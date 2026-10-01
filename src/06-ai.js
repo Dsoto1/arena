@@ -128,6 +128,7 @@ const pers = player => {
       cf: Math.max(P.cf, 45),
       loyalty: P.loyalty
     };
+    if (player.aiPers) for (const k of Object.keys(player.aiPers)) player._hp[k] = clamp(player._hp[k] + player.aiPers[k], 1, 100); /* v0.62: a tier's instincts (80-aitiers) */
   }
   return player._hp;
 };
@@ -1041,7 +1042,7 @@ async function cpuAct(player) {
     } = dijkstra(player.r, player.c, blk);
     // route around danger: hard CPUs always weigh it, normal ones half the time, easy ones stroll obliviously
     const dz = (player.diff === 'hard' || player.diff === 'normal' && (player._dzRoll ?? (player._dzRoll = rand())) < 0.5 || P.survival > 65) && !(S.evKey === 'gauntlet') ? dangerMap(player) : null;
-    const dw = player.diff === 'hard' ? 0.6 : 0.3;
+    const dw = player.aiDz != null ? player.aiDz : player.diff === 'hard' ? 0.6 : 0.3;
     let gk = -1,
       gd = 1e9;
     for (const [r, c] of goals) {

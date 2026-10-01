@@ -38,13 +38,9 @@ noise=function(player,scale=1){const T=AI_TIERS[aiTier(player)];const bl=player&
 {const base=mkPlayer;mkPlayer=function(i,s){const p=base.apply(this,arguments);try{if(s&&s.aiw)p.aiw=s.aiw;
   let t=p.st&&p.st.int?aiTierOf(p.st.int):aiTierKey(s&&s.diff);if(t<0)t=2;
   if(s&&s.diffLock&&typeof bandInt==='function'&&p.st){const ix={easy:0,normal:1,hard:2};if(ix[s.diffLock]<ix[bandInt(p.st.int)])t=Math.max(0,t-1)}
-  p.tier=t;if(p.cpu)p.diff=AI_TIERS[t].diff;if(s&&s.aiNoise!=null)p.aiNoise=s.aiNoise;if(s&&s.aiBlunder!=null)p.aiBlunder=s.aiBlunder;if(s&&s.aiDiff)p.aiDiff=s.aiDiff;if(p.aiDiff&&p.cpu)p.diff=p.aiDiff}catch(e){console.error(e)}return p}}
+  p.tier=t;if(p.cpu)p.diff=AI_TIERS[t].diff;if(s&&s.aiNoise!=null)p.aiNoise=s.aiNoise;if(s&&s.aiBlunder!=null)p.aiBlunder=s.aiBlunder;if(s&&s.aiPers)p.aiPers=s.aiPers;if(s&&s.aiSub)p.aiSub=s.aiSub;if(s&&s.aiDz!=null)p.aiDz=s.aiDz;if(s&&s.aiDiff)p.aiDiff=s.aiDiff;if(p.aiDiff&&p.cpu)p.diff=p.aiDiff}catch(e){console.error(e)}return p}}
 /* keep the switches in step (a gladiator handed to the CPU mid-bout plays its own tier) */
 {const base=beginTurn;beginTurn=async function(){try{const p=S&&cur();if(p&&p.cpu&&p.tier!=null)p.diff=p.aiDiff||AI_TIERS[p.tier].diff}catch(e){}return base.apply(this,arguments)}}
-/* the Apprentice plays its cards like a Fighter */
-{const base=cpuUseItems;cpuUseItems=async function(player){if(aiTier(player)!==1)return base.apply(this,arguments);const d=player.diff;player.diff='normal';try{return await base.apply(this,arguments)}finally{player.diff=d}}}
-/* …and works the market like one */
-{const base=cpuMarket;cpuMarket=async function(player){if(aiTier(player)!==1)return base.apply(this,arguments);const d=player.diff;player.diff='normal';try{return await base.apply(this,arguments)}finally{player.diff=d}}}
 /* statBonuses names the tier too (read by the chips, the ratings card and the growth news) */
 {const base=statBonuses;statBonuses=function(st){const b=base.apply(this,arguments);b.tier=aiTierOf((st||{}).int||0);b.tierName=AI_TIERS[b.tier].n;return b}}
 function aiTierChip(int){const T=AI_TIERS[aiTierOf(int)];return `<span class="aitier t${aiTierOf(int)}" title="${esc(T.n)} mind: ${esc(T.d)}">🧠 ${esc(T.n)}</span>`}
@@ -54,3 +50,14 @@ function aiTierChip(int){const T=AI_TIERS[aiTierOf(int)];return `<span class="ai
 {const base=statChips;statChips=function(st,opt={}){const h=base.apply(this,arguments);if(!h||!st||!st.int)return h;return h.replace(/<\/span>$/,` ${aiTierChip(statFix(st.int))}</span>`)}}
 const AI_TIERS_TXT='Novice below 65, Apprentice 65, Fighter 76, Veteran 86, Master 96';
 try{if(typeof GLOSS!=='undefined'&&GLOSS.int)GLOSS.int.d=`How sharply a CPU plays the gladiator — five minds: ${AI_TIERS_TXT}. Personality still decides how they play. Grows by surviving and winning.`}catch(e){}
+/* ---------- SKILLS BY SUBSYSTEM: each tier sets the play level (easy / normal / hard) of each part of the CPU separately.
+   While a subsystem's function runs, the player's diff is that subsystem's level; nested calls set their own and restore.
+   act = moving, targeting and the turn's choices · items = cards and tokens · market · tactic = push and topple ·
+   social = truces, trades and helping allies · defend = Minerva / Fidelis on incoming blows. TWEAK: the levels in AI_TIERS. */
+const AI_SUBS={act:['cpuAct','cpuGoals','cpuChoice','cpuScoreAttack'],items:['cpuUseItems','askCard'],market:['cpuMarket','marketRoll'],tactic:['cpuTactic'],social:['cpuDiplomacy','cpuHelpAllies'],defend:['defend']};
+function aiSubLevel(p,k){if(!p||!p.cpu)return null;if(p.aiSub&&p.aiSub[k])return p.aiSub[k];const T=AI_TIERS[aiTier(p)];return T.sub&&T.sub[k]||null}
+for(const [k,fns] of Object.entries(AI_SUBS))for(const name of fns){try{const base=eval(name);if(typeof base!=='function')continue;
+  const isAsync=base.constructor&&base.constructor.name==='AsyncFunction';
+  const w=isAsync?async function(p){const lv=aiSubLevel(p,k);if(!lv)return base.apply(this,arguments);const d=p.diff;p.diff=lv;try{return await base.apply(this,arguments)}finally{p.diff=d}}
+    :function(p){const lv=aiSubLevel(p,k);if(!lv)return base.apply(this,arguments);const d=p.diff;p.diff=lv;try{return base.apply(this,arguments)}finally{p.diff=d}};
+  eval(`${name}=w`)}catch(e){}}
