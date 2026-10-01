@@ -9519,7 +9519,7 @@ async function cpuDiplomacy(player) {
     wantTrade = mfWant && MANDATA[mfWant.idx].n === 'The Trade';
   if (!wantTrade && (wantTruce || strength(q) > strength(player) * 0.9 || P.loyalty > 75 && rand() < .5 || relOf(player, q) >= 25)) {
     let ok;
-    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await modal(`${player.name} offers a truce`, `<p>${player.name} (CPU) proposes a truce. Neither of you will be targeted by the other, but there is no penalty for breaking it. Only one gladiator can win.</p>${hint('truce')}`, [{
+    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await modal(`${player.name} offers a truce`, `<p>${typeof truceWho==='function'?truceWho(player):player.name} (CPU) proposes a truce. Neither of you will be targeted by the other, but there is no penalty for breaking it. Only one gladiator can win.</p>${hint('truce')}`, [{
       label: 'Accept truce',
       value: 1,
       primary: 1
@@ -13570,7 +13570,7 @@ async function openTrade(player) {
       return;
     }
     let ok;
-    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await modal(`${q.name}: truce offer`, `<p>${player.name} proposes a truce. Accept?</p>`, [{
+    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await modal(`${q.name}: truce offer`, `<p>${typeof truceWho==='function'?truceWho(player):player.name} proposes a truce. Accept?</p>`, [{
       label: 'Accept',
       value: 1,
       primary: 1
@@ -22734,7 +22734,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
-  {v:'0.60',ic:'🛣',t:'The Road from the record',hi:['🛣 Send on the Road sits on every living gladiator\'s record in Your Play Now Gladiators (custom characters too); the walker\'s record has ⚔ Walk stage'],fx:['The Annals no longer loop back to the main menu','Moving between the Annals, Your Play Now Gladiators and the Road is covered by the curtain — no menu flashes','The Hall\'s Road box drops its long dropdown for a button to your gladiators']},
+  {v:'0.60',ic:'🛣',t:'The Road from the record',hi:['🛣 Send on the Road sits on every living gladiator\'s record in Your Play Now Gladiators (custom characters too); the walker\'s record has ⚔ Walk stage'],fx:['The Venatore\'s Tame card shows the Lyre of Orpheus face','Tamed beasts carry no aggro; counter-attacks only when a wild beast attacks (a tamed beast striking a wild one draws its aggro onto the owner; striking a rival\'s tamed beast waits for its owner\'s Resolve)','Crowd Favor offerings fall face up where the offering lands (3 tiles out from a toppled pillar)','Truce offers show the class in its colour; truced gladiators wear a 🕊 and a dashed ring','The Annals no longer loop back to the main menu','Moving between the Annals, Your Play Now Gladiators and the Road is covered by the curtain — no menu flashes','The Hall\'s Road box drops its long dropdown for a button to your gladiators']},
   {v:'0.59',ic:'⚔',t:'Rivals, ships and chariots by the book',hi:['Rivalry Week: the last regular week is Familia, two on two, against your fiercest rival (the Consilium writes in week 11; byes now weeks 4 and 11)','Naumachia by the rulebook: the printed layout, 10-tile decks, boarding only from boarding tiles, the water-token pinwheel, waist-deep swimmers','Chariot Racing by the rulebook: a snake draft with chariot cards, one free tile past a gate, horse and wheel tokens riding on each chariot','Credits (click D.Soto) with the prototype photos; Zora stands on the board as his own mini','Five event cards repainted to match the rulebook; a mute button beside Settings'],fx:['Naumachia: a random team takes the first turn','Event Designer: the draft option says it replaces the class loadout','⏭ To the end now sits in the Speed tray, right of Fast','Ludus: a tie at the cut goes to the most CF, then the most coin, then d12 roll-offs','A new turn clears the last turn\'s card pop-ups and thoughts','No menu or arena flash when Play opens from Ludus Flavius or Manager mode loads','The floating sound chip is gone','Invitationals: the frequency line reads plainly']},
   {v:'0.58',ic:'⛵',t:'The printed ships, the prototype',hi:['Naumachia ships are the printed 3 x 5 hulls with Virgilante\'s deck art, set in a ring around the middle','Each hull shows its HP; hover its pillar for the ship\'s name','Arena deck, event and weapon cards from the original scans, twice as sharp','Click D.Soto in the main menu (or the Play Now guide) to see the prototype the game was distilled from'],fx:[]},
   {v:'0.57',ic:'🌿',t:'A cleaner sand, a fairer start',hi:['New houses choose a starting difficulty: Easy (250 coin, two fighters), Normal (125, one) or Hard (50, none)','Houses called in by a word can be taken over like any other','Courting shows on the shortlist (what you offered, what they ask); scouting or courting shortlists a fighter','Call a loaned fighter home for the rest of the loan plus a quarter','A letter for your first bye week; saved careers show record and treasury'],fx:['Laurels fly only after the closing horns; the start marks fade once play begins; no beasts are left on the sand after the clean-up','Saving gladiators keeps the results window up','Mail keeps only what you have not read','Match Week: winners in gold, YOURS in blue, LOANED in purple with the terms; Wagers shows a count; enter, watch and walk wait for the road to be paid; End the week from the results hides the buttons','Consilium and Schooling swap places; one billing per fighter on the Season tab']},
@@ -27271,6 +27271,45 @@ document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.c
 {const base=mmAfterClose;mmAfterClose=function(){if(!MM.fromMenu)return base.apply(this,arguments);const a=arguments,self=this;
   if(typeof transitCover==='function'&&!HEADLESS)transitCover(1200);
   setTimeout(()=>{if(!$('#modal').hidden||CUR_MODAL){if(typeof transitUncover==='function')transitUncover();return}base.apply(self,a);setTimeout(()=>{if(typeof transitUncover==='function')transitUncover()},120)},320)}}
+/* ---------- TAME, BY THE RULEBOOK (p.40) ----------
+   • The Venatore's starting Tame card shows the Lyre of Orpheus face (it had no art, so the card back showed).
+   • Tamed NPCs carry no aggro: taming clears it, nothing can set it while the bond holds (setAggro), and any left over is
+     swept at every turn start. They act only as the last step of their owner's Resolve, in their initial state.
+   • Counter-attacks are NPC v NPC only, and only when a WILD NPC attacks: a tamed beast striking a wild one draws that
+     beast's aggro onto the owner (as if the owner had hit it); striking another gladiator's tamed beast draws nothing at
+     once — its owner answers in their own Resolve (a CPU owner goes for the beast that hit theirs first). */
+if(CARDS.tame&&CARDS.lyre){CARDS.tame.img=CARDS.lyre.img;CARDS.tame.q=CARDS.tame.q||CARDS.lyre.q}
+{const base=beginTurn;beginTurn=async function(){try{for(const n of (S&&S.npcs)||[])if(n.tamedBy!=null&&n.aggro!=null){n.aggro=null;n.aggroWhy=null}}catch(e){}return base.apply(this,arguments)}}
+{const base=tamedAttack;tamedAttack=async function(npc,player,target){if(!target||target.kind!=='npc')return base.apply(this,arguments);
+  const m=target.ref,st=npcStats(npc),hits=rollHits(2),h=cnt(hits),dmg=h*st.ap;
+  hurtNPC(m,dmg,player,`${nm(npc)} (${player.name}'s) attacks ${diceHtml(hits)} ${h}×${st.ap} = ${dmg}`,null,npc);
+  if(m.alive){if(m.tamedBy==null)setAggro(m,player,'tamed');else{m.hitBy={npc:npc.id,owner:player.id,turn:S.turnNo};const o=S.players[m.tamedBy];if(o)log(`${nm(o)} will answer for ${nm(m)} in their own Resolve.`)}}}}
+{const base=cpuCommand;cpuCommand=async function(player,n){try{const hb=n.hitBy;if(hb&&S.turnNo-hb.turn<=S.players.length*2){const foe=S.npcs.find(x=>x.id===hb.npc&&x.alive);
+    if(foe){n.hitBy=null;if(cheb(n,foe)>1){if(n.netted)n.netted=false;else await npcWalk(n,adjTiles(foe),npcStats(n).mv)}
+      const t=tamedTargets(n,player).find(x=>x.kind==='npc'&&x.ref===foe);if(t){await tamedAttack(n,player,t);return}}}}catch(e){console.error(e)}
+  return base.apply(this,arguments)}}
+/* ---------- CROWD FAVOR OFFERINGS FALL: like every offering but the Spiders and the Curse (which strike the breaker at once),
+   a CF token lands face up where the pot's offering falls — 3 tiles out at the end of a toppled pillar's rubble — and pays
+   its CF to whoever picks it up (none for a gladiator whose weakness bars CF from Blessings). */
+{const base=revealOffering;revealOffering=async function(player,off,land){if((off==='cf1'||off==='cf2')&&land){let [r,c]=land;r=clamp(r,0,N-1);c=clamp(c,0,N-1);if(pillarAt(r,c)){r=player.r;c=player.c}
+    placeFloor('offer',off,r,c);log(`An offering spills onto ${tl(r,c)}: <b>${OFFER[off].n}</b> (${OFFER[off].s}).`);await pickupAt(r,c);return}
+  return base.apply(this,arguments)}}
+{const base=pickupAt;pickupAt=async function(r,c){try{const p=playerAt(r,c);if(p){for(const f of S.floor.filter(f=>f.r===r&&f.c===c&&f.kind==='offer'&&(f.key==='cf1'||f.key==='cf2'))){
+    S.floor=S.floor.filter(x=>x!==f);const v=f.key==='cf1'?1:2;if(weak(p,'noBlessCF'))log(`${nm(p)} picks up a Crowd Favor offering, but gains no CF from Blessings.`);
+    else{cfWhy('breaking pots');p.cf+=v;fx(r,c,`+${v} CF`,'#f0cf7d');log(`${nm(p)} picks up a Crowd Favor offering: +${v} CF.`)}}}}catch(e){console.error(e)}
+  return base.apply(this,arguments)}}
+/* ---------- TRUCES YOU CAN SEE ----------
+   The offer names the gladiator with their class, in its colour; and on the sand, everyone you hold a truce with wears a
+   white 🕊 above their head and a dashed ring in your colour — so a move or an attack never breaks one by accident. */
+function truceWho(p){const C=CLASSES[p.cls]||{};const col=C.color||p.color||'#ccc';return `<b>${esc(p.name)}</b> <span class="trcls" style="--tc:${col}"><i></i>${esc(C.name||p.cls||'')}</span>`}
+function truceViewer(){if(!S||!S.players)return null;const c=cur();if(c&&!c.cpu)return c;const hs=S.players.filter(p=>!p.cpu&&p.alive);return hs.length===1?hs[0]:null}
+{const base=drawPlayer;drawPlayer=function(player){const r=base.apply(this,arguments);
+  try{const v=truceViewer();if(v&&v!==player&&player.alive&&!player.exited&&inTruce(v,player)){const m=center(player.r,player.c);
+    ctx.save();ctx.setLineDash([5,4]);ctx.strokeStyle=v.color||'#fff';ctx.lineWidth=2;ell(m.x,m.y+TW*0.03,TW*0.42,TW*0.21);ctx.stroke();ctx.setLineDash([]);
+    const y=m.y-TW*1.55;ctx.fillStyle='rgba(255,255,255,.92)';ctx.beginPath();ctx.arc(m.x+TW*0.28,y,TW*0.15,0,Math.PI*2);ctx.fill();ctx.strokeStyle=v.color||'#888';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.font=`${Math.round(TW*0.19)}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🕊',m.x+TW*0.28,y+1);ctx.restore()}}catch(e){}
+  return r}}
+{const st=document.createElement('style');st.textContent=`.trcls{display:inline-flex;align-items:center;gap:4px;color:var(--tc);font-weight:600}.trcls i{width:10px;height:10px;border-radius:50%;background:var(--tc);display:inline-block}`;document.head.appendChild(st)}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

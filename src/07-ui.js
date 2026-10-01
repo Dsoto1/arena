@@ -3367,7 +3367,7 @@ async function openTrade(player) {
       return;
     }
     let ok;
-    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await modal(`${q.name}: truce offer`, `<p>${player.name} proposes a truce. Accept?</p>`, [{
+    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await modal(`${q.name}: truce offer`, `<p>${typeof truceWho==='function'?truceWho(player):player.name} proposes a truce. Accept?</p>`, [{
       label: 'Accept',
       value: 1,
       primary: 1
