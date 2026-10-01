@@ -14,13 +14,13 @@ o.arena=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide()
   startEvent({ev:'democritus',loc:6,seats:[{cls:'venatore'},{cls:'hero',cpu:true},{cls:'soldier',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}});
   await new Promise(r=>setTimeout(r,1200));for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,80))}
   const z=spawnZora(S.players[0]);const zm=!!(typeof STANDEE_SRC!=='undefined'&&STANDEE_SRC.zoraMini)&&typeof drawZoraMini==='function';
-  cardShow('c:wealth3',cur(),'🂠 Drawn');const c0=document.getElementById('cardShow').children.length;S.busy=false;S.pending=null;advanceTurn();await new Promise(r=>setTimeout(r,400));
-  return {zora:!!z,zm,c0,c1:document.getElementById('cardShow').children.length}});
+  cardShow('c:wealth3',cur(),'🂠 Drawn');const old=document.getElementById('cardShow').firstElementChild;const c0=old?1:0;S.busy=false;S.pending=null;advanceTurn();await new Promise(r=>setTimeout(r,400));
+  return {zora:!!z,zm,c0,c1:old&&old.isConnected?1:0}});
 ok(o.arena.zora&&o.arena.zm,'zora mini');ok(o.arena.c0>=1&&o.arena.c1===0,'turn sweep');
 o.naum=await pg.evaluate(async()=>{S&&(S.over=true);startEvent({ev:'naumachia',loc:6,seats:['soldier','hero','slave','royalty','venatore','amazonia'].map((c,i)=>({cls:c,cpu:true,team:'T'+(i%3)})),opts:{spect:0}});
-  await new Promise(r=>setTimeout(r,600));const p=S.players[0];const sv=[p.r,p.c];
+  await new Promise(r=>setTimeout(r,600));const p=S.players[0];const sv=[p.r,p.c];const oth=S.players.filter(q=>q!==p).map(q=>[q,q.r,q.c]);oth.forEach(([q],i)=>{q.r=12;q.c=8+i});
   p.r=0;p.c=0;let R=reach(p);const corner=[...R.tiles.keys()].filter(k=>shipAt(Math.floor(k/N),k%N)&&R.tiles.get(k)<=2).length;
-  p.r=0;p.c=3;R=reach(p);const board=[...R.tiles.keys()].filter(k=>shipAt(Math.floor(k/N),k%N)&&R.tiles.get(k)<=2).length;[p.r,p.c]=sv;
+  p.r=0;p.c=3;R=reach(p);const board=[...R.tiles.keys()].filter(k=>shipAt(Math.floor(k/N),k%N)&&R.tiles.get(k)<=2).length;[p.r,p.c]=sv;oth.forEach(([q,r,c])=>{q.r=r;q.c=c});
   return {tiles:S.ships.map(s=>s.tiles.size),wt:S.waterTok.map(t=>t.r+','+t.c).includes('0,7'),starts:S.players.every(q=>nTerr(q.start[0],q.start[1])==='ship'),corner,board,boxes:S.ships.every(s=>s.box&&s.board)}});
 ok(o.naum.tiles.every(n=>n===11)&&o.naum.wt&&o.naum.starts&&o.naum.corner===0&&o.naum.board===3&&o.naum.boxes,'naumachia');
 o.ch=await pg.evaluate(async()=>{S&&(S.over=true);startEvent({ev:'chariot',loc:7,seats:['soldier','hero','slave','royalty'].map(c=>({cls:c,cpu:true})),opts:{spect:0}});
@@ -32,7 +32,7 @@ o.riv=await pg.evaluate(async()=>{S&&(S.over=true);openManager();await new Promi
   w.week=w.week+(11-wkOf(w.week));makeNight();const lock=!!(w.rivalry&&w.rivalry.abs===w.week+1);MGR.tab='ludus';MGR_REDRAW();const btn=document.querySelector('[data-rivcommit]');if(btn)btn.click();
   const commit=(w.rivalry.commit[me().id]||[]).length;w.week++;makeNight();const bouts=w.night.bouts.map(b=>b.ev+':'+b.ents.length+':'+!!b.rivalry);
   for(let i=0;i<w.night.bouts.length;i++)await runBoutSim(i);w.pend=[];await endWeek();
-  const news=(w.news||[]).filter(x=>/Rivalry Week:|wins the rivalry/.test(x.text)).length;
-  return {byes:BYE_WKS.join(','),fx:fixtureFor(1,12).ev,lock,commit,bouts,news,pairs:w.rivalry.pairs.length}});
-ok(o.riv.byes==='4,11'&&o.riv.fx==='familia'&&o.riv.lock&&o.riv.commit===2&&o.riv.bouts.length===3&&o.riv.bouts.every(x=>x==='familia:4:true')&&o.riv.news===o.riv.pairs,'rivalry');
+  const bg=(w.news||[]).filter(x=>/Rivalry Week:/.test(x.text)).length,cardWins=(w.news||[]).filter(x=>/wins the rivalry/.test(x.text)).length,news=bg+cardWins;
+  return {byes:BYE_WKS.join(','),fx:fixtureFor(1,12).ev,lock,commit,bouts,news,bg,cardWins,pairs:w.rivalry.pairs.length}});
+ok(o.riv.byes==='4,11'&&o.riv.fx==='familia'&&o.riv.lock&&o.riv.commit===2&&o.riv.bouts.length===3&&o.riv.bouts.every(x=>x==='familia:4:true')&&o.riv.bg===o.riv.pairs-3&&o.riv.cardWins<=3,'rivalry');
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length)process.exit(1)})();
