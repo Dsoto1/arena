@@ -1,4 +1,4 @@
-"""mkscans.py — rebuild image sheets from David's original PDF scans (v0.57).
+"""mkscans.py — rebuild image sheets from Virgilante's original PDF scans (v0.57).
 
     pdfimages -png <scan>.pdf <dir>/i        # once per PDF (poppler-utils)
     python3 tools/mkscans.py <scans-root> [out-dir|-] [sections]   # needs Pillow; writes into assets/ unless out-dir is given

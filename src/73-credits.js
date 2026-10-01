@@ -2,9 +2,9 @@
    73-CREDITS · v0.59
    =====================================================================
    THE CREDITS — 'D.Soto' in the main menu now opens a Credits window with two tabs: Credits (the rulebook's Contact &
-   Credits page, adapted: motto banner, David's dedication, the editions this game comes from, contact links, QR,
+   Credits page, adapted: motto banner, Virgilante's dedication, the editions this game comes from, contact links, QR,
    Mifune Media) and Prototype (the v0.58 photo gallery). The Play Now guide's "See the prototype" opens the second tab.
-   Art: assets/cr_*.* (from David's credits PDF; sources in tools/art/credits/).
+   Art: assets/cr_*.* (from Virgilante's credits PDF; sources in tools/art/credits/).
    ===================================================================== */
 const CR_LINKS=[['🌐','Website','https://www.flaviusrule.com','www.FlaviusRule.com'],['✉️','Email','mailto:FlaviusRule@gmail.com','FlaviusRule@gmail.com'],
   ['🎲','Tabletop Simulator','https://steamcommunity.com/sharedfiles/filedetails/?id=809267424','Magnus Edition on the Steam Workshop'],

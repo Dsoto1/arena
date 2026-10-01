@@ -908,7 +908,7 @@ function bestiaryTally(){ // called at gameOver: the keepers update the ledgers
     if(n){const B=BESTIARY[n.t]=BESTIARY[n.t]||{slain:0,ate:0,tamed:0};B.ate++;whoOf(n).ate++;dirty=1}}
   if(dirty)Store.put('hall','bestiary',{v:BESTIARY}).catch(()=>{});
 }
-/* v0.22: the beasts' lore is David's own "ludus notes" from the rulebook's NPC pages (p.32-33), quoted with their attributions */
+/* v0.22: the beasts' lore is Virgilante's own "ludus notes" from the rulebook's NPC pages (p.32-33), quoted with their attributions */
 const BEAST_LORE={
   snake:'<i>Species: Nāgá.</i> “Cherished companions of Flavius, these serpents become formidable contenders, embodying the essence of Asclepius, ensuring a ceaseless crimson cascade upon the arena sands.” <span class="rc-sub">— Virgilante, ludus notes</span>',
   wolf:'<i>Species: Canis lupus.</i> “Valencia and Moechus, masters of the hunt, possess an insatiable appetite within the arena, their natural prowess and docility allowing them to effortlessly track their prey.” <span class="rc-sub">— Cassius Dio, ludus notes</span>',

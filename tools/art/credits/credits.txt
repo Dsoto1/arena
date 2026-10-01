@@ -1,5 +1,5 @@
 CONTACT & CREDITS — text of the rulebook page (p.73), for the in-game Credits page (queued).
-Art in this folder comes from creditsonly.pdf (David): banner_bg.jpg (the motto is live text in the PDF —
+Art in this folder comes from creditsonly.pdf (Virgilante): banner_bg.jpg (the motto is live text in the PDF —
 set it in the display font), portrait.jpg, qr.jpg, mifune_media.png, nc_flag.png.
 
 AUT VIAM INVENIAM AUT FACIAM
@@ -38,5 +38,5 @@ WARNING! Small parts. Choking hazard. Not suitable for children under 3 years.
 Recommended for ages 13+. This product is not a toy. Actual components may vary from those shown.
 Reprinting or publishing of the rulebook, game components, or illustrations is prohibited without prior permission.
 
-ADD (David): this is a digital standalone version of the original Magnus Edition (Tabletop Simulator)
+ADD (Virgilante): this is a digital standalone version of the original Magnus Edition (Tabletop Simulator)
 and the Print & Play Edition (Barnes & Noble).

@@ -2,7 +2,7 @@
    20-TOKENS · v0.23 TOKEN FIGURES AND THE TOKEN CREATOR
    ---------------------------------------------------------------------
    Three looks for pieces on the board (Settings → Board tokens):
-     • standee  — David's printed minis for the 8 classes and default beasts
+     • standee  — Virgilante's printed minis for the 8 classes and default beasts
      • figure   — sculpted vector figurines, built from a small spec (below)
      • cylinder — the original flat tokens
    A figure spec is plain data, so it lives on custom characters (c.token),

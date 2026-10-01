@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
-A single-file HTML/JS/Canvas adaptation of **David's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.58**. Owner: David.
+A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
+arena, Roman-themed). Current version: **v0.58**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -10,7 +10,7 @@ armor, trophies, banners, events, tournaments, invitationals, editors, spectator
 
 ---
 
-## 1. Working with David (standing rules)
+## 1. Working with Virgilante (standing rules)
 
 - **Ask clarifying questions before starting a batch** — as many as it takes to resolve what's unclear (no fixed
   limit; don't ask what the request already answers), multiple-choice where possible. He sends work as
@@ -167,7 +167,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 4. `sh build.sh` → full regression → `python3 tools/mkshare.py X.YY` → smoke-test the share build.
 5. Publish to the claude.ai artifact **https://claude.ai/artifact/8LU6eHbPpuznn64JeWZ6We** with the page and all 23
    assets (label "vX.YY"); check the live version with an Artifact read before publishing. Before publishing, review any new shared-Store writes and make
-   sure no cheat word appears in plain text. Send David the share build file.
+   sure no cheat word appears in plain text. Send Virgilante the share build file.
 
 ## 7. Version history (recent)
 - **v0.48** depth chart, loans, Vulso's cart, Hygeia, two guides, 16-season stress fixes.
@@ -194,24 +194,24 @@ One global script; files are concatenated in order. Later "version modules" patc
 - **v0.57** starting difficulty for new houses; word-houses takeable; shortlist courting chips; loan recall; bye letter;
   save cards with record/treasury; laurels after horns; start marks fade; no beasts after clean-up; no flicker on Save;
   unread-only mail; Match Week colours/tags/wager count/travel gating/end-week buttons; Consilium↔Schooling; one billing;
-  sharper art from David's PDF scans (tools/mkscans.py): fates, chariot cards/tokens, armor, 8 new offering tokens.
+  sharper art from Virgilante's PDF scans (tools/mkscans.py): fates, chariot cards/tokens, armor, 8 new offering tokens.
   (Published as artifact Version 68.)
 - **v0.58** 3x5 Naumachia ships in a pinwheel ring with the printed deck art; hull HP labels, names on hover; arena deck
   (480x704), event cards (480x692) and weapon cards (600x416) from scans; prototype gallery (D.Soto link); clearer
   invitational frequency wording.
 
 ## 8. Next steps / open items
-- **Readability pass, phase 2+** (David chose "phased"): files 02–07 are done (Babel scope-safe parameter renames via
+- **Readability pass, phase 2+** (Virgilante chose "phased"): files 02–07 are done (Babel scope-safe parameter renames via
   `tools/rename.js`, then comments on every function with `TWEAK:` notes; verified with `tools/samecode.js`, which
   compares code ignoring comments/whitespace). Remaining: 08–64, file by file, regression after each. Rename only
   function parameters in the safe map unless verified; never change behaviour.
 - Possibly offer: remove the 32 auto-generated Ludus recruits created by older builds (`recruit:true` in `gladiators`).
-- Event Designer: a full step-by-step wizard was deferred (David chose the "Beasts hub + pieces" scope for v0.54).
+- Event Designer: a full step-by-step wizard was deferred (Virgilante chose the "Beasts hub + pieces" scope for v0.54).
 - Play Now setup: the city/modifier header above the map could align exactly to the map width.
 - Hot-seat LAN/Online lobbies are placeholders.
-- Next (agreed): Sica's syndicate as its own league house (roster, enforcers, dirty tricks) — design with David first.
-- Audio in the artifact-downloaded copy: v0.55 added Safari/iOS fixes; confirm with David which device/browser it was.
-- Scans: David's original PDFs are not in the repo (uploads only). `pdfimages -png <pdf> <dir>/i` then
+- Next (agreed): Sica's syndicate as its own league house (roster, enforcers, dirty tricks) — design with Virgilante first.
+- Audio in the artifact-downloaded copy: v0.55 added Safari/iOS fixes; confirm with Virgilante which device/browser it was.
+- Scans: Virgilante's original PDFs are not in the repo (uploads only). `pdfimages -png <pdf> <dir>/i` then
   `python3 tools/mkscans.py <root> [out]`; rtok.webp now has 5 rows (RTOK_ROWS).
 - Arena deck scans: uploaded as arenacards1-3.pdf (thirds). mkscans `arena`/`events` sections map cells → scans (`ARENA_CARDS`,
   `EVENT_CARDS`); no scan for Forge +3 AP (26, 70) or Floor Spikes (46); the Orpheus event scan is a different print (kept).
@@ -219,18 +219,18 @@ One global script; files are concatenated in order. Later "version modules" patc
 - **Queued for the next batch:** repaint 5 event cards in events.jpg to match the rulebook (the game already follows it):
   Triumviratus (FFA Royale, ends at 1st elimination → highest CF; CF+CA ticked), Familia (CF/CA crossed), Chariot (CF
   crossed), Naumachia (PvE crossed), Ludus (R1 ends at 10x turn rotations, CF ticked). Ludus rulebook: CF ties favor the
-  elder (age) — the game breaks ties by seat order; ask David how to map it.
+  elder (age) — the game breaks ties by seat order; ask Virgilante how to map it.
 - **Queued for the next batch — Naumachia to the rulebook (pp.48-49):** layout = TL horizontal, TR vertical, BR horizontal,
   BL vertical (mirror of the v0.58 pinwheel); boarding from water only via valid boarding tiles (3 along each long side's
   middle + 1 off each end; corners invalid), 2 MV, door→ship free; the 4 cut-corner ship tiles are invalid in the rulebook
-  (David: switch to the rulebook — 10 deck tiles + pillar, corners water/invalid); 16 water tokens in a fixed cross on row/col 6; a boarding visual; swimmers drawn
+  (Virgilante: switch to the rulebook — 10 deck tiles + pillar, corners water/invalid); 16 water tokens in a fixed cross on row/col 6; a boarding visual; swimmers drawn
   half-submerged; team turns are simultaneous in the book (game: team members back to back); first team = oldest (no ages).
 - **Queued for the next batch — Chariot Racing (pp.50-51):** rules mostly match (base 3 MV, horse +1-3, broken wheel −2,
   forward 1 / diagonal 2, no backwards/sideways/center/pillar/tunnel/occupied, gate = flip horse + offering + step beyond,
   2 keys + 3 CF, CF off). Gaps: 6-round snake draft (game: straight order, chariot by colour); gate step should be one free
   tile beyond (game: +2 MV). Visuals: horse (current face) + wheel tokens drawn on each chariot, horse flip animation at
   gates, HP pips, token drops off when destroyed.
-- **Queued for the next batch — Zora's miniature:** David's photo is in tools/art/zora_mini.jpg; cut it out and use it as
+- **Queued for the next batch — Zora's miniature:** Virgilante's photo is in tools/art/zora_mini.jpg; cut it out and use it as
   Zora's on-board figure only (cards/panels keep the printed rtok 'zora' disc). Zora is male ("his").
 - **Queued for the next batch — Credits page:** D.Soto (main menu) opens a Credits page with a tab for the prototype photos.
   Adapt the rulebook's Contact & Credits page (reference: tools/art/credits_ref.jpg): motto banner "Aut viam inveniam aut
@@ -238,5 +238,5 @@ One global script; files are concatenated in order. Later "version modules" patc
   Discord, Steam: Virgilante) as clickable links with simple neutral icons (no brand logos), QR code, © 2016-2026 Mifune
   Media + warnings + reprint notice. Add a line that this is a digital standalone version of the original Magnus Edition
   (Tabletop Simulator) and the Print & Play Edition (Barnes & Noble). Art + transcribed text: tools/art/credits/
-  (from David's creditsonly.pdf; the left half of that spread is the Quick Reference — not used).
+  (from Virgilante's creditsonly.pdf; the left half of that spread is the Quick Reference — not used).
 - Keep watching: shared-Store writes on load (conversions must be idempotent and saved once).

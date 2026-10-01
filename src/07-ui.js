@@ -313,7 +313,7 @@ function standeeSize(k) {
   if (!im) return TW;
   const ar = im.naturalWidth / im.naturalHeight;
   const want = TW * 1.3 * ((STANDEE_H[k] || 600) / 670);
-  const maxW = TW * (['brutum', 'ursa', 'leo', 'leaena', 'arenosus', 'glykon', 'moechus', 'valencia'].includes(k) ? 1.0 : 0.82);
+  const maxW = TW * (['brutum', 'ursa', 'leo', 'leaena', 'arenosus', 'glykon', 'moechus', 'valencia', 'zoraMini'].includes(k) ? 1.0 : 0.82);
   return Math.min(want, maxW / ar);
 }
 /* standeesOn — true when the token style setting is 'standee' (or no such setting exists). */
@@ -2121,7 +2121,8 @@ function drawNPC(npc) {
   const sk = standeeKeyNPC(npc);
   const sh = sk ? standeeSize(sk) : TW * 0.8;
   const filt = st.state === 'Fazed' ? 'brightness(.6) saturate(.6)' : st.state === 'Raged' ? 'saturate(1.4) contrast(1.1)' : '';
-  const stTop = wantFigure(!!T.custom || npc.t === 'zora' && tokenStyle() === 'figure') ? drawFigureTok(tokenForNPC(npc), m.x, m.y + TW * 0.02, TW * 1.25, {
+  const zTop = npc.t === 'zora' && typeof drawZoraMini === 'function' ? drawZoraMini(m.x, m.y + TW * 0.04, filt) : null; /* v0.59: his own mini (74-zora) */
+  const stTop = zTop != null ? zTop : wantFigure(!!T.custom || npc.t === 'zora' && tokenStyle() === 'figure') ? drawFigureTok(tokenForNPC(npc), m.x, m.y + TW * 0.02, TW * 1.25, {
     filter: filt
   }) : sk && npc.t !== 'zora' ? drawStandee(sk, m.x, m.y + TW * 0.04, sh, {
     filter: st.state === 'Fazed' ? 'brightness(.6) saturate(.6)' : st.state === 'Raged' ? 'saturate(1.4) contrast(1.1)' : ''

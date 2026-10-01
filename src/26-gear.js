@@ -7,7 +7,7 @@
      weapons — used everywhere a printed card would be. Nothing enters play unless "added to the rolls":
      the market deck at its level, and/or the character-creator loadout lists.
    • The ARMOR DESIGNER: the same, for armor — slot, point and AP within printed bounds.
-   • THE DRAWN ARMOR SET: vector recreations of all 27 printed armor pieces (drawn from David's own
+   • THE DRAWN ARMOR SET: vector recreations of all 27 printed armor pieces (drawn from Virgilante's own
      scans). Settings → Visuals picks Drawn or the Original scans, exactly like Tokens.
    ===================================================================== */
 const MARKET_W0={1:[...MARKET_W[1]],2:[...MARKET_W[2]],3:[...MARKET_W[3]]};

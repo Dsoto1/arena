@@ -2,7 +2,7 @@
    71-V58 · v0.58
    =====================================================================
    NAUMACHIA — the ships are the printed 3 x 5 hulls (every tile of the rectangle is deck, the cut corners
-   included), set in a pinwheel around the middle (two north-south, two east-west, bows chasing clockwise), painted with David's deck art (assets/ship.webp: 256 px a
+   included), set in a pinwheel around the middle (two north-south, two east-west, bows chasing clockwise), painted with Virgilante's deck art (assets/ship.webp: 256 px a
    tile, a 110 px bow above the first row). drawShipTile (called from draw's tile loop) paints each deck tile's
    slice through an affine map from the art onto the tile's diamond; the bows go on after the last tile so the
    water never covers them. The hull bar reads only its HP; hovering the pillar (or the bar above it) names it.
