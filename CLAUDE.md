@@ -227,6 +227,11 @@ One global script; files are concatenated in order. Later "version modules" patc
   (Published as artifact Version 72.)
 
 ## 8. Next steps / open items
+- **Planned (agreed with Virgilante):** (1) a window manager — one screen stack for the menu, windows and curtain (ends the
+  flicker/loop bug class); (2) then Intelligence AI tiers: an offline tuner (tools/aitune.js, simEvent) evolves the skill
+  weights; 5 named tiers by Intelligence (Novice 50-64, Apprentice 65-75, Fighter 76-85, Veteran 86-95, Master 96-99) blend
+  hand-set → tuned weights and unlock skills; personality untouched; tier shown beside Intelligence + Manager tier-up news;
+  sims check each tier beats the one below (~60/40); no live learning (dice stay seeded).
 - **Readability pass, phase 2+** (Virgilante chose "phased"): files 02–07 are done (Babel scope-safe parameter renames via
   `tools/rename.js`, then comments on every function with `TWEAK:` notes; verified with `tools/samecode.js`, which
   compares code ignoring comments/whitespace). Remaining: 08–64, file by file, regression after each. Rename only
