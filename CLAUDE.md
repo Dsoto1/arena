@@ -180,7 +180,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   (Published as artifact Version 66.)
 - **v0.56** the lanista's mail (inbox in Your ludus, actionable offers/invitations, past mail, unread count); ratings in
   the glossary/tooltips/guides/to-do/arena hints; Play Now guide re-run on 600 sims with a wins-by-perk chart;
-  rolled Intelligence follows the overall (most CPUs Normal).
+  rolled Intelligence follows the overall (most CPUs Normal). (Published as artifact Version 67.)
 
 ## 8. Next steps / open items
 - **Readability pass, phase 2+** (David chose "phased"): files 02–07 are done (Babel scope-safe parameter renames via
