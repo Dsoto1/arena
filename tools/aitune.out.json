@@ -60,14 +60,56 @@
   "lastUse": 2
  },
  "final": {
-  "tunedVsBase": 0.2222222222222222,
-  "baseVsTuned": 0.2222222222222222
+  "tunedVsBase": 0.24814814814814815,
+  "baseVsTuned": 0.26296296296296295
  },
  "log": [
   {
    "gen": 1,
+   "best": 0.317,
+   "confirm": 0.244,
+   "accepted": false
+  },
+  {
+   "gen": 2,
+   "best": 0.283,
+   "confirm": 0.269,
+   "accepted": false
+  },
+  {
+   "gen": 3,
+   "best": 0.228,
+   "confirm": 0.253,
+   "accepted": false
+  },
+  {
+   "gen": 4,
+   "best": 0.289,
+   "confirm": 0.264,
+   "accepted": false
+  },
+  {
+   "gen": 5,
+   "best": 0.228,
+   "confirm": 0.211,
+   "accepted": false
+  },
+  {
+   "gen": 6,
+   "best": 0.289,
+   "confirm": 0.258,
+   "accepted": false
+  },
+  {
+   "gen": 7,
+   "best": 0.272,
+   "confirm": 0.244,
+   "accepted": false
+  },
+  {
+   "gen": 8,
    "best": 0.25,
-   "confirm": 0.375,
+   "confirm": 0.225,
    "accepted": false
   }
  ]
