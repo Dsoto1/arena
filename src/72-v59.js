@@ -46,3 +46,11 @@ function turnSweep(){if(HEADLESS)return;for(const id of ['cardShow','bubbles']){
     const t2=Date.now();const w=()=>{if(MM.launchPending&&Date.now()-t2<15000)return setTimeout(w,100);
       const m=$('#mainMenu');if(!m||!m.hidden||!$('#modal').hidden||!$('#mReturn').hidden||CUR_MODAL)return;if(typeof CITY!=='undefined'&&CITY.open)return;if(S&&!S.over&&S.phase!=='setup')return;
       MM.fromMenu=false;menuShow()};w()},2900)}}
+/* ---------- THE LUDUS CUT (rulebook tie-break, as Virgilante set it): the top two by CF go to the duel; a tie at the cut is
+   broken by the most coin, and if still tied, the tied gladiators roll a d12 against each other until one is higher. ---------- */
+function ludusRank(list,cut=2){const L=[...list].sort((a,b)=>b.cf-a.cf||(b.coin||0)-(a.coin||0));if(L.length<=cut)return L;
+  const edge=L[cut-1],same=p=>p.cf===edge.cf&&(p.coin||0)===(edge.coin||0);const tied=L.filter(same);if(tied.length<2||!tied.some(p=>L.indexOf(p)>=cut))return L;
+  const rollOff=pool=>{if(pool.length<2)return pool;const rs=pool.map(p=>({p,r:1+Math.floor(rand()*12)}));
+    log(`🎲 Ludus tie (${edge.cf} CF, ${edge.coin||0} coin) — d12: ${rs.map(x=>`${nm(x.p)} ${x.r}`).join(', ')}.`);
+    const vals=[...new Set(rs.map(x=>x.r))].sort((a,b)=>b-a);return vals.flatMap(v=>rollOff(rs.filter(x=>x.r===v).map(x=>x.p)))};
+  const i0=L.findIndex(same);return [...L.slice(0,i0),...rollOff(tied),...L.slice(i0+tied.length)]}

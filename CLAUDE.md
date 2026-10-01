@@ -229,7 +229,6 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Arena deck scans: uploaded as arenacards1-3.pdf (thirds). mkscans `arena`/`events` sections map cells → scans (`ARENA_CARDS`,
   `EVENT_CARDS`); no scan for Forge +3 AP (26, 70) or Floor Spikes (46); the Orpheus event scan is a different print (kept).
   Drive connector caps downloads at 10 MB, and drive.google.com is blocked — ask for uploads or <10 MB parts.
-- Open questions: Ludus rulebook "CF ties favor the elder (age)" — the game breaks ties by seat order (no ages); Naumachia
-  "first team = highest combined age" and simultaneous team turns (game: teammates back to back) — ask Virgilante.
-- Orpheus event card scan is a different print than the game's art (kept the old one) — ask which is current.
+- Decided (v0.59): Ludus cut ties → most CF, then most coin, then d12 roll-offs (`ludusRank` in 72-v59); Orpheus keeps the
+  game's event art. Open: Naumachia "first team = highest combined age" and simultaneous team turns (game: teammates back to back).
 - Keep watching: shared-Store writes on load (conversions must be idempotent and saved once).

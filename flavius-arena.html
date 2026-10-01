@@ -7956,7 +7956,7 @@ async function nextRound(why) {
   S.elimStart = S.elims;
   // special transitions
   if (S.evKey === 'ludus') {
-    const ranked = [...activePlayers()].sort((a, b) => b.cf - a.cf);
+    const ranked = typeof ludusRank === 'function' ? ludusRank(activePlayers(), 2) : [...activePlayers()].sort((a, b) => b.cf - a.cf); /* v0.59: CF, then coin, then d12 roll-offs */
     for (const p of ranked.slice(2)) {
       p.alive = false;
       log(`${nm(p)} did not earn enough favor and is removed from the Ludus.`, 'bad');
@@ -22733,7 +22733,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
-  {v:'0.59',ic:'⚔',t:'Rivals, ships and chariots by the book',hi:['Rivalry Week: the last regular week is Familia, two on two, against your fiercest rival (the Consilium writes in week 11; byes now weeks 4 and 11)','Naumachia by the rulebook: the printed layout, 10-tile decks, boarding only from boarding tiles, the water-token pinwheel, waist-deep swimmers','Chariot Racing by the rulebook: a snake draft with chariot cards, one free tile past a gate, horse and wheel tokens riding on each chariot','Credits (click D.Soto) with the prototype photos; Zora stands on the board as his own mini','Five event cards repainted to match the rulebook; a mute button beside Settings'],fx:['A new turn clears the last turn\'s card pop-ups and thoughts','No menu or arena flash when Play opens from Ludus Flavius or Manager mode loads','The floating sound chip is gone','Invitationals: the frequency line reads plainly']},
+  {v:'0.59',ic:'⚔',t:'Rivals, ships and chariots by the book',hi:['Rivalry Week: the last regular week is Familia, two on two, against your fiercest rival (the Consilium writes in week 11; byes now weeks 4 and 11)','Naumachia by the rulebook: the printed layout, 10-tile decks, boarding only from boarding tiles, the water-token pinwheel, waist-deep swimmers','Chariot Racing by the rulebook: a snake draft with chariot cards, one free tile past a gate, horse and wheel tokens riding on each chariot','Credits (click D.Soto) with the prototype photos; Zora stands on the board as his own mini','Five event cards repainted to match the rulebook; a mute button beside Settings'],fx:['Ludus: a tie at the cut goes to the most CF, then the most coin, then d12 roll-offs','A new turn clears the last turn\'s card pop-ups and thoughts','No menu or arena flash when Play opens from Ludus Flavius or Manager mode loads','The floating sound chip is gone','Invitationals: the frequency line reads plainly']},
   {v:'0.58',ic:'⛵',t:'The printed ships, the prototype',hi:['Naumachia ships are the printed 3 x 5 hulls with Virgilante\'s deck art, set in a ring around the middle','Each hull shows its HP; hover its pillar for the ship\'s name','Arena deck, event and weapon cards from the original scans, twice as sharp','Click D.Soto in the main menu (or the Play Now guide) to see the prototype the game was distilled from'],fx:[]},
   {v:'0.57',ic:'🌿',t:'A cleaner sand, a fairer start',hi:['New houses choose a starting difficulty: Easy (250 coin, two fighters), Normal (125, one) or Hard (50, none)','Houses called in by a word can be taken over like any other','Courting shows on the shortlist (what you offered, what they ask); scouting or courting shortlists a fighter','Call a loaned fighter home for the rest of the loan plus a quarter','A letter for your first bye week; saved careers show record and treasury'],fx:['Laurels fly only after the closing horns; the start marks fade once play begins; no beasts are left on the sand after the clean-up','Saving gladiators keeps the results window up','Mail keeps only what you have not read','Match Week: winners in gold, YOURS in blue, LOANED in purple with the terms; Wagers shows a count; enter, watch and walk wait for the road to be paid; End the week from the results hides the buttons','Consilium and Schooling swap places; one billing per fighter on the Season tab']},
   {v:'0.56',ic:'📬',t:'The lanista\'s mail',hi:['A mailbox in Your ludus: offers, invitations, letters and reports arrive as mail — accept or refuse right from the letter, and past mail stays readable','The left menu counts unread mail; Match Week keeps one quiet line when the Consilium advises against entering','The five ratings join the glossary, tooltips, both guides, the to-do list and the arena hints','The Play Now guide re-run on 600 simulated events, with a new chart: wins by rating perk'],fx:['Rolled Intelligence follows a fighter\'s overall rating, so most CPUs play Normal again']},
@@ -26937,6 +26937,14 @@ function turnSweep(){if(HEADLESS)return;for(const id of ['cardShow','bubbles']){
     const t2=Date.now();const w=()=>{if(MM.launchPending&&Date.now()-t2<15000)return setTimeout(w,100);
       const m=$('#mainMenu');if(!m||!m.hidden||!$('#modal').hidden||!$('#mReturn').hidden||CUR_MODAL)return;if(typeof CITY!=='undefined'&&CITY.open)return;if(S&&!S.over&&S.phase!=='setup')return;
       MM.fromMenu=false;menuShow()};w()},2900)}}
+/* ---------- THE LUDUS CUT (rulebook tie-break, as Virgilante set it): the top two by CF go to the duel; a tie at the cut is
+   broken by the most coin, and if still tied, the tied gladiators roll a d12 against each other until one is higher. ---------- */
+function ludusRank(list,cut=2){const L=[...list].sort((a,b)=>b.cf-a.cf||(b.coin||0)-(a.coin||0));if(L.length<=cut)return L;
+  const edge=L[cut-1],same=p=>p.cf===edge.cf&&(p.coin||0)===(edge.coin||0);const tied=L.filter(same);if(tied.length<2||!tied.some(p=>L.indexOf(p)>=cut))return L;
+  const rollOff=pool=>{if(pool.length<2)return pool;const rs=pool.map(p=>({p,r:1+Math.floor(rand()*12)}));
+    log(`🎲 Ludus tie (${edge.cf} CF, ${edge.coin||0} coin) — d12: ${rs.map(x=>`${nm(x.p)} ${x.r}`).join(', ')}.`);
+    const vals=[...new Set(rs.map(x=>x.r))].sort((a,b)=>b-a);return vals.flatMap(v=>rollOff(rs.filter(x=>x.r===v).map(x=>x.p)))};
+  const i0=L.findIndex(same);return [...L.slice(0,i0),...rollOff(tied),...L.slice(i0+tied.length)]}
 /* =====================================================================
    73-CREDITS · v0.59
    =====================================================================

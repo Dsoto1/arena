@@ -953,7 +953,7 @@ async function nextRound(why) {
   S.elimStart = S.elims;
   // special transitions
   if (S.evKey === 'ludus') {
-    const ranked = [...activePlayers()].sort((a, b) => b.cf - a.cf);
+    const ranked = typeof ludusRank === 'function' ? ludusRank(activePlayers(), 2) : [...activePlayers()].sort((a, b) => b.cf - a.cf); /* v0.59: CF, then coin, then d12 roll-offs */
     for (const p of ranked.slice(2)) {
       p.alive = false;
       log(`${nm(p)} did not earn enough favor and is removed from the Ludus.`, 'bad');
