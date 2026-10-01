@@ -173,7 +173,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 
 ## 5. Testing
 - Full suite: `(nohup sh tools/runreg.sh >/dev/null 2>&1 &)` then watch `tools/reg.txt` for `ALLDONE` (~35 min).
-  Pass = every block ends `exit=0` and prints `ERRS []`. Run a subset: `sh tools/runreg.sh tv53 tpia`. (v0.58: 120 blocks, ~90 min.)
+  Pass = every block ends `exit=0` and prints `ERRS []`. Run a subset: `sh tools/runreg.sh tv53 tpia`. (v0.60: 123 blocks, ~60-90 min.)
 - `t12` plays every event via sims (slow). Version tests: `tv50…tv54`-style files (`tv52`, `tv53`), plus feature tests
   (`tcls` classes, `tlook` accessories, `tbye` bye weeks, `temp53` closures, `t53s` studio, `tres` results,
   `tmgr54` manager, `tpia` piacula, `t54a` studio/event designer, `tv55` ratings/letters/loans/home/grades,
@@ -223,7 +223,8 @@ One global script; files are concatenated in order. Later "version modules" patc
 - **v0.59** Rivalry Week (Familia 2v2 vs your top rival, byes 4 & 11); Naumachia and Chariot Racing to the rulebook; Credits
   page; Zora's mini; repainted event cards; menu mute; no menu/arena flashes; turn sweep; 'David' → 'Virgilante'.  (Published as artifact Version 70; update with random Naumachia first team + draft wording = Version 71.)
 - **v0.60** Road from the gladiator's record (any living gladiator), Hall Road box without the dropdown, Annals loop fixed,
-  smooth window hand-offs.
+  smooth window hand-offs; tame card face, tamed beasts without aggro, rulebook counters, CF offerings fall, truce marker.
+  (Published as artifact Version 72.)
 
 ## 8. Next steps / open items
 - **Readability pass, phase 2+** (Virgilante chose "phased"): files 02–07 are done (Babel scope-safe parameter renames via
