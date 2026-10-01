@@ -26905,6 +26905,26 @@ mmMuteInstall();
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#mmMute'))audToggleMute()});
 {const st=document.createElement('style');st.textContent=`.mmbtns .mmrow{display:flex;gap:7px}.mmbtns .mmrow [data-mm="settings"]{flex:1}
 .mmbtns #mmMute{flex:0 0 64px;padding:10px 0;font-size:19px}.mmbtns #mmMute.muted{opacity:.7;border-color:var(--blood2,#a33)}`;document.head.appendChild(st)}
+/* ---------- A CLEAN SAND FOR EACH TURN: the previous turn's card pop-ups (bottom left) and thought bubbles leave the moment
+   the next turn begins, so they never cover the new player's view or read as theirs. (They stay in the log and the Stands.) */
+function turnSweep(){if(HEADLESS)return;for(const id of ['cardShow','bubbles']){const box=document.getElementById(id);if(!box)continue;
+  for(const el of [...box.children]){if(el.classList.contains('sweep'))continue;el.classList.add('sweep');setTimeout(()=>el.remove(),160)}}}
+{const base=beginTurn;beginTurn=async function(){try{if(S&&!S.over&&!S.sim)turnSweep()}catch(e){}return base.apply(this,arguments)}}
+{const st=document.createElement('style');st.textContent=`#cardShow .sweep,#bubbles .sweep{opacity:0!important;transition:opacity .15s ease!important}`;document.head.appendChild(st)}
+/* ---------- MENU LAUNCHES WAIT FOR THE MODE: the curtain (transitRun) gave up after ~2.2 s and the watchdog brought the
+   menu back at 3 s — with the shared Store over the network, Manager mode (loading the careers) can take longer, so the
+   empty arena flashed first. Now, while a launched mode is still opening (MM.launchPending), transitUncover keeps the curtain up (15 s cap)
+   and the watchdog waits for it to finish before deciding anything. */
+{const base=transitUncover;transitUncover=function(){const ready=!$('#modal').hidden||!document.getElementById('mainMenu').hidden||(S&&!S.over&&S.phase!=='setup')||(typeof CITY!=='undefined'&&CITY.open);
+  if(MM.launchPending&&!ready&&TRANSIT&&TRANSIT.classList.contains('on')&&Date.now()-(MM.launchedAt||0)<15000){clearTimeout(TRANSIT._hold);TRANSIT._hold=setTimeout(transitUncover,100);return}
+  return base.apply(this,arguments)}}
+{const base=mmLaunch;mmLaunch=function(fn,label){const t0=MM.launchedAt;
+  const f=function(){const r=fn.apply(this,arguments);if(r&&r.then){MM.launchPending=true;r.then(()=>{MM.launchPending=false},()=>{MM.launchPending=false})}return r};
+  base.call(this,f,label);const t1=MM.launchedAt;if(t1===t0)return;
+  setTimeout(()=>{if(MM.launchedAt!==t1||!MM.launchPending)return;MM.launchedAt=t1+1; /* the built-in watchdog stands down; this one waits */
+    const t2=Date.now();const w=()=>{if(MM.launchPending&&Date.now()-t2<15000)return setTimeout(w,100);
+      const m=$('#mainMenu');if(!m||!m.hidden||!$('#modal').hidden||!$('#mReturn').hidden||CUR_MODAL)return;if(typeof CITY!=='undefined'&&CITY.open)return;if(S&&!S.over&&S.phase!=='setup')return;
+      MM.fromMenu=false;menuShow()};w()},2900)}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
