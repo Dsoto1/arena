@@ -2,7 +2,7 @@
 
     pdfimages -png <scan>.pdf <dir>/i        # once per PDF (poppler-utils)
     python3 tools/mkscans.py <scans-root> [out-dir|-] [sections]   # needs Pillow; writes into assets/ unless out-dir is given
-    sections: fates,chcards,chtok,rtok,armor,weapons,ship,proto,arena,events (default all). armor reads the old 220 px
+    sections: fates,chcards,chtok,rtok,armor,weapons,ship,proto,arena,events (events also needs numpy + opencv, see evfix.py) (default all). armor reads the old 220 px
     armor2.png from git (a8e3810) for the layout; rtok keeps the first four rows of the current rtok.webp.
 
 <scans-root> holds one folder per PDF, named by the upload: *FROfferingTokens*, *chariot*, *fatecards*.
@@ -160,6 +160,9 @@ def fit(im, ref, ar, m0=68, dy0=0, span=4):
             d = sum(ImageStat.Stat(ImageChops.difference(g.crop((m, y, m + w, y + h)).resize(r.size), r)).mean)
             if best is None or d < best[0]: best = (d, m, y, w, h)
     _, m, y, w, h = best; return im.crop((m, y, m + w, y + h))
+def oldsheet(name):  # the pre-scan 1x sheet (layout reference), from git — the one in assets/ is the rebuilt 2x one
+    import io, subprocess
+    return Image.open(io.BytesIO(subprocess.run(['git', 'show', 'fc92198^:assets/' + name], cwd=os.path.dirname(A), capture_output=True, check=True).stdout)).convert('RGB')
 AC = [folder(f'arenacards{n}') if want('arena') or want('events') else None for n in (1, 2, 3)]
 if want('arena') and all(AC):
     ARENA_CARDS = {0: (1, 9), 1: (1, 9), 2: (1, 13), 3: (1, 13), 4: (1, 414), 5: (1, 414), 6: (1, 410), 7: (1, 410), 8: (1, 812), 9: (1, 810),
@@ -170,7 +173,7 @@ if want('arena') and all(AC):
         50: (2, 2003), 51: (2, 2403), 52: (2, 2001), 53: (2, 2401), 54: (2, 2405), 55: (2, 2405), 56: (3, 9), 57: (3, 9), 58: (3, 1205), 59: (3, 1205),
         60: (3, 1607), 61: (3, 1605), 62: (3, 1603), 63: (3, 1601), 64: (3, 1995), 65: (3, 1997), 66: (3, 1999), 67: (3, 1993), 68: (3, 2399), 69: (1, 15),
         71: (1, 2006), 72: (2, 1207), 73: (2, 1207), 74: (2, 1207), 75: (2, 1207), 76: (2, 1207), 77: (3, 9), 78: (3, 9), 79: (3, 409), 80: (3, 409), 81: (2, 1609)}
-    old = Image.open(os.path.join(A, 'arena.jpg')).convert('RGB'); CW, CH = 480, 704
+    old = oldsheet('arena.jpg'); CW, CH = 480, 704
     out = old.resize((10 * CW, 9 * CH), Image.LANCZOS)
     for i, (t, n) in ARENA_CARDS.items():
         ref = old.crop((i % 10 * 240, i // 10 * 352, i % 10 * 240 + 240, i // 10 * 352 + 352))
@@ -178,10 +181,15 @@ if want('arena') and all(AC):
     out.save(os.path.join(OUT, 'arena.jpg'), quality=74, optimize=True, progressive=True)
 if want('events') and AC[2]:
     EVENT_CARDS = [2789, 2397, 2395, 2797, 2405, 2407, 2793, 2403, None, 2393, 2791, 2795, 2801]  # 8 Orpheus: the scan is a different print — kept
-    old = Image.open(os.path.join(A, 'events.jpg')).convert('RGB'); CW, CH = 480, 692
+    old = oldsheet('events.jpg'); CW, CH = 480, 692
     out = old.resize((5 * CW, 3 * CH), Image.LANCZOS)
+    import importlib.util; sp = importlib.util.spec_from_file_location('evfix', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'evfix.py'))
+    EVF = importlib.util.module_from_spec(sp); sp.loader.exec_module(EVF); EVF.D = AC[2] + '/'; FIXED = EVF.fixed()  # v0.59: rulebook repaints
     for i, n in enumerate(EVENT_CARDS):
         if n is None: continue
+        if n in FIXED:
+            ref = old.crop((i % 5 * 240, i // 5 * 346, i % 5 * 240 + 240, i // 5 * 346 + 346))
+            out.paste(fit(FIXED[n].convert('RGB'), ref, 346 / 240, 48, 0, 2).resize((CW, CH), Image.LANCZOS), (i % 5 * CW, i // 5 * CH)); continue
         ref = old.crop((i % 5 * 240, i // 5 * 346, i % 5 * 240 + 240, i // 5 * 346 + 346))
         out.paste(fit(flat(load(AC[2], n)), ref, 346 / 240, 48, 0, 2).resize((CW, CH), Image.LANCZOS), (i % 5 * CW, i // 5 * CH))
     out.save(os.path.join(OUT, 'events.jpg'), quality=82, optimize=True, progressive=True)
