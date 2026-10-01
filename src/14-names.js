@@ -65,6 +65,8 @@ function genBeastName({pattern=null}={}){const taken=takenNames();
     const n=f();if(!taken.has(n)&&!NAME_SESSION.has(n)){NAME_SESSION.add(n);return n}}
   return pickOne(BEASTBANK.pet)+' '+RN(1+Math.floor(Math.random()*30));}
 function genNickname(){return pickOne([()=>pickOne(NAMEBANK.epi).replace(/^the /,'The '),()=>`The ${pickOne(NAMEBANK.title)} of ${pickOne(NAMEBANK.place)}`,()=>pickOne(NAMEBANK.stage)])()}
+/* LANISTA_CITIES — a house's home city must be one of the 12 arena cities (events, city square, home games) */
+const LANISTA_CITIES=()=>LOCATIONS.slice(1).map(L=>L.n);
 const HOME_CITIES=()=>[...LOCATIONS.slice(1).map(L=>L.n),'Carthago','Alexandria','Corinth','Gades','Massilia','Ostia','Tarentum','Neapolis','Brundisium','Antiochia','Cyrene','Londinium','Lugdunum','Emerita'];
 function genBackstory(name,city){
   const B={

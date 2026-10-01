@@ -1134,7 +1134,7 @@ button.railhd.fold{all:unset;box-sizing:border-box;display:none;cursor:pointer;w
 </style>
 
 <header class="bar">
-  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.62</span></div>
+  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.63</span></div>
   <div class="status" id="status"></div>
   <div class="tools speedtray" id="speedTray">
     <div class="seg speedseg" role="group" aria-label="CPU speed"><span class="lbl">Speed</span><button type="button" data-speed="pause" title="Pause CPU turns">❚❚ Pause</button><button type="button" data-speed="step" title="Step: each CPU action waits for you — Next ▶ or Space — with a caption explaining it">⏯ Step</button><button type="button" data-speed="slow" class="on">Slow</button><button type="button" data-speed="normal">Normal</button><button type="button" data-speed="fast">Fast</button></div>
@@ -12768,7 +12768,7 @@ function boardHTML(player, interactive) {
     badges.push(`<span class="badge gold">Lap ${ch.laps}/3</span>`, `<span class="badge ${ch.wheel ? 'good' : 'bad'}">Wheel ${ch.wheel ? ch.wheel.hp + ' HP' : 'missing (−2 MV)'}</span>`, `<span class="badge ${ch.horse ? 'good' : 'bad'}">${ch.horse ? `Horse ${ch.horse.sides[ch.horse.face].hp - ch.horse.dmg} HP · +${ch.horse.sides[ch.horse.face].mv} MV` : 'Horse missing'}</span>`);
   }
   const isCur = S.players[S.cur] === player && S.phase === 'action';
-  return `<div class="pb-head" style="--pc:${player.color}">${clsPieceHTML(player.cls, 58, 'stnd phead') || '<span class="sw"></span>'}<div><div class="pname">${player.name}</div><div class="pcls">${CLASSES[player.cls].name} · ${CLASSES[player.cls].sub}${player.drafted ? ' (drafted)' : ''} · ${player.cpu ? 'CPU ' + player.diff : 'You'} · ${player.exited ? 'exited' : player.alive ? tl(player.r, player.c) : 'fallen'}</div>${typeof seatChipHTML === 'function' ? seatChipHTML(player) : ''}</div></div>
+  return `<div class="pb-head" style="--pc:${player.color}">${clsPieceHTML(player.cls, 58, 'stnd phead') || '<span class="sw"></span>'}<div><div class="pname">${player.name}</div><div class="pcls">${CLASSES[player.cls].name} · ${CLASSES[player.cls].sub}${player.drafted ? ' (drafted)' : ''} · ${player.cpu ? 'CPU ' + cpuMind(player) : 'You'} · ${player.exited ? 'exited' : player.alive ? tl(player.r, player.c) : 'fallen'}</div>${typeof seatChipHTML === 'function' ? seatChipHTML(player) : ''}</div></div>
    <div class="econ"><div class="stat" title="${player.coinLog ? Object.entries(player.coinLog).map(([k2, v2]) => `${v2 > 0 ? '+' : ''}${v2} ${k2}`).join(String.fromCharCode(10)) : 'No coin has moved yet.'}"><span>Coin ⓘ</span><b>${ICO.coin} ${player.coin}</b></div><div class="stat" title="${player.cfLog && Object.keys(player.cfLog).length ? Object.entries(player.cfLog).sort((x, y) => Math.abs(y[1]) - Math.abs(x[1])).map(([k2, v2]) => `${v2 > 0 ? '+' : ''}${v2} ${k2}`).join(String.fromCharCode(10)) : 'No Crowd Favor has moved yet.'}">${(() => {
     const rr = S.over && S.result ? S.result.rows.find(x => x.id === player.id) : null;
     return rr ? `<span title="The final Fate score — the same number the results show">Fate ⓘ</span><b>${ICO.wheat} ${rr.f}</b>` : `<span>CF ⓘ</span><b>${ICO.wheat} ${player.cf}</b>`;
@@ -12910,7 +12910,7 @@ function render() {
     if (bb) bb.hidden = !(S.mgrCtx || S.specCtx);
   }
   $('#roster').innerHTML = S.players.map(other => `<button type="button" class="rc ${other === p && !S.over || S.over && S.boardPid === other.id ? 'cur' : ''} ${other.alive ? '' : 'dead'}" style="--pc:${other.color}" data-act="inspect" data-pid="${other.id}">
-    <div class="top">${(S.mgrCtx || S.specCtx) && other.mgrGid && typeof gById === 'function' && gById(other.mgrGid) ? `<span class="favstar ${gById(other.mgrGid).favd ? 'on' : ''}" role="button" tabindex="0" data-favg="${other.mgrGid}" title="${gById(other.mgrGid).favd ? 'On your ★ Favorites board — click to remove' : 'Add to your ★ Favorites board (Manager mode)'}">${gById(other.mgrGid).favd ? '★' : '☆'}</span>` : ''}<span class="nm">${other.name}</span><span class="tag">${CLASSES[other.cls].name}${EV().teams || EV().coop ? ' · Team ' + other.team : ''} · ${other.cpu ? 'CPU ' + other.diff : 'You'}</span></div>
+    <div class="top">${(S.mgrCtx || S.specCtx) && other.mgrGid && typeof gById === 'function' && gById(other.mgrGid) ? `<span class="favstar ${gById(other.mgrGid).favd ? 'on' : ''}" role="button" tabindex="0" data-favg="${other.mgrGid}" title="${gById(other.mgrGid).favd ? 'On your ★ Favorites board — click to remove' : 'Add to your ★ Favorites board (Manager mode)'}">${gById(other.mgrGid).favd ? '★' : '☆'}</span>` : ''}<span class="nm">${other.name}</span><span class="tag">${CLASSES[other.cls].name}${EV().teams || EV().coop ? ' · Team ' + other.team : ''} · ${other.cpu ? 'CPU ' + cpuMind(other) : 'You'}</span></div>
     <div class="mini">${[['head', 'chest'], ['rarm', 'larm'], ['rleg', 'lleg']].flat().map(l => {
     const v = other.hp[l];
     return `<div class="mloc"><span class="lab">${sideBadge(l)}${LOCS_SHORT[l]}</span><div class="mbars">${v <= 0 ? `<span class="sevd">${sevLabel(l).toLowerCase()}</span>` : seg7(v, 'h', v <= 2) + seg7(other.ap[l], 'a')}</div></div>`;
@@ -12926,7 +12926,7 @@ function render() {
     const n = S.cmd.n,
       zo = n.t === 'zora' ? zoraPickOptions(n) : [];
     a = `<p class="hint">Command <b>${n.name}</b>: click an orange tile to move${S.cmd.moved ? ' (moved)' : ''}${n.carry ? `. Carrying ${n.carry.label}: half movement, no attacks` : ', or a red ring to attack'}${n.t === 'zora' ? '. Zora flies over everything and can land on pillars' : ''}.</p><div class="acts">${zo.map((o, i) => `<button class="btn" type="button" data-act="zpick" data-i="${i}">Pick up ${o.label}<small>halves his movement</small></button>`).join('')}${n.carry ? `<button class="btn" type="button" data-act="zdrop">${cheb(n, S.cmd.p) <= 1 ? 'Deliver to ' + S.cmd.p.name : 'Drop here'}<small>${n.carry.label}</small></button>` : ''}<button class="btn primary" type="button" data-act="cmddone">Done commanding</button></div>`;
-  } else if (p.cpu) a = `<p class="hint">${p.name} (CPU, ${p.diff}) is taking their turn…</p>`;else if (ph === 'resolve') a = '<p class="hint">The arena reacts to you. NPCs are moving…</p>';else if (ph === 'choice') a = `<div class="acts"><button class="btn primary" type="button" data-act="coin" ${S.busy ? 'disabled' : ''}>Take 2 coin<small>safe</small></button><button class="btn" type="button" data-act="card" ${S.busy || !canDraw() ? 'disabled' : ''}>Draw arena card<small>${canDraw() ? S.deck.length + ' left · high risk' : 'no arena deck in this event'}</small></button></div>`;else if (ph === 'action' && isChariot()) {
+  } else if (p.cpu) a = `<p class="hint">${p.name} (CPU, ${typeof AI_TIERS !== 'undefined' && p.tier != null ? AI_TIERS[p.tier].n : p.diff}) is taking their turn…</p>`;else if (ph === 'resolve') a = '<p class="hint">The arena reacts to you. NPCs are moving…</p>';else if (ph === 'choice') a = `<div class="acts"><button class="btn primary" type="button" data-act="coin" ${S.busy ? 'disabled' : ''}>Take 2 coin<small>safe</small></button><button class="btn" type="button" data-act="card" ${S.busy || !canDraw() ? 'disabled' : ''}>Draw arena card<small>${canDraw() ? S.deck.length + ' left · high risk' : 'no arena deck in this event'}</small></button></div>`;else if (ph === 'action' && isChariot()) {
     const srcs = attackSources(p).filter(s => !s.thr);
     const m = S.mode;
     const ch = p.ch;
@@ -14233,7 +14233,7 @@ function resultCard(x,place,interim){
   const saveBit=survives?(x.savedDone?`<button class="btn" type="button" disabled>✓ ${esc(p.name)}'s Ludus record ${p.saved?'updated':'saved'}<small>${p.saved?'automatic for summoned gladiators':'one save per event'}</small></button>`:`<button class="btn" type="button" data-save="${p.id}">Save ${esc(p.name)} in the Ludus<small>returns with ${Math.min(25,Math.floor(x.f/2))} CF${p.cpu?' · CPU record: rival or bet-on gladiator, no missios':''}</small></button>`):'';
   const freeBit=free50?`<button class="btn" type="button" data-free="${p.id}" style="border-color:var(--gold)">🗡 Claim freedom · the rudis<small>leaves the sands forever, memorialized among the Liberti</small></button>`:'';
   return `<div class="rcard" style="--pc:${p.color}">
-    <div class="rc-top"><span class="rc-place">${place}</span>${pArt(p,'sm')}<div><div class="rc-name">${esc(p.name)}</div><div class="rc-sub">${C.name} · ${p.cpu?'CPU '+p.diff:'You'}</div>${status}</div></div>
+    <div class="rc-top"><span class="rc-place">${place}</span>${pArt(p,'sm')}<div><div class="rc-name">${esc(p.name)}</div><div class="rc-sub">${C.name} · ${p.cpu?'CPU '+cpuMind(p):'You'}</div>${status}</div></div>
     <div class="rc-fate">${interim?`<div>${S.exhib?`<b>${x.f} CF</b> · exhibition: ${p.alive?'still standing when the bout was called':'pulled from the sand by the doctors — no Fate is drawn'}`:`<b>${x.f} CF</b> carried into the next event`}</div>`:`${fi!=null?cardHTML('f:'+fi,'md'):''}<div><div class="rc-fname">${esc(x.fate[0])}</div><table class="fmath">${fb.lines.map(([a,v])=>`<tr><td>${esc(a)}</td><td class="n">${v}</td></tr>`).join('')}<tr class="tot"><td>Final Fate score</td><td class="n">${x.f}</td></tr></table>${/Thumb/.test(x.fate[0])?`<div class="rc-sub">${esc(x.fate[1])}</div>`:''}${p.mgrGid?'':`<div class="rc-sub">${survives?(x.f>=50?'Free, or back for glory: can be saved in the Ludus.':'Survives to the Ludus Flavius: can be saved.'):p.retired?'Retired: this character is gone.':'Does not survive. Any saved record or missio for this character ends.'}</div>`}</div>`}</div>
     <details class="rc-more"><summary>Event stats</summary><div class="rc-stats">${stats.map(([a,v])=>`<span><b>${v}</b>${a}</span>`).join('')}</div></details>
     ${(st.spectCF||st.spectOffers)?`<div class="rc-sub">🏟 The stands (${houseHTML(S.attendance||0,S.seed,S.locIdx)} attended): <b>+${st.spectCF||0} CF</b> in section cheers${st.spectOffers?` · <b>${st.spectOffers}</b> offering${st.spectOffers>1?'s':''} thrown, worth ~<b>${st.spectVal||0} coin</b>`:''}${(S.attendance||0)>8?' · cheers scaled for the big house':''}.</div>`:''}
@@ -15338,7 +15338,7 @@ function guideHTML(){
 
 /* ================= VISUAL FEEDBACK: floating numbers, attack flashes, banners, shake ================= */
 const FX=[],FXL=[];let fxRAF=null;
-const reduceMotion=()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}};
+const reduceMotion=()=>{try{if(typeof SETTINGS!=='undefined'&&SETTINGS.calm)return true;return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}}; /* v0.63: or Settings → Reduce motion */
 /* v0.46 HIT FEEDBACK: every blow that lands makes its target flash red — a figure, a beast, a Blessings pot or a pillar —
    and the Spiders offering sends a swarm crawling over whoever broke it open. */
 const HITFX=[];
@@ -15691,7 +15691,8 @@ async function shareBuild(btn){
       try{const r2=await fetch('assets/'+f);if(!r2.ok)continue;const b=await r2.blob();
         data[f]=await new Promise(r3=>{const fr=new FileReader();fr.onload=()=>r3(fr.result);fr.readAsDataURL(b)})}catch(e){}}
     stat('Binding the volume…');
-    for(const [f,du] of Object.entries(data))html=html.split('assets/'+f).join(du);
+    /* v0.63: inline only real references (url(…), src="…", quoted) — never the mentions inside comments */
+    for(const [f,du] of Object.entries(data)){const fe=f.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');html=html.replace(new RegExp(`(?<=url\\(|src="|['"])assets/${fe}(?=[)"'])`,'g'),()=>du)}
     html=html.replace('<script>','<script>window.ASSET_DATA='+JSON.stringify(data)+';<\/script>\n<script>');
     const blob=new Blob([html],{type:'text/html'});const mb=(blob.size/1048576).toFixed(1);
     // v0.35: inside the published page a plain <a download> is blocked — the host's save dialog hands it over
@@ -15827,6 +15828,8 @@ function genBeastName({pattern=null}={}){const taken=takenNames();
     const n=f();if(!taken.has(n)&&!NAME_SESSION.has(n)){NAME_SESSION.add(n);return n}}
   return pickOne(BEASTBANK.pet)+' '+RN(1+Math.floor(Math.random()*30));}
 function genNickname(){return pickOne([()=>pickOne(NAMEBANK.epi).replace(/^the /,'The '),()=>`The ${pickOne(NAMEBANK.title)} of ${pickOne(NAMEBANK.place)}`,()=>pickOne(NAMEBANK.stage)])()}
+/* LANISTA_CITIES — a house's home city must be one of the 12 arena cities (events, city square, home games) */
+const LANISTA_CITIES=()=>LOCATIONS.slice(1).map(L=>L.n);
 const HOME_CITIES=()=>[...LOCATIONS.slice(1).map(L=>L.n),'Carthago','Alexandria','Corinth','Gades','Massilia','Ostia','Tarentum','Neapolis','Brundisium','Antiochia','Cyrene','Londinium','Lugdunum','Emerita'];
 function genBackstory(name,city){
   const B={
@@ -18767,7 +18770,7 @@ const RULESBLK9=c=>`<details class="card2" style="margin-top:8px" ${Object.keys(
       <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-top:6px"><input type="checkbox" data-nmspect="1" ${c.spectOK!==false?'checked':''}> 🎟 Let me spectate: buy a ticket to watch any bout, special or the Superbus from the stands (helping my own fighters from there costs fame)</label></div></details>`;
 function startHTML(){
   if(MGR.view==='create'){const c=NEWMGR;return `<h4>${c.takeKey?`Make ${esc(MGR_PRE.find(t=>t.key===c.takeKey).ludus)} yours <span class="rc-sub">rename the house, its lanista and its colors — the fighters, coin, fame and old feuds come with it</span>`:c.sale?`✍ Found your new house <span class="rc-sub">the old one is sold — the sale closes when this one opens, in the same league</span>`:`Create your lanista ${customTag()}`}</h4><div class="setup-grid" style="grid-template-columns:minmax(0,220px) minmax(0,1fr)"><div id="nmPortrait" style="text-align:center">${portraitHTML({name:c.name,portrait:c.portrait,color:c.color},'lg')}<div class="mbtns"><button class="btn" type="button" data-mg="nmlook">🎲 Random look</button></div></div><div>
-    <div class="formgrid"><label>Name<span style="display:flex;gap:4px"><input class="tin" id="nmName" data-nm="name" value="${esc(c.name)}" maxlength="28">${diceBtn('#nmName')}</span></label><label>Ludus name<input class="tin" data-nm="ludus" value="${esc(c.ludus)}" maxlength="32"></label><label title="Where your ludus stands. Fighters from this city lean your way (+8 interest) and scout at half price; its square sells to you at a quarter off; walking your own sand costs half.">🏠 Home city — where your ludus stands<select class="tin" data-nm="city" ${c.takeKey?'disabled title="A house you take over keeps its home city"':''}>${HOME_CITIES().map(x=>`<option ${x===c.city?'selected':''}>${esc(x)}</option>`).join('')}</select></label><label>Color<input type="color" class="tin" data-nm="color" value="${c.color}" style="height:34px;padding:2px"></label></div>
+    <div class="formgrid"><label>Name<span style="display:flex;gap:4px"><input class="tin" id="nmName" data-nm="name" value="${esc(c.name)}" maxlength="28">${diceBtn('#nmName')}</span></label><label>Ludus name<input class="tin" data-nm="ludus" value="${esc(c.ludus)}" maxlength="32"></label><label title="Where your ludus stands. Fighters from this city lean your way (+8 interest) and scout at half price; its square sells to you at a quarter off; walking your own sand costs half.">🏠 Home city — where your ludus stands<select class="tin" data-nm="city" ${c.takeKey?'disabled title="A house you take over keeps its home city"':''}>${LANISTA_CITIES().map(x=>`<option ${x===c.city?'selected':''}>${esc(x)}</option>`).join('')}</select></label><label>Color<input type="color" class="tin" data-nm="color" value="${c.color}" style="height:34px;padding:2px"></label></div>
     <p class="rc-sub" style="margin:4px 0 0">🏠 <b>Your home city</b>: its fighters lean your way (+8 interest) and scout at half price; its square sells to you at a quarter off; walking its sand costs half.</p>
     ${c.takeKey?'':`<h4>Personality</h4>`}<div class="presets" ${c.takeKey?'hidden':''}>${Object.entries(MGR_PRESETS).map(([k,[n]])=>`<button type="button" class="preset" data-mg="nmpre" data-id="${k}">${n}</button>`).join('')}</div>
     <div class="perswrap" style="margin-top:8px" ${c.takeKey?'hidden':''}>${MGR_KEYS.map(([k,l,d])=>`<label class="slider" title="${d}"><span>${l}</span><input type="range" min="1" max="100" data-nmp="${k}" value="${c.p[k]}"><output>${c.p[k]}</output></label>`).join('')}</div>
@@ -18836,7 +18839,7 @@ function weekReviewHTML(){const w=W_(),m=me();const R=w.review;const T=ludusTodo
     ${w.lastPaper?`<button class="btn" type="button" data-mg="paper" style="margin-top:4px">📜 Read the Acta Diurna<small>the week's gazette</small></button>`:''}</div>`
    :`<div class="revbox"><div class="sect" style="margin-top:0">👋 Welcome to ${esc(m.ludus)}</div><p style="margin:4px 0">This is your ludus — you start every week here. The to-do list on the right shows what still needs doing.</p>
    <ol class="welc">
-    <li><b>Prepare.</b> <b>Roster</b> sets your starters. <b>Recruiting</b> signs free agents (you have 10 hours a week). <b>Training Yard</b> sets drills. <b>Infirmary</b> heals.</li>
+    <li><b>Prepare.</b> <b>Roster</b> sets your starters. <b>Recruiting</b> signs free agents (you have 10 hours a week). <b>Training Yard</b> sets drills and spends your 10 training hours. <b>Infirmary</b> heals.</li>
     <li><b>Fight.</b> <b>Match Week</b> is Flavius's travelling games. It brings three bouts to a city: the Undercard on Friday, the Feature on Saturday and the Main event on Sunday. Enter your starters, then fight, watch or simulate each bout.</li>
     <li><b>Decide.</b> After the bouts, you rule on thumbs, blood money and the rudis.</li>
     <li><b>End the week.</b> Wages are paid, fighters train and heal, contracts tick down, and the <b>Acta Diurna</b> prints the week's news.</li>
@@ -19147,7 +19150,7 @@ function practiceHTML(){
   return `${trainYardCardHTML()}<div class="sect" style="margin-top:14px">⚔ Train with other teams</div><p>🏟 <b>The practice arena.</b> Request an <b>exhibition</b> from a rival stable: your fighter against theirs, sparring partners filling the Classic Elimination's four places. <b>Nobody dies</b> — the doctors pull a fighter before the killing blow and the bout is called. The stands fill with fighters from around the league, who pay a coin from their own purses to watch. You get their fighters fully scouted, a training chance for yours (better if they last), <b>a Match Week edge</b> this week (+1 AP, +2 CF), the gate money, a perk point, and warmer relations with that lanista. ${EXHIB_HOURS} hours and ${EXHIB_COST} coin each; once per fighter per week.</p>
    ${ready.length&&opps.length?`<div class="card2"><div class="bslip"><label>Your fighter <select class="tin" id="exMine" style="width:auto">${ready.map(g=>`<option value="${g.id}">${esc(g.name)} (${effOvr(g)})</option>`).join('')}</select></label>
      <label>Against <select class="tin" id="exOpp" style="width:auto">${opps.map(x=>`<option value="${x.id}" ${MGR.pOpp===x.id?'selected':''}>${esc(x.ludus)} — ${rosterOf(x).length} fighters · ${rivalTier(x.rivalry||0)}</option>`).join('')}</select></label></div>
-     <div class="acts" style="margin-top:8px"><button class="btn primary" type="button" data-mg="exsim" ${MGR.busy?'disabled':dis(needHrs(w,EXHIB_HOURS),needCoin(m,EXHIB_COST))}>Request the exhibition<small>${EXHIB_HOURS} h · ${EXHIB_COST} coin · resolved instantly</small></button><button class="btn" type="button" data-mg="exlive" ${dis(needHrs(w,EXHIB_HOURS),needCoin(m,EXHIB_COST))}>Watch it live<small>on the board · fighters in the stands</small></button><button class="btn" type="button" data-mg="exfight" ${dis(needHrs(w,EXHIB_HOURS),needCoin(m,EXHIB_COST))}>Fight it yourself<small>take your fighter's reins</small></button></div>
+     <div class="acts" style="margin-top:8px"><button class="btn primary" type="button" data-mg="exsim" ${MGR.busy?'disabled':dis(needTHrs(w,EXHIB_HOURS),needCoin(m,EXHIB_COST))}>Request the exhibition<small>${EXHIB_HOURS} h · ${EXHIB_COST} coin · resolved instantly</small></button><button class="btn" type="button" data-mg="exlive" ${dis(needTHrs(w,EXHIB_HOURS),needCoin(m,EXHIB_COST))}>Watch it live<small>on the board · fighters in the stands</small></button><button class="btn" type="button" data-mg="exfight" ${dis(needTHrs(w,EXHIB_HOURS),needCoin(m,EXHIB_COST))}>Fight it yourself<small>take your fighter's reins</small></button></div>
      <div id="mgProg"></div></div>`:`<p class="rc-sub">${!mine.length?'You need a healthy fighter on your roster.':!ready.length?'Every healthy fighter has already sparred this week.':'No rival stable has fighters to send.'}</p>`}
    ${(w.exlog||[]).length?`<h4>Recent exhibitions</h4><div class="news" style="max-height:220px">${w.exlog.map(x=>`<div><span class="rc-sub">S${x.s} W${x.wk} · </span>${x.txt}</div>`).join('')}</div>`:''}`;
 }
@@ -19468,8 +19471,8 @@ function wireManager(done){
     if(a==='arcopen'){MGR.arcSel=+id;MGR.papSel=null;redraw();return}
     if(a==='arcback'){MGR.arcSel=null;MGR.papSel=null;redraw();return}
     if(a==='regime'){w.train=id;saveWorld();redraw();return}
-    if(a==='exsim'||a==='exlive'||a==='exfight'){const myId=$('#exMine')&&$('#exMine').value,oppId=$('#exOpp')&&$('#exOpp').value;if(!myId||!oppId||w.hours<EXHIB_HOURS||m.coin<EXHIB_COST)return;
-      const X=exhibSetup(myId,oppId);if(!X)return;w.hours-=EXHIB_HOURS;m.coin-=EXHIB_COST;X.g.exWk=w.week;
+    if(a==='exsim'||a==='exlive'||a==='exfight'){const myId=$('#exMine')&&$('#exMine').value,oppId=$('#exOpp')&&$('#exOpp').value;if(!myId||!oppId||thLeft(w)<EXHIB_HOURS||m.coin<EXHIB_COST)return;
+      const X=exhibSetup(myId,oppId);if(!X)return;thPlan(w).spent=(thPlan(w).spent||0)+EXHIB_HOURS;m.coin-=EXHIB_COST;X.g.exWk=w.week;
       if(a==='exsim'){MGR.busy=true;let txt='';try{const res=await simEvent(exhibCfg(X,false));if(res&&!res.error)txt=exhibApply(res,exhibCfg(X,false).exhibCtx)}finally{MGR.busy=false}saveWorld(true);say(txt||'The exhibition was rained out.');return}
       saveWorld(true);modalDismiss();S&&(S.over=true);startEvent(exhibCfg(X,true,a==='exfight'));return}
     if(a==='kintix'){if(!g||m.coin<4)return;m.coin-=4;g.kinWk=w.week;
@@ -22754,6 +22757,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'0.63',ic:'🏋',t:'Training hours, clearer tabs',hi:['Training hours: a weekly pool for speed and strength drills, tactics, crowd work, rehab, doctore time, bonding and in-house sparring — exhibitions draw on it too','The Training Yard opens with your hours plan beside the practice arena','Accessibility: reduce motion, a colour-blind palette with class letters on tokens, and larger text','Event Designer: guided steps from Basics to Finish, or every section at once'],fx:['Rail tabs with something left to do are outlined: Recruiting, Training Yard, Infirmary; Match Week in light purple','The free-agent list fills the screen','House home cities are the twelve arena cities','Share builds are a third smaller','CPU turns and the roster name each CPU\'s mind','The fighter panel shows the ratings top right, out of the way — and they fold away']},
   {v:'0.62',ic:'🧠',t:'Five minds',hi:['Intelligence now sets one of five CPU minds — Novice, Apprentice, Fighter, Veteran, Master — shown beside the ratings','Each mind unlocks real skills: the market, steady nerves, routes and truces, Focus, and for a Master: stepping to safety after a blow and Focusing for the kill','Play Now seats pick a mind; Manager growth news says when a fighter reaches a new one'],fx:['Each mind beats the one below it in self-play (about 55–66% of wins)']},
   {v:'0.61',ic:'🪟',t:'Smoother screens',hi:['One screen manager decides what shows when a window closes — no more menu flashes or loops between windows'],fx:['Windows open faster from the main menu (the curtain lifts as soon as the next window is up)']},
   {v:'0.60',ic:'🛣',t:'The Road from the record',hi:['🛣 Send on the Road sits on every living gladiator\'s record in Your Play Now Gladiators (custom characters too); the walker\'s record has ⚔ Walk stage'],fx:['The Venatore\'s Tame card shows the Lyre of Orpheus face','Tamed beasts carry no aggro; counter-attacks only when a wild beast attacks (a tamed beast striking a wild one draws its aggro onto the owner; striking a rival\'s tamed beast waits for its owner\'s Resolve)','Crowd Favor offerings fall face up where the offering lands (3 tiles out from a toppled pillar)','Truce offers show the class in its colour; truced gladiators wear a 🕊 and a dashed ring','The Annals no longer loop back to the main menu','Moving between the Annals, Your Play Now Gladiators and the Road is covered by the curtain — no menu flashes','The Hall\'s Road box drops its long dropdown for a button to your gladiators']},
@@ -25916,7 +25920,7 @@ CR_KINDS.cl={list:()=>CUSTOM.classes||[],set:v=>{CUSTOM.classes=v},store:'custom
 CUSTOM.lanistas=CUSTOM.lanistas||[];
 {const baseLoad=loadCustoms;loadCustoms=async function(){const r=await baseLoad.apply(this,arguments);try{CUSTOM.lanistas=(await Store.list('customLanistas')).sort((a,b)=>String(a.name).localeCompare(String(b.name)))}catch(e){CUSTOM.lanistas=CUSTOM.lanistas||[]}return r}}
 if(typeof SAVE_COLS!=='undefined'&&!SAVE_COLS.includes('customLanistas'))SAVE_COLS.push('customLanistas');
-function blankLanista(){return {id:null,name:genName(),ludus:'Ludus '+pickOne(NAMEBANK.cog),city:pickOne(HOME_CITIES()),color:pickOne(['#c0433a','#4f7fc4','#4f9a57','#d4b13c','#dc7a34','#8a5cc0','#5fc7c0','#e07b9a']),portrait:randomPortrait(),nick:'',bio:'',p:{...MGR_PRESETS.balanced[1]}}}
+function blankLanista(){return {id:null,name:genName(),ludus:'Ludus '+pickOne(NAMEBANK.cog),city:pickOne(LANISTA_CITIES()),color:pickOne(['#c0433a','#4f7fc4','#4f9a57','#d4b13c','#dc7a34','#8a5cc0','#5fc7c0','#e07b9a']),portrait:randomPortrait(),nick:'',bio:'',p:{...MGR_PRESETS.balanced[1]}}}
 CR_KINDS.ln={list:()=>CUSTOM.lanistas||[],set:v=>{CUSTOM.lanistas=v},store:'customLanistas',nm:'lanistas',rolls:'Manager mode’s lanista picker',
   on:x=>x.rolls!==false,toggle:x=>{x.rolls=x.rolls===false},edit:x=>{ST.lnd=JSON.parse(JSON.stringify(x))}};
 function lanistaStudioHTML(){const d=ST.lnd||(ST.lnd=blankLanista());
@@ -25926,7 +25930,7 @@ function lanistaStudioHTML(){const d=ST.lnd||(ST.lnd=blankLanista());
   <div class="setup-grid" style="grid-template-columns:minmax(0,300px) minmax(0,1fr)"><div><div class="mbtns" style="margin:0 0 8px;justify-content:center"><button class="btn primary" type="button" data-lna="new">✚ New lanista</button><button class="btn" type="button" data-lna="rlook">🎲 Random look</button></div>
     <div id="lnPortrait" style="display:flex;justify-content:center">${portraitHTML({name:d.name,portrait:d.portrait,color:d.color},'lg')}</div>${portraitControlsHTML(d.portrait,'data-lnpt')}</div>
    <div><div class="formgrid"><label>Name<input class="tin" data-lnf="name" value="${esc(d.name)}" maxlength="28"></label><label>Epithet<span style="display:flex;gap:4px"><input class="tin" data-lnf="nick" value="${esc(d.nick||'')}" maxlength="30"><button type="button" class="btn" data-lna="nick" style="padding:4px 8px" aria-label="Generate an epithet">🎲</button></span></label>
-     <label>Ludus name<input class="tin" data-lnf="ludus" value="${esc(d.ludus)}" maxlength="32"></label><label>Home city<select class="tin" data-lnf="city">${HOME_CITIES().map(c=>`<option ${c===d.city?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
+     <label>Ludus name<input class="tin" data-lnf="ludus" value="${esc(d.ludus)}" maxlength="32"></label><label>Home city<select class="tin" data-lnf="city">${LANISTA_CITIES().map(c=>`<option ${c===d.city?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
      <label>Color<input type="color" class="tin" data-lnf="color" value="${esc(d.color)}" style="height:34px;padding:2px"></label></div>
     <h4>Personality</h4><div class="presets">${Object.entries(MGR_PRESETS).map(([k,[n]])=>`<button type="button" class="preset" data-lna="pre" data-v="${k}">${esc(n)}</button>`).join('')}</div>
     <div class="perswrap" style="margin-top:8px">${MGR_KEYS.map(([k,l,desc])=>`<label class="slider" title="${esc(desc)}"><span>${l}</span><input type="range" min="1" max="100" data-lnp="${k}" value="${d.p[k]}"><output>${d.p[k]}</output></label>`).join('')}</div>
@@ -25940,7 +25944,7 @@ async function lanistaStudioClick(b,redraw){const a=b.dataset.lna,d=ST.lnd||(ST.
   if(a==='nick'){d.nick=genNickname();return redraw()}
   if(a==='bio'){d.bio=lanistaStory(d.name,d.city);return redraw()}
   if(a==='pre'){const P=MGR_PRESETS[b.dataset.v];if(P)d.p={...P[1]};return redraw()}
-  if(a==='copysys'){const t=MGR_PRE.find(x=>x.key===b.dataset.v);if(!t)return;ST.lnd={...blankLanista(),name:t.name+' II',ludus:t.ludus,city:HOME_CITIES().includes(t.city)?t.city:HOME_CITIES()[0],color:t.color,bio:t.bio||'',p:{...t.p}};return redraw()}
+  if(a==='copysys'){const t=MGR_PRE.find(x=>x.key===b.dataset.v);if(!t)return;ST.lnd={...blankLanista(),name:t.name+' II',ludus:t.ludus,city:LANISTA_CITIES().includes(t.city)?t.city:LANISTA_CITIES()[0],color:t.color,bio:t.bio||'',p:{...t.p}};return redraw()}
   if(a==='save'){if(!String(d.name||'').trim())d.name=genName();const now=new Date().toISOString().slice(0,10);if(!d.id){d.id='ln'+Date.now().toString(36);d.created=now}d.updated=now;
     const copy=JSON.parse(JSON.stringify(d));CUSTOM.lanistas=[...(CUSTOM.lanistas||[]).filter(x=>x.id!==d.id),copy].sort((x,y)=>String(x.name).localeCompare(String(y.name)));await Store.put('customLanistas',d.id,copy).catch(()=>{});
     mToast(`✓ Saved the lanista <b>${esc(d.name)}</b>`);return redraw()}}
@@ -25958,7 +25962,7 @@ function lanistasForPicker(){const all=(CUSTOM.lanistas||[]).filter(x=>x.rolls!=
     const row=`<div class="card2" style="margin:0 0 8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><b>🎩 Studio lanistas</b>${L.length?`<select class="tin" data-nmlan="1" style="width:auto"><option value="">— start from one —</option>${L.map(x=>`<option value="${esc(x.id)}">${esc(x.name)}${x.nick?' “'+esc(x.nick)+'”':''}</option>`).join('')}</select>`:'<span class="rc-sub">none yet — design them in the Creator Studio</span>'}<button class="btn tksm" type="button" data-nmxa="savelan">💾 Save this lanista to the Studio</button></div>`;
     h=h.replace('<div class="formgrid"><label>Name<span',row+'<div class="formgrid"><label>Name<span')}}catch(e){console.error(e)}return h}}
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.nmlan||!t.value||typeof NEWMGR==='undefined'||!NEWMGR)return;const x=(CUSTOM.lanistas||[]).find(l=>l.id===t.value);if(!x)return;
-  Object.assign(NEWMGR,{lanId:x.id,name:x.name,ludus:x.ludus,color:x.color,portrait:JSON.parse(JSON.stringify(x.portrait||{})),nick:x.nick||'',bio:x.bio||'',p:{...x.p}});if(HOME_CITIES().includes(x.city))NEWMGR.city=x.city;if(typeof MGR_REDRAW==='function')MGR_REDRAW()});
+  Object.assign(NEWMGR,{lanId:x.id,name:x.name,ludus:x.ludus,color:x.color,portrait:JSON.parse(JSON.stringify(x.portrait||{})),nick:x.nick||'',bio:x.bio||'',p:{...x.p}});if(LANISTA_CITIES().includes(x.city))NEWMGR.city=x.city;if(typeof MGR_REDRAW==='function')MGR_REDRAW()});
 document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('[data-nmxa="savelan"]');if(!b||typeof NEWMGR==='undefined'||!NEWMGR)return;
   const same=(CUSTOM.lanistas||[]).find(l=>l.id===NEWMGR.lanId||(l.name===NEWMGR.name&&l.ludus===NEWMGR.ludus));
   const x={...(same||{}),id:same?same.id:'ln'+Date.now().toString(36),name:NEWMGR.name,ludus:NEWMGR.ludus,city:NEWMGR.city,color:NEWMGR.color,portrait:JSON.parse(JSON.stringify(NEWMGR.portrait||{})),nick:NEWMGR.nick||'',bio:NEWMGR.bio||'',p:{...NEWMGR.p},created:(same&&same.created)||new Date().toISOString().slice(0,10),updated:new Date().toISOString().slice(0,10)};
@@ -27457,6 +27461,235 @@ aiDodge=async function(p){if(isChariot()||isNaum()||p.mv<=0)return;const dz=dang
   for(let k=0;k<N*N;k++){if(dist[k]<1||dist[k]>p.mv||!aiZoneOK(Math.floor(k/N),k%N))continue;const v=dz[k]+dist[k]*0.05;if(!best||v<best.v)best={v,k}}
   if(!best||here-dz[best.k]<1)return;const path=pathTo(prev,p.r*N+p.c,best.k)||[];
   for(const k of path){if((Math.floor(k/N)!==p.r&&k%N!==p.c?2:1)>p.mv||!p.alive||S.over)break;await movePlayer(p,[k]);await checkEagleScore(p)}render()};
+
+/* cpuMind — a CPU's label wherever the game used to print easy / normal / hard */
+function cpuMind(p){try{return p&&p.tier!=null&&AI_TIERS[p.tier]?AI_TIERS[p.tier].n:(p&&p.diff)||''}catch(e){return p&&p.diff||''}}
+/* =====================================================================
+   81-V63 · v0.63 MANAGER BATCH
+   =====================================================================
+   • Rail to-do borders: 🤝 Recruiting in the recruiting-hours green while hours remain; ⚕ Infirmary light white while a hurt
+     fighter still needs healing; ⚔ Match Week a light purple border (no purple fill); 🏋 Training Yard amber while
+     training hours remain. One 700 ms sweep (like 47-mgr47's) keeps them true between redraws.
+   • TRAINING HOURS — a second weekly pool beside the recruiting hours: 10 a week, +2 per Yard facility level, +4 in a
+     bye week (thMax). Spent in the Training Yard on:
+       per fighter (max 4 h each a week): 🏃 Speed or 💪 Strength drills, 📜 Tactics (Intelligence), 🎭 Crowd work
+       (Charisma + fame), 🩹 Rehab (2 h takes a week off an injury);
+       for the squad: 🧑‍🏫 Doctore hours (each hour = a quarter Yard level on the week's regime: better gains, fewer injuries,
+       max 4), 🤝 Bond a pair (2 h: loyalty for both — luck follows), ⚔ Spar in-house (2 h: speed + strength for both, a small
+       injury risk), and the practice arena's exhibitions (3 h, moved here from the recruiting hours).
+     The plan resolves when the week ends (before the regime), then the pool refills. TWEAK: TH_* below.
+   • The Training Yard tab: banner, then the hours plan (left) beside the practice arena (right), then regime and board.
+   ===================================================================== */
+const TH_BASE=10,TH_YARD=2,TH_BYE=4,TH_FIGHTER=4,TH_DOC=4,TH_DRILL=0.3,TH_FAME=0.5;
+function thMax(){const w=W_(),m=me();if(!w||!m)return TH_BASE;const y=typeof facLvl==='function'?facLvl(m,'yard'):0;
+  const bye=typeof BYE_WKS!=='undefined'&&typeof wkOf==='function'&&BYE_WKS.includes(wkOf(w.week));return TH_BASE+TH_YARD*y+(bye?TH_BYE:0)}
+function thPlan(w){w=w||W_();if(!w.tplan||w.tplan.wk!==w.week)w.tplan={wk:w.week,g:{},doc:0,pairs:[],spent:0};return w.tplan}
+const thOfG=(P,id)=>Object.values(P.g[id]||{}).reduce((a,b)=>a+b,0)+P.pairs.filter(x=>x.a===id||x.b===id).length*2;
+function thUsed(w){const P=thPlan(w);return Object.keys(P.g).reduce((a,id)=>a+Object.values(P.g[id]).reduce((x,y)=>x+y,0),0)+P.doc+P.pairs.length*2+(P.spent||0)}
+function thLeft(w){return Math.max(0,thMax()-thUsed(w||W_()))}
+const needTHrs=(w,h)=>[thLeft(w)<h,`Needs ${h} training hour${h===1?'':'s'} — ${thLeft(w)} left. Hours refill when the week ends.`];
+const TH_KINDS=[['spd','🏃','Speed drill'],['str','💪','Strength drill'],['int','📜','Tactics'],['cha','🎭','Crowd work'],['rehab','🩹','Rehab']];
+
+/* ---------- the rail: to-do borders ---------- */
+{const st=document.createElement('style');st.textContent=`
+.mtabs [data-id="recruit"].recpend{border:2px solid #7fae5f!important;color:#b7d59d!important;box-shadow:0 0 9px rgba(127,174,95,.35)}
+.mtabs [data-id="practice"].trpend{border:2px solid #d9a441!important;color:#f0cf7d!important;box-shadow:0 0 9px rgba(217,164,65,.3)}
+.mtabs [data-id="infirm"].infpend{border:2px solid #e9e5dc!important;color:#f6f3ec!important;box-shadow:0 0 9px rgba(233,229,220,.3)}
+.mtabs [data-id="night"].nightpend{background:none!important;border:2px solid #b9a3e3!important;color:#d9ccf4!important;box-shadow:0 0 9px rgba(185,163,227,.35)!important;animation:none!important}
+.badge.thrs{border-color:#6b5420;color:#f0cf7d}
+.yardtop{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin:10px 0 4px}
+@media (max-width:820px){.yardtop{grid-template-columns:1fr}}
+.yardtop>.card2{margin:0}.throw{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:4px 0}
+.thg{display:grid;grid-template-columns:minmax(96px,150px) 1fr auto;gap:6px;align-items:center;margin:3px 0;padding:3px 0;border-top:1px solid var(--line2)}
+.thg .thks{display:flex;gap:6px;flex-wrap:wrap}.thg>b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.thc{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line2);border-radius:9px;padding:1px 4px;font-size:12px}
+.thc b{min-width:12px;text-align:center}.thc button{background:none;border:0;color:var(--gold2);cursor:pointer;font-size:14px;padding:0 3px}
+.thc button:disabled{color:var(--muted);cursor:default}.thmeter{height:6px;border-radius:3px;background:var(--line2);overflow:hidden;margin:6px 0}
+.thmeter i{display:block;height:100%;background:#d9a441}`;document.head.appendChild(st)}
+function railPend(){const w=W_(),m=me();if(!w||!m||w.dead)return {};const ros=rosterOf(m);
+  return {recruit:(w.hours||0)>0,practice:thLeft(w)>0&&ros.length>0,
+    infirm:ros.some(g=>g.inj&&!g.inj.war&&g.medWk!==w.week&&g.bathWk!==w.week)}}
+setInterval(()=>{try{if(typeof W_!=='function'||!W_())return;const P=railPend();
+  for(const [k,cls] of [['recruit','recpend'],['practice','trpend'],['infirm','infpend']]){const b=document.querySelector(`.mtabs [data-mg="tab"][data-id="${k}"]`);if(b)b.classList.toggle(cls,!!P[k])}
+  recFit()}catch(e){}},700);
+/* the free-agent list reaches down to the bottom of the fighter's details beside it (was a fixed 62vh box with blank space below) */
+function recFit(){const t=document.getElementById('recTable');if(!t)return;const g=t.closest('.mgrid');const col=g&&[...g.children].find(c=>!c.contains(t));
+  const floor=Math.round(innerHeight*0.62);const want=col?Math.round(col.getBoundingClientRect().bottom-t.getBoundingClientRect().top):floor;
+  const v=Math.max(floor,want)+'px';if(t.style.maxHeight!==v)t.style.maxHeight=v}
+/* the header shows the training hours beside the recruiting hours */
+{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(!w||w.dead||!me())return h;
+  h=h.replace(/(Recruiting hours [^<]*<\/span>)/,`$1<span class="badge ${thLeft(w)?'thrs':''}" title="Spend them in the Training Yard">Training hours ${thLeft(w)}/${thMax()}</span>`)}catch(e){}return h}}
+
+/* ---------- the plan: clicks ---------- */
+document.addEventListener('click',e=>{const b=e.target.closest('[data-tp]');if(!b||b.disabled)return;e.preventDefault();const w=W_(),m=me();if(!w||!m)return;const P=thPlan(w);
+  const [k,a,c,d]=b.dataset.tp.split('|');const left=thLeft(w);
+  if(k==='g'){const g=gById(a);if(!g)return;const cur=(P.g[a]||{})[c]||0,dd=+d;
+    if(dd>0&&(left<1||thOfG(P,a)>=TH_FIGHTER||c==='rehab'&&(!g.inj||cur>=2)||c!=='rehab'&&g.inj))return;
+    const v=Math.max(0,cur+dd);P.g[a]=P.g[a]||{};if(v)P.g[a][c]=v;else delete P.g[a][c]}
+  else if(k==='doc'){const v=P.doc+(+a);if(v<0||v>TH_DOC||(+a>0&&left<1))return;P.doc=v}
+  else if(k==='pair'){const x=document.getElementById('thPa'),y=document.getElementById('thPb');if(!x||!y||x.value===y.value||left<2)return;
+    if(thOfG(P,x.value)+2>TH_FIGHTER||thOfG(P,y.value)+2>TH_FIGHTER){mToast('Each fighter can train 4 hours a week.');return}P.pairs.push({k:a,a:x.value,b:y.value})}
+  else if(k==='unpair')P.pairs.splice(+a,1);
+  saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()});
+
+/* ---------- the plan resolves when the week ends (before the regime), then the pool refills ---------- */
+function thResolve(w){const P=thPlan(w),m=me();if(P.done)return;P.done=true;const out=[];const nm=id=>{const g=gById(id);return g?esc(g.name):'?'};
+  for(const [id,hs] of Object.entries(P.g)){const g=gById(id);if(!g||!g.alive||!rosterOf(m).includes(g))continue;
+    for(const [k,h] of Object.entries(hs)){if(!h)continue;
+      if(k==='rehab'){if(g.inj&&h>=2){g.inj.until=Math.max(w.week,g.inj.until-1);out.push(`${nm(id)}: rehab — back a week sooner`)}continue}
+      if(typeof statGain==='function')statGain(g,k,h*TH_DRILL);
+      if(k==='cha'){g.fame=clamp((g.fame||0)+Math.floor(h*TH_FAME),0,100)}
+      out.push(`${nm(id)}: ${h} h ${TH_KINDS.find(x=>x[0]===k)[2].toLowerCase()}`)}}
+  for(const p of P.pairs){const a=gById(p.a),b=gById(p.b);if(!a||!b)continue;
+    if(p.k==='bond'){for(const g of [a,b]){g.loyB=Math.min(25,(g.loyB||0)+2);g.morale=clamp((g.morale||50)+3,0,100)}out.push(`${nm(p.a)} & ${nm(p.b)}: bonded (+loyalty)`)}
+    else{for(const g of [a,b]){if(typeof statGain==='function'){statGain(g,'spd',0.25);statGain(g,'str',0.25)}}
+      const hurt=Math.random()<0.04?pickOneUI([a,b]):null;if(hurt&&!hurt.inj){hurt.inj={until:w.week+2,label:'a sparring knock',pen:2};out.push(`${nm(hurt.id)} took a sparring knock`)}
+      out.push(`${nm(p.a)} & ${nm(p.b)}: sparred in-house`)}}
+  if(out.length){w.lastPlan=out;if(typeof tnews==='function')tnews(`Training hours: ${out.length} session${out.length===1?'':'s'} — ${out.slice(0,3).join('; ')}${out.length>3?'…':''}`)}}
+const pickOneUI=a=>a[Math.floor(Math.random()*a.length)]; /* not the dice RNG */
+/* doctore hours: the player's yard counts a quarter level higher per hour while the week resolves (facLvl is a const arrow) */
+{const base=endWeek;endWeek=async function(){const w=W_(),m=w&&me();const wk=w&&w.week;let lift=0;
+  try{if(w&&!w.dead&&m){thResolve(w);lift=(thPlan(w).doc||0)/4;if(lift){m.fac=m.fac||{};m.fac.yard=(m.fac.yard||0)+lift}}}catch(e){console.error(e)}
+  try{return await base.apply(this,arguments)}finally{if(lift&&m&&m.fac)m.fac.yard=Math.max(0,(m.fac.yard||0)-lift);try{const w2=W_();if(w2&&w2.week!==wk)thPlan(w2)}catch(e){}}}}
+
+/* ---------- the Training Yard tab: banner, then the hours plan beside the practice arena ---------- */
+function thPlanHTML(){const w=W_(),m=me();const P=thPlan(w);const ros=rosterOf(m);const left=thLeft(w),mx=thMax();
+  const ctr=(tp,v,canUp,canDn)=>`<span class="thc"><button type="button" data-tp="${tp}|-1" ${canDn?'':'disabled'}>−</button><b>${v}</b><button type="button" data-tp="${tp}|1" ${canUp?'':'disabled'}>+</button></span>`;
+  const rows=ros.map(g=>{const hs=P.g[g.id]||{};const used=thOfG(P,g.id);
+    const ks=TH_KINDS.filter(([k])=>g.inj?k==='rehab':k!=='rehab');
+    return `<div class="thg"><b title="${esc(g.name)}">${g.inj?'⚕ ':''}${esc(g.name)}</b><span class="thks">${ks.map(([k,i,n])=>`<span title="${n}">${i}${ctr(`g|${g.id}|${k}`,hs[k]||0,left>0&&used<TH_FIGHTER&&!(k==='rehab'&&(hs[k]||0)>=2),(hs[k]||0)>0)}</span>`).join('')}</span><span class="rc-sub">${used}/${TH_FIGHTER} h</span></div>`}).join('');
+  const opts=ros.filter(g=>!g.inj).map(g=>`<option value="${g.id}">${esc(g.name)}</option>`).join('');
+  const pairs=P.pairs.map((p,i)=>`<div class="throw">${p.k==='bond'?'🤝':'⚔'} ${esc((gById(p.a)||{}).name||'?')} & ${esc((gById(p.b)||{}).name||'?')} <span class="rc-sub">2 h</span> <button class="btn tksm" type="button" data-tp="unpair|${i}">✕</button></div>`).join('');
+  return `<div class="card2"><div class="sect" style="margin-top:0">⏳ Training hours <span class="rc-sub">${left} of ${mx} left · spent when the week ends</span></div>
+    <div class="thmeter"><i style="width:${Math.round((mx-left)/Math.max(1,mx)*100)}%"></i></div>
+    <div class="throw">🧑‍🏫 <b>Doctore</b> ${ctr('doc',P.doc,left>0&&P.doc<TH_DOC,P.doc>0)}<span class="rc-sub">each hour sharpens this week's regime (max ${TH_DOC})</span></div>
+    ${rows||'<p class="rc-sub">No fighters in the yard.</p>'}
+    <p class="rc-sub" style="margin:4px 0">🏃 Speed · 💪 Strength · 📜 Tactics (Intelligence) · 🎭 Crowd work (Charisma, fame) · 🩹 Rehab (2 h = a week sooner) · max ${TH_FIGHTER} h a fighter</p>
+    ${ros.filter(g=>!g.inj).length>1?`<div class="throw"><select class="tin" id="thPa" style="width:auto">${opts}</select> & <select class="tin" id="thPb" style="width:auto">${ros.filter(g=>!g.inj).map((g,i)=>`<option value="${g.id}" ${i===1?'selected':''}>${esc(g.name)}</option>`).join('')}</select>
+      <button class="btn tksm" type="button" data-tp="pair|bond" ${left<2?'disabled':''}>🤝 Bond · 2 h</button><button class="btn tksm" type="button" data-tp="pair|spar" ${left<2?'disabled':''}>⚔ Spar · 2 h</button></div>`:''}
+    ${pairs}${(w.lastPlan||[]).length?`<div class="rc-sub" style="margin-top:6px">Last week: ${w.lastPlan.slice(0,4).map(x=>x).join(' · ')}</div>`:''}</div>`}
+{const base=practiceHTML;practiceHTML=function(){const h=base.apply(this,arguments);try{
+  const mark='<div class="sect" style="margin-top:14px">⚔ Train with other teams</div>';const i=h.indexOf(mark);if(i<0)return h;
+  let yard=h.slice(0,i),arena=h.slice(i+mark.length);
+  const j=yard.indexOf('<div class="roomtiles">');const banner=j>0?yard.slice(0,j):'';if(j>0)yard=yard.slice(j);
+  return `${banner}<div class="yardtop">${thPlanHTML()}<div class="card2"><div class="sect" style="margin-top:0">⚔ Train with other teams</div>${arena}</div></div>${yard}`}catch(e){console.error(e);return h}}}
+
+
+/* ---------- the fighter panel: the ratings sit in the header's empty top-right corner, not under the figure's feet ---------- */
+{const st=document.createElement('style');st.textContent=`.pb-head>.statrow{margin:0 0 0 auto;align-self:flex-start;justify-content:flex-end;max-width:52%;gap:4px}
+.pb-head>.statrow .badge{font-size:12px;padding:1px 6px}
+.ratfold{background:none;border:1px solid var(--line2);border-radius:9px;color:var(--muted);cursor:pointer;font-size:11px;padding:1px 6px;order:99}
+.pb-head>.statrow.shut>:not(.ratfold){display:none}`;document.head.appendChild(st)}
+let RAT_SHUT=(()=>{try{return localStorage.getItem('flavius_ratshut')==='1'}catch(e){return false}})();
+function panelStatsUp(){const b=document.getElementById('board');if(!b)return;const r=b.querySelector(':scope>.statrow'),h=b.querySelector(':scope>.pb-head');if(!r||!h)return;
+  h.appendChild(r);r.classList.toggle('shut',RAT_SHUT);
+  if(!r.querySelector('.ratfold')){const t=document.createElement('button');t.type='button';t.className='ratfold';r.prepend(t)}
+  const t=r.querySelector('.ratfold');t.textContent=RAT_SHUT?'📊 ◂':'▸';t.title=RAT_SHUT?'Show the ratings':'Fold the ratings away';t.setAttribute('aria-expanded',String(!RAT_SHUT))}
+document.addEventListener('click',e=>{const t=e.target.closest('.ratfold');if(!t)return;e.preventDefault();RAT_SHUT=!RAT_SHUT;try{localStorage.setItem('flavius_ratshut',RAT_SHUT?'1':'0')}catch(err){}panelStatsUp()});
+{const b0=()=>{const b=document.getElementById('board');if(b)new MutationObserver(panelStatsUp).observe(b,{childList:true});panelStatsUp()};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',b0);else b0()}
+/* =====================================================================
+   82-ACCESS · v0.63 ACCESSIBILITY (Settings → General → Accessibility)
+   =====================================================================
+   • Reduce motion (SETTINGS.calm): the same as the system's reduced-motion request, in-game — no CSS animations or
+     transitions (body.calm), no screen shake, no flying projectiles or corpse-crew walks (animOn), dice land at once.
+     reduceMotion() (11-extra) reads it too, so everything that already honoured the system setting follows.
+   • Text size (SETTINGS.tscale 100 / 115 / 130): CSS zoom on the panels, the log, the side column, windows and the menu —
+     never on the arena canvas (its hit-testing stays exact).
+   • Colour-blind palette (SETTINGS.cvd): the eight printed classes take the Okabe–Ito colours (distinct under red-green and
+     blue-yellow colour blindness), each token carries its class letter, and good/bad badges turn blue/orange.
+     Custom classes keep their own colours. TWEAK: CVD_COLORS.
+   ===================================================================== */
+const CVD_COLORS={soldier:'#D55E00',royalty:'#0072B2',hero:'#009E73',slave:'#F0E442',veteranus:'#EDEDED',amazonia:'#E69F00',venatore:'#CC79A7',damnatio:'#56B4E9'};
+const CLS_COLOR0={};for(const k of Object.keys(CVD_COLORS))if(CLASSES[k])CLS_COLOR0[k]=CLASSES[k].color;
+{const st=document.createElement('style');st.textContent=`
+body.calm *,body.calm *::before,body.calm *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+body.ts115 #actions,body.ts115 .logbar,body.ts115 aside.side,body.ts115 #mBody,body.ts115 #mainMenu .mmbtns,body.ts115 #tip{zoom:1.15}
+body.ts130 #actions,body.ts130 .logbar,body.ts130 aside.side,body.ts130 #mBody,body.ts130 #mainMenu .mmbtns,body.ts130 #tip{zoom:1.3}
+body.cvd .badge.good{border-color:#2f5d8a;color:#9cc8f0}body.cvd .badge.bad{border-color:#8a5a1e;color:#f2b46a}
+.a11yrow .seg button.on{outline:1px solid var(--gold2)}`;document.head.appendChild(st)}
+function applyAccess(){try{const b=document.body;if(!b)return;b.classList.toggle('calm',!!SETTINGS.calm);
+  b.classList.remove('ts115','ts130');if(+SETTINGS.tscale===115||+SETTINGS.tscale===130)b.classList.add('ts'+SETTINGS.tscale);
+  b.classList.toggle('cvd',!!SETTINGS.cvd);
+  for(const [k,c] of Object.entries(CVD_COLORS))if(CLASSES[k])CLASSES[k].color=SETTINGS.cvd?c:CLS_COLOR0[k];
+  if(typeof S!=='undefined'&&S&&typeof draw==='function')try{draw()}catch(e){}}catch(e){}}
+{const base=applySettings;applySettings=function(){const r=base.apply(this,arguments);applyAccess();return r}}
+{const base=animOn;animOn=function(){return base.apply(this,arguments)&&!(typeof reduceMotion==='function'&&reduceMotion())}}
+/* the class letter on each token (colour-blind palette) */
+{const base=drawPlayer;drawPlayer=function(player){const r=base.apply(this,arguments);try{if(SETTINGS.cvd&&player&&player.alive&&!player.exited&&typeof ctx!=='undefined'){
+  const C=CLASSES[player.cls]||{};const L=((C.n||C.name||player.cls||'?')+'').replace(/^the\s+/i,'').charAt(0).toUpperCase();const {x,y}=center(player.r,player.c);
+  ctx.save();ctx.font=`700 ${Math.max(9,Math.round(TW*0.24))}px IBM Plex Mono, monospace`;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.lineWidth=3;ctx.strokeStyle='rgba(0,0,0,.85)';ctx.strokeText(L,x,y+TH*0.18);ctx.fillStyle='#fff';ctx.fillText(L,x,y+TH*0.18);ctx.restore()}}catch(e){}return r}}
+/* Settings → General: the three controls, just above Visuals */
+{const base=settingsHTML;settingsHTML=function(tab){const h=base.apply(this,arguments);if(tab!=='general'&&tab)return h;try{
+  const ts=+SETTINGS.tscale||100;
+  const block=`<h4 style="grid-column:1/-1;margin:6px 0 0">Accessibility</h4>
+    <label class="setrow"><input type="checkbox" data-set="calm" ${SETTINGS.calm?'checked':''}><span><b>Reduce motion</b><br><span class="hint" style="margin:0">No shakes, flashes, flying missiles or animated panels. On by itself when your system asks for reduced motion.</span></span></label>
+    <label class="setrow"><input type="checkbox" data-set="cvd" ${SETTINGS.cvd?'checked':''}><span><b>Colour-blind palette</b><br><span class="hint" style="margin:0">Class colours anyone can tell apart, a class letter on every token, blue/orange for good/bad.</span></span></label>
+    <div class="setrow a11yrow"><span><b>Text size</b><br><span class="hint" style="margin:0">Panels, log, windows and menus. The arena keeps its size.</span></span><div class="seg">${[100,115,130].map(v=>`<button type="button" data-tscale="${v}" class="${ts===v?'on':''}">${v}%</button>`).join('')}</div></div>`;
+  const mark='<h4 style="grid-column:1/-1;margin:6px 0 0">Visuals</h4>';return h.includes(mark)?h.replace(mark,block+mark):h}catch(e){return h}}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-tscale]');if(!b)return;SETTINGS.tscale=+b.dataset.tscale;applySettings();
+  b.parentElement.querySelectorAll('[data-tscale]').forEach(x=>x.classList.toggle('on',x===b))});
+applyAccess();
+/* =====================================================================
+   83-EDSTEPS · v0.63 EVENT DESIGNER — GUIDED STEPS INSIDE THE DESIGNER
+   =====================================================================
+   The Board / Rounds & rules / Classes & NPCs tabs stay; on top of them a step bar walks a new designer through the
+   same fields in order, one step at a time, with ← Back / Next → at the bottom:
+     1 Basics (music, name, mode, players, arena, win reward) · 2 Board · 3 Rounds (+ time limits) ·
+     4 Rules (arena rules, beast strength, starting bonuses) · 5 Fighters & beasts · 6 Finish (trophy, editor, Summa Rudis,
+     notes, what is still missing, Save / Save and play)
+   "All sections" shows the classic tabs with everything (remembered per browser: flavius_edall).
+   Works on the rendered DOM: the children of #edPane are tagged with their step by the section headings they follow
+   (no string surgery on the editor's HTML, so the other modules' sections land in the right step on their own).
+   ===================================================================== */
+const ED_STEPS=[['basics','Basics','rules'],['board','Board','board'],['rounds','Rounds','rules'],['rules','Rules','rules'],['fighters','Fighters & beasts','roster'],['finish','Finish','rules']];
+let ED_ALL=(()=>{try{return localStorage.getItem('flavius_edall')==='1'}catch(e){return false}})();
+{const st=document.createElement('style');st.textContent=`
+.edsteps{display:flex;gap:4px;flex-wrap:wrap;margin:6px 0 10px}.edsteps button{border:1px solid var(--line2);background:none;color:var(--muted);border-radius:16px;padding:3px 10px;cursor:pointer;font-size:13px}
+.edsteps button.cur{border-color:var(--gold);color:var(--gold2);background:rgba(240,207,125,.08)}.edsteps button.seen{color:var(--text)}
+.edsteps .edall{margin-left:auto}.edsteps button.warn::after{content:' ⚠';color:var(--blood2)}
+#edPane.stepped>[data-edstep]:not(.edcur){display:none!important}.edstepnav{display:flex;justify-content:space-between;gap:8px;margin:10px 0}`;document.head.appendChild(st)}
+function edStepIdx(){return Math.max(0,Math.min(ED_STEPS.length-1,ST.edStep||0))}
+/* tag #edPane's children by the headings they follow */
+function edTagPane(pane){const k=ED_STEPS[edStepIdx()][0],sub=ST.sub;let cur=sub==='board'?'board':sub==='roster'?'fighters':'basics';
+  for(const el of pane.children){const t=(el.textContent||'').trim();
+    if(sub==='rules'){
+      if(el.querySelector&&el.querySelector('[data-f="trophy"]'))cur='finish';
+      else if(el.querySelector&&el.querySelector('[data-edmusic]'))cur='basics';
+      else if(el.classList.contains('srcard'))cur='finish';
+      else if(el.tagName==='H4'&&/^Rounds/.test(t))cur='rounds';
+      else if(el.tagName==='H4'&&/^Arena rules/.test(t))cur='rules';
+      else if(el.tagName==='H4'&&/^Notes/.test(t))cur='finish';
+      else if(cur==='finish'&&!el.classList.contains('srcard')&&el.querySelector&&el.querySelector('[data-f="name"]'))cur='basics';
+    }
+    el.dataset.edstep=cur;el.classList.toggle('edcur',cur===k)}}
+function edStepsDecorate(){const pane=document.getElementById('edPane');if(!pane||!ST||ST.tab!=='events'||!ST.draft)return;
+  const seg=[...document.querySelectorAll('.seg[role="tablist"]')].find(s=>s.querySelector('[data-st="sub"]'));
+  let bar=document.querySelector('.edsteps');
+  if(!bar&&seg){bar=document.createElement('div');bar.className='edsteps';seg.parentNode.insertBefore(bar,seg)}
+  if(!bar)return;const i=edStepIdx();ST.edSeen=ST.edSeen||{};if(!ED_ALL)ST.edSeen[i]=1;
+  const errs=typeof eventErrors==='function'?eventErrors(ST.draft):[];
+  bar.innerHTML=(ED_ALL?'':ED_STEPS.map(([k,n],j)=>`<button type="button" data-edstep="${j}" class="${j===i?'cur':''} ${ST.edSeen[j]?'seen':''} ${k==='finish'&&errs.length?'warn':''}">${j+1} ${n}</button>`).join(''))
+    +`<button type="button" class="edall" data-edall="1">${ED_ALL?'🧭 Guided steps':'All sections'}</button>`;
+  if(seg)seg.style.display=ED_ALL?'':'none';
+  pane.classList.toggle('stepped',!ED_ALL);
+  if(ED_ALL){pane.querySelectorAll('.edcur').forEach(x=>x.classList.remove('edcur'));document.querySelectorAll('.edstepnav').forEach(x=>x.remove());return}
+  edTagPane(pane);
+  let nav=document.querySelector('.edstepnav');if(!nav){nav=document.createElement('div');nav.className='edstepnav';pane.after(nav)}
+  nav.innerHTML=`<button class="btn" type="button" data-edgo="-1" ${i?'':'disabled'}>← Back</button>${ED_STEPS[i][0]==='finish'?(errs.length?`<span class="rc-sub" style="color:var(--blood2)">Still to do: ${errs.map(esc).join(' · ')}</span>`:'<span class="rc-sub">Ready — save it, or save and play.</span>'):''}<button class="btn primary" type="button" data-edgo="1" ${i<ED_STEPS.length-1?'':'disabled'}>Next →</button>`}
+function edGoStep(j){ST.edStep=Math.max(0,Math.min(ED_STEPS.length-1,j));ST.sub=ED_STEPS[ST.edStep][2];
+  if(typeof edStudioRedraw==='function')edStudioRedraw();else if(typeof studioRedraw==='function')studioRedraw();
+  const p=document.getElementById('edPane');if(p)p.scrollIntoView({block:'nearest'})}
+document.addEventListener('click',e=>{const s=e.target.closest('[data-edstep]');if(s&&s.closest('.edsteps')){e.preventDefault();edGoStep(+s.dataset.edstep);return}
+  const g=e.target.closest('[data-edgo]');if(g&&!g.disabled){e.preventDefault();edGoStep(edStepIdx()+(+g.dataset.edgo));return}
+  const a=e.target.closest('[data-edall]');if(a){e.preventDefault();ED_ALL=!ED_ALL;try{localStorage.setItem('flavius_edall',ED_ALL?'1':'0')}catch(err){}
+    if(!ED_ALL)ST.sub=ED_STEPS[edStepIdx()][2];if(typeof edStudioRedraw==='function')edStudioRedraw();else edStepsDecorate()}},true);
+/* the classic tabs keep the step in sync when "All sections" is off */
+document.addEventListener('click',e=>{const b=e.target.closest('[data-st="sub"]');if(!b||ED_ALL||!ST)return;const j=ED_STEPS.findIndex(x=>x[2]===b.dataset.v);if(j>=0)ST.edStep=j},true);
+/* a fresh draft starts at step 1 */
+document.addEventListener('click',e=>{const b=e.target.closest('[data-st="new"],[data-st="random"],[data-st="edit"],[data-st="dup"]');if(b&&ST){ST.edStep=0;ST.edSeen={};if(!ED_ALL)setTimeout(()=>{if(ST.tab==='events'&&ST.draft)edGoStep(0)},0)}},true);
+new MutationObserver(()=>{const p=document.getElementById('edPane');if(p&&(!p.dataset.edDone||!ED_ALL&&[...p.children].some(c=>!c.dataset.edstep))){p.dataset.edDone='1';try{if(!ED_ALL&&ST&&ST.sub!==ED_STEPS[edStepIdx()][2])ST.edStep=ED_STEPS.findIndex(x=>x[2]===ST.sub);edStepsDecorate()}catch(e){console.error(e)}}})
+  .observe(document.body,{childList:true,subtree:true});
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

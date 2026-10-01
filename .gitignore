@@ -5,3 +5,4 @@ tools/reg.txt
 tools/tests/*.png
 share39.png
 tools/reg/
+.regpage.html

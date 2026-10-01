@@ -86,3 +86,6 @@ aiDodge=async function(p){if(isChariot()||isNaum()||p.mv<=0)return;const dz=dang
   for(let k=0;k<N*N;k++){if(dist[k]<1||dist[k]>p.mv||!aiZoneOK(Math.floor(k/N),k%N))continue;const v=dz[k]+dist[k]*0.05;if(!best||v<best.v)best={v,k}}
   if(!best||here-dz[best.k]<1)return;const path=pathTo(prev,p.r*N+p.c,best.k)||[];
   for(const k of path){if((Math.floor(k/N)!==p.r&&k%N!==p.c?2:1)>p.mv||!p.alive||S.over)break;await movePlayer(p,[k]);await checkEagleScore(p)}render()};
+
+/* cpuMind — a CPU's label wherever the game used to print easy / normal / hard */
+function cpuMind(p){try{return p&&p.tier!=null&&AI_TIERS[p.tier]?AI_TIERS[p.tier].n:(p&&p.diff)||''}catch(e){return p&&p.diff||''}}

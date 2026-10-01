@@ -99,7 +99,7 @@ CR_KINDS.cl={list:()=>CUSTOM.classes||[],set:v=>{CUSTOM.classes=v},store:'custom
 CUSTOM.lanistas=CUSTOM.lanistas||[];
 {const baseLoad=loadCustoms;loadCustoms=async function(){const r=await baseLoad.apply(this,arguments);try{CUSTOM.lanistas=(await Store.list('customLanistas')).sort((a,b)=>String(a.name).localeCompare(String(b.name)))}catch(e){CUSTOM.lanistas=CUSTOM.lanistas||[]}return r}}
 if(typeof SAVE_COLS!=='undefined'&&!SAVE_COLS.includes('customLanistas'))SAVE_COLS.push('customLanistas');
-function blankLanista(){return {id:null,name:genName(),ludus:'Ludus '+pickOne(NAMEBANK.cog),city:pickOne(HOME_CITIES()),color:pickOne(['#c0433a','#4f7fc4','#4f9a57','#d4b13c','#dc7a34','#8a5cc0','#5fc7c0','#e07b9a']),portrait:randomPortrait(),nick:'',bio:'',p:{...MGR_PRESETS.balanced[1]}}}
+function blankLanista(){return {id:null,name:genName(),ludus:'Ludus '+pickOne(NAMEBANK.cog),city:pickOne(LANISTA_CITIES()),color:pickOne(['#c0433a','#4f7fc4','#4f9a57','#d4b13c','#dc7a34','#8a5cc0','#5fc7c0','#e07b9a']),portrait:randomPortrait(),nick:'',bio:'',p:{...MGR_PRESETS.balanced[1]}}}
 CR_KINDS.ln={list:()=>CUSTOM.lanistas||[],set:v=>{CUSTOM.lanistas=v},store:'customLanistas',nm:'lanistas',rolls:'Manager mode’s lanista picker',
   on:x=>x.rolls!==false,toggle:x=>{x.rolls=x.rolls===false},edit:x=>{ST.lnd=JSON.parse(JSON.stringify(x))}};
 function lanistaStudioHTML(){const d=ST.lnd||(ST.lnd=blankLanista());
@@ -109,7 +109,7 @@ function lanistaStudioHTML(){const d=ST.lnd||(ST.lnd=blankLanista());
   <div class="setup-grid" style="grid-template-columns:minmax(0,300px) minmax(0,1fr)"><div><div class="mbtns" style="margin:0 0 8px;justify-content:center"><button class="btn primary" type="button" data-lna="new">✚ New lanista</button><button class="btn" type="button" data-lna="rlook">🎲 Random look</button></div>
     <div id="lnPortrait" style="display:flex;justify-content:center">${portraitHTML({name:d.name,portrait:d.portrait,color:d.color},'lg')}</div>${portraitControlsHTML(d.portrait,'data-lnpt')}</div>
    <div><div class="formgrid"><label>Name<input class="tin" data-lnf="name" value="${esc(d.name)}" maxlength="28"></label><label>Epithet<span style="display:flex;gap:4px"><input class="tin" data-lnf="nick" value="${esc(d.nick||'')}" maxlength="30"><button type="button" class="btn" data-lna="nick" style="padding:4px 8px" aria-label="Generate an epithet">🎲</button></span></label>
-     <label>Ludus name<input class="tin" data-lnf="ludus" value="${esc(d.ludus)}" maxlength="32"></label><label>Home city<select class="tin" data-lnf="city">${HOME_CITIES().map(c=>`<option ${c===d.city?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
+     <label>Ludus name<input class="tin" data-lnf="ludus" value="${esc(d.ludus)}" maxlength="32"></label><label>Home city<select class="tin" data-lnf="city">${LANISTA_CITIES().map(c=>`<option ${c===d.city?'selected':''}>${esc(c)}</option>`).join('')}</select></label>
      <label>Color<input type="color" class="tin" data-lnf="color" value="${esc(d.color)}" style="height:34px;padding:2px"></label></div>
     <h4>Personality</h4><div class="presets">${Object.entries(MGR_PRESETS).map(([k,[n]])=>`<button type="button" class="preset" data-lna="pre" data-v="${k}">${esc(n)}</button>`).join('')}</div>
     <div class="perswrap" style="margin-top:8px">${MGR_KEYS.map(([k,l,desc])=>`<label class="slider" title="${esc(desc)}"><span>${l}</span><input type="range" min="1" max="100" data-lnp="${k}" value="${d.p[k]}"><output>${d.p[k]}</output></label>`).join('')}</div>
@@ -123,7 +123,7 @@ async function lanistaStudioClick(b,redraw){const a=b.dataset.lna,d=ST.lnd||(ST.
   if(a==='nick'){d.nick=genNickname();return redraw()}
   if(a==='bio'){d.bio=lanistaStory(d.name,d.city);return redraw()}
   if(a==='pre'){const P=MGR_PRESETS[b.dataset.v];if(P)d.p={...P[1]};return redraw()}
-  if(a==='copysys'){const t=MGR_PRE.find(x=>x.key===b.dataset.v);if(!t)return;ST.lnd={...blankLanista(),name:t.name+' II',ludus:t.ludus,city:HOME_CITIES().includes(t.city)?t.city:HOME_CITIES()[0],color:t.color,bio:t.bio||'',p:{...t.p}};return redraw()}
+  if(a==='copysys'){const t=MGR_PRE.find(x=>x.key===b.dataset.v);if(!t)return;ST.lnd={...blankLanista(),name:t.name+' II',ludus:t.ludus,city:LANISTA_CITIES().includes(t.city)?t.city:LANISTA_CITIES()[0],color:t.color,bio:t.bio||'',p:{...t.p}};return redraw()}
   if(a==='save'){if(!String(d.name||'').trim())d.name=genName();const now=new Date().toISOString().slice(0,10);if(!d.id){d.id='ln'+Date.now().toString(36);d.created=now}d.updated=now;
     const copy=JSON.parse(JSON.stringify(d));CUSTOM.lanistas=[...(CUSTOM.lanistas||[]).filter(x=>x.id!==d.id),copy].sort((x,y)=>String(x.name).localeCompare(String(y.name)));await Store.put('customLanistas',d.id,copy).catch(()=>{});
     mToast(`✓ Saved the lanista <b>${esc(d.name)}</b>`);return redraw()}}
@@ -141,7 +141,7 @@ function lanistasForPicker(){const all=(CUSTOM.lanistas||[]).filter(x=>x.rolls!=
     const row=`<div class="card2" style="margin:0 0 8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><b>🎩 Studio lanistas</b>${L.length?`<select class="tin" data-nmlan="1" style="width:auto"><option value="">— start from one —</option>${L.map(x=>`<option value="${esc(x.id)}">${esc(x.name)}${x.nick?' “'+esc(x.nick)+'”':''}</option>`).join('')}</select>`:'<span class="rc-sub">none yet — design them in the Creator Studio</span>'}<button class="btn tksm" type="button" data-nmxa="savelan">💾 Save this lanista to the Studio</button></div>`;
     h=h.replace('<div class="formgrid"><label>Name<span',row+'<div class="formgrid"><label>Name<span')}}catch(e){console.error(e)}return h}}
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.nmlan||!t.value||typeof NEWMGR==='undefined'||!NEWMGR)return;const x=(CUSTOM.lanistas||[]).find(l=>l.id===t.value);if(!x)return;
-  Object.assign(NEWMGR,{lanId:x.id,name:x.name,ludus:x.ludus,color:x.color,portrait:JSON.parse(JSON.stringify(x.portrait||{})),nick:x.nick||'',bio:x.bio||'',p:{...x.p}});if(HOME_CITIES().includes(x.city))NEWMGR.city=x.city;if(typeof MGR_REDRAW==='function')MGR_REDRAW()});
+  Object.assign(NEWMGR,{lanId:x.id,name:x.name,ludus:x.ludus,color:x.color,portrait:JSON.parse(JSON.stringify(x.portrait||{})),nick:x.nick||'',bio:x.bio||'',p:{...x.p}});if(LANISTA_CITIES().includes(x.city))NEWMGR.city=x.city;if(typeof MGR_REDRAW==='function')MGR_REDRAW()});
 document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('[data-nmxa="savelan"]');if(!b||typeof NEWMGR==='undefined'||!NEWMGR)return;
   const same=(CUSTOM.lanistas||[]).find(l=>l.id===NEWMGR.lanId||(l.name===NEWMGR.name&&l.ludus===NEWMGR.ludus));
   const x={...(same||{}),id:same?same.id:'ln'+Date.now().toString(36),name:NEWMGR.name,ludus:NEWMGR.ludus,city:NEWMGR.city,color:NEWMGR.color,portrait:JSON.parse(JSON.stringify(NEWMGR.portrait||{})),nick:NEWMGR.nick||'',bio:NEWMGR.bio||'',p:{...NEWMGR.p},created:(same&&same.created)||new Date().toISOString().slice(0,10),updated:new Date().toISOString().slice(0,10)};

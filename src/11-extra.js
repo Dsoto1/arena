@@ -600,7 +600,7 @@ function guideHTML(){
 
 /* ================= VISUAL FEEDBACK: floating numbers, attack flashes, banners, shake ================= */
 const FX=[],FXL=[];let fxRAF=null;
-const reduceMotion=()=>{try{return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}};
+const reduceMotion=()=>{try{if(typeof SETTINGS!=='undefined'&&SETTINGS.calm)return true;return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}}; /* v0.63: or Settings → Reduce motion */
 /* v0.46 HIT FEEDBACK: every blow that lands makes its target flash red — a figure, a beast, a Blessings pot or a pillar —
    and the Spiders offering sends a swarm crawling over whoever broke it open. */
 const HITFX=[];

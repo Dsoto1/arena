@@ -307,7 +307,8 @@ async function shareBuild(btn){
       try{const r2=await fetch('assets/'+f);if(!r2.ok)continue;const b=await r2.blob();
         data[f]=await new Promise(r3=>{const fr=new FileReader();fr.onload=()=>r3(fr.result);fr.readAsDataURL(b)})}catch(e){}}
     stat('Binding the volume…');
-    for(const [f,du] of Object.entries(data))html=html.split('assets/'+f).join(du);
+    /* v0.63: inline only real references (url(…), src="…", quoted) — never the mentions inside comments */
+    for(const [f,du] of Object.entries(data)){const fe=f.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');html=html.replace(new RegExp(`(?<=url\\(|src="|['"])assets/${fe}(?=[)"'])`,'g'),()=>du)}
     html=html.replace('<script>','<script>window.ASSET_DATA='+JSON.stringify(data)+';<\/script>\n<script>');
     const blob=new Blob([html],{type:'text/html'});const mb=(blob.size/1048576).toFixed(1);
     // v0.35: inside the published page a plain <a download> is blocked — the host's save dialog hands it over
