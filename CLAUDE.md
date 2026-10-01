@@ -216,4 +216,8 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Arena deck scans: uploaded as arenacards1-3.pdf (thirds). mkscans `arena`/`events` sections map cells → scans (`ARENA_CARDS`,
   `EVENT_CARDS`); no scan for Forge +3 AP (26, 70) or Floor Spikes (46); the Orpheus event scan is a different print (kept).
   Drive connector caps downloads at 10 MB, and drive.google.com is blocked — ask for uploads or <10 MB parts.
+- **Queued for the next batch:** repaint 5 event cards in events.jpg to match the rulebook (the game already follows it):
+  Triumviratus (FFA Royale, ends at 1st elimination → highest CF; CF+CA ticked), Familia (CF/CA crossed), Chariot (CF
+  crossed), Naumachia (PvE crossed), Ludus (R1 ends at 10x turn rotations, CF ticked). Ludus rulebook: CF ties favor the
+  elder (age) — the game breaks ties by seat order; ask David how to map it.
 - Keep watching: shared-Store writes on load (conversions must be idempotent and saved once).
