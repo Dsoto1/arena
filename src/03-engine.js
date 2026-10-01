@@ -859,9 +859,7 @@ function eliminate(victim, source) {
   if (!victim.alive) return;
   victim.alive = false;
   if (source.type !== 'retire') bloodAt(victim.r, victim.c, 'elim');
-  if (!HEADLESS && !S.sim && typeof isSpecialShow === 'function' && isSpecialShow() && source && source.p && source.p.alive) try {
-    tossFrom(5, source.p, 0.35);
-  } catch (e) {} /* v0.42: the crowd salutes the kill */
+  /* v0.57: no laurels mid-match — the crowd throws them only after the closing horns */
   S.elims++;
   fx(victim.r, victim.c, source.type === 'retire' ? 'RETIRED' : 'ELIMINATED', '#ff3b2f', {
     big: 1,

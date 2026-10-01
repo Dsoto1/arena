@@ -158,8 +158,8 @@ async function gameOver(winners,reason){
   S.over=true;S.phase='over';S.busy=false;render();
   if(!HEADLESS&&!S.sim)setTimeout(()=>{try{startCleanCrew()}catch(e){}},4200); // v0.33: the full post-show reset runs gore or no gore
   const G=S,ev=EV();recordHist();
-  if(!S.sim&&!HEADLESS&&typeof sfx==='function')setTimeout(()=>sfx('fanfare'),300);
-  if(!S.sim&&!HEADLESS&&typeof isSpecialShow==='function'&&isSpecialShow())setTimeout(()=>{try{const ws=(winners||[]).map(w=>typeof w==='number'?S.players[w]:w).filter(p=>p&&p.alive&&!p.exited);const tg=ws.length?ws:[{r:6,c:6}];for(const w of tg)tossFrom(Math.round(36/tg.length),w,0.6)}catch(e){}},900); // v0.42: laurels and flowers from the stands
+  if(!S.sim&&!HEADLESS&&typeof sfx==='function'){setTimeout(()=>sfx('fanfare'),300);setTimeout(()=>sfx('horn'),1500)} /* v0.57: the closing horns, then the laurels */
+  if(!S.sim&&!HEADLESS&&typeof isSpecialShow==='function'&&isSpecialShow())setTimeout(()=>{try{const ws=(winners||[]).map(w=>typeof w==='number'?S.players[w]:w).filter(p=>p&&p.alive&&!p.exited);const tg=ws.length?ws:[{r:6,c:6}];for(const w of tg)tossFrom(Math.round(36/tg.length),w,0.6)}catch(e){}},LAUREL_DELAY); /* v0.42: laurels and flowers from the stands — v0.57: only once the closing horns have sounded */
   // v0.22: every event played on its own moves the empire's calendar one week (Manager bouts belong to their career's week)
   if(!S.sim&&!HEADLESS&&!S.mgrCtx&&!S.specCtx&&!S.tourn&&!S.exhib&&!(S.fest&&S.fest.stage<2)&&typeof calAdvance==='function'&&!(await careerHoldsClock())){const c=calAdvance();S.calAdvanced=c;later(()=>log(`📅 The empire moves on: it is now <b>${empireDate(c.season,c.week).short}</b> — next on the schedule, ${esc(EVENTS[c.fx.ev]?EVENTS[c.fx.ev].n:'the games')} at ${esc(LOCATIONS[c.fx.loc]?LOCATIONS[c.fx.loc].n:'')}.`,'thought'),400)}
   const wset=new Set(winners.map(w=>w.id));
@@ -237,7 +237,7 @@ async function gameOver(winners,reason){
   if(saveAllOK())btns.splice(Math.max(0,btns.findIndex(b=>b.value==='export')),0,saveAllBtn);
   // the Standings button re-opens this results modal for as long as the board shows this event
   S.showResults=async(tab0)=>{let first=true;for(;;){
-    const v=await modal(title,body(),btns,{wide:1,close:'close',onOpen:done=>{const mb=$('#mBody');wirePerf(mb);if(first&&tab0==='graph'){const gt=mb.querySelector('[data-rtab="graph"]');if(gt)setTimeout(()=>gt.click(),0)}first=false;mb.addEventListener('click',e=>{
+    const v=await modal(title,body(),btns,{wide:1,close:'close',keep:v=>v==='saveall'||v==='export'||/^(save|free|thumb):/.test(String(v)),onOpen:done=>{const mb=$('#mBody');wirePerf(mb);if(first&&tab0==='graph'){const gt=mb.querySelector('[data-rtab="graph"]');if(gt)setTimeout(()=>gt.click(),0)}first=false;mb.addEventListener('click',e=>{
       const t=e.target.closest('[data-rtab]');if(t){mb.querySelectorAll('[data-rtab]').forEach(b=>b.classList.toggle('on',b===t));$('#rtab-res').hidden=t.dataset.rtab!=='res';$('#rtab-graph').hidden=t.dataset.rtab!=='graph';{const f=$('#rtab-fates');if(f)f.hidden=t.dataset.rtab!=='fates'}return}
       const sv=e.target.closest('[data-save]');if(sv)done('save:'+sv.dataset.save);const fr=e.target.closest('[data-free]');if(fr)done('free:'+fr.dataset.free);const th=e.target.closest('[data-thumb]');
       if(th&&!th.dataset.busy){th.dataset.busy='1';const x=rows.find(r=>r.p.id===+th.dataset.thumb);const fz=th.closest('.rc-fate');

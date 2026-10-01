@@ -767,6 +767,7 @@ const CLEAN_PH = {
   },
   // 10 · very last: the handlers walk every surviving beast back to its starting position
   npcs: C => {
+    return 2; /* v0.57: the beasts stay behind the gates once herded out — no live beast or gladiator is left on the sand */
     let moving = false;
     for (const n of S.npcs || []) {
       if (!n.alive || n.sr == null || n.flown) continue;
@@ -872,7 +873,7 @@ function startCleanCrew() {
     return !pl || pl.pots.length < ip.pots;
   }) || S.pillars.some(pillar => !(init.pillars || []).some(ip => ip.id === pillar.id));
   const chestWork = !!(init.chest && (!S.chest || S.chest.r !== init.chest.r || S.chest.c !== init.chest.c || S.chest.held != null));
-  const npcWork = (S.npcs || []).some(n => n.alive && n.sr != null && (n.r !== n.sr || n.c !== n.sc));
+  const npcWork = false; /* v0.57: beasts are not walked back to their marks */
   const lootWork = (S.piles || []).some(pillar => !pillar.gone && !pillar.corpse && !pileEmpty(pillar)) || (S.floor || []).length;
   const standsWork = (S.spect || []).some(x => !x.gone);
   const beastWork = (S.npcs || []).some(n => n.alive && n.t !== 'zora');
@@ -958,7 +959,7 @@ function cleanTick9(G9, C) {
           afterShowPrompt();
         }, 1600);
       } /* v0.46 */
-      log('The sand is raked smooth, the ropes come down to open the full square, the pillars stand dressed, and every beast is back at its mark. The arena waits for its next games.', 'thought');
+      log('The sand is raked smooth, the ropes come down to open the full square, the pillars stand dressed, and the beast gates are barred. The arena waits for its next games.', 'thought');
       try {
         draw();
       } catch (e) {}
@@ -1006,10 +1007,9 @@ function cleanFinishNow() {
     if (!n.alive) n.gone = 1;else if (n.t === 'zora') {
       n.out = 1;
       n.flown = 1;
-    } else if (n.sr != null) {
-      n.r = n.sr;
-      n.c = n.sc;
-      n.out = 0;
+    } else {
+      n.out = 1; /* v0.57: herded out and kept out */
+      n.gone = 1;
       n.aggro = null;
       n.netted = false;
       n.tamedBy = null;
@@ -1699,7 +1699,9 @@ function draw() {
     const m = center(-0.9, c);
     ctx.fillText(COLL[c], m.x, m.y);
   }
-  if (!isChariot() && !isNaum()) STARTS.slice(0, Math.max(4, S.players.length)).forEach(([r, c], i) => {
+  const stA = typeof startTileAlpha === 'function' ? startTileAlpha() : 1; /* v0.57: the numbered start marks fade once the match begins */
+  if (!isChariot() && !isNaum() && stA > 0) STARTS.slice(0, Math.max(4, S.players.length)).forEach(([r, c], i) => {
+    ctx.globalAlpha = stA;
     const m = center(r, c);
     ctx.fillStyle = 'rgba(60,20,10,.55)';
     ell(m.x, m.y, TW * 0.2, TW * 0.1);
@@ -1707,6 +1709,7 @@ function draw() {
     ctx.fillStyle = '#f0cf7d';
     ctx.font = `${Math.round(TW * 0.2)}px Marcellus SC, serif`;
     ctx.fillText(i + 1, m.x, m.y + 1);
+    ctx.globalAlpha = 1;
   });
   for (const t of S.tunnels) {
     const sealed = typeof tunnelUsable === 'function' && !tunnelUsable(t);
@@ -3028,13 +3031,16 @@ function modal(title, body, buttons, opt = {}) {
     modalPause();
     /* done — closes the window, removes its handlers, resumes game speed and resolves with the value. */
     const done = victim => {
-      if (typeof MM !== 'undefined' && MM.fromMenu && $('#modal').classList.contains('full') && typeof transitCover === 'function') transitCover(1400); /* v0.41: no arena flash on the way back */
+      const hold = !!(opt.keep && opt.keep(victim)); /* v0.57: a window that will reopen at once (e.g. results after Save) stays up — no flash of the arena */
+      if (!hold && typeof MM !== 'undefined' && MM.fromMenu && $('#modal').classList.contains('full') && typeof transitCover === 'function') transitCover(1400); /* v0.41: no arena flash on the way back */
       CUR_MODAL = null;
       $('#mClose').classList.remove('saveq');
       $('#mClose').textContent = '×';
-      document.body.classList.remove('modal-open');
-      $('#modal').hidden = true;
-      $('#modal').classList.remove('full');
+      if (!hold) {
+        document.body.classList.remove('modal-open');
+        $('#modal').hidden = true;
+        $('#modal').classList.remove('full');
+      }
       setTimeout(modalResume, 80);
       setTimeout(() => {
         try {

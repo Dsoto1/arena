@@ -1,0 +1,33 @@
+/* v0.57: start marks fade, no beasts after the clean-up, results stay up on Save, starting difficulty, word-houses can be taken over, save cards, unread-only mail, courting on the shortlist, LOANED tags, wagers count, travel first, end-week buttons, the bye letter, one billing per fighter, recalling a loan */
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:1000}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1800);
+const o={};
+o.arena=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();SPEED='fast';SPEEDMUL.fast=0;
+  startEvent({ev:'democritus',loc:6,seats:[{cls:'slave',cpu:true},{cls:'hero',cpu:true},{cls:'soldier',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}});
+  const a0=startTileAlpha();await new Promise(r=>setTimeout(r,400));S.turnNo=Math.max(1,S.turnNo);S.phase='action';startTileAlpha();await new Promise(r=>setTimeout(r,1300));const a1=startTileAlpha();
+  S.over=true;S.cleanDone=0;S.clean=null;cleanFinishNow();const live=S.npcs.filter(n=>n.alive&&!n.out&&!n.gone).length;
+  for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,50))}
+  const p=modal('t','<p>x</p>',[{label:'a',value:'saveall'}],{keep:v=>v==='saveall'});await new Promise(r=>setTimeout(r,50));CUR_MODAL.done('saveall');await p;const held=!document.getElementById('modal').hidden;
+  const p2=modal('t','<p>x</p>',[{label:'b',value:'close'}],{keep:v=>v==='saveall'});await new Promise(r=>setTimeout(r,50));CUR_MODAL.done('close');await p2;const shut=document.getElementById('modal').hidden;
+  return {a0,a1,live,held,shut,laurel:LAUREL_DELAY}});
+o.diff=await pg.evaluate(()=>{const r={};for(const d of ['easy','normal','hard']){newWorld({type:'custom',mgr:{name:'T',ludus:'Ludus T',city:'Capua',color:'#c0433a',p:{...MGR_PRESETS.balanced[1]},diff:d,portrait:{}}});const pm=me();r[d]=[pm.coin,rosterOf(pm).length,W_().qsLast.total]}return r});
+o.house=await pg.evaluate(async()=>{localStorage.setItem(FAMILY_HOUSES.duckio.flag,'1');openManager();await new Promise(r=>setTimeout(r,600));MGR.world=null;MGR.view='take';MGR_REDRAW();
+  const btn=document.querySelector('[data-takehouse="duckio"]');if(!btn)return 'norow';btn.click();await new Promise(r=>setTimeout(r,300));const pm=me();localStorage.removeItem(FAMILY_HOUSES.duckio.flag);return {ludus:pm.ludus,player:W_().playerId,ros:rosterOf(pm).length}});
+o.saves=await pg.evaluate(async()=>{saveWorld(true);await new Promise(r=>setTimeout(r,300));MGR.world=null;MGR.view='load';try{MGR.careers=await Store.list('mgrCareers')}catch(e){}MGR_REDRAW();const t=document.getElementById('mgrBody').innerHTML;return {rec:/record <b>\d+-\d+<\/b>/.test(t),tre:/treasury <b>-?\d+<\/b>/.test(t)}});
+await pg.evaluate(()=>{newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;MGR.tab='ludus';MGR_REDRAW()});await pg.waitForTimeout(300);
+o.mail=await pg.evaluate(()=>{const w=W_();sendLetter(w,{key:'t1',kind:'letter',from:'x',title:'Old unread',body:'<p>a</p>'});sendLetter(w,{key:'t2',kind:'letter',from:'x',title:'Old read',body:'<p>b</p>'});
+  w.letters.forEach(l=>{l.wk=w.week-2;l.until=w.week-2});w.mailRead=['L:t2'];MGR_REDRAW();const keys=[...document.querySelectorAll('#mailBox details.mail')].map(d=>d.dataset.mail);return {unread:keys.includes('L:t1'),read:keys.includes('L:t2'),past:!!document.querySelector('.mpast')}});
+o.court=await pg.evaluate(()=>{const w=W_();const g=freeAgents()[0];g.favd=false;offerVerdict(g,1,3,0);MGR.tab='recruit';MGR_REDRAW();return {fav:!!g.favd,chip:!!document.querySelector('.favbox .courtchip'),txt:(document.querySelector('.favbox .courtchip')||{}).textContent}});
+o.night=await pg.evaluate(async()=>{const w=W_(),pm=me();const g=rosterOf(pm)[0];const t=travelState(w);t.paid=false;t.cost=t.cost||5;w.night.bouts[0].bets.push({gid:w.night.bouts[0].ents[0],stake:5,odds:2,bid:'x'});MGR.tab='night';MGR_REDRAW();
+  const locked=[...document.querySelectorAll('[data-mg="enter"],[data-mg="watch"],[data-mg="fight"]')].every(b=>b.dataset.dis);const wag=/💰 Wagers · 1/.test(document.getElementById('mgrBody').innerHTML);
+  w.night.bouts[0].bets=[];t.paid=true;for(const b of w.night.bouts){b.done=true;b.res=b.res||{att:0,winners:[],rows:[],turns:1,lines:[],reason:''}}w.pend=[];MGR_REDRAW();const before=!!document.querySelector('#nightRes .wkloop');
+  const e=document.querySelector('#nightRes .wkloop [data-mg="endask"]');if(e)e.click();await new Promise(r=>setTimeout(r,200));const after=!!document.querySelector('#nightRes .wkloop');
+  return {locked,wag,before,after}});
+o.tag=await pg.evaluate(()=>{const w=W_(),pm=me();const g=rosterOf(pm)[0];const m=w.mgrs.find(x=>!x.isPlayer);g.loanFrom={mid:pm.id,fee:3,weeks:2};g.contract.mgr=m.id;const t=loanTag(g);
+  const f=recallFee(g);MGR.tab='roster';pm.coin=500;MGR_REDRAW();const btn=document.querySelector(`[data-recall="${g.id}"]`);const c0=pm.coin;if(btn)btn.click();return {tag:/LOANED/.test(t)&&/data-tip/.test(t),fee:f,btn:!!btn,back:g.contract.mgr===pm.id&&!g.loanFrom,paid:c0-pm.coin}});
+o.bill=await pg.evaluate(()=>{const w=W_(),pm=me();w.commits={};const g=rosterOf(pm)[0];const a1=w.week+4,a2=w.week+6;MGR.tab='sched';MGR_REDRAW();
+  const s1=document.getElementById('cm_'+a1),s2=document.getElementById('cm_'+a2);if(!s1||!s2)return 'nosel';s1.value=g.id;document.querySelector(`[data-mg="cm_set"][data-id="${a1}"]`).click();
+  MGR_REDRAW();const s2b=document.getElementById('cm_'+a2);s2b.value=g.id;document.querySelector(`[data-mg="cm_set"][data-id="${a2}"]`).click();return {first:!!w.commits[a1],second:!!w.commits[a2]}});
+o.bye=await pg.evaluate(async()=>{const w=W_();for(let i=0;i<6&&!w.night.bye;i++){for(const b of w.night.bouts)b.done=true;w.pend=[];await endWeek()}return {bye:!!W_().night.bye,letter:(W_().letters||[]).some(l=>/^bye-/.test(l.key))}});
+await pg.evaluate(()=>{MGR.tab='ludus';MGR_REDRAW()});await pg.screenshot({path:'v57.png'});
+console.log(JSON.stringify(o));console.log('ERRS',errs.slice(0,4));await b.close()})();

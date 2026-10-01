@@ -168,8 +168,8 @@ function devWeek(){const w=W_();for(const m of w.mgrs)m.dev=Math.round((m.dev||0
    house at a glance (and what needs you); click a tile to work on it in the panel below. */
 const gradeCol=g=>({S:'#f0cf7d','A+':'#f0cf7d',A:'#f0cf7d','B+':'#c9d1dc',B:'#c9d1dc','C+':'#cd8a52',C:'#cd8a52',D:'#7f858c',F:'#d24a3a'})[g]||'#7f858c'; /* v0.55: the medal ladder — gold A, silver B, bronze C, iron D, blood F */
 function runDashHTML(trainFn,ledgerFn){const w=W_(),m=me();const P=m.perkPts||0;const R=TRAIN_REGIMES[w.train||'off']||TRAIN_REGIMES.off;const g=ludusGrade(m);
-  const tiles=[['train','🏋','Training',R.n,w.train&&w.train!=='off'?'':'idle'],['promote','📯','Promote',`fame ${m.fame}`,''],['consil','🏛','Consilium','your advisors',''],
-    ['fac','🏗','Facilities',`<span class="gradebox sm" style="--gc:${gradeCol(g)}">${g}</span>`,m.facWk===w.week?'':'ready'],['school','🎓','Schooling',`<span class="ptbox sm${P?' on':''}">${P}</span>`,P?'ready':''],['ledger','📜','Ledger',`${(w.tlog||[]).length} entries`,'']];
+  const tiles=[['train','🏋','Training',R.n,w.train&&w.train!=='off'?'':'idle'],['promote','📯','Promote',`fame ${m.fame}`,''],['school','🎓','Schooling',`<span class="ptbox sm${P?' on':''}">${P}</span>`,P?'ready':''],
+    ['fac','🏗','Facilities',`<span class="gradebox sm" style="--gc:${gradeCol(g)}">${g}</span>`,m.facWk===w.week?'':'ready'],['consil','🏛','Consilium','your advisors',''],['ledger','📜','Ledger',`${(w.tlog||[]).length} entries`,'']];
   if(MGR.run==='train'||!MGR.run)MGR.run='promote'; /* v0.45: the drills live in the Training Yard tab now */
   const cur=MGR.run;
   const panel=cur==='train'?trainFn():cur==='promote'?promoteCardHTML():cur==='consil'?consiliumHTML():cur==='fac'?facilitiesHTML():cur==='school'?schoolingCardHTML():ledgerFn();

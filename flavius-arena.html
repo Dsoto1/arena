@@ -1134,7 +1134,7 @@ button.railhd.fold{all:unset;box-sizing:border-box;display:none;cursor:pointer;w
 </style>
 
 <header class="bar">
-  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.56</span></div>
+  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.57</span></div>
   <div class="status" id="status"></div>
   <div class="tools speedtray" id="speedTray">
     <div class="seg speedseg" role="group" aria-label="CPU speed"><span class="lbl">Speed</span><button type="button" data-speed="pause" title="Pause CPU turns">❚❚ Pause</button><button type="button" data-speed="step" title="Step: each CPU action waits for you — Next ▶ or Space — with a caption explaining it">⏯ Step</button><button type="button" data-speed="slow" class="on">Slow</button><button type="button" data-speed="normal">Normal</button><button type="button" data-speed="fast">Fast</button></div>
@@ -4979,9 +4979,7 @@ function eliminate(victim, source) {
   if (!victim.alive) return;
   victim.alive = false;
   if (source.type !== 'retire') bloodAt(victim.r, victim.c, 'elim');
-  if (!HEADLESS && !S.sim && typeof isSpecialShow === 'function' && isSpecialShow() && source && source.p && source.p.alive) try {
-    tossFrom(5, source.p, 0.35);
-  } catch (e) {} /* v0.42: the crowd salutes the kill */
+  /* v0.57: no laurels mid-match — the crowd throws them only after the closing horns */
   S.elims++;
   fx(victim.r, victim.c, source.type === 'retire' ? 'RETIRED' : 'ELIMINATED', '#ff3b2f', {
     big: 1,
@@ -10971,6 +10969,7 @@ const CLEAN_PH = {
   },
   // 10 · very last: the handlers walk every surviving beast back to its starting position
   npcs: C => {
+    return 2; /* v0.57: the beasts stay behind the gates once herded out — no live beast or gladiator is left on the sand */
     let moving = false;
     for (const n of S.npcs || []) {
       if (!n.alive || n.sr == null || n.flown) continue;
@@ -11076,7 +11075,7 @@ function startCleanCrew() {
     return !pl || pl.pots.length < ip.pots;
   }) || S.pillars.some(pillar => !(init.pillars || []).some(ip => ip.id === pillar.id));
   const chestWork = !!(init.chest && (!S.chest || S.chest.r !== init.chest.r || S.chest.c !== init.chest.c || S.chest.held != null));
-  const npcWork = (S.npcs || []).some(n => n.alive && n.sr != null && (n.r !== n.sr || n.c !== n.sc));
+  const npcWork = false; /* v0.57: beasts are not walked back to their marks */
   const lootWork = (S.piles || []).some(pillar => !pillar.gone && !pillar.corpse && !pileEmpty(pillar)) || (S.floor || []).length;
   const standsWork = (S.spect || []).some(x => !x.gone);
   const beastWork = (S.npcs || []).some(n => n.alive && n.t !== 'zora');
@@ -11162,7 +11161,7 @@ function cleanTick9(G9, C) {
           afterShowPrompt();
         }, 1600);
       } /* v0.46 */
-      log('The sand is raked smooth, the ropes come down to open the full square, the pillars stand dressed, and every beast is back at its mark. The arena waits for its next games.', 'thought');
+      log('The sand is raked smooth, the ropes come down to open the full square, the pillars stand dressed, and the beast gates are barred. The arena waits for its next games.', 'thought');
       try {
         draw();
       } catch (e) {}
@@ -11210,10 +11209,9 @@ function cleanFinishNow() {
     if (!n.alive) n.gone = 1;else if (n.t === 'zora') {
       n.out = 1;
       n.flown = 1;
-    } else if (n.sr != null) {
-      n.r = n.sr;
-      n.c = n.sc;
-      n.out = 0;
+    } else {
+      n.out = 1; /* v0.57: herded out and kept out */
+      n.gone = 1;
       n.aggro = null;
       n.netted = false;
       n.tamedBy = null;
@@ -11903,7 +11901,9 @@ function draw() {
     const m = center(-0.9, c);
     ctx.fillText(COLL[c], m.x, m.y);
   }
-  if (!isChariot() && !isNaum()) STARTS.slice(0, Math.max(4, S.players.length)).forEach(([r, c], i) => {
+  const stA = typeof startTileAlpha === 'function' ? startTileAlpha() : 1; /* v0.57: the numbered start marks fade once the match begins */
+  if (!isChariot() && !isNaum() && stA > 0) STARTS.slice(0, Math.max(4, S.players.length)).forEach(([r, c], i) => {
+    ctx.globalAlpha = stA;
     const m = center(r, c);
     ctx.fillStyle = 'rgba(60,20,10,.55)';
     ell(m.x, m.y, TW * 0.2, TW * 0.1);
@@ -11911,6 +11911,7 @@ function draw() {
     ctx.fillStyle = '#f0cf7d';
     ctx.font = `${Math.round(TW * 0.2)}px Marcellus SC, serif`;
     ctx.fillText(i + 1, m.x, m.y + 1);
+    ctx.globalAlpha = 1;
   });
   for (const t of S.tunnels) {
     const sealed = typeof tunnelUsable === 'function' && !tunnelUsable(t);
@@ -13232,13 +13233,16 @@ function modal(title, body, buttons, opt = {}) {
     modalPause();
     /* done — closes the window, removes its handlers, resumes game speed and resolves with the value. */
     const done = victim => {
-      if (typeof MM !== 'undefined' && MM.fromMenu && $('#modal').classList.contains('full') && typeof transitCover === 'function') transitCover(1400); /* v0.41: no arena flash on the way back */
+      const hold = !!(opt.keep && opt.keep(victim)); /* v0.57: a window that will reopen at once (e.g. results after Save) stays up — no flash of the arena */
+      if (!hold && typeof MM !== 'undefined' && MM.fromMenu && $('#modal').classList.contains('full') && typeof transitCover === 'function') transitCover(1400); /* v0.41: no arena flash on the way back */
       CUR_MODAL = null;
       $('#mClose').classList.remove('saveq');
       $('#mClose').textContent = '×';
-      document.body.classList.remove('modal-open');
-      $('#modal').hidden = true;
-      $('#modal').classList.remove('full');
+      if (!hold) {
+        document.body.classList.remove('modal-open');
+        $('#modal').hidden = true;
+        $('#modal').classList.remove('full');
+      }
       setTimeout(modalResume, 80);
       setTimeout(() => {
         try {
@@ -14214,8 +14218,8 @@ async function gameOver(winners,reason){
   S.over=true;S.phase='over';S.busy=false;render();
   if(!HEADLESS&&!S.sim)setTimeout(()=>{try{startCleanCrew()}catch(e){}},4200); // v0.33: the full post-show reset runs gore or no gore
   const G=S,ev=EV();recordHist();
-  if(!S.sim&&!HEADLESS&&typeof sfx==='function')setTimeout(()=>sfx('fanfare'),300);
-  if(!S.sim&&!HEADLESS&&typeof isSpecialShow==='function'&&isSpecialShow())setTimeout(()=>{try{const ws=(winners||[]).map(w=>typeof w==='number'?S.players[w]:w).filter(p=>p&&p.alive&&!p.exited);const tg=ws.length?ws:[{r:6,c:6}];for(const w of tg)tossFrom(Math.round(36/tg.length),w,0.6)}catch(e){}},900); // v0.42: laurels and flowers from the stands
+  if(!S.sim&&!HEADLESS&&typeof sfx==='function'){setTimeout(()=>sfx('fanfare'),300);setTimeout(()=>sfx('horn'),1500)} /* v0.57: the closing horns, then the laurels */
+  if(!S.sim&&!HEADLESS&&typeof isSpecialShow==='function'&&isSpecialShow())setTimeout(()=>{try{const ws=(winners||[]).map(w=>typeof w==='number'?S.players[w]:w).filter(p=>p&&p.alive&&!p.exited);const tg=ws.length?ws:[{r:6,c:6}];for(const w of tg)tossFrom(Math.round(36/tg.length),w,0.6)}catch(e){}},LAUREL_DELAY); /* v0.42: laurels and flowers from the stands — v0.57: only once the closing horns have sounded */
   // v0.22: every event played on its own moves the empire's calendar one week (Manager bouts belong to their career's week)
   if(!S.sim&&!HEADLESS&&!S.mgrCtx&&!S.specCtx&&!S.tourn&&!S.exhib&&!(S.fest&&S.fest.stage<2)&&typeof calAdvance==='function'&&!(await careerHoldsClock())){const c=calAdvance();S.calAdvanced=c;later(()=>log(`📅 The empire moves on: it is now <b>${empireDate(c.season,c.week).short}</b> — next on the schedule, ${esc(EVENTS[c.fx.ev]?EVENTS[c.fx.ev].n:'the games')} at ${esc(LOCATIONS[c.fx.loc]?LOCATIONS[c.fx.loc].n:'')}.`,'thought'),400)}
   const wset=new Set(winners.map(w=>w.id));
@@ -14293,7 +14297,7 @@ async function gameOver(winners,reason){
   if(saveAllOK())btns.splice(Math.max(0,btns.findIndex(b=>b.value==='export')),0,saveAllBtn);
   // the Standings button re-opens this results modal for as long as the board shows this event
   S.showResults=async(tab0)=>{let first=true;for(;;){
-    const v=await modal(title,body(),btns,{wide:1,close:'close',onOpen:done=>{const mb=$('#mBody');wirePerf(mb);if(first&&tab0==='graph'){const gt=mb.querySelector('[data-rtab="graph"]');if(gt)setTimeout(()=>gt.click(),0)}first=false;mb.addEventListener('click',e=>{
+    const v=await modal(title,body(),btns,{wide:1,close:'close',keep:v=>v==='saveall'||v==='export'||/^(save|free|thumb):/.test(String(v)),onOpen:done=>{const mb=$('#mBody');wirePerf(mb);if(first&&tab0==='graph'){const gt=mb.querySelector('[data-rtab="graph"]');if(gt)setTimeout(()=>gt.click(),0)}first=false;mb.addEventListener('click',e=>{
       const t=e.target.closest('[data-rtab]');if(t){mb.querySelectorAll('[data-rtab]').forEach(b=>b.classList.toggle('on',b===t));$('#rtab-res').hidden=t.dataset.rtab!=='res';$('#rtab-graph').hidden=t.dataset.rtab!=='graph';{const f=$('#rtab-fates');if(f)f.hidden=t.dataset.rtab!=='fates'}return}
       const sv=e.target.closest('[data-save]');if(sv)done('save:'+sv.dataset.save);const fr=e.target.closest('[data-free]');if(fr)done('free:'+fr.dataset.free);const th=e.target.closest('[data-thumb]');
       if(th&&!th.dataset.busy){th.dataset.busy='1';const x=rows.find(r=>r.p.id===+th.dataset.thumb);const fz=th.closest('.rc-fate');
@@ -18740,12 +18744,12 @@ function startHTML(){
     ${c.sale?'<p class="rc-sub" style="margin-top:8px">🏜 The league’s house rules stay as they were founded.</p>':RULESBLK9(c)}
     <div class="mbtns"><button class="btn primary" type="button" data-mg="nmgo">${c.takeKey?'Take the reins':c.sale?'✍ Sign the sale and open the new house':'Open the ludus'}</button><button class="btn" type="button" data-mg="back">Back</button></div></div></div>`}
   if(MGR.view==='load'||MGR.view==='manage'){const man=MGR.view==='manage';const L=MGR.careers;
-    return `<h4>${man?'🗂 Manage your Manager saves':'📂 Load a Manager career'}</h4>${L.length?`<div class="list2">${L.map(c=>`<div class="lrow"><div class="t"><b>${esc(c.ludus)}</b> ${c.dead?'<span class="badge bad">✝ collapsed</span>':''}<small>${esc(c.name)} · season ${c.season}, week ${wkOf(c.week)} · saved ${esc(c.updated||'')}</small></div><div class="a">${man?`<button class="btn" type="button" data-mg="dlcareer" data-id="${c.id}">⬇ Download</button><button class="btn" type="button" data-mg="delcareer" data-id="${c.id}">🗑 Delete</button>`:`<button class="btn primary" type="button" data-mg="load" data-id="${c.id}">${c.dead?'Visit the ruin':'▶ Load'}</button>`}</div></div>`).join('')}</div>`:'<p class="rc-sub">No careers saved yet.</p>'}<div class="mbtns"><button class="btn" type="button" data-mg="back">← All options</button></div>`}
+    return `<h4>${man?'🗂 Manage your Manager saves':'📂 Load a Manager career'}</h4>${L.length?`<div class="list2">${L.map(c=>`<div class="lrow"><div class="t"><b>${esc(c.ludus)}</b> ${c.dead?'<span class="badge bad">✝ collapsed</span>':''}<small>${esc(c.name)} · season ${c.season}, week ${wkOf(c.week)}${c.wins!=null?` · record <b>${c.wins}-${Math.max(0,(c.bouts||0)-(c.wins||0))}</b>`:''}${c.coin!=null?` · treasury <b>${c.coin}</b>`:''} · saved ${esc(c.updated||'')}</small></div><div class="a">${man?`<button class="btn" type="button" data-mg="dlcareer" data-id="${c.id}">⬇ Download</button><button class="btn" type="button" data-mg="delcareer" data-id="${c.id}">🗑 Delete</button>`:`<button class="btn primary" type="button" data-mg="load" data-id="${c.id}">${c.dead?'Visit the ruin':'▶ Load'}</button>`}</div></div>`).join('')}</div>`:'<p class="rc-sub">No careers saved yet.</p>'}<div class="mbtns"><button class="btn" type="button" data-mg="back">← All options</button></div>`}
   if(MGR.view==='take')return `<h4>Take control of a ludus</h4><div class="list2">${MGR_PRE.map(t=>`<div class="lrow" style="--pc:${t.color}"><div class="t"><b>${esc(t.name)}</b><small>${esc(t.ludus)} · ${esc(t.city)} · fame ${t.fame} (${mgrTier(t.fame)}) · ${t.coin} coin · ${t.n} fighters</small><small style="color:var(--bone)">${esc(t.bio)}</small><small>${MGR_KEYS.map(([k,l])=>`${l} ${t.p[k]}`).join(' · ')}</small></div><div class="a"><button class="btn primary" type="button" data-mg="take" data-id="${t.key}">Take over</button></div></div>`).join('')}</div><div class="mbtns"><button class="btn" type="button" data-mg="back">Back</button></div>`;
   return `<p>Run a ludus as its <b>lanista</b>. Recruit fighters the way college coaches recruit: every fighter has an <b>interest</b> level in every ludus, driven by what they want (coin, glory, honor, spectacle, training, home, arena time) and by how your personality and record grade on each. Scout them with sparring bouts simulated in the Ludus, enter them on match nights, bet on the bouts, and poach stars from rival stables. Every bout is a real Flavius Rule event: simulate it instantly or watch it live on the board. And mind the books — three week-ends in the red, or a season ended in debt, and the creditors close the ludus <b>for good</b>.</p>
     <div class="mbtns" style="margin:0 0 12px"><button class="btn primary" type="button" data-mg="create">Create a new lanista<small>start Unknown, with 40 coin and one raw recruit</small></button><button class="btn" type="button" data-mg="takeview">Take over an existing ludus<small>${MGR_PRE.length} lanistae, from struggling to Imperial</small></button></div>
     ${MGR.careers.length>1||MGR.careers.some(c=>c.dead)?`<h4>Career leaderboard</h4><div style="overflow-x:auto"><table class="tally"><tr><th>#</th><th>Lanista</th><th>Status</th><th>Fame</th><th>Record</th><th>Treasury</th><th>Betting</th><th>Deaths</th></tr>${[...MGR.careers].sort((a,b)=>(b.fame||0)-(a.fame||0)||(b.wins||0)-(a.wins||0)).map((c,i)=>`<tr><td class="n">${i+1}</td><td><b>${esc(c.name)}</b><br><span class="rc-sub">${esc(c.ludus)}</span></td><td>${c.dead?`<span style="color:var(--blood2)">✝ collapsed</span><br><span class="rc-sub">S${c.season} W${c.week}</span>`:`S${c.season} W${c.week}${MGR.activeCid===c.id?' · ★':''}`}</td><td class="n">${c.fame??'—'}${c.fame!=null?` <span class="rc-sub">${mgrTier(c.fame)}</span>`:''}</td><td class="n">${c.wins!=null?`${c.wins}-${Math.max(0,(c.bouts||0)-(c.wins||0))}`:'—'}</td><td class="n">${c.coin??'—'}</td><td class="n">${c.betNet!=null?((c.betNet>=0?'+':'')+c.betNet):'—'}</td><td class="n">${c.deaths??'—'}</td></tr>`).join('')}</table><p class="hint">Ranked by fame, then wins. Collapsed ludi stay on the board as monuments — that is the point of a monument.</p></div>`:''}
-    <h4>Saved careers</h4><p class="rc-sub" style="margin:0 0 6px">One career is your <b>active wallet</b>: its treasury bankrolls every wager you place outside Manager mode (the Wagers window, watching any event).</p>${MGR.careers.length?`<div class="list2">${MGR.careers.map(c=>`<div class="lrow"><div class="t"><b>${esc(c.name)}</b> ${c.custom?customTag():''}${c.dead?'<span class="badge bad">✝ collapsed</span>':''}${MGR.activeCid===c.id?'<span class="badge gold" title="This treasury bankrolls your wagers everywhere">★ active wallet</span>':''}<small>${esc(c.ludus)} · season ${c.season}, week ${wkOf(c.week)} · saved ${esc(c.updated||'')}</small></div><div class="a"><button class="btn primary" type="button" data-mg="load" data-id="${c.id}">${c.dead?'Visit the ruin':'Continue'}</button>${!c.dead&&MGR.activeCid!==c.id?`<button class="btn" type="button" data-mg="setactive" data-id="${c.id}">Use for wagers</button>`:''}<button class="btn" type="button" data-mg="delcareer" data-id="${c.id}">Delete</button></div></div>`).join('')}</div>`:'<p style="color:var(--muted)">No careers yet.</p>'}`;
+    <h4>Saved careers</h4><p class="rc-sub" style="margin:0 0 6px">One career is your <b>active wallet</b>: its treasury bankrolls every wager you place outside Manager mode (the Wagers window, watching any event).</p>${MGR.careers.length?`<div class="list2">${MGR.careers.map(c=>`<div class="lrow"><div class="t"><b>${esc(c.name)}</b> ${c.custom?customTag():''}${c.dead?'<span class="badge bad">✝ collapsed</span>':''}${MGR.activeCid===c.id?'<span class="badge gold" title="This treasury bankrolls your wagers everywhere">★ active wallet</span>':''}<small>${esc(c.ludus)} · season ${c.season}, week ${wkOf(c.week)}${c.wins!=null?` · record <b>${c.wins}-${Math.max(0,(c.bouts||0)-(c.wins||0))}</b>`:''}${c.coin!=null?` · treasury <b>${c.coin}</b>`:''} · saved ${esc(c.updated||'')}</small></div><div class="a"><button class="btn primary" type="button" data-mg="load" data-id="${c.id}">${c.dead?'Visit the ruin':'Continue'}</button>${!c.dead&&MGR.activeCid!==c.id?`<button class="btn" type="button" data-mg="setactive" data-id="${c.id}">Use for wagers</button>`:''}<button class="btn" type="button" data-mg="delcareer" data-id="${c.id}">Delete</button></div></div>`).join('')}</div>`:'<p style="color:var(--muted)">No careers yet.</p>'}`;
 }
 function hubHTML(){
   const w=W_(),m=me();const ros=rosterOf(m);const rec=`${m.wins}-${Math.max(0,m.bouts-m.wins)}`;
@@ -18899,7 +18903,7 @@ function nightResultsHTML(){const w=W_(),n=w.night,m=me();if(!n||!n.bouts.every(
   const card=b=>{const T=TIERS[b.tier];const E=EVENTS[b.ev]||{};const R=b.res;if(!R)return `<div class="nres"><b>${T.n}</b> — called off.</div>`;
     const win=R.winners.map(gById).filter(Boolean);const wm=win[0]&&win[0].contract?mgrById(win[0].contract.mgr):null;tot.purse+=b.purse;
     const rows=[...R.rows].sort((a,c)=>(a.place||9)-(c.place||9)).map(r=>{const g=gById(r.gid);const gm=g&&g.contract?mgrById(g.contract.mgr):null;const mine=gm&&gm.isPlayer;const sd=boutSide(b,b.ents.indexOf(r.gid));
-      return `<tr class="${mine?'me':''}${lentOut(g)?' lent':''}"><td>${r.place?['','🥇','🥈','🥉'][r.place]||r.place+'th':''}</td><td><b>${esc(g?g.name:r.name||'?')}</b>${mine?' <span class="mytag">YOURS</span>':''}${loanTag(g)}${sd?` <span class="sidetag" style="--sc:${sd.col}">${sd.n}</span>`:''}</td><td class="rc-sub">${gm?esc(gm.ludus):'free agent'}</td><td class="n">${r.f} CF</td><td>${boutFate(r)}</td></tr>`}).join('');
+      return `<tr class="${mine?'me':''}${lentOut(g)?' lent':''}${r.won?' won':''}"><td>${r.place?['','🥇','🥈','🥉'][r.place]||r.place+'th':''}</td><td><b>${esc(g?g.name:r.name||'?')}</b>${mine?' <span class="mytag">YOURS</span>':''}${loanTag(g)}${sd?` <span class="sidetag" style="--sc:${sd.col}">${sd.n}</span>`:''}</td><td class="rc-sub">${gm?esc(gm.ludus):'free agent'}</td><td class="n">${r.f} CF</td><td>${boutFate(r)}</td></tr>`}).join('');
     let bnet=0;const bets=b.bets.map(x=>{const won=R.winners.includes(x.gid);const pay=won?betPay(x.stake,x.odds).net:0;tot.bets+=pay-x.stake;bnet+=pay-x.stake; // v0.43: each wager as a slip
       return `<span class="betslip ${won?'won':'lost'}" title="${x.stake} coin on ${esc(gById(x.gid)?.name||'?')} at ${x.odds}×"><i>${won?'✓':'✗'}</i><b>${esc(gById(x.gid)?.name||'?')}</b><span>${x.stake}c @ ${x.odds}×</span><em>${won?'+'+pay:'−'+x.stake}</em></span>`}).join('');
     return `<div class="nres"><div class="nreshd"><b>${T.n}</b> <span class="rc-sub">${esc(E.n||'')} · ${R.turns||'?'} turns</span><span class="rc-sub" title="How many came to see it">🏟 ${R.att?R.att.toLocaleString()+' in the stands':'attendance not counted'}</span><span class="nwin">🏆 ${win.length?win.map(g=>esc(g.name)).join(' & '):'no winner'}${win.some(g=>g.contract&&mgrById(g.contract.mgr)&&mgrById(g.contract.mgr).isPlayer)?' <span class="mytag">YOURS</span>':''}${wm?` <span class="rc-sub">(${esc(wm.ludus)})</span>`:''} · purse ${ICO.coin} ${b.purse}</span></div>
@@ -18920,7 +18924,7 @@ function nightHTML(){
       ${!b.done&&!b.rig?`<div class="bstake">💰 <b>Your stake</b> <button type="button" class="btn tksm" data-stk="${bi}|-5">−5</button><input type="number" class="tin" id="mgStake${bi}" min="1" max="${m.coin}" value="${Math.min(10,Math.max(1,m.coin))}"><button type="button" class="btn tksm" data-stk="${bi}|5">+5</button> <span class="rc-sub">coin — then press <b>Bet</b> beside a fighter · treasury ${m.coin}</span></div>`:''}
       <table class="tally"><tr><th>Fighter</th><th>Ludus</th><th title="What a rating does on the sand: it sets how well the fighter plays (below 60 like an Easy CPU with loose, noisy decisions; 60-79 Normal; 80+ Hard, near-perfect choices), the armor fitted before the bout (+1 AP per 6 points above 62, up to +5) and coin in the purse (+1 per 5 points above 70, up to +4). Morale shifts it: high morale adds 1 AP and a CF, low morale takes an AP, broken morale drops a skill tier. Injuries and severed limbs lower the rating itself." style="cursor:help">Rating ⓘ</th><th>Book</th><th title="Your own scouting reports vs the bookmaker: a scouted fighter whose true chance beats the public odds is a VALUE bet; one the public overrates is a TRAP.">Your scouts</th><th>Odds</th><th>${b.done?'Result':'Bet'}</th></tr>
       ${b.ents.map((id,i)=>{const g=gById(id);if(!g)return '';const gm=g.contract?mgrById(g.contract.mgr):null;const r=b.res&&b.res.rows.find(x=>x.gid===id);
-        return `<tr class="${gm&&gm.isPlayer?'me':''}${lentOut(g)?' lent':''}"><td>${gm&&typeof flagChip==='function'?flagChip(gm,13,'Fights under '+gm.ludus):''}<button class="btn" type="button" data-mg="fav" data-id="${g.id}" title="${g.favd?'Remove from':'Pin to'} your recruiting board" style="padding:1px 4px;border:none;background:none;font-size:14px;color:${g.favd?'var(--gold2)':'var(--dim)'}">${g.favd?'★':'☆'}</button>${gArt(g,'xs')} <b>${esc(g.name)}</b>${gm&&gm.isPlayer?' <span class="mytag">YOURS</span>':''}${lentOut(g)?loanTag(g):''} ${(()=>{const sd=boutSide(b,i);return sd?`<span class="sidetag" style="--sc:${sd.col}">${sd.n}</span> `:''})()}${gTags(g)}${g.inj?' <span title="'+esc(g.inj.label)+'">🩹</span>':''}</td><td>${gm?`<span style="color:${gm.color}">${esc(gm.ludus)}</span>${g.loanFrom&&g.loanFrom.mid!==gm.id&&mgrById(g.loanFrom.mid)?`<span class="rc-sub loanfrom"> (on loan from: ${esc(mgrById(g.loanFrom.mid).ludus)})</span>`:''}`:'<span class="rc-sub">free agent</span>'}</td><td>${starHTML(starsOf(estOvr(g).v))} <span class="odds">${estOvr(g).txt}</span></td><td class="n">${Math.round(bk[i]*100)}%</td><td class="n">${g.scout||(gm&&gm.isPlayer)?`${Math.round(est[i]*100)}%${est[i]-bk[i]>=0.07?' <span class="badge good" title="Your scouts rate them well above the public line — the odds pay too much. Bet.">▲ value</span>':est[i]-bk[i]<=-0.07?' <span class="badge bad" title="The public flatters them — the odds pay too little. Stay away, or bet against.">▼ trap</span>':''}`:'<span class="rc-sub" title="Scout them (Recruiting tab, 3h) or run a trial bout to see their true chance here">not scouted</span>'}</td><td class="n odds">${odds[i]}×</td>
+        return `<tr class="${gm&&gm.isPlayer?'me':''}${lentOut(g)?' lent':''}${r&&r.won?' won':''}"><td>${gm&&typeof flagChip==='function'?flagChip(gm,13,'Fights under '+gm.ludus):''}<button class="btn" type="button" data-mg="fav" data-id="${g.id}" title="${g.favd?'Remove from':'Pin to'} your recruiting board" style="padding:1px 4px;border:none;background:none;font-size:14px;color:${g.favd?'var(--gold2)':'var(--dim)'}">${g.favd?'★':'☆'}</button>${gArt(g,'xs')} <b>${esc(g.name)}</b>${gm&&gm.isPlayer?' <span class="mytag">YOURS</span>':''}${g.loanFrom?loanTag(g):''} ${(()=>{const sd=boutSide(b,i);return sd?`<span class="sidetag" style="--sc:${sd.col}">${sd.n}</span> `:''})()}${gTags(g)}${g.inj?' <span title="'+esc(g.inj.label)+'">🩹</span>':''}</td><td>${gm?`<span style="color:${gm.color}">${esc(gm.ludus)}</span>${g.loanFrom&&g.loanFrom.mid!==gm.id&&mgrById(g.loanFrom.mid)?`<span class="rc-sub loanfrom"> (on loan from: ${esc(mgrById(g.loanFrom.mid).ludus)})</span>`:''}`:'<span class="rc-sub">free agent</span>'}</td><td>${starHTML(starsOf(estOvr(g).v))} <span class="odds">${estOvr(g).txt}</span></td><td class="n">${Math.round(bk[i]*100)}%</td><td class="n">${g.scout||(gm&&gm.isPlayer)?`${Math.round(est[i]*100)}%${est[i]-bk[i]>=0.07?' <span class="badge good" title="Your scouts rate them well above the public line — the odds pay too much. Bet.">▲ value</span>':est[i]-bk[i]<=-0.07?' <span class="badge bad" title="The public flatters them — the odds pay too little. Stay away, or bet against.">▼ trap</span>':''}`:'<span class="rc-sub" title="Scout them (Recruiting tab, 3h) or run a trial bout to see their true chance here">not scouted</span>'}</td><td class="n odds">${odds[i]}×</td>
           <td>${b.done?(r?`${r.place?`<b title="${r.won?'Last gladiator standing':r.elimTurn?`Eliminated on turn ${r.elimTurn}${r.elimBy?' by '+esc(r.elimBy):''}`:'Standing when the bout ended'}">${['','1st','2nd','3rd','4th','5th','6th'][r.place]||r.place+'th'}</b> · `:''}${boutFate(r)} · ${r.f} CF`:''):`<button class="btn" type="button" data-mg="bet" data-id="${bi}|${id}|${odds[i]}" style="padding:3px 8px" ${m.coin<1?'disabled':b.rig?dis([true,'You fixed this bout — the bookmaker will not take your money on it.']):''}>Bet</button>`}</td></tr>`}).join('')}</table>
       ${b.bets.length?`<p class="rc-sub" style="margin:4px 0 0">Your bets: ${b.bets.map(x=>`${x.stake} on ${esc(gById(x.gid)?.name||'?')} at ${x.odds}×`).join(' · ')}</p>`:''}
       ${b.done?`<p class="rc-sub" style="margin:6px 0 0">${esc(b.res.reason||'')} · ${b.res.turns} turns. ${b.res.lines.join(' · ')}</p>`:!inOrder?`<p class="rc-sub" style="margin:6px 0 0">⏳ Waiting its turn — the card runs in order: ${n.bouts.slice(0,bi).filter(x=>!x.done).map(x=>TIERS[x.tier].n).join(', ')} first.</p>`:`<div class="acts" style="margin-top:8px">${!myIn&&(b.wd||0)>=2?`<span class="badge bad">🔒 Closed to your house this week — two withdrawals</span>`:''}${!myIn&&(b.wd||0)<2&&avail.length?`<select class="tin" id="ent${bi}" style="width:auto">${avail.map(g=>`<option value="${g.id}">${esc(g.name)} (${effOvr(g)})</option>`).join('')}</select><button class="btn" type="button" data-mg="enter" data-id="${bi}">Enter your fighter<small>replaces a free agent</small></button>`:''}${!myIn&&!avail.length&&mine.some(g=>g.bench&&!g.inj&&!entered.has(g.id)&&effOvr(g)>=T.lo-6&&effOvr(g)<=T.hi+6)?`<span class="rc-sub">🪑 Only benched fighters fit this bout — make them starters on the Roster tab.</span>`:''}${myIn?`<button class="btn primary" type="button" data-mg="fight" data-id="${bi}">Fight it yourself<small>take your fighter's reins, live on the board</small></button><button class="btn" type="button" data-mg="withdraw" data-id="${bi}" title="Pulling out unsettles the box office; after two withdrawals this bout is closed to your house for the week">Withdraw your fighter<small>${(b.wd||0)>=1?'last chance — a second withdrawal closes this card to you':'the box office will notice'}</small></button>${boutRiggable(b)?`<button class="btn" type="button" data-mg="rig" data-id="${bi}" ${dis(needCoin(m,rigCost(b)))} style="border-color:#7a2a52">🤝 Fix the bout<small>${rigCost(b)} coin under the table · your fighter wins · ${Math.round(12+(w.rigCount||0)*2)}% chance Flavius finds out${(m.rigStrikes||0)?' · CAUGHT ONCE ALREADY — twice and the ludus is seized':''}</small></button>`:b.rig?'<span class="badge bad" title="The other lanistae have taken your coin. Nobody talks. Probably.">🤝 fixed</span>':''}`:''}<button class="btn" type="button" data-mg="watch" data-id="${bi}">Watch live<small>on the arena board</small></button>${W_().spectOK!==false?`<button class="btn" type="button" data-mg="spect" data-id="${bi}">🎟 Spectate<small>${({under:3,feature:6,main:12})[b.tier]||6} coin · a seat in the stands</small></button>`:''}<button class="btn primary" type="button" data-mg="sim" data-id="${bi}">Simulate<small>instant result</small></button></div>`}</div>`};
@@ -20714,7 +20718,7 @@ async function trophyMgrClick(a,id,b,ctx){const w=W_(),pm=me();if(!w||!pm)return
   if(a==='iv_decline'){const iv=w.invites.find(x=>x.id===id);if(iv){iv.status='declined';saveWorld();say(`Declined with thanks: ${esc(iv.n)}.`)}return true}
   if(a==='iv_withdraw'){const iv=w.invites.find(x=>x.id===id);if(iv){iv.status='declined';pm.fame=clamp((pm.fame||0)-2,0,100);saveWorld();say(`Withdrawn from ${esc(iv.n)} — the host will remember (−2 fame).`)}return true}
   if(a==='cm_set'){const abs=+id;const s=document.getElementById('cm_'+abs);const gid=s&&s.value;if(!gid){say('Pick a fighter to bill.');return true}if(abs-w.week<3){say('The billing window has closed for that week.');return true}
-    w.commits=w.commits||{};if(Object.values(w.commits).some(c=>c.gid===gid&&false))return true;w.commits[abs]={gid,ahead:abs-w.week,at:w.week};saveWorld();say(`📌 ${esc(gById(gid).name)} is billed for week ${absSW(w,abs).wk} — ${abs-w.week} weeks ahead.`);return true}
+    w.commits=w.commits||{};{const prev=Object.entries(w.commits).find(([k,c])=>c&&c.gid===gid&&+k>=w.week&&+k!==abs);if(prev){say(`📌 ${esc(gById(gid).name)} is already billed for week ${absSW(w,+prev[0]).wk}. One billing per fighter — undo that one first.`);return true}} /* v0.57: one upcoming billing per fighter */w.commits[abs]={gid,ahead:abs-w.week,at:w.week};saveWorld();say(`📌 ${esc(gById(gid).name)} is billed for week ${absSW(w,abs).wk} — ${abs-w.week} weeks ahead.`);return true}
   if(a==='cm_undo'){const abs=+id;if(abs-w.week<3){say('Too late — the posters are printed.');return true}delete w.commits[abs];saveWorld();redraw();return true}
   if(a==='sp_run'){MGR.busy=true;try{await specRunNext()}finally{MGR.busy=false}saveWorld();redraw();return true}
   if(a==='sp_all'){MGR.busy=true;try{let g=0;while(w.special&&!w.special.champ&&g++<30)await specRunNext()}finally{MGR.busy=false}saveWorld();redraw();return true}
@@ -20988,8 +20992,8 @@ function devWeek(){const w=W_();for(const m of w.mgrs)m.dev=Math.round((m.dev||0
    house at a glance (and what needs you); click a tile to work on it in the panel below. */
 const gradeCol=g=>({S:'#f0cf7d','A+':'#f0cf7d',A:'#f0cf7d','B+':'#c9d1dc',B:'#c9d1dc','C+':'#cd8a52',C:'#cd8a52',D:'#7f858c',F:'#d24a3a'})[g]||'#7f858c'; /* v0.55: the medal ladder — gold A, silver B, bronze C, iron D, blood F */
 function runDashHTML(trainFn,ledgerFn){const w=W_(),m=me();const P=m.perkPts||0;const R=TRAIN_REGIMES[w.train||'off']||TRAIN_REGIMES.off;const g=ludusGrade(m);
-  const tiles=[['train','🏋','Training',R.n,w.train&&w.train!=='off'?'':'idle'],['promote','📯','Promote',`fame ${m.fame}`,''],['consil','🏛','Consilium','your advisors',''],
-    ['fac','🏗','Facilities',`<span class="gradebox sm" style="--gc:${gradeCol(g)}">${g}</span>`,m.facWk===w.week?'':'ready'],['school','🎓','Schooling',`<span class="ptbox sm${P?' on':''}">${P}</span>`,P?'ready':''],['ledger','📜','Ledger',`${(w.tlog||[]).length} entries`,'']];
+  const tiles=[['train','🏋','Training',R.n,w.train&&w.train!=='off'?'':'idle'],['promote','📯','Promote',`fame ${m.fame}`,''],['school','🎓','Schooling',`<span class="ptbox sm${P?' on':''}">${P}</span>`,P?'ready':''],
+    ['fac','🏗','Facilities',`<span class="gradebox sm" style="--gc:${gradeCol(g)}">${g}</span>`,m.facWk===w.week?'':'ready'],['consil','🏛','Consilium','your advisors',''],['ledger','📜','Ledger',`${(w.tlog||[]).length} entries`,'']];
   if(MGR.run==='train'||!MGR.run)MGR.run='promote'; /* v0.45: the drills live in the Training Yard tab now */
   const cur=MGR.run;
   const panel=cur==='train'?trainFn():cur==='promote'?promoteCardHTML():cur==='consil'?consiliumHTML():cur==='fac'?facilitiesHTML():cur==='school'?schoolingCardHTML():ledgerFn();
@@ -22717,6 +22721,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'0.57',ic:'🌿',t:'A cleaner sand, a fairer start',hi:['New houses choose a starting difficulty: Easy (250 coin, two fighters), Normal (125, one) or Hard (50, none)','Houses called in by a word can be taken over like any other','Courting shows on the shortlist (what you offered, what they ask); scouting or courting shortlists a fighter','Call a loaned fighter home for the rest of the loan plus a quarter','A letter for your first bye week; saved careers show record and treasury'],fx:['Laurels fly only after the closing horns; the start marks fade once play begins; no beasts are left on the sand after the clean-up','Saving gladiators keeps the results window up','Mail keeps only what you have not read','Match Week: winners in gold, YOURS in blue, LOANED in purple with the terms; Wagers shows a count; enter, watch and walk wait for the road to be paid; End the week from the results hides the buttons','Consilium and Schooling swap places; one billing per fighter on the Season tab']},
   {v:'0.56',ic:'📬',t:'The lanista\'s mail',hi:['A mailbox in Your ludus: offers, invitations, letters and reports arrive as mail — accept or refuse right from the letter, and past mail stays readable','The left menu counts unread mail; Match Week keeps one quiet line when the Consilium advises against entering','The five ratings join the glossary, tooltips, both guides, the to-do list and the arena hints','The Play Now guide re-run on 600 simulated events, with a new chart: wins by rating perk'],fx:['Rolled Intelligence follows a fighter\'s overall rating, so most CPUs play Normal again']},
   {v:'0.55',ic:'📈',t:'Ratings that grow, a syndicate that collects',hi:['Five ratings for every gladiator: Speed (movement), Strength (damage), Intelligence (CPU play), Luck (coin) and Charisma (CF) — classes no longer grant those perks, the ratings do','Manager: ratings grow slowly with training, practice, fights and fame; your fighters\' growth and new perks are reported each week','Creator Studio: rating sliders with a 375-point pool; classes can bring a tamed ally (any beast) or stones; beasts show Speed and Strength','Sica\'s syndicate lends only to houses in the red, never touches your treasury — but miss the weekly minimum three times and a spear finds your best fighter','Home games, letters from the Consilium, gold-shining A grades, a folding left menu, your fighters marked on Match Week'],fx:['Hard CPUs no longer get bonus coin and an elixir','Pay-to-join offers only in Your ludus and Recruiting','Sound on Safari, iPhone and iPad copies, with a chip when the browser holds it back']},
   {v:'0.54',ic:'🃏',t:'Piacula, invitationals, a friendlier designer',hi:['Every class on the sand brings its own Piaculum — drawn in the printed style with the class name in its colour','Event Designer: a Beasts & cohorts picker with real tokens (stock, yours, myth starters, cohorts), real pieces on the grid, and arena music','Invitationals (was Special events): pick an arena and a trophy, then purse, field and frequency','Results: Save all to the Ludus Flavius; the Fate card and score up front','Manager: fighters bank the coin they survive with; hungry free agents pay to join small houses; fame-hungry fighters ask for a fight'],fx:['Class designer: the printed 8 are the system defaults; unique names and colours; weakness explained; no champion field; clearer thumbnails','Favorites live in Recruiting; Sort is a compact tray; a taken-over house shows its treasury, and How a week works starts open','Play Now plays a random unlocked theme; hints start off; the Play Now roster fills only by hand','Tamed beasts no longer steal aggro; Speed: Paused; Take a Seat; the Multiplayer tray closes on an outside click; the editors’ code word is new']},
@@ -26732,6 +26737,87 @@ const RATINGS_MGR=`<h4>Ratings that grow</h4><ul>
   for(const [k,n] of [['coin','Luck +1'],['cf','Charisma +1'],['mv','Speed +1'],['dmg','Strength +1']])if(P[k]&&P[k]['1'])rows.push({l:n,v:P[k]['1'].win,tip:`${n}: wins ${P[k]['1'].win}% (without: ${P[k]['0'].win}%) · average ${P[k]['1'].cf} CF`});
   const chart=gvHBar('Win rate by rating perk','share of events won · hover for CF',rows,{max:40});
   return h.replace('</div>\n   <ul class="gfind">',chart+'</div>\n   <ul class="gfind">')}}
+/* =====================================================================
+   70-V57 · v0.57
+   =====================================================================
+   ARENA — laurels and flowers fly only after the closing horns (LAUREL_DELAY; none mid-match); the numbered
+   start marks fade once the first turn begins; the camera comes back to the normal view when an event ends;
+   the clean-up show leaves no live beast on the sand (07-ui); Save on the results keeps the window up (07-ui).
+   MANAGER — (sections below)
+   ===================================================================== */
+const LAUREL_DELAY=3400; /* ms after the end: fanfare, the closing horns, then the laurels (TWEAK) */
+/* startTileAlpha — 1 before the match; fades to 0 over a second once the first turn begins */
+function startTileAlpha(){if(!S||S.phase==='setup'||!S.turnNo)return 1;if(HEADLESS)return 0;
+  if(!S._stFade){S._stFade=performance.now()}const k=(performance.now()-S._stFade)/1100;
+  if(k<1&&!S._stRaf){S._stRaf=requestAnimationFrame(()=>{S._stRaf=0;try{draw()}catch(e){}})}return Math.max(0,1-k)}
+{const base=gameOver;gameOver=async function(){if(S){S.zoomIn=false;S.zoomOut=false}return base.apply(this,arguments)}}
+/* ---------- MANAGER · a new house picks its starting difficulty ---------- */
+const START_DIFF={easy:{n:'Easy',coin:250,glads:2,d:'250 coin and two fighters on the roster'},normal:{n:'Normal',coin:125,glads:1,d:'125 coin and one fighter'},hard:{n:'Hard',coin:50,glads:0,d:'50 coin and an empty roster'}}; /* TWEAK */
+{const base=newWorld;newWorld=function(choice){const w=base.apply(this,arguments);try{if(choice&&choice.type==='custom'&&!w.tutorial){const D=START_DIFF[(choice.mgr&&choice.mgr.diff)||'normal'];const pm=me();
+  let ros=rosterOf(pm);while(ros.length>D.glads){ros[ros.length-1].contract=null;ros=rosterOf(pm)}
+  while(ros.length<D.glads){const g=genGlad({ovr:44+rnd(9),rookie:true});g.contract={mgr:pm.id,wage:askWage(g),weeks:8,since:1};g.scout=2;w.glads.push(g);ros=rosterOf(pm)}
+  pm.coin=D.coin;w.startDiff=(choice.mgr&&choice.mgr.diff)||'normal';
+  w.qsLast={season:w.season,founding:true,lines:[[`🏛 The Senate’s founding grant — ${D.n} start`,D.coin],...(ros.length?[[`🛡 ${ros.length} raw recruit${ros.length===1?'':'s'} under contract`,0]]:[])],total:D.coin,seen:false};saveWorld(true)}}catch(e){console.error(e)}return w}}
+function startDiffHTML(c){const k=c.diff||'normal';return `<h4>Starting difficulty</h4><div class="seg sdiff">${Object.entries(START_DIFF).map(([id,D])=>`<button type="button" class="${k===id?'on':''}" data-sdiff="${id}" title="${esc(D.d)}">${D.n}<small style="display:block;font-size:11px;color:var(--muted)">${D.coin}c · ${D.glads} fighter${D.glads===1?'':'s'}</small></button>`).join('')}</div>`}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-sdiff]');if(!b||typeof NEWMGR==='undefined'||!NEWMGR)return;e.stopPropagation();NEWMGR.diff=b.dataset.sdiff;if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
+/* ---------- MANAGER · houses called in by a word can be taken over like any other ---------- */
+function houseTakeRows(){return Object.entries(FAMILY_HOUSES).filter(([k])=>houseOn(k)).map(([k,H])=>`<div class="lrow" style="--pc:${H.mgr.color}"><div class="t"><b>${esc(H.mgr.name)}</b><small>${esc(H.mgr.ludus)} · ${esc(H.mgr.city)} · fame 22 · 180 coin · ${esc(H.child.name)} and three fighters</small><small style="color:var(--bone)">${esc(H.mgr.bio)}</small></div><div class="a"><button class="btn primary" type="button" data-takehouse="${k}">Take over</button></div></div>`).join('')}
+{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{
+  if(MGR.view==='take'){const rows=houseTakeRows();if(rows)h=h.replace('</div><div class="mbtns"><button class="btn" type="button" data-mg="back">Back</button></div>',rows+'</div><div class="mbtns"><button class="btn" type="button" data-mg="back">Back</button></div>')}
+  if(MGR.view==='create'&&typeof NEWMGR!=='undefined'&&NEWMGR&&!NEWMGR.takeKey&&!NEWMGR.sale){const D=START_DIFF[NEWMGR.diff||'normal'];
+    h=h.replace(/You start with 40 coin, no fame and one raw recruit\./,`You start with ${D.coin} coin, no fame and ${D.glads?D.glads===1?'one raw recruit':'two raw recruits':'no fighters'}.`);
+    h=h.replace('<div class="mbtns"><button class="btn primary" type="button" data-mg="nmgo">',startDiffHTML(NEWMGR)+'<div class="mbtns"><button class="btn primary" type="button" data-mg="nmgo">')}
+  h=h.replace(/start Unknown, with 40 coin and one raw recruit/,'start Unknown — choose Easy, Normal or Hard')}catch(e){}return h}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-takehouse]');if(!b)return;e.stopPropagation();const k=b.dataset.takehouse;if(!houseOn(k))return;
+  MGR.view=null;const w=newWorld({type:'pre',key:MGR_PRE[0].key});const m=houseMgr(w,k);if(!m){if(typeof mToast==='function')mToast('That house could not be found in the league.');return}
+  const old=w.mgrs.find(x=>x.isPlayer);if(old){old.isPlayer=false}m.isPlayer=true;w.playerId=m.id;
+  for(const x of w.mgrs)if(!x.isPlayer)x.rivalry=(x.rivals&&x.rivals[m.id])||0;
+  const ros=rosterOf(m);w.qsLast={season:w.season,founding:true,lines:[['🏛 The treasury as it stands today — the coffers you take over with the house',m.coin],[`🛡 ${ros.length} fighters already under contract`,0]],total:m.coin,seen:false};
+  MGR.tab='ludus';saveWorld(true);if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
+/* ---------- MANAGER · the mail keeps only what is unread ---------- */
+/* a letter stays while unread (up to 8 weeks); once read it goes at the week's end; nothing is archived */
+{const base=mailLive;mailLive=function(){const w=W_();const R=new Set(w.mailRead||[]);const L0=w.letters;
+  w.letters=(L0||[]).filter(x=>!x.read&&(x.until>=w.week||(!R.has('L:'+x.key)&&w.week-x.wk<=8))).map(x=>x.until>=w.week?x:{...x,until:w.week});
+  try{return base.apply(this,arguments)}finally{w.letters=L0}}}
+{const base=mailPanelHTML;mailPanelHTML=function(){return base.apply(this,arguments).replace(/<details class="mpast">[\s\S]*<\/details><\/div>$/,'</div>')}}
+/* ---------- MANAGER · courting shows on the shortlist; scouting or courting puts them there ---------- */
+{const base=offerVerdict;offerVerdict=function(g,wage,weeks,bonus){const v=base.apply(this,arguments);try{const w=W_(),m=me();const ask=/wants about (\d+) coin a week/.exec(v.why||'');
+  g.court={mgr:m.id,wk:w.week,wage,weeks,ask:ask?+ask[1]:null,ok:!!v.ok,why:v.ok?'':String(v.why||'').replace(/^[^ ]+ [^ ]+ /,'')};g.favd=true}catch(e){}return v}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mg]');if(!b)return;const a=b.dataset.mg;if(!['scout','pitch','visit','gift','trial','offer','feast'].includes(a))return;
+  try{const gid=String(b.dataset.id||MGR.sel||'').split('|')[0];const g=gById(gid);if(g&&!(g.contract&&g.contract.mgr===me().id))g.favd=true}catch(err){}},true);
+{const base=recruitHTML;recruitHTML=function(){let h=base.apply(this,arguments);try{const i=h.indexOf('<div class="card2 favbox">');if(i<0)return h;const j=h.indexOf('</table>',i);let box=h.slice(i,j);const m=me(),w=W_();
+  for(const g of w.glads.filter(x=>x.favd&&x.court&&x.court.mgr===m.id&&w.week-x.court.wk<=2)){const c=g.court;
+    const chip=`<span class="courtchip" data-tip="${esc(`Week ${wkOf(c.wk)}: you offered ${c.wage} coin a week for ${c.weeks} weeks. ${c.ok?'They would sign.':c.ask?`They want about ${c.ask} coin a week.`:c.why}`)}">💬 ${c.wage}c×${c.weeks}wk${c.ok?' · ✓ would sign':c.ask?` · asks ${c.ask}c`:' · not yet'}</span>`;
+    box=box.replace(`<b>${esc(g.name)}</b> <span class="rc-sub">`,`<b>${esc(g.name)}</b> ${chip} <span class="rc-sub">`)}
+  h=h.slice(0,i)+box+h.slice(j)}catch(e){}return h}}
+/* ---------- MANAGER · Match Week: tags, wagers count, travel first, end-week buttons ---------- */
+loanTag=function(g){if(!g||!g.loanFrom)return '';const pm=me();const from=mgrById(g.loanFrom.mid);const to=g.contract?mgrById(g.contract.mgr):null;const L=g.loanFrom;
+  const tip=`On loan from ${from?from.ludus:'another house'} to ${to?to.ludus:'another house'} · ${L.fee} coin a week · ${L.weeks} week${L.weeks===1?'':'s'} left${pm&&L.mid===pm.id?' · your fighter':''}`;
+  return ` <span class="loantag" data-tip="${esc(tip)}">LOANED</span>`};
+{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(w&&w.night&&!w.dead){const n=(w.night.bouts||[]).reduce((a,b)=>a+(b.bets||[]).length,0);if(n)h=h.replace('💰 Wagers</button>',`💰 Wagers · ${n}</button>`)}}catch(e){}return h}}
+{const base=nightHTML;nightHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(typeof travelOK==='function'&&!travelOK(w)&&!w.night.bye){const t=travelState(w);const msg=`Travel to ${LOCATIONS[w.night.loc].n} first (${t.cost} coin) — pay the road at the top of Match Week, then enter, watch or walk the sand.`;
+  h=h.replace(/<button ([^>]*?)data-mg="(enter|fight|watch|spect|scoutarena)"/g,(m0,pre,a)=>`<button ${pre}data-mg="${a}" data-dis="${esc(msg)}" data-tip="${esc(msg)}" aria-disabled="true"`)}}catch(e){}return h}}
+{const base=weekLoopBtns;weekLoopBtns=function(){const w=W_();if(MGR.confirmEnd||(w&&MGR.loopHidden===w.week))return '';return base.apply(this,arguments)}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.wkloop [data-mg="endask"]');if(!b)return;const w=W_();if(w)MGR.loopHidden=w.week},true);
+/* ---------- MANAGER · the first bye week brings a letter ---------- */
+{const base=endWeek;endWeek=async function(){const w0=W_();const r=await base.apply(this,arguments);try{const w=W_();if(r!==false&&w&&w===w0&&!w.dead&&!w.tutorial&&w.night&&w.night.bye&&!w.byeLetter){w.byeLetter=1;
+  sendLetter(w,{key:'bye-'+w.week,kind:'letter',from:'the Consilium',seal:'🌿',title:'A bye week: no games, and much to do',until:w.week,
+    body:`<p>No bouts this week, lanista. The houses that win seasons use these weeks well:</p><ul><li><b>Heal</b>: send the hurt to the Infirmary; a week without the sand lets wounds close.</li><li><b>Drill</b>: set the Training Yard; no Match Week means no wear on top of the work.</li><li><b>Recruit</b>: you have ${BYE_HOURS} extra recruiting hours — scout, pitch and sign before the others wake up.</li><li><b>Shop</b>: Vulso's cart and the market are in town; kit your starters for the weeks ahead.</li><li><b>Plan</b>: bill a fighter on the Season tab for a big bout three or more weeks out.</li></ul>`});saveWorld()}}catch(e){console.error(e)}return r}}
+/* ---------- MANAGER · call a loaned fighter home (the rest of the loan + 25%) ---------- */
+const RECALL_MULT=1.25; /* TWEAK */
+const recallFee=g=>Math.ceil((g.loanFrom.fee||1)*Math.max(1,g.loanFrom.weeks||1)*RECALL_MULT);
+{const base=loansCardHTML;loansCardHTML=function(){let h=base.apply(this,arguments);try{const pm=me(),w=W_();
+  for(const g of w.glads.filter(g=>g.alive&&g.loanFrom&&g.loanFrom.mid===pm.id&&g.contract&&g.contract.mgr!==pm.id)){const f=recallFee(g);const busy=(w.night&&w.night.bouts||[]).some(b=>!b.done&&b.ents.includes(g.id));
+    h=h.replace(`<b>${esc(g.name)}</b> <span class="rc-sub">${effOvr(g)}</span></td>`,`<b>${esc(g.name)}</b> <span class="rc-sub">${effOvr(g)}</span> <button class="btn tksm" type="button" data-recall="${g.id}" ${busy?dis([true,'They fight for the borrowing house this week — call them back after the bout.']):pm.coin<f?dis([true,`The treasury cannot cover the ${f} coin recall fee.`]):`data-tip="${esc(`Pay ${esc((mgrById(g.contract.mgr)||{}).ludus||'them')} ${f} coin — the rest of the loan plus a quarter — and ${esc(g.name)} returns to your roster now.`)}"`}>↩ Call back · ${f}c</button></td>`)}}catch(e){}return h}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-recall]');if(!b)return;e.stopPropagation();if(b.dataset.dis)return;const w=W_(),pm=me();const g=gById(b.dataset.recall);if(!g||!g.loanFrom||g.loanFrom.mid!==pm.id)return;
+  const f=recallFee(g);if(pm.coin<f)return;const bor=mgrById(g.contract.mgr);pm.coin-=f;if(bor){bor.coin+=f;bor.relB=(bor.relB||0)-3}
+  g.contract.mgr=pm.id;delete g.loanFrom;ghist(g,`called home early from ${bor?bor.ludus:'a loan'} (${f} coin)`);tnews(`↩ ${esc(g.name)} is called home from ${esc(bor?bor.ludus:'the loan')} — ${f} coin paid.`);saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
+/* ---------- styles ---------- */
+{const st=document.createElement('style');st.textContent=`
+table.tally tr.won td b{color:var(--gold2)}.mytag{background:#7fc0d8!important;color:#0e1a20!important}
+.loantag{border-color:#9a6ad6!important;color:#f0e2ff!important;background:rgba(138,92,192,.28)!important;font-weight:700;letter-spacing:.06em;cursor:help}
+.courtchip{display:inline-block;font:11px var(--mono);padding:1px 6px;border-radius:9px;border:1px solid #6a5130;color:var(--gold2);background:rgba(240,207,125,.08);cursor:help}
+.sdiff button{min-width:110px}`;document.head.appendChild(st)}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
