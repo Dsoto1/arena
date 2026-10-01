@@ -230,5 +230,5 @@ One global script; files are concatenated in order. Later "version modules" patc
   `EVENT_CARDS`); no scan for Forge +3 AP (26, 70) or Floor Spikes (46); the Orpheus event scan is a different print (kept).
   Drive connector caps downloads at 10 MB, and drive.google.com is blocked — ask for uploads or <10 MB parts.
 - Decided (v0.59): Ludus cut ties → most CF, then most coin, then d12 roll-offs (`ludusRank` in 72-v59); Orpheus keeps the
-  game's event art. Open: Naumachia "first team = highest combined age" and simultaneous team turns (game: teammates back to back).
+  game's event art. Naumachia: a random team goes first (seeded shuffle in 05-flow); teammates still play back to back.
 - Keep watching: shared-Store writes on load (conversions must be idempotent and saved once).

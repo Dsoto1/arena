@@ -530,8 +530,9 @@ async function startEvent(config) {
   }
   crowdStart();
   if (ev.kind === 'naumachia') {
-    const teams = [...new Set(S.players.map(player => player.team))].sort();
+    const teams = shuffle([...new Set(S.players.map(player => player.team))].sort()); /* v0.59: a random team goes first (Virgilante) */
     S.order = teams.flatMap(target => S.players.filter(player => player.team === target).map(player => player.id));
+    log(`🎲 The lots are drawn: Team ${esc(String(teams[0]))} takes the first turn.`);
   }
   if (ev.kind === 'chariot') {
     S.order = S.players.map(player => player.id);
