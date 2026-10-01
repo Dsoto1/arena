@@ -138,7 +138,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   `protoOpen` (`[data-proto]`: menu footer D.Soto, Play Now guide) shows assets/proto1-5.jpg.
 - **v0.59 (72-77):** `72-v59` — Ludus/Road → Play Now hand-off holds the curtain (`HANDOFF_SEL`); menu launches keep the curtain
   while the mode opens (`MM.launchPending`, `transitUncover` wrapper; the built-in 3 s watchdog stands down); `turnSweep` clears
-  #cardShow/#bubbles at each `beginTurn`; `#mmMute` beside Settings (no #audChip). `73-credits` — `creditsOpen(tab)` (Credits |
+  #cardShow/#bubbles at each `beginTurn`; `#mmMute` beside Settings (no #audChip); #btnSimEnd moved into the Speed tray ("⏭ To the end"). `73-credits` — `creditsOpen(tab)` (Credits |
   Prototype), assets cr_*.*, text in tools/art/credits/. `74-zora` — `STANDEE_SRC.zoraMini` + `drawZoraMini` (figure/standee
   styles; cylinders and panels keep the disc). `75-naum59` — `SHIP_LAYOUT59` (TL/BR east-west, TR/BL north-south), `shipDeck`
   (no corners), `shipBoarding`/`canBoard` (nReach rewritten), `WATER_TOK59` pinwheel, art over the whole box (`shipBoxAt`),

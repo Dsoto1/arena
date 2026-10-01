@@ -54,3 +54,9 @@ function ludusRank(list,cut=2){const L=[...list].sort((a,b)=>b.cf-a.cf||(b.coin|
     log(`🎲 Ludus tie (${edge.cf} CF, ${edge.coin||0} coin) — d12: ${rs.map(x=>`${nm(x.p)} ${x.r}`).join(', ')}.`);
     const vals=[...new Set(rs.map(x=>x.r))].sort((a,b)=>b-a);return vals.flatMap(v=>rollOff(rs.filter(x=>x.r===v).map(x=>x.p)))};
   const i0=L.findIndex(same);return [...L.slice(0,i0),...rollOff(tied),...L.slice(i0+tied.length)]}
+/* ---------- "Sim to end" lives in the Speed tray, right of Fast (it is the last pace, after all); the same #btnSimEnd element
+   moves there (always shown beside the active pace when it applies), so its click, its show/hide in render() and the Manager lesson's pointer all still work ---------- */
+{const se=document.getElementById('btnSimEnd'),seg=document.querySelector('#speedTray .speedseg');
+  if(se&&seg){se.classList.remove('btn');se.textContent='⏭ To the end';se.title='Resolve the rest of the event at once — straight to the results';seg.appendChild(se);
+    se.addEventListener('click',()=>setTimeout(()=>seg.classList.remove('open'),0))}
+  const st=document.createElement('style');st.textContent=`#speedTray #btnSimEnd[hidden]{display:none!important}.speedtray .seg:not(.open) #btnSimEnd:not([hidden]){display:inline-block}#speedTray #btnSimEnd{border-left:1px solid var(--line2)}`;document.head.appendChild(st)}
