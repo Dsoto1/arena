@@ -233,6 +233,8 @@ One global script; files are concatenated in order. Later "version modules" patc
 - **v0.60** Road from the gladiator's record (any living gladiator), Hall Road box without the dropdown, Annals loop fixed,
   smooth window hand-offs; tame card face, tamed beasts without aggro, rulebook counters, CF offerings fall, truce marker.
   (Published as artifact Version 72.)
+- **v0.61** screen manager (79-screens): one decider for what shows when a window closes; parallel regression (~11 min).
+  (Published as artifact Version 73.)
 
 ## 8. Next steps / open items
 - **Planned (agreed with Virgilante):** (done in v0.61: the screen manager, 79-screens) next — Intelligence AI tiers: an offline tuner (tools/aitune.js, simEvent) evolves the skill

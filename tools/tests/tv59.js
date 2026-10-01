@@ -14,7 +14,7 @@ o.arena=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide()
   startEvent({ev:'democritus',loc:6,seats:[{cls:'venatore'},{cls:'hero',cpu:true},{cls:'soldier',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}});
   await new Promise(r=>setTimeout(r,1200));for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,80))}
   const z=spawnZora(S.players[0]);const zm=!!(typeof STANDEE_SRC!=='undefined'&&STANDEE_SRC.zoraMini)&&typeof drawZoraMini==='function';
-  cardShow('c:wealth3',cur(),'🂠 Drawn');const old=document.getElementById('cardShow').firstElementChild;const c0=old?1:0;S.busy=false;S.pending=null;advanceTurn();await new Promise(r=>setTimeout(r,400));
+  cardShow('c:wealth3',cur(),'🂠 Drawn');const old=document.getElementById('cardShow').firstElementChild;const c0=old?1:0;S.busy=false;S.pending=null;const tn=S.turnNo;advanceTurn();for(let i=0;i<60&&S.turnNo===tn;i++)await new Promise(r=>setTimeout(r,50));await new Promise(r=>setTimeout(r,250));
   return {zora:!!z,zm,c0,c1:old&&old.isConnected?1:0}});
 ok(o.arena.zora&&o.arena.zm,'zora mini');ok(o.arena.c0>=1&&o.arena.c1===0,'turn sweep');
 o.naum=await pg.evaluate(async()=>{S&&(S.over=true);startEvent({ev:'naumachia',loc:6,seats:['soldier','hero','slave','royalty','venatore','amazonia'].map((c,i)=>({cls:c,cpu:true,team:'T'+(i%3)})),opts:{spect:0}});
