@@ -29,7 +29,7 @@ armor, trophies, banners, events, tournaments, invitationals, editors, spectator
 flavius/   (repo root; build.sh and tools/*.py resolve paths from their own location)
   build.sh              concatenates src/ in a fixed order into flavius-arena.html, then node --check → prints SYNTAX_OK
   flavius-arena.html    the built game (references assets/ relatively)
-  assets/               23 image assets (arena.jpg card sheet, classes.jpg, weapons.jpg, armor2.png, avatar.png,
+  assets/               23 image assets (armor2/chtok are .webp since v0.57) (arena.jpg card sheet, classes.jpg, weapons.jpg, armor2.png, avatar.png,
                         blessing.png, tunnel_open.jpg / tunnel_door.jpg, rtok.webp, logo.png, map.jpg, …)
   src/                  ~69 source files (see order in build.sh)
   share/                self-contained share builds (assets inlined as data URIs), flavius-rule-arena-vX.YY.html
@@ -189,7 +189,9 @@ One global script; files are concatenated in order. Later "version modules" patc
   rolled Intelligence follows the overall (most CPUs Normal). (Published as artifact Version 67.)
 - **v0.57** starting difficulty for new houses; word-houses takeable; shortlist courting chips; loan recall; bye letter;
   save cards with record/treasury; laurels after horns; start marks fade; no beasts after clean-up; no flicker on Save;
-  unread-only mail; Match Week colours/tags/wager count/travel gating/end-week buttons; Consilium↔Schooling; one billing.
+  unread-only mail; Match Week colours/tags/wager count/travel gating/end-week buttons; Consilium↔Schooling; one billing;
+  sharper art from David's PDF scans (tools/mkscans.py): fates, chariot cards/tokens, armor, 8 new offering tokens.
+  (Published as artifact Version 68.)
 
 ## 8. Next steps / open items
 - **Readability pass, phase 2+** (David chose "phased"): files 02–07 are done (Babel scope-safe parameter renames via
@@ -202,5 +204,6 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Hot-seat LAN/Online lobbies are placeholders.
 - Next (agreed): Sica's syndicate as its own league house (roster, enforcers, dirty tricks) — design with David first.
 - Audio in the artifact-downloaded copy: v0.55 added Safari/iOS fixes; confirm with David which device/browser it was.
-- Elixir offering tokens (+2/+4): waiting for David's scan of the offering-token sheet; 4 free slots in rtok.webp.
+- Scans: David's original PDFs are not in the repo (uploads only). `pdfimages -png <pdf> <dir>/i` then
+  `python3 tools/mkscans.py <root> [out]`; rtok.webp now has 5 rows (RTOK_ROWS).
 - Keep watching: shared-Store writes on load (conversions must be idempotent and saved once).
