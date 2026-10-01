@@ -375,12 +375,13 @@ async function cpuMarket(player) {
     vet = weak(player, 'tax') ? 1 : 0;
   const weakest = Math.min(...armsAttached(player).map(a => wScore(player['w' + a])));
   const disc = player.items.find(i => i.kind === 'card' && i.key === 'discount');
-  const reserve = Math.round(P.coin / (player.diff === 'hard' ? 24 : 12)); // merchants keep a purse
-  const wantW = weakest < (player.diff === 'hard' ? 4.5 : 3.5) && armsAttached(player).length > 0 && (P.aggression + P.hunt) / 2 > 30;
-  const wantA = (P.survival > 55 || player.diff === 'hard' && P.survival > 40) && LOCS.some(l => player.hp[l] > 0 && player.ap[l] < 2);
+  const sharp = aiSk(player, 'merchant', false); // Master: buys what the body lacks, whatever the temper
+  const reserve = sharp ? 0 : Math.round(P.coin / (player.diff === 'hard' ? 24 : 12)); // merchants keep a purse
+  const wantW = weakest < (player.diff === 'hard' ? 4.5 : 3.5) && armsAttached(player).length > 0 && (sharp || (P.aggression + P.hunt) / 2 > 30);
+  const wantA = (sharp || P.survival > 55 || player.diff === 'hard' && P.survival > 40) && LOCS.some(l => player.hp[l] > 0 && player.ap[l] < 2);
   const rich = player.coin >= 12 + vet + reserve;
   if (!(wantW || wantA || rich) || player.cf < 3 + (player.diff === 'hard' ? 0 : 1) || player.coin + (disc ? 2 : 0) < 4 + vet + reserve) return;
-  if (P.cf > 80 && player.cf >= 17 && player.cf < 50 && rand() < .5) return; // showmen hoard CF for freedom
+  if (!sharp && P.cf > 80 && player.cf >= 17 && player.cf < 50 && rand() < .5) return; // showmen hoard CF for freedom
   player.cf -= 3;
   player.market = true;
   log(`${nm(player)} spends 3 CF to unlock the market.`);
@@ -876,6 +877,14 @@ function dangerMap(player) {
   }
   return d;
 }
+/* aiSk — is a CPU skill on? d is the old Easy/Normal/Hard answer; 80-aitiers lets each Intelligence tier set skills one by one. */
+function aiSk(player, k, d) {
+  return d;
+}
+async function aiLookahead(player) {
+  return false;
+}
+async function aiDodge(player) {}
 /* cpuAct — runs a CPU's whole Phase 3: maybe a thought, items, Zora, market, diplomacy, gifts, then up to 18 steps of: exit if allowed, loot, open the chest, best attack,
    push/topple, tunnel escape or shortcut, else walk one tile toward cpuGoals while routing around dangerMap.
    TWEAK: thought odds .25, item-use odds (.6 Easy, .8 normal, always Hard), Easy hesitation 25% (skips PvP that turn), schemer betrayal (loyalty < 25, 25% vs a hurt truce partner),
@@ -883,14 +892,14 @@ function dangerMap(player) {
 async function cpuAct(player) {
   const G = S;
   const P = pers(player);
-  player.hesitant = player.diff === 'easy' && rand() < .25;
+  player.hesitant = !aiSk(player, 'steady', player.diff !== 'easy') && rand() < .25;
   if (rand() < .25) think(player, hurtBad(player) ? pickOne(QUOTES.hurt) : pickOne(QUOTES.start), 'think');
-  if (player.diff === 'hard' || rand() < (player.diff === 'easy' ? .6 : .8)) await cpuUseItems(player);
+  if (aiSk(player, 'items', player.diff === 'hard') || rand() < (player.diff === 'easy' ? .6 : .8)) await cpuUseItems(player);
   if (G !== S || !player.alive) return;
   if (player.abil === 'zora' && caAllowed() && (player.zoraUsed || 0) < (player.abilVal || 1) && !player.noEagle) {
     if (spawnZora(player)) player.zoraUsed = (player.zoraUsed || 0) + 1;
   }
-  if (player.diff !== 'easy') await cpuMarket(player);
+  if (aiSk(player, 'shop', player.diff !== 'easy')) await cpuMarket(player);
   await cpuDiplomacy(player);
   await cpuHelpAllies(player);
   await flushMF();
@@ -962,7 +971,9 @@ async function cpuAct(player) {
       };
     }
     if (best) {
-      const focus = player.diff === 'hard' && best.t.kind === 'player' && player.mv > 0 && player.mv <= 2;
+      const q0 = best.t.ref,
+        reachKill = best.t.kind === 'player' && ['head', 'chest'].some(l => q0.hp[l] > 0 && q0.hp[l] + q0.ap[l] <= 2 * srcPow(best.src) + statDmgB(player));
+      const focus = aiSk(player, 'focus', player.diff === 'hard') && best.t.kind === 'player' && player.mv > 0 && (player.mv <= 2 || aiSk(player, 'focusAny', false) || aiSk(player, 'focusKill', false) && reachKill); // Master: spends a full walk on Focus when a vital blow can kill
       if (best.t.kind === 'player' && rand() < .3) think(player, pickOne(QUOTES.pvp), 'think');else if (best.t.kind === 'npc' && rand() < .2) think(player, pickOne(QUOTES.npc), 'think');
       await doAttack(player, best.src, best.t, {
         focusRoll: focus
@@ -985,7 +996,7 @@ async function cpuAct(player) {
       /* gStr — rough menace of a gladiator: body HP plus armor. */
       const gStr = u => LOCS.reduce((s2, l) => s2 + Math.max(0, u.hp[l]) + u.ap[l], 0); // rough menace: body + armor
       const bladeHeat = enemiesOf(player).filter(other => cheb(player, other) <= 2 && gStr(other) >= gStr(player) * 0.9).length >= (player.diff === 'hard' ? 1 : 2);
-      if (player.diff !== 'easy' && (P.survival > 55 || player.diff === 'hard') && hurtBad(player) && (beastHeat || bladeHeat)) {
+      if (aiSk(player, 'escape', player.diff !== 'easy') && (P.survival > 55 || player.diff === 'hard') && hurtBad(player) && (beastHeat || bladeHeat)) {
         const ex = tunnelExits(player);
         if (ex.length) {
           const threats = enemiesOf(player).concat(S.npcs.filter(n => n.alive && n.tamedBy == null));
@@ -998,7 +1009,7 @@ async function cpuAct(player) {
       }
     }
     // 2) TRAVEL — a spare key, a distant goal, and an exit that cuts the walk by 4+ tiles: take the shortcut.
-    if (player.diff === 'hard' && player.keys > 1 && player.mv > 0) {
+    if (aiSk(player, 'shortcut', player.diff === 'hard') && player.keys > 1 && player.mv > 0) {
       const goals0 = cpuGoals(player);
       if (goals0.length) {
         const g0 = goals0[0];
@@ -1031,6 +1042,7 @@ async function cpuAct(player) {
       }
     }
     if (player.mv <= 0) break;
+    if (aiSk(player, 'lookahead', false) && (await aiLookahead(player))) continue; // Master: step to the tile with the best blow
     const goals = cpuGoals(player);
     if (!goals.length) break;
     if (player.retreating && guard === 0) think(player, pickOne(QUOTES.retreat), 'think');
@@ -1041,7 +1053,7 @@ async function cpuAct(player) {
       prev
     } = dijkstra(player.r, player.c, blk);
     // route around danger: hard CPUs always weigh it, normal ones half the time, easy ones stroll obliviously
-    const dz = (player.diff === 'hard' || player.diff === 'normal' && (player._dzRoll ?? (player._dzRoll = rand())) < 0.5 || P.survival > 65) && !(S.evKey === 'gauntlet') ? dangerMap(player) : null;
+    const dz = (aiSk(player, 'route', player.diff === 'hard') || player.diff === 'normal' && (player._dzRoll ?? (player._dzRoll = rand())) < 0.5 || P.survival > 65) && !(S.evKey === 'gauntlet') ? dangerMap(player) : null;
     const dw = player.aiDz != null ? player.aiDz : player.diff === 'hard' ? 0.6 : 0.3;
     let gk = -1,
       gd = 1e9;
@@ -1067,6 +1079,7 @@ async function cpuAct(player) {
     await checkEagleScore(player);
     render();
   }
+  if (G === S && player.alive && !player.exited && !S.over && aiSk(player, 'dodge', false)) await aiDodge(player); // Master: spare steps go to safer ground
   await flushMF();
 }
 /* cpuCommand — moves and attacks with a beast this CPU has tamed. Zora first breaks pots or runs its own pick-up logic; otherwise the beast walks to the nearest foe and attacks, preferring gladiators, then the lowest HP. */

@@ -13,11 +13,11 @@
    printed CPU's Intelligence); Manager and Studio gladiators get theirs from their rating (a broken spirit drops one tier).
    ===================================================================== */
 const AI_TIERS=[
-  {k:'novice',blunder:0.45,n:'Novice',lo:50,diff:'easy',noise:4.5,blend:0,int:58,d:'misjudges often, plays cards at random'},
-  {k:'apprentice',blunder:0.3,n:'Apprentice',lo:65,diff:'easy',noise:3.9,blend:0,int:70,d:'still rash, but plays its cards and the market sensibly'},
-  {k:'fighter',blunder:0.15,n:'Fighter',lo:76,diff:'normal',noise:3.4,blend:0,int:80,d:'plans routes around danger, works the market'},
-  {k:'veteran',blunder:0.07,n:'Veteran',lo:86,diff:'hard',noise:1.8,blend:0.5,int:90,d:'times truces and tunnels, hunts the leader'},
-  {k:'master',blunder:0,n:'Master',lo:96,diff:'hard',noise:0.6,blend:1,int:97,d:'the sharpest reads in the arena'}];
+  {k:'novice',n:'Novice',lo:50,int:58,diff:'easy',noise:3.4,blunder:0.45,blend:0,sk:{shop:false},d:'hesitates, skips the market, misjudges often'},
+  {k:'apprentice',n:'Apprentice',lo:65,int:70,diff:'easy',noise:3.4,blunder:0.3,blend:0,sk:{shop:true,steady:true},d:'works the market and fights, but wanders into danger'},
+  {k:'fighter',n:'Fighter',lo:76,int:80,diff:'normal',noise:3.4,blend:0,blunder:0.15,d:'never shies from a fight, plans routes, trades and truces'},
+  {k:'veteran',n:'Veteran',lo:86,int:90,diff:'normal',noise:3.4,blend:0.5,blunder:0.07,sk:{focus:true},d:'rolls Focus on close foes'},
+  {k:'master',n:'Master',lo:96,int:97,diff:'hard',noise:3.4,blend:1,blunder:0,sk:{dodge:true,merchant:true,route:true,focusKill:true},d:'hunts the leader, Focuses for the kill, steps to safety after striking'}];
 /* AIW_TUNED — the attack weights tools/aitune.js found (Master plays these; Veteran halfway). TWEAK: re-run the tuner after rule changes. */
 const AIW_TUNED={...AIW_BASE};
 const aiTierOf=int=>{let t=0;for(let i=0;i<AI_TIERS.length;i++)if((int||0)>=AI_TIERS[i].lo)t=i;return t};
@@ -52,12 +52,36 @@ const AI_TIERS_TXT='Novice below 65, Apprentice 65, Fighter 76, Veteran 86, Mast
 try{if(typeof GLOSS!=='undefined'&&GLOSS.int)GLOSS.int.d=`How sharply a CPU plays the gladiator — five minds: ${AI_TIERS_TXT}. Personality still decides how they play. Grows by surviving and winning.`}catch(e){}
 /* ---------- SKILLS BY SUBSYSTEM: each tier sets the play level (easy / normal / hard) of each part of the CPU separately.
    While a subsystem's function runs, the player's diff is that subsystem's level; nested calls set their own and restore.
-   act = moving, targeting and the turn's choices · items = cards and tokens · market · tactic = push and topple ·
+   act = the turn itself (hesitation, Focus, escapes, tunnels) · goals = where to walk · choice = the turn's coin/CF/card choice ·
+   score = which attack to make · items = cards and tokens · market · tactic = push and topple ·
    social = truces, trades and helping allies · defend = Minerva / Fidelis on incoming blows. TWEAK: the levels in AI_TIERS. */
-const AI_SUBS={act:['cpuAct','cpuGoals','cpuChoice','cpuScoreAttack'],items:['cpuUseItems','askCard'],market:['cpuMarket','marketRoll'],tactic:['cpuTactic'],social:['cpuDiplomacy','cpuHelpAllies'],defend:['defend']};
+const AI_SUBS={act:['cpuAct'],goals:['cpuGoals'],choice:['cpuChoice'],score:['cpuScoreAttack'],items:['cpuUseItems','askCard'],market:['cpuMarket','marketRoll'],tactic:['cpuTactic'],social:['cpuDiplomacy','cpuHelpAllies'],defend:['defend']};
 function aiSubLevel(p,k){if(!p||!p.cpu)return null;if(p.aiSub&&p.aiSub[k])return p.aiSub[k];const T=AI_TIERS[aiTier(p)];return T.sub&&T.sub[k]||null}
 for(const [k,fns] of Object.entries(AI_SUBS))for(const name of fns){try{const base=eval(name);if(typeof base!=='function')continue;
   const isAsync=base.constructor&&base.constructor.name==='AsyncFunction';
   const w=isAsync?async function(p){const lv=aiSubLevel(p,k);if(!lv)return base.apply(this,arguments);const d=p.diff;p.diff=lv;try{return await base.apply(this,arguments)}finally{p.diff=d}}
     :function(p){const lv=aiSubLevel(p,k);if(!lv)return base.apply(this,arguments);const d=p.diff;p.diff=lv;try{return base.apply(this,arguments)}finally{p.diff=d}};
   eval(`${name}=w`)}catch(e){}}
+/* ---------- SKILLS ONE BY ONE (inside the turn, 06-ai aiSk): steady (never hesitates to fight a gladiator) · items (uses cards every turn) ·
+   shop (works the market) · focus (Focus roll on a close foe) · escape (tunnels out when hurt) · shortcut (tunnels to a far goal) ·
+   route (always walks around danger). A tier's `sk` sets them; unset ones follow its Easy/Normal/Hard switches. p.aiSk overrides (experiments). */
+aiSk=function(p,k,d){if(!p||!p.cpu)return d;if(p.aiSk&&k in p.aiSk)return p.aiSk[k];const T=AI_TIERS[aiTier(p)];return T.sk&&k in T.sk?T.sk[k]:d};
+{const base=mkPlayer;mkPlayer=function(i,s){const p=base.apply(this,arguments);if(s&&s.aiSk)p.aiSk=s.aiSk;return p}}
+/* ---------- MASTER'S EYE: lookahead (before walking, weigh every tile it can reach this turn by the best blow it could strike from there,
+   less the danger of standing there — and step toward the best) · dodge (steps left over at the end of the turn carry it to safer ground).
+   TWEAK: danger 0.6 and distance 0.15 in the lookahead; the dodge needs to shed 1+ danger. Chariot and Naumachia keep their own movement. */
+const aiWalkBlk=p=>{const b=playerBlock(p);return (r,c)=>b(r,c)||spikeAt(r,c)};
+const aiZoneOK=(r,c)=>RD().zone===1||inZone(r,c);
+aiLookahead=async function(p){if(isChariot()||isNaum()||!attackSources(p).length)return false;
+  const {dist,prev}=dijkstra(p.r,p.c,aiWalkBlk(p));const dz=dangerMap(p);const nz=noise,r0=p.r,c0=p.c;let best=null;
+  noise=()=>0;try{for(let k=0;k<N*N;k++){if(dist[k]<1||dist[k]>p.mv)continue;const r=Math.floor(k/N),c=k%N;if(!aiZoneOK(r,c))continue;p.r=r;p.c=c;let b=0;
+    for(const src of attackSources(p))for(const t of targetsFor(p,src)){if(p.hesitant&&t.kind==='player')continue;if(t.kind==='player'&&inTruce(p,t.ref)&&activePlayers().length>2)continue;
+      if(S.evKey==='goldenEagle'&&t.kind==='npc'&&cheb(p,t.ref)>1&&t.ref.aggro!==p.id)continue;const sc=cpuScoreAttack(p,src,t);if(sc>b)b=sc}
+    if(b<=0)continue;const v=b-dz[k]*0.6-dist[k]*0.15;if(!best||v>best.v)best={v,k}}}finally{p.r=r0;p.c=c0;noise=nz}
+  if(!best)return false;const path=pathTo(prev,r0*N+c0,best.k);if(!path||!path.length)return false;const k=path[0];
+  if((Math.floor(k/N)!==p.r&&k%N!==p.c?2:1)>p.mv)return false;await movePlayer(p,[k]);await checkEagleScore(p);render();return true};
+aiDodge=async function(p){if(isChariot()||isNaum()||p.mv<=0)return;const dz=dangerMap(p);const here=dz[p.r*N+p.c];if(here<1)return;
+  const {dist,prev}=dijkstra(p.r,p.c,aiWalkBlk(p));let best=null;
+  for(let k=0;k<N*N;k++){if(dist[k]<1||dist[k]>p.mv||!aiZoneOK(Math.floor(k/N),k%N))continue;const v=dz[k]+dist[k]*0.05;if(!best||v<best.v)best={v,k}}
+  if(!best||here-dz[best.k]<1)return;const path=pathTo(prev,p.r*N+p.c,best.k)||[];
+  for(const k of path){if((Math.floor(k/N)!==p.r&&k%N!==p.c?2:1)>p.mv||!p.alive||S.over)break;await movePlayer(p,[k]);await checkEagleScore(p)}render()};
