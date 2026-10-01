@@ -211,7 +211,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   (480x704), event cards (480x692) and weapon cards (600x416) from scans; prototype gallery (D.Soto link); clearer
   invitational frequency wording. (Published as artifact Version 69.)
 - **v0.59** Rivalry Week (Familia 2v2 vs your top rival, byes 4 & 11); Naumachia and Chariot Racing to the rulebook; Credits
-  page; Zora's mini; repainted event cards; menu mute; no menu/arena flashes; turn sweep; 'David' → 'Virgilante'.  (Published as artifact Version 70.)
+  page; Zora's mini; repainted event cards; menu mute; no menu/arena flashes; turn sweep; 'David' → 'Virgilante'.  (Published as artifact Version 70; update with random Naumachia first team + draft wording = Version 71.)
 
 ## 8. Next steps / open items
 - **Readability pass, phase 2+** (Virgilante chose "phased"): files 02–07 are done (Babel scope-safe parameter renames via
