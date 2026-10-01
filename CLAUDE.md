@@ -25,7 +25,7 @@ armor, trophies, banners, events, tournaments, invitationals, editors, spectator
 ## 2. Layout & build
 
 ```
-/home/claude/flavius/
+flavius/   (repo root; build.sh and tools/*.py resolve paths from their own location)
   build.sh              concatenates src/ in a fixed order into flavius-arena.html, then node --check → prints SYNTAX_OK
   flavius-arena.html    the built game (references assets/ relatively)
   assets/               23 image assets (arena.jpg card sheet, classes.jpg, weapons.jpg, armor2.png, avatar.png,

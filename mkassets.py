@@ -1,6 +1,7 @@
 from PIL import Image
 U='/root/.claude/uploads/9d68b8c5-61f3-5076-b7bf-0a1c8c60449b/'
-OUT='/home/claude/flavius/assets/'
+import os
+OUT=os.path.join(os.path.dirname(os.path.abspath(__file__)),'assets')+'/'
 def std(im,r,c): # standard 8000-wide sheets
     x,y=48+800*c,37+1092*r; return im.crop((x,y,x+706,y+1018))
 def sheet(cells,cols,cw,ch,name,q=80):

@@ -1,6 +1,7 @@
 import base64,json,os,sys,mimetypes
 v=sys.argv[1]
-src='/home/claude/flavius/flavius-arena.html';A='/home/claude/flavius/assets'
+R=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # project root
+src=os.path.join(R,'flavius-arena.html');A=os.path.join(R,'assets')
 html=open(src,encoding='utf-8').read()
 data={}
 for f in sorted(os.listdir(A)):
