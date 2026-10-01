@@ -2,3 +2,4 @@ node_modules/
 share/
 tools/reg.txt
 *.zip
+tools/tests/*.png
