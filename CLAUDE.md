@@ -271,7 +271,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   (Published as artifact Version 74.)
 - **v0.63** training hours + Training Yard layout; rail to-do borders; free-agent list fills the column; lanista cities = 12 arenas;
   accessibility (reduce motion, colour-blind palette, text size); Event Designer guided steps; ratings in the panel header;
-  CPU labels name the mind; share build ~25 MB; smart regression + release script.
+  CPU labels name the mind; share build ~25 MB; smart regression + release script. (Published as artifact Version 75.)
 
 ## 8. Next steps / open items
 - **Planned v0.64: async play-by-link** (shared Store, published link only). Design the security model with Virgilante FIRST:

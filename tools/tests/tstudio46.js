@@ -35,13 +35,14 @@ await pg.click(`[data-rs="useplay"][data-v="${await pg.evaluate(()=>CUSTOM.roste
 o.gate=await pg.evaluate(()=>({cfg:CFG.roster,cards:pairDeckCards({}).length,classic:(()=>{CFG.roster='classic';ROSTER_ACTIVE=null;return pairDeckCards({}).length})()}));
 // event designer SR
 await pg.click('[data-st="tab"][data-v="events"]');await pg.waitForTimeout(500);
-await pg.click('[data-st="sub"][data-v="rules"]');await pg.waitForTimeout(400);
+/* v0.63: guided steps hide the classic sub-tabs; the Summa Rudis lives on step 6, Finish */
+await pg.click('.edsteps [data-edstep="5"]');await pg.waitForTimeout(400);
 await pg.click('[data-srx="make"]');await pg.waitForTimeout(400);
 o.sr=await pg.evaluate(()=>({srp:!!ST.draft.srp,img:!!document.querySelector('#srPrev img'),sel:document.querySelectorAll('[data-f^="srp."]').length}));
 await pg.selectOption('[data-f="srp.helm"]','crested');await pg.waitForTimeout(400);
 o.sr2=await pg.evaluate(()=>ST.draft.srp.helm);
 await pg.screenshot({path:'st_sr.png'});
-await pg.click('[data-st="sub"][data-v="roster"]');await pg.waitForTimeout(400);
+await pg.click('.edsteps [data-edstep="4"]');await pg.waitForTimeout(400);
 /* v0.54: cohorts come from the Beasts & cohorts picker */
 await pg.evaluate(()=>{const t=document.querySelector('[data-hubtab="cohorts"]');if(t)t.click()});await pg.waitForTimeout(300);o.edp=await pg.evaluate(()=>document.querySelectorAll('[data-hub="cohort"]').length);await pg.click('[data-hub="cohort"][data-v="sys_romulus"]');await pg.waitForTimeout(200);o.edp2=await pg.evaluate(()=>ST.draft.pairs);
 await pg.click('[data-st="save"]');await pg.waitForTimeout(500);
