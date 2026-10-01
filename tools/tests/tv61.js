@@ -8,8 +8,10 @@ await pg.evaluate(async()=>{const g={id:'gscr1',name:'Screenus',cls:'hero',statu
   window._bad=[];window._iv=setInterval(()=>{const mm=!document.getElementById('mainMenu').hidden,md=!document.getElementById('modal').hidden,tr=document.querySelector('.transit'),c=tr&&tr.classList.contains('on');
     if(!mm&&!md&&!c&&!(S&&!S.over&&S.phase!=='setup'))window._bad.push('blank '+Date.now());window._state=(mm?'M':'')+(md?'W':'')},20)});
 const click=async(sel,w=1200)=>{await pg.click(sel);await pg.waitForTimeout(w)};
-await click('[data-mm="annals"]',1500);await click('#hallBody [data-tab="ludus"]');await pg.evaluate(()=>{window._menuMid=0;window._iv2=setInterval(()=>{if(!document.getElementById('mainMenu').hidden)window._menuMid++},20)});
-await click('#mClose');await click('#hallBody [data-tab="hall"]',900);await click('#hallBody [data-tab="ludus"]');await click('#mClose');
+/* step — click, then wait until the hand-off settles (no pending intent, a window up): fixed sleeps raced the hand-off under parallel load */
+const step=async sel=>{await pg.click(sel);await pg.waitForTimeout(300);await pg.waitForFunction(()=>SCREEN.pending===0&&!document.getElementById('modal').hidden,null,{timeout:20000});await pg.waitForTimeout(250)};
+await click('[data-mm="annals"]',1500);await step('#hallBody [data-tab="ludus"]');await pg.evaluate(()=>{window._menuMid=0;window._iv2=setInterval(()=>{if(!document.getElementById('mainMenu').hidden)window._menuMid++},20)});
+await step('#mClose');await step('#hallBody [data-tab="hall"]');await step('#hallBody [data-tab="ludus"]');await step('#mClose');
 o.menuMid=await pg.evaluate(()=>{clearInterval(window._iv2);return window._menuMid});ok(o.menuMid===0,'no menu between windows');
 await click('#mClose',1500);o.backToMenu=await pg.evaluate(()=>!document.getElementById('mainMenu').hidden&&document.getElementById('modal').hidden);ok(o.backToMenu,'back to menu');
 await click('[data-mm="annals"]',1500);o.again=await pg.evaluate(()=>/Annals/.test(document.getElementById('mTitle').textContent)&&!document.getElementById('modal').hidden);ok(o.again,'Annals again');await click('#mClose',1500);

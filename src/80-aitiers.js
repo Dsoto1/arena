@@ -4,11 +4,12 @@
    FIVE MINDS — a CPU's Intelligence sets one of five named tiers. Each tier sets how sharply the gladiator plays; their
    personality still sets HOW they play (a reckless Master is still reckless — just good at it).
      Novice 50-64 · Apprentice 65-75 · Fighter 76-85 · Veteran 86-95 · Master 96-99
-   • decision noise (how often they misjudge a swing) shrinks tier by tier;
-   • the old Easy / Normal / Hard switches (who plays the market, tunnels, truces, Focus…) follow the tier
-     (Novice and Apprentice Easy, Fighter Normal, Veteran and Master Hard); the Apprentice already plays cards like a Fighter;
-   • Veteran and Master read the attack weights found by the offline tuner (tools/aitune.js) — Veteran halfway, Master
-     fully (AIW_TUNED below; AIW_BASE in 06-ai is the hand-set start).
+   • each tier unlocks skills (aiSk in 06-ai, `sk` below), measured one by one in seeded self-play (tools/aitiers.js):
+     Novice — Easy play, hesitates, skips the market · Apprentice — works the market, stops hesitating · Fighter — Normal play
+     (routes, truces, trades, escapes) · Veteran — + Focus on close foes · Master — Hard play + dodge (spare steps to safer ground),
+     always routes around danger, buys whatever the body lacks, Focuses for a kill. Ladder (450 games a step): ~65/66/56/55%.
+   • blunders (a badly misread swing) shrink tier by tier; aiW reads the tuner's weights (tools/aitune.js) — it has found none
+     better than the hand-set AIW_BASE yet, so AIW_TUNED equals it.
    Nothing learns during play: the dice and replays stay seeded. Play Now's seat picker offers the five tiers (each sets a
    printed CPU's Intelligence); Manager and Studio gladiators get theirs from their rating (a broken spirit drops one tier).
    ===================================================================== */
