@@ -250,6 +250,13 @@ One global script; files are concatenated in order. Later "version modules" patc
   border like other to-do tabs, Infirmary light white border when someone is hurt; Training Yard: practice section top-right under the
   banner + **training hours** (separate pool, 10/week, regimes kept) spent on stat drills, sparring (in-house/outside), doctore hours,
   recovery & tactics, chemistry/bonds, crowd work (Charisma/fame).
+  Also v0.63 (non-Manager): smart regression (tools/smartreg.js, coverage-mapped test selection, full run for releases) +
+  one-command release script; lighter build (WebP sheets, lazy art); accessibility (colour-blind-safe palette, larger text
+  setting, reduced motion everywhere); Event Designer guided steps INSIDE the current designer (not a separate wizard).
+- **Planned v0.64: async play-by-link** (shared Store, published link only). Design the security model with Virgilante FIRST:
+  per-seat signing keys (WebCrypto), hash-chained append-only move log, deterministic replay verification from the seed,
+  invite codes, size/rate limits; peeking (hands, seeded future dice) is honor-system unless commit-reveal dice. Out-of-turn
+  reactions (defend cards, Omnia, truce/trade): PAUSE and wait for that player (Virgilante's choice). Friends-only first.
 - **Readability pass, phase 2+** (Virgilante chose "phased"): files 02–07 are done (Babel scope-safe parameter renames via
   `tools/rename.js`, then comments on every function with `TWEAK:` notes; verified with `tools/samecode.js`, which
   compares code ignoring comments/whitespace). Remaining: 08–64, file by file, regression after each. Rename only
