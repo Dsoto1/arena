@@ -223,11 +223,13 @@ One global script; files are concatenated in order. Later "version modules" patc
 - **Queued for the next batch — Naumachia to the rulebook (pp.48-49):** layout = TL horizontal, TR vertical, BR horizontal,
   BL vertical (mirror of the v0.58 pinwheel); boarding from water only via valid boarding tiles (3 along each long side's
   middle + 1 off each end; corners invalid), 2 MV, door→ship free; the 4 cut-corner ship tiles are invalid in the rulebook
-  (game: all 15 deck — confirm); 16 water tokens in a fixed cross on row/col 6; a boarding visual; swimmers drawn
+  (David: switch to the rulebook — 10 deck tiles + pillar, corners water/invalid); 16 water tokens in a fixed cross on row/col 6; a boarding visual; swimmers drawn
   half-submerged; team turns are simultaneous in the book (game: team members back to back); first team = oldest (no ages).
 - **Queued for the next batch — Chariot Racing (pp.50-51):** rules mostly match (base 3 MV, horse +1-3, broken wheel −2,
   forward 1 / diagonal 2, no backwards/sideways/center/pillar/tunnel/occupied, gate = flip horse + offering + step beyond,
   2 keys + 3 CF, CF off). Gaps: 6-round snake draft (game: straight order, chariot by colour); gate step should be one free
   tile beyond (game: +2 MV). Visuals: horse (current face) + wheel tokens drawn on each chariot, horse flip animation at
   gates, HP pips, token drops off when destroyed.
+- **Queued for the next batch — Zora's miniature:** David's photo is in tools/art/zora_mini.jpg; cut it out and use it for
+  Zora's token (current: rtok 'zora'). Ask: replace the disc art, or use it as the on-board figure only.
 - Keep watching: shared-Store writes on load (conversions must be idempotent and saved once).
