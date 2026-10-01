@@ -1,0 +1,12 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
+const ctx=await b.newContext({viewport:{width:1440,height:1000}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});
+const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2500);
+await pg.evaluate(()=>{showRules()});await pg.waitForTimeout(600);await pg.click('[data-rul="guide"]');await pg.waitForTimeout(700);
+const o=await pg.evaluate(()=>({figs:document.querySelectorAll('#rulTab-guide .gvfig').length,secs:document.querySelectorAll('#rulTab-guide .gsec').length,gl:document.querySelectorAll('#rulTab-guide .gl').length}));
+await pg.screenshot({path:'shot_guide50.png'});
+const t=(await pg.$$('#rulTab-guide .gstat'))[2];await t.hover();await pg.waitForTimeout(1400);
+const tt=await pg.$('.tt');o.tt=!!tt;o.locked=await pg.evaluate(()=>!!document.querySelector('.tt.locked'));
+const g=await pg.$('.tt .gl');if(g){const bb=await g.boundingBox();await pg.mouse.move(bb.x+3,bb.y+5,{steps:4});await pg.waitForTimeout(700)}o.nested=await pg.evaluate(()=>document.querySelectorAll('.tt').length);
+await pg.screenshot({path:'shot_tt50.png'});
+console.log(JSON.stringify(o),errs.slice(0,3));await b.close()})();

@@ -1,0 +1,25 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
+const ctx=await b.newContext({viewport:{width:1500,height:1000}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});const pg=await ctx.newPage();await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
+const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1500);
+await pg.click('[data-mm="studio"]');await pg.waitForTimeout(1800);
+await pg.click('[data-st="tab"][data-v="npcs"]');await pg.waitForTimeout(600);
+const o={};
+o.gal=await pg.evaluate(()=>({sys:document.querySelectorAll('.sysbeasts .lrow').length,myth:document.querySelectorAll('.mythcard').length,prev:!!document.querySelector('#rtPrev svg'),zone:!!document.querySelector('.zonecard'),bench:!!document.querySelector('[data-scb="add"][data-k="rt"]')}));
+await pg.click('.mythcard[data-v="1"]');await pg.waitForTimeout(500);
+o.myth=await pg.evaluate(()=>({n:ST.draft.name,zone:ST.draft.zone,rt:ST.draft.rtok.layers.length}));
+await pg.click('[data-scb="add"][data-k="rt"][data-v="star"]');await pg.waitForTimeout(300);
+const box=await pg.locator('#rtPrev').boundingBox();
+await pg.mouse.move(box.x+box.width*0.4,box.y+box.width*0.42);await pg.mouse.down();await pg.mouse.move(box.x+box.width*3,box.y-300,{steps:5});await pg.mouse.up();await pg.waitForTimeout(300);
+o.drag=await pg.evaluate(()=>{const L=ST.draft.rtok.layers;return L[L.length-1]});
+await pg.selectOption('[data-f="zone.at"]','nw');await pg.waitForTimeout(300);
+await pg.click('[data-st="save"]');await pg.waitForTimeout(600);
+o.saved=await pg.evaluate(()=>({n:CUSTOM.npcs.length,tok:!!document.querySelector('.stlist .rtoksvg')||!!document.querySelector('.list2 .rtoksvg')}));
+await pg.click('.sysbeasts [data-st="npcsys"]');await pg.waitForTimeout(400);o.copy=await pg.evaluate(()=>({n:ST.draft.name,base:ST.draft.rtok.base}));
+await pg.screenshot({path:'st_beast.png'});
+// event designer: place the custom beast
+await pg.click('[data-st="tab"][data-v="events"]');await pg.waitForTimeout(600);
+o.ed=await pg.evaluate(()=>{const id=CUSTOM.npcs[0].id;ST.opt.npc='cn:'+id;ST.tool='npc';edApplyCell(3,9);document.getElementById('edPane').innerHTML=edBoardHTML();return {zn:document.querySelectorAll('.edcell.zn').length,z:zoneAround('cn_'+id,8,8,'x'),tok:!!document.querySelector('.edcell .rtoksvg')}});
+await pg.screenshot({path:'st_ed.png'});
+o.tokhtml=await pg.evaluate(()=>npcTokHTML({t:'cn_'+CUSTOM.npcs[0].id,name:'X'}).includes('rtoksvg'));
+console.log(JSON.stringify(o,null,1));console.log('ERRS',errs.slice(0,5));await b.close()})();

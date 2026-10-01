@@ -1,0 +1,13 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:950}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.click('#mClose');
+await pg.evaluate(async()=>{const d=blankCW();d.name='Test Fang';d.art.type='sword';CUSTOM.weapons=[d];await Store.put('customWeapons',d.id,d);gearRebuild();
+  const t=blankTrophy();t.name='Test Cup';CUSTOM.trophies=[t];await Store.put('customTrophies',t.id,t);openStudio('gear')});await pg.waitForTimeout(900);
+const c=async s=>{await pg.evaluate(s=>document.querySelector(s).click(),s);await pg.waitForTimeout(400)};
+const btns=await pg.evaluate(()=>[...document.querySelectorAll('.cracts')[0].querySelectorAll('button')].map(b=>b.textContent));
+await c('[data-cr="rolls"][data-k="w"]');const r1=await pg.evaluate(()=>[CUSTOM.weapons[0].rolls,!!W['cw_'+CUSTOM.weapons[0].id].cwMarket]);
+await c('[data-cr="lock"][data-k="w"]');const r2=await pg.evaluate(()=>[CUSTOM.weapons[0].locked,document.querySelector('[data-cr="del"][data-k="w"]').disabled]);
+await c('[data-cr="copy"][data-k="w"]');const r3=await pg.evaluate(()=>CUSTOM.weapons.map(w=>w.name));
+await pg.evaluate(()=>{document.querySelector('[data-st="tab"][data-v="trophies"]').click()});await pg.waitForTimeout(500);
+await c('[data-cr="rolls"][data-k="t"]');const r4=await pg.evaluate(()=>[CUSTOM.trophies[0].offered,trophyOptions().some(o=>o[1].includes('Test Cup'))]);
+await c('[data-cr="del"][data-k="t"]');const r5=await pg.evaluate(()=>CUSTOM.trophies.length);
+console.log(JSON.stringify({btns,r1,r2,r3,r4,r5}),errs.slice(0,3));await b.close()})();

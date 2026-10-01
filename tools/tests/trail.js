@@ -1,0 +1,16 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1500,height:950}});await pg.route(/fonts\./,r=>r.abort());
+const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.click('#mClose');await pg.waitForTimeout(500);
+await pg.evaluate(()=>{newWorld({type:'custom',mgr:{name:'Test',ludus:'Ludus T',city:'Roma',color:'#c0433a',p:{...MGR_PRESETS.balanced[1]},portrait:{}}});saveWorld(true)});
+await pg.evaluate(()=>{$('#modal').hidden=true;openManager()});await pg.waitForTimeout(1200);
+const m=await pg.evaluate(()=>({full:$('#modal').classList.contains('full'),grps:document.querySelectorAll('.mtabs .railgrp').length,btns:document.querySelectorAll('.mtabs button').length}));
+await pg.screenshot({path:'rail_m.png'});
+await pg.click('[data-mg="tab"][data-id="league"]');await pg.waitForTimeout(600);
+const m2=await pg.evaluate(()=>({tab:MGR.tab,on:document.querySelector('.mtabs button.on')?.dataset.id}));
+await pg.click('#mClose');await pg.waitForTimeout(900);
+await pg.evaluate(()=>{openStudio('gear')});await pg.waitForTimeout(1000);
+const s=await pg.evaluate(()=>({full:$('#modal').classList.contains('full'),grps:document.querySelectorAll('.sttabs .railgrp').length,cols:getComputedStyle(document.getElementById('studio')).gridTemplateColumns}));
+await pg.screenshot({path:'rail_s.png'});
+await pg.click('[data-st="tab"][data-v="flags"]');await pg.waitForTimeout(500);
+const s2=await pg.evaluate(()=>ST.tab);
+console.log(JSON.stringify({m,m2,s,s2}),errs.slice(0,4));await b.close()})();

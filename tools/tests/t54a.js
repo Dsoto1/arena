@@ -1,0 +1,22 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
+const ctx=await b.newContext({viewport:{width:1440,height:1000}});
+const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2500);
+await pg.evaluate(async()=>{menuHide();if(CUR_MODAL)CUR_MODAL.done(null);await loadCustoms();openStudio('classes')});await pg.waitForTimeout(1200);
+await pg.evaluate(()=>{document.querySelector('.stlist').scrollIntoView()});await pg.waitForTimeout(300);await pg.screenshot({path:'s54a.png'});
+await pg.evaluate(()=>{document.querySelector('[data-clsa="copybase"][data-v="soldier"]').click()});await pg.waitForTimeout(600);await pg.evaluate(()=>{$('#mBody').scrollTop=0});await pg.screenshot({path:'s54b.png'});
+const o={};o.copy=await pg.evaluate(()=>({name:ST.draft.name,col:ST.draft.color,clash:!!classColorClash(ST.draft.color,null)}));
+await pg.evaluate(()=>{document.querySelector('[data-st="tab"][data-v="events"]').click()});await pg.waitForTimeout(600);
+await pg.evaluate(()=>{const b=document.querySelector('[data-st="sub"][data-v="roster"]');b&&b.click()});await pg.waitForTimeout(500);
+await pg.evaluate(()=>{const b=document.querySelector('[data-hubtab="myth"]');b&&b.click()});await pg.waitForTimeout(400);
+await pg.evaluate(()=>{const b=document.querySelector('[data-hub="myth"][data-v="0"]');b&&b.click()});await pg.waitForTimeout(600);
+await pg.evaluate(()=>{const e=document.querySelector('.edhub');e&&e.scrollIntoView()});await pg.screenshot({path:'s54c.png'});
+o.hub=await pg.evaluate(()=>({npcs:ST.draft.layout.npcs.map(n=>n.name),mine:CUSTOM.npcs.map(n=>n.name)}));
+await pg.evaluate(()=>{const b=document.querySelector('[data-st="sub"][data-v="board"]');b&&b.click()});await pg.waitForTimeout(500);await pg.evaluate(()=>{$('#mBody').scrollTop=0});await pg.screenshot({path:'s54d.png'});
+await pg.evaluate(()=>{const b=document.querySelector('[data-st="sub"][data-v="rules"]');b&&b.click()});await pg.waitForTimeout(400);o.music=await pg.evaluate(()=>document.querySelectorAll('[data-edmusic] option').length);
+await pg.evaluate(()=>{document.querySelector('[data-st="tab"][data-v="specials"]').click()});await pg.waitForTimeout(600);await pg.evaluate(()=>{$('#mBody').scrollTop=0});await pg.screenshot({path:'s54e.png'});
+await pg.evaluate(()=>{document.querySelector('[data-st="tab"][data-v="cohorts"]').click()});await pg.waitForTimeout(600);await pg.screenshot({path:'s54f.png'});
+/* piaculum card */
+o.pia=await pg.evaluate(()=>{const k=piaKeyFor('damnatio');const d=document.createElement('div');d.id='piaT';d.style.cssText='position:fixed;left:0;top:0;z-index:9999;background:#222;padding:10px;display:flex;gap:8px';d.innerHTML=cardHTML('c:'+k,'lg')+cardHTML('c:pia_royalty','lg');document.body.appendChild(d);return k});
+await pg.waitForTimeout(800);await pg.screenshot({path:'s54g.png',clip:{x:0,y:0,width:600,height:420}});
+console.log(JSON.stringify(o));console.log(errs.slice(0,5));await b.close()})();

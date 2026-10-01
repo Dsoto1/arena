@@ -1,0 +1,14 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:950}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.click('#mClose');
+await pg.evaluate(()=>{openStudio('events')});await pg.waitForTimeout(900);
+const r0=await pg.evaluate(()=>({draft:!!ST.draft,rows:document.querySelectorAll('[data-potsel]').length,pillars:ST.draft&&ST.draft.layout.pillars.length}));
+await pg.evaluate(()=>document.querySelector('[data-st="randpots"]').click());await pg.waitForTimeout(400);
+const r1=await pg.evaluate(()=>ST.draft.layout.pillars.map(p=>p.pot));
+await pg.evaluate(()=>document.querySelector('[data-st="randpots"]').click());await pg.waitForTimeout(400);
+const r2=await pg.evaluate(()=>({pots:ST.draft.layout.pillars.map(p=>p.pot),toast:(document.querySelector('.mtoast,#toast')||{}).textContent}));
+await pg.evaluate(()=>{const s=document.querySelector('[data-potsel="0"]');s.value='?';s.dispatchEvent(new Event('input',{bubbles:true}))});await pg.waitForTimeout(300);
+const r3=await pg.evaluate(()=>ST.draft.layout.pillars[0].pot);
+await pg.evaluate(()=>document.querySelector('[data-st="clearboard"]').click());await pg.waitForTimeout(300);
+const r4=await pg.evaluate(()=>({starts:ST.draft.layout.starts.length,errs:eventErrors(ST.draft)}));
+await pg.screenshot({path:'pots.png'});
+console.log(JSON.stringify({r0,r1:r1.slice(0,4),r2:{pots:r2.pots.slice(0,4)},r3,r4}),errs.slice(0,3));await b.close()})();

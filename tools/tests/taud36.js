@@ -1,0 +1,13 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch({args:['--autoplay-policy=no-user-gesture-required']});const pg=await b.newPage({viewport:{width:1400,height:950}});await pg.route(/fonts\./,r=>r.abort());
+const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.evaluate(()=>{localStorage.setItem('flavius_musica','1')});await pg.waitForTimeout(900);await pg.click('#mClose');await pg.mouse.click(700,500);
+await pg.evaluate(()=>{openSettings('audio')});await pg.waitForTimeout(600);
+const rows=await pg.evaluate(()=>document.querySelectorAll('.trackrow').length);
+await pg.click('[data-trk="play"][data-city="Capua"]');await pg.waitForTimeout(3200);
+const a=await pg.evaluate(()=>({loc:AUD.loc,playing:AUD.playing,fade:+AUD.fade.gain.value.toFixed(2),step:AUD.step,on:!!document.querySelector('.trackrow.on')}));
+await pg.evaluate(()=>{AUD.step=TRACK_STEPS});await pg.waitForTimeout(2600);
+const b2=await pg.evaluate(()=>({loc:AUD.loc,fade:+AUD.fade.gain.value.toFixed(2)}));
+await pg.click('[data-trk="pause"]');await pg.waitForTimeout(1600);
+const c=await pg.evaluate(()=>({playing:AUD.playing,paused:AUD.paused,fade:+AUD.fade.gain.value.toFixed(2),loc:AUD.loc}));
+await pg.screenshot({path:'aud36.png',clip:{x:200,y:300,width:1000,height:640}});
+console.log(JSON.stringify({rows,a,b2,c}),errs.slice(0,3));await b.close()})();

@@ -1,0 +1,12 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
+const ctx=await b.newContext({viewport:{width:1400,height:900}});const pg=await ctx.newPage();await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
+const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1500);
+const o={};
+o.setup=await pg.evaluate(()=>!!document.querySelector('[data-roster="cfg"]'));
+o.w=await pg.evaluate(async()=>{await loadCustoms();const c=blankChar();c.id='zz1';c.name='Rostered Guy';c.rolls=true;c.status='active';c.created='x';CUSTOM.chars.push(c);registerCustoms();
+  const r={};NEWMGR={roster:'classic'};newWorld({type:'custom',mgr:{name:'T',ludus:'Ludus T',city:'Roma',color:'#c0433a',p:{...MGR_PRESETS[Object.keys(MGR_PRESETS)[0]][1]}}});r.classic=MGR.world.glads.some(g=>g.name==='Rostered Guy');r.rc=MGR.world.roster.id;
+  NEWMGR={roster:'rolls'};newWorld({type:'custom',mgr:{name:'T2',ludus:'Ludus T2',city:'Roma',color:'#c0433a',p:{...MGR_PRESETS[Object.keys(MGR_PRESETS)[0]][1]}}});r.rolls=MGR.world.glads.some(g=>g.name==='Rostered Guy');r.rr=MGR.world.roster.id;
+  CFG.roster='classic';ROSTER_ACTIVE=null;r.acClassic=allowedClasses(EVENTS.democritus).includes('cc_zz1');CFG.roster='rolls';r.acRolls=allowedClasses(EVENTS.democritus).includes('cc_zz1');CFG.roster='classic';
+  const old={glads:[],mgrs:[]};r.migr=(mgrMigrate(old)||old).roster;return r});
+console.log(JSON.stringify(o,null,1));console.log('ERRS',errs.slice(0,5));await b.close()})();

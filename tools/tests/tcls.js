@@ -1,0 +1,22 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
+const ctx=await b.newContext({viewport:{width:1440,height:1000}});
+const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
+const o={};
+o.conv=await pg.evaluate(async()=>{menuHide();if(CUR_MODAL)CUR_MODAL.done(null);const c=blankChar();delete c.classRef;c.id='oldc1';c.name='Oldus Maximus';c.R='trident';c.L=null;c.abil='coin';c.coin=5;await Store.put('customChars','oldc1',JSON.parse(JSON.stringify(c)));
+  await loadCustoms();const cc=CUSTOM.chars.find(x=>x.id==='oldc1');const k=CUSTOM.classes.find(x=>'ccl:'+x.id===cc.classRef);return {ref:cc.classRef,kname:k&&k.name,kR:k&&k.R,kcoin:k&&k.coin,CL:CLASSES['cc_oldc1'].R,abil:CLASSES['cc_oldc1'].abil}});
+o.pre=await pg.evaluate(()=>({busy:modalBusy(),cm:!!CUR_MODAL,title:document.getElementById('mTitle').textContent}));await pg.evaluate(()=>{openStudio('classes').catch(e=>window.__e=String(e))});await pg.waitForTimeout(1500);o.e=await pg.evaluate(()=>window.__e);console.log(JSON.stringify(o),errs);
+await pg.screenshot({path:'cls1.png'});
+await pg.evaluate(()=>{const s=document.querySelector('[data-f="cf"]');s.value=3;s.dispatchEvent(new Event('input',{bubbles:true}));s.dispatchEvent(new Event('change',{bubbles:true}))});
+await pg.evaluate(()=>{const s=document.querySelector('[data-f="items.0"]');s.value='c:rete';s.dispatchEvent(new Event('change',{bubbles:true}))});
+await pg.click('[data-clsa="save"]');await pg.waitForTimeout(500);
+o.saved=await pg.evaluate(()=>CUSTOM.classes.map(c=>c.name+':'+c.cf+':'+c.items.join('/')));
+await pg.evaluate(()=>{document.querySelector('[data-st="tab"][data-v="chars"]').click()});await pg.waitForTimeout(800);
+await pg.screenshot({path:'cls2.png'});
+o.charform=await pg.evaluate(()=>({pick:!!document.querySelector('.clspick'),weap:/Weapons \(favorite/.test(document.getElementById('studio').innerHTML),budget:!!document.querySelector('#stCost')}));
+/* pick the new class and save the character, then play it */
+o.play=await pg.evaluate(async()=>{const k=CUSTOM.classes.find(c=>c.cf===3);const s=document.querySelector('[data-f="classRef"]');s.value='ccl:'+k.id;s.dispatchEvent(new Event('change',{bubbles:true}));await new Promise(r=>setTimeout(r,200));
+  document.querySelector('[data-st="save"]').click();await new Promise(r=>setTimeout(r,600));const ch=CUSTOM.chars.find(c=>c.classRef==='ccl:'+k.id);if(!ch)return 'nochar';
+  CUR_MODAL&&CUR_MODAL.done('close');await new Promise(r=>setTimeout(r,300));
+  newState({ev:'democritus',loc:6,seats:[{cls:'cc_'+ch.id,cpu:false},{cls:'soldier',cpu:true,diff:'easy'},{cls:'slave',cpu:true,diff:'easy'},{cls:'royalty',cpu:true,diff:'easy'}],opts:{}});const p=S.players[0];giveLoadout(p);return {cf:p.cf,items:p.items.map(i=>i.k||i.key||i.n),w:p.wR&&p.wR.n}});
+console.log(JSON.stringify(o));console.log(errs.slice(0,5));await b.close()})();

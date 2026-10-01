@@ -1,0 +1,17 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
+const ctx=await b.newContext({viewport:{width:1440,height:1000}});
+const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
+await pg.evaluate(()=>{menuHide();if(CUR_MODAL)CUR_MODAL.done(null);
+ const helms=['plumed','hoplo','secutor','phrygian','turban','kerchief','flowers','goldwreath','lion'];const hs=['bun','ponytail','topknot','wild','twinbraid'];const bs=['braided','chin','mutton','longbeard'];const mk=['freckles','mole','kohl','tears','cheek','bruise'];const gb=['lorica','cape','leopard','robe','pteruges'];const nk=['torque','bulla','chain','pearls','fang','collar'];const ear=['hoop','pearl','double'];const fc=['nosering','goldtooth','brow'];
+ const list=[];for(const h of helms)list.push({helm:h});for(const x of hs)list.push({hs:x});for(const x of bs)list.push({bs:x});for(const x of mk)list.push({mark:x});for(const x of gb)list.push({garb:x});for(const x of nk)list.push({neck:x});for(const x of ear)list.push({ear:x});for(const x of fc)list.push({face:x});
+ const d=document.createElement('div');d.id='lk';d.style.cssText='position:fixed;inset:0;z-index:9999;background:#222;display:flex;flex-wrap:wrap;gap:4px;padding:6px;overflow:auto';
+ d.innerHTML=list.map(o=>`<div style="color:#ddd;font:10px monospace;text-align:center">${portraitHTML({portrait:{skin:SKINS[3],hair:HAIRS[2],bg:BGS[1],...o},color:'#4f7fc4'},'md')}<br>${Object.values(o)[0]}</div>`).join('');document.body.appendChild(d)});
+await pg.waitForTimeout(300);await pg.screenshot({path:'look1.png'});
+await pg.evaluate(()=>{document.getElementById('lk').remove()});
+await pg.evaluate(()=>{openManager()});await pg.waitForTimeout(1500);
+await pg.evaluate(()=>{const b=document.querySelector('[data-mg="create"]');b&&b.click()});await pg.waitForTimeout(800);
+await pg.evaluate(()=>{const s=document.querySelector('[data-nmpt="helm"]');s.value='lion';s.dispatchEvent(new Event('change',{bubbles:true}));document.querySelector('[data-nmxa="bio"]').click()});await pg.waitForTimeout(400);
+await pg.screenshot({path:'look2.png'});
+console.log(await pg.evaluate(()=>({helm:NEWMGR.portrait.helm,bio:(NEWMGR.bio||'').slice(0,80)})));
+console.log(errs.slice(0,4));await b.close()})();

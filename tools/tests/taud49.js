@@ -1,0 +1,17 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch({args:['--autoplay-policy=no-user-gesture-required']});
+const ctx=await b.newContext({viewport:{width:1400,height:950}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});
+const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());
+const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n').slice(1,3).join(' ')));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1500);await pg.mouse.click(5,5);
+await pg.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)});await pg.waitForTimeout(300);
+const o={};o.headless=await pg.evaluate(()=>HEADLESS);
+o.groove=await pg.evaluate(()=>{audUnlock();let n=0;for(const c of ['Roma','Capua','Manager','Finale']){const th=audTheme(c);for(let s=0;s<256;s+=3){audStep(th,AUD.ctx.currentTime+1+s*0.01,s,1);n++}}return {n,bpm:AUD_THEMES.Capua.bpm,roma:AUD_THEMES.Roma.bpm}});
+await pg.evaluate(()=>{openSettings('audio')});await pg.waitForTimeout(700);
+o.bars=await pg.evaluate(()=>{audBarsSync();return document.querySelectorAll('.trkbar').length});
+o.locked=await pg.evaluate(()=>[...document.querySelectorAll('#audTracks .trackrow.locked b')].map(b=>b.textContent));
+const bar=await pg.$('.trkbar[data-seek="Roma"]');const bb=await bar.boundingBox();await pg.mouse.click(bb.x+bb.width*0.5,bb.y+5);await pg.waitForTimeout(900);
+o.seek=await pg.evaluate(()=>({loc:AUD.loc,step:AUD.step,playing:AUD.playing,w:document.querySelector('.trkbar[data-seek="Roma"] i').style.width,lab:document.querySelector('.trkbar[data-seek="Roma"] span').textContent}));
+await pg.screenshot({path:'shot_aud49.png'});
+await pg.evaluate(()=>{CUR_MODAL&&CUR_MODAL.done(null)});await pg.waitForTimeout(400);
+o.mgr=await pg.evaluate(async()=>{AUD.manual='Roma';openManager();await new Promise(r=>setTimeout(r,2600));return {want:audWant(),loc:AUD.loc,heard:audHeard()}});
+console.log(JSON.stringify(o));console.log('ERRS',errs.slice(0,4));await b.close()})();

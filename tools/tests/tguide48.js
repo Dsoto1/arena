@@ -1,0 +1,12 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
+const pg=await b.newPage({viewport:{width:1400,height:950}});await pg.route(/fonts\./,r=>r.abort());
+const errs=[];pg.on('pageerror',e=>errs.push(e.message));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1200);await pg.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)});await pg.waitForTimeout(300);
+await pg.evaluate(()=>{showRules()});await pg.waitForTimeout(500);
+const o={};o.tabs=await pg.evaluate(()=>[...document.querySelectorAll('[data-rul]')].map(b=>b.textContent));
+await pg.click('[data-rul="mguide"]');await pg.waitForTimeout(200);
+o.m=await pg.evaluate(()=>{const el=document.getElementById('rulTab-mguide');return {vis:!el.hidden,h4:[...el.querySelectorAll('h4')].length,ref:!!el.querySelector('details.gref')}});
+o.p=await pg.evaluate(()=>{const el=document.getElementById('rulTab-guide');return {mgr:/Manager mode/.test([...el.querySelectorAll('h4')].map(h=>h.textContent).join()),h4:el.querySelectorAll('h4').length}});
+await pg.screenshot({path:'shot_mguide48.png'});
+o.imp=await pg.evaluate(async()=>{await new Promise(r=>setTimeout(r,3500));return CROWD_CACHE.filter(r=>!r.recruited).length});
+console.log(JSON.stringify(o));console.log('ERRS',errs.slice(0,4));await b.close()})();

@@ -1,0 +1,12 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:980}});await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
+const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.click('#mClose');
+await pg.evaluate(()=>{$('#modal').hidden=true;startEvent({ev:'democritus',loc:6,seats:['soldier','hero'].map(c=>({cls:c,cpu:true,diff:'normal'})),opts:{spect:0}});SPEED='pause'});
+await pg.waitForTimeout(2000);
+await pg.evaluate(()=>{const m=document.getElementById('modal');if(m)m.hidden=true;const p=S.players[0];p.coin=25;{openMarket(p)}});
+await pg.waitForTimeout(900);await pg.screenshot({path:'mkt_locked.png',clip:{x:280,y:10,width:860,height:960}});
+await pg.evaluate(()=>{const p=S.players[0];p.market=true;const mc=document.getElementById('mClose');if(mc)mc.click()});
+await pg.waitForTimeout(500);
+await pg.evaluate(()=>{{openMarket(S.players[0])}});
+await pg.waitForTimeout(900);await pg.screenshot({path:'mkt_open.png',clip:{x:280,y:10,width:860,height:960}});
+console.log('ERRS',errs.slice(0,5));await b.close()})();

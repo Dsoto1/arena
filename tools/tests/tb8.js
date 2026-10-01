@@ -1,0 +1,22 @@
+const { chromium } = require('playwright');
+(async()=>{
+const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1560,height:1000}});
+await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
+const errs=[];pg.on('pageerror',e=>errs.push(e.message+' @ '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.click('#mClose');
+const out={};
+await pg.evaluate(()=>{startEvent({ev:'democritus',loc:6,seats:[{cls:'soldier',cpu:true},{cls:'hero',cpu:true},{cls:'slave',cpu:true},{cls:'venatore',cpu:true}],opts:{spect:30}});SPEED='pause'});
+await pg.waitForTimeout(700);out.intro=await pg.evaluate(()=>!!document.querySelector('#evIntro'));await pg.screenshot({path:'shot_intro.png'});
+out.house=await pg.evaluate(()=>document.querySelector('.house')&&document.querySelector('.house').textContent+' | '+document.querySelector('.house').title);
+out.mute=await pg.evaluate(()=>{document.querySelector('#btnMute').click();const a=audSet().on;document.querySelector('#btnMute').click();return [a,audSet().on]});
+await pg.waitForTimeout(3500);
+await pg.click('#btnRules');await pg.waitForTimeout(300);await pg.screenshot({path:'shot_rules25.png'});await pg.click('[data-rul="new"]');await pg.waitForTimeout(200);out.newTab=await pg.evaluate(()=>!document.querySelector('#rulTab-new').hidden);
+out.closeRight=await pg.evaluate(()=>{const b=document.querySelector('#mClose').getBoundingClientRect(),m=document.querySelector('#mboxEl').getBoundingClientRect();return b.left>m.left+m.width/2});
+await pg.click('#mClose');await pg.waitForTimeout(200);
+await pg.click('#navTog');await pg.waitForTimeout(350);await pg.click('#btnSettings');await pg.waitForTimeout(300);await pg.click('[data-stab="tokens"]');await pg.waitForTimeout(300);out.tokRows=await pg.evaluate(()=>document.querySelectorAll('.tokrow').length);await pg.screenshot({path:'shot_settok25.png'});await pg.click('#mClose');
+await pg.evaluate(()=>document.getElementById('btnStudio').click());await pg.waitForTimeout(400);await pg.evaluate(()=>{ST.tab='chars';stReady();document.querySelector('#studio').innerHTML=studioHTML()});await pg.waitForTimeout(400);
+await pg.evaluate(()=>{ST.draft.portrait.helm='galea';ST.draft.portrait.hs='long';ST.draft.portrait.bs='goatee';document.querySelector('#studio').innerHTML=studioHTML()});await pg.waitForTimeout(200);
+await pg.screenshot({path:'shot_char25.png'});
+await pg.click('[data-st="tab"][data-v="tokens"]');await pg.waitForTimeout(300);await pg.click('[data-st="toklibnew"]');await pg.waitForTimeout(400);
+out.lib=await pg.evaluate(()=>CUSTOM.tokens.length);
+console.log(JSON.stringify(out));console.log(errs.slice(0,5));await b.close();})();

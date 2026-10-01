@@ -1,0 +1,17 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
+const ctx=await b.newContext({viewport:{width:1440,height:1000}});
+const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
+await pg.evaluate(async()=>{menuHide();if(CUR_MODAL)CUR_MODAL.done(null);await loadCustoms();openStudio('chars')});await pg.waitForTimeout(1200);
+await pg.evaluate(()=>{const s=document.querySelector('[data-f="classRef"]');s.value='ccp:murmillo';s.dispatchEvent(new Event('change',{bubbles:true}))});await pg.waitForTimeout(500);
+await pg.screenshot({path:'s53a.png',clip:{x:540,y:40,width:880,height:260}});
+await pg.evaluate(()=>{document.querySelector('[data-st="tab"][data-v="classes"]').click()});await pg.waitForTimeout(700);
+await pg.evaluate(()=>{document.querySelector('.stlist').scrollIntoView()});await pg.waitForTimeout(300);await pg.screenshot({path:'s53b.png'});
+await pg.evaluate(()=>{document.querySelector('[data-st="tab"][data-v="lanistas"]').click()});await pg.waitForTimeout(700);await pg.evaluate(()=>{$('#mBody').scrollTop=0});
+await pg.screenshot({path:'s53c.png'});
+await pg.click('[data-lna="save"]');await pg.waitForTimeout(400);
+const o=await pg.evaluate(()=>({lan:CUSTOM.lanistas.length,rs:RS_KINDS.map(r=>r[0]).join(',')}));
+await pg.evaluate(()=>{document.querySelector('[data-st="tab"][data-v="rosters"]').click()});await pg.waitForTimeout(500);
+await pg.evaluate(()=>{const b=document.querySelector('[data-rs="tab"][data-v="lanistas"]');b&&b.click()});await pg.waitForTimeout(400);
+o.rsl=await pg.evaluate(()=>document.getElementById('studio').innerText.includes('Crispus'));
+console.log(JSON.stringify(o));console.log(errs.slice(0,4));await b.close()})();

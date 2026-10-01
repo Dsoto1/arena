@@ -1,0 +1,30 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
+const pg=await b.newPage({viewport:{width:1500,height:950}});await pg.route(/fonts\./,r=>r.abort());
+const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n').slice(1,3).join(' ')));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1200);
+await pg.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)});
+const o={};
+await pg.evaluate(()=>{openManager()});await pg.waitForTimeout(800);
+await pg.click('[data-mg="create"]');await pg.waitForTimeout(300);await pg.click('[data-mg="nmgo"]');await pg.waitForTimeout(900);
+o.founding=await pg.evaluate(()=>{const q=document.querySelector('.qscard');return q?q.textContent.slice(0,90):null});
+o.glowHTML=await pg.evaluate(()=>{const b=document.querySelector('.mtabs [data-id="night"]');const before=b&&b.classList.contains('nightpend');MGR.tab='roster';MGR_REDRAW();const b2=document.querySelector('.mtabs [data-id="night"]');return [before,b2&&b2.classList.contains('nightpend'),getComputedStyle(b2).animationName]});
+o.depth=await pg.evaluate(()=>{MGR.tab='roster';MGR_REDRAW();const t=document.querySelector('[data-m48="bench"]');if(!t)return 'notog';t.click();const g=gById(t.dataset.id);return {bench:!!g.bench,dep:depthOf(me()).bench.includes(g),hd:document.querySelector('.depth .sect').textContent}});
+o.nightStarters=await pg.evaluate(()=>{const pm=me();const ros=rosterOf(pm);ros.forEach(g=>g.bench=true);MGR.tab='night';MGR_REDRAW();const t=document.getElementById('mgrPane').textContent;ros.forEach(g=>g.bench=false);return /Only benched fighters/.test(t)});
+o.hyg=await pg.evaluate(()=>{const pm=me(),w=W_();const ros=rosterOf(pm);ros[0].inj={until:w.week+3,label:'cut',pen:1};MGR.tab='infirm';MGR_REDRAW();const bt=document.querySelector('[data-m48="hygeia"]');if(!bt)return 'nobtn';const dis0=bt.disabled;bt.click();const bt2=document.querySelector('[data-m48="hygeia"]');return {dis0,healed:!ros[0].inj,after:bt2&&bt2.disabled,reset:(w.season++,hygeiaReady(pm))&&(w.season--,true)}});
+o.practice=await pg.evaluate(()=>{const w=W_(),pm=me();const g=rosterOf(pm)[0];const c0=pm.coin;const purse0=w.glads.filter(x=>x.alive&&x.contract&&x.id!==g.id).reduce((a,x)=>a+(x.purse||0),0);
+  try{exhibApply({winner:0,players:[]},{my:g.id,opp:null})}catch(e){return 'err '+e.message}const purse1=w.glads.filter(x=>x.alive&&x.contract&&x.id!==g.id).reduce((a,x)=>a+(x.purse||0),0);
+  const s=seatFor(g,'#fff',true);return {gate:pm.coin-c0,purseDrop:purse0-purse1,spar:g.sparWk===w.week,ap:s.boost.ap,cf:s.boost.cf}});
+o.empty=await pg.evaluate(()=>{const w=W_(),pm=me();const mine=rosterOf(pm);mine.forEach(g=>{g.contract=null});w.offers=[];w.cartSpell=0;
+  w.mgrs.filter(m=>!m.isPlayer).forEach(m=>{m.opin=m.opin||{};});const orig=opinionOf;opinionOf=m=>({v:60});emptyBarracksWeek(w,pm);opinionOf=orig;
+  const off=(w.offers||[]).find(x=>x.kind==='loanin');MGR.tab='ludus';MGR_REDRAW();const pane=document.getElementById('mgrPane').innerHTML;
+  const r={offer:!!off,letter:/A letter from/.test(pane),cart:/Vulso's cart/.test(pane),lots:(w.cart||{ids:[]}).ids.length};
+  if(off){document.querySelector('[data-m48="loaninyes"]').click();const g=gById(off.gid);r.borrowed=g.contract.mgr===pm.id&&!!g.loanFrom&&g.loanFrom.dire===1;
+    MGR.tab='roster';MGR_REDRAW();r.loansCard=!!document.querySelector('.loans');
+    const cid=w.cart.ids[0];pm.coin+=50;MGR.tab='ludus';MGR_REDRAW();document.querySelector(`[data-m48="cartbuy"][data-id="${cid}"]`).click();r.bought=gById(cid).contract&&gById(cid).contract.mgr===pm.id;
+    r.returned=g.contract.mgr===off.mid&&!g.loanFrom;
+    /* death while on loan */
+    const h=w.glads.find(x=>x.alive&&x.contract&&!mgrById(x.contract.mgr).isPlayer&&!isRival(mgrById(x.contract.mgr)));const owner=mgrById(h.contract.mgr);borrowFrom(h,owner,3,4);const c0=pm.coin,o0=owner.coin;h.alive=false;h.contract=null;loansWeek(w,pm);r.deathFee=[c0-pm.coin,owner.coin-o0]}
+  r.spell=(emptyBarracksWeek(w,pm),w.cart&&w.cart.ids.length);return r});
+o.ledger=await pg.evaluate(()=>{const w=W_(),pm=me();w.qsLast=null;qsInit(w,pm);qsClose(w,pm);w.finaleDue=true;const a=qsMaybePay(w,pm);w.finaleDue=false;w.awardShow={seen:false};const b2=qsMaybePay(w,pm);w.awardShow=null;const c0=pm.coin;const c=qsMaybePay(w,pm);return {blockedFinale:!a,blockedAwards:!b2,paid:c,gain:pm.coin-c0}});
+o.trophyBtns=await pg.evaluate(()=>{return typeof hallTrophiesHTML==='function'?/data-trsys/.test(hallTrophiesHTML()):'n/a'});
+console.log(JSON.stringify(o,null,1));console.log('ERRS',errs.slice(0,5));await b.close()})();

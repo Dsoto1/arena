@@ -1,0 +1,24 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
+const ctx=await b.newContext({viewport:{width:1500,height:1000}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});const pg=await ctx.newPage();await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
+const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1500);
+await pg.click('[data-mm="studio"]');await pg.waitForTimeout(1800);
+await pg.click('[data-st="tab"][data-v="chars"]');await pg.waitForTimeout(600);
+const o={};o.chars=await pg.evaluate(()=>({top:!!document.querySelector('.chartop [data-st="new"]'),rand:!!document.querySelector('.chartop [data-st="random"]'),saveplay:!!document.querySelector('[data-st="saveplay"]'),budget:!!document.querySelector('.budgetcard'),flags:document.querySelectorAll('.bgflag').length,listNew:document.querySelectorAll('[data-st="new"]').length}));
+await pg.click('.chartop [data-st="random"]');await pg.waitForTimeout(400);
+await pg.click('.bgflag:nth-child(3)');await pg.waitForTimeout(400);o.bg=await pg.evaluate(()=>ST.draft.portrait.bg);
+await pg.click('[data-st="tab"][data-v="classes"]');await pg.waitForTimeout(500);await pg.evaluate(()=>{const c=document.querySelector('[data-f="sandbox"]');c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}))});await pg.waitForTimeout(400);
+o.sbx=await pg.evaluate(()=>!!document.querySelector('.budgetcard .cbadge.sbx'));
+await pg.screenshot({path:'st_char.png'});
+await pg.click('[data-st="tab"][data-v="gear:a"]');await pg.waitForTimeout(600);
+o.gear=await pg.evaluate(()=>({tab:ST.tab,sub:ST.gearSub,picks:document.querySelectorAll('.armpick').length,seg:!!document.querySelector('[data-gs="sub"]')}));
+await pg.click('.armpick[data-id="musculata"]');await pg.waitForTimeout(500);o.fromsys=await pg.evaluate(()=>({n:ST.ca.name,ap:ST.ca.ap,slot:ST.ca.slot,shape:ST.ca.shape,base:ST.ca.base}));
+// sculpt: add circle, cut it
+await pg.click('[data-scb="add"][data-k="a"][data-v="circle"]');await pg.waitForTimeout(300);
+await pg.click('[data-scb="cut"][data-k="a"]');await pg.waitForTimeout(300);
+o.cut=await pg.evaluate(()=>({cut:ST.ca.layers[0].cut,mask:!!document.querySelector('#caPiece mask'),undo:!document.querySelector('[data-scb="undo"]').disabled}));
+await pg.screenshot({path:'st_armor.png'});
+await pg.click('[data-scb="undo"][data-k="a"]');await pg.waitForTimeout(300);o.undone=await pg.evaluate(()=>({cut:!!ST.ca.layers[0]&&!!ST.ca.layers[0].cut,n:ST.ca.layers.length}));
+await pg.click('[data-scb="mirror"][data-k="a"]').catch(()=>{});
+await pg.click('[data-st="tab"][data-v="gear:w"]');await pg.waitForTimeout(500);o.w=await pg.evaluate(()=>ST.gearSub);
+console.log(JSON.stringify(o,null,1));console.log('ERRS',errs.slice(0,5));await b.close()})();

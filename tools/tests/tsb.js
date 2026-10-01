@@ -1,0 +1,13 @@
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1500,height:1000}});await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
+const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.click('#mClose');
+const r=await pg.evaluate(async()=>{newWorld({type:'pre',key:MGR_PRE[0].key});const w=W_(),m=me();m.coin=900;
+  w.week=12;makeNight();for(const bt of w.night.bouts)bt.done=true;w.pend=[];
+  const out={week:w.week};
+  out.ok=await endWeek();
+  out.after={week:w.week,season:w.season,sp:!!w.special,fin:w.special&&w.special.D&&w.special.D.finale,ents:w.special&&w.special.rounds[0][0].ents.length,mine:w.special&&w.special.rounds[0][0].ents.some(e=>e.mine),blocked:!(await endWeek())};
+  MGR.tab='night';
+  return out});
+await pg.evaluate(()=>{openManager()});await pg.waitForTimeout(700);await pg.screenshot({path:'shot_superbus.png'});
+const r2=await pg.evaluate(async()=>{await specAutoRun();const w=W_();return {finale:w.finale,awards:w.awardShow&&w.awardShow.awards.length,seen:w.awardShow&&w.awardShow.seen,log:w.specialLog}});
+console.log(JSON.stringify({r,r2}),errs.slice(0,4));await b.close()})();

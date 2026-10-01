@@ -1,0 +1,30 @@
+const { chromium } = require('playwright');
+(async()=>{
+const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1560,height:1000}});
+await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
+const errs=[];pg.on('pageerror',e=>errs.push(e.message+' @ '+(e.stack||'').split('\n')[1]));
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.click('#mClose');
+const out={};
+await pg.evaluate(()=>{openManager()});await pg.waitForTimeout(400);
+out.m=await pg.evaluate(async()=>{newWorld({type:'custom',mgr:{name:'T',ludus:'LT',city:'Roma',color:'#c0433a',p:{...MGR_PRESETS.balanced[1]},portrait:{}}});const w=W_(),m=me();m.coin=300;
+  const fa=freeAgents().slice(0,3);fa.forEach(g=>{g.contract={mgr:m.id,wage:5,weeks:20,since:1};g.scout=2});const r={};
+  const R=t=>{MGR.tab=t;document.querySelector('#mgrBody').innerHTML=mgrHTML();return document.querySelector('#mgrPane')};
+  let p=R('ludus');r.consil=!!p.querySelector('.consil');r.lagNone=!p.querySelector('.lagbox');
+  p=R('roster');r.roster=p.innerHTML.includes('Your roster');p=R('recruit');r.recruitNoRoster=!p.innerHTML.includes('Your roster');
+  p=R('night');r.noExch=!p.querySelector('.exch');
+  calSet(w.season,((w.week-1)%12)+4);p=R('ludus');r.lag=!!p.querySelector('.lagbox');
+  const t0=Date.now();const cr=await catchUpWeeks();r.catch={...cr,heads:undefined,ms:Date.now()-t0};r.lagAfter=calLag();
+  p=R('paper');r.darwin=p.innerHTML.includes('DARWINIUS');r.nextAfterOverheard=p.innerHTML.indexOf('OVERHEARD')<p.innerHTML.indexOf('NEXT WEEK');
+  r.exchWhen=betlogLoad().slice(-3).map(x=>x.date);
+  return r});
+await pg.screenshot({path:'shot_paper24.png'});
+await pg.evaluate(()=>{MGR.tab='ludus';document.querySelector('#mgrBody').innerHTML=mgrHTML()});await pg.screenshot({path:'shot_ludus24.png'});
+await pg.click('#mClose');await pg.waitForTimeout(300);
+await pg.evaluate(()=>document.getElementById('btnHall').click());await pg.waitForTimeout(500);await pg.click('[data-tab="hall"]');await pg.waitForTimeout(500);
+out.hall=await pg.evaluate(()=>({ach:document.querySelectorAll('.ach').length,road:!!document.querySelector('.roadbox')}));
+await pg.screenshot({path:'shot_hall24.png'});
+const t1=Date.now();await pg.click('[data-tab="events"]');
+for(let i=0;i<120;i++){await pg.waitForTimeout(1000);const done=await pg.evaluate(()=>!window._seeding&&!document.querySelector('#seedProg'));if(done)break}
+out.seed=await pg.evaluate(async()=>{const er=(await Store.getDoc('hall','eventRecords'))||{};return {n:Object.keys(er).length,sample:Object.values(er).slice(0,2).map(x=>[x.name,x.cf])}});out.seedMs=Date.now()-t1;
+await pg.screenshot({path:'shot_records24.png'});
+console.log(JSON.stringify(out));console.log(errs.slice(0,5));await b.close();})();
