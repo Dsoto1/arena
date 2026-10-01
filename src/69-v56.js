@@ -104,7 +104,7 @@ const RATINGS_GUIDE=`<h4>Ratings: Speed, Strength, Intelligence, Luck, Charisma<
   <li><b>Every gladiator has five ratings</b> from 50 to 99. Classes set the loadout; the ratings set the perks. A Slave tends to be fast and a Soldier strong, but not every one is.</li>
   <li><b>Speed</b>: +1 movement at 76, +2 at 96. <b>Strength</b>: +1 damage per hit at 76, +2 at 87, +3 at 96. <b>Luck</b>: +1 coin a turn at 76, +2 at 96. <b>Charisma</b>: +1 CF a turn at 76, +2 at 96. They stack.</li>
   <li><b>When they pay</b>: only in rounds that allow class abilities. In a Classic event that is round 1, so a strong gladiator should hit early and hard.</li>
-  <li><b>Intelligence</b> decides how a CPU plays: Easy below 76, Normal from 76, Hard from 96. It never adds gear or coin.</li>
+  <li><b>Intelligence</b> sets a CPU's mind — Novice below 65, Apprentice 65, Fighter 76, Veteran 86, Master 96. It never adds gear or coin.</li>
   <li><b>Read the chips</b> on each fighter panel: a gold chip is a perk earned; a glowing one is a top band (96+).</li></ul>`;
 const RATINGS_MGR=`<h4>Ratings that grow</h4><ul>
   <li><b>Slow and steady</b>: a busy, winning fighter climbs about one band a season. Gains slow above 90 and stop at 99.</li>

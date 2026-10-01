@@ -6,7 +6,7 @@
    - Strength     → damage per successful attack: +1 at 76, +2 at 87, +3 at 96
    - Luck         → coin each turn: +1 at 76, +2 at 96
    - Charisma     → CF each turn: +1 at 76, +2 at 96
-   - Intelligence → how a CPU plays: Easy below 76, Normal 76–95, Hard 96+
+   - Intelligence → how a CPU plays (v0.62: five minds, see 80-aitiers: Novice <65, Apprentice, Fighter 76, Veteran 86, Master 96)
    Movement, damage, coin and CF pay only in rounds that allow class abilities (caAllowed), and they stack.
    Classes keep their loadout, weakness and special perks (Zora, stones, a tamed ally); the old Fleet-footed,
    Iron Fist, Patron's Purse, Crowd Darling and Lanista abilities are now read off the ratings instead.
@@ -71,7 +71,7 @@ function statTurn(p){if(!p||!p.st)return;const b=statBonuses(p.st);const bits=[]
 /* statChips — the five ratings as compact chips; perk bands glow. opt.small for tight panels. */
 function statChips(st,opt={}){if(!st)return '';const b=statBonuses(st);
   const perk={spd:b.mv,str:b.dmg,lck:b.coin,cha:b.cf,int:st.int>=76?1:0};
-  return `<span class="statchips${opt.small?' sm':''}">${STATS.map(([k,n,ic])=>{const v=statFix(st[k]);const t=k==='int'?`${n} ${v}: plays ${b.diff==='normal'?'Normal':b.diff==='hard'?'Hard':'Easy'}`:`${n} ${v}${perk[k]?`: +${perk[k]} ${STATS.find(x=>x[0]===k)[3]}`:''}`;
+  return `<span class="statchips${opt.small?' sm':''}">${STATS.map(([k,n,ic])=>{const v=statFix(st[k]);const t=k==='int'?`${n} ${v}: ${b.tierName||(b.diff==='normal'?'Normal':b.diff==='hard'?'Hard':'Easy')} mind`:`${n} ${v}${perk[k]?`: +${perk[k]} ${STATS.find(x=>x[0]===k)[3]}`:''}`;
     return `<span class="statchip${perk[k]?' up':''}${v>=96?' top':''}" title="${t}">${ic}<b>${v}</b></span>`}).join('')}</span>`}
 /* ---- beasts: Speed and Strength read off the rulebook movement and attack ---- */
 const NPC_SPD={1:55,2:66,3:73,4:84,5:93,6:97,7:99}; /* TWEAK */

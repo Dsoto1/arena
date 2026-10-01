@@ -9651,6 +9651,10 @@ function atkPlan(player, source, target) {
     exp: n * 0.5 * pw + bonus * (1 - 1 / (1 << n))
   };
 }
+/* AIW_BASE — the hand-set attack-scoring weights cpuScoreAttack reads (v0.62). Tiers blend these toward AIW_TUNED (80-aitiers).
+   TWEAK: every value here; tools/aitune.js searches around them. */
+const AIW_BASE = {potFloor:0.5,potBase:3,potPer:2,ship:10,threat:6,killR:4,tamedBase:4,tamedKill:6,huntMul:2.2,huntBias:1/12,fistBeast:4,risk:0.5,riskHurt:1.4,riskOk:0.35,slog:0.8,
+  pvpBase:3,strip:1.6,lethal:14,hurtFoe:2,fewLocs:1.5,leader:2.5,lethalHard:6,rel:1/12,friend:4,punch:1.5,throwNear:1,throwFar:3,lastUse:2};
 /* cpuScoreAttack — scores one attack option; cpuAct takes the highest positive score and -1 means never. These weights shape most CPU fighting behavior.
    Pots only if the swing breaks one often enough; beasts score high when they threaten the CPU, otherwise a hunt value (trophy worth to this personality minus risk);
    gladiators score by damage that gets through plus lethal chance, scaled by aggression. Allies, relationships and weapon conservation adjust it, then noise is added.
@@ -9660,6 +9664,7 @@ function atkPlan(player, source, target) {
    relationship -r/12 capped -3..+7 and -4 vs friends; -1.5 for punches, -3 (or -1) for throwing, -2 to save a weapon's last use. */
 function cpuScoreAttack(player, source, target) {
   const P = pers(player);
+  const W = typeof aiW === 'function' ? aiW(player) : AIW_BASE; /* v0.62: the tunable weights (80-aitiers) */
   const pl = atkPlan(player, source, target);
   const {
     n,
@@ -9675,9 +9680,9 @@ function cpuScoreAttack(player, source, target) {
     // only swing at a pot that can realistically break (2 damage)
     const pr = pAtLeast(n, pw, bonus, 2, Math.min(flips, 1));
     const mustSwing = S.active.restless && player.attacks === 0; // any attack keeps the restless crowd from stoning everyone
-    if (pr < (easy ? 0.25 : 0.5) && !mustSwing) return -1; // a power-1 weapon breaks a pot only 1 time in 4: not worth the swing
-    s = (3 + target.ref.pots.length * 2) * pr * ((P.cf + P.coin) / 100 + 0.5);
-  } else if (target.kind === 'ship') s = 10 + exp;else if (target.kind === 'npc' && S.evKey === 'orpheus' && S.ri === 0 && NPCT[target.ref.t].tameable && target.ref.tamedBy == null) {
+    if (pr < (easy ? 0.25 : W.potFloor) && !mustSwing) return -1; // a power-1 weapon breaks a pot only 1 time in 4: not worth the swing
+    s = (W.potBase + target.ref.pots.length * W.potPer) * pr * ((P.cf + P.coin) / 100 + 0.5);
+  } else if (target.kind === 'ship') s = W.ship + exp;else if (target.kind === 'npc' && S.evKey === 'orpheus' && S.ri === 0 && NPCT[target.ref.t].tameable && target.ref.tamedBy == null) {
     s = target.ref.aggro === player.id && cheb(player, target.ref) <= 1 ? target.ref.hp <= exp * 1.5 || hurtBad(player) ? 8 : 5 : -1;
   } else if (target.kind === 'npc') {
     const m = target.ref,
@@ -9686,15 +9691,15 @@ function cpuScoreAttack(player, source, target) {
     const kill = pAtLeast(n, pw, bonus, m.hp, flips);
     const reward = (T.cf * (P.cf + 40) + T.coin * (P.coin + 20)) / 100; // what the trophy is worth to this personality
     const threat = m.tamedBy == null && (m.aggro === player.id || cheb(player, m) <= 1);
-    if (S.evKey === 'gauntlet' || S.evKey === 'commodus' || threat) s = 6 + exp + kill * (4 + reward);else if (m.tamedBy != null) s = (4 + exp + kill * 6) * pw50(player, 'aggression');else {
+    if (S.evKey === 'gauntlet' || S.evKey === 'commodus' || threat) s = W.threat + exp + kill * (W.killR + reward);else if (m.tamedBy != null) s = (W.tamedBase + exp + kill * W.tamedKill) * pw50(player, 'aggression');else {
       // hunting a beast that is not after us: worth it only if it can die soon or we are built for the hunt
       // value = share of the trophy this swing earns, plus the chance to finish it now, minus the aggro it draws
       const turns = m.hp / Math.max(0.5, exp);
-      s = (4 + reward) * Math.min(1, exp / m.hp) * 2.2 + kill * (4 + reward) + (P.hunt - 50) / 12;
-      if (exp < 1) s -= 4; // a fist against a lion just earns its attention
-      const risk = st.ap * 0.5 * Math.min(turns, 4) * (P.survival / 100) * (hurtBad(player) || hpFrac(player) < .5 ? 1.4 : 0.35);
+      s = (W.killR + reward) * Math.min(1, exp / m.hp) * W.huntMul + kill * (W.killR + reward) + (P.hunt - 50) * W.huntBias;
+      if (exp < 1) s -= W.fistBeast; // a fist against a lion just earns its attention
+      const risk = st.ap * W.risk * Math.min(turns, 4) * (P.survival / 100) * (hurtBad(player) || hpFrac(player) < .5 ? W.riskHurt : W.riskOk);
       s -= risk;
-      if (turns > 6) s -= (turns - 6) * 0.8; // a slog the crowd won't wait for
+      if (turns > 6) s -= (turns - 6) * W.slog; // a slog the crowd won't wait for
     }
     if (source.w.punch && m.t === 'bear' && player.items.some(i => i.kind === 'mf' && MANDATA[i.idx].n === 'Bear Puncher')) s += 8;
   } else {
@@ -9713,13 +9718,13 @@ function cpuScoreAttack(player, source, target) {
     lethal /= locs.length;
     strip /= locs.length;
     if (strip < 0.5) return -1; // nothing gets through
-    s = (3 + strip * 1.6 + lethal * 14) * pw50(player, 'aggression');
-    if (hurtBad(q)) s += 2 * pw50(player, 'aggression');
-    if (locs.length <= 3) s += 1.5; // a foe down to few whole locations is close to done: press them
+    s = (W.pvpBase + strip * W.strip + lethal * W.lethal) * pw50(player, 'aggression');
+    if (hurtBad(q)) s += W.hurtFoe * pw50(player, 'aggression');
+    if (locs.length <= 3) s += W.fewLocs; // a foe down to few whole locations is close to done: press them
     if (hard) {
       const lead = activePlayers().filter(x => x !== player).sort((a, b) => b.cf - a.cf)[0];
-      if (lead === q) s += 2.5; // hard CPUs go after the leader
-      s += lethal * 6;
+      if (lead === q) s += W.leader; // hard CPUs go after the leader
+      s += lethal * W.lethalHard;
     }
     if (S.evKey === 'goldenEagle' && q.eagle) s += 6;
     if (S.evKey === 'orpheus' && S.ri === 0) s = q.wR && q.wR.lyre || q.wL && q.wL.lyre ? 8 : 2;
@@ -9727,14 +9732,15 @@ function cpuScoreAttack(player, source, target) {
   s += allyBonus(player, target);
   if (target.kind === 'player') {
     const r = relOf(player, target.ref);
-    s += clamp(-r / 12, -3, 7);
-    if (r >= 25 && activePlayers().length > 2) s -= 4;
+    s += clamp(-r * W.rel, -3, 7);
+    if (r >= 25 && activePlayers().length > 2) s -= W.friend;
   }
-  if (source.w.punch) s -= 1.5;
-  if (source.thr) s -= isNaum() ? 99 : target.kind === 'player' && pAtLeast(n, pw, bonus, 3) > 0.5 ? 1 : 3; // don't throw away a spear lightly
-  if (source.w.atkUses && source.w.atkLeft <= 1 && s < 6) s -= 2; // save the last swing of a failing weapon
+  if (source.w.punch) s -= W.punch;
+  if (source.thr) s -= isNaum() ? 99 : target.kind === 'player' && pAtLeast(n, pw, bonus, 3) > 0.5 ? W.throwNear : W.throwFar; // don't throw away a spear lightly
+  if (source.w.atkUses && source.w.atkLeft <= 1 && s < 6) s -= W.lastUse; // save the last swing of a failing weapon
   return s + noise(player);
 }
+
 /* cpuTactic — picks the best Push or Topple (not on Easy), or null. Push: an enemy onto spikes 10, out of the shrinking zone 4, for The Push Mandatum 3; Hard may push a pillar onto a tunnel 3.
    Topple: 2.5 per pot x (cf+coin)/100 (+4 with no weapon, +1.5 for a showman with spectators) plus 6 x aggression per rival and 5/2 per beast in the fall line, -20 per friend; needs 5+.
    TWEAK: those scores and the 5 threshold. */
@@ -26287,7 +26293,7 @@ setTimeout(()=>{try{if(!HEADLESS)piaArtImage()}catch(e){}},1500); /* load the Pi
    - Strength     → damage per successful attack: +1 at 76, +2 at 87, +3 at 96
    - Luck         → coin each turn: +1 at 76, +2 at 96
    - Charisma     → CF each turn: +1 at 76, +2 at 96
-   - Intelligence → how a CPU plays: Easy below 76, Normal 76–95, Hard 96+
+   - Intelligence → how a CPU plays (v0.62: five minds, see 80-aitiers: Novice <65, Apprentice, Fighter 76, Veteran 86, Master 96)
    Movement, damage, coin and CF pay only in rounds that allow class abilities (caAllowed), and they stack.
    Classes keep their loadout, weakness and special perks (Zora, stones, a tamed ally); the old Fleet-footed,
    Iron Fist, Patron's Purse, Crowd Darling and Lanista abilities are now read off the ratings instead.
@@ -26352,7 +26358,7 @@ function statTurn(p){if(!p||!p.st)return;const b=statBonuses(p.st);const bits=[]
 /* statChips — the five ratings as compact chips; perk bands glow. opt.small for tight panels. */
 function statChips(st,opt={}){if(!st)return '';const b=statBonuses(st);
   const perk={spd:b.mv,str:b.dmg,lck:b.coin,cha:b.cf,int:st.int>=76?1:0};
-  return `<span class="statchips${opt.small?' sm':''}">${STATS.map(([k,n,ic])=>{const v=statFix(st[k]);const t=k==='int'?`${n} ${v}: plays ${b.diff==='normal'?'Normal':b.diff==='hard'?'Hard':'Easy'}`:`${n} ${v}${perk[k]?`: +${perk[k]} ${STATS.find(x=>x[0]===k)[3]}`:''}`;
+  return `<span class="statchips${opt.small?' sm':''}">${STATS.map(([k,n,ic])=>{const v=statFix(st[k]);const t=k==='int'?`${n} ${v}: ${b.tierName||(b.diff==='normal'?'Normal':b.diff==='hard'?'Hard':'Easy')} mind`:`${n} ${v}${perk[k]?`: +${perk[k]} ${STATS.find(x=>x[0]===k)[3]}`:''}`;
     return `<span class="statchip${perk[k]?' up':''}${v>=96?' top':''}" title="${t}">${ic}<b>${v}</b></span>`}).join('')}</span>`}
 /* ---- beasts: Speed and Strength read off the rulebook movement and attack ---- */
 const NPC_SPD={1:55,2:66,3:73,4:84,5:93,6:97,7:99}; /* TWEAK */
@@ -26405,7 +26411,7 @@ function statGain(g,k,amt){if(!g||!amt||amt<=0)return 0;const st=gStats(g);g.sxp
   const mine=g.contract&&mgrById(g.contract.mgr)&&mgrById(g.contract.mgr).isPlayer;
   if(w&&mine){const L=(w.sgain=w.sgain||{})[g.id]=(w.sgain[g.id]||{});L[k]=Math.round(((L[k]||0)+amt)*100)/100}
   if(up){const after=statBonuses(st);const nm9=STATS.find(s=>s[0]===k)[1];
-    const perk=k==='int'?(after.diff!==before.diff?`now plays ${after.diff==='hard'?'Hard':'Normal'}`:''):(()=>{const f={spd:'mv',str:'dmg',lck:'coin',cha:'cf'}[k];const unit={mv:'movement',dmg:'damage per hit',coin:'coin a turn',cf:'CF a turn'}[f];return after[f]>before[f]?`now +${after[f]} ${unit}`:''})();
+    const perk=k==='int'?(after.tier!=null?(after.tier!==before.tier?`now a ${after.tierName} mind`:''):(after.diff!==before.diff?`now plays ${after.diff==='hard'?'Hard':'Normal'}`:'')):(()=>{const f={spd:'mv',str:'dmg',lck:'coin',cha:'cf'}[k];const unit={mv:'movement',dmg:'damage per hit',coin:'coin a turn',cf:'CF a turn'}[f];return after[f]>before[f]?`now +${after[f]} ${unit}`:''})();
     if(perk&&w){if(mine)tnews(`⭐ <b>${esc(g.name)}</b> reaches ${nm9} ${st[k]} — ${perk}.`,'big');else if(st[k]>=96&&g.contract)mnews(`⭐ ${esc(g.name)} of ${esc(mgrById(g.contract.mgr).ludus)} reaches ${nm9} ${st[k]} — ${perk}.`);
       ghist(g,`reached ${nm9} ${st[k]} — ${perk}`)}}
   return up}
@@ -26440,7 +26446,7 @@ function growthDigest(w){const sg=w.sgain||{};const parts=[];
   try{const w=W_();if(r!==false&&w&&w===w0&&!w.dead&&!w.tutorial){weeklyGrowth(w);growthDigest(w);saveWorld()}}catch(e){console.error(e)}return r}}
 /* ratingsHTML — the five ratings for a fighter card: exact for your fighters and anyone scouted twice, a range after one scouting, hidden before. */
 function ratingsHTML(g){const st=gStats(g);if(!st)return '';const w=W_(),pm=me();const mine=g.contract&&g.contract.mgr===pm.id;const sc=mine?3:(g.scout||0);
-  const b=statBonuses(st);const perkOf={spd:b.mv?`+${b.mv} movement`:'',str:b.dmg?`+${b.dmg} damage`:'',lck:b.coin?`+${b.coin} coin a turn`:'',cha:b.cf?`+${b.cf} CF a turn`:'',int:`plays ${b.diff==='hard'?'Hard':b.diff==='normal'?'Normal':'Easy'}`};
+  const b=statBonuses(st);const perkOf={spd:b.mv?`+${b.mv} movement`:'',str:b.dmg?`+${b.dmg} damage`:'',lck:b.coin?`+${b.coin} coin a turn`:'',cha:b.cf?`+${b.cf} CF a turn`:'',int:b.tierName?`${b.tierName} mind`:`plays ${b.diff==='hard'?'Hard':b.diff==='normal'?'Normal':'Easy'}`};
   const rows=STATS.map(([k,n,ic])=>{const v=st[k];const pct=Math.round((v-STAT_MIN)/(STAT_MAX-STAT_MIN)*100);const nb=nextBand(k,v);const xp=Math.round(((g.sxp||{})[k]||0)*100);
     const val=sc>=2?`${v}`:sc===1?`${Math.max(STAT_MIN,v-4)}–${Math.min(STAT_MAX,v+4)}`:'?';
     return `<span>${ic} ${n}</span><div class="meter${v>=96?' gold':''}" title="${sc>=2&&nb?`${nb-v} to the next band (${nb})`:''}"><i style="width:${sc?pct:0}%"></i></div><span class="n">${val}</span><span class="rc-sub">${sc>=2?(k==='int'||perkOf[k]?perkOf[k]:'—')+(mine&&v<STAT_MAX?` · ${xp}% to ${v+1}`:''):''}</span>`}).join('');
@@ -26719,7 +26725,7 @@ const RATINGS_GUIDE=`<h4>Ratings: Speed, Strength, Intelligence, Luck, Charisma<
   <li><b>Every gladiator has five ratings</b> from 50 to 99. Classes set the loadout; the ratings set the perks. A Slave tends to be fast and a Soldier strong, but not every one is.</li>
   <li><b>Speed</b>: +1 movement at 76, +2 at 96. <b>Strength</b>: +1 damage per hit at 76, +2 at 87, +3 at 96. <b>Luck</b>: +1 coin a turn at 76, +2 at 96. <b>Charisma</b>: +1 CF a turn at 76, +2 at 96. They stack.</li>
   <li><b>When they pay</b>: only in rounds that allow class abilities. In a Classic event that is round 1, so a strong gladiator should hit early and hard.</li>
-  <li><b>Intelligence</b> decides how a CPU plays: Easy below 76, Normal from 76, Hard from 96. It never adds gear or coin.</li>
+  <li><b>Intelligence</b> sets a CPU's mind — Novice below 65, Apprentice 65, Fighter 76, Veteran 86, Master 96. It never adds gear or coin.</li>
   <li><b>Read the chips</b> on each fighter panel: a gold chip is a perk earned; a glowing one is a top band (96+).</li></ul>`;
 const RATINGS_MGR=`<h4>Ratings that grow</h4><ul>
   <li><b>Slow and steady</b>: a busy, winning fighter climbs about one band a season. Gains slow above 90 and stop at 99.</li>
@@ -27348,6 +27354,58 @@ for(const name of SCREEN_OPENERS){try{const base=window[name]||eval(name);if(typ
 /* the old deciders hand over to the one decision */
 mmAfterClose=function(){screenSettle()};
 try{Object.defineProperty(MM,'launchPending',{configurable:true,get(){return SCREEN.pending>0},set(v){}})}catch(e){}
+/* =====================================================================
+   80-AITIERS · v0.62
+   =====================================================================
+   FIVE MINDS — a CPU's Intelligence sets one of five named tiers. Each tier sets how sharply the gladiator plays; their
+   personality still sets HOW they play (a reckless Master is still reckless — just good at it).
+     Novice 50-64 · Apprentice 65-75 · Fighter 76-85 · Veteran 86-95 · Master 96-99
+   • decision noise (how often they misjudge a swing) shrinks tier by tier;
+   • the old Easy / Normal / Hard switches (who plays the market, tunnels, truces, Focus…) follow the tier
+     (Novice and Apprentice Easy, Fighter Normal, Veteran and Master Hard); the Apprentice already plays cards like a Fighter;
+   • Veteran and Master read the attack weights found by the offline tuner (tools/aitune.js) — Veteran halfway, Master
+     fully (AIW_TUNED below; AIW_BASE in 06-ai is the hand-set start).
+   Nothing learns during play: the dice and replays stay seeded. Play Now's seat picker offers the five tiers (each sets a
+   printed CPU's Intelligence); Manager and Studio gladiators get theirs from their rating (a broken spirit drops one tier).
+   ===================================================================== */
+const AI_TIERS=[
+  {k:'novice',n:'Novice',lo:50,diff:'easy',noise:4.5,blend:0,int:58,d:'misjudges often, plays cards at random'},
+  {k:'apprentice',n:'Apprentice',lo:65,diff:'easy',noise:3.9,blend:0,int:70,d:'still rash, but plays its cards sensibly'},
+  {k:'fighter',n:'Fighter',lo:76,diff:'normal',noise:3.4,blend:0,int:80,d:'plans routes around danger, works the market'},
+  {k:'veteran',n:'Veteran',lo:86,diff:'hard',noise:1.8,blend:0.5,int:90,d:'times truces and tunnels, hunts the leader'},
+  {k:'master',n:'Master',lo:96,diff:'hard',noise:0.6,blend:1,int:97,d:'the sharpest reads in the arena'}];
+/* AIW_TUNED — the attack weights tools/aitune.js found (Master plays these; Veteran halfway). TWEAK: re-run the tuner after rule changes. */
+const AIW_TUNED={...AIW_BASE};
+const aiTierOf=int=>{let t=0;for(let i=0;i<AI_TIERS.length;i++)if((int||0)>=AI_TIERS[i].lo)t=i;return t};
+const aiTierName=int=>AI_TIERS[aiTierOf(int)].n;
+/* a seat's picker value → tier index (the five tier keys, or the old easy / normal / hard) */
+const aiTierKey=v=>{const i=AI_TIERS.findIndex(t=>t.k===v);if(i>=0)return i;return v==='easy'?0:v==='hard'?4:v==='normal'?2:-1};
+for(const t of AI_TIERS)INT_FOR_DIFF[t.k]=t.int;
+function aiTier(p){if(!p)return 2;if(p.tier!=null)return p.tier;return p.st&&p.st.int?aiTierOf(p.st.int):p.diff==='easy'?0:p.diff==='hard'?4:2}
+/* the weights a player scores with: the tuner's own (p.aiw), else the tier's blend of hand-set and tuned */
+const AIW_CACHE={};
+function aiW(p){if(p&&p.aiw)return p.aiw;const t=aiTier(p);const b=AI_TIERS[t].blend;if(!b)return AIW_BASE;if(AIW_CACHE[t])return AIW_CACHE[t];
+  const o={};for(const k of Object.keys(AIW_BASE))o[k]=AIW_BASE[k]+((AIW_TUNED[k]??AIW_BASE[k])-AIW_BASE[k])*b;return AIW_CACHE[t]=o}
+noise=function(player,scale=1){const d=AI_TIERS[aiTier(player)].noise;return (rand()-.5)*d*scale*(0.6+pers(player).aggression/250+(100-pers(player).survival)/250)};
+/* tier set at the seat: the picker value for printed CPUs, else the Intelligence rating; a Manager seat whose lanista's
+   fighter is broken (diffLock below the rating's band) drops one tier */
+{const base=mkPlayer;mkPlayer=function(i,s){const p=base.apply(this,arguments);try{if(s&&s.aiw)p.aiw=s.aiw;
+  let t=p.st&&p.st.int?aiTierOf(p.st.int):aiTierKey(s&&s.diff);if(t<0)t=2;
+  if(s&&s.diffLock&&typeof bandInt==='function'&&p.st){const ix={easy:0,normal:1,hard:2};if(ix[s.diffLock]<ix[bandInt(p.st.int)])t=Math.max(0,t-1)}
+  p.tier=t;if(p.cpu)p.diff=AI_TIERS[t].diff}catch(e){console.error(e)}return p}}
+/* keep the switches in step (a gladiator handed to the CPU mid-bout plays its own tier) */
+{const base=beginTurn;beginTurn=async function(){try{const p=S&&cur();if(p&&p.cpu&&p.tier!=null)p.diff=AI_TIERS[p.tier].diff}catch(e){}return base.apply(this,arguments)}}
+/* the Apprentice plays its cards like a Fighter */
+{const base=cpuUseItems;cpuUseItems=async function(player){if(aiTier(player)!==1)return base.apply(this,arguments);const d=player.diff;player.diff='normal';try{return await base.apply(this,arguments)}finally{player.diff=d}}}
+/* statBonuses names the tier too (read by the chips, the ratings card and the growth news) */
+{const base=statBonuses;statBonuses=function(st){const b=base.apply(this,arguments);b.tier=aiTierOf((st||{}).int||0);b.tierName=AI_TIERS[b.tier].n;return b}}
+function aiTierChip(int){const T=AI_TIERS[aiTierOf(int)];return `<span class="aitier t${aiTierOf(int)}" title="${esc(T.n)} mind: ${esc(T.d)}">🧠 ${esc(T.n)}</span>`}
+{const st=document.createElement('style');st.textContent=`.aitier{display:inline-block;font-size:11px;padding:1px 6px;border-radius:9px;border:1px solid var(--line2);color:var(--muted);white-space:nowrap}
+.aitier.t2{color:#cfc6b4}.aitier.t3{color:#9cc4e8;border-color:#4f7fc4}.aitier.t4{color:var(--gold2);border-color:var(--gold)}`;document.head.appendChild(st)}
+/* the tier rides beside the ratings wherever they show; the glossary and the ratings guide name the five minds */
+{const base=statChips;statChips=function(st,opt={}){const h=base.apply(this,arguments);if(!h||!st||!st.int)return h;return h.replace(/<\/span>$/,` ${aiTierChip(statFix(st.int))}</span>`)}}
+const AI_TIERS_TXT='Novice below 65, Apprentice 65, Fighter 76, Veteran 86, Master 96';
+try{if(typeof GLOSS!=='undefined'&&GLOSS.int)GLOSS.int.d=`How sharply a CPU plays the gladiator — five minds: ${AI_TIERS_TXT}. Personality still decides how they play. Grows by surviving and winning.`}catch(e){}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
@@ -27394,7 +27452,7 @@ function seatRows(ev,n,cls){
     return `<div class="seat" style="--pc:${CLASSES[s.cls].color}"><span class="cn">${clsPieceHTML(s.cls,34)}Seat ${i+1}</span>
       <div class="row"><select id="cls${i}" aria-label="Class for seat ${i+1}">${classOptions(cls,s.cls)}</select>
       <select id="cpu${i}" aria-label="Controller for seat ${i+1}"><option value="0" ${!s.cpu?'selected':''}>You</option><option value="1" ${s.cpu?'selected':''}>CPU</option></select>
-      ${s.cpu?`<select id="dif${i}" aria-label="CPU difficulty for seat ${i+1}">${['easy','normal','hard'].map(d=>`<option value="${d}" ${s.diff===d?'selected':''}>${d[0].toUpperCase()+d.slice(1)}</option>`).join('')}</select>
+      ${s.cpu?`<select id="dif${i}" aria-label="CPU mind for seat ${i+1}" title="How sharply the computer plays this gladiator (sets their Intelligence)">${typeof AI_TIERS!=='undefined'?AI_TIERS.map((T,ti)=>`<option value="${T.k}" ${aiTierKey(s.diff||'normal')===ti?'selected':''}>🧠 ${T.n}</option>`).join(''):['easy','normal','hard'].map(d=>`<option value="${d}" ${s.diff===d?'selected':''}>${d[0].toUpperCase()+d.slice(1)}</option>`).join('')}</select>
         <select id="pre${i}" aria-label="CPU personality for seat ${i+1}"><option value="class" ${!s.preset||s.preset==='class'?'selected':''}>Personality: class default</option><option value="random" ${s.preset==='random'?'selected':''}>Random</option>${Object.entries(PERS_PRESETS).map(([k,v])=>`<option value="${k}" ${s.preset===k?'selected':''}>${v.n}</option>`).join('')}<option value="custom" ${s.preset==='custom'?'selected':''}>Custom…</option></select>
         <button class="btn" type="button" data-tune="${i}" aria-expanded="${!!s.tune}" style="padding:4px 8px">${s.tune?'Hide':'Tune'}</button>
         ${LUDUS_CACHE.some(g=>g.roster&&gladActive(g))?`<select id="lcp${i}" aria-label="Field an active-roster Ludus gladiator in CPU seat ${i+1}"><option value="">Generated rival</option>${LUDUS_CACHE.filter(g=>g.roster&&gladActive(g)&&cls.includes(g.cls)).map(g=>`<option value="${g.id}" ${s.saved===g.id?'selected':''}>Ludus rival: ${esc(g.name)} (${CLASSES[g.cls].name}${g.cpu?' · CPU':''})</option>`).join('')}</select>`:''}`:`<input id="nam${i}" type="text" maxlength="24" placeholder="${esc(CLASSES[s.cls].hero)} (default name)" title="The name you give a class is remembered and used every time you pick it" value="${esc(s.name||clsSavedName(s.cls)||'')}" aria-label="Gladiator name for seat ${i+1}" style="background:var(--ink);color:var(--bone);border:1px solid var(--line2);border-radius:3px;padding:5px 6px;font-size:14px;width:11em">${diceBtn('#nam'+i)}

@@ -29,7 +29,7 @@ function statGain(g,k,amt){if(!g||!amt||amt<=0)return 0;const st=gStats(g);g.sxp
   const mine=g.contract&&mgrById(g.contract.mgr)&&mgrById(g.contract.mgr).isPlayer;
   if(w&&mine){const L=(w.sgain=w.sgain||{})[g.id]=(w.sgain[g.id]||{});L[k]=Math.round(((L[k]||0)+amt)*100)/100}
   if(up){const after=statBonuses(st);const nm9=STATS.find(s=>s[0]===k)[1];
-    const perk=k==='int'?(after.diff!==before.diff?`now plays ${after.diff==='hard'?'Hard':'Normal'}`:''):(()=>{const f={spd:'mv',str:'dmg',lck:'coin',cha:'cf'}[k];const unit={mv:'movement',dmg:'damage per hit',coin:'coin a turn',cf:'CF a turn'}[f];return after[f]>before[f]?`now +${after[f]} ${unit}`:''})();
+    const perk=k==='int'?(after.tier!=null?(after.tier!==before.tier?`now a ${after.tierName} mind`:''):(after.diff!==before.diff?`now plays ${after.diff==='hard'?'Hard':'Normal'}`:'')):(()=>{const f={spd:'mv',str:'dmg',lck:'coin',cha:'cf'}[k];const unit={mv:'movement',dmg:'damage per hit',coin:'coin a turn',cf:'CF a turn'}[f];return after[f]>before[f]?`now +${after[f]} ${unit}`:''})();
     if(perk&&w){if(mine)tnews(`⭐ <b>${esc(g.name)}</b> reaches ${nm9} ${st[k]} — ${perk}.`,'big');else if(st[k]>=96&&g.contract)mnews(`⭐ ${esc(g.name)} of ${esc(mgrById(g.contract.mgr).ludus)} reaches ${nm9} ${st[k]} — ${perk}.`);
       ghist(g,`reached ${nm9} ${st[k]} — ${perk}`)}}
   return up}
@@ -64,7 +64,7 @@ function growthDigest(w){const sg=w.sgain||{};const parts=[];
   try{const w=W_();if(r!==false&&w&&w===w0&&!w.dead&&!w.tutorial){weeklyGrowth(w);growthDigest(w);saveWorld()}}catch(e){console.error(e)}return r}}
 /* ratingsHTML — the five ratings for a fighter card: exact for your fighters and anyone scouted twice, a range after one scouting, hidden before. */
 function ratingsHTML(g){const st=gStats(g);if(!st)return '';const w=W_(),pm=me();const mine=g.contract&&g.contract.mgr===pm.id;const sc=mine?3:(g.scout||0);
-  const b=statBonuses(st);const perkOf={spd:b.mv?`+${b.mv} movement`:'',str:b.dmg?`+${b.dmg} damage`:'',lck:b.coin?`+${b.coin} coin a turn`:'',cha:b.cf?`+${b.cf} CF a turn`:'',int:`plays ${b.diff==='hard'?'Hard':b.diff==='normal'?'Normal':'Easy'}`};
+  const b=statBonuses(st);const perkOf={spd:b.mv?`+${b.mv} movement`:'',str:b.dmg?`+${b.dmg} damage`:'',lck:b.coin?`+${b.coin} coin a turn`:'',cha:b.cf?`+${b.cf} CF a turn`:'',int:b.tierName?`${b.tierName} mind`:`plays ${b.diff==='hard'?'Hard':b.diff==='normal'?'Normal':'Easy'}`};
   const rows=STATS.map(([k,n,ic])=>{const v=st[k];const pct=Math.round((v-STAT_MIN)/(STAT_MAX-STAT_MIN)*100);const nb=nextBand(k,v);const xp=Math.round(((g.sxp||{})[k]||0)*100);
     const val=sc>=2?`${v}`:sc===1?`${Math.max(STAT_MIN,v-4)}–${Math.min(STAT_MAX,v+4)}`:'?';
     return `<span>${ic} ${n}</span><div class="meter${v>=96?' gold':''}" title="${sc>=2&&nb?`${nb-v} to the next band (${nb})`:''}"><i style="width:${sc?pct:0}%"></i></div><span class="n">${val}</span><span class="rc-sub">${sc>=2?(k==='int'||perkOf[k]?perkOf[k]:'—')+(mine&&v<STAT_MAX?` · ${xp}% to ${v+1}`:''):''}</span>`}).join('');

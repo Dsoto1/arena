@@ -576,6 +576,10 @@ function atkPlan(player, source, target) {
     exp: n * 0.5 * pw + bonus * (1 - 1 / (1 << n))
   };
 }
+/* AIW_BASE — the hand-set attack-scoring weights cpuScoreAttack reads (v0.62). Tiers blend these toward AIW_TUNED (80-aitiers).
+   TWEAK: every value here; tools/aitune.js searches around them. */
+const AIW_BASE = {potFloor:0.5,potBase:3,potPer:2,ship:10,threat:6,killR:4,tamedBase:4,tamedKill:6,huntMul:2.2,huntBias:1/12,fistBeast:4,risk:0.5,riskHurt:1.4,riskOk:0.35,slog:0.8,
+  pvpBase:3,strip:1.6,lethal:14,hurtFoe:2,fewLocs:1.5,leader:2.5,lethalHard:6,rel:1/12,friend:4,punch:1.5,throwNear:1,throwFar:3,lastUse:2};
 /* cpuScoreAttack — scores one attack option; cpuAct takes the highest positive score and -1 means never. These weights shape most CPU fighting behavior.
    Pots only if the swing breaks one often enough; beasts score high when they threaten the CPU, otherwise a hunt value (trophy worth to this personality minus risk);
    gladiators score by damage that gets through plus lethal chance, scaled by aggression. Allies, relationships and weapon conservation adjust it, then noise is added.
@@ -585,6 +589,7 @@ function atkPlan(player, source, target) {
    relationship -r/12 capped -3..+7 and -4 vs friends; -1.5 for punches, -3 (or -1) for throwing, -2 to save a weapon's last use. */
 function cpuScoreAttack(player, source, target) {
   const P = pers(player);
+  const W = typeof aiW === 'function' ? aiW(player) : AIW_BASE; /* v0.62: the tunable weights (80-aitiers) */
   const pl = atkPlan(player, source, target);
   const {
     n,
@@ -600,9 +605,9 @@ function cpuScoreAttack(player, source, target) {
     // only swing at a pot that can realistically break (2 damage)
     const pr = pAtLeast(n, pw, bonus, 2, Math.min(flips, 1));
     const mustSwing = S.active.restless && player.attacks === 0; // any attack keeps the restless crowd from stoning everyone
-    if (pr < (easy ? 0.25 : 0.5) && !mustSwing) return -1; // a power-1 weapon breaks a pot only 1 time in 4: not worth the swing
-    s = (3 + target.ref.pots.length * 2) * pr * ((P.cf + P.coin) / 100 + 0.5);
-  } else if (target.kind === 'ship') s = 10 + exp;else if (target.kind === 'npc' && S.evKey === 'orpheus' && S.ri === 0 && NPCT[target.ref.t].tameable && target.ref.tamedBy == null) {
+    if (pr < (easy ? 0.25 : W.potFloor) && !mustSwing) return -1; // a power-1 weapon breaks a pot only 1 time in 4: not worth the swing
+    s = (W.potBase + target.ref.pots.length * W.potPer) * pr * ((P.cf + P.coin) / 100 + 0.5);
+  } else if (target.kind === 'ship') s = W.ship + exp;else if (target.kind === 'npc' && S.evKey === 'orpheus' && S.ri === 0 && NPCT[target.ref.t].tameable && target.ref.tamedBy == null) {
     s = target.ref.aggro === player.id && cheb(player, target.ref) <= 1 ? target.ref.hp <= exp * 1.5 || hurtBad(player) ? 8 : 5 : -1;
   } else if (target.kind === 'npc') {
     const m = target.ref,
@@ -611,15 +616,15 @@ function cpuScoreAttack(player, source, target) {
     const kill = pAtLeast(n, pw, bonus, m.hp, flips);
     const reward = (T.cf * (P.cf + 40) + T.coin * (P.coin + 20)) / 100; // what the trophy is worth to this personality
     const threat = m.tamedBy == null && (m.aggro === player.id || cheb(player, m) <= 1);
-    if (S.evKey === 'gauntlet' || S.evKey === 'commodus' || threat) s = 6 + exp + kill * (4 + reward);else if (m.tamedBy != null) s = (4 + exp + kill * 6) * pw50(player, 'aggression');else {
+    if (S.evKey === 'gauntlet' || S.evKey === 'commodus' || threat) s = W.threat + exp + kill * (W.killR + reward);else if (m.tamedBy != null) s = (W.tamedBase + exp + kill * W.tamedKill) * pw50(player, 'aggression');else {
       // hunting a beast that is not after us: worth it only if it can die soon or we are built for the hunt
       // value = share of the trophy this swing earns, plus the chance to finish it now, minus the aggro it draws
       const turns = m.hp / Math.max(0.5, exp);
-      s = (4 + reward) * Math.min(1, exp / m.hp) * 2.2 + kill * (4 + reward) + (P.hunt - 50) / 12;
-      if (exp < 1) s -= 4; // a fist against a lion just earns its attention
-      const risk = st.ap * 0.5 * Math.min(turns, 4) * (P.survival / 100) * (hurtBad(player) || hpFrac(player) < .5 ? 1.4 : 0.35);
+      s = (W.killR + reward) * Math.min(1, exp / m.hp) * W.huntMul + kill * (W.killR + reward) + (P.hunt - 50) * W.huntBias;
+      if (exp < 1) s -= W.fistBeast; // a fist against a lion just earns its attention
+      const risk = st.ap * W.risk * Math.min(turns, 4) * (P.survival / 100) * (hurtBad(player) || hpFrac(player) < .5 ? W.riskHurt : W.riskOk);
       s -= risk;
-      if (turns > 6) s -= (turns - 6) * 0.8; // a slog the crowd won't wait for
+      if (turns > 6) s -= (turns - 6) * W.slog; // a slog the crowd won't wait for
     }
     if (source.w.punch && m.t === 'bear' && player.items.some(i => i.kind === 'mf' && MANDATA[i.idx].n === 'Bear Puncher')) s += 8;
   } else {
@@ -638,13 +643,13 @@ function cpuScoreAttack(player, source, target) {
     lethal /= locs.length;
     strip /= locs.length;
     if (strip < 0.5) return -1; // nothing gets through
-    s = (3 + strip * 1.6 + lethal * 14) * pw50(player, 'aggression');
-    if (hurtBad(q)) s += 2 * pw50(player, 'aggression');
-    if (locs.length <= 3) s += 1.5; // a foe down to few whole locations is close to done: press them
+    s = (W.pvpBase + strip * W.strip + lethal * W.lethal) * pw50(player, 'aggression');
+    if (hurtBad(q)) s += W.hurtFoe * pw50(player, 'aggression');
+    if (locs.length <= 3) s += W.fewLocs; // a foe down to few whole locations is close to done: press them
     if (hard) {
       const lead = activePlayers().filter(x => x !== player).sort((a, b) => b.cf - a.cf)[0];
-      if (lead === q) s += 2.5; // hard CPUs go after the leader
-      s += lethal * 6;
+      if (lead === q) s += W.leader; // hard CPUs go after the leader
+      s += lethal * W.lethalHard;
     }
     if (S.evKey === 'goldenEagle' && q.eagle) s += 6;
     if (S.evKey === 'orpheus' && S.ri === 0) s = q.wR && q.wR.lyre || q.wL && q.wL.lyre ? 8 : 2;
@@ -652,14 +657,15 @@ function cpuScoreAttack(player, source, target) {
   s += allyBonus(player, target);
   if (target.kind === 'player') {
     const r = relOf(player, target.ref);
-    s += clamp(-r / 12, -3, 7);
-    if (r >= 25 && activePlayers().length > 2) s -= 4;
+    s += clamp(-r * W.rel, -3, 7);
+    if (r >= 25 && activePlayers().length > 2) s -= W.friend;
   }
-  if (source.w.punch) s -= 1.5;
-  if (source.thr) s -= isNaum() ? 99 : target.kind === 'player' && pAtLeast(n, pw, bonus, 3) > 0.5 ? 1 : 3; // don't throw away a spear lightly
-  if (source.w.atkUses && source.w.atkLeft <= 1 && s < 6) s -= 2; // save the last swing of a failing weapon
+  if (source.w.punch) s -= W.punch;
+  if (source.thr) s -= isNaum() ? 99 : target.kind === 'player' && pAtLeast(n, pw, bonus, 3) > 0.5 ? W.throwNear : W.throwFar; // don't throw away a spear lightly
+  if (source.w.atkUses && source.w.atkLeft <= 1 && s < 6) s -= W.lastUse; // save the last swing of a failing weapon
   return s + noise(player);
 }
+
 /* cpuTactic — picks the best Push or Topple (not on Easy), or null. Push: an enemy onto spikes 10, out of the shrinking zone 4, for The Push Mandatum 3; Hard may push a pillar onto a tunnel 3.
    Topple: 2.5 per pot x (cf+coin)/100 (+4 with no weapon, +1.5 for a showman with spectators) plus 6 x aggression per rival and 5/2 per beast in the fall line, -20 per friend; needs 5+.
    TWEAK: those scores and the 5 threshold. */
