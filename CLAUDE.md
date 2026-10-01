@@ -232,4 +232,11 @@ One global script; files are concatenated in order. Later "version modules" patc
   gates, HP pips, token drops off when destroyed.
 - **Queued for the next batch — Zora's miniature:** David's photo is in tools/art/zora_mini.jpg; cut it out and use it as
   Zora's on-board figure only (cards/panels keep the printed rtok 'zora' disc). Zora is male ("his").
+- **Queued for the next batch — Credits page:** D.Soto (main menu) opens a Credits page with a tab for the prototype photos.
+  Adapt the rulebook's Contact & Credits page (reference: tools/art/credits_ref.jpg): motto banner "Aut viam inveniam aut
+  faciam", the three dedication paragraphs, contact block (website, email, Tabletop Simulator, X, YouTube, BoardGameGeek,
+  Discord, Steam: Virgilante) as clickable links with simple neutral icons (no brand logos), QR code, © 2016-2026 Mifune
+  Media + warnings + reprint notice. Add a line that this is a digital standalone version of the original Magnus Edition
+  (Tabletop Simulator) and the Print & Play Edition (Barnes & Noble). David will upload original art (banner, portrait,
+  Mifune Media badge, QR, NC flag) — wait for it.
 - Keep watching: shared-Store writes on load (conversions must be idempotent and saved once).
