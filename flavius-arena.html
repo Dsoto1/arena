@@ -1134,7 +1134,7 @@ button.railhd.fold{all:unset;box-sizing:border-box;display:none;cursor:pointer;w
 </style>
 
 <header class="bar">
-  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.55</span></div>
+  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.56</span></div>
   <div class="status" id="status"></div>
   <div class="tools speedtray" id="speedTray">
     <div class="seg speedseg" role="group" aria-label="CPU speed"><span class="lbl">Speed</span><button type="button" data-speed="pause" title="Pause CPU turns">❚❚ Pause</button><button type="button" data-speed="step" title="Step: each CPU action waits for you — Next ▶ or Space — with a caption explaining it">⏯ Step</button><button type="button" data-speed="slow" class="on">Slow</button><button type="button" data-speed="normal">Normal</button><button type="button" data-speed="fast">Fast</button></div>
@@ -15257,7 +15257,7 @@ function guideHTML(){
    <li><b>Age shapes class</b>: the young arrive mostly as Slaves and Soldiers; the graying re-badge as Veteranus. Mid-career (23–31) is when fighters most often change class — at a ludus's request, after new drills, on an omen-reader's advice, or plain restlessness. The news criers report every change.</li>
    <li><b>The training yard</b>: set a weekly drill budget in Your ludus. More coin per fighter means better odds of +1 rating (your Discipline helps), the report prints in the Acta Diurna — and a hard week or an ill omen can injure someone: benched and rating-docked until the Medicus (or a week of rest) clears it.</li>
   </ul>
-  <h4>Classes</h4><ul>${cls.map(([k,C])=>`<li><span data-card="k:${k}" style="text-decoration:underline dotted;cursor:help">${C.name}</span>: ${esc(C.ab)} ${{soldier:'Strike hard in round 1 while the +1 damage lasts, then armor up.',royalty:'Bank your extra coin into level 2-3 weapons; the Pugio hits for 2.',hero:'The Scutum absorbs 2 per hit for 4 hits; your +1 CF per turn adds up, so play long.',slave:'The extra movement lets you race to pots and away from beasts; the Rete stops a chaser.',veteranus:'Best armor in the game (5 AP head and chest) but the Rudis falls apart after 6 uses, so buy a weapon early.',amazonia:'Axe and Falcata both hit for 2 and the Cestus adds 1. You gain no CF from pots, so hunt beasts and gladiators.',venatore:'Release Zora early: he breaks pots and carries loot. Your Tame card turns a wolf or bear into a bodyguard.',damnatio:'No armor worth the name and a stone to the head each turn. The Stone Sling reaches 5 tiles; stay far away and win for +10 CF.'}[k]}${st&&st.cls[k]?` <span style="color:var(--muted)">(sim win rate ${st.cls[k].win}%, avg CF ${st.cls[k].cf})</span>`:''}</li>`).join('')}</ul>
+  <h4>Classes</h4><ul>${cls.map(([k,C])=>`<li><span data-card="k:${k}" style="text-decoration:underline dotted;cursor:help">${C.name}</span>: ${esc(C.ab)} ${{soldier:'Soldiers lean strong: with Strength 76+ every hit lands harder while class abilities are on, so strike early, then armor up.',royalty:'Royalty leans lucky: Luck 76+ pays coin each turn. Bank it into level 2-3 weapons; the Pugio hits for 2.',hero:'Heroes lean on Charisma: 76+ adds CF each turn. The Scutum absorbs 2 per hit for 4 hits, so play long.',slave:'Slaves lean fast: Speed 76+ means an extra tile a turn to race to pots and away from beasts; the Rete stops a chaser.',veteranus:'Best armor in the game (5 AP head and chest) but the Rudis falls apart after 6 uses, so buy a weapon early.',amazonia:'Axe and Falcata both hit for 2 and the Cestus adds 1. You gain no CF from pots, so hunt beasts and gladiators.',venatore:'Release Zora early: he breaks pots and carries loot. Your Tame card turns a wolf or bear into a bodyguard.',damnatio:'No armor worth the name and a stone to the head each turn. The Stone Sling reaches 5 tiles; stay far away and win for +10 CF.'}[k]}${st&&st.cls[k]?` <span style="color:var(--muted)">(sim win rate ${st.cls[k].win}%, avg CF ${st.cls[k].cf})</span>`:''}</li>`).join('')}</ul>
   ${st?`<h4>Personalities in the simulations</h4><table class="tally"><tr><th>Dominant trait</th><th>Games</th><th>Win rate</th><th>Avg final CF</th><th>Reached Ludus</th></tr>${Object.entries(st.pers).map(([k,v])=>`<tr><td>${esc(PERS_KEYS.find(x=>x[0]===k)?.[1]||k)}</td><td class="n">${v.n}</td><td class="n">${v.win}%</td><td class="n">${v.cf}</td><td class="n">${v.ludus}%</td></tr>`).join('')}</table><p class="hint">${esc(st.note||'')}</p>`:''}
     <h4>Manager mode, beyond the sand (v0.21–v0.25)</h4><ul>
    <li><b>Morale fights with them.</b> 80+ morale walks out with +1 AP and +1 CF and a bolder style; under 35 costs 1 AP; under 20 drops them a whole difficulty tier. A shared meal or kin tickets before Match Week is cheap insurance.</li>
@@ -22717,6 +22717,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'0.56',ic:'📬',t:'The lanista\'s mail',hi:['A mailbox in Your ludus: offers, invitations, letters and reports arrive as mail — accept or refuse right from the letter, and past mail stays readable','The left menu counts unread mail; Match Week keeps one quiet line when the Consilium advises against entering','The five ratings join the glossary, tooltips, both guides, the to-do list and the arena hints','The Play Now guide re-run on 600 simulated events, with a new chart: wins by rating perk'],fx:['Rolled Intelligence follows a fighter\'s overall rating, so most CPUs play Normal again']},
   {v:'0.55',ic:'📈',t:'Ratings that grow, a syndicate that collects',hi:['Five ratings for every gladiator: Speed (movement), Strength (damage), Intelligence (CPU play), Luck (coin) and Charisma (CF) — classes no longer grant those perks, the ratings do','Manager: ratings grow slowly with training, practice, fights and fame; your fighters\' growth and new perks are reported each week','Creator Studio: rating sliders with a 375-point pool; classes can bring a tamed ally (any beast) or stones; beasts show Speed and Strength','Sica\'s syndicate lends only to houses in the red, never touches your treasury — but miss the weekly minimum three times and a spear finds your best fighter','Home games, letters from the Consilium, gold-shining A grades, a folding left menu, your fighters marked on Match Week'],fx:['Hard CPUs no longer get bonus coin and an elixir','Pay-to-join offers only in Your ludus and Recruiting','Sound on Safari, iPhone and iPad copies, with a chip when the browser holds it back']},
   {v:'0.54',ic:'🃏',t:'Piacula, invitationals, a friendlier designer',hi:['Every class on the sand brings its own Piaculum — drawn in the printed style with the class name in its colour','Event Designer: a Beasts & cohorts picker with real tokens (stock, yours, myth starters, cohorts), real pieces on the grid, and arena music','Invitationals (was Special events): pick an arena and a trophy, then purse, field and frequency','Results: Save all to the Ludus Flavius; the Fate card and score up front','Manager: fighters bank the coin they survive with; hungry free agents pay to join small houses; fame-hungry fighters ask for a fight'],fx:['Class designer: the printed 8 are the system defaults; unique names and colours; weakness explained; no champion field; clearer thumbnails','Favorites live in Recruiting; Sort is a compact tray; a taken-over house shows its treasury, and How a week works starts open','Play Now plays a random unlocked theme; hints start off; the Play Now roster fills only by hand','Tamed beasts no longer steal aggro; Speed: Paused; Take a Seat; the Multiplayer tray closes on an outside click; the editors’ code word is new']},
   {v:'0.53',ic:'🎩',t:'Lanistas, sharper Focus, one of each',hi:['Lanista designer in the Creator Studio; Manager mode can start from one or save yours','Class cards show the character using them: name, portrait, board token, armor art; eight new system classes','Focus roll: three dice spin and settle one by one; click the one to strike','Zoom in and out any time from the arena tools; a Glossary tab in Rules & strategy'],fx:['Only padded armor has copies; loadouts take their pieces from the market, and shared pieces get a stand-in','Closed host cities move the games to the nearest open arena (an impromptu bye only if none can host, once a season)','Focus suggests the true fastest finish (arms and legs explained), only with the strategy panel on','No attack or Focus without a target in reach; hot-seat defenders are asked by name','Turn indicator: dot, name and phase (details in ⓘ); phases colour-coded; Speed tray; log off the arena by default','Tooltips stop at two levels; tunnels show the door side, the dark shaft marks an exit; arrows and bolts fade','Core engine files renamed and commented for reading']},
@@ -25019,8 +25020,8 @@ audGroove=function(th,t,step,inten){if(!AUD_GROOVE[th.name])return;const spb=60/
   if(bar%4===3&&st>=5)for(const k of [1,2])audHat(t+spb*k/3,0.05*lv);if(st===6&&bar%4===1)audHat(t,0.07*lv,true);
   /* trap bells in the answer: the chord broken upward, an octave above the melody */
   if(S9.kind==='A2'&&bar%2===1&&st>=4){const tone=[0,2,4,7][st-4];audNote(d,t,audMtof(th.deg(chord+tone,2)),spb*1.4,'sine',0.028,{a:0.002,r:0.35,verb:1})}};
-/* 53-GUIDE50 · the Play Now guide, re-run on v0.50: 600 simulated events, charted */
-const SIM50={"ver": "0.50", "games": 600, "gladiators": 2400, "winCF": 52, "ludusPct": 25, "avgTurns": 55, "evTurns": {"democritus": 53, "egidious": 57, "cassian": 56}, "potWin": 30, "noPotWin": 16, "cls": {"slave": {"win": 24, "cf": 15, "ludus": 24, "n": 323}, "soldier": {"win": 28, "cf": 18, "ludus": 27, "n": 289}, "royalty": {"win": 28, "cf": 20, "ludus": 27, "n": 298}, "hero": {"win": 32, "cf": 25, "ludus": 32, "n": 289}, "amazonia": {"win": 30, "cf": 22, "ludus": 30, "n": 293}, "veteranus": {"win": 29, "cf": 21, "ludus": 29, "n": 310}, "venatore": {"win": 23, "cf": 19, "ludus": 23, "n": 301}, "damnatio": {"win": 7, "cf": 7, "ludus": 7, "n": 297}}, "pers": {"hunt": {"n": 372, "win": 22, "cf": 18.9, "ludus": 33}, "coin": {"n": 378, "win": 26, "cf": 17.5, "ludus": 32}, "loyalty": {"n": 196, "win": 27, "cf": 17.9, "ludus": 35}, "cf": {"n": 399, "win": 29, "cf": 22.4, "ludus": 42}, "aggression": {"n": 522, "win": 25, "cf": 19.3, "ludus": 34}, "survival": {"n": 533, "win": 23, "cf": 15.2, "ludus": 29}}, "comp": {"kn": {"hiWin": 30, "hiLudus": 43, "loWin": 14, "loLudus": 15, "hiN": 1406, "loN": 335}, "buys": {"hiWin": 28, "hiLudus": 38, "loWin": 11, "loLudus": 17, "hiN": 1809, "loN": 196}, "pots": {"hiWin": 30, "hiLudus": 39, "loWin": 16, "loLudus": 22, "hiN": 1336, "loN": 391}, "cards": {"hiWin": 28, "hiLudus": 38, "loWin": 10, "loLudus": 14, "hiN": 1972, "loN": 258}}, "ends": {"won": 600, "ludus": 209, "fell": 1590, "freed": 1}, "hist": {"labels": ["<0", "0–9", "10–19", "20–29", "30–39", "40–49", "50–59", "60+"], "all": [421, 764, 411, 188, 145, 139, 144, 188], "win": [0, 0, 6, 40, 96, 127, 144, 187]}, "bold": {"cf": 20.0, "win": 26}, "caut": {"cf": 14.1, "win": 22}, "kills": 7.7, "findings": ["Beasts are the savings account: gladiators with 2+ beast trophies won 30% and reached the Ludus 43% of the time — with none, 14% and 15%.", "Spend your coin: 2+ market buys won 28% of events; never buying, 11%.", "Break pots: 2+ pots broken meant 30% wins and 39% Ludus, against 16% and 22% for the pot-shy.", "Draw cards: 2+ arena cards won 28% against 10% for coin-only turns.", "Boldness pays: gladiators with survival 30 or less averaged 20.0 CF and won 26%; the very cautious (70+) averaged 14.1 CF and won 22%.", "Events last 55 turns on average: Democritus 53, Egidious 57, Cassian 56. Beasts slain per event: 7.7."]};
+/* 53-GUIDE50 · the Play Now guide, re-run on v0.56 (ratings): 600 simulated events, charted (tools/simguide.js) */
+const SIM50={"ver": "0.56", "games": 600, "gladiators": 2400, "winCF": 47, "ludusPct": 36, "avgTurns": 53, "evTurns": {"egidious": 53, "democritus": 52, "cassian": 55}, "potWin": 28, "noPotWin": 12, "cls": {"venatore": {"win": 24, "cf": 19.5, "ludus": 39, "n": 264}, "veteranus": {"win": 26, "cf": 23, "ludus": 45, "n": 261}, "damnatio": {"win": 5, "cf": 9.5, "ludus": 13, "n": 309}, "slave": {"win": 26, "cf": 15.8, "ludus": 29, "n": 310}, "amazonia": {"win": 31, "cf": 23.3, "ludus": 44, "n": 294}, "hero": {"win": 33, "cf": 25.7, "ludus": 51, "n": 289}, "soldier": {"win": 22, "cf": 17.1, "ludus": 35, "n": 317}, "royalty": {"win": 32, "cf": 19.5, "ludus": 38, "n": 356}}, "pers": {"hunt": {"win": 23, "cf": 19.4, "ludus": 38, "n": 307}, "loyalty": {"win": 24, "cf": 22.6, "ludus": 41, "n": 46}, "survival": {"win": 22, "cf": 15.2, "ludus": 29, "n": 476}, "aggression": {"win": 26, "cf": 20.1, "ludus": 39, "n": 694}, "cf": {"win": 27, "cf": 22, "ludus": 43, "n": 399}, "coin": {"win": 26, "cf": 18.2, "ludus": 35, "n": 478}}, "comp": {"kn": {"hiWin": 29, "hiLudus": 45, "loWin": 18, "loLudus": 22, "hiN": 1366, "loN": 336}, "buys": {"hiWin": 28, "hiLudus": 42, "loWin": 13, "loLudus": 19, "hiN": 1683, "loN": 258}, "pots": {"hiWin": 32, "hiLudus": 44, "loWin": 12, "loLudus": 24, "hiN": 1326, "loN": 449}, "cards": {"hiWin": 27, "hiLudus": 41, "loWin": 18, "loLudus": 21, "hiN": 1951, "loN": 265}}, "ends": {"won": 600, "ludus": 275, "fell": 1525, "freed": 0}, "hist": {"labels": ["<0", "0–9", "10–19", "20–29", "30–39", "40–49", "50–59", "60+"], "all": [87, 978, 516, 222, 163, 184, 140, 110], "win": [0, 0, 3, 47, 125, 176, 140, 109]}, "bold": {"cf": 20.2, "win": 24}, "caut": {"cf": 15, "win": 23}, "kills": 7.5, "perk": {"mv": {"0": {"win": 25, "cf": 19.4, "ludus": 37, "n": 2160}, "1": {"win": 26, "cf": 15.8, "ludus": 29, "n": 240}}, "dmg": {"0": {"win": 25, "cf": 19.2, "ludus": 36, "n": 2143}, "1": {"win": 23, "cf": 17.6, "ludus": 37, "n": 257}}, "coin": {"0": {"win": 24, "cf": 18.5, "ludus": 35, "n": 1899}, "1": {"win": 30, "cf": 21, "ludus": 41, "n": 501}}, "cf": {"0": {"win": 24, "cf": 17.5, "ludus": 33, "n": 1967}, "1": {"win": 30, "cf": 26, "ludus": 53, "n": 433}}, "int": {"normal": {"win": 25, "cf": 19, "ludus": 36, "n": 2400}}, "count": {"0": {"win": 21, "cf": 17.3, "ludus": 32, "n": 1140}, "1": {"win": 28, "cf": 20, "ludus": 39, "n": 1089}, "2": {"win": 27, "cf": 24.5, "ludus": 50, "n": 171}}}, "findings": ["Beasts are the savings account: gladiators with 2+ beast trophies won 29% and reached the Ludus 45% of the time — with none, 18% and 22%.", "Spend your coin: 2+ market buys won 28% of events; never buying, 13%.", "Break pots: 2+ pots broken meant 32% wins and 44% Ludus, against 12% and 24% for the pot-shy.", "Draw cards: 2+ arena cards won 27% against 18% for coin-only turns.", "Ratings: a Luck perk (+1 coin a turn) won 30% against 24% without, and a Charisma perk (+1 CF a turn) 30% with 26 CF on average. A lone +1 movement or +1 damage changes little by itself: spend it early, in the rounds that allow it.", "Events last 53 turns on average: Democritus 52, Egidious 53, Cassian 55. Beasts slain per event: 7.5."]};
 Object.assign(SIM_STATS,{games:SIM50.games,gladiators:SIM50.gladiators,winCF:SIM50.winCF,ludusPct:SIM50.ludusPct,potWin:SIM50.potWin,noPotWin:SIM50.noPotWin,avgTurns:SIM50.avgTurns,cls:SIM50.cls,pers:SIM50.pers,findings:SIM50.findings});
 
 /* ---------- the charts: inline SVG, one hover tooltip per mark (the game's data-tip engine), a table under each ---------- */
@@ -25058,7 +25059,7 @@ function guideDashHTML(){const S5=SIM50;const C=S5.cls;const cn=k=>CLASSES[k]?CL
    <div class="gstats">${tiles.map(([i,n,l,t])=>`<div class="gstat" data-tip="${esc(t)}"><span class="gti">${i}</span><b>${n}</b><span>${l}</span></div>`).join('')}</div>
    <div class="ggrid">${gvDonut('How events end','all '+S5.gladiators.toLocaleString()+' gladiators',parts)}${gvPairs('Habits that win','win rate · 2 or more vs none',pairs,'2 or more','none')}
    ${gvHBar('Win rate by class','share of events won · hover for CF and the Ludus',clsRows,{max:40})}${gvHist('Final Crowd Favor','how many gladiators end at each CF',S5.hist.labels,S5.hist.all,S5.hist.win)}</div>
-   <ul class="gfind">${S5.findings.map((f,i)=>`<li><span>${['🐺','🛒','🏺','🂠','⚔','⏳'][i]||'•'}</span>${esc(f)}</li>`).join('')}</ul></div>`}
+   <ul class="gfind">${S5.findings.map((f,i)=>`<li><span>${['🐺','🛒','🏺','🂠','📈','⏳'][i]||'•'}</span>${esc(f)}</li>`).join('')}</ul></div>`}
 /* the guide: the dashboard first, then every section folded — open what you want to read */
 {const _pg=playGuideHTML;playGuideHTML=function(){const h=_pg();const inner=h.replace(/^\s*<div class="guide">/,'').replace(/<\/div>\s*$/,'');const parts=inner.split(/(?=<h4>)/);
   const intro=`<p class="rc-sub" style="margin:0 0 8px">Simulated on v${SIM50.ver}: ${SIM50.games} all-CPU events. Hover any chart or term for the detail; open a section below to read it.</p>`;
@@ -26589,6 +26590,148 @@ function audChip(){let c=document.getElementById('audChip');const blocked=audSet
   if(!c){c=document.createElement('button');c.id='audChip';c.type='button';c.textContent='🔇 Sound is held back — tap to turn it on';c.addEventListener('click',()=>{AUD_EL.el=null;audElUnlock();audUnlock();setTimeout(audChip,500)});document.body.appendChild(c)}
   c.hidden=false}
 for(const ev of ['touchend','click','keydown'])document.addEventListener(ev,()=>{audElUnlock();setTimeout(audChip,700)},{passive:true,capture:true});
+/* =====================================================================
+   69-V56 · v0.56 THE LANISTA'S MAIL, AND HELP THAT KNOWS THE RATINGS
+   =====================================================================
+   1. MAIL — one inbox in Your ludus. Everything that used to stack as cards at the top of the tabs arrives as
+      mail: offers (trade, pay-to-join, buying the ludus, the syndicate's loan), invitations (invitationals, the
+      Flavian Awards), letters (Consilium, syndicate, gifts, the capital) and reports (the Quaestor's ledger, weekly
+      growth, contracts ending, fighters asking for a fight). Offers and invitations keep their own buttons inside
+      the letter. Live items are re-read from their sources each render (mailLive); every item is logged once in
+      w.mailLog so past weeks stay readable after it is answered. Unread: w.mailRead. The Ludus tab shows the count;
+      Match Week keeps one quiet line when the Consilium advises against entering.
+   2. HELP — glossary terms for the five ratings and the syndicate; rating chips and sliders carry them as
+      tooltips; both guides get a Ratings section; the Classes tips read the ratings; the Manager to-do list and
+      the arena's strategy hints point at the next band.
+   ===================================================================== */
+/* ---------- 1. MAIL ---------- */
+const MAIL_KINDS={offer:['📨','Offer'],invite:['🎟','Invitation'],letter:['✉','Letter'],report:['📜','Report']};
+/* classify a card pulled from the old top-of-tab stack */
+function mailClass(el){const c=el.className||'';const txt=(el.textContent||'').replace(/\s+/g,' ').trim();
+  const title=((el.querySelector('b')||el.querySelector('.sect')||{}).textContent||txt).replace(/\s+/g,' ').trim().replace(/^[\p{Extended_Pictographic}\uFE0F\s]+/u,'').slice(0,90);
+  if(/cartbox/.test(c))return null; /* Vulso's cart is a shop, not mail */
+  if(/qscard/.test(c))return {kind:'report',from:"the Quaestor",title:"The Quaestor's ledger",seal:'🏛'};
+  if(/fightreq/.test(c))return {kind:'report',from:'your barracks',title:'Fighters asking for a fight',seal:'🗣'};
+  if(/payjoin/.test(c))return {kind:'offer',from:'a free agent',title,seal:'🪙'};
+  if(/offerbox/.test(c))return {kind:'offer',from:'a rival house',title,seal:'📨'};
+  if(/loanbox/.test(c))return {kind:'offer',from:"Sica's syndicate",title:'A rope, for a price',seal:'💸'};
+  if(/lagbox/.test(c))return {kind:'letter',from:'the capital',title:'A letter from the capital',seal:'📜'};
+  if(/invbox|specbox/.test(c))return {kind:'invite',from:/Flavian Awards/.test(txt)?'the Flavian Awards':'the editors',title,seal:'🎟'};
+  return {kind:'offer',from:'—',title,seal:'📨'}}
+const mailKey=(kind,title)=>kind+':'+hashStr(title.replace(/\d+/g,'#')).toString(36);
+/* the cards the old stack produced (any tab), split into envelopes */
+function mailFromHTML(html,out){if(!html)return;const t=document.createElement('template');t.innerHTML=html;
+  for(const el of [...t.content.children]){const k=mailClass(el);if(!k){out.keep+=el.outerHTML;continue}
+    out.items.push({...k,key:mailKey(k.kind,k.title),html:el.outerHTML})}}
+/* mailLive — what is in the inbox right now: {items:[{key,kind,from,title,seal,html}], keep: html left on the page} */
+let MAIL_BUSY=false;
+function mailLive(bodyHTML){const w=W_();const out={items:[],keep:'',body:bodyHTML||''};MAIL_BUSY=true;
+  try{const t0=MGR.tab;MGR.tab='ludus';try{mailFromHTML(MAIL_BASE_TOP(),out)}finally{MGR.tab=t0}
+    /* the ludus page's own notices: awards, invitations, the loan offer, the capital's letter */
+    if(out.body){const t=document.createElement('template');t.innerHTML=out.body;
+      for(const el of [...t.content.querySelectorAll('.invbox,.specbox,.loanbox.offer,.lagbox')]){const k=mailClass(el);if(!k)continue;out.items.push({...k,key:mailKey(k.kind,k.title),html:el.outerHTML,body:1});el.remove()}
+      out.body=t.innerHTML}
+    for(const L of (w.letters||[]).filter(x=>x.until>=w.week&&!x.read))out.items.push({kind:L.kind||'letter',from:L.from,title:L.title,seal:L.seal||'✉',key:'L:'+L.key,html:`<div class="lbody">${L.body}</div>`,letter:L})}
+  finally{MAIL_BUSY=false}
+  return out}
+let MAIL_BODYKEYS=[];
+/* mailSync — the log: first sight is remembered, so past weeks stay readable once a letter is answered (Your ludus only) */
+function mailSync(out){const w=W_();MAIL_BODYKEYS=out.items.filter(x=>x.body).map(x=>x.key);
+  /* the log: first sight is remembered, so past weeks stay readable once a letter is answered */
+  w.mailLog=w.mailLog||[];const live=new Set(out.items.map(x=>x.key));
+  for(const it of out.items){let e=w.mailLog.find(x=>x.key===it.key&&x.open);if(!e){e={key:it.key,kind:it.kind,from:it.from,title:it.title,seal:it.seal,wk:w.week,s:w.season,open:true,body:it.letter?it.letter.body:''};w.mailLog.unshift(e)}it.wk=e.wk}
+  for(const e of w.mailLog)if(e.open&&!live.has(e.key)){e.open=false;e.closedWk=w.week}
+  w.mailLog=w.mailLog.slice(0,80);return out}
+const mailUnread=items=>{const R=new Set(W_().mailRead||[]);return items.filter(x=>!R.has(x.key))};
+function mailPanelHTML(live){const w=W_();const items=live.items;const un=new Set(mailUnread(items).map(x=>x.key));
+  const env=it=>`<details class="mail ${it.kind}${un.has(it.key)?' unread':''}" data-mail="${esc(it.key)}" ${MGR.mailOpen===it.key?'open':''}><summary><span class="lseal">${it.seal}</span><b>${esc(it.title)}</b><span class="rc-sub">${MAIL_KINDS[it.kind][1]} · from ${esc(it.from)} · week ${wkOf(it.wk||w.week)}</span>${un.has(it.key)?'<span class="mnew">new</span>':''}</summary><div class="mbody">${it.html}</div>${it.letter?`<div class="acts"><button class="btn tksm" type="button" data-ltr="${esc(it.letter.key)}">File it away</button></div>`:''}</details>`;
+  const past=(w.mailLog||[]).filter(e=>!e.open).slice(0,24);
+  return `<div class="card2 mailbox" id="mailBox"><div class="mailhd"><b>📬 Mail</b><span class="rc-sub">${items.length?`${items.length} this week${un.size?` · <b>${un.size} unread</b>`:''}`:'nothing waiting this week'}</span></div>
+    ${items.length?`<div class="mlist">${items.map(env).join('')}</div>`:''}
+    ${past.length?`<details class="mpast"><summary>Past mail <span class="rc-sub">${past.length} kept</span></summary><div class="mlist">${past.map(e=>`<details class="mail old ${e.kind}"><summary><span class="lseal">${e.seal}</span><b>${esc(e.title)}</b><span class="rc-sub">${MAIL_KINDS[e.kind]?MAIL_KINDS[e.kind][1]:''} · from ${esc(e.from)} · S${e.s} W${wkOf(e.wk)}${e.closedWk&&e.kind!=='letter'&&e.kind!=='report'?' · answered or expired':''}</span></summary>${e.body?`<div class="mbody"><div class="lbody">${e.body}</div></div>`:''}</details>`).join('')}</div></details>`:''}</div>`}
+/* the old stack stops printing at the top of the tabs: it is read through the mail */
+const MAIL_BASE_TOP=buyOfferHTML;
+buyOfferHTML=function(){if(MAIL_BUSY)return MAIL_BASE_TOP.apply(this,arguments);const w=W_();if(!w)return '';
+  if(MGR.tab==='ludus'||MGR.tab==='recruit'){const t=document.createElement('template');t.innerHTML=MAIL_BASE_TOP.apply(this,arguments);return [...t.content.children].filter(el=>/cartbox/.test(el.className||'')).map(el=>el.outerHTML).join('')}
+  return ''};
+/* Your ludus: the mailbox first (its letters, offers and invitations come out of the page below) */
+{const base=ludusTabHTML;ludusTabHTML=function(){const w=W_();const L0=w.letters;w.letters=[];let body;try{body=base.apply(this,arguments)}finally{w.letters=L0} /* the v0.55 letters strip moves into the mail */
+  const live=mailLive(body);mailSync(live);return mailPanelHTML(live)+live.body}}
+/* Match Week: one quiet line instead of the letters */
+{const base=nightHTML;nightHTML=function(){const w=W_();const L0=w.letters;w.letters=[];let h;try{h=base.apply(this,arguments)}finally{w.letters=L0}
+  const c=(w.letters||[]).find(x=>x.key==='consil-'+w.week&&x.until>=w.week);const fr=rosterOf(me()).filter(x=>x.wantFight&&x.wantFight.week===w.week);
+  const lines=[c?`🏛 The Consilium advises against entering this week. <button class="btn tksm" type="button" data-mailgo="L:${esc(c.key)}">Read the letter</button>`:'',fr.length&&!(w.night&&w.night.bye)?`🗣 Asking for a fight: ${fr.map(x=>esc(x.name)).join(', ')} <span class="rc-sub">(enter them for +${FIGHT_REQ.moraleUp} morale)</span>`:''].filter(Boolean);
+  return (lines.length?`<div class="mailline">${lines.map(l=>`<div>${l}</div>`).join('')}</div>`:'')+h}}
+/* reading marks it read; a 'read the letter' link opens the mailbox at that letter */
+document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.matches('details.mail[data-mail]')||!d.open)return;const w=W_();if(!w)return;w.mailRead=w.mailRead||[];
+  if(!w.mailRead.includes(d.dataset.mail)){w.mailRead.push(d.dataset.mail);w.mailRead=w.mailRead.slice(-200);d.classList.remove('unread');const n=d.querySelector('.mnew');if(n)n.remove();saveWorld(true)}},true);
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mailgo]');if(!b)return;e.stopPropagation();MGR.tab='ludus';MGR.mailOpen=b.dataset.mailgo;if(typeof MGR_REDRAW==='function')MGR_REDRAW();
+  setTimeout(()=>{const el=document.querySelector(`details.mail[data-mail="${CSS.escape(b.dataset.mailgo)}"]`);if(el){el.open=true;el.scrollIntoView({block:'center'})}MGR.mailOpen=null},60)},true);
+/* the left menu counts the unread */
+{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(w&&!w.dead){const live=mailLive('');const keys=new Set([...live.items.map(x=>x.key),...MAIL_BODYKEYS]);const R=new Set(w.mailRead||[]);const n=[...keys].filter(k=>!R.has(k)).length;if(n)h=h.replace('🏛 Your ludus</button>',`🏛 Your ludus <span class="mcount" title="${n} unread letter${n===1?'':'s'}">✉ ${n}</span></button>`)}}catch(err){}return h}}
+/* reports that used to be news lines: weekly growth and contracts ending arrive as mail too */
+{const base=growthDigest;growthDigest=function(w){const sg=w.sgain||{};const rows=[];for(const [id,o] of Object.entries(sg)){const g=gById(id);if(!g)continue;
+    const bits=STATS.filter(([k])=>o[k]>0).map(([k,n])=>{const v=gStats(g)[k];const nb=nextBand(k,v);return `${n} +${(+o[k]).toFixed(1)} <span class="rc-sub">(now ${v}${nb?`, ${nb-v} to the next band`:''})</span>`});
+    if(bits.length)rows.push(`<li><b>${esc(g.name)}</b>: ${bits.join(' · ')}</li>`)}
+  if(rows.length)sendLetter(w,{key:'grow-'+w.week,kind:'report',from:'your doctores',seal:'📈',title:'How the fighters grew this week',body:`<ul>${rows.join('')}</ul>`});
+  return base.apply(this,arguments)}}
+function contractReport(w){const exp=rosterOf(me()).filter(g=>g.contract&&g.contract.weeks<=2);if(!exp.length)return;
+  sendLetter(w,{key:'contracts-'+w.week,kind:'report',from:'your clerk',seal:'📜',title:`Contract${exp.length===1?'':'s'} ending soon`,body:`<p>${exp.map(g=>`<b>${esc(g.name)}</b> (${g.contract.weeks} week${g.contract.weeks===1?'':'s'} left)`).join(', ')}. Re-sign from the fighter's card on the Roster tab before they walk.</p>`})}
+{const base=endWeek;endWeek=async function(){const w0=W_();const r=await base.apply(this,arguments);try{const w=W_();if(r!==false&&w&&w===w0&&!w.dead&&!w.tutorial){contractReport(w);saveWorld()}}catch(e){console.error(e)}return r}}
+/* ---------- 2. HELP ---------- */
+Object.assign(GLOSS,{
+  ratings:{t:'Ratings',re:/\bratings? bands?\b|\bfive ratings\b/i,d:'Five numbers from 50 to 99 every gladiator carries: [[spd|Speed]], [[str|Strength]], [[int|Intelligence]], [[lck|Luck]] and [[cha|Charisma]]. Crossing 76 (and higher bands) earns a perk. Perks pay only in rounds that allow class abilities, and they stack.'},
+  spd:{t:'Speed',re:/\bSpeed (?=\d)/,d:'Movement. Base 3 (two legs); +1 at 76, +2 at 96. Grows with drills and fights.'},
+  str:{t:'Strength',re:/\bStrength (?=\d)/,d:'Damage per successful attack: +1 at 76, +2 at 87, +3 at 96. Grows with drills, wins and kills.'},
+  int:{t:'Intelligence',re:/\bIntelligence (?=\d)/,d:'How a CPU plays the gladiator: Easy below 76, Normal from 76, Hard from 96. Grows by surviving and winning.'},
+  lck:{t:'Luck',re:/\bLuck (?=\d)/,d:'Coin each turn: +1 at 76, +2 at 96. Grows with time at a ludus and the bonds you build.'},
+  cha:{t:'Charisma',re:/\bCharisma (?=\d)/,d:'Crowd Favor each turn: +1 at 76, +2 at 96. Grows with big crowds, high CF, fame and being spared.'},
+  synd:{t:"Sica's syndicate",re:/Sica's syndicate/,d:'The lender of last resort: only to a house in the red, 12% a week added to the debt. Pay the weekly minimum by hand; three short weeks and a spear finds your best fighter.'}});
+/* chips and sliders carry the glossary tooltips */
+{const base=statChips;statChips=function(st,opt={}){return base.apply(this,arguments).replace(/<span class="statchip([^"]*)" title="([^"]*)">([^<]*)<b>/g,(m,c,t,ic)=>{const k=STATS.find(s=>s[2]===ic.trim());return `<span class="statchip${c}" data-tt="${k?k[0]:'ratings'}" aria-label="${t}">${ic}<b>`})}}
+{const base=ratingsHTML;ratingsHTML=function(g){return base.apply(this,arguments).replace(/<span>([^<]*) (Speed|Strength|Intelligence|Luck|Charisma)<\/span>/g,(m,ic,n)=>`<span>${ic} <span class="gl" data-tt="${STATS.find(s=>s[1]===n)[0]}">${n}</span></span>`)}}
+{const base=statSlidersHTML;statSlidersHTML=function(c){return base.apply(this,arguments).replace(/<span>([^<]*) (Speed|Strength|Intelligence|Luck|Charisma)<\/span>/g,(m,ic,n)=>`<span>${ic} <span class="gl" data-tt="${STATS.find(s=>s[1]===n)[0]}">${n}</span></span>`)}}
+/* the guides: a Ratings section in both, and the Classes tips read the ratings */
+const RATINGS_GUIDE=`<h4>Ratings: Speed, Strength, Intelligence, Luck, Charisma</h4><ul>
+  <li><b>Every gladiator has five ratings</b> from 50 to 99. Classes set the loadout; the ratings set the perks. A Slave tends to be fast and a Soldier strong, but not every one is.</li>
+  <li><b>Speed</b>: +1 movement at 76, +2 at 96. <b>Strength</b>: +1 damage per hit at 76, +2 at 87, +3 at 96. <b>Luck</b>: +1 coin a turn at 76, +2 at 96. <b>Charisma</b>: +1 CF a turn at 76, +2 at 96. They stack.</li>
+  <li><b>When they pay</b>: only in rounds that allow class abilities. In a Classic event that is round 1, so a strong gladiator should hit early and hard.</li>
+  <li><b>Intelligence</b> decides how a CPU plays: Easy below 76, Normal from 76, Hard from 96. It never adds gear or coin.</li>
+  <li><b>Read the chips</b> on each fighter panel: a gold chip is a perk earned; a glowing one is a top band (96+).</li></ul>`;
+const RATINGS_MGR=`<h4>Ratings that grow</h4><ul>
+  <li><b>Slow and steady</b>: a busy, winning fighter climbs about one band a season. Gains slow above 90 and stop at 99.</li>
+  <li><b>What grows what</b>: Strength and Speed from the Training Yard (brutal drills most), fights survived and won, and kills. Intelligence from surviving and winning. Charisma from big CF, fame and being spared. Luck from weeks with your house and the bonds you build (meals, bonuses, kin tickets).</li>
+  <li><b>Push a fighter over a line</b>: the to-do list flags anyone a few points short of a band; a personal trainer or brutal drills that week can earn the perk before the next Match Week.</li>
+  <li><b>Watch the free agents</b>: they drill on their own, and rival yards train too. A fighter who reaches 96 makes the news.</li>
+  <li><b>Your mail</b> carries a weekly growth report from the doctores; a new band also makes your ludus ledger.</li></ul>`;
+{const base=playGuideHTML;playGuideHTML=function(){const h=base.apply(this,arguments);const i=h.indexOf('<details class="gsec"');return i<0?h.replace(/<\/div>\s*$/,RATINGS_GUIDE+'</div>'):h.slice(0,i)+`<details class="gsec" open><summary>Ratings: Speed, Strength, Intelligence, Luck, Charisma</summary><div class="gsecb">${RATINGS_GUIDE.replace(/^<h4>[^<]*<\/h4>/,'')}</div></details>`+h.slice(i)}}
+{const base=mgrGuideHTML;mgrGuideHTML=function(){const h=base.apply(this,arguments);const i=h.indexOf('<details class="gsec"');return i<0?h.replace(/<\/div>\s*$/,RATINGS_MGR+'</div>'):h.slice(0,i)+`<details class="gsec"><summary>Ratings that grow</summary><div class="gsecb">${RATINGS_MGR.replace(/^<h4>[^<]*<\/h4>/,'')}</div></details>`+h.slice(i)}}
+/* the Manager to-do list: who is a few points short of a band, and unread mail */
+{const base=ludusTodos;ludusTodos=function(){const T=base.apply(this,arguments);try{const w=W_(),m=me();const go=(tab,l)=>`<button class="btn" type="button" data-mg="tab" data-id="${tab}" style="padding:2px 8px">${l}</button>`;
+  const close=[];for(const g of rosterOf(m)){if(g.inj)continue;const st=gStats(g);for(const k of ['str','spd']){const nb=nextBand(k,st[k]);if(nb&&nb-st[k]<=3)close.push([g,k,nb])}}
+  if(close.length){const [g,k,nb]=close.sort((a,b)=>(a[2]-gStats(a[0])[a[1]])-(b[2]-gStats(b[0])[b[1]]))[0];const n=STATS.find(s=>s[0]===k)[1];const after=k==='str'?`+${band3(nb)} damage`:`+${band2(nb)} movement`;
+    T.unshift(['📈',`<b>${esc(g.name)}</b> is ${nb-gStats(g)[k]} ${n} from ${after} — standard or brutal drills, or a personal trainer, this week.`,go('practice','Training Yard')])}}catch(e){}return T}}
+/* the arena's strategy hints: your perks this round, or why they rest */
+{const base=strategyHints;strategyHints=function(p){const out=base.apply(this,arguments);try{if(!out||!p||!p.st||!S||S.phase!=='action'||!Array.isArray(out))return out;
+  const per=statPerks(p.st);if(!per.length)return out;
+  out.unshift(caAllowed()?`Your ratings pay this round: ${per.join(', ')}.`:`Class abilities are off this round, so your rating perks (${per.join(', ')}) rest until a round that allows them.`)}catch(e){}return out}}
+/* ---------- styles for the mail ---------- */
+{const st=document.createElement('style');st.textContent=`
+.mailbox{border-color:#6a5130;margin-bottom:10px}.mailhd{display:flex;gap:10px;align-items:baseline;margin-bottom:6px}.mailhd b{font:400 19px var(--display);color:var(--gold2)}
+.mlist{display:grid;gap:6px}.mail{background:var(--panel2);border:1px solid var(--line2);border-left:4px solid #c9a458;border-radius:6px;padding:5px 10px}
+.mail.offer{border-left-color:#d6ab4c}.mail.invite{border-left-color:#8fc3ea}.mail.letter{border-left-color:#c9a458}.mail.report{border-left-color:#7f858c}.mail.old{opacity:.8}
+.mail.unread{box-shadow:0 0 0 1px rgba(240,207,125,.45) inset}.mail summary{cursor:pointer;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.mail .lseal{font-size:16px}
+.mail .mnew{font:700 10px var(--mono);letter-spacing:.08em;padding:1px 6px;border-radius:9px;background:var(--gold);color:#1a120c;text-transform:uppercase}
+.mail .mbody{margin:6px 0 4px}.mail .mbody>.card2{margin:0;border:none;background:none;padding:2px 0;box-shadow:none}.mail .lbody{font-family:Georgia,serif;font-size:14px;line-height:1.5;color:var(--bone)}.mail .lbody p{color:var(--bone);margin:0 0 6px}.mail .lbody ul{margin:0 0 6px;padding-left:18px}
+.mpast{margin-top:8px}.mpast>summary{cursor:pointer;color:var(--muted);font-size:13px}.mpast .mlist{margin-top:6px}
+.mcount{display:inline-block;margin-left:4px;font:700 10px var(--mono);padding:1px 6px;border-radius:9px;background:var(--gold);color:#1a120c;vertical-align:1px}
+.mailline{display:grid;gap:4px;margin-bottom:10px;padding:6px 10px;border:1px solid #6a5130;border-radius:6px;background:var(--panel2);font-size:13.5px}`;document.head.appendChild(st)}
+/* the Play Now guide's dashboard: one more chart, wins by rating perk */
+{const base=guideDashHTML;guideDashHTML=function(){const h=base.apply(this,arguments);const P=SIM50.perk;if(!P)return h;
+  const lbl={0:'No perks',1:'One perk',2:'Two or more'};const rows=Object.entries(P.count).map(([k,v])=>({l:lbl[k]||k+' perks',v:v.win,tip:`${lbl[k]||k}: wins ${v.win}% · average ${v.cf} CF · ${v.n} gladiators`}));
+  for(const [k,n] of [['coin','Luck +1'],['cf','Charisma +1'],['mv','Speed +1'],['dmg','Strength +1']])if(P[k]&&P[k]['1'])rows.push({l:n,v:P[k]['1'].win,tip:`${n}: wins ${P[k]['1'].win}% (without: ${P[k]['0'].win}%) · average ${P[k]['1'].cf} CF`});
+  const chart=gvHBar('Win rate by rating perk','share of events won · hover for CF',rows,{max:40});
+  return h.replace('</div>\n   <ul class="gfind">',chart+'</div>\n   <ul class="gfind">')}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
