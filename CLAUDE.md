@@ -12,7 +12,8 @@ armor, trophies, banners, events, tournaments, invitationals, editors, spectator
 
 ## 1. Working with David (standing rules)
 
-- **Ask clarifying questions before starting a batch** — at most 4, multiple-choice where possible. He sends work as
+- **Ask clarifying questions before starting a batch** — as many as it takes to resolve what's unclear (no fixed
+  limit; don't ask what the request already answers), multiple-choice where possible. He sends work as
   numbered item lists ("batches"); answer any direct questions inside them ("correct me if I'm wrong").
 - Keep **in-game wording succinct**. No tooltips for internals the player never needs (e.g. how music is generated).
 - Tooltips nest **at most 2 levels**; a term never links to itself.
