@@ -237,6 +237,6 @@ One global script; files are concatenated in order. Later "version modules" patc
   faciam", the three dedication paragraphs, contact block (website, email, Tabletop Simulator, X, YouTube, BoardGameGeek,
   Discord, Steam: Virgilante) as clickable links with simple neutral icons (no brand logos), QR code, © 2016-2026 Mifune
   Media + warnings + reprint notice. Add a line that this is a digital standalone version of the original Magnus Edition
-  (Tabletop Simulator) and the Print & Play Edition (Barnes & Noble). David will upload original art (banner, portrait,
-  Mifune Media badge, QR, NC flag) — wait for it.
+  (Tabletop Simulator) and the Print & Play Edition (Barnes & Noble). Art + transcribed text: tools/art/credits/
+  (from David's creditsonly.pdf; the left half of that spread is the Quick Reference — not used).
 - Keep watching: shared-Store writes on load (conversions must be idempotent and saved once).

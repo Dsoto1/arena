@@ -1,0 +1,42 @@
+CONTACT & CREDITS — text of the rulebook page (p.73), for the in-game Credits page (queued).
+Art in this folder comes from creditsonly.pdf (David): banner_bg.jpg (the motto is live text in the PDF —
+set it in the display font), portrait.jpg, qr.jpg, mifune_media.png, nc_flag.png.
+
+AUT VIAM INVENIAM AUT FACIAM
+
+Behold! I implore you all to embark on any daring quests of creativity one can devise, embracing even
+the most obscure ideas, for the wisdom gained on these paths shall surpass any mere creation.
+In the year 2016, I set forth on a momentous journey that has forged the very essence of Flavius Rule
+as you now behold it. From humble beginnings, tiny sparks of inspiration ignited, propelling me into
+uncharted territories where new, exhilarating challenges awaited. As I now reach the culmination of
+this odyssey, should this game kindle even a flicker of entertainment, joy, or inspiration within a select
+few, I shall consider my mission triumphantly fulfilled, surpassing all initial aspirations.
+
+I extend profound gratitude to my esteemed Flavius community, the valiant fr-qa-team,
+the venerable Indie Game Lab, and the illustrious board game design communities for their invaluable
+contributions, their sagacious counsel, and the endless wellspring of provided inspiration.
+Furthermore, I humbly express boundless love and reverence to my father,
+who lent his guiding hand in designing and constructing the very first prototype of Flavius Rule,
+forever etching his legacy into this immersive realm.
+
+Finally, I pour my heartfelt appreciation to each and every one of you, noble
+players, for it is through your participation that the spirit of Flavius Rule is brought
+to life. May your ventures within this ancient realm resonate with valor, cunning,
+and a glimmer of the divine. God bless & Bonam fortunam!
+
+WEBSITE: www.FlaviusRule.com
+EMAIL: FlaviusRule@gmail.com
+Tabletop Simulator: https://steamcommunity.com/sharedfiles/filedetails/?id=809267424
+X: https://twitter.com/FlaviusRule | @FlaviusRule
+YouTube: https://youtube.com/@FlaviusRule
+BoardGameGeek: https://boardgamegeek.com/boardgame/362610/flavius-rule
+Discord: https://discord.gg/KfKvmTA
+Steam: Virgilante
+
+© 2016-2026. Mifune Media. All rights reserved.
+WARNING! Small parts. Choking hazard. Not suitable for children under 3 years.
+Recommended for ages 13+. This product is not a toy. Actual components may vary from those shown.
+Reprinting or publishing of the rulebook, game components, or illustrations is prohibited without prior permission.
+
+ADD (David): this is a digital standalone version of the original Magnus Edition (Tabletop Simulator)
+and the Print & Play Edition (Barnes & Noble).
