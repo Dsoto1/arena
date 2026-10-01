@@ -1134,7 +1134,7 @@ button.railhd.fold{all:unset;box-sizing:border-box;display:none;cursor:pointer;w
 </style>
 
 <header class="bar">
-  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.59</span></div>
+  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.60</span></div>
   <div class="status" id="status"></div>
   <div class="tools speedtray" id="speedTray">
     <div class="seg speedseg" role="group" aria-label="CPU speed"><span class="lbl">Speed</span><button type="button" data-speed="pause" title="Pause CPU turns">❚❚ Pause</button><button type="button" data-speed="step" title="Step: each CPU action waits for you — Next ▶ or Space — with a caption explaining it">⏯ Step</button><button type="button" data-speed="slow" class="on">Slow</button><button type="button" data-speed="normal">Normal</button><button type="button" data-speed="fast">Fast</button></div>
@@ -22734,6 +22734,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'0.60',ic:'🛣',t:'The Road from the record',hi:['🛣 Send on the Road sits on every living gladiator\'s record in Your Play Now Gladiators (custom characters too); the walker\'s record has ⚔ Walk stage'],fx:['The Annals no longer loop back to the main menu','Moving between the Annals, Your Play Now Gladiators and the Road is covered by the curtain — no menu flashes','The Hall\'s Road box drops its long dropdown for a button to your gladiators']},
   {v:'0.59',ic:'⚔',t:'Rivals, ships and chariots by the book',hi:['Rivalry Week: the last regular week is Familia, two on two, against your fiercest rival (the Consilium writes in week 11; byes now weeks 4 and 11)','Naumachia by the rulebook: the printed layout, 10-tile decks, boarding only from boarding tiles, the water-token pinwheel, waist-deep swimmers','Chariot Racing by the rulebook: a snake draft with chariot cards, one free tile past a gate, horse and wheel tokens riding on each chariot','Credits (click D.Soto) with the prototype photos; Zora stands on the board as his own mini','Five event cards repainted to match the rulebook; a mute button beside Settings'],fx:['Naumachia: a random team takes the first turn','Event Designer: the draft option says it replaces the class loadout','⏭ To the end now sits in the Speed tray, right of Fast','Ludus: a tie at the cut goes to the most CF, then the most coin, then d12 roll-offs','A new turn clears the last turn\'s card pop-ups and thoughts','No menu or arena flash when Play opens from Ludus Flavius or Manager mode loads','The floating sound chip is gone','Invitationals: the frequency line reads plainly']},
   {v:'0.58',ic:'⛵',t:'The printed ships, the prototype',hi:['Naumachia ships are the printed 3 x 5 hulls with Virgilante\'s deck art, set in a ring around the middle','Each hull shows its HP; hover its pillar for the ship\'s name','Arena deck, event and weapon cards from the original scans, twice as sharp','Click D.Soto in the main menu (or the Play Now guide) to see the prototype the game was distilled from'],fx:[]},
   {v:'0.57',ic:'🌿',t:'A cleaner sand, a fairer start',hi:['New houses choose a starting difficulty: Easy (250 coin, two fighters), Normal (125, one) or Hard (50, none)','Houses called in by a word can be taken over like any other','Courting shows on the shortlist (what you offered, what they ask); scouting or courting shortlists a fighter','Call a loaned fighter home for the rest of the loan plus a quarter','A letter for your first bye week; saved careers show record and treasury'],fx:['Laurels fly only after the closing horns; the start marks fade once play begins; no beasts are left on the sand after the clean-up','Saving gladiators keeps the results window up','Mail keeps only what you have not read','Match Week: winners in gold, YOURS in blue, LOANED in purple with the terms; Wagers shows a count; enter, watch and walk wait for the road to be paid; End the week from the results hides the buttons','Consilium and Schooling swap places; one billing per fighter on the Season tab']},
@@ -27232,6 +27233,44 @@ function rivalBackground(w){const n=w.night;if(!n||!n.bgRival||n.bgDone)return;n
 {const base=seasonTabHTML;seasonTabHTML=function(){const h=base.apply(this,arguments);try{const w=W_();const wk=wkOf(w.week);if(wk<=RIVAL_WK){const R=w.rivalry&&w.rivalry.season===w.season?w.rivalry:null;const foe=R?rivalOf(w,me().id):null;
   return `<p class="rc-sub rivalline">⚔ <b>Week ${RIVAL_WK} · Rivalry Week</b> (Familia, two on two) vs <b>${R?(foe?esc(foe.ludus):'— a bye —'):'TBD'}</b>${R?'':' — set at the start of week 11, when the Consilium writes'} · byes in weeks ${BYE_WKS.join(' and ')}.</p>`+h}}catch(e){}return h}}
 {const st=document.createElement('style');st.textContent=`.rivalban{border-color:#b0453a;background:linear-gradient(90deg,rgba(176,69,58,.18),transparent);margin-bottom:8px}`;document.head.appendChild(st)}
+/* =====================================================================
+   78-V60 · v0.60
+   =====================================================================
+   THE ROAD FROM THE CARD — every living gladiator in Your Play Now Gladiators (custom characters included) has
+   🛣 Send on the Road at the top of their record (48-arena47's button, which only printed classes had); the walker's
+   own record shows ⚔ Walk stage N instead. The Hall of Flavius keeps the Road's status, Walk stage and Abandon, but
+   the long dropdown is gone: a button opens Your Play Now Gladiators to choose there.
+   THE ANNALS LOOP — closing the Annals left its body (#hallBody) in the hidden window, so the next openHall() only
+   re-rendered that hidden body and no window appeared; the launch watchdog then sent you back to the main menu.
+   openHall now opens a fresh window whenever none is showing.
+   ===================================================================== */
+{const base=openHall;openHall=function(){try{if($('#modal').hidden){const hb=document.getElementById('hallBody');if(hb)hb.removeAttribute('id')}}catch(e){}return base.apply(this,arguments)}}
+let ROAD_NOW=null; /* the Road as last read, for the cards (ludusDetail is synchronous) */
+{const base=openLudus;openLudus=async function(){try{ROAD_NOW=await roadLoad()}catch(e){ROAD_NOW=null}return base.apply(this,arguments)}}
+{const _ld=ludusDetail;ludusDetail=function(g){let h=_ld(g);if(!g||!gladActive(g)||g.cpu)return h;
+  const R=ROAD_NOW&&!ROAD_NOW.over?ROAD_NOW:null;
+  const btn=R&&R.gid===g.id?(()=>{const st=roadStage(R);return `<button type="button" class="btn roadsend primary" data-road="go" title="Opens New event with ${esc(g.name)} summoned">⚔ Walk stage ${R.step+1}: ${esc(st.L.n)}</button>`})()
+    :`<button type="button" class="btn roadsend" data-roadsend="${g.id}" title="Win the twelve arenas in order with ${esc(g.name)}${R?` — replaces ${esc(R.name)}`:''}">🛣 Send on the Road</button>`;
+  h=h.replace(/<button type="button" class="btn roadsend" data-roadsend="[^"]*"[^>]*>🛣 Send on the Road<\/button>/,'');
+  return h.replace('<div class="gdetail" id="gDetail">',`<div class="gdetail" id="gDetail">${btn}`)}}
+/* ⚔ Walk stage from the walker's record: the same hand-off as the Hall's button */
+document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('#ludusBody [data-road="go"]');if(!b)return;e.stopPropagation();
+  const R=await roadLoad();if(!R||R.over)return;const g=LUDUS_CACHE.find(x=>x.id===R.gid);if(!g||!gladActive(g)){if(typeof mToast==='function')mToast('That gladiator can no longer walk the road.');return}
+  const st=roadStage(R);const cur=CUR_MODAL;if(cur)cur.done('road');
+  setTimeout(()=>{CFG.mode='event';CFG.loc=st.li;CFG.ev=st.ev;const E=EVENTS[st.ev];CFG.n=clamp(CFG.n,E.min,E.max);summonToSetup(g);CFG.road={gid:R.gid,step:R.step,loc:st.li,ev:st.ev};openSetup()},120)},true);
+/* the Hall: no dropdown — choose from the gladiators' records */
+{const base=roadVisualHTML;roadVisualHTML=function(R,cand,old){let h=base.apply(this,arguments);
+  const pick=`<div class="acts" style="align-items:center"><button class="btn primary" type="button" data-tab="ludus">🛡 Choose from Your Play Now Gladiators</button><span class="rc-sub">open a gladiator's record and press 🛣 Send on the Road</span></div>`;
+  h=h.replace(/<div class="acts" style="align-items:center"><select class="tin" id="roadPick">[\s\S]*?<\/select><button[^>]*data-road="commit"[^>]*>[\s\S]*?<\/button><\/div>/,pick)
+     .replace('<p class="rc-sub">You need a living gladiator of the eight classes on your roster (save one after an event).</p>',pick)
+     .replace(' — or pick them here.','.');
+  return h}}
+/* SMOOTH HAND-OFFS BETWEEN WINDOWS: when a window opened from the main menu closes, the menu used to come back at once —
+   even when another window (Annals ⇄ Your Play Now Gladiators, the Road, a record) was about to take its place, so the
+   menu flashed between them. Now the curtain covers the gap and the menu returns only if nothing else opened. */
+{const base=mmAfterClose;mmAfterClose=function(){if(!MM.fromMenu)return base.apply(this,arguments);const a=arguments,self=this;
+  if(typeof transitCover==='function'&&!HEADLESS)transitCover(1200);
+  setTimeout(()=>{if(!$('#modal').hidden||CUR_MODAL){if(typeof transitUncover==='function')transitUncover();return}base.apply(self,a);setTimeout(()=>{if(typeof transitUncover==='function')transitUncover()},120)},320)}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
