@@ -220,4 +220,9 @@ One global script; files are concatenated in order. Later "version modules" patc
   Triumviratus (FFA Royale, ends at 1st elimination → highest CF; CF+CA ticked), Familia (CF/CA crossed), Chariot (CF
   crossed), Naumachia (PvE crossed), Ludus (R1 ends at 10x turn rotations, CF ticked). Ludus rulebook: CF ties favor the
   elder (age) — the game breaks ties by seat order; ask David how to map it.
+- **Queued for the next batch — Naumachia to the rulebook (pp.48-49):** layout = TL horizontal, TR vertical, BR horizontal,
+  BL vertical (mirror of the v0.58 pinwheel); boarding from water only via valid boarding tiles (3 along each long side's
+  middle + 1 off each end; corners invalid), 2 MV, door→ship free; the 4 cut-corner ship tiles are invalid in the rulebook
+  (game: all 15 deck — confirm); 16 water tokens in a fixed cross on row/col 6; a boarding visual; swimmers drawn
+  half-submerged; team turns are simultaneous in the book (game: team members back to back); first team = oldest (no ages).
 - Keep watching: shared-Store writes on load (conversions must be idempotent and saved once).
