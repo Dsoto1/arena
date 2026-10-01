@@ -2213,16 +2213,26 @@ function drawPlayer(player) {
       /* drawMe — draws the figure or standee and returns its top y. */
       const drawMe = () => useFig ? drawFigureTok(tokenForP(player), m.x, m.y + TW * 0.02, TW * 1.3) : drawStandee(sk, m.x, m.y + TW * 0.04, sh);
       let top;
-      if (swimming(player)) {
+      if (swimming(player)) { /* v0.59: waist-deep — the figure sinks half a tile and the water closes over its legs */
+        const sink = TW * 0.36, wl = m.y + TW * 0.02, rx2 = TW * 0.3, ry2 = TW * 0.12;
+        ctx.fillStyle = 'rgba(30,70,78,.55)';
+        ell(m.x, wl, rx2, ry2);
+        ctx.fill(); /* the dark water round them */
         ctx.save();
         ctx.beginPath();
-        ctx.rect(m.x - TW, m.y - TW * 2.4, TW * 2, TW * 2.4 - TW * 0.18);
+        ctx.rect(m.x - TW, wl - TW * 2.6, TW * 2, TW * 2.6);
         ctx.clip();
-        top = drawMe();
+        ctx.translate(0, sink);
+        top = drawMe() + sink;
         ctx.restore();
-        ctx.strokeStyle = 'rgba(220,240,245,.8)';
-        ctx.lineWidth = 1.5;
-        ell(m.x, m.y - TW * 0.18, TW * 0.33, TW * 0.16);
+        ctx.strokeStyle = 'rgba(225,244,248,.9)';
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.ellipse(m.x, wl, rx2, ry2, 0, 0, Math.PI);
+        ctx.stroke(); /* the ripple in front of them */
+        ctx.strokeStyle = 'rgba(225,244,248,.35)';
+        ctx.beginPath();
+        ctx.ellipse(m.x, wl + TW * 0.02, rx2 * 1.4, ry2 * 1.45, 0, 0.15, Math.PI - 0.15);
         ctx.stroke();
       } else top = drawMe();
       ctx.fillStyle = player.color;
