@@ -35,7 +35,9 @@ function nextBand(k,v){const steps=k==='str'?[76,87,96]:[76,96];return steps.fin
 function leanOf(cls){if(STAT_LEAN[cls])return STAT_LEAN[cls];const C=CLASSES[cls];const r=C&&C.clsRef;if(r&&String(r).startsWith('cls:'))return STAT_LEAN[String(r).slice(4)]||[];return []}
 /* rollStats — fresh ratings around a fighter's overall rating; leaned stats roll 10+ higher. rng: a 0–1 function (never the event dice). TWEAK: the spread. */
 function rollStats(lean,ovr,rng){rng=rng||Math.random;lean=lean||[];const base=50+clamp(((ovr??70)-40)*0.45,0,24);const o={};
-  for(const k of STAT_KEYS){let v=base-4+rng()*12;if(lean.includes(k))v=Math.max(v,base+10)+rng()*10;o[k]=statFix(v)}return o}
+  for(const k of STAT_KEYS){let v=base-4+rng()*12;if(lean.includes(k))v=Math.max(v,base+10)+rng()*10;o[k]=statFix(v)}
+  o.int=statFix(64+((ovr??70)-50)*0.9+rng()*12-6); /* Intelligence follows the overall: most fighters play Normal, the weak Easy, the stars Hard (TWEAK) */
+  return o}
 /* statsFromAbil — ratings that reproduce an old printed ability (migrating custom characters and classes made before v0.55). */
 function statsFromAbil(abil,val){const o={spd:65,str:65,int:70,lck:65,cha:65};val=val||1;
   for(const k of ABIL_TO_STAT[abil]||[])o[k]=k==='str'?[80,90,97][clamp(val,1,3)-1]:val>=2?97:80;return o}

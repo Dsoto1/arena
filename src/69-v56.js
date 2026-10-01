@@ -134,3 +134,9 @@ const RATINGS_MGR=`<h4>Ratings that grow</h4><ul>
 .mpast{margin-top:8px}.mpast>summary{cursor:pointer;color:var(--muted);font-size:13px}.mpast .mlist{margin-top:6px}
 .mcount{display:inline-block;margin-left:4px;font:700 10px var(--mono);padding:1px 6px;border-radius:9px;background:var(--gold);color:#1a120c;vertical-align:1px}
 .mailline{display:grid;gap:4px;margin-bottom:10px;padding:6px 10px;border:1px solid #6a5130;border-radius:6px;background:var(--panel2);font-size:13.5px}`;document.head.appendChild(st)}
+/* the Play Now guide's dashboard: one more chart, wins by rating perk */
+{const base=guideDashHTML;guideDashHTML=function(){const h=base.apply(this,arguments);const P=SIM50.perk;if(!P)return h;
+  const lbl={0:'No perks',1:'One perk',2:'Two or more'};const rows=Object.entries(P.count).map(([k,v])=>({l:lbl[k]||k+' perks',v:v.win,tip:`${lbl[k]||k}: wins ${v.win}% · average ${v.cf} CF · ${v.n} gladiators`}));
+  for(const [k,n] of [['coin','Luck +1'],['cf','Charisma +1'],['mv','Speed +1'],['dmg','Strength +1']])if(P[k]&&P[k]['1'])rows.push({l:n,v:P[k]['1'].win,tip:`${n}: wins ${P[k]['1'].win}% (without: ${P[k]['0'].win}%) · average ${P[k]['1'].cf} CF`});
+  const chart=gvHBar('Win rate by rating perk','share of events won · hover for CF',rows,{max:40});
+  return h.replace('</div>\n   <ul class="gfind">',chart+'</div>\n   <ul class="gfind">')}}
