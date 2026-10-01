@@ -120,7 +120,7 @@ async function pairStart(cfg){const ids=[...((cfg&&cfg.pairs)||[]),...(((EV()||{
   for(const id of ids){if(seen.has(id))continue;seen.add(id);const P=pairById(id);if(P&&!pairMembersOK(P))await pairEnter(P,null,'enters with the pompa')}}
 
 /* ---------------- ⭐ SPECIAL EVENTS (Manager invitationals) ---------------- */
-const SX_FREQ=[['off','Never (design only)',0],['rare','Rare',0.4],['occasional','Occasional',1],['common','Common',2],['headliner','Headliner — often',4]];
+const SX_FREQ=[['off','Off (not sent)',0],['rare','Rare',0.4],['occasional','Occasional',1],['common','Common',2],['headliner','Headliner — often',4]];
 const SX_ICONS=['⭐','🏛','🔱','🦁','🦅','🐺','🐍','🔥','⚔','🏆','🌊','🌙','☀','👑','🎭','🛡'];
 const SX_FORMATS=[['single','A single bout',1],['bracket2','Two heats → a final',2],['bracket4','Four heats → a final',4]];
 const sxEvents=()=>Object.keys(EVENTS).filter(k=>{const E=EVENTS[k];return E&&!['chariot','naumachia'].includes(E.kind)&&E.min<=4&&E.max>=2}).map(k=>[k,(EVENTS[k].custom?'✦ ':'')+EVENTS[k].n+(EVENTS[k].custom?' · custom':'')]);
@@ -199,7 +199,7 @@ function specialStudioHTML(){const d=ST.sxd||(ST.sxd=sxBlank());const P=ST.pxd||
   const s=(k,opts,v)=>`<select class="tin" data-sxf="${k}">${opts.map(([a,b])=>`<option value="${esc(a)}" ${String(v)===String(a)?'selected':''}>${esc(b)}</option>`).join('')}</select>`;
   const n=(k,v,min,max,step=1)=>`<span class="slider" style="grid-template-columns:1fr 42px"><input type="range" data-sxf="${k}" min="${min}" max="${max}" step="${step}" value="${v}"><output>${v}</output></span>`;
   const pairs=allPairings();
-  const inv=`<div class="sxinv"><div class="sxicon">${esc(d.icon||'⭐')}</div><b>${esc(d.name||'Special event')}</b><div class="rc-sub">${esc((LOCATIONS[D.loc]||{}).n||'')} · ${starsHTML(D.stars)}</div><div class="sxrules">${D.rules.map(r=>`<div>• ${esc(r)}</div>`).join('')}</div><div class="sxpay">💰 ${D.purse} purse · 🪙 ${D.appear} a fighter · ⭐ +${D.fame} fame${D.trophy&&typeof trophyDef==='function'&&trophyDef(D.trophy)?` · 🏆 ${esc(trophyDef(D.trophy).name)}`:''}</div>${D.pairs.length?`<div class="sxpairs">${D.pairs.map(id=>{const Q=pairById(id);return `<span title="${esc(Q.name)}">${(Q.members||[]).map(r=>pmTok(r,24)).join('')}</span>`}).join('')}</div>`:''}<div class="rc-sub" style="margin-top:4px">${esc((SX_FREQ.find(q=>q[0]===d.freq)||SX_FREQ[2])[1])} in Manager mode</div></div>`;
+  const inv=`<div class="sxinv"><div class="sxicon">${esc(d.icon||'⭐')}</div><b>${esc(d.name||'Special event')}</b><div class="rc-sub">${esc((LOCATIONS[D.loc]||{}).n||'')} · ${starsHTML(D.stars)}</div><div class="sxrules">${D.rules.map(r=>`<div>• ${esc(r)}</div>`).join('')}</div><div class="sxpay">💰 ${D.purse} purse · 🪙 ${D.appear} a fighter · ⭐ +${D.fame} fame${D.trophy&&typeof trophyDef==='function'&&trophyDef(D.trophy)?` · 🏆 ${esc(trophyDef(D.trophy).name)}`:''}</div>${D.pairs.length?`<div class="sxpairs">${D.pairs.map(id=>{const Q=pairById(id);return `<span title="${esc(Q.name)}">${(Q.members||[]).map(r=>pmTok(r,24)).join('')}</span>`}).join('')}</div>`:''}<div class="rc-sub" style="margin-top:4px">${d.freq==='off'?'Off — not sent in Manager mode yet':'Sent in Manager mode: '+esc((SX_FREQ.find(q=>q[0]===d.freq)||SX_FREQ[2])[1])}</div></div>`;
   const pOK=pairMembersOK(P);const PT=PAIR_TYPES[P.type]||PAIR_TYPES.duo;
   const memOpts=[['','— empty —'],...BASE_CLS.map(k=>['cls:'+k,'🛡 '+CLASSES[k].name]),...(CUSTOM.chars||[]).map(c=>['cc:'+c.id,'✦ '+c.name]),...Object.keys(NPCT).filter(k=>!NPCT[k].custom).map(k=>['npc:'+k,'🐾 '+NPCT[k].n]),...(CUSTOM.npcs||[]).map(x=>['cn:'+x.id,'✦🐾 '+x.name])];
   const slots=Math.max(PT[3],(P.members||[]).length);
@@ -237,7 +237,7 @@ if(typeof CR_KINDS!=='undefined'){
 
 /* ---------------- wiring (the studio's own handlers run on #mBody; these run first, on the document) ---------------- */
 async function sxSave(){const d=ST.sxd;if(!String(d.name).trim())d.name='Special event';if(!nameGuard('specials',d,'[data-sxf="name"]'))return;
-  CUSTOM.specials=[...(CUSTOM.specials||[]).filter(x=>x.id!==d.id),JSON.parse(JSON.stringify(d))].sort(byName);await Store.put('customSpecials',d.id,d).catch(()=>{});if(typeof mToast==='function')mToast(`⭐ <b>${esc(d.name)}</b> is in the calendar’s drawer${d.freq==='off'?' (design only)':''}.`)}
+  CUSTOM.specials=[...(CUSTOM.specials||[]).filter(x=>x.id!==d.id),JSON.parse(JSON.stringify(d))].sort(byName);await Store.put('customSpecials',d.id,d).catch(()=>{});if(typeof mToast==='function')mToast(`⭐ <b>${esc(d.name)}</b> is in the calendar’s drawer${d.freq==='off'?' (off — not sent)':''}.`)}
 async function pxSave(){const P=ST.pxd;if(pairMembersOK(P))return;if(!String(P.name).trim())P.name='Pairing';if(!nameGuard('pairings',P,'[data-pxf="name"]'))return;P.members=(P.members||[]).filter(Boolean);
   CUSTOM.pairings=[...(CUSTOM.pairings||[]).filter(x=>x.id!==P.id),JSON.parse(JSON.stringify(P))].sort(byName);await Store.put('customPairings',P.id,P).catch(()=>{});pairRegister();if(typeof mToast==='function')mToast(`🤝 Cohort <b>${esc(P.name)}</b> saved.`)}
 async function rsSave(){const d=ST.rsd;if(!String(d.name).trim())d.name='My roster';if(!nameGuard('rosters',d,'[data-rsf="name"]'))return;
