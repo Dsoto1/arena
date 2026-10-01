@@ -566,7 +566,7 @@ function atkPlan(player, source, target) {
   // dice, bonus and flips this CPU can count on for this attack
   const n = S.endgame ? 4 : target.kind === 'npc' ? 4 : 2;
   const pw = srcPow(source);
-  const bonus = (player.abil === 'dmg' && caAllowed() && S.ri === 0 ? player.abilVal || 1 : 0) + (hasCestus(player, source.arm) ? 1 : 0) + (player.hercules || 0);
+  const bonus = statDmgB(player) + (hasCestus(player, source.arm) ? 1 : 0) + (player.hercules || 0);
   const om = player.diff === 'easy' ? 0 : player.items.some(i => i.kind === 'card' && i.key === 'omnia2') ? 2 : player.items.some(i => i.kind === 'card' && i.key === 'omnia1') ? 1 : 0;
   return {
     n,
@@ -809,7 +809,7 @@ function cpuGoals(player) {
     const potPow = Math.max(0, ...armsAttached(player).map(a => {
       const w = player['w' + a];
       return (w && !w.lyre && !w.noAtk && w.p ? w.p : hasCestus(player, a) ? 1 : 0) + (hasCestus(player, a) ? 1 : 0);
-    })) + (player.abil === 'dmg' && caAllowed() && S.ri === 0 ? player.abilVal || 1 : 0);
+    })) + statDmgB(player);
     if (potPow < 2 && player.diff !== 'easy') bl = []; // can't reliably break a pot: don't walk to one
     if (bl.length && rand() < 0.45 + potLove * 0.4) {
       bl.sort((a, b) => cheb(player, a) - cheb(player, b));

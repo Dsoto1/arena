@@ -1111,10 +1111,30 @@ div.stat[data-tip]{cursor:help}div.stat[data-tip]:hover{border-color:var(--gold)
 .favbox{margin-bottom:10px;border-color:var(--gold)!important}.favbox table{margin:0}
 .payjoin{border-color:#5fc7c0!important;margin-bottom:10px}.fightreq{border-color:var(--gold)!important;margin-bottom:10px}
 .cimg.piagen{position:relative;container-type:inline-size;overflow:hidden}.cimg.piagen .piamask{position:absolute;left:12%;top:60.9%;width:76%;height:6.1%;background:#1a1510;display:flex;align-items:center;justify-content:center;white-space:nowrap;font:7.3cqw/1 Georgia,'Times New Roman',serif;color:#efe3c6}.cimg.piagen .piamask b{font-weight:400;margin:0 .25em}
+/* v0.55 */
+.statchips{display:inline-flex;gap:3px;flex-wrap:wrap;vertical-align:middle}.statchip{display:inline-flex;align-items:center;gap:2px;padding:1px 5px;border:1px solid var(--line2);border-radius:9px;font:11px var(--mono);color:var(--muted);background:var(--panel2)}.statchip b{color:var(--bone);font-weight:500}.statchip.up{border-color:#7a5c20;color:var(--gold2)}.statchip.top{border-color:var(--gold);box-shadow:0 0 6px rgba(240,207,125,.45)}.statchips.sm .statchip{font-size:10px;padding:0 4px}
+.ratgrid{display:grid;grid-template-columns:auto minmax(70px,1fr) 46px minmax(0,1.4fr);gap:4px 8px;align-items:center;font-size:13px;margin-bottom:4px}.ratgrid .n{font:500 13px var(--mono);text-align:right}.meter.gold i{background:linear-gradient(90deg,#d6ab4c,#f0cf7d)}
+.letters{display:grid;gap:6px;margin-bottom:10px}.letter{background:linear-gradient(#efe3cc0d,transparent),var(--panel2);border:1px solid #6a5130;border-left:4px solid #c9a458;border-radius:6px;padding:6px 10px}.letter summary{cursor:pointer;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.letter .lseal{font-size:16px}.letter .lbody{font-family:Georgia,serif;font-size:14px;line-height:1.5;color:var(--bone);margin:6px 0}.letter .lbody p{color:var(--bone);margin:0 0 6px}.letter .lbody ul{margin:0 0 6px;padding-left:18px}
+.mytag{display:inline-block;font:700 10px var(--mono);letter-spacing:.08em;padding:1px 6px;border-radius:9px;background:var(--gold);color:#1a120c;vertical-align:1px}
+table.tally tr.me td{background:rgba(240,207,125,.13)}table.tally tr.me td:first-child{box-shadow:inset 4px 0 0 var(--gold)}table.tally tr.lent td{background:rgba(127,166,201,.12)}table.tally tr.lent td:first-child{box-shadow:inset 4px 0 0 #7fa6c9}
+.loantag{display:inline-block;font:11px var(--mono);padding:1px 6px;border-radius:9px;border:1px solid #4d6f8f;color:#bcd6ea;background:rgba(127,166,201,.12);vertical-align:1px}.loantag.mine{border-color:#7fa6c9;color:#e0efff;font-weight:600}
+.hometag{color:#b7f09d}.homegame{border-color:#3d5a2e;margin-bottom:10px}
+.grade.A,.grade.B,.grade.C,.grade.D,.grade.F{border-width:1px}
+.grade.A{color:#1a120c;background:linear-gradient(110deg,#c99a3a 20%,#fff2c0 45%,#f0cf7d 55%,#c99a3a 80%);background-size:250% 100%;border-color:#f0cf7d;animation:gshine 2.8s linear infinite;box-shadow:0 0 8px rgba(240,207,125,.55)}
+.grade.B{color:#1b1f24;background:linear-gradient(#e6ebf1,#a9b3bf);border-color:#dfe5ec}.grade.C{color:#1e1208;background:linear-gradient(#e0a06a,#9a5c2e);border-color:#cd8a52}.grade.D{color:#d7dbe0;background:#3a3f45;border-color:#6b7178}.grade.F{color:#fff0ec;background:#7a1f18;border-color:#d24a3a}
+.gradebox[style*="--gc:#f0cf7d"]{animation:gglow 2.4s ease-in-out infinite}
+@keyframes gshine{from{background-position:120% 0}to{background-position:-130% 0}}@keyframes gglow{0%,100%{box-shadow:0 0 6px rgba(240,207,125,.35)}50%{box-shadow:0 0 20px rgba(240,207,125,.85)}}
+@media (prefers-reduced-motion:reduce){.grade.A,.gradebox[style*="--gc:#f0cf7d"]{animation:none}}
+button.railhd.fold{all:unset;box-sizing:border-box;display:none;cursor:pointer;width:100%}
+#modal.full .rail button.railhd.fold{display:flex;justify-content:space-between;align-items:center;padding:8px 12px 4px;font:600 11px var(--mono,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:rgba(0,0,0,.18)}
+#modal.full .rail button.railhd.fold:hover,#modal.full .rail button.railhd.fold:focus-visible{color:var(--gold2)}#modal.full .rail button.railhd.fold.cur{color:var(--gold2)}
+.railhd .rcar{transition:transform .15s}.railgrp.shut .railhd .rcar{transform:rotate(-90deg)}#modal.full .rail .railgrp.shut>button:not(.railhd){display:none}
+.sliderow{display:grid;grid-template-columns:120px 1fr 40px minmax(0,1fr);gap:6px 8px;align-items:center;font-size:13px}.sliderow input[type=range]{width:100%;accent-color:var(--gold)}.statbudget{font:12px var(--mono);margin:4px 0}.statbudget.over{color:var(--blood2)}
+#audChip{position:fixed;left:12px;bottom:12px;z-index:3000;background:#241a10;border:1px solid var(--gold);border-radius:18px;padding:6px 12px;font-size:13px;color:var(--bone);cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.5)}
 </style>
 
 <header class="bar">
-  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.54</span></div>
+  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.55</span></div>
   <div class="status" id="status"></div>
   <div class="tools speedtray" id="speedTray">
     <div class="seg speedseg" role="group" aria-label="CPU speed"><span class="lbl">Speed</span><button type="button" data-speed="pause" title="Pause CPU turns">❚❚ Pause</button><button type="button" data-speed="step" title="Step: each CPU action waits for you — Next ▶ or Space — with a caption explaining it">⏯ Step</button><button type="button" data-speed="slow" class="on">Slow</button><button type="button" data-speed="normal">Normal</button><button type="button" data-speed="fast">Fast</button></div>

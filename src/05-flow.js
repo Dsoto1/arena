@@ -432,13 +432,7 @@ async function startEvent(config) {
     await pairStart(config);
     if (G !== S) return;
   } /* v0.46: pairings enter with the pompa */
-  // Hard CPUs: a veteran's edge on top of sharper play (shown in setup): +3 coin and a 2 HP Health Elixir token
-  for (const p of S.players) if (p.cpu && p.diff === 'hard' && !isChariot() && !isNaum()) {
-    p.coin += 3;
-    coinLog(p, 3, "veteran's edge");
-    p.items.push(mkOffer('elix2'));
-  }
-  if (S.players.some(player => player.cpu && player.diff === 'hard') && !isChariot() && !isNaum()) log('Hard CPU gladiators enter with a veteran\'s edge: +3 coin and a 2 HP Health Elixir.');
+  /* v0.55: Hard CPUs no longer get a veteran's edge — Intelligence only sharpens their play */
   // carry-over (festivals, missios)
   for (const [i, s] of config.seats.entries()) {
     const p = S.players[i];
@@ -446,6 +440,11 @@ async function startEvent(config) {
       cfWhy('carried in');
       p.cf += s.cfStart;
       log(`${nm(p)} carries ${s.cfStart} CF into this event.`);
+    }
+    if (s.homeHouse) {
+      cfWhy('home crowd');
+      p.cf += 2;
+      log(`${nm(p)} fights at home for ${esc(s.homeHouse)}: the stands roar (+2 CF).`);
     }
     if (s.coinStart) {
       p.coin += s.coinStart;
@@ -1218,6 +1217,7 @@ async function takeChoice(player, which) {
       }
     }
     if (player.abil === 'mv' && !player.netted) player.mv = Math.min(7, player.mv + av);
+    statTurn(player); /* v0.55: Speed, Luck and Charisma pay here */
     if (player.abil === 'stone') {
       const w = ['R', 'L'].map(a => player['w' + a]).find(weapon => weapon && weapon.stones);
       if (w) {

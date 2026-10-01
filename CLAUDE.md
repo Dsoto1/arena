@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **David's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.54**. Owner: David.
+arena, Roman-themed). Current version: **v0.55**. Owner: David.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -56,7 +56,8 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Works for `function` declarations and `let` functions. **`const` arrows cannot be wrapped** (e.g. `fixtureFor`, `cfAllowed`).
 - Module ordering matters: a wrapper only sees wrappers installed before it.
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
-  `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`.
+  `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
+  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`.
   Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
 
 ### Core globals (engine)
@@ -105,6 +106,21 @@ One global script; files are concatenated in order. Later "version modules" patc
 - **Cheats:** never put code words in plain text anywhere in the page. Register with
   `cheatRegister('h'+hashStr('code:'+WORD), run, label)`; the reveal list `CHEAT_SHOW` stores char codes +7.
   Current words: EDITOR12 (all editors), MUSICA16 (all 16 themes), LUDUS50 (+50 coin), CHARD / DUCKIO (bonus houses).
+- **Ratings (65/66/67, v0.55):** every gladiator has `st`/`g.stats` = {spd,str,int,lck,cha}, 50–99 (`STATS`,
+  `statBonuses`). Speed → +1/+2 movement (76/96), Strength → +1/+2/+3 damage (76/87/96), Luck → coin/turn, Charisma →
+  CF/turn (76/96), Intelligence → CPU difficulty (`bandInt`: Easy <76, Normal, Hard 96+). Movement/damage/coin/CF pay
+  only when `caAllowed()`; helpers `statDmgB`, `statMvB`, `statTurn` (called in takeChoice). The class abilities
+  mv/dmg/coin/cf/vet (`STAT_ABILS`) are nulled on the player — classes keep loadout, weakness, stones, and Zora or a
+  tamed ally (`C.ally`, released via `spawnZora`). Ratings come from `seatStats`: seat `stats` (Manager `seatFor`),
+  a Studio character's `stats` (375 pool, `STAT_BUDGET`), or a roll leaning by printed class (`STAT_LEAN`, seeded off
+  the event seed — never the dice RNG). Hard CPUs no longer get the veteran's edge. Beasts: `npcRatings` (display only).
+  Manager: `gStats(g)` creates ratings lazily (deterministic from id); `statGain` grows them (bouts in `applyBout`,
+  exhibitions, Training Yard, loyalty bonds, rival/free-agent drift) and posts band-ups; `statOvr` feeds `effOvr`.
+- **Manager v0.55 (66):** `sendLetter`/`lettersHTML` (letters only in Your ludus + Match Week); `adviseWeek`
+  (Consilium letter when `worldImpact` is bad); loans: syndicate only (`loanLender`), `loanWeek` = interest + weekly
+  minimum, no garnish; 3 short weeks → `w.syndSpear` → next `boutCfg`/`exhibCfg` carries `syndSpear` → spear at
+  rotation 7 (`spectatorsAct` wrapper); friendly houses send gifts (`friendGift`); home games (`homeCfg`, seat
+  `homeHouse` → +2 CF); medal-ladder grades (`gradeCol`, `gradeChip`); rail headers fold (`flavius_railshut`).
 - **Music:** procedural Web Audio (21-audio, 45-music, 16 themes; unlocked by winning in cities). Play Now plays a
   random unlocked theme or the Custom Event's `music`; Manager keeps city themes; final duel uses the boss theme.
 
@@ -122,7 +138,8 @@ One global script; files are concatenated in order. Later "version modules" patc
   Pass = every block ends `exit=0` and prints `ERRS []`. Run a subset: `sh tools/runreg.sh tv53 tpia`.
 - `t12` plays every event via sims (slow). Version tests: `tv50…tv54`-style files (`tv52`, `tv53`), plus feature tests
   (`tcls` classes, `tlook` accessories, `tbye` bye weeks, `temp53` closures, `t53s` studio, `tres` results,
-  `tmgr54` manager, `tpia` piacula, `t54a` studio/event designer).
+  `tmgr54` manager, `tpia` piacula, `t54a` studio/event designer, `tv55` ratings/letters/loans/home/grades,
+  `tstat55` Studio ratings and allies).
 - When a UI move breaks an old test intentionally, update the test (keep its intent).
 - Visual checks: write a short Playwright script, screenshot, and look at it.
 
@@ -132,7 +149,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 3. Add a `SAVE_MIGRATIONS` entry if world data changed shape.
 4. `sh build.sh` → full regression → `python3 tools/mkshare.py X.YY` → smoke-test the share build.
 5. Publish to the claude.ai artifact **https://claude.ai/artifact/8LU6eHbPpuznn64JeWZ6We** with the page and all 23
-   assets (label "vX.YY"); live is Version 65 = v0.54. Before publishing, review any new shared-Store writes and make
+   assets (label "vX.YY"); check the live version with an Artifact read before publishing. Before publishing, review any new shared-Store writes and make
    sure no cheat word appears in plain text. Send David the share build file.
 
 ## 7. Version history (recent)
@@ -149,6 +166,10 @@ One global script; files are concatenated in order. Later "version modules" patc
   (arena + trophy shell); Event Designer Beasts & cohorts picker with real tokens + arena music; results Save all +
   Fate up front; Manager purse banking, pay-to-join, fight requests, Favorites inside Recruiting, Sort tray;
   tamed beasts don't steal aggro; Play Now random music; roster filled by hand only.
+- **v0.55** five ratings (Speed/Strength/Intelligence/Luck/Charisma) replace class stat abilities; Manager rating
+  growth + weekly growth news; Studio rating sliders (375 pool), tamed-ally classes, beast ratings; syndicate loans
+  (manual pay, weekly minimum, spear); Consilium letters; home games; medal-ladder grades; folding rail; Match Week
+  YOURS/loan tags; pay-to-join only in Ludus/Recruiting; no Hard veteran's edge; Safari/iOS audio unlock + chip.
 
 ## 8. Next steps / open items
 - **Readability pass, phase 2+** (David chose "phased"): files 02–07 are done (Babel scope-safe parameter renames via
@@ -159,4 +180,6 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Event Designer: a full step-by-step wizard was deferred (David chose the "Beasts hub + pieces" scope for v0.54).
 - Play Now setup: the city/modifier header above the map could align exactly to the map width.
 - Hot-seat LAN/Online lobbies are placeholders.
+- Next (agreed): Sica's syndicate as its own league house (roster, enforcers, dirty tricks) — design with David first.
+- Audio in the artifact-downloaded copy: v0.55 added Safari/iOS fixes; confirm with David which device/browser it was.
 - Keep watching: shared-Store writes on load (conversions must be idempotent and saved once).

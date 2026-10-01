@@ -2494,7 +2494,7 @@ const sideBadge = l => LOCSIDE[l] ? `<span class="side-badge ${LOCSIDE[l]}" aria
    interactive shows the Use/Declare buttons. */
 function boardHTML(player, interactive) {
   const badges = [];
-  if (player.abil === 'dmg' || hasCestus(player, 'R') || hasCestus(player, 'L')) badges.push(`<span class="badge good">+${(player.abil === 'dmg' && caAllowed() ? 1 : 0) + (hasCestus(player, 'R') || hasCestus(player, 'L') ? 1 : 0)} DMG${hasCestus(player, 'R') || hasCestus(player, 'L') ? ' (Cestus)' : ''}</span>`);
+  if (statDmgB(player) || hasCestus(player, 'R') || hasCestus(player, 'L')) badges.push(`<span class="badge good">+${statDmgB(player) + (hasCestus(player, 'R') || hasCestus(player, 'L') ? 1 : 0)} DMG${hasCestus(player, 'R') || hasCestus(player, 'L') ? ' (Cestus)' : ''}</span>`);
   if (greavesOn(player)) badges.push('<span class="badge good">+1 MV Greaves</span>');
   if (player.hercules) badges.push(`<span class="badge good">Hercules +${player.hercules}</span>`);
   if (player.focusNext) badges.push('<span class="badge gold">Focus! ready</span>');
@@ -2551,6 +2551,7 @@ function boardHTML(player, interactive) {
     const v = player.hp[l];
     return `<div class="loc"><span class="ln">${sideBadge(l)}${LOCS_SHORT[l]}</span><span class="nums">${v <= 0 ? `<span class="sevd">${sevLabel(l).toUpperCase()}</span>` : `HP ${v} · AP ${player.ap[l]}`}</span><div class="bars">${seg7(Math.max(0, v), 'h', v <= 2)}${seg7(player.ap[l], 'a')}</div>${player.pieces[l].length ? `<div class="pieces">${player.pieces[l].map(x => `<span data-card="a:${x.key}" style="cursor:help">${cardHTML('a:' + x.key, 'xs')} ${x.n}</span>`).join(' ')}</div>` : ''}</div>`;
   }).join('')}</div></div>
+   ${player.st ? `<div class="badges statrow" title="Ratings: Speed, Strength, Intelligence, Luck, Charisma">${statChips(player.st)}</div>` : ''}
    ${badges.length ? `<div class="badges">${badges.join('')}</div>` : ''}
    ${player.ch && player.ch.mounted ? `<div class="sect">Chariot</div><div class="wrow"><span class="wn">${player.ch.art ? cardHTML('g:' + player.ch.art, 'xs') : ''}<span><b>${esc(player.ch.name || 'Chariot')}</b></span></span><span class="ws">${player.ch.horse ? `<span data-card="h:${player.ch.horse.sides[player.ch.horse.face].art || 'saxoA'}" style="cursor:help">${cardHTML('h:' + (player.ch.horse.sides[player.ch.horse.face].art || 'saxoA'), 'xs')} ${esc(player.ch.horse.name || 'horse')} ${player.ch.horse.sides[player.ch.horse.face].hp - player.ch.horse.dmg}HP</span>` : 'no horse'} · ${player.ch.wheel ? `<span data-card="h:${player.ch.wheel.art || 'wheel8'}" style="cursor:help">${cardHTML('h:' + (player.ch.wheel.art || 'wheel8'), 'xs')} ${player.ch.wheel.hp}HP</span>` : 'no wheel'}</span></div>` : ''}
    <div class="sect">Weapons</div>
@@ -2559,7 +2560,7 @@ function boardHTML(player, interactive) {
     const used = armAlive(player, a) && player.armUses[a] >= (w && w.both ? 2 : 1);
     return `<div class="wrow ${used ? 'used' : ''}"><span class="wn">${w && armAlive(player, a) ? w.gart ? cardHTML(w.gart, 'xs') : w.lyre ? cardHTML('c:lyre', 'xs') : cardRef('w:' + w.key) ? cardHTML('w:' + w.key, 'xs') : '' : ''}<span>${a === 'R' ? 'Right (primary)' : 'Left (secondary)'}: <b>${armAlive(player, a) ? w ? w.n : 'empty hand' : '—'}</b></span></span><span class="ws">${armAlive(player, a) ? w ? wStats(w) : 'punch P1 · R1' : 'severed'}${used ? ' · spent' : ''}</span></div>`;
   }).join('')}
-   <div class="sect">Movement ${isCur ? `· ${player.mv} left` : `· ${mvMax(player)}${player.abil === 'mv' ? '+1' : ''} per turn`}</div>
+   <div class="sect">Movement ${isCur ? `· ${player.mv} left` : `· ${mvMax(player)}${statMvB(player) ? '+' + statMvB(player) : ''} per turn`}</div>
    <div class="mvtrack" aria-label="movement">${Array.from({
     length: 7
   }, (_, i) => `<i class="${isCur ? i < player.mv ? 'f' : '' : i < mvMax(player) ? '' : 'cap'}"></i>`).join('')}</div>

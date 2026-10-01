@@ -159,7 +159,7 @@ function strategyHints(p){
   for(const n of threats){const st=npcStats(n);const outs=[];if(tunnelExits(p).length)outs.push('dive into a tunnel (1 key)');if(has('ward'))outs.push('declare your Ward of the Evil Eye');if(has('lure')&&activePlayers().some(q=>q!==p&&cheb(p,q)<=4))outs.push('throw your Meat Lure at a rival');
     out.push(`${n.name} is aggro on you${st.state?` (${st.state}: ${st.ap} attack, ${st.mv} move)`:''}. ${n.hp<=8?'It is low: finish it for the trophy.':outs.length?'To shake it: '+outs.join(', or ')+'.':'Stay out of its reach or fight it near allies.'}`)}
   {const srcs=attackSources(p).filter(s=>!s.thr&&(!s.w.punch||hasCestus(p,s.arm)));const pots=S.pillars.filter(pl=>pl.pots.length&&cheb(p,pl)===1);
-   if(pots.length&&srcs.length){const best=Math.max(...srcs.map(s=>s.w.p+(hasCestus(p,s.arm)?1:0)+(p.hercules||0)+((p.abil==='dmg'&&caAllowed()&&S.ri===0)?1:0)));const n=S.endgame?4:2;
+   if(pots.length&&srcs.length){const best=Math.max(...srcs.map(s=>s.w.p+(hasCestus(p,s.arm)?1:0)+(p.hercules||0)+statDmgB(p)));const n=S.endgame?4:2;
      const chance=best>=2?1-Math.pow(.5,n):1-Math.pow(.5,n)-n*Math.pow(.5,n);out.push(`A Blessings pot is in reach. It needs 2 damage: with power ${best} you break it ${Math.round(chance*100)}% of the time (2 coin, 1 CF and a hidden offering).`)}}
   if(rd.zone>1&&!inZone(p.r,p.c))out.push(`You are outside the zone${p.grace>0?` (${p.grace} grace turn${p.grace>1?'s':''} left)`:''}. Ending here costs 2 CF.`);
   if(hurtBad(p)&&p.items.some(i=>i.kind==='card'&&isElixir(i.key)||i.kind==='offer'&&(i.key==='elix2'||i.key==='elix4')))out.push('You are badly hurt and hold a Health Elixir. An elixir can also save a location the moment it hits 0.');

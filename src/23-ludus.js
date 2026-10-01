@@ -166,7 +166,7 @@ function devWeek(){const w=W_();for(const m of w.mgrs)m.dev=Math.round((m.dev||0
 
 /* v0.29 RUNNING THE LUDUS — one dashboard, no scrolling: a row of tiles shows the state of every part of the
    house at a glance (and what needs you); click a tile to work on it in the panel below. */
-const gradeCol=g=>({S:'#f0cf7d','A+':'#9bd070',A:'#9bd070','B+':'#8fc3ea',B:'#8fc3ea','C+':'#c9ccd3',C:'#c9ccd3',D:'#e0843a'})[g]||'#c9ccd3';
+const gradeCol=g=>({S:'#f0cf7d','A+':'#f0cf7d',A:'#f0cf7d','B+':'#c9d1dc',B:'#c9d1dc','C+':'#cd8a52',C:'#cd8a52',D:'#7f858c',F:'#d24a3a'})[g]||'#7f858c'; /* v0.55: the medal ladder — gold A, silver B, bronze C, iron D, blood F */
 function runDashHTML(trainFn,ledgerFn){const w=W_(),m=me();const P=m.perkPts||0;const R=TRAIN_REGIMES[w.train||'off']||TRAIN_REGIMES.off;const g=ludusGrade(m);
   const tiles=[['train','🏋','Training',R.n,w.train&&w.train!=='off'?'':'idle'],['promote','📯','Promote',`fame ${m.fame}`,''],['consil','🏛','Consilium','your advisors',''],
     ['fac','🏗','Facilities',`<span class="gradebox sm" style="--gc:${gradeCol(g)}">${g}</span>`,m.facWk===w.week?'':'ready'],['school','🎓','Schooling',`<span class="ptbox sm${P?' on':''}">${P}</span>`,P?'ready':''],['ledger','📜','Ledger',`${(w.tlog||[]).length} entries`,'']];

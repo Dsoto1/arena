@@ -250,7 +250,7 @@ async function doAttack(player, source, target, {
   const herc = player.hercules || 0;
   player.hercules = 0;
   /* bonus — flat damage added when at least one die hits: the class 'dmg' ability (round 1 only), +1 for a Cestus, plus Herculean Vigor. */
-  const bonus = () => h > 0 ? (player.abil === 'dmg' && caAllowed() && S.ri === 0 ? player.abilVal || 1 : 0) + (hasCestus(player, source.arm) ? 1 : 0) + herc : 0;
+  const bonus = () => h > 0 ? statDmgB(player) + (hasCestus(player, source.arm) ? 1 : 0) + herc : 0;
   let dmg = h * pw + bonus();
   fxLine(player, target.kind === 'pot' || target.kind === 'ship' ? {
     r: target.r,
