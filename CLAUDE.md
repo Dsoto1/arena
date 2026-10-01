@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.58**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.59**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -29,7 +29,7 @@ armor, trophies, banners, events, tournaments, invitationals, editors, spectator
 flavius/   (repo root; build.sh and tools/*.py resolve paths from their own location)
   build.sh              concatenates src/ in a fixed order into flavius-arena.html, then node --check → prints SYNTAX_OK
   flavius-arena.html    the built game (references assets/ relatively)
-  assets/               23 image assets (armor2/chtok are .webp since v0.57) (arena.jpg card sheet, classes.jpg, weapons.jpg, armor2.png, avatar.png,
+  assets/               ~35 image assets (armor2/chtok are .webp since v0.57; cr_* credits art since v0.59) (arena.jpg card sheet, classes.jpg, weapons.jpg, armor2.png, avatar.png,
                         blessing.png, tunnel_open.jpg / tunnel_door.jpg, rtok.webp, logo.png, map.jpg, …)
   src/                  ~69 source files (see order in build.sh)
   share/                self-contained share builds (assets inlined as data URIs), flavius-rule-arena-vX.YY.html
@@ -57,7 +57,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Module ordering matters: a wrapper only sees wrappers installed before it.
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
   `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
-  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`.
+  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`.
   Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
 
 ### Core globals (engine)
@@ -99,7 +99,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   first, legs last); suggestions only with hints + strategy panel on.
 - **Manager:** `W_()` world, `me()` player manager, `rosterOf`, `gById`, `mgrById`, `endWeek()` (async),
   `makeNight()` builds the week's 3 bouts (`w.night`), `applyBout`, `MGR_REDRAW()`. Weeks are absolute; `wkOf(abs)`
-  → 1–12. **Bye weeks 4 & 8** (59-bye). **Empire closures** (63): a shut host city moves games to the nearest open
+  → 1–12. **Bye weeks 4 & 11** (59-bye; 77-rivalry moved the second from 8). **Empire closures** (63): a shut host city moves games to the nearest open
   arena; impromptu bye only if no arena can host, once per season. Pay-to-join free agents + fight requests (64).
 - **Tooltips (52-v50 + 56 + 60):** `data-tip` / `data-tt` (glossary `GLOSS`), placed beside the anchor, max depth 2;
   glossary tab in Rules & strategy.
@@ -136,6 +136,17 @@ One global script; files are concatenated in order. Later "version modules" patc
   two north-south, two east-west, rot 0-3 = bow N/E/S/W); `drawShipTile` (hooked in draw's tile loop) paints `assets/ship.webp` through `shipXform` (affine art→iso);
   bows drawn after the last tile. Hull bar = HP only; `describeTile` names the ship on its pillar. Prototype gallery
   `protoOpen` (`[data-proto]`: menu footer D.Soto, Play Now guide) shows assets/proto1-5.jpg.
+- **v0.59 (72-77):** `72-v59` — Ludus/Road → Play Now hand-off holds the curtain (`HANDOFF_SEL`); menu launches keep the curtain
+  while the mode opens (`MM.launchPending`, `transitUncover` wrapper; the built-in 3 s watchdog stands down); `turnSweep` clears
+  #cardShow/#bubbles at each `beginTurn`; `#mmMute` beside Settings (no #audChip). `73-credits` — `creditsOpen(tab)` (Credits |
+  Prototype), assets cr_*.*, text in tools/art/credits/. `74-zora` — `STANDEE_SRC.zoraMini` + `drawZoraMini` (figure/standee
+  styles; cylinders and panels keep the disc). `75-naum59` — `SHIP_LAYOUT59` (TL/BR east-west, TR/BL north-south), `shipDeck`
+  (no corners), `shipBoarding`/`canBoard` (nReach rewritten), `WATER_TOK59` pinwheel, art over the whole box (`shipBoxAt`),
+  boarding fx in a naumStep wrapper; swimmers waist-deep (07-ui drawPlayer). `76-chariot59` — snake `chariotDraft` with
+  `CH_CARDS59`, `ch.gateAt` free step (chReach rewritten), horse/wheel tokens via `chTok` (chtok.webp), flip (`horse.flipT`),
+  `CH_DROPS`. `77-rivalry` — `BYE_WKS` = [4,11]; week 12 fixture = familia; `rivalPairs` (mutual heat), `rivalLock` at week 11
+  (letter with `[data-rivcommit]`), `rivalNight` (3 card bouts, `n.bgRival` background pairings), `rivalBackground` at endWeek,
+  fame for the winner. Event-card repaints: tools/evfix.py (used by mkscans `events`; needs numpy + opencv).
 - **Guide data:** `SIM50` in 53-guide50 is regenerated by `node tools/simguide.js flavius-arena.html 600` (SIMVER env);
   it includes `perk` (wins by rating perk), charted by 69-v56.
 - **Music:** procedural Web Audio (21-audio, 45-music, 16 themes; unlocked by winning in cities). Play Now plays a
@@ -156,7 +167,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - `t12` plays every event via sims (slow). Version tests: `tv50…tv54`-style files (`tv52`, `tv53`), plus feature tests
   (`tcls` classes, `tlook` accessories, `tbye` bye weeks, `temp53` closures, `t53s` studio, `tres` results,
   `tmgr54` manager, `tpia` piacula, `t54a` studio/event designer, `tv55` ratings/letters/loans/home/grades,
-  `tstat55` Studio ratings and allies, `tv56` mail and ratings help, `tv57` the v0.57 batch, `tv58` ships/prototype).
+  `tstat55` Studio ratings and allies, `tv56` mail and ratings help, `tv57` the v0.57 batch, `tv58` ships/prototype, `tv59` the v0.59 batch).
 - When a UI move breaks an old test intentionally, update the test (keep its intent).
 - Visual checks: write a short Playwright script, screenshot, and look at it.
 
@@ -165,7 +176,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 2. Add a `MILESTONES` entry at the top of `src/34-notes.js` (`hi` = new features, `fx` = fixes/changes; keep it short).
 3. Add a `SAVE_MIGRATIONS` entry if world data changed shape.
 4. `sh build.sh` → full regression → `python3 tools/mkshare.py X.YY` → smoke-test the share build.
-5. Publish to the claude.ai artifact **https://claude.ai/artifact/8LU6eHbPpuznn64JeWZ6We** with the page and all 23
+5. Publish to the claude.ai artifact **https://claude.ai/artifact/8LU6eHbPpuznn64JeWZ6We** with the page and all
    assets (label "vX.YY"); check the live version with an Artifact read before publishing. Before publishing, review any new shared-Store writes and make
    sure no cheat word appears in plain text. Send Virgilante the share build file.
 
@@ -198,7 +209,9 @@ One global script; files are concatenated in order. Later "version modules" patc
   (Published as artifact Version 68.)
 - **v0.58** 3x5 Naumachia ships in a pinwheel ring with the printed deck art; hull HP labels, names on hover; arena deck
   (480x704), event cards (480x692) and weapon cards (600x416) from scans; prototype gallery (D.Soto link); clearer
-  invitational frequency wording.
+  invitational frequency wording. (Published as artifact Version 69.)
+- **v0.59** Rivalry Week (Familia 2v2 vs your top rival, byes 4 & 11); Naumachia and Chariot Racing to the rulebook; Credits
+  page; Zora's mini; repainted event cards; menu mute; no menu/arena flashes; turn sweep; 'David' → 'Virgilante'.
 
 ## 8. Next steps / open items
 - **Readability pass, phase 2+** (Virgilante chose "phased"): files 02–07 are done (Babel scope-safe parameter renames via
@@ -216,27 +229,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Arena deck scans: uploaded as arenacards1-3.pdf (thirds). mkscans `arena`/`events` sections map cells → scans (`ARENA_CARDS`,
   `EVENT_CARDS`); no scan for Forge +3 AP (26, 70) or Floor Spikes (46); the Orpheus event scan is a different print (kept).
   Drive connector caps downloads at 10 MB, and drive.google.com is blocked — ask for uploads or <10 MB parts.
-- **Queued for the next batch:** repaint 5 event cards in events.jpg to match the rulebook (the game already follows it):
-  Triumviratus (FFA Royale, ends at 1st elimination → highest CF; CF+CA ticked), Familia (CF/CA crossed), Chariot (CF
-  crossed), Naumachia (PvE crossed), Ludus (R1 ends at 10x turn rotations, CF ticked). Ludus rulebook: CF ties favor the
-  elder (age) — the game breaks ties by seat order; ask Virgilante how to map it.
-- **Queued for the next batch — Naumachia to the rulebook (pp.48-49):** layout = TL horizontal, TR vertical, BR horizontal,
-  BL vertical (mirror of the v0.58 pinwheel); boarding from water only via valid boarding tiles (3 along each long side's
-  middle + 1 off each end; corners invalid), 2 MV, door→ship free; the 4 cut-corner ship tiles are invalid in the rulebook
-  (Virgilante: switch to the rulebook — 10 deck tiles + pillar, corners water/invalid); 16 water tokens in a fixed cross on row/col 6; a boarding visual; swimmers drawn
-  half-submerged; team turns are simultaneous in the book (game: team members back to back); first team = oldest (no ages).
-- **Queued for the next batch — Chariot Racing (pp.50-51):** rules mostly match (base 3 MV, horse +1-3, broken wheel −2,
-  forward 1 / diagonal 2, no backwards/sideways/center/pillar/tunnel/occupied, gate = flip horse + offering + step beyond,
-  2 keys + 3 CF, CF off). Gaps: 6-round snake draft (game: straight order, chariot by colour); gate step should be one free
-  tile beyond (game: +2 MV). Visuals: horse (current face) + wheel tokens drawn on each chariot, horse flip animation at
-  gates, HP pips, token drops off when destroyed.
-- **Queued for the next batch — Zora's miniature:** Virgilante's photo is in tools/art/zora_mini.jpg; cut it out and use it as
-  Zora's on-board figure only (cards/panels keep the printed rtok 'zora' disc). Zora is male ("his").
-- **Queued for the next batch — Credits page:** D.Soto (main menu) opens a Credits page with a tab for the prototype photos.
-  Adapt the rulebook's Contact & Credits page (reference: tools/art/credits_ref.jpg): motto banner "Aut viam inveniam aut
-  faciam", the three dedication paragraphs, contact block (website, email, Tabletop Simulator, X, YouTube, BoardGameGeek,
-  Discord, Steam: Virgilante) as clickable links with simple neutral icons (no brand logos), QR code, © 2016-2026 Mifune
-  Media + warnings + reprint notice. Add a line that this is a digital standalone version of the original Magnus Edition
-  (Tabletop Simulator) and the Print & Play Edition (Barnes & Noble). Art + transcribed text: tools/art/credits/
-  (from Virgilante's creditsonly.pdf; the left half of that spread is the Quick Reference — not used).
+- Open questions: Ludus rulebook "CF ties favor the elder (age)" — the game breaks ties by seat order (no ages); Naumachia
+  "first team = highest combined age" and simultaneous team turns (game: teammates back to back) — ask Virgilante.
+- Orpheus event card scan is a different print than the game's art (kept the old one) — ask which is current.
 - Keep watching: shared-Store writes on load (conversions must be idempotent and saved once).
