@@ -144,5 +144,7 @@ if want('ship') and SH:
 PR = folder('protoimages')
 if want('proto') and PR:
     for i, n in enumerate([379, 380, 382, 383, 384]):
-        im = flat(load(PR, n)); im.thumbnail((1600, 1600)); im.save(os.path.join(OUT, f'proto{i + 1}.jpg'), quality=84, optimize=True, progressive=True)
+        im = flat(load(PR, n))
+        if i == 2: im = im.rotate(-90, expand=True)  # photographed sideways: turned 90° clockwise
+        im.thumbnail((1600, 1600)); im.save(os.path.join(OUT, f'proto{i + 1}.jpg'), quality=84, optimize=True, progressive=True)
 print('done:', ','.join(WANT) or 'all')
