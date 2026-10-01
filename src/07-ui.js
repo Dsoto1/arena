@@ -1576,6 +1576,7 @@ function draw() {
     }
     if (isChariot() && inPlayerZone(r, c)) ctx.fillStyle = (r + c) % 2 ? '#d8b39c' : '#cda58e';
     ctx.fill();
+    if (typeof drawShipTile === 'function') drawShipTile(r, c); /* v0.58: the printed deck art, tile by tile */
     if (isChariot() && chHatched(r, c)) {
       ctx.save();
       ctx.clip();

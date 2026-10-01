@@ -5,7 +5,7 @@ const GAME_VER=(()=>{const m=/v(\d+\.\d+)/.exec(((document.querySelector('.brand
 const verCmp=(a,b)=>{const A=String(a||'0').split('.').map(Number),B=String(b||'0').split('.').map(Number);for(let i=0;i<Math.max(A.length,B.length);i++){const d=(A[i]||0)-(B[i]||0);if(d)return d<0?-1:1}return 0};
 
 /* ---------- the version button lives on the main menu (click it to speak a word of power) ---------- */
-function mmVerInstall(){const f=document.querySelector('#mainMenu .mmfoot');if(!f||f.querySelector('.mmver'))return;f.innerHTML=`© 2026 Flavius Rule · D.Soto · <button type="button" class="mmver" title="Version — click to speak a word of power">v${GAME_VER}</button>`}
+function mmVerInstall(){const f=document.querySelector('#mainMenu .mmfoot');if(!f||f.querySelector('.mmver'))return;f.innerHTML=`© 2026 Flavius Rule · <button type="button" class="mmlink" data-proto title="The prototype this game was distilled from">D.Soto</button> · <button type="button" class="mmver" title="Version — click to speak a word of power">v${GAME_VER}</button>`}
 setTimeout(mmVerInstall,60);setTimeout(mmVerInstall,700);
 document.addEventListener('click',e=>{const b=e.target.closest('.mmver');if(!b)return;e.preventDefault();e.stopPropagation();if(typeof cheatPrompt==='function')cheatPrompt()},true);
 {const _mq=typeof mmQuiet==='function'?mmQuiet:null;if(_mq)mmQuiet=function(){_mq();mmVerInstall()}}

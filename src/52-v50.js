@@ -138,7 +138,7 @@ if(!HEADLESS)glObs.observe(document.body,{childList:true,subtree:true});
 const MM_NAMES={learn:'🎓 Learn to Play',learnmgr:'💼 Learn Manager Mode',play:'⚔️ Play Now',multi:'👥 Multiplayer',manager:'💼 Manager Mode',studio:'🎨 Creator Studio',annals:'🏛️ The Annals',rules:'📜 Rules & Strategy',settings:'⚙️ Settings',hotseat:'🪑 Hot Seat',lan:'🖧 LAN',online:'🌐 Online'};
 function mmQuiet(){const box=document.querySelector('#mainMenu .mmbtns');if(!box)return;for(const b of box.querySelectorAll('[data-mm]')){if(b.dataset.quietDone)continue;const sm=b.querySelector('small');const tip=sm?sm.textContent.trim():'';
     if(MM_NAMES[b.dataset.mm]){b.textContent=MM_NAMES[b.dataset.mm]}else if(sm)sm.remove();if(tip)b.dataset.tip=esc(tip.charAt(0).toUpperCase()+tip.slice(1));b.dataset.quietDone='1'}
-  const f=document.querySelector('#mainMenu .mmfoot');if(f)f.innerHTML='© 2026 Flavius Rule · D.Soto'}
+  const f=document.querySelector('#mainMenu .mmfoot');if(f)f.innerHTML='© 2026 Flavius Rule · <button type="button" class="mmlink" data-proto title="The prototype this game was distilled from">D.Soto</button>'}
 setTimeout(mmQuiet,30);setTimeout(mmQuiet,600);
 
 /* ---------- the setup: the options fold away, the calendar is one line ---------- */

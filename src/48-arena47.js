@@ -50,7 +50,7 @@ function drawFloorTok(f,m){const key=f.kind==='eagle'?'eagle':f.kind==='key'?'ke
   for(const sh of S.ships){const pl=S.pillars.find(x=>x.ship===sh.id)||{r:sh.pillar[0],c:sh.pillar[1],pots:[]};const m=center(pl.r,pl.c);const y=m.y-TW*0.95-TW*0.2-(pl.pots||[]).length*TW*0.44-TW*0.18;const bw=TW*1.1,bh=Math.max(5,TW*0.1);
     ctx.save();ctx.fillStyle='rgba(10,6,4,.78)';ctx.fillRect(m.x-bw/2-3,y-TW*0.2,bw+6,bh+TW*0.2+4);const k=sh.sunk?0:Math.max(0,sh.hp)/12;ctx.fillStyle='#2a1a10';ctx.fillRect(m.x-bw/2,y,bw,bh);
     ctx.fillStyle=sh.sunk?'#555':k>0.5?'#7fb4e0':k>0.25?'#e0b040':'#e05a44';ctx.fillRect(m.x-bw/2,y,bw*k,bh);ctx.fillStyle='#f5ead2';ctx.font=`600 ${Math.max(9,Math.round(TW*0.15))}px IBM Plex Mono, monospace`;ctx.textAlign='center';ctx.textBaseline='bottom';
-    ctx.fillText(sh.sunk?`⚓ ${sh.name} · sunk`:`⛵ ${sh.name} · ${Math.max(0,sh.hp)}/12`,m.x,y-1);ctx.restore()}}catch(e){}}}
+    ctx.fillText(sh.sunk?'⚓ sunk':`${Math.max(0,sh.hp)}/12 HP`,m.x,y-1);ctx.restore();(S._shipBars=S._shipBars||{})[sh.id]={x:m.x-bw/2-3,y:y-TW*0.2,w:bw+6,h:bh+TW*0.2+4}}}catch(e){}}} /* v0.58: the bar shows the hull's HP; its name comes on hover */
 
 /* ---------------- the bubbles never outlive the event ---------------- */
 setInterval(()=>{try{if(S&&(S.over||S.clean)){const b=document.getElementById('bubbles');if(b&&b.children.length)b.innerHTML='';S.bubbles=[]}}catch(e){}},900);
