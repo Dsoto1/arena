@@ -8,12 +8,13 @@
      struck in the same bronze ring),
    • the beasts in the Menagerie tracker, on hover cards and in the beast list,
    • the loading screens between modes: a Blessing token turning slowly in the dark. */
-const RTOK_NAMES=['zora','leaena','chest','brutum','leo','ursa','valencia','spectator','glykon','moechus','arenosus','tholo','boar','commodus','eagle','blessing','key','spike','mw1','mw2','mw3','ma1','ma2','ma3','ap2','ap3','croc','water'];
-const RTOK_COLS=8,RTOK_ROWS=4;
+const RTOK_NAMES=['zora','leaena','chest','brutum','leo','ursa','valencia','spectator','glykon','moechus','arenosus','tholo','boar','commodus','eagle','blessing','key','spike','mw1','mw2','mw3','ma1','ma2','ma3','ap2','ap3','croc','water',
+  'elix2','elix4','spiders','cf1','cf2','merc1','merc2','curse']; /* v0.57: the fifth row, cut from David's offering-token and chariot scans (tools/mkscans.py) */
+const RTOK_COLS=8,RTOK_ROWS=5;
 function rtokHTML(name,size=28,title=''){const i=RTOK_NAMES.indexOf(name);if(i<0)return '';const c=i%RTOK_COLS,r=Math.floor(i/RTOK_COLS);
   return `<span class="rtok" role="img" aria-label="${esc(title||name)}"${title?` title="${esc(title)}"`:''} style="width:${size}px;height:${size}px;background-image:url('${assetURL('rtok.webp')}');background-size:${RTOK_COLS*100}% ${RTOK_ROWS*100}%;background-position:${(c/(RTOK_COLS-1)*100).toFixed(3)}% ${(r/(RTOK_ROWS-1)*100).toFixed(3)}%"></span>`}
 /* an offering's token: printed art where the sheets have it, otherwise the same ring around the offering's sign */
-const OFFER_TOK={mw1:'mw1',mw2:'mw2',mw3:'mw3',ma1:'ma1',ma2:'ma2',ma3:'ma3',ap2:'ap2',ap3:'ap3',key:'key',eagle:'eagle'};
+const OFFER_TOK={mw1:'mw1',mw2:'mw2',mw3:'mw3',ma1:'ma1',ma2:'ma2',ma3:'ma3',ap2:'ap2',ap3:'ap3',key:'key',eagle:'eagle',elix2:'elix2',elix4:'elix4',spiders:'spiders',cf1:'cf1',cf2:'cf2',merc1:'merc1',merc2:'merc2',curse:'curse'};
 const OFFER_SIGN={elix2:'🧪',elix4:'🧪',spiders:'🕷',cf1:'👑',cf2:'👑',merc1:'🪽',merc2:'🪽',curse:'💀'};
 function offerTokHTML(k,size=28){const O=typeof OFFER!=='undefined'?OFFER[k]:null;const t=O?`${O.n} · ${O.s}`:k;
   if(OFFER_TOK[k])return rtokHTML(OFFER_TOK[k],size,t);

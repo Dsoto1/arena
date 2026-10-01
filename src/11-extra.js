@@ -24,8 +24,8 @@ const SHEETS={
   k:{f:'classes.jpg',cols:4,rows:2,ar:'300/432'},
   b:{f:'classbacks.jpg',cols:8,rows:1,ar:'120/173'},
   x:{f:'misc.jpg',cols:7,rows:1,ar:'240/346'},
-  a:{f:'armor2.png',cols:9,rows:3,ar:'1/1'},
-  h:{f:'chtok.png',cols:5,rows:4,ar:'1/1'},
+  a:{f:'armor2.webp',cols:9,rows:3,ar:'1/1'},
+  h:{f:'chtok.webp',cols:5,rows:4,ar:'1/1'},
   nt:{f:'naum.png',cols:5,rows:2,ar:'1/1'},
   g:{f:'chcards.jpg',cols:3,rows:2,ar:'520/352',wide:1},
 };
