@@ -16,12 +16,12 @@ const ARM_CROP=[[39,16,252,299],[366,15,256,300],[706,16,233,298],[1053,16,202,2
 const EQ={head:[75,29],sho:[40,77],fore:[30,133],hand:[22,168],chest:[75,96],belt:[75,135],thigh:[60,190],shin:[61,258]};
 const EQ_L={sho:[110,76],fore:[119,132],hand:[128,168],thigh:[91,190],shin:[88,258]};
 /* x,y = where the piece's centre sits; w = its width on the body; r = turn in degrees */
-const ARM_FIT={ /* placed to the rulebook's armored avatar (p.22): helmets to the chin, cuirass collarbone to waist, belt across the
-   waist, upper-arm plates shoulder to elbow, bracers over the padded forearm, thigh plates from the hip, lower-leg pieces knee to ankle */
-  galea:{at:'head',dy:3,w:52},cassis:{at:'head',dy:2,w:56},crista:{at:'head',dy:1,w:50},murmillo:{at:'head',dy:4,w:50},helm5:{at:'head',dy:4,w:50},flavhelm:{at:'head',dy:2,w:56},
-  balteus:{at:'belt',dy:-3,w:60},pectorale:{at:'chest',dy:0,w:48},lorica:{at:'chest',dy:5,w:56},musculata:{at:'chest',dy:5,w:54},amazon:{at:'chest',dy:5,w:56},flavchest:{at:'chest',dy:5,w:56},thorax:{at:'chest',dy:2,w:84},
-  wraps:{at:'fore',dx:-1,dy:4,w:34},manica:{at:'sho',dx:-4,dy:14,w:36},provmanica:{at:'sho',dx:-4,dy:14,w:36},spaulder:{at:'sho',dx:-3,dy:2,w:48},cestus:{at:'hand',dy:-4,w:28},galerus:{at:'sho',dx:-4,dy:14,w:37},bracers:{at:'fore',dx:-1,dy:6,w:33},
-  legwrapsU:{at:'thigh',dx:-2,dy:-6,w:32},legwraps:{at:'shin',dy:-4,w:35},femoralia:{at:'thigh',dx:-2,dy:-4,w:32},ocrea:{at:'shin',dy:2,w:30},greaves:{at:'shin',dy:4,w:26},thighplate:{at:'thigh',dx:-4,dy:-6,w:33},cnemis:{at:'shin',dy:-2,w:24}};
+const ARM_FIT={ /* v0.70: Virgilante's fits (fit tool, 2026-10-02) baked in. at = equip point; dx,dy = offset; w = width; r = turn; flip = mirror the art */
+  galea:{at:'head',dy:-6,w:39},cassis:{at:'head',dy:-3,w:67},crista:{at:'head',dy:-7,w:64},murmillo:{at:'head',dy:4,w:42},helm5:{at:'head',dy:10,w:59},flavhelm:{at:'head',dy:-14,w:56,dx:-2},
+  balteus:{at:'belt',dy:-3,w:57},pectorale:{at:'chest',dy:2,w:59,dx:-1},lorica:{at:'chest',dy:5,w:64},musculata:{at:'chest',dy:5,w:61},amazon:{at:'chest',dy:8,w:59,dx:-1},flavchest:{at:'chest',dy:9,w:67},
+  thorax:{at:'chest',dy:-1,w:111,dx:1},wraps:{at:'fore',dx:-1,dy:4,w:34},manica:{at:'sho',w:40},provmanica:{at:'fore',dy:-3,w:27},spaulder:{at:'sho',dx:6,dy:-4,w:48,flip:1},cestus:{at:'hand',dy:-17,w:29,dx:3},
+  galerus:{at:'sho',dx:3,dy:-2,w:37},bracers:{at:'fore',dx:-1,dy:-1,w:26},legwrapsU:{at:'thigh',dx:-7,dy:-34,w:25,flip:1},legwraps:{at:'shin',dy:5,w:22},femoralia:{at:'thigh',dx:-7,dy:-33,w:27},ocrea:{at:'shin',dy:-5,w:26,dx:1,flip:1},
+  greaves:{at:'shin',dy:-7,w:23,flip:1},thighplate:{at:'thigh',dx:-6,dy:-32,w:26},cnemis:{at:'shin',dy:-9,w:24}};
 /* the sharper sheet (v0.57) put the orange-brown upper padding in cell 19: Padded Leg Armor (upper) wears it (rulebook p.23) */
 if(ARM.legwrapsU)ARM.legwrapsU.img=19;
 /* Flavius' Bracers: the gold engraved art is not on the sheet yet — the dark plates (cell 15, also the Provocator Manica) stand in */
@@ -36,18 +36,21 @@ function armFit(key){const f={...(ARM_FIT[key]||{}),...(ARM_FIT_OVR[key]||{})};c
 const armSide=l=>l==='larm'||l==='lleg'?'L':'R';
 /* the piece's box on the body: centre (cx,cy), width w, height from the crop's aspect */
 /* pairs drawn as both legs in one cell: each leg wears its own half (image-left half = the body's right leg), never a mirror */
-const ARM_PAIR={22:[[1356,675,123,300],[1491,675,123,300]],24:[[2027,675,112,297],[2150,675,112,297]]};
+/* v0.70: no more pair halves — each leg wears the same art, mirrored on the left (Virgilante: the halves faced the same way) */
+const ARM_PAIR={};
 /* pieces whose art is drawn for the LEFT limb (rulebook p.22: segmented thigh plates step outward) — flipped on the right side */
 const ARM_LEFTART={thighplate:1,legwrapsU:1};
 function armBox(key,l){const A=ARM[key];const f=armFit(key);if(!A||A.img==null||!f||!ARM_CROP[A.img])return null;const P=ARM_PAIR[A.img];const c=P?P[armSide(l)==='L'?1:0]:ARM_CROP[A.img];
   const L=armSide(l)==='L';const p=(L&&EQ_L[f.at])||EQ[f.at];const x=L&&!EQ_L[f.at]?150-p[0]:p[0];
-  const cx=L?x-(f.dx||0):x+(f.dx||0),cy=p[1]+(f.dy||0);const h=f.w*c[3]/c[2];return {cx,cy,w:f.w,h,r:f.r||0,crop:c,mirror:P?!!f.flip:(L!==(!!ARM_LEFTART[key]!==!!f.flip)),gold:key==='bracers'}}
+  /* v0.70: the left side can carry its own adjustments (f.L = {dx,dy,w,r}); otherwise it mirrors the right */
+  const F=L&&f.L?{...f,...f.L}:f;
+  const cx=L?x-(F.dx||0):x+(F.dx||0),cy=p[1]+(F.dy||0);const h=F.w*c[3]/c[2];return {cx,cy,w:F.w,h,r:F.r||0,crop:c,side:L,mirror:P?!!f.flip:(L!==(!!ARM_LEFTART[key]!==!!f.flip)),gold:key==='bracers'}}
 /* each piece's share of the location's AP pool (wear order, as eliminate() drops them) */
 /* rulebook p.22: a location's armor is damaged as one pool; at 0 AP every piece on it is destroyed together */
 function armShares(p,l){const P=p.pieces[l]||[];const tot=P.reduce((a,pc)=>a+(pc.ap||0),0);const cur=Math.max(0,p.ap[l]||0);const ratio=tot?Math.min(1,cur/tot):1;return P.map(pc=>({pc,cur,ratio}))}
 const ARM_FALL=[];const ARM_SEEN={};
 function armPieceSVG(B,key,ratio,extra,uid){const c=B.crop;const x=B.cx-B.w/2,y=B.cy-B.h/2;const k=B.w/c[2];const id=`acp${String(uid||'').replace(/[^\w-]/g,'')}${key}${extra?'f':''}`;
-  const tr=`${B.mirror?`translate(${2*B.cx} 0) scale(-1 1) `:''}${B.r?`rotate(${B.mirror?-B.r:B.r} ${B.cx} ${B.cy})`:''}`;
+  const tr=`${B.mirror?`translate(${2*B.cx} 0) scale(-1 1) `:''}${B.r?`rotate(${B.r*(B.mirror?-1:1)*(B.side?-1:1)} ${B.cx} ${B.cy})`:''}`;
   let cracks='';const n=ratio<1?Math.ceil((1-ratio)*3):0;
   for(let i=0;i<n;i++){const sx=x+B.w*(0.25+0.25*i),sy=y+B.h*(0.15+0.2*i);cracks+=`<path d="M${sx.toFixed(1)} ${sy.toFixed(1)}l${(B.w*.12).toFixed(1)} ${(B.h*.1).toFixed(1)}l${(-B.w*.07).toFixed(1)} ${(B.h*.08).toFixed(1)}l${(B.w*.1).toFixed(1)} ${(B.h*.12).toFixed(1)}" fill="none" stroke="#140f0b" stroke-width=".9" stroke-opacity=".8"/>`}
   const href=typeof assetURL==='function'?assetURL(ARM_SHEET.f):ASSET+ARM_SHEET.f;

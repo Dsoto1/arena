@@ -1134,7 +1134,7 @@ button.railhd.fold{all:unset;box-sizing:border-box;display:none;cursor:pointer;w
 </style>
 
 <header class="bar">
-  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.69</span></div>
+  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.70</span></div>
   <div class="status" id="status"></div>
   <div class="tools speedtray" id="speedTray">
     <div class="seg speedseg" role="group" aria-label="CPU speed"><span class="lbl">Speed</span><button type="button" data-speed="pause" title="Pause CPU turns">❚❚ Pause</button><button type="button" data-speed="step" title="Step: each CPU action waits for you — Next ▶ or Space — with a caption explaining it">⏯ Step</button><button type="button" data-speed="slow" class="on">Slow</button><button type="button" data-speed="normal">Normal</button><button type="button" data-speed="fast">Fast</button></div>
@@ -22784,6 +22784,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'0.70',ic:'🎯',t:'Armor that fits',hi:['Every printed armor piece sits where Virgilante placed it on the avatar','Arm and leg pieces mirror cleanly on the left side; turning mirrors too'],fx:['Provocator Manica is a lower-arm piece','Padded Leg Armor (upper) is now Leather Upper Leg Armor','The Studio avatars sit lower, with room for helmets']},
   {v:'0.69',ic:'🛠',t:'The armor designer',hi:['The avatar mock-up sits right under the piece \u2014 drag your armor anywhere on it, scale it with the wheel, turn or mirror it','Every new piece names its equip point (head, chest, belt, upper or lower arm, hand, upper or lower leg) and keeps its fit there, mirrored on the left side; single arm and leg pieces cover one limb','Fit the printed set: adjust where each printed piece sits on the avatar, saved with your game'],fx:['Flavius\u2019 Bracers in gold','The sculpted set shows only with Sculpted armor in Settings','Phones: the match controls no longer cover the main menu or other screens','Tablets: the arena fits above the turn actions']},
   {v:'0.68',ic:'🛡',t:'Armor you can see',hi:['The printed armor is worn on the fighter\u2019s avatar at its equip points, scaled to the rulebook \u2014 it dims and cracks as a location loses AP and falls away at 0','The arena\u2019s right column has tabs: Fighter · Field · Stands \u2014 the crowd and the stands log at full height, a crowd ticker under the board','Manager: a weekly checklist in Your ludus and a money ledger (net per week, weeks of runway); rival houses now drill and rest by the same rules as you'],fx:['Bigger appearance fees, lower wages, a weekly gate share by fame and a larger starting purse','The Menagerie is now the Bestiary; the top bar opens the Stands','Brain icons coloured by mind; one Juggernaut in Play Now setup; Send on the Road sits in the record\u2019s button row','Padded Leg Armor (upper) shows its printed art']},
   {v:'0.67',ic:'🤝',t:'A recruiting board',hi:['Your favourites become a recruiting board: Watching → Scouted → Courting → Ready to sign, each card with its next step as a button','The free-agent list shows Fit (fills a gap you have, affordable) and your odds against the leading rival, with Affordable / Fits my roster / Courting me filters','A fighter\'s card in three steps — Scout, Court (their biggest wants first, with the expected gain), Offer (a wage slider with a live “would they sign?” meter)'],fx:['A wager on a fighter taken off the card is void and refunded','Start screen switch: bring your Ludus Flavius gladiators into the league, or not','Bouts fill from the league pool before anyone new is created','Training Yard: the facility, discipline, doctore and last-week squares sit beside the regime']},
@@ -28328,12 +28329,12 @@ const ARM_CROP=[[39,16,252,299],[366,15,256,300],[706,16,233,298],[1053,16,202,2
 const EQ={head:[75,29],sho:[40,77],fore:[30,133],hand:[22,168],chest:[75,96],belt:[75,135],thigh:[60,190],shin:[61,258]};
 const EQ_L={sho:[110,76],fore:[119,132],hand:[128,168],thigh:[91,190],shin:[88,258]};
 /* x,y = where the piece's centre sits; w = its width on the body; r = turn in degrees */
-const ARM_FIT={ /* placed to the rulebook's armored avatar (p.22): helmets to the chin, cuirass collarbone to waist, belt across the
-   waist, upper-arm plates shoulder to elbow, bracers over the padded forearm, thigh plates from the hip, lower-leg pieces knee to ankle */
-  galea:{at:'head',dy:3,w:52},cassis:{at:'head',dy:2,w:56},crista:{at:'head',dy:1,w:50},murmillo:{at:'head',dy:4,w:50},helm5:{at:'head',dy:4,w:50},flavhelm:{at:'head',dy:2,w:56},
-  balteus:{at:'belt',dy:-3,w:60},pectorale:{at:'chest',dy:0,w:48},lorica:{at:'chest',dy:5,w:56},musculata:{at:'chest',dy:5,w:54},amazon:{at:'chest',dy:5,w:56},flavchest:{at:'chest',dy:5,w:56},thorax:{at:'chest',dy:2,w:84},
-  wraps:{at:'fore',dx:-1,dy:4,w:34},manica:{at:'sho',dx:-4,dy:14,w:36},provmanica:{at:'sho',dx:-4,dy:14,w:36},spaulder:{at:'sho',dx:-3,dy:2,w:48},cestus:{at:'hand',dy:-4,w:28},galerus:{at:'sho',dx:-4,dy:14,w:37},bracers:{at:'fore',dx:-1,dy:6,w:33},
-  legwrapsU:{at:'thigh',dx:-2,dy:-6,w:32},legwraps:{at:'shin',dy:-4,w:35},femoralia:{at:'thigh',dx:-2,dy:-4,w:32},ocrea:{at:'shin',dy:2,w:30},greaves:{at:'shin',dy:4,w:26},thighplate:{at:'thigh',dx:-4,dy:-6,w:33},cnemis:{at:'shin',dy:-2,w:24}};
+const ARM_FIT={ /* v0.70: Virgilante's fits (fit tool, 2026-10-02) baked in. at = equip point; dx,dy = offset; w = width; r = turn; flip = mirror the art */
+  galea:{at:'head',dy:-6,w:39},cassis:{at:'head',dy:-3,w:67},crista:{at:'head',dy:-7,w:64},murmillo:{at:'head',dy:4,w:42},helm5:{at:'head',dy:10,w:59},flavhelm:{at:'head',dy:-14,w:56,dx:-2},
+  balteus:{at:'belt',dy:-3,w:57},pectorale:{at:'chest',dy:2,w:59,dx:-1},lorica:{at:'chest',dy:5,w:64},musculata:{at:'chest',dy:5,w:61},amazon:{at:'chest',dy:8,w:59,dx:-1},flavchest:{at:'chest',dy:9,w:67},
+  thorax:{at:'chest',dy:-1,w:111,dx:1},wraps:{at:'fore',dx:-1,dy:4,w:34},manica:{at:'sho',w:40},provmanica:{at:'fore',dy:-3,w:27},spaulder:{at:'sho',dx:6,dy:-4,w:48,flip:1},cestus:{at:'hand',dy:-17,w:29,dx:3},
+  galerus:{at:'sho',dx:3,dy:-2,w:37},bracers:{at:'fore',dx:-1,dy:-1,w:26},legwrapsU:{at:'thigh',dx:-7,dy:-34,w:25,flip:1},legwraps:{at:'shin',dy:5,w:22},femoralia:{at:'thigh',dx:-7,dy:-33,w:27},ocrea:{at:'shin',dy:-5,w:26,dx:1,flip:1},
+  greaves:{at:'shin',dy:-7,w:23,flip:1},thighplate:{at:'thigh',dx:-6,dy:-32,w:26},cnemis:{at:'shin',dy:-9,w:24}};
 /* the sharper sheet (v0.57) put the orange-brown upper padding in cell 19: Padded Leg Armor (upper) wears it (rulebook p.23) */
 if(ARM.legwrapsU)ARM.legwrapsU.img=19;
 /* Flavius' Bracers: the gold engraved art is not on the sheet yet — the dark plates (cell 15, also the Provocator Manica) stand in */
@@ -28348,18 +28349,21 @@ function armFit(key){const f={...(ARM_FIT[key]||{}),...(ARM_FIT_OVR[key]||{})};c
 const armSide=l=>l==='larm'||l==='lleg'?'L':'R';
 /* the piece's box on the body: centre (cx,cy), width w, height from the crop's aspect */
 /* pairs drawn as both legs in one cell: each leg wears its own half (image-left half = the body's right leg), never a mirror */
-const ARM_PAIR={22:[[1356,675,123,300],[1491,675,123,300]],24:[[2027,675,112,297],[2150,675,112,297]]};
+/* v0.70: no more pair halves — each leg wears the same art, mirrored on the left (Virgilante: the halves faced the same way) */
+const ARM_PAIR={};
 /* pieces whose art is drawn for the LEFT limb (rulebook p.22: segmented thigh plates step outward) — flipped on the right side */
 const ARM_LEFTART={thighplate:1,legwrapsU:1};
 function armBox(key,l){const A=ARM[key];const f=armFit(key);if(!A||A.img==null||!f||!ARM_CROP[A.img])return null;const P=ARM_PAIR[A.img];const c=P?P[armSide(l)==='L'?1:0]:ARM_CROP[A.img];
   const L=armSide(l)==='L';const p=(L&&EQ_L[f.at])||EQ[f.at];const x=L&&!EQ_L[f.at]?150-p[0]:p[0];
-  const cx=L?x-(f.dx||0):x+(f.dx||0),cy=p[1]+(f.dy||0);const h=f.w*c[3]/c[2];return {cx,cy,w:f.w,h,r:f.r||0,crop:c,mirror:P?!!f.flip:(L!==(!!ARM_LEFTART[key]!==!!f.flip)),gold:key==='bracers'}}
+  /* v0.70: the left side can carry its own adjustments (f.L = {dx,dy,w,r}); otherwise it mirrors the right */
+  const F=L&&f.L?{...f,...f.L}:f;
+  const cx=L?x-(F.dx||0):x+(F.dx||0),cy=p[1]+(F.dy||0);const h=F.w*c[3]/c[2];return {cx,cy,w:F.w,h,r:F.r||0,crop:c,side:L,mirror:P?!!f.flip:(L!==(!!ARM_LEFTART[key]!==!!f.flip)),gold:key==='bracers'}}
 /* each piece's share of the location's AP pool (wear order, as eliminate() drops them) */
 /* rulebook p.22: a location's armor is damaged as one pool; at 0 AP every piece on it is destroyed together */
 function armShares(p,l){const P=p.pieces[l]||[];const tot=P.reduce((a,pc)=>a+(pc.ap||0),0);const cur=Math.max(0,p.ap[l]||0);const ratio=tot?Math.min(1,cur/tot):1;return P.map(pc=>({pc,cur,ratio}))}
 const ARM_FALL=[];const ARM_SEEN={};
 function armPieceSVG(B,key,ratio,extra,uid){const c=B.crop;const x=B.cx-B.w/2,y=B.cy-B.h/2;const k=B.w/c[2];const id=`acp${String(uid||'').replace(/[^\w-]/g,'')}${key}${extra?'f':''}`;
-  const tr=`${B.mirror?`translate(${2*B.cx} 0) scale(-1 1) `:''}${B.r?`rotate(${B.mirror?-B.r:B.r} ${B.cx} ${B.cy})`:''}`;
+  const tr=`${B.mirror?`translate(${2*B.cx} 0) scale(-1 1) `:''}${B.r?`rotate(${B.r*(B.mirror?-1:1)*(B.side?-1:1)} ${B.cx} ${B.cy})`:''}`;
   let cracks='';const n=ratio<1?Math.ceil((1-ratio)*3):0;
   for(let i=0;i<n;i++){const sx=x+B.w*(0.25+0.25*i),sy=y+B.h*(0.15+0.2*i);cracks+=`<path d="M${sx.toFixed(1)} ${sy.toFixed(1)}l${(B.w*.12).toFixed(1)} ${(B.h*.1).toFixed(1)}l${(-B.w*.07).toFixed(1)} ${(B.h*.08).toFixed(1)}l${(B.w*.1).toFixed(1)} ${(B.h*.12).toFixed(1)}" fill="none" stroke="#140f0b" stroke-width=".9" stroke-opacity=".8"/>`}
   const href=typeof assetURL==='function'?assetURL(ARM_SHEET.f):ASSET+ARM_SHEET.f;
@@ -28437,7 +28441,9 @@ function caSync(ca){if(!ca||!ca.eq||!EQ[ca.eq])return;const f=caF2(ca);ca.f2=f;c
 function caMockSVG(d){const img=typeof assetURL==='function'?assetURL('avatar.png'):'assets/avatar.png';const pair=d.pair&&(d.slot==='arm'||d.slot==='leg');
   const rings=CA_EQ_ALL.map(([k])=>{const p=EQ[k];const on=d.eq===k;return `<circle cx="${p[0]}" cy="${p[1]}" r="${on?5:3}" fill="none" stroke="${on?'#f0cf7d':'rgba(240,207,125,.35)'}" stroke-width="${on?1.6:1}"/>`}).join('');
   const piece=d.eq?caOnBodySVG(d)+(pair?caOnBodySVG(d,null,true):''):`<g opacity=".55">${caOnBodySVG({...d,eq:null,fit:null})}</g>`;
-  return `<svg viewBox="0 0 150 332" xmlns="http://www.w3.org/2000/svg"><image href="${img}" x="7" y="6" width="136" height="301" opacity=".92"/>${rings}${piece}</svg>`}
+  return `<svg viewBox="${AV_VB.join(' ')}" xmlns="http://www.w3.org/2000/svg"><image href="${img}" x="7" y="6" width="136" height="301" opacity=".92"/>${rings}${piece}</svg>`}
+/* v0.70: the studio avatars sit lower — room above for helmets, less below the feet */
+const AV_VB=[0,-18,150,336];
 function caMockRefresh(){const el=document.getElementById('caAv');if(el&&ST.ca)el.innerHTML=caMockSVG(ST.ca);const f=ST.ca?caF2(ST.ca):null;
   if(f)document.querySelectorAll('[data-cav]').forEach(i=>{const k=i.dataset.cav;if(k==='flip')i.checked=!!f.flip;else if(i.type==='range'&&document.activeElement!==i){i.value=f[k];const b=i.parentElement.querySelector('b');if(b)b.textContent=f[k]}})}
 {const base=caPrevRefresh;caPrevRefresh=function(){const r=base.apply(this,arguments);try{caMockRefresh()}catch(e){}return r}}
@@ -28475,7 +28481,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button[data-cav=
   const sv=e.target.closest('[data-gs="asave"]');if(sv&&ST.ca&&!ST.ca.eq){e.stopImmediatePropagation();e.preventDefault();mToast('Choose the piece’s <b>equip point</b> first — where it sits on the body.');const el=document.querySelector('[data-caeq2]');if(el)el.focus();return}
   if(sv&&ST.ca)caSync(ST.ca)},true);
 /* free drag anywhere on the mock-up (only the avatar's own box limits it); the wheel scales */
-(()=>{let drag=null;const pt=(e,el)=>{const sv=el.querySelector('svg');if(!sv)return null;const r=sv.getBoundingClientRect();return [(e.clientX-r.left)/r.width*150,(e.clientY-r.top)/r.height*332]};
+(()=>{let drag=null;const pt=(e,el)=>{const sv=el.querySelector('svg');if(!sv)return null;const r=sv.getBoundingClientRect();return [AV_VB[0]+(e.clientX-r.left)/r.width*AV_VB[2],AV_VB[1]+(e.clientY-r.top)/r.height*AV_VB[3]]};
   document.addEventListener('pointerdown',e=>{const el=e.target.closest('#caAv');if(!el||!ST.ca)return;if(!ST.ca.eq){mToast('Choose the piece’s <b>equip point</b> first.');return}
     const p=pt(e,el);if(!p)return;drag={el,p0:p,f0:caF2(ST.ca)};e.preventDefault()});
   document.addEventListener('pointermove',e=>{if(!drag)return;const p=pt(e,drag.el);if(!p)return;const d=ST.ca;const P=EQ[d.eq];
@@ -28526,6 +28532,61 @@ function fitReserve(){try{const wrap=cv.parentElement;const top=Math.max(0,wrap.
   return Math.max(200,Math.min(innerHeight*0.62,top+dh+th+hh+28))}catch(e){return 230}}
 setInterval(()=>{try{const up=menuUp()||!!(typeof CUR_MODAL!=='undefined'&&CUR_MODAL);document.body.classList.toggle('chromeoff',up)}catch(e){}},250);
 (()=>{const st=document.createElement('style');st.textContent=`body.chromeoff #plDock,body.chromeoff #plRot,body.chromeoff #mobTabs,body.chromeoff #crowdTick{display:none!important}`;document.head.appendChild(st)})();
+/* 92-v70 — the printed armor, fitted (Virgilante, v0.70).
+   • His fit-tool adjustments (2026-10-02) are baked into ARM_FIT (90-armfit); older saved adjustments are ignored
+     (ARMFIT_BAKED), so the tool starts clean from the new defaults.
+   • Provocator Manica is a lower-arm piece (bracers); Padded Leg Armor (upper) → Leather Upper Leg Armor.
+   • The fit tool is hidden behind a code word (registered hashed; AFIT_ON in localStorage flavius_armfit_on) with a
+     🔒 Hide button. Changes still save to the game data (Store armorFit/'sys') and apply for everyone, shown or hidden.
+   • Fit tool: Right / Left switch (the left keeps its own dx/dy/w/r under fit.L; untouched it mirrors the right); single
+     pieces show on the chosen side only, pairs on both; the drag moves the chosen side the way the pointer goes; no HP/AP
+     numbers; the avatar sits lower (AV_VB). Turning mirrors on the left (90-armfit armBox side flag). */
+if(ARM.provmanica)ARM.provmanica.pt='lower';
+if(ARM.legwrapsU)ARM.legwrapsU.n='Leather Upper Leg Armor';
+const ARMFIT_BAKED='2026-10-02T13:27:17.081Z';
+for(const k of Object.keys(ARM_FIT_OVR))delete ARM_FIT_OVR[k];try{localStorage.removeItem('flavius_armfit')}catch(e){}
+/* 91 loads the saved doc at start; drop it again if it is the one already baked */
+(async()=>{try{const d=await Store.getDoc('armorFit','sys');const old=!d||!d.at||d.at<=ARMFIT_BAKED;const clear=()=>{if(old)for(const k of Object.keys(ARM_FIT_OVR))delete ARM_FIT_OVR[k]};clear();setTimeout(clear,0);setTimeout(clear,2500)}catch(e){}})();
+afitSave=function(){clearTimeout(AFIT_T);AFIT_T=setTimeout(()=>{try{Store.put('armorFit','sys',{id:'sys',fits:ARM_FIT_OVR,at:new Date().toISOString()}).catch(()=>{})}catch(e){}},500)};
+/* the code word */
+const afitOn=()=>{try{return localStorage.getItem('flavius_armfit_on')==='1'}catch(e){return false}};
+cheatRegister('h3828236272',()=>{try{localStorage.setItem('flavius_armfit_on','1')}catch(e){}try{const b=document.getElementById('caRedraw');if(b)b.click()}catch(e){}return '🎯 <b>Fit the printed set</b> is open in Creator Studio → Gear → Armor. Hide it again with 🔒 beside it.'},'🎯 fit the printed set');
+if(typeof CHEAT_SHOW!=='undefined')CHEAT_SHOW.push([[72,89,84,86,89,77,80,91],'🎯 Fit the printed set — position, size, turn and mirror every printed armor piece on the avatar (Creator Studio → Gear → Armor)']);
+/* the tool */
+AFIT.side='R';
+function afitF(k,side){const f=armFit(k)||{};return side==='L'&&f.L?{...f,...f.L}:f}
+function afitSet(k,side,patch){const o=ARM_FIT_OVR[k]=ARM_FIT_OVR[k]||{};if(side==='L'){const base=armFit(k)||{};o.L={dx:base.dx||0,dy:base.dy||0,w:base.w,r:base.r||0,...((base.L)||{}),...(o.L||{}),...patch}}else Object.assign(o,patch)}
+function afitAvatar(k){const A=ARM[k];const p={id:'afit',name:'fit',hp:{},ap:{},pieces:{}};for(const l of LOCS){p.hp[l]=5;p.ap[l]=0;p.pieces[l]=[]}
+  const both=A.slot==='arm'||A.slot==='leg';const R=A.slot==='arm'?'rarm':'rleg',Lf=A.slot==='arm'?'larm':'lleg';
+  const locs=!both?[A.slot]:A.pair?[R,Lf]:[AFIT.side==='L'?Lf:R];for(const l of locs){p.pieces[l].push({key:k,n:A.n,ap:A.ap});p.ap[l]=A.ap}
+  return avatarSVG(p).replace(/<circle cx="[\d.]+" cy="[\d.]+" r="(?:9|7)"[^>]*\/><text[^>]*>[^<]*<\/text>/g,'').replace(/<text[^>]*>(?:R|L|fist|[^<]*)<\/text>/g,'').replace('viewBox="0 0 150 332"',`viewBox="${AV_VB.join(' ')}"`)}
+afitHTML=function(){if(!afitOn())return '';const keys=Object.keys(ARM).filter(k=>!ARM[k].custom&&ARM_FIT[k]);if(!keys.includes(AFIT.key))AFIT.key=keys[0];const A=ARM[AFIT.key];
+  const limb=A.slot==='arm'||A.slot==='leg';if(!limb)AFIT.side='R';const f=afitF(AFIT.key,AFIT.side);
+  const sl=(k,l,min,max)=>`<label class="rc-sub">${l} <b>${f[k]||0}</b><input type="range" min="${min}" max="${max}" step="1" value="${f[k]||0}" data-afit2="${k}" style="width:100%"></label>`;
+  const done=keys.filter(k=>ARM_FIT_OVR[k]).length;
+  return `<div class="card2 afit"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h4 style="margin:0">🎯 Fit the printed set <span class="rc-sub">${done} adjusted · saved in the game data</span></h4><button class="btn tksm" type="button" data-afhide>🔒 Hide the fit tool</button></div>
+   <div class="afgrid"><div id="afPrev2" class="afprev" title="Drag the piece · the wheel scales it">${afitAvatar(AFIT.key)}</div>
+   <div><label>Piece<select data-afkey>${keys.map(k=>`<option value="${k}" ${k===AFIT.key?'selected':''}>${ARM_FIT_OVR[k]?'✎ ':''}${esc(ARM[k].n)} · ${ARM[k].slot}${ARM[k].pt&&ARM[k].pt!=='helm'&&ARM[k].pt!=='chest'?' '+ARM[k].pt:''}</option>`).join('')}</select></label>
+    ${limb?`<div class="seg" style="margin:6px 0">${[['R','Right side'],['L','Left side']].map(([s,l])=>`<button type="button" data-afside="${s}" class="${AFIT.side===s?'on':''}">${l}</button>`).join('')}</div><p class="rc-sub" style="margin:0 0 4px">${AFIT.side==='L'?(f.L||(ARM_FIT_OVR[AFIT.key]&&ARM_FIT_OVR[AFIT.key].L)?'The left side has its own fit.':'The left side mirrors the right until you move it.'):'The left side mirrors this unless you fit it separately.'}</p>`:''}
+    ${sl('dx','Across',-60,60)}${sl('dy','Up / down',-90,90)}${sl('w','Size',8,140)}${sl('r','Turn',-60,60)}
+    ${AFIT.side==='R'?`<label class="rc-sub" style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-afflip ${f.flip?'checked':''}> Mirror the art</label>`:''}
+    <div class="acts"><button class="btn tksm" type="button" data-afact="prev">◀</button><button class="btn tksm" type="button" data-afact="next">▶</button><button class="btn tksm" type="button" data-afact2="reset">↺ Default${AFIT.side==='L'?' (left)':''}</button><button class="btn tksm" type="button" data-afact="export">⇪ Copy as text</button></div>
+    <textarea id="afOut" class="tin" rows="3" style="width:100%;margin-top:6px;font:11px var(--mono)" hidden readonly></textarea></div></div></div>`};
+afitRefresh=function(full){const box=document.querySelector('.afit');if(!box)return;if(full){box.outerHTML=afitHTML();return}const pv=document.getElementById('afPrev2');if(pv)pv.innerHTML=afitAvatar(AFIT.key);
+  const f=afitF(AFIT.key,AFIT.side);box.querySelectorAll('[data-afit2]').forEach(i=>{const v=f[i.dataset.afit2]||0;if(document.activeElement!==i)i.value=v;const b=i.parentElement.querySelector('b');if(b)b.textContent=v})};
+document.addEventListener('input',e=>{const i=e.target.closest('[data-afit2]');if(!i)return;afitSet(AFIT.key,AFIT.side,{[i.dataset.afit2]:+i.value});afitSave();afitRefresh()});
+document.addEventListener('click',e=>{const s=e.target.closest('[data-afside]');if(s){AFIT.side=s.dataset.afside;afitRefresh(true);return}
+  if(e.target.closest('[data-afhide]')){try{localStorage.removeItem('flavius_armfit_on')}catch(err){}const b=document.querySelector('.afit');if(b)b.remove();mToast('Fit tool hidden — your fits stay. The code word brings it back.');return}
+  const r=e.target.closest('[data-afact2="reset"]');if(r){const o=ARM_FIT_OVR[AFIT.key];if(AFIT.side==='L'){if(o)delete o.L}else if(o){const L=o.L;delete ARM_FIT_OVR[AFIT.key];if(L)ARM_FIT_OVR[AFIT.key]={L}}afitSave();afitRefresh(true)}});
+document.addEventListener('change',e=>{if(e.target.closest('[data-afkey]'))AFIT.side='R'},true);
+/* drag on the fit avatar: the chosen side moves the way the pointer goes; the wheel scales */
+(()=>{let drag=null;const pt=e=>{const sv=document.querySelector('#afPrev2 svg');if(!sv)return null;const r=sv.getBoundingClientRect();return [AV_VB[0]+(e.clientX-r.left)/r.width*AV_VB[2],AV_VB[1]+(e.clientY-r.top)/r.height*AV_VB[3]]};
+  document.addEventListener('pointerdown',e=>{if(!e.target.closest('#afPrev2'))return;const p=pt(e);if(!p)return;const f=afitF(AFIT.key,AFIT.side);drag={p0:p,dx:f.dx||0,dy:f.dy||0};e.preventDefault()});
+  document.addEventListener('pointermove',e=>{if(!drag)return;const p=pt(e);if(!p)return;const sgn=AFIT.side==='L'?-1:1;
+    afitSet(AFIT.key,AFIT.side,{dx:Math.round(drag.dx+sgn*(p[0]-drag.p0[0])),dy:Math.round(drag.dy+p[1]-drag.p0[1])});afitRefresh()});
+  window.addEventListener('pointerup',()=>{if(drag){drag=null;afitSave();afitRefresh(true)}});
+  document.addEventListener('wheel',e=>{if(!e.target.closest('#afPrev2'))return;e.preventDefault();const f=afitF(AFIT.key,AFIT.side);afitSet(AFIT.key,AFIT.side,{w:Math.max(8,Math.min(140,(f.w||30)+(e.deltaY<0?2:-2)))});afitSave();afitRefresh()},{passive:false})})();
+(()=>{const st=document.createElement('style');st.textContent=`#afPrev2{cursor:grab;touch-action:none}#afPrev2 svg{width:100%;height:auto;display:block}`;document.head.appendChild(st)})();
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

@@ -22,7 +22,9 @@ function caSync(ca){if(!ca||!ca.eq||!EQ[ca.eq])return;const f=caF2(ca);ca.f2=f;c
 function caMockSVG(d){const img=typeof assetURL==='function'?assetURL('avatar.png'):'assets/avatar.png';const pair=d.pair&&(d.slot==='arm'||d.slot==='leg');
   const rings=CA_EQ_ALL.map(([k])=>{const p=EQ[k];const on=d.eq===k;return `<circle cx="${p[0]}" cy="${p[1]}" r="${on?5:3}" fill="none" stroke="${on?'#f0cf7d':'rgba(240,207,125,.35)'}" stroke-width="${on?1.6:1}"/>`}).join('');
   const piece=d.eq?caOnBodySVG(d)+(pair?caOnBodySVG(d,null,true):''):`<g opacity=".55">${caOnBodySVG({...d,eq:null,fit:null})}</g>`;
-  return `<svg viewBox="0 0 150 332" xmlns="http://www.w3.org/2000/svg"><image href="${img}" x="7" y="6" width="136" height="301" opacity=".92"/>${rings}${piece}</svg>`}
+  return `<svg viewBox="${AV_VB.join(' ')}" xmlns="http://www.w3.org/2000/svg"><image href="${img}" x="7" y="6" width="136" height="301" opacity=".92"/>${rings}${piece}</svg>`}
+/* v0.70: the studio avatars sit lower — room above for helmets, less below the feet */
+const AV_VB=[0,-18,150,336];
 function caMockRefresh(){const el=document.getElementById('caAv');if(el&&ST.ca)el.innerHTML=caMockSVG(ST.ca);const f=ST.ca?caF2(ST.ca):null;
   if(f)document.querySelectorAll('[data-cav]').forEach(i=>{const k=i.dataset.cav;if(k==='flip')i.checked=!!f.flip;else if(i.type==='range'&&document.activeElement!==i){i.value=f[k];const b=i.parentElement.querySelector('b');if(b)b.textContent=f[k]}})}
 {const base=caPrevRefresh;caPrevRefresh=function(){const r=base.apply(this,arguments);try{caMockRefresh()}catch(e){}return r}}
@@ -60,7 +62,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button[data-cav=
   const sv=e.target.closest('[data-gs="asave"]');if(sv&&ST.ca&&!ST.ca.eq){e.stopImmediatePropagation();e.preventDefault();mToast('Choose the piece’s <b>equip point</b> first — where it sits on the body.');const el=document.querySelector('[data-caeq2]');if(el)el.focus();return}
   if(sv&&ST.ca)caSync(ST.ca)},true);
 /* free drag anywhere on the mock-up (only the avatar's own box limits it); the wheel scales */
-(()=>{let drag=null;const pt=(e,el)=>{const sv=el.querySelector('svg');if(!sv)return null;const r=sv.getBoundingClientRect();return [(e.clientX-r.left)/r.width*150,(e.clientY-r.top)/r.height*332]};
+(()=>{let drag=null;const pt=(e,el)=>{const sv=el.querySelector('svg');if(!sv)return null;const r=sv.getBoundingClientRect();return [AV_VB[0]+(e.clientX-r.left)/r.width*AV_VB[2],AV_VB[1]+(e.clientY-r.top)/r.height*AV_VB[3]]};
   document.addEventListener('pointerdown',e=>{const el=e.target.closest('#caAv');if(!el||!ST.ca)return;if(!ST.ca.eq){mToast('Choose the piece’s <b>equip point</b> first.');return}
     const p=pt(e,el);if(!p)return;drag={el,p0:p,f0:caF2(ST.ca)};e.preventDefault()});
   document.addEventListener('pointermove',e=>{if(!drag)return;const p=pt(e,drag.el);if(!p)return;const d=ST.ca;const P=EQ[d.eq];

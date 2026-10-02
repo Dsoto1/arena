@@ -7,7 +7,7 @@ await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ST.gearSub='a';ST.ca=blankCA();openStudio('gear');await W8(900);
-  const r={tabs:!!document.querySelector('[data-gs="caview"][data-id="avatar"]'),mock:!!document.querySelector('#caAv svg'),eqsel:!!document.querySelector('[data-caeq2]'),old:!!document.querySelector('[data-caf="slot"],[data-caf="pt"]'),fit:!!document.querySelector('.afit #afPrev'),saveCols:SAVE_COLS.includes('armorFit')};
+  const r={tabs:!!document.querySelector('[data-gs="caview"][data-id="avatar"]'),mock:!!document.querySelector('#caAv svg'),eqsel:!!document.querySelector('[data-caeq2]'),old:!!document.querySelector('[data-caf="slot"],[data-caf="pt"]'),fit:true,saveCols:SAVE_COLS.includes('armorFit')};
   const n0=(CUSTOM.armor||[]).length;document.querySelector('[data-gs="asave"]').click();await W8(300);r.blocked=(CUSTOM.armor||[]).length===n0;
   ST.ca=blankCA();caFromSystem(ST.ca,'manica');ST.ca.name='Tv69 Sleeve';ST.ca.pair=0;document.getElementById('caRedraw').click();await W8(400);r.autoEq=ST.ca.eq;
   const sz=document.querySelector('[data-cav="s"]');sz.value=70;sz.dispatchEvent(new Event('input',{bubbles:true}));
@@ -17,9 +17,10 @@ o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   /* worn in a match: only on the left arm, at the left point, mirrored */
   if(c){const key='ca_'+c.id;const p={id:'t69',name:'x',hp:{},ap:{},pieces:{}};for(const l of LOCS){p.hp[l]=5;p.ap[l]=0;p.pieces[l]=[]}p.pieces.larm=[{key,n:c.name,ap:3}];p.ap.larm=3;
     const svg=avatarSVG(p);const m=svg.match(/translate\(([\d.]+) ([\d.]+)\) rotate\([^)]*\) scale\(-1 1\)/g)||[];r.worn=m.length===1&&Math.abs(parseFloat(m[0].slice(10))-(EQ_L.fore[0]-c.f2.dx))<0.6}
-  /* the printed-set fit tool: saved in the game data */
+  /* the printed-set fit tool (v0.70: behind its code word): saved in the game data */
+  localStorage.setItem('flavius_armfit_on','1');document.getElementById('caRedraw').click();await W8(400);r.fit=!!document.querySelector('.afit #afPrev2');
   const k=document.querySelector('[data-afkey]');k.value='galerus';k.dispatchEvent(new Event('change',{bubbles:true}));await W8(200);
-  const w=document.querySelector('.afit [data-afit="w"]');w.value=50;w.dispatchEvent(new Event('input',{bubbles:true}));
+  const w=document.querySelector('.afit [data-afit2="w"]');w.value=50;w.dispatchEvent(new Event('input',{bubbles:true}));
   const f=document.querySelector('[data-afflip]');f.checked=true;f.dispatchEvent(new Event('change',{bubbles:true}));await W8(900);
   const doc=await Store.getDoc('armorFit','sys');r.store=!!doc&&doc.fits&&doc.fits.galerus&&doc.fits.galerus.w===50&&doc.fits.galerus.flip===1;
   const B=armBox('galerus','rarm');r.flip=B.w===50&&B.mirror===true;
