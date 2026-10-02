@@ -30267,7 +30267,7 @@ document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest
 function bedsHTML76(){const w=W_(),m=me();const beds=bedsClean76(w);const N=bedsOf76(m);const wait=bedWait76(w);const free=N-beds.length;
   const why=g=>(g.severed||[]).length&&!g.inj?`lost ${g.severed.map(l=>LOCN[l].toLowerCase()).join(', ')} — Hygeia needs a bed`:esc(g.inj?g.inj.label:'');
   const cell=id=>{const g=gById(id);return `<div class="bed76 on">${mgAvatar(g)}<div><b>${esc(g.name)}</b><small>${why(g)}</small></div><button class="btn tksm" type="button" data-unbed76="${g.id}">Discharge</button></div>`};
-  return `<div class="beds76"><div class="sect">🛏 Beds · ${beds.length}/${N} <span class="rc-sub">serious wounds and lost limbs need a bed · without one: no Medicus, surgeon or Hygeia, and half-pace healing · more beds with the Valetudinarium</span></div>
+  return `<div class="beds76"><div class="sect">🛏 Beds · ${beds.length}/${N} <span class="rc-sub">for serious wounds and lost limbs · no bed: no Medicus, surgeon or Hygeia, half-pace mending</span></div>
     <div class="bedgrid76">${beds.map(cell).join('')}${Array.from({length:free},()=>'<div class="bed76 empty"><span>🛏</span><small>Empty bed</small></div>').join('')}</div>
     ${wait.length?`<div class="bedwait76">${wait.map(g=>`<div class="bedw76"><b>${esc(g.name)}</b> <span class="rc-sub">${why(g)}</span><button class="btn tksm ${free?'primary':''}" type="button" data-bed76="${g.id}" ${free?'':'disabled title="Every bed is taken"'}>🛏 Give a bed</button></div>`).join('')}</div>`:''}</div>`}
 {const base=infirmaryHTML;infirmaryHTML=function(){let h=base.apply(this,arguments);try{const w=W_();const occ=bedsClean76(w).length,N=bedsOf76(me()),wait=bedWait76(w).length;
@@ -30296,6 +30296,132 @@ function bedsHTML76(){const w=W_(),m=me();const beds=bedsClean76(w);const N=beds
 .bed76.on{border-color:var(--gold)}.bed76 small{display:block;color:var(--muted);font-size:11.5px}.bed76>:first-child{width:30px;height:38px;overflow:hidden;display:block}.bed76>:first-child *{max-width:100%;max-height:38px}
 .bed76.empty{grid-template-columns:auto 1fr;opacity:.6;border-style:dashed}.bed76.empty span{font-size:20px}
 .bedwait76{display:grid;gap:4px;margin-top:6px}.bedw76{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:4px 8px;border-left:3px solid var(--blood2);background:rgba(163,40,31,.12);border-radius:4px}.bedw76 .btn{margin-left:auto}`;document.head.appendChild(st)})();
+
+/* =====================================================================
+   v0.76 E — the beast pen (Training Yard)
+   • One fighter against one animal (PEN76.beasts: snake, wolf, bear, lion — no Tholo, no Commodus) in a 6×6 pen in the
+     middle of a normal arena (the home city's), played by you under the usual arena rules. Costs PEN76.hours training
+     hours + the keeper's fee; once per fighter a week; not hurt, not resting.
+   • The event is a hidden custom event (EVENTS.pen76, not enumerable — never listed): one round, end 'beasts', no deck,
+     market, crowd or Fates. The pen is a hard wall: dijkstra is wrapped while S.pen76 (tiles outside PEN76.box block
+     everyone). The fence and the watching roster (up to 8 others, minis facing the pen) are drawn as extra pieces
+     injected into S.pillars for the length of draw() only (drawPillar wrapper: w76 = watcher, f76 = fence span).
+   • Time: PEN76.rot rotations (checkEndCustom wrapper). 🏳 Call it off (#pen76Off, your turn) pulls the fighter.
+   • Results (gameOver wrapper, no Fate): kill → the kill's coin to the treasury, +1 beast on the record, and a flat
+     +PEN76.bonus to a rating you pick; pulled (fell or called off) → −PEN76.fame fame; time → nothing either way.
+     Injuries are real (penWound76: a limb at 0 or a fall → a serious wound that needs a bed; heavy damage → a light
+     one), never death. Fatigue +FAT_EXH. Back to the Training Yard.
+   ===================================================================== */
+const PEN76={hours:2,rot:8,bonus:2,fame:3,box:[3,8],start:[8,6],den:[3,5],beasts:{snake:3,wolf:5,bear:8,lion:10},
+  watch:[[1,4],[1,7],[10,4],[10,7],[4,1],[7,1],[4,10],[7,10]]};
+const pen76In=(r,c)=>r>=PEN76.box[0]&&r<=PEN76.box[1]&&c>=PEN76.box[0]&&c<=PEN76.box[1];
+function penEventDef76(t,loc){
+  return {custom:true,cid:'pen76',pen76:1,img:null,n:'The Beast Pen',short:'Beast pen',tag:'Training',loc,min:1,max:1,deck:0,mandata:0,teams:0,coop:0,noTruce:1,noMarket:true,draft:null,loadout:'class',
+    classes:Object.keys(CLASSES),blurb:'One fighter, one beast, a pen of six by six.',noSpect:true,nofates:true,
+    rounds:[{n:'The pen',zone:1,pve:1,pvp:0,cf:1,ca:1,end:'beasts',endN:1,reward:{win:0}}],
+    layout:{pillars:PILLARS.map(([r,c])=>({r,c,pot:null})),tunnels:[],spikes:[],chest:null,npcs:[{key:t,t,name:NPCT[t].n,r:PEN76.den[0],c:PEN76.den[1],beh:'hunt'}],items:[],starts:[[...PEN76.start]]},
+    start:{},npcHp:100,npcDmg:0,priceMul:1,spect:0,limits:{},chariotOffers:0,optOffers:false,eaglePot:false,noCards:[]}}
+{const base=newState;newState=function(config){const r=base.apply(this,arguments);try{if(S&&config&&config.pen76)S.pen76={...config.pen76}}catch(e){}return r}}
+{const base=startEvent;startEvent=function(cfg){const r=base.apply(this,arguments);try{if(cfg&&cfg.pen76&&typeof LAST_CFG!=='undefined')LAST_CFG=null}catch(e){}return r}}
+{const base=dijkstra;dijkstra=function(sr,sc,blocked,fly){if(S&&S.pen76&&!S.over){const b=blocked;return base.call(this,sr,sc,(r,c)=>!pen76In(r,c)||b(r,c),false)}return base.apply(this,arguments)}}
+{const base=freeGrid;freeGrid=function(){if(S&&S.pen76){for(let i=0;i<80;i++){const r=PEN76.box[0]+Math.floor(Math.random()*6),c=PEN76.box[0]+Math.floor(Math.random()*6);if(!pillarAt(r,c)&&!unitAt(r,c))return [r,c]}}return base.apply(this,arguments)}}
+{const base=checkEndCustom;checkEndCustom=function(ev,rd,act,set,win){if(S&&S.pen76&&act.length&&S.rotation>PEN76.rot&&S.npcs.some(n=>n.alive)){S.pen76.time=1;return win(act,'Time is called — the keepers drive the beast back.')}return base.apply(this,arguments)}}
+{const base=eliminate;eliminate=function(victim){const r=base.apply(this,arguments);try{if(S&&S.pen76&&victim&&victim.cls&&S.players.includes(victim))log(`${nm(victim)} is <b>pulled from the pen</b> — the keepers drive the beast back with torches.`,'thought')}catch(e){}return r}}
+{const base=matchSaveOK;matchSaveOK=function(){return S&&S.pen76?false:base.apply(this,arguments)}}
+{const base=matchSaveUI;matchSaveUI=function(){const r=base.apply(this,arguments);try{if(S&&S.pen76){const b=document.getElementById('btnMSave');if(b)b.hidden=true}}catch(e){}return r}}
+/* the fence and the watchers: extra pieces for the depth-sorted pass of draw() */
+function penPieces76(){const P=S.pen76;const [a,b]=PEN76.box;const z=b+1;const out=[];
+  /* a fence span sorts by its depth (r+c): the back sides just behind the pen's first row, the front sides just in front of its last */
+  for(let j=a;j<=b;j++)out.push({f76:[a,j,a,j+1],r:a+j-0.5,c:0},{f76:[j,a,j+1,a],r:j+a-0.5,c:0},{f76:[z,j,z,j+1],r:b+j+0.6,c:0},{f76:[j,z,j+1,z],r:j+b+0.6,c:0});
+  for(const u of P.watch||[])out.push({w76:u,r:u.r,c:u.c});return out.map((o,i)=>({id:'p76_'+i,pots:[],...o}))}
+{const base=draw;draw=function(){if(!(S&&S.pen76&&S.pillars))return base.apply(this,arguments);const extra=penPieces76();S.pillars.push(...extra);
+  try{return base.apply(this,arguments)}finally{if(S&&S.pillars)S.pillars=S.pillars.filter(x=>!x.f76&&!x.w76)}}}
+{const base=drawPillar;drawPillar=function(pl){if(pl&&pl.f76)return penFence76(pl.f76);if(pl&&pl.w76)return penWatcher76(pl.w76);return base.apply(this,arguments)}}
+function penFence76([i0,j0,i1,j1]){const A=iso(i0,j0),B=iso(i1,j1);const h=TW*0.32;ctx.save();ctx.lineCap='round';
+  ctx.strokeStyle='rgba(0,0,0,.35)';ctx.lineWidth=Math.max(2,TW*0.07);ctx.beginPath();ctx.moveTo(A.x,A.y+2);ctx.lineTo(B.x,B.y+2);ctx.stroke();
+  ctx.strokeStyle='#7a5530';ctx.lineWidth=Math.max(2,TW*0.05);for(const k of [0.45,0.85]){ctx.beginPath();ctx.moveTo(A.x,A.y-h*k);ctx.lineTo(B.x,B.y-h*k);ctx.stroke()}
+  ctx.strokeStyle='#5a3c1e';ctx.lineWidth=Math.max(2,TW*0.06);for(const P of [A,B]){ctx.beginPath();ctx.moveTo(P.x,P.y);ctx.lineTo(P.x,P.y-h);ctx.stroke()}ctx.restore()}
+function penWatcher76(u){const m=center(u.r,u.c);ctx.save();ctx.strokeStyle=u.color||'#d6ab4c';ctx.lineWidth=2;ell(m.x,m.y+TW*0.03,TW*0.26,TW*0.13);ctx.stroke();
+  const sk=standeeKeyCls(u.cls)||standeeKeyCls('soldier');let top=m.y-TW*0.6;
+  const fake={cls:u.cls,hp:{...BASE_HP},color:u.color};const useFig=wantFigure(hasCustomToken(u.cls));let tk=null;try{tk=useFig?tokenForP(fake):null}catch(e){}
+  if(tk&&tokenImg(tk))top=drawFigureTok(tk,m.x,m.y+TW*0.02,TW*1.15);
+  else if(sk&&standeesOn()&&standeeImg(sk)){const prev=typeof MINI_CUR!=='undefined'?MINI_CUR:null;try{if(typeof MINI_CUR!=='undefined')MINI_CUR=u;top=drawStandee(sk,m.x,m.y+TW*0.04,standeeSize(sk)*0.9)}finally{if(typeof MINI_CUR!=='undefined')MINI_CUR=prev}}
+  else{ctx.fillStyle=u.color||'#8a6a44';ell(m.x,m.y-TW*0.1,TW*0.22,TW*0.12);ctx.fill();top=m.y-TW*0.3}
+  ctx.font=`600 ${Math.max(9,Math.round(TW*0.2))}px Alegreya Sans, sans-serif`;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillStyle='rgba(20,14,10,.75)';
+  const t=u.n||'';const tw=ctx.measureText(t).width;ctx.fillRect(m.x-tw/2-3,(top||m.y)-Math.max(12,TW*0.26),tw+6,Math.max(12,TW*0.24));ctx.fillStyle='#efe3cc';ctx.fillText(t,m.x,(top||m.y)-2);ctx.restore()}
+/* 🏳 call it off */
+function penOffSync76(){let b=document.getElementById('pen76Off');const show=!!(S&&S.pen76&&!S.over&&!S.sim);
+  if(!show){if(b)b.hidden=true;return}
+  if(!b){b=document.createElement('button');b.id='pen76Off';b.type='button';b.className='btn';b.innerHTML='🏳 Call it off';const host=document.getElementById('cv')&&document.getElementById('cv').parentElement;if(!host)return;host.appendChild(b);
+    b.addEventListener('click',async()=>{if(!S||!S.pen76||S.over)return;const p=S.players[0];const ok=await ask76('🏳 Call it off?',`The keepers pull <b>${esc(p.name)}</b> out of the pen. Wounds still count; −${PEN76.fame} fame.`,'🏳 Call it off','Keep fighting');
+      if(ok&&S&&S.pen76&&!S.over){S.pen76.called=1;log(`The lanista raises a hand: <b>${esc(p.name)}</b> is pulled out of the pen.`,'big');gameOver([],'The lanista calls it off.')}})}
+  b.hidden=false;b.disabled=!(typeof humanTurn==='function'&&humanTurn()&&!S.busy)}
+setInterval(()=>{try{penOffSync76()}catch(e){}},400);
+/* the wound the pen leaves — real, never death */
+function penWound76(p,g,w){const H=k=>p.hp[k]||0;const zero=LOCS.filter(l=>H(l)<=0);
+  const pick=zero.includes('head')?'head':zero.includes('chest')?'chest':zero.find(l=>/arm/.test(l))||zero.find(l=>/leg/.test(l));
+  if(pick||!p.alive){const l=pick||'chest';const W2={head:['a rattled skull','surgeon',4],chest:['cracked ribs','surgeon',4],rarm:['a mauled shoulder','medicus',4],larm:['a mauled shoulder','medicus',4],rleg:['a mauled thigh','medicus',4],lleg:['a mauled thigh','medicus',4]}[l];
+    return {until:w.week+2,label:W2[0],req:W2[1],pen:W2[2],ser76:1}}
+  const full=LOCS.reduce((s,l)=>s+(BASE_HP[l]||0),0),now=LOCS.reduce((s,l)=>s+Math.max(0,H(l)),0);
+  if(full&&now/full<=0.5)return {until:w.week+1,label:'claw marks on the thigh',req:'rest',pen:2};return null}
+async function penApply76(P,out,p){
+  if(!MGR.world||MGR.world.id!==P.cid){const d=await Store.getDoc('mgrCareers',P.cid);if(!d)return null;MGR.world=mgrMigrate(JSON.parse(d.world))}
+  const w=W_(),m=me();const g=gById(P.gid);if(!g)return null;const T=NPCT[P.t]||{n:'beast',coin:0};const L=[];g.rec=g.rec||{};
+  g.fat=Math.min(100,(g.fat||0)+(typeof FAT_EXH!=='undefined'?FAT_EXH:12));
+  if(out==='win'){m.coin+=T.coin||0;g.rec.kn=(g.rec.kn||0)+1;g.morale=clamp((g.morale||50)+4,0,100);L.push(`🐾 The ${esc(T.n)} is down: +${T.coin||0} coin, +1 beast on the record`);ghist(g,`killed a ${T.n} in the beast pen`)}
+  else if(out==='pulled'){g.fame=clamp((g.fame||0)-PEN76.fame,0,100);g.morale=clamp((g.morale||50)-3,0,100);L.push(`🏳 Pulled from the pen: −${PEN76.fame} fame`);ghist(g,`pulled from the beast pen (${T.n})`)}
+  else{L.push(`⏳ Time — the ${esc(T.n)} is driven back. No bonus, no shame.`);ghist(g,`held off a ${T.n} in the beast pen`)}
+  const inj=g.inj?null:penWound76(p,g,w);if(inj){g.inj=inj;L.push(`🩹 ${esc(inj.label)} (−${inj.pen} rating${serious76(g)?' · needs a bed':''})`)}
+  L.push(`😮‍💨 Fatigue ${gFat?gFat(g):g.fat}`);
+  (w.pen76log=w.pen76log||[]).unshift({s:w.season,wk:w.week,n:g.name,t:P.t,out});w.pen76log=w.pen76log.slice(0,8);
+  tnews(`🐾 Beast pen: <b>${esc(g.name)}</b> vs the ${esc(T.n)} — ${out==='win'?'kills it':out==='pulled'?'is pulled out':'time is called'}.${inj?` ${esc(inj.label)}.`:''}`,out==='win'?'big':out==='pulled'?'bad':'');
+  saveWorld(true);return {g,L,T}}
+{const base=gameOver;gameOver=async function(winners,reason){if(!S||!S.pen76||S.sim)return base.apply(this,arguments);
+  if(S.overShown)return;S.overShown=true;S.over=true;S.phase='over';S.busy=false;try{render()}catch(e){}penOffSync76();
+  const P=S.pen76,p=S.players[0];const beast=S.npcs.find(n=>n.t===P.t)||S.npcs[0];const killed=!!(beast&&!beast.alive);
+  const out=killed&&p.alive?'win':(!p.alive||P.called)?'pulled':'time';log(reason,'big');
+  if(out==='win'&&typeof sfx==='function')setTimeout(()=>sfx('fanfare'),300);
+  const R=await penApply76(P,out,p).catch(e=>{console.error(e);return null});if(!R)return;const {g,L,T}=R;
+  const st=gStats(g);const title=out==='win'?`🐾 ${g.name} kills the ${T.n}`:out==='pulled'?`🏳 ${g.name} is pulled from the pen`:`⏳ Time is called`;
+  const body=`<div class="pen76res">${pArt(p,'md')}<ul class="leave76">${L.map(x=>`<li>${x}</li>`).join('')}</ul></div>${out==='win'?`<p><b>Choose the bonus:</b> +${PEN76.bonus} to one rating.</p>`:''}`;
+  const btns=out==='win'?STATS.map(([k,n,ic])=>({label:`${ic} ${n} +${PEN76.bonus}`,sub:`${st[k]} → ${Math.min(STAT_MAX,st[k]+PEN76.bonus)}`,value:'st:'+k})):[{label:'Back to the Training Yard',value:'back',primary:1}];
+  let v=await modal(title,body,btns,{close:out==='win'?null:'back'});
+  if(out==='win'){const k=String(v||'').startsWith('st:')?v.slice(3):'str';const before=st[k];st[k]=Math.min(STAT_MAX,st[k]+PEN76.bonus);const nm9=(STATS.find(s=>s[0]===k)||[])[1]||k;
+    tnews(`⭐ <b>${esc(g.name)}</b> takes the pen's lesson: ${nm9} ${before} → ${st[k]}.`,'big');ghist(g,`${nm9} +${st[k]-before} from the beast pen`);saveWorld(true)}
+  openManager('practice')}}
+/* the Training Yard card */
+const penFee76=t=>PEN76.beasts[t]||5;
+function penWhy76(g,w){if(!g)return 'Pick a fighter';if(g.inj)return g.inj.war?'Away at war':'Hurt';if(g.restWk===w.week)return 'Resting this week';if(g.pen76Wk===w.week)return 'Already in the pen this week';return ''}
+function penCardHTML76(){const w=W_(),m=me();const ros=rosterOf(m);if(!ros.length)return '';MGR.pen76=MGR.pen76||{};const S7=MGR.pen76;
+  if(!S7.t||!PEN76.beasts[S7.t])S7.t='wolf';if(!ros.some(g=>g.id===S7.gid&&!penWhy76(g,w))){const ok=ros.find(g=>!penWhy76(g,w));S7.gid=ok?ok.id:ros[0].id}
+  const g=gById(S7.gid);const why=penWhy76(g,w);const fee=penFee76(S7.t);const left=typeof thLeft==='function'?thLeft(w):0;
+  const block=why||(left<PEN76.hours?`Needs ${PEN76.hours} training hours`:'')||(m.coin<fee?'Not enough coin':'');
+  const tile=t=>{const T=NPCT[t];return `<button type="button" class="pen76b ${S7.t===t?'on':''}" data-pen76b="${t}"><b>${esc(T.n)}</b><small>HP ${T.hp} · attack ${T.ap} · move ${T.mv}</small><small>fee ${penFee76(t)} · kill +${T.coin} coin</small></button>`};
+  return `<div class="card2 pen76"><div class="sect" style="margin-top:0">🐾 The beast pen <span class="rc-sub">one fighter, one beast, a 6×6 pen · your roster watches</span></div>
+    <p class="rc-sub" style="margin:2px 0 8px">You fight it on the board. Kill it: the kill's coin and <b>+${PEN76.bonus}</b> to a rating you pick. Pulled out: −${PEN76.fame} fame. Wounds are real; nobody dies. ${PEN76.rot} rotations.</p>
+    <div class="pen76row"><label class="rc-sub">Fighter <select id="pen76g">${ros.map(x=>{const y=penWhy76(x,w);return `<option value="${x.id}" ${x.id===S7.gid?'selected':''} ${y?'disabled':''}>${esc(x.name)} · ${effOvr(x)}${y?` — ${y}`:''}</option>`}).join('')}</select></label></div>
+    <div class="pen76grid">${Object.keys(PEN76.beasts).filter(t=>NPCT[t]).map(tile).join('')}</div>
+    <div class="acts" style="margin-top:8px"><button class="btn primary" type="button" data-pen76="go" ${block?`disabled title="${esc(block)}"`:''}>⚔ Into the pen<small>${PEN76.hours} h · ${fee} coin${block?` · ${esc(block)}`:''}</small></button></div></div>`}
+{const base=practiceHTML;practiceHTML=function(){const h=base.apply(this,arguments);try{const c=penCardHTML76();if(!c)return h;
+  /* inside the lock wrapper's frame when on the road */const i=h.lastIndexOf('</div>');return h.startsWith('<div class="card2 lock76">')&&i>0?h.slice(0,i)+c+h.slice(i):h+c}catch(e){console.error(e);return h}}}
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-pen76b]');if(!t||!t.closest('#mgrBody'))return;e.stopPropagation();MGR.pen76=MGR.pen76||{};MGR.pen76.t=t.dataset.pen76b;if(typeof MGR_REDRAW==='function')MGR_REDRAW()});
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='pen76g'){MGR.pen76=MGR.pen76||{};MGR.pen76.gid=e.target.value;if(typeof MGR_REDRAW==='function')MGR_REDRAW()}});
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-pen76="go"]');if(!t||t.disabled||!t.closest('#mgrBody'))return;e.preventDefault();e.stopPropagation();penGo76()});
+function penGo76(){const w=W_(),m=me();const S7=MGR.pen76||{};const g=gById(S7.gid);const t=S7.t;if(!g||!NPCT[t]||penWhy76(g,w))return;const fee=penFee76(t);
+  if(thLeft(w)<PEN76.hours||m.coin<fee)return;
+  thPlan(w).spent=(thPlan(w).spent||0)+PEN76.hours;m.coin-=fee;g.pen76Wk=w.week;
+  const home=typeof travelHome==='function'?travelHome(m):6;Object.defineProperty(EVENTS,'pen76',{value:penEventDef76(t,home),enumerable:false,configurable:true,writable:true});
+  const watch=rosterOf(m).filter(x=>x.id!==g.id&&!(x.inj&&x.inj.war)).slice(0,PEN76.watch.length).map((x,i)=>{const [r,c]=PEN76.watch[i];const ctr=(PEN76.box[0]+PEN76.box[1])/2;
+    const dr=Math.sign(ctr-r),dc=Math.sign(ctr-c);return {r,c,_fr:r-(Math.abs(r-ctr)>=Math.abs(c-ctr)?dr:0),_fc:c-(Math.abs(c-ctr)>Math.abs(r-ctr)?dc:0),cls:CLASSES[x.cls]?x.cls:'soldier',n:x.name.split(' ')[0],color:m.color}});
+  const cfg={ev:'pen76',loc:home,seats:[seatFor(g,m.color,true)],opts:{mods:false,mandata:false,optOffers:false,eaglePot:false,spect:0},omen:OMENS[0],pen76:{cid:w.id,gid:g.id,t,week:w.week,watch}};
+  tnews(`🐾 ${esc(g.name)} walks into the beast pen with a ${esc(NPCT[t].n)} (${PEN76.hours} h, ${fee} coin).`);
+  saveWorld(true);if(typeof MM!=='undefined')MM.fromMenu=false;/* not 'close': that path takes you back to the main menu */if(CUR_MODAL)CUR_MODAL.done('pen76');else modalDismiss();S&&(S.over=true);startEvent(cfg)}
+(()=>{const st=document.createElement('style');st.textContent=`
+.pen76{margin-top:12px}.pen76grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.pen76b{display:grid;gap:1px;text-align:left;padding:7px 9px;border:1px solid var(--line2);border-radius:8px;background:var(--panel2);color:var(--bone);cursor:pointer}
+.pen76b.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}.pen76b b{font:400 16px var(--display)}.pen76b small{color:var(--muted);font-size:11.5px}
+.pen76row select{max-width:100%}.pen76res{display:flex;gap:12px;align-items:flex-start}.pen76res .leave76{margin-top:0}
+#pen76Off{position:absolute;top:8px;left:8px;z-index:5;border-color:var(--gold)}#pen76Off[hidden]{display:none}`;document.head.appendChild(st)})();
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
