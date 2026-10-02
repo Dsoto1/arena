@@ -30534,6 +30534,67 @@ document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest
 .yd76x{background:none;border:0;color:var(--muted);cursor:pointer;padding:0 2px}.yd76log{margin-top:10px}`;document.head.appendChild(st)})();
 
 /* =====================================================================
+   v0.76 G — the Infirmary as a ward (wardHTML76 replaces the tab's body; Hygeia's card and the room banner stay)
+   • A strip: beds, the physicians' weekly budget, which cure (the care guide behind ⓘ).
+   • 🛏 The ward: one cot per bed (bedsOf76) — the patient's body with the wound marked (injuryAvatar74), the wound,
+     what it needs, when they are fit, the cures as plan tiles (planTiles: cost + fit week before you tap), what was
+     done this week, Discharge. Empty cots wait.
+   • 🪑 The bench: everyone hurt and not in a bed — serious wounds wait for a bed (🛏 Give a bed), light wounds are
+     treated right there; soldiers away at war are listed.
+   • 🛁 The bathhouse: fatigue for the fit — 🛁 Rubdown (data-bath, 1 h) and 🛏 Rest week (data-rest), each with its
+     effect previewed. Then Cleared for the sand.
+   ===================================================================== */
+function wardDone76(g,w){const X=x74(w);const R=[];if(g.medWk===w.week)R.push('⚕ Seen by the Medicus');if(g.bathWk===w.week)R.push('🛁 Bathhouse day');if(X.rub.includes(g.id))R.push('🛁 Rubdown: −10 fatigue');if(g.restWk===w.week)R.push('🛏 Resting this week');return R}
+function wardPatient76(g,w,m){const i=g.inj;const req=i&&!i.war?injReq(i):null;const need={rest:'rest',medicus:'the Medicus',surgeon:'the surgeon'}[req]||'';const fw=typeof fitWeekOf==='function'?fitWeekOf(g):w.week;
+  const left=Math.max(0,repCap()-(w.repair||0));const sev=(g.severed||[]).length;
+  const hy=sev?`<button class="btn tksm" type="button" data-mg="heal" data-id="${g.id}" ${!inBed76(g)?'disabled title="Needs a bed"':left<HYGEIA?`disabled title="The physicians' budget is spent this week"`:m.coin<HYGEIA?'disabled title="Not enough coin"':''}>🌿 Hygeia<small>${HYGEIA} coin a limb · regrows ${g.severed.map(l=>LOCN[l].toLowerCase()).join(', ')}</small></button>`:'';
+  const av=typeof injuryAvatar74==='function'?injuryAvatar74(g):mgAvatar(g);
+  return {av,info:`<b>${esc(g.name)}</b> <span class="rc-sub">${effOvr(g)} · morale ${g.morale}</span>
+    ${i&&!i.war?`<div class="wd76w">🩸 <b>${esc(i.label)}</b>${i.pen?` · −${i.pen} rating`:''} · needs <b>${need}</b>${i.neglect?` · <b class="wd76bad">festering ${i.neglect}/3</b>`:` · fit ${wkName(fw)}`}</div>`:''}
+    ${sev?`<div class="wd76w">✂ ${g.severed.map(l=>esc(LOCN[l])).join(', ')} lost — only Hygeia regrows a limb</div>`:''}`,
+    cures:(i&&!i.war?planTiles(g):'')+(hy?`<div class="acts" style="margin-top:4px">${hy}</div>`:''),done:wardDone76(g,w)}}
+function wardHTML76(){const w=W_(),m=me();const ros=rosterOf(m);const beds=bedsClean76(w);const N=bedsOf76(m);const cap=repCap(),left=Math.max(0,cap-(w.repair||0));
+  const done=d=>d.length?`<div class="yd76res">${d.map(x=>`<span>${x}</span>`).join('')}</div>`:'';
+  const cot=(id,n)=>{if(!id)return `<div class="wd76cot empty"><div class="wd76ct">🛏 Bed ${n}</div><div class="wd76mt">Empty — give it to someone on the bench</div></div>`;
+    const g=gById(id);const P=wardPatient76(g,w,m);
+    return `<div class="wd76cot ${g.inj&&g.inj.neglect?'bad':''}"><div class="wd76ct">🛏 Bed ${n}<button class="btn tksm" type="button" data-unbed76="${g.id}">Discharge</button></div>
+      <div class="wd76pt"><div class="wd76av">${P.av}</div><div>${P.info}</div></div>${P.cures.replace('<div class="rc-sub">🛏 In a bed</div>','')}${done(P.done)}</div>`};
+  const hurt=ros.filter(g=>(g.inj||(g.severed||[]).length)&&!beds.includes(g.id));const free=N-beds.length;
+  const bench=hurt.map(g=>{const war=g.inj&&g.inj.war;const ser=!war&&serious76(g);const P=wardPatient76(g,w,m);
+    return `<div class="wd76bn ${ser?'ser':''}"><div class="wd76av sm">${P.av}</div><div class="wd76bi">${war?`<b>${esc(g.name)}</b> <span class="rc-sub">⚔ ${esc(g.inj.label)} · back ${wkName(g.inj.until)}</span>`:P.info}
+      ${ser?`<div class="wd76w">🛏 Needs a bed — half-pace mending until then <button class="btn tksm ${free?'primary':''}" type="button" data-bed76="${g.id}" ${free?'':'disabled title="Every bed is taken"'}>🛏 Give a bed</button></div>`:''}
+      ${!war?P.cures:''}${done(P.done)}</div></div>`}).join('');
+  const fit=ros.filter(g=>!g.inj);const X=x74(w);const th=thLeft(w);
+  const bath=fit.map(g=>{const f=gFat(g);const r=g.restWk===w.week;const rub=X.rub.includes(g.id);
+    return `<div class="wd76ba"><b>${esc(g.name)}</b><span class="fatbar"><i style="width:${f}%;background:${fatCol(f)}"></i></span><span class="rc-sub">${f}${f>50?' · at risk':''}${onCard(g)?' · on the card':''}</span>
+      <button class="yd76b ${rub?'on':''}" type="button" data-bath="${g.id}" ${rub||th<1||!(f>0)?'disabled':''}>🛁 Rubdown<small>${rub?'done':`1 h · ${f} → ${Math.max(0,f-10)}`}</small></button>
+      <button class="yd76b ${r?'on':''}" type="button" data-rest="${g.id}" title="No drills this week; fatigue −${FAT_REST} at the week's end">🛏 ${r?'Resting':'Rest week'}<small>${r?'tap to cancel':`no drills · → ${Math.max(0,f-FAT_REST)}`}</small></button></div>`}).join('');
+  const top=`<div class="card2 wd76top"><span>🛏 <b>${beds.length} / ${N}</b> beds${hurt.some(g=>serious76(g)&&!(g.inj&&g.inj.war))?` · <b class="wd76bad">${hurt.filter(g=>serious76(g)&&!(g.inj&&g.inj.war)).length} waiting</b>`:''}</span>
+    <span title="What your Medicus, surgeon and Hygeia's priests can still do this week; the bathhouse and Asclepius are outside help">🧑‍⚕️ Physicians <b>${left}</b> / ${cap} coin left ⓘ</span>
+    <span class="rc-sub">🏗 Valetudinarium ${facLvl(m,'valet')}/3 · more beds and budget</span></div>`;
+  return `${top}<div class="sect">🛏 The ward</div><div class="wd76beds">${Array.from({length:N},(_,i)=>cot(beds[i],i+1)).join('')}</div>
+    ${bench?`<div class="sect">🪑 The bench <span class="rc-sub">waiting for a bed · light wounds treated here</span></div><div class="wd76bench">${bench}</div>`:''}
+    ${fit.length?`<div class="sect">🛁 The bathhouse <span class="rc-sub">fatigue · above 50 a fighter may get hurt</span></div><div class="wd76bath">${bath}</div>`:''}
+    ${typeof careGuideHTML==='function'?careGuideHTML(null):''}`}
+{const base=infirmaryHTML;infirmaryHTML=function(){const h=base.apply(this,arguments);try{const t=document.createElement('template');t.innerHTML=h;const pick=s=>{const e=t.content.querySelector(s);return e?e.outerHTML:''};
+  const cl=t.content.querySelector('.clearstrip');const clear=cl?`<div class="sect">🗡 Cleared for the sand</div>${cl.outerHTML}`:'';
+  const body=wardHTML76()+clear;const n=lockNote76('Infirmary');return pick('.hygcard')+pick('.roomhd')+(n?n+`<div class="locked76">${body}</div>`:body)}catch(e){console.error(e);return h}}}
+(()=>{const st=document.createElement('style');st.textContent=`
+.wd76top{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;margin:10px 0}.wd76top span:last-child{margin-left:auto}.wd76bad{color:#e07a6a}
+.wd76beds{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:10px}
+.wd76cot{position:relative;border:1px solid #8a6a44;border-top:6px solid #6b4a2a;border-radius:10px 10px 8px 8px;padding:8px 10px 10px;display:grid;gap:6px;background:var(--panel2);box-shadow:inset 0 -5px 0 #4a3420,0 6px 16px rgba(0,0,0,.35)}
+.wd76cot.bad{border-color:var(--blood2);border-top-color:#7a2a1e}
+.wd76cot.empty{border-style:dashed;opacity:.65;min-height:120px;align-content:start}.wd76mt{color:var(--muted);font-size:13px}
+.wd76ct{display:flex;justify-content:space-between;align-items:center;font:600 11px var(--mono,monospace);letter-spacing:.08em;text-transform:uppercase;color:#c9a46a}
+.wd76pt{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start}.wd76av{width:64px;height:96px;overflow:hidden;display:block}.wd76av svg{max-width:100%;max-height:96px}
+.wd76av.sm{width:40px;height:60px}.wd76av.sm svg{max-height:60px}.wd76w{font-size:13px;margin-top:3px}
+.wd76bench{display:grid;gap:6px}.wd76bn{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:6px 8px;border:1px solid var(--line2);border-radius:8px;background:var(--panel2)}
+.wd76bn.ser{border-left:3px solid var(--blood2)}.wd76bi{display:grid;gap:2px}
+.wd76bath{display:grid;gap:4px}.wd76ba{display:grid;grid-template-columns:minmax(120px,200px) 120px 1fr auto auto;gap:8px;align-items:center}
+.wd76ba b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:700px){.wd76ba{grid-template-columns:1fr auto auto}.wd76ba .fatbar,.wd76ba .rc-sub{display:none}}`;document.head.appendChild(st)})();
+
+/* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
    =====================================================================
    openSetup() is the big configuration modal: map + event pick, seats (with the Ludus
