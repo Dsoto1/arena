@@ -226,7 +226,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   line (click → Stands); top-bar #btnDrawB = 🏟 Stands · N; `openMenagerie` = Bestiary only (B key, Field, Rules & strategy).
 - **Armor on the avatar (90-armfit, v0.68):** the printed armor art (armor2.webp cut-outs, drawn for avatar.png) is worn on the
   player-board avatar: `ARM_CROP[img]` (alpha bounds; Femoralia/Greaves cells are pairs → one half), `ARM_FIT[key]` = {at,dx,dy,w,r}
-  anchored to the avatar's equip points `EQ`/`EQ_L` (head, sho, fore, hand, chest, belt, thigh, shin); left side mirrored; clipped
+  anchored to the avatar's equip points `EQ`/`EQ_L` (arm/leg pieces by their printed `pt` via `ARM_PT_AT`: upper→sho/thigh, lower→fore/shin, hand→hand) (head, sho, fore, hand, chest, belt, thigh, shin); left side mirrored; clipped
   `<image>` (not nested svg — panel CSS sizes every svg). `armShares` splits the location AP pool in wear order → each piece dims
   (`ARM_DIM`) and cracks, falls off at 0 (`ARM_FALL`, CSS `.armfall`); the steel sheen is stripped. Editors (DEV_KEY): Armor forge
   "🎯 Fit the printed set" (sliders, saved in localStorage flavius_armfit, ⇪ Export → paste into ARM_FIT). Custom pieces: equip
