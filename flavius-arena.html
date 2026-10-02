@@ -29444,6 +29444,10 @@ MARKET_A[1].push('steelhelm','balteus1','lgreaves');MARKET_A[2].push('centurion'
 try{if(typeof SETTINGS!=='undefined'&&localStorage.getItem('flavius_armscan74')!=='1'){SETTINGS.armorStyle='scan';localStorage.setItem('flavius_armscan74','1');if(typeof applySettings==='function')applySettings()}}catch(e){}
 if(typeof SETTINGS!=='undefined'&&!SETTINGS.armorStyle)SETTINGS.armorStyle='scan';
 {const base=settingsHTML;settingsHTML=function(tab){let h=base.apply(this,arguments);try{if(tab==='tokens'&&typeof h==='string')h=h.replace(/<button type="button" class="tokrow[^"]*" data-sarmor="drawn">[\s\S]*?<\/button>/,'')}catch(e){}return h}}
+/* the Iron Spaulder was the same fur-and-iron shoulder guard as the Hero's Manica (Virgilante): one piece now. The market sells the
+   Manica in its place; old saves, classes and characters that name 'spaulder' still resolve (a hidden alias, left out of every list). */
+{const i=MARKET_A[2].indexOf('spaulder');if(i>=0)MARKET_A[2][i]='provmanica';
+  if(ARM.spaulder&&ARM.provmanica){delete ARM.spaulder;Object.defineProperty(ARM,'spaulder',{value:ARM.provmanica,enumerable:false,configurable:true,writable:true})}}
 /* =====================================================================
    104-CARDS74 · v0.74 — the class cards (Virgilante)
    =====================================================================

@@ -24,12 +24,12 @@ o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   const f=document.querySelector('[data-afflip]');f.checked=true;f.dispatchEvent(new Event('change',{bubbles:true}));await W8(900);
   const doc=await Store.getDoc('armorFit','sys');r.store=!!doc&&doc.fits&&doc.fits.galerus&&doc.fits.galerus.w===50&&doc.fits.galerus.flip===1;
   const B=armBox('galerus','rarm');r.flip=B.w===50&&B.mirror===true;
-  r.gold=cardStyle('a:bracers').includes('sepia')&&!cardStyle('a:provmanica').includes('sepia')&&!!armBox('bracers','rarm').gold;
+  r.gold=!cardStyle('a:bracers').includes('sepia')&&!armBox('bracers','rarm').gold&&ARM.bracers.img===33; /* v0.74: his real gold Bracers art, no grading */
   delete ARM_FIT_OVR.galerus;afitSave();AFIT.mode=false;localStorage.removeItem('flavius_armfit_on');
   SETTINGS.armorStyle='scan';document.getElementById('caRedraw').click();await W8(400);r.noSculpt=document.querySelectorAll('[data-gs="casys"]').length;
   SETTINGS.armorStyle='drawn';document.getElementById('caRedraw').click();await W8(400);r.sculpt=document.querySelectorAll('[data-gs="casys"]').length;
   if(c){CUSTOM.armor=CUSTOM.armor.filter(x=>x.id!==c.id);await Store.del('customArmor',c.id).catch(()=>{})}return r});
 ok(!o.a.tabs&&o.a.mock&&o.a.eqsel&&!o.a.old,'designer layout');ok(o.a.blocked,'save needs an equip point');ok(o.a.autoEq==='sho','printed start picks its point');
 ok(o.a.part.join()==='arm,lower'&&o.a.keptS===70,'point sets the part, size kept');ok(o.a.single,'single piece shows one side');ok(o.a.saved,'fit saved with the piece');
-ok(o.a.worn,'worn only on its limb, at the left point');ok(o.a.saveCols&&o.a.fit&&o.a.store&&o.a.flip,'fit tool saved in the game data');ok(o.a.gold,'gold bracers');ok(o.a.noSculpt>=27&&o.a.sculpt===o.a.noSculpt,'system set kept in both art styles (v0.72)');
+ok(o.a.worn,'worn only on its limb, at the left point');ok(o.a.saveCols&&o.a.fit&&o.a.store&&o.a.flip,'fit tool saved in the game data');ok(o.a.gold,'real bracers art (v0.74)');ok(o.a.noSculpt>=27&&o.a.sculpt===o.a.noSculpt,'system set kept in both art styles (v0.72)');
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();
