@@ -212,17 +212,17 @@ const SHOUTS={happy:['Ave!','Yes!','Magnificent!','Again!'],fav:['My coin is on 
    today's card, the billing (manager main events, festival finals) — and then the omen on top. */
 function empireTurnout(cfg){
   const why=[];const L=LOCATIONS[S.locIdx];const here=L?L.n:'';const LC=LOC_CROWD[S.locIdx]||{act:100};
-  let n=6+rnd(9);n=Math.round(n*LC.act/100);why.push(`${here||'the city'}'s own appetite (${n})`);
+  let n=6+rnd(9);n=Math.round(n*LC.act/100);why.push(`${here||'the city'}'s own appetite (${n}K)`);
   const home=CROWD_CACHE.filter(r=>r.city===here&&!r.quit&&!r.banned&&!r.recruited).length;
-  if(home){const h=Math.min(8,Math.round(home*.3));if(h){n+=h;why.push(`+${h} hometown regulars`)}}
+  if(home){const h=Math.min(8,Math.round(home*.3));if(h){n+=h;why.push(`+${h}K hometown spectators`)}}
   const names=new Set(S.players.map(p=>String(p.name).toLowerCase()));
   const follow=CROWD_CACHE.filter(r=>!r.banned&&!r.recruited&&[r.fanOf,r.patronFav,r.kin&&r.kin.name].some(x=>x&&names.has(String(x).toLowerCase()))).length;
-  if(follow){const f=Math.min(14,Math.round(follow*1.3));n+=f;why.push(`+${f} following today's fighters`)}
-  const saved=cfg.seats?cfg.seats.filter(x=>x.saved).length:0;if(saved){n+=saved*2;why.push(`+${saved*2} for returning Ludus names`)}
-  {const dm=typeof drawMul==='function'?drawMul():1;if(dm>1.1){const ex=Math.round(n*(dm-1)*0.7);if(ex){n+=ex;why.push(`+${ex} for the draw — famous names on the card`)}}} // v0.32
-  if(cfg.mgrTier){const t={main:12,mid:5}[cfg.mgrTier]||0;if(t){n+=t;why.push(`+${t} for the ${cfg.mgrTier==='main'?'main event':'billing'}`)}}
+  if(follow){const f=Math.min(14,Math.round(follow*1.3));n+=f;why.push(`+${f}K following today's fighters`)}
+  const saved=cfg.seats?cfg.seats.filter(x=>x.saved).length:0;if(saved){n+=saved*2;why.push(`+${saved*2}K for returning Ludus names`)}
+  {const dm=typeof drawMul==='function'?drawMul():1;if(dm>1.1){const ex=Math.round(n*(dm-1)*0.7);if(ex){n+=ex;why.push(`+${ex}K for the draw — famous names on the card`)}}} // v0.32
+  if(cfg.mgrTier){const t={main:12,mid:5}[cfg.mgrTier]||0;if(t){n+=t;why.push(`+${t}K for the ${cfg.mgrTier==='main'?'main event':'billing'}`)}}
   if(cfg.fest&&cfg.fest.stage>=2){n+=8;why.push('+8 festival crowds')}
-  {const wi=typeof worldImpact==='function'?worldImpact(S.locIdx):null;if(wi&&wi.att){const d=Math.round(n*wi.att);n+=d;why.push(`${d>=0?'+':''}${d} from world events (${wi.list.map(e=>e.n.toLowerCase()).join('; ')})`)}}
+  {const wi=typeof worldImpact==='function'?worldImpact(S.locIdx):null;if(wi&&wi.att){const d=Math.round(n*wi.att);n+=d;why.push(`${d>=0?'+':''}${d}K from world events (${wi.list.map(e=>e.n.toLowerCase()).join('; ')})`)}}
   n+=Math.round((rand()-.5)*6); // and the plain chance of a Roman afternoon
   S.turnoutWhy=why;return clamp(n,3,SPECT_MAX);
 }
@@ -354,7 +354,7 @@ function crowdStart(){
       const o=(()=>{try{return oddsTable(true).find(x=>x.ps.some(q=>q.id===sp.fav))}catch(e){return null}})();sp.bet={pid:sp.fav,amt:2,odds:o?+o.odds.toFixed(2):2};if(!S.sim&&!HEADLESS)sp.bet.bid=betRec({src:'event',ev:S.seed,dayOff:0,min:660+Math.floor(Math.random()*150),city:LOCATIONS[S.locIdx]?LOCATIONS[S.locIdx].n:'',who:sp.name,kind:'spectator',on:`${S.players[sp.fav].name} to win`,stake:2,odds:sp.bet.odds,cur:'CF'})}}
   try{spectWagers()}catch(e){}
   const fans=S.spect.filter(s=>!s.human&&s.fav!=null),neu=S.spect.filter(s=>!s.human&&s.fav==null);
-  log(`${S.spect.length} spectator${S.spect.length>1?'s take their seats':' takes a seat'} in the stands: ${fans.length} arrive as fans, ${neu.length} still to be won over. Open the crowd panel for every name.`);
+  log(`${S.spect.length}K spectators take their seats in the stands: ${fans.length}K arrive as fans, ${neu.length}K still to be won over. Open the crowd panel for every name.`);
   for(const s of S.spect.filter(x=>!x.human))slog(`<b>${esc(s.name)}</b> (${SPECT_TASTES[s.taste][0].toLowerCase()}, ${SPECT_TEMPERS[s.temper][0].toLowerCase()}) sits in ${SECTIONS[s.sec].n}${s.fav!=null?`, backing <b>${esc(S.players[s.fav].name)}</b> with a 2 CF wager`:''}.`);
 }
 function spectMood(sp,d,emo,text){
@@ -522,7 +522,7 @@ function crowdPanelHTML(){
   const feed=(S.spectLog||[]).slice(-32).reverse().map(e=>`<div class="${e.cls||''}"><span style="color:var(--dim)">R${e.r} · </span>${e.html}</div>`).join('');
   /* v0.45: both halves fold away (the bookmaker lives in 💰 Wagers on the top bar now) */
   const sh=k=>collShut(k);
-  return `<h3 class="collhd ${sh('stands')?'coll-shut':''}" data-coll="stands" role="button" tabindex="0"><span class="collcar">▾</span> The stands · ${S.spect.filter(s=>!s.gone).length}</h3>${sh('stands')?'':`<div class="crowd" style="max-height:230px;overflow-y:auto">${rows}</div>`}${feed?`<div class="sect collhd ${sh('slog')?'coll-shut':''}" data-coll="slog" role="button" tabindex="0"><span class="collcar">▾</span> Stands log</div>${sh('slog')?'':`<div class="slog">${feed}</div>`}`:''}`;
+  return `<h3 class="collhd ${sh('stands')?'coll-shut':''}" data-coll="stands" role="button" tabindex="0"><span class="collcar">▾</span> The stands · ${S.spect.filter(s=>!s.gone).length}K spectators</h3>${sh('stands')?'':`<div class="crowd" style="max-height:230px;overflow-y:auto">${rows}</div>`}${feed?`<div class="sect collhd ${sh('slog')?'coll-shut':''}" data-coll="slog" role="button" tabindex="0"><span class="collcar">▾</span> Stands log</div>${sh('slog')?'':`<div class="slog">${feed}</div>`}`:''}`;
 }
 /* v0.45 collapsible panels: the stands, the stands log and the arena log (remembered in this browser) */
 let PANEL_COLL={};try{PANEL_COLL=JSON.parse(localStorage.getItem('flavius_coll')||'{}')||{}}catch(e){PANEL_COLL={}}
@@ -969,7 +969,7 @@ function empireStripHTML(){
   const top=Object.entries(fans).sort((a,b)=>b[1]-a[1]).slice(0,3);
   const arenas=Object.values(ARENA_CACHE||{}).filter(A=>A&&(A.events||0)>0);const sum=k=>arenas.reduce((a,A)=>a+(A[k]||0),0);
   const c=(i,v,l)=>`<span class="estat" title="${l}">${i} <b>${v}</b></span>`;
-  return `<div class="empstrip"><span class="eslbl">The empire</span>${c('👥',regs.length,'named regulars')}${c('🗡',regs.filter(r=>r.exGlad).length,'ex-gladiators in the seats')}${c('👪',regs.filter(r=>r.kin).length,'kin of fighters')}${c('⚠',regs.filter(r=>r.trouble).length,'known troublemakers')}${c('🚫',regs.filter(r=>r.banned).length,'banned')}${c('🏟',sum('events'),'events held everywhere')}${c('✝',sum('elims'),'gladiators fallen')}${c('🍯',sum('conc'),'coin of concessions')}${c('🔱',sum('spears'),'spectators speared')}
+  return `<div class="empstrip"><span class="eslbl">The empire</span>${c('👥',regs.length+'K','spectators')}${c('🗡',regs.filter(r=>r.exGlad).length,'ex-gladiators in the seats')}${c('👪',regs.filter(r=>r.kin).length,'kin of fighters')}${c('⚠',regs.filter(r=>r.trouble).length,'known troublemakers')}${c('🚫',regs.filter(r=>r.banned).length,'banned')}${c('🏟',sum('events'),'events held everywhere')}${c('✝',sum('elims'),'gladiators fallen')}${c('🍯',sum('conc'),'coin of concessions')}${c('🔱',sum('spears'),'spectators speared')}
     ${top.length?`<span class="eslbl" style="margin-left:auto">❤ Most beloved</span>${top.map(([n,v],i)=>`<span class="estat" title="fans + bought cheers + family (×2)">${['🥇','🥈','🥉'][i]} <b>${esc(n)}</b> ${v}</span>`).join('')}`:''}</div>`}
 function standsRosterViewHTML(){
   const regs=CROWD_CACHE.filter(r=>!r.recruited);const cities={};for(const r of regs)if(r.city)cities[r.city]=(cities[r.city]||0)+1;
@@ -1041,7 +1041,7 @@ function standsDrawerHTML(opt={}){
   // the roster of every living regular in the system
   const regs=CROWD_CACHE.filter(r=>!r.recruited).sort((a,b)=>(b.visits||0)-(a.visits||0));
   const sel=DRAWER.sel?CROWD_CACHE.find(r=>r.id===DRAWER.sel):null;
-  const roster=`<div class="sect">Spectator roster · ${regs.length} regulars known to the ushers</div>
+  const roster=`<div class="sect">Spectator roster · ${regs.length}K spectators known to the ushers</div>
    <input type="search" class="tin spsearch" placeholder="🔍 Find a spectator — name, city, or the gladiator they follow" value="${esc(window.SPQ||'')}" oninput="spFilter(this)" style="width:100%;margin:0 0 6px">
    ${sel?spectInspectorHTML(sel):''}
    <div style="max-height:${sel?'180px':'320px'};overflow-y:auto">${regs.map(r=>`<div class="sprow" data-spid="${esc(r.id)}" data-q="${esc([r.name,r.city,r.fanOf,r.patronFav,r.kin&&r.kin.name].filter(Boolean).join(' ').toLowerCase())}"${window.SPQ&&![r.name,r.city,r.fanOf,r.patronFav,r.kin&&r.kin.name].filter(Boolean).join(' ').toLowerCase().includes(window.SPQ.toLowerCase())?' hidden':''}>${specFaceSVG(r.look)}<span style="flex:1"><b>${esc(r.name)}</b>${r.custom?' <span class="cbadge">✦</span>':''}${r.kin?` <span style="font-size:11px;color:var(--gold2)" title="${esc(r.kin.rel)} of the gladiator ${esc(r.kin.name)}">👪 ${esc(r.kin.name)}</span>`:''}${r.trouble?' <span class="trb">troublemaker</span>':''}${r.banned?' <span class="trb">BANNED</span>':''}${r.quit?` <span class="rc-sub">staying away (${esc(r.quit.reason)})</span>`:''}<br><span class="rc-sub">${SPECT_TASTES[r.taste]?SPECT_TASTES[r.taste][0].toLowerCase():''} fan · ${SPECT_TEMPERS[r.temper]?SPECT_TEMPERS[r.temper][0].toLowerCase():''} · ${r.visits||0} visit${(r.visits||0)===1?'':'s'}</span></span></div>`).join('')||'<p class="hint">No regulars yet — run an event with spectators and the neighborhood forms on its own.</p>'}</div>`;
@@ -1049,7 +1049,7 @@ function standsDrawerHTML(opt={}){
   return (opt.noChron?'':chron)+(live?`<div class="sect">In the stands right now</div>${live}`:'')+roster;
 }
 // v0.28: the roster search — filters as you type; the query survives a redraw
-function spFilter(inp){const q=inp.value.trim().toLowerCase();window.SPQ=q;const box=inp.parentElement;let n=0;box.querySelectorAll('.sprow').forEach(el=>{const hit=!q||(el.dataset.q||'').includes(q);el.hidden=!hit;if(hit)n++});let m=box.querySelector('.spnone');if(!n&&q){if(!m){m=document.createElement('p');m.className='rc-sub spnone';inp.after(m)}m.textContent=`Nobody by that name in the stands — the ushers know ${box.querySelectorAll('.sprow').length} regulars.`}else if(m)m.remove()}
+function spFilter(inp){const q=inp.value.trim().toLowerCase();window.SPQ=q;const box=inp.parentElement;let n=0;box.querySelectorAll('.sprow').forEach(el=>{const hit=!q||(el.dataset.q||'').includes(q);el.hidden=!hit;if(hit)n++});let m=box.querySelector('.spnone');if(!n&&q){if(!m){m=document.createElement('p');m.className='rc-sub spnone';inp.after(m)}m.textContent=`Nobody by that name in the stands — the ushers know ${box.querySelectorAll('.sprow').length}K spectators.`}else if(m)m.remove()}
 function spectInspectorHTML(r){
   const lore=specLore(r);const mems=(r.mem||[]).slice(-5).reverse();
   return `<div class="card2" style="margin-bottom:8px"><div style="display:flex;gap:10px;align-items:flex-start">

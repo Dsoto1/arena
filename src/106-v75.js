@@ -14,6 +14,19 @@
      wears the minis (applySettings wrapper keeps SETTINGS.mini3d on; old standee players switched once). Pieces with no mini
      (custom beasts) keep their flat standee art. The pillar mini is 15% shorter and wears his pillar standee's painted stone
      (assets/mini_pillar.webp re-rendered by tools/art/minis/render3.html + shot3.js from pillar_tex.png).
+   • One crowd count (Virgilante): every spectator in the stands counts as 1,000 Romans and shows as "13K" everywhere — top bar,
+     Stands tab, briefing, logs, results, Hall, Imperium, Manager. houseCount = n×1000 (the day-to-day variety lives in how many
+     turn up); "regulars" → "spectators" on screen. Edits in 05/07/10/16/17/18/22/25/30/47/66/89.
+   • The market to the rulebook (pp.24-25): a purchase pays for a LEVEL, the market die picks a slot, and the buyer takes that
+     slot's weapon OR one armor piece/set from it (marketBuy75; CPUs too — 06-ai edit). Armor is dealt face up across slots 1-4
+     (S.market.a[lv].piles; `slots` stays as a live flattened view so older readers still work; no armor deck). Weapons keep 3
+     face up + the face-down deck in slot 4; a slot-4 card flipped before a re-roll stays face up there (W.up4) until taken.
+     Empty slot → the closest one (ties: the buyer's pick). Free items roll their own side, no re-roll. The window is drawn on his
+     market board (assets/market_board.webp).
+   • Play Now (New event · Single event) in the mockup's layout (pnLayout75 re-seats the existing controls — same ids, same handlers):
+     top row (modes · this week · ⚡ Quick start · ★ Presets), Where (city + map) | What (event card strip, the chosen card in his
+     event frame, his players badge with the event's count, rounds, the Annals record), Who (seat cards with the 3D minis and the
+     guide's class win rates), Options, and a start bar. Presets live in localStorage flavius_pnpresets.
    ===================================================================== */
 document.addEventListener('pointerdown',e=>{if(e.button!==0)return;const t=e.target.closest&&e.target.closest('.ratfold');if(!t)return;e.preventDefault();
   RAT_SHUT=!RAT_SHUT;try{localStorage.setItem('flavius_ratshut',RAT_SHUT?'1':'0')}catch(err){}panelStatsUp()},true);
@@ -50,3 +63,266 @@ const MINI_PILLAR75=0.85; /* TWEAK: the pillar's height against v0.74 */
 try{if(SETTINGS.tokenStyle==='standee'&&!SETTINGS.mini3d)applySettings()}catch(e){}
 {const base=settingsHTML;settingsHTML=function(tab){let h=base.apply(this,arguments);if(tab!=='tokens'||typeof h!=='string')return h;
   return h.replace(/<button type="button" class="tokrow[^"]*" data-tokstyle="standee">[\s\S]*?<\/button>/,'')}}
+
+/* ---------- the arena's top bar on one row: his FR mark, the event's token + name, the round marker ---------- */
+(()=>{const im=document.querySelector('#brandLink img');if(im){im.src=assetURL('fr_icon.png');im.classList.add('fr75')}
+  let l=document.querySelector('link[rel="icon"]');if(!l){l=document.createElement('link');l.rel='icon';document.head.appendChild(l)}l.type='image/png';l.href=assetURL('fr_icon.png');
+  /* Event Details joins the ‹ drawer; the event name opens the card pop-up (with its own Event details button) */
+  const ev=document.getElementById('btnEvInfo'),dr=document.getElementById('navDrawer'),nw=document.getElementById('btnNew');
+  if(ev&&dr){ev.classList.add('evdet75');dr.insertBefore(ev,nw?nw.nextSibling:null)}})();
+/* evTok75 — the event's own token: the Summa Rudis medallion for the classics, the Eagle for the Golden Eagle, else nothing */
+function evTok75(ev,size=24){const k=typeof srKey==='function'?srKey(ev):null;if(k)return srImgHTML(k,size,'evtok');if(S&&S.evKey==='goldenEagle'&&typeof rtokHTML==='function')return `<span class="evtok">${rtokHTML('eagle',size,'Golden Eagle')}</span>`;return ''}
+function statusRow75(){const st=document.getElementById('status');if(!st)return;const cal=st.querySelector('#calChip');if(cal)cal.remove();
+  if(!S||S.phase==='setup')return;const ev=EV();
+  st.querySelectorAll('.rulechip').forEach(c=>c.remove());
+  const evc=[...st.querySelectorAll('.chip')].find(c=>(c.getAttribute('title')||'').startsWith(ev.n));
+  if(evc&&!evc.classList.contains('evchip75')){const fest=S.fest?` · ${festName(S.fest.kind)} ${S.fest.stage+1}/3`:'',mis=S.missio?` · Missio ${S.missio.step+1}/5`:'';
+    evc.outerHTML=`<span class="chip evchip75" role="button" tabindex="0" data-evpop aria-haspopup="dialog" aria-label="${esc(ev.n)}: the event card">${evTok75(ev)}<b>${esc(ev.short||ev.n)}</b>${fest||mis?`<small>${esc(fest||mis)}</small>`:''}</span>`}
+  [...st.querySelectorAll('.chip')].forEach(c=>{if(/^Selected|Festival|Missio · /.test(c.textContent)&&!c.classList.contains('evchip75')&&(S.fest||S.missio)&&/event \d\/3|step \d\/5/.test(c.textContent))c.remove()});
+  const rc=st.querySelector('.roundchip');if(rc)rc.innerHTML=rc.innerHTML.replace(/ · \d+×\d+\s*$/,'')}
+{const base=render;render=function(){const r=base.apply(this,arguments);try{statusRow75()}catch(e){console.error(e)}return r}}
+/* the event card pop-up: the card set in his frame, then the place, the date, this week's games and the board */
+function evPopHTML75(){const ev=EV();const L=LOCATIONS[S.locIdx];const cal=S.cal||(typeof calNow==='function'?calNow():null);const dt=cal&&typeof empireDate==='function'?empireDate(cal.season,cal.week):null;
+  const fx=typeof calNow==='function'?calNow().fx:null;const z=ZONES[RD().zone],zs=z[1]-z[0]+1;const hasCard=typeof cardRef==='function'&&cardRef('e:'+S.evKey);
+  const card=hasCard?`<span class="evp-card" style="${cardStyle('e:'+S.evKey)}"></span>`:`<span class="evp-card evp-txt"><b>${esc(ev.n)}</b><small>${ev.rounds.map((r,i)=>`${i+1}. ${esc(r.n)}`).join('<br>')}</small></span>`;
+  const house=S.spect&&S.spect.length&&typeof houseHTML==='function'?` · 🏟 ${houseHTML(S.spect.length,S.seed,S.locIdx)}`:'';
+  return `<div class="evp-frame"><img src="${assetURL('event_frame.webp')}" alt="">${card}</div>
+   <div class="evp-info"><div class="evp-nm">${evTok75(ev,30)}<b>${esc(ev.n)}</b>${ev.sr?`<small>Summa Rudis ${esc(ev.sr)}</small>`:''}</div>
+    <div>📍 ${esc(L?L.n:'Roma')}${dt?` · 📅 ${esc(dt.short)}`:''}${house}</div>
+    ${dt?`<div class="rc-sub">${esc(dt.long)}</div>`:''}
+    ${fx&&LOCATIONS[fx.loc]?`<div>This week: ${esc(LOCATIONS[fx.loc].n)} · ${esc(EVENTS[fx.ev]?EVENTS[fx.ev].n:fx.ev)}${S.cal&&S.cal.onSched===false?' <span class="rc-sub">(you are off the schedule)</span>':''}</div>`:''}
+    <div>Board ${zs}×${zs} · Round ${S.ri+1} of ${ev.rounds.length}: ${esc(RD().n)}</div>
+    <div class="evp-btns"><button class="btn" type="button" data-evdet75>📋 Event details</button><button class="btn" type="button" data-evsched75>📅 Season schedule</button></div></div>`}
+let EVPOP75={el:null,pin:false,t:0};
+function evPopShow75(anchor,pin){if(!S||S.phase==='setup')return;let p=EVPOP75.el;if(!p){p=document.createElement('div');p.id='evPop75';p.setAttribute('role','dialog');p.setAttribute('aria-label','Event card');document.body.appendChild(p);EVPOP75.el=p;
+    p.addEventListener('mouseenter',()=>clearTimeout(EVPOP75.t));p.addEventListener('mouseleave',()=>{if(!EVPOP75.pin)evPopHide75(250)})}
+  clearTimeout(EVPOP75.t);p.innerHTML=evPopHTML75();p.hidden=false;EVPOP75.pin=!!pin;const r=anchor.getBoundingClientRect();const w=Math.min(560,innerWidth-16);p.style.width=w+'px';
+  p.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left))+'px';p.style.top=(r.bottom+6)+'px'}
+function evPopHide75(ms){clearTimeout(EVPOP75.t);EVPOP75.t=setTimeout(()=>{if(EVPOP75.el){EVPOP75.el.hidden=true;EVPOP75.pin=false}},ms||0)}
+document.addEventListener('mouseover',e=>{const a=e.target.closest&&e.target.closest('[data-evpop]');if(a)evPopShow75(a,EVPOP75.pin)});
+document.addEventListener('mouseout',e=>{const a=e.target.closest&&e.target.closest('[data-evpop]');if(a&&!(e.relatedTarget&&a.contains(e.relatedTarget))&&!EVPOP75.pin)evPopHide75(250)});
+document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
+  const a=t.closest('[data-evpop]');if(a){if(EVPOP75.pin&&EVPOP75.el&&!EVPOP75.el.hidden)evPopHide75(0);else evPopShow75(a,true);return}
+  if(t.closest('[data-evdet75]')){evPopHide75(0);const b=document.getElementById('btnEvInfo');if(b)b.click();return}
+  if(t.closest('[data-evsched75]')){evPopHide75(0);if(typeof openSchedule==='function')openSchedule();return}
+  if(EVPOP75.el&&!EVPOP75.el.hidden&&!t.closest('#evPop75'))evPopHide75(0)});
+document.addEventListener('keydown',e=>{const a=e.target&&e.target.closest&&e.target.closest('[data-evpop]');if(a&&(e.key==='Enter'||e.key===' ')){e.preventDefault();a.click()}else if(e.key==='Escape'&&EVPOP75.el&&!EVPOP75.el.hidden)evPopHide75(0)});
+
+/* ---------- the turn panel: who is up, the phase, and what this round forbids, in one plate at the arena's top right ---------- */
+{const base=renderTurnInd;renderTurnInd=function(){const r=base.apply(this,arguments);try{const box=document.getElementById('turnInd');if(!box||box.hidden||!S||S.phase==='setup')return r;
+  box.classList.add('tp75');const rd=RD();const rr=roundRules(rd,true);
+  const off=Object.keys(RULE_INFO).filter(k=>!rr[k]).map(k=>`<span class="rulechip tpr75" role="button" tabindex="0" title="${esc(RULE_INFO[k][3])} — click for the event briefing"><i aria-hidden="true">⃠</i>${k==='ca'?'Abilities':RULE_INFO[k][1]}${k==='cf'&&rd.cf&&commodusIn()?' · Commodus':''}</span>`).join('');
+  if(!box.querySelector('.tprow')){const head=document.createElement('div');head.className='tprow';while(box.firstChild)head.appendChild(box.firstChild);box.appendChild(head)}
+  let rl=box.querySelector('.tprules');if(off){if(!rl){rl=document.createElement('div');rl.className='tprules';box.appendChild(rl)}rl.innerHTML=off}else if(rl)rl.remove()}catch(e){console.error(e)}return r}}
+
+(()=>{const st=document.createElement('style');st.textContent=`
+#brandLink img.fr75{height:32px;width:32px;image-rendering:auto;border-radius:4px}
+.evchip75{gap:7px;padding:2px 10px 2px 4px;cursor:pointer;border-color:var(--gold);background:linear-gradient(#2a1f17,#1f1711)}.evchip75 b{font:400 14px var(--display);letter-spacing:.04em;color:var(--gold2)}
+.evchip75 small{color:var(--muted);font-size:11px}.evchip75:hover,.evchip75:focus-visible{background:#3a2a18;outline:none}
+.evchip75 .evtok,.evchip75 img.evtok{width:24px;height:24px;display:inline-grid;place-items:center;border-radius:50%;flex:none}.evchip75 .evtok .rtok{width:24px!important;height:24px!important}
+#evPop75{position:fixed;z-index:40;display:grid;grid-template-columns:minmax(0,230px) 1fr;gap:12px;align-items:start;padding:10px;background:rgba(15,10,7,.97);border:1px solid var(--gold);border-radius:10px;box-shadow:0 16px 50px rgba(0,0,0,.7)}
+#evPop75[hidden]{display:none}
+.evp-frame{position:relative;width:100%;aspect-ratio:1057/1200}.evp-frame>img{position:absolute;inset:0;width:100%;height:100%;display:block}
+.evp-card{position:absolute;left:23.6%;width:52.8%;top:13.6%;height:67.6%;border-radius:4px;box-shadow:0 4px 14px rgba(0,0,0,.55);background-size:auto;background-color:#e8dcc0}
+.evp-card.evp-txt{display:flex;flex-direction:column;gap:6px;padding:8px;color:#2a1d12;font:12px Georgia,serif;overflow:hidden}.evp-card.evp-txt b{font:400 14px var(--display);color:#6b1a12}
+.evp-info{display:grid;gap:6px;font-size:13.5px;color:var(--bone)}.evp-nm{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.evp-nm b{font:400 19px var(--display);color:var(--gold2);letter-spacing:.03em}.evp-nm small{color:var(--muted);width:100%}
+.evp-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}.evp-btns .btn{font-size:12.5px;padding:4px 9px}
+@media (max-width:600px){#evPop75{grid-template-columns:1fr}.evp-frame{max-width:220px;margin:0 auto}}
+.turnind.tp75{flex-direction:column;align-items:stretch;gap:4px;padding:6px 10px 6px 12px;border:1px solid #6a5130;border-left:4px solid var(--pc);border-radius:6px;
+  background:linear-gradient(180deg,rgba(42,31,23,.94),rgba(22,15,10,.94));box-shadow:inset 0 0 0 1px rgba(240,207,125,.14),0 6px 18px rgba(0,0,0,.45)}
+.turnind.tp75 .tprow{display:flex;align-items:center;gap:8px}.turnind.tp75 .tiname{font:400 15px var(--display);letter-spacing:.03em}
+.turnind.tp75 .tprules{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end;padding-top:4px;border-top:1px solid rgba(240,207,125,.16)}
+.tpr75{display:inline-flex;align-items:center;gap:3px;font:600 11px var(--mono);letter-spacing:.02em;color:#f3c0b2;background:rgba(122,32,24,.35);border:1px solid rgba(192,81,63,.55);border-radius:999px;padding:1px 8px 1px 6px;cursor:pointer}
+.tpr75 i{font-style:normal;color:#ff8d76;font-size:12px}.tpr75:hover{background:rgba(160,48,36,.5)}
+#navDrawer .evdet75{white-space:nowrap}`;document.head.appendChild(st)})();
+
+/* ---------- one crowd count: 1 spectator = 1K ---------- */
+houseCount=function(n){return Math.max(0,Math.round(+n||0))*1000};
+houseHTML=function(n){n=Math.max(0,Math.round(+n||0));return `<span class="house" title="${n}K spectators — each spectator in the stands stands for roughly 1,000 Romans">${n}K</span>`};
+
+/* ---------- the market to the rulebook ---------- */
+const WDEF75=W; /* the weapon table (market code below names a level's weapon side W) */
+/* armView75 — the old `slots` array as a live view of the armor piles: reading flattens, writing null/undefined at an index takes
+   that piece out of its pile (chooseMarket, marketPullArmor and the level-2 reward still do `m.slots[i]=m.deck.pop()||null`) */
+function armView75(m){const d=Object.getOwnPropertyDescriptor(m,'slots');if(d&&d.get)return;delete m.slots;
+  Object.defineProperty(m,'slots',{configurable:true,enumerable:false,get(){const flat=m.piles.flat();return new Proxy(flat,{set(t,p,v){if(typeof p==='string'&&/^\d+$/.test(p)){let i=+p;
+    for(const pile of m.piles){if(i<pile.length){if(v==null||v===false)pile.splice(i,1);else pile[i]=v;return true}i-=pile.length}return true}t[p]=v;return true}})}});if(!Array.isArray(m.deck))m.deck=[]}
+/* armDeal75 — deals every armor of a level face up across the four slots (the pool is already shuffled) */
+function armDeal75(m){if(!m)return;if(m.piles){armView75(m);return}const pool=[...((m.slots||[]).filter(Boolean)),...(m.deck||[])];m.piles=[[],[],[],[]];pool.forEach((k,i)=>m.piles[i%4].push(k));m.deck=[];armView75(m)}
+function mktFix75(){if(!S||!S.market||!S.market.a)return;for(const lv of [1,2,3])armDeal75(S.market.a[lv])}
+{const base=buildMarket;buildMarket=function(){const m=base.apply(this,arguments);try{for(const lv of [1,2,3])armDeal75(m.a[lv])}catch(e){console.error(e)}return m}}
+{const base=matchLoad;matchLoad=async function(){const r=await base.apply(this,arguments);try{mktFix75()}catch(e){}return r}}
+const wOpen75=W=>!!(W.up4&&W.deck.length&&W.deck[W.deck.length-1]===W.up4);
+function wHas75(W,s){return s<=3?!!W.slots[s-1]:W.deck.length>0}
+function aHas75(A,s){return !!(A.piles[s-1]&&A.piles[s-1].length)}
+function wTake75(W,s){let key=null;if(s<=3){key=W.slots[s-1];if(wOpen75(W)&&W.deck.length>1)W.slots[s-1]=W.deck.splice(W.deck.length-2,1)[0];else{W.slots[s-1]=W.deck.pop()||null;if(W.up4&&!W.deck.includes(W.up4))W.up4=null}}
+  else{key=W.deck.pop()||null;W.up4=null}return key}
+function aTake75(A,s,key){const p=A.piles[s-1];const i=p.indexOf(key);if(i>=0)p.splice(i,1);return key}
+/* nearest75 — the slots closest to s that still hold something (one, or two on a tie) */
+function nearest75(has,s){if(has(s))return [s];const c=[1,2,3,4].filter(has);if(!c.length)return [];const d=Math.min(...c.map(x=>Math.abs(x-s)));return c.filter(x=>Math.abs(x-s)===d)}
+const aVal75=(kind,key)=>key?itemValue(kind,key):0;
+/* the choices at a rolled slot: the weapon (face up, or the top of the deck for slot 4) and every armor piece in the pile */
+function slotOpts75(lv,slot,sides){const W=S.market.w[lv],A=S.market.a[lv];const o=[];
+  if(sides.includes('w'))for(const s of nearest75(x=>wHas75(W,x),slot)){const key=s<=3?W.slots[s-1]:(wOpen75(W)?W.up4:null);o.push({kind:'w',s,key,blind:s===4&&!wOpen75(W)})}
+  if(sides.includes('a'))for(const s of nearest75(x=>aHas75(A,x),slot))for(const key of A.piles[s-1])o.push({kind:'a',s,key});return o}
+function optLabel75(o){return o.kind==='w'?(o.blind?`Weapon · slot 4 · the top card (face down)`:`${W[o.key].n} · weapon slot ${o.s}`):`${ARM[o.key].n} · armor slot ${o.s}`}
+function optSub75(o){return o.kind==='w'?(o.blind?'flip it and take it':wStats(mkW(o.key))):armorDesc(o.key)}
+/* marketBuy75 — one purchase (already paid) or a free item: roll (or Market Choice), re-roll for 2 coin, then take the slot's weapon or
+   one armor piece. only: 'w'|'a' for items that name their side. pref: the CPU's leaning. Returns {kind,key}. */
+async function marketBuy75(player,lv,opt={}){mktFix75();const W=S.market.w[lv],A=S.market.a[lv];const sides=opt.only?[opt.only]:['w','a'];
+  const sideHas=k=>[1,2,3,4].some(s=>k==='w'?wHas75(W,s):aHas75(A,s));
+  if(!sides.some(sideHas)){log(`Nothing is left at level ${lv}${opt.only?(opt.only==='w'?' (weapons)':' (armor)'):''}.`);return {kind:null,key:null}}
+  const cpuPick=os=>os.slice().sort((a,b)=>(aVal75(b.kind,b.key)+(b.blind?lv*1.6:0)+(b.kind===opt.pref?1:0))-(aVal75(a.kind,a.key)+(a.blind?lv*1.6:0)+(a.kind===opt.pref?1:0)))[0];
+  let slot,opts;
+  if(player.mchoice&&!opt.free){
+    if(player.cpu){slot=[1,2,3,4].map(s=>[s,slotOpts75(lv,s,sides)]).filter(([,os])=>os.length).sort((a,b)=>aVal75(cpuPick(b[1]).kind,cpuPick(b[1]).key)-aVal75(cpuPick(a[1]).kind,cpuPick(a[1]).key))[0][0]}
+    else slot=await modal('Market Choice','<p>Pick the slot you want — no die.</p>',[1,2,3,4].map(s=>({label:`Slot ${s}`,sub:slotOpts75(lv,s,sides).map(o=>o.blind?'a face-down weapon':o.kind==='w'?WDEF75[o.key].n:ARM[o.key].n).join(' · ')||'empty',value:s})));
+    slot=slot||1;log(`${nm(player)} uses Market Choice for slot ${slot}.`);opts=slotOpts75(lv,slot,sides)}
+  else for(;;){slot=1+rnd(4);
+    if(slot===4&&sides.includes('w')&&!wOpen75(W)&&W.deck.length){W.up4=W.deck[W.deck.length-1];log(`${nm(player)} rolls the market die: <b>4</b> — the top weapon is flipped: <b>${esc(WDEF75[W.up4].n)}</b>.`)}
+    else log(`${nm(player)} rolls the market die: <b>${slot}</b>.`);
+    opts=slotOpts75(lv,slot,sides);
+    if(opt.free||player.coin<2||!opts.length)break;
+    let re=false;
+    if(player.cpu){const b=cpuPick(opts);re=player.diff==='hard'&&aVal75(b.kind,b.key)<lv*2&&rand()<.5}
+    else{const v=await modal(`Market die · ${slot}`,`<p>The die shows <b>${slot}</b>. Take one of these, or pay 2 coin to roll again${slot===4&&wOpen75(W)?' (the flipped weapon stays face up in slot 4)':''}.</p>`,
+      [...opts.map((o,i)=>({label:optLabel75(o),sub:optSub75(o),value:'t'+i,card:o.key?(o.kind==='w'?'w:':'a:')+o.key:null})),{label:'Re-roll',sub:'2 coin',value:'re'}]);
+      if(v&&v[0]==='t'){const o=opts[+v.slice(1)];return {kind:o.kind,key:o.kind==='w'?wTake75(W,o.s):aTake75(A,o.s,o.key)}}re=v==='re'}
+    if(!re)break;player.coin-=2;coinLog(player,-2,'market re-rolls');log(`${nm(player)} pays 2 coin to re-roll.`)}
+  if(!opts.length)return {kind:null,key:null};
+  let o;if(opts.length===1||player.cpu)o=player.cpu?cpuPick(opts):opts[0];
+  else{const v=await modal(`Market · slot ${slot}`,'<p>Take the weapon or one armor piece.</p>',opts.map((x,i)=>({label:optLabel75(x),sub:optSub75(x),value:i,card:x.key?(x.kind==='w'?'w:':'a:')+x.key:null})));o=opts[v!=null?v:0]}
+  return {kind:o.kind,key:o.kind==='w'?wTake75(W,o.s):aTake75(A,o.s,o.key)}}
+/* items that name their side (offerings, cards) roll on that side only, with no re-roll */
+marketRoll=async function(player,kind,lv,opt={}){const r=await marketBuy75(player,lv,{...opt,only:kind});return r.key};
+marketPeek=function(kind,lv,slot){mktFix75();const m=S.market[kind][lv];if(kind==='a')return m.piles[slot-1]&&m.piles[slot-1].length?m.piles[slot-1].join(', '):'(empty)';
+  if(slot<=3)return m.slots[slot-1]||'(empty)';return m.deck.length?(wOpen75(m)?m.up4:'face-down'):'(empty)'};
+marketTake=function(kind,lv,slot){mktFix75();if(kind==='w')return wTake75(S.market.w[lv],slot);const A=S.market.a[lv];const s=nearest75(x=>aHas75(A,x),slot)[0];return s?A.piles[s-1].shift():null};
+
+/* the market window: his board, weapons left and armor right, level 3 at the top */
+const MB75={w:[[4.4,11.6],[12.1,19.3],[19.7,31.8],[32.6,44.6]],a:[[55.4,65.0],[65.6,75.3],[75.8,85.4],[86.0,95.7]],rows:{3:[5.6,32.0],2:[36.7,63.7],1:[68.1,95.2]}};
+function boardHTML75(player){const m=S.market;const cell=(x,y,inner,cls='')=>`<div class="mb-cell ${cls}" style="left:${x[0]}%;width:${x[1]-x[0]}%;top:${y[0]}%;height:${y[1]-y[0]}%;--ch:${(y[1]-y[0]).toFixed(1)}">${inner}</div>`;let h='';
+  for(const lv of [3,2,1]){const y=MB75.rows[lv];const W=m.w[lv],A=m.a[lv];
+    for(let s=1;s<=4;s++){const x=MB75.w[s-1];let inner='';
+      if(s<=3)inner=W.slots[s-1]?`<span class="mb-w" data-card="w:${W.slots[s-1]}" style="${cardStyle('w:'+W.slots[s-1])}" title="${esc(WDEF75[W.slots[s-1]].n)}"></span>`:'';
+      else inner=W.deck.length?(wOpen75(W)?`<span class="mb-w" data-card="w:${W.up4}" style="${cardStyle('w:'+W.up4)}" title="${esc(WDEF75[W.up4].n)} (flipped)"></span><span class="mb-n">×${W.deck.length}</span>`:`<span class="mb-back" title="${W.deck.length} face down"><b>FLAVIUS<br>RULE</b><small>×${W.deck.length}</small></span>`):'';
+      h+=cell(x,y,inner,'w')}
+    for(let s=1;s<=4;s++){const x=MB75.a[s-1];const p=A.piles[s-1]||[];const n=p.length;
+      const inner=p.map(k=>`<span class="mb-a" data-card="a:${k}" style="${cardStyle('a:'+k)}" title="${esc(ARM[k].n)}"></span>`).join('');h+=cell(x,y,`<div class="mb-pile n${Math.min(n,6)}">${inner}</div>`,'a')}}
+  return `<div class="mboard75"><img src="${assetURL('market_board.webp')}" alt="The market board">${h}</div>`}
+openMarket=async function(player){mktFix75();const vetOn=weak(player,'tax');if(vetOn&&player.cpu)player.taxPref=player.cf>player.coin?'cf':'coin';
+  for(;;){const vetCF=vetOn&&player.taxPref==='cf'?1:0,vet=vetOn&&!vetCF?1:0;
+    const notes=[vetOn?`⚖ Old debts: +1 ${vetCF?'CF':'coin'} per purchase`:'',player.discount?`％ Discount: −${player.discount} coin this turn`:'',player.mchoice?'☝ Market Choice: pick your slot, no die':''].filter(Boolean);
+    const body=`<div class="mkt75">${boardHTML75(player)}
+      <div class="mkt75-foot"><span>Pay for a level, roll the market die, then take that slot's <b>weapon</b> or <b>one armor piece</b> · re-roll 2 coin</span><span class="stall-purse">${ICO&&ICO.coin?ICO.coin:'🪙'} <b>${player.coin}</b> coin · 🌾 <b>${player.cf}</b> CF${player.market?' · <b style="color:var(--gold2)">open</b>':''}</span></div>
+      ${player.market?'':`<div class="mkt75-lock"><div><div style="font-size:30px">🔒</div><b>The market is closed.</b><br><span class="rc-sub">3 Crowd Favor opens it for this turn — then buy as often as your coin allows.</span></div></div>`}</div>${notes.length?`<p class="rc-sub" style="margin:6px 0 0">${notes.join(' · ')}</p>`:''}${typeof hint==='function'?hint('market'):''}`;
+    const btns=[];
+    if(!player.market)btns.push({label:'Unlock market',sub:cfAllowed()?'3 CF':'Crowd Favor is locked',value:'unlock',disabled:player.cf<3||!cfAllowed(),primary:1});
+    else for(const lv of [1,2,3]){const left=[1,2,3,4].some(s=>wHas75(S.market.w[lv],s)||aHas75(S.market.a[lv],s));
+      btns.push({label:`Buy at level ${lv}`,sub:`${purchaseCost(player,lv)+vet} coin${vetCF?' + 1 CF':''}${left?'':' · empty'}`,value:'b'+lv,disabled:!left||player.coin<purchaseCost(player,lv)+vet||vetCF&&player.cf<1})}
+    if(player.market&&vetOn)btns.push({label:vetCF?'⚖ Pay old debts in coin':'⚖ Pay old debts in CF',sub:'Veteranus: +1 per purchase',value:'taxswap'});
+    btns.push({label:'Close market',value:'close'});
+    const v=await modal('Market of Flavius',body,btns,{wide:1});
+    if(v==='close'||!v)break;
+    if(v==='taxswap'){player.taxPref=vetCF?'coin':'cf';continue}
+    if(v==='unlock'){player.cf-=3;player.market=true;log(`${nm(player)} spends 3 CF to unlock the market.`);continue}
+    const lv=+v[1];player.coin-=purchaseCost(player,lv)+vet;if(vetCF)player.cf-=1;coinLog(player,-(purchaseCost(player,lv)+vet),'market purchases');stat(player,'buy');crowdReact('buy',{p:player});
+    log(`${nm(player)} buys at level ${lv}.`);
+    const got=await marketBuy75(player,lv);if(got.kind==='w'&&got.key)await gainWeapon(player,got.key);else if(got.key)await gainArmorPiece(player,got.key);
+    checkMandata(player);render()}};
+(()=>{const st=document.createElement('style');st.textContent=`
+.mkt75{position:relative}.mboard75{position:relative;width:100%;aspect-ratio:2000/1294;border-radius:8px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.mboard75>img{position:absolute;inset:0;width:100%;height:100%;display:block}
+.mb-cell{position:absolute;display:flex;align-items:center;justify-content:center}
+.mb-w{display:block;height:100%;background-size:auto;position:relative;border-radius:4px;box-shadow:0 3px 8px rgba(0,0,0,.5)}
+.mboard75{container-type:size}.mb-cell.w .mb-w{position:absolute;left:50%;top:50%;height:auto;aspect-ratio:600/416;width:calc(var(--ch) * 0.9cqh);transform:translate(-50%,-50%) rotate(-90deg)}
+.mb-cell.w:nth-child(n){z-index:1}.mb-cell.w .mb-w:hover{z-index:3}
+.mb-w[style*="background"]{background-repeat:no-repeat}
+.mb-back{width:88%;height:94%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:5px;background:radial-gradient(circle at 50% 40%,#3a2a1a,#120b07);border:2px solid #b8963e;color:#e8c46a;font:400 clamp(8px,1.1vw,13px)/1.05 var(--display);text-align:center;letter-spacing:.06em;box-shadow:0 3px 8px rgba(0,0,0,.55)}
+.mb-back small{font:600 11px var(--mono);color:#f0dfb0}.mb-n{position:absolute;right:4%;bottom:4%;background:rgba(0,0,0,.7);color:#f0dfb0;font:600 10px var(--mono);border-radius:6px;padding:0 4px}
+.mb-pile{display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:2px;width:100%;height:100%;padding:12% 4% 14%}
+.mb-a{display:block;width:46%;aspect-ratio:1/1;background-color:transparent!important;background-repeat:no-repeat;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+.mb-pile.n1 .mb-a{width:80%}.mb-pile.n2 .mb-a{width:62%}.mb-pile.n5 .mb-a,.mb-pile.n6 .mb-a{width:40%}
+.mkt75-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:13px;color:var(--muted)}
+.mkt75-lock{position:absolute;inset:0;bottom:30px;display:grid;place-items:center;background:rgba(10,6,4,.55);border-radius:8px;text-align:center;color:var(--bone)}`;document.head.appendChild(st)})();
+
+/* ---------- Play Now: the mockup's layout over the existing controls ---------- */
+const PN75={er:null};
+function pnLoadRecs75(){try{Store.getDoc('hall','eventRecords').then(er=>{PN75.er=er||{};const el=document.querySelector('#mBody .pn-rec');if(el)el.outerHTML=pnRecHTML75(CFG.ev)}).catch(()=>{})}catch(e){}}
+function pnRecHTML75(k){const r=PN75.er&&PN75.er[k];return `<div class="pn-rec">${r?`🏆 Record: <b>${r.cf} CF</b> · ${esc(r.name)}${r.clsName?` (${esc(r.clsName)})`:''}${r.won?' · won':''}`:'🏆 No record yet — set one'}</div>`}
+function pnBadge75(ev){const t=ev.min===ev.max?`${ev.min}`:`${ev.min}–${ev.max}`;return `<div class="pn-badge" title="${t} gladiators"><img src="${assetURL('badge_players.webp')}" alt=""><b>${t} ${ev.max===1?'PLAYER':'PLAYERS'}</b></div>`}
+function pnPresets75(){try{return JSON.parse(localStorage.getItem('flavius_pnpresets')||'[]')||[]}catch(e){return []}}
+function pnPresetsSave75(L){try{localStorage.setItem('flavius_pnpresets',JSON.stringify(L.slice(0,8)))}catch(e){}}
+function pnLayout75(h){const T=document.createElement('template');T.innerHTML=h;const f=T.content;const grid=f.querySelector('.setup-grid');if(!grid||grid.children.length<2)return h;
+  const tabs=f.querySelector('.seg[role="tablist"]'),[left,right]=grid.children,opts=f.querySelector('.setup-opts'),err=f.querySelector('#setupErr'),btns=f.querySelector('.mbtns');
+  const pick=sel=>{const e=right.querySelector(sel);if(!e)return null;const l=e.closest('label')||e;l.remove();return l};
+  const cal=right.querySelector('.calline')||right.querySelector('.card2');if(cal)cal.remove();
+  const evLab=pick('#evSel'),locLab=pick('#locSel'),nLab=pick('#nSel');const desc=right.querySelector('.evdesc');if(desc)desc.remove();const seats=right.querySelector('.seats');if(seats)seats.remove();
+  const ev=EVENTS[CFG.ev],L=LOCATIONS[CFG.loc];
+  /* the event strip, in the select's order */
+  const sel=evLab&&evLab.querySelector('#evSel');const keys=sel?[...sel.querySelectorAll('option')].map(o=>o.value).filter(k=>EVENTS[k]):Object.keys(EVENTS);
+  const strip=keys.map(k=>{const E=EVENTS[k];const has=!E.custom&&typeof cardRef==='function'&&cardRef('e:'+k);const nmx=(E.n||k).replace('Classic · ','');
+    return `<button type="button" class="pn-ev ${k===CFG.ev?'on':''}" data-pnev="${k}" title="${esc(E.n)}">${has?`<span class="pn-evc" style="${cardStyle('e:'+k)}"></span>`:`<span class="pn-evc pn-cust">✦</span>`}<span class="pn-evn">${esc(nmx)}</span></button>`}).join('');
+  const has=!ev.custom&&typeof cardRef==='function'&&cardRef('e:'+CFG.ev);
+  const big=`<div class="pn-big"><div class="evp-frame pn-frame"><img src="${assetURL('event_frame.webp')}" alt="">${has?`<span class="evp-card" style="${cardStyle('e:'+CFG.ev)}" data-card="e:${CFG.ev}"></span>`:`<span class="evp-card evp-txt"><b>${esc(ev.n)}</b><small>${ev.rounds.map((r,i)=>`${i+1}. ${esc(r.n)}`).join('<br>')}</small></span>`}</div>
+    <div class="pn-bigr"><div class="pn-evt">${evTok75(ev,40)}<div><h3>${esc(ev.n)}</h3><small>${esc(ev.short||'')}${ev.sr?` · Summa Rudis ${esc(ev.sr)}`:''}</small></div>${pnBadge75(ev)}</div>
+     ${desc?`<div class="pn-desc">${desc.querySelector('div')?desc.querySelector('div').innerHTML:desc.innerHTML}</div>`:''}${pnRecHTML75(CFG.ev)}${nLab?nLab.outerHTML:''}</div></div>`;
+  const C=CFG.seats.slice(0,CFG.n);const you=C.find(s=>!s.cpu);
+  const wrap=document.createElement('div');wrap.className='pn75';
+  wrap.innerHTML=`<div class="pn-top"><div class="pn-tabs"></div><div class="pn-cal"></div><div class="pn-acts"><button type="button" class="btn pn-quick" data-pnquick title="This week's games, you as a random class against CPUs — straight to the sand">⚡ Quick start</button><button type="button" class="btn" data-pnpre aria-expanded="false">★ Presets</button><div class="pn-premenu" hidden></div></div></div>
+   <div class="pn-bands"><section class="pn-card"><div class="pn-lbl">Where · the city</div><div class="pn-where"></div></section>
+    <section class="pn-card"><div class="pn-lbl"><span>What · the event</span><span class="pn-evsel"></span></div><div class="pn-strip">${strip}</div>${big}</section></div>
+   <section class="pn-card pn-who"><div class="pn-lbl">Who · the gladiators</div><div class="pn-whobody"></div></section>
+   <section class="pn-card pn-optc"></section>
+   <div class="pn-start"><div class="pn-sum"><b>${esc(ev.n)}</b> at <b>${esc(L?L.n:'?')}</b> · ${CFG.n} gladiator${CFG.n===1?'':'s'} · You: <b>${you?esc((CLASSES[you.cls]||{}).name||you.cls):'watching'}</b></div><div class="pn-go"></div></div>`;
+  if(tabs)wrap.querySelector('.pn-tabs').appendChild(tabs);if(cal)wrap.querySelector('.pn-cal').appendChild(cal);
+  const wh=wrap.querySelector('.pn-where');while(left.firstChild)wh.appendChild(left.firstChild);if(locLab)wh.appendChild(locLab);
+  if(evLab){evLab.classList.add('pn-evlab');wrap.querySelector('.pn-evsel').appendChild(evLab)}
+  const wb=wrap.querySelector('.pn-whobody');while(right.firstChild)wb.appendChild(right.firstChild);if(seats){wb.appendChild(seats);
+    [...seats.querySelectorAll(':scope>.seat')].forEach((el,i)=>{const s=CFG.seats[i];if(!s)return;const k=s.cls;const url=typeof MINI_URL!=='undefined'&&MINI_URL[k];
+      if(url)el.insertAdjacentHTML('afterbegin',`<div class="pn-fig"><img src="${assetURL(url.slice(7))}" alt=""></div>`);
+      const sw=typeof SIM50!=='undefined'&&SIM50.cls&&SIM50.cls[k];if(sw){const row=el.querySelector('.row');if(row)row.insertAdjacentHTML('afterend',`<div class="pn-win" title="From the guide's ${SIM50.games} simulated classic events"><em>Wins <b>${sw.win}%</b> of classic events</em><span><i style="width:${Math.min(100,sw.win*2.5)}%"></i></span></div>`)}})}
+  if(opts)wrap.querySelector('.pn-optc').appendChild(opts);const go=wrap.querySelector('.pn-go');if(err)go.appendChild(err);if(btns)go.appendChild(btns);
+  /* anything else the modes added keeps its place after the layout */
+  const out=document.createElement('div');out.appendChild(wrap);const rest=[...f.childNodes].filter(n=>n!==grid&&!(n.nodeType===3&&!n.textContent.trim()));rest.forEach(n=>{if(n.isConnected===false&&n!==tabs&&n!==opts&&n!==err&&n!==btns)out.appendChild(n)});
+  return out.innerHTML}
+{const base=setupBody;setupBody=function(){const h=base.apply(this,arguments);try{if(CFG.mode!=='event'||CFG.hotseat)return h;return pnLayout75(h)}catch(e){console.error(e);return h}}}
+{const base=openSetup;openSetup=function(){pnLoadRecs75();return base.apply(this,arguments)}}
+function pnRedraw75(){const box=document.getElementById('mBody');if(box){box.innerHTML=setupBody();try{render()}catch(e){}}}
+document.addEventListener('click',e=>{const t=e.target;if(!t.closest||!t.closest('#mBody .pn75'))return;
+  const ev=t.closest('[data-pnev]');if(ev){const s=document.getElementById('evSel');if(s){s.value=ev.dataset.pnev;s.dispatchEvent(new Event('change',{bubbles:true}))}return}
+  if(t.closest('[data-pnquick]')){const c=calNow();CFG.mode='event';CFG.loc=c.fx.loc;CFG.ev=c.fx.ev;const E=EVENTS[CFG.ev];CFG.n=clamp(4,E.min,E.max);
+    const pool=allowedClasses(E).filter(k=>!CLASSES[k].custom);const sh=pool.slice().sort(()=>Math.random()-.5);
+    CFG.seats.slice(0,CFG.n).forEach((st,i)=>{st.cls=sh[i%sh.length];st.cpu=i!==0;st.saved=null;st.name=clsSavedName(st.cls)});pnRedraw75();
+    setTimeout(()=>{const g=document.getElementById('goBtn');if(g)g.click()},60);return}
+  const pb=t.closest('[data-pnpre]');if(pb){const m=document.querySelector('#mBody .pn-premenu');if(!m)return;const L=pnPresets75();
+    m.innerHTML=`${L.map((p,i)=>`<div class="pn-prerow"><button type="button" class="btn" data-pnload="${i}">${esc(p.name)}</button><button type="button" class="btn" data-pndel="${i}" aria-label="Delete ${esc(p.name)}">✕</button></div>`).join('')||'<div class="rc-sub">No presets yet.</div>'}<button type="button" class="btn primary" data-pnsave>★ Save this setup</button>`;
+    m.hidden=!m.hidden;pb.setAttribute('aria-expanded',String(!m.hidden));return}
+  if(t.closest('[data-pnsave]')){const E=EVENTS[CFG.ev],L=LOCATIONS[CFG.loc];const L2=pnPresets75();L2.unshift({name:`${E.short||E.n} · ${L?L.n:'?'} · ${CFG.n}`,cfg:{loc:CFG.loc,ev:CFG.ev,n:CFG.n,seats:JSON.parse(JSON.stringify(CFG.seats.slice(0,8))),opts:JSON.parse(JSON.stringify(CFG.opts||{}))}});pnPresetsSave75(L2);if(typeof mToast==='function')mToast('★ Preset saved');pnRedraw75();return}
+  const ld=t.closest('[data-pnload]');if(ld){const p=pnPresets75()[+ld.dataset.pnload];if(p&&EVENTS[p.cfg.ev]){Object.assign(CFG,{mode:'event',loc:p.cfg.loc,ev:p.cfg.ev,n:p.cfg.n});p.cfg.seats.forEach((s,i)=>{if(CFG.seats[i]&&CLASSES[s.cls])Object.assign(CFG.seats[i],s)});CFG.opts={...CFG.opts,...p.cfg.opts};pnRedraw75()}return}
+  const dl=t.closest('[data-pndel]');if(dl){const L=pnPresets75();L.splice(+dl.dataset.pndel,1);pnPresetsSave75(L);const b=document.querySelector('#mBody [data-pnpre]');const m=document.querySelector('#mBody .pn-premenu');if(m)m.hidden=true;if(b)b.click();return}},true);
+(()=>{const st=document.createElement('style');st.textContent=`
+.pn75{display:grid;gap:12px}.pn-top{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}.pn-top .seg{margin:0!important}.pn-cal{flex:1 1 260px;min-width:0}.pn-cal .calline{margin:0}
+.pn-acts{display:flex;gap:6px;position:relative}.pn-quick{border-color:var(--gold);color:var(--gold2)}
+.pn-premenu{position:absolute;right:0;top:calc(100% + 4px);z-index:5;display:grid;gap:4px;min-width:240px;padding:8px;background:var(--panel);border:1px solid var(--gold);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.6)}.pn-premenu[hidden]{display:none}.pn-prerow{display:flex;gap:4px}.pn-prerow .btn:first-child{flex:1}
+.pn-bands{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:12px}@media (max-width:900px){.pn-bands{grid-template-columns:minmax(0,1fr)}}
+.pn-card{background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:10px 12px;min-width:0}
+.pn-lbl{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font:400 15px var(--display);letter-spacing:.06em;color:var(--gold2);margin-bottom:8px}
+.pn-where .mapbox{width:100%;max-width:min(100%,400px);margin:0 auto}.pn-where .lochead{margin:0 0 8px!important}.pn-where label{margin-top:8px}
+.pn-evlab{display:flex!important;align-items:center;gap:6px;font:13px var(--body)!important;color:var(--muted);letter-spacing:0}.pn-evlab select{max-width:200px}
+.pn-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x proximity}
+.pn-ev{flex:none;width:78px;display:grid;gap:3px;justify-items:center;padding:4px;border:1px solid var(--line2);border-radius:7px;background:var(--panel);cursor:pointer;scroll-snap-align:start;color:var(--bone)}
+.pn-ev.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset;background:#3a2a18}.pn-ev:hover{border-color:var(--gold)}
+.pn-evc{display:block;width:66px;aspect-ratio:480/692;border-radius:4px;background-color:#2a1f17}.pn-cust{display:grid;place-items:center;font-size:26px;color:#cdb8ff}
+.pn-evn{font-size:10.5px;line-height:1.15;text-align:center;color:var(--muted)}
+.pn-big{display:grid;grid-template-columns:minmax(150px,210px) minmax(0,1fr);gap:12px;margin-top:8px;align-items:start}@media (max-width:600px){.pn-big{grid-template-columns:1fr}.pn-frame{max-width:210px;margin:0 auto}}
+.pn-bigr{display:grid;gap:8px;min-width:0}.pn-evt{display:flex;gap:10px;align-items:center}.pn-evt h3{margin:0;font:400 20px var(--display);color:var(--gold2)}.pn-evt small{color:var(--muted)}
+.pn-badge{position:relative;width:118px;flex:none;margin-left:auto}.pn-badge img{width:100%;display:block}.pn-badge b{position:absolute;left:12%;right:12%;top:65%;transform:translateY(-50%);text-align:center;font:400 13px/1 var(--display);letter-spacing:.04em;color:#c42a1c;-webkit-text-stroke:.4px #f0c34a;text-shadow:0 0 2px #f0c34a}
+.pn-desc{font-size:13.5px}.pn-desc .rounds{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.pn-rec{font-size:13px;color:var(--muted)}.pn-rec b{color:var(--gold2)}
+.pn-who .seats{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin:6px 0 0}
+.pn-who .seat{display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:8px 10px;border-left:0;border-top:4px solid var(--pc);border-radius:8px;position:relative;min-height:150px}
+.pn-who .seat .cn{min-width:0}.pn-fig{position:absolute;right:6px;top:6px;width:52px;height:80px;pointer-events:none}.pn-fig img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 4px rgba(0,0,0,.5))}
+.pn-who .seat .row{padding-right:56px}.pn-win{font-size:12px;color:var(--muted);display:grid;gap:2px}.pn-win em{font-style:normal}.pn-win span{display:block;height:5px;background:#33271e;border-radius:3px;overflow:hidden}.pn-win i{display:block;height:100%;background:linear-gradient(90deg,#6f9a4a,#e6b93a)}
+.pn-start{position:sticky;bottom:-18px;z-index:4;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;padding:10px 12px;margin:0 -8px;background:linear-gradient(180deg,rgba(31,23,17,.96),rgba(20,14,10,.98));border-top:1px solid var(--gold);border-radius:10px 10px 0 0}
+.pn-sum{font-size:13.5px;color:var(--muted)}.pn-sum b{color:var(--bone)}.pn-go{display:flex;flex-direction:column;align-items:flex-end;gap:4px}.pn-go .mbtns{margin:0;flex-wrap:nowrap}.pn-go .mbtns .btn{flex:none}.pn-go #setupErr{margin:0!important}
+.pn-go #goBtn{font:400 17px var(--display);letter-spacing:.05em;padding:9px 22px}`;document.head.appendChild(st)})();

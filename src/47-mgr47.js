@@ -66,7 +66,7 @@ function lanRecordHTML(m,w){const s=msp(m,w.season);const L=leagueSort(w.mgrs,w.
 /* ---------------- fame, fans, debt: the header ---------------- */
 function teamFans(){const pm=me();const names=new Map(rosterOf(pm).map(g=>[g.name.toLowerCase(),g]));const out=[];
   for(const r of (typeof CROWD_CACHE!=='undefined'?CROWD_CACHE:[])){if(r.banned||r.recruited)continue;for(const [k,rel] of [[r.fanOf,'fan'],[r.patronFav,'patron'],[r.kin&&r.kin.name,r.kin&&r.kin.rel]]){if(k&&names.has(String(k).toLowerCase())){out.push({r,g:names.get(String(k).toLowerCase()),rel});break}}}return out}
-function fameTipHTML(){const F=teamFans();return `<span class="fametip" role="tooltip"><b>👥 ${F.length} active fan${F.length===1?'':'s'} of your house</b><span class="rc-sub">regulars who follow a fighter on your roster — every one counts</span>${F.length?`<span class="ftlist">${F.slice(0,40).map(x=>`<span>${esc(x.r.name)} <i>${esc(x.r.city||'')}</i> · ${x.rel==='fan'?'a fan of':x.rel==='patron'?'patron of':esc(x.rel)+' of'} <b>${esc(x.g.name)}</b></span>`).join('')}${F.length>40?`<span class="rc-sub">…and ${F.length-40} more</span>`:''}</span>`:'<span class="rc-sub">Nobody yet — win in front of a crowd and they will come.</span>'}</span>`}
+function fameTipHTML(){const F=teamFans();return `<span class="fametip" role="tooltip"><b>👥 ${F.length}K active fans of your house</b><span class="rc-sub">regulars who follow a fighter on your roster — every one counts</span>${F.length?`<span class="ftlist">${F.slice(0,40).map(x=>`<span>${esc(x.r.name)} <i>${esc(x.r.city||'')}</i> · ${x.rel==='fan'?'a fan of':x.rel==='patron'?'patron of':esc(x.rel)+' of'} <b>${esc(x.g.name)}</b></span>`).join('')}${F.length>40?`<span class="rc-sub">…and ${F.length-40} more</span>`:''}</span>`:'<span class="rc-sub">Nobody yet — win in front of a crowd and they will come.</span>'}</span>`}
 /* perk points bank */
 {const _sc=schoolingCardHTML;schoolingCardHTML=function(){return _sc().replace('Available now:','Banked and ready (they never expire):')}}
 
@@ -77,7 +77,7 @@ function qsClose(w,pm){qsInit(w,pm);const Q=w.qs;if(Q.closed)return;const L=leag
   Q.signed=rosterOf(pm).map(g=>g.id).filter(id=>!Q.roster.includes(id)).length;Q.lost=Math.max(0,Q.bet-(pm.betNet||0));Q.fameD=Math.max(0,pm.fame-Q.fame);Q.fansD=Math.max(0,teamFans().length-Q.fans);Q.fameAt=pm.fame;w.qsDue={...Q}}
 function quaestorLedger(w,pm){const Q=w.qsDue;if(!Q||Q.paid)return null;
   const lines=[['🏛 The Senate’s stipend — your house stood the whole season',Q.rich?0:30],['📜 Tax return on the wages you paid ('+Q.wages+' coin)',Math.round(Q.wages*0.10)],['🎲 Rebate on the tax you paid on lost wagers',Math.round(Q.lost*0.12)],
-    ['🤝 Recruiting bounty — '+Q.signed+' new signing'+(Q.signed===1?'':'s'),Q.signed*12],['⭐ Fame gained this season ('+Q.fameD+')',Q.fameD*3],['👥 New fans ('+Q.fansD+')',Q.fansD*2],
+    ['🤝 Recruiting bounty — '+Q.signed+' new signing'+(Q.signed===1?'':'s'),Q.signed*12],['⭐ Fame gained this season ('+Q.fameD+')',Q.fameD*3],['👥 New fans ('+Q.fansD+'K)',Q.fansD*2],
     ['📊 League finish — '+(Q.pos?'#'+Q.pos+' of '+Q.n:'—'),Q.pos?Math.max(0,(Q.n-Q.pos))*4:0]].filter(x=>x[1]>0);
   let total=lines.reduce((a,x)=>a+x[1],0);const cap=120+(Q.fameAt||0)*3;if(total>cap){lines.push([`⚖ The quaestor’s ceiling (${cap})`,cap-total]);total=cap}
   Q.paid=true;w.qsDue=null;pm.coin+=total;w.qsLast={season:Q.s,lines,total,seen:false};

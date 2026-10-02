@@ -417,9 +417,9 @@ async function cpuMarket(player) {
     crowdReact('buy', {
       p: player
     });
-    log(`${nm(player)} buys a level ${lv} ${kind === 'w' ? 'weapon' : 'armor'}.`);
-    const key = await marketRoll(player, kind, lv);
-    if (kind === 'w') await gainWeapon(player, key);else if (key) await gainArmorPiece(player, key);
+    log(`${nm(player)} buys at level ${lv}.`);
+    const got = typeof marketBuy75 === 'function' ? await marketBuy75(player, lv, { pref: kind }) : { kind, key: await marketRoll(player, kind, lv) }; /* v0.75: one roll, either side (rulebook p.25) */
+    if (got.kind === 'w' && got.key) await gainWeapon(player, got.key);else if (got.key) await gainArmorPiece(player, got.key);
     think(player, pickOne(QUOTES.market), 'think');
     render();
     await sleep(250);

@@ -158,7 +158,7 @@ function seasonAwards(w,season=w.season){
   {const g=top(G,x=>x.ss.dmg);if(g&&g.ss.dmg)add('vulcan',g,null,`${g.ss.dmg} damage dealt`)}
   {const g=top(G,x=>(x.ss.surv||0)*10+x.ss.ev,x=>x.alive);if(g&&(g.ss.surv||0)>=2)add('aegis',g,null,`walked away from ${g.ss.surv} of ${g.ss.ev} bouts`)}
   {const g=top(G,x=>x.ovr-(x.ss.o0??x.ovr),x=>x.alive);if(g&&g.ovr-(g.ss.o0??g.ovr)>0)add('rising',g,null,`+${g.ovr-g.ss.o0} rating (${g.ss.o0} → ${g.ovr})`)}
-  {const fansOf=x=>typeof fansFor==='function'?fansFor(x.name):0;const g=top(G,fansOf);if(g&&fansOf(g))add('vox',g,null,`≈${(fansOf(g)*1000).toLocaleString()} fans`)}
+  {const fansOf=x=>typeof fansFor==='function'?fansFor(x.name):0;const g=top(G,fansOf);if(g&&fansOf(g))add('vox',g,null,`≈${fansOf(g)}K fans`)}
   // and now, the ones the crowd actually stays for
   {const g=top(G,x=>x.ss.taken);if(g&&g.ss.taken)add('sponge',g,null,`${g.ss.taken} damage taken — and still here`)}
   {const g=top(G,x=>x.ss.ev,x=>x.ss.w===0);if(g&&g.ss.ev>=2)add('sandal',g,null,`0 wins in ${g.ss.ev} bouts`)}

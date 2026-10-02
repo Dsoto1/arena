@@ -387,7 +387,7 @@ async function startEvent(config) {
     log(`<i>The pompa winds once around the sand — musicians, priests, and the fighters behind them. The editor rises. The herald fills his lungs:</i>`);
     log(`“Citizens of ${locN}! By the generosity of the editor, <b>FLAVIUS</b>, we present ${ev.n}${ev.tag ? ` — a ${ev.tag} bout` : ''}! ${S.players.length === 1 ? `One brave soul enters the sand alone` : `${['', '', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight'][S.players.length] || S.players.length} shall enter the sand`}!”`);
     log(`The roll is called: ${S.players.map(player => `${nm(player)} the ${CLASSES[player.cls] ? CLASSES[player.cls].name : player.cls}`).join(' · ')}.`);
-    if (S.turnoutWhy && S.spect) log(`<i>The empire turns out: <b>${S.spect.length}</b> in the stands — ${S.turnoutWhy.join(', ')}${S.omen && S.omen.att ? `, swayed by ${esc(S.omen.n.toLowerCase())}` : ''}.</i>`);
+    if (S.turnoutWhy && S.spect) log(`<i>The empire turns out: <b>${S.spect.length}K</b> spectators in the stands — ${S.turnoutWhy.join(', ')}${S.omen && S.omen.att ? `, swayed by ${esc(S.omen.n.toLowerCase())}` : ''}.</i>`);
     if (typeof HINTS !== 'undefined' && HINTS && ev.blurb) log(`<div class="tiphint"><b>${esc(ev.short || ev.n)}</b> ${esc(ev.blurb)} Rounds: ${ev.rounds.map(r => r.n).join(' → ')}.</div>`);
   }
   if (!HEADLESS && typeof curtainTo === 'function') {

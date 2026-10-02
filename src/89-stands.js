@@ -14,7 +14,7 @@ function sideTabsEnsure(){const side=document.querySelector('aside.side');if(!si
     const pane=document.createElement('div');pane.id='standsPane';pane.className='panel standspane';pane.hidden=true;side.appendChild(pane)}
   return bar}
 function sideTabsHTML(){const n=standsCount(),k=S&&S.npcKills||0;
-  return [['fighter','⚔ Fighter'],['field',`🐾 Field${k?` · ${k} slain`:''}`],['stands',`🏟 Stands · ${n}`]].map(([t,l])=>`<button type="button" role="tab" data-sidetab="${t}" aria-selected="${SIDE.tab===t}" class="${SIDE.tab===t?'on':''}">${l}</button>`).join('')}
+  return [['fighter','⚔ Fighter'],['field',`🐾 Field${k?` · ${k} slain`:''}`],['stands',`🏟 Stands · ${n}K`]].map(([t,l])=>`<button type="button" role="tab" data-sidetab="${t}" aria-selected="${SIDE.tab===t}" class="${SIDE.tab===t?'on':''}">${l}</button>`).join('')}
 function standsPaneHTML(){if(!S||!S.spect||!S.spect.length)return `<p class="hint" style="margin:0">The stands are empty this event.</p>${typeof standsDrawerHTML==='function'?standsDrawerHTML({chronOnly:1}):''}`;
   if(typeof standsDrawerHTML!=='function')return crowdPanelHTML();
   /* the crowd first; the arena's chronicle as one quiet line after the stands log, then the roster */
@@ -28,7 +28,7 @@ function sideApply(){const bar=sideTabsEnsure();if(!bar)return;const live=sideLi
   vis('board',t==='fighter');vis('rosterGrp',t==='field');vis('npcPanel',t==='field');vis('crowdPanel',false);const npc=document.getElementById('npcPanel');if(npc&&live)npc.hidden=false;
   const pane=document.getElementById('standsPane');if(pane){pane.hidden=t!=='stands';if(t==='stands'){const sc=pane.scrollTop;pane.innerHTML=standsPaneHTML();pane.scrollTop=sc}}
   const np=document.getElementById('npcPanel');if(np&&t==='field'&&!np.querySelector('.fieldhd'))np.insertAdjacentHTML('afterbegin',fieldHeadHTML());
-  const bb=document.getElementById('btnDrawB');if(bb){bb.innerHTML=`🏟 Stands · <b>${standsCount()}</b>`;bb.title='The stands: the crowd, the stands log and the spectator roster, in the right column';bb.classList.toggle('on',t==='stands')}
+  const bb=document.getElementById('btnDrawB');if(bb){bb.innerHTML=`🏟 Stands · <b>${standsCount()}K</b>`;bb.title='The stands: the crowd, the stands log and the spectator roster, in the right column';bb.classList.toggle('on',t==='stands')}
   tickerApply()}
 function sideTab(t){SIDE.tab=t;try{localStorage.setItem('flavius_sidetab',t)}catch(e){}if(document.body.classList.contains('phoneL')){const d=document.querySelector('#plDock [data-pl="side"]');if(d&&!document.body.classList.contains('pl-side'))d.click()}sideApply()}
 /* the crowd ticker under the board */

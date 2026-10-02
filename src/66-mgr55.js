@@ -150,7 +150,7 @@ function friendGift(w,pm){if(pm.coin>=20||typeof opinionOf!=='function'||w.week-
    ===================================================================== */
 function homeCfg(cfg){try{const L=LOCATIONS[cfg.loc];if(!L)return cfg;for(const s of cfg.seats||[]){const g=gById(s.mgrGid);const m=g&&g.contract?mgrById(g.contract.mgr):null;if(m&&m.city===L.n)s.homeHouse=m.ludus}}catch(e){}return cfg}
 {const base=empireTurnout;empireTurnout=function(cfg){let n=base.apply(this,arguments);const hh=[...new Set((cfg&&cfg.seats||[]).map(s=>s.homeHouse).filter(Boolean))];
-  if(hh.length){n=clamp(n+4,3,SPECT_MAX);(S.turnoutWhy=S.turnoutWhy||[]).push(`+4 home regulars backing ${hh.join(' & ')}`)}return n}}
+  if(hh.length){n=clamp(n+4,3,SPECT_MAX);(S.turnoutWhy=S.turnoutWhy||[]).push(`+4K home spectators backing ${hh.join(' & ')}`)}return n}}
 {const base=seasonTabHTML;seasonTabHTML=function(){let h=base.apply(this,arguments);try{const pm=me();if(pm&&pm.city)h=h.split(`<td>📍 ${esc(pm.city)}</td>`).join(`<td><b class="hometag">🏠 Home</b> · ${esc(pm.city)}</td>`)}catch(e){}return h}}
 {const base=nightHTML;nightHTML=function(){let h=base.apply(this,arguments);try{const w=W_(),pm=me();const L=w&&w.night&&LOCATIONS[w.night.loc];if(L&&pm&&L.n===pm.city&&!w.night.bye)h=`<div class="card2 homegame"><b class="hometag">🏠 Home games this week</b> <span class="rc-sub">${esc(L.n)} is your city: your fighters start with +2 CF and your regulars fill the stands.</span></div>`+h}catch(e){}return h}}
 /* =====================================================================
