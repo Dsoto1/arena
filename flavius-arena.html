@@ -28946,13 +28946,23 @@ try{RAT_SHUT=localStorage.getItem('flavius_ratshut')!=='0'}catch(e){RAT_SHUT=tru
    Match Week: every bout fought and no verdict waiting. (Your ludus follows the weekly checklist, above.) */
 function tabDone73(k){const w=W_(),m=me();if(!w||!m||w.dead)return false;
   if(k==='recruit')return !(w.hours>0);
-  if(k==='practice')return !!w.train&&w.train!=='off'&&!(thLeft(w)>0&&rosterOf(m).length);
-  if(k==='infirm')return infirmNeed73()===0;
+  const sk=w.ckSkip&&w.ckSkip.wk===w.week&&w.ckSkip.s===w.season?w.ckSkip.keys:[]; /* dismissed items count as done */
+  if(k==='practice')return (sk.includes('regime')||!!w.train&&w.train!=='off')&&(sk.includes('hours')||!(thLeft(w)>0&&rosterOf(m).length));
+  if(k==='infirm')return infirmNeed73()===0||sk.includes('hurt');
   if(k==='night')return !!(w.night&&w.night.bouts.every(b=>b.done))&&!(w.pend||[]).length;
   return false}
 {const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/(⚔️ Match Week) ✓/,'$1')}catch(e){}return h}}
 setInterval(()=>{try{if(typeof W_!=='function'||!W_()||W_().dead)return;for(const k of ['recruit','practice','infirm','night']){const b=document.querySelector(`.mtabs [data-mg="tab"][data-id="${k}"]`);if(!b)continue;
   const d=tabDone73(k);let c=b.querySelector('.tabchk.c73');if(d&&!c){c=document.createElement('span');c.className='tabchk c73';c.title='Done for the week';c.textContent='✓';b.appendChild(c)}else if(!d&&c)c.remove()}}catch(e){}},500);
+
+/* ---------- (v0.74) optional checklist items can be dismissed for the week; only the verdicts (⚖) are required ---------- */
+const CK_KEY={'⚕':'hurt','📜':'contract','🏋':'regime','⏳':'hours','⚔':'enter','🤝':'roster'};
+{const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const w=W_();const sk=w.ckSkip&&w.ckSkip.wk===w.week&&w.ckSkip.s===w.season?w.ckSkip.keys:[];
+  for(const x of I){const k=CK_KEY[x.ic];if(!k||x.done)continue;if(sk.includes(k)){x.done=true;x.txt+=' <span class="rc-sub">· dismissed</span>';x.skipped=true}
+    else x.btn=(x.btn||'')+`<button class="btn tksm ckskip" type="button" data-ckskip="${k}" title="Not this week — take it off the list">Dismiss</button>`}}catch(e){console.error(e)}return I}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ckskip]');if(!b)return;e.stopPropagation();const w=W_();if(!w)return;
+  if(!w.ckSkip||w.ckSkip.wk!==w.week||w.ckSkip.s!==w.season)w.ckSkip={wk:w.week,s:w.season,keys:[]};if(!w.ckSkip.keys.includes(b.dataset.ckskip))w.ckSkip.keys.push(b.dataset.ckskip);saveWorld();MGR_REDRAW()},true);
+(()=>{const st=document.createElement('style');st.textContent=`.wkbtn{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.ckskip{opacity:.75}.ckskip:hover{opacity:1}`;document.head.appendChild(st)})();
 /* 96-armlv — custom armor in levels (Virgilante; drafted v0.70, shipped v0.73).
    One design, ticked for Level I, II and/or III: each ticked level becomes its own piece — "Name I/II/III", its own market deck,
    its own colour grade (I iron · II bronze · III gold) and its own stats, bought from that level's budget (CA_BUDGET 3/5/8):
