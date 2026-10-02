@@ -462,12 +462,16 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
-- **Online multiplayer — BRAINSTORM ONLY (Virgilante, v0.63): do not build until core gameplay is polished.** Direction so far:
-  real-time only (async play-by-link dropped); authoritative server holding dice/hands; client hosted on Virgilante's S3
-  site (CloudFront), backend API Gateway WebSockets + Lambda + DynamoDB (or a small Lightsail Node box). Phases when it
-  starts: 1 engine/UI split (every in-match decision through one request layer; single player unchanged, ~2-3 batches),
-  2 Node game server tested locally (~2), 3 lobby: invite codes, quick match with CPU fill, turn timers, reconnect, CPU
-  takeover (~1-2), 4 deploy (needs AWS secrets). Open: Play Now only?, seats, timer length, guests vs accounts.
+- **Online multiplayer (decided with Virgilante after v0.75):** play-by-link FIRST, real-time later. Model B: server-held games
+  (AWS: API Gateway HTTP API + Lambda + DynamoDB, deployed by Virgilante from CloudShell with a template I write — no keys in chat;
+  if keys are ever needed: environment variables AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY in the environment settings). The link is
+  only a game id + a secret per seat; the server rolls dice and keeps hidden cards. Scope: the three classic events; guests with a
+  name (no accounts). Turn notices: Web Push (free) + copy-link fallback; SES email optional (he worried about cost — ~$0.10/1,000).
+  Order: save hub batch → engine/UI request layer (every in-match decision through one layer; test locally with two windows) →
+  the AWS template → wire the client. Hosting: the game sits at flaviusrule.com/play/ (S3 + CloudFront).
+- **His website (flaviusrule.com):** redesigned to the game's look and delivered as zips (site + play/ folder) — NOT in git (his
+  call; the source also holds his AWS policy file). Pages keep their class names; styles.css rewritten; play.html added;
+  FlaviusSiteMedia/ (logo, covers, STL renders) lives only on S3 — he will send it for previews.
 - **Readability pass, phase 2+** (Virgilante chose "phased"): files 02–07 are done (Babel scope-safe parameter renames via
   `tools/rename.js`, then comments on every function with `TWEAK:` notes; verified with `tools/samecode.js`, which
   compares code ignoring comments/whitespace). Remaining: 08–64, file by file, regression after each. Rename only
