@@ -7,11 +7,11 @@ await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
-  const r={baked:ARM_FIT.galea.w===39&&ARM_FIT.thorax.w===111&&ARM_FIT.provmanica.at==='fore',data:ARM.provmanica.pt==='lower'&&ARM.legwrapsU.n==='Leather Upper Leg Armor',
+  const r={baked:ARM_FIT.galea.w===39&&ARM_FIT.thorax.w===108&&ARM_FIT.provmanica.at==='fore',data:ARM.provmanica.pt==='lower'&&ARM.legwrapsU.n==='Leather Upper Leg Armor',
     noPairs:!Object.keys(ARM_PAIR).length,legMirror:armBox('femoralia','lleg').mirror===true&&armBox('femoralia','rleg').mirror===false,
     turn:(()=>{ARM_FIT_OVR.manica={r:20};const a=armBox('manica','rarm'),c=armBox('manica','larm');delete ARM_FIT_OVR.manica;return a.r===20&&c.r===20&&a.side===false&&c.side===true})()};
   ST.gearSub='a';ST.ca=blankCA();openStudio('gear');await W8(900);r.hidden=!document.querySelector('.afit');r.vb=(document.querySelector('#caAv svg').getAttribute('viewBox')||'').startsWith('0 -18');
-  CHEATS['h3828236272'].run();await W8(500);r.shown=!!document.querySelector('.afit #afPrev2');
+  CHEATS['h3828236272'].run();await W8(500);document.querySelector('[data-afit3]').click();await W8(500);r.shown=!!document.querySelector('.afit #afPrev2');
   const pick=async k=>{const s=document.querySelector('[data-afkey]');s.value=k;s.dispatchEvent(new Event('change',{bubbles:true}));await W8(300)};
   await pick('spaulder');const sv=document.querySelector('#afPrev2 svg').innerHTML;r.one=(sv.match(/class="armpc"/g)||[]).length===1;r.noChips=!/r="9"/.test(sv);
   await pick('ocrea');r.pairBoth=(document.querySelector('#afPrev2 svg').innerHTML.match(/class="armpc"/g)||[]).length===2;
@@ -21,7 +21,7 @@ o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   document.querySelector('[data-afhide]').click();await W8(300);r.hid=!document.querySelector('.afit')&&localStorage.getItem('flavius_armfit_on')!=='1';
   r.cheatHidden=!document.documentElement.innerHTML.includes(String.fromCharCode(65,82,77,79,82,70,73,84));return r});
 /* drag on the left side moves it the way the pointer goes */
-await pg.evaluate(async()=>{CHEATS['h3828236272'].run();await new Promise(r=>setTimeout(r,500));const s=document.querySelector('[data-afkey]');s.value='cnemis';s.dispatchEvent(new Event('change',{bubbles:true}));await new Promise(r=>setTimeout(r,300));document.querySelector('[data-afside="L"]').click();await new Promise(r=>setTimeout(r,300));document.querySelector('.afit').scrollIntoView()});
+await pg.evaluate(async()=>{CHEATS['h3828236272'].run();await new Promise(r=>setTimeout(r,500));document.querySelector('[data-afit3]').click();await new Promise(r=>setTimeout(r,500));const s=document.querySelector('[data-afkey]');s.value='cnemis';s.dispatchEvent(new Event('change',{bubbles:true}));await new Promise(r=>setTimeout(r,300));document.querySelector('[data-afside="L"]').click();await new Promise(r=>setTimeout(r,300));document.querySelector('.afit').scrollIntoView()});
 const x0=await pg.evaluate(()=>armBox('cnemis','lleg').cx);const bx=await pg.locator('#afPrev2 svg').boundingBox();
 await pg.mouse.move(bx.x+bx.width*0.6,bx.y+bx.height*0.8);await pg.mouse.down();await pg.mouse.move(bx.x+bx.width*0.7,bx.y+bx.height*0.8,{steps:4});await pg.mouse.up();await pg.waitForTimeout(300);
 o.drag=await pg.evaluate(x0=>{const x1=armBox('cnemis','lleg').cx;delete ARM_FIT_OVR.cnemis;afitSave();localStorage.removeItem('flavius_armfit_on');return x1>x0+5},x0);
