@@ -455,6 +455,16 @@ One global script; files are concatenated in order. Later "version modules" patc
   creations · your sets with counts · ✎ Manage sets → Studio), one line of what's in play, no toast; no creations → a Studio note.
   (3) Seat cards redesigned: mini on top, name + class; You|CPU toggle; 🧠 mind chip cycles; tap the figure/class → class picker grid
   (cards from the roster + guide win rates); personality/Tune/Ludus rival/summon/team behind "⋯ More"; team events show a team chip.
+  (4) Manager road lock: travelling to the match city locks the Training Yard + Infirmary (new drills/hours/treatments/rest) until
+  the week ends; booked care keeps running; Recruiting stays open; home games and byes never lock; a "before you leave" warning
+  lists what's undone. Impromptu bye at the travel step: free, once per season, full bye perks (+4 hours, rest), no gate/fees,
+  small fame loss. (5) Infirmary beds: severed limbs + major injuries need a bed before care starts (beds = 1 at level 1, +1 per
+  upgrade); no free bed → waits in a queue, heals at half pace; minor knocks/fatigue rest at home.
+  (6) Manager ideas, all approved: road events on the way to the host city (a choice, small coin/morale/fatigue swings); a hired
+  medicus (skill, wage, faster healing, can save a limb, poachable); temple offerings in the host city before a bout (Mars/Nemesis/
+  Fortuna one-match blessing); new ludus rooms (armory, kitchen, shrine; small upgrade trees); contract clauses (no-Naumachia,
+  win bonus; breaking costs morale/loyalty); Darling of the Arena (season vote; gate share up, rivals target them); rival lanista
+  letters (taunts, challenge bouts at double purse, truces) through the mail.
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
   8 printed classes move to the live template (104-cards74 classCard74) so rule changes update their cards. Still to come from him:
   Thracian Helm, Ornate Chest Armor, Chest Armor, Reinforced Arm Armor art; distinct art for the Iron Spaulder (it shares the look of
@@ -462,12 +472,12 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
-- **Online multiplayer (decided with Virgilante after v0.75):** play-by-link FIRST, real-time later. Model B: server-held games
+- **Online multiplayer — PAUSED again by Virgilante (after v0.75); decisions kept for when it resumes:** play-by-link FIRST, real-time later. Model B: server-held games
   (AWS: API Gateway HTTP API + Lambda + DynamoDB, deployed by Virgilante from CloudShell with a template I write — no keys in chat;
   if keys are ever needed: environment variables AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY in the environment settings). The link is
   only a game id + a secret per seat; the server rolls dice and keeps hidden cards. Scope: the three classic events; guests with a
   name (no accounts). Turn notices: Web Push (free) + copy-link fallback; SES email optional (he worried about cost — ~$0.10/1,000).
-  Order: save hub batch → engine/UI request layer (every in-match decision through one layer; test locally with two windows) →
+  Order (when resumed): engine/UI request layer (every in-match decision through one layer; test locally with two windows) →
   the AWS template → wire the client. Hosting: the game sits at flaviusrule.com/play/ (S3 + CloudFront).
 - **His website (flaviusrule.com):** redesigned to the game's look and delivered as zips (site + play/ folder) — NOT in git (his
   call; the source also holds his AWS policy file). Pages keep their class names; styles.css rewritten; play.html added;
