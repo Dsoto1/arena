@@ -12,8 +12,8 @@ o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
     econ:TIERS.main.fee===ECON.fees.main&&WAGE_MUL<1&&gateShare({fame:200})===ECON.gateMax,bonus:!!w._econ68,
     hurt:/is hurt/.test(document.querySelector('.wkcheck').textContent),renewBtn:!!document.querySelector(`.wkcheck [data-mg="extend"][data-id="${ros[1].id}"]`)};
   r.skip=(endConfirmHTML()||'').includes('You are about to skip');
-  {const riv=w.mgrs.find(x=>!x.isPlayer&&!x.dead&&rosterOf(x).length);riv.p.discipline=90;riv.coin=500;const g=rosterOf(riv).find(x=>!x.inj);g.fat=0;const s0={...gStats(g)},c0=riv.coin;
-   rivalTrain(w);const s1=gStats(g);r.riv={reg:riv.train,paid:c0-riv.coin===TRAIN_REGIMES.hard.c,grew:(s1.str+s1.spd)>(s0.str+s0.spd)||!!g.inj,fat:g.fat>0||!!g.inj};
+  {const riv=w.mgrs.find(x=>!x.isPlayer&&!x.dead&&rosterOf(x).length);riv.p.discipline=90;riv.coin=500;const g=rosterOf(riv).find(x=>!x.inj);g.fat=0;const s0={...gStats(g)},x0={...(g.sxp||{})},c0=riv.coin;
+   rivalTrain(w);const s1=gStats(g);r.riv={reg:riv.train,paid:c0-riv.coin===TRAIN_REGIMES.hard.c,grew:(s1.str+s1.spd)>(s0.str+s0.spd)||((g.sxp||{}).str||0)+((g.sxp||{}).spd||0)>(x0.str||0)+(x0.spd||0)||s1.str>=STAT_MAX||!!g.inj,fat:g.fat>0||!!g.inj};
    const h=rosterOf(riv)[0];h.fat=80;h.inj=null;rivalTrain(w);r.riv.rest=h.restWk===w.week}
   document.querySelector('.wkcheck [data-mg="tab"][data-id="infirm"]').click();await W8(400);r.tab=MGR.tab;
   MGR.tab='ludus';delete ros[0].inj;MGR_REDRAW();await W8(300);r.after=document.querySelectorAll('.wkcheck .wkitem:not(.done)').length;r.done=!!document.querySelector('.wkcheck .wkdone');return r});
