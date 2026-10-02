@@ -28842,7 +28842,7 @@ function tabStat73(k){const w=W_();if(!w||w.dead)return null;
   if(k==='roster')return rosterTodo73();
   return null}
 function hoursPips73(h,mx,col){return `<span class="hpips">${Array.from({length:mx},(_,i)=>`<i style="${i<h?`background:${col}`:''}"></i>`).join('')}</span>`}
-function bannerStat73(k){const s=tabStat73(k);if(!s)return '';return `<div class="roomstat"><b>${s[0]}</b><span>${s[1]}</span>${s[2]||''}</div>`}
+function bannerStat73(k){const s=tabStat73(k);if(!s)return '';return `<div class="roomstat rs2"><div class="ptbox on">${s[0]}</div><span>${s[1]}</span>${s[2]||''}</div>`} /* v0.74: the perk-point box (Virgilante: swap) */
 
 /* ---------- the scenes ---------- */
 const BANNERS73={
@@ -28963,6 +28963,23 @@ const CK_KEY={'⚕':'hurt','📜':'contract','🏋':'regime','⏳':'hours','⚔'
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ckskip]');if(!b)return;e.stopPropagation();const w=W_();if(!w)return;
   if(!w.ckSkip||w.ckSkip.wk!==w.week||w.ckSkip.s!==w.season)w.ckSkip={wk:w.week,s:w.season,keys:[]};if(!w.ckSkip.keys.includes(b.dataset.ckskip))w.ckSkip.keys.push(b.dataset.ckskip);saveWorld();MGR_REDRAW()},true);
 (()=>{const st=document.createElement('style');st.textContent=`.wkbtn{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.ckskip{opacity:.75}.ckskip:hover{opacity:1}`;document.head.appendChild(st)})();
+
+/* ---------- (v0.74) the swap: banners count in the perk-point box; the perk points use the banner's pill ---------- */
+{const base=schoolingCardHTML;schoolingCardHTML=function(){let h=base.apply(this,arguments);try{const P=me().perkPts||0;
+  h=h.replace(/<div class="ptbox[^"]*"([^>]*)>\d+<\/div>/,`<div class="ptpill ${P?'on':''}"$1><b>${P}</b><span>point${P===1?'':'s'} to spend</span></div>`)}catch(e){}return h}}
+(()=>{const st=document.createElement('style');st.textContent=`
+.roomstat.rs2{padding:6px 10px;border-radius:12px;gap:3px;min-width:0}.roomstat.rs2 .ptbox{min-width:52px;height:48px;font-size:22px;padding:0 8px}
+.ptpill{display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:5px 14px;border:1px solid var(--line2);border-radius:999px;background:rgba(20,14,10,.78)}
+.ptpill b{font:700 20px/1 var(--mono);color:var(--dim);background:var(--panel2);border-radius:999px;padding:3px 12px}.ptpill span{font-size:11px;color:var(--muted);white-space:nowrap}
+.ptpill.on{border-color:var(--gold);box-shadow:0 4px 14px rgba(0,0,0,.5)}.ptpill.on b{color:#1a120c;background:var(--gold)}.ptpill.on span{color:#e8dcc0}`;document.head.appendChild(st)})();
+/* each banner's count wears its tab's colour (the rail's to-do colours) */
+(()=>{const st=document.createElement('style');st.textContent=`
+.roomstat.rs2 .ptbox.on{--gc:#f0cf7d}
+.b73-recruit .roomstat.rs2 .ptbox.on{background:radial-gradient(circle at 40% 35%,#e3f5c8,#7fae5f 60%,#3d6a2a);box-shadow:0 0 12px rgba(127,174,95,.5)}
+.yard .roomstat.rs2 .ptbox.on{background:radial-gradient(circle at 40% 35%,#ffe7b0,#d9a441 60%,#8a5a14);box-shadow:0 0 12px rgba(217,164,65,.5)}
+.infirm .roomstat.rs2 .ptbox.on{background:radial-gradient(circle at 40% 35%,#ffffff,#e9e5dc 60%,#9a948a);box-shadow:0 0 12px rgba(233,229,220,.45)}
+.b73-night .roomstat.rs2 .ptbox.on{background:radial-gradient(circle at 40% 35%,#f1e8ff,#b9a3e3 60%,#5e4a8a);box-shadow:0 0 12px rgba(185,163,227,.5)}
+.b73-roster .roomstat.rs2 .ptbox.on{background:radial-gradient(circle at 40% 35%,#ffd9cf,#d2694e 60%,#7a2a1a);box-shadow:0 0 12px rgba(210,105,78,.45)}`;document.head.appendChild(st)})();
 /* 96-armlv — custom armor in levels (Virgilante; drafted v0.70, shipped v0.73).
    One design, ticked for Level I, II and/or III: each ticked level becomes its own piece — "Name I/II/III", its own market deck,
    its own colour grade (I iron · II bronze · III gold) and its own stats, bought from that level's budget (CA_BUDGET 3/5/8):
