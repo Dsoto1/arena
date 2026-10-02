@@ -7,7 +7,7 @@ await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
-  const r={baked:ARM_FIT.galea.w===39&&ARM_FIT.thorax.w===108&&ARM_FIT.provmanica.at==='fore',data:ARM.provmanica.pt==='lower'&&ARM.legwrapsU.n==='Leather Upper Leg Armor',
+  const r={baked:ARM_FIT.galea.w===39&&ARM_FIT.thorax.w===108&&ARM_FIT.provmanica.at===ARM_FIT.spaulder.at,data:ARM.provmanica.pt==='upper'&&ARM.legwrapsU.n==='Leather Tasset Armor' /* v0.74: the Manica sits on the upper arm, his names */,
     noPairs:!Object.keys(ARM_PAIR).length,legMirror:armBox('femoralia','lleg').mirror===true&&armBox('femoralia','rleg').mirror===false,
     turn:(()=>{ARM_FIT_OVR.manica={r:20};const a=armBox('manica','rarm'),c=armBox('manica','larm');delete ARM_FIT_OVR.manica;return a.r===20&&c.r===20&&a.side===false&&c.side===true})()};
   ST.gearSub='a';ST.ca=blankCA();openStudio('gear');await W8(900);r.hidden=!document.querySelector('.afit');r.vb=(document.querySelector('#caAv svg').getAttribute('viewBox')||'').startsWith('0 -18');
