@@ -31,5 +31,10 @@ o.s=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   sideTab('fighter');document.getElementById('crowdTick').click();await W8(200);r.tickGo=SIDE.tab==='stands';
   openMenagerie();await W8(700);r.best=!!document.querySelector('#menagBody')&&!document.querySelector('#menagBody #npcDrawer');if(CUR_MODAL)CUR_MODAL.done(null);
   sideTab('fighter');return r});
+o.arm=await pg.evaluate(()=>{const mk=(dmg)=>{const p={id:'tv68a',name:'x',hp:{},ap:{},pieces:{}};for(const l of LOCS){p.hp[l]=5;p.ap[l]=0;p.pieces[l]=[]}
+    p.pieces.chest=[{key:'balteus',n:'b',ap:2},{key:'lorica',n:'l',ap:4}];p.ap.chest=6-dmg;p.pieces.head=[{key:'galea',n:'g',ap:2}];p.ap.head=2;return p};
+  const a=avatarSVG(mk(0)),b=avatarSVG(mk(3)),c=avatarSVG(mk(6));const n=s=>(s.match(/class="armpc"/g)||[]).length;
+  return {worn:n(a)===3&&a.includes('armor2.webp')&&!a.includes('url(#met'),dim:/opacity="0\.\d+"/.test(b),fell:c.includes('class="armfall"')||reduceMotion()}});
+ok(o.arm.worn&&o.arm.dim&&o.arm.fell,'armor worn on the avatar');
 ok(o.s.tabs===3&&o.s.f&&o.s.fld&&o.s.st,'side tabs');ok(o.s.tick&&o.s.tickGo,'crowd ticker');ok(o.s.best,'bestiary only');
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();
