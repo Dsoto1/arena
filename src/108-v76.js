@@ -415,3 +415,101 @@ function penGo76(){const w=W_(),m=me();const S7=MGR.pen76||{};const g=gById(S7.g
 .pen76b.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}.pen76b b{font:400 16px var(--display)}.pen76b small{color:var(--muted);font-size:11.5px}
 .pen76row select{max-width:100%}.pen76res{display:flex;gap:12px;align-items:flex-start}.pen76res .leave76{margin-top:0}
 #pen76Off{position:absolute;top:8px;left:8px;z-index:5;border-color:var(--gold)}#pen76Off[hidden]{display:none}`;document.head.appendChild(st)})();
+
+/* =====================================================================
+   v0.76 F — the Training Yard, one card per fighter (yardHTML76 replaces the tab's body; the room banner stays)
+   • Top strip: this week's regime (data-mg="regime"), the hours bank, squad doctore hours (data-tp="doc|±1"),
+     📜 Study the card (data-yj="study"), yard level and Discipline.
+   • A card per fighter: header (rating → potential, morale, fatigue, status) · Drills (data-tp="g|id|k|±1", the gain
+     previewed on the chip) · Care (own doctore data-mg="ptrain", 🗣 morale talk / 🛡 gear care data-yj, 🤝 bond) ·
+     Bout, one a week (⚔ spar, 🏟 exhibition, 🐾 beast pen; boutDone76) — a choice opens its panel under the card
+     (MGR.yb76 {gid,k}: partner select [data-yp76], the exhibition form #exMine/#exOpp + data-mg exsim/exlive/exfight,
+     the pen's beasts) · This week: what is booked or done (yardRes76), last week's line.
+   ===================================================================== */
+function boutDone76(g,w){const P=thPlan(w);return P.pairs.some(p=>p.k==='spar'&&(p.a===g.id||p.b===g.id))||g.exWk===w.week||g.pen76Wk===w.week}
+function yardRes76(g,w){const P=thPlan(w),X=x74(w);const R=[];const nmOf=id=>esc(((gById(id)||{}).name||'?').split(' ')[0]);
+  if(X.morale.includes(g.id))R.push('🗣 Morale talk: +5 morale');if(X.gear.includes(g.id))R.push('🛡 Gear care: +1 AP next bout');if(g.ptrain)R.push(`⚒ Own doctore hired (${PTRAIN_COST}c)`);
+  P.pairs.forEach((p,i)=>{if(p.a===g.id||p.b===g.id)R.push(`${p.k==='bond'?'🤝 Bonding':'⚔ Sparring'} with ${nmOf(p.a===g.id?p.b:p.a)} <button type="button" class="yd76x" data-tp="unpair|${i}" title="Cancel">✕</button>`)});
+  if(g.exWk===w.week){const e=(w.exlog||[]).find(x=>x.s===w.season&&x.wk===w.week&&x.txt.includes(esc(g.name)));R.push(`🏟 ${e?e.txt.replace(/^Exhibition with ([^:]+):.*?(is [^(.]+).*/,'Exhibition vs $1: $2'):'Exhibition fought'}`)}
+  if(g.pen76Wk===w.week){const e=(w.pen76log||[]).find(x=>x.s===w.season&&x.wk===w.week&&x.n===g.name);const T=e&&NPCT[e.t];R.push(`🐾 Beast pen: ${!e?'in the pen':e.out==='win'?`killed the ${esc(T?T.n:'beast')}`:e.out==='pulled'?`pulled out (${esc(T?T.n:'beast')})`:`time called (${esc(T?T.n:'beast')})`}`)}
+  return R}
+function yardCard76(g,w,m){const P=thPlan(w),X=x74(w);const left=thLeft(w);const used=thOfG(P,g.id);const st=gStats(g);const f=gFat(g);const rest=g.restWk===w.week;
+  const o=effOvr(g),pot=Math.max(o,g.pot||o);const hurt=!!g.inj;const busy=MGR.yb76&&MGR.yb76.gid===g.id?MGR.yb76.k:null;const bd=boutDone76(g,w);const nm1=g.name.split(' ')[0];
+  const chip=(k,ic,lab)=>{const h=(P.g[g.id]||{})[k]||0;const v=st[k]||50,fr=(g.sxp&&g.sxp[k])||0;const gain=h*TH_DRILL*GROW_SLOW(v);const up=left>0&&used<TH_FIGHTER&&!hurt&&!rest;
+    return `<div class="yd76d ${h?'on':''}"><button type="button" data-tp="g|${g.id}|${k}|1" ${up?'':'disabled'} title="+1 hour of ${lab.toLowerCase()}">${ic}<b>${lab}</b><span>${v}${gain?` → ${(v+fr+gain).toFixed(1)}`:''}</span></button><span class="pips">${[0,1,2,3].map(n=>`<button type="button" class="pip ${n<h?'on':''}" ${n<h?`data-tp="g|${g.id}|${k}|-1" title="Take an hour back"`:'disabled'}></button>`).join('')}</span></div>`};
+  const reh=(P.g[g.id]||{}).rehab||0;
+  const drills=hurt?(g.inj.war?'<span class="rc-sub">Away at war.</span>':`<div class="yd76d ${reh?'on':''}"><button type="button" data-tp="g|${g.id}|rehab|1" ${left>0&&reh<2&&used<TH_FIGHTER?'':'disabled'}>🩹<b>Rehab</b><span>${reh>=2?'back a week sooner':`${2-reh} h → a week sooner`}</span></button><span class="pips">${[0,1].map(n=>`<button type="button" class="pip ${n<reh?'on':''}" ${n<reh?`data-tp="g|${g.id}|rehab|-1"`:'disabled'}></button>`).join('')}</span></div>`)
+    :rest?'<span class="rc-sub">🛏 Resting this week — no drills.</span>':TH_TILES.map(([k,ic,lab])=>chip(k,ic,lab)).join('');
+  const b=(attr,lab,sub,on,dis,tip)=>`<button type="button" class="yd76b ${on?'on':''}" ${attr} ${dis?`disabled title="${esc(dis)}"`:tip?`title="${esc(tip)}"`:''}>${lab}<small>${sub}</small></button>`;
+  const care=[b(`data-mg="ptrain" data-id="${g.id}"`,'⚒ Own doctore',g.ptrain?`hired · ${PTRAIN_COST}c`:`${PTRAIN_COST}c · best odds`,g.ptrain,hurt?'Hurt fighters rest':'','A personal doctore for this week: the best odds of +1 rating, a little extra risk'),
+    b(`data-yj="morale" data-id="${g.id}"`,'🗣 Morale talk',X.morale.includes(g.id)?'done':`1 h · ${g.morale}→${Math.min(100,g.morale+5)}`,X.morale.includes(g.id),X.morale.includes(g.id)?'Done this week':left<1?'No hours left':''),
+    b(`data-yj="gear" data-id="${g.id}"`,'🛡 Gear care',X.gear.includes(g.id)?'done':'1 h · +1 AP',X.gear.includes(g.id),X.gear.includes(g.id)?'Done this week':hurt?'Hurt':left<1?'No hours left':''),
+    b(`data-yb76="bond:${g.id}"`,'🤝 Bond','2 h · loyalty',busy==='bond',hurt?'Hurt':left<2?'Needs 2 hours':used+2>TH_FIGHTER?`${TH_FIGHTER} h a fighter`:'')].join('');
+  const opps=w.mgrs.filter(x=>!x.isPlayer&&rosterOf(x).length);const fee=penFee76((MGR.pen76&&MGR.pen76.t)||'wolf');
+  const why=hurt?'Hurt':rest?'Resting':bd?'One bout a week — done':'';
+  const bout=[b(`data-yb76="spar:${g.id}"`,'⚔ Spar','2 h · Speed + Strength',busy==='spar',why||(left<2?'Needs 2 hours':used+2>TH_FIGHTER?`${TH_FIGHTER} h a fighter`:'')),
+    b(`data-yb76="exh:${g.id}"`,'🏟 Exhibition',`${EXHIB_HOURS} h · ${EXHIB_COST}c · vs a rival`,busy==='exh',why||(!opps.length?'No rival has fighters':left<EXHIB_HOURS?`Needs ${EXHIB_HOURS} hours`:m.coin<EXHIB_COST?'Not enough coin':''),'Against a rival stable\'s fighters; nobody dies. Scouts them, a chance at +1 rating, +1 AP and +2 CF this Match Week, a perk point, warmer relations.'),
+    b(`data-yb76="pen:${g.id}"`,'🐾 Beast pen',`${PEN76.hours} h + fee · kill: +${PEN76.bonus} rating`,busy==='pen',why||(left<PEN76.hours?`Needs ${PEN76.hours} hours`:''))].join('');
+  let panel='';
+  if(busy==='bond'||busy==='spar'){const mates=rosterOf(m).filter(x=>x.id!==g.id&&!x.inj&&x.restWk!==w.week&&thOfG(P,x.id)+2<=TH_FIGHTER&&!(busy==='spar'&&boutDone76(x,w)));
+    panel=mates.length?`<div class="yd76p"><label class="rc-sub">${busy==='bond'?'Bond':'Spar'} with <select class="tin" data-yp76p="${g.id}">${mates.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></label>
+      <button class="btn primary tksm" type="button" data-yp76="${busy}|${g.id}">${busy==='bond'?'🤝 Bond':'⚔ Spar'}<small>2 h each · ${busy==='bond'?'+loyalty, +3 morale':'Speed + Strength · 4% knock'} · at week's end</small></button></div>`:`<div class="yd76p rc-sub">Nobody free to ${busy} with.</div>`}
+  else if(busy==='exh')panel=`<div class="yd76p"><input type="hidden" id="exMine" value="${g.id}"><label class="rc-sub">Against <select class="tin" id="exOpp">${opps.map(x=>`<option value="${x.id}" ${MGR.pOpp===x.id?'selected':''}>${esc(x.ludus)} · ${rosterOf(x).length} fighters · ${rivalTier(x.rivalry||0)}</option>`).join('')}</select></label>
+      <div class="acts"><button class="btn primary tksm" type="button" data-mg="exsim" ${MGR.busy?'disabled':dis(needTHrs(w,EXHIB_HOURS),needCoin(m,EXHIB_COST))}>Request it<small>resolved at once</small></button><button class="btn tksm" type="button" data-mg="exlive" ${dis(needTHrs(w,EXHIB_HOURS),needCoin(m,EXHIB_COST))}>Watch live<small>on the board</small></button><button class="btn tksm" type="button" data-mg="exfight" ${dis(needTHrs(w,EXHIB_HOURS),needCoin(m,EXHIB_COST))}>Fight it<small>you play ${esc(nm1)}</small></button></div><div id="mgProg"></div></div>`;
+  else if(busy==='pen'){const t=(MGR.pen76&&MGR.pen76.t)||'wolf';const blk=m.coin<penFee76(t)?'Not enough coin':left<PEN76.hours?`Needs ${PEN76.hours} hours`:'';
+    panel=`<div class="yd76p"><div class="pen76grid">${Object.keys(PEN76.beasts).filter(k=>NPCT[k]).map(k=>{const T=NPCT[k];return `<button type="button" class="pen76b ${t===k?'on':''}" data-pen76b="${k}"><b>${esc(T.n)}</b><small>HP ${T.hp} · attack ${T.ap} · move ${T.mv}</small><small>fee ${penFee76(k)} · kill +${T.coin} coin</small></button>`}).join('')}</div>
+      <div class="acts" style="margin-top:6px"><button class="btn primary tksm" type="button" data-pen76="go" ${blk?`disabled title="${esc(blk)}"`:''}>⚔ Into the pen<small>${PEN76.hours} h · ${penFee76(t)} coin · you fight it · pulled: −${PEN76.fame} fame</small></button></div></div>`}
+  const res=yardRes76(g,w);const last=(w.lastPlan||[]).filter(x=>x.includes(esc(g.name))).map(x=>x.replace(esc(g.name)+': ','').replace(esc(g.name),'')).slice(0,2);
+  return `<div class="yd76c ${hurt?'hurt':''} ${busy?'open':''}"><div class="yd76hd">${mgAvatar(g)}<div class="yd76nm"><b>${esc(g.name)}</b><span class="rc-sub">${o} → ${pot} · morale ${g.morale}${hurt?` · ⚕ ${esc(g.inj.label)}`:''}${onCard(g)?' · ⚔ on this week\'s card':''}</span>
+      <i class="yd76pot"><i style="width:${Math.round(o/Math.max(1,pot)*100)}%"></i></i></div><span class="yd76h" title="Training hours this fighter uses (max ${TH_FIGHTER})">${used}/${TH_FIGHTER} h</span><span class="fatchip" title="Fatigue ${f}"><i style="width:${f}%;background:${fatCol(f)}"></i></span></div>
+    <div class="yd76row"><span class="yd76l">Drills</span><div class="yd76ds">${drills}</div></div>
+    <div class="yd76row"><span class="yd76l">Care</span><div class="yd76bs">${care}</div></div>
+    <div class="yd76row"><span class="yd76l">Bout</span><div class="yd76bs">${bout}</div></div>${panel}
+    ${res.length||last.length?`<div class="yd76res">${res.map(x=>`<span>${x}</span>`).join('')}${last.length?`<span class="rc-sub">Last week: ${last.join(' · ')}</span>`:''}</div>`:''}</div>`}
+function yardHTML76(){const w=W_(),m=me();const P=thPlan(w),X=x74(w);const left=thLeft(w),mx=thMax();const ros=rosterOf(m);const cur=w.train||'off';const Y=facLvl(m,'yard');
+  const icon={off:'💤',light:'🚶',std:'🏃',hard:'🔥'};
+  const reg=Object.entries(TRAIN_REGIMES).map(([k,R])=>`<button type="button" class="yd76rg ${cur===k?'on':''}" data-mg="regime" data-id="${k}">${icon[k]||'🏋'} <b>${k==='off'?'None':R.n.replace(/ drills/,'')}</b><small>${R.c?`${R.c}c · 📈 ${Math.round(R.gain*100)}% · 🩹 ${Math.round(R.inj*100)}%`:'free'}</small></button>`).join('');
+  const top=`<div class="card2 yd76top"><div class="yd76regs"><span class="yd76l" title="Squad drills, resolved when the week ends: the odds of +1 rating per fighter, and the injury risk">Regime ⓘ</span>${reg}</div>
+    <div class="yd76bank"><span class="thbig">${left}</span><span class="rc-sub">of ${mx} h</span><span class="bankpips">${Array.from({length:mx},(_,i)=>`<i class="${i<mx-left?'used':''}"></i>`).join('')}</span>
+      <span class="yd76sq" title="Each hour lifts the whole squad's regime a quarter level (max ${TH_DOC})">🧑‍🏫 Squad doctore <span class="thc"><button type="button" data-tp="doc|-1" ${P.doc>0?'':'disabled'}>−</button><b>${P.doc}</b><button type="button" data-tp="doc|1" ${left>0&&P.doc<TH_DOC?'':'disabled'}>+</button></span></span>
+      <button type="button" class="yd76b ${X.study?'on':''}" data-yj="study" ${X.study||left<1?'disabled':''}>📜 Study the card<small>${X.study?'done':'1 h · scout this week · a little Intelligence'}</small></button>
+      <span class="rc-sub yd76fac">🏗 Yard ${Y}/3 · 🎖 Discipline ${m.p.discipline}</span></span></div></div>`;
+  const cards=ros.map(g=>yardCard76(g,w,m)).join('');
+  const lastT=(w.lastTraining||[]).slice(0,6);
+  return `${top}<div class="yd76grid">${cards||'<p class="rc-sub">No fighters in the yard.</p>'}</div>
+    ${lastT.length||(w.exlog||[]).length?`<details class="yd76log"><summary class="rc-sub">📜 Last week's drills and recent bouts</summary>${lastT.map(x=>`<div class="rc-sub">${esc(x.n)}: ${x.txt}</div>`).join('')}${(w.exlog||[]).slice(0,4).map(x=>`<div class="rc-sub">S${x.s} W${x.wk} · ${x.txt}</div>`).join('')}</details>`:''}`}
+{const base=practiceHTML;practiceHTML=function(){const h=base.apply(this,arguments);try{const t=document.createElement('template');t.innerHTML=h;const hd=t.content.querySelector('.roomhd');
+  const body=yardHTML76();const n=lockNote76('Training Yard');return (hd?hd.outerHTML:'')+(n?n+`<div class="locked76">${body}</div>`:body)}catch(e){console.error(e);return h}}}
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-yb76],[data-yp76]');if(!t||t.disabled||!t.closest('#mgrBody'))return;e.preventDefault();e.stopPropagation();const w=W_();if(!w)return;
+  if(roadLocked76(w)){mToast(`🛣 On the road to <b>${esc(roadCity76(w))}</b> — the Training Yard reopens when the week ends.`);return}
+  if(t.dataset.yb76){const [k,gid]=t.dataset.yb76.split(':');MGR.yb76=MGR.yb76&&MGR.yb76.gid===gid&&MGR.yb76.k===k?null:{gid,k};if(k==='pen'){MGR.pen76={...(MGR.pen76||{}),gid,t:(MGR.pen76&&MGR.pen76.t)||'wolf'}}if(typeof MGR_REDRAW==='function')MGR_REDRAW();return}
+  const [k,gid]=t.dataset.yp76.split('|');const sel=document.querySelector(`[data-yp76p="${gid}"]`);const mate=sel&&sel.value;const P=thPlan(w);
+  if(!mate||mate===gid||thLeft(w)<2)return;if(thOfG(P,gid)+2>TH_FIGHTER||thOfG(P,mate)+2>TH_FIGHTER){mToast(`Each fighter can train ${TH_FIGHTER} hours a week.`);return}
+  P.pairs.push({k,a:gid,b:mate});MGR.yb76=null;saveWorld();mToast(`${k==='bond'?'🤝':'⚔'} ${esc(gById(gid).name)} and ${esc(gById(mate).name)} ${k==='bond'?'bond':'spar'} this week (2 h each).`);if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
+/* a pen launched from a fighter's card fights that fighter */
+{const base=penGo76;penGo76=function(){try{if(MGR.yb76&&MGR.yb76.k==='pen'){MGR.pen76=MGR.pen76||{};MGR.pen76.gid=MGR.yb76.gid}}catch(e){}MGR.yb76=null;return base.apply(this,arguments)}}
+/* a just-started event is never covered by the main menu (a window closing with 'close' while the bout is still setting up) */
+{const base=menuShow;menuShow=function(){if(S&&!S.over&&S.phase==='setup'&&S.startedAt&&Date.now()-S.startedAt<8000)return;return base.apply(this,arguments)}}
+(()=>{const st=document.createElement('style');st.textContent=`
+.yd76top{display:grid;gap:8px;margin:10px 0}.yd76regs,.yd76bank{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.yd76bank .thbig{font:400 28px var(--display);color:var(--gold2);line-height:1}
+.yd76l{font:600 11px var(--mono,monospace);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:46px}
+.yd76rg,.yd76b{display:inline-grid;gap:0;text-align:left;padding:4px 8px;border:1px solid var(--line2);border-radius:7px;background:var(--panel2);color:var(--bone);cursor:pointer;font-size:13.5px}
+.yd76rg small,.yd76b small{color:var(--muted);font-size:11px}.yd76rg.on,.yd76b.on{border-color:var(--gold);background:#3a2a18}.yd76rg:hover:not(:disabled),.yd76b:hover:not(:disabled){border-color:var(--gold)}
+.yd76b:disabled{opacity:.45;cursor:default}.yd76b.on:disabled{opacity:1;color:#cfe3b8}.yd76sq{display:inline-flex;gap:6px;align-items:center;font-size:13px}.yd76fac{margin-left:auto}
+.yd76grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:10px}
+@media (max-width:620px){.yd76grid{grid-template-columns:1fr}}
+.yd76c{border:1px solid var(--line2);border-top:3px solid var(--gold);border-radius:10px;background:linear-gradient(180deg,var(--panel2),var(--panel));padding:8px 10px;display:grid;gap:6px}
+.yd76c.hurt{border-top-color:var(--blood2)}.yd76c.open{box-shadow:0 0 0 1px var(--gold) inset}
+.yd76hd{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center}.yd76hd>:first-child{width:30px;height:40px;overflow:hidden;display:block}.yd76hd>:first-child *{max-width:100%;max-height:40px}
+.yd76nm{display:grid;min-width:0}.yd76nm b{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.yd76nm .rc-sub{font-size:12px}
+.yd76pot{display:block;height:3px;border-radius:2px;background:var(--line2);margin-top:3px;overflow:hidden}.yd76pot i{display:block;height:100%;background:linear-gradient(90deg,#b8862c,#f0cf7d)}
+.yd76h{font:600 11px var(--mono,monospace);color:var(--muted);border:1px solid var(--line2);border-radius:8px;padding:1px 6px}
+.yd76row{display:grid;grid-template-columns:52px 1fr;gap:6px;align-items:start}.yd76row .yd76l{padding-top:6px}
+.yd76ds,.yd76bs{display:flex;flex-wrap:wrap;gap:5px}
+.yd76d{display:grid;border:1px solid var(--line2);border-radius:7px;background:var(--panel2);min-width:92px}.yd76d.on{border-color:var(--gold)}
+.yd76d>button{all:unset;cursor:pointer;display:grid;grid-template-columns:auto 1fr;column-gap:4px;padding:4px 7px 2px;font-size:12.5px}.yd76d>button:disabled{cursor:default;opacity:.55}
+.yd76d>button b{font-weight:600}.yd76d>button span{grid-column:1/-1;color:var(--muted);font-size:11.5px}.yd76d .pips{display:flex;gap:3px;padding:0 7px 5px}
+.yd76d .pip{width:9px;height:9px;border-radius:50%;border:1px solid var(--line2);background:none;padding:0;cursor:pointer}.yd76d .pip.on{background:#d9a441;border-color:#d9a441}.yd76d .pip:disabled{cursor:default}
+.yd76p{border:1px dashed var(--gold);border-radius:8px;padding:8px;display:grid;gap:6px;background:rgba(214,171,76,.05)}.yd76p select{max-width:100%}
+.yd76res{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12.5px;border-top:1px solid var(--line2);padding-top:5px}.yd76res>span{color:#cfe3b8}.yd76res>span.rc-sub{color:var(--muted)}
+.yd76x{background:none;border:0;color:var(--muted);cursor:pointer;padding:0 2px}.yd76log{margin-top:10px}`;document.head.appendChild(st)})();
