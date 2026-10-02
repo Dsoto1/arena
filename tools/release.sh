@@ -19,6 +19,7 @@ step "2 build"
 OUT=$(sh build.sh); echo "$OUT" | tail -1
 echo "$OUT" | grep -q SYNTAX_OK || { echo "build failed"; exit 1; }
 echo "$OUT" | grep -q "GUARD TRIPPED" && { echo "swallowed-statement guard tripped"; exit 1; }
+printf '{"v":"%s"}\n' "$V" > version.json; echo "version.json → v$V (upload it to play/ with index.html)"
 step "3 page hygiene"
 WORDS=$(grep -m1 "Current words:" CLAUDE.md | sed 's/.*Current words://' | grep -oE '[A-Z][A-Z0-9]{3,}')
 for w in $WORDS; do if grep -q "$w" flavius-arena.html; then echo "cheat word in plain text: $w"; exit 1; fi; done
