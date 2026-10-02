@@ -122,3 +122,16 @@ try{RAT_SHUT=localStorage.getItem('flavius_ratshut')!=='0'}catch(e){RAT_SHUT=tru
 {const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(!w||w.dead)return h;const n=ludusTodo73();
   h=h.replace(/(<button[^>]*data-mg="tab" data-id="ludus"[^>]*class=")([^"]*)("[^>]*>)([\s\S]*?)(<\/button>)/,(m0,a,cls,c,lab,e)=>{cls=cls.replace(/\b(ludpend|luddone)\b/g,'').trim()+' '+(n?'ludpend':'luddone');
     lab=lab.replace(/<span class="tabchk"[^>]*>✓<\/span>/,'');return `${a}${cls}${c}${lab}${n?'':'<span class="tabchk" title="Everything here is done for the week">✓</span>'}${e}`})}catch(e){console.error(e)}return h}}
+
+/* ---------- (v0.74) each tab with a to-do wears the green ✓ once its own work is done ----------
+   Recruiting: no hours left · Training Yard: a regime set and no training hours left · Infirmary: nobody waiting for care ·
+   Match Week: every bout fought and no verdict waiting. (Your ludus follows the weekly checklist, above.) */
+function tabDone73(k){const w=W_(),m=me();if(!w||!m||w.dead)return false;
+  if(k==='recruit')return !(w.hours>0);
+  if(k==='practice')return !!w.train&&w.train!=='off'&&!(thLeft(w)>0&&rosterOf(m).length);
+  if(k==='infirm')return infirmNeed73()===0;
+  if(k==='night')return !!(w.night&&w.night.bouts.every(b=>b.done))&&!(w.pend||[]).length;
+  return false}
+{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/(⚔️ Match Week) ✓/,'$1')}catch(e){}return h}}
+setInterval(()=>{try{if(typeof W_!=='function'||!W_()||W_().dead)return;for(const k of ['recruit','practice','infirm','night']){const b=document.querySelector(`.mtabs [data-mg="tab"][data-id="${k}"]`);if(!b)continue;
+  const d=tabDone73(k);let c=b.querySelector('.tabchk.c73');if(d&&!c){c=document.createElement('span');c.className='tabchk c73';c.title='Done for the week';c.textContent='✓';b.appendChild(c)}else if(!d&&c)c.remove()}}catch(e){}},500);
