@@ -5,13 +5,13 @@ await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
 const errs=[];pg.on('pageerror',e=>errs.push(e.message+' @ '+(e.stack||'').split('\n')[1]));
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.click('#mClose');
 const out={};
-out.loc=await pg.evaluate(()=>document.querySelector('#calChip').textContent);
+out.loc=await pg.evaluate(()=>(document.querySelector('#calChip')||document.querySelector('#status')).textContent /* v0.75: the date chip moved into the event pop-up */);
 // auto-pause
 await pg.evaluate(()=>{startEvent({ev:'democritus',loc:6,seats:[{cls:'soldier',cpu:true},{cls:'hero',cpu:true},{cls:'slave',cpu:true},{cls:'venatore',cpu:true}],opts:{spect:12}})});
 await pg.waitForTimeout(800);
 await pg.evaluate(()=>{const m=document.querySelector('#modal');if(m&&!m.hidden){const c=document.querySelector('#mClose');if(c&&!c.hidden)c.click()}});await pg.waitForTimeout(300);
 await pg.evaluate(()=>setSpeedUI('normal'));
-out.locLive=await pg.evaluate(()=>document.querySelector('#calChip').textContent);
+out.locLive=await pg.evaluate(()=>(document.querySelector('#calChip')||document.querySelector('#status')).textContent /* v0.75: the date chip moved into the event pop-up */);
 await pg.click('#btnRules');await pg.waitForTimeout(300);
 out.pausedOpen=await pg.evaluate(()=>SPEED);
 await pg.click('#mClose');await pg.waitForTimeout(400);

@@ -15,7 +15,7 @@ o.d=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   r.card=/cls_hero/.test(cardHTML('k:hero','md'));const k=blankClass();k.name='Tester';k.arm={head:'galea'};r.custom=/class card/.test(classCardSVG(k))&&classCardSVG(k).includes('viewBox="0 0 554 800"');
   /* the Veteranus pays his debt in CF */
   startEvent({ev:'democritus',loc:6,seats:[{cls:'veteranus',cpu:false},{cls:'hero',cpu:true}],opts:{spect:0}});await W8(2500);for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(150)}
-  const p=S.players[0];p.taxPref='cf';p.coin=20;p.cf=10;p.market=true;const pr=openMarket(p);await W8(500);const btn=[...document.querySelectorAll('#mBtns button')].find(x=>/Armor LV 1/.test(x.textContent));r.taxLabel=!!btn&&/\+ 1 CF/.test(btn.textContent);
+  const p=S.players[0];p.taxPref='cf';p.coin=20;p.cf=10;p.market=true;const pr=openMarket(p);await W8(500);const btn=[...document.querySelectorAll('#mBtns button')].find(x=>/Armor LV 1|Buy at level 1/.test(x.textContent));r.taxLabel=!!btn&&/\+ 1 CF/.test(btn.textContent);
   CUR_MODAL&&CUR_MODAL.done('close');await W8(200);S.over=true;return r});
 o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_();const ros=rosterOf(me());const r={};
   ros[0].inj={until:w.week+2,label:'a torn shoulder',pen:2};ros[2].fat=40;MGR.tab='practice';MGR_REDRAW();await W8(400);const t0=thLeft(w);document.querySelector(`[data-yj="gear"][data-id="${ros[1].id}"]`).click();await W8(200);r.gear=thLeft(w)===t0-1&&boostFor(ros[1]).ap>=1;
