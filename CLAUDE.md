@@ -424,6 +424,11 @@ One global script; files are concatenated in order. Later "version modules" patc
   per-tab checks, week strip, banner boxes; lingering pop-up fix. (Published as artifact Version 86.)
 
 ## 8. Next steps / open items
+- **Next update (v0.75, agreed):** Ornate Chest Armor (tools/art/armor_new/55, L2 chest 4 AP) = Royalty's starting chest (Scaled stays
+  in the market); single Flavius' Greave art (54) for the avatar (mirrored left; thumbnail keeps the pair); top-bar event chip shows the
+  event's own token (Summa Rudis medallion for classic events, rtok 'eagle' for the Golden Eagle, nothing otherwise) and hovering the
+  event name shows the event card (data-card="e:"+S.evKey); Play Now redesign (mockup first: card strip events, seat cards in the
+  token style, quick start + presets, guide win rates, your record).
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
   8 printed classes move to the live template (104-cards74 classCard74) so rule changes update their cards. Still to come from him:
   Thracian Helm, Ornate Chest Armor, Chest Armor, Reinforced Arm Armor art; distinct art for the Iron Spaulder (it shares the look of
