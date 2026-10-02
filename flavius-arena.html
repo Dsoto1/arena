@@ -28326,11 +28326,14 @@ const ARM_CROP=[[39,16,252,299],[366,15,256,300],[706,16,233,298],[1053,16,202,2
 const EQ={head:[75,29],sho:[40,77],fore:[30,133],hand:[22,168],chest:[75,96],belt:[75,135],thigh:[60,190],shin:[61,258]};
 const EQ_L={sho:[110,76],fore:[119,132],hand:[128,168],thigh:[91,190],shin:[88,258]};
 /* x,y = where the piece's centre sits; w = its width on the body; r = turn in degrees */
-const ARM_FIT={
-  galea:{at:'head',dy:-1,w:44},cassis:{at:'head',dy:-4,w:50},crista:{at:'head',dy:-6,w:46},murmillo:{at:'head',dy:-2,w:42},helm5:{at:'head',dy:-1,w:44},flavhelm:{at:'head',dy:-2,w:52},
-  balteus:{at:'belt',dy:4,w:48},pectorale:{at:'chest',dy:-2,w:46},lorica:{at:'chest',dy:6,w:56},musculata:{at:'chest',dy:6,w:56},amazon:{at:'chest',dy:6,w:56},flavchest:{at:'chest',dy:6,w:56},thorax:{at:'chest',dy:0,w:84},
-  wraps:{at:'fore',dy:-4,w:26},manica:{at:'sho',dx:-2,dy:16,w:28},provmanica:{at:'sho',dx:-2,dy:16,w:30},spaulder:{at:'sho',dx:-2,dy:4,w:46},cestus:{at:'hand',dy:-6,w:26},galerus:{at:'sho',dx:-3,dy:6,w:34},bracers:{at:'fore',dy:2,w:20},
-  legwrapsU:{at:'thigh',dy:4,w:22},legwraps:{at:'shin',dy:6,w:22},femoralia:{at:'thigh',dy:6,w:26},ocrea:{at:'shin',dy:2,w:26},greaves:{at:'shin',dy:2,w:24},thighplate:{at:'thigh',dy:4,w:26},cnemis:{at:'shin',dy:-4,w:24}};
+const ARM_FIT={ /* placed to the rulebook's armored avatar (p.22): helmets to the chin, cuirass collarbone to waist, belt across the
+   waist, upper-arm plates shoulder to elbow, bracers over the padded forearm, thigh plates from the hip, lower-leg pieces knee to ankle */
+  galea:{at:'head',dy:3,w:48},cassis:{at:'head',dy:2,w:56},crista:{at:'head',dy:1,w:50},murmillo:{at:'head',dy:4,w:46},helm5:{at:'head',dy:4,w:46},flavhelm:{at:'head',dy:2,w:56},
+  balteus:{at:'belt',dy:-3,w:60},pectorale:{at:'chest',dy:0,w:48},lorica:{at:'chest',dy:5,w:56},musculata:{at:'chest',dy:5,w:54},amazon:{at:'chest',dy:5,w:56},flavchest:{at:'chest',dy:5,w:56},thorax:{at:'chest',dy:2,w:84},
+  wraps:{at:'fore',dy:2,w:30},manica:{at:'sho',dx:-2,dy:9,w:30},provmanica:{at:'sho',dx:-2,dy:9,w:32},spaulder:{at:'sho',dx:-2,dy:2,w:42},cestus:{at:'hand',dy:-4,w:26},galerus:{at:'sho',dx:-2,dy:9,w:31},bracers:{at:'fore',dy:2,w:24},
+  legwrapsU:{at:'thigh',dx:-1,dy:-8,w:28},legwraps:{at:'shin',dy:4,w:27},femoralia:{at:'thigh',dx:-1,dy:-6,w:28},ocrea:{at:'shin',dy:4,w:28},greaves:{at:'shin',dy:6,w:24},thighplate:{at:'thigh',dx:-2,dy:-10,w:29},cnemis:{at:'shin',dy:0,w:21}};
+/* the sharper sheet (v0.57) put the orange-brown upper padding in cell 19: Padded Leg Armor (upper) wears it (rulebook p.23) */
+if(ARM.legwrapsU)ARM.legwrapsU.img=19;
 const ARM_DIM=0.5; /* opacity lost when a piece's share of AP is gone (it falls off at 0) */
 let ARM_FIT_OVR={};try{ARM_FIT_OVR=JSON.parse(localStorage.getItem('flavius_armfit')||'{}')||{}}catch(e){ARM_FIT_OVR={}}
 /* the printed part decides the point: arm upper → shoulder, lower → forearm, hand → hand; leg upper → thigh, lower → shin */
