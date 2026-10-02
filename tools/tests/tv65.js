@@ -11,7 +11,7 @@ o.y=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ope
   const two=(thPlan(w).g[g.id]||{}).spd===2;const prev=/→ ~/.test(document.querySelector(`[data-tp="g|${g.id}|spd|1"]`).textContent);
   document.querySelector(`[data-tp="g|${g.id}|spd|-1"]`).click();await new Promise(r=>setTimeout(r,200));const one=(thPlan(w).g[g.id]||{}).spd===1;
   const hurtTiles=!document.querySelector(`[data-tp="g|${hurt.id}|spd|1"]`)&&!!document.querySelector(`[data-tp="g|${hurt.id}|rehab|1"]`);
-  await new Promise(r=>setTimeout(r,900));const chip=(document.querySelector('.mtabs [data-id="practice"] .hrchip')||{}).textContent;
+  await new Promise(r=>setTimeout(r,900));const chip=(document.querySelector('.mtabs [data-id="practice"] .mcount.c73')||{}).textContent;
   const rb=document.querySelector('.mtabs [data-mg="tab"][data-id="recruit"]');const css={borderTopWidth:getComputedStyle(rb).borderTopWidth,boxShadow:getComputedStyle(rb).boxShadow,cls:rb.className};
   MGR.tab='infirm';MGR_REDRAW();await new Promise(r=>setTimeout(r,500));
   const plans=document.querySelectorAll('.plantile').length,tl=!!document.querySelector('.rtimeline'),fatrows=document.querySelectorAll('.fatrow').length;
