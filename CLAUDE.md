@@ -428,7 +428,9 @@ One global script; files are concatenated in order. Later "version modules" patc
   in the market); single Flavius' Greave art (54) for the avatar (mirrored left; thumbnail keeps the pair); top-bar event chip shows the
   event's own token (Summa Rudis medallion for classic events, rtok 'eagle' for the Golden Eagle, nothing otherwise) and hovering the
   event name shows the event card (data-card="e:"+S.evKey); Play Now redesign (mockup first: card strip events, seat cards in the
-  token style, quick start + presets, guide win rates, your record).
+  token style, quick start + presets, guide win rates, your record; mockup https://claude.ai/artifact/2T2FJJL3PKcou1gjrKnfPP, source
+  tools/mockups/play-now-redesign.html); the arena's top-right cluster (turn name + phase + the round-rule chips like ⃠ No PvP, moved
+  out of the top bar) becomes ONE thematic, unobtrusive panel.
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
   8 printed classes move to the live template (104-cards74 classCard74) so rule changes update their cards. Still to come from him:
   Thracian Helm, Ornate Chest Armor, Chest Armor, Reinforced Arm Armor art; distinct art for the Iron Spaulder (it shares the look of
