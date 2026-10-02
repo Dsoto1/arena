@@ -30257,7 +30257,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 
 /* ---------- infirmary beds ---------- */
 const bedsOf76=m=>1+(typeof facLvl==='function'?facLvl(m,'valet'):0);
-function serious76(g){if(!g)return false;if((g.severed||[]).length)return true;const i=g.inj;if(!i||i.war)return false;if(i.ser76)return true;const w=W_();
+function serious76(g){if(!g)return false;{const w0=W_();if(w0&&w0.tutorial)return false} /* the lesson's league skips beds */if((g.severed||[]).length)return true;const i=g.inj;if(!i||i.war)return false;if(i.ser76)return true;const w=W_();
   const s=injReq(i)==='surgeon'||(i.pen||0)>=4||((i.until||0)-w.week)>=3;if(s)i.ser76=1;return s}
 function bedsClean76(w){const m=me();if(!m)return [];const ros=new Set(rosterOf(m).map(g=>g.id));
   w.beds76=(w.beds76||[]).filter((id,i,a)=>a.indexOf(id)===i&&ros.has(id)&&serious76(gById(id))).slice(0,bedsOf76(m));return w.beds76}
@@ -30512,7 +30512,7 @@ document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest
 /* a pen launched from a fighter's card fights that fighter */
 {const base=penGo76;penGo76=function(){try{if(MGR.yb76&&MGR.yb76.k==='pen'){MGR.pen76=MGR.pen76||{};MGR.pen76.gid=MGR.yb76.gid}}catch(e){}MGR.yb76=null;return base.apply(this,arguments)}}
 /* a just-started event is never covered by the main menu (a window closing with 'close' while the bout is still setting up) */
-{const base=menuShow;menuShow=function(){if(S&&!S.over&&S.phase==='setup'&&S.startedAt&&Date.now()-S.startedAt<8000)return;return base.apply(this,arguments)}}
+{const base=menuShow;menuShow=function(){if(S&&!S.over&&(S.pen76||S.exhibCtx||S.mgrCtx)&&S.startedAt&&Date.now()-S.startedAt<8000)return;return base.apply(this,arguments)}}
 (()=>{const st=document.createElement('style');st.textContent=`
 .yd76top{display:grid;gap:8px;margin:10px 0}.yd76regs,.yd76bank{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.yd76bank .thbig{font:400 28px var(--display);color:var(--gold2);line-height:1}
 .yd76l{font:600 11px var(--mono,monospace);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:46px}
