@@ -700,3 +700,8 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 (()=>{const st=document.createElement('style');st.textContent=`
 .wd76med{display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center}details.wd76med{display:block;flex-basis:100%}details.wd76med summary{cursor:pointer}
 .tmp76{margin:8px 0}.cl76{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}`;document.head.appendChild(st)})();
+
+/* ---------- v0.76 fix: the round's switched-off rules go into the turn panel's ⓘ (the ⃠ chips under the name looked odd) ---------- */
+{const base=renderTurnInd;renderTurnInd=function(){const r=base.apply(this,arguments);try{const box=document.getElementById('turnInd');if(!box||box.hidden)return r;
+  const rl=box.querySelector('.tprules');const off=rl?[...rl.querySelectorAll('.tpr75')].map(x=>x.textContent.replace('⃠','').trim()).filter(Boolean):[];if(rl)rl.remove();
+  const qi=box.querySelector('.qi');if(qi&&off.length){qi.dataset.tip=(qi.dataset.tip||'')+`<br>This round: no ${off.map(esc).join(' · no ')}`;qi.dataset.off76=off.join('|')}}catch(e){console.error(e)}return r}}

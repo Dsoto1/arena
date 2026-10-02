@@ -22,7 +22,7 @@ o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));co
   r.ornate=CLASSES.royalty.armor.some(a=>a[0]==='ornate')&&ARM.ornate.ap===4&&ARM.greaves.img===43&&ARM.greaves.thumb===24;
   r.pillar=typeof MINI_PILLAR75==='number'&&MINI_PILLAR75<1;
   r.top=!document.getElementById('calChip')&&!!document.querySelector('#status .evchip75')&&!!document.querySelector('#navDrawer #btnEvInfo')&&!document.querySelector('#status .rulechip');
-  r.panel=/PvP/.test((document.querySelector('#turnInd .tprules')||{}).textContent||'');
+  r.panel=/PvP/.test(((document.querySelector('#turnInd .qi')||{}).dataset||{}).tip||''); /* v0.76: the round's rules live in the turn panel's ⓘ */
   r.crowd=houseCount(13)===13000&&/K/.test(document.getElementById('btnDrawB').textContent);
   const A=S.market.a[1];r.piles=Array.isArray(A.piles)&&A.piles.length===4&&A.deck.length===0&&A.slots.length===A.piles.flat().length;
   const n0=A.piles.flat().length;const k=await marketRoll(S.players[1],'a',1,{free:1});r.free=!!ARM[k]&&A.piles.flat().length===n0-1;
