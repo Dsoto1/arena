@@ -274,10 +274,12 @@ One global script; files are concatenated in order. Later "version modules" patc
   CPU labels name the mind; share build ~25 MB; smart regression + release script. (Published as artifact Version 75.)
 
 ## 8. Next steps / open items
-- **Planned v0.64: async play-by-link** (shared Store, published link only). Design the security model with Virgilante FIRST:
-  per-seat signing keys (WebCrypto), hash-chained append-only move log, deterministic replay verification from the seed,
-  invite codes, size/rate limits; peeking (hands, seeded future dice) is honor-system unless commit-reveal dice. Out-of-turn
-  reactions (defend cards, Omnia, truce/trade): PAUSE and wait for that player (Virgilante's choice). Friends-only first.
+- **Online multiplayer — BRAINSTORM ONLY (Virgilante, v0.63): do not build until core gameplay is polished.** Direction so far:
+  real-time only (async play-by-link dropped); authoritative server holding dice/hands; client hosted on Virgilante's S3
+  site (CloudFront), backend API Gateway WebSockets + Lambda + DynamoDB (or a small Lightsail Node box). Phases when it
+  starts: 1 engine/UI split (every in-match decision through one request layer; single player unchanged, ~2-3 batches),
+  2 Node game server tested locally (~2), 3 lobby: invite codes, quick match with CPU fill, turn timers, reconnect, CPU
+  takeover (~1-2), 4 deploy (needs AWS secrets). Open: Play Now only?, seats, timer length, guests vs accounts.
 - **Readability pass, phase 2+** (Virgilante chose "phased"): files 02–07 are done (Babel scope-safe parameter renames via
   `tools/rename.js`, then comments on every function with `TWEAK:` notes; verified with `tools/samecode.js`, which
   compares code ignoring comments/whitespace). Remaining: 08–64, file by file, regression after each. Rename only
