@@ -207,7 +207,7 @@ function boardHTML75(player){const m=S.market;const cell=(x,y,inner,cls='')=>`<d
   for(const lv of [3,2,1]){const y=MB75.rows[lv];const W=m.w[lv],A=m.a[lv];
     for(let s=1;s<=4;s++){const x=MB75.w[s-1];let inner='';
       if(s<=3)inner=W.slots[s-1]?`<span class="mb-w" data-card="w:${W.slots[s-1]}" style="${cardStyle('w:'+W.slots[s-1])}" title="${esc(WDEF75[W.slots[s-1]].n)}"></span>`:'';
-      else inner=W.deck.length?(wOpen75(W)?`<span class="mb-w" data-card="w:${W.up4}" style="${cardStyle('w:'+W.up4)}" title="${esc(WDEF75[W.up4].n)} (flipped)"></span><span class="mb-n">×${W.deck.length}</span>`:`<span class="mb-back" title="${W.deck.length} face down"><b>FLAVIUS<br>RULE</b><small>×${W.deck.length}</small></span>`):'';
+      else inner=W.deck.length?(wOpen75(W)?`<span class="mb-w" data-card="w:${W.up4}" style="${cardStyle('w:'+W.up4)}" title="${esc(WDEF75[W.up4].n)} (flipped)"></span><span class="mb-n">×${W.deck.length}</span>`:`<span class="mb-back" data-lv="${lv}" title="${W.deck.length} face down"><b>FLAVIUS<br>RULE</b><small>×${W.deck.length}</small></span>`):'';
       h+=cell(x,y,inner,'w')}
     for(let s=1;s<=4;s++){const x=MB75.a[s-1];const p=A.piles[s-1]||[];const n=p.length;
       const inner=p.map(k=>`<span class="mb-a" data-card="a:${k}" style="${cardStyle('a:'+k)}" title="${esc(ARM[k].n)}"></span>`).join('');h+=cell(x,y,`<div class="mb-pile n${Math.min(n,6)}">${inner}</div>`,'a')}}
