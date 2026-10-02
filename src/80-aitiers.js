@@ -44,11 +44,18 @@ noise=function(player,scale=1){const T=AI_TIERS[aiTier(player)];const bl=player&
 {const base=beginTurn;beginTurn=async function(){try{const p=S&&cur();if(p&&p.cpu&&p.tier!=null)p.diff=p.aiDiff||AI_TIERS[p.tier].diff}catch(e){}return base.apply(this,arguments)}}
 /* statBonuses names the tier too (read by the chips, the ratings card and the growth news) */
 {const base=statBonuses;statBonuses=function(st){const b=base.apply(this,arguments);b.tier=aiTierOf((st||{}).int||0);b.tierName=AI_TIERS[b.tier].n;return b}}
-function aiTierChip(int){const T=AI_TIERS[aiTierOf(int)];return `<span class="aitier t${aiTierOf(int)}" title="${esc(T.n)} mind: ${esc(T.d)}">🧠 ${esc(T.n)}</span>`}
+function aiTierChip(int){const T=AI_TIERS[aiTierOf(int)];return `<span class="aitier t${aiTierOf(int)}" title="${esc(T.n)} mind: ${esc(T.d)}"><i class="brain b${aiTierOf(int)}">🧠</i> ${esc(T.n)}</span>`}
 {const st=document.createElement('style');st.textContent=`.aitier{display:inline-block;font-size:11px;padding:1px 6px;border-radius:9px;border:1px solid var(--line2);color:var(--muted);white-space:nowrap}
 .aitier.t2{color:#cfc6b4}.aitier.t3{color:#9cc4e8;border-color:#4f7fc4}.aitier.t4{color:var(--gold2);border-color:var(--gold)}`;document.head.appendChild(st)}
 /* the tier rides beside the ratings wherever they show; the glossary and the ratings guide name the five minds */
-{const base=statChips;statChips=function(st,opt={}){const h=base.apply(this,arguments);if(!h||!st||!st.int)return h;return h.replace(/<\/span>$/,` ${aiTierChip(statFix(st.int))}</span>`)}}
+{const base=statChips;statChips=function(st,opt={}){let h=base.apply(this,arguments);if(!h||!st||!st.int)return h;
+  h=h.replace(/(title="Intelligence [^"]*">)🧠/,`$1<i class="brain b${aiTierOf(statFix(st.int))}">🧠</i>`); /* v0.67: the brain wears its mind's colour */
+  return h.replace(/<\/span>$/,` ${aiTierChip(statFix(st.int))}</span>`)}}
+/* the five minds' colours: Novice grey · Apprentice green · Fighter bronze · Veteran blue · Master gold */
+{const st=document.createElement('style');st.textContent=`.brain{font-style:normal;display:inline-block}
+.brain.b0{filter:grayscale(1) brightness(1.05)}.brain.b1{filter:hue-rotate(150deg) saturate(1.3)}.brain.b2{filter:sepia(1) saturate(1.6) hue-rotate(-12deg) brightness(.95)}
+.brain.b3{filter:hue-rotate(245deg) saturate(1.4)}.brain.b4{filter:sepia(1) saturate(3) hue-rotate(5deg) brightness(1.2) drop-shadow(0 0 2px rgba(240,207,125,.6))}
+.aitier.t0{color:#a9a39a}.aitier.t1{color:#9cc46e;border-color:#4f7a35}`;document.head.appendChild(st)}
 const AI_TIERS_TXT='Novice below 65, Apprentice 65, Fighter 76, Veteran 86, Master 96';
 try{if(typeof GLOSS!=='undefined'&&GLOSS.int)GLOSS.int.d=`How sharply a CPU plays the gladiator — five minds: ${AI_TIERS_TXT}. Personality still decides how they play. Grows by surviving and winning.`}catch(e){}
 /* ---------- SKILLS BY SUBSYSTEM: each tier sets the play level (easy / normal / hard) of each part of the CPU separately.

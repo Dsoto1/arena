@@ -308,6 +308,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - **v0.66** tutorial bumpers; phones in landscape (drawers, dock, auto actions); follow camera + pinch zoom; portrait hint.
   (Published as artifact Version 78.)
 - **v0.67** recruiting board + Fit/Odds/filters + 3-step card with offer meter; void wagers; Ludus Flavius switch; pool-first fillers; yard row.
+  (Published as artifact Version 79.)
 
 ## 8. Next steps / open items
 - **Next (agreed with Virgilante):** v0.68 — portrait compact mode (arena on top, tabbed bottom sheet Actions/Fighter/Log, tray
