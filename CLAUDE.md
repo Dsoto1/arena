@@ -434,6 +434,14 @@ One global script; files are concatenated in order. Later "version modules" patc
   The arena's 📅 date chip (season schedule) leaves the top bar; the date + "this week: <city> · <event>" line goes into the hovered event-card pop-up. Top bar slims to one row: logo · event token + name + round
   marker/name (board size into the pop-up) · speed tray · 🏟 Stands · 📊 Standings · Rules (stays: rules + strategy guides) · 🏛 menu
   (Event Details moves in there) · ‹. His FR favicon replaces the logo at the arena's top left (file still to come from him).
+- **Market to the rulebook (pp.24-25; decided with Virgilante, part of the next update):** (1) declare + pay a LEVEL, roll the market
+  die once, then take the rolled slot from EITHER side (weapon or armor); (2) armor = option A: shuffle all of the level's MARKET_A
+  pieces and deal them face up across slots 1-4 (a slot holds several; pairs/sets like bracers or lower legs are one pick), take ONE
+  piece/set from the rolled slot, no armor deck, empty slot → nearest (tie = buyer's choice); (3) weapons keep 3 face up + slot 4
+  face-down deck, and a slot-4 card flipped before a re-roll stays face up in slot 4 until taken; (4) the market window = his board
+  (tools/art/market_board.jpg: weapons left, armor right, L3 top, 12/8/4 coin spine). His art also waiting: badges (tools/art/icons/
+  badge_time/badge_players — text painted out, live numbers), event frame (tools/art/event_frame.webp), 9 diamond icons (strip9.webp,
+  purpose not yet told), FR favicon 32px (fr_favicon.png).
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
   8 printed classes move to the live template (104-cards74 classCard74) so rule changes update their cards. Still to come from him:
   Thracian Helm, Ornate Chest Armor, Chest Armor, Reinforced Arm Armor art; distinct art for the Iron Spaulder (it shares the look of
