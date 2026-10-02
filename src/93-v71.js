@@ -76,3 +76,13 @@ setInterval(()=>{try{wagerWatch();slogPinApply()}catch(e){}},300);
 @keyframes wbub{0%{opacity:0;transform:translate(-50%,-70%) scale(.7)}12%{opacity:1;transform:translate(-50%,-100%) scale(1.08)}22%{transform:translate(-50%,-100%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-160%)}}
 body.calm .wbub{animation:none;opacity:1}
 body.chromeoff #wbubs{display:none}`;document.head.appendChild(st)})();
+/* the old-save question opens as its own small centred window (it used to be inserted beside the button and squeezed save cards) */
+verAsk=function(anchor,v){return new Promise(res=>{for(const o of document.querySelectorAll('.verask,.veraskbg'))o.remove();
+  const bg=document.createElement('div');bg.className='veraskbg';const bar=document.createElement('div');bar.className='card2 verask';bar.setAttribute('role','dialog');bar.setAttribute('aria-modal','true');
+  bar.innerHTML=`<b>⬆ This save is from ${esc(verLabel(v))}.</b><div class="rc-sub" style="margin:4px 0 10px">It will be upgraded to v${GAME_VER} as it loads: fields newer versions need are filled in (fighters’ purses, season records) and broken offers are dropped. Your record, roster and treasury stay as they are.</div><div class="acts"><button type="button" class="btn primary" data-verask="yes">Upgrade and load</button><button type="button" class="btn" data-verask="no">Cancel</button></div>`;
+  bg.appendChild(bar);document.body.appendChild(bg);const done=ok=>{bg.remove();document.removeEventListener('keydown',key,true);res(ok)};
+  const key=e=>{if(e.key==='Escape'){e.stopPropagation();e.preventDefault();done(false)}};document.addEventListener('keydown',key,true);
+  bg.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-verask]');if(b)done(b.dataset.verask==='yes');else if(e.target===bg)done(false)});
+  setTimeout(()=>{const y=bar.querySelector('[data-verask="yes"]');if(y)y.focus()},30)})};
+(()=>{const st=document.createElement('style');st.textContent=`.veraskbg{position:fixed;inset:0;z-index:4000;background:rgba(8,5,3,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.veraskbg .verask{width:min(440px,100%);margin:0;padding:14px 16px;border-color:var(--gold);box-shadow:0 18px 50px rgba(0,0,0,.7)}.veraskbg .verask .acts .btn{flex:1 1 140px}`;document.head.appendChild(st)})();
