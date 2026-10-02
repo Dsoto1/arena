@@ -28980,6 +28980,14 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-ckskip]');
 .infirm .roomstat.rs2 .ptbox.on{background:radial-gradient(circle at 40% 35%,#ffffff,#e9e5dc 60%,#9a948a);box-shadow:0 0 12px rgba(233,229,220,.45)}
 .b73-night .roomstat.rs2 .ptbox.on{background:radial-gradient(circle at 40% 35%,#f1e8ff,#b9a3e3 60%,#5e4a8a);box-shadow:0 0 12px rgba(185,163,227,.5)}
 .b73-roster .roomstat.rs2 .ptbox.on{background:radial-gradient(circle at 40% 35%,#ffd9cf,#d2694e 60%,#7a2a1a);box-shadow:0 0 12px rgba(210,105,78,.45)}`;document.head.appendChild(st)})();
+
+/* ---------- fix (v0.74): a card/token pop-up (#tip) could linger when its card vanished or re-rendered under the pointer (no
+   mouseover fires), or after a token pop-up (it never hid itself). A watchdog hides it once its anchor is gone or no longer hovered. ---------- */
+(()=>{const tip=document.getElementById('tip');if(!tip)return;let anchor=null;
+  document.addEventListener('mouseover',e=>{anchor=e.target.closest&&e.target.closest('[data-card],[data-glad],[data-tokz]')},true);
+  const hide=()=>{if(!tip.hidden)tip.hidden=true};
+  setInterval(()=>{if(tip.hidden)return;if(!anchor||!anchor.isConnected||!anchor.matches(':hover'))hide()},350);
+  document.addEventListener('mouseleave',hide);window.addEventListener('blur',hide)})();
 /* 96-armlv — custom armor in levels (Virgilante; drafted v0.70, shipped v0.73).
    One design, ticked for Level I, II and/or III: each ticked level becomes its own piece — "Name I/II/III", its own market deck,
    its own colour grade (I iron · II bronze · III gold) and its own stats, bought from that level's budget (CA_BUDGET 3/5/8):
