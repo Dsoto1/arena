@@ -18,10 +18,10 @@ const EQ_L={sho:[110,76],fore:[119,132],hand:[128,168],thigh:[91,190],shin:[88,2
 /* x,y = where the piece's centre sits; w = its width on the body; r = turn in degrees */
 const ARM_FIT={ /* placed to the rulebook's armored avatar (p.22): helmets to the chin, cuirass collarbone to waist, belt across the
    waist, upper-arm plates shoulder to elbow, bracers over the padded forearm, thigh plates from the hip, lower-leg pieces knee to ankle */
-  galea:{at:'head',dy:3,w:48},cassis:{at:'head',dy:2,w:56},crista:{at:'head',dy:1,w:50},murmillo:{at:'head',dy:4,w:46},helm5:{at:'head',dy:4,w:46},flavhelm:{at:'head',dy:2,w:56},
+  galea:{at:'head',dy:3,w:52},cassis:{at:'head',dy:2,w:56},crista:{at:'head',dy:1,w:50},murmillo:{at:'head',dy:4,w:50},helm5:{at:'head',dy:4,w:50},flavhelm:{at:'head',dy:2,w:56},
   balteus:{at:'belt',dy:-3,w:60},pectorale:{at:'chest',dy:0,w:48},lorica:{at:'chest',dy:5,w:56},musculata:{at:'chest',dy:5,w:54},amazon:{at:'chest',dy:5,w:56},flavchest:{at:'chest',dy:5,w:56},thorax:{at:'chest',dy:2,w:84},
-  wraps:{at:'fore',dy:2,w:30},manica:{at:'sho',dx:-2,dy:9,w:30},provmanica:{at:'sho',dx:-2,dy:9,w:32},spaulder:{at:'sho',dx:-2,dy:2,w:42},cestus:{at:'hand',dy:-4,w:26},galerus:{at:'sho',dx:-2,dy:9,w:31},bracers:{at:'fore',dy:2,w:26},
-  legwrapsU:{at:'thigh',dx:-1,dy:-8,w:28},legwraps:{at:'shin',dy:4,w:27},femoralia:{at:'thigh',dx:-1,dy:-6,w:28},ocrea:{at:'shin',dy:4,w:28},greaves:{at:'shin',dy:6,w:24},thighplate:{at:'thigh',dx:-2,dy:-10,w:29},cnemis:{at:'shin',dy:0,w:21}};
+  wraps:{at:'fore',dx:-1,dy:4,w:34},manica:{at:'sho',dx:-4,dy:14,w:36},provmanica:{at:'sho',dx:-4,dy:14,w:36},spaulder:{at:'sho',dx:-3,dy:2,w:48},cestus:{at:'hand',dy:-4,w:28},galerus:{at:'sho',dx:-4,dy:14,w:37},bracers:{at:'fore',dx:-1,dy:6,w:33},
+  legwrapsU:{at:'thigh',dx:-2,dy:-6,w:32},legwraps:{at:'shin',dy:-4,w:35},femoralia:{at:'thigh',dx:-2,dy:-4,w:32},ocrea:{at:'shin',dy:2,w:30},greaves:{at:'shin',dy:4,w:26},thighplate:{at:'thigh',dx:-4,dy:-6,w:33},cnemis:{at:'shin',dy:-2,w:24}};
 /* the sharper sheet (v0.57) put the orange-brown upper padding in cell 19: Padded Leg Armor (upper) wears it (rulebook p.23) */
 if(ARM.legwrapsU)ARM.legwrapsU.img=19;
 /* Flavius' Bracers: the gold engraved art is not on the sheet yet — the dark plates (cell 15, also the Provocator Manica) stand in */
