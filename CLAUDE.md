@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.67**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.68**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -59,7 +59,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Module ordering matters: a wrapper only sees wrappers installed before it.
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
   `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
-  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`.
+  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`.
   Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
 
 ### Core globals (engine)
@@ -216,11 +216,13 @@ One global script; files are concatenated in order. Later "version modules" patc
   fighter taken off a card are void + refunded (`voidBets` in 17-manager: enter, withdraw, the Gambit, and a guard at
   settlement; bet log status 'void'); career switch "Bring my Ludus Flavius gladiators into the league" (`lfPoolOn`,
   localStorage flavius_lfpool, default on); `fillNight` takes the nearest-rated free agents before creating a fighter.
-- **v0.68 (88-89, in progress):** `88-v68` — Your ludus checklist replaces the todobox (`weekChecklist` items {done,ic,txt,btn},
+- **v0.68 (88-90):** `88-v68` — Your ludus checklist replaces the todobox (`weekChecklist` items {done,ic,txt,btn},
   one button each, done items fold), header ledger badge (`weekMoney`: wages+drills vs gate share+fees of entered bouts → net/wk,
   runway, "before fees"), "You are about to skip" in `endConfirmHTML`. Economy levers in 87-v67 (`ECON`: fees 12/24/40, wages ×0.85,
   gate share 5+fame/4 ≤30 a week for every house, +100 starting purse once via `w._econ68`); tools/mgrsim.js = season simulator
-  (base/yard/cheap). `89-stands` — right column tabs `SIDE.tab` fighter/field/stands (`sideApply` after render; `flavius_sidetab`):
+  (base/yard/cheap). Rivals train (`rivalTrain` in an endWeek wrapper before the base: regime by Discipline/purse with
+  cost + injury odds, hours on the weaker of Speed/Strength, rest above fatigue 60; `rivalRest` decays fatigue after; `RIVAL_TRAIN`
+  turns off the old flat +0.3 drift in 66 weeklyGrowth). `89-stands` — right column tabs `SIDE.tab` fighter/field/stands (`sideApply` after render; `flavius_sidetab`):
   Fighter = #board, Field = #rosterGrp + #npcPanel (+ deck count, 📖 Bestiary button), Stands = `#standsPane` (`standsDrawerHTML`);
   #crowdPanel always hidden; the old drawer's `openDrawer` routes to the tabs; `#crowdTick` under the board = newest `S.spectLog`
   line (click → Stands); top-bar #btnDrawB = 🏟 Stands · N; `openMenagerie` = Bestiary only (B key, Field, Rules & strategy).
@@ -261,11 +263,11 @@ One global script; files are concatenated in order. Later "version modules" patc
   that is correct, not a bug.
 - **Releases always run the full suite** (tools/release.sh does it). Old runner: `(nohup sh tools/runreg.sh >/dev/null 2>&1 &)`
   then watch `tools/reg.txt` for `ALLDONE` (~11 min: 3 tests at once, `-j N`).
-  Pass = every block ends `exit=0` and prints `ERRS []`. Run a subset: `node tools/smartreg.js tv53 tpia`. (v0.67: 129 tests.)
+  Pass = every block ends `exit=0` and prints `ERRS []`. Run a subset: `node tools/smartreg.js tv53 tpia`. (v0.68: 130 tests.)
 - `t12` plays every event via sims (slow). Version tests: `tv50…tv54`-style files (`tv52`, `tv53`), plus feature tests
   (`tcls` classes, `tlook` accessories, `tbye` bye weeks, `temp53` closures, `t53s` studio, `tres` results,
   `tmgr54` manager, `tpia` piacula, `t54a` studio/event designer, `tv55` ratings/letters/loans/home/grades,
-  `tstat55` Studio ratings and allies, `tv56` mail and ratings help, `tv57` the v0.57 batch, `tv58` ships/prototype, `tv59` the v0.59 batch, `tv60` Road from the record + Annals loop, `tv60b` tame/counters/CF offerings/truces, `tv61` screens, `tv62` five minds, `tv63` the v0.63 batch, `tv64` missios/chariot tokens, `tv65` yard/fatigue/infirmary, `tv66` bumpers/phones, `tv67` recruiting board).
+  `tstat55` Studio ratings and allies, `tv56` mail and ratings help, `tv57` the v0.57 batch, `tv58` ships/prototype, `tv59` the v0.59 batch, `tv60` Road from the record + Annals loop, `tv60b` tame/counters/CF offerings/truces, `tv61` screens, `tv62` five minds, `tv63` the v0.63 batch, `tv64` missios/chariot tokens, `tv65` yard/fatigue/infirmary, `tv66` bumpers/phones, `tv67` recruiting board, `tv68` checklist/ledger/economy/rivals/stands tabs/armor on the avatar).
 - When a UI move breaks an old test intentionally, update the test (keep its intent).
 - Visual checks: write a short Playwright script, screenshot, and look at it.
 
@@ -329,9 +331,12 @@ One global script; files are concatenated in order. Later "version modules" patc
   (Published as artifact Version 78.)
 - **v0.67** recruiting board + Fit/Odds/filters + 3-step card with offer meter; void wagers; Ludus Flavius switch; pool-first fillers; yard row.
   (Published as artifact Version 79.)
+- **v0.68** printed armor worn on the avatar (rulebook placement and scale, dims/cracks, falls at 0, editors' Fit mode); arena right
+  column tabs Fighter · Field · Stands + crowd ticker, Menagerie → Bestiary; Manager weekly checklist + money ledger, economy
+  levers, rivals that train; brain colours, one Juggernaut, Road button in the record row. (Published as artifact Version 80.)
 
 ## 8. Next steps / open items
-- **Next (agreed with Virgilante):** v0.68 — portrait compact mode (arena on top, tabbed bottom sheet Actions/Fighter/Log, tray
+- **Next (agreed with Virgilante):** portrait compact mode (arena on top, tabbed bottom sheet Actions/Fighter/Log, tray
   behind ⋯) and phone layouts for menus/Manager/Studio (rail → bottom tabs). Recruiting ideas not chosen yet: weekly
   recruiting-hours plan, compare view, signing card.
 - **Online multiplayer — BRAINSTORM ONLY (Virgilante, v0.63): do not build until core gameplay is polished.** Direction so far:
