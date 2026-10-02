@@ -28255,7 +28255,10 @@ function sideTabsEnsure(){const side=document.querySelector('aside.side');if(!si
 function sideTabsHTML(){const n=standsCount(),k=S&&S.npcKills||0;
   return [['fighter','⚔ Fighter'],['field',`🐾 Field${k?` · ${k} slain`:''}`],['stands',`🏟 Stands · ${n}`]].map(([t,l])=>`<button type="button" role="tab" data-sidetab="${t}" aria-selected="${SIDE.tab===t}" class="${SIDE.tab===t?'on':''}">${l}</button>`).join('')}
 function standsPaneHTML(){if(!S||!S.spect||!S.spect.length)return `<p class="hint" style="margin:0">The stands are empty this event.</p>${typeof standsDrawerHTML==='function'?standsDrawerHTML({chronOnly:1}):''}`;
-  return typeof standsDrawerHTML==='function'?standsDrawerHTML():crowdPanelHTML()}
+  if(typeof standsDrawerHTML!=='function')return crowdPanelHTML();
+  /* the crowd first; the arena's chronicle as one quiet line after the stands log, then the roster */
+  const h=standsDrawerHTML({noChron:1}).replace('<div class="sect">In the stands right now</div>',''),ch=standsDrawerHTML({chronOnly:1})||'';const i=h.indexOf('<div class="sect">Spectator roster');
+  return i<0?h+ch:h.slice(0,i)+ch+h.slice(i)}
 function fieldHeadHTML(){const d=S&&S.deck&&EV()&&EV().deck?`${S.deck.length} arena card${S.deck.length===1?'':'s'} left`:'';
   return `<div class="fieldhd"><span class="rc-sub">${d}</span><button class="btn tksm" type="button" data-bestiary>📖 Bestiary</button></div>`}
 function sideApply(){const bar=sideTabsEnsure();if(!bar)return;const live=sideLive();bar.hidden=!live;
@@ -28299,6 +28302,11 @@ openMenagerie=async function(){if(typeof modalBusy==='function'&&modalBusy())ret
 .crowdtick .tk,.crowdtick .tkr{flex:none}.crowdtick .tkr{color:var(--dim,#9a8a74);font:11px var(--mono)}.crowdtick .tkt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.crowdtick .tkt *{display:inline}
 .crowdtick:hover{border-color:var(--gold,#c9a458)}
 .crowdtick.flash{animation:tkflash 1.2s ease-out}@keyframes tkflash{0%{background:rgba(201,164,88,.35)}100%{background:rgba(20,14,10,.6)}}
+.standspane .slog+.sect,.standspane .sect:has(+.chron){margin-top:12px!important}
+.standspane .chron.mini{display:flex;flex-wrap:wrap;gap:2px 12px;margin:0 0 4px}
+.standspane .chron.mini .stat{display:inline-flex;flex-direction:row;align-items:baseline;gap:4px;border:0;background:none;padding:0;min-width:0;min-height:0;font-size:12px;color:var(--muted)}
+.standspane .chron.mini .stat b{font:600 13px var(--mono);color:var(--gold2);display:inline}
+.standspane .chron.mini+p{font-size:12px;margin:2px 0 6px!important}
 #btnDrawB.on{border-color:var(--gold,#c9a458)}`;document.head.appendChild(st)})();
 
 /* =====================================================================
