@@ -30319,7 +30319,7 @@ function penEventDef76(t,loc){
   return {custom:true,cid:'pen76',pen76:1,img:null,n:'The Beast Pen',short:'Beast pen',tag:'Training',loc,min:1,max:1,deck:0,mandata:0,teams:0,coop:0,noTruce:1,noMarket:true,draft:null,loadout:'class',
     classes:Object.keys(CLASSES),blurb:'One fighter, one beast, a pen of six by six.',noSpect:true,nofates:true,
     rounds:[{n:'The pen',zone:1,pve:1,pvp:0,cf:1,ca:1,end:'beasts',endN:1,reward:{win:0}}],
-    layout:{pillars:PILLARS.map(([r,c])=>({r,c,pot:null})),tunnels:[],spikes:[],chest:null,npcs:[{key:t,t,name:NPCT[t].n,r:PEN76.den[0],c:PEN76.den[1],beh:'hunt'}],items:[],starts:[[...PEN76.start]]},
+    layout:{pillars:PILLARS.filter(([r,c])=>!pen76In(r,c)).map(([r,c])=>({r,c,pot:null})),tunnels:[],spikes:[],chest:null,npcs:[{key:t,t,name:NPCT[t].n,r:PEN76.den[0],c:PEN76.den[1],beh:'hunt'}],items:[],starts:[[...PEN76.start]]},
     start:{},npcHp:100,npcDmg:0,priceMul:1,spect:0,limits:{},chariotOffers:0,optOffers:false,eaglePot:false,noCards:[]}}
 {const base=newState;newState=function(config){const r=base.apply(this,arguments);try{if(S&&config&&config.pen76)S.pen76={...config.pen76}}catch(e){}return r}}
 {const base=startEvent;startEvent=function(cfg){const r=base.apply(this,arguments);try{if(cfg&&cfg.pen76&&typeof LAST_CFG!=='undefined')LAST_CFG=null}catch(e){}return r}}
@@ -30337,10 +30337,22 @@ function penPieces76(){const P=S.pen76;const [a,b]=PEN76.box;const z=b+1;const o
 {const base=draw;draw=function(){if(!(S&&S.pen76&&S.pillars))return base.apply(this,arguments);const extra=penPieces76();S.pillars.push(...extra);
   try{return base.apply(this,arguments)}finally{if(S&&S.pillars)S.pillars=S.pillars.filter(x=>!x.f76&&!x.w76)}}}
 {const base=drawPillar;drawPillar=function(pl){if(pl&&pl.f76)return penFence76(pl.f76);if(pl&&pl.w76)return penWatcher76(pl.w76);return base.apply(this,arguments)}}
-function penFence76([i0,j0,i1,j1]){const A=iso(i0,j0),B=iso(i1,j1);const h=TW*0.32;ctx.save();ctx.lineCap='round';
-  ctx.strokeStyle='rgba(0,0,0,.35)';ctx.lineWidth=Math.max(2,TW*0.07);ctx.beginPath();ctx.moveTo(A.x,A.y+2);ctx.lineTo(B.x,B.y+2);ctx.stroke();
-  ctx.strokeStyle='#7a5530';ctx.lineWidth=Math.max(2,TW*0.05);for(const k of [0.45,0.85]){ctx.beginPath();ctx.moveTo(A.x,A.y-h*k);ctx.lineTo(B.x,B.y-h*k);ctx.stroke()}
-  ctx.strokeStyle='#5a3c1e';ctx.lineWidth=Math.max(2,TW*0.06);for(const P of [A,B]){ctx.beginPath();ctx.moveTo(P.x,P.y);ctx.lineTo(P.x,P.y-h);ctx.stroke()}ctx.restore()}
+/* a makeshift cage: rough stakes with pointed tops, two lashed poles, rope bindings at every crossing, a brace on every other span */
+function penFence76([i0,j0,i1,j1]){const A=iso(i0,j0),B=iso(i1,j1);const h=TW*0.72;const front=i0===i1?i0>PEN76.box[0]:j0>PEN76.box[0];
+  const seed=(i0*31+j0*17)%7;const L=(t,y)=>({x:A.x+(B.x-A.x)*t,y:A.y+(B.y-A.y)*t-y});const lw=k=>Math.max(1.2,TW*k);
+  ctx.save();ctx.lineCap='round';if(front)ctx.globalAlpha=0.82;
+  ctx.strokeStyle='rgba(0,0,0,.32)';ctx.lineWidth=lw(0.08);ctx.beginPath();ctx.moveTo(A.x,A.y+2);ctx.lineTo(B.x,B.y+2);ctx.stroke();
+  const stakes=[0,0.34,0.67,1];
+  for(const [k,t] of stakes.entries()){const lean=((seed+k*3)%5-2)*TW*0.012,hh=h*(0.9+((seed+k)%4)*0.05);const p0=L(t,0),p1={x:p0.x+lean,y:p0.y-hh};
+    ctx.strokeStyle='#4a3018';ctx.lineWidth=lw(0.075);ctx.beginPath();ctx.moveTo(p0.x,p0.y);ctx.lineTo(p1.x,p1.y);ctx.stroke();
+    ctx.strokeStyle='#8a6034';ctx.lineWidth=lw(0.03);ctx.beginPath();ctx.moveTo(p0.x-lw(0.015),p0.y);ctx.lineTo(p1.x-lw(0.015),p1.y+2);ctx.stroke();
+    ctx.fillStyle='#4a3018';ctx.beginPath();ctx.moveTo(p1.x-lw(0.04),p1.y+2);ctx.lineTo(p1.x+lw(0.04),p1.y+2);ctx.lineTo(p1.x,p1.y-TW*0.07);ctx.closePath();ctx.fill()}
+  for(const y of [h*0.3,h*0.74]){const a=L(-0.04,y),b=L(1.04,y+((seed%3)-1)*TW*0.02);ctx.strokeStyle='#5c3d1e';ctx.lineWidth=lw(0.06);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+    ctx.strokeStyle='#9a7040';ctx.lineWidth=lw(0.02);ctx.beginPath();ctx.moveTo(a.x,a.y-1);ctx.lineTo(b.x,b.y-1);ctx.stroke()}
+  if((i0+j0)%2===0){const a=L(0.02,h*0.3),b=L(0.98,h*0.74);ctx.strokeStyle='#553819';ctx.lineWidth=lw(0.045);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}
+  ctx.strokeStyle='#d9c08a';ctx.lineWidth=lw(0.022);for(const t of stakes)for(const y of [h*0.3,h*0.74]){const c=L(t,y);const r=TW*0.035;
+    ctx.beginPath();ctx.moveTo(c.x-r,c.y-r);ctx.lineTo(c.x+r,c.y+r);ctx.moveTo(c.x+r,c.y-r);ctx.lineTo(c.x-r,c.y+r);ctx.moveTo(c.x-r,c.y-r*0.2);ctx.lineTo(c.x+r,c.y-r*0.2);ctx.stroke()}
+  ctx.restore()}
 function penWatcher76(u){const m=center(u.r,u.c);ctx.save();ctx.strokeStyle=u.color||'#d6ab4c';ctx.lineWidth=2;ell(m.x,m.y+TW*0.03,TW*0.26,TW*0.13);ctx.stroke();
   const sk=standeeKeyCls(u.cls)||standeeKeyCls('soldier');let top=m.y-TW*0.6;
   const fake={cls:u.cls,hp:{...BASE_HP},color:u.color};const useFig=wantFigure(hasCustomToken(u.cls));let tk=null;try{tk=useFig?tokenForP(fake):null}catch(e){}
