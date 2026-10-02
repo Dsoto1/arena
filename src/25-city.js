@@ -285,10 +285,11 @@ function cityDrawBldg(c2,[k,r0,r1,c0,c1,h,label,icon],D){const TWc=CITY.TW;
   c2.fillStyle=wall2;c2.beginPath();c2.moveTo(Lx,Ly);c2.lineTo(Cx,Cy);c2.lineTo(Cx,Cy-H);c2.lineTo(Lx,Ly-H);c2.closePath();c2.fill();
   c2.fillStyle=wall1;c2.beginPath();c2.moveTo(Cx,Cy);c2.lineTo(Rx,Ry);c2.lineTo(Rx,Ry-H);c2.lineTo(Cx,Cy-H);c2.closePath();c2.fill();
   // texture: stone courses on the arena, timber planks on the shops
+  if(!(typeof cityWallTex75==='function'&&cityWallTex75(c2,Lx,Ly,Cx,Cy,Rx,Ry,H))){ /* v0.75: his stone blocks when loaded */
   c2.save();c2.globalAlpha=.35;c2.strokeStyle=stone?'#4a4238':'#4a3520';c2.lineWidth=1;
   for(let i=1;i<4;i++){const t=i/4;c2.beginPath();c2.moveTo(Lx,Ly-H*t);c2.lineTo(Cx,Cy-H*t);c2.lineTo(Rx,Ry-H*t);c2.stroke()}
   if(!stone)for(let i=1;i<5;i++){const t=i/5;c2.beginPath();c2.moveTo(Lx+(Cx-Lx)*t,Ly+(Cy-Ly)*t);c2.lineTo(Lx+(Cx-Lx)*t,Ly+(Cy-Ly)*t-H);c2.stroke();c2.beginPath();c2.moveTo(Cx+(Rx-Cx)*t,Cy+(Ry-Cy)*t);c2.lineTo(Cx+(Rx-Cx)*t,Cy+(Ry-Cy)*t-H);c2.stroke()}
-  c2.restore();
+  c2.restore()}
   // roof
   c2.fillStyle=roofC;c2.beginPath();c2.moveTo(pA.x,pA.y-TWc/4-H);c2.lineTo(Rx,Ry-H);c2.lineTo(Cx,Cy-H);c2.lineTo(Lx,Ly-H);c2.closePath();c2.fill();c2.strokeStyle='rgba(20,12,6,.5)';c2.stroke();
   if(!stone){ // clay tile ridges on shop roofs

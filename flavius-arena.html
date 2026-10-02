@@ -21492,10 +21492,11 @@ function cityDrawBldg(c2,[k,r0,r1,c0,c1,h,label,icon],D){const TWc=CITY.TW;
   c2.fillStyle=wall2;c2.beginPath();c2.moveTo(Lx,Ly);c2.lineTo(Cx,Cy);c2.lineTo(Cx,Cy-H);c2.lineTo(Lx,Ly-H);c2.closePath();c2.fill();
   c2.fillStyle=wall1;c2.beginPath();c2.moveTo(Cx,Cy);c2.lineTo(Rx,Ry);c2.lineTo(Rx,Ry-H);c2.lineTo(Cx,Cy-H);c2.closePath();c2.fill();
   // texture: stone courses on the arena, timber planks on the shops
+  if(!(typeof cityWallTex75==='function'&&cityWallTex75(c2,Lx,Ly,Cx,Cy,Rx,Ry,H))){ /* v0.75: his stone blocks when loaded */
   c2.save();c2.globalAlpha=.35;c2.strokeStyle=stone?'#4a4238':'#4a3520';c2.lineWidth=1;
   for(let i=1;i<4;i++){const t=i/4;c2.beginPath();c2.moveTo(Lx,Ly-H*t);c2.lineTo(Cx,Cy-H*t);c2.lineTo(Rx,Ry-H*t);c2.stroke()}
   if(!stone)for(let i=1;i<5;i++){const t=i/5;c2.beginPath();c2.moveTo(Lx+(Cx-Lx)*t,Ly+(Cy-Ly)*t);c2.lineTo(Lx+(Cx-Lx)*t,Ly+(Cy-Ly)*t-H);c2.stroke();c2.beginPath();c2.moveTo(Cx+(Rx-Cx)*t,Cy+(Ry-Cy)*t);c2.lineTo(Cx+(Rx-Cx)*t,Cy+(Ry-Cy)*t-H);c2.stroke()}
-  c2.restore();
+  c2.restore()}
   // roof
   c2.fillStyle=roofC;c2.beginPath();c2.moveTo(pA.x,pA.y-TWc/4-H);c2.lineTo(Rx,Ry-H);c2.lineTo(Cx,Cy-H);c2.lineTo(Lx,Ly-H);c2.closePath();c2.fill();c2.strokeStyle='rgba(20,12,6,.5)';c2.stroke();
   if(!stone){ // clay tile ridges on shop roofs
@@ -22799,7 +22800,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
-  {v:'0.75',ic:'⚖',t:'The market board',hi:['The market follows the rulebook: pay for a level, roll once, take that slot\u2019s weapon or one armor piece \u2014 laid out on Virgilante\u2019s market board, armor dealt across all four slots','Play Now redesigned: pick the city and the event from a card strip, the chosen card in its frame, seat cards with the minis and win rates, Quick start and presets','A slimmer arena bar: the FR mark, the event\u2019s token and name (hover for the card, the date, this week and the board), the round','One turn panel at the arena\u2019s top right: who is up, the phase and what this round forbids','The 3D minis replace the standees; the pillars are shorter and wear the painted stone of his pillar standee','His weapon-card icons, his Ornate Chest Armor for the Royalty and a single Flavius\u2019 Greave'],fx:['Every crowd count shows the same number: each spectator stands for roughly 1,000 Romans (13K)','The ratings fold above the avatar answers even while turns are playing']},
+  {v:'0.75',ic:'⚖',t:'The market board',hi:['The market follows the rulebook: pay for a level, roll once, take that slot\u2019s weapon or one armor piece \u2014 laid out on Virgilante\u2019s market board, armor dealt across all four slots','Play Now redesigned: pick the city and the event from a card strip, the chosen card in its frame, seat cards with the minis and win rates, Quick start and presets','A slimmer arena bar: the FR mark, the event\u2019s token and name (hover for the card, the date, this week and the board), the round','One turn panel at the arena\u2019s top right: who is up, the phase and what this round forbids','The 3D minis replace the standees; the pillars are shorter and wear the painted stone of his pillar standee','His weapon-card icons, his Ornate Chest Armor for the Royalty and a single Flavius\u2019 Greave','His textures: stone blocks on the city square\u2019s buildings, parchment under the mail and letters'],fx:['Every crowd count shows the same number: each spectator stands for roughly 1,000 Romans (13K)','The ratings fold above the avatar answers even while turns are playing']},
   {v:'0.74',ic:'🛡',t:'The printed set',hi:['Virgilante\u2019s class cards for all eight classes; custom classes get a live card in the same design','His drawn armor is the system set, with his names: new Centurian Helm, Steel Helm, Leather Greaves, two gladiator belts and the real Flavius\u2019 Bracers; pairs show both pieces','Every hour has a use: Morale talk, Study the card, Gear care in the yard; the baths in the Infirmary','The Infirmary shows each hurt fighter\u2019s body: the wound, the lost limbs','Recruiting is your call: Watch them train, Ask around, a Private note in three tones — the advisor suggests, you choose'],fx:['Classes follow his cards: Soldier\u2019s Centurian Helm, Venatore\u2019s Steel Helm, Hero and Slave padded shins, Hero\u2019s Thracian Shield, the Manica on the shoulder','Veteranus pays old debts in coin or CF','Optional tasks can be dismissed; each tab shows a ✓ when its work is done','Banner counts in each tab\u2019s colour; the Wagers banner lists the week\u2019s three bouts','Card pop-ups no longer linger','The Summa Rudis waits behind a seal on Flavius\u2019s box: hover it for the event card and medallion']},
   {v:'0.73',ic:'🗡',t:'Sica\u2019s Syndicate',hi:['Sica\u2019s Syndicate joins the league: enforcers on the sand, spears from the stands, bribes and lured fighters','Every Manager tab has its banner, with what is left to do at the right; gold counts on the rail','Custom armor in levels I · II · III (iron, bronze, gold)','Hover the avatar for HP, AP and armor; struck parts flash; try armor on in the market','Phones in portrait: the arena on top, Actions · Fighter · Log below; Manager tabs along the bottom','Recruiting: a weekly plan, compare two fighters side by side, the signing card','Custom class cards show the class wearing its armor','The 3D minis turn to face where they move'],fx:['Start from in the armor designer loads the printed piece — its stats, its art and where it is worn','The Summa Rudis medallion waits behind ⓘ beside Flavius','Scouting shows ratings and personality on the fighter\u2019s card','Recruiting and training hours moved into their tabs; the short-handed warning clears with a recruit on your board','Ratings start folded in the fighter panel; no armor pictures under the bars','Your Crocodile medallion; an offer to clear old auto-recruits']},
   {v:'0.72',ic:'🏺',t:'3D minis',hi:['Virgilante\u2019s sculpted minis and pillars as a new token style (Settings → Tokens): the eight classes, the beasts and Zora on their bases','New avatar art on the player board','System sets shown the same way in every designer: your sets first, then the locked system sets with 📜 rolls · Copy & edit','Weapons get their system set too'],fx:['Switching the armor art keeps the system armor in the designer — only the art changes','The armor fit tool lives inside the armor designer (🎯 Fit on a printed piece) and fits custom pairs side by side','His second round of armor fits']},
@@ -29621,6 +29622,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-rec74]');i
      top row (modes · this week · ⚡ Quick start · ★ Presets), Where (city + map) | What (event card strip, the chosen card in his
      event frame, his players badge with the event's count, rounds, the Annals record), Who (seat cards with the 3D minis and the
      guide's class win rates), Options, and a start bar. Presets live in localStorage flavius_pnpresets.
+   • His textures: the city square's buildings wear his stone blocks (assets/stone_wall.webp, `cityWallTex75` called from 25-city's
+     cityDrawBldg); mail and letters sit on his parchment (assets/parchment.webp) in dark ink.
    ===================================================================== */
 document.addEventListener('pointerdown',e=>{if(e.button!==0)return;const t=e.target.closest&&e.target.closest('.ratfold');if(!t)return;e.preventDefault();
   RAT_SHUT=!RAT_SHUT;try{localStorage.setItem('flavius_ratshut',RAT_SHUT?'1':'0')}catch(err){}panelStatsUp()},true);
@@ -29920,6 +29923,22 @@ document.addEventListener('click',e=>{const t=e.target;if(!t.closest||!t.closest
 .pn-start{position:sticky;bottom:-18px;z-index:4;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;padding:10px 12px;margin:0 -8px;background:linear-gradient(180deg,rgba(31,23,17,.96),rgba(20,14,10,.98));border-top:1px solid var(--gold);border-radius:10px 10px 0 0}
 .pn-sum{font-size:13.5px;color:var(--muted)}.pn-sum b{color:var(--bone)}.pn-go{display:flex;flex-direction:column;align-items:flex-end;gap:4px}.pn-go .mbtns{margin:0;flex-wrap:nowrap}.pn-go .mbtns .btn{flex:none}.pn-go #setupErr{margin:0!important}
 .pn-go #goBtn{font:400 17px var(--display);letter-spacing:.05em;padding:9px 22px}`;document.head.appendChild(st)})();
+
+/* ---------- his textures: stone walls in the city square, parchment mail ---------- */
+const STONE75={im:null,pat:null,tw:0};
+function cityWallTex75(c2,Lx,Ly,Cx,Cy,Rx,Ry,H){if(HEADLESS)return false;let im=STONE75.im;if(!im){im=STONE75.im=new Image();im.src=assetURL('stone_wall.webp');im.onload=()=>{STONE75.pat=null}}
+  if(!im.complete||!im.naturalWidth)return false;const TWc=CITY.TW;
+  if(!STONE75.pat||STONE75.tw!==TWc){const w=Math.max(16,Math.round(TWc*2.4)),h=Math.round(w*im.naturalHeight/im.naturalWidth);const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(im,0,0,w,h);STONE75.pat=c2.createPattern(cv,'repeat');STONE75.tw=TWc}
+  const wall=(x0,y0,x1,y1,shade)=>{const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy)||1;c2.save();c2.beginPath();c2.moveTo(x0,y0);c2.lineTo(x1,y1);c2.lineTo(x1,y1-H);c2.lineTo(x0,y0-H);c2.closePath();c2.clip();
+    c2.save();c2.transform(dx/L,dy/L,0,1,x0,y0-H);c2.fillStyle=STONE75.pat;c2.fillRect(0,0,L,H+Math.abs(dy)+2);c2.restore();
+    if(shade){c2.fillStyle=`rgba(30,18,8,${shade})`;c2.fillRect(Math.min(x0,x1)-2,Math.min(y0,y1)-H-2,Math.abs(dx)+4,H+Math.abs(dy)+4)}c2.restore()};
+  wall(Lx,Ly,Cx,Cy,.32);wall(Cx,Cy,Rx,Ry,.08);return true}
+(()=>{const st=document.createElement('style');st.textContent=`
+.mail,.letters .letter{background:#efe4c9 url('${assetURL('parchment.webp')}') center/cover;color:#2a1d12;border-color:#b9a071}
+.mail summary b,.letters .letter summary b{color:#3a2414}.mail .rc-sub,.letters .letter .rc-sub{color:#6b5638}
+.mail .lbody,.mail .lbody p,.letters .letter p,.letters .letter li{color:#2a1d12}.mail .mbody,.mail .mbody p,.mail .mbody b{color:#2a1d12}
+.mail .mbody .card2,.mail .mbody .card2 *:not(.btn):not(button):not(.badge){color:#2a1d12}.mail .mbody .btn{color:var(--bone)}
+.mail.unread{box-shadow:0 0 0 1px rgba(160,120,40,.6) inset}`;document.head.appendChild(st)})();
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

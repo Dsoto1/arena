@@ -443,8 +443,8 @@ One global script; files are concatenated in order. Later "version modules" patc
   replace standees, shorter textured pillar; his weapon icons, Ornate Chest, single greave; one crowd count (13K). (Published as artifact Version 87.)
 
 ## 8. Next steps / open items
-- **Waiting on files from Virgilante (sent inline only, not saved):** stone block wall texture → city center buildings; parchment →
-  letters/mail background; weapon card backs Levels 1-4 → market slot 4 (replace the `.mb-back` placeholder) and any face-down weapon.
+- **Waiting on files from Virgilante (sent inline only, not saved):** weapon card backs Levels 1-4 → market slot 4 (replace the
+  `.mb-back` placeholder) and any face-down weapon. (Stone + parchment arrived as files and are in v0.75: `cityWallTex75`, mail CSS.)
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
   8 printed classes move to the live template (104-cards74 classCard74) so rule changes update their cards. Still to come from him:
   Thracian Helm, Ornate Chest Armor, Chest Armor, Reinforced Arm Armor art; distinct art for the Iron Spaulder (it shares the look of

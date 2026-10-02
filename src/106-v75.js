@@ -27,6 +27,8 @@
      top row (modes · this week · ⚡ Quick start · ★ Presets), Where (city + map) | What (event card strip, the chosen card in his
      event frame, his players badge with the event's count, rounds, the Annals record), Who (seat cards with the 3D minis and the
      guide's class win rates), Options, and a start bar. Presets live in localStorage flavius_pnpresets.
+   • His textures: the city square's buildings wear his stone blocks (assets/stone_wall.webp, `cityWallTex75` called from 25-city's
+     cityDrawBldg); mail and letters sit on his parchment (assets/parchment.webp) in dark ink.
    ===================================================================== */
 document.addEventListener('pointerdown',e=>{if(e.button!==0)return;const t=e.target.closest&&e.target.closest('.ratfold');if(!t)return;e.preventDefault();
   RAT_SHUT=!RAT_SHUT;try{localStorage.setItem('flavius_ratshut',RAT_SHUT?'1':'0')}catch(err){}panelStatsUp()},true);
@@ -326,3 +328,19 @@ document.addEventListener('click',e=>{const t=e.target;if(!t.closest||!t.closest
 .pn-start{position:sticky;bottom:-18px;z-index:4;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;padding:10px 12px;margin:0 -8px;background:linear-gradient(180deg,rgba(31,23,17,.96),rgba(20,14,10,.98));border-top:1px solid var(--gold);border-radius:10px 10px 0 0}
 .pn-sum{font-size:13.5px;color:var(--muted)}.pn-sum b{color:var(--bone)}.pn-go{display:flex;flex-direction:column;align-items:flex-end;gap:4px}.pn-go .mbtns{margin:0;flex-wrap:nowrap}.pn-go .mbtns .btn{flex:none}.pn-go #setupErr{margin:0!important}
 .pn-go #goBtn{font:400 17px var(--display);letter-spacing:.05em;padding:9px 22px}`;document.head.appendChild(st)})();
+
+/* ---------- his textures: stone walls in the city square, parchment mail ---------- */
+const STONE75={im:null,pat:null,tw:0};
+function cityWallTex75(c2,Lx,Ly,Cx,Cy,Rx,Ry,H){if(HEADLESS)return false;let im=STONE75.im;if(!im){im=STONE75.im=new Image();im.src=assetURL('stone_wall.webp');im.onload=()=>{STONE75.pat=null}}
+  if(!im.complete||!im.naturalWidth)return false;const TWc=CITY.TW;
+  if(!STONE75.pat||STONE75.tw!==TWc){const w=Math.max(16,Math.round(TWc*2.4)),h=Math.round(w*im.naturalHeight/im.naturalWidth);const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(im,0,0,w,h);STONE75.pat=c2.createPattern(cv,'repeat');STONE75.tw=TWc}
+  const wall=(x0,y0,x1,y1,shade)=>{const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy)||1;c2.save();c2.beginPath();c2.moveTo(x0,y0);c2.lineTo(x1,y1);c2.lineTo(x1,y1-H);c2.lineTo(x0,y0-H);c2.closePath();c2.clip();
+    c2.save();c2.transform(dx/L,dy/L,0,1,x0,y0-H);c2.fillStyle=STONE75.pat;c2.fillRect(0,0,L,H+Math.abs(dy)+2);c2.restore();
+    if(shade){c2.fillStyle=`rgba(30,18,8,${shade})`;c2.fillRect(Math.min(x0,x1)-2,Math.min(y0,y1)-H-2,Math.abs(dx)+4,H+Math.abs(dy)+4)}c2.restore()};
+  wall(Lx,Ly,Cx,Cy,.32);wall(Cx,Cy,Rx,Ry,.08);return true}
+(()=>{const st=document.createElement('style');st.textContent=`
+.mail,.letters .letter{background:#efe4c9 url('${assetURL('parchment.webp')}') center/cover;color:#2a1d12;border-color:#b9a071}
+.mail summary b,.letters .letter summary b{color:#3a2414}.mail .rc-sub,.letters .letter .rc-sub{color:#6b5638}
+.mail .lbody,.mail .lbody p,.letters .letter p,.letters .letter li{color:#2a1d12}.mail .mbody,.mail .mbody p,.mail .mbody b{color:#2a1d12}
+.mail .mbody .card2,.mail .mbody .card2 *:not(.btn):not(button):not(.badge){color:#2a1d12}.mail .mbody .btn{color:var(--bone)}
+.mail.unread{box-shadow:0 0 0 1px rgba(160,120,40,.6) inset}`;document.head.appendChild(st)})();
