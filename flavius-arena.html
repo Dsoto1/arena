@@ -14161,7 +14161,7 @@ function betSettle(id,won,pay){if(!id)return;const r=betlogLoad().find(x=>x.id==
 function exchangeHTML(filter,limit=30){const L=betlogLoad().filter(filter||(()=>true)).slice().sort((a,b)=>(b.etk||0)-(a.etk||0)||(b.at>a.at?1:-1)).slice(0,limit);
   if(!L.length)return '<p class="rc-sub" style="margin:4px 0">No slips on the board yet — the first wager of the day will appear here.</p>';
   const cur=r=>r.cur==='CF'?'CF':'c';
-  return `<div class="exch"><table><tr><th>When (empire time)</th><th>Where</th><th>Bettor</th><th>Selection</th><th class="n">Stake</th><th class="n">Odds</th><th class="n">Result</th></tr>${L.map(r=>`<tr class="${r.status}"><td>${esc(r.date||new Date(r.at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}))}</td><td>${esc(r.city||'')}</td><td>${r.kind==='you'?'<b>You</b>':esc(r.who||'')}<span class="dim"> · ${esc(r.kind==='you'?'your treasury':r.kind||'')}</span></td><td>${esc(r.on||'')}</td><td class="n">${r.stake}${cur(r)}</td><td class="n">${(+r.odds).toFixed(2)}×</td><td class="n">${r.status==='open'?'<span class="opn">● open</span>':r.status==='won'?`<span class="up">+${r.pay}${cur(r)}</span>`:`<span class="dn">−${r.stake}${cur(r)}</span>`}</td></tr>`).join('')}</table></div>`}
+  return `<div class="exch"><table><tr><th>When (empire time)</th><th>Where</th><th>Bettor</th><th>Selection</th><th class="n">Stake</th><th class="n">Odds</th><th class="n">Result</th></tr>${L.map(r=>`<tr class="${r.status}"><td>${esc(r.date||new Date(r.at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}))}</td><td>${esc(r.city||'')}</td><td>${r.kind==='you'?'<b>You</b>':esc(r.who||'')}<span class="dim"> · ${esc(r.kind==='you'?'your treasury':r.kind||'')}</span></td><td>${esc(r.on||'')}</td><td class="n">${r.stake}${cur(r)}</td><td class="n">${(+r.odds).toFixed(2)}×</td><td class="n">${r.status==='open'?'<span class="opn">● open</span>':r.status==='void'?'<span class="dim">↩ void · returned</span>':r.status==='won'?`<span class="up">+${r.pay}${cur(r)}</span>`:`<span class="dn">−${r.stake}${cur(r)}</span>`}</td></tr>`).join('')}</table></div>`}
 /* ================= LOG EXPORT ================= */
 function logText(){
   const ev=S?EV():null;
@@ -18155,6 +18155,12 @@ function boutProbs(b,mode){ // mode 'book' uses public ratings, 'mine' your scou
 }
 const boutOdds=b=>boutProbs(b,'book').map(p=>Math.max(1.1,Math.min(25,Math.round(10/(p*HOUSE))/10)));
 const rigCost=b=>Math.round(b.purse*0.6+15);
+/* voidBets — v0.67: a fighter taken off a card (your entry replaced them, a withdrawal, the Gambit) voids every wager on them:
+   the stake returns to the treasury and the slip reads "void" in the betting log */
+function voidBets(b,gid){if(!b||!b.bets||!gid)return 0;const m=me();let back=0;
+  b.bets=b.bets.filter(bt=>{if(bt.gid!==gid)return true;back+=bt.stake;m.coin+=bt.stake;
+    try{const r=betlogLoad().find(x=>x.id===bt.bid);if(r){r.status='void';r.pay=bt.stake;r.settled=new Date().toISOString();betlogSave()}}catch(e){}return false});
+  if(back)setTimeout(()=>{try{mToast(`↩ Your ${back}-coin wager on ${esc((gById(gid)||{}).name||'that fighter')} is void — they are off the card. Stake returned.`)}catch(e){}},60);return back}
 function boutRiggable(b){const m=me();if(b.done||b.rig||(b.bets||[]).length)return false; // v0.29: no fixing a bout you have money on
   const mine=b.ents.some(id=>{const g=gById(id);return g&&g.contract&&g.contract.mgr===m.id});
   const theirs=b.ents.some(id=>{const g=gById(id);return g&&g.contract&&g.contract.mgr!==m.id});
@@ -18259,7 +18265,8 @@ function applyBout(bi,res,opt={}){
      m2.rivals=m2.rivals||{};m2.rivals[mw.id]=clamp(Math.round((m2.rivals[mw.id]||0)+heat),0,100);}}
   // a pledge kept: the promised main event, delivered
   if(b.tier==='main')for(const gid of b.ents){const g=gById(gid);if(g&&g.pledge&&g.contract&&g.contract.mgr===g.pledge.mgr){const m2=mgrById(g.pledge.mgr);g.morale=clamp(g.morale+10,0,100);if(m2){m2.kept=(m2.kept||0)+1;if(m2.isPlayer)m2.perkPend=(m2.perkPend||0)+1}delete g.pledge;mnews(`${esc(g.name)} got the main event ${m2&&m2.isPlayer?'you':m2?m2.name:''} promised. Word kept; the barracks notice.`,'big')}}
-  // bets placed from the ludus before the bout
+  // bets placed from the ludus before the bout (v0.67: a wager on a fighter no longer on the card is void — the stake comes back)
+  for(const bt of [...b.bets])if(!b.ents.includes(bt.gid))voidBets(b,bt.gid);
   for(const bt of b.bets){const won=wins.has(bt.gid);const P=betPay(bt.stake,bt.odds);const pay=won?P.net:0;betSettle(bt.bid,won,pay);me().coin+=pay;me().betNet=(me().betNet||0)+pay-bt.stake;if(won&&P.tax)me().taxPaid=(me().taxPaid||0)+P.tax;lines.push(`Your bet on ${esc(gById(bt.gid)?.name||'?')}: ${won?`<b>+${pay}</b>${P.tax?` <span class="rc-sub">(${P.tax} to the Emperor's tenth)</span>`:''}`:'lost '+bt.stake}`)}
   // rival lanistae gamble too
   for(const m of w.mgrs){if(m.isPlayer||Math.random()>m.p.risk/140)continue;const st=Math.round(5+m.p.risk/8);
@@ -19570,7 +19577,7 @@ function wireManager(done){
       const sel9=$('#udAlly');const allyId=sel9&&sel9.value||null;
       const outs=bo.ents.map(gById).filter(x=>x&&(!x.contract||x.contract.mgr!==m.id)).sort((x,y)=>effOvr(x)-effOvr(y));
       if(!outs.length){say('No seat can be bought on this card.');return}
-      if(!bo.ents.includes(lg.id))bo.ents[bo.ents.indexOf(outs[0].id)]=lg.id;
+      if(!bo.ents.includes(lg.id)){bo.ents[bo.ents.indexOf(outs[0].id)]=lg.id;voidBets(bo,outs[0].id)}
       let allyIn=null;
       if(allyId&&!bo.ents.includes(allyId)&&outs[1])bo.ents[bo.ents.indexOf(outs[1].id)]=allyId;
       if(allyId&&bo.ents.includes(allyId))allyIn=allyId;
@@ -19578,9 +19585,9 @@ function wireManager(done){
       tnews(`💀 <b>${esc(m.name)} takes the Debtor's Gambit</b> — the lanista himself on tonight's card${allyIn?`, ${esc(gById(allyIn).name)} at his side under truce`:''}. The bookmakers lose their minds.`,'big');
       saveWorld(true);done('fight:2');return}
     if(['travelpay','traveldeal','traveldecline'].includes(a)&&typeof travelClick==='function'){travelClick(a);redraw();return}
-    if(a==='enter'){if(typeof travelBlock==='function'&&travelBlock('enter fighters'))return;{const bw=w.night.bouts[+id];if(bw&&(bw.wd||0)>=2){say(`🔒 You withdrew from the ${esc(TIERS[bw.tier].n)} twice — the card is closed to your house this week.`);return}}const bo=w.night.bouts[+id];const sel=$('#ent'+id);if(!sel)return;const gid=sel.value;const out=bo.ents.map(gById).filter(x=>!x.contract).sort((x,y)=>effOvr(x)-effOvr(y))[0]||bo.ents.map(gById).filter(x=>!x.contract||x.contract.mgr!==m.id).pop();if(!out)return;bo.ents[bo.ents.indexOf(out.id)]=gid;m.coin+=0;saveWorld();redraw();return}
+    if(a==='enter'){if(typeof travelBlock==='function'&&travelBlock('enter fighters'))return;{const bw=w.night.bouts[+id];if(bw&&(bw.wd||0)>=2){say(`🔒 You withdrew from the ${esc(TIERS[bw.tier].n)} twice — the card is closed to your house this week.`);return}}const bo=w.night.bouts[+id];const sel=$('#ent'+id);if(!sel)return;const gid=sel.value;const out=bo.ents.map(gById).filter(x=>!x.contract).sort((x,y)=>effOvr(x)-effOvr(y))[0]||bo.ents.map(gById).filter(x=>!x.contract||x.contract.mgr!==m.id).pop();if(!out)return;bo.ents[bo.ents.indexOf(out.id)]=gid;m.coin+=0;voidBets(bo,out.id);saveWorld();redraw();return}
     if(a==='withdraw'){const bo=w.night.bouts[+id];bo.wd=(bo.wd||0)+1; // v0.43: two withdrawals and the editor stops taking your entries for this bout
-      if(bo.wd>=2)setTimeout(()=>mToast(`🔒 Two withdrawals from the ${esc(TIERS[bo.tier].n)} — the editor will take no more entries from your house for it this week.`),50);const i=bo.ents.findIndex(x=>{const q=gById(x);return q.contract&&q.contract.mgr===m.id});if(i<0)return;const T=TIERS[bo.tier];const used=new Set(w.night.bouts.flatMap(x=>x.ents));const rep=freeAgents().find(q=>!used.has(q.id)&&!q.inj&&effOvr(q)>=T.lo-3&&effOvr(q)<=T.hi+3)||genGlad({ovr:T.lo+5});if(!rep.debut)rep.debut={s:w.season,wk:w.week};if(!gById(rep.id))w.glads.push(rep);bo.ents[i]=rep.id;saveWorld();redraw();return}
+      if(bo.wd>=2)setTimeout(()=>mToast(`🔒 Two withdrawals from the ${esc(TIERS[bo.tier].n)} — the editor will take no more entries from your house for it this week.`),50);const i=bo.ents.findIndex(x=>{const q=gById(x);return q.contract&&q.contract.mgr===m.id});if(i<0)return;const T=TIERS[bo.tier];const used=new Set(w.night.bouts.flatMap(x=>x.ents));const rep=freeAgents().find(q=>!used.has(q.id)&&!q.inj&&effOvr(q)>=T.lo-3&&effOvr(q)<=T.hi+3)||genGlad({ovr:T.lo+5});if(!rep.debut)rep.debut={s:w.season,wk:w.week};if(!gById(rep.id))w.glads.push(rep);{const gone=bo.ents[i];bo.ents[i]=rep.id;voidBets(bo,gone)}saveWorld();redraw();return}
     if(a==='rig'){const bo=w.night.bouts[+id];if(!bo||!boutRiggable(bo)||m.coin<rigCost(bo))return;
       if(!b.dataset.armed){b.dataset.armed='1';b.innerHTML='CONFIRM · this is a crime<small>Flavius seizes ludi for less. Twice caught in a career and yours is gone.</small>';b.classList.add('primary');return}
       m.coin-=rigCost(bo);const mine2=bo.ents.map(gById).filter(g2=>g2&&g2.contract&&g2.contract.mgr===m.id).sort((x,y)=>effOvr(y)-effOvr(x))[0];
