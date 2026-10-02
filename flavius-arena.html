@@ -29591,6 +29591,17 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-rec74]');i
 .advise74{font-size:12.5px;color:var(--gold2);margin:0 0 6px;padding:4px 8px;border:1px dashed var(--gold);border-radius:6px;background:rgba(240,207,125,.06)}
 .btn.adv74{box-shadow:0 0 0 2px var(--gold) inset}.recnote{margin-top:4px}.advwrap{display:flex;gap:4px;align-items:stretch;color:var(--gold2);width:100%}.advwrap>.btn:first-of-type{flex:1;min-width:0}.advwrap>.btn:last-child{flex:0 0 auto;padding:2px 8px}
 @media (max-width:600px){.yj{grid-template-columns:1fr 1fr}.yjn{grid-column:1/-1}}`;document.head.appendChild(st)})();
+/* =====================================================================
+   106-V75 · v0.75 — fixes and the next batch
+   =====================================================================
+   • The ratings fold above the avatar answers on the PRESS (pointerdown). The fighter board is rebuilt many times a second
+     during turns; a click needs press + release on the same button, so a rebuild in between swallowed it. Keyboard
+     (Enter/Space → click with detail 0) still uses the click path; the click that follows a press is ignored.
+   ===================================================================== */
+document.addEventListener('pointerdown',e=>{if(e.button!==0)return;const t=e.target.closest&&e.target.closest('.ratfold');if(!t)return;e.preventDefault();
+  RAT_SHUT=!RAT_SHUT;try{localStorage.setItem('flavius_ratshut',RAT_SHUT?'1':'0')}catch(err){}panelStatsUp()},true);
+document.addEventListener('click',e=>{if(!e.target.closest||!e.target.closest('.ratfold'))return;if(e.detail===0)return;
+  e.stopImmediatePropagation();e.preventDefault()},true); /* a pointer click: the press already toggled */
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
