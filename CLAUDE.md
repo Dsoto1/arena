@@ -431,6 +431,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   token style, quick start + presets, guide win rates, your record; mockup https://claude.ai/artifact/2T2FJJL3PKcou1gjrKnfPP, source
   tools/mockups/play-now-redesign.html); the arena's top-right cluster (turn name + phase + the round-rule chips like ⃠ No PvP, moved
   out of the top bar) becomes ONE thematic, unobtrusive panel.
+  The arena's 📅 date chip (season schedule) leaves the top bar; the date + "this week: <city> · <event>" line goes into the hovered event-card pop-up.
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
   8 printed classes move to the live template (104-cards74 classCard74) so rule changes update their cards. Still to come from him:
   Thracian Helm, Ornate Chest Armor, Chest Armor, Reinforced Arm Armor art; distinct art for the Iron Spaulder (it shares the look of
