@@ -53,7 +53,7 @@ function weeklyGrowth(w){const pm=me();const byName={};for(const g of rosterOf(p
   for(const g of w.glads){if(!g.alive)continue;gStats(g);
     if(g.contract){const own=mgrById(g.contract.mgr);statGain(g,'lck',0.2); /* time with a house */
       const lb=g.loyB||0;if(g._loyB0!=null&&lb>g._loyB0)statGain(g,'lck',(lb-g._loyB0)*0.12);g._loyB0=lb;
-      if(own&&!own.isPlayer){statGain(g,pickOne(['spd','str']),0.3)}} /* rival yards drill too */
+      if(own&&!own.isPlayer&&!(typeof RIVAL_TRAIN!=='undefined'&&RIVAL_TRAIN)){statGain(g,pickOne(['spd','str']),0.3)}} /* rival yards drill too (v0.68: rivalTrain in 88-v68 instead) */
     else if(!g.retired)statGain(g,pickOne(STAT_KEYS),0.15)} /* free agents keep themselves sharp */
 }
 function growthDigest(w){const sg=w.sgain||{};const parts=[];

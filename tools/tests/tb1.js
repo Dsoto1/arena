@@ -23,7 +23,7 @@ for(let i=0;i<150;i++){await pg.waitForTimeout(1000);if(await pg.evaluate(()=>S.
 out.closeX=await pg.evaluate(()=>!$('#mClose').hidden);out.mt=await pg.evaluate(()=>$('#mTitle').textContent);console.log('MT',out.mt,out.closeX);
 await pg.click('#mClose');await pg.waitForTimeout(400);await pg.evaluate(()=>document.getElementById('btnDrawS').click());await pg.waitForTimeout(700);out.imperiumOverResults=await pg.evaluate(()=>!!document.querySelector('#standsHubBody'));
 await pg.click('#mClose');await pg.waitForTimeout(300);
-await pg.click('#btnDrawB');await pg.waitForTimeout(700);out.menag=await pg.evaluate(()=>!!document.querySelector('#menagBody'));
+await pg.evaluate(()=>{openMenagerie()});await pg.waitForTimeout(700);out.menag=await pg.evaluate(()=>!!document.querySelector('#menagBody'));
 await pg.click('#mClose');await pg.waitForTimeout(300);
 await pg.click('#btnGraph');await pg.waitForTimeout(700);out.graphVisible=await pg.evaluate(()=>{const g=$('#rtab-graph');return !!g&&!g.hidden&&!!g.querySelector('svg')});
 console.log(JSON.stringify({out,errs:errs.slice(0,4)},null,1));await b.close()})();

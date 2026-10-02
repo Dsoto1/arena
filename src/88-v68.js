@@ -45,3 +45,21 @@ function checklistHTML(){const I=weekChecklist();const todo=I.filter(x=>!x.done)
 .wkdone summary{cursor:pointer;margin-top:4px}
 .badge.ledger{font-variant-numeric:tabular-nums}.badge.ledger.good{border-color:#3d5a2e;color:#b7d59d}.badge.ledger.warn{border-color:#6b5420;color:#f0cf7d}.badge.ledger.bad{border-color:#7a2a22;color:#f2a093}
 .skiplist{border:1px solid rgba(217,164,65,.45);border-radius:7px;padding:6px 10px;margin:0 0 8px;font-size:13px}.skiplist div{margin-top:2px}`;document.head.appendChild(st)}
+/* rivals that train: every AI house runs the yard by the same rules as yours — a regime chosen by Discipline and purse (cost paid,
+   the same injury odds), training hours (TH_BASE + 2/yard level, scaled by Discipline) on each fighter's weaker of Speed/Strength,
+   a rest week above fatigue 60, fatigue that decays. Replaces the flat +0.3 a week in weeklyGrowth (66). TWEAK: RIV_*. */
+var RIVAL_TRAIN=true;const RIV_REST=60,RIV_HOURS_MIN=0.4;
+function rivalRegime(m){const d=(m.p&&m.p.discipline)||50;let k=d>=75?'hard':d>=50?'std':d>=25?'light':'off';
+  while(k!=='off'&&m.coin<(TRAIN_REGIMES[k].c||0)+40)k=k==='hard'?'std':k==='std'?'light':'off';return k}
+function rivalTrain(w){if(!RIVAL_TRAIN)return;for(const m of w.mgrs){if(m.isPlayer||m.dead)continue;const ros=rosterOf(m);if(!ros.length)continue;
+  const reg=rivalRegime(m),R=TRAIN_REGIMES[reg]||TRAIN_REGIMES.off;m.coin-=R.c||0;m.train=reg;const y=facLvl(m,'yard');const d=((m.p&&m.p.discipline)||50)/100;
+  const fit=[];for(const g of ros){gStats(g);if(g.inj)continue;if(gFat(g)>RIV_REST){g.restWk=w.week;continue}
+    if(R.c&&Math.random()<R.inj*(1-.2*y)){g.inj={until:w.week+2,label:'a training knock',pen:3};g.morale=clamp(g.morale-5,0,100);continue}
+    const tr=TRAIN_STAT[reg]||0;if(tr)gainAll(g,{str:tr,spd:tr*0.8,int:tr*0.2});g.fat=Math.min(100,gFat(g)+(FAT_REG[reg]||0));fit.push(g)}
+  let hrs=Math.round((TH_BASE+TH_YARD*y)*(RIV_HOURS_MIN+(1-RIV_HOURS_MIN)*d));
+  for(const g of fit.sort((a,b)=>effOvr(b)-effOvr(a))){if(hrs<=0)break;const h=Math.min(TH_FIGHTER,hrs);hrs-=h;const s=gStats(g);
+    statGain(g,(s.str||0)<=(s.spd||0)?'str':'spd',h*TH_DRILL);g.fat=Math.min(100,gFat(g)+h*FAT_HOUR)}}}
+function rivalRest(w){for(const m of w.mgrs){if(m.isPlayer)continue;for(const g of rosterOf(m)){const f=gFat(g);if(!f)continue;
+  g.fat=Math.max(0,f-FAT_DECAY-(g.restWk===w.week-1||g.restWk===w.week?FAT_REST:0))}}}
+{const base=endWeek;endWeek=async function(){const w=W_();const wk=w&&w.week;try{if(w&&!w.dead&&!(w.special&&!w.special.done))rivalTrain(w)}catch(e){console.error(e)}
+  const r=await base.apply(this,arguments);try{const w2=W_();if(w2&&w2.week!==wk)rivalRest(w2)}catch(e){console.error(e)}return r}}
