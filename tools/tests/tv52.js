@@ -27,7 +27,7 @@ await pg.click('#ctTog');const op=await pg.evaluate(()=>document.getElementById(
 await pg.click('#btnHintsM');const hm=await pg.evaluate(()=>SETTINGS.hints);ok(hm===false,'hints master toggled off');
 /* keys ⓘ, log tiles */
 const kb=await pg.evaluate(()=>{const h=boardHTML(S.players[0],true);return {keys:/Keys ⓘ/.test(h),tro:/Trophies ⓘ/.test(h)&&!/Trophies ▸/.test(h)}});ok(kb.keys&&kb.tro,'stat ⓘ');
-const mv=await pg.evaluate(async()=>{const p=S.players[0];const r0=p.r,c0=p.c;const [lg0]=[document.getElementById('log').children.length];placeFloor('offer','elix2',3,3);log('An offering lands.');return document.getElementById('log').firstElementChild.textContent});ok(/D-4|\([A-M]-\d+\)/.test(mv),'spawn tile '+mv);
+const mv=await pg.evaluate(async()=>{const p=S.players[0];const r0=p.r,c0=p.c;const [lg0]=[document.getElementById('log').children.length];placeFloor('offer','elix2',3,3);log('An offering lands.');return document.querySelector('#log > li:not(#slogPin)').textContent});ok(/D-4|\([A-M]-\d+\)/.test(mv),'spawn tile '+mv);
 /* stones & Damnatio */
 const dm=await pg.evaluate(async()=>{const q=S.players.find(p=>p.alive);q.abil='stone';q.wR={...W.sling,key:'sling',ammoLeft:2};const before=q.wR.ammoLeft;const s={name:'x',sec:0,cf:10,_x:null};const H=hurt;hurt=async()=>{};try{await spectStone(s,q)}finally{hurt=H}return [before,q.wR.ammoLeft]});ok(dm[1]===dm[0]+1,'damnatio stone '+dm);
 /* transit bar */
