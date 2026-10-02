@@ -1,0 +1,28 @@
+<!doctype html><html><body style="margin:0;background:transparent">
+<script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+const P=new URLSearchParams(location.search);const name=P.get('m');const W=+P.get('w')||512,H=+P.get('h')||640;
+const r=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});r.setSize(W,H);r.setClearColor(0,0);r.outputColorSpace=THREE.SRGBColorSpace;document.body.appendChild(r.domElement);
+const sc=new THREE.Scene();sc.add(new THREE.HemisphereLight(0xfff2dd,0x4a3a2a,2.3));const d=new THREE.DirectionalLight(0xffffff,2.6);d.position.set(-2,6,6);sc.add(d);
+const tl=new THREE.TextureLoader();const _skip=name==='pillar';const tx=k=>{const t=tl.load(`../tts/${name}_THIS_MODEL_texture_${k}.png`);t.flipY=true;return t};
+const dif=_skip?null:tx('diffuse');if(dif)dif.colorSpace=THREE.SRGBColorSpace;
+const mat=_skip?null:new THREE.MeshStandardMaterial({map:dif,normalMap:tx('normal'),aoMap:tx('occlusion'),metalnessMap:tx('metal'),metalness:0.6,roughness:0.55,emissiveMap:tx('emissive'),emissive:0xffffff,emissiveIntensity:0.4});
+const isG=name==='pillar';
+function pillarMat(mesh){if(!P.get('tex'))return new THREE.MeshStandardMaterial({color:new THREE.Color(P.get('col')||'#d9d2c4'),roughness:.85,metalness:0});
+  const g=mesh.geometry;g.computeBoundingBox();const bb=g.boundingBox;const pos=g.attributes.position;const uv=new Float32Array(pos.count*2);
+  const cx=(bb.min.x+bb.max.x)/2,cz=(bb.min.z+bb.max.z)/2;const ax=P.get('ax')||'y';const FB=+(P.get('fb')||.15),FC=+(P.get('fc')||.8);
+  for(let i=0;i<pos.count;i++){const x=pos.getX(i)-cx,y=pos.getY(i),z=pos.getZ(i)-cz;let a,h,lo,hi;
+    if(ax==='y'){a=Math.atan2(z,x);h=y;lo=bb.min.y;hi=bb.max.y}else{a=Math.atan2(pos.getY(i)-(bb.min.y+bb.max.y)/2,x);h=pos.getZ(i);lo=bb.min.z;hi=bb.max.z}
+    const f=(h-lo)/(hi-lo);const seg=(f,a0,a1,b0,b1)=>b0+(f-a0)/(a1-a0)*(b1-b0);
+    let v=f<FB?seg(f,0,FB,0,.14):f<FC?seg(f,FB,FC,.14,.91):seg(f,FC,1,.91,1);
+    const nr=g.attributes.normal;let u=Math.abs(a)/Math.PI;if(nr&&Math.abs(nr.getY(i))>.6){u=.5;v=f>.5?.955:.07}
+    uv[i*2]=u;uv[i*2+1]=v}
+  g.setAttribute('uv',new THREE.BufferAttribute(uv,2));const t=new THREE.TextureLoader().load('../tts/pillar/pillar_tex.png');t.colorSpace=THREE.SRGBColorSpace;t.flipY=true;
+  return new THREE.MeshStandardMaterial({map:t,roughness:.8,metalness:0})}const L=isG?new GLTFLoader():new OBJLoader();L.load(isG?'../tts/pillar/PillarV7.gltf':`../tts/${name}_default.obj`,g0=>{const o0=isG?g0.scene:g0;o0.traverse(c=>{if(c.isMesh){c.material=isG?pillarMat(c):mat}});o0.rotation.x=(+P.get('rx')||-90)*Math.PI/180;if(isG)o0.scale.setScalar(1000);const o=new THREE.Group();o.add(o0);o.updateMatrixWorld(true);
+  const box=new THREE.Box3().setFromObject(o);const sz=box.getSize(new THREE.Vector3()),ct=box.getCenter(new THREE.Vector3());if(isG){o.position.x-=ct.x;o.position.z-=ct.z;o.position.y-=box.min.y}
+  const g=new THREE.Group();g.add(o);sc.add(g);g.rotation.y=(+P.get('rot')||0)*Math.PI/180;
+  const el=(+P.get('el')||26.57)*Math.PI/180;const R=200;const M=+P.get('M')||48;const cam=new THREE.OrthographicCamera(-M*W/H,M*W/H,M,-M,0.1,R*10);
+  cam.position.set(0,Math.sin(el)*R*3,Math.cos(el)*R*3);cam.lookAt(0,0,0);cam.position.y+= +P.get('cy')||0;
+  setTimeout(()=>{r.render(sc,cam);window.DONE=r.domElement.toDataURL('image/png');window.INFO=[sz.x,sz.y,sz.z]},1500)});
+</script></body></html>

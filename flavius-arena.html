@@ -29603,6 +29603,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-rec74]');i
    • His Ornate Chest Armor (armor2.webp cell 44; L2 chest 4 AP, `ornate`) = the Royalty's starting chest (the Scaled Chest Armor
      stays in the market; the Ornate one is sold too). Flavius' Greaves wear his single greave (cell 43) on the avatar, mirrored on the
      left; the card/thumbnail keeps the pair (cell 24).
+   • Tokens: the 3D minis replace the standees (Virgilante) — the Standees row leaves Settings → Tokens, a standee choice always
+     wears the minis (applySettings wrapper keeps SETTINGS.mini3d on; old standee players switched once). Pieces with no mini
+     (custom beasts) keep their flat standee art. The pillar mini is 15% shorter and wears his pillar standee's painted stone
+     (assets/mini_pillar.webp re-rendered by tools/art/minis/render3.html + shot3.js from pillar_tex.png).
    ===================================================================== */
 document.addEventListener('pointerdown',e=>{if(e.button!==0)return;const t=e.target.closest&&e.target.closest('.ratfold');if(!t)return;e.preventDefault();
   RAT_SHUT=!RAT_SHUT;try{localStorage.setItem('flavius_ratshut',RAT_SHUT?'1':'0')}catch(err){}panelStatsUp()},true);
@@ -29631,6 +29635,14 @@ ARM.ornate={n:'Ornate Chest Armor',lv:2,slot:'chest',pt:'chest',ap:4,img:44};ARM
 if(!MARKET_A[2].includes('ornate'))MARKET_A[2].push('ornate');
 if(CLASSES.royalty)CLASSES.royalty.armor=CLASSES.royalty.armor.map(([k,l])=>[k==='lorica'?'ornate':k,l]);
 if(ARM.greaves){ARM.greaves.thumb=24;ARM.greaves.img=43;ARM_FIT.greaves={at:'shin',dy:-7,w:23}}
+
+/* ---------- 3D minis instead of standees; the pillar shorter ---------- */
+const MINI_PILLAR75=0.85; /* TWEAK: the pillar's height against v0.74 */
+{const base=miniScale;miniScale=function(k){const s=base.apply(this,arguments);return k==='pillar'?s*MINI_PILLAR75:s}}
+{const base=applySettings;applySettings=function(){try{if(SETTINGS.tokenStyle==='standee')SETTINGS.mini3d=true}catch(e){}return base.apply(this,arguments)}}
+try{if(SETTINGS.tokenStyle==='standee'&&!SETTINGS.mini3d)applySettings()}catch(e){}
+{const base=settingsHTML;settingsHTML=function(tab){let h=base.apply(this,arguments);if(tab!=='tokens'||typeof h!=='string')return h;
+  return h.replace(/<button type="button" class="tokrow[^"]*" data-tokstyle="standee">[\s\S]*?<\/button>/,'')}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
