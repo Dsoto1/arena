@@ -100,15 +100,25 @@ function persTags73(g){if(g.report&&g.report.tags)return g.report.tags;try{const
 .scoutsee{margin:6px 0 8px}.ptags{display:flex;gap:6px;flex-wrap:wrap}
 @media (max-width:600px){.roomstat{right:8px;padding:4px 10px;min-width:0}.roomstat b{font-size:17px}}`;document.head.appendChild(st)})();
 
-/* ---------- v0.73 fix: the Summa Rudis medallion beside Flavius hid his speech bubbles — it now waits behind an ⓘ ---------- */
+/* ---------- v0.73/v0.74: the Summa Rudis — never drawn on the sand (it hid Flavius's words). A gold seal sits at the corner of
+   Flavius's box; hovering it (or a tap) opens the event's Summa Rudis card and the medallion. ---------- */
 let SR_OPEN=false;
-function srBtnAt(x,y,d){const cv=document.getElementById('cv')||document.querySelector('.canvas-wrap canvas');if(!cv)return;const wrap=cv.parentElement;let b=document.getElementById('srInfo');
-  if(!b){b=document.createElement('button');b.id='srInfo';b.type='button';b.className='srinfo';b.textContent='ⓘ';b.addEventListener('click',e=>{e.stopPropagation();SR_OPEN=!SR_OPEN;b.classList.toggle('on',SR_OPEN);try{draw()}catch(err){}});wrap.appendChild(b)}
-  const k=cv.clientWidth/cv.width;const ox=cv.offsetLeft,oy=cv.offsetTop;b.style.left=(ox+x*k)+'px';b.style.top=(oy+(y+d*0.08)*k)+'px';b.hidden=false;
-  const ev=typeof EV==='function'?EV():null;b.title=SR_OPEN?'Hide the Summa Rudis':`Summa Rudis${ev&&ev.sr?': '+ev.sr:''} — show the medallion`;b._t=Date.now()}
-/* the button goes when the medallion is not drawn at all (setup, Flavius hidden, no event) */
-setInterval(()=>{const b=document.getElementById('srInfo');if(b&&!b.hidden&&Date.now()-(b._t||0)>1500&&(!S||S.over||S.phase==='setup'))b.hidden=true},700);
-(()=>{const st=document.createElement('style');st.textContent=`.srinfo{position:absolute;z-index:3;width:22px;height:22px;border-radius:50%;border:1px solid var(--gold);background:rgba(20,14,10,.85);color:var(--gold2);font:600 13px/1 var(--mono);cursor:pointer;padding:0;display:grid;place-items:center}.srinfo.on{background:var(--gold);color:#1a120c}`;document.head.appendChild(st)})();
+function srBtnAt(x,y,d){const cv=document.getElementById('cv');if(!cv)return;const wrap=cv.parentElement;let b=document.getElementById('srInfo');
+  if(!b){b=document.createElement('button');b.id='srInfo';b.type='button';b.className='srseal';b.setAttribute('aria-label','The Summa Rudis');b.innerHTML='<span>SR</span>';
+    const show=()=>srPopShow(b);b.addEventListener('mouseenter',show);b.addEventListener('focus',show);b.addEventListener('mouseleave',()=>{if(!SR_OPEN)srPopHide()});b.addEventListener('blur',()=>{if(!SR_OPEN)srPopHide()});
+    b.addEventListener('click',e=>{e.stopPropagation();SR_OPEN=!SR_OPEN;b.classList.toggle('on',SR_OPEN);if(SR_OPEN)srPopShow(b);else srPopHide()});wrap.appendChild(b)}
+  const k=cv.clientWidth/cv.width;b.style.left=(cv.offsetLeft+x*k-11)+'px';b.style.top=(cv.offsetTop+y*k-9)+'px';b.hidden=false;b._t=Date.now()}
+function srPopShow(b){const ev=typeof EV==='function'?EV():null;const key=srKey(ev);let p=document.getElementById('srPop');if(!p){p=document.createElement('div');p.id='srPop';p.className='srpop';document.body.appendChild(p)}
+  p.innerHTML=`<div class="srph">⚖ The Summa Rudis${ev&&ev.sr?` · <b>${esc(ev.sr)}</b>`:''}</div><div class="srpb">${S&&S.evKey&&typeof cardHTML==='function'?cardHTML('e:'+S.evKey,'md')||'':''}${key?srImgHTML(key,110):''}</div><div class="rc-sub">${ev?esc(ev.n||''):''}${SR_OPEN?' · tap the seal to close':''}</div>`;
+  p.hidden=false;const r=b.getBoundingClientRect();const w=p.offsetWidth||260;let x=r.right+8;if(x+w>innerWidth-8)x=r.left-w-8;p.style.left=Math.max(8,x)+'px';p.style.top=Math.max(8,Math.min(innerHeight-p.offsetHeight-8,r.top))+'px'}
+function srPopHide(){const p=document.getElementById('srPop');if(p)p.hidden=true}
+document.addEventListener('click',e=>{if(SR_OPEN&&!e.target.closest('#srInfo,#srPop')){SR_OPEN=false;const b=document.getElementById('srInfo');if(b)b.classList.remove('on');srPopHide()}});
+/* the seal goes when nothing is drawn (setup, Flavius hidden, no event) */
+setInterval(()=>{const b=document.getElementById('srInfo');if(b&&!b.hidden&&Date.now()-(b._t||0)>1500&&(!S||S.over||S.phase==='setup')){b.hidden=true;srPopHide()}},700);
+(()=>{const st=document.createElement('style');st.textContent=`.srseal{position:absolute;z-index:3;width:22px;height:22px;border-radius:50%;border:1.5px solid #8a6414;background:radial-gradient(circle at 40% 35%,#fff2b0,#e6b93a 60%,#9a6a14);box-shadow:0 2px 6px rgba(0,0,0,.6);cursor:help;padding:0;display:grid;place-items:center}
+.srseal span{font:700 8px/1 Georgia,serif;color:#3a2410;letter-spacing:.5px}.srseal.on{box-shadow:0 0 0 2px var(--gold2),0 2px 6px rgba(0,0,0,.6)}
+.srpop{position:fixed;z-index:45;background:rgba(15,10,7,.96);border:1px solid var(--gold);border-radius:8px;padding:8px 10px;box-shadow:0 10px 30px rgba(0,0,0,.6);max-width:300px}
+.srph{font:400 15px var(--display);color:var(--gold2);margin-bottom:6px}.srph b{font-weight:400;color:var(--bone)}.srpb{display:flex;gap:8px;align-items:center}`;document.head.appendChild(st)})();
 
 /* ---------- v0.73: offer to clear the gladiators older builds recruited on their own (recruit:true, never fought) ---------- */
 const oldRecruits73=()=>(typeof LUDUS_CACHE!=='undefined'?LUDUS_CACHE:[]).filter(g=>g&&g.recruit&&!(g.events>0));

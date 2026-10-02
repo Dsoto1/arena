@@ -18,7 +18,7 @@ ICO.coin=`<img class="ico coinimg" src="${assetURL('coin.webp')}" alt="coin">`;
 const SR_IMG={};const srImage=k=>{if(SR_IMG[k])return SR_IMG[k].complete&&SR_IMG[k].naturalWidth?SR_IMG[k]:null;const im=new Image();im.onload=()=>{try{draw()}catch(e){}};im.src=assetURL('sr_'+k+'.webp');SR_IMG[k]=im;return null};
 {const base=drawFlavius;drawFlavius=function(){const r=base.apply(this,arguments);try{if(!S||HEADLESS||S.phase==='setup'||(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false))return r;const k=srKey(EV());if(!k)return r;const im=srImage(k);if(!im)return r;
   const a=iso(0,0);const w=TW*1.55,h=TW*1.2;const cx=STANDS?a.x:Math.max(w/2+8,a.x-TW*5.2),cy=STANDS?Math.max(h/2+6,a.y-TW*2.62-h/2):h/2+8;const d=h*0.78;
-  if(typeof SR_OPEN==='undefined'||SR_OPEN){ctx.save();ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=6;ctx.drawImage(im,cx+w/2+4,cy-d/2,d,d);ctx.restore()}if(typeof srBtnAt==='function')srBtnAt(cx+w/2+4,cy-d/2,d) /* v0.73: shown on ⓘ only */}catch(e){}return r}}
+  if(typeof srBtnAt==='function')srBtnAt(cx+w/2,cy-h/2,d) /* v0.74: never drawn on the sand — a seal at the box's corner opens it */}catch(e){}return r}}
 /* the briefing and the status bar */
 {const base=briefingHTML;briefingHTML=function(){let h=base.apply(this,arguments);try{const k=srKey(EV());if(k)h=h.replace('<div class="brname">',`<div class="brsr">${srImgHTML(k,58)}<span class="rc-sub">Summa Rudis<br><b>${esc(EV().sr)}</b></span></div><div class="brname">`)}catch(e){}return h}}
 function statusDecor(){const st=document.getElementById('status');if(!st||!S||S.phase==='setup')return;
