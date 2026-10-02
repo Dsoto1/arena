@@ -24,6 +24,8 @@ armor, trophies, banners, events, tournaments, invitationals, editors, spectator
 - Communication: concise and technical.
 - Batches may come split into **NEW** (features/additions) and **FIXES / CHANGES** (where · what happened · what was expected).
   Fixes go straight into the next build; features get clarifying questions first. Keep his numbering in questions and summaries.
+- **When he sends a list, do NOT build, commit or publish until he says go** — sometimes he only wants to dump notes. Read it, sort it,
+  ask the questions, then wait. (A release he already approved may finish.)
 
 ## 2. Layout & build
 

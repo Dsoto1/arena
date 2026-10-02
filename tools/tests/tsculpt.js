@@ -26,13 +26,12 @@ res.wUnbaked=await pg.evaluate(()=>[ST.cw.art.layers.length,ST.cw.art.baked.leng
 await pg.click('[data-st="tab"][data-v="gear:a"]');await pg.waitForTimeout(300);
 res.aBlank=await pg.evaluate(()=>ST.ca.shape);
 res.a=await addDrag('a','#caPiece svg',[-0.15,0.1]);
-await pg.click('[data-gs="caview"][data-id="avatar"]');await pg.waitForTimeout(300);
-const r=await pg.evaluate(()=>{const b=document.querySelector('#caPiece svg').getBoundingClientRect();const F=caFit(ST.ca);return {x:b.left+F.x/150*b.width,y:b.top+F.y/332*b.height,w:b.width,h:b.height}});
+/* v0.69: the mock-up sits under the piece; pick an equip point, drag the whole piece, re-slot through the equip point */
+await pg.evaluate(()=>{const s=document.querySelector('[data-caeq2]');s.value='chest';s.dispatchEvent(new Event('change',{bubbles:true}))});await pg.waitForTimeout(400);
+const r=await pg.evaluate(()=>{const b=document.querySelector('#caAv svg').getBoundingClientRect();const F=caFit(ST.ca);return {x:b.left+F.x/150*b.width,y:b.top+F.y/332*b.height,w:b.width,h:b.height}});
 await pg.mouse.move(r.x,r.y);await pg.mouse.down();await pg.mouse.move(r.x+10,r.y-20,{steps:5});await pg.mouse.up();await pg.waitForTimeout(300);
 res.aFit=await pg.evaluate(()=>ST.ca.fit);
-// click the head zone to re-slot
-const hz=await pg.evaluate(()=>{const b=document.querySelector('#caPiece svg').getBoundingClientRect();return {x:b.left+75/150*b.width,y:b.top+24/332*b.height}});
-await pg.mouse.click(hz.x,hz.y);await pg.waitForTimeout(300);
+await pg.evaluate(()=>{const s=document.querySelector('[data-caeq2]');s.value='head';s.dispatchEvent(new Event('change',{bubbles:true}))});await pg.waitForTimeout(400);
 res.aSlot=await pg.evaluate(()=>ST.ca.slot);
 await pg.screenshot({path:'sc_a.png'});
 // trophy
