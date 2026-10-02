@@ -372,7 +372,8 @@ async function cpuUseItems(player) {
 async function cpuMarket(player) {
   if (!cfAllowed() || EV().noMarket) return;
   const P = pers(player),
-    vet = weak(player, 'tax') ? 1 : 0;
+    vetCF = weak(player, 'tax') && player.cf > player.coin + 3 ? 1 : 0, /* v0.74: Old debts in coin or CF, whichever it has more of */
+    vet = weak(player, 'tax') && !vetCF ? 1 : 0;
   const weakest = Math.min(...armsAttached(player).map(a => wScore(player['w' + a])));
   const disc = player.items.find(i => i.kind === 'card' && i.key === 'discount');
   const sharp = aiSk(player, 'merchant', false); // Master: buys what the body lacks, whatever the temper
@@ -411,6 +412,7 @@ async function cpuMarket(player) {
     }
     if (kind === 'a' && lv < 2 && player.coin < 8) break;
     player.coin -= purchaseCost(player, lv) + vet;
+    if (vetCF) player.cf -= 1;
     stat(player, 'buy');
     crowdReact('buy', {
       p: player

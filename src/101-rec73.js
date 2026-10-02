@@ -8,7 +8,7 @@
    ===================================================================== */
 MGR.cmp=MGR.cmp||[];
 function recPlanHTML(){const w=W_(),m=me();const board=w.glads.filter(g=>g.alive!==false&&g.favd&&!g.contract);if(!board.length)return '';let left=w.hours||0;
-  const rows=board.map(g=>{const btn=nextStep(g,m);const h=+((btn.match(/(\d+) h/)||[])[1]||0);const label=btn.replace(/<small>[\s\S]*?<\/small>/,'').replace(/<[^>]*>/g,'').trim();const fits=h&&h<=left;if(fits)left-=h;
+  const rows=board.map(g=>{const btn=nextStep(g,m);const h=+((btn.match(/(\d+) h/)||[])[1]||0);const label=btn.replace(/<small>[\s\S]*?<\/small>/,'').replace(/<[^>]*>/g,'').replace(/[★⋯]/g,'').trim();const fits=h&&h<=left;if(fits)left-=h;
     return `<div class="rplan ${fits?'fits':h?'later':''}"><b>${esc(g.name)}</b><span>${esc(label)||'—'}</span><span class="rph">${h?h+' h':''}</span><span class="rps">${h?(fits?'✓ this week':'next week'):''}</span></div>`}).join('');
   return `<details class="card2 rplanbox" ${(()=>{try{return localStorage.getItem('flavius_rplan')==='0'}catch(e){return false}})()?'':'open'}><summary class="sect" style="margin:0;cursor:pointer">🗓 This week's plan <span class="rc-sub">next step for each recruit on your board · ${w.hours||0} h left</span></summary>${rows}</details>`}
 function recCmpHTML(){const w=W_(),m=me();const L=MGR.cmp.map(gById).filter(g=>g&&g.alive!==false);MGR.cmp=L.map(g=>g.id);if(!L.length)return '';

@@ -3180,13 +3180,16 @@ function distModal(player, n, why, kind) {
 /* ================= HUMAN MENUS ================= */
 /* openMarket — the human market window (the sutler's stall): unlock for 3 CF, then buy weapon or armor levels 1-3 until closed. TWEAK: the sutler names. */
 async function openMarket(player) {
-  const vet = weak(player, 'tax') ? 1 : 0;
+  const vetOn = weak(player, 'tax'); /* v0.74: Old debts are paid as 1 coin OR 1 CF (the player's choice; a CPU pays with what it has more of) */
+  if (vetOn && player.cpu) player.taxPref = player.cf > player.coin ? 'cf' : 'coin';
   // v0.34 THE SUTLER'S STALL: the market is a proper stall now — striped awning, plank shelves,
   // the PRINTED cards racked face-up in their slots, the deck face-down beside them. Same rules,
   // same die; it just finally looks like a place a gladiator would spend coin between rounds.
   const sutler = ['Barbatus', 'Mercator Felix', 'Old Vibius', 'Naso the sutler', 'Crassus Minor', 'the widow Tertia'][Math.abs(S && S.seed || 0) % 6]; // one sutler per event — he remembers you
   for (;;) {
     const m = S.market;
+    const vetCF = vetOn && player.taxPref === 'cf' ? 1 : 0,
+      vet = vetOn && !vetCF ? 1 : 0;
     const RM = ['Ⅰ', 'Ⅱ', 'Ⅲ'];
     /* shelf — one market shelf: the three face-up card slots plus the face-down deck for a level. */
     const shelf = (kind, lv) => {
@@ -3195,7 +3198,7 @@ async function openMarket(player) {
       const fd = `<span class="slotwrap"><span class="slotn">4</span><span class="cardback" title="${M.deck.length} card${M.deck.length === 1 ? '' : 's'} face-down in the level ${lv} deck">🏛<small>×${M.deck.length}</small></span></span>`;
       return `<div class="shelf"><div class="shelf-hd"><b>LEVEL ${RM[lv - 1]}</b><span class="shelf-price">${purchaseCost(player, lv) + vet} coin</span></div><div class="shelf-slots">${slots}${fd}</div></div>`;
     };
-    const notes = [vet ? '⚖ Old debts: +1 coin per purchase' : '', player.discount ? `％ Discount: −${player.discount} coin this turn` : '', player.mchoice ? '☝ Choose: pick your slot, no die' : ''].filter(Boolean);
+    const notes = [vetOn ? `⚖ Old debts: +1 ${vetCF ? 'CF' : 'coin'} per purchase` : '', player.discount ? `％ Discount: −${player.discount} coin this turn` : '', player.mchoice ? '☝ Choose: pick your slot, no die' : ''].filter(Boolean);
     const body = `<div class="stall">
       <div class="stall-awn"></div>
       <div class="stall-sign"><span>⚖ MERCATVS FLAVII ⚖</span><span class="rc-sub">the market die (1-4) picks the slot · re-roll 2 coin</span></div>
@@ -3221,17 +3224,22 @@ async function openMarket(player) {
     });else {
       for (const lv of [1, 2, 3]) btns.push({
         label: `Weapon LV ${lv}`,
-        sub: `${purchaseCost(player, lv) + vet} coin`,
+        sub: `${purchaseCost(player, lv) + vet} coin${vetCF ? ' + 1 CF' : ''}`,
         value: 'w' + lv,
-        disabled: player.coin < purchaseCost(player, lv) + vet
+        disabled: player.coin < purchaseCost(player, lv) + vet || vetCF && player.cf < 1
       });
       for (const lv of [1, 2, 3]) btns.push({
         label: `Armor LV ${lv}`,
-        sub: `${purchaseCost(player, lv) + vet} coin`,
+        sub: `${purchaseCost(player, lv) + vet} coin${vetCF ? ' + 1 CF' : ''}`,
         value: 'a' + lv,
-        disabled: player.coin < purchaseCost(player, lv) + vet
+        disabled: player.coin < purchaseCost(player, lv) + vet || vetCF && player.cf < 1
       });
     }
+    if (player.market && vetOn) btns.push({
+      label: vetCF ? '⚖ Pay old debts in coin' : '⚖ Pay old debts in CF',
+      sub: 'Veteranus: +1 per purchase',
+      value: 'taxswap'
+    });
     btns.push({
       label: 'Close market',
       value: 'close'
@@ -3240,6 +3248,10 @@ async function openMarket(player) {
       wide: 1
     });
     if (v === 'close' || !v) break;
+    if (v === 'taxswap') {
+      player.taxPref = vetCF ? 'coin' : 'cf';
+      continue;
+    }
     if (v === 'unlock') {
       player.cf -= 3;
       player.market = true;
@@ -3249,6 +3261,7 @@ async function openMarket(player) {
     const kind = v[0],
       lv = +v[1];
     player.coin -= purchaseCost(player, lv) + vet;
+    if (vetCF) player.cf -= 1;
     coinLog(player, -(purchaseCost(player, lv) + vet), 'market purchases');
     stat(player, 'buy');
     crowdReact('buy', {
