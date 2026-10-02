@@ -163,5 +163,5 @@ var WAGE_MUL=ECON.wage;
 for(const [k,v] of Object.entries(ECON.fees))if(TIERS[k])TIERS[k].fee=v;
 const gateShare=m=>Math.min(ECON.gateMax,Math.round(ECON.gateBase+(m.fame||0)*ECON.gatePerFame));
 {const base=newWorld;newWorld=function(){const r=base.apply(this,arguments);try{const w=W_();if(w&&!w._econ68){for(const m of w.mgrs)m.coin=(m.coin||0)+ECON.startBonus;w._econ68=1}}catch(e){console.error(e)}return r}}
-{const base=endWeek;endWeek=async function(){const w=W_();const wk=w&&w.week;try{if(w&&!w.dead)for(const m of w.mgrs){if(m.dead)continue;const g=gateShare(m);m.coin+=g;if(m.isPlayer&&typeof tnews==='function')tnews(`🏟 Your share of the gate: +${g} coin (fame ${m.fame}).`)}}catch(e){console.error(e)}
+{const base=endWeek;endWeek=async function(){const w=W_();const wk=w&&w.week;try{if(w&&!w.dead)for(const m of w.mgrs){if(m.dead||(m.isPlayer&&w.night&&w.night.selfBye))continue; /* v0.76: a house sitting the week out takes no gate share */const g=gateShare(m);m.coin+=g;if(m.isPlayer&&typeof tnews==='function')tnews(`🏟 Your share of the gate: +${g} coin (fame ${m.fame}).`)}}catch(e){console.error(e)}
   return base.apply(this,arguments)}}

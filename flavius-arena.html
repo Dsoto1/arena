@@ -28195,7 +28195,7 @@ var WAGE_MUL=ECON.wage;
 for(const [k,v] of Object.entries(ECON.fees))if(TIERS[k])TIERS[k].fee=v;
 const gateShare=m=>Math.min(ECON.gateMax,Math.round(ECON.gateBase+(m.fame||0)*ECON.gatePerFame));
 {const base=newWorld;newWorld=function(){const r=base.apply(this,arguments);try{const w=W_();if(w&&!w._econ68){for(const m of w.mgrs)m.coin=(m.coin||0)+ECON.startBonus;w._econ68=1}}catch(e){console.error(e)}return r}}
-{const base=endWeek;endWeek=async function(){const w=W_();const wk=w&&w.week;try{if(w&&!w.dead)for(const m of w.mgrs){if(m.dead)continue;const g=gateShare(m);m.coin+=g;if(m.isPlayer&&typeof tnews==='function')tnews(`🏟 Your share of the gate: +${g} coin (fame ${m.fame}).`)}}catch(e){console.error(e)}
+{const base=endWeek;endWeek=async function(){const w=W_();const wk=w&&w.week;try{if(w&&!w.dead)for(const m of w.mgrs){if(m.dead||(m.isPlayer&&w.night&&w.night.selfBye))continue; /* v0.76: a house sitting the week out takes no gate share */const g=gateShare(m);m.coin+=g;if(m.isPlayer&&typeof tnews==='function')tnews(`🏟 Your share of the gate: +${g} coin (fame ${m.fame}).`)}}catch(e){console.error(e)}
   return base.apply(this,arguments)}}
 /* =====================================================================
    88-V68 · v0.68 MANAGER: THE WEEK AT A GLANCE
@@ -30175,6 +30175,127 @@ document.addEventListener('toggle',e=>{const d=e.target;if(d&&d.classList&&d.cla
 .pk76c{display:grid;justify-items:center;gap:3px;padding:8px;border:1px solid var(--line2);border-top:3px solid var(--pc);border-radius:8px;background:var(--panel2);cursor:pointer;color:var(--bone)}
 .pk76c.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}.pk76c:hover{border-color:var(--gold)}.pk76c .cimg.sm{width:96px}
 .pk76c b{font:400 15px var(--display)}.pk76c small{color:var(--muted);font-size:11.5px}.pk76w{display:block;width:80%;height:5px;background:#33271e;border-radius:3px;overflow:hidden}.pk76w i{display:block;height:100%;background:linear-gradient(90deg,#6f9a4a,#e6b93a)}`;document.head.appendChild(st)})();
+
+/* =====================================================================
+   v0.76 C — the road, a week off of your own, infirmary beds
+   • Road lock (roadLocked76): once the house leaves for an away Match Week (💰 Travel, a road deal, or the first bout
+     of a booked fighter), the Training Yard and the Infirmary are shut until the week ends — no new drills, hours,
+     exhibitions, yard jobs, treatments, rest weeks or bed changes (LOCK76 click guard). What was booked before leaving
+     still runs. Recruiting stays open. Home weeks and byes never lock. Before you leave, a window lists what is
+     undone (leaveList76); the travel card says the yard is shut while you are away.
+   • Sit this week out (sbyeOK76/takeSbye76): once a season, before any of your fighters is on the card (never in
+     Rivalry Week): no road, no gate share (87 edit), −SBYE76.fame fame; bye perks: +TH_BYE training hours (thMax
+     wrapper), wounds a week shorter, nobody sulks for missing a bout. w.night.selfBye, w.sbye76 = season.
+   • Infirmary beds: bedsOf76 = 1 + Valetudinarium level. Serious wounds (serious76: surgeon-grade, −4 rating or
+     worse, 3+ weeks; remembered as inj.ser76) and lost limbs need a bed. You assign them (w.beds76 = gids,
+     [data-bed76]/[data-unbed76]); a healed fighter leaves the bed. Without a bed: no Medicus, surgeon or Hygeia, and
+     the wound heals at half pace (endWeek wrapper: every other week adds a week). Bathhouse and Asclepius still work.
+   ===================================================================== */
+/* a small centred question over any window (the Manager lives in #modal, so modal() would replace it) */
+function ask76(title,body,yes,no){return new Promise(res=>{for(const o of document.querySelectorAll('.ask76bg'))o.remove();
+  const bg=document.createElement('div');bg.className='veraskbg ask76bg';bg.innerHTML=`<div class="card2 verask" role="dialog" aria-modal="true"><b>${title}</b><div style="margin:6px 0 10px">${body}</div><div class="acts"><button type="button" class="btn primary" data-ask76="1">${yes}</button><button type="button" class="btn" data-ask76="0">${no}</button></div></div>`;
+  document.body.appendChild(bg);const done=v=>{bg.remove();document.removeEventListener('keydown',key,true);res(v)};
+  const key=e=>{if(e.key==='Escape'){e.stopPropagation();e.preventDefault();done(false)}};document.addEventListener('keydown',key,true);
+  bg.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-ask76]');if(b)done(b.dataset.ask76==='1');else if(e.target===bg)done(false)});
+  setTimeout(()=>{const y=bg.querySelector('[data-ask76="1"]');if(y)y.focus()},30)})}
+const SBYE76={fame:2};
+function roadLocked76(w){w=w||W_();const n=w&&w.night;if(!n||n.bye||n.selfBye||w.tutorial)return false;const t=n.travel;return !!(t&&t.cost>0&&t.gone)}
+const roadCity76=w=>{const L=LOCATIONS[(w||W_()).night.loc];return L?L.n:'the games'};
+{const base=travelClick;travelClick=function(a){const r=base.apply(this,arguments);try{const w=W_();const t=w&&w.night&&w.night.travel;if(t&&t.paid&&t.cost>0&&(a==='travelpay'||a==='traveldeal'))t.gone=true}catch(e){}return r}}
+{const base=applyBout;applyBout=function(){const r=base.apply(this,arguments);try{const w=W_(),m=me();const t=w.night&&w.night.travel;
+  const mine=id=>{const g=gById(id);return g&&g.contract&&g.contract.mgr===m.id};
+  if(t&&t.cost>0&&!t.gone&&w.night.bouts.some(b=>b.done&&b.ents.some(mine)))t.gone=true;
+  for(const g of rosterOf(m))if(g.inj&&!g.inj.war&&!g.inj.bedNote&&serious76(g)&&!inBed76(g)){g.inj.bedNote=1;tnews(`🛏 ${esc(g.name)} needs a bed in the Infirmary (${esc(g.inj.label)}).`,'bad')}}catch(e){console.error(e)}return r}}
+/* what is left undone when the house leaves */
+function leaveList76(w){const m=me();const ros=rosterOf(m);const L=[];
+  const th=typeof thLeft==='function'?thLeft(w):0;if(th&&ros.length)L.push(`⏳ <b>${th}</b> training hour${th===1?'':'s'} unspent`);
+  if(!w.train||w.train==='off')L.push('🏋 No drills set for the week');
+  const hurt=ros.filter(g=>g.inj&&!g.inj.war&&injReq(g.inj)!=='rest'&&g.medWk!==w.week&&g.bathWk!==w.week);if(hurt.length)L.push(`⚕ Untreated: ${hurt.map(g=>esc(g.name)).join(', ')}`);
+  const wait=bedWait76(w);if(wait.length&&bedFree76(w))L.push(`🛏 Waiting for a bed: ${wait.map(g=>esc(g.name)).join(', ')}`);
+  const worn=typeof gFat==='function'?ros.filter(g=>!g.inj&&gFat(g)>50&&g.restWk!==w.week):[];if(worn.length)L.push(`😮‍💨 Worn down, no rest week: ${worn.map(g=>`${esc(g.name)} (${gFat(g)})`).join(', ')}`);
+  return L}
+const LEAVE76={ok:0};
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mg="travelpay"],[data-mg="traveldeal"]');if(!b||b.disabled)return;if(LEAVE76.ok){LEAVE76.ok=0;return}
+  const w=typeof W_==='function'&&W_();if(!w||w.tutorial||!w.night)return;const L=leaveList76(w);if(!L.length)return;e.preventDefault();e.stopPropagation();const sel=`[data-mg="${b.dataset.mg}"]`;
+  ask76('🛣 Before you leave',`Once you leave for <b>${esc(roadCity76(w))}</b>, the Training Yard and the Infirmary are shut until the week ends. Still undone:<ul class="leave76">${L.map(x=>`<li>${x}</li>`).join('')}</ul><span class="rc-sub">Anything you already booked still runs.</span>`,'🛣 Leave now','Stay and finish').then(v=>{if(!v)return;const nb=b.isConnected?b:document.querySelector(sel);if(nb){LEAVE76.ok=1;nb.click()}})},true);
+const LOCK76='[data-mg="regime"],[data-mg="exsim"],[data-mg="exlive"],[data-mg="exfight"],[data-mg="ptrain"],[data-mg="medic"],[data-mg="surgeon"],[data-mg="bath"],[data-mg="asclepius"],[data-mg="heal"],[data-tp],[data-yj],[data-bath],[data-rest],[data-bed76],[data-unbed76],[data-pen76]';
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest(LOCK76);if(!b||!b.closest('#mgrBody'))return;const w=typeof W_==='function'&&W_();if(!w)return;
+  if(roadLocked76(w)){e.preventDefault();e.stopPropagation();mToast(`🛣 On the road to <b>${esc(roadCity76(w))}</b> — the Training Yard and the Infirmary reopen when the week ends.`);return}
+  const t=b.closest('[data-mg="medic"],[data-mg="surgeon"],[data-mg="heal"]');if(t){const g=gById(t.dataset.id);if(g&&serious76(g)&&!inBed76(g)){e.preventDefault();e.stopPropagation();mToast(`🛏 ${esc(g.name)} needs a bed in the Infirmary first.`)}}},true);
+const lockNote76=what=>{const w=W_();return roadLocked76(w)?`<div class="card2 lock76">🛣 <b>On the road to ${esc(roadCity76(w))}.</b> The ${what} is shut until the week ends — what you booked before leaving still runs.</div>`:''};
+{const base=practiceHTML;practiceHTML=function(){const h=base.apply(this,arguments);try{const n=lockNote76('Training Yard');if(n)return n+`<div class="locked76">${h}</div>`}catch(e){}return h}}
+
+/* ---------- sit this week out ---------- */
+function sbyeOK76(w){w=w||W_();const n=w&&w.night;if(!n||n.bye||n.selfBye||w.tutorial||w.dead)return [false,''];
+  if(w.sbye76===w.season)return [false,'Already taken this season'];
+  if(typeof RIVAL_WK!=='undefined'&&wkOf(w.week)===RIVAL_WK)return [false,'Not in Rivalry Week'];
+  if(n.bouts.some(b=>b.done))return [false,'The games have begun'];
+  const m=me();if(n.bouts.some(b=>b.ents.some(id=>{const g=gById(id);return g&&g.contract&&g.contract.mgr===m.id})))return [false,'Your fighters are on the card'];
+  const t=n.travel;if(t&&(t.gone||t.deal))return [false,'You are already on the road'];
+  return [true,'']}
+async function takeSbye76(){const w=W_(),m=me();if(!sbyeOK76(w)[0])return;const L=roadCity76(w);
+  const v=await ask76('🌿 Sit this week out?',`Your house skips Match Week at <b>${esc(L)}</b>. Once a season.<ul class="leave76"><li>⏳ +${TH_BYE} training hours</li><li>⚕ Wounds heal a week sooner</li><li>🛏 Nobody sulks for missing a bout</li><li>🏟 No gate share this week</li><li>📉 −${SBYE76.fame} fame</li></ul>`,'🌿 Sit it out','Cancel');
+  if(!v||!sbyeOK76(w)[0])return;const n=w.night;const home=travelHome(m);
+  n.selfBye=true;w.sbye76=w.season;n.travel={cost:0,paid:true,offer:null,deal:null,from:LOCATIONS[home]?LOCATIONS[home].n:'',bye:1,self:1};
+  for(const g of rosterOf(m))if(g.inj&&!g.inj.war)g.inj.until=Math.max(w.week,(g.inj.until||w.week)-1);
+  m.fame=clamp((m.fame||0)-SBYE76.fame,0,100);
+  tnews(`🌿 <b>${esc(m.ludus)} sits out Match Week</b> at ${esc(L)}: +${TH_BYE} training hours, wounds a week sooner, no gate share, −${SBYE76.fame} fame.`,'big');
+  saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()}
+{const base=thMax;thMax=function(){const r=base.apply(this,arguments);try{const w=W_();if(w&&w.night&&w.night.selfBye)return r+TH_BYE}catch(e){}return r}}
+{const base=weekMoney;weekMoney=function(){const r=base.apply(this,arguments);try{const w=W_();if(w&&w.night&&w.night.selfBye&&r.gate){r.net-=r.gate;r.gate=0;r.runway=r.net>=0?Infinity:Math.max(0,Math.floor(r.coin/-r.net))}}catch(e){}return r}}
+{const base=travelCardHTML;travelCardHTML=function(){const w=W_();try{if(w&&w.night&&w.night.selfBye)return `<div class="card2 travelcard home sbye76"><b>🌿 Your house sits this week out</b> — the games at ${esc(roadCity76(w))} go on without you. <span class="rc-sub">+${TH_BYE} training hours · no gate share</span></div>`}catch(e){}
+  let h=base.apply(this,arguments);try{const [ok]=sbyeOK76(w);
+    if(ok&&h)h=h.replace(/<\/div>$/,`<div class="sbye76row"><button class="btn tksm" type="button" data-sbye76>🌿 Sit this week out<small>once a season · +${TH_BYE} h · −${SBYE76.fame} fame</small></button></div></div>`);
+    if(roadLocked76(w)&&h)h=h.replace(/<\/div>$/,'<div class="rc-sub">🔒 The Training Yard and the Infirmary are shut until the week ends.</div></div>')}catch(e){}return h}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-sbye76]');if(b){e.preventDefault();e.stopPropagation();takeSbye76();return}
+  const en=e.target.closest&&e.target.closest('[data-mg="enter"]');if(en){const w=typeof W_==='function'&&W_();if(w&&w.night&&w.night.selfBye){e.preventDefault();e.stopPropagation();mToast('🌿 Your house is sitting this week out.')}}},true);
+{const base=nightTodo73;nightTodo73=function(){try{const w=W_();if(w&&w.night&&w.night.selfBye&&!(w.pend||[]).length)return null}catch(e){}return base.apply(this,arguments)}}
+
+/* ---------- infirmary beds ---------- */
+const bedsOf76=m=>1+(typeof facLvl==='function'?facLvl(m,'valet'):0);
+function serious76(g){if(!g)return false;if((g.severed||[]).length)return true;const i=g.inj;if(!i||i.war)return false;if(i.ser76)return true;const w=W_();
+  const s=injReq(i)==='surgeon'||(i.pen||0)>=4||((i.until||0)-w.week)>=3;if(s)i.ser76=1;return s}
+function bedsClean76(w){const m=me();if(!m)return [];const ros=new Set(rosterOf(m).map(g=>g.id));
+  w.beds76=(w.beds76||[]).filter((id,i,a)=>a.indexOf(id)===i&&ros.has(id)&&serious76(gById(id))).slice(0,bedsOf76(m));return w.beds76}
+const inBed76=g=>{const w=W_();return !!(w&&(w.beds76||[]).includes(g.id))};
+const bedWait76=w=>rosterOf(me()).filter(g=>serious76(g)&&!(w.beds76||[]).includes(g.id));
+const bedFree76=w=>Math.max(0,bedsOf76(me())-bedsClean76(w).length);
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('[data-bed76],[data-unbed76]');if(!a)return;e.preventDefault();e.stopPropagation();const w=W_();if(!w)return;bedsClean76(w);
+  if(a.dataset.bed76){const g=gById(a.dataset.bed76);if(!g||inBed76(g))return;if(!bedFree76(w)){mToast('🛏 Every bed is taken — discharge someone, or build the Valetudinarium for more.');return}w.beds76.push(g.id);tnews(`🛏 ${esc(g.name)} takes a bed in the Infirmary.`)}
+  else{w.beds76=w.beds76.filter(id=>id!==a.dataset.unbed76)}
+  saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()});
+function bedsHTML76(){const w=W_(),m=me();const beds=bedsClean76(w);const N=bedsOf76(m);const wait=bedWait76(w);const free=N-beds.length;
+  const why=g=>(g.severed||[]).length&&!g.inj?`lost ${g.severed.map(l=>LOCN[l].toLowerCase()).join(', ')} — Hygeia needs a bed`:esc(g.inj?g.inj.label:'');
+  const cell=id=>{const g=gById(id);return `<div class="bed76 on">${mgAvatar(g)}<div><b>${esc(g.name)}</b><small>${why(g)}</small></div><button class="btn tksm" type="button" data-unbed76="${g.id}">Discharge</button></div>`};
+  return `<div class="beds76"><div class="sect">🛏 Beds · ${beds.length}/${N} <span class="rc-sub">serious wounds and lost limbs need a bed · without one: no Medicus, surgeon or Hygeia, and half-pace healing · more beds with the Valetudinarium</span></div>
+    <div class="bedgrid76">${beds.map(cell).join('')}${Array.from({length:free},()=>'<div class="bed76 empty"><span>🛏</span><small>Empty bed</small></div>').join('')}</div>
+    ${wait.length?`<div class="bedwait76">${wait.map(g=>`<div class="bedw76"><b>${esc(g.name)}</b> <span class="rc-sub">${why(g)}</span><button class="btn tksm ${free?'primary':''}" type="button" data-bed76="${g.id}" ${free?'':'disabled title="Every bed is taken"'}>🛏 Give a bed</button></div>`).join('')}</div>`:''}</div>`}
+{const base=infirmaryHTML;infirmaryHTML=function(){let h=base.apply(this,arguments);try{const w=W_();const occ=bedsClean76(w).length,N=bedsOf76(me()),wait=bedWait76(w).length;
+  /* the room's Patients tile counts the real beds */
+  h=h.replace(/(<div class="rtv">)\d+ \/ \d+ beds(<\/div><div class="rtl">)Patients(<\/div>)(<div class="rc-sub">[^<]*<\/div>)?(<div class="meter"[^>]*><i style="width:)[\d.]+%/,(m0,a,b,c,d,e)=>`${a}${occ} / ${N} beds${b}Serious patients${c}${wait?`<div class="rc-sub">${wait} waiting · half-pace mending</div>`:''}${e}${Math.round(occ/N*100)}%`);
+  const b=bedsHTML76();const i=h.indexOf('<p class="rc-sub" style="margin:4px 0 8px"><b>Care must match');h=i>=0?h.slice(0,i)+b+h.slice(i):b+h;const n=lockNote76('Infirmary');if(n)h=n+`<div class="locked76">${h}</div>`}catch(e){console.error(e)}return h}}
+{const base=planTiles;planTiles=function(g){let h=base.apply(this,arguments);try{if(serious76(g)&&!inBed76(g))h=h.replace(/class="plantile ([^"]*)" data-mg="(medic|surgeon)" data-id="[^"]*"/g,'class="plantile off" disabled data-bedneed76="1"')+`<div class="pw">🛏 Needs a bed — heals at half pace without one</div>`;else if(inBed76(g))h+=`<div class="rc-sub">🛏 In a bed</div>`}catch(e){}return h}}
+{const base=careHTML;careHTML=function(g){let h=base.apply(this,arguments);try{if(g&&(g.severed||[]).length&&!inBed76(g))h=h.replace(/(<button class="btn[^"]*" type="button") data-mg="heal" data-id="[^"]*"[^>]*>/,'$1 disabled title="Needs a bed in the Infirmary first">')}catch(e){}return h}}
+{const base=infirmNeed73;infirmNeed73=function(){let r=base.apply(this,arguments);try{const w=W_();r+=Math.min(bedFree76(w),bedWait76(w).length)}catch(e){}return r}}
+{const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const w=W_();
+  if(w.night&&w.night.selfBye){const x=I.find(x=>x.ic==='⚔');if(x){x.done=true;x.txt='Sitting this week out';x.btn=''}}
+  const wait=bedWait76(w);const free=bedFree76(w);if(wait.length&&free){const at=I.findIndex(x=>x.ic==='⚕');I.splice(at<0?0:at+1,0,{done:false,ic:'🛏',txt:`${wait.slice(0,free).map(g=>esc(g.name)).join(', ')} ${Math.min(free,wait.length)===1?'needs':'need'} a bed`,btn:`<button class="btn tksm" type="button" data-mg="tab" data-id="infirm">Infirmary</button>`})}}catch(e){console.error(e)}return I}}
+{const base=endWeek;endWeek=async function(){const w=W_();let undo=null;
+  try{if(w&&!w.dead&&w.night&&w.night.bouts.every(b=>b.done)&&!(w.pend||[]).length&&!(w.special&&!w.special.done)){undo=[];const m=me();
+    if(w.night.selfBye)for(const g of rosterOf(m)){undo.push([g,'lastBout',g.lastBout]);g.lastBout=w.week}
+    bedsClean76(w);for(const g of rosterOf(m)){const i=g.inj;if(!i||i.war||!serious76(g)||inBed76(g)||injReq(i)==='surgeon')continue;
+      undo.push([i,'half76',i.half76],[i,'until',i.until]);i.half76=(i.half76||0)+1;if(i.half76%2===1)i.until=Math.max(i.until||w.week,w.week)+1}}}catch(e){console.error(e)}
+  const r=await base.apply(this,arguments);
+  if(r===false&&undo)for(const [o,k,v] of undo.reverse())o[k]=v;
+  try{const w2=W_();if(w2&&r!==false)bedsClean76(w2)}catch(e){}return r}}
+(()=>{const st=document.createElement('style');st.textContent=`
+.lock76{border-color:#c98a2e;margin-bottom:10px}.locked76 button:not([data-mg="tab"]):not([data-mg="sel"]),.locked76 .plantile{opacity:.5;cursor:not-allowed}
+.leave76{margin:6px 0 8px 18px;display:grid;gap:3px}.sbye76row{margin-top:6px}
+.beds76{margin:10px 0}.bedgrid76{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.bed76{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:6px 8px;border:1px solid var(--line2);border-radius:8px;background:var(--panel2);min-height:46px}
+.bed76.on{border-color:var(--gold)}.bed76 small{display:block;color:var(--muted);font-size:11.5px}.bed76>:first-child{width:30px;height:38px;overflow:hidden;display:block}.bed76>:first-child *{max-width:100%;max-height:38px}
+.bed76.empty{grid-template-columns:auto 1fr;opacity:.6;border-style:dashed}.bed76.empty span{font-size:20px}
+.bedwait76{display:grid;gap:4px;margin-top:6px}.bedw76{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:4px 8px;border-left:3px solid var(--blood2);background:rgba(163,40,31,.12);border-radius:4px}.bedw76 .btn{margin-left:auto}`;document.head.appendChild(st)})();
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
