@@ -448,6 +448,13 @@ One global script; files are concatenated in order. Later "version modules" patc
   follow-up with card backs, chest flip, city Match Week banners, icon weapon chips, no skip-menu = Version 88.)
 
 ## 8. Next steps / open items
+- **Next batch (agreed, go given):** (1) central save hub — main menu ▶ Continue (last thing played) + 📜 Saves window with tabs
+  Matches (3 slots + autosave: load/rename/delete) · Careers (Manager + archives) · Campaigns (missios, tournaments) · Backups (export/
+  import, moved from Settings; Settings keeps a link); save cards with date/version/summary; old entry points open the same window.
+  (2) Play Now roster: a compact "📚 <set> ▾" chip in the Who header picks only the pool (plain names: 🏛 Printed game only · ✦ All my
+  creations · your sets with counts · ✎ Manage sets → Studio), one line of what's in play, no toast; no creations → a Studio note.
+  (3) Seat cards redesigned: mini on top, name + class; You|CPU toggle; 🧠 mind chip cycles; tap the figure/class → class picker grid
+  (cards from the roster + guide win rates); personality/Tune/Ludus rival/summon/team behind "⋯ More"; team events show a team chip.
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
   8 printed classes move to the live template (104-cards74 classCard74) so rule changes update their cards. Still to come from him:
   Thracian Helm, Ornate Chest Armor, Chest Armor, Reinforced Arm Armor art; distinct art for the Iron Spaulder (it shares the look of
