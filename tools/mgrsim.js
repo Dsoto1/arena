@@ -26,6 +26,9 @@ for(const strat of STRATS)for(let run=0;run<RUNS;run++){
       /* signings */
       if(strat==='cheap'&&wkOf(w.week)<=3){for(const g of freeAgents().filter(g=>askWage(g)<=12&&(g.pot||effOvr(g))>=60).sort((a,b)=>(b.pot||0)-(a.pot||0))){if(ros().length>=12)break;
         if(m.coin<askWage(g)*4)break;for(const x of [1,1.25,1.5]){const wage=Math.ceil(askWage(g)*x);if(offerVerdict(g,wage,12,0,false).ok){signGlad(g,wage,12,0,false);break}}}}
+      /* every lanista keeps at least 4 fighters: replace the fallen with the best free agent they can afford (8 weeks of wages) */
+      while(ros().length<4){const g=freeAgents().filter(g=>!g.inj&&askWage(g)*8<=m.coin).sort((a,b)=>effOvr(b)-effOvr(a))[0];if(!g)break;let done=false;
+        for(const x of [1,1.25,1.5]){const wage=Math.ceil(askWage(g)*x);if(offerVerdict(g,wage,12,0,false).ok){signGlad(g,wage,12,0,false);done=true;break}}if(!done){g.favd=false;g.interest[m.id]=0;break}}
       /* renewals: the game's own extend rule (morale 35+, interest 25+), at the current ask */
       for(const g of ros())if(g.morale<45&&m.coin>25){m.coin-=5;g.morale=Math.min(100,g.morale+8)} /* an attentive lanista: a feast for the low-spirited (same for every strategy) */
       for(const g of ros())if(g.contract&&g.contract.weeks<=2&&g.morale>=35){g.contract.weeks=Math.max(0,g.contract.weeks)+8;g.contract.wage=Math.max(g.contract.wage,askWage(g));g.contract.expired=0}
