@@ -27450,11 +27450,18 @@ noise=function(player,scale=1){const T=AI_TIERS[aiTier(player)];const bl=player&
 {const base=beginTurn;beginTurn=async function(){try{const p=S&&cur();if(p&&p.cpu&&p.tier!=null)p.diff=p.aiDiff||AI_TIERS[p.tier].diff}catch(e){}return base.apply(this,arguments)}}
 /* statBonuses names the tier too (read by the chips, the ratings card and the growth news) */
 {const base=statBonuses;statBonuses=function(st){const b=base.apply(this,arguments);b.tier=aiTierOf((st||{}).int||0);b.tierName=AI_TIERS[b.tier].n;return b}}
-function aiTierChip(int){const T=AI_TIERS[aiTierOf(int)];return `<span class="aitier t${aiTierOf(int)}" title="${esc(T.n)} mind: ${esc(T.d)}">🧠 ${esc(T.n)}</span>`}
+function aiTierChip(int){const T=AI_TIERS[aiTierOf(int)];return `<span class="aitier t${aiTierOf(int)}" title="${esc(T.n)} mind: ${esc(T.d)}"><i class="brain b${aiTierOf(int)}">🧠</i> ${esc(T.n)}</span>`}
 {const st=document.createElement('style');st.textContent=`.aitier{display:inline-block;font-size:11px;padding:1px 6px;border-radius:9px;border:1px solid var(--line2);color:var(--muted);white-space:nowrap}
 .aitier.t2{color:#cfc6b4}.aitier.t3{color:#9cc4e8;border-color:#4f7fc4}.aitier.t4{color:var(--gold2);border-color:var(--gold)}`;document.head.appendChild(st)}
 /* the tier rides beside the ratings wherever they show; the glossary and the ratings guide name the five minds */
-{const base=statChips;statChips=function(st,opt={}){const h=base.apply(this,arguments);if(!h||!st||!st.int)return h;return h.replace(/<\/span>$/,` ${aiTierChip(statFix(st.int))}</span>`)}}
+{const base=statChips;statChips=function(st,opt={}){let h=base.apply(this,arguments);if(!h||!st||!st.int)return h;
+  h=h.replace(/((?:title|aria-label)="Intelligence [^"]*">)🧠/,`$1<i class="brain b${aiTierOf(statFix(st.int))}">🧠</i>`); /* v0.67: the brain wears its mind's colour */
+  return h.replace(/<\/span>$/,` ${aiTierChip(statFix(st.int))}</span>`)}}
+/* the five minds' colours: Novice grey · Apprentice green · Fighter bronze · Veteran blue · Master gold */
+{const st=document.createElement('style');st.textContent=`.brain{font-style:normal;display:inline-block}
+.brain.b0{filter:grayscale(1) brightness(1.05)}.brain.b1{filter:hue-rotate(150deg) saturate(1.3)}.brain.b2{filter:sepia(1) saturate(1.6) hue-rotate(-12deg) brightness(.95)}
+.brain.b3{filter:hue-rotate(245deg) saturate(1.4)}.brain.b4{filter:sepia(1) saturate(3) hue-rotate(5deg) brightness(1.2) drop-shadow(0 0 2px rgba(240,207,125,.6))}
+.aitier.t0{color:#a9a39a}.aitier.t1{color:#9cc46e;border-color:#4f7a35}`;document.head.appendChild(st)}
 const AI_TIERS_TXT='Novice below 65, Apprentice 65, Fighter 76, Veteran 86, Master 96';
 try{if(typeof GLOSS!=='undefined'&&GLOSS.int)GLOSS.int.d=`How sharply a CPU plays the gladiator — five minds: ${AI_TIERS_TXT}. Personality still decides how they play. Grows by surviving and winning.`}catch(e){}
 /* ---------- SKILLS BY SUBSYSTEM: each tier sets the play level (easy / normal / hard) of each part of the CPU separately.
@@ -28137,6 +28144,23 @@ setInterval(()=>{const el=document.getElementById('ofMeter');if(el&&!el.dataset.
 .ofmeter{margin:8px 0;padding:6px 8px;border-radius:7px;border:1px solid var(--line2)}.ofmeter.yes{border-color:rgba(127,174,95,.6)}.ofmeter.close{border-color:rgba(217,164,65,.6)}.ofmeter.no{border-color:rgba(201,86,74,.45)}
 .ofbar{position:relative;height:8px;background:var(--line2);border-radius:4px;margin-bottom:5px}.ofbar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:#d9a441}.ofmeter.yes .ofbar i{background:#7fae5f}
 .ofbar u{position:absolute;top:-3px;bottom:-3px;width:3px;background:#c9564a;border-radius:2px}.ofbar s{position:absolute;top:-3px;bottom:-3px;width:2px;background:#e9e5dc;opacity:.7}`;document.head.appendChild(st)}
+/* ---------- Juggernaut (Play Now setup): exactly one Juggernaut, everyone else is the Team. The rows open with seat 1 as the
+   Juggernaut; choosing Juggernaut for a seat moves the role there (the old one joins the Team); the last Juggernaut can't be
+   switched to the Team — pick another seat as the Juggernaut instead. ---------- */
+function juggNormalize(n){const S8=CFG.seats.slice(0,n);let j=S8.findIndex(s=>s.team==='J');if(j<0)j=0;S8.forEach((s,i)=>s.team=i===j?'J':'T')}
+{const base=seatRows;seatRows=function(ev,n){try{if(ev&&ev.teams==='jugg')juggNormalize(n)}catch(e){}return base.apply(this,arguments)}}
+document.addEventListener('change',e=>{const t=e.target;if(!t||!/^team\d$/.test(t.id||''))return;const ev=EVENTS[CFG.ev];if(!ev||ev.teams!=='jugg')return;
+  const i=+t.id.slice(4);const sels=[...document.querySelectorAll('select[id^="team"]')].filter(x=>/^team\d$/.test(x.id));
+  if(t.value==='J'){for(const s of sels){const k=+s.id.slice(4);if(k!==i){s.value='T';if(CFG.seats[k])CFG.seats[k].team='T'}}CFG.seats[i].team='J'}
+  else if(!sels.some(s=>s.value==='J')){t.value='J';CFG.seats[i].team='J';try{mToast('Someone has to be the Juggernaut — choose Juggernaut on another seat to hand the role over.')}catch(err){}}});
+/* ---------- the Ludus record: 🛣 Send on the Road (or ⚔ Walk stage) joins the record's action row, beside "Continue as a
+   missio", instead of floating in the corner ---------- */
+{const base=ludusDetail;ludusDetail=function(g){let h=base.apply(this,arguments);try{
+  const m=h.match(/<button type="button" class="btn roadsend[^"]*"[^>]*>[\s\S]*?<\/button>/);if(!m)return h;
+  const i=h.indexOf('<div class="mbtns"');if(i<0)return h;const j=h.indexOf('</div>',i);if(j<0)return h;
+  const btn=m[0].replace('class="btn roadsend','class="btn roadsend inrow').replace(/>(🛣 Send on the Road)</,'>$1<small>win the twelve arenas in order</small><').replace(/>(⚔ Walk stage[^<]*)</,'>$1<small>opens the next stage</small><');
+  h=h.replace(m[0],'');return h.slice(0,h.indexOf('</div>',h.indexOf('<div class="mbtns"')))+btn+h.slice(h.indexOf('</div>',h.indexOf('<div class="mbtns"')))}catch(e){return h}}}
+{const st=document.createElement('style');st.textContent=`.roadsend.inrow{position:static!important;float:none!important;margin:0!important}`;document.head.appendChild(st)}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

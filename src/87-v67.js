@@ -137,3 +137,20 @@ setInterval(()=>{const el=document.getElementById('ofMeter');if(el&&!el.dataset.
 .ofmeter{margin:8px 0;padding:6px 8px;border-radius:7px;border:1px solid var(--line2)}.ofmeter.yes{border-color:rgba(127,174,95,.6)}.ofmeter.close{border-color:rgba(217,164,65,.6)}.ofmeter.no{border-color:rgba(201,86,74,.45)}
 .ofbar{position:relative;height:8px;background:var(--line2);border-radius:4px;margin-bottom:5px}.ofbar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:#d9a441}.ofmeter.yes .ofbar i{background:#7fae5f}
 .ofbar u{position:absolute;top:-3px;bottom:-3px;width:3px;background:#c9564a;border-radius:2px}.ofbar s{position:absolute;top:-3px;bottom:-3px;width:2px;background:#e9e5dc;opacity:.7}`;document.head.appendChild(st)}
+/* ---------- Juggernaut (Play Now setup): exactly one Juggernaut, everyone else is the Team. The rows open with seat 1 as the
+   Juggernaut; choosing Juggernaut for a seat moves the role there (the old one joins the Team); the last Juggernaut can't be
+   switched to the Team — pick another seat as the Juggernaut instead. ---------- */
+function juggNormalize(n){const S8=CFG.seats.slice(0,n);let j=S8.findIndex(s=>s.team==='J');if(j<0)j=0;S8.forEach((s,i)=>s.team=i===j?'J':'T')}
+{const base=seatRows;seatRows=function(ev,n){try{if(ev&&ev.teams==='jugg')juggNormalize(n)}catch(e){}return base.apply(this,arguments)}}
+document.addEventListener('change',e=>{const t=e.target;if(!t||!/^team\d$/.test(t.id||''))return;const ev=EVENTS[CFG.ev];if(!ev||ev.teams!=='jugg')return;
+  const i=+t.id.slice(4);const sels=[...document.querySelectorAll('select[id^="team"]')].filter(x=>/^team\d$/.test(x.id));
+  if(t.value==='J'){for(const s of sels){const k=+s.id.slice(4);if(k!==i){s.value='T';if(CFG.seats[k])CFG.seats[k].team='T'}}CFG.seats[i].team='J'}
+  else if(!sels.some(s=>s.value==='J')){t.value='J';CFG.seats[i].team='J';try{mToast('Someone has to be the Juggernaut — choose Juggernaut on another seat to hand the role over.')}catch(err){}}});
+/* ---------- the Ludus record: 🛣 Send on the Road (or ⚔ Walk stage) joins the record's action row, beside "Continue as a
+   missio", instead of floating in the corner ---------- */
+{const base=ludusDetail;ludusDetail=function(g){let h=base.apply(this,arguments);try{
+  const m=h.match(/<button type="button" class="btn roadsend[^"]*"[^>]*>[\s\S]*?<\/button>/);if(!m)return h;
+  const i=h.indexOf('<div class="mbtns"');if(i<0)return h;const j=h.indexOf('</div>',i);if(j<0)return h;
+  const btn=m[0].replace('class="btn roadsend','class="btn roadsend inrow').replace(/>(🛣 Send on the Road)</,'>$1<small>win the twelve arenas in order</small><').replace(/>(⚔ Walk stage[^<]*)</,'>$1<small>opens the next stage</small><');
+  h=h.replace(m[0],'');return h.slice(0,h.indexOf('</div>',h.indexOf('<div class="mbtns"')))+btn+h.slice(h.indexOf('</div>',h.indexOf('<div class="mbtns"')))}catch(e){return h}}}
+{const st=document.createElement('style');st.textContent=`.roadsend.inrow{position:static!important;float:none!important;margin:0!important}`;document.head.appendChild(st)}

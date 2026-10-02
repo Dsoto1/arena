@@ -5,7 +5,7 @@ await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.t=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
   const tiers=[58,70,80,90,97].map(i=>AI_TIERS[aiTierOf(i)].k).join(',');const edges=[64,65,75,76,85,86,95,96].map(aiTierOf).join('');
-  const chip=/🧠 Master/.test(statChips({spd:70,str:70,int:97,lck:70,cha:70}));const sb=statBonuses({int:80}).tierName;
+  const chip=/🧠(<\/i>)? Master/.test(statChips({spd:70,str:70,int:97,lck:70,cha:70}));const sb=statBonuses({int:80}).tierName;
   const r=await simEvent({ev:'democritus',loc:6,seed:4242,seats:['hero','soldier','slave','royalty'].map((c,i)=>({cls:c,cpu:true,diff:AI_TIERS[i+1].k})),opts:{...CFG.opts,spect:0}},{timeoutMs:60000});
   const r2=await simEvent({ev:'democritus',loc:6,seed:4242,seats:['hero','soldier','slave','royalty'].map((c,i)=>({cls:c,cpu:true,diff:AI_TIERS[i+1].k})),opts:{...CFG.opts,spect:0}},{timeoutMs:60000});
   const p={cpu:true,tier:4};const p0={cpu:true,tier:0};

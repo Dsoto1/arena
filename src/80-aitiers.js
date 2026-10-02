@@ -49,7 +49,7 @@ function aiTierChip(int){const T=AI_TIERS[aiTierOf(int)];return `<span class="ai
 .aitier.t2{color:#cfc6b4}.aitier.t3{color:#9cc4e8;border-color:#4f7fc4}.aitier.t4{color:var(--gold2);border-color:var(--gold)}`;document.head.appendChild(st)}
 /* the tier rides beside the ratings wherever they show; the glossary and the ratings guide name the five minds */
 {const base=statChips;statChips=function(st,opt={}){let h=base.apply(this,arguments);if(!h||!st||!st.int)return h;
-  h=h.replace(/(title="Intelligence [^"]*">)🧠/,`$1<i class="brain b${aiTierOf(statFix(st.int))}">🧠</i>`); /* v0.67: the brain wears its mind's colour */
+  h=h.replace(/((?:title|aria-label)="Intelligence [^"]*">)🧠/,`$1<i class="brain b${aiTierOf(statFix(st.int))}">🧠</i>`); /* v0.67: the brain wears its mind's colour */
   return h.replace(/<\/span>$/,` ${aiTierChip(statFix(st.int))}</span>`)}}
 /* the five minds' colours: Novice grey · Apprentice green · Fighter bronze · Veteran blue · Master gold */
 {const st=document.createElement('style');st.textContent=`.brain{font-style:normal;display:inline-block}
