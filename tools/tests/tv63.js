@@ -6,7 +6,7 @@ await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.m=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await new Promise(r=>setTimeout(r,700));newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;
-  const w=W_(),m=me();const ros=rosterOf(m);const g=ros[0],h=ros[1];g.inj={until:w.week+3,label:'test',pen:2};const until0=g.inj.until;
+  const w=W_(),m=me();const ros=rosterOf(m);const g=ros[0],h=ros[1];g.inj={until:w.week+3,label:'test',pen:2};const until0=g.inj.until;w.beds76=[g.id]; /* v0.76: a 3-week wound is serious — in a bed it mends at the normal pace */
   MGR.tab='practice';MGR_REDRAW();await new Promise(r=>setTimeout(r,900));
   const cls=k=>(document.querySelector(`.mtabs [data-mg="tab"][data-id="${k}"]`)||{}).className||'';
   const rail={rec:/recpend/.test(cls('recruit')),inf:/infpend/.test(cls('infirm')),tr:/trpend/.test(cls('practice'))};
