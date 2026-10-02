@@ -22,6 +22,8 @@ armor, trophies, banners, events, tournaments, invitationals, editors, spectator
 - **Follow the rulebook** over the printed event cards when they disagree (decided in v0.52).
 - Deliver each batch: version bump → regression → share build → publish → concise summary of what changed.
 - Communication: concise and technical.
+- Batches may come split into **NEW** (features/additions) and **FIXES / CHANGES** (where · what happened · what was expected).
+  Fixes go straight into the next build; features get clarifying questions first. Keep his numbering in questions and summaries.
 
 ## 2. Layout & build
 
