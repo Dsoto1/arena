@@ -99,3 +99,15 @@ document.addEventListener('change',e=>{const c=e.target.closest('[data-afflip]')
 .cavl{display:block;margin:2px 0}.cavl input{width:100%}
 .afgrid{display:grid;grid-template-columns:240px 1fr;gap:12px;align-items:start}#afPrev{cursor:grab;touch-action:none}
 @media (max-width:640px){.afgrid{grid-template-columns:1fr}}`;document.head.appendChild(st)})();
+/* ---------- phones & tablets (v0.69) ----------
+   • The match's own controls (landscape dock + action drawer, the portrait "turn sideways" hint, the phone tab bar, the crowd
+     ticker) hide while the main menu or any window is up — they used to sit on top of the menu and every screen.
+   • The arena fits the space it really has: draw() reserves the header, the crowd ticker and the action dock as measured
+     (fitReserve), not a fixed 230 px — on tablets the dock no longer covers the bottom rows of the sand. */
+const menuUp=()=>{const m=document.getElementById('mainMenu');return !!(m&&!m.hidden)};
+{const base=phoneLand;phoneLand=function(){return !menuUp()&&base.apply(this,arguments)}}
+function fitReserve(){try{const wrap=cv.parentElement;const top=Math.max(0,wrap.getBoundingClientRect().top+scrollY);const dock=document.querySelector('.dock');const dh=dock?Math.min(dock.offsetHeight||0,150):110;
+  const tk=document.getElementById('crowdTick');const th=tk&&!tk.hidden?tk.offsetHeight+6:0;const hv=document.querySelector('.hover');const hh=hv?hv.offsetHeight:0;
+  return Math.max(200,Math.min(innerHeight*0.62,top+dh+th+hh+28))}catch(e){return 230}}
+setInterval(()=>{try{const up=menuUp()||!!(typeof CUR_MODAL!=='undefined'&&CUR_MODAL);document.body.classList.toggle('chromeoff',up)}catch(e){}},250);
+(()=>{const st=document.createElement('style');st.textContent=`body.chromeoff #plDock,body.chromeoff #plRot,body.chromeoff #mobTabs,body.chromeoff #crowdTick{display:none!important}`;document.head.appendChild(st)})();

@@ -1134,7 +1134,7 @@ button.railhd.fold{all:unset;box-sizing:border-box;display:none;cursor:pointer;w
 </style>
 
 <header class="bar">
-  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.68</span></div>
+  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.69</span></div>
   <div class="status" id="status"></div>
   <div class="tools speedtray" id="speedTray">
     <div class="seg speedseg" role="group" aria-label="CPU speed"><span class="lbl">Speed</span><button type="button" data-speed="pause" title="Pause CPU turns">❚❚ Pause</button><button type="button" data-speed="step" title="Step: each CPU action waits for you — Next ▶ or Space — with a caption explaining it">⏯ Step</button><button type="button" data-speed="slow" class="on">Slow</button><button type="button" data-speed="normal">Normal</button><button type="button" data-speed="fast">Fast</button></div>
@@ -11746,7 +11746,7 @@ function draw() {
   const wrap = cv.parentElement;
   const Wd = wrap.clientWidth;
   // fit the arena (and the stands) to the window so the action dock below it stays in view
-  const fitH = SETTINGS.fit === false ? 1e9 : typeof phoneLand === 'function' && phoneLand() ? innerHeight - 8 : Math.max(360, innerHeight - 230); // v0.66: a phone in landscape gives the arena the whole height
+  const fitH = SETTINGS.fit === false ? 1e9 : typeof phoneLand === 'function' && phoneLand() ? innerHeight - 8 : Math.max(360, innerHeight - (typeof fitReserve === 'function' ? fitReserve() : 230)); // v0.66: a phone in landscape gives the arena the whole height
   const mob9 = innerWidth <= 700;
   TW = Math.max(20, Math.floor(Math.min(Wd / (STANDS ? mob9 ? 14.2 : 16.4 : mob9 ? 12.4 : 13.8), fitH / (STANDS ? 10.3 : 9.5)))); /* v0.51: on a phone the arena fills the width; the outer benches may crop */
   TH = TW / 2;
@@ -22784,6 +22784,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'0.69',ic:'🛠',t:'The armor designer',hi:['The avatar mock-up sits right under the piece \u2014 drag your armor anywhere on it, scale it with the wheel, turn or mirror it','Every new piece names its equip point (head, chest, belt, upper or lower arm, hand, upper or lower leg) and keeps its fit there, mirrored on the left side; single arm and leg pieces cover one limb','Fit the printed set: adjust where each printed piece sits on the avatar, saved with your game'],fx:['Flavius\u2019 Bracers in gold','The sculpted set shows only with Sculpted armor in Settings','Phones: the match controls no longer cover the main menu or other screens','Tablets: the arena fits above the turn actions']},
   {v:'0.68',ic:'🛡',t:'Armor you can see',hi:['The printed armor is worn on the fighter\u2019s avatar at its equip points, scaled to the rulebook \u2014 it dims and cracks as a location loses AP and falls away at 0','The arena\u2019s right column has tabs: Fighter · Field · Stands \u2014 the crowd and the stands log at full height, a crowd ticker under the board','Manager: a weekly checklist in Your ludus and a money ledger (net per week, weeks of runway); rival houses now drill and rest by the same rules as you'],fx:['Bigger appearance fees, lower wages, a weekly gate share by fame and a larger starting purse','The Menagerie is now the Bestiary; the top bar opens the Stands','Brain icons coloured by mind; one Juggernaut in Play Now setup; Send on the Road sits in the record\u2019s button row','Padded Leg Armor (upper) shows its printed art']},
   {v:'0.67',ic:'🤝',t:'A recruiting board',hi:['Your favourites become a recruiting board: Watching → Scouted → Courting → Ready to sign, each card with its next step as a button','The free-agent list shows Fit (fills a gap you have, affordable) and your odds against the leading rival, with Affordable / Fits my roster / Courting me filters','A fighter\'s card in three steps — Scout, Court (their biggest wants first, with the expected gain), Offer (a wage slider with a live “would they sign?” meter)'],fx:['A wager on a fighter taken off the card is void and refunded','Start screen switch: bring your Ludus Flavius gladiators into the league, or not','Bouts fill from the league pool before anyone new is created','Training Yard: the facility, discipline, doctore and last-week squares sit beside the regime']},
   {v:'0.66',ic:'📱',t:'Bumpers and phones',hi:['Phones in landscape: the arena fills the screen; actions, your board, the log and the top bar slide in from a small button dock — your actions open by themselves on your move','The camera follows the action: zoom in (🔍 or pinch the sand) and the view stays on whoever is acting'],fx:['The Play Now lesson has bumpers: while Flavius shows you around, buttons are look-only; in hands-on steps only the board and your actions respond; ✖ Exit is always there','In portrait, a hint suggests turning the phone']},
@@ -28513,6 +28514,18 @@ document.addEventListener('change',e=>{const c=e.target.closest('[data-afflip]')
 .cavl{display:block;margin:2px 0}.cavl input{width:100%}
 .afgrid{display:grid;grid-template-columns:240px 1fr;gap:12px;align-items:start}#afPrev{cursor:grab;touch-action:none}
 @media (max-width:640px){.afgrid{grid-template-columns:1fr}}`;document.head.appendChild(st)})();
+/* ---------- phones & tablets (v0.69) ----------
+   • The match's own controls (landscape dock + action drawer, the portrait "turn sideways" hint, the phone tab bar, the crowd
+     ticker) hide while the main menu or any window is up — they used to sit on top of the menu and every screen.
+   • The arena fits the space it really has: draw() reserves the header, the crowd ticker and the action dock as measured
+     (fitReserve), not a fixed 230 px — on tablets the dock no longer covers the bottom rows of the sand. */
+const menuUp=()=>{const m=document.getElementById('mainMenu');return !!(m&&!m.hidden)};
+{const base=phoneLand;phoneLand=function(){return !menuUp()&&base.apply(this,arguments)}}
+function fitReserve(){try{const wrap=cv.parentElement;const top=Math.max(0,wrap.getBoundingClientRect().top+scrollY);const dock=document.querySelector('.dock');const dh=dock?Math.min(dock.offsetHeight||0,150):110;
+  const tk=document.getElementById('crowdTick');const th=tk&&!tk.hidden?tk.offsetHeight+6:0;const hv=document.querySelector('.hover');const hh=hv?hv.offsetHeight:0;
+  return Math.max(200,Math.min(innerHeight*0.62,top+dh+th+hh+28))}catch(e){return 230}}
+setInterval(()=>{try{const up=menuUp()||!!(typeof CUR_MODAL!=='undefined'&&CUR_MODAL);document.body.classList.toggle('chromeoff',up)}catch(e){}},250);
+(()=>{const st=document.createElement('style');st.textContent=`body.chromeoff #plDock,body.chromeoff #plRot,body.chromeoff #mobTabs,body.chromeoff #crowdTick{display:none!important}`;document.head.appendChild(st)})();
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
