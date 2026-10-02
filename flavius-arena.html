@@ -28684,7 +28684,7 @@ verAsk=function(anchor,v){return new Promise(res=>{for(const o of document.query
    • Armor: the printed set is always listed — Settings → Tokens → Armor only swaps its art (sculpted ↔ original drawn).
      Your armor uses the same cards.
    • Weapons: the printed weapon cards as the system set; Copy & edit starts a new weapon from one (`cwFromSystem`).
-   • 🎯 Fit (ARMORFIT unlocked) on each printed armor card loads it into the designer's own place in fit mode (`AFIT.mode`);
+   • 🎯 Fit (fit code word unlocked) on each printed armor card loads it into the designer's own place in fit mode (`AFIT.mode`);
      the separate fit panel at the bottom is gone. Custom pieces get Right / Left too (ca.f2.L, the left side's own fit). */
 const armArtCell=(k,size)=>{const st=typeof SETTINGS!=='undefined'?(SETTINGS.armorStyle||'drawn'):'drawn';
   if(st==='scan'&&typeof cardRef==='function'&&cardRef('a:'+k))return `<span class="cimg armlu setart" style="${cardStyle('a:'+k)};width:${size}px;height:${size}px"></span>`;
