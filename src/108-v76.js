@@ -574,3 +574,126 @@ function wardHTML76(){const w=W_(),m=me();const ros=rosterOf(m);const beds=bedsC
 .wd76bath{display:grid;gap:4px}.wd76ba{display:grid;grid-template-columns:minmax(120px,200px) 120px 1fr auto auto;gap:8px;align-items:center}
 .wd76ba b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media (max-width:700px){.wd76ba{grid-template-columns:1fr auto auto}.wd76ba .fatbar,.wd76ba .rc-sub{display:none}}`;document.head.appendChild(st)})();
+
+/* =====================================================================
+   v0.76 D — seven Manager ideas
+   • Road events (ROAD76): leaving for an away Match Week, now and then something happens on the road — a choice
+     (ask76) with small coin / morale / fatigue / fame swings; the line stays on the travel card (t.road76).
+   • House medicus (w.medicus76 {name,skill,wage}): hired from the ward strip (MEDC76 candidates, refreshed weekly),
+     paid each week. Skill 1: rest-grade wounds a week sooner · 2: Medicus-grade too · 3: may save a limb in a bout
+     (applyBout: a lost limb becomes a serious wound, MEDIC76.save). Rivals may hire them away (poach odds, letter).
+   • Temple offerings (TEMPLE76) on Match Week, once you are in the host city (or at home): Mars +1 AP, Fortuna
+     +3 coin, Nemesis +2 CF for your fighters this week (boostFor wrapper); the Shrine room makes them cheaper.
+   • Ludus rooms: FAC.kitchen (fatigue −5/level and +1 morale/level a week) and FAC.shrine (offerings −25%/level).
+     The Armory already exists.
+   • Contract clauses (g.contract.cl76 {nonaum, winb}) on the fighter's wage box: No Naumachia (+6 morale; entering
+     them in one breaks it: −15 morale, −loyalty) and Win bonus (+5 morale; each win pays them 4 coin, +3 morale).
+     Dropping a clause costs 8 morale.
+   • Darling of the Arena: after week 6 the crowds vote (w.darling76 {gid,s}): the owner takes +DARL76.gate coin a week,
+     the Darling +2 CF in every bout — and every rival house warms its grudge.
+   • Rival letters (endWeek): a hot rival writes — a taunt (answer it: +1 fame, +4 rivalry), a challenge (meet their
+     fighter in a bout this week: the winner's house takes the purse twice; dodge it: −2 fame), or a truce (−15
+     rivalry). Buttons [data-rl76] in the letter.
+   ===================================================================== */
+const DARL76={gate:6,cf:2,week:6},MEDIC76={save:0.35};
+const TEMPLE76={mars:['⚔','Mars','+1 AP for your fighters this week',8],fortuna:['🎲','Fortuna','+3 coin to start each bout this week',6],nemesis:['⚖','Nemesis','+2 CF to start each bout this week',8]};
+FAC.kitchen={n:'Kitchen',i:'🍲',d:'Barley, beans and a cook who shouts',fx:l=>`fatigue −${l*5} and +${l} morale for every fighter each week`};
+FAC.shrine={n:'Shrine',i:'🏛',d:'The Lares, a priest and a smoking altar',fx:l=>`temple offerings ${l*25}% cheaper`};
+const mine76=g=>{const m=me();return !!(g&&g.contract&&m&&g.contract.mgr===m.id)};
+/* ---------- road events ---------- */
+const ROAD76=[
+  {k:'bandits',t:'🗡 Bandits on the Via',b:'Masked men block the road.',a:['Pay them off','−8 coin',w=>{me().coin-=8;return 'You paid the bandits 8 coin.'}],
+    z:['Fight them off','+1 fame · tiring · a fighter may be cut',w=>{const m=me();m.fame=clamp(m.fame+1,0,100);const ros=rosterOf(m).filter(g=>!g.inj);for(const g of ros)g.fat=Math.min(100,(g.fat||0)+6);const v=ros.length&&Math.random()<0.25?ros[Math.floor(Math.random()*ros.length)]:null;if(v)v.inj={until:w.week+1,label:"a bandit's cut on the thigh",req:'rest',pen:2};return `Your fighters drove them off (+1 fame)${v?` — ${esc(v.name)} took a cut`:''}.`}]},
+  {k:'axle',t:'🛞 A broken axle',b:'The wagon lurches into a ditch.',a:['Pay a wheelwright','−5 coin',w=>{me().coin-=5;return 'A wheelwright fixed the axle for 5 coin.'}],
+    z:['Walk the last miles','+8 fatigue for all',w=>{for(const g of rosterOf(me()))g.fat=Math.min(100,(g.fat||0)+8);return 'Your fighters walked the last miles (+8 fatigue).'}]},
+  {k:'shrine',t:'🕯 A roadside shrine',b:'A shrine to the Lares of the road.',a:['Leave an offering','−3 coin · +4 morale',w=>{me().coin-=3;for(const g of rosterOf(me()))g.morale=clamp(g.morale+4,0,100);return 'An offering at the shrine: +4 morale.'}],
+    z:['Ride on','nothing',()=> 'You rode on past the shrine.']},
+  {k:'inn',t:'🍷 Admirers at an inn',b:'Locals recognise your banner.',a:['Buy a round','−6 coin · +2 fame',w=>{const m=me();m.coin-=6;m.fame=clamp(m.fame+2,0,100);return 'You bought the inn a round: +2 fame.'}],
+    z:['Turn in early','−5 fatigue for all',w=>{for(const g of rosterOf(me()))g.fat=Math.max(0,(g.fat||0)-5);return 'An early night: −5 fatigue.'}]}];
+async function roadEvent76(){const w=W_();const t=w&&w.night&&w.night.travel;if(!t||!t.gone||t.road76||w.tutorial)return;if(Math.random()>0.55){t.road76={k:'none'};return}
+  const E=ROAD76[Math.floor(Math.random()*ROAD76.length)];const v=await ask76(E.t,`${E.b}<div class="rc-sub" style="margin-top:6px">${E.a[0]}: ${E.a[1]}<br>${E.z[0]}: ${E.z[1]}</div>`,E.a[0],E.z[0]);
+  const txt=(v?E.a:E.z)[2](w);t.road76={k:E.k,txt};tnews(`🛣 ${E.t.replace(/^\S+ /,'')}: ${txt}`);saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()}
+{const base=travelClick;travelClick=function(a){const w=W_();const was=!!(w&&w.night&&w.night.travel&&w.night.travel.gone);const r=base.apply(this,arguments);try{const t=w&&w.night&&w.night.travel;if(!was&&t&&t.gone&&!t.road76)setTimeout(roadEvent76,350)}catch(e){}return r}}
+{const base=travelCardHTML;travelCardHTML=function(){let h=base.apply(this,arguments);try{const t=W_().night.travel;if(t&&t.road76&&t.road76.txt&&h)h=h.replace(/<\/div>$/,`<div class="rc-sub">🛣 On the road: ${t.road76.txt}</div></div>`)}catch(e){}return h}}
+/* ---------- the house medicus ---------- */
+function medCands76(w){if(!w.medc76||w.medc76.wk!==w.week){const N=['Galen the Younger','Asclepiades','Soranus','Rufus of Ephesus','Herophila','Celsus','Marcellus the Greek','Antonia Medica'];const L=[];
+  for(let s=1;s<=3;s++)L.push({name:N[Math.floor(Math.random()*N.length)],skill:s,wage:[4,7,11][s-1]});w.medc76={wk:w.week,list:L}}return w.medc76.list}
+const MED_SK76=['','rest-grade wounds a week sooner','rest and Medicus-grade wounds a week sooner','wounds a week sooner · may save a limb'];
+function medicHTML76(){const w=W_(),m=me();const M=w.medicus76;
+  if(M)return `<span class="wd76med">🧑‍⚕️ <b>${esc(M.name)}</b> · skill ${M.skill} · ${M.wage}c/wk <span class="rc-sub">${MED_SK76[M.skill]}</span> <button class="btn tksm" type="button" data-med76="fire">Let go</button></span>`;
+  return `<details class="wd76med"><summary>🧑‍⚕️ <b>Hire a house medicus</b> <span class="rc-sub">a weekly wage · faster healing</span></summary><div class="acts" style="margin-top:6px">${medCands76(w).map((c,i)=>`<button class="btn tksm" type="button" data-med76="${i}" ${m.coin<c.wage?'disabled title="Not enough coin"':''}>${esc(c.name)} · skill ${c.skill}<small>${c.wage}c a week · ${MED_SK76[c.skill]}</small></button>`).join('')}</div></details>`}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-med76]');if(!b||b.disabled||!b.closest('#mgrBody'))return;e.preventDefault();e.stopPropagation();const w=W_();if(!w)return;
+  if(roadLocked76(w)){mToast(`🛣 On the road — the Infirmary reopens when the week ends.`);return}
+  if(b.dataset.med76==='fire'){tnews(`🧑‍⚕️ ${esc(w.medicus76.name)} packs their instruments and leaves your service.`);w.medicus76=null}
+  else{const c=medCands76(w)[+b.dataset.med76];if(!c)return;w.medicus76={...c};tnews(`🧑‍⚕️ <b>${esc(c.name)}</b> joins your house as medicus (skill ${c.skill}, ${c.wage}c a week).`,'big')}
+  saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
+{const base=wardHTML76;wardHTML76=function(){const h=base.apply(this,arguments);try{return h.replace('<div class="card2 wd76top">',`<div class="card2 wd76top">${medicHTML76()}`)}catch(e){return h}}}
+/* the medicus saves a limb now and then (applyBout reads r.severed) */
+{const base=applyBout;applyBout=function(bi,res){try{const w=W_();const M=w&&w.medicus76;if(M&&M.skill>=3&&res&&res.rows)for(const r of res.rows){const g=r.mgrId&&gById(r.mgrId);if(!g||!mine76(g)||!(r.severed||[]).length)continue;
+    const keep=r.severed.filter(l=>!(g.severed||[]).includes(l));for(const l of keep)if(Math.random()<MEDIC76.save){r.severed=r.severed.filter(x=>x!==l);if(!g.inj)g.inj={until:w.week+2,label:/arm/.test(l)?'a mauled shoulder':'a mauled thigh',req:'medicus',pen:4,ser76:1};tnews(`🧑‍⚕️ ${esc(M.name)} saves ${esc(g.name)}'s ${LOCN[l].toLowerCase()} — a bad wound, but whole.`,'big')}}}catch(e){console.error(e)}
+  const r=base.apply(this,arguments);
+  /* clauses, challenges, the Darling's purse */
+  try{const w=W_(),m=me();const b=w.night&&w.night.bouts[bi];if(b&&res&&res.rows){const E=EVENTS[b.ev]||{};const won=new Set((res.winners||[]).map(i=>{const row=res.rows.find(x=>x.id===i);return row&&row.mgrId}).filter(Boolean));
+    for(const gid of b.ents){const g=gById(gid);if(!g||!mine76(g))continue;const cl=g.contract.cl76||{};
+      if(cl.nonaum&&E.kind==='naumachia'&&!cl.broke){cl.broke=1;g.morale=clamp(g.morale-15,0,100);g.loyB=Math.max(0,(g.loyB||0)-5);tnews(`📜 You sent ${esc(g.name)} to a Naumachia against their contract: −15 morale, and they will remember.`,'bad')}
+      if(cl.winb&&won.has(gid)){m.coin-=4;g.purse=(g.purse||0)+4;g.morale=clamp(g.morale+3,0,100);tnews(`📜 Win bonus: ${esc(g.name)} takes 4 coin (+3 morale).`)}}
+    const C=w.chal76;if(C&&C.s===w.season&&C.wk===w.week&&!C.met){const R=mgrById(C.mgr);const theirs=b.ents.filter(id=>{const g=gById(id);return g&&g.contract&&g.contract.mgr===C.mgr});const ours=b.ents.filter(id=>mine76(gById(id)));
+      if(R&&theirs.length&&ours.length){C.met=1;const wid=[...won][0];const wg=wid&&gById(wid);const purse=b.purse||0;
+        if(wg&&mine76(wg)){m.coin+=purse;R.rivalry=Math.min(100,(R.rivalry||0)+6);tnews(`⚔ Challenge met: ${esc(wg.name)} beats ${esc(R.ludus)} — the purse twice over (+${purse} coin).`,'big')}
+        else if(wg&&wg.contract&&wg.contract.mgr===C.mgr){R.coin+=purse;tnews(`⚔ Challenge lost: ${esc(R.ludus)} takes the purse twice over.`,'bad')}
+        else tnews(`⚔ The challenge with ${esc(R.ludus)} went to neither house.`)}}}}catch(e){console.error(e)}
+  return r}}
+/* ---------- temple offerings ---------- */
+const templeCost76=k=>Math.max(1,Math.round(TEMPLE76[k][3]*(1-0.25*facLvl(me(),'shrine'))));
+function templeHTML76(){const w=W_(),m=me();const n=w.night;if(!n||n.bye||n.selfBye||(n.bouts||[]).every(b=>b.done))return '';const t=travelState(w);const here=!t||t.paid;const L=LOCATIONS[n.loc];const cur=n.god76;
+  return `<div class="card2 tmp76"><b>🏛 The temple${L?` of ${esc(L.n)}`:''}</b> <span class="rc-sub">${cur?`${TEMPLE76[cur][0]} ${TEMPLE76[cur][1]} blesses your fighters this week`:here?'one offering a week, before the bouts':'travel first'}</span>
+    <div class="acts" style="margin-top:6px">${Object.entries(TEMPLE76).map(([k,G])=>`<button class="yd76b ${cur===k?'on':''}" type="button" data-god76="${k}" ${cur||!here?'disabled':m.coin<templeCost76(k)?'disabled title="Not enough coin"':''}>${G[0]} ${G[1]}<small>${templeCost76(k)}c · ${G[2]}</small></button>`).join('')}</div></div>`}
+{const base=nightHTML;nightHTML=function(){const h=base.apply(this,arguments);try{const w=W_();if(w&&w.night&&w.night.bye)return h;const T=templeHTML76();const C=w.chal76&&w.chal76.s===w.season&&w.chal76.wk===w.week?w.chal76:null;const R=C&&mgrById(C.mgr);
+  const ch=C&&R?`<div class="card2 tmp76">⚔ <b>Challenge from ${esc(R.ludus)}</b> <span class="rc-sub">${C.met?'met':'meet one of their fighters in any bout this week: the winner\'s house takes the purse twice'}</span></div>`:'';
+  const i=h.indexOf('</div>',h.indexOf('travelcard'));return i>0&&h.indexOf('travelcard')>=0?h.slice(0,i+6)+ch+T+h.slice(i+6):ch+T+h}catch(e){console.error(e);return h}}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-god76]');if(!b||b.disabled||!b.closest('#mgrBody'))return;e.preventDefault();e.stopPropagation();const w=W_(),m=me();const k=b.dataset.god76;const c=templeCost76(k);
+  if(!w.night||w.night.god76||m.coin<c)return;m.coin-=c;w.night.god76=k;tnews(`🏛 An offering to ${TEMPLE76[k][1]} (${c}c): ${TEMPLE76[k][2]}.`);saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
+{const base=boostFor;boostFor=function(g){const b=base.apply(this,arguments);try{const w=W_();if(!w||!g)return b;
+  if(mine76(g)&&w.night&&w.night.god76){const k=w.night.god76;if(k==='mars')b.ap=Math.min(7,(b.ap||0)+1);if(k==='fortuna')b.coin=(b.coin||0)+3;if(k==='nemesis')b.cf=(b.cf||0)+2}
+  if(w.darling76&&w.darling76.gid===g.id&&w.darling76.s===w.season)b.cf=(b.cf||0)+DARL76.cf}catch(e){}return b}}
+/* ---------- contract clauses ---------- */
+{const base=wageBreakHTML;wageBreakHTML=function(g){const h=base.apply(this,arguments);try{if(!mine76(g))return h;const cl=g.contract.cl76||{};
+  const t=(k,lab,sub)=>`<button class="btn tksm ${cl[k]?'on':''}" type="button" data-cl76="${k}|${g.id}">${cl[k]?'✓ ':''}${lab}<small>${cl[k]?'tap to drop · −8 morale':sub}</small></button>`;
+  return h+`<div class="cl76"><span class="rc-sub">📜 Clauses</span>${t('nonaum','No Naumachia','+6 morale · breaking it costs −15')}${t('winb','Win bonus','+5 morale · 4 coin to them a win')}</div>`}catch(e){return h}}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-cl76]');if(!b||!b.closest('#mgrBody'))return;e.preventDefault();e.stopPropagation();const [k,id]=b.dataset.cl76.split('|');const g=gById(id);if(!g||!mine76(g))return;
+  const cl=g.contract.cl76=g.contract.cl76||{};if(cl[k]){delete cl[k];g.morale=clamp(g.morale-8,0,100);tnews(`📜 You struck a clause from ${esc(g.name)}'s contract: −8 morale.`,'bad')}
+  else{cl[k]=1;g.morale=clamp(g.morale+(k==='nonaum'?6:5),0,100);tnews(`📜 ${esc(g.name)}'s contract: ${k==='nonaum'?'no Naumachia':'a win bonus'} (+${k==='nonaum'?6:5} morale).`)}
+  saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
+/* ---------- the week's end: medicus, kitchen, Darling, rival letters ---------- */
+{const base=endWeek;endWeek=async function(){const w=W_();const ready=!!(w&&!w.dead&&w.night&&w.night.bouts.every(b=>b.done)&&!(w.pend||[]).length&&!(w.special&&!w.special.done));const wk=w&&w.week;
+  if(ready){try{const m=me();const M=w.medicus76;
+    if(M){m.coin-=M.wage;for(const g of rosterOf(m)){const i=g.inj;if(!i||i.war)continue;const q=injReq(i);if(q==='rest'||(q==='medicus'&&M.skill>=2))i.until=Math.max(w.week,(i.until||w.week)-1)}
+      const hot=w.mgrs.filter(x=>!x.isPlayer&&!x.dead&&(x.rivalry||0)>=35);if(hot.length&&Math.random()<0.04+0.02*M.skill){const R=hot[0];sendLetter(w,{key:'med76'+w.week,kind:'letter',from:R.ludus,seal:'🧑‍⚕️',title:'Your medicus has left',body:`<p>${esc(M.name)} took a better offer from ${esc(R.ludus)}.</p>`,until:w.week+2});tnews(`🧑‍⚕️ ${esc(R.ludus)} hired away ${esc(M.name)}.`,'bad');w.medicus76=null}}
+    const K=facLvl(m,'kitchen');if(K)for(const g of rosterOf(m)){g.fat=Math.max(0,(g.fat||0)-5*K);g.morale=clamp(g.morale+K,0,100)}
+    const D=w.darling76;if(D&&D.s===w.season){const g=gById(D.gid);if(g&&mine76(g)){m.coin+=DARL76.gate;tnews(`🌹 The Darling of the Arena fills the seats: +${DARL76.gate} coin.`)}}
+    const C=w.chal76;if(C&&C.s===w.season&&C.wk===w.week&&!C.met){const R=mgrById(C.mgr);m.fame=clamp(m.fame-2,0,100);if(R)R.rivalry=Math.min(100,(R.rivalry||0)+5);tnews(`⚔ You dodged ${esc(R?R.ludus:'the')} challenge: −2 fame.`,'bad');C.met=1}}catch(e){console.error(e)}}
+  const r=await base.apply(this,arguments);
+  if(ready&&r!==false){try{const w2=W_();if(w2&&w2.week!==wk){darlingVote76(w2);rivalLetter76(w2)}}catch(e){console.error(e)}}return r}}
+function darlingVote76(w){if(wkOf(w.week)!==DARL76.week+1||(w.darling76&&w.darling76.s===w.season))return;
+  const all=w.glads.filter(g=>g.alive!==false&&g.contract);if(!all.length)return;const sc=g=>(g.fame||0)+((g.rec&&g.rec.w)||0)*5+((g.rec&&g.rec.kn)||0)*2;const top=all.sort((a,b)=>sc(b)-sc(a))[0];
+  w.darling76={gid:top.id,s:w.season};const H=mgrById(top.contract.mgr);
+  if(mine76(top)){sendLetter(w,{key:'darl76'+w.season,kind:'letter',from:'The crowds of the empire',seal:'🌹',title:`${top.name} is the Darling of the Arena`,body:`<p>The crowds have voted. <b>${esc(top.name)}</b> is their Darling this season: +${DARL76.cf} CF in every bout and +${DARL76.gate} coin a week at the gate. Every rival house now wants them beaten.</p>`,until:w.week+3});
+    for(const R of w.mgrs)if(!R.isPlayer&&!R.dead)R.rivalry=Math.min(100,(R.rivalry||0)+3);tnews(`🌹 <b>${esc(top.name)}</b> is voted Darling of the Arena!`,'big')}
+  else mnews(`🌹 The crowds vote <b>${esc(top.name)}</b>${H?` of ${esc(H.ludus)}`:''} Darling of the Arena.`)}
+function rivalLetter76(w){if(w.tutorial||Math.random()>0.3)return;const R=w.mgrs.filter(x=>!x.isPlayer&&!x.dead&&(x.rivalry||0)>=20).sort((a,b)=>(b.rivalry||0)-(a.rivalry||0))[0];if(!R)return;const v=R.rivalry||0;
+  const kind=v>=60&&Math.random()<0.35?'truce':v>=25&&Math.random()<0.5?'chal':'taunt';const key='rl76'+w.season+'_'+w.week;
+  const btn=(a,l)=>`<button class="btn tksm" type="button" data-rl76="${a}|${key}">${l}</button>`;
+  const L={taunt:['🗡',`A word from ${R.name}`,`<p>“Your fighters train like farmhands, ${esc(me().name)}. The sand will show it.”</p><div class="acts">${btn('reply','✍ Answer in kind · +1 fame, +4 rivalry')}</div>`],
+    chal:['⚔',`${R.ludus} issues a challenge`,`<p>“Put one of yours against one of ours this week. The winner's house takes the purse twice.”</p><div class="acts">${btn('accept','⚔ Accept')}${btn('decline','Decline · +3 rivalry')}</div>`],
+    truce:['🕊',`${R.ludus} proposes a truce`,`<p>“This feud costs us both. Let it rest.”</p><div class="acts">${btn('truce','🕊 Accept · −15 rivalry')}${btn('decline','Refuse · +3 rivalry')}</div>`]}[kind];
+  sendLetter(w,{key,kind:'letter',from:R.ludus,seal:L[0],title:L[1],body:L[2],until:w.week+1,rl76:{mgr:R.id,kind}})}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-rl76]');if(!b)return;e.preventDefault();e.stopPropagation();const w=W_(),m=me();if(!w)return;const [a,key]=b.dataset.rl76.split('|');
+  const x=(w.letters||[]).find(l=>l.key===key);if(!x||!x.rl76||x.done76)return;const R=mgrById(x.rl76.mgr);if(!R)return;x.done76=1;x.read=true;
+  if(a==='reply'){m.fame=clamp(m.fame+1,0,100);R.rivalry=Math.min(100,(R.rivalry||0)+4);tnews(`✍ You answered ${esc(R.name)} in kind: +1 fame.`)}
+  else if(a==='accept'){w.chal76={mgr:R.id,s:w.season,wk:w.week,met:0};tnews(`⚔ Challenge accepted: meet ${esc(R.ludus)} in a bout this week for the purse twice over.`,'big')}
+  else if(a==='truce'){R.rivalry=Math.max(0,(R.rivalry||0)-15);tnews(`🕊 A truce with ${esc(R.ludus)}: −15 rivalry.`)}
+  else{R.rivalry=Math.min(100,(R.rivalry||0)+3);tnews(`You turned ${esc(R.ludus)} away (+3 rivalry).`)}
+  saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
+(()=>{const st=document.createElement('style');st.textContent=`
+.wd76med{display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center}details.wd76med{display:block;flex-basis:100%}details.wd76med summary{cursor:pointer}
+.tmp76{margin:8px 0}.cl76{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}`;document.head.appendChild(st)})();
