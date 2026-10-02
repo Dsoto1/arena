@@ -357,8 +357,15 @@ One global script; files are concatenated in order. Later "version modules" patc
 - **v0.69** armor designer (mock-up under the piece, required equip point, free placement relative to it, single/pair limbs); open
   printed-set fit tool saved in the game data (to bake + remove later); gold Flavius' Bracers; sculpted set follows the setting;
   phones: match controls hidden under menu/windows; tablets: measured arena fit. (Published as artifact Version 81.)
+- **v0.70** Virgilante's armor fits baked in; fit tool behind ARMORFIT with Right/Left fitting; legs mirror one art; turning
+  mirrors; Provocator Manica lower arm; Leather Upper Leg Armor; studio avatars lower. (Published as artifact Version 82.)
 
 ## 8. Next steps / open items
+- **Next batch (agreed, waiting for his go):** (1) the stands line under the arena moves into the Arena log as a pinned,
+  clickable top row with a divider (remove #crowdTick); (2) a gold wager bubble pops above spectators, gladiators and your own
+  seat when a live wager is placed (stake shown; bets settle only at the event's end, so no payout bubble); (3) his printed gold coin
+  (justcoin.pdf, laureate head, 197 px cut-out kept in the session scratchpad — re-extract with pdfimages: the 198x197 image + its
+  smask) can replace the drawn ICO.coin everywhere and sit in the wager bubble — ask him first.
 - **Next (WIP in src/wip-armlevels.js, not in build.sh):** custom armor in levels I/II/III (budgets 3/5/8; AP 1 pt above the first,
   bonus 2, stackable 1; grades iron/bronze/gold; names + numerals). (v0.70 baked his first round of fits; the tool now sits behind ARMORFIT.) Armor/avatar ideas offered: try-on ghost in market/loot, bonus-AP links, hit flash, hover/tap menu on the
   avatar, armored avatar on records/cards, severed-limb drop.
