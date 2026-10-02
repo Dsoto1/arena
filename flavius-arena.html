@@ -1134,7 +1134,7 @@ button.railhd.fold{all:unset;box-sizing:border-box;display:none;cursor:pointer;w
 </style>
 
 <header class="bar">
-  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.72</span></div>
+  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.73</span></div>
   <div class="status" id="status"></div>
   <div class="tools speedtray" id="speedTray">
     <div class="seg speedseg" role="group" aria-label="CPU speed"><span class="lbl">Speed</span><button type="button" data-speed="pause" title="Pause CPU turns">❚❚ Pause</button><button type="button" data-speed="step" title="Step: each CPU action waits for you — Next ▶ or Space — with a caption explaining it">⏯ Step</button><button type="button" data-speed="slow" class="on">Slow</button><button type="button" data-speed="normal">Normal</button><button type="button" data-speed="fast">Fast</button></div>
@@ -18454,7 +18454,7 @@ async function endWeek(){
     // next week as an invitational (the league pauses for it) — watch it live, or play it out. The awards follow it.
     {const lead=leagueSort(w.mgrs)[0];
       const kind=lead.isPlayer?(w.festPick||'ludi'):(lead.p.greed>60?'saturnalia':lead.p.show>60?'fortuna':lead.p.discipline>60?'vulcanalia':lead.p.honor>60?'asclepieia':'ludi');
-      const top4=leagueSort(w.mgrs).slice(0,4).map(m2=>m2.id);
+      const top4=leagueSort(w.mgrs.filter(m2=>!m2.sica)).slice(0,4).map(m2=>m2.id);
       w.finaleDue={season:w.season,kind,top4,lead:lead.id};
       mnews(`🏛 <b>The regular season is over.</b> The Flavius Superbus is set for Roma: ${top4.map(id=>esc(mgrById(id).ludus)).join(', ')} are invited — one fighter each. ${esc(lead.isPlayer?'You':lead.name)} chose the ${esc((FEST_KINDS[kind]||FEST_KINDS.ludi).n)} gift.`,'big');
       if(top4.includes(w.playerId))tnews(`🏛 <b>You are invited to the Flavius Superbus!</b> Choose your champion on Match Week when it opens next week.`,'big')}
@@ -22784,6 +22784,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'0.73',ic:'🗡',t:'Sica\u2019s Syndicate',hi:['Sica\u2019s Syndicate joins the league: enforcers on the sand, spears from the stands, bribes and lured fighters','Every Manager tab has its banner, with what is left to do at the right; gold counts on the rail','Custom armor in levels I · II · III (iron, bronze, gold)','Hover the avatar for HP, AP and armor; struck parts flash; try armor on in the market','Phones in portrait: the arena on top, Actions · Fighter · Log below; Manager tabs along the bottom','Recruiting: a weekly plan, compare two fighters side by side, the signing card','The 3D minis turn to face where they move'],fx:['Start from in the armor designer loads the printed piece — its stats, its art and where it is worn','The Summa Rudis medallion waits behind ⓘ beside Flavius','Scouting shows ratings and personality on the fighter\u2019s card','Recruiting and training hours moved into their tabs; the short-handed warning clears with a recruit on your board','Ratings start folded in the fighter panel; no armor pictures under the bars','Your Crocodile medallion; an offer to clear old auto-recruits']},
   {v:'0.72',ic:'🏺',t:'3D minis',hi:['Virgilante\u2019s sculpted minis and pillars as a new token style (Settings → Tokens): the eight classes, the beasts and Zora on their bases','New avatar art on the player board','System sets shown the same way in every designer: your sets first, then the locked system sets with 📜 rolls · Copy & edit','Weapons get their system set too'],fx:['Switching the armor art keeps the system armor in the designer — only the art changes','The armor fit tool lives inside the armor designer (🎯 Fit on a printed piece) and fits custom pairs side by side','His second round of armor fits']},
   {v:'0.71',ic:'🪙',t:'The printed pieces',hi:['Virgilante\u2019s medallion tokens: chests, keys, weapons, armor, upgrades, elixirs, Speed of Mercury, Crowd Favor, spiders, curse, eagle and more','The gold coin of the board game, everywhere coin is shown','The Summa Rudis officiating each event beside Flavius, in the briefing and on the status bar','Live wagers pop a gold bubble above whoever bets'],fx:['The round marker on the status bar','The stands line sits pinned at the top of the arena log','Mandata Flavi card back on hidden objectives; \u201cMandata\u201d spelled as printed','Sharper tunnel art','The old-save upgrade question opens in its own small window instead of squeezing the save card']},
   {v:'0.70',ic:'🎯',t:'Armor that fits',hi:['Every printed armor piece sits where Virgilante placed it on the avatar','Arm and leg pieces mirror cleanly on the left side; turning mirrors too'],fx:['Provocator Manica is a lower-arm piece','Padded Leg Armor (upper) is now Leather Upper Leg Armor','The Studio avatars sit lower, with room for helmets']},
@@ -28926,6 +28927,9 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-oldr
   if(b.dataset.oldrec==='keep'){try{localStorage.setItem('flavius_oldrec73','keep')}catch(err){}const c=b.closest('.oldrec');if(c)c.remove();return}
   const L=oldRecruits73();for(const g of L){await Store.del('gladiators',g.id).catch(()=>{})}LUDUS_CACHE=LUDUS_CACHE.filter(g=>!L.includes(g));
   const box=document.getElementById('ludusBody');if(box)box.innerHTML=await ludusHTML();if(typeof mToast==='function')mToast(`🧹 ${L.length} removed.`)},true);
+
+/* ---------- v0.73: the ratings in the fighter panel's header start folded (until you open them) ---------- */
+try{RAT_SHUT=localStorage.getItem('flavius_ratshut')!=='0'}catch(e){RAT_SHUT=true}
 /* 96-armlv — custom armor in levels (Virgilante; drafted v0.70, shipped v0.73).
    One design, ticked for Level I, II and/or III: each ticked level becomes its own piece — "Name I/II/III", its own market deck,
    its own colour grade (I iron · II bronze · III gold) and its own stats, bought from that level's budget (CA_BUDGET 3/5/8):
@@ -29096,6 +29100,207 @@ document.addEventListener('mouseover',e=>{const c=e.target.closest&&e.target.clo
 .tohd{font:11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--gold2);margin-bottom:4px}.toav svg{width:100%;height:auto;display:block}.tost small{display:block;color:var(--muted);font-size:11.5px}
 .gdetail.recwav{position:relative;padding-right:96px}.recav{width:76px}.recav svg{width:100%;height:auto;display:block}.gdetail .recav{position:absolute;right:10px;top:10px}
 .recav.cls{width:110px;flex:none}`;document.head.appendChild(st)})();
+/* =====================================================================
+   99-PHONE73 · v0.73 — phones in portrait, and the big windows on phones (Virgilante)
+   =====================================================================
+   • A match in portrait no longer asks you to turn the phone: the arena sits on top, a bottom sheet below it with three
+     tabs — ⚔ Actions · 🛡 Fighter · 📜 Log — and the top bar (speed, rules, menu) waits behind ⋯ (body.phoneP2).
+     Your move switches the sheet to Actions; the tab you pick stays until your next move.
+   • Manager mode and Creator Studio on a phone: the rail becomes a row of tabs along the bottom of the window (scrolls
+     sideways); windows fill the screen.
+   ===================================================================== */
+const PP={tab:'act',turn:null};
+const phoneP2=()=>typeof phonePort==='function'&&phonePort();
+function ppBuild(){if(document.getElementById('ppTabs'))return;const t=document.createElement('div');t.id='ppTabs';
+  t.innerHTML=`<button type="button" data-pp="act">⚔ Actions</button><button type="button" data-pp="side">🛡 Fighter</button><button type="button" data-pp="log">📜 Log</button><button type="button" data-pp="nav" class="ppmore" title="Speed, rules and the menu">⋯</button>`;document.body.appendChild(t)}
+function ppSync(){const B=document.body;for(const k of ['act','side','log'])B.classList.toggle('pp-'+k,PP.tab===k);
+  document.querySelectorAll('#ppTabs [data-pp]').forEach(b=>b.classList.toggle('on',b.dataset.pp==='nav'?B.classList.contains('pp-nav'):PP.tab===b.dataset.pp));
+  const wrap=document.querySelector('.canvas-wrap');if(wrap){const r=wrap.getBoundingClientRect();B.style.setProperty('--ppTop',Math.max(120,Math.round(r.bottom))+'px')}}
+function ppTick(){try{const B=document.body;const on=phoneP2();if(on!==B.classList.contains('phoneP2')){B.classList.toggle('phoneP2',on);if(on)ppBuild();if(!on)B.classList.remove('pp-nav');try{draw()}catch(e){}}
+  if(!on)return;const mine=!S.over&&typeof humanTurn==='function'&&humanTurn()&&(S.phase==='action'||S.phase==='choice');const key=(S.turnNo||0)+':'+mine;
+  if(key!==PP.turn){PP.turn=key;if(mine)PP.tab='act'}ppSync()}catch(e){}}
+setInterval(ppTick,300);addEventListener('resize',()=>{ppTick();try{draw()}catch(e){}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-pp]');if(!b)return;e.preventDefault();const k=b.dataset.pp;if(k==='nav'){document.body.classList.toggle('pp-nav');ppSync();return}PP.tab=k;document.body.classList.remove('pp-nav');ppSync()});
+document.addEventListener('pointerdown',e=>{if(document.body.classList.contains('pp-nav')&&e.target===cv){document.body.classList.remove('pp-nav');ppSync()}},true);
+/* the arena gets the top ~55% of the screen */
+{const base=fitReserve;fitReserve=function(){if(phoneP2())return Math.round(innerHeight*0.45);return base.apply(this,arguments)}}
+(()=>{const st=document.createElement('style');st.textContent=`
+body.phoneP2 #plRot{display:none!important}
+body.phoneP2{overflow:hidden}
+body.phoneP2 header.bar{position:fixed;left:0;right:0;top:0;z-index:60;transform:translateY(-105%);transition:transform .2s;box-shadow:0 6px 18px rgba(0,0,0,.6)}
+body.phoneP2.pp-nav header.bar{transform:none}
+body.phoneP2 main.layout{display:block!important;padding:0!important;margin:0!important;max-width:none!important}
+body.phoneP2 .canvas-wrap{margin:0!important;border-radius:0!important;max-height:58dvh;overflow:hidden}
+body.phoneP2 .hover,body.phoneP2 #mobTabs{display:none!important}
+#ppTabs{display:none}
+body.phoneP2 #ppTabs{display:flex;position:fixed;left:0;right:0;top:var(--ppTop,55dvh);z-index:57;background:#1c140e;border-top:1px solid var(--gold);border-bottom:1px solid var(--line2)}
+#ppTabs button{flex:1;background:none;border:0;border-right:1px solid var(--line2);color:var(--muted);padding:9px 4px;font-size:13.5px}
+#ppTabs button.on{color:var(--gold2);background:rgba(240,207,125,.08);box-shadow:inset 0 -2px 0 var(--gold)}#ppTabs .ppmore{flex:0 0 46px;border-right:0;font-size:18px}
+body.phoneP2 #actions,body.phoneP2 aside.side,body.phoneP2 .logbar{position:fixed!important;left:0;right:0;top:calc(var(--ppTop,55dvh) + 40px);bottom:0;z-index:55;margin:0!important;overflow-y:auto;background:var(--panel,#1c140e);display:none!important;border-radius:0!important;max-height:none!important;width:auto!important;transform:none!important}
+body.phoneP2.pp-act #actions{display:block!important}body.phoneP2.pp-side aside.side{display:flex!important}body.phoneP2.pp-log .logbar{display:flex!important}
+body.phoneP2 .logbar #log{height:auto!important;flex:1}
+body.phoneP2 #actions.dock{position:fixed!important;box-shadow:none}
+@media (max-width:600px){
+  .mbox,.mbox.wide,.mbox.xwide{max-width:100vw!important;width:100vw!important;max-height:100dvh!important;height:100dvh;border-radius:0!important;padding:12px 10px!important;margin:0}
+  .modal{padding:0!important}
+  #modal.full .railwrap,.railwrap{display:flex!important;flex-direction:column-reverse;gap:8px}
+  #modal.full .railwrap>.tabrow,.railwrap>.tabrow{flex-direction:row!important;position:sticky!important;top:auto!important;bottom:-12px;z-index:5;margin:0 -10px!important;background:#1c140e;border-top:1px solid var(--gold);padding:4px;gap:4px}
+  #modal.full .railwrap .rail,.railwrap .rail{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;overflow-x:auto;gap:4px;padding:0!important;border:0!important;background:none!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  #modal.full .railwrap .rail .railgrp,.railwrap .rail .railgrp{display:contents!important}#modal.full .railwrap .rail .railhd,.railwrap .rail .railhd{display:none!important}
+  #modal.full .railwrap .rail button,.railwrap .rail button{flex:0 0 auto;white-space:nowrap;padding:7px 10px!important;border-radius:999px!important;font-size:13px;width:auto!important}
+  #modal.full .railwrap .endwk{width:auto!important;flex:0 0 auto;font-size:12px;padding:6px 8px}
+  .railwrap .railmain{min-width:0}
+  .roomhd{height:92px}.roomttl b{font-size:18px}.roomttl span{display:none}
+  .mgrid,.mgrid.wide,.lan2,.lan3,.impgrid{grid-template-columns:minmax(0,1fr)!important}
+}`;document.head.appendChild(st)})();
+/* the side column's own tabs (Fighter · Field · Stands) decide what shows inside the sheet */
+(()=>{const st=document.createElement('style');st.textContent=`body.phoneP2 aside.side{flex-direction:column}
+body.phoneP2 aside.side>*:not(.sidehide):not(#crowdPanel):not([hidden]){display:block!important}body.phoneP2 aside.side>#sideTabs{display:flex!important}
+@media (max-width:600px){.railwrap>.tabrow{transition:transform .2s}.railwrap>.tabrow.navhide{transform:translateY(110%)}}`;document.head.appendChild(st)})();
+/* phones: the bottom tab row slides away while you scroll down a window and comes back when you scroll up */
+{let lastY=0;document.addEventListener('scroll',e=>{if(innerWidth>600)return;const el=e.target;if(!el||!el.querySelector)return;const row=el.querySelector('.railwrap>.tabrow');if(!row)return;
+  const y=el.scrollTop||0;if(y>lastY+8&&y>80)row.classList.add('navhide');else if(y<lastY-8||y<80)row.classList.remove('navhide');lastY=y},true)}
+/* phones: the Manager header folds to one scrolling line of badges and a smaller face */
+(()=>{const st=document.createElement('style');st.textContent=`@media (max-width:600px){.badges.mhead{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.badges.mhead .badge{flex:0 0 auto;font-size:12px!important;padding:3px 7px!important}
+#mBody .mgrhd img,#mBody .mgrhd svg{max-height:56px}}`;document.head.appendChild(st)})();
+/* =====================================================================
+   100-SICA73 · v0.73 — Sica's syndicate, a house of its own (designed with Virgilante)
+   =====================================================================
+   • Sica's Syndicate joins the league as a full house (m.sica): standings, bouts, a roster of enforcers (high Strength, low
+     Intelligence). It is never invited to the Flavius Superbus (17-manager top4 filter).
+   • Dirty tricks: when one of Sica's fighters is on a card, his men may throw a spear from the stands at the strongest rival
+     (the loan spear's own mechanism, S.syndSpear); he bribes fighters to hold back (rumours in the mail first); he lures
+     unhappy fighters (low morale) away with cash.
+   • You: his loans stay as they are; he may offer YOU a bribe for your fighter to hold back in a bout — paid if they lose
+     while the CPU fights them (fight them yourself and the deal is off); if it gets out, fame and your fighters' morale suffer.
+   TWEAK: SICA (chances and sums).
+   ===================================================================== */
+const SICA={spear:0.45,bribeAI:0.35,bribeYou:0.3,caught:0.25,poach:0.3,poachMorale:35,fameHit:8,moraleHit:8};
+function sicaMgr(w){return (w||W_()).mgrs.find(m=>m.sica)}
+function sicaEnsure(w){if(!w||sicaMgr(w))return false;
+  const m={id:'m_sica',key:'sica',name:'Sica',ludus:"Sica's Syndicate",city:'Roma',color:'#5b2a6e',p:{ambition:85,cunning:96,honor:4,greed:95,show:40,discipline:35,risk:80},fame:30,coin:420,wins:0,bouts:0,deaths:0,betNet:0,poached:0,improved:0,
+    bio:'Moneylender of the Subura. His men sit in every crowd; his debts are paid in coin or in blood.',sica:true,rivals:{},rivalry:0,portrait:{skin:'#8a5a3a',hair:'#1a120c',helm:'none',beard:true,bg:typeof sysBG==='function'?sysBG():undefined}};
+  w.mgrs.push(m);const ENF=['the Collector','the Debt','Knucklebone','the Quiet One','Ironjaw'];
+  for(let i=0;i<4;i++){const g=genGlad({ovr:58+rnd(12)});{const n0=genName();g.name=/^The |"/.test(n0)?n0:n0+' '+ENF[i%ENF.length]}g.enforcer=true;g.contract={mgr:m.id,wage:askWage(g),weeks:12,since:w.week};g.morale=70;g.interest={};
+    const st=gStats(g);st.str=Math.max(st.str,86+rnd(10));st.int=Math.min(st.int,54+rnd(8));w.glads.push(g)}
+  mnews(`🗡 <b>Sica's Syndicate</b> buys a seat in the league. The Subura sends its enforcers to the sand — and its men to the stands.`,'big');return true}
+{const base=newWorld;newWorld=function(){const r=base.apply(this,arguments);try{const w=W_();if(w&&sicaEnsure(w)){try{makeNight()}catch(e){}saveWorld(true)}}catch(e){console.error(e)}return r}}
+/* older careers: the syndicate arrives at the next week's end */
+{const base=endWeek;endWeek=async function(){const w=W_();try{if(w&&!w.dead)sicaEnsure(w)}catch(e){console.error(e)}
+  try{if(w&&!w.dead)sicaPoach(w)}catch(e){console.error(e)}const r=await base.apply(this,arguments);try{sicaBribes(W_())}catch(e){console.error(e)}return r}}
+const isSicaG=g=>{const w=W_();const m=g&&g.contract&&mgrById(g.contract.mgr);return !!(m&&m.sica)};
+/* the spear: a card with one of his fighters on it */
+{const base=boutCfg;boutCfg=function(b,watch,fightGid){const cfg=base.apply(this,arguments);try{const w=W_();if(!b||!cfg||!cfg.seats)return cfg;
+  const ids=b.ents||[];if(ids.some(id=>isSicaG(gById(id)))&&!cfg.syndSpear&&b.sicaSpear==null)b.sicaSpear=Math.random()<SICA.spear;
+  if(b.sicaSpear&&!cfg.syndSpear){const t=ids.map(gById).filter(g=>g&&!isSicaG(g)).sort((x,y)=>effOvr(y)-effOvr(x))[0];if(t)cfg.syndSpear=t.id}
+  /* a bought fighter holds back while the CPU fights them */
+  cfg.seats.forEach((s,i)=>{const g=gById(ids[i]);if(!g)return;const bought=(g.thrown===w.season+':'+w.week)||(w.sicaBribe&&w.sicaBribe.state==='yes'&&w.sicaBribe.gid===g.id&&w.sicaBribe.wk===w.week);
+    if(bought&&s.cpu!==false&&ids[i]!==fightGid){s.aiDiff='easy';s.aiBlunder=0.6;b.sicaThrow=g.id}
+    else if(bought&&w.sicaBribe&&w.sicaBribe.gid===g.id)w.sicaBribe.off=1})}catch(e){console.error(e)}return cfg}}
+/* bribes: rumours for the AI, an offer for you */
+function sicaBribes(w){if(!w||w.dead||!w.night)return;const sm=sicaMgr(w);if(!sm)return;const pm=me();
+  const cards=w.night.bouts.filter(b=>!b.done&&b.ents.some(id=>isSicaG(gById(id))));if(!cards.length)return;const b=pickOne(cards);
+  const others=b.ents.map(gById).filter(g=>g&&!isSicaG(g));const mine=others.find(g=>g.contract&&g.contract.mgr===pm.id);
+  if(mine&&Math.random()<SICA.bribeYou){const amt=10+Math.round(effOvr(mine)/4);w.sicaBribe={wk:w.week,gid:mine.id,amt,state:'offer'};
+    sendLetter(w,{key:'sica-bribe-'+w.season+'-'+w.week,kind:'offer',from:'Sica',seal:'🗡',title:`A quiet word about ${esc(mine.name)}`,until:w.week,
+      body:`<p>Sica's man leans close: <b>${amt} coin</b> if <b>${esc(mine.name)}</b> does not win this week's ${esc(TIERS[b.tier]?TIERS[b.tier].n:'bout')}. Paid after the bout — and only if the CPU fights for them; take the reins yourself and the deal is off.</p><p class="rc-sub">If it gets out: −${SICA.fameHit} fame and your fighters lose heart.</p>
+       <div class="acts"><button class="btn" type="button" data-sicabribe="yes">Take the coin</button><button class="btn" type="button" data-sicabribe="no">Send him away</button></div>`});return}
+  const t=others.filter(g=>g.contract&&mgrById(g.contract.mgr)&&!mgrById(g.contract.mgr).isPlayer&&(mgrById(g.contract.mgr).p.honor||50)<70);
+  if(t.length&&Math.random()<SICA.bribeAI){const g=pickOne(t);g.thrown=w.season+':'+w.week;
+    sendLetter(w,{key:'sica-rumour-'+w.season+'-'+w.week,kind:'letter',from:'A tavern rumour',seal:'🍷',title:`Sica's coin reached ${esc(g.name)}?`,until:w.week,
+      body:`<p>They say a purse changed hands in the Subura and <b>${esc(g.name)}</b> (${esc(mgrById(g.contract.mgr).ludus)}) will not try too hard this week. Bet accordingly — or don't.</p>`})}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-sicabribe]');if(!b)return;const w=W_();if(!w||!w.sicaBribe||w.sicaBribe.state!=='offer')return;e.stopPropagation();
+  const yes=b.dataset.sicabribe==='yes';w.sicaBribe.state=yes?'yes':'no';const g=gById(w.sicaBribe.gid);
+  tnews(yes?`🗡 You shook Sica's hand: ${esc(g?g.name:'your fighter')} holds back this week.`:`🗡 You sent Sica's man away. He smiled, which is worse.`);
+  if(!yes&&sicaMgr(w)){const sm=sicaMgr(w);const pm=me();pm.rivals=pm.rivals||{};sm.rivals[pm.id]=Math.min(90,(sm.rivals[pm.id]||0)+15)}
+  const L=(w.letters||[]).find(x=>x.key==='sica-bribe-'+w.season+'-'+w.week);if(L)L.read=true;saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
+/* after the bout: pay, or not; and maybe it gets out */
+{const base=applyBout;applyBout=function(bi,res,opt){const w=W_();const b=w&&w.night&&w.night.bouts[bi];const was=b&&b.done;const r=base.apply(this,arguments);
+  try{const B=w.sicaBribe;if(!b||was||!B||B.state!=='yes'||B.wk!==w.week||!b.ents.includes(B.gid)||B.settled)return r;B.settled=1;const g=gById(B.gid);const pm=me();
+    const row=res&&res.rows.find(x=>x.mgrId===B.gid);const won=!!(row&&res.winners.includes(row.id));
+    if(B.off){tnews(`🗡 You fought ${esc(g.name)} yourself — Sica's deal is off.`);return r}
+    if(won){tnews(`🗡 ${esc(g.name)} won anyway. Sica's men are not pleased.`,'big');const sm=sicaMgr(w);if(sm){sm.rivals[pm.id]=Math.min(90,(sm.rivals[pm.id]||0)+20)}return r}
+    pm.coin+=B.amt;tnews(`🗡 Sica pays: <b>+${B.amt} coin</b> for ${esc(g.name)}'s quiet afternoon.`);
+    if(Math.random()<SICA.caught){pm.fame=Math.max(0,(pm.fame||0)-SICA.fameHit);for(const x of rosterOf(pm))x.morale=Math.max(0,(x.morale||50)-SICA.moraleHit);
+      tnews(`📯 <b>It gets out.</b> The crowd hisses at ${esc(pm.ludus)} — −${SICA.fameHit} fame; your fighters are ashamed (−${SICA.moraleHit} morale).`,'big')}}catch(e){console.error(e)}return r}}
+/* poaching: an unhappy fighter takes Sica's cash */
+function sicaPoach(w){const sm=sicaMgr(w);if(!sm||Math.random()>=SICA.poach||rosterOf(sm).length>=7)return;
+  const c=w.glads.filter(g=>g.alive!==false&&g.contract&&!isSicaG(g)&&(g.morale||50)<SICA.poachMorale&&!g.inj);if(!c.length)return;const g=pickOne(c);const from=mgrById(g.contract.mgr);
+  g.contract={mgr:sm.id,wage:askWage(g)+3,weeks:8,since:w.week};g.morale=60;sm.poached=(sm.poached||0)+1;if(typeof ghist==='function')ghist(g,`lured to Sica's Syndicate from ${esc(from.ludus)}`);
+  if(from.isPlayer){tnews(`🗡 <b>${esc(g.name)}</b> is gone — Sica's cash found them unhappy. They fight for the Syndicate now.`,'big');sendLetter(w,{key:'sica-poach-'+g.id,kind:'letter',from:'Sica',seal:'🗡',title:`${esc(g.name)} works for me now`,until:w.week+1,body:`<p>An unhappy fighter is an expensive fighter, lanista. <b>${esc(g.name)}</b> took my coin. Keep the others happy.</p>`})}
+  else mnews(`🗡 ${esc(g.name)} leaves ${esc(from.ludus)} for Sica's Syndicate — the Subura pays better than pride.`)}
+(()=>{const st=document.createElement('style');st.textContent=`.badge.sicab{border-color:#5b2a6e;color:#d9b8ea}`;document.head.appendChild(st)})();
+/* =====================================================================
+   101-REC73 · v0.73 — recruiting extras (Virgilante)
+   =====================================================================
+   • This week's plan: every recruit on your board with their next step, its hours, and whether it fits the hours left.
+   • Compare: ⇄ on a fighter's card puts them side by side (two at a time): rating, ratings (as far as scouted), age,
+     class, ask, your interest and rank, fit, personality.
+   • The signing card: a signature celebrates each fighter you sign (portrait, terms, ratings).
+   ===================================================================== */
+MGR.cmp=MGR.cmp||[];
+function recPlanHTML(){const w=W_(),m=me();const board=w.glads.filter(g=>g.alive!==false&&g.favd&&!g.contract);if(!board.length)return '';let left=w.hours||0;
+  const rows=board.map(g=>{const btn=nextStep(g,m);const h=+((btn.match(/(\d+) h/)||[])[1]||0);const label=btn.replace(/<small>[\s\S]*?<\/small>/,'').replace(/<[^>]*>/g,'').trim();const fits=h&&h<=left;if(fits)left-=h;
+    return `<div class="rplan ${fits?'fits':h?'later':''}"><b>${esc(g.name)}</b><span>${esc(label)||'—'}</span><span class="rph">${h?h+' h':''}</span><span class="rps">${h?(fits?'✓ this week':'next week'):''}</span></div>`}).join('');
+  return `<details class="card2 rplanbox" ${(()=>{try{return localStorage.getItem('flavius_rplan')==='0'}catch(e){return false}})()?'':'open'}><summary class="sect" style="margin:0;cursor:pointer">🗓 This week's plan <span class="rc-sub">next step for each recruit on your board · ${w.hours||0} h left</span></summary>${rows}</details>`}
+function recCmpHTML(){const w=W_(),m=me();const L=MGR.cmp.map(gById).filter(g=>g&&g.alive!==false);MGR.cmp=L.map(g=>g.id);if(!L.length)return '';
+  const col=g=>{const st=gStats(g);const sc=g.scout||0;const r=STATS.map(([k,n])=>`<div class="cmpr"><span>${n}</span><b>${sc>=2?st[k]:sc?`${st[k]-4}–${st[k]+4}`:'?'}</b></div>`).join('');
+    const tags=sc&&typeof persTags73==='function'?persTags73(g).join(' · '):'scout them';const iv=interestOf(g,m);const rank=suitors(g).findIndex(x=>x.m===m)+1;
+    return `<div class="cmpc"><div class="cmph">${mgAvatar(g)}<div><b>${esc(g.name)}</b><div class="rc-sub">${esc(CLASSES[g.cls]?CLASSES[g.cls].name:g.cls)} · ${g.age||'?'} yrs</div></div><button class="btn tksm" type="button" data-reccmp="${g.id}" title="Take out of the comparison">✕</button></div>
+      <div class="cmpr"><span>Rating</span><b>~${estOvr(g).v}</b></div>${r}<div class="cmpr"><span>Ask</span><b>${askWage(g)}/wk</b></div><div class="cmpr"><span>Your interest</span><b>${iv}${rank?` · #${rank}`:''}</b></div>
+      <div class="cmpr"><span>Personality</span><b>${esc(tags)}</b></div></div>`};
+  return `<div class="card2 cmpbox"><div class="sect" style="margin-top:0">⇄ Compare <span class="rc-sub">${L.length<2?'pick one more with ⇄ on a fighter’s card':'side by side'}</span></div><div class="cmpg">${L.map(col).join('')}</div></div>`}
+{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(!w||w.dead||MGR.view||MGR.tab!=='recruit')return h;
+  const add=recCmpHTML()+recPlanHTML();if(!add)return h;const i=h.indexOf('<div class="roomhd b73 b73-recruit">');const c=i>=0?cutDiv(h,i):null;
+  if(c)h=h.slice(0,i)+c[0]+add+h.slice(i+c[0].length)}catch(e){console.error(e)}return h}}
+/* ⇄ on the fighter's card */
+{const base=detailHTML;detailHTML=function(g){let h=base.apply(this,arguments);try{if(!g||g.contract)return h;const on=MGR.cmp.includes(g.id);
+  h=h.replace('<div class="rsteps">',`<button class="btn tksm ${on?'on':''}" type="button" data-reccmp="${g.id}" style="margin:0 0 6px">⇄ ${on?'In the comparison':'Compare'}</button><div class="rsteps">`)}catch(e){}return h}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-reccmp]');if(!b)return;e.stopPropagation();const id=b.dataset.reccmp;const i=MGR.cmp.indexOf(id);if(i>=0)MGR.cmp.splice(i,1);else{MGR.cmp.push(id);if(MGR.cmp.length>2)MGR.cmp.shift()}MGR_REDRAW()},true);
+document.addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('rplanbox'))try{localStorage.setItem('flavius_rplan',e.target.open?'1':'0')}catch(err){}},true);
+/* the signing card */
+{const base=signGlad;signGlad=function(g,wage,weeks,bonus,pledge){const r=base.apply(this,arguments);try{if(!HEADLESS&&g&&g.contract&&g.contract.mgr===me().id)setTimeout(()=>signCard73(g),60)}catch(e){}return r}}
+function signCard73(g){const old=document.getElementById('signCard');if(old)old.remove();const st=gStats(g);const c=g.contract||{};const m=me();
+  const d=document.createElement('div');d.id='signCard';d.className='signcard';
+  d.innerHTML=`<div class="sgbox"><div class="sghd">✍ Signed</div><div class="sgface">${mgAvatar(g)}</div><div class="sgname">${esc(g.name)}</div><div class="rc-sub">${esc(CLASSES[g.cls]?CLASSES[g.cls].name:'')} · ${g.age||'?'} yrs · rating ${effOvr(g)}</div>
+    <div class="sgterms"><span><b>${c.wage}</b>coin a week</span><span><b>${c.weeks}</b>weeks</span>${g.pledge?'<span><b>★</b>main event</span>':''}</div>
+    <div class="sgstats">${STATS.map(([k,n])=>`<span title="${n}"><b>${st[k]}</b>${n.slice(0,3)}</span>`).join('')}</div>
+    <div class="rc-sub" style="margin-top:6px">Fights for <b style="color:${m.color}">${esc(m.ludus)}</b></div><button class="btn primary" type="button" data-sgclose>Welcome to the ludus</button></div>`;
+  document.body.appendChild(d);d.addEventListener('click',e=>{if(e.target===d||e.target.closest('[data-sgclose]'))d.remove()})}
+(()=>{const st=document.createElement('style');st.textContent=`
+.rplanbox{margin:0 0 8px}.rplan{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1.4fr) 40px 90px;gap:8px;align-items:center;padding:4px 0;border-top:1px solid var(--line2);font-size:13px}
+.rplan.fits .rps{color:#b7d59d}.rplan.later .rps{color:var(--muted)}.rph{font:12px var(--mono);color:var(--gold2)}
+.cmpbox{margin:0 0 8px;border-color:var(--gold)}.cmpg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.cmpc{background:var(--panel2);border-radius:8px;padding:8px}
+.cmph{display:grid;grid-template-columns:44px 1fr auto;gap:8px;align-items:center;margin-bottom:6px}.cmph>:first-child{width:44px;height:52px;overflow:hidden}.cmph>:first-child *{max-width:100%;max-height:52px}
+.cmpr{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:2px 0;border-top:1px solid #3a2b1f}.cmpr b{font-family:var(--mono);color:var(--bone)}
+.signcard{position:fixed;inset:0;z-index:3500;background:rgba(8,5,3,.6);display:grid;place-items:center;animation:csin .3s ease-out}
+.sgbox{width:min(320px,92vw);background:linear-gradient(#2a1f17,#1c140e);border:2px solid var(--gold);border-radius:12px;padding:16px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.7);display:grid;gap:6px;justify-items:center}
+.sghd{font:12px var(--mono);letter-spacing:.2em;color:var(--gold2);text-transform:uppercase}.sgface{width:96px;height:112px;overflow:hidden}.sgface *{max-width:100%;max-height:112px}
+.sgname{font:400 24px var(--display);color:var(--gold2)}.sgterms,.sgstats{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.sgterms span,.sgstats span{display:flex;flex-direction:column;align-items:center;background:var(--panel);border-radius:6px;padding:4px 8px;font-size:11px;color:var(--muted);min-width:52px}.sgterms b,.sgstats b{font:600 16px var(--mono);color:var(--bone)}
+@media (max-width:600px){.cmpg{grid-template-columns:1fr}.rplan{grid-template-columns:1fr auto}.rplan>span:nth-child(2){grid-column:1/-1}}`;document.head.appendChild(st)})();
+/* =====================================================================
+   102-MINIS73 · v0.73 — the 3D minis turn to face where they move (Virgilante)
+   =====================================================================
+   Each mini has eight renders (assets/minis8_<key>.webp, one row of cells: toward the camera, then every 45° clockwise).
+   A piece faces the way it last stepped (MINI_FACE on the player / beast); a new piece faces the camera (gladiators) or
+   three-quarters (beasts on long bases). Panels keep the single front view (mini_<key>.webp). */
+const MINI8_URL={hero:'assets/minis8_hero.webp',veteranus:'assets/minis8_veteranus.webp',amazonia:'assets/minis8_amazonia.webp',damnatio:'assets/minis8_damnatio.webp',royalty:'assets/minis8_royalty.webp',soldier:'assets/minis8_soldier.webp',slave:'assets/minis8_slave.webp',venatore:'assets/minis8_venatore.webp',commodus:'assets/minis8_commodus.webp',tholo:'assets/minis8_tholo.webp',arenosus:'assets/minis8_arenosus.webp',glykon:'assets/minis8_glykon.webp',moechus:'assets/minis8_moechus.webp',valencia:'assets/minis8_valencia.webp',zora:'assets/minis8_zora.webp',ursa:'assets/minis8_ursa.webp',brutum:'assets/minis8_brutum.webp',leo:'assets/minis8_leo.webp',leaena:'assets/minis8_leaena.webp'};
+const MINI8={hero:[106,115,52.8,95.1],veteranus:[80,124,40.2,104.5],amazonia:[111,136,55.6,116.0],damnatio:[80,125,40.2,105.0],royalty:[82,130,41.2,110.5],soldier:[95,129,47.3,109.4],slave:[138,133,68.8,113.3],venatore:[105,128,52.3,107.8],commodus:[97,161,48.4,141.3],tholo:[123,140,61.6,119.9],arenosus:[80,62,40.2,42.3],glykon:[80,65,40.2,45.1],moechus:[81,82,40.7,62.1],valencia:[90,82,45.1,62.1],zora:[86,72,42.9,52.2],ursa:[207,166,103.4,125.9],brutum:[207,166,103.4,125.9],leo:[170,152,85.2,112.7],leaena:[161,133,80.3,93.5]}; /* key → [cell width, cell height, anchor x, anchor y] in sheet px */
+const MINI_YAW=[0,45,90,135,180,-135,-90,-45];
+const MINI8_IMG={};
+function mini8Img(k){if(HEADLESS||!MINI8_URL[k])return null;let im=MINI8_IMG[k];if(!im){im=new Image();im.onload=()=>{try{draw()}catch(e){}};im.src=MINI8_URL[k];MINI8_IMG[k]=im}return im.complete&&im.naturalWidth?im:null}
+let MINI_CUR=null;
+/* the facing index of piece p from its last step (dr,dc on the grid → a yaw on screen) */
+function miniFace(p,k){if(!p)return 0;if(p._fr==null){p._fr=p.r;p._fc=p.c;p._face=['ursa','brutum','leo','leaena'].includes(k)?1:0}
+  const dr=p.r-p._fr,dc=p.c-p._fc;if(dr||dc){const a=Math.atan2(dc-dr,dc+dr)*180/Math.PI;let best=0,bd=1e9;MINI_YAW.forEach((y,i)=>{let d=Math.abs(((a-y)%360+540)%360-180);if(d<bd){bd=d;best=i}});p._face=best;p._fr=p.r;p._fc=p.c}
+  return p._face||0}
+{const base=drawPlayer;drawPlayer=function(p){MINI_CUR=p;try{return base.apply(this,arguments)}finally{MINI_CUR=null}}}
+{const base=drawNPC;drawNPC=function(n){MINI_CUR=n;try{return base.apply(this,arguments)}finally{MINI_CUR=null}}}
+{const base=miniDraw;miniDraw=function(k,x,y,opt={}){const M=MINI8[k];const im=M&&MINI_CUR?mini8Img(k):null;if(!im||!MINI_A[k])return base.apply(this,arguments);
+  const i=miniFace(MINI_CUR,k);const s=miniScale(k);const a=MINI_A[k];
+  ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=Math.min(a[2]*TW*MINI_BASE/25.4,TW*MINI_FIT)*0.55;ell(x+2,y+3,rw,rw*0.5);ctx.fill();
+  if(opt.dim)ctx.globalAlpha=opt.dim;if(opt.filter)ctx.filter=opt.filter;ctx.drawImage(im,i*M[0],0,M[0],M[1],x-M[2]*s,y-M[3]*s,M[0]*s,M[1]*s);ctx.restore();return y-M[3]*s}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

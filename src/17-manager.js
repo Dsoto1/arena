@@ -633,7 +633,7 @@ async function endWeek(){
     // next week as an invitational (the league pauses for it) — watch it live, or play it out. The awards follow it.
     {const lead=leagueSort(w.mgrs)[0];
       const kind=lead.isPlayer?(w.festPick||'ludi'):(lead.p.greed>60?'saturnalia':lead.p.show>60?'fortuna':lead.p.discipline>60?'vulcanalia':lead.p.honor>60?'asclepieia':'ludi');
-      const top4=leagueSort(w.mgrs).slice(0,4).map(m2=>m2.id);
+      const top4=leagueSort(w.mgrs.filter(m2=>!m2.sica)).slice(0,4).map(m2=>m2.id);
       w.finaleDue={season:w.season,kind,top4,lead:lead.id};
       mnews(`🏛 <b>The regular season is over.</b> The Flavius Superbus is set for Roma: ${top4.map(id=>esc(mgrById(id).ludus)).join(', ')} are invited — one fighter each. ${esc(lead.isPlayer?'You':lead.name)} chose the ${esc((FEST_KINDS[kind]||FEST_KINDS.ludi).n)} gift.`,'big');
       if(top4.includes(w.playerId))tnews(`🏛 <b>You are invited to the Flavius Superbus!</b> Choose your champion on Match Week when it opens next week.`,'big')}

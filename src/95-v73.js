@@ -114,3 +114,6 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-oldr
   if(b.dataset.oldrec==='keep'){try{localStorage.setItem('flavius_oldrec73','keep')}catch(err){}const c=b.closest('.oldrec');if(c)c.remove();return}
   const L=oldRecruits73();for(const g of L){await Store.del('gladiators',g.id).catch(()=>{})}LUDUS_CACHE=LUDUS_CACHE.filter(g=>!L.includes(g));
   const box=document.getElementById('ludusBody');if(box)box.innerHTML=await ludusHTML();if(typeof mToast==='function')mToast(`🧹 ${L.length} removed.`)},true);
+
+/* ---------- v0.73: the ratings in the fighter panel's header start folded (until you open them) ---------- */
+try{RAT_SHUT=localStorage.getItem('flavius_ratshut')!=='0'}catch(e){RAT_SHUT=true}
