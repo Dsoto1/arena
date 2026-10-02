@@ -407,6 +407,19 @@ One global script; files are concatenated in order. Later "version modules" patc
   recruiting plan/compare/signing card; mini facings; Start from fix; Summa Rudis on ⓘ; Crocodile medallion. (Published as artifact Version 85.)
 
 ## 8. Next steps / open items
+- **v0.74 (agreed list, waiting for Virgilante's go):** his 8 printed class cards (tools/art/classcards/*.jpg) replace the class card
+  art; custom classes get a live card template in that layout (values from the class; armored avatar + mini); class fixes — Provocator
+  Manica back to UPPER arm (convert its fit fore→sho), Hero LVL1 Thracian Shield, "Trident" spelling, ability text "while class abilities
+  are on" (abilities/perks already follow each round's ca flag), Hero/Slave/Veteranus leg armor on the LOWER leg, Soldier wears the
+  Centurian Helm (3 AP), keep "Murmillo"/"Hasta"/Damnatio +10 CF on a win, Veteranus' Old debts paid as 1 coin OR 1 CF (choice);
+  armor renamed to his TTS names (Iron Helm, Horned Helm, Hoplomachus Helm, Steel Gated Helm, Steel Dome Helm, Helm of Flavius,
+  Leather Gladiator Belt I/II, Bronze/Scaled/Forged/Plated Chest Armor, Flavius' Chest Armor, Reinforced Chest Armor, Padded Arm Armor,
+  Galerus(+1 head)=old manica, Manica(+2 chest)=old provmanica, Iron Spaulder, Cestus, Lorica Segmentata(+1 head)=old galerus, Flavius'
+  Bracers, Leather/Iron Tasset Armor, Padded Leg Armor, Greaves=old ocrea, Flavius' Greaves, Tasset Armor, Steel Greaves); belt art
+  split into Belt I (Venatore) / Belt II (Soldier); pair thumbnails show the mirrored pair (Iron Tasset: one half + mirror); new art in
+  tools/art/armor_new: Centurian Helm (L2 head 3), Steel Helm (L1 head 2, Venatore's), real Flavius' Bracers, Iron Spaulder art,
+  Leather Greaves (L1 lower leg 3, pair); his drawn set becomes the default armor art, Sculpted hidden until reworked, everyone switched once.
+  Still to come from him: Thracian Helm, Ornate Chest Armor, Chest Armor, Reinforced Arm Armor art.
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
