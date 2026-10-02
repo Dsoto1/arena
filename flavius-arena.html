@@ -1134,7 +1134,7 @@ button.railhd.fold{all:unset;box-sizing:border-box;display:none;cursor:pointer;w
 </style>
 
 <header class="bar">
-  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.65</span></div>
+  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.66</span></div>
   <div class="status" id="status"></div>
   <div class="tools speedtray" id="speedTray">
     <div class="seg speedseg" role="group" aria-label="CPU speed"><span class="lbl">Speed</span><button type="button" data-speed="pause" title="Pause CPU turns">❚❚ Pause</button><button type="button" data-speed="step" title="Step: each CPU action waits for you — Next ▶ or Space — with a caption explaining it">⏯ Step</button><button type="button" data-speed="slow" class="on">Slow</button><button type="button" data-speed="normal">Normal</button><button type="button" data-speed="fast">Fast</button></div>
@@ -11746,7 +11746,7 @@ function draw() {
   const wrap = cv.parentElement;
   const Wd = wrap.clientWidth;
   // fit the arena (and the stands) to the window so the action dock below it stays in view
-  const fitH = SETTINGS.fit === false ? 1e9 : Math.max(360, innerHeight - 230);
+  const fitH = SETTINGS.fit === false ? 1e9 : typeof phoneLand === 'function' && phoneLand() ? innerHeight - 8 : Math.max(360, innerHeight - 230); // v0.66: a phone in landscape gives the arena the whole height
   const mob9 = innerWidth <= 700;
   TW = Math.max(20, Math.floor(Math.min(Wd / (STANDS ? mob9 ? 14.2 : 16.4 : mob9 ? 12.4 : 13.8), fitH / (STANDS ? 10.3 : 9.5)))); /* v0.51: on a phone the arena fills the width; the outer benches may crop */
   TH = TW / 2;
@@ -11760,6 +11760,11 @@ function draw() {
       TH = TW / 2;
       OX = Wd / 2;
       OY = Hd * 0.56 - N * TH / 2;
+      const f = typeof camFocus === 'function' ? camFocus(Wd, Hd) : null; // v0.66: the camera follows the action
+      if (f) {
+        OX = f.x - (f.c - f.r) * TW / 2;
+        OY = f.y - (f.c + f.r) * TH / 2;
+      }
     }
   } /* v0.46: the final duel camera leans in on the centre of the sand */
   const dpr = window.devicePixelRatio || 1;
@@ -22769,6 +22774,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'0.66',ic:'📱',t:'Bumpers and phones',hi:['Phones in landscape: the arena fills the screen; actions, your board, the log and the top bar slide in from a small button dock — your actions open by themselves on your move','The camera follows the action: zoom in (🔍 or pinch the sand) and the view stays on whoever is acting'],fx:['The Play Now lesson has bumpers: while Flavius shows you around, buttons are look-only; in hands-on steps only the board and your actions respond; ✖ Exit is always there','In portrait, a hint suggests turning the phone']},
   {v:'0.65',ic:'🩹',t:'A clearer yard, a smarter infirmary',hi:['Training hours as fighter cards: tap a focus to add an hour, tap a pip to take it back; each rating shows the gain you are planning and the next band','Fatigue: bouts and hard work wear fighters down; above 50 they may get hurt; a rest week in the Infirmary clears it','Infirmary treatment plans: Rest, Medicus or Surgeon, Bathhouse and Asclepius, each with its cost and the week the fighter is fit — plus a recovery timeline and a warning when a patient is on this week\'s card'],fx:['This week\'s regime sits above the hours plan and the practice arena','Hours left show on the Recruiting and Training Yard tabs','Softer to-do outlines on the rail']},
   {v:'0.64',ic:'📜',t:'Missios by the rulebook',hi:['Missios follow the rulebook: 20+ CF, a win or a spared thumb passes a step; "Win" steps must be won','Chariot, Familia, Naumachia, Golden Eagle, Juggernaut, Gauntlet and Commodus give no CF, so surviving to the end passes — and no Fate is drawn','Eliminated on a missio: the event ends at once on a Missio failed screen; the gladiator is marked fallen','Chariots: racers ride on their chariot token; the horse and wheel tokens sit on the chariot card; spare parts on the sand are the printed tokens'],fx:['The missio picker lists your whole roster in a scrolling box (custom classes greyed)','No "To the end" during a missio','A start-of-event modifier no longer leaves a missio gladiator one-armed for good','Seeded events replay the crowd too: spectators\' favourites and wagers follow the seed']},
   {v:'0.63',ic:'🏋',t:'Training hours, clearer tabs',hi:['Training hours: a weekly pool for speed and strength drills, tactics, crowd work, rehab, doctore time, bonding and in-house sparring — exhibitions draw on it too','The Training Yard opens with your hours plan beside the practice arena','Accessibility: reduce motion, a colour-blind palette with class letters on tokens, and larger text','Event Designer: guided steps from Basics to Finish, or every section at once'],fx:['Rail tabs with something left to do are outlined: Recruiting, Training Yard, Infirmary; Match Week in light purple','The free-agent list fills the screen','House home cities are the twelve arena cities','Share builds are a third smaller','CPU turns and the roster name each CPU\'s mind','The fighter panel shows the ratings top right, out of the way — and they fold away']},
@@ -27895,6 +27901,92 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-rest]');if
 @media (max-width:700px){.fatrow{grid-template-columns:auto 1fr auto}.fatrow .fatbar,.fatrow .rc-sub{display:none}}`;document.head.appendChild(st)}
 /* a fighter resting this week takes no drill hours */
 {const base=thTile;thTile=function(g,k,ic,lab,P,left){return g.restWk===W_().week?base.call(this,g,k,ic,lab,P,0):base.apply(this,arguments)}}
+/* =====================================================================
+   86-V66 · v0.66 TUTORIAL BUMPERS, PHONES IN LANDSCAPE
+   =====================================================================
+   BUMPERS (Play Now lesson; the Manager lesson already guards clicks in 36-mtutor): while the lesson runs, a capture-phase
+   guard lets through only the coach, dialogs and — in a hands-on step — the play surfaces (actions, the sand, your board,
+   the roster, hints). During the screen tour everything is look-only: the highlighted button shows, it does not open.
+   🏛 asks to leave the lesson (Exit is always there); the rest of the top bar is dimmed. The Manager lesson dims what
+   its guard blocks too.
+   ===================================================================== */
+const tutLive=()=>!!(typeof TUT!=='undefined'&&TUT.on&&S&&S.tutorial&&!S.over);
+const tutTourNow=()=>{const st=typeof TUT_STEPS!=='undefined'&&TUT_STEPS[TUT.step];return !!(st&&(st.tour||st.info))};
+const TUT_PLAY='#actions,#cv,#board,#roster,#hintDock,#ctxMenu,#bubbles,#stepBar,.speedseg,.collhd,#btnMute,#mmMute';
+function tutGuard(e){if(!tutLive())return;const t=e.target;if(!t||!t.closest)return;
+  if(t.closest('#tutCoach,#modal,#mClose,#tip,.tt[role="tooltip"]'))return;
+  if(t.closest('#btnMenu')){e.preventDefault();e.stopPropagation();if(e.type==='click'&&typeof tutExit==='function')tutExit();return}
+  if(!tutTourNow()&&t.closest(TUT_PLAY))return;
+  if(!t.closest('button,a,select,input,textarea,summary,label,[data-act],[data-card],[role="button"],canvas'))return;
+  e.preventDefault();e.stopPropagation();
+  if(e.type==='click'&&typeof mToast==='function')mToast(tutTourNow()?'🎓 Just looking for now — press <b>Next ▶</b> on the coach.':'🎓 One thing at a time — follow the coach (✖ Exit is always there).')}
+for(const ev of ['click','pointerdown','mousedown','touchstart'])document.addEventListener(ev,tutGuard,{capture:true,passive:false});
+{const st=document.createElement('style');st.textContent=`
+body.tutlock header.bar .navmid button,body.tutlock header.bar .navright button:not(#btnMenu):not(#btnMute),body.tutlock #arenaDrawer button,body.tutlock #btnSimEnd{opacity:.35;filter:grayscale(.6);cursor:not-allowed}
+body.tutlock header.bar .tutspot{opacity:1!important;filter:none!important;cursor:help}
+body.tuttour #actions button:not(.tutspot),body.tuttour #board button{cursor:help}`;document.head.appendChild(st)}
+setInterval(()=>{try{const on=tutLive();document.body.classList.toggle('tutlock',on);document.body.classList.toggle('tuttour',on&&tutTourNow())}catch(e){}},300);
+/* ---------- PHONES IN LANDSCAPE (phoneLand): the arena takes the whole screen; the top bar, actions, fighter board and log
+   become drawers behind a small button dock (bottom left); the actions open by themselves when it is your move.
+   In portrait during an event a one-line hint suggests turning the phone (the compact portrait mode is v0.67).
+   CAMERA: zoomed in (🔍, or a pinch), the view follows whoever is acting — smoothly — instead of the middle of the sand;
+   a pinch sets the zoom (1-2.4x). The final duel keeps its own camera. TWEAK: CAM_MAX, the 0.18 follow ease. ---------- */
+const CAM={z:null,fx:null,fy:null,raf:0},CAM_MAX=2.4;
+const isPhone=()=>Math.min(innerWidth,innerHeight)<=520&&(matchMedia('(pointer:coarse)').matches||Math.max(innerWidth,innerHeight)<=950);
+function phoneLand(){return !HEADLESS&&isPhone()&&innerWidth>innerHeight&&!!S&&S.phase!=='setup'}
+const phonePort=()=>!HEADLESS&&isPhone()&&innerHeight>innerWidth&&!!S&&!S.over&&S.phase!=='setup';
+/* the camera: where the acting gladiator stands (screen point the zoomed board should put under them) */
+function camFocus(Wd,Hd){if(!S||S.over||(typeof duelZoneOn==='function'&&duelZoneOn()))return null;const p=cur();if(!p||p.r==null)return null;
+  const tx=Wd/2,ty=Hd*0.5;const r=p.r,c=p.c;if(CAM.fr==null){CAM.fr=r;CAM.fc=c}
+  CAM.fr+=(r-CAM.fr)*0.18;CAM.fc+=(c-CAM.fc)*0.18;const moving=Math.abs(r-CAM.fr)>0.02||Math.abs(c-CAM.fc)>0.02;if(!moving){CAM.fr=r;CAM.fc=c}
+  else if(!CAM.raf)CAM.raf=requestAnimationFrame(()=>{CAM.raf=0;try{draw()}catch(e){}});
+  return {r:CAM.fr,c:CAM.fc,x:tx,y:ty}}
+{const base=duelCam;duelCam=function(){const dz=typeof duelZoneOn==='function'&&duelZoneOn();if(!dz&&CAM.z&&S)return CAM.z;return base.apply(this,arguments)}}
+document.addEventListener('click',e=>{if(e.target.closest('#btnZoom')){CAM.z=null}},true);
+/* pinch on the sand */
+{let pin=null;const d2=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);
+  document.addEventListener('touchstart',e=>{if(e.touches.length===2&&e.target===cv){pin={d:d2(e.touches),z:CAM.z||(typeof duelCam==='function'?duelCam():1)};e.preventDefault()}},{passive:false});
+  document.addEventListener('touchmove',e=>{if(pin&&e.touches.length===2){e.preventDefault();CAM.z=Math.max(1,Math.min(CAM_MAX,pin.z*d2(e.touches)/pin.d));if(S)S.zoomIn=CAM.z>1.02;try{draw()}catch(err){}}},{passive:false});
+  document.addEventListener('touchend',e=>{if(pin&&e.touches.length<2){pin=null;if(CAM.z&&CAM.z<1.03)CAM.z=null;try{duelUI()}catch(err){}}})}
+/* the drawers and the dock */
+{const st=document.createElement('style');st.textContent=`
+body.phoneL{overflow:hidden}
+body.phoneL header.bar{position:fixed;left:0;right:0;top:0;z-index:60;transform:translateY(-105%);transition:transform .2s;box-shadow:0 6px 18px rgba(0,0,0,.6)}
+body.phoneL.pl-nav header.bar{transform:none}
+body.phoneL main.layout{display:block!important;padding:0!important;margin:0!important;max-width:none!important}
+body.phoneL .canvas-wrap{margin:0!important;border-radius:0!important;height:100vh;height:100dvh;overflow:hidden}
+body.phoneL #cv{touch-action:none}
+body.phoneL #actions,body.phoneL aside.side,body.phoneL .logbar{position:fixed!important;z-index:55;background:var(--panel,#1c140e);box-shadow:0 0 20px rgba(0,0,0,.7);overflow-y:auto;margin:0!important;transition:transform .2s}
+body.phoneL #actions{right:8px;bottom:8px;width:min(360px,48vw);max-height:78vh;border-radius:10px;transform:translateY(calc(100% + 20px))}
+body.phoneL.pl-act #actions{transform:none}
+body.phoneL aside.side{right:0;top:0;bottom:0;width:min(380px,62vw);transform:translateX(105%)}body.phoneL.pl-side aside.side{transform:none}
+body.phoneL .logbar{left:0;top:0;bottom:0;width:min(380px,62vw);transform:translateX(-105%)}body.phoneL.pl-log .logbar{transform:none}
+#plDock{display:none}body.phoneL #plDock{display:flex;position:fixed;left:8px;bottom:8px;z-index:58;gap:6px;flex-direction:column}
+#plDock button{width:42px;height:42px;border-radius:50%;border:1px solid var(--line2);background:rgba(28,20,14,.86);color:var(--text);font-size:18px;padding:0}
+#plDock button.on{border-color:var(--gold);color:var(--gold2)}
+#plRot{display:none}body.phoneP #plRot{display:flex;position:fixed;left:8px;right:8px;top:8px;z-index:58;gap:8px;align-items:center;justify-content:space-between;
+  background:rgba(28,20,14,.94);border:1px solid var(--line2);border-radius:10px;padding:6px 10px;font-size:13px}
+body.phoneP.pl-rotx #plRot{display:none}`;document.head.appendChild(st)}
+function plBuild(){if(document.getElementById('plDock'))return;const d=document.createElement('div');d.id='plDock';
+  d.innerHTML=`<button type="button" data-pl="nav" title="Top bar: speed, rules, menu">☰</button><button type="button" data-pl="act" title="Your actions">⚔</button><button type="button" data-pl="side" title="Fighter board and gladiators">🛡</button><button type="button" data-pl="log" title="Arena log">📜</button><button type="button" data-pl="zoom" title="Zoom (or pinch the sand)">🔍</button>`;
+  document.body.appendChild(d);const r=document.createElement('div');r.id='plRot';r.innerHTML=`<span>↻ Turn your phone sideways for the full arena</span><button class="btn tksm" type="button" data-pl="rotx">✕</button>`;document.body.appendChild(r)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-pl]');if(!b)return;e.preventDefault();const k=b.dataset.pl,B=document.body;
+  if(k==='zoom'){if(S){S.zoomIn=!(S.zoomIn||CAM.z>1.02);CAM.z=null;try{draw();duelUI()}catch(err){}}return}
+  if(k==='rotx'){B.classList.add('pl-rotx');return}
+  const was=B.classList.contains('pl-'+k);for(const x of ['nav','side','log'])B.classList.remove('pl-'+x);if(k==='act'){B.classList.toggle('pl-act',!was);PL.actUser=!was}else B.classList.toggle('pl-'+k,!was);plSync()});
+/* tapping the sand closes the side drawers */
+document.addEventListener('pointerdown',e=>{if(!document.body.classList.contains('phoneL'))return;if(e.target===cv)for(const x of ['nav','side','log'])document.body.classList.remove('pl-'+x)},true);
+const PL={on:false,turn:null,actUser:null};
+function plSync(){const B=document.body;for(const k of ['nav','act','side','log']){const b=document.querySelector(`#plDock [data-pl="${k}"]`);if(b)b.classList.toggle('on',B.classList.contains('pl-'+k))}
+  const z=document.querySelector('#plDock [data-pl="zoom"]');if(z)z.classList.toggle('on',!!(S&&(S.zoomIn||CAM.z>1.02)))}
+function plTick(){try{const B=document.body;const on=phoneLand();
+  if(on&&!PL.on){plBuild();if(S&&!S.over&&S.zoomIn==null)S.zoomIn=true}
+  if(on!==PL.on){PL.on=on;B.classList.toggle('phoneL',on);if(!on)for(const x of ['nav','act','side','log'])B.classList.remove('pl-'+x);try{draw()}catch(e){}}
+  B.classList.toggle('phoneP',phonePort());if(phonePort())plBuild();
+  if(on&&S){/* your move: the actions slide in; a CPU's move: they slide away (unless you opened them yourself) */
+    const mine=!S.over&&typeof humanTurn==='function'&&humanTurn()&&(S.phase==='action'||S.phase==='choice');const key=(S.turnNo||0)+':'+S.phase+':'+mine;
+    if(key!==PL.turn){PL.turn=key;PL.actUser=null;B.classList.toggle('pl-act',mine)}plSync()}}catch(e){}}
+setInterval(plTick,300);addEventListener('resize',()=>{plTick();try{draw()}catch(e){}});
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

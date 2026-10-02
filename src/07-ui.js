@@ -1512,7 +1512,7 @@ function draw() {
   const wrap = cv.parentElement;
   const Wd = wrap.clientWidth;
   // fit the arena (and the stands) to the window so the action dock below it stays in view
-  const fitH = SETTINGS.fit === false ? 1e9 : Math.max(360, innerHeight - 230);
+  const fitH = SETTINGS.fit === false ? 1e9 : typeof phoneLand === 'function' && phoneLand() ? innerHeight - 8 : Math.max(360, innerHeight - 230); // v0.66: a phone in landscape gives the arena the whole height
   const mob9 = innerWidth <= 700;
   TW = Math.max(20, Math.floor(Math.min(Wd / (STANDS ? mob9 ? 14.2 : 16.4 : mob9 ? 12.4 : 13.8), fitH / (STANDS ? 10.3 : 9.5)))); /* v0.51: on a phone the arena fills the width; the outer benches may crop */
   TH = TW / 2;
@@ -1526,6 +1526,11 @@ function draw() {
       TH = TW / 2;
       OX = Wd / 2;
       OY = Hd * 0.56 - N * TH / 2;
+      const f = typeof camFocus === 'function' ? camFocus(Wd, Hd) : null; // v0.66: the camera follows the action
+      if (f) {
+        OX = f.x - (f.c - f.r) * TW / 2;
+        OY = f.y - (f.c + f.r) * TH / 2;
+      }
     }
   } /* v0.46: the final duel camera leans in on the centre of the sand */
   const dpr = window.devicePixelRatio || 1;
