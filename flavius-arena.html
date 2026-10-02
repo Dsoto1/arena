@@ -28330,12 +28330,12 @@ const ARM_CROP=[[39,16,252,299],[366,15,256,300],[706,16,233,298],[1053,16,202,2
 const EQ={head:[75,29],sho:[40,77],fore:[30,133],hand:[22,168],chest:[75,96],belt:[75,135],thigh:[60,190],shin:[61,258]};
 const EQ_L={sho:[110,76],fore:[119,132],hand:[128,168],thigh:[91,190],shin:[88,258]};
 /* x,y = where the piece's centre sits; w = its width on the body; r = turn in degrees */
-const ARM_FIT={ /* v0.70: Virgilante's fits (fit tool, 2026-10-02) baked in. at = equip point; dx,dy = offset; w = width; r = turn; flip = mirror the art */
-  galea:{at:'head',dy:-6,w:39},cassis:{at:'head',dy:-3,w:67},crista:{at:'head',dy:-7,w:64},murmillo:{at:'head',dy:4,w:42},helm5:{at:'head',dy:10,w:59},flavhelm:{at:'head',dy:-14,w:56,dx:-2},
-  balteus:{at:'belt',dy:-3,w:57},pectorale:{at:'chest',dy:2,w:59,dx:-1},lorica:{at:'chest',dy:5,w:64},musculata:{at:'chest',dy:5,w:61},amazon:{at:'chest',dy:8,w:59,dx:-1},flavchest:{at:'chest',dy:9,w:67},
-  thorax:{at:'chest',dy:-1,w:111,dx:1},wraps:{at:'fore',dx:-1,dy:4,w:34},manica:{at:'sho',w:40},provmanica:{at:'fore',dy:-3,w:27},spaulder:{at:'sho',dx:6,dy:-4,w:48,flip:1},cestus:{at:'hand',dy:-17,w:29,dx:3},
-  galerus:{at:'sho',dx:3,dy:-2,w:37},bracers:{at:'fore',dx:-1,dy:-1,w:26},legwrapsU:{at:'thigh',dx:-7,dy:-34,w:25,flip:1},legwraps:{at:'shin',dy:5,w:22},femoralia:{at:'thigh',dx:-7,dy:-33,w:27},ocrea:{at:'shin',dy:-5,w:26,dx:1,flip:1},
-  greaves:{at:'shin',dy:-7,w:23,flip:1},thighplate:{at:'thigh',dx:-6,dy:-32,w:26},cnemis:{at:'shin',dy:-9,w:24}};
+const ARM_FIT={ /* Virgilante's fits: round 1 (v0.70) + round 2 (2026-10-02 16:04, v0.72). at = equip point; dx,dy = offset; w = width; r = turn; flip = mirror the art; L = the left side's own fit */
+  galea:{at:'head',dy:-6,w:39},cassis:{at:'head',dy:-3,w:67},crista:{at:'head',dy:-7,w:67},murmillo:{at:'head',dy:4,w:42},helm5:{at:'head',dy:7,w:58},flavhelm:{at:'head',dy:-12,w:56,dx:-1},
+  balteus:{at:'belt',dy:-3,w:57},pectorale:{at:'chest',dy:2,w:59,dx:-1},lorica:{at:'chest',dy:5,w:64},musculata:{at:'chest',dy:5,w:61},amazon:{at:'chest',dy:8,w:60,r:-1},flavchest:{at:'chest',dy:9,w:67},
+  thorax:{at:'chest',dy:-2,w:108,dx:1},wraps:{at:'fore',dx:-1,dy:4,w:34},manica:{at:'sho',w:40},provmanica:{at:'fore',dy:-3,w:27,dx:1},spaulder:{at:'sho',dx:8,dy:-2,w:50,flip:1},cestus:{at:'hand',dy:-17,w:29,dx:3,L:{dx:4,dy:-18,r:3,w:29},r:1},
+  galerus:{at:'sho',dx:3,dy:-2,w:37},bracers:{at:'fore',dx:-1,dy:-1,w:26},legwrapsU:{at:'thigh',dx:-7,dy:-34,w:25,flip:1},legwraps:{at:'shin',dy:4,w:24,L:{dx:-2,dy:4,w:24},dx:-1,r:1},femoralia:{at:'thigh',dx:-7,dy:-29,w:26},ocrea:{at:'shin',dy:-5,w:26,dx:1,flip:1},
+  greaves:{at:'shin',dy:-7,w:23,flip:1},thighplate:{at:'thigh',dx:-6,dy:-32,w:26},cnemis:{at:'shin',dy:-7,w:24,L:{dx:-2,dy:-7,w:24},dx:-1}};
 /* the sharper sheet (v0.57) put the orange-brown upper padding in cell 19: Padded Leg Armor (upper) wears it (rulebook p.23) */
 if(ARM.legwrapsU)ARM.legwrapsU.img=19;
 /* Flavius' Bracers: the gold engraved art is not on the sheet yet — the dark plates (cell 15, also the Provocator Manica) stand in */
@@ -28544,7 +28544,7 @@ setInterval(()=>{try{const up=menuUp()||!!(typeof CUR_MODAL!=='undefined'&&CUR_M
      numbers; the avatar sits lower (AV_VB). Turning mirrors on the left (90-armfit armBox side flag). */
 if(ARM.provmanica)ARM.provmanica.pt='lower';
 if(ARM.legwrapsU)ARM.legwrapsU.n='Leather Upper Leg Armor';
-const ARMFIT_BAKED='2026-10-02T13:27:17.081Z';
+const ARMFIT_BAKED='2026-10-02T16:04:36.671Z';
 for(const k of Object.keys(ARM_FIT_OVR))delete ARM_FIT_OVR[k];try{localStorage.removeItem('flavius_armfit')}catch(e){}
 /* 91 loads the saved doc at start; drop it again if it is the one already baked */
 (async()=>{try{const d=await Store.getDoc('armorFit','sys');const old=!d||!d.at||d.at<=ARMFIT_BAKED;const clear=()=>{if(old)for(const k of Object.keys(ARM_FIT_OVR))delete ARM_FIT_OVR[k]};clear();setTimeout(clear,0);setTimeout(clear,2500)}catch(e){}})();
