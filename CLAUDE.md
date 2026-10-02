@@ -433,7 +433,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   out of the top bar) becomes ONE thematic, unobtrusive panel.
   The arena's 📅 date chip (season schedule) leaves the top bar; the date + "this week: <city> · <event>" line goes into the hovered event-card pop-up. Top bar slims to one row: logo · event token + name + round
   marker/name (board size into the pop-up) · speed tray · 🏟 Stands · 📊 Standings · Rules (stays: rules + strategy guides) · 🏛 menu
-  (Event Details moves in there) · ‹.
+  (Event Details moves in there) · ‹. His FR favicon replaces the logo at the arena's top left (file still to come from him).
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
   8 printed classes move to the live template (104-cards74 classCard74) so rule changes update their cards. Still to come from him:
   Thracian Helm, Ornate Chest Armor, Chest Armor, Reinforced Arm Armor art; distinct art for the Iron Spaulder (it shares the look of
