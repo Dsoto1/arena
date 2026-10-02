@@ -1,6 +1,9 @@
 /* =====================================================================
-   108-V76 · v0.76 — one place for saves
+   108-V76 · v0.76 — saves, seats, the road, the yard, the ward, the beast pen
    =====================================================================
+   A  the save hub (below) · B  Play Now roster chip + seat cards · C  road lock, sitting a week out, infirmary beds
+   D  seven Manager ideas · E  the beast pen · F  the Training Yard as fighter cards · G  the Infirmary as a ward
+   Each part has its own header further down. Part A:
    • ▶ Continue on the main menu: the single most recent thing played (a match slot, a Manager career, a missio or a
      tournament), named on the button. The game notes the latest activity in localStorage flavius_last76
      {kind,k|id,label,at}: matchSlotPut (manual saves + the autosave), saveWorld (every career save), a missio event

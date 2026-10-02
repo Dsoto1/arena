@@ -23,7 +23,7 @@ o.r=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));if
   r.meter=/would sign|Close|Not yet/.test((document.getElementById('ofMeter')||{}).textContent||'');r.yes=/would sign/.test(document.getElementById('ofMeter').textContent);
   m.coin=Math.max(m.coin,500);document.querySelector(`[data-mg="offer"][data-id="${c.id}"]`).click();await W8(500);r.signed=!!(c.contract&&c.contract.mgr===m.id);
   const bo=w.night.bouts[0];const x=bo.ents[0];bo.bets.push({gid:x,stake:9,odds:2});m.coin-=9;const c0=m.coin;bo.ents[0]=genGlad({}).id;voidBets(bo,x);r.refund=m.coin-c0;
-  MGR.tab='practice';MGR_REDRAW();await W8(400);r.yard=!!document.querySelector('.yardreg.yr2 .yrtiles .roomtiles');return r});
+  MGR.tab='practice';MGR_REDRAW();await W8(400);r.yard=!!document.querySelector('.yd76top .yd76fac'); /* v0.76: the yard's numbers sit in the top strip */return r});
 ok(o.r.box&&o.r.lfOff,'Ludus Flavius switch');ok(o.r.cols===4&&o.r.cards>=2&&o.r.watch==='watch','pipeline board');
 ok(o.r.nextScout&&o.r.scouted&&o.r.moved,'next step from the card');ok(o.r.fitHead&&o.r.fit&&o.r.filter,'fit + filters');
 ok(o.r.steps&&o.r.slider&&o.r.meter,'3-step card + meter');ok(!o.r.yes||o.r.signed,'meter yes → the offer signs');ok(o.r.refund===9,'void wager refunded');ok(o.r.yard,'yard row');
