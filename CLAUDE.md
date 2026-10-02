@@ -420,6 +420,14 @@ One global script; files are concatenated in order. Later "version modules" patc
   tools/art/armor_new: Centurian Helm (L2 head 3), Steel Helm (L1 head 2, Venatore's), real Flavius' Bracers, Iron Spaulder art,
   Leather Greaves (L1 lower leg 3, pair); his drawn set becomes the default armor art, Sculpted hidden until reworked, everyone switched once.
   Still to come from him: Thracian Helm, Ornate Chest Armor, Chest Armor, Reinforced Arm Armor art.
+  Also in v0.74 (agreed): Training Yard 1-h actions (Morale talk +5 once/fighter/week, Study the card = see this week's opponents'
+  ratings/personality + small Int gain, Gear care = +1 AP on one location in round 1 of the next bout; outside the 4 h/fighter cap);
+  Infirmary gets a "baths" side (Rubdown 1 h −10 fatigue, care beyond wounds) and shows each hurt fighter on an avatar with wounds and
+  severed limbs marked where they need fixing; Recruiting: per-stage action menus with a ★ advisor pick + reason (never automatic),
+  new Watch them train (1 h: two rating ranges + top motive), Ask around (1 h free: suitors, rough ask, a personality hint, 25% wrong),
+  Private note (1 h, no pitch slot; Praise / Promise (ask rises at signing) / Plain truth, landing by personality). Already built for
+  v0.74: Your ludus ✓ follows the checklist; per-tab ✓; dismissable optional checklist items (verdicts required); Wagers banner week strip;
+  banner counts in the perk-point box coloured per tab, perk points in the pill; lingering #tip watchdog.
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
