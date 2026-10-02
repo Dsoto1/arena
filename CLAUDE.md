@@ -299,6 +299,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - **v0.65** training-hours cards with previews; fatigue + rest weeks; Infirmary treatment plans + timeline; regime first; rail hours + soft outlines.
   (Published as artifact Version 77.)
 - **v0.66** tutorial bumpers; phones in landscape (drawers, dock, auto actions); follow camera + pinch zoom; portrait hint.
+  (Published as artifact Version 78.)
 
 ## 8. Next steps / open items
 - **Next (agreed with Virgilante):** v0.67 — Recruiting portal: favourites become a pipeline board (⭐ Watching → 🔍 Scouted →

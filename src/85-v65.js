@@ -80,7 +80,7 @@ if(typeof exhibApply==='function'){const base=exhibApply;exhibApply=function(){c
       const spar=P.pairs.filter(p=>p.k==='spar'&&(p.a===g.id||p.b===g.id)).length;const resting=g.restWk===w.week;
       const work=(resting?0:reg)+hrs*FAT_HOUR+spar*FAT_SPAR;before.work[g.id]=work;g.fat=Math.min(100,gFat(g)+work)}}}catch(e){console.error(e)}
   const r=await base.apply(this,arguments);
-  try{if(before&&W_()&&me()){for(const g of rosterOf(me())){const f=gFat(g);const busy=g.fatWk===before.wk||(before.work[g.id]||0)>0;const rest=g.restWk===before.wk;
+  try{if(before&&W_()){for(const g of Object.keys(before.work).map(id=>gById(id)).filter(Boolean)){ /* everyone who was on the roster when the week began, even if the week took them away */const f=gFat(g);const busy=g.fatWk===before.wk||(before.work[g.id]||0)>0;const rest=g.restWk===before.wk;
       let nf=f-FAT_DECAY-(busy?0:FAT_IDLE-FAT_DECAY)-(rest?FAT_REST:0);g.fat=Math.max(0,nf);
       if(!g.inj&&f>50&&!rest&&Math.random()<Math.min(0.2,(f-50)/250)){g.inj={until:w.week+2,label:pickOneUI(['worn down: a strained back','worn down: shin splints','worn down: a pulled hamstring']),pen:2};g.fat=Math.max(0,g.fat-30);
         if(typeof tnews==='function')tnews(`${esc(g.name)} is worn down (fatigue ${f}) — ${esc(g.inj.label.replace('worn down: ',''))}.`,'bad')}}}}catch(e){console.error(e)}
