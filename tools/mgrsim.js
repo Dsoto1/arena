@@ -19,13 +19,16 @@ for(const strat of STRATS)for(let run=0;run<RUNS;run++){
   const r=await pg.evaluate(async({strat,run,SEASONS})=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));
     newWorld({type:'pre',key:MGR_PRE[run%MGR_PRE.length].key});MGR.view=null;const w=W_(),m=me();
     const avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:0;const rivals=()=>w.mgrs.filter(x=>!x.isPlayer&&!x.dead);
-    const start={mine:avg(rosterOf(m).map(effOvr)),riv:avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))};let injuries=0,lost=0;const n0=rosterOf(m).length;
+    const start={mine:avg(rosterOf(m).map(effOvr)),riv:avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))};let injuries=0,lost=0,c6=null,c12=null,c24=null,minCoin=1e9,collapsed=0;const n0=rosterOf(m).length;
     const weeks=SEASONS*12;
     for(let k=0;k<weeks;k++){
       const yard=strat!=='base';const ros=()=>rosterOf(m);
       /* signings */
       if(strat==='cheap'&&wkOf(w.week)<=3){for(const g of freeAgents().filter(g=>askWage(g)<=12&&(g.pot||effOvr(g))>=60).sort((a,b)=>(b.pot||0)-(a.pot||0))){if(ros().length>=12)break;
         if(m.coin<askWage(g)*4)break;for(const x of [1,1.25,1.5]){const wage=Math.ceil(askWage(g)*x);if(offerVerdict(g,wage,12,0,false).ok){signGlad(g,wage,12,0,false);break}}}}
+      /* renewals: the game's own extend rule (morale 35+, interest 25+), at the current ask */
+      for(const g of ros())if(g.morale<45&&m.coin>25){m.coin-=5;g.morale=Math.min(100,g.morale+8)} /* an attentive lanista: a feast for the low-spirited (same for every strategy) */
+      for(const g of ros())if(g.contract&&g.contract.weeks<=2&&g.morale>=35){g.contract.weeks=Math.max(0,g.contract.weeks)+8;g.contract.wage=Math.max(g.contract.wage,askWage(g));g.contract.expired=0}
       /* care */
       for(const g of ros())if(g.inj&&!g.inj.war){const req=injReq(g.inj);if(req==='surgeon'&&m.coin>=SURGEON+20){m.coin-=SURGEON;delete g.inj}else if(req!=='surgeon'&&m.coin>=MEDICUS+20){m.coin-=MEDICUS;delete g.inj}}
       /* the yard */
@@ -36,16 +39,19 @@ for(const strat of STRATS)for(let run=0;run<RUNS;run++){
       const used=new Set();for(const bo of w.night.bouts){if(bo.done)continue;const T=TIERS[bo.tier];
         const g=ros().filter(g=>!g.inj&&g.morale>15&&!used.has(g.id)&&!bo.ents.includes(g.id)&&effOvr(g)>=T.lo-4&&effOvr(g)<=T.hi+2).sort((a,b)=>effOvr(b)-effOvr(a))[0];if(!g)continue;
         const out=bo.ents.map(gById).filter(x=>x&&!x.contract).sort((x,y)=>effOvr(x)-effOvr(y))[0];if(!out)continue;bo.ents[bo.ents.indexOf(out.id)]=g.id;used.add(g.id)}
+      if(w.special&&!w.special.done&&typeof specAutoRun==='function'){try{await specAutoRun()}catch(e){}}
       const inj0=ros().filter(g=>g.inj).length;
       for(let i=0;i<w.night.bouts.length;i++)if(!w.night.bouts[i].done){try{await runBoutSim(i)}catch(e){}}
       let guard=0;while((w.pend||[]).length&&guard++<30){const P=w.pend[0];const g=gById(P.gid);try{if(P.t==='thumb')settlePending(0,null,{d6:1+Math.floor(Math.random()*6),d12:1+Math.floor(Math.random()*12)});else if(P.t==='blood')settlePending(0,'let');else settlePending(0,'stay')}catch(e){w.pend.shift()}}
       const alive0=ros().length;let ok=true;try{ok=await endWeek()}catch(e){ok=false}if(ok===false)break;
-      injuries+=Math.max(0,ros().filter(g=>g.inj).length-inj0);lost+=Math.max(0,alive0-ros().length)}
+      injuries+=Math.max(0,ros().filter(g=>g.inj).length-inj0);lost+=Math.max(0,alive0-ros().length);
+      const wk=k+1;if(wk===6)c6=m.coin;if(wk===12)c12=m.coin;if(wk===24)c24=m.coin;minCoin=Math.min(minCoin,m.coin);
+      if(m.dead||w.dead||(!ros().length&&m.coin<0)){collapsed=wk;break}}
     const table=w.mgrs.filter(x=>!x.dead).map(x=>({p:x.isPlayer,wins:x.wins||0})).sort((a,b)=>b.wins-a.wins);
-    return {strat,run,wins:m.wins||0,rank:table.findIndex(x=>x.p)+1,houses:table.length,mine:+avg(rosterOf(m).map(effOvr)).toFixed(1),riv:+avg(rivals().flatMap(x=>rosterOf(x).map(effOvr))).toFixed(1),
-      gain:+(avg(rosterOf(m).map(effOvr))-start.mine).toFixed(1),rivGain:+(avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))-start.riv).toFixed(1),coin:m.coin,fighters:rosterOf(m).length,n0,injuries,lost,weeks:w.week}},{strat,run,SEASONS});
+    return {strat,run,wins:m.wins||0,rank:table.findIndex(x=>x.p)+1,wage:rosterOf(m).reduce((a,g)=>a+(g.contract?g.contract.wage:0),0),houses:table.length,mine:+avg(rosterOf(m).map(effOvr)).toFixed(1),riv:+avg(rivals().flatMap(x=>rosterOf(x).map(effOvr))).toFixed(1),
+      gain:+(avg(rosterOf(m).map(effOvr))-start.mine).toFixed(1),rivGain:+(avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))-start.riv).toFixed(1),coin:m.coin,c6,c12,c24,minCoin,collapsed,fighters:rosterOf(m).length,n0,injuries,lost,weeks:w.week}},{strat,run,SEASONS});
   rows.push(r);process.stderr.write(JSON.stringify(r)+'\n')}
 const by={};for(const r of rows)(by[r.strat]=by[r.strat]||[]).push(r);const A=(a,k)=>(a.reduce((s,x)=>s+x[k],0)/a.length).toFixed(1);
-console.log('strategy   wins  rank/12  myOvr  rivOvr  myGain  rivGain  coin  roster  injuries  lost');
-for(const [s,a] of Object.entries(by))console.log(`${s.padEnd(9)} ${A(a,'wins').padStart(5)} ${A(a,'rank').padStart(7)} ${A(a,'mine').padStart(6)} ${A(a,'riv').padStart(7)} ${A(a,'gain').padStart(7)} ${A(a,'rivGain').padStart(8)} ${A(a,'coin').padStart(5)} ${A(a,'fighters').padStart(7)} ${A(a,'injuries').padStart(9)} ${A(a,'lost').padStart(5)}`);
+console.log('strategy   wins  rank/12  myOvr  rivOvr  myGain  rivGain  coin  roster  injuries  lost  coin@6  coin@12  coin@24  lowest  collapsed');
+for(const [s,a] of Object.entries(by))console.log(`${s.padEnd(9)} ${A(a,'wins').padStart(5)} ${A(a,'rank').padStart(7)} ${A(a,'mine').padStart(6)} ${A(a,'riv').padStart(7)} ${A(a,'gain').padStart(7)} ${A(a,'rivGain').padStart(8)} ${A(a,'coin').padStart(5)} ${A(a,'fighters').padStart(7)} ${A(a,'injuries').padStart(9)} ${A(a,'lost').padStart(5)} ${A(a.filter(x=>x.c6!=null),'c6').padStart(7)} ${A(a.filter(x=>x.c12!=null),'c12').padStart(8)} ${A(a.filter(x=>x.c24!=null),'c24').padStart(8)} ${A(a,'minCoin').padStart(7)} ${a.filter(x=>x.collapsed).length}/${a.length}`);
 if(errs.length)console.log('page errors:',errs.slice(0,3));await b.close()})();

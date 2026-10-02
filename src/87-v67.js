@@ -154,3 +154,14 @@ document.addEventListener('change',e=>{const t=e.target;if(!t||!/^team\d$/.test(
   const btn=m[0].replace('class="btn roadsend','class="btn roadsend inrow').replace(/>(🛣 Send on the Road)</,'>$1<small>win the twelve arenas in order</small><').replace(/>(⚔ Walk stage[^<]*)</,'>$1<small>opens the next stage</small><');
   h=h.replace(m[0],'');return h.slice(0,h.indexOf('</div>',h.indexOf('<div class="mbtns"')))+btn+h.slice(h.indexOf('</div>',h.indexOf('<div class="mbtns"')))}catch(e){return h}}}
 {const st=document.createElement('style');st.textContent=`.roadsend.inrow{position:static!important;float:none!important;margin:0!important}`;document.head.appendChild(st)}
+/* ---------- ECONOMY (v0.68 tuning, the same rules for every house): an attentive lanista who enters the card each week roughly
+   breaks even without winning; purses become profit.
+     appearance fees 4/8/15 → 12/24/40 · wage asks −15% (WAGE_MUL; signed contracts keep their wage) · a weekly gate share
+     5 + fame/4 (max 30) for every house · +100 starting coin for every house.  TWEAK: ECON. ---------- */
+const ECON={fees:{under:12,feature:24,main:40},wage:0.85,gateBase:5,gatePerFame:0.25,gateMax:30,startBonus:100};
+var WAGE_MUL=ECON.wage;
+for(const [k,v] of Object.entries(ECON.fees))if(TIERS[k])TIERS[k].fee=v;
+const gateShare=m=>Math.min(ECON.gateMax,Math.round(ECON.gateBase+(m.fame||0)*ECON.gatePerFame));
+{const base=newWorld;newWorld=function(){const r=base.apply(this,arguments);try{const w=W_();if(w&&!w._econ68){for(const m of w.mgrs)m.coin=(m.coin||0)+ECON.startBonus;w._econ68=1}}catch(e){console.error(e)}return r}}
+{const base=endWeek;endWeek=async function(){const w=W_();const wk=w&&w.week;try{if(w&&!w.dead)for(const m of w.mgrs){if(m.dead)continue;const g=gateShare(m);m.coin+=g;if(m.isPlayer&&typeof tnews==='function')tnews(`🏟 Your share of the gate: +${g} coin (fame ${m.fame}).`)}}catch(e){console.error(e)}
+  return base.apply(this,arguments)}}

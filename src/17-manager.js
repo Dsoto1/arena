@@ -139,7 +139,7 @@ const pubOvr=g=>clamp(effOvr(g)+Math.round(g.pubNoise||0),30,99);
 function estOvr(g){const s=g.scout||0;if(s>=2||(g.contract&&g.contract.mgr===W_().playerId))return {v:effOvr(g),txt:String(effOvr(g))};if(s===1){const lo=effOvr(g)-3,hi=effOvr(g)+3;return {v:effOvr(g),txt:`${lo}–${hi}`}}return {v:pubOvr(g),txt:`~${pubOvr(g)}`}}
 // v0.28: stars know their worth — a 4★ asks a quarter more, a 5★ half again (the blue-chip premium)
 const STAR_PREM=[1,1,1,1.08,1.25,1.5];
-const askWage=g=>Math.max(3,Math.round((3+(effOvr(g)-40)*0.55+g.fame*0.05)*STAR_PREM[starsOf(effOvr(g))]));
+const askWage=g=>Math.max(3,Math.round((3+(effOvr(g)-40)*0.55+g.fame*0.05)*STAR_PREM[starsOf(effOvr(g))]*(typeof WAGE_MUL!=='undefined'?WAGE_MUL:1))); // v0.68: WAGE_MUL (87-v67) scales every ask
 /* v0.28 MONEY TALKS (the NIL rule): what you actually PUT ON THE TABLE outweighs everything else.
    Every coin a week over their ask adds interest; pay enough and even the fame gate opens —
    a humble ludus CAN land a blue-chip fighter, if it pays like a palace. */
