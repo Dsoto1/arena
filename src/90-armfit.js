@@ -26,6 +26,8 @@ const ARM_FIT={ /* placed to the rulebook's armored avatar (p.22): helmets to th
 if(ARM.legwrapsU)ARM.legwrapsU.img=19;
 /* Flavius' Bracers: the gold engraved art is not on the sheet yet — the dark plates (cell 15, also the Provocator Manica) stand in */
 if(ARM.bracers)ARM.bracers.img=15;
+/* Flavius' Bracers: the dark plates colour-graded gold (Virgilante: the bracers are the same art graded per level) */
+const BRACER_GOLD='sepia(1) saturate(2.4) hue-rotate(-8deg) brightness(1.2) contrast(1.05)';
 const ARM_DIM=0.5; /* opacity lost when a piece's share of AP is gone (it falls off at 0) */
 let ARM_FIT_OVR={};try{ARM_FIT_OVR=JSON.parse(localStorage.getItem('flavius_armfit')||'{}')||{}}catch(e){ARM_FIT_OVR={}}
 /* the printed part decides the point: arm upper → shoulder, lower → forearm, hand → hand; leg upper → thigh, lower → shin */
@@ -39,7 +41,7 @@ const ARM_PAIR={22:[[1356,675,123,300],[1491,675,123,300]],24:[[2027,675,112,297
 const ARM_LEFTART={thighplate:1,legwrapsU:1};
 function armBox(key,l){const A=ARM[key];const f=armFit(key);if(!A||A.img==null||!f||!ARM_CROP[A.img])return null;const P=ARM_PAIR[A.img];const c=P?P[armSide(l)==='L'?1:0]:ARM_CROP[A.img];
   const L=armSide(l)==='L';const p=(L&&EQ_L[f.at])||EQ[f.at];const x=L&&!EQ_L[f.at]?150-p[0]:p[0];
-  const cx=L?x-(f.dx||0):x+(f.dx||0),cy=p[1]+(f.dy||0);const h=f.w*c[3]/c[2];return {cx,cy,w:f.w,h,r:f.r||0,crop:c,mirror:P?false:(L!==!!ARM_LEFTART[key])}}
+  const cx=L?x-(f.dx||0):x+(f.dx||0),cy=p[1]+(f.dy||0);const h=f.w*c[3]/c[2];return {cx,cy,w:f.w,h,r:f.r||0,crop:c,mirror:P?!!f.flip:(L!==(!!ARM_LEFTART[key]!==!!f.flip)),gold:key==='bracers'}}
 /* each piece's share of the location's AP pool (wear order, as eliminate() drops them) */
 /* rulebook p.22: a location's armor is damaged as one pool; at 0 AP every piece on it is destroyed together */
 function armShares(p,l){const P=p.pieces[l]||[];const tot=P.reduce((a,pc)=>a+(pc.ap||0),0);const cur=Math.max(0,p.ap[l]||0);const ratio=tot?Math.min(1,cur/tot):1;return P.map(pc=>({pc,cur,ratio}))}
@@ -49,7 +51,7 @@ function armPieceSVG(B,key,ratio,extra,uid){const c=B.crop;const x=B.cx-B.w/2,y=
   let cracks='';const n=ratio<1?Math.ceil((1-ratio)*3):0;
   for(let i=0;i<n;i++){const sx=x+B.w*(0.25+0.25*i),sy=y+B.h*(0.15+0.2*i);cracks+=`<path d="M${sx.toFixed(1)} ${sy.toFixed(1)}l${(B.w*.12).toFixed(1)} ${(B.h*.1).toFixed(1)}l${(-B.w*.07).toFixed(1)} ${(B.h*.08).toFixed(1)}l${(B.w*.1).toFixed(1)} ${(B.h*.12).toFixed(1)}" fill="none" stroke="#140f0b" stroke-width=".9" stroke-opacity=".8"/>`}
   const href=typeof assetURL==='function'?assetURL(ARM_SHEET.f):ASSET+ARM_SHEET.f;
-  const inner=`<g class="armpc" opacity="${(1-ARM_DIM*(1-ratio)).toFixed(2)}" transform="${tr}"><clipPath id="${id}"><rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${B.w.toFixed(1)}" height="${B.h.toFixed(1)}"/></clipPath><image href="${href}" x="${(x-c[0]*k).toFixed(2)}" y="${(y-c[1]*k).toFixed(2)}" width="${(ARM_SHEET.w*k).toFixed(1)}" height="${(ARM_SHEET.h*k).toFixed(1)}" clip-path="url(#${id})" preserveAspectRatio="none"/>${cracks}</g>`;
+  const inner=`<g class="armpc" opacity="${(1-ARM_DIM*(1-ratio)).toFixed(2)}" transform="${tr}"><clipPath id="${id}"><rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${B.w.toFixed(1)}" height="${B.h.toFixed(1)}"/></clipPath><image href="${href}" x="${(x-c[0]*k).toFixed(2)}" y="${(y-c[1]*k).toFixed(2)}" width="${(ARM_SHEET.w*k).toFixed(1)}" height="${(ARM_SHEET.h*k).toFixed(1)}" clip-path="url(#${id})" preserveAspectRatio="none"${B.gold?` style="filter:${BRACER_GOLD}"`:''}/>${cracks}</g>`;
   return extra?`<g class="${extra.cls}" style="${extra.style}">${inner}</g>`:inner}
 /* draw order: padded and wraps first, plate over them, the belt last */
 const armZ=key=>key==='balteus'?3:ARM[key]&&ARM[key].stack?0:key==='spaulder'||key==='galerus'?2:1;
