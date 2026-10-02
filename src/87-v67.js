@@ -19,3 +19,11 @@ function cutDiv(h,i){let e=h.indexOf('>',i)+1,depth=1;while(depth&&e<h.length){c
 .yr2 .yrtiles .roomtiles{grid-template-columns:1fr 1fr;margin:0;gap:6px}
 .yr2 .yrtiles .roomtile{padding:5px 8px;gap:6px;cursor:help}.yr2 .yrtiles .rti{font-size:18px}.yr2 .yrtiles .rtv{font-size:15px}.yr2 .yrtiles .rtl{font-size:10px}
 @media (max-width:1100px){.yardreg.yr2{grid-template-columns:1fr}}`;document.head.appendChild(st)}
+/* ---------- Ludus Flavius in the league: a switch on the career start screen (remembered per browser, on by default) ---------- */
+function lfPoolOn(){try{return localStorage.getItem('flavius_lfpool')!=='0'}catch(e){return true}}
+{const base=startHTML;startHTML=function(){const h=base.apply(this,arguments);try{if(MGR.view)return h;
+  const n=(typeof LUDUS_CACHE!=='undefined'?LUDUS_CACHE:[]).filter(g=>gladActive(g)&&!isCustomCls(g.cls)).length;if(!n)return h;
+  const box=`<label class="lfpool"><input type="checkbox" data-lfpool ${lfPoolOn()?'checked':''}> Bring my <b>Ludus Flavius</b> gladiators into the league <span class="rc-sub">(${n} — as free agents, rivals' signings and card fillers; off = a league of its own)</span></label>`;
+  return box+h}catch(e){return h}}}
+document.addEventListener('change',e=>{const t=e.target;if(t&&t.matches&&t.matches('[data-lfpool]')){try{localStorage.setItem('flavius_lfpool',t.checked?'1':'0')}catch(err){}}});
+{const st=document.createElement('style');st.textContent=`.lfpool{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 10px;padding:6px 10px;border:1px solid var(--line2);border-radius:8px}`;document.head.appendChild(st)}

@@ -18034,7 +18034,7 @@ function newWorld(choice){
   // the pool: generated fighters, the Ludus Flavius and your custom characters
   for(let i=0;i<58;i++)w.glads.push(genGlad()); // twelve stables need a deeper pool
   if(choice.scattered)for(const g of choice.scattered){if(!w.glads.some(x=>x.name===g.name)){w.glads.push({...g,alive:true});}}
-  for(const L of LUDUS_CACHE.filter(g=>gladActive(g)&&!isCustomCls(g.cls)))w.glads.push(gladFromLudus(L));
+  if(typeof lfPoolOn!=='function'||lfPoolOn())for(const L of LUDUS_CACHE.filter(g=>gladActive(g)&&!isCustomCls(g.cls)))w.glads.push(gladFromLudus(L)); // v0.67: a switch on the start screen
   for(const c of CUSTOM.chars.filter(typeof onRollsR==='function'?onRollsR:onRolls))w.glads.push(gladFromCustom(c)); // only creations on the rolls join the league
   for(let i=0;i<4;i++)w.glads.push(genGlad({rookie:true,ovr:40+rnd(10)}));
   // rival stables fill up from the pool, strongest managers first
@@ -18123,6 +18123,9 @@ function fillNight(){
   for(const b of n.bouts){const T=TIERS[b.tier];const need=boutSize(b);
     const pool=freeAgents().filter(g=>!used.has(g.id)&&!g.inj&&effOvr(g)>=T.lo-3&&effOvr(g)<=T.hi+3).sort(()=>Math.random()-.5);
     while(b.ents.length<need&&pool.length){const g=pool.pop();b.ents.push(g.id);used.add(g.id)}
+    /* v0.67: the league pool first — the nearest-rated free agents outside the band — and a new fighter only when none is left */
+    if(b.ents.length<need){const mid=(T.lo+T.hi)/2;const near=freeAgents().filter(g=>!used.has(g.id)&&!g.inj).sort((x,y)=>Math.abs(effOvr(x)-mid)-Math.abs(effOvr(y)-mid));
+      while(b.ents.length<need&&near.length){const g=near.shift();b.ents.push(g.id);used.add(g.id)}}
     while(b.ents.length<need){const g=genGlad({ovr:clamp(T.lo+rnd(Math.min(20,T.hi-T.lo)),40,90)});g.debut={s:w.season,wk:w.week};w.glads.push(g);b.ents.push(g.id);used.add(g.id)}
   }
 }
@@ -28015,6 +28018,14 @@ function cutDiv(h,i){let e=h.indexOf('>',i)+1,depth=1;while(depth&&e<h.length){c
 .yr2 .yrtiles .roomtiles{grid-template-columns:1fr 1fr;margin:0;gap:6px}
 .yr2 .yrtiles .roomtile{padding:5px 8px;gap:6px;cursor:help}.yr2 .yrtiles .rti{font-size:18px}.yr2 .yrtiles .rtv{font-size:15px}.yr2 .yrtiles .rtl{font-size:10px}
 @media (max-width:1100px){.yardreg.yr2{grid-template-columns:1fr}}`;document.head.appendChild(st)}
+/* ---------- Ludus Flavius in the league: a switch on the career start screen (remembered per browser, on by default) ---------- */
+function lfPoolOn(){try{return localStorage.getItem('flavius_lfpool')!=='0'}catch(e){return true}}
+{const base=startHTML;startHTML=function(){const h=base.apply(this,arguments);try{if(MGR.view)return h;
+  const n=(typeof LUDUS_CACHE!=='undefined'?LUDUS_CACHE:[]).filter(g=>gladActive(g)&&!isCustomCls(g.cls)).length;if(!n)return h;
+  const box=`<label class="lfpool"><input type="checkbox" data-lfpool ${lfPoolOn()?'checked':''}> Bring my <b>Ludus Flavius</b> gladiators into the league <span class="rc-sub">(${n} — as free agents, rivals' signings and card fillers; off = a league of its own)</span></label>`;
+  return box+h}catch(e){return h}}}
+document.addEventListener('change',e=>{const t=e.target;if(t&&t.matches&&t.matches('[data-lfpool]')){try{localStorage.setItem('flavius_lfpool',t.checked?'1':'0')}catch(err){}}});
+{const st=document.createElement('style');st.textContent=`.lfpool{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 10px;padding:6px 10px;border:1px solid var(--line2);border-radius:8px}`;document.head.appendChild(st)}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

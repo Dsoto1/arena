@@ -213,7 +213,7 @@ function newWorld(choice){
   // the pool: generated fighters, the Ludus Flavius and your custom characters
   for(let i=0;i<58;i++)w.glads.push(genGlad()); // twelve stables need a deeper pool
   if(choice.scattered)for(const g of choice.scattered){if(!w.glads.some(x=>x.name===g.name)){w.glads.push({...g,alive:true});}}
-  for(const L of LUDUS_CACHE.filter(g=>gladActive(g)&&!isCustomCls(g.cls)))w.glads.push(gladFromLudus(L));
+  if(typeof lfPoolOn!=='function'||lfPoolOn())for(const L of LUDUS_CACHE.filter(g=>gladActive(g)&&!isCustomCls(g.cls)))w.glads.push(gladFromLudus(L)); // v0.67: a switch on the start screen
   for(const c of CUSTOM.chars.filter(typeof onRollsR==='function'?onRollsR:onRolls))w.glads.push(gladFromCustom(c)); // only creations on the rolls join the league
   for(let i=0;i<4;i++)w.glads.push(genGlad({rookie:true,ovr:40+rnd(10)}));
   // rival stables fill up from the pool, strongest managers first
@@ -302,6 +302,9 @@ function fillNight(){
   for(const b of n.bouts){const T=TIERS[b.tier];const need=boutSize(b);
     const pool=freeAgents().filter(g=>!used.has(g.id)&&!g.inj&&effOvr(g)>=T.lo-3&&effOvr(g)<=T.hi+3).sort(()=>Math.random()-.5);
     while(b.ents.length<need&&pool.length){const g=pool.pop();b.ents.push(g.id);used.add(g.id)}
+    /* v0.67: the league pool first — the nearest-rated free agents outside the band — and a new fighter only when none is left */
+    if(b.ents.length<need){const mid=(T.lo+T.hi)/2;const near=freeAgents().filter(g=>!used.has(g.id)&&!g.inj).sort((x,y)=>Math.abs(effOvr(x)-mid)-Math.abs(effOvr(y)-mid));
+      while(b.ents.length<need&&near.length){const g=near.shift();b.ents.push(g.id);used.add(g.id)}}
     while(b.ents.length<need){const g=genGlad({ovr:clamp(T.lo+rnd(Math.min(20,T.hi-T.lo)),40,90)});g.debut={s:w.season,wk:w.week};w.glads.push(g);b.ents.push(g.id);used.add(g.id)}
   }
 }
