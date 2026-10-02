@@ -463,7 +463,8 @@ One global script; files are concatenated in order. Later "version modules" patc
   replace standees, shorter textured pillar; his weapon icons, Ornate Chest, single greave; one crowd count (13K). (Published as artifact Version 87;
   follow-up with card backs, chest flip, city Match Week banners, icon weapon chips, no skip-menu = Version 88.)
 - **v0.76** save hub (▶ Continue + 📜 Saves); Play Now roster chip + seat cards; road lock, sit a week out, infirmary beds; Training Yard
-  as fighter cards; Infirmary as a ward; the beast pen; road events, medicus, temple, kitchen/shrine, clauses, Darling, rival letters.
+  as fighter cards; Infirmary as a ward; the beast pen; road events, medicus, temple, kitchen/shrine, clauses, Darling, rival letters;
+  round rules in the turn panel's ⓘ. (Published as artifact Version 89; his site files page got a one-file "Update to v0.76" button.)
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
