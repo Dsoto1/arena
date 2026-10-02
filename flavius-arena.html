@@ -30765,6 +30765,14 @@ function saveBlocked76(){const n=newerSeen76();if(!n)return false;updBar76(n,tru
   padding:8px 12px;background:var(--panel,#1f1711);border:1px solid var(--gold,#d6ab4c);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.55);font-size:14px;color:var(--bone,#efe3cc)}
 #upd76[hidden]{display:none}`;document.head.appendChild(st)})();
 
+/* ---------- every delete of a custom creation asks first (a centred popup naming it; one answer — the old two-click
+   "Confirm delete" buttons go straight through after it) ---------- */
+const DEL76='[data-st="del"],[data-st="spdel"],[data-clsa="del"],[data-trs="del"],[data-sps="del"],[data-fda="del"],[data-gs="wdel"],[data-gs="adel"],[data-cr="del"],[data-rs="del"]';
+function delName76(b){const box=b.closest('.lrow,.setcard,.card2,tr,li,.studcard,.row')||b.parentElement;const n=box&&box.querySelector('b,strong,.nm,.name');const t=(n&&n.textContent||'').trim();return t&&t.length<60?t:'this creation'}
+document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest(DEL76);if(!b||b.disabled)return;if(b.dataset.del76ok){delete b.dataset.del76ok;return}
+  e.preventDefault();e.stopPropagation();const ok=await ask76(`🗑 Delete ${esc(delName76(b))}?`,'It is gone for good — this cannot be undone.','Delete','Keep it');if(!ok||!b.isConnected)return;
+  b.dataset.del76ok='1';if(b.dataset.st)b.dataset.armed='1';b.click()},true);
+
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
    =====================================================================
