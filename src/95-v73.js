@@ -117,3 +117,8 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-oldr
 
 /* ---------- v0.73: the ratings in the fighter panel's header start folded (until you open them) ---------- */
 try{RAT_SHUT=localStorage.getItem('flavius_ratshut')!=='0'}catch(e){RAT_SHUT=true}
+
+/* ---------- fix (v0.74): the Your ludus tab's ✓ follows the weekly checklist (the v0.49 check could say done with tasks left) ---------- */
+{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(!w||w.dead)return h;const n=ludusTodo73();
+  h=h.replace(/(<button[^>]*data-mg="tab" data-id="ludus"[^>]*class=")([^"]*)("[^>]*>)([\s\S]*?)(<\/button>)/,(m0,a,cls,c,lab,e)=>{cls=cls.replace(/\b(ludpend|luddone)\b/g,'').trim()+' '+(n?'ludpend':'luddone');
+    lab=lab.replace(/<span class="tabchk"[^>]*>✓<\/span>/,'');return `${a}${cls}${c}${lab}${n?'':'<span class="tabchk" title="Everything here is done for the week">✓</span>'}${e}`})}catch(e){console.error(e)}return h}}
