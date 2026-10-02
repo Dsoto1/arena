@@ -28321,7 +28321,7 @@ openMenagerie=async function(){if(typeof modalBusy==='function'&&modalBusy())ret
 const ARM_SHEET={f:'armor2.webp',w:2970,h:990};
 const ARM_CROP=[[39,16,252,299],[366,15,256,300],[706,16,233,298],[1053,16,202,299],[1376,15,217,300],[1680,15,268,300],[2037,165,216,149],[2385,16,178,299],[2703,18,198,294],
   [72,345,186,300],[398,345,198,300],[740,346,171,299],[1005,366,300,257],[1393,348,178,296],[1723,355,142,278],[2055,348,177,294],[2326,351,299,286],[2717,345,176,292],
-  [76,684,155,282],[434,675,123,300],[780,675,90,300],[1105,691,86,281],[1356,675,129,300],[1749,675,132,300],[2027,675,117,297],[2414,675,123,300],[2760,675,88,300]];
+  [76,684,155,282],[434,675,123,300],[780,675,90,300],[1105,691,86,281],[1356,675,123,300],[1749,675,132,300],[2027,675,112,297],[2414,675,123,300],[2760,675,88,300]];
 /* the avatar's equip points (the red rings in avatar.png), right side = image-left */
 const EQ={head:[75,29],sho:[40,77],fore:[30,133],hand:[22,168],chest:[75,96],belt:[75,135],thigh:[60,190],shin:[61,258]};
 const EQ_L={sho:[110,76],fore:[119,132],hand:[128,168],thigh:[91,190],shin:[88,258]};
@@ -28343,9 +28343,13 @@ const ARM_PT_AT={arm:{upper:'sho',lower:'fore',hand:'hand'},leg:{upper:'thigh',l
 function armFit(key){const f={...(ARM_FIT[key]||{}),...(ARM_FIT_OVR[key]||{})};const A=ARM[key];const at=A&&ARM_PT_AT[A.slot]&&ARM_PT_AT[A.slot][A.pt];if(at)f.at=at;return f.at?f:null}
 const armSide=l=>l==='larm'||l==='lleg'?'L':'R';
 /* the piece's box on the body: centre (cx,cy), width w, height from the crop's aspect */
-function armBox(key,l){const A=ARM[key];const f=armFit(key);if(!A||A.img==null||!f||!ARM_CROP[A.img])return null;const c=ARM_CROP[A.img];
+/* pairs drawn as both legs in one cell: each leg wears its own half (image-left half = the body's right leg), never a mirror */
+const ARM_PAIR={22:[[1356,675,123,300],[1491,675,123,300]],24:[[2027,675,112,297],[2150,675,112,297]]};
+/* pieces whose art is drawn for the LEFT limb (rulebook p.22: segmented thigh plates step outward) — flipped on the right side */
+const ARM_LEFTART={thighplate:1,legwrapsU:1};
+function armBox(key,l){const A=ARM[key];const f=armFit(key);if(!A||A.img==null||!f||!ARM_CROP[A.img])return null;const P=ARM_PAIR[A.img];const c=P?P[armSide(l)==='L'?1:0]:ARM_CROP[A.img];
   const L=armSide(l)==='L';const p=(L&&EQ_L[f.at])||EQ[f.at];const x=L&&!EQ_L[f.at]?150-p[0]:p[0];
-  const cx=L?x-(f.dx||0):x+(f.dx||0),cy=p[1]+(f.dy||0);const h=f.w*c[3]/c[2];return {cx,cy,w:f.w,h,r:f.r||0,crop:c,mirror:L}}
+  const cx=L?x-(f.dx||0):x+(f.dx||0),cy=p[1]+(f.dy||0);const h=f.w*c[3]/c[2];return {cx,cy,w:f.w,h,r:f.r||0,crop:c,mirror:P?false:(L!==!!ARM_LEFTART[key])}}
 /* each piece's share of the location's AP pool (wear order, as eliminate() drops them) */
 /* rulebook p.22: a location's armor is damaged as one pool; at 0 AP every piece on it is destroyed together */
 function armShares(p,l){const P=p.pieces[l]||[];const tot=P.reduce((a,pc)=>a+(pc.ap||0),0);const cur=Math.max(0,p.ap[l]||0);const ratio=tot?Math.min(1,cur/tot):1;return P.map(pc=>({pc,cur,ratio}))}
