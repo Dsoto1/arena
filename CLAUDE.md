@@ -348,8 +348,15 @@ One global script; files are concatenated in order. Later "version modules" patc
 - **v0.68** printed armor worn on the avatar (rulebook placement and scale, dims/cracks, falls at 0, editors' Fit mode); arena right
   column tabs Fighter · Field · Stands + crowd ticker, Menagerie → Bestiary; Manager weekly checklist + money ledger, economy
   levers, rivals that train; brain colours, one Juggernaut, Road button in the record row. (Published as artifact Version 80.)
+- **v0.69** armor designer (mock-up under the piece, required equip point, free placement relative to it, single/pair limbs); open
+  printed-set fit tool saved in the game data (to bake + remove later); gold Flavius' Bracers; sculpted set follows the setting;
+  phones: match controls hidden under menu/windows; tablets: measured arena fit. (Published as artifact Version 81.)
 
 ## 8. Next steps / open items
+- **Next (v0.70, WIP in src/92-v70.js, not in build.sh):** custom armor in levels I/II/III (budgets 3/5/8; AP 1 pt above the first,
+  bonus 2, stackable 1; grades iron/bronze/gold; names + numerals). Then bake Virgilante's printed-set fits (from his save file) into ARM_FIT
+  and remove the fit tool. Armor/avatar ideas offered: try-on ghost in market/loot, bonus-AP links, hit flash, hover/tap menu on the
+  avatar, armored avatar on records/cards, severed-limb drop.
 - **Next (agreed with Virgilante):** portrait compact mode (arena on top, tabbed bottom sheet Actions/Fighter/Log, tray
   behind ⋯) and phone layouts for menus/Manager/Studio (rail → bottom tabs). Recruiting ideas not chosen yet: weekly
   recruiting-hours plan, compare view, signing card.
