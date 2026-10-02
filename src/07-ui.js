@@ -1644,7 +1644,7 @@ function draw() {
     seg(10, 10, 13, 10, '#c0433a');
     for (const q of S.players) if (q.alive && q.ch && !q.ch.mounted) {
       const m = center(q.ch.cr, q.ch.cc);
-      drawWheel(m.x, m.y, q.color);
+      if (!(typeof chRideTok === 'function' && chRideTok(q, m))) drawWheel(m.x, m.y, q.color); // v0.64: the parked chariot's token
     }
   }
   if (isNaum() && !S.drained) {
@@ -1858,6 +1858,7 @@ function draw() {
   if (S.clean && S.clean.crew) drawCleanCrew();
   for (const f of S.floor) {
     const m = center(f.r, f.c);
+    if ((f.kind === 'wheel' || f.kind === 'horse') && typeof chFloorTok === 'function' && chFloorTok(f, m)) continue; // v0.64: the printed spare tokens
     if (f.kind === 'wheel') {
       drawWheel(m.x, m.y, '#caa46a');
       continue;
@@ -2187,7 +2188,7 @@ function drawPlayer(player) {
   const m = center(player.r, player.c);
   const rx = TW * 0.25,
     h = TW * 0.55;
-  if (player.ch && player.ch.mounted) drawWheel(m.x, m.y, player.color);
+  if (player.ch && player.ch.mounted && !(typeof chRideTok === 'function' && chRideTok(player, m))) drawWheel(m.x, m.y, player.color); // v0.64: rides on the chariot token
   if (isNaum() && player.onDoor != null) {}
   if (S.players[S.cur] === player && !S.over) {
     ctx.strokeStyle = '#f0cf7d';
@@ -2644,7 +2645,7 @@ function render() {
   {
     const live = S && !S.over && S.phase !== 'setup';
     const se = $('#btnSimEnd');
-    if (se) se.hidden = !(live && !S.snap && !S.tutorial);
+    if (se) se.hidden = !(live && !S.snap && !S.tutorial && !S.missio); // v0.64: a missio is fought by hand
     const hs = $('#hintsSeg');
     if (hs) hs.hidden = true;
     {

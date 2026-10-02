@@ -602,10 +602,12 @@ async function applyMod(player, m) {
     log(`${nm(player)} cannot call Zora in this event.`);
   } else if (t === 'minusArm') {
     player.hp.larm = 0;
+    (player.modLoss = player.modLoss || []).push('larm'); /* v0.64: a modifier's limb is not a missio wound */
     stripLoc(player, 'larm');
     log(`${nm(player)} starts with one arm.`);
   } else if (t === 'minusLeg') {
     player.hp.lleg = 0;
+    (player.modLoss = player.modLoss || []).push('lleg');
     stripLoc(player, 'lleg');
     log(`${nm(player)} starts with one leg.`);
   }

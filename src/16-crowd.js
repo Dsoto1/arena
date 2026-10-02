@@ -1165,13 +1165,13 @@ function spectFavPool(){const out=[];const w=typeof mgrWorldAny==='function'?mgr
   if(S&&S.players)for(const p of S.players)if(!out.some(o=>o.n===p.name))out.push({n:p.name,wt:8});
   return out}
 function spectFavEnsure(r){if(!r)return;if(!S._favPool)S._favPool=spectFavPool();const pool=S._favPool;if(!pool.length)return;
-  if(r.favG&&pool.some(o=>o.n===r.favG)&&Math.random()>0.04)return; // loyalty: a favorite is rarely dropped while they still fight
-  const tot=pool.reduce((a,o)=>a+o.wt,0);let x=Math.random()*tot;for(const o of pool){x-=o.wt;if(x<=0){r.favG=o.n;break}}
+  if(r.favG&&pool.some(o=>o.n===r.favG)&&sideRand()>0.04)return; // loyalty: a favorite is rarely dropped while they still fight
+  const tot=pool.reduce((a,o)=>a+o.wt,0);let x=sideRand()*tot;for(const o of pool){x-=o.wt;if(x<=0){r.favG=o.n;break}}
   try{Store.put('crowd',r.id,r).catch(()=>{})}catch(e){}}
 /* the automatic wager: runs once per spectator as they sit — fans back their favorite, some neutrals chase the odds */
 function spectWagers(){if(!S||!S.spect||S.sim||HEADLESS)return;let tab=[];try{tab=oddsTable(true)}catch(e){}
   for(const sp of S.spect){if(sp.human||sp.bet||sp.gone)continue;
-    let pid=null;if(sp.fav!=null)pid=sp.fav;else if(tab.length&&Math.random()<(sp.temper==='miser'?0.1:0.35)){const pick=sp.taste==='underdog'?tab[tab.length-1]:tab[0];pid=pick&&pick.p?pick.p.id:null}
+    let pid=null;if(sp.fav!=null)pid=sp.fav;else if(tab.length&&sideRand()<(sp.temper==='miser'?0.1:0.35)){const pick=sp.taste==='underdog'?tab[tab.length-1]:tab[0];pid=pick&&pick.p?pick.p.id:null}
     if(pid==null)continue;const o=tab.find(x=>x.ps.some(q=>q.id===pid));sp.bet={pid,amt:2,odds:o?+o.odds.toFixed(2):2};
     if(sp.fav==null)slog(`<b>${esc(sp.name)}</b> plays the odds: 2 CF on <b>${esc(S.players[pid].name)}</b>.`)}}
 

@@ -56,7 +56,7 @@ function chTok(art,x,y,d,sx=1,alpha=1){const im=chTokImg();const i=CHTOK_IDX[art
 function chBar(x,y,w,frac,col){ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(x-w/2,y,w,4);ctx.fillStyle=col;ctx.fillRect(x-w/2,y,w*Math.max(0,Math.min(1,frac)),4)}
 const CH_DROPS=[];
 {const base=drawPlayer;drawPlayer=function(player){const r=base.apply(this,arguments);
-  try{const ch=player.ch;if(!HEADLESS&&isChariot()&&ch&&ch.mounted&&player.alive){const m=center(player.r,player.c);const d=TW*0.4,y=m.y+TW*0.02;
+  try{const ch=player.ch;if(false&&!HEADLESS&&isChariot()&&ch&&ch.mounted&&player.alive){ /* v0.64: horse/wheel tokens moved onto the chariot card (84-v64) */const m=center(player.r,player.c);const d=TW*0.4,y=m.y+TW*0.02;
     if(ch.horse){const H=ch.horse;let face=H.face,sx=1;if(H.flipT){const t=(performance.now()-H.flipT)/700;if(t<1){sx=Math.abs(Math.cos(Math.PI*t));if(t<0.5)face^=1}else H.flipT=0}
       const side=H.sides[face];chTok(side.art,m.x-TW*0.42,y,d,sx);const f=H.sides[H.face];chBar(m.x-TW*0.42,y+d*0.52,d*0.9,(f.hp-H.dmg)/f.hp,'#9cc46e')}
     if(ch.wheel){chTok(ch.wheel.art,m.x+TW*0.42,y,d);chBar(m.x+TW*0.42,y+d*0.52,d*0.9,ch.wheel.hp/ch.wheel.max,'#d8b878')}}}catch(e){}

@@ -1,0 +1,32 @@
+/* v0.64: missios by the rulebook (whole roster in the picker, no sim, elimination ends it at once → Missio failed + fallen,
+   no-CF events pass by surviving with no Fate), seeded crowd stream, chariot tokens (ride token, spares, tokens on the card) */
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:950}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
+const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
+/* the picker: the whole active roster, custom classes greyed, in a scrolling box */
+o.pick=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
+  CLASSES.cc_t64={...CLASSES.hero,name:'Test Class',custom:true};
+  for(const [id,cls] of [['g64a','damnatio'],['g64b','hero'],['g64c','cc_t64']])await Store.put('gladiators',id,{id,name:'T'+id,cls,status:'active',roster:true,events:0,wins:0,carry:0,hp:{},portrait:{}});
+  await loadLudus();openSetup();await new Promise(r=>setTimeout(r,900));const t=document.querySelector('[data-tab="missio"],[data-st="missio"],[data-mode="missio"]');t&&t.click();await new Promise(r=>setTimeout(r,700));
+  const box=document.querySelector('.missioroll');return {box:!!box,scroll:box?getComputedStyle(box).overflowY:'',n:box?box.querySelectorAll('.item').length:0,grey:box?[...box.querySelectorAll('.item')].filter(i=>/printed classes/.test(i.textContent)).length:0}});
+ok(o.pick.box&&o.pick.scroll==='auto'&&o.pick.n>=3&&o.pick.grey>=1,'missio picker');
+const run=async mode=>pg.evaluate(async(mode)=>{if(CUR_MODAL)CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,300));menuHide();
+  const rec=await missioFromLudus(LUDUS_CACHE.find(x=>x.id==='g64a'));await Store.put('missios',rec.id,rec);startMissio(rec);
+  await new Promise(r=>setTimeout(r,2500));for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,150))}SPEED='snap';
+  const r={sim:!document.getElementById('btnSimEnd').hidden};await simToEnd(true);r.refused=!S.over&&!S.players[0].cpu;
+  r.comp=!!document.querySelector('#board .chcomp .chtk.horse')&&!!document.querySelector('#board .chcomp .chtk.wheel');r.tok=typeof chRideTok==='function'&&S.floor.some(f=>f.kind==='wheel'&&f.part&&f.part.art);
+  if(mode==='kill'){eliminate(S.players[0],{type:'player',ref:S.players[1]});checkEnd();settle();render()}
+  else{S.players[0].cpu=true;S.players[0].diff='normal';if(cur()===S.players[0]){S.busy=false;S.pending=null;advanceTurn()}}
+  for(let i=0;i<90&&!(S.over&&document.querySelector('#mBody .missiohd'));i++){await new Promise(r2=>setTimeout(r2,1000));if(CUR_MODAL&&!S.over)CUR_MODAL.done(null)}
+  r.hd=(document.querySelector('#mBody .missiohd')||{}).textContent||'';r.g=(await Store.getDoc('gladiators','g64a')||{}).status;r.m=(await Store.getDoc('missios',rec.id)||{}).status;
+  r.fate=(S.result&&S.result.rows&&S.result.rows[0]||{}).fate;if(CUR_MODAL)CUR_MODAL.done(null);S.over=true;return r},mode);
+o.race=await run('race');
+ok(!o.race.sim&&o.race.refused,'no sim in a missio');ok(o.race.comp&&o.race.tok,'chariot tokens');
+ok(/Step 1 of 5 complete|Missio failed/.test(o.race.hd)&&o.race.fate==='','no-CF: no Fate, survive passes');ok(o.race.g==='active','survivor stays on the rolls');
+await pg.evaluate(async()=>{const g=LUDUS_CACHE.find(x=>x.id==='g64a');for(const m of await Store.list('missios'))await Store.del('missios',m.id);g.status='active';await Store.put('gladiators',g.id,g);await loadLudus()});
+o.kill=await run('kill');
+ok(o.kill.hd==='Missio failed'&&o.kill.g==='fallen'&&o.kill.m==='fallen','elimination → Missio failed + fallen');
+o.side=await pg.evaluate(()=>{const s0=S.seed;const a=(S._sideS=undefined,[sideRand(),sideRand()]);S._sideS=undefined;const b2=[sideRand(),sideRand()];return a.join()===b2.join()&&a[0]!==a[1]});
+ok(o.side,'seeded crowd stream');
+console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();

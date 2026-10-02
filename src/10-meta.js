@@ -164,7 +164,7 @@ async function gameOver(winners,reason){
   if(!S.sim&&!HEADLESS&&!S.mgrCtx&&!S.specCtx&&!S.tourn&&!S.exhib&&!(S.fest&&S.fest.stage<2)&&typeof calAdvance==='function'&&!(await careerHoldsClock())){const c=calAdvance();S.calAdvanced=c;later(()=>log(`📅 The empire moves on: it is now <b>${empireDate(c.season,c.week).short}</b> — next on the schedule, ${esc(EVENTS[c.fx.ev]?EVENTS[c.fx.ev].n:'the games')} at ${esc(LOCATIONS[c.fx.loc]?LOCATIONS[c.fx.loc].n:'')}.`,'thought'),400)}
   const wset=new Set(winners.map(w=>w.id));
   const interim=(S.fest&&S.fest.stage===1)||!!S.exhib||!!(S.specCtx&&S.specCtx.nofates)||!!(S.tourn&&S.tourn.nofates)||!!(ev.custom&&ev.nofates); // v0.29: Fates everywhere unless an event is set Fate-free // v0.27: invitational and tournament heats draw no Fate; a tournament's final does // exhibitions, like a festival's first leg, draw no Fate
-  const rows=S.players.map(p=>{const won=wset.has(p.id);const f=finalCF(p,won);const fate=interim?null:(p.retired?[FATES[0].g+' · '+FATES[0].n,FATES[0].t]:(S.thumbsDown||[]).includes(p.id)?thumbsDownFate():fateFor(f));
+  const rows=S.players.map(p=>{const won=wset.has(p.id);const f=finalCF(p,won);const fate=interim||(typeof missioNoFate==='function'&&missioNoFate(p))?null:(p.retired?[FATES[0].g+' · '+FATES[0].n,FATES[0].t]:(S.thumbsDown||[]).includes(p.id)?thumbsDownFate():fateFor(f));
     // a human facing the Thumb of Flavius rolls the die themselves, in the results window: the outcome
     // is already decided here (records need it), but it stays hidden until they press the button.
     const thumbHide=!!(fate&&/^Thumb of Flavius/.test(fate[0])&&!p.cpu&&!S.sim&&!HEADLESS);
@@ -208,7 +208,7 @@ async function gameOver(winners,reason){
   if(!interim)for(const x of rows){const p=x.p;if(!p.saved)continue;
     if(x.thumbHide)continue; // deferred until they roll the die in the results window
     if(aliveInUniverse(x)){x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);if(rec)log(`${nm(p)}'s Ludus record updates automatically: ${rec.cf} CF, returns with ${rec.carry}.`)}
-    else if(!(S.missio&&!p.cpu)){await markFallen(p,x).catch(()=>{});log(`${nm(p)} did not survive; their Ludus record is struck from the rolls for good.`,'bad')}}
+    else if(!(S.missio&&(!p.cpu||(typeof missioHero==='function'&&p===missioHero())))){await markFallen(p,x).catch(()=>{});log(`${nm(p)} did not survive; their Ludus record is struck from the rolls for good.`,'bad')}}
   if(G!==S)return;
   await loadLudus().catch(()=>{});
   const ranked=placements(rows,wset);
@@ -254,7 +254,7 @@ async function gameOver(winners,reason){
         flaviusMood&&flaviusMood(/spared/.test(x.fate[0])?'cheer':'laugh',4200,.9);
         // now the deferred roguelike consequence lands
         if(x.p.saved){if(aliveInUniverse(x)){x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);if(rec)log(`${nm(x.p)}'s Ludus record updates automatically: ${rec.cf} CF, returns with ${rec.carry}.`)}
-          else if(!(S.missio&&!x.p.cpu)){await markFallen(x.p,x).catch(()=>{});log(`${nm(x.p)} did not survive the thumb; their Ludus record is struck from the rolls for good.`,'bad')}}}
+          else if(!(S.missio&&(!x.p.cpu||(typeof missioHero==='function'&&x.p===missioHero())))){await markFallen(x.p,x).catch(()=>{});log(`${nm(x.p)} did not survive the thumb; their Ludus record is struck from the rolls for good.`,'bad')}}}
       continue}
     if(typeof v==='string'&&v.startsWith('free:')){const x=rows.find(r=>r.p.id===+v.slice(5));if(x&&!x.freedDone){x.freedDone=true;x.savedDone=true;await claimFreedom(x).catch(e=>console.error(e));log(`${nm(x.p)} takes the <b>rudis</b> and walks free, to a standing crowd. Their name joins the Liberti.`,'big')}continue}
     if(v==='mgr'){openManager('night');break}

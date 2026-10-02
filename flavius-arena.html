@@ -1134,7 +1134,7 @@ button.railhd.fold{all:unset;box-sizing:border-box;display:none;cursor:pointer;w
 </style>
 
 <header class="bar">
-  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.63</span></div>
+  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.64</span></div>
   <div class="status" id="status"></div>
   <div class="tools speedtray" id="speedTray">
     <div class="seg speedseg" role="group" aria-label="CPU speed"><span class="lbl">Speed</span><button type="button" data-speed="pause" title="Pause CPU turns">❚❚ Pause</button><button type="button" data-speed="step" title="Step: each CPU action waits for you — Next ▶ or Space — with a caption explaining it">⏯ Step</button><button type="button" data-speed="slow" class="on">Slow</button><button type="button" data-speed="normal">Normal</button><button type="button" data-speed="fast">Fast</button></div>
@@ -1314,6 +1314,15 @@ function mulberry32(seed) {
 let RNG = null; // set per event in newState; null = unseeded (menus, setup screens)
 /* rand — random number 0..1 from the seeded event RNG, or Math.random when no event is seeded. */
 const rand = () => RNG ? RNG.next() : Math.random();
+/* sideRand — a second stream, seeded from the event seed but separate from the dice: spectators' favourites and wagers use it,
+   so a seed replays the same crowd live or loaded, and the crowd never shifts a single die. State lives in S (saved with matches). */
+function sideRand() {
+  if (typeof S === 'undefined' || !S || S.seed == null) return Math.random();
+  let t = (S._sideS = ((S._sideS ?? (S.seed ^ 0x5bd1e995)) + 0x6d2b79f5) | 0);
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
 /* rnd — seeded random integer from 0 to n-1. */
 const rnd = n => Math.floor(rand() * n);
 /* pickOne — seeded random element of an array. */
@@ -7605,10 +7614,12 @@ async function applyMod(player, m) {
     log(`${nm(player)} cannot call Zora in this event.`);
   } else if (t === 'minusArm') {
     player.hp.larm = 0;
+    (player.modLoss = player.modLoss || []).push('larm'); /* v0.64: a modifier's limb is not a missio wound */
     stripLoc(player, 'larm');
     log(`${nm(player)} starts with one arm.`);
   } else if (t === 'minusLeg') {
     player.hp.lleg = 0;
+    (player.modLoss = player.modLoss || []).push('lleg');
     stripLoc(player, 'lleg');
     log(`${nm(player)} starts with one leg.`);
   }
@@ -11867,7 +11878,7 @@ function draw() {
     seg(10, 10, 13, 10, '#c0433a');
     for (const q of S.players) if (q.alive && q.ch && !q.ch.mounted) {
       const m = center(q.ch.cr, q.ch.cc);
-      drawWheel(m.x, m.y, q.color);
+      if (!(typeof chRideTok === 'function' && chRideTok(q, m))) drawWheel(m.x, m.y, q.color); // v0.64: the parked chariot's token
     }
   }
   if (isNaum() && !S.drained) {
@@ -12081,6 +12092,7 @@ function draw() {
   if (S.clean && S.clean.crew) drawCleanCrew();
   for (const f of S.floor) {
     const m = center(f.r, f.c);
+    if ((f.kind === 'wheel' || f.kind === 'horse') && typeof chFloorTok === 'function' && chFloorTok(f, m)) continue; // v0.64: the printed spare tokens
     if (f.kind === 'wheel') {
       drawWheel(m.x, m.y, '#caa46a');
       continue;
@@ -12410,7 +12422,7 @@ function drawPlayer(player) {
   const m = center(player.r, player.c);
   const rx = TW * 0.25,
     h = TW * 0.55;
-  if (player.ch && player.ch.mounted) drawWheel(m.x, m.y, player.color);
+  if (player.ch && player.ch.mounted && !(typeof chRideTok === 'function' && chRideTok(player, m))) drawWheel(m.x, m.y, player.color); // v0.64: rides on the chariot token
   if (isNaum() && player.onDoor != null) {}
   if (S.players[S.cur] === player && !S.over) {
     ctx.strokeStyle = '#f0cf7d';
@@ -12867,7 +12879,7 @@ function render() {
   {
     const live = S && !S.over && S.phase !== 'setup';
     const se = $('#btnSimEnd');
-    if (se) se.hidden = !(live && !S.snap && !S.tutorial);
+    if (se) se.hidden = !(live && !S.snap && !S.tutorial && !S.missio); // v0.64: a missio is fought by hand
     const hs = $('#hintsSeg');
     if (hs) hs.hidden = true;
     {
@@ -14257,7 +14269,7 @@ async function gameOver(winners,reason){
   if(!S.sim&&!HEADLESS&&!S.mgrCtx&&!S.specCtx&&!S.tourn&&!S.exhib&&!(S.fest&&S.fest.stage<2)&&typeof calAdvance==='function'&&!(await careerHoldsClock())){const c=calAdvance();S.calAdvanced=c;later(()=>log(`📅 The empire moves on: it is now <b>${empireDate(c.season,c.week).short}</b> — next on the schedule, ${esc(EVENTS[c.fx.ev]?EVENTS[c.fx.ev].n:'the games')} at ${esc(LOCATIONS[c.fx.loc]?LOCATIONS[c.fx.loc].n:'')}.`,'thought'),400)}
   const wset=new Set(winners.map(w=>w.id));
   const interim=(S.fest&&S.fest.stage===1)||!!S.exhib||!!(S.specCtx&&S.specCtx.nofates)||!!(S.tourn&&S.tourn.nofates)||!!(ev.custom&&ev.nofates); // v0.29: Fates everywhere unless an event is set Fate-free // v0.27: invitational and tournament heats draw no Fate; a tournament's final does // exhibitions, like a festival's first leg, draw no Fate
-  const rows=S.players.map(p=>{const won=wset.has(p.id);const f=finalCF(p,won);const fate=interim?null:(p.retired?[FATES[0].g+' · '+FATES[0].n,FATES[0].t]:(S.thumbsDown||[]).includes(p.id)?thumbsDownFate():fateFor(f));
+  const rows=S.players.map(p=>{const won=wset.has(p.id);const f=finalCF(p,won);const fate=interim||(typeof missioNoFate==='function'&&missioNoFate(p))?null:(p.retired?[FATES[0].g+' · '+FATES[0].n,FATES[0].t]:(S.thumbsDown||[]).includes(p.id)?thumbsDownFate():fateFor(f));
     // a human facing the Thumb of Flavius rolls the die themselves, in the results window: the outcome
     // is already decided here (records need it), but it stays hidden until they press the button.
     const thumbHide=!!(fate&&/^Thumb of Flavius/.test(fate[0])&&!p.cpu&&!S.sim&&!HEADLESS);
@@ -14301,7 +14313,7 @@ async function gameOver(winners,reason){
   if(!interim)for(const x of rows){const p=x.p;if(!p.saved)continue;
     if(x.thumbHide)continue; // deferred until they roll the die in the results window
     if(aliveInUniverse(x)){x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);if(rec)log(`${nm(p)}'s Ludus record updates automatically: ${rec.cf} CF, returns with ${rec.carry}.`)}
-    else if(!(S.missio&&!p.cpu)){await markFallen(p,x).catch(()=>{});log(`${nm(p)} did not survive; their Ludus record is struck from the rolls for good.`,'bad')}}
+    else if(!(S.missio&&(!p.cpu||(typeof missioHero==='function'&&p===missioHero())))){await markFallen(p,x).catch(()=>{});log(`${nm(p)} did not survive; their Ludus record is struck from the rolls for good.`,'bad')}}
   if(G!==S)return;
   await loadLudus().catch(()=>{});
   const ranked=placements(rows,wset);
@@ -14347,7 +14359,7 @@ async function gameOver(winners,reason){
         flaviusMood&&flaviusMood(/spared/.test(x.fate[0])?'cheer':'laugh',4200,.9);
         // now the deferred roguelike consequence lands
         if(x.p.saved){if(aliveInUniverse(x)){x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);if(rec)log(`${nm(x.p)}'s Ludus record updates automatically: ${rec.cf} CF, returns with ${rec.carry}.`)}
-          else if(!(S.missio&&!x.p.cpu)){await markFallen(x.p,x).catch(()=>{});log(`${nm(x.p)} did not survive the thumb; their Ludus record is struck from the rolls for good.`,'bad')}}}
+          else if(!(S.missio&&(!x.p.cpu||(typeof missioHero==='function'&&x.p===missioHero())))){await markFallen(x.p,x).catch(()=>{});log(`${nm(x.p)} did not survive the thumb; their Ludus record is struck from the rolls for good.`,'bad')}}}
       continue}
     if(typeof v==='string'&&v.startsWith('free:')){const x=rows.find(r=>r.p.id===+v.slice(5));if(x&&!x.freedDone){x.freedDone=true;x.savedDone=true;await claimFreedom(x).catch(e=>console.error(e));log(`${nm(x.p)} takes the <b>rudis</b> and walks free, to a standing crowd. Their name joins the Liberti.`,'big')}continue}
     if(v==='mgr'){openManager('night');break}
@@ -17775,13 +17787,13 @@ function spectFavPool(){const out=[];const w=typeof mgrWorldAny==='function'?mgr
   if(S&&S.players)for(const p of S.players)if(!out.some(o=>o.n===p.name))out.push({n:p.name,wt:8});
   return out}
 function spectFavEnsure(r){if(!r)return;if(!S._favPool)S._favPool=spectFavPool();const pool=S._favPool;if(!pool.length)return;
-  if(r.favG&&pool.some(o=>o.n===r.favG)&&Math.random()>0.04)return; // loyalty: a favorite is rarely dropped while they still fight
-  const tot=pool.reduce((a,o)=>a+o.wt,0);let x=Math.random()*tot;for(const o of pool){x-=o.wt;if(x<=0){r.favG=o.n;break}}
+  if(r.favG&&pool.some(o=>o.n===r.favG)&&sideRand()>0.04)return; // loyalty: a favorite is rarely dropped while they still fight
+  const tot=pool.reduce((a,o)=>a+o.wt,0);let x=sideRand()*tot;for(const o of pool){x-=o.wt;if(x<=0){r.favG=o.n;break}}
   try{Store.put('crowd',r.id,r).catch(()=>{})}catch(e){}}
 /* the automatic wager: runs once per spectator as they sit — fans back their favorite, some neutrals chase the odds */
 function spectWagers(){if(!S||!S.spect||S.sim||HEADLESS)return;let tab=[];try{tab=oddsTable(true)}catch(e){}
   for(const sp of S.spect){if(sp.human||sp.bet||sp.gone)continue;
-    let pid=null;if(sp.fav!=null)pid=sp.fav;else if(tab.length&&Math.random()<(sp.temper==='miser'?0.1:0.35)){const pick=sp.taste==='underdog'?tab[tab.length-1]:tab[0];pid=pick&&pick.p?pick.p.id:null}
+    let pid=null;if(sp.fav!=null)pid=sp.fav;else if(tab.length&&sideRand()<(sp.temper==='miser'?0.1:0.35)){const pick=sp.taste==='underdog'?tab[tab.length-1]:tab[0];pid=pick&&pick.p?pick.p.id:null}
     if(pid==null)continue;const o=tab.find(x=>x.ps.some(q=>q.id===pid));sp.bet={pid,amt:2,odds:o?+o.odds.toFixed(2):2};
     if(sp.fav==null)slog(`<b>${esc(sp.name)}</b> plays the odds: 2 CF on <b>${esc(S.players[pid].name)}</b>.`)}}
 
@@ -22757,6 +22769,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'0.64',ic:'📜',t:'Missios by the rulebook',hi:['Missios follow the rulebook: 20+ CF, a win or a spared thumb passes a step; "Win" steps must be won','Chariot, Familia, Naumachia, Golden Eagle, Juggernaut, Gauntlet and Commodus give no CF, so surviving to the end passes — and no Fate is drawn','Eliminated on a missio: the event ends at once on a Missio failed screen; the gladiator is marked fallen','Chariots: racers ride on their chariot token; the horse and wheel tokens sit on the chariot card; spare parts on the sand are the printed tokens'],fx:['The missio picker lists your whole roster in a scrolling box (custom classes greyed)','No "To the end" during a missio','A start-of-event modifier no longer leaves a missio gladiator one-armed for good','Seeded events replay the crowd too: spectators\' favourites and wagers follow the seed']},
   {v:'0.63',ic:'🏋',t:'Training hours, clearer tabs',hi:['Training hours: a weekly pool for speed and strength drills, tactics, crowd work, rehab, doctore time, bonding and in-house sparring — exhibitions draw on it too','The Training Yard opens with your hours plan beside the practice arena','Accessibility: reduce motion, a colour-blind palette with class letters on tokens, and larger text','Event Designer: guided steps from Basics to Finish, or every section at once'],fx:['Rail tabs with something left to do are outlined: Recruiting, Training Yard, Infirmary; Match Week in light purple','The free-agent list fills the screen','House home cities are the twelve arena cities','Share builds are a third smaller','CPU turns and the roster name each CPU\'s mind','The fighter panel shows the ratings top right, out of the way — and they fold away']},
   {v:'0.62',ic:'🧠',t:'Five minds',hi:['Intelligence now sets one of five CPU minds — Novice, Apprentice, Fighter, Veteran, Master — shown beside the ratings','Each mind unlocks real skills: the market, steady nerves, routes and truces, Focus, and for a Master: stepping to safety after a blow and Focusing for the kill','Play Now seats pick a mind; Manager growth news says when a fighter reaches a new one'],fx:['Each mind beats the one below it in self-play (about 55–66% of wins)']},
   {v:'0.61',ic:'🪟',t:'Smoother screens',hi:['One screen manager decides what shows when a window closes — no more menu flashes or loops between windows'],fx:['Windows open faster from the main menu (the curtain lifts as soon as the next window is up)']},
@@ -27162,7 +27175,7 @@ function chTok(art,x,y,d,sx=1,alpha=1){const im=chTokImg();const i=CHTOK_IDX[art
 function chBar(x,y,w,frac,col){ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(x-w/2,y,w,4);ctx.fillStyle=col;ctx.fillRect(x-w/2,y,w*Math.max(0,Math.min(1,frac)),4)}
 const CH_DROPS=[];
 {const base=drawPlayer;drawPlayer=function(player){const r=base.apply(this,arguments);
-  try{const ch=player.ch;if(!HEADLESS&&isChariot()&&ch&&ch.mounted&&player.alive){const m=center(player.r,player.c);const d=TW*0.4,y=m.y+TW*0.02;
+  try{const ch=player.ch;if(false&&!HEADLESS&&isChariot()&&ch&&ch.mounted&&player.alive){ /* v0.64: horse/wheel tokens moved onto the chariot card (84-v64) */const m=center(player.r,player.c);const d=TW*0.4,y=m.y+TW*0.02;
     if(ch.horse){const H=ch.horse;let face=H.face,sx=1;if(H.flipT){const t=(performance.now()-H.flipT)/700;if(t<1){sx=Math.abs(Math.cos(Math.PI*t));if(t<0.5)face^=1}else H.flipT=0}
       const side=H.sides[face];chTok(side.art,m.x-TW*0.42,y,d,sx);const f=H.sides[H.face];chBar(m.x-TW*0.42,y+d*0.52,d*0.9,(f.hp-H.dmg)/f.hp,'#9cc46e')}
     if(ch.wheel){chTok(ch.wheel.art,m.x+TW*0.42,y,d);chBar(m.x+TW*0.42,y+d*0.52,d*0.9,ch.wheel.hp/ch.wheel.max,'#d8b878')}}}catch(e){}
@@ -27690,6 +27703,75 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-st="sub"]'
 document.addEventListener('click',e=>{const b=e.target.closest('[data-st="new"],[data-st="random"],[data-st="edit"],[data-st="dup"]');if(b&&ST){ST.edStep=0;ST.edSeen={};if(!ED_ALL)setTimeout(()=>{if(ST.tab==='events'&&ST.draft)edGoStep(0)},0)}},true);
 new MutationObserver(()=>{const p=document.getElementById('edPane');if(p&&(!p.dataset.edDone||!ED_ALL&&[...p.children].some(c=>!c.dataset.edstep))){p.dataset.edDone='1';try{if(!ED_ALL&&ST&&ST.sub!==ED_STEPS[edStepIdx()][2])ST.edStep=ED_STEPS.findIndex(x=>x[2]===ST.sub);edStepsDecorate()}catch(e){console.error(e)}}})
   .observe(document.body,{childList:true,subtree:true});
+/* =====================================================================
+   84-V64 · v0.64 MISSIOS BY THE RULEBOOK, CHARIOT TOKENS
+   =====================================================================
+   MISSIOS (rulebook p.56): an event counts when the character earns 20+ CF and/or wins (a spared thumb counts too);
+   steps that say "Win" must be won. Events where no CF can be earned (Chariot, Familia, Naumachia, Golden Eagle,
+   Juggernaut, Gauntlet, Commodus — missioNoCF) pass by surviving to the end, and the Fate table never rolls for the missio
+   character there (missioNoFate, read by the results in 10-meta). Elimination ends the character's story: the event stops
+   at once (checkEnd wrapper), the Ludus record is marked fallen (markFallen, kept in the Annals — no longer deleted), the
+   Royal Reserve is lost, and the results open on "Missio failed". A survivor who misses a step: missio failed, back to the
+   rolls. A missio is fought by hand: no "To the end" (07-ui hides it; simToEnd refuses).
+   CHARIOTS: on the board a racer rides on their chariot token (chtok.webp, nearest of the six colours to the player's) —
+   no loose horse/wheel tokens beside it; the side panel lays the horse and wheel tokens on the chariot card's dashed
+   circles; spare horses and wheels on the sand are the printed tokens.
+   ===================================================================== */
+const missioNoCF=k=>{const E=EVENTS[k];return !!E&&E.rounds.every(r=>!r.cf)};
+const missioHero=()=>S&&S.missio?S.players.find(p=>!p.cpu&&p.name===S.missio.name)||S.players.find(p=>p.name===S.missio.name)||S.players[0]:null;
+function missioNoFate(p){return !!(S&&S.missio&&p&&p===missioHero()&&missioNoCF(S.evKey))}
+/* elimination ends the missio at once */
+{const base=checkEnd;checkEnd=function(){if(S&&S.missio&&!S.over&&!S.pending&&S.phase!=='setup'&&!(S.fest&&S.fest.stage===1)){const h=missioHero();
+  if(h&&!h.alive){S.pending={over:1,winners:activePlayers().filter(p=>p!==h).length===1?activePlayers().filter(p=>p!==h):[],reason:`${h.name} has fallen — the missio is lost.`};S.missioFell=true;return}}
+  return base.apply(this,arguments)}}
+{const base=simToEnd;simToEnd=async function(){if(S&&S.missio&&!HEADLESS){try{mToast('A missio is fought by hand.')}catch(e){}return}return base.apply(this,arguments)}}
+advanceMissio=async function(rows){
+  const recs=await Store.list('missios');const rec=recs.find(r=>r.id===S.missio.id);if(!rec)return null;
+  const x=rows.find(x=>!x.p.cpu&&x.p.name===rec.name)||rows.find(x=>x.p.name===rec.name)||rows[0];const p=x.p;
+  const st=MISSIOS[rec.cls].path[rec.step];const noCF=missioNoCF(S.evKey);
+  const spared=!!(x.fate&&/spared/.test(x.fate[0]));
+  const fell=!p.alive||p.retired||S.missioFell;
+  const fateDeath=!noCF&&!fell&&!!x.fate&&!aliveInUniverse(x);
+  const dead=fell||fateDeath;
+  const pass=!dead&&(st.win?x.won:(x.won||(noCF?true:(x.f>=20||spared))));
+  rec.events++;rec.trophies+=p.trophies.length;
+  rec.history.push({step:rec.step,ev:EVENTS[S.evKey].short,loc:LOCATIONS[S.locIdx]?LOCATIONS[S.locIdx].n:'',cf:x.f,won:x.won});
+  const head=(t,c)=>`<div class="missiohd ${c}"><b>${t}</b></div>`;let msg;
+  if(pass){
+    rec.rr+=p.coin;rec.cfCarry=Math.min(25,Math.floor(x.f/2));rec.severed=['rarm','larm','rleg','lleg'].filter(l=>p.hp[l]<=0&&((rec.severed||[]).includes(l)||!(p.modLoss||[]).includes(l)));rec.step++;
+    if(rec.step>=5){const req=MISSIOS[rec.cls].req||{};const ok=(!req.rr||rec.rr>=req.rr)&&(!req.trophies||rec.trophies>=req.trophies);
+      rec.status=ok?'complete':'incomplete';
+      msg=ok?head('Missio complete','ok')+`${esc(rec.name)} claims the Missio Spoils: a Rudis, a Laurel Crown, ${rec.rr} coin from the Royal Reserve, freedom, and a hearty “Gratulationes”.`
+        :head('Missio incomplete','bad')+`${esc(rec.name)} finished all five events but missed the requirement (${req.rr?`${rec.rr}/${req.rr} coin in RR`:''}${req.trophies?`${rec.trophies}/${req.trophies} trophies`:''}).`}
+    else msg=head(`Step ${rec.step} of 5 complete`,'ok')+`${esc(rec.name)} moves on to step ${rec.step+1}, carrying ${rec.cfCarry} CF. Royal Reserve: ${rec.rr} coin.${rec.severed.length?` Severed limbs persist: ${rec.severed.map(l=>LOCN[l]).join(', ')}.`:''}`;
+  } else if(dead){
+    rec.status='fallen';rec.rr=0;
+    if(rec.gladId&&p.saved){try{await markFallen(p,x)}catch(e){console.error(e)}}
+    msg=head('Missio failed','bad')+`${esc(rec.name)} ${fell?'was eliminated':'did not survive the Fates'} at step ${rec.step+1} of 5. Their story ends here${rec.gladId?' — they are marked fallen in the Ludus':''}, and the Royal Reserve is lost.`;
+  } else {
+    rec.status='failed';const why=st.win?'this step had to be won':noCF?'they did not make it to the end':`${x.f} CF — 20 were needed, or a win`;
+    msg=head('Missio failed','bad')+`${esc(rec.name)} survives, but the missio ends at step ${rec.step+1} of 5 (${why}). The Royal Reserve is forfeit; ${esc(rec.name)} returns to the rolls.`}
+  await Store.put('missios',rec.id,rec);
+  if(rec.gladId&&pass){const g=LUDUS_CACHE.find(y=>y.id===rec.gladId);if(g){p.saved=g.id;await saveGladiator(x);x.savedDone=true}}
+  return {rec,next:rec.status==='active',msg}};
+{const st=document.createElement('style');st.textContent=`.missiohd{font:400 22px var(--display);margin:4px 0 6px}.missiohd.bad b{color:var(--blood2)}.missiohd.ok b{color:var(--gold2)}`;document.head.appendChild(st)}
+/* the result card of a missio character with no Fate (a no-CF event) */
+{const base=resultCard;resultCard=function(x,place,interim){if(!interim&&x&&!x.fate){const h=base.call(this,x,place,true);return h.replace(/<b>[^<]*<\/b> carried into the next event/,`<b>${x.f} CF</b> · missio — no Fate in this event`)}return base.apply(this,arguments)}}
+/* ---------- chariots: the racer rides on their chariot token; the spares on the sand are the printed tokens ---------- */
+/* chTokFlat — a round token lying on the sand: the sheet cell drawn squashed to the iso floor */
+function chTokFlat(art,x,y,w){const im=typeof chTokImg==='function'?chTokImg():null;const i=CHTOK_IDX[art];if(!im||i==null)return false;const cw=im.naturalWidth/5,h=w*0.56;
+  ctx.save();ctx.fillStyle='rgba(0,0,0,.35)';ell(x+2,y+3,w*0.5,h*0.5);ctx.fill();ctx.drawImage(im,(i%5)*cw,Math.floor(i/5)*cw,cw,cw,x-w/2,y-h/2,w,h);ctx.restore();return true}
+function chRideTok(p,m){if(HEADLESS||!p.ch)return false;const art=CHTOK_IDX[p.ch.art]!=null?p.ch.art:'chRed';return chTokFlat(art,m.x,m.y,TW*0.86)}
+function chFloorTok(f,m){if(HEADLESS||!f.part)return false;const art=f.kind==='wheel'?f.part.art:(f.part.sides&&f.part.sides[f.part.face||0]||{}).art;return !!art&&chTokFlat(art,m.x,m.y,TW*0.7)}
+/* the side panel: the horse and wheel tokens sit on the chariot card's dashed circles (horse by the shaft, wheel over the axle) */
+{const st=document.createElement('style');st.textContent=`.chcomp{position:relative;display:inline-block;width:210px;flex:none}
+.chcomp>.cimg{width:100%!important;height:auto!important;display:block}.chcomp .chtk{position:absolute;width:29%;transform:translate(-50%,-50%);pointer-events:auto}
+.chcomp .chtk .cimg{width:100%!important;height:auto!important;display:block;border-radius:50%}.chcomp .chtk.horse{left:74.5%;top:40%}.chcomp .chtk.wheel{left:31%;top:66%}
+.chcomp .chtk.gone{opacity:.25;filter:grayscale(1)}`;document.head.appendChild(st)}
+function chCardComp(p){const ch=p.ch;if(!ch||!ch.art)return '';const H=ch.horse,hart=H?(H.sides[H.face]||{}).art||'saxoA':null;
+  return `<span class="chcomp">${cardHTML('g:'+ch.art,'sm')}${H?`<span class="chtk horse" data-card="h:${hart}" title="${esc(H.name||'horse')}">${cardHTML('h:'+hart,'xs')}</span>`:''}${ch.wheel?`<span class="chtk wheel" data-card="h:${ch.wheel.art||'wheel8'}" title="${esc(ch.wheel.name||'wheel')}">${cardHTML('h:'+(ch.wheel.art||'wheel8'),'xs')}</span>`:''}</span>`}
+{const base=boardHTML;boardHTML=function(player){let h=base.apply(this,arguments);try{if(player&&player.ch&&player.ch.mounted&&player.ch.art){
+  const card=cardHTML('g:'+player.ch.art,'xs');const i=h.indexOf('<div class="sect">Chariot</div>');if(i>=0){const j=h.indexOf(card,i);if(j>=0)h=h.slice(0,j)+chCardComp(player)+h.slice(j+card.length)}}}catch(e){}return h}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
@@ -27806,7 +27888,7 @@ function setupBody(){
     return tabs+`<div class="setup-grid"><div>
       <div class="evdesc"><b>Missios</b> (p.56-57) are five-event campaigns for one character. Finish each event with a win or at least 20 CF to advance. Half your CF (up to 25) carries over, coin goes to the Royal Reserve, and severed limbs persist.</div>
       <h4>Continue a missio</h4>${act.length?`<div class="items">${act.map(m=>{const st=MISSIOS[m.cls].path[m.step];return `<div class="item"><span><b>${esc(m.name)}</b> · ${CLASSES[m.cls].name} · step ${m.step+1}/5<em>Next: ${st.fest?'Festival '+festName(st.fest)+', ':''}${EVENTS[st.ev].n} at ${LOCATIONS[st.loc].n} · RR ${m.rr} · carrying ${m.cfCarry} CF</em></span><button class="btn primary" type="button" data-cont="${m.id}">Continue</button></div>`}).join('')}</div>`:'<p style="color:var(--muted)">No active missios yet.</p>'}
-      <h4>Start from the Ludus</h4>${LUDUS_CACHE.filter(g=>gladActive(g)&&!g.cpu&&MISSIOS[g.cls]).length?`<div class="items">${LUDUS_CACHE.filter(g=>gladActive(g)&&!g.cpu&&MISSIOS[g.cls]).map(g=>{const c=missioCredit(g);const act=MISSIO_CACHE.find(m=>m.gladId===g.id&&m.status==='active');return `<div class="item"><span><span class="mfacetok">${gladFace(g,'xs')}${typeof figureHTML==='function'&&typeof tokenForCls==='function'?figureHTML(tokenForCls(g.cls),40):''}</span><span><b>${esc(g.name)}</b> · ${CLASSES[g.cls].name}<em>${act?`missio in progress · step ${act.step+1}/5`:`${c?`${c} step${c>1?'s':''} already earned from past events · `:''}starts at step ${c+1}/5 with ${g.carry||0} CF`}</em></span></span><button class="btn" type="button" data-lmissio="${g.id}">${act?'Continue':'Start'}</button></div>`}).join('')}</div>`:'<p style="color:var(--muted)">No saved gladiators yet. Save one from the results screen after an event.</p>'}
+      <h4>Start from the Ludus</h4>${LUDUS_CACHE.filter(g=>gladActive(g)&&!g.cpu).length?`<div class="items missioroll" style="max-height:360px;overflow-y:auto">${LUDUS_CACHE.filter(g=>gladActive(g)&&!g.cpu).sort((a,b)=>(MISSIOS[b.cls]?1:0)-(MISSIOS[a.cls]?1:0)).map(g=>{if(!MISSIOS[g.cls])return `<div class="item" style="opacity:.5"><span><span class="mfacetok">${gladFace(g,'xs')}</span><span><b>${esc(g.name)}</b> · ${esc((CLASSES[g.cls]||{}).name||'custom')}<em>missios use the printed classes</em></span></span></div>`;const c=missioCredit(g);const act=MISSIO_CACHE.find(m=>m.gladId===g.id&&m.status==='active');return `<div class="item"><span><span class="mfacetok">${gladFace(g,'xs')}${typeof figureHTML==='function'&&typeof tokenForCls==='function'?figureHTML(tokenForCls(g.cls),40):''}</span><span><b>${esc(g.name)}</b> · ${CLASSES[g.cls].name}<em>${act?`missio in progress · step ${act.step+1}/5`:`${c?`${c} step${c>1?'s':''} already earned from past events · `:''}starts at step ${c+1}/5 with ${g.carry||0} CF`}</em></span></span><button class="btn" type="button" data-lmissio="${g.id}">${act?'Continue':'Start'}</button></div>`}).join('')}</div>`:'<p style="color:var(--muted)">No saved gladiators yet. Save one from the results screen after an event.</p>'}
      </div><div>
       <h4>Start a new missio</h4>
       <div class="opts"><label>Class <select id="mCls">${BASE_CLS.map(k=>`<option value="${k}" ${CFG.mCls===k?'selected':''}>${CLASSES[k].name} · ${CLASSES[k].sub}</option>`).join('')}</select></label>

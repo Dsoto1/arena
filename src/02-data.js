@@ -110,6 +110,15 @@ function mulberry32(seed) {
 let RNG = null; // set per event in newState; null = unseeded (menus, setup screens)
 /* rand — random number 0..1 from the seeded event RNG, or Math.random when no event is seeded. */
 const rand = () => RNG ? RNG.next() : Math.random();
+/* sideRand — a second stream, seeded from the event seed but separate from the dice: spectators' favourites and wagers use it,
+   so a seed replays the same crowd live or loaded, and the crowd never shifts a single die. State lives in S (saved with matches). */
+function sideRand() {
+  if (typeof S === 'undefined' || !S || S.seed == null) return Math.random();
+  let t = (S._sideS = ((S._sideS ?? (S.seed ^ 0x5bd1e995)) + 0x6d2b79f5) | 0);
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
 /* rnd — seeded random integer from 0 to n-1. */
 const rnd = n => Math.floor(rand() * n);
 /* pickOne — seeded random element of an array. */
