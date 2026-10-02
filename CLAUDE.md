@@ -492,8 +492,16 @@ One global script; files are concatenated in order. Later "version modules" patc
   grow like Manager fighters. **Death = the Fate table, Ranked only** (under 17 CF condemned; 17-19 Thumb of Flavius); the dead go
   to the Hall of the Fallen; **nothing carries over** to the next character. **Sign-in accounts** (AWS Cognito: Google / email link)
   replace "guests". **Live first:** real-time matches via API Gateway WebSockets + Lambda + DynamoDB (lobby list, live watch,
-  tickets); play-by-link becomes a slow-game option inside it. Server is the authority for dice, hidden cards, wallets and deaths.
-- **Online multiplayer — earlier decisions (superseded where the design above differs):** play-by-link FIRST, real-time later. Model B: server-held games
+  tickets). Server is the authority for dice, hidden cards, wallets and deaths. **Play-by-link: sidelined indefinitely.**
+  **Login: Google accounts** (Cognito federated). **Deploy: one CloudFormation template** (WebSockets API Gateway, Lambda,
+  DynamoDB, Cognito) + a code zip packaged to S3 from CloudShell (`aws cloudformation package/deploy`; same cost as any other way —
+  CFN is free). **No backdrops yet** (build from existing art; he may send some later). **The slow grind:** characters start with
+  almost nothing (recruit kit, empty wallet); Roman ranks **Tiro → Gregarius → Veteranus → Primus Palus → Summa Rudis**, earned by
+  survived ranked bouts + lifetime CF; matchmaking pairs similar ranks (Tiro only meets Tiro); each rank unlocks a market tier
+  (Tiro: level 1 gear only); it should take a long time and reward survivors and the cunning. **Death by the Fate table from the
+  very first ranked bout** (no grace). **Hall of the Fallen = only the great:** fell at Veteranus or above, or with a legendary feat
+  (e.g. 25+ survived bouts, 500 lifetime CF, slew Commodus); everyone else suffers damnatio memoriae (erased).
+- **Online multiplayer — earlier decisions (superseded where the design above differs; play-by-link shelved):** Model B: server-held games
   (AWS: API Gateway HTTP API + Lambda + DynamoDB, deployed by Virgilante from CloudShell with a template I write — no keys in chat;
   if keys are ever needed: environment variables AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY in the environment settings). The link is
   only a game id + a secret per seat; the server rolls dice and keeps hidden cards. Scope: the three classic events; guests with a
