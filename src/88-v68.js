@@ -23,7 +23,8 @@ function weekChecklist(){const w=W_(),m=me();const ros=rosterOf(m);const n=w.nig
   const th=typeof thLeft==='function'?thLeft(w):0;item(!th||!ros.length,'⏳',th?`<b>${th}</b> training hour${th===1?'':'s'} unspent`:'Training hours planned',th&&ros.length?go('practice','Plan hours'):'');
   const mine=new Set(ros.map(g=>g.id));const entered=n?n.bouts.filter(b=>b.ents.some(id=>mine.has(id))).length:0;const open=n?n.bouts.filter(b=>!b.done).length:0;const fit=ros.filter(g=>!g.inj&&g.morale>15).length;
   item(entered>=Math.min(open,fit)||!fit,'⚔',entered?`${entered} of ${open} bout${open===1?'':'s'} carry your fighters`:fit?'None of your fighters is on this week\'s card':'Nobody fit to fight',entered>=Math.min(open,fit)?'':go('night','Enter fighters'));
-  item(ros.length>=4,'🤝',ros.length>=4?`${ros.length} fighters on the roster`:`Only ${ros.length} fighter${ros.length===1?'':'s'} — the card needs bodies`,ros.length>=4?'':go('recruit','Recruit'));
+  const onBoard=w.glads.filter(g=>g.alive&&g.favd&&!g.contract).length; /* v0.73: a recruit on the board clears it */
+  item(ros.length>=4||onBoard>0,'🤝',ros.length>=4?`${ros.length} fighters on the roster`:onBoard?`Short-handed — ${onBoard} recruit${onBoard===1?'':'s'} on your board`:`Short-handed — only ${ros.length} fighter${ros.length===1?'':'s'}. Put a recruit on your board.`,ros.length>=4||onBoard?'':go('recruit','Recruit'));
   return I}
 function checklistHTML(){const I=weekChecklist();const todo=I.filter(x=>!x.done),done=I.filter(x=>x.done);
   return `<div class="todobox wkcheck"><div class="sect" style="margin-top:0">✅ This week <span class="rc-sub">${todo.length?`${todo.length} to do`:'all done — end the week when ready'}</span></div>

@@ -28202,7 +28202,8 @@ function weekChecklist(){const w=W_(),m=me();const ros=rosterOf(m);const n=w.nig
   const th=typeof thLeft==='function'?thLeft(w):0;item(!th||!ros.length,'⏳',th?`<b>${th}</b> training hour${th===1?'':'s'} unspent`:'Training hours planned',th&&ros.length?go('practice','Plan hours'):'');
   const mine=new Set(ros.map(g=>g.id));const entered=n?n.bouts.filter(b=>b.ents.some(id=>mine.has(id))).length:0;const open=n?n.bouts.filter(b=>!b.done).length:0;const fit=ros.filter(g=>!g.inj&&g.morale>15).length;
   item(entered>=Math.min(open,fit)||!fit,'⚔',entered?`${entered} of ${open} bout${open===1?'':'s'} carry your fighters`:fit?'None of your fighters is on this week\'s card':'Nobody fit to fight',entered>=Math.min(open,fit)?'':go('night','Enter fighters'));
-  item(ros.length>=4,'🤝',ros.length>=4?`${ros.length} fighters on the roster`:`Only ${ros.length} fighter${ros.length===1?'':'s'} — the card needs bodies`,ros.length>=4?'':go('recruit','Recruit'));
+  const onBoard=w.glads.filter(g=>g.alive&&g.favd&&!g.contract).length; /* v0.73: a recruit on the board clears it */
+  item(ros.length>=4||onBoard>0,'🤝',ros.length>=4?`${ros.length} fighters on the roster`:onBoard?`Short-handed — ${onBoard} recruit${onBoard===1?'':'s'} on your board`:`Short-handed — only ${ros.length} fighter${ros.length===1?'':'s'}. Put a recruit on your board.`,ros.length>=4||onBoard?'':go('recruit','Recruit'));
   return I}
 function checklistHTML(){const I=weekChecklist();const todo=I.filter(x=>!x.done),done=I.filter(x=>x.done);
   return `<div class="todobox wkcheck"><div class="sect" style="margin-top:0">✅ This week <span class="rc-sub">${todo.length?`${todo.length} to do`:'all done — end the week when ready'}</span></div>
@@ -28609,7 +28610,7 @@ ICO.coin=`<img class="ico coinimg" src="${assetURL('coin.webp')}" alt="coin">`;
 const SR_IMG={};const srImage=k=>{if(SR_IMG[k])return SR_IMG[k].complete&&SR_IMG[k].naturalWidth?SR_IMG[k]:null;const im=new Image();im.onload=()=>{try{draw()}catch(e){}};im.src=assetURL('sr_'+k+'.webp');SR_IMG[k]=im;return null};
 {const base=drawFlavius;drawFlavius=function(){const r=base.apply(this,arguments);try{if(!S||HEADLESS||S.phase==='setup'||(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false))return r;const k=srKey(EV());if(!k)return r;const im=srImage(k);if(!im)return r;
   const a=iso(0,0);const w=TW*1.55,h=TW*1.2;const cx=STANDS?a.x:Math.max(w/2+8,a.x-TW*5.2),cy=STANDS?Math.max(h/2+6,a.y-TW*2.62-h/2):h/2+8;const d=h*0.78;
-  ctx.save();ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=6;ctx.drawImage(im,cx+w/2+4,cy-d/2,d,d);ctx.restore()}catch(e){}return r}}
+  if(typeof SR_OPEN==='undefined'||SR_OPEN){ctx.save();ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=6;ctx.drawImage(im,cx+w/2+4,cy-d/2,d,d);ctx.restore()}if(typeof srBtnAt==='function')srBtnAt(cx+w/2+4,cy-d/2,d) /* v0.73: shown on ⓘ only */}catch(e){}return r}}
 /* the briefing and the status bar */
 {const base=briefingHTML;briefingHTML=function(){let h=base.apply(this,arguments);try{const k=srKey(EV());if(k)h=h.replace('<div class="brname">',`<div class="brsr">${srImgHTML(k,58)}<span class="rc-sub">Summa Rudis<br><b>${esc(EV().sr)}</b></span></div><div class="brname">`)}catch(e){}return h}}
 function statusDecor(){const st=document.getElementById('status');if(!st||!S||S.phase==='setup')return;
@@ -28809,6 +28810,292 @@ miniApply();
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-tokstyle]');if(!b)return;const v=b.dataset.tokstyle;
   SETTINGS.mini3d=v==='mini3d';if(v==='mini3d'){b.dataset.tokstyle='standee';setTimeout(()=>{b.dataset.tokstyle='mini3d'},0)}
   setTimeout(()=>{try{miniApply();for(const k in STANDEE_IMG)delete STANDEE_IMG[k];draw()}catch(err){}},0)},true);
+/* =====================================================================
+   95-V73 · v0.73 — Manager batch (Virgilante)
+   =====================================================================
+   • The rail: every tab with something left wears the same gold oval as Mail — Your ludus (tasks left), Recruiting
+     (hours left), Training Yard (training hours left), Infirmary (fighters who need care). The Your ludus outline is
+     muted like the others.
+   • Scouting shows what it found on the free agent's card: the ratings (exact once scouted) and the personality tags.
+   • The roster check ("Short-handed …") clears once a recruit is on your recruiting board.
+   • Recruiting and training hours leave the header; each tab's banner carries its own count.
+   • Every Manager tab has a scene banner (roomScene73); the "left to do" number sits at the banner's far right,
+     in the same place on every tab (bannerStat73), only where the tab needs one.
+   ===================================================================== */
+
+/* ---------- what each tab has left ---------- */
+function infirmNeed73(){const w=W_(),m=me();if(!w||!m)return 0;return rosterOf(m).filter(g=>g.inj&&!g.inj.war&&g.medWk!==w.week&&g.bathWk!==w.week).length}
+function ludusTodo73(){try{return weekChecklist().filter(x=>!x.done).length}catch(e){return 0}}
+function nightTodo73(){const w=W_(),m=me();if(!w||!m||!w.night)return null;const pend=(w.pend||[]).length;if(pend)return [pend,pend===1?'verdict waits':'verdicts wait'];
+  const ros=rosterOf(m);const mine=new Set(ros.map(g=>g.id));const open=w.night.bouts.filter(b=>!b.done);const entered=open.filter(b=>b.ents.some(id=>mine.has(id))).length;
+  const fit=ros.filter(g=>!g.inj&&g.morale>15).length;const want=Math.min(open.length,fit);return want>entered?[want-entered,want-entered===1?'bout to enter':'bouts to enter']:null}
+function rosterTodo73(){const w=W_(),m=me();if(!w||!m)return null;const exp=rosterOf(m).filter(g=>g.contract&&g.contract.weeks<=1).length;return exp?[exp,exp===1?'contract ends':'contracts end']:null}
+/* tab → [number, label, extra html] or null */
+function tabStat73(k){const w=W_();if(!w||w.dead)return null;
+  if(k==='ludus'){const n=ludusTodo73();return n?[n,n===1?'task left':'tasks left']:null}
+  if(k==='recruit'){const h=w.hours||0,mx=hoursMax();return [h+' h',`of ${mx} left this week`,hoursPips73(h,mx,'#7fae5f')]}
+  if(k==='practice'){const h=thLeft(w),mx=thMax();return h?[h+' h',`training hours of ${mx} left`,hoursPips73(h,mx,'#d9a441')]:null}
+  if(k==='infirm'){const n=infirmNeed73();return n?[n,n===1?'needs care':'need care']:null}
+  if(k==='night')return nightTodo73();
+  if(k==='roster')return rosterTodo73();
+  return null}
+function hoursPips73(h,mx,col){return `<span class="hpips">${Array.from({length:mx},(_,i)=>`<i style="${i<h?`background:${col}`:''}"></i>`).join('')}</span>`}
+function bannerStat73(k){const s=tabStat73(k);if(!s)return '';return `<div class="roomstat"><b>${s[0]}</b><span>${s[1]}</span>${s[2]||''}</div>`}
+
+/* ---------- the scenes ---------- */
+const BANNERS73={
+  ludus:['🏛 Your ludus','the house, the ledger and the morning mail'],
+  roster:['🛡 The roster','the men and women who carry your name onto the sand'],
+  recruit:['🤝 Recruiting','the forum stalls, the dockside pits and a good word in the right ear'],
+  board:['★ Favorites','names worth watching'],
+  night:['⚔️ Match Week','three days of games — and the crowd keeps count'],
+  exch:['💰 Wagers','where the smart money sits in the shade'],
+  news:['📯 News','the criers, the walls and the gossip of the baths'],
+  league:['📊 The league','every house, every point, twelve weeks long'],
+  imp:['🌍 The Imperium','roads, legions, fans and weather from Gades to Antioch'],
+  trophy:['🏆 Trophies','silver on the shelf, and room for more'],
+  sched:['📅 The season','twelve weeks, two byes and the Grand Games'],
+  me:['👤 The lanista','your seal, your temper and your reputation']};
+function roomScene73(k){const sky=(a,b)=>`<defs><linearGradient id="b73${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect x="-700" width="2000" height="120" fill="url(#b73${k})"/>`;
+  const col=(x,h=80,w=16,c='#d9cdb4')=>`<rect x="${x}" y="${118-h}" width="${w}" height="${h}" fill="${c}"/><rect x="${x-4}" y="${114-h}" width="${w+8}" height="6" fill="${c}"/><rect x="${x-4}" y="112" width="${w+8}" height="6" fill="${c}"/>`;
+  const man=(x,y,c='#c98e62',s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle cx="0" cy="-46" r="7" fill="${c}"/><path d="M0-38v22M0-32l10 10M0-32l-10 10M0-16l-7 16M0-16l7 16" stroke="${c}" stroke-width="5" stroke-linecap="round"/></g>`;
+  const crowd=(y,n,c)=>Array.from({length:n*3},(_,i)=>`<circle cx="${-592+i*(600/n)}" cy="${y+(i%3)*3}" r="5" fill="${c}"/>`).join('');
+  let s='';
+  if(k==='ludus')s=sky('#4a3424','#1e150e')+`<path d="M-700 50h2000v70H-700z" fill="#2a1d12"/><path d="M60 50L300 14 540 50z" fill="#6b4a2a"/>${[80,150,220,380,450,520].map(x=>col(x,68,14)).join('')}<rect x="270" y="62" width="60" height="56" rx="4" fill="#150e09" stroke="#c9a458" stroke-width="2"/><rect x="250" y="96" width="100" height="22" fill="#3a6a7a" opacity=".55"/>${man(120,118,'#e8dcc0',.8)}${man(480,118,'#c98e62',.8)}`;
+  else if(k==='roster')s=sky('#3a2a1c','#1a120c')+`<rect x="-700" y="78" width="2000" height="8" fill="#5a3c22"/><rect x="-700" y="30" width="2000" height="6" fill="#5a3c22"/>${Array.from({length:27},(_,i)=>{const x=-536+i*64;return `<g transform="translate(${x} 74)"><path d="M-14 0q0-26 14-30q14 4 14 30z" fill="${['#9aa3ab','#c9a458','#8a6a44'][i%3]}"/><rect x="-10" y="-14" width="20" height="4" fill="#1a120c"/>${i%2?'<path d="M0-30v-12" stroke="#a3281f" stroke-width="5"/>':''}</g><path d="M${x+20} 26l18 50" stroke="#d8dde2" stroke-width="3"/>`}).join('')}`;
+  else if(k==='recruit')s=sky('#c9925a','#5a3c22')+`<rect x="-700" y="84" width="2000" height="36" fill="#7a5a3a"/>${[30,230,430].map(x=>`<path d="M${x} 40h150l-10-14H${x+10}z" fill="#a3281f"/><path d="M${x} 40h150" stroke="#e8dcc0" stroke-width="3" stroke-dasharray="10 8"/><rect x="${x+8}" y="40" width="4" height="50" fill="#4a321c"/><rect x="${x+138}" y="40" width="4" height="50" fill="#4a321c"/><rect x="${x+20}" y="70" width="110" height="14" fill="#5a3c22"/>`).join('')}${man(105,98,'#c98e62',.7)}${man(305,98,'#e0b48c',.7)}${man(505,98,'#a8754e',.7)}${man(160,116,'#3a2a1c',.9)}${man(360,116,'#3a2a1c',.9)}`;
+  else if(k==='board')s=sky('#2a1f30','#140f0b')+Array.from({length:60},(_,i)=>`<text x="${(i*97)%1800-600}" y="${20+(i*37)%90}" font-size="${10+(i%3)*5}" fill="#f0cf7d" opacity="${.3+(i%4)*.15}">★</text>`).join('')+`<rect x="220" y="30" width="160" height="70" rx="6" fill="#e9ddc0"/><path d="M236 50h128M236 64h110M236 78h120" stroke="#8a6a44" stroke-width="3"/>`;
+  else if(k==='night')s=sky('#e0a35a','#7a3a1a')+`<rect x="-700" y="54" width="2000" height="66" fill="#8a5a34"/><path d="M0 120V54q300-60 600 0v66z" fill="#8a5a34"/>${[0,1,2].map(r=>Array.from({length:44},(_,i)=>`<path d="M${-660+i*44+(r%2)*22} ${66+r*16}q11-12 22 0" stroke="#4a2a14" stroke-width="5" fill="none"/>`).join('')).join('')}<ellipse cx="300" cy="118" rx="250" ry="12" fill="#d9b97e"/>${crowd(50,48,'#3a2014')}<path d="M300 8v34" stroke="#4a2a14" stroke-width="3"/><path d="M300 8l26 8-26 8" fill="#a3281f"/>`;
+  else if(k==='exch')s=sky('#2a1d12','#140f0b')+Array.from({length:7},(_,i)=>{const x=60+i*80;const h=3+(i*5)%7;return Array.from({length:h},(_,j)=>`<ellipse cx="${x}" cy="${112-j*7}" rx="22" ry="6" fill="#e6b93a" stroke="#8a6414" stroke-width="2"/>`).join('')}).join('')+`<path d="M-660 30h1920" stroke="#c9a458" stroke-width="2" stroke-dasharray="4 6"/><text x="300" y="26" text-anchor="middle" font-size="16" fill="#f0cf7d" font-family="Georgia,serif">2 : 1 · 5 : 2 · 3 : 1</text>`;
+  else if(k==='news')s=sky('#c9b48a','#7a6444')+`<rect x="-700" y="90" width="2000" height="30" fill="#5a4a34"/>${[60,200,340,480].map((x,i)=>`<rect x="${x}" y="${24+i%2*6}" width="90" height="56" fill="#e9ddc0" stroke="#8a6a44" stroke-width="2" transform="rotate(${i%2?3:-3} ${x+45} 50)"/><path d="M${x+10} ${40+i%2*6}h70M${x+10} ${52+i%2*6}h60M${x+10} ${64+i%2*6}h66" stroke="#5c4c30" stroke-width="3" transform="rotate(${i%2?3:-3} ${x+45} 50)"/>`).join('')}${man(170,118,'#a8754e',.8)}<path d="M178 70l26-12v24z" fill="#c9a458"/>`;
+  else if(k==='league')s=sky('#3a2a1c','#1a120c')+[[250,60,'#c9a458'],[150,40,'#9aa3ab'],[350,30,'#b07a4a']].map(([x,h,c])=>`<rect x="${x}" y="${118-h}" width="100" height="${h}" fill="${c}"/>`).join('')+`<g transform="translate(300 34)"><path d="M-30 0q30 30 60 0" stroke="#7ccf4f" stroke-width="5" fill="none"/></g>${[60,520].map(x=>`<rect x="${x}" y="20" width="16" height="98" fill="#4a321c"/><path d="M${x+16} 22h34v24h-34z" fill="#a3281f"/>`).join('')}`;
+  else if(k==='imp')s=sky('#1c3a4a','#0f1c26')+`<rect x="-700" y="78" width="2000" height="42" fill="#3a5a3a"/><path d="M0 80q80-30 160-10t160 0 160-20 120 10v70H0z" fill="#3a5a3a"/><path d="M60 96q120-40 240-10t240-20" stroke="#c9a458" stroke-width="3" fill="none" stroke-dasharray="8 6"/>${[110,300,470].map(x=>`<circle cx="${x}" cy="${78+x%3*4}" r="7" fill="#a3281f" stroke="#f0cf7d" stroke-width="2"/>`).join('')}<g transform="translate(540 24)"><path d="M0 0v80" stroke="#c9a458" stroke-width="4"/><path d="M-18 6q18-12 36 0l-6 10q-12-8-24 0z" fill="#f0cf7d"/><rect x="-14" y="22" width="28" height="22" fill="#a3281f"/></g>`;
+  else if(k==='trophy')s=sky('#2a1d12','#140f0b')+`<rect x="-700" y="92" width="2000" height="10" fill="#6b4a2a"/><rect x="-700" y="46" width="2000" height="8" fill="#6b4a2a"/>${[60,160,260,360,460,540].map((x,i)=>`<g transform="translate(${x} ${i%2?44:90})"><path d="M-14-30h28v10a14 14 0 0 1-28 0z" fill="${['#e6b93a','#c0c7cf','#b07a4a'][i%3]}"/><rect x="-3" y="-6" width="6" height="${i%2?0:4}" fill="#8a6414"/><rect x="-10" y="-4" width="20" height="4" fill="#8a6414"/></g>`).join('')}`;
+  else if(k==='sched')s=sky('#c9925a','#6b4a2a')+`<circle cx="300" cy="120" r="90" fill="#e9ddc0" stroke="#8a6a44" stroke-width="4"/>${Array.from({length:12},(_,i)=>{const a=Math.PI*(1+i/11);return `<path d="M${300+Math.cos(a)*70} ${120+Math.sin(a)*70}L${300+Math.cos(a)*86} ${120+Math.sin(a)*86}" stroke="#5c4c30" stroke-width="${[3,10].includes(i)?6:3}"/>`}).join('')}<path d="M300 120L240 60" stroke="#3a2a1c" stroke-width="5"/>`;
+  else if(k==='me')s=sky('#3a2430','#140f0b')+`<path d="M-700 120V70h2000v50z" fill="#2a1d12"/><g transform="translate(300 120)"><path d="M-46 0q0-40 46-44q46 4 46 44z" fill="#a3281f"/><circle cx="0" cy="-62" r="24" fill="#d9cdb4"/><path d="M-24-70q24-26 48 0" stroke="#7ccf4f" stroke-width="5" fill="none"/></g>${[120,480].map(x=>col(x,90,18)).join('')}`;
+  else s=sky('#3a2a1c','#1a120c');
+  return `<svg viewBox="0 0 600 120" preserveAspectRatio="xMidYMid meet" style="overflow:hidden" aria-hidden="true">${s}</svg>`}
+function banner73(k){const B=BANNERS73[k];if(!B)return '';return `<div class="roomhd b73 b73-${k}">${roomScene73(k)}<div class="roomttl"><b>${B[0]}</b><span>${B[1]}</span></div>${bannerStat73(k)}</div>`}
+
+/* ---------- mgrHTML: banners, header hours out, rail ovals ---------- */
+{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(!w||w.dead||MGR.view)return h;const k=MGR.tab;
+  h=h.replace(/<span class="badge[^"]*"[^>]*>Recruiting hours [^<]*<\/span>/,'').replace(/<span class="badge[^"]*"[^>]*>Training hours [^<]*<\/span>/,'');
+  if(/<div class="roomhd (infirm|yard)">/.test(h))h=h.replace(/(<div class="roomhd (infirm|yard)">[\s\S]*?<div class="roomttl">[\s\S]*?<\/div>)/,`$1${bannerStat73(k)}`);
+  else if(BANNERS73[k])h=h.replace('<div class="railmain">',m0=>m0+banner73(k));
+  /* the infirmary's " · N" in its label becomes the oval */
+  h=h.replace(/⚕ Infirmary · \d+/,'⚕ Infirmary')}catch(e){console.error(e)}return h}}
+/* the rail ovals (kept live by the sweep, like the hour chips of v0.65) */
+setInterval(()=>{try{if(typeof W_!=='function'||!W_()||W_().dead)return;const w=W_();
+  const vals={ludus:[ludusTodo73(),n=>`📋 ${n}`,n=>`${n} task${n===1?'':'s'} left this week`],recruit:[w.hours||0,n=>`${n} h`,n=>`${n} recruiting hours left`],practice:[thLeft(w),n=>`${n} h`,n=>`${n} training hours left`],infirm:[infirmNeed73(),n=>`⚕ ${n}`,n=>`${n} fighter${n===1?'':'s'} need care`]};
+  for(const [k,[v,t,tt]] of Object.entries(vals)){const b=document.querySelector(`.mtabs [data-mg="tab"][data-id="${k}"]`);if(!b)continue;
+    const old=b.querySelector('.hrchip');if(old)old.remove();let c=b.querySelector('.mcount.c73');
+    if(!c){c=document.createElement('span');c.className='mcount c73';b.appendChild(c)}const txt=v?t(v):'';if(c.textContent!==txt){c.textContent=txt;c.title=v?tt(v):''}c.hidden=!v}}catch(e){}},500);
+
+/* ---------- scouting: ratings + personality on the free agent's card ---------- */
+function persTags73(g){if(g.report&&g.report.tags)return g.report.tags;try{const st=styleOf({cpu:true,pers:g.pers,diff:'normal',cls:CLASSES[g.cls]?g.cls:'soldier',stats:{},trophies:[],coin:0,cf:0});return PERS_KEYS.map(([k,l])=>[l,st[k]]).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0])}catch(e){return []}}
+{const base=detailHTML;detailHTML=function(g){let h=base.apply(this,arguments);try{if(!g||g.contract||!h.includes('class="rsteps"'))return h;
+  const tags=g.scout?persTags73(g):[];const add=(typeof ratingsHTML==='function'?ratingsHTML(g):'')+(g.scout?`<div class="sect">Personality</div><div class="ptags">${tags.map(t=>`<span class="badge gold">${esc(t)}</span>`).join(' ')||'<span class="rc-sub">—</span>'}</div>`:'<p class="rc-sub" style="margin:4px 0 0">Scout them to see their ratings and personality.</p>');
+  const i=h.indexOf('<div class="rpane">');if(i>=0)h=h.slice(0,i)+`<div class="scoutsee">${add}</div>`+h.slice(i)}catch(e){console.error(e)}return h}}
+
+(()=>{const st=document.createElement('style');st.textContent=`
+.mtabs [data-id="ludus"].ludpend{border:1px solid rgba(214,171,76,.22)!important}
+.mtabs button .mcount.c73{float:right;margin-left:6px}
+.mtabs .hrchip{display:none!important}
+.roomstat{position:absolute;right:14px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 16px;border:1px solid var(--gold);border-radius:999px;background:rgba(20,14,10,.78);box-shadow:0 4px 14px rgba(0,0,0,.5);min-width:96px}
+.roomstat b{font:700 22px/1 var(--mono);color:#1a120c;background:var(--gold);border-radius:999px;padding:3px 12px}
+.roomstat span{font-size:11.5px;color:#e8dcc0;letter-spacing:.03em;white-space:nowrap}
+.hpips{display:flex;gap:2px;margin-top:2px}.hpips i{width:7px;height:7px;border-radius:2px;background:#3a2b1f;display:block}
+.scoutsee{margin:6px 0 8px}.ptags{display:flex;gap:6px;flex-wrap:wrap}
+@media (max-width:600px){.roomstat{right:8px;padding:4px 10px;min-width:0}.roomstat b{font-size:17px}}`;document.head.appendChild(st)})();
+
+/* ---------- v0.73 fix: the Summa Rudis medallion beside Flavius hid his speech bubbles — it now waits behind an ⓘ ---------- */
+let SR_OPEN=false;
+function srBtnAt(x,y,d){const cv=document.getElementById('cv')||document.querySelector('.canvas-wrap canvas');if(!cv)return;const wrap=cv.parentElement;let b=document.getElementById('srInfo');
+  if(!b){b=document.createElement('button');b.id='srInfo';b.type='button';b.className='srinfo';b.textContent='ⓘ';b.addEventListener('click',e=>{e.stopPropagation();SR_OPEN=!SR_OPEN;b.classList.toggle('on',SR_OPEN);try{draw()}catch(err){}});wrap.appendChild(b)}
+  const k=cv.clientWidth/cv.width;const ox=cv.offsetLeft,oy=cv.offsetTop;b.style.left=(ox+x*k)+'px';b.style.top=(oy+(y+d*0.08)*k)+'px';b.hidden=false;
+  const ev=typeof EV==='function'?EV():null;b.title=SR_OPEN?'Hide the Summa Rudis':`Summa Rudis${ev&&ev.sr?': '+ev.sr:''} — show the medallion`;b._t=Date.now()}
+/* the button goes when the medallion is not drawn at all (setup, Flavius hidden, no event) */
+setInterval(()=>{const b=document.getElementById('srInfo');if(b&&!b.hidden&&Date.now()-(b._t||0)>1500&&(!S||S.over||S.phase==='setup'))b.hidden=true},700);
+(()=>{const st=document.createElement('style');st.textContent=`.srinfo{position:absolute;z-index:3;width:22px;height:22px;border-radius:50%;border:1px solid var(--gold);background:rgba(20,14,10,.85);color:var(--gold2);font:600 13px/1 var(--mono);cursor:pointer;padding:0;display:grid;place-items:center}.srinfo.on{background:var(--gold);color:#1a120c}`;document.head.appendChild(st)})();
+
+/* ---------- v0.73: offer to clear the gladiators older builds recruited on their own (recruit:true, never fought) ---------- */
+const oldRecruits73=()=>(typeof LUDUS_CACHE!=='undefined'?LUDUS_CACHE:[]).filter(g=>g&&g.recruit&&!(g.events>0));
+{const base=ludusHTML;ludusHTML=async function(){let h=await base.apply(this,arguments);try{let off=false;try{off=localStorage.getItem('flavius_oldrec73')==='keep'}catch(e){}const L=oldRecruits73();
+  if(L.length&&!off)h=`<div class="card2 oldrec"><b>🧹 ${L.length} gladiator${L.length===1?'':'s'} the ludus recruited on its own</b> <span class="rc-sub">older versions filled your roster with them; none has fought yet.</span><div class="acts" style="margin-top:6px"><button class="btn primary" type="button" data-oldrec="del">Remove them</button><button class="btn" type="button" data-oldrec="keep">Keep them</button></div></div>`+h}catch(e){console.error(e)}return h}}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-oldrec]');if(!b)return;e.stopPropagation();
+  if(b.dataset.oldrec==='keep'){try{localStorage.setItem('flavius_oldrec73','keep')}catch(err){}const c=b.closest('.oldrec');if(c)c.remove();return}
+  const L=oldRecruits73();for(const g of L){await Store.del('gladiators',g.id).catch(()=>{})}LUDUS_CACHE=LUDUS_CACHE.filter(g=>!L.includes(g));
+  const box=document.getElementById('ludusBody');if(box)box.innerHTML=await ludusHTML();if(typeof mToast==='function')mToast(`🧹 ${L.length} removed.`)},true);
+/* 96-armlv — custom armor in levels (Virgilante; drafted v0.70, shipped v0.73).
+   One design, ticked for Level I, II and/or III: each ticked level becomes its own piece — "Name I/II/III", its own market deck,
+   its own colour grade (I iron · II bronze · III gold) and its own stats, bought from that level's budget (CA_BUDGET 3/5/8):
+   AP 1 point each above the first (cap 7), bonus AP 2 points each, Stackable 1 point. A pair costs nothing extra.
+   ca.levels = {1:{on,ap,bonusAp},2:{…},3:{…}}; shared: bonusLoc, stack, pair, art, equip point. The first ticked level keeps the
+   key ca_<id>; the others are ca_<id>_L<n>. Older custom armor (no levels) keeps its single level and name. */
+const CA_BUDGET={1:3,2:5,3:8};const CA_NUM={1:'I',2:'II',3:'III'};
+const CA_GRADE={1:'grayscale(.6) brightness(.8) contrast(1.15)',2:'sepia(.75) saturate(1.6) hue-rotate(-14deg) brightness(.92)',3:'sepia(1) saturate(2.4) hue-rotate(-8deg) brightness(1.2) contrast(1.05)'};
+const CA_GRADE_N={1:'iron',2:'bronze',3:'gold'};
+function caLevels(ca){if(ca.levels&&Object.values(ca.levels).some(x=>x&&x.on))return ca.levels;const lv=clamp(+ca.lv||1,1,3);return {[lv]:{on:1,ap:clamp(+ca.ap||2,1,7),bonusAp:ca.bonusLoc?(+ca.bonusAp||0):0}}}
+const caOnLv=ca=>[1,2,3].filter(n=>{const L=caLevels(ca)[n];return L&&L.on});
+function caCost(ca,n,L){L=L||caLevels(ca)[n]||{};return Math.max(0,(+L.ap||1)-1)+2*(ca.bonusLoc?(+L.bonusAp||0):0)+(ca.stack?1:0)}
+const caVarKey=(ca,n,first)=>n===first?'ca_'+ca.id:'ca_'+ca.id+'_L'+n;
+/* a level's stats, fitted into its budget (bonus first gives way, then AP) */
+function caFitBudget(ca,n){const L=(ca.levels[n]=ca.levels[n]||{on:0,ap:2,bonusAp:0});L.ap=clamp(+L.ap||1,1,7);L.bonusAp=ca.bonusLoc?clamp(+L.bonusAp||0,0,4):0;
+  while(caCost(ca,n,L)>CA_BUDGET[n]&&L.bonusAp>0)L.bonusAp--;while(caCost(ca,n,L)>CA_BUDGET[n]&&L.ap>1)L.ap--;return L}
+function caLevelsInit(ca){if(ca.levels)return;const lv=clamp(+ca.lv||1,1,3);ca.levels={};for(const n of [1,2,3])ca.levels[n]={on:n===lv?1:0,ap:n===lv?clamp(+ca.ap||2,1,7):[2,3,5][n-1],bonusAp:n===lv&&ca.bonusLoc?(+ca.bonusAp||0):0};
+  for(const n of [1,2,3])caFitBudget(ca,n)}
+/* the variants join ARM (gearRebuild deletes stale custom keys first, then calls caReg for every design) */
+{const base=caReg;caReg=function(ca){const a=base.apply(this,arguments);try{if(!ca.levels)return a;const on=caOnLv(ca);if(!on.length)return a;const first=on[0];
+  for(const n of on){const L=caLevels(ca)[n];const k=caVarKey(ca,n,first);const v=n===first?a:{...a};v.n=ca.name+' '+CA_NUM[n];v.lv=n;v.ap=clamp(+L.ap||1,1,7);v.grade=n;
+    if(ca.bonusLoc&&+L.bonusAp)v.bonus={[ca.bonusLoc]:+L.bonusAp};else delete v.bonus;ARM[k]=v}}catch(e){console.error(e)}return a}}
+{const base=gearRebuild;gearRebuild=function(){const r=base.apply(this,arguments);try{for(const ca of CUSTOM.armor||[]){if(!ca.levels)continue;const on=caOnLv(ca);
+  for(const n of on.slice(1)){const k=caVarKey(ca,n,on[0]);const a=ARM[k];if(a&&a.caMarket&&(typeof rosterGate!=='function'||rosterGate('armor',ca,true))&&!MARKET_A[n].includes(k))MARKET_A[n].push(k)}}}catch(e){console.error(e)}return r}}
+/* the grade on the art: every armSVG of a levelled piece, and the piece worn on the avatar */
+{const base=armSVG;armSVG=function(key){const s=base.apply(this,arguments);const g=ARM[key]&&ARM[key].grade;return g&&CA_GRADE[g]?s.replace(/^<svg\b/,`<svg style="filter:${CA_GRADE[g]}"`):s}}
+{const base=caOnBodySVG;caOnBodySVG=function(ca,key){const s=base.apply(this,arguments);const g=key&&ARM[key]&&ARM[key].grade;return g&&CA_GRADE[g]?s.replace(/^<g\b/,`<g style="filter:${CA_GRADE[g]}"`):s}}
+/* the designer: a Levels block replaces AP, Market level and Bonus amount */
+function caLevelsHTML(d){caLevelsInit(d);const btn=(a,n,v,l,dis)=>`<button class="btn tksm" type="button" data-calv="${a}" data-n="${n}" data-v="${v}" ${dis?'disabled':''}>${l}</button>`;
+  const art=armSVG('ca_preview',{...d});
+  return `<div class="calevels" style="grid-column:1/-1"><div class="sect" style="margin:4px 0">Levels <span class="rc-sub">tick each level it comes in · each spends its own budget · AP 1 point each above the first · bonus AP 2 · stackable 1</span></div>
+   <div class="calvgrid">${[1,2,3].map(n=>{const L=d.levels[n];const used=caCost(d,n),left=CA_BUDGET[n]-used;const on=!!L.on;
+     return `<div class="calv ${on?'on':''}"><label class="calvhd"><input type="checkbox" data-calv="on" data-n="${n}" ${on?'checked':''}> <b>Level ${CA_NUM[n]}</b> <span class="rc-sub">${CA_GRADE_N[n]} · ${CA_BUDGET[n]} points</span></label>
+      <div class="calvart" style="filter:${CA_GRADE[n]}">${art}</div>
+      ${on?`<div class="calvrow">AP ${btn('ap',n,-1,'−',L.ap<=1)}<b>${L.ap}</b>${btn('ap',n,1,'+',L.ap>=7||left<1)}</div>
+      ${d.bonusLoc?`<div class="calvrow">Bonus ${btn('bonus',n,-1,'−',!L.bonusAp)}<b>+${L.bonusAp||0}</b>${btn('bonus',n,1,'+',left<2||(L.bonusAp||0)>=4)}</div>`:''}
+      <div class="calvleft ${left<0?'bad':''}">${left} point${left===1?'':'s'} left</div><div class="rc-sub">${esc(d.name||'Unnamed')} ${CA_NUM[n]}</div>`:'<div class="rc-sub" style="margin-top:6px">not made</div>'}</div>`}).join('')}</div></div>`}
+{const base=gearAHTML;gearAHTML=function(){let h=base.apply(this,arguments);try{const d=ST.ca;if(!d)return h;caLevelsInit(d);
+  h=h.replace(/<label>AP<select data-caf="ap">[\s\S]*?<\/select><\/label>/,'').replace(/<label>Market level<select data-caf="lv">[\s\S]*?<\/select><\/label>/,'').replace(/<label>Bonus amount<select data-caf="bonusAp">[\s\S]*?<\/select><\/label>/,'');
+  const i=h.indexOf('<div style="grid-column:1/-1" class="rc-sub crnote">');if(i>=0)h=h.slice(0,i)+caLevelsHTML(d)+h.slice(i);
+  h=h.replace(/(<div class="rc-sub" style="text-align:center">)[^<]*·\s*\d+ AP(<\/div>)/,`$1${esc(d.name||'Unnamed piece')} · ${caOnLv(d).map(n=>CA_NUM[n]+' '+d.levels[n].ap+' AP').join(' · ')||'no level ticked'}$2`)}catch(e){console.error(e)}return h}}
+document.addEventListener('click',e=>{const b=e.target.closest('button[data-calv]');if(!b||!ST.ca)return;const d=ST.ca;caLevelsInit(d);const n=+b.dataset.n,v=+b.dataset.v,L=d.levels[n];
+  if(b.dataset.calv==='ap'){const t={...L,ap:clamp(L.ap+v,1,7)};if(caCost(d,n,t)<=CA_BUDGET[n]||v<0)L.ap=t.ap;else return mToast(`Level ${CA_NUM[n]} has ${CA_BUDGET[n]} points.`)}
+  if(b.dataset.calv==='bonus'){const t={...L,bonusAp:clamp((L.bonusAp||0)+v,0,4)};if(caCost(d,n,t)<=CA_BUDGET[n]||v<0)L.bonusAp=t.bonusAp;else return mToast(`Level ${CA_NUM[n]} has ${CA_BUDGET[n]} points.`)}
+  caRedraw()});
+document.addEventListener('change',e=>{const c=e.target.closest('input[data-calv="on"]');if(c&&ST.ca){const d=ST.ca;caLevelsInit(d);const n=+c.dataset.n;d.levels[n].on=c.checked?1:0;caFitBudget(d,n);caRedraw();return}
+  /* stackable or a new bonus location changes every level's cost: refit them */
+  const f=e.target.closest('[data-caf="stack"],[data-caf="bonusLoc"]');if(f&&ST.ca){setTimeout(()=>{const d=ST.ca;caLevelsInit(d);for(const n of [1,2,3])caFitBudget(d,n);caRedraw()},0)}});
+/* saving: at least one level; the first ticked level is the design's own lv/ap (older code and lists read those) */
+document.addEventListener('click',e=>{const sv=e.target.closest('[data-gs="asave"]');if(!sv||!ST.ca)return;const d=ST.ca;caLevelsInit(d);const on=caOnLv(d);
+  if(!on.length){e.stopImmediatePropagation();e.preventDefault();mToast('Tick at least one <b>level</b> for this piece.');return}
+  for(const n of on)caFitBudget(d,n);const L=d.levels[on[0]];d.lv=on[0];d.ap=Math.max(2,L.ap);d.bonusAp=d.bonusLoc?(L.bonusAp||0):0},true);
+{const base=caFromSystem;caFromSystem=function(d){const r=base.apply(this,arguments);try{delete d.levels;caLevelsInit(d)}catch(e){}return r}}
+{const base=blankCA;blankCA=function(){const d=base.apply(this,arguments);d.levels={1:{on:0,ap:3,bonusAp:0},2:{on:1,ap:4,bonusAp:0},3:{on:0,ap:6,bonusAp:0}};return d}}
+(()=>{const st=document.createElement('style');st.textContent=`
+.calvgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.calv{border:1px solid var(--line2);border-radius:8px;padding:6px 8px;background:var(--panel2);display:grid;gap:4px;justify-items:center;opacity:.6}.calv.on{opacity:1;border-color:var(--gold)}
+.calvhd{display:flex!important;gap:6px;align-items:center;justify-self:start;color:var(--bone)!important}
+.calvart{width:64px;height:64px}.calvart svg{width:100%;height:100%}
+.calvrow{display:flex;gap:6px;align-items:center;font-size:13px}.calvrow b{min-width:1.6em;text-align:center;font:600 15px var(--mono);color:var(--gold2)}
+.calvleft{font:12px var(--mono);color:var(--muted)}.calvleft.bad{color:var(--blood2)}
+@media (max-width:640px){.calvgrid{grid-template-columns:1fr}}`;document.head.appendChild(st)})();
+/* =====================================================================
+   97-ARMOR73 · v0.73 — the armor designer's Start from, fixed (Virgilante: "does not make sense and does not load the system
+   armors as it should")
+   =====================================================================
+   • Start from lists "A blank piece" and the printed armor grouped by where it is worn (Head, Chest, Belt, Upper arm,
+     Lower arm, Hand, Upper leg, Lower leg). The sculpt templates moved to their own "Base shape" list.
+   • Loading a printed piece (Start from or 📜 Copy & edit) brings its rulebook stats AND its look: the printed art (in the
+     current art style — Original Drawn or Sculpted) at the exact spot the printed piece is worn (ARM_FIT → equip point and
+     placement). "Wear the printed art" can be switched off to sculpt your own; adding sculpt shapes or a base shape does too.
+   • A copy that keeps the printed art wears it in matches, on the avatar and in every list (ca.art = the printed key).
+   ===================================================================== */
+const CA_S_K=1.15; /* TWEAK: sculpt size (% of the 100-unit box) per avatar unit of printed width */
+const caArtOn=ca=>!!(ca&&ca.art&&ARM[ca.art]&&!ARM[ca.art].custom&&!ca.noArt&&!(ca.layers||[]).length&&!(ca.baked||[]).length);
+function caPlaceFromSystem(d,k){const f=armFit(k)||ARM_FIT[k];if(!f||!f.at||!EQ[f.at])return;d.eq=f.at;
+  d.f2={dx:f.dx||0,dy:f.dy||0,s:Math.round((f.w||40)*CA_S_K),r:f.r||0,flip:f.flip?1:0};
+  if(f.L)d.f2.L={dx:f.L.dx??f.dx??0,dy:f.L.dy??f.dy??0,s:Math.round((f.L.w||f.w||40)*CA_S_K),r:f.L.r??f.r??0};
+  try{caSync(d)}catch(e){}}
+{const base=caFromSystem;caFromSystem=function(d,k){const r=base.apply(this,arguments);try{if(ARM[k]){d.art=k;delete d.noArt;d.name=ARM[k].n+' (copy)';caPlaceFromSystem(d,k)}}catch(e){console.error(e)}return r}}
+/* the printed part as the designer's equip point */
+const caEqOf=k=>{const f=ARM_FIT[k];return f&&f.at?f.at:(ARM[k].slot==='head'?'head':'chest')};
+function caStartHTML(d){const sys=Object.keys(ARM).filter(k=>!ARM[k].custom);const groups=CA_EQ_ALL.map(([eq,l])=>[l,sys.filter(k=>caEqOf(k)===eq)]).filter(g=>g[1].length);
+  return `<label>Start from<select data-caf="start"><option value="" ${d.base?'':'selected'}>✦ A blank piece</option>${groups.map(([l,ks])=>`<optgroup label="${esc(l)}">${ks.map(k=>`<option value="${k}" ${d.base===k?'selected':''}>${esc(ARM[k].n)} · ${ARM[k].ap} AP · L${ARM[k].lv}</option>`).join('')}</optgroup>`).join('')}</select></label>
+   <label>Base shape<select data-caf="shape">${CA_SHAPES.map(([k,l])=>`<option value="${k}" ${d.shape===k?'selected':''}>${l}</option>`).join('')}</select></label>
+   ${d.art&&ARM[d.art]?`<label class="caartrow"><input type="checkbox" data-caart ${caArtOn(d)?'checked':''} ${(d.layers||[]).length||(d.baked||[]).length?'disabled':''}> Wear the printed art of <b>${esc(ARM[d.art].n)}</b>${(d.layers||[]).length||(d.baked||[]).length?' <span class="rc-sub">(your sculpt replaces it)</span>':''}</label>`:''}`}
+{const base=gearAHTML;gearAHTML=function(){let h=base.apply(this,arguments);try{const d=ST.ca;if(!d)return h;
+  h=h.replace(/<label>Start from<select data-caf="shape">[\s\S]*?<\/select><\/label>/,caStartHTML(d));
+  if(caArtOn(d))h=h.replace(/(<div class="scart[^"]*" id="caPiece"[^>]*>)[\s\S]*?(<\/div>)/,`$1<div class="caartprev">${armArtCell(d.art,200)}</div>$2`)}catch(e){console.error(e)}return h}}
+{const base=caPrevRefresh;caPrevRefresh=function(){const d=ST.ca;if(caArtOn(d)){const pv=document.getElementById('caPiece');if(pv)pv.innerHTML=`<div class="caartprev">${armArtCell(d.art,200)}</div>`;return}return base.apply(this,arguments)}}
+/* the art of a copy that keeps the printed look: the printed piece's own drawing (graded by level, if any) */
+{const base=armSVG;armSVG=function(key,ca){const A=ARM[key]||{};const cu=ca||(A.caId?(CUSTOM.armor||[]).find(c=>c.id===A.caId):null);
+  if(cu&&caArtOn(cu)){const s=base.call(this,cu.art);const g=A.grade;return g&&typeof CA_GRADE!=='undefined'&&CA_GRADE[g]?s.replace(/^<svg\b/,`<svg style="filter:${CA_GRADE[g]}"`):s}return base.apply(this,arguments)}}
+/* on the body: the printed cut-out at the copy's own placement */
+{const base=caOnBodySVG;caOnBodySVG=function(ca,key,mirror){try{if(caArtOn(ca)&&ca.eq&&EQ[ca.eq]){const P=ARM[ca.art];const c=ARM_CROP[P.img];if(c){const f0=caF2(ca);const f=mirror&&ca.f2&&ca.f2.L?{...f0,...ca.f2.L}:f0;
+    const p=mirror?(EQ_L[ca.eq]||[150-EQ[ca.eq][0],EQ[ca.eq][1]]):EQ[ca.eq];const w=f.s/CA_S_K;const cx=mirror?p[0]-f.dx:p[0]+f.dx,cy=p[1]+f.dy;
+    const B={cx,cy,w,h:w*c[3]/c[2],r:f.r||0,crop:c,side:!!mirror,mirror:!!mirror!==(!!ARM_LEFTART[ca.art]!==!!f.flip),gold:ca.art==='bracers'};
+    const g=key&&ARM[key]&&ARM[key].grade;const s=armPieceSVG(B,ca.art,1,null,'ca'+(ca.id||'')+(mirror?'L':'R'));
+    return g&&typeof CA_GRADE!=='undefined'&&CA_GRADE[g]?`<g style="filter:${CA_GRADE[g]}">${s}</g>`:s}}}catch(e){console.error(e)}return base.apply(this,arguments)}}
+/* cards for a copy that keeps the printed look show the printed card in the Original Drawn style */
+{const base=cardHTML;cardHTML=function(ref,...a){try{if(typeof ref==='string'&&ref.startsWith('a:ca_')&&armorStyle()==='scan'){const A=ARM[ref.slice(2)];const cu=A&&A.caId?(CUSTOM.armor||[]).find(c=>c.id===A.caId):null;if(cu&&caArtOn(cu))return base.call(this,'a:'+cu.art,...a)}}catch(e){}return base.call(this,ref,...a)}}
+/* the controls */
+document.addEventListener('change',e=>{const t=e.target;if(!ST.ca)return;
+  if(t.matches('select[data-caf="start"]')){e.stopImmediatePropagation();const v=t.value;if(v){caFromSystem(ST.ca,v)}else{const keep=ST.ca.id;ST.ca=blankCA();ST.ca.id=keep}caRedraw();return}
+  if(t.matches('select[data-caf="shape"]')){ST.ca.noArt=1}
+  if(t.matches('input[data-caart]')){e.stopImmediatePropagation();if(t.checked)delete ST.ca.noArt;else ST.ca.noArt=1;caRedraw()}},true);
+document.addEventListener('click',e=>{if(e.target.closest('[data-scb="add"]')&&ST.ca&&caArtOn(ST.ca))ST.ca.noArt=1},true);
+(()=>{const st=document.createElement('style');st.textContent=`
+.caartrow{display:flex!important;flex-direction:row!important;gap:6px;align-items:center;grid-column:1/-1;font-size:13px}.caartrow input{width:auto!important}
+.caartprev{display:grid;place-items:center;width:100%;height:100%;min-height:200px}.caartprev .cimg,.caartprev img{max-width:220px!important;width:220px}`;document.head.appendChild(st)})();
+/* =====================================================================
+   98-AVATAR73 · v0.73 — the armored avatar, quieter and more useful (Virgilante)
+   =====================================================================
+   • No HP/AP numbers over the avatar: hover (or tap) a body part for its HP, AP and the pieces worn there (avPop).
+   • The location rows under the avatar keep the bars and piece names; the small armor pictures go (the avatar wears them).
+   • A struck body part flashes red on the avatar (AVHIT: HP or AP dropped since the last draw).
+   • Try-on ghost: hovering an armor card in the market or in a loot choice shows your avatar wearing it, with its stats.
+   • Records: Ludus Flavius records and the class designer show the avatar in the class's starting armor (avatarFor73).
+   ===================================================================== */
+const AVHIT={};const AVHIT_MS=1100;
+const avLocOf=t=>{for(const l of LOCS)if(t.startsWith(LOCN[l]+':')||t.startsWith(LOCN[l]+' '))return l;return null};
+{const base=avatarSVG;avatarSVG=function(p){let s=base.apply(this,arguments);try{if(!p||!p.hp||p.id==='afit')return s;
+  /* the chips go */
+  s=s.replace(/<circle cx="[\d.]+" cy="[\d.]+" r="9"[^>]*\/><text[^>]*>[^<]*<\/text>/g,'').replace(/<circle cx="[\d.]+" cy="[\d.]+" r="7" fill="#b9c1c9"\/><text[^>]*>[^<]*<\/text>/g,'');
+  /* the zones answer a hover; a struck one flashes */
+  const now=performance.now();const flash=[];
+  for(const l of LOCS){const v=(p.hp[l]||0)*100+(p.ap[l]||0);const k=p.id+'|'+l;const was=AVHIT[k];if(!was)AVHIT[k]={v,t:0};else if(v<was.v)AVHIT[k]={v,t:now};else if(v!==was.v)AVHIT[k]={v,t:was.t}}
+  s=s.replace(/<path d="([^"]*)" fill="([^"]*)" fill-opacity="([^"]*)" stroke="none"><title>([^<]*)<\/title><\/path>/g,(m0,d,f,fo,t)=>{const l=avLocOf(t);const H=l&&AVHIT[p.id+'|'+l];if(H&&now-H.t<AVHIT_MS)flash.push(d);
+    return `<path d="${d}" fill="${f}" fill-opacity="${fo}" stroke="none" class="avzone" pointer-events="all" data-avtip="${esc(t)}"${l?` data-avloc="${l}"`:''}/>`});
+  if(flash.length)s=s.replace('</svg>',flash.map(d=>`<path d="${d}" class="avhit" fill="#ff4a3a" pointer-events="none"/>`).join('')+'</svg>');
+  /* the zones sit above the armor so the hover reaches them */
+  const zs=[];s=s.replace(/<path [^>]*class="avzone"[^>]*\/>/g,m0=>{zs.push(m0.replace('fill="none"','fill="#000"').replace(/fill-opacity="[^"]*"/,'fill-opacity="0"'));return m0});if(zs.length)s=s.replace('</svg>',zs.join('')+'</svg>')}catch(e){console.error(e)}return s}}
+/* keep redrawing the board panel while a flash is running */
+setInterval(()=>{try{const now=performance.now();if(Object.values(AVHIT).some(h=>h.t&&now-h.t<AVHIT_MS+200)&&typeof render==='function'&&S&&!S.over&&document.querySelector('#board .avhit'))render()}catch(e){}},400);
+/* the hover card */
+function avPopShow(el,ev){const t=el.dataset.avtip||'';const m=t.match(/^([^:]+):\s*(\d+) HP, (\d+) AP(?: · (.*))?$/);let pop=document.getElementById('avPop');if(!pop){pop=document.createElement('div');pop.id='avPop';pop.className='avpop';document.body.appendChild(pop)}
+  const pcs=m&&m[4]?m[4].split(', '):[];const card=n=>{const k=Object.keys(ARM).find(x=>ARM[x].n===n);const A=k&&ARM[k];return `<div class="avpc">${k&&typeof armArtCell==='function'?armArtCell(k,30):''}<span><b>${esc(n)}</b>${A?`<small>${A.ap} AP · L${A.lv||1}${A.bonus?` · +${Object.values(A.bonus)[0]} AP to ${LOCN[Object.keys(A.bonus)[0]]||Object.keys(A.bonus)[0]}`:''}</small>`:''}</span></div>`};
+  pop.innerHTML=m?`<b class="avpl">${esc(m[1])}</b><div class="avnums"><span class="hp">HP <b>${m[2]}</b></span><span class="ap">AP <b>${m[3]}</b></span></div>${pcs.length?pcs.map(card).join(''):'<div class="rc-sub">no armor here</div>'}`:esc(t);
+  pop.hidden=false;const r=el.getBoundingClientRect();const x=Math.min(window.innerWidth-230,(ev&&ev.clientX||r.right)+14),y=Math.max(8,Math.min(window.innerHeight-180,(ev&&ev.clientY||r.top)-20));pop.style.left=x+'px';pop.style.top=y+'px'}
+document.addEventListener('mouseover',e=>{const z=e.target.closest&&e.target.closest('[data-avtip]');const pop=document.getElementById('avPop');if(z)avPopShow(z,e);else if(pop&&!pop.hidden&&!e.target.closest('#avPop'))pop.hidden=true});
+document.addEventListener('click',e=>{const z=e.target.closest&&e.target.closest('[data-avtip]');if(z){avPopShow(z,e);return}const pop=document.getElementById('avPop');if(pop&&!e.target.closest('#avPop'))pop.hidden=true},true);
+/* an avatar wearing a list of [armorKey, location] */
+function avatarFor73(list,id){const p={id:id||'rec',name:'',hp:{},ap:{},pieces:{},w:{}};for(const l of LOCS){p.hp[l]=BASE_HP[l];p.ap[l]=0;p.pieces[l]=[]}
+  for(const [k,l] of list||[]){const A=ARM[k];if(!A||!p.pieces[l])continue;p.pieces[l].push({key:k,n:A.n,ap:A.ap});p.ap[l]+=A.ap}return p}
+const avatarCls73=cls=>{const C=CLASSES[cls];return C&&C.armor?avatarFor73(C.armor,'rec_'+cls):null};
+/* try-on ghost: an armor card hovered in the market or a loot choice */
+function tryOnShow(el){const ref=el.dataset.card||'';const k=ref.slice(2);const A=ARM[k];const me0=typeof cur==='function'&&S&&!S.over?cur():null;if(!A||!me0||!me0.pieces)return;
+  const p={...me0,id:'tryon',hp:{...me0.hp},ap:{...me0.ap},pieces:Object.fromEntries(LOCS.map(l=>[l,[...(me0.pieces[l]||[])]]))};
+  const locs=A.slot==='head'?['head']:A.slot==='chest'?['chest']:A.slot==='arm'?(A.pair?['rarm','larm']:['rarm']):(A.pair?['rleg','lleg']:['rleg']);
+  for(const l of locs){p.pieces[l].push({key:k,n:A.n,ap:A.ap});p.ap[l]=(p.ap[l]||0)+A.ap}
+  let box=document.getElementById('tryOn');if(!box){box=document.createElement('div');box.id='tryOn';box.className='tryon';document.body.appendChild(box)}
+  box.innerHTML=`<div class="tohd">👤 Try it on</div><div class="toav">${avatarSVG(p).replace(/class="avzone"[^>]*data-avtip="[^"]*"/g,'')}</div><div class="tost"><b>${esc(A.n)}</b><small>${A.ap} AP · ${A.slot}${A.pt&&A.pt!=='helm'&&A.pt!=='chest'?' '+A.pt:''} · L${A.lv||1}${A.stack?' · stacks':''}${A.bonus?` · +${Object.values(A.bonus)[0]} AP to ${LOCN[Object.keys(A.bonus)[0]]||''}`:''}</small></div>`;
+  const r=el.getBoundingClientRect();box.hidden=false;const x=r.right+250>window.innerWidth?r.left-190:r.right+10;box.style.left=Math.max(4,x)+'px';box.style.top=Math.max(8,Math.min(window.innerHeight-330,r.top-40))+'px'}
+document.addEventListener('mouseover',e=>{const c=e.target.closest&&e.target.closest('#modal [data-card^="a:"]');const box=document.getElementById('tryOn');if(c)tryOnShow(c);else if(box&&!box.hidden)box.hidden=true});
+/* records: the avatar in the class's starting armor */
+{const base=ludusDetail;ludusDetail=function(g){let h=base.apply(this,arguments);try{const p=g&&avatarCls73(g.cls);if(p)h=h.replace('<div class="gdetail" id="gDetail">',`<div class="gdetail recwav" id="gDetail"><div class="recav" title="Starting armor of the ${esc(CLASSES[g.cls].name)}">${avatarSVG(p)}</div>`)}catch(e){console.error(e)}return h}}
+{const base=classStudioHTML;classStudioHTML=function(){let h=base.apply(this,arguments);try{const k=ST.draft;if(k&&typeof charArmor==='function'){const p=avatarFor73(charArmor({arm:k.arm||{}}),'rec_draft');
+  h=h.replace('id="clsCard" style="display:flex;justify-content:center">',`id="clsCard" style="display:flex;justify-content:center;gap:12px;align-items:flex-start"><div class="recav cls" title="The class's armor on the body">${avatarSVG(p)}</div>`)}}catch(e){console.error(e)}return h}}
+(()=>{const st=document.createElement('style');st.textContent=`
+#board .loc .pieces .cimg{display:none}
+.avzone{cursor:help}.avzone:hover{fill:#f0cf7d;fill-opacity:.12}
+.avhit{animation:avhit 1.1s ease-out forwards}@keyframes avhit{0%{fill-opacity:.7}100%{fill-opacity:0}}
+@media (prefers-reduced-motion:reduce){.avhit{animation:none;fill-opacity:.35}}body.calm .avhit{animation:none;fill-opacity:.35}
+.avpop{position:fixed;z-index:40;min-width:170px;max-width:240px;background:rgba(15,10,7,.96);border:1px solid var(--gold);border-radius:8px;padding:8px 10px;box-shadow:0 10px 30px rgba(0,0,0,.6);font-size:13px;pointer-events:none}
+.avpl{font:400 16px var(--display);color:var(--gold2)}.avnums{display:flex;gap:10px;margin:3px 0 6px;font:12px var(--mono)}.avnums .hp b{color:var(--hp)}.avnums .ap b{color:var(--ap)}
+.avpc{display:flex;gap:6px;align-items:center;margin:3px 0}.avpc small{display:block;color:var(--muted);font-size:11px}.avpc .setart,.avpc .cimg{width:30px!important;height:30px!important}
+.tryon{position:fixed;z-index:40;width:180px;background:rgba(15,10,7,.96);border:1px solid var(--gold);border-radius:8px;padding:8px;box-shadow:0 10px 30px rgba(0,0,0,.6);pointer-events:none}
+.tohd{font:11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--gold2);margin-bottom:4px}.toav svg{width:100%;height:auto;display:block}.tost small{display:block;color:var(--muted);font-size:11.5px}
+.gdetail.recwav{position:relative;padding-right:96px}.recav{width:76px}.recav svg{width:100%;height:auto;display:block}.gdetail .recav{position:absolute;right:10px;top:10px}
+.recav.cls{width:110px;flex:none}`;document.head.appendChild(st)})();
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

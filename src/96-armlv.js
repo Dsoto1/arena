@@ -1,4 +1,4 @@
-/* 92-v70 — custom armor in levels (Virgilante, v0.70).
+/* 96-armlv — custom armor in levels (Virgilante; drafted v0.70, shipped v0.73).
    One design, ticked for Level I, II and/or III: each ticked level becomes its own piece — "Name I/II/III", its own market deck,
    its own colour grade (I iron · II bronze · III gold) and its own stats, bought from that level's budget (CA_BUDGET 3/5/8):
    AP 1 point each above the first (cap 7), bonus AP 2 points each, Stackable 1 point. A pair costs nothing extra.
