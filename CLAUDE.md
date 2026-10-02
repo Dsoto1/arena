@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.66**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.67**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -59,7 +59,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Module ordering matters: a wrapper only sees wrappers installed before it.
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
   `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
-  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`.
+  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`.
   Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
 
 ### Core globals (engine)
@@ -209,7 +209,10 @@ One global script; files are concatenated in order. Later "version modules" patc
   drawers (`pl-nav/pl-act/pl-side/pl-log`), `#plDock` buttons, actions auto-open on your move (`plTick`); draw() fits the
   arena to the full height in phoneL. Camera: `camFocus` (07-ui draw, zoomed only, not the duel) eases toward `cur()`;
   `CAM.z` pinch zoom (1–2.4, wraps duelCam); `phonePort()` → body.phoneP + `#plRot` hint. Tablets use the normal layout.
-- **v0.67 so far (87 + small edits):** Training Yard stat squares beside the regime (`.yardreg.yr2`, `cutDiv`); wagers on a
+- **v0.67 (87 + small edits):** recruiting portal — `pipelineHTML` replaces the favbox (stages via `recStage`: watch / scouted /
+  court (interest 30+) / ready (`recReady`: signs at the ask or 1.1×), next step `nextStep`); list Fit chip (`recFit`) + odds
+  (`recOdds`), filters `MGR.rf` (aff/fit/court) by row removal; `detailHTML` for free agents = 3 steps (`MGR.recStep`,
+  `recStepNow`) with a range `#ofWage` and live `ofMeterUpdate` from `offerVerdict` (no side effects). Also: Training Yard stat squares beside the regime (`.yardreg.yr2`, `cutDiv`); wagers on a
   fighter taken off a card are void + refunded (`voidBets` in 17-manager: enter, withdraw, the Gambit, and a guard at
   settlement; bet log status 'void'); career switch "Bring my Ludus Flavius gladiators into the league" (`lfPoolOn`,
   localStorage flavius_lfpool, default on); `fillNight` takes the nearest-rated free agents before creating a fighter.
@@ -238,11 +241,11 @@ One global script; files are concatenated in order. Later "version modules" patc
   that is correct, not a bug.
 - **Releases always run the full suite** (tools/release.sh does it). Old runner: `(nohup sh tools/runreg.sh >/dev/null 2>&1 &)`
   then watch `tools/reg.txt` for `ALLDONE` (~11 min: 3 tests at once, `-j N`).
-  Pass = every block ends `exit=0` and prints `ERRS []`. Run a subset: `node tools/smartreg.js tv53 tpia`. (v0.66: 128 tests.)
+  Pass = every block ends `exit=0` and prints `ERRS []`. Run a subset: `node tools/smartreg.js tv53 tpia`. (v0.67: 129 tests.)
 - `t12` plays every event via sims (slow). Version tests: `tv50…tv54`-style files (`tv52`, `tv53`), plus feature tests
   (`tcls` classes, `tlook` accessories, `tbye` bye weeks, `temp53` closures, `t53s` studio, `tres` results,
   `tmgr54` manager, `tpia` piacula, `t54a` studio/event designer, `tv55` ratings/letters/loans/home/grades,
-  `tstat55` Studio ratings and allies, `tv56` mail and ratings help, `tv57` the v0.57 batch, `tv58` ships/prototype, `tv59` the v0.59 batch, `tv60` Road from the record + Annals loop, `tv60b` tame/counters/CF offerings/truces, `tv61` screens, `tv62` five minds, `tv63` the v0.63 batch, `tv64` missios/chariot tokens, `tv65` yard/fatigue/infirmary, `tv66` bumpers/phones).
+  `tstat55` Studio ratings and allies, `tv56` mail and ratings help, `tv57` the v0.57 batch, `tv58` ships/prototype, `tv59` the v0.59 batch, `tv60` Road from the record + Annals loop, `tv60b` tame/counters/CF offerings/truces, `tv61` screens, `tv62` five minds, `tv63` the v0.63 batch, `tv64` missios/chariot tokens, `tv65` yard/fatigue/infirmary, `tv66` bumpers/phones, `tv67` recruiting board).
 - When a UI move breaks an old test intentionally, update the test (keep its intent).
 - Visual checks: write a short Playwright script, screenshot, and look at it.
 
@@ -304,14 +307,12 @@ One global script; files are concatenated in order. Later "version modules" patc
   (Published as artifact Version 77.)
 - **v0.66** tutorial bumpers; phones in landscape (drawers, dock, auto actions); follow camera + pinch zoom; portrait hint.
   (Published as artifact Version 78.)
+- **v0.67** recruiting board + Fit/Odds/filters + 3-step card with offer meter; void wagers; Ludus Flavius switch; pool-first fillers; yard row.
 
 ## 8. Next steps / open items
-- **Next (agreed with Virgilante):** v0.67 — Recruiting portal: favourites become a pipeline board (⭐ Watching → 🔍 Scouted →
-  🤝 Courting → ✍ Ready, cards with the next step as a button, moving on their own); Fit chip (roster gap + affordability)
-  replaces 'Wants ?', Odds vs the leading rival, filters Affordable / Fits / Courting me; detail panel as 3 steps (Scout →
-  Court with their top wants highlighted and expected gains → Offer with a wage slider, live acceptance meter and the rival's
-  best offer). Not chosen (yet): weekly recruiting-hours plan, compare view, signing card. v0.68 — portrait compact mode
-  (arena on top, tabbed bottom sheet, tray behind ⋯) and phone layouts for menus/Manager/Studio (rail → bottom tabs).
+- **Next (agreed with Virgilante):** v0.68 — portrait compact mode (arena on top, tabbed bottom sheet Actions/Fighter/Log, tray
+  behind ⋯) and phone layouts for menus/Manager/Studio (rail → bottom tabs). Recruiting ideas not chosen yet: weekly
+  recruiting-hours plan, compare view, signing card.
 - **Online multiplayer — BRAINSTORM ONLY (Virgilante, v0.63): do not build until core gameplay is polished.** Direction so far:
   real-time only (async play-by-link dropped); authoritative server holding dice/hands; client hosted on Virgilante's S3
   site (CloudFront), backend API Gateway WebSockets + Lambda + DynamoDB (or a small Lightsail Node box). Phases when it

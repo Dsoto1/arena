@@ -1,0 +1,30 @@
+/* v0.67: recruiting portal (pipeline board with next steps, Fit + Odds, filters, 3-step card with a live offer meter that
+   signs), wagers voided when a fighter leaves the card, the Ludus Flavius switch, the Training Yard row */
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:1100}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
+await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
+const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
+o.r=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
+  await Store.put('gladiators','g67',{id:'g67',name:'Lupus Septimus',cls:'hero',status:'active',roster:true,events:1,wins:1,carry:0,hp:{},portrait:{}});await loadLudus();
+  openManager();await W8(800);const r={box:!!document.querySelector('[data-lfpool]')};
+  localStorage.setItem('flavius_lfpool','0');newWorld({type:'pre',key:MGR_PRE[0].key});r.lfOff=!W_().glads.some(g=>g.name==='Lupus Septimus');localStorage.setItem('flavius_lfpool','1');
+  newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_(),m=me();
+  const fa=freeAgents().sort((a,b)=>effOvr(a)-effOvr(b));const [a,c]=[fa[0],fa[5]];a.favd=true;c.favd=true;c.scout=2;
+  MGR.tab='recruit';MGR.sel=a.id;MGR_REDRAW();await W8(500);
+  r.cols=document.querySelectorAll('.pcol').length;r.watch=recStage(a,m);r.cards=document.querySelectorAll('.pcard').length;
+  const h0=w.hours;const sb=document.querySelector(`.pcard [data-mg="scout"][data-id="${a.id}"]`);r.nextScout=!!sb;if(sb)sb.click();for(let i=0;i<120&&!a.scout;i++)await W8(250);await W8(300);
+  r.scouted=!!a.scout&&w.hours===h0-3;r.moved=recStage(a,m)!=='watch';
+  r.fitHead=/>Fit</.test(document.getElementById('mgrBody').innerHTML);r.fit=document.querySelectorAll('.fitchip').length>0;
+  const rows0=document.querySelectorAll('#recTable tr[data-mg="sel"]').length;document.querySelector('[data-recf="aff"]').click();await W8(300);
+  const rows1=document.querySelectorAll('#recTable tr[data-mg="sel"]').length;r.filter=rows1<=rows0;document.querySelector('[data-recf="aff"]').click();await W8(200);
+  MGR.sel=c.id;MGR_REDRAW();await W8(300);r.steps=document.querySelectorAll('.rstep').length===3;
+  document.querySelector('[data-recstep="3"]').click();await W8(800);
+  const rg=document.getElementById('ofWage');r.slider=rg&&rg.type==='range';rg.value=rg.max;rg.dispatchEvent(new Event('input',{bubbles:true}));await W8(200);
+  r.meter=/would sign|Close|Not yet/.test((document.getElementById('ofMeter')||{}).textContent||'');r.yes=/would sign/.test(document.getElementById('ofMeter').textContent);
+  m.coin=Math.max(m.coin,500);document.querySelector(`[data-mg="offer"][data-id="${c.id}"]`).click();await W8(500);r.signed=!!(c.contract&&c.contract.mgr===m.id);
+  const bo=w.night.bouts[0];const x=bo.ents[0];bo.bets.push({gid:x,stake:9,odds:2});m.coin-=9;const c0=m.coin;bo.ents[0]=genGlad({}).id;voidBets(bo,x);r.refund=m.coin-c0;
+  MGR.tab='practice';MGR_REDRAW();await W8(400);r.yard=!!document.querySelector('.yardreg.yr2 .yrtiles .roomtiles');return r});
+ok(o.r.box&&o.r.lfOff,'Ludus Flavius switch');ok(o.r.cols===4&&o.r.cards>=2&&o.r.watch==='watch','pipeline board');
+ok(o.r.nextScout&&o.r.scouted&&o.r.moved,'next step from the card');ok(o.r.fitHead&&o.r.fit&&o.r.filter,'fit + filters');
+ok(o.r.steps&&o.r.slider&&o.r.meter,'3-step card + meter');ok(!o.r.yes||o.r.signed,'meter yes → the offer signs');ok(o.r.refund===9,'void wager refunded');ok(o.r.yard,'yard row');
+console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();
