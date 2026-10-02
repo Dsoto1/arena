@@ -28315,8 +28315,8 @@ openMenagerie=async function(){if(typeof modalBusy==='function'&&modalBusy())ret
    • ARM_FIT[key] = {x,y,w,r} in the avatar's 150x332 viewBox for the RIGHT side (image-left); left pieces are mirrored
      about the body's centre line and nudged to the left equip points (EQ_L). Per-browser fine-tune: localStorage
      flavius_armfit (the Fit mode in the Armor forge, editors only) → Export → paste into ARM_FIT.
-   • A location's AP is the pool of every piece on it; the pool is shared out in wear order (the same order a corpse
-     drops them), so each piece dims and cracks as its own share goes and falls off at 0.
+   • A location's AP is the pool of every piece on it (rulebook p.22): the pieces dim and crack together as the pool
+     drops and are all destroyed (fall off) when it reaches 0.
    • Custom forge pieces keep their own fit (caOnBodySVG). TWEAK: ARM_FIT, ARM_DIM. */
 const ARM_SHEET={f:'armor2.webp',w:2970,h:990};
 const ARM_CROP=[[39,16,252,299],[366,15,256,300],[706,16,233,298],[1053,16,202,299],[1376,15,217,300],[1680,15,268,300],[2037,165,216,149],[2385,16,178,299],[2703,18,198,294],
@@ -28342,7 +28342,8 @@ function armBox(key,l){const A=ARM[key];const f=armFit(key);if(!A||A.img==null||
   const L=armSide(l)==='L';const p=(L&&EQ_L[f.at])||EQ[f.at];const x=L&&!EQ_L[f.at]?150-p[0]:p[0];
   const cx=L?x-(f.dx||0):x+(f.dx||0),cy=p[1]+(f.dy||0);const h=f.w*c[3]/c[2];return {cx,cy,w:f.w,h,r:f.r||0,crop:c,mirror:L}}
 /* each piece's share of the location's AP pool (wear order, as eliminate() drops them) */
-function armShares(p,l){let left=p.ap[l]||0;return (p.pieces[l]||[]).map(pc=>{const cur=Math.max(0,Math.min(pc.ap,left));left-=cur;return {pc,cur,ratio:pc.ap?cur/pc.ap:1}})}
+/* rulebook p.22: a location's armor is damaged as one pool; at 0 AP every piece on it is destroyed together */
+function armShares(p,l){const P=p.pieces[l]||[];const tot=P.reduce((a,pc)=>a+(pc.ap||0),0);const cur=Math.max(0,p.ap[l]||0);const ratio=tot?Math.min(1,cur/tot):1;return P.map(pc=>({pc,cur,ratio}))}
 const ARM_FALL=[];const ARM_SEEN={};
 function armPieceSVG(B,key,ratio,extra,uid){const c=B.crop;const x=B.cx-B.w/2,y=B.cy-B.h/2;const k=B.w/c[2];const id=`acp${String(uid||'').replace(/[^\w-]/g,'')}${key}${extra?'f':''}`;
   const tr=`${B.mirror?`translate(${2*B.cx} 0) scale(-1 1) `:''}${B.r?`rotate(${B.mirror?-B.r:B.r} ${B.cx} ${B.cy})`:''}`;
