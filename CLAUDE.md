@@ -481,7 +481,19 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
-- **Online multiplayer — PAUSED again by Virgilante (after v0.75); decisions kept for when it resumes:** play-by-link FIRST, real-time later. Model B: server-held games
+- **Online — the design (after v0.76, Virgilante):** Multiplayer → Online opens a Halo-Infinite-style landing space: your online
+  gladiator lit on a stage (mini/avatar + armor, name, class, mind, lifetime CF, wallet, bouts survived), party slots beside them
+  (+ Invite, for team events), left rail Play · Lobby Browser · Spectate · Armory & Market · Character · Hall of the Fallen, event
+  "playlists" as big cards with his event art (players online, wait, Ranked/Custom), weekly challenges + empire news. A **Lobby
+  Browser** tab = an old-school Age-of-Empires list of every hosted Ranked/Custom game (host, event, city, seats, gear-score range,
+  ping, Waiting/In progress) with Join · Create · 👁 Watch (free) · 🎟 Ticket (wallet coin → a seat in the stands: stones, offerings,
+  wagers, cheers; the price goes to host/pot). **Online characters:** made in a trimmed Studio (class, look, 375 ratings), personal
+  wallet (coin) + lifetime CF, gear bought between matches up to high-end sets (veterans may arrive fully geared — intended), ratings
+  grow like Manager fighters. **Death = the Fate table, Ranked only** (under 17 CF condemned; 17-19 Thumb of Flavius); the dead go
+  to the Hall of the Fallen; **nothing carries over** to the next character. **Sign-in accounts** (AWS Cognito: Google / email link)
+  replace "guests". **Live first:** real-time matches via API Gateway WebSockets + Lambda + DynamoDB (lobby list, live watch,
+  tickets); play-by-link becomes a slow-game option inside it. Server is the authority for dice, hidden cards, wallets and deaths.
+- **Online multiplayer — earlier decisions (superseded where the design above differs):** play-by-link FIRST, real-time later. Model B: server-held games
   (AWS: API Gateway HTTP API + Lambda + DynamoDB, deployed by Virgilante from CloudShell with a template I write — no keys in chat;
   if keys are ever needed: environment variables AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY in the environment settings). The link is
   only a game id + a secret per seat; the server rolls dice and keeps hidden cards. Scope: the three classic events; guests with a
