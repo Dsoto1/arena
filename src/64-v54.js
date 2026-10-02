@@ -167,7 +167,7 @@ const fameHungry=g=>!!(g.motives&&g.motives[0]&&['glory','playing','spectacle'].
 function payJoinOffer(w,pm){if(w.payJoin&&w.payJoin.until>=w.week)return;w.payJoin=null;if((pm.fame||0)>PAYJOIN.maxFame||isByeWk(w.week))return;if(Math.random()>PAYJOIN.chance)return;
   const pool=freeAgents().filter(g=>!g.inj&&!g.noPayJoin&&g.unsigned>=PAYJOIN.weeksUnsigned&&effOvr(g)>=PAYJOIN.ovr[0]&&effOvr(g)<=PAYJOIN.ovr[1]);if(!pool.length)return;
   const g=pickOne(pool);const pay=3+Math.floor((PAYJOIN.ovr[1]-effOvr(g))/3)+rnd(5);w.payJoin={gid:g.id,pay,until:w.week+1};
-  tnews(`🪙 <b>${esc(g.name)}</b> has gone ${g.unsigned} weeks without a house and offers to <b>pay you ${pay} coin</b> to join — they want a name. Answer it at the top of any tab.`,'big')}
+  tnews(`${ICO.coin} <b>${esc(g.name)}</b> has gone ${g.unsigned} weeks without a house and offers to <b>pay you ${pay} coin</b> to join — they want a name. Answer it at the top of any tab.`,'big')}
 function fightRequests(w,pm){for(const g of rosterOf(pm)){const req=g.wantFight;if(req&&req.week<w.week){ /* last week's ask: was it honoured? */
       if(req.bye){}else if(g.lastBout===req.week){g.morale=clamp(g.morale+FIGHT_REQ.moraleUp,0,100);ghist(g,'got the fight they asked for')}else{g.morale=clamp(g.morale-FIGHT_REQ.moraleDown,0,100);tnews(`😠 ${esc(g.name)} asked to fight and sat out again (−${FIGHT_REQ.moraleDown} morale).`,'bad')}
       delete g.wantFight}}
@@ -178,7 +178,7 @@ function fightRequests(w,pm){for(const g of rosterOf(pm)){const req=g.wantFight;
 /* the cards at the top of every Manager tab */
 {const baseTop=buyOfferHTML;buyOfferHTML=function(){let h=baseTop();try{const w=W_(),pm=me();if(!w||!pm)return h;
   const o=w.payJoin&&w.payJoin.until>=w.week?w.payJoin:null;const g=o&&gById(o.gid);
-  if(g&&!g.contract)h+=`<div class="card2 payjoin"><div style="display:flex;gap:10px;align-items:center">${gArt(g,'sm')}<div style="flex:1"><b>🪙 ${esc(g.name)} will pay to join ${esc(pm.ludus)}</b><p style="margin:4px 0">“No house will look at me. Take me on and I’ll pay you <b>${o.pay} coin</b> — give me the sand and I’ll give you a name.” <span class="rc-sub">${CLASSES[g.cls]?CLASSES[g.cls].name:''} · rated ~${pubOvr(g)} · ${PAYJOIN.weeks} weeks at ${PAYJOIN.wage}/wk</span></p>
+  if(g&&!g.contract)h+=`<div class="card2 payjoin"><div style="display:flex;gap:10px;align-items:center">${gArt(g,'sm')}<div style="flex:1"><b>${ICO.coin} ${esc(g.name)} will pay to join ${esc(pm.ludus)}</b><p style="margin:4px 0">“No house will look at me. Take me on and I’ll pay you <b>${o.pay} coin</b> — give me the sand and I’ll give you a name.” <span class="rc-sub">${CLASSES[g.cls]?CLASSES[g.cls].name:''} · rated ~${pubOvr(g)} · ${PAYJOIN.weeks} weeks at ${PAYJOIN.wage}/wk</span></p>
     <div class="acts"><button class="btn primary" type="button" data-v54="payjoin-yes">✍ Take them on<small>+${o.pay} coin</small></button><button class="btn" type="button" data-v54="payjoin-no">✋ No thanks</button></div></div></div></div>`;
   const reqs=rosterOf(pm).filter(x=>x.wantFight&&x.wantFight.week===w.week);
   if(reqs.length&&!(w.night&&w.night.bye))h+=`<div class="card2 fightreq"><b>🗣 Asking for a fight this week:</b> ${reqs.map(x=>esc(x.name)).join(', ')} <span class="rc-sub">enter them on Match Week (+${FIGHT_REQ.moraleUp} morale) or they sulk (−${FIGHT_REQ.moraleDown})</span> <button class="btn tksm" type="button" data-mg="tab" data-id="night">⚔️ Match Week</button></div>`}catch(e){console.error(e)}return h}}

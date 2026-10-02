@@ -27,8 +27,8 @@ o.s=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   r.f=shown('board')&&!shown('rosterGrp')&&!shown('standsPane');
   document.querySelector('[data-sidetab="field"]').click();await W8(200);r.fld=shown('rosterGrp')&&shown('npcPanel')&&!shown('board')&&!!document.querySelector('#npcPanel [data-bestiary]');
   document.querySelector('#btnDrawB').click();await W8(300);r.st=shown('standsPane')&&!!document.querySelector('#standsPane .crow')&&!CUR_MODAL&&/Stands/.test(document.querySelector('#btnDrawB').textContent);
-  r.tick=!document.getElementById('crowdTick').hidden&&document.querySelector('#crowdTick .tkt').textContent.length>5;
-  sideTab('fighter');document.getElementById('crowdTick').click();await W8(200);r.tickGo=SIDE.tab==='stands';
+  await W8(400);r.tick=!!document.querySelector('#log > #slogPin:first-child .tkt')&&document.querySelector('#slogPin .tkt').textContent.length>5; /* v0.71: the stands line is pinned in the arena log */
+  sideTab('fighter');document.getElementById('slogPin').click();await W8(200);r.tickGo=SIDE.tab==='stands';
   openMenagerie();await W8(700);r.best=!!document.querySelector('#menagBody')&&!document.querySelector('#menagBody #npcDrawer');if(CUR_MODAL)CUR_MODAL.done(null);
   sideTab('fighter');return r});
 o.arm=await pg.evaluate(()=>{const mk=(dmg)=>{const p={id:'tv68a',name:'x',hp:{},ap:{},pieces:{}};for(const l of LOCS){p.hp[l]=5;p.ap[l]=0;p.pieces[l]=[]}

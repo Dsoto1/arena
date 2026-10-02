@@ -2562,7 +2562,7 @@ function boardHTML(player, interactive) {
         return rr && rr.f !== player.cf ? `<small class="ifwin" title="Crowd Favor held when the event ended${rr.won ? '; the winner\u2019s bonuses make up the difference' : ''}">held ${player.cf}</small>` : '';
       }
       const wv = finalCF(player, true);
-      return wv !== player.cf && player.alive ? `<small class="ifwin" title="Final Fate score if this gladiator wins now: held CF plus the winner's bonuses (event reward, 5 per 3 trophies, Flavius items, a held Golden Eagle), minus 5 per hidden Mandati Flavi">win → ${wv}</small>` : '';
+      return wv !== player.cf && player.alive ? `<small class="ifwin" title="Final Fate score if this gladiator wins now: held CF plus the winner's bonuses (event reward, 5 per 3 trophies, Flavius items, a held Golden Eagle), minus 5 per hidden Mandata Flavi">win → ${wv}</small>` : '';
     } catch (e) {
       return '';
     }
@@ -2588,7 +2588,7 @@ function boardHTML(player, interactive) {
    ${player.items.length ? `<div class="sect">Hand, offerings & objectives</div><div class="items">${player.items.map(it => {
     const hidden = it.kind === 'mf' && player.cpu && !S.over;
     const I = hidden ? {
-      n: 'Mandati Flavi',
+      n: 'Mandata Flavi',
       t: 'Secret objective',
       d: ''
     } : itemInfo(it);

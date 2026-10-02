@@ -6,7 +6,7 @@
    2 CHOICE   2 coin or draw an arena card (handled in 05-flow's takeChoice).
    3 ACTION   attacks live here: hit dice (PvP 2, PvE 4), location die, focus rolls, throws.
    4 END      handled by 05-flow's endTurn.
-   Also: Mandati Flavi checking/declaring, Carmina Fescennina, trades and truces.
+   Also: Mandata Flavi checking/declaring, Carmina Fescennina, trades and truces.
    The attack path is doAttack() -> rollHits() -> hurt() (in 03-engine).
    ===================================================================== */
 /* ================= ATTACKS ================= */
@@ -734,7 +734,7 @@ async function resolvePhase(player) {
 }
 
 /* ================= CARDS & ITEMS ================= */
-// Mandati Flavi: tests are checked synchronously; rewards are queued and paid at the next safe point.
+// Mandata Flavi: tests are checked synchronously; rewards are queued and paid at the next safe point.
 function checkMandata(player) {
   if (!player || !player.alive || !S) return;
   for (const it of [...player.items]) if (it.kind === 'mf') {
@@ -748,7 +748,7 @@ function checkMandata(player) {
     }
   }
 }
-/* flushMF — pays every queued Mandati Flavi reward, in order. */
+/* flushMF — pays every queued Mandata Flavi reward, in order. */
 async function flushMF() {
   while (S && S.mfQ && S.mfQ.length) {
     const {
@@ -758,17 +758,17 @@ async function flushMF() {
     await payMandata(p, idx);
   }
 }
-/* payMandata — reveals a completed Mandati Flavi (log, card, crowd reaction) and runs its reward. */
+/* payMandata — reveals a completed Mandata Flavi (log, card, crowd reaction) and runs its reward. */
 async function payMandata(player, idx) {
   const M = MANDATA[idx];
   stat(player, 'mfRevealed');
   crowdReact('mf', {
     p: player
   });
-  fx(player.r, player.c, 'Mandati Flavi!', '#f0cf7d', {
+  fx(player.r, player.c, 'Mandata Flavi!', '#f0cf7d', {
     big: 1
   });
-  log(`${nm(player)} reveals a Mandati Flavi: <b>${M.n}</b>. ${M.d} Reward: ${M.r}.`, 'big');
+  log(`${nm(player)} reveals a Mandata Flavi: <b>${M.n}</b>. ${M.d} Reward: ${M.r}.`, 'big');
   cardShow('m:' + idx, player, '📜 Revealed');
   if (/applause/.test(M.r)) log('The crowd offers a generous applause.');
   await M.reward(player);

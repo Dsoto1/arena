@@ -11,7 +11,7 @@ const FIRST_RUN = (() => {
    =====================================================================
    Everything printed on cardboard lives here as plain data: classes, weapons (W),
    armor tokens (ARM), NPC types (NPCT), arena cards, events, Fates, locations,
-   chariot horses/wheels, Mandati Flavi. Change a number here and the whole game obeys.
+   chariot horses/wheels, Mandata Flavi. Change a number here and the whole game obeys.
 
    HOW THE FILES FIT TOGETHER (they are concatenated into one <script> in this order):
      01-head.html   page shell + all CSS
@@ -1055,7 +1055,7 @@ const PT_NAME = {
     if (ARM[k]) ARM[k].img = i;
   });
 }
-// Flavius' Chest Armor is set aside until claimed (Mandati Flavi)
+// Flavius' Chest Armor is set aside until claimed (Mandata Flavi)
 /* MARKET_A — armor keys in each market level's pile (a repeated key = extra copies). Edit to change what armor can be bought. */
 const MARKET_A = {
   1: ['galea', 'galea', 'pectorale', 'balteus', 'balteus', 'wraps', 'legwrapsU', 'legwraps'],
@@ -1667,7 +1667,7 @@ const isHerc = k => k === 'hercules1' || k === 'hercules2';
 /* isForge — true for either Forge of Vulcan card. */
 const isForge = k => k === 'forge3' || k === 'forge2';
 
-/* ---- Mandati Flavi (15 secret objectives). Revealed the moment they are completed; unrevealed cards cost 5 CF at the end.
+/* ---- Mandata Flavi (15 secret objectives). Revealed the moment they are completed; unrevealed cards cost 5 CF at the end.
    declare = completed by a spoken declaration on your turn. img = index in assets/mandati.jpg ---- */
 /* MANDATA fields: n name · d task · r reward text · test(player) auto-completion check (usually a player.stats counter) · declare spoken line that completes it · img · reward(player) async effect. TWEAK: the CF numbers inside reward. */
 const MANDATA = [{

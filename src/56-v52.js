@@ -56,7 +56,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&(
 /* ---------- the passage between screens: a health bar that fills, and a line to read ---------- */
 const RULE_LINES=['When a weapon runs out of throws, discard it from play.','Thrown weapons cannot be picked up in the same turn.','Ammo cards can only refill a weapon to its original ammo.',
   'Lose the head or the chest and you are out of the event.','A hit strips armor before it reaches health.','Crowd Favor of 20 or more saves you to the Ludus Flavius.','50 Crowd Favor wins your freedom.',
-  'Every 3 trophies held by the winner add 5 CF.','Hidden Mandati Flavi cost 5 CF each at the end.','No CF can be spent while Commodus is in the arena.','Beasts you attack will hunt you: that is aggro.',
+  'Every 3 trophies held by the winner add 5 CF.','Hidden Mandata Flavi cost 5 CF each at the end.','No CF can be spent while Commodus is in the arena.','Beasts you attack will hunt you: that is aggro.',
   'Spectators may throw a stone for 2 CF.','Arena keys open the chest or a tunnel.','The zone shrinks each round: two turns of grace to get inside.'];
 function transitQuote(){const pool=[];try{for(const k in CARDS){const q=CARDS[k].q;if(q&&!pool.includes('“'+q+'”'))pool.push('“'+q+'”')}}catch(e){}
   for(const l of RULE_LINES)pool.push('📜 '+l);

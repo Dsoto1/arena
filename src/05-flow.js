@@ -497,7 +497,7 @@ async function startEvent(config) {
       kind: 'mf',
       idx: idx[i]
     }));
-    log('Each gladiator is secretly handed a Mandati Flavi.');
+    log('Each gladiator is secretly handed a Mandata Flavi.');
   }
   // event specifics
   if (ev.kind === 'orpheus') {
@@ -1008,7 +1008,7 @@ async function nextRound(why) {
   log(`Round ${S.ri + 1} · ${nr.n}. ${nr.zone > 1 ? `The zone shrinks to ${z[1] - z[0] + 1}×${z[1] - z[0] + 1}. Two turns of grace to get inside.` : ''} ${nr.pvp ? 'PvP is allowed.' : 'No PvP.'}`, 'hd');
   render();
 }
-/* finalCF — a player's final CF: -5 per unrevealed Mandati Flavi; a winner adds the last round's win reward (default 15), +10 with the pelted weakness, +5 per 3 trophies, +2 per Flavian item and +15 for the Golden Eagle. Retired players score 0. TWEAK: those bonus numbers. */
+/* finalCF — a player's final CF: -5 per unrevealed Mandata Flavi; a winner adds the last round's win reward (default 15), +10 with the pelted weakness, +5 per 3 trophies, +2 per Flavian item and +15 for the Golden Eagle. Retired players score 0. TWEAK: those bonus numbers. */
 function finalCF(player, winner) {
   if (player.retired) return 0;
   let v = player.cf;
@@ -1252,7 +1252,7 @@ async function endTurn() {
       }
     }
     if (p.grace > 0) p.grace--;
-    /* hand — cards and Mandati Flavi that count toward the hand limit. */
+    /* hand — cards and Mandata Flavi that count toward the hand limit. */
     const hand = () => p.items.filter(i => i.kind === 'card' || i.kind === 'mf');
     while (p.alive && hand().length > 10) {
       const cards = p.items.filter(i => i.kind === 'card');

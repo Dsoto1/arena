@@ -67,7 +67,7 @@ const GLOSS={
   ludusf:{t:'Ludus Flavius',re:/Ludus Flavius/,d:'Gladiators who end with 20+ [[cf|CF]] and survive are saved here, and can be summoned into later events.'},
   rudis:{t:'The rudis',re:/\brudis\b/,d:'The wooden sword of freedom. A fighter with enough events and wins can be granted it: freed, or kept for the house.'},
   blessings:{t:'Blessings pots',re:/Blessings pots?|Blessings bag/,d:'Pots on the pillars. Break one (2 damage) for 2 coin, 1 [[cf|CF]] and a hidden offering. Power-2 weapons break them best.'},
-  mandati:{t:'Mandati Flavi',re:/Mandati Flavi/,d:'Secret objectives dealt at the start. Each one still hidden at the end costs 5 [[cf|CF]].'},
+  mandati:{t:'Mandata Flavi',re:/Mandata Flavi/,d:'Secret objectives dealt at the start. Each one still hidden at the end costs 5 [[cf|CF]].'},
   aggro:{t:'Aggro',re:/\baggro\b/,d:'The gladiator a beast is hunting: the last one to hit it. Tunnels and the Ward of the Evil Eye shake it off.'},
   raged:{t:'Raged and Fazed',re:/\bRaged\b|\bFazed\b/,d:'Lions, Commodus and Tholo turn Raged as they lose HP (harder hits, faster), then Fazed near death (slow, weak). Finish a Fazed boss before a rival steals the trophy.'},
   truce:{t:'Truce',re:/\btruces?\b/,d:'A pact not to attack. It ends the moment either side strikes.'},

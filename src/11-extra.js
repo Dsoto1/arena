@@ -55,7 +55,7 @@ function cardLabel(ref){
   if(!ref)return '';const k=ref[0],key=ref.slice(2);
   if(k==='c')return CARDS[key]?CARDS[key].n+' (arena card)':'Arena card';
   if(k==='w')return W[key]?W[key].n+' (weapon card)':'Weapon card';
-  if(k==='m')return MANDATA[+key]?'Mandati Flavi: '+MANDATA[+key].n:'Mandati Flavi';
+  if(k==='m')return MANDATA[+key]?'Mandata Flavi: '+MANDATA[+key].n:'Mandata Flavi';
   if(k==='e')return EVENTS[key]?EVENTS[key].n+' (Summa Rudis card)':'';
   if(k==='h')return {wheel8:'Wagon Wheel token',wheel10:'Laurel Wheel token',wheel12:'Gilded Wheel token'}[key]||'Chariot horse token';
   if(k==='g')return ({chTeal:'Bellum Quadriga',chGold:'Aureus Triumphus',chSilver:'Bellator Aequus',chRed:'Invicta Gloria',chBlue:'Azureus Magnus',chPurple:'Fulgens Velox'}[key]||'Chariot')+' (chariot card)';
@@ -147,7 +147,7 @@ const RULE_POPS={
   aggro:['Aggro','<p>A beast you attack or push becomes <b>aggro</b> on you: it follows you anywhere and attacks during your Resolve phase. Each NPC holds only one aggro target, the most recent gladiator to hit it. It still lashes out at anyone standing next to it. Tunnels, a Ward of the Evil Eye or a Meat Lure shake it off.</p>'],
   zone:['The zone shrinks','<p>You have 2 turns of grace to get inside the lit zone. Ending a turn outside costs 2 CF, and negative CF eliminates you.</p>'],
   firstTurn:['Your turn','<p><b>1 Resolve</b>: beasts that are aggro on you, in whose zone you stand, or next to you act. <b>2 Choice</b>: take 2 coin (safe) or draw an arena card (instant cards resolve at once and can hurt). <b>3 Action</b>: move, up to one attack per arm, push, topple, loot, trade and spend CF. <b>4 End</b>.</p><p>Hover any card or weapon to see the real card.</p>'],
-  mandata:['Mandati Flavi','<p>You hold a secret objective from Flavius. Complete it and it is revealed with its reward; still hidden at the end of the event costs 5 CF. Some are completed by a spoken declaration from the Action panel.</p>'],
+  mandata:['Mandata Flavi','<p>You hold a secret objective from Flavius. Complete it and it is revealed with its reward; still hidden at the end of the event costs 5 CF. Some are completed by a spoken declaration from the Action panel.</p>'],
   thumb:['The Thumb of Flavius','<p>Ending with 17-19 CF puts your life in the Thumb of Flavius: a d6 of 4+ spares you (20 CF, sent to the Ludus Flavius). 20 CF or more reaches the Ludus, which lets you save your gladiator.</p>','f:9'],
 };
 function popRule(k){if(typeof MTUT!=='undefined'&&MTUT.on)return; /* v0.46: the Manager lesson keeps a live bout quiet */const r=RULE_POPS[k];if(r)return rulePop(k,r[0],r[1],r[2])}
@@ -165,7 +165,7 @@ function strategyHints(p){
   if(hurtBad(p)&&p.items.some(i=>i.kind==='card'&&isElixir(i.key)||i.kind==='offer'&&(i.key==='elix2'||i.key==='elix4')))out.push('You are badly hurt and hold a Health Elixir. An elixir can also save a location the moment it hits 0.');
   if(p.focusNext)out.push('Focus! is declared: your next attack on a gladiator picks the location. Aim at their least armored limb or a weak head.');
   if(p.hercules)out.push(`Herculean Vigor adds ${p.hercules} damage to your next attack that lands a hit.`);
-  const mf=p.items.find(i=>i.kind==='mf');if(mf){const M=MANDATA[mf.idx];out.push(M.declare?`Your Mandati Flavi (${M.n}) is completed by declaring it: use it from your hand.`:`Mandati Flavi: ${M.d} (${M.r}).`)}
+  const mf=p.items.find(i=>i.kind==='mf');if(mf){const M=MANDATA[mf.idx];out.push(M.declare?`Your Mandata Flavi (${M.n}) is completed by declaring it: use it from your hand.`:`Mandata Flavi: ${M.d} (${M.r}).`)}
   if(p.cf>=17&&p.cf<20)out.push(`At ${p.cf} CF you sit in the Thumb of Flavius range (17-19). Reaching 20 CF secures the Ludus Flavius.`);
   if(!p.market&&cfAllowed()&&p.cf>=3+(weak(p,'tax')?1:0)&&p.coin>=purchaseCost(p,2)+(weak(p,'tax')?1:0)&&armsAttached(p).length&&Math.min(...armsAttached(p).map(a=>wScore(p['w'+a])))<3)out.push(`Your weapons are weak and you can afford a level 2 weapon (3 CF to unlock + ${purchaseCost(p,2)} coin).`);
   const sev=pilesAt(p.r,p.c).length;if(sev&&!p.looted)out.push('You stand on a pile: loot 1 item this turn.');
@@ -514,7 +514,7 @@ function guideHTML(){
   <h4>Winning the crowd</h4><ul>
    <li><b>Your Fate is your score.</b> 20+ CF reaches the Ludus Flavius (you can save your gladiator); 50+ earns freedom. 17-19 is the Thumb of Flavius, a coin flip with your life.</li>
    <li>Early CF comes from <b>Blessings pots</b> (2 coin + 1 CF + a hidden offering, 2 damage breaks one), <b>beast trophies</b> (snake 3, wolf 4, bear 5, lion 5, Commodus and Tholo 6) and your class ability. A gladiator elimination is worth 10 CF and a trophy.</li>
-   <li>Winners add 15 CF, 5 CF per 3 trophies and 2 CF per Flavius item. Every Mandati Flavi still hidden at the end costs 5 CF, so work on yours early.</li>
+   <li>Winners add 15 CF, 5 CF per 3 trophies and 2 CF per Flavius item. Every Mandata Flavi still hidden at the end costs 5 CF, so work on yours early.</li>
    ${st?`<li>In the simulations winners averaged <b>${st.winCF} CF</b>; ${st.ludusPct}% of all gladiators reached the Ludus Flavius, and gladiators who broke 2+ pots in round 1 won ${st.potWin}% of events versus ${st.noPotWin}% for those who broke none.</li>`:''}
   </ul>
   ${st?`<h4>What ${st.games} simulated events say</h4><ul>${st.findings.map(f=>`<li>${f}</li>`).join('')}</ul>`:''}

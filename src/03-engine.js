@@ -44,7 +44,7 @@ const mkOffer = k => ({
   kind: 'offer',
   key: k
 });
-/* itemInfo — name, type line and description for any inventory item (arena card, Mandati Flavi or offering), used by tooltips and lists. */
+/* itemInfo — name, type line and description for any inventory item (arena card, Mandata Flavi or offering), used by tooltips and lists. */
 function itemInfo(it) {
   if (it.kind === 'card') {
     const C = CARDS[it.key];
@@ -57,7 +57,7 @@ function itemInfo(it) {
   if (it.kind === 'mf') {
     const M = MANDATA[it.idx];
     return {
-      n: 'Mandati Flavi: ' + M.n,
+      n: 'Mandata Flavi: ' + M.n,
       t: 'Secret objective' + (M.declare ? ' · declare on your turn' : ''),
       d: `${M.d} Reward: ${M.r}. Still hidden at the end: −5 CF.`
     };

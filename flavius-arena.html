@@ -1134,7 +1134,7 @@ button.railhd.fold{all:unset;box-sizing:border-box;display:none;cursor:pointer;w
 </style>
 
 <header class="bar">
-  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.70</span></div>
+  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.71</span></div>
   <div class="status" id="status"></div>
   <div class="tools speedtray" id="speedTray">
     <div class="seg speedseg" role="group" aria-label="CPU speed"><span class="lbl">Speed</span><button type="button" data-speed="pause" title="Pause CPU turns">❚❚ Pause</button><button type="button" data-speed="step" title="Step: each CPU action waits for you — Next ▶ or Space — with a caption explaining it">⏯ Step</button><button type="button" data-speed="slow" class="on">Slow</button><button type="button" data-speed="normal">Normal</button><button type="button" data-speed="fast">Fast</button></div>
@@ -1215,7 +1215,7 @@ const FIRST_RUN = (() => {
    =====================================================================
    Everything printed on cardboard lives here as plain data: classes, weapons (W),
    armor tokens (ARM), NPC types (NPCT), arena cards, events, Fates, locations,
-   chariot horses/wheels, Mandati Flavi. Change a number here and the whole game obeys.
+   chariot horses/wheels, Mandata Flavi. Change a number here and the whole game obeys.
 
    HOW THE FILES FIT TOGETHER (they are concatenated into one <script> in this order):
      01-head.html   page shell + all CSS
@@ -2259,7 +2259,7 @@ const PT_NAME = {
     if (ARM[k]) ARM[k].img = i;
   });
 }
-// Flavius' Chest Armor is set aside until claimed (Mandati Flavi)
+// Flavius' Chest Armor is set aside until claimed (Mandata Flavi)
 /* MARKET_A — armor keys in each market level's pile (a repeated key = extra copies). Edit to change what armor can be bought. */
 const MARKET_A = {
   1: ['galea', 'galea', 'pectorale', 'balteus', 'balteus', 'wraps', 'legwrapsU', 'legwraps'],
@@ -2871,7 +2871,7 @@ const isHerc = k => k === 'hercules1' || k === 'hercules2';
 /* isForge — true for either Forge of Vulcan card. */
 const isForge = k => k === 'forge3' || k === 'forge2';
 
-/* ---- Mandati Flavi (15 secret objectives). Revealed the moment they are completed; unrevealed cards cost 5 CF at the end.
+/* ---- Mandata Flavi (15 secret objectives). Revealed the moment they are completed; unrevealed cards cost 5 CF at the end.
    declare = completed by a spoken declaration on your turn. img = index in assets/mandati.jpg ---- */
 /* MANDATA fields: n name · d task · r reward text · test(player) auto-completion check (usually a player.stats counter) · declare spoken line that completes it · img · reward(player) async effect. TWEAK: the CF numbers inside reward. */
 const MANDATA = [{
@@ -4173,7 +4173,7 @@ const mkOffer = k => ({
   kind: 'offer',
   key: k
 });
-/* itemInfo — name, type line and description for any inventory item (arena card, Mandati Flavi or offering), used by tooltips and lists. */
+/* itemInfo — name, type line and description for any inventory item (arena card, Mandata Flavi or offering), used by tooltips and lists. */
 function itemInfo(it) {
   if (it.kind === 'card') {
     const C = CARDS[it.key];
@@ -4186,7 +4186,7 @@ function itemInfo(it) {
   if (it.kind === 'mf') {
     const M = MANDATA[it.idx];
     return {
-      n: 'Mandati Flavi: ' + M.n,
+      n: 'Mandata Flavi: ' + M.n,
       t: 'Secret objective' + (M.declare ? ' · declare on your turn' : ''),
       d: `${M.d} Reward: ${M.r}. Still hidden at the end: −5 CF.`
     };
@@ -5604,7 +5604,7 @@ async function chooseMarket(player, kind, lv) {
    2 CHOICE   2 coin or draw an arena card (handled in 05-flow's takeChoice).
    3 ACTION   attacks live here: hit dice (PvP 2, PvE 4), location die, focus rolls, throws.
    4 END      handled by 05-flow's endTurn.
-   Also: Mandati Flavi checking/declaring, Carmina Fescennina, trades and truces.
+   Also: Mandata Flavi checking/declaring, Carmina Fescennina, trades and truces.
    The attack path is doAttack() -> rollHits() -> hurt() (in 03-engine).
    ===================================================================== */
 /* ================= ATTACKS ================= */
@@ -6332,7 +6332,7 @@ async function resolvePhase(player) {
 }
 
 /* ================= CARDS & ITEMS ================= */
-// Mandati Flavi: tests are checked synchronously; rewards are queued and paid at the next safe point.
+// Mandata Flavi: tests are checked synchronously; rewards are queued and paid at the next safe point.
 function checkMandata(player) {
   if (!player || !player.alive || !S) return;
   for (const it of [...player.items]) if (it.kind === 'mf') {
@@ -6346,7 +6346,7 @@ function checkMandata(player) {
     }
   }
 }
-/* flushMF — pays every queued Mandati Flavi reward, in order. */
+/* flushMF — pays every queued Mandata Flavi reward, in order. */
 async function flushMF() {
   while (S && S.mfQ && S.mfQ.length) {
     const {
@@ -6356,17 +6356,17 @@ async function flushMF() {
     await payMandata(p, idx);
   }
 }
-/* payMandata — reveals a completed Mandati Flavi (log, card, crowd reaction) and runs its reward. */
+/* payMandata — reveals a completed Mandata Flavi (log, card, crowd reaction) and runs its reward. */
 async function payMandata(player, idx) {
   const M = MANDATA[idx];
   stat(player, 'mfRevealed');
   crowdReact('mf', {
     p: player
   });
-  fx(player.r, player.c, 'Mandati Flavi!', '#f0cf7d', {
+  fx(player.r, player.c, 'Mandata Flavi!', '#f0cf7d', {
     big: 1
   });
-  log(`${nm(player)} reveals a Mandati Flavi: <b>${M.n}</b>. ${M.d} Reward: ${M.r}.`, 'big');
+  log(`${nm(player)} reveals a Mandata Flavi: <b>${M.n}</b>. ${M.d} Reward: ${M.r}.`, 'big');
   cardShow('m:' + idx, player, '📜 Revealed');
   if (/applause/.test(M.r)) log('The crowd offers a generous applause.');
   await M.reward(player);
@@ -7509,7 +7509,7 @@ async function startEvent(config) {
       kind: 'mf',
       idx: idx[i]
     }));
-    log('Each gladiator is secretly handed a Mandati Flavi.');
+    log('Each gladiator is secretly handed a Mandata Flavi.');
   }
   // event specifics
   if (ev.kind === 'orpheus') {
@@ -8020,7 +8020,7 @@ async function nextRound(why) {
   log(`Round ${S.ri + 1} · ${nr.n}. ${nr.zone > 1 ? `The zone shrinks to ${z[1] - z[0] + 1}×${z[1] - z[0] + 1}. Two turns of grace to get inside.` : ''} ${nr.pvp ? 'PvP is allowed.' : 'No PvP.'}`, 'hd');
   render();
 }
-/* finalCF — a player's final CF: -5 per unrevealed Mandati Flavi; a winner adds the last round's win reward (default 15), +10 with the pelted weakness, +5 per 3 trophies, +2 per Flavian item and +15 for the Golden Eagle. Retired players score 0. TWEAK: those bonus numbers. */
+/* finalCF — a player's final CF: -5 per unrevealed Mandata Flavi; a winner adds the last round's win reward (default 15), +10 with the pelted weakness, +5 per 3 trophies, +2 per Flavian item and +15 for the Golden Eagle. Retired players score 0. TWEAK: those bonus numbers. */
 function finalCF(player, winner) {
   if (player.retired) return 0;
   let v = player.cf;
@@ -8264,7 +8264,7 @@ async function endTurn() {
       }
     }
     if (p.grace > 0) p.grace--;
-    /* hand — cards and Mandati Flavi that count toward the hand limit. */
+    /* hand — cards and Mandata Flavi that count toward the hand limit. */
     const hand = () => p.items.filter(i => i.kind === 'card' || i.kind === 'mf');
     while (p.alive && hand().length > 10) {
       const cards = p.items.filter(i => i.kind === 'card');
@@ -12796,7 +12796,7 @@ function boardHTML(player, interactive) {
         return rr && rr.f !== player.cf ? `<small class="ifwin" title="Crowd Favor held when the event ended${rr.won ? '; the winner\u2019s bonuses make up the difference' : ''}">held ${player.cf}</small>` : '';
       }
       const wv = finalCF(player, true);
-      return wv !== player.cf && player.alive ? `<small class="ifwin" title="Final Fate score if this gladiator wins now: held CF plus the winner's bonuses (event reward, 5 per 3 trophies, Flavius items, a held Golden Eagle), minus 5 per hidden Mandati Flavi">win → ${wv}</small>` : '';
+      return wv !== player.cf && player.alive ? `<small class="ifwin" title="Final Fate score if this gladiator wins now: held CF plus the winner's bonuses (event reward, 5 per 3 trophies, Flavius items, a held Golden Eagle), minus 5 per hidden Mandata Flavi">win → ${wv}</small>` : '';
     } catch (e) {
       return '';
     }
@@ -12822,7 +12822,7 @@ function boardHTML(player, interactive) {
    ${player.items.length ? `<div class="sect">Hand, offerings & objectives</div><div class="items">${player.items.map(it => {
     const hidden = it.kind === 'mf' && player.cpu && !S.over;
     const I = hidden ? {
-      n: 'Mandati Flavi',
+      n: 'Mandata Flavi',
       t: 'Secret objective',
       d: ''
     } : itemInfo(it);
@@ -14181,7 +14181,7 @@ $('#btnExport').onclick=()=>{if(S&&S.logLines&&S.logLines.length)exportLog()};
 function fateBreakdown(p,won,champ){
   if(p.retired)return {lines:[['Retired from the event','0']],total:0};
   const L=[['Crowd Favor held',p.cf]];
-  const mf=p.items?p.items.filter(i=>i.kind==='mf').length:0;if(mf)L.push([`Mandati Flavi still hidden ×${mf}`,-5*mf]);
+  const mf=p.items?p.items.filter(i=>i.kind==='mf').length:0;if(mf)L.push([`Mandata Flavi still hidden ×${mf}`,-5*mf]);
   if(won){const ev=EV();L.push(['Event win',ev.rounds[ev.rounds.length-1].reward.win||15]);
     const t3=Math.floor(p.trophies.length/3);if(t3)L.push([`Trophies: ${p.trophies.length} (5 CF per 3)`,t3*5]);
     const fl=['R','L'].filter(a=>p['w'+a]&&p['w'+a].flav).length+LOCS.reduce((s,l)=>s+p.pieces[l].filter(pc=>ARM[pc.key].flav).length,0);if(fl)L.push([`Flavius items ×${fl}`,fl*2]);
@@ -14329,7 +14329,7 @@ async function gameOver(winners,reason){
     <div class="rtabs seg" role="tablist"><button type="button" data-rtab="res" class="on">Results &amp; Fates</button><button type="button" data-rtab="graph">Performance graph</button><button type="button" data-rtab="fates">⚖️ The Fates table</button></div>
     ${wagers.length?(typeof wagerPanelHTML==='function'?wagerPanelHTML(wagers):`<div class="card2" style="margin-bottom:10px"><div class="sect" style="margin-top:0">Wagers</div>${wagers.map(w=>`<div style="font-size:13.5px">${w}</div>`).join('')}</div>`):''}
     <div id="rtab-res"><div class="rgrid">${ranked.map((x,i)=>resultCard(x,ord[i]||'',interim)).join('')}</div>
-    <p class="hint">Final Fate score = Crowd Favor held, −5 per Mandati Flavi still hidden; winners add the event reward, 5 CF per 3 trophies, 2 CF per Flavius item, 15 for a held Golden Eagle and 10 for a Damnatio win. Gladiators slain by beasts already lost 5 CF when they fell.</p></div>
+    <p class="hint">Final Fate score = Crowd Favor held, −5 per Mandata Flavi still hidden; winners add the event reward, 5 CF per 3 trophies, 2 CF per Flavius item, 15 for a held Golden Eagle and 10 for a Damnatio win. Gladiators slain by beasts already lost 5 CF when they fell.</p></div>
     <div id="rtab-graph" hidden><div id="perfWrap">${perfTabs('s')+perfChartHTML('s')}</div></div><div id="rtab-fates" hidden>${fatesHTML()}</div>`;
   const btns=[];
   if(interim&&S.fest)btns.push({label:'Continue the festival',sub:'Classic Elimination',value:'fest',primary:1});
@@ -14679,9 +14679,9 @@ async function hallHTML(tab){
     return tabs+(latest?`<div class="card2" style="margin-bottom:12px;border-left:4px solid var(--gold)"><div class="sect" style="margin-top:0">Most recent playthrough</div>
       <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">${CLASSES[latest.cls]?figureHTML(tokenForCls(latest.cls),76):''}<div><div style="font:400 20px var(--display);color:var(--gold2)">${esc(latest.name)} ${latest.custom?'<span class="cbadge">✦ custom</span>':''}</div>
       <div class="rc-sub">${clsN(latest)} · ${esc(latest.event)} at ${esc(latest.loc)} · ${esc(latest.date)}${latest.cpu?' · CPU':''}${latest.manager?' · managed by '+esc(latest.manager):''}</div>
-      <div><span class="badge ${/Won/.test(latest.status)?'gold':/Elim|Retired/.test(latest.status)?'bad':'good'}">${esc(latest.status)}</span> <span class="badge" title="Final Fate score: Crowd Favor held at the end plus the winner's bonuses — the number the Infamis ranks">${latest.cf} Fate CF${latest.held!=null&&latest.held!==latest.cf?` (held ${latest.held} ${latest.cf>latest.held?'+':'−'} ${Math.abs(latest.cf-latest.held)} ${latest.cf>latest.held?'winner\u2019s bonus':'hidden Mandati'})`:''} · ${esc(latest.fate||'')}</span>${latest.att!=null?`<span class="badge">${latest.att} 🏟 attended</span>`:''}</div></div></div>
+      <div><span class="badge ${/Won/.test(latest.status)?'gold':/Elim|Retired/.test(latest.status)?'bad':'good'}">${esc(latest.status)}</span> <span class="badge" title="Final Fate score: Crowd Favor held at the end plus the winner's bonuses — the number the Infamis ranks">${latest.cf} Fate CF${latest.held!=null&&latest.held!==latest.cf?` (held ${latest.held} ${latest.cf>latest.held?'+':'−'} ${Math.abs(latest.cf-latest.held)} ${latest.cf>latest.held?'winner\u2019s bonus':'hidden Mandata'})`:''} · ${esc(latest.fate||'')}</span>${latest.att!=null?`<span class="badge">${latest.att} 🏟 attended</span>`:''}</div></div></div>
       <p class="hint" style="margin-bottom:0">Shown whether they won or fell. The Fate score is what the Infamis ranks: the CF a gladiator held at the end, plus the winner's bonuses — which is why a winner's board card (held CF) reads lower than this.</p></div>`:'')+
-      `<p>The <b>top 20</b> Fate scores of <b>${monthName(mo)}</b>, ordered by final Crowd Favor. The board resets at the start of every month (${Math.ceil(days/864e5)} day${Math.ceil(days/864e5)===1?'':'s'} left); each month's best is kept below as its champion. RR is the Royal Reserve; FF marks Flavius Fidelis (a revealed Mandati Flavi). Custom characters and custom events are not eligible.${Store.db?' Records are shared with everyone who opens this page.':' Records are kept in this browser.'}</p>
+      `<p>The <b>top 20</b> Fate scores of <b>${monthName(mo)}</b>, ordered by final Crowd Favor. The board resets at the start of every month (${Math.ceil(days/864e5)} day${Math.ceil(days/864e5)===1?'':'s'} left); each month's best is kept below as its champion. RR is the Royal Reserve; FF marks Flavius Fidelis (a revealed Mandata Flavi). Custom characters and custom events are not eligible.${Store.db?' Records are shared with everyone who opens this page.':' Records are kept in this browser.'}</p>
       <div style="overflow-x:auto"><table class="tally"><tr><th>#</th><th>Character</th><th>Event / Location</th><th>Class</th><th>RR</th><th>FF</th><th>Final CF</th><th>🏟</th><th>Notes</th></tr>
       ${rows.map((r,i)=>`<tr><td class="n">${i+1}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.event)} / ${esc(r.loc)}</td><td>${clsN(r)}</td><td class="n">${r.rr??''}</td><td>${r.ff?'✓':''}</td><td class="n" title="${r.held!=null?`held ${r.held} CF at the end`:''}">${r.cf} CF${r.held!=null&&r.held!==r.cf?`<br><span class="rc-sub">held ${r.held}</span>`:''}</td><td class="n">${r.att??'—'}</td><td style="color:var(--muted);font-size:13px">${esc(r.notes||'')} · ${esc(r.date||'')}</td></tr>`).join('')||`<tr><td colspan="9" style="color:var(--muted)">No winners recorded yet in ${monthName(mo)}.</td></tr>`}
       ${ex.map(r=>`<tr style="opacity:.6;font-style:italic"><td></td><td>${r.name}</td><td>${r.event} / ${r.loc}</td><td>${CLASSES[r.cls].name}</td><td></td><td>${r.ff?'✓':''}</td><td class="n">${r.cf} CF</td><td></td><td>${r.notes} (rulebook example)</td></tr>`).join('')}</table></div>
@@ -14810,7 +14810,7 @@ function cardLabel(ref){
   if(!ref)return '';const k=ref[0],key=ref.slice(2);
   if(k==='c')return CARDS[key]?CARDS[key].n+' (arena card)':'Arena card';
   if(k==='w')return W[key]?W[key].n+' (weapon card)':'Weapon card';
-  if(k==='m')return MANDATA[+key]?'Mandati Flavi: '+MANDATA[+key].n:'Mandati Flavi';
+  if(k==='m')return MANDATA[+key]?'Mandata Flavi: '+MANDATA[+key].n:'Mandata Flavi';
   if(k==='e')return EVENTS[key]?EVENTS[key].n+' (Summa Rudis card)':'';
   if(k==='h')return {wheel8:'Wagon Wheel token',wheel10:'Laurel Wheel token',wheel12:'Gilded Wheel token'}[key]||'Chariot horse token';
   if(k==='g')return ({chTeal:'Bellum Quadriga',chGold:'Aureus Triumphus',chSilver:'Bellator Aequus',chRed:'Invicta Gloria',chBlue:'Azureus Magnus',chPurple:'Fulgens Velox'}[key]||'Chariot')+' (chariot card)';
@@ -14902,7 +14902,7 @@ const RULE_POPS={
   aggro:['Aggro','<p>A beast you attack or push becomes <b>aggro</b> on you: it follows you anywhere and attacks during your Resolve phase. Each NPC holds only one aggro target, the most recent gladiator to hit it. It still lashes out at anyone standing next to it. Tunnels, a Ward of the Evil Eye or a Meat Lure shake it off.</p>'],
   zone:['The zone shrinks','<p>You have 2 turns of grace to get inside the lit zone. Ending a turn outside costs 2 CF, and negative CF eliminates you.</p>'],
   firstTurn:['Your turn','<p><b>1 Resolve</b>: beasts that are aggro on you, in whose zone you stand, or next to you act. <b>2 Choice</b>: take 2 coin (safe) or draw an arena card (instant cards resolve at once and can hurt). <b>3 Action</b>: move, up to one attack per arm, push, topple, loot, trade and spend CF. <b>4 End</b>.</p><p>Hover any card or weapon to see the real card.</p>'],
-  mandata:['Mandati Flavi','<p>You hold a secret objective from Flavius. Complete it and it is revealed with its reward; still hidden at the end of the event costs 5 CF. Some are completed by a spoken declaration from the Action panel.</p>'],
+  mandata:['Mandata Flavi','<p>You hold a secret objective from Flavius. Complete it and it is revealed with its reward; still hidden at the end of the event costs 5 CF. Some are completed by a spoken declaration from the Action panel.</p>'],
   thumb:['The Thumb of Flavius','<p>Ending with 17-19 CF puts your life in the Thumb of Flavius: a d6 of 4+ spares you (20 CF, sent to the Ludus Flavius). 20 CF or more reaches the Ludus, which lets you save your gladiator.</p>','f:9'],
 };
 function popRule(k){if(typeof MTUT!=='undefined'&&MTUT.on)return; /* v0.46: the Manager lesson keeps a live bout quiet */const r=RULE_POPS[k];if(r)return rulePop(k,r[0],r[1],r[2])}
@@ -14920,7 +14920,7 @@ function strategyHints(p){
   if(hurtBad(p)&&p.items.some(i=>i.kind==='card'&&isElixir(i.key)||i.kind==='offer'&&(i.key==='elix2'||i.key==='elix4')))out.push('You are badly hurt and hold a Health Elixir. An elixir can also save a location the moment it hits 0.');
   if(p.focusNext)out.push('Focus! is declared: your next attack on a gladiator picks the location. Aim at their least armored limb or a weak head.');
   if(p.hercules)out.push(`Herculean Vigor adds ${p.hercules} damage to your next attack that lands a hit.`);
-  const mf=p.items.find(i=>i.kind==='mf');if(mf){const M=MANDATA[mf.idx];out.push(M.declare?`Your Mandati Flavi (${M.n}) is completed by declaring it: use it from your hand.`:`Mandati Flavi: ${M.d} (${M.r}).`)}
+  const mf=p.items.find(i=>i.kind==='mf');if(mf){const M=MANDATA[mf.idx];out.push(M.declare?`Your Mandata Flavi (${M.n}) is completed by declaring it: use it from your hand.`:`Mandata Flavi: ${M.d} (${M.r}).`)}
   if(p.cf>=17&&p.cf<20)out.push(`At ${p.cf} CF you sit in the Thumb of Flavius range (17-19). Reaching 20 CF secures the Ludus Flavius.`);
   if(!p.market&&cfAllowed()&&p.cf>=3+(weak(p,'tax')?1:0)&&p.coin>=purchaseCost(p,2)+(weak(p,'tax')?1:0)&&armsAttached(p).length&&Math.min(...armsAttached(p).map(a=>wScore(p['w'+a])))<3)out.push(`Your weapons are weak and you can afford a level 2 weapon (3 CF to unlock + ${purchaseCost(p,2)} coin).`);
   const sev=pilesAt(p.r,p.c).length;if(sev&&!p.looted)out.push('You stand on a pile: loot 1 item this turn.');
@@ -15269,7 +15269,7 @@ function guideHTML(){
   <h4>Winning the crowd</h4><ul>
    <li><b>Your Fate is your score.</b> 20+ CF reaches the Ludus Flavius (you can save your gladiator); 50+ earns freedom. 17-19 is the Thumb of Flavius, a coin flip with your life.</li>
    <li>Early CF comes from <b>Blessings pots</b> (2 coin + 1 CF + a hidden offering, 2 damage breaks one), <b>beast trophies</b> (snake 3, wolf 4, bear 5, lion 5, Commodus and Tholo 6) and your class ability. A gladiator elimination is worth 10 CF and a trophy.</li>
-   <li>Winners add 15 CF, 5 CF per 3 trophies and 2 CF per Flavius item. Every Mandati Flavi still hidden at the end costs 5 CF, so work on yours early.</li>
+   <li>Winners add 15 CF, 5 CF per 3 trophies and 2 CF per Flavius item. Every Mandata Flavi still hidden at the end costs 5 CF, so work on yours early.</li>
    ${st?`<li>In the simulations winners averaged <b>${st.winCF} CF</b>; ${st.ludusPct}% of all gladiators reached the Ludus Flavius, and gladiators who broke 2+ pots in round 1 won ${st.potWin}% of events versus ${st.noPotWin}% for those who broke none.</li>`:''}
   </ul>
   ${st?`<h4>What ${st.games} simulated events say</h4><ul>${st.findings.map(f=>`<li>${f}</li>`).join('')}</ul>`:''}
@@ -16359,7 +16359,7 @@ function edRulesHTML(){
     <label>Arena location${fSel('loc',LOCATIONS.slice(1).map((L,i)=>[i+1,`${i+1} · ${L.n}`]),e.loc)}</label><label>Win reward (CF) ${fNum('win',e.win,0,40)}</label></div>
    <h4>Rounds</h4><div style="display:grid;gap:8px">${e.rounds.map(round).join('')}</div>${e.rounds.length<3?`<div class="mbtns"><button type="button" class="btn" data-st="addround">Add a round</button></div>`:''}
    <h4>Time constraints</h4><div class="formgrid"><label>Turn rotations (0 = none) ${fNum('limits.rot',e.limits.rot||0,0,60)}</label><label>Minutes (0 = none) ${fNum('limits.min',e.limits.min||0,0,120,5)}</label></div>
-   <h4>Arena rules</h4><div class="chkgrid">${fChk('deck',e.deck,'Arena deck (arena cards)')}${fChk('mandata',e.mandata,'Mandati Flavi secret objectives')}${fChk('market',e.market,'Market open')}${fChk('truce',e.truce,'Truces allowed')}${fChk('optOffers',e.optOffers,'Optional offerings in the bag')}</div>
+   <h4>Arena rules</h4><div class="chkgrid">${fChk('deck',e.deck,'Arena deck (arena cards)')}${fChk('mandata',e.mandata,'Mandata Flavi secret objectives')}${fChk('market',e.market,'Market open')}${fChk('truce',e.truce,'Truces allowed')}${fChk('optOffers',e.optOffers,'Optional offerings in the bag')}</div>
    <div class="formgrid" style="margin-top:8px"><label>Chariot offering tokens added to the bag ${fNum('chariotOffers',e.chariotOffers||0,0,12)}</label><label>Market prices (%) ${fNum('priceMul',e.priceMul,50,200,10)}</label><label>Spectators ${fNum('spect',e.spect||0,0,48)}</label></div>
    <h4>Beasts</h4><div class="formgrid"><label>Beast health (%) ${fNum('npcHp',e.npcHp,50,250,10)}</label><label>Beast damage (±) ${fNum('npcDmg',e.npcDmg||0,-2,3)}</label></div>
    <h4>Starting bonuses for every gladiator</h4><div class="formgrid"><label>Coin ${fNum('start.coin',e.start.coin||0,0,20)}</label><label>Crowd Favor ${fNum('start.cf',e.start.cf||0,0,20)}</label><label>Arena Keys ${fNum('start.keys',e.start.keys||0,0,4)}</label><label>Extra HP to place ${fNum('start.hp',e.start.hp||0,0,8)}</label><label>Extra AP to place ${fNum('start.ap',e.start.ap||0,0,8)}</label></div>
@@ -18908,7 +18908,7 @@ function consiliumHTML(){const w=W_(),m=me(),n=w.night;const ros=rosterOf(m);con
   const au=`${n?`This week: <b>${esc(LOCATIONS[n.loc].n)}</b>${n.omen&&n.omen.k!=='clear'?` under <i>${esc(n.omen.n)}</i>`:''}. `:''}Coming: ${fx.join(' → ')}. Fighters from those cities fight harder at home.`;
   const row=(ic,who,t,b)=>`<div class="cons"><span class="ci">${ic}</span><div><b>${who}</b><div>${t}</div></div>${b||''}</div>`;
   return `<div class="card2 consil"><div class="sect" style="margin-top:0">🧭 The Consilium <span class="rc-sub">your advisors' counsel this week</span></div>
-    ${row('🪙','The Quaestor',q,m.coin<0||runway<3?go('night','Match Week'):'')}${row('🏋','The Doctore',d,hurt.length?go('infirm','Infirmary'):go('roster','Roster'))}${row('🔭','The Scout',sc,go('recruit','Recruiting'))}${row('🦅','The Augur',au,go('sched','Season'))}</div>`}
+    ${row(ICO.coin,'The Quaestor',q,m.coin<0||runway<3?go('night','Match Week'):'')}${row('🏋','The Doctore',d,hurt.length?go('infirm','Infirmary'):go('roster','Roster'))}${row('🔭','The Scout',sc,go('recruit','Recruiting'))}${row('🦅','The Augur',au,go('sched','Season'))}</div>`}
 function rosterBlockHTML(){const m=me(),w=W_();const ros=rosterOf(m).sort((a,b)=>effOvr(b)-effOvr(a));
   if(!(MGR.lsel&&ros.some(g=>g.id===MGR.lsel))&&ros.length)MGR.lsel=ros[0].id;const wk=ros.reduce((s,g)=>s+g.contract.wage,0);const left=Math.max(0,repCap()-(w.repair||0));
   return `   ${ros.length?`<div class="mgrid wide"><div style="overflow-x:auto"><table class="tally"><tr><th></th><th>Fighter</th><th title="What a rating does on the sand: it sets how well the fighter plays (below 60 like an Easy CPU with loose, noisy decisions; 60-79 Normal; 80+ Hard, near-perfect choices), the armor fitted before the bout (+1 AP per 6 points above 62, up to +5) and coin in the purse (+1 per 5 points above 70, up to +4). Morale shifts it: high morale adds 1 AP and a CF, low morale takes an AP, broken morale drops a skill tier. Injuries and severed limbs lower the rating itself." style="cursor:help">Rating ⓘ</th><th>Record</th><th>Morale</th><th>Contract</th></tr>${ros.map(g=>`<tr class="${MGR.lsel===g.id?'me':''}" data-mg="lsel" data-id="${g.id}" style="cursor:pointer"><td>${gArt(g,'xs')}</td><td><b>${esc(g.name)}</b> ${gTags(g)}<br><span class="rc-sub">${gSex(g)} ${CLASSES[g.cls]?CLASSES[g.cls].name:'?'} · ${gAge(g)} yrs · ${esc(g.city)} · fame ${g.fame} · first sand S${g.debut?g.debut.s:1} W${g.debut?g.debut.wk:1}</span></td><td>${starHTML(starsOf(effOvr(g)))}<br>${fameHTML(g.fame)}<br><span class="odds">${effOvr(g)}</span> <span class="rc-sub">pot ${g.pot}</span></td><td class="n">${g.rec.w}W / ${g.rec.ev} · ⚔${g.rec.kp} 🐾${g.rec.kn}</td><td title="${MORALE_TXT[moraleTier(g.morale)]} · loyalty ${loyaltyOf(g)} (what a rival must beat to poach them; high loyalty renews contracts)"><div class="meter"><i style="width:${g.morale}%"></i></div><span class="rc-sub">${g.morale} · ${moraleTier(g.morale)}</span></td><td>${g.contract.wage}/wk · ${g.contract.weeks>0?g.contract.weeks+' wk left':'<b style="color:var(--blood2)">expired</b>'}</td>
@@ -22784,6 +22784,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'0.71',ic:'🪙',t:'The printed pieces',hi:['Virgilante\u2019s medallion tokens: chests, keys, weapons, armor, upgrades, elixirs, Speed of Mercury, Crowd Favor, spiders, curse, eagle and more','The gold coin of the board game, everywhere coin is shown','The Summa Rudis officiating each event beside Flavius, in the briefing and on the status bar','Live wagers pop a gold bubble above whoever bets'],fx:['The round marker on the status bar','The stands line sits pinned at the top of the arena log','Mandata Flavi card back on hidden objectives; \u201cMandata\u201d spelled as printed','Sharper tunnel art']},
   {v:'0.70',ic:'🎯',t:'Armor that fits',hi:['Every printed armor piece sits where Virgilante placed it on the avatar','Arm and leg pieces mirror cleanly on the left side; turning mirrors too'],fx:['Provocator Manica is a lower-arm piece','Padded Leg Armor (upper) is now Leather Upper Leg Armor','The Studio avatars sit lower, with room for helmets']},
   {v:'0.69',ic:'🛠',t:'The armor designer',hi:['The avatar mock-up sits right under the piece \u2014 drag your armor anywhere on it, scale it with the wheel, turn or mirror it','Every new piece names its equip point (head, chest, belt, upper or lower arm, hand, upper or lower leg) and keeps its fit there, mirrored on the left side; single arm and leg pieces cover one limb','Fit the printed set: adjust where each printed piece sits on the avatar, saved with your game'],fx:['Flavius\u2019 Bracers in gold','The sculpted set shows only with Sculpted armor in Settings','Phones: the match controls no longer cover the main menu or other screens','Tablets: the arena fits above the turn actions']},
   {v:'0.68',ic:'🛡',t:'Armor you can see',hi:['The printed armor is worn on the fighter\u2019s avatar at its equip points, scaled to the rulebook \u2014 it dims and cracks as a location loses AP and falls away at 0','The arena\u2019s right column has tabs: Fighter · Field · Stands \u2014 the crowd and the stands log at full height, a crowd ticker under the board','Manager: a weekly checklist in Your ludus and a money ledger (net per week, weeks of runway); rival houses now drill and rest by the same rules as you'],fx:['Bigger appearance fees, lower wages, a weekly gate share by fame and a larger starting purse','The Menagerie is now the Bestiary; the top bar opens the Stands','Brain icons coloured by mind; one Juggernaut in Play Now setup; Send on the Road sits in the record\u2019s button row','Padded Leg Armor (upper) shows its printed art']},
@@ -23243,7 +23244,7 @@ if(typeof FAMOUS!=='undefined')for(const k of Object.keys(FAMILY_HOUSES)){const 
    • the beasts in the Menagerie tracker, on hover cards and in the beast list,
    • the loading screens between modes: a Blessing token turning slowly in the dark. */
 const RTOK_NAMES=['zora','leaena','chest','brutum','leo','ursa','valencia','spectator','glykon','moechus','arenosus','tholo','boar','commodus','eagle','blessing','key','spike','mw1','mw2','mw3','ma1','ma2','ma3','ap2','ap3','croc','water',
-  'elix2','elix4','spiders','cf1','cf2','merc1','merc2','curse']; /* v0.57: the fifth row, cut from Virgilante's offering-token and chariot scans (tools/mkscans.py) */
+  'elix2','elix4','spiders','cf1','cf2','merc1','merc2','curse','key2']; /* v0.57: the fifth row, cut from Virgilante's offering-token and chariot scans (tools/mkscans.py) */
 const RTOK_COLS=8,RTOK_ROWS=5;
 function rtokHTML(name,size=28,title=''){const i=RTOK_NAMES.indexOf(name);if(i<0)return '';const c=i%RTOK_COLS,r=Math.floor(i/RTOK_COLS);
   return `<span class="rtok" role="img" aria-label="${esc(title||name)}"${title?` title="${esc(title)}"`:''} style="width:${size}px;height:${size}px;background-image:url('${assetURL('rtok.webp')}');background-size:${RTOK_COLS*100}% ${RTOK_ROWS*100}%;background-position:${(c/(RTOK_COLS-1)*100).toFixed(3)}% ${(r/(RTOK_ROWS-1)*100).toFixed(3)}%"></span>`}
@@ -24984,7 +24985,7 @@ const GLOSS={
   ludusf:{t:'Ludus Flavius',re:/Ludus Flavius/,d:'Gladiators who end with 20+ [[cf|CF]] and survive are saved here, and can be summoned into later events.'},
   rudis:{t:'The rudis',re:/\brudis\b/,d:'The wooden sword of freedom. A fighter with enough events and wins can be granted it: freed, or kept for the house.'},
   blessings:{t:'Blessings pots',re:/Blessings pots?|Blessings bag/,d:'Pots on the pillars. Break one (2 damage) for 2 coin, 1 [[cf|CF]] and a hidden offering. Power-2 weapons break them best.'},
-  mandati:{t:'Mandati Flavi',re:/Mandati Flavi/,d:'Secret objectives dealt at the start. Each one still hidden at the end costs 5 [[cf|CF]].'},
+  mandati:{t:'Mandata Flavi',re:/Mandata Flavi/,d:'Secret objectives dealt at the start. Each one still hidden at the end costs 5 [[cf|CF]].'},
   aggro:{t:'Aggro',re:/\baggro\b/,d:'The gladiator a beast is hunting: the last one to hit it. Tunnels and the Ward of the Evil Eye shake it off.'},
   raged:{t:'Raged and Fazed',re:/\bRaged\b|\bFazed\b/,d:'Lions, Commodus and Tholo turn Raged as they lose HP (harder hits, faster), then Fazed near death (slow, weak). Finish a Fazed boss before a rival steals the trophy.'},
   truce:{t:'Truce',re:/\btruces?\b/,d:'A pact not to attack. It ends the moment either side strikes.'},
@@ -25432,7 +25433,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&(
 /* ---------- the passage between screens: a health bar that fills, and a line to read ---------- */
 const RULE_LINES=['When a weapon runs out of throws, discard it from play.','Thrown weapons cannot be picked up in the same turn.','Ammo cards can only refill a weapon to its original ammo.',
   'Lose the head or the chest and you are out of the event.','A hit strips armor before it reaches health.','Crowd Favor of 20 or more saves you to the Ludus Flavius.','50 Crowd Favor wins your freedom.',
-  'Every 3 trophies held by the winner add 5 CF.','Hidden Mandati Flavi cost 5 CF each at the end.','No CF can be spent while Commodus is in the arena.','Beasts you attack will hunt you: that is aggro.',
+  'Every 3 trophies held by the winner add 5 CF.','Hidden Mandata Flavi cost 5 CF each at the end.','No CF can be spent while Commodus is in the arena.','Beasts you attack will hunt you: that is aggro.',
   'Spectators may throw a stone for 2 CF.','Arena keys open the chest or a tunnel.','The zone shrinks each round: two turns of grace to get inside.'];
 function transitQuote(){const pool=[];try{for(const k in CARDS){const q=CARDS[k].q;if(q&&!pool.includes('“'+q+'”'))pool.push('“'+q+'”')}}catch(e){}
   for(const l of RULE_LINES)pool.push('📜 '+l);
@@ -26287,7 +26288,7 @@ const fameHungry=g=>!!(g.motives&&g.motives[0]&&['glory','playing','spectacle'].
 function payJoinOffer(w,pm){if(w.payJoin&&w.payJoin.until>=w.week)return;w.payJoin=null;if((pm.fame||0)>PAYJOIN.maxFame||isByeWk(w.week))return;if(Math.random()>PAYJOIN.chance)return;
   const pool=freeAgents().filter(g=>!g.inj&&!g.noPayJoin&&g.unsigned>=PAYJOIN.weeksUnsigned&&effOvr(g)>=PAYJOIN.ovr[0]&&effOvr(g)<=PAYJOIN.ovr[1]);if(!pool.length)return;
   const g=pickOne(pool);const pay=3+Math.floor((PAYJOIN.ovr[1]-effOvr(g))/3)+rnd(5);w.payJoin={gid:g.id,pay,until:w.week+1};
-  tnews(`🪙 <b>${esc(g.name)}</b> has gone ${g.unsigned} weeks without a house and offers to <b>pay you ${pay} coin</b> to join — they want a name. Answer it at the top of any tab.`,'big')}
+  tnews(`${ICO.coin} <b>${esc(g.name)}</b> has gone ${g.unsigned} weeks without a house and offers to <b>pay you ${pay} coin</b> to join — they want a name. Answer it at the top of any tab.`,'big')}
 function fightRequests(w,pm){for(const g of rosterOf(pm)){const req=g.wantFight;if(req&&req.week<w.week){ /* last week's ask: was it honoured? */
       if(req.bye){}else if(g.lastBout===req.week){g.morale=clamp(g.morale+FIGHT_REQ.moraleUp,0,100);ghist(g,'got the fight they asked for')}else{g.morale=clamp(g.morale-FIGHT_REQ.moraleDown,0,100);tnews(`😠 ${esc(g.name)} asked to fight and sat out again (−${FIGHT_REQ.moraleDown} morale).`,'bad')}
       delete g.wantFight}}
@@ -26298,7 +26299,7 @@ function fightRequests(w,pm){for(const g of rosterOf(pm)){const req=g.wantFight;
 /* the cards at the top of every Manager tab */
 {const baseTop=buyOfferHTML;buyOfferHTML=function(){let h=baseTop();try{const w=W_(),pm=me();if(!w||!pm)return h;
   const o=w.payJoin&&w.payJoin.until>=w.week?w.payJoin:null;const g=o&&gById(o.gid);
-  if(g&&!g.contract)h+=`<div class="card2 payjoin"><div style="display:flex;gap:10px;align-items:center">${gArt(g,'sm')}<div style="flex:1"><b>🪙 ${esc(g.name)} will pay to join ${esc(pm.ludus)}</b><p style="margin:4px 0">“No house will look at me. Take me on and I’ll pay you <b>${o.pay} coin</b> — give me the sand and I’ll give you a name.” <span class="rc-sub">${CLASSES[g.cls]?CLASSES[g.cls].name:''} · rated ~${pubOvr(g)} · ${PAYJOIN.weeks} weeks at ${PAYJOIN.wage}/wk</span></p>
+  if(g&&!g.contract)h+=`<div class="card2 payjoin"><div style="display:flex;gap:10px;align-items:center">${gArt(g,'sm')}<div style="flex:1"><b>${ICO.coin} ${esc(g.name)} will pay to join ${esc(pm.ludus)}</b><p style="margin:4px 0">“No house will look at me. Take me on and I’ll pay you <b>${o.pay} coin</b> — give me the sand and I’ll give you a name.” <span class="rc-sub">${CLASSES[g.cls]?CLASSES[g.cls].name:''} · rated ~${pubOvr(g)} · ${PAYJOIN.weeks} weeks at ${PAYJOIN.wage}/wk</span></p>
     <div class="acts"><button class="btn primary" type="button" data-v54="payjoin-yes">✍ Take them on<small>+${o.pay} coin</small></button><button class="btn" type="button" data-v54="payjoin-no">✋ No thanks</button></div></div></div></div>`;
   const reqs=rosterOf(pm).filter(x=>x.wantFight&&x.wantFight.week===w.week);
   if(reqs.length&&!(w.night&&w.night.bye))h+=`<div class="card2 fightreq"><b>🗣 Asking for a fight this week:</b> ${reqs.map(x=>esc(x.name)).join(', ')} <span class="rc-sub">enter them on Match Week (+${FIGHT_REQ.moraleUp} morale) or they sulk (−${FIGHT_REQ.moraleDown})</span> <button class="btn tksm" type="button" data-mg="tab" data-id="night">⚔️ Match Week</button></div>`}catch(e){console.error(e)}return h}}
@@ -28587,6 +28588,84 @@ document.addEventListener('change',e=>{if(e.target.closest('[data-afkey]'))AFIT.
   window.addEventListener('pointerup',()=>{if(drag){drag=null;afitSave();afitRefresh(true)}});
   document.addEventListener('wheel',e=>{if(!e.target.closest('#afPrev2'))return;e.preventDefault();const f=afitF(AFIT.key,AFIT.side);afitSet(AFIT.key,AFIT.side,{w:Math.max(8,Math.min(140,(f.w||30)+(e.deltaY<0?2:-2)))});afitSave();afitRefresh()},{passive:false})})();
 (()=>{const st=document.createElement('style');st.textContent=`#afPrev2{cursor:grab;touch-action:none}#afPrev2 svg{width:100%;height:auto;display:block}`;document.head.appendChild(st)})();
+/* 93-v71 — Virgilante's printed pieces in the game.
+   • His medallion tokens replace the matching cells of assets/rtok.webp (chest, keys, armor/weapon L1-3, armor upgrades, elixirs,
+     Speed of Mercury, Crowd Favor, spiders, curse, golden eagle, water, boar, blessing) — every rtok consumer picks them up;
+     a 'key2' cell (2× Arena Keys) was added. Source art: tools/art/medallions/.
+   • His gold coin (assets/coin.webp) is ICO.coin everywhere.
+   • The summa rudis medallions (assets/sr_<key>.webp): beside Flavius's box while they officiate, in the event briefing, the
+     status chip, the festival picker and on Manager's Grand Games line.
+   • The Mandata Flavi card back (assets/mandata_back.webp) on hidden objectives; "Mandati" → "Mandata" across the game.
+   • The round marker (assets/round.webp, "ROUND :" baked in, the number on top) in the status bar.
+   • The stands line moves from under the arena into the arena log as a pinned top row (#slogPin, click → Stands).
+   • A gold wager bubble pops above whoever places a live wager (spectators, gladiators, you). */
+const SR_KEYS=['democritus','egidious','cassian'];
+const srKey=ev=>{const k=String((ev&&ev.sr)||'').toLowerCase();return SR_KEYS.includes(k)?k:null};
+const srImgHTML=(k,size,cls)=>k?`<img class="srmed ${cls||''}" src="${assetURL('sr_'+k+'.webp')}" alt="Summa Rudis ${k[0].toUpperCase()+k.slice(1)}" title="Summa Rudis ${k[0].toUpperCase()+k.slice(1)}" style="width:${size}px;height:${size}px">`:'';
+/* the coin */
+ICO.coin=`<img class="ico coinimg" src="${assetURL('coin.webp')}" alt="coin">`;
+/* summa rudis beside Flavius (canvas) */
+const SR_IMG={};const srImage=k=>{if(SR_IMG[k])return SR_IMG[k].complete&&SR_IMG[k].naturalWidth?SR_IMG[k]:null;const im=new Image();im.onload=()=>{try{draw()}catch(e){}};im.src=assetURL('sr_'+k+'.webp');SR_IMG[k]=im;return null};
+{const base=drawFlavius;drawFlavius=function(){const r=base.apply(this,arguments);try{if(!S||HEADLESS||S.phase==='setup'||(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false))return r;const k=srKey(EV());if(!k)return r;const im=srImage(k);if(!im)return r;
+  const a=iso(0,0);const w=TW*1.55,h=TW*1.2;const cx=STANDS?a.x:Math.max(w/2+8,a.x-TW*5.2),cy=STANDS?Math.max(h/2+6,a.y-TW*2.62-h/2):h/2+8;const d=h*0.78;
+  ctx.save();ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=6;ctx.drawImage(im,cx+w/2+4,cy-d/2,d,d);ctx.restore()}catch(e){}return r}}
+/* the briefing and the status bar */
+{const base=briefingHTML;briefingHTML=function(){let h=base.apply(this,arguments);try{const k=srKey(EV());if(k)h=h.replace('<div class="brname">',`<div class="brsr">${srImgHTML(k,58)}<span class="rc-sub">Summa Rudis<br><b>${esc(EV().sr)}</b></span></div><div class="brname">`)}catch(e){}return h}}
+function statusDecor(){const st=document.getElementById('status');if(!st||!S||S.phase==='setup')return;
+  for(const c of st.querySelectorAll('.chip')){const t=c.getAttribute('title')||'';
+    const m=/^Round (\d+) of/.exec(t);if(m&&!c.querySelector('.roundmk')){c.classList.add('roundchip');c.innerHTML=c.innerHTML.replace(/^Round \d+\/\d+ · /,'');c.insertAdjacentHTML('afterbegin',`<span class="roundmk" aria-label="Round ${m[1]}"><img src="${assetURL('round.webp')}" alt=""><b>${m[1]}</b></span>`)}
+    const k=srKey(EV());if(k&&/Summa Rudis/.test(t)&&!c.querySelector('.srmed'))c.insertAdjacentHTML('afterbegin',srImgHTML(k,20,'inchip'))}}
+{const base=render;render=function(){const r=base.apply(this,arguments);try{statusDecor()}catch(e){}return r}}
+/* festival setup: the medallion beside the picker */
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='festSR'){const im=document.getElementById('festSRimg');if(im)im.outerHTML=srImgHTML(e.target.value,44,'festsr').replace('<img','<img id="festSRimg"')}});
+{const base=openSetup;openSetup=function(){const r=base.apply(this,arguments);setTimeout(function fx(n){const s=document.getElementById('festSR');if(s&&!document.getElementById('festSRimg'))s.insertAdjacentHTML('afterend',srImgHTML(s.value,44,'festsr').replace('<img','<img id="festSRimg"'));else if(!s&&n<20)setTimeout(()=>fx(n+1),250)},300,0);return r}}
+/* Manager: Cassian presides over the Grand Games */
+{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(' · the Grand Games: purses ×1.6',` · ${srImgHTML('cassian',22,'inline')} the Grand Games, Cassian presiding: purses ×1.6`)}catch(e){}return h}}
+/* the Mandata Flavi card back on hidden objectives */
+{const base=boardHTML;boardHTML=function(){let h=base.apply(this,arguments);try{h=h.split('<div class="item mf"><span><span>Mandata Flavi<em>Secret objective').join(`<div class="item mf"><span><img class="mfback" src="${assetURL('mandata_back.webp')}" alt="Mandata Flavi card back"><span>Mandata Flavi<em>Secret objective`)}catch(e){}return h}}
+/* the stands line, pinned at the top of the arena log */
+tickerApply=function(){const el=document.getElementById('crowdTick');if(el)el.hidden=true;slogPinApply()};
+let SLOG_N=0;
+function slogPinApply(){const ol=document.getElementById('log');if(!ol)return;let li=document.getElementById('slogPin');
+  const L=S&&S.spectLog||[];const e=L[L.length-1];const on=!!(S&&S.phase!=='setup'&&!S.over&&e);
+  if(!on){if(li)li.remove();SLOG_N=0;return}
+  if(!li){li=document.createElement('li');li.id='slogPin';li.className='slogpin';li.setAttribute('role','button');li.tabIndex=0;li.title='Open the stands'}
+  if(ol.firstChild!==li)ol.prepend(li);
+  if(L.length!==SLOG_N){li.innerHTML=`<span class="tk">🏟</span><span class="tkr">R${e.r}</span><span class="tkt">${e.html}</span>`;
+    if(SLOG_N&&!(typeof reduceMotion==='function'&&reduceMotion())){li.classList.remove('flash');void li.offsetWidth;li.classList.add('flash')}SLOG_N=L.length}}
+{const base=log;log=function(){const r=base.apply(this,arguments);try{const li=document.getElementById('slogPin');const ol=document.getElementById('log');if(li&&ol&&ol.firstChild!==li)ol.prepend(li)}catch(e){}return r}}
+document.addEventListener('click',e=>{if(e.target.closest('#slogPin')&&typeof sideTab==='function')sideTab('stands')});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest&&e.target.closest('#slogPin')&&typeof sideTab==='function'){e.preventDefault();sideTab('stands')}});
+/* live wager bubbles */
+const WB_SEEN=new WeakSet();let WB_SELF=0,WB_ME=0,WB_EV=null;
+function wagerBubble(x,y,amt,unit,who){if(HEADLESS)return;let box=document.getElementById('wbubs');if(!box){const cw=document.querySelector('.canvas-wrap');if(!cw)return;box=document.createElement('div');box.id='wbubs';cw.appendChild(box)}const el=document.createElement('div');el.className='wbub';
+  el.innerHTML=`${unit==='cf'?ICO.wheat:ICO.coin}<b>${amt}</b>${unit==='cf'?'<small>CF</small>':''}`;if(who)el.title=`${who} places a wager`;
+  el.style.left=x+'px';el.style.top=y+'px';box.appendChild(el);setTimeout(()=>el.remove(),2300)}
+function wagerWatch(){if(HEADLESS||!S||S.phase==='setup'||S.sim||S.snap||S.over)return;
+  if(WB_EV!==S){WB_EV=S;WB_SELF=0;WB_ME=(S.bets||[]).length;for(const sp of S.spect||[])if(sp.bet)WB_SEEN.add(sp.bet);for(const p of S.players)if(p.selfBet)WB_SEEN.add(p.selfBet);return}
+  for(const sp of S.spect||[]){if(!sp.bet||WB_SEEN.has(sp.bet)||sp.gone)continue;WB_SEEN.add(sp.bet);if(sp._x!=null&&STANDS)wagerBubble(sp._x,sp._y-TW*0.5,sp.bet.amt,'cf',sp.name)}
+  for(const p of S.players){if(!p.selfBet||WB_SEEN.has(p.selfBet))continue;WB_SEEN.add(p.selfBet);if(p.alive){const m=center(p.r,p.c);wagerBubble(m.x,m.y-TW*1.1,p.selfBet.stake,'coin',p.name)}}
+  const B=S.bets||[];if(B.length>WB_ME){const b=B[B.length-1];const me=(S.spect||[]).find(s=>s.human);const p=S.players.find(q=>!q.cpu&&q.alive);
+    if(me&&me._x!=null&&STANDS)wagerBubble(me._x,me._y-TW*0.5,b.stake,'coin','You');else if(p){const m=center(p.r,p.c);wagerBubble(m.x,m.y-TW*1.1,b.stake,'coin','You')}}WB_ME=B.length}
+setInterval(()=>{try{wagerWatch();slogPinApply()}catch(e){}},300);
+(()=>{const st=document.createElement('style');st.textContent=`
+.ico.coinimg{width:1.15em;height:1.15em;vertical-align:-.22em;object-fit:contain;display:inline-block}
+.srmed{border-radius:50%;object-fit:contain;vertical-align:middle;flex:none}.srmed.inchip{margin-right:5px;vertical-align:-5px}.srmed.inline{vertical-align:-6px}.srmed.festsr{margin-left:8px;vertical-align:middle}
+.brsr{display:flex;align-items:center;gap:8px;margin:0 0 4px}.brsr b{color:var(--gold2)}
+.roundchip{display:inline-flex;align-items:center;gap:6px}
+.roundmk{position:relative;display:inline-block;height:30px;margin:-5px 0;flex:none}.roundmk img{height:30px;width:auto;display:block}
+.roundmk b{position:absolute;left:76.2%;top:50%;transform:translate(-50%,-48%);font:700 17px/1 var(--display);color:#f0e8d6;text-shadow:0 0 2px #96703c,0 1px 1px #000}
+.item .mfback{width:30px;height:auto;border-radius:3px;margin-right:8px;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+#log li.slogpin{position:sticky;top:-10px;z-index:2;display:flex;gap:8px;align-items:baseline;cursor:pointer;background:var(--panel2);border-bottom:2px solid var(--line2);margin:-10px -14px 4px;padding:6px 14px;font-size:14px;color:var(--bone)}
+#log li.slogpin:hover{background:#33261b}#log li.slogpin .tkr{color:var(--dim);font:11px var(--mono);flex:none}#log li.slogpin .tk{flex:none}
+#log li.slogpin .tkt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#log li.slogpin .tkt *{display:inline}
+#log li.slogpin.flash{animation:tkflash 1.2s ease-out}
+#wbubs{position:absolute;inset:0;pointer-events:none;z-index:3}
+.wbub{position:absolute;transform:translate(-50%,-100%);display:flex;align-items:center;gap:4px;padding:3px 9px 3px 4px;border-radius:999px;background:linear-gradient(#f6d77a,#c99a2e);border:2px solid #7a5a14;color:#2a1c06;font:700 14px var(--mono);box-shadow:0 4px 12px rgba(0,0,0,.55);pointer-events:none;animation:wbub 2.2s ease-out forwards;white-space:nowrap}
+.wbub .ico{width:20px;height:20px}.wbub small{font-size:10px;margin-left:1px}
+@keyframes wbub{0%{opacity:0;transform:translate(-50%,-70%) scale(.7)}12%{opacity:1;transform:translate(-50%,-100%) scale(1.08)}22%{transform:translate(-50%,-100%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-160%)}}
+body.calm .wbub{animation:none;opacity:1}
+body.chromeoff #wbubs{display:none}`;document.head.appendChild(st)})();
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
@@ -28655,7 +28734,7 @@ function optApplies(ev){
   const k=ev?ev.kind:null;
   return {
     mods:ev&&(ev.draft||k==='orpheus'||k==='eagle')?'Drafted and capture events ignore class modifiers':null,
-    mandata:ev&&!ev.mandata?'Only classic events deal Mandati Flavi':null,
+    mandata:ev&&!ev.mandata?'Only classic events deal Mandata Flavi':null,
     carmina:null,
     optOffers:k==='chariot'?'Chariot Racing uses its own offerings (Speed of Mercury, Crowd Favor, Curse Tablets)':k==='naumachia'?'No Blessings pots in the flooded arena':null,
     eaglePot:k==='chariot'||k==='naumachia'?'No Blessings pots in this event':k==='eagle'?'The Golden Eagle is already the objective of this event':null,
@@ -28666,7 +28745,7 @@ function optionsHTML(ev,L){
   const o=CFG.opts;const na=optApplies(ev);
   return `<h4>Options</h4><div class="opts">
      ${L?optBox('oMods','mods',o.mods,`Apply ${L.n}'s class modifiers`,na.mods):''}
-     ${optBox('oMandata','mandata',o.mandata,'Mandati Flavi secret objectives',na.mandata)}
+     ${optBox('oMandata','mandata',o.mandata,'Mandata Flavi secret objectives',na.mandata)}
      ${optBox('oCarmina','carmina',o.carmina,'Carmina Fescennina before the event',na.carmina)}
      ${optBox('oOpt','optOffers',o.optOffers,'Shuffle the optional offerings into the Blessings bag (Crowd Favor, Speed of Mercury, Curse Tablet)',na.optOffers)}
      ${optBox('oEagle','eaglePot',o.eaglePot,'Include the Golden Eagle as one of the 12 Blessings',na.eaglePot)}
@@ -28816,12 +28895,12 @@ async function openSetup(fresh){
 }
 function showRules(tab='build'){
   const buildHTML=`<div class="rules">
-  <div class="rsplit"><div><h4>📜 From the original Magnus Edition of Flavius Rule</h4><p class="rc-sub" style="margin:0 0 6px"><b>One word, one meaning:</b> the <b>editor</b> is the one who gives (pays for) the games — the rulebook's term. Flavius is the empire's great editor; win in a city and its own editor takes the box. A house's financial <b>backer</b> is money behind a ludus, not the games' host.</p><p class="rc-sub" style="margin:0 0 6px">Played as printed — page references are to the Magnus Edition rulebook. The same game is on the table as the <b>print &amp; play</b> edition and as the <b>Tabletop Simulator mod</b>.</p><div class="rtiles"><div class="rtile"><span class="rti">🏟</span><div><b>The arena</b><span>Board from p.9: 12 pillars, 4 tunnels, the chest, spikes and 6 base beasts with their zones.</span></div></div><div class="rtile"><span class="rti">⚔</span><div><b>Turns & combat</b><span>Phases, movement, pushing & toppling, tunnels, focus rolls, throws, looting, trading and truces. PvP 2 hit dice, PvE 4, NPCs 2; shields absorb by choice.</span></div></div><div class="rtile"><span class="rti">🛡</span><div><b>Armor & weapons</b><span>Every armor piece (to 7 AP) and all 40 weapon cards, the market, and the level 4 treasures.</span></div></div><div class="rtile"><span class="rti">🐾</span><div><b>Beasts</b><span>Base and spawned NPCs with Initial / Raged / Fazed states, Commodus, Tholo, the lions, Zora, taming and lures.</span></div></div><div class="rtile"><span class="rti">🏺</span><div><b>Blessings</b><span>One face-down bag: 12 pots, one per pillar; spawned offerings come from the same bag.</span></div></div><div class="rtile"><span class="rti">⚖</span><div><b>Summa rudis & Fates</b><span>Per-round PvE/PvP/CF/ability flags, rewards, the zone, and your Fate from final CF.</span></div></div><div class="rtile"><span class="rti">🗺</span><div><b>Locations</b><span>The 12-city map, d6/d12 rolls and class modifiers.</span></div></div><div class="rtile"><span class="rti">🎪</span><div><b>Special events</b><span>Chariot racing, Naumachia, festivals, Carmina Fescennina, missios, events for 5–8 gladiators.</span></div></div><div class="rtile"><span class="rti">👥</span><div><b>Spectators</b><span>8 sections, section cheers, stones, offerings and the Tholo chant (p.34-35).</span></div></div><div class="rtile"><span class="rti">🂠</span><div><b>Every card</b><span>The 70-card arena deck, round-2 cards, Mandati Flavi, Carmina, class and event cards, the Fates.</span></div></div><div class="rtile"><span class="rti">🏛</span><div><b>Infamis & Hall</b><span>The monthly high-score table and the Hall of Flavius.</span></div></div></div></div>
+  <div class="rsplit"><div><h4>📜 From the original Magnus Edition of Flavius Rule</h4><p class="rc-sub" style="margin:0 0 6px"><b>One word, one meaning:</b> the <b>editor</b> is the one who gives (pays for) the games — the rulebook's term. Flavius is the empire's great editor; win in a city and its own editor takes the box. A house's financial <b>backer</b> is money behind a ludus, not the games' host.</p><p class="rc-sub" style="margin:0 0 6px">Played as printed — page references are to the Magnus Edition rulebook. The same game is on the table as the <b>print &amp; play</b> edition and as the <b>Tabletop Simulator mod</b>.</p><div class="rtiles"><div class="rtile"><span class="rti">🏟</span><div><b>The arena</b><span>Board from p.9: 12 pillars, 4 tunnels, the chest, spikes and 6 base beasts with their zones.</span></div></div><div class="rtile"><span class="rti">⚔</span><div><b>Turns & combat</b><span>Phases, movement, pushing & toppling, tunnels, focus rolls, throws, looting, trading and truces. PvP 2 hit dice, PvE 4, NPCs 2; shields absorb by choice.</span></div></div><div class="rtile"><span class="rti">🛡</span><div><b>Armor & weapons</b><span>Every armor piece (to 7 AP) and all 40 weapon cards, the market, and the level 4 treasures.</span></div></div><div class="rtile"><span class="rti">🐾</span><div><b>Beasts</b><span>Base and spawned NPCs with Initial / Raged / Fazed states, Commodus, Tholo, the lions, Zora, taming and lures.</span></div></div><div class="rtile"><span class="rti">🏺</span><div><b>Blessings</b><span>One face-down bag: 12 pots, one per pillar; spawned offerings come from the same bag.</span></div></div><div class="rtile"><span class="rti">⚖</span><div><b>Summa rudis & Fates</b><span>Per-round PvE/PvP/CF/ability flags, rewards, the zone, and your Fate from final CF.</span></div></div><div class="rtile"><span class="rti">🗺</span><div><b>Locations</b><span>The 12-city map, d6/d12 rolls and class modifiers.</span></div></div><div class="rtile"><span class="rti">🎪</span><div><b>Special events</b><span>Chariot racing, Naumachia, festivals, Carmina Fescennina, missios, events for 5–8 gladiators.</span></div></div><div class="rtile"><span class="rti">👥</span><div><b>Spectators</b><span>8 sections, section cheers, stones, offerings and the Tholo chant (p.34-35).</span></div></div><div class="rtile"><span class="rti">🂠</span><div><b>Every card</b><span>The 70-card arena deck, round-2 cards, Mandata Flavi, Carmina, class and event cards, the Fates.</span></div></div><div class="rtile"><span class="rti">🏛</span><div><b>Infamis & Hall</b><span>The monthly high-score table and the Hall of Flavius.</span></div></div></div></div>
   <div><h4>✨ Extra in this digital standalone edition</h4><p class="rc-sub" style="margin:0 0 6px">Built around the printed game — none of it changes a printed rule.</p><div class="rtiles ext"><div class="rtile"><span class="rti">💼</span><div><b>Manager mode</b><span>A living league: stables, contracts, morale, the fate table, blood money, Match Week, the Acta Diurna.</span></div></div><div class="rtile"><span class="rti">🌍</span><div><b>Imperium & the crowd</b><span>Named regulars with memories and tempers, fans on the roads, world events, weather and omens.</span></div></div><div class="rtile"><span class="rti">🎨</span><div><b>Creator Studio</b><span>Custom characters, beasts, events, spectators and board tokens — with a shape editor.</span></div></div><div class="rtile"><span class="rti">📅</span><div><b>Calendar</b><span>A shared empire calendar and 12-week season schedule; every event moves it on.</span></div></div><div class="rtile"><span class="rti">💰</span><div><b>Wagers & exchange</b><span>A bookmaker for every event and one betting ledger across the empire.</span></div></div><div class="rtile"><span class="rti">🏆</span><div><b>Annals & the Road</b><span>Achievements with real rewards, seeded records, the Liberti and the Road of Flavius.</span></div></div><div class="rtile"><span class="rti">🎭</span><div><b>Sponsors</b><span>A patron for every city, unlocked by winning there, and a Sponsor creator once you have won in all twelve.</span></div></div><div class="rtile"><span class="rti">🏆</span><div><b>Trophies &amp; tournaments</b><span>A trophy room and the Flavian Awards in Manager mode, invitationals that pause the week, bracket tournaments, and a trophy designer for your own events.</span></div></div><div class="rtile"><span class="rti">🔊</span><div><b>Audio</b><span>A generated theme for every arena and sound effects.</span></div></div><div class="rtile"><span class="rti">💾</span><div><b>Saves</b><span>Named game saves and portable save files.</span></div></div></div></div></div>
   <details class="card2" style="margin-top:10px"><summary><b>Interpretations, simplifications and the card sheets</b> <span class="rc-sub">where the digital game had to decide</span></summary>
   <h4>From your card sheets (v0.4)</h4><ul>
   <li>All 40 weapon cards (power, range, ammo, uses, throws, absorb, CF per hit, soul steal, both attacks); one card of each in the market, class weapons pulled out for the gladiators in play, and the level 4 Labrys, Psykhe and Shield of Achilles in the Arena Chest.</li>
-  <li>The full 70-card arena deck and the 12 round-2 cards, the 15 Mandati Flavi, the 12 Carmina verses, the 8 class cards, the 13 Summa Rudis event cards and the 12 Fates. Hover any card name or thumbnail to see the card.</li></ul>
+  <li>The full 70-card arena deck and the 12 round-2 cards, the 15 Mandata Flavi, the 12 Carmina verses, the 8 class cards, the 13 Summa Rudis event cards and the 12 Fates. Hover any card name or thumbnail to see the card.</li></ul>
   <h4>Interpretations</h4><ul>
   <li>Commodus' entrance damage goes to the location every gladiator can best afford. Lure and Rete use range 4 from the thrower. Herculean Vigor applies to your next attack. "A generous applause" is flavor.</li>
   <li>The Naumachia water tokens now use the printed set (water tiles, crocodiles, sunken Level 1–3 weapons and armor, and +2/+3 AP Armor Upgrades; 16 drawn face-down), and the chariot horses (Palmatus, Ocianus, Saxo, Vindex), wheels (Wagon, Laurel, Gilded) and chariot names use the printed token stats. The 36 Blessings tokens remain an estimated mix.</li></ul>
