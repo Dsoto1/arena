@@ -31,5 +31,5 @@ const {chromium}=require('playwright');(async()=>{const b=await chromium.launch(
  await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
  o.port=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();startEvent({ev:'democritus',loc:6,seats:[{cls:'venatore'},{cls:'hero',cpu:true}],opts:{spect:0}});await new Promise(r=>setTimeout(r,1500));for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,120))}await new Promise(r=>setTimeout(r,700));const el=document.getElementById('plRot');
    return {cls:document.body.className,hint:el?getComputedStyle(el).display:'none'}});
- ok(/phoneP/.test(o.port.cls)&&o.port.hint==='flex','portrait hint');await ctx.close()}
+ ok(/phoneP2/.test(o.port.cls)&&o.port.hint==='none','portrait sheet replaces the hint (v0.73)');await ctx.close()}
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();

@@ -9,7 +9,7 @@ const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ST.gearSub='a';ST.ca=blankCA();openStudio('gear');await W8(900);
   const r={tabs:!!document.querySelector('[data-gs="caview"][data-id="avatar"]'),mock:!!document.querySelector('#caAv svg'),eqsel:!!document.querySelector('[data-caeq2]'),old:!!document.querySelector('[data-caf="slot"],[data-caf="pt"]'),fit:true,saveCols:SAVE_COLS.includes('armorFit')};
   const n0=(CUSTOM.armor||[]).length;document.querySelector('[data-gs="asave"]').click();await W8(300);r.blocked=(CUSTOM.armor||[]).length===n0;
-  ST.ca=blankCA();caFromSystem(ST.ca,'manica');ST.ca.name='Tv69 Sleeve';ST.ca.pair=0;document.getElementById('caRedraw').click();await W8(400);r.autoEq=ST.ca.eq;
+  ST.ca=blankCA();caFromSystem(ST.ca,'manica');ST.ca.noArt=1;ST.ca.name='Tv69 Sleeve';ST.ca.pair=0;document.getElementById('caRedraw').click();await W8(400);r.autoEq=ST.ca.eq;
   const sz=document.querySelector('[data-cav="s"]');sz.value=70;sz.dispatchEvent(new Event('input',{bubbles:true}));
   const s=document.querySelector('[data-caeq2]');s.value='fore';s.dispatchEvent(new Event('change',{bubbles:true}));await W8(400);r.part=[ST.ca.slot,ST.ca.pt];r.keptS=caF2(ST.ca).s;
   const g=(document.querySelector('#caAv svg').innerHTML.match(/scale\(0\.7\)/g)||[]).length;r.single=g===1;

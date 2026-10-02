@@ -290,7 +290,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   `caArtOn(ca)` → printed art in preview (`armArtCell`), on the body (`armPieceSVG` at the copy's placement), armSVG and scan cards;
   sculpt layers/base shape turn it off (`ca.noArt`). `98-avatar73` — avatar chips stripped, zones `[data-avtip]/[data-avloc]` +
   `#avPop` hover card, `AVHIT` flash, try-on ghost `#tryOn` on `#modal [data-card^="a:"]`, `avatarFor73`/`avatarCls73` on Ludus
-  records and the class designer; `#board .loc .pieces .cimg` hidden. `99-phone73` — portrait match `body.phoneP2` (`#ppTabs`
+  records and the class designer; custom class cards use `classSnap73` (61-studio53 figure; printed cards keep their art — Virgilante has better printed cards to send); `#board .loc .pieces .cimg` hidden. `99-phone73` — portrait match `body.phoneP2` (`#ppTabs`
   act/side/log + ⋯ nav, `--ppTop`, fitReserve wrapper 45%); ≤600px windows full screen, Manager/Studio rail = bottom pill row
   (hides on scroll down, `.navhide`), one-line badge header. `100-sica73` — `sicaEnsure` (m.sica 'm_sica', 4 enforcers),
   `SICA` odds; spear via `cfg.syndSpear` in his bouts (`b.sicaSpear`), AI bribes (`g.thrown` + rumour letter), your bribe

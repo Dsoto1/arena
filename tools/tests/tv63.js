@@ -12,7 +12,7 @@ o.m=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ope
   const rail={rec:/recpend/.test(cls('recruit')),inf:/infpend/.test(cls('infirm')),tr:/trpend/.test(cls('practice'))};
   const nightCss=getComputedStyle(document.querySelector('.mtabs [data-id="night"]')).backgroundImage;
   const layout=!!document.querySelector('.yardtop .card2 [data-tp="doc|1"]')&&!!document.querySelector('.yardtop #exMine');
-  const head=/Training hours 10\/10/.test(document.getElementById('mgrBody').textContent);
+  const head=!/Training hours 10\/10/.test(document.querySelector('.mhead').textContent); /* v0.73: hours left the header for the tab banners */
   const P=thPlan(w);P.g[g.id]={rehab:2};P.g[h.id]={str:4};P.doc=2;
   const capped=(()=>{const before=JSON.stringify(P.g[h.id]);const btn=document.querySelector(`[data-tp="g|${h.id}|spd|1"]`);MGR_REDRAW();return before})();
   const left=thLeft(w);const sxp0=JSON.stringify((h.sxp||{}));const st0=gStats(h).str;
@@ -33,7 +33,7 @@ o.a=await pg.evaluate(async()=>{const r={body:document.body.className,col:CLASSE
   startEvent({ev:'democritus',loc:6,seats:[{cls:'venatore'},{cls:'hero',cpu:true,diff:'master'},{cls:'soldier',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}});
   await new Promise(r2=>setTimeout(r2,1500));for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r3=>setTimeout(r3,100))}
   r.statsUp=!!document.querySelector('#board .pb-head>.statrow')&&!document.querySelector('#board>.statrow');r.mind=/CPU (Novice|Apprentice|Fighter|Veteran|Master)/.test(document.getElementById('roster').textContent);
-  {const f=document.querySelector('#board .ratfold');f.click();await new Promise(r2=>setTimeout(r2,100));const sr=document.querySelector('#board .statrow');r.fold=sr.classList.contains('shut')&&[...sr.children].filter(c=>getComputedStyle(c).display!=='none').length===1;render();await new Promise(r2=>setTimeout(r2,100));r.foldKept=document.querySelector('#board .statrow').classList.contains('shut');document.querySelector('#board .ratfold').click()}
+  {RAT_SHUT=false;panelStatsUp();const f=document.querySelector('#board .ratfold');f.click();await new Promise(r2=>setTimeout(r2,100));const sr=document.querySelector('#board .statrow');r.fold=sr.classList.contains('shut')&&[...sr.children].filter(c=>getComputedStyle(c).display!=='none').length===1;render();await new Promise(r2=>setTimeout(r2,100));r.foldKept=document.querySelector('#board .statrow').classList.contains('shut');document.querySelector('#board .ratfold').click()}
   r.anim2=animOn();SETTINGS.cvd=false;applySettings();r.col2=CLASSES.soldier.color;return r});
 ok(/cvd/.test(o.a.body)&&/calm/.test(o.a.body)&&/ts115/.test(o.a.body),'a11y classes');ok(o.a.col==='#D55E00'&&o.a.col2==='#c0433a','cvd palette');ok(o.a.rm&&!o.a.anim2&&o.a.saved===115,'reduce motion + saved');ok(o.a.statsUp,'ratings in panel header');ok(o.a.fold&&o.a.foldKept,'ratings fold');ok(o.a.mind,'roster names the mind');
 await pg.evaluate(()=>{S&&(S.over=true);openStudio('events')});await pg.waitForTimeout(1200);

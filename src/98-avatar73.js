@@ -58,3 +58,9 @@ document.addEventListener('mouseover',e=>{const c=e.target.closest&&e.target.clo
 .tohd{font:11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--gold2);margin-bottom:4px}.toav svg{width:100%;height:auto;display:block}.tost small{display:block;color:var(--muted);font-size:11.5px}
 .gdetail.recwav{position:relative;padding-right:96px}.recav{width:76px}.recav svg{width:100%;height:auto;display:block}.gdetail .recav{position:absolute;right:10px;top:10px}
 .recav.cls{width:110px;flex:none}`;document.head.appendChild(st)})();
+/* custom class cards: a snapshot of the class wearing its armor (61-studio53 calls it; printed class cards keep their art);
+   a character who takes the class shows as a small token in the corner */
+function classSnap73(k,ch){const A=typeof charArmor==='function'?charArmor({arm:k.arm||{}}):[];
+  const av=avatarSVG(avatarFor73(A,'cc'+String(k.id||k.name||'x').replace(/\W/g,''))).replace(/<text[^>]*>[^<]*<\/text>/g,'').replace(/ data-avtip="[^"]*"/g,'').replace(/ data-avloc="[^"]*"/g,'').replace(/ class="avzone"/g,'');
+  let s=nestSVG(av,176,72,112,236);
+  if(ch&&typeof figureSVG==='function'&&typeof tokenOfChar==='function')s+=nestSVG(figureSVG(tokenOfChar(ch)),246,236,44,76);return s}
