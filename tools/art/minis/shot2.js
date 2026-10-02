@@ -1,0 +1,4 @@
+const {chromium}=require('playwright');const fs=require('fs');(async()=>{const b=await chromium.launch({args:['--use-gl=swiftshader','--enable-unsafe-swiftshader']});const pg=await b.newPage();const errs=[];pg.on('pageerror',e=>errs.push(e.message));pg.on('console',m=>{if(m.type()==='error')errs.push(m.text())});
+for(const [m,rot,el] of JSON.parse(process.argv[2])){await pg.goto(`http://localhost:8123/r3d/render2.html?m=${m}&rot=${rot}&el=${el}&w=640&h=640&M=56&cy=40${m==='pillar'?'&rx=0.0001&col=%23e3d6bd':''}`);await pg.waitForFunction(()=>window.DONE,null,{timeout:60000});
+  const d=await pg.evaluate(()=>window.DONE);fs.writeFileSync(`/tmp/claude-0/x/r3d/${m}_${rot}_${el}.png`,Buffer.from(d.split(',')[1],'base64'));console.log(m,rot,await pg.evaluate(()=>window.INFO))}
+console.log(errs.slice(0,3));await b.close()})();

@@ -89,3 +89,44 @@ document.addEventListener('input',e=>{const i=e.target.closest('input[type="rang
 svg.setart{width:72px;height:72px}
 .fitbanner{padding:8px 12px;border:1px solid var(--gold);border-radius:6px;background:rgba(214,171,76,.1);margin:0 0 8px}
 .afit.fitmode{border-color:var(--gold)}`;document.head.appendChild(st)})();
+
+/* ---- 3D MINIS (Settings → Tokens): Virgilante's Tabletop Simulator minis + his pillar, rendered offline with three.js at the
+   board's 2:1 camera (30°), sculpted bases kept. Stored as SETTINGS.mini3d on top of the standee style, so every standee path
+   (board, panels, lists) carries them: STANDEE_SRC is swapped to the renders. Barb = Ursa; Leaena = Leo, toned. ---- */
+const MINI_URL={hero:'assets/mini_hero.webp',veteranus:'assets/mini_veteranus.webp',amazonia:'assets/mini_amazonia.webp',damnatio:'assets/mini_damnatio.webp',royalty:'assets/mini_royalty.webp',soldier:'assets/mini_soldier.webp',slave:'assets/mini_slave.webp',venatore:'assets/mini_venatore.webp',commodus:'assets/mini_commodus.webp',tholo:'assets/mini_tholo.webp',arenosus:'assets/mini_arenosus.webp',glykon:'assets/mini_glykon.webp',moechus:'assets/mini_moechus.webp',valencia:'assets/mini_valencia.webp',zora:'assets/mini_zora.webp',ursa:'assets/mini_ursa.webp',brutum:'assets/mini_brutum.webp',leo:'assets/mini_leo.webp',leaena:'assets/mini_leaena.webp',pillar:'assets/mini_pillar.webp'};
+/* anchor [x,y] = base centre in the sprite px, then the base's widest footprint in mm (round bases 25.4) */
+const MINI_A={hero:[40.2,70.9,25.4],veteranus:[40.2,101.2,25.4],amazonia:[57.8,87.4,25.4],damnatio:[40.2,103.9,25.4],royalty:[40.2,105.0,25.4],soldier:[46.8,102.8,25.4],slave:[50.6,89.6,25.4],venatore:[42.4,102.8,25.4],commodus:[40.2,107.8,25.4],tholo:[65.5,116.0,25.4],arenosus:[40.2,36.8,25.4],glykon:[40.2,25.8,25.4],moechus:[40.2,62.1,25.4],valencia:[40.2,61.0,25.4],zora:[40.2,44.0,25.4],ursa:[74.8,97.3,63],brutum:[74.8,97.3,63],leo:[74.8,80.8,58],leaena:[74.8,80.8,58],pillar:[47.3,239.8,30]};
+const MINI_PXMM=3.143, MINI_BASE=0.8, MINI_FIT=1.1; /* TWEAK: sprite px per mm; round base = 0.8 tile wide; long bases ≤ 1.1 tile */
+const MINI_PILLAR=0.62; /* TWEAK: the pillar is 80 mm in real life — drawn at 0.62 so it does not wall the board */
+const MINI_ORIG={...STANDEE_SRC};
+const miniOn=()=>typeof SETTINGS!=='undefined'&&!!SETTINGS.mini3d&&tokenStyle()==='standee';
+const miniKey=k=>k==='zoraMini'?'zora':k;
+const MINI_IMG={};
+function miniImg(k){if(HEADLESS)return null;let im=MINI_IMG[k];if(!im){im=new Image();im.onload=()=>{try{draw()}catch(e){}};im.src=MINI_URL[k];MINI_IMG[k]=im}return im.complete&&im.naturalWidth?im:null}
+function miniApply(){const on=miniOn();for(const k of new Set([...Object.keys(MINI_ORIG),'zoraMini'])){const mk=miniKey(k);const src=on&&MINI_URL[mk]?MINI_URL[mk]:MINI_ORIG[k];if(src&&STANDEE_SRC[k]!==src){STANDEE_SRC[k]=src;delete STANDEE_IMG[k]}}}
+if(!MINI_ORIG.zoraMini&&STANDEE_SRC.zoraMini)MINI_ORIG.zoraMini=STANDEE_SRC.zoraMini;
+/* miniScale — screen px per sprite px for mini k */
+function miniScale(k){const a=MINI_A[k];const p=TW*MINI_BASE/25.4;const fit=Math.min(1,TW*MINI_FIT/(a[2]*p));return p/MINI_PXMM*fit*(k==='pillar'?MINI_PILLAR:1)}
+/* miniDraw — draws mini k with its base centred on (x,y); returns the top y or null */
+function miniDraw(k,x,y,opt={}){const im=miniImg(k),a=MINI_A[k];if(!im||!a)return null;const s=miniScale(k);
+  ctx.save();ctx.fillStyle='rgba(0,0,0,.32)';const rw=a[2]*TW*MINI_BASE/25.4*Math.min(1,TW*MINI_FIT/(a[2]*TW*MINI_BASE/25.4))*0.55;ell(x+2,y+3,rw,rw*0.5);ctx.fill();
+  if(opt.dim)ctx.globalAlpha=opt.dim;if(opt.filter)ctx.filter=opt.filter;ctx.drawImage(im,x-a[0]*s,y-a[1]*s,im.naturalWidth*s,im.naturalHeight*s);ctx.restore();return y-a[1]*s}
+{const base=drawStandee;drawStandee=function(k,x,y,h,opt={}){const mk=miniKey(k);if(miniOn()&&MINI_A[mk]){const t=miniDraw(mk,x,y-TW*0.04,opt);if(t!=null)return t}return base.apply(this,arguments)}}
+{const base=standeeSize;standeeSize=function(k){const mk=miniKey(k);if(miniOn()&&MINI_A[mk]){const im=miniImg(mk);if(im)return im.naturalHeight*miniScale(mk)}return base.apply(this,arguments)}}
+{const base=drawZoraMini;drawZoraMini=function(x,y,filt){if(miniOn()){const t=miniDraw('zora',x,y-TW*0.04,{filter:filt});if(t!=null)return t}return base.apply(this,arguments)}}
+/* 48-arena47 shows Zora's printed token in the standee style; with minis he wears his mini (07 draws it in the figure path) */
+{const base=drawNPC;drawNPC=function(n){if(!(n&&n.t==='zora'&&miniOn()))return base.apply(this,arguments);const keep=SETTINGS.tokenStyle;SETTINGS.tokenStyle='figure';try{return base.apply(this,arguments)}finally{SETTINGS.tokenStyle=keep}}}
+{const base=drawPillar;drawPillar=function(pl){if(!miniOn())return base.apply(this,arguments);const m=center(pl.r,pl.c);const top=miniDraw('pillar',m.x,m.y);if(top==null)return base.apply(this,arguments);
+  let y=top+TW*0.06;pl.pots.forEach(()=>{drawPot(m.x,y,TW*0.46,false);y-=TW*0.44});
+  if(pl.pots.length>1&&TW>28){ctx.fillStyle='#f0cf7d';ctx.font=`500 ${Math.round(TW*0.18)}px IBM Plex Mono, monospace`;ctx.fillText('×'+pl.pots.length,m.x+TW*0.34,top+TW*0.2)}}}
+{const base=applySettings;applySettings=function(){const r=base.apply(this,arguments);try{miniApply()}catch(e){}return r}}
+miniApply();
+/* Settings → Tokens: a fourth row */
+{const base=settingsHTML;settingsHTML=function(tab){let h=base.apply(this,arguments);if(tab!=='tokens'||typeof h!=='string')return h;const on=miniOn();
+  if(on)h=h.replace(/(<button type="button" class="tokrow) on(" data-tokstyle="standee">[\s\S]*?)<span class="badge gold">in use<\/span>/,'$1$2');
+  const line=BASE_CLS.map(c=>MINI_URL[c]?`<img class="stnd" src="${MINI_URL[c]}" alt="" style="height:58px">`:'').join('');
+  const row=`<button type="button" class="tokrow ${on?'on':''}" data-tokstyle="mini3d"><div class="tokrowhd"><b>🏺 3D minis</b>${on?'<span class="badge gold">in use</span>':''}<small>Virgilante's sculpted minis and pillars, on their bases — the eight classes and the default beasts</small></div><div class="toklineup">${line}</div></button>`;
+  const j=h.search(/<button type="button" class="tokrow ?(on)?" data-tokstyle="cylinder"/);return j<0?h:h.slice(0,j)+row+h.slice(j)}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-tokstyle]');if(!b)return;const v=b.dataset.tokstyle;
+  SETTINGS.mini3d=v==='mini3d';if(v==='mini3d'){b.dataset.tokstyle='standee';setTimeout(()=>{b.dataset.tokstyle='mini3d'},0)}
+  setTimeout(()=>{try{miniApply();for(const k in STANDEE_IMG)delete STANDEE_IMG[k];draw()}catch(err){}},0)},true);

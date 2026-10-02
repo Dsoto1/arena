@@ -1,0 +1,17 @@
+<!doctype html><html><body style="margin:0;background:transparent">
+<script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+const P=new URLSearchParams(location.search);const name=P.get('m');const W=+P.get('w')||512,H=+P.get('h')||640;
+const r=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});r.setSize(W,H);r.setClearColor(0,0);r.outputColorSpace=THREE.SRGBColorSpace;document.body.appendChild(r.domElement);
+const sc=new THREE.Scene();sc.add(new THREE.HemisphereLight(0xfff2dd,0x4a3a2a,2.3));const d=new THREE.DirectionalLight(0xffffff,2.6);d.position.set(-2,6,6);sc.add(d);
+const tl=new THREE.TextureLoader();const _skip=name==='pillar';const tx=k=>{const t=tl.load(`../tts/${name}_THIS_MODEL_texture_${k}.png`);t.flipY=true;return t};
+const dif=_skip?null:tx('diffuse');if(dif)dif.colorSpace=THREE.SRGBColorSpace;
+const mat=_skip?null:new THREE.MeshStandardMaterial({map:dif,normalMap:tx('normal'),aoMap:tx('occlusion'),metalnessMap:tx('metal'),metalness:0.6,roughness:0.55,emissiveMap:tx('emissive'),emissive:0xffffff,emissiveIntensity:0.4});
+const isG=name==='pillar';const L=isG?new GLTFLoader():new OBJLoader();L.load(isG?'../tts/pillar/PillarV7.gltf':`../tts/${name}_default.obj`,g0=>{const o0=isG?g0.scene:g0;o0.traverse(c=>{if(c.isMesh){c.material=isG?new THREE.MeshStandardMaterial({color:new THREE.Color(P.get('col')||'#d9d2c4'),roughness:.85,metalness:0}):mat}});o0.rotation.x=(+P.get('rx')||-90)*Math.PI/180;if(isG)o0.scale.setScalar(1000);const o=new THREE.Group();o.add(o0);o.updateMatrixWorld(true);
+  const box=new THREE.Box3().setFromObject(o);const sz=box.getSize(new THREE.Vector3()),ct=box.getCenter(new THREE.Vector3());if(isG){o.position.x-=ct.x;o.position.z-=ct.z;o.position.y-=box.min.y}
+  const g=new THREE.Group();g.add(o);sc.add(g);g.rotation.y=(+P.get('rot')||0)*Math.PI/180;
+  const el=(+P.get('el')||26.57)*Math.PI/180;const R=200;const M=+P.get('M')||48;const cam=new THREE.OrthographicCamera(-M*W/H,M*W/H,M,-M,0.1,R*10);
+  cam.position.set(0,Math.sin(el)*R*3,Math.cos(el)*R*3);cam.lookAt(0,0,0);cam.position.y+= +P.get('cy')||0;
+  setTimeout(()=>{r.render(sc,cam);window.DONE=r.domElement.toDataURL('image/png');window.INFO=[sz.x,sz.y,sz.z]},1500)});
+</script></body></html>
