@@ -1505,7 +1505,7 @@ function spriteBox(kind, x, y) {
 let DRAW_EMPTY = false; // v0.42: the seat map's snapshot — the sand without anyone on it
 /* draw — repaints the whole canvas: sizes TW/TH/OX/OY to the window, then rim, stands, tiles and zone tints, event marks, tunnels, spikes, rubble, corpses, blood, crew, floor tokens, chest and highlights,
    then pillars/beasts/gladiators sorted back to front, aggro lines, attack rings, fan flags, Flavius and effects.
-   TWEAK: the tile-size divisors (16.4 / 13.8 tiles wide, 14.2 / 12.4 on phones; 10.3 / 9.5 tall), minimum TW 20, the 230 px kept for the action dock, highlight colors. */
+   TWEAK: the tile-size divisors (16.4 / 13.8 tiles wide, 14.2 / 12.4 on phones; 10.9 / 9.5 tall), minimum TW 20, the 230 px kept for the action dock, highlight colors. */
 function draw() {
   if (HEADLESS) return;
   if (S && S.snap && !S.over) return; /* v0.42: nothing to watch while the event snaps to its end */
@@ -1514,7 +1514,7 @@ function draw() {
   // fit the arena (and the stands) to the window so the action dock below it stays in view
   const fitH = SETTINGS.fit === false ? 1e9 : typeof phoneLand === 'function' && phoneLand() ? innerHeight - 8 : Math.max(360, innerHeight - (typeof fitReserve === 'function' ? fitReserve() : 230)); // v0.66: a phone in landscape gives the arena the whole height
   const mob9 = innerWidth <= 700;
-  TW = Math.max(20, Math.floor(Math.min(Wd / (STANDS ? mob9 ? 14.2 : 16.4 : mob9 ? 12.4 : 13.8), fitH / (STANDS ? 10.3 : 9.5)))); /* v0.51: on a phone the arena fills the width; the outer benches may crop */
+  TW = Math.max(20, Math.floor(Math.min(Wd / (STANDS ? mob9 ? 14.2 : 16.4 : mob9 ? 12.4 : 13.8), fitH / (STANDS ? 10.9 : 9.5)))); /* v0.51: on a phone the arena fills the width; the outer benches may crop */
   TH = TW / 2;
   OX = Wd / 2;
   OY = TW * (STANDS ? 2.3 : 1.9);
