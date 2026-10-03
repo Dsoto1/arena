@@ -192,3 +192,22 @@ body.onlarena #btnExport,body.onlarena #btnTicket,body.onlarena #btnBets,body.on
 (function(){try{const u=new URL(location.href);if(!u.searchParams.get('code')||!u.searchParams.get('state'))return;const d=document.createElement('div');d.id='onlLoad';
   d.innerHTML='<div><div class="ring"></div>Entering the Online arena…</div>';document.body.appendChild(d);const t0=Date.now();
   const iv=setInterval(()=>{if(document.getElementById('onl')||Date.now()-t0>20000){clearInterval(iv);setTimeout(()=>d.remove(),250)}},120)}catch(e){}})();
+
+/* ---------------- no gladiator yet: the main window anyway (v0.79 follow-up) ----------------
+   Online opens on Play even before the first gladiator exists. Watching, the Spectate tab, the Lobby Browser and the Hall work;
+   anything that needs a gladiator (play, host, join, wager, ticket, armory, party) opens the creator first. */
+const ONL_NEEDS_GLAD=new Set(['quick','join','newgame','host','bet','betgo','ticket','buy','pinvite','pjoin','start','ready']);
+/* on window, capturing: runs before the Online window's own click handlers */
+window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-onl]');if(!b||ONL.char||!ONL.acct)return;if(!ONL_NEEDS_GLAD.has(b.dataset.onl))return;
+  e.preventDefault();e.stopImmediatePropagation();ONL.newGlad=true;ONL.creating=null;onlRedraw();if(typeof mToast==='function')mToast('⚔ Make your gladiator first — then the sand is yours.')},true);
+function onlNoGladHTML(what){return `<div class="card2 onl-noglad"><div class="onl-ngfig">${onlMini('hero',96)}</div><div><b>No gladiator yet</b><p class="rc-sub" style="margin:4px 0 8px">${what} Watching live matches and the Hall of the Fallen are open to everyone.</p>
+  <button type="button" class="btn primary" data-onl="gnew">⚔ Make your gladiator</button></div></div>`}
+{const base=onlPlayHTML;onlPlayHTML=function(){if(ONL.char)return base.apply(this,arguments);
+  const fake={id:'-',name:'',cls:'hero',stats:{...ONLC.START_STATS},wallet:0,lifeCF:0,bouts:0,survived:0,wins:0,gear:[],look:{}};const keep=ONL.char;ONL.char=fake;let h;try{h=base.apply(this,arguments)}finally{ONL.char=keep}
+  /* the stage becomes the invitation; the playlists stay (their buttons open the creator) */
+  return h.replace(/<div class="onl-stage">[\s\S]*?<div class="onl-side">/,`${onlNoGladHTML('Make one to fight, host, wager or buy a ticket.')}<div class="onl-side">`)}}
+{const base=onlArmoryHTML;onlArmoryHTML=function(){return ONL.char?base.apply(this,arguments):`<h3>🛒 Armory &amp; Market</h3>${onlNoGladHTML('The armory sells to a gladiator, from their own wallet.')}`}}
+{const base=onlCharHTML;onlCharHTML=function(){if(ONL.chars.some(c=>c.alive))return base.apply(this,arguments);
+  return `<div class="onl-lbtop"><h3>🛡 My Gladiators <span class="rc-sub">0/${ONLC.GLAD_MAX} living</span></h3></div><div class="onl-gslots">${Array.from({length:ONLC.GLAD_MAX},()=>`<button type="button" class="onl-gslot empty" data-onl="gnew">＋<b>New gladiator</b><small>starts as a Tiro</small></button>`).join('')}</div>`}}
+{const st=document.createElement('style');st.textContent=`.onl-noglad{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;padding:18px 20px;min-height:180px;border-color:var(--gold,#e8c96a)!important}
+.onl-cstage{gap:10px}.onl-cmini{opacity:.95}.onl-cstage .portrait{border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.5)}`;document.head.appendChild(st)}

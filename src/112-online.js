@@ -155,7 +155,7 @@ async function onlineOpen(tab){if(typeof modalBusy==='function'&&modalBusy())ret
   if(!ONL_SUB)ONL_SUB=NET.on('lobby.update',async()=>{if(!document.getElementById('onl'))return;try{ONL.lobbies=await NET.req('lobby.list')}catch(e){}onlRedraw();if(typeof onlLobbyTick==='function')onlLobbyTick()});
   const v=await modal('🌐 Online',`<div id="onl">${onlHTML()}</div>`,[{label:'Close',value:'close'}],{wide:1,full:1,close:'close',onOpen:()=>{const x=$('#mClose');if(x){x.textContent='✖ Leave the Online arena';x.classList.add('saveq')}}});
   if(typeof v==='string'&&v.startsWith('play:'))onlPlay(v.slice(5))}
-function onlHTML(){if(!ONL.acct)return onlSignInHTML();if((!ONL.char||ONL.newGlad)&&ONL.tab!=='hall')return onlCreatorHTML();
+function onlHTML(){if(!ONL.acct)return onlSignInHTML();if(ONL.newGlad&&ONL.tab!=='hall')return onlCreatorHTML();
   const tabs=[['play','⚔ Play'],['lobby','📜 Lobby Browser'],['spect','👁 Spectate'],['armory','🛒 Armory & Market'],['char','🛡 My Gladiators'],['hall','🪦 Hall of the Fallen']];
   return `<div class="onl-wrap"><nav class="onl-rail">${tabs.map(([k,l])=>`<button type="button" data-onl="tab" data-v="${k}" class="${ONL.tab===k?'on':''}">${l}</button>`).join('')}
     <div class="onl-acct"><span>${esc2(ONL.acct.name)}</span><small>${ONL.mode==='mock'?'mock server · preview':'signed in'}</small><button type="button" class="btn tksm" data-onl="signout">Sign out</button></div></nav>
@@ -167,14 +167,14 @@ function onlSignInHTML(){return `<div class="onl-sign"><div class="onl-sign-card
 /* the creator: name, class card, look, ratings */
 function onlCreatorHTML(){const d=ONL.creating||(ONL.creating={name:typeof genName==='function'?genName():'',cls:'hero',look:{portrait:typeof randomPortrait==='function'?randomPortrait():null}});
   const L={spd:'Speed',str:'Strength',int:'Intelligence',lck:'Luck',cha:'Charisma'};const dead=ONL.chars.filter(c=>!c.alive)[0];
-  return `<div class="onl-create"><div class="onl-cstage">${onlMini(d.cls,260)}<div class="onl-cname">${esc2(d.name||'Nameless')}</div><div class="rc-sub">${esc2((CLASSES[d.cls]||{}).name||'')} · ${onlRankChip('tiro')}</div></div>
+  return `<div class="onl-create"><div class="onl-cstage">${typeof portraitHTML==='function'&&d.look&&d.look.portrait?portraitHTML({name:d.name,portrait:d.look.portrait,color:(CLASSES[d.cls]||{}).color},'lg'):''}<div class="onl-cmini">${onlMini(d.cls,110)}</div><div class="onl-cname">${esc2(d.name||'Nameless')}</div><div class="rc-sub">${esc2((CLASSES[d.cls]||{}).name||'')} · ${onlRankChip('tiro')}</div></div>
    <div class="onl-cform"><h3>${dead?`${esc2(dead.name)} is gone. A new gladiator steps forward.`:'Your online gladiator'}</h3>
     <p class="rc-sub">Starts with the recruit kit (the class's weapons, no armor) and an empty wallet. Earn coin and CF to rank up; buy gear between bouts. Nothing carries over from a fallen gladiator.</p>
     <label>Name<span style="display:flex;gap:4px"><input class="tin" id="onlCName" data-onlf="name" value="${esc2(d.name)}" maxlength="24">${typeof diceBtn==='function'?diceBtn('#onlCName'):''}</span></label>
     <div class="sect">Class</div><div class="onl-clsgrid">${ONLC.CLASSES8.map(k=>`<button type="button" class="onl-cls ${d.cls===k?'on':''}" data-onl="cls" data-v="${k}">${typeof cardHTML==='function'?cardHTML('k:'+k,'sm'):''}<span>${esc2(CLASSES[k].name)}</span></button>`).join('')}</div>
     <div class="sect">Ratings <span class="rc-sub">every recruit starts the same</span></div>
     <div class="onl-st0">${ONLC.STAT_KEYS.map(k=>`<span><b>${ONLC.START_STATS[k]}</b> ${L[k]}</span>`).join('')}</div><p class="rc-sub" style="margin:0">They grow only by surviving: +1 to your lowest rating for every bout you live through, +1 more for a win.</p>
-    <div class="mbtns"><button type="button" class="btn primary" data-onl="create">⚔ Enter the arena as a Tiro</button><button type="button" class="btn" data-onl="face">🎲 New face</button>${ONL.newGlad&&ONL.char?'<button type="button" class="btn" data-onl="nonew">Back</button>':ONL.chars.length?'<button type="button" class="btn" data-onl="tab" data-v="hall">🪦 Hall of the Fallen</button>':''}</div>
+    <div class="mbtns"><button type="button" class="btn primary" data-onl="create">⚔ Enter the arena as a Tiro</button><button type="button" class="btn" data-onl="face">🎲 New face</button><button type="button" class="btn" data-onl="nonew">Back</button></div>
     <p class="rc-sub" style="margin:0">Up to ${ONLC.GLAD_MAX} living gladiators; the active one fights. Their look, token and class are set in 🛡 My Gladiators.</p>
     ${ONL.err?`<p class="onl-err">${esc2(ONL.err)}</p>`:''}</div></div>`}
 function onlStageHTML(ch){const R=onlRank(ONLC.rankFor(ch).k),N=ONLC.nextRank(ch),pg=Math.round(ONLC.rankProgress(ch)*100);
