@@ -148,7 +148,7 @@ function drawStands(){
     // tiered benches: outer tiers higher (lighter), with a raised back wall
     for(let t=0;t<3;t++){const d0=1.35+t*0.47,d1=d0+0.47;const Q=secQuad(si,d0,d1).map(([r,c])=>pt(r,c));
       ctx.beginPath();Q.forEach((p,i)=>i?ctx.lineTo(p.x,p.y-t*TW*0.08):ctx.moveTo(p.x,p.y-t*TW*0.08));ctx.closePath();
-      ctx.fillStyle=t%2?(THEME.standA||'#5b4130'):(THEME.standB||'#6d4f38');ctx.fill();ctx.strokeStyle='rgba(20,12,6,.55)';ctx.lineWidth=1;ctx.stroke()}
+      ctx.fillStyle=t%2?(THEME.standA||'#5b4130'):(THEME.standB||'#6d4f38');ctx.fill();if(typeof standsTex81==='function')standsTex81(t,si);ctx.strokeStyle='rgba(20,12,6,.55)';ctx.lineWidth=1;ctx.stroke()}
     // section color: the rulebook's colored seat marker in the middle of each stand
     const mid=secQuad(si,1.9,1.9);const m1=pt(...mid[0]),m2=pt(...mid[1]);const cx=(m1.x+m2.x)/2,cy=(m1.y+m2.y)/2-TW*0.08;
     const col=secColor(si);ctx.fillStyle=col;ctx.globalAlpha=.85;ell(cx,cy,TW*0.24,TW*0.12);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle='#1a120c';ctx.lineWidth=1.2;ctx.stroke();

@@ -9,7 +9,7 @@
      numbers; the avatar sits lower (AV_VB). Turning mirrors on the left (90-armfit armBox side flag). */
 if(ARM.provmanica)ARM.provmanica.pt='lower';
 if(ARM.legwrapsU)ARM.legwrapsU.n='Leather Upper Leg Armor';
-const ARMFIT_BAKED='2026-10-02T16:04:36.671Z';
+const ARMFIT_BAKED='2026-10-03T19:57:18Z'; /* v0.81: round 3 (his 12 fits of 2026-10-03 19:57) baked in 123-v81art */
 for(const k of Object.keys(ARM_FIT_OVR))delete ARM_FIT_OVR[k];try{localStorage.removeItem('flavius_armfit')}catch(e){}
 /* 91 loads the saved doc at start; drop it again if it is the one already baked */
 (async()=>{try{const d=await Store.getDoc('armorFit','sys');const old=!d||!d.at||d.at<=ARMFIT_BAKED;const clear=()=>{if(old)for(const k of Object.keys(ARM_FIT_OVR))delete ARM_FIT_OVR[k]};clear();setTimeout(clear,0);setTimeout(clear,2500)}catch(e){}})();
