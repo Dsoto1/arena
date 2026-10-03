@@ -8,7 +8,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 31,
+   "time": 23,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -17,7 +17,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tseed4.js": "8f6030496b25"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tgo45": {
    "streak": 28,
@@ -34,7 +34,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tgo45.js": "c77bfa518559"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tbrief": {
    "streak": 28,
@@ -42,7 +42,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 26,
+   "time": 24,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -51,7 +51,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tbrief.js": "1e6b753b258f"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tmgr45": {
    "streak": 28,
@@ -59,7 +59,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 11,
+   "time": 7,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -68,7 +68,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tmgr45.js": "069c354048bc"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tmisc45": {
    "streak": 6,
@@ -76,7 +76,7 @@
    "fails": 1,
    "flaky": [],
    "lastRun": 38,
-   "time": 13,
+   "time": 12,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -85,7 +85,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tmisc45.js": "bb606e550559"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tstudio45": {
    "streak": 3,
@@ -93,7 +93,7 @@
    "fails": 3,
    "flaky": [],
    "lastRun": 38,
-   "time": 41,
+   "time": 42,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -102,299 +102,9 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tstudio45.js": "be97f3ed27ee"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tb4": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 11,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tb4.js": "7e6a93ec722f"
-   },
-   "sh": "fe882d862c"
-  },
-  "tb5": {
-   "streak": 8,
-   "runs": 29,
-   "fails": 1,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 18,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tb5.js": "f129c47afea0"
-   },
-   "sh": "fe882d862c",
-   "pinUntil": 37
-  },
-  "tb6": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 12,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tb6.js": "eedd6dcf3b59"
-   },
-   "sh": "fe882d862c"
-  },
-  "tb1": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 106,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tb1.js": "0359efa23859"
-   },
-   "sh": "fe882d862c"
-  },
-  "tb8": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 13,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tb8.js": "f8ecba70f88f"
-   },
-   "sh": "fe882d862c"
-  },
-  "tb9": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 26,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tb9.js": "17a06a4c4d73"
-   },
-   "sh": "fe882d862c"
-  },
-  "tsim": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 22,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tsim.js": "8ce238d13c98"
-   },
-   "sh": "fe882d862c"
-  },
-  "tmid": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 5,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tmid.js": "3a96fd870ce4"
-   },
-   "sh": "fe882d862c"
-  },
-  "tworld": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 4,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tworld.js": "f250cb532630"
-   },
-   "sh": "fe882d862c"
-  },
-  "tinf": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 68,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tinf.js": "0d3954aa0340"
-   },
-   "sh": "fe882d862c"
-  },
-  "tc1": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 11,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tc1.js": "a473e9a9fab4"
-   },
-   "sh": "fe882d862c"
-  },
-  "tsb": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 7,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tsb.js": "4b719f411467"
-   },
-   "sh": "fe882d862c"
-  },
-  "tcity": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 15,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tcity.js": "6390c1777338"
-   },
-   "sh": "fe882d862c"
-  },
-  "tv30": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 7,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tv30.js": "da4fe6b8a97c"
-   },
-   "sh": "fe882d862c"
-  },
-  "tg": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 7,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tg.js": "837e085d8aa7"
-   },
-   "sh": "fe882d862c"
-  },
-  "tf": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 12,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tf.js": "69a89dc983be"
-   },
-   "sh": "fe882d862c"
-  },
-  "tb7": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 133,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tb7.js": "3ad5af052b60"
-   },
-   "sh": "fe882d862c"
-  },
-  "tc3": {
    "streak": 28,
    "runs": 28,
    "fails": 0,
@@ -407,11 +117,199 @@
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tc3.js": "25e99990baeb"
+    "tools/tests/tb4.js": "7e6a93ec722f"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
-  "tgore": {
+  "tb5": {
+   "streak": 8,
+   "runs": 29,
+   "fails": 1,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 13,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tb5.js": "f129c47afea0"
+   },
+   "sh": "2e250795f7",
+   "pinUntil": 37
+  },
+  "tb6": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 7,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tb6.js": "eedd6dcf3b59"
+   },
+   "sh": "2e250795f7"
+  },
+  "tb1": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 112,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tb1.js": "0359efa23859"
+   },
+   "sh": "2e250795f7"
+  },
+  "tb8": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 15,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tb8.js": "f8ecba70f88f"
+   },
+   "sh": "2e250795f7"
+  },
+  "tb9": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 21,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tb9.js": "17a06a4c4d73"
+   },
+   "sh": "2e250795f7"
+  },
+  "tsim": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 24,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tsim.js": "8ce238d13c98"
+   },
+   "sh": "2e250795f7"
+  },
+  "tmid": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 4,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tmid.js": "3a96fd870ce4"
+   },
+   "sh": "2e250795f7"
+  },
+  "tworld": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 3,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tworld.js": "f250cb532630"
+   },
+   "sh": "2e250795f7"
+  },
+  "tinf": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 46,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tinf.js": "0d3954aa0340"
+   },
+   "sh": "2e250795f7"
+  },
+  "tc1": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 7,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tc1.js": "a473e9a9fab4"
+   },
+   "sh": "2e250795f7"
+  },
+  "tsb": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 4,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tsb.js": "4b719f411467"
+   },
+   "sh": "2e250795f7"
+  },
+  "tcity": {
    "streak": 28,
    "runs": 28,
    "fails": 0,
@@ -424,11 +322,45 @@
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tgore.js": "5f4e4e96a56a"
+    "tools/tests/tcity.js": "6390c1777338"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
-  "tsc": {
+  "tv30": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 4,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tv30.js": "da4fe6b8a97c"
+   },
+   "sh": "2e250795f7"
+  },
+  "tg": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 4,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tg.js": "837e085d8aa7"
+   },
+   "sh": "2e250795f7"
+  },
+  "tf": {
    "streak": 28,
    "runs": 28,
    "fails": 0,
@@ -441,16 +373,85 @@
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tf.js": "69a89dc983be"
+   },
+   "sh": "2e250795f7"
+  },
+  "tb7": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 142,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tb7.js": "3ad5af052b60"
+   },
+   "sh": "2e250795f7"
+  },
+  "tc3": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 5,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tc3.js": "25e99990baeb"
+   },
+   "sh": "2e250795f7"
+  },
+  "tgore": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 12,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tgore.js": "5f4e4e96a56a"
+   },
+   "sh": "2e250795f7"
+  },
+  "tsc": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 4,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tsc.js": "75a10eca0c2a"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "t12": {
    "streak": 0,
    "runs": 28,
    "fails": 2,
    "flaky": [
-    32
+    32,
+    38
    ],
    "lastRun": 38,
    "time": 400,
@@ -464,7 +465,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 12,
+   "time": 11,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -473,7 +474,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tclean2.js": "4d00a21f5fb1"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tlock": {
    "streak": 28,
@@ -490,7 +491,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tlock.js": "f787303d74e9"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tmkt": {
    "streak": 28,
@@ -498,7 +499,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 9,
+   "time": 8,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -507,7 +508,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tmkt.js": "0420696f5e41"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "thorn": {
    "streak": 6,
@@ -515,7 +516,7 @@
    "fails": 1,
    "flaky": [],
    "lastRun": 38,
-   "time": 58,
+   "time": 62,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -531,7 +532,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 23,
+   "time": 49,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -540,7 +541,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tclean.js": "ca65e2eaa350"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tud2": {
    "streak": 28,
@@ -548,7 +549,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 16,
+   "time": 21,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -557,7 +558,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tud2.js": "b5f413012eb3"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tboss": {
    "streak": 28,
@@ -565,7 +566,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 7,
+   "time": 5,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -574,7 +575,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tboss.js": "9c83919d4557"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tud4": {
    "streak": 28,
@@ -582,7 +583,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 16,
+   "time": 15,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -591,7 +592,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tud4.js": "bec75c7a78b1"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tmenu3": {
    "streak": 6,
@@ -599,7 +600,7 @@
    "fails": 1,
    "flaky": [],
    "lastRun": 38,
-   "time": 35,
+   "time": 34,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -608,7 +609,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tmenu3.js": "be2121a143ec"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tcity35": {
    "streak": 28,
@@ -625,7 +626,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tcity35.js": "60bdf08ec0e7"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tnaum": {
    "streak": 28,
@@ -633,7 +634,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 14,
+   "time": 53,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -642,7 +643,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tnaum.js": "9008b924c4dd"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "trec": {
    "streak": 28,
@@ -650,7 +651,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 8,
+   "time": 7,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -659,7 +660,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/trec.js": "9cf237372489"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "thist": {
    "streak": 28,
@@ -667,7 +668,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 7,
+   "time": 4,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -676,7 +677,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/thist.js": "526913fe8d73"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tbuy": {
    "streak": 28,
@@ -684,7 +685,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 10,
+   "time": 6,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -693,7 +694,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tbuy.js": "b4b34372cef0"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tnames": {
    "streak": 28,
@@ -701,7 +702,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 7,
+   "time": 5,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -710,7 +711,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tnames.js": "6acd74a8e3de"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "ttro": {
    "streak": 28,
@@ -718,7 +719,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 6,
+   "time": 5,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -727,7 +728,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/ttro.js": "217e839a3ab0"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tlive": {
    "streak": 28,
@@ -735,7 +736,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 36,
+   "time": 35,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -744,7 +745,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tlive.js": "f78ae0d7fce7"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tbake": {
    "streak": 28,
@@ -752,7 +753,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 6,
+   "time": 4,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -761,77 +762,9 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tbake.js": "04dd87fc82f7"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tcard": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 10,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tcard.js": "5ddfe7548b22"
-   },
-   "sh": "fe882d862c"
-  },
-  "taud36": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 12,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/taud36.js": "39cd0e6e88c2"
-   },
-   "sh": "fe882d862c"
-  },
-  "tlive36": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 12,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tlive36.js": "c341ac0be085"
-   },
-   "sh": "fe882d862c"
-  },
-  "tlan": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 8,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tlan.js": "654ece58c639"
-   },
-   "sh": "fe882d862c"
-  },
-  "tall": {
    "streak": 28,
    "runs": 28,
    "fails": 0,
@@ -844,11 +777,11 @@
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tall.js": "9d394d0099ac"
+    "tools/tests/tcard.js": "5ddfe7548b22"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
-  "ttruce2": {
+  "taud36": {
    "streak": 28,
    "runs": 28,
    "fails": 0,
@@ -861,14 +794,65 @@
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/ttruce2.js": "59832c63a373"
+    "tools/tests/taud36.js": "39cd0e6e88c2"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
-  "ttut": {
-   "streak": 6,
-   "runs": 29,
-   "fails": 1,
+  "tlive36": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 6,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tlive36.js": "c341ac0be085"
+   },
+   "sh": "2e250795f7"
+  },
+  "tlan": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 5,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tlan.js": "654ece58c639"
+   },
+   "sh": "2e250795f7"
+  },
+  "tall": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 4,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tall.js": "9d394d0099ac"
+   },
+   "sh": "2e250795f7"
+  },
+  "ttruce2": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
    "flaky": [],
    "lastRun": 38,
    "time": 10,
@@ -878,9 +862,26 @@
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/ttruce2.js": "59832c63a373"
+   },
+   "sh": "2e250795f7"
+  },
+  "ttut": {
+   "streak": 6,
+   "runs": 29,
+   "fails": 1,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 9,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/ttut.js": "90d25cb894f0"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tspect": {
    "streak": 28,
@@ -888,7 +889,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 17,
+   "time": 11,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -897,7 +898,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tspect.js": "24a26bc48af7"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tspect2": {
    "streak": 28,
@@ -905,7 +906,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 8,
+   "time": 5,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -914,7 +915,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tspect2.js": "493709ee5866"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tstep": {
    "streak": 28,
@@ -922,7 +923,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 28,
+   "time": 27,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -931,7 +932,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tstep.js": "c28ef374acaa"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tsculpt": {
    "streak": 17,
@@ -939,7 +940,7 @@
    "fails": 1,
    "flaky": [],
    "lastRun": 38,
-   "time": 14,
+   "time": 12,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -948,7 +949,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tsculpt.js": "a1a8cb8c3266"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "trail": {
    "streak": 28,
@@ -965,7 +966,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/trail.js": "c6c98af632f1"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tnaum2": {
    "streak": 28,
@@ -973,7 +974,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 15,
+   "time": 14,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -982,7 +983,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tnaum2.js": "80870a87eaaf"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tmshow": {
    "streak": 6,
@@ -999,7 +1000,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tmshow.js": "2c203c6b3eea"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "thorns": {
    "streak": 6,
@@ -1007,7 +1008,7 @@
    "fails": 1,
    "flaky": [],
    "lastRun": 38,
-   "time": 10,
+   "time": 9,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1016,7 +1017,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/thorns.js": "4702b0b7d209"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tcitysch": {
    "streak": 28,
@@ -1024,7 +1025,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 4,
+   "time": 2,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1033,128 +1034,9 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tcitysch.js": "224306ba985b"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "ttix": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 9,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/ttix.js": "28cd828985f1"
-   },
-   "sh": "fe882d862c"
-  },
-  "tlayers": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 9,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tlayers.js": "6b8fee4408ec"
-   },
-   "sh": "fe882d862c"
-  },
-  "tico": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 8,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tico.js": "a2d05bc7c781"
-   },
-   "sh": "fe882d862c"
-  },
-  "tsnap": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 17,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tsnap.js": "61de0c5a8511"
-   },
-   "sh": "fe882d862c"
-  },
-  "ttoss": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 18,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/ttoss.js": "bd00e14419f9"
-   },
-   "sh": "fe882d862c"
-  },
-  "tpia": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 9,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tpia.js": "6342b4e7b0fd"
-   },
-   "sh": "fe882d862c"
-  },
-  "tseed": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 30,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tseed.js": "59741b45e7b5"
-   },
-   "sh": "fe882d862c"
-  },
-  "ttravel": {
    "streak": 28,
    "runs": 28,
    "fails": 0,
@@ -1167,45 +1049,11 @@
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/ttravel.js": "d8075a7cc841"
+    "tools/tests/ttix.js": "28cd828985f1"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
-  "ttut2": {
-   "streak": 6,
-   "runs": 29,
-   "fails": 1,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 13,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/ttut2.js": "eda06063ef43"
-   },
-   "sh": "fe882d862c"
-  },
-  "tcurt": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 9,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tcurt.js": "2fc2b12b9aae"
-   },
-   "sh": "fe882d862c"
-  },
-  "tfair": {
+  "tlayers": {
    "streak": 28,
    "runs": 28,
    "fails": 0,
@@ -1218,9 +1066,162 @@
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tlayers.js": "6b8fee4408ec"
+   },
+   "sh": "2e250795f7"
+  },
+  "tico": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 5,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tico.js": "a2d05bc7c781"
+   },
+   "sh": "2e250795f7"
+  },
+  "tsnap": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 26,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tsnap.js": "61de0c5a8511"
+   },
+   "sh": "2e250795f7"
+  },
+  "ttoss": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 66,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/ttoss.js": "bd00e14419f9"
+   },
+   "sh": "2e250795f7"
+  },
+  "tpia": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 7,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tpia.js": "6342b4e7b0fd"
+   },
+   "sh": "2e250795f7"
+  },
+  "tseed": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 28,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tseed.js": "59741b45e7b5"
+   },
+   "sh": "2e250795f7"
+  },
+  "ttravel": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 4,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/ttravel.js": "d8075a7cc841"
+   },
+   "sh": "2e250795f7"
+  },
+  "ttut2": {
+   "streak": 6,
+   "runs": 29,
+   "fails": 1,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 10,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/ttut2.js": "eda06063ef43"
+   },
+   "sh": "2e250795f7"
+  },
+  "tcurt": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 8,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tcurt.js": "2fc2b12b9aae"
+   },
+   "sh": "2e250795f7"
+  },
+  "tfair": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 3,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tfair.js": "970ac0429764"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tboss2": {
    "streak": 28,
@@ -1228,7 +1229,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 12,
+   "time": 13,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1237,7 +1238,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tboss2.js": "f8075976de15"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tseat2": {
    "streak": 28,
@@ -1254,7 +1255,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tseat2.js": "cbdd33b91687"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tcr": {
    "streak": 28,
@@ -1262,7 +1263,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 8,
+   "time": 6,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1271,7 +1272,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tcr.js": "a134dc06181c"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tpots": {
    "streak": 28,
@@ -1279,7 +1280,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 8,
+   "time": 5,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1288,7 +1289,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tpots.js": "89360c648e34"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tflick": {
    "streak": 28,
@@ -1296,7 +1297,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 100,
+   "time": 101,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1305,7 +1306,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tflick.js": "3fa5b1e9cedd"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tmtut": {
    "streak": 6,
@@ -1322,7 +1323,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tmtut.js": "9eae42c039b1"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tseed46": {
    "streak": 28,
@@ -1330,7 +1331,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 140,
+   "time": 182,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1339,77 +1340,9 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tseed46.js": "17ae62e370e4"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tmgr46": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 12,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tmgr46.js": "d22952f0136c"
-   },
-   "sh": "fe882d862c"
-  },
-  "tmtut46": {
-   "streak": 5,
-   "runs": 29,
-   "fails": 2,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 58,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tmtut46.js": "2b17591c44f7"
-   },
-   "sh": "fe882d862c"
-  },
-  "ttut46": {
-   "streak": 6,
-   "runs": 29,
-   "fails": 1,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 63,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/ttut46.js": "dc25c13926ed"
-   },
-   "sh": "fe882d862c"
-  },
-  "tbeast46": {
-   "streak": 6,
-   "runs": 29,
-   "fails": 1,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 12,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tbeast46.js": "72b18e12bd38"
-   },
-   "sh": "fe882d862c"
-  },
-  "tpair46": {
    "streak": 28,
    "runs": 28,
    "fails": 0,
@@ -1422,9 +1355,77 @@
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tmgr46.js": "d22952f0136c"
+   },
+   "sh": "2e250795f7"
+  },
+  "tmtut46": {
+   "streak": 5,
+   "runs": 29,
+   "fails": 2,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 83,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tmtut46.js": "2b17591c44f7"
+   },
+   "sh": "2e250795f7"
+  },
+  "ttut46": {
+   "streak": 6,
+   "runs": 29,
+   "fails": 1,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 59,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/ttut46.js": "dc25c13926ed"
+   },
+   "sh": "2e250795f7"
+  },
+  "tbeast46": {
+   "streak": 6,
+   "runs": 29,
+   "fails": 1,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 10,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tbeast46.js": "72b18e12bd38"
+   },
+   "sh": "2e250795f7"
+  },
+  "tpair46": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 7,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tpair46.js": "0c2a944b4c47"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "trost46": {
    "streak": 28,
@@ -1432,7 +1433,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 5,
+   "time": 3,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1441,7 +1442,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/trost46.js": "2f6858d92fb3"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tmusic47": {
    "streak": 28,
@@ -1449,7 +1450,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 6,
+   "time": 3,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1458,7 +1459,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tmusic47.js": "538849bd86a4"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tstudio46": {
    "streak": 7,
@@ -1466,7 +1467,7 @@
    "fails": 3,
    "flaky": [],
    "lastRun": 38,
-   "time": 19,
+   "time": 18,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1475,7 +1476,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tstudio46.js": "be9696e13f85"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tmgr47": {
    "streak": 28,
@@ -1483,7 +1484,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 12,
+   "time": 7,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1492,7 +1493,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tmgr47.js": "22f3126b450b"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "ttourn47": {
    "streak": 6,
@@ -1500,7 +1501,7 @@
    "fails": 1,
    "flaky": [],
    "lastRun": 38,
-   "time": 27,
+   "time": 21,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1509,7 +1510,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/ttourn47.js": "5b5f817c3cf4"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tstudio47": {
    "streak": 7,
@@ -1517,7 +1518,7 @@
    "fails": 1,
    "flaky": [],
    "lastRun": 38,
-   "time": 16,
+   "time": 15,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1526,43 +1527,9 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tstudio47.js": "4030278580e9"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "ttut47": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 12,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/ttut47.js": "74f90da14edf"
-   },
-   "sh": "fe882d862c"
-  },
-  "tmgr48": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 9,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tmgr48.js": "43176f022285"
-   },
-   "sh": "fe882d862c"
-  },
-  "tguide48": {
    "streak": 28,
    "runs": 28,
    "fails": 0,
@@ -1575,9 +1542,43 @@
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/ttut47.js": "74f90da14edf"
+   },
+   "sh": "2e250795f7"
+  },
+  "tmgr48": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 6,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tmgr48.js": "43176f022285"
+   },
+   "sh": "2e250795f7"
+  },
+  "tguide48": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 7,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tguide48.js": "940b5873e529"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tmgr49": {
    "streak": 28,
@@ -1585,7 +1586,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 8,
+   "time": 6,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1594,7 +1595,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tmgr49.js": "0245b8d17a4f"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tarena47": {
    "streak": 28,
@@ -1602,7 +1603,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 79,
+   "time": 49,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1611,7 +1612,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tarena47.js": "01efeb7a0b05"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "taud49": {
    "streak": 28,
@@ -1619,7 +1620,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 10,
+   "time": 9,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1628,7 +1629,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/taud49.js": "d43575e33e5a"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "ths49": {
    "streak": 6,
@@ -1636,7 +1637,7 @@
    "fails": 1,
    "flaky": [],
    "lastRun": 38,
-   "time": 12,
+   "time": 11,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1645,7 +1646,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/ths49.js": "94e767f262e4"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tv50": {
    "streak": 6,
@@ -1653,7 +1654,7 @@
    "fails": 1,
    "flaky": [],
    "lastRun": 38,
-   "time": 15,
+   "time": 13,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1662,7 +1663,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tv50.js": "da467d0b8b3c"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tguide50": {
    "streak": 28,
@@ -1679,7 +1680,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tguide50.js": "59bbfbda926d"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tv51": {
    "streak": 6,
@@ -1687,7 +1688,7 @@
    "fails": 1,
    "flaky": [],
    "lastRun": 38,
-   "time": 11,
+   "time": 7,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1696,7 +1697,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tv51.js": "d01a3296126a"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "ths50": {
    "streak": 6,
@@ -1713,7 +1714,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/ths50.js": "c7ade3fdc777"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tver51": {
    "streak": 28,
@@ -1721,7 +1722,7 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 10,
+   "time": 9,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -1730,63 +1731,12 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tver51.js": "11da3e885517"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tv52": {
    "streak": 6,
    "runs": 29,
    "fails": 2,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 13,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tv52.js": "7ed92632ad94"
-   },
-   "sh": "fe882d862c"
-  },
-  "tarena51": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 15,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tarena51.js": "8aecfa9d7b88"
-   },
-   "sh": "fe882d862c"
-  },
-  "tcls": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 10,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tcls.js": "80df12d8de07"
-   },
-   "sh": "fe882d862c"
-  },
-  "tlook": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
    "flaky": [],
    "lastRun": 38,
    "time": 11,
@@ -1796,149 +1746,13 @@
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tlook.js": "4bc3b2d76735"
+    "tools/tests/tv52.js": "7ed92632ad94"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
-  "tanim51": {
+  "tarena51": {
    "streak": 28,
    "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 22,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tanim51.js": "20f28932c1db"
-   },
-   "sh": "fe882d862c"
-  },
-  "temp53": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 16,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/temp53.js": "5e0345c94112"
-   },
-   "sh": "fe882d862c"
-  },
-  "tbye": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 16,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tbye.js": "36daf2ac9485"
-   },
-   "sh": "fe882d862c"
-  },
-  "t53s": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 10,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/t53s.js": "5930507d3b50"
-   },
-   "sh": "fe882d862c"
-  },
-  "tv53": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 19,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tv53.js": "35cd2fc4e435"
-   },
-   "sh": "fe882d862c"
-  },
-  "tmgr54": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 10,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tmgr54.js": "b33933d78609"
-   },
-   "sh": "fe882d862c"
-  },
-  "tv55": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 18,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tv55.js": "2f535497c16a"
-   },
-   "sh": "fe882d862c"
-  },
-  "tres": {
-   "streak": 28,
-   "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 27,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tres.js": "4b28d17de592"
-   },
-   "sh": "fe882d862c"
-  },
-  "t54a": {
-   "streak": 29,
-   "runs": 29,
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
@@ -1949,11 +1763,28 @@
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/t54a.js": "d83b16de3f3a"
+    "tools/tests/tarena51.js": "8aecfa9d7b88"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
-  "tv56": {
+  "tcls": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 8,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tcls.js": "80df12d8de07"
+   },
+   "sh": "2e250795f7"
+  },
+  "tlook": {
    "streak": 28,
    "runs": 28,
    "fails": 0,
@@ -1966,100 +1797,64 @@
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tv56.js": "5358c1be2f63"
+    "tools/tests/tlook.js": "4bc3b2d76735"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
-  "tstat55": {
+  "tanim51": {
    "streak": 28,
    "runs": 28,
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 16,
+   "time": 20,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tstat55.js": "75aaa447cdd9"
+    "tools/tests/tanim51.js": "20f28932c1db"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
-  "tv57": {
+  "temp53": {
    "streak": 28,
    "runs": 28,
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 10,
+   "time": 6,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tv57.js": "df68f5b70cc0"
+    "tools/tests/temp53.js": "5e0345c94112"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
-  "tv59": {
-   "streak": 3,
-   "runs": 29,
-   "fails": 2,
-   "flaky": [
-    34
-   ],
-   "lastRun": 38,
-   "time": 16,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tv59.js": "4dad7c28eb41"
-   },
-   "sh": "fe882d862c"
-  },
-  "tv60b": {
+  "tbye": {
    "streak": 28,
    "runs": 28,
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 10,
+   "time": 12,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tv60b.js": "9cfd2e521847"
+    "tools/tests/tbye.js": "36daf2ac9485"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
-  "tv58": {
+  "t53s": {
    "streak": 28,
    "runs": 28,
-   "fails": 0,
-   "flaky": [],
-   "lastRun": 38,
-   "time": 14,
-   "lastPass": 38,
-   "deps": {
-    "build.sh": "22ad8d0ea144",
-    "src/01-head.html": "42c7b73d9cdf",
-    "tools/smartreg.js": "040c902c4e54",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tv58.js": "9e8a510c602e"
-   },
-   "sh": "fe882d862c"
-  },
-  "tv62": {
-   "streak": 29,
-   "runs": 29,
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
@@ -2070,9 +1865,215 @@
     "src/01-head.html": "42c7b73d9cdf",
     "tools/smartreg.js": "040c902c4e54",
     "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/t53s.js": "5930507d3b50"
+   },
+   "sh": "2e250795f7"
+  },
+  "tv53": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 18,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tv53.js": "35cd2fc4e435"
+   },
+   "sh": "2e250795f7"
+  },
+  "tmgr54": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 7,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tmgr54.js": "b33933d78609"
+   },
+   "sh": "2e250795f7"
+  },
+  "tv55": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 6,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tv55.js": "2f535497c16a"
+   },
+   "sh": "2e250795f7"
+  },
+  "tres": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 31,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tres.js": "4b28d17de592"
+   },
+   "sh": "2e250795f7"
+  },
+  "t54a": {
+   "streak": 29,
+   "runs": 29,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 13,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/t54a.js": "d83b16de3f3a"
+   },
+   "sh": "2e250795f7"
+  },
+  "tv56": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 5,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tv56.js": "5358c1be2f63"
+   },
+   "sh": "2e250795f7"
+  },
+  "tstat55": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 7,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tstat55.js": "75aaa447cdd9"
+   },
+   "sh": "2e250795f7"
+  },
+  "tv57": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 8,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tv57.js": "df68f5b70cc0"
+   },
+   "sh": "2e250795f7"
+  },
+  "tv59": {
+   "streak": 3,
+   "runs": 29,
+   "fails": 2,
+   "flaky": [
+    34
+   ],
+   "lastRun": 38,
+   "time": 14,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tv59.js": "4dad7c28eb41"
+   },
+   "sh": "2e250795f7"
+  },
+  "tv60b": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 5,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tv60b.js": "9cfd2e521847"
+   },
+   "sh": "2e250795f7"
+  },
+  "tv58": {
+   "streak": 28,
+   "runs": 28,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 11,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tv58.js": "9e8a510c602e"
+   },
+   "sh": "2e250795f7"
+  },
+  "tv62": {
+   "streak": 29,
+   "runs": 29,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 6,
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tv62.js": "1a9a8e5ec7c2"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tv61": {
    "streak": 6,
@@ -2080,7 +2081,7 @@
    "fails": 1,
    "flaky": [],
    "lastRun": 38,
-   "time": 17,
+   "time": 16,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2089,7 +2090,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tv61.js": "c4eae1a7ebd8"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tv60": {
    "streak": 6,
@@ -2106,7 +2107,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tv60.js": "05bf26b31c60"
    },
-   "sh": "fe882d862c"
+   "sh": "2e250795f7"
   },
   "tv63": {
    "streak": 6,
@@ -2114,8 +2115,8 @@
    "fails": 2,
    "flaky": [],
    "lastRun": 38,
-   "time": 18,
-   "sh": "fe882d862c",
+   "time": 17,
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2131,8 +2132,8 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 69,
-   "sh": "fe882d862c",
+   "time": 72,
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2151,8 +2152,8 @@
     23
    ],
    "lastRun": 38,
-   "time": 11,
-   "sh": "fe882d862c",
+   "time": 8,
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2168,7 +2169,7 @@
    "fails": 1,
    "flaky": [],
    "lastRun": 38,
-   "time": 39,
+   "time": 38,
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2184,8 +2185,8 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 13,
-   "sh": "fe882d862c",
+   "time": 12,
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2203,8 +2204,8 @@
     14
    ],
    "lastRun": 38,
-   "time": 13,
-   "sh": "fe882d862c",
+   "time": 12,
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2220,8 +2221,8 @@
    "fails": 3,
    "flaky": [],
    "lastRun": 38,
-   "time": 10,
-   "sh": "fe882d862c",
+   "time": 9,
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2237,8 +2238,8 @@
    "fails": 2,
    "flaky": [],
    "lastRun": 38,
-   "time": 11,
-   "sh": "fe882d862c",
+   "time": 10,
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2257,8 +2258,8 @@
     37
    ],
    "lastRun": 38,
-   "time": 17,
-   "sh": "fe882d862c",
+   "time": 12,
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2274,8 +2275,8 @@
    "fails": 1,
    "flaky": [],
    "lastRun": 38,
-   "time": 17,
-   "sh": "fe882d862c",
+   "time": 16,
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2291,8 +2292,8 @@
    "fails": 2,
    "flaky": [],
    "lastRun": 38,
-   "time": 25,
-   "sh": "fe882d862c",
+   "time": 23,
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2311,7 +2312,7 @@
    ],
    "lastRun": 38,
    "time": 15,
-   "sh": "fe882d862c",
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2328,8 +2329,8 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 18,
-   "sh": "fe882d862c",
+   "time": 16,
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2345,8 +2346,8 @@
    "fails": 1,
    "flaky": [],
    "lastRun": 38,
-   "time": 34,
-   "sh": "fe882d862c",
+   "time": 33,
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2363,7 +2364,7 @@
    "flaky": [],
    "lastRun": 38,
    "time": 9,
-   "sh": "fe882d862c",
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2379,8 +2380,8 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 4,
-   "sh": "fe882d862c",
+   "time": 3,
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2396,8 +2397,8 @@
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 44,
-   "sh": "fe882d862c",
+   "time": 43,
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2407,25 +2408,14 @@
     "tools/tests/tv77.js": "c63150c96a48"
    }
   },
-  "tonl77": {
-   "streak": 0,
-   "runs": 1,
-   "fails": 1,
-   "flaky": [
-    38
-   ],
-   "lastRun": 38,
-   "time": 68,
-   "deps": {}
-  },
   "tonlws77": {
    "streak": 1,
    "runs": 1,
    "fails": 0,
    "flaky": [],
    "lastRun": 38,
-   "time": 68,
-   "sh": "fe882d862c",
+   "time": 71,
+   "sh": "2e250795f7",
    "lastPass": 38,
    "deps": {
     "build.sh": "22ad8d0ea144",
@@ -2434,11 +2424,28 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tonlws77.js": "dc4793391ff5"
    }
+  },
+  "tonl77": {
+   "streak": 1,
+   "runs": 1,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 38,
+   "time": 71,
+   "sh": "2e250795f7",
+   "lastPass": 38,
+   "deps": {
+    "build.sh": "22ad8d0ea144",
+    "src/01-head.html": "42c7b73d9cdf",
+    "tools/smartreg.js": "040c902c4e54",
+    "tools/regcov.js": "4b05c01ae7aa",
+    "tools/tests/tonl77.js": "a9980723c50b"
+   }
   }
  },
  "order": "src/02-data.js src/02b-standees.js src/03-engine.js src/04-rules.js src/05-flow.js src/06-ai.js src/07-ui.js src/09-special.js src/10-meta.js src/11-extra.js src/12-settings.js src/13-sim.js src/14-names.js src/15-custom.js src/16-crowd.js src/17-manager.js src/18-world.js src/19-calendar.js src/20-tokens.js src/21-audio.js src/22-trophies.js src/23-ludus.js src/24-sponsors.js src/25-city.js src/26-gear.js src/27-flags.js src/28-purses.js src/29-guide.js src/30-spectate.js src/31-sculpt.js src/32-rail.js src/33-tickets.js src/34-notes.js src/35-travel.js src/36-mtutor.js src/37-crlist.js src/38-matchsave.js src/39-sotonium.js src/40-rtok.js src/41-duel.js src/42-rooms.js src/43-beasts.js src/44-studio.js src/45-music.js src/46-tourney.js src/47-mgr47.js src/48-arena47.js src/49-studio47.js src/50-v48.js src/51-v49.js src/52-v50.js src/53-guide50.js src/54-v51.js src/55-anim.js src/56-v52.js src/57-classes.js src/58-looks.js src/59-bye.js src/60-v53.js src/61-studio53.js src/62-rules53.js src/63-empire53.js src/64-v54.js src/65-stats55.js src/66-mgr55.js src/67-studio55.js src/68-fix55.js src/69-v56.js src/70-v57.js src/71-v58.js src/72-v59.js src/73-credits.js src/74-zora.js src/75-naum59.js src/76-chariot59.js src/77-rivalry.js src/78-v60.js src/79-screens.js src/80-aitiers.js src/81-v63.js src/82-access.js src/83-edsteps.js src/84-v64.js src/85-v65.js src/86-v66.js src/87-v67.js src/88-v68.js src/89-stands.js src/90-armfit.js src/91-v69.js src/92-v70.js src/93-v71.js src/94-v72.js src/95-v73.js src/96-armlv.js src/97-armor73.js src/98-avatar73.js src/99-phone73.js src/100-sica73.js src/101-rec73.js src/102-minis73.js src/103-v74.js src/104-cards74.js src/105-mgr74.js src/106-v75.js src/107-v751.js src/108-v76.js src/08-setup.js",
  "shapeSets": {
-  "fe882d862c": {
+  "2e250795f7": {
    "src/02-data.js": "aecb6ee135",
    "src/02b-standees.js": "1c85ebb14c",
    "src/03-engine.js": "05eb05edf3",
@@ -2548,10 +2555,10 @@
    "src/108-v76.js": "85f5b26eb3",
    "src/109-v761.js": "4fddd9b919",
    "src/110-v77.js": "3d1f443736",
-   "src/111-onlcore.js": "2d23e9af2e",
-   "src/112-online.js": "889f60a857",
-   "src/113-onlmatch.js": "d31343f752",
-   "src/114-onlnet.js": "e0e402dac9",
+   "src/111-onlcore.js": "c641322fe8",
+   "src/112-online.js": "3b0fa2c816",
+   "src/113-onlmatch.js": "286c4d8826",
+   "src/114-onlnet.js": "e462ab89c8",
    "src/08-setup.js": "897d3d2eb7"
   }
  }
