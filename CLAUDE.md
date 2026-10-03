@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.77**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.78**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -406,6 +406,14 @@ One global script; files are concatenated in order. Later "version modules" patc
   https://flaviusrule-arena.auth.us-east-1.amazoncognito.com, client 5qhkffer4i9jla5qkojt917ms, pool us-east-1_VdMsuDJ59 (not secrets;
   play/online.json holds the first three). Checked from here: bad token → 401, old protocol → 426. The Cognito domain is blocked by
   this sandbox's proxy, so Google sign-in can only be tried in his browser. Updates: CloudShell `sh deploy.sh <email>` with GOOGLE_ID/SECRET.
+  **Google sign-in WORKS (2026-10-03, v0.78 + server-6).** The long invalid_client hunt was a Cognito client_id polluted by a pasted command
+  (`read-s-p"…deploy.sh<email>158703920017-…`); deploy.sh now accepts only `^[0-9]+-[a-z0-9]+\.apps\.googleusercontent\.com$` and a
+  `GOCSPX-` secret. Diagnose with `describe-identity-provider … ProviderDetails.client_id` or the Location header of Cognito's
+  /oauth2/authorize. Google client "FlaviusRuleOnline" (Web app, project FlaviusRule, number 158703920017); its secret was rotated after
+  appearing in chat. Site: bucket flaviusrule.com, CloudFront E3P6OKSHPTXJGF (a function 301s /play/index.html → /play/, so check headers on
+  /play/); privacy page flaviusrule.com/privacy.html (self-styled, in the consent screen); full site zip in website/flavius-site-v0.78.zip.
+  He prefers click-through console steps for site uploads (S3 Upload with System-defined Cache-Control no-cache metadata + CloudFront
+  invalidation); server zips still run in CloudShell. Give CloudShell commands one per line (his pastes once lost all spaces).
   Budget kill switch (template): ACTUAL ≥ budget → SNS → `flavius-arena-switch` sets the arena Lambda's concurrency to 0; an
   EventBridge rule reopens it on the 1st (or the `ReopenCommand` output). Hidden info (only the Mandata) is not protected — decided:
   not game-breaking.
