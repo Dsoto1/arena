@@ -130,3 +130,13 @@ TESTS:
 - Art: tools/plans/orbis/proj.js (world-atlas land-50m, ISC; Natural Earth public domain; lat 76…-52, equirectangular) +
   render.py (numpy + cv2) → ship as assets/orbis.webp (~90 KB at 1200 wide). mock.css/mock.js = the preview injected into the landing.
 - Privacy page (website, not git): add one line — the time-zone region shown as an anonymous dot while you are online.
+
+### Revised layout (his note, 2026-10-03) — supersedes the band above
+- Under the Playlists, one row of two columns (mock2.css/mock2.js): LEFT "Orbis Terrarum  N online · M fighting · K waiting" over a
+  sideways OVAL (aspect ~2.25:1, border-radius 50%) with a GOLD border (#c9a24f + dark hairline + faint gold halo, inner shadow); the map
+  is cropped tastefully at both ends (shown at ~132% width, slightly east of centre) and dimmed a little. Click → a centred large view
+  (full map, gold frame, bigger glows, the same heading, ✕ Close / click outside) — never modal() over the Online window.
+- RIGHT, balancing it at the oval's height: "📯 The Forum · quick calls" — the Praeco feed (calls with ⚔ Take a seat, opened rooms,
+  results) plus lanistas' landing phrases, and a chip row: Ave! · ⚔ Anyone for Classic? · 👥 Anyone for Familia? · 🏅 Ranked, anyone? ·
+  Well fought · Vale. Landing phrases reach everyone online (one per 10 s per lanista; the daily meter stops live pushes before the
+  budget switch) — so the landing DOES carry phrase lines now, still no free text.

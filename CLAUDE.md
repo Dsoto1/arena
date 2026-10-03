@@ -620,8 +620,9 @@ One global script; files are concatenated in order. Later "version modules" patc
   match as bubbles, never game state); 📣 calls from a room to free lanistas who fit, Here now count + name pills (Invite/Join/Watch/Mute),
   server-side Find me a fight (fixes twin games), ⚔ Again; names = active gladiator; NO horn (nothing listens offline); Mute + Quiet only.
   Bundled fixes: AWS online count 0, room chat rewriting the lobby + lobby.list storm, full lobbies in hello/lobby.list (128 KB cap).
-  Same batch: Orbis Terrarum — a subtle world map in his empire-map style under the Playlists, ember glows by TIME ZONE (no IPs,
-  no names, no interaction) + 'N lanistas online · M fighting · K waiting' (plan + art tools in tools/plans/orbis/).
+  Same batch: Orbis Terrarum — his empire-map style world map in a gold-bordered sideways OVAL (ends cropped) under the Playlists,
+  ember glows by TIME ZONE (no IPs, no names), 'N lanistas online · M fighting · K waiting'; click → large view; beside it (right)
+  📯 The Forum: Praeco feed + landing phrase chips (plan + art tools + mock2 in tools/plans/orbis/).
 - **Online — the design (after v0.76, Virgilante):** Multiplayer → Online opens a Halo-Infinite-style landing space: your online
   gladiator lit on a stage (mini/avatar + armor, name, class, mind, lifetime CF, wallet, bouts survived), party slots beside them
   (+ Invite, for team events), left rail Play · Lobby Browser · Spectate · Armory & Market · Character · Hall of the Fallen, event
