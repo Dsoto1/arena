@@ -12,7 +12,8 @@ o.sbx=await pg.evaluate(()=>!!document.querySelector('.budgetcard .cbadge.sbx'))
 await pg.screenshot({path:'st_char.png'});
 await pg.click('[data-st="tab"][data-v="gear:a"]');await pg.waitForTimeout(600);
 o.gear=await pg.evaluate(()=>({tab:ST.tab,sub:ST.gearSub,picks:document.querySelectorAll('[data-gs="casys"]').length,seg:!!document.querySelector('[data-gs="sub"]')}));
-await pg.click('[data-gs="casys"][data-id="musculata"]');await pg.waitForTimeout(500);o.fromsys=await pg.evaluate(()=>({n:ST.ca.name,ap:ST.ca.ap,slot:ST.ca.slot,shape:ST.ca.shape,base:ST.ca.base}));
+/* v0.76: system armor is shown as examples only (no copy button) — load the printed piece directly */
+await pg.evaluate(()=>caFromSystem(ST.ca,'musculata'));await pg.waitForTimeout(300);o.fromsys=await pg.evaluate(()=>({n:ST.ca.name,ap:ST.ca.ap,slot:ST.ca.slot,shape:ST.ca.shape,base:ST.ca.base}));
 // sculpt: add circle, cut it
 await pg.click('[data-scb="add"][data-k="a"][data-v="circle"]');await pg.waitForTimeout(300);
 await pg.click('[data-scb="cut"][data-k="a"]');await pg.waitForTimeout(300);

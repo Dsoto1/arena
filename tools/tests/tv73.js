@@ -23,8 +23,8 @@ o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   for(const m of w.mgrs)m.wins=0;sm.wins=99;sm.bouts=99;r.noSuperbus=!leagueSort(w.mgrs.filter(m2=>!m2.sica)).slice(0,4).includes(sm);
   S&&(S.over=true);if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);return r});
 o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const r={};if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);
-  ST.gearSub='a';ST.ca=blankCA();openStudio('gear');await W8(900);const s=document.querySelector('select[data-caf="start"]');r.groups=s?s.querySelectorAll('optgroup').length:0;
-  s.value='galea';s.dispatchEvent(new Event('change',{bubbles:true}));await W8(500);r.start=ST.ca.base==='galea'&&ST.ca.art==='galea'&&ST.ca.eq==='head'&&!!document.querySelector('#caPiece .caartprev');
+  ST.gearSub='a';ST.ca=blankCA();openStudio('gear');await W8(900);r.groups=document.querySelector('select[data-caf="start"]')?1:0; /* v0.76: Start from removed — load the printed piece directly */
+  caFromSystem(ST.ca,'galea');openStudio('gear');await W8(900);r.start=ST.ca.base==='galea'&&ST.ca.art==='galea'&&ST.ca.eq==='head'&&!!document.querySelector('#caPiece .caartprev');
   r.levels=!!document.querySelector('.calevels .calv');r.croc=RTOK_NAMES.includes('croc');if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);
   startEvent({ev:'democritus',loc:6,seats:[{cls:'soldier',cpu:false},{cls:'hero',cpu:true},{cls:'royalty',cpu:true},{cls:'venatore',cpu:true}],opts:{}});
   await W8(2800);for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(200)}setSpeedUI('pause');await W8(600);
@@ -42,6 +42,6 @@ o.p=await ph.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   document.querySelector('#ppTabs [data-pp="side"]').click();await W8(300);r.board=getComputedStyle(document.getElementById('board')).display!=='none';return r});
 const m=o.m,a=o.a,p=o.p;ok(m.banner&&!m.missing&&m.recStat,'tab banners + count');ok(m.noHrs,'hours out of the header');ok(m.ovals,'rail ovals');ok(m.scout,'scouting shows ratings + personality');
 ok(m.short&&m.cleared,'roster check clears with a board recruit');ok(m.plan&&m.cmp,'recruiting plan + compare');ok(m.sica&&m.spear&&m.noSuperbus,'Sica house');
-ok(a.groups>=6&&a.start,'Start from loads the printed piece');ok(a.levels,'armor levels');ok(a.croc,'croc token');ok(a.noChips&&a.zones&&a.flash,'avatar hover zones + flash');ok(a.sr&&a.ratShut,'summa rudis hidden + ratings folded');
+ok(!a.groups&&a.start,'no Start from; a printed piece still loads');ok(a.levels,'armor levels');ok(a.croc,'croc token');ok(a.noChips&&a.zones&&a.flash,'avatar hover zones + flash');ok(a.sr&&a.ratShut,'summa rudis hidden + ratings folded');
 ok(a.face&&a.face2,'mini facing');ok(p.pp&&p.tabs&&p.board,'phone portrait sheet');
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();

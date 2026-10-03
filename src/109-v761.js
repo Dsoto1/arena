@@ -67,3 +67,17 @@ const CLS_CARD_TXT76={soldier:'+1 damage on every successful round 1 attack.',ro
   veteranus:'1 coin or 1 CF each turn — here, from Luck and Charisma. Weakness: weapons, armor and CF purchases cost 1 more.',amazonia:'None. Weakness: never receives CF from Blessings.',
   venatore:'Declare Zora and place her mini into play. Weakness: can never use tunnels.',damnatio:'Gain 1 stone each turn; +10 CF to the final score if they win any event. Weakness: pelted with 1 stone (1 damage) each turn in phase 1.'};
 {const base=classStudioHTML;classStudioHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/(data-card="k:(\w+)">[\s\S]*?<div class="t">[\s\S]*?<\/span>)<small>[^<]*<\/small>/g,(m0,a,k)=>CLS_CARD_TXT76[k]?a+`<small>${esc(CLS_CARD_TXT76[k])}</small>`:m0)}catch(e){console.error(e)}return h}}
+
+/* ---- Level 4 custom weapons: the Arena Chest ----
+   The weapon designer gets a Level choice: "by its stats" (1-3, as before) or "4 · the Arena Chest". A level 4 design on the rolls
+   joins the chest's random draw (CHEST_W) instead of the market or the loadouts. Events with their own chest list keep it. */
+const CHEST_W0_76=[...CHEST_W];
+{const base=cwBuild;cwBuild=function(cw){const w=base.apply(this,arguments);if(cw&&cw.chest){w.lv=4;w.cwChest=w.cwMarket||w.cwLoadout;w.cwMarket=false;w.cwLoadout=false}return w}}
+{const base=gearRebuild;gearRebuild=function(){const r=base.apply(this,arguments);CHEST_W.length=0;CHEST_W.push(...CHEST_W0_76);
+  for(const cw of CUSTOM.weapons||[]){const w=W['cw_'+cw.id];if(w&&w.cwChest&&(typeof rosterGate!=='function'||rosterGate('weapons',cw,true)))CHEST_W.push('cw_'+cw.id)}return r}}
+{const base=gearStudioInput;gearStudioInput=function(t){const r=base.apply(this,arguments);if(t&&t.dataset&&t.dataset.cwf==='chest'){ST.cw.chest=t.value==='1'?1:0;return 'redraw'}return r}}
+{const base=gearWHTML;gearWHTML=function(){let h=base.apply(this,arguments);try{const d=ST.cw||{};const lvSel=`<label>Level<select data-cwf="chest"><option value="" ${d.chest?'':'selected'}>By its stats (1–3) · market</option><option value="1" ${d.chest?'selected':''}>4 · the Arena Chest</option></select></label>`;
+  h=h.replace(/(<label>Start from<select data-cwf="a\.type">)/,lvSel+'$1');
+  if(d.chest)h=h.replace(/its card · Level 4 · [^<]*/,'its card · Level 4 · a chest prize — on the rolls it joins the Arena Chest’s draw');
+  for(const cw of CUSTOM.weapons||[]){const wk=W['cw_'+cw.id];if(wk&&wk.cwChest)h=h.replace(new RegExp(`(<b>${esc(cw.name).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}</b> <span class="rc-sub">)`),'$1🗝 in the Arena Chest')}
+  }catch(e){}return h}}

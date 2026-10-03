@@ -132,7 +132,7 @@ document.addEventListener('change',e=>{const t=e.target.closest&&e.target.closes
 /* =====================================================================
    MULTIPLAYER · HOT SEAT (open table) — up to 8 on one device, humans and CPUs mixed, every event
    =====================================================================
-   • Main menu → 👥 Multiplayer opens three attached choices: 🪑 Hot seat (live), 🖧 LAN and 🌐 Online lobbies
+   • Main menu → 👥 Multiplayer opens two attached choices: 🪑 Hot seat (live) and 🌐 Online lobbies (v0.76: LAN removed)
      (placeholders until those modes exist).
    • Hot seat opens the usual setup on Roma · Classic with four player seats; each human seat takes a player name.
      A name is a PROFILE, kept on this device: its own record, wallet, honors and Road of Flavius.
@@ -159,7 +159,7 @@ const hsActive=()=>{if(!hsLive())return null;const id=S.hsActive||(S.hotseat.pla
 function mmMultiInstall(){const box=document.querySelector('#mainMenu .mmbtns');if(!box||box.querySelector('[data-mm="multi"]'))return;const play=box.querySelector('[data-mm="play"]');if(!play)return;
   const b=document.createElement('button');b.className='btn';b.type='button';b.dataset.mm='multi';b.setAttribute('aria-expanded','false');b.innerHTML='👥 Multiplayer<small>hot seat · LAN · online lobbies</small>';
   const g=document.createElement('div');g.className='mmmulti';g.id='mmMulti';g.hidden=true;
-  g.innerHTML=`<button class="btn" type="button" data-mm="hotseat">🪑 Hot seat<small>2–8 players on this device, CPUs fill the rest</small></button><button class="btn" type="button" data-mm="lan" disabled title="Coming in a later version">🖧 LAN<small>coming soon</small></button><button class="btn" type="button" data-mm="online" disabled title="Coming in a later version">🌐 Online lobbies<small>coming soon</small></button>`;
+  g.innerHTML=`<button class="btn" type="button" data-mm="hotseat">🪑 Hot seat<small>2–8 players on this device, CPUs fill the rest</small></button><button class="btn" type="button" data-mm="online" disabled title="Coming in a later version">🌐 Online lobbies<small>coming soon</small></button>`;
   play.after(b);b.after(g)}
 if(!HEADLESS||true)setTimeout(mmMultiInstall,0);
 document.addEventListener('click',e=>{const b=e.target.closest('#mainMenu [data-mm="multi"],#mainMenu [data-mm="hotseat"]');if(!b)return;e.stopPropagation();

@@ -14,7 +14,7 @@ o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   const f=document.querySelector('[data-afit3]');r.fitBtnOn=!!f;if(f){f.click();await W8(500)}r.fitMode=!!document.querySelector('.afit.fitmode')&&!!document.querySelector('.fitbanner');
   const d=document.querySelector('[data-afdone]');if(d){d.click();await W8(400)}r.done=!document.querySelector('.afit');localStorage.removeItem('flavius_armfit_on');
   CUR_MODAL&&CUR_MODAL.done(null);await W8(300);ST.gearSub='w';openStudio('gear');await W8(900);
-  r.wsys=!![...document.querySelectorAll('#mBody h4')].find(h=>/🔒 System weapons · \d+/.test(h.textContent));const cw=document.querySelector('[data-gs="cwsys"]');r.wcopy=!!cw;
+  r.wsys=!![...document.querySelectorAll('#mBody h4')].find(h=>/🔒 System weapons · \d+/.test(h.textContent));const cw=document.querySelector('[data-gs="cwsys"]');r.wcopy=!cw; /* v0.76: examples only, no Copy */
   CUR_MODAL&&CUR_MODAL.done(null);await W8(300);return r});
 o.b=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const r={};
   openSettings('tokens');await W8(600);const row=document.querySelector('[data-tokstyle="mini3d"]');r.row=!!row&&row.querySelectorAll('img').length===8;
