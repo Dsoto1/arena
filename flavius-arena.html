@@ -31148,7 +31148,7 @@ const ONLC=(function(){
   /* 👑 Give Host: an unseated new host takes the old host's seat (the old host stands) */
   function roomGiveHost(L,by,to,now){if(L.host.id!==by)return 'Only the host gives the room away.';if(L.status!=='waiting')return 'Already under way.';const m=memberOf(L,to);if(!m||to===by)return 'Pick someone in the room.';
     if(seatOf(L,to)<0){const i=seatOf(L,by);const old=i>=0?L.players[i]:null;if(i>=0)L.players.splice(i,1);const why=sitGroup(L,[to],now);if(why){if(old)L.players.splice(i,0,old);return why}
-      if(old&&L.team){const np=L.players[seatOf(L,to)];if(np)np.team=old.team}}
+      if(old){const np=L.players.pop();L.players.splice(i,0,np);if(L.team)np.team=old.team}}
     L.host={id:m.id,name:m.name,char:m.char||null};return ''}
   /* the host removes a lanista (before the horns); they may come back after KICK_MS */
   function roomKick(L,by,who,now){if(L.host.id!==by)return 'Only the host removes lanistas.';if(L.status!=='waiting')return 'Already under way.';if(who===by||!memberOf(L,who))return 'Pick someone in the room.';
