@@ -10,7 +10,9 @@ EMAIL=$(clean "$1"); [ -n "$EMAIL" ] || { echo "usage: sh deploy.sh you@example.
 [ -n "$GOOGLE_ID" ] && GOOGLE_ID=$(clean "$GOOGLE_ID"); [ -n "$GOOGLE_SECRET" ] && GOOGLE_SECRET=$(clean "$GOOGLE_SECRET")
 echo "Alert e-mail: [$EMAIL]   Google client: [${GOOGLE_ID:-none}]"
 case "$EMAIL" in *" "*|*googleusercontent*|*@*@*) echo "That e-mail looks mixed up: [$EMAIL]"; exit 1;; *@*.*) ;; *) echo "That is not an e-mail address: [$EMAIL]"; exit 1;; esac
-case "${GOOGLE_ID:-none}" in none|*.apps.googleusercontent.com) ;; *) echo "GOOGLE_ID should end in .apps.googleusercontent.com: [$GOOGLE_ID]"; exit 1;; esac
+# a Google client ID is digits-letters.apps.googleusercontent.com and nothing else (a pasted command once ended up in front of it)
+if [ -n "$GOOGLE_ID" ] && ! printf '%s' "$GOOGLE_ID" | grep -Eq '^[0-9]+-[a-z0-9]+\.apps\.googleusercontent\.com$'; then echo "That is not a Google client ID: [$GOOGLE_ID]"; echo "Copy it with the copy button on Google Cloud → Credentials and try again."; exit 1; fi
+if [ -n "$GOOGLE_SECRET" ] && ! printf '%s' "$GOOGLE_SECRET" | grep -Eq '^GOCSPX-[A-Za-z0-9_-]+$'; then echo "That does not look like a Google client secret (it starts with GOCSPX-). Try again."; exit 1; fi
 STACK="${STACK:-flavius-arena}"; REGION="${REGION:-us-east-1}"
 ACCT=$(aws sts get-caller-identity --query Account --output text)
 BUCKET="flavius-arena-code-$ACCT-$REGION"
