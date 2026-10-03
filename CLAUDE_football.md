@@ -1,7 +1,7 @@
-# New game — brainstorm
+# Football — brainstorm
 
 Status: BRAINSTORM. Nothing built. Wait for the go before any build, commit of code, or publish.
-Started 2026-10-03. Working name: _(none yet)_. Rename this file once it has one. If it turns into a build, it gets its own repo.
+Started 2026-10-03. Working name: _(none yet)_. If it turns into a build, it gets its own repo.
 
 ## How we work (from CLAUDE.md §1)
 - He sends numbered lists. Claude keeps that numbering in questions and summaries and answers any direct questions inside them.
