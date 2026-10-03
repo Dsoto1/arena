@@ -20,7 +20,8 @@ TIMES=../reg/times.txt
 [ -f $TIMES ] || : > $TIMES
 # order: slowest first (unknown tests count as slow), the rest in list order
 ORDER=$(for t in $LIST; do s=$(awk -v t=$t '$1==t{print $2}' $TIMES); echo "${s:-9999} $t"; done | sort -rn -s -k1,1 | awk '{print $2}')
-echo "$ORDER" | xargs -P "$J" -I{} sh -c 't={}; s=$(date +%s); timeout 400 node $t.js '"$F"' > ../reg/$t.out 2>&1; echo "exit=$?" >> ../reg/$t.out; echo "$t $(( $(date +%s)-s ))" > ../reg/$t.time'
+# kill limit per test: 400 s, or 1.6x its last time + 60 s when slower (t12 needs ~430 s alone)
+echo "$ORDER" | xargs -P "$J" -I{} sh -c 't={}; k=$(awk -v t=$t '"'"'$1==t{print int($2*1.6+60)}'"'"' '"$TIMES"'); [ "${k:-0}" -gt 400 ] || k=400; s=$(date +%s); timeout $k node $t.js '"$F"' > ../reg/$t.out 2>&1; echo "exit=$?" >> ../reg/$t.out; echo "$t $(( $(date +%s)-s ))" > ../reg/$t.time'
 : > $TIMES.new
 for t in $LIST; do
   echo "== $t ==" >> $OUT

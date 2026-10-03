@@ -5,7 +5,8 @@
 #   2. sh build.sh → SYNTAX_OK, swallowed-statement guard quiet
 #   3. page hygiene: no cheat word (from CLAUDE.md "Current words") and no e-mail address in plain text
 #   4. FULL regression (tools/smartreg.js --full — releases never skip a test)
-#   5. share build (tools/mkshare.py) + its smoke test, then share/flavius-rule-arena-v<ver>.zip
+#   5. share build (tools/mkshare.py) + its smoke test + zip — ONLY with SHARE=1 (off by default since v0.81: the site
+#      and the artifact use the page + assets; the in-game ⇩ download builds its own one-file copy in the browser)
 # Left for Claude/the owner: publish to the artifact (read the live version first), update CLAUDE.md, send the zip.
 set -e
 V="$1"; [ -n "$V" ] || { echo "usage: sh tools/release.sh X.YY"; exit 2; }
@@ -30,6 +31,7 @@ if [ -n "$LEAK" ]; then echo "an e-mail address is in the page: $LEAK"; exit 1; 
 echo "clean ($(echo $WORDS | wc -w) words checked)"
 step "4 full regression (~12 min)"
 node tools/smartreg.js --full || { echo "regression failed — see tools/reg.txt"; exit 1; }
+if [ "$SHARE" != "1" ]; then printf '\nREADY v%s (no share build; SHARE=1 makes one) — next: publish (read the live artifact first), update CLAUDE.md, commit.\n' "$V"; exit 0; fi
 step "5 share build"
 python3 tools/mkshare.py "$V" | tail -1
 mkdir -p /tmp/sharetest39 && cp "share/flavius-rule-arena-v$V.html" /tmp/sharetest39/

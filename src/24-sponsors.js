@@ -58,7 +58,7 @@ cheatRegister('h3429076038',()=>{const w=typeof ACTIVE!=='undefined'&&ACTIVE.wor
   return 'No ludus to pay — open Manager mode first.'},'+50 coin');
 /* v0.45: the words themselves, for the strategy guide — kept scrambled in the source and only spelled out when the player asks */
 const CHEAT_SHOW=[[[76,75,80,91,86,89,56,57],'🔑 Every city editor and the Editor creator unlocked without the need to win in each city'],[[84,92,90,80,74,72,56,61],'🎶 All sixteen themes in Settings → Audio — the twelve cities and the four others'],[[83,92,75,92,90,60,55],'💰 +50 coin to your ludus treasury (or the active wallet) — as often as you like']];
-function cheatsGuideHTML(){return `<h4>🔑 Words of power</h4><p class="rc-sub" style="margin:0 0 6px">Cheats. Click the version button (<b>v${typeof GAME_VER!=='undefined'?GAME_VER:''}</b>) at the bottom of the main menu and speak one. They stay hidden until you ask.</p>
+function cheatsGuideHTML(){return `<h4>🔑 Words of power</h4><p class="rc-sub" style="margin:0 0 6px">Cheats. Press <b>C</b> on the main menu and speak one. They stay hidden until you ask.</p>
   <div class="cheatbox"><button class="btn primary" type="button" data-cheatshow="1">🔑 Reveal the words</button><div class="cheatlist" hidden></div></div>`}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-cheatshow]');if(!b)return;const box=b.parentElement.querySelector('.cheatlist');if(!box)return;
   if(!box.hidden){box.hidden=true;box.innerHTML='';b.textContent='🔑 Reveal the words';return}

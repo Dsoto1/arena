@@ -119,6 +119,9 @@ function plan(full) {
   return { P, idle: idle.filter(t => !rot.includes(t)) };
 }
 
+/* per-test kill limit: 400 s, or 1.6x the test's recorded time + 60 s when it is slower (t12 needs ~430 s alone) */
+function limitFor(t) { const k = (st.tests[t] || {}).time || 0; return Math.max(400, Math.round(k * 1.6 + 60)); }
+
 /* run a list of tests, J at a time, slowest first; coverage on unless cov === false */
 function runAll(list, cov = true) {
   fs.mkdirSync(RD, { recursive: true });
@@ -135,7 +138,7 @@ function runAll(list, cov = true) {
         const pr = spawn('node', ['-r', path.join(__dirname, 'regcov.js'), path.join(TD, t + '.js'), PAGE], { cwd: TD, env });
         let out = '';
         pr.stdout.on('data', d => out += d); pr.stderr.on('data', d => out += d);
-        const kill = setTimeout(() => pr.kill('SIGKILL'), 400000);
+        const kill = setTimeout(() => pr.kill('SIGKILL'), limitFor(t) * 1000);
         pr.on('close', code => {
           clearTimeout(kill); live--;
           const errs = /ERRS \[\s*\S/.test(out) && !/ERRS \[\]/.test(out);
