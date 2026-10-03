@@ -626,6 +626,12 @@ One global script; files are concatenated in order. Later "version modules" patc
   Steel Helm, Flavius' Greaves, Iron Spaulder/Manica shoulder, Flavius' Bracers, Leather Greaves, Helm of Flavius, Hoplomachus Helm) + the NEW
   Thracian Helm (his TTS list: L2 · head · 4 AP) — decided: the HERO starts with it (instead of the Steel Gated Helm, also L2 4 AP).
   His TTS armor list (L/slot/AP/bonus) is the reference for stats — it also names Chest Armor (L2 chest 4) and Reinforced Arm Armor (L3 lower arm 3).
+- **v0.81 token rounds (his, intake in tools/art/ptokens81/, not wired yet):** for each printed class a mosaic side (`<cls>_color.webp`,
+  in the class colour — replaces the coloured dots drawn when a player DROPS things in play) and a figure side (`<cls>_figure.webp`);
+  `blank_template.webp` (wall + empty banner) and `border_ring.webp` (frame, transparent centre) for CUSTOM classes. Custom mosaic
+  APPROVED look (his "that's the look"): recolour his Hero mosaic — green patches → the class colour (keep each cell's light/shade),
+  the cross-hatch cells between and the darker cells → muted, darker shades of the same colour (s×0.42, l×0.78), lead lines stay dark,
+  then the border on top. Recipe: tools/art/ptokens81/recolor.py (preview in tools/art/ptokens81/custom_preview.png).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
