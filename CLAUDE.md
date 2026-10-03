@@ -649,6 +649,8 @@ One global script; files are concatenated in order. Later "version modules" patc
   (destroyed/taken), owner history on looted pieces, repair of pieces destroyed in a match you survived, Arena Chest for high ranks
   (CF → RNG named weapons with rarities/extra stats) + a special playlist where only those may be used.
 - **His answers (2026-10-03, for v0.81 and the gear batch after it):**
+  ONLINE PRICES (v0.82, with the coin rework; ONLC PRICE is shared with the server): weapons L1 60 / L2 250 / L3 750; armor by AP
+  15 / 55 / 150 coin per AP at L1/L2/L3 (Greaves L2 4 AP = 220, Forged Chest L3 5 AP = 750); owned gear and wallets untouched.
   COIN (online): no pay-out for carried coin — flat survival award by rank (Tiro 8 / Gregarius 12 / Veteranus 18 / Primus 25 / Summa 35,
   win bonus +50%, survival streak kept); Custom pays NO coin; no daily cap. GEAR BATCH (after v0.81): brought gear can be destroyed/taken
   (Ranked only), owner history, Whole/Broken + repair ⅓ of price, gear of a gladiator killed by beast/CPU/Fate → back to the market with its
