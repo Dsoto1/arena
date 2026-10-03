@@ -455,6 +455,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   AUTH_DOMAIN defaults to none and AUTH_STAGE to cert. Plan (after v0.80 is stable): deploy AUTH_DOMAIN=login.flaviusrule.com
   (stage cert) → 15+ min later the same with AUTH_STAGE=live → add the Google redirect https://login.flaviusrule.com/oauth2/idpresponse
   (keep the old one) → play/online.json auth = https://login.flaviusrule.com.
+  DONE 2026-10-03: he added the Google redirect https://login.flaviusrule.com/oauth2/idpresponse (old one kept); the two deploys + online.json remain.
   After v0.79 (unreleased, 116 tail): Online opens on the main window even with no gladiator (`onlNoGladHTML` card on Play/Armory,
   empty slots in My Gladiators); actions in `ONL_NEEDS_GLAD` are caught on window-capture and ask first (`onlNeedGlad` → ask76 popup
   "You need a gladiator …", wording per action in `ONL_WHY`) before opening the creator (`ONL.newGlad`); creator stage = portrait +
