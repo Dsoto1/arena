@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.79**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.80**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -65,7 +65,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Module ordering matters: a wrapper only sees wrappers installed before it.
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
   `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
-  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`.
+  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`.
   Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
 
 ### Core globals (engine)
@@ -461,6 +461,36 @@ One global script; files are concatenated in order. Later "version modules" patc
   small mini, always has Back. 114: signed in but refused → the sign-in card says why (+ ↻ Try again).
   Tests: `tv79`, `tonl79` (room, look on the other screen, rejoin after reload, abandon, shutdown). NOT yet: Stakes matches, referee replay,
   more events, reclaiming a seat a CPU took.
+- **v0.80 (protocol VER 4; 117-121 + server):** plan/contract in tools/plans/onl80-contract.md + onl80-praeco.md.
+  ROOMS (ONLC `roomJoin/sitGroup/roomSit/roomStand/roomLeave/roomGiveHost/roomKick/roomSet/roomTeam/autoBalance/seatTeams/startRoom/quickPick`,
+  `liteRow` for other rooms): ≤8 members sit or stand, host keeps a seat, give host (the unseated new host takes the old seat), kick (5 min,
+  `L.kicked`), event/city/seats/ticket/abandon/standsOff/teams until the horns (Classics exactly 4, Familia 4–8, 2+ teams; Ranked/auto-balance),
+  unseated at the horns → 'started without you' (`ONL.unseated80`, 10 s). QUICK CHAT only (`ONLC.QC` room/match/after/forum phrase codes,
+  `QC_TEXT`; lobby.chat refused): room phrases = CHAT# items (`lobby.say`, ✓ Ready marks the seat), match bubbles (`match.say` → `onlBubble80`,
+  farewells 10 min after), the Forum (`forum.say`, FORUM lines ttl 1 day, a daily push meter FMETER#). THE PRAECO: `lobby.quick` (Find me a
+  fight; the room is ELECTED through a consistent pointer item QUICK#<ev>#<rank|c>#<flag>|OPEN — the GSI is eventually consistent),
+  📣 `lobby.call` (3 a room, 2 min apart, to ≤40 free lanistas who fit: `fitFor`), ✉ `lobby.invite` (rates), ⚔ `lobby.again` (after your own
+  report), 🔇 `forum.mute` (server-side, `A.mutes`, also filters match.say), 🔔/🔕 Quiet (localStorage flavius_onlquiet80). Names online =
+  the active gladiator's (`nameOf`; never the Google name; `ONLC.nameBad` word filter on gladiator names). PRESENCE: ACCT GSI1PK 'ON' while a
+  socket is open (`store.clearConn` conditional; a gone push also marks the match away), `hello.here` = {n,fight,wait,zones} by time zone
+  (`ONLC.cleanTz`). ORBIS TERRARUM (117 `ONL_TZ`/`onlTzLL`/`onlTzXY`; assets/orbis.webp, tools/art/orbis/): the oval under the Playlists,
+  glows per zone, click → large view; 📯 the Forum beside it. SERVER HARDENING: rooms and gladiators are written versioned (`store.putRev`,
+  `editLobby`/`editChar` retries) — refunds, payouts and buys happen once; `store.flip` = one settlement; ConsistentRead gets; hello/lobby.list
+  ≤ ~115 KB. BUSY RULE: `stillFighting(A)` — a lanista whose gladiator is in a live match (a CPU may hold the seat) cannot open/join rooms or
+  buy tickets until it ends, they abandon, or they reported; `hello.live` = {id,ev,loc,ranked,dropped}; hello carries `now` (server clock).
+  ONLINE RULES (119): printed gear only (classic roster), no offline records (`onl80Rec` + Store guard), Ranked no hints/strategy/Focus
+  suggestions/odds, no pause; MAJORITY RESYNC (`match.hashq/hasha/odd`, generation `g`, `ONLM.odd`): the odd one is skipped, struck, and told
+  (`match.youodd`) — it asks the lowest-seat voter for the arena. SNAPSHOTS ONLY WHEN ASKED (121: `ONLM.asked` per account, 45 s). Stuck
+  inputs (another seat's move while the game waits elsewhere) → void after 2.5 s settled if the pre-hash matches, else the vote (121
+  `onl80fStuckCheck`). The socket stays 10 min after a match. REJOIN/ABANDON (121): localStorage flavius_onlmatch80 (set on entering as a
+  fighter, confirmed/cleared by hello.live) → main menu `#mmLive80` ⚔ Back to your match / 🚪 Abandon; the abandon popup (`onlAbandonAsk80`,
+  ask76 + `onlStakeHTML80`) shows face + token, record, ratings, the gear brought and what is lost. TODAY IN THE ARENA: WORLD DAY#<utc day>
+  (ONLC `dayFromMatch`/`dayFell`/`dayOut`, ≤14 KB, faces trimmed from the tail) → `hello.today` (yesterday's while today is empty) →
+  `#onlToday80` two boxes on the landing (🏆 victors by CF in one match; 🪦 fallen — Ranked deaths best rank first, Damnatio — and upsets).
+  v0.80 fixes (120): hot seat stays out of other modes (`HS_GO`), Gate of Life writes the record by id, the Summa Rudis seal is gone,
+  `#boot` cover (01-head) until the menu or a window is up. Tests: `tonl80` (rooms, phrases, Forum, Orbis, invites), `tonl80r` (rules +
+  majority resync with a tampered client), `tonl80m` (main-menu rejoin/abandon popup, Today), `tonlws80` (three windows on the REAL
+  handler via server/test/localws.js), `thsleak80`; server: `cd server && npm test` (3 suites).
 - **Guide data:** `SIM50` in 53-guide50 is regenerated by `node tools/simguide.js flavius-arena.html 600` (SIMVER env);
   it includes `perk` (wins by rating perk), charted by 69-v56.
 - **Music:** procedural Web Audio (21-audio, 45-music, 16 themes; unlocked by winning in cities). Play Now plays a
@@ -600,7 +630,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   ▶ Resume the table, table games stay OUT of the owner's records). No curtain: other players' Mandata always show the card back, your
   own too with a 👁 hold-to-peek. Later list: only "Guest in Manager bouts". Two fixes ship in v0.80: hot seat leaking into other modes
   (lessons, Manager bouts, pen, the Online host) and the Gate of Life ghost Ludus record.
-- **Online — agreed for the next online batch (not built; wait for his go):** (1) online uses PRINTED gear only (host's custom chest
+- **Online — (1)–(5) BUILT in v0.80 (with ROOMS, QUICK CHAT, the Praeco, Orbis); the rest of this note is still open:** (1) online uses PRINTED gear only (host's custom chest
   weapons / roster-set gear leak into S.chest/S.market today → crash/desync risk); (2) online results never write offline records (Annals,
   Hall, crowd memory, music unlocks); (3) Ranked: no hints/strategy panel/Focus suggestions/win odds (Custom allows); (4) no pause online
   (own animation speed stays); (5) resync by MAJORITY of humans' states, not the mover's snapshot (a tampered client can push its state
@@ -611,7 +641,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   (data / sign-in / server + test copy) with the login.flaviusrule.com swap, take back a seat a CPU took, Quick match, friends,
   "your turn" notices, more events, Stakes, weekly challenges that count, leaderboards/seasons, sell-back + gear score, record page,
   report/mute. His view: in-game collusion (truces/trades) is allowed — Flavius breaks truces anyway.
-- **Online ROOMS — agreed spec (not built; wait for his go):** a lobby becomes a room: created with no setup (defaults), the host
+- **Online ROOMS — agreed spec (BUILT in v0.80):** a lobby becomes a room: created with no setup (defaults), the host
   changes event/city/rules/ticket price until the horns; Ranked/Custom FIXED at creation. Room holds up to 8 lanistas; seats = the
   event's size picked by the host within its min–max (Classics are exactly 4 — fix: today's 'Seats 2/3/4' can start a Classic with 2;
   CPUs must fill to the event's size), start needs 2+ humans seated. Host always keeps a seat; others grab empty seats first come and
@@ -622,7 +652,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   1v2v1v2v2; ≥2 teams; engine supports N teams — team1 end + S.order by team); Custom: players pick their team on their seat, host can
   move anyone, optional auto-balance; Ranked: auto-balance (host picks the number of teams; even sizes, parties together, strengths
   mixed by ratings + gear). Playlist Ranked/Custom = find a room with that event and a free seat, else create one.
-- **Online QUICK CHAT + the Praeco — agreed (not built; ONE batch together with ROOMS, protocol 4; wait for his go):** full plan in
+- **Online QUICK CHAT + the Praeco — agreed (BUILT in v0.80, protocol 4):** full plan in
   tools/plans/onl80-praeco.md. No free text anywhere online (room text box → phrases; phrases before/after AND a short set during the
   match as bubbles, never game state); 📣 calls from a room to free lanistas who fit, Here now count + name pills (Invite/Join/Watch/Mute),
   server-side Find me a fight (fixes twin games), ⚔ Again; names = active gladiator; NO horn (nothing listens offline); Mute + Quiet only.
