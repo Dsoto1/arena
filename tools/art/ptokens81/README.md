@@ -6,3 +6,6 @@ Each class has two sides (627x627, transparent):
 - `<class>_figure.webp` — the class mini with its name banner.
 
 All eight printed classes received: amazonia (orange), damnatio (grey), hero (green), royalty (blue), slave (yellow), soldier (red), venatore (purple), veteranus (white).
+
+`blank_template.webp` — the empty round (wall, empty plaque, blank banner): the base for CUSTOM class token rounds
+(the class mini/figure drawn in, the class name on the banner in its colour; a mosaic side in the class colour to be generated).
