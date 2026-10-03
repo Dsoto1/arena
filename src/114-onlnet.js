@@ -19,7 +19,7 @@ const NETWS={ws:null,cfg:null,wait:{},seq:0,open:null,tries:0,closedFor:null,
     this.open=new Promise((res,rej)=>{const ws=new WebSocket(c.ws+(c.ws.includes('?')?'&':'?')+q);this.ws=ws;let opened=false;
       ws.onopen=()=>{opened=true;this.tries=0;res(ws)};
       ws.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(err){return}if(m.re!=null&&this.wait[m.re]){const w=this.wait[m.re];delete this.wait[m.re];clearTimeout(w.t);m.ok?w.res(m.d):w.rej(new Error(m.err||'The server said no.'))}else if(m.push)NET.emit(m.push,m.d)};
-      ws.onclose=e=>{if(!opened)rej(new Error(e.code===1006?'Could not reach the online server.':'The server closed the door.'));for(const k of Object.keys(this.wait)){this.wait[k].rej(new Error('Connection lost.'));delete this.wait[k]}
+      ws.onclose=e=>{if(!opened)rej(new Error(e.code===1006?'The online arena is closed for now — offline modes are open. (It reopens on the 1st if the month’s budget ran out.)':'The server closed the door.'));for(const k of Object.keys(this.wait)){this.wait[k].rej(new Error('Connection lost.'));delete this.wait[k]}
         if(opened&&!this.closedFor){const d=Math.min(15000,800*2**this.tries++);setTimeout(()=>{this.connect().then(()=>{NET.emit('net.back',{});if(typeof onlmOn==='function'&&onlmOn())onlmCatchUp()}).catch(()=>{})},d)}};
       ws.onerror=()=>{}});
     return this.open},

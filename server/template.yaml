@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >-
   Flavius Rule — the Online Arena. A WebSocket API (API Gateway) with one Lambda, one DynamoDB table,
-  Cognito sign-in with Google, and a monthly budget alarm. Deploy from CloudShell with server/deploy.sh.
+  Cognito sign-in with Google, and a monthly budget that closes the arena (until the 1st) when it is reached. Deploy from CloudShell with server/deploy.sh.
 
 Parameters:
   SiteUrl:
@@ -28,7 +28,7 @@ Parameters:
   MonthlyBudgetUSD:
     Type: Number
     Default: 10
-    Description: Alarm when the month's forecast passes this (the stack never stops itself; the e-mail is the warning).
+    Description: E-mail when the forecast passes this; when real spend reaches it, the arena closes itself until the 1st.
   DevNames:
     Type: String
     AllowedValues: ['false', 'true']
@@ -200,8 +200,83 @@ Resources:
           Subscribers: [{SubscriptionType: EMAIL, Address: !Ref AlertEmail}]
         - Notification: {NotificationType: ACTUAL, ComparisonOperator: GREATER_THAN, Threshold: 80, ThresholdType: PERCENTAGE}
           Subscribers: [{SubscriptionType: EMAIL, Address: !Ref AlertEmail}]
+        # the kill switch: real spend reaches the budget → the arena closes until the 1st of next month
+        - Notification: {NotificationType: ACTUAL, ComparisonOperator: GREATER_THAN, Threshold: 100, ThresholdType: PERCENTAGE}
+          Subscribers:
+            - {SubscriptionType: EMAIL, Address: !Ref AlertEmail}
+            - {SubscriptionType: SNS, Address: !Ref BudgetTopic}
+
+  # ---------- the kill switch ----------
+  BudgetTopic:
+    Type: AWS::SNS::Topic
+    Properties: {TopicName: flavius-arena-budget}
+  BudgetTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics: [!Ref BudgetTopic]
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: {Service: budgets.amazonaws.com}
+            Action: sns:Publish
+            Resource: !Ref BudgetTopic
+  SwitchRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - {Effect: Allow, Principal: {Service: lambda.amazonaws.com}, Action: sts:AssumeRole}
+      ManagedPolicyArns: [arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole]
+      Policies:
+        - PolicyName: switch
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [lambda:PutFunctionConcurrency, lambda:DeleteFunctionConcurrency]
+                Resource: !GetAtt Fn.Arn
+  Switch:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: flavius-arena-switch
+      Runtime: nodejs24.x
+      Architectures: [arm64]
+      Handler: index.handler
+      Role: !GetAtt SwitchRole.Arn
+      MemorySize: 128
+      Timeout: 10
+      Environment: {Variables: {ARENA: !Ref Fn}}
+      Code:
+        ZipFile: |
+          // Closes the arena (concurrency 0: it cannot run, nothing is billed, nothing is deleted) when the budget
+          // topic fires; reopens it when called with {"reopen":true} (the monthly rule, or by hand).
+          const {LambdaClient,PutFunctionConcurrencyCommand,DeleteFunctionConcurrencyCommand}=require('@aws-sdk/client-lambda');
+          const L=new LambdaClient({});
+          exports.handler=async ev=>{const fn=process.env.ARENA;
+            if(ev&&ev.reopen){await L.send(new DeleteFunctionConcurrencyCommand({FunctionName:fn}));console.log('arena reopened');return 'open'}
+            await L.send(new PutFunctionConcurrencyCommand({FunctionName:fn,ReservedConcurrentExecutions:0}));console.log('arena closed: budget reached');return 'closed'};
+  SwitchSub:
+    Type: AWS::SNS::Subscription
+    Properties: {TopicArn: !Ref BudgetTopic, Protocol: lambda, Endpoint: !GetAtt Switch.Arn}
+  SwitchFromSns:
+    Type: AWS::Lambda::Permission
+    Properties: {Action: lambda:InvokeFunction, FunctionName: !Ref Switch, Principal: sns.amazonaws.com, SourceArn: !Ref BudgetTopic}
+  ReopenMonthly:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Reopen the online arena on the 1st of each month (budgets reset).
+      ScheduleExpression: cron(5 0 1 * ? *)
+      Targets: [{Arn: !GetAtt Switch.Arn, Id: reopen, Input: '{"reopen":true}'}]
+  SwitchFromEvents:
+    Type: AWS::Lambda::Permission
+    Properties: {Action: lambda:InvokeFunction, FunctionName: !Ref Switch, Principal: events.amazonaws.com, SourceArn: !GetAtt ReopenMonthly.Arn}
 
 Outputs:
+  ReopenCommand:
+    Description: Reopen the arena by hand after it closed for the month.
+    Value: !Sub 'aws lambda invoke --function-name ${Switch} --cli-binary-format raw-in-base64-out --payload ''{"reopen":true}'' /dev/stdout'
   WebSocketUrl:
     Description: Paste into the game (Settings > Online server) — or put in play/online.json.
     Value: !Sub 'wss://${WsApi}.execute-api.${AWS::Region}.amazonaws.com/live'

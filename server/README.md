@@ -9,7 +9,9 @@ The game page talks to it; the shared rules (`src/onlcore.js`) are the same file
 - A 4-player match ≈ 1,000 WebSocket messages + ~300 small database writes → roughly **$0.002 per match**.
   1,000 matches a month ≈ $2–3; 10,000 ≈ $15–25.
 - Cognito is free up to 10,000 monthly sign-ins. Lambda stays in the free tier at this size.
-- The budget alarm e-mails you when the month's forecast passes `BUDGET` (default $10). It never shuts anything off.
+- The budget e-mails you when the month's forecast passes `BUDGET` (default $10). When the real spend reaches it, the arena
+  **closes itself** (the arena Lambda's concurrency goes to 0: nothing runs, nothing is billed, nothing is deleted) and players
+  see "the online arena is closed for now". It reopens on the 1st of the month, or by hand with the stack's `ReopenCommand` output.
 
 ## One-time: a Google sign-in client (5 minutes)
 1. https://console.cloud.google.com → create (or pick) a project → **APIs & Services → OAuth consent screen**:
