@@ -1821,6 +1821,7 @@ function draw() {
       ctx.lineTo(m.x - TW * 0.1, m.y + TW * 0.05);
       ctx.stroke();
     } else {
+      if (typeof dropTok81 === 'function' && dropTok81(pl.owner, pl.color, m.x + TW * 0.18, m.y + TW * 0.04)) continue; /* v0.81: his token round */
       ctx.fillStyle = pl.color;
       ell(m.x + TW * 0.18, m.y + TW * 0.04, TW * 0.09, TW * 0.045);
       ctx.fill();
@@ -1880,6 +1881,7 @@ function draw() {
     // a thrown weapon in the sand is just a small tracker in the thrower's color, like a dropped pile
     if (f.kind === 'weapon') {
       const o = S.players[f.owner];
+      if (o && typeof dropTok81 === 'function' && dropTok81(o.id, o.color, m.x - TW * 0.18, m.y + TW * 0.04)) continue; /* v0.81: his token round */
       ctx.fillStyle = o ? o.color : '#d7dde2';
       ell(m.x - TW * 0.18, m.y + TW * 0.04, TW * 0.09, TW * 0.045);
       ctx.fill();
