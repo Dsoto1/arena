@@ -593,6 +593,11 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
+- **Hot seat — agreed next batch (after v0.80; wait for his go):** plan + review in tools/plans/hotseat-next.md. Scope = all fixes +
+  table basics (whose-move pill, own gladiator names, every window names who answers, truce decree asks each bound player, seat rules,
+  ▶ Resume the table, table games stay OUT of the owner's records). No curtain: other players' Mandata always show the card back, your
+  own too with a 👁 hold-to-peek. Later list: only "Guest in Manager bouts". Two fixes ship in v0.80: hot seat leaking into other modes
+  (lessons, Manager bouts, pen, the Online host) and the Gate of Life ghost Ludus record.
 - **Online — agreed for the next online batch (not built; wait for his go):** (1) online uses PRINTED gear only (host's custom chest
   weapons / roster-set gear leak into S.chest/S.market today → crash/desync risk); (2) online results never write offline records (Annals,
   Hall, crowd memory, music unlocks); (3) Ranked: no hints/strategy panel/Focus suggestions/win odds (Custom allows); (4) no pause online
