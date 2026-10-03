@@ -54,29 +54,41 @@ const MOCK_ROUTES={
   'lobby.list':(w)=>Object.values(w.lobbies).filter(L=>L.status!=='done').sort((a,b)=>b.created-a.created),
   'lobby.create':(w,d,me)=>{const ch=onlMockChar(w,me);if(d.ranked&&!ch)throw new Error('Ranked needs a living gladiator.');
     for(const L of Object.values(w.lobbies))if(L.status==='waiting'&&L.players.some(p=>p.id===me))throw new Error('You are already in a lobby.');
-    const L=ONLC.newLobby(d,{id:me,name:w.accounts[me].name,char:ch&&ch.id,rank:ch?ONLC.rankFor(ch).k:'tiro'},'L'+(w.seq++),Date.now());L.ping=12;w.lobbies[L.id]=L;return L},
+    const L=ONLC.newLobby(d,{id:me,name:w.accounts[me].name,char:ch&&ch.id,rank:ch?ONLC.rankFor(ch).k:'tiro',kit:ONLC.kitOf(ch)},'L'+(w.seq++),Date.now());L.ping=12;w.lobbies[L.id]=L;return L},
   'lobby.join':(w,d,me)=>{const L=w.lobbies[d.id];if(!L)throw new Error('That game is gone.');const ch=onlMockChar(w,me);const who={id:me,name:w.accounts[me].name,char:ch&&ch.id,rank:ch?ONLC.rankFor(ch).k:'tiro'};
-    const why=ONLC.canJoin(L,who);if(why)throw new Error(why);if(!L.players.some(p=>p.id===me))L.players.push({...who,ready:false});return L},
+    const why=ONLC.canJoin(L,who);if(why)throw new Error(why);if(!L.players.some(p=>p.id===me))L.players.push({...who,kit:ONLC.kitOf(ch),ready:false});return L},
   'lobby.leave':(w,d,me)=>{const L=w.lobbies[d.id];if(!L)return {};L.players=L.players.filter(p=>p.id!==me);if(!L.players.length||L.host.id===me)L.status='done';return L},
   'lobby.ready':(w,d,me)=>{const L=w.lobbies[d.id];if(!L)throw new Error('That game is gone.');const p=L.players.find(p=>p.id===me);if(p)p.ready=!!d.ready;return L},
   'lobby.start':(w,d,me)=>{const L=w.lobbies[d.id];if(!L||L.host.id!==me)throw new Error('Only the host starts the game.');if(L.status!=='waiting')throw new Error('Already under way.');
-    L.status='live';L.seed=(Math.random()*2**31)>>>0;L.started=Date.now();w.matches[L.id]={id:L.id,seed:L.seed,inputs:[],results:{}};return L},
+    L.status='live';L.seed=(Math.random()*2**31)>>>0;L.started=Date.now();w.matches[L.id]={id:L.id,seed:L.seed,inputs:[],results:{},open:null};return L},
+  'match.open':(w,d,me)=>{const M=w.matches[d.id];const L=w.lobbies[d.id];if(!M||!L)throw new Error('No such match.');if(L.host.id!==me)throw new Error('Only the host opens the match.');M.open=d.snap;mockPush('match.open',{id:d.id});return {}},
+  'match.get':(w,d)=>{const M=w.matches[d.id];if(!M)throw new Error('No such match.');return {open:M.open,inputs:M.inputs.slice(d.from|0),seed:M.seed}},
+  'match.input':(w,d,me)=>{const M=w.matches[d.id];const L=w.lobbies[d.id];if(!M||!L)throw new Error('No such match.');if(!L.players.some(p=>p.id===me))throw new Error('Not your match.');
+    const inp={...d.in,from:me,seq:M.inputs.length};M.inputs.push(inp);mockPush('match.input',{id:d.id,in:inp});return {seq:inp.seq}},
+  'match.snapreq':(w,d,me)=>{mockPush('match.snapreq',{id:d.id,to:d.to,from:me,seq:d.seq});return {}},
+  'match.snap':(w,d,me)=>{mockPush('match.snap',{id:d.id,to:d.to,snap:d.snap,seq:d.seq,from:me});return {}},
   'lobby.watch':(w,d,me)=>{const L=w.lobbies[d.id];if(!L)throw new Error('That game is gone.');L.watchers=(L.watchers||0)+1;return L},
   'lobby.ticket':(w,d,me)=>{const L=w.lobbies[d.id];if(!L)throw new Error('That game is gone.');const ch=onlMockChar(w,me);if(!ch)throw new Error('Tickets are paid from a gladiator’s wallet.');
     if((ch.wallet||0)<L.ticket)throw new Error(`A ticket costs ${L.ticket} coin.`);ch.wallet-=L.ticket;L.tickets=(L.tickets||0)+1;L.pot=(L.pot||0)+L.ticket;return {lobby:L,char:ch}},
+  'bet.place':(w,d,me)=>{const L=w.lobbies[d.id];if(!L)throw new Error('That game is gone.');const ch=onlMockChar(w,me);if(!ch)throw new Error('Wagers are paid from a living gladiator’s wallet.');
+    const amt=d.amt|0,seat=d.seat|0;const why=ONLC.betOK(L,me,seat,amt,ch.wallet);if(why)throw new Error(why);ch.wallet-=amt;(L.bets=L.bets||[]).push({by:me,char:ch.id,seat,amt});L.pool=(L.pool||0)+amt;return {lobby:L,char:ch}},
   'match.result':(w,d,me)=>{const L=w.lobbies[d.id];const ch=w.chars[d.char];if(!ch||ch.owner!==me)throw new Error('Not yours.');if(!ch.alive)throw new Error('The dead do not report.');
     const M=w.matches[d.id]||(w.matches[d.id]={id:d.id,results:{}});if(M.results[me])return {char:ch,out:M.results[me].out,dup:1};
     const out=ONLC.applyResult(ch,d.row,!!(L&&L.ranked));M.results[me]={row:d.row,hash:d.hash||'',out};
     if(out.died){const e={name:ch.name,cls:ch.cls,rank:ch.died.rank,lifeCF:ch.lifeCF,survived:ch.survived,diedAt:Date.now(),why:out.hall?onlHallWhy(ch):''};if(out.hall)w.hall.unshift(e);
       w.news.unshift(out.hall?['🪦',`${ch.name} fell. The Hall of the Fallen keeps the name.`]:['🌫',`${ch.name} fell and is forgotten.`])}
     if(out.rankUp)w.news.unshift(['⚔',`${ch.name} is now ${ONLC.RANKS[ONLC.rankIdx(out.rankUp)].n}.`]);w.news=w.news.slice(0,12);
-    if(L&&Object.keys(M.results).length>=L.players.filter(p=>!/^bot/.test(p.id)).length)L.status='done';return {char:ch,out}},
+    M.results[me].seat=d.seat|0;
+    if(L&&Object.keys(M.results).length>=L.players.filter(p=>!/^bot/.test(p.id)).length){L.status='done';
+      if((L.bets||[]).length){const wins=Object.values(M.results).filter(r=>r.row&&r.row.won).map(r=>r.seat);const st=ONLC.settle(L.bets,wins);
+        for(const [by,v] of Object.entries(st.payouts)){const c=onlMockChar(w,by);if(c)c.wallet+=v}const hc=onlMockChar(w,L.host.id);if(hc&&st.cut)hc.wallet+=st.cut;L.settled=st}}
+    return {char:w.chars[ch.id],out}},
   'hall.list':(w)=>w.hall.slice(0,60),
   'world.news':(w)=>({news:w.news.slice(0,8),online:Object.keys(w.accounts).length+37,challenges:ONLC.weekChallenges(Date.now())})};
 function onlMockChar(w,me){return Object.values(w.chars).find(c=>c.owner===me&&c.alive)||null}
 function onlHallWhy(ch){const R=ONLC.RANKS[ONLC.rankIdx(ch.died&&ch.died.rank||ch.rank)];if(ONLC.rankIdx(R.k)>=2)return R.n;if((ch.feats||[]).includes('slew:commodus'))return 'Slew Commodus';if((ch.survived||0)>=25)return `${ch.survived} bouts survived`;return `${ch.lifeCF} lifetime CF`}
 async function mockReq(t,d){const R=MOCK_ROUTES[t];if(!R)throw new Error('Unknown request: '+t);await new Promise(r=>setTimeout(r,30+Math.random()*60));
-  const w=mockLoad();mockSeedWorld(w);const me=mockMe();const out=R(w,d,me);mockSave(w);if(/^(lobby|match)\./.test(t)&&t!=='lobby.list')mockPush('lobby.update',{id:d.id||(out&&out.id)});return JSON.parse(JSON.stringify(out===undefined?{}:out))}
+  const w=mockLoad();mockSeedWorld(w);const me=mockMe();const out=R(w,d,me);mockSave(w);if(/^lobby\./.test(t)&&t!=='lobby.list'||t==='match.result')mockPush('lobby.update',{id:d.id||(out&&out.id)});return JSON.parse(JSON.stringify(out===undefined?{}:out))}
 /* the gear catalog: every printed weapon and armor piece the market sells, by level (the server ships the same list) */
 function onlCatalog(){if(ONL.cat)return ONL.cat;const c={};for(const lv of [1,2,3]){for(const k of (typeof MARKET_W0!=='undefined'?MARKET_W0:MARKET_W)[lv]||[])if(W[k]&&!W[k].custom)c[k]={kind:'w',lv,n:W[k].n};
   for(const k of (typeof MARKET_A0!=='undefined'?MARKET_A0:MARKET_A)[lv]||[])if(ARM[k]&&!ARM[k].custom)c[k]={kind:'a',lv,n:ARM[k].n,stack:!!ARM[k].stack}}return ONL.cat=c}
@@ -140,10 +152,10 @@ function onlMyLobbyHTML(){const me=ONL.acct&&ONL.acct.id;const L=ONL.lobbies.fin
    <div class="acts">${L.status==='waiting'?(host?`<button type="button" class="btn primary" data-onl="start" data-v="${L.id}">▶ Start now</button>`:`<button type="button" class="btn" data-onl="ready" data-v="${L.id}">✓ Ready</button>`):''}${L.status==='live'?`<button type="button" class="btn primary" data-onl="enter" data-v="${L.id}">⚔ Enter the sand</button>`:''}<button type="button" class="btn" data-onl="leave" data-v="${L.id}">Leave</button></div></div>`}
 function onlLobbyHTML(){const me=ONL.acct.id;const rows=ONL.lobbies;const st=L=>L.status==='waiting'?'<span class="badge gold">Waiting</span>':'<span class="badge">In progress</span>';
   return `<div class="onl-lbtop"><h3>📜 Lobby Browser <span class="rc-sub">${rows.length} games</span></h3><div class="acts"><button type="button" class="btn" data-onl="refresh">↻ Refresh</button><button type="button" class="btn primary" data-onl="newgame">＋ Create</button></div></div>
-   ${ONL.mkgame?onlCreateGameHTML():''}${onlMyLobbyHTML()}
+   ${ONL.mkgame?onlCreateGameHTML():''}${ONL.betting?onlBetHTML():''}${onlMyLobbyHTML()}
    <table class="tally onl-lb"><tr><th>Host</th><th>Event</th><th>City</th><th>Seats</th><th>Rank</th><th>Ping</th><th>Status</th><th></th></tr>${rows.map(L=>{const mine=L.players.some(p=>p.id===me);
      return `<tr class="${mine?'mine':''}"><td><b>${esc2(L.host.name)}</b></td><td>${esc2(onlEvName(L.ev))}</td><td>${esc2(onlCityName(L.loc))}</td><td>${L.players.length}/${L.seats}</td><td>${L.ranked?onlRankChip(L.rank):'<span class="rc-sub">Custom · any</span>'}</td><td>${L.ping||'—'} ms</td><td>${st(L)}</td>
-      <td class="acts">${L.status==='waiting'&&!mine?`<button type="button" class="btn tksm primary" data-onl="join" data-v="${L.id}">Join</button>`:''}<button type="button" class="btn tksm" data-onl="watch" data-v="${L.id}" title="Watch for free">👁</button>${L.ticket?`<button type="button" class="btn tksm" data-onl="ticket" data-v="${L.id}" title="A seat in the stands: stones, offerings, wagers, cheers">🎟 ${L.ticket}</button>`:''}</td></tr>`}).join('')||'<tr><td colspan="8" class="rc-sub">No games hosted. Create one.</td></tr>'}</table>`}
+      <td class="acts">${L.status==='waiting'&&!mine?`<button type="button" class="btn tksm primary" data-onl="join" data-v="${L.id}">Join</button>`:''}${L.status==='waiting'?`<button type="button" class="btn tksm" data-onl="bet" data-v="${L.id}" title="Wager from your wallet">🎲${L.pool?' '+L.pool:''}</button>`:''}<button type="button" class="btn tksm" data-onl="watch" data-v="${L.id}" title="Watch for free">👁</button>${L.ticket?`<button type="button" class="btn tksm" data-onl="ticket" data-v="${L.id}" title="A seat in the stands: stones, offerings, wagers, cheers">🎟 ${L.ticket}</button>`:''}</td></tr>`}).join('')||'<tr><td colspan="8" class="rc-sub">No games hosted. Create one.</td></tr>'}</table>`}
 function onlCreateGameHTML(){const g=ONL.mkgame;return `<div class="card2 onl-mk"><b>Host a game</b><div class="formgrid">
    <label>Event<select data-onlg="ev">${ONLC.EVENTS3.map(k=>`<option value="${k}" ${g.ev===k?'selected':''}>${esc2(onlEvName(k))}</option>`).join('')}</select></label>
    <label>City<select data-onlg="loc">${LOCATIONS.map((L,i)=>L?`<option value="${i}" ${+g.loc===i?'selected':''}>${esc2(L.n)}</option>`:'').join('')}</select></label>
@@ -151,6 +163,11 @@ function onlCreateGameHTML(){const g=ONL.mkgame;return `<div class="card2 onl-mk
    <label>Mode<select data-onlg="ranked"><option value="1" ${g.ranked?'selected':''}>⚔ Ranked — your rank only, Fate is final</option><option value="0" ${g.ranked?'':'selected'}>Custom — anyone, no deaths</option></select></label>
    <label>Ticket to the stands<select data-onlg="ticket">${[0,2,5,10,20].map(n=>`<option value="${n}" ${+g.ticket===n?'selected':''}>${n?n+' coin':'no tickets'}</option>`).join('')}</select></label></div>
    <div class="acts"><button type="button" class="btn primary" data-onl="host">Host it</button><button type="button" class="btn" data-onl="nogame">Cancel</button></div></div>`}
+function onlBetHTML(){const L=ONL.lobbies.find(x=>x.id===ONL.betting.id);if(!L)return '';const me=ONL.acct.id;const mine=L.players.findIndex(p=>p.id===me);
+  const opts=Array.from({length:L.seats},(_,i)=>{const p=L.players[i];return mine>=0&&i!==mine?'':`<option value="${i}">${esc2(p?p.name:'Seat '+(i+1)+' (open)')}</option>`}).join('');
+  return `<div class="card2 onl-mk"><b>🎲 Wager on ${esc2(onlEvName(L.ev))}</b> <span class="rc-sub">pool ${L.pool||0} coin · winners split it, 5% to the host · ${mine>=0?'a fighter may only back themselves':'bets close when the match starts'}</span>
+   <div class="formgrid"><label>Back<select id="onlBetSeat">${opts}</select></label><label>Stake<input class="tin" id="onlBetAmt" type="number" min="${ONLC.WAGER.min}" max="${Math.min(ONLC.WAGER.max,ONL.char.wallet)}" value="${Math.min(10,ONL.char.wallet)}"></label></div>
+   <div class="acts"><button type="button" class="btn primary" data-onl="betgo" data-v="${L.id}">Place the wager</button><button type="button" class="btn" data-onl="nobet">Cancel</button></div></div>`}
 function onlSpectHTML(){const live=ONL.lobbies.filter(L=>L.status==='live');return `<h3>👁 Spectate</h3><p class="rc-sub">Watch any live game for free, or buy a ticket for a seat in the stands — throw stones, make offerings, wager and cheer. Ticket money goes to the pot.</p>
    <div class="onl-spgrid">${live.map(L=>`<div class="card2 onl-sp">${typeof cardHTML==='function'?cardHTML('e:'+L.ev,'sm'):''}<div><b>${esc2(onlEvName(L.ev))}</b> · ${esc2(onlCityName(L.loc))}<div class="rc-sub">${L.players.map(p=>esc2(p.name)).join(' · ')}</div><div class="rc-sub">👁 ${L.watchers||0} watching · 🎟 ${L.tickets||0} in the stands</div>
      <div class="acts"><button type="button" class="btn tksm" data-onl="watch" data-v="${L.id}">👁 Watch</button>${L.ticket?`<button type="button" class="btn tksm primary" data-onl="ticket" data-v="${L.id}">🎟 Ticket · ${L.ticket}</button>`:''}</div></div></div>`).join('')||'<p class="rc-sub">Nothing live right now.</p>'}</div>`}
@@ -194,6 +211,9 @@ document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl]'
   if(a==='enter'){const L=ONL.lobbies.find(x=>x.id===v);if(L)onlEnter(L);return}
   if(a==='watch')return onlDo(async()=>{const L=await NET.req('lobby.watch',{id:v});if(typeof mToast==='function')mToast(`👁 Watching ${esc2(onlEvName(L.ev))} — live views arrive with the AWS server.`)});
   if(a==='ticket')return onlDo(async()=>{const r=await NET.req('lobby.ticket',{id:v});ONL.char=r.char;if(typeof mToast==='function')mToast(`🎟 A seat in the stands at ${esc2(onlCityName(r.lobby.loc))}.`)});
+  if(a==='bet'){ONL.betting={id:v};ONL.tab='lobby';onlRedraw();return}
+  if(a==='nobet'){ONL.betting=null;onlRedraw();return}
+  if(a==='betgo')return onlDo(async()=>{const r=await NET.req('bet.place',{id:v,seat:+($('#onlBetSeat')||{}).value,amt:+($('#onlBetAmt')||{}).value});ONL.char=r.char;ONL.betting=null;ONL.lobbies=await NET.req('lobby.list');if(typeof mToast==='function')mToast('🎲 Wager placed.')});
   if(a==='mkt'){ONL.mkt=v;onlRedraw();return}
   if(a==='buy')return onlDo(async()=>{ONL.char=await NET.req('char.buy',{char:ONL.char.id,item:v});if(typeof mToast==='function')mToast(`🛒 Bought ${esc2((onlCatalog()[v]||{}).n||v)}.`)})},true);
 document.addEventListener('input',e=>{const t=e.target;if(!t||!t.closest||!t.closest('#onl'))return;
@@ -201,13 +221,14 @@ document.addEventListener('input',e=>{const t=e.target;if(!t||!t.closest||!t.clo
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||t.dataset.onlg==null||!ONL.mkgame)return;const k=t.dataset.onlg;ONL.mkgame[k]=k==='ranked'?t.value==='1':k==='ev'?t.value:+t.value},true);
 
 /* ---------------- into the sand (phase 1: the lobby plays here; empty and remote seats are CPUs) ---------------- */
-function onlSeatsFor(L){const me=ONL.acct.id;const seats=[];const used=new Set();
-  L.players.forEach(p=>{const mine=p.id===me;const cls=mine?ONL.char.cls:(ONLC.CLASSES8.find(k=>!used.has(k))||'soldier');used.add(cls);
-    seats.push({cls,cpu:!mine,name:mine?ONL.char.name:p.name,stats:mine?{...ONL.char.stats}:undefined,onl:{id:p.id,char:p.char||null,gear:mine?(ONL.char.gear||[]):null}})});
+function onlSeatsFor(L){const seats=[];const used=new Set();
+  L.players.forEach(p=>{const bot=/^bot/.test(p.id);const k=p.kit||{};let cls=k.cls&&!used.has(k.cls)?k.cls:(ONLC.CLASSES8.find(x=>!used.has(x))||'soldier');used.add(cls);
+    seats.push({cls,cpu:bot,name:k.name||p.name,stats:k.stats?{...k.stats}:undefined,onl:{id:p.id,char:p.char||null,gear:bot?null:(k.gear||[])}})});
   while(seats.length<L.seats){const cls=ONLC.CLASSES8.find(k=>!used.has(k))||'soldier';used.add(cls);seats.push({cls,cpu:true})}return seats}
-function onlEnter(L){if(!ONL.char)return;const seats=onlSeatsFor(L);const mine=seats.findIndex(s=>s.onl&&s.onl.id===ONL.acct.id);
+function onlEnter(L){if(!ONL.char)return;const seats=onlSeatsFor(L);const mine=seats.findIndex(s=>s.onl&&s.onl.id===ONL.acct.id);const host=L.host.id===ONL.acct.id;
+  const owners=seats.map(s=>s.onl&&!s.cpu?s.onl.id:null);const onl={lobby:L.id,ranked:!!L.ranked,seat:mine,owners,host};
   ONL.live={id:L.id,ranked:!!L.ranked,seat:mine,char:ONL.char.id,seed:L.seed};if(CUR_MODAL)CUR_MODAL.done('enter');
-  setTimeout(()=>{try{menuHide()}catch(e){}startEvent({ev:L.ev,loc:L.loc,seats,seed:L.seed,opts:{spect:0},onl:{lobby:L.id,ranked:!!L.ranked,seat:mine}})},120)}
+  setTimeout(()=>{try{menuHide()}catch(e){}if(host||typeof onlJoinMatch!=='function')startEvent({ev:L.ev,loc:L.loc,seats,seed:L.seed,opts:{spect:0},onl});else onlJoinMatch(L,onl)},120)}
 {const base=startEvent;startEvent=function(cfg){const r=base.apply(this,arguments);try{if(cfg&&cfg.onl&&S){S.onl={...cfg.onl};if(ONL.live)ONL.live.started=Date.now()}}catch(e){}return r}}
 /* the gladiator's own kit: the class weapons, no class armor, plus what the wallet bought (seat.onl.gear) */
 {const base=mkPlayer;mkPlayer=function(i,seat){const p=base.apply(this,arguments);try{if(seat&&seat.onl&&seat.onl.gear)p._onlKit=seat.onl.gear.slice()}catch(e){}return p}}
@@ -223,7 +244,7 @@ function onlRow(p,winners){const LR=S.lastResult||{};const row=(LR.rows||[]).fin
   const place=won?1:out<0?Math.min(S.players.length,2):Math.max(2,S.players.length-out);
   return {won,place,f:row.f|0,coin:p.coin|0,kills:(p.trophies||[]).filter(t=>t.pk==='player').length,survives:row.survives!==false,slew:(p.trophies||[]).some(t=>/commodus/i.test(String(t.k||t.n||'')))?['commodus']:[]}}
 async function onlReport(winners){const L=ONL.live;L.reported=true;const p=S.players[L.seat];if(!p)return;const row=onlRow(p,winners);
-  const res=await NET.req('match.result',{id:L.id,char:L.char,row,hash:typeof onlHash==='function'?onlHash():''});ONL.char=res.char;const o=res.out;
+  const res=await NET.req('match.result',{id:L.id,char:L.char,seat:L.seat,row,hash:typeof onlHash==='function'?onlHash():''});ONL.char=res.char;const o=res.out;
   const msg=o.died?(o.hall?`🪦 <b>${esc2(res.char.name)}</b> is dead. The Hall of the Fallen keeps the name.`:`🌫 <b>${esc2(res.char.name)}</b> is dead — and forgotten.`)
     :`💰 +${o.pay} coin · ⭐ +${o.cf} lifetime CF${o.rankUp?` · ⚔ now <b>${esc2(onlRank(o.rankUp).n)}</b>`:''}`;
   setTimeout(()=>{if(typeof mToast==='function')mToast(msg)},2500)}
