@@ -286,11 +286,10 @@ function onlToday80Patch(){const el=document.getElementById('onlToday80');if(!el
 @media(max-width:760px){#onlCry80{border-radius:12px;font-size:13px;flex-wrap:wrap;top:8px;padding:8px 10px}}
 .omapbig{padding:0 16px;box-sizing:border-box}.omapbig .cap{text-align:center;max-width:100%}
 @media(max-width:600px){.omapbig .cap{font-size:16px}.omapbig .cap small{display:block;margin-left:0;font-size:12px}}
-#mmLive80{display:flex;align-items:center;gap:12px;padding:8px 12px;margin:0 0 8px;border:2px solid var(--gold,#e8c96a);border-radius:12px;background:linear-gradient(90deg,rgba(142,42,30,.55),rgba(36,26,16,.92));box-shadow:0 0 18px rgba(232,201,106,.25);text-align:left}
-#mmLive80 .ml80-fig{flex:none;width:56px;display:grid;place-items:center;font-size:30px}#mmLive80 .ml80-fig img,#mmLive80 .ml80-fig svg{max-height:60px}
-#mmLive80 .ml80-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}#mmLive80 .ml80-txt b{font:700 15px Georgia,serif;color:#f3d58a}#mmLive80 .ml80-txt small{color:#d8cbb0;font-size:12.5px}
-#mmLive80 .ml80-acts{display:flex;gap:6px;flex-wrap:wrap}#mmLive80 .ml80-acts .btn{min-width:0;padding:6px 12px;font-size:13.5px}
-@media(max-width:600px){#mmLive80{flex-wrap:wrap}#mmLive80 .ml80-acts{width:100%}#mmLive80 .ml80-acts .btn{flex:1}}
+#mmLive80{display:grid;grid-template-columns:52px minmax(0,1fr);grid-template-areas:"fig txt" "acts acts";gap:6px 10px;align-items:center;padding:10px 12px;margin:0 0 10px;border:2px solid var(--gold,#e8c96a);border-radius:12px;background:linear-gradient(90deg,rgba(142,42,30,.55),rgba(36,26,16,.92));box-shadow:0 0 18px rgba(232,201,106,.25);text-align:left;width:100%;box-sizing:border-box}
+#mmLive80 .ml80-fig{grid-area:fig;display:grid;place-items:center;font-size:30px}#mmLive80 .ml80-fig img,#mmLive80 .ml80-fig svg{max-height:58px}
+#mmLive80 .ml80-txt{grid-area:txt;min-width:0;display:flex;flex-direction:column;gap:2px}#mmLive80 .ml80-txt b{font:700 15px Georgia,serif;color:#f3d58a}#mmLive80 .ml80-txt small{color:#d8cbb0;font-size:12.5px}
+#mmLive80 .ml80-acts{grid-area:acts;display:flex;gap:6px}#mmLive80 .ml80-acts .btn{flex:1 1 0;width:auto;min-width:0;margin:0;padding:7px 10px;font-size:14px}
 .ask76bg .verask:has(.stk80){width:min(560px,94vw);max-height:92vh;overflow-y:auto}
 .stk80{display:flex;gap:14px;align-items:flex-start;text-align:left}.stk80-art{position:relative;flex:none;width:96px}.stk80-art .portrait{width:96px!important;height:134px!important;border-radius:10px;overflow:hidden;border:2px solid #6b5532}
 .stk80-tok{position:absolute;right:-18px;bottom:-10px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.6))}.stk80-tok img,.stk80-tok svg{max-height:84px}
