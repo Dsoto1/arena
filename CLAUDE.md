@@ -648,6 +648,22 @@ One global script; files are concatenated in order. Later "version modules" patc
   re-entered (the stale "… is on the move" banner bug). GEAR ECONOMY idea (his, design questions pending): brought gear can be lost
   (destroyed/taken), owner history on looted pieces, repair of pieces destroyed in a match you survived, Arena Chest for high ranks
   (CF → RNG named weapons with rarities/extra stats) + a special playlist where only those may be used.
+- **His answers (2026-10-03, for v0.81 and the gear batch after it):**
+  COIN (online): no pay-out for carried coin — flat survival award by rank (Tiro 8 / Gregarius 12 / Veteranus 18 / Primus 25 / Summa 35,
+  win bonus +50%, survival streak kept); Custom pays NO coin; no daily cap. GEAR BATCH (after v0.81): brought gear can be destroyed/taken
+  (Ranked only), owner history, Whole/Broken + repair ⅓ of price, gear of a gladiator killed by beast/CPU/Fate → back to the market with its
+  history; Flavius's Gifts = chest openings earned by play/rank-ups (mostly coin, a CF bonus = extra STARTING CF next Ranked match, offering
+  tokens; L1 gear uncommon, L2/L3 rare, famous pieces very rare); named pieces Common 0 / Rare 1 / Epic 2 / Legendary 2 + unique effect;
+  their playlist "Ludi Infames", Veteranus+; start COUNTDOWN 10 s after the host's Start (line-up + what is at stake shown, host ✕ Hold,
+  any line-up change cancels). v0.81: Online server box behind a word of power; guests may watch read-only, counted SEPARATELY on the map
+  (a different glow colour), may read the Forum, 2 h connection limit; invites have NO timer — they die with the room (start/fill/close);
+  playlist borders Democritus bronze-gold / Egidious deep red / Cassian steel blue / Familia olive green; DOMUS REQUIRED before any online
+  gladiator (house name, word-filtered; the house keeps a record; a new house only while it has no gladiators yet); his sharp armor art as
+  one file per piece (full detail); the Veteranus' chest → Forged Chest Armor (L3 5 AP; Flavius' Chest Armor off the class). PILLAR
+  offerings: landing on another pillar → one tile back; on an NPC's tile → it lies UNDER the NPC; on a player's tile → that player gets it;
+  on spikes → it falls INTO the spikes (pick it up = take the spike damage). SPECTATOR GROUP TURN (online only): every ticket holder gets
+  their own private popup at the same time (nobody else sees the choices), one action each per window; a thrown stone/offering is LOCKED to
+  its tile and still fires — whoever stands there when it lands is hit / receives it.
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
