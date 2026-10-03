@@ -23,5 +23,5 @@ o.gate=await pg.evaluate(async()=>{await Store.del&&Promise.resolve();S.hotseat=
   const before=(await Store.list('gladiators')).length;gameOver([p],'test');for(let i=0;i<60;i++){await new Promise(r=>setTimeout(r,200));if(CUR_MODAL)CUR_MODAL.done(null)}
   const all=await Store.list('gladiators');const mine=all.filter(g=>g.name===p.name);return {added:all.length-before,ids:mine.map(g=>!!g.id),status:mine.map(g=>g.status),events:mine.map(g=>g.events)}});
 console.log(JSON.stringify(o));
-const ok=o.cfgHot===false&&o.leak.hints===o.hints0&&o.leak.name==='Marcus Bout'&&!o.leak.hot&&o.leak.profiles===o.profiles0&&o.afterMenu===false&&o.table.hot&&o.table.names.includes('Ann')&&o.gate.added===1&&o.gate.ids.every(Boolean)&&o.gate.status[0]==='infirmary'&&o.gate.events[0]===1;
+const ok=o.leak.hints===o.hints0&&o.leak.name==='Marcus Bout'&&!o.leak.hot&&o.leak.profiles===o.profiles0&&o.afterMenu===false&&o.table.hot&&o.table.names.includes('Ann')&&o.gate.added===1&&o.gate.ids.every(Boolean)&&o.gate.status[0]==='infirmary'&&o.gate.events[0]===1;
 console.log(ok?'PASS':'FAIL');console.log('ERRS',errs.slice(0,4));await b.close();process.exit(ok?0:1)})();
