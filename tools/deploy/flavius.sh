@@ -76,16 +76,56 @@ cmd_server(){ need_zip "${1:-}"; local email=""
   [ "${DRY:-}" = 1 ] || cd "$HOME/server"; AUTH_DOMAIN="${AUTH_DOMAIN:-none}" GOOGLE_ID="$GOOGLE_ID" GOOGLE_SECRET="$sec" run sh deploy.sh "$email"
   unset sec; [ "${DRY:-}" = 1 ] || cmd_status; }
 
-cmd_status(){ say "What is live"
-  printf '  game version   : %s\n' "$(curl -s "$SITE/play/version.json?x=$RANDOM" | tr -d '\n')"
-  printf '  online.json    : %s\n' "$(curl -s "$SITE/play/online.json?x=$RANDOM" | tr -d '\n' | cut -c1-140)"
-  printf '  server stack   : %s\n' "$(aws cloudformation describe-stacks --stack-name "$STACK" --query 'Stacks[0].StackStatus' --output text 2>/dev/null || echo '?')"
+G(){ printf '  \033[1;32m●\033[0m %-16s %s\n' "$1" "$2"; }   # fine
+Y(){ printf '  \033[1;33m●\033[0m %-16s %s\n' "$1" "$2"; YN=$((YN+1)); }   # worth a look
+R(){ printf '  \033[1;31m●\033[0m %-16s %s\n' "$1" "$2"; RN=$((RN+1)); }   # needs attention now
+cmd_status(){ set +e +o pipefail; say "What is live   (green = fine · yellow = worth a look · red = fix now)"; YN=0; RN=0
+  # the game page and its version
+  local vj v page pver; vj=$(curl -s -m 10 "$SITE/play/version.json?x=$RANDOM" || true); v=$(printf '%s' "$vj" | sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p')
+  page=$(curl -s -m 20 "$SITE/play/?x=$RANDOM" || true); pver=$(printf '%s' "$page" | grep -o 'arena · v[0-9.]*' | head -1 | sed 's/.*v//')
+  if [ -z "$v" ]; then R "game version" "play/version.json is missing or unreadable"
+  elif [ -n "$pver" ] && [ "$pver" != "$v" ]; then Y "game version" "version.json says v$v but the page is v$pver (upload both, version.json last)"
+  else G "game version" "v$v"; fi
+  # online.json → the server address and the sign-in address the page uses
+  local oj ws auth; oj=$(curl -s -m 10 "$SITE/play/online.json?x=$RANDOM" || true)
+  ws=$(printf '%s' "$oj" | sed -n 's/.*"ws" *: *"\([^"]*\)".*/\1/p'); auth=$(printf '%s' "$oj" | sed -n 's/.*"auth" *: *"\([^"]*\)".*/\1/p')
+  [ -n "$ws" ] && G "online.json" "server ${ws#wss://}" || R "online.json" "missing or unreadable — the game falls back to the offline preview"
+  # the stack
+  local st; st=$(aws cloudformation describe-stacks --stack-name "$STACK" --query 'Stacks[0].StackStatus' --output text 2>/dev/null || echo "?")
+  case "$st" in
+    UPDATE_ROLLBACK_COMPLETE) Y "server stack" "$st — the last update failed and was undone; the server before it is running";;
+    *ROLLBACK*|*FAILED*|"?") R "server stack" "$st";;
+    *IN_PROGRESS*) Y "server stack" "$st — a deploy is running";;
+    *) G "server stack" "$st";; esac
+  local out_auth; out_auth=$(aws cloudformation describe-stacks --stack-name "$STACK" --query "Stacks[0].Outputs[?OutputKey=='SignInDomain'].OutputValue" --output text 2>/dev/null || true)
+  if [ -n "$auth" ] && [ -n "$out_auth" ] && [ "$out_auth" != "None" ]; then [ "$auth" = "$out_auth" ] && G "sign-in address" "${auth#https://}" || R "sign-in address" "online.json uses ${auth#https://} but the server's is ${out_auth#https://} — sign-in will fail"; fi
+  case "$auth" in *amazoncognito.com*) Y "sign-in look" "Google shows amazoncognito.com (login.flaviusrule.com not set up yet)";; esac
+  # the arena Lambda: when it was updated, and whether the budget switch closed it
   local fn; fn=$(aws cloudformation describe-stack-resources --stack-name "$STACK" --logical-resource-id Fn --query 'StackResources[0].PhysicalResourceId' --output text 2>/dev/null || true)
-  [ -n "$fn" ] && printf '  server updated : %s\n' "$(aws lambda get-function --function-name "$fn" --query Configuration.LastModified --output text 2>/dev/null)"
+  if [ -n "$fn" ] && [ "$fn" != "None" ]; then
+    G "server updated" "$(aws lambda get-function --function-name "$fn" --query Configuration.LastModified --output text 2>/dev/null | cut -c1-16 | tr T ' ') UTC"
+    local cc; cc=$(aws lambda get-function-concurrency --function-name "$fn" --query ReservedConcurrentExecutions --output text 2>/dev/null || echo None)
+    [ "$cc" = "0" ] && R "arena open?" "CLOSED by the budget switch — reopen: see the stack's ReopenCommand output" || G "arena open?" "open"
+  else R "server updated" "the arena function was not found"; fi
+  # page and server speak the same protocol? (the server answers 401 = 'sign in' when the version is right, 426 when it is not)
+  local pv code; pv=$(printf '%s' "$page" | grep -o 'const VER=[0-9]*' | head -1 | cut -d= -f2)
+  if [ -n "$ws" ] && [ -n "$pv" ]; then code=$(curl -s -m 10 -o /dev/null -w '%{http_code}' -H 'Connection: Upgrade' -H 'Upgrade: websocket' -H 'Sec-WebSocket-Version: 13' -H 'Sec-WebSocket-Key: Zmxhdml1c3J1bGVfX3Rlc3Q=' "https://${ws#wss://}?ver=$pv" || true)
+    case "$code" in 401|403|101) G "versions match" "page protocol $pv is accepted by the server";; 426) R "versions match" "the server refuses the page's protocol $pv — deploy the matching server zip";; *) Y "versions match" "could not tell (answer $code)";; esac; fi
+  # Google sign-in settings inside Cognito
   local cid; cid=$(aws cognito-idp describe-identity-provider --user-pool-id "$POOL" --provider-name Google --query IdentityProvider.ProviderDetails.client_id --output text 2>/dev/null || echo '?')
-  [ "$cid" = "$GOOGLE_ID" ] && printf '  google client  : ✓ correct\n' || printf '  google client  : ✗ "%s"\n' "$cid"
-  printf '  sign-in domain : %s\n' "$(aws cognito-idp describe-user-pool --user-pool-id "$POOL" --query 'UserPool.[Domain,CustomDomain]' --output text 2>/dev/null)"
-  printf '  styles.css     : %s bytes on the site\n' "$(curl -s "$SITE/styles.css?x=$RANDOM" | wc -c | tr -d ' ')"; }
+  [ "$cid" = "$GOOGLE_ID" ] && G "google client" "correct" || R "google client" "Cognito holds \"$cid\" — Google sign-in will fail"
+  # this month's spend against the budget
+  local acct lim spent; acct=$(aws sts get-caller-identity --query Account --output text 2>/dev/null || true)
+  if [ -n "$acct" ]; then read -r lim spent < <(aws budgets describe-budget --account-id "$acct" --budget-name flavius-arena-budget --query 'Budget.[BudgetLimit.Amount,CalculatedSpend.ActualSpend.Amount]' --output text 2>/dev/null || echo "")
+    if [ -n "${lim:-}" ] && [ -n "${spent:-}" ]; then local pct; pct=$(awk -v a="$spent" -v b="$lim" 'BEGIN{printf "%d", (b>0?a*100/b:0)}')
+      if [ "$pct" -ge 100 ]; then R "this month" "\$$spent of \$$lim (${pct}%) — the arena closes at 100%"; elif [ "$pct" -ge 75 ]; then Y "this month" "\$$spent of \$$lim (${pct}%)"; else G "this month" "\$$spent of \$$lim (${pct}%)"; fi
+    else Y "this month" "budget not readable"; fi; fi
+  # the website
+  local css; css=$(curl -s -m 10 "$SITE/styles.css?x=$RANDOM" | head -c 80 || true)
+  case "$css" in *"look of the digital arena"*) G "site styles" "the arena look";; "") R "site styles" "styles.css not served";; *) Y "site styles" "an older styles.css is live — bash flavius.sh site <full site zip>";; esac
+  local pc; pc=$(curl -s -m 10 -o /dev/null -w '%{http_code}' "$SITE/privacy" || true)
+  [ "$pc" = "200" ] && G "privacy page" "/privacy" || Y "privacy page" "/privacy answers $pc (Google's consent screen links to it)"
+  echo; if [ "$RN" -gt 0 ]; then printf '\033[1;31m%s to fix now\033[0m' "$RN"; elif [ "$YN" -gt 0 ]; then printf '\033[1;33mAll working — %s worth a look\033[0m' "$YN"; else printf '\033[1;32mAll green\033[0m'; fi; echo; }
 
 CMD="${1:-}"; shift || true
 case "$CMD" in
