@@ -26,8 +26,8 @@ o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   const B=armBox('galerus','rarm');r.flip=B.w===50&&B.mirror===true;
   r.gold=!cardStyle('a:bracers').includes('sepia')&&!armBox('bracers','rarm').gold&&ARM.bracers.img===33; /* v0.74: his real gold Bracers art, no grading */
   delete ARM_FIT_OVR.galerus;afitSave();AFIT.mode=false;localStorage.removeItem('flavius_armfit_on');
-  SETTINGS.armorStyle='scan';document.getElementById('caRedraw').click();await W8(400);r.noSculpt=document.querySelectorAll('[data-gs="casys"]').length;
-  SETTINGS.armorStyle='drawn';document.getElementById('caRedraw').click();await W8(400);r.sculpt=document.querySelectorAll('[data-gs="casys"]').length;
+  SETTINGS.armorStyle='scan';document.getElementById('caRedraw').click();await W8(400);r.noSculpt=document.querySelectorAll('.setgrid.sys > *').length; /* v0.76: examples only — count the system cards */
+  SETTINGS.armorStyle='drawn';document.getElementById('caRedraw').click();await W8(400);r.sculpt=document.querySelectorAll('.setgrid.sys > *').length;
   if(c){CUSTOM.armor=CUSTOM.armor.filter(x=>x.id!==c.id);await Store.del('customArmor',c.id).catch(()=>{})}return r});
 ok(!o.a.tabs&&o.a.mock&&o.a.eqsel&&!o.a.old,'designer layout');ok(o.a.blocked,'save needs an equip point');ok(o.a.autoEq==='sho','printed start picks its point');
 ok(o.a.part.join()==='arm,lower'&&o.a.keptS===70,'point sets the part, size kept');ok(o.a.single,'single piece shows one side');ok(o.a.saved,'fit saved with the piece');
