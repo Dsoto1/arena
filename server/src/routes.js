@@ -130,7 +130,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
 
   /* ✉ one invitation (the rules are the same for lobby.invite and lobby.again); '' or the reason */
   async function inviteOne(L,me,meName,to,o={}){if(!to||to===me)return 'Pick a lanista.';const H=await hereMap();if(!H.get(to))return 'Not in the arena now.';
-    const T=await acctOf(to);if(!T||!T.conn)return 'Not in the arena now.';if(T.match)return 'Fighting right now.';if(C.memberOf(L,to)||L.players.some(p=>p.id===to))return 'Already in the room.';
+    const T=await acctOf(to);if(!T||!T.conn)return 'Not in the arena now.';if(T.match&&T.match!==o.again)return 'Fighting right now.';if(C.memberOf(L,to)||L.players.some(p=>p.id===to))return 'Already in the room.';
     if(flagOf(T)!==!!L.flag)return 'They cannot join this game.';
     if(L.ranked){let r=T.here&&T.here.rank;if(!r){const tc=await liveChar(to,T);r=tc?C.rankFor(tc).k:'tiro'}if(r!==L.rank)return `Ranked: ${(C.RANKS[C.rankIdx(L.rank)]||C.RANKS[0]).n} only.`}
     const P='ACCT#'+me,S='PROFILE',t=now();
@@ -228,9 +228,11 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     'lobby.invite':async(d,ctx)=>{const L=await getLobby(d.id);if(!C.memberOf(L,ctx.acct))throw new Error('Join the room first.');if(L.status!=='waiting')throw new Error('Already under way.');
       const why=await inviteOne(L,ctx.acct,memberName(L,ctx.acct),d.to);if(why)throw new Error(why);return {}},
     /* ⚔ Again: a new room like the match just fought (no Praeco line), the other lanistas of that match invited */
-    'lobby.again':async(d,ctx)=>{const M=await meta(d.id||d.lobbyId);if(!(M.players||[]).includes(ctx.acct))throw new Error('Not your match.');if(M.status!=='done')throw new Error('The match is not over.');
+    'lobby.again':async(d,ctx)=>{const M=await meta(d.id||d.lobbyId);if(!(M.players||[]).includes(ctx.acct))throw new Error('Not your match.');
+      /* your bout is over on your screen once you reported (or left); the others may still be confirming */
+      if(M.status!=='done'&&!(M.reports||{})[ctx.acct]&&!(M.abandoned||{})[ctx.acct])throw new Error('The match is not over.');
       const old=await getLobby(M.id);const {g}=await groupOf(ctx.acct);const L=await makeRoom({ev:old.ev,loc:old.loc,ranked:old.ranked,seats:old.seats,cry:false},ctx.acct,g);await toRoom(L,null,{except:ctx.acct});
-      const name=memberName(L,ctx.acct);const invited=[];for(const a of M.players){if(a===ctx.acct||C.memberOf(L,a))continue;if(!(await inviteOne(L,ctx.acct,name,a,{gap:false})))invited.push(a)}
+      const name=memberName(L,ctx.acct);const invited=[];for(const a of M.players){if(a===ctx.acct||C.memberOf(L,a))continue;if(!(await inviteOne(L,ctx.acct,name,a,{gap:false,again:M.id})))invited.push(a)}
       return {lobby:room(L),invited}},
     /* 💬 a room phrase: its own CHAT# item (the room is never rewritten for a line) */
     'lobby.say':async(d,ctx)=>{const L=await getLobby(d.id);const mem=C.memberOf(L,ctx.acct)||L.players.some(p=>p.id===ctx.acct),st=inStands(L,ctx.acct);if(!mem&&!st)throw new Error('Join the game to talk.');
@@ -294,9 +296,10 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     'match.snap':async(d,ctx)=>{const M=await meta(d.id);const w=a=>(M.watch||{})[a]!==undefined;if(!inMatch(M,ctx.acct)||!(inMatch(M,d.to)||w(d.to)))throw new Error('Not your match.');await toMatch({conns:{[d.to]:connOf(M,d.to)}},'match.snap',{id:d.id,to:d.to,snap:d.snap,seq:d.seq,from:ctx.acct});return {}},
     /* 💬 a match phrase: a bubble over the gladiator — never an input, never game state (after the match: 10 minutes of farewells) */
     'match.say':async(d,ctx)=>{const M=await meta(d.id);if(!inMatch(M,ctx.acct))throw new Error('Not your match.');
-      const scope=M.status==='live'?'match':(now()-(M.doneAt||0)<=10*60e3?'after':null);if(!scope)throw new Error('The sand is quiet now.');if(!C.phraseOK(scope,d.q))throw new Error('Quick chat only.');
+      /* live: match phrases, and farewells too (your bout may end on your screen before the others report) */
+      const ok=M.status==='live'?(C.phraseOK('match',d.q)||C.phraseOK('after',d.q)):(now()-(M.doneAt||0)<=10*60e3?C.phraseOK('after',d.q):null);if(ok===null)throw new Error('The sand is quiet now.');if(!ok)throw new Error('Quick chat only.');
       if(!(await store.rate('ACCT#'+ctx.acct,'PROFILE','sayAt',C.RATE.say,now())))throw new Error('Slow down.');
-      await toMatch(M,'match.say',{id:d.id,seat:(M.seats||{})[ctx.acct],q:d.q,by:ctx.acct},ctx.acct);return {}},
+      const seat=(M.seats||{})[ctx.acct];await toMatch(M,'match.say',{id:d.id,seat,q:d.q,by:ctx.acct},ctx.acct);return {seat}},
     /* majority resync: ask the other live humans for their state hash at a seq; answers go back to the asker */
     'match.hashq':async(d,ctx)=>{const M=await meta(d.id);const live=liveHumans(M);if(!live.includes(ctx.acct))throw new Error('Not your match.');
       await toMatch({conns:Object.fromEntries(live.filter(a=>a!==ctx.acct).map(a=>[a,(M.conns||{})[a]||null]))},'match.hashq',{id:d.id,seq:d.seq|0,from:ctx.acct});return {}},
