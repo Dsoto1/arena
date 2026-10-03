@@ -14,6 +14,8 @@ one server redeploy (protocol VER 4, server-8, AUTH_DOMAIN=none until the custom
 - Names shown in calls, invites, phrases: the ACTIVE GLADIATOR's name, never the Google account name.
 - NO horn: nothing listens while you play offline; calls/invites reach you only while the Online window is open
   (drop the netIdleClose wrapper, ping keepalive and #onlHorn chip from the notes below).
+- Gladiator names (decided 2026-10-03): the old room-chat word filter (ONLC CHAT_BAD) REFUSES a bad name when a gladiator is
+  made or renamed (ONLC.newChar / editChar, so the server enforces it). TO DO in the v0.80 fix round.
 - Moderation = 🔇 Mute (server drops their phrases, calls, invites) + 🔕 Quiet (no banners) + the existing strike split.
   Drop forum.say / free Forum line / report / hush / flavius.sh reports from the notes below.
 - The landing feed keeps only structured lines: 📣 calls and results (k:cry/res), no say lines. FMETER guards cries only.
