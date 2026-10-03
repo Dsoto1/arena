@@ -19,7 +19,7 @@ const NETWS={ws:null,cfg:null,wait:{},seq:0,open:null,tries:0,closedFor:null,
     this.open=new Promise((res,rej)=>{const ws=new WebSocket(c.ws+(c.ws.includes('?')?'&':'?')+q);this.ws=ws;let opened=false;
       ws.onopen=()=>{opened=true;this.tries=0;res(ws)};
       ws.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(err){return}if(m.re!=null&&this.wait[m.re]){const w=this.wait[m.re];delete this.wait[m.re];clearTimeout(w.t);m.ok?w.res(m.d):w.rej(new Error(m.err||'The server said no.'))}else if(m.push)NET.emit(m.push,m.d)};
-      ws.onclose=e=>{if(!opened)rej(new Error(e.code===1006?'The online arena is closed for now — offline modes are open. (It reopens on the 1st if the month’s budget ran out.)':'The server closed the door.'));for(const k of Object.keys(this.wait)){this.wait[k].rej(new Error('Connection lost.'));delete this.wait[k]}
+      ws.onclose=e=>{if(!opened)rej(new Error(e.code===1006?'The server turned the connection away (a newer or older game version, an expired sign-in, or the arena is closed for the month).':'The server closed the door.'));for(const k of Object.keys(this.wait)){this.wait[k].rej(new Error('Connection lost.'));delete this.wait[k]}
         if(opened&&!this.closedFor){const d=Math.min(15000,800*2**this.tries++);setTimeout(()=>{this.connect().then(()=>{NET.emit('net.back',{});if(typeof onlmOn==='function'&&onlmOn())onlmCatchUp()}).catch(()=>{})},d)}};
       ws.onerror=()=>{}});
     return this.open},
@@ -64,6 +64,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl="
     <textarea class="tin" id="onlSrv" rows="3" placeholder='{"ws":"wss://…/live","auth":"https://….amazoncognito.com","client":"…"}'>${c?esc2(JSON.stringify(c)):''}</textarea>
     <div class="acts"><button type="button" class="btn tksm" data-onl="srvset">Use this server</button>${c?'<button type="button" class="btn tksm" data-onl="srvclear">Back to the mock</button>':''}</div></details>`;
   const devBox=dev?`<div class="onl-mocknote"><b>Test server.</b> Sign in with a name.<div style="display:flex;gap:6px;margin-top:6px"><input class="tin" id="onlName" maxlength="24" placeholder="Your lanista name"><button type="button" class="btn" data-onl="mocksign">Enter</button></div></div>`:'';
-  return h.replace('</div></div>',devBox+box+'</div></div>')}}
+  /* signed in but the server would not take the connection: say so instead of just showing the button again */
+  const why=c&&!c.dev&&netTokGet()&&ONL.err?`<div class="onl-mocknote" style="border-color:#a3281f;color:#f0cf7d"><b>Couldn't reach the online arena.</b> ${esc2(ONL.err)}<br>If the game was just updated, the server may still be updating — try again in a few minutes.<div style="margin-top:6px"><button type="button" class="btn tksm" data-onl="refresh">↻ Try again</button></div></div>`:'';
+  return h.replace('</div></div>',why+devBox+box+'</div></div>')}}
 NET.on('net.back',()=>{if(document.getElementById('onl'))onlRefresh().then(onlRedraw)});
 {const st=document.createElement('style');st.textContent='.onl-srv{text-align:left;font-size:13px}.onl-srv summary{cursor:pointer;color:var(--muted)}.onl-srv textarea{width:100%;font:12px var(--mono)}';document.head.appendChild(st)}
