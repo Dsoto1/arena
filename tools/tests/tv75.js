@@ -7,16 +7,9 @@ await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
   startEvent({ev:'democritus',loc:6,seats:[{cls:'hero',cpu:false},{cls:'soldier',cpu:true}],opts:{spect:4}});await W8(2500);for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(150)}render();await W8(300)});
-const box=async()=>{const r=await pg.locator('#board .ratfold').boundingBox();return r&&{x:r.x+r.width/2,y:r.y+r.height/2}};
-const shut=()=>pg.evaluate(()=>RAT_SHUT);
-/* press → the board is rebuilt → release */
-let s0=await shut();let p=await box();await pg.mouse.move(p.x,p.y);await pg.mouse.down();await pg.evaluate(()=>{render();render()});await pg.mouse.up();await pg.waitForTimeout(200);
-o.redraw=(await shut())!==s0;
-/* a plain click toggles exactly once */
-s0=await shut();p=await box();await pg.mouse.click(p.x,p.y);await pg.waitForTimeout(200);o.once=(await shut())!==s0;
-/* the keyboard */
-s0=await shut();await pg.focus('#board .ratfold');await pg.keyboard.press('Enter');await pg.waitForTimeout(200);o.key=(await shut())!==s0;
-o.view=await pg.evaluate(()=>document.querySelector('#board .statrow').classList.contains('shut')===RAT_SHUT);
+/* v0.81: the ratings always show in the panel header — no fold button (his note: the toggle felt slow) */
+const rv=()=>pg.evaluate(()=>{const r=document.querySelector('#board .statrow');const f=r&&r.querySelector('.ratfold');return !!r&&!r.classList.contains('shut')&&r.querySelectorAll('.statchip').length>=5&&[...r.querySelectorAll('.statchip')].every(c=>c.offsetWidth>0)&&(!f||getComputedStyle(f).display==='none')});
+o.redraw=await rv();await pg.evaluate(()=>{RAT_SHUT=true;render();render()});o.once=await rv();o.key=true;o.view=await rv();
 o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const r={};
   r.ico=/data:image\/webp/.test(CW_ICO.dmg())&&/data:image\/webp/.test(cwIcoSVG('rng'));r.wsIco=!!document.querySelector('#board .ws75 img');
   r.ornate=CLASSES.royalty.armor.some(a=>a[0]==='ornate')&&ARM.ornate.ap===4&&ARM.greaves.img===43&&ARM.greaves.thumb===24;
@@ -42,7 +35,7 @@ o.s=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   CUR_MODAL&&CUR_MODAL.done(null);await W8(300);openSettings('general');await W8(500);r.noSkip=!document.querySelector('[data-set="skipMenu"]');CUR_MODAL&&CUR_MODAL.done(null);await W8(300);return r});
 const Q=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_();w.night.loc=8;MGR.tab='night';MGR_REDRAW();await W8(500);
   const b=document.querySelector('.roomhd.b75city .roomttl b');return {city:!!b&&b.textContent==='Pompeii'}});o.q=Q;
-ok(o.redraw,'toggles through a redraw');ok(o.once,'one click = one toggle');ok(o.key,'keyboard');ok(o.view,'drawer follows the state');const A=o.a,M=o.m,P=o.s;ok(A.ico,'his weapon icons');ok(A.ornate,'Ornate chest + single greave');ok(A.pillar,'shorter pillar');
+ok(o.redraw,'ratings always show');ok(o.once,'ratings stay after redraws');ok(o.view,'no fold button');const A=o.a,M=o.m,P=o.s;ok(A.ico,'his weapon icons');ok(A.ornate,'Ornate chest + single greave');ok(A.pillar,'shorter pillar');
 ok(A.top&&o.pop,'top bar + event pop-up');ok(A.panel,'turn panel rules');ok(A.crowd,'one crowd count');ok(A.piles&&A.free,'armor dealt across 4 slots');
 ok(M.cells===24&&M.buy,'market board');ok(P.layout&&P.pick&&P.seats&&P.preset,'Play Now layout');ok(M.back,'his weapon card backs');ok(P.noSkip,'no Skip the main menu');ok(Q.city,'Match Week city banner');
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();
