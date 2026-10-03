@@ -575,6 +575,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   your party on one team; online protocol 2 (redeploy the server). (Published as artifact Version 91.)
 - **v0.79** Online: My Gladiators (3, active, look/token/class/gear), pre-match room with chat + host rules, 2-lanista minimum, Abandon /
   Rejoin / the online bar, cleanup of dead games, login.flaviusrule.com; menu: version notes, C for words, two-button Multiplayer.
+  (Published as artifact Version 92; server zip flavius-server-7.)
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
