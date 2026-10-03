@@ -4,7 +4,7 @@
    reaches C (free, Online open); B presses the Classic Custom playlist (lobby.quick) and lands in A's room (no twin);
    room phrases (lobby.say) reach the other window's log + lobby.chatlog; A sounds the horns, B walks in by itself; moves sync
    with no resync; a 💬 match phrase (match.say) shows as a bubble on the other screen; the bout ends on both screens → the
-   result settles → ⚔ Again opens a new room and the other fighter gets the invitation.
+   result settles → after 10 s on the results a farewell phrase still reaches the other screen → ⚔ Again opens a new room and the other fighter gets the invitation.
    Needs server/node_modules (cd server && npm install); without it the test says SKIP and passes. */
 const http=require('http'),fs=require('fs'),path=require('path');
 let LWS;try{LWS=require('../../server/test/localws.js')}catch(e){console.log('SKIP — no server/node_modules (cd server && npm install)');console.log('MISS',[]);console.log('ERRS',[]);process.exit(0)}
@@ -81,7 +81,13 @@ for(const p of [A,B])await p.evaluate(()=>{if(!S.over)gameOver([S.players[0]],'t
 /* the closing windows (results/Fate) are answered; C (free) sees the result line in the Forum */
 for(let i=0;i<40;i++){for(const p of [A,B])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)}).catch(()=>{});await wait(300);if(await C.evaluate(()=>ONLF.lines.some(l=>l.k==='res')))break}
 const resC=await C.evaluate(()=>ONLF.lines.filter(l=>l.k==='res').map(l=>(l.win||[]).join('&')+' '+l.ev+(l.void?' void':'')));
-const lobbyAfter=await A.evaluate(async id=>{const r=(await NET.req('lobby.list')).find(L=>L.id===id);return r?r.status:'gone'},rA&&rA.id);
+/* both lanistas read the results for a while on the sand (no request from either window): their sockets stay open, so a farewell
+   and the ⚔ Again invitation still reach them */
+await wait(10000);
+const sockets=await Promise.all([A,B].map(p=>p.evaluate(()=>!!(NETWS.ws&&NETWS.ws.readyState===1))));
+await A.evaluate(()=>{window.__bub2=[];new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.classList&&n.classList.contains('qbub80'))window.__bub2.push(n.textContent)}).observe(document.body,{childList:true,subtree:true})});
+await B.evaluate(()=>{ONLM.uiAt=Date.now()});await B.click('#btnOnlSay80').catch(()=>{});await wait(300);await B.click('#onlSay80 [data-msay="well"]').catch(()=>{});
+const bubAfter=await until(A,()=>window.__bub2.length?window.__bub2:null,null,5000);
 /* ⚔ Again (B, a fighter): a new room like the last, A invited — A sees the invitation once back in Online */
 const againBtn=await until(B,()=>!!document.getElementById('btnOnlAgain80'),null,6000);
 await B.evaluate(()=>{ONLM.uiAt=Date.now();const b=document.getElementById('btnOnlAgain80');if(b)b.click()});
@@ -91,7 +97,7 @@ const pop=await until(A,()=>{const p=document.querySelector('.inv80bg');return p
 await A.click('.inv80bg [data-onl="ijoin"]').catch(()=>{});
 const joined=await until(A,id=>{const L=onlMyLobby();return L&&L.id===id?L.players.map(p=>p.name):null},again&&again.id,6000);
 const mode=await A.evaluate(()=>NET.mode);
-const out={modes,mode,hello,rA,openC:!!openC,banC,rB,waitingRooms,aSeesB,logB,logA,chatlog,freeText,startBtn,inA:!!inA,inB:!!inB,seats,inputs:ins.length,same,diff,resync:[ha.r,hb.r,ha.last,hb.last],sayBtn:!!sayBtn,bub,resC,lobbyAfter,againBtn:!!againBtn,again,pop,joined,notes};
+const out={modes,mode,hello,rA,openC:!!openC,banC,rB,waitingRooms,aSeesB,logB,logA,chatlog,freeText,startBtn,inA:!!inA,inB:!!inB,seats,inputs:ins.length,same,diff,resync:[ha.r,hb.r,ha.last,hb.last],sayBtn:!!sayBtn,bub,resC,sockets,bubAfter,againBtn:!!againBtn,again,pop,joined,notes};
 console.log(JSON.stringify(out));
 const miss=[];
 if(mode!=='aws'||modes.some(m=>m!=='aws'))miss.push('the real transport');
@@ -102,5 +108,5 @@ if(!logB||!logA)miss.push('room phrases reach the other window');if(!chatlog.som
 if(!startBtn||startBtn.dis)miss.push('▶ Start enabled ('+(startBtn&&startBtn.why)+')');if(!inA||!inB)miss.push('both enter the match');
 if(ins.length<8)miss.push('enough inputs ('+ins.length+')');if(diff||ha.r||hb.r)miss.push('lockstep with no resync');
 if(!sayBtn||!bub||!bub.some(t=>/Well struck/.test(t)))miss.push('match.say bubble on the other screen');
-if(!resC.length)miss.push('result line in the Forum');if(!againBtn||!again||again.ev!=='democritus'||again.ranked)miss.push('⚔ Again room');if(!/invites you/.test(pop||''))miss.push('Again invites the other fighter');if(!joined)miss.push('join from the invitation');
+if(!resC.length)miss.push('result line in the Forum');if(!sockets[0]||!sockets[1])miss.push('sockets stay open after the match');if(!bubAfter||!bubAfter.some(t=>/Well fought/.test(t)))miss.push('after-match phrase');if(!againBtn||!again||again.ev!=='democritus'||again.ranked)miss.push('⚔ Again room');if(!/invites you/.test(pop||''))miss.push('Again invites the other fighter');if(!joined)miss.push('join from the invitation');
 console.log('MISS',miss);console.log('ERRS',JSON.stringify(errs.slice(0,6)));await b.close();srv.close();WS.close();if(miss.length||errs.length)process.exit(1)})();

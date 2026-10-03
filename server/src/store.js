@@ -41,6 +41,10 @@ function memory(){
     async quota(pk,sk,field,bucket,max){const x=t.get(key(pk,sk));if(!x)return false;const q=x[field];if(q&&q.h===bucket){if(q.n>=max)return false;q.n++;return true}x[field]={h:bucket,n:1};return true},
     async bump(pk,sk,field){const k=key(pk,sk);const x=t.get(k);if(!x)return null;x[field]=(x[field]||0)+1;return {seq:x[field]-1,item:clone(x)}},
     async setIn(pk,sk,map,k2,v){const x=t.get(key(pk,sk));if(x){x[map]={...(x[map]||{}),[k2]:v}}},
+    /* v0.80: a versioned put — only when the stored rev is still item.rev (none = a new item or one never versioned); → the new rev or false */
+    async putRev(pk,sk,item){const k=key(pk,sk);const x=t.get(k);if(x&&(x.rev??null)!==(item.rev??null))return false;const rev=(item.rev||0)+1;t.set(k,clone({...item,PK:pk,SK:sk,rev}));return rev},
+    /* a one-time switch: field from → to, true only for the caller that made it */
+    async flip(pk,sk,field,from,to){const x=t.get(key(pk,sk));if(!x||x[field]!==from)return false;x[field]=to;return true},
     dump(){return t}};
 }
 function dynamo(table){
@@ -49,7 +53,8 @@ function dynamo(table){
   const db=DynamoDBDocumentClient.from(new DynamoDBClient({}),{marshallOptions:{removeUndefinedValues:true}});
   const all=async q=>{let out=[],k;do{const r=await db.send(new QueryCommand({...q,ExclusiveStartKey:k}));out=out.concat(r.Items||[]);k=r.LastEvaluatedKey}while(k);return out};
   return {kind:'dynamo',
-    async get(pk,sk){const r=await db.send(new GetCommand({TableName:table,Key:{PK:pk,SK:sk}}));return r.Item||null},
+    /* strongly consistent: a request must see the write the previous request just made */
+    async get(pk,sk){const r=await db.send(new GetCommand({TableName:table,Key:{PK:pk,SK:sk},ConsistentRead:true}));return r.Item||null},
     async put(pk,sk,item){await db.send(new PutCommand({TableName:table,Item:{...item,PK:pk,SK:sk}}))},
     async del(pk,sk){await db.send(new DeleteCommand({TableName:table,Key:{PK:pk,SK:sk}}))},
     async query(pk,prefix,o){o=o||{};const q={TableName:table,KeyConditionExpression:'PK = :p AND begins_with(SK, :s)',ExpressionAttributeValues:{':p':pk,':s':prefix||''},ScanIndexForward:!o.desc};
@@ -60,6 +65,11 @@ function dynamo(table){
     async setIn(pk,sk,map,k2,v){try{await db.send(new UpdateCommand({TableName:table,Key:{PK:pk,SK:sk},UpdateExpression:'SET #m.#k = :v',ConditionExpression:'attribute_exists(#m)',ExpressionAttributeNames:{'#m':map,'#k':k2},ExpressionAttributeValues:{':v':v}}))}catch(e){if(e.name!=='ConditionalCheckFailedException')throw e}},
     /* atomic: returns the value BEFORE the increment */
     async counter(pk,sk,field,by){const n=by||1;const r=await db.send(new UpdateCommand({TableName:table,Key:{PK:pk,SK:sk},UpdateExpression:'ADD #f :one',ExpressionAttributeNames:{'#f':field},ExpressionAttributeValues:{':one':n},ReturnValues:'UPDATED_NEW'}));return r.Attributes[field]-n},
+    async putRev(pk,sk,item){const r=item.rev;const rev=(r||0)+1;try{await db.send(new PutCommand({TableName:table,Item:{...item,PK:pk,SK:sk,rev},
+      ConditionExpression:r==null?'attribute_not_exists(#r)':'#r = :r',ExpressionAttributeNames:{'#r':'rev'},...(r==null?{}:{ExpressionAttributeValues:{':r':r}})}));return rev}
+      catch(e){if(e.name==='ConditionalCheckFailedException')return false;throw e}},
+    async flip(pk,sk,field,from,to){try{await db.send(new UpdateCommand({TableName:table,Key:{PK:pk,SK:sk},UpdateExpression:'SET #f = :to',ConditionExpression:'#f = :from',
+      ExpressionAttributeNames:{'#f':field},ExpressionAttributeValues:{':to':to,':from':from}}));return true}catch(e){if(e.name==='ConditionalCheckFailedException')return false;throw e}},
     async putNew(pk,sk,item){try{await db.send(new PutCommand({TableName:table,Item:{...item,PK:pk,SK:sk},ConditionExpression:'attribute_not_exists(PK)'}));return true}catch(e){if(e.name==='ConditionalCheckFailedException')return false;throw e}},
     async set(pk,sk,fields){const ks=Object.keys(fields);if(!ks.length)return true;const N={},V={};ks.forEach((k,i)=>{N['#a'+i]=k;V[':a'+i]=fields[k]});
       try{await db.send(new UpdateCommand({TableName:table,Key:{PK:pk,SK:sk},UpdateExpression:'SET '+ks.map((k,i)=>'#a'+i+' = :a'+i).join(', '),ConditionExpression:'attribute_exists(PK)',ExpressionAttributeNames:N,ExpressionAttributeValues:V}));return true}
