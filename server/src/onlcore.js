@@ -9,6 +9,9 @@
      surviving), the recruit kit (the class's weapons, no armor), an empty wallet. Coin earned in matches goes to the wallet; gear is bought between matches.
    • Prices 15 / 60 / 180 by market level; purses grow +10% per ranked bout survived in a row (streak, up to +100%).
    • Wagers: online wallets only, escrowed by the server, split among winning bets (5% to the host); fighters back only themselves.
+   • Anti-cheat: results by agreement (`agree`: every human reports the whole table; strict majority wins, 2 disagreeing humans →
+     void, no pay, no deaths, strikes for the minority); 3 strikes → matched only with other struck accounts; a ranked player away
+     3 minutes is dropped (a CPU takes the seat at an agreed input) and still faces the Fate.
    • Death: Ranked only, by the game's own Fate table (the event's result row says whether the gladiator survives).
      The dead go to the Hall of the Fallen only if they were great: died at Veteranus or above, or with a legendary feat
      (25+ ranked bouts survived, 500+ lifetime CF, or Commodus slain). Everyone else is erased (damnatio memoriae).
@@ -82,8 +85,20 @@ const ONLC=(function(){
   function settle(bets,winSeats){const pool=bets.reduce((a,b)=>a+b.amt,0);const cut=Math.floor(pool*WAGER.cut);const won=bets.filter(b=>winSeats.includes(b.seat));const wsum=won.reduce((a,b)=>a+b.amt,0);const pay={};
     if(!wsum){for(const b of bets)pay[b.by]=(pay[b.by]||0)+b.amt;return {payouts:pay,cut:0,refund:true}}
     let left=pool-cut;for(const b of won){const v=Math.floor((pool-cut)*b.amt/wsum);pay[b.by]=(pay[b.by]||0)+v;left-=v}return {payouts:pay,cut:cut+left,refund:false}}
+  /* ANTI-CHEAT — results by agreement. Every human reports the WHOLE results table (one row per seat) + an end hash.
+     agree(reports) → {table, void, minority:[acct…], unverified}: the table most reports share wins when it has a strict majority;
+     a lone human (the rest CPUs) is accepted but unverified; no majority (e.g. 2 humans disagree) → void: no pay, no deaths. */
+  const STRIKES_OUT=3, AWAY_MS=180000;
+  function cleanRow(r){r=r||{};return {seat:r.seat|0,won:!!r.won,place:Math.max(1,Math.min(8,r.place|0||4)),f:Math.max(0,Math.min(400,r.f|0)),coin:Math.max(0,Math.min(200,r.coin|0)),kills:Math.max(0,Math.min(20,r.kills|0)),survives:r.survives!==false,slew:Array.isArray(r.slew)?r.slew.filter(x=>x==='commodus'):[]}}
+  function cleanTable(t){return (Array.isArray(t)?t:[]).slice(0,8).map(cleanRow).sort((a,b)=>a.seat-b.seat)}
+  function agree(reports){const ids=Object.keys(reports);if(!ids.length)return {table:null,void:true,minority:[]};
+    const key=r=>JSON.stringify(cleanTable(r.table))+'|'+String(r.hash||'');const groups={};for(const a of ids){const k=key(reports[a]);(groups[k]=groups[k]||[]).push(a)}
+    const best=Object.entries(groups).sort((x,y)=>y[1].length-x[1].length)[0];
+    if(ids.length===1)return {table:cleanTable(reports[ids[0]].table),void:false,minority:[],unverified:true};
+    if(best[1].length*2>ids.length)return {table:cleanTable(reports[best[1][0]].table),void:false,minority:ids.filter(a=>!best[1].includes(a))};
+    return {table:null,void:true,minority:ids}}
   /* weekly challenges rotate with the week of the year */
   const CHALLENGES=[['Survive 3 ranked bouts',3,'survived'],['Earn 60 CF in one bout',60,'cf1'],['Win a bout at Capua',1,'win:3'],['Slay 5 beasts',5,'beasts'],['Finish 5 bouts',5,'bouts'],['Win with 20+ coin left',1,'rich']];
   function weekChallenges(t){const wk=Math.floor((t||0)/604800000);const out=[];for(let i=0;i<3;i++)out.push(CHALLENGES[(wk+i*2)%CHALLENGES.length]);return out}
-  return {VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,PURSE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle}})();
+  return {VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,PURSE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

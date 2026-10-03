@@ -4,7 +4,7 @@
    ?dev=<any id> and the 'auth.signin' request, like the game's mock server.
    makeHandler({db, send, dev, verifyCfg}) builds the same handler for local runs (server/test/localws.js). */
 'use strict';
-const {makeRoutes,reconnect}=require('./routes.js');const C=require('./onlcore.js');const {verify}=require('./jwt.js');const store=require('./store.js');
+const {makeRoutes,reconnect,away}=require('./routes.js');const C=require('./onlcore.js');const {verify}=require('./jwt.js');const store=require('./store.js');
 const catalog=require('./catalog.json');
 function makeHandler({db,send,dev,verifyCfg,verifyFn=verify}){
   const route=makeRoutes({store:db,catalog,dev,pushConn:async(conn,t,d)=>{await send(conn,{push:t,d})},push:async(acct,t,d)=>{const a=await db.get('ACCT#'+acct,'PROFILE');if(a&&a.conn){const gone=await send(a.conn,{push:t,d});if(gone){a.conn=null;await db.put('ACCT#'+acct,'PROFILE',a)}}}});
@@ -15,7 +15,7 @@ function makeHandler({db,send,dev,verifyCfg,verifyFn=verify}){
       const a=(await db.get('ACCT#'+sub,'PROFILE'))||(name||!dev?{id:sub,name:C.cleanName(name||'Lanista')||'Lanista',since:Date.now()}:null);
       if(a){a.conn=conn;await db.put('ACCT#'+sub,'PROFILE',a);await reconnect(db,sub,conn)}
       await db.put('CONN#'+conn,'CONN',{acct:sub,ttl:Math.floor(Date.now()/1000)+86400});return {statusCode:200}}
-    if(rc.routeKey==='$disconnect'){await db.del('CONN#'+conn,'CONN');return {statusCode:200}}
+    if(rc.routeKey==='$disconnect'){const c=await db.get('CONN#'+conn,'CONN');await db.del('CONN#'+conn,'CONN');if(c&&c.acct){const a=await db.get('ACCT#'+c.acct,'PROFILE');if(a&&a.conn===conn)await away(db,c.acct,Date.now())}return {statusCode:200}}
     let m;try{m=JSON.parse(ev.body||'{}')}catch(e){return {statusCode:400}}
     const c=await db.get('CONN#'+conn,'CONN');const ctx={acct:c&&c.acct,conn};
     try{const out=await route(m.t,m.d,ctx);if(m.t==='auth.signin'&&out&&out.id){const a=await db.get('ACCT#'+out.id,'PROFILE');a.conn=conn;await db.put('ACCT#'+out.id,'PROFILE',a);await reconnect(db,out.id,conn)}

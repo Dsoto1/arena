@@ -31006,6 +31006,9 @@ div:has(> .tseat){min-width:0}.tseat{display:flex!important;gap:6px;align-items:
      surviving), the recruit kit (the class's weapons, no armor), an empty wallet. Coin earned in matches goes to the wallet; gear is bought between matches.
    • Prices 15 / 60 / 180 by market level; purses grow +10% per ranked bout survived in a row (streak, up to +100%).
    • Wagers: online wallets only, escrowed by the server, split among winning bets (5% to the host); fighters back only themselves.
+   • Anti-cheat: results by agreement (`agree`: every human reports the whole table; strict majority wins, 2 disagreeing humans →
+     void, no pay, no deaths, strikes for the minority); 3 strikes → matched only with other struck accounts; a ranked player away
+     3 minutes is dropped (a CPU takes the seat at an agreed input) and still faces the Fate.
    • Death: Ranked only, by the game's own Fate table (the event's result row says whether the gladiator survives).
      The dead go to the Hall of the Fallen only if they were great: died at Veteranus or above, or with a legendary feat
      (25+ ranked bouts survived, 500+ lifetime CF, or Commodus slain). Everyone else is erased (damnatio memoriae).
@@ -31079,10 +31082,22 @@ const ONLC=(function(){
   function settle(bets,winSeats){const pool=bets.reduce((a,b)=>a+b.amt,0);const cut=Math.floor(pool*WAGER.cut);const won=bets.filter(b=>winSeats.includes(b.seat));const wsum=won.reduce((a,b)=>a+b.amt,0);const pay={};
     if(!wsum){for(const b of bets)pay[b.by]=(pay[b.by]||0)+b.amt;return {payouts:pay,cut:0,refund:true}}
     let left=pool-cut;for(const b of won){const v=Math.floor((pool-cut)*b.amt/wsum);pay[b.by]=(pay[b.by]||0)+v;left-=v}return {payouts:pay,cut:cut+left,refund:false}}
+  /* ANTI-CHEAT — results by agreement. Every human reports the WHOLE results table (one row per seat) + an end hash.
+     agree(reports) → {table, void, minority:[acct…], unverified}: the table most reports share wins when it has a strict majority;
+     a lone human (the rest CPUs) is accepted but unverified; no majority (e.g. 2 humans disagree) → void: no pay, no deaths. */
+  const STRIKES_OUT=3, AWAY_MS=180000;
+  function cleanRow(r){r=r||{};return {seat:r.seat|0,won:!!r.won,place:Math.max(1,Math.min(8,r.place|0||4)),f:Math.max(0,Math.min(400,r.f|0)),coin:Math.max(0,Math.min(200,r.coin|0)),kills:Math.max(0,Math.min(20,r.kills|0)),survives:r.survives!==false,slew:Array.isArray(r.slew)?r.slew.filter(x=>x==='commodus'):[]}}
+  function cleanTable(t){return (Array.isArray(t)?t:[]).slice(0,8).map(cleanRow).sort((a,b)=>a.seat-b.seat)}
+  function agree(reports){const ids=Object.keys(reports);if(!ids.length)return {table:null,void:true,minority:[]};
+    const key=r=>JSON.stringify(cleanTable(r.table))+'|'+String(r.hash||'');const groups={};for(const a of ids){const k=key(reports[a]);(groups[k]=groups[k]||[]).push(a)}
+    const best=Object.entries(groups).sort((x,y)=>y[1].length-x[1].length)[0];
+    if(ids.length===1)return {table:cleanTable(reports[ids[0]].table),void:false,minority:[],unverified:true};
+    if(best[1].length*2>ids.length)return {table:cleanTable(reports[best[1][0]].table),void:false,minority:ids.filter(a=>!best[1].includes(a))};
+    return {table:null,void:true,minority:ids}}
   /* weekly challenges rotate with the week of the year */
   const CHALLENGES=[['Survive 3 ranked bouts',3,'survived'],['Earn 60 CF in one bout',60,'cf1'],['Win a bout at Capua',1,'win:3'],['Slay 5 beasts',5,'beasts'],['Finish 5 bouts',5,'bouts'],['Win with 20+ coin left',1,'rich']];
   function weekChallenges(t){const wk=Math.floor((t||0)/604800000);const out=[];for(let i=0;i<3;i++)out.push(CHALLENGES[(wk+i*2)%CHALLENGES.length]);return out}
-  return {VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,PURSE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle}})();
+  return {VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,PURSE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
 /* =====================================================================
    112-ONLINE · MULTIPLAYER → ONLINE (phase 1: the landing space, against a mock server)
@@ -31151,6 +31166,7 @@ const MOCK_ROUTES={
   'match.open':(w,d,me)=>{const M=w.matches[d.id];const L=w.lobbies[d.id];if(!M||!L)throw new Error('No such match.');if(L.host.id!==me)throw new Error('Only the host opens the match.');M.open=d.snap;mockPush('match.open',{id:d.id});return {}},
   'match.get':(w,d)=>{const M=w.matches[d.id];if(!M)throw new Error('No such match.');return {open:M.open,inputs:M.inputs.slice(d.from|0),seed:M.seed}},
   'match.input':(w,d,me)=>{const M=w.matches[d.id];const L=w.lobbies[d.id];if(!M||!L)throw new Error('No such match.');if(!L.players.some(p=>p.id===me))throw new Error('Not your match.');
+    if((d.in.seat|0)!==L.players.findIndex(p=>p.id===me)||d.in.k==='drop')throw new Error('That seat is not yours.');
     const inp={...d.in,from:me,seq:M.inputs.length};M.inputs.push(inp);mockPush('match.input',{id:d.id,in:inp});return {seq:inp.seq}},
   'match.snapreq':(w,d,me)=>{mockPush('match.snapreq',{id:d.id,to:d.to,from:me,seq:d.seq});return {}},
   'match.snap':(w,d,me)=>{mockPush('match.snap',{id:d.id,to:d.to,snap:d.snap,seq:d.seq,from:me});return {}},
@@ -31159,17 +31175,20 @@ const MOCK_ROUTES={
     if((ch.wallet||0)<L.ticket)throw new Error(`A ticket costs ${L.ticket} coin.`);ch.wallet-=L.ticket;L.tickets=(L.tickets||0)+1;L.pot=(L.pot||0)+L.ticket;return {lobby:L,char:ch}},
   'bet.place':(w,d,me)=>{const L=w.lobbies[d.id];if(!L)throw new Error('That game is gone.');const ch=onlMockChar(w,me);if(!ch)throw new Error('Wagers are paid from a living gladiator’s wallet.');
     const amt=d.amt|0,seat=d.seat|0;const why=ONLC.betOK(L,me,seat,amt,ch.wallet);if(why)throw new Error(why);ch.wallet-=amt;(L.bets=L.bets||[]).push({by:me,char:ch.id,seat,amt});L.pool=(L.pool||0)+amt;return {lobby:L,char:ch}},
-  'match.result':(w,d,me)=>{const L=w.lobbies[d.id];const ch=w.chars[d.char];if(!ch||ch.owner!==me)throw new Error('Not yours.');if(!ch.alive)throw new Error('The dead do not report.');
-    const M=w.matches[d.id]||(w.matches[d.id]={id:d.id,results:{}});if(M.results[me])return {char:ch,out:M.results[me].out,dup:1};
-    const out=ONLC.applyResult(ch,d.row,!!(L&&L.ranked));M.results[me]={row:d.row,hash:d.hash||'',out};
-    if(out.died){const e={name:ch.name,cls:ch.cls,rank:ch.died.rank,lifeCF:ch.lifeCF,survived:ch.survived,diedAt:Date.now(),why:out.hall?onlHallWhy(ch):''};if(out.hall)w.hall.unshift(e);
-      w.news.unshift(out.hall?['🪦',`${ch.name} fell. The Hall of the Fallen keeps the name.`]:['🌫',`${ch.name} fell and is forgotten.`])}
-    if(out.rankUp)w.news.unshift(['⚔',`${ch.name} is now ${ONLC.RANKS[ONLC.rankIdx(out.rankUp)].n}.`]);w.news=w.news.slice(0,12);
-    M.results[me].seat=d.seat|0;
-    if(L&&Object.keys(M.results).length>=L.players.filter(p=>!/^bot/.test(p.id)).length){L.status='done';
-      if((L.bets||[]).length){const wins=Object.values(M.results).filter(r=>r.row&&r.row.won).map(r=>r.seat);const st=ONLC.settle(L.bets,wins);
-        for(const [by,v] of Object.entries(st.payouts)){const c=onlMockChar(w,by);if(c)c.wallet+=v}const hc=onlMockChar(w,L.host.id);if(hc&&st.cut)hc.wallet+=st.cut;L.settled=st}}
-    return {char:w.chars[ch.id],out}},
+  'match.result':(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');const humans=L.players.filter(p=>!/^bot/.test(p.id)).map(p=>p.id);if(!humans.includes(me))throw new Error('Not your match.');
+    M.reports=M.reports||{};if(!M.reports[me])M.reports[me]={table:ONLC.cleanTable(d.table),hash:String(d.hash||'')};M.dropped=M.dropped||{};
+    if(M.status!=='done'&&humans.filter(a=>!M.dropped[a]).every(a=>M.reports[a])){const A=ONLC.agree(M.reports);M.status='done';M.outs={};
+      for(const a of A.minority){const P=w.accounts[a];if(P)P.strikes=(P.strikes||0)+1}
+      if(!A.void)L.players.forEach((p,i)=>{if(!humans.includes(p.id))return;const ch=onlMockChar(w,p.id);const row=A.table.find(r=>r.seat===i);if(!ch||!row)return;const out=ONLC.applyResult(ch,row,!!L.ranked);M.outs[p.id]=out;
+        if(out.died){const e={name:ch.name,cls:ch.cls,rank:ch.died.rank,lifeCF:ch.lifeCF,survived:ch.survived,diedAt:Date.now(),why:out.hall?onlHallWhy(ch):''};if(out.hall)w.hall.unshift(e);
+          w.news.unshift(out.hall?['🪦',`${ch.name} fell. The Hall of the Fallen keeps the name.`]:['🌫',`${ch.name} fell and is forgotten.`])}
+        if(out.rankUp)w.news.unshift(['⚔',`${ch.name} is now ${ONLC.RANKS[ONLC.rankIdx(out.rankUp)].n}.`])});
+      w.news=w.news.slice(0,12);L.status='done';
+      if((L.bets||[]).length){const wins=A.void?[]:A.table.filter(r=>r.won).map(r=>r.seat);const st=ONLC.settle(L.bets,wins);for(const [by,v] of Object.entries(st.payouts)){const c=onlMockChar(w,by);if(c)c.wallet+=v}const hc=onlMockChar(w,L.host.id);if(hc&&st.cut)hc.wallet+=st.cut;L.settled=st}
+      for(const a of humans)if(a!==me)mockPush('match.settled',{id:d.id,to:a,void:!!A.void,out:M.outs[a]||null,char:Object.values(w.chars).filter(c=>c.owner===a).sort((x,y)=>y.born-x.born)[0]||null})}
+    const mine=Object.values(w.chars).filter(c=>c.owner===me).sort((x,y)=>y.born-x.born)[0]||null;if(M.status==='done')return {char:mine,out:(M.outs||{})[me]||null,void:!!(M.outs&&!Object.keys(M.outs).length&&L.status==='done'&&ONLC.agree(M.reports).void)};return {pending:true}},
+  'match.drop':(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');const p=L.players[d.seat|0];if(!p||p.id===me)throw new Error('No one to drop.');
+    M.dropped=M.dropped||{};if(M.dropped[p.id])return {done:1};M.dropped[p.id]=true;const inp={k:'drop',seat:d.seat|0,from:'server',seq:M.inputs.length};M.inputs.push(inp);mockPush('match.input',{id:d.id,in:inp});return {done:1}},
   'hall.list':(w)=>w.hall.slice(0,60),
   'world.news':(w)=>({news:w.news.slice(0,8),online:Object.keys(w.accounts).length+37,challenges:ONLC.weekChallenges(Date.now())})};
 function onlMockChar(w,me){return Object.values(w.chars).find(c=>c.owner===me&&c.alive)||null}
@@ -31328,14 +31347,19 @@ function onlEnter(L){if(!ONL.char)return;const seats=onlSeatsFor(L);const mine=s
   return r}}
 {const base=gameOver;gameOver=async function(winners,reason){const on=S&&S.onl;const r=await base.apply(this,arguments);try{if(on&&ONL.live&&!ONL.live.reported)await onlReport(winners)}catch(e){console.error(e)}return r}}
 function onlRow(p,winners){const LR=S.lastResult||{};const row=(LR.rows||[]).find(x=>x.id===p.id)||{};const won=(winners||[]).some(w=>(w&&w.id)===p.id);
-  const order=(S.elimOrder||[]).map(o=>o.id);const alive=S.players.filter(q=>q.alive&&!q.exited).length;const out=order.indexOf(p.id);
-  const place=won?1:out<0?Math.min(S.players.length,2):Math.max(2,S.players.length-out);
-  return {won,place,f:row.f|0,coin:p.coin|0,kills:(p.trophies||[]).filter(t=>t.pk==='player').length,survives:row.survives!==false,slew:(p.trophies||[]).some(t=>/commodus/i.test(String(t.k||t.n||'')))?['commodus']:[]}}
-async function onlReport(winners){const L=ONL.live;L.reported=true;const p=S.players[L.seat];if(!p)return;const row=onlRow(p,winners);
-  const res=await NET.req('match.result',{id:L.id,char:L.char,seat:L.seat,row,hash:typeof onlHash==='function'?onlHash():''});ONL.char=res.char;const o=res.out;
-  const msg=o.died?(o.hall?`🪦 <b>${esc2(res.char.name)}</b> is dead. The Hall of the Fallen keeps the name.`:`🌫 <b>${esc2(res.char.name)}</b> is dead — and forgotten.`)
+  const order=(S.elimOrder||[]).map(o=>o.id);const out=order.indexOf(p.id);const place=won?1:out<0?Math.min(S.players.length,2):Math.max(2,S.players.length-out);
+  return {seat:S.players.indexOf(p),won,place,f:row.f|0,coin:p.coin|0,kills:(p.trophies||[]).filter(t=>t.pk==='player').length,survives:row.survives!==false,slew:(p.trophies||[]).some(t=>/commodus/i.test(String(t.k||t.n||'')))?['commodus']:[]}}
+/* ANTI-CHEAT: report the WHOLE table (every seat); the server pays out from the table the players agree on */
+async function onlReport(winners){const L=ONL.live;L.reported=true;if(!S.players[L.seat])return;const table=S.players.map(p=>onlRow(p,winners));
+  const res=await NET.req('match.result',{id:L.id,char:L.char,seat:L.seat,table,hash:typeof onlHash==='function'?onlHash():''});if(res.pending){ONL.waitSettle=L.id;setTimeout(()=>{if(typeof mToast==='function')mToast('⏳ Waiting for the other lanistas to confirm the result…')},2500);return}
+  onlSettled(res)}
+function onlSettled(res){if(res.char)ONL.char=res.char.alive?res.char:null;const o=res.out;let msg;
+  if(res.void)msg='⚖ The lanistas did not agree on the result — the match is void: no pay, no deaths.';
+  else if(!o)msg='⚖ The match is settled.';
+  else msg=o.died?(o.hall?`🪦 <b>${esc2(res.char.name)}</b> is dead. The Hall of the Fallen keeps the name.`:`🌫 <b>${esc2(res.char.name)}</b> is dead — and forgotten.`)
     :`💰 +${o.pay} coin · ⭐ +${o.cf} lifetime CF${o.rankUp?` · ⚔ now <b>${esc2(onlRank(o.rankUp).n)}</b>`:''}`;
   setTimeout(()=>{if(typeof mToast==='function')mToast(msg)},2500)}
+NET.on('match.settled',d=>{if(!d||!ONL.acct||(d.to&&d.to!==ONL.acct.id))return;if(ONL.waitSettle!==d.id)return;ONL.waitSettle=null;onlSettled(d)});
 
 {const st=document.createElement('style');st.textContent=`
 #onl{min-height:70vh}.onl-wrap{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px}
@@ -31398,7 +31422,9 @@ function onlmSeatOf(p){return p?S.players.indexOf(p):-1}
 function onlmHuman(i){return i>=0&&!!ONLM.owners[i]}
 function onlmOwner(){if(ONLM.override!=null)return ONLM.override;if(typeof RESPONDER!=='undefined'&&RESPONDER)return onlmSeatOf(RESPONDER);
   const c=cur();if(c&&!c.cpu)return onlmSeatOf(c);return ONLM.owners.findIndex(Boolean)}
-function onlmMine(){return onlmOwner()===ONLM.me}
+/* who may act on the board right now: never a CPU's turn (the lowest-human fallback is for windows only) */
+function onlmActor(){if(ONLM.override!=null)return ONLM.override;if(typeof RESPONDER!=='undefined'&&RESPONDER)return onlmSeatOf(RESPONDER);const c=cur();return c&&!c.cpu?onlmSeatOf(c):-1}
+function onlmMine(){return onlmActor()===ONLM.me||(!!CUR_MODAL&&onlmOwner()===ONLM.me)}
 function onlHash(){try{const x=JSON.stringify([S.turnNo,S.rotation,S.ri,RNG&&RNG.s,S.players.map(p=>[p.r,p.c,p.alive?1:0,p.exited?1:0,Math.round(p.cf||0),p.coin,p.hp,p.ap,p.keys,(p.items||[]).length,p.wR&&p.wR.key,p.wL&&p.wL.key]),(S.npcs||[]).map(n=>[n.t,n.r,n.c,n.hp,n.alive?1:0])]);return 'h'+hashStr(x)}catch(e){return ''}}
 /* ---------------- sending ---------------- */
 function onlmSend(inp){inp.h=onlHash();ONLM.hlog['n'+(ONLM.sent+1)]=inp.k==='modal'?inp.pre:inp.h;inp.seat=ONLM.me;inp.n=++ONLM.sent;NET.req('match.input',{id:S.onl.lobby,in:inp}).then(r=>{if(r&&Number.isInteger(r.seq)&&r.seq>=ONLM.next){ONLM.own.add(r.seq);onlmPump()}}).catch(e=>{if(typeof mToast==='function')mToast('⚠ The server did not take that move: '+esc(e.message))})}
@@ -31426,15 +31452,17 @@ for(const nm of ['popRule','eventBriefing']){try{const base=eval(nm);if(typeof b
   if(c&&c.cpu&&/offers a truce|proposes a trade/.test(t)){const no=(buttons||[]).find(b=>/decline|refuse|no\b|keep/i.test(b.label||''))||(buttons||[]).slice(-1)[0];return Promise.resolve(no?no.value:null)}
   const own=onlmOwner();if(!onlmHuman(own))return base.apply(this,arguments);
   if(own===ONLM.me){const pre=onlHash();const pr=base.apply(this,arguments);return Promise.resolve(pr).then(v=>{const inp={k:'modal',v:v===undefined?null:v,t:t.slice(0,60)};inp.pre=pre;onlmSend(inp);return v})}
-  return new Promise(res=>{ONLM.pend={res,t,seat:own,at:Date.now()};onlmWaitShow();onlmPump()})}}
+  const def=opt&&('close' in opt)?opt.close:((buttons||[]).slice(-1)[0]||{}).value??null;
+  return new Promise(res=>{ONLM.pend={res,t,seat:own,at:Date.now(),def};onlmWaitShow();onlmPump()})}}
 /* ---------------- receiving ---------------- */
 NET.on('match.input',d=>{if(!onlmOn()||!d||d.id!==S.onl.lobby)return;const inp=d.in;if(inp.from===ONL.acct.id||inp.seq<ONLM.next)return;if(!ONLM.q.some(x=>x.seq===inp.seq))ONLM.q.push(inp);ONLM.q.sort((a,b)=>a.seq-b.seq);onlmPump()});
-function onlmReady(inp){if(!S||S.over)return false;if(inp.k==='modal')return !!ONLM.pend;
-  return !S.busy&&!CUR_MODAL&&!ONLM.pend&&['choice','action','command'].includes(S.phase)&&onlmOwner()===inp.seat}
+function onlmReady(inp){if(!S||S.over)return false;if(inp.k==='void')return true;if(inp.k==='drop')return ONLM.pend?ONLM.pend.seat===inp.seat:(!S.busy&&!CUR_MODAL&&['choice','action','command'].includes(S.phase)&&onlmActor()===inp.seat);if(inp.k==='modal')return !!ONLM.pend;
+  return !S.busy&&!CUR_MODAL&&!ONLM.pend&&['choice','action','command'].includes(S.phase)&&onlmActor()===inp.seat}
 let ONLM_PUMP=0;
 function onlmPump(){clearTimeout(ONLM_PUMP);if(!onlmOn()||ONLM.resyncing)return;
   for(;;){while(ONLM.own.has(ONLM.next)){ONLM.own.delete(ONLM.next);ONLM.next++}if(!(ONLM.q.length&&ONLM.q[0].seq===ONLM.next))break;const inp=ONLM.q[0];if(!onlmReady(inp)){ONLM_PUMP=setTimeout(onlmPump,120);onlmWaitShow();return}
     ONLM.q.shift();ONLM.next=inp.seq+1;
+    if(inp.k==='void'){continue}if(inp.k==='drop'){onlmDrop(inp);continue}
     const mine=inp.k==='modal'?inp.pre:onlHash();if(inp.k==='modal'?inp.pre&&mine!==onlmPendHash():inp.h&&mine!==inp.h){onlmResync(inp);return}
     ONLM.hlog['s'+inp.seq]=inp.k==='modal'?onlmPendHash():onlHash();onlmApply(inp)}
   if(ONLM.q.length&&ONLM.q[0].seq>ONLM.next)onlmCatchUp();onlmWaitShow()}
@@ -31450,6 +31478,14 @@ async function onlmCatchUp(){if(ONLM.catching)return;ONLM.catching=true;try{cons
   for(const inp of g.inputs||[])if(inp.from===ONL.acct.id&&inp.seq>=ONLM.next)ONLM.own.add(inp.seq);ONLM.q.sort((a,b)=>a.seq-b.seq)}catch(e){}finally{ONLM.catching=false}onlmPump()}
 /* own inputs advance the shared counter too (the server echoes them back to everyone) */
 NET.on('match.input',d=>{if(!onlmOn()||!d||d.id!==S.onl.lobby)return;if(d.in.from===ONL.acct.id&&d.in.seq>=ONLM.next){ONLM.own.add(d.in.seq);onlmPump()}});
+/* ---------------- a player away too long: a CPU takes the seat, here, on every client ---------------- */
+function onlmDrop(inp){const p=S.players[inp.seat];if(!p)return;p.cpu=true;ONLM.owners[inp.seat]=null;log(`🔌 <b>${esc(p.name)}</b> left the arena — a CPU fights on in that seat (the Fate still waits).`,'big');
+  if(inp.seat===ONLM.me){ONLM.me=-1;if(typeof mToast==='function')mToast('🔌 You were away too long — a CPU took your seat. Your gladiator still faces the Fate.')}
+  ONLM.replay++;try{if(ONLM.pend){const P=ONLM.pend;ONLM.pend=null;P.res(P.def)}else if(S.phase==='command'){const b=document.createElement('button');b.dataset.act='cmddone';b.style.display='none';document.body.appendChild(b);try{b.click()}finally{b.remove()}}else{endTurn()}}finally{ONLM.replay--}onlmWaitShow()}
+/* waiting on someone for 3 minutes: ask the server to drop them (it only agrees if their connection really is gone) */
+setInterval(()=>{if(!onlmOn())return;const own=ONLM.pend?ONLM.pend.seat:onlmActor();if(!onlmHuman(own)||own===ONLM.me){ONLM.waitSince=0;return}
+  if(ONLM.pend||!S.busy){if(!ONLM.waitSince||ONLM.waitFor!==own){ONLM.waitSince=Date.now();ONLM.waitFor=own}
+    if(Date.now()-ONLM.waitSince>ONLC.AWAY_MS&&Date.now()-(ONLM.dropAt||0)>30000){ONLM.dropAt=Date.now();NET.req('match.drop',{id:S.onl.lobby,seat:own}).catch(()=>{})}}else ONLM.waitSince=0},5000);
 /* ---------------- resync ---------------- */
 function onlmResync(inp){ONLM.resyncs++;ONLM.lastResync={seq:inp.seq,k:inp.k,a:inp.a||inp.t||'',mine:inp.k==='modal'?onlmPendHash():onlHash(),theirs:inp.k==='modal'?inp.pre:inp.h,turn:S.turnNo,phase:S.phase,cur:cur()&&cur().name};ONLM.resyncing=true;ONLM.needAt=inp.seq;if(typeof mToast==='function')mToast('🔄 Out of step with the others — fetching their arena…');
   NET.req('match.snapreq',{id:S.onl.lobby,to:ONLM.owners[inp.seat],seq:inp.seq}).catch(()=>{});setTimeout(()=>{if(ONLM.resyncing){ONLM.resyncing=false;onlmPump()}},15000)}
@@ -31469,7 +31505,7 @@ async function onlJoinMatch(L,onl){if(typeof mToast==='function')mToast('⚔ Wai
   try{if(typeof menuHide==='function')menuHide()}catch(e){}S.startedAt=Date.now();later(()=>beginTurn(),60)}
 /* ---------------- whose move ---------------- */
 function onlmWaitShow(){clearTimeout(ONLM.waitT);ONLM.waitT=setTimeout(()=>{let el=document.getElementById('onlWait');const on=onlmOn();
-  const own=on?(ONLM.pend?ONLM.pend.seat:onlmOwner()):-1;const show=on&&onlmHuman(own)&&own!==ONLM.me&&(ONLM.pend||!S.busy);
+  const own=on?(ONLM.pend?ONLM.pend.seat:onlmActor()):-1;const show=on&&onlmHuman(own)&&own!==ONLM.me&&(ONLM.pend||!S.busy);
   document.body.classList.toggle('onl-off',!!(on&&!onlmMine()));
   if(!show){if(el)el.hidden=true;return}if(!el){el=document.createElement('div');el.id='onlWait';document.body.appendChild(el)}
   const p=S.players[own];el.innerHTML=`⏳ <b>${esc(p?p.name:'Another lanista')}</b> ${ONLM.pend?'is deciding':'is on the move'}…`;el.hidden=false},80)}

@@ -48,6 +48,15 @@ node test/localws.js 8787                     # the same Lambda on ws://127.0.0.
 ```
 The game's regression test `tools/tests/tonlws77.js` plays two windows against that local server.
 
+## Anti-cheat
+- The server alone holds dice seeds, move order, wallets, gear, ranks, wagers and deaths; every buy/bet/gladiator is checked
+  against the shared rules.
+- A move may only speak for the sender's own seat.
+- Results by agreement: every player reports the whole results table; the majority table is paid out. Two players who disagree
+  → the match is void (no pay, no deaths, wagers refunded) and both get a strike; 3 strikes → matched only with other struck accounts.
+- Leaving doesn't save a gladiator: after 3 minutes away a CPU takes the seat and the Fate still applies.
+- Not covered yet: peeking at hidden cards with browser tools (needs the game engine on the server — the bigger option).
+
 ## Efficiency notes (why it is cheap)
 - A move = one DynamoDB update (returns the seq and the players' connections) + one small put + one push to each other player.
 - The match record stays small (the 15 KB opening lives in its own item): DynamoDB bills updates by item size.
