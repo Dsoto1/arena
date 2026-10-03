@@ -6,3 +6,4 @@ tools/tests/*.png
 share39.png
 tools/reg/
 .regpage.html
+.claude/
