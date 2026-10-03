@@ -1131,7 +1131,14 @@ button.railhd.fold{all:unset;box-sizing:border-box;display:none;cursor:pointer;w
 .railhd .rcar{transition:transform .15s}.railgrp.shut .railhd .rcar{transform:rotate(-90deg)}#modal.full .rail .railgrp.shut>button:not(.railhd){display:none}
 .sliderow{display:grid;grid-template-columns:120px 1fr 40px minmax(0,1fr);gap:6px 8px;align-items:center;font-size:13px}.sliderow input[type=range]{width:100%;accent-color:var(--gold)}.statbudget{font:12px var(--mono);margin:4px 0}.statbudget.over{color:var(--blood2)}
 #audChip{position:fixed;left:12px;bottom:12px;z-index:3000;background:#241a10;border:1px solid var(--gold);border-radius:18px;padding:6px 12px;font-size:13px;color:var(--bone);cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.5)}
+#boot{position:fixed;inset:0;z-index:3000;background:radial-gradient(ellipse at 50% 26%,#2c1d10,#120c07 78%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;transition:opacity .35s ease}
+#boot img{width:min(390px,70vw);filter:drop-shadow(0 12px 44px rgba(0,0,0,.85))}#boot i{width:40px;height:40px;border:3px solid rgba(240,207,125,.2);border-top-color:#f0cf7d;border-radius:50%;animation:bootspin 1s linear infinite}
+#boot.out{opacity:0;pointer-events:none}@keyframes bootspin{to{transform:rotate(360deg)}}
+#boot{animation:bootgone .3s linear 12s forwards}@keyframes bootgone{to{opacity:0;visibility:hidden}} /* safety: never stuck, even if the script fails */@media (prefers-reduced-motion:reduce){#boot i{animation:none}}
 </style>
+
+<!-- v0.80: the page paints this first, so a reload never shows the empty arena; 120-v80fix lifts it once the menu (or a first window) is up; a CSS timer hides it after 12 s whatever happens -->
+<div id="boot" aria-hidden="true"><img src="assets/logo.png" alt=""><i></i></div>
 
 <header class="bar">
   <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.79</span></div>
