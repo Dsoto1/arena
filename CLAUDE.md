@@ -540,6 +540,8 @@ One global script; files are concatenated in order. Later "version modules" patc
   invitational steps), level 4 chest weapons, one armor level, printed pieces as examples, printed class cards; delete asks first;
   update notice + newer-save guard; menu: Saves beside Settings, no LAN/Continue; Online preview behind LOBBY77 with the AWS stack
   deployed (us-east-1). (Published as artifact Version 90; site update = play/index.html + play/version.json.)
+- **v0.78** Online: free live watching, tickets with your own stands turns (coin into the wager pot), parties by code, Familia 2 v 2 with
+  your party on one team; online protocol 2 (redeploy the server). (Published as artifact Version 91.)
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
