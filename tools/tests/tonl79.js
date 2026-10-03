@@ -1,4 +1,4 @@
-/* online v0.79: the pre-match room (1 lanista cannot start, chat), a gladiator's own look on the other screen, rejoin after a reload,
+/* online v0.79: the pre-match room (1 lanista cannot start, quick-chat phrases — v0.80: no free text), a gladiator's own look on the other screen, rejoin after a reload,
    abandon (Custom, eliminated) and the last lanista leaving shuts the match down */
 const http=require('http'),fs=require('fs'),path=require('path');
 const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.resolve(process.argv[2])),page=path.basename(process.argv[2]);
@@ -11,8 +11,8 @@ await setup(A,'Alpha','hero');await setup(B,'Beta','soldier');
 const look=await A.evaluate(async()=>{const c=await NET.req('char.edit',{char:ONL.char.id,look:{portrait:{skin:'#c68e5f',helm:'galea'},color:'#2255aa',token:{c1:'#2255aa',helm:'crested',shield:'scutum'}}});ONL.char=c;return c.look});
 const L=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:false,abandon:'fate'}));
 const solo=await A.evaluate(async id=>{try{await NET.req('lobby.start',{id});return 'started'}catch(e){return e.message}},L.id);
-await B.evaluate(async id=>{await NET.req('lobby.join',{id});await NET.req('lobby.chat',{id,text:'Ave, Alpha!'})},L.id);
-const chat=await A.evaluate(async id=>{await NET.req('lobby.chat',{id,text:'Ave, Beta.'});return (await NET.req('lobby.list')).find(x=>x.id===id).chat.map(m=>m.name+': '+m.text)},L.id);
+await B.evaluate(async id=>{await NET.req('lobby.join',{id});await NET.req('lobby.say',{id,q:'ave'})},L.id);
+const chat=await A.evaluate(async id=>{await NET.req('lobby.say',{id,q:'luck'});let free='';try{await NET.req('lobby.chat',{id,text:'free text'})}catch(e){free=e.message}return (await NET.req('lobby.chatlog',{id})).map(m=>m.name+': '+ONLC.QC_TEXT[m.q]).concat(free?[]:['FREE TEXT'])},L.id);
 const L2=await A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},L.id);
 await B.evaluate(L=>onlEnter(L),L2);
 const drive=async p=>{const r=await p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on||onlmMine()||ONLM.info>0)){const t=(document.querySelector('#mTitle')||{}).textContent||'';const pb=document.querySelector('#modal .mbtns .primary')?'#modal .mbtns .primary':document.querySelector('#modal .mbtns button')?'#modal .mbtns button':null;return pb?['sel',pb,'modal:'+t.slice(0,24)]:['','','modal?']}
