@@ -13,5 +13,5 @@ await pg.click('[data-lna="save"]');await pg.waitForTimeout(400);
 const o=await pg.evaluate(()=>({lan:CUSTOM.lanistas.length,rs:RS_KINDS.map(r=>r[0]).join(',')}));
 await pg.evaluate(()=>{document.querySelector('[data-st="tab"][data-v="rosters"]').click()});await pg.waitForTimeout(500);
 await pg.evaluate(()=>{const b=document.querySelector('[data-rs="tab"][data-v="lanistas"]');b&&b.click()});await pg.waitForTimeout(400);
-o.rsl=await pg.evaluate(()=>document.getElementById('studio').innerText.includes('Crispus'));
+o.rsl=await pg.evaluate(()=>document.getElementById('studio').textContent.includes('Crispus')); /* v0.77: printed lanistas sit in a folded list */
 console.log(JSON.stringify(o));console.log(errs.slice(0,4));await b.close()})();

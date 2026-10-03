@@ -25,8 +25,8 @@ o.deck=await pg.evaluate(()=>({deck:CUSTOM.pairings[0].deck,cards:pairDeckCards(
 await pg.screenshot({path:'st_special.png',fullPage:false});
 // roster
 await pg.click('[data-st="tab"][data-v="rosters"]');await pg.waitForTimeout(500);
-await pg.click('[data-rs="tab"][data-v="pairs"]');await pg.waitForTimeout(300);
-await pg.click('[data-rs="all"]');await pg.waitForTimeout(300);
+await pg.click('[data-rs77new]');await pg.waitForTimeout(300); /* v0.77: roster sets as a deck builder */
+await pg.click('[data-rs77all="pairs"]');await pg.waitForTimeout(300);
 await pg.fill('[data-rsf="name"]','Test set');
 await pg.click('[data-rs="save"]');await pg.waitForTimeout(400);
 o.rs=await pg.evaluate(()=>({n:CUSTOM.rosters.length,sel:CUSTOM.rosters[0].sel.pairs.length}));
