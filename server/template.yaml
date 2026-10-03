@@ -101,7 +101,7 @@ Resources:
       AllowedOAuthScopes: [openid, email, profile]
       CallbackURLs: [!Sub '${SiteUrl}/play/', !Sub '${SiteUrl}/play/index.html', 'http://localhost:8137/flavius-arena.html']
       LogoutURLs: [!Sub '${SiteUrl}/play/', !Sub '${SiteUrl}/play/index.html', 'http://localhost:8137/flavius-arena.html']
-      SupportedIdentityProviders: !If [HasGoogle, [Google], [COGNITO]]
+      SupportedIdentityProviders: !If [HasGoogle, [!Ref GoogleIdP], [COGNITO]]   # the Ref makes the client wait for the provider
       IdTokenValidity: 12
       AccessTokenValidity: 12
       RefreshTokenValidity: 30
