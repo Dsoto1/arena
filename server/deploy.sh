@@ -4,7 +4,11 @@
 #   GOOGLE_ID=xxx GOOGLE_SECRET=yyy sh deploy.sh you@example.com     with Google sign-in
 # Optional: STACK (default flavius-arena), REGION (default us-east-1), BUDGET (default 10), AUTH_PREFIX, DEV=true (test stack only)
 set -e
-EMAIL="$1"; [ -n "$EMAIL" ] || { echo "usage: sh deploy.sh you@example.com"; exit 1; }
+# pasted values can carry invisible characters (a carriage return, a tab, a space): strip them all
+clean(){ printf '%s' "$1" | tr -d '\r\n\t '; }
+EMAIL=$(clean "$1"); [ -n "$EMAIL" ] || { echo "usage: sh deploy.sh you@example.com"; exit 1; }
+[ -n "$GOOGLE_ID" ] && GOOGLE_ID=$(clean "$GOOGLE_ID"); [ -n "$GOOGLE_SECRET" ] && GOOGLE_SECRET=$(clean "$GOOGLE_SECRET")
+echo "Alert e-mail: [$EMAIL]   Google client: [${GOOGLE_ID:-none}]"
 case "$EMAIL" in *" "*|*googleusercontent*|*@*@*) echo "That e-mail looks mixed up: [$EMAIL]"; exit 1;; *@*.*) ;; *) echo "That is not an e-mail address: [$EMAIL]"; exit 1;; esac
 case "${GOOGLE_ID:-none}" in none|*.apps.googleusercontent.com) ;; *) echo "GOOGLE_ID should end in .apps.googleusercontent.com: [$GOOGLE_ID]"; exit 1;; esac
 STACK="${STACK:-flavius-arena}"; REGION="${REGION:-us-east-1}"
