@@ -622,6 +622,10 @@ One global script; files are concatenated in order. Later "version modules" patc
   8 printed classes move to the live template (104-cards74 classCard74) so rule changes update their cards. Still to come from him:
   Thracian Helm, Ornate Chest Armor, Chest Armor, Reinforced Arm Armor art; distinct art for the Iron Spaulder (it shares the look of
   the Manica's shoulder guard now).
+- **v0.81 art (his, intake in tools/art/armor81/, not wired yet):** higher-resolution art for 8 existing pieces (Reinforced Chest Armor,
+  Steel Helm, Flavius' Greaves, Iron Spaulder/Manica shoulder, Flavius' Bracers, Leather Greaves, Helm of Flavius, Hoplomachus Helm) + the NEW
+  Thracian Helm (his TTS list: L2 · head · 4 AP) — decided: the HERO starts with it (instead of the Steel Gated Helm, also L2 4 AP).
+  His TTS armor list (L/slot/AP/bonus) is the reference for stats — it also names Chest Armor (L2 chest 4) and Reinforced Arm Armor (L3 lower arm 3).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
