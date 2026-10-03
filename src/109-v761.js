@@ -81,3 +81,10 @@ const CHEST_W0_76=[...CHEST_W];
   if(d.chest)h=h.replace(/its card · Level 4 · [^<]*/,'its card · Level 4 · a chest prize — on the rolls it joins the Arena Chest’s draw');
   for(const cw of CUSTOM.weapons||[]){const wk=W['cw_'+cw.id];if(wk&&wk.cwChest)h=h.replace(new RegExp(`(<b>${esc(cw.name).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}</b> <span class="rc-sub">)`),'$1🗝 in the Arena Chest')}
   }catch(e){}return h}}
+
+/* ---- Main menu: no ▶ Continue (Manager mode's own menu has one); 📜 Saves shares the Settings row ---- */
+{const base=continue76;continue76=async function(){return null}}
+{const base=mmSaves76;mmSaves76=async function(){const r=await base.apply(this,arguments);try{const box=document.querySelector('#mainMenu .mmbtns');if(!box)return r;
+  const cb=box.querySelector('[data-mm="continue"]');if(cb)cb.remove();
+  const sv=box.querySelector('[data-mm="saves"]'),set=box.querySelector('[data-mm="settings"]');if(sv&&set&&sv.parentElement!==set.parentElement)set.after(sv)}catch(e){}return r}}
+{const st=document.createElement('style');st.textContent='#mainMenu .mmrow>[data-mm="saves"]{flex:1 1 0;min-width:0}#mainMenu .mmrow>[data-mm="saves"] small{display:none}';document.head.appendChild(st)}

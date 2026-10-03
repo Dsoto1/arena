@@ -10,7 +10,7 @@ o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   menuHide();startEvent({ev:'democritus',loc:6,seats:[{cls:'hero',cpu:false},{cls:'soldier',cpu:true}],opts:{spect:0}});await W8(2500);for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(150)}
   matchSlotPut('2',matchSnapshot('Test match'));S.over=true;
   openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;saveWorld(true);await W8(600);if(CUR_MODAL)CUR_MODAL.done(null);await W8(400);
-  menuShow();await W8(900);const cb=document.querySelector('#mainMenu [data-mm="continue"]');r.cont=!!cb&&/Ludus|season/.test(cb.textContent);r.saves=!!document.querySelector('#mainMenu [data-mm="saves"]');
+  menuShow();await W8(900);r.cont=!document.querySelector('#mainMenu [data-mm="continue"]')&&document.querySelector('#mainMenu [data-mm="saves"]').parentElement===document.querySelector('#mainMenu [data-mm="settings"]').parentElement; /* no Continue on the menu; Saves beside Settings */r.saves=!!document.querySelector('#mainMenu [data-mm="saves"]');
   savesHub76('matches');await W8(700);r.hub=!!document.querySelector('[data-hub76="careers"]');document.querySelector('[data-hub76="careers"]').click();await W8(500);r.car=!!document.querySelector('[data-hubcar]');
   if(CUR_MODAL)CUR_MODAL.done(null);await W8(400);return r});
 /* B · Play Now seat cards */
@@ -57,7 +57,7 @@ o.e=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));co
   const st0={...gStats(g)};const c0=m.coin;S.npcs[0].alive=false;S.npcs[0].hp=0;gameOver([S.players[0]],'Every beast is slain or tamed');await W8(1200);
   r.choose=/kills the Wolf/.test(document.querySelector('#modal').textContent);CUR_MODAL.done('st:str');await W8(1500);r.bonus=gStats(g).str===Math.min(99,st0.str+2)&&m.coin===c0+6&&MGR.tab==='practice';return r});
 const A=o.a,B=o.b,M=o.m,E=o.e;
-ok(A.cont&&A.saves,'▶ Continue + 📜 Saves on the menu');ok(A.hub&&A.car,'the Saves window');ok(B.chip&&B.cls&&B.you&&B.mind,'Play Now roster chip + seat cards');
+ok(A.cont&&A.saves,'📜 Saves beside Settings, no Continue');ok(A.hub&&A.car,'the Saves window');ok(B.chip&&B.cls&&B.you&&B.mind,'Play Now roster chip + seat cards');
 ok(M.ser&&M.ward&&M.medOff&&M.bed&&M.full,'the ward + beds');ok(M.medicus,'house medicus');ok(M.cards&&M.drill&&M.spar&&M.penPanel,'yard fighter cards');
 ok(M.temple,'temple offerings');ok(M.sbye,'sit this week out');ok(M.warn&&M.locked&&M.lockYard,'road lock + before-you-leave');ok(M.road,'road events');
 ok(M.clause&&M.rooms&&M.darling&&M.letter,'clauses, rooms, Darling, rival letters');ok(E.pen&&E.walls&&E.noPillars,'the beast pen');ok(E.choose&&E.bonus,'pen results');
