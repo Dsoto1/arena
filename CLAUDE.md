@@ -449,10 +449,12 @@ One global script; files are concatenated in order. Later "version modules" patc
   CustomAuthDomain/HostedZoneId (ACM cert DNS-validated in Route 53 + UserPoolDomain CustomDomainConfig + alias A record);
   deploy.sh looks up the zone for AUTH_DOMAIN (default login.flaviusrule.com; AUTH_DOMAIN=none to skip). After that deploy: Google
   redirect URI https://login.flaviusrule.com/oauth2/idpresponse, then play/online.json auth = https://login.flaviusrule.com.
-  ⚠ First deploy of the custom domain FAILED (CustomAuthPoolDomain CREATE_FAILED "Invalid request", rolled back); server-7 was then
-  deployed with AUTH_DOMAIN=none and works on the amazoncognito.com address. Suspect: one domain per user pool (the prefix domain
-  exists) → plan: swap the prefix domain for the custom one in one deploy, then the Google redirect URI + online.json. Waiting on his
-  describe-user-pool [Domain,CustomDomain] + acm list-certificates output. Until then deploy with AUTH_DOMAIN=none.
+  Custom domain DIAGNOSED (2026-10-03, CloudTrail): CreateUserPoolDomain got 'The specified SSL certificate doesn't exist…' from
+  CloudFront for a certificate CloudFormation had issued seconds before (CloudFront needs minutes to see it); a pool CAN have a custom
+  domain beside the prefix one (no swap). Fix: template param CustomAuthStage cert|live (condition CustomAuthLive); deploy.sh
+  AUTH_DOMAIN defaults to none and AUTH_STAGE to cert. Plan (after v0.80 is stable): deploy AUTH_DOMAIN=login.flaviusrule.com
+  (stage cert) → 15+ min later the same with AUTH_STAGE=live → add the Google redirect https://login.flaviusrule.com/oauth2/idpresponse
+  (keep the old one) → play/online.json auth = https://login.flaviusrule.com.
   After v0.79 (unreleased, 116 tail): Online opens on the main window even with no gladiator (`onlNoGladHTML` card on Play/Armory,
   empty slots in My Gladiators); actions in `ONL_NEEDS_GLAD` are caught on window-capture and ask first (`onlNeedGlad` → ask76 popup
   "You need a gladiator …", wording per action in `ONL_WHY`) before opening the creator (`ONL.newGlad`); creator stage = portrait +

@@ -17,6 +17,11 @@ Parameters:
     Type: String
     Default: none
     Description: 'Optional own sign-in address, e.g. login.flaviusrule.com (needs HostedZoneId). Google then names your site, not amazoncognito.com.'
+  CustomAuthStage:
+    Type: String
+    AllowedValues: [cert, live]
+    Default: cert
+    Description: 'cert = make and validate the certificate only. live = a LATER deploy (15+ minutes after cert) adds the sign-in domain and its DNS record. CloudFront cannot see a certificate issued seconds earlier, so one deploy that does both fails.'
   HostedZoneId:
     Type: String
     Default: none
@@ -46,6 +51,7 @@ Parameters:
 Conditions:
   HasGoogle: !Not [!Equals [!Ref GoogleClientId, none]]
   HasCustomAuth: !And [!Not [!Equals [!Ref CustomAuthDomain, none]], !Not [!Equals [!Ref HostedZoneId, none]]]
+  CustomAuthLive: !And [!Condition HasCustomAuth, !Equals [!Ref CustomAuthStage, live]]
 
 Resources:
   # ---------- data ----------
@@ -111,7 +117,7 @@ Resources:
           HostedZoneId: !Ref HostedZoneId
   CustomAuthPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
-    Condition: HasCustomAuth
+    Condition: CustomAuthLive
     Properties:
       Domain: !Ref CustomAuthDomain
       UserPoolId: !Ref UserPool
@@ -119,7 +125,7 @@ Resources:
         CertificateArn: !Ref AuthCert
   AuthAlias:
     Type: AWS::Route53::RecordSet
-    Condition: HasCustomAuth
+    Condition: CustomAuthLive
     Properties:
       HostedZoneId: !Ref HostedZoneId
       Name: !Ref CustomAuthDomain
@@ -319,11 +325,11 @@ Outputs:
     Value: !Sub 'wss://${WsApi}.execute-api.${AWS::Region}.amazonaws.com/live'
   SignInDomain:
     Description: The "auth" value for play/online.json.
-    Value: !If [HasCustomAuth, !Sub 'https://${CustomAuthDomain}', !Sub 'https://${AuthDomainPrefix}.auth.${AWS::Region}.amazoncognito.com']
+    Value: !If [CustomAuthLive, !Sub 'https://${CustomAuthDomain}', !Sub 'https://${AuthDomainPrefix}.auth.${AWS::Region}.amazoncognito.com']
   UserPoolClientId:
     Value: !Ref UserPoolClient
   UserPoolId:
     Value: !Ref UserPool
   GoogleRedirectUri:
     Description: Add this as an "Authorized redirect URI" on the Google OAuth client.
-    Value: !If [HasCustomAuth, !Sub 'https://${CustomAuthDomain}/oauth2/idpresponse', !Sub 'https://${AuthDomainPrefix}.auth.${AWS::Region}.amazoncognito.com/oauth2/idpresponse']
+    Value: !If [CustomAuthLive, !Sub 'https://${CustomAuthDomain}/oauth2/idpresponse', !Sub 'https://${AuthDomainPrefix}.auth.${AWS::Region}.amazoncognito.com/oauth2/idpresponse']
