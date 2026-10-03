@@ -615,6 +615,11 @@ One global script; files are concatenated in order. Later "version modules" patc
   1v2v1v2v2; ≥2 teams; engine supports N teams — team1 end + S.order by team); Custom: players pick their team on their seat, host can
   move anyone, optional auto-balance; Ranked: auto-balance (host picks the number of teams; even sizes, parties together, strengths
   mixed by ratings + gear). Playlist Ranked/Custom = find a room with that event and a free seat, else create one.
+- **Online QUICK CHAT + the Praeco — agreed (not built; ONE batch together with ROOMS, protocol 4; wait for his go):** full plan in
+  tools/plans/onl80-praeco.md. No free text anywhere online (room text box → phrases; phrases before/after AND a short set during the
+  match as bubbles, never game state); 📣 calls from a room to free lanistas who fit, Here now count + name pills (Invite/Join/Watch/Mute),
+  server-side Find me a fight (fixes twin games), ⚔ Again; names = active gladiator; NO horn (nothing listens offline); Mute + Quiet only.
+  Bundled fixes: AWS online count 0, room chat rewriting the lobby + lobby.list storm, full lobbies in hello/lobby.list (128 KB cap).
 - **Online — the design (after v0.76, Virgilante):** Multiplayer → Online opens a Halo-Infinite-style landing space: your online
   gladiator lit on a stage (mini/avatar + armor, name, class, mind, lifetime CF, wallet, bouts survived), party slots beside them
   (+ Invite, for team events), left rail Play · Lobby Browser · Spectate · Armory & Market · Character · Hall of the Fallen, event
