@@ -68,6 +68,35 @@ The game's regression test `tools/tests/tonlws77.js` plays two windows against t
 - 👥 Parties: share a 5-letter code (up to 4). The leader picks the game; the whole party sits down together, on one team in
   team events (Familia 2 v 2).
 
+## v0.80 (protocol 4, server-8): rooms, quick chat, the Forum, presence, the map
+Deploy this server BEFORE the v0.80 page (`sh deploy.sh <email>` with `AUTH_DOMAIN=none` until the custom-domain swap); older pages
+are refused with "Please reload".
+- **Rooms.** A lobby is a room of up to 8 lanistas: the event's seats sit (Classics exactly 4, Familia 4–8), the rest stand. The host
+  changes event, city, seats, teams, ticket and rules until the horns (`lobby.set`); fewer seats → the last to sit stand up. Ranked/Custom
+  is fixed at creation. 👑 `lobby.host` gives the room away (an unseated new host takes the old host's seat); a leaving host hands it to
+  the earliest joiner still there. `lobby.kick` removes someone for 5 minutes. Team events: players pick teams in Custom
+  (`lobby.team`), Ranked is balanced at the horns (parties together). At the horns the unseated leave with a "started without you" push.
+  Every `lobby.update` push carries the whole changed room, so clients never re-read the list; lists (`hello`, `lobby.list`) send
+  small rows (< 1 KB) for every room but your own.
+- **Quick chat.** No free text anywhere online. Phrases are codes (`lobby.say` in rooms, `match.say` as bubbles during and 10 minutes
+  after a match, `forum.say` on the landing), one per 3 s (Forum 10 s) per account. Room phrases are their own small items
+  (`CHAT#…`, kept a day), so a line never rewrites the room. 🔇 `forum.mute` (≤ 50): a muted lanista's phrases, calls and
+  invitations never reach you.
+- **The Praeco.** `lobby.quick` (the playlists) sits you in the fullest fitting room or opens one — never twin rooms; a new room is
+  cried in the Forum to free lanistas who fit (same strike group, Ranked = same rank, not fighting, at most 40, newest first).
+  📣 `lobby.call`: 3 calls a room (the opening counts), 2 minutes apart, only with a free seat. ✉ `lobby.invite`: one every 4 s,
+  the same lanista once in 2 minutes, 15 an hour. ⚔ `lobby.again`: a room like the last match, its lanistas invited.
+- **The Forum.** The landing's feed: phrases, opened rooms, calls and results (`FORUM` items, kept a day, the last 30 shown).
+  A daily meter (`WORLD FMETER#<day>`) stops live Forum pushes after 100,000 in a UTC day; lines are still kept and shown.
+- **Presence and the map.** An open socket marks the account `GSI1PK 'ON'` (no extra table); closing it — or a push that finds it
+  gone — clears that only if it is still the account's newest socket. `hello` returns `{n, fight, wait, zones}`: the only location
+  is the browser's time-zone name (e.g. `Europe/Rome`), counted per zone; no IP addresses are kept. The Lambda caches the list 20 s.
+- **Majority resync.** `match.hashq` / `match.hasha` relay state hashes between the live humans of a match; `match.odd` votes that a
+  seat is out of step — a strike once a match when a majority of 3+ humans agree.
+- **What it costs.** A phrase = 1 small write + one push per listener; a call/opening ≤ 40 pushes. At 10 players about $0.10 a
+  month; at 200 at once about $5–8 a month (mostly WebSocket messages, $1 per million). The Forum meter caps its pushes at about
+  $0.10 a day; the map adds about $0.05 a month at 10 players, $1–1.50 at 200. The budget switch still closes everything at the limit.
+
 ## Efficiency notes (why it is cheap)
 - A move = one DynamoDB update (returns the seq and the players' connections) + one small put + one push to each other player.
 - The match record stays small (the 15 KB opening lives in its own item): DynamoDB bills updates by item size.

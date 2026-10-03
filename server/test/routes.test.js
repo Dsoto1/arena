@@ -18,7 +18,7 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   await assert.rejects(route('char.edit',{char:z2.id,cls:'dragon'},Z),/eight printed/);
   const ZL=await route('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:false},Z);await assert.rejects(route('char.edit',{char:z2.id,name:'Busy'},Z),/Finish or leave/);
   await assert.rejects(route('lobby.start',{id:ZL.id},Z),/at least 2/,'no online match with one human');
-  await route('lobby.chat',{id:ZL.id,text:'Ave, what the fuck'},Z);assert.strictEqual((await db.get('LOBBY#'+ZL.id,'LOBBY')).chat[0].text,'Ave, what the f***');
+  await assert.rejects(route('lobby.chat',{id:ZL.id,text:'Ave'},Z),/Quick chat only/,'v0.80: no free text online');
   await route('lobby.set',{id:ZL.id,abandon:'fate',standsOff:true},Z);assert.strictEqual((await db.get('LOBBY#'+ZL.id,'LOBBY')).abandon,'fate');await route('lobby.leave',{id:ZL.id},Z);
   const cb=await route('char.create',{name:'Beta the Grim',cls:'soldier'},B);
   await assert.rejects(route('char.buy',{char:ca.id,item:'gladius'},A),/Costs 15 coin/);
@@ -111,4 +111,158 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   assert.strictEqual((await verify(mk(body),cfg,async()=>[jwk])).sub,'abc');
   await assert.rejects(verify(mk(body,crypto.generateKeyPairSync('rsa',{modulusLength:2048}).privateKey),cfg,async()=>[jwk]),/Bad signature/);
   await assert.rejects(verify(mk({...body,aud:'other'}),cfg,async()=>[jwk]),/Wrong audience/);
-  console.log('server routes: all checks passed')})().catch(e=>{console.error(e);process.exit(1)});
+  console.log('server routes: all checks passed');
+  await v80();console.log('server v0.80 (rooms, quick chat, Praeco, Forum, presence, resync): all checks passed')})().catch(e=>{console.error(e);process.exit(1)});
+
+/* ── v0.80 through the real handler (index.js makeHandler): presence, rooms, quick chat, the Praeco, the Forum, resync helpers ── */
+async function v80(){
+  const {makeHandler}=require('../src/index.js');
+  let T=1800000000000;const db=store.memory();const sent=[];const live=new Set();
+  const send=async(conn,msg)=>{if(!live.has(conn))return true;sent.push({conn,msg});return false};
+  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0});
+  let nc=0,rid=0;
+  const connect=async name=>{const conn='c'+(++nc);live.add(conn);const r=await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER)}});assert.strictEqual(r.statusCode,200);return conn};
+  const disconnect=async conn=>{live.delete(conn);await h({requestContext:{routeKey:'$disconnect',connectionId:conn}})};
+  const mark=()=>sent.length;
+  async function client(name,o={}){const cl={name,acct:'dev-'+name};cl.conn=await connect(name);
+    cl.req=async(t,d)=>{T+=10;const id=++rid;await h({requestContext:{routeKey:'$default',connectionId:cl.conn},body:JSON.stringify({t,id,d})});const m=sent.find(x=>x.conn===cl.conn&&x.msg.re===id);if(!m)throw new Error('no reply to '+t);if(!m.msg.ok)throw new Error(m.msg.err);return m.msg.d};
+    cl.got=(t,since=0)=>sent.slice(since).filter(x=>x.conn===cl.conn&&x.msg.push===t).map(x=>x.msg.d);
+    cl.reconnect=async()=>{cl.conn=await connect(name)};
+    await cl.req('auth.signin',{name:o.acctName||name.toUpperCase()+' Account'});if(o.glad!==false)cl.ch=await cl.req('char.create',{name:o.glad||name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});
+    if(o.tz!==undefined)await cl.req('hello',{all:1,tz:o.tz});return cl}
+  const prof=a=>db.get('ACCT#'+a,'PROFILE');const getL=id=>db.get('LOBBY#'+id,'LOBBY');
+  /* presence: $connect marks the account 'ON'; hello stores {glad,rank,tz} and sums the zones */
+  const ann=await client('ann',{tz:'Europe/Rome'}),bob=await client('bob',{tz:'America/New_York'}),cat=await client('cat',{tz:'Europe/Rome'});
+  let P=await prof(ann.acct);assert.strictEqual(P.GSI1PK,'ON');assert.strictEqual(P.conn,ann.conn);assert.deepStrictEqual(P.here,{glad:'Ann Gladius',rank:'tiro',tz:'Europe/Rome'});
+  const hc=await cat.req('hello',{all:1,tz:'Europe/Rome'});assert.strictEqual(hc.here.n,3);assert.strictEqual(hc.online,3);assert.deepStrictEqual(hc.here.zones,{'Europe/Rome':2,'America/New_York':1});assert.deepStrictEqual(hc.forum,[]);
+  assert.strictEqual((await cat.req('hello',{all:1,tz:'Not a zone!'})).here.zones['Not a zone!'],undefined,'bad zones are dropped');await cat.req('hello',{all:1,tz:'Europe/Rome'});
+  /* a reconnect, then the OLD socket closes: the newer connection is kept (conditional clear) */
+  const old=ann.conn;await ann.reconnect();await disconnect(old);P=await prof(ann.acct);assert.strictEqual(P.conn,ann.conn,'the old socket never clears the new one');assert.strictEqual(P.GSI1PK,'ON');
+  await disconnect(ann.conn);P=await prof(ann.acct);assert.strictEqual(P.conn,null);assert.strictEqual(P.GSI1PK,undefined);assert.strictEqual(P.offAt,T);
+  assert.strictEqual((await bob.req('hello',{all:1})).here.n,2,'gone from the map');assert.strictEqual((await bob.req('world.news',{})).online,2,'world.news counts the lanistas here');
+  await ann.reconnect();assert.strictEqual((await bob.req('hello',{all:1})).here.n,3);
+  /* a silently dead socket: the first push that finds it gone clears the presence */
+  live.delete(cat.conn);await ann.req('forum.say',{q:'ave'});P=await prof(cat.acct);assert.strictEqual(P.conn,null,'a gone push clears the connection');assert.strictEqual(P.GSI1PK,undefined);await cat.reconnect();
+
+  /* ROOMS: a classic always has 4 seats; the rest stand */
+  const dan=await client('dan'),eve=await client('eve'),fay=await client('fay');
+  let L=await ann.req('lobby.create',{ranked:false,seats:2,cry:false});assert.strictEqual(L.seats,4,'classics are always 4 seats');assert.deepStrictEqual(L.members.map(m=>m.id),[ann.acct]);assert.strictEqual(L.players[0].name,'Ann Gladius','names are gladiator names');
+  L=await ann.req('lobby.set',{id:L.id,seats:3});assert.strictEqual(L.seats,4);
+  for(const x of [bob,cat,dan])await x.req('lobby.join',{id:L.id});let m0=mark();L=await eve.req('lobby.join',{id:L.id});
+  assert.ok(C.memberOf(L,eve.acct)&&C.seatOf(L,eve.acct)<0,'the fifth lanista stands');assert.strictEqual(ann.got('lobby.update',m0).slice(-1)[0].lobby.members.length,5,'the push carries the changed room');
+  await assert.rejects(eve.req('lobby.sit',{id:L.id}),/Every seat is taken/);await assert.rejects(ann.req('lobby.stand',{id:L.id}),/host keeps a seat/);
+  await bob.req('lobby.stand',{id:L.id});L=await eve.req('lobby.sit',{id:L.id});assert.ok(C.seatOf(L,eve.acct)>=0);await assert.rejects(bob.req('lobby.sit',{id:L.id}),/Every seat/);
+  await assert.rejects(eve.req('char.edit',{char:eve.ch.id,name:'Busy Eve'}),/Finish or leave/,'members wait to edit');
+  await assert.rejects(bob.req('lobby.set',{id:L.id,ev:'familia'}),/Only the host/);
+  /* Familia: 4–8 seats; fewer seats → the last to sit stand up; settings reset ready */
+  L=await ann.req('lobby.set',{id:L.id,ev:'familia',seats:6});assert.ok(L.team);assert.strictEqual(L.seats,6);assert.ok(L.players.every(p=>p.team));
+  L=await bob.req('lobby.sit',{id:L.id});assert.strictEqual(L.players.length,5);L=await ann.req('lobby.set',{id:L.id,seats:9});assert.strictEqual(L.seats,8);
+  await ann.req('lobby.ready',{id:L.id,ready:true});L=await ann.req('lobby.set',{id:L.id,seats:4});assert.strictEqual(L.seats,4);assert.ok(C.seatOf(L,bob.acct)<0,'bob sat last and stands up');assert.ok(L.players.every(p=>!p.ready),'ready resets');
+  L=await ann.req('lobby.set',{id:L.id,seats:3});assert.strictEqual(L.seats,4,'Familia has at least 4 seats');
+  /* teams (Custom): yourself, or the host moves you */
+  L=await cat.req('lobby.team',{id:L.id,team:'B'});assert.strictEqual(L.players[C.seatOf(L,cat.acct)].team,'B');
+  await assert.rejects(dan.req('lobby.team',{id:L.id,who:cat.acct,team:'A'}),/Only the host moves/);L=await ann.req('lobby.team',{id:L.id,who:dan.acct,team:'A'});assert.strictEqual(L.players[C.seatOf(L,dan.acct)].team,'A');
+  /* 👑 Give Host: the unseated new host takes the old host's seat (and team) */
+  await fay.req('lobby.join',{id:L.id});L=await getL(L.id);const annSeat=C.seatOf(L,ann.acct),annTeam=L.players[annSeat].team;
+  L=await ann.req('lobby.host',{id:L.id,to:bob.acct});assert.strictEqual(L.host.id,bob.acct);assert.strictEqual(C.seatOf(L,bob.acct),annSeat);assert.strictEqual(L.players[annSeat].team,annTeam);assert.ok(C.seatOf(L,ann.acct)<0,'the old host stands');
+  /* kick: removed, told so, blocked for 5 minutes */
+  m0=mark();L=await bob.req('lobby.kick',{id:L.id,who:fay.acct});assert.ok(!C.memberOf(L,fay.acct));assert.ok(fay.got('lobby.update',m0).some(u=>u.kicked===1&&u.id===L.id),'the removed hears it');
+  await assert.rejects(fay.req('lobby.join',{id:L.id}),/removed you/);T+=C.KICK_MS+1000;await fay.req('lobby.join',{id:L.id});
+  /* the host leaves: the earliest joiner still there gets the room and a seat */
+  await bob.req('lobby.leave',{id:L.id});L=await getL(L.id);assert.strictEqual(L.host.id,ann.acct);assert.ok(C.seatOf(L,ann.acct)>=0);assert.strictEqual(L.status,'waiting');
+  const hw=await fay.req('hello',{all:1});assert.ok(hw.here.wait>=5,'waiting lanistas counted');assert.ok(!hw.lobbies.find(x=>x.id===L.id).lite,'your own room comes whole');
+  assert.ok((await bob.req('hello',{all:1})).lobbies.find(x=>x.id===L.id).lite,'other rooms come as lite rows');
+  /* the horns: the unseated leave the room with a push */
+  m0=mark();L=await ann.req('lobby.start',{id:L.id});assert.strictEqual(L.status,'live');assert.deepStrictEqual(L.unseated,[fay.acct]);assert.ok(!C.memberOf(L,fay.acct));
+  assert.ok(fay.got('lobby.update',m0).some(u=>u.started===1&&u.unseated===1),'started without you');assert.ok(cat.got('lobby.update',m0).some(u=>u.lobby&&u.lobby.status==='live'));
+  const fid=L.id;const hf=await fay.req('hello',{all:1});assert.strictEqual(hf.here.fight,4);
+  const who=await fay.req('who.list',{});assert.strictEqual(who.find(w=>w.id===cat.acct).st,'fight');assert.strictEqual(who.find(w=>w.id===bob.acct).st,'free');assert.strictEqual(who.find(w=>w.id===cat.acct).name,'Cat Gladius');assert.ok(!who.some(w=>w.id===fay.acct));
+  /* in the match: 💬 phrases (never inputs), hash relays, out-of-step votes */
+  m0=mark();await cat.req('match.say',{id:fid,q:'truce'});const ms=ann.got('match.say',m0)[0];assert.deepStrictEqual([ms.q,ms.by,ms.seat],['truce',cat.acct,C.seatOf(L,cat.acct)]);assert.strictEqual(cat.got('match.say',m0).length,0,'no echo');
+  await assert.rejects(cat.req('match.say',{id:fid,q:'struck'}),/Slow down/);T+=C.RATE.say;await assert.rejects(cat.req('match.say',{id:fid,q:'well'}),/Quick chat only/,'farewells wait for the end');
+  await assert.rejects(fay.req('match.say',{id:fid,q:'ha'}),/Not your match/);assert.strictEqual((await db.query('MATCH#'+fid,'IN#')).length,0,'phrases are never inputs');
+  m0=mark();await ann.req('match.hashq',{id:fid,seq:5});for(const x of [cat,dan,eve])assert.deepStrictEqual(x.got('match.hashq',m0)[0],{id:fid,seq:5,from:ann.acct});assert.strictEqual(ann.got('match.hashq',m0).length,0);
+  m0=mark();await cat.req('match.hasha',{id:fid,seq:5,to:ann.acct,h:'abc'});assert.deepStrictEqual(ann.got('match.hasha',m0)[0],{id:fid,seq:5,from:cat.acct,seat:C.seatOf(L,cat.acct),h:'abc'});assert.strictEqual(dan.got('match.hasha',m0).length,0);
+  await assert.rejects(fay.req('match.hashq',{id:fid,seq:1}),/Not your match/);
+  const eveSeat=C.seatOf(L,eve.acct);await assert.rejects(eve.req('match.odd',{id:fid,seat:eveSeat}),/No one/);
+  let od=await cat.req('match.odd',{id:fid,seat:eveSeat});assert.deepStrictEqual([od.votes,od.need,od.struck],[1,3,false]);od=await dan.req('match.odd',{id:fid,seat:eveSeat});assert.ok(!od.struck);
+  od=await dan.req('match.odd',{id:fid,seat:eveSeat});assert.strictEqual(od.votes,2,'one vote a voter');od=await ann.req('match.odd',{id:fid,seat:eveSeat});assert.ok(od.struck);
+  od=await ann.req('match.odd',{id:fid,seat:eveSeat});assert.ok(!od.struck,'a strike once a match');assert.strictEqual((await prof(eve.acct)).strikes,1);
+  /* the result: a 'res' line in the Forum; after-match phrases for 10 minutes */
+  const ft=L.players.map((p,i)=>({seat:i,won:p.team==='A',f:p.team==='A'?20+i:5,survives:true}));m0=mark();for(const x of [ann,cat,dan,eve])await x.req('match.result',{id:fid,table:ft,hash:'q'});
+  const fg=await fay.req('forum.get',{});const res=fg.slice(-1)[0];assert.strictEqual(res.k,'res');assert.strictEqual(res.ev,'familia');assert.deepStrictEqual(res.win.sort(),L.players.filter(p=>p.team==='A').map(p=>p.name).sort());
+  assert.strictEqual(res.cf,Math.max(...ft.filter(r=>r.won).map(r=>r.f)));assert.ok(fay.got('forum.line',m0).some(x=>x.line.k==='res'),'free lanistas hear the result');assert.ok(!ann.got('forum.line',m0).some(x=>x.line.k==='res'),'fighters get match.settled instead');
+  T+=C.RATE.say;await ann.req('match.say',{id:fid,q:'well'});await assert.rejects(dan.req('match.say',{id:fid,q:'truce'}),/Quick chat only/);T+=11*60e3;await assert.rejects(dan.req('match.say',{id:fid,q:'vale'}),/quiet/);
+  /* ⚔ Again: a room like the last one, the others invited, no Praeco line */
+  m0=mark();const ag=await ann.req('lobby.again',{id:fid});assert.strictEqual(ag.lobby.ev,'familia');assert.strictEqual(ag.lobby.loc,L.loc);assert.deepStrictEqual(ag.invited.sort(),[cat.acct,dan.acct,eve.acct].sort());
+  const iv=cat.got('lobby.invite',m0)[0];assert.strictEqual(iv.from,'Ann Gladius');assert.strictEqual(iv.fromId,ann.acct);assert.ok(iv.row.lite);assert.ok(!sent.slice(m0).some(x=>x.msg.push==='forum.line'),'Again cries nothing');
+  await assert.rejects(fay.req('lobby.again',{id:fid}),/Not your match/);await ann.req('lobby.leave',{id:ag.lobby.id});
+  /* the Praeco: lobby.quick never makes twin rooms; opening a room cries it to free lanistas who fit */
+  const gus=await client('gus'),hal=await client('hal'),ida=await client('ida'),jon=await client('jon'),kim=await client('kim');
+  await kim.req('forum.mute',{who:gus.acct,on:true});m0=mark();const q1=await gus.req('lobby.quick',{ev:'cassian'});assert.ok(q1.made);
+  const op=hal.got('forum.line',m0).map(x=>x.line).find(l=>l.k==='open');assert.ok(op&&op.row.id===q1.lobby.id&&op.name==='Gus Gladius','free lanistas hear the opening');assert.ok(JSON.stringify(op.row).length<1024,'a lite row is small');
+  assert.ok(!kim.got('forum.line',m0).length,'muted: no cries');assert.strictEqual((await fay.req('forum.get',{})).slice(-1)[0].k,'open','the opening is kept in the Forum');
+  const q2=await hal.req('lobby.quick',{ev:'cassian'});assert.ok(!q2.made);assert.strictEqual(q2.lobby.id,q1.lobby.id,'the playlist joins the waiting room');
+  const [q3,q4]=await Promise.all([ida.req('lobby.quick',{ev:'egidious'}),jon.req('lobby.quick',{ev:'egidious'})]);
+  const eg=(await db.byIndex('LOBBIES')).filter(x=>x.ev==='egidious'&&x.status==='waiting');assert.strictEqual(eg.length,1,'no twin rooms');assert.strictEqual(eg[0].players.length,2);assert.strictEqual(q3.lobby.id,q4.lobby.id);
+  assert.ok((await db.byIndex('LOBBIES_DONE')).some(x=>x.closed==='merged'&&x.ev==='egidious'),'both pressed at once: the later twin folded into the earlier');
+  /* 📣 calls: the opening counts, 3 a room, 2 minutes apart, only with a free seat */
+  await assert.rejects(gus.req('lobby.call',{id:q1.lobby.id}),/needs a breath — 120 s/);T+=C.RATE.cryGap;m0=mark();assert.strictEqual((await gus.req('lobby.call',{id:q1.lobby.id})).left,1);
+  assert.ok(bob.got('forum.line',m0).some(x=>x.line.k==='call'&&x.line.need===2&&x.line.row.id===q1.lobby.id),'the call says the free seats');assert.strictEqual(kim.got('forum.line',m0).length,0,'muted');assert.strictEqual(hal.got('forum.line',m0).length,0,'not to the room itself');
+  await assert.rejects(hal.req('lobby.call',{id:q1.lobby.id}),/breath/);T+=C.RATE.cryGap;await hal.req('lobby.call',{id:q1.lobby.id});T+=C.RATE.cryGap;await assert.rejects(gus.req('lobby.call',{id:q1.lobby.id}),/three times/);
+  await assert.rejects(bob.req('lobby.call',{id:q1.lobby.id}),/Join the room/);
+  /* the fan-out: at most RATE.fanCap free lanistas, the newest first; struck accounts never hear clean rooms; nobody fighting */
+  for(let i=0;i<45;i++){const c='cf'+i;live.add(c);await db.put('ACCT#dev-f'+i,'PROFILE',{id:'dev-f'+i,name:'F'+i,conn:c,GSI1PK:'ON',GSI1SK:T+i,here:{glad:'F'+i,rank:'tiro',tz:''}})}
+  live.add('csx');await db.put('ACCT#dev-sx','PROFILE',{id:'dev-sx',name:'SX',conn:'csx',GSI1PK:'ON',GSI1SK:T+99,strikes:3});
+  live.add('cfx');await db.put('ACCT#dev-fx','PROFILE',{id:'dev-fx',name:'FX',conn:'cfx',GSI1PK:'ON',GSI1SK:T+98,match:'Lsomewhere'});
+  m0=mark();const ql=await kim.req('lobby.create',{ev:'democritus'});const heard=sent.slice(m0).filter(x=>x.msg.push==='forum.line');
+  assert.strictEqual(heard.length,C.RATE.fanCap,'the fan-out stops at the cap');assert.ok(heard.some(x=>x.conn==='cf44')&&!heard.some(x=>x.conn==='cf0'),'newest first');
+  assert.ok(!heard.some(x=>x.conn==='csx'),'struck accounts are kept apart');assert.ok(!heard.some(x=>x.conn==='cfx'),'fighters are not called');
+  /* ✉ invites: rules, rates, mutes */
+  await assert.rejects(kim.req('lobby.invite',{id:ql.id,to:'dev-nobody'}),/Not in the arena/);await assert.rejects(kim.req('lobby.invite',{id:ql.id,to:'dev-sx'}),/cannot join/);
+  await assert.rejects(kim.req('lobby.invite',{id:ql.id,to:'dev-fx'}),/Fighting right now/);await assert.rejects(bob.req('lobby.invite',{id:ql.id,to:fay.acct}),/Join the room/);
+  m0=mark();await kim.req('lobby.invite',{id:ql.id,to:bob.acct});const bi=bob.got('lobby.invite',m0)[0];assert.strictEqual(bi.from,'Kim Gladius');assert.strictEqual(bi.row.id,ql.id);
+  await assert.rejects(kim.req('lobby.invite',{id:ql.id,to:fay.acct}),/Slow down/);T+=C.RATE.invGap;await assert.rejects(kim.req('lobby.invite',{id:ql.id,to:bob.acct}),/invited them already/);
+  await bob.req('forum.mute',{who:kim.acct,on:true});T+=C.RATE.invSame;m0=mark();await kim.req('lobby.invite',{id:ql.id,to:bob.acct});assert.strictEqual(bob.got('lobby.invite',m0).length,0,'a muting lanista never hears it');
+  assert.deepStrictEqual((await bob.req('forum.mute',{who:kim.acct,on:false})).mutes,[]);
+  T=Math.ceil(T/3600e3)*3600e3+1000;let ok=0;for(let i=0;i<20;i++){T+=C.RATE.invGap;try{await kim.req('lobby.invite',{id:ql.id,to:'dev-f'+i});ok++}catch(e){assert.match(e.message,/this hour/);break}}assert.strictEqual(ok,C.RATE.invHour,'15 invitations an hour');
+  T+=3600e3;await kim.req('lobby.invite',{id:ql.id,to:'dev-f30'});
+  await bob.req('lobby.join',{id:ql.id});T+=C.RATE.invSame;await assert.rejects(kim.req('lobby.invite',{id:ql.id,to:bob.acct}),/Already in the room/);
+  /* Ranked: the same rank only (calls and invites) */
+  const Pd=await prof(fay.acct);Pd.here={...Pd.here,rank:'gregarius'};await db.put('ACCT#'+fay.acct,'PROFILE',Pd);
+  const rq=await eve.req('lobby.create',{ranked:true,ev:'cassian',cry:false});await assert.rejects(eve.req('lobby.invite',{id:rq.id,to:fay.acct}),/Ranked: Tiro only/);
+  const F44=await prof('dev-f44');F44.here.rank='gregarius';await db.put('ACCT#dev-f44','PROFILE',F44);
+  T+=C.RATE.cryGap;m0=mark();await eve.req('lobby.call',{id:rq.id});const rh=sent.slice(m0).filter(x=>x.msg.push==='forum.line').map(x=>x.conn);
+  assert.ok(!rh.includes('cf44')&&rh.includes('cf43'),'Ranked calls reach the same rank only');
+  /* 💬 room phrases: codes only, 3 s apart, their own CHAT# items, ✓ Ready marks the seat, the last 40 kept */
+  T+=C.RATE.say;m0=mark();const sy=await kim.req('lobby.say',{id:ql.id,q:'ave'});assert.deepStrictEqual([sy.line.q,sy.line.name],['ave','Kim Gladius']);assert.strictEqual(bob.got('lobby.say',m0)[0].line.q,'ave');assert.strictEqual(kim.got('lobby.say',m0).length,0);
+  await assert.rejects(kim.req('lobby.say',{id:ql.id,q:'luck'}),/Slow down/);await assert.rejects(bob.req('lobby.say',{id:ql.id,q:'Ave you fools'}),/Quick chat only/);await assert.rejects(bob.req('lobby.say',{id:ql.id,q:'truce'}),/Quick chat only/,'match phrases stay in matches');
+  await assert.rejects(fay.req('lobby.say',{id:ql.id,q:'ave'}),/Join the game/);
+  await bob.req('lobby.say',{id:ql.id,q:'ready'});assert.ok((await getL(ql.id)).players.find(p=>p.id===bob.acct).ready,'✓ Ready marks the seat');
+  await kim.req('forum.mute',{who:bob.acct,on:true});T+=C.RATE.say;m0=mark();await bob.req('lobby.say',{id:ql.id,q:'luck'});assert.strictEqual(kim.got('lobby.say',m0).length,0,'muted phrases are dropped');
+  for(let i=0;i<42;i++){T+=C.RATE.say;await kim.req('lobby.say',{id:ql.id,q:C.QC.room[i%C.QC.room.length]})}
+  const log=await bob.req('lobby.chatlog',{id:ql.id});assert.strictEqual(log.length,C.CHAT_KEEP);assert.ok(log[0].at<log[39].at,'oldest first');assert.strictEqual(log[39].by,kim.acct);
+  assert.deepStrictEqual((await getL(ql.id)).chat||[],[],'phrases never rewrite the room');await assert.rejects(fay.req('lobby.chatlog',{id:ql.id}),/Join the game/);
+  /* the Forum: phrases from lanistas with a gladiator, 10 s apart, the last 30, mutes, the daily meter */
+  const nog=await client('nog',{glad:false});await assert.rejects(nog.req('forum.say',{q:'ave'}),/Make a gladiator/);await assert.rejects(fay.req('forum.say',{q:'Free text!'}),/Quick chat only/);
+  T+=C.RATE.forum;m0=mark();const fs1=await fay.req('forum.say',{q:'anyc'});assert.strictEqual(fs1.line.name,'Fay Gladius');assert.ok(nog.got('forum.line',m0).some(x=>x.line.q==='anyc'&&x.line.k==='say'));assert.ok(!fay.got('forum.line',m0).length,'no echo');
+  await assert.rejects(fay.req('forum.say',{q:'vale'}),/Slow down/);
+  const stale=(await nog.req('hello',{all:1})).here.n;await bob.reconnect();assert.strictEqual((await nog.req('hello',{all:1})).here.n,stale+1,'a socket older than 2 h 05 is not counted until it reconnects');
+  await nog.req('forum.mute',{who:fay.acct,on:true});T+=C.RATE.forum;m0=mark();await fay.req('forum.say',{q:'vale'});assert.ok(!nog.got('forum.line',m0).length,'muted');assert.ok(bob.got('forum.line',m0).length,'others still hear it');
+  const day=new Date(T).toISOString().slice(0,10);await db.put('WORLD','FMETER#'+day,{n:C.RATE.meterDay});T+=C.RATE.forum;m0=mark();await fay.req('forum.say',{q:'well'});
+  assert.ok(!sent.slice(m0).some(x=>x.msg.push==='forum.line'),'over the daily meter: no pushes');const fl=await nog.req('forum.get',{});assert.strictEqual(fl.slice(-1)[0].q,'well','but the line is kept');assert.ok(fl.length<=30);
+  for(let i=0;i<35;i++)await db.put('FORUM','L#'+String(T+i).padStart(13,'0')+'#x',{k:'say',by:'x',q:'ave',at:T+i});const f30=await nog.req('forum.get',{});assert.strictEqual(f30.length,30);assert.ok(f30[0].at<f30[29].at,'newest last');
+  assert.strictEqual((await nog.req('hello',{all:1})).forum.length,30,'hello carries the Forum');
+  /* Ranked Familia: teams are balanced at the horns, a party stays together */
+  const r1=await client('rua'),r2=await client('rub'),r3=await client('ruc'),r4=await client('rud');
+  const pt=await r1.req('party.create',{});await r2.req('party.join',{code:pt.code});await assert.rejects(r2.req('lobby.quick',{ev:'familia'}),/leader picks/);
+  const RF=await r1.req('lobby.create',{ranked:true,ev:'familia',cry:false});assert.ok(RF.autoBal);assert.strictEqual(RF.members.length,2,'the party comes in together');
+  await r3.req('lobby.join',{id:RF.id});await r4.req('lobby.join',{id:RF.id});await assert.rejects(r3.req('lobby.team',{id:RF.id,team:'A'}),/Ranked teams are balanced/);
+  const RS=await r1.req('lobby.start',{id:RF.id});const tm=Object.fromEntries(RS.players.map(p=>[p.id,p.team]));assert.strictEqual(tm[r1.acct],tm[r2.acct],'the party fights together');assert.notStrictEqual(tm[r3.acct],tm[r1.acct]);assert.strictEqual(tm[r3.acct],tm[r4.acct]);
+  /* hello stays well under the 128 KB frame with 30 full rooms (lite rows) */
+  const big={portrait:Object.fromEntries(Array.from({length:30},(_,i)=>['k'+i,'x'.repeat(30)]))};
+  for(let i=0;i<30;i++){const X=C.newLobby({ev:'democritus'},{id:'dev-b'+i,name:'B'+i,char:'c'+i,rank:'tiro'},'LB'+i,T);
+    for(let k=0;k<4;k++)C.roomJoin(X,[{id:'dev-b'+i+'x'+k,name:'B'+k,char:'c',rank:'tiro',kit:{cls:'hero',name:'B',stats:{...C.START_STATS},gear:['gladius'],look:big}}],T);await db.put('LOBBY#'+X.id,'LOBBY',{...X,GSI1PK:'LOBBIES',GSI1SK:T,ttl:9e9})}
+  const hb=await nog.req('hello',{all:1});const hbs=JSON.stringify(hb).length;assert.ok(hbs<128*1024,'hello < 128 KB: '+hbs);const lb=hb.lobbies.filter(x=>x.id.startsWith('LB'));assert.strictEqual(lb.length,30);
+  assert.ok(lb.every(x=>x.lite&&JSON.stringify(x).length<1024),'lite rows < 1 KB');assert.ok(JSON.stringify(C.newLobby({},{id:'x',name:'x'},'x',T)).length>0);
+}
