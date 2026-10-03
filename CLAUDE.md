@@ -639,6 +639,15 @@ One global script; files are concatenated in order. Later "version modules" patc
   then the border on top. Recipe: tools/art/ptokens81/recolor.py (preview in tools/art/ptokens81/custom_preview.png).
 - **v0.81 tooling:** smartreg/runreg kill a test at 400 s; t12 needs ~430 s alone → scale the limit by each test's recorded time.
   Rules & Strategy's words-of-power text still says "click the version button" (since v0.79 that opens What's new) → "press C on the main menu".
+- **Online decisions (his, for v0.81+):** online CF uses the wheat icon (ICO.wheat) everywhere; the Online ludus = **Domus** — 4 gladiators
+  (GLAD_MAX 3→4, server change), each lanista NAMES their house (word-filtered), ONE active gladiator; online gladiators wear SCULPTED tokens
+  (the Studio sculpt bench in the online creator; shown to every viewer whatever their token style; CPU seats/beasts keep the viewer's style;
+  board token only, no portrait sculpt; existing gladiators auto-converted from their parts). Tokens carry NO weapons/armor except lower padded
+  arm or lower padded leg. Hide the sign-in card's "Online server" box; guests may watch without signing in (read-only); invites expire
+  (countdown, die with the room); playlists scroll sideways on narrow screens, each with its own border tone; a reported match is never
+  re-entered (the stale "… is on the move" banner bug). GEAR ECONOMY idea (his, design questions pending): brought gear can be lost
+  (destroyed/taken), owner history on looted pieces, repair of pieces destroyed in a match you survived, Arena Chest for high ranks
+  (CF → RNG named weapons with rarities/extra stats) + a special playlist where only those may be used.
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
