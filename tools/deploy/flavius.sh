@@ -1,6 +1,8 @@
 #!/bin/bash
 # flavius.sh — one helper for every Flavius Rule deployment, run in AWS CloudShell (us-east-1).
 #
+#   bash flavius.sh release                                 EVERYTHING in the right order, from the files uploaded here:
+#                                                           server zip → game zip → privacy.html (each only if present) → status
 #   bash flavius.sh game   flavius-site-update-v0.80.zip   the game: play/assets (if any) → play/index.html → play/version.json
 #   bash flavius.sh site   flavius-site-v0.78.zip          the whole website (never touches play/ or FlaviusSiteMedia/)
 #   bash flavius.sh page   privacy.html                    one file at the site root (or: page file.css some/folder/file.css)
@@ -127,8 +129,20 @@ cmd_status(){ set +e +o pipefail; say "What is live   (green = fine · yellow = 
   [ "$pc" = "200" ] && G "privacy page" "/privacy" || Y "privacy page" "/privacy answers $pc (Google's consent screen links to it)"
   echo; if [ "$RN" -gt 0 ]; then printf '\033[1;31m%s to fix now\033[0m' "$RN"; elif [ "$YN" -gt 0 ]; then printf '\033[1;33mAll working — %s worth a look\033[0m' "$YN"; else printf '\033[1;32mAll green\033[0m'; fi; echo; }
 
+# one command per release: the newest server zip, the newest game zip and privacy.html found here, in the safe order
+cmd_release(){ local here; here=$(pwd)
+  local srv gam pri; srv=$(ls -t "$here"/flavius-server-*.zip 2>/dev/null | head -1 || true); gam=$(ls -t "$here"/flavius-site-update-*.zip 2>/dev/null | head -1 || true)
+  pri=""; [ -f "$here/privacy.html" ] && pri="$here/privacy.html"
+  [ -n "$srv$gam$pri" ] || die "Nothing to release here. Upload the server zip, the game zip and/or privacy.html first (Actions → Upload file)."
+  say "Release plan"; echo "  1 server : ${srv:-(none uploaded — skipped)}"; echo "  2 game   : ${gam:-(none uploaded — skipped)}"; echo "  3 page   : ${pri:-(none uploaded — skipped)}"
+  if [ "${DRY:-}" != 1 ]; then read -r -p "Go? [y/N] " ok; case "$ok" in y|Y|yes) ;; *) die "Stopped — nothing changed.";; esac; fi
+  [ -n "$srv" ] && { cmd_server "$srv"; cd "$here"; }
+  [ -n "$gam" ] && { cmd_game "$gam"; cd "$here"; }
+  [ -n "$pri" ] && { cmd_page "$pri"; cd "$here"; }
+  cmd_status; }
+
 CMD="${1:-}"; shift || true
 case "$CMD" in
-  game) cmd_game "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; server) cmd_server "$@";; status) cmd_status;;
+  release) cmd_release;; game) cmd_game "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; server) cmd_server "$@";; status) cmd_status;;
   *) sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//';;
 esac
