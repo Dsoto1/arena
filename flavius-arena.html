@@ -31985,7 +31985,13 @@ body.onlarena #btnExport,body.onlarena #btnTicket,body.onlarena #btnBets,body.on
 const ONL_NEEDS_GLAD=new Set(['quick','join','newgame','host','bet','betgo','ticket','buy','pinvite','pjoin','start','ready']);
 /* on window, capturing: runs before the Online window's own click handlers */
 window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-onl]');if(!b||ONL.char||!ONL.acct)return;if(!ONL_NEEDS_GLAD.has(b.dataset.onl))return;
-  e.preventDefault();e.stopImmediatePropagation();ONL.newGlad=true;ONL.creating=null;onlRedraw();if(typeof mToast==='function')mToast('⚔ Make your gladiator first — then the sand is yours.')},true);
+  e.preventDefault();e.stopImmediatePropagation();onlNeedGlad(b.dataset.onl)},true);
+/* ask first (a small centred popup over the Online window — never a second modal) */
+const ONL_WHY={quick:'to fight in a playlist',join:'to join a game',newgame:'to host a game',host:'to host a game',start:'to start a game',ready:'to take a seat',
+  bet:'to place a wager — it is paid from a gladiator’s wallet',betgo:'to place a wager — it is paid from a gladiator’s wallet',ticket:'to buy a ticket — it is paid from a gladiator’s wallet',
+  buy:'to buy gear',pinvite:'to form a party',pjoin:'to join a party'};
+async function onlNeedGlad(act){const go=typeof ask76==='function'?await ask76('⚔ You need a gladiator',`<p style="margin:0">You need a gladiator ${esc2(ONL_WHY[act]||'for that')}. Make one now? It takes a minute: a name and a class.</p><p class="rc-sub" style="margin:6px 0 0">Watching live matches and the Hall of the Fallen are open without one.</p>`,'⚔ Make my gladiator','Not now'):true;
+  if(!go)return;ONL.newGlad=true;ONL.creating=null;onlRedraw()}
 function onlNoGladHTML(what){return `<div class="card2 onl-noglad"><div class="onl-ngfig">${onlMini('hero',96)}</div><div><b>No gladiator yet</b><p class="rc-sub" style="margin:4px 0 8px">${what} Watching live matches and the Hall of the Fallen are open to everyone.</p>
   <button type="button" class="btn primary" data-onl="gnew">⚔ Make your gladiator</button></div></div>`}
 {const base=onlPlayHTML;onlPlayHTML=function(){if(ONL.char)return base.apply(this,arguments);
