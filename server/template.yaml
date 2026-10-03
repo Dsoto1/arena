@@ -1,0 +1,215 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  Flavius Rule — the Online Arena. A WebSocket API (API Gateway) with one Lambda, one DynamoDB table,
+  Cognito sign-in with Google, and a monthly budget alarm. Deploy from CloudShell with server/deploy.sh.
+
+Parameters:
+  SiteUrl:
+    Type: String
+    Default: https://flaviusrule.com
+    Description: Where the game is served (no trailing slash). Sign-in returns to SiteUrl/play/.
+  AuthDomainPrefix:
+    Type: String
+    Default: flaviusrule-arena
+    AllowedPattern: '^[a-z0-9-]{3,60}$'
+    Description: Prefix for the Cognito sign-in page (https://<prefix>.auth.<region>.amazoncognito.com). Must be unused in this region.
+  GoogleClientId:
+    Type: String
+    Description: OAuth client ID from Google Cloud Console (APIs & Services > Credentials). Leave "none" to deploy without Google first.
+    Default: none
+  GoogleClientSecret:
+    Type: String
+    NoEcho: true
+    Default: none
+    Description: The matching client secret (stored by Cognito, never shown).
+  AlertEmail:
+    Type: String
+    Description: Where the budget alarm and nothing else is sent.
+  MonthlyBudgetUSD:
+    Type: Number
+    Default: 10
+    Description: Alarm when the month's forecast passes this (the stack never stops itself; the e-mail is the warning).
+  DevNames:
+    Type: String
+    AllowedValues: ['false', 'true']
+    Default: 'false'
+    Description: 'true only on a test stack: allows signing in with a typed name instead of Google.'
+
+Conditions:
+  HasGoogle: !Not [!Equals [!Ref GoogleClientId, none]]
+
+Resources:
+  # ---------- data ----------
+  Table:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - {AttributeName: PK, AttributeType: S}
+        - {AttributeName: SK, AttributeType: S}
+        - {AttributeName: GSI1PK, AttributeType: S}
+        - {AttributeName: GSI1SK, AttributeType: N}
+      KeySchema:
+        - {AttributeName: PK, KeyType: HASH}
+        - {AttributeName: SK, KeyType: RANGE}
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - {AttributeName: GSI1PK, KeyType: HASH}
+            - {AttributeName: GSI1SK, KeyType: RANGE}
+          Projection: {ProjectionType: ALL}
+      TimeToLiveSpecification: {AttributeName: ttl, Enabled: true}
+      PointInTimeRecoverySpecification: {PointInTimeRecoveryEnabled: true}
+
+  # ---------- sign-in ----------
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: flavius-arena-players
+      UsernameAttributes: [email]
+      AutoVerifiedAttributes: [email]
+      Schema:
+        - {Name: email, Required: true, Mutable: true, AttributeDataType: String}
+        - {Name: name, Required: false, Mutable: true, AttributeDataType: String}
+  GoogleIdP:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Condition: HasGoogle
+    Properties:
+      UserPoolId: !Ref UserPool
+      ProviderName: Google
+      ProviderType: Google
+      ProviderDetails:
+        client_id: !Ref GoogleClientId
+        client_secret: !Ref GoogleClientSecret
+        authorize_scopes: openid email profile
+      AttributeMapping: {email: email, name: name}
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: !Ref AuthDomainPrefix
+      UserPoolId: !Ref UserPool
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
+      ClientName: flavius-arena-web
+      GenerateSecret: false
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows: [code]
+      AllowedOAuthScopes: [openid, email, profile]
+      CallbackURLs: [!Sub '${SiteUrl}/play/', 'http://localhost:8137/flavius-arena.html']
+      LogoutURLs: [!Sub '${SiteUrl}/play/', 'http://localhost:8137/flavius-arena.html']
+      SupportedIdentityProviders: !If [HasGoogle, [Google], [COGNITO]]
+      IdTokenValidity: 12
+      AccessTokenValidity: 12
+      RefreshTokenValidity: 30
+      TokenValidityUnits: {IdToken: hours, AccessToken: hours, RefreshToken: days}
+
+  # ---------- the server ----------
+  FnRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - {Effect: Allow, Principal: {Service: lambda.amazonaws.com}, Action: sts:AssumeRole}
+      ManagedPolicyArns: [arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole]
+      Policies:
+        - PolicyName: arena
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: [dynamodb:GetItem, dynamodb:PutItem, dynamodb:DeleteItem, dynamodb:UpdateItem, dynamodb:Query]
+                Resource: [!GetAtt Table.Arn, !Sub '${Table.Arn}/index/*']
+              - Effect: Allow
+                Action: execute-api:ManageConnections
+                Resource: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WsApi}/*'
+  Fn:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: flavius-arena
+      Runtime: nodejs24.x
+      Handler: index.handler
+      Code: ./src
+      Role: !GetAtt FnRole.Arn
+      MemorySize: 512
+      Timeout: 10
+      Environment:
+        Variables:
+          TABLE: !Ref Table
+          POOL_ID: !Ref UserPool
+          CLIENT_ID: !Ref UserPoolClient
+          DEV_NAMES: !Ref DevNames
+  FnLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/flavius-arena
+      RetentionInDays: 14
+
+  WsApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: flavius-arena
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: '$request.body.t'
+  WsIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WsApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Fn.Arn}/invocations'
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties: {ApiId: !Ref WsApi, RouteKey: $connect, AuthorizationType: NONE, Target: !Sub 'integrations/${WsIntegration}'}
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties: {ApiId: !Ref WsApi, RouteKey: $disconnect, Target: !Sub 'integrations/${WsIntegration}'}
+  DefaultRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties: {ApiId: !Ref WsApi, RouteKey: $default, Target: !Sub 'integrations/${WsIntegration}'}
+  WsStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref WsApi
+      StageName: live
+      AutoDeploy: true
+      DefaultRouteSettings: {ThrottlingBurstLimit: 200, ThrottlingRateLimit: 100}
+  WsInvoke:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref Fn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WsApi}/*'
+
+  # ---------- the money alarm ----------
+  Budget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: flavius-arena-monthly
+        BudgetType: COST
+        TimeUnit: MONTHLY
+        BudgetLimit: {Amount: !Ref MonthlyBudgetUSD, Unit: USD}
+      NotificationsWithSubscribers:
+        - Notification: {NotificationType: FORECASTED, ComparisonOperator: GREATER_THAN, Threshold: 100, ThresholdType: PERCENTAGE}
+          Subscribers: [{SubscriptionType: EMAIL, Address: !Ref AlertEmail}]
+        - Notification: {NotificationType: ACTUAL, ComparisonOperator: GREATER_THAN, Threshold: 80, ThresholdType: PERCENTAGE}
+          Subscribers: [{SubscriptionType: EMAIL, Address: !Ref AlertEmail}]
+
+Outputs:
+  WebSocketUrl:
+    Description: Paste into the game (Settings > Online server) — or put in play/online.json.
+    Value: !Sub 'wss://${WsApi}.execute-api.${AWS::Region}.amazonaws.com/live'
+  SignInDomain:
+    Value: !Sub 'https://${AuthDomainPrefix}.auth.${AWS::Region}.amazoncognito.com'
+  UserPoolClientId:
+    Value: !Ref UserPoolClient
+  UserPoolId:
+    Value: !Ref UserPool
+  GoogleRedirectUri:
+    Description: Add this as an "Authorized redirect URI" on the Google OAuth client.
+    Value: !Sub 'https://${AuthDomainPrefix}.auth.${AWS::Region}.amazoncognito.com/oauth2/idpresponse'

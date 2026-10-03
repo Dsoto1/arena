@@ -1,0 +1,262 @@
+{
+ "gladius": {
+  "kind": "w",
+  "lv": 1,
+  "n": "Gladius"
+ },
+ "mace": {
+  "kind": "w",
+  "lv": 1,
+  "n": "Mace"
+ },
+ "sica": {
+  "kind": "w",
+  "lv": 1,
+  "n": "Sica"
+ },
+ "hasta": {
+  "kind": "w",
+  "lv": 1,
+  "n": "Hasta"
+ },
+ "stones": {
+  "kind": "w",
+  "lv": 1,
+  "n": "Stones"
+ },
+ "thracian": {
+  "kind": "w",
+  "lv": 1,
+  "n": "Thracian Shield"
+ },
+ "knives": {
+  "kind": "w",
+  "lv": 1,
+  "n": "Knives"
+ },
+ "trident": {
+  "kind": "w",
+  "lv": 1,
+  "n": "Trident"
+ },
+ "rudis": {
+  "kind": "w",
+  "lv": 1,
+  "n": "Rudis"
+ },
+ "galea": {
+  "kind": "a",
+  "lv": 1,
+  "n": "Iron Helm",
+  "stack": false
+ },
+ "pectorale": {
+  "kind": "a",
+  "lv": 1,
+  "n": "Bronze Chest Armor",
+  "stack": false
+ },
+ "balteus": {
+  "kind": "a",
+  "lv": 1,
+  "n": "Leather Gladiator Belt II",
+  "stack": true
+ },
+ "wraps": {
+  "kind": "a",
+  "lv": 1,
+  "n": "Padded Arm Armor",
+  "stack": true
+ },
+ "legwrapsU": {
+  "kind": "a",
+  "lv": 1,
+  "n": "Leather Tasset Armor",
+  "stack": true
+ },
+ "legwraps": {
+  "kind": "a",
+  "lv": 1,
+  "n": "Padded Leg Armor",
+  "stack": true
+ },
+ "axe": {
+  "kind": "w",
+  "lv": 2,
+  "n": "Axe"
+ },
+ "falcata": {
+  "kind": "w",
+  "lv": 2,
+  "n": "Falcata"
+ },
+ "bow": {
+  "kind": "w",
+  "lv": 2,
+  "n": "Parthian Bow"
+ },
+ "pugio": {
+  "kind": "w",
+  "lv": 2,
+  "n": "Royal Dagger"
+ },
+ "scissor": {
+  "kind": "w",
+  "lv": 2,
+  "n": "Scissor"
+ },
+ "scutum": {
+  "kind": "w",
+  "lv": 2,
+  "n": "Scutum Shield"
+ },
+ "sling": {
+  "kind": "w",
+  "lv": 2,
+  "n": "Stone Sling"
+ },
+ "cassis": {
+  "kind": "a",
+  "lv": 2,
+  "n": "Horned Helm",
+  "stack": false
+ },
+ "crista": {
+  "kind": "a",
+  "lv": 2,
+  "n": "Hoplomachus Helm",
+  "stack": false
+ },
+ "murmillo": {
+  "kind": "a",
+  "lv": 2,
+  "n": "Steel Gated Helm",
+  "stack": false
+ },
+ "lorica": {
+  "kind": "a",
+  "lv": 2,
+  "n": "Scaled Chest Armor",
+  "stack": false
+ },
+ "manica": {
+  "kind": "a",
+  "lv": 2,
+  "n": "Galerus",
+  "stack": false
+ },
+ "spaulder": {
+  "kind": "a",
+  "lv": 2,
+  "n": "Manica",
+  "stack": false
+ },
+ "cestus": {
+  "kind": "a",
+  "lv": 2,
+  "n": "Cestus",
+  "stack": false
+ },
+ "femoralia": {
+  "kind": "a",
+  "lv": 2,
+  "n": "Iron Tasset Armor",
+  "stack": false
+ },
+ "ocrea": {
+  "kind": "a",
+  "lv": 2,
+  "n": "Greaves",
+  "stack": false
+ },
+ "greaves": {
+  "kind": "a",
+  "lv": 2,
+  "n": "Flavius' Greaves",
+  "stack": false
+ },
+ "arcu": {
+  "kind": "w",
+  "lv": 3,
+  "n": "Arcuballista"
+ },
+ "charun": {
+  "kind": "w",
+  "lv": 3,
+  "n": "Charun"
+ },
+ "flavgl": {
+  "kind": "w",
+  "lv": 3,
+  "n": "Gladius of Flavius"
+ },
+ "jade": {
+  "kind": "w",
+  "lv": 3,
+  "n": "Jade Spear"
+ },
+ "flail": {
+  "kind": "w",
+  "lv": 3,
+  "n": "Tri-Ball Flail"
+ },
+ "pilum": {
+  "kind": "w",
+  "lv": 3,
+  "n": "Weighted Pilum"
+ },
+ "flavhelm": {
+  "kind": "a",
+  "lv": 3,
+  "n": "Helm of Flavius",
+  "stack": false
+ },
+ "helm5": {
+  "kind": "a",
+  "lv": 3,
+  "n": "Steel Dome Helm",
+  "stack": false
+ },
+ "musculata": {
+  "kind": "a",
+  "lv": 3,
+  "n": "Forged Chest Armor",
+  "stack": false
+ },
+ "amazon": {
+  "kind": "a",
+  "lv": 3,
+  "n": "Plated Chest Armor",
+  "stack": false
+ },
+ "thorax": {
+  "kind": "a",
+  "lv": 3,
+  "n": "Reinforced Chest Armor",
+  "stack": false
+ },
+ "galerus": {
+  "kind": "a",
+  "lv": 3,
+  "n": "Lorica Segmentata",
+  "stack": false
+ },
+ "bracers": {
+  "kind": "a",
+  "lv": 3,
+  "n": "Flavius' Bracers",
+  "stack": false
+ },
+ "thighplate": {
+  "kind": "a",
+  "lv": 3,
+  "n": "Tasset Armor",
+  "stack": false
+ },
+ "cnemis": {
+  "kind": "a",
+  "lv": 3,
+  "n": "Steel Greaves",
+  "stack": false
+ }
+}
