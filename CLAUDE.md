@@ -402,6 +402,10 @@ One global script; files are concatenated in order. Later "version modules" patc
   3 min (`AWAY_MS`, $disconnect marks META.away) can be dropped by the others (`match.drop` → a server `drop` input: seat → CPU at
   that point on every client, pending window gets its close value, else endTurn) and still faces the Fate; settlement pushes
   `match.settled`. Board/act readiness uses `onlmActor()` (never a CPU's turn — the lowest-human fallback is for windows only).
+  DEPLOYED (2026-10-03, us-east-1, stack flavius-arena): ws wss://8mok5w9i11.execute-api.us-east-1.amazonaws.com/live, sign-in
+  https://flaviusrule-arena.auth.us-east-1.amazoncognito.com, client 5qhkffer4i9jla5qkojt917ms, pool us-east-1_VdMsuDJ59 (not secrets;
+  play/online.json holds the first three). Checked from here: bad token → 401, old protocol → 426. The Cognito domain is blocked by
+  this sandbox's proxy, so Google sign-in can only be tried in his browser. Updates: CloudShell `sh deploy.sh <email>` with GOOGLE_ID/SECRET.
   Budget kill switch (template): ACTUAL ≥ budget → SNS → `flavius-arena-switch` sets the arena Lambda's concurrency to 0; an
   EventBridge rule reopens it on the 1st (or the `ReopenCommand` output). Hidden info (only the Mandata) is not protected — decided:
   not game-breaking. NOT yet: live spectating (Watch/Ticket record only), parties/team events, Stakes matches, referee replay.
