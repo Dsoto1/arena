@@ -5,4 +5,4 @@ Each class has two sides (627x627, transparent):
   (replaces the coloured dots the game draws today).
 - `<class>_figure.webp` — the class mini with its name banner.
 
-Received so far: amazonia (orange), damnatio (grey), hero (green), royalty (blue), slave (yellow), soldier (red). More on the way.
+All eight printed classes received: amazonia (orange), damnatio (grey), hero (green), royalty (blue), slave (yellow), soldier (red), venatore (purple), veteranus (white).
