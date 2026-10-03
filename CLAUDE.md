@@ -616,6 +616,11 @@ One global script; files are concatenated in order. Later "version modules" patc
 - **v0.79** Online: My Gladiators (3, active, look/token/class/gear), pre-match room with chat + host rules, 2-lanista minimum, Abandon /
   Rejoin / the online bar, cleanup of dead games, login.flaviusrule.com; menu: version notes, C for words, two-button Multiplayer.
   (Published as artifact Version 92; server zip flavius-server-7.)
+- **v0.80** Online rooms (sit/stand, host hand-off, kick, teams), quick chat only, the Praeco (Find me a fight, calls, invites, Again),
+  Orbis Terrarum + the Forum, Today in the arena, ⚔ Back to your match / 🚪 Abandon on the main menu with the gladiator at stake; online
+  rules (printed gear, no offline records, Ranked no hints, no pause, majority resync); hot-seat leak + ghost record + boot cover fixes.
+  (Published as artifact Version 93; server zip flavius-server-8, protocol 4 — deploy the server FIRST; site update zip v0.80 +
+  privacy page.) Release run: 149/151 — t12 passes alone in 432 s (over the runner's 400 s limit), tonl80r flaky under load.
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
@@ -632,6 +637,8 @@ One global script; files are concatenated in order. Later "version modules" patc
   APPROVED look (his "that's the look"): recolour his Hero mosaic — green patches → the class colour (keep each cell's light/shade),
   the cross-hatch cells between and the darker cells → muted, darker shades of the same colour (s×0.42, l×0.78), lead lines stay dark,
   then the border on top. Recipe: tools/art/ptokens81/recolor.py (preview in tools/art/ptokens81/custom_preview.png).
+- **v0.81 tooling:** smartreg/runreg kill a test at 400 s; t12 needs ~430 s alone → scale the limit by each test's recorded time.
+  Rules & Strategy's words-of-power text still says "click the version button" (since v0.79 that opens What's new) → "press C on the main menu".
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
