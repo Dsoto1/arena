@@ -117,3 +117,16 @@ TESTS:
 - tonlws80: cry, invite and forum.say through the real handler (test/localws.js).
 - Update tonl79 (it reads L.chat → chatlog) and tonl78 selectors if the markup moves.
 - Release: full suite via tools/release.sh; MILESTONES entry; no SAVE_MIGRATIONS (no world data change); review the new shared writes (none client-side; all server).
+## Orbis Terrarum — the online map (agreed 2026-10-03, same batch)
+- A world map in the style of his empire map (assets/map.jpg: tan parchment land, orange halftone coast band, blue sea with darker
+  halftone shallows, black ink outline), darkened/sepia to blend into the Online landing under the Playlists, edges faded into the
+  window colour. Heading like the Playlists one: "Orbis Terrarum  N lanistas online · M fighting · K waiting". Soft ember glows per
+  region, size by count; gentle breathing (off with calm / reduce motion). NO interaction (aria-hidden, pointer-events none), no names.
+- Location = the browser's time zone (Intl…resolvedOptions().timeZone) sent in hello; stored on the presence entry (cleared with it);
+  hello/world.news return only aggregates {n,fight,wait,zones:{tz:count}}. Client maps tz → lat/lon with a built-in table from the
+  public-domain tz database (zone1970.tab coordinates, ~8 KB); unknown zones still count, no dot. Small cosmetic jitter (Math.random).
+- Refresh with hello / the landing's existing refresh, at most once a minute while the Play tab is up. Cost ≈ $0.05/month at 10
+  players, $1–1.50 at 200.
+- Art: tools/plans/orbis/proj.js (world-atlas land-50m, ISC; Natural Earth public domain; lat 76…-52, equirectangular) +
+  render.py (numpy + cv2) → ship as assets/orbis.webp (~90 KB at 1200 wide). mock.css/mock.js = the preview injected into the landing.
+- Privacy page (website, not git): add one line — the time-zone region shown as an anonymous dot while you are online.
