@@ -1037,7 +1037,7 @@ label.setrow{display:grid!important;grid-template-columns:auto 1fr;align-items:s
 .navtog{font-weight:700;min-width:30px}.navright.open .navtog{transform:scaleX(-1)}
 @media (prefers-reduced-motion:reduce){.navdrawer{transition:none}}
 /* v0.49 */
-.mmmulti{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:-4px;border:1px solid var(--gold);border-top:none;border-radius:0 0 8px 8px;overflow:hidden}.mmmulti .btn{border-radius:0;border:none;border-right:1px solid var(--line2);font-size:14px!important;padding:8px 6px!important}.mmmulti .btn:last-child{border-right:none}.mmmulti .btn[disabled]{opacity:.45;cursor:not-allowed}
+.mmmulti{display:grid;grid-template-columns:1fr 1.3fr;gap:0;margin-top:-4px;border:1px solid var(--gold);border-top:none;border-radius:0 0 8px 8px;overflow:hidden}.mmmulti .btn{border-radius:0;border:none;border-right:1px solid var(--line2);font-size:14px!important;padding:8px 6px!important}.mmmulti .btn:last-child{border-right:none}.mmmulti .btn[disabled]{opacity:.45;cursor:not-allowed}
 .mmbtns [data-mm="multi"].on{border-color:var(--gold);border-radius:8px 8px 0 0}
 .hsbanner{border-color:var(--gold)!important;margin-bottom:10px}.hsdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:0}.hshon{font-size:13px}
 .seat .hsname{grid-column:1/-1;display:flex;align-items:center;gap:6px;margin:0;font-size:14px}.hsname input{font-weight:600}.hsname input{flex:1;min-width:0}
@@ -1134,7 +1134,7 @@ button.railhd.fold{all:unset;box-sizing:border-box;display:none;cursor:pointer;w
 </style>
 
 <header class="bar">
-  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.78</span></div>
+  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.79</span></div>
   <div class="status" id="status"></div>
   <div class="tools speedtray" id="speedTray">
     <div class="seg speedseg" role="group" aria-label="CPU speed"><span class="lbl">Speed</span><button type="button" data-speed="pause" title="Pause CPU turns">❚❚ Pause</button><button type="button" data-speed="step" title="Step: each CPU action waits for you — Next ▶ or Space — with a caption explaining it">⏯ Step</button><button type="button" data-speed="slow" class="on">Slow</button><button type="button" data-speed="normal">Normal</button><button type="button" data-speed="fast">Fast</button></div>
@@ -22800,6 +22800,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'0.79',ic:'🛡',t:'Online: your gladiators and the pre-match room',hi:['My Gladiators: up to three living gladiators, one active; each with its own look, board token, class and the gear it brings','A pre-match room with chat and the host\u2019s rules; a match starts only with two or more lanistas','Abandon is the only way out of an online match (in Ranked the gladiator dies by Damnatio); rejoin any time after a disconnect','Sign in at login.flaviusrule.com'],fx:['The version badge shows what is new; press C on the main menu for words of power','Online always opens on Play; a smaller figure on the stage','The Multiplayer row holds two buttons','A loading screen after Google sign-in instead of flashing screens','Abandoned games and empty matches leave the lobby list']},
   {v:'0.78',ic:'👁',t:'Online: watch, the stands and parties',hi:['Watch any live online match for free, move by move','Tickets before the horns: a seat in the stands with your own stones, offerings and chants each rotation; the ticket coin goes into the wager pot','Parties: share a code, your leader picks the game and you sit down together','Familia 2 v 2 online: your party fights on one team'],fx:[]},
   {v:'0.77',ic:'🌐',t:'The Creator Studio, tidied',hi:['Roster sets as a deck builder: your sets as cards, the open set as tiles you click in or out, printed pieces always in','Every Studio tab shows how many you made; first-make tiles, name pins, grouped spectators, invitational steps','Level 4 weapons of your own join the Arena Chest\u2019s draw','Armor: one level per piece; the printed armor and weapons are examples to learn from; your printed class cards in the class designer'],fx:['Deleting a creation always asks first','A notice when a new version is out (finish your match, then reload); an older page never overwrites newer saves','Main menu: Saves sits beside Settings; LAN and Continue are gone (Manager keeps its own Continue)']},
   {v:'0.76',ic:'🐾',t:'The beast pen',hi:['▶ Continue and a 📜 Saves window on the main menu: matches, careers, campaigns and backups in one place','Training Yard: a card per fighter \u2014 drills with their gains shown, care, one bout a week \u2014 and the beast pen: your fighter against a snake, wolf, bear or lion in a roped stake cage while the roster watches','Infirmary as a ward: beds for serious wounds, the bench, the bathhouse, and a house medicus to hire','On the road: the yard and infirmary shut once you leave, road events, a temple offering in the host city; sit a week out once a season','Contract clauses, the Darling of the Arena, rival letters (taunts, challenges, truces), kitchen and shrine rooms'],fx:['Play Now: a roster chip and new seat cards (class picker with win rates, You | CPU, mind chip)','A bout started from the Manager no longer opens behind the main menu','The round\u2019s rules (no PvP and so on) moved into the turn panel\u2019s ⓘ']},
@@ -24878,7 +24879,7 @@ const hsActive=()=>{if(!hsLive())return null;const id=S.hsActive||(S.hotseat.pla
 
 /* ---------- the main menu: Multiplayer and its three modes ---------- */
 function mmMultiInstall(){const box=document.querySelector('#mainMenu .mmbtns');if(!box||box.querySelector('[data-mm="multi"]'))return;const play=box.querySelector('[data-mm="play"]');if(!play)return;
-  const b=document.createElement('button');b.className='btn';b.type='button';b.dataset.mm='multi';b.setAttribute('aria-expanded','false');b.innerHTML='👥 Multiplayer<small>hot seat · LAN · online lobbies</small>';
+  const b=document.createElement('button');b.className='btn';b.type='button';b.dataset.mm='multi';b.setAttribute('aria-expanded','false');b.innerHTML='👥 Multiplayer<small>hot seat · online</small>';
   const g=document.createElement('div');g.className='mmmulti';g.id='mmMulti';g.hidden=true;
   g.innerHTML=`<button class="btn" type="button" data-mm="hotseat">🪑 Hot seat<small>2–8 players on this device, CPUs fill the rest</small></button><button class="btn" type="button" data-mm="online" disabled title="Coming in a later version">🌐 Online lobbies<small>coming soon</small></button>`;
   play.after(b);b.after(g)}
@@ -25181,9 +25182,9 @@ const GAME_VER=(()=>{const m=/v(\d+\.\d+)/.exec(((document.querySelector('.brand
 const verCmp=(a,b)=>{const A=String(a||'0').split('.').map(Number),B=String(b||'0').split('.').map(Number);for(let i=0;i<Math.max(A.length,B.length);i++){const d=(A[i]||0)-(B[i]||0);if(d)return d<0?-1:1}return 0};
 
 /* ---------- the version button lives on the main menu (click it to speak a word of power) ---------- */
-function mmVerInstall(){const f=document.querySelector('#mainMenu .mmfoot');if(!f||f.querySelector('.mmver'))return;f.innerHTML=`© 2026 Flavius Rule · <button type="button" class="mmlink" data-proto title="The prototype this game was distilled from">D.Soto</button> · <button type="button" class="mmver" title="Version — click to speak a word of power">v${GAME_VER}</button>`}
+function mmVerInstall(){const f=document.querySelector('#mainMenu .mmfoot');if(!f||f.querySelector('.mmver'))return;f.innerHTML=`© 2026 Flavius Rule · <button type="button" class="mmlink" data-proto title="The prototype this game was distilled from">D.Soto</button> · <button type="button" class="mmver" title="Version — click for what is new">v${GAME_VER}</button>`}
 setTimeout(mmVerInstall,60);setTimeout(mmVerInstall,700);
-document.addEventListener('click',e=>{const b=e.target.closest('.mmver');if(!b)return;e.preventDefault();e.stopPropagation();if(typeof cheatPrompt==='function')cheatPrompt()},true);
+document.addEventListener('click',e=>{const b=e.target.closest('.mmver');if(!b)return;e.preventDefault();e.stopPropagation();if(typeof verNotes79==='function')verNotes79();else if(typeof cheatPrompt==='function')cheatPrompt()},true);
 {const _mq=typeof mmQuiet==='function'?mmQuiet:null;if(_mq)mmQuiet=function(){_mq();mmVerInstall()}}
 
 /* ---------- tooltips: no loading bar, no lock — a tooltip simply stays while the pointer is on it ---------- */
@@ -31016,12 +31017,14 @@ div:has(> .tseat){min-width:0}.tseat{display:flex!important;gap:6px;align-items:
      (25+ ranked bouts survived, 500+ lifetime CF, or Commodus slain). Everyone else is erased (damnatio memoriae).
    ===================================================================== */
 const ONLC=(function(){
-  const VER=2; /* protocol version: the server refuses clients on another one */
+  const VER=3; /* protocol version: the server refuses clients on another one */
   const CLASSES8=['soldier','royalty','hero','slave','veteranus','amazonia','venatore','damnatio'];
   const EVENTS3=['democritus','egidious','cassian'];
   const EVENTS_TEAM=['familia']; /* team events: 4 seats, Team A (seats 0-1 by default) vs Team B; a party sits on one team */
   const EVENTS_ALL=EVENTS3.concat(EVENTS_TEAM);
   const STANDS_MAX=8, PARTY_MAX=4;
+  /* v0.79: up to 3 living gladiators an account, one active; a match needs 2 humans; lobby chat */
+  const GLAD_MAX=3, MIN_HUMANS=2, CHAT_KEEP=40, CHAT_LEN=200;
   const RANKS=[
     {k:'tiro',n:'Tiro',bouts:0,cf:0,mkt:1,ic:'🪵'},
     {k:'gregarius',n:'Gregarius',bouts:6,cf:90,mkt:2,ic:'🛡'},
@@ -31048,7 +31051,7 @@ const ONLC=(function(){
   function newChar(spec,owner,id,now){const name=cleanName(spec&&spec.name);if(name.length<2)throw new Error('Name: 2–24 letters.');
     if(!CLASSES8.includes(spec.cls))throw new Error('Pick one of the eight printed classes.');
     const look=spec.look&&typeof spec.look==='object'?JSON.parse(JSON.stringify(spec.look)):{};
-    return {id,owner,name,cls:spec.cls,stats:{...START_STATS},look,rank:'tiro',wallet:0,lifeCF:0,bouts:0,survived:0,wins:0,kills:0,gear:[],feats:[],alive:true,born:now,died:null,v:VER}}
+    return {id,owner,name,cls:spec.cls,stats:{...START_STATS},look:cleanLook(look),rank:'tiro',wallet:0,lifeCF:0,bouts:0,survived:0,wins:0,kills:0,gear:[],feats:[],alive:true,born:now,died:null,v:VER}}
   /* what a gladiator may buy: market level ≤ rank's level, not already owned (only padded/belt pieces stack) */
   function canBuy(ch,item,catalog){const it=catalog[item];if(!it)return 'No such piece.';if(!ch.alive)return 'The dead buy nothing.';
     const R=rankFor(ch);if(it.lv>R.mkt)return `${R.n} may buy up to level ${R.mkt}.`;if(!it.stack&&(ch.gear||[]).includes(item))return 'Already yours.';
@@ -31068,14 +31071,39 @@ const ONLC=(function(){
     if(ranked){ch.survived=(ch.survived||0)+1;ch.streak=(ch.streak||0)+1}if(row.survives!==false)grow(ch,1+(row.won?1:0));
     const after=rankFor(ch);ch.rank=after.k;if(after.k!==before.k)out.rankUp=after.k;return out}
   /* what a lobby seat needs to field the gladiator on every client */
-  function kitOf(ch){return ch?{cls:ch.cls,name:ch.name,stats:{...ch.stats},gear:(ch.gear||[]).slice()}:null}
+  function kitOf(ch){return ch?{cls:ch.cls,name:ch.name,stats:{...ch.stats},gear:equipOf(ch),look:cleanLook(ch.look)}:null}
+  /* what a gladiator brings: the pieces ticked in My Gladiators (all bought gear until something is unticked) */
+  function equipOf(ch){const g=ch.gear||[];if(!Array.isArray(ch.equip))return g.slice();const left=g.slice();const out=[];for(const k of ch.equip){const i=left.indexOf(k);if(i>=0){out.push(k);left.splice(i,1)}}return out}
+  /* a look: the portrait (face), an accent colour and the board token — only plain short values, at most 3 KB */
+  function cleanLook(L){const out={};if(!L||typeof L!=='object')return out;const val=v=>typeof v==='boolean'?v:typeof v==='number'&&isFinite(v)?Math.round(v*1000)/1000:typeof v==='string'?v.replace(/[<>"'`\\]/g,'').slice(0,40):undefined;
+    const flat=o=>{const r={};if(!o||typeof o!=='object'||Array.isArray(o))return r;let n=0;for(const [k,v] of Object.entries(o)){if(++n>40)break;if(!/^[a-zA-Z0-9_]{1,16}$/.test(k))continue;const x=val(v);if(x!==undefined)r[k]=x}return r};
+    if(L.portrait)out.portrait=flat(L.portrait);if(typeof L.color==='string'&&/^#[0-9a-fA-F]{6}$/.test(L.color))out.color=L.color;if(L.token)out.token=flat(L.token);
+    return JSON.stringify(out).length>3000?{}:out}
+  /* My Gladiators: rename, change class (the 8 printed ones), look, which bought pieces to bring — only between events */
+  function editChar(ch,d,catalog){if(!ch.alive)throw new Error('The dead stay as they fell.');
+    if(d.name!=null){const n=cleanName(d.name);if(n.length<2)throw new Error('Name: 2–24 letters.');ch.name=n}
+    if(d.cls!=null){if(!CLASSES8.includes(d.cls))throw new Error('Pick one of the eight printed classes.');ch.cls=d.cls}
+    if(d.look!=null)ch.look=cleanLook(d.look);
+    if(d.equip!=null){if(!Array.isArray(d.equip))throw new Error('Pick the pieces to bring.');const left=(ch.gear||[]).slice();const eq=[];for(const k of d.equip.slice(0,30)){const i=left.indexOf(k);if(i>=0){eq.push(k);left.splice(i,1)}}ch.equip=eq}
+    return ch}
+  /* lobby chat: plain text, short, a light word filter */
+  const CHAT_BAD=/\b(f+u+c+k+\w*|sh[i1]t+\w*|c+u+n+t+\w*|n[i1]gg\w*|f[a4]gg?\w*|wh[o0]re\w*|sl[u]t+\w*|b[i1]tch\w*|r[e3]t[a4]rd\w*)/gi;
+  function cleanChat(t){return String(t||'').replace(/[<>]/g,'').replace(/\s+/g,' ').trim().slice(0,CHAT_LEN).replace(CHAT_BAD,m=>m[0]+'*'.repeat(Math.max(0,m.length-1)))}
+  /* how a host's game treats leaving: Ranked always 'fate' (an abandoned gladiator is eliminated and dies by Damnatio);
+     Custom: 'fate' (eliminated, the bout ends for them — no death) or 'cpu' (a CPU takes the seat) */
+  function abandonRule(L){return L.ranked?'fate':(L.abandon==='fate'?'fate':'cpu')}
+  function humansOf(L){return (L.players||[]).filter(p=>!/^bot/.test(p.id))}
+  function canStart(L,who,conn){if(L.host.id!==who)return 'Only the host starts the game.';if(L.status!=='waiting')return 'Already under way.';
+    const h=humansOf(L);if(h.length<MIN_HUMANS)return `An online match needs at least ${MIN_HUMANS} lanistas — wait for someone to join.`;
+    if(conn){const off=h.filter(p=>!conn[p.id]);if(off.length)return `${off.map(p=>p.name).join(', ')} ${off.length>1?'are':'is'} not connected.`}return ''}
   function hallWhy(ch){const R=RANKS[rankIdx(ch.died&&ch.died.rank||ch.rank)];if(rankIdx(R.k)>=2)return R.n;if((ch.feats||[]).includes('slew:commodus'))return 'Slew Commodus';if((ch.survived||0)>=25)return `${ch.survived} bouts survived`;return `${ch.lifeCF} lifetime CF`}
   function hallWorthy(ch){return rankIdx(ch.died&&ch.died.rank||ch.rank)>=2||(ch.survived||0)>=25||(ch.lifeCF||0)>=500||(ch.feats||[]).includes('slew:commodus')}
   /* lobbies */
   /* a lobby; the host's whole party sits down with them (seatGroup). Team events: L.team, every player carries team 'A' or 'B'. */
   function newLobby(spec,host,id,now){const ev=EVENTS_ALL.includes(spec.ev)?spec.ev:'democritus';const team=EVENTS_TEAM.includes(ev);const seats=team?4:Math.max(2,Math.min(4,spec.seats|0||4));
     return {id,host:{id:host.id,name:host.name,char:host.char||null},ev,team,loc:Math.max(1,Math.min(12,spec.loc|0||6)),ranked:!!spec.ranked,rank:spec.ranked?(host.rank||'tiro'):null,
-      seats,players:[],stands:[],watchers:0,tickets:0,pot:0,ticket:Math.max(0,Math.min(50,spec.ticket|0)),
+      seats,players:[],stands:[],watchers:0,tickets:0,pot:0,ticket:spec.standsOff?0:Math.max(0,Math.min(50,spec.ticket|0)),
+      abandon:spec.ranked?'fate':(spec.abandon==='fate'?'fate':'cpu'),standsOff:!!spec.standsOff,chat:[],
       status:'waiting',created:now,seed:null,v:VER}}
   function canJoin(L,who){if(L.status!=='waiting')return 'Already under way.';if(L.players.some(p=>p.id===who.id))return '';if(L.players.length>=L.seats)return 'Full.';
     if(L.ranked&&(who.rank||'tiro')!==L.rank)return `Ranked: ${(RANKS[rankIdx(L.rank)]||RANKS[0]).n} only.`;if(L.ranked&&!who.char)return 'Ranked needs a living gladiator.';return ''}
@@ -31125,7 +31153,7 @@ const ONLC=(function(){
   /* weekly challenges rotate with the week of the year */
   const CHALLENGES=[['Survive 3 ranked bouts',3,'survived'],['Earn 60 CF in one bout',60,'cf1'],['Win a bout at Capua',1,'win:3'],['Slay 5 beasts',5,'beasts'],['Finish 5 bouts',5,'bouts'],['Win with 20+ coin left',1,'rich']];
   function weekChallenges(t){const wk=Math.floor((t||0)/604800000);const out=[];for(let i=0;i<3;i++)out.push(CHALLENGES[(wk+i*2)%CHALLENGES.length]);return out}
-  return {EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,PURSE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
+  return {GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,PURSE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
 /* =====================================================================
    112-ONLINE · MULTIPLAYER → ONLINE (phase 1: the landing space, against a mock server)
@@ -31173,15 +31201,22 @@ function mockSeedWorld(w){if(w.seeded)return;w.seeded=1;const now=Date.now();
   w.news=[['🏛','The Colosseum games are on — Capua fills its tiers.'],['⚔','Old Crixus reached Veteranus after 20 bouts.'],['🪦','Flamma the Syrian fell at Pompeii. The Hall remembers.']]}
 const MOCK_ROUTES={
   'hello':(w,d,me)=>{const a=me&&w.accounts[me]||null;const o={ver:ONLC.VER,mode:'mock',me:a};if(d.all&&a){o.chars=Object.values(w.chars).filter(c=>c.owner===me).sort((x,y)=>y.born-x.born);o.lobbies=MOCK_ROUTES['lobby.list'](w);
-    o.news=w.news.slice(0,8);o.online=Object.keys(w.accounts).length+37;o.challenges=ONLC.weekChallenges(Date.now());o.party=a.party&&w.parties&&w.parties[a.party]||null}return o},
+    o.news=w.news.slice(0,8);o.online=Object.keys(w.accounts).length+37;o.challenges=ONLC.weekChallenges(Date.now());o.active=(onlMockChar(w,me)||{}).id||null;o.party=a.party&&w.parties&&w.parties[a.party]||null}return o},
   'auth.signin':(w,d)=>{const name=ONLC.cleanName(d.name);if(name.length<2)throw new Error('Your name: 2–24 letters.');const id='u'+(w.seq++)+Math.random().toString(36).slice(2,6);
     w.accounts[id]={id,name,since:Date.now()};try{sessionStorage.setItem('flavius_onlacct',id);localStorage.setItem('flavius_onlacct',id)}catch(e){}return w.accounts[id]},
   'auth.signout':(w,d,me)=>{try{sessionStorage.removeItem('flavius_onlacct');localStorage.removeItem('flavius_onlacct')}catch(e){}return {}},
   'char.mine':(w,d,me)=>Object.values(w.chars).filter(c=>c.owner===me).sort((a,b)=>b.born-a.born),
-  'char.create':(w,d,me)=>{if(!me)throw new Error('Sign in first.');if(Object.values(w.chars).some(c=>c.owner===me&&c.alive))throw new Error('One living gladiator at a time.');
-    const ch=ONLC.newChar(d,me,'g'+(w.seq++),Date.now());w.chars[ch.id]=ch;return ch},
-  'char.buy':(w,d,me)=>{const ch=w.chars[d.char];if(!ch||ch.owner!==me)throw new Error('Not yours.');ONLC.buy(ch,d.item,onlCatalog());return ch},
-  'lobby.list':(w)=>Object.values(w.lobbies).filter(L=>L.status!=='done').sort((a,b)=>b.created-a.created),
+  'char.create':(w,d,me)=>{if(!me)throw new Error('Sign in first.');const live=Object.values(w.chars).filter(c=>c.owner===me&&c.alive);if(live.length>=ONLC.GLAD_MAX)throw new Error(`Up to ${ONLC.GLAD_MAX} living gladiators.`);
+    const ch=ONLC.newChar(d,me,'g'+(w.seq++),Date.now());w.chars[ch.id]=ch;const A=w.accounts[me];if(A&&!live.some(c=>c.id===A.active))A.active=ch.id;return ch},
+  'char.active':(w,d,me)=>{const ch=w.chars[d.char];if(!ch||ch.owner!==me||!ch.alive)throw new Error('Not yours.');if(mockBusy(w,me))throw new Error('Finish or leave your game first.');w.accounts[me].active=ch.id;return ch},
+  'char.edit':(w,d,me)=>{const ch=w.chars[d.char];if(!ch||ch.owner!==me)throw new Error('Not yours.');if(mockBusy(w,me))throw new Error('Finish or leave your game first.');ONLC.editChar(ch,d,onlCatalog());return ch},
+  'char.buy':(w,d,me)=>{const ch=w.chars[d.char];if(!ch||ch.owner!==me)throw new Error('Not yours.');ONLC.buy(ch,d.item,onlCatalog());if(Array.isArray(ch.equip))ch.equip.push(d.item);return ch},
+  'lobby.list':(w)=>{for(const L of Object.values(w.lobbies))if(L.status==='waiting'&&!L.mock&&Date.now()-(L.created||0)>3*3600e3)mockClose(w,L,'old');return Object.values(w.lobbies).filter(L=>L.status!=='done').sort((a,b)=>b.created-a.created)},
+  'lobby.chat':(w,d,me)=>{const L=w.lobbies[d.id];if(!L)throw new Error('That game is gone.');if(L.status!=='waiting')throw new Error('The chat closes when the horns sound.');
+    if(!L.players.some(p=>p.id===me)&&!(L.stands||[]).some(t=>t.id===me))throw new Error('Join the game to talk.');const text=ONLC.cleanChat(d.text);if(!text)return L;
+    const last=(L.chat||[]).filter(m=>m.by===me).slice(-1)[0];if(last&&Date.now()-last.at<1000)throw new Error('Slow down.');L.chat=[...(L.chat||[]),{by:me,name:w.accounts[me].name,text,at:Date.now()}].slice(-ONLC.CHAT_KEEP);return L},
+  'lobby.set':(w,d,me)=>{const L=w.lobbies[d.id];if(!L||L.host.id!==me)throw new Error('Only the host changes the game.');if(L.status!=='waiting')throw new Error('Already under way.');
+    if(d.abandon!=null&&!L.ranked)L.abandon=d.abandon==='fate'?'fate':'cpu';if(d.standsOff!=null)L.standsOff=!!d.standsOff;return L},
   'lobby.create':(w,d,me)=>{const g=mockGroup(w,me);const m=g[0];if(d.ranked&&!m.char)throw new Error('Ranked needs a living gladiator.');
     const L=ONLC.newLobby(d,{id:me,name:m.name,char:m.char,rank:m.rank},'L'+(w.seq++),Date.now());const why=ONLC.seatGroup(L,g);if(why)throw new Error(why);L.ping=12;w.lobbies[L.id]=L;return L},
   'lobby.join':(w,d,me)=>{const L=w.lobbies[d.id];if(!L)throw new Error('That game is gone.');const why=ONLC.seatGroup(L,mockGroup(w,me));if(why)throw new Error(why);return L},
@@ -31197,15 +31232,21 @@ const MOCK_ROUTES={
     if(!P.members.length){delete w.parties[P.id];return {}}if(P.leader===me)P.leader=P.members[0];mockPush('party.update',{id:P.id});return {}},
   'party.get':(w,d,me)=>{const a=w.accounts[me];return a&&a.party&&w.parties&&w.parties[a.party]||null},
   'lobby.ready':(w,d,me)=>{const L=w.lobbies[d.id];if(!L)throw new Error('That game is gone.');const p=L.players.find(p=>p.id===me);if(p)p.ready=!!d.ready;return L},
-  'lobby.start':(w,d,me)=>{const L=w.lobbies[d.id];if(!L||L.host.id!==me)throw new Error('Only the host starts the game.');if(L.status!=='waiting')throw new Error('Already under way.');
-    L.status='live';L.seed=(Math.random()*2**31)>>>0;L.started=Date.now();w.matches[L.id]={id:L.id,seed:L.seed,inputs:[],results:{},open:null,watch:{}};return L},
+  'lobby.start':(w,d,me)=>{const L=w.lobbies[d.id];if(!L)throw new Error('That game is gone.');const why=ONLC.canStart(L,me);if(why)throw new Error(why);
+    L.status='live';L.seed=(Math.random()*2**31)>>>0;L.started=Date.now();w.matches[L.id]={id:L.id,seed:L.seed,inputs:[],results:{},open:null,watch:{},abandoned:{},abandon:ONLC.abandonRule(L),standsOff:!!L.standsOff};return L},
+  'match.abandon':(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');const seat=L.players.findIndex(p=>p.id===me);if(seat<0)throw new Error('Not your match.');
+    M.abandoned=M.abandoned||{};if(M.abandoned[me]||M.status==='done')return {done:1};const rule=M.abandon||ONLC.abandonRule(L);M.abandoned[me]=rule;
+    const inp={k:'abandon',seat,rule,from:'server',seq:M.inputs.length};M.inputs.push(inp);mockPush('match.input',{id:d.id,in:inp});let out=null;
+    if(L.ranked){const ch=w.chars[L.players[seat].char];if(ch&&ch.alive){out=ONLC.applyResult(ch,{won:false,place:L.seats,f:0,coin:0,survives:false},true);out.abandoned=1;M.outs=M.outs||{};M.outs[me]=out;
+      if(out.hall)w.hall.unshift({name:ch.name,cls:ch.cls,rank:ch.died.rank,lifeCF:ch.lifeCF,survived:ch.survived,diedAt:Date.now(),why:onlHallWhy(ch)});w.news.unshift(['🌫',`${ch.name} abandoned the sand — Damnatio.`])}}
+    const left=L.players.filter(p=>!/^bot/.test(p.id)&&!M.abandoned[p.id]&&!(M.dropped||{})[p.id]);if(!left.length)mockClose(w,L,'empty');return {done:1,out,rule}},
   'match.watch':(w,d,me)=>{const M=w.matches[d.id];const L=w.lobbies[d.id];if(L&&L.mock)throw new Error('A sample game of the preview — nothing to watch.');if(!M||!L||L.status!=='live')throw new Error('That match is over.');M.watch=M.watch||{};M.watch[me]=1;L.watchers=(L.watchers||0)+1;
-    return {lobby:L,players:L.players.filter(p=>!/^bot/.test(p.id)).map(p=>p.id),specs:(L.stands||[]).map(s=>s.id),seed:M.seed}},
+    return {lobby:L,players:L.players.filter(p=>!/^bot/.test(p.id)).map(p=>p.id),specs:(L.stands||[]).map(s=>s.id),seed:M.seed,abandoned:Object.keys(M.abandoned||{}),dropped:Object.keys(M.dropped||{})}},
   'match.unwatch':(w,d,me)=>{const M=w.matches[d.id];if(M&&M.watch)delete M.watch[me];return {}},
   'match.open':(w,d,me)=>{const M=w.matches[d.id];const L=w.lobbies[d.id];if(!M||!L)throw new Error('No such match.');if(L.host.id!==me)throw new Error('Only the host opens the match.');M.open=d.snap;mockPush('match.open',{id:d.id});return {}},
   'match.get':(w,d)=>{const M=w.matches[d.id];if(!M)throw new Error('No such match.');return {open:M.open,inputs:M.inputs.slice(d.from|0),seed:M.seed}},
   'match.input':(w,d,me)=>{const M=w.matches[d.id];const L=w.lobbies[d.id];if(!M||!L)throw new Error('No such match.');if(mockSeat(L,me)<0)throw new Error('Not your match.');
-    if((d.in.seat|0)!==mockSeat(L,me)||d.in.k==='drop')throw new Error('That seat is not yours.');
+    if((d.in.seat|0)!==mockSeat(L,me)||d.in.k==='drop'||d.in.k==='abandon')throw new Error('That seat is not yours.');if((M.abandoned||{})[me])throw new Error('You left this match.');
     const inp={...d.in,from:me,seq:M.inputs.length};M.inputs.push(inp);mockPush('match.input',{id:d.id,in:inp});return {seq:inp.seq}},
   'match.snapreq':(w,d,me)=>{mockPush('match.snapreq',{id:d.id,to:d.to,from:me,seq:d.seq});return {}},
   'match.snap':(w,d,me)=>{mockPush('match.snap',{id:d.id,to:d.to,snap:d.snap,seq:d.seq,from:me});return {}},
@@ -31216,9 +31257,9 @@ const MOCK_ROUTES={
     const amt=d.amt|0,seat=d.seat|0;const why=ONLC.betOK(L,me,seat,amt,ch.wallet);if(why)throw new Error(why);ch.wallet-=amt;(L.bets=L.bets||[]).push({by:me,char:ch.id,seat,amt});L.pool=(L.pool||0)+amt;return {lobby:L,char:ch}},
   'match.result':(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');const humans=L.players.filter(p=>!/^bot/.test(p.id)).map(p=>p.id);if(!humans.includes(me))throw new Error('Not your match.');
     M.reports=M.reports||{};if(!M.reports[me])M.reports[me]={table:ONLC.cleanTable(d.table),hash:String(d.hash||'')};M.dropped=M.dropped||{};
-    if(M.status!=='done'&&humans.filter(a=>!M.dropped[a]).every(a=>M.reports[a])){const A=ONLC.agree(M.reports);M.status='done';M.outs={};
+    M.abandoned=M.abandoned||{};if(M.status!=='done'&&humans.filter(a=>!M.dropped[a]&&!M.abandoned[a]).every(a=>M.reports[a])){const A=ONLC.agree(M.reports);M.status='done';M.outs=M.outs||{};
       for(const a of A.minority){const P=w.accounts[a];if(P)P.strikes=(P.strikes||0)+1}
-      if(!A.void)L.players.forEach((p,i)=>{if(!humans.includes(p.id))return;const ch=onlMockChar(w,p.id);const row=A.table.find(r=>r.seat===i);if(!ch||!row)return;const out=ONLC.applyResult(ch,row,!!L.ranked);M.outs[p.id]=out;
+      if(!A.void)L.players.forEach((p,i)=>{if(!humans.includes(p.id)||M.abandoned[p.id])return;const ch=w.chars[p.char];if(ch&&!ch.alive)return;const row=A.table.find(r=>r.seat===i);if(!ch||!row)return;const out=ONLC.applyResult(ch,row,!!L.ranked);M.outs[p.id]=out;
         if(out.died){const e={name:ch.name,cls:ch.cls,rank:ch.died.rank,lifeCF:ch.lifeCF,survived:ch.survived,diedAt:Date.now(),why:out.hall?onlHallWhy(ch):''};if(out.hall)w.hall.unshift(e);
           w.news.unshift(out.hall?['🪦',`${ch.name} fell. The Hall of the Fallen keeps the name.`]:['🌫',`${ch.name} fell and is forgotten.`])}
         if(out.rankUp)w.news.unshift(['⚔',`${ch.name} is now ${ONLC.RANKS[ONLC.rankIdx(out.rankUp)].n}.`])});
@@ -31236,10 +31277,14 @@ function mockGroup(w,me){const a=w.accounts[me];const P=a&&a.party&&w.parties&&w
   for(const L of Object.values(w.lobbies))if(L.status==='waiting'&&L.players.some(p=>out.some(x=>x.id===p.id)))throw new Error(out.length>1?'Someone in your party is already in a lobby.':'You are already in a lobby.');return out}
 /* a lanista's seat in a match: fighters first, then the ticket holders */
 function mockSeat(L,me){const i=L.players.findIndex(p=>p.id===me);if(i>=0)return i;const k=(L.stands||[]).findIndex(s=>s.id===me);return k>=0?L.seats+k:-1}
-function onlMockChar(w,me){return Object.values(w.chars).find(c=>c.owner===me&&c.alive)||null}
+/* the account's ACTIVE gladiator (v0.79: up to 3 living, one active) */
+function onlMockChar(w,me){const all=Object.values(w.chars).filter(c=>c.owner===me&&c.alive).sort((a,b)=>b.born-a.born);if(!all.length)return null;const A=w.accounts[me];return all.find(c=>A&&c.id===A.active)||all[all.length-1]}
+function mockBusy(w,me){return Object.values(w.lobbies).find(L=>(L.status==='waiting'||L.status==='live')&&L.players.some(p=>p.id===me))||null}
+function mockClose(w,L,why){const M=w.matches[L.id];if(M)M.status='done';const st=ONLC.settle(L.bets||[],[],{tix:(L.stands||[]).map(s=>({by:s.id,amt:s.paid|0})),void:true});
+  for(const [by,v] of Object.entries(st.payouts)){const c=onlMockChar(w,by);if(c)c.wallet+=v}L.status='done';L.closed=why;L.bets=[];L.pool=0;L.pot=0;mockPush('lobby.update',{id:L.id,closed:why})}
 const onlHallWhy=ch=>ONLC.hallWhy(ch);
 async function mockReq(t,d){const R=MOCK_ROUTES[t];if(!R)throw new Error('Unknown request: '+t);await new Promise(r=>setTimeout(r,30+Math.random()*60));
-  const w=mockLoad();mockSeedWorld(w);const me=mockMe();const out=R(w,d,me);mockSave(w);if(/^lobby\./.test(t)&&t!=='lobby.list'||t==='match.result'||t==='match.watch')mockPush('lobby.update',{id:d.id||(out&&out.id)});return JSON.parse(JSON.stringify(out===undefined?{}:out))}
+  const w=mockLoad();mockSeedWorld(w);const me=mockMe();const out=R(w,d,me);mockSave(w);if(/^lobby\./.test(t)&&t!=='lobby.list'||t==='match.result'||t==='match.watch'||t==='match.abandon')mockPush('lobby.update',{id:d.id||(out&&out.id)});return JSON.parse(JSON.stringify(out===undefined?{}:out))}
 /* the gear catalog: every printed weapon and armor piece the market sells, by level (the server ships the same list) */
 function onlCatalog(){if(ONL.cat)return ONL.cat;const c={};for(const lv of [1,2,3]){for(const k of (typeof MARKET_W0!=='undefined'?MARKET_W0:MARKET_W)[lv]||[])if(W[k]&&!W[k].custom)c[k]={kind:'w',lv,n:W[k].n};
   for(const k of (typeof MARKET_A0!=='undefined'?MARKET_A0:MARKET_A)[lv]||[])if(ARM[k]&&!ARM[k].custom)c[k]={kind:'a',lv,n:ARM[k].n,stack:!!ARM[k].stack}}return ONL.cat=c}
@@ -31258,22 +31303,23 @@ function onlMini(cls,h=220){const src=typeof MINI_URL!=='undefined'&&MINI_URL[cl
 function onlEvName(k){return (EVENTS[k]||{}).n||k}
 function onlCityName(i){return (LOCATIONS[i]||{}).n||'—'}
 async function onlRefresh(){try{const h=await NET.req('hello',{all:1});ONL.acct=h.me;ONL.mode=h.mode;
-    if(h.chars&&h.me){ONL.chars=h.chars;ONL.char=h.chars.find(c=>c.alive)||null;ONL.lobbies=h.lobbies||[];ONL.news=h.news||[];ONL.stats={challenges:h.challenges||[],online:h.online||0};ONL.party=h.party||null;return}}catch(e){ONL.err=e.message}
-  if(ONL.acct){try{ONL.chars=await NET.req('char.mine');ONL.char=ONL.chars.find(c=>c.alive)||null}catch(e){}}
+    if(h.chars&&h.me){ONL.chars=h.chars;ONL.active=h.active||null;ONL.char=h.chars.find(c=>c.alive&&c.id===h.active)||h.chars.find(c=>c.alive)||null;ONL.lobbies=h.lobbies||[];ONL.news=h.news||[];ONL.stats={challenges:h.challenges||[],online:h.online||0};ONL.party=h.party||null;return}}catch(e){ONL.err=e.message}
+  if(ONL.acct){try{ONL.chars=await NET.req('char.mine');ONL.char=ONL.chars.find(c=>c.alive&&c.id===ONL.active)||ONL.chars.find(c=>c.alive)||null}catch(e){}}
   try{ONL.lobbies=await NET.req('lobby.list')}catch(e){}try{const n=await NET.req('world.news');ONL.news=n.news;ONL.stats=n}catch(e){}}
 function onlRedraw(){const r=document.getElementById('onl');if(!r)return;const sc=($('#mBody')||{}).scrollTop||0;r.innerHTML=onlHTML();const b=$('#mBody');if(b)b.scrollTop=sc}
 let ONL_SUB=null;
-async function onlineOpen(tab){if(typeof modalBusy==='function'&&modalBusy())return;ONL.tab=tab||ONL.tab||'play';await onlRefresh();
+async function onlineOpen(tab){if(typeof modalBusy==='function'&&modalBusy())return;ONL.tab=tab||'play';ONL.newGlad=false;await onlRefresh();
   if(!ONL_SUB)ONL_SUB=NET.on('lobby.update',async()=>{if(!document.getElementById('onl'))return;try{ONL.lobbies=await NET.req('lobby.list')}catch(e){}onlRedraw();if(typeof onlLobbyTick==='function')onlLobbyTick()});
   const v=await modal('🌐 Online',`<div id="onl">${onlHTML()}</div>`,[{label:'Close',value:'close'}],{wide:1,full:1,close:'close',onOpen:()=>{const x=$('#mClose');if(x){x.textContent='✖ Leave the Online arena';x.classList.add('saveq')}}});
   if(typeof v==='string'&&v.startsWith('play:'))onlPlay(v.slice(5))}
-function onlHTML(){if(!ONL.acct)return onlSignInHTML();if(!ONL.char&&ONL.tab!=='hall')return onlCreatorHTML();
-  const tabs=[['play','⚔ Play'],['lobby','📜 Lobby Browser'],['spect','👁 Spectate'],['armory','🛒 Armory & Market'],['char','🛡 Character'],['hall','🪦 Hall of the Fallen']];
+function onlHTML(){if(!ONL.acct)return onlSignInHTML();if((!ONL.char||ONL.newGlad)&&ONL.tab!=='hall')return onlCreatorHTML();
+  const tabs=[['play','⚔ Play'],['lobby','📜 Lobby Browser'],['spect','👁 Spectate'],['armory','🛒 Armory & Market'],['char','🛡 My Gladiators'],['hall','🪦 Hall of the Fallen']];
   return `<div class="onl-wrap"><nav class="onl-rail">${tabs.map(([k,l])=>`<button type="button" data-onl="tab" data-v="${k}" class="${ONL.tab===k?'on':''}">${l}</button>`).join('')}
     <div class="onl-acct"><span>${esc2(ONL.acct.name)}</span><small>${ONL.mode==='mock'?'mock server · preview':'signed in'}</small><button type="button" class="btn tksm" data-onl="signout">Sign out</button></div></nav>
    <main class="onl-main">${({play:onlPlayHTML,lobby:onlLobbyHTML,spect:onlSpectHTML,armory:onlArmoryHTML,char:onlCharHTML,hall:onlHallHTML}[ONL.tab]||onlPlayHTML)()}</main></div>`}
 function onlSignInHTML(){return `<div class="onl-sign"><div class="onl-sign-card"><h2>🌐 The Online Arena</h2><p>Fight real lanistas' gladiators. In Ranked, the Fate table is final: the dead stay dead.</p>
    <button type="button" class="btn primary onl-google" data-onl="google"><b>G</b> Sign in with Google</button>
+   <small class="rc-sub">Signing in shares your Google name and e-mail with the arena. <a href="https://flaviusrule.com/privacy.html" target="_blank" rel="noopener noreferrer">Privacy policy</a></small>
    ${NET.mode==='mock'?`<div class="onl-mocknote"><b>Mock server.</b> Until the AWS template is deployed, sign in with a name. Open a second window to play yourself.<div style="display:flex;gap:6px;margin-top:6px"><input class="tin" id="onlName" maxlength="24" placeholder="Your lanista name"><button type="button" class="btn" data-onl="mocksign">Enter</button></div></div>`:''}</div></div>`}
 /* the creator: name, class card, look, ratings */
 function onlCreatorHTML(){const d=ONL.creating||(ONL.creating={name:typeof genName==='function'?genName():'',cls:'hero',look:{portrait:typeof randomPortrait==='function'?randomPortrait():null}});
@@ -31285,7 +31331,8 @@ function onlCreatorHTML(){const d=ONL.creating||(ONL.creating={name:typeof genNa
     <div class="sect">Class</div><div class="onl-clsgrid">${ONLC.CLASSES8.map(k=>`<button type="button" class="onl-cls ${d.cls===k?'on':''}" data-onl="cls" data-v="${k}">${typeof cardHTML==='function'?cardHTML('k:'+k,'sm'):''}<span>${esc2(CLASSES[k].name)}</span></button>`).join('')}</div>
     <div class="sect">Ratings <span class="rc-sub">every recruit starts the same</span></div>
     <div class="onl-st0">${ONLC.STAT_KEYS.map(k=>`<span><b>${ONLC.START_STATS[k]}</b> ${L[k]}</span>`).join('')}</div><p class="rc-sub" style="margin:0">They grow only by surviving: +1 to your lowest rating for every bout you live through, +1 more for a win.</p>
-    <div class="mbtns"><button type="button" class="btn primary" data-onl="create">⚔ Enter the arena as a Tiro</button><button type="button" class="btn" data-onl="face">🎲 New face</button>${ONL.chars.length?'<button type="button" class="btn" data-onl="tab" data-v="hall">🪦 Hall of the Fallen</button>':''}</div>
+    <div class="mbtns"><button type="button" class="btn primary" data-onl="create">⚔ Enter the arena as a Tiro</button><button type="button" class="btn" data-onl="face">🎲 New face</button>${ONL.newGlad&&ONL.char?'<button type="button" class="btn" data-onl="nonew">Back</button>':ONL.chars.length?'<button type="button" class="btn" data-onl="tab" data-v="hall">🪦 Hall of the Fallen</button>':''}</div>
+    <p class="rc-sub" style="margin:0">Up to ${ONLC.GLAD_MAX} living gladiators; the active one fights. Their look, token and class are set in 🛡 My Gladiators.</p>
     ${ONL.err?`<p class="onl-err">${esc2(ONL.err)}</p>`:''}</div></div>`}
 function onlStageHTML(ch){const R=onlRank(ONLC.rankFor(ch).k),N=ONLC.nextRank(ch),pg=Math.round(ONLC.rankProgress(ch)*100);
   return `<div class="onl-stage"><div class="onl-light"></div>${onlMini(ch.cls,250)}<div class="onl-plate"><div class="onl-pname">${esc2(ch.name)}</div><div>${esc2((CLASSES[ch.cls]||{}).name||'')} · ${onlRankChip(R.k)}</div>
@@ -31317,7 +31364,7 @@ function onlLobbyHTML(){const me=ONL.acct.id;const rows=ONL.lobbies;const st=L=>
    ${ONL.mkgame?onlCreateGameHTML():''}${ONL.betting?onlBetHTML():''}${onlMyLobbyHTML()}
    <table class="tally onl-lb"><tr><th>Host</th><th>Event</th><th>City</th><th>Seats</th><th>Rank</th><th>Ping</th><th>Status</th><th></th></tr>${rows.map(L=>{const mine=L.players.some(p=>p.id===me)||(L.stands||[]).some(t=>t.id===me);
      return `<tr class="${mine?'mine':''}"><td><b>${esc2(L.host.name)}</b></td><td>${esc2(onlEvName(L.ev))}${L.team?' <span class="badge">👥 2v2</span>':''}</td><td>${esc2(onlCityName(L.loc))}</td><td>${L.players.length}/${L.seats}${(L.stands||[]).length?` <small class="rc-sub">🎟${L.stands.length}</small>`:''}</td><td>${L.ranked?onlRankChip(L.rank):'<span class="rc-sub">Custom · any</span>'}</td><td>${L.ping||'—'} ms</td><td>${st(L)}</td>
-      <td class="acts">${L.status==='waiting'&&!mine?`<button type="button" class="btn tksm primary" data-onl="join" data-v="${L.id}">Join</button>`:''}${L.status==='waiting'?`<button type="button" class="btn tksm" data-onl="bet" data-v="${L.id}" title="Wager from your wallet">🎲${L.pool?' '+L.pool:''}</button>`:''}${L.status==='live'?`<button type="button" class="btn tksm" data-onl="watch" data-v="${L.id}" title="Watch for free">👁</button>`:''}${L.ticket&&L.status==='waiting'&&!mine?`<button type="button" class="btn tksm" data-onl="ticket" data-v="${L.id}" title="A seat in the stands until the horns: stones, offerings, cheers. The coin goes into the wager pot.">🎟 ${L.ticket}</button>`:''}</td></tr>`}).join('')||'<tr><td colspan="8" class="rc-sub">No games hosted. Create one.</td></tr>'}</table>`}
+      <td class="acts">${L.status==='waiting'&&!mine?`<button type="button" class="btn tksm primary" data-onl="join" data-v="${L.id}">Join</button>`:''}${L.status==='waiting'?`<button type="button" class="btn tksm" data-onl="bet" data-v="${L.id}" title="Wager from your wallet">🎲${L.pool?' '+L.pool:''}</button>`:''}${L.status==='live'?(L.players.some(p=>p.id===me)&&!(ONL.leftMatch||{})[L.id]?`<button type="button" class="btn tksm primary" data-onl="rejoin" data-v="${L.id}" title="Back to your match">⚔ Rejoin</button>`:`<button type="button" class="btn tksm" data-onl="watch" data-v="${L.id}" title="Watch for free">👁</button>`):''}${L.ticket&&L.status==='waiting'&&!mine?`<button type="button" class="btn tksm" data-onl="ticket" data-v="${L.id}" title="A seat in the stands until the horns: stones, offerings, cheers. The coin goes into the wager pot.">🎟 ${L.ticket}</button>`:''}</td></tr>`}).join('')||'<tr><td colspan="8" class="rc-sub">No games hosted. Create one.</td></tr>'}</table>`}
 function onlCreateGameHTML(){const g=ONL.mkgame;return `<div class="card2 onl-mk"><b>Host a game</b><div class="formgrid">
    <label>Event<select data-onlg="ev">${ONLC.EVENTS_ALL.map(k=>`<option value="${k}" ${g.ev===k?'selected':''}>${esc2(onlEvName(k))}${ONLC.EVENTS_TEAM.includes(k)?' — teams 2 v 2':''}</option>`).join('')}</select></label>
    <label>City<select data-onlg="loc">${LOCATIONS.map((L,i)=>L?`<option value="${i}" ${+g.loc===i?'selected':''}>${esc2(L.n)}</option>`:'').join('')}</select></label>
@@ -31341,7 +31388,7 @@ function onlArmoryHTML(){const ch=ONL.char;const R=ONLC.rankFor(ch);const cat=on
    <div class="seg" style="margin-bottom:8px"><button type="button" data-onl="mkt" data-v="w" class="${f==='w'?'on':''}">⚔ Weapons</button><button type="button" data-onl="mkt" data-v="a" class="${f==='a'?'on':''}">🛡 Armor</button></div>
    <div class="onl-mkgrid">${items.map(([k,it])=>{const why=ONLC.canBuy(ch,k,cat);const own=(ch.gear||[]).includes(k);const art=typeof cardHTML==='function'?cardHTML((it.kind==='w'?'w:':'a:')+k,'sm'):'';
      return `<div class="onl-it ${why&&!own?'no':''} ${own?'own':''}">${art}<b>${esc2(it.n)}</b><small>Level ${it.lv} · ${ONLC.PRICE[it.lv]} coin</small>${own&&!it.stack?'<span class="badge gold">Yours</span>':`<button type="button" class="btn tksm ${why?'':'primary'}" data-onl="buy" data-v="${k}" ${why?`disabled title="${esc2(why)}"`:''}>Buy</button>`}</div>`}).join('')}</div>`}
-function onlCharHTML(){const ch=ONL.char;const cat=onlCatalog();const kit=((CLASSES[ch.cls]||{}).weapons||[]).map(k=>(W[k]||{}).n).filter(Boolean);
+function onlCharHTML(){const ch=ONL.char;const cat=onlCatalog();const CK=CLASSES[ch.cls]||{};const kit=[CK.R,CK.L].filter(Boolean).map(k=>(W[k]||{}).n).filter(Boolean);
   return `<div class="onl-cprof">${onlStageHTML(ch)}<div class="card2"><b>Record</b><table class="tally compact"><tr><td>Bouts</td><td>${ch.bouts}</td></tr><tr><td>Won</td><td>${ch.wins}</td></tr><tr><td>Ranked bouts survived</td><td>${ch.survived}</td></tr><tr><td>Lifetime CF</td><td>${ch.lifeCF}</td></tr><tr><td>Kills</td><td>${ch.kills}</td></tr></table>
    <b>Kit</b><p class="rc-sub">Recruit kit: ${esc2(kit.join(', ')||'the class weapons')}${(ch.gear||[]).length?' · bought: '+esc2(ch.gear.map(k=>(cat[k]||{}).n||k).join(', ')):''}</p>
    <b>Ratings</b><p class="rc-sub">${ONLC.STAT_KEYS.map(k=>`${k.toUpperCase()} ${ch.stats[k]}`).join(' · ')}</p></div></div>`}
@@ -31360,7 +31407,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl]'
   if(a==='signout')return onlDo(async()=>{await NET.req('auth.signout');ONL.acct=null;ONL.char=null});
   if(a==='cls'){ONL.creating.cls=v;onlRedraw();return}
   if(a==='face'){ONL.creating.look={portrait:typeof randomPortrait==='function'?randomPortrait():null};onlRedraw();return}
-  if(a==='create')return onlDo(async()=>{const d=ONL.creating;d.name=($('#onlCName')||{}).value||d.name;ONL.char=await NET.req('char.create',d);ONL.creating=null;ONL.chars.unshift(ONL.char);ONL.tab='play';if(typeof mToast==='function')mToast(`⚔ <b>${esc2(ONL.char.name)}</b> enters the arena — a Tiro with an empty purse.`)});
+  if(a==='nonew'){ONL.newGlad=false;ONL.creating=null;onlRedraw();return}
+  if(a==='create')return onlDo(async()=>{const d=ONL.creating;d.name=($('#onlCName')||{}).value||d.name;const made=await NET.req('char.create',d);ONL.creating=null;ONL.newGlad=false;await onlRefresh();ONL.tab=ONL.chars.filter(c=>c.alive).length>1?'char':'play';ONL.gsel=made.id;ONL.char=ONL.char||made;if(typeof mToast==='function')mToast(`⚔ <b>${esc2(ONL.char.name)}</b> enters the arena — a Tiro with an empty purse.`)});
   if(a==='refresh')return onlDo(onlRefresh);
   if(a==='newgame'){ONL.mkgame={ev:'democritus',loc:6,seats:4,ranked:true,ticket:0};onlRedraw();return}
   if(a==='nogame'){ONL.mkgame=null;onlRedraw();return}
@@ -31527,18 +31575,20 @@ for(const nm of ['popRule','eventBriefing']){try{const base=eval(nm);if(typeof b
   /* a CPU offering a truce or a trade to a human: declined everywhere (v1) */
   if(c&&c.cpu&&/offers a truce|proposes a trade/.test(t)){const no=(buttons||[]).find(b=>/decline|refuse|no\b|keep/i.test(b.label||''))||(buttons||[]).slice(-1)[0];return Promise.resolve(no?no.value:null)}
   const own=onlmOwner();if(!onlmHuman(own))return base.apply(this,arguments);
+  /* a seat whose lanista abandoned: every client answers that seat's windows with the default (the same value everywhere) */
+  if(ONLM.left&&ONLM.left[own]!=null){const def=opt&&('close' in opt)?opt.close:((buttons||[]).slice(-1)[0]||{}).value??null;return Promise.resolve(def)}
   if(own===ONLM.me){const pre=onlHash();const pr=base.apply(this,arguments);if(own>=onlmFighters())onlmAutoPass(buttons,opt);return Promise.resolve(pr).then(v=>{const inp={k:'modal',v:v===undefined?null:v,t:t.slice(0,60)};inp.pre=pre;onlmSend(inp);return v})}
   const def=opt&&('close' in opt)?opt.close:((buttons||[]).slice(-1)[0]||{}).value??null;
   return new Promise(res=>{ONLM.pend={res,t,seat:own,at:Date.now(),def};onlmWaitShow();onlmPump()})}}
 /* ---------------- receiving ---------------- */
 NET.on('match.input',d=>{if(!onlmOn()||!d||d.id!==S.onl.lobby)return;const inp=d.in;if(inp.from===ONL.acct.id||inp.seq<ONLM.next)return;if(!ONLM.q.some(x=>x.seq===inp.seq))ONLM.q.push(inp);ONLM.q.sort((a,b)=>a.seq-b.seq);onlmPump()});
-function onlmReady(inp){if(!S||S.over)return false;if(inp.k==='void')return true;if(inp.k==='drop')return ONLM.pend?ONLM.pend.seat===inp.seat:(!S.busy&&!CUR_MODAL&&['choice','action','command'].includes(S.phase)&&onlmActor()===inp.seat);if(inp.k==='modal')return !!ONLM.pend;
+function onlmReady(inp){if(!S||S.over)return false;if(inp.k==='void'||inp.k==='abandon')return true;if(inp.k==='drop')return ONLM.pend?ONLM.pend.seat===inp.seat:(!S.busy&&!CUR_MODAL&&['choice','action','command'].includes(S.phase)&&onlmActor()===inp.seat);if(inp.k==='modal')return !!ONLM.pend;
   return !S.busy&&!CUR_MODAL&&!ONLM.pend&&['choice','action','command'].includes(S.phase)&&onlmActor()===inp.seat}
 let ONLM_PUMP=0;
 function onlmPump(){clearTimeout(ONLM_PUMP);if(!onlmOn()||ONLM.resyncing)return;
   for(;;){while(ONLM.own.has(ONLM.next)){ONLM.own.delete(ONLM.next);ONLM.next++}if(!(ONLM.q.length&&ONLM.q[0].seq===ONLM.next))break;const inp=ONLM.q[0];if(!onlmReady(inp)){ONLM_PUMP=setTimeout(onlmPump,120);onlmWaitShow();return}
     ONLM.q.shift();ONLM.next=inp.seq+1;
-    if(inp.k==='void'){continue}if(inp.k==='drop'){onlmDrop(inp);continue}
+    if(inp.k==='void'){continue}if(inp.k==='drop'){onlmDrop(inp);continue}if(inp.k==='abandon'){onlmAbandonMark(inp);continue}
     const mine=inp.k==='modal'?inp.pre:onlHash();if(inp.k==='modal'?inp.pre&&mine!==onlmPendHash():inp.h&&mine!==inp.h){onlmResync(inp);return}
     ONLM.hlog['s'+inp.seq]=inp.k==='modal'?onlmPendHash():onlHash();onlmApply(inp)}
   if(ONLM.q.length&&ONLM.q[0].seq>ONLM.next)onlmCatchUp();onlmWaitShow()}
@@ -31605,6 +31655,8 @@ function onlmAutoPass(buttons,opt){const m=CUR_MODAL;const v=opt&&('close' in op
   setTimeout(()=>{if(CUR_MODAL&&CUR_MODAL===m&&onlmOn()){if(typeof mToast==='function')mToast('⏳ The stands moved on — you watch this rotation.');m.done(v)}},45000)}
 /* every ticket holder takes an upkeep in seat order (the engine's own spectator turn, one owner at a time) */
 {const base=humanSpectatorTurn;humanSpectatorTurn=async function(me){if(!onlmOn())return base.apply(this,arguments);
+  /* the stands act in round 1 only, and never when the host closed them (v0.79) */
+  if((S.onl&&S.onl.standsOff)||S.ri>0)return;
   for(const s of (S.spect||[]).filter(x=>x.human&&!x.gone&&x.onlIdx!=null)){if(!S||S.over)return;const prev=ONLM.override;ONLM.override=s.onlIdx;ONLM.specName=s.onlIdx===ONLM.me?null:s.name;
     try{await base.call(this,s)}finally{ONLM.override=prev;ONLM.specName=null}}}}
 /* the engine words a human spectator as "you": on the other screens, name them */
@@ -31626,10 +31678,26 @@ async function onlWatchReplay(id){const W=ONL.watching;if(!W||W.id!==id||W.done)
 function onlmWatchOn(next,ins){ONLM.on=true;ONLM.me=-1;ONLM.owners=S.onl.owners;ONLM.next=next;ONLM.q=[];ONLM.pend=null;ONLM.sent=0;ONLM.own=new Set();ONLM.resyncing=false;
   for(const inp of ins)if(inp.seq>=next&&!ONLM.q.some(x=>x.seq===inp.seq))ONLM.q.push(inp);ONLM.q.sort((a,b)=>a.seq-b.seq);onlmWaitShow();setTimeout(onlmPump,200)}
 NET.on('match.snap',d=>{const W=ONL.watching;if(!W||W.done||!d||d.id!==W.id||d.to!==ONL.acct.id)return;W.done=true;onlmLoad(d.snap,W.onl);onlmWatchOn(d.seq,W.buf);
-  try{if(typeof menuHide==='function')menuHide()}catch(e){}log('👁 You are watching from the free stands.','big');render()});
+  try{if(typeof menuHide==='function')menuHide()}catch(e){}log(W.seat?'⚔ You are back on the sand.':'👁 You are watching from the free stands.','big');render()});
 /* moves that arrive before the snapshot are kept for it */
 NET.on('match.input',d=>{const W=ONL.watching;if(W&&!W.done&&d&&d.id===W.id&&d.in)W.buf.push(d.in)});
 {const base=gameOver;gameOver=async function(){const w=S&&S.onl&&S.onl.watch;const r=await base.apply(this,arguments);if(w&&ONL.watching){NET.req('match.unwatch',{id:ONL.watching.id}).catch(()=>{});ONL.watching=null}return r}}
+
+/* ---------------- 🚪 abandon (v0.79) ----------------
+   The server orders an 'abandon' input; it only MARKS the seat (no state change), so it may land at any time. The seat is then
+   taken off at a point every client reaches in the same state: that seat's next decision (its turn, or a window it owns).
+   rule 'fate' → eliminated (the bout is over for them; in Ranked the server already applied the Damnatio death); 'cpu' → a CPU fights on. */
+function onlmAbandonMark(inp){ONLM.left=ONLM.left||{};if(ONLM.left[inp.seat]!=null)return;ONLM.left[inp.seat]=inp.rule||'cpu';
+  const p=S.players[inp.seat];if(p)log(`🚪 <b>${esc(p.name)}</b> abandoned the match${inp.rule==='fate'?(S.onl&&S.onl.ranked?' — Damnatio.':' — out of the bout.'):' — a CPU fights on in that seat.'}`,'big');
+  if(inp.seat===ONLM.me){ONLM.me=-1}
+  if(ONLM.pend&&ONLM.pend.seat===inp.seat){const P=ONLM.pend;ONLM.pend=null;P.res(P.def)}
+  setTimeout(onlmLeftCheck,60)}
+function onlmLeftCheck(){if(!onlmOn()||!ONLM.left)return;if(S.busy||CUR_MODAL||ONLM.pend||!['choice','action','command'].includes(S.phase))return;
+  const c=cur();const i=onlmSeatOf(c);const rule=ONLM.left[i];if(rule==null||!c||c.cpu||!c.alive)return;if(ONLM.leftDone&&ONLM.leftDone[i])return;(ONLM.leftDone=ONLM.leftDone||{})[i]=1;
+  ONLM.replay++;try{if(rule==='fate'){ONLM.owners[i]=null;c.cpu=true;try{eliminate(c,{type:'retire'})}catch(e){console.error(e)}render();endTurn()}
+    else{c.cpu=true;ONLM.owners[i]=null;if(S.phase==='command'){const b=document.createElement('button');b.dataset.act='cmddone';b.style.display='none';document.body.appendChild(b);try{b.click()}finally{b.remove()}}else endTurn()}}
+  finally{ONLM.replay--}onlmWaitShow()}
+{const base=render;render=function(){const r=base.apply(this,arguments);if(ONLM.on&&ONLM.left)setTimeout(onlmLeftCheck,40);return r}}
 /* =====================================================================
    114-ONLNET · THE REAL SERVER (phase 4): WebSocket + Google sign-in
    =====================================================================
@@ -31674,7 +31742,7 @@ async function netSignOut(){try{localStorage.removeItem('flavius_onltok')}catch(
 /* back from Google: trade the code, tidy the address, open Online */
 (async()=>{const u=new URL(location.href);const code=u.searchParams.get('code');if(!code)return;let p=null;try{p=JSON.parse(sessionStorage.getItem('flavius_onlpkce')||'null')}catch(e){}
   if(!p||u.searchParams.get('state')!==p.st)return;try{await netTokenCall({grant_type:'authorization_code',code,redirect_uri:netRedirect(),code_verifier:p.ver});sessionStorage.removeItem('flavius_onlpkce')}catch(e){if(typeof mToast==='function')mToast('⚠ '+e.message)}
-  history.replaceState(null,'',netRedirect());try{localStorage.setItem('flavius_online77','1')}catch(e){}setTimeout(()=>{try{if(typeof menuHide==='function')menuHide();onlineOpen('play')}catch(e){}},1500)})();
+  history.replaceState(null,'',netRedirect());try{localStorage.setItem('flavius_online77','1')}catch(e){}setTimeout(()=>{try{if(typeof menuHide==='function')menuHide();onlineOpen('play')}catch(e){}},300)})();
 /* ---------------- choose the transport ---------------- */
 async function netPick(){const c=await NETWS.config();NET.mode=c?'aws':'mock';return NET.mode}
 /* idle sockets cost connection-minutes: close when the Online window shuts and no match is live (requests reopen it) */
@@ -31699,6 +31767,215 @@ document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl="
   return h.replace('</div></div>',devBox+box+'</div></div>')}}
 NET.on('net.back',()=>{if(document.getElementById('onl'))onlRefresh().then(onlRedraw)});
 {const st=document.createElement('style');st.textContent='.onl-srv{text-align:left;font-size:13px}.onl-srv summary{cursor:pointer;color:var(--muted)}.onl-srv textarea{width:100%;font:12px var(--mono)}';document.head.appendChild(st)}
+/* =====================================================================
+   115-V79 · v0.79 (Virgilante's notes after trying Online)
+   =====================================================================
+   • Main menu: the version badge shows what is new in this version (the Rules window's What's new card);
+     pressing C on the main menu opens the words of power (never during a match, never with a window up or typing).
+   • The Multiplayer row holds two buttons (Hot seat · Online, Online slightly wider — CSS in 01-head).
+   The online parts of v0.79 live in 111-114 (shared rules, window, lockstep, socket) and server/.
+   ===================================================================== */
+function verNotes79(){if(typeof modalBusy==='function'&&modalBusy())return;
+  return modal(`📜 What's new · v${GAME_VER}`,`${typeof whatsNewHTML==='function'?whatsNewHTML():''}`,[{label:'Version history',value:'hist'},{label:'Close',value:null,primary:1}],{close:null}).then(v=>{if(v==='hist'&&typeof showRules==='function')showRules('hist')})}
+function menuUp79(){const m=document.getElementById('mainMenu');return !!(m&&!m.hidden)}
+window.addEventListener('keydown',e=>{if(e.key!=='c'&&e.key!=='C')return;if(e.ctrlKey||e.metaKey||e.altKey||e.repeat)return;
+  const t=document.activeElement;if(t&&(['INPUT','TEXTAREA','SELECT'].includes(t.tagName)||t.isContentEditable))return;
+  if(!menuUp79()||CUR_MODAL||(typeof modalBusy==='function'&&modalBusy()))return;if(S&&!S.over&&S.phase!=='setup'&&S.onl)return;
+  e.preventDefault();if(typeof cheatPrompt==='function')cheatPrompt()});
+/* =====================================================================
+   116-ONL79 · ONLINE, v0.79 (Virgilante's first-session notes)
+   =====================================================================
+   • 🛡 My Gladiators: up to 3 living gladiators (ONLC.GLAD_MAX), one ACTIVE (it fights, bets and buys tickets);
+     edit name, class (the 8 printed; ratings, rank and bought gear stay), look (the Studio's portrait controls + colour),
+     an own board token (or the class mini) and which bought pieces to bring — only between events (server 'char.edit').
+   • In the arena a gladiator wears its look: seat kit.look → p._onlLook; its own token is drawn as a figure (tokenForP +
+     a drawPlayer wrapper that lends the class the 'custom' flag while drawing); the result cards show its portrait (pArt).
+   • The pre-match room (Your game card): seats + ready, host settings (Custom: abandoning eliminates or hands the seat to a
+     CPU; the stands round 1 only or closed), chat (closes at the horns), Start only with 2+ lanistas (ONLC.canStart).
+     When the host starts, everyone seated enters by themselves.
+   • In a match: the online bar (body.onlarena hides New event, sim, saves, Studio, Manager, Annals, main menu…);
+     🚪 Abandon (fighters) / 🚪 Leave (watchers, the stands) — the only way out. Rejoin a live match at any time from Play
+     (a fresh snapshot from another lanista); after abandoning, or once a CPU took the seat, you may only watch.
+   • Online opens on Play; the stage figure sits smaller, lower and to the right.
+   • Coming back from Google: a loading screen covers the page until the Online window is up (no arena/menu flash).
+   ===================================================================== */
+const ONL_TOKKEYS=['body','helm','shield','emblem','hair','hairC','skin','c1','c2','cape','capeC','base'];
+function onlTokenOf(cls,look){const t=look&&look.token;if(!t||!Object.keys(t).length)return null;
+  const base=(typeof TOKEN_DEF!=='undefined'&&TOKEN_DEF[cls])||{kind:'human',body:'tunic',helm:'galea',shield:'round',weapon:'gladius'};const o={...base,kind:'human'};
+  for(const k of ONL_TOKKEYS)if(t[k]!=null&&t[k]!=='')o[k]=t[k];return o}
+function onlFig(cls,look,h){const tk=onlTokenOf(cls,look);return tk&&typeof figureHTML==='function'?figureHTML(tk,h):onlMini(cls,h)}
+function onlPortraitOf(ch){const L=ch.look||{};return {name:ch.name,portrait:L.portrait||{},color:L.color||(CLASSES[ch.cls]||{}).color||'#a3281f'}}
+
+/* ---------------- the Play stage: the figure smaller, lower, to the right ---------------- */
+{const base=onlStageHTML;onlStageHTML=function(ch){const h=base.apply(this,arguments);return h.replace(onlMini(ch.cls,250),'').replace('<div class="onl-plate">',`<div class="onl-fig79">${onlFig(ch.cls,ch.look,165)}</div><div class="onl-plate">`)}}
+
+/* ---------------- 🛡 My Gladiators ---------------- */
+function onlBusy(){const me=ONL.acct&&ONL.acct.id;return (ONL.lobbies||[]).find(L=>(L.status==='waiting'||L.status==='live')&&L.players.some(p=>p.id===me))||null}
+function onlDraft(ch){if(ONL.ged&&ONL.ged.id===ch.id)return ONL.ged;const L=ch.look||{};
+  const eq=ONLC.equipOf(ch);const left=eq.slice();const on=(ch.gear||[]).map(k=>{const i=left.indexOf(k);if(i>=0){left.splice(i,1);return true}return false});
+  return ONL.ged={id:ch.id,name:ch.name,cls:ch.cls,look:{portrait:{...(L.portrait||(typeof randomPortrait==='function'?randomPortrait():{}))},color:L.color||(CLASSES[ch.cls]||{}).color||'#a3281f',token:L.token?{...L.token}:null},on,dirty:false}}
+function onlSel(path,opts,val,attr){return `<select class="tin" ${attr}="${path}">${opts.map(([v,l])=>`<option value="${esc2(v??'')}" ${String(val??'')===String(v??'')?'selected':''}>${esc2(l)}</option>`).join('')}</select>`}
+onlCharHTML=function(){const live=ONL.chars.filter(c=>c.alive).sort((a,b)=>a.born-b.born);const dead=ONL.chars.filter(c=>!c.alive);
+  const sel=live.find(c=>c.id===ONL.gsel)||ONL.char||live[0];if(!sel)return '';ONL.gsel=sel.id;const D=onlDraft(sel);const busy=onlBusy();const cat=onlCatalog();const p=D.look.portrait;
+  const slot=c=>{const act=c.id===(ONL.char&&ONL.char.id);return `<button type="button" class="onl-gslot ${c.id===sel.id?'on':''}" data-onl="gpick" data-v="${c.id}">${onlFig(c.cls,c.look,96)}<b>${esc2(c.name)}</b><small>${esc2((CLASSES[c.cls]||{}).name||'')} · ${onlRankChip(ONLC.rankFor(c).k)}</small><small>${typeof ICO!=='undefined'&&ICO.coin?ICO.coin:'🪙'} ${c.wallet} · ⭐ ${c.lifeCF} CF</small>${act?'<span class="badge gold">⚔ Active</span>':''}</button>`};
+  const empty=Array.from({length:Math.max(0,ONLC.GLAD_MAX-live.length)},()=>`<button type="button" class="onl-gslot empty" data-onl="gnew">＋<b>New gladiator</b><small>starts as a Tiro</small></button>`).join('');
+  const P=(path,label,opts,val)=>`<label>${label}${onlSel(path,opts,val,'data-onlgp')}</label>`;
+  const T=(f,label,opts)=>`<label>${label}${onlSel(f,opts,(D.look.token||{})[f]||(onlTokenOf(D.cls,{token:{x:1}})||{})[f]||'','data-onlgt')}</label>`;
+  const TC=(f,label,def)=>`<label>${label}<input type="color" data-onlgt="${f}" value="${/^#[0-9a-f]{6}$/i.test((D.look.token||{})[f]||'')?D.look.token[f]:def}"></label>`;
+  const gearRows=(sel.gear||[]).map((k,i)=>`<label class="chk"><input type="checkbox" data-onlgeq="${i}" ${D.on[i]?'checked':''}> ${esc2((cat[k]||{}).n||k)} <small class="rc-sub">L${(cat[k]||{}).lv||'?'}</small></label>`).join('');
+  const CK=CLASSES[D.cls]||{};const kit=[CK.R,CK.L].filter(Boolean).map(k=>(W[k]||{}).n).filter(Boolean);
+  return `<div class="onl-lbtop"><h3>🛡 My Gladiators <span class="rc-sub">${live.length}/${ONLC.GLAD_MAX} living · the active one fights</span></h3></div>
+   <div class="onl-gslots">${live.map(slot).join('')}${empty}</div>
+   ${busy?`<p class="onl-busy">⏳ In a game (${esc2(onlEvName(busy.ev))}) — changes wait until it is over.</p>`:''}
+   <div class="onl-ged"><div class="onl-gprev"><div id="onlGPort">${typeof portraitHTML==='function'?portraitHTML({...onlPortraitOf({name:D.name,cls:D.cls,look:D.look})},'lg'):''}</div>
+      <div id="onlGTok" title="The board token">${onlFig(D.cls,D.look,120)}</div>
+      ${sel.id!==(ONL.char&&ONL.char.id)?`<button type="button" class="btn primary" data-onl="gact" data-v="${sel.id}" ${busy?'disabled':''}>⚔ Make active</button>`:'<span class="badge gold">⚔ Active gladiator</span>'}</div>
+    <div class="onl-gform">
+     <label>Name<input class="tin" data-onlge="name" maxlength="24" value="${esc2(D.name)}"></label>
+     <div class="sect">Class <span class="rc-sub">switch freely between events — ratings, rank and bought gear stay</span></div>
+     <div class="onl-clsgrid">${ONLC.CLASSES8.map(k=>`<button type="button" class="onl-cls ${D.cls===k?'on':''}" data-onl="gcls" data-v="${k}">${typeof cardHTML==='function'?cardHTML('k:'+k,'sm'):''}<span>${esc2(CLASSES[k].name)}</span></button>`).join('')}</div>
+     <p class="rc-sub" style="margin:2px 0 0">Recruit kit: ${esc2(kit.join(', ')||'the class weapons')}</p>
+     <div class="sect">Look</div>
+     <div class="formgrid onl-g2">${P('portrait.skin','Skin',SKINS.map((v,i)=>[v,SKIN_NAMES[i]||'Tone '+(i+1)]),p.skin)}${P('portrait.hair','Hair',HAIRS.map((v,i)=>[v,HAIR_NAMES[i]||'Shade '+(i+1)]),p.hair)}
+      ${P('portrait.helm','Headgear',HELMS,p.helm)}${P('portrait.hs','Hairstyle',HAIRSTYLES,p.hs||(p.long?'long':''))}${P('portrait.bs','Beard',BEARDS,p.bs&&p.bs!=='none'?p.bs:(p.beard?'full':''))}
+      ${P('portrait.eyes','Eyes',EYES,p.eyes||EYES[0][0])}${P('portrait.mark','Marks',MARKS,p.mark||'')}${P('portrait.garb','Garb',GARBS,p.garb||'')}
+      ${P('portrait.fem','Build',[['','Gladiator'],['1','Gladiatrix']],p.fem?'1':'')}${P('portrait.smile','Expression',[['','Stern'],['1','Grin']],p.smile?'1':'')}
+      ${typeof EARRINGS!=='undefined'?P('portrait.ear','Earring',EARRINGS,p.ear||''):''}<label>Colour<input type="color" data-onlgp="color" value="${esc2(D.look.color)}"></label></div>
+     <div class="mbtns" style="margin:4px 0"><button type="button" class="btn tksm" data-onl="grlook">🎲 Random look</button></div>
+     <div class="sect">Board token</div>
+     <label class="chk"><input type="checkbox" data-onl="gtok" ${D.look.token?'checked':''}> My own token <span class="rc-sub">(off: the class mini)</span></label>
+     ${D.look.token?`<div class="formgrid onl-g2">${T('body','Body',T_BODIES)}${T('helm','Headgear',T_HELMS)}${T('shield','Shield',T_SHIELDS)}${T('emblem','Shield emblem',T_EMBLEM)}${T('hair','Hair',T_HAIRS)}
+       ${T('skin','Skin',TOKEN_SKINS.map((v,i)=>[v,'Tone '+(i+1)]))}${TC('c1','Main colour','#a3281f')}${TC('c2','Trim colour','#d6ab4c')}${TC('hairC','Hair colour','#3a2616')}
+       <label class="chk" style="align-self:end"><input type="checkbox" data-onlgt="cape" ${(D.look.token||{}).cape?'checked':''}> Cape</label></div>`:''}
+     <div class="sect">Gear to bring <span class="rc-sub">bought in the Armory</span></div>
+     <div class="chkgrid">${gearRows||'<span class="rc-sub">Nothing bought yet — the recruit kit only.</span>'}</div>
+     <div class="mbtns"><button type="button" class="btn primary" data-onl="gsave" ${busy?'disabled':''}>💾 Save ${esc2(D.name)}</button></div>
+    </div></div>
+   ${dead.length?`<div class="sect">The fallen</div><div class="rc-sub">${dead.map(c=>esc2(c.name)).join(' · ')}</div>`:''}`};
+function onlGPrev(){const D=ONL.ged;if(!D)return;const a=document.getElementById('onlGPort');if(a&&typeof portraitHTML==='function')a.innerHTML=portraitHTML(onlPortraitOf({name:D.name,cls:D.cls,look:D.look}),'lg');
+  const b=document.getElementById('onlGTok');if(b)b.innerHTML=onlFig(D.cls,D.look,120)}
+document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl]');if(!b)return;const a=b.dataset.onl,v=b.dataset.v;const D=ONL.ged;
+  if(a==='gpick'){ONL.gsel=v;ONL.ged=null;onlRedraw();return}
+  if(a==='gnew'){ONL.newGlad=true;ONL.creating=null;onlRedraw();return}
+  if(a==='gcls'&&D){D.cls=v;D.dirty=true;onlRedraw();return}
+  if(a==='grlook'&&D){D.look.portrait=typeof randomPortrait==='function'?randomPortrait():D.look.portrait;D.dirty=true;onlRedraw();return}
+  if(a==='gtok'&&D){D.look.token=D.look.token?null:{...(onlTokenOf(D.cls,{token:{x:1}})||{}),c1:D.look.color};delete (D.look.token||{}).x;D.dirty=true;onlRedraw();return}
+  if(a==='gact')return onlDo(async()=>{await NET.req('char.active',{char:v});ONL.active=v;await onlRefresh();if(typeof mToast==='function')mToast(`⚔ <b>${esc2(ONL.char.name)}</b> is your active gladiator.`)});
+  if(a==='gsave'&&D)return onlDo(async()=>{const ch=ONL.chars.find(c=>c.id===D.id);const equip=(ch.gear||[]).filter((k,i)=>D.on[i]);
+    const tok=D.look.token?Object.fromEntries(Object.entries(D.look.token).filter(([k])=>ONL_TOKKEYS.includes(k))):null;
+    await NET.req('char.edit',{char:D.id,name:D.name,cls:D.cls,look:{portrait:D.look.portrait,color:D.look.color,...(tok?{token:tok}:{})},equip});ONL.ged=null;await onlRefresh();if(typeof mToast==='function')mToast(`💾 <b>${esc2(D.name)}</b> is ready.`)})},true);
+document.addEventListener('input',e=>{const t=e.target;if(!t||!t.closest||!t.closest('#onl'))return;const D=ONL.ged;if(!D)return;
+  if(t.dataset.onlge){D[t.dataset.onlge]=t.value;D.dirty=true;return}
+  if(t.dataset.onlgp){const f=t.dataset.onlgp;let v=t.value;if(f==='portrait.fem'||f==='portrait.smile')v=!!v;if(f==='color')D.look.color=v;else setPath(D.look,f,v);D.dirty=true;onlGPrev();return}
+  if(t.dataset.onlgt&&D.look.token){const f=t.dataset.onlgt;D.look.token[f]=t.type==='checkbox'?t.checked:t.value;D.dirty=true;onlGPrev();return}
+  if(t.dataset.onlgeq!=null){D.on[+t.dataset.onlgeq]=t.checked;D.dirty=true}},true);
+document.addEventListener('change',e=>{const t=e.target;if(t&&t.closest&&t.closest('#onl')&&(t.dataset.onlgp||t.dataset.onlgt))t.dispatchEvent(new Event('input',{bubbles:true}))},true);
+
+/* ---------------- the look in the arena ---------------- */
+{const base=mkPlayer;mkPlayer=function(i,seat){const p=base.apply(this,arguments);try{if(seat&&seat.onl&&seat.onl.look){p._onlLook=seat.onl.look;const tk=onlTokenOf(p.cls,seat.onl.look);if(tk)p._onlTok=tk}}catch(e){}return p}}
+{const base=tokenForP;tokenForP=function(p){if(p&&p._onlTok){const C=CLASSES[p.cls];const was=C&&C.custom;if(C)C.custom=false;let r;try{r=base.apply(this,arguments)}finally{if(C)C.custom=was}
+    const o={...r};for(const k of ONL_TOKKEYS)if(p._onlTok[k]!=null)o[k]=p._onlTok[k];return o}return base.apply(this,arguments)}}
+{const base=drawPlayer;drawPlayer=function(p){if(p&&p._onlTok&&CLASSES[p.cls]&&!CLASSES[p.cls].custom){const C=CLASSES[p.cls];C.custom=true;try{return base.apply(this,arguments)}finally{C.custom=false}}return base.apply(this,arguments)}}
+{const base=pArt;pArt=function(p,size){if(p&&p._onlLook&&p._onlLook.portrait&&typeof portraitHTML==='function')return `<span class="partw">${portraitHTML({name:p.name,portrait:p._onlLook.portrait,color:p._onlLook.color||p.color},size||'sm')}</span>`;return base.apply(this,arguments)}}
+{const base=onlSeatsFor;onlSeatsFor=function(L){const seats=base.apply(this,arguments);L.players.forEach((p,i)=>{const k=p.kit||{};if(seats[i]&&seats[i].onl&&k.look)seats[i].onl.look=k.look});return seats}}
+
+/* ---------------- the pre-match room ---------------- */
+function onlMyLobby(){const me=ONL.acct&&ONL.acct.id;return (ONL.lobbies||[]).find(x=>x.status!=='done'&&(x.players.some(p=>p.id===me)||(x.stands||[]).some(t=>t.id===me)))||null}
+onlMyLobbyHTML=function(){const me=ONL.acct&&ONL.acct.id;const L=onlMyLobby();if(!L)return '';const host=L.host.id===me;const fan=!L.players.some(p=>p.id===me);const tm=ONLC.seatTeams(L);
+  const humans=ONLC.humansOf(L);const why=host?ONLC.canStart(L,me):'';const left=(ONL.leftMatch||{})[L.id];const inMatch=S&&S.onl&&S.onl.lobby===L.id&&!S.over;
+  const seat=i=>{const p=L.players[i];const t=tm?`<i class="onl-team t${tm[i]}">${tm[i]}</i>`:'';const k=p&&p.kit;
+    return `<div class="onl-rseat ${p?'on':''}">${p&&k?onlFig(k.cls,k.look,54):'<span class="onl-rq">?</span>'}<div>${t}${p?`<b>${esc2(p.name)}</b>${p.id===L.host.id?' 👑':''}${p.ready?' <span class="onl-rdy">✓ ready</span>':''}<small>${k?esc2((CLASSES[k.cls]||{}).name||'')+' · ':''}${onlRankChip(p.rank)}</small>`:'<small>Open — a CPU if empty</small>'}</div></div>`};
+  const rule=ONLC.abandonRule(L);
+  const settings=L.status==='waiting'?`<div class="onl-rset"><b>Rules of this game</b>
+     <label>Leaving the sand ${host&&!L.ranked?`<select class="tin" data-onlset="abandon"><option value="cpu" ${rule==='cpu'?'selected':''}>a CPU takes the seat</option><option value="fate" ${rule==='fate'?'selected':''}>the gladiator is eliminated</option></select>`:`<span>${L.ranked?'Ranked: eliminated — Damnatio, the gladiator dies':rule==='fate'?'the gladiator is eliminated':'a CPU takes the seat'}</span>`}</label>
+     <label>The stands ${host?`<select class="tin" data-onlset="standsOff"><option value="0" ${L.standsOff?'':'selected'}>may act in round 1</option><option value="1" ${L.standsOff?'selected':''}>watch only</option></select>`:`<span>${L.standsOff?'watch only':'may act in round 1'}</span>`}</label></div>`:'';
+  const chat=L.status==='waiting'?`<div class="onl-chat"><div class="onl-chatlog" id="onlChatLog">${(L.chat||[]).map(m=>`<div><b>${esc2(m.name)}</b> ${esc2(m.text)}</div>`).join('')||'<div class="rc-sub">Say ave to the other lanistas.</div>'}</div>
+     <div class="onl-chatrow"><input class="tin" id="onlChat" maxlength="${ONLC.CHAT_LEN}" placeholder="Message the room"><button type="button" class="btn tksm" data-onl="chat" data-v="${L.id}">Send</button></div></div>`:'';
+  const acts=L.status==='waiting'?(fan?'':(host?`<button type="button" class="btn primary" data-onl="start" data-v="${L.id}" ${why?`disabled title="${esc2(why)}"`:''}>▶ Start the match</button>`:`<button type="button" class="btn" data-onl="ready" data-v="${L.id}">✓ Ready</button>`))
+    :(inMatch?'':left||fan?`<button type="button" class="btn primary" data-onl="${fan&&!left?'enter':'watch'}" data-v="${L.id}">${fan&&!left?'🎟 Take your seat':'👁 Watch'}</button>`:`<button type="button" class="btn primary" data-onl="rejoin" data-v="${L.id}">⚔ Rejoin the match</button>`);
+  return `<div class="card2 onl-mine onl-room"><div class="onl-rhead"><b>${fan?'🎟 Your seat in the stands':'⚔ Your game'}</b> · ${esc2(onlEvName(L.ev))} at ${esc2(onlCityName(L.loc))} · ${L.ranked?'⚔ Ranked':'Custom'}${L.team?' · 👥 Team A vs Team B':''}
+     <span class="rc-sub">${L.status==='waiting'?`${humans.length} lanista${humans.length===1?'':'s'} · ${L.players.length}/${L.seats} seated`:'🔴 Live'}</span></div>
+   <div class="onl-rbody"><div><div class="onl-rseats">${Array.from({length:L.seats},(_,i)=>seat(i)).join('')}</div>
+     ${(L.stands||[]).length?`<div class="rc-sub">🎟 In the stands: ${L.stands.map(t=>esc2(t.name)).join(', ')} · pot ${L.pot||0} coin</div>`:''}
+     ${host&&why&&L.status==='waiting'?`<p class="onl-busy">⏳ ${esc2(why)}</p>`:''}${settings}
+     <div class="acts">${acts}${L.status==='waiting'?`<button type="button" class="btn" data-onl="leave" data-v="${L.id}">${fan?'Give back the ticket':host?'Close the game':'Leave'}</button>`:''}</div></div>${chat}</div></div>`};
+document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl]');if(!b)return;const a=b.dataset.onl,v=b.dataset.v;
+  if(a==='chat')return onlChatSend(v);
+  if(a==='rejoin'){const L=ONL.lobbies.find(x=>x.id===v);if(L)onlDo(()=>onlAttach(L,'seat'));return}},true);
+function onlChatSend(id){const i=document.getElementById('onlChat');const t=i&&i.value.trim();if(!t)return;i.value='';onlDo(async()=>{await NET.req('lobby.chat',{id,text:t});ONL.lobbies=await NET.req('lobby.list')}).then(()=>{const n=document.getElementById('onlChat');if(n)n.focus()})}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target&&e.target.id==='onlChat'){e.preventDefault();const L=onlMyLobby();if(L)onlChatSend(L.id)}},true);
+document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.onlset)return;const L=onlMyLobby();if(!L)return;const k=t.dataset.onlset;
+  onlDo(async()=>{await NET.req('lobby.set',{id:L.id,[k]:k==='standsOff'?t.value==='1':t.value});ONL.lobbies=await NET.req('lobby.list')})},true);
+/* a redraw keeps what you were typing in the chat, and the chat scrolled to its end */
+{const base=onlRedraw;onlRedraw=function(){const c=document.getElementById('onlChat');const val=c&&c.value,foc=c&&document.activeElement===c;const r=base.apply(this,arguments);
+  const n=document.getElementById('onlChat');if(n&&val){n.value=val}if(n&&foc)n.focus();const lg=document.getElementById('onlChatLog');if(lg)lg.scrollTop=lg.scrollHeight;return r}}
+/* when the host sounds the horns, everyone seated walks in (the host already has) */
+ONL.entered=ONL.entered||{};
+{const base=onlEnter;onlEnter=function(L){ONL.entered[L.id]=1;return base.apply(this,arguments)}}
+NET.on('lobby.update',d=>{setTimeout(async()=>{if(!ONL.acct||!document.getElementById('onl'))return;const L=onlMyLobby();if(!L||L.status!=='live'||ONL.entered[L.id]||(ONL.leftMatch||{})[L.id])return;
+  if(S&&S.onl&&!S.over)return;ONL.entered[L.id]=1;onlEnter(L)},250)});
+/* the Spectate tab and the lobby list: your own live match shows Rejoin, not Watch */
+
+/* ---------------- rejoin / watch: a fresh snapshot from another lanista ---------------- */
+async function onlAttach(L,role){const r=await NET.req('match.watch',{id:L.id});const lob=r.lobby||L;const me=ONL.acct.id;
+  if(role==='seat'&&((r.abandoned||[]).includes(me)||(r.dropped||[]).includes(me))){role='watch';if(typeof mToast==='function')mToast(r.abandoned.includes(me)?'🚪 You left that match — you may watch it.':'🔌 A CPU holds your seat now — you may watch.')}
+  if(role!=='seat')return onlWatch(lob);
+  const seats=onlSeatsFor(lob);let seat=lob.players.findIndex(p=>p.id===me);const tk=(lob.stands||[]).findIndex(t=>t.id===me);if(seat<0&&tk>=0)seat=lob.seats+tk;if(seat<0)return onlWatch(lob);
+  const onl={lobby:lob.id,ranked:!!lob.ranked,seat,owners:onlOwnersFor(lob,seats),host:lob.host.id===me,opened:true,stands:(lob.stands||[]).map(t=>({id:t.id,name:t.name})),fighters:lob.seats,team:!!lob.team,standsOff:!!lob.standsOff};
+  ONL.live={id:lob.id,ranked:!!lob.ranked,seat,char:(lob.players[seat]||{}).char||null,seed:lob.seed};ONL.entered[lob.id]=1;ONL.watching={id:lob.id,onl,buf:[],at:Date.now(),seat:true};
+  if(CUR_MODAL)CUR_MODAL.done('rejoin');if(typeof mToast==='function')mToast('⚔ Back to the sand — fetching the arena…');
+  const ask=(r.players||[]).filter(a=>a!==me).concat(r.specs||[]);let k=0;const tryOne=()=>{const W=ONL.watching;if(!W||W.id!==lob.id||W.done)return;if(k>=ask.length){if(typeof mToast==='function')mToast('⚠ Nobody answered — try Rejoin again in a moment.');ONL.watching=null;return}
+    NET.req('match.snapreq',{id:lob.id,to:ask[k++],seq:0}).catch(()=>{});setTimeout(tryOne,7000)};tryOne()}
+/* the watcher path (113) loads as seat -1; a rejoining fighter takes their own seat back */
+{const base=onlmWatchOn;onlmWatchOn=function(next,ins){const r=base.apply(this,arguments);const W=ONL.watching;if(W&&W.seat&&S&&S.onl){S.onl.watch=false;ONLM.me=S.onl.seat}return r}}
+/* onlEnter on a match that started a while ago (a reload, a late click) is a rejoin from a snapshot — never a second opening */
+{const base=onlEnter;onlEnter=function(L){if(L&&L.status==='live'&&L.started&&Date.now()-L.started>20000&&!(S&&S.onl&&S.onl.lobby===L.id&&!S.over))return onlDo(()=>onlAttach(L,'seat'));return base.apply(this,arguments)}}
+{const base=onlEnter;onlEnter=function(L){const r=base.apply(this,arguments);try{if(S&&S.onl&&L)S.onl.standsOff=!!L.standsOff}catch(e){}return r}}
+{const base=startEvent;startEvent=function(cfg){if(cfg&&cfg.onl){const L=(ONL.lobbies||[]).find(x=>x.id===cfg.onl.lobby);if(L)cfg.onl.standsOff=!!L.standsOff}return base.apply(this,arguments)}}
+
+/* ---------------- the online arena bar · 🚪 Abandon / Leave ---------------- */
+function onlInArena(){return !!(S&&S.onl&&ONLM.on)}
+function onlBarSync(){const on=!!(S&&S.onl&&!S.over&&(ONLM.on||S.onl.watch));document.body.classList.toggle('onlarena',on);let b=document.getElementById('btnOnlLeave');
+  if(!on&&!(S&&S.onl&&S.over)){if(b)b.remove();return}
+  if(!b){const m=document.getElementById('btnMenu');if(!m)return;b=document.createElement('button');b.id='btnOnlLeave';b.type='button';b.className='btn';m.after(b)}
+  const fighter=S.onl.seat>=0&&S.onl.seat<(S.onl.fighters||S.players.length)&&ONLM.me>=0;
+  b.textContent=S.over?'🌐 Back to Online':fighter?'🚪 Abandon match':'🚪 Leave';b.dataset.mode=S.over?'back':fighter?'abandon':'leave';
+  b.title=S.over?'Back to the Online arena':fighter?(S.onl.ranked?'Leave the match — in Ranked your gladiator dies (Damnatio)':'Leave the match'):'Stop watching'}
+setInterval(()=>{try{onlBarSync()}catch(e){}},500);
+document.addEventListener('click',async e=>{const b=e.target.closest('#btnOnlLeave');if(!b)return;e.preventDefault();e.stopPropagation();ONLM.uiAt=Date.now();const mode=b.dataset.mode;const id=S&&S.onl&&S.onl.lobby;
+  if(mode==='back'){onlExit();return}
+  if(mode==='leave'){if(ONL.watching)NET.req('match.unwatch',{id}).catch(()=>{});onlExit();return}
+  const rule=S.onl.ranked?'fate':((ONL.lobbies||[]).find(x=>x.id===id)||{}).abandon==='fate'?'fate':'cpu';
+  const v=await modal('🚪 Abandon the match?',`<p>${S.onl.ranked?'<b>Ranked:</b> your gladiator is eliminated and <b>dies by Damnatio</b>. This cannot be undone.':rule==='fate'?'Your gladiator is eliminated — the bout is over for you.':'A CPU takes your seat and fights on.'}</p><p class="rc-sub">You may come back to watch, but not to fight.</p>`,
+    [{label:'Abandon',value:'go'},{label:'Stay',value:null,primary:1}],{close:null});
+  if(v!=='go')return;try{const r=await NET.req('match.abandon',{id});(ONL.leftMatch=ONL.leftMatch||{})[id]=1;if(r&&r.out&&r.out.died&&typeof mToast==='function')setTimeout(()=>mToast('🌫 Your gladiator abandoned the sand — Damnatio.'),600)}catch(err){if(typeof mToast==='function')mToast('⚠ '+esc(err.message))}onlExit()},true);
+function onlExit(){try{if(S&&!S.over){S.over=true}}catch(e){}ONLM.on=false;ONL.watching=null;ONL.live=ONL.live&&ONL.live.reported?ONL.live:null;onlBarSync();
+  try{if(typeof cleanFinishNow==='function')cleanFinishNow()}catch(e){}try{if(typeof menuShow==='function')menuShow()}catch(e){}setTimeout(()=>{try{onlineOpen('play')}catch(e){}},200)}
+{const st=document.createElement('style');st.textContent=`
+body.onlarena #btnNew,body.onlarena #btnSimEnd,body.onlarena #btnMSave,body.onlarena #btnStudio,body.onlarena #btnLudus,body.onlarena #btnManager,body.onlarena #btnHall,
+body.onlarena #btnExport,body.onlarena #btnTicket,body.onlarena #btnBets,body.onlarena #btnMenu,body.onlarena #btnGraph,body.onlarena .navnew{display:none!important}
+#btnOnlLeave{border-color:#a3281f;color:#f0a090}
+.onl-stage{grid-template-columns:minmax(0,1fr) auto}.onl-fig79{grid-column:2;grid-row:1 / span 3;align-self:end;justify-self:end;margin:0 6px -8px 0;position:relative;z-index:1}.onl-stage .onl-party{grid-column:1}.onl-fig79 .onl-mini{filter:drop-shadow(0 14px 10px rgba(0,0,0,.6))}.onl-stage .onl-plate{grid-column:1;grid-row:1}
+.onl-gslots{display:grid;grid-template-columns:repeat(${ONLC.GLAD_MAX},minmax(0,1fr));gap:10px;margin:8px 0 12px}
+.onl-gslot{all:unset;cursor:pointer;display:grid;justify-items:center;gap:3px;padding:10px;border:1px solid #5a4428;border-radius:10px;background:rgba(255,255,255,.03);text-align:center;font-size:13px}
+.onl-gslot.on{border-color:var(--gold,#e8c96a);background:rgba(232,201,106,.08)}.onl-gslot.empty{border-style:dashed;color:var(--muted);font-size:22px}.onl-gslot.empty b,.onl-gslot.empty small{font-size:13px}
+.onl-ged{display:grid;grid-template-columns:220px minmax(0,1fr);gap:16px}.onl-gprev{display:grid;justify-items:center;gap:10px;align-content:start}.onl-gform{display:grid;gap:6px;align-content:start}
+.onl-g2{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))!important}.onl-g2 input[type=color]{width:100%;height:30px;padding:0;border:0;background:none}
+.onl-busy{color:#f0cf7d;font-size:13px;margin:4px 0}
+.onl-room .onl-rbody{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;margin-top:8px}.onl-rseats{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:8px}
+.onl-rseat{display:flex;gap:8px;align-items:center;padding:6px 10px;border:1px dashed #6b5636;border-radius:10px;font-size:13px}.onl-rseat.on{border-style:solid}.onl-rseat small{display:block;color:var(--muted)}
+.onl-rq{display:grid;place-items:center;width:40px;height:54px;color:var(--muted);font-size:22px}.onl-rdy{color:#8fd18f}
+.onl-rset{display:grid;gap:4px;font-size:13px;margin:6px 0}.onl-rset label{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.onl-rset select{width:auto}
+.onl-chat{display:grid;grid-template-rows:1fr auto;gap:6px;border:1px solid #5a4428;border-radius:10px;padding:8px;min-height:180px;max-height:280px}
+.onl-chatlog{overflow-y:auto;font-size:13px;display:grid;gap:3px;align-content:start}.onl-chatrow{display:flex;gap:4px}
+#onlLoad{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;background:radial-gradient(ellipse at center,#2a1d12,#0d0906);color:#f0cf7d;font:600 20px Georgia,serif;text-align:center}
+#onlLoad .ring{width:56px;height:56px;border:4px solid rgba(240,207,125,.25);border-top-color:#f0cf7d;border-radius:50%;margin:0 auto 16px;animation:onlspin 1s linear infinite}@keyframes onlspin{to{transform:rotate(360deg)}}
+@media(max-width:760px){.onl-ged,.onl-room .onl-rbody{grid-template-columns:1fr}.onl-gslots{grid-template-columns:1fr}}`;document.head.appendChild(st)}
+
+/* ---------------- back from Google: a loading screen until the Online window is up ---------------- */
+(function(){try{const u=new URL(location.href);if(!u.searchParams.get('code')||!u.searchParams.get('state'))return;const d=document.createElement('div');d.id='onlLoad';
+  d.innerHTML='<div><div class="ring"></div>Entering the Online arena…</div>';document.body.appendChild(d);const t0=Date.now();
+  const iv=setInterval(()=>{if(document.getElementById('onl')||Date.now()-t0>20000){clearInterval(iv);setTimeout(()=>d.remove(),250)}},120)}catch(e){}})();
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
