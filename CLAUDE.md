@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.78**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.79**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -65,7 +65,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Module ordering matters: a wrapper only sees wrappers installed before it.
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
   `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
-  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`.
+  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`.
   Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
 
 ### Core globals (engine)
@@ -427,7 +427,30 @@ One global script; files are concatenated in order. Later "version modules" patc
   bets, else goes to the winning fighters; void / called off → bets and tickets refunded. 👥 Parties (`party.create/join/leave/get`,
   PARTY#/PCODE# items, 5-letter `partyCode`, ≤4): only the leader creates/joins (`groupOf` / `mockGroup`), `ONLC.seatGroup` seats the
   group together; team events `EVENTS_TEAM` = familia (4 seats, `L.team`, players' `team` A/B, `seatTeams` fills CPUs). Test `tonl78`
-  (party in Familia + ticket holder + late watcher, four windows). NOT yet: Stakes matches, referee replay, more events.
+  (party in Familia + ticket holder + late watcher, four windows).
+  **v0.79 (protocol VER 3; 115-v79 menu, 116-onl79 online client):** menu — version badge → `verNotes79` (What's new card), C on the
+  main menu → cheatPrompt (not while typing / a window / a live online match), Multiplayer row = 2 columns. Online — up to 3 living
+  gladiators (`ONLC.GLAD_MAX`), account `active` (server `liveChar` = active), `char.active` / `char.edit` (`ONLC.editChar`: name, class
+  among the 8, look via `cleanLook` ≤3 KB, `equip` subset of gear; refused while in a waiting/live game, `busyIn`); 🛡 My Gladiators
+  (`onlCharHTML` replaced: slots, Studio portrait selects `data-onlgp`, own token `data-onlgt` over TOKEN_DEF, gear ticks). Looks in
+  play: kit.look → seat.onl.look → p._onlLook/_onlTok; `tokenForP` merge (ONL_TOKKEYS) + drawPlayer lends CLASSES[cls].custom while
+  drawing (wantFigure/hasCustomToken are const arrows), `pArt` portrait. Pre-match room (`onlMyLobbyHTML` replaced): seats with figures,
+  host rules `lobby.set` (Custom abandon 'cpu'|'fate'; `standsOff`), chat `lobby.chat` (`cleanChat` filter, 1/s, last 40, closes at the
+  horns), start needs `ONLC.canStart` (2+ humans, connected on AWS); everyone seated auto-enters on lobby.update. Abandon: server
+  `match.abandon` → a server input {k:'abandon',seat,rule} that only MARKS the seat (`onlmAbandonMark`); the seat is taken off at its
+  next decision (`onlmLeftCheck` on render idle; its windows answer the default) — 'fate' = eliminate(retire), 'cpu' = CPU; Ranked kills
+  the gladiator on the server at once (`fallen`); abandoned players can only watch (`ONL.leftMatch`, `onlAttach` → watch). Rejoin:
+  `onlAttach(L,'seat')` = the watcher path with my seat (snapshot from another human); a late onlEnter (>20 s after start) routes there;
+  dropped (CPU took the seat) → watch. Last human gone (abandoned/dropped) → `closeMatch` (void, refunds); `prune` in hello/lobby.list
+  closes waiting games whose host is offline 5 min (`offAt` set in $disconnect) or older than 3 h, and live matches empty / all away
+  10 min. Online bar: body.onlarena hides New event/sim/saves/Studio/Manager/Annals/main menu; `#btnOnlLeave` 🚪 Abandon / Leave /
+  Back to Online (`onlExit`). Stands: ticket holders act only in round 1 and never with standsOff (humanSpectatorTurn wrapper).
+  Sign-in return: `#onlLoad` covers the page until #onl is up (handoff 300 ms). Custom sign-in domain: template params
+  CustomAuthDomain/HostedZoneId (ACM cert DNS-validated in Route 53 + UserPoolDomain CustomDomainConfig + alias A record);
+  deploy.sh looks up the zone for AUTH_DOMAIN (default login.flaviusrule.com; AUTH_DOMAIN=none to skip). After that deploy: Google
+  redirect URI https://login.flaviusrule.com/oauth2/idpresponse, then play/online.json auth = https://login.flaviusrule.com.
+  Tests: `tv79`, `tonl79` (room, look on the other screen, rejoin after reload, abandon, shutdown). NOT yet: Stakes matches, referee replay,
+  more events, reclaiming a seat a CPU took.
 - **Guide data:** `SIM50` in 53-guide50 is regenerated by `node tools/simguide.js flavius-arena.html 600` (SIMVER env);
   it includes `perk` (wins by rating perk), charted by 69-v56.
 - **Music:** procedural Web Audio (21-audio, 45-music, 16 themes; unlocked by winning in cities). Play Now plays a
@@ -550,6 +573,8 @@ One global script; files are concatenated in order. Later "version modules" patc
   deployed (us-east-1). (Published as artifact Version 90; site update = play/index.html + play/version.json.)
 - **v0.78** Online: free live watching, tickets with your own stands turns (coin into the wager pot), parties by code, Familia 2 v 2 with
   your party on one team; online protocol 2 (redeploy the server). (Published as artifact Version 91.)
+- **v0.79** Online: My Gladiators (3, active, look/token/class/gear), pre-match room with chat + host rules, 2-lanista minimum, Abandon /
+  Rejoin / the online bar, cleanup of dead games, login.flaviusrule.com; menu: version notes, C for words, two-button Multiplayer.
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the

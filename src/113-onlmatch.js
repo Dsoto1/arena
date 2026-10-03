@@ -55,18 +55,20 @@ for(const nm of ['popRule','eventBriefing']){try{const base=eval(nm);if(typeof b
   /* a CPU offering a truce or a trade to a human: declined everywhere (v1) */
   if(c&&c.cpu&&/offers a truce|proposes a trade/.test(t)){const no=(buttons||[]).find(b=>/decline|refuse|no\b|keep/i.test(b.label||''))||(buttons||[]).slice(-1)[0];return Promise.resolve(no?no.value:null)}
   const own=onlmOwner();if(!onlmHuman(own))return base.apply(this,arguments);
+  /* a seat whose lanista abandoned: every client answers that seat's windows with the default (the same value everywhere) */
+  if(ONLM.left&&ONLM.left[own]!=null){const def=opt&&('close' in opt)?opt.close:((buttons||[]).slice(-1)[0]||{}).value??null;return Promise.resolve(def)}
   if(own===ONLM.me){const pre=onlHash();const pr=base.apply(this,arguments);if(own>=onlmFighters())onlmAutoPass(buttons,opt);return Promise.resolve(pr).then(v=>{const inp={k:'modal',v:v===undefined?null:v,t:t.slice(0,60)};inp.pre=pre;onlmSend(inp);return v})}
   const def=opt&&('close' in opt)?opt.close:((buttons||[]).slice(-1)[0]||{}).value??null;
   return new Promise(res=>{ONLM.pend={res,t,seat:own,at:Date.now(),def};onlmWaitShow();onlmPump()})}}
 /* ---------------- receiving ---------------- */
 NET.on('match.input',d=>{if(!onlmOn()||!d||d.id!==S.onl.lobby)return;const inp=d.in;if(inp.from===ONL.acct.id||inp.seq<ONLM.next)return;if(!ONLM.q.some(x=>x.seq===inp.seq))ONLM.q.push(inp);ONLM.q.sort((a,b)=>a.seq-b.seq);onlmPump()});
-function onlmReady(inp){if(!S||S.over)return false;if(inp.k==='void')return true;if(inp.k==='drop')return ONLM.pend?ONLM.pend.seat===inp.seat:(!S.busy&&!CUR_MODAL&&['choice','action','command'].includes(S.phase)&&onlmActor()===inp.seat);if(inp.k==='modal')return !!ONLM.pend;
+function onlmReady(inp){if(!S||S.over)return false;if(inp.k==='void'||inp.k==='abandon')return true;if(inp.k==='drop')return ONLM.pend?ONLM.pend.seat===inp.seat:(!S.busy&&!CUR_MODAL&&['choice','action','command'].includes(S.phase)&&onlmActor()===inp.seat);if(inp.k==='modal')return !!ONLM.pend;
   return !S.busy&&!CUR_MODAL&&!ONLM.pend&&['choice','action','command'].includes(S.phase)&&onlmActor()===inp.seat}
 let ONLM_PUMP=0;
 function onlmPump(){clearTimeout(ONLM_PUMP);if(!onlmOn()||ONLM.resyncing)return;
   for(;;){while(ONLM.own.has(ONLM.next)){ONLM.own.delete(ONLM.next);ONLM.next++}if(!(ONLM.q.length&&ONLM.q[0].seq===ONLM.next))break;const inp=ONLM.q[0];if(!onlmReady(inp)){ONLM_PUMP=setTimeout(onlmPump,120);onlmWaitShow();return}
     ONLM.q.shift();ONLM.next=inp.seq+1;
-    if(inp.k==='void'){continue}if(inp.k==='drop'){onlmDrop(inp);continue}
+    if(inp.k==='void'){continue}if(inp.k==='drop'){onlmDrop(inp);continue}if(inp.k==='abandon'){onlmAbandonMark(inp);continue}
     const mine=inp.k==='modal'?inp.pre:onlHash();if(inp.k==='modal'?inp.pre&&mine!==onlmPendHash():inp.h&&mine!==inp.h){onlmResync(inp);return}
     ONLM.hlog['s'+inp.seq]=inp.k==='modal'?onlmPendHash():onlHash();onlmApply(inp)}
   if(ONLM.q.length&&ONLM.q[0].seq>ONLM.next)onlmCatchUp();onlmWaitShow()}
@@ -133,6 +135,8 @@ function onlmAutoPass(buttons,opt){const m=CUR_MODAL;const v=opt&&('close' in op
   setTimeout(()=>{if(CUR_MODAL&&CUR_MODAL===m&&onlmOn()){if(typeof mToast==='function')mToast('⏳ The stands moved on — you watch this rotation.');m.done(v)}},45000)}
 /* every ticket holder takes an upkeep in seat order (the engine's own spectator turn, one owner at a time) */
 {const base=humanSpectatorTurn;humanSpectatorTurn=async function(me){if(!onlmOn())return base.apply(this,arguments);
+  /* the stands act in round 1 only, and never when the host closed them (v0.79) */
+  if((S.onl&&S.onl.standsOff)||S.ri>0)return;
   for(const s of (S.spect||[]).filter(x=>x.human&&!x.gone&&x.onlIdx!=null)){if(!S||S.over)return;const prev=ONLM.override;ONLM.override=s.onlIdx;ONLM.specName=s.onlIdx===ONLM.me?null:s.name;
     try{await base.call(this,s)}finally{ONLM.override=prev;ONLM.specName=null}}}}
 /* the engine words a human spectator as "you": on the other screens, name them */
@@ -154,7 +158,23 @@ async function onlWatchReplay(id){const W=ONL.watching;if(!W||W.id!==id||W.done)
 function onlmWatchOn(next,ins){ONLM.on=true;ONLM.me=-1;ONLM.owners=S.onl.owners;ONLM.next=next;ONLM.q=[];ONLM.pend=null;ONLM.sent=0;ONLM.own=new Set();ONLM.resyncing=false;
   for(const inp of ins)if(inp.seq>=next&&!ONLM.q.some(x=>x.seq===inp.seq))ONLM.q.push(inp);ONLM.q.sort((a,b)=>a.seq-b.seq);onlmWaitShow();setTimeout(onlmPump,200)}
 NET.on('match.snap',d=>{const W=ONL.watching;if(!W||W.done||!d||d.id!==W.id||d.to!==ONL.acct.id)return;W.done=true;onlmLoad(d.snap,W.onl);onlmWatchOn(d.seq,W.buf);
-  try{if(typeof menuHide==='function')menuHide()}catch(e){}log('👁 You are watching from the free stands.','big');render()});
+  try{if(typeof menuHide==='function')menuHide()}catch(e){}log(W.seat?'⚔ You are back on the sand.':'👁 You are watching from the free stands.','big');render()});
 /* moves that arrive before the snapshot are kept for it */
 NET.on('match.input',d=>{const W=ONL.watching;if(W&&!W.done&&d&&d.id===W.id&&d.in)W.buf.push(d.in)});
 {const base=gameOver;gameOver=async function(){const w=S&&S.onl&&S.onl.watch;const r=await base.apply(this,arguments);if(w&&ONL.watching){NET.req('match.unwatch',{id:ONL.watching.id}).catch(()=>{});ONL.watching=null}return r}}
+
+/* ---------------- 🚪 abandon (v0.79) ----------------
+   The server orders an 'abandon' input; it only MARKS the seat (no state change), so it may land at any time. The seat is then
+   taken off at a point every client reaches in the same state: that seat's next decision (its turn, or a window it owns).
+   rule 'fate' → eliminated (the bout is over for them; in Ranked the server already applied the Damnatio death); 'cpu' → a CPU fights on. */
+function onlmAbandonMark(inp){ONLM.left=ONLM.left||{};if(ONLM.left[inp.seat]!=null)return;ONLM.left[inp.seat]=inp.rule||'cpu';
+  const p=S.players[inp.seat];if(p)log(`🚪 <b>${esc(p.name)}</b> abandoned the match${inp.rule==='fate'?(S.onl&&S.onl.ranked?' — Damnatio.':' — out of the bout.'):' — a CPU fights on in that seat.'}`,'big');
+  if(inp.seat===ONLM.me){ONLM.me=-1}
+  if(ONLM.pend&&ONLM.pend.seat===inp.seat){const P=ONLM.pend;ONLM.pend=null;P.res(P.def)}
+  setTimeout(onlmLeftCheck,60)}
+function onlmLeftCheck(){if(!onlmOn()||!ONLM.left)return;if(S.busy||CUR_MODAL||ONLM.pend||!['choice','action','command'].includes(S.phase))return;
+  const c=cur();const i=onlmSeatOf(c);const rule=ONLM.left[i];if(rule==null||!c||c.cpu||!c.alive)return;if(ONLM.leftDone&&ONLM.leftDone[i])return;(ONLM.leftDone=ONLM.leftDone||{})[i]=1;
+  ONLM.replay++;try{if(rule==='fate'){ONLM.owners[i]=null;c.cpu=true;try{eliminate(c,{type:'retire'})}catch(e){console.error(e)}render();endTurn()}
+    else{c.cpu=true;ONLM.owners[i]=null;if(S.phase==='command'){const b=document.createElement('button');b.dataset.act='cmddone';b.style.display='none';document.body.appendChild(b);try{b.click()}finally{b.remove()}}else endTurn()}}
+  finally{ONLM.replay--}onlmWaitShow()}
+{const base=render;render=function(){const r=base.apply(this,arguments);if(ONLM.on&&ONLM.left)setTimeout(onlmLeftCheck,40);return r}}

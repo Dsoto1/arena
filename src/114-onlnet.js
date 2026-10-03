@@ -42,7 +42,7 @@ async function netSignOut(){try{localStorage.removeItem('flavius_onltok')}catch(
 /* back from Google: trade the code, tidy the address, open Online */
 (async()=>{const u=new URL(location.href);const code=u.searchParams.get('code');if(!code)return;let p=null;try{p=JSON.parse(sessionStorage.getItem('flavius_onlpkce')||'null')}catch(e){}
   if(!p||u.searchParams.get('state')!==p.st)return;try{await netTokenCall({grant_type:'authorization_code',code,redirect_uri:netRedirect(),code_verifier:p.ver});sessionStorage.removeItem('flavius_onlpkce')}catch(e){if(typeof mToast==='function')mToast('⚠ '+e.message)}
-  history.replaceState(null,'',netRedirect());try{localStorage.setItem('flavius_online77','1')}catch(e){}setTimeout(()=>{try{if(typeof menuHide==='function')menuHide();onlineOpen('play')}catch(e){}},1500)})();
+  history.replaceState(null,'',netRedirect());try{localStorage.setItem('flavius_online77','1')}catch(e){}setTimeout(()=>{try{if(typeof menuHide==='function')menuHide();onlineOpen('play')}catch(e){}},300)})();
 /* ---------------- choose the transport ---------------- */
 async function netPick(){const c=await NETWS.config();NET.mode=c?'aws':'mock';return NET.mode}
 /* idle sockets cost connection-minutes: close when the Online window shuts and no match is live (requests reopen it) */

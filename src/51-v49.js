@@ -157,7 +157,7 @@ const hsActive=()=>{if(!hsLive())return null;const id=S.hsActive||(S.hotseat.pla
 
 /* ---------- the main menu: Multiplayer and its three modes ---------- */
 function mmMultiInstall(){const box=document.querySelector('#mainMenu .mmbtns');if(!box||box.querySelector('[data-mm="multi"]'))return;const play=box.querySelector('[data-mm="play"]');if(!play)return;
-  const b=document.createElement('button');b.className='btn';b.type='button';b.dataset.mm='multi';b.setAttribute('aria-expanded','false');b.innerHTML='👥 Multiplayer<small>hot seat · LAN · online lobbies</small>';
+  const b=document.createElement('button');b.className='btn';b.type='button';b.dataset.mm='multi';b.setAttribute('aria-expanded','false');b.innerHTML='👥 Multiplayer<small>hot seat · online</small>';
   const g=document.createElement('div');g.className='mmmulti';g.id='mmMulti';g.hidden=true;
   g.innerHTML=`<button class="btn" type="button" data-mm="hotseat">🪑 Hot seat<small>2–8 players on this device, CPUs fill the rest</small></button><button class="btn" type="button" data-mm="online" disabled title="Coming in a later version">🌐 Online lobbies<small>coming soon</small></button>`;
   play.after(b);b.after(g)}

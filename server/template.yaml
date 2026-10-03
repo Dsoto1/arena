@@ -13,6 +13,14 @@ Parameters:
     Default: flaviusrule-arena
     AllowedPattern: '^[a-z0-9-]{3,60}$'
     Description: Prefix for the Cognito sign-in page (https://<prefix>.auth.<region>.amazoncognito.com). Must be unused in this region.
+  CustomAuthDomain:
+    Type: String
+    Default: none
+    Description: 'Optional own sign-in address, e.g. login.flaviusrule.com (needs HostedZoneId). Google then names your site, not amazoncognito.com.'
+  HostedZoneId:
+    Type: String
+    Default: none
+    Description: The Route 53 hosted zone of the site's domain (for the certificate and the sign-in record).
   GoogleClientId:
     Type: String
     Description: OAuth client ID from Google Cloud Console (APIs & Services > Credentials). Leave "none" to deploy without Google first.
@@ -37,6 +45,7 @@ Parameters:
 
 Conditions:
   HasGoogle: !Not [!Equals [!Ref GoogleClientId, none]]
+  HasCustomAuth: !And [!Not [!Equals [!Ref CustomAuthDomain, none]], !Not [!Equals [!Ref HostedZoneId, none]]]
 
 Resources:
   # ---------- data ----------
@@ -90,6 +99,34 @@ Resources:
     Properties:
       Domain: !Ref AuthDomainPrefix
       UserPoolId: !Ref UserPool
+  # the own sign-in address: a free certificate (validated through Route 53), Cognito's custom domain, and the DNS alias
+  AuthCert:
+    Type: AWS::CertificateManager::Certificate
+    Condition: HasCustomAuth
+    Properties:
+      DomainName: !Ref CustomAuthDomain
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Ref CustomAuthDomain
+          HostedZoneId: !Ref HostedZoneId
+  CustomAuthPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Condition: HasCustomAuth
+    Properties:
+      Domain: !Ref CustomAuthDomain
+      UserPoolId: !Ref UserPool
+      CustomDomainConfig:
+        CertificateArn: !Ref AuthCert
+  AuthAlias:
+    Type: AWS::Route53::RecordSet
+    Condition: HasCustomAuth
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref CustomAuthDomain
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt CustomAuthPoolDomain.CloudFrontDistribution
+        HostedZoneId: Z2FDTNDATAQYW2
   UserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
@@ -281,11 +318,12 @@ Outputs:
     Description: Paste into the game (Settings > Online server) — or put in play/online.json.
     Value: !Sub 'wss://${WsApi}.execute-api.${AWS::Region}.amazonaws.com/live'
   SignInDomain:
-    Value: !Sub 'https://${AuthDomainPrefix}.auth.${AWS::Region}.amazoncognito.com'
+    Description: The "auth" value for play/online.json.
+    Value: !If [HasCustomAuth, !Sub 'https://${CustomAuthDomain}', !Sub 'https://${AuthDomainPrefix}.auth.${AWS::Region}.amazoncognito.com']
   UserPoolClientId:
     Value: !Ref UserPoolClient
   UserPoolId:
     Value: !Ref UserPool
   GoogleRedirectUri:
     Description: Add this as an "Authorized redirect URI" on the Google OAuth client.
-    Value: !Sub 'https://${AuthDomainPrefix}.auth.${AWS::Region}.amazoncognito.com/oauth2/idpresponse'
+    Value: !If [HasCustomAuth, !Sub 'https://${CustomAuthDomain}/oauth2/idpresponse', !Sub 'https://${AuthDomainPrefix}.auth.${AWS::Region}.amazoncognito.com/oauth2/idpresponse']

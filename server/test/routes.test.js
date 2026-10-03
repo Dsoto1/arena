@@ -9,7 +9,17 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   await route('auth.signin',{name:'Alpha'},A);await route('auth.signin',{name:'Beta'},B);
   const ca=await route('char.create',{name:'Alpha the Bold',cls:'hero',stats:{spd:99,str:99,int:99,lck:99,cha:99}},A);
   assert.deepStrictEqual(ca.stats,C.START_STATS,'everyone starts at the same low ratings');assert.strictEqual(ca.wallet,0);
-  await assert.rejects(route('char.create',{name:'Second',cls:'hero'},A),/One living gladiator/);
+  /* v0.79: up to 3 living gladiators, one active; edits only between events */
+  const Z={acct:'dev-z'};await route('auth.signin',{name:'Zeta'},Z);const z1=await route('char.create',{name:'Zeta One',cls:'hero'},Z);const z2=await route('char.create',{name:'Zeta Two',cls:'slave'},Z);await route('char.create',{name:'Zeta Three',cls:'soldier'},Z);
+  await assert.rejects(route('char.create',{name:'Zeta Four',cls:'hero'},Z),/Up to 3/);assert.strictEqual((await route('hello',{all:1},Z)).active,z1.id,'the first gladiator is active');
+  await route('char.active',{char:z2.id},Z);assert.strictEqual((await route('hello',{all:1},Z)).active,z2.id);
+  const z2e=await route('char.edit',{char:z2.id,cls:'amazonia',name:'Zeta Swift',look:{portrait:{skin:'#c58c5c',helm:'galea<script>'},color:'#123456',token:{c1:'#ff0000'}}},Z);
+  assert.strictEqual(z2e.cls,'amazonia');assert.strictEqual(z2e.name,'Zeta Swift');assert.strictEqual(z2e.look.portrait.helm,'galeascript','looks are cleaned');assert.deepStrictEqual(z2e.stats,C.START_STATS,'ratings stay');
+  await assert.rejects(route('char.edit',{char:z2.id,cls:'dragon'},Z),/eight printed/);
+  const ZL=await route('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:false},Z);await assert.rejects(route('char.edit',{char:z2.id,name:'Busy'},Z),/Finish or leave/);
+  await assert.rejects(route('lobby.start',{id:ZL.id},Z),/at least 2/,'no online match with one human');
+  await route('lobby.chat',{id:ZL.id,text:'Ave, what the fuck'},Z);assert.strictEqual((await db.get('LOBBY#'+ZL.id,'LOBBY')).chat[0].text,'Ave, what the f***');
+  await route('lobby.set',{id:ZL.id,abandon:'fate',standsOff:true},Z);assert.strictEqual((await db.get('LOBBY#'+ZL.id,'LOBBY')).abandon,'fate');await route('lobby.leave',{id:ZL.id},Z);
   const cb=await route('char.create',{name:'Beta the Grim',cls:'soldier'},B);
   await assert.rejects(route('char.buy',{char:ca.id,item:'gladius'},A),/Costs 15 coin/);
   const L=await route('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:true},A);assert.strictEqual(L.rank,'tiro');
@@ -69,7 +79,7 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   const ga=await route('char.create',{name:'Alpha Third',cls:'royalty'},A).catch(()=>null);
   await route('lobby.join',{id:F.id},B);assert.strictEqual((await db.get('LOBBY#'+F.id,'LOBBY')).players.find(p=>p.id==='dev-b').team,'B');
   /* tickets: before the horns only, never for a fighter; the coin goes into the pot */
-  let chA=(await route('char.mine',{},A)).find(c=>c.alive);chA.wallet=20;await db.put('CHAR#'+chA.id,'CHAR',{...chA,GSI1PK:'OWNER#dev-a',GSI1SK:chA.born});
+  const actA=(await route('hello',{all:1},A)).active;let chA=(await route('char.mine',{},A)).find(c=>c.id===actA);chA.wallet=20;await db.put('CHAR#'+chA.id,'CHAR',{...chA,GSI1PK:'OWNER#dev-a',GSI1SK:chA.born});
   await assert.rejects(route('lobby.ticket',{id:F.id},B),/Fighters take the sand/);
   const tk=await route('lobby.ticket',{id:F.id},A);assert.strictEqual(tk.char.wallet,15);assert.strictEqual(tk.lobby.pot,5);assert.strictEqual(tk.lobby.stands[0].id,'dev-a');
   await route('lobby.start',{id:F.id},Cc);await assert.rejects(route('lobby.ticket',{id:F.id},A),/until the horns/);
@@ -88,6 +98,12 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   /* settle: winning bets share bets + pot; void refunds bets and tickets */
   const st=C.settle([{by:'x',seat:0,amt:10},{by:'y',seat:1,amt:10}],[0],{pot:20});assert.strictEqual(st.payouts.x,38);
   const sv=C.settle([{by:'x',seat:0,amt:10}],[0],{pot:5,tix:[{by:'t',amt:5}],void:true});assert.deepStrictEqual(sv.payouts,{x:10,t:5});
+  /* 🚪 abandon in Ranked: Damnatio now; the last human leaving shuts the match down */
+  const G={acct:'dev-g'},H={acct:'dev-h'};await route('auth.signin',{name:'Gaius'},G);await route('auth.signin',{name:'Helva'},H);const cg=await route('char.create',{name:'Gaius Brave',cls:'hero'},G);const chH=await route('char.create',{name:'Helva Bold',cls:'slave'},H);
+  const RL=await route('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:true},G);await route('lobby.join',{id:RL.id},H);await route('lobby.start',{id:RL.id},G);
+  const ab=await route('match.abandon',{id:RL.id},H);assert.strictEqual(ab.rule,'fate');assert.ok(ab.out&&ab.out.died,'an abandoned Ranked gladiator dies');assert.ok(!(await db.get('CHAR#'+chH.id,'CHAR')).alive);
+  const gi=await route('match.get',{id:RL.id,from:0},G);assert.strictEqual(gi.inputs.slice(-1)[0].k,'abandon');await assert.rejects(route('match.input',{id:RL.id,in:{k:'act',a:'end',seat:1}},H),/Not your match|left this match/);
+  await route('match.abandon',{id:RL.id},G);assert.strictEqual((await db.get('LOBBY#'+RL.id,'LOBBY')).status,'done','the last human leaving shuts it down');
   /* JWT: a token signed by the pool's key passes; a forged one does not */
   const {privateKey,publicKey}=crypto.generateKeyPairSync('rsa',{modulusLength:2048});const jwk={...publicKey.export({format:'jwk'}),kid:'k1',alg:'RS256'};
   const enc=o=>Buffer.from(JSON.stringify(o)).toString('base64url');const mk=(body,key=privateKey)=>{const h=enc({alg:'RS256',kid:'k1'}),b=enc(body);return h+'.'+b+'.'+crypto.sign('RSA-SHA256',Buffer.from(h+'.'+b),key).toString('base64url')};

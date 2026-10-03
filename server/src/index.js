@@ -15,7 +15,7 @@ function makeHandler({db,send,dev,verifyCfg,verifyFn=verify}){
       const a=(await db.get('ACCT#'+sub,'PROFILE'))||(name||!dev?{id:sub,name:C.cleanName(name||'Lanista')||'Lanista',since:Date.now()}:null);
       if(a){a.conn=conn;await db.put('ACCT#'+sub,'PROFILE',a);await reconnect(db,sub,conn)}
       await db.put('CONN#'+conn,'CONN',{acct:sub,ttl:Math.floor(Date.now()/1000)+86400});return {statusCode:200}}
-    if(rc.routeKey==='$disconnect'){const c=await db.get('CONN#'+conn,'CONN');await db.del('CONN#'+conn,'CONN');if(c&&c.acct){const a=await db.get('ACCT#'+c.acct,'PROFILE');if(a&&a.conn===conn)await away(db,c.acct,Date.now())}return {statusCode:200}}
+    if(rc.routeKey==='$disconnect'){const c=await db.get('CONN#'+conn,'CONN');await db.del('CONN#'+conn,'CONN');if(c&&c.acct){const a=await db.get('ACCT#'+c.acct,'PROFILE');if(a&&a.conn===conn){a.conn=null;a.offAt=Date.now();await db.put('ACCT#'+c.acct,'PROFILE',a);await away(db,c.acct,Date.now())}}return {statusCode:200}}
     let m;try{m=JSON.parse(ev.body||'{}')}catch(e){return {statusCode:400}}
     const c=await db.get('CONN#'+conn,'CONN');const ctx={acct:c&&c.acct,conn};
     try{const out=await route(m.t,m.d,ctx);if(m.t==='auth.signin'&&out&&out.id){const a=await db.get('ACCT#'+out.id,'PROFILE');a.conn=conn;await db.put('ACCT#'+out.id,'PROFILE',a);await reconnect(db,out.id,conn)}

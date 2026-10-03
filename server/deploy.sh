@@ -14,6 +14,9 @@ case "$EMAIL" in *" "*|*googleusercontent*|*@*@*) echo "That e-mail looks mixed 
 if [ -n "$GOOGLE_ID" ] && ! printf '%s' "$GOOGLE_ID" | grep -Eq '^[0-9]+-[a-z0-9]+\.apps\.googleusercontent\.com$'; then echo "That is not a Google client ID: [$GOOGLE_ID]"; echo "Copy it with the copy button on Google Cloud → Credentials and try again."; exit 1; fi
 if [ -n "$GOOGLE_SECRET" ] && ! printf '%s' "$GOOGLE_SECRET" | grep -Eq '^GOCSPX-[A-Za-z0-9_-]+$'; then echo "That does not look like a Google client secret (it starts with GOCSPX-). Try again."; exit 1; fi
 STACK="${STACK:-flavius-arena}"; REGION="${REGION:-us-east-1}"
+# the own sign-in address (login.flaviusrule.com) when the site's domain lives in Route 53; AUTH_DOMAIN=none turns it off
+AUTH_DOMAIN="${AUTH_DOMAIN:-login.flaviusrule.com}"; ZONE=none
+if [ "$AUTH_DOMAIN" != none ]; then PARENT="${AUTH_DOMAIN#*.}"; ZONE=$(aws route53 list-hosted-zones-by-name --dns-name "$PARENT" --query "HostedZones[?Name=='$PARENT.'].Id | [0]" --output text 2>/dev/null | sed 's#/hostedzone/##'); case "$ZONE" in Z*) echo "Sign-in address: https://$AUTH_DOMAIN (Route 53 zone $ZONE)";; *) echo "No Route 53 zone for $PARENT — keeping the amazoncognito.com sign-in address."; AUTH_DOMAIN=none; ZONE=none;; esac; fi
 ACCT=$(aws sts get-caller-identity --query Account --output text)
 BUCKET="flavius-arena-code-$ACCT-$REGION"
 # a first deploy that failed leaves the stack in ROLLBACK_COMPLETE, which cannot be updated: clear it first
@@ -23,5 +26,5 @@ aws s3api head-bucket --bucket "$BUCKET" 2>/dev/null || aws s3 mb "s3://$BUCKET"
 aws cloudformation package --region "$REGION" --template-file template.yaml --s3-bucket "$BUCKET" --output-template-file packaged.yaml
 aws cloudformation deploy --region "$REGION" --template-file packaged.yaml --stack-name "$STACK" --capabilities CAPABILITY_IAM \
   --parameter-overrides AlertEmail="$EMAIL" MonthlyBudgetUSD="${BUDGET:-10}" GoogleClientId="${GOOGLE_ID:-none}" GoogleClientSecret="${GOOGLE_SECRET:-none}" \
-    AuthDomainPrefix="${AUTH_PREFIX:-flaviusrule-arena}" DevNames="${DEV:-false}"
+    AuthDomainPrefix="${AUTH_PREFIX:-flaviusrule-arena}" DevNames="${DEV:-false}" CustomAuthDomain="$AUTH_DOMAIN" HostedZoneId="$ZONE"
 aws cloudformation describe-stacks --region "$REGION" --stack-name "$STACK" --query "Stacks[0].Outputs" --output table
