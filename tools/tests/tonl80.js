@@ -47,7 +47,7 @@ const readyA=(await room(B)).players.find(x=>/Alpha/.test(x[0]));
 /* the Forum: C (free, Online open) says Ave; the 📣 call reaches C as a banner */
 await click(C,'#onl [data-onl="tab"][data-v="play"]');await click(C,'#onl [data-onl="fsay"][data-v="ave"]');await wait(500);
 const forumA=await A.evaluate(()=>ONLF.lines.filter(l=>l.k==='say').map(l=>l.name+':'+l.q));
-await A.evaluate(id=>{const w=mockLoad();w.lobbies[id].cry=[Date.now()-130000];delete w.lobbies[id].kicked;mockSave(w)},rA.id);
+await A.evaluate(id=>{const w=mockLoad();w.lobbies[id].cry=[Date.now()-130000];delete w.lobbies[id].kicked;mockSave(w)},rA.id);await C.evaluate(id=>{delete ONL.kicked80[id]},rA.id);
 await click(B,'#onl [data-onl="rcall"]');await wait(600);const ban=await C.evaluate(()=>{const b=document.getElementById('onlCry80');return b&&!b.hidden?b.textContent:''});
 const callLine=await C.evaluate(()=>ONLF.lines.some(l=>l.k==='call'));
 /* the who list (here) and the invite popup: B invites C → popup → Not now; A invites C → ⚔ Join */

@@ -46,9 +46,10 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   const nameOf=(A,ch)=>(ch&&ch.name)||(A&&A.here&&A.here.glad)||'A lanista';
   /* a room row as the Forum keeps it (the live push carries the whole list row) */
   const tinyRow=r=>r?{id:r.id,ev:r.ev,loc:r.loc,ranked:!!r.ranked,rank:r.rank||null,seats:r.seats,n:(r.players||[]).length,team:!!r.team}:undefined;
-  /* the match a lanista's gladiator is still fighting in (a CPU may hold the seat; a ticket holder is not fighting): no new room or ticket until it ends or they abandon it */
+  /* the match a lanista's gladiator is still fighting in (a CPU may hold the seat; a ticket holder is not fighting): no new room or ticket until it ends,
+     they abandon it, or their own screen has finished it (reported — the others may still be confirming) */
   async function stillFighting(A){if(!A||!A.match)return null;const M=await store.get('MATCH#'+A.match,'META');
-    if(M&&M.status==='live'&&(M.players||[]).includes(A.id)&&!(M.abandoned||{})[A.id])return M;if(!M||M.status!=='live')await store.set('ACCT#'+A.id,'PROFILE',{match:null});return null}
+    if(M&&M.status==='live'&&(M.players||[]).includes(A.id)&&!(M.abandoned||{})[A.id]&&!(M.reports||{})[A.id])return M;if(!M||M.status!=='live')await store.set('ACCT#'+A.id,'PROFILE',{match:null});return null}
   const ts13=t=>String(t).padStart(13,'0');
 
   /* ── presence: ACCT items with GSI1PK 'ON' (set on $connect, removed by a conditional clear on $disconnect / a gone push) ── */
@@ -188,7 +189,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
 
   const R={
     /* one request when the Online window opens: who you are, your gladiators, the rooms, presence, the Forum and the news */
-    'hello':async(d,ctx)=>{const A=await acctOf(ctx.acct);const me=strip(A);const out={ver:C.VER,mode:'aws',me};if(d.all&&me){const chars=await store.byIndex('OWNER#'+ctx.acct);out.chars=chars.map(strip);const f=flagOf(me);
+    'hello':async(d,ctx)=>{const A=await acctOf(ctx.acct);const me=strip(A);const out={ver:C.VER,mode:'aws',me,now:now()};if(d.all&&me){const chars=await store.byIndex('OWNER#'+ctx.acct);out.chars=chars.map(strip);const f=flagOf(me);
       const live=chars.filter(c=>c.alive);const ch=live.find(c=>c.id===me.active)||live[live.length-1]||null;out.active=ch?ch.id:null;
       /* the presence entry: gladiator, rank and time zone (written only when it changed) */
       const hr={glad:ch?ch.name:null,rank:ch?C.rankFor(ch).k:'tiro',tz:d.tz!=null?C.cleanTz(d.tz):((me.here&&me.here.tz)||'')};

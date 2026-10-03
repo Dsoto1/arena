@@ -321,7 +321,9 @@ async function v80b(){
   let R=await eve.req('lobby.create',{ranked:true,ev:'cassian',cry:false});await fay.req('lobby.join',{id:R.id});await gus.req('lobby.join',{id:R.id});R=await eve.req('lobby.start',{id:R.id});
   const rt=R.players.map((p,i)=>({seat:i,won:p.id===eve.acct,place:p.id===eve.acct?1:3,f:p.id===eve.acct?25:p.id===fay.acct?12:5,survives:p.id!==fay.acct}));
   m0=mark();const ab=await gus.req('match.abandon',{id:R.id});assert.ok(ab.out&&ab.out.died);
-  for(const x of [eve,fay])await x.req('match.result',{id:R.id,table:rt,hash:'r'});
+  await eve.req('match.result',{id:R.id,table:rt,hash:'r'});assert.ok(!(await eve.req('hello',{all:1})).live,'reported: free (the others may still confirm)');
+  const ev2=await eve.req('lobby.create',{ev:'cassian',cry:false});await eve.req('lobby.leave',{id:ev2.id});assert.ok((await fay.req('hello',{all:1})).live,'not yet reported: still fighting');
+  await fay.req('match.result',{id:R.id,table:rt,hash:'r'});assert.ok((await fay.req('hello',{all:1})).now,'hello carries the server clock');
   td=(await dan.req('hello',{all:1})).today;assert.deepStrictEqual(td.fallen.map(f=>[f.name,f.how]).sort(),[['Fay Gladius','fate'],['Gus Gladius','damnatio']]);assert.ok(td.fallen[0].look,'faces kept');
   assert.deepStrictEqual(td.wins.map(w=>w.name),['Ann Gladius','Eve Gladius'],'most CF first');
   /* a dropped seat is still the lanista's match: Rejoin / Abandon until it ends */
