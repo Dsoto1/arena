@@ -18,6 +18,7 @@
      MATCH#<id>        ODD#<seat>#<voter> / ODDX#<acct>   out-of-step votes / the one strike they gave (ttl 2 days)
      FORUM             L#<ts13>#<acct4>     a Forum line {k:say|open|call|res,…} (ttl 1 day)
      WORLD             FMETER#<yyyy-mm-dd>  {n}: Forum pushes sent that UTC day
+     WORLD             DAY#<yyyy-mm-dd>     Today in the arena {wins,fallen,upsets} (versioned, ttl 3 days)
 */
 'use strict';
 function memory(){

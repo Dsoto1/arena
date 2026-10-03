@@ -112,11 +112,13 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     if(!(await store.flip('MATCH#'+id,'META','status','live','done'))){const M2=await meta(id);return M2.outs&&M2.outs[me]?{char:strip(await liveOrLast(me)),out:M2.outs[me]}:{pending:true}}
     let L=await getLobby(id);L.stands=L.stands||[];const A=C.agree(M.reports);M.status='done';M.doneAt=now();M.agreed=A;M.outs=M.outs||{};
     for(const a of A.minority)await store.counter('ACCT#'+a,'PROFILE','strikes');
-    if(!A.void)for(const a of M.players){if((M.abandoned||{})[a])continue;const pl=L.players.find(p=>p.id===a);const row=A.table.find(r=>r.seat===M.seats[a]);if(!pl||!row)continue;let out=null;
-      const ch=await editChar(pl.char,c=>{if(!c.alive)return false;out=C.applyResult(c,row,!!L.ranked)});if(!ch||!out)continue;M.outs[a]=out;
+    const dseats=[];
+    if(!A.void)for(const a of M.players){if((M.abandoned||{})[a])continue;const pl=L.players.find(p=>p.id===a);const row=A.table.find(r=>r.seat===M.seats[a]);if(!pl||!row)continue;let out=null,before='tiro';
+      const ch=await editChar(pl.char,c=>{if(!c.alive)return false;before=C.rankFor(c).k;out=C.applyResult(c,row,!!L.ranked)});if(!ch||!out)continue;M.outs[a]=out;dseats.push({acct:a,ch,before,row,out});
       if(out.died){const e={name:ch.name,cls:ch.cls,rank:ch.died.rank,lifeCF:ch.lifeCF,survived:ch.survived,diedAt:now(),why:out.hall?C.hallWhy(ch):''};
         if(out.hall){const H=await world('HALL');H.list=[e,...H.list].slice(0,200);await store.put('WORLD','HALL',H)}await news(out.hall?['🪦',`${ch.name} fell. The Hall of the Fallen keeps the name.`]:['🌫',`${ch.name} fell and is forgotten.`])}
       if(out.rankUp)await news(['⚔',`${ch.name} is now ${C.RANKS[C.rankIdx(out.rankUp)].n}.`])}
+    if(dseats.length)await dayEdit(D=>C.dayFromMatch(D,{id,ev:L.ev,loc:L.loc,at:now(),ranked:!!L.ranked,seats:dseats}));
     /* the room closes first (retried over any concurrent change); the wagers and the pot pay out from what was closed */
     let st=null;L=await editLobby(id,X=>{if(X.status==='done')return false;st=null;if((X.bets||[]).length||X.pot){const wins=A.void?[]:A.table.filter(r=>r.won).map(r=>r.seat);const seatAcct={};X.players.forEach((p,i)=>{seatAcct[i]=p.id});
         st=C.settle(X.bets||[],wins,{pot:X.pot|0,tix:(X.stands||[]).map(s=>({by:s.id,amt:s.paid|0})),seatAcct,void:!!A.void});X.settled=st}X.status='done'})||L;
@@ -151,6 +153,13 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       out.push(L)}catch(e){out.push(L)}}return out}
   const world=async k=>(await store.get('WORLD',k))||{list:[]};
   const news=async line=>{const N=await world('NEWS');N.list=[line,...N.list].slice(0,12);await store.put('WORLD','NEWS',N)};
+  /* ☀ Today in the arena (WORLD DAY#<utc day>): versioned edits, never allowed to break a settlement */
+  let dayC=null,dayAt=0;
+  async function dayEdit(fn){try{const k='DAY#'+C.dayKey(now());for(let i=0;i<6;i++){const X=(await store.get('WORLD',k))||{};const D=fn(X)||X;
+      if((await store.putRev('WORLD',k,{...D,ttl:ttl(3)}))!==false){dayC=null;return}}}catch(e){}}
+  /* today's record, or yesterday's while today's is still empty */
+  async function today(){const t=now();if(hereMs&&dayC&&t-dayAt<hereMs)return dayC;const D=await store.get('WORLD','DAY#'+C.dayKey(t));
+    let out=C.dayOut(D,'today');if(!C.dayHas(D)){const Y=await store.get('WORLD','DAY#'+C.dayKey(t-86400e3));if(C.dayHas(Y))out=C.dayOut(Y,'yesterday')}dayC=out;dayAt=t;return out}
   /* a lobby list for one lanista: their strike flag only; liteRow for every room but their own (full) */
   const listFor=(list,acct,f)=>{const mine=L=>inRoom(L,acct)||inStands(L,acct);const rows=list.filter(L=>!!L.flag===f);
     const out=rows.filter(mine).map(room).concat(rows.filter(L=>!mine(L)).slice(0,60).map(lite));
@@ -185,9 +194,11 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       if(JSON.stringify(me.here||null)!==JSON.stringify(hr)){await store.set('ACCT#'+ctx.acct,'PROFILE',{here:hr});out.me={...me,here:hr};const c=(hereC||[]).find(x=>x.id===ctx.acct);if(c)c.here=hr}
       const list=await prune((await lobbies()).filter(L=>!!L.flag===f));out.lobbies=listFor(list,ctx.acct,f);
       const H=await here();out.here=C.hereSummary(H.map(x=>({id:x.id,match:x.match,tz:x.here&&x.here.tz})),list);out.online=out.here.n;out.forum=await forumLines();
-      out.news=(await world('NEWS')).list.slice(0,8);out.challenges=C.weekChallenges(now());out.party=me.party?await partyOut(await store.get('PARTY#'+me.party,'PARTY')):null;
+      out.news=(await world('NEWS')).list.slice(0,8);out.challenges=C.weekChallenges(now());out.today=await today();out.party=me.party?await partyOut(await store.get('PARTY#'+me.party,'PARTY')):null;
       /* the match this lanista's gladiator is still in (also when a CPU holds the seat): the menu offers Rejoin / Abandon */
-      const LM=await stillFighting(A);if(LM){const LL=list.find(x=>x.id===LM.id)||await store.get('LOBBY#'+LM.id,'LOBBY');out.live={id:LM.id,ev:LL&&LL.ev,loc:LL&&LL.loc,ranked:!!LM.ranked,dropped:!!(LM.dropped||{})[ctx.acct]}}}return out},
+      const LM=await stillFighting(A);if(LM){const LL=list.find(x=>x.id===LM.id)||await store.get('LOBBY#'+LM.id,'LOBBY');out.live={id:LM.id,ev:LL&&LL.ev,loc:LL&&LL.loc,ranked:!!LM.ranked,dropped:!!(LM.dropped||{})[ctx.acct]}}
+      /* one WebSocket frame is at most 128 KB: other rooms' rows go first */
+      while(out.lobbies.length>1&&JSON.stringify(out).length>115000)out.lobbies.pop()}return out},
     'auth.signin':async(d,ctx)=>{if(!dev)throw new Error('Sign in with Google.');const name=C.cleanName(d.name);if(name.length<2)throw new Error('Your name: 2–24 letters.');
       const a={id:ctx.acct,name,since:now()};await store.put('ACCT#'+a.id,'PROFILE',a);return a},
     'auth.signout':async()=>({}),
@@ -376,13 +387,13 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       const B=await store.bump('MATCH#'+d.id,'META','n');const inp={k:'abandon',seat,rule,from:'server',seq:B.seq};await store.put('MATCH#'+d.id,'IN#'+String(B.seq).padStart(8,'0'),{in:inp,ttl:ttl(2)});
       if(!B.item.abandoned)await store.put('MATCH#'+d.id,'META',{...B.item,abandoned:{[ctx.acct]:rule}});else await store.setIn('MATCH#'+d.id,'META','abandoned',ctx.acct,rule);
       await toMatch(B.item,'match.input',{id:d.id,in:inp});let out=null;
-      if(L.ranked){const pl=L.players.find(p=>p.id===ctx.acct);const ch=pl&&await editChar(pl.char,c=>{if(!c.alive)return false;out=C.applyResult(c,{won:false,place:L.seats,f:0,coin:0,survives:false},true);out.abandoned=1});
-        if(ch&&out){await fallen(ch,out);await store.setIn('MATCH#'+d.id,'META','outs',ctx.acct,out)}}
+      if(L.ranked){const pl=L.players.find(p=>p.id===ctx.acct);let before='tiro';const ch=pl&&await editChar(pl.char,c=>{if(!c.alive)return false;before=C.rankFor(c).k;out=C.applyResult(c,{won:false,place:L.seats,f:0,coin:0,survives:false},true);out.abandoned=1});
+        if(ch&&out){await fallen(ch,out);await store.setIn('MATCH#'+d.id,'META','outs',ctx.acct,out);await dayEdit(D=>C.dayFell(D,{id:d.id,acct:ctx.acct,ev:L.ev,loc:L.loc,at:now(),ch,before,hall:out.hall}))}}
       const M2=await meta(d.id);const left=(M2.players||[]).filter(a=>!(M2.abandoned||{})[a]&&!(M2.dropped||{})[a]);
       if(!left.length)await closeMatch(d.id,'empty');else if(left.every(a=>(M2.reports||{})[a]))await settleMatch(d.id,M2,ctx.acct);
       const A=await acctOf(ctx.acct);if(A&&A.match===d.id)await store.set('ACCT#'+A.id,'PROFILE',{match:null});return {done:1,out,rule}},
     'hall.list':async()=>(await world('HALL')).list.slice(0,60),
-    'world.news':async()=>({news:(await world('NEWS')).list.slice(0,8),online:(await here()).length,challenges:C.weekChallenges(now())})};
+    'world.news':async()=>({news:(await world('NEWS')).list.slice(0,8),online:(await here()).length,challenges:C.weekChallenges(now()),today:await today()})};
   return async function route(t,d,ctx){const f=R[t];if(!f)throw new Error('Unknown request: '+t);if(!ctx.acct&&t!=='hello')throw new Error('Sign in first.');return f(d||{},ctx)}}
 /* a player reconnects mid-match: their new connection goes into the match record */
 async function reconnect(store,acct,conn){const A=await store.get('ACCT#'+acct,'PROFILE');if(A&&A.match){await store.setIn('MATCH#'+A.match,'META','conns',acct,conn);await store.setIn('MATCH#'+A.match,'META','away',acct,0)}}

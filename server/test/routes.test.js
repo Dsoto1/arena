@@ -112,7 +112,8 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   await assert.rejects(verify(mk(body,crypto.generateKeyPairSync('rsa',{modulusLength:2048}).privateKey),cfg,async()=>[jwk]),/Bad signature/);
   await assert.rejects(verify(mk({...body,aud:'other'}),cfg,async()=>[jwk]),/Wrong audience/);
   console.log('server routes: all checks passed');
-  await v80();console.log('server v0.80 (rooms, quick chat, Praeco, Forum, presence, resync): all checks passed')})().catch(e=>{console.error(e);process.exit(1)});
+  await v80();console.log('server v0.80 (rooms, quick chat, Praeco, Forum, presence, resync): all checks passed');
+  await v80b();console.log('server v0.80 review (races, busy rule, names, mutes, odd push, Today in the arena): all checks passed')})().catch(e=>{console.error(e);process.exit(1)});
 
 /* ── v0.80 through the real handler (index.js makeHandler): presence, rooms, quick chat, the Praeco, the Forum, resync helpers ── */
 async function v80(){
@@ -265,4 +266,74 @@ async function v80(){
     for(let k=0;k<4;k++)C.roomJoin(X,[{id:'dev-b'+i+'x'+k,name:'B'+k,char:'c',rank:'tiro',kit:{cls:'hero',name:'B',stats:{...C.START_STATS},gear:['gladius'],look:big}}],T);await db.put('LOBBY#'+X.id,'LOBBY',{...X,GSI1PK:'LOBBIES',GSI1SK:T,ttl:9e9})}
   const hb=await nog.req('hello',{all:1});const hbs=JSON.stringify(hb).length;assert.ok(hbs<128*1024,'hello < 128 KB: '+hbs);const lb=hb.lobbies.filter(x=>x.id.startsWith('LB'));assert.strictEqual(lb.length,30);
   assert.ok(lb.every(x=>x.lite&&JSON.stringify(x).length<1024),'lite rows < 1 KB');assert.ok(JSON.stringify(C.newLobby({},{id:'x',name:'x'},'x',T)).length>0);
+}
+
+/* ── v0.80 review fixes: requests at once never double-spend or double-pay, the busy rule, names, mutes, the odd push, Today in the arena ── */
+async function v80b(){
+  const {makeHandler}=require('../src/index.js');
+  let T=1800000000000;const db=store.memory();const sent=[];const live=new Set();
+  const send=async(conn,msg)=>{if(!live.has(conn))return true;sent.push({conn,msg});return false};
+  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0});
+  let nc=0,rid=0;const mark=()=>sent.length;
+  const connect=async name=>{const conn='k'+(++nc);live.add(conn);await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER)}});return conn};
+  async function client(name,o={}){const cl={name,acct:'dev-'+name};cl.conn=await connect(name);
+    cl.req=async(t,d)=>{T+=10;const id=++rid;await h({requestContext:{routeKey:'$default',connectionId:cl.conn},body:JSON.stringify({t,id,d})});const m=sent.find(x=>x.conn===cl.conn&&x.msg.re===id);if(!m)throw new Error('no reply to '+t);if(!m.msg.ok)throw new Error(m.msg.err);return m.msg.d};
+    cl.got=(t,since=0)=>sent.slice(since).filter(x=>x.conn===cl.conn&&x.msg.push===t).map(x=>x.msg.d);
+    await cl.req('auth.signin',{name:name.toUpperCase()+' Account'});if(o.glad!==false)cl.ch=await cl.req('char.create',{name:o.glad||name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});return cl}
+  const getC=id=>db.get('CHAR#'+id,'CHAR');const setC=async(id,f)=>{const c=await getC(id);Object.assign(c,f);await db.put('CHAR#'+id,'CHAR',c)};
+  const ok=r=>r.status==='fulfilled';
+  /* the name filter (gladiator names are what everyone sees) */
+  const ann=await client('ann'),bob=await client('bob'),cat=await client('cat'),dan=await client('dan');
+  await assert.rejects(ann.req('char.create',{name:'Shithead',cls:'hero'}),/Pick another name/);await assert.rejects(ann.req('char.edit',{char:ann.ch.id,name:'Big Fucker'}),/Pick another name/);
+  /* parties show gladiator names, never sign-in names */
+  const pt=await ann.req('party.create',{});assert.strictEqual(pt.names[ann.acct],'Ann Gladius');const pj=await bob.req('party.join',{code:pt.code});assert.strictEqual(pj.names[bob.acct],'Bob Gladius');
+  assert.ok(!JSON.stringify(pj).includes('Account'),'no sign-in names');await bob.req('party.leave',{});await ann.req('party.leave',{});
+  /* two buys at once over one wallet: one wins, the other is told to try again */
+  await setC(ann.ch.id,{wallet:15});const buys=await Promise.allSettled([ann.req('char.buy',{char:ann.ch.id,item:'gladius'}),ann.req('char.buy',{char:ann.ch.id,item:'mace'})]);
+  assert.strictEqual(buys.filter(ok).length,1,'one buy');let ch=await getC(ann.ch.id);assert.strictEqual(ch.wallet,0);assert.strictEqual(ch.gear.length,1);
+  /* a ticket given back twice at once is refunded once; a ticket holder cannot join the room */
+  let L=await bob.req('lobby.create',{ev:'democritus',cry:false});await bob.req('lobby.set',{id:L.id,ticket:10});await setC(cat.ch.id,{wallet:30});
+  await cat.req('lobby.ticket',{id:L.id});assert.strictEqual((await getC(cat.ch.id)).wallet,20);await assert.rejects(cat.req('lobby.join',{id:L.id}),/hold a ticket/);
+  const lv=await Promise.allSettled([cat.req('lobby.leave',{id:L.id}),cat.req('lobby.leave',{id:L.id})]);assert.ok(lv.every(ok));assert.strictEqual((await getC(cat.ch.id)).wallet,30,'refunded once');
+  /* the Forum keeps tiny room rows; every room line says the free seats */
+  const fl=(await db.query('FORUM','L#')).map(x=>x);let m0=mark();await cat.req('lobby.create',{ev:'cassian'});const fl2=(await db.query('FORUM','L#')).slice(fl.length);
+  assert.strictEqual(fl2.length,1);assert.deepStrictEqual(Object.keys(fl2[0].row).sort(),['ev','id','loc','n','rank','ranked','seats','team'].sort(),'tiny rows');assert.strictEqual(fl2[0].need,3);
+  await cat.req('lobby.leave',{id:(await cat.req('lobby.list',{})).find(x=>x.ev==='cassian').id});
+  /* a match of four: mutes, the odd push, results at once settle once, Today in the arena */
+  for(const x of [ann,cat,dan])await x.req('lobby.join',{id:L.id});L=await bob.req('lobby.start',{id:L.id});const id=L.id;const seat=x=>C.seatOf(L,x.acct);
+  await assert.rejects(ann.req('lobby.create',{ev:'cassian',cry:false}),/still fighting/,'busy until the match ends or is abandoned');
+  await assert.rejects(ann.req('lobby.ticket',{id:'x'}),/still fighting/);let hl=await ann.req('hello',{all:1});assert.strictEqual(hl.live.id,id);assert.strictEqual(hl.live.ev,'democritus');assert.ok(!hl.live.dropped);
+  await cat.req('forum.mute',{who:dan.acct,on:true});m0=mark();await dan.req('match.say',{id,q:'truce'});assert.strictEqual(cat.got('match.say',m0).length,0,'muted bubbles never arrive');assert.strictEqual(ann.got('match.say',m0).length,1);
+  m0=mark();await ann.req('match.odd',{id,seat:seat(dan)});assert.strictEqual(dan.got('match.youodd',m0).length,0,'one vote is not a majority');await bob.req('match.odd',{id,seat:seat(dan)});
+  let yo=dan.got('match.youodd',m0);assert.strictEqual(yo.length,0,'2 of 4 is not a majority');await cat.req('match.odd',{id,seat:seat(dan)});yo=dan.got('match.youodd',m0);
+  assert.strictEqual(yo.length,1,'the odd lanista is told');assert.deepStrictEqual(yo[0].voters.sort(),[ann.acct,bob.acct,cat.acct].sort());
+  /* ranks at the horns: Ann Tiro, Bob Primus Palus, Cat Gregarius; Ann wins with 34 CF → an upset */
+  await setC(bob.ch.id,{survived:40,lifeCF:800,bouts:40,rank:'primus'});await setC(cat.ch.id,{survived:7,lifeCF:100,bouts:7,rank:'gregarius'});
+  await setC(bob.ch.id,{wallet:0});
+  const table=[0,1,2,3].map(i=>({seat:i,won:i===seat(ann),place:i===seat(ann)?1:2,f:i===seat(ann)?34:i===seat(bob)?20:8,coin:10,survives:true}));
+  const rs=await Promise.allSettled([ann,bob,cat,dan].map(x=>x.req('match.result',{id,table,hash:'h'})));assert.ok(rs.every(ok),rs.filter(r=>!ok(r)).map(r=>r.reason&&r.reason.message).join());
+  for(const x of [ann,bob,cat,dan])assert.strictEqual((await getC(x.ch.id)).bouts,x===bob?41:x===cat?8:1,'one result each: '+x.name);
+  assert.ok(!(await ann.req('hello',{all:1})).live,'free again');
+  let td=(await dan.req('hello',{all:1})).today;assert.strictEqual(td.day,'today');assert.strictEqual(td.wins[0].name,'Ann Gladius');assert.strictEqual(td.wins[0].cf,34);assert.strictEqual(td.wins[0].ev,'democritus');assert.strictEqual(td.wins[0].rank,'tiro');
+  assert.strictEqual(td.upsets.length,1);assert.deepStrictEqual([td.upsets[0].w.name,td.upsets[0].l.name,td.upsets[0].l.rank,td.upsets[0].gap],['Ann Gladius','Bob Gladius','primus',3]);assert.deepStrictEqual(td.fallen,[]);
+  /* Ranked: a death by the Fate, then an abandoned Ranked gladiator (Damnatio) — the best rank first */
+  const eve=await client('eve'),fay=await client('fay'),gus=await client('gus');
+  let R=await eve.req('lobby.create',{ranked:true,ev:'cassian',cry:false});await fay.req('lobby.join',{id:R.id});await gus.req('lobby.join',{id:R.id});R=await eve.req('lobby.start',{id:R.id});
+  const rt=R.players.map((p,i)=>({seat:i,won:p.id===eve.acct,place:p.id===eve.acct?1:3,f:p.id===eve.acct?25:p.id===fay.acct?12:5,survives:p.id!==fay.acct}));
+  m0=mark();const ab=await gus.req('match.abandon',{id:R.id});assert.ok(ab.out&&ab.out.died);
+  for(const x of [eve,fay])await x.req('match.result',{id:R.id,table:rt,hash:'r'});
+  td=(await dan.req('hello',{all:1})).today;assert.deepStrictEqual(td.fallen.map(f=>[f.name,f.how]).sort(),[['Fay Gladius','fate'],['Gus Gladius','damnatio']]);assert.ok(td.fallen[0].look,'faces kept');
+  assert.deepStrictEqual(td.wins.map(w=>w.name),['Ann Gladius','Eve Gladius'],'most CF first');
+  /* a dropped seat is still the lanista's match: Rejoin / Abandon until it ends */
+  const hal=await client('hal'),ida=await client('ida');let D=await hal.req('lobby.create',{ev:'egidious',cry:false});await ida.req('lobby.join',{id:D.id});D=await hal.req('lobby.start',{id:D.id});
+  await db.put('MATCH#'+D.id,'META',{...(await db.get('MATCH#'+D.id,'META')),away:{[ida.acct]:T-C.AWAY_MS-1}});await hal.req('match.drop',{id:D.id,seat:C.seatOf(D,ida.acct)});
+  hl=await ida.req('hello',{all:1});assert.strictEqual(hl.live.id,D.id);assert.ok(hl.live.dropped,'a CPU holds the seat');await assert.rejects(ida.req('lobby.quick',{ev:'cassian'}),/still fighting/);
+  await ida.req('match.abandon',{id:D.id});assert.ok(!(await ida.req('hello',{all:1})).live,'abandoned: free');
+  /* tomorrow the board shows yesterday's until a new day has its own */
+  T+=86400e3;td=(await dan.req('hello',{all:1})).today;assert.strictEqual(td.day,'yesterday');assert.strictEqual(td.wins[0].name,'Ann Gladius');
+  T+=86400e3;td=(await dan.req('hello',{all:1})).today;assert.strictEqual(td.day,'today');assert.deepStrictEqual([td.wins.length,td.fallen.length,td.upsets.length],[0,0,0]);
+  /* the record stays small however big the faces are */
+  const big={portrait:Object.fromEntries(Array.from({length:40},(_,i)=>['p'+i,'x'.repeat(40)])),token:Object.fromEntries(Array.from({length:30},(_,i)=>['t'+i,'y'.repeat(40)])),color:'#123456'};
+  let DD={};for(let i=0;i<12;i++)DD=C.dayFromMatch(DD,{id:'M'+i,ev:'democritus',loc:1,at:i,seats:[{acct:'a'+i,ch:{name:'A'+i,cls:'hero',look:big},before:'tiro',row:{won:true,f:10+i}},{acct:'b'+i,ch:{name:'B'+i,cls:'hero',look:big},before:'summa',row:{won:false,f:1},out:{died:true}}]});
+  assert.ok(JSON.stringify(DD).length<=C.DAY_MAX,'≤ DAY_MAX');assert.strictEqual(DD.wins.length,5);assert.strictEqual(DD.wins[0].cf,21);
 }

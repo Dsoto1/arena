@@ -238,8 +238,31 @@ const ONLC=(function(){
     if(ids.length===1)return {table:cleanTable(reports[ids[0]].table),void:false,minority:[],unverified:true};
     if(best[1].length*2>ids.length)return {table:cleanTable(reports[best[1][0]].table),void:false,minority:ids.filter(a=>!best[1].includes(a))};
     return {table:null,void:true,minority:ids}}
+  /* ── v0.80 Today in the arena: one record a UTC day (WORLD DAY#yyyy-mm-dd) — wins = the most CF in one match, fallen = Ranked deaths
+     (Damnatio too) best rank first, upsets = a lower rank beating a higher one. Each entry keeps the face/token (look), the event and the
+     outcome; the record stays under DAY_MAX bytes (faces leave from the tail first). ── */
+  const DAY_KEEP={wins:5,fallen:5,upsets:4},DAY_MAX=14000;
+  function dayKey(t){return new Date(t).toISOString().slice(0,10)}
+  function dayWho(ch,rank){return {name:ch.name,cls:ch.cls,rank:rank||rankFor(ch).k,look:cleanLook(ch.look),bouts:ch.bouts|0,wins:ch.wins|0,survived:ch.survived|0,lifeCF:ch.lifeCF|0}}
+  function dayLite(ch,rank){const L=cleanLook(ch.look);return {name:ch.name,cls:ch.cls,rank:rank||rankFor(ch).k,look:L.token?{token:L.token,color:L.color}:{}}}
+  const DAY_SORT={wins:(a,b)=>b.cf-a.cf||a.at-b.at,fallen:(a,b)=>rankIdx(b.rank)-rankIdx(a.rank)||(b.lifeCF|0)-(a.lifeCF|0)||a.at-b.at,
+    upsets:(a,b)=>b.gap-a.gap||rankIdx(b.l.rank)-rankIdx(a.l.rank)||a.at-b.at};
+  function dayNote(D,kind,e){D=D||{};D[kind]=(D[kind]||[]).filter(x=>x.key!==e.key).concat([e]).sort(DAY_SORT[kind]).slice(0,DAY_KEEP[kind]);return D}
+  function daySlim(D){const faces=[];for(let i=DAY_KEEP.wins;i>=0;i--)for(const k of ['upsets','fallen','wins']){const e=(D[k]||[])[i];if(e)faces.push(...(k==='upsets'?[e.l,e.w]:[e]))}
+    for(const cut of ['portrait','look'])for(const f of faces){if(JSON.stringify(D).length<=DAY_MAX)return D;if(f&&f.look){if(cut==='portrait')delete f.look.portrait;else f.look={}}}return D}
+  /* a settled match: m = {id,ev,loc,at,ranked,void,seats:[{acct,ch (after the result),before (rank key at the horns),row,out}]} (abandoned seats left out) */
+  function dayFromMatch(D,m){D=D||{};if(m.void)return D;const hs=(m.seats||[]).filter(s=>s&&s.ch&&s.row);const base={at:m.at,ev:m.ev,loc:m.loc,ranked:!!m.ranked};
+    for(const s of hs){if(s.row.won&&(s.row.f|0)>0)dayNote(D,'wins',{key:m.id+'#'+s.acct,...base,...dayWho(s.ch,s.before),cf:s.row.f|0});
+      if(s.out&&s.out.died)dayNote(D,'fallen',{key:m.id+'#'+s.acct,...base,...dayWho(s.ch,s.before),how:'fate',hall:!!s.out.hall,cf:s.row.f|0})}
+    for(const w of hs.filter(s=>s.row.won)){const l=hs.filter(s=>!s.row.won&&rankIdx(s.before)>rankIdx(w.before)).sort((a,b)=>rankIdx(b.before)-rankIdx(a.before))[0];
+      if(l)dayNote(D,'upsets',{key:m.id+'#'+w.acct,...base,gap:rankIdx(l.before)-rankIdx(w.before),w:dayLite(w.ch,w.before),l:{...dayLite(l.ch,l.before),fell:!!(l.out&&l.out.died)}})}
+    return daySlim(D)}
+  /* a Ranked gladiator abandoned the sand: Damnatio */
+  function dayFell(D,m){return daySlim(dayNote(D||{},'fallen',{key:m.id+'#'+m.acct,at:m.at,ev:m.ev,loc:m.loc,ranked:true,...dayWho(m.ch,m.before),how:m.how||'damnatio',hall:!!m.hall,cf:0}))}
+  const dayHas=D=>!!D&&['wins','fallen','upsets'].some(k=>(D[k]||[]).length);
+  function dayOut(D,day){D=D||{};return {day,wins:D.wins||[],fallen:D.fallen||[],upsets:D.upsets||[]}}
   /* weekly challenges rotate with the week of the year */
   const CHALLENGES=[['Survive 3 ranked bouts',3,'survived'],['Earn 60 CF in one bout',60,'cf1'],['Win a bout at Capua',1,'win:3'],['Slay 5 beasts',5,'beasts'],['Finish 5 bouts',5,'bouts'],['Win with 20+ coin left',1,'rich']];
   function weekChallenges(t){const wk=Math.floor((t||0)/604800000);const out=[];for(let i=0;i<3;i++)out.push(CHALLENGES[(wk+i*2)%CHALLENGES.length]);return out}
-  return {nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,PURSE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
+  return {DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,PURSE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
