@@ -589,6 +589,17 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
+- **Online — agreed for the next online batch (not built; wait for his go):** (1) online uses PRINTED gear only (host's custom chest
+  weapons / roster-set gear leak into S.chest/S.market today → crash/desync risk); (2) online results never write offline records (Annals,
+  Hall, crowd memory, music unlocks); (3) Ranked: no hints/strategy panel/Focus suggestions/win odds (Custom allows); (4) no pause online
+  (own animation speed stays); (5) resync by MAJORITY of humans' states, not the mover's snapshot (a tampered client can push its state
+  today) + strike the odd one out. Token parts are all open since v0.47 (`achLocked` returns null) — nothing to lock. Spectator GROUP
+  TURN (his design): once a rotation a 20 s window, all ticket holders choose at once (host's clock closes it, early when all answered),
+  Tholo decided from everyone's choices at close, stones/offerings fire on the TARGET's turn, section moves at once. Open questions:
+  refund if the target falls first; one action or as many as CF allows; offline too; CPU crowd. Also proposed: 3-stack AWS split
+  (data / sign-in / server + test copy) with the login.flaviusrule.com swap, take back a seat a CPU took, Quick match, friends,
+  "your turn" notices, more events, Stakes, weekly challenges that count, leaderboards/seasons, sell-back + gear score, record page,
+  report/mute. His view: in-game collusion (truces/trades) is allowed — Flavius breaks truces anyway.
 - **Online — the design (after v0.76, Virgilante):** Multiplayer → Online opens a Halo-Infinite-style landing space: your online
   gladiator lit on a stage (mini/avatar + armor, name, class, mind, lifetime CF, wallet, bouts survived), party slots beside them
   (+ Invite, for team events), left rail Play · Lobby Browser · Spectate · Armory & Market · Character · Hall of the Fallen, event
