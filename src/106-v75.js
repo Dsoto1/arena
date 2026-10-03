@@ -30,9 +30,9 @@
    • His textures: the city square's buildings wear his stone blocks (assets/stone_wall.webp, `cityWallTex75` called from 25-city's
      cityDrawBldg); mail and letters sit on his parchment (assets/parchment.webp) in dark ink.
    ===================================================================== */
-document.addEventListener('pointerdown',e=>{if(e.button!==0)return;const t=e.target.closest&&e.target.closest('.ratfold');if(!t)return;e.preventDefault();
+let RAT_PD=0;document.addEventListener('pointerdown',e=>{if(e.button!==0)return;const t=e.target.closest&&e.target.closest('.ratfold');if(!t)return;e.preventDefault();RAT_PD=Date.now();
   RAT_SHUT=!RAT_SHUT;try{localStorage.setItem('flavius_ratshut',RAT_SHUT?'1':'0')}catch(err){}panelStatsUp()},true);
-document.addEventListener('click',e=>{if(!e.target.closest||!e.target.closest('.ratfold'))return;if(e.detail===0)return;
+document.addEventListener('click',e=>{if(!e.target.closest||!e.target.closest('.ratfold'))return;if(e.detail===0&&Date.now()-RAT_PD>1000)return; /* v0.81: a touch tap's click can carry detail 0 — it toggled on the press already */
   e.stopImmediatePropagation();e.preventDefault()},true); /* a pointer click: the press already toggled */
 
 /* ---------- his weapon-card icons ---------- */
