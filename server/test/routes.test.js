@@ -332,6 +332,15 @@ async function v80b(){
   /* tomorrow the board shows yesterday's until a new day has its own */
   T+=86400e3;td=(await dan.req('hello',{all:1})).today;assert.strictEqual(td.day,'yesterday');assert.strictEqual(td.wins[0].name,'Ann Gladius');
   T+=86400e3;td=(await dan.req('hello',{all:1})).today;assert.strictEqual(td.day,'today');assert.deepStrictEqual([td.wins.length,td.fallen.length,td.upsets.length],[0,0,0]);
+  /* Find me a fight: two presses whose new rooms the (eventually consistent) room index cannot show yet still meet in one room */
+  {const db2=store.memory();const lag={...db2,byIndex:async g=>g==='LOBBIES'?[]:db2.byIndex(g)};const sent2=[];const live2=new Set();
+    const h2=makeHandler({db:lag,send:async(conn,msg)=>{if(!live2.has(conn))return true;sent2.push({conn,msg});return false},dev:true,verifyCfg:{},now:()=>T,hereMs:0});let r2=0;
+    const cl2=async name=>{const conn='q'+name;live2.add(conn);await h2({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER)}});
+      const req=async(t,d)=>{T+=10;const id=++r2;await h2({requestContext:{routeKey:'$default',connectionId:conn},body:JSON.stringify({t,id,d})});const m=sent2.find(x=>x.conn===conn&&x.msg.re===id);if(!m.msg.ok)throw new Error(m.msg.err);return m.msg.d};
+      await req('auth.signin',{name});await req('char.create',{name:name+' Gladius',cls:'hero'});return req};
+    const qa=await cl2('qa'),qb=await cl2('qb'),qc=await cl2('qc');const [x1,x2]=await Promise.all([qa('lobby.quick',{ev:'cassian'}),qb('lobby.quick',{ev:'cassian'})]);
+    assert.strictEqual(x1.lobby.id,x2.lobby.id,'one room through the pointer');const x3=await qc('lobby.quick',{ev:'cassian'});assert.strictEqual(x3.lobby.id,x1.lobby.id,'the next press finds it too');
+    assert.strictEqual((await db2.get('LOBBY#'+x1.lobby.id,'LOBBY')).players.length,3)}
   /* the record stays small however big the faces are */
   const big={portrait:Object.fromEntries(Array.from({length:40},(_,i)=>['p'+i,'x'.repeat(40)])),token:Object.fromEntries(Array.from({length:30},(_,i)=>['t'+i,'y'.repeat(40)])),color:'#123456'};
   let DD={};for(let i=0;i<12;i++)DD=C.dayFromMatch(DD,{id:'M'+i,ev:'democritus',loc:1,at:i,seats:[{acct:'a'+i,ch:{name:'A'+i,cls:'hero',look:big},before:'tiro',row:{won:true,f:10+i}},{acct:'b'+i,ch:{name:'B'+i,cls:'hero',look:big},before:'summa',row:{won:false,f:1},out:{died:true}}]});

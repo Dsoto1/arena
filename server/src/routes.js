@@ -102,7 +102,8 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   async function meterOK(n){if(!n)return false;const day=new Date(now()).toISOString().slice(0,10);return (await store.counter('WORLD','FMETER#'+day,'n',n))<C.RATE.meterDay}
   /* free lanistas who fit a room: here, not the caller, not in it, not fighting, the same strike flag, Ranked = the same rank,
      not muting the caller; the newest RATE.fanCap by connect time */
-  async function fitFor(L,by){return (await here()).filter(A=>A.id!==by&&!A.match&&!C.memberOf(L,A.id)&&!L.players.some(p=>p.id===A.id)&&flagOf(A)===!!L.flag&&
+  const kickedOut=(L,a)=>((L.kicked||{})[a]||0)>now();
+  async function fitFor(L,by){return (await here()).filter(A=>A.id!==by&&!A.match&&!C.memberOf(L,A.id)&&!L.players.some(p=>p.id===A.id)&&!kickedOut(L,A.id)&&!inStands(L,A.id)&&flagOf(A)===!!L.flag&&
     (!L.ranked||((A.here&&A.here.rank)||'tiro')===L.rank)&&!muting(A,by)).slice(0,C.RATE.fanCap)}
   async function forumOut(line,As){line=await forumPut(line);if(await meterOK(As.length))await fan(As,'forum.line',{line});return line}
   const roomLine=(k,L,by,name)=>({k,by,name,row:lite(L),need:Math.max(0,L.seats-L.players.length)});
@@ -167,7 +168,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
 
   /* ✉ one invitation (the rules are the same for lobby.invite and lobby.again); '' or the reason */
   async function inviteOne(L,me,meName,to,o={}){if(!to||to===me)return 'Pick a lanista.';const H=await hereMap();if(!H.get(to))return 'Not in the arena now.';
-    const T=await acctOf(to);if(!T||!T.conn)return 'Not in the arena now.';if(T.match&&T.match!==o.again)return 'Fighting right now.';if(C.memberOf(L,to)||L.players.some(p=>p.id===to))return 'Already in the room.';if(inStands(L,to))return 'They hold a ticket to this game.';
+    const T=await acctOf(to);if(!T||!T.conn)return 'Not in the arena now.';if(T.match&&T.match!==o.again)return 'Fighting right now.';if(C.memberOf(L,to)||L.players.some(p=>p.id===to))return 'Already in the room.';if(inStands(L,to))return 'They hold a ticket to this game.';if(kickedOut(L,to))return 'You removed them a moment ago.';
     if(flagOf(T)!==!!L.flag)return 'They cannot join this game.';
     if(L.ranked){let r=T.here&&T.here.rank;if(!r){const tc=await liveChar(to,T);r=tc?C.rankFor(tc).k:'tiro'}if(r!==L.rank)return `Ranked: ${(C.RANKS[C.rankIdx(L.rank)]||C.RANKS[0]).n} only.`}
     const P='ACCT#'+me,S='PROFILE',t=now();
@@ -255,7 +256,14 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       const tryJoin=async pick=>{const L=await store.get('LOBBY#'+pick.id,'LOBBY');if(!L||L.status!=='waiting')return null;L.members=L.members||[];
         if(L.seats-L.players.length<g.length)return null;if(C.roomJoin(L,cleanG(g),now()))return null;await putLobby(L);await toRoom(L,null,{except:ctx.acct});return L};
       const pick=C.quickPick(list,g,ev,ranked,flag,now());if(pick){const L=await tryJoin(pick);if(L)return {lobby:room(L),made:false}}
+      /* the playlist's open room is ELECTED with one consistent pointer item (QUICK#…|OPEN): the room index is eventually consistent, the pointer is not */
+      const qk='QUICK#'+ev+'#'+(ranked?(g.find(w=>w.id===ctx.acct).rank||'tiro'):'c')+'#'+(flag?1:0);
+      const viaPtr=async P=>{if(!P||!P.id)return null;const X=await store.get('LOBBY#'+P.id,'LOBBY');return X&&X.status==='waiting'?tryJoin(X):null};
+      let ptr=await store.get(qk,'OPEN');{const J=await viaPtr(ptr);if(J)return {lobby:room(J),made:false}}
       const L=await makeRoom({ev,ranked,quick:1},ctx.acct,g);
+      if((await store.putRev(qk,'OPEN',{...(ptr||{}),id:L.id,ttl:ttl(1)}))===false){ptr=await store.get(qk,'OPEN');
+        /* another press won the pointer a moment ago: fold into its room (mine closes unseen), or keep mine if theirs will not take us */
+        const J=await viaPtr(ptr);if(J){L.status='done';L.closed='merged';await putLobby(L).catch(()=>{});return {lobby:room(J),made:false}}}
       /* two playlists pressed at once: the later of two fresh twin rooms folds into the earlier one (both sides agree on the order) */
       const twin=(await lobbies()).filter(X=>X.id!==L.id&&X.quick&&X.status==='waiting'&&X.ev===ev&&!!X.ranked===ranked&&!!X.flag===flag&&(!ranked||X.rank===L.rank)&&
         ((X.created||0)<L.created||(X.created===L.created&&X.id<L.id))).sort((a,b)=>(a.created||0)-(b.created||0))[0];
