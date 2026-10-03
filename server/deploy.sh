@@ -5,6 +5,8 @@
 # Optional: STACK (default flavius-arena), REGION (default us-east-1), BUDGET (default 10), AUTH_PREFIX, DEV=true (test stack only)
 set -e
 EMAIL="$1"; [ -n "$EMAIL" ] || { echo "usage: sh deploy.sh you@example.com"; exit 1; }
+case "$EMAIL" in *" "*|*googleusercontent*|*@*@*) echo "That e-mail looks mixed up: [$EMAIL]"; exit 1;; *@*.*) ;; *) echo "That is not an e-mail address: [$EMAIL]"; exit 1;; esac
+case "${GOOGLE_ID:-none}" in none|*.apps.googleusercontent.com) ;; *) echo "GOOGLE_ID should end in .apps.googleusercontent.com: [$GOOGLE_ID]"; exit 1;; esac
 STACK="${STACK:-flavius-arena}"; REGION="${REGION:-us-east-1}"
 ACCT=$(aws sts get-caller-identity --query Account --output text)
 BUCKET="flavius-arena-code-$ACCT-$REGION"
