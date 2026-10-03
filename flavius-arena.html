@@ -14325,13 +14325,13 @@ async function gameOver(winners,reason){
     if(!sev.length&&!lowHp)continue;
     x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);
     if(rec){rec.status='infirmary';rec.infirm={wait:0,need:sev.length?'the Blessings of Hygeia':'a Medicus regimen',cost:(sev.length?HYGEIA*sev.length:0)+MEDICUS};
-      await Store.put('gladiators',rec.id,rec).catch(()=>{});await loadLudus();
+      await Store.put('gladiators',rec.id||p.saved,rec).catch(()=>{});await loadLudus();
       log(`${nm(p)} is carried through the Gate of Life to the <b>Ludus infirmary</b> — saved, but they need ${rec.infirm.need} (${rec.infirm.cost} coin) before they can fight again. Left untended too long, wounds write their own endings.`,'big')}}
   let mres=null;if(S.missio&&!interim)mres=await advanceMissio(rows);
   // roguelike Ludus: summoned gladiators update automatically at the end of every event they fight in.
   // Survive and the record grows; fall short and the record is struck for good. The sand keeps what it takes.
   if(!interim)for(const x of rows){const p=x.p;if(!p.saved)continue;
-    if(x.thumbHide)continue; // deferred until they roll the die in the results window
+    if(x.thumbHide||x.savedDone)continue; /* v0.80: the Gate of Life already wrote this record */ // deferred until they roll the die in the results window
     if(aliveInUniverse(x)){x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);if(rec)log(`${nm(p)}'s Ludus record updates automatically: ${rec.cf} CF, returns with ${rec.carry}.`)}
     else if(!(S.missio&&(!p.cpu||(typeof missioHero==='function'&&p===missioHero())))){await markFallen(p,x).catch(()=>{});log(`${nm(p)} did not survive; their Ludus record is struck from the rolls for good.`,'bad')}}
   if(G!==S)return;
@@ -15124,7 +15124,7 @@ async function saveGladiator(x){
     const cut=[...LUDUS_CACHE].filter(g=>!gladActive(g)).sort((a,b)=>(a.cf||0)-(b.cf||0))[0];
     if(cut){await Store.del('gladiators',cut.id).catch(()=>{});LUDUS_CACHE=LUDUS_CACHE.filter(g=>g.id!==cut.id);
       log(`The Ludus rolls are full: ${esc(cut.name)}'s old record (${cut.status}) is cleared to make room.`)}}
-  await Store.put('gladiators',id,rec);x.p.saved=id;await loadLudus();return rec;
+  rec.id=id;await Store.put('gladiators',id,rec);x.p.saved=id;await loadLudus();return rec;
 }
 async function markFallen(p,x){ // a saved gladiator who returns and falls short of the Ludus dies
   const prev=LUDUS_CACHE.find(g=>g.id===p.saved)||await Store.getDoc('gladiators',p.saved);if(!prev)return;
@@ -32099,6 +32099,22 @@ function onlTzLL(tz){return ONL_TZ[tz]||null}
 /* =====================================================================
    119-ONL80RULES · ONLINE v0.80: online match rules + majority resync — being built
    ===================================================================== */
+/* =====================================================================
+   120-V80FIX · v0.80 fixes outside Online
+   =====================================================================
+   • Hot seat stays at the hot-seat table. Only an event started from the hot-seat setup (its ▶ Sound the horns, or a replay of
+     such an event, which carries cfg.hotseat) seats players from profiles. Before, one visit to Hot seat left CFG.hotseat on, and
+     lessons, Manager bouts, exhibitions, the beast pen and an Online host's match were then renamed after profiles, saved junk
+     profiles and turned hints off. Going back to the main menu now ends hot-seat mode (seats return to you + CPUs).
+   • (10-meta / 11-extra edits) the Gate of Life saves under the gladiator's real id; a record already written this event is not
+     written again, so no ghost record, no double-counted event, and the infirmary state holds.
+   ===================================================================== */
+let HS_GO=0;
+document.addEventListener('click',e=>{if(!CFG.hotseat)return;const b=e.target.closest&&e.target.closest('#goBtn');if(!b)return;const m=document.getElementById('modal');if(m&&m.querySelector('.hsbanner'))HS_GO=Date.now()},true);
+{const base=startEvent;startEvent=function(cfg){if(!CFG.hotseat||(cfg&&cfg.hotseat)||Date.now()-HS_GO<4000)return base.apply(this,arguments);
+  /* not from the hot-seat table: run it as a normal event */
+  CFG.hotseat=false;try{return base.apply(this,arguments)}finally{CFG.hotseat=true}}}
+{const base=menuShow;menuShow=function(){try{if(CFG.hotseat){CFG.hotseat=false;CFG.seats.forEach((s,i)=>{s.cpu=i>0;s.hsName=''})}}catch(e){}return base.apply(this,arguments)}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

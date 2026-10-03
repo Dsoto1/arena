@@ -200,13 +200,13 @@ async function gameOver(winners,reason){
     if(!sev.length&&!lowHp)continue;
     x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);
     if(rec){rec.status='infirmary';rec.infirm={wait:0,need:sev.length?'the Blessings of Hygeia':'a Medicus regimen',cost:(sev.length?HYGEIA*sev.length:0)+MEDICUS};
-      await Store.put('gladiators',rec.id,rec).catch(()=>{});await loadLudus();
+      await Store.put('gladiators',rec.id||p.saved,rec).catch(()=>{});await loadLudus();
       log(`${nm(p)} is carried through the Gate of Life to the <b>Ludus infirmary</b> — saved, but they need ${rec.infirm.need} (${rec.infirm.cost} coin) before they can fight again. Left untended too long, wounds write their own endings.`,'big')}}
   let mres=null;if(S.missio&&!interim)mres=await advanceMissio(rows);
   // roguelike Ludus: summoned gladiators update automatically at the end of every event they fight in.
   // Survive and the record grows; fall short and the record is struck for good. The sand keeps what it takes.
   if(!interim)for(const x of rows){const p=x.p;if(!p.saved)continue;
-    if(x.thumbHide)continue; // deferred until they roll the die in the results window
+    if(x.thumbHide||x.savedDone)continue; /* v0.80: the Gate of Life already wrote this record */ // deferred until they roll the die in the results window
     if(aliveInUniverse(x)){x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);if(rec)log(`${nm(p)}'s Ludus record updates automatically: ${rec.cf} CF, returns with ${rec.carry}.`)}
     else if(!(S.missio&&(!p.cpu||(typeof missioHero==='function'&&p===missioHero())))){await markFallen(p,x).catch(()=>{});log(`${nm(p)} did not survive; their Ludus record is struck from the rolls for good.`,'bad')}}
   if(G!==S)return;
