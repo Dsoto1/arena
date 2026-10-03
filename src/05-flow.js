@@ -707,7 +707,7 @@ async function runDraft() {
 /* armorDesc — one-line description of an armor piece for menus. */
 function armorDesc(k) {
   const a = ARM[k];
-  return `${a.slot} ${PT_NAME[a.pt]}${a.pair ? ' (pair)' : ''}${a.stack ? ' · stackable' : ''} · ${a.ap} AP${a.bonus ? ' · bonus ' + Object.entries(a.bonus).map(([l, v]) => `+${v} ${LOCN[l]}`).join(', ') : ''}${a.greaves ? ' · +1 MV' : ''}${a.cestus ? ' · +1 DMG' : ''}`;
+  return `${a.slot}${PT_NAME[a.pt]&&PT_NAME[a.pt]!==a.slot?' '+PT_NAME[a.pt]:''}${a.pair ? ' (pair)' : ''}${a.stack ? ' · stackable' : ''} · ${a.ap} AP${a.bonus ? ' · bonus ' + Object.entries(a.bonus).map(([l, v]) => `+${v} ${LOCN[l]}`).join(', ') : ''}${a.greaves ? ' · +1 MV' : ''}${a.cestus ? ' · +1 DMG' : ''}`;
 }
 
 /* ================= END CONDITIONS & ROUNDS ================= */
