@@ -19,6 +19,14 @@
      FORUM             L#<ts13>#<acct4>     a Forum line {k:say|open|call|res,…} (ttl 1 day)
      WORLD             FMETER#<yyyy-mm-dd>  {n}: Forum pushes sent that UTC day
      WORLD             DAY#<yyyy-mm-dd>     Today in the arena {wins,fallen,upsets} (versioned, ttl 3 days)
+   v0.82 (domus, guests, invites, the stands turn):
+     ACCT#<sub>        PROFILE       + domus <id>, dname <house name>, domusOld [ids]
+     DOMUS#<id>        DOMUS         a house {id,owner,name,founded,bouts,wins,survived,fallen,lifeCF,glads,archived} (versioned;
+                                     GSI1PK DOMUS_OF#<acct>); CHAR items carry domus <id>
+     DNAME#<lower name> DNAME        {domus,owner,name}: a house name, claimed once (putNew)
+     GUEST#<gid>       GUEST         a guest {id,first,conn,tz} (+ GSI1PK 'GON', GSI1SK <connect ms> while its socket is open; ttl 1 day from first)
+     INVITE#<to>       R#<room>#<by> one invitation {room,by,name,at} (ttl 1 day; dropped when the room dies or the invitee joins a room)
+     MATCH#<id>        STW#<rot6> / STP#<rot6>#<acct>   a stands window {rot,open,at,holders} / one private pick {acct,seat,pick}
 */
 'use strict';
 function memory(){
@@ -36,6 +44,8 @@ function memory(){
     async set(pk,sk,fields){const x=t.get(key(pk,sk));if(!x)return false;Object.assign(x,clone(fields));return true},
     /* presence off: only when the socket going away is still the account's (a newer connection is never clobbered) */
     async clearConn(acct,conn,now){const x=t.get(key('ACCT#'+acct,'PROFILE'));if(!x||!conn||x.conn!==conn)return false;x.conn=null;x.offAt=now;delete x.GSI1PK;delete x.GSI1SK;return true},
+    /* v0.82: a guest's presence off, on the same terms */
+    async clearGuest(gid,conn){const x=t.get(key('GUEST#'+gid,'GUEST'));if(!x||!conn||x.conn!==conn)return false;x.conn=null;delete x.GSI1PK;delete x.GSI1SK;return true},
     /* a rate limit on one field: true (and field=now) when it is absent or at least gapMs old */
     async rate(pk,sk,field,gapMs,now){const x=t.get(key(pk,sk));if(!x)return false;if(x[field]!=null&&x[field]>now-gapMs)return false;x[field]=now;return true},
     /* a counted quota per bucket (e.g. the hour): true while fewer than max this bucket */
@@ -78,6 +88,8 @@ function dynamo(table){
     /* presence off, conditional on the connection still being this one */
     async clearConn(acct,conn,now){if(!conn)return false;try{await db.send(new UpdateCommand({TableName:table,Key:{PK:'ACCT#'+acct,SK:'PROFILE'},UpdateExpression:'SET #c = :n, offAt = :t REMOVE GSI1PK, GSI1SK',ConditionExpression:'#c = :c',
         ExpressionAttributeNames:{'#c':'conn'},ExpressionAttributeValues:{':n':null,':t':now,':c':conn}}));return true}catch(e){if(e.name==='ConditionalCheckFailedException')return false;throw e}},
+    async clearGuest(gid,conn){if(!conn)return false;try{await db.send(new UpdateCommand({TableName:table,Key:{PK:'GUEST#'+gid,SK:'GUEST'},UpdateExpression:'SET #c = :n REMOVE GSI1PK, GSI1SK',ConditionExpression:'#c = :c',
+        ExpressionAttributeNames:{'#c':'conn'},ExpressionAttributeValues:{':n':null,':c':conn}}));return true}catch(e){if(e.name==='ConditionalCheckFailedException')return false;throw e}},
     /* one write: SET field=now only when absent or older than now-gap (per account, survives reconnects and Lambda containers) */
     async rate(pk,sk,field,gapMs,now){try{await db.send(new UpdateCommand({TableName:table,Key:{PK:pk,SK:sk},UpdateExpression:'SET #f = :now',ConditionExpression:'attribute_exists(PK) AND (attribute_not_exists(#f) OR #f <= :cut)',
         ExpressionAttributeNames:{'#f':field},ExpressionAttributeValues:{':now':now,':cut':now-gapMs}}));return true}catch(e){if(e.name==='ConditionalCheckFailedException')return false;throw e}},

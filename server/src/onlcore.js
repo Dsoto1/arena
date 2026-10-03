@@ -6,8 +6,14 @@
    • Ranks: Tiro → Gregarius → Veteranus → Primus Palus → Summa Rudis, earned by ranked bouts survived AND lifetime CF.
      Ranked matchmaking pairs equal ranks only. Each rank opens one more market level (Tiro: level 1 only).
    • A new online gladiator: one of the 8 printed classes, the same low ratings for everyone (55 each — they grow by
-     surviving), the recruit kit (the class's weapons, no armor), an empty wallet. Coin earned in matches goes to the wallet; gear is bought between matches.
-   • Prices 15 / 60 / 180 by market level; purses grow +10% per ranked bout survived in a row (streak, up to +100%).
+     surviving), the recruit kit (the class's weapons, no armor), an empty wallet. Surviving Ranked bouts pays the wallet (AWARD); gear is bought between matches.
+   • v0.82 (protocol 5): prices — weapons 60 / 250 / 750 by market level, armor 15 / 55 / 150 coin per AP (priceOf).
+     Coin: no pay-out of in-match coin; a SURVIVED RANKED bout pays a flat award by rank (AWARD: 8/12/18/25/35), +50% for a win,
+     ×(1 + 10% per ranked bout survived in a row, up to +100%). Custom pays no coin. Wagers/tickets unchanged.
+   • v0.82 DOMUS: every account names a house (3–24 letters, word-filtered, unique) before any gladiator; up to 4 gladiators
+     (GLAD_MAX), one active; the house keeps a record (bouts, wins, survived, fallen, lifetime CF, founded).
+   • v0.82 GUESTS: read-only watchers without sign-in (GUEST_OK requests), 2 hours (GUEST_MS), counted apart (hereSummary guests/gzones).
+   • v0.82 STANDS GROUP TURN: one private pick per ticket holder per rotation (standsPickOK), applied together as one server input.
    • Wagers: online wallets only, escrowed by the server, split among winning bets (5% to the host); fighters back only themselves.
    • Anti-cheat: results by agreement (`agree`: every human reports the whole table; strict majority wins, 2 disagreeing humans →
      void, no pay, no deaths, strikes for the minority); 3 strikes → matched only with other struck accounts; a ranked player away
@@ -17,14 +23,14 @@
      (25+ ranked bouts survived, 500+ lifetime CF, or Commodus slain). Everyone else is erased (damnatio memoriae).
    ===================================================================== */
 const ONLC=(function(){
-  const VER=4; /* protocol version: the server refuses clients on another one (v0.80: rooms, quick chat, the Praeco, presence) */
+  const VER=5; /* protocol version: the server refuses clients on another one (v0.80: rooms, quick chat, the Praeco, presence; v0.82: domus, coin, guests, invites, stands turn) */
   const CLASSES8=['soldier','royalty','hero','slave','veteranus','amazonia','venatore','damnatio'];
   const EVENTS3=['democritus','egidious','cassian'];
   const EVENTS_TEAM=['familia']; /* team events: 4 seats, Team A (seats 0-1 by default) vs Team B; a party sits on one team */
   const EVENTS_ALL=EVENTS3.concat(EVENTS_TEAM);
   const STANDS_MAX=8, PARTY_MAX=4;
   /* v0.79: up to 3 living gladiators an account, one active; a match needs 2 humans; lobby chat */
-  const GLAD_MAX=3, MIN_HUMANS=2, CHAT_KEEP=40, CHAT_LEN=200;
+  const GLAD_MAX=4, MIN_HUMANS=2, CHAT_KEEP=40, CHAT_LEN=200;
   const RANKS=[
     {k:'tiro',n:'Tiro',bouts:0,cf:0,mkt:1,ic:'🪵'},
     {k:'gregarius',n:'Gregarius',bouts:6,cf:90,mkt:2,ic:'🛡'},
@@ -36,10 +42,13 @@ const ONLC=(function(){
      +1 more for a win (ties go in STAT_KEYS order), never above 99 */
   const START_STATS={spd:55,str:55,int:55,lck:55,cha:55};
   function grow(ch,n){for(let i=0;i<n;i++){let lo=null;for(const k of STAT_KEYS)if((ch.stats[k]||0)<STAT_MAX&&(lo==null||ch.stats[k]<ch.stats[lo]))lo=k;if(lo==null)return;ch.stats[lo]++}}
-  /* gear prices by market level; the wallet only ever pays these */
-  const PRICE={1:15,2:60,3:180}; /* slow on purpose: a full high-end kit takes ~50 survived bouts */
-  /* match pay: placing pays a purse by rank, surviving a ranked bout pays a little more; CF earned adds to lifetime CF */
-  const PURSE={tiro:[10,4,2,1],gregarius:[16,7,3,1],veteranus:[24,10,5,2],primus:[34,14,6,3],summa:[48,20,8,4]};
+  /* v0.82 gear prices: a weapon by its market level (PRICE), an armor piece by its AP (PRICE_AP per AP at its level; the catalog carries ap) */
+  const PRICE={1:60,2:250,3:750}, PRICE_AP={1:15,2:55,3:150};
+  function priceOf(it){if(!it)return 999999;if(it.kind==='a')return (PRICE_AP[it.lv]||999)*Math.max(1,it.ap|0);return PRICE[it.lv]||999999}
+  /* v0.82 match pay: only a SURVIVED RANKED bout pays — a flat award by the rank held at the horns, +50% for a win, ×(1 + 10% a survived
+     ranked bout in a row, ≤ +100%). Custom pays nothing; coin carried in the match is never paid out. */
+  const AWARD={tiro:8,gregarius:12,veteranus:18,primus:25,summa:35}, WIN_BONUS=0.5;
+  function awardOf(rank,won,streak){return Math.round((AWARD[rank]||AWARD.tiro)*(won?1+WIN_BONUS:1)*(1+Math.min(1,(streak|0)*0.1)))}
   const rankIdx=k=>Math.max(0,RANKS.findIndex(r=>r.k===k));
   function rankFor(ch){let r=RANKS[0];for(const R of RANKS)if((ch.survived||0)>=R.bouts&&(ch.lifeCF||0)>=R.cf)r=R;return r}
   function nextRank(ch){const i=rankIdx(rankFor(ch).k);return RANKS[i+1]||null}
@@ -57,17 +66,15 @@ const ONLC=(function(){
   /* what a gladiator may buy: market level ≤ rank's level, not already owned (only padded/belt pieces stack) */
   function canBuy(ch,item,catalog){const it=catalog[item];if(!it)return 'No such piece.';if(!ch.alive)return 'The dead buy nothing.';
     const R=rankFor(ch);if(it.lv>R.mkt)return `${R.n} may buy up to level ${R.mkt}.`;if(!it.stack&&(ch.gear||[]).includes(item))return 'Already yours.';
-    const p=PRICE[it.lv]||999;if((ch.wallet||0)<p)return `Costs ${p} coin.`;return ''}
-  function buy(ch,item,catalog){const why=canBuy(ch,item,catalog);if(why)throw new Error(why);ch.wallet-=PRICE[catalog[item].lv];ch.gear=[...(ch.gear||[]),item];return ch}
+    const p=priceOf(it);if((ch.wallet||0)<p)return `Costs ${p} coin.`;return ''}
+  function buy(ch,item,catalog){const why=canBuy(ch,item,catalog);if(why)throw new Error(why);ch.wallet-=priceOf(catalog[item]);ch.gear=[...(ch.gear||[]),item];return ch}
   /* the result of one match for one gladiator. row = the event's result row for that seat:
-     {won, place (1 = best), f (final CF), coin, kills, survives, slew:['commodus',…]} */
+     {won, place (1 = best), f (final CF), coin (ignored since v0.82), kills, survives, slew:['commodus',…]} */
   function applyResult(ch,row,ranked){const before=rankFor(ch);const out={died:false,rankUp:null,pay:0,cf:0,hall:false};
     ch.bouts=(ch.bouts||0)+1;if(row.won)ch.wins=(ch.wins||0)+1;ch.kills=(ch.kills||0)+(row.kills|0);
     const cf=Math.max(0,row.f|0);out.cf=cf;ch.lifeCF=(ch.lifeCF||0)+cf;
-    const purse0=(PURSE[before.k]||PURSE.tiro)[Math.min(3,Math.max(0,(row.place||4)-1))]||0;const kept=Math.max(0,Math.min(60,row.coin|0));
-    /* the survival streak: +10% per ranked bout survived in a row, up to +100% (death ends everything anyway) */
-    const purse=Math.round(purse0*(1+Math.min(1,(ch.streak||0)*0.1)));
-    out.pay=(ranked?purse:Math.ceil(purse/2))+Math.floor(kept/2);ch.wallet=(ch.wallet||0)+out.pay;
+    /* v0.82: the award (Ranked, survived) — streak counted before this bout */
+    out.pay=ranked&&row.survives!==false?awardOf(before.k,!!row.won,ch.streak||0):0;ch.wallet=(ch.wallet||0)+out.pay;
     for(const s of row.slew||[])if(!ch.feats.includes('slew:'+s))ch.feats.push('slew:'+s);
     if(ranked&&row.survives===false){ch.alive=false;out.died=true;ch.died={at:Date.now(),cf,rank:before.k};out.hall=hallWorthy(ch);return out}
     if(ranked){ch.survived=(ch.survived||0)+1;ch.streak=(ch.streak||0)+1}if(row.survives!==false)grow(ch,1+(row.won?1:0));
@@ -131,12 +138,12 @@ const ONLC=(function(){
   function sitGroup(L,ids,now){const ms=ids.map(id=>memberOf(L,id)).filter(m=>m&&seatOf(L,m.id)<0);if(!ms.length)return '';if(L.status!=='waiting')return 'Already under way.';
     if(L.players.length+ms.length>L.seats)return ms.length>1?`No ${ms.length} free seats together.`:'Every seat is taken.';
     const team=L.team?leanTeam(L):null;
-    for(const m of ms)L.players.push({id:m.id,name:m.name,char:m.char||null,rank:m.rank||'tiro',kit:m.kit||null,ready:false,sat:now||Date.now(),...(team?{team}:{}),...(m.party?{party:m.party}:{})});return ''}
+    for(const m of ms)L.players.push({id:m.id,name:m.name,char:m.char||null,rank:m.rank||'tiro',kit:m.kit||null,ready:false,sat:now||Date.now(),...(team?{team}:{}),...(m.party?{party:m.party}:{}),...(m.domus?{domus:m.domus}:{})});return ''}
   /* a lanista (or a whole party) enters: everyone becomes a member; they sit together if there are seats for all, else they stand */
   function roomJoin(L,whos,now){const fresh=whos.filter(w=>!memberOf(L,w.id));if(!fresh.length)return '';
     for(const w of fresh){const why=canJoin(L,w,now);if(why)return whos.length>1?`${w.name}: ${why}`:why}
     if((L.members||[]).length+fresh.length>ROOM_MAX)return whos.length>1?`No room for a party of ${whos.length}.`:'The room is full.';
-    L.members=L.members||[];for(const w of fresh)L.members.push({id:w.id,name:w.name,char:w.char||null,rank:w.rank||'tiro',kit:w.kit||null,at:now||Date.now(),...(w.party?{party:w.party}:{})});
+    L.members=L.members||[];for(const w of fresh)L.members.push({id:w.id,name:w.name,char:w.char||null,rank:w.rank||'tiro',kit:w.kit||null,at:now||Date.now(),...(w.party?{party:w.party}:{}),...(w.domus?{domus:w.domus}:{})});
     for(const w of fresh)L.stands=(L.stands||[]).filter(s=>s.id!==w.id);
     sitGroup(L,fresh.map(w=>w.id),now);return ''}
   /* the old name: join (and sit when there is room) */
@@ -192,9 +199,9 @@ const ONLC=(function(){
   /* the horns: Ranked (and Custom with auto-balance) team rooms balance; members without a seat leave the room. Returns their ids. */
   function startRoom(L){if(L.team&&(L.ranked||L.autoBal))autoBalance(L);const out=(L.members||[]).filter(m=>seatOf(L,m.id)<0).map(m=>m.id);L.members=(L.members||[]).filter(m=>seatOf(L,m.id)>=0);L.unseated=out;return out}
   /* a lobby row for lists: no kits, looks, chat or bets — the room's own members get the whole room */
-  function liteRow(L){const y={...L};for(const k of ['chat','bets','seed','kicked','cry'])delete y[k];
-    y.players=(L.players||[]).map(p=>({id:p.id,name:p.name,rank:p.rank,ready:!!p.ready,cls:p.kit&&p.kit.cls||null,...(p.team?{team:p.team}:{}),...(p.party?{party:p.party}:{})}));
-    y.members=(L.members||[]).map(m=>({id:m.id,name:m.name,rank:m.rank}));y.stands=(L.stands||[]).map(s=>({id:s.id,name:s.name}));y.lite=1;return y}
+  function liteRow(L){const y={...L};for(const k of ['chat','bets','seed','kicked','cry','invited'])delete y[k];
+    y.players=(L.players||[]).map(p=>({id:p.id,name:p.name,rank:p.rank,ready:!!p.ready,cls:p.kit&&p.kit.cls||null,...(p.team?{team:p.team}:{}),...(p.party?{party:p.party}:{}),...(p.domus?{domus:p.domus}:{})}));
+    y.members=(L.members||[]).map(m=>({id:m.id,name:m.name,rank:m.rank,...(m.domus?{domus:m.domus}:{})}));delete y.invited;y.stands=(L.stands||[]).map(s=>({id:s.id,name:s.name}));y.lite=1;return y}
   /* QUICK CHAT: phrases only, sent as codes (no text from players anywhere online) */
   const QC={room:['ave','ready','wait','horns','swap','seat','luck','vale'],after:['well','again','vale'],match:['truce','struck','mercy','ha'],forum:['ave','anyc','anyf','ranked','well','vale']};
   const QC_TEXT={ave:'Ave!',ready:'✓ Ready',wait:'⏳ 2 min',horns:'▶ Sound the horns?',swap:'⇄ Swap teams?',seat:'🪑 One more seat?',luck:'Good luck',vale:'Vale',
@@ -204,9 +211,31 @@ const ONLC=(function(){
   const RATE={say:3000,forum:10000,cryMax:3,cryGap:120000,invGap:4000,invSame:120000,invHour:15,fanCap:40,meterDay:100000};
   /* presence: a browser's IANA time zone (the map's only location — no IP addresses), and the landing's counts */
   function cleanTz(tz){tz=String(tz||'');return /^[A-Za-z_]{2,20}(\/[A-Za-z0-9_+\-]{1,24}){0,2}$/.test(tz)?tz:''}
-  /* here = [{id,match,tz}], rooms = the lobby list → {n, fight, wait, zones:{tz:count}} */
-  function hereSummary(here,rooms){const waiting=new Set();for(const L of rooms||[])if(L.status==='waiting')for(const m of (L.members||L.players||[]))waiting.add(m.id);
-    const out={n:here.length,fight:0,wait:0,zones:{}};for(const h of here){if(h.match)out.fight++;else if(waiting.has(h.id))out.wait++;const z=cleanTz(h.tz);if(z)out.zones[z]=(out.zones[z]||0)+1}return out}
+  /* here = [{id,match,tz}], rooms = the lobby list, guests = [{tz}] (v0.82) → {n, fight, wait, zones:{tz:count}, guests, gzones:{tz:count}} */
+  function hereSummary(here,rooms,guests){const waiting=new Set();for(const L of rooms||[])if(L.status==='waiting')for(const m of (L.members||L.players||[]))waiting.add(m.id);
+    const out={n:here.length,fight:0,wait:0,zones:{}};for(const h of here){if(h.match)out.fight++;else if(waiting.has(h.id))out.wait++;const z=cleanTz(h.tz);if(z)out.zones[z]=(out.zones[z]||0)+1}
+    out.guests=(guests||[]).length;out.gzones={};for(const g of guests||[]){const z=cleanTz(g.tz);if(z)out.gzones[z]=(out.gzones[z]||0)+1}return out}
+  /* ── v0.82 DOMUS: the online ludus. A house name: 3–24 letters after cleanName, word-filtered; unique case-insensitively (the server
+     keeps DNAME#<domusKey>). The record mirrors its gladiators' results. ── */
+  const DOMUS_MIN=3, DOMUS_MAX=24;
+  function domusWhy(s){const n=String(s||'').replace(/[<>&"'`\\]/g,'').replace(/\s+/g,' ').trim();if(n.length<DOMUS_MIN||n.length>DOMUS_MAX)return `House name: ${DOMUS_MIN}–${DOMUS_MAX} letters.`;if(nameBad(n))return 'Pick another name for your house.';return ''}
+  const domusKey=s=>cleanName(s).toLowerCase();
+  function newDomus(name,owner,id,now){const why=domusWhy(name);if(why)throw new Error(why);return {id,owner,name:cleanName(name),founded:now,bouts:0,wins:0,survived:0,fallen:0,lifeCF:0,glads:0,archived:false,v:VER}}
+  /* one gladiator's settled result into the house record (out = applyResult's answer) */
+  function domusNote(D,row,out,ranked){D.bouts=(D.bouts|0)+1;if(row&&row.won)D.wins=(D.wins|0)+1;D.lifeCF=(D.lifeCF|0)+((out&&out.cf)|0);
+    if(out&&out.died)D.fallen=(D.fallen|0)+1;else if(ranked)D.survived=(D.survived|0)+1;return D}
+  /* the house record built from gladiators made before houses existed (no data lost) */
+  function domusFromChars(D,chars){for(const c of chars||[]){D.bouts=(D.bouts|0)+(c.bouts|0);D.wins=(D.wins|0)+(c.wins|0);D.survived=(D.survived|0)+(c.survived|0);D.lifeCF=(D.lifeCF|0)+(c.lifeCF|0);if(!c.alive)D.fallen=(D.fallen|0)+1}D.glads=(D.glads|0)+(chars||[]).length;return D}
+  const domusRow=D=>D?{id:D.id,name:D.name,founded:D.founded,bouts:D.bouts|0,wins:D.wins|0,survived:D.survived|0,fallen:D.fallen|0,lifeCF:D.lifeCF|0,glads:D.glads|0}:null;
+  /* ── v0.82 GUESTS: a connection without sign-in may only look (these requests), for 2 hours from its first connect ── */
+  const GUEST_MS=2*3600e3, GUEST_OK=['hello','auth.guest','lobby.list','match.watch','match.unwatch','match.get','match.snapreq','forum.get','hall.list','world.news'];
+  /* ── v0.82 STANDS GROUP TURN: once a rotation every ticket holder picks ONE action in private; the server applies all picks as one
+     input. A thrown stone / offering is LOCKED to its tile (r,c on the 13×13 board). ── */
+  const STANDS_MS=20000, STANDS_ACTS=['pass','stone','offer','tholo','move','cheer'];
+  function standsPickOK(p){if(!p||typeof p!=='object'||Array.isArray(p))return 'Pick an action.';if(JSON.stringify(p).length>600)return 'That pick is too large.';
+    if(!STANDS_ACTS.includes(p.a))return 'No such action from the stands.';
+    if(p.a==='stone'||p.a==='offer'){if(!Number.isInteger(p.r)||!Number.isInteger(p.c)||p.r<0||p.r>12||p.c<0||p.c>12)return 'Throw at a tile.'}return ''}
+  function cleanPick(p){const o={a:p.a};for(const k of ['r','c','seat','sec','v','tok'])if(p[k]!=null&&(typeof p[k]==='number'||typeof p[k]==='string'))o[k]=typeof p[k]==='string'?p[k].slice(0,24):p[k];return o}
   /* a seat in the stands: bought before the horns, never by a fighter of this game; the price goes into the wager pot */
   function ticketOK(L,who,wallet){if(!L.ticket)return 'This game sells no tickets.';if(L.status!=='waiting')return 'Tickets are sold until the horns.';
     if(L.players.some(p=>p.id===who))return 'Fighters take the sand, not the stands.';if((L.stands||[]).some(s=>s.id===who))return 'You already hold a ticket.';
@@ -264,5 +293,5 @@ const ONLC=(function(){
   /* weekly challenges rotate with the week of the year */
   const CHALLENGES=[['Survive 3 ranked bouts',3,'survived'],['Earn 60 CF in one bout',60,'cf1'],['Win a bout at Capua',1,'win:3'],['Slay 5 beasts',5,'beasts'],['Finish 5 bouts',5,'bouts'],['Win with 20+ coin left',1,'rich']];
   function weekChallenges(t){const wk=Math.floor((t||0)/604800000);const out=[];for(let i=0;i<3;i++)out.push(CHALLENGES[(wk+i*2)%CHALLENGES.length]);return out}
-  return {DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,PURSE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
+  return {PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

@@ -6,12 +6,14 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   const db=store.memory();const pushed=[];let t=1700000000000;
   const route=makeRoutes({store:db,push:async(a,ty,d)=>pushed.push([a,ty,d]),catalog,now:()=>(t+=1000),dev:true});
   const A={acct:'dev-a'},B={acct:'dev-b'};
-  await route('auth.signin',{name:'Alpha'},A);await route('auth.signin',{name:'Beta'},B);
+  /* v0.82: every lanista founds a house before any gladiator */
+  const sign=async(ctx,name)=>{await route('auth.signin',{name},ctx);await route('domus.create',{name:'Domus '+name},ctx)};
+  await sign(A,'Alpha');await sign(B,'Beta');
   const ca=await route('char.create',{name:'Alpha the Bold',cls:'hero',stats:{spd:99,str:99,int:99,lck:99,cha:99}},A);
   assert.deepStrictEqual(ca.stats,C.START_STATS,'everyone starts at the same low ratings');assert.strictEqual(ca.wallet,0);
   /* v0.79: up to 3 living gladiators, one active; edits only between events */
-  const Z={acct:'dev-z'};await route('auth.signin',{name:'Zeta'},Z);const z1=await route('char.create',{name:'Zeta One',cls:'hero'},Z);const z2=await route('char.create',{name:'Zeta Two',cls:'slave'},Z);await route('char.create',{name:'Zeta Three',cls:'soldier'},Z);
-  await assert.rejects(route('char.create',{name:'Zeta Four',cls:'hero'},Z),/Up to 3/);assert.strictEqual((await route('hello',{all:1},Z)).active,z1.id,'the first gladiator is active');
+  const Z={acct:'dev-z'};await sign(Z,'Zeta');const z1=await route('char.create',{name:'Zeta One',cls:'hero'},Z);const z2=await route('char.create',{name:'Zeta Two',cls:'slave'},Z);await route('char.create',{name:'Zeta Three',cls:'soldier'},Z);await route('char.create',{name:'Zeta Four',cls:'veteranus'},Z);
+  await assert.rejects(route('char.create',{name:'Zeta Five',cls:'hero'},Z),/Up to 4/,'v0.82: four gladiators a house');assert.strictEqual((await route('hello',{all:1},Z)).active,z1.id,'the first gladiator is active');
   await route('char.active',{char:z2.id},Z);assert.strictEqual((await route('hello',{all:1},Z)).active,z2.id);
   const z2e=await route('char.edit',{char:z2.id,cls:'amazonia',name:'Zeta Swift',look:{portrait:{skin:'#c58c5c',helm:'galea<script>'},color:'#123456',token:{c1:'#ff0000'}}},Z);
   assert.strictEqual(z2e.cls,'amazonia');assert.strictEqual(z2e.name,'Zeta Swift');assert.strictEqual(z2e.look.portrait.helm,'galeascript','looks are cleaned');assert.deepStrictEqual(z2e.stats,C.START_STATS,'ratings stay');
@@ -21,7 +23,7 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   await assert.rejects(route('lobby.chat',{id:ZL.id,text:'Ave'},Z),/Quick chat only/,'v0.80: no free text online');
   await route('lobby.set',{id:ZL.id,abandon:'fate',standsOff:true},Z);assert.strictEqual((await db.get('LOBBY#'+ZL.id,'LOBBY')).abandon,'fate');await route('lobby.leave',{id:ZL.id},Z);
   const cb=await route('char.create',{name:'Beta the Grim',cls:'soldier'},B);
-  await assert.rejects(route('char.buy',{char:ca.id,item:'gladius'},A),/Costs 15 coin/);
+  await assert.rejects(route('char.buy',{char:ca.id,item:'gladius'},A),/Costs 60 coin/);
   const L=await route('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:true},A);assert.strictEqual(L.rank,'tiro');
   await route('lobby.join',{id:L.id},B);
   /* wagers: a fighter backs only themselves; the pool is escrowed */
@@ -46,7 +48,7 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   const ra=await route('match.result',{id:L.id,table,hash:'h1'},A);assert.ok(ra.pending,'waits for the other report');
   const rb=await route('match.result',{id:L.id,table,hash:'h1'},B);
   assert.ok(!rb.void);assert.ok(!rb.out.died);assert.strictEqual(rb.char.survived,1);assert.strictEqual(rb.char.streak,1);assert.strictEqual(rb.char.stats.spd+rb.char.stats.str+rb.char.stats.int+rb.char.stats.lck+rb.char.stats.cha,275+2,'+1 survived, +1 won');
-  assert.strictEqual(rb.char.wallet,30+(10+6)+10,'purse + half the coin kept + the pool back');
+  assert.strictEqual(rb.char.wallet,30+12+10,'v0.82: the Tiro award ×1.5 for the win (no coin carried out) + the pool back');
   assert.ok(pushed.some(([a,ty,d])=>a==='dev-a'&&ty==='match.settled'&&d.out&&d.out.died),'A hears the verdict');
   assert.ok(!(await db.get('CHAR#'+ca.id,'CHAR')).alive,'A is dead');assert.strictEqual((await route('hall.list',{},A)).length,0,'a fallen Tiro is forgotten');
   assert.strictEqual((await db.get('LOBBY#'+L.id,'LOBBY')).status,'done');
@@ -70,7 +72,7 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   /* a Veteranus who falls is remembered */
   const v=C.newChar({name:'Old Crixus',cls:'veteranus'},'dev-a','gv',t);v.survived=20;v.lifeCF=320;v.rank='veteranus';const o=C.applyResult(v,{won:false,place:3,f:10,survives:false},true);assert.ok(o.hall);
   /* parties + team events: a party of two sits on one team; only the leader picks the game */
-  const Cc={acct:'dev-c'},Dd={acct:'dev-d'};await route('auth.signin',{name:'Gamma'},Cc);await route('auth.signin',{name:'Delta'},Dd);
+  const Cc={acct:'dev-c'},Dd={acct:'dev-d'};await sign(Cc,'Gamma');await sign(Dd,'Delta');
   const cc=await route('char.create',{name:'Gamma Rex',cls:'amazonia'},Cc);const cd=await route('char.create',{name:'Delta Pax',cls:'venatore'},Dd);
   const Pt=await route('party.create',{},Cc);assert.strictEqual(Pt.code.length,5);await route('party.join',{code:Pt.code.toLowerCase()},Dd);
   await assert.rejects(route('lobby.create',{ev:'familia',loc:5,ranked:false},Dd),/leader picks/);
@@ -99,7 +101,7 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   const st=C.settle([{by:'x',seat:0,amt:10},{by:'y',seat:1,amt:10}],[0],{pot:20});assert.strictEqual(st.payouts.x,38);
   const sv=C.settle([{by:'x',seat:0,amt:10}],[0],{pot:5,tix:[{by:'t',amt:5}],void:true});assert.deepStrictEqual(sv.payouts,{x:10,t:5});
   /* 🚪 abandon in Ranked: Damnatio now; the last human leaving shuts the match down */
-  const G={acct:'dev-g'},H={acct:'dev-h'};await route('auth.signin',{name:'Gaius'},G);await route('auth.signin',{name:'Helva'},H);const cg=await route('char.create',{name:'Gaius Brave',cls:'hero'},G);const chH=await route('char.create',{name:'Helva Bold',cls:'slave'},H);
+  const G={acct:'dev-g'},H={acct:'dev-h'};await sign(G,'Gaius');await sign(H,'Helva');const cg=await route('char.create',{name:'Gaius Brave',cls:'hero'},G);const chH=await route('char.create',{name:'Helva Bold',cls:'slave'},H);
   const RL=await route('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:true},G);await route('lobby.join',{id:RL.id},H);await route('lobby.start',{id:RL.id},G);
   const ab=await route('match.abandon',{id:RL.id},H);assert.strictEqual(ab.rule,'fate');assert.ok(ab.out&&ab.out.died,'an abandoned Ranked gladiator dies');assert.ok(!(await db.get('CHAR#'+chH.id,'CHAR')).alive);
   const gi=await route('match.get',{id:RL.id,from:0},G);assert.strictEqual(gi.inputs.slice(-1)[0].k,'abandon');await assert.rejects(route('match.input',{id:RL.id,in:{k:'act',a:'end',seat:1}},H),/Not your match|left this match/);
@@ -113,7 +115,8 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   await assert.rejects(verify(mk({...body,aud:'other'}),cfg,async()=>[jwk]),/Wrong audience/);
   console.log('server routes: all checks passed');
   await v80();console.log('server v0.80 (rooms, quick chat, Praeco, Forum, presence, resync): all checks passed');
-  await v80b();console.log('server v0.80 review (races, busy rule, names, mutes, odd push, Today in the arena): all checks passed')})().catch(e=>{console.error(e);process.exit(1)});
+  await v80b();console.log('server v0.80 review (races, busy rule, names, mutes, odd push, Today in the arena): all checks passed');
+  await v82();console.log('server v0.82 (domus, coin, prices, guests, invites, stands group turn): all checks passed')})().catch(e=>{console.error(e);process.exit(1)});
 
 /* ── v0.80 through the real handler (index.js makeHandler): presence, rooms, quick chat, the Praeco, the Forum, resync helpers ── */
 async function v80(){
@@ -129,12 +132,12 @@ async function v80(){
     cl.req=async(t,d)=>{T+=10;const id=++rid;await h({requestContext:{routeKey:'$default',connectionId:cl.conn},body:JSON.stringify({t,id,d})});const m=sent.find(x=>x.conn===cl.conn&&x.msg.re===id);if(!m)throw new Error('no reply to '+t);if(!m.msg.ok)throw new Error(m.msg.err);return m.msg.d};
     cl.got=(t,since=0)=>sent.slice(since).filter(x=>x.conn===cl.conn&&x.msg.push===t).map(x=>x.msg.d);
     cl.reconnect=async()=>{cl.conn=await connect(name)};
-    await cl.req('auth.signin',{name:o.acctName||name.toUpperCase()+' Account'});if(o.glad!==false)cl.ch=await cl.req('char.create',{name:o.glad||name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});
+    await cl.req('auth.signin',{name:o.acctName||name.toUpperCase()+' Account'});if(o.domus!==false)cl.domus=(await cl.req('domus.create',{name:'Domus '+name})).domus;if(o.glad!==false&&o.domus!==false)cl.ch=await cl.req('char.create',{name:o.glad||name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});
     if(o.tz!==undefined)await cl.req('hello',{all:1,tz:o.tz});return cl}
   const prof=a=>db.get('ACCT#'+a,'PROFILE');const getL=id=>db.get('LOBBY#'+id,'LOBBY');
   /* presence: $connect marks the account 'ON'; hello stores {glad,rank,tz} and sums the zones */
   const ann=await client('ann',{tz:'Europe/Rome'}),bob=await client('bob',{tz:'America/New_York'}),cat=await client('cat',{tz:'Europe/Rome'});
-  let P=await prof(ann.acct);assert.strictEqual(P.GSI1PK,'ON');assert.strictEqual(P.conn,ann.conn);assert.deepStrictEqual(P.here,{glad:'Ann Gladius',rank:'tiro',tz:'Europe/Rome'});
+  let P=await prof(ann.acct);assert.strictEqual(P.GSI1PK,'ON');assert.strictEqual(P.conn,ann.conn);assert.deepStrictEqual(P.here,{glad:'Ann Gladius',rank:'tiro',tz:'Europe/Rome',domus:'Domus ann'},'v0.82: the house name rides along');
   const hc=await cat.req('hello',{all:1,tz:'Europe/Rome'});assert.strictEqual(hc.here.n,3);assert.strictEqual(hc.online,3);assert.deepStrictEqual(hc.here.zones,{'Europe/Rome':2,'America/New_York':1});assert.deepStrictEqual(hc.forum,[]);
   assert.strictEqual((await cat.req('hello',{all:1,tz:'Not a zone!'})).here.zones['Not a zone!'],undefined,'bad zones are dropped');await cat.req('hello',{all:1,tz:'Europe/Rome'});
   /* a reconnect, then the OLD socket closes: the newer connection is kept (conditional clear) */
@@ -279,7 +282,7 @@ async function v80b(){
   async function client(name,o={}){const cl={name,acct:'dev-'+name};cl.conn=await connect(name);
     cl.req=async(t,d)=>{T+=10;const id=++rid;await h({requestContext:{routeKey:'$default',connectionId:cl.conn},body:JSON.stringify({t,id,d})});const m=sent.find(x=>x.conn===cl.conn&&x.msg.re===id);if(!m)throw new Error('no reply to '+t);if(!m.msg.ok)throw new Error(m.msg.err);return m.msg.d};
     cl.got=(t,since=0)=>sent.slice(since).filter(x=>x.conn===cl.conn&&x.msg.push===t).map(x=>x.msg.d);
-    await cl.req('auth.signin',{name:name.toUpperCase()+' Account'});if(o.glad!==false)cl.ch=await cl.req('char.create',{name:o.glad||name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});return cl}
+    await cl.req('auth.signin',{name:name.toUpperCase()+' Account'});await cl.req('domus.create',{name:'Domus '+name});if(o.glad!==false)cl.ch=await cl.req('char.create',{name:o.glad||name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});return cl}
   const getC=id=>db.get('CHAR#'+id,'CHAR');const setC=async(id,f)=>{const c=await getC(id);Object.assign(c,f);await db.put('CHAR#'+id,'CHAR',c)};
   const ok=r=>r.status==='fulfilled';
   /* the name filter (gladiator names are what everyone sees) */
@@ -289,7 +292,7 @@ async function v80b(){
   const pt=await ann.req('party.create',{});assert.strictEqual(pt.names[ann.acct],'Ann Gladius');const pj=await bob.req('party.join',{code:pt.code});assert.strictEqual(pj.names[bob.acct],'Bob Gladius');
   assert.ok(!JSON.stringify(pj).includes('Account'),'no sign-in names');await bob.req('party.leave',{});await ann.req('party.leave',{});
   /* two buys at once over one wallet: one wins, the other is told to try again */
-  await setC(ann.ch.id,{wallet:15});const buys=await Promise.allSettled([ann.req('char.buy',{char:ann.ch.id,item:'gladius'}),ann.req('char.buy',{char:ann.ch.id,item:'mace'})]);
+  await setC(ann.ch.id,{wallet:C.PRICE[1]});const buys=await Promise.allSettled([ann.req('char.buy',{char:ann.ch.id,item:'gladius'}),ann.req('char.buy',{char:ann.ch.id,item:'mace'})]);
   assert.strictEqual(buys.filter(ok).length,1,'one buy');let ch=await getC(ann.ch.id);assert.strictEqual(ch.wallet,0);assert.strictEqual(ch.gear.length,1);
   /* a ticket given back twice at once is refunded once; a ticket holder cannot join the room */
   let L=await bob.req('lobby.create',{ev:'democritus',cry:false});await bob.req('lobby.set',{id:L.id,ticket:10});await setC(cat.ch.id,{wallet:30});
@@ -339,7 +342,7 @@ async function v80b(){
     const h2=makeHandler({db:lag,send:async(conn,msg)=>{if(!live2.has(conn))return true;sent2.push({conn,msg});return false},dev:true,verifyCfg:{},now:()=>T,hereMs:0});let r2=0;
     const cl2=async name=>{const conn='q'+name;live2.add(conn);await h2({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER)}});
       const req=async(t,d)=>{T+=10;const id=++r2;await h2({requestContext:{routeKey:'$default',connectionId:conn},body:JSON.stringify({t,id,d})});const m=sent2.find(x=>x.conn===conn&&x.msg.re===id);if(!m.msg.ok)throw new Error(m.msg.err);return m.msg.d};
-      await req('auth.signin',{name});await req('char.create',{name:name+' Gladius',cls:'hero'});return req};
+      await req('auth.signin',{name});await req('domus.create',{name:'Domus '+name});await req('char.create',{name:name+' Gladius',cls:'hero'});return req};
     const qa=await cl2('qa'),qb=await cl2('qb'),qc=await cl2('qc');const [x1,x2]=await Promise.all([qa('lobby.quick',{ev:'cassian'}),qb('lobby.quick',{ev:'cassian'})]);
     assert.strictEqual(x1.lobby.id,x2.lobby.id,'one room through the pointer');const x3=await qc('lobby.quick',{ev:'cassian'});assert.strictEqual(x3.lobby.id,x1.lobby.id,'the next press finds it too');
     assert.strictEqual((await db2.get('LOBBY#'+x1.lobby.id,'LOBBY')).players.length,3)}
@@ -347,4 +350,168 @@ async function v80b(){
   const big={portrait:Object.fromEntries(Array.from({length:40},(_,i)=>['p'+i,'x'.repeat(40)])),token:Object.fromEntries(Array.from({length:30},(_,i)=>['t'+i,'y'.repeat(40)])),color:'#123456'};
   let DD={};for(let i=0;i<12;i++)DD=C.dayFromMatch(DD,{id:'M'+i,ev:'democritus',loc:1,at:i,seats:[{acct:'a'+i,ch:{name:'A'+i,cls:'hero',look:big},before:'tiro',row:{won:true,f:10+i}},{acct:'b'+i,ch:{name:'B'+i,cls:'hero',look:big},before:'summa',row:{won:false,f:1},out:{died:true}}]});
   assert.ok(JSON.stringify(DD).length<=C.DAY_MAX,'≤ DAY_MAX');assert.strictEqual(DD.wins.length,5);assert.strictEqual(DD.wins[0].cf,21);
+}
+
+/* ── v0.82 (protocol 5) through the real handler: the Domus, the coin rework, prices by AP, guests, invites that die with the room,
+   the stands group turn ── */
+async function v82(){
+  const {makeHandler}=require('../src/index.js');
+  let T=1900000000000;const db=store.memory();const sent=[];const live=new Set();
+  const send=async(conn,msg)=>{if(!live.has(conn))return true;sent.push({conn,msg});return false};
+  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0});
+  let nc=0,rid=0;const mark=()=>sent.length;
+  const ask=async(conn,t,d)=>{T+=10;const id=++rid;await h({requestContext:{routeKey:'$default',connectionId:conn},body:JSON.stringify({t,id,d})});const m=sent.find(x=>x.conn===conn&&x.msg.re===id);if(!m)throw new Error('no reply to '+t);
+    if(!m.msg.ok){const e=new Error(m.msg.err);e.code=m.msg.code;e.reply=m.msg;throw e}return m.msg.d};
+  const got=(conn,t,since=0)=>sent.slice(since).filter(x=>x.conn===conn&&x.msg.push===t).map(x=>x.msg.d);
+  const rejects=async(p,code,re)=>{let e=null;try{await p}catch(x){e=x}assert.ok(e,'expected a refusal: '+(code||re));if(code)assert.strictEqual(e.code,code,e.message);if(re)assert.match(e.message,re);return e};
+  const connect=async name=>{const conn='v'+(++nc);live.add(conn);const r=await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER)}});assert.strictEqual(r.statusCode,200);return conn};
+  async function client(name,o={}){const cl={name,acct:'dev-'+name};cl.conn=await connect(name);cl.req=(t,d)=>ask(cl.conn,t,d);cl.got=(t,s)=>got(cl.conn,t,s);
+    await cl.req('auth.signin',{name:name.toUpperCase()+' Account'});if(o.domus!==false)cl.domus=(await cl.req('domus.create',{name:o.domus||'Domus '+name})).domus;
+    if(o.glad!==false&&o.domus!==false)cl.ch=await cl.req('char.create',{name:name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});return cl}
+  const getC=id=>db.get('CHAR#'+id,'CHAR');const setC=async(id,f)=>{const c=await getC(id);Object.assign(c,f);await db.put('CHAR#'+id,'CHAR',c)};
+  const getD=id=>db.get('DOMUS#'+id,'DOMUS');
+  /* old protocol: refused */
+  {const r=await h({requestContext:{routeKey:'$connect',connectionId:'old'},queryStringParameters:{dev:'x',ver:'4'}});assert.strictEqual(r.statusCode,426,'protocol 4 clients reload');assert.strictEqual(C.VER,5)}
+
+  /* ── 1. DOMUS ── */
+  const lan=await client('lan',{domus:false,glad:false});let hl=await lan.req('hello',{all:1});assert.strictEqual(hl.needDomus,true);assert.strictEqual(hl.domus,null);
+  await rejects(lan.req('char.create',{name:'Lan Gladius',cls:'hero'}),'need_domus',/Name your house/);await rejects(lan.req('lobby.create',{ev:'democritus'}),'need_domus');
+  await rejects(lan.req('char.buy',{char:'x',item:'gladius'}),'need_domus');await rejects(lan.req('forum.say',{q:'ave'}),'need_domus');await lan.req('lobby.list',{});await lan.req('forum.get',{});
+  await rejects(lan.req('domus.create',{name:'ab'}),'domus_name',/3–24/);await rejects(lan.req('domus.create',{name:'x'.repeat(25)}),'domus_name',/3–24/);
+  await rejects(lan.req('domus.create',{name:'House of Shit'}),'domus_name',/another name/);await rejects(lan.req('domus.rename',{name:'Domus Prima'}),'need_domus');
+  let dm=await lan.req('domus.create',{name:'  Domus   Aurea '});assert.strictEqual(dm.domus.name,'Domus Aurea');assert.strictEqual(dm.domus.bouts,0);assert.ok(dm.domus.founded);
+  const mob=await client('mob',{domus:false,glad:false});await rejects(mob.req('domus.create',{name:'domus AUREA'}),'name_taken');
+  dm=await lan.req('domus.rename',{name:'Domus Argentea'});assert.strictEqual(dm.domus.name,'Domus Argentea','renamed while it has no gladiators');
+  await mob.req('domus.create',{name:'Domus Aurea'});await lan.req('domus.rename',{name:'domus argentea'});
+  /* a new house while the current one never had a gladiator: the old one is archived and its name freed */
+  const first=(await lan.req('domus.get',{})).domus;dm=await lan.req('domus.create',{name:'Domus Nova'});assert.notStrictEqual(dm.domus.id,first.id);
+  let dg=await lan.req('domus.get',{});assert.strictEqual(dg.archived.length,1);assert.strictEqual(dg.archived[0].id,first.id);assert.ok((await getD(first.id)).archived);
+  await mob.req('domus.rename',{name:'Domus Argentea'});
+  const lc=await lan.req('char.create',{name:'Lan Gladius',cls:'hero'});assert.strictEqual(lc.domus,dm.domus.id,'the gladiator belongs to the house');
+  dg=await lan.req('domus.get',{});assert.strictEqual(dg.glads,1);await rejects(lan.req('domus.rename',{name:'Domus Other'}),'domus_locked');await rejects(lan.req('domus.create',{name:'Domus Other'}),'domus_locked');
+  hl=await lan.req('hello',{all:1});assert.strictEqual(hl.needDomus,false);assert.strictEqual(hl.domus.name,'Domus Nova');assert.strictEqual(hl.me.here.domus,'Domus Nova');
+  /* four gladiators a house */
+  for(const n of ['Two','Three','Four'])await lan.req('char.create',{name:'Lan '+n,cls:'slave'});await rejects(lan.req('char.create',{name:'Lan Five',cls:'slave'}),null,/Up to 4/);
+  /* an account from before houses: its gladiators wait (no data lost), everything else waits for the name */
+  const old=await client('old',{domus:false,glad:false});
+  await db.put('CHAR#gold1','CHAR',{...C.newChar({name:'Old Faithful',cls:'soldier'},old.acct,'gold1',T-9e6),bouts:9,wins:3,survived:8,lifeCF:120,GSI1PK:'OWNER#'+old.acct,GSI1SK:T-9e6});
+  await db.put('CHAR#gold2','CHAR',{...C.newChar({name:'Old Fallen',cls:'hero'},old.acct,'gold2',T-8e6),alive:false,bouts:4,wins:0,survived:3,lifeCF:40,GSI1PK:'OWNER#'+old.acct,GSI1SK:T-8e6});
+  hl=await old.req('hello',{all:1});assert.strictEqual(hl.needDomus,true);assert.strictEqual(hl.chars.length,2,'the old gladiators are still there');
+  await rejects(old.req('lobby.quick',{ev:'cassian'}),'need_domus');await rejects(old.req('lobby.join',{id:'x'}),'need_domus');await rejects(old.req('char.active',{char:'gold1'}),'need_domus');
+  dm=await old.req('domus.create',{name:'Domus Vetus'});assert.strictEqual(dm.joined,2);assert.deepStrictEqual([dm.domus.bouts,dm.domus.wins,dm.domus.survived,dm.domus.fallen,dm.domus.lifeCF,dm.domus.glads],[13,3,11,1,160,2],'the record from its gladiators');
+  assert.strictEqual((await getC('gold1')).domus,dm.domus.id);await rejects(old.req('domus.rename',{name:'Domus Nuova'}),'domus_locked');
+  /* the house name rides beside the gladiator's: rooms, lists, who.list, the Forum, invites */
+  const nan=await client('nan');let R0=await lan.req('lobby.create',{ev:'democritus',cry:false});assert.strictEqual(R0.players[0].domus,'Domus Nova');assert.strictEqual(R0.players[0].name,'Lan Gladius');
+  const row=(await nan.req('hello',{all:1})).lobbies.find(x=>x.id===R0.id);assert.ok(row.lite);assert.strictEqual(row.players[0].domus,'Domus Nova');assert.strictEqual(row.members[0].domus,'Domus Nova');
+  assert.strictEqual((await nan.req('who.list',{})).find(w=>w.id===lan.acct).domus,'Domus Nova');T+=C.RATE.forum;assert.strictEqual((await nan.req('forum.say',{q:'ave'})).line.domus,'Domus nan');
+  /* the house keeps the record of a settled Ranked match; the coin rework pays the award only */
+  await lan.req('lobby.leave',{id:R0.id});
+  let RR=await lan.req('lobby.create',{ev:'cassian',ranked:true,cry:false});await nan.req('lobby.join',{id:RR.id});RR=await lan.req('lobby.start',{id:RR.id});
+  const actL=(await lan.req('hello',{all:1})).active;await setC(actL,{streak:3,wallet:5});const w0=(await getC(nan.ch.id)).wallet;
+  const rt=RR.players.map((p,i)=>({seat:i,won:p.id===lan.acct,place:p.id===lan.acct?1:2,f:p.id===lan.acct?30:7,coin:60,survives:true}));
+  for(const x of [lan,nan])await x.req('match.result',{id:RR.id,table:rt,hash:'d'});
+  assert.strictEqual((await getC(actL)).wallet,5+Math.round(8*1.5*1.3),'Tiro win with a streak of 3: 8 ×1.5 ×1.3 (carried coin is never paid)');assert.strictEqual((await getC(nan.ch.id)).wallet,w0+8,'Tiro survivor: 8');
+  const hd=(await lan.req('domus.get',{})).domus;assert.deepStrictEqual([hd.bouts,hd.wins,hd.survived,hd.fallen,hd.lifeCF],[1,1,1,0,30],'the house record');
+  /* Custom pays no coin */
+  let CR=await lan.req('lobby.create',{ev:'egidious',cry:false});await nan.req('lobby.join',{id:CR.id});CR=await lan.req('lobby.start',{id:CR.id});const w1=(await getC(nan.ch.id)).wallet;
+  const ct=CR.players.map((p,i)=>({seat:i,won:p.id===nan.acct,place:1,f:20,coin:50,survives:true}));for(const x of [lan,nan])await x.req('match.result',{id:CR.id,table:ct,hash:'c'});
+  assert.strictEqual((await getC(nan.ch.id)).wallet,w1,'Custom: no coin, even for the winner');assert.strictEqual((await nan.req('domus.get',{})).domus.bouts,2,'but the house counts the bout');
+
+  /* ── 2. the award table (ONLC) ── */
+  const mk=(rank,o)=>({...C.newChar({name:'Tester',cls:'hero'},'x','t',0),rank,...o});
+  const pay=(rank,row,ranked,o)=>C.applyResult(mk(rank,o),{place:1,f:10,coin:99,survives:true,...row},ranked).pay;
+  assert.deepStrictEqual(['tiro','gregarius','veteranus','primus','summa'].map(r=>C.awardOf(r,false,0)),[8,12,18,25,35]);
+  assert.strictEqual(pay('tiro',{won:false},true),8);assert.strictEqual(pay('tiro',{won:true},true),12,'+50% for a win');
+  assert.strictEqual(pay('gregarius',{won:true},true,{survived:6,lifeCF:90,streak:3}),Math.round(12*1.5*1.3),'the streak is kept');
+  assert.strictEqual(pay('summa',{won:true},true,{survived:60,lifeCF:1200,streak:15}),Math.round(35*1.5*2),'the streak caps at +100%');
+  assert.strictEqual(pay('primus',{won:true},false,{survived:35,lifeCF:650}),0,'Custom pays nothing');assert.strictEqual(pay('tiro',{won:false,survives:false},true),0,'the dead are not paid');
+  assert.ok(!('PURSE' in C),'the old purse table is gone');
+
+  /* ── 3. PRICES by level (weapons) and by AP (armor) ── */
+  const arm=Object.entries(catalog).filter(([k,v])=>v.kind==='a');assert.ok(arm.length>10&&arm.every(([k,v])=>Number.isInteger(v.ap)&&v.ap>0),'the catalog carries every armor piece’s AP');
+  for(const [k,v] of Object.entries(catalog))assert.strictEqual(C.priceOf(v),v.kind==='w'?{1:60,2:250,3:750}[v.lv]:{1:15,2:55,3:150}[v.lv]*v.ap,k);
+  assert.strictEqual(C.priceOf({kind:'a',lv:2,ap:4}),220);assert.strictEqual(C.priceOf({kind:'a',lv:3,ap:5}),750);
+  const gal=catalog.galea;await setC(nan.ch.id,{wallet:C.priceOf(gal)-1});await rejects(nan.req('char.buy',{char:nan.ch.id,item:'galea'}),null,new RegExp('Costs '+C.priceOf(gal)+' coin'));
+  await setC(nan.ch.id,{wallet:C.priceOf(gal)+60});let bc=await nan.req('char.buy',{char:nan.ch.id,item:'galea'});assert.strictEqual(bc.wallet,60);bc=await nan.req('char.buy',{char:nan.ch.id,item:'mace'});assert.strictEqual(bc.wallet,0,'a level-1 weapon costs 60');
+
+  /* ── 5. INVITES die with the room ── */
+  const iv={};for(const n of ['iva','ivb','ivc','ivd','ive','ivf','ivg','ivh','ivi','ivj','ivk','ivl','ivm'])iv[n]=await client(n);
+  const inviteAs=async(by,room,to)=>{T+=C.RATE.invGap;const m=mark();await by.req('lobby.invite',{id:room,to:to.acct});return to.got('lobby.invite',m)[0]};
+  let IA=await iv.iva.req('lobby.create',{ev:'democritus',cry:false});const inv1=await inviteAs(iv.iva,IA.id,iv.ivb);assert.strictEqual(inv1.room,IA.id);assert.strictEqual(inv1.fromDomus,'Domus iva');
+  assert.strictEqual((await db.query('INVITE#'+iv.ivb.acct,'R#')).length,1,'the invitation is kept');
+  await rejects(iv.ivk.req('lobby.accept',{id:IA.id}),'no_invite');
+  let m0=mark();IA=await iv.ivb.req('lobby.accept',{id:IA.id});assert.ok(C.seatOf(IA,iv.ivb.acct)>=0);assert.strictEqual(iv.ivb.got('invite.gone',m0).length,0,'the room you join is simply used');
+  assert.strictEqual((await db.query('INVITE#'+iv.ivb.acct,'R#')).length,0);
+  /* started: the invitation dies (live: you can watch) */
+  await inviteAs(iv.iva,IA.id,iv.ivc);m0=mark();IA=await iv.iva.req('lobby.start',{id:IA.id});
+  assert.deepStrictEqual(iv.ivc.got('invite.gone',m0),[{rooms:[IA.id],why:'started',live:true}]);
+  let e=await rejects(iv.ivc.req('lobby.accept',{id:IA.id}),'room_gone',/started/);assert.strictEqual(e.reply.live,true);assert.strictEqual(e.reply.why,'started');
+  /* filled: no free seat left */
+  const IB=await iv.ivd.req('lobby.create',{ev:'egidious',cry:false});await inviteAs(iv.ivd,IB.id,iv.ive);await iv.ivf.req('lobby.join',{id:IB.id});await iv.ivg.req('lobby.join',{id:IB.id});
+  m0=mark();await iv.ivh.req('lobby.join',{id:IB.id});assert.deepStrictEqual(iv.ive.got('invite.gone',m0),[{rooms:[IB.id],why:'full'}]);e=await rejects(iv.ive.req('lobby.join',{id:IB.id,inv:1}),'room_gone',/filled/);assert.ok(!e.reply.live);
+  /* the inviter left (the room lives on under a new host) */
+  const IC=await iv.ivi.req('lobby.create',{ev:'cassian',cry:false});await iv.ivj.req('lobby.join',{id:IC.id});await inviteAs(iv.ivi,IC.id,iv.ivk);
+  m0=mark();await iv.ivi.req('lobby.leave',{id:IC.id});assert.deepStrictEqual(iv.ivk.got('invite.gone',m0),[{rooms:[IC.id],why:'left'}]);await rejects(iv.ivk.req('lobby.accept',{id:IC.id}),'room_gone',/left/);
+  /* invited by two: one leaving keeps it alive */
+  await iv.ivi.req('lobby.join',{id:IC.id});await inviteAs(iv.ivi,IC.id,iv.ivl);T+=C.RATE.invGap;await iv.ivj.req('lobby.invite',{id:IC.id,to:iv.ivl.acct});
+  m0=mark();await iv.ivi.req('lobby.leave',{id:IC.id});assert.strictEqual(iv.ivl.got('invite.gone',m0).length,0,'another inviter is still there');
+  /* closed: the last lanista leaves */
+  const ID=await iv.ivm.req('lobby.create',{ev:'democritus',cry:false});await inviteAs(iv.ivm,ID.id,iv.ivf);m0=mark();await iv.ivm.req('lobby.leave',{id:ID.id});
+  assert.deepStrictEqual(iv.ivf.got('invite.gone',m0),[{rooms:[ID.id],why:'closed'}]);await rejects(iv.ivf.req('lobby.accept',{id:ID.id}),'room_gone',/closed/);
+  /* joining another room drops every pending invitation (ivl holds two: IC and IE) */
+  const IE=await iv.ivm.req('lobby.create',{ev:'democritus',cry:false});await inviteAs(iv.ivm,IE.id,iv.ivl);assert.strictEqual((await db.query('INVITE#'+iv.ivl.acct,'R#')).length,3,'two invitations to IC, one to IE');
+  m0=mark();await iv.ivl.req('lobby.create',{ev:'egidious',cry:false});
+  const gone=iv.ivl.got('invite.gone',m0);assert.strictEqual(gone.length,1);assert.deepStrictEqual(gone[0].rooms.sort(),[IC.id,IE.id].sort());assert.strictEqual(gone[0].why,'joined');assert.strictEqual((await db.query('INVITE#'+iv.ivl.acct,'R#')).length,0);
+  await rejects(iv.ivl.req('lobby.accept',{id:IE.id}),'no_invite');
+
+  /* ── 6. THE STANDS GROUP TURN ── */
+  const sa=await client('sta'),sb=await client('stb'),sc=await client('stc'),sd=await client('std');
+  let SL=await sa.req('lobby.create',{ev:'democritus',cry:false});await sa.req('lobby.set',{id:SL.id,ticket:5});await sb.req('lobby.join',{id:SL.id});
+  for(const x of [sc,sd]){await setC(x.ch.id,{wallet:20});await x.req('lobby.ticket',{id:SL.id})}SL=await sa.req('lobby.start',{id:SL.id});await sa.req('match.open',{id:SL.id,snap:{S:'{}'}});
+  const MS=await db.get('MATCH#'+SL.id,'META');assert.deepStrictEqual([MS.seats[sc.acct],MS.seats[sd.acct]],[4,5]);
+  await rejects(sb.req('match.stands.open',{id:SL.id,rot:1}),null,/Only the host/);
+  m0=mark();const op=await sa.req('match.stands.open',{id:SL.id,rot:1});assert.deepStrictEqual(op.holders,[4,5]);assert.strictEqual(op.until,T+C.STANDS_MS);
+  assert.deepStrictEqual(sc.got('stands.window',m0).map(w=>[w.rot,w.seat,w.until]),[[1,4,op.until]]);assert.deepStrictEqual(sd.got('stands.window',m0).map(w=>[w.rot,w.seat]),[[1,5]]);
+  assert.strictEqual(sa.got('stands.window',m0).length+sb.got('stands.window',m0).length,0,'only ticket holders get the window');
+  await rejects(sa.req('match.stands.open',{id:SL.id,rot:1}),'stands_twice');await rejects(sb.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'pass'}}),null,/Only ticket holders/);
+  await rejects(sc.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'stone'}}),null,/Throw at a tile/);await rejects(sc.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'fireball'}}),null,/No such action/);
+  m0=mark();let pk=await sc.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'stone',r:3,c:4,junk:{x:1}}});assert.ok(pk.ok&&!pk.closed);
+  assert.ok(!sent.slice(m0).some(x=>x.msg.push),'a pick is private: nothing is pushed');await rejects(sc.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'pass'}}),'stands_twice');
+  m0=mark();pk=await sd.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'offer',r:5,c:6}});assert.ok(pk.closed,'everyone answered: the window closes');
+  for(const x of [sa,sb,sc]){const ins=x.got('match.input',m0).map(u=>u.in);assert.strictEqual(ins.length,1,x.name);assert.strictEqual(ins[0].k,'stands.result');assert.strictEqual(ins[0].from,'server');
+    assert.deepStrictEqual(ins[0].picks,[{seat:4,pick:{a:'stone',r:3,c:4}},{seat:5,pick:{a:'offer',r:5,c:6}}],'tiles locked in the pick');assert.deepStrictEqual(ins[0].missed,[])}
+  await rejects(sc.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'pass'}}),'stands_closed');
+  /* rotation 2: one answers; a fighter may not close early; the host closes; the missed seat is named; closing twice adds nothing */
+  await sa.req('match.stands.open',{id:SL.id,rot:2});await sc.req('match.stands.pick',{id:SL.id,rot:2,pick:{a:'pass'}});
+  await rejects(sb.req('match.stands.close',{id:SL.id,rot:2}),null,/still choosing/);await rejects(sc.req('match.stands.close',{id:SL.id,rot:2}),null,/Only the host/);
+  m0=mark();const cl=await sa.req('match.stands.close',{id:SL.id,rot:2});assert.ok(cl.closed);const r2=sb.got('match.input',m0)[0].in;assert.deepStrictEqual([r2.picks,r2.missed],[[{seat:4,pick:{a:'pass'}}],[5]]);
+  assert.deepStrictEqual(await sa.req('match.stands.close',{id:SL.id,rot:2}),{closed:false});
+  const sins=(await sa.req('match.get',{id:SL.id,from:0})).inputs.filter(x=>x.k==='stands.result');assert.deepStrictEqual(sins.map(x=>x.rot),[1,2],'one result input a rotation, in the ordered stream');
+  /* rotation 3: nobody answers; after 25 s any fighter may close */
+  await sa.req('match.stands.open',{id:SL.id,rot:3});T+=C.STANDS_MS+5000;assert.ok((await sb.req('match.stands.close',{id:SL.id,rot:3})).closed);
+  /* stands off, or nobody in them: no window */
+  const sx=await client('stx'),sy=await client('sty');let SO=await sx.req('lobby.create',{ev:'egidious',cry:false,standsOff:true});await sy.req('lobby.join',{id:SO.id});SO=await sx.req('lobby.start',{id:SO.id});
+  await rejects(sx.req('match.stands.open',{id:SO.id,rot:1}),'no_stands');
+
+  /* ── 4. GUESTS ── */
+  const gconn=async gid=>{const conn='g'+(++nc);live.add(conn);const r=await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{guest:gid,ver:String(C.VER)}});return {conn,status:r.statusCode,body:r.body}};
+  const G1=await gconn('guestone1');assert.strictEqual(G1.status,200);assert.strictEqual((await gconn('short')).status,401,'a guest id needs 8+ letters');
+  const g=(t,d)=>ask(G1.conn,t,d);const ga=await g('auth.guest',{tz:'Asia/Tokyo'});assert.strictEqual(ga.guest,true);assert.strictEqual(ga.id,'guest-guestone1');assert.strictEqual(ga.until,ga.first+C.GUEST_MS);
+  const gh=await g('hello',{all:1});assert.strictEqual(gh.me,null);assert.strictEqual(gh.guest.id,'guest-guestone1');assert.ok(gh.lobbies.length&&gh.lobbies.every(x=>x.lite));assert.ok(gh.forum.length>0,'guests read the Forum');assert.ok(gh.today);
+  assert.strictEqual(gh.here.guests,1);assert.deepStrictEqual(gh.here.gzones,{'Asia/Tokyo':1});const signedHere=(await nan.req('hello',{all:1})).here;assert.strictEqual(signedHere.guests,1,'lanistas see the guest count too');assert.strictEqual(signedHere.n,gh.here.n,'guests are not lanistas');
+  assert.strictEqual(signedHere.zones['Asia/Tokyo'],undefined,'guests glow apart');
+  await g('lobby.list',{});await g('forum.get',{});await g('hall.list',{});assert.strictEqual((await g('world.news',{})).guests,1);
+  await rejects(g('forum.say',{q:'ave'}),'guest',/Sign in to speak in the Forum/);await rejects(g('lobby.create',{ev:'democritus'}),'guest',/Sign in to play/);await rejects(g('lobby.join',{id:'x'}),'guest');
+  await rejects(g('char.create',{name:'Ghost',cls:'hero'}),'guest');await rejects(g('bet.place',{id:'x',seat:0,amt:1}),'guest',/wager/);await rejects(g('domus.create',{name:'Domus Umbra'}),'guest');await rejects(g('lobby.ticket',{id:'x'}),'guest');
+  await rejects(g('match.input',{id:SL.id,in:{k:'act',seat:0}}),'guest');await rejects(g('match.stands.pick',{id:SL.id,rot:4,pick:{a:'pass'}}),'guest');await rejects(g('match.say',{id:SL.id,q:'ha'}),'guest');
+  /* a guest watches a live match and hears its moves */
+  const wt=await g('match.watch',{id:SL.id});assert.ok(wt.players.includes(sa.acct));m0=mark();await sa.req('match.input',{id:SL.id,in:{k:'act',a:'end',seat:0}});assert.strictEqual(got(G1.conn,'match.input',m0).length,1,'the guest hears the move');
+  await g('match.get',{id:SL.id,from:0});await g('match.unwatch',{id:SL.id});m0=mark();await sa.req('match.input',{id:SL.id,in:{k:'act',a:'end',seat:0}});assert.strictEqual(got(G1.conn,'match.input',m0).length,0);
+  /* a second guest; one leaves; the map counts the rest */
+  const G2=await gconn('guesttwo2');await ask(G2.conn,'auth.guest',{tz:'Europe/Rome'});assert.deepStrictEqual((await g('hello',{})).here.gzones,{'Asia/Tokyo':1,'Europe/Rome':1});
+  live.delete(G2.conn);await h({requestContext:{routeKey:'$disconnect',connectionId:G2.conn}});assert.strictEqual((await g('hello',{})).here.guests,1,'a closed guest socket leaves the map');
+  /* two hours from the first connect: refused, also on a new socket with the same guest id; another id is fresh */
+  T=ga.first+C.GUEST_MS+1000;await rejects(g('hello',{}),'guest_expired',/two hours/);await rejects(g('lobby.list',{}),'guest_expired');
+  const G3=await gconn('guestone1');assert.strictEqual(G3.status,403,'the same guest cannot reconnect for more time');assert.match(G3.body,/sign in/);
+  const G4=await gconn('guestfour4');assert.strictEqual(G4.status,200);assert.strictEqual((await ask(G4.conn,'hello',{})).here.guests,1,'the expired guest is not counted');
 }
