@@ -43,7 +43,8 @@ function mockSeedWorld(w){if(w.seeded)return;w.seeded=1;const now=Date.now();
   w.hall.push({name:'Spartacus of Thrace',cls:'slave',rank:'summa',lifeCF:1450,survived:71,diedAt:now-86400000*12,why:'Summa Rudis'},{name:'Flamma the Syrian',cls:'veteranus',rank:'primus',lifeCF:880,survived:34,diedAt:now-86400000*3,why:'Primus Palus'});
   w.news=[['🏛','The Colosseum games are on — Capua fills its tiers.'],['⚔','Old Crixus reached Veteranus after 20 bouts.'],['🪦','Flamma the Syrian fell at Pompeii. The Hall remembers.']]}
 const MOCK_ROUTES={
-  'hello':(w,d,me)=>({ver:ONLC.VER,mode:'mock',me:me&&w.accounts[me]||null}),
+  'hello':(w,d,me)=>{const a=me&&w.accounts[me]||null;const o={ver:ONLC.VER,mode:'mock',me:a};if(d.all&&a){o.chars=Object.values(w.chars).filter(c=>c.owner===me).sort((x,y)=>y.born-x.born);o.lobbies=MOCK_ROUTES['lobby.list'](w);
+    o.news=w.news.slice(0,8);o.online=Object.keys(w.accounts).length+37;o.challenges=ONLC.weekChallenges(Date.now())}return o},
   'auth.signin':(w,d)=>{const name=ONLC.cleanName(d.name);if(name.length<2)throw new Error('Your name: 2–24 letters.');const id='u'+(w.seq++)+Math.random().toString(36).slice(2,6);
     w.accounts[id]={id,name,since:Date.now()};try{sessionStorage.setItem('flavius_onlacct',id);localStorage.setItem('flavius_onlacct',id)}catch(e){}return w.accounts[id]},
   'auth.signout':(w,d,me)=>{try{sessionStorage.removeItem('flavius_onlacct');localStorage.removeItem('flavius_onlacct')}catch(e){}return {}},
@@ -106,7 +107,8 @@ function onlRankChip(k){const R=onlRank(k);return `<span class="onl-rk onl-rk-${
 function onlMini(cls,h=220){const src=typeof MINI_URL!=='undefined'&&MINI_URL[cls];return src?`<img class="onl-mini" src="${typeof assetURL==='function'?assetURL(src.replace(/^assets\//,'')):src}" alt="" style="height:${h}px">`:`<span style="font-size:${h/3}px">🛡</span>`}
 function onlEvName(k){return (EVENTS[k]||{}).n||k}
 function onlCityName(i){return (LOCATIONS[i]||{}).n||'—'}
-async function onlRefresh(){try{const h=await NET.req('hello');ONL.acct=h.me;ONL.mode=h.mode}catch(e){ONL.err=e.message}
+async function onlRefresh(){try{const h=await NET.req('hello',{all:1});ONL.acct=h.me;ONL.mode=h.mode;
+    if(h.chars&&h.me){ONL.chars=h.chars;ONL.char=h.chars.find(c=>c.alive)||null;ONL.lobbies=h.lobbies||[];ONL.news=h.news||[];ONL.stats={challenges:h.challenges||[],online:h.online||0};return}}catch(e){ONL.err=e.message}
   if(ONL.acct){try{ONL.chars=await NET.req('char.mine');ONL.char=ONL.chars.find(c=>c.alive)||null}catch(e){}}
   try{ONL.lobbies=await NET.req('lobby.list')}catch(e){}try{const n=await NET.req('world.news');ONL.news=n.news;ONL.stats=n}catch(e){}}
 function onlRedraw(){const r=document.getElementById('onl');if(!r)return;const sc=($('#mBody')||{}).scrollTop||0;r.innerHTML=onlHTML();const b=$('#mBody');if(b)b.scrollTop=sc}

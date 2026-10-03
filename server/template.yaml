@@ -132,10 +132,11 @@ Resources:
     Properties:
       FunctionName: flavius-arena
       Runtime: nodejs24.x
+      Architectures: [arm64]
       Handler: index.handler
       Code: ./src
       Role: !GetAtt FnRole.Arn
-      MemorySize: 512
+      MemorySize: 256
       Timeout: 10
       Environment:
         Variables:
@@ -147,7 +148,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: /aws/lambda/flavius-arena
-      RetentionInDays: 14
+      RetentionInDays: 7
 
   WsApi:
     Type: AWS::ApiGatewayV2::Api

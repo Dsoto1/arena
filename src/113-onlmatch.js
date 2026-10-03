@@ -18,7 +18,7 @@
      that owner for a snapshot and reloads it (match.snapreq → match.snap).
    • Off-turn: the board and the action panel ignore real clicks; a banner says whose move it is.
    ===================================================================== */
-const ONLM={hlog:{},resyncs:0,on:false,me:-1,owners:[],next:0,q:[],pend:null,replay:0,info:0,uiAt:0,override:null,sent:0,lastHash:'',waitT:0,resyncing:false};
+const ONLM={own:new Set(),hlog:{},resyncs:0,on:false,me:-1,owners:[],next:0,q:[],pend:null,replay:0,info:0,uiAt:0,override:null,sent:0,lastHash:'',waitT:0,resyncing:false};
 const onlmOn=()=>!!(ONLM.on&&S&&S.onl&&!S.over);
 function onlmSeatOf(p){return p?S.players.indexOf(p):-1}
 function onlmHuman(i){return i>=0&&!!ONLM.owners[i]}
@@ -27,7 +27,7 @@ function onlmOwner(){if(ONLM.override!=null)return ONLM.override;if(typeof RESPO
 function onlmMine(){return onlmOwner()===ONLM.me}
 function onlHash(){try{const x=JSON.stringify([S.turnNo,S.rotation,S.ri,RNG&&RNG.s,S.players.map(p=>[p.r,p.c,p.alive?1:0,p.exited?1:0,Math.round(p.cf||0),p.coin,p.hp,p.ap,p.keys,(p.items||[]).length,p.wR&&p.wR.key,p.wL&&p.wL.key]),(S.npcs||[]).map(n=>[n.t,n.r,n.c,n.hp,n.alive?1:0])]);return 'h'+hashStr(x)}catch(e){return ''}}
 /* ---------------- sending ---------------- */
-function onlmSend(inp){inp.h=onlHash();ONLM.hlog['n'+(ONLM.sent+1)]=inp.k==='modal'?inp.pre:inp.h;inp.seat=ONLM.me;inp.n=++ONLM.sent;NET.req('match.input',{id:S.onl.lobby,in:inp}).catch(e=>{if(typeof mToast==='function')mToast('⚠ The server did not take that move: '+esc(e.message))})}
+function onlmSend(inp){inp.h=onlHash();ONLM.hlog['n'+(ONLM.sent+1)]=inp.k==='modal'?inp.pre:inp.h;inp.seat=ONLM.me;inp.n=++ONLM.sent;NET.req('match.input',{id:S.onl.lobby,in:inp}).then(r=>{if(r&&Number.isInteger(r.seq)&&r.seq>=ONLM.next){ONLM.own.add(r.seq);onlmPump()}}).catch(e=>{if(typeof mToast==='function')mToast('⚠ The server did not take that move: '+esc(e.message))})}
 /* board clicks */
 {const base=onTile;onTile=function(r,c){if(!onlmOn()||ONLM.replay)return base.apply(this,arguments);if(!onlmMine())return;
   const p=cur();onlmSend({k:'tile',r,c,mode:S.mode,focus:p&&p.focusRoll?1:0});return base.apply(this,arguments)}}
@@ -59,7 +59,7 @@ function onlmReady(inp){if(!S||S.over)return false;if(inp.k==='modal')return !!O
   return !S.busy&&!CUR_MODAL&&!ONLM.pend&&['choice','action','command'].includes(S.phase)&&onlmOwner()===inp.seat}
 let ONLM_PUMP=0;
 function onlmPump(){clearTimeout(ONLM_PUMP);if(!onlmOn()||ONLM.resyncing)return;
-  while(ONLM.q.length&&ONLM.q[0].seq===ONLM.next){const inp=ONLM.q[0];if(!onlmReady(inp)){ONLM_PUMP=setTimeout(onlmPump,120);onlmWaitShow();return}
+  for(;;){while(ONLM.own.has(ONLM.next)){ONLM.own.delete(ONLM.next);ONLM.next++}if(!(ONLM.q.length&&ONLM.q[0].seq===ONLM.next))break;const inp=ONLM.q[0];if(!onlmReady(inp)){ONLM_PUMP=setTimeout(onlmPump,120);onlmWaitShow();return}
     ONLM.q.shift();ONLM.next=inp.seq+1;
     const mine=inp.k==='modal'?inp.pre:onlHash();if(inp.k==='modal'?inp.pre&&mine!==onlmPendHash():inp.h&&mine!==inp.h){onlmResync(inp);return}
     ONLM.hlog['s'+inp.seq]=inp.k==='modal'?onlmPendHash():onlHash();onlmApply(inp)}
@@ -73,24 +73,24 @@ function onlmApply(inp){ONLM.replay++;try{
 /* the modal's own hash is taken when it opens */
 {const base=modal;modal=function(){if(onlmOn()&&!ONLM.replay){const h=onlHash();const r=base.apply(this,arguments);if(ONLM.pend&&!ONLM.pend.h)ONLM.pend.h=h;return r}return base.apply(this,arguments)}}
 async function onlmCatchUp(){if(ONLM.catching)return;ONLM.catching=true;try{const g=await NET.req('match.get',{id:S.onl.lobby,from:ONLM.next});for(const inp of g.inputs||[])if(inp.from!==ONL.acct.id&&inp.seq>=ONLM.next&&!ONLM.q.some(x=>x.seq===inp.seq))ONLM.q.push(inp);
-  for(const inp of g.inputs||[])if(inp.from===ONL.acct.id&&inp.seq===ONLM.next)ONLM.next++;ONLM.q.sort((a,b)=>a.seq-b.seq)}catch(e){}finally{ONLM.catching=false}onlmPump()}
+  for(const inp of g.inputs||[])if(inp.from===ONL.acct.id&&inp.seq>=ONLM.next)ONLM.own.add(inp.seq);ONLM.q.sort((a,b)=>a.seq-b.seq)}catch(e){}finally{ONLM.catching=false}onlmPump()}
 /* own inputs advance the shared counter too (the server echoes them back to everyone) */
-NET.on('match.input',d=>{if(!onlmOn()||!d||d.id!==S.onl.lobby)return;if(d.in.from===ONL.acct.id&&d.in.seq>=ONLM.next){ONLM.next=d.in.seq+1;onlmPump()}});
+NET.on('match.input',d=>{if(!onlmOn()||!d||d.id!==S.onl.lobby)return;if(d.in.from===ONL.acct.id&&d.in.seq>=ONLM.next){ONLM.own.add(d.in.seq);onlmPump()}});
 /* ---------------- resync ---------------- */
-function onlmResync(inp){ONLM.resyncs++;ONLM.resyncing=true;ONLM.needAt=inp.seq;if(typeof mToast==='function')mToast('🔄 Out of step with the others — fetching their arena…');
+function onlmResync(inp){ONLM.resyncs++;ONLM.lastResync={seq:inp.seq,k:inp.k,a:inp.a||inp.t||'',mine:inp.k==='modal'?onlmPendHash():onlHash(),theirs:inp.k==='modal'?inp.pre:inp.h,turn:S.turnNo,phase:S.phase,cur:cur()&&cur().name};ONLM.resyncing=true;ONLM.needAt=inp.seq;if(typeof mToast==='function')mToast('🔄 Out of step with the others — fetching their arena…');
   NET.req('match.snapreq',{id:S.onl.lobby,to:ONLM.owners[inp.seat],seq:inp.seq}).catch(()=>{});setTimeout(()=>{if(ONLM.resyncing){ONLM.resyncing=false;onlmPump()}},15000)}
 NET.on('match.snapreq',d=>{if(!onlmOn()||d.id!==S.onl.lobby||d.to!==ONL.acct.id)return;const send=()=>{if(S.busy||CUR_MODAL){setTimeout(send,150);return}
   NET.req('match.snap',{id:S.onl.lobby,to:d.from,seq:ONLM.next,snap:matchSnapshot('online')}).catch(()=>{})};send()});
 NET.on('match.snap',d=>{if(!S||!S.onl||d.id!==S.onl.lobby||d.to!==ONL.acct.id)return;const keep={...S.onl};onlmLoad(d.snap,keep);ONLM.next=d.seq;ONLM.q=ONLM.q.filter(x=>x.seq>=d.seq);ONLM.pend=null;ONLM.resyncing=false;onlmPump()});
 function onlmLoad(snap,onl){try{matchSlotPut('onl',snap);const ok=matchLoad('onl');matchSlotDel('onl');S.onl={...onl};S.limits=S.limits?{...S.limits,min:0}:S.limits;return ok}catch(e){console.error(e);return false}}
 /* ---------------- the opening ---------------- */
-{const base=beginTurn;beginTurn=async function(){if(S&&S.onl&&!S.onl.opened){S.onl.opened=true;ONLM.on=true;ONLM.me=S.onl.seat;ONLM.owners=S.onl.owners||[];ONLM.next=0;ONLM.q=[];ONLM.pend=null;ONLM.sent=0;
+{const base=beginTurn;beginTurn=async function(){if(S&&S.onl&&!S.onl.opened){S.onl.opened=true;ONLM.on=true;ONLM.me=S.onl.seat;ONLM.owners=S.onl.owners||[];ONLM.next=0;ONLM.q=[];ONLM.pend=null;ONLM.sent=0;ONLM.own=new Set();
     if(S.limits)S.limits.min=0;if(S.onl.host){try{await NET.req('match.open',{id:S.onl.lobby,snap:matchSnapshot('online')})}catch(e){if(typeof mToast==='function')mToast('⚠ '+esc(e.message))}}onlmWaitShow()}
   return base.apply(this,arguments)}}
 async function onlJoinMatch(L,onl){if(typeof mToast==='function')mToast('⚔ Waiting for the host to open the arena…');let g=null;
   for(let i=0;i<150&&!(g&&g.open);i++){try{g=await NET.req('match.get',{id:L.id,from:0})}catch(e){}if(!(g&&g.open))await new Promise(r=>setTimeout(r,400))}
   if(!g||!g.open){if(typeof mToast==='function')mToast('⚠ The host never opened the arena.');return}
-  onlmLoad(g.open,{...onl,opened:true});ONLM.on=true;ONLM.me=onl.seat;ONLM.owners=onl.owners;ONLM.next=0;ONLM.q=[];ONLM.pend=null;ONLM.sent=0;
+  onlmLoad(g.open,{...onl,opened:true});ONLM.on=true;ONLM.me=onl.seat;ONLM.owners=onl.owners;ONLM.next=0;ONLM.q=[];ONLM.pend=null;ONLM.sent=0;ONLM.own=new Set();
   for(const inp of g.inputs||[])if(inp.from!==ONL.acct.id)ONLM.q.push(inp);
   try{if(typeof menuHide==='function')menuHide()}catch(e){}S.startedAt=Date.now();later(()=>beginTurn(),60)}
 /* ---------------- whose move ---------------- */

@@ -65,7 +65,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Module ordering matters: a wrapper only sees wrappers installed before it.
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
   `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
-  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`.
+  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`.
   Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
 
 ### Core globals (engine)
@@ -371,6 +371,31 @@ One global script; files are concatenated in order. Later "version modules" patc
   intros (`p.intro77` + ⓘ with the rest), All creations first-make tiles `.st77f` + "Play Now set" column, Names 📌 Pin / ✎ Use
   (localStorage flavius_namepins77, `[data-nm77pin]`, `[data-nm77use]`), Spectators Personality/Look heads + face-card list, Editors
   progress bar `.ed77bar`, Invitational steps ①–⑤ (`.sx77h`), tournament seats wider + `.tn77you` 🎮 You pills. Test `tv77`.
+- **Online (111-114 + server/, after v0.76; behind the word LOBBY77 → localStorage flavius_online77):**
+  `111-onlcore` = THE shared rules (also `require`d by the Lambda — copy with `node tools/mkserver.js`, which also writes
+  server/src/catalog.json): ranks Tiro→Gregarius→Veteranus→Primus Palus→Summa Rudis (`rankFor`: ranked bouts survived AND
+  lifetime CF), START_STATS 55 each (no choosing; +1 lowest rating per bout survived, +1 more for a win), recruit kit = class
+  weapons only, PRICE 15/60/180 by market level ≤ rank's `mkt`, PURSE by rank × survival streak (+10%/bout, ≤+100%), Ranked death
+  = the game's own Fate (result row `survives`), Hall only if great (`hallWorthy`: Veteranus+, 25 survived, 500 CF, Commodus),
+  wagers `betOK`/`settle` (pool split by stake, 5% to host, fighters back only themselves, close at start), lobbies `newLobby`/`canJoin`
+  (Ranked = equal rank). `112-online` = `NET` (req/on/emit), the in-page MOCK server (`MOCK_ROUTES`, localStorage flavius_onlmock,
+  BroadcastChannel; account id in sessionStorage so two windows = two players; mirrors server/src/routes.js), the window
+  `onlineOpen` (rail Play · Lobby Browser · Spectate · Armory & Market · Character · Hall), creator, `onlEnter` (seats from lobby kits:
+  humans cpu:false, bots/empty = CPUs), kit via mkPlayer/giveLoadout wrappers, `onlReport` (match.result after gameOver), no sim online.
+  `113-onlmatch` = LOCKSTEP: host runs startEvent; first beginTurn sends `matchSnapshot` (~15 KB) via match.open; others `onlJoinMatch`
+  (load it, beginTurn). Inputs recorded by their owner (`onlmOwner`: humanCommand override → RESPONDER → cur() → lowest human seat):
+  `tile` (onTile wrapper, S.mode + focus), `act` (trusted [data-act] clicks; replayed by clicking a hidden twin button), `modal`
+  (decision values; remote-owned modals wait for the value). Not recorded: popRule/eventBriefing (ONLM.info), windows opened by a
+  trusted click outside board/actions within 300 ms (ONLM.uiAt), anything after S.over. CPU truce/trade offers to humans are declined
+  everywhere (v1: the engine doesn't say which human). Hash `onlHash` before each input; mismatch → match.snapreq/snap resync from the
+  owner. Off-turn: real clicks/hotkeys blocked, `#onlWait` banner, body.onl-off. Own inputs' seqs come from the reply (`ONLM.own`).
+  `114-onlnet` = `NETWS` WebSocket (config play/online.json or the sign-in screen's "Online server" box → localStorage flavius_onlserver;
+  `{ws,auth,client}` or `{ws,dev:true}`), Google via Cognito hosted UI + PKCE (tokens localStorage flavius_onltok, refresh), reconnect +
+  catch-up, socket closes when Online shuts and no match is live. **server/**: template.yaml (lint: /tmp venv cfn-lint), deploy.sh
+  (CloudShell), README.md (Google client steps, costs), src/{index,routes,store,jwt}.js (single-table DynamoDB; a move = one `bump`
+  update returning seq + conns + one put + pushes to the others), test/routes.test.js (`npm test`), test/localws.js (the Lambda on a
+  local ws server). Tests: `tonl77` (two windows, mock), `tonlws77` (two windows through the real handler; needs server/node_modules).
+  NOT yet: live spectating (Watch/Ticket record only), parties/team events, Stakes matches, referee replay of results.
 - **Guide data:** `SIM50` in 53-guide50 is regenerated by `node tools/simguide.js flavius-arena.html 600` (SIMVER env);
   it includes `perk` (wins by rating perk), charted by 69-v56.
 - **Music:** procedural Web Audio (21-audio, 45-music, 16 themes; unlocked by winning in cities). Play Now plays a

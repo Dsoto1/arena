@@ -1,0 +1,7 @@
+{
+  "name": "flavius-arena-server",
+  "private": true,
+  "description": "The Online Arena's Lambda (src/) and its local test server (test/). The Lambda needs no packages: the Node runtime ships the AWS SDK.",
+  "scripts": {"test": "node test/routes.test.js", "local": "node test/localws.js"},
+  "devDependencies": {"ws": "^8.18.0"}
+}

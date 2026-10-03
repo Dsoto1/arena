@@ -4,7 +4,7 @@
 'use strict';
 const C=require('./onlcore.js');
 const DAY=86400;
-function makeRoutes({store,push,catalog,now=()=>Date.now(),rnd=()=>Math.random(),dev=false}){
+function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=>Math.random(),dev=false}){
   const ttl=days=>Math.floor(now()/1000)+days*DAY;
   const acctOf=async id=>id?await store.get('ACCT#'+id,'PROFILE'):null;
   const liveChar=async acct=>(await store.byIndex('OWNER#'+acct)).find(c=>c.alive)||null;
@@ -13,11 +13,16 @@ function makeRoutes({store,push,catalog,now=()=>Date.now(),rnd=()=>Math.random()
   const putChar=ch=>store.put('CHAR#'+ch.id,'CHAR',{...ch,GSI1PK:'OWNER#'+ch.owner,GSI1SK:ch.born});
   const strip=x=>{if(!x)return x;const y={...x};for(const k of ['PK','SK','GSI1PK','GSI1SK','ttl'])delete y[k];return y};
   const id=p=>p+now().toString(36)+Math.floor(rnd()*1e6).toString(36);
+  /* a live match keeps its players' connections in its META record: pushes need no account reads */
+  const toMatch=async(M,type,data,except)=>{for(const [a,c] of Object.entries(M.conns||{}))if(a!==except){if(c&&pushConn)await pushConn(c,type,data);else await push(a,type,data)}};
+  const meta=async id=>{const M=await store.get('MATCH#'+id,'META');if(!M)throw new Error('No such match.');return M};
   const toLobby=async(L,type,data)=>{for(const p of L.players)if(!/^bot/.test(p.id))await push(p.id,type,data)};
   const world=async k=>(await store.get('WORLD',k))||{list:[]};
   const news=async line=>{const N=await world('NEWS');N.list=[line,...N.list].slice(0,12);await store.put('WORLD','NEWS',N)};
   const R={
-    'hello':async(d,ctx)=>({ver:C.VER,mode:'aws',me:strip(await acctOf(ctx.acct))}),
+    /* one request when the Online window opens: who you are, your gladiators, the lobbies and the news */
+    'hello':async(d,ctx)=>{const me=strip(await acctOf(ctx.acct));const out={ver:C.VER,mode:'aws',me};if(d.all&&me){out.chars=(await store.byIndex('OWNER#'+ctx.acct)).map(strip);out.lobbies=(await store.byIndex('LOBBIES')).map(strip).slice(0,100);
+      out.news=(await world('NEWS')).list.slice(0,8);out.challenges=C.weekChallenges(now())}return out},
     'auth.signin':async(d,ctx)=>{if(!dev)throw new Error('Sign in with Google.');const name=C.cleanName(d.name);if(name.length<2)throw new Error('Your name: 2–24 letters.');
       const a={id:ctx.acct,name,since:now()};await store.put('ACCT#'+a.id,'PROFILE',a);return a},
     'auth.signout':async()=>({}),
@@ -33,23 +38,26 @@ function makeRoutes({store,push,catalog,now=()=>Date.now(),rnd=()=>Math.random()
     'lobby.leave':async(d,ctx)=>{const L=await store.get('LOBBY#'+d.id,'LOBBY');if(!L)return {};L.players=L.players.filter(p=>p.id!==ctx.acct);if(!L.players.length||L.host.id===ctx.acct)L.status='done';await putLobby(L);await toLobby(L,'lobby.update',{id:L.id});return strip(L)},
     'lobby.ready':async(d,ctx)=>{const L=await getLobby(d.id);const p=L.players.find(p=>p.id===ctx.acct);if(p)p.ready=!!d.ready;await putLobby(L);await toLobby(L,'lobby.update',{id:L.id});return strip(L)},
     'lobby.start':async(d,ctx)=>{const L=await getLobby(d.id);if(L.host.id!==ctx.acct)throw new Error('Only the host starts the game.');if(L.status!=='waiting')throw new Error('Already under way.');
-      L.status='live';L.seed=Math.floor(rnd()*2**31)>>>0;L.started=now();await putLobby(L);await store.put('MATCH#'+L.id,'META',{id:L.id,seed:L.seed,n:0,results:{},open:null,ttl:ttl(2)});await toLobby(L,'lobby.update',{id:L.id});return strip(L)},
+      L.status='live';L.seed=Math.floor(rnd()*2**31)>>>0;L.started=now();await putLobby(L);const humans=L.players.filter(p=>!/^bot/.test(p.id)).map(p=>p.id);const conns={};
+      for(const a of humans){const A=await acctOf(a);if(A){conns[a]=A.conn||null;A.match=L.id;await store.put('ACCT#'+a,'PROFILE',A)}}
+      await store.put('MATCH#'+L.id,'META',{id:L.id,seed:L.seed,n:0,players:humans,conns,host:L.host.id,status:'live',ranked:!!L.ranked,results:{},ttl:ttl(2)});await toLobby(L,'lobby.update',{id:L.id});return strip(L)},
     'lobby.watch':async(d)=>{const L=await getLobby(d.id);L.watchers=(L.watchers||0)+1;await putLobby(L);return strip(L)},
     'lobby.ticket':async(d,ctx)=>{const L=await getLobby(d.id);const ch=await liveChar(ctx.acct);if(!ch)throw new Error('Tickets are paid from a gladiator’s wallet.');if((ch.wallet||0)<L.ticket)throw new Error(`A ticket costs ${L.ticket} coin.`);
       ch.wallet-=L.ticket;L.tickets=(L.tickets||0)+1;L.pot=(L.pot||0)+L.ticket;await putChar(ch);await putLobby(L);return {lobby:strip(L),char:strip(ch)}},
     'bet.place':async(d,ctx)=>{const L=await getLobby(d.id);const ch=await liveChar(ctx.acct);if(!ch)throw new Error('Wagers are paid from a living gladiator’s wallet.');
       const amt=d.amt|0,seat=d.seat|0;const why=C.betOK(L,ctx.acct,seat,amt,ch.wallet);if(why)throw new Error(why);ch.wallet-=amt;(L.bets=L.bets||[]).push({by:ctx.acct,char:ch.id,seat,amt});L.pool=(L.pool||0)+amt;
       await putChar(ch);await putLobby(L);return {lobby:strip(L),char:strip(ch)}},
-    'match.open':async(d,ctx)=>{const L=await getLobby(d.id);if(L.host.id!==ctx.acct)throw new Error('Only the host opens the match.');const M=await store.get('MATCH#'+d.id,'META');if(!M)throw new Error('No such match.');
-      if(typeof d.snap!=='object'||JSON.stringify(d.snap).length>300000)throw new Error('The opening is too large.');M.open=d.snap;await store.put('MATCH#'+d.id,'META',M);await toLobby(L,'match.open',{id:d.id});return {}},
-    'match.get':async(d)=>{const M=await store.get('MATCH#'+d.id,'META');if(!M)throw new Error('No such match.');const from=Math.max(0,d.from|0);
-      const ins=(await store.query('MATCH#'+d.id,'IN#')).map(x=>x.in).filter(x=>x.seq>=from);return {open:M.open,inputs:ins,seed:M.seed}},
-    'match.input':async(d,ctx)=>{const L=await getLobby(d.id);if(!L.players.some(p=>p.id===ctx.acct))throw new Error('Not your match.');if(L.status!=='live')throw new Error('The match is not live.');
-      const raw=d.in||{};if(JSON.stringify(raw).length>4000)throw new Error('That move is too large.');
-      const seq=await store.counter('MATCH#'+d.id,'META','n');const inp={...raw,from:ctx.acct,seq};await store.put('MATCH#'+d.id,'IN#'+String(seq).padStart(8,'0'),{in:inp,ttl:ttl(2)});
-      await toLobby(L,'match.input',{id:d.id,in:inp});return {seq}},
-    'match.snapreq':async(d,ctx)=>{const L=await getLobby(d.id);if(!L.players.some(p=>p.id===ctx.acct))throw new Error('Not your match.');await push(d.to,'match.snapreq',{id:d.id,to:d.to,from:ctx.acct,seq:d.seq});return {}},
-    'match.snap':async(d,ctx)=>{const L=await getLobby(d.id);if(!L.players.some(p=>p.id===ctx.acct))throw new Error('Not your match.');await push(d.to,'match.snap',{id:d.id,to:d.to,snap:d.snap,seq:d.seq,from:ctx.acct});return {}},
+    'match.open':async(d,ctx)=>{const M=await meta(d.id);if(M.host!==ctx.acct)throw new Error('Only the host opens the match.');
+      if(typeof d.snap!=='object'||JSON.stringify(d.snap).length>300000)throw new Error('The opening is too large.');await store.put('MATCH#'+d.id,'OPEN',{snap:d.snap,ttl:ttl(2)});await toMatch(M,'match.open',{id:d.id},ctx.acct);return {}},
+    'match.get':async(d)=>{const M=await meta(d.id);const O=await store.get('MATCH#'+d.id,'OPEN');const from=Math.max(0,d.from|0);
+      const ins=(await store.query('MATCH#'+d.id,'IN#')).map(x=>x.in).filter(x=>x.seq>=from);return {open:O?O.snap:null,inputs:ins,seed:M.seed}},
+    /* the hot path: ONE update (the seq + the match record) + ONE small put + a push to each OTHER player */
+    'match.input':async(d,ctx)=>{const raw=d.in||{};if(JSON.stringify(raw).length>4000)throw new Error('That move is too large.');
+      const B=await store.bump('MATCH#'+d.id,'META','n');if(!B)throw new Error('No such match.');const M=B.item;if(!(M.players||[]).includes(ctx.acct))throw new Error('Not your match.');if(M.status!=='live')throw new Error('The match is not live.');
+      const inp={...raw,from:ctx.acct,seq:B.seq};await store.put('MATCH#'+d.id,'IN#'+String(B.seq).padStart(8,'0'),{in:inp,ttl:ttl(2)});
+      await toMatch(M,'match.input',{id:d.id,in:inp},ctx.acct);return {seq:B.seq}},
+    'match.snapreq':async(d,ctx)=>{const M=await meta(d.id);if(!(M.players||[]).includes(ctx.acct)||!(M.players||[]).includes(d.to))throw new Error('Not your match.');await toMatch({conns:{[d.to]:M.conns[d.to]}},'match.snapreq',{id:d.id,to:d.to,from:ctx.acct,seq:d.seq});return {}},
+    'match.snap':async(d,ctx)=>{const M=await meta(d.id);if(!(M.players||[]).includes(ctx.acct)||!(M.players||[]).includes(d.to))throw new Error('Not your match.');await toMatch({conns:{[d.to]:M.conns[d.to]}},'match.snap',{id:d.id,to:d.to,snap:d.snap,seq:d.seq,from:ctx.acct});return {}},
     'match.result':async(d,ctx)=>{const L=await store.get('LOBBY#'+d.id,'LOBBY');const ch=await store.get('CHAR#'+d.char,'CHAR');if(!ch||ch.owner!==ctx.acct)throw new Error('Not yours.');if(!ch.alive)throw new Error('The dead do not report.');
       if(!L||!L.players.some(p=>p.id===ctx.acct))throw new Error('Not your match.');
       const M=(await store.get('MATCH#'+d.id,'META'))||{id:d.id,results:{}};M.results=M.results||{};if(M.results[ctx.acct])return {char:strip(ch),out:M.results[ctx.acct].out,dup:1};
@@ -60,7 +68,7 @@ function makeRoutes({store,push,catalog,now=()=>Date.now(),rnd=()=>Math.random()
       if(out.rankUp)await news(['⚔',`${ch.name} is now ${C.RANKS[C.rankIdx(out.rankUp)].n}.`]);
       /* everyone reported: compare the end hashes (a mismatch flags the match and pays nothing more), settle the wagers */
       const humans=L.players.filter(p=>!/^bot/.test(p.id));
-      if(Object.keys(M.results).length>=humans.length){L.status='done';const hs=new Set(Object.values(M.results).map(r=>r.hash).filter(Boolean));M.flagged=hs.size>1;
+      if(Object.keys(M.results).length>=humans.length){L.status='done';M.status='done';const hs=new Set(Object.values(M.results).map(r=>r.hash).filter(Boolean));M.flagged=hs.size>1;
         if((L.bets||[]).length){const wins=M.flagged?[]:Object.values(M.results).filter(r=>r.row.won).map(r=>r.seat);const st=C.settle(L.bets,wins);
           for(const [by,v] of Object.entries(st.payouts)){const c=await liveChar(by);if(c){c.wallet+=v;await putChar(c)}}const hc=await liveChar(L.host.id);if(hc&&st.cut){hc.wallet+=st.cut;await putChar(hc)}L.settled=st}
         await putLobby(L)}
@@ -68,4 +76,6 @@ function makeRoutes({store,push,catalog,now=()=>Date.now(),rnd=()=>Math.random()
     'hall.list':async()=>(await world('HALL')).list.slice(0,60),
     'world.news':async()=>({news:(await world('NEWS')).list.slice(0,8),online:0,challenges:C.weekChallenges(now())})};
   return async function route(t,d,ctx){const f=R[t];if(!f)throw new Error('Unknown request: '+t);if(!ctx.acct&&t!=='hello')throw new Error('Sign in first.');return f(d||{},ctx)}}
-module.exports={makeRoutes};
+/* a player reconnects mid-match: their new connection goes into the match record */
+async function reconnect(store,acct,conn){const A=await store.get('ACCT#'+acct,'PROFILE');if(A&&A.match)await store.setIn('MATCH#'+A.match,'META','conns',acct,conn)}
+module.exports={makeRoutes,reconnect};
