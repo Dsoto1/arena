@@ -658,7 +658,10 @@ One global script; files are concatenated in order. Later "version modules" patc
   tokens; L1 gear uncommon, L2/L3 rare, famous pieces very rare); named pieces Common 0 / Rare 1 / Epic 2 / Legendary 2 + unique effect;
   their playlist "Ludi Infames", Veteranus+; chest pieces can't be bought/sold but HOLD A VALUE = level price × rarity
   (Common ×1 / Rare ×2 / Epic ×4 / Legendary ×8; L4 base 1500) — shown on the card, in the gear score, stake lines and loot history;
-  repair of a named piece = ⅓ of the BASE price (default; he may pick ⅓ of the full value); start COUNTDOWN 10 s after the host's Start (line-up + what is at stake shown, host ✕ Hold,
+  repair of a named piece = ⅓ of its FULL value (his pick, "a rogue-like"); GENERATED chest weapons (proposed, his nod): the SERVER
+  rolls them (base type + rarity budget of capped affixes, Latin-part names, his icons tinted by rarity), stored on the gladiator as a
+  full weapon def, carried in the kit → every client builds it like a custom weapon; Common/Rare = printed + 0–1 affix, Epic = fully
+  generated + 2 affixes, Legendary = generated + 2 affixes + one hand-coded unique effect (start ~10–15; he may write some), each unique; start COUNTDOWN 10 s after the host's Start (line-up + what is at stake shown, host ✕ Hold,
   any line-up change cancels). v0.81: Online server box behind a word of power; guests may watch read-only, counted SEPARATELY on the map
   (a different glow colour), may read the Forum, 2 h connection limit; invites have NO timer — they die with the room (start/fill/close);
   playlist borders Democritus bronze-gold / Egidious deep red / Cassian steel blue / Familia olive green; DOMUS REQUIRED before any online
