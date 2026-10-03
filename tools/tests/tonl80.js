@@ -18,10 +18,10 @@ for(const p of [A,B,C])await p.evaluate(()=>{if(!onlTzLL('Europe/Rome'))Object.a
 for(const p of [A,B,C]){p.evaluate(()=>{onlineOpen('play')}).catch(()=>{})}await wait(1500);
 const click=async(p,sel)=>{await p.waitForSelector(sel,{timeout:5000});await p.click(sel);await p.waitForTimeout(450)};
 const room=p=>p.evaluate(()=>{const L=onlMyLobby();return L?{id:L.id,ev:L.ev,seats:L.seats,host:L.host.name,players:L.players.map(x=>[x.name,x.team||'',!!x.ready]),members:(L.members||[]).map(m=>m.name),status:L.status,teams:L.teams}:null});
-const landing=await A.evaluate(()=>({row:!!document.querySelector('#onl #onlRow80 .omap'),dots:document.querySelectorAll('#onlRow80 .omap-dot').length,cap:(document.getElementById('omapCap')||{}).textContent||'',chips:[...document.querySelectorAll('#onlRow80 .ofor-chips button')].map(b=>b.textContent)}));
+const landing=await A.evaluate(()=>({row:!!document.querySelector('#onl #onlStageMap81 .omap-in'),dots:document.querySelectorAll('#onlStageMap81 .omap-dot').length,cap:(document.getElementById('omapCap')||{}).textContent||'',chips:[...document.querySelectorAll('#onlForum81 .ofor-chips button')].map(b=>b.textContent)}));
 if(SHOT)await A.screenshot({path:SHOT+'/landing.png',fullPage:false});
 /* the big map: a centred view, never a modal() */
-await click(A,'#onl .omap');const big=await A.evaluate(()=>({on:!!document.querySelector('.omapbig .frame'),dots:document.querySelectorAll('.omapbig .omap-dot').length}));if(SHOT)await A.screenshot({path:SHOT+'/mapbig.png'});
+await click(A,'#onl .scap81 [data-onl="omap"]');const big=await A.evaluate(()=>({on:!!document.querySelector('.omapbig .frame'),dots:document.querySelectorAll('.omapbig .omap-dot').length}));if(SHOT)await A.screenshot({path:SHOT+'/mapbig.png'});
 await A.click('.omapbig');await wait(200);
 /* A: ＋ Custom room (instant, defaults) */
 await click(A,'#onl [data-onl="tab"][data-v="lobby"]');await click(A,'#onl [data-onl="mkroom"][data-v="0"]');await wait(300);const rA=await room(A);
@@ -95,7 +95,7 @@ const muted={list:await C.evaluate(id=>(mockLoad().accounts[ONL.acct.id].mutes||
 const out={landing,big,rA,rB,twins,rC,fam,hostB:hostB&&hostB.host,afterKick,blocked,logB,lists:[lists0,lists1],readyA,forumA,ban,callLine,who,pop1,pop2,rC2,grey,inMatch,backA,bub,res,againBtn,again,pop3,muted};
 console.log(JSON.stringify(out));
 const miss=[];
-if(!landing.row||!landing.dots||!/online/.test(landing.cap)||landing.chips.length!==6)miss.push('landing row: map + Forum');if(!big.on||!big.dots)miss.push('big map');
+if(!landing.row||!landing.dots||!/online/.test(landing.cap)||landing.chips.length!==6)miss.push('landing: stage map + Forum (v0.81)');if(!big.on||!big.dots)miss.push('big map');
 if(!rA||rA.ev!=='democritus'||rA.seats!==4)miss.push('＋ Custom room');if(!rB||rB.id!==rA.id||twins!==1)miss.push('playlist joins, no twin');if(!rC||rC.id!==rA.id||rC.players.length!==3)miss.push('join from the browser');
 if(!fam||fam.ev!=='familia'||fam.seats!==6||fam.teams!==3||!(fam.players.find(x=>/Gamma/.test(x[0]))||[])[1]==='B')miss.push('Familia 6 seats + teams');
 if(!/Beta/.test(hostB&&hostB.host||''))miss.push('give host');if(afterKick.c||afterKick.b.members.some(n=>/Gamma/.test(n)))miss.push('remove');if(!/removed you/.test(blocked))miss.push('removed lanista blocked');

@@ -309,7 +309,7 @@ NET.on('lobby.say',d=>{if(!d||!d.line||!ONL.acct)return;if(ONLF.muted.has(d.line
 NET.on('lobby.invite',d=>{if(!d||!d.row||!ONL.acct)return;if(ONLF.muted.has(d.fromId))return;const it={row:d.row,from:d.from,fromId:d.fromId,at:Date.now()};
   if(onlQuiet80()){ONLF.local.push({k:'inv',from:d.from,by:d.fromId,row:d.row,at:Date.now()});onlPatchFeed80();return}ONLF.invq.push(it)});
 function onlPopOpen80(){return !!document.querySelector('.ask76bg,.veraskbg,.onl80pop')}
-setInterval(()=>{try{ONLF.invq=ONLF.invq.filter(x=>Date.now()-x.at<120000);if(!ONLF.invq.length||!document.getElementById('onl')||onlPopOpen80()||onlInMatch80())return;
+setInterval(()=>{try{/* v0.81: no timer — an invite dies with its room (124) */if(!ONLF.invq.length||!document.getElementById('onl')||onlPopOpen80()||onlInMatch80())return;
   const it=ONLF.invq.shift();if(onlWaitRoom80()||onlQuiet80()){ONLF.local.push({k:'inv',from:it.from,by:it.fromId,row:it.row,at:it.at});onlPatchFeed80();return}onlInvitePop80(it)}catch(e){}},400);
 function onlInvitePop80(it){const r=it.row;const bg=document.createElement('div');bg.className='veraskbg onl80pop inv80bg';
   bg.innerHTML=`<div class="card2 verask" role="dialog" aria-modal="true"><b>✉ ${esc2(it.from||'A lanista')} invites you</b><div style="margin:6px 0 10px">${onlRowTxt80(r)}<div class="rc-sub">${(r.players||[]).length}/${r.seats|0} seated · ${(r.members||[]).length}/${ONLC.ROOM_MAX} in the room</div></div>
