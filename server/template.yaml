@@ -99,8 +99,8 @@ Resources:
       AllowedOAuthFlowsUserPoolClient: true
       AllowedOAuthFlows: [code]
       AllowedOAuthScopes: [openid, email, profile]
-      CallbackURLs: [!Sub '${SiteUrl}/play/', 'http://localhost:8137/flavius-arena.html']
-      LogoutURLs: [!Sub '${SiteUrl}/play/', 'http://localhost:8137/flavius-arena.html']
+      CallbackURLs: [!Sub '${SiteUrl}/play/', !Sub '${SiteUrl}/play/index.html', 'http://localhost:8137/flavius-arena.html']
+      LogoutURLs: [!Sub '${SiteUrl}/play/', !Sub '${SiteUrl}/play/index.html', 'http://localhost:8137/flavius-arena.html']
       SupportedIdentityProviders: !If [HasGoogle, [Google], [COGNITO]]
       IdTokenValidity: 12
       AccessTokenValidity: 12
