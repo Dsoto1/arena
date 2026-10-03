@@ -604,6 +604,17 @@ One global script; files are concatenated in order. Later "version modules" patc
   (data / sign-in / server + test copy) with the login.flaviusrule.com swap, take back a seat a CPU took, Quick match, friends,
   "your turn" notices, more events, Stakes, weekly challenges that count, leaderboards/seasons, sell-back + gear score, record page,
   report/mute. His view: in-game collusion (truces/trades) is allowed — Flavius breaks truces anyway.
+- **Online ROOMS — agreed spec (not built; wait for his go):** a lobby becomes a room: created with no setup (defaults), the host
+  changes event/city/rules/ticket price until the horns; Ranked/Custom FIXED at creation. Room holds up to 8 lanistas; seats = the
+  event's size picked by the host within its min–max (Classics are exactly 4 — fix: today's 'Seats 2/3/4' can start a Classic with 2;
+  CPUs must fill to the event's size), start needs 2+ humans seated. Host always keeps a seat; others grab empty seats first come and
+  may stand; a party takes seats together (same team). Give Host to anyone (an unseated new host takes the old host's seat); host leaves
+  → the earliest joiner still present becomes host (+ that seat). Host may remove a player (5-min rejoin block, not after start). Event
+  change with fewer seats → last to sit stand up (ready marks reset). At the horns the unseated see a greyed room, 'started without you'
+  10 s countdown back to Online + 👁 Watch. Team events: teams A/B/C/D… any split of the seated count (4v4, 2v2v2v2, 3v3v2,
+  1v2v1v2v2; ≥2 teams; engine supports N teams — team1 end + S.order by team); Custom: players pick their team on their seat, host can
+  move anyone, optional auto-balance; Ranked: auto-balance (host picks the number of teams; even sizes, parties together, strengths
+  mixed by ratings + gear). Playlist Ranked/Custom = find a room with that event and a free seat, else create one.
 - **Online — the design (after v0.76, Virgilante):** Multiplayer → Online opens a Halo-Infinite-style landing space: your online
   gladiator lit on a stage (mini/avatar + armor, name, class, mind, lifetime CF, wallet, bouts survived), party slots beside them
   (+ Invite, for team events), left rail Play · Lobby Browser · Spectate · Armory & Market · Character · Hall of the Fallen, event
