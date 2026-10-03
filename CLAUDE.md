@@ -656,7 +656,9 @@ One global script; files are concatenated in order. Later "version modules" patc
   (Ranked only), owner history, Whole/Broken + repair ⅓ of price, gear of a gladiator killed by beast/CPU/Fate → back to the market with its
   history; Flavius's Gifts = chest openings earned by play/rank-ups (mostly coin, a CF bonus = extra STARTING CF next Ranked match, offering
   tokens; L1 gear uncommon, L2/L3 rare, famous pieces very rare); named pieces Common 0 / Rare 1 / Epic 2 / Legendary 2 + unique effect;
-  their playlist "Ludi Infames", Veteranus+; start COUNTDOWN 10 s after the host's Start (line-up + what is at stake shown, host ✕ Hold,
+  their playlist "Ludi Infames", Veteranus+; chest pieces can't be bought/sold but HOLD A VALUE = level price × rarity
+  (Common ×1 / Rare ×2 / Epic ×4 / Legendary ×8; L4 base 1500) — shown on the card, in the gear score, stake lines and loot history;
+  repair of a named piece = ⅓ of the BASE price (default; he may pick ⅓ of the full value); start COUNTDOWN 10 s after the host's Start (line-up + what is at stake shown, host ✕ Hold,
   any line-up change cancels). v0.81: Online server box behind a word of power; guests may watch read-only, counted SEPARATELY on the map
   (a different glow colour), may read the Forum, 2 h connection limit; invites have NO timer — they die with the room (start/fill/close);
   playlist borders Democritus bronze-gold / Egidious deep red / Cassian steel blue / Familia olive green; DOMUS REQUIRED before any online
