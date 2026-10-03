@@ -12,7 +12,6 @@
 #                                                           (1st: certificate · 2nd: the address + play/online.json); later server
 #                                                           deploys keep it on by themselves (remembered in ~/.flavius.conf)
 #   bash flavius.sh status                                 what is live: game version, server, sign-in, styles
-#   bash flavius.sh zips                                   the release zips kept in your private bucket (release keeps a copy of each)
 #
 # Everything is uploaded with Cache-Control: no-cache and CloudFront is cleared for exactly the changed paths.
 # Nothing is ever deleted from the bucket. DRY=1 bash flavius.sh … prints the commands instead of running them.
@@ -45,10 +44,6 @@ clear_cdn(){ # clear_cdn <path> [<path> …] — and wait until CloudFront is do
   if [ "${DRY:-}" = 1 ]; then printf '   [dry] aws cloudfront create-invalidation --distribution-id %s --paths %s\n' "$DIST" "$*"; return; fi
   local id; id=$(aws cloudfront create-invalidation --distribution-id "$DIST" --paths "$@" --query Invalidation.Id --output text)
   printf '   waiting (usually under a minute)…\n'; aws cloudfront wait invalidation-completed --distribution-id "$DIST" --id "$id" && ok "CloudFront cleared"; }
-keep_zip(){ # keep_zip <zip> — a copy in a PRIVATE bucket of this account (never the public site), so every release can be found again
-  local acct b; acct=$(aws sts get-caller-identity --query Account --output text 2>/dev/null || true); [ -n "$acct" ] || return 0; b="flavius-releases-$acct"
-  if ! aws s3api head-bucket --bucket "$b" 2>/dev/null; then run aws s3api create-bucket --bucket "$b" >/dev/null && run aws s3api put-public-access-block --bucket "$b" --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true; fi
-  run aws s3 cp "$1" "s3://$b/$(basename "$1")" --only-show-errors && ok "kept a copy: s3://$b/$(basename "$1") (private)"; }
 unpack(){ # unpack <zip> → prints the folder
   local d; d=$(mktemp -d "$HOME/.flavius-XXXX"); unzip -oq "$1" -d "$d"; echo "$d"; }
 
@@ -168,7 +163,6 @@ cmd_release(){ local here; here=$(pwd)
   [ -n "$srv$gam$sit$pri" ] || die "Nothing to release here. Upload the server zip, the game zip, the site zip and/or privacy.html first (Actions → Upload file)."
   say "Release plan"; echo "  1 server : ${srv:-(none uploaded — skipped)}"; echo "  2 game   : ${gam:-(none uploaded — skipped)}"; echo "  3 site   : ${sit:-(none uploaded — skipped)}"; echo "  4 page   : ${pri:-(none uploaded — skipped)}"
   if [ "${DRY:-}" != 1 ]; then read -r -p "Go? [y/N] " ok; case "$ok" in y|Y|yes) ;; *) die "Stopped — nothing changed.";; esac; fi
-  for z in $srv $gam $sit; do keep_zip "$z"; done
   [ -n "$srv" ] && { cmd_server "$srv"; cd "$here"; }
   [ -n "$gam" ] && { cmd_game "$gam"; cd "$here"; }
   [ -n "$sit" ] && { cmd_site "$sit"; cd "$here"; }
@@ -177,6 +171,6 @@ cmd_release(){ local here; here=$(pwd)
 
 CMD="${1:-}"; shift || true
 case "$CMD" in
-  release) cmd_release;; game) cmd_game "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; zips) aws s3 ls "s3://flavius-releases-$(aws sts get-caller-identity --query Account --output text)/" || echo "No zips kept yet.";; server) cmd_server "$@";; status) cmd_status;;
-  *) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//';;
+  release) cmd_release;; game) cmd_game "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; server) cmd_server "$@";; status) cmd_status;;
+  *) sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//';;
 esac
