@@ -8,7 +8,11 @@
 #   bash flavius.sh page   privacy.html                    one file at the site root (or: page file.css some/folder/file.css)
 #   bash flavius.sh server flavius-server-8.zip            the online server (asks for the Google client secret, hidden)
 #   bash flavius.sh online online.json                     play/online.json (the game's server settings)
+#   bash flavius.sh login                                  the own sign-in address login.flaviusrule.com, in two runs 15 min apart
+#                                                           (1st: certificate · 2nd: the address + play/online.json); later server
+#                                                           deploys keep it on by themselves (remembered in ~/.flavius.conf)
 #   bash flavius.sh status                                 what is live: game version, server, sign-in, styles
+#   bash flavius.sh zips                                   the release zips kept in your private bucket (release keeps a copy of each)
 #
 # Everything is uploaded with Cache-Control: no-cache and CloudFront is cleared for exactly the changed paths.
 # Nothing is ever deleted from the bucket. DRY=1 bash flavius.sh … prints the commands instead of running them.
@@ -41,6 +45,10 @@ clear_cdn(){ # clear_cdn <path> [<path> …] — and wait until CloudFront is do
   if [ "${DRY:-}" = 1 ]; then printf '   [dry] aws cloudfront create-invalidation --distribution-id %s --paths %s\n' "$DIST" "$*"; return; fi
   local id; id=$(aws cloudfront create-invalidation --distribution-id "$DIST" --paths "$@" --query Invalidation.Id --output text)
   printf '   waiting (usually under a minute)…\n'; aws cloudfront wait invalidation-completed --distribution-id "$DIST" --id "$id" && ok "CloudFront cleared"; }
+keep_zip(){ # keep_zip <zip> — a copy in a PRIVATE bucket of this account (never the public site), so every release can be found again
+  local acct b; acct=$(aws sts get-caller-identity --query Account --output text 2>/dev/null || true); [ -n "$acct" ] || return 0; b="flavius-releases-$acct"
+  if ! aws s3api head-bucket --bucket "$b" 2>/dev/null; then run aws s3api create-bucket --bucket "$b" >/dev/null && run aws s3api put-public-access-block --bucket "$b" --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true; fi
+  run aws s3 cp "$1" "s3://$b/$(basename "$1")" --only-show-errors && ok "kept a copy: s3://$b/$(basename "$1") (private)"; }
 unpack(){ # unpack <zip> → prints the folder
   local d; d=$(mktemp -d "$HOME/.flavius-XXXX"); unzip -oq "$1" -d "$d"; echo "$d"; }
 
@@ -75,8 +83,31 @@ cmd_server(){ need_zip "${1:-}"; local email=""
   printf 'Paste the Google client SECRET (nothing shows), then Enter: '; local sec; read -r -s sec; echo; sec=$(printf '%s' "$sec" | tr -d '\r\n\t ')
   [ ${#sec} -ge 20 ] || die "That secret is ${#sec} characters — expected about 35. Run again."
   ok "secret read (${#sec} characters)"
-  [ "${DRY:-}" = 1 ] || cd "$HOME/server"; AUTH_DOMAIN="${AUTH_DOMAIN:-none}" GOOGLE_ID="$GOOGLE_ID" GOOGLE_SECRET="$sec" run sh deploy.sh "$email"
+  [ "${DRY:-}" = 1 ] || cd "$HOME/server"; AUTH_DOMAIN="${AUTH_DOMAIN:-${LOGIN_DOMAIN:-none}}" AUTH_STAGE="${AUTH_STAGE:-${LOGIN_STAGE:-cert}}" GOOGLE_ID="$GOOGLE_ID" GOOGLE_SECRET="$sec" run sh deploy.sh "$email"
   unset sec; [ "${DRY:-}" = 1 ] || cmd_status; }
+
+# the own sign-in address: run once → certificate; run again 15+ minutes later → the address goes live and the game switches to it
+conf_set(){ touch "$CONF"; grep -v "^$1=" "$CONF" > "$CONF.tmp" || true; printf '%s=%q\n' "$1" "$2" >> "$CONF.tmp"; mv "$CONF.tmp" "$CONF"; }
+cmd_login(){ local dom="login.flaviusrule.com" zip; [ -f "$CONF" ] && . "$CONF"
+  zip=$(ls -t "$HOME"/flavius-server-*.zip 2>/dev/null | head -1 || true); [ -n "$zip" ] || die "Upload the newest server zip first (Actions → Upload file)."
+  if [ "${LOGIN_STAGE:-}" = live ]; then say "$dom is already set up"; cmd_status; return; fi
+  if [ "${LOGIN_STAGE:-}" != cert ]; then
+    say "Step 1 of 2: the certificate for $dom (with $(basename "$zip"))"
+    AUTH_DOMAIN="$dom" AUTH_STAGE=cert cmd_server "$zip"
+    conf_set LOGIN_DOMAIN "$dom"; conf_set LOGIN_STAGE cert; conf_set LOGIN_CERT_AT "$(date +%s)"
+    ok "Certificate made. Come back in 15 minutes and run:  bash flavius.sh login"; return; fi
+  local wait=$(( ${LOGIN_CERT_AT:-0} + 900 - $(date +%s) ))
+  [ "$wait" -le 0 ] || die "Too soon — CloudFront needs time to see the certificate. Run this again in $(( (wait+59)/60 )) min."
+  say "Step 2 of 2: the sign-in address $dom"
+  AUTH_DOMAIN="$dom" AUTH_STAGE=live cmd_server "$zip"
+  local out; out=$(aws cloudformation describe-stacks --stack-name "$STACK" --query "Stacks[0].Outputs[?OutputKey=='SignInDomain'].OutputValue" --output text 2>/dev/null || true)
+  [ "$out" = "https://$dom" ] || die "The server still reports '$out' as its sign-in address — nothing else changed. Send this to Claude."
+  conf_set LOGIN_STAGE live
+  say "The game now signs in through https://$dom"
+  local oj; oj=$(curl -s -m 10 "$SITE/play/online.json?x=$RANDOM"); [ -n "$oj" ] || die "Could not read play/online.json"
+  printf '%s' "$oj" | python3 -c "import json,sys;j=json.load(sys.stdin);j['auth']='https://$dom';json.dump(j,open('online-login.json','w'),separators=(',',':'))" || die "play/online.json is not valid JSON"
+  cmd_online online-login.json
+  ok "Done. Sign in once to check: Google should now name flaviusrule.com."; }
 
 G(){ printf '  \033[1;32m●\033[0m %-16s %s\n' "$1" "$2"; }   # fine
 Y(){ printf '  \033[1;33m●\033[0m %-16s %s\n' "$1" "$2"; YN=$((YN+1)); }   # worth a look
@@ -137,6 +168,7 @@ cmd_release(){ local here; here=$(pwd)
   [ -n "$srv$gam$sit$pri" ] || die "Nothing to release here. Upload the server zip, the game zip, the site zip and/or privacy.html first (Actions → Upload file)."
   say "Release plan"; echo "  1 server : ${srv:-(none uploaded — skipped)}"; echo "  2 game   : ${gam:-(none uploaded — skipped)}"; echo "  3 site   : ${sit:-(none uploaded — skipped)}"; echo "  4 page   : ${pri:-(none uploaded — skipped)}"
   if [ "${DRY:-}" != 1 ]; then read -r -p "Go? [y/N] " ok; case "$ok" in y|Y|yes) ;; *) die "Stopped — nothing changed.";; esac; fi
+  for z in $srv $gam $sit; do keep_zip "$z"; done
   [ -n "$srv" ] && { cmd_server "$srv"; cd "$here"; }
   [ -n "$gam" ] && { cmd_game "$gam"; cd "$here"; }
   [ -n "$sit" ] && { cmd_site "$sit"; cd "$here"; }
@@ -145,6 +177,6 @@ cmd_release(){ local here; here=$(pwd)
 
 CMD="${1:-}"; shift || true
 case "$CMD" in
-  release) cmd_release;; game) cmd_game "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; server) cmd_server "$@";; status) cmd_status;;
-  *) sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//';;
+  release) cmd_release;; game) cmd_game "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; zips) aws s3 ls "s3://flavius-releases-$(aws sts get-caller-identity --query Account --output text)/" || echo "No zips kept yet.";; server) cmd_server "$@";; status) cmd_status;;
+  *) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//';;
 esac
