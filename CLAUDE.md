@@ -525,6 +525,10 @@ One global script; files are concatenated in order. Later "version modules" patc
 - **v0.76** save hub (▶ Continue + 📜 Saves); Play Now roster chip + seat cards; road lock, sit a week out, infirmary beds; Training Yard
   as fighter cards; Infirmary as a ward; the beast pen; road events, medicus, temple, kitchen/shrine, clauses, Darling, rival letters;
   round rules in the turn panel's ⓘ. (Published as artifact Version 89; his site files page got a one-file "Update to v0.76" button.)
+- **v0.77** the Creator Studio tidied (roster sets as a deck builder, counts, first-make tiles, name pins, grouped spectators,
+  invitational steps), level 4 chest weapons, one armor level, printed pieces as examples, printed class cards; delete asks first;
+  update notice + newer-save guard; menu: Saves beside Settings, no LAN/Continue; Online preview behind LOBBY77 with the AWS stack
+  deployed (us-east-1). (Published as artifact Version 90; site update = play/index.html + play/version.json.)
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
