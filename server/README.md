@@ -59,6 +59,15 @@ The game's regression test `tools/tests/tonlws77.js` plays two windows against t
 - Leaving doesn't save a gladiator: after 3 minutes away a CPU takes the seat and the Fate still applies.
 - Not covered yet: peeking at hidden cards with browser tools (needs the game engine on the server — the bigger option).
 
+## Watching, tickets and parties
+- 👁 Watch: anyone can follow a live match for free (up to 30 watchers). A watcher gets a fresh snapshot from a fighter, then
+  every move as it happens; watchers never move.
+- 🎟 Tickets: sold until the horns (up to 8 per game). A ticket holder sits in the stands as a human spectator and takes the
+  engine's own stands turn each rotation (stones, offerings, change section, chant). The ticket coin goes into the wager pot:
+  winning bets share it; with no winning bet it goes to the winning fighters; a game called off or void refunds every ticket.
+- 👥 Parties: share a 5-letter code (up to 4). The leader picks the game; the whole party sits down together, on one team in
+  team events (Familia 2 v 2).
+
 ## Efficiency notes (why it is cheap)
 - A move = one DynamoDB update (returns the seq and the players' connections) + one small put + one push to each other player.
 - The match record stays small (the 15 KB opening lives in its own item): DynamoDB bills updates by item size.

@@ -26,10 +26,12 @@ function onlmOwner(){if(ONLM.override!=null)return ONLM.override;if(typeof RESPO
   const c=cur();if(c&&!c.cpu)return onlmSeatOf(c);return ONLM.owners.findIndex(Boolean)}
 /* who may act on the board right now: never a CPU's turn (the lowest-human fallback is for windows only) */
 function onlmActor(){if(ONLM.override!=null)return ONLM.override;if(typeof RESPONDER!=='undefined'&&RESPONDER)return onlmSeatOf(RESPONDER);const c=cur();return c&&!c.cpu?onlmSeatOf(c):-1}
-function onlmMine(){return onlmActor()===ONLM.me||(!!CUR_MODAL&&onlmOwner()===ONLM.me)}
+function onlmMine(){if(ONLM.me<0)return false;return onlmActor()===ONLM.me||(!!CUR_MODAL&&onlmOwner()===ONLM.me)}
+/* a decision seat's name: a fighter, or a ticket holder in the stands (seats after the fighters) */
+function onlmName(i){const p=S.players[i];if(p)return p.name;const t=((S.onl&&S.onl.stands)||[])[i-((S.onl&&S.onl.fighters)||S.players.length)];return t?t.name+' (in the stands)':'Another lanista'}
 function onlHash(){try{const x=JSON.stringify([S.turnNo,S.rotation,S.ri,RNG&&RNG.s,S.players.map(p=>[p.r,p.c,p.alive?1:0,p.exited?1:0,Math.round(p.cf||0),p.coin,p.hp,p.ap,p.keys,(p.items||[]).length,p.wR&&p.wR.key,p.wL&&p.wL.key]),(S.npcs||[]).map(n=>[n.t,n.r,n.c,n.hp,n.alive?1:0])]);return 'h'+hashStr(x)}catch(e){return ''}}
 /* ---------------- sending ---------------- */
-function onlmSend(inp){inp.h=onlHash();ONLM.hlog['n'+(ONLM.sent+1)]=inp.k==='modal'?inp.pre:inp.h;inp.seat=ONLM.me;inp.n=++ONLM.sent;NET.req('match.input',{id:S.onl.lobby,in:inp}).then(r=>{if(r&&Number.isInteger(r.seq)&&r.seq>=ONLM.next){ONLM.own.add(r.seq);onlmPump()}}).catch(e=>{if(typeof mToast==='function')mToast('⚠ The server did not take that move: '+esc(e.message))})}
+function onlmSend(inp){inp.h=onlHash();ONLM.hlog['n'+(ONLM.sent+1)]=inp.k==='modal'?inp.pre:inp.h;inp.seat=ONLM.me;inp.n=++ONLM.sent;ONLM.inflight=(ONLM.inflight||0)+1;NET.req('match.input',{id:S.onl.lobby,in:inp}).then(r=>{ONLM.inflight--;if(r&&Number.isInteger(r.seq)&&r.seq>=ONLM.next){ONLM.own.add(r.seq);onlmPump()}}).catch(e=>{ONLM.inflight--;if(typeof mToast==='function')mToast('⚠ The server did not take that move: '+esc(e.message))})}
 /* board clicks */
 {const base=onTile;onTile=function(r,c){if(!onlmOn()||ONLM.replay)return base.apply(this,arguments);if(!onlmMine())return;
   const p=cur();onlmSend({k:'tile',r,c,mode:S.mode,focus:p&&p.focusRoll?1:0});return base.apply(this,arguments)}}
@@ -53,7 +55,7 @@ for(const nm of ['popRule','eventBriefing']){try{const base=eval(nm);if(typeof b
   /* a CPU offering a truce or a trade to a human: declined everywhere (v1) */
   if(c&&c.cpu&&/offers a truce|proposes a trade/.test(t)){const no=(buttons||[]).find(b=>/decline|refuse|no\b|keep/i.test(b.label||''))||(buttons||[]).slice(-1)[0];return Promise.resolve(no?no.value:null)}
   const own=onlmOwner();if(!onlmHuman(own))return base.apply(this,arguments);
-  if(own===ONLM.me){const pre=onlHash();const pr=base.apply(this,arguments);return Promise.resolve(pr).then(v=>{const inp={k:'modal',v:v===undefined?null:v,t:t.slice(0,60)};inp.pre=pre;onlmSend(inp);return v})}
+  if(own===ONLM.me){const pre=onlHash();const pr=base.apply(this,arguments);if(own>=onlmFighters())onlmAutoPass(buttons,opt);return Promise.resolve(pr).then(v=>{const inp={k:'modal',v:v===undefined?null:v,t:t.slice(0,60)};inp.pre=pre;onlmSend(inp);return v})}
   const def=opt&&('close' in opt)?opt.close:((buttons||[]).slice(-1)[0]||{}).value??null;
   return new Promise(res=>{ONLM.pend={res,t,seat:own,at:Date.now(),def};onlmWaitShow();onlmPump()})}}
 /* ---------------- receiving ---------------- */
@@ -81,17 +83,21 @@ async function onlmCatchUp(){if(ONLM.catching)return;ONLM.catching=true;try{cons
 /* own inputs advance the shared counter too (the server echoes them back to everyone) */
 NET.on('match.input',d=>{if(!onlmOn()||!d||d.id!==S.onl.lobby)return;if(d.in.from===ONL.acct.id&&d.in.seq>=ONLM.next){ONLM.own.add(d.in.seq);onlmPump()}});
 /* ---------------- a player away too long: a CPU takes the seat, here, on every client ---------------- */
-function onlmDrop(inp){const p=S.players[inp.seat];if(!p)return;p.cpu=true;ONLM.owners[inp.seat]=null;log(`🔌 <b>${esc(p.name)}</b> left the arena — a CPU fights on in that seat (the Fate still waits).`,'big');
+function onlmDrop(inp){const p=S.players[inp.seat];const sp=!p&&(S.spect||[]).find(s=>s.onlIdx===inp.seat);if(!p&&!sp)return;ONLM.owners[inp.seat]=null;
+  if(sp){sp.human=false;log(`🔌 <b>${esc(sp.name)}</b> left the stands.`)}else{p.cpu=true;log(`🔌 <b>${esc(p.name)}</b> left the arena — a CPU fights on in that seat (the Fate still waits).`,'big')}
   if(inp.seat===ONLM.me){ONLM.me=-1;if(typeof mToast==='function')mToast('🔌 You were away too long — a CPU took your seat. Your gladiator still faces the Fate.')}
   ONLM.replay++;try{if(ONLM.pend){const P=ONLM.pend;ONLM.pend=null;P.res(P.def)}else if(S.phase==='command'){const b=document.createElement('button');b.dataset.act='cmddone';b.style.display='none';document.body.appendChild(b);try{b.click()}finally{b.remove()}}else{endTurn()}}finally{ONLM.replay--}onlmWaitShow()}
 /* waiting on someone for 3 minutes: ask the server to drop them (it only agrees if their connection really is gone) */
-setInterval(()=>{if(!onlmOn())return;const own=ONLM.pend?ONLM.pend.seat:onlmActor();if(!onlmHuman(own)||own===ONLM.me){ONLM.waitSince=0;return}
+setInterval(()=>{if(!onlmOn()||S.onl.watch)return;const own=ONLM.pend?ONLM.pend.seat:onlmActor();if(!onlmHuman(own)||own===ONLM.me){ONLM.waitSince=0;return}
   if(ONLM.pend||!S.busy){if(!ONLM.waitSince||ONLM.waitFor!==own){ONLM.waitSince=Date.now();ONLM.waitFor=own}
     if(Date.now()-ONLM.waitSince>ONLC.AWAY_MS&&Date.now()-(ONLM.dropAt||0)>30000){ONLM.dropAt=Date.now();NET.req('match.drop',{id:S.onl.lobby,seat:own}).catch(()=>{})}}else ONLM.waitSince=0},5000);
 /* ---------------- resync ---------------- */
 function onlmResync(inp){ONLM.resyncs++;ONLM.lastResync={seq:inp.seq,k:inp.k,a:inp.a||inp.t||'',mine:inp.k==='modal'?onlmPendHash():onlHash(),theirs:inp.k==='modal'?inp.pre:inp.h,turn:S.turnNo,phase:S.phase,cur:cur()&&cur().name};ONLM.resyncing=true;ONLM.needAt=inp.seq;if(typeof mToast==='function')mToast('🔄 Out of step with the others — fetching their arena…');
   NET.req('match.snapreq',{id:S.onl.lobby,to:ONLM.owners[inp.seat],seq:inp.seq}).catch(()=>{});setTimeout(()=>{if(ONLM.resyncing){ONLM.resyncing=false;onlmPump()}},15000)}
-NET.on('match.snapreq',d=>{if(!onlmOn()||d.id!==S.onl.lobby||d.to!==ONL.acct.id)return;const send=()=>{if(S.busy||CUR_MODAL){setTimeout(send,150);return}
+/* a snapshot only at a settled point: a human's own decision, nothing resolving, every move so far applied (a freshly loaded
+   client cannot resume a CPU's turn half-way, and must not replay a move this client already made) */
+function onlmSettled(){return !S.busy&&!CUR_MODAL&&!ONLM.pend&&!ONLM.inflight&&!ONLM.own.size&&!ONLM.q.length&&['choice','action','command'].includes(S.phase)&&onlmActor()>=0}
+NET.on('match.snapreq',d=>{if(!onlmOn()||d.id!==S.onl.lobby||d.to!==ONL.acct.id)return;const t0=Date.now();const send=()=>{if(!onlmOn())return;if(!onlmSettled()&&Date.now()-t0<60000){setTimeout(send,150);return}
   NET.req('match.snap',{id:S.onl.lobby,to:d.from,seq:ONLM.next,snap:matchSnapshot('online')}).catch(()=>{})};send()});
 NET.on('match.snap',d=>{if(!S||!S.onl||d.id!==S.onl.lobby||d.to!==ONL.acct.id)return;const keep={...S.onl};onlmLoad(d.snap,keep);ONLM.next=d.seq;ONLM.q=ONLM.q.filter(x=>x.seq>=d.seq);ONLM.pend=null;ONLM.resyncing=false;onlmPump()});
 function onlmLoad(snap,onl){try{matchSlotPut('onl',snap);const ok=matchLoad('onl');matchSlotDel('onl');S.onl={...onl};S.limits=S.limits?{...S.limits,min:0}:S.limits;return ok}catch(e){console.error(e);return false}}
@@ -110,7 +116,7 @@ function onlmWaitShow(){clearTimeout(ONLM.waitT);ONLM.waitT=setTimeout(()=>{let 
   const own=on?(ONLM.pend?ONLM.pend.seat:onlmActor()):-1;const show=on&&onlmHuman(own)&&own!==ONLM.me&&(ONLM.pend||!S.busy);
   document.body.classList.toggle('onl-off',!!(on&&!onlmMine()));
   if(!show){if(el)el.hidden=true;return}if(!el){el=document.createElement('div');el.id='onlWait';document.body.appendChild(el)}
-  const p=S.players[own];el.innerHTML=`⏳ <b>${esc(p?p.name:'Another lanista')}</b> ${ONLM.pend?'is deciding':'is on the move'}…`;el.hidden=false},80)}
+  el.innerHTML=`⏳ <b>${esc(onlmName(own))}</b> ${ONLM.pend?'is deciding':'is on the move'}…`;el.hidden=false},80)}
 function onlmNudge(){const el=document.getElementById('onlWait');if(el){el.classList.remove('nudge');void el.offsetWidth;el.classList.add('nudge')}}
 {const base=render;render=function(){const r=base.apply(this,arguments);if(ONLM.on)onlmWaitShow();return r}}
 {const base=gameOver;gameOver=async function(){const r=await base.apply(this,arguments);if(ONLM.on){ONLM.on=false;onlmWaitShow()}return r}}
@@ -119,3 +125,36 @@ function onlmNudge(){const el=document.getElementById('onlWait');if(el){el.class
 body.onl-off #actions{opacity:.55}`;document.head.appendChild(st)}
 /* words of power stay offline */
 {const base=cheatPrompt;cheatPrompt=function(){if(S&&S.onl&&!S.over){if(typeof mToast==='function')mToast('🔑 Words of power have no voice in the online arena.');return}return base.apply(this,arguments)}}
+
+/* ---------------- the stands: ticket holders ---------------- */
+function onlmFighters(){return (S.onl&&S.onl.fighters)||S.players.length}
+/* a ticket holder who sits on a window too long watches the rotation instead (the others are waiting) */
+function onlmAutoPass(buttons,opt){const m=CUR_MODAL;const v=opt&&('close' in opt)?opt.close:((buttons||[]).slice(-1)[0]||{}).value??null;
+  setTimeout(()=>{if(CUR_MODAL&&CUR_MODAL===m&&onlmOn()){if(typeof mToast==='function')mToast('⏳ The stands moved on — you watch this rotation.');m.done(v)}},45000)}
+/* every ticket holder takes an upkeep in seat order (the engine's own spectator turn, one owner at a time) */
+{const base=humanSpectatorTurn;humanSpectatorTurn=async function(me){if(!onlmOn())return base.apply(this,arguments);
+  for(const s of (S.spect||[]).filter(x=>x.human&&!x.gone&&x.onlIdx!=null)){if(!S||S.over)return;const prev=ONLM.override;ONLM.override=s.onlIdx;ONLM.specName=s.onlIdx===ONLM.me?null:s.name;
+    try{await base.call(this,s)}finally{ONLM.override=prev;ONLM.specName=null}}}}
+/* the engine words a human spectator as "you": on the other screens, name them */
+{const base=log;log=function(h,c){if(ONLM.specName&&typeof h==='string'){const n=`<b>${esc(ONLM.specName)}</b>`;
+  h=h.replace(/\bYou hurl\b/g,n+' hurls').replace(/\bYou throw\b/g,n+' throws').replace(/\bYou move\b/g,n+' moves').replace(/\bYou cheer\b/g,n+' cheers').replace(/\bYour stone\b/g,n+'’s stone').replace(/\bYou collect\b/g,n+' collects').replace(/\byour chant\b/g,n+'’s chant')}
+  return base.call(this,h,c)}}
+/* ---------------- 👁 watching a live match (read-only) ---------------- */
+async function onlWatch(L){const r=await NET.req('match.watch',{id:L.id});const lob=r.lobby||L;const seats=onlSeatsFor(lob);
+  const onl={lobby:lob.id,ranked:!!lob.ranked,seat:-1,owners:onlOwnersFor(lob,seats),host:false,watch:true,opened:true,stands:(lob.stands||[]).map(t=>({id:t.id,name:t.name})),fighters:lob.seats,team:!!lob.team};
+  ONL.live=null;ONL.watching={id:lob.id,onl,buf:[],at:Date.now()};if(CUR_MODAL)CUR_MODAL.done('watch');
+  if(typeof mToast==='function')mToast(`👁 Taking a seat to watch ${esc(onlEvName(lob.ev))}…`);
+  /* a fresh snapshot from a fighter (or a ticket holder) is quicker than replaying the whole bout */
+  const ask=(r.players||[]).concat(r.specs||[]);let k=0;const tryOne=()=>{const W=ONL.watching;if(!W||W.id!==lob.id||W.done)return;if(k>=ask.length){onlWatchReplay(lob.id);return}
+    NET.req('match.snapreq',{id:lob.id,to:ask[k++],seq:0}).catch(()=>{});setTimeout(tryOne,7000)};tryOne()}
+/* nobody answered: start from the opening and replay every move */
+async function onlWatchReplay(id){const W=ONL.watching;if(!W||W.id!==id||W.done)return;let g=null;try{g=await NET.req('match.get',{id,from:0})}catch(e){}
+  if(!g||!g.open){if(typeof mToast==='function')mToast('⚠ That match has not opened yet — try again in a moment.');ONL.watching=null;return}
+  W.done=true;onlmLoad(g.open,W.onl);onlmWatchOn(0,(g.inputs||[]).concat(W.buf));try{if(typeof menuHide==='function')menuHide()}catch(e){}S.startedAt=Date.now();later(()=>beginTurn(),60)}
+function onlmWatchOn(next,ins){ONLM.on=true;ONLM.me=-1;ONLM.owners=S.onl.owners;ONLM.next=next;ONLM.q=[];ONLM.pend=null;ONLM.sent=0;ONLM.own=new Set();ONLM.resyncing=false;
+  for(const inp of ins)if(inp.seq>=next&&!ONLM.q.some(x=>x.seq===inp.seq))ONLM.q.push(inp);ONLM.q.sort((a,b)=>a.seq-b.seq);onlmWaitShow();setTimeout(onlmPump,200)}
+NET.on('match.snap',d=>{const W=ONL.watching;if(!W||W.done||!d||d.id!==W.id||d.to!==ONL.acct.id)return;W.done=true;onlmLoad(d.snap,W.onl);onlmWatchOn(d.seq,W.buf);
+  try{if(typeof menuHide==='function')menuHide()}catch(e){}log('👁 You are watching from the free stands.','big');render()});
+/* moves that arrive before the snapshot are kept for it */
+NET.on('match.input',d=>{const W=ONL.watching;if(W&&!W.done&&d&&d.id===W.id&&d.in)W.buf.push(d.in)});
+{const base=gameOver;gameOver=async function(){const w=S&&S.onl&&S.onl.watch;const r=await base.apply(this,arguments);if(w&&ONL.watching){NET.req('match.unwatch',{id:ONL.watching.id}).catch(()=>{});ONL.watching=null}return r}}

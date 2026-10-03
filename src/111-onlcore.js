@@ -17,9 +17,12 @@
      (25+ ranked bouts survived, 500+ lifetime CF, or Commodus slain). Everyone else is erased (damnatio memoriae).
    ===================================================================== */
 const ONLC=(function(){
-  const VER=1; /* protocol version: the server refuses clients on another one */
+  const VER=2; /* protocol version: the server refuses clients on another one */
   const CLASSES8=['soldier','royalty','hero','slave','veteranus','amazonia','venatore','damnatio'];
   const EVENTS3=['democritus','egidious','cassian'];
+  const EVENTS_TEAM=['familia']; /* team events: 4 seats, Team A (seats 0-1 by default) vs Team B; a party sits on one team */
+  const EVENTS_ALL=EVENTS3.concat(EVENTS_TEAM);
+  const STANDS_MAX=8, PARTY_MAX=4;
   const RANKS=[
     {k:'tiro',n:'Tiro',bouts:0,cf:0,mkt:1,ic:'🪵'},
     {k:'gregarius',n:'Gregarius',bouts:6,cf:90,mkt:2,ic:'🛡'},
@@ -70,21 +73,44 @@ const ONLC=(function(){
   function hallWhy(ch){const R=RANKS[rankIdx(ch.died&&ch.died.rank||ch.rank)];if(rankIdx(R.k)>=2)return R.n;if((ch.feats||[]).includes('slew:commodus'))return 'Slew Commodus';if((ch.survived||0)>=25)return `${ch.survived} bouts survived`;return `${ch.lifeCF} lifetime CF`}
   function hallWorthy(ch){return rankIdx(ch.died&&ch.died.rank||ch.rank)>=2||(ch.survived||0)>=25||(ch.lifeCF||0)>=500||(ch.feats||[]).includes('slew:commodus')}
   /* lobbies */
-  function newLobby(spec,host,id,now){const ev=EVENTS3.includes(spec.ev)?spec.ev:'democritus';const seats=Math.max(2,Math.min(4,spec.seats|0||4));
-    return {id,host:{id:host.id,name:host.name,char:host.char||null},ev,loc:Math.max(1,Math.min(12,spec.loc|0||6)),ranked:!!spec.ranked,rank:spec.ranked?(host.rank||'tiro'):null,
-      seats,players:[{id:host.id,name:host.name,char:host.char||null,rank:host.rank||'tiro',kit:host.kit||null,ready:false}],watchers:0,tickets:0,ticket:Math.max(0,Math.min(50,spec.ticket|0)),
+  /* a lobby; the host's whole party sits down with them (seatGroup). Team events: L.team, every player carries team 'A' or 'B'. */
+  function newLobby(spec,host,id,now){const ev=EVENTS_ALL.includes(spec.ev)?spec.ev:'democritus';const team=EVENTS_TEAM.includes(ev);const seats=team?4:Math.max(2,Math.min(4,spec.seats|0||4));
+    return {id,host:{id:host.id,name:host.name,char:host.char||null},ev,team,loc:Math.max(1,Math.min(12,spec.loc|0||6)),ranked:!!spec.ranked,rank:spec.ranked?(host.rank||'tiro'):null,
+      seats,players:[],stands:[],watchers:0,tickets:0,pot:0,ticket:Math.max(0,Math.min(50,spec.ticket|0)),
       status:'waiting',created:now,seed:null,v:VER}}
-  function canJoin(L,who){if(L.status!=='waiting')return 'Already under way.';if(L.players.length>=L.seats)return 'Full.';if(L.players.some(p=>p.id===who.id))return '';
+  function canJoin(L,who){if(L.status!=='waiting')return 'Already under way.';if(L.players.some(p=>p.id===who.id))return '';if(L.players.length>=L.seats)return 'Full.';
     if(L.ranked&&(who.rank||'tiro')!==L.rank)return `Ranked: ${(RANKS[rankIdx(L.rank)]||RANKS[0]).n} only.`;if(L.ranked&&!who.char)return 'Ranked needs a living gladiator.';return ''}
+  /* seat a group (a lone lanista or a party) together. whos = [{id,name,char,rank,kit}]. Team events put the group on one team.
+     Returns '' and changes L, or a reason (L untouched). */
+  function seatGroup(L,whos){const fresh=whos.filter(w=>!L.players.some(p=>p.id===w.id));if(!fresh.length)return '';
+    for(const w of fresh){const why=canJoin(L,w);if(why)return whos.length>1?`${w.name}: ${why}`:why}
+    if(L.players.length+fresh.length>L.seats)return whos.length>1?`No room for a party of ${whos.length}.`:'Full.';
+    let team=null;if(L.team){const n=t=>L.players.filter(p=>p.team===t).length;const mates=L.players.find(p=>whos.some(w=>w.id===p.id));
+      team=mates?mates.team:['A','B'].find(t=>n(t)+fresh.length<=L.seats/2);if(!team||n(team)+fresh.length>L.seats/2)return 'No team has room for you all.'}
+    for(const w of fresh)L.players.push({id:w.id,name:w.name,char:w.char||null,rank:w.rank||'tiro',kit:w.kit||null,ready:false,...(team?{team}:{}),...(w.party?{party:w.party}:{})});
+    for(const w of fresh)L.stands=(L.stands||[]).filter(s=>s.id!==w.id);return ''}
+  /* a seat in the stands: bought before the horns, never by a fighter of this game; the price goes into the wager pot */
+  function ticketOK(L,who,wallet){if(!L.ticket)return 'This game sells no tickets.';if(L.status!=='waiting')return 'Tickets are sold until the horns.';
+    if(L.players.some(p=>p.id===who))return 'Fighters take the sand, not the stands.';if((L.stands||[]).some(s=>s.id===who))return 'You already hold a ticket.';
+    if((L.stands||[]).length>=STANDS_MAX)return 'The stands are sold out.';if((wallet|0)<L.ticket)return `A ticket costs ${L.ticket} coin.`;return ''}
+  /* the seat order every client uses: fighters 0..seats-1 (empty seats are CPUs), then the ticket holders.
+     Team events: players keep their team, CPUs fill the short team. */
+  function seatTeams(L){if(!L.team)return null;const t=[];const n={A:0,B:0};L.players.forEach((p,i)=>{t[i]=p.team||'A';n[t[i]]++});for(let i=L.players.length;i<L.seats;i++){const k=n.A<=n.B?'A':'B';t[i]=k;n[k]++}return t}
+  function partyCode(r){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<5;i++)s+=A[Math.floor(r()*A.length)%A.length];return s}
   /* wagers: online wallets only. A bet backs one seat; fighters may back only themselves; bets close when the match starts.
      settle(pool,winnerSeats) → {payouts:{bettor:coin}, cut} — the pool is split among winning bets by stake, 5% to the host. */
   const WAGER={min:1,max:500,cut:0.05};
   function betOK(L,who,seat,amt,wallet){if(L.status!=='waiting')return 'Bets close when the match starts.';if(!Number.isInteger(amt)||amt<WAGER.min||amt>WAGER.max)return `Stake ${WAGER.min}–${WAGER.max} coin.`;
     if(amt>(wallet|0))return 'Not enough in the wallet.';if(!Number.isInteger(seat)||seat<0||seat>=L.seats)return 'Back a seat.';
     const mine=L.players.findIndex(p=>p.id===who);if(mine>=0&&seat!==mine)return 'A fighter may only back themselves.';return ''}
-  function settle(bets,winSeats){const pool=bets.reduce((a,b)=>a+b.amt,0);const cut=Math.floor(pool*WAGER.cut);const won=bets.filter(b=>winSeats.includes(b.seat));const wsum=won.reduce((a,b)=>a+b.amt,0);const pay={};
-    if(!wsum){for(const b of bets)pay[b.by]=(pay[b.by]||0)+b.amt;return {payouts:pay,cut:0,refund:true}}
-    let left=pool-cut;for(const b of won){const v=Math.floor((pool-cut)*b.amt/wsum);pay[b.by]=(pay[b.by]||0)+v;left-=v}return {payouts:pay,cut:cut+left,refund:false}}
+  /* x = {pot (ticket coin), tix:[{by,amt}], seatAcct:{seat:acct}, void}. The ticket pot joins the pool of the winning bets;
+     with no winning bet it goes to the winning fighters; a void match (or no winner) refunds bets and tickets. */
+  function settle(bets,winSeats,x){x=x||{};const pot=x.pot|0;const pool=bets.reduce((a,b)=>a+b.amt,0);const pay={};const add=(k,v)=>{if(k&&v>0)pay[k]=(pay[k]||0)+v};
+    if(x.void||!winSeats.length){for(const b of bets)add(b.by,b.amt);for(const t of x.tix||[])add(t.by,t.amt);return {payouts:pay,cut:0,refund:true}}
+    const won=bets.filter(b=>winSeats.includes(b.seat));const wsum=won.reduce((a,b)=>a+b.amt,0);
+    if(!wsum){for(const b of bets)add(b.by,b.amt);const ws=winSeats.map(s=>(x.seatAcct||{})[s]).filter(a=>a&&!/^bot/.test(a));let left=pot;
+      for(const a of ws){const v=Math.floor(pot/ws.length);add(a,v);left-=v}return {payouts:pay,cut:left,refund:true}}
+    const all=pool+pot;const cut=Math.floor(all*WAGER.cut);let left=all-cut;for(const b of won){const v=Math.floor((all-cut)*b.amt/wsum);add(b.by,v);left-=v}return {payouts:pay,cut:cut+left,refund:false}}
   /* ANTI-CHEAT — results by agreement. Every human reports the WHOLE results table (one row per seat) + an end hash.
      agree(reports) → {table, void, minority:[acct…], unverified}: the table most reports share wins when it has a strict majority;
      a lone human (the rest CPUs) is accepted but unverified; no majority (e.g. 2 humans disagree) → void: no pay, no deaths. */
@@ -100,5 +126,5 @@ const ONLC=(function(){
   /* weekly challenges rotate with the week of the year */
   const CHALLENGES=[['Survive 3 ranked bouts',3,'survived'],['Earn 60 CF in one bout',60,'cf1'],['Win a bout at Capua',1,'win:3'],['Slay 5 beasts',5,'beasts'],['Finish 5 bouts',5,'bouts'],['Win with 20+ coin left',1,'rich']];
   function weekChallenges(t){const wk=Math.floor((t||0)/604800000);const out=[];for(let i=0;i<3;i++)out.push(CHALLENGES[(wk+i*2)%CHALLENGES.length]);return out}
-  return {VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,PURSE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
+  return {EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,PURSE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

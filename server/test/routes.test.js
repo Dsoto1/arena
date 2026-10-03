@@ -59,6 +59,35 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   const r5=await route('match.result',{id:L5.id,table:[{seat:0,won:true,survives:true},{seat:1,won:false,survives:true}],hash:'z'},A);assert.ok(!r5.pending,'a dropped player is not waited for');assert.ok(r5.out&&!r5.out.died);
   /* a Veteranus who falls is remembered */
   const v=C.newChar({name:'Old Crixus',cls:'veteranus'},'dev-a','gv',t);v.survived=20;v.lifeCF=320;v.rank='veteranus';const o=C.applyResult(v,{won:false,place:3,f:10,survives:false},true);assert.ok(o.hall);
+  /* parties + team events: a party of two sits on one team; only the leader picks the game */
+  const Cc={acct:'dev-c'},Dd={acct:'dev-d'};await route('auth.signin',{name:'Gamma'},Cc);await route('auth.signin',{name:'Delta'},Dd);
+  const cc=await route('char.create',{name:'Gamma Rex',cls:'amazonia'},Cc);const cd=await route('char.create',{name:'Delta Pax',cls:'venatore'},Dd);
+  const Pt=await route('party.create',{},Cc);assert.strictEqual(Pt.code.length,5);await route('party.join',{code:Pt.code.toLowerCase()},Dd);
+  await assert.rejects(route('lobby.create',{ev:'familia',loc:5,ranked:false},Dd),/leader picks/);
+  const F=await route('lobby.create',{ev:'familia',loc:5,ranked:false,ticket:5},Cc);assert.ok(F.team);assert.strictEqual(F.seats,4);
+  assert.deepStrictEqual(F.players.map(p=>[p.id,p.team]),[['dev-c','A'],['dev-d','A']],'the party fights on one team');
+  const ga=await route('char.create',{name:'Alpha Third',cls:'royalty'},A).catch(()=>null);
+  await route('lobby.join',{id:F.id},B);assert.strictEqual((await db.get('LOBBY#'+F.id,'LOBBY')).players.find(p=>p.id==='dev-b').team,'B');
+  /* tickets: before the horns only, never for a fighter; the coin goes into the pot */
+  let chA=(await route('char.mine',{},A)).find(c=>c.alive);chA.wallet=20;await db.put('CHAR#'+chA.id,'CHAR',{...chA,GSI1PK:'OWNER#dev-a',GSI1SK:chA.born});
+  await assert.rejects(route('lobby.ticket',{id:F.id},B),/Fighters take the sand/);
+  const tk=await route('lobby.ticket',{id:F.id},A);assert.strictEqual(tk.char.wallet,15);assert.strictEqual(tk.lobby.pot,5);assert.strictEqual(tk.lobby.stands[0].id,'dev-a');
+  await route('lobby.start',{id:F.id},Cc);await assert.rejects(route('lobby.ticket',{id:F.id},A),/until the horns/);
+  const MF=await db.get('MATCH#'+F.id,'META');assert.strictEqual(MF.seats['dev-a'],4,'the ticket holder sits after the four fighters');assert.ok(!MF.players.includes('dev-a'));
+  await route('match.open',{id:F.id,snap:{S:'{}',rng:1}},Cc);
+  const sp=await route('match.input',{id:F.id,in:{k:'modal',v:'pass',seat:4}},A);assert.ok(Number.isInteger(sp.seq),'a ticket holder decides their own upkeep');
+  /* 👁 watching: a stranger hears every move */
+  const Ee={acct:'dev-e'};await route('auth.signin',{name:'Epsilon'},Ee);const wt=await route('match.watch',{id:F.id},{...Ee,conn:'cE'});assert.deepStrictEqual(wt.players.sort(),['dev-b','dev-c','dev-d']);
+  pushed.length=0;await route('match.input',{id:F.id,in:{k:'act',a:'end',seat:0}},Cc);assert.ok(pushed.some(([a,ty])=>a==='dev-e'&&ty==='match.input'),'the watcher hears the move');
+  await assert.rejects(route('match.input',{id:F.id,in:{k:'act',a:'end',seat:0}},Ee),/Not your match/,'a watcher cannot move');
+  /* team A wins: the pot (no bets) goes to the winning fighters */
+  const ft=[{seat:0,won:true,survives:true},{seat:1,won:true,survives:true},{seat:2,won:false,survives:true},{seat:3,won:false,survives:true}];
+  const wc0=(await db.get('CHAR#'+cc.id,'CHAR')).wallet;for(const X of [Cc,Dd,B])await route('match.result',{id:F.id,table:ft,hash:'f'},X);
+  const wc1=(await db.get('CHAR#'+cc.id,'CHAR')).wallet;assert.ok(wc1>=wc0+2,'the ticket pot is split by the winning team');
+  await route('party.leave',{},Dd);assert.deepStrictEqual((await route('party.get',{},Cc)).members,['dev-c']);
+  /* settle: winning bets share bets + pot; void refunds bets and tickets */
+  const st=C.settle([{by:'x',seat:0,amt:10},{by:'y',seat:1,amt:10}],[0],{pot:20});assert.strictEqual(st.payouts.x,38);
+  const sv=C.settle([{by:'x',seat:0,amt:10}],[0],{pot:5,tix:[{by:'t',amt:5}],void:true});assert.deepStrictEqual(sv.payouts,{x:10,t:5});
   /* JWT: a token signed by the pool's key passes; a forged one does not */
   const {privateKey,publicKey}=crypto.generateKeyPairSync('rsa',{modulusLength:2048});const jwk={...publicKey.export({format:'jwk'}),kid:'k1',alg:'RS256'};
   const enc=o=>Buffer.from(JSON.stringify(o)).toString('base64url');const mk=(body,key=privateKey)=>{const h=enc({alg:'RS256',kid:'k1'}),b=enc(body);return h+'.'+b+'.'+crypto.sign('RSA-SHA256',Buffer.from(h+'.'+b),key).toString('base64url')};
