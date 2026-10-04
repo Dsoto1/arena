@@ -1,0 +1,1405 @@
+From ad4feef065c7df86ca8bd833fa177a0e7dd9e096 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 3 Oct 2026 23:33:47 +0000
+Subject: [PATCH] v0.82 online server: Domus, coin rework, prices by AP,
+ guests, invites that die with the room, stands group turn (protocol 5)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01BLtNGuDrMd265uhsDUPs5S
+---
+ server/src/catalog.json       | 119 ++++++++++++++++-----
+ server/src/index.js           |  17 ++-
+ server/src/onlcore.js         |  77 +++++++++-----
+ server/src/routes.js          | 175 +++++++++++++++++++++++++-----
+ server/src/store.js           |  12 +++
+ server/test/localws.js        |   2 +-
+ server/test/routes.test.js    | 193 +++++++++++++++++++++++++++++++---
+ src/111-onlcore.js            |  77 +++++++++-----
+ tools/plans/onl82-contract.md | 113 ++++++++++++++++++++
+ 9 files changed, 664 insertions(+), 121 deletions(-)
+ create mode 100644 tools/plans/onl82-contract.md
+
+diff --git a/server/src/catalog.json b/server/src/catalog.json
+index 19224ae..70802f2 100644
+--- a/server/src/catalog.json
++++ b/server/src/catalog.json
+@@ -48,37 +48,64 @@
+   "kind": "a",
+   "lv": 1,
+   "n": "Iron Helm",
+-  "stack": false
++  "stack": false,
++  "ap": 2
+  },
+  "pectorale": {
+   "kind": "a",
+   "lv": 1,
+   "n": "Bronze Chest Armor",
+-  "stack": false
++  "stack": false,
++  "ap": 3
+  },
+  "balteus": {
+   "kind": "a",
+   "lv": 1,
+   "n": "Leather Gladiator Belt II",
+-  "stack": true
++  "stack": true,
++  "ap": 2
+  },
+  "wraps": {
+   "kind": "a",
+   "lv": 1,
+   "n": "Padded Arm Armor",
+-  "stack": true
++  "stack": true,
++  "ap": 2
+  },
+  "legwrapsU": {
+   "kind": "a",
+   "lv": 1,
+   "n": "Leather Tasset Armor",
+-  "stack": true
++  "stack": true,
++  "ap": 2
+  },
+  "legwraps": {
+   "kind": "a",
+   "lv": 1,
+   "n": "Padded Leg Armor",
+-  "stack": true
++  "stack": true,
++  "ap": 2
++ },
++ "steelhelm": {
++  "kind": "a",
++  "lv": 1,
++  "n": "Steel Helm",
++  "stack": false,
++  "ap": 2
++ },
++ "balteus1": {
++  "kind": "a",
++  "lv": 1,
++  "n": "Leather Gladiator Belt I",
++  "stack": true,
++  "ap": 2
++ },
++ "lgreaves": {
++  "kind": "a",
++  "lv": 1,
++  "n": "Leather Greaves",
++  "stack": false,
++  "ap": 3
+  },
+  "axe": {
+   "kind": "w",
+@@ -119,61 +146,92 @@
+   "kind": "a",
+   "lv": 2,
+   "n": "Horned Helm",
+-  "stack": false
++  "stack": false,
++  "ap": 3
+  },
+  "crista": {
+   "kind": "a",
+   "lv": 2,
+   "n": "Hoplomachus Helm",
+-  "stack": false
++  "stack": false,
++  "ap": 3
+  },
+  "murmillo": {
+   "kind": "a",
+   "lv": 2,
+   "n": "Steel Gated Helm",
+-  "stack": false
++  "stack": false,
++  "ap": 4
+  },
+  "lorica": {
+   "kind": "a",
+   "lv": 2,
+   "n": "Scaled Chest Armor",
+-  "stack": false
++  "stack": false,
++  "ap": 4
+  },
+  "manica": {
+   "kind": "a",
+   "lv": 2,
+   "n": "Galerus",
+-  "stack": false
++  "stack": false,
++  "ap": 3
+  },
+- "spaulder": {
++ "provmanica": {
+   "kind": "a",
+   "lv": 2,
+   "n": "Manica",
+-  "stack": false
++  "stack": false,
++  "ap": 3
+  },
+  "cestus": {
+   "kind": "a",
+   "lv": 2,
+   "n": "Cestus",
+-  "stack": false
++  "stack": false,
++  "ap": 2
+  },
+  "femoralia": {
+   "kind": "a",
+   "lv": 2,
+   "n": "Iron Tasset Armor",
+-  "stack": false
++  "stack": false,
++  "ap": 3
+  },
+  "ocrea": {
+   "kind": "a",
+   "lv": 2,
+   "n": "Greaves",
+-  "stack": false
++  "stack": false,
++  "ap": 4
+  },
+  "greaves": {
+   "kind": "a",
+   "lv": 2,
+   "n": "Flavius' Greaves",
+-  "stack": false
++  "stack": false,
++  "ap": 3
++ },
++ "centurion": {
++  "kind": "a",
++  "lv": 2,
++  "n": "Centurian Helm",
++  "stack": false,
++  "ap": 3
++ },
++ "ornate": {
++  "kind": "a",
++  "lv": 2,
++  "n": "Ornate Chest Armor",
++  "stack": false,
++  "ap": 4
++ },
++ "thrachelm": {
++  "kind": "a",
++  "lv": 2,
++  "n": "Thracian Helm",
++  "stack": false,
++  "ap": 4
+  },
+  "arcu": {
+   "kind": "w",
+@@ -209,54 +267,63 @@
+   "kind": "a",
+   "lv": 3,
+   "n": "Helm of Flavius",
+-  "stack": false
++  "stack": false,
++  "ap": 5
+  },
+  "helm5": {
+   "kind": "a",
+   "lv": 3,
+   "n": "Steel Dome Helm",
+-  "stack": false
++  "stack": false,
++  "ap": 5
+  },
+  "musculata": {
+   "kind": "a",
+   "lv": 3,
+   "n": "Forged Chest Armor",
+-  "stack": false
++  "stack": false,
++  "ap": 5
+  },
+  "amazon": {
+   "kind": "a",
+   "lv": 3,
+   "n": "Plated Chest Armor",
+-  "stack": false
++  "stack": false,
++  "ap": 5
+  },
+  "thorax": {
+   "kind": "a",
+   "lv": 3,
+   "n": "Reinforced Chest Armor",
+-  "stack": false
++  "stack": false,
++  "ap": 7
+  },
+  "galerus": {
+   "kind": "a",
+   "lv": 3,
+   "n": "Lorica Segmentata",
+-  "stack": false
++  "stack": false,
++  "ap": 4
+  },
+  "bracers": {
+   "kind": "a",
+   "lv": 3,
+   "n": "Flavius' Bracers",
+-  "stack": false
++  "stack": false,
++  "ap": 3
+  },
+  "thighplate": {
+   "kind": "a",
+   "lv": 3,
+   "n": "Tasset Armor",
+-  "stack": false
++  "stack": false,
++  "ap": 4
+  },
+  "cnemis": {
+   "kind": "a",
+   "lv": 3,
+   "n": "Steel Greaves",
+-  "stack": false
++  "stack": false,
++  "ap": 5
+  }
+ }
+\ No newline at end of file
+diff --git a/server/src/index.js b/server/src/index.js
+index b8ce03f..2879453 100644
+--- a/server/src/index.js
++++ b/server/src/index.js
+@@ -4,7 +4,9 @@
+    ?dev=<any id> and the 'auth.signin' request, like the game's mock server.
+    makeHandler({db, send, dev, verifyCfg, now, hereMs}) builds the same handler for local runs (server/test/localws.js).
+    v0.80 presence: $connect (and a dev sign-in) marks the ACCT item GSI1PK 'ON'; $disconnect and a gone push clear it only when
+-   the closing socket is still the account's (store.clearConn), so a newer connection is never clobbered. */
++   the closing socket is still the account's (store.clearConn), so a newer connection is never clobbered.
++   v0.82 (protocol 5): ?guest=<client id>&ver=5 opens a read-only GUEST connection (no sign-in; GUEST#<gid> item, presence 'GON'),
++   refused with 403 once 2 hours have passed since that guest id first connected (the item lives a day). Refusals carry `code` (+ extras). */
+ 'use strict';
+ const {makeRoutes,reconnect,away,online}=require('./routes.js');const C=require('./onlcore.js');const {verify}=require('./jwt.js');const store=require('./store.js');
+ const catalog=require('./catalog.json');
+@@ -12,20 +14,25 @@ function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),h
+   /* a push to a known connection: true when the socket is gone (then the account's presence is cleared) */
+   /* a push that finds the socket gone clears presence AND marks the lanista away in a live match (their $disconnect may come later and find
+      nothing left to clear) — so the others can drop the seat after AWAY_MS */
+-  const pushConn=async(conn,t,d,acct)=>{const gone=await send(conn,{push:t,d});if(gone&&acct&&await db.clearConn(acct,conn,now()))await away(db,acct,now());return gone};
++  const pushConn=async(conn,t,d,acct)=>{const gone=await send(conn,{push:t,d});if(gone&&acct){if(/^guest-/.test(acct))await db.clearGuest(acct,conn);else if(await db.clearConn(acct,conn,now()))await away(db,acct,now())}return gone};
+   const route=makeRoutes({store:db,catalog,dev,now,hereMs,pushConn,push:async(acct,t,d)=>{const a=await db.get('ACCT#'+acct,'PROFILE');if(a&&a.conn)await pushConn(a.conn,t,d,acct)}});
+   return async ev=>{const rc=ev.requestContext||{};const conn=rc.connectionId;
+     if(rc.routeKey==='$connect'){const q=ev.queryStringParameters||{};if(String(q.ver)!==String(C.VER))return {statusCode:426,body:'Please reload: a new version is out.'};
++      /* v0.82 a guest: looks only, 2 hours from the first connect of that guest id */
++      if(q.guest&&!q.token&&!(dev&&q.dev)){const gid='guest-'+String(q.guest).replace(/[^a-z0-9_-]/gi,'').slice(0,40);if(gid.length<14)return {statusCode:401,body:'Sign in again.'};
++        const G=await db.get('GUEST#'+gid,'GUEST');const t=now();const first=G&&G.first||t;if(t-first>C.GUEST_MS)return {statusCode:403,body:'Your two hours as a guest are up — sign in to keep watching.'};
++        await db.put('GUEST#'+gid,'GUEST',{id:gid,first,conn,tz:(G&&G.tz)||'',GSI1PK:'GON',GSI1SK:t,ttl:Math.floor(first/1000)+86400});
++        await db.put('CONN#'+conn,'CONN',{guest:gid,first,ttl:Math.floor(t/1000)+86400});return {statusCode:200}}
+       let sub,name;try{if(dev&&q.dev){sub='dev-'+String(q.dev).replace(/[^a-z0-9_-]/gi,'').slice(0,40);name=null}else{const b=await verifyFn(q.token,verifyCfg);sub=b.sub;name=b.name||b.given_name||String(b.email||'').split('@')[0]}}
+       catch(e){return {statusCode:401,body:'Sign in again.'}}
+       const a=(await db.get('ACCT#'+sub,'PROFILE'))||(name||!dev?{id:sub,name:C.cleanName(name||'Lanista')||'Lanista',since:now()}:null);
+       if(a){a.conn=conn;a.GSI1PK='ON';a.GSI1SK=now();await db.put('ACCT#'+sub,'PROFILE',a);await reconnect(db,sub,conn)}
+       await db.put('CONN#'+conn,'CONN',{acct:sub,ttl:Math.floor(now()/1000)+86400});return {statusCode:200}}
+-    if(rc.routeKey==='$disconnect'){const c=await db.get('CONN#'+conn,'CONN');await db.del('CONN#'+conn,'CONN');if(c&&c.acct&&await db.clearConn(c.acct,conn,now()))await away(db,c.acct,now());return {statusCode:200}}
++    if(rc.routeKey==='$disconnect'){const c=await db.get('CONN#'+conn,'CONN');await db.del('CONN#'+conn,'CONN');if(c&&c.guest)await db.clearGuest(c.guest,conn);if(c&&c.acct&&await db.clearConn(c.acct,conn,now()))await away(db,c.acct,now());return {statusCode:200}}
+     let m;try{m=JSON.parse(ev.body||'{}')}catch(e){return {statusCode:400}}
+-    const c=await db.get('CONN#'+conn,'CONN');const ctx={acct:c&&c.acct,conn};
++    const c=await db.get('CONN#'+conn,'CONN');const ctx={acct:c&&c.acct,conn,...(c&&c.guest?{guest:{id:c.guest,first:c.first}}:{})};
+     try{const out=await route(m.t,m.d,ctx);if(m.t==='auth.signin'&&out&&out.id)await online(db,out.id,conn,now());
+-      await send(conn,{re:m.id,ok:true,d:out})}catch(e){await send(conn,{re:m.id,ok:false,err:String(e.message||e).slice(0,200)})}
++      await send(conn,{re:m.id,ok:true,d:out})}catch(e){await send(conn,{...(e.extra||{}),re:m.id,ok:false,err:String(e.message||e).slice(0,200),...(e.code?{code:e.code}:{})})}
+     return {statusCode:200}}}
+ /* AWS: DynamoDB + the API Gateway management API */
+ let LIVE=null;
+diff --git a/server/src/onlcore.js b/server/src/onlcore.js
+index b375fe0..b7969a9 100644
+--- a/server/src/onlcore.js
++++ b/server/src/onlcore.js
+@@ -6,8 +6,14 @@
+    • Ranks: Tiro → Gregarius → Veteranus → Primus Palus → Summa Rudis, earned by ranked bouts survived AND lifetime CF.
+      Ranked matchmaking pairs equal ranks only. Each rank opens one more market level (Tiro: level 1 only).
+    • A new online gladiator: one of the 8 printed classes, the same low ratings for everyone (55 each — they grow by
+-     surviving), the recruit kit (the class's weapons, no armor), an empty wallet. Coin earned in matches goes to the wallet; gear is bought between matches.
+-   • Prices 15 / 60 / 180 by market level; purses grow +10% per ranked bout survived in a row (streak, up to +100%).
++     surviving), the recruit kit (the class's weapons, no armor), an empty wallet. Surviving Ranked bouts pays the wallet (AWARD); gear is bought between matches.
++   • v0.82 (protocol 5): prices — weapons 60 / 250 / 750 by market level, armor 15 / 55 / 150 coin per AP (priceOf).
++     Coin: no pay-out of in-match coin; a SURVIVED RANKED bout pays a flat award by rank (AWARD: 8/12/18/25/35), +50% for a win,
++     ×(1 + 10% per ranked bout survived in a row, up to +100%). Custom pays no coin. Wagers/tickets unchanged.
++   • v0.82 DOMUS: every account names a house (3–24 letters, word-filtered, unique) before any gladiator; up to 4 gladiators
++     (GLAD_MAX), one active; the house keeps a record (bouts, wins, survived, fallen, lifetime CF, founded).
++   • v0.82 GUESTS: read-only watchers without sign-in (GUEST_OK requests), 2 hours (GUEST_MS), counted apart (hereSummary guests/gzones).
++   • v0.82 STANDS GROUP TURN: one private pick per ticket holder per rotation (standsPickOK), applied together as one server input.
+    • Wagers: online wallets only, escrowed by the server, split among winning bets (5% to the host); fighters back only themselves.
+    • Anti-cheat: results by agreement (`agree`: every human reports the whole table; strict majority wins, 2 disagreeing humans →
+      void, no pay, no deaths, strikes for the minority); 3 strikes → matched only with other struck accounts; a ranked player away
+@@ -17,14 +23,14 @@
+      (25+ ranked bouts survived, 500+ lifetime CF, or Commodus slain). Everyone else is erased (damnatio memoriae).
+    ===================================================================== */
+ const ONLC=(function(){
+-  const VER=4; /* protocol version: the server refuses clients on another one (v0.80: rooms, quick chat, the Praeco, presence) */
++  const VER=5; /* protocol version: the server refuses clients on another one (v0.80: rooms, quick chat, the Praeco, presence; v0.82: domus, coin, guests, invites, stands turn) */
+   const CLASSES8=['soldier','royalty','hero','slave','veteranus','amazonia','venatore','damnatio'];
+   const EVENTS3=['democritus','egidious','cassian'];
+   const EVENTS_TEAM=['familia']; /* team events: 4 seats, Team A (seats 0-1 by default) vs Team B; a party sits on one team */
+   const EVENTS_ALL=EVENTS3.concat(EVENTS_TEAM);
+   const STANDS_MAX=8, PARTY_MAX=4;
+   /* v0.79: up to 3 living gladiators an account, one active; a match needs 2 humans; lobby chat */
+-  const GLAD_MAX=3, MIN_HUMANS=2, CHAT_KEEP=40, CHAT_LEN=200;
++  const GLAD_MAX=4, MIN_HUMANS=2, CHAT_KEEP=40, CHAT_LEN=200;
+   const RANKS=[
+     {k:'tiro',n:'Tiro',bouts:0,cf:0,mkt:1,ic:'🪵'},
+     {k:'gregarius',n:'Gregarius',bouts:6,cf:90,mkt:2,ic:'🛡'},
+@@ -36,10 +42,13 @@ const ONLC=(function(){
+      +1 more for a win (ties go in STAT_KEYS order), never above 99 */
+   const START_STATS={spd:55,str:55,int:55,lck:55,cha:55};
+   function grow(ch,n){for(let i=0;i<n;i++){let lo=null;for(const k of STAT_KEYS)if((ch.stats[k]||0)<STAT_MAX&&(lo==null||ch.stats[k]<ch.stats[lo]))lo=k;if(lo==null)return;ch.stats[lo]++}}
+-  /* gear prices by market level; the wallet only ever pays these */
+-  const PRICE={1:15,2:60,3:180}; /* slow on purpose: a full high-end kit takes ~50 survived bouts */
+-  /* match pay: placing pays a purse by rank, surviving a ranked bout pays a little more; CF earned adds to lifetime CF */
+-  const PURSE={tiro:[10,4,2,1],gregarius:[16,7,3,1],veteranus:[24,10,5,2],primus:[34,14,6,3],summa:[48,20,8,4]};
++  /* v0.82 gear prices: a weapon by its market level (PRICE), an armor piece by its AP (PRICE_AP per AP at its level; the catalog carries ap) */
++  const PRICE={1:60,2:250,3:750}, PRICE_AP={1:15,2:55,3:150};
++  function priceOf(it){if(!it)return 999999;if(it.kind==='a')return (PRICE_AP[it.lv]||999)*Math.max(1,it.ap|0);return PRICE[it.lv]||999999}
++  /* v0.82 match pay: only a SURVIVED RANKED bout pays — a flat award by the rank held at the horns, +50% for a win, ×(1 + 10% a survived
++     ranked bout in a row, ≤ +100%). Custom pays nothing; coin carried in the match is never paid out. */
++  const AWARD={tiro:8,gregarius:12,veteranus:18,primus:25,summa:35}, WIN_BONUS=0.5;
++  function awardOf(rank,won,streak){return Math.round((AWARD[rank]||AWARD.tiro)*(won?1+WIN_BONUS:1)*(1+Math.min(1,(streak|0)*0.1)))}
+   const rankIdx=k=>Math.max(0,RANKS.findIndex(r=>r.k===k));
+   function rankFor(ch){let r=RANKS[0];for(const R of RANKS)if((ch.survived||0)>=R.bouts&&(ch.lifeCF||0)>=R.cf)r=R;return r}
+   function nextRank(ch){const i=rankIdx(rankFor(ch).k);return RANKS[i+1]||null}
+@@ -57,17 +66,15 @@ const ONLC=(function(){
+   /* what a gladiator may buy: market level ≤ rank's level, not already owned (only padded/belt pieces stack) */
+   function canBuy(ch,item,catalog){const it=catalog[item];if(!it)return 'No such piece.';if(!ch.alive)return 'The dead buy nothing.';
+     const R=rankFor(ch);if(it.lv>R.mkt)return `${R.n} may buy up to level ${R.mkt}.`;if(!it.stack&&(ch.gear||[]).includes(item))return 'Already yours.';
+-    const p=PRICE[it.lv]||999;if((ch.wallet||0)<p)return `Costs ${p} coin.`;return ''}
+-  function buy(ch,item,catalog){const why=canBuy(ch,item,catalog);if(why)throw new Error(why);ch.wallet-=PRICE[catalog[item].lv];ch.gear=[...(ch.gear||[]),item];return ch}
++    const p=priceOf(it);if((ch.wallet||0)<p)return `Costs ${p} coin.`;return ''}
++  function buy(ch,item,catalog){const why=canBuy(ch,item,catalog);if(why)throw new Error(why);ch.wallet-=priceOf(catalog[item]);ch.gear=[...(ch.gear||[]),item];return ch}
+   /* the result of one match for one gladiator. row = the event's result row for that seat:
+-     {won, place (1 = best), f (final CF), coin, kills, survives, slew:['commodus',…]} */
++     {won, place (1 = best), f (final CF), coin (ignored since v0.82), kills, survives, slew:['commodus',…]} */
+   function applyResult(ch,row,ranked){const before=rankFor(ch);const out={died:false,rankUp:null,pay:0,cf:0,hall:false};
+     ch.bouts=(ch.bouts||0)+1;if(row.won)ch.wins=(ch.wins||0)+1;ch.kills=(ch.kills||0)+(row.kills|0);
+     const cf=Math.max(0,row.f|0);out.cf=cf;ch.lifeCF=(ch.lifeCF||0)+cf;
+-    const purse0=(PURSE[before.k]||PURSE.tiro)[Math.min(3,Math.max(0,(row.place||4)-1))]||0;const kept=Math.max(0,Math.min(60,row.coin|0));
+-    /* the survival streak: +10% per ranked bout survived in a row, up to +100% (death ends everything anyway) */
+-    const purse=Math.round(purse0*(1+Math.min(1,(ch.streak||0)*0.1)));
+-    out.pay=(ranked?purse:Math.ceil(purse/2))+Math.floor(kept/2);ch.wallet=(ch.wallet||0)+out.pay;
++    /* v0.82: the award (Ranked, survived) — streak counted before this bout */
++    out.pay=ranked&&row.survives!==false?awardOf(before.k,!!row.won,ch.streak||0):0;ch.wallet=(ch.wallet||0)+out.pay;
+     for(const s of row.slew||[])if(!ch.feats.includes('slew:'+s))ch.feats.push('slew:'+s);
+     if(ranked&&row.survives===false){ch.alive=false;out.died=true;ch.died={at:Date.now(),cf,rank:before.k};out.hall=hallWorthy(ch);return out}
+     if(ranked){ch.survived=(ch.survived||0)+1;ch.streak=(ch.streak||0)+1}if(row.survives!==false)grow(ch,1+(row.won?1:0));
+@@ -131,12 +138,12 @@ const ONLC=(function(){
+   function sitGroup(L,ids,now){const ms=ids.map(id=>memberOf(L,id)).filter(m=>m&&seatOf(L,m.id)<0);if(!ms.length)return '';if(L.status!=='waiting')return 'Already under way.';
+     if(L.players.length+ms.length>L.seats)return ms.length>1?`No ${ms.length} free seats together.`:'Every seat is taken.';
+     const team=L.team?leanTeam(L):null;
+-    for(const m of ms)L.players.push({id:m.id,name:m.name,char:m.char||null,rank:m.rank||'tiro',kit:m.kit||null,ready:false,sat:now||Date.now(),...(team?{team}:{}),...(m.party?{party:m.party}:{})});return ''}
++    for(const m of ms)L.players.push({id:m.id,name:m.name,char:m.char||null,rank:m.rank||'tiro',kit:m.kit||null,ready:false,sat:now||Date.now(),...(team?{team}:{}),...(m.party?{party:m.party}:{}),...(m.domus?{domus:m.domus}:{})});return ''}
+   /* a lanista (or a whole party) enters: everyone becomes a member; they sit together if there are seats for all, else they stand */
+   function roomJoin(L,whos,now){const fresh=whos.filter(w=>!memberOf(L,w.id));if(!fresh.length)return '';
+     for(const w of fresh){const why=canJoin(L,w,now);if(why)return whos.length>1?`${w.name}: ${why}`:why}
+     if((L.members||[]).length+fresh.length>ROOM_MAX)return whos.length>1?`No room for a party of ${whos.length}.`:'The room is full.';
+-    L.members=L.members||[];for(const w of fresh)L.members.push({id:w.id,name:w.name,char:w.char||null,rank:w.rank||'tiro',kit:w.kit||null,at:now||Date.now(),...(w.party?{party:w.party}:{})});
++    L.members=L.members||[];for(const w of fresh)L.members.push({id:w.id,name:w.name,char:w.char||null,rank:w.rank||'tiro',kit:w.kit||null,at:now||Date.now(),...(w.party?{party:w.party}:{}),...(w.domus?{domus:w.domus}:{})});
+     for(const w of fresh)L.stands=(L.stands||[]).filter(s=>s.id!==w.id);
+     sitGroup(L,fresh.map(w=>w.id),now);return ''}
+   /* the old name: join (and sit when there is room) */
+@@ -192,9 +199,9 @@ const ONLC=(function(){
+   /* the horns: Ranked (and Custom with auto-balance) team rooms balance; members without a seat leave the room. Returns their ids. */
+   function startRoom(L){if(L.team&&(L.ranked||L.autoBal))autoBalance(L);const out=(L.members||[]).filter(m=>seatOf(L,m.id)<0).map(m=>m.id);L.members=(L.members||[]).filter(m=>seatOf(L,m.id)>=0);L.unseated=out;return out}
+   /* a lobby row for lists: no kits, looks, chat or bets — the room's own members get the whole room */
+-  function liteRow(L){const y={...L};for(const k of ['chat','bets','seed','kicked','cry'])delete y[k];
+-    y.players=(L.players||[]).map(p=>({id:p.id,name:p.name,rank:p.rank,ready:!!p.ready,cls:p.kit&&p.kit.cls||null,...(p.team?{team:p.team}:{}),...(p.party?{party:p.party}:{})}));
+-    y.members=(L.members||[]).map(m=>({id:m.id,name:m.name,rank:m.rank}));y.stands=(L.stands||[]).map(s=>({id:s.id,name:s.name}));y.lite=1;return y}
++  function liteRow(L){const y={...L};for(const k of ['chat','bets','seed','kicked','cry','invited'])delete y[k];
++    y.players=(L.players||[]).map(p=>({id:p.id,name:p.name,rank:p.rank,ready:!!p.ready,cls:p.kit&&p.kit.cls||null,...(p.team?{team:p.team}:{}),...(p.party?{party:p.party}:{}),...(p.domus?{domus:p.domus}:{})}));
++    y.members=(L.members||[]).map(m=>({id:m.id,name:m.name,rank:m.rank,...(m.domus?{domus:m.domus}:{})}));delete y.invited;y.stands=(L.stands||[]).map(s=>({id:s.id,name:s.name}));y.lite=1;return y}
+   /* QUICK CHAT: phrases only, sent as codes (no text from players anywhere online) */
+   const QC={room:['ave','ready','wait','horns','swap','seat','luck','vale'],after:['well','again','vale'],match:['truce','struck','mercy','ha'],forum:['ave','anyc','anyf','ranked','well','vale']};
+   const QC_TEXT={ave:'Ave!',ready:'✓ Ready',wait:'⏳ 2 min',horns:'▶ Sound the horns?',swap:'⇄ Swap teams?',seat:'🪑 One more seat?',luck:'Good luck',vale:'Vale',
+@@ -204,9 +211,31 @@ const ONLC=(function(){
+   const RATE={say:3000,forum:10000,cryMax:3,cryGap:120000,invGap:4000,invSame:120000,invHour:15,fanCap:40,meterDay:100000};
+   /* presence: a browser's IANA time zone (the map's only location — no IP addresses), and the landing's counts */
+   function cleanTz(tz){tz=String(tz||'');return /^[A-Za-z_]{2,20}(\/[A-Za-z0-9_+\-]{1,24}){0,2}$/.test(tz)?tz:''}
+-  /* here = [{id,match,tz}], rooms = the lobby list → {n, fight, wait, zones:{tz:count}} */
+-  function hereSummary(here,rooms){const waiting=new Set();for(const L of rooms||[])if(L.status==='waiting')for(const m of (L.members||L.players||[]))waiting.add(m.id);
+-    const out={n:here.length,fight:0,wait:0,zones:{}};for(const h of here){if(h.match)out.fight++;else if(waiting.has(h.id))out.wait++;const z=cleanTz(h.tz);if(z)out.zones[z]=(out.zones[z]||0)+1}return out}
++  /* here = [{id,match,tz}], rooms = the lobby list, guests = [{tz}] (v0.82) → {n, fight, wait, zones:{tz:count}, guests, gzones:{tz:count}} */
++  function hereSummary(here,rooms,guests){const waiting=new Set();for(const L of rooms||[])if(L.status==='waiting')for(const m of (L.members||L.players||[]))waiting.add(m.id);
++    const out={n:here.length,fight:0,wait:0,zones:{}};for(const h of here){if(h.match)out.fight++;else if(waiting.has(h.id))out.wait++;const z=cleanTz(h.tz);if(z)out.zones[z]=(out.zones[z]||0)+1}
++    out.guests=(guests||[]).length;out.gzones={};for(const g of guests||[]){const z=cleanTz(g.tz);if(z)out.gzones[z]=(out.gzones[z]||0)+1}return out}
++  /* ── v0.82 DOMUS: the online ludus. A house name: 3–24 letters after cleanName, word-filtered; unique case-insensitively (the server
++     keeps DNAME#<domusKey>). The record mirrors its gladiators' results. ── */
++  const DOMUS_MIN=3, DOMUS_MAX=24;
++  function domusWhy(s){const n=String(s||'').replace(/[<>&"'`\\]/g,'').replace(/\s+/g,' ').trim();if(n.length<DOMUS_MIN||n.length>DOMUS_MAX)return `House name: ${DOMUS_MIN}–${DOMUS_MAX} letters.`;if(nameBad(n))return 'Pick another name for your house.';return ''}
++  const domusKey=s=>cleanName(s).toLowerCase();
++  function newDomus(name,owner,id,now){const why=domusWhy(name);if(why)throw new Error(why);return {id,owner,name:cleanName(name),founded:now,bouts:0,wins:0,survived:0,fallen:0,lifeCF:0,glads:0,archived:false,v:VER}}
++  /* one gladiator's settled result into the house record (out = applyResult's answer) */
++  function domusNote(D,row,out,ranked){D.bouts=(D.bouts|0)+1;if(row&&row.won)D.wins=(D.wins|0)+1;D.lifeCF=(D.lifeCF|0)+((out&&out.cf)|0);
++    if(out&&out.died)D.fallen=(D.fallen|0)+1;else if(ranked)D.survived=(D.survived|0)+1;return D}
++  /* the house record built from gladiators made before houses existed (no data lost) */
++  function domusFromChars(D,chars){for(const c of chars||[]){D.bouts=(D.bouts|0)+(c.bouts|0);D.wins=(D.wins|0)+(c.wins|0);D.survived=(D.survived|0)+(c.survived|0);D.lifeCF=(D.lifeCF|0)+(c.lifeCF|0);if(!c.alive)D.fallen=(D.fallen|0)+1}D.glads=(D.glads|0)+(chars||[]).length;return D}
++  const domusRow=D=>D?{id:D.id,name:D.name,founded:D.founded,bouts:D.bouts|0,wins:D.wins|0,survived:D.survived|0,fallen:D.fallen|0,lifeCF:D.lifeCF|0,glads:D.glads|0}:null;
++  /* ── v0.82 GUESTS: a connection without sign-in may only look (these requests), for 2 hours from its first connect ── */
++  const GUEST_MS=2*3600e3, GUEST_OK=['hello','auth.guest','lobby.list','match.watch','match.unwatch','match.get','match.snapreq','forum.get','hall.list','world.news'];
++  /* ── v0.82 STANDS GROUP TURN: once a rotation every ticket holder picks ONE action in private; the server applies all picks as one
++     input. A thrown stone / offering is LOCKED to its tile (r,c on the 13×13 board). ── */
++  const STANDS_MS=20000, STANDS_ACTS=['pass','stone','offer','tholo','move','cheer'];
++  function standsPickOK(p){if(!p||typeof p!=='object'||Array.isArray(p))return 'Pick an action.';if(JSON.stringify(p).length>600)return 'That pick is too large.';
++    if(!STANDS_ACTS.includes(p.a))return 'No such action from the stands.';
++    if(p.a==='stone'||p.a==='offer'){if(!Number.isInteger(p.r)||!Number.isInteger(p.c)||p.r<0||p.r>12||p.c<0||p.c>12)return 'Throw at a tile.'}return ''}
++  function cleanPick(p){const o={a:p.a};for(const k of ['r','c','seat','sec','v','tok'])if(p[k]!=null&&(typeof p[k]==='number'||typeof p[k]==='string'))o[k]=typeof p[k]==='string'?p[k].slice(0,24):p[k];return o}
+   /* a seat in the stands: bought before the horns, never by a fighter of this game; the price goes into the wager pot */
+   function ticketOK(L,who,wallet){if(!L.ticket)return 'This game sells no tickets.';if(L.status!=='waiting')return 'Tickets are sold until the horns.';
+     if(L.players.some(p=>p.id===who))return 'Fighters take the sand, not the stands.';if((L.stands||[]).some(s=>s.id===who))return 'You already hold a ticket.';
+@@ -264,5 +293,5 @@ const ONLC=(function(){
+   /* weekly challenges rotate with the week of the year */
+   const CHALLENGES=[['Survive 3 ranked bouts',3,'survived'],['Earn 60 CF in one bout',60,'cf1'],['Win a bout at Capua',1,'win:3'],['Slay 5 beasts',5,'beasts'],['Finish 5 bouts',5,'bouts'],['Win with 20+ coin left',1,'rich']];
+   function weekChallenges(t){const wk=Math.floor((t||0)/604800000);const out=[];for(let i=0;i<3;i++)out.push(CHALLENGES[(wk+i*2)%CHALLENGES.length]);return out}
+-  return {DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,PURSE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
++  return {PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
+ if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
+diff --git a/server/src/routes.js b/server/src/routes.js
+index a9f9fe2..387e067 100644
+--- a/server/src/routes.js
++++ b/server/src/routes.js
+@@ -5,12 +5,22 @@
+    v0.80 (protocol 4): ROOMS (members who sit or stand, host hand-off, kick, event/seat/team settings — the rules are ONLC's),
+    quick chat (phrase codes only: lobby.say / match.say / forum.say; lobby.chat is gone), the Praeco (lobby.quick, 📣 lobby.call,
+    ✉ lobby.invite, ⚔ lobby.again), the Forum (FORUM lines, mutes, a daily push meter), presence (ACCT GSI1PK 'ON' while a socket
+-   is open → here()), and majority-resync helpers (match.hashq / hasha / odd). Every lobby.update push carries the room. */
++   is open → here()), and majority-resync helpers (match.hashq / hasha / odd). Every lobby.update push carries the room.
++   v0.82 (protocol 5, contract tools/plans/onl82-contract.md): DOMUS (domus.create / rename / get; needDomus gating), the coin rework (ONLC.applyResult),
++   prices by AP (ONLC.priceOf), GUESTS (ctx.guest: read-only GUEST_OK requests for 2 h, counted apart), stored INVITES that die with the room
++   (lobby.accept → room_gone; invite.gone pushes), and the STANDS GROUP TURN (match.stands.open / pick / close → one 'stands.result' input).
++   Refusals may carry a code: throw fail(code,msg,extra) → the reply {ok:false, err, code, ...extra}. */
+ 'use strict';
+ const C=require('./onlcore.js');
+ const DAY=86400;
+ const HERE_MS=2*3600e3+5*60e3; /* API Gateway closes a socket after 2 h: older presence entries are stale */
+ const FORUM_KEEP=30;
++/* a refusal the client can act on: err = the player-facing text, code = a stable key, extra fields ride along in the reply */
++function fail(code,msg,extra){const e=new Error(msg);e.code=code;if(extra)e.extra=extra;return e}
++/* v0.82: requests an account without a house may not make (needDomus) */
++const NEED_DOMUS=new Set(['char.create','char.buy','char.edit','char.active','lobby.create','lobby.join','lobby.accept','lobby.quick','lobby.sit','lobby.ticket','lobby.invite','lobby.call','lobby.again','lobby.say','bet.place','party.create','party.join','forum.say']);
++/* what a guest is told when a request needs a sign-in */
++const GUEST_WHY={'forum.say':'speak in the Forum','bet.place':'wager','lobby.ticket':'buy a ticket','char.create':'raise gladiators','domus.create':'found a house'};
+ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=>Math.random(),dev=false,hereMs=0}){
+   const ttl=days=>Math.floor(now()/1000)+days*DAY;
+   const acctOf=async id=>id?await store.get('ACCT#'+id,'PROFILE'):null;
+@@ -38,7 +48,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+   async function credit(acct,v){if(!v)return;const c=await liveChar(acct);if(c)await editChar(c.id,ch=>{if(!ch.alive)return false;ch.wallet=(ch.wallet||0)+v})}
+   const strip=x=>{if(!x)return x;const y={...x};for(const k of ['PK','SK','GSI1PK','GSI1SK','ttl'])delete y[k];return y};
+   /* the whole room, for its own members (lists get C.liteRow) */
+-  const room=L=>{const y=strip(L);delete y.chat;return y};
++  const room=L=>{const y=strip(L);delete y.chat;delete y.invited;return y};
+   const lite=L=>C.liteRow(strip(L));
+   const id=p=>p+now().toString(36)+Math.floor(rnd()*1e6).toString(36);
+   const flagOf=A=>!!A&&(A.strikes||0)>=C.STRIKES_OUT;
+@@ -51,12 +61,31 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+   async function stillFighting(A){if(!A||!A.match)return null;const M=await store.get('MATCH#'+A.match,'META');
+     if(M&&M.status==='live'&&(M.players||[]).includes(A.id)&&!(M.abandoned||{})[A.id]&&!(M.reports||{})[A.id])return M;if(!M||M.status!=='live')await store.set('ACCT#'+A.id,'PROFILE',{match:null});return null}
+   const ts13=t=>String(t).padStart(13,'0');
++  const rk=r=>String(r|0).padStart(6,'0');
++  /* who is asking: the account, or a guest's id (watching only) */
++  const viewer=ctx=>ctx.acct||(ctx.guest&&ctx.guest.id)||null;
+ 
+   /* ── presence: ACCT items with GSI1PK 'ON' (set on $connect, removed by a conditional clear on $disconnect / a gone push) ── */
+   let hereC=null,hereAt=0;
+   async function here(){const t=now();if(hereMs&&hereC&&t-hereAt<hereMs)return hereC;
+     hereC=(await store.byIndex('ON')).filter(A=>A.conn&&t-(A.GSI1SK||0)<HERE_MS&&!/^bot/.test(A.id));hereAt=t;return hereC}
+   const hereMap=async()=>new Map((await here()).map(A=>[A.id,A]));
++  /* v0.82 guests: GUEST#<gid> items with GSI1PK 'GON' while a guest socket is open (counted apart, never pushed the Forum) */
++  let gC=null,gAt=0;
++  async function guestsHere(){const t=now();if(hereMs&&gC&&t-gAt<hereMs)return gC;gC=(await store.byIndex('GON')).filter(G=>G.conn&&t-(G.GSI1SK||0)<HERE_MS&&t-(G.first||0)<C.GUEST_MS);gAt=t;return gC}
++  const summary=async list=>{const H=await here();return C.hereSummary(H.map(x=>({id:x.id,match:x.match,tz:x.here&&x.here.tz})),list,(await guestsHere()).map(G=>({tz:G.tz})))};
++  /* ── v0.82 DOMUS: DOMUS#<id> DOMUS = the house; DNAME#<lower name> DNAME = its name, claimed once (putNew); ACCT PROFILE {domus, dname} ── */
++  const domusGet=async id=>id?await store.get('DOMUS#'+id,'DOMUS'):null;
++  const domusItem=D=>({...D,GSI1PK:'DOMUS_OF#'+D.owner,GSI1SK:D.founded});
++  async function editDomus(id,fn){if(!id)return null;for(let i=0;i<6;i++){const D=await domusGet(id);if(!D)return null;if((await fn(D))===false)return null;
++      const rev=await store.putRev('DOMUS#'+id,'DOMUS',domusItem(D));if(rev!==false){D.rev=rev;return D}}return null}
++  /* gladiators a house has ever had (living or dead): its counter, or its gladiators found by owner */
++  async function domusGlads(D){if(!D)return 0;const n=(await store.byIndex('OWNER#'+D.owner)).filter(c=>c.domus===D.id).length;return Math.max(n,D.glads|0)}
++  async function claimName(name,D){const k=C.domusKey(name);if(await store.putNew('DNAME#'+k,'DNAME',{domus:D.id,owner:D.owner,name}))return true;
++    const X=await store.get('DNAME#'+k,'DNAME');return !!X&&X.domus===D.id}
++  const releaseName=async D=>{const k=C.domusKey(D.name);const X=await store.get('DNAME#'+k,'DNAME');if(X&&X.domus===D.id)await store.del('DNAME#'+k,'DNAME')};
++  /* a gladiator's settled result into its house record (never allowed to break a settlement) */
++  const domusResult=async(ch,row,out,ranked)=>{try{if(ch&&ch.domus)await editDomus(ch.domus,D=>{C.domusNote(D,row,out,ranked)})}catch(e){}};
+ 
+   /* ── pushes: known connections first (no ACCT read), in batches of 10; a gone socket falls back to one fresh read ── */
+   const muting=(A,by)=>!!(by&&A&&(A.mutes||[]).includes(by));
+@@ -72,7 +101,20 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+   async function fan(As,type,data){await batches(As.map(A=>()=>sendOne(A.id,type,data,A,null)))}
+   const roomIds=(L,extra)=>(L.members||[]).map(m=>m.id).concat(L.players.map(p=>p.id),(L.stands||[]).map(s=>s.id),extra||[]);
+   /* every member, seated player and ticket holder hears the changed room */
+-  const toRoom=(L,extra,o)=>deliver(roomIds(L,o&&o.also),'lobby.update',{id:L.id,lobby:room(L),...(extra||{})},o);
++  const toRoom=async(L,extra,o)=>{await deliver(roomIds(L,o&&o.also),'lobby.update',{id:L.id,lobby:room(L),...(extra||{})},o);await sweepInvites(L)};
++  /* ── v0.82 INVITES: INVITE#<to> R#<room>#<by> {room,by,name,at} (ttl 1 day). An invitation dies with the room — started, filled (no free
++     seat), closed, or every lanista who sent it gone — and when the invitee joins any room. No timers. ── */
++  function inviteDead(L,to){if(!L||L.status==='done')return {why:'closed'};if(L.status==='live')return {why:'started',live:true};
++    if(L.players.length>=L.seats)return {why:'full'};const by=(L.invited||[]).filter(x=>x.to===to).map(x=>x.by);
++    if(by.length&&!by.some(b=>C.memberOf(L,b)))return {why:'left'};return null}
++  const GONE_TXT={closed:'That room has closed.',started:'That game has started — you can watch it.',full:'That room has filled up.',left:'The lanista who invited you has left the room.'};
++  async function dropInvites(to,roomId){const xs=await store.query('INVITE#'+to,'R#'+(roomId?roomId+'#':''));for(const x of xs)await store.del('INVITE#'+to,x.SK);return xs}
++  /* push invite.gone to those whose invitation to L just died (called with every room push) */
++  async function sweepInvites(L){const inv=L&&L.invited||[];if(!inv.length||(L.status==='done'&&L.started))return; /* a started room was swept at the horns */const seen=new Set();
++    for(const {to} of inv){if(seen.has(to))continue;seen.add(to);const dead=inviteDead(L,to);if(!dead)continue;
++      if((await dropInvites(to,L.id)).length)await deliver([to],'invite.gone',{rooms:[L.id],why:dead.why,...(dead.live?{live:true}:{})})}}
++  /* the invitee joined a room: every pending invitation is dropped (invite.gone names the OTHER rooms; the joined one is simply used) */
++  async function cancelInvites(ids,joined){for(const a of ids){const xs=await dropInvites(a);const rooms=[...new Set(xs.map(x=>x.room))].filter(r=>r!==joined);if(rooms.length)await deliver([a],'invite.gone',{rooms,why:'joined'})}}
+ 
+   /* a live match keeps its players' connections in its META record: pushes need no account reads */
+   const toMatch=async(M,type,data,except)=>{for(const [a,c] of Object.entries(M.conns||{}))if(a!==except){if(c&&pushConn){if(await pushConn(c,type,data,a))await push(a,type,data)}else await push(a,type,data)}
+@@ -87,7 +129,8 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+     if(P&&P.leader!==acct)throw new Error('Your party leader picks the game.');const ids=P?P.members:[acct];const g=[];
+     for(const m of ids){const A=m===acct?a:await acctOf(m);if(!A)continue;
+       if(await stillFighting(A))throw new Error(m===acct?'Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.':'Someone in your party is still in a match.');
+-      const ch=await liveChar(m,A);g.push({id:m,name:nameOf(A,ch),char:ch&&ch.id,rank:ch?C.rankFor(ch).k:'tiro',kit:C.kitOf(ch),party:P?P.id:undefined,strikes:A.strikes||0})}
++      if(!A.domus)throw fail('need_domus',m===acct?'Name your house first.':'Someone in your party has no house yet.');
++      const ch=await liveChar(m,A);g.push({id:m,name:nameOf(A,ch),domus:A.dname||undefined,char:ch&&ch.id,rank:ch?C.rankFor(ch).k:'tiro',kit:C.kitOf(ch),party:P?P.id:undefined,strikes:A.strikes||0})}
+     const list=await lobbies();
+     for(const L of list)if(L.status==='waiting'&&L.id!==o.except&&g.some(w=>inRoom(L,w.id)))throw new Error(g.length>1?'Someone in your party is already in a room.':'You are already in a room.');
+     return {g,list}}
+@@ -117,6 +160,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+     const dseats=[];
+     if(!A.void)for(const a of M.players){if((M.abandoned||{})[a])continue;const pl=L.players.find(p=>p.id===a);const row=A.table.find(r=>r.seat===M.seats[a]);if(!pl||!row)continue;let out=null,before='tiro';
+       const ch=await editChar(pl.char,c=>{if(!c.alive)return false;before=C.rankFor(c).k;out=C.applyResult(c,row,!!L.ranked)});if(!ch||!out)continue;M.outs[a]=out;dseats.push({acct:a,ch,before,row,out});
++      await domusResult(ch,row,out,!!L.ranked);
+       if(out.died){const e={name:ch.name,cls:ch.cls,rank:ch.died.rank,lifeCF:ch.lifeCF,survived:ch.survived,diedAt:now(),why:out.hall?C.hallWhy(ch):''};
+         if(out.hall){const H=await world('HALL');H.list=[e,...H.list].slice(0,200);await store.put('WORLD','HALL',H)}await news(out.hall?['🪦',`${ch.name} fell. The Hall of the Fallen keeps the name.`]:['🌫',`${ch.name} fell and is forgotten.`])}
+       if(out.rankUp)await news(['⚔',`${ch.name} is now ${C.RANKS[C.rankIdx(out.rankUp)].n}.`])}
+@@ -177,7 +221,10 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+     if(!(await store.rate(P,S,'iv_'+to,C.RATE.invSame,t)))return 'You invited them already.';
+     if(!(await store.quota(P,S,'ivH',Math.floor(t/3600e3),C.RATE.invHour)))return 'Enough invitations for this hour.';
+     /* a muting lanista never hears it (and the inviter is not told) */
+-    if(!muting(T,me)){const msg={row:lite(L),from:meName,fromId:me};if(pushConn)await pushConn(T.conn,'lobby.invite',msg,to);else await push(to,'lobby.invite',msg)}return ''}
++    if(!muting(T,me)){const A=await acctOf(me);const msg={room:L.id,row:lite(L),from:meName,fromId:me,fromDomus:(A&&A.dname)||null};
++      await store.put('INVITE#'+to,'R#'+L.id+'#'+me,{room:L.id,by:me,name:meName,at:t,ttl:ttl(1)});
++      await editLobby(L.id,X=>{X.invited=(X.invited||[]).filter(x=>!(x.to===to&&x.by===me)).concat([{to,by:me}]).slice(-60)}).catch(()=>null);
++      if(pushConn)await pushConn(T.conn,'lobby.invite',msg,to);else await push(to,'lobby.invite',msg)}return ''}
+   const memberName=(L,a)=>{const m=C.memberOf(L,a)||L.players.find(p=>p.id===a)||(L.stands||[]).find(s=>s.id===a);return m?m.name:'Lanista'};
+ 
+   /* a new room for a group: newLobby + roomJoin; the Praeco's 'open' line unless cry === false (an 'open' counts as the first call) */
+@@ -189,13 +236,21 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+ 
+   const R={
+     /* one request when the Online window opens: who you are, your gladiators, the rooms, presence, the Forum and the news */
+-    'hello':async(d,ctx)=>{const A=await acctOf(ctx.acct);const me=strip(A);const out={ver:C.VER,mode:'aws',me,now:now()};if(d.all&&me){const chars=await store.byIndex('OWNER#'+ctx.acct);out.chars=chars.map(strip);const f=flagOf(me);
++    'hello':async(d,ctx)=>{
++      /* v0.82 a guest: the landing only (rooms as lite rows, presence, the Forum, news, Today) */
++      if(!ctx.acct&&ctx.guest){const G=ctx.guest;const list=await prune((await lobbies()).filter(L=>!L.flag));const out={ver:C.VER,mode:'aws',me:null,guest:{id:G.id,until:(G.first||now())+C.GUEST_MS},now:now()};
++        out.lobbies=listFor(list,G.id,false);out.here=await summary(list);out.online=out.here.n;out.forum=await forumLines();out.news=(await world('NEWS')).list.slice(0,8);out.challenges=C.weekChallenges(now());out.today=await today();
++        while(out.lobbies.length>1&&JSON.stringify(out).length>115000)out.lobbies.pop();return out}
++      const A=await acctOf(ctx.acct);const me=strip(A);const out={ver:C.VER,mode:'aws',me,now:now()};
++      /* v0.82 the house: needDomus until it is named (an old account keeps its gladiators — they join the house when it is founded) */
++      if(me){out.needDomus=!me.domus;out.domus=C.domusRow(await domusGet(me.domus))}
++      if(d.all&&me){const chars=await store.byIndex('OWNER#'+ctx.acct);out.chars=chars.map(strip);const f=flagOf(me);
+       const live=chars.filter(c=>c.alive);const ch=live.find(c=>c.id===me.active)||live[live.length-1]||null;out.active=ch?ch.id:null;
+       /* the presence entry: gladiator, rank and time zone (written only when it changed) */
+-      const hr={glad:ch?ch.name:null,rank:ch?C.rankFor(ch).k:'tiro',tz:d.tz!=null?C.cleanTz(d.tz):((me.here&&me.here.tz)||'')};
++      const hr={glad:ch?ch.name:null,rank:ch?C.rankFor(ch).k:'tiro',tz:d.tz!=null?C.cleanTz(d.tz):((me.here&&me.here.tz)||''),...(me.dname?{domus:me.dname}:{})};
+       if(JSON.stringify(me.here||null)!==JSON.stringify(hr)){await store.set('ACCT#'+ctx.acct,'PROFILE',{here:hr});out.me={...me,here:hr};const c=(hereC||[]).find(x=>x.id===ctx.acct);if(c)c.here=hr}
+       const list=await prune((await lobbies()).filter(L=>!!L.flag===f));out.lobbies=listFor(list,ctx.acct,f);
+-      const H=await here();out.here=C.hereSummary(H.map(x=>({id:x.id,match:x.match,tz:x.here&&x.here.tz})),list);out.online=out.here.n;out.forum=await forumLines();
++      out.here=await summary(list);out.online=out.here.n;out.forum=await forumLines();
+       out.news=(await world('NEWS')).list.slice(0,8);out.challenges=C.weekChallenges(now());out.today=await today();out.party=me.party?await partyOut(await store.get('PARTY#'+me.party,'PARTY')):null;
+       /* the match this lanista's gladiator is still in (also when a CPU holds the seat): the menu offers Rejoin / Abandon */
+       const LM=await stillFighting(A);if(LM){const LL=list.find(x=>x.id===LM.id)||await store.get('LOBBY#'+LM.id,'LOBBY');out.live={id:LM.id,ev:LL&&LL.ev,loc:LL&&LL.loc,ranked:!!LM.ranked,dropped:!!(LM.dropped||{})[ctx.acct]}}
+@@ -204,9 +259,33 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+     'auth.signin':async(d,ctx)=>{if(!dev)throw new Error('Sign in with Google.');const name=C.cleanName(d.name);if(name.length<2)throw new Error('Your name: 2–24 letters.');
+       const a={id:ctx.acct,name,since:now()};await store.put('ACCT#'+a.id,'PROFILE',a);return a},
+     'auth.signout':async()=>({}),
++    /* v0.82 a guest connection (opened with ?guest=<id>): its time zone for the map and the time it has left */
++    'auth.guest':async(d,ctx)=>{if(ctx.acct)throw new Error('You are signed in.');if(!ctx.guest)throw fail('guest','Open the arena as a guest first.');const G=ctx.guest;
++      const tz=C.cleanTz(d.tz);await store.set('GUEST#'+G.id,'GUEST',{tz});const c=(gC||[]).find(x=>x.id===G.id);if(c)c.tz=tz;return {guest:true,id:G.id,first:G.first,until:(G.first||now())+C.GUEST_MS,now:now()}},
++    /* ── v0.82 DOMUS ── */
++    'domus.get':async(d,ctx)=>{const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);const old=[];for(const x of (A&&A.domusOld)||[]){const o=await domusGet(x);if(o)old.push(C.domusRow(o))}
++      return {domus:C.domusRow(D),needDomus:!D,glads:await domusGlads(D),archived:old}},
++    /* found a house (or, while the current one has never had a gladiator, a new one — the old is archived with its record) */
++    'domus.create':async(d,ctx)=>{const A=await acctOf(ctx.acct);if(!A)throw new Error('Sign in first.');const why=C.domusWhy(d.name);if(why)throw fail('domus_name',why);
++      const cur=await domusGet(A.domus);if(cur&&(await domusGlads(cur))>0)throw fail('domus_locked','Your house already has gladiators — it stands as it is.');
++      const D=C.newDomus(d.name,ctx.acct,id('D'),now());if(!(await claimName(D.name,D)))throw fail('name_taken','Another lanista’s house has that name.');
++      /* gladiators made before houses existed join it, with their record */
++      const old=(await store.byIndex('OWNER#'+ctx.acct)).filter(c=>!c.domus);C.domusFromChars(D,old);
++      for(const c of old)await editChar(c.id,x=>{if(x.domus)return false;x.domus=D.id});
++      if((await store.putRev('DOMUS#'+D.id,'DOMUS',domusItem(D)))===false)throw new Error('Try again.');
++      if(cur){await editDomus(cur.id,X=>{X.archived=true;X.archivedAt=now()});await releaseName(cur)}
++      const P={domus:D.id,dname:D.name};if(cur)P.domusOld=[...(A.domusOld||[]),cur.id].slice(-10);await store.set('ACCT#'+ctx.acct,'PROFILE',P);hereC=null;
++      return {domus:C.domusRow(D),needDomus:false,joined:old.length}},
++    /* rename: only while the house has never had a gladiator */
++    'domus.rename':async(d,ctx)=>{const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);if(!D)throw fail('need_domus','Name your house first.');
++      if((await domusGlads(D))>0)throw fail('domus_locked','A house with gladiators keeps its name.');const why=C.domusWhy(d.name);if(why)throw fail('domus_name',why);
++      const name=C.cleanName(d.name);const same=C.domusKey(name)===C.domusKey(D.name);if(!same&&!(await claimName(name,D)))throw fail('name_taken','Another lanista’s house has that name.');
++      const old={...D};const X=await editDomus(D.id,Y=>{Y.name=name});if(!X)throw new Error('Try again.');if(!same)await releaseName(old);
++      await store.set('ACCT#'+ctx.acct,'PROFILE',{dname:name});hereC=null;return {domus:C.domusRow(X)}},
+     'char.mine':async(d,ctx)=>(await store.byIndex('OWNER#'+ctx.acct)).map(strip),
+     'char.create':async(d,ctx)=>{const live=(await store.byIndex('OWNER#'+ctx.acct)).filter(c=>c.alive);if(live.length>=C.GLAD_MAX)throw new Error(`Up to ${C.GLAD_MAX} living gladiators.`);const ch=C.newChar(d,ctx.acct,id('g'),now());
+-      const A=await acctOf(ctx.acct);if(A&&!live.some(c=>c.id===A.active))await store.set('ACCT#'+A.id,'PROFILE',{active:ch.id});await putChar(ch);return strip(ch)},
++      const A=await acctOf(ctx.acct);ch.domus=A&&A.domus||null;if(A&&!live.some(c=>c.id===A.active))await store.set('ACCT#'+A.id,'PROFILE',{active:ch.id});await putChar(ch);
++      await editDomus(ch.domus,D=>{D.glads=(D.glads|0)+1});return strip(ch)},
+     'char.active':async(d,ctx)=>{const ch=await charById(d.char);if(!ch||ch.owner!==ctx.acct||!ch.alive)throw new Error('Not yours.');if(await busyIn(ctx.acct))throw new Error('Finish or leave your game first.');
+       await store.set('ACCT#'+ctx.acct,'PROFILE',{active:ch.id});return strip(ch)},
+     'char.edit':async(d,ctx)=>{const ch=await charById(d.char);if(!ch||ch.owner!==ctx.acct)throw new Error('Not yours.');if(await busyIn(ctx.acct))throw new Error('Finish or leave your game first.');
+@@ -216,9 +295,17 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+     /* v0.80: no free text online — phrases only (lobby.say) */
+     'lobby.chat':async()=>{throw new Error('Quick chat only.')},
+     /* ── ROOMS ── */
+-    'lobby.create':async(d,ctx)=>{const {g}=await groupOf(ctx.acct);const L=await makeRoom(d,ctx.acct,g);await toRoom(L,null,{except:ctx.acct});if(d.cry!==false)await announce(L,ctx.acct);return room(L)},
+-    'lobby.join':async(d,ctx)=>{const L=await getLobby(d.id);const {g}=await groupOf(ctx.acct,{except:L.id});
+-      if(!!L.flag!==g.some(w=>w.strikes>=C.STRIKES_OUT))throw new Error('That game is gone.');const why=C.roomJoin(L,cleanG(g),now());if(why)throw new Error(why);await putLobby(L);await toRoom(L,null,{except:ctx.acct});return room(L)},
++    'lobby.create':async(d,ctx)=>{const {g}=await groupOf(ctx.acct);const L=await makeRoom(d,ctx.acct,g);await cancelInvites(g.map(w=>w.id));await toRoom(L,null,{except:ctx.acct});if(d.cry!==false)await announce(L,ctx.acct);return room(L)},
++    'lobby.join':async(d,ctx)=>{if(d.inv)return R['lobby.accept'](d,ctx);const L=await getLobby(d.id);const {g}=await groupOf(ctx.acct,{except:L.id});
++      if(!!L.flag!==g.some(w=>w.strikes>=C.STRIKES_OUT))throw new Error('That game is gone.');const why=C.roomJoin(L,cleanG(g),now());if(why)throw new Error(why);await putLobby(L);
++      await cancelInvites(g.map(w=>w.id),L.id);await toRoom(L,null,{except:ctx.acct});return room(L)},
++    /* v0.82 ✉ accept an invitation: refused with code room_gone (+ live:true when the game can be watched) once the room started, filled,
++       closed, or everyone who invited you left; no invitation → code no_invite */
++    'lobby.accept':async(d,ctx)=>{const L=await store.get('LOBBY#'+d.id,'LOBBY');if(L){L.members=L.members||[];L.players=L.players||[]}const dead=inviteDead(L,ctx.acct);
++      if(dead){await dropInvites(ctx.acct,d.id);throw fail('room_gone',GONE_TXT[dead.why],{why:dead.why,...(dead.live?{live:true}:{})})}
++      const mine=await store.query('INVITE#'+ctx.acct,'R#'+d.id+'#');if(!mine.length)throw fail('no_invite','That invitation is gone.');
++      const {g}=await groupOf(ctx.acct,{except:L.id});if(!!L.flag!==g.some(w=>w.strikes>=C.STRIKES_OUT))throw fail('room_gone',GONE_TXT.closed,{why:'closed'});
++      const why=C.roomJoin(L,cleanG(g),now());if(why)throw new Error(why);await putLobby(L);await cancelInvites(g.map(w=>w.id),L.id);await toRoom(L,null,{except:ctx.acct});return room(L)},
+     /* sit down (a party leader sits the standing party together) / stand up */
+     'lobby.sit':async(d,ctx)=>{const L=await getLobby(d.id);const why=C.roomSit(L,ctx.acct,now());if(why)throw new Error(why);await putLobby(L);await toRoom(L,null,{except:ctx.acct});return room(L)},
+     'lobby.stand':async(d,ctx)=>{const L=await getLobby(d.id);const why=C.roomStand(L,ctx.acct);if(why)throw new Error(why);await putLobby(L);await toRoom(L,null,{except:ctx.acct});return room(L)},
+@@ -231,7 +318,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+         const r=C.roomLeave(X,ctx.acct,now());closed=r.closed;if(closed)pay=refundsOf(X)});
+       if(!L)return room({...L0,members:L0.members||[],players:L0.players||[]});
+       /* the room empties before the horns: every wager and ticket goes back */
+-      await payAll(pay);await deliver(was,'lobby.update',{id:L.id,lobby:room(L),...(closed?{closed:'empty'}:{})},{except:ctx.acct});return room(L)},
++      await payAll(pay);await deliver(was,'lobby.update',{id:L.id,lobby:room(L),...(closed?{closed:'empty'}:{})},{except:ctx.acct});await sweepInvites(L);return room(L)},
+     /* 👑 give the room away */
+     'lobby.host':async(d,ctx)=>{const L=await getLobby(d.id);const why=C.roomGiveHost(L,ctx.acct,d.to,now());if(why)throw new Error(why);await putLobby(L);await toRoom(L,null,{except:ctx.acct});return room(L)},
+     /* the host removes a lanista (5 minutes before they may come back) */
+@@ -255,7 +342,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+     'lobby.quick':async(d,ctx)=>{const ev=C.EVENTS_ALL.includes(d.ev)?d.ev:'democritus';const ranked=!!d.ranked;const {g,list}=await groupOf(ctx.acct);const flag=g.some(w=>w.strikes>=C.STRIKES_OUT);
+       if(ranked&&!g.find(w=>w.id===ctx.acct).char)throw new Error('Ranked needs a living gladiator.');
+       const tryJoin=async pick=>{const L=await store.get('LOBBY#'+pick.id,'LOBBY');if(!L||L.status!=='waiting')return null;L.members=L.members||[];
+-        if(L.seats-L.players.length<g.length)return null;if(C.roomJoin(L,cleanG(g),now()))return null;await putLobby(L);await toRoom(L,null,{except:ctx.acct});return L};
++        if(L.seats-L.players.length<g.length)return null;if(C.roomJoin(L,cleanG(g),now()))return null;await putLobby(L);await cancelInvites(g.map(w=>w.id),L.id);await toRoom(L,null,{except:ctx.acct});return L};
+       const pick=C.quickPick(list,g,ev,ranked,flag,now());if(pick){const L=await tryJoin(pick);if(L)return {lobby:room(L),made:false}}
+       /* the playlist's open room is ELECTED with one consistent pointer item (QUICK#…|OPEN): the room index is eventually consistent, the pointer is not */
+       const qk='QUICK#'+ev+'#'+(ranked?(g.find(w=>w.id===ctx.acct).rank||'tiro'):'c')+'#'+(flag?1:0);
+@@ -264,13 +351,13 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+       const L=await makeRoom({ev,ranked,quick:1},ctx.acct,g);
+       if((await store.putRev(qk,'OPEN',{...(ptr||{}),id:L.id,ttl:ttl(1)}))===false){ptr=await store.get(qk,'OPEN');
+         /* another press won the pointer a moment ago: fold into its room (mine closes unseen), or keep mine if theirs will not take us */
+-        const J=await viaPtr(ptr);if(J){L.status='done';L.closed='merged';await putLobby(L).catch(()=>{});return {lobby:room(J),made:false}}}
++        const J=await viaPtr(ptr);if(J){L.status='done';L.closed='merged';await putLobby(L).catch(()=>{});await cancelInvites(g.map(w=>w.id),J.id);return {lobby:room(J),made:false}}}
+       /* two playlists pressed at once: the later of two fresh twin rooms folds into the earlier one (both sides agree on the order) */
+       const twin=(await lobbies()).filter(X=>X.id!==L.id&&X.quick&&X.status==='waiting'&&X.ev===ev&&!!X.ranked===ranked&&!!X.flag===flag&&(!ranked||X.rank===L.rank)&&
+         ((X.created||0)<L.created||(X.created===L.created&&X.id<L.id))).sort((a,b)=>(a.created||0)-(b.created||0))[0];
+       if(twin){const W=await store.get('LOBBY#'+twin.id,'LOBBY');if(W&&W.status==='waiting'){W.members=W.members||[];const X=JSON.parse(JSON.stringify(W));
+-        if(!C.roomJoin(X,cleanG(g),now())&&X.players.length-W.players.length===g.length){L.status='done';L.closed='merged';await putLobby(L);await putLobby(X);await toRoom(X,null,{except:ctx.acct});return {lobby:room(X),made:false}}}}
+-      await toRoom(L,null,{except:ctx.acct});await announce(L,ctx.acct);return {lobby:room(L),made:true}},
++        if(!C.roomJoin(X,cleanG(g),now())&&X.players.length-W.players.length===g.length){L.status='done';L.closed='merged';await putLobby(L);await putLobby(X);await cancelInvites(g.map(w=>w.id),X.id);await toRoom(X,null,{except:ctx.acct});return {lobby:room(X),made:false}}}}
++      await cancelInvites(g.map(w=>w.id));await toRoom(L,null,{except:ctx.acct});await announce(L,ctx.acct);return {lobby:room(L),made:true}},
+     /* 📣 the crier calls a waiting room with a free seat: up to RATE.cryMax a room (the opening counts), RATE.cryGap apart */
+     'lobby.call':async(d,ctx)=>{const L=await getLobby(d.id);if(!C.memberOf(L,ctx.acct))throw new Error('Join the room first.');if(L.status!=='waiting')throw new Error('Already under way.');
+       if(L.players.length>=L.seats)throw new Error('Every seat is taken.');L.cry=L.cry||[];if(L.cry.length>=C.RATE.cryMax)throw new Error('The crier has called three times.');
+@@ -283,7 +370,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+     'lobby.again':async(d,ctx)=>{const M=await meta(d.id||d.lobbyId);if(!(M.players||[]).includes(ctx.acct))throw new Error('Not your match.');
+       /* your bout is over on your screen once you reported (or left); the others may still be confirming */
+       if(M.status!=='done'&&!(M.reports||{})[ctx.acct]&&!(M.abandoned||{})[ctx.acct])throw new Error('The match is not over.');
+-      const old=await getLobby(M.id);const {g}=await groupOf(ctx.acct);const L=await makeRoom({ev:old.ev,loc:old.loc,ranked:old.ranked,seats:old.seats,cry:false},ctx.acct,g);await toRoom(L,null,{except:ctx.acct});
++      const old=await getLobby(M.id);const {g}=await groupOf(ctx.acct);const L=await makeRoom({ev:old.ev,loc:old.loc,ranked:old.ranked,seats:old.seats,cry:false},ctx.acct,g);await cancelInvites(g.map(w=>w.id));await toRoom(L,null,{except:ctx.acct});
+       const name=memberName(L,ctx.acct);const invited=[];for(const a of M.players){if(a===ctx.acct||C.memberOf(L,a))continue;if(!(await inviteOne(L,ctx.acct,name,a,{gap:false,again:M.id})))invited.push(a)}
+       return {lobby:room(L),invited}},
+     /* 💬 a room phrase: its own CHAT# item (the room is never rewritten for a line) */
+@@ -298,12 +385,12 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+       return (await store.query('LOBBY#'+L.id,'CHAT#',{limit:C.CHAT_KEEP,desc:true})).reverse().map(x=>({by:x.by,name:x.name,q:x.q,at:x.at}))},
+     /* 👥 who is here: ≤40, free / in a room / fighting (same strike flag) */
+     'who.list':async(d,ctx)=>{/* names: gladiators only (nameOf never shows a sign-in name) */const me=await acctOf(ctx.acct);const f=flagOf(me);const list=await lobbies();const inR=new Set();for(const L of list)if(L.status==='waiting')for(const m of L.members||L.players)inR.add(m.id);
+-      return (await here()).filter(A=>A.id!==ctx.acct&&flagOf(A)===f).slice(0,40).map(A=>({id:A.id,name:nameOf(A),rank:(A.here&&A.here.rank)||'tiro',st:A.match?'fight':inR.has(A.id)?'room':'free'}))},
++      return (await here()).filter(A=>A.id!==ctx.acct&&flagOf(A)===f).slice(0,40).map(A=>({id:A.id,name:nameOf(A),domus:A.dname||null,rank:(A.here&&A.here.rank)||'tiro',st:A.match?'fight':inR.has(A.id)?'room':'free'}))},
+     /* ── the Forum ── */
+     'forum.get':async()=>forumLines(),
+     'forum.say':async(d,ctx)=>{const ch=await liveChar(ctx.acct);if(!ch)throw new Error('Make a gladiator first.');if(!C.phraseOK('forum',d.q))throw new Error('Quick chat only.');
+       if(!(await store.rate('ACCT#'+ctx.acct,'PROFILE','fAt',C.RATE.forum,now())))throw new Error('Slow down.');
+-      const As=(await here()).filter(A=>A.id!==ctx.acct&&!A.match&&!muting(A,ctx.acct));const line=await forumOut({k:'say',by:ctx.acct,name:ch.name,q:d.q},As);return {line}},
++      const As=(await here()).filter(A=>A.id!==ctx.acct&&!A.match&&!muting(A,ctx.acct));const A=await acctOf(ctx.acct);const line=await forumOut({k:'say',by:ctx.acct,name:ch.name,domus:(A&&A.dname)||null,q:d.q},As);return {line}},
+     /* 🔇 your mutes: their phrases, calls and invites never reach you (≤50) */
+     'forum.mute':async(d,ctx)=>{const A=await acctOf(ctx.acct);let m=(A.mutes||[]).filter(x=>x!==d.who);if(d.on!==false&&d.who&&d.who!==ctx.acct)m.push(d.who);m=m.slice(-50);
+       await store.set('ACCT#'+ctx.acct,'PROFILE',{mutes:m});const c=(hereC||[]).find(x=>x.id===ctx.acct);if(c)c.mutes=m;return {mutes:m}},
+@@ -337,11 +424,11 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+     'match.open':async(d,ctx)=>{const M=await meta(d.id);if(M.host!==ctx.acct)throw new Error('Only the host opens the match.');
+       if(typeof d.snap!=='object'||JSON.stringify(d.snap).length>300000)throw new Error('The opening is too large.');await store.put('MATCH#'+d.id,'OPEN',{snap:d.snap,ttl:ttl(2)});await toMatch(M,'match.open',{id:d.id},ctx.acct);return {}},
+     /* 👁 watch a live match: the opening, the moves so far, and from now on every move as it happens (at most 30 watchers) */
+-    'match.watch':async(d,ctx)=>{const M=await meta(d.id);if(M.status!=='live')throw new Error('That match is over.');const n=Object.keys(M.watch||{}).length;
+-      if(!inMatch(M,ctx.acct)){if(n>=30&&!(M.watch||{})[ctx.acct])throw new Error('The free stands are full — 30 watching.');if(!M.watch){M.watch={};await store.put('MATCH#'+d.id,'META',{...M,watch:{[ctx.acct]:ctx.conn||null}})}else await store.setIn('MATCH#'+d.id,'META','watch',ctx.acct,ctx.conn||null)}
++    'match.watch':async(d,ctx)=>{const me=viewer(ctx);const M=await meta(d.id);if(M.status!=='live')throw new Error('That match is over.');const n=Object.keys(M.watch||{}).length;
++      if(!inMatch(M,me)){if(n>=30&&!(M.watch||{})[me])throw new Error('The free stands are full — 30 watching.');if(!M.watch){M.watch={};await store.put('MATCH#'+d.id,'META',{...M,watch:{[me]:ctx.conn||null}})}else await store.setIn('MATCH#'+d.id,'META','watch',me,ctx.conn||null)}
+       const L=await editLobby(d.id,X=>{X.watchers=(X.watchers||0)+1}).catch(()=>null)||await getLobby(d.id);
+       return {lobby:room(L),players:M.players,specs:M.specs||[],seed:M.seed,abandoned:Object.keys(M.abandoned||{}),dropped:Object.keys(M.dropped||{})}},
+-    'match.unwatch':async(d,ctx)=>{const M=await store.get('MATCH#'+d.id,'META');if(M&&(M.watch||{})[ctx.acct]!==undefined)await store.setIn('MATCH#'+d.id,'META','watch',ctx.acct,null);return {}},
++    'match.unwatch':async(d,ctx)=>{const me=viewer(ctx);const M=await store.get('MATCH#'+d.id,'META');if(M&&(M.watch||{})[me]!==undefined)await store.setIn('MATCH#'+d.id,'META','watch',me,null);return {}},
+     'match.get':async(d)=>{const M=await meta(d.id);const O=await store.get('MATCH#'+d.id,'OPEN');const from=Math.max(0,d.from|0);
+       const ins=(await store.query('MATCH#'+d.id,'IN#')).map(x=>x.in).filter(x=>x.seq>=from);return {open:O?O.snap:null,inputs:ins,seed:M.seed}},
+     /* the hot path: ONE update (the seq + the match record) + ONE small put + a push to each OTHER player */
+@@ -352,7 +439,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+       if((raw.seat|0)!==(M.seats||{})[ctx.acct]||raw.k==='drop'){const v={k:'void',from:'server',seq:B.seq};await store.put('MATCH#'+d.id,'IN#'+String(B.seq).padStart(8,'0'),{in:v,ttl:ttl(2)});await toMatch(M,'match.input',{id:d.id,in:v});throw new Error('That seat is not yours.')}
+       const inp={...raw,from:ctx.acct,seq:B.seq};await store.put('MATCH#'+d.id,'IN#'+String(B.seq).padStart(8,'0'),{in:inp,ttl:ttl(2)});
+       await toMatch(M,'match.input',{id:d.id,in:inp},ctx.acct);return {seq:B.seq}},
+-    'match.snapreq':async(d,ctx)=>{const M=await meta(d.id);const w=a=>(M.watch||{})[a]!==undefined;if(!(inMatch(M,ctx.acct)||w(ctx.acct))||!inMatch(M,d.to))throw new Error('Not your match.');await toMatch({conns:{[d.to]:connOf(M,d.to)}},'match.snapreq',{id:d.id,to:d.to,from:ctx.acct,seq:d.seq});return {}},
++    'match.snapreq':async(d,ctx)=>{const me=viewer(ctx);const M=await meta(d.id);const w=a=>(M.watch||{})[a]!==undefined;if(!(inMatch(M,me)||w(me))||!inMatch(M,d.to))throw new Error('Not your match.');await toMatch({conns:{[d.to]:connOf(M,d.to)}},'match.snapreq',{id:d.id,to:d.to,from:me,seq:d.seq});return {}},
+     'match.snap':async(d,ctx)=>{const M=await meta(d.id);const w=a=>(M.watch||{})[a]!==undefined;if(!inMatch(M,ctx.acct)||!(inMatch(M,d.to)||w(d.to)))throw new Error('Not your match.');await toMatch({conns:{[d.to]:connOf(M,d.to)}},'match.snap',{id:d.id,to:d.to,snap:d.snap,seq:d.seq,from:ctx.acct});return {}},
+     /* 💬 a match phrase: a bubble over the gladiator — never an input, never game state (after the match: 10 minutes of farewells) */
+     'match.say':async(d,ctx)=>{const M=await meta(d.id);if(!inMatch(M,ctx.acct))throw new Error('Not your match.');
+@@ -397,16 +484,48 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
+       if(!B.item.abandoned)await store.put('MATCH#'+d.id,'META',{...B.item,abandoned:{[ctx.acct]:rule}});else await store.setIn('MATCH#'+d.id,'META','abandoned',ctx.acct,rule);
+       await toMatch(B.item,'match.input',{id:d.id,in:inp});let out=null;
+       if(L.ranked){const pl=L.players.find(p=>p.id===ctx.acct);let before='tiro';const ch=pl&&await editChar(pl.char,c=>{if(!c.alive)return false;before=C.rankFor(c).k;out=C.applyResult(c,{won:false,place:L.seats,f:0,coin:0,survives:false},true);out.abandoned=1});
+-        if(ch&&out){await fallen(ch,out);await store.setIn('MATCH#'+d.id,'META','outs',ctx.acct,out);await dayEdit(D=>C.dayFell(D,{id:d.id,acct:ctx.acct,ev:L.ev,loc:L.loc,at:now(),ch,before,hall:out.hall}))}}
++        if(ch&&out){await fallen(ch,out);await domusResult(ch,{won:false},out,true);await store.setIn('MATCH#'+d.id,'META','outs',ctx.acct,out);await dayEdit(D=>C.dayFell(D,{id:d.id,acct:ctx.acct,ev:L.ev,loc:L.loc,at:now(),ch,before,hall:out.hall}))}}
+       const M2=await meta(d.id);const left=(M2.players||[]).filter(a=>!(M2.abandoned||{})[a]&&!(M2.dropped||{})[a]);
+       if(!left.length)await closeMatch(d.id,'empty');else if(left.every(a=>(M2.reports||{})[a]))await settleMatch(d.id,M2,ctx.acct);
+       const A=await acctOf(ctx.acct);if(A&&A.match===d.id)await store.set('ACCT#'+A.id,'PROFILE',{match:null});return {done:1,out,rule}},
+     'hall.list':async()=>(await world('HALL')).list.slice(0,60),
+-    'world.news':async()=>({news:(await world('NEWS')).list.slice(0,8),online:(await here()).length,challenges:C.weekChallenges(now()),today:await today()})};
+-  return async function route(t,d,ctx){const f=R[t];if(!f)throw new Error('Unknown request: '+t);if(!ctx.acct&&t!=='hello')throw new Error('Sign in first.');return f(d||{},ctx)}}
++    'world.news':async()=>({news:(await world('NEWS')).list.slice(0,8),online:(await here()).length,guests:(await guestsHere()).length,challenges:C.weekChallenges(now()),today:await today()}),
++    /* ── v0.82 STANDS GROUP TURN. MATCH#<id> STW#<rot6> = the window {rot,open,at,holders}; STP#<rot6>#<acct> = one private pick.
++       The host opens it once a rotation; every ticket holder hears stands.window and sends ONE pick (stored, never pushed);
++       the host closes it (20 s) — or it closes when all have answered, or any fighter may close it 25 s after it opened —
++       and ONE server input {k:'stands.result',rot,picks:[{seat,pick}],missed:[seat…]} joins the match's ordered inputs. ── */
++    'match.stands.open':async(d,ctx)=>{const M=await meta(d.id);if(M.host!==ctx.acct)throw new Error('Only the host opens the stands.');if(M.status!=='live')throw new Error('The match is not live.');
++      if(M.standsOff)throw fail('no_stands','This game has no stands.');const rot=d.rot|0;if(rot<0)throw new Error('Which rotation?');
++      const holders=(M.specs||[]).filter(a=>!(M.dropped||{})[a]&&!(M.abandoned||{})[a]);if(!holders.length)throw fail('no_stands','Nobody holds a ticket.');
++      const at=now();if(!(await store.putNew('MATCH#'+d.id,'STW#'+rk(rot),{rot,open:true,at,holders,ttl:ttl(2)})))throw fail('stands_twice','The stands already chose this rotation.');
++      const until=at+C.STANDS_MS;for(const a of holders)await toMatch({conns:{[a]:(M.conns||{})[a]||null}},'stands.window',{id:d.id,rot,until,seat:(M.seats||{})[a]});
++      return {rot,until,holders:holders.map(a=>(M.seats||{})[a])}},
++    'match.stands.pick':async(d,ctx)=>{const M=await meta(d.id);const rot=d.rot|0;const W=await store.get('MATCH#'+d.id,'STW#'+rk(rot));
++      if(!W||!W.open)throw fail('stands_closed','The stands have chosen — wait for the next rotation.');if(!(W.holders||[]).includes(ctx.acct))throw new Error('Only ticket holders choose from the stands.');
++      const why=C.standsPickOK(d.pick);if(why)throw new Error(why);const pick=C.cleanPick(d.pick);
++      if(!(await store.putNew('MATCH#'+d.id,'STP#'+rk(rot)+'#'+ctx.acct,{acct:ctx.acct,seat:(M.seats||{})[ctx.acct],pick,at:now(),ttl:ttl(2)})))throw fail('stands_twice','You already chose this rotation.');
++      const n=(await store.query('MATCH#'+d.id,'STP#'+rk(rot)+'#')).length;let closed=null;if(n>=W.holders.length)closed=await closeStands(d.id,M,rot);
++      return {rot,ok:true,...(closed?{closed:true,seq:closed.seq}:{})}},
++    'match.stands.close':async(d,ctx)=>{const M=await meta(d.id);const rot=d.rot|0;const W=await store.get('MATCH#'+d.id,'STW#'+rk(rot));if(!W)throw new Error('No stands window for that rotation.');
++      if(M.host!==ctx.acct){if(!liveHumans(M).includes(ctx.acct)||(M.specs||[]).includes(ctx.acct))throw new Error('Only the host closes the stands.');if(now()-W.at<C.STANDS_MS+5000)throw new Error('The stands are still choosing.')}
++      const inp=W.open?await closeStands(d.id,M,rot):null;return inp?{closed:true,seq:inp.seq}:{closed:false}}};
++  /* the window closes once: every pick becomes one input in the match's order */
++  async function closeStands(id,M,rot){if(!(await store.flip('MATCH#'+id,'STW#'+rk(rot),'open',true,false)))return null;const W=await store.get('MATCH#'+id,'STW#'+rk(rot));
++    const ps=(await store.query('MATCH#'+id,'STP#'+rk(rot)+'#')).filter(p=>(W.holders||[]).includes(p.acct));const got=new Set(ps.map(p=>p.acct));
++    const picks=ps.map(p=>({seat:p.seat,pick:p.pick})).sort((a,b)=>a.seat-b.seat);const missed=(W.holders||[]).filter(a=>!got.has(a)).map(a=>(M.seats||{})[a]).sort((a,b)=>a-b);
++    const B=await store.bump('MATCH#'+id,'META','n');if(!B)return null;const inp={k:'stands.result',rot,picks,missed,from:'server',seq:B.seq};
++    await store.put('MATCH#'+id,'IN#'+String(B.seq).padStart(8,'0'),{in:inp,ttl:ttl(2)});await toMatch(B.item,'match.input',{id,in:inp});return inp}
++  return async function route(t,d,ctx){const f=R[t];if(!f)throw new Error('Unknown request: '+t);
++    /* v0.82 guests look, never act — for 2 hours from their first connect */
++    if(!ctx.acct&&ctx.guest){if(now()-(ctx.guest.first||0)>C.GUEST_MS)throw fail('guest_expired','Your two hours as a guest are up — sign in to keep watching.');
++      if(!C.GUEST_OK.includes(t))throw fail('guest',`Sign in to ${GUEST_WHY[t]||'play'}.`);return f(d||{},ctx)}
++    if(!ctx.acct&&t!=='hello'&&t!=='auth.guest')throw new Error('Sign in first.');
++    /* v0.82 no house, no gladiators, rooms, buys or words */
++    if(NEED_DOMUS.has(t)){const A=await acctOf(ctx.acct);if(A&&!A.domus)throw fail('need_domus','Name your house first — every lanista needs a Domus.')}
++    return f(d||{},ctx)}}
+ /* a player reconnects mid-match: their new connection goes into the match record */
+ async function reconnect(store,acct,conn){const A=await store.get('ACCT#'+acct,'PROFILE');if(A&&A.match){await store.setIn('MATCH#'+A.match,'META','conns',acct,conn);await store.setIn('MATCH#'+A.match,'META','away',acct,0)}}
+ async function away(store,acct,t){const A=await store.get('ACCT#'+acct,'PROFILE');if(A&&A.match)await store.setIn('MATCH#'+A.match,'META','away',acct,t)}
+ /* presence on: the account's socket + the 'ON' index entry (GSI1SK = connect time) */
+ async function online(store,acct,conn,t){const a=await store.get('ACCT#'+acct,'PROFILE');if(!a)return null;a.conn=conn;a.GSI1PK='ON';a.GSI1SK=t;await store.put('ACCT#'+acct,'PROFILE',a);await reconnect(store,acct,conn);return a}
+-module.exports={makeRoutes,reconnect,away,online};
++module.exports={makeRoutes,reconnect,away,online,fail};
+diff --git a/server/src/store.js b/server/src/store.js
+index 7668eb1..7ffad8a 100644
+--- a/server/src/store.js
++++ b/server/src/store.js
+@@ -19,6 +19,14 @@
+      FORUM             L#<ts13>#<acct4>     a Forum line {k:say|open|call|res,…} (ttl 1 day)
+      WORLD             FMETER#<yyyy-mm-dd>  {n}: Forum pushes sent that UTC day
+      WORLD             DAY#<yyyy-mm-dd>     Today in the arena {wins,fallen,upsets} (versioned, ttl 3 days)
++   v0.82 (domus, guests, invites, the stands turn):
++     ACCT#<sub>        PROFILE       + domus <id>, dname <house name>, domusOld [ids]
++     DOMUS#<id>        DOMUS         a house {id,owner,name,founded,bouts,wins,survived,fallen,lifeCF,glads,archived} (versioned;
++                                     GSI1PK DOMUS_OF#<acct>); CHAR items carry domus <id>
++     DNAME#<lower name> DNAME        {domus,owner,name}: a house name, claimed once (putNew)
++     GUEST#<gid>       GUEST         a guest {id,first,conn,tz} (+ GSI1PK 'GON', GSI1SK <connect ms> while its socket is open; ttl 1 day from first)
++     INVITE#<to>       R#<room>#<by> one invitation {room,by,name,at} (ttl 1 day; dropped when the room dies or the invitee joins a room)
++     MATCH#<id>        STW#<rot6> / STP#<rot6>#<acct>   a stands window {rot,open,at,holders} / one private pick {acct,seat,pick}
+ */
+ 'use strict';
+ function memory(){
+@@ -36,6 +44,8 @@ function memory(){
+     async set(pk,sk,fields){const x=t.get(key(pk,sk));if(!x)return false;Object.assign(x,clone(fields));return true},
+     /* presence off: only when the socket going away is still the account's (a newer connection is never clobbered) */
+     async clearConn(acct,conn,now){const x=t.get(key('ACCT#'+acct,'PROFILE'));if(!x||!conn||x.conn!==conn)return false;x.conn=null;x.offAt=now;delete x.GSI1PK;delete x.GSI1SK;return true},
++    /* v0.82: a guest's presence off, on the same terms */
++    async clearGuest(gid,conn){const x=t.get(key('GUEST#'+gid,'GUEST'));if(!x||!conn||x.conn!==conn)return false;x.conn=null;delete x.GSI1PK;delete x.GSI1SK;return true},
+     /* a rate limit on one field: true (and field=now) when it is absent or at least gapMs old */
+     async rate(pk,sk,field,gapMs,now){const x=t.get(key(pk,sk));if(!x)return false;if(x[field]!=null&&x[field]>now-gapMs)return false;x[field]=now;return true},
+     /* a counted quota per bucket (e.g. the hour): true while fewer than max this bucket */
+@@ -78,6 +88,8 @@ function dynamo(table){
+     /* presence off, conditional on the connection still being this one */
+     async clearConn(acct,conn,now){if(!conn)return false;try{await db.send(new UpdateCommand({TableName:table,Key:{PK:'ACCT#'+acct,SK:'PROFILE'},UpdateExpression:'SET #c = :n, offAt = :t REMOVE GSI1PK, GSI1SK',ConditionExpression:'#c = :c',
+         ExpressionAttributeNames:{'#c':'conn'},ExpressionAttributeValues:{':n':null,':t':now,':c':conn}}));return true}catch(e){if(e.name==='ConditionalCheckFailedException')return false;throw e}},
++    async clearGuest(gid,conn){if(!conn)return false;try{await db.send(new UpdateCommand({TableName:table,Key:{PK:'GUEST#'+gid,SK:'GUEST'},UpdateExpression:'SET #c = :n REMOVE GSI1PK, GSI1SK',ConditionExpression:'#c = :c',
++        ExpressionAttributeNames:{'#c':'conn'},ExpressionAttributeValues:{':n':null,':c':conn}}));return true}catch(e){if(e.name==='ConditionalCheckFailedException')return false;throw e}},
+     /* one write: SET field=now only when absent or older than now-gap (per account, survives reconnects and Lambda containers) */
+     async rate(pk,sk,field,gapMs,now){try{await db.send(new UpdateCommand({TableName:table,Key:{PK:pk,SK:sk},UpdateExpression:'SET #f = :now',ConditionExpression:'attribute_exists(PK) AND (attribute_not_exists(#f) OR #f <= :cut)',
+         ExpressionAttributeNames:{'#f':field},ExpressionAttributeValues:{':now':now,':cut':now-gapMs}}));return true}catch(e){if(e.name==='ConditionalCheckFailedException')return false;throw e}},
+diff --git a/server/test/localws.js b/server/test/localws.js
+index 6e42e9c..7029a51 100644
+--- a/server/test/localws.js
++++ b/server/test/localws.js
+@@ -7,7 +7,7 @@ function start(port=0){const socks=new Map();let n=0;const db=store.memory();
+   const send=async(conn,msg)=>{const s=socks.get(conn);if(!s||s.readyState!==1)return true;s.send(JSON.stringify(msg));return false};
+   const h=makeHandler({db,send,dev:true,verifyCfg:{}});const wss=new WebSocketServer({port,host:'127.0.0.1'});
+   wss.on('connection',async(s,req)=>{const conn='c'+(++n);const q=Object.fromEntries(new URL(req.url,'http://x').searchParams);
+-    const r=await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:q});if(r.statusCode!==200){s.close(r.statusCode===426?4426:4401,r.body);return}
++    const r=await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:q});if(r.statusCode!==200){s.close(r.statusCode===426?4426:r.statusCode===403?4403:4401,r.body);return}
+     socks.set(conn,s);s.on('message',b=>h({requestContext:{routeKey:'$default',connectionId:conn},body:String(b)}).catch(e=>console.error(e)));
+     s.on('close',()=>{socks.delete(conn);h({requestContext:{routeKey:'$disconnect',connectionId:conn}})})});
+   return new Promise(r=>wss.on('listening',()=>r({port:wss.address().port,close:()=>wss.close(),db})))}
+diff --git a/server/test/routes.test.js b/server/test/routes.test.js
+index df8fe4a..f29ff7c 100644
+--- a/server/test/routes.test.js
++++ b/server/test/routes.test.js
+@@ -6,12 +6,14 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
+   const db=store.memory();const pushed=[];let t=1700000000000;
+   const route=makeRoutes({store:db,push:async(a,ty,d)=>pushed.push([a,ty,d]),catalog,now:()=>(t+=1000),dev:true});
+   const A={acct:'dev-a'},B={acct:'dev-b'};
+-  await route('auth.signin',{name:'Alpha'},A);await route('auth.signin',{name:'Beta'},B);
++  /* v0.82: every lanista founds a house before any gladiator */
++  const sign=async(ctx,name)=>{await route('auth.signin',{name},ctx);await route('domus.create',{name:'Domus '+name},ctx)};
++  await sign(A,'Alpha');await sign(B,'Beta');
+   const ca=await route('char.create',{name:'Alpha the Bold',cls:'hero',stats:{spd:99,str:99,int:99,lck:99,cha:99}},A);
+   assert.deepStrictEqual(ca.stats,C.START_STATS,'everyone starts at the same low ratings');assert.strictEqual(ca.wallet,0);
+   /* v0.79: up to 3 living gladiators, one active; edits only between events */
+-  const Z={acct:'dev-z'};await route('auth.signin',{name:'Zeta'},Z);const z1=await route('char.create',{name:'Zeta One',cls:'hero'},Z);const z2=await route('char.create',{name:'Zeta Two',cls:'slave'},Z);await route('char.create',{name:'Zeta Three',cls:'soldier'},Z);
+-  await assert.rejects(route('char.create',{name:'Zeta Four',cls:'hero'},Z),/Up to 3/);assert.strictEqual((await route('hello',{all:1},Z)).active,z1.id,'the first gladiator is active');
++  const Z={acct:'dev-z'};await sign(Z,'Zeta');const z1=await route('char.create',{name:'Zeta One',cls:'hero'},Z);const z2=await route('char.create',{name:'Zeta Two',cls:'slave'},Z);await route('char.create',{name:'Zeta Three',cls:'soldier'},Z);await route('char.create',{name:'Zeta Four',cls:'veteranus'},Z);
++  await assert.rejects(route('char.create',{name:'Zeta Five',cls:'hero'},Z),/Up to 4/,'v0.82: four gladiators a house');assert.strictEqual((await route('hello',{all:1},Z)).active,z1.id,'the first gladiator is active');
+   await route('char.active',{char:z2.id},Z);assert.strictEqual((await route('hello',{all:1},Z)).active,z2.id);
+   const z2e=await route('char.edit',{char:z2.id,cls:'amazonia',name:'Zeta Swift',look:{portrait:{skin:'#c58c5c',helm:'galea<script>'},color:'#123456',token:{c1:'#ff0000'}}},Z);
+   assert.strictEqual(z2e.cls,'amazonia');assert.strictEqual(z2e.name,'Zeta Swift');assert.strictEqual(z2e.look.portrait.helm,'galeascript','looks are cleaned');assert.deepStrictEqual(z2e.stats,C.START_STATS,'ratings stay');
+@@ -21,7 +23,7 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
+   await assert.rejects(route('lobby.chat',{id:ZL.id,text:'Ave'},Z),/Quick chat only/,'v0.80: no free text online');
+   await route('lobby.set',{id:ZL.id,abandon:'fate',standsOff:true},Z);assert.strictEqual((await db.get('LOBBY#'+ZL.id,'LOBBY')).abandon,'fate');await route('lobby.leave',{id:ZL.id},Z);
+   const cb=await route('char.create',{name:'Beta the Grim',cls:'soldier'},B);
+-  await assert.rejects(route('char.buy',{char:ca.id,item:'gladius'},A),/Costs 15 coin/);
++  await assert.rejects(route('char.buy',{char:ca.id,item:'gladius'},A),/Costs 60 coin/);
+   const L=await route('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:true},A);assert.strictEqual(L.rank,'tiro');
+   await route('lobby.join',{id:L.id},B);
+   /* wagers: a fighter backs only themselves; the pool is escrowed */
+@@ -46,7 +48,7 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
+   const ra=await route('match.result',{id:L.id,table,hash:'h1'},A);assert.ok(ra.pending,'waits for the other report');
+   const rb=await route('match.result',{id:L.id,table,hash:'h1'},B);
+   assert.ok(!rb.void);assert.ok(!rb.out.died);assert.strictEqual(rb.char.survived,1);assert.strictEqual(rb.char.streak,1);assert.strictEqual(rb.char.stats.spd+rb.char.stats.str+rb.char.stats.int+rb.char.stats.lck+rb.char.stats.cha,275+2,'+1 survived, +1 won');
+-  assert.strictEqual(rb.char.wallet,30+(10+6)+10,'purse + half the coin kept + the pool back');
++  assert.strictEqual(rb.char.wallet,30+12+10,'v0.82: the Tiro award ×1.5 for the win (no coin carried out) + the pool back');
+   assert.ok(pushed.some(([a,ty,d])=>a==='dev-a'&&ty==='match.settled'&&d.out&&d.out.died),'A hears the verdict');
+   assert.ok(!(await db.get('CHAR#'+ca.id,'CHAR')).alive,'A is dead');assert.strictEqual((await route('hall.list',{},A)).length,0,'a fallen Tiro is forgotten');
+   assert.strictEqual((await db.get('LOBBY#'+L.id,'LOBBY')).status,'done');
+@@ -70,7 +72,7 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
+   /* a Veteranus who falls is remembered */
+   const v=C.newChar({name:'Old Crixus',cls:'veteranus'},'dev-a','gv',t);v.survived=20;v.lifeCF=320;v.rank='veteranus';const o=C.applyResult(v,{won:false,place:3,f:10,survives:false},true);assert.ok(o.hall);
+   /* parties + team events: a party of two sits on one team; only the leader picks the game */
+-  const Cc={acct:'dev-c'},Dd={acct:'dev-d'};await route('auth.signin',{name:'Gamma'},Cc);await route('auth.signin',{name:'Delta'},Dd);
++  const Cc={acct:'dev-c'},Dd={acct:'dev-d'};await sign(Cc,'Gamma');await sign(Dd,'Delta');
+   const cc=await route('char.create',{name:'Gamma Rex',cls:'amazonia'},Cc);const cd=await route('char.create',{name:'Delta Pax',cls:'venatore'},Dd);
+   const Pt=await route('party.create',{},Cc);assert.strictEqual(Pt.code.length,5);await route('party.join',{code:Pt.code.toLowerCase()},Dd);
+   await assert.rejects(route('lobby.create',{ev:'familia',loc:5,ranked:false},Dd),/leader picks/);
+@@ -99,7 +101,7 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
+   const st=C.settle([{by:'x',seat:0,amt:10},{by:'y',seat:1,amt:10}],[0],{pot:20});assert.strictEqual(st.payouts.x,38);
+   const sv=C.settle([{by:'x',seat:0,amt:10}],[0],{pot:5,tix:[{by:'t',amt:5}],void:true});assert.deepStrictEqual(sv.payouts,{x:10,t:5});
+   /* 🚪 abandon in Ranked: Damnatio now; the last human leaving shuts the match down */
+-  const G={acct:'dev-g'},H={acct:'dev-h'};await route('auth.signin',{name:'Gaius'},G);await route('auth.signin',{name:'Helva'},H);const cg=await route('char.create',{name:'Gaius Brave',cls:'hero'},G);const chH=await route('char.create',{name:'Helva Bold',cls:'slave'},H);
++  const G={acct:'dev-g'},H={acct:'dev-h'};await sign(G,'Gaius');await sign(H,'Helva');const cg=await route('char.create',{name:'Gaius Brave',cls:'hero'},G);const chH=await route('char.create',{name:'Helva Bold',cls:'slave'},H);
+   const RL=await route('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:true},G);await route('lobby.join',{id:RL.id},H);await route('lobby.start',{id:RL.id},G);
+   const ab=await route('match.abandon',{id:RL.id},H);assert.strictEqual(ab.rule,'fate');assert.ok(ab.out&&ab.out.died,'an abandoned Ranked gladiator dies');assert.ok(!(await db.get('CHAR#'+chH.id,'CHAR')).alive);
+   const gi=await route('match.get',{id:RL.id,from:0},G);assert.strictEqual(gi.inputs.slice(-1)[0].k,'abandon');await assert.rejects(route('match.input',{id:RL.id,in:{k:'act',a:'end',seat:1}},H),/Not your match|left this match/);
+@@ -113,7 +115,8 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
+   await assert.rejects(verify(mk({...body,aud:'other'}),cfg,async()=>[jwk]),/Wrong audience/);
+   console.log('server routes: all checks passed');
+   await v80();console.log('server v0.80 (rooms, quick chat, Praeco, Forum, presence, resync): all checks passed');
+-  await v80b();console.log('server v0.80 review (races, busy rule, names, mutes, odd push, Today in the arena): all checks passed')})().catch(e=>{console.error(e);process.exit(1)});
++  await v80b();console.log('server v0.80 review (races, busy rule, names, mutes, odd push, Today in the arena): all checks passed');
++  await v82();console.log('server v0.82 (domus, coin, prices, guests, invites, stands group turn): all checks passed')})().catch(e=>{console.error(e);process.exit(1)});
+ 
+ /* ── v0.80 through the real handler (index.js makeHandler): presence, rooms, quick chat, the Praeco, the Forum, resync helpers ── */
+ async function v80(){
+@@ -129,12 +132,12 @@ async function v80(){
+     cl.req=async(t,d)=>{T+=10;const id=++rid;await h({requestContext:{routeKey:'$default',connectionId:cl.conn},body:JSON.stringify({t,id,d})});const m=sent.find(x=>x.conn===cl.conn&&x.msg.re===id);if(!m)throw new Error('no reply to '+t);if(!m.msg.ok)throw new Error(m.msg.err);return m.msg.d};
+     cl.got=(t,since=0)=>sent.slice(since).filter(x=>x.conn===cl.conn&&x.msg.push===t).map(x=>x.msg.d);
+     cl.reconnect=async()=>{cl.conn=await connect(name)};
+-    await cl.req('auth.signin',{name:o.acctName||name.toUpperCase()+' Account'});if(o.glad!==false)cl.ch=await cl.req('char.create',{name:o.glad||name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});
++    await cl.req('auth.signin',{name:o.acctName||name.toUpperCase()+' Account'});if(o.domus!==false)cl.domus=(await cl.req('domus.create',{name:'Domus '+name})).domus;if(o.glad!==false&&o.domus!==false)cl.ch=await cl.req('char.create',{name:o.glad||name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});
+     if(o.tz!==undefined)await cl.req('hello',{all:1,tz:o.tz});return cl}
+   const prof=a=>db.get('ACCT#'+a,'PROFILE');const getL=id=>db.get('LOBBY#'+id,'LOBBY');
+   /* presence: $connect marks the account 'ON'; hello stores {glad,rank,tz} and sums the zones */
+   const ann=await client('ann',{tz:'Europe/Rome'}),bob=await client('bob',{tz:'America/New_York'}),cat=await client('cat',{tz:'Europe/Rome'});
+-  let P=await prof(ann.acct);assert.strictEqual(P.GSI1PK,'ON');assert.strictEqual(P.conn,ann.conn);assert.deepStrictEqual(P.here,{glad:'Ann Gladius',rank:'tiro',tz:'Europe/Rome'});
++  let P=await prof(ann.acct);assert.strictEqual(P.GSI1PK,'ON');assert.strictEqual(P.conn,ann.conn);assert.deepStrictEqual(P.here,{glad:'Ann Gladius',rank:'tiro',tz:'Europe/Rome',domus:'Domus ann'},'v0.82: the house name rides along');
+   const hc=await cat.req('hello',{all:1,tz:'Europe/Rome'});assert.strictEqual(hc.here.n,3);assert.strictEqual(hc.online,3);assert.deepStrictEqual(hc.here.zones,{'Europe/Rome':2,'America/New_York':1});assert.deepStrictEqual(hc.forum,[]);
+   assert.strictEqual((await cat.req('hello',{all:1,tz:'Not a zone!'})).here.zones['Not a zone!'],undefined,'bad zones are dropped');await cat.req('hello',{all:1,tz:'Europe/Rome'});
+   /* a reconnect, then the OLD socket closes: the newer connection is kept (conditional clear) */
+@@ -279,7 +282,7 @@ async function v80b(){
+   async function client(name,o={}){const cl={name,acct:'dev-'+name};cl.conn=await connect(name);
+     cl.req=async(t,d)=>{T+=10;const id=++rid;await h({requestContext:{routeKey:'$default',connectionId:cl.conn},body:JSON.stringify({t,id,d})});const m=sent.find(x=>x.conn===cl.conn&&x.msg.re===id);if(!m)throw new Error('no reply to '+t);if(!m.msg.ok)throw new Error(m.msg.err);return m.msg.d};
+     cl.got=(t,since=0)=>sent.slice(since).filter(x=>x.conn===cl.conn&&x.msg.push===t).map(x=>x.msg.d);
+-    await cl.req('auth.signin',{name:name.toUpperCase()+' Account'});if(o.glad!==false)cl.ch=await cl.req('char.create',{name:o.glad||name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});return cl}
++    await cl.req('auth.signin',{name:name.toUpperCase()+' Account'});await cl.req('domus.create',{name:'Domus '+name});if(o.glad!==false)cl.ch=await cl.req('char.create',{name:o.glad||name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});return cl}
+   const getC=id=>db.get('CHAR#'+id,'CHAR');const setC=async(id,f)=>{const c=await getC(id);Object.assign(c,f);await db.put('CHAR#'+id,'CHAR',c)};
+   const ok=r=>r.status==='fulfilled';
+   /* the name filter (gladiator names are what everyone sees) */
+@@ -289,7 +292,7 @@ async function v80b(){
+   const pt=await ann.req('party.create',{});assert.strictEqual(pt.names[ann.acct],'Ann Gladius');const pj=await bob.req('party.join',{code:pt.code});assert.strictEqual(pj.names[bob.acct],'Bob Gladius');
+   assert.ok(!JSON.stringify(pj).includes('Account'),'no sign-in names');await bob.req('party.leave',{});await ann.req('party.leave',{});
+   /* two buys at once over one wallet: one wins, the other is told to try again */
+-  await setC(ann.ch.id,{wallet:15});const buys=await Promise.allSettled([ann.req('char.buy',{char:ann.ch.id,item:'gladius'}),ann.req('char.buy',{char:ann.ch.id,item:'mace'})]);
++  await setC(ann.ch.id,{wallet:C.PRICE[1]});const buys=await Promise.allSettled([ann.req('char.buy',{char:ann.ch.id,item:'gladius'}),ann.req('char.buy',{char:ann.ch.id,item:'mace'})]);
+   assert.strictEqual(buys.filter(ok).length,1,'one buy');let ch=await getC(ann.ch.id);assert.strictEqual(ch.wallet,0);assert.strictEqual(ch.gear.length,1);
+   /* a ticket given back twice at once is refunded once; a ticket holder cannot join the room */
+   let L=await bob.req('lobby.create',{ev:'democritus',cry:false});await bob.req('lobby.set',{id:L.id,ticket:10});await setC(cat.ch.id,{wallet:30});
+@@ -339,7 +342,7 @@ async function v80b(){
+     const h2=makeHandler({db:lag,send:async(conn,msg)=>{if(!live2.has(conn))return true;sent2.push({conn,msg});return false},dev:true,verifyCfg:{},now:()=>T,hereMs:0});let r2=0;
+     const cl2=async name=>{const conn='q'+name;live2.add(conn);await h2({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER)}});
+       const req=async(t,d)=>{T+=10;const id=++r2;await h2({requestContext:{routeKey:'$default',connectionId:conn},body:JSON.stringify({t,id,d})});const m=sent2.find(x=>x.conn===conn&&x.msg.re===id);if(!m.msg.ok)throw new Error(m.msg.err);return m.msg.d};
+-      await req('auth.signin',{name});await req('char.create',{name:name+' Gladius',cls:'hero'});return req};
++      await req('auth.signin',{name});await req('domus.create',{name:'Domus '+name});await req('char.create',{name:name+' Gladius',cls:'hero'});return req};
+     const qa=await cl2('qa'),qb=await cl2('qb'),qc=await cl2('qc');const [x1,x2]=await Promise.all([qa('lobby.quick',{ev:'cassian'}),qb('lobby.quick',{ev:'cassian'})]);
+     assert.strictEqual(x1.lobby.id,x2.lobby.id,'one room through the pointer');const x3=await qc('lobby.quick',{ev:'cassian'});assert.strictEqual(x3.lobby.id,x1.lobby.id,'the next press finds it too');
+     assert.strictEqual((await db2.get('LOBBY#'+x1.lobby.id,'LOBBY')).players.length,3)}
+@@ -348,3 +351,167 @@ async function v80b(){
+   let DD={};for(let i=0;i<12;i++)DD=C.dayFromMatch(DD,{id:'M'+i,ev:'democritus',loc:1,at:i,seats:[{acct:'a'+i,ch:{name:'A'+i,cls:'hero',look:big},before:'tiro',row:{won:true,f:10+i}},{acct:'b'+i,ch:{name:'B'+i,cls:'hero',look:big},before:'summa',row:{won:false,f:1},out:{died:true}}]});
+   assert.ok(JSON.stringify(DD).length<=C.DAY_MAX,'≤ DAY_MAX');assert.strictEqual(DD.wins.length,5);assert.strictEqual(DD.wins[0].cf,21);
+ }
++
++/* ── v0.82 (protocol 5) through the real handler: the Domus, the coin rework, prices by AP, guests, invites that die with the room,
++   the stands group turn ── */
++async function v82(){
++  const {makeHandler}=require('../src/index.js');
++  let T=1900000000000;const db=store.memory();const sent=[];const live=new Set();
++  const send=async(conn,msg)=>{if(!live.has(conn))return true;sent.push({conn,msg});return false};
++  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0});
++  let nc=0,rid=0;const mark=()=>sent.length;
++  const ask=async(conn,t,d)=>{T+=10;const id=++rid;await h({requestContext:{routeKey:'$default',connectionId:conn},body:JSON.stringify({t,id,d})});const m=sent.find(x=>x.conn===conn&&x.msg.re===id);if(!m)throw new Error('no reply to '+t);
++    if(!m.msg.ok){const e=new Error(m.msg.err);e.code=m.msg.code;e.reply=m.msg;throw e}return m.msg.d};
++  const got=(conn,t,since=0)=>sent.slice(since).filter(x=>x.conn===conn&&x.msg.push===t).map(x=>x.msg.d);
++  const rejects=async(p,code,re)=>{let e=null;try{await p}catch(x){e=x}assert.ok(e,'expected a refusal: '+(code||re));if(code)assert.strictEqual(e.code,code,e.message);if(re)assert.match(e.message,re);return e};
++  const connect=async name=>{const conn='v'+(++nc);live.add(conn);const r=await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER)}});assert.strictEqual(r.statusCode,200);return conn};
++  async function client(name,o={}){const cl={name,acct:'dev-'+name};cl.conn=await connect(name);cl.req=(t,d)=>ask(cl.conn,t,d);cl.got=(t,s)=>got(cl.conn,t,s);
++    await cl.req('auth.signin',{name:name.toUpperCase()+' Account'});if(o.domus!==false)cl.domus=(await cl.req('domus.create',{name:o.domus||'Domus '+name})).domus;
++    if(o.glad!==false&&o.domus!==false)cl.ch=await cl.req('char.create',{name:name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});return cl}
++  const getC=id=>db.get('CHAR#'+id,'CHAR');const setC=async(id,f)=>{const c=await getC(id);Object.assign(c,f);await db.put('CHAR#'+id,'CHAR',c)};
++  const getD=id=>db.get('DOMUS#'+id,'DOMUS');
++  /* old protocol: refused */
++  {const r=await h({requestContext:{routeKey:'$connect',connectionId:'old'},queryStringParameters:{dev:'x',ver:'4'}});assert.strictEqual(r.statusCode,426,'protocol 4 clients reload');assert.strictEqual(C.VER,5)}
++
++  /* ── 1. DOMUS ── */
++  const lan=await client('lan',{domus:false,glad:false});let hl=await lan.req('hello',{all:1});assert.strictEqual(hl.needDomus,true);assert.strictEqual(hl.domus,null);
++  await rejects(lan.req('char.create',{name:'Lan Gladius',cls:'hero'}),'need_domus',/Name your house/);await rejects(lan.req('lobby.create',{ev:'democritus'}),'need_domus');
++  await rejects(lan.req('char.buy',{char:'x',item:'gladius'}),'need_domus');await rejects(lan.req('forum.say',{q:'ave'}),'need_domus');await lan.req('lobby.list',{});await lan.req('forum.get',{});
++  await rejects(lan.req('domus.create',{name:'ab'}),'domus_name',/3–24/);await rejects(lan.req('domus.create',{name:'x'.repeat(25)}),'domus_name',/3–24/);
++  await rejects(lan.req('domus.create',{name:'House of Shit'}),'domus_name',/another name/);await rejects(lan.req('domus.rename',{name:'Domus Prima'}),'need_domus');
++  let dm=await lan.req('domus.create',{name:'  Domus   Aurea '});assert.strictEqual(dm.domus.name,'Domus Aurea');assert.strictEqual(dm.domus.bouts,0);assert.ok(dm.domus.founded);
++  const mob=await client('mob',{domus:false,glad:false});await rejects(mob.req('domus.create',{name:'domus AUREA'}),'name_taken');
++  dm=await lan.req('domus.rename',{name:'Domus Argentea'});assert.strictEqual(dm.domus.name,'Domus Argentea','renamed while it has no gladiators');
++  await mob.req('domus.create',{name:'Domus Aurea'});await lan.req('domus.rename',{name:'domus argentea'});
++  /* a new house while the current one never had a gladiator: the old one is archived and its name freed */
++  const first=(await lan.req('domus.get',{})).domus;dm=await lan.req('domus.create',{name:'Domus Nova'});assert.notStrictEqual(dm.domus.id,first.id);
++  let dg=await lan.req('domus.get',{});assert.strictEqual(dg.archived.length,1);assert.strictEqual(dg.archived[0].id,first.id);assert.ok((await getD(first.id)).archived);
++  await mob.req('domus.rename',{name:'Domus Argentea'});
++  const lc=await lan.req('char.create',{name:'Lan Gladius',cls:'hero'});assert.strictEqual(lc.domus,dm.domus.id,'the gladiator belongs to the house');
++  dg=await lan.req('domus.get',{});assert.strictEqual(dg.glads,1);await rejects(lan.req('domus.rename',{name:'Domus Other'}),'domus_locked');await rejects(lan.req('domus.create',{name:'Domus Other'}),'domus_locked');
++  hl=await lan.req('hello',{all:1});assert.strictEqual(hl.needDomus,false);assert.strictEqual(hl.domus.name,'Domus Nova');assert.strictEqual(hl.me.here.domus,'Domus Nova');
++  /* four gladiators a house */
++  for(const n of ['Two','Three','Four'])await lan.req('char.create',{name:'Lan '+n,cls:'slave'});await rejects(lan.req('char.create',{name:'Lan Five',cls:'slave'}),null,/Up to 4/);
++  /* an account from before houses: its gladiators wait (no data lost), everything else waits for the name */
++  const old=await client('old',{domus:false,glad:false});
++  await db.put('CHAR#gold1','CHAR',{...C.newChar({name:'Old Faithful',cls:'soldier'},old.acct,'gold1',T-9e6),bouts:9,wins:3,survived:8,lifeCF:120,GSI1PK:'OWNER#'+old.acct,GSI1SK:T-9e6});
++  await db.put('CHAR#gold2','CHAR',{...C.newChar({name:'Old Fallen',cls:'hero'},old.acct,'gold2',T-8e6),alive:false,bouts:4,wins:0,survived:3,lifeCF:40,GSI1PK:'OWNER#'+old.acct,GSI1SK:T-8e6});
++  hl=await old.req('hello',{all:1});assert.strictEqual(hl.needDomus,true);assert.strictEqual(hl.chars.length,2,'the old gladiators are still there');
++  await rejects(old.req('lobby.quick',{ev:'cassian'}),'need_domus');await rejects(old.req('lobby.join',{id:'x'}),'need_domus');await rejects(old.req('char.active',{char:'gold1'}),'need_domus');
++  dm=await old.req('domus.create',{name:'Domus Vetus'});assert.strictEqual(dm.joined,2);assert.deepStrictEqual([dm.domus.bouts,dm.domus.wins,dm.domus.survived,dm.domus.fallen,dm.domus.lifeCF,dm.domus.glads],[13,3,11,1,160,2],'the record from its gladiators');
++  assert.strictEqual((await getC('gold1')).domus,dm.domus.id);await rejects(old.req('domus.rename',{name:'Domus Nuova'}),'domus_locked');
++  /* the house name rides beside the gladiator's: rooms, lists, who.list, the Forum, invites */
++  const nan=await client('nan');let R0=await lan.req('lobby.create',{ev:'democritus',cry:false});assert.strictEqual(R0.players[0].domus,'Domus Nova');assert.strictEqual(R0.players[0].name,'Lan Gladius');
++  const row=(await nan.req('hello',{all:1})).lobbies.find(x=>x.id===R0.id);assert.ok(row.lite);assert.strictEqual(row.players[0].domus,'Domus Nova');assert.strictEqual(row.members[0].domus,'Domus Nova');
++  assert.strictEqual((await nan.req('who.list',{})).find(w=>w.id===lan.acct).domus,'Domus Nova');T+=C.RATE.forum;assert.strictEqual((await nan.req('forum.say',{q:'ave'})).line.domus,'Domus nan');
++  /* the house keeps the record of a settled Ranked match; the coin rework pays the award only */
++  await lan.req('lobby.leave',{id:R0.id});
++  let RR=await lan.req('lobby.create',{ev:'cassian',ranked:true,cry:false});await nan.req('lobby.join',{id:RR.id});RR=await lan.req('lobby.start',{id:RR.id});
++  const actL=(await lan.req('hello',{all:1})).active;await setC(actL,{streak:3,wallet:5});const w0=(await getC(nan.ch.id)).wallet;
++  const rt=RR.players.map((p,i)=>({seat:i,won:p.id===lan.acct,place:p.id===lan.acct?1:2,f:p.id===lan.acct?30:7,coin:60,survives:true}));
++  for(const x of [lan,nan])await x.req('match.result',{id:RR.id,table:rt,hash:'d'});
++  assert.strictEqual((await getC(actL)).wallet,5+Math.round(8*1.5*1.3),'Tiro win with a streak of 3: 8 ×1.5 ×1.3 (carried coin is never paid)');assert.strictEqual((await getC(nan.ch.id)).wallet,w0+8,'Tiro survivor: 8');
++  const hd=(await lan.req('domus.get',{})).domus;assert.deepStrictEqual([hd.bouts,hd.wins,hd.survived,hd.fallen,hd.lifeCF],[1,1,1,0,30],'the house record');
++  /* Custom pays no coin */
++  let CR=await lan.req('lobby.create',{ev:'egidious',cry:false});await nan.req('lobby.join',{id:CR.id});CR=await lan.req('lobby.start',{id:CR.id});const w1=(await getC(nan.ch.id)).wallet;
++  const ct=CR.players.map((p,i)=>({seat:i,won:p.id===nan.acct,place:1,f:20,coin:50,survives:true}));for(const x of [lan,nan])await x.req('match.result',{id:CR.id,table:ct,hash:'c'});
++  assert.strictEqual((await getC(nan.ch.id)).wallet,w1,'Custom: no coin, even for the winner');assert.strictEqual((await nan.req('domus.get',{})).domus.bouts,2,'but the house counts the bout');
++
++  /* ── 2. the award table (ONLC) ── */
++  const mk=(rank,o)=>({...C.newChar({name:'Tester',cls:'hero'},'x','t',0),rank,...o});
++  const pay=(rank,row,ranked,o)=>C.applyResult(mk(rank,o),{place:1,f:10,coin:99,survives:true,...row},ranked).pay;
++  assert.deepStrictEqual(['tiro','gregarius','veteranus','primus','summa'].map(r=>C.awardOf(r,false,0)),[8,12,18,25,35]);
++  assert.strictEqual(pay('tiro',{won:false},true),8);assert.strictEqual(pay('tiro',{won:true},true),12,'+50% for a win');
++  assert.strictEqual(pay('gregarius',{won:true},true,{survived:6,lifeCF:90,streak:3}),Math.round(12*1.5*1.3),'the streak is kept');
++  assert.strictEqual(pay('summa',{won:true},true,{survived:60,lifeCF:1200,streak:15}),Math.round(35*1.5*2),'the streak caps at +100%');
++  assert.strictEqual(pay('primus',{won:true},false,{survived:35,lifeCF:650}),0,'Custom pays nothing');assert.strictEqual(pay('tiro',{won:false,survives:false},true),0,'the dead are not paid');
++  assert.ok(!('PURSE' in C),'the old purse table is gone');
++
++  /* ── 3. PRICES by level (weapons) and by AP (armor) ── */
++  const arm=Object.entries(catalog).filter(([k,v])=>v.kind==='a');assert.ok(arm.length>10&&arm.every(([k,v])=>Number.isInteger(v.ap)&&v.ap>0),'the catalog carries every armor piece’s AP');
++  for(const [k,v] of Object.entries(catalog))assert.strictEqual(C.priceOf(v),v.kind==='w'?{1:60,2:250,3:750}[v.lv]:{1:15,2:55,3:150}[v.lv]*v.ap,k);
++  assert.strictEqual(C.priceOf({kind:'a',lv:2,ap:4}),220);assert.strictEqual(C.priceOf({kind:'a',lv:3,ap:5}),750);
++  const gal=catalog.galea;await setC(nan.ch.id,{wallet:C.priceOf(gal)-1});await rejects(nan.req('char.buy',{char:nan.ch.id,item:'galea'}),null,new RegExp('Costs '+C.priceOf(gal)+' coin'));
++  await setC(nan.ch.id,{wallet:C.priceOf(gal)+60});let bc=await nan.req('char.buy',{char:nan.ch.id,item:'galea'});assert.strictEqual(bc.wallet,60);bc=await nan.req('char.buy',{char:nan.ch.id,item:'mace'});assert.strictEqual(bc.wallet,0,'a level-1 weapon costs 60');
++
++  /* ── 5. INVITES die with the room ── */
++  const iv={};for(const n of ['iva','ivb','ivc','ivd','ive','ivf','ivg','ivh','ivi','ivj','ivk','ivl','ivm'])iv[n]=await client(n);
++  const inviteAs=async(by,room,to)=>{T+=C.RATE.invGap;const m=mark();await by.req('lobby.invite',{id:room,to:to.acct});return to.got('lobby.invite',m)[0]};
++  let IA=await iv.iva.req('lobby.create',{ev:'democritus',cry:false});const inv1=await inviteAs(iv.iva,IA.id,iv.ivb);assert.strictEqual(inv1.room,IA.id);assert.strictEqual(inv1.fromDomus,'Domus iva');
++  assert.strictEqual((await db.query('INVITE#'+iv.ivb.acct,'R#')).length,1,'the invitation is kept');
++  await rejects(iv.ivk.req('lobby.accept',{id:IA.id}),'no_invite');
++  let m0=mark();IA=await iv.ivb.req('lobby.accept',{id:IA.id});assert.ok(C.seatOf(IA,iv.ivb.acct)>=0);assert.strictEqual(iv.ivb.got('invite.gone',m0).length,0,'the room you join is simply used');
++  assert.strictEqual((await db.query('INVITE#'+iv.ivb.acct,'R#')).length,0);
++  /* started: the invitation dies (live: you can watch) */
++  await inviteAs(iv.iva,IA.id,iv.ivc);m0=mark();IA=await iv.iva.req('lobby.start',{id:IA.id});
++  assert.deepStrictEqual(iv.ivc.got('invite.gone',m0),[{rooms:[IA.id],why:'started',live:true}]);
++  let e=await rejects(iv.ivc.req('lobby.accept',{id:IA.id}),'room_gone',/started/);assert.strictEqual(e.reply.live,true);assert.strictEqual(e.reply.why,'started');
++  /* filled: no free seat left */
++  const IB=await iv.ivd.req('lobby.create',{ev:'egidious',cry:false});await inviteAs(iv.ivd,IB.id,iv.ive);await iv.ivf.req('lobby.join',{id:IB.id});await iv.ivg.req('lobby.join',{id:IB.id});
++  m0=mark();await iv.ivh.req('lobby.join',{id:IB.id});assert.deepStrictEqual(iv.ive.got('invite.gone',m0),[{rooms:[IB.id],why:'full'}]);e=await rejects(iv.ive.req('lobby.join',{id:IB.id,inv:1}),'room_gone',/filled/);assert.ok(!e.reply.live);
++  /* the inviter left (the room lives on under a new host) */
++  const IC=await iv.ivi.req('lobby.create',{ev:'cassian',cry:false});await iv.ivj.req('lobby.join',{id:IC.id});await inviteAs(iv.ivi,IC.id,iv.ivk);
++  m0=mark();await iv.ivi.req('lobby.leave',{id:IC.id});assert.deepStrictEqual(iv.ivk.got('invite.gone',m0),[{rooms:[IC.id],why:'left'}]);await rejects(iv.ivk.req('lobby.accept',{id:IC.id}),'room_gone',/left/);
++  /* invited by two: one leaving keeps it alive */
++  await iv.ivi.req('lobby.join',{id:IC.id});await inviteAs(iv.ivi,IC.id,iv.ivl);T+=C.RATE.invGap;await iv.ivj.req('lobby.invite',{id:IC.id,to:iv.ivl.acct});
++  m0=mark();await iv.ivi.req('lobby.leave',{id:IC.id});assert.strictEqual(iv.ivl.got('invite.gone',m0).length,0,'another inviter is still there');
++  /* closed: the last lanista leaves */
++  const ID=await iv.ivm.req('lobby.create',{ev:'democritus',cry:false});await inviteAs(iv.ivm,ID.id,iv.ivf);m0=mark();await iv.ivm.req('lobby.leave',{id:ID.id});
++  assert.deepStrictEqual(iv.ivf.got('invite.gone',m0),[{rooms:[ID.id],why:'closed'}]);await rejects(iv.ivf.req('lobby.accept',{id:ID.id}),'room_gone',/closed/);
++  /* joining another room drops every pending invitation (ivl holds two: IC and IE) */
++  const IE=await iv.ivm.req('lobby.create',{ev:'democritus',cry:false});await inviteAs(iv.ivm,IE.id,iv.ivl);assert.strictEqual((await db.query('INVITE#'+iv.ivl.acct,'R#')).length,3,'two invitations to IC, one to IE');
++  m0=mark();await iv.ivl.req('lobby.create',{ev:'egidious',cry:false});
++  const gone=iv.ivl.got('invite.gone',m0);assert.strictEqual(gone.length,1);assert.deepStrictEqual(gone[0].rooms.sort(),[IC.id,IE.id].sort());assert.strictEqual(gone[0].why,'joined');assert.strictEqual((await db.query('INVITE#'+iv.ivl.acct,'R#')).length,0);
++  await rejects(iv.ivl.req('lobby.accept',{id:IE.id}),'no_invite');
++
++  /* ── 6. THE STANDS GROUP TURN ── */
++  const sa=await client('sta'),sb=await client('stb'),sc=await client('stc'),sd=await client('std');
++  let SL=await sa.req('lobby.create',{ev:'democritus',cry:false});await sa.req('lobby.set',{id:SL.id,ticket:5});await sb.req('lobby.join',{id:SL.id});
++  for(const x of [sc,sd]){await setC(x.ch.id,{wallet:20});await x.req('lobby.ticket',{id:SL.id})}SL=await sa.req('lobby.start',{id:SL.id});await sa.req('match.open',{id:SL.id,snap:{S:'{}'}});
++  const MS=await db.get('MATCH#'+SL.id,'META');assert.deepStrictEqual([MS.seats[sc.acct],MS.seats[sd.acct]],[4,5]);
++  await rejects(sb.req('match.stands.open',{id:SL.id,rot:1}),null,/Only the host/);
++  m0=mark();const op=await sa.req('match.stands.open',{id:SL.id,rot:1});assert.deepStrictEqual(op.holders,[4,5]);assert.strictEqual(op.until,T+C.STANDS_MS);
++  assert.deepStrictEqual(sc.got('stands.window',m0).map(w=>[w.rot,w.seat,w.until]),[[1,4,op.until]]);assert.deepStrictEqual(sd.got('stands.window',m0).map(w=>[w.rot,w.seat]),[[1,5]]);
++  assert.strictEqual(sa.got('stands.window',m0).length+sb.got('stands.window',m0).length,0,'only ticket holders get the window');
++  await rejects(sa.req('match.stands.open',{id:SL.id,rot:1}),'stands_twice');await rejects(sb.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'pass'}}),null,/Only ticket holders/);
++  await rejects(sc.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'stone'}}),null,/Throw at a tile/);await rejects(sc.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'fireball'}}),null,/No such action/);
++  m0=mark();let pk=await sc.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'stone',r:3,c:4,junk:{x:1}}});assert.ok(pk.ok&&!pk.closed);
++  assert.ok(!sent.slice(m0).some(x=>x.msg.push),'a pick is private: nothing is pushed');await rejects(sc.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'pass'}}),'stands_twice');
++  m0=mark();pk=await sd.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'offer',r:5,c:6}});assert.ok(pk.closed,'everyone answered: the window closes');
++  for(const x of [sa,sb,sc]){const ins=x.got('match.input',m0).map(u=>u.in);assert.strictEqual(ins.length,1,x.name);assert.strictEqual(ins[0].k,'stands.result');assert.strictEqual(ins[0].from,'server');
++    assert.deepStrictEqual(ins[0].picks,[{seat:4,pick:{a:'stone',r:3,c:4}},{seat:5,pick:{a:'offer',r:5,c:6}}],'tiles locked in the pick');assert.deepStrictEqual(ins[0].missed,[])}
++  await rejects(sc.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'pass'}}),'stands_closed');
++  /* rotation 2: one answers; a fighter may not close early; the host closes; the missed seat is named; closing twice adds nothing */
++  await sa.req('match.stands.open',{id:SL.id,rot:2});await sc.req('match.stands.pick',{id:SL.id,rot:2,pick:{a:'pass'}});
++  await rejects(sb.req('match.stands.close',{id:SL.id,rot:2}),null,/still choosing/);await rejects(sc.req('match.stands.close',{id:SL.id,rot:2}),null,/Only the host/);
++  m0=mark();const cl=await sa.req('match.stands.close',{id:SL.id,rot:2});assert.ok(cl.closed);const r2=sb.got('match.input',m0)[0].in;assert.deepStrictEqual([r2.picks,r2.missed],[[{seat:4,pick:{a:'pass'}}],[5]]);
++  assert.deepStrictEqual(await sa.req('match.stands.close',{id:SL.id,rot:2}),{closed:false});
++  const sins=(await sa.req('match.get',{id:SL.id,from:0})).inputs.filter(x=>x.k==='stands.result');assert.deepStrictEqual(sins.map(x=>x.rot),[1,2],'one result input a rotation, in the ordered stream');
++  /* rotation 3: nobody answers; after 25 s any fighter may close */
++  await sa.req('match.stands.open',{id:SL.id,rot:3});T+=C.STANDS_MS+5000;assert.ok((await sb.req('match.stands.close',{id:SL.id,rot:3})).closed);
++  /* stands off, or nobody in them: no window */
++  const sx=await client('stx'),sy=await client('sty');let SO=await sx.req('lobby.create',{ev:'egidious',cry:false,standsOff:true});await sy.req('lobby.join',{id:SO.id});SO=await sx.req('lobby.start',{id:SO.id});
++  await rejects(sx.req('match.stands.open',{id:SO.id,rot:1}),'no_stands');
++
++  /* ── 4. GUESTS ── */
++  const gconn=async gid=>{const conn='g'+(++nc);live.add(conn);const r=await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{guest:gid,ver:String(C.VER)}});return {conn,status:r.statusCode,body:r.body}};
++  const G1=await gconn('guestone1');assert.strictEqual(G1.status,200);assert.strictEqual((await gconn('short')).status,401,'a guest id needs 8+ letters');
++  const g=(t,d)=>ask(G1.conn,t,d);const ga=await g('auth.guest',{tz:'Asia/Tokyo'});assert.strictEqual(ga.guest,true);assert.strictEqual(ga.id,'guest-guestone1');assert.strictEqual(ga.until,ga.first+C.GUEST_MS);
++  const gh=await g('hello',{all:1});assert.strictEqual(gh.me,null);assert.strictEqual(gh.guest.id,'guest-guestone1');assert.ok(gh.lobbies.length&&gh.lobbies.every(x=>x.lite));assert.ok(gh.forum.length>0,'guests read the Forum');assert.ok(gh.today);
++  assert.strictEqual(gh.here.guests,1);assert.deepStrictEqual(gh.here.gzones,{'Asia/Tokyo':1});const signedHere=(await nan.req('hello',{all:1})).here;assert.strictEqual(signedHere.guests,1,'lanistas see the guest count too');assert.strictEqual(signedHere.n,gh.here.n,'guests are not lanistas');
++  assert.strictEqual(signedHere.zones['Asia/Tokyo'],undefined,'guests glow apart');
++  await g('lobby.list',{});await g('forum.get',{});await g('hall.list',{});assert.strictEqual((await g('world.news',{})).guests,1);
++  await rejects(g('forum.say',{q:'ave'}),'guest',/Sign in to speak in the Forum/);await rejects(g('lobby.create',{ev:'democritus'}),'guest',/Sign in to play/);await rejects(g('lobby.join',{id:'x'}),'guest');
++  await rejects(g('char.create',{name:'Ghost',cls:'hero'}),'guest');await rejects(g('bet.place',{id:'x',seat:0,amt:1}),'guest',/wager/);await rejects(g('domus.create',{name:'Domus Umbra'}),'guest');await rejects(g('lobby.ticket',{id:'x'}),'guest');
++  await rejects(g('match.input',{id:SL.id,in:{k:'act',seat:0}}),'guest');await rejects(g('match.stands.pick',{id:SL.id,rot:4,pick:{a:'pass'}}),'guest');await rejects(g('match.say',{id:SL.id,q:'ha'}),'guest');
++  /* a guest watches a live match and hears its moves */
++  const wt=await g('match.watch',{id:SL.id});assert.ok(wt.players.includes(sa.acct));m0=mark();await sa.req('match.input',{id:SL.id,in:{k:'act',a:'end',seat:0}});assert.strictEqual(got(G1.conn,'match.input',m0).length,1,'the guest hears the move');
++  await g('match.get',{id:SL.id,from:0});await g('match.unwatch',{id:SL.id});m0=mark();await sa.req('match.input',{id:SL.id,in:{k:'act',a:'end',seat:0}});assert.strictEqual(got(G1.conn,'match.input',m0).length,0);
++  /* a second guest; one leaves; the map counts the rest */
++  const G2=await gconn('guesttwo2');await ask(G2.conn,'auth.guest',{tz:'Europe/Rome'});assert.deepStrictEqual((await g('hello',{})).here.gzones,{'Asia/Tokyo':1,'Europe/Rome':1});
++  live.delete(G2.conn);await h({requestContext:{routeKey:'$disconnect',connectionId:G2.conn}});assert.strictEqual((await g('hello',{})).here.guests,1,'a closed guest socket leaves the map');
++  /* two hours from the first connect: refused, also on a new socket with the same guest id; another id is fresh */
++  T=ga.first+C.GUEST_MS+1000;await rejects(g('hello',{}),'guest_expired',/two hours/);await rejects(g('lobby.list',{}),'guest_expired');
++  const G3=await gconn('guestone1');assert.strictEqual(G3.status,403,'the same guest cannot reconnect for more time');assert.match(G3.body,/sign in/);
++  const G4=await gconn('guestfour4');assert.strictEqual(G4.status,200);assert.strictEqual((await ask(G4.conn,'hello',{})).here.guests,1,'the expired guest is not counted');
++}
+diff --git a/src/111-onlcore.js b/src/111-onlcore.js
+index b375fe0..b7969a9 100644
+--- a/src/111-onlcore.js
++++ b/src/111-onlcore.js
+@@ -6,8 +6,14 @@
+    • Ranks: Tiro → Gregarius → Veteranus → Primus Palus → Summa Rudis, earned by ranked bouts survived AND lifetime CF.
+      Ranked matchmaking pairs equal ranks only. Each rank opens one more market level (Tiro: level 1 only).
+    • A new online gladiator: one of the 8 printed classes, the same low ratings for everyone (55 each — they grow by
+-     surviving), the recruit kit (the class's weapons, no armor), an empty wallet. Coin earned in matches goes to the wallet; gear is bought between matches.
+-   • Prices 15 / 60 / 180 by market level; purses grow +10% per ranked bout survived in a row (streak, up to +100%).
++     surviving), the recruit kit (the class's weapons, no armor), an empty wallet. Surviving Ranked bouts pays the wallet (AWARD); gear is bought between matches.
++   • v0.82 (protocol 5): prices — weapons 60 / 250 / 750 by market level, armor 15 / 55 / 150 coin per AP (priceOf).
++     Coin: no pay-out of in-match coin; a SURVIVED RANKED bout pays a flat award by rank (AWARD: 8/12/18/25/35), +50% for a win,
++     ×(1 + 10% per ranked bout survived in a row, up to +100%). Custom pays no coin. Wagers/tickets unchanged.
++   • v0.82 DOMUS: every account names a house (3–24 letters, word-filtered, unique) before any gladiator; up to 4 gladiators
++     (GLAD_MAX), one active; the house keeps a record (bouts, wins, survived, fallen, lifetime CF, founded).
++   • v0.82 GUESTS: read-only watchers without sign-in (GUEST_OK requests), 2 hours (GUEST_MS), counted apart (hereSummary guests/gzones).
++   • v0.82 STANDS GROUP TURN: one private pick per ticket holder per rotation (standsPickOK), applied together as one server input.
+    • Wagers: online wallets only, escrowed by the server, split among winning bets (5% to the host); fighters back only themselves.
+    • Anti-cheat: results by agreement (`agree`: every human reports the whole table; strict majority wins, 2 disagreeing humans →
+      void, no pay, no deaths, strikes for the minority); 3 strikes → matched only with other struck accounts; a ranked player away
+@@ -17,14 +23,14 @@
+      (25+ ranked bouts survived, 500+ lifetime CF, or Commodus slain). Everyone else is erased (damnatio memoriae).
+    ===================================================================== */
+ const ONLC=(function(){
+-  const VER=4; /* protocol version: the server refuses clients on another one (v0.80: rooms, quick chat, the Praeco, presence) */
++  const VER=5; /* protocol version: the server refuses clients on another one (v0.80: rooms, quick chat, the Praeco, presence; v0.82: domus, coin, guests, invites, stands turn) */
+   const CLASSES8=['soldier','royalty','hero','slave','veteranus','amazonia','venatore','damnatio'];
+   const EVENTS3=['democritus','egidious','cassian'];
+   const EVENTS_TEAM=['familia']; /* team events: 4 seats, Team A (seats 0-1 by default) vs Team B; a party sits on one team */
+   const EVENTS_ALL=EVENTS3.concat(EVENTS_TEAM);
+   const STANDS_MAX=8, PARTY_MAX=4;
+   /* v0.79: up to 3 living gladiators an account, one active; a match needs 2 humans; lobby chat */
+-  const GLAD_MAX=3, MIN_HUMANS=2, CHAT_KEEP=40, CHAT_LEN=200;
++  const GLAD_MAX=4, MIN_HUMANS=2, CHAT_KEEP=40, CHAT_LEN=200;
+   const RANKS=[
+     {k:'tiro',n:'Tiro',bouts:0,cf:0,mkt:1,ic:'🪵'},
+     {k:'gregarius',n:'Gregarius',bouts:6,cf:90,mkt:2,ic:'🛡'},
+@@ -36,10 +42,13 @@ const ONLC=(function(){
+      +1 more for a win (ties go in STAT_KEYS order), never above 99 */
+   const START_STATS={spd:55,str:55,int:55,lck:55,cha:55};
+   function grow(ch,n){for(let i=0;i<n;i++){let lo=null;for(const k of STAT_KEYS)if((ch.stats[k]||0)<STAT_MAX&&(lo==null||ch.stats[k]<ch.stats[lo]))lo=k;if(lo==null)return;ch.stats[lo]++}}
+-  /* gear prices by market level; the wallet only ever pays these */
+-  const PRICE={1:15,2:60,3:180}; /* slow on purpose: a full high-end kit takes ~50 survived bouts */
+-  /* match pay: placing pays a purse by rank, surviving a ranked bout pays a little more; CF earned adds to lifetime CF */
+-  const PURSE={tiro:[10,4,2,1],gregarius:[16,7,3,1],veteranus:[24,10,5,2],primus:[34,14,6,3],summa:[48,20,8,4]};
++  /* v0.82 gear prices: a weapon by its market level (PRICE), an armor piece by its AP (PRICE_AP per AP at its level; the catalog carries ap) */
++  const PRICE={1:60,2:250,3:750}, PRICE_AP={1:15,2:55,3:150};
++  function priceOf(it){if(!it)return 999999;if(it.kind==='a')return (PRICE_AP[it.lv]||999)*Math.max(1,it.ap|0);return PRICE[it.lv]||999999}
++  /* v0.82 match pay: only a SURVIVED RANKED bout pays — a flat award by the rank held at the horns, +50% for a win, ×(1 + 10% a survived
++     ranked bout in a row, ≤ +100%). Custom pays nothing; coin carried in the match is never paid out. */
++  const AWARD={tiro:8,gregarius:12,veteranus:18,primus:25,summa:35}, WIN_BONUS=0.5;
++  function awardOf(rank,won,streak){return Math.round((AWARD[rank]||AWARD.tiro)*(won?1+WIN_BONUS:1)*(1+Math.min(1,(streak|0)*0.1)))}
+   const rankIdx=k=>Math.max(0,RANKS.findIndex(r=>r.k===k));
+   function rankFor(ch){let r=RANKS[0];for(const R of RANKS)if((ch.survived||0)>=R.bouts&&(ch.lifeCF||0)>=R.cf)r=R;return r}
+   function nextRank(ch){const i=rankIdx(rankFor(ch).k);return RANKS[i+1]||null}
+@@ -57,17 +66,15 @@ const ONLC=(function(){
+   /* what a gladiator may buy: market level ≤ rank's level, not already owned (only padded/belt pieces stack) */
+   function canBuy(ch,item,catalog){const it=catalog[item];if(!it)return 'No such piece.';if(!ch.alive)return 'The dead buy nothing.';
+     const R=rankFor(ch);if(it.lv>R.mkt)return `${R.n} may buy up to level ${R.mkt}.`;if(!it.stack&&(ch.gear||[]).includes(item))return 'Already yours.';
+-    const p=PRICE[it.lv]||999;if((ch.wallet||0)<p)return `Costs ${p} coin.`;return ''}
+-  function buy(ch,item,catalog){const why=canBuy(ch,item,catalog);if(why)throw new Error(why);ch.wallet-=PRICE[catalog[item].lv];ch.gear=[...(ch.gear||[]),item];return ch}
++    const p=priceOf(it);if((ch.wallet||0)<p)return `Costs ${p} coin.`;return ''}
++  function buy(ch,item,catalog){const why=canBuy(ch,item,catalog);if(why)throw new Error(why);ch.wallet-=priceOf(catalog[item]);ch.gear=[...(ch.gear||[]),item];return ch}
+   /* the result of one match for one gladiator. row = the event's result row for that seat:
+-     {won, place (1 = best), f (final CF), coin, kills, survives, slew:['commodus',…]} */
++     {won, place (1 = best), f (final CF), coin (ignored since v0.82), kills, survives, slew:['commodus',…]} */
+   function applyResult(ch,row,ranked){const before=rankFor(ch);const out={died:false,rankUp:null,pay:0,cf:0,hall:false};
+     ch.bouts=(ch.bouts||0)+1;if(row.won)ch.wins=(ch.wins||0)+1;ch.kills=(ch.kills||0)+(row.kills|0);
+     const cf=Math.max(0,row.f|0);out.cf=cf;ch.lifeCF=(ch.lifeCF||0)+cf;
+-    const purse0=(PURSE[before.k]||PURSE.tiro)[Math.min(3,Math.max(0,(row.place||4)-1))]||0;const kept=Math.max(0,Math.min(60,row.coin|0));
+-    /* the survival streak: +10% per ranked bout survived in a row, up to +100% (death ends everything anyway) */
+-    const purse=Math.round(purse0*(1+Math.min(1,(ch.streak||0)*0.1)));
+-    out.pay=(ranked?purse:Math.ceil(purse/2))+Math.floor(kept/2);ch.wallet=(ch.wallet||0)+out.pay;
++    /* v0.82: the award (Ranked, survived) — streak counted before this bout */
++    out.pay=ranked&&row.survives!==false?awardOf(before.k,!!row.won,ch.streak||0):0;ch.wallet=(ch.wallet||0)+out.pay;
+     for(const s of row.slew||[])if(!ch.feats.includes('slew:'+s))ch.feats.push('slew:'+s);
+     if(ranked&&row.survives===false){ch.alive=false;out.died=true;ch.died={at:Date.now(),cf,rank:before.k};out.hall=hallWorthy(ch);return out}
+     if(ranked){ch.survived=(ch.survived||0)+1;ch.streak=(ch.streak||0)+1}if(row.survives!==false)grow(ch,1+(row.won?1:0));
+@@ -131,12 +138,12 @@ const ONLC=(function(){
+   function sitGroup(L,ids,now){const ms=ids.map(id=>memberOf(L,id)).filter(m=>m&&seatOf(L,m.id)<0);if(!ms.length)return '';if(L.status!=='waiting')return 'Already under way.';
+     if(L.players.length+ms.length>L.seats)return ms.length>1?`No ${ms.length} free seats together.`:'Every seat is taken.';
+     const team=L.team?leanTeam(L):null;
+-    for(const m of ms)L.players.push({id:m.id,name:m.name,char:m.char||null,rank:m.rank||'tiro',kit:m.kit||null,ready:false,sat:now||Date.now(),...(team?{team}:{}),...(m.party?{party:m.party}:{})});return ''}
++    for(const m of ms)L.players.push({id:m.id,name:m.name,char:m.char||null,rank:m.rank||'tiro',kit:m.kit||null,ready:false,sat:now||Date.now(),...(team?{team}:{}),...(m.party?{party:m.party}:{}),...(m.domus?{domus:m.domus}:{})});return ''}
+   /* a lanista (or a whole party) enters: everyone becomes a member; they sit together if there are seats for all, else they stand */
+   function roomJoin(L,whos,now){const fresh=whos.filter(w=>!memberOf(L,w.id));if(!fresh.length)return '';
+     for(const w of fresh){const why=canJoin(L,w,now);if(why)return whos.length>1?`${w.name}: ${why}`:why}
+     if((L.members||[]).length+fresh.length>ROOM_MAX)return whos.length>1?`No room for a party of ${whos.length}.`:'The room is full.';
+-    L.members=L.members||[];for(const w of fresh)L.members.push({id:w.id,name:w.name,char:w.char||null,rank:w.rank||'tiro',kit:w.kit||null,at:now||Date.now(),...(w.party?{party:w.party}:{})});
++    L.members=L.members||[];for(const w of fresh)L.members.push({id:w.id,name:w.name,char:w.char||null,rank:w.rank||'tiro',kit:w.kit||null,at:now||Date.now(),...(w.party?{party:w.party}:{}),...(w.domus?{domus:w.domus}:{})});
+     for(const w of fresh)L.stands=(L.stands||[]).filter(s=>s.id!==w.id);
+     sitGroup(L,fresh.map(w=>w.id),now);return ''}
+   /* the old name: join (and sit when there is room) */
+@@ -192,9 +199,9 @@ const ONLC=(function(){
+   /* the horns: Ranked (and Custom with auto-balance) team rooms balance; members without a seat leave the room. Returns their ids. */
+   function startRoom(L){if(L.team&&(L.ranked||L.autoBal))autoBalance(L);const out=(L.members||[]).filter(m=>seatOf(L,m.id)<0).map(m=>m.id);L.members=(L.members||[]).filter(m=>seatOf(L,m.id)>=0);L.unseated=out;return out}
+   /* a lobby row for lists: no kits, looks, chat or bets — the room's own members get the whole room */
+-  function liteRow(L){const y={...L};for(const k of ['chat','bets','seed','kicked','cry'])delete y[k];
+-    y.players=(L.players||[]).map(p=>({id:p.id,name:p.name,rank:p.rank,ready:!!p.ready,cls:p.kit&&p.kit.cls||null,...(p.team?{team:p.team}:{}),...(p.party?{party:p.party}:{})}));
+-    y.members=(L.members||[]).map(m=>({id:m.id,name:m.name,rank:m.rank}));y.stands=(L.stands||[]).map(s=>({id:s.id,name:s.name}));y.lite=1;return y}
++  function liteRow(L){const y={...L};for(const k of ['chat','bets','seed','kicked','cry','invited'])delete y[k];
++    y.players=(L.players||[]).map(p=>({id:p.id,name:p.name,rank:p.rank,ready:!!p.ready,cls:p.kit&&p.kit.cls||null,...(p.team?{team:p.team}:{}),...(p.party?{party:p.party}:{}),...(p.domus?{domus:p.domus}:{})}));
++    y.members=(L.members||[]).map(m=>({id:m.id,name:m.name,rank:m.rank,...(m.domus?{domus:m.domus}:{})}));delete y.invited;y.stands=(L.stands||[]).map(s=>({id:s.id,name:s.name}));y.lite=1;return y}
+   /* QUICK CHAT: phrases only, sent as codes (no text from players anywhere online) */
+   const QC={room:['ave','ready','wait','horns','swap','seat','luck','vale'],after:['well','again','vale'],match:['truce','struck','mercy','ha'],forum:['ave','anyc','anyf','ranked','well','vale']};
+   const QC_TEXT={ave:'Ave!',ready:'✓ Ready',wait:'⏳ 2 min',horns:'▶ Sound the horns?',swap:'⇄ Swap teams?',seat:'🪑 One more seat?',luck:'Good luck',vale:'Vale',
+@@ -204,9 +211,31 @@ const ONLC=(function(){
+   const RATE={say:3000,forum:10000,cryMax:3,cryGap:120000,invGap:4000,invSame:120000,invHour:15,fanCap:40,meterDay:100000};
+   /* presence: a browser's IANA time zone (the map's only location — no IP addresses), and the landing's counts */
+   function cleanTz(tz){tz=String(tz||'');return /^[A-Za-z_]{2,20}(\/[A-Za-z0-9_+\-]{1,24}){0,2}$/.test(tz)?tz:''}
+-  /* here = [{id,match,tz}], rooms = the lobby list → {n, fight, wait, zones:{tz:count}} */
+-  function hereSummary(here,rooms){const waiting=new Set();for(const L of rooms||[])if(L.status==='waiting')for(const m of (L.members||L.players||[]))waiting.add(m.id);
+-    const out={n:here.length,fight:0,wait:0,zones:{}};for(const h of here){if(h.match)out.fight++;else if(waiting.has(h.id))out.wait++;const z=cleanTz(h.tz);if(z)out.zones[z]=(out.zones[z]||0)+1}return out}
++  /* here = [{id,match,tz}], rooms = the lobby list, guests = [{tz}] (v0.82) → {n, fight, wait, zones:{tz:count}, guests, gzones:{tz:count}} */
++  function hereSummary(here,rooms,guests){const waiting=new Set();for(const L of rooms||[])if(L.status==='waiting')for(const m of (L.members||L.players||[]))waiting.add(m.id);
++    const out={n:here.length,fight:0,wait:0,zones:{}};for(const h of here){if(h.match)out.fight++;else if(waiting.has(h.id))out.wait++;const z=cleanTz(h.tz);if(z)out.zones[z]=(out.zones[z]||0)+1}
++    out.guests=(guests||[]).length;out.gzones={};for(const g of guests||[]){const z=cleanTz(g.tz);if(z)out.gzones[z]=(out.gzones[z]||0)+1}return out}
++  /* ── v0.82 DOMUS: the online ludus. A house name: 3–24 letters after cleanName, word-filtered; unique case-insensitively (the server
++     keeps DNAME#<domusKey>). The record mirrors its gladiators' results. ── */
++  const DOMUS_MIN=3, DOMUS_MAX=24;
++  function domusWhy(s){const n=String(s||'').replace(/[<>&"'`\\]/g,'').replace(/\s+/g,' ').trim();if(n.length<DOMUS_MIN||n.length>DOMUS_MAX)return `House name: ${DOMUS_MIN}–${DOMUS_MAX} letters.`;if(nameBad(n))return 'Pick another name for your house.';return ''}
++  const domusKey=s=>cleanName(s).toLowerCase();
++  function newDomus(name,owner,id,now){const why=domusWhy(name);if(why)throw new Error(why);return {id,owner,name:cleanName(name),founded:now,bouts:0,wins:0,survived:0,fallen:0,lifeCF:0,glads:0,archived:false,v:VER}}
++  /* one gladiator's settled result into the house record (out = applyResult's answer) */
++  function domusNote(D,row,out,ranked){D.bouts=(D.bouts|0)+1;if(row&&row.won)D.wins=(D.wins|0)+1;D.lifeCF=(D.lifeCF|0)+((out&&out.cf)|0);
++    if(out&&out.died)D.fallen=(D.fallen|0)+1;else if(ranked)D.survived=(D.survived|0)+1;return D}
++  /* the house record built from gladiators made before houses existed (no data lost) */
++  function domusFromChars(D,chars){for(const c of chars||[]){D.bouts=(D.bouts|0)+(c.bouts|0);D.wins=(D.wins|0)+(c.wins|0);D.survived=(D.survived|0)+(c.survived|0);D.lifeCF=(D.lifeCF|0)+(c.lifeCF|0);if(!c.alive)D.fallen=(D.fallen|0)+1}D.glads=(D.glads|0)+(chars||[]).length;return D}
++  const domusRow=D=>D?{id:D.id,name:D.name,founded:D.founded,bouts:D.bouts|0,wins:D.wins|0,survived:D.survived|0,fallen:D.fallen|0,lifeCF:D.lifeCF|0,glads:D.glads|0}:null;
++  /* ── v0.82 GUESTS: a connection without sign-in may only look (these requests), for 2 hours from its first connect ── */
++  const GUEST_MS=2*3600e3, GUEST_OK=['hello','auth.guest','lobby.list','match.watch','match.unwatch','match.get','match.snapreq','forum.get','hall.list','world.news'];
++  /* ── v0.82 STANDS GROUP TURN: once a rotation every ticket holder picks ONE action in private; the server applies all picks as one
++     input. A thrown stone / offering is LOCKED to its tile (r,c on the 13×13 board). ── */
++  const STANDS_MS=20000, STANDS_ACTS=['pass','stone','offer','tholo','move','cheer'];
++  function standsPickOK(p){if(!p||typeof p!=='object'||Array.isArray(p))return 'Pick an action.';if(JSON.stringify(p).length>600)return 'That pick is too large.';
++    if(!STANDS_ACTS.includes(p.a))return 'No such action from the stands.';
++    if(p.a==='stone'||p.a==='offer'){if(!Number.isInteger(p.r)||!Number.isInteger(p.c)||p.r<0||p.r>12||p.c<0||p.c>12)return 'Throw at a tile.'}return ''}
++  function cleanPick(p){const o={a:p.a};for(const k of ['r','c','seat','sec','v','tok'])if(p[k]!=null&&(typeof p[k]==='number'||typeof p[k]==='string'))o[k]=typeof p[k]==='string'?p[k].slice(0,24):p[k];return o}
+   /* a seat in the stands: bought before the horns, never by a fighter of this game; the price goes into the wager pot */
+   function ticketOK(L,who,wallet){if(!L.ticket)return 'This game sells no tickets.';if(L.status!=='waiting')return 'Tickets are sold until the horns.';
+     if(L.players.some(p=>p.id===who))return 'Fighters take the sand, not the stands.';if((L.stands||[]).some(s=>s.id===who))return 'You already hold a ticket.';
+@@ -264,5 +293,5 @@ const ONLC=(function(){
+   /* weekly challenges rotate with the week of the year */
+   const CHALLENGES=[['Survive 3 ranked bouts',3,'survived'],['Earn 60 CF in one bout',60,'cf1'],['Win a bout at Capua',1,'win:3'],['Slay 5 beasts',5,'beasts'],['Finish 5 bouts',5,'bouts'],['Win with 20+ coin left',1,'rich']];
+   function weekChallenges(t){const wk=Math.floor((t||0)/604800000);const out=[];for(let i=0;i<3;i++)out.push(CHALLENGES[(wk+i*2)%CHALLENGES.length]);return out}
+-  return {DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,PURSE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
++  return {PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
+ if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
+diff --git a/tools/plans/onl82-contract.md b/tools/plans/onl82-contract.md
+new file mode 100644
+index 0000000..ade2a9d
+--- /dev/null
++++ b/tools/plans/onl82-contract.md
+@@ -0,0 +1,113 @@
++# v0.82 Online — the server contract (Domus · coin rework · prices by AP · guests · invites · the stands group turn)
++
++Protocol **VER 5** (src/111-onlcore.js). Old clients (VER 4) get **426** on `$connect`, as today. The server is in server/src
++(routes.js, index.js, store.js); the shared rules are ONLC (src/111-onlcore.js, copied to server/src/onlcore.js by
++`node tools/mkserver.js`). The mock server (MOCK_ROUTES in 112/118) must answer the same requests the same way and call the same ONLC
++functions. Tests: `cd server && npm test` (suite "server v0.82").
++
++## 0. Replies and refusals
++Reply: `{re, ok:true, d}` | `{re, ok:false, err, code?, ...extra}`. **New:** refusals may carry a stable `code` (and extra fields)
++— read `code`, show `err` (player-facing, already worded). Codes used now:
++
++| code | when | extra |
++|---|---|---|
++| `need_domus` | the account has no house and the request needs one (list in §1); also from a party member without a house | — |
++| `domus_name` | bad house name (length / word filter) | — |
++| `name_taken` | another house has that name (case-insensitive) | — |
++| `domus_locked` | rename / new house while the house has (had) a gladiator | — |
++| `guest` | a guest asked for something outside GUEST_OK | — |
++| `guest_expired` | a guest's 2 hours are up | — |
++| `room_gone` | lobby.accept / lobby.join{inv} on a dead room | `why`: started\|full\|left\|closed, `live:true` when started (watchable) |
++| `no_invite` | lobby.accept with no pending invitation for that room (room still alive) | — |
++| `no_stands` | stands window in a game with stands off / no ticket holder | — |
++| `stands_twice` | a window already opened for that rotation, or a second pick | — |
++| `stands_closed` | a pick after the window closed | — |
++
++Other refusals keep plain text without a code (as before).
++
++## 1. DOMUS (the online ludus)
++ONLC: `DOMUS_MIN=3, DOMUS_MAX=24`, `domusWhy(name)` → '' or the reason (clean, 3–24 letters, `nameBad` filter), `domusKey(name)`
++(lower case), `newDomus`, `domusNote(D,row,out,ranked)`, `domusFromChars(D,chars)`, `domusRow(D)` → `{id,name,founded,bouts,wins,
++survived,fallen,lifeCF,glads}`. **GLAD_MAX = 4** living gladiators; one active (unchanged).
++
++Requests:
++- `domus.get {}` → `{domus: row|null, needDomus, glads (gladiators ever in it), archived:[row…]}`
++- `domus.create {name}` → `{domus: row, needDomus:false, joined: n}`. Allowed when the account has no house, or when its current house
++  has NEVER had a gladiator (then the old house is archived with its record and its name freed). Gladiators made before houses existed
++  (no `domus` field) join the new house; its record is built from them (`joined` = how many). Errors: domus_name, name_taken, domus_locked.
++- `domus.rename {name}` → `{domus: row}`. Only while the house has never had a gladiator (else domus_locked). need_domus without a house.
++- `hello` (signed in) now always carries `needDomus` (true while the account has no house) and `domus` (row or null).
++  `me.here.domus` = the house name. Old accounts with gladiators but no house: hello shows needDomus:true, `chars` as before — the client
++  must ask for the house name before anything else.
++- **Requests refused with `need_domus`** while the account has no house: char.create, char.buy, char.edit, char.active, lobby.create,
++  lobby.join, lobby.accept, lobby.quick, lobby.sit, lobby.ticket, lobby.invite, lobby.call, lobby.again, lobby.say, bet.place,
++  party.create, party.join, forum.say. Still allowed: hello, auth.*, domus.*, char.mine, lobby.list/leave/chatlog/watch, forum.get/mute,
++  who.list, party.get/leave, hall.list, world.news, every match.* request (a match already under way finishes).
++- Gladiators carry `domus: <house id>`. The house record follows every settled result (`domusNote`): bouts +1, wins, lifeCF += CF of the
++  bout; survived +1 (Ranked, survived) or fallen +1 (died — also a Ranked abandon/Damnatio). Custom bouts count bouts/wins/CF.
++- **Names stay the gladiator's**; the house name rides beside it as `domus` (a string) on: room `players[]` / `members[]` (full and lite
++  rows), `who.list` rows, Forum `say` lines (`line.domus`), invitations (`fromDomus`). Absent / null when unknown.
++
++## 2. Coin rework (ONLC.applyResult)
++No pay-out of in-match coin (`row.coin` is ignored). `out.pay` = `awardOf(rankAtTheHorns, won, streakBeforeThisBout)` for a
++**Ranked bout survived**, else 0 (Custom pays nothing; the dead are not paid).
++`AWARD = {tiro:8, gregarius:12, veteranus:18, primus:25, summa:35}`, `WIN_BONUS = 0.5`, multiplier `1 + min(1, streak × 0.1)`,
++rounded: `Math.round(AWARD[r] × (won ? 1.5 : 1) × mult)`. No cap. Wagers and tickets unchanged. `ONLC.PURSE` is gone — use `AWARD`/`awardOf`.
++
++## 3. Prices (ONLC)
++`PRICE = {1:60, 2:250, 3:750}` (weapons by level), `PRICE_AP = {1:15, 2:55, 3:150}` (armor, per AP at its level).
++**Always use `ONLC.priceOf(catalogItem)`** (weapons: PRICE[lv]; armor: PRICE_AP[lv] × ap). `canBuy` / `buy` use it; the error text
++is `Costs N coin.` **The catalog must carry `ap` for armor**: server/src/catalog.json does now. CLIENT TODO: `onlCatalog()` (112) must add
++`ap: ARM[k].ap` to armor entries (`{kind:'a', lv, n, stack, ap}`) — otherwise the mock prices armor at 1 AP and the next
++`node tools/mkserver.js` writes a catalog without `ap` (server armor would then cost 1 AP's price). Owned gear and wallets untouched.
++
++## 4. Guests (read-only, no sign-in)
++- Connect: `wss://…?guest=<client id>&ver=5` — the client keeps a random id (8–40 of `[a-z0-9_-]`) in localStorage
++  (e.g. `flavius_onlguest82`). Refused with **403** (local server close code 4403) once 2 hours have passed since that guest id FIRST
++  connected (the server remembers for a day); 401 for a bad id. A token or dev sign-in takes priority over `guest`.
++- `auth.guest {tz}` → `{guest:true, id:'guest-<id>', first, until (= first + GUEST_MS), now}`; stores the time zone for the map.
++- `hello` (guest) → `{ver, mode:'aws', me:null, guest:{id, until}, now, lobbies (lite rows), here, online, forum, news, challenges, today}`
++  (no chars/party/live/needDomus).
++- Allowed: `ONLC.GUEST_OK` = hello, auth.guest, lobby.list, match.watch, match.unwatch, match.get, match.snapreq (the watcher path),
++  forum.get, hall.list, world.news. Everything else → code `guest`, err `Sign in to play.` (or: `Sign in to speak in the Forum.`,
++  `…to wager.`, `…to buy a ticket.`, `…to raise gladiators.`, `…to found a house.`).
++- After 2 h every request → code `guest_expired` ("Your two hours as a guest are up — sign in to keep watching."). The client shows its own
++  notice from `until` (no push is sent).
++- Watching: guests use the same `match.watch` (counted in the 30 free seats) and receive `match.input` / `match.open` pushes like
++  any watcher. They never receive Forum pushes (they read `forum.get` / hello.forum).
++- Presence: `hello.here` gains **`guests`** (count) and **`gzones`** `{tz: count}` — guests are NOT in `n` or `zones` (separate glow).
++  `world.news` gains `guests`. ONLC `hereSummary(here, rooms, guests)` computes it.
++
++## 5. Invitations die with the room
++- `lobby.invite` / `lobby.again` store each invitation (INVITE#<to> R#<room>#<by>) and push **`lobby.invite`
++  `{room, row (lite), from (gladiator name), fromId, fromDomus}`** (`room` is new).
++- **`lobby.accept {id}`** (room id) — or `lobby.join {id, inv:1}` (same thing) — joins like lobby.join. Refused with code **`room_gone`**
++  + `why` when the room started (`live:true`, offer 👁 Watch), filled (no free seat), closed, or every lanista who sent it left;
++  code **`no_invite`** when there is no pending invitation (e.g. dropped because you joined elsewhere) and the room is still alive.
++- Push **`invite.gone {rooms:[roomId…], why, live?}`** to the invitee when an invitation dies: why = started (live:true) | full | left |
++  closed (sent with the room's own change), or **joined** (you joined/created/quick-joined another room — `rooms` lists every other
++  room whose invitations were dropped; the room you joined is never listed). No timers on the server; the client removes the card.
++
++## 6. The stands group turn (server side)
++Ticket holders' seats are `M.seats[acct]` = fighters' seats + k (as v0.78). Requests:
++- **`match.stands.open {id, rot}`** — host only, live match. One window a rotation (`rot` = any integer the host's client uses,
++  e.g. the rotation number). Refused: not host · `no_stands` (stands off / no ticket holder left) · `stands_twice` (already opened).
++  → `{rot, until (= now + ONLC.STANDS_MS, 20 s), holders:[seat…]}`. Push **`stands.window {id, rot, until, seat}`** to every ticket
++  holder (not dropped/abandoned) — ONLY to them.
++- **`match.stands.pick {id, rot, pick}`** — ticket holders of that window only, ONE pick each (`stands_twice` for a second),
++  `stands_closed` once closed. `pick` is validated by `ONLC.standsPickOK`: `a` ∈ `STANDS_ACTS` = pass, stone, offer, tholo, move, cheer;
++  `stone`/`offer` need integer tiles `r`,`c` in 0–12 (LOCKED to that tile); ≤ 600 chars. Stored as `ONLC.cleanPick(pick)` = `{a}` plus
++  any of `r, c, seat, sec, v, tok` (numbers or ≤24-char strings). **Nothing is pushed** to anyone. → `{rot, ok:true}`; when this was the
++  last holder to answer the window closes at once → `{rot, ok:true, closed:true, seq}`.
++- **`match.stands.close {id, rot}`** — the host (any time, normally at 20 s); any other live fighter only 25 s after it opened
++  (`STANDS_MS + 5000`, if the host is gone). Ticket holders cannot close. → `{closed:true, seq}` or `{closed:false}` (already closed).
++- Closing (once, whoever triggers it) appends ONE server input to the match's ordered stream and pushes it as **`match.input`** to every
++  fighter, ticket holder and watcher (no exception for the closer):
++  `{k:'stands.result', rot, picks:[{seat, pick}…] (sorted by seat), missed:[seat…], from:'server', seq}`.
++  Lockstep clients apply all picks at that seq: stones/offerings fire on their locked tiles (whoever stands there is hit / receives it).
++  CF/coin are not known to the server — the engine refuses an unaffordable pick when applying (deterministically, on every client).
++
++## 7. Unchanged
++Rooms, quick chat, Praeco, Forum, presence for lanistas, Today, majority resync, results by agreement, wagers/tickets, abandon/drop.
++Storage additions are listed at the top of server/src/store.js (DOMUS#, DNAME#, GUEST#, INVITE#, MATCH# STW#/STP#; ACCT domus/dname/domusOld;
++CHAR domus). template.yaml needs no change. Deploy the server (protocol 5) together with the client.
+-- 
+2.43.0
+
