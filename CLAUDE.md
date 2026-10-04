@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.81**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.82**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -65,7 +65,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Module ordering matters: a wrapper only sees wrappers installed before it.
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
   `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
-  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`.
+  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`, `126-v82fix`, `127-v82onl`, `128-v82stands`, `129-v82beasts`, `130-v82vis`.
   Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
 
 ### Core globals (engine)
@@ -511,8 +511,22 @@ One global script; files are concatenated in order. Later "version modules" patc
   (RAT_PD), 05-flow armorDesc no "chest chest". Tests `tv81p`, `tv81a`, `tv81o`. tools: per-test kill limit = max(400, 1.6×time+60);
   release.sh share build only with SHARE=1; flavius.sh `release` = server → game (+ play/flavius-rule-arena.zip) → site → privacy,
   `login` (two-step login.flaviusrule.com, remembered in ~/.flavius.conf). Site v0.81 (website/, not in git): Contact off the nav, Media =
-  Videos only, Play page Online card + What's new. v0.82 SERVER HALF built on branch worktree-agent-ae08b484d7ebd2404 (commit ad4feef,
-  protocol VER 5, contract tools/plans/onl82-contract.md) — NOT merged until the v0.82 client half.
+  Videos only, Play page Online card + What's new.
+- **v0.82 (126-130 + server, protocol VER 5, contract tools/plans/onl82-contract.md):** `126-v82fix` — unique spawn cards leave the deck
+  once their beast is on the sand (`UNIQUE_CARD82`, `uniqueOut82`; fixes Tholo drawn twice), hunched sculpted figures ×1.062 (Hero height),
+  Tholo's sculpted token from his card (laurel, grey hair/beard, cape), main menu: Play Now + Manager one row, 🎓 Tutorials button folds
+  #mmLearn (`data-mm82="tut"`), slim row Annals/Rules/Settings/Saves/mute (`mmLabels82`); Domus showcase on stone_wall, main card on
+  parchment. `127-v82onl` — DOMUS (house name required before a gladiator, record incl. Purses, 4 slots, Storeroom move/equip locked in a
+  match), GLORY rank bar (lifeCF + 12×survived + 8×wins; living counts per rank from the server), table factor (2 humans pay less),
+  guests watch read-only, invites `lobby.accept`, prices by AP, PATRON (set at founding, ✎ fold on the Domus `details.pat82d`), free
+  tickets, daily guest pass + house Fame, `match.speared` refund. `128-v82stands` — online stands GROUP TURN (`#st82Pop` private popups,
+  `stands.result` input), spear refund, sculpted online tokens (`p._onlSc`), random starting class in the creator. `129-v82beasts` —
+  beast cards (`nc82*`; printed beasts flip to their arena-deck card `NC82_BACKCARD`, custom ones get a generated 1- or 3-state back
+  whose HP counts down), spawn show `beastShow82`, custom beasts in the deck (`spawn_cn_<id>`, unique tick `unique82`, grid dice),
+  deck slots Tholo + 3 (`SLOT82_DEF`, roster set row `rosterSlots82`, Event Designer `ed82*`), spear = Flavius scowls + "−N 🪙" float +
+  the spearer draws a Mandati Flavi (`mfDeck82`, none if the deck is empty). `130-v82vis` — pillar shadows under the base
+  (`pillarShadow82`), iron/bronze spikes (`drawSpikeTile` in 07-ui, `SPIKE82`), pieces face their attack target (minis' `_face`).
+  Server: Scan permission in template.yaml → FULL stack redeploy (server zip flavius-server-9). Tests `tv82s`, `tv82o`, `tv82b`, `tv82v`.
 - **Guide data:** `SIM50` in 53-guide50 is regenerated by `node tools/simguide.js flavius-arena.html 600` (SIMVER env);
   it includes `perk` (wins by rating perk), charted by 69-v56.
 - **Music:** procedural Web Audio (21-audio, 45-music, 16 themes; unlocked by winning in cities). Play Now plays a
@@ -648,6 +662,10 @@ One global script; files are concatenated in order. Later "version modules" patc
   bout's end (resent), no stale matches, invites die with rooms, wheat CF, new landing, playlists scroll; ratings always shown, phone cards
   scaled. (Published as artifact Version 94; no server change; game zip flavius-site-update-v0.81 + site zip flavius-site-v0.81.)
   Release run: 151/151 (tlive flaky once; tv73 updated for the always-on ratings).
+- **v0.82** Domus (house, record, Storeroom, patron), Glory rank bar with living counts, smaller pay at 2-human tables, guests may watch,
+  free tickets + guest pass, stands group turn online, spear refunds + Flavius's scowl + a Mandate for the spearer, beast cards with
+  their backs, custom beasts in the arena deck (Tholo + 3 slots, unique tick), sculpted online tokens, Tholo's new token, Hero height,
+  tidier main menu, pillar shadows, iron spikes, pieces face their target. (Server zip flavius-server-9, protocol 5 — full stack deploy FIRST.)
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
@@ -734,7 +752,9 @@ One global script; files are concatenated in order. Later "version modules" patc
 - **Online market ideas (his, 2026-10-04, for the gear batch v0.83 — questions pending):** (1) the Armory sells OFFERINGS (tokens) a
   gladiator can carry into a match in their inventory and bring back out if they survive/win; (2) the online market shows weapons and
   armor on his market board art (boardHTML75 / assets/market_board.webp) — one side of the board for weapons, the other for armor. A row of OFFERINGS runs above both sides
-  (his layout).
+  (his layout). CONFIRMED for v0.83 ("8 sure").
+- **Beast backs (his, 2026-10-04):** he has SHARPER beast-card backs (pasted in chat only) — waiting for them as files; then
+  swap `NC82_BACKCARD` (arena-sheet cards) for assets/npcback82p_<key>.webp.
 - **v0.83 plan (his answers 2026-10-04; build after v0.82 ships, wait for his go on the batch):** GEAR LEVELS: 1–3 = printed system
   gear, 4 = named chest gear (Common/Rare/Epic/Legendary from the Arena Chest + Flavius's Gifts); NO rank gate on buying (prices gate);
   the first 3 ranks (Tiro, Novicius, Gregarius) may only WEAR printed gear — named pieces wait in the Storeroom until Veteranus.
