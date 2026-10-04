@@ -906,6 +906,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
   tidy + readability pass + his v0.84 notes — START RIGHT AFTER v0.84 IS PUBLISHED; v0.86 = BUILT-IN SPANISH (one string table, GAME_TERMS
   stay English, live Language switch + first-run prompt for Spanish browsers, hover/long-press panels on English-art cards/tokens,
   a test walking the screens in Spanish for leftover English + overflow); then one language per release.
+  His call (2026-10-04): NAMES STAY ENGLISH like the class names — weapons, armor, beasts, offerings, cards (the translated
+  panel gives the rules text, the name stays as printed).
 - **RECRUITING II (his yes 2026-10-04, v0.87):** (1) decision deadline + the rival house's counter-bid in the last week (Recruiter letter:
   match / outbid on another want / walk away); (2) each fighter has 1–2 WANTS (coin, arena time, fame, rudis path, home city, a friend in
   the house) revealed by scouting — pitches on a want gain big, the button previews the gain; (3) progressive scouting: ratings as ranges
