@@ -86,3 +86,17 @@ function rb82Fit(){const rb=document.querySelector('#onl .rb82'),gs=document.que
  setInterval(()=>{if(document.querySelector('#onl .rb82'))rb82Fit()},400);addEventListener('resize',()=>setTimeout(rb82Fit,50))}
 /* the round's switched-off rules live only in the turn panel's ⓘ — the ⃠ chip row under the name never shows (it crept back) */
 {const st=document.createElement('style');st.textContent='#turnInd .tprules{display:none!important}';document.head.appendChild(st)}
+/* the Blessings bag holds 2 spiders (was 6 of 36 in the placeholder mix — two could turn up in the first rotations) */
+BLESSING_TABLE.spiders=2;
+/* the Open Arena Chest button glimmers gold while it is offered (you stand on or hold the chest with a key);
+   the chest's Level 4 card flips LANDSCAPE, like the weapon cards: the back art turned on its side, the weapon face upright */
+{const st=document.createElement('style');st.textContent=`
+[data-act="chest"]:not([disabled]){position:relative;overflow:hidden;border-color:#e8c96a!important;color:#ffe9a8!important;background:linear-gradient(180deg,#5a4214,#2e2008)!important;box-shadow:0 0 0 1px rgba(232,201,106,.5),0 0 12px rgba(232,180,60,.45);animation:chestGlow82 2.4s ease-in-out infinite}
+[data-act="chest"]:not([disabled])::after{content:'';position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,240,190,.55),transparent);animation:chestSheen82 2.4s ease-in-out infinite;pointer-events:none}
+@keyframes chestGlow82{50%{box-shadow:0 0 0 1px rgba(255,220,120,.85),0 0 20px rgba(240,190,70,.75)}}
+@keyframes chestSheen82{0%{left:-60%}60%,100%{left:130%}}
+body.calm [data-act="chest"]::after{animation:none;display:none}body.calm [data-act="chest"]{animation:none}
+@media (prefers-reduced-motion:reduce){[data-act="chest"]::after{display:none}[data-act="chest"]{animation:none}}
+.chest75-card{width:300px!important;aspect-ratio:600/416!important}
+.chest75-back{inset:auto!important;left:50%;top:50%;width:208px;height:300px;transform:translate(-50%,-50%) rotate(90deg)}
+.chest75-front .cimg{width:100%!important;transform:translate(-50%,-50%)!important}`;document.head.appendChild(st)}
