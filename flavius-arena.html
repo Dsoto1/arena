@@ -38781,6 +38781,9 @@ const reduceMotion85=()=>{try{return typeof reduceMotion==='function'&&reduceMot
        with the number of bouts still to fight in gold.
   11 · The free agent card's steps (1 Scout · 2 Court · 3 Offer) swap only the card column — no MGR_REDRAW,
        so the rail is never rebuilt (clicking them again and again made the left rail flicker, like ⋯ did).
+  12 · ONLINE: the Forum starts fresh every UTC day — the server returns only today's lines (server/src/routes.js
+       forumLines), the mock does the same, and the page drops older lines it still holds (a tab left open
+       over midnight).
    ===================================================================== */
 const FIX85={offering:0};
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mg="offer"]');if(!b)return;FIX85.offering++;setTimeout(()=>{FIX85.offering=Math.max(0,FIX85.offering-1)},0)},true);
@@ -38893,6 +38896,12 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   const body=document.getElementById('mgrBody');const col=body&&body.querySelector('.mgrid > div:nth-child(2)');const g=MGR.sel&&gById(MGR.sel);if(!col||!g||!col.contains(b))return;
   e.preventDefault();e.stopPropagation();const n=+b.dataset.recstep;if(MGR.recStep===n&&b.classList.contains('cur'))return;MGR.recStep=n;
   try{col.innerHTML=detailHTML(g)}catch(err){console.error(err);if(typeof MGR_REDRAW==='function')MGR_REDRAW()}},true);
+
+/* 12 · the Forum starts fresh each UTC day */
+const day0_85=()=>Math.floor(Date.now()/864e5)*864e5;
+if(typeof onlFeedHTML80==='function'){const base=onlFeedHTML80;onlFeedHTML80=function(){const d0=day0_85();try{if(typeof ONLF!=='undefined'){if(Array.isArray(ONLF.lines))ONLF.lines=ONLF.lines.filter(l=>!l.at||l.at>=d0);if(Array.isArray(ONLF.local))ONLF.local=ONLF.local.filter(l=>!l.at||l.at>=d0)}}catch(e){}return base.apply(this,arguments)}}
+if(typeof MOCK_ROUTES!=='undefined'){const today=a=>Array.isArray(a)?a.filter(l=>!l.at||l.at>=Math.floor((typeof mockNow==='function'?mockNow():Date.now())/864e5)*864e5):a;
+  for(const k of ['forum.get','hello']){const base=MOCK_ROUTES[k];if(typeof base!=='function')continue;MOCK_ROUTES[k]=function(){const r=base.apply(this,arguments);const fix=o=>{if(k==='forum.get')return today(o);if(o&&Array.isArray(o.forum))o.forum=today(o.forum);return o};return r&&typeof r.then==='function'?r.then(fix):fix(r)}}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
