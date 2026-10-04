@@ -2,8 +2,9 @@
    134-V83SPIKES · v0.83 — the Floor Spikes medallion (Virgilante: "spears that come out from beneath the tile through small
    slots… about 6 spikes angling out and up with 1 straight up in the middle")
    =====================================================================
-   • assets/rtok.webp cell 'spike' = the new medallion (tools/art/spikes83/make.py: his Spiders frame, plaque and scroll; his
-     Water stands; an iron plate with seven slots and seven spears; "2 DMG" and "SPIKES" set from his own lettering).
+   • assets/rtok.webp cell 'spike' = the new medallion (tools/art/spikes83/make.py: his Spiders frame, plaque and scroll; inside a round
+     iron sewer cap dusted with sand, seven slots, iron spikes coming up out of them — six angling out and up, one straight up;
+     "2 DMG" on the plaque, "FLOOR SPIKE" on the scroll, set from his own lettering).
    • It shows wherever spikes are named: the log (spikes rising, a spike wound), the tile line under the arena, and the Event
      Designer's Spike tool. The board keeps drawing the raised iron spikes (130-v82vis).
    ===================================================================== */
