@@ -23,7 +23,7 @@
        The ward's lock note says you can look at the wounds now and treat them next week.
    7 · Prices read "Cost: N coin" instead of "−N coin": the road events (ROAD76 choices) and the temple
        offerings ("8c · …" → "Cost: 8 coin · …").
-   8 · The bout tracker's fought mark = two swords crossed into an X, tips up (replaces the slash).
+   8 · The bout tracker's fought mark = two rudes (wooden swords: oak blade, rounded tip, dark grip) crossed into an X, tips up.
    9 · The Acta Diurna loses "Start your next week →" (leaving the tab already dismisses it; Your ludus keeps it).
   10 · Rail ovals wear their room's colour: Infirmary medic white with dark red figures, Recruiting the banner's
        green, Training Yard light grey, Your ludus — the letters oval on parchment and the tasks oval light blue
@@ -58,7 +58,10 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 @media (max-width:760px){.travelcard.road85{grid-template-columns:1fr}.road85side{border-left:0;padding-left:0;flex-direction:row;flex-wrap:wrap}.road85t{flex:1 1 200px}}`;document.head.appendChild(st)}
 
 /* 3 · the bout tracker on the Match Week banner */
-const BT85_X=`<svg class="bt85x" viewBox="0 0 40 40" aria-hidden="true"><g stroke-linecap="round"><path d="M9 33L31 7" stroke="#e7ecf1" stroke-width="2.6"/><path d="M31 33L9 7" stroke="#e7ecf1" stroke-width="2.6"/><path d="M9 33L31 7" stroke="#7d868f" stroke-width=".8"/><path d="M31 33L9 7" stroke="#7d868f" stroke-width=".8"/><path d="M8 27l8 6M24 33l8-6" stroke="#b08a3e" stroke-width="2.6"/><circle cx="6.5" cy="35.5" r="2" fill="#b08a3e"/><circle cx="33.5" cy="35.5" r="2" fill="#b08a3e"/></g></svg>`;
+const BT85_X=(()=>{const rud=(x1,y1,x2,y2)=>{const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L,gx=x1+ux*9,gy=y1+uy*9,px=-uy,py=ux;
+    return `<path d="M${gx} ${gy}L${x2} ${y2}" stroke="#5a3a1c" stroke-width="5.2" stroke-linecap="round"/><path d="M${gx} ${gy}L${x2} ${y2}" stroke="#b07a42" stroke-width="3.8" stroke-linecap="round"/><path d="M${gx+px*.6} ${gy+py*.6}L${x2+px*.6-ux*2} ${y2+py*.6-uy*2}" stroke="#d9a868" stroke-width="1" stroke-linecap="round" opacity=".8"/>`+
+    `<path d="M${gx-px*4.5} ${gy-py*4.5}L${gx+px*4.5} ${gy+py*4.5}" stroke="#4a2e16" stroke-width="2.6" stroke-linecap="round"/><path d="M${x1} ${y1}L${gx} ${gy}" stroke="#3a2412" stroke-width="2.6" stroke-linecap="round"/><circle cx="${x1-ux*1.2}" cy="${y1-uy*1.2}" r="2.1" fill="#6b4524"/>`};
+  return `<svg class="bt85x" viewBox="0 0 40 40" aria-hidden="true">${rud(8,35,31,6)}${rud(32,35,9,6)}</svg>`})();
 const BT85_DAY={under:'Fri',feature:'Sat',main:'Sun'};
 function boutTrack85(){const w=W_(),m=me();const n=w&&w.night;if(!n||n.bye||!n.bouts||!n.bouts.length)return '';
   const mine=new Set(rosterOf(m).map(g=>g.id));const nextI=n.bouts.findIndex(b=>!b.done);
