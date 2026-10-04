@@ -57,3 +57,12 @@ function drawChest83(m){if(typeof ctx==='undefined')return;const C=CHEST83;
   ctx.lineTo(...P(x0,y1,Hb));ctx.closePath();ctx.stroke();
   ctx.lineWidth=Math.max(0.8,TW*0.008);ctx.beginPath();a=P(x0,y1,Hb);ctx.moveTo(a[0],a[1]);a=P(x1,y1,Hb);ctx.lineTo(a[0],a[1]);a=P(x1,y1,0);ctx.lineTo(a[0],a[1]);ctx.stroke();
   ctx.restore()}
+/* the carried chest isn't drawn on the carrier's figure any more (07-ui checks CHEST_INV83): its token sits in their inventory
+   until they open it or drop it — "Hand, offerings & objectives" on the fighter board; a beast holding it shows it on its Field row */
+const CHEST_INV83=true;
+{const base=boardHTML;boardHTML=function(player){let h=base.apply(this,arguments);try{if(player&&player.carrying&&S&&S.chest&&h.indexOf('data-chest83')<0){
+  const n=(S.chest.weapons||[]).length;
+  const row=`<div class="item chest83" data-chest83="1"><span>${typeof rtokHTML==='function'?rtokHTML('chest',30,'The Arena Chest'):'🧰'}<span><b>The Arena Chest</b><em>Locked · ${n} inside · open it with an Arena Key · −1 movement while held</em></span></span></div>`;
+  if(h.indexOf('<div class="items">')>=0)h=h.replace('<div class="items">','<div class="items">'+row);
+  else{const at=h.lastIndexOf('</div>');h=h.slice(0,at)+`<div class="sect">Hand, offerings & objectives</div><div class="items">${row}</div>`+h.slice(at)}}}catch(e){}return h}}
+{const st=document.createElement('style');st.textContent='.item.chest83{border:1px solid rgba(214,171,76,.55);background:linear-gradient(90deg,rgba(214,171,76,.14),transparent)}.item.chest83 .rtok{margin-right:8px}';document.head.appendChild(st)}

@@ -2151,7 +2151,7 @@ function drawNPC(npc) {
       ell(m.x + TW * 0.28, stTop + 8, TW * 0.08, TW * 0.08);
       ctx.fill();
     }
-    if (S.chest && S.chest.held === npc.id) {
+    if (S.chest && S.chest.held === npc.id && typeof CHEST_INV83 === 'undefined') {
       ctx.fillStyle = '#d6ab4c';
       ctx.fillRect(m.x + TW * 0.2, m.y - TW * 0.3, TW * 0.16, TW * 0.11);
     }
@@ -2181,7 +2181,7 @@ function drawNPC(npc) {
   ctx.fillRect(m.x - bw / 2, y, bw, 4);
   ctx.fillStyle = npc.tamedBy != null ? '#7fb4e0' : npc.aggro != null ? '#e05a44' : '#9cc46e';
   ctx.fillRect(m.x - bw / 2, y, bw * Math.max(0, npc.hp) / maxhp, 4);
-  if (S.chest && S.chest.held === npc.id) {
+  if (S.chest && S.chest.held === npc.id && typeof CHEST_INV83 === 'undefined') {
     ctx.fillStyle = '#d6ab4c';
     ctx.fillRect(m.x + rx * 0.6, m.y - h * 0.6, TW * 0.16, TW * 0.11);
   }
@@ -2263,7 +2263,7 @@ function drawPlayer(player) {
         ctx.textBaseline = 'middle';
         ctx.fillText('E', m.x + TW * 0.25, top + 9);
       }
-      if (player.carrying) {
+      if (player.carrying && typeof CHEST_INV83 === 'undefined') { /* v0.83: the carried chest lives in the inventory */
         ctx.fillStyle = '#d6ab4c';
         ctx.fillRect(m.x - TW * 0.38, m.y - TW * 0.4, TW * 0.16, TW * 0.11);
       }
@@ -2305,7 +2305,7 @@ function drawPlayer(player) {
     ctx.font = `700 ${Math.round(TW * 0.13)}px Marcellus SC, serif`;
     ctx.fillText('E', m.x + rx * 0.9, m.y - h - 3);
   }
-  if (player.carrying) {
+  if (player.carrying && typeof CHEST_INV83 === 'undefined') { /* v0.83: the carried chest lives in the inventory */
     ctx.fillStyle = '#d6ab4c';
     ctx.fillRect(m.x - rx * 1.4, m.y - h * 0.6, TW * 0.16, TW * 0.11);
   }
