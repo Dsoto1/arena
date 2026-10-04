@@ -19,6 +19,7 @@ const NAMEBANK={
   title:['Butcher','Hammer','Lion','Wolf','Pride','Terror','Shield','Scourge','Bull','Ghost','Viper','Storm','Anvil','Ox','Fox','Jackal','Hawk','Bear','Blade','Widow'],
   place:['Capua','Pompeii','Roma','Verona','Arles','Nemausus','Pola','Puteoli','Syracusae','Uthina','Thysdrus','Leptis Magna','Carthago','Alexandria','Corinth','Gades','Massilia','Ostia','Tarentum','Neapolis','Brundisium','Numidia','Thracia','Gallia','Dacia','Britannia','Hispania','Germania','Illyria','Aegyptus','Parthia','Sardinia','Creta','Cyrene','Antiochia'],
 };
+/* NAME_PATTERNS — [weight, maker(_, female)] for each name shape: Roman, Roman + stage name, stage + epithet, cognomen + epithet, "The Title of Place", "Stage of Place". TWEAK: the weights (30/12/14/12/10/10). */
 const NAME_PATTERNS=[
   [30,(g,f)=>`${pickOne(f?NAMEBANK.praeF:NAMEBANK.prae)} ${pickOne(NAMEBANK.cog)}`],
   [12,(g,f)=>`${pickOne(f?NAMEBANK.praeF:NAMEBANK.prae)} "${pickOne(NAMEBANK.stage)}" ${pickOne(NAMEBANK.cog)}`],
@@ -27,6 +28,7 @@ const NAME_PATTERNS=[
   [10,()=>`The ${pickOne(NAMEBANK.title)} of ${pickOne(NAMEBANK.place)}`],
   [10,()=>`${pickOne(NAMEBANK.stage)} of ${pickOne(NAMEBANK.place)}`],
 ];
+/* takenNames — every name already in use (lower case): class heroes, beasts, city beasts, the Ludus, custom characters and beasts, Manager gladiators and lanistae, the live seats and this session's names. */
 function takenNames(){
   const s=new Set();const add=n=>n&&s.add(String(n).toLowerCase());
   for(const k in CLASSES)add(CLASSES[k].hero);
@@ -39,7 +41,9 @@ function takenNames(){
   for(const n of NAME_SESSION)add(n);
   return s;
 }
+/* NAME_SESSION — names handed out this session (never repeated). */
 const NAME_SESSION=new Set();
+/* genName — a unique gladiator name (28% female by default; optional pattern index); after 60 clashes falls back to "Prae Cog II–V". The shape is picked with Math.random but the parts with pickOne/rnd (the seeded dice). TWEAK: the .28 female share, the 26-character limit. */
 function genName({female=null,pattern=null,taken=null}={}){
   const T=taken||takenNames();
   const f=female==null?Math.random()<.28:female;
@@ -50,6 +54,7 @@ function genName({female=null,pattern=null,taken=null}={}){
   }
   return `${pickOne(NAMEBANK.prae)} ${pickOne(NAMEBANK.cog)} ${['II','III','IV','V'][rnd(4)]}`;
 }
+/* nameCombos — how many distinct names the patterns can produce (shown in the Studio name generator). */
 const nameCombos=()=>NAMEBANK.prae.length*NAMEBANK.cog.length+NAMEBANK.praeF.length*NAMEBANK.cog.length+(NAMEBANK.prae.length+NAMEBANK.praeF.length)*NAMEBANK.stage.length*NAMEBANK.cog.length+NAMEBANK.stage.length*NAMEBANK.epi.length+NAMEBANK.cog.length*NAMEBANK.epi.length+NAMEBANK.title.length*NAMEBANK.place.length+NAMEBANK.stage.length*NAMEBANK.place.length;
 /* ---- BEAST NAMES (v0.20): what the keepers call them — rivers, mountains, old gods, bad omens ---- */
 const BEASTBANK={
@@ -59,15 +64,20 @@ const BEASTBANK={
   pet:['Mordicus','Ursulus','Lupulus','Dentatus','Ossifragus','Vastator','Carnifex','Sanguineus','Nocturnus','Tenebra','Fulgor','Tonitrus','Umbra','Bruma','Aestas','Grando','Procella','Turbo','Nix','Cinis'],
   suffix:['the Hungry','of the Pits','the Old One','the Ungentle','Twice-Sold','the Quiet','the Keeper\u2019s Regret','of the Dark Cage','the Gate-Breaker','Ever-Chained'],
 };
+/* BEAST_PATTERNS — [weight, maker] for beast names: places, tempers, myths, keepers' names, keeper's name + epithet. TWEAK: the weights. */
 const BEAST_PATTERNS=[[30,()=>pickOne(BEASTBANK.place)],[22,()=>pickOne(BEASTBANK.virtue)],[18,()=>pickOne(BEASTBANK.myth)],[20,()=>pickOne(BEASTBANK.pet)],[10,()=>`${pickOne(BEASTBANK.pet)} ${pickOne(BEASTBANK.suffix)}`]];
+/* genBeastName — a unique beast name (optional pattern index). */
 function genBeastName({pattern=null}={}){const taken=takenNames();
   for(let i=0;i<40;i++){let f;if(pattern!=null&&BEAST_PATTERNS[pattern])f=BEAST_PATTERNS[pattern][1];else{const t=BEAST_PATTERNS.reduce((a,[w])=>a+w,0);let x=Math.random()*t;f=BEAST_PATTERNS[0][1];for(const [w,fn] of BEAST_PATTERNS){if((x-=w)<0){f=fn;break}}}
     const n=f();if(!taken.has(n)&&!NAME_SESSION.has(n)){NAME_SESSION.add(n);return n}}
   return pickOne(BEASTBANK.pet)+' '+RN(1+Math.floor(Math.random()*30));}
+/* genNickname — a random epithet / title / stage name for a portrait. */
 function genNickname(){return pickOne([()=>pickOne(NAMEBANK.epi).replace(/^the /,'The '),()=>`The ${pickOne(NAMEBANK.title)} of ${pickOne(NAMEBANK.place)}`,()=>pickOne(NAMEBANK.stage)])()}
 /* LANISTA_CITIES — a house's home city must be one of the 12 arena cities (events, city square, home games) */
 const LANISTA_CITIES=()=>LOCATIONS.slice(1).map(L=>L.n);
+/* HOME_CITIES — birthplaces for gladiators: the 12 arena cities plus other cities of the empire. */
 const HOME_CITIES=()=>[...LOCATIONS.slice(1).map(L=>L.n),'Carthago','Alexandria','Corinth','Gades','Massilia','Ostia','Tarentum','Neapolis','Brundisium','Antiochia','Cyrene','Londinium','Lugdunum','Emerita'];
+/* genBackstory — a one-paragraph backstory (origin, past, motive, quirk) for a name and home city. */
 function genBackstory(name,city){
   const B={
     origin:['born to a fishmonger on the docks of {c}','the last son of a disgraced senator from {c}','sold into bondage in {c} before they could walk','a deserter from the legions stationed near {c}','raised by the priests of Mars outside {c}','a former chariot groom from the stables of {c}','an orphan of the plague years in {c}','a shepherd from the hills above {c}'],
@@ -81,7 +91,9 @@ function genBackstory(name,city){
 }
 // a small "🎲" button beside any name field: <button data-genname="#inputId">
 document.addEventListener('click',e=>{const b=e.target.closest('[data-genname]');if(!b)return;e.preventDefault();const inp=document.querySelector(b.dataset.genname);if(!inp)return;inp.value=genName();inp.dispatchEvent(new Event('input',{bubbles:true}));inp.dispatchEvent(new Event('change',{bubbles:true}))});
+/* diceBtn — the 🎲 button that fills the input matching sel with a generated name. */
 const diceBtn=sel=>`<button type="button" class="btn" data-genname="${sel}" title="Generate a unique gladiator name" aria-label="Generate a name" style="padding:4px 8px">🎲</button>`;
+/* nameGenHTML — the Creator Studio name generator body: pattern buttons and a list of generated names. */
 function nameGenHTML(list){
   return `<p>${nameCombos().toLocaleString()} possible combinations across six patterns: praenomen and cognomen, stage names, epithets and titles. Each name below is unique against the class heroes, the beasts, your Ludus, your custom characters and every manager and gladiator in Manager mode.</p>
    <div class="seg" role="group" style="margin-bottom:8px"><span class="lbl">Style</span>${[['','Any'],['0','Roman'],['1','Roman + stage'],['2','Stage + epithet'],['3','Cognomen + epithet'],['4','Title of place'],['5','Stage of place']].map(([v,l])=>`<button type="button" data-ngpat="${v}">${l}</button>`).join('')}</div>
