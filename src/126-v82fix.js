@@ -98,5 +98,5 @@ BLESSING_TABLE.spiders=2;
 body.calm [data-act="chest"]::after{animation:none;display:none}body.calm [data-act="chest"]{animation:none}
 @media (prefers-reduced-motion:reduce){[data-act="chest"]::after{display:none}[data-act="chest"]{animation:none}}
 .chest75-card{width:300px!important;aspect-ratio:600/416!important}
-.chest75-back{inset:auto!important;left:50%;top:50%;width:208px;height:300px;transform:translate(-50%,-50%) rotate(90deg)}
+.chest75-back{right:auto!important;bottom:auto!important;left:50%!important;top:50%!important;width:208px;height:300px;transform:translate(-50%,-50%) rotate(90deg)}
 .chest75-front .cimg{width:100%!important;transform:translate(-50%,-50%)!important}`;document.head.appendChild(st)}

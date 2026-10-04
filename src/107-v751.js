@@ -9,7 +9,7 @@
    • Settings: "Skip the main menu" is gone; the game always opens on the menu (anyone who had it on is switched off once).
    ===================================================================== */
 /* ---------- card backs ---------- */
-const WBACK75=lv=>assetURL('weapon_back'+lv+'.webp');
+const WBACK75=lv=>assetURL('weapon_back'+lv+(lv==4?'b':'')+'.webp'); /* v0.82: his sharper Level 4 back (weapon_back4b) */
 {const base=boardHTML75;boardHTML75=function(){let h=base.apply(this,arguments);try{h=h.replace(/<span class="mb-back" data-lv="(\d)" title="([^"]*)"><b>FLAVIUS<br>RULE<\/b><small>(×\d+)<\/small><\/span>/g,
   (m,lv,t,n)=>`<span class="mb-back mb-back75" title="${t}" style="background-image:url('${WBACK75(lv)}')"><small>${n}</small></span>`)}catch(e){}return h}}
 {const base=openChest;openChest=async function(player){try{if(player&&!player.cpu&&!HEADLESS&&!(S&&S.sim)&&S.chest&&S.chest.weapons.length){const key=S.chest.weapons[S.chest.weapons.length-1];
