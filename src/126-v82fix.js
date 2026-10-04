@@ -84,3 +84,5 @@ function rb82Fit(){const rb=document.querySelector('#onl .rb82'),gs=document.que
   const r=bd.getBoundingClientRect(),pad=rb.getBoundingClientRect().bottom-r.bottom;const h=Math.round(gs.getBoundingClientRect().bottom-r.top-pad);const v=Math.max(300,h)+'px';if(bd.style.height!==v)bd.style.height=v}
 {const st=document.createElement('style');st.textContent='@media(min-width:761px){#onl .rb82{position:static}}';document.head.appendChild(st);
  setInterval(()=>{if(document.querySelector('#onl .rb82'))rb82Fit()},400);addEventListener('resize',()=>setTimeout(rb82Fit,50))}
+/* the round's switched-off rules live only in the turn panel's ⓘ — the ⃠ chip row under the name never shows (it crept back) */
+{const st=document.createElement('style');st.textContent='#turnInd .tprules{display:none!important}';document.head.appendChild(st)}
