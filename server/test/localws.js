@@ -3,9 +3,9 @@
    {"ws":"ws://127.0.0.1:<port>","dev":true} (Online → sign-in → Online server). */
 'use strict';
 const {WebSocketServer}=require('ws');const {makeHandler}=require('../src/index.js');const store=require('../src/store.js');
-function start(port=0){const socks=new Map();let n=0;const db=store.memory();
+function start(port=0,o={}){const socks=new Map();let n=0;const db=store.memory();
   const send=async(conn,msg)=>{const s=socks.get(conn);if(!s||s.readyState!==1)return true;s.send(JSON.stringify(msg));return false};
-  const h=makeHandler({db,send,dev:true,verifyCfg:{}});const wss=new WebSocketServer({port,host:'127.0.0.1'});
+  const h=makeHandler({db,send,dev:true,verifyCfg:{},countdown:o.countdown});const wss=new WebSocketServer({port,host:'127.0.0.1'});
   wss.on('connection',async(s,req)=>{const conn='c'+(++n);const q=Object.fromEntries(new URL(req.url,'http://x').searchParams);
     const r=await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:q});if(r.statusCode!==200){s.close(r.statusCode===426?4426:r.statusCode===403?4403:4401,r.body);return}
     socks.set(conn,s);s.on('message',b=>h({requestContext:{routeKey:'$default',connectionId:conn},body:String(b)}).catch(e=>console.error(e)));

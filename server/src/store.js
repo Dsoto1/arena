@@ -31,6 +31,17 @@
      DOMUS#<id>        DOMUS         + fame (guest passes sat through), passDay <utc day>, patron {look ≤1 KB}
      DOMUS#<id>        PASS#<utc day> the house's guest pass that day {room,acct,at} (putNew = one a day; ttl 3 days)
      MATCH#<id>        META          + left {acct:ms}: ticket holders who left the stands before the end (match.unwatch)
+   v0.83 (protocol 6, tools/plans/onl83-contract.md):
+     DOMUS#<id>        DOMUS         + treasury, trophies [{k,n,at,glad,x}], recent [≤10], pcs {uid: piece state} (the shelf)
+     CHAR#<id>         CHAR          + pcs {uid:{st,hist,rar,w}}, pcsN, offers, offerEq, cfb, gifts, giftsOpened
+     ACCT#<sub>        PROFILE       + follows [{id,name}] (≤100)
+     LOOT#<match>      S#<seat6>     a dead gladiator's brought gear waiting for the killer's pick (GSI1PK 'LOOT' → 'LOOT_DONE', GSI1SK until; ttl 3 days)
+     MARKET            U#<ts13>#<r>  a used printed piece for sale {item,pc,price,from,sold} (ttl 14 days)
+     CHEST             P#<uid>       a fallen's named piece back in the chest pool {item,pc,taken}
+     WORLD             UNIQ#<k> / VDAY#<day>   a Legendary unique claimed once / Victor of the Day awarded once
+     WORLD             COUNTS        + seeded6 (re-seeded once for the 8 ranks)
+     BETS#<acct>       B#<ts13>#<room>#<r>     one bet and its outcome (ttl 30 days)
+     WAGERWK#<week>    A#<acct>      the week's tally {staked, net, won, name, domus, dom}
 */
 'use strict';
 function memory(){

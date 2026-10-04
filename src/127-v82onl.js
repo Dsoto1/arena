@@ -349,7 +349,7 @@ onlSettled=function(res){if(res.char)ONL.char=res.char.alive?res.char:null;const
   else if(o.died)msg=o.hall?`🪦 <b>${esc2(res.char.name)}</b> is dead. The Hall of the Fallen keeps the name.`:`🌫 <b>${esc2(res.char.name)}</b> is dead — and forgotten.`;
   else{const up=o.rankUp?` · ⚔ now <b>${esc2(onlRank(o.rankUp).n)}</b>`:'';const gl=o.glory!=null?` · ✦ +${o.glory} Glory`:'';const f=o.factor!=null?o.factor:1;const tb=f<1?` · ${f===0.5?'half':'¾'} for a small table`:'';
     if(P.ranked===false||(!o.pay&&P.ranked!==true))msg=`⚖ Custom bout — no purse · ${W} +${o.cf} lifetime CF${gl}${tb}${up}`;
-    else{const rk=P.rank||'tiro';const st=P.streak|0;const won=o.pay===Math.round(ONLC.awardOf(rk,true,st)*f)&&o.pay!==Math.round(ONLC.awardOf(rk,false,st)*f);
+    else{const rk=P.rank||'tiro';const st=P.streak|0;const aw=o.award!=null?o.award:o.pay;const won=aw===Math.round(ONLC.awardOf(rk,true,st)*f)&&aw!==Math.round(ONLC.awardOf(rk,false,st)*f); /* v0.83: the award before the house's cut */
       msg=`💰 +${o.pay} coin <small>(${esc2(onlRank(rk).n)} ${ONLC.AWARD[rk]}${won?' · win +50%':''}${st?` · ${st} in a row +${Math.min(100,st*10)}%`:''}${f<1?` · ${f===0.5?'×½':'×¾'} table`:''})</small> · ${W} +${o.cf} lifetime CF${gl}${up}`}}
   setTimeout(()=>onlToast80(msg),2500)};
 /* the rank and streak at the horns, for the award line */

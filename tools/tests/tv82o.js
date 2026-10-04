@@ -9,7 +9,7 @@ const http=require('http'),fs=require('fs'),path=require('path');
 const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.resolve(process.argv[2])),page=path.basename(process.argv[2]);const SHOT=process.env.SHOT||'';
 const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.url.split('?')[0]));if(!f.startsWith(root)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end()}const ext=path.extname(f);r.writeHead(200,{'content-type':{'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'}[ext]||'application/octet-stream'});fs.createReadStream(f).pipe(r)});
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:1300,height:900}});await ctx.route(/fonts\./,r=>r.abort());
-await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');
+await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0');
   window.T82=[];const iv=setInterval(()=>{if(typeof mToast==='function'){const m=mToast;mToast=function(h){T82.push(String(h));return m.apply(this,arguments)};clearInterval(iv)}},20)});
 const errs=[];const pg=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);return p};
 const A=await pg('A');await A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl/.test(k))localStorage.removeItem(k)});await A.reload();
@@ -43,7 +43,7 @@ const dm=await A.evaluate(()=>{const o=document.getElementById('onl');return {ra
   bandTop:o.querySelector('.rb82-band b')?.textContent||'',pat:!!o.querySelector('.pat82 svg'),aulus:ONLC.rankFor(ONL.chars.find(c=>c.name==='Aulus')).k,brutus:ONLC.rankFor(ONL.chars.find(c=>c.name==='Brutus')).k,
   barRight:(()=>{const a=o.querySelector('.rb82').getBoundingClientRect(),m=o.querySelector('.dom82-main').getBoundingClientRect();return a.left>m.left})()}});
 ok(/🏛 Domus/.test(dm.rail)&&dm.slots===4&&dm.empty===0,'Domus tab: 4 gladiator slots');ok(/Fame/.test(dm.rec)&&/Lifetime CF/.test(dm.rec)&&dm.lock,'house record + locked name');
-ok(dm.bar===5&&/Summa/.test(dm.bandTop)&&dm.toks===4&&dm.barRight,'rank bar on the right, Summa at the top, four tokens');ok(dm.counts.length===5&&dm.counts.some(t=>/[1-9]\d* living/.test(t)),'living counts by rank');
+ok(dm.bar===8&&/Invictus/.test(dm.bandTop)&&dm.toks===4&&dm.barRight,'rank bar on the right, the top rank at the top, four tokens (v0.83: 8 ranks)');ok(dm.counts.length===8&&dm.counts.some(t=>/[1-9]\d* living/.test(t)),'living counts by rank');
 ok(dm.aulus==='gregarius'&&dm.brutus==='veteranus','Glory ranks, never demoted');ok(dm.pat,'patron look');
 await A.evaluate(()=>{const d=document.querySelector('details.pat82d');if(d)d.open=true});await A.selectOption('select[data-pat82="skin"]',{index:3}).catch(()=>{});await A.waitForTimeout(200);ok(await A.evaluate(()=>!!localStorage.getItem('flavius_patron82.'+ONL.acct.id)),'patron draft kept while editing');
 await A.waitForTimeout(1200);const pat=await A.evaluate(async()=>({srv:(await NET.req('domus.get',{})).domus.patron,draft:localStorage.getItem('flavius_patron82.'+ONL.acct.id),skin:document.querySelector('select[data-pat82="skin"]').value}));
@@ -79,8 +79,8 @@ await A.evaluate(()=>{ONL.tab='play';onlRedraw()});await A.waitForTimeout(300);
 const note=await A.evaluate(()=>document.querySelector('#onlRoom80 .tbl82')?.textContent||'');ok(/2 lanistas: half rewards · seat 4 for the full purse/.test(note),'room: table-size note');await shot(A,'room');
 const st=await A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlPre82(L);const t=L.players.map((p,i)=>({seat:i,won:i===0,place:i?2:1,f:i?5:20,coin:40,survives:true}));ONL82._t=t;return t},R1);
 await B.evaluate(async([id,t])=>{await NET.req('match.result',{id,table:t,hash:'h'})},[R1,st]);
-const rA=await A.evaluate(async id=>{const r=await NET.req('match.result',{id,table:ONL82._t,hash:'h'});T82.length=0;onlSettled(r);await new Promise(x=>setTimeout(x,2700));return {pay:r.out&&r.out.pay,f:r.out&&r.out.factor,toast:T82.join(' ')}},R1);
-ok(rA.pay===Math.round(12*0.5)&&rA.f===0.5&&/\+6 coin/.test(rA.toast)&&/win \+50%/.test(rA.toast)&&/×½ table/.test(rA.toast),'award × table shown');
+const rA=await A.evaluate(async id=>{const r=await NET.req('match.result',{id,table:ONL82._t,hash:'h'});T82.length=0;onlSettled(r);await new Promise(x=>setTimeout(x,2700));return {pay:r.out&&r.out.pay,award:r.out&&r.out.award,f:r.out&&r.out.factor,toast:T82.join(' ')}},R1);
+ok(rA.award===Math.round(12*0.5)&&rA.pay===rA.award-Math.round(rA.award*0.2)&&rA.f===0.5&&new RegExp('\\+'+rA.pay+' coin').test(rA.toast)&&/win \+50%/.test(rA.toast)&&/×½ table/.test(rA.toast),'award × table shown');
 const cu=await A.evaluate(async()=>{ONL82.pre={ranked:false};T82.length=0;onlSettled({char:ONL.char,out:{pay:0,cf:9,glory:4.5,factor:0.5}});await new Promise(x=>setTimeout(x,2700));return T82.join(' ')});ok(/Custom bout — no purse/.test(cu)&&!/carried/.test(cu),'Custom: no purse');
 const hd=await A.evaluate(async()=>(await NET.req('domus.get',{})).domus);ok(hd.bouts===1&&hd.wins===1&&hd.survived===1&&hd.lifeCF===20,'the house record follows the result');
 /* ── 5. the guest ── */

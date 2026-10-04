@@ -10,12 +10,12 @@
 'use strict';
 const {makeRoutes,reconnect,away,online}=require('./routes.js');const C=require('./onlcore.js');const {verify}=require('./jwt.js');const store=require('./store.js');
 const catalog=require('./catalog.json');
-function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),hereMs=0}){
+function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),hereMs=0,countdown,rnd}){
   /* a push to a known connection: true when the socket is gone (then the account's presence is cleared) */
   /* a push that finds the socket gone clears presence AND marks the lanista away in a live match (their $disconnect may come later and find
      nothing left to clear) — so the others can drop the seat after AWAY_MS */
   const pushConn=async(conn,t,d,acct)=>{const gone=await send(conn,{push:t,d});if(gone&&acct){if(/^guest-/.test(acct))await db.clearGuest(acct,conn);else if(await db.clearConn(acct,conn,now()))await away(db,acct,now())}return gone};
-  const route=makeRoutes({store:db,catalog,dev,now,hereMs,pushConn,push:async(acct,t,d)=>{const a=await db.get('ACCT#'+acct,'PROFILE');if(a&&a.conn)await pushConn(a.conn,t,d,acct)}});
+  const route=makeRoutes({store:db,catalog,dev,now,hereMs,countdown,...(rnd?{rnd}:{}),pushConn,push:async(acct,t,d)=>{const a=await db.get('ACCT#'+acct,'PROFILE');if(a&&a.conn)await pushConn(a.conn,t,d,acct)}});
   return async ev=>{const rc=ev.requestContext||{};const conn=rc.connectionId;
     if(rc.routeKey==='$connect'){const q=ev.queryStringParameters||{};if(String(q.ver)!==String(C.VER))return {statusCode:426,body:'Please reload: a new version is out.'};
       /* v0.82 a guest: looks only, 2 hours from the first connect of that guest id */
