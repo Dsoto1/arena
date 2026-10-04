@@ -291,7 +291,7 @@ function armorConflict(player, location, key) {
   const d = ARM[key];
   return player.pieces[location].find(pc => {
     const e = ARM[pc.key];
-    return d.stack ? !!e.stack : !e.stack && e.pt === d.pt;
+    return d.stack ? !!e.stack && e.pt === d.pt : !e.stack && e.pt === d.pt; /* v0.83: padding stacks per equip point — upper + lower padding on one leg both fit (his rule) */
   }) || null;
 }
 /* equipPiece — puts an armor piece on a location if it is alive and the equip point is free: adds its AP (cap 7) plus any bonus AP to other living locations, remembering how much bonus actually landed. TWEAK: the 7 AP cap. */
@@ -390,7 +390,7 @@ async function gainArmorPiece(player, key, apOverride, {
     if (c) {
       // same equip point already taken in this layer: swap or keep
       let swap;
-      if (player.cpu) swap = (apOverride ?? d.ap) + (d.bonus ? Object.values(d.bonus).reduce((a, b) => a + b, 0) : 0) > Math.min(c.ap, player.ap[l]) + (ARM[c.key].bonus ? 1 : 0);else swap = await modal(`${LOCN[l]}: equip point taken`, `<p>Your ${LOCN[l].toLowerCase()} already wears <b>${c.n}</b> (${Math.min(c.ap, player.ap[l])} AP) on the ${PT_NAME[d.pt]} point. Only one ${d.stack ? 'stackable' : 'regular'} armor fits there${d.stack ? '' : '; stackable padding and belts can sit beneath it'}.</p>`, [{
+      if (player.cpu) swap = (apOverride ?? d.ap) + (d.bonus ? Object.values(d.bonus).reduce((a, b) => a + b, 0) : 0) > Math.min(c.ap, player.ap[l]) + (ARM[c.key].bonus ? 1 : 0);else swap = await modal(`${LOCN[l]}: equip point taken`, `<p>Your ${LOCN[l].toLowerCase()} already wears <b>${c.n}</b> (${Math.min(c.ap, player.ap[l])} AP) on the ${PT_NAME[ARM[c.key].pt] || PT_NAME[d.pt]} point. Only one ${d.stack ? 'stackable' : 'regular'} armor fits there${d.stack ? '' : '; stackable padding and belts can sit beneath it'}.</p>`, [{
         label: `Swap in ${d.n}`,
         sub: `${apOverride ?? d.ap} AP · the old piece drops at your feet`,
         value: 1,

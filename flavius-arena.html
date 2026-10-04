@@ -4427,7 +4427,7 @@ function armorConflict(player, location, key) {
   const d = ARM[key];
   return player.pieces[location].find(pc => {
     const e = ARM[pc.key];
-    return d.stack ? !!e.stack : !e.stack && e.pt === d.pt;
+    return d.stack ? !!e.stack && e.pt === d.pt : !e.stack && e.pt === d.pt; /* v0.83: padding stacks per equip point — upper + lower padding on one leg both fit (his rule) */
   }) || null;
 }
 /* equipPiece — puts an armor piece on a location if it is alive and the equip point is free: adds its AP (cap 7) plus any bonus AP to other living locations, remembering how much bonus actually landed. TWEAK: the 7 AP cap. */
@@ -4526,7 +4526,7 @@ async function gainArmorPiece(player, key, apOverride, {
     if (c) {
       // same equip point already taken in this layer: swap or keep
       let swap;
-      if (player.cpu) swap = (apOverride ?? d.ap) + (d.bonus ? Object.values(d.bonus).reduce((a, b) => a + b, 0) : 0) > Math.min(c.ap, player.ap[l]) + (ARM[c.key].bonus ? 1 : 0);else swap = await modal(`${LOCN[l]}: equip point taken`, `<p>Your ${LOCN[l].toLowerCase()} already wears <b>${c.n}</b> (${Math.min(c.ap, player.ap[l])} AP) on the ${PT_NAME[d.pt]} point. Only one ${d.stack ? 'stackable' : 'regular'} armor fits there${d.stack ? '' : '; stackable padding and belts can sit beneath it'}.</p>`, [{
+      if (player.cpu) swap = (apOverride ?? d.ap) + (d.bonus ? Object.values(d.bonus).reduce((a, b) => a + b, 0) : 0) > Math.min(c.ap, player.ap[l]) + (ARM[c.key].bonus ? 1 : 0);else swap = await modal(`${LOCN[l]}: equip point taken`, `<p>Your ${LOCN[l].toLowerCase()} already wears <b>${c.n}</b> (${Math.min(c.ap, player.ap[l])} AP) on the ${PT_NAME[ARM[c.key].pt] || PT_NAME[d.pt]} point. Only one ${d.stack ? 'stackable' : 'regular'} armor fits there${d.stack ? '' : '; stackable padding and belts can sit beneath it'}.</p>`, [{
         label: `Swap in ${d.n}`,
         sub: `${apOverride ?? d.ap} AP · the old piece drops at your feet`,
         value: 1,
@@ -33663,7 +33663,7 @@ const ART81={thorax:{f:'arm81_thorax.webp',cell:12,w:669,h:574},steelhelm:{f:'ar
   bracers:{f:'arm81_bracers.webp',cell:33,w:123,h:260},lgreaves:{f:'arm81_lgreaves.webp',cell:32,w:142,h:475},
   flavhelm:{f:'arm81_flavhelm.webp',cell:5,w:353,h:395},crista:{f:'arm81_crista.webp',cell:2,w:367,h:467},
   thrachelm:{f:'arm81_thracian.webp',cell:45,w:374,h:497}};
-const THUMB81={24:'armthumb81_greaves.webp',39:'armthumb81_femoralia.webp',40:'armthumb81_ocrea.webp',41:'armthumb81_thighplate.webp'};
+const THUMB81={37:'armthumb81_legwrapsU.webp',24:'armthumb81_greaves.webp',39:'armthumb81_femoralia.webp',40:'armthumb81_ocrea.webp',41:'armthumb81_thighplate.webp'};
 /* ---------- new pieces ---------- */
 ARM_CROP[45]=[0,0,374,497]; /* the Thracian Helm has no sheet cell: its own file, this box only gives the aspect */
 ARM.thrachelm={n:'Thracian Helm',lv:2,slot:'head',pt:'helm',ap:4,img:45};
