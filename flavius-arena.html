@@ -33918,6 +33918,12 @@ setTimeout(()=>{try{mmLabels82()}catch(e){}},500);setTimeout(()=>{try{mmLabels82
 #onl .dom82 .pat82{border-top-color:rgba(90,60,25,.35)}
 #onl .dom82 select,#onl .dom82 .tin{background:#241a12;color:#f0e2c4}
 #onl .dom82 .btn{background:rgba(36,24,14,.9);color:#f0e2c4}`;document.head.appendChild(st)}
+/* the Glory rank bar runs down to the bottom of the gladiator cards (measured; wide layout only, ≥300 px) */
+function rb82Fit(){const rb=document.querySelector('#onl .rb82'),gs=document.querySelector('#onl .onl-gslots'),bd=rb&&rb.querySelector('.rb82-body');if(!bd)return;
+  if(!gs||innerWidth<=760){if(bd.style.height)bd.style.height='';return}
+  const r=bd.getBoundingClientRect(),pad=rb.getBoundingClientRect().bottom-r.bottom;const h=Math.round(gs.getBoundingClientRect().bottom-r.top-pad);const v=Math.max(300,h)+'px';if(bd.style.height!==v)bd.style.height=v}
+{const st=document.createElement('style');st.textContent='@media(min-width:761px){#onl .rb82{position:static}}';document.head.appendChild(st);
+ setInterval(()=>{if(document.querySelector('#onl .rb82'))rb82Fit()},400);addEventListener('resize',()=>setTimeout(rb82Fit,50))}
 /* =====================================================================
    127-V82ONL · ONLINE v0.82, the client half (contract tools/plans/onl82-contract.md, protocol 5)
    =====================================================================
