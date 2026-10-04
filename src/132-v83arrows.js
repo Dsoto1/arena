@@ -96,15 +96,17 @@ function drawArrow83(k,x,y,ang,len){const bolt=k==='bolt';const u=len/(bolt?15:2
 const TOK83={head:[0,0.9],chest:[0,0.66],rarm:[-0.15,0.58],larm:[0.15,0.58],rleg:[-0.06,0.24],lleg:[0.06,0.24]};
 function drawStuckOn83(q,m,top,isNpc,sink){const L=stuckOf83(q);if(!L.length)return;const H=Math.max(TW*0.4,m.y-top);
   const groups=isNpc?['body','head']:LOCS;
+  /* v0.83: on the 3D minis the arrows turn with the figure's facing (MINI_YAW); the body's sides swap when it turns round */
+  let yk=1;try{if(!isNpc&&tokenStyle()==='standee'&&q._face!=null&&typeof MINI_YAW!=='undefined'){const c=Math.cos((MINI_YAW[q._face]||0)*Math.PI/180);yk=(Math.abs(c)<0.25?Math.sign(c||1)*0.25:c)*1.5}}catch(e){}
   for(const l of groups){if(!isNpc&&(q.hp[l]||0)<=0)continue;const xs=L.filter(x=>x.l===l);if(!xs.length)continue;
     if(sink&&!isNpc&&(l==='rleg'||l==='lleg'))continue;
     let lastX=0,lastY=0;
     xs.slice(0,STUCK83_MAX).forEach(x=>{let px,py;
       if(isNpc){if(l==='head'){const sd=q.t==='tholo'?0:(fr83(x.s,5)<0.5?-1:1);px=sd*0.15*TW+(fr83(x.s,1)*2-1)*0.04*TW;py=m.y-H*(q.t==='tholo'?0.86:0.72)+(fr83(x.s,2)*2-1)*0.03*TW}
         else{px=(fr83(x.s,1)*2-1)*0.2*TW;py=m.y-H*(0.3+fr83(x.s,2)*0.36)}}
-      else{const T=TOK83[l];px=T[0]*TW+(fr83(x.s,1)*2-1)*0.035*TW;py=m.y-H*T[1]+(fr83(x.s,2)*2-1)*0.03*TW}
+      else{const T=TOK83[l];px=T[0]*TW*yk+(fr83(x.s,1)*2-1)*0.035*TW;py=m.y-H*T[1]+(fr83(x.s,2)*2-1)*0.03*TW}
       const side=px<-0.02*TW?-1:px>0.02*TW?1:(fr83(x.s,4)<0.5?-1:1);
-      const ang=(x.a!=null?x.a:(side<0?Math.PI*1.12:-Math.PI*0.12))+(fr83(x.s,3)*2-1)*0.38;
+      let ang=(x.a!=null?x.a:(side<0?Math.PI*1.12:-Math.PI*0.12))+(fr83(x.s,3)*2-1)*0.38;if(!isNpc&&yk<0)ang=Math.PI-ang;
       const X=m.x+px,Y=py;if(sink&&Y>m.y)return;drawArrow83(x.k,X,Y,ang,TW*(x.k==='bolt'?0.11:0.165)*(STUCK83_K[tokenStyle()]||1));lastX=X;lastY=Y});
     if(xs.length>STUCK83_MAX){const t='+'+(xs.length-STUCK83_MAX);ctx.save();ctx.font=`700 ${Math.max(8,Math.round(TW*0.12))}px IBM Plex Mono, monospace`;ctx.textAlign='center';ctx.textBaseline='middle';
       ctx.lineWidth=3;ctx.strokeStyle='rgba(0,0,0,.85)';ctx.strokeText(t,lastX,lastY-TW*0.09);ctx.fillStyle='#f0cf7d';ctx.fillText(t,lastX,lastY-TW*0.09);ctx.restore()}}}

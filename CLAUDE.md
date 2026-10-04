@@ -800,7 +800,7 @@ share copy — the site download play/flavius-rule-arena.zip.)
   week's fixture shows on the Online main menu and is always the WEEKLY CHALLENGE; complete all challenges + win an event → a Flavius
   Gift — but GIFTS MUST STAY RARE (cap them: ~1 a week from challenges, no stacking). "YOUR TURN" notices. RECLAIM A SEAT a CPU took —
   only within a limited window (not at the last second after the CPU did the work); a match a CPU finished/won for them pays SEVERELY
-  reduced rewards. ARROWS ON MINIS turn with the facing. MANAGER COUNCIL speaks more (Recruiter ★ picks / bargains, Medicus risk
+  reduced rewards. MANAGER COUNCIL speaks more (Recruiter ★ picks / bargains, Medicus risk
   letters…). BOARD LIFE: blood soaks into the sand and fades, light dust drifting toward where a corpse falls (subtle — "not Pigpen"),
   rubble settling. NO online tutorial. READABILITY PASS (08+) + PHONE PASS (every v0.82/83 screen at 390 px + landscape, lighter
   rendering for old phones). TRANSLATIONS asked about (es/de/pt/ja/zh) — see the estimate given 2026-10-04.
