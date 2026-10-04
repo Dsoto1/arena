@@ -714,7 +714,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
 
 - **v0.84** named armor + holographic cards, Flavius's Auction, seasons + weekly challenge, seat reclaim, your-turn notices; programmata;
   council letters; blood/dust/rubble; one tab per save; backup nudges; translate-safe; Settings tidy; landing fits; Roster as the barracks wall.
-  (Server zip flavius-server-11, protocol 7 — deploy FIRST.)
+  (Published as artifact Version 98; server zip flavius-server-11, protocol 7 — deploy FIRST; game zip flavius-site-update-v0.84.)
+  Release run: 151/151; the 16 tests written since v0.81 were missing from runreg's DEFAULT list — added (13 pass, tv81o/tonl84/tv82o flaky).
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
