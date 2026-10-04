@@ -11,13 +11,19 @@
    Manager careers advance the calendar as their weeks end; outside a career, every event played moves it on
    one week (v0.22). The world's stories and weather (18-world) evolve on the same weekly tick (v0.26).
    ===================================================================== */
+/* CAL_KEY — localStorage key of the empire calendar. */
 const CAL_KEY='flavius_calendar';
+/* ROMAN_MONTHS — Latin month names for the Roman date form. */
 const ROMAN_MONTHS=['Ianuarius','Februarius','Martius','Aprilis','Maius','Iunius','Iulius','Augustus','September','October','November','December'];
-const RN=n=>{const t=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];let s='';for(const [v,r] of t)while(n>=v){s+=r;n-=v}return s||'—'};
+/* RN — a number in Roman numerals ("—" for 0). */
+const RN=num=>{const t=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];let s='';for(const [v,r] of t)while(num>=v){s+=r;num-=v}return s||'—'};
 // weight of each event kind on the schedule: classics dominate; specials are rare and pay more
 const SCHED_WEIGHTS=[['democritus',22],['egidious',16],['cassian',14],['familia',5],['goldenEagle',4],['juggernaut',3],['orpheus',3],['triumviratus',3],['ludus',2],['chariot',2],['naumachia',1],['commodus',2]];
+/* SCHED_PURSE — purse multiplier of each event kind on the schedule (specials pay more). TWEAK. */
 const SCHED_PURSE={democritus:1,egidious:0.9,cassian:1.15,familia:1.5,goldenEagle:1.6,juggernaut:1.7,orpheus:1.5,triumviratus:1.4,ludus:1.4,chariot:1.8,naumachia:2,commodus:1.7};
+/* CAL — the loaded calendar {season, week, epoch, sched}. */
 let CAL=null;
+/* calLoad — loads (or starts) the calendar; it moves only by play (frozen), not by the wall clock. */
 function calLoad(){if(CAL)return CAL;try{CAL=JSON.parse(localStorage.getItem(CAL_KEY)||'null')}catch(e){CAL=null}
   if(!CAL){CAL={season:1,week:1,epoch:new Date().toISOString().slice(0,10),sched:{}};calSave()}
   // the empire keeps moving while nobody plays: a real day is a week of games
@@ -25,6 +31,7 @@ function calLoad(){if(CAL)return CAL;try{CAL=JSON.parse(localStorage.getItem(CAL
   if(!CAL.frozen){const days=Math.floor((Date.now()-new Date(CAL.epoch).getTime())/864e5);const total=(CAL.season-1)*12+(CAL.week-1);
     if(days>total){const t=days;CAL.season=Math.floor(t/12)+1;CAL.week=t%12+1;calSave()}}
   return CAL}
+/* calSave — saves the calendar to localStorage. */
 function calSave(){try{localStorage.setItem(CAL_KEY,JSON.stringify(CAL))}catch(e){}}
 // deterministic schedule for a season: 12 fixtures {loc,ev,purse}, from the season number alone
 function seasonSchedule(season){
@@ -40,7 +47,9 @@ function seasonSchedule(season){
     fx.push({wk:i+1,loc,ev,purse:SCHED_PURSE[ev]||1})});
   C.sched[season]=fx;calSave();return fx;
 }
+/* fixtureFor — the fixture {wk, loc, ev, purse} of a season week (week wraps 1–12). A const arrow — cannot be wrapped. */
 const fixtureFor=(season,week)=>seasonSchedule(season)[((week-1)%12+12)%12];
+/* calNow — today in the empire: {season, week, fx} with the week's fixture. */
 function calNow(){const C=calLoad();return {season:C.season,week:C.week,fx:fixtureFor(C.season,C.week)}}
 // "a.d. VI Kal. Mai." — the Roman way of naming a day, from season and week
 function empireDate(season,week){
@@ -52,8 +61,11 @@ function empireDate(season,week){
   const EN=['January','February','March','April','May','June','July','August','September','October','November','December'][m];
   return {short:`${EN} ${d}`,long:`${EN} ${d} — season ${season}, week ${week} of 12 (${s})`,roman:s,season,week};
 }
+/* calAdvance — moves the empire on one week (a new season after week 12). */
 function calAdvance(){const C=calLoad();C.week++;if(C.week>12){C.week=1;C.season++}C.frozen=1;calSave();return calNow()}
+/* calSet — sets the calendar to a season and week (Manager careers only move it forward). */
 function calSet(season,week){const C=calLoad();C.season=season;C.week=week;C.frozen=1;calSave()}
+/* scheduleHTML — the season's 12-week schedule table, the current week marked. */
 function scheduleHTML(season,week){
   const fx=seasonSchedule(season);
   return `<table class="tally" style="margin-top:6px"><tr><th>Week</th><th>Date</th><th>Arena</th><th>Games</th><th>Purse</th></tr>${fx.map(f=>`<tr class="${f.wk===week?'me schednow':''}"><td class="n">${f.wk===week?'▶ ':''}${f.wk}</td><td class="rc-sub">${empireDate(season,f.wk).short}</td><td>📍 ${esc(LOCATIONS[f.loc].n)}</td><td>${esc(EVENTS[f.ev]?EVENTS[f.ev].n:f.ev)}${/democritus|egidious|cassian/.test(f.ev)?'':' <span class="badge gold" title="A special: riskier, and it pays">special</span>'}${f.wk===12?' <span class="badge" title="The regular season ends here; the top four stables are invited to the Flavius Superbus">last regular week</span>':''}</td><td class="n">×${f.purse}</td></tr>`).join('')}</table>`;
@@ -64,4 +76,5 @@ function openSchedule(){
   if(typeof modalBusy==='function'&&modalBusy())return;const c=calNow();const dt=empireDate(c.season,c.week);
   modal(`📅 Season ${c.season} schedule`,`<p>Today in the empire: <b>${dt.short}</b>, week ${c.week} of 12. One arena hosts the editor's games each week; classics dominate, and the rarer specials carry fatter purses. Manager mode and New event both follow this schedule.</p>${scheduleHTML(c.season,c.week)}`,[{label:'Close',value:0}],{wide:1});
 }
+/* the date chip opens the schedule. */
 document.addEventListener('click',e=>{if(e.target.closest('#calChip'))openSchedule()});
