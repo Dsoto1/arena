@@ -11,7 +11,7 @@ const errs=[];const P={};for(const n of ['A','B','C','D']){P[n]=await ctx.newPag
 const shots=process.env.SHOTS||'';
 await P.A.goto(URL0);await P.A.evaluate(()=>localStorage.removeItem('flavius_onlmock'));for(const n of ['B','C','D'])await P[n].goto(URL0);await P.A.waitForTimeout(2500);
 /* A's gladiator wears a sculpted token with a marker shape (#12ab34) */
-const setup=async(p,name,cls,look)=>p.evaluate(async([name,cls,look])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls,look:look||undefined});
+const setup=async(p,name,cls,look)=>p.evaluate(async([name,cls,look])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls,look:look||undefined});
   /* every applied stands result: the stands and the arena right after it */
   window.__st={};const b0=st82Apply;st82Apply=async function(inp){await b0.apply(this,arguments);window.__st[inp.rot]=JSON.stringify([S.spect.map(s=>[s.cf,s.sec,s.gone?1:0,s.fav??null]),onlHash(),(S.floor||[]).length])};
   window.__pop=0;setInterval(()=>{if(document.getElementById('st82Pop'))window.__pop++},150);
