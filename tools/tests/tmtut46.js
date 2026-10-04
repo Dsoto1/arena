@@ -2,7 +2,7 @@ const {chromium}=require('playwright');(async()=>{const b=await chromium.launch(
 const ctx=await b.newContext({viewport:{width:1500,height:980}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});
 const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1500);
-await pg.click('[data-mm="learnmgr"]');await pg.waitForTimeout(1500);
+await pg.click('[data-mm82="tut"]');await pg.waitForTimeout(200);await pg.click('[data-mm="learnmgr"]');await pg.waitForTimeout(1500);
 const step=()=>pg.evaluate(()=>MTUT.on?MTUT.step:-1);
 const clk=async sel=>{const ok=await pg.evaluate(sel=>{const e=typeof sel==='string'?document.querySelector(sel):null;if(!e)return false;e.click();return true},sel);await pg.waitForTimeout(600);return ok};
 const next=()=>clk('[data-mt="next"]');

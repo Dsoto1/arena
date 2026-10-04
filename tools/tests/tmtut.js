@@ -3,7 +3,7 @@ const ctx=await b.newContext({viewport:{width:1400,height:950}});await ctx.addIn
 const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1500);
 const careers0=await pg.evaluate(async()=>(await Store.list('mgrCareers')).length);
-await pg.click('[data-mm="learnmgr"]');await pg.waitForTimeout(1500);
+await pg.click('[data-mm82="tut"]');await pg.waitForTimeout(200);await pg.click('[data-mm="learnmgr"]');await pg.waitForTimeout(1500);
 const log=[];const st=()=>pg.evaluate(()=>({step:MTUT.step,tab:MGR.tab,spot:(document.querySelector('.tutspot')||{}).className||null}));
 const next=async()=>{await pg.evaluate(()=>{const b=document.querySelector('[data-mt="next"]');b&&b.click()});await pg.waitForTimeout(500)};
 const tab=async id=>{await pg.evaluate(id=>document.querySelector(`[data-mg="tab"][data-id="${id}"]`).click(),id);await pg.waitForTimeout(700)};

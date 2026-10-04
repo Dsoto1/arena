@@ -2,7 +2,7 @@ const {chromium}=require('playwright');(async()=>{const b=await chromium.launch(
 const ctx=await b.newContext({viewport:{width:1500,height:980}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});
 const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1500);
-await pg.click('[data-mm="learn"]');await pg.waitForTimeout(3000);
+await pg.click('[data-mm82="tut"]');await pg.waitForTimeout(200);await pg.click('[data-mm="learn"]');await pg.waitForTimeout(3000);
 const log=[];let shots=0;
 for(let i=0;i<700;i++){
   const st=await pg.evaluate(()=>{const s=TUT_STEPS[TUT.step];return {on:TUT.on,step:TUT.step,id:s&&s.id,over:!!(S&&S.over),modal:!document.getElementById('modal').hidden,mt:document.getElementById('mTitle').textContent,next:!!document.querySelector('#tutCoach [data-tut="next"]'),hum:humanTurn(),ph:S.phase,busy:S.busy,cue:document.getElementById('tutCoach')&&document.getElementById('tutCoach').classList.contains('cue')}});

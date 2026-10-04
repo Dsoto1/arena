@@ -4,7 +4,7 @@ await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()
 const pg=await ctx.newPage();await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
 const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1500);
-await pg.click('[data-mm="learn"]');
+await pg.click('[data-mm82="tut"]');await pg.waitForTimeout(200);await pg.click('[data-mm="learn"]');
 // wait for the human's choice phase
 for(let i=0;i<60;i++){const ok=await pg.evaluate(()=>S&&S.phase==='choice'&&humanTurn());if(ok)break;await pg.waitForTimeout(500)}
 await pg.waitForTimeout(800);
