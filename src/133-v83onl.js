@@ -114,7 +114,7 @@ function mockToMarket83(w,P,from){const I=ONLC.pieceInfo(P,onlCatalog());if(!I)r
   if(I.named){w.chest83.push({item:P.item,pc:P.pc||null,at:Date.now(),from});return}
   const id='U#'+String(Date.now()).padStart(13,'0')+'#'+Math.floor(Math.random()*1e9).toString(36);w.market83.unshift({id,item:P.item,pc:P.pc||null,base:I.base,n:I.n,kind:I.kind,lv:I.lv,st:I.st,price:ONLC.usedPrice(I),at:Date.now(),from});w.market83=w.market83.slice(0,120)}
 const mockLeaving83=(Ps,h,from,how)=>Ps.map(P=>ONLC.histAdd(ONLC.tagPiece(P,h),{house:from.house||null,glad:from.glad,when:Date.now(),how}));
-const mockLootOut83=X=>({id:X.match,seat:X.seat,until:X.until,dead:X.dead,killer:{seat:X.killer.seat},pieces:X.pieces.map(p=>({item:p.item,n:p.n,kind:p.kind,lv:p.lv,st:p.st,rar:p.rar||null,val:p.val|0,hist:(p.pc&&p.pc.hist)||[]}))});
+const mockLootOut83=X=>({id:X.match,seat:X.seat,until:X.until,dead:X.dead,killer:{seat:X.killer.seat},pieces:X.pieces.map(p=>({item:p.item,n:p.n,kind:p.kind,lv:p.lv,st:p.st,rar:p.rar||null,val:p.val|0,hist:(p.pc&&p.pc.hist)||[],...(p.pc&&p.pc.w?{w:p.pc.w}:{})}))}); /* v0.84: the full def (w) */
 function mockLootResolve83(w,X,i){if(X.done)return null;X.done=true;if(i==null)i=ONLC.lootBest(X.pieces);X.picked=i;const from={house:X.dead.domus||null,glad:X.dead.name};let to='market',got=null,ch=null;
   const kc=w.chars[X.killer.char];
   X.pieces.forEach((p,j)=>{let P={item:p.item,pc:p.pc||null};

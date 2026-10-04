@@ -88,7 +88,7 @@ const hd=await A.evaluate(async()=>(await NET.req('domus.get',{})).domus);ok(hd.
 await C.evaluate(async()=>{localStorage.removeItem('flavius_onlacct');menuHide();onlineOpen('play')});await C.waitForTimeout(1500);ok(await C.evaluate(()=>!!document.querySelector('#onl [data-onl82="guest"]')),'sign-in card offers Watch as a guest');
 await C.click('#onl [data-onl82="guest"]');await C.waitForTimeout(1800);
 const gl=await C.evaluate(()=>{const o=document.getElementById('onl');return {g:ONL.acct&&ONL.acct.guest,id:ONL.acct&&ONL.acct.id,tabs:[...o.querySelectorAll('.onl-rail [data-onl="tab"]')].map(b=>b.dataset.v),quick:o.querySelectorAll('[data-onl="quick"]').length,gq:o.querySelectorAll('[data-g82="quick"]').length,card:!!o.querySelector('.g82card'),left:(o.querySelector('#g82left')||{}).textContent||''}});
-ok(gl.g&&/^guest-g[a-z0-9]{8,}/.test(gl.id)&&gl.tabs.join()==='play,lobby,spect,wagers,hall'&&!gl.quick&&gl.gq>0&&gl.card&&/h|min/.test(gl.left),'guest landing, read-only');await shot(C,'guest');
+ok(gl.g&&/^guest-g[a-z0-9]{8,}/.test(gl.id)&&gl.tabs.join()==='play,lobby,spect,auction,wagers,hall' /* v0.84: guests read the auction too */&&!gl.quick&&gl.gq>0&&gl.card&&/h|min/.test(gl.left),'guest landing, read-only');await shot(C,'guest');
 await C.click('#onl [data-g82="quick"]',{force:true});await C.waitForTimeout(300);ok(await C.evaluate(()=>T82.some(t=>/Sign in to fight/.test(t))),'a guest control says Sign in to …');
 ok(/^guest\|\|Sign in to speak in the Forum/.test(await err(C,o=>NET.req('forum.say',o),{q:'ave'})),'server-side refusal for guests');
 ok(Array.isArray(await C.evaluate(()=>NET.req('lobby.list'))),'guests read the lobby list');
