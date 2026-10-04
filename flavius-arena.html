@@ -33965,6 +33965,8 @@ body.calm #plDock button.glow82{animation:none}`;document.head.appendChild(st)}
  window.addEventListener('click',e=>{if(held82&&e.target.closest&&e.target.closest('.mmver')){held82=false;e.preventDefault();e.stopPropagation()}},true);
  document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('.mmver'))e.preventDefault()},true);
  const st=document.createElement('style');st.textContent='.mmver{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}';document.head.appendChild(st)}
+/* the main menu's show keeps its proportions: on narrow screens it scales DOWN instead of squeezing the figures sideways */
+{const st=document.createElement('style');st.textContent='#mmCv{height:auto!important;aspect-ratio:1240/340;max-height:170px}';document.head.appendChild(st)}
 /* =====================================================================
    127-V82ONL · ONLINE v0.82, the client half (contract tools/plans/onl82-contract.md, protocol 5)
    =====================================================================
