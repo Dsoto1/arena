@@ -10,6 +10,7 @@
    JRPG fade. Entered from the Imperium (any city) or from Match Week (this week's host).
    ===================================================================== */
 const CITY={open:false};
+/* CITY_N — the square is CITY_N × CITY_N tiles. TWEAK: the 14. */
 const CITY_N=14; // v0.32: one tile roomier
 // per-city dressing: ground and awning hues, a landmark line, and what the square is called
 const CITY_DRESS={
@@ -35,10 +36,13 @@ const CITY_BLDG=[
   ['lupanar',7,8,12,13,1.6,'Lupanar','🌙'],
   ['auction',3,4,12,13,1.3,'Auction block','⚖'],
 ];
+/* CITY_GATE — the arena gate tile: walk here (or wait for the horns) to enter. */
 const CITY_GATE=[2,6]; // the arena gate tile — walk here (or wait for the horns) to enter
 function cityBlocked(r,c){if(r<0||c<0||r>=CITY_N||c>=CITY_N)return true;if(r===7&&c===7)return true; // the fountain
   return CITY_BLDG.some(([k,r0,r1,c0,c1])=>r>=r0&&r<=r1&&c>=c0&&c<=c1)}
+/* cityBldgAt — the building covering square tile r,c, if any. */
 function cityBldgAt(r,c){return CITY_BLDG.find(([k,r0,r1,c0,c1])=>r>=r0-0&&r<=r1&&c>=c0&&c<=c1)}
+/* cityIso — square tile r,c → screen point (the square's own isometric projection). */
 const cityIso=(r,c)=>({x:CITY.OX+(c-r)*CITY.TW/2,y:CITY.OY+(c+r)*CITY.TW/4});
 
 /* ---------------- opening and closing ---------------- */
@@ -58,14 +62,15 @@ function citySideDraw(){const el=document.getElementById('citySideBody');if(!el|
   else if(CITY.side==='roster'){h=`<div class="sect" style="margin-top:0">👥 The spectator roster <span class="rc-sub">${regs.length}K spectators across the empire</span></div>${regs.slice().sort((a,b)=>(b.visits||0)-(a.visits||0)).slice(0,80).map(r=>`<div class="csrow">${face(r)}<div><b>${esc(r.name)}</b><small>${esc(r.city||'')} · ${r.visits||0} visits${r.trouble?' · <span style="color:var(--blood2)">troublemaker</span>':''}</small></div></div>`).join('')}`}
   else if(CITY.side==='beasts'){h=typeof cityBeastsHTML==='function'?cityBeastsHTML(CITY.li,{h:9999,only:true}):''}
   el.innerHTML=h}
-function openCitySquare(li,opts={}){
-  if(HEADLESS||CITY.open)return;const L=LOCATIONS[li];if(!L)return;
+/* openCitySquare — opens a city's square (only after paying the road when it is this week's host): builds the canvas, the crowd, the HUD and starts the loop. */
+function openCitySquare(locIdx,opts={}){
+  if(HEADLESS||CITY.open)return;const L=LOCATIONS[locIdx];if(!L)return;
   const w=typeof W_==='function'?W_():null;
-  if(w&&w.night&&w.night.loc===li&&typeof travelOK==='function'&&!travelOK(w)){if(typeof mToast==='function')mToast(`🛣 Travel to <b>${esc(L.n)}</b> first — pay the road on Match Week.`);return} // v0.42
+  if(w&&w.night&&w.night.loc===locIdx&&typeof travelOK==='function'&&!travelOK(w)){if(typeof mToast==='function')mToast(`🛣 Travel to <b>${esc(L.n)}</b> first — pay the road on Match Week.`);return} // v0.42
   // v0.33: horns sounded on this city's card → every door back into the square is barred until the bout is fought
-  if(w&&w.night&&w.night.loc===li&&w.night.hornsLock!=null){const n9=w.night;const b9=n9.bouts[n9.hornsLock];
+  if(w&&w.night&&w.night.loc===locIdx&&w.night.hornsLock!=null){const n9=w.night;const b9=n9.bouts[n9.hornsLock];
     if(b9&&!b9.done){if(typeof mToast==='function')mToast('🎺 The horns have sounded — the arena gates are shut until the '+(typeof TIERS!=='undefined'?esc(TIERS[b9.tier].n):'bout')+' is fought.');return}}
-  Object.assign(CITY,{open:true,li,L,w,mgr:!!(w&&typeof me==='function'&&me()),opts,sel:null,npcs:[],player:null,path:[],stepT:0,mode:'stroll',
+  Object.assign(CITY,{open:true,li:locIdx,L,w,mgr:!!(w&&typeof me==='function'&&me()),opts,sel:null,npcs:[],player:null,path:[],stepT:0,mode:'stroll',
     remain:opts.prematch?150000:0,speed:1,lastT:0,filedAt:0,beastT:performance.now()+9000+Math.random()*9000,chatT:performance.now()+2500,hover:null,imgs:{},t0:performance.now()});
   const ov=document.createElement('div');ov.id='cityOv';ov.innerHTML=`
     <div class="citybar"><b>🏛 ${esc((CITY_DRESS[L.n]||{}).sq||'The Square')} · ${esc(L.n)}</b>${typeof CITY_FLAG!=='undefined'&&CITY_FLAG[L.n]&&typeof flagURIk==='function'?`<img class="flagchip" src="${flagURIk(CITY_FLAG[L.n])}" style="height:16px" alt="" title="The banner of ${esc(L.n)}">`:''}<span class="rc-sub" id="cityLand">${esc((CITY_DRESS[L.n]||{}).land||'')}</span>
@@ -93,15 +98,19 @@ function openCitySquare(li,opts={}){
   window.addEventListener('resize',citySize);
   log2city(`You step into ${(CITY_DRESS[L.n]||{}).sq||'the square'} at ${L.n}.`);
 }
-function closeCity(cb){if(!CITY.open)return;if(!cb&&CITY.mgr&&CITY.opts&&CITY.opts.prematch&&typeof MGR!=='undefined'){MGR.tab='night';cb=()=>{if(typeof MGR_REDRAW==='function'&&document.getElementById('mgrBody'))MGR_REDRAW();const mb=document.getElementById('mBody');if(mb)mb.scrollTop=0} } // leaving before the games → straight to Match Week
+/* closeCity — closes the square (then runs the callback; from a pre-match visit it returns to Match Week). */
+function closeCity(then){if(!CITY.open)return;if(!then&&CITY.mgr&&CITY.opts&&CITY.opts.prematch&&typeof MGR!=='undefined'){MGR.tab='night';then=()=>{if(typeof MGR_REDRAW==='function'&&document.getElementById('mgrBody'))MGR_REDRAW();const mb=document.getElementById('mBody');if(mb)mb.scrollTop=0} } // leaving before the games → straight to Match Week
   const fd=document.getElementById('cityFade');
   const fin=()=>{CITY.open=false;cancelAnimationFrame(CITY.raf);document.removeEventListener('keydown',CITY.esc,true);window.removeEventListener('resize',citySize);
-    const ov=document.getElementById('cityOv');if(ov)ov.remove();if(cb)cb();setTimeout(()=>{const f2=document.getElementById('cityFade');if(f2){f2.classList.remove('dark');setTimeout(()=>f2.remove(),650)}},80)};
+    const ov=document.getElementById('cityOv');if(ov)ov.remove();if(then)then();setTimeout(()=>{const f2=document.getElementById('cityFade');if(f2){f2.classList.remove('dark');setTimeout(()=>f2.remove(),650)}},80)};
   if(fd){fd.classList.add('dark');setTimeout(fin,620)}else fin()}
+/* cityHUD — the square's coin / visiting label. */
 function cityHUD(){const el=document.getElementById('cityCoin');if(!el)return;const t=CITY.mgr?`${typeof ICO!=='undefined'&&ICO.coin?ICO.coin:'🟡'} ${me().coin} coin`:'👁 visiting';if(el.dataset.v!==t){el.dataset.v=t;el.innerHTML=t}}
+/* citySize — sizes the square's canvas to its box. */
 function citySize(){if(!CITY.open)return;const cv=CITY.cv;const r=cv.parentElement.getBoundingClientRect();cv.width=r.width;cv.height=r.height;
   CITY.TW=Math.max(34,Math.min(r.width/(CITY_N+1.2),(r.height*2)/(CITY_N+5.6)));CITY.OX=r.width/2;CITY.OY=CITY.TW*2.2}
-function log2city(t){CITY.toast={t,until:performance.now()+3600}}
+/* log2city — a toast line over the square for a few seconds. */
+function log2city(text){CITY.toast={t:text,until:performance.now()+3600}}
 
 /* ---------------- who is in the square ---------------- */
 // what's next on THIS city's sand — this week's card if we are hosting, else the schedule's next visit
@@ -113,6 +122,7 @@ function cityNextEventLine(){const w=CITY.w;const li=CITY.li;
   for(let k=1;k<=24;k++){const i=(c0.week-1)+k;const season=c0.season+Math.floor(i/12),wk=(i%12)+1;
     const f=typeof fixtureFor==='function'?fixtureFor(season,wk):null;if(f&&f.loc===li)return `📜 <b>Next games here:</b> ${esc((EVENTS[f.ev]||{}).n||f.ev)} · ${esc(empireDate(season,wk).short)} (${k} week${k===1?'':'s'} off)`}
   return `📜 No games scheduled here for two seasons — the sand waits`}
+/* cityPopulate — fills the square: residents (the same regulars as the stands), passers-by, this week's card, soldiers, the sponsor, beasts. NOTE: uses rnd() — the seeded dice — from UI code. */
 function cityPopulate(){
   const L=CITY.L,w=CITY.w;const npcs=[];let id=0;
   const spot=()=>{for(let k=0;k<80;k++){const r=2+rnd(CITY_N-3),c=rnd(CITY_N);if(!cityBlocked(r,c)&&!npcs.some(n=>n.r===r&&n.c===c))return [r,c]}return [10,7]};
@@ -181,6 +191,7 @@ function cityLoop(ts){if(!CITY.open)return;const now=performance.now();const dt=
     if(ck){ck.hidden=false;ck.textContent=CITY.mode==='filing'?'🎺 the games begin — to the arena!':`🏛 the games begin in ${Math.max(0,Math.ceil(left/1000))}s`;ck.classList.toggle('soon',left<30000&&CITY.mode!=='filing')}
     if(left<=0&&CITY.mode!=='filing')cityHorns()}
   cityHUD();cityDraw();CITY.raf=requestAnimationFrame(cityLoop)}
+/* cityHorns — the horns sound: the gates lock and the crowd files toward the arena gate. */
 function cityHorns(){if(CITY.mode==='filing')return;CITY.mode='filing';CITY.remain=0;
   // v0.33 THE GATES SHUT: once the horns sound, there is no strolling back to the square until the bout is fought
   try{const w9=CITY.w;if(CITY.mgr&&w9&&w9.night&&w9.night.loc===CITY.li){const bi9=w9.night.bouts.findIndex(b2=>!b2.done);if(bi9>=0)w9.night.hornsLock=bi9}}catch(e){}
@@ -188,6 +199,7 @@ function cityHorns(){if(CITY.mode==='filing')return;CITY.mode='filing';CITY.rema
     n.path=cityBFS([n.r,n.c],[CITY_GATE[0]+1,CITY_GATE[1]+(rnd(3)-1)]);n.path.push([CITY_GATE[0],CITY_GATE[1]]);n.t0=performance.now()+rnd(2600)}
   log2city('🎺 The horns! The crowd streams toward the arena gate.');
   citySelect({kind:'enter'})}
+/* cityEnterArena — follows the crowd into the arena (the bout starts behind the fade). */
 function cityEnterArena(){if(CITY.entering)return;CITY.entering=true;const wasMgr=CITY.mgr,li9=CITY.li;
   closeCity(()=>{CITY.entering=false;
     if(!(wasMgr&&typeof MGR!=='undefined'))return;
@@ -199,39 +211,46 @@ function cityEnterArena(){if(CITY.entering)return;CITY.entering=true;const wasMg
     const mb=document.getElementById('mBody');if(mb)mb.scrollTop=0})}
 /* v0.35 THE SEALED GATE: with no games on this sand, the arena is barred — and the way out names where you came from */
 function cityGamesHere(){const w=CITY.w;return !!(CITY.mgr&&w&&w.night&&w.night.loc===CITY.li&&w.night.bouts.some(b2=>!b2.done))}
+/* cityExitKind — where leaving the square goes: back to Match Week, your ludus, or just out. */
 function cityExitKind(){const w=CITY.w;if(!CITY.mgr||!w||!w.night)return 'leave';
   if(w.night.loc===CITY.li)return 'night';                  // this city hosts the week — Match Week is where you belong
   return 'ludus'}                                           // the week's games are elsewhere — home to the ludus
+/* CITY_EXIT_LBL — labels of the exit buttons by kind. */
 const CITY_EXIT_LBL={night:'⏎ Return to Match Week',ludus:'⏎ Return to your ludus',leave:'Leave the square ✕'};
+/* cityExit — leaves the square the way cityExitKind says. */
 function cityExit(){const k=cityExitKind();
   if(k==='leave'){closeCity();return}
   closeCity(()=>{MGR.tab=k==='night'?'night':'ludus';
     if(!document.getElementById('mgrBody')){if(typeof openManager==='function')openManager(MGR.tab)}else if(typeof MGR_REDRAW==='function')MGR_REDRAW();
     const mb=document.getElementById('mBody');if(mb)mb.scrollTop=0})}
+/* citySealedPanel — the sealed-gate panel when no games are on this sand. */
 function citySealedPanel(){const w=CITY.w;const k=cityExitKind();
   const why=CITY.mgr&&w&&w.night&&w.night.loc===CITY.li?'Tonight’s games here are already fought — the results are posted on Match Week.':CITY.mgr&&w&&w.night?`This week’s games are at <b>${esc(LOCATIONS[w.night.loc].n)}</b>, not here.`:'No games are called on this sand right now.';
   cityPanel(`<div class="sect" style="margin-top:0">🔒 The arena gate is barred</div><div class="card2"><p style="margin:0">${why} The gatekeeper does not even look up.</p>
     <div class="acts" style="margin-top:8px"><button class="btn primary" type="button" onclick="cityExit()">${CITY_EXIT_LBL[k]}</button><button class="btn tksm" type="button" onclick="cityPanel('')">Keep strolling</button></div></div>`)}
-function cityBFS(a,b){const seen={};const q=[[a,[]]];seen[a[0]+','+a[1]]=1;
-  while(q.length){const [[r,c],path]=q.shift();if(r===b[0]&&c===b[1])return path;
+/* cityBFS — shortest walkable path between two square tiles (breadth-first). */
+function cityBFS(from,to){const seen={};const q=[[from,[]]];seen[from[0]+','+from[1]]=1;
+  while(q.length){const [[r,c],path]=q.shift();if(r===to[0]&&c===to[1])return path;
     for(const [dr,dc] of [[0,1],[0,-1],[1,0],[-1,0]]){const r2=r+dr,c2=c+dc,k=r2+','+c2;
       if(seen[k])continue;const gate=r2===CITY_GATE[0]&&c2===CITY_GATE[1];
-      if(!gate&&cityBlocked(r2,c2))continue;seen[k]=1;const p2=[...path,[r2,c2]];if(r2===b[0]&&c2===b[1])return p2;if(!gate)q.push([[r2,c2],p2])}}
+      if(!gate&&cityBlocked(r2,c2))continue;seen[k]=1;const p2=[...path,[r2,c2]];if(r2===to[0]&&c2===to[1])return p2;if(!gate)q.push([[r2,c2],p2])}}
   return []}
 
 /* ---------------- drawing ---------------- */
 function cityImg(key,svg){let im=CITY.imgs[key];if(!im){im=new Image();im.src='data:image/svg+xml,'+encodeURIComponent(svg);CITY.imgs[key]=im}return im.complete&&im.naturalWidth?im:null}
-function drawTownsfolk(c2,x,y,U,look,opts={}){const lk=look||{};
-  c2.fillStyle='rgba(0,0,0,.22)';c2.beginPath();c2.ellipse(x,y,U*0.3,U*0.11,0,0,Math.PI*2);c2.fill();
-  c2.fillStyle=opts.armor?'#8a9098':(lk.robe||'#c9b27a');c2.beginPath();c2.moveTo(x-U*0.26,y);c2.quadraticCurveTo(x-U*0.3,y-U*0.62,x,y-U*0.7);c2.quadraticCurveTo(x+U*0.3,y-U*0.62,x+U*0.26,y);c2.closePath();c2.fill();c2.strokeStyle='rgba(20,12,6,.55)';c2.lineWidth=1;c2.stroke();
-  if(opts.sash){c2.strokeStyle=opts.sash;c2.lineWidth=U*0.08;c2.beginPath();c2.moveTo(x-U*0.18,y-U*0.14);c2.lineTo(x+U*0.14,y-U*0.56);c2.stroke()}
-  c2.fillStyle=lk.skin||'#e6cfa8';c2.beginPath();c2.ellipse(x,y-U*0.82,U*0.17,U*0.17,0,0,Math.PI*2);c2.fill();c2.strokeStyle='#1a120c';c2.lineWidth=1;c2.stroke();
-  c2.fillStyle=lk.hair||'#4a2c17';c2.beginPath();c2.ellipse(x,y-U*0.89,U*0.15,U*0.085,0,Math.PI,0);c2.fill();
-  if(lk.long){c2.beginPath();c2.ellipse(x-U*0.15,y-U*0.78,U*0.04,U*0.1,0,0,Math.PI*2);c2.ellipse(x+U*0.15,y-U*0.78,U*0.04,U*0.1,0,0,Math.PI*2);c2.fill()}
-  if(lk.beard){c2.beginPath();c2.ellipse(x,y-U*0.71,U*0.1,U*0.055,0,0,Math.PI*2);c2.fill()}
-  if(opts.helm){c2.fillStyle='#a9aeb5';c2.beginPath();c2.ellipse(x,y-U*0.9,U*0.16,U*0.1,0,Math.PI,0);c2.fill();c2.fillStyle='#a3281f';c2.fillRect(x-U*0.02,y-U*1.06,U*0.04,U*0.14)}
-  if(opts.spear){c2.strokeStyle='#7a5a2a';c2.lineWidth=U*0.045;c2.beginPath();c2.moveTo(x+U*0.24,y+U*0.02);c2.lineTo(x+U*0.24,y-U*1.06);c2.stroke();c2.fillStyle='#c9d0d6';c2.beginPath();c2.moveTo(x+U*0.24,y-U*1.2);c2.lineTo(x+U*0.19,y-U*1.04);c2.lineTo(x+U*0.29,y-U*1.04);c2.closePath();c2.fill()}
-  if(opts.ring){c2.strokeStyle=opts.ring;c2.lineWidth=2;c2.beginPath();c2.ellipse(x,y-U*0.42,U*0.34,U*0.5,0,0,Math.PI*2);c2.stroke()}}
+/* drawTownsfolk — draws one person in the square (robe, head, hair, hat or armor) at x,y with a size unit. */
+function drawTownsfolk(c2,x,y,unit,look,opts={}){const lk=look||{};
+  c2.fillStyle='rgba(0,0,0,.22)';c2.beginPath();c2.ellipse(x,y,unit*0.3,unit*0.11,0,0,Math.PI*2);c2.fill();
+  c2.fillStyle=opts.armor?'#8a9098':(lk.robe||'#c9b27a');c2.beginPath();c2.moveTo(x-unit*0.26,y);c2.quadraticCurveTo(x-unit*0.3,y-unit*0.62,x,y-unit*0.7);c2.quadraticCurveTo(x+unit*0.3,y-unit*0.62,x+unit*0.26,y);c2.closePath();c2.fill();c2.strokeStyle='rgba(20,12,6,.55)';c2.lineWidth=1;c2.stroke();
+  if(opts.sash){c2.strokeStyle=opts.sash;c2.lineWidth=unit*0.08;c2.beginPath();c2.moveTo(x-unit*0.18,y-unit*0.14);c2.lineTo(x+unit*0.14,y-unit*0.56);c2.stroke()}
+  c2.fillStyle=lk.skin||'#e6cfa8';c2.beginPath();c2.ellipse(x,y-unit*0.82,unit*0.17,unit*0.17,0,0,Math.PI*2);c2.fill();c2.strokeStyle='#1a120c';c2.lineWidth=1;c2.stroke();
+  c2.fillStyle=lk.hair||'#4a2c17';c2.beginPath();c2.ellipse(x,y-unit*0.89,unit*0.15,unit*0.085,0,Math.PI,0);c2.fill();
+  if(lk.long){c2.beginPath();c2.ellipse(x-unit*0.15,y-unit*0.78,unit*0.04,unit*0.1,0,0,Math.PI*2);c2.ellipse(x+unit*0.15,y-unit*0.78,unit*0.04,unit*0.1,0,0,Math.PI*2);c2.fill()}
+  if(lk.beard){c2.beginPath();c2.ellipse(x,y-unit*0.71,unit*0.1,unit*0.055,0,0,Math.PI*2);c2.fill()}
+  if(opts.helm){c2.fillStyle='#a9aeb5';c2.beginPath();c2.ellipse(x,y-unit*0.9,unit*0.16,unit*0.1,0,Math.PI,0);c2.fill();c2.fillStyle='#a3281f';c2.fillRect(x-unit*0.02,y-unit*1.06,unit*0.04,unit*0.14)}
+  if(opts.spear){c2.strokeStyle='#7a5a2a';c2.lineWidth=unit*0.045;c2.beginPath();c2.moveTo(x+unit*0.24,y+unit*0.02);c2.lineTo(x+unit*0.24,y-unit*1.06);c2.stroke();c2.fillStyle='#c9d0d6';c2.beginPath();c2.moveTo(x+unit*0.24,y-unit*1.2);c2.lineTo(x+unit*0.19,y-unit*1.04);c2.lineTo(x+unit*0.29,y-unit*1.04);c2.closePath();c2.fill()}
+  if(opts.ring){c2.strokeStyle=opts.ring;c2.lineWidth=2;c2.beginPath();c2.ellipse(x,y-unit*0.42,unit*0.34,unit*0.5,0,0,Math.PI*2);c2.stroke()}}
+/* cityDraw — draws the whole square each frame: ground, buildings, people and beasts in depth order, hover and selection, toasts. */
 function cityDraw(){const c2=CITY.c2,cv=CITY.cv;if(!c2)return;const TWc=CITY.TW,TH=TWc/2;const now=performance.now();
   const D=CITY_DRESS[CITY.L.n]||{g1:'#b5a26e',g2:'#a99663',aw:'#7a2230'};
   c2.clearRect(0,0,cv.width,cv.height);
@@ -277,9 +296,10 @@ function cityDraw(){const c2=CITY.c2,cv=CITY.cv;if(!c2)return;const TWc=CITY.TW,
   if(CITY.toast&&now<CITY.toast.until){c2.font=`600 ${Math.max(12,Math.round(TWc*0.26))}px Alegreya Sans,sans-serif`;const wd=c2.measureText(CITY.toast.t).width+18;
     c2.fillStyle='rgba(20,14,8,.85)';c2.beginPath();c2.roundRect(cv.width/2-wd/2,10,wd,TWc*0.44,5);c2.fill();c2.fillStyle='#e8dcc0';c2.textAlign='center';c2.textBaseline='middle';c2.fillText(CITY.toast.t,cv.width/2,10+TWc*0.22)}
 }
-function cityDrawBldg(c2,[k,r0,r1,c0,c1,h,label,icon],D){const TWc=CITY.TW;
+/* cityDrawBldg — draws one building block of the square (walls, roof, awning, label) in the city's colors. */
+function cityDrawBldg(c2,[k,r0,r1,c0,c1,h,label,icon],dress){const TWc=CITY.TW;
   const pA=cityIso(r0,c0),pB=cityIso(r0,c1),pC=cityIso(r1,c1),pD2=cityIso(r1,c0);const H=TWc*h*0.55;
-  const stone=k==='arena';const wall1=stone?'#7a6f60':'#8a6f4e',wall2=stone?'#685e50':'#74593c',roofC=k==='arena'?'#8a8070':D.aw;
+  const stone=k==='arena';const wall1=stone?'#7a6f60':'#8a6f4e',wall2=stone?'#685e50':'#74593c',roofC=k==='arena'?'#8a8070':dress.aw;
   const Lx=pD2.x-TWc/2,Ly=pD2.y,Cx=pC.x,Cy=pC.y+TWc/4,Rx=pB.x+TWc/2,Ry=pB.y;
   // left wall (D→C) and right wall (C→B)
   c2.fillStyle=wall2;c2.beginPath();c2.moveTo(Lx,Ly);c2.lineTo(Cx,Cy);c2.lineTo(Cx,Cy-H);c2.lineTo(Lx,Ly-H);c2.closePath();c2.fill();
@@ -297,7 +317,7 @@ function cityDrawBldg(c2,[k,r0,r1,c0,c1,h,label,icon],D){const TWc=CITY.TW;
   if(k==='arena'){ // arches, banner poles, the gate, the balcony
     c2.fillStyle='#2a2018';for(let i=0;i<5;i++){const t=(i+0.5)/5;const x=Lx+(Cx-Lx)*t,y=Ly+(Cy-Ly)*t;
       c2.beginPath();c2.ellipse(x,y-H*0.34,TWc*0.11,H*0.3,0,Math.PI,0);c2.rect(x-TWc*0.11,y-H*0.34,TWc*0.22,H*0.34);c2.fill()}
-    {const fs=[D.aw,D.aw];if(CITY.mgr&&typeof mgrFlagOf==='function'){CITY.myFlagIm=CITY.myFlagIm||null}
+    {const fs=[dress.aw,dress.aw];if(CITY.mgr&&typeof mgrFlagOf==='function'){CITY.myFlagIm=CITY.myFlagIm||null}
      let fi=0;for(const t of [0.12,0.88]){const x=Lx+(Rx-Lx)*t,y=(t<0.5?Ly+(Cy-Ly)*t*2:Cy+(Ry-Cy)*(t-0.5)*2);
       c2.strokeStyle='#5a4a34';c2.lineWidth=2.5;c2.beginPath();c2.moveTo(x,y-H);c2.lineTo(x,y-H-TWc*0.8);c2.stroke();
       const mine=fi===1&&CITY.mgr&&typeof flagImg==='function';const im=mine?flagImg(mgrFlagOf(me())):null;
@@ -321,7 +341,7 @@ function cityDrawBldg(c2,[k,r0,r1,c0,c1,h,label,icon],D){const TWc=CITY.TW;
   // striped awning over a stall — drawn on whichever wall actually faces the square
   if(DECO.awn){const onLeft=c0>=8; // right-edge shops open toward the square on their LEFT wall
     const ax=onLeft?Lx+(Cx-Lx)*0.5:Cx+(Rx-Cx)*0.72,ay=onLeft?Ly+(Cy-Ly)*0.5:Cy+(Ry-Cy)*0.72;const aw2=TWc*0.75,ad=TWc*0.42;const dir=onLeft?-0.35:0.35;
-    const grad=[D.aw,'#e8dcc0'];for(let i=0;i<5;i++){c2.fillStyle=grad[i%2];
+    const grad=[dress.aw,'#e8dcc0'];for(let i=0;i<5;i++){c2.fillStyle=grad[i%2];
       c2.beginPath();c2.moveTo(ax-aw2/2+i*aw2/5,ay-H*0.62);c2.lineTo(ax-aw2/2+(i+1)*aw2/5,ay-H*0.62);c2.lineTo(ax-aw2/2+(i+1)*aw2/5+ad*dir,ay-H*0.28+ad*0.2);c2.lineTo(ax-aw2/2+i*aw2/5+ad*dir,ay-H*0.28+ad*0.2);c2.closePath();c2.fill()}
     c2.strokeStyle='#5a4a34';c2.lineWidth=2;c2.beginPath();c2.moveTo(ax-aw2/2+ad*dir,ay-H*0.28+ad*0.2);c2.lineTo(ax-aw2/2+ad*dir,ay+TWc*0.06);c2.moveTo(ax+aw2/2+ad*dir,ay-H*0.28+ad*0.2);c2.lineTo(ax+aw2/2+ad*dir,ay+TWc*0.06);c2.stroke();
     c2.fillStyle='#7a5a34';c2.fillRect(ax-aw2/2+ad*dir*0.6,ay-TWc*0.16,aw2*0.8,TWc*0.1);c2.strokeStyle='#4a3520';c2.strokeRect(ax-aw2/2+ad*dir*0.6,ay-TWc*0.16,aw2*0.8,TWc*0.1);
@@ -344,7 +364,9 @@ function cityAt(ev){const rect=CITY.cv.getBoundingClientRect();const x=ev.client
   if(best)return {npc:best};
   const cB=Math.round(((x-CITY.OX)/(TWc/2)+(y-CITY.OY)/(TWc/4))/2),rB=Math.round(((y-CITY.OY)/(TWc/4)-(x-CITY.OX)/(TWc/2))/2);
   return {r:rB,c:cB}}
+/* cityMove — pointer move over the square: hover and cursor. */
 function cityMove(ev){const hit=cityAt(ev);CITY.hover=hit.npc||null;CITY.cv.style.cursor=hit.npc||hit.sponsor||(hit.r!=null&&cityBldgAt(hit.r,hit.c))?'pointer':'default'}
+/* cityClick — a click in the square: select a person / building or walk to a tile. */
 function cityClick(ev){const hit=cityAt(ev);
   if(hit.sponsor)return citySelect({kind:'sponsor',sp:CITY.sponsorHere});
   if(hit.npc)return citySelect(hit.npc.kind==='auct'?{kind:'auction'}:hit.npc);
@@ -356,6 +378,7 @@ function cityClick(ev){const hit=cityAt(ev);
 function cityPanel(html){const p=document.getElementById('cityPanel');if(!p)return;p.hidden=!html;p.innerHTML=html?`<button class="btn tksm citypx" type="button" onclick="cityPanel('')">✕</button>${html}`:'';
   if(html&&!p._wired){p._wired=1;p.addEventListener('click',e=>{const act=e.target.closest('[data-spact]');if(!act)return; // the global handler acts; we refresh the card right after
     setTimeout(()=>{if(CITY.open&&CITY.sel&&CITY.sel.kind==='spec')citySelect(CITY.sel)},120)})}}
+/* citySelect — opens the side panel for what was clicked (a regular, a passer-by, a fighter, the sponsor, a shop, the auction, the gate…). */
 function citySelect(sel){CITY.sel=sel;const w=CITY.w,mgr=CITY.mgr;const pm=mgr?me():null;
   if(sel.kind==='spec'&&sel.reg){cityPanel(`<div class="sect" style="margin-top:0">👤 A face from the stands</div>${typeof spectInspectorHTML==='function'?spectInspectorHTML(sel.reg):`<b>${esc(sel.name)}</b>`}
     <p class="rc-sub">${esc(sel.reg.city||CITY.L.n)} is home. You have seen them in the tiers${sel.reg.visits?` ${sel.reg.visits} time${sel.reg.visits===1?'':'s'}`:''}.</p>`);return}
@@ -374,22 +397,27 @@ function citySelect(sel){CITY.sel=sel;const w=CITY.w,mgr=CITY.mgr;const pm=mgr?m
   if(sel.kind==='enter'){cityPanel(`<div class="sect" style="margin-top:0">🎺 The horns have sounded</div><div class="card2"><p style="margin:0">The square empties; the tiers fill. ${CITY.mgr?'Your card is waiting.':'The games are beginning.'}</p>
     <div class="acts" style="margin-top:8px"><button class="btn primary" type="button" onclick="cityEnterArena()">⚔ Enter the arena</button><button class="btn tksm" type="button" onclick="cityPanel('')">Linger a moment</button></div></div>`);return}
 }
+/* cityFav — pins / unpins a fighter on your Favorites board from the square. */
 function cityFav(gid){const g=gById(gid);if(!g)return;g.favd=!g.favd;if(typeof saveWorld==='function')saveWorld();citySelect(CITY.sel);log2city(g.favd?`${g.name} pinned to your Favorites.`:`${g.name} removed from your board.`)}
 
 /* ---------------- the auction block: the unwanted, going cheap ---------------- */
+/* AUCTION_WOES — why an auction lot is cheap, and what that does to the fighter. */
 const AUCTION_WOES=[['old bones',g=>{g.age=36+rnd(8)}],['a wet cough',g=>{g.ovr=Math.max(38,g.ovr-6)}],['too fond of the table',g=>{g.ovr=Math.max(38,g.ovr-4)}],['a condemned man',g=>{g.cls='damnatio'}],['"no one hires a woman", says the seller',g=>{g.fem=true;g.cls='amazonia'}],['half-blind in one eye',g=>{g.ovr=Math.max(38,g.ovr-5)}],['freezes at the sight of beasts',g=>{}],['too old to retrain, they say',g=>{g.age=34+rnd(6)}]];
+/* cityAuctionLot — this week's auction block lot (2–3 cheap fighters, some hidden gems), created once per week and city. TWEAK: the .18 gem chance, the 5–13 coin prices. */
 function cityAuctionLot(){const w=CITY.w;if(!w)return [];
   if(!w.cityAuction||w.cityAuction.wk!==w.week||w.cityAuction.li!==CITY.li){
     const lot=[];for(let i=0;i<2+rnd(2);i++){const g=genGlad({ovr:37+rnd(12)});const [woe,fx]=pickOne(AUCTION_WOES);fx(g);g.woe=woe;g.auction=1;g.gemHid=Math.random()<.18?6+rnd(8):0; /* v0.47: the empire's cannon fodder — cheaper, a notch lower, and still the odd gem */
       g.price=5+rnd(9);w.glads.push(g);lot.push(g.id)}
     w.cityAuction={wk:w.week,li:CITY.li,ids:lot};if(typeof saveWorld==='function')saveWorld()}
   return w.cityAuction.ids.map(gById).filter(g=>g&&g.alive&&!g.contract)}
+/* cityAuctionPanel — the auction block panel. */
 function cityAuctionPanel(){const mgr=CITY.mgr;const lot=cityAuctionLot();const pm=mgr?me():null;
   cityPanel(`<div class="sect" style="margin-top:0">⚖ The auction block</div>
    <p class="rc-sub" style="margin:0 0 6px">"HONEST VULSO'S — fighters no ludus wants, at prices no lanista can refuse!" The unwanted go cheap. Most are exactly what they look like. <b>Most.</b> You learn the truth only if they win their first bout under your name.</p>
    ${!CITY.w?'<p class="rc-sub">Come back wearing a lanista’s ring — Vulso only sells to managers.</p>':lot.length?lot.map(g=>`<div class="card2" style="margin-bottom:6px"><div style="display:flex;gap:8px">${typeof gArt==='function'?gArt(g,'sm'):''}<div style="flex:1"><b>${esc(g.name)}</b> <span class="stars">${'★'.repeat(starsOf(pubOvr(g)))}</span>
       <div class="rc-sub">${CLASSES[g.cls]?CLASSES[g.cls].name:''} · ${gAge(g)} · rated ~${pubOvr(g)} · <i>${esc(g.woe)}</i></div>
       <div class="acts" style="margin-top:4px"><button class="btn primary tksm" type="button" ${mgr&&pm.coin>=g.price?'':'disabled'} onclick="cityBuyLot('${g.id}')">Buy · ${g.price} coin<small>signs 6 weeks at 2/wk</small></button></div></div></div></div>`).join(''):'<p class="rc-sub">The block stands empty — sold out, or nobody desperate enough this week.</p>'}`)}
+/* cityBuyLot — buys an auction lot onto your roster (wage 2, 6 weeks). */
 function cityBuyLot(gid){const g=gById(gid);const pm=me();const w=CITY.w;if(!g||!pm||pm.coin<g.price)return;
   pm.coin-=g.price;g.contract={mgr:pm.id,wage:2,weeks:6,since:w.week};delete g.auction;g.morale=55;g.scout=1;g.unsigned=0;
   ghist(g,`bought off the auction block at ${CITY.L.n} for ${g.price} coin (${g.woe})`);
@@ -397,18 +425,22 @@ function cityBuyLot(gid){const g=gById(gid);const pm=me();const w=CITY.w;if(!g||
   if(typeof mlog==='function')mlog(pm,`bought ${g.name} at auction (${g.price} coin)`);
   saveWorld();log2city(`${g.name} is yours. Vulso bites the coin and grins.`);cityAuctionPanel()}
 // the hidden gem shows their true worth the first time they WIN for you
-function gemCheck(g,m){if(!g||!g.gemHid||!m||!m.isPlayer)return;const up=g.gemHid;g.gemHid=0;
-  g.ovr=clamp(g.ovr+up,38,94);g.pot=Math.max(g.pot||g.ovr,g.ovr+3+rnd(5));
+function gemCheck(glad,mgr){if(!glad||!glad.gemHid||!mgr||!mgr.isPlayer)return;const up=glad.gemHid;glad.gemHid=0;
+  glad.ovr=clamp(glad.ovr+up,38,94);glad.pot=Math.max(glad.pot||glad.ovr,glad.ovr+3+rnd(5));
   {const w9=W_();w9.gemsFound=(w9.gemsFound||0)+1}
-  mnews(`💎 <b>${esc(g.name)}</b> — the auction-block castoff — fights like a champion! The doctores re-rate them at <b>${g.ovr}</b>. Vulso's face, when he hears.`,'big');
-  tnews(`💎 Hidden gem: ${esc(g.name)} is re-rated at ${g.ovr} (+${up}).`,'big');ghist(g,`revealed as a hidden gem — re-rated ${g.ovr}`)}
+  mnews(`💎 <b>${esc(glad.name)}</b> — the auction-block castoff — fights like a champion! The doctores re-rate them at <b>${glad.ovr}</b>. Vulso's face, when he hears.`,'big');
+  tnews(`💎 Hidden gem: ${esc(glad.name)} is re-rated at ${glad.ovr} (+${up}).`,'big');ghist(glad,`revealed as a hidden gem — re-rated ${glad.ovr}`)}
 
 /* ---------------- the shops: a start-of-bout kit, the baths, the tavern ---------------- */
 /* v0.36 HOME CITY: in the city where your ludus stands, the merchants know your face — a quarter off everything */
 const cityHome=()=>!!(CITY.mgr&&typeof me==='function'&&me()&&me().city===CITY.L.n);
-const cityPr=pr=>cityHome()?Math.ceil(pr*0.75):pr;
+/* cityPr — a square price, a quarter off in your own home city. */
+const cityPr=price=>cityHome()?Math.ceil(price*0.75):price;
+/* CITY_ARMS — the arms market: start-of-bout kit offerings and prices. TWEAK. */
 const CITY_ARMS=[['mw1',6],['mw2',12],['mw3',20],['merc1',5],['merc2',9]];
+/* CITY_ARMOR — the armorer's offerings and prices. TWEAK. */
 const CITY_ARMOR=[['ma1',6],['ma2',12],['ma3',20],['elix2',5],['elix4',9]];
+/* cityShopPanel — a shop panel (arms, armor, baths, tavern…) with what it sells. */
 function cityShopPanel(key){const w=CITY.w,mgr=CITY.mgr;const pm=mgr?me():null;
   if(key==='arena'){if(cityGamesHere())citySelect({kind:'enter'});else citySealedPanel();return}
   if(key==='arms'||key==='armor'){const stock=key==='arms'?CITY_ARMS:CITY_ARMOR;const ros=mgr?rosterOf(pm).sort((a,b)=>effOvr(b)-effOvr(a)):[];
@@ -426,25 +458,32 @@ function cityShopPanel(key){const w=CITY.w,mgr=CITY.mgr;const pm=mgr?me():null;
     ${mgr?`<div class="acts" style="margin-top:6px"><button class="btn primary tksm" type="button" ${w.lupWk===w.week?'disabled title="The house has already been generous this week"':me().coin<cityPr(10)?'disabled':''} onclick="cityLup()">An evening of diplomacy<small>${cityPr(10)} coin · weekly · a rival house warms to you</small></button></div>`:''}</div>`);return}
   if(key==='auction')return cityAuctionPanel();
 }
-function cityKitListHTML(g){if(!g)return '';return `<div class="sect">In ${esc(g.name)}'s kit</div>${(g.kit||[]).length?(g.kit||[]).map((k,i)=>`<div style="font-size:12.5px">${OFFER[k].g} ${OFFER[k].n} (${OFFER[k].s}) <button class="btn tksm" type="button" onclick="cityKitDrop('${g.id}',${i})">↩ return</button></div>`).join(''):'<span class="rc-sub">Nothing yet — they walk out with their class loadout.</span>'}`}
-function cityBuyKit(k,pr){const pm=me();const sel=document.getElementById('cityKitWho');const g=sel&&gById(sel.value);if(!g||pm.coin<pr)return;
+/* cityKitListHTML — what a fighter carries in their kit for this week's bout. */
+function cityKitListHTML(glad){if(!glad)return '';return `<div class="sect">In ${esc(glad.name)}'s kit</div>${(glad.kit||[]).length?(glad.kit||[]).map((k,i)=>`<div style="font-size:12.5px">${OFFER[k].g} ${OFFER[k].n} (${OFFER[k].s}) <button class="btn tksm" type="button" onclick="cityKitDrop('${glad.id}',${i})">↩ return</button></div>`).join(''):'<span class="rc-sub">Nothing yet — they walk out with their class loadout.</span>'}`}
+/* cityBuyKit — buys a kit item for the chosen fighter. */
+function cityBuyKit(key,price){const pm=me();const sel=document.getElementById('cityKitWho');const g=sel&&gById(sel.value);if(!g||pm.coin<price)return;
   g.kit=g.kit||[];if(g.kit.length>=3){log2city('Three items is the limit — the fighter has only so many hands.');return}
-  pm.coin-=pr;g.kit.push(k);g.kitWk=CITY.w.week;saveWorld();log2city(`${OFFER[k].n} wrapped for ${g.name}.`);
+  pm.coin-=price;g.kit.push(key);g.kitWk=CITY.w.week;saveWorld();log2city(`${OFFER[key].n} wrapped for ${g.name}.`);
   const box=document.getElementById('cityKitList');if(box)box.innerHTML=cityKitListHTML(g);const o=sel.querySelector(`option[value="${g.id}"]`);if(o)o.textContent=`${g.name} · ${effOvr(g)} · kit ${g.kit.length}/3`}
+/* cityKitDrop — sells a kit item back (70%). */
 function cityKitDrop(gid,i){const g=gById(gid);const pm=me();if(!g||!g.kit)return;const k=g.kit.splice(i,1)[0];pm.coin+=Math.ceil((CITY_ARMS.concat(CITY_ARMOR).find(x=>x[0]===k)||[0,4])[1]*0.7);saveWorld();
   const box=document.getElementById('cityKitList');if(box)box.innerHTML=cityKitListHTML(g)}
+/* cityBath — the bathhouse: +2 morale for the whole stable, once a week. TWEAK: 8 coin. */
 function cityBath(){const w=CITY.w,pm=me();const f=cityPr(8);if(w.bathWk===w.week||pm.coin<f)return;pm.coin-=f;w.bathWk=w.week;for(const g of rosterOf(pm))g.morale=clamp(g.morale+2,0,100);tnews('🛁 The whole stable steamed at the bathhouse: +2 morale each.');saveWorld();log2city('The stable emerges pink and cheerful. +2 morale each.');cityShopPanel('bath')}
+/* cityTavern — the tavern: +3 morale for the stable and a tip that scouts one unknown fighter, once a week. TWEAK: 6 coin. */
 function cityTavern(){const w=CITY.w,pm=me();const f=cityPr(6);if(w.tavWk===w.week||pm.coin<f)return;pm.coin-=f;w.tavWk=w.week;for(const g of rosterOf(pm))g.morale=clamp(g.morale+3,0,100);
   const un=w.glads.filter(g=>g.alive&&(g.scout||0)<1&&(!g.contract||g.contract.mgr!==pm.id));const tip=un.length?pickOne(un):null;if(tip)tip.scout=Math.max(tip.scout||0,1);
   tnews(`🍷 Stood a round at ${esc(CITY.L.n)}: +3 morale each${tip?`, and a drunk swears <b>${esc(tip.name)}</b> is better than the scrolls say (scouted)`:''}.`);saveWorld();
   log2city(tip?`+3 morale each — and a tip about ${tip.name}.`:'+3 morale all around.');cityShopPanel('tavern')}
+/* cityLup — the lupanar: once a week, an evening there softens your coldest rival (+4 opinion). TWEAK: 10 coin. */
 function cityLup(){const w=CITY.w,pm=me();const f=cityPr(10);if(w.lupWk===w.week||pm.coin<f)return;pm.coin-=f;w.lupWk=w.week;
   const riv=w.mgrs.filter(m=>!m.isPlayer).sort((a,b)=>(typeof opinionOf==='function'?opinionOf(a).v-opinionOf(b).v:0))[0];
   if(riv){riv.relB=(riv.relB||0)+4;if(typeof mlog==='function')mlog(riv,`softened toward ${pm.ludus} after a certain evening at the ${CITY.L.n} lupanar`)}
   tnews(`🌙 An evening of diplomacy at ${esc(CITY.L.n)}${riv?`: ${esc(riv.ludus)} warms to you a little (+4 opinion)`:''}.`);saveWorld();log2city(riv?`${riv.name} will hear of your generosity. +4 opinion.`:'A pleasant, expensive evening.');cityShopPanel('lupanar')}
 // clicks from the Imperium's city tiles land here, wherever they are rendered
 /* v0.45: in a career you can only walk a city's square in the week you fight there, once the road is paid */
-function citySquareGate(li){const w=typeof W_==='function'?W_():null;if(!w||!w.night)return null;if(w.tutorial)return 'Not during the lesson — explore the squares in your own career';
-  if(+li!==+w.night.loc)return `Only ${LOCATIONS[w.night.loc]?LOCATIONS[w.night.loc].n:'this week’s city'} this week — each square opens in the week of its games`;
-  const t=typeof travelState==='function'?travelState(w):null;if(t&&!t.paid)return `Pay the road to ${LOCATIONS[li].n} first (${t.cost} coin, on Match Week)`;return null}
+function citySquareGate(locIdx){const w=typeof W_==='function'?W_():null;if(!w||!w.night)return null;if(w.tutorial)return 'Not during the lesson — explore the squares in your own career';
+  if(+locIdx!==+w.night.loc)return `Only ${LOCATIONS[w.night.loc]?LOCATIONS[w.night.loc].n:'this week’s city'} this week — each square opens in the week of its games`;
+  const t=typeof travelState==='function'?travelState(w):null;if(t&&!t.paid)return `Pay the road to ${LOCATIONS[locIdx].n} first (${t.cost} coin, on Match Week)`;return null}
+/* Imperium "Visit the city square" buttons (gated in careers). */
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ct="square"]');if(!b)return;e.preventDefault();const why=citySquareGate(+b.dataset.li);if(why){if(typeof mToast==='function')mToast('🔒 '+esc(why));return}openCitySquare(+b.dataset.li,{})},true);
