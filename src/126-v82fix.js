@@ -60,8 +60,8 @@ if(typeof TOKEN_DEF!=='undefined'&&TOKEN_DEF.tholo)Object.assign(TOKEN_DEF.tholo
 #mainMenu .mmbtns>#mmLearn.tut82.on{display:flex!important}
 #mainMenu .mmbtns>#mmLearn.tut82>button{font-size:14px}
 #mainMenu .mmbtns>[data-mm="studio"]{order:5!important}`;document.head.appendChild(st)}
-function mmLabels82(){const b=document.querySelector('#mainMenu [data-mm="rules"]');if(b&&!/^📜 Rules$/.test(b.textContent.trim()))b.innerHTML='📜 Rules';
-  const a=document.querySelector('#mainMenu [data-mm="annals"]');if(a&&!/^🏛️ Annals$/.test(a.textContent.trim()))a.innerHTML='🏛️ Annals'}
+function mmLabels82(){const b=document.querySelector('#mainMenu [data-mm="rules"]');if(b&&!/^📜 Rules$/.test((b.dataset.en84||b.textContent).trim()))b.innerHTML='📜 Rules';
+  const a=document.querySelector('#mainMenu [data-mm="annals"]');if(a&&!/^🏛️ Annals$/.test((a.dataset.en84||a.textContent).trim()))a.innerHTML='🏛️ Annals'}
 {const base=menuShow;menuShow=function(){const r=base.apply(this,arguments);try{mmLabels82()}catch(e){}return r}}
 setTimeout(()=>{try{mmLabels82()}catch(e){}},500);setTimeout(()=>{try{mmLabels82()}catch(e){}},2500);
 /* Online Domus: the gladiator showcase sits on his parchment (dark cards on light parchment, framed in gold) */

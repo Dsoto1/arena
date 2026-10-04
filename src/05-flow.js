@@ -1910,9 +1910,10 @@ async function flaviusTruceCheck() {
     value: 1,
     primary: 1
   }]);
+  const thumbModal = CUR_MODAL; /* v0.84: the window itself, not its (translatable) title */
   if (humansIn()) await pr;else setTimeout(() => {
     try {
-      if (CUR_MODAL && $('#mTitle').textContent === 'Flavius turns his thumb down') CUR_MODAL.done(1);
+      if (CUR_MODAL && CUR_MODAL === thumbModal) CUR_MODAL.done(1);
     } catch (e) {}
   }, 3500);
   if (G9 !== S || S.over) return;

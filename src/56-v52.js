@@ -47,7 +47,7 @@ function capFit(){const el=document.getElementById('caption'),cv=document.getEle
 window.addEventListener('resize',()=>{try{capFit()}catch(e){}});
 
 /* ---------- “Sound the horns” always reaches the sand (never the menu) ---------- */
-document.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&(b.id==='goBtn'||b.id==='cityBell'||/Sound the horns/i.test(b.textContent||'')))MM.goAt=Date.now()},true);
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&(b.id==='goBtn'||b.id==='cityBell'||/Sound the horns/i.test(b.dataset.en84||b.textContent||'')))MM.goAt=Date.now()},true);
 {const _ac=mmAfterClose;mmAfterClose=function(){if(Date.now()-(MM.goAt||0)<15000){ /* the horns sounded: wait for the event rather than fall back to the menu */
     const t0=MM.goAt;const wait=()=>{if(MM.goAt!==t0)return;if(S&&!S.over&&S.phase!=='setup'||(typeof CITY!=='undefined'&&CITY.open)||!$('#modal').hidden){MM.fromMenu=false;transitUncover();return}
       if(Date.now()-t0>15000){MM.goAt=0;return _ac()}setTimeout(wait,200)};return wait()}

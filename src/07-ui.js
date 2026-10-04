@@ -1768,7 +1768,7 @@ function draw() {
     for (let i = 0; i < 5; i++) {
       const a = i * 2.4 + rb.r * 1.3 + k,
         x = m.x + Math.cos(a) * TW * 0.18 * sz,
-        y = m.y + Math.sin(a) * TW * 0.08 * sz;
+        y = m.y + Math.sin(a) * TW * 0.08 * sz - (typeof rubbleSettle84 === 'function' ? rubbleSettle84(rb, k, i) : 0); /* v0.84: the stones settle (138-v84) */
       ctx.fillStyle = i % 2 ? THEME.rubble || '#bdb3a0' : shade(THEME.rubble || '#bdb3a0', -0.15);
       ctx.beginPath();
       ctx.ellipse(x, y, TW * 0.06 * sz + 1, TW * 0.035 * sz + 1, a, 0, Math.PI * 2);
@@ -1828,18 +1828,20 @@ function draw() {
     const R9 = mulberry32(B.seed || 1);
     /* rr — next number from this splash's seeded random generator, so blood looks the same every frame. */
     const rr = () => R9.next();
+    const fa = typeof bloodFade84 === 'function' ? bloodFade84(B) : 1; /* v0.84: blood soaks in and fades over the rotations (138-v84) */
+    const sp = 1 + (1 - fa) * 0.12;
     ctx.save();
-    ctx.globalAlpha = B.kind === 'drop' ? 0.5 : 0.72;
-    ctx.fillStyle = B.kind === 'elim' ? '#6e120c' : '#8a1c14';
+    ctx.globalAlpha = (B.kind === 'drop' ? 0.5 : 0.72) * fa;
+    ctx.fillStyle = typeof bloodCol84 === 'function' ? bloodCol84(B.kind === 'elim' ? '#6e120c' : '#8a1c14', fa) : B.kind === 'elim' ? '#6e120c' : '#8a1c14';
     const k = B.kind === 'elim' ? 9 : B.kind === 'limb' ? 5 : 2;
     for (let i = 0; i < k; i++) {
       const a = rr() * Math.PI * 2,
         d = rr() * (B.kind === 'elim' ? 0.42 : 0.26);
-      ell(m.x + Math.cos(a) * TW * d, m.y + Math.sin(a) * TW * d * 0.5, TW * (B.kind === 'drop' ? 0.03 : 0.05 + rr() * 0.06), TW * (B.kind === 'drop' ? 0.018 : 0.03 + rr() * 0.03));
+      ell(m.x + Math.cos(a) * TW * d, m.y + Math.sin(a) * TW * d * 0.5, TW * sp * (B.kind === 'drop' ? 0.03 : 0.05 + rr() * 0.06), TW * sp * (B.kind === 'drop' ? 0.018 : 0.03 + rr() * 0.03));
       ctx.fill();
     }
     if (B.kind === 'elim') {
-      ctx.globalAlpha = 0.6;
+      ctx.globalAlpha = 0.6 * fa;
       ell(m.x, m.y, TW * 0.3, TW * 0.15);
       ctx.fill();
     }
