@@ -17487,10 +17487,12 @@ function flavFaceURL(mood,sp){ // cached data-URL portraits for HTML dialogs (Fl
   try{const cv2=document.createElement('canvas');cv2.width=156;cv2.height=124;const c=cv2.getContext('2d');
     flavFace(c,78,62,152,120,mood,false,sp);return (FLAV_IMG[key]=cv2.toDataURL())}catch(e){return ''}
 }
+/* flavK — Flavius's box scale: smaller on phones (v0.82, his ask) so it doesn't crowd the board. TWEAK: the 0.7. */
+function flavK(){return Math.min(innerWidth,innerHeight)<=520?0.7:1}
 function drawFlavius(){
   if(!S||HEADLESS||(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false))return;
   const now=performance.now();const mood=now<FLAV.until?FLAV.mood:'calm';
-  const a=iso(0,0);const w=TW*1.55,h=TW*1.2;
+  const a=iso(0,0);const w=TW*1.55*flavK(),h=TW*1.2*flavK();
   // stands on: the box floats above the A-1 corner. Stands off: there is no room up there, so Flavius watches from the top-left, clear of every tile
   const cx=STANDS?a.x:Math.max(w/2+8,a.x-TW*5.2),cy=STANDS?Math.max(h/2+6,a.y-TW*2.62-h/2):h/2+8;
   flavFace(ctx,cx,cy,w,h,mood,true);
@@ -22811,7 +22813,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
-  {v:'0.82',ic:'🏛',t:'Domus, Glory and the beasts’ own cards',hi:['Online: found your house (Domus) — 4 gladiators, a record, a storeroom to equip them, a patron in the stands; ranks by Glory with a rank bar; fuller rewards at fuller tables','The stands choose together: every ticket holder gets a private window each rotation, throws land on the tile picked; speared ticket holders are refunded','Guests can watch without signing in; invites end with their room; free seats and Flavius’s guest pass for the poor','Every beast has its two-sided card — it turns over when the beast enters; make your own beasts unique, give them 1 or 3 states and a spawn card; Tholo + 3 beast slots per arena deck','Spear a spectator and Flavius scowls, refunds the seat and hands you a Mandate from Flavius'],fx:['Fewer spiders in the Blessings bag (2)','Open Arena Chest glimmers gold; the chest’s Level 4 card turns over landscape','The round’s rules sit only in the turn panel’s ⓘ','Pillar shadows sit under the base; floor spikes in iron and bronze; pieces turn to face what they attack','Sculpted tokens for online gladiators; a random class to start','Main menu: Play Now and Manager Mode side by side, lessons under Tutorials','Tholo’s card is pulled once he is on the sand; the Hero stands as tall as the rest; Tholo looks like his card']},
+  {v:'0.82',ic:'🏛',t:'Domus, Glory and the beasts’ own cards',hi:['Online: found your house (Domus) — 4 gladiators, a record, a storeroom to equip them, a patron in the stands; ranks by Glory with a rank bar; fuller rewards at fuller tables','The stands choose together: every ticket holder gets a private window each rotation, throws land on the tile picked; speared ticket holders are refunded','Guests can watch without signing in; invites end with their room; free seats and Flavius’s guest pass for the poor','Every beast has its two-sided card — it turns over when the beast enters; make your own beasts unique, give them 1 or 3 states and a spawn card; Tholo + 3 beast slots per arena deck','Spear a spectator and Flavius scowls, refunds the seat and hands you a Mandate from Flavius'],fx:['Flavius’s box is smaller on phones','Fewer spiders in the Blessings bag (2)','Open Arena Chest glimmers gold; the chest’s Level 4 card turns over landscape','The round’s rules sit only in the turn panel’s ⓘ','Pillar shadows sit under the base; floor spikes in iron and bronze; pieces turn to face what they attack','Sculpted tokens for online gladiators; a random class to start','Main menu: Play Now and Manager Mode side by side, lessons under Tutorials','Tholo’s card is pulled once he is on the sand; the Hero stands as tall as the rest; Tholo looks like his card']},
   {v:'0.81',ic:'🛡',t:'Fair drafts, falling pillars, sharper armor',hi:['Drafts offer only what fits your gladiator, two to a row; the Juggernaut picks from the real arena deck','A toppled pillar says where its offering fell: one tile back from another pillar, under a beast, straight to a gladiator, into the spikes','Sharper armor art, the Thracian Helm for the Hero, Forged Chest Armor for the Veteranus; dropped gear shows the class mosaic','Online: results are sent the moment the bout ends, invites die with their room, a new landing with the world behind your gladiator'],fx:['Belt I, Steel Helm, Leather Greaves, Centurian Helm and Ornate Chest back in the market','The bar under the arena stays put','Online CF shows the wheat','Pair leg cards read as a V','Stands in wood']},
   {v:'0.80',ic:'📯',t:'Online: rooms, quick calls and the world map',hi:['Rooms: up to 8 lanistas, sit or stand, the host sets the event, city and seats until the horns; give the host away, remove a lanista, pick teams in Familia (4–8 seats, 2+ teams)','Quick chat only: phrases in the room, short calls during the match as bubbles, farewells after; ⚔ Again opens the same game with the same lanistas','The Praeco: Find me a fight, 📣 calls to free lanistas, invitations, mute and quiet','Orbis Terrarum: where lanistas connect from, glowing on the empire map; the Forum beside it','⚔ Back to your match and 🚪 Abandon on the main menu while your gladiator is still on the sand; the abandon window shows what is at stake','Today in the arena: the day’s biggest wins and its fallen'],fx:['Online uses the printed gear only and never writes your offline records; Ranked has no hints or win odds; the online arena never pauses','A lanista out of step is outvoted by the majority instead of overwriting the others','Hot seat no longer leaks into lessons, Manager bouts or the beast pen; no ghost Ludus records at the Gate of Life','No empty arena flash when the page loads; the Summa Rudis seal beside Flavius is gone']},
   {v:'0.79',ic:'🛡',t:'Online: your gladiators and the pre-match room',hi:['My Gladiators: up to three living gladiators, one active; each with its own look, board token, class and the gear it brings','A pre-match room with chat and the host\u2019s rules; a match starts only with two or more lanistas','Abandon is the only way out of an online match (in Ranked the gladiator dies by Damnatio); rejoin any time after a disconnect','Sign in at login.flaviusrule.com'],fx:['The version badge shows what is new; press C on the main menu for words of power','Online always opens on Play; a smaller figure on the stage','The Multiplayer row holds two buttons','A loading screen after Google sign-in instead of flashing screens','Abandoned games and empty matches leave the lobby list']},
@@ -25452,7 +25454,7 @@ setTimeout(ctSync,150);
 
 /* ---------- the caption never covers Flavius ---------- */
 function capFit(){const el=document.getElementById('caption'),cv=document.getElementById('cv');if(!el||!cv||!cv.width||typeof iso!=='function')return;
-  const a=iso(0,0);const w=TW*1.55;const on=!(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false);
+  const a=iso(0,0);const w=TW*1.55*flavK();const on=!(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false);
   const left=on?(STANDS?a.x:Math.max(w/2+8,a.x-TW*5.2))-w/2:cv.clientWidth;
   if(cv.clientWidth<560){el.style.setProperty('top','auto','important');el.style.setProperty('bottom','8px','important');el.style.removeProperty('left');el.style.setProperty('--capmax',Math.round(cv.clientWidth*0.72)+'px');return}
   el.style.removeProperty('top');el.style.removeProperty('bottom');
@@ -25855,7 +25857,7 @@ renderTurnInd=function(){if(HEADLESS)return;const box=$('#turnInd');if(!box)retu
   turnIndFit()};
 /* keep the indicator clear of Flavius's box, like the caption on the left */
 function turnIndFit(){const box=$('#turnInd'),canvas=$('#cv');if(!box||!canvas||typeof iso!=='function')return;
-  const top=iso(0,0),boxW=TW*1.55;const flavOn=!(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false)&&STANDS;
+  const top=iso(0,0),boxW=TW*1.55*flavK();const flavOn=!(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false)&&STANDS;
   const flavRight=flavOn?top.x+boxW/2:0;const room=canvas.clientWidth-flavRight-22;
   box.style.maxWidth=Math.max(120,room)+'px'}
 
@@ -28647,7 +28649,7 @@ ICO.coin=`<img class="ico coinimg" src="${assetURL('coin.webp')}" alt="coin">`;
 /* summa rudis beside Flavius (canvas) */
 const SR_IMG={};const srImage=k=>{if(SR_IMG[k])return SR_IMG[k].complete&&SR_IMG[k].naturalWidth?SR_IMG[k]:null;const im=new Image();im.onload=()=>{try{draw()}catch(e){}};im.src=assetURL('sr_'+k+'.webp');SR_IMG[k]=im;return null};
 {const base=drawFlavius;drawFlavius=function(){const r=base.apply(this,arguments);try{if(!S||HEADLESS||S.phase==='setup'||(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false))return r;const k=srKey(EV());if(!k)return r;const im=srImage(k);if(!im)return r;
-  const a=iso(0,0);const w=TW*1.55,h=TW*1.2;const cx=STANDS?a.x:Math.max(w/2+8,a.x-TW*5.2),cy=STANDS?Math.max(h/2+6,a.y-TW*2.62-h/2):h/2+8;const d=h*0.78;
+  const a=iso(0,0);const w=TW*1.55*flavK(),h=TW*1.2*flavK();const cx=STANDS?a.x:Math.max(w/2+8,a.x-TW*5.2),cy=STANDS?Math.max(h/2+6,a.y-TW*2.62-h/2):h/2+8;const d=h*0.78;
   if(typeof srBtnAt==='function')srBtnAt(cx+w/2,cy-h/2,d) /* v0.74: never drawn on the sand — a seal at the box's corner opens it */}catch(e){}return r}}
 /* the briefing and the status bar */
 {const base=briefingHTML;briefingHTML=function(){let h=base.apply(this,arguments);try{const k=srKey(EV());if(k)h=h.replace('<div class="brname">',`<div class="brsr">${srImgHTML(k,58)}<span class="rc-sub">Summa Rudis<br><b>${esc(EV().sr)}</b></span></div><div class="brname">`)}catch(e){}return h}}
@@ -34956,7 +34958,7 @@ function mfDeck82(){if(!S)return [];if(Array.isArray(S.mfDeck82))return S.mfDeck
   return (S.mfDeck82=shuffle(MANDATA.map((_,i)=>i).filter(i=>!used.has(i))))}
 function seatPrice82(){const o=S&&S.onl;const v=o?+(o.ticket||o.price||o.tix||0):0;return v>0?v:SEAT_PRICE82}
 function flavPos82(){const cv=typeof ctx!=='undefined'&&ctx&&ctx.canvas;if(!cv||!FLAV.m82)return null;const r=cv.getBoundingClientRect();const k=r.width/cv.width;const p=FLAV.m82;return {x:r.left+p.x*k,y:r.top+p.y*k}}
-{const base=drawFlavius;drawFlavius=function(){try{if(!HEADLESS&&S&&typeof ctx!=='undefined'){const a=iso(0,0);const w=TW*1.55,h=TW*1.2;
+{const base=drawFlavius;drawFlavius=function(){try{if(!HEADLESS&&S&&typeof ctx!=='undefined'){const a=iso(0,0);const w=TW*1.55*flavK(),h=TW*1.2*flavK();
     const cx=STANDS?a.x:Math.max(w/2+8,a.x-TW*5.2),cy=STANDS?Math.max(h/2+6,a.y-TW*2.62-h/2):h/2+8;const M=ctx.getTransform();FLAV.m82={x:M.a*cx+M.c*(cy-h/2)+M.e,y:M.b*cx+M.d*(cy-h/2)+M.f}}}catch(e){}
   return base.apply(this,arguments)}}
 function refundFloat82(n){if(HEADLESS||!S||S.sim)return;const p=flavPos82();const el=document.createElement('div');el.className='flref82';el.innerHTML=`−${n} ${ICO.coin}`;

@@ -834,10 +834,12 @@ function flavFaceURL(mood,sp){ // cached data-URL portraits for HTML dialogs (Fl
   try{const cv2=document.createElement('canvas');cv2.width=156;cv2.height=124;const c=cv2.getContext('2d');
     flavFace(c,78,62,152,120,mood,false,sp);return (FLAV_IMG[key]=cv2.toDataURL())}catch(e){return ''}
 }
+/* flavK — Flavius's box scale: smaller on phones (v0.82, his ask) so it doesn't crowd the board. TWEAK: the 0.7. */
+function flavK(){return Math.min(innerWidth,innerHeight)<=520?0.7:1}
 function drawFlavius(){
   if(!S||HEADLESS||(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false))return;
   const now=performance.now();const mood=now<FLAV.until?FLAV.mood:'calm';
-  const a=iso(0,0);const w=TW*1.55,h=TW*1.2;
+  const a=iso(0,0);const w=TW*1.55*flavK(),h=TW*1.2*flavK();
   // stands on: the box floats above the A-1 corner. Stands off: there is no room up there, so Flavius watches from the top-left, clear of every tile
   const cx=STANDS?a.x:Math.max(w/2+8,a.x-TW*5.2),cy=STANDS?Math.max(h/2+6,a.y-TW*2.62-h/2):h/2+8;
   flavFace(ctx,cx,cy,w,h,mood,true);

@@ -24,7 +24,7 @@ renderTurnInd=function(){if(HEADLESS)return;const box=$('#turnInd');if(!box)retu
   turnIndFit()};
 /* keep the indicator clear of Flavius's box, like the caption on the left */
 function turnIndFit(){const box=$('#turnInd'),canvas=$('#cv');if(!box||!canvas||typeof iso!=='function')return;
-  const top=iso(0,0),boxW=TW*1.55;const flavOn=!(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false)&&STANDS;
+  const top=iso(0,0),boxW=TW*1.55*flavK();const flavOn=!(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false)&&STANDS;
   const flavRight=flavOn?top.x+boxW/2:0;const room=canvas.clientWidth-flavRight-22;
   box.style.maxWidth=Math.max(120,room)+'px'}
 
