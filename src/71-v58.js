@@ -33,12 +33,12 @@ function drawShipBows(){const img=shipImg();if(!img||!S.ships)return;
 /* the hull's name, on hover of its pillar or the bar above it */
 {const base=describeTile;describeTile=function(t){let h=base.apply(this,arguments);try{if(t&&S&&isNaum()&&S.ships){const {r,c}=t;
   const sh=S.ships.find(s=>!s.sunk&&s.pillar&&[0,1,2].some(k=>s.pillar[0]-k===r&&s.pillar[1]-k===c));
-  if(sh)h=`⛵ <b>${esc(sh.name)}</b> · Team ${esc(String(sh.team))} · ${Math.max(0,sh.hp)}/12 HP — smash its pillar to sink it · `+h}}catch(e){}return h}}
+  if(sh)h=_T`⛵ <b>${esc(sh.name)}</b> · Team ${esc(String(sh.team))} · ${Math.max(0,sh.hp)}/12 HP — smash its pillar to sink it · `+h}}catch(e){}return h}}
 /* ---------- the prototype ---------- */
-const PROTO=[['proto1.jpg','The board, mid-game'],['proto2.jpg','The arena and its pillars'],['proto3.jpg','Cards, tokens and the market'],['proto4.jpg','The arena, lit'],['proto5.jpg','The sand, close up']]; /* TWEAK: captions */
+const PROTO=[['proto1.jpg',_T('The board, mid-game')],['proto2.jpg',_T('The arena and its pillars')],['proto3.jpg',_T('Cards, tokens and the market')],['proto4.jpg',_T('The arena, lit')],['proto5.jpg',_T('The sand, close up')]]; /* TWEAK: captions */
 function protoOpen(){let o=document.getElementById('protoBox');if(o){o.hidden=false;return}
   o=document.createElement('div');o.id='protoBox';o.setAttribute('role','dialog');o.setAttribute('aria-label','The prototype');
-  o.innerHTML=`<div class="protoin"><button type="button" class="mclose" data-protox aria-label="Close">×</button><h2>The prototype</h2><p class="rc-sub">The hand-built board game that Flavius Rule Arena was distilled from — by D.Soto.</p>
+  o.innerHTML=`<div class="protoin"><button type="button" class="mclose" data-protox aria-label="${_T`Close`}">×</button><h2>${_T`The prototype`}</h2><p class="rc-sub">${_T`The hand-built board game that Flavius Rule Arena was distilled from — by D.Soto.`}</p>
     <div class="protogrid">${PROTO.map(([f,c],i)=>`<figure><img src="${assetURL(f)}" alt="${esc(c)}" loading="lazy" data-protoz="${i}"><figcaption>${esc(c)}</figcaption></figure>`).join('')}</div></div>`;
   document.body.appendChild(o)}
 document.addEventListener('click',e=>{const t=e.target;if(t.closest&&t.closest('[data-proto]')){e.preventDefault();e.stopPropagation();protoOpen();return}

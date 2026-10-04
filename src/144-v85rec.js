@@ -45,36 +45,36 @@ const motTag85=k=>MOTIVES[k]?`<span class="phtag mt85 mt85-${k}" title="${esc(MO
 function recStep85(g,m){const h=nextStep(g,m);const b=h.match(/<button ([^>]*)>([\s\S]*?)<\/button>/);if(!b)return `<span class="pg85">${h}</span>`;
   let attrs=b[1];const inner=b[2];let small=((inner.match(/<small>([\s\S]*?)<\/small>/)||[])[1]||'').replace(/<[^>]*>/g,'');
   const label=inner.replace(/<small>[\s\S]*?<\/small>/,'').replace(/<[^>]*>/g,'').trim();const mg=(attrs.match(/data-mg="([^"]+)"/)||[])[1]||'';
-  let lab=esc(label);if(/data-offer=/.test(attrs)){lab='✍ Sign';small=small.replace(/ signs$/,'')}if(mg==='pitch'){const k=(attrs.match(/data-id="[^"|]*\|(\w+)"/)||[])[1];if(k&&MOTIVES[k])lab=`🗣 Pitch ${motTag85(k)}`}
-  attrs=attrs.replace(/class="btn([^"]*)"/,(x,c)=>`class="btn pst85${c.replace(/\btksm\b/,'')}"`);
+  let lab=esc(label);if(/data-offer=/.test(attrs)){lab=_T('✍ Sign');small=small.replace(/ signs$/,'')}if(mg==='pitch'){const k=(attrs.match(/data-id="[^"|]*\|(\w+)"/)||[])[1];if(k&&MOTIVES[k])lab=_T`🗣 Pitch ${motTag85(k)}`}
+  attrs=attrs.replace(/class="btn([^"]*)"/,(x,c)=>_T`class="btn pst85${c.replace(/\btksm\b/,'')}"`);
   const tip=`${label}${small?' · '+small:''}`;
-  attrs=/\btitle="/.test(attrs)?attrs.replace(/title="([^"]*)"/,(x,t)=>`title="${esc(tip)} — ${t}"`):attrs+` title="★ Advisor suggests: ${esc(tip)}"`;
-  const why=(()=>{try{const a=typeof recAdvice74==='function'?recAdvice74(g,m,recStepNow(g,m)):null;return a?a[1]:'The next step on the way to signing them.'}catch(e){return ''}})();
-  return `<button ${attrs}><span class="pl85b">${lab}</span>${small?`<small> · ${esc(small)}</small>`:''}<i class="adv85b" title="★ Advisor suggests — ${esc(why)}">★<span class="t85"> advised</span></i></button><button class="btn pmo85" type="button" data-mg="sel" data-id="${g.id}" title="Every option for ${esc(g.name)}">⋯</button>`}
+  attrs=/\btitle="/.test(attrs)?attrs.replace(/title="([^"]*)"/,(x,t)=>`title="${esc(tip)} — ${t}"`):attrs+_T` title="★ Advisor suggests: ${esc(tip)}"`;
+  const why=(()=>{try{const a=typeof recAdvice74==='function'?recAdvice74(g,m,recStepNow(g,m)):null;return a?a[1]:_T('The next step on the way to signing them.')}catch(e){return ''}})();
+  return `<button ${attrs}><span class="pl85b">${lab}</span>${small?`<small> · ${esc(small)}</small>`:''}<i class="adv85b" title="${_T`★ Advisor suggests — ${esc(why)}`}">★<span class="t85"> advised</span></i></button><button class="btn pmo85" type="button" data-mg="sel" data-id="${g.id}" title="${_T`Every option for ${esc(g.name)}`}">⋯</button>`}
 /* 2 · the board as the barracks wall */
 function pipelineHTML(){const w=W_(),m=me();const favs=w.glads.filter(g=>g.alive&&g.favd&&!(g.contract&&g.contract.mgr===m.id));
   const card=g=>{const o=recOdds(g,m);const iv=interestOf(g,m);const nm=recName85(g);const st=recStage(g,m);
     const chip=String(o.short||'').replace(/ vs .*$/,'').replace(' · ',' ');
     return `<div class="pcard pt85 st85-${st} ${MGR.sel===g.id?'me':''}" data-mg="sel" data-id="${g.id}" title="${esc(g.name)} · ${esc(o.txt)}"><div class="pa85p">${gArt(g,'xs')}</div>
-      <b class="pn85${nm.length>22?' long85 xl85':nm.length>17?' long85':''}">${esc(nm)}</b><span class="ps85"><b>${estOvr(g).txt}</b><span>ask ${askWage(g)}</span><span class="pr85 ${o.lead?'lead':'trail'}">${esc(chip.split(' ')[0])}</span></span>
-      <button class="pin85" type="button" data-mg="fav" data-id="${g.id}" title="On your board — tap to remove">📌</button><div class="px85">${recStep85(g,m)}</div><i class="pm85"><i style="width:${iv}%"></i></i></div>`};
+      <b class="pn85${nm.length>22?' long85 xl85':nm.length>17?' long85':''}">${esc(nm)}</b><span class="ps85">${_T`<b>${estOvr(g).txt}</b><span>ask ${askWage(g)}</span>`}<span class="pr85 ${o.lead?'lead':'trail'}">${esc(chip.split(' ')[0])}</span></span>
+      <button class="pin85" type="button" data-mg="fav" data-id="${g.id}" title="${_T`On your board — tap to remove`}">📌</button><div class="px85">${recStep85(g,m)}</div><i class="pm85"><i style="width:${iv}%"></i></i></div>`};
   const by={};for(const g of favs)(by[recStage(g,m)]=by[recStage(g,m)]||[]).push(g);
   const lane=([k,t,sub])=>{const L=(by[k]||[]).sort((a,b)=>interestOf(b,m)-interestOf(a,m));
     return L.length?`<div class="pcol pl85" style="--n:${L.length}"><div class="pcolhd" title="${esc(sub)}"><b>${t} · ${L.length}</b></div><div class="pg85l">${L.map(card).join('')}</div></div>`
       :`<div class="pcol pl85 ppost85" title="${esc(t.replace(/^\S+\s/,''))}: ${esc(sub)}"><div class="pcolhd"><b>${t} · 0</b></div></div>`};
-  return `<div class="card2 pipeline pw85"><div class="sect" style="margin-top:0">★ Your recruiting board <span class="rc-sub">${favs.length?`${favs.length} on the board · tap ☆ in the list to add`:'tap ☆ beside a fighter to put them on your board'}</span></div>
-    ${favs.length?`<div class="pcols pwall85">${REC_COLS.map(lane).join('')}</div>${(by.gone||[]).length?`<div class="rc-sub" style="margin-top:4px">Signed elsewhere: ${by.gone.map(g=>`<a href="#" data-mg="sel" data-id="${g.id}">${esc(g.name)}</a>`).join(', ')}</div>`:''}`:''}</div>`}
+  return `<div class="card2 pipeline pw85"><div class="sect" style="margin-top:0">${_T`★ Your recruiting board`} <span class="rc-sub">${favs.length?_T`${favs.length} on the board · tap ☆ in the list to add`:_T('tap ☆ beside a fighter to put them on your board')}</span></div>
+    ${favs.length?`<div class="pcols pwall85">${REC_COLS.map(lane).join('')}</div>${(by.gone||[]).length?`<div class="rc-sub" style="margin-top:4px">${_T`Signed elsewhere: ${by.gone.map(g=>`<a href="#" data-mg="sel" data-id="${g.id}">${esc(g.name)}</a>`).join(', ')}`}</div>`:''}`:''}</div>`}
 /* 1 · the week's plan on one line */
 function recPlanOpen85(){try{return localStorage.getItem('flavius_recplan85')==='1'}catch(e){return false}}
 {const base=recPlanHTML;recPlanHTML=function(){const h=base.apply(this,arguments);if(!h)return h;try{const w=W_(),m=me();
   const board=w.glads.filter(g=>g.alive!==false&&g.favd&&!g.contract);const sc=board.filter(g=>recStage(g,m)==='watch').length,co=board.length-sc;
   const i=h.indexOf('</summary>'),j=h.lastIndexOf('</details>');const rows=i>=0&&j>i?h.slice(i+10,j):'';
-  return `<details class="card2 rplanbox rp85" ${recPlanOpen85()?'open':''}><summary class="rp85s"><span class="rp85a">▸</span> 📜 <b>This week:</b> ${sc} scouting · ${co} courting planned</summary><div class="rp85b">${rows}</div></details>`}catch(e){console.error(e);return h}}}
+  return `<details class="card2 rplanbox rp85" ${recPlanOpen85()?'open':''}><summary class="rp85s"><span class="rp85a">▸</span> ${_T`📜 <b>This week:</b> ${sc} scouting · ${co} courting planned`}</summary><div class="rp85b">${rows}</div></details>`}catch(e){console.error(e);return h}}}
 document.addEventListener('toggle',e=>{const t=e.target;if(t&&t.classList&&t.classList.contains('rp85'))try{localStorage.setItem('flavius_recplan85',t.open?'1':'0')}catch(err){}},true);
 /* 3 + 7 · the list: one line per fighter; the toolbar */
 {const base=recruitHTML;recruitHTML=function(){let h=base.apply(this,arguments);try{const w=W_(),m=me();
   h=h.replace('<div class="acts" style="margin-bottom:8px"><div class="seg">','<div class="acts rtb85" style="margin-bottom:8px"><div class="seg">');
-  for(const [k,full,short] of [['signed','Signed elsewhere','Signed'],['targets','Interested in you','Interested'],['mine','Your stable','Stable']])h=h.replace(new RegExp(`(data-mg="filter" data-id="${k}" class="[^"]*")>${full}<`),`$1 title="${full}">${short}<`);
+  for(const [k,full,short] of [['signed',_T('Signed elsewhere'),_T('Signed')],['targets',_T('Interested in you'),_T('Interested')],['mine',_T('Your stable'),_T('Stable')]])h=h.replace(new RegExp(`(data-mg="filter" data-id="${k}" class="[^"]*")>${full}<`),`$1 title="${full}">${short}<`);
   h=h.replace('<div class="seg recflt"><span class="lbl">Show</span>','<div class="seg recflt" title="Show only">').replace(/(<button type="button" data-recf="\w+" class="[^"]*")>(\S+) ([^<]+)</g,'$1 title="Show only: $3" aria-label="$3">$2<');
   if(MGR.filter==='mine')return h;const t=h.indexOf('<div id="recTable"');if(t<0)return h;
   let tail=h.slice(t);
@@ -84,17 +84,17 @@ document.addEventListener('toggle',e=>{const t=e.target;if(t&&t.classList&&t.cla
     const f=recFit(g,m),o=recOdds(g,m),iv=interestOf(g,m);const c=g.contract&&mgrById(g.contract.mgr);const C=CLASSES[g.cls];
     const sub=`${gSex(g)} ${C?C.name:'?'} · ${gAge(g)} · ${esc(g.city||'')}${c?` · <span style="color:${c.color}">${esc(c.ludus)}</span>`:''}`;
     const lock=m.fame<reqFame(g)?' 🔒':'';
-    return `<tr class="${cls} r85" data-mg="sel" data-id="${id}" style="cursor:pointer"><td><div class="r85f"><button class="btn r85st" type="button" data-mg="fav" data-id="${id}" title="${g.favd?'Remove from':'Pin to'} your recruiting board" style="color:${g.favd?'var(--gold2)':'var(--dim)'}">${g.favd?'★':'☆'}</button>${gArt(g,'xs')}<b class="r85n" title="${esc(g.name)}">${esc(g.name)}</b><span class="r85t">${gTags(g)}</span><span class="rc-sub r85s">${sub}</span></div></td>
+    return `<tr class="${cls} r85" data-mg="sel" data-id="${id}" style="cursor:pointer"><td><div class="r85f"><button class="btn r85st" type="button" data-mg="fav" data-id="${id}" title="${_T`${g.favd?_T('Remove from'):_T('Pin to')} your recruiting board`}" style="color:${g.favd?'var(--gold2)':'var(--dim)'}">${g.favd?'★':'☆'}</button>${gArt(g,'xs')}<b class="r85n" title="${esc(g.name)}">${esc(g.name)}</b><span class="r85t">${gTags(g)}</span><span class="rc-sub r85s">${sub}</span></div></td>
       <td><span class="r85r">${starHTML(starsOf(estOvr(g).v))}<span class="odds">${estOvr(g).txt}</span></span></td>
       <td><span class="fitchip f${f.mark==='✓'?'y':f.mark==='~'?'m':'n'}" title="${esc(f.why)}">${f.mark}</span></td>
-      <td title="${esc(`Your interest ${iv} · ${o.txt}`)}${lock?' · they want more fame first':''}"><div class="r85i"><div class="meter"><i style="width:${iv}%"></i></div><span class="rc-sub ${o.lead?'lead':'trail'}">${iv}<small> #${esc(String(o.txt).split(' ')[0].replace('#',''))}${lock}</small></span></div></td><td class="n">${askWage(g)}</td></tr>`});
+      <td title="${esc(_T`Your interest ${iv} · ${o.txt}`)}${lock?_T(' · they want more fame first'):''}"><div class="r85i"><div class="meter"><i style="width:${iv}%"></i></div><span class="rc-sub ${o.lead?'lead':'trail'}">${iv}<small> #${esc(String(o.txt).split(' ')[0].replace('#',''))}${lock}</small></span></div></td><td class="n">${askWage(g)}</td></tr>`});
   h=h.slice(0,t)+tail}catch(e){console.error(e)}return h}}
 /* 5 + 6 · the free agent's card: one ratings line before scouting; the advisor's ★ on the button */
 {const base=detailHTML;detailHTML=function(g){let h=base.apply(this,arguments);try{if(!g||g.contract||!h.includes('class="rsteps"'))return h;const m=me();
   if(!g.scout){const i=h.indexOf('<div class="scoutsee">');const c=i>=0?cutDiv(h,i):null;if(c)h=h.slice(0,i)+'<div class="scoutsee rat85"><span>📊 <b>Ratings:</b> <i>scout to see</i></span></div>'+h.slice(i+c[0].length)}
   h=h.replace(/<div class="advise74">[\s\S]*?<\/div>/,'');
   const step=MGR.recStep||recStepNow(g,m);const adv=typeof recAdvice74==='function'?recAdvice74(g,m,step):null;
-  if(adv)h=h.replace(/<button class="btn([^"]*\badv74\b[^"]*)"([^>]*)>/,(x,c,rest)=>{const tip=`★ Advisor suggests — ${adv[1]}`;
+  if(adv)h=h.replace(/<button class="btn([^"]*\badv74\b[^"]*)"([^>]*)>/,(x,c,rest)=>{const tip=_T`★ Advisor suggests — ${adv[1]}`;
     rest=/\btitle="/.test(rest)?rest.replace(/title="([^"]*)"/,(y,t0)=>`title="${esc(tip)} (${t0})"`):rest+` title="${esc(tip)}"`;
     return `<button class="btn${c}"${rest} data-adv85="${esc(adv[1])}"><i class="star85">★ advised</i>`})}catch(e){console.error(e)}return h}}
 /* the pitch topics as tags on the card too: the pitch buttons and the "what they want" rows */

@@ -30,8 +30,8 @@
 const NC82_PRINTED={tholo:1,commodus:1,leo:1,leaena:1,zora:1};
 const NC82_MINIS=['glykon','arenosus','valencia','moechus','ursa','brutum','leo','leaena','tholo','commodus','zora'];
 const NC82_MINI_T={snake:'glykon',wolf:'valencia',bear:'ursa',lion:'leo',tholo:'tholo',commodus:'commodus',zora:'zora'};
-const NC82_STATE_N=['Initial','Raged','Fazed'];
-const SPEAR_LINES82=['My spectators are not targets!','Who pays for that seat now?'];
+const NC82_STATE_N=[_T('Initial'),_T('Raged'),_T('Fazed')];
+const SPEAR_LINES82=[_T('My spectators are not targets!'),_T('Who pays for that seat now?')];
 const SEAT_PRICE82=3;
 function nc82Spec(t,key,name){const T=NPCT[t]||{n:String(t||'?'),hp:1,ap:1,mv:1};const rec=T.custom?(CUSTOM.npcs||[]).find(x=>x.id===T.cid)||null:null;
   return {t,T,key:key||name||'',name:name||(rec&&rec.name)||T.n,rec}}
@@ -42,26 +42,26 @@ function nc82Mini(sp){const k=String(sp.key||'').toLowerCase();return NC82_MINIS
 function nc82Med(sp){if(typeof RTOK_NAMES==='undefined')return '';const k=String(sp.key||'').toLowerCase();const nmx=RTOK_NAMES.includes(k)?k:RTOK_NAMES.includes(nc82Mini(sp))?nc82Mini(sp):'';if(!nmx)return '';
   const i=RTOK_NAMES.indexOf(nmx),c=i%RTOK_COLS,r=Math.floor(i/RTOK_COLS);
   return `<div class="med" style="background-image:url('${assetURL('rtok.webp')}');background-size:${RTOK_COLS*100}% ${RTOK_ROWS*100}%;background-position:${(c/(RTOK_COLS-1)*100).toFixed(3)}% ${(r/(RTOK_ROWS-1)*100).toFixed(3)}%"></div>`}
-function nc82Behave(T){return T.scan?'Hunts the closest gladiator.':T.huntCF?'Hunts the gladiator with the most Crowd Favor.':'Guards its zone and attacks gladiators who come close.'}
+function nc82Behave(T){return T.scan?_T('Hunts the closest gladiator.'):T.huntCF?_T('Hunts the gladiator with the most Crowd Favor.'):_T('Guards its zone and attacks gladiators who come close.')}
 function nc82Rules(sp){const T=sp.T,t=sp.t;const out=[];
   const card={tholo:'spawnTholo',commodus:'spawnCommodus',zora:'zora'}[t]||(t==='lion'?(nc82Printed(sp)==='leaena'?'spawnLeaena':'spawnLeo'):null);
   if(card&&CARDS[card])out.push(CARDS[card].d);
   else if(T.custom){out.push(nc82Behave(T));if(sp.rec&&sp.rec.lore)out.push(String(sp.rec.lore).slice(0,160))}
   else out.push(nc82Behave(T));
-  const tags=[];const said=out.join(' ');if(T.fly)tags.push('Flies over pillars and units');if(t!=='zora'&&!/tamed/i.test(said))tags.push(T.tameable?'Can be tamed':'Cannot be tamed');
-  if(T.unique82||['tholo','commodus'].includes(t)||(t==='lion'&&/^(leo|leaena)$/i.test(sp.key||'')))tags.push('Enters an event at most once');
+  const tags=[];const said=out.join(' ');if(T.fly)tags.push(_T('Flies over pillars and units'));if(t!=='zora'&&!/tamed/i.test(said))tags.push(T.tameable?_T('Can be tamed'):_T('Cannot be tamed'));
+  if(T.unique82||['tholo','commodus'].includes(t)||(t==='lion'&&/^(leo|leaena)$/i.test(sp.key||'')))tags.push(_T('Enters an event at most once'));
   if(tags.length)out.push(tags.join(' · ')+'.');
-  if(t!=='zora')out.push(`Slain: ${T.coin||0} coin · ${T.cf||0} CF.`);
+  if(t!=='zora')out.push(_T`Slain: ${T.coin||0} coin · ${T.cf||0} CF.`);
   return out}
 /* the ART side */
 function nc82Front(sp){const pk=nc82Printed(sp);
-  if(pk)return `<div class="nc82c" role="img" aria-label="${esc(sp.name)} — beast card"><img class="bg" src="${assetURL('npccard82_'+pk+'.webp')}" alt="" draggable="false"></div>`;
+  if(pk)return `<div class="nc82c" role="img" aria-label="${_T`${esc(sp.name)} — beast card`}"><img class="bg" src="${assetURL('npccard82_'+pk+'.webp')}" alt="" draggable="false"></div>`;
   const T=sp.T;let art='';
   if(sp.rec&&typeof figureSVG==='function'&&typeof tokenOfNpc==='function'){try{art=`<div class="fig">${figureSVG(tokenOfNpc(sp.rec),{w:'100%',h:'100%'})}</div>`}catch(e){art=''}}
   if(!art){const m=nc82Mini(sp);const med=nc82Med(sp);
     art=med||m?`${med}${m?`<img class="mini${med?' withmed':''}" src="${assetURL('mini_'+m+'.webp')}" alt="" draggable="false">`:''}`:`<div class="glyph" style="background:${esc(T.col||'#777')}">${esc(T.g||'?')}</div>`}
   const nmU=String(sp.name||'').toUpperCase();const fs=Math.min(9,9*10/Math.max(6,nmU.length)).toFixed(2);
-  return `<div class="nc82c gen" role="img" aria-label="${esc(sp.name)} — beast card" style="--nc:${esc(T.col||'#777')}"><img class="bg" src="${assetURL('npcfront82.webp')}" alt="" draggable="false">
+  return `<div class="nc82c gen" role="img" aria-label="${_T`${esc(sp.name)} — beast card`}" style="--nc:${esc(T.col||'#777')}"><img class="bg" src="${assetURL('npcfront82.webp')}" alt="" draggable="false">
     <div class="win"></div><div class="art">${art}</div><div class="nm" style="font-size:${fs}cqw">${esc(nmU)}</div>
     <b class="sv s1">${T.states?T.states[0][1]:T.ap}</b><b class="sv s2">${T.rng||1}</b>${T.scan?'':'<i class="noeye"></i>'}<b class="sv s3">${T.states?T.states[0][3]:T.mv}</b><b class="sv s4">${T.hp}</b></div>`}
 /* the INFO side */
@@ -71,9 +71,9 @@ function nc82Back(sp){const T=sp.T;const st=T.states&&T.states.length===3?T.stat
   const rr=rows.map((x,i)=>`<b class="v va" style="top:${Y[i]}%">${x.a}</b><b class="v vr" style="top:${Y[i]}%">${x.r}</b><b class="v vm" style="top:${Y[i]}%">${x.m}</b><b class="v vh" style="top:${Y[i]}%">${x.hp}</b>`).join('');
   const kind=typeof npcKind==='function'?npcKind(sp.t):T.n;
   return `<div class="nc82c back" role="img" aria-label="${esc(sp.name)} — behaviour"><img class="bg" src="${assetURL(st?'npcback82_3.webp':'npcback82_1.webp')}" alt="" draggable="false">
-    <div class="ttl">${esc(sp.name)}</div><div class="kd">${kind&&kind!=='Unknown'?esc(kind)+' · ':''}${T.hp} HP</div>${rr}
+    <div class="ttl">${esc(sp.name)}</div><div class="kd">${_T`${kind&&kind!=='Unknown'?esc(kind)+' · ':''}${T.hp} HP`}</div>${rr}
     <div class="rules">${nc82Rules(sp).map(x=>`<p>${esc(x)}</p>`).join('')}</div></div>`}
-function nc82Flip(sp,opt={}){return `<div class="nc82flip ${opt.flipped?'flipped':''} ${opt.cls||''}" data-nc82flip style="${opt.w?`width:${opt.w}px`:''}"><div class="in"><div class="face f">${nc82Front(sp)}</div><div class="face b">${nc82Back(sp)}</div></div></div>`}
+function nc82Flip(sp,opt={}){return `<div class="nc82flip ${opt.flipped?'flipped':''} ${opt.cls||''}" data-nc82flip style="${opt.w?_T`width:${opt.w}px`:''}"><div class="in"><div class="face f">${nc82Front(sp)}</div><div class="face b">${nc82Back(sp)}</div></div></div>`}
 function nc82Pair(sp,w){return `<div class="nc82pair">${`<div style="width:${w}px">${nc82Front(sp)}</div><div style="width:${w}px">${nc82Back(sp)}</div>`}</div>`}
 
 /* ---------------- B · the spawn show ---------------- */
@@ -103,7 +103,7 @@ function bs82Target(id){const vis=e=>e&&e.offsetParent!==null&&e.getBoundingClie
 /* the card on demand */
 function nc82Open(t,key,name){if(HEADLESS||!NPCT[t])return;let pop=document.getElementById('nc82pop');if(pop)pop.remove();
   pop=document.createElement('div');pop.id='nc82pop';const w=Math.round(270*Math.max(.62,nc82Scale()));const calm=typeof reduceMotion==='function'&&reduceMotion();
-  pop.innerHTML=`<div class="nc82popin">${calm?nc82Pair(nc82Spec(t,key,name),Math.round(w*.8)):nc82Flip(nc82Spec(t,key,name),{w})}<div class="rc-sub">${calm?'':'Click the card to turn it · '}Esc to close</div></div>`;
+  pop.innerHTML=`<div class="nc82popin">${calm?nc82Pair(nc82Spec(t,key,name),Math.round(w*.8)):nc82Flip(nc82Spec(t,key,name),{w})}<div class="rc-sub">${_T`${calm?'':_T('Click the card to turn it · ')}Esc to close`}</div></div>`;
   document.body.appendChild(pop);if(!calm)setTimeout(()=>{const f=pop.querySelector('.nc82flip');if(f&&!f.dataset.touched)f.classList.add('flipped')},nc82Ms(700))}
 document.addEventListener('click',e=>{const pop=document.getElementById('nc82pop');
   if(pop&&pop.contains(e.target)){const f=e.target.closest('.nc82flip');if(f){f.dataset.touched='1';f.classList.toggle('flipped')}else if(!e.target.closest('.nc82popin'))pop.remove();return}
@@ -112,7 +112,7 @@ document.addEventListener('click',e=>{const pop=document.getElementById('nc82pop
   const row=e.target.closest('[data-nc82],[data-nc82k]');if(row&&S){if(row.dataset.nc82!=null){const n=(S.npcs||[]).find(x=>String(x.id)===row.dataset.nc82);if(n)nc82Open(n.t,n.key,n.name)}else{const [t,nmx]=row.dataset.nc82k.split('|');nc82Open(t,nmx,nmx)}return}
   const br=e.target.closest('#menagBody .brow');if(br){const nmx=(br.querySelector('.t b')||{}).textContent||'';const hit=nc82Bestiary(nmx);if(hit)nc82Open(hit[0],hit[1],nmx)}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const p=document.getElementById('nc82pop');if(p){p.remove();e.stopPropagation()}}},true);
-function nc82Bestiary(nmx){if(nmx==='Tholo')return ['tholo','Tholo'];
+function nc82Bestiary(nmx){if(nmx==='Tholo')return ['tholo',_T('Tholo')];
   for(const [k,t] of (typeof BEAST_ROLES!=='undefined'?BEAST_ROLES:[]))for(const c of Object.keys(CITY_BEASTS))if(CITY_BEASTS[c][k]===nmx)return [t,k];return null}
 {const base=npcTrackerHTML;npcTrackerHTML=function(){let h=base.apply(this,arguments);try{if(!S)return h;let i=0;const N=S.npcs.length;
     const spawn=(isChariot()||isNaum())?[]:SPAWNABLE.filter(([nmx])=>!S.npcs.some(n=>n.name===nmx));
@@ -127,31 +127,31 @@ function st82Rows(n){const hp=clamp(+n.hp||1,1,60),ap=clamp(+n.ap||1,1,9),rng=cl
   return R.map((x,i)=>[i===0?s0:i===1?s1:0,clamp(+x[1]||1,1,9),clamp(+x[2]||1,1,5),clamp(+x[3]||0,0,7),NC82_STATE_N[i]])}
 {const base=npcType;npcType=function(n){const T=base.apply(this,arguments);try{T.unique82=n.unique82?1:0;if(n.states&&(+n.hp||1)>=3)T.states=st82Rows(n);else if(n.states&&(+n.hp||1)<3)T.states=null}catch(e){console.error(e)}return T}}
 function cn82Card(n){const T=NPCT['cn_'+n.id]||npcType(n);
-  return {n:n.name,type:'npc',d:`${n.name} enters the arena: spawn it by the grid dice. ${nc82Behave(T)}${T.unique82?' Once per event.':''}`,img:null,cn:n.id}}
+  return {n:n.name,type:'npc',d:_T`${n.name} enters the arena: spawn it by the grid dice. ${nc82Behave(T)}${T.unique82?_T(' Once per event.'):''}`,img:null,cn:n.id}}
 {const base=registerCustoms;registerCustoms=function(){const r=base.apply(this,arguments);try{
     for(const n of CUSTOM.npcs||[]){const k='spawn_cn_'+n.id;CARDS[k]=cn82Card(n);if(n.unique82)UNIQUE_CARD82['cn_'+n.id]=k;else delete UNIQUE_CARD82['cn_'+n.id]}}catch(e){console.error(e)}return r}}
 {const base=bossSpent;bossSpent=function(key){if(typeof key==='string'&&key.startsWith('cn_'))return !!(S&&S.spawnedOnce&&S.spawnedOnce[key])||(S&&S.npcs||[]).some(n=>n.t===key);return base.apply(this,arguments)}}
 {const base=spawnNPC;spawnNPC=function(target,name,at,extra={}){
   const T=NPCT[target];const tame=extra&&extra.tamedBy!=null;
-  if(T&&T.unique82&&!tame&&String(target).startsWith('cn_')){if(bossSpent(target)){log(`${esc(name||T.n)} has already entered this event — the pens stay shut.`);return null}}
+  if(T&&T.unique82&&!tame&&String(target).startsWith('cn_')){if(bossSpent(target)){log(_T`${esc(name||T.n)} has already entered this event — the pens stay shut.`);return null}}
   const n=base.apply(this,arguments);
   try{if(n&&T&&T.unique82&&!tame){(S.spawnedOnce=S.spawnedOnce||{})[target]=1;uniqueOut82(target)}}catch(e){}
   try{if(n&&!HEADLESS&&S&&!S.sim&&S.phase!=='setup')beastShow82(n)}catch(e){console.error(e)}
   return n}}
 {const base=resolveDrawn;resolveDrawn=async function(player,k){if(typeof k==='string'&&k.startsWith('spawn_cn_')){const C=CARDS[k];const t='cn_'+k.slice(9);
-    cardShow('c:'+k,player,'🂠 Drawn');if(!C||!NPCT[t]){log(`${nm(player)} draws a beast card for a beast that is no longer in the pens.`);return}
-    log(`${nm(player)} reveals <b>${esc(C.n)}</b>: ${esc(C.d)}`,'big');spawnNPC(t,C.n,null);draw();await sleep(400);return}
+    cardShow('c:'+k,player,_T('🂠 Drawn'));if(!C||!NPCT[t]){log(_T`${nm(player)} draws a beast card for a beast that is no longer in the pens.`);return}
+    log(_T`${nm(player)} reveals <b>${esc(C.n)}</b>: ${esc(C.d)}`,'big');spawnNPC(t,C.n,null);draw();await sleep(400);return}
   return base.apply(this,arguments)}}
 {const base=cardHTML;cardHTML=function(ref,size='md',extra=''){if(typeof ref==='string'&&ref.startsWith('c:spawn_cn_')){const t='cn_'+ref.slice(11);
-    if(NPCT[t])return `<span class="cimg ${size} nc82arena" style="aspect-ratio:600/866" role="img" aria-label="${esc((CARDS[ref.slice(2)]||{}).n||'beast')} (arena card)" data-card="${ref}" ${extra}>${nc82Front(nc82Spec(t))}</span>`}
+    if(NPCT[t])return `<span class="cimg ${size} nc82arena" style="aspect-ratio:600/866" role="img" aria-label="${_T`${esc((CARDS[ref.slice(2)]||{}).n||'beast')} (arena card)`}" data-card="${ref}" ${extra}>${nc82Front(nc82Spec(t))}</span>`}
   return base.apply(this,arguments)}}
 /* the designer: unique tick, 1 or 3 states (with their rows), the card */
 {const base=npcEditorHTML;npcEditorHTML=function(){let h=base.apply(this,arguments);const n=ST.draft;if(!n)return h;try{
     const three=!!n.states;const rows=st82Rows(n);
-    const tbl=three?`<table class="st82tbl"><tr><th></th><th title="the HP where this state starts">From HP</th><th>Attack</th><th>Range</th><th>Move</th></tr>${rows.map((x,i)=>`<tr><th>${x[4]}</th>${[0,1,2,3].map(j=>i===2&&j===0?'<td class="rc-sub">0</td>':`<td><input class="tin" type="number" data-st82="${i}.${j}" value="${x[j]}" min="${j===3?0:j===0?1:1}" max="${j===0?60:j===1?9:j===2?5:7}"></td>`).join('')}</tr>`).join('')}</table>`:'';
-    const blk=`<div class="st82blk"><label class="st82sel">Behaviour states <select class="tin" data-st82="n"><option value="1" ${three?'':'selected'}>1 — one row (same all fight long)</option><option value="3" ${three?'selected':''}>3 — Initial · Raged · Fazed</option></select></label>${tbl}
-      <label class="chk"><input type="checkbox" data-st82="unique" ${n.unique82?'checked':''}> Unique — enters an event at most once</label></div>
-      <div class="nc82des"><div class="rc-sub">Its card · front and back</div>${nc82Pair(nc82Spec('cn_tmp82'),170)}</div>`;
+    const tbl=three?`<table class="st82tbl"><tr><th></th><th title="${_T`the HP where this state starts`}">${_T`From HP`}</th><th>${_T`Attack`}</th><th>${_T`Range`}</th><th>${_T`Move`}</th></tr>${rows.map((x,i)=>`<tr><th>${x[4]}</th>${[0,1,2,3].map(j=>i===2&&j===0?'<td class="rc-sub">0</td>':`<td><input class="tin" type="number" data-st82="${i}.${j}" value="${x[j]}" min="${j===3?0:j===0?1:1}" max="${j===0?60:j===1?9:j===2?5:7}"></td>`).join('')}</tr>`).join('')}</table>`:'';
+    const blk=`<div class="st82blk"><label class="st82sel">${_T`Behaviour states`} <select class="tin" data-st82="n"><option value="1" ${three?'':'selected'}>${_T`1 — one row (same all fight long)`}</option><option value="3" ${three?'selected':''}>3 — Initial · Raged · Fazed</option></select></label>${tbl}
+      <label class="chk"><input type="checkbox" data-st82="unique" ${n.unique82?'checked':''}> ${_T`Unique — enters an event at most once`}</label></div>
+      <div class="nc82des"><div class="rc-sub">${_T`Its card · front and back`}</div>${nc82Pair(nc82Spec('cn_tmp82'),170)}</div>`;
     h=h.replace(/<label class="chk"><input type="checkbox" data-f="states"[^>]*>[^<]*<\/label>/,'');
     const i=h.indexOf('<p class="hint">Beasts attack with 2 hit dice');h=i<0?h+blk:h.slice(0,i)+blk+h.slice(i);
   }catch(e){console.error(e)}return h}}
@@ -166,7 +166,7 @@ document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||t.dat
 
 /* ---------------- D · arena deck beast slots ---------------- */
 const SLOT82_DEF=['spawnLeo','spawnLeaena','spawnCommodus'];
-const SLOT82_PRINTED=[['spawnLeo','Leo'],['spawnLeaena','Leaena'],['spawnCommodus','Commodus']];
+const SLOT82_PRINTED=[['spawnLeo',_T('Leo')],['spawnLeaena',_T('Leaena')],['spawnCommodus',_T('Commodus')]];
 function slot82Excluded(ev,k){return (ev.noBoss&&(k==='spawnTholo'||k==='spawnCommodus'))||(ev.noTholo&&k==='spawnTholo')||(ev.kind==='orpheus'&&(k==='spawnLeo'||k==='spawnLeaena'))}
 function slot82Name(k){if(!k)return '— empty —';const p=SLOT82_PRINTED.find(x=>x[0]===k);if(p)return p[1];return CARDS[k]?CARDS[k].n+' ✦':k}
 /* the roster set in force: its 3 slots, or null (= the rulebook) */
@@ -191,8 +191,8 @@ function deckBeasts82(D){return (D||[]).filter(k=>CARDS[k]&&CARDS[k].type==='npc
 {const base=rosterSnap;rosterSnap=function(R){const o=base.apply(this,arguments);try{if(R&&Array.isArray(R.beasts82))o.beasts82=[...R.beasts82]}catch(e){}return o}}
 function rs82RowHTML(d,ro){const sel=new Set((d.sel||{}).npcs||[]);const mine=(CUSTOM.npcs||[]).filter(n=>sel.has(n.id));const b=Array.isArray(d.beasts82)?d.beasts82:SLOT82_DEF;
   const opts=v=>[['','— empty —'],...SLOT82_PRINTED,...mine.map(n=>['spawn_cn_'+n.id,n.name+' ✦'])].map(([k,l])=>`<option value="${esc(k)}" ${k===(v||'')?'selected':''}>${esc(l)}</option>`).join('');
-  return `<section class="rs77k rs82"><div class="rs77kh"><b>🃏 Arena deck beasts</b> <span class="rc-sub">${Array.isArray(d.beasts82)?'your slots':'the rulebook'} · at most 4 beast cards</span>${!ro&&Array.isArray(d.beasts82)?' <button type="button" class="btn tksm" data-rs82="reset">↺ Rulebook</button>':''}</div>
-    <div class="slot82row"><span class="slot82 fix" title="Tholo stays in every deck (the rulebook removes him from Orpheus and the Juggernaut)">🔒 Tholo</span>${[0,1,2].map(i=>`<label class="slot82">Slot ${i+1}<select class="tin" data-rs82="${i}" ${ro?'disabled':''}>${opts(b[i])}</select></label>`).join('')}</div>
+  return `<section class="rs77k rs82"><div class="rs77kh">${_T`<b>🃏 Arena deck beasts</b>`} <span class="rc-sub">${_T`${Array.isArray(d.beasts82)?_T('your slots'):_T('the rulebook')} · at most 4 beast cards`}</span>${!ro&&Array.isArray(d.beasts82)?' <button type="button" class="btn tksm" data-rs82="reset">↺ Rulebook</button>':''}</div>
+    <div class="slot82row"><span class="slot82 fix" title="${_T`Tholo stays in every deck (the rulebook removes him from Orpheus and the Juggernaut)`}">${_T`🔒 Tholo`}</span>${[0,1,2].map(i=>`<label class="slot82">${_T`Slot ${i+1}`}<select class="tin" data-rs82="${i}" ${ro?'disabled':''}>${opts(b[i])}</select></label>`).join('')}</div>
     ${mine.length||ro?'':'<div class="rc-sub">Put your own beasts in this set (🐾 Beasts above) to deal them a slot.</div>'}</section>`}
 {const base=rosterStudioHTML;rosterStudioHTML=function(){let h=base.apply(this,arguments);try{const id=ST.rs77;const sysR=ROSTER_SYS.find(r=>r.id===id);
     if(sysR){const i=h.indexOf('<p class="rs77note">');if(i>=0)h=h.slice(0,i)+rs82RowHTML({},true)+h.slice(i)}
@@ -218,9 +218,9 @@ function ed82Sync(e){const s=e.slots82;if(!s)return;const all=[s.tholo?'spawnTho
 function ed82HTML(e){ed82Convert(e);const s=e.slots82;const mine=CUSTOM.npcs||[];
   const opts=v=>[['','— empty —'],...SLOT82_PRINTED,...mine.map(n=>['spawn_cn_'+n.id,n.name+' ✦'])].map(([k,l])=>`<option value="${esc(k)}" ${k===(v||'')?'selected':''}>${esc(l)}</option>`).join('');
   const n=s.tholo?3:4;
-  return `<h4>Arena deck beasts</h4><p class="hint" style="margin-top:0">At most 4 beast cards: Tholo + 3 slots. Untick Tholo to free his place. Beasts you place on the board use no slot.</p>
-   <div class="slot82row"><label class="chk slot82 fix"><input type="checkbox" data-ed82="tholo" ${s.tholo?'checked':''}> Tholo</label>${Array.from({length:n},(_,i)=>`<label class="slot82">Slot ${i+1}<select class="tin" data-ed82="${i}">${opts(s.s[i])}</select></label>`).join('')}</div>
-   <div class="chkgrid">${fChk('deckSpawns.Zora',!!(e.deckSpawns||{}).Zora,'Zora card stays in the deck')}</div>`}
+  return `<h4>${_T`Arena deck beasts`}</h4><p class="hint" style="margin-top:0">${_T`At most 4 beast cards: Tholo + 3 slots. Untick Tholo to free his place. Beasts you place on the board use no slot.`}</p>
+   <div class="slot82row"><label class="chk slot82 fix"><input type="checkbox" data-ed82="tholo" ${s.tholo?'checked':''}> ${_T`Tholo`}</label>${Array.from({length:n},(_,i)=>`<label class="slot82">${_T`Slot ${i+1}`}<select class="tin" data-ed82="${i}">${opts(s.s[i])}</select></label>`).join('')}</div>
+   <div class="chkgrid">${fChk('deckSpawns.Zora',!!(e.deckSpawns||{}).Zora,_T('Zora card stays in the deck'))}</div>`}
 {const base=edRosterHTML;edRosterHTML=function(){let h=base.apply(this,arguments);try{const e=ST.draft;if(e&&e.deck)h=h.replace(/<h4>Arena deck spawn cards<\/h4><div class="chkgrid">[\s\S]*?<\/label><\/div>/,ed82HTML(e))}catch(err){console.error(err)}return h}}
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||t.dataset.ed82==null||typeof ST==='undefined'||!ST.draft||ST.tab!=='events')return;const d=ST.draft;ed82Convert(d);
   if(t.dataset.ed82==='tholo'){d.slots82.tholo=t.checked;if(t.checked)d.slots82.s[3]=''}else d.slots82.s[+t.dataset.ed82]=t.value;ed82Sync(d);studioRedraw()},true);
@@ -241,10 +241,10 @@ function flavPos82(){const cv=typeof ctx!=='undefined'&&ctx&&ctx.canvas;if(!cv||
   return base.apply(this,arguments)}}
 function refundFloat82(n){if(HEADLESS||!S||S.sim)return;const p=flavPos82();const el=document.createElement('div');el.className='flref82';el.innerHTML=`−${n} ${ICO.coin}`;
   if(p){el.style.left=p.x+'px';el.style.top=p.y+'px'}else{el.style.left='80px';el.style.top='90px'}document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
-function spearAfter82(p,s){const n=seatPrice82();log(`Flavius scowls and refunds ${esc(s.name)}'s seat (−${n} coin).`);
+function spearAfter82(p,s){const n=seatPrice82();log(_T`Flavius scowls and refunds ${esc(s.name)}'s seat (−${n} coin).`);
   try{refundFloat82(n)}catch(e){}
   const D=mfDeck82();if(!D.length)return;const idx=D.pop();p.items.push({id:uid++,kind:'mf',idx});
-  log(`${nm(p)} draws a Mandati Flavi (Mandate from Flavius).`,'big');try{if(!HEADLESS)render()}catch(e){}}
+  log(_T`${nm(p)} draws a Mandati Flavi (Mandate from Flavius).`,'big');try{if(!HEADLESS)render()}catch(e){}}
 {const base=doSpear;doSpear=async function(p,s){const was=!!(s&&s.gone);const r=await base.apply(this,arguments);try{if(s&&s.gone&&!was)spearAfter82(p,s)}catch(e){console.error(e)}return r}}
 
 /* ---------------- styles ---------------- */
@@ -294,7 +294,7 @@ body.calm .flref82{animation:none;opacity:1}`;document.head.appendChild(st)}
    their card flips to that printed card; the template back stays for every other beast */
 const NC82_BACKCARD={tholo:'spawnTholo',commodus:'spawnCommodus',leo:'spawnLeo',leaena:'spawnLeaena',zora:'zora'};
 {const base=nc82Back;nc82Back=function(sp){const pk=sp&&nc82Printed(sp);const k=pk&&NC82_BACKCARD[pk];
-  if(pk&&NC82_BACKART.includes(pk))return `<div class="nc82pback"><img class="nc82bimg" src="${assetURL('npcback82p_'+pk+'.webp')}" alt="${esc(sp.name||pk)} — stats side" draggable="false"></div>`;
+  if(pk&&NC82_BACKART.includes(pk))return `<div class="nc82pback"><img class="nc82bimg" src="${assetURL('npcback82p_'+pk+'.webp')}" alt="${_T`${esc(sp.name||pk)} — stats side`}" draggable="false"></div>`;
   if(k&&CARDS[k]&&typeof cardHTML==='function')return `<div class="nc82pback">${cardHTML('c:'+k,'xl')}</div>`;return base.apply(this,arguments)}}
 /* his stats sides (tools/art/npcbacks82/, cropped to the card frame → assets/npcback82p_<key>.webp); the rest still flip to the arena-deck card */
 const NC82_BACKART=['tholo','commodus','leo','leaena','zora'];

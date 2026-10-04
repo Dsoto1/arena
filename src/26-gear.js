@@ -40,8 +40,8 @@ async function loadGear(){try{CUSTOM.weapons=(await Store.list('customWeapons'))
 setTimeout(()=>{if(typeof CUSTOM!=='undefined')loadGear()},900);
 
 /* ---------- the weapon art: parametric, in a 100×100 box ---------- */
-const CW_TYPES=[['none','— Blank canvas —'],['sword','Sword'],['dagger','Dagger'],['axe','Axe'],['spear','Spear'],['trident','Trident'],['hammer','Hammer'],['club','Club'],['flail','Flail'],['bow','Bow'],['sling','Sling'],['scythe','Scythe'],['shield','Shield']];
-const CW_MOTIFS=[['','None'],['laurel','Laurel'],['serpent','Serpent'],['skull','Memento mori'],['bolt','Lightning'],['eye','Watching eye']];
+const CW_TYPES=[['none',_T('— Blank canvas —')],['sword',_T('Sword')],['dagger',_T('Dagger')],['axe',_T('Axe')],['spear',_T('Spear')],['trident',_T('Trident')],['hammer',_T('Hammer')],['club',_T('Club')],['flail',_T('Flail')],['bow',_T('Bow')],['sling',_T('Sling')],['scythe',_T('Scythe')],['shield',_T('Shield')]];
+const CW_MOTIFS=[['',_T('None')],['laurel',_T('Laurel')],['serpent',_T('Serpent')],['skull',_T('Memento mori')],['bolt',_T('Lightning')],['eye',_T('Watching eye')]];
 function wpnArt(a){const M=a.metal||'#c9d0d6',E=(typeof tkDark==='function'?tkDark(M,-0.35):'#6d757d'),Hf=a.haft||'#7a5a2a',Wr=a.wrap||'#8a2a2a',G=a.gem||'#c0433a';const t=a.type||'sword';let g='';
   const haft=(x1,y1,x2,y2,w=4)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${Hf}" stroke-width="${w}" stroke-linecap="round"/>`;
   const grip=(x,y)=>`<rect x="${x-3.4}" y="${y}" width="6.8" height="14" rx="2" fill="${Wr}" stroke="${tkDark(Wr)}"/><path d="M${x-3.4} ${y+3}h6.8M${x-3.4} ${y+7}h6.8M${x-3.4} ${y+11}h6.8" stroke="${tkDark(Wr)}" stroke-width="1"/>`;
@@ -84,25 +84,25 @@ const CW_ICO={
   thr:c=>`<circle cx="1.8" cy="-4.4" r="1.5" fill="#e87ad8"/><path d="M1.2 -2.4L-0.6 1.2L2.4 3L1 6M-0.6 1.2L-3.6 2.8M0.6 -1.6L4.4 -3.2M0.8 -1.8L-3.4 -1.4" stroke="#e87ad8" stroke-width="1.5" stroke-linecap="round" fill="none"/>`,
   both:c=>`<path d="M-5.2 5.2L4.4 -4.4M-3 5.2L5.2 -3M5.2 5.2L-4.4 -4.4" stroke="#9ab8d8" stroke-width="1.4" stroke-linecap="round"/><path d="M4.4 -4.4l1.4 -1.4M5.2 -3l1.2 -1.2M-4.4 -4.4l-1.4 -1.4" stroke="#e8f0f8" stroke-width="1.6" stroke-linecap="round"/>`};
 CW_ICO.brk=CW_ICO.use; // older cards: "breaks after" is the rulebook's USE
-const CW_ICO_NAME={dmg:'Attack power',rng:'Range',abs:'Shield absorb',ammo:'Ammo',soul:'Soul steal',cf:'Crowd favor',use:'Use',thr:'Throw',both:'Both attacks'};
-const CW_ICO_DESC={dmg:'Damage dealt for each hit rolled in an attack.',rng:'How far a player (or NPC) can be from a target to make an attack.',abs:'Damage absorbed by the shield before it hits a player.',ammo:'Initial ammo value of a weapon, managed via ammo dice and replenished via arena cards.',soul:'For each hit rolled with this weapon, 1 HP to the player holding it — distributed to any body location.',cf:'For every hit rolled with this weapon, 1 CF to the player holding it.',use:'The number of times a weapon can be used for attacks. Discard the card at 0 uses.',thr:'The number of times a weapon can be thrown, using a second set of weapon values. Discard the card at 0 throws.',both:'The weapon may be used for both of a player\u2019s attacks on a turn — still two unique targets.'};
+const CW_ICO_NAME={dmg:_T('Attack power'),rng:_T('Range'),abs:_T('Shield absorb'),ammo:_T('Ammo'),soul:_T('Soul steal'),cf:_T('Crowd favor'),use:_T('Use'),thr:_T('Throw'),both:_T('Both attacks')};
+const CW_ICO_DESC={dmg:_T('Damage dealt for each hit rolled in an attack.'),rng:_T('How far a player (or NPC) can be from a target to make an attack.'),abs:_T('Damage absorbed by the shield before it hits a player.'),ammo:_T('Initial ammo value of a weapon, managed via ammo dice and replenished via arena cards.'),soul:_T('For each hit rolled with this weapon, 1 HP to the player holding it — distributed to any body location.'),cf:_T('For every hit rolled with this weapon, 1 CF to the player holding it.'),use:_T('The number of times a weapon can be used for attacks. Discard the card at 0 uses.'),thr:_T('The number of times a weapon can be thrown, using a second set of weapon values. Discard the card at 0 throws.'),both:_T('The weapon may be used for both of a player\u2019s attacks on a turn — still two unique targets.')};
 function cwIcoSVG(k,px=26){return `<svg viewBox="-9 -9 18 18" width="${px}" height="${px}" aria-hidden="true"><rect x="-6.3" y="-6.3" width="12.6" height="12.6" transform="rotate(45)" fill="#15110d" stroke="#6a5a44" stroke-width=".5"/>${CW_ICO[k]()}</svg>`}
 function cwCardSVG(cw){const w=cwBuild(cw);const lv=clamp(w.lv||1,1,4);const [F,Fd]=CW_LV_FRAME[lv];
   // the stat tiles, in the rulebook's order
   const tiles=[];
   // v0.37: as printed — 'a|b' reads normal | thrown (the Hasta is 1|2 damage, 2|4 range)
-  if(!w.shield||w.p){tiles.push(['dmg',w.throw?`${w.p}|${w.throw.p}`:w.p,w.throw?'Attack power: normal | thrown':'Attack power']);tiles.push(['rng',w.throw?`${w.r}|${w.throw.r}`:w.r,w.throw?'Range: normal | thrown':'Range'])}
-  if(w.shield){tiles.push(['abs',w.absorb,'Shield absorb']);tiles.push(['use',w.uses,'Use'])}
-  if(w.throw)tiles.push(['thr',w.throw.n,`Throw: ${w.throw.n}`]);
-  if(w.ammo)tiles.push(['ammo',w.ammo,'Ammo']);
-  if(w.cfw)tiles.push(['cf','+1','Crowd favor: +1 CF per hit']);if(w.soul)tiles.push(['soul','1','Soul steal: 1 HP per hit']);if(w.atkUses)tiles.push(['use',w.atkUses,'Use']);if(w.both)tiles.push(['both','↔','Both attacks']);
+  if(!w.shield||w.p){tiles.push(['dmg',w.throw?`${w.p}|${w.throw.p}`:w.p,w.throw?_T('Attack power: normal | thrown'):_T('Attack power')]);tiles.push(['rng',w.throw?`${w.r}|${w.throw.r}`:w.r,w.throw?_T('Range: normal | thrown'):_T('Range')])}
+  if(w.shield){tiles.push(['abs',w.absorb,_T('Shield absorb')]);tiles.push(['use',w.uses,_T('Use')])}
+  if(w.throw)tiles.push(['thr',w.throw.n,_T`Throw: ${w.throw.n}`]);
+  if(w.ammo)tiles.push(['ammo',w.ammo,_T('Ammo')]);
+  if(w.cfw)tiles.push(['cf','+1',_T('Crowd favor: +1 CF per hit')]);if(w.soul)tiles.push(['soul','1',_T('Soul steal: 1 HP per hit')]);if(w.atkUses)tiles.push(['use',w.atkUses,_T('Use')]);if(w.both)tiles.push(['both','↔',_T('Both attacks')]);
   const n=tiles.length,slot=Math.min(44,164/Math.max(1,n));
   const tileSVG=tiles.map(([k,v,t],i)=>{const cy=24+slot*i+slot*0.36;const fs=String(v).length>3?9:11;
     return `<g><title>${esc(t)}</title><g transform="translate(276 ${cy})"><rect x="-8.5" y="-8.5" width="17" height="17" transform="rotate(45)" fill="#15110d" stroke="${Fd}" stroke-width=".8"/>${CW_ICO[k]()}</g><text x="276" y="${cy+21}" font-size="${fs}" font-weight="700" text-anchor="middle" fill="#2a1d12" font-family="Georgia,serif">${esc(String(v))}</text>${i<n-1?`<line x1="264" x2="288" y1="${24+slot*(i+1)-1}" y2="${24+slot*(i+1)-1}" stroke="${Fd}" stroke-width=".8" opacity=".6"/>`:''}</g>`}).join('');
   // the name, fitted to its plaque
-  const nm=String(cw.name||'Unnamed').toUpperCase();const plW=Math.max(130,Math.min(214,70+nm.length*7.2)),fsN=Math.min(14,Math.max(7.5,(plW-16)/(nm.length*0.66)));
+  const nm=String(cw.name||_T('Unnamed')).toUpperCase();const plW=Math.max(130,Math.min(214,70+nm.length*7.2)),fsN=Math.min(14,Math.max(7.5,(plW-16)/(nm.length*0.66)));
   // the fine print: small, centered, under the weapon
-  const notes=[];if(w.both)notes.push('may be used for both attacks');if(w.atkUses)notes.push(`breaks after ${w.atkUses} attacks`);if(w.cfw)notes.push('+1 Crowd Favor per hit');if(w.soul)notes.push('drains 1 HP per hit');if(w.flav)notes.push('a Flavius item: +2 CF to a winner holding it');if(w.stones)notes.push('reloads from Stones');
+  const notes=[];if(w.both)notes.push(_T('may be used for both attacks'));if(w.atkUses)notes.push(_T`breaks after ${w.atkUses} attacks`);if(w.cfw)notes.push(_T('+1 Crowd Favor per hit'));if(w.soul)notes.push(_T('drains 1 HP per hit'));if(w.flav)notes.push(_T('a Flavius item: +2 CF to a winner holding it'));if(w.stones)notes.push(_T('reloads from Stones'));
   const note=notes.join(' · ');
   // stone blocks
   const bricks=Array.from({length:9},(_,r)=>{const y=14+r*21;return `<line x1="40" x2="262" y1="${y}" y2="${y}" stroke="#b89e74" stroke-width=".9" opacity=".55"/>`+Array.from({length:6},(_,c)=>{const x=40+c*42+(r%2?21:0);return x<262?`<line x1="${x}" x2="${x}" y1="${y}" y2="${y+21}" stroke="#b89e74" stroke-width=".9" opacity=".45"/>`:''}).join('')}).join('');
@@ -113,7 +113,7 @@ function cwCardSVG(cw){const w=cwBuild(cw);const lv=clamp(w.lv||1,1,4);const [F,
    <rect x="10" y="10" width="280" height="188" rx="3" fill="none" stroke="${Fd}" stroke-width="1.4"/>
    ${corner(10,10,1,1)}${corner(290,10,-1,1)}${corner(10,198,1,-1)}${corner(290,198,-1,-1)}
    <rect x="14" y="16" width="22" height="176" fill="#d9c49c" stroke="${Fd}" stroke-width="1"/><line x1="17" x2="17" y1="18" y2="190" stroke="${Fd}" opacity=".5"/><line x1="33" x2="33" y1="18" y2="190" stroke="${Fd}" opacity=".5"/>
-   <text transform="translate(29 104) rotate(-90)" font-size="11" letter-spacing="4" text-anchor="middle" fill="${Fd}" font-family="Georgia,serif" font-weight="700">LEVEL ${lv}</text>
+   <text transform="translate(29 104) rotate(-90)" font-size="11" letter-spacing="4" text-anchor="middle" fill="${Fd}" font-family="Georgia,serif" font-weight="700">${_T`LEVEL ${lv}`}</text>
    <rect x="264" y="16" width="24" height="176" fill="#d9c49c" stroke="${Fd}" stroke-width="1"/>
    <g transform="translate(150 104) rotate(45) scale(1.62) translate(-50 -52)">${wpnArt(cw.art||{})}</g>
    <rect x="${150-plW/2}" y="5" width="${plW}" height="22" rx="2" fill="#f4ead2" stroke="${Fd}" stroke-width="1.2"/>
@@ -167,11 +167,11 @@ const armorStyle=()=>typeof SETTINGS==='undefined'?'drawn':(SETTINGS.armorStyle|
    place them, tune size/rotation/color, delete. Layers live in a plain array of shapeSVG specs. */
 const SC_SHAPES=['circle','ellipse','rect','tri','diamond','star','crescent','line','spike','ring'];
 function sculptHTML(kind,layers){const sel=ST.scSel!=null&&layers[ST.scSel]?ST.scSel:null;const L=sel!=null?layers[sel]:null;
-  return `<div style="grid-column:1/-1" class="sect">Sculpt <span class="rc-sub">add a shape, then <b>drag it on the preview</b> — exactly like the token designer</span></div>
+  return `<div style="grid-column:1/-1" class="sect">${_T`Sculpt`} <span class="rc-sub">${_T`add a shape, then <b>drag it on the preview</b> — exactly like the token designer`}</span></div>
    <div class="acts" style="grid-column:1/-1">${SC_SHAPES.map(t=>`<button class="btn tksm" type="button" data-sc="add" data-k="${kind}" data-t="${t}">+ ${t}</button>`).join('')}</div>
    ${layers.length?`<div class="acts" style="grid-column:1/-1">${layers.map((l2,i)=>`<button class="btn tksm ${sel===i?'primary':''}" type="button" data-sc="sel" data-k="${kind}" data-i="${i}">${l2.t} ${i+1}</button>`).join('')}${sel!=null?`<button class="btn tksm" type="button" data-sc="del" data-k="${kind}">🗑 remove</button>`:''}</div>`:''}
-   ${L?`<label>Width<input type="range" min="2" max="80" value="${L.w||12}" data-sc="f" data-k="${kind}" data-f="w"></label><label>Height<input type="range" min="2" max="80" value="${L.h||12}" data-sc="f" data-k="${kind}" data-f="h"></label>
-    <label>Rotate<input type="range" min="-180" max="180" value="${L.r||0}" data-sc="f" data-k="${kind}" data-f="r"></label><label>Color<input type="color" value="${L.c||'#e6b93a'}" data-sc="f" data-k="${kind}" data-f="c"></label>`:''}`}
+   ${L?`<label>${_T`Width`}<input type="range" min="2" max="80" value="${L.w||12}" data-sc="f" data-k="${kind}" data-f="w"></label><label>${_T`Height`}<input type="range" min="2" max="80" value="${L.h||12}" data-sc="f" data-k="${kind}" data-f="h"></label>
+    <label>${_T`Rotate`}<input type="range" min="-180" max="180" value="${L.r||0}" data-sc="f" data-k="${kind}" data-f="r"></label><label>${_T`Color`}<input type="color" value="${L.c||'#e6b93a'}" data-sc="f" data-k="${kind}" data-f="c"></label>`:''}`}
 function sculptTarget(kind){return kind==='w'?((ST.cw.art.layers=ST.cw.art.layers||[])):kind==='t'?((ST.trd.layers=ST.trd.layers||[])):((ST.ca.layers=ST.ca.layers||[]))}
 function sculptClick(b,redraw){const kind=b.dataset.k;const Ls=sculptTarget(kind);
   if(b.dataset.sc==='add'){Ls.push({t:b.dataset.t,x:50,y:50,w:14,h:14,c:'#e6b93a'});ST.scSel=Ls.length-1;redraw();return true}
@@ -204,7 +204,7 @@ function blankCW(){return {id:'w'+Date.now().toString(36),name:'',type:'sword',s
 function caFromSystem(d,k){const A=ARM[k];if(!A)return;d.base=k;d.slot=A.slot;d.pt=A.pt;d.ap=clamp(A.ap,2,7);d.lv=A.lv||1;d.stack=A.stack?1:0;d.pair=A.pair?1:0;
   const bl=A.bonus?Object.keys(A.bonus)[0]:'';d.bonusLoc=bl||'';d.bonusAp=bl?A.bonus[bl]:0;d.shape=ARM_SHAPE[k]||'plate';d.metal=ARM_METAL[k]||d.metal;if(!d.name)d.name=A.n+' (remade)';d.fit=null}
 function blankCA(){return {id:'a'+Date.now().toString(36),name:'',slot:'chest',pt:'chest',ap:3,lv:2,stack:0,pair:0,bonusLoc:'',bonusAp:0,shape:'none',metal:'#c9a458',gem:'#7a2230',rolls:{market:false,loadout:false},layers:[],baked:[],fit:null,v:1}}
-const CA_SHAPES=[['none','— Blank canvas —'],['helmR','Round helm'],['helmR2','Helm with neck-guard'],['helmCrest','Crested helm'],['helmGrill','Grilled helm (murmillo)'],['helmSec','Smooth helm (secutor)'],['belt','Broad belt'],['plate','Chest plate on straps'],['scale','Scale shirt'],['muscle','Muscled cuirass'],['thorax','Great plate + shoulders'],['bands','Padded wraps'],['segArm','Segmented arm (manica)'],['shoulder','Layered shoulder'],['fist','Studded fist'],['galerus','High shoulder-plate'],['bracerPair','Bracer pair'],['skirt','Studded skirt'],['greave','Greave'],['greavePair','Greave pair'],['plateLeg','Thigh plate'],['greaveTall','Tall ornate greave']];
+const CA_SHAPES=[['none',_T('— Blank canvas —')],['helmR',_T('Round helm')],['helmR2',_T('Helm with neck-guard')],['helmCrest',_T('Crested helm')],['helmGrill',_T('Grilled helm (murmillo)')],['helmSec',_T('Smooth helm (secutor)')],['belt',_T('Broad belt')],['plate',_T('Chest plate on straps')],['scale',_T('Scale shirt')],['muscle',_T('Muscled cuirass')],['thorax',_T('Great plate + shoulders')],['bands',_T('Padded wraps')],['segArm',_T('Segmented arm (manica)')],['shoulder',_T('Layered shoulder')],['fist',_T('Studded fist')],['galerus',_T('High shoulder-plate')],['bracerPair',_T('Bracer pair')],['skirt',_T('Studded skirt')],['greave',_T('Greave')],['greavePair',_T('Greave pair')],['plateLeg',_T('Thigh plate')],['greaveTall',_T('Tall ornate greave')]];
 function gearStudioHTML(){const sub=ST.gearSub||'w';
   return sub==='w'?gearWHTML():gearAHTML()} /* v0.45: Weapons and Armor have their own entries under Gear on the studio rail */
 function gearWHTML(){const d=ST.cw||(ST.cw=blankCW());const st=d.stats;const w=cwReg({...d,id:'preview'});delete W['cw_preview'];
@@ -212,69 +212,69 @@ function gearWHTML(){const d=ST.cw||(ST.cw=blankCW());const st=d.stats;const w=c
   const chk=(f,lbl,d2)=>`<label style="display:flex;gap:6px;align-items:center" title="${d2}"><input type="checkbox" data-cwf="s.${f}" ${st[f]?'checked':''}> ${lbl}</label>`;
   const col=(f,l)=>`<label>${l}<input type="color" data-cwf="a.${f}" value="${esc(d.art[f])}"></label>`;
   const L=CUSTOM.weapons||[];
-  return `<p>Forge a weapon and its <b>card</b> — the same sideways card the printed weapons use. Stats assemble only from behaviors and bounds that exist on printed cards, and the <b>market level derives from the stats</b>, so nothing outbids the printed game. It enters play only when added to the rolls.</p>
-   <div class="trstudio big"><div class="trprev"><div class="scart" id="cwArt" data-scbprev="w" title="Drag a shape to move it">${cwArtSVG(d.art)}</div><div class="rc-sub" style="text-align:center;margin:2px 0 8px">the weapon · sculpt it here</div><div class="cwprev" id="cwPrev">${cwCardSVG(d)}</div><div class="rc-sub" style="text-align:center;margin-top:4px">its card · Level ${w.lv} · ${w.lv===1?'common steel':w.lv===2?'fine work':'a master’s piece'}</div></div>
-    <div class="formgrid"><label>Name<input type="text" data-cwf="name" value="${esc(d.name)}" maxlength="18" placeholder="e.g. Fang of Nemausus"></label>
-     <label>Start from<select data-cwf="a.type">${CW_TYPES.map(([k,l])=>`<option value="${k}" ${d.art.type===k?'selected':''}>${l}</option>`).join('')}</select></label>
-     ${col('metal','Metal')}${col('haft','Haft wood')}${col('wrap','Grip / leather')}${col('gem','Gem / accent')}
-     <label>Motif<select data-cwf="a.motif">${CW_MOTIFS.map(([k,l])=>`<option value="${k}" ${(d.art.motif||'')===k?'selected':''}>${l}</option>`).join('')}</select></label>
+  return `<p>${_T`Forge a weapon and its <b>card</b> — the same sideways card the printed weapons use. Stats assemble only from behaviors and bounds that exist on printed cards, and the <b>market level derives from the stats</b>, so nothing outbids the printed game. It enters play only when added to the rolls.`}</p>
+   <div class="trstudio big"><div class="trprev"><div class="scart" id="cwArt" data-scbprev="w" title="${_T`Drag a shape to move it`}">${cwArtSVG(d.art)}</div><div class="rc-sub" style="text-align:center;margin:2px 0 8px">${_T`the weapon · sculpt it here`}</div><div class="cwprev" id="cwPrev">${cwCardSVG(d)}</div><div class="rc-sub" style="text-align:center;margin-top:4px">${_T`its card · Level ${w.lv} · ${w.lv===1?_T('common steel'):w.lv===2?_T('fine work'):_T('a master’s piece')}`}</div></div>
+    <div class="formgrid"><label>${_T`Name`}<input type="text" data-cwf="name" value="${esc(d.name)}" maxlength="18" placeholder="${_T`e.g. Fang of Nemausus`}"></label>
+     <label>${_T`Start from`}<select data-cwf="a.type">${CW_TYPES.map(([k,l])=>`<option value="${k}" ${d.art.type===k?'selected':''}>${l}</option>`).join('')}</select></label>
+     ${col('metal',_T('Metal'))}${col('haft',_T('Haft wood'))}${col('wrap','Grip / leather')}${col('gem','Gem / accent')}
+     <label>${_T`Motif`}<select data-cwf="a.motif">${CW_MOTIFS.map(([k,l])=>`<option value="${k}" ${(d.art.motif||'')===k?'selected':''}>${l}</option>`).join('')}</select></label>
      ${scbBenchHTML('w')}
-     <div style="grid-column:1/-1" class="sect">Weapon card icons <span class="rc-sub">as the rulebook prints them — tick what this weapon has; numbers stay within printed bounds</span></div>
+     <div style="grid-column:1/-1" class="sect">${_T`Weapon card icons`} <span class="rc-sub">${_T`as the rulebook prints them — tick what this weapon has; numbers stay within printed bounds`}</span></div>
      <div class="icogrid" style="grid-column:1/-1">${(()=>{const sel=(f,vals,cur)=>`<select data-cwf="s.${f}">${vals.map(v=>`<option value="${v}" ${+cur===v?'selected':''}>${v}</option>`).join('')}</select>`;
        const tile=(k,ctrl,on=true,tog='')=>`<div class="icot${on?' on':''}"><div class="icoth">${cwIcoSVG(k,30)}<div><b>${CW_ICO_NAME[k]}</b>${tog}</div></div><div class="rc-sub">${CW_ICO_DESC[k]}</div>${on&&ctrl?`<div class="icoc">${ctrl}</div>`:''}</div>`;
-       const tg=(f,on)=>`<label class="icotog"><input type="checkbox" data-cwt="${f}" ${on?'checked':''}> has it</label>`;
+       const tg=(f,on)=>`<label class="icotog"><input type="checkbox" data-cwt="${f}" ${on?'checked':''}> ${_T`has it`}</label>`;
        const out=[];
-       out.push(tile('abs',`<label>Absorb ${sel('absorb',[1,2],st.absorb)}</label><label>Use ${sel('uses',[3,4,5,6,7,8,9,10,11,12],st.uses)}</label>`,!!st.shield,`<label class="icotog"><input type="checkbox" data-cwf="s.shield" ${st.shield?'checked':''}> a shield</label>`));
+       out.push(tile('abs',`<label>${_T`Absorb ${sel('absorb',[1,2],st.absorb)}`}</label><label>${_T`Use ${sel('uses',[3,4,5,6,7,8,9,10,11,12],st.uses)}`}</label>`,!!st.shield,`<label class="icotog"><input type="checkbox" data-cwf="s.shield" ${st.shield?'checked':''}> ${_T`a shield`}</label>`));
        if(!st.shield){
-         out.push(tile('dmg',`<label>Value ${sel('p',[1,2,3,4],st.p)}</label>`));
-         out.push(tile('rng',`<label>Value ${sel('r',[1,2,3,4,5],st.r)}</label>`));
-         out.push(tile('thr',`<label>Throws ${sel('thrN',[1,3,6],st.thrN)}</label><label>Thrown power ${sel('thrP',[1,2,3,4],st.thrP||st.p)}</label><label>Thrown range ${sel('thrR',[2,3,4,5],st.thrR||2)}</label>`,!!st.thrN,tg('thr',!!st.thrN)));
-         out.push(tile('ammo',`<label>Ammo ${sel('ammo',[3,4,5,6],st.ammo)}</label><label class="icotog"><input type="checkbox" data-cwf="s.stones" ${st.stones?'checked':''}> 🪨 reloads from Stones</label>`,!!st.ammo,tg('ammo',!!st.ammo)));
-         out.push(tile('use',`<label>Uses ${sel('atkUses',[3,6],st.atkUses)}</label>`,!!st.atkUses,tg('use',!!st.atkUses)));
-         out.push(tile('soul','',!!st.soul,`<label class="icotog"><input type="checkbox" data-cwf="s.soul" ${st.soul?'checked':''}> has it</label>`));
-         out.push(tile('cf','',!!st.cfw,`<label class="icotog"><input type="checkbox" data-cwf="s.cfw" ${st.cfw?'checked':''}> has it</label>`));
-         out.push(tile('both','',!!st.both,`<label class="icotog"><input type="checkbox" data-cwf="s.both" ${st.both?'checked':''}> has it</label>`));}
+         out.push(tile('dmg',`<label>${_T`Value ${sel('p',[1,2,3,4],st.p)}`}</label>`));
+         out.push(tile('rng',`<label>${_T`Value ${sel('r',[1,2,3,4,5],st.r)}`}</label>`));
+         out.push(tile('thr',`<label>${_T`Throws ${sel('thrN',[1,3,6],st.thrN)}`}</label><label>${_T`Thrown power ${sel('thrP',[1,2,3,4],st.thrP||st.p)}`}</label><label>${_T`Thrown range ${sel('thrR',[2,3,4,5],st.thrR||2)}`}</label>`,!!st.thrN,tg('thr',!!st.thrN)));
+         out.push(tile('ammo',`<label>${_T`Ammo ${sel('ammo',[3,4,5,6],st.ammo)}`}</label><label class="icotog"><input type="checkbox" data-cwf="s.stones" ${st.stones?'checked':''}> ${_T`🪨 reloads from Stones`}</label>`,!!st.ammo,tg('ammo',!!st.ammo)));
+         out.push(tile('use',`<label>${_T`Uses ${sel('atkUses',[3,6],st.atkUses)}`}</label>`,!!st.atkUses,tg('use',!!st.atkUses)));
+         out.push(tile('soul','',!!st.soul,`<label class="icotog"><input type="checkbox" data-cwf="s.soul" ${st.soul?'checked':''}> ${_T`has it`}</label>`));
+         out.push(tile('cf','',!!st.cfw,`<label class="icotog"><input type="checkbox" data-cwf="s.cfw" ${st.cfw?'checked':''}> ${_T`has it`}</label>`));
+         out.push(tile('both','',!!st.both,`<label class="icotog"><input type="checkbox" data-cwf="s.both" ${st.both?'checked':''}> ${_T`has it`}</label>`));}
        return out.join('')})()}</div>
-     <label style="grid-column:1/-1;display:flex;gap:6px;align-items:center" title="Counts as one of Flavius\u2019s own: +2 CF to a winner holding it, like the Gladius of Flavius"><input type="checkbox" data-cwf="s.flav" ${st.flav?'checked':''}> 🏛 A Flavius item <span class="rc-sub">(not a card icon — +2 CF to a winner holding it)</span></label>
-     <div style="grid-column:1/-1" class="rc-sub crnote">📜 <b>The rolls</b> — once saved, add this weapon to the market deck and the character loadouts with the <b>📜 Add to the rolls</b> button on the weapon itself, in the list below.</div></div></div>
-   <div class="mbtns"><button class="btn primary" type="button" data-gs="wsave">💾 Save weapon &amp; card</button><button class="btn" type="button" data-gs="wnew">↺ Fresh steel</button><button class="btn" type="button" data-gs="wrand">🎲 Surprise me</button></div>
-   <h4>Your weapons · ${L.length}</h4>${L.length?`<div class="cwlist">${L.map(c=>{const wk=W['cw_'+c.id];return `<div class="cwrow"><div class="cwmini">${cwCardSVG(c)}</div><div><b>${esc(c.name)}</b> <span class="rc-sub">${wk&&wk.cwMarket?'in the market':''}${wk&&wk.cwLoadout?' · in loadouts':''}</span>${crActs('w',c)}</div></div>`}).join('')}</div>`:'<p class="rc-sub">The forge is cold. Nothing yet.</p>'}`}
+     <label style="grid-column:1/-1;display:flex;gap:6px;align-items:center" title="${_T`Counts as one of Flavius\u2019s own: +2 CF to a winner holding it, like the Gladius of Flavius`}"><input type="checkbox" data-cwf="s.flav" ${st.flav?'checked':''}> ${_T`🏛 A Flavius item`} <span class="rc-sub">${_T`(not a card icon — +2 CF to a winner holding it)`}</span></label>
+     <div style="grid-column:1/-1" class="rc-sub crnote">${_T`📜 <b>The rolls</b> — once saved, add this weapon to the market deck and the character loadouts with the <b>📜 Add to the rolls</b> button on the weapon itself, in the list below.`}</div></div></div>
+   <div class="mbtns"><button class="btn primary" type="button" data-gs="wsave">${_T`💾 Save weapon &amp; card`}</button><button class="btn" type="button" data-gs="wnew">${_T`↺ Fresh steel`}</button><button class="btn" type="button" data-gs="wrand">${_T`🎲 Surprise me`}</button></div>
+   <h4>${_T`Your weapons · ${L.length}`}</h4>${L.length?`<div class="cwlist">${L.map(c=>{const wk=W['cw_'+c.id];return `<div class="cwrow"><div class="cwmini">${cwCardSVG(c)}</div><div><b>${esc(c.name)}</b> <span class="rc-sub">${wk&&wk.cwMarket?_T('in the market'):''}${wk&&wk.cwLoadout?_T(' · in loadouts'):''}</span>${crActs('w',c)}</div></div>`}).join('')}</div>`:'<p class="rc-sub">The forge is cold. Nothing yet.</p>'}`}
 function gearAHTML(){const d=ST.ca||(ST.ca=blankCA());const L=CUSTOM.armor||[];
   const col=(f,l)=>`<label>${l}<input type="color" data-caf="${f}" value="${esc(d[f])}"></label>`;
-  return `<p>Shape a piece of armor. The <b>sculpted set</b> below recreates all ${Object.keys(ARM).filter(k=>!ARM[k].custom).length} printed pieces — pick any of them (or choose one under <b>Start from</b>) to begin from its rulebook stats. Settings → Tokens → Armor swaps between Sculpted and the Original Drawn Armor. New pieces use printed bounds: AP 2–7, the same slots and points, and enter play only when added to the rolls.</p>
-   <div class="trstudio big"><div class="trprev"><div class="seg" style="margin-bottom:6px;justify-content:center"><button type="button" data-gs="caview" data-id="piece" class="${ST.caAvatar?'':'on'}">The piece</button><button type="button" data-gs="caview" data-id="avatar" class="${ST.caAvatar?'on':''}">On the avatar</button></div>
-      <div class="scart ${ST.caAvatar?'caav':''}" id="caPiece" data-scbprev="a" title="${ST.caAvatar?'Drag the piece to fit it on the body · click a body zone to equip it there':'Drag a shape to move it'}">${ST.caAvatar?caAvatarSVG({...d}):armSVG('ca_preview',{...d})}</div>
-      ${ST.caAvatar?`<p class="rc-sub" style="margin:6px 0 0;text-align:center">On the avatar, a drag moves the <b>whole piece</b>. Switch to <b>The piece</b> to move single shapes.</p><label class="rc-sub" style="display:block;margin-top:6px">Size on the body<input type="range" min="20" max="110" value="${caFit(d).s}" data-caf="fitS" style="width:100%"></label><div class="acts" style="justify-content:center"><button class="btn tksm" type="button" data-gs="cafitreset">↺ Default fit</button></div>`:''}
-      <div class="rc-sub" style="text-align:center">${esc(d.name||'Unnamed piece')} · ${d.ap} AP</div></div>
-    <div class="formgrid"><label>Name<input type="text" data-caf="name" value="${esc(d.name)}" maxlength="24" placeholder="e.g. Lionheart Cuirass"></label>
-     <label>Start from<select data-caf="shape"><optgroup label="Shapes">${CA_SHAPES.map(([k,l])=>`<option value="${k}" ${d.shape===k&&!d.base?'selected':''}>${l}</option>`).join('')}</optgroup><optgroup label="The printed armor (system pieces · stats from the rulebook)">${Object.keys(ARM).filter(k=>!ARM[k].custom).map(k=>`<option value="sys:${k}" ${d.base===k?'selected':''}>${esc(ARM[k].n)} · ${ARM[k].slot} · ${ARM[k].ap} AP · L${ARM[k].lv}</option>`).join('')}</optgroup></select></label>
-     ${col('metal','Metal / cloth')}${col('gem','Accent')}
-     <label>Body location<select data-caf="slot">${[['head','Head'],['chest','Chest'],['arm','Arm'],['leg','Leg']].map(([k,l])=>`<option value="${k}" ${d.slot===k?'selected':''}>${l}</option>`).join('')}</select></label>
-     <label>Point<select data-caf="pt">${[['helm','Helm'],['chest','Chest'],['upper','Upper'],['lower','Lower'],['hand','Hand']].map(([k,l])=>`<option value="${k}" ${d.pt===k?'selected':''}>${l}</option>`).join('')}</select></label>
+  return `<p>${_T`Shape a piece of armor. The <b>sculpted set</b> below recreates all ${Object.keys(ARM).filter(k=>!ARM[k].custom).length} printed pieces — pick any of them (or choose one under <b>Start from</b>) to begin from its rulebook stats. Settings → Tokens → Armor swaps between Sculpted and the Original Drawn Armor. New pieces use printed bounds: AP 2–7, the same slots and points, and enter play only when added to the rolls.`}</p>
+   <div class="trstudio big"><div class="trprev"><div class="seg" style="margin-bottom:6px;justify-content:center"><button type="button" data-gs="caview" data-id="piece" class="${ST.caAvatar?'':'on'}">${_T`The piece`}</button><button type="button" data-gs="caview" data-id="avatar" class="${ST.caAvatar?'on':''}">${_T`On the avatar`}</button></div>
+      <div class="scart ${ST.caAvatar?'caav':''}" id="caPiece" data-scbprev="a" title="${ST.caAvatar?_T('Drag the piece to fit it on the body · click a body zone to equip it there'):_T('Drag a shape to move it')}">${ST.caAvatar?caAvatarSVG({...d}):armSVG('ca_preview',{...d})}</div>
+      ${ST.caAvatar?`<p class="rc-sub" style="margin:6px 0 0;text-align:center">${_T`On the avatar, a drag moves the <b>whole piece</b>. Switch to <b>The piece</b> to move single shapes.`}</p><label class="rc-sub" style="display:block;margin-top:6px">${_T`Size on the body`}<input type="range" min="20" max="110" value="${caFit(d).s}" data-caf="fitS" style="width:100%"></label><div class="acts" style="justify-content:center"><button class="btn tksm" type="button" data-gs="cafitreset">${_T`↺ Default fit`}</button></div>`:''}
+      <div class="rc-sub" style="text-align:center">${_T`${esc(d.name||_T('Unnamed piece'))} · ${d.ap} AP`}</div></div>
+    <div class="formgrid"><label>${_T`Name`}<input type="text" data-caf="name" value="${esc(d.name)}" maxlength="24" placeholder="${_T`e.g. Lionheart Cuirass`}"></label>
+     <label>${_T`Start from`}<select data-caf="shape"><optgroup label="Shapes">${CA_SHAPES.map(([k,l])=>`<option value="${k}" ${d.shape===k&&!d.base?'selected':''}>${l}</option>`).join('')}</optgroup><optgroup label="The printed armor (system pieces · stats from the rulebook)">${Object.keys(ARM).filter(k=>!ARM[k].custom).map(k=>`<option value="sys:${k}" ${d.base===k?'selected':''}>${_T`${esc(ARM[k].n)} · ${ARM[k].slot} · ${ARM[k].ap} AP · L${ARM[k].lv}`}</option>`).join('')}</optgroup></select></label>
+     ${col('metal','Metal / cloth')}${col('gem',_T('Accent'))}
+     <label>${_T`Body location`}<select data-caf="slot">${[['head',_T('Head')],['chest',_T('Chest')],['arm',_T('Arm')],['leg',_T('Leg')]].map(([k,l])=>`<option value="${k}" ${d.slot===k?'selected':''}>${l}</option>`).join('')}</select></label>
+     <label>${_T`Point`}<select data-caf="pt">${[['helm',_T('Helm')],['chest',_T('Chest')],['upper',_T('Upper')],['lower',_T('Lower')],['hand',_T('Hand')]].map(([k,l])=>`<option value="${k}" ${d.pt===k?'selected':''}>${l}</option>`).join('')}</select></label>
      <label>AP<select data-caf="ap">${[2,3,4,5,6,7].map(v=>`<option ${+d.ap===v?'selected':''}>${v}</option>`).join('')}</select></label>
      ${scbBenchHTML('a')}
-     <label>Market level<select data-caf="lv">${[1,2,3].map(v=>`<option ${+d.lv===v?'selected':''}>${v}</option>`).join('')}</select></label>
-     <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-caf="stack" ${d.stack?'checked':''}> Stackable (padding)</label>
-     <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-caf="pair" ${d.pair?'checked':''}> Pair (covers both sides)</label>
-     <label>Bonus AP to<select data-caf="bonusLoc">${[['','Nothing'],['head','Head'],['chest','Chest'],['rarm','Right arm'],['larm','Left arm'],['rleg','Right leg'],['lleg','Left leg']].map(([k,l])=>`<option value="${k}" ${d.bonusLoc===k?'selected':''}>${l}</option>`).join('')}</select></label>
-     ${d.bonusLoc?`<label>Bonus amount<select data-caf="bonusAp">${[1,2,3,4].map(v=>`<option ${+d.bonusAp===v?'selected':''}>${v}</option>`).join('')}</select></label>`:''}
-     <div style="grid-column:1/-1" class="rc-sub crnote">📜 <b>The rolls</b> — once saved, add this piece to the market deck and the character loadouts with the <b>📜 Add to the rolls</b> button on the piece itself, in the list below.</div></div></div>
-   <div class="mbtns"><button class="btn primary" type="button" data-gs="asave">💾 Save armor</button><button class="btn" type="button" data-gs="anew">↺ Fresh bronze</button></div>
-   <h4>The sculpted set · every printed piece <span class="rc-sub">system pieces are locked — copy one to start a new design from it, with its rulebook stats</span></h4><div class="armgrid sysgrid">${Object.keys(ARM).filter(k=>!ARM[k].custom).map(k=>`<div class="armcell ${d.base===k?'on':''}" title="${esc(ARM[k].n)} · ${ARM[k].slot} · ${ARM[k].ap} AP${ARM[k].bonus?' · bonus '+Object.entries(ARM[k].bonus).map(([l,v])=>'+'+v+' '+l).join(', '):''}"><button type="button" class="armpick armimg" data-gs="casys" data-id="${k}" title="Start a new piece from it">${armSVG(k)}</button><span>${esc(ARM[k].n)}</span><small>${ARM[k].ap} AP · L${ARM[k].lv}</small>${sysActs(`data-gs="casys" data-id="${k}"`)}</div>`).join('')}</div>
-   ${L.length?`<h4>Your armor · ${L.length}</h4><div class="armgrid mine">${L.map(c=>`<div class="armcell" title="${esc(c.name)}">${armSVG('ca_'+c.id)}<span>${esc(c.name)}</span>${crActs('a',c)}</div>`).join('')}</div>`:''}`}
+     <label>${_T`Market level`}<select data-caf="lv">${[1,2,3].map(v=>`<option ${+d.lv===v?'selected':''}>${v}</option>`).join('')}</select></label>
+     <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-caf="stack" ${d.stack?'checked':''}> ${_T`Stackable (padding)`}</label>
+     <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-caf="pair" ${d.pair?'checked':''}> ${_T`Pair (covers both sides)`}</label>
+     <label>${_T`Bonus AP to`}<select data-caf="bonusLoc">${[['',_T('Nothing')],['head',_T('Head')],['chest',_T('Chest')],['rarm',_T('Right arm')],['larm',_T('Left arm')],['rleg',_T('Right leg')],['lleg',_T('Left leg')]].map(([k,l])=>`<option value="${k}" ${d.bonusLoc===k?'selected':''}>${l}</option>`).join('')}</select></label>
+     ${d.bonusLoc?`<label>${_T`Bonus amount`}<select data-caf="bonusAp">${[1,2,3,4].map(v=>`<option ${+d.bonusAp===v?'selected':''}>${v}</option>`).join('')}</select></label>`:''}
+     <div style="grid-column:1/-1" class="rc-sub crnote">${_T`📜 <b>The rolls</b> — once saved, add this piece to the market deck and the character loadouts with the <b>📜 Add to the rolls</b> button on the piece itself, in the list below.`}</div></div></div>
+   <div class="mbtns"><button class="btn primary" type="button" data-gs="asave">${_T`💾 Save armor`}</button><button class="btn" type="button" data-gs="anew">${_T`↺ Fresh bronze`}</button></div>
+   <h4>${_T`The sculpted set · every printed piece`} <span class="rc-sub">${_T`system pieces are locked — copy one to start a new design from it, with its rulebook stats`}</span></h4><div class="armgrid sysgrid">${Object.keys(ARM).filter(k=>!ARM[k].custom).map(k=>`<div class="armcell ${d.base===k?'on':''}" title="${_T`${esc(ARM[k].n)} · ${ARM[k].slot} · ${ARM[k].ap} AP${ARM[k].bonus?' · bonus '+Object.entries(ARM[k].bonus).map(([l,v])=>'+'+v+' '+l).join(', '):''}`}"><button type="button" class="armpick armimg" data-gs="casys" data-id="${k}" title="${_T`Start a new piece from it`}">${armSVG(k)}</button>${_T`<span>${esc(ARM[k].n)}</span><small>${ARM[k].ap} AP · L${ARM[k].lv}</small>${sysActs(`data-gs="casys" data-id="${k}"`)}`}</div>`).join('')}</div>
+   ${L.length?`<h4>${_T`Your armor · ${L.length}`}</h4><div class="armgrid mine">${L.map(c=>`<div class="armcell" title="${esc(c.name)}">${armSVG('ca_'+c.id)}<span>${esc(c.name)}</span>${crActs('a',c)}</div>`).join('')}</div>`:''}`}
 async function gearStudioClick(b,redraw){const a=b.dataset.gs,id=b.dataset.id;
   if(a==='sub'){ST.gearSub=id;redraw();return}
   if(a==='wnew'){ST.cw=blankCW();redraw();return}
   if(a==='wrand'){const d=blankCW();const t=pickOne(CW_TYPES.slice(1))[0];d.art.type=t;d.type=t;const hex=()=>'#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0');
     d.art.metal=pickOne(['#c9d0d6','#e6b93a','#a9764a','#7f96a8','#b8925a']);d.art.haft=pickOne(['#7a5a2a','#4a3018','#8a6a3a']);d.art.wrap=hex();d.art.gem=hex();d.art.motif=pickOne(CW_MOTIFS)[0];
     if(t==='shield'){d.stats.shield=1;d.stats.absorb=1+rnd(2);d.stats.uses=3+rnd(8)}else{d.stats.p=1+rnd(3);d.stats.r=1+rnd(2);if(Math.random()<.3)d.stats.thrN=pickOne([1,3]);if(Math.random()<.2)d.stats.ammo=3+rnd(3)}
-    d.name=pickOne(['Fang','Oath','Kiss','Wrath','Sting','Mercy','Thorn','Talon'])+' of '+pickOne(LOCATIONS.filter(Boolean)).n;ST.cw=d;redraw();return}
+    d.name=pickOne([_T('Fang'),_T('Oath'),_T('Kiss'),_T('Wrath'),_T('Sting'),_T('Mercy'),_T('Thorn'),_T('Talon')])+' of '+pickOne(LOCATIONS.filter(Boolean)).n;ST.cw=d;redraw();return}
   if(a==='wedit'){const c=(CUSTOM.weapons||[]).find(x=>x.id===id);if(c)ST.cw=JSON.parse(JSON.stringify(c));redraw();return}
   if(a==='wdel'){CUSTOM.weapons=(CUSTOM.weapons||[]).filter(x=>x.id!==id);await Store.del('customWeapons',id).catch(()=>{});gearRebuild();redraw();return}
-  if(a==='wsave'){const d=ST.cw;if(!String(d.name).trim())d.name=pickOne(['Nameless Steel','The Bargain','Vulso’s Pride']);if(!nameGuard('weapons',d,'[data-cwf="name"]'))return;d.v=(d.v||0)+1;
+  if(a==='wsave'){const d=ST.cw;if(!String(d.name).trim())d.name=pickOne([_T('Nameless Steel'),_T('The Bargain'),_T('Vulso’s Pride')]);if(!nameGuard('weapons',d,'[data-cwf="name"]'))return;d.v=(d.v||0)+1;
     CUSTOM.weapons=[...(CUSTOM.weapons||[]).filter(x=>x.id!==d.id),JSON.parse(JSON.stringify(d))].sort((x,y)=>String(x.name).localeCompare(y.name));
     await Store.put('customWeapons',d.id,d).catch(()=>{});gearRebuild();
-    if(typeof mToast==='function')mToast(`⚔ <b>${esc(d.name)}</b> is forged${d.rolls.market||d.rolls.loadout?' — and on the rolls':' — add it to the rolls when ready'}.`);redraw();return}
+    if(typeof mToast==='function')mToast(_T`⚔ <b>${esc(d.name)}</b> is forged${d.rolls.market||d.rolls.loadout?_T(' — and on the rolls'):_T(' — add it to the rolls when ready')}.`);redraw();return}
   if(a==='anew'){ST.ca=blankCA();redraw();return}
   if(a==='caview'){ST.caAvatar=id==='avatar';redraw();return}
   if(a==='cafitreset'){ST.ca.fit=null;redraw();return}
@@ -284,7 +284,7 @@ async function gearStudioClick(b,redraw){const a=b.dataset.gs,id=b.dataset.id;
   if(a==='asave'){const d=ST.ca;if(!String(d.name).trim())d.name='Unnamed Bronze';if(!nameGuard('armor',d,'[data-caf="name"]'))return;d.v=(d.v||0)+1;
     CUSTOM.armor=[...(CUSTOM.armor||[]).filter(x=>x.id!==d.id),JSON.parse(JSON.stringify(d))].sort((x,y)=>String(x.name).localeCompare(y.name));
     await Store.put('customArmor',d.id,d).catch(()=>{});gearRebuild();
-    if(typeof mToast==='function')mToast(`🛡 <b>${esc(d.name)}</b> is hammered out.`);redraw();return}}
+    if(typeof mToast==='function')mToast(_T`🛡 <b>${esc(d.name)}</b> is hammered out.`);redraw();return}}
 function gearStudioInput(t){
   if(t.dataset.cwt!=null){const d=ST.cw,st=d.stats,on=t.checked; // v0.42: the rulebook's toggles reveal their numbers
     if(t.dataset.cwt==='thr'){st.thrN=on?1:0;if(on){st.thrP=st.thrP||Math.min(4,st.p+1);st.thrR=st.thrR||Math.max(2,Math.min(5,st.r+1))}}

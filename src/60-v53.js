@@ -8,7 +8,7 @@
 try{if(localStorage.getItem('flavius_capfeed53')!=='1'){localStorage.setItem('flavius_capfeed53','1');SETTINGS.capFeed=false;applySettings()}}catch(e){}
 
 /* ---------- phases wear their colours wherever they are named ---------- */
-const PHASE_LABEL={resolve:'Resolve',command:'Resolve',choice:'Choice',action:'Action',end:'End'};
+const PHASE_LABEL={resolve:_T('Resolve'),command:_T('Resolve'),choice:_T('Choice'),action:_T('Action'),end:'End'};
 /* phaseTag(phase): a small coloured chip for a phase name */
 function phaseTag(phase){const key=phase==='command'?'resolve':phase;return `<span class="phtag ph-${key}">${PHASE_LABEL[phase]||phase}</span>`}
 /* log headers like "Phase 2 · Choice: …" get the chip instead of the number */
@@ -18,8 +18,8 @@ function phaseTag(phase){const key=phase==='command'?'resolve':phase;return `<sp
 renderTurnInd=function(){if(HEADLESS)return;const box=$('#turnInd');if(!box)return;
   if(!S||S.over||S.phase==='setup'||!S.players.length){box.hidden=true;return}
   const player=cur();box.hidden=false;const owner=typeof arenaOwner==='function'?arenaOwner():null;
-  box.className='turnind slim'+(player.cpu?'':' you');box.style.setProperty('--pc',player.color);
-  const details=`<b>${esc(player.name)}</b>${player.cpu?' (CPU)':' · your turn'}<br>Phase: ${PHASE_LABEL[S.phase]||S.phase}<br>Turn ${S.turnNo} · rotation ${S.rotation}${owner&&owner.k!=='play'?`<br>${owner.i} ${esc(owner.n)}`:''}${SPEED==='pause'?'<br>Speed: Paused':''}`;
+  box.className=_T('turnind slim')+(player.cpu?'':' you');box.style.setProperty('--pc',player.color);
+  const details=_T`<b>${esc(player.name)}</b>${player.cpu?' (CPU)':_T(' · your turn')}<br>Phase: ${PHASE_LABEL[S.phase]||S.phase}<br>Turn ${S.turnNo} · rotation ${S.rotation}${owner&&owner.k!=='play'?`<br>${owner.i} ${esc(owner.n)}`:''}${SPEED==='pause'?_T('<br>Speed: Paused'):''}`;
   box.innerHTML=`<span class="dot" aria-hidden="true"></span><b class="tiname">${esc(player.name)}</b>${phaseTag(S.phase)}<span class="qi" data-tip="${esc(details)}">ⓘ</span>`;
   turnIndFit()};
 /* keep the indicator clear of Flavius's box, like the caption on the left */
@@ -39,7 +39,7 @@ duelCam=function(){if(HEADLESS)return 1;const duel=duelZoneOn();const want=duel?
   if(k<1&&!DUEL.raf)DUEL.raf=requestAnimationFrame(()=>{DUEL.raf=0;try{draw()}catch(err){}});return DUEL.z};
 {const baseVig=duelVignette;duelVignette=function(w,h){if(duelZoneOn())return baseVig(w,h)}}
 duelUI=function(){const btn=document.getElementById('btnZoom');if(!btn)return;const live=!!(S&&!S.over&&S.phase!=='setup');btn.hidden=!live;if(!live)return;
-  const zoomed=duelZoneOn()?!S.zoomOut:!!S.zoomIn;const label=zoomed?'🔍 Zoom out':'🔍 Zoom in';if(btn.textContent!==label)btn.textContent=label;btn.title=zoomed?'Pull the camera back':'Lean the camera in'};
+  const zoomed=duelZoneOn()?!S.zoomOut:!!S.zoomIn;const label=zoomed?_T('🔍 Zoom out'):_T('🔍 Zoom in');if(btn.textContent!==label)btn.textContent=label;btn.title=zoomed?_T('Pull the camera back'):_T('Lean the camera in')};
 document.addEventListener('click',e=>{if(!e.target.closest('#btnZoom')||!S||duelZoneOn())return;e.stopImmediatePropagation();S.zoomIn=!S.zoomIn;draw();duelUI()},true);
 {const baseRender=render;render=function(){const r=baseRender.apply(this,arguments);try{duelUI()}catch(e){}return r}}
 

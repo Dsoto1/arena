@@ -12,27 +12,27 @@
    ===================================================================== */
 const TOKEN_SKINS=['#f1c9a5','#e0ac7e','#c68e5f','#a86b43','#7d4b2c','#5a341e','#c47a52','#8a8f96','#6f9a7a'];
 /* T_HELMS — token part options [key, label]: helmets; the T_* lists below are the other parts (bodies, shields, weapons, eyes, beards, hair, arms, legs, neck, face, emblem, off hand, beast pattern / gear / body / tail). */
-const T_HELMS=[['none','Bare head'],['galea','Galea'],['crested','Crested galea'],['murmillo','Murmillo grill'],['thraex','Thraex griffin'],['hood','Hood'],['horned','Horned helm'],['laurel','Laurel wreath'],['crown','Crown']];
-const T_BODIES=[['tunic','Tunic'],['armor','Lorica (armor)'],['scale','Scale mail'],['bare','Bare-chested'],['robe','Robe'],['rags','Rags'],['flavius','Flavius\u2019s gilded armor']];
+const T_HELMS=[['none',_T('Bare head')],['galea',_T('Galea')],['crested',_T('Crested galea')],['murmillo',_T('Murmillo grill')],['thraex',_T('Thraex griffin')],['hood',_T('Hood')],['horned',_T('Horned helm')],['laurel',_T('Laurel wreath')],['crown',_T('Crown')]];
+const T_BODIES=[['tunic',_T('Tunic')],['armor',_T('Lorica (armor)')],['scale',_T('Scale mail')],['bare','Bare-chested'],['robe',_T('Robe')],['rags',_T('Rags')],['flavius',_T('Flavius\u2019s gilded armor')]];
 /* v0.24: Hall of Flavius rewards unlock these token options */
 const ACH_LOCK={weapon:{greatclub:'tholo'},emblem:{eagle:'commodus'},extra:{collar:'tamer'},helm:{laurel:'first'},face:{warpaint:'road3'},body:{flavius:'road12'},capeC:{gold:'eightwins'},baseT:{obsidian:'classes'}};
 /* achLocked — which achievement locks a token part — always null since v0.47 (every part is open). */
 const achLocked=(f,v)=>null; /* v0.47: achievements carry no rewards — every token part is open to everyone */
-const T_SHIELDS=[['none','No shield'],['scutum','Scutum (tall)'],['parma','Parma (square)'],['round','Round'],['buckler','Buckler'],['net','Net (rete)']];
-const T_WEAPONS=[['none','Empty hand'],['gladius','Gladius'],['spear','Spear'],['trident','Trident'],['bow','Bow'],['axe','Axe'],['club','Club'],['greatclub','Great blunted club'],['mace','Mace'],['sica','Sica'],['hammer','War hammer'],['flail','Flail'],['scythe','Scythe'],['sling','Sling']];
-const T_EYES=[['two','Two eyes'],['cyclops','One great eye (cyclops)'],['patch','Eyepatch'],['glow','Glowing eyes'],['visor','Hidden (visor)']];
-const T_BEARD=[['','Clean-shaven'],['full','Full beard'],['goatee','Goatee'],['stache','Moustache'],['stubble','Stubble']];
-const T_HAIRS=[['','Short'],['long','Long'],['bald','Shaven'],['topknot','Top-knot'],['crest','Mohawk'],['braid','Braid']];
-const T_ARMS=[['','Bare arms'],['manica','Manica (sword arm)'],['bracers','Leather bracers'],['pauldron','Shoulder plate'],['both','Manica + shoulder plate']];
-const T_LEGS=[['','Bare legs'],['greaves','Greaves'],['wraps','Leg wraps'],['boots','Tall boots']];
-const T_NECK=[['','Nothing'],['torc','Gold torc'],['chain','Slave chain'],['beads','Bead necklace'],['sash','Sash across the chest']];
-const T_FACE=[['','Nothing'],['warpaint','War paint'],['scar','Scar'],['woad','Woad (blue face)'],['tattoo','Tattoos']];
-const T_EMBLEM=[['','Plain'],['eagle','Eagle'],['bolt','Thunderbolt'],['star','Star'],['sun','Sun'],['wolf','Wolf head'],['boss','Bronze boss']];
-const T_OFF=[['','Nothing'],['dagger','Pugio (dagger)'],['torch','Torch'],['whip','Whip']];
-const T_PATTERN=[['','Plain hide'],['stripes','Stripes'],['spots','Spots'],['plates','Armored plates'],['scales','Scales']];
-const T_EXTRA=[['','Nothing'],['collar','Spiked collar'],['chains','Broken chains'],['saddle','War saddle'],['fangs','Great fangs']];
-const T_BEASTS=[['quad','Four-legged'],['serpent','Serpent'],['bird','Bird'],['biped','Brute (two legs)'],['blob','Ooze'],['spider','Many-legged']];
-const T_TAILS=[['none','No tail'],['long','Long'],['bushy','Bushy'],['spiked','Spiked'],['tuft','Tufted']];
+const T_SHIELDS=[['none',_T('No shield')],['scutum',_T('Scutum (tall)')],['parma',_T('Parma (square)')],['round',_T('Round')],['buckler',_T('Buckler')],['net',_T('Net (rete)')]];
+const T_WEAPONS=[['none',_T('Empty hand')],['gladius',_T('Gladius')],['spear',_T('Spear')],['trident',_T('Trident')],['bow',_T('Bow')],['axe',_T('Axe')],['club',_T('Club')],['greatclub',_T('Great blunted club')],['mace',_T('Mace')],['sica',_T('Sica')],['hammer',_T('War hammer')],['flail',_T('Flail')],['scythe',_T('Scythe')],['sling',_T('Sling')]];
+const T_EYES=[['two',_T('Two eyes')],['cyclops',_T('One great eye (cyclops)')],['patch',_T('Eyepatch')],['glow',_T('Glowing eyes')],['visor',_T('Hidden (visor)')]];
+const T_BEARD=[['','Clean-shaven'],['full',_T('Full beard')],['goatee',_T('Goatee')],['stache',_T('Moustache')],['stubble',_T('Stubble')]];
+const T_HAIRS=[['',_T('Short')],['long',_T('Long')],['bald',_T('Shaven')],['topknot','Top-knot'],['crest',_T('Mohawk')],['braid',_T('Braid')]];
+const T_ARMS=[['',_T('Bare arms')],['manica',_T('Manica (sword arm)')],['bracers',_T('Leather bracers')],['pauldron',_T('Shoulder plate')],['both',_T('Manica + shoulder plate')]];
+const T_LEGS=[['',_T('Bare legs')],['greaves',_T('Greaves')],['wraps',_T('Leg wraps')],['boots',_T('Tall boots')]];
+const T_NECK=[['',_T('Nothing')],['torc',_T('Gold torc')],['chain',_T('Slave chain')],['beads',_T('Bead necklace')],['sash',_T('Sash across the chest')]];
+const T_FACE=[['',_T('Nothing')],['warpaint',_T('War paint')],['scar',_T('Scar')],['woad',_T('Woad (blue face)')],['tattoo',_T('Tattoos')]];
+const T_EMBLEM=[['',_T('Plain')],['eagle',_T('Eagle')],['bolt',_T('Thunderbolt')],['star',_T('Star')],['sun',_T('Sun')],['wolf',_T('Wolf head')],['boss',_T('Bronze boss')]];
+const T_OFF=[['',_T('Nothing')],['dagger',_T('Pugio (dagger)')],['torch',_T('Torch')],['whip',_T('Whip')]];
+const T_PATTERN=[['',_T('Plain hide')],['stripes',_T('Stripes')],['spots',_T('Spots')],['plates',_T('Armored plates')],['scales',_T('Scales')]];
+const T_EXTRA=[['',_T('Nothing')],['collar',_T('Spiked collar')],['chains',_T('Broken chains')],['saddle',_T('War saddle')],['fangs',_T('Great fangs')]];
+const T_BEASTS=[['quad','Four-legged'],['serpent',_T('Serpent')],['bird',_T('Bird')],['biped',_T('Brute (two legs)')],['blob',_T('Ooze')],['spider','Many-legged']];
+const T_TAILS=[['none',_T('No tail')],['long',_T('Long')],['bushy',_T('Bushy')],['spiked',_T('Spiked')],['tuft',_T('Tufted')]];
 /* TOKEN_DEF — the default figure spec of every class and beast. TWEAK: colors and parts. */
 const TOKEN_DEF={
   soldier:{kind:'human',body:'armor',helm:'galea',shield:'scutum',weapon:'gladius',c1:'#a3281f',c2:'#d6ab4c',cape:true},
@@ -207,7 +207,7 @@ function figureSVG(spec,opts={}){
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 170" width="${opts.w||100}" height="${opts.h||170}">${baseSVG}<g transform="translate(50 157) scale(${sz} ${sz*(spec.squash||1)}) translate(-50 -157)">${g}</g></svg>`;
 }
 /* v0.24 SHAPES: free layers on top of any token — add, drag, resize, rotate, recolor, then commit (bake) */
-const SHAPES=[['circle','● Circle'],['ellipse','⬭ Oval'],['rect','■ Box'],['tri','▲ Triangle'],['diamond','◆ Diamond'],['star','★ Star'],['crescent','☾ Crescent'],['line','╱ Bar'],['spike','➤ Spike'],['ring','◯ Ring']];
+const SHAPES=[['circle',_T('● Circle')],['ellipse',_T('⬭ Oval')],['rect',_T('■ Box')],['tri',_T('▲ Triangle')],['diamond',_T('◆ Diamond')],['star',_T('★ Star')],['crescent',_T('☾ Crescent')],['line',_T('╱ Bar')],['spike',_T('➤ Spike')],['ring',_T('◯ Ring')]];
 /* shapeSVG — one sculpted shape layer as SVG (circle, box, star…), with its selection outline. */
 function shapeSVG(layer,sel){if(layer&&layer.hid)return ''; /* v0.42: a hidden layer */const w=layer.w||12,h=layer.h||12,c=layer.c||'#e6b93a',o=layer.o??1;const st=layer.st?` stroke="${layer.st}" stroke-width="1"`:'';let el;
   switch(layer.t){case 'circle':el=`<circle cx="0" cy="0" r="${w/2}" fill="${c}"${st}/>`;break;case 'ellipse':el=`<ellipse cx="0" cy="0" rx="${w/2}" ry="${h/2}" fill="${c}"${st}/>`;break;

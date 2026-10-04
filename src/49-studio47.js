@@ -13,10 +13,10 @@
    • Roster sets say which one is loaded (Play Now, and each career's own).
    • The Event Designer (and the other designers) refuse to save until the basics are in place.
    ===================================================================== */
-const BF_SPECIES=[['feline','Great cat — lion, tiger, leopard'],['canine','Hound — wolf, hyena, Cerberus'],['ursine','Bear'],['boar','Boar'],['bovine','Bull — aurochs, Minotaur'],['cervine','Stag or hind'],['serpent','Serpent — hydra, python'],['avian','Bird — eagle, griffin, harpy'],['reptile','Crocodile'],['arachnid','Spider or scorpion'],['giant','Giant — cyclops, bronze man']];
-const BF_HORNS=[['','None'],['bull','Bull horns'],['ram','Ram horns'],['antlers','Antlers'],['spikes','Spikes']];
-const BF_PATTERN=[['','Plain'],['stripes','Stripes'],['spots','Spots'],['scales','Scales']];
-const BF_GEAR=[['','Nothing'],['collar','Spiked collar'],['crown','Laurel crown'],['helm','War helm'],['chains','Broken chains'],['ring','Nose ring']];
+const BF_SPECIES=[['feline',_T('Great cat — lion, tiger, leopard')],['canine',_T('Hound — wolf, hyena, Cerberus')],['ursine',_T('Bear')],['boar',_T('Boar')],['bovine',_T('Bull — aurochs, Minotaur')],['cervine',_T('Stag or hind')],['serpent',_T('Serpent — hydra, python')],['avian',_T('Bird — eagle, griffin, harpy')],['reptile',_T('Crocodile')],['arachnid',_T('Spider or scorpion')],['giant',_T('Giant — cyclops, bronze man')]];
+const BF_HORNS=[['',_T('None')],['bull',_T('Bull horns')],['ram',_T('Ram horns')],['antlers',_T('Antlers')],['spikes',_T('Spikes')]];
+const BF_PATTERN=[['',_T('Plain')],['stripes',_T('Stripes')],['spots',_T('Spots')],['scales',_T('Scales')]];
+const BF_GEAR=[['',_T('Nothing')],['collar',_T('Spiked collar')],['crown',_T('Laurel crown')],['helm',_T('War helm')],['chains',_T('Broken chains')],['ring',_T('Nose ring')]];
 const BF_KIND={lion:'feline',liger:'feline',tiger:'feline',leopard:'feline',panther:'feline',wolf:'canine',hyena:'canine',bear:'ursine',boar:'boar',aurochs:'bovine',stag:'cervine',viper:'serpent',eagle:'avian',ostrich:'avian',crocodile:'reptile',scorpion:'arachnid'};
 const BF_TYPE={snake:'serpent',wolf:'canine',bear:'ursine',lion:'feline',tholo:'giant',commodus:'giant',zora:'avian',boar:'boar',croc:'reptile',crocodile:'reptile'};
 function faceBlank(n){const k=n&&typeof kindKeyOf==='function'?kindKeyOf(n):null;const sp=BF_KIND[k]||'feline';return {species:sp,c1:(n&&n.color)||'#b8782e',c2:'#e8d4a0',eyes:'#f0cf7d',eyeT:sp==='arachnid'?'many':'two',horns:sp==='bovine'?'bull':sp==='cervine'?'antlers':'',mane:k==='lion',fangs:sp!=='cervine'&&sp!=='avian',pattern:'',gear:'',scar:false,bg:'#2a1f17'}}
@@ -79,17 +79,17 @@ function rtokFaceSVG(sp,n){const F=n&&n.face;if(!F||(sp&&sp.useFace===false))ret
 
 /* ---------------- the beast designer, face first ---------------- */
 {const _ne=npcEditorHTML;npcEditorHTML=function(){const n=ST.draft;if(!n.face)n.face=faceBlank(n);if(n.rtok&&n.rtok.faceMig!==1){n.rtok.glyph=false;n.rtok.faceMig=1}const F=n.face;let h=_ne();
-  const sel=(f,opts,v)=>fSel('face.'+f,opts,v);
+  const sel=(f,opts,v)=>fSel(_T('face.')+f,opts,v);
   h=h.replace('<div id="rtPrev"',`<div class="bfprev" id="bfPrev" title="${esc(n.name)}’s face">${beastFaceSVG(F)}</div><div class="rc-sub" style="font:600 10px var(--mono);letter-spacing:.1em">THE FACE</div><div id="rtPrev"`);
   h=h.replace(/<label>Token letter[\s\S]*?<\/label>(<label>Color)/,'$1');
-  h=h.replace(/<label>Letter color[\s\S]*?<\/label><\/div>/,'</div>').replace(/<div class="chkgrid" style="margin-top:4px">\s*<label class="chk"><input type="checkbox" data-f="rtok\.glyph"[^<]*<\/label>[^<]*<\/div>/,`<div class="chkgrid" style="margin-top:4px">${fChk('rtok.useFaceOff',n.rtok&&n.rtok.useFace===false,'Hide the face on the token (sculpt your own instead)')}</div>`);
-  const faceCard=`<div class="card2 bfcard"><b>🦁 The face</b> <span class="rc-sub">like a character's portrait — it heads this page, fills the round token and colours the board figure</span>
-    <div class="formgrid" style="margin-top:6px"><label>Species${sel('species',BF_SPECIES,F.species)}</label><label>Horns${sel('horns',BF_HORNS,F.horns||'')}</label><label>Pattern${sel('pattern',BF_PATTERN,F.pattern||'')}</label><label>Gear${sel('gear',BF_GEAR,F.gear||'')}</label>
-     <label>Eyes${sel('eyeT',[['two','Two'],['one','One great eye'],['many','Many (spiders)']],F.eyeT||'two')}</label>
-     <label>Hide<input type="color" data-f="face.c1" value="${esc(F.c1)}" style="width:44px;height:30px;border:0;background:none;padding:0"></label><label>Markings &amp; muzzle<input type="color" data-f="face.c2" value="${esc(F.c2)}" style="width:44px;height:30px;border:0;background:none;padding:0"></label><label>Eye colour<input type="color" data-f="face.eyes" value="${esc(F.eyes)}" style="width:44px;height:30px;border:0;background:none;padding:0"></label>
-     <label style="grid-column:span 2">Backdrop${sel('bg',BGS.map((v,i)=>[v,BG_NAMES[i]||'Backdrop '+(i+1)]).concat(typeof FLAGS!=='undefined'?Object.entries(FLAGS).map(([k,F2])=>['flag:'+k,'🏳 City banner · '+F2.n]):[]).concat((CUSTOM.flags||[]).map(f=>['flag:c:'+f.id,(f.fmt==='portrait'?'🖼 ':'✦ ')+(f.name||'your banner')+' · custom'])),F.bg)}</label></div>
-    <div class="chkgrid" style="margin-top:4px">${fChk('face.mane',F.mane,'Mane / crest / beard')}${fChk('face.fangs',F.fangs,'Fangs')}${fChk('face.scar',F.scar,'Battle scar')}</div>
-    <div class="acts" style="margin-top:6px"><button type="button" class="btn tksm" data-bf="rand">🎲 Another face</button><button type="button" class="btn tksm" data-bf="kind">↺ Face of its kind</button></div></div>`;
+  h=h.replace(/<label>Letter color[\s\S]*?<\/label><\/div>/,'</div>').replace(/<div class="chkgrid" style="margin-top:4px">\s*<label class="chk"><input type="checkbox" data-f="rtok\.glyph"[^<]*<\/label>[^<]*<\/div>/,`<div class="chkgrid" style="margin-top:4px">${fChk('rtok.useFaceOff',n.rtok&&n.rtok.useFace===false,_T('Hide the face on the token (sculpt your own instead)'))}</div>`);
+  const faceCard=`<div class="card2 bfcard">${_T`<b>🦁 The face</b>`} <span class="rc-sub">${_T`like a character's portrait — it heads this page, fills the round token and colours the board figure`}</span>
+    <div class="formgrid" style="margin-top:6px"><label>${_T`Species${sel('species',BF_SPECIES,F.species)}`}</label><label>${_T`Horns${sel('horns',BF_HORNS,F.horns||'')}`}</label><label>${_T`Pattern${sel('pattern',BF_PATTERN,F.pattern||'')}`}</label><label>${_T`Gear${sel('gear',BF_GEAR,F.gear||'')}`}</label>
+     <label>${_T`Eyes${sel('eyeT',[['two',_T('Two')],['one',_T('One great eye')],['many',_T('Many (spiders)')]],F.eyeT||'two')}`}</label>
+     <label>${_T`Hide`}<input type="color" data-f="face.c1" value="${esc(F.c1)}" style="width:44px;height:30px;border:0;background:none;padding:0"></label><label>${_T`Markings &amp; muzzle`}<input type="color" data-f="face.c2" value="${esc(F.c2)}" style="width:44px;height:30px;border:0;background:none;padding:0"></label><label>${_T`Eye colour`}<input type="color" data-f="face.eyes" value="${esc(F.eyes)}" style="width:44px;height:30px;border:0;background:none;padding:0"></label>
+     <label style="grid-column:span 2">${_T`Backdrop${sel('bg',BGS.map((v,i)=>[v,BG_NAMES[i]||_T('Backdrop ')+(i+1)]).concat(typeof FLAGS!=='undefined'?Object.entries(FLAGS).map(([k,F2])=>['flag:'+k,_T('🏳 City banner · ')+F2.n]):[]).concat((CUSTOM.flags||[]).map(f=>['flag:c:'+f.id,(f.fmt==='portrait'?'🖼 ':'✦ ')+(f.name||_T('your banner'))+' · custom'])),F.bg)}`}</label></div>
+    <div class="chkgrid" style="margin-top:4px">${fChk('face.mane',F.mane,'Mane / crest / beard')}${fChk('face.fangs',F.fangs,_T('Fangs'))}${fChk('face.scar',F.scar,_T('Battle scar'))}</div>
+    <div class="acts" style="margin-top:6px"><button type="button" class="btn tksm" data-bf="rand">${_T`🎲 Another face`}</button><button type="button" class="btn tksm" data-bf="kind">${_T`↺ Face of its kind`}</button></div></div>`;
   h=h.replace('<div class="card2 rtcard">',faceCard+'<div class="card2 rtcard">');
   h=h.replace(/fSel\('tokenRef'/,'fSel(\'tokenRef\'');return h}}
 function bfRefresh(){const n=ST&&ST.draft;if(!n||!n.face)return;const pv=document.getElementById('bfPrev');if(pv)pv.innerHTML=beastFaceSVG(n.face);if(typeof rtPrevRefresh==='function')rtPrevRefresh()}
@@ -109,7 +109,7 @@ const MYTH_FACES={'Nemean Lion':{species:'feline',c1:'#d8a040',c2:'#f0dca8',eyes
   'Cretan Bull':{species:'bovine',c1:'#e8e0cc',c2:'#d8a0a0',eyes:'#3a2a1a',horns:'bull'},'Griffin of Apollo':{species:'avian',c1:'#c9a050',c2:'#f5efe0',eyes:'#f0cf7d',mane:true,gear:'crown'},'Polyphemus':{species:'giant',c1:'#c98e62',c2:'#6a4a2a',eyes:'#f0cf7d',eyeT:'one',mane:true,fangs:true},
   'Pegasus':{species:'cervine',c1:'#f0ece4',c2:'#c9d0d6',eyes:'#3a5a8a',horns:'',mane:true},'Ceryneian Hind':{species:'cervine',c1:'#c08a44',c2:'#e6b93a',eyes:'#3a2a1a',horns:'antlers'},'Arachne':{species:'arachnid',c1:'#3a2a3a',c2:'#c8c0d8',eyes:'#e04a2a',eyeT:'many'},
   'Python of Delphi':{species:'serpent',c1:'#5f8a3a',c2:'#d8c88a',eyes:'#e0d040',pattern:'scales',fangs:true,gear:'crown'},'Talos':{species:'giant',c1:'#b87333',c2:'#e6b93a',eyes:'#ffb04a',gear:'helm'},'The Calydonian Boar':{species:'boar',c1:'#3a2a1c',c2:'#9a7a5a',eyes:'#ff4a2a',horns:'spikes',scar:true}};
-if(typeof MYTH_BEASTS!=='undefined'){MYTH_BEASTS.push({name:'The Calydonian Boar',kind:'Calydonian Boar',kindKey:'boar',glyph:'B',color:'#3a2a1c',hp:18,ap:5,rng:1,mv:3,coin:14,cf:9,beh:'hunt',tameable:false,states:true,lore:'Sent by Artemis to ravage Calydon — the heroes of Greece gathered to hunt it. The same boar that storms out of the arena deck.',
+if(typeof MYTH_BEASTS!=='undefined'){MYTH_BEASTS.push({name:'The Calydonian Boar',kind:'Calydonian Boar',kindKey:'boar',glyph:'B',color:'#3a2a1c',hp:18,ap:5,rng:1,mv:3,coin:14,cf:9,beh:'hunt',tameable:false,states:true,lore:_T('Sent by Artemis to ravage Calydon — the heroes of Greece gathered to hunt it. The same boar that storms out of the arena deck.'),
     tok:{kind:'beast',body:'quad',c1:'#3a2a1c',c2:'#6a5040',size:1.15,tail:'none',bulk:1,spikes:true,extra:'fangs',eyes:'#ff4a2a'},rt:{ring:'bronze',bg:'#2a1a0e',glyph:false,base:'boar',useFace:false,layers:[]}}); /* its printed round token, from the sheets */
   for(const M of MYTH_BEASTS){M.face={...faceBlank(),...(MYTH_FACES[M.name]||{}),bg:M.rt&&M.rt.bg||'#2a1f17'};if(M.rt&&!M.rt.base){M.rt.layers=[];M.rt.glyph=false}}}
 {const _md=mythDraft;mythDraft=function(i){const n=_md(i);const M=MYTH_BEASTS[i];if(n&&M&&M.face)n.face=JSON.parse(JSON.stringify(M.face));return n}}
@@ -118,21 +118,21 @@ if(typeof MYTH_BEASTS!=='undefined'){MYTH_BEASTS.push({name:'The Calydonian Boar
 
 /* ---------------- 🤝 COHORTS (were Pairings), under Fighters ---------------- */
 SYS_PAIRINGS.push(
-  {id:'sys_dominus',sys:1,name:'Dominus & Servus',type:'duo',rel:'Master & slave',members:['cls:royalty','cls:slave'],blurb:'The master fights beside the man he owns — and never turns his back on him.'},
-  {id:'sys_colleagues',sys:1,name:'Colleagues of the Sand',type:'duo',rel:'Co-workers',members:['cls:soldier','cls:veteranus'],blurb:'Same ludus, same drills, same bad soup for twenty years.'},
-  {id:'sys_rivals',sys:1,name:'The Rivals of Rome',type:'duo',rel:'Rivals',members:['cls:hero','cls:damnatio'],blurb:'The crowd’s darling and the condemned man who swore to end him.'},
-  {id:'sys_artemis',sys:1,name:'The Hunt of Artemis',type:'handler',rel:'Friends',members:['cls:venatore','npc:wolf','npc:wolf'],blurb:'The huntress and the hounds of the goddess.'},
-  {id:'sys_bearpit',sys:1,name:'The Bear Pit',type:'pack',members:['npc:bear','npc:bear'],blurb:'Two bears, one pit, no patience.'},
-  {id:'sys_serpents',sys:1,name:'The Serpent Cult of Glykon',type:'pack',members:['npc:snake','npc:snake','npc:snake'],blurb:'The oracle’s snakes, loosed on the sand.'},
-  {id:'sys_lionsleptis',sys:1,name:'The Lions of Leptis',type:'pack',members:['npc:lion','npc:lion'],blurb:'A pride brought over from Africa for the games.'},
-  {id:'sys_amazons',sys:1,name:'The Daughters of Ares',type:'trio',members:['cls:amazonia','cls:amazonia','cls:venatore'],blurb:'Three women of the sword, and a debt to settle.'});
+  {id:'sys_dominus',sys:1,name:'Dominus & Servus',type:'duo',rel:'Master & slave',members:['cls:royalty','cls:slave'],blurb:_T('The master fights beside the man he owns — and never turns his back on him.')},
+  {id:'sys_colleagues',sys:1,name:'Colleagues of the Sand',type:'duo',rel:'Co-workers',members:['cls:soldier','cls:veteranus'],blurb:_T('Same ludus, same drills, same bad soup for twenty years.')},
+  {id:'sys_rivals',sys:1,name:'The Rivals of Rome',type:'duo',rel:_T('Rivals'),members:['cls:hero','cls:damnatio'],blurb:_T('The crowd’s darling and the condemned man who swore to end him.')},
+  {id:'sys_artemis',sys:1,name:'The Hunt of Artemis',type:'handler',rel:_T('Friends'),members:['cls:venatore','npc:wolf','npc:wolf'],blurb:_T('The huntress and the hounds of the goddess.')},
+  {id:'sys_bearpit',sys:1,name:'The Bear Pit',type:'pack',members:['npc:bear','npc:bear'],blurb:_T('Two bears, one pit, no patience.')},
+  {id:'sys_serpents',sys:1,name:'The Serpent Cult of Glykon',type:'pack',members:['npc:snake','npc:snake','npc:snake'],blurb:_T('The oracle’s snakes, loosed on the sand.')},
+  {id:'sys_lionsleptis',sys:1,name:'The Lions of Leptis',type:'pack',members:['npc:lion','npc:lion'],blurb:_T('A pride brought over from Africa for the games.')},
+  {id:'sys_amazons',sys:1,name:'The Daughters of Ares',type:'trio',members:['cls:amazonia','cls:amazonia','cls:venatore'],blurb:_T('Three women of the sword, and a debt to settle.')});
 {const _pp=pmParse;pmParse=function(ref){const [k,id]=String(ref||'').split(':');if(k==='lg'){const g=(typeof LUDUS_CACHE!=='undefined'?LUDUS_CACHE:[]).find(x=>x.id===id);return g?{char:1,cls:g.cls,name:g.name,label:g.name,lg:g}:null}return _pp(ref)}}
 {const _pt=pmTok;pmTok=function(ref,size=40){const m=pmParse(ref);if(m&&m.lg)return `<span class="pmtok" style="width:${size}px;height:${size}px">${gladFace(m.lg,'xs')}</span>`;return _pt(ref,size)}}
 /* keepers are matched by name when they come from your roster */
 {const _pe=pairEnter;pairEnter=async function(P,drawer,why){const M=(P.members||[]).map(pmParse).filter(Boolean);if(M.some(m=>m.lg)){const P2={...P,members:P.members.map(r=>{const m=pmParse(r);if(m&&m.lg){const p=S.players.find(q=>q.name===m.name);return p?'cls:'+p.cls:r}return r})};return _pe(P2,drawer,why)}return _pe(P,drawer,why)}}
 function cohortStudioHTML(){const h=specialStudioHTML();const a=h.indexOf('<h3 class="sxh3">');if(a<0)return h;
   let c=h.slice(a).replace('<h3 class="sxh3">🤝 Pairings</h3>','<h3 class="sxh3" style="border:0;margin-top:0">🤝 Cohorts</h3>').replace(/pairing/g,'cohort').replace(/Pairing/g,'Cohort').replace(/Your cohorts/,'Your cohorts').replace(/The system cohorts/,'The system cohorts');
-  return `<p>A <b>cohort</b> is a group bound by something — a duo with a bond (family, friends, master &amp; slave, co-workers, the Blood of Asclepius…), a team of four, a keeper and their beasts, a pack. Members come from <b>Your Play Now Gladiators</b> (the active roster) and from the beasts. A cohort can ride in a ⭐ special event, join the <b>arena deck</b> as a card, and be placed in any custom event. ${customTag()}</p>`+c}
+  return `<p>${_T`A <b>cohort</b> is a group bound by something — a duo with a bond (family, friends, master &amp; slave, co-workers, the Blood of Asclepius…), a team of four, a keeper and their beasts, a pack. Members come from <b>Your Play Now Gladiators</b> (the active roster) and from the beasts. A cohort can ride in a ⭐ special event, join the <b>arena deck</b> as a card, and be placed in any custom event. ${customTag()}`}</p>`+c}
 function specialOnlyHTML(){const h=specialStudioHTML();const a=h.indexOf('<h3 class="sxh3">');return (a<0?h:h.slice(0,a)).replace('and the <b>pairings</b> that make them memorable','and the <b>cohorts</b> that make them memorable (made under Fighters → 🤝 Cohorts)').replace(/🤝 Pairings in this event/,'🤝 Cohorts in this event').replace(/Pairings in this event/,'Cohorts in this event')}
 /* member choices: your roster first, then the beasts */
 {const _sp=specialStudioHTML;specialStudioHTML=function(){let h=_sp();const ros=(typeof LUDUS_CACHE!=='undefined'?LUDUS_CACHE:[]).filter(g=>g.roster&&gladActive(g));
@@ -143,7 +143,7 @@ function specialOnlyHTML(){const h=specialStudioHTML();const a=h.indexOf('<h3 cl
   return h}}
 {const _pb=pairBlank;pairBlank=function(){const P=_pb();const ros=(typeof LUDUS_CACHE!=='undefined'?LUDUS_CACHE:[]).filter(g=>g.roster&&gladActive(g));P.members=ros.length>=2?['lg:'+ros[0].id,'lg:'+ros[1].id]:P.members;return P}}
 /* the All creations table calls them cohorts */
-{const _ae=allRowsExtra;allRowsExtra=function(){return _ae().map(r=>r.t==='Pairing'?{...r,t:'Cohort',k:'pairings'}:r)}}
+{const _ae=allRowsExtra;allRowsExtra=function(){return _ae().map(r=>r.t==='Pairing'?{...r,t:_T('Cohort'),k:'pairings'}:r)}}
 /* the Event Designer lists cohorts, marked */
 {const _ro=edRosterHTML;edRosterHTML=function(){return _ro().replace('🤝 Pairings <span','🤝 Cohorts <span').replace(/(data-edpair="[^"]*"[^>]*>) ✦ ([^<]*)/g,'$1 ✦ $2 <span class="cbadge">custom</span>').replace('Make pairings on the ⭐ Special events tab.','Make cohorts under Fighters → 🤝 Cohorts.')}}
 /* every other picker marks custom content */
@@ -152,17 +152,17 @@ function specialOnlyHTML(){const h=specialStudioHTML();const a=h.indexOf('<h3 cl
 
 /* ---------------- 📚 which roster set is loaded ---------------- */
 {const _rs=rosterStudioHTML;rosterStudioHTML=function(){const cur=rosterById((typeof CFG!=='undefined'&&CFG.roster)||'classic');const w=typeof MGR!=='undefined'&&MGR.world;
-  return `<div class="card2 rsloaded"><b>▶ Loaded now</b> · Play Now / New event: <b>${esc(cur.name)}</b>${w&&w.roster?` · your open career (${esc((w.mgrs.find(m=>m.isPlayer)||{}).ludus||'')}) plays with <b>${esc(w.roster.name)}</b> — chosen at its founding, it never changes`:''}</div>`+_rs().replace(/<span class="badge gold">New event uses this<\/span>/,'<span class="badge gold">▶ LOADED for Play Now</span>')}}
+  return `<div class="card2 rsloaded">${_T`<b>▶ Loaded now</b> · Play Now / New event: <b>${esc(cur.name)}</b>${w&&w.roster?_T` · your open career (${esc((w.mgrs.find(m=>m.isPlayer)||{}).ludus||'')}) plays with <b>${esc(w.roster.name)}</b> — chosen at its founding, it never changes`:''}`}</div>`+_rs().replace(/<span class="badge gold">New event uses this<\/span>/,'<span class="badge gold">▶ LOADED for Play Now</span>')}}
 {const _me=meHTML;meHTML=function(){const w=W_();const h=_me();if(!w||!w.roster)return h;return h.replace('<div class="card2"><div class="sect" style="margin-top:0">🏜 Sandbox',`<div class="card2"><div class="sect" style="margin-top:0">📚 Roster set <span class="rc-sub">locked at the founding</span></div><p style="margin:0">This career plays with <b>${esc(w.roster.name)}</b>${w.roster.sel?` — ${esc(rosterSummary(w.roster))}`:''}.</p></div><div class="card2"><div class="sect" style="margin-top:0">🏜 Sandbox`)}}
-document.addEventListener('change',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.roster==='cfg'&&typeof mToast==='function')mToast(`📚 Loaded for Play Now: <b>${esc(rosterById(t.value).name)}</b>`)});
+document.addEventListener('change',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.roster==='cfg'&&typeof mToast==='function')mToast(_T`📚 Loaded for Play Now: <b>${esc(rosterById(t.value).name)}</b>`)});
 
 /* ---------------- save checks ---------------- */
-{const _ee=eventErrors;eventErrors=function(e){const out=_ee(e);if(!(e.rounds||[]).length)out.push('Add at least one round.');
-  (e.rounds||[]).forEach((r,i)=>{if(!r.end)out.push(`Round ${i+1} needs an end condition.`);if(!String(r.n||'').trim())out.push(`Name round ${i+1}.`);
-    if(/alive/.test(r.end||'')&&!r.pvp&&e.mode!=='coop'&&(e.layout.npcs||[]).length===0)out.push(`Round ${i+1} ends when gladiators fall, but PVP is off and there are no beasts — nobody could fall.`);
-    if(/^npc/.test(r.end||'')&&!(e.layout.npcs||[]).length&&!(e.deck&&Object.values(e.deckSpawns||{}).some(Boolean))&&!(e.pairs||[]).length)out.push(`Round ${i+1} ends on slain beasts, but there are none on the board or in the deck.`)});
-  if(+e.max>(e.layout.starts||[]).filter(Boolean).length&&!out.some(x=>/start tiles/.test(x)))out.push('Place one start tile per player.');
-  if(e.mode==='teams'&&+e.max<2)out.push('A team event needs at least two players.');return [...new Set(out)]}}
+{const _ee=eventErrors;eventErrors=function(e){const out=_ee(e);if(!(e.rounds||[]).length)out.push(_T('Add at least one round.'));
+  (e.rounds||[]).forEach((r,i)=>{if(!r.end)out.push(_T`Round ${i+1} needs an end condition.`);if(!String(r.n||'').trim())out.push(_T`Name round ${i+1}.`);
+    if(/alive/.test(r.end||'')&&!r.pvp&&e.mode!=='coop'&&(e.layout.npcs||[]).length===0)out.push(_T`Round ${i+1} ends when gladiators fall, but PVP is off and there are no beasts — nobody could fall.`);
+    if(/^npc/.test(r.end||'')&&!(e.layout.npcs||[]).length&&!(e.deck&&Object.values(e.deckSpawns||{}).some(Boolean))&&!(e.pairs||[]).length)out.push(_T`Round ${i+1} ends on slain beasts, but there are none on the board or in the deck.`)});
+  if(+e.max>(e.layout.starts||[]).filter(Boolean).length&&!out.some(x=>/start tiles/.test(x)))out.push(_T('Place one start tile per player.'));
+  if(e.mode==='teams'&&+e.max<2)out.push(_T('A team event needs at least two players.'));return [...new Set(out)]}}
 {const _sd=stSaveDraft;stSaveDraft=function(){const d=ST.draft;if(ST.tab==='events'){const er=eventErrors(d);if(er.length){if(typeof mToast==='function')mToast('⚠ '+esc(er[0]));return Promise.resolve(null)}}
-  if(ST.tab==='npcs'){if(!(+d.hp>0)){mToast('⚠ A beast needs at least 1 HP.');return Promise.resolve(null)}if(!(+d.mv>=0)){mToast('⚠ Set the beast’s movement.');return Promise.resolve(null)}}
+  if(ST.tab==='npcs'){if(!(+d.hp>0)){mToast(_T('⚠ A beast needs at least 1 HP.'));return Promise.resolve(null)}if(!(+d.mv>=0)){mToast(_T('⚠ Set the beast’s movement.'));return Promise.resolve(null)}}
   if(ST.tab==='chars'&&!String(d.name||'').trim()&&typeof genName==='function')d.name=genName();return _sd()}}

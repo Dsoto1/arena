@@ -59,7 +59,7 @@ const audMtof=midi=>440*Math.pow(2,(midi-69)/12);
 /* audTheme — an arena's theme: its recipe plus a fixed 8-bar melody seeded from the city name. */
 function audTheme(locName){const T=AUD_THEMES[locName]||AUD_THEMES.Roma;const sc=AUD_MODES[T.mode];const deg=(d,oct=0)=>T.root+sc[((d%7)+7)%7]+12*(Math.floor(d/7)+oct);
   // a fixed melody per arena, seeded from its name, so each city is recognisable
-  let h=0;for(const ch of locName||'Roma')h=(h*31+ch.charCodeAt(0))>>>0;const R=()=>{h=(h*1103515245+12345)>>>0;return h/4294967296};
+  let h=0;for(const ch of locName||_T('Roma'))h=(h*31+ch.charCodeAt(0))>>>0;const R=()=>{h=(h*1103515245+12345)>>>0;return h/4294967296};
   const mel=[];for(let bar=0;bar<8;bar++){const row=[];for(let st=0;st<8;st++){const hit=st===0||(R()<(st%2?0.28:0.5));row.push(hit?(T.prog[bar]+[0,2,4,7,4,2,1,5][Math.floor(R()*8)]):null)}mel.push(row)}
   return {...T,sc,deg,mel,name:locName}}
 /* audNote — plays one synthesized note (oscillator, envelope, optional bend / vibrato / low-pass / reverb). */
@@ -95,8 +95,8 @@ function audStep(theme,time,step,intensity){if(theme.boss)return audBossStep(the
    each, crossfading into the next. During an event the arena's own theme plays. Settings → Audio lists every
    track with play / pause / restart; everything fades in and out, gently. */
 /* AUD_TRACKS — the playlist: [city, track name]. */
-const AUD_TRACKS=[['Roma','Ave Imperator'],['Capua','The School of Batiatus'],['Pompeii','Under the Mountain'],['Syracusae','Harbor of Archimedes'],['Verona','The Rose Stone'],['Arles','Dusk on the Rhône'],
-  ['Thysdrus','Olive Gold'],['Nemausus','The Crocodile Coin'],['Leptis Magna','Sea Gate of Severus'],['Uthina','Dunes and Drums'],['Pola','The White Amphitheatre'],['Puteoli','Sulphur Harbor']];
+const AUD_TRACKS=[[_T('Roma'),_T('Ave Imperator')],[_T('Capua'),_T('The School of Batiatus')],[_T('Pompeii'),_T('Under the Mountain')],[_T('Syracusae'),_T('Harbor of Archimedes')],[_T('Verona'),_T('The Rose Stone')],[_T('Arles'),_T('Dusk on the Rhône')],
+  [_T('Thysdrus'),_T('Olive Gold')],[_T('Nemausus'),_T('The Crocodile Coin')],[_T('Leptis Magna'),_T('Sea Gate of Severus')],[_T('Uthina'),_T('Dunes and Drums')],[_T('Pola'),_T('The White Amphitheatre')],[_T('Puteoli'),_T('Sulphur Harbor')]];
 /* TRACK_STEPS — steps a playlist track runs before the next one (~2 minutes). TWEAK: the 384. */
 const TRACK_STEPS=384;
 AUD.pl=0;AUD.manual=null;AUD.paused=false;AUD.switching=false;
@@ -106,9 +106,9 @@ function audFadeTo(level,sec){if(!AUD.ctx||!AUD.fade)return;const g=AUD.fade.gai
 function audLive(){return typeof S!=='undefined'&&S&&!S.over&&S.phase!=='setup'}
 function audWant(){ // which track should be playing right now
   if(AUD.manual)return AUD.manual;
-  if(audFinalOn())return 'Finale'; // v0.42: the last round of a classic
+  if(audFinalOn())return _T('Finale'); // v0.42: the last round of a classic
   if(audLive()&&LOCATIONS[S.locIdx])return LOCATIONS[S.locIdx].n;
-  {const t=AUD_TRACKS[AUD.pl%AUD_TRACKS.length][0];return musicUnlocked(t)?t:'Roma'}}
+  {const t=AUD_TRACKS[AUD.pl%AUD_TRACKS.length][0];return musicUnlocked(t)?t:_T('Roma')}}
 /* audSwitch — crossfades to another theme (the Finale starts with its sting). */
 function audSwitch(name,fast){AUD.switching=true;audFadeTo(0,fast?0.5:1.4);
   setTimeout(()=>{if(!AUD.ctx)return;AUD.theme=audTheme(name);AUD.loc=name;AUD.step=AUD.seek||0;AUD.seek=0;AUD.next=AUD.ctx.currentTime+0.1;AUD.switching=false;
@@ -135,7 +135,7 @@ function audStop(){const was=AUD.playing;AUD.playing=false;if(was)audFadeTo(0,1.
   setTimeout(()=>{if(AUD.playing)return;if(AUD.timer){clearInterval(AUD.timer);AUD.timer=null}if(!AUD.paused){AUD.theme=null;AUD.loc=null}},was?1150:0);audListRefresh()}
 // track controls (Settings → Audio)
 /* audPlayTrack — plays a track from Settings → Audio (locked tracks refuse). */
-function audPlayTrack(name){if(!musicUnlocked(name)){if(typeof mToast==='function')mToast(`🔒 Win at ${esc(name)} to unlock its theme.`);return}audUnlock();AUD.paused=false;AUD.manual=name;AUD.pl=Math.max(0,AUD_TRACKS.findIndex(x=>x[0]===name));
+function audPlayTrack(name){if(!musicUnlocked(name)){if(typeof mToast==='function')mToast(_T`🔒 Win at ${esc(name)} to unlock its theme.`);return}audUnlock();AUD.paused=false;AUD.manual=name;AUD.pl=Math.max(0,AUD_TRACKS.findIndex(x=>x[0]===name));
   if(AUD.theme&&AUD.loc===name&&!AUD.playing){audTick();return} // resume where it paused
   if(AUD.theme&&AUD.playing)audSwitch(name,true);else{AUD.theme=null;audTick()}}
 /* audPauseTrack — pauses the music. */
@@ -146,14 +146,14 @@ function audRestartTrack(name){if(!musicUnlocked(name))return;audUnlock();AUD.pa
    (Roma's is yours from the start). A word of power unlocks all twelve. */
 function musicUnlocked(city){if(city==='Roma')return true;try{if(localStorage.getItem('flavius_musica')==='1')return true}catch(e){}const li=LOCATIONS.findIndex(L=>L&&L.n===city);return typeof HALL_LOCS!=='undefined'&&HALL_LOCS.includes(li)}
 /* audListHTML — the track list in Settings → Audio. */
-function audListHTML(){const cur=AUD.loc;return `<div class="tracklist">${AUD_TRACKS.map(([city,nm],i)=>{if(!musicUnlocked(city))return `<div class="trackrow locked"><span class="n">${String(i+1).padStart(2,'0')}</span><span><b>🔒 ${esc(nm)}</b><br><span class="rc-sub">win an event at <b>${esc(city)}</b> with a gladiator of your own to unlock</span></span><span class="seg"><button type="button" disabled>🔒</button></span></div>`;const on=cur===city&&AUD.playing;const paused=cur===city&&AUD.paused;
-    return `<div class="trackrow ${on?'on':''}"><span class="n">${String(i+1).padStart(2,'0')}</span><span><b>${esc(nm)}</b><br><span class="rc-sub">${esc(city)} · ${AUD_THEMES[city].mode} · ${AUD_THEMES[city].bpm} bpm <b class="trst" style="color:var(--gold2)">${on?'♪ now playing':paused?'paused':''}</b></span></span>
-      <span class="seg"><button type="button" data-trk="${on?'pause':'play'}" data-city="${esc(city)}" title="${on?'Pause':'Play'}">${on?'❚❚':'▶'}</button><button type="button" data-trk="restart" data-city="${esc(city)}" title="Restart from the top">↺</button></span></div>`}).join('')}</div>`}
+function audListHTML(){const cur=AUD.loc;return `<div class="tracklist">${AUD_TRACKS.map(([city,nm],i)=>{if(!musicUnlocked(city))return `<div class="trackrow locked"><span class="n">${String(i+1).padStart(2,'0')}</span><span><b>🔒 ${esc(nm)}</b><br><span class="rc-sub">${_T`win an event at <b>${esc(city)}</b> with a gladiator of your own to unlock`}</span></span><span class="seg"><button type="button" disabled>🔒</button></span></div>`;const on=cur===city&&AUD.playing;const paused=cur===city&&AUD.paused;
+    return `<div class="trackrow ${on?'on':''}"><span class="n">${String(i+1).padStart(2,'0')}</span><span><b>${esc(nm)}</b><br><span class="rc-sub">${_T`${esc(city)} · ${AUD_THEMES[city].mode} · ${AUD_THEMES[city].bpm} bpm <b class="trst" style="color:var(--gold2)">${on?_T('♪ now playing'):paused?_T('paused'):''}</b>`}</span></span>
+      <span class="seg"><button type="button" data-trk="${on?'pause':'play'}" data-city="${esc(city)}" title="${on?_T('Pause'):_T('Play')}">${on?'❚❚':'▶'}</button><button type="button" data-trk="restart" data-city="${esc(city)}" title="${_T`Restart from the top`}">↺</button></span></div>`}).join('')}</div>`}
 // update the rows IN PLACE — never replace a button a click is landing on
 function audListRefresh(){const el=document.getElementById('audTracks');if(!el)return;const rows=el.querySelectorAll('.trackrow');if(rows.length!==AUD_TRACKS.length){el.innerHTML=audListHTML();return}
   AUD_TRACKS.forEach(([city],i)=>{const row=rows[i];const on=AUD.loc===city&&AUD.playing;const paused=AUD.loc===city&&AUD.paused;row.classList.toggle('on',on);
-    const b=row.querySelector('[data-trk="play"],[data-trk="pause"]');if(b){const want=on?'pause':'play';if(b.dataset.trk!==want){b.dataset.trk=want;b.textContent=on?'❚❚':'▶';b.title=on?'Pause':'Play'}}
-    const st=row.querySelector('.trst');if(st){const t=on?'♪ now playing':paused?'paused':'';if(st.textContent!==t)st.textContent=t}})}
+    const b=row.querySelector('[data-trk="play"],[data-trk="pause"]');if(b){const want=on?'pause':'play';if(b.dataset.trk!==want){b.dataset.trk=want;b.textContent=on?'❚❚':'▶';b.title=on?_T('Pause'):_T('Play')}}
+    const st=row.querySelector('.trst');if(st){const t=on?_T('♪ now playing'):paused?'paused':'';if(st.textContent!==t)st.textContent=t}})}
 /* track list play / pause / restart buttons. */
 document.addEventListener('click',e=>{const b=e.target.closest('[data-trk]');if(!b)return;const c=b.dataset.city;
   if(b.dataset.trk==='play')audPlayTrack(c);else if(b.dataset.trk==='pause')audPauseTrack();else audRestartTrack(c);setTimeout(audListRefresh,80)});
@@ -182,7 +182,7 @@ function sfx(kind){const a=audSet();if(HEADLESS||!a.on||!a.sfx)return;if(!audIni
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&(b.id==='goBtn'||b.id==='cityBell'||/Sound the horns/i.test(b.dataset.en84||b.textContent||'')))setTimeout(()=>{try{sfx('horn')}catch(err){}},30)},true);
 
 /* v0.25: the speaker button on the main bar mutes everything (same switch as Settings → Audio → Sound) */
-function audMuteUI(){const b=document.getElementById('btnMute');if(!b)return;const on=audSet().on;b.textContent=on?'🔊':'🔇';b.classList.toggle('muted',!on);b.title=on?'Mute all sound (M)':'Sound is muted — click to unmute (M)'}
+function audMuteUI(){const b=document.getElementById('btnMute');if(!b)return;const on=audSet().on;b.textContent=on?'🔊':'🔇';b.classList.toggle('muted',!on);b.title=on?_T('Mute all sound (M)'):_T('Sound is muted — click to unmute (M)')}
 /* audToggleMute — mutes / unmutes all sound (button or M). */
 function audToggleMute(){SETTINGS.audio={...audSet(),on:!audSet().on};if(typeof applySettings==='function')applySettings();if(audSet().on){audInit();if(AUD.ctx&&AUD.ctx.state==='suspended')AUD.ctx.resume();audApplyVol();audTick()}else{audApplyVol();audStop()}audMuteUI()}
 /* the speaker button. */

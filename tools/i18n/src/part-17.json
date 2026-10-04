@@ -1,0 +1,1910 @@
+[
+ {
+  "k": "called on Hygeia's Blessing ({0} healed)",
+  "w": "50-v48.js:82"
+ },
+ {
+  "k": "<b>Hygeia's Blessing</b>",
+  "w": "50-v48.js:84"
+ },
+ {
+  "k": "Once a season, free: every wounded fighter on your roster is healed at once (lost limbs and war service excepted).",
+  "w": "50-v48.js:84"
+ },
+ {
+  "k": "Used this season — it returns in season {0}.",
+  "w": "50-v48.js:84"
+ },
+ {
+  "k": "Heal every wounded fighter now",
+  "w": "50-v48.js:85"
+ },
+ {
+  "k": "Nobody needs it right now",
+  "w": "50-v48.js:85"
+ },
+ {
+  "k": "Already used this season",
+  "w": "50-v48.js:85"
+ },
+ {
+  "k": "🌿 Call on Hygeia{0}",
+  "w": "50-v48.js:85"
+ },
+ {
+  "k": "· {0} to heal",
+  "w": "50-v48.js:85"
+ },
+ {
+  "k": "✓ Used this season",
+  "w": "50-v48.js:85"
+ },
+ {
+  "k": "🏛 The treasury as it stands today — the coffers you take over with the house",
+  "w": "50-v48.js:90"
+ },
+ {
+  "k": "🏛 The Senate’s founding grant — a new house opens its gates",
+  "w": "50-v48.js:90"
+ },
+ {
+  "k": "🛡 {0} fighter{1} already under contract",
+  "w": "50-v48.js:90"
+ },
+ {
+  "k": "🏛 The Quaestor’s Ledger · your founding",
+  "w": "50-v48.js:92"
+ },
+ {
+  "k": "the treasury you open with — at every season's end the quaestor pays again",
+  "w": "50-v48.js:92"
+ },
+ {
+  "k": "<b>Your opening treasury</b>",
+  "w": "50-v48.js:93"
+ },
+ {
+  "k": "bought off Vulso's cart for {0} coin ({1})",
+  "w": "50-v48.js:100"
+ },
+ {
+  "k": "🛒 Bought {0} off Vulso's cart ({1} coin). {2}.",
+  "w": "50-v48.js:100"
+ },
+ {
+  "k": "🕯 A new season — the crowd forgets a little: fame {0} ({1} → {2}). Win it back on the sand.",
+  "w": "50-v48.js:116"
+ },
+ {
+  "k": "How to run a ludus that lasts. The notes at the end come from a 16-season test run of the league.",
+  "w": "50-v48.js:126"
+ },
+ {
+  "k": "The season",
+  "w": "50-v48.js:127"
+ },
+ {
+  "k": "12 weeks. Each week is a Match Week, Flavius's travelling games: the Undercard on Friday, the Feature on Saturday and the Main event on Sunday. Wins are worth 3 points and runner-up finishes 1.",
+  "w": "50-v48.js:128"
+ },
+ {
+  "k": "The top four go to the <b>Superbus</b>. After it come the awards and the recap paper, and then the <b>Quaestor's Ledger</b> pays every house for its season.",
+  "w": "50-v48.js:129"
+ },
+ {
+  "k": "A new career opens with its founding ledger, which shows your starting treasury.",
+  "w": "50-v48.js:130"
+ },
+ {
+  "k": "Money",
+  "w": "50-v48.js:131"
+ },
+ {
+  "k": "<b>Wages are the bill, purses are the income.</b> A fighter rated 60 asks about 14 coin a week, and an Undercard win pays about 30.",
+  "w": "50-v48.js:132"
+ },
+ {
+  "k": "Keep your weekly wages below what one good night pays. A small house runs best on <b>about three fighters</b>.",
+  "w": "50-v48.js:133"
+ },
+ {
+  "k": "Appearance fees are paid win or lose, so enter someone every week.",
+  "w": "50-v48.js:134"
+ },
+ {
+  "k": "Pay blood money only for a fighter you can't replace.",
+  "w": "50-v48.js:135"
+ },
+ {
+  "k": "Three week-ends in the red closes the ludus. At the season's close, the creditors count what the Quaestor still owes you.",
+  "w": "50-v48.js:136"
+ },
+ {
+  "k": "Your first weeks",
+  "w": "50-v48.js:137"
+ },
+ {
+  "k": "A house built from nothing opens with 100 coin: the founding treasury plus the Senate's newcomer grant.",
+  "w": "50-v48.js:138"
+ },
+ {
+  "k": "<b>Spar every week.</b> The gate from watching fighters is safe income, and the sparring fighter gets an edge on Match Week.",
+  "w": "50-v48.js:139"
+ },
+ {
+  "k": "<b>Take the road offers.</b> Another house pays your travel if you enter the fighter they ask for. Struggling houses get these offers more often.",
+  "w": "50-v48.js:140"
+ },
+ {
+  "k": "Small houses (2 fighters or fewer, under 120 coin) pay half the blood money to save a condemned fighter.",
+  "w": "50-v48.js:141"
+ },
+ {
+  "k": "Your first, partial season is forgiven if it ends in debt. The next one isn't.",
+  "w": "50-v48.js:142"
+ },
+ {
+  "k": "In a 20-career test, new houses that spar, take road offers and borrow once survived three seasons 18 times out of 20. Before this build it was 2 out of 20.",
+  "w": "50-v48.js:143"
+ },
+ {
+  "k": "House size",
+  "w": "50-v48.js:144"
+ },
+ {
+  "k": "<b>Small (2–4 fighters).</b> Enter your best fighter in the bout they fit. Keep weekly wages at or below one night's purse. This is where every house starts.",
+  "w": "50-v48.js:145"
+ },
+ {
+  "k": "<b>Medium (5–7).</b> You can fill all three bouts every week and still cover injuries.",
+  "w": "50-v48.js:146"
+ },
+ {
+  "k": "Bench the spares and lend them out for a fee.",
+  "w": "50-v48.js:148"
+ },
+ {
+  "k": "It pays only with steady Feature and Main event wins. Wages run about 70–100 coin a week.",
+  "w": "50-v48.js:149"
+ },
+ {
+  "k": "<b>Large (8+).</b> Build to this once you're thriving.",
+  "w": "50-v48.js:151"
+ },
+ {
+  "k": "Special events and exhibitions give the extra fighters bouts, and loans turn the bench into income.",
+  "w": "50-v48.js:153"
+ },
+ {
+  "k": "Build Barracks so fighters sign for less, and Practice stands so sparring pays.",
+  "w": "50-v48.js:154"
+ },
+ {
+  "k": "There's no cap on signings, but past five fighters, recruits who care about time on the sand grade you a little lower for each extra body.",
+  "w": "50-v48.js:155"
+ },
+ {
+  "k": "<b>Thriving houses</b> (350+ coin, or fame 55+ with 150+ coin) are on their own: no loan offers, no cart, no one pays your road, and no Senate stipend.",
+  "w": "50-v48.js:157"
+ },
+ {
+  "k": "The depth chart",
+  "w": "50-v48.js:158"
+ },
+ {
+  "k": "<b>Starters</b> are the fighters you can enter on Match Week.",
+  "w": "50-v48.js:159"
+ },
+ {
+  "k": "<b>Bench</b> fighters train, or go on loan to a friendly house for a weekly fee. Rivals never get a loan.",
+  "w": "50-v48.js:160"
+ },
+ {
+  "k": "The injured sit out until they're healed.",
+  "w": "50-v48.js:161"
+ },
+ {
+  "k": "The Loans panel shows who is out, who is in, the fee and the weeks left.",
+  "w": "50-v48.js:162"
+ },
+ {
+  "k": "Practice",
+  "w": "50-v48.js:163"
+ },
+ {
+  "k": "A practice bout grows a fighter a little.",
+  "w": "50-v48.js:164"
+ },
+ {
+  "k": "League fighters who come to watch each pay a coin from their own purses, 2 with Practice stands.",
+  "w": "50-v48.js:165"
+ },
+ {
+  "k": "The fighter who sparred takes <b>+1 AP and +2 CF</b> into this week's Match Week. Spar the fighter you're about to enter.",
+  "w": "50-v48.js:166"
+ },
+ {
+  "k": "Empty barracks",
+  "w": "50-v48.js:167"
+ },
+ {
+  "k": "Lose everyone and a friendly house writes to offer a fighter on loan. You decide whether to accept.",
+  "w": "50-v48.js:168"
+ },
+ {
+  "k": "<b>Vulso's cart</b> also comes to your gate once, with three cheap lots and no travel cost.",
+  "w": "50-v48.js:169"
+ },
+ {
+  "k": "A loaned fighter goes home as soon as you sign one of your own.",
+  "w": "50-v48.js:170"
+ },
+ {
+  "k": "If a loaned fighter dies under your colours, you owe their house a fee.",
+  "w": "50-v48.js:171"
+ },
+ {
+  "k": "The physicians have a weekly budget. The Valetudinarium raises it.",
+  "w": "50-v48.js:173"
+ },
+ {
+  "k": "<b>Hygeia's Blessing</b> heals your whole roster once a season, for free. Save it for a bad week near the run-in. Every house has one.",
+  "w": "50-v48.js:174"
+ },
+ {
+  "k": "Fame and stone",
+  "w": "50-v48.js:175"
+ },
+ {
+  "k": "Fame opens doors to recruits, but at every season's close it drifts back toward 35. Keep winning to hold it.",
+  "w": "50-v48.js:176"
+ },
+ {
+  "k": "Rich houses build: Practice stands pay, the yard trains, the armory adds AP. Once your treasury clears the next building's price, the rival houses are already pouring stone.",
+  "w": "50-v48.js:177"
+ },
+ {
+  "k": "What 16 seasons showed",
+  "w": "50-v48.js:178"
+ },
+ {
+  "k": "Ratings hold steady at a league average of 60–65. A 90+ star appears now and then.",
+  "w": "50-v48.js:179"
+ },
+ {
+  "k": "The free-agent market settles at about 55–60 fighters.",
+  "w": "50-v48.js:180"
+ },
+ {
+  "k": "House treasuries settle at a median of 150–250.",
+  "w": "50-v48.js:181"
+ },
+ {
+  "k": "A house that enters every fighter in every bout and pays every blood price loses about 60 coin a week. Pick your bouts.",
+  "w": "50-v48.js:182"
+ },
+ {
+  "k": "Fixed in this build:",
+  "w": "50-v48.js:183"
+ },
+ {
+  "k": "Fame crept toward the ceiling for every house. It now drifts back toward 35 each season.",
+  "w": "50-v48.js:185"
+ },
+ {
+  "k": "Rich houses sat on 900–1,000 coin. They now build sooner.",
+  "w": "50-v48.js:186"
+ },
+ {
+  "k": "The free-agent pool swelled past 75. It's now trimmed to 55.",
+  "w": "50-v48.js:187"
+ },
+ {
+  "k": "More detail",
+  "w": "50-v48.js:189"
+ },
+ {
+  "k": "open Manager mode to hear it",
+  "w": "51-v49.js:37"
+ },
+ {
+  "k": "open the Annals to hear it",
+  "w": "51-v49.js:37"
+ },
+ {
+  "k": "reach the Flavius Superbus to hear it",
+  "w": "51-v49.js:37"
+ },
+ {
+  "k": "play a special event or a Play Now tournament to hear it",
+  "w": "51-v49.js:37"
+ },
+ {
+  "k": "Click anywhere to jump there",
+  "w": "51-v49.js:56"
+ },
+ {
+  "k": "Friday",
+  "w": "51-v49.js:67"
+ },
+ {
+  "k": "Saturday",
+  "w": "51-v49.js:67"
+ },
+ {
+  "k": "Sunday",
+  "w": "51-v49.js:67"
+ },
+ {
+  "k": "<b>All set in Your ludus.</b> Match Week is waiting at <b>{0}</b>.",
+  "w": "51-v49.js:80"
+ },
+ {
+  "k": "Go to Match Week →",
+  "w": "51-v49.js:80"
+ },
+ {
+  "k": "picked for {0}",
+  "w": "51-v49.js:86"
+ },
+ {
+  "k": "⭐ Picked for <b>{0}</b>: {1} walk a little taller (+4 morale). Keep them until it's fought for more.",
+  "w": "51-v49.js:87"
+ },
+ {
+  "k": "⭐ {0} kept their word and travel to <b>{1}</b>: +8 morale and +2 loyalty each, and the rest of the barracks gets +2 morale.",
+  "w": "51-v49.js:90"
+ },
+ {
+  "k": "🌱 The Senate’s newcomer grant — for a house built from nothing",
+  "w": "51-v49.js:107"
+ },
+ {
+  "k": "⬆ Upload a save<small>{0}</small>",
+  "w": "51-v49.js:118"
+ },
+ {
+  "k": "a career .json you downloaded",
+  "w": "51-v49.js:118"
+ },
+ {
+  "k": "a match .json you downloaded",
+  "w": "51-v49.js:118"
+ },
+ {
+  "k": "That is a whole-game backup — it replaces every save, so it is restored only from Settings → Saves (⬆ Open a save file), which asks before replacing anything.",
+  "w": "51-v49.js:120"
+ },
+ {
+  "k": "All three match slots are full — delete one, then upload again.",
+  "w": "51-v49.js:121"
+ },
+ {
+  "k": "⬆ “{0}” is in slot {1}.",
+  "w": "51-v49.js:122"
+ },
+ {
+  "k": "Uploaded match",
+  "w": "51-v49.js:122"
+ },
+ {
+  "k": "That career file is damaged.",
+  "w": "51-v49.js:123"
+ },
+ {
+  "k": "⬆ {0} is in your careers.",
+  "w": "51-v49.js:126"
+ },
+ {
+  "k": "Into the Ludus",
+  "w": "51-v49.js:146"
+ },
+ {
+  "k": "finish with 20+ CF and survive",
+  "w": "51-v49.js:146"
+ },
+ {
+  "k": "reach 50 CF",
+  "w": "51-v49.js:146"
+ },
+ {
+  "k": "Tholo slayer",
+  "w": "51-v49.js:146"
+ },
+ {
+  "k": "kill Tholo",
+  "w": "51-v49.js:146"
+ },
+ {
+  "k": "Kingslayer",
+  "w": "51-v49.js:146"
+ },
+ {
+  "k": "kill Commodus",
+  "w": "51-v49.js:146"
+ },
+ {
+  "k": "Master of arms",
+  "w": "51-v49.js:147"
+ },
+ {
+  "k": "win with all eight base classes",
+  "w": "51-v49.js:147"
+ },
+ {
+  "k": "Grand tour",
+  "w": "51-v49.js:147"
+ },
+ {
+  "k": "win at all twelve arenas",
+  "w": "51-v49.js:147"
+ },
+ {
+  "k": "Veteran",
+  "w": "51-v49.js:147"
+ },
+ {
+  "k": "play 25 events",
+  "w": "51-v49.js:147"
+ },
+ {
+  "k": "win the twelve arenas in the Hall’s order",
+  "w": "51-v49.js:147"
+ },
+ {
+  "k": "Deep purse",
+  "w": "51-v49.js:147"
+ },
+ {
+  "k": "hold 300 coin",
+  "w": "51-v49.js:147"
+ },
+ {
+  "k": "👥 Multiplayer<small>hot seat · online</small>",
+  "w": "51-v49.js:160"
+ },
+ {
+  "k": "🪑 Hot seat<small>2–8 players on this device, CPUs fill the rest</small>",
+  "w": "51-v49.js:162"
+ },
+ {
+  "k": "Coming in a later version",
+  "w": "51-v49.js:162"
+ },
+ {
+  "k": "🌐 Online lobbies<small>coming soon</small>",
+  "w": "51-v49.js:162"
+ },
+ {
+  "k": "Hot seat",
+  "w": "51-v49.js:167"
+ },
+ {
+  "k": "🪑 Hot seat",
+  "w": "51-v49.js:175"
+ },
+ {
+  "k": "open table · pass the device on each turn · up to 8 seats, humans and CPUs",
+  "w": "51-v49.js:175"
+ },
+ {
+  "k": "Set a seat to <b>Player</b> and type a name. A name is a profile on this device: record, wallet, honors and its own Road of Flavius.",
+  "w": "51-v49.js:176"
+ },
+ {
+  "k": "Best CF",
+  "w": "51-v49.js:177"
+ },
+ {
+  "k": "Wallet",
+  "w": "51-v49.js:177"
+ },
+ {
+  "k": "Honors",
+  "w": "51-v49.js:177"
+ },
+ {
+  "k": "Road",
+  "w": "51-v49.js:177"
+ },
+ {
+  "k": "Delete this profile",
+  "w": "51-v49.js:177"
+ },
+ {
+  "k": "<div class=\"seat\"",
+  "w": "51-v49.js:182"
+ },
+ {
+  "k": "Delete?",
+  "w": "51-v49.js:185"
+ },
+ {
+  "k": "Player {0}",
+  "w": "51-v49.js:192"
+ },
+ {
+  "k": "🎮 <b>{0}</b>’s turn <span>{1}{2}</span>",
+  "w": "51-v49.js:196"
+ },
+ {
+  "k": "<b>{0}</b>: {1}{2} CF · +{3} coin (wallet {4}) · Road {5}/12{6}",
+  "w": "51-v49.js:214"
+ },
+ {
+  "k": "<b>🪑 Hot seat — the players' books</b><br>{0}",
+  "w": "51-v49.js:215"
+ },
+ {
+  "k": "🪑 Every player’s profile is updated — see the log.",
+  "w": "51-v49.js:215"
+ },
+ {
+  "k": "Zora in the arena deck <span class=\"rc-sub\">(anyone can draw him · the Venatore always carries his own)</span>",
+  "w": "52-v50.js:19"
+ },
+ {
+  "k": "This event keeps Zora out",
+  "w": "52-v50.js:19"
+ },
+ {
+  "k": "in hand",
+  "w": "52-v50.js:40"
+ },
+ {
+  "k": "🎮 {0} — your turn",
+  "w": "52-v50.js:46"
+ },
+ {
+  "k": "Since your last turn",
+  "w": "52-v50.js:46"
+ },
+ {
+  "k": "Start my turn",
+  "w": "52-v50.js:46"
+ },
+ {
+  "k": "Crowd Favor (CF)",
+  "w": "52-v50.js:62"
+ },
+ {
+  "k": "Your score with the crowd. Earn it from [[blessings|pots]], beast trophies, kills and your class. At the end: 20+ saves you to the [[ludusf|Ludus Flavius]], 50+ wins freedom, 17–19 faces the [[thumb|Thumb of Flavius]], under 17 the [[fate|Fate table]].",
+  "w": "52-v50.js:62"
+ },
+ {
+  "k": "Armor Points (AP)",
+  "w": "52-v50.js:63"
+ },
+ {
+  "k": "Armor on each body location, at most 7. A hit strips AP before it reaches [[hp|HP]]. Shields can absorb a hit instead.",
+  "w": "52-v50.js:63"
+ },
+ {
+  "k": "Health (HP)",
+  "w": "52-v50.js:64"
+ },
+ {
+  "k": "Health on each body location. Lose the head or the chest and you are out; lose an arm or a leg and it is severed.",
+  "w": "52-v50.js:64"
+ },
+ {
+  "k": "The Fate table",
+  "w": "52-v50.js:65"
+ },
+ {
+  "k": "At the end, a gladiator under 17 [[cf|CF]] rolls the d12: Damnatio, the Fatal Charades or worse. In Manager mode, [[blood|blood money]] can buy them back.",
+  "w": "52-v50.js:65"
+ },
+ {
+  "k": "Gladiators who end with 20+ [[cf|CF]] and survive are saved here, and can be summoned into later events.",
+  "w": "52-v50.js:67"
+ },
+ {
+  "k": "The rudis",
+  "w": "52-v50.js:68"
+ },
+ {
+  "k": "The wooden sword of freedom. A fighter with enough events and wins can be granted it: freed, or kept for the house.",
+  "w": "52-v50.js:68"
+ },
+ {
+  "k": "Blessings pots",
+  "w": "52-v50.js:69"
+ },
+ {
+  "k": "Pots on the pillars. Break one (2 damage) for 2 coin, 1 [[cf|CF]] and a hidden offering. Power-2 weapons break them best.",
+  "w": "52-v50.js:69"
+ },
+ {
+  "k": "Secret objectives dealt at the start. Each one still hidden at the end costs 5 [[cf|CF]].",
+  "w": "52-v50.js:70"
+ },
+ {
+  "k": "The gladiator a beast is hunting: the last one to hit it. Tunnels and the Ward of the Evil Eye shake it off.",
+  "w": "52-v50.js:71"
+ },
+ {
+  "k": "Raged and Fazed",
+  "w": "52-v50.js:72"
+ },
+ {
+  "k": "Lions, Commodus and Tholo turn Raged as they lose HP (harder hits, faster), then Fazed near death (slow, weak). Finish a Fazed boss before a rival steals the trophy.",
+  "w": "52-v50.js:72"
+ },
+ {
+  "k": "Truce",
+  "w": "52-v50.js:73"
+ },
+ {
+  "k": "A pact not to attack. It ends the moment either side strikes.",
+  "w": "52-v50.js:73"
+ },
+ {
+  "k": "Blood money",
+  "w": "52-v50.js:74"
+ },
+ {
+  "k": "Manager mode: pay the editor to spare a condemned fighter the [[fate|Fate table]]. Small, struggling houses pay half.",
+  "w": "52-v50.js:74"
+ },
+ {
+  "k": "Appearance fee",
+  "w": "52-v50.js:75"
+ },
+ {
+  "k": "Paid to your house for every fighter on the card, win or lose.",
+  "w": "52-v50.js:75"
+ },
+ {
+  "k": "80+: +1 [[ap|AP]] and +1 [[cf|CF]] on the sand. Under 35: −1 AP. Under 20: the fighter thinks a tier worse.",
+  "w": "52-v50.js:76"
+ },
+ {
+  "k": "Starters and bench",
+  "w": "52-v50.js:77"
+ },
+ {
+  "k": "Starters are the fighters you can enter on [[mweek|Match Week]]. The bench trains or goes on loan.",
+  "w": "52-v50.js:77"
+ },
+ {
+  "k": "Flavius’s travelling games: three bouts in one city each week — the Undercard on Friday, the Feature on Saturday, the Main event on Sunday.",
+  "w": "52-v50.js:78"
+ },
+ {
+  "k": "The season’s championship in Roma for the top four houses. The awards, the recap paper and the [[ledger|Quaestor’s Ledger]] follow it.",
+  "w": "52-v50.js:79"
+ },
+ {
+  "k": "The Quaestor’s Ledger",
+  "w": "52-v50.js:80"
+ },
+ {
+  "k": "The season’s pay to every house: a stipend, tax returns, bounties, [[fame]] and league finish. Thriving houses get no stipend.",
+  "w": "52-v50.js:80"
+ },
+ {
+  "k": "How known your house is. It opens doors to recruits and drifts back toward 35 at every season’s close.",
+  "w": "52-v50.js:81"
+ },
+ {
+  "k": "The omen",
+  "w": "52-v50.js:82"
+ },
+ {
+  "k": "The week’s sign from the gods: it sways attendance, purses and moods.",
+  "w": "52-v50.js:82"
+ },
+ {
+  "k": "Hygeia’s Blessing",
+  "w": "52-v50.js:84"
+ },
+ {
+  "k": "Once a season, every house can heal its whole roster for free.",
+  "w": "52-v50.js:84"
+ },
+ {
+  "k": "Thriving house",
+  "w": "52-v50.js:85"
+ },
+ {
+  "k": "350+ coin, or fame 55+ with 150+ coin. A thriving house gets no loans, cart, paid road or stipend.",
+  "w": "52-v50.js:85"
+ },
+ {
+  "k": "🎓 Learn to Play",
+  "w": "52-v50.js:138"
+ },
+ {
+  "k": "💼 Learn Manager Mode",
+  "w": "52-v50.js:138"
+ },
+ {
+  "k": "⚔️ Play Now",
+  "w": "52-v50.js:138"
+ },
+ {
+  "k": "👥 Multiplayer",
+  "w": "52-v50.js:138"
+ },
+ {
+  "k": "💼 Manager Mode",
+  "w": "52-v50.js:138"
+ },
+ {
+  "k": "🎨 Creator Studio",
+  "w": "52-v50.js:138"
+ },
+ {
+  "k": "🏛️ The Annals",
+  "w": "52-v50.js:138"
+ },
+ {
+  "k": "⚙️ Settings",
+  "w": "52-v50.js:138"
+ },
+ {
+  "k": "🪑 Hot Seat",
+  "w": "52-v50.js:138"
+ },
+ {
+  "k": "🌐 Online",
+  "w": "52-v50.js:138"
+ },
+ {
+  "k": "ⓘ How the Blessings bag works",
+  "w": "52-v50.js:147"
+ },
+ {
+  "k": "this week: <b>{0}</b> · {1}",
+  "w": "52-v50.js:152"
+ },
+ {
+  "k": "<span class=\"badge gold\">on schedule</span>",
+  "w": "52-v50.js:152"
+ },
+ {
+  "k": "👋 How a week works",
+  "w": "52-v50.js:160"
+ },
+ {
+  "k": "Beasts are the savings account: gladiators with 2+ beast trophies won 29% and reached the Ludus 45% of the time — with none, 18% and 22%.",
+  "w": "53-guide50.js:2"
+ },
+ {
+  "k": "Break pots: 2+ pots broken meant 32% wins and 44% Ludus, against 12% and 24% for the pot-shy.",
+  "w": "53-guide50.js:2"
+ },
+ {
+  "k": "Draw cards: 2+ arena cards won 27% against 18% for coin-only turns.",
+  "w": "53-guide50.js:2"
+ },
+ {
+  "k": "Ratings: a Luck perk (+1 coin a turn) won 30% against 24% without, and a Charisma perk (+1 CF a turn) 30% with 26 CF on average. A lone +1 movement or +1 damage changes little by itself: spend it early, in the rounds that allow it.",
+  "w": "53-guide50.js:2"
+ },
+ {
+  "k": "Events last 53 turns on average: Democritus 52, Egidious 53, Cassian 55. Beasts slain per event: 7.5.",
+  "w": "53-guide50.js:2"
+ },
+ {
+  "k": "Table",
+  "w": "53-guide50.js:8"
+ },
+ {
+  "k": "{0}: {1}% ({2} of {3} gladiators)",
+  "w": "53-guide50.js:15"
+ },
+ {
+  "k": "Outcome",
+  "w": "53-guide50.js:17"
+ },
+ {
+  "k": "Share",
+  "w": "53-guide50.js:17"
+ },
+ {
+  "k": "Habit",
+  "w": "53-guide50.js:23"
+ },
+ {
+  "k": "Final CF {0}: {1} gladiators, {2} of them winners",
+  "w": "53-guide50.js:26"
+ },
+ {
+  "k": "everyone else",
+  "w": "53-guide50.js:28"
+ },
+ {
+  "k": "Winners",
+  "w": "53-guide50.js:29"
+ },
+ {
+  "k": "events simulated",
+  "w": "53-guide50.js:32"
+ },
+ {
+  "k": "All-CPU Classic events (Democritus, Egidious, Cassian) on v",
+  "w": "53-guide50.js:32"
+ },
+ {
+  "k": ", with every option on.",
+  "w": "53-guide50.js:32"
+ },
+ {
+  "k": "CF, the average winner",
+  "w": "53-guide50.js:32"
+ },
+ {
+  "k": "Winners add 15 CF for surviving; most end well past the 50 CF of freedom.",
+  "w": "53-guide50.js:32"
+ },
+ {
+  "k": "reach the Ludus Flavius",
+  "w": "53-guide50.js:32"
+ },
+ {
+  "k": "Finished with 20+ [[cf|CF]] and walked out alive.",
+  "w": "53-guide50.js:32"
+ },
+ {
+  "k": "turns an event",
+  "w": "53-guide50.js:32"
+ },
+ {
+  "k": "· Egidious",
+  "w": "53-guide50.js:32"
+ },
+ {
+  "k": "· Cassian",
+  "w": "53-guide50.js:32"
+ },
+ {
+  "k": "The last gladiator standing (+15 CF).",
+  "w": "53-guide50.js:33"
+ },
+ {
+  "k": "Saved to the Ludus",
+  "w": "53-guide50.js:33"
+ },
+ {
+  "k": "Survived with 20+ CF.",
+  "w": "53-guide50.js:33"
+ },
+ {
+  "k": "Fell or condemned",
+  "w": "53-guide50.js:33"
+ },
+ {
+  "k": "Eliminated on the sand, or sent to the Fate table.",
+  "w": "53-guide50.js:33"
+ },
+ {
+  "k": "{0}: wins {1}% · average {2} CF · reaches the Ludus {3}%",
+  "w": "53-guide50.js:34"
+ },
+ {
+  "k": "Beast trophies",
+  "w": "53-guide50.js:35"
+ },
+ {
+  "k": "Market buys",
+  "w": "53-guide50.js:35"
+ },
+ {
+  "k": "Pots broken",
+  "w": "53-guide50.js:35"
+ },
+ {
+  "k": "Arena cards",
+  "w": "53-guide50.js:35"
+ },
+ {
+  "k": "How events end",
+  "w": "53-guide50.js:38"
+ },
+ {
+  "k": "Habits that win",
+  "w": "53-guide50.js:38"
+ },
+ {
+  "k": "win rate · 2 or more vs none",
+  "w": "53-guide50.js:38"
+ },
+ {
+  "k": "2 or more",
+  "w": "53-guide50.js:38"
+ },
+ {
+  "k": "Win rate by class",
+  "w": "53-guide50.js:39"
+ },
+ {
+  "k": "share of events won · hover for CF and the Ludus",
+  "w": "53-guide50.js:39"
+ },
+ {
+  "k": "Final Crowd Favor",
+  "w": "53-guide50.js:39"
+ },
+ {
+  "k": "how many gladiators end at each CF",
+  "w": "53-guide50.js:39"
+ },
+ {
+  "k": "© 2026 Flavius Rule ·",
+  "w": "54-v51.js:8"
+ },
+ {
+  "k": "The prototype this game was distilled from",
+  "w": "54-v51.js:8"
+ },
+ {
+  "k": "Version — click for what is new",
+  "w": "54-v51.js:8"
+ },
+ {
+  "k": "an earlier version",
+  "w": "54-v51.js:37"
+ },
+ {
+  "k": "<b>⬆ This save is from {0}.</b>",
+  "w": "54-v51.js:40"
+ },
+ {
+  "k": "It will be upgraded to v{0} as it loads: fields newer versions need are filled in (fighters’ purses, season records) and broken offers are dropped. Your record, roster and treasury stay as they are.",
+  "w": "54-v51.js:40"
+ },
+ {
+  "k": "Upgrade and load",
+  "w": "54-v51.js:40"
+ },
+ {
+  "k": "Saves from older versions are upgraded to v{0} as they are restored.",
+  "w": "54-v51.js:60"
+ },
+ {
+  "k": "· +{0} CF",
+  "w": "54-v51.js:72"
+ },
+ {
+  "k": "· +{0} coin",
+  "w": "54-v51.js:72"
+ },
+ {
+  "k": "<b>Trophies · {0}</b><br>{1}{2}{3}Every 3 held by a winner add 5 CF.",
+  "w": "54-v51.js:73"
+ },
+ {
+  "k": "None yet.",
+  "w": "54-v51.js:73"
+ },
+ {
+  "k": "Power: hit dice rolled per attack point",
+  "w": "54-v51.js:74"
+ },
+ {
+  "k": "Range in tiles",
+  "w": "54-v51.js:74"
+ },
+ {
+  "k": "shots left",
+  "w": "54-v51.js:74"
+ },
+ {
+  "k": "can be thrown once, farther and harder",
+  "w": "54-v51.js:74"
+ },
+ {
+  "k": "absorbs damage when you choose to block",
+  "w": "54-v51.js:74"
+ },
+ {
+  "k": "attacks twice each turn",
+  "w": "54-v51.js:74"
+ },
+ {
+  "k": "CF for every hit",
+  "w": "54-v51.js:74"
+ },
+ {
+  "k": "heals you for every hit",
+  "w": "54-v51.js:74"
+ },
+ {
+  "k": "uses left before it breaks",
+  "w": "54-v51.js:74"
+ },
+ {
+  "k": "An empty hand punches for 1 at range 1 — and glances off armor unless you wear a Cestus.",
+  "w": "54-v51.js:75"
+ },
+ {
+  "k": "Plays the lyre: control one beast each Resolve.",
+  "w": "54-v51.js:76"
+ },
+ {
+  "k": "Held, not swung: it occupies this hand.",
+  "w": "54-v51.js:76"
+ },
+ {
+  "k": "Power {0}: {1} hit {2} per attack point.",
+  "w": "54-v51.js:77"
+ },
+ {
+  "k": "Range {0}: reaches {1} tile{2}{3}.",
+  "w": "54-v51.js:77"
+ },
+ {
+  "k": "— strikes from out of reach",
+  "w": "54-v51.js:77"
+ },
+ {
+  "k": "{0} shot{1} left.",
+  "w": "54-v51.js:78"
+ },
+ {
+  "k": "Throw: power {0}, range {1} ({2} left) — it leaves your hand.",
+  "w": "54-v51.js:78"
+ },
+ {
+  "k": "Shield: absorbs {0} per hit, {1} uses.",
+  "w": "54-v51.js:79"
+ },
+ {
+  "k": "{0} uses before it breaks.",
+  "w": "54-v51.js:79"
+ },
+ {
+  "k": "Attacks with both hands’ strength twice.",
+  "w": "54-v51.js:79"
+ },
+ {
+  "k": "+{0} CF for every hit.",
+  "w": "54-v51.js:80"
+ },
+ {
+  "k": "Heals {0} HP for every hit.",
+  "w": "54-v51.js:80"
+ },
+ {
+  "k": "A Flavius item: +2 CF if you win.",
+  "w": "54-v51.js:80"
+ },
+ {
+  "k": "Right hand",
+  "w": "54-v51.js:86"
+ },
+ {
+  "k": "Left hand",
+  "w": "54-v51.js:86"
+ },
+ {
+  "k": "<span class=\"wspent\">spent this turn</span>",
+  "w": "54-v51.js:87"
+ },
+ {
+  "k": "<button class=\"stat\" data-tip=\"",
+  "w": "54-v51.js:90"
+ },
+ {
+  "k": "<br>This gladiator cannot use tunnels.",
+  "w": "54-v51.js:92"
+ },
+ {
+  "k": "Looking at",
+  "w": "54-v51.js:95"
+ },
+ {
+  "k": "📌 On arena",
+  "w": "54-v51.js:107"
+ },
+ {
+  "k": "📌 Off arena",
+  "w": "54-v51.js:107"
+ },
+ {
+  "k": "{0} moves {1} tile{2}, {3} → {4} ({5} movement{6}).",
+  "w": "54-v51.js:115"
+ },
+ {
+  "k": ", {0} left",
+  "w": "54-v51.js:115"
+ },
+ {
+  "k": "Resolve",
+  "w": "54-v51.js:117"
+ },
+ {
+  "k": "Choice",
+  "w": "54-v51.js:117"
+ },
+ {
+  "k": "Action",
+  "w": "54-v51.js:117"
+ },
+ {
+  "k": "⚔ Actions",
+  "w": "54-v51.js:125"
+ },
+ {
+  "k": "🛡 Fighter",
+  "w": "54-v51.js:125"
+ },
+ {
+  "k": "👥 Gladiators",
+  "w": "54-v51.js:125"
+ },
+ {
+  "k": "📜 Log",
+  "w": "54-v51.js:125"
+ },
+ {
+  "k": "{0} picks up the stone ({1} in the sling).",
+  "w": "56-v52.js:7"
+ },
+ {
+  "k": "click the active pace to change it",
+  "w": "56-v52.js:21"
+ },
+ {
+  "k": "Hide the arena tools",
+  "w": "56-v52.js:27"
+ },
+ {
+  "k": "Arena tools: stands, see-through, hints, zoom",
+  "w": "56-v52.js:27"
+ },
+ {
+  "k": "Hints are on — click to turn every hint off (H)",
+  "w": "56-v52.js:28"
+ },
+ {
+  "k": "Hints are off — click to turn them on (H)",
+  "w": "56-v52.js:28"
+ },
+ {
+  "k": "When a weapon runs out of throws, discard it from play.",
+  "w": "56-v52.js:57"
+ },
+ {
+  "k": "Thrown weapons cannot be picked up in the same turn.",
+  "w": "56-v52.js:57"
+ },
+ {
+  "k": "Ammo cards can only refill a weapon to its original ammo.",
+  "w": "56-v52.js:57"
+ },
+ {
+  "k": "Lose the head or the chest and you are out of the event.",
+  "w": "56-v52.js:58"
+ },
+ {
+  "k": "A hit strips armor before it reaches health.",
+  "w": "56-v52.js:58"
+ },
+ {
+  "k": "Crowd Favor of 20 or more saves you to the Ludus Flavius.",
+  "w": "56-v52.js:58"
+ },
+ {
+  "k": "50 Crowd Favor wins your freedom.",
+  "w": "56-v52.js:58"
+ },
+ {
+  "k": "Every 3 trophies held by the winner add 5 CF.",
+  "w": "56-v52.js:59"
+ },
+ {
+  "k": "Hidden Mandata Flavi cost 5 CF each at the end.",
+  "w": "56-v52.js:59"
+ },
+ {
+  "k": "No CF can be spent while Commodus is in the arena.",
+  "w": "56-v52.js:59"
+ },
+ {
+  "k": "Beasts you attack will hunt you: that is aggro.",
+  "w": "56-v52.js:59"
+ },
+ {
+  "k": "Spectators may throw a stone for 2 CF.",
+  "w": "56-v52.js:60"
+ },
+ {
+  "k": "Arena keys open the chest or a tunnel.",
+  "w": "56-v52.js:60"
+ },
+ {
+  "k": "The zone shrinks each round: two turns of grace to get inside.",
+  "w": "56-v52.js:60"
+ },
+ {
+  "k": "🎓 Lesson buttons shown on the main menu",
+  "w": "56-v52.js:83"
+ },
+ {
+  "k": "🎓 Lesson buttons hidden from the main menu",
+  "w": "56-v52.js:83"
+ },
+ {
+  "k": "💡 Turn hints",
+  "w": "56-v52.js:86"
+ },
+ {
+  "k": "a suggested move each turn",
+  "w": "56-v52.js:86"
+ },
+ {
+  "k": "📜 Rule hints",
+  "w": "56-v52.js:86"
+ },
+ {
+  "k": "what the rules say about what you hover",
+  "w": "56-v52.js:86"
+ },
+ {
+  "k": "🧭 Strategy panel",
+  "w": "56-v52.js:86"
+ },
+ {
+  "k": "the hint box under your actions",
+  "w": "56-v52.js:86"
+ },
+ {
+  "k": "📖 Rule popups",
+  "w": "56-v52.js:86"
+ },
+ {
+  "k": "a short note the first time a rule comes up",
+  "w": "56-v52.js:86"
+ },
+ {
+  "k": "📰 Turn recap",
+  "w": "56-v52.js:86"
+ },
+ {
+  "k": "what happened since your last turn",
+  "w": "56-v52.js:86"
+ },
+ {
+  "k": "New to the sand? A short lesson teaches the arena in a few minutes.",
+  "w": "56-v52.js:91"
+ },
+ {
+  "k": "They start off. Tick any you want, or press <b>H</b> or 💡 in the arena tools any time.",
+  "w": "56-v52.js:92"
+ },
+ {
+  "k": "<span><b>All hints</b></span>",
+  "w": "56-v52.js:93"
+ },
+ {
+  "k": "👋 Welcome to Flavius Rule",
+  "w": "56-v52.js:94"
+ },
+ {
+  "k": "💼 Manager lesson",
+  "w": "56-v52.js:94"
+ },
+ {
+  "k": "Just play",
+  "w": "56-v52.js:94"
+ },
+ {
+  "k": "{0} picks up the missed stone ({1} in the sling).",
+  "w": "56-v52.js:103"
+ },
+ {
+  "k": "Murmillo",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Thraex",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Hoplomachus",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Secutor",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Dimachaerus",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Essedarius",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Sagittarius",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Laquearius",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Andabata",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Crupellarius",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Scissor",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Eques",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Paegniarius",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Arbelas",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Veles",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Cestiarius",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Rudiarius",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Gallus",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Samnis",
+  "w": "57-classes.js:13"
+ },
+ {
+  "k": "Wealth of Saturn · 3 coin (card)",
+  "w": "57-classes.js:14"
+ },
+ {
+  "k": "Health Elixir 4 HP (card)",
+  "w": "57-classes.js:14"
+ },
+ {
+  "k": "*For each",
+  "w": "57-classes.js:37"
+ },
+ {
+  "k": "No class ability",
+  "w": "57-classes.js:38"
+ },
+ {
+  "k": "1x LVL {0} “{1}”",
+  "w": "57-classes.js:39"
+ },
+ {
+  "k": "{0}x Arena Key",
+  "w": "57-classes.js:40"
+ },
+ {
+  "k": "Armors:",
+  "w": "57-classes.js:42"
+ },
+ {
+  "k": "Ability:",
+  "w": "57-classes.js:42"
+ },
+ {
+  "k": "Weapons:",
+  "w": "57-classes.js:42"
+ },
+ {
+  "k": "Starting Items:",
+  "w": "57-classes.js:42"
+ },
+ {
+  "k": "Unique Starting Items:",
+  "w": "57-classes.js:42"
+ },
+ {
+  "k": "{0} class card",
+  "w": "57-classes.js:48"
+ },
+ {
+  "k": "<text x=\"150\" y=\"314\" text-anchor=\"middle\" font-family=\"Georgia,serif\" font-size=\"7.5\" fill=\"#8a2a20\">sandbox build</text>",
+  "w": "57-classes.js:54"
+ },
+ {
+  "k": "Custom",
+  "w": "57-classes.js:69"
+ },
+ {
+  "k": "’s Loadout",
+  "w": "57-classes.js:71"
+ },
+ {
+  "k": "Carried over from {0}’s original loadout.",
+  "w": "57-classes.js:74"
+ },
+ {
+  "k": "class starting CF",
+  "w": "57-classes.js:79"
+ },
+ {
+  "k": "🎭 Class · the loadout",
+  "w": "57-classes.js:84"
+ },
+ {
+  "k": "Fights as{0}",
+  "w": "57-classes.js:86"
+ },
+ {
+  "k": "Weapons, armor, ability, coin, keys, starting CF and items come from the class.{0}",
+  "w": "57-classes.js:87"
+ },
+ {
+  "k": "✎ Edit this class",
+  "w": "57-classes.js:88"
+ },
+ {
+  "k": "⧉ Copy into a new class",
+  "w": "57-classes.js:88"
+ },
+ {
+  "k": "✚ Design a class",
+  "w": "57-classes.js:88"
+ },
+ {
+  "k": "<b>{0}</b> {1}<small>{2} · {3} · {4} · {5} coin{6} · used by {7}</small>",
+  "w": "57-classes.js:98"
+ },
+ {
+  "k": "· {0} CF",
+  "w": "57-classes.js:98"
+ },
+ {
+  "k": "✎ Edit",
+  "w": "57-classes.js:99"
+ },
+ {
+  "k": "⧉ Copy",
+  "w": "57-classes.js:99"
+ },
+ {
+  "k": "Printed class: locked — copy it to make your own",
+  "w": "57-classes.js:100"
+ },
+ {
+  "k": "Design a <b>class</b>: the loadout a gladiator fights with. It prints as a class card, like the rulebook’s. Characters pick their class in the Characters tab.",
+  "w": "57-classes.js:101"
+ },
+ {
+  "k": "✚ New class",
+  "w": "57-classes.js:103"
+ },
+ {
+  "k": "Start from a printed class",
+  "w": "57-classes.js:105"
+ },
+ {
+  "k": "Class budget:",
+  "w": "57-classes.js:106"
+ },
+ {
+  "k": "weapons 2/4/7 · armor 1/3/5 · 1 per 2 coin · 1 per key · 1 per CF · 2 per item · abilities cost, weaknesses refund",
+  "w": "57-classes.js:106"
+ },
+ {
+  "k": "Sandbox: ignore the budget",
+  "w": "57-classes.js:107"
+ },
+ {
+  "k": "Class name{0}",
+  "w": "57-classes.js:108"
+ },
+ {
+  "k": "Champion (card subtitle){0}",
+  "w": "57-classes.js:108"
+ },
+ {
+  "k": "Ability{0}",
+  "w": "57-classes.js:110"
+ },
+ {
+  "k": "({0} pts)",
+  "w": "57-classes.js:110"
+ },
+ {
+  "k": "Tamed ally{0}",
+  "w": "57-classes.js:110"
+ },
+ {
+  "k": "Movement, damage, coin and CF now come from each gladiator's ratings (Speed, Strength, Luck, Charisma), not the class.",
+  "w": "57-classes.js:110"
+ },
+ {
+  "k": "Weakness{0}",
+  "w": "57-classes.js:110"
+ },
+ {
+  "k": "Ability name{0}",
+  "w": "57-classes.js:111"
+ },
+ {
+  "k": "maxlength=\"40\" placeholder=\"e.g. Net of Neptune\"",
+  "w": "57-classes.js:111"
+ },
+ {
+  "k": "Ability value {0}",
+  "w": "57-classes.js:111"
+ },
+ {
+  "k": "Right hand{0}",
+  "w": "57-classes.js:112"
+ },
+ {
+  "k": "Fist",
+  "w": "57-classes.js:112"
+ },
+ {
+  "k": "Left hand{0}",
+  "w": "57-classes.js:112"
+ },
+ {
+  "k": "Empty",
+  "w": "57-classes.js:112"
+ },
+ {
+  "k": "Head{0}",
+  "w": "57-classes.js:113"
+ },
+ {
+  "k": "Chest{0}",
+  "w": "57-classes.js:113"
+ },
+ {
+  "k": "Gladiator belt",
+  "w": "57-classes.js:113"
+ },
+ {
+  "k": "Legs, upper (pair){0}",
+  "w": "57-classes.js:115"
+ },
+ {
+  "k": "Legs, lower (pair){0}",
+  "w": "57-classes.js:115"
+ },
+ {
+  "k": "Padded upper",
+  "w": "57-classes.js:115"
+ },
+ {
+  "k": "Padded lower",
+  "w": "57-classes.js:115"
+ },
+ {
+  "k": "Starting purse, favor and hand",
+  "w": "57-classes.js:116"
+ },
+ {
+  "k": "Arena keys {0}",
+  "w": "57-classes.js:116"
+ },
+ {
+  "k": "Item 1{0}",
+  "w": "57-classes.js:117"
+ },
+ {
+  "k": "Item 2{0}",
+  "w": "57-classes.js:117"
+ },
+ {
+  "k": "Item 3{0}",
+  "w": "57-classes.js:117"
+ },
+ {
+  "k": "Lore",
+  "w": "57-classes.js:118"
+ },
+ {
+  "k": "Who fights this way, and why…",
+  "w": "57-classes.js:118"
+ },
+ {
+  "k": "Save class",
+  "w": "57-classes.js:119"
+ },
+ {
+  "k": "used by {0} character{1} — they update when you save",
+  "w": "57-classes.js:119"
+ },
+ {
+  "k": "Your classes · {0}",
+  "w": "57-classes.js:120"
+ },
+ {
+  "k": "Printed classes",
+  "w": "57-classes.js:120"
+ },
+ {
+  "k": "🎭 {0} is used by {1}{2}. Give them another class first.",
+  "w": "57-classes.js:131"
+ },
+ {
+  "k": "🎭 That class name is taken — pick another.",
+  "w": "57-classes.js:135"
+ },
+ {
+  "k": "✓ Saved the class <b>{0}</b>{1}",
+  "w": "57-classes.js:139"
+ },
+ {
+  "k": "— {0} character{1} updated",
+  "w": "57-classes.js:139"
+ },
+ {
+  "k": "Plumed galea",
+  "w": "58-looks.js:11"
+ },
+ {
+  "k": "Hoplomachus plumes",
+  "w": "58-looks.js:11"
+ },
+ {
+  "k": "Secutor egg helm",
+  "w": "58-looks.js:11"
+ },
+ {
+  "k": "Phrygian cap",
+  "w": "58-looks.js:11"
+ },
+ {
+  "k": "Headscarf",
+  "w": "58-looks.js:11"
+ },
+ {
+  "k": "Golden wreath",
+  "w": "58-looks.js:11"
+ },
+ {
+  "k": "Lion pelt (Hercules)",
+  "w": "58-looks.js:11"
+ },
+ {
+  "k": "Bun",
+  "w": "58-looks.js:12"
+ },
+ {
+  "k": "Ponytail",
+  "w": "58-looks.js:12"
+ },
+ {
+  "k": "Topknot",
+  "w": "58-looks.js:12"
+ },
+ {
+  "k": "Wild",
+  "w": "58-looks.js:12"
+ },
+ {
+  "k": "Twin braids",
+  "w": "58-looks.js:12"
+ },
+ {
+  "k": "Braided beard",
+  "w": "58-looks.js:13"
+ },
+ {
+  "k": "Chinstrap",
+  "w": "58-looks.js:13"
+ },
+ {
+  "k": "Mutton chops",
+  "w": "58-looks.js:13"
+ },
+ {
+  "k": "Philosopher’s beard",
+  "w": "58-looks.js:13"
+ },
+ {
+  "k": "Freckles",
+  "w": "58-looks.js:14"
+ },
+ {
+  "k": "Beauty mark",
+  "w": "58-looks.js:14"
+ },
+ {
+  "k": "Kohl-lined eyes",
+  "w": "58-looks.js:14"
+ },
+ {
+  "k": "Painted tears",
+  "w": "58-looks.js:14"
+ },
+ {
+  "k": "Cheek stripes",
+  "w": "58-looks.js:14"
+ },
+ {
+  "k": "Black eye",
+  "w": "58-looks.js:14"
+ },
+ {
+  "k": "Lorica segmentata",
+  "w": "58-looks.js:15"
+ },
+ {
+  "k": "Red cape",
+  "w": "58-looks.js:15"
+ },
+ {
+  "k": "Leopard pelt",
+  "w": "58-looks.js:15"
+ },
+ {
+  "k": "Eastern robe",
+  "w": "58-looks.js:15"
+ },
+ {
+  "k": "Leather pteruges",
+  "w": "58-looks.js:15"
+ },
+ {
+  "k": "Gold ring",
+  "w": "58-looks.js:16"
+ },
+ {
+  "k": "Large hoop",
+  "w": "58-looks.js:16"
+ },
+ {
+  "k": "Pearl drop",
+  "w": "58-looks.js:16"
+ },
+ {
+  "k": "Double studs",
+  "w": "58-looks.js:16"
+ },
+ {
+  "k": "Gold torque",
+  "w": "58-looks.js:17"
+ },
+ {
+  "k": "Bulla amulet",
+  "w": "58-looks.js:17"
+ },
+ {
+  "k": "Iron chain",
+  "w": "58-looks.js:17"
+ },
+ {
+  "k": "Pearl string",
+  "w": "58-looks.js:17"
+ },
+ {
+  "k": "Beast-fang cord",
+  "w": "58-looks.js:17"
+ },
+ {
+  "k": "Slave collar",
+  "w": "58-looks.js:17"
+ },
+ {
+  "k": "Gold tooth",
+  "w": "58-looks.js:18"
+ },
+ {
+  "k": "Brow ring",
+  "w": "58-looks.js:18"
+ },
+ {
+  "k": "Lanista (woman)",
+  "w": "58-looks.js:93"
+ },
+ {
+  "k": "Borrow a Studio character’s look",
+  "w": "58-looks.js:101"
+ },
+ {
+  "k": "Epithet",
+  "w": "58-looks.js:103"
+ },
+ {
+  "k": "e.g. the Iron Purse",
+  "w": "58-looks.js:103"
+ },
+ {
+  "k": "Generate an epithet",
+  "w": "58-looks.js:103"
+ },
+ {
+  "k": "Story",
+  "w": "58-looks.js:104"
+ },
+ {
+  "k": "How this lanista came to own a ludus…",
+  "w": "58-looks.js:104"
+ },
+ {
+  "k": "🎲 Write a story",
+  "w": "58-looks.js:104"
+ },
+ {
+  "k": "{0} of {1} {2}. {3} {4}",
+  "w": "58-looks.js:118"
+ },
+ {
+  "k": "once sold wine to the legions",
+  "w": "58-looks.js:118"
+ },
+ {
+  "k": "was a gladiator who bought the rudis and then the ludus",
+  "w": "58-looks.js:118"
+ },
+ {
+  "k": "inherited the ludus, and its debts, from an uncle",
+  "w": "58-looks.js:118"
+ },
+ {
+  "k": "won the ludus in a game of knucklebones",
+  "w": "58-looks.js:118"
+ },
+ {
+  "k": "kept the books for a senator until the senator fell",
+  "w": "58-looks.js:118"
+ },
+ {
+  "k": "trained horses for the Circus before trading them for fighters",
+  "w": "58-looks.js:118"
+ },
+ {
+  "k": "The house has a leaking roof and a proud gate.",
+  "w": "58-looks.js:118"
+ },
+ {
+  "k": "The barracks are small, the ambitions are not.",
+  "w": "58-looks.js:118"
+ },
+ {
+  "k": "Half the city owes them a favor; the other half owes them coin.",
+  "w": "58-looks.js:118"
+ },
+ {
+  "k": "The old sign still hangs crooked over the door.",
+  "w": "58-looks.js:118"
+ },
+ {
+  "k": "They mean to see a fighter win freedom in the Colosseum.",
+  "w": "58-looks.js:118"
+ },
+ {
+  "k": "They want the Superbus trophy on the mantel, whatever it costs.",
+  "w": "58-looks.js:118"
+ },
+ {
+  "k": "They swear no fighter of theirs will die for a bad wager.",
+  "w": "58-looks.js:118"
+ },
+ {
+  "k": "They want the league to learn the name of their house.",
+  "w": "58-looks.js:118"
+ },
+ {
+  "k": "a quiet week",
+  "w": "59-bye.js:19"
+ },
+ {
+  "k": "🌿 <b>Bye week.</b> No bouts anywhere in the league. Vulso’s cart is at your gate, it is market day on your home square, and you have {0} extra hours.",
+  "w": "59-bye.js:21"
+ }
+]

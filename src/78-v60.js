@@ -14,18 +14,18 @@ let ROAD_NOW=null; /* the Road as last read, for the cards (ludusDetail is synch
 {const base=openLudus;openLudus=async function(){try{ROAD_NOW=await roadLoad()}catch(e){ROAD_NOW=null}return base.apply(this,arguments)}}
 {const _ld=ludusDetail;ludusDetail=function(g){let h=_ld(g);if(!g||!gladActive(g)||g.cpu)return h;
   const R=ROAD_NOW&&!ROAD_NOW.over?ROAD_NOW:null;
-  const btn=R&&R.gid===g.id?(()=>{const st=roadStage(R);return `<button type="button" class="btn roadsend primary" data-road="go" title="Opens New event with ${esc(g.name)} summoned">⚔ Walk stage ${R.step+1}: ${esc(st.L.n)}</button>`})()
-    :`<button type="button" class="btn roadsend" data-roadsend="${g.id}" title="Win the twelve arenas in order with ${esc(g.name)}${R?` — replaces ${esc(R.name)}`:''}">🛣 Send on the Road</button>`;
+  const btn=R&&R.gid===g.id?(()=>{const st=roadStage(R);return `<button type="button" class="btn roadsend primary" data-road="go" title="${_T`Opens New event with ${esc(g.name)} summoned`}">${_T`⚔ Walk stage ${R.step+1}: ${esc(st.L.n)}`}</button>`})()
+    :`<button type="button" class="btn roadsend" data-roadsend="${g.id}" title="${_T`Win the twelve arenas in order with ${esc(g.name)}${R?_T` — replaces ${esc(R.name)}`:''}`}">${_T`🛣 Send on the Road`}</button>`;
   h=h.replace(/<button type="button" class="btn roadsend" data-roadsend="[^"]*"[^>]*>🛣 Send on the Road<\/button>/,'');
   return h.replace('<div class="gdetail" id="gDetail">',`<div class="gdetail" id="gDetail">${btn}`)}}
 /* ⚔ Walk stage from the walker's record: the same hand-off as the Hall's button */
 document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('#ludusBody [data-road="go"]');if(!b)return;e.stopPropagation();
-  const R=await roadLoad();if(!R||R.over)return;const g=LUDUS_CACHE.find(x=>x.id===R.gid);if(!g||!gladActive(g)){if(typeof mToast==='function')mToast('That gladiator can no longer walk the road.');return}
+  const R=await roadLoad();if(!R||R.over)return;const g=LUDUS_CACHE.find(x=>x.id===R.gid);if(!g||!gladActive(g)){if(typeof mToast==='function')mToast(_T('That gladiator can no longer walk the road.'));return}
   const st=roadStage(R);const cur=CUR_MODAL;if(cur)cur.done('road');
   setTimeout(()=>{CFG.mode='event';CFG.loc=st.li;CFG.ev=st.ev;const E=EVENTS[st.ev];CFG.n=clamp(CFG.n,E.min,E.max);summonToSetup(g);CFG.road={gid:R.gid,step:R.step,loc:st.li,ev:st.ev};openSetup()},120)},true);
 /* the Hall: no dropdown — choose from the gladiators' records */
 {const base=roadVisualHTML;roadVisualHTML=function(R,cand,old){let h=base.apply(this,arguments);
-  const pick=`<div class="acts" style="align-items:center"><button class="btn primary" type="button" data-tab="ludus">🛡 Choose from Your Play Now Gladiators</button><span class="rc-sub">open a gladiator's record and press 🛣 Send on the Road</span></div>`;
+  const pick=`<div class="acts" style="align-items:center"><button class="btn primary" type="button" data-tab="ludus">${_T`🛡 Choose from Your Play Now Gladiators`}</button><span class="rc-sub">${_T`open a gladiator's record and press 🛣 Send on the Road`}</span></div>`;
   h=h.replace(/<div class="acts" style="align-items:center"><select class="tin" id="roadPick">[\s\S]*?<\/select><button[^>]*data-road="commit"[^>]*>[\s\S]*?<\/button><\/div>/,pick)
      .replace('<p class="rc-sub">You need a living gladiator of the eight classes on your roster (save one after an event).</p>',pick)
      .replace(' — or pick them here.','.');
@@ -47,8 +47,8 @@ if(CARDS.tame&&CARDS.lyre){CARDS.tame.img=CARDS.lyre.img;CARDS.tame.q=CARDS.tame
 {const base=beginTurn;beginTurn=async function(){try{for(const n of (S&&S.npcs)||[])if(n.tamedBy!=null&&n.aggro!=null){n.aggro=null;n.aggroWhy=null}}catch(e){}return base.apply(this,arguments)}}
 {const base=tamedAttack;tamedAttack=async function(npc,player,target){if(!target||target.kind!=='npc')return base.apply(this,arguments);
   const m=target.ref,st=npcStats(npc),hits=rollHits(2),h=cnt(hits),dmg=h*st.ap;
-  hurtNPC(m,dmg,player,`${nm(npc)} (${player.name}'s) attacks ${diceHtml(hits)} ${h}×${st.ap} = ${dmg}`,null,npc);
-  if(m.alive){if(m.tamedBy==null)setAggro(m,player,'tamed');else{m.hitBy={npc:npc.id,owner:player.id,turn:S.turnNo};const o=S.players[m.tamedBy];if(o)log(`${nm(o)} will answer for ${nm(m)} in their own Resolve.`)}}}}
+  hurtNPC(m,dmg,player,_T`${nm(npc)} (${player.name}'s) attacks ${diceHtml(hits)} ${h}×${st.ap} = ${dmg}`,null,npc);
+  if(m.alive){if(m.tamedBy==null)setAggro(m,player,'tamed');else{m.hitBy={npc:npc.id,owner:player.id,turn:S.turnNo};const o=S.players[m.tamedBy];if(o)log(_T`${nm(o)} will answer for ${nm(m)} in their own Resolve.`)}}}}
 {const base=cpuCommand;cpuCommand=async function(player,n){try{const hb=n.hitBy;if(hb&&S.turnNo-hb.turn<=S.players.length*2){const foe=S.npcs.find(x=>x.id===hb.npc&&x.alive);
     if(foe){n.hitBy=null;if(cheb(n,foe)>1){if(n.netted)n.netted=false;else await npcWalk(n,adjTiles(foe),npcStats(n).mv)}
       const t=tamedTargets(n,player).find(x=>x.kind==='npc'&&x.ref===foe);if(t){await tamedAttack(n,player,t);return}}}}catch(e){console.error(e)}
@@ -57,11 +57,11 @@ if(CARDS.tame&&CARDS.lyre){CARDS.tame.img=CARDS.lyre.img;CARDS.tame.q=CARDS.tame
    a CF token lands face up where the pot's offering falls — 3 tiles out at the end of a toppled pillar's rubble — and pays
    its CF to whoever picks it up (none for a gladiator whose weakness bars CF from Blessings). */
 {const base=revealOffering;revealOffering=async function(player,off,land){if((off==='cf1'||off==='cf2')&&land){let [r,c]=land;r=clamp(r,0,N-1);c=clamp(c,0,N-1);if(pillarAt(r,c)){r=player.r;c=player.c}
-    placeFloor('offer',off,r,c);log(`An offering spills onto ${tl(r,c)}: <b>${OFFER[off].n}</b> (${OFFER[off].s}).`);await pickupAt(r,c);return}
+    placeFloor('offer',off,r,c);log(_T`An offering spills onto ${tl(r,c)}: <b>${OFFER[off].n}</b> (${OFFER[off].s}).`);await pickupAt(r,c);return}
   return base.apply(this,arguments)}}
 {const base=pickupAt;pickupAt=async function(r,c){try{const p=playerAt(r,c);if(p){for(const f of S.floor.filter(f=>f.r===r&&f.c===c&&f.kind==='offer'&&(f.key==='cf1'||f.key==='cf2'))){
-    S.floor=S.floor.filter(x=>x!==f);const v=f.key==='cf1'?1:2;if(weak(p,'noBlessCF'))log(`${nm(p)} picks up a Crowd Favor offering, but gains no CF from Blessings.`);
-    else{cfWhy('breaking pots');p.cf+=v;fx(r,c,`+${v} CF`,'#f0cf7d');log(`${nm(p)} picks up a Crowd Favor offering: +${v} CF.`)}}}}catch(e){console.error(e)}
+    S.floor=S.floor.filter(x=>x!==f);const v=f.key==='cf1'?1:2;if(weak(p,'noBlessCF'))log(_T`${nm(p)} picks up a Crowd Favor offering, but gains no CF from Blessings.`);
+    else{cfWhy(_T('breaking pots'));p.cf+=v;fx(r,c,_T`+${v} CF`,'#f0cf7d');log(_T`${nm(p)} picks up a Crowd Favor offering: +${v} CF.`)}}}}catch(e){console.error(e)}
   return base.apply(this,arguments)}}
 /* ---------- TRUCES YOU CAN SEE ----------
    The offer names the gladiator with their class, in its colour; and on the sand, everyone you hold a truce with wears a

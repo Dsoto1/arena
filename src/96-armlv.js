@@ -28,27 +28,27 @@ function caLevelsInit(ca){if(ca.levels)return;const lv=clamp(+ca.lv||1,1,3);ca.l
 /* the designer: a Levels block replaces AP, Market level and Bonus amount */
 function caLevelsHTML(d){caLevelsInit(d);const btn=(a,n,v,l,dis)=>`<button class="btn tksm" type="button" data-calv="${a}" data-n="${n}" data-v="${v}" ${dis?'disabled':''}>${l}</button>`;
   const art=armSVG('ca_preview',{...d});
-  return `<div class="calevels" style="grid-column:1/-1"><div class="sect" style="margin:4px 0">Levels <span class="rc-sub">tick each level it comes in · each spends its own budget · AP 1 point each above the first · bonus AP 2 · stackable 1</span></div>
+  return `<div class="calevels" style="grid-column:1/-1"><div class="sect" style="margin:4px 0">${_T`Levels`} <span class="rc-sub">${_T`tick each level it comes in · each spends its own budget · AP 1 point each above the first · bonus AP 2 · stackable 1`}</span></div>
    <div class="calvgrid">${[1,2,3].map(n=>{const L=d.levels[n];const used=caCost(d,n),left=CA_BUDGET[n]-used;const on=!!L.on;
-     return `<div class="calv ${on?'on':''}"><label class="calvhd"><input type="checkbox" data-calv="on" data-n="${n}" ${on?'checked':''}> <b>Level ${CA_NUM[n]}</b> <span class="rc-sub">${CA_GRADE_N[n]} · ${CA_BUDGET[n]} points</span></label>
+     return `<div class="calv ${on?'on':''}"><label class="calvhd"><input type="checkbox" data-calv="on" data-n="${n}" ${on?'checked':''}> ${_T`<b>Level ${CA_NUM[n]}</b>`} <span class="rc-sub">${_T`${CA_GRADE_N[n]} · ${CA_BUDGET[n]} points`}</span></label>
       <div class="calvart" style="filter:${CA_GRADE[n]}">${art}</div>
-      ${on?`<div class="calvrow">AP ${btn('ap',n,-1,'−',L.ap<=1)}<b>${L.ap}</b>${btn('ap',n,1,'+',L.ap>=7||left<1)}</div>
-      ${d.bonusLoc?`<div class="calvrow">Bonus ${btn('bonus',n,-1,'−',!L.bonusAp)}<b>+${L.bonusAp||0}</b>${btn('bonus',n,1,'+',left<2||(L.bonusAp||0)>=4)}</div>`:''}
-      <div class="calvleft ${left<0?'bad':''}">${left} point${left===1?'':'s'} left</div><div class="rc-sub">${esc(d.name||'Unnamed')} ${CA_NUM[n]}</div>`:'<div class="rc-sub" style="margin-top:6px">not made</div>'}</div>`}).join('')}</div></div>`}
+      ${on?`<div class="calvrow">${_T`AP ${btn('ap',n,-1,'−',L.ap<=1)}<b>${L.ap}</b>${btn('ap',n,1,'+',L.ap>=7||left<1)}`}</div>
+      ${d.bonusLoc?`<div class="calvrow">${_T`Bonus ${btn('bonus',n,-1,'−',!L.bonusAp)}<b>+${L.bonusAp||0}</b>${btn('bonus',n,1,'+',left<2||(L.bonusAp||0)>=4)}`}</div>`:''}
+      <div class="calvleft ${left<0?'bad':''}">${_T`${left} point${left===1?'':'s'} left`}</div><div class="rc-sub">${esc(d.name||_T('Unnamed'))} ${CA_NUM[n]}</div>`:'<div class="rc-sub" style="margin-top:6px">not made</div>'}</div>`}).join('')}</div></div>`}
 {const base=gearAHTML;gearAHTML=function(){let h=base.apply(this,arguments);try{const d=ST.ca;if(!d)return h;caLevelsInit(d);
   h=h.replace(/<label>AP<select data-caf="ap">[\s\S]*?<\/select><\/label>/,'').replace(/<label>Market level<select data-caf="lv">[\s\S]*?<\/select><\/label>/,'').replace(/<label>Bonus amount<select data-caf="bonusAp">[\s\S]*?<\/select><\/label>/,'');
   const i=h.indexOf('<div style="grid-column:1/-1" class="rc-sub crnote">');if(i>=0)h=h.slice(0,i)+caLevelsHTML(d)+h.slice(i);
-  h=h.replace(/(<div class="rc-sub" style="text-align:center">)[^<]*·\s*\d+ AP(<\/div>)/,`$1${esc(d.name||'Unnamed piece')} · ${caOnLv(d).map(n=>CA_NUM[n]+' '+d.levels[n].ap+' AP').join(' · ')||'no level ticked'}$2`)}catch(e){console.error(e)}return h}}
+  h=h.replace(/(<div class="rc-sub" style="text-align:center">)[^<]*·\s*\d+ AP(<\/div>)/,`$1${esc(d.name||_T('Unnamed piece'))} · ${caOnLv(d).map(n=>CA_NUM[n]+' '+d.levels[n].ap+' AP').join(' · ')||_T('no level ticked')}$2`)}catch(e){console.error(e)}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest('button[data-calv]');if(!b||!ST.ca)return;const d=ST.ca;caLevelsInit(d);const n=+b.dataset.n,v=+b.dataset.v,L=d.levels[n];
-  if(b.dataset.calv==='ap'){const t={...L,ap:clamp(L.ap+v,1,7)};if(caCost(d,n,t)<=CA_BUDGET[n]||v<0)L.ap=t.ap;else return mToast(`Level ${CA_NUM[n]} has ${CA_BUDGET[n]} points.`)}
-  if(b.dataset.calv==='bonus'){const t={...L,bonusAp:clamp((L.bonusAp||0)+v,0,4)};if(caCost(d,n,t)<=CA_BUDGET[n]||v<0)L.bonusAp=t.bonusAp;else return mToast(`Level ${CA_NUM[n]} has ${CA_BUDGET[n]} points.`)}
+  if(b.dataset.calv==='ap'){const t={...L,ap:clamp(L.ap+v,1,7)};if(caCost(d,n,t)<=CA_BUDGET[n]||v<0)L.ap=t.ap;else return mToast(_T`Level ${CA_NUM[n]} has ${CA_BUDGET[n]} points.`)}
+  if(b.dataset.calv==='bonus'){const t={...L,bonusAp:clamp((L.bonusAp||0)+v,0,4)};if(caCost(d,n,t)<=CA_BUDGET[n]||v<0)L.bonusAp=t.bonusAp;else return mToast(_T`Level ${CA_NUM[n]} has ${CA_BUDGET[n]} points.`)}
   caRedraw()});
 document.addEventListener('change',e=>{const c=e.target.closest('input[data-calv="on"]');if(c&&ST.ca){const d=ST.ca;caLevelsInit(d);const n=+c.dataset.n;d.levels[n].on=c.checked?1:0;caFitBudget(d,n);caRedraw();return}
   /* stackable or a new bonus location changes every level's cost: refit them */
   const f=e.target.closest('[data-caf="stack"],[data-caf="bonusLoc"]');if(f&&ST.ca){setTimeout(()=>{const d=ST.ca;caLevelsInit(d);for(const n of [1,2,3])caFitBudget(d,n);caRedraw()},0)}});
 /* saving: at least one level; the first ticked level is the design's own lv/ap (older code and lists read those) */
 document.addEventListener('click',e=>{const sv=e.target.closest('[data-gs="asave"]');if(!sv||!ST.ca)return;const d=ST.ca;caLevelsInit(d);const on=caOnLv(d);
-  if(!on.length){e.stopImmediatePropagation();e.preventDefault();mToast('Tick at least one <b>level</b> for this piece.');return}
+  if(!on.length){e.stopImmediatePropagation();e.preventDefault();mToast(_T('Tick at least one <b>level</b> for this piece.'));return}
   for(const n of on)caFitBudget(d,n);const L=d.levels[on[0]];d.lv=on[0];d.ap=Math.max(2,L.ap);d.bonusAp=d.bonusLoc?(L.bonusAp||0):0},true);
 {const base=caFromSystem;caFromSystem=function(d){const r=base.apply(this,arguments);try{delete d.levels;caLevelsInit(d)}catch(e){}return r}}
 {const base=blankCA;blankCA=function(){const d=base.apply(this,arguments);d.levels={1:{on:0,ap:3,bonusAp:0},2:{on:1,ap:4,bonusAp:0},3:{on:0,ap:6,bonusAp:0}};return d}}

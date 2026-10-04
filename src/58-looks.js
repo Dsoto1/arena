@@ -8,14 +8,14 @@
    • The Lanista creator gets the full look maker, an epithet, a story, and can borrow the look of any
      Studio character.
    ===================================================================== */
-HELMS.push(['plumed','Plumed galea'],['hoplo','Hoplomachus plumes'],['secutor','Secutor egg helm'],['phrygian','Phrygian cap'],['turban','Eastern turban'],['kerchief','Headscarf'],['flowers','Flower crown'],['goldwreath','Golden wreath'],['lion','Lion pelt (Hercules)']);
-HAIRSTYLES.push(['bun','Bun'],['ponytail','Ponytail'],['topknot','Topknot'],['wild','Wild'],['twinbraid','Twin braids']);
-BEARDS.push(['braided','Braided beard'],['chin','Chinstrap'],['mutton','Mutton chops'],['longbeard','Philosopher’s beard']);
-MARKS.push(['freckles','Freckles'],['mole','Beauty mark'],['kohl','Kohl-lined eyes'],['tears','Painted tears'],['cheek','Cheek stripes'],['bruise','Black eye']);
-GARBS.push(['lorica','Lorica segmentata'],['cape','Red cape'],['leopard','Leopard pelt'],['robe','Eastern robe'],['pteruges','Leather pteruges']);
-const EARRINGS=[['','None'],['1','Gold ring'],['hoop','Large hoop'],['pearl','Pearl drop'],['double','Double studs']];
-const NECKS=[['','None'],['torque','Gold torque'],['bulla','Bulla amulet'],['chain','Iron chain'],['pearls','Pearl string'],['fang','Beast-fang cord'],['collar','Slave collar']];
-const FACES=[['','None'],['nosering','Nose ring'],['goldtooth','Gold tooth'],['brow','Brow ring']];
+HELMS.push(['plumed',_T('Plumed galea')],['hoplo',_T('Hoplomachus plumes')],['secutor',_T('Secutor egg helm')],['phrygian',_T('Phrygian cap')],['turban',_T('Eastern turban')],['kerchief',_T('Headscarf')],['flowers',_T('Flower crown')],['goldwreath',_T('Golden wreath')],['lion',_T('Lion pelt (Hercules)')]);
+HAIRSTYLES.push(['bun',_T('Bun')],['ponytail',_T('Ponytail')],['topknot',_T('Topknot')],['wild',_T('Wild')],['twinbraid',_T('Twin braids')]);
+BEARDS.push(['braided',_T('Braided beard')],['chin',_T('Chinstrap')],['mutton',_T('Mutton chops')],['longbeard',_T('Philosopher’s beard')]);
+MARKS.push(['freckles',_T('Freckles')],['mole',_T('Beauty mark')],['kohl',_T('Kohl-lined eyes')],['tears',_T('Painted tears')],['cheek',_T('Cheek stripes')],['bruise',_T('Black eye')]);
+GARBS.push(['lorica',_T('Lorica segmentata')],['cape',_T('Red cape')],['leopard',_T('Leopard pelt')],['robe',_T('Eastern robe')],['pteruges',_T('Leather pteruges')]);
+const EARRINGS=[['',_T('None')],['1',_T('Gold ring')],['hoop',_T('Large hoop')],['pearl',_T('Pearl drop')],['double',_T('Double studs')]];
+const NECKS=[['',_T('None')],['torque',_T('Gold torque')],['bulla',_T('Bulla amulet')],['chain',_T('Iron chain')],['pearls',_T('Pearl string')],['fang',_T('Beast-fang cord')],['collar',_T('Slave collar')]];
+const FACES=[['',_T('None')],['nosering',_T('Nose ring')],['goldtooth',_T('Gold tooth')],['brow',_T('Brow ring')]];
 const NEW_HELMS=new Set(['plumed','hoplo','secutor','phrygian','turban','kerchief','flowers','goldwreath','lion']);
 const NEW_BEARDS=new Set(['chin','mutton','longbeard','braided']);
 {const _ps=portraitSVG;portraitSVG=function(pt={},color='#c0433a'){pt=pt||{};const acc=color,dk=h=>shade(h,-0.35),mt='#a9b2ba',mtd='#5d656d';
@@ -86,22 +86,22 @@ function randomPortrait(fem){fem=fem==null?Math.random()<.35:!!fem;const r=p=>Ma
 /* the shared look maker: attr names the data attribute each control writes through */
 function portraitControlsHTML(pt,attr){pt=pt||{};const sel=(f,opts,v)=>`<select class="tin" ${attr}="${f}">${opts.map(([k,l])=>`<option value="${esc(k??'')}" ${String(v??'')===String(k??'')?'selected':''}>${esc(l)}</option>`).join('')}</select>`;
   return `<div class="formgrid lookgrid" style="grid-template-columns:1fr 1fr;margin-top:8px">
-   <label>Skin${sel('skin',SKINS.map((v,i)=>[v,SKIN_NAMES[i]||'Tone '+(i+1)]),pt.skin)}</label><label>Hair${sel('hair',HAIRS.map((v,i)=>[v,HAIR_NAMES[i]||'Shade '+(i+1)]),pt.hair)}</label>
-   <label>Headgear${sel('helm',HELMS,pt.helm||'none')}</label><label>Backdrop${sel('bg',BGS.map((v,i)=>[v,BG_NAMES[i]||'Backdrop '+(i+1)]).concat(typeof FLAGS!=='undefined'?Object.entries(FLAGS).map(([k,F])=>['flag:'+k,'🏳 '+F.n]):[]),pt.bg)}</label>
-   <label>Hairstyle${sel('hs',HAIRSTYLES,pt.hs||(pt.long?'long':''))}</label><label>Beard${sel('bs',BEARDS,pt.bs&&pt.bs!=='none'?pt.bs:(pt.beard?'full':''))}</label>
-   <label>Eyes${sel('eyes',EYES,pt.eyes||EYES[0][0])}</label><label>Marks${sel('mark',MARKS,pt.mark||'')}</label>
-   <label>Garb${sel('garb',GARBS,pt.garb||'')}</label><label>Build${sel('fem',[['','Lanista'],['1','Lanista (woman)']],pt.fem?'1':'')}</label>
-   <label>Earring${sel('ear',EARRINGS,pt.ear===true?'1':pt.ear||'')}</label><label>Neck${sel('neck',NECKS,pt.neck||'')}</label>
-   <label>Face${sel('face',FACES,pt.face||'')}</label><label>Expression${sel('smile',[['','Stern'],['1','Grin']],pt.smile?'1':'')}</label></div>`}
+   <label>${_T`Skin${sel('skin',SKINS.map((v,i)=>[v,SKIN_NAMES[i]||_T('Tone ')+(i+1)]),pt.skin)}`}</label><label>${_T`Hair${sel('hair',HAIRS.map((v,i)=>[v,HAIR_NAMES[i]||_T('Shade ')+(i+1)]),pt.hair)}`}</label>
+   <label>${_T`Headgear${sel('helm',HELMS,pt.helm||'none')}`}</label><label>${_T`Backdrop${sel('bg',BGS.map((v,i)=>[v,BG_NAMES[i]||_T('Backdrop ')+(i+1)]).concat(typeof FLAGS!=='undefined'?Object.entries(FLAGS).map(([k,F])=>['flag:'+k,'🏳 '+F.n]):[]),pt.bg)}`}</label>
+   <label>${_T`Hairstyle${sel('hs',HAIRSTYLES,pt.hs||(pt.long?'long':''))}`}</label><label>${_T`Beard${sel('bs',BEARDS,pt.bs&&pt.bs!=='none'?pt.bs:(pt.beard?'full':''))}`}</label>
+   <label>${_T`Eyes${sel('eyes',EYES,pt.eyes||EYES[0][0])}`}</label><label>${_T`Marks${sel('mark',MARKS,pt.mark||'')}`}</label>
+   <label>${_T`Garb${sel('garb',GARBS,pt.garb||'')}`}</label><label>${_T`Build${sel('fem',[['',_T('Lanista')],['1',_T('Lanista (woman)')]],pt.fem?'1':'')}`}</label>
+   <label>${_T`Earring${sel('ear',EARRINGS,pt.ear===true?'1':pt.ear||'')}`}</label><label>${_T`Neck${sel('neck',NECKS,pt.neck||'')}`}</label>
+   <label>${_T`Face${sel('face',FACES,pt.face||'')}`}</label><label>${_T`Expression${sel('smile',[['',_T('Stern')],['1',_T('Grin')]],pt.smile?'1':'')}`}</label></div>`}
 
 /* ---------- the Lanista creator, rebuilt ---------- */
 function nmLookRefresh(){const box=document.getElementById('nmPortrait');if(!box||!NEWMGR)return;const p=box.querySelector('.portrait');if(p)p.outerHTML=portraitHTML({name:NEWMGR.name,portrait:NEWMGR.portrait,color:NEWMGR.color},'lg')}
 {const _sh=startHTML;startHTML=function(){let h=_sh.apply(this,arguments);try{if(MGR.view==='create'&&NEWMGR){const c=NEWMGR;
     const chars=(CUSTOM.chars||[]).filter(x=>x.portrait);
-    const look=`<div class="mbtns"><button class="btn" type="button" data-mg="nmlook">🎲 Random look</button></div>${chars.length?`<label style="display:grid;gap:3px;font-size:12.5px;text-align:left">Borrow a Studio character’s look<select class="tin" data-nmimport="1"><option value="">— choose —</option>${chars.map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join('')}</select></label>`:''}<div style="text-align:left">${portraitControlsHTML(c.portrait,'data-nmpt')}</div></div>`;
+    const look=`<div class="mbtns"><button class="btn" type="button" data-mg="nmlook">${_T`🎲 Random look`}</button></div>${chars.length?`<label style="display:grid;gap:3px;font-size:12.5px;text-align:left">${_T`Borrow a Studio character’s look`}<select class="tin" data-nmimport="1"><option value="">— choose —</option>${chars.map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join('')}</select></label>`:''}<div style="text-align:left">${portraitControlsHTML(c.portrait,'data-nmpt')}</div></div>`;
     h=h.replace('<div class="mbtns"><button class="btn" type="button" data-mg="nmlook">🎲 Random look</button></div></div>',look);
-    const extra=`<div class="formgrid" style="margin-top:8px"><label>Epithet<span style="display:flex;gap:4px"><input class="tin" data-nmx="nick" value="${esc(c.nick||'')}" maxlength="30" placeholder="e.g. the Iron Purse"><button type="button" class="btn" data-nmxa="nick" style="padding:4px 8px" aria-label="Generate an epithet">🎲</button></span></label></div>
-     <label style="display:grid;gap:3px;margin-top:6px">Story<textarea class="tin" data-nmx="bio" maxlength="600" placeholder="How this lanista came to own a ludus…">${esc(c.bio||'')}</textarea></label><div class="mbtns" style="margin-top:4px"><button class="btn tksm" type="button" data-nmxa="bio">🎲 Write a story</button></div>`;
+    const extra=`<div class="formgrid" style="margin-top:8px"><label>${_T`Epithet`}<span style="display:flex;gap:4px"><input class="tin" data-nmx="nick" value="${esc(c.nick||'')}" maxlength="30" placeholder="${_T`e.g. the Iron Purse`}"><button type="button" class="btn" data-nmxa="nick" style="padding:4px 8px" aria-label="${_T`Generate an epithet`}">🎲</button></span></label></div>
+     <label style="display:grid;gap:3px;margin-top:6px">${_T`Story`}<textarea class="tin" data-nmx="bio" maxlength="600" placeholder="${_T`How this lanista came to own a ludus…`}">${esc(c.bio||'')}</textarea></label><div class="mbtns" style="margin-top:4px"><button class="btn tksm" type="button" data-nmxa="bio">${_T`🎲 Write a story`}</button></div>`;
     h=h.replace('<p class="rc-sub" style="margin:4px 0 0">🏠 <b>Your home city</b>',extra+'<p class="rc-sub" style="margin:4px 0 0">🏠 <b>Your home city</b>');
     h=h.replace('grid-template-columns:minmax(0,220px) minmax(0,1fr)','grid-template-columns:minmax(0,300px) minmax(0,1fr)')}}catch(e){console.error(e)}return h}}
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||typeof NEWMGR==='undefined'||!NEWMGR)return;
@@ -113,7 +113,7 @@ document.addEventListener('click',e=>{if(typeof NEWMGR==='undefined'||!NEWMGR)re
   const lk=e.target.closest&&e.target.closest('[data-mg="nmlook"]');if(lk){e.stopPropagation();e.preventDefault();NEWMGR.portrait=randomPortrait(NEWMGR.portrait&&NEWMGR.portrait.fem);if(typeof MGR_REDRAW==='function')MGR_REDRAW();return}
   const b=e.target.closest&&e.target.closest('[data-nmxa]');if(!b)return;
   if(b.dataset.nmxa==='nick'){NEWMGR.nick=genNickname();const i=document.querySelector('[data-nmx="nick"]');if(i)i.value=NEWMGR.nick}
-  if(b.dataset.nmxa==='bio'){NEWMGR.bio=lanistaStory(NEWMGR.name||'This lanista',NEWMGR.city);const i=document.querySelector('[data-nmx="bio"]');if(i)i.value=NEWMGR.bio}},true);
+  if(b.dataset.nmxa==='bio'){NEWMGR.bio=lanistaStory(NEWMGR.name||_T('This lanista'),NEWMGR.city);const i=document.querySelector('[data-nmx="bio"]');if(i)i.value=NEWMGR.bio}},true);
 function lanistaStory(n,city){const P=pickOne;
-  return `${n} of ${city||'Roma'} ${P(['once sold wine to the legions','was a gladiator who bought the rudis and then the ludus','inherited the ludus, and its debts, from an uncle','won the ludus in a game of knucklebones','kept the books for a senator until the senator fell','trained horses for the Circus before trading them for fighters'])}. ${P(['The house has a leaking roof and a proud gate.','The barracks are small, the ambitions are not.','Half the city owes them a favor; the other half owes them coin.','The old sign still hangs crooked over the door.'])} ${P(['They mean to see a fighter win freedom in the Colosseum.','They want the Superbus trophy on the mantel, whatever it costs.','They swear no fighter of theirs will die for a bad wager.','They want the league to learn the name of their house.'])}`}
+  return _T`${n} of ${city||_T('Roma')} ${P([_T('once sold wine to the legions'),_T('was a gladiator who bought the rudis and then the ludus'),_T('inherited the ludus, and its debts, from an uncle'),_T('won the ludus in a game of knucklebones'),_T('kept the books for a senator until the senator fell'),_T('trained horses for the Circus before trading them for fighters')])}. ${P([_T('The house has a leaking roof and a proud gate.'),_T('The barracks are small, the ambitions are not.'),_T('Half the city owes them a favor; the other half owes them coin.'),_T('The old sign still hangs crooked over the door.')])} ${P([_T('They mean to see a fighter win freedom in the Colosseum.'),_T('They want the Superbus trophy on the mantel, whatever it costs.'),_T('They swear no fighter of theirs will die for a bad wager.'),_T('They want the league to learn the name of their house.')])}`}
 {const _me=meHTML;meHTML=function(){let h=_me.apply(this,arguments);try{const m=me();if(m&&m.nick)h=h.replace('<p class="rc-sub" style="margin-bottom:0">',`<p class="rc-sub" style="margin-bottom:0"><b>“${esc(m.nick)}”</b> · `)}catch(e){}return h}}

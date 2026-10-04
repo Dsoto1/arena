@@ -1,7 +1,7 @@
 /* ================= CPU PERSONALITY =================
    Every CPU gladiator carries six 1-100 priorities. They weight every decision, and a little noise
    (more on Easy, less on Hard, more for risk-takers) keeps them from playing perfectly. */
-const PERS_KEYS = [['survival', 'Survival', 'Heals early, dodges, retreats and hides in tunnels when hurt'], ['hunt', 'NPC hunting', 'Chases beasts for trophies, coin and CF'], ['coin', 'Coin', 'Takes coin over cards, loots purses, buys when rich'], ['cf', 'Crowd Favor', 'Breaks pots, plays to the crowd and chases freedom (50 CF)'], ['aggression', 'PvP aggression', 'Attacks gladiators, refuses truces'], ['loyalty', 'Loyalty', 'Helps allies with gifts and focus fire; keeps truces']];
+const PERS_KEYS = [['survival', _T('Survival'), _T('Heals early, dodges, retreats and hides in tunnels when hurt')], ['hunt', _T('NPC hunting'), _T('Chases beasts for trophies, coin and CF')], ['coin', _T('Coin'), _T('Takes coin over cards, loots purses, buys when rich')], ['cf', _T('Crowd Favor'), _T('Breaks pots, plays to the crowd and chases freedom (50 CF)')], ['aggression', _T('PvP aggression'), _T('Attacks gladiators, refuses truces')], ['loyalty', _T('Loyalty'), _T('Helps allies with gifts and focus fire; keeps truces')]];
 const PERS_PRESETS = {
   balanced: {
     n: 'Balanced',
@@ -143,15 +143,15 @@ function noise(player, scale = 1) {
 
 /* ================= THOUGHTS (CPU speech bubbles) ================= */
 const QUOTES = {
-  kill: ['Another name for the crowd to forget.', 'The people wanted blood. There it is.', 'Hail Flavius!', 'Stay down.', 'One step closer to the Rudis.'],
-  hurt: ['That one stung.', 'I can still stand. I think.', 'Hygeia, now would be nice.', 'Not like this. Not in the sand.'],
-  start: ['Eyes on the crowd, feet in the sand.', 'Patience. Let them bleed first.', 'Today I earn my freedom.', 'The pots first, then the beasts.'],
-  npc: ['Come here, beast.', 'A trophy for the wall.', 'That pelt will fetch coin.'],
-  pvp: ['Nothing personal, friend.', 'The crowd wants a duel.', 'Only one of us walks out.'],
-  gift: ['Take it. You need it more than I do.', 'For the familia.', 'Stay alive, ally.'],
-  retreat: ['Fall back. Live to fight.', 'Not today, Flavius.', 'Let them come to me.'],
-  market: ['Coin well spent.', 'Better steel, better odds.'],
-  truce: ['Allies, for now.', 'Watch my back and I watch yours.']
+  kill: [_T('Another name for the crowd to forget.'), _T('The people wanted blood. There it is.'), _T('Hail Flavius!'), _T('Stay down.'), _T('One step closer to the Rudis.')],
+  hurt: [_T('That one stung.'), _T('I can still stand. I think.'), _T('Hygeia, now would be nice.'), _T('Not like this. Not in the sand.')],
+  start: [_T('Eyes on the crowd, feet in the sand.'), _T('Patience. Let them bleed first.'), _T('Today I earn my freedom.'), _T('The pots first, then the beasts.')],
+  npc: [_T('Come here, beast.'), _T('A trophy for the wall.'), _T('That pelt will fetch coin.')],
+  pvp: [_T('Nothing personal, friend.'), _T('The crowd wants a duel.'), _T('Only one of us walks out.')],
+  gift: [_T('Take it. You need it more than I do.'), _T('For the familia.'), _T('Stay alive, ally.')],
+  retreat: [_T('Fall back. Live to fight.'), _T('Not today, Flavius.'), _T('Let them come to me.')],
+  market: [_T('Coin well spent.'), _T('Better steel, better odds.')],
+  truce: [_T('Allies, for now.'), _T('Watch my back and I watch yours.')]
 };
 let THOUGHTS = true;
 /* think — shows a CPU speech bubble and stores it as lastThought. Skipped in headless runs, for repeats of the same line within 15 s, and randomly for casual thoughts (humans only get 'say' bubbles).
@@ -180,19 +180,19 @@ function think(player, text, mood = 'think') {
 /* ================= RELATIONSHIPS (how each CPU feels about every other gladiator) =================
    -100..100. Like behavior states, feelings pass thresholds (Devoted, Friendly, Neutral, Hostile, Vengeful)
    and change what the CPU does: who it hunts, who it trusts with a truce, who it gifts. */
-const REL_STATES = [[60, 'Devoted', '😊'], [25, 'Friendly', '🙂'], [-24, 'Neutral', '😐'], [-59, 'Hostile', '😠'], [-101, 'Vengeful', '😡']];
+const REL_STATES = [[60, _T('Devoted'), '😊'], [25, _T('Friendly'), '🙂'], [-24, _T('Neutral'), '😐'], [-59, _T('Hostile'), '😠'], [-101, _T('Vengeful'), '😡']];
 /* relOf — how player feels about other, -100..100 (0 when no feeling is recorded). */
 const relOf = (player, other) => player && other && player.rel ? player.rel[other.id] || 0 : 0;
 /* relState — maps a feeling value to its REL_STATES row: [threshold, name, emoji]. TWEAK: the thresholds live in REL_STATES above. */
 const relState = victim => REL_STATES.find(s => victim >= s[0]);
 const REL_LINES = {
   up: {
-    Friendly: ['I like your style, {n}.', '{n}, you are all right.'],
-    Devoted: ['I would bleed for you, {n}.', 'Brothers in the sand, {n}.']
+    Friendly: [_T('I like your style, {n}.'), _T('{n}, you are all right.')],
+    Devoted: [_T('I would bleed for you, {n}.'), _T('Brothers in the sand, {n}.')]
   },
   down: {
-    Hostile: ['Watch yourself, {n}.', 'You will regret that, {n}.'],
-    Vengeful: ['{n} dies by my hand. Today.', 'I will not rest until {n} falls!']
+    Hostile: [_T('Watch yourself, {n}.'), _T('You will regret that, {n}.')],
+    Vengeful: [_T('{n} dies by my hand. Today.'), _T('I will not rest until {n} falls!')]
   }
 };
 /* bumpRel — shifts a CPU's feeling toward another gladiator by d (clamped -100..100). Crossing a threshold makes the CPU say a REL_LINES line and logs the change. */
@@ -208,7 +208,7 @@ function bumpRel(player, other, d, why) {
     const up = after > before;
     const lines = (up ? REL_LINES.up : REL_LINES.down)[b];
     if (lines) think(player, pickOne(lines).replace('{n}', other.name), up ? 'gift' : 'angry');
-    log(`${nm(player)} now feels <b>${b.toLowerCase()}</b> toward ${nm(other)}${why ? ` (${why})` : ''}.`, 'thought');
+    log(_T`${nm(player)} now feels <b>${b.toLowerCase()}</b> toward ${nm(other)}${why ? ` (${why})` : ''}.`, 'thought');
   }
 }
 /* relDecay — fades every CPU's feelings 7% toward neutral; called once per rotation from the turn flow.
@@ -323,11 +323,11 @@ async function cpuUseItems(player) {
         if (n && q) {
           player.items = player.items.filter(x => x !== it);
           n.tamedBy = null;
-          log(`${nm(player)} throws a Meat Lure at ${nm(q)}.`, 'big');
+          log(_T`${nm(player)} throws a Meat Lure at ${nm(q)}.`, 'big');
           setAggro(n, q, 'lure');
-          bumpRel(q, player, -25, 'meat lure');
+          bumpRel(q, player, -25, _T('meat lure'));
           cardShow('c:lure', player);
-          think(player, 'Accept without conceit, relinquish without reluctance.', 'quote');
+          think(player, _T('Accept without conceit, relinquish without reluctance.'), 'quote');
         }
         continue;
       }
@@ -339,9 +339,9 @@ async function cpuUseItems(player) {
             n.tamedBy = player.id;
             n.aggro = null;
             stat(player, 'tame');
-            log(`${nm(player)} plays ${CARDS[k].n} and tames ${nm(n)}!`, 'big');
+            log(_T`${nm(player)} plays ${CARDS[k].n} and tames ${nm(n)}!`, 'big');
             cardShow('c:' + k, player);
-            think(player, (CARDS[k].q || 'Easy now, beast') + '.', 'quote');
+            think(player, (CARDS[k].q || _T('Easy now, beast')) + '.', 'quote');
           }
         }
         continue;
@@ -351,7 +351,7 @@ async function cpuUseItems(player) {
         if (u) {
           u.netted = true;
           player.items = player.items.filter(x => x !== it);
-          log(`${nm(player)} throws the Rete over ${nm(u)}.`);
+          log(_T`${nm(player)} throws the Rete over ${nm(u)}.`);
           if (u.cls) bumpRel(u, player, -10, 'netted');
           cardShow('c:rete', player);
         }
@@ -385,17 +385,17 @@ async function cpuMarket(player) {
   if (!sharp && P.cf > 80 && player.cf >= 17 && player.cf < 50 && rand() < .5) return; // showmen hoard CF for freedom
   player.cf -= 3;
   player.market = true;
-  log(`${nm(player)} spends 3 CF to unlock the market.`);
+  log(_T`${nm(player)} spends 3 CF to unlock the market.`);
   if (disc) {
     player.items = player.items.filter(x => x !== disc);
     player.discount = 2;
-    log(`${nm(player)} declares % Off.`);
+    log(_T`${nm(player)} declares % Off.`);
   }
   const mc = player.items.find(i => i.kind === 'card' && i.key === 'mchoice');
   if (mc && player.diff !== 'easy') {
     player.items = player.items.filter(x => x !== mc);
     player.mchoice = true;
-    log(`${nm(player)} declares Choose.`);
+    log(_T`${nm(player)} declares Choose.`);
   }
   for (let guard = 0; guard < 3; guard++) {
     const weak = Math.min(...armsAttached(player).map(a => wScore(player['w' + a])));
@@ -417,7 +417,7 @@ async function cpuMarket(player) {
     crowdReact('buy', {
       p: player
     });
-    log(`${nm(player)} buys at level ${lv}.`);
+    log(_T`${nm(player)} buys at level ${lv}.`);
     const got = typeof marketBuy75 === 'function' ? await marketBuy75(player, lv, { pref: kind }) : { kind, key: await marketRoll(player, kind, lv) }; /* v0.75: one roll, either side (rulebook p.25) */
     if (got.kind === 'w' && got.key) await gainWeapon(player, got.key);else if (got.key) await gainArmorPiece(player, got.key);
     think(player, pickOne(QUOTES.market), 'think');
@@ -437,7 +437,7 @@ async function cpuDiplomacy(player) {
   if ((S.lastOffer || -9) > S.turnNo - 4) return;
   const P = pers(player);
   const partners = tradePartners(player).filter(other => !friendly(player, other) && !inTruce(player, other) && relOf(player, other) > -60);
-  const mfWant = player.items.find(i => i.kind === 'mf' && ['The Truce', 'The Trade'].includes(MANDATA[i.idx].n));
+  const mfWant = player.items.find(i => i.kind === 'mf' && [_T('The Truce'), _T('The Trade')].includes(MANDATA[i.idx].n));
   let chance = (player.diff === 'hard' ? .3 : .15) * (0.5 + (P.survival + P.loyalty - P.aggression + 50) / 150);
   if (mfWant && player.diff !== 'easy') chance = Math.max(chance, .6);
   if (!partners.length || rand() > chance) return;
@@ -448,18 +448,18 @@ async function cpuDiplomacy(player) {
     wantTrade = mfWant && MANDATA[mfWant.idx].n === 'The Trade';
   if (!wantTrade && (wantTruce || strength(q) > strength(player) * 0.9 || P.loyalty > 75 && rand() < .5 || relOf(player, q) >= 25)) {
     let ok;
-    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await modal(`${player.name} offers a truce`, `<p>${typeof truceWho==='function'?truceWho(player):player.name} (CPU) proposes a truce. Neither of you will be targeted by the other, but there is no penalty for breaking it. Only one gladiator can win.</p>${hint('truce')}`, [{
-      label: 'Accept truce',
+    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await modal(_T`${player.name} offers a truce`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} (CPU) proposes a truce. Neither of you will be targeted by the other, but there is no penalty for breaking it. Only one gladiator can win.`}</p>${hint('truce')}`, [{
+      label: _T('Accept truce'),
       value: 1,
       primary: 1
     }, {
-      label: 'Refuse',
+      label: _T('Refuse'),
       value: 0
     }]);
     if (ok) {
       makeTruce(player, q);
       think(player, pickOne(QUOTES.truce), 'think');
-    } else log(`${nm(q)} refuses ${nm(player)}'s truce.`);
+    } else log(_T`${nm(q)} refuses ${nm(player)}'s truce.`);
     return;
   }
   const mine = tradeables(player).filter(x => x.t === 'coin' || x.t === 'item');
@@ -469,17 +469,17 @@ async function cpuDiplomacy(player) {
   const give = mine.filter(x => x.val >= get.val * 0.9).sort((a, b) => a.val - b.val)[0];
   if (!give) return;
   let ok;
-  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await modal(`${player.name} proposes a trade`, `<p>${player.name} offers <b>${give.label}</b> for your <b>${get.label}</b>.</p>`, [{
-    label: 'Accept trade',
+  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await modal(_T`${player.name} proposes a trade`, `<p>${_T`${player.name} offers <b>${give.label}</b> for your <b>${get.label}</b>.`}</p>`, [{
+    label: _T('Accept trade'),
     value: 1,
     primary: 1
   }, {
-    label: 'Refuse',
+    label: _T('Refuse'),
     value: 0
   }]);
   if (ok) {
     doTrade(player, q, give, get);
-  } else log(`${nm(q)} refuses ${nm(player)}'s trade.`);
+  } else log(_T`${nm(q)} refuses ${nm(player)}'s trade.`);
 }
 /* Allies (teammates, co-op partners, truce partners) share what they can spare. */
 /* cpuHelpAllies — gives at most one gift per turn to the most-hurt ally within 4 tiles: a heal, an armor token, a key for the chest, or 3 coin.
@@ -500,18 +500,18 @@ async function cpuHelpAllies(player) {
     const heal = mine.find(x => x.t === 'item' && (x.it.key === 'elix4' || x.it.key === 'elix2' || isElixir(x.it.key)));
     if (heal && (hurtBad(q) || hpFrac(q) < .5) && (!hurtBad(player) || P.loyalty > 85)) {
       gift = heal;
-      why = 'to patch their wounds';
+      why = _T('to patch their wounds');
     }
     if (!gift) {
       const ap = mine.find(x => x.t === 'item' && (x.it.key === 'ap2' || x.it.key === 'ap3' || isForge(x.it.key)));
       if (ap && LOCS.some(l => q.ap[l] > 0) && LOCS.reduce((s, l) => s + q.ap[l], 0) < LOCS.reduce((s, l) => s + player.ap[l], 0) - 3) {
         gift = ap;
-        why = 'to shore up their armor';
+        why = _T('to shore up their armor');
       }
     }
     if (!gift && q.keys === 0 && player.keys > 1 && S.chest && S.chest.weapons.length && cheb(q, S.chest) < cheb(player, S.chest)) {
       gift = mine.find(x => x.t === 'key');
-      why = 'for the chest';
+      why = _T('for the chest');
     }
     if (!gift && q.coin < 4 && player.coin >= 10 && P.coin < 65) {
       gift = {
@@ -520,7 +520,7 @@ async function cpuHelpAllies(player) {
         label: '3 coin',
         val: 3
       };
-      why = 'to keep them in the fight';
+      why = _T('to keep them in the fight');
     }
     if (gift) {
       doGift(player, q, gift, why);
@@ -954,7 +954,7 @@ async function cpuAct(player) {
       player.carrying = true;
       S.chest.held = 'p' + player.id;
       player.mv = Math.max(0, player.mv - 1);
-      log(`${nm(player)} picks up the chest to keep it from the others.`);
+      log(_T`${nm(player)} picks up the chest to keep it from the others.`);
     }
     // attacks
     let best = null;
@@ -1035,7 +1035,7 @@ async function cpuAct(player) {
             c: g0[1]
           }))[0];
           if (cut) {
-            think(player, 'The crowd above never sees the roads below.', 'think');
+            think(player, _T('The crowd above never sees the roads below.'), 'think');
             await doTunnel(player, cut);
             render();
             return;

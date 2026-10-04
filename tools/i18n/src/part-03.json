@@ -1,0 +1,2194 @@
+[
+ {
+  "k": "to patch their wounds",
+  "w": "06-ai.js:503"
+ },
+ {
+  "k": "to shore up their armor",
+  "w": "06-ai.js:509"
+ },
+ {
+  "k": "for the chest",
+  "w": "06-ai.js:514"
+ },
+ {
+  "k": "to keep them in the fight",
+  "w": "06-ai.js:523"
+ },
+ {
+  "k": "{0} picks up the chest to keep it from the others.",
+  "w": "06-ai.js:957"
+ },
+ {
+  "k": "The crowd above never sees the roads below.",
+  "w": "06-ai.js:1038"
+ },
+ {
+  "k": "{0} throws the Rete over {1}. It loses its movement next turn.",
+  "w": "07-ui.js:159"
+ },
+ {
+  "k": "Command {0}: move it, attack an adjacent enemy, or finish.",
+  "w": "07-ui.js:174"
+ },
+ {
+  "k": "{0} is walked to the gate first, arms raised to the crowd.",
+  "w": "07-ui.js:403"
+ },
+ {
+  "k": "Handlers with nets and long poles herd the surviving beasts out through the beast gates.",
+  "w": "07-ui.js:419"
+ },
+ {
+  "k": "Boatmen pole across the flooded arena, fishing out every token — some of them bite.",
+  "w": "07-ui.js:442"
+ },
+ {
+  "k": "The sluices open: the sea drains out of the arena, corner to corner, and the sand comes back.",
+  "w": "07-ui.js:462"
+ },
+ {
+  "k": "A hush falls. Through the Porta Libitinensis stalks a masked figure in <b>Charun's</b> likeness, a long iron hook in hand — come for <b>{0}</b>, as the Fates decreed.",
+  "w": "07-ui.js:484"
+ },
+ {
+  "k": "{0} is dragged from the sand, hook under the arm, heels carving a line in the sand.",
+  "w": "07-ui.js:498"
+ },
+ {
+  "k": "Slaves wheel small carts onto the sand and heave the fallen aboard.",
+  "w": "07-ui.js:527"
+ },
+ {
+  "k": "Chained slaves shuffle across the sand with rags and rakes, wiping away the day’s blood.",
+  "w": "07-ui.js:562"
+ },
+ {
+  "k": "Boys with baskets gather the laurels and flowers the crowd threw.",
+  "w": "07-ui.js:586"
+ },
+ {
+  "k": "The crew sweeps the sand for what the fighters left behind — dropped kit, offerings, thrown steel — every scrap carried to the vaults.",
+  "w": "07-ui.js:615"
+ },
+ {
+  "k": "The crews unstep the ships’ masts and drag them out — the sand is being set for Classic games.",
+  "w": "07-ui.js:669"
+ },
+ {
+  "k": "The crew hauls away the stone that does not belong.",
+  "w": "07-ui.js:669"
+ },
+ {
+  "k": "Teams of slaves carry out twelve pillars and set them on the Classic marks, fresh Blessings pots chained above.",
+  "w": "07-ui.js:683"
+ },
+ {
+  "k": "Teams of slaves heave the fallen pillars back onto their plinths and chain fresh Blessings pots above.",
+  "w": "07-ui.js:683"
+ },
+ {
+  "k": "Fresh Blessings pots are chained atop the pillars.",
+  "w": "07-ui.js:701"
+ },
+ {
+  "k": "Below the sand, the winches turn: the spikes sink back into their housings.",
+  "w": "07-ui.js:728"
+ },
+ {
+  "k": "The Arena Chest is carried back to its mark.",
+  "w": "07-ui.js:744"
+ },
+ {
+  "k": "The ushers work the tiers: the last spectators drain out through the vomitoria, still arguing about the card.",
+  "w": "07-ui.js:762"
+ },
+ {
+  "k": "Last of all, the handlers lead the beasts back in and walk them to their marks.",
+  "w": "07-ui.js:791"
+ },
+ {
+  "k": "The games are done. The Porta Triumphalis opens for the living; the crew of the arena takes the sand.",
+  "w": "07-ui.js:912"
+ },
+ {
+  "k": "The sand is raked smooth, the ropes come down to open the full square, the pillars stand dressed, and the beast gates are barred. The arena waits for its next games.",
+  "w": "07-ui.js:962"
+ },
+ {
+  "k": "<span>🧹 <b>The arena crew</b> · ~{0}s to reset</span>",
+  "w": "07-ui.js:1135"
+ },
+ {
+  "k": "⏎ Return to Match Week",
+  "w": "07-ui.js:1135"
+ },
+ {
+  "k": "⏭ Skip the show",
+  "w": "07-ui.js:1135"
+ },
+ {
+  "k": "🧹 The arena is ready",
+  "w": "07-ui.js:1166"
+ },
+ {
+  "k": "⚔️ Start a new match",
+  "w": "07-ui.js:1167"
+ },
+ {
+  "k": "choose the arena, event and gladiators",
+  "w": "07-ui.js:1168"
+ },
+ {
+  "k": "🏟 Back to the arena",
+  "w": "07-ui.js:1172"
+ },
+ {
+  "k": "stay and look around",
+  "w": "07-ui.js:1173"
+ },
+ {
+  "k": "main menu",
+  "w": "07-ui.js:1177"
+ },
+ {
+  "k": "The main menu…",
+  "w": "07-ui.js:1182"
+ },
+ {
+  "k": "Hover or tap a tile to inspect it.",
+  "w": "07-ui.js:2346"
+ },
+ {
+  "k": "⬇ {0} is <b>underground</b> — surfaces on this tunnel at the start of their next turn, and cannot be attacked until then",
+  "w": "07-ui.js:2355"
+ },
+ {
+  "k": "{0} · Head {1}/{2}AP · Chest {3}/{4}AP · CF {5}{6}",
+  "w": "07-ui.js:2355"
+ },
+ {
+  "k": "{0} ({1}) · {2} HP · MV {3} · ATK {4}{5}{6}{7}",
+  "w": "07-ui.js:2359"
+ },
+ {
+  "k": "· aggro on",
+  "w": "07-ui.js:2359"
+ },
+ {
+  "k": "Pillar with {0} Blessings pot{1} (contents hidden)",
+  "w": "07-ui.js:2361"
+ },
+ {
+  "k": "Pillar",
+  "w": "07-ui.js:2361"
+ },
+ {
+  "k": "{0} (Team {1}, {2} HP)",
+  "w": "07-ui.js:2364"
+ },
+ {
+  "k": "Sunken pillar top (solid footing)",
+  "w": "07-ui.js:2364"
+ },
+ {
+  "k": "Water",
+  "w": "07-ui.js:2364"
+ },
+ {
+  "k": "Floating door (board for 2 movement)",
+  "w": "07-ui.js:2365"
+ },
+ {
+  "k": "Cannot be traversed",
+  "w": "07-ui.js:2368"
+ },
+ {
+  "k": "Player-only zone",
+  "w": "07-ui.js:2368"
+ },
+ {
+  "k": "Race track",
+  "w": "07-ui.js:2368"
+ },
+ {
+  "k": "Pillar gate",
+  "w": "07-ui.js:2369"
+ },
+ {
+  "k": "Tunnel",
+  "w": "07-ui.js:2371"
+ },
+ {
+  "k": "Tunnel (sealed by a pillar)",
+  "w": "07-ui.js:2371"
+ },
+ {
+  "k": "Floor spike (2 damage on entry)",
+  "w": "07-ui.js:2372"
+ },
+ {
+  "k": "Arena Chest (locked, {0} inside)",
+  "w": "07-ui.js:2373"
+ },
+ {
+  "k": "{0} {1} (free to pick up)",
+  "w": "07-ui.js:2374"
+ },
+ {
+  "k": "'s thrown",
+  "w": "07-ui.js:2374"
+ },
+ {
+  "k": "Thrown",
+  "w": "07-ui.js:2374"
+ },
+ {
+  "k": "Spare wheel",
+  "w": "07-ui.js:2374"
+ },
+ {
+  "k": "Spare horse",
+  "w": "07-ui.js:2374"
+ },
+ {
+  "k": "Golden Eagle",
+  "w": "07-ui.js:2374"
+ },
+ {
+  "k": "Offering: {0} ({1})",
+  "w": "07-ui.js:2374"
+ },
+ {
+  "k": "Corpse of",
+  "w": "07-ui.js:2375"
+ },
+ {
+  "k": "Left in the sand",
+  "w": "07-ui.js:2375"
+ },
+ {
+  "k": "Items dropped by",
+  "w": "07-ui.js:2375"
+ },
+ {
+  "k": "Golden Eagle capture tile",
+  "w": "07-ui.js:2376"
+ },
+ {
+  "k": "{0}'s zone",
+  "w": "07-ui.js:2380"
+ },
+ {
+  "k": "outside the playable zone",
+  "w": "07-ui.js:2381"
+ },
+ {
+  "k": "move cost {0}",
+  "w": "07-ui.js:2388"
+ },
+ {
+  "k": "{0}'s body: health and armor by location",
+  "w": "07-ui.js:2473"
+ },
+ {
+  "k": "{0}: {1} HP, {2} AP{3}",
+  "w": "07-ui.js:2494"
+ },
+ {
+  "k": "Flavius' Greaves: +1 movement",
+  "w": "07-ui.js:2504"
+ },
+ {
+  "k": "+{0} DMG{1}",
+  "w": "07-ui.js:2525"
+ },
+ {
+  "k": "(Cestus)",
+  "w": "07-ui.js:2525"
+ },
+ {
+  "k": "<span class=\"badge good\">+1 MV Greaves</span>",
+  "w": "07-ui.js:2526"
+ },
+ {
+  "k": "Hercules +{0}",
+  "w": "07-ui.js:2527"
+ },
+ {
+  "k": "<span class=\"badge gold\">Focus! ready</span>",
+  "w": "07-ui.js:2528"
+ },
+ {
+  "k": "<span class=\"badge good\">Ward active</span>",
+  "w": "07-ui.js:2529"
+ },
+ {
+  "k": "<span class=\"badge good\">+1 MV this round</span>",
+  "w": "07-ui.js:2530"
+ },
+ {
+  "k": "+{0} MV this turn",
+  "w": "07-ui.js:2531"
+ },
+ {
+  "k": "{0}'s feeling toward {1}: {2}",
+  "w": "07-ui.js:2537"
+ },
+ {
+  "k": "{0} {1} toward {2}",
+  "w": "07-ui.js:2537"
+ },
+ {
+  "k": "Priorities: {0}",
+  "w": "07-ui.js:2543"
+ },
+ {
+  "k": "<span class=\"badge bad\">Netted</span>",
+  "w": "07-ui.js:2545"
+ },
+ {
+  "k": "<span class=\"badge gold\">Carrying chest (−1 MV)</span>",
+  "w": "07-ui.js:2546"
+ },
+ {
+  "k": "<span class=\"badge gold\">Golden Eagle</span>",
+  "w": "07-ui.js:2547"
+ },
+ {
+  "k": "Captured {0}/2",
+  "w": "07-ui.js:2548"
+ },
+ {
+  "k": "Team {0}",
+  "w": "07-ui.js:2549"
+ },
+ {
+  "k": "Truce with {0}",
+  "w": "07-ui.js:2550"
+ },
+ {
+  "k": "Ally: {0}",
+  "w": "07-ui.js:2551"
+ },
+ {
+  "k": "<span class=\"badge bad\">No Zora</span>",
+  "w": "07-ui.js:2552"
+ },
+ {
+  "k": "<span class=\"badge good\">Riding a floating door</span>",
+  "w": "07-ui.js:2554"
+ },
+ {
+  "k": "{0} carries {1}",
+  "w": "07-ui.js:2555"
+ },
+ {
+  "k": "Lap {0}/3",
+  "w": "07-ui.js:2558"
+ },
+ {
+  "k": "Wheel {0}",
+  "w": "07-ui.js:2558"
+ },
+ {
+  "k": "missing (−2 MV)",
+  "w": "07-ui.js:2558"
+ },
+ {
+  "k": "Horse {0} HP · +{1} MV",
+  "w": "07-ui.js:2558"
+ },
+ {
+  "k": "Horse missing",
+  "w": "07-ui.js:2558"
+ },
+ {
+  "k": "stnd phead",
+  "w": "07-ui.js:2561"
+ },
+ {
+  "k": "You",
+  "w": "07-ui.js:2561"
+ },
+ {
+  "k": "No coin has moved yet.",
+  "w": "07-ui.js:2562"
+ },
+ {
+  "k": "<span>Coin ⓘ</span><b>{0} {1}</b>",
+  "w": "07-ui.js:2562"
+ },
+ {
+  "k": "No Crowd Favor has moved yet.",
+  "w": "07-ui.js:2562"
+ },
+ {
+  "k": "The final Fate score — the same number the results show",
+  "w": "07-ui.js:2564"
+ },
+ {
+  "k": "Fate ⓘ",
+  "w": "07-ui.js:2564"
+ },
+ {
+  "k": "Crowd Favor held when the event ended{0}",
+  "w": "07-ui.js:2569"
+ },
+ {
+  "k": "; the winner’s bonuses make up the difference",
+  "w": "07-ui.js:2569"
+ },
+ {
+  "k": "held {0}",
+  "w": "07-ui.js:2569"
+ },
+ {
+  "k": "Final Fate score if this gladiator wins now: held CF plus the winner's bonuses (event reward, 5 per 3 trophies, Flavius items, a held Golden Eagle), minus 5 per hidden Mandata Flavi",
+  "w": "07-ui.js:2572"
+ },
+ {
+  "k": "<span>Keys</span><b>{0} {1}</b>",
+  "w": "07-ui.js:2576"
+ },
+ {
+  "k": "Trophies: {0} gladiators, {1} beasts",
+  "w": "07-ui.js:2576"
+ },
+ {
+  "k": "<span>Trophies ▸</span><b>{0} {1}",
+  "w": "07-ui.js:2576"
+ },
+ {
+  "k": "HP {0} · AP {1}",
+  "w": "07-ui.js:2580"
+ },
+ {
+  "k": "Ratings: Speed, Strength, Intelligence, Luck, Charisma",
+  "w": "07-ui.js:2582"
+ },
+ {
+  "k": "Chariot",
+  "w": "07-ui.js:2584"
+ },
+ {
+  "k": "{0} {1} {2}HP",
+  "w": "07-ui.js:2584"
+ },
+ {
+  "k": "no horse",
+  "w": "07-ui.js:2584"
+ },
+ {
+  "k": "{0} {1}HP",
+  "w": "07-ui.js:2584"
+ },
+ {
+  "k": "no wheel",
+  "w": "07-ui.js:2584"
+ },
+ {
+  "k": "Weapons",
+  "w": "07-ui.js:2585"
+ },
+ {
+  "k": "Right (primary)",
+  "w": "07-ui.js:2589"
+ },
+ {
+  "k": "Left (secondary)",
+  "w": "07-ui.js:2589"
+ },
+ {
+  "k": "empty hand",
+  "w": "07-ui.js:2589"
+ },
+ {
+  "k": "punch P1 · R1",
+  "w": "07-ui.js:2589"
+ },
+ {
+  "k": "Movement {0}",
+  "w": "07-ui.js:2591"
+ },
+ {
+  "k": "· {0} left",
+  "w": "07-ui.js:2591"
+ },
+ {
+  "k": "· {0}{1} per turn",
+  "w": "07-ui.js:2591"
+ },
+ {
+  "k": "Hand, offerings & objectives",
+  "w": "07-ui.js:2595"
+ },
+ {
+  "k": "Declare",
+  "w": "07-ui.js:2604"
+ },
+ {
+  "k": "Use",
+  "w": "07-ui.js:2604"
+ },
+ {
+  "k": "{0} card",
+  "w": "07-ui.js:2606"
+ },
+ {
+  "k": "Drafted gladiator: no class ability or weakness.",
+  "w": "07-ui.js:2606"
+ },
+ {
+  "k": "Lanista takes: {0}",
+  "w": "07-ui.js:2606"
+ },
+ {
+  "k": "{0} leads with {1} CF",
+  "w": "07-ui.js:2624"
+ },
+ {
+  "k": "Standings — {0} leads with {1} CF",
+  "w": "07-ui.js:2626"
+ },
+ {
+  "k": "not allowed",
+  "w": "07-ui.js:2655"
+ },
+ {
+  "k": "🐾 Menagerie{0}",
+  "w": "07-ui.js:2671"
+ },
+ {
+  "k": "· <b>{0}</b> slain",
+  "w": "07-ui.js:2671"
+ },
+ {
+  "k": "no PvE",
+  "w": "07-ui.js:2677"
+ },
+ {
+  "k": "no PvP",
+  "w": "07-ui.js:2677"
+ },
+ {
+  "k": "no CF (Commodus is in the arena)",
+  "w": "07-ui.js:2677"
+ },
+ {
+  "k": "no CF",
+  "w": "07-ui.js:2677"
+ },
+ {
+  "k": "Click for the season schedule · {0}{1}{2}",
+  "w": "07-ui.js:2678"
+ },
+ {
+  "k": "· class modifiers apply here (see New event)",
+  "w": "07-ui.js:2678"
+ },
+ {
+  "k": "· off the season schedule",
+  "w": "07-ui.js:2678"
+ },
+ {
+  "k": "· Summa Rudis",
+  "w": "07-ui.js:2678"
+ },
+ {
+  "k": "Round {0} of {1}: {2}. Zone {3}×{4}. Allowed now: {5}{6}",
+  "w": "07-ui.js:2678"
+ },
+ {
+  "k": "Round {0}/{1} · {2} · {3}×{4}",
+  "w": "07-ui.js:2678"
+ },
+ {
+  "k": "{0} — click for the event briefing",
+  "w": "07-ui.js:2680"
+ },
+ {
+  "k": "No abilities",
+  "w": "07-ui.js:2680"
+ },
+ {
+  "k": "· Commodus is in",
+  "w": "07-ui.js:2680"
+ },
+ {
+  "k": "<span>Rotation <b>{0}</b>/10</span>",
+  "w": "07-ui.js:2681"
+ },
+ {
+  "k": "<span>Eagles {0}</span>",
+  "w": "07-ui.js:2681"
+ },
+ {
+  "k": "<span>Eagles 0</span>",
+  "w": "07-ui.js:2681"
+ },
+ {
+  "k": "{0} · event {1}/3",
+  "w": "07-ui.js:2681"
+ },
+ {
+  "k": "Missio · {0} · step {1}/5",
+  "w": "07-ui.js:2681"
+ },
+ {
+  "k": "Click for the season schedule · {0}",
+  "w": "07-ui.js:2687"
+ },
+ {
+  "k": "Selected in New event",
+  "w": "07-ui.js:2687"
+ },
+ {
+  "k": "<span class=\"chip\" style=\"opacity:.7\">No event on the sand</span>",
+  "w": "07-ui.js:2687"
+ },
+ {
+  "k": "<span>⚔ Fighting in this event</span><small>{0} of {1} standing</small>",
+  "w": "07-ui.js:2693"
+ },
+ {
+  "k": "On your ★ Favorites board — click to remove",
+  "w": "07-ui.js:2703"
+ },
+ {
+  "k": "Add to your ★ Favorites board (Manager mode)",
+  "w": "07-ui.js:2703"
+ },
+ {
+  "k": "· Team",
+  "w": "07-ui.js:2703"
+ },
+ {
+  "k": "Exited the arena",
+  "w": "07-ui.js:2708"
+ },
+ {
+  "k": "{0}{1}CF {2} · coin {3} · ⚔ {4} 🐾 {5}{6}{7}",
+  "w": "07-ui.js:2708"
+ },
+ {
+  "k": "Lap {0}/3{1} ·",
+  "w": "07-ui.js:2708"
+ },
+ {
+  "k": "· on foot",
+  "w": "07-ui.js:2708"
+ },
+ {
+  "k": "· outside zone",
+  "w": "07-ui.js:2708"
+ },
+ {
+  "k": "Eliminated",
+  "w": "07-ui.js:2708"
+ },
+ {
+  "k": "Command <b>{0}</b>: click an orange tile to move{1}{2}{3}.",
+  "w": "07-ui.js:2718"
+ },
+ {
+  "k": ", or a red ring to attack",
+  "w": "07-ui.js:2718"
+ },
+ {
+  "k": "Pick up {0}<small>halves his movement</small>",
+  "w": "07-ui.js:2718"
+ },
+ {
+  "k": "Deliver to",
+  "w": "07-ui.js:2718"
+ },
+ {
+  "k": "Drop here",
+  "w": "07-ui.js:2718"
+ },
+ {
+  "k": "Done commanding",
+  "w": "07-ui.js:2718"
+ },
+ {
+  "k": "{0} (CPU, {1}) is taking their turn…",
+  "w": "07-ui.js:2719"
+ },
+ {
+  "k": "Take 2 coin<small>safe</small>",
+  "w": "07-ui.js:2719"
+ },
+ {
+  "k": "Draw arena card<small>{0}</small>",
+  "w": "07-ui.js:2719"
+ },
+ {
+  "k": "left · high risk",
+  "w": "07-ui.js:2719"
+ },
+ {
+  "k": "no arena deck in this event",
+  "w": "07-ui.js:2719"
+ },
+ {
+  "k": "Drive",
+  "w": "07-ui.js:2725"
+ },
+ {
+  "k": "Move on foot",
+  "w": "07-ui.js:2725"
+ },
+ {
+  "k": "{0} movement{1}",
+  "w": "07-ui.js:2725"
+ },
+ {
+  "k": "· forward or forward-diagonal only",
+  "w": "07-ui.js:2725"
+ },
+ {
+  "k": "Attack · {0}",
+  "w": "07-ui.js:2729"
+ },
+ {
+  "k": "{0} in range · once per lap",
+  "w": "07-ui.js:2729"
+ },
+ {
+  "k": "after your first lap",
+  "w": "07-ui.js:2729"
+ },
+ {
+  "k": "already attacked this lap",
+  "w": "07-ui.js:2729"
+ },
+ {
+  "k": "Dismount",
+  "w": "07-ui.js:2731"
+ },
+ {
+  "k": "fetch spare wheels or horses on foot",
+  "w": "07-ui.js:2731"
+ },
+ {
+  "k": "Mount chariot",
+  "w": "07-ui.js:2731"
+ },
+ {
+  "k": "End turn<small>next racer</small>",
+  "w": "07-ui.js:2732"
+ },
+ {
+  "k": "Race counter-clockwise: north up the right side, west along the top, south down the left, east along the bottom across the red finish line. Lap {0}/3. Pillar gates at the top and bottom middle flip your horse, draw an offering and give a free step.{1}",
+  "w": "07-ui.js:2733"
+ },
+ {
+  "k": "On foot you can enter the center to pick up spare wheels and horses; a chariot that hits you eliminates you.",
+  "w": "07-ui.js:2733"
+ },
+ {
+  "k": "Throw",
+  "w": "07-ui.js:2742"
+ },
+ {
+  "k": "Attack",
+  "w": "07-ui.js:2742"
+ },
+ {
+  "k": "{0} · {1} target{2}",
+  "w": "07-ui.js:2742"
+ },
+ {
+  "k": "Move",
+  "w": "07-ui.js:2748"
+ },
+ {
+  "k": "locked — Focus spends your movement",
+  "w": "07-ui.js:2748"
+ },
+ {
+  "k": "{0} movement · diagonal 2",
+  "w": "07-ui.js:2748"
+ },
+ {
+  "k": "Spend ALL your remaining movement: the location die is rolled three times and you pick where your next attack on a gladiator lands",
+  "w": "07-ui.js:2749"
+ },
+ {
+  "k": "🎯 Focus roll: {0}<small>{1}</small>",
+  "w": "07-ui.js:2749"
+ },
+ {
+  "k": "your next attack picks 1 of 3 rolled locations",
+  "w": "07-ui.js:2749"
+ },
+ {
+  "k": "costs your {0} movement · pick 1 of 3 locations",
+  "w": "07-ui.js:2749"
+ },
+ {
+  "k": "no attacks left",
+  "w": "07-ui.js:2749"
+ },
+ {
+  "k": "Push",
+  "w": "07-ui.js:2750"
+ },
+ {
+  "k": "Topple pillar",
+  "w": "07-ui.js:2751"
+ },
+ {
+  "k": "1 Arena Key · ends turn",
+  "w": "07-ui.js:2752"
+ },
+ {
+  "k": "Open Arena Chest",
+  "w": "07-ui.js:2753"
+ },
+ {
+  "k": "Pick up chest",
+  "w": "07-ui.js:2754"
+ },
+ {
+  "k": "−1 movement while held",
+  "w": "07-ui.js:2754"
+ },
+ {
+  "k": "Drop chest",
+  "w": "07-ui.js:2755"
+ },
+ {
+  "k": "Loot",
+  "w": "07-ui.js:2756"
+ },
+ {
+  "k": "thrown weapons only",
+  "w": "07-ui.js:2756"
+ },
+ {
+  "k": "1 item per turn",
+  "w": "07-ui.js:2756"
+ },
+ {
+  "k": "Market",
+  "w": "07-ui.js:2757"
+ },
+ {
+  "k": "3 CF to unlock",
+  "w": "07-ui.js:2757"
+ },
+ {
+  "k": "CF locked",
+  "w": "07-ui.js:2757"
+ },
+ {
+  "k": "{0} CF to spend",
+  "w": "07-ui.js:2758"
+ },
+ {
+  "k": "locked this round",
+  "w": "07-ui.js:2758"
+ },
+ {
+  "k": "Trade or truce",
+  "w": "07-ui.js:2759"
+ },
+ {
+  "k": "within 4 tiles",
+  "w": "07-ui.js:2759"
+ },
+ {
+  "k": "Spear a spectator",
+  "w": "07-ui.js:2760"
+ },
+ {
+  "k": "3 CF · once per event",
+  "w": "07-ui.js:2760"
+ },
+ {
+  "k": "Wager on yourself",
+  "w": "07-ui.js:2761"
+ },
+ {
+  "k": "coin at today's odds",
+  "w": "07-ui.js:2761"
+ },
+ {
+  "k": "Release Zora",
+  "w": "07-ui.js:2762"
+ },
+ {
+  "k": "{0} release{1} left",
+  "w": "07-ui.js:2762"
+ },
+ {
+  "k": "once per event",
+  "w": "07-ui.js:2762"
+ },
+ {
+  "k": "Exit the arena",
+  "w": "07-ui.js:2763"
+ },
+ {
+  "k": "ends your event here",
+  "w": "07-ui.js:2763"
+ },
+ {
+  "k": "Leave the door",
+  "w": "07-ui.js:2764"
+ },
+ {
+  "k": "swim from here",
+  "w": "07-ui.js:2764"
+ },
+ {
+  "k": "End turn<small>{0}</small>",
+  "w": "07-ui.js:2765"
+ },
+ {
+  "k": "nothing left to do this turn",
+  "w": "07-ui.js:2765"
+ },
+ {
+  "k": "Phase 4",
+  "w": "07-ui.js:2765"
+ },
+ {
+  "k": "Click an orange tile to move. Numbers show the movement it costs.",
+  "w": "07-ui.js:2768"
+ },
+ {
+  "k": "Click a yellow tile to push that pillar, player or NPC one tile away. Push beasts or rivals onto spikes, or pillars onto tunnels to seal them.",
+  "w": "07-ui.js:2769"
+ },
+ {
+  "k": "Click a pillar to topple it away from you. Anything on the next two tiles takes 3 damage and every pot on it breaks.",
+  "w": "07-ui.js:2770"
+ },
+ {
+  "k": "Click a blue tunnel to exit there. You stay underground until your next turn.",
+  "w": "07-ui.js:2771"
+ },
+ {
+  "k": "Click a teal target to throw the net.",
+  "w": "07-ui.js:2772"
+ },
+ {
+  "k": "Click a red-ringed target. Pots need 2 damage to break.",
+  "w": "07-ui.js:2773"
+ },
+ {
+  "k": "Grace: {0} turn{1} left to reach the zone.",
+  "w": "07-ui.js:2773"
+ },
+ {
+  "k": "Hints",
+  "w": "07-ui.js:2777"
+ },
+ {
+  "k": "{0} lifts the Arena Chest.",
+  "w": "07-ui.js:2883"
+ },
+ {
+  "k": "{0} sets the chest down.",
+  "w": "07-ui.js:2890"
+ },
+ {
+  "k": "Take one item per turn from a corpse or a dropped pile. Thrown weapons in the sand can always be picked up.",
+  "w": "07-ui.js:2894"
+ },
+ {
+  "k": "{0} dismounts.",
+  "w": "07-ui.js:2918"
+ },
+ {
+  "k": "{0} mounts their chariot.",
+  "w": "07-ui.js:2922"
+ },
+ {
+  "k": "{0} slips off the door into the water.",
+  "w": "07-ui.js:2926"
+ },
+ {
+  "k": "{0}'s trophies",
+  "w": "07-ui.js:2941"
+ },
+ {
+  "k": "Close",
+  "w": "07-ui.js:2946"
+ },
+ {
+  "k": "Trophy",
+  "w": "07-ui.js:2953"
+ },
+ {
+  "k": "Type",
+  "w": "07-ui.js:2953"
+ },
+ {
+  "k": "Round",
+  "w": "07-ui.js:2953"
+ },
+ {
+  "k": "<b>Total</b>",
+  "w": "07-ui.js:2953"
+ },
+ {
+  "k": "Every 3 trophies held by a winner add 5 CF at the end. {0} in total.",
+  "w": "07-ui.js:2954"
+ },
+ {
+  "k": "Gladiators eliminated (players &amp; CPUs)",
+  "w": "07-ui.js:2954"
+ },
+ {
+  "k": "Beasts eliminated (NPCs)",
+  "w": "07-ui.js:2954"
+ },
+ {
+  "k": "Back to:",
+  "w": "07-ui.js:3101"
+ },
+ {
+  "k": "Distribute <b>{0} {1}</b> from {2}. Put it all in one location or spread it. Nothing can exceed 7.",
+  "w": "07-ui.js:3141"
+ },
+ {
+  "k": "Remove from {0}",
+  "w": "07-ui.js:3142"
+ },
+ {
+  "k": "Add to {0}",
+  "w": "07-ui.js:3142"
+ },
+ {
+  "k": "Left to assign: <b id=\"distLeft\">{0}</b>",
+  "w": "07-ui.js:3143"
+ },
+ {
+  "k": "Distribute health",
+  "w": "07-ui.js:3144"
+ },
+ {
+  "k": "Distribute armor",
+  "w": "07-ui.js:3144"
+ },
+ {
+  "k": "Auto: head, chest, arms, legs",
+  "w": "07-ui.js:3145"
+ },
+ {
+  "k": "Confirm",
+  "w": "07-ui.js:3148"
+ },
+ {
+  "k": "Barbatus",
+  "w": "07-ui.js:3195"
+ },
+ {
+  "k": "Mercator Felix",
+  "w": "07-ui.js:3195"
+ },
+ {
+  "k": "Old Vibius",
+  "w": "07-ui.js:3195"
+ },
+ {
+  "k": "Naso the sutler",
+  "w": "07-ui.js:3195"
+ },
+ {
+  "k": "Crassus Minor",
+  "w": "07-ui.js:3195"
+ },
+ {
+  "k": "the widow Tertia",
+  "w": "07-ui.js:3195"
+ },
+ {
+  "k": "{0} card{1} face-down in the level {2} deck",
+  "w": "07-ui.js:3205"
+ },
+ {
+  "k": "<b>LEVEL {0}</b>",
+  "w": "07-ui.js:3206"
+ },
+ {
+  "k": "⚖ Old debts: +1 {0} per purchase",
+  "w": "07-ui.js:3208"
+ },
+ {
+  "k": "％ Discount: −{0} coin this turn",
+  "w": "07-ui.js:3208"
+ },
+ {
+  "k": "☝ Choose: pick your slot, no die",
+  "w": "07-ui.js:3208"
+ },
+ {
+  "k": "<span>⚖ MERCATVS FLAVII ⚖</span>",
+  "w": "07-ui.js:3211"
+ },
+ {
+  "k": "the market die (1-4) picks the slot · re-roll 2 coin",
+  "w": "07-ui.js:3211"
+ },
+ {
+  "k": "🗡 The weapon racks",
+  "w": "07-ui.js:3213"
+ },
+ {
+  "k": "🛡 The armor shelves",
+  "w": "07-ui.js:3214"
+ },
+ {
+  "k": "<span>{0} <b>{1}</b> eyes your purse</span>",
+  "w": "07-ui.js:3216"
+ },
+ {
+  "k": "💰 <b>{0}</b> coin · 🌾 <b>{1}</b> CF{2}",
+  "w": "07-ui.js:3221"
+ },
+ {
+  "k": "· <b style=\"color:var(--gold2)\">stall open</b>",
+  "w": "07-ui.js:3221"
+ },
+ {
+  "k": "<b>The shutters are up.</b>",
+  "w": "07-ui.js:3222"
+ },
+ {
+  "k": "3 Crowd Favor opens the stall for this turn — then buy as often as your coin allows.",
+  "w": "07-ui.js:3222"
+ },
+ {
+  "k": "Unlock market",
+  "w": "07-ui.js:3226"
+ },
+ {
+  "k": "Weapon LV {0}",
+  "w": "07-ui.js:3233"
+ },
+ {
+  "k": "{0} coin{1}",
+  "w": "07-ui.js:3234"
+ },
+ {
+  "k": "Armor LV {0}",
+  "w": "07-ui.js:3239"
+ },
+ {
+  "k": "⚖ Pay old debts in coin",
+  "w": "07-ui.js:3246"
+ },
+ {
+  "k": "⚖ Pay old debts in CF",
+  "w": "07-ui.js:3246"
+ },
+ {
+  "k": "Veteranus: +1 per purchase",
+  "w": "07-ui.js:3247"
+ },
+ {
+  "k": "Close market",
+  "w": "07-ui.js:3251"
+ },
+ {
+  "k": "Market of Flavius",
+  "w": "07-ui.js:3254"
+ },
+ {
+  "k": "market purchases",
+  "w": "07-ui.js:3272"
+ },
+ {
+  "k": "Unlock market for this turn",
+  "w": "07-ui.js:3290"
+ },
+ {
+  "k": "Arena card",
+  "w": "07-ui.js:3300"
+ },
+ {
+  "k": "Health Elixir token (+4 HP)",
+  "w": "07-ui.js:3305"
+ },
+ {
+  "k": "AP Upgrade token (+3 AP)",
+  "w": "07-ui.js:3310"
+ },
+ {
+  "k": "Discard 10 coin for 2 CF",
+  "w": "07-ui.js:3315"
+ },
+ {
+  "k": "Crowd Favor is spent in Phase 3. If it ever drops below zero, you are eliminated. You have <b>{0} CF</b> and <b>{1} coin</b>.",
+  "w": "07-ui.js:3323"
+ },
+ {
+  "k": "{0} buys an Arena Key.",
+  "w": "07-ui.js:3333"
+ },
+ {
+  "k": "{0} buys a Health Elixir token.",
+  "w": "07-ui.js:3342"
+ },
+ {
+  "k": "{0} buys an AP Upgrade token.",
+  "w": "07-ui.js:3347"
+ },
+ {
+  "k": "thrown to the crowd",
+  "w": "07-ui.js:3351"
+ },
+ {
+  "k": "{0} throws 10 coin to the crowd (+2 CF).",
+  "w": "07-ui.js:3353"
+ },
+ {
+  "k": "{0} · {1} tiles away{2}",
+  "w": "07-ui.js:3364"
+ },
+ {
+  "k": "· in truce",
+  "w": "07-ui.js:3364"
+ },
+ {
+  "k": "With {0}",
+  "w": "07-ui.js:3372"
+ },
+ {
+  "k": "Propose a trade",
+  "w": "07-ui.js:3373"
+ },
+ {
+  "k": "Give a gift",
+  "w": "07-ui.js:3377"
+ },
+ {
+  "k": "hand over an item, coin or weapon",
+  "w": "07-ui.js:3378"
+ },
+ {
+  "k": "Break the truce",
+  "w": "07-ui.js:3381"
+ },
+ {
+  "k": "Propose a truce",
+  "w": "07-ui.js:3381"
+ },
+ {
+  "k": "no more truces this event",
+  "w": "07-ui.js:3384"
+ },
+ {
+  "k": "Flavius will not allow it in a lesson",
+  "w": "07-ui.js:3384"
+ },
+ {
+  "k": "{0} ends the truce with {1}.",
+  "w": "07-ui.js:3392"
+ },
+ {
+  "k": "{0}: truce offer",
+  "w": "07-ui.js:3396"
+ },
+ {
+  "k": "{0} proposes a truce. Accept?",
+  "w": "07-ui.js:3396"
+ },
+ {
+  "k": "Accept",
+  "w": "07-ui.js:3397"
+ },
+ {
+  "k": "{0} refuses the truce.",
+  "w": "07-ui.js:3406"
+ },
+ {
+  "k": "Gift to {0}",
+  "w": "07-ui.js:3412"
+ },
+ {
+  "k": "Gratias, friend.",
+  "w": "07-ui.js:3421"
+ },
+ {
+  "k": "I will not forget this.",
+  "w": "07-ui.js:3421"
+ },
+ {
+  "k": "The gods smile on you.",
+  "w": "07-ui.js:3421"
+ },
+ {
+  "k": "Nothing to trade",
+  "w": "07-ui.js:3428"
+ },
+ {
+  "k": "You give…",
+  "w": "07-ui.js:3434"
+ },
+ {
+  "k": "…and ask for",
+  "w": "07-ui.js:3442"
+ },
+ {
+  "k": "{0} holds:",
+  "w": "07-ui.js:3442"
+ },
+ {
+  "k": "{0}: trade offer",
+  "w": "07-ui.js:3453"
+ },
+ {
+  "k": "{0} offers {1} for your {2}. Accept?",
+  "w": "07-ui.js:3453"
+ },
+ {
+  "k": "{0} refuses the trade.",
+  "w": "07-ui.js:3463"
+ },
+ {
+  "k": "four beasts are slain, or one gladiator falls",
+  "w": "07-ui.js:3474"
+ },
+ {
+  "k": "only two gladiators remain",
+  "w": "07-ui.js:3475"
+ },
+ {
+  "k": "one gladiator (or side) is left standing",
+  "w": "07-ui.js:3476"
+ },
+ {
+  "k": "every beast in the arena is slain or tamed",
+  "w": "07-ui.js:3477"
+ },
+ {
+  "k": "Commodus is dethroned",
+  "w": "07-ui.js:3478"
+ },
+ {
+  "k": "the Golden Eagles are carried to the gates",
+  "w": "07-ui.js:3479"
+ },
+ {
+  "k": "two gladiators have escaped through the gates",
+  "w": "07-ui.js:3480"
+ },
+ {
+  "k": "a chariot completes three laps",
+  "w": "07-ui.js:3482"
+ },
+ {
+  "k": "twenty rotations have passed",
+  "w": "07-ui.js:3483"
+ },
+ {
+  "k": "ten rotations have passed",
+  "w": "07-ui.js:3484"
+ },
+ {
+  "k": "one team is left standing",
+  "w": "07-ui.js:3485"
+ },
+ {
+  "k": "the first gladiator falls",
+  "w": "07-ui.js:3486"
+ },
+ {
+  "k": "enough beasts are slain",
+  "w": "07-ui.js:3487"
+ },
+ {
+  "k": "enough rotations have passed",
+  "w": "07-ui.js:3488"
+ },
+ {
+  "k": "a gladiator reaches the Crowd Favor target",
+  "w": "07-ui.js:3489"
+ },
+ {
+  "k": "every beast is slain or tamed",
+  "w": "07-ui.js:3490"
+ },
+ {
+  "k": "the rotations run out — everyone standing wins",
+  "w": "07-ui.js:3491"
+ },
+ {
+  "k": "beasts may be attacked",
+  "w": "07-ui.js:3494"
+ },
+ {
+  "k": "No PvE: beasts cannot be attacked this round",
+  "w": "07-ui.js:3494"
+ },
+ {
+  "k": "gladiators may attack each other",
+  "w": "07-ui.js:3495"
+ },
+ {
+  "k": "No PvP: gladiators cannot attack each other this round",
+  "w": "07-ui.js:3495"
+ },
+ {
+  "k": "Crowd Favor can be spent (market, crowd purchases, the Eagle)",
+  "w": "07-ui.js:3496"
+ },
+ {
+  "k": "No CF: Crowd Favor cannot be SPENT this round — no market unlock, no crowd purchases, no Eagle redemption. You still earn it.",
+  "w": "07-ui.js:3496"
+ },
+ {
+  "k": "Abilities",
+  "w": "07-ui.js:3497"
+ },
+ {
+  "k": "class abilities work",
+  "w": "07-ui.js:3497"
+ },
+ {
+  "k": "No class abilities this round",
+  "w": "07-ui.js:3497"
+ },
+ {
+  "k": "the winner takes {0} CF",
+  "w": "07-ui.js:3521"
+ },
+ {
+  "k": "+{0} coin",
+  "w": "07-ui.js:3521"
+ },
+ {
+  "k": "{0} cards",
+  "w": "07-ui.js:3521"
+ },
+ {
+  "k": "<b>Round {0} · {1}</b>{2}",
+  "w": "07-ui.js:3522"
+ },
+ {
+  "k": "{0}×{1} zone",
+  "w": "07-ui.js:3522"
+ },
+ {
+  "k": "Ends when <b>{0}</b>{1}",
+  "w": "07-ui.js:3522"
+ },
+ {
+  "k": "Be the side still standing when <b>{0}</b>.",
+  "w": "07-ui.js:3525"
+ },
+ {
+  "k": "Survive every round. The event is won when <b>{0}</b>{1}. Crowd Favor decides your Fate at the end.",
+  "w": "07-ui.js:3525"
+ },
+ {
+  "k": "— worth <b>{0} CF</b>",
+  "w": "07-ui.js:3525"
+ },
+ {
+  "k": "· Missio",
+  "w": "07-ui.js:3527"
+ },
+ {
+  "k": "📍 {0} · ⚔ {1} gladiator{2}{3}{4}{5}",
+  "w": "07-ui.js:3528"
+ },
+ {
+  "k": "in {0} {1}",
+  "w": "07-ui.js:3528"
+ },
+ {
+  "k": "as one side",
+  "w": "07-ui.js:3528"
+ },
+ {
+  "k": "· 🏟 {0}K spectators in the stands",
+  "w": "07-ui.js:3528"
+ },
+ {
+  "k": "· Summa rudis: {0}",
+  "w": "07-ui.js:3528"
+ },
+ {
+  "k": "🏆 <b>How to win.</b> {0}",
+  "w": "07-ui.js:3529"
+ },
+ {
+  "k": "The rounds",
+  "w": "07-ui.js:3530"
+ },
+ {
+  "k": "On the sand",
+  "w": "07-ui.js:3531"
+ },
+ {
+  "k": "🚫 marks what is <b>not allowed</b> in that round — hover a chip for the full rule. Reopen this any time with <b>📋 Event</b> on the top bar.",
+  "w": "07-ui.js:3532"
+ },
+ {
+  "k": "📋 The briefing",
+  "w": "07-ui.js:3552"
+ },
+ {
+  "k": "📋 This event",
+  "w": "07-ui.js:3552"
+ },
+ {
+  "k": "⚔ To the sand",
+  "w": "07-ui.js:3553"
+ },
+ {
+  "k": "Back to the sand",
+  "w": "07-ui.js:3553"
+ },
+ {
+  "k": "📍 {0} <span>·</span> ⚔ {1} gladiator{2}",
+  "w": "07-ui.js:3577"
+ },
+ {
+  "k": "No event on the sand yet — sound the horns from New event.",
+  "w": "07-ui.js:3588"
+ },
+ {
+  "k": "{0}'s chariot runs down {1} on foot. Bye, Felicius!",
+  "w": "09-special.js:78"
+ },
+ {
+  "k": "{0} completes lap {1} of 3!",
+  "w": "09-special.js:81"
+ },
+ {
+  "k": "{0} passes through a pillar gate.",
+  "w": "09-special.js:83"
+ },
+ {
+  "k": "{0}'s token flips: {1} HP, +{2} movement.",
+  "w": "09-special.js:84"
+ },
+ {
+  "k": "The horse",
+  "w": "09-special.js:84"
+ },
+ {
+  "k": "Speed of Mercury: +{0} movement.",
+  "w": "09-special.js:86"
+ },
+ {
+  "k": "The crowd roars: +{0} CF.",
+  "w": "09-special.js:87"
+ },
+ {
+  "k": "Curse Tablet",
+  "w": "09-special.js:89"
+ },
+ {
+  "k": "Pay 3 CF",
+  "w": "09-special.js:89"
+ },
+ {
+  "k": "Roll the d6",
+  "w": "09-special.js:89"
+ },
+ {
+  "k": "{0} pays 3 CF to lift the Curse Tablet.",
+  "w": "09-special.js:90"
+ },
+ {
+  "k": "Curse Tablet: {0} rolls {1}.",
+  "w": "09-special.js:91"
+ },
+ {
+  "k": "{0} gains a free step beyond the gate.",
+  "w": "09-special.js:93"
+ },
+ {
+  "k": "{0}'s {1}wheel shatters (−2 movement until replaced).",
+  "w": "09-special.js:99"
+ },
+ {
+  "k": "{0}'s {1}: {2} HP left.",
+  "w": "09-special.js:99"
+ },
+ {
+  "k": "{0}'s horse {1} is lost!",
+  "w": "09-special.js:100"
+ },
+ {
+  "k": "{0}'s {1}: {2} HP left on this face.",
+  "w": "09-special.js:100"
+ },
+ {
+  "k": "Attack {0}",
+  "w": "09-special.js:112"
+ },
+ {
+  "k": "Wheel",
+  "w": "09-special.js:112"
+ },
+ {
+  "k": "Horse",
+  "w": "09-special.js:112"
+ },
+ {
+  "k": "AP {0} · HP {1}",
+  "w": "09-special.js:112"
+ },
+ {
+  "k": "{0} attacks {1} with {2} {3} = {4}",
+  "w": "09-special.js:114"
+ },
+ {
+  "k": "{0} takes the reins of the",
+  "w": "09-special.js:126"
+ },
+ {
+  "k": ", drawn by",
+  "w": "09-special.js:126"
+ },
+ {
+  "k": "(+{0} speed, {1} HP) on a",
+  "w": "09-special.js:126"
+ },
+ {
+  "k": "({0} HP).",
+  "w": "09-special.js:126"
+ },
+ {
+  "k": "Chariot draft: every racer draws a chariot, a wheel and a horse, then drafts head armor, chest armor and a level 1-2 weapon.",
+  "w": "09-special.js:130"
+ },
+ {
+  "k": "Head armor",
+  "w": "09-special.js:132"
+ },
+ {
+  "k": "Chest armor",
+  "w": "09-special.js:132"
+ },
+ {
+  "k": "Weapon",
+  "w": "09-special.js:132"
+ },
+ {
+  "k": "Draft · {0} · {1}",
+  "w": "09-special.js:137"
+ },
+ {
+  "k": "{0} drafts {1}.",
+  "w": "09-special.js:140"
+ },
+ {
+  "k": "Each racer receives an Arena Key token (2 keys) and 3 CF. The chariot card fills the secondary weapon slot.",
+  "w": "09-special.js:144"
+ },
+ {
+  "k": "{0} jumps down to fetch a spare {1}.",
+  "w": "09-special.js:158"
+ },
+ {
+  "k": "I need that",
+  "w": "09-special.js:158"
+ },
+ {
+  "k": "{0} remounts.",
+  "w": "09-special.js:166"
+ },
+ {
+  "k": "The arena floods. {0} drop anchor.",
+  "w": "09-special.js:203"
+ },
+ {
+  "k": "{0} (Team {1})",
+  "w": "09-special.js:203"
+ },
+ {
+  "k": "{0} boards a floating door.",
+  "w": "09-special.js:236"
+ },
+ {
+  "k": "🌊 Flipped",
+  "w": "09-special.js:245"
+ },
+ {
+  "k": "{0} flips a water token: <b data-card=\"n:croc\">a crocodile!</b> It clamps down — the {1} is reduced to 1 HP.",
+  "w": "09-special.js:246"
+ },
+ {
+  "k": "{0} flips a",
+  "w": "09-special.js:247"
+ },
+ {
+  "k": "water token",
+  "w": "09-special.js:247"
+ },
+ {
+  "k": "{0} flips a water token: a <b>Level {1} Weapon</b> — fishes a",
+  "w": "09-special.js:252"
+ },
+ {
+  "k": "from the wreckage ({0} hand).",
+  "w": "09-special.js:252"
+ },
+ {
+  "k": "{0} flips a water token: a <b>Level {1} Weapon</b> — a",
+  "w": "09-special.js:254"
+ },
+ {
+  "k": "surfaces at {0} (hands full: loot it from this tile).",
+  "w": "09-special.js:254"
+ },
+ {
+  "k": "{0} flips a water token: <b>Level {1} Armor</b> — a",
+  "w": "09-special.js:261"
+ },
+ {
+  "k": "washes up at their feet (loot it from this tile).",
+  "w": "09-special.js:261"
+ },
+ {
+  "k": "{0} flips a water token: an",
+  "w": "09-special.js:263"
+ },
+ {
+  "k": "Armor Upgrade",
+  "w": "09-special.js:263"
+ },
+ {
+  "k": "— +{0} AP to distribute.",
+  "w": "09-special.js:263"
+ },
+ {
+  "k": "the Armor Upgrade token",
+  "w": "09-special.js:264"
+ },
+ {
+  "k": "The {0} (Team {1}) sinks!{2}",
+  "w": "09-special.js:274"
+ },
+ {
+  "k": "{0} is credited.",
+  "w": "09-special.js:274"
+ },
+ {
+  "k": "{0} falls into the water.",
+  "w": "09-special.js:275"
+ },
+ {
+  "k": "Team {0} has no ships left and is eliminated.",
+  "w": "09-special.js:276"
+ },
+ {
+  "k": "January",
+  "w": "10-meta.js:46"
+ },
+ {
+  "k": "February",
+  "w": "10-meta.js:46"
+ },
+ {
+  "k": "March",
+  "w": "10-meta.js:46"
+ },
+ {
+  "k": "April",
+  "w": "10-meta.js:46"
+ },
+ {
+  "k": "May",
+  "w": "10-meta.js:46"
+ },
+ {
+  "k": "June",
+  "w": "10-meta.js:46"
+ },
+ {
+  "k": "July",
+  "w": "10-meta.js:46"
+ },
+ {
+  "k": "August",
+  "w": "10-meta.js:46"
+ },
+ {
+  "k": "September",
+  "w": "10-meta.js:46"
+ },
+ {
+  "k": "October",
+  "w": "10-meta.js:46"
+ },
+ {
+  "k": "November",
+  "w": "10-meta.js:46"
+ },
+ {
+  "k": "December",
+  "w": "10-meta.js:46"
+ },
+ {
+  "k": "When (empire time)",
+  "w": "10-meta.js:68"
+ },
+ {
+  "k": "Where",
+  "w": "10-meta.js:68"
+ },
+ {
+  "k": "Bettor",
+  "w": "10-meta.js:68"
+ },
+ {
+  "k": "Selection",
+  "w": "10-meta.js:68"
+ },
+ {
+  "k": "Stake",
+  "w": "10-meta.js:68"
+ },
+ {
+  "k": "Odds",
+  "w": "10-meta.js:68"
+ },
+ {
+  "k": "Result",
+  "w": "10-meta.js:68"
+ },
+ {
+  "k": "<b>You</b>",
+  "w": "10-meta.js:68"
+ },
+ {
+  "k": "your treasury",
+  "w": "10-meta.js:68"
+ },
+ {
+  "k": "FLAVIUS RULE · {0} at {1}\nExported {2}",
+  "w": "10-meta.js:73"
+ },
+ {
+  "k": "Arena log",
+  "w": "10-meta.js:82"
+ },
+ {
+  "k": "Copy to clipboard",
+  "w": "10-meta.js:82"
+ },
+ {
+  "k": "Copied",
+  "w": "10-meta.js:82"
+ },
+ {
+  "k": "Retired from the event",
+  "w": "10-meta.js:90"
+ },
+ {
+  "k": "Crowd Favor held",
+  "w": "10-meta.js:91"
+ },
+ {
+  "k": "Mandata Flavi still hidden ×{0}",
+  "w": "10-meta.js:92"
+ },
+ {
+  "k": "Event win",
+  "w": "10-meta.js:93"
+ },
+ {
+  "k": "Trophies: {0} (5 CF per 3)",
+  "w": "10-meta.js:94"
+ },
+ {
+  "k": "Flavius items ×{0}",
+  "w": "10-meta.js:95"
+ },
+ {
+  "k": "Golden Eagle held",
+  "w": "10-meta.js:96"
+ },
+ {
+  "k": "Damnatio victory",
+  "w": "10-meta.js:97"
+ },
+ {
+  "k": "Crowd-hated victory",
+  "w": "10-meta.js:97"
+ },
+ {
+  "k": "Festival champion",
+  "w": "10-meta.js:98"
+ },
+ {
+  "k": "Flavius, {0}",
+  "w": "10-meta.js:119"
+ },
+ {
+  "k": "<b>{0}</b> ends on <b>{1} CF</b>. The roar dies to a murmur; every eye climbs to the editor's box. {2} raises a hand…",
+  "w": "10-meta.js:130"
+ },
+ {
+  "k": "🎲 Roll the d6",
+  "w": "10-meta.js:130"
+ },
+ {
+  "k": "The die leaves his hand…",
+  "w": "10-meta.js:132"
+ },
+ {
+  "k": "<b>{0}</b> — the thumb goes <b>UP</b>. The crowd erupts: <b>{1}</b> is spared, raised to 20 CF and sent to the Ludus Flavius.",
+  "w": "10-meta.js:134"
+ },
+ {
+  "k": "spared (4-6)",
+  "w": "10-meta.js:134"
+ },
+ {
+  "k": "👍 Spared · Ludus Flavius",
+  "w": "10-meta.js:134"
+ },
+ {
+  "k": "<b>{0}</b> — the thumb turns <b>DOWN</b>. Flavius smiles thinly and calls for the d12: it will choose how {1} leaves this world.",
+  "w": "10-meta.js:136"
+ },
+ {
+  "k": "condemned (1-3)",
+  "w": "10-meta.js:136"
+ },
+ {
+  "k": "🎲 Roll the d12",
+  "w": "10-meta.js:136"
+ },
+ {
+  "k": "The d12 clatters across the marble…",
+  "w": "10-meta.js:138"
+ },
+ {
+  "k": "The d12 shows <b>{0}</b>. {1}",
+  "w": "10-meta.js:141"
+ },
+ {
+  "k": "<span class=\"badge gold\">Winner</span>",
+  "w": "10-meta.js:148"
+ },
+ {
+  "k": "<span class=\"badge bad\">Retired</span>",
+  "w": "10-meta.js:148"
+ },
+ {
+  "k": "Eliminated · turn {0}{1}",
+  "w": "10-meta.js:148"
+ },
+ {
+  "k": "<span class=\"badge good\">Exited</span>",
+  "w": "10-meta.js:148"
+ },
+ {
+  "k": "<span class=\"badge good\">Survived</span>",
+  "w": "10-meta.js:148"
+ },
+ {
+  "k": "{0} · You",
+  "w": "10-meta.js:152"
+ },
+ {
+  "k": "🖑 Thumb of Flavius",
+  "w": "10-meta.js:153"
+ },
+ {
+  "k": "{0} CF — one short of certainty. The arena falls silent; every eye turns to the editor's box. Flavius weighs your {1}… and reaches for the die.",
+  "w": "10-meta.js:153"
+ },
+ {
+  "k": "🎲 Face the thumb — roll the d6<small>4-6 spares you to the Ludus; 1-3 hands your fate to the d12</small>",
+  "w": "10-meta.js:154"
+ },
+ {
+  "k": "⚔ Gladiators",
+  "w": "10-meta.js:158"
+ },
+ {
+  "k": "🐾 Beasts",
+  "w": "10-meta.js:158"
+ },
+ {
+  "k": "Pots",
+  "w": "10-meta.js:158"
+ },
+ {
+  "k": "Damage dealt",
+  "w": "10-meta.js:158"
+ },
+ {
+  "k": "Cards",
+  "w": "10-meta.js:158"
+ },
+ {
+  "k": "Buys",
+  "w": "10-meta.js:158"
+ },
+ {
+  "k": "<b>CPU priorities</b> {0}",
+  "w": "10-meta.js:159"
+ },
+ {
+  "k": "✓ {0}'s Ludus record {1}<small>{2}</small>",
+  "w": "10-meta.js:163"
+ },
+ {
+  "k": "automatic for summoned gladiators",
+  "w": "10-meta.js:163"
+ },
+ {
+  "k": "one save per event",
+  "w": "10-meta.js:163"
+ },
+ {
+  "k": "Save {0} in the Ludus<small>returns with {1} CF{2}</small>",
+  "w": "10-meta.js:163"
+ },
+ {
+  "k": "· CPU record: rival or bet-on gladiator, no missios",
+  "w": "10-meta.js:163"
+ },
+ {
+  "k": "🗡 Claim freedom · the rudis<small>leaves the sands forever, memorialized among the Liberti</small>",
+  "w": "10-meta.js:164"
+ },
+ {
+  "k": "<b>{0} CF</b> · exhibition: {1}",
+  "w": "10-meta.js:167"
+ },
+ {
+  "k": "still standing when the bout was called",
+  "w": "10-meta.js:167"
+ },
+ {
+  "k": "pulled from the sand by the doctors — no Fate is drawn",
+  "w": "10-meta.js:167"
+ },
+ {
+  "k": "<b>{0} CF</b> carried into the next event",
+  "w": "10-meta.js:167"
+ },
+ {
+  "k": "Final Fate score",
+  "w": "10-meta.js:167"
+ },
+ {
+  "k": "Free, or back for glory: can be saved in the Ludus.",
+  "w": "10-meta.js:167"
+ },
+ {
+  "k": "Survives to the Ludus Flavius: can be saved.",
+  "w": "10-meta.js:167"
+ },
+ {
+  "k": "Retired: this character is gone.",
+  "w": "10-meta.js:167"
+ },
+ {
+  "k": "Does not survive. Any saved record or missio for this character ends.",
+  "w": "10-meta.js:167"
+ },
+ {
+  "k": "Event stats",
+  "w": "10-meta.js:168"
+ },
+ {
+  "k": "🏟 The stands ({0} attended): <b>+{1} CF</b> in section cheers{2}{3}.",
+  "w": "10-meta.js:169"
+ },
+ {
+  "k": "· <b>{0}</b> offering{1} thrown, worth ~<b>{2} coin</b>",
+  "w": "10-meta.js:169"
+ },
+ {
+  "k": "· cheers scaled for the big house",
+  "w": "10-meta.js:169"
+ },
+ {
+  "k": "Manager mode fighter: this Fate applies in the league too{0}",
+  "w": "10-meta.js:171"
+ },
+ {
+  "k": "— unless their lanista pays the editor blood money (settled on Match Week).",
+  "w": "10-meta.js:171"
+ },
+ {
+  "k": "Result logged on {0}'s character sheet (Creator Studio).",
+  "w": "10-meta.js:171"
+ },
+ {
+  "k": "🗡 Freed",
+  "w": "10-meta.js:171"
+ },
+ {
+  "k": "{0} takes the rudis and leaves the sands forever — memorialized among the <b>Liberti</b> (the Annals).",
+  "w": "10-meta.js:171"
+ },
+ {
+  "k": "Thumbs down · {0}",
+  "w": "10-meta.js:178"
+ },
+ {
+  "k": "Flavius's thumb turned down on a truce. The d12 shows {0}: {1}",
+  "w": "10-meta.js:178"
+ },
+ {
+  "k": "📅 The empire moves on: it is now <b>{0}</b> — next on the schedule, {1} at {2}.",
+  "w": "10-meta.js:188"
+ },
+ {
+  "k": "the games",
+  "w": "10-meta.js:188"
+ },
+ {
+  "k": "Won {0}",
+  "w": "10-meta.js:208"
+ },
+ {
+  "k": "<b>{0}</b> is crowned festival champion (+5 CF).",
+  "w": "10-meta.js:215"
+ },
+ {
+  "k": "the Blessings of Hygeia",
+  "w": "10-meta.js:226"
+ },
+ {
+  "k": "a Medicus regimen",
+  "w": "10-meta.js:226"
+ },
+ {
+  "k": "{0} is carried through the Gate of Life to the <b>Ludus infirmary</b> — saved, but they need {1} ({2} coin) before they can fight again. Left untended too long, wounds write their own endings.",
+  "w": "10-meta.js:228"
+ },
+ {
+  "k": "{0}'s Ludus record updates automatically: {1} CF, returns with {2}.",
+  "w": "10-meta.js:234"
+ },
+ {
+  "k": "{0} did not survive; their Ludus record is struck from the rolls for good.",
+  "w": "10-meta.js:235"
+ },
+ {
+  "k": "Flavius is not entertained",
+  "w": "10-meta.js:240"
+ },
+ {
+  "k": "Enter this under Options → Dice seed to replay the exact same rolls (same choices, same saved world required).",
+  "w": "10-meta.js:241"
+ },
+ {
+  "k": "🎲 Seed {0}{1}",
+  "w": "10-meta.js:241"
+ },
+ {
+  "k": "· 🏟 {0}K spectators",
+  "w": "10-meta.js:241"
+ }
+]

@@ -10,7 +10,7 @@
    Works on the rendered DOM: the children of #edPane are tagged with their step by the section headings they follow
    (no string surgery on the editor's HTML, so the other modules' sections land in the right step on their own).
    ===================================================================== */
-const ED_STEPS=[['basics','Basics','rules'],['board','Board','board'],['rounds','Rounds','rules'],['rules','Rules','rules'],['fighters','Fighters & beasts','roster'],['finish','Finish','rules']];
+const ED_STEPS=[['basics',_T('Basics'),'rules'],['board',_T('Board'),'board'],['rounds',_T('Rounds'),'rules'],['rules',_T('Rules'),'rules'],['fighters','Fighters & beasts','roster'],['finish',_T('Finish'),'rules']];
 let ED_ALL=(()=>{try{return localStorage.getItem('flavius_edall')==='1'}catch(e){return false}})();
 {const st=document.createElement('style');st.textContent=`
 .edsteps{display:flex;gap:4px;flex-wrap:wrap;margin:6px 0 10px}.edsteps button{border:1px solid var(--line2);background:none;color:var(--muted);border-radius:16px;padding:3px 10px;cursor:pointer;font-size:13px}
@@ -38,13 +38,13 @@ function edStepsDecorate(){const pane=document.getElementById('edPane');if(!pane
   if(!bar)return;const i=edStepIdx();ST.edSeen=ST.edSeen||{};if(!ED_ALL)ST.edSeen[i]=1;
   const errs=typeof eventErrors==='function'?eventErrors(ST.draft):[];
   bar.innerHTML=(ED_ALL?'':ED_STEPS.map(([k,n],j)=>`<button type="button" data-edstep="${j}" class="${j===i?'cur':''} ${ST.edSeen[j]?'seen':''} ${k==='finish'&&errs.length?'warn':''}">${j+1} ${n}</button>`).join(''))
-    +`<button type="button" class="edall" data-edall="1">${ED_ALL?'🧭 Guided steps':'All sections'}</button>`;
+    +`<button type="button" class="edall" data-edall="1">${ED_ALL?_T('🧭 Guided steps'):_T('All sections')}</button>`;
   if(seg)seg.style.display=ED_ALL?'':'none';
   pane.classList.toggle('stepped',!ED_ALL);
   if(ED_ALL){pane.querySelectorAll('.edcur').forEach(x=>x.classList.remove('edcur'));document.querySelectorAll('.edstepnav').forEach(x=>x.remove());return}
   edTagPane(pane);
   let nav=document.querySelector('.edstepnav');if(!nav){nav=document.createElement('div');nav.className='edstepnav';pane.after(nav)}
-  nav.innerHTML=`<button class="btn" type="button" data-edgo="-1" ${i?'':'disabled'}>← Back</button>${ED_STEPS[i][0]==='finish'?(errs.length?`<span class="rc-sub" style="color:var(--blood2)">Still to do: ${errs.map(esc).join(' · ')}</span>`:'<span class="rc-sub">Ready — save it, or save and play.</span>'):''}<button class="btn primary" type="button" data-edgo="1" ${i<ED_STEPS.length-1?'':'disabled'}>Next →</button>`}
+  nav.innerHTML=`<button class="btn" type="button" data-edgo="-1" ${i?'':'disabled'}>${_T`← Back`}</button>${ED_STEPS[i][0]==='finish'?(errs.length?`<span class="rc-sub" style="color:var(--blood2)">${_T`Still to do: ${errs.map(esc).join(' · ')}`}</span>`:_T('<span class="rc-sub">Ready — save it, or save and play.</span>')):''}<button class="btn primary" type="button" data-edgo="1" ${i<ED_STEPS.length-1?'':'disabled'}>${_T`Next →`}</button>`}
 function edGoStep(j){ST.edStep=Math.max(0,Math.min(ED_STEPS.length-1,j));ST.sub=ED_STEPS[ST.edStep][2];
   if(typeof edStudioRedraw==='function')edStudioRedraw();else if(typeof studioRedraw==='function')studioRedraw();
   const p=document.getElementById('edPane');if(p)p.scrollIntoView({block:'nearest'})}

@@ -106,7 +106,7 @@ function giveLoadout(player) {
     marketPull(C.L);
   }
   player.coin = C.coin;
-  coinLog(player, C.coin, 'starting purse');
+  coinLog(player, C.coin, _T('starting purse'));
   player.keys = C.keys;
   for (const it of C.items) player.items.push(it.startsWith('c:') ? mkCard(it.slice(2)) : mkOffer(it));
 }
@@ -277,7 +277,7 @@ function newState(config) {
   })() : null); // the empire's date for this event // exhibition: nobody dies, gladiators fill the stands
   S.omen = config.omen || rollOmen();
   S.omenDone = 0;
-  if (!HEADLESS) later(() => log(`The dice are cast from seed <b>${S.seed}</b> — enter it under Options → Dice seed to replay these exact rolls.`, 'thought'), 0);
+  if (!HEADLESS) later(() => log(_T`The dice are cast from seed <b>${S.seed}</b> — enter it under Options → Dice seed to replay these exact rolls.`, 'thought'), 0);
   // spectators
   S.passive = !!ev.passiveSpect; // v0.21: races and sea-fights seat a crowd that only watches — cheers, jeers and words, no stones or gifts
   if (!ev.noSpect) seatSpectators(ev.custom && ev.spect != null ? ev.spect : config.opts.spect || 0, config);
@@ -336,7 +336,7 @@ function seedOpening(config) {
       uid = L.uid || uid;
       later(() => {
         try {
-          mToast(`🎲 Seed ${S.seed} with this setup has been fought before — the same crowd, sky and news return for the replay.`);
+          mToast(_T`🎲 Seed ${S.seed} with this setup has been fought before — the same crowd, sky and news return for the replay.`);
         } catch (e) {}
       }, 400);
     } catch (e) {
@@ -374,21 +374,21 @@ async function startEvent(config) {
   const ev = EV();
   const G = S;
   if (!HEADLESS) $('#log').innerHTML = '';
-  if (S.fest) log(`${festName(S.fest.kind)} festival · event ${S.fest.stage} of 3.`, 'hd');
-  if (S.missio) log(`Missio of ${S.missio.name} · step ${S.missio.step + 1} of 5: ${MISSIOS[S.missio.cls].path[S.missio.step].t}`, 'hd');
+  if (S.fest) log(_T`${festName(S.fest.kind)} festival · event ${S.fest.stage} of 3.`, 'hd');
+  if (S.missio) log(_T`Missio of ${S.missio.name} · step ${S.missio.step + 1} of 5: ${MISSIOS[S.missio.cls].path[S.missio.step].t}`, 'hd');
   // ---- the pompa: every event opens with formality, as the Romans insisted ----
   if (!HEADLESS && !S.sim) {
     SPEED = 'slow';
     document.querySelectorAll('[data-speed]').forEach(x => x.classList.toggle('on', x.dataset.speed === 'slow'));
   } // CPU pace always begins on Slow
-  const locN = LOCATIONS[config.loc] ? LOCATIONS[config.loc].n : 'Roma';
-  log(`${ev.n} at ${locN}. The horns sound.`, 'hd');
+  const locN = LOCATIONS[config.loc] ? LOCATIONS[config.loc].n : _T('Roma');
+  log(_T`${ev.n} at ${locN}. The horns sound.`, 'hd');
   if (!S.sim) {
-    log(`<i>The pompa winds once around the sand — musicians, priests, and the fighters behind them. The editor rises. The herald fills his lungs:</i>`);
-    log(`“Citizens of ${locN}! By the generosity of the editor, <b>FLAVIUS</b>, we present ${ev.n}${ev.tag ? ` — a ${ev.tag} bout` : ''}! ${S.players.length === 1 ? `One brave soul enters the sand alone` : `${['', '', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight'][S.players.length] || S.players.length} shall enter the sand`}!”`);
-    log(`The roll is called: ${S.players.map(player => `${nm(player)} the ${CLASSES[player.cls] ? CLASSES[player.cls].name : player.cls}`).join(' · ')}.`);
-    if (S.turnoutWhy && S.spect) log(`<i>The empire turns out: <b>${S.spect.length}K</b> spectators in the stands — ${S.turnoutWhy.join(', ')}${S.omen && S.omen.att ? `, swayed by ${esc(S.omen.n.toLowerCase())}` : ''}.</i>`);
-    if (typeof HINTS !== 'undefined' && HINTS && ev.blurb) log(`<div class="tiphint"><b>${esc(ev.short || ev.n)}</b> ${esc(ev.blurb)} Rounds: ${ev.rounds.map(r => r.n).join(' → ')}.</div>`);
+    log(_T`<i>The pompa winds once around the sand — musicians, priests, and the fighters behind them. The editor rises. The herald fills his lungs:</i>`);
+    log(_T`“Citizens of ${locN}! By the generosity of the editor, <b>FLAVIUS</b>, we present ${ev.n}${ev.tag ? _T` — a ${ev.tag} bout` : ''}! ${S.players.length === 1 ? _T`One brave soul enters the sand alone` : _T`${['', '', _T('Two'), _T('Three'), _T('Four'), _T('Five'), _T('Six'), _T('Seven'), _T('Eight')][S.players.length] || S.players.length} shall enter the sand`}!”`);
+    log(_T`The roll is called: ${S.players.map(player => _T`${nm(player)} the ${CLASSES[player.cls] ? CLASSES[player.cls].name : player.cls}`).join(' · ')}.`);
+    if (S.turnoutWhy && S.spect) log(_T`<i>The empire turns out: <b>${S.spect.length}K</b> spectators in the stands — ${S.turnoutWhy.join(', ')}${S.omen && S.omen.att ? _T`, swayed by ${esc(S.omen.n.toLowerCase())}` : ''}.</i>`);
+    if (typeof HINTS !== 'undefined' && HINTS && ev.blurb) log(`<div class="tiphint">${_T`<b>${esc(ev.short || ev.n)}</b> ${esc(ev.blurb)} Rounds: ${ev.rounds.map(r => r.n).join(' → ')}.`}</div>`);
   }
   if (!HEADLESS && typeof curtainTo === 'function') {
     CURTAIN.v = 1;
@@ -423,7 +423,7 @@ async function startEvent(config) {
     const [a9, b9] = config.truceSeats.map(i => S.players[i]);
     if (a9 && b9) {
       S.truces.add(truceKey(a9.id, b9.id));
-      log(`${nm(a9)} and ${nm(b9)} enter under one banner — sworn to a truce, until ${edName()} decides otherwise.`, 'big');
+      log(_T`${nm(a9)} and ${nm(b9)} enter under one banner — sworn to a truce, until ${edName()} decides otherwise.`, 'big');
     }
   }
   if (ev.custom) await customStart(ev);
@@ -437,41 +437,41 @@ async function startEvent(config) {
   for (const [i, s] of config.seats.entries()) {
     const p = S.players[i];
     if (s.cfStart) {
-      cfWhy('carried in');
+      cfWhy(_T('carried in'));
       p.cf += s.cfStart;
-      log(`${nm(p)} carries ${s.cfStart} CF into this event.`);
+      log(_T`${nm(p)} carries ${s.cfStart} CF into this event.`);
     }
     if (s.homeHouse) {
-      cfWhy('home crowd');
+      cfWhy(_T('home crowd'));
       p.cf += 2;
-      log(`${nm(p)} fights at home for ${esc(s.homeHouse)}: the stands roar (+2 CF).`);
+      log(_T`${nm(p)} fights at home for ${esc(s.homeHouse)}: the stands roar (+2 CF).`);
     }
     if (s.coinStart) {
       p.coin += s.coinStart;
     }
     for (const k of s.festItems || []) {
       p.items.push(mkOffer(k));
-      log(`${nm(p)} carries a festival boon: a ${OFFER[k] ? OFFER[k].n : 'token'}.`);
+      log(_T`${nm(p)} carries a festival boon: a ${OFFER[k] ? OFFER[k].n : _T('token')}.`);
     }
     for (const l of s.severed || []) {
       p.hp[l] = 0;
       stripLoc(p, l);
       const a = l === 'rarm' ? 'R' : l === 'larm' ? 'L' : null;
       if (a) p['w' + a] = null;
-      log(`${nm(p)} enters without a ${LOCN[l].toLowerCase()} (missio limb persistence).`);
+      log(_T`${nm(p)} enters without a ${LOCN[l].toLowerCase()} (missio limb persistence).`);
     }
     if (s.noHelm) {
       stripLoc(p, 'head');
-      log(`${nm(p)} discards their helm to start.`);
+      log(_T`${nm(p)} discards their helm to start.`);
     }
     if (s.noZora) p.noEagle = true;
     // Manager mode: a fighter's rating shows up as a veteran's extra coin and armor
     if (s.boost) {
       if (s.boost.coin) {
         p.coin += s.boost.coin;
-        coinLog(p, s.boost.coin, 'training boost');
+        coinLog(p, s.boost.coin, _T('training boost'));
       }
-      if (s.boost.ap) await distributeAP(p, s.boost.ap, `+${s.boost.ap} AP (training)`);
+      if (s.boost.ap) await distributeAP(p, s.boost.ap, _T`+${s.boost.ap} AP (training)`);
       if (s.boost.cf) p.cf += s.boost.cf;
     }
   }
@@ -497,7 +497,7 @@ async function startEvent(config) {
       kind: 'mf',
       idx: idx[i]
     }));
-    log('Each gladiator is secretly handed a Mandata Flavi.');
+    log(_T('Each gladiator is secretly handed a Mandata Flavi.'));
   }
   // event specifics
   if (ev.kind === 'orpheus') {
@@ -505,7 +505,7 @@ async function startEvent(config) {
       const [r, c] = freeGrid();
       placeFloor('offer', drawOffer(), r, c);
     }
-    log('The Lyres of Orpheus are locked in the Arena Chest. Three offerings are scattered in the sand.');
+    log(_T('The Lyres of Orpheus are locked in the Arena Chest. Three offerings are scattered in the sand.'));
   }
   if (ev.kind === 'eagle') {
     for (let i = 0; i < 3; i++) {
@@ -517,22 +517,22 @@ async function startEvent(config) {
       placeFloor('key', 'key', r, c);
     }
     placeFloor('eagle', 'eagle', 6, 6);
-    log('A Golden Eagle waits on the center tile. Three items and two Arena Keys are scattered in the sand.');
+    log(_T('A Golden Eagle waits on the center tile. Three items and two Arena Keys are scattered in the sand.'));
   }
   if (ev.kind === 'commodus') {
-    spawnNPC('lion', 'Leo');
-    spawnNPC('lion', 'Leaena');
+    spawnNPC('lion', _T('Leo'));
+    spawnNPC('lion', _T('Leaena'));
     const [r, c] = freeGrid();
     placeFloor('key', 'key', r, c);
     const [r2, c2] = freeGrid();
     placeFloor('key', 'key', r2, c2);
-    log('Both lions prowl the arena. Two Arena Keys lie in the sand.');
+    log(_T('Both lions prowl the arena. Two Arena Keys lie in the sand.'));
   }
   crowdStart();
   if (ev.kind === 'naumachia') {
     const teams = shuffle([...new Set(S.players.map(player => player.team))].sort()); /* v0.59: a random team goes first (Virgilante) */
     S.order = teams.flatMap(target => S.players.filter(player => player.team === target).map(player => player.id));
-    log(`🎲 The lots are drawn: Team ${esc(String(teams[0]))} takes the first turn.`);
+    log(_T`🎲 The lots are drawn: Team ${esc(String(teams[0]))} takes the first turn.`);
   }
   if (ev.kind === 'chariot') {
     S.order = S.players.map(player => player.id);
@@ -570,21 +570,21 @@ async function startEvent(config) {
 /* applyMod — applies one location class modifier to a player: HP, AP, CF, coin, damage, or starting without a shield / Cestus / Rudis / Zora / an arm / a leg. */
 async function applyMod(player, m) {
   const [, t, v] = m;
-  if (t === 'hp') await distributeHP(player, v, `the ${LOCATIONS[S.locIdx].n} modifier`);else if (t === 'ap') await distributeAP(player, v, `the ${LOCATIONS[S.locIdx].n} modifier (+${v} AP)`);else if (t === 'cf') {
-    cfWhy('location modifier');
+  if (t === 'hp') await distributeHP(player, v, _T`the ${LOCATIONS[S.locIdx].n} modifier`);else if (t === 'ap') await distributeAP(player, v, _T`the ${LOCATIONS[S.locIdx].n} modifier (+${v} AP)`);else if (t === 'cf') {
+    cfWhy(_T('location modifier'));
     player.cf += v;
-    log(`${nm(player)} starts with +${v} CF (${LOCATIONS[S.locIdx].n}).`);
+    log(_T`${nm(player)} starts with +${v} CF (${LOCATIONS[S.locIdx].n}).`);
   } else if (t === 'coin') {
     player.coin = Math.max(0, player.coin + v);
-    log(`${nm(player)} loses ${-v} coin (${LOCATIONS[S.locIdx].n}).`);
+    log(_T`${nm(player)} loses ${-v} coin (${LOCATIONS[S.locIdx].n}).`);
   } else if (t === 'dmg') await hurt(player, rollLoc(player), v, {
     type: 'env'
-  }, `${LOCATIONS[S.locIdx].n} modifier`, {
+  }, _T`${LOCATIONS[S.locIdx].n} modifier`, {
     noShield: 1,
     noCards: 1
   });else if (t === 'noShield') {
     for (const a of ['R', 'L']) if (player['w' + a] && player['w' + a].shield) player['w' + a] = null;
-    log(`${nm(player)} starts without a shield.`);
+    log(_T`${nm(player)} starts without a shield.`);
   } else if (t === 'noCestus') {
     for (const l of ['rarm', 'larm']) {
       const i = player.pieces[l].findIndex(pc => pc.key === 'cestus');
@@ -593,23 +593,23 @@ async function applyMod(player, m) {
         player.pieces[l].splice(i, 1);
       }
     }
-    log(`${nm(player)} starts without the Cestus.`);
+    log(_T`${nm(player)} starts without the Cestus.`);
   } else if (t === 'noRudis') {
     for (const a of ['R', 'L']) if (player['w' + a] && player['w' + a].key === 'rudis') player['w' + a] = null;
-    log(`${nm(player)} starts without the Rudis.`);
+    log(_T`${nm(player)} starts without the Rudis.`);
   } else if (t === 'noEagle') {
     player.noEagle = true;
-    log(`${nm(player)} cannot call Zora in this event.`);
+    log(_T`${nm(player)} cannot call Zora in this event.`);
   } else if (t === 'minusArm') {
     player.hp.larm = 0;
     (player.modLoss = player.modLoss || []).push('larm'); /* v0.64: a modifier's limb is not a missio wound */
     stripLoc(player, 'larm');
-    log(`${nm(player)} starts with one arm.`);
+    log(_T`${nm(player)} starts with one arm.`);
   } else if (t === 'minusLeg') {
     player.hp.lleg = 0;
     (player.modLoss = player.modLoss || []).push('lleg');
     stripLoc(player, 'lleg');
-    log(`${nm(player)} starts with one leg.`);
+    log(_T`${nm(player)} starts with one leg.`);
   }
 }
 /* runDraft — snake draft for draft events: each pick offers a random few of the remaining level 1-3 weapons and armor; the Juggernaut then picks 5 declare cards. TWEAK: OFFER (items shown per pick, 8), the level 2 cap for non-Juggernaut players. */
@@ -637,7 +637,7 @@ async function runDraft() {
   const picks = player => ev.draft.all || (player.team === 'J' ? ev.draft.jugg : ev.draft.team);
   const maxRounds = Math.max(...S.players.map(picks));
   const OFFER = 8; // each pick, only a random handful of what is left is on offer
-  log(`Snake draft: ${S.players.map(player => `${player.name} ${picks(player)} picks`).join(', ')}. Each pick offers a random ${OFFER} of the remaining level 1-3 weapons and armor.`, 'hd');
+  log(_T`Snake draft: ${S.players.map(player => _T`${player.name} ${picks(player)} picks`).join(', ')}. Each pick offers a random ${OFFER} of the remaining level 1-3 weapons and armor.`, 'hd');
   let order = S.players.map(player => player.id);
   for (let rd = 0; rd < maxRounds; rd++) {
     for (const id of order) {
@@ -656,7 +656,7 @@ async function runDraft() {
             const q = S.players[x.by - 1];
             return {
               label: nmx,
-              sub: `taken by ${q.name}`,
+              sub: _T`taken by ${q.name}`,
               value: x.id,
               disabled: true,
               style: `border:2px solid ${q.color};opacity:.55`,
@@ -667,21 +667,21 @@ async function runDraft() {
           const lvOK = x.lv <= maxLv(p);
           return {
             label: nmx,
-            sub: `LV${x.lv} · ${x.kind === 'w' ? wStats(mkW(x.k)) : armorDesc(x.k)}${!lvOK ? ' · above your draft level' : on ? '' : ' · not offered this pick'}`,
+            sub: _T`LV${x.lv} · ${x.kind === 'w' ? wStats(mkW(x.k)) : armorDesc(x.k)}${!lvOK ? _T(' · above your draft level') : on ? '' : _T(' · not offered this pick')}`,
             value: x.id,
             disabled: !on,
             style: on ? 'border-color:var(--gold)' : 'opacity:.35',
             card: (x.kind === 'w' ? 'w:' : 'a:') + x.k
           };
         });
-        const idx = await modal(`Draft · ${p.name} · pick ${rd + 1} of ${picks(p)}`, `<p>Choose one weapon or armor from the <b style="color:var(--gold2)">${avail.length} offered</b> this pick (gold borders). Picks already taken show the drafter's color. Weapons go to a free hand; armor equips straight away.</p><div class="pickgrid" id="pickgrid"></div>`, [], {
+        const idx = await modal(_T`Draft · ${p.name} · pick ${rd + 1} of ${picks(p)}`, `<p>${_T`Choose one weapon or armor from the <b style="color:var(--gold2)">${avail.length} offered</b> this pick (gold borders). Picks already taken show the drafter's color. Weapons go to a free hand; armor equips straight away.`}</p><div class="pickgrid" id="pickgrid"></div>`, [], {
           wide: 1,
           grid
         });
         pick = avail.find(x => x.id === idx) || avail[0];
       }
       pick.by = p.id + 1;
-      log(`${nm(p)} drafts <b>${pick.kind === 'w' ? W[pick.k].n : ARM[pick.k].n}</b>.`);
+      log(_T`${nm(p)} drafts <b>${pick.kind === 'w' ? W[pick.k].n : ARM[pick.k].n}</b>.`);
       if (pick.kind === 'w') await gainWeapon(p, pick.k);else await gainArmorPiece(p, pick.k);
       render();
     }
@@ -692,7 +692,7 @@ async function runDraft() {
     if (j) {
       for (let i = 0; i < 5; i++) {
         let k;
-        if (j.cpu) k = ['ward', 'focus', 'forge3', 'hercules2', 'rete'][i];else k = await modal(`Juggernaut card ${i + 1} of 5`, '<p>Choose a Declare-type arena card.</p>', DECLARE_PICKS.map(x => ({
+        if (j.cpu) k = ['ward', 'focus', 'forge3', 'hercules2', 'rete'][i];else k = await modal(_T`Juggernaut card ${i + 1} of 5`, '<p>Choose a Declare-type arena card.</p>', DECLARE_PICKS.map(x => ({
           label: CARDS[x].n,
           sub: CARDS[x].d,
           value: x,
@@ -700,14 +700,14 @@ async function runDraft() {
         })));
         j.items.push(mkCard(k || 'ward'));
       }
-      log(`${nm(j)} chooses 5 declare cards.`);
+      log(_T`${nm(j)} chooses 5 declare cards.`);
     }
   }
 }
 /* armorDesc — one-line description of an armor piece for menus. */
 function armorDesc(k) {
   const a = ARM[k];
-  return `${a.slot}${PT_NAME[a.pt]&&PT_NAME[a.pt]!==a.slot?' '+PT_NAME[a.pt]:''}${a.pair ? ' (pair)' : ''}${a.stack ? ' · stackable' : ''} · ${a.ap} AP${a.bonus ? ' · bonus ' + Object.entries(a.bonus).map(([l, v]) => `+${v} ${LOCN[l]}`).join(', ') : ''}${a.greaves ? ' · +1 MV' : ''}${a.cestus ? ' · +1 DMG' : ''}`;
+  return _T`${a.slot}${PT_NAME[a.pt]&&PT_NAME[a.pt]!==a.slot?' '+PT_NAME[a.pt]:''}${a.pair ? ' (pair)' : ''}${a.stack ? ' · stackable' : ''} · ${a.ap} AP${a.bonus ? ' · bonus ' + Object.entries(a.bonus).map(([l, v]) => `+${v} ${LOCN[l]}`).join(', ') : ''}${a.greaves ? ' · +1 MV' : ''}${a.cestus ? ' · +1 DMG' : ''}`;
 }
 
 /* ================= END CONDITIONS & ROUNDS ================= */
@@ -729,12 +729,12 @@ function checkEnd() {
   if (ev.coop && S.elims >= 1) return set({
     over: 1,
     winners: [],
-    reason: `A gladiator fell before Commodus did. ${edName()} laughs, and everyone loses.`
+    reason: _T`A gladiator fell before Commodus did. ${edName()} laughs, and everyone loses.`
   });
   if (!S.players.some(player => player.alive)) return set({
     over: 1,
     winners: [],
-    reason: 'No gladiator survives.'
+    reason: _T('No gladiator survives.')
   });
   const teamsAlive = [...new Set(act.map(player => player.team))];
   if (ev.custom) return checkEndCustom(ev, rd, act, set, win);
@@ -742,73 +742,73 @@ function checkEnd() {
     /* npc4|elim1 — round ends when 4 beasts are slain (2 in the tutorial), a gladiator falls, or 14 rotations pass in the tutorial; a lone survivor wins. TWEAK: 4 / 2 kills. */
     case 'npc4|elim1':
       {
-        if (act.length <= 1) return win(act, 'Last gladiator standing.');
+        if (act.length <= 1) return win(act, _T('Last gladiator standing.'));
         const need = S.tutorial ? 2 : 4; /* v0.42: the lesson opens round two sooner */
         if (S.npcKills >= need || S.elims >= 1 || S.tutorial && S.rotation >= 14) set({
           next: 1,
-          reason: S.elims >= 1 ? 'a gladiator has fallen' : S.npcKills >= need ? need === 2 ? 'two beasts are slain' : 'four beasts are slain' : 'fourteen rotations have passed'
+          reason: S.elims >= 1 ? _T('a gladiator has fallen') : S.npcKills >= need ? need === 2 ? _T('two beasts are slain') : _T('four beasts are slain') : _T('fourteen rotations have passed')
         });
         break;
       }
     /* alive2 — round ends when only 2 gladiators remain; a lone survivor wins. */
     case 'alive2':
-      if (act.length <= 1) return win(act, 'Last gladiator standing.');
+      if (act.length <= 1) return win(act, _T('Last gladiator standing.'));
       if (act.length <= 2) set({
         next: 1,
-        reason: 'two gladiators remain'
+        reason: _T('two gladiators remain')
       });
       break;
     /* alive1 — event ends with the last gladiator standing. */
     case 'alive1':
-      if (act.length <= 1) win(act, 'Last gladiator standing.');
+      if (act.length <= 1) win(act, _T('Last gladiator standing.'));
       break;
     /* allnpc — Gauntlet: won once every beast is slain or tamed, no Commodus is pending, and the snake, wolf and bear flags (gSnake/gWolf/gBear) are set. */
     case 'allnpc':
       if (!act.length) return;
-      if (S.npcs.every(n => !n.alive || n.tamedBy != null) && !S.pendingCommodus && S.gSnake && S.gWolf && S.gBear) win(act, 'Every beast in the Gauntlet is slain.');
+      if (S.npcs.every(n => !n.alive || n.tamedBy != null) && !S.pendingCommodus && S.gSnake && S.gWolf && S.gBear) win(act, _T('Every beast in the Gauntlet is slain.'));
       break;
     /* elim1 — event ends at the first death (or 1 left); the highest final CF wins. */
     case 'elim1':
       if (S.elims >= 1 || act.length <= 1) {
         const ranked = [...act].sort((a, b) => finalCF(b, true) - finalCF(a, true));
-        win(ranked.slice(0, 1), 'The first gladiator has fallen. The highest Crowd Favor takes the Triumviratus.');
+        win(ranked.slice(0, 1), _T('The first gladiator has fallen. The highest Crowd Favor takes the Triumviratus.'));
       }
       break;
     /* team1 — event ends with the last team standing. */
     case 'team1':
-      if (teamsAlive.length <= 1) win(act, 'Last team standing.');
+      if (teamsAlive.length <= 1) win(act, _T('Last team standing.'));
       break;
     /* rot20 — round ends after 20 rotations; a lone survivor wins early. TWEAK: 20. */
     case 'rot20':
-      if (act.length <= 1) return win(act, 'Last gladiator standing.');
+      if (act.length <= 1) return win(act, _T('Last gladiator standing.'));
       if (S.rotation > 20) set({
         next: 1,
-        reason: 'twenty turn rotations have passed'
+        reason: _T('twenty turn rotations have passed')
       });
       break;
     /* rot10 — round ends after 10 rotations; a lone survivor wins early. TWEAK: 10. */
     case 'rot10':
-      if (act.length <= 1) return win(act, 'Last gladiator standing.');
+      if (act.length <= 1) return win(act, _T('Last gladiator standing.'));
       if (S.rotation > 10) set({
         next: 1,
-        reason: 'ten turn rotations have passed'
+        reason: _T('ten turn rotations have passed')
       });
       break;
     /* lion1 — round ends when a lion dies. */
     case 'lion1':
       if (S.lionDead) set({
         next: 1,
-        reason: 'a lion has fallen'
+        reason: _T('a lion has fallen')
       });
       break;
     /* commodus — event ends when Commodus dies. */
     case 'commodus':
-      if (S.commodusDead) win(act, 'Commodus is dethroned!');
+      if (S.commodusDead) win(act, _T('Commodus is dethroned!'));
       break;
     /* race — first to finish 3 laps wins, or the last racer standing. */
     case 'race':
-      if (S.raceWinner != null) return win([S.players[S.raceWinner]], 'First to complete three laps!');
-      if (act.length <= 1) win(act, 'Last racer standing.');
+      if (S.raceWinner != null) return win([S.players[S.raceWinner]], _T('First to complete three laps!'));
+      if (act.length <= 1) win(act, _T('Last racer standing.'));
       break;
     /* exit2 — Orpheus capture round ends when 2 gladiators exit; after 40 rotations the editor waves the top capturers through; if too few beasts are left to capture, everyone still inside is eliminated. TWEAK: 40 rotations. */
     case 'exit2':
@@ -816,7 +816,7 @@ function checkEnd() {
         if (S.exits.length >= 2) {
           set({
             next: 1,
-            reason: 'two gladiators have exited'
+            reason: _T('two gladiators have exited')
           });
           break;
         }
@@ -826,33 +826,33 @@ function checkEnd() {
           for (const p of ranked.slice(0, Math.max(0, 2 - S.exits.length))) {
             p.exited = true;
             S.exits.push(p.id);
-            log(`${edName()} grows impatient and waves ${nm(p)} through to the Duel Finale (${p.captured.length} capture${p.captured.length === 1 ? '' : 's'}).`, 'big');
+            log(_T`${edName()} grows impatient and waves ${nm(p)} through to the Duel Finale (${p.captured.length} capture${p.captured.length === 1 ? '' : 's'}).`, 'big');
           }
           if (S.exits.length >= 2) {
             set({
               next: 1,
-              reason: `${edName()} ended the capture round`
+              reason: _T`${edName()} ended the capture round`
             });
             break;
           }
           const ex = S.exits.map(i => S.players[i]);
-          return win(ex, 'Only one gladiator remained for the Duel Finale.');
+          return win(ex, _T('Only one gladiator remained for the Duel Finale.'));
         }
         const left = act;
         if (!left.length) {
           const ex = S.exits.map(i => S.players[i]);
-          return win(ex, ex.length ? 'Only one gladiator escaped the Capture round.' : 'No one escaped.');
+          return win(ex, ex.length ? _T('Only one gladiator escaped the Capture round.') : _T('No one escaped.'));
         }
         const wild = S.npcs.filter(n => n.alive && n.tamedBy == null && NPCT[n.t].tameable).length;
         const pop = wild + (S.lionsOut || !wild ? 0 : 2);
         const need = Math.min(...left.map(player => 2 - player.captured.length));
         if (pop < need) {
-          log('There are not enough beasts left to capture. Every gladiator still in the arena is eliminated.', 'big');
+          log(_T('There are not enough beasts left to capture. Every gladiator still in the arena is eliminated.'), 'big');
           for (const p of left) {
             p.alive = false;
           }
           const ex = S.exits.map(i => S.players[i]);
-          return win(ex, ex.length ? 'Only one gladiator escaped the Capture round.' : 'No one escaped.');
+          return win(ex, ex.length ? _T('Only one gladiator escaped the Capture round.') : _T('No one escaped.'));
         }
         break;
       }
@@ -860,8 +860,8 @@ function checkEnd() {
     case 'eagle':
       {
         const ex = S.players.find(player => player.exited);
-        if (ex) return win(S.players.filter(player => player.team === ex.team), `Team ${ex.team} captured three eagles and exited first.`);
-        if (teamsAlive.length <= 1) win(act, 'Last team standing.');
+        if (ex) return win(S.players.filter(player => player.team === ex.team), _T`Team ${ex.team} captured three eagles and exited first.`);
+        if (teamsAlive.length <= 1) win(act, _T('Last team standing.'));
         break;
       }
   }
@@ -871,10 +871,10 @@ function timeUp(why) {
   if (!S || S.over) return;
   const act = activePlayers();
   const ranked = [...act].sort((a, b) => b.cf - a.cf);
-  log(`${why}. The highest Crowd Favor still standing takes the event.`, 'big');
+  log(_T`${why}. The highest Crowd Favor still standing takes the event.`, 'big');
   const top = ranked[0];
   const ws = !top ? [] : EV().teams || EV().coop ? act.filter(player => player.team === top.team) : [top];
-  return gameOver(ws, `${why}: the highest Crowd Favor wins.`);
+  return gameOver(ws, _T`${why}: the highest Crowd Favor wins.`);
 }
 /* settle — acts on S.pending: ends the game, or starts the next round and re-checks in case that round is already over. */
 async function settle() {
@@ -894,32 +894,32 @@ async function nextRound(why) {
     rd = RD(),
     rw = rd.reward;
   const act = activePlayers();
-  log(`${rd.n} ends: ${why}.`, 'big');
+  log(_T`${rd.n} ends: ${why}.`, 'big');
   if (S.ri === 0) for (const p of S.players) p.r1pots = p.stats.pots || 0;
   if (rw.coin || rw.cf) {
     for (const p of act) {
       p.coin += rw.coin || 0;
-      coinLog(p, rw.coin || 0, 'round rewards');
-      cfWhy('round rewards');
+      coinLog(p, rw.coin || 0, _T('round rewards'));
+      cfWhy(_T('round rewards'));
       p.cf += rw.cf || 0;
     }
-    log(`Survivors receive ${rw.coin || 0} coin and ${rw.cf || 0} CF.`);
+    log(_T`Survivors receive ${rw.coin || 0} coin and ${rw.cf || 0} CF.`);
   }
   if (rw.cards) {
     for (const p of act) for (let i = 0; i < rw.cards && S.round2.length; i++) p.items.push(mkCard(S.round2.pop()));
-    log(`Each survivor draws ${rw.cards} of the set-aside arena cards.`);
+    log(_T`Each survivor draws ${rw.cards} of the set-aside arena cards.`);
     const hasEnd = S.deck[0] === 'endgame';
     S.deck = shuffle((hasEnd ? S.deck.slice(1) : S.deck).concat(S.round2));
     if (hasEnd) S.deck.unshift('endgame');
     S.round2 = [];
   }
-  if (rw.applause) log('The crowd offers a generous applause.');
+  if (rw.applause) log(_T('The crowd offers a generous applause.'));
   if (rw.offering) {
     for (const i of S.exits) {
       const p = S.players[i];
       const o = drawOffer();
       p.items.push(mkOffer(o));
-      log(`${nm(p)} receives an offering: ${OFFER[o].n} (${OFFER[o].s}).`);
+      log(_T`${nm(p)} receives an offering: ${OFFER[o].n} (${OFFER[o].s}).`);
     }
   }
   if (rw.choose2) {
@@ -936,7 +936,7 @@ async function nextRound(why) {
       if (!opts.length) break;
       let pick;
       if (p.cpu) pick = opts.sort((a, b) => itemValue(b.kind, b.k) - itemValue(a.kind, a.k))[0];else {
-        const i = await modal(`Reward for ${p.name}`, '<p>Choose any remaining level 2 armor or weapon from the market.</p>', opts.map((o, i) => ({
+        const i = await modal(_T`Reward for ${p.name}`, '<p>Choose any remaining level 2 armor or weapon from the market.</p>', opts.map((o, i) => ({
           label: o.kind === 'w' ? W[o.k].n : ARM[o.k].n,
           sub: o.kind === 'w' ? wStats(mkW(o.k)) : armorDesc(o.k),
           value: i,
@@ -959,13 +959,13 @@ async function nextRound(why) {
     const ranked = typeof ludusRank === 'function' ? ludusRank(activePlayers(), 2) : [...activePlayers()].sort((a, b) => b.cf - a.cf); /* v0.59: CF, then coin, then d12 roll-offs */
     for (const p of ranked.slice(2)) {
       p.alive = false;
-      log(`${nm(p)} did not earn enough favor and is removed from the Ludus.`, 'bad');
+      log(_T`${nm(p)} did not earn enough favor and is removed from the Ludus.`, 'bad');
     }
   }
   if (S.evKey === 'orpheus') {
     for (const p of activePlayers()) {
       p.alive = false;
-      log(`${nm(p)} failed to exit and is eliminated.`, 'bad');
+      log(_T`${nm(p)} failed to exit and is eliminated.`, 'bad');
     }
     for (const n of S.npcs) n.alive = false;
     const spots = [[2, 2], [10, 10], [2, 10], [10, 2]];
@@ -976,7 +976,7 @@ async function nextRound(why) {
       if (p.captured.length) {
         let c;
         if (p.cpu) c = p.captured.sort((a, b) => NPCT[b.t].hp - NPCT[a.t].hp)[0];else {
-          const j = await modal(`${p.name}: choose your beast`, '<p>Choose one captured beast to fight beside you in the Duel Finale.</p>', p.captured.map((x, j) => ({
+          const j = await modal(_T`${p.name}: choose your beast`, '<p>Choose one captured beast to fight beside you in the Duel Finale.</p>', p.captured.map((x, j) => ({
             label: `${x.name} (${NPCT[x.t].n})`,
             value: j
           })));
@@ -987,7 +987,7 @@ async function nextRound(why) {
           tamedBy: p.id
         });
         S.npcs.push(n);
-        log(`${nm(p)} enters the Duel Finale with ${nm(n)}.`);
+        log(_T`${nm(p)} enters the Duel Finale with ${nm(n)}.`);
       }
       for (const a of ['R', 'L']) if (p['w' + a] && p['w' + a].lyre) p['w' + a] = null;
     }
@@ -1001,11 +1001,11 @@ async function nextRound(why) {
   const z = ZONES[nr.zone];
   if (nr.zone > 1 && activePlayers().some(other => !other.cpu)) popRule('zone');
   {
-    const offs = typeof RULE_INFO !== 'undefined' ? Object.keys(RULE_INFO).filter(k => !(k === 'cf' ? cfAllowed() : nr[k])).map(k => k === 'ca' ? 'no abilities' : 'no ' + RULE_INFO[k][1]) : [];
-    banner(`Round ${S.ri + 1} · ${nr.n}`, [nr.zone > 1 ? `The zone shrinks to ${ZONES[nr.zone][1] - ZONES[nr.zone][0] + 1}×${ZONES[nr.zone][1] - ZONES[nr.zone][0] + 1}` : '', offs.length ? '🚫 ' + offs.join(' · ') : ''].filter(Boolean).join(' — '));
-    if (offs.length) log(`🚫 This round: <b>${offs.join(' · ')}</b>.${!cfAllowed() ? ' Crowd Favor still counts — it just cannot be spent.' : ''}`, 'big');
+    const offs = typeof RULE_INFO !== 'undefined' ? Object.keys(RULE_INFO).filter(k => !(k === 'cf' ? cfAllowed() : nr[k])).map(k => k === 'ca' ? _T('no abilities') : 'no ' + RULE_INFO[k][1]) : [];
+    banner(_T`Round ${S.ri + 1} · ${nr.n}`, [nr.zone > 1 ? _T`The zone shrinks to ${ZONES[nr.zone][1] - ZONES[nr.zone][0] + 1}×${ZONES[nr.zone][1] - ZONES[nr.zone][0] + 1}` : '', offs.length ? '🚫 ' + offs.join(' · ') : ''].filter(Boolean).join(' — '));
+    if (offs.length) log(_T`🚫 This round: <b>${offs.join(' · ')}</b>.${!cfAllowed() ? _T(' Crowd Favor still counts — it just cannot be spent.') : ''}`, 'big');
   }
-  log(`Round ${S.ri + 1} · ${nr.n}. ${nr.zone > 1 ? `The zone shrinks to ${z[1] - z[0] + 1}×${z[1] - z[0] + 1}. Two turns of grace to get inside.` : ''} ${nr.pvp ? 'PvP is allowed.' : 'No PvP.'}`, 'hd');
+  log(_T`Round ${S.ri + 1} · ${nr.n}. ${nr.zone > 1 ? _T`The zone shrinks to ${z[1] - z[0] + 1}×${z[1] - z[0] + 1}. Two turns of grace to get inside.` : ''} ${nr.pvp ? _T('PvP is allowed.') : _T('No PvP.')}`, 'hd');
   render();
 }
 /* finalCF — a player's final CF: -5 per unrevealed Mandata Flavi; a winner adds the last round's win reward (default 15), +10 with the pelted weakness, +5 per 3 trophies, +2 per Flavian item and +15 for the Golden Eagle. Retired players score 0. TWEAK: those bonus numbers. */
@@ -1059,13 +1059,13 @@ async function beginTurn() {
   if (S.sim && S.turnNo > (S.sim.maxTurns || 900)) {
     const act = activePlayers().sort((a, b) => b.cf - a.cf);
     S.busy = false;
-    return gameOver(act.slice(0, 1), 'The bout was stopped; the highest Crowd Favor takes it.');
+    return gameOver(act.slice(0, 1), _T('The bout was stopped; the highest Crowd Favor takes it.'));
   }
   if (S.limits && S.limits.min && S.startedAt && Date.now() - S.startedAt > S.limits.min * 60000 && !S.sim) {
     S.busy = false;
-    return timeUp('The sand-glass runs out');
+    return timeUp(_T('The sand-glass runs out'));
   }
-  log(`${p.name}'s turn · ${RD().n}, rotation ${S.rotation}`, 'hd');
+  log(_T`${p.name}'s turn · ${RD().n}, rotation ${S.rotation}`, 'hd');
   await flaviusTruceCheck();
   if (G !== S) return;
   if (!p.cpu) {
@@ -1078,13 +1078,13 @@ async function beginTurn() {
     const r = d6();
     if (r === 1 || r === 6) {
       S.active.telemachus = 0;
-      log(`${nm(p)} rolls ${r}: Telemachus is dragged out of the arena. Attacks resume!`, 'big');
-    } else log(`${nm(p)} rolls ${r}: Telemachus still stands between the gladiators. No attacks.`);
+      log(_T`${nm(p)} rolls ${r}: Telemachus is dragged out of the arena. Attacks resume!`, 'big');
+    } else log(_T`${nm(p)} rolls ${r}: Telemachus still stands between the gladiators. No attacks.`);
   }
   if (isChariot()) {
     S.phase = 'action';
     p.mv = chMv(p);
-    log(`Phase 1 · Movement: ${p.ch.mounted ? 'mounted, ' + p.mv + ' movement' : 'on foot'} · lap ${p.ch.laps}/3.`);
+    log(_T`Phase 1 · Movement: ${p.ch.mounted ? 'mounted, ' + p.mv + ' movement' : _T('on foot')} · lap ${p.ch.laps}/3.`);
     render();
     if (p.cpu) {
       await sleep(350);
@@ -1104,7 +1104,7 @@ async function beginTurn() {
   if (p.underground) {
     p.underground = false;
     for (const n of S.npcs) if (n.aggro === p.id) n.aggro = null;
-    log(`${nm(p)} emerges from the tunnel; all aggro is shaken off.`);
+    log(_T`${nm(p)} emerges from the tunnel; all aggro is shaken off.`);
   }
   render();
   await sleep(300);
@@ -1168,14 +1168,14 @@ async function takeChoice(player, which) {
   if (S.evKey === 'gauntlet') {
     if (!S.gCoinNote) {
       S.gCoinNote = 1;
-      log('Phase 2 · Choice: there is no purse-filling in the Gauntlet — the editor paid for blood, not loitering.');
+      log(_T('Phase 2 · Choice: there is no purse-filling in the Gauntlet — the editor paid for blood, not loitering.'));
     }
   } else if (which === 'coin' || !canDraw()) {
     player.coin += 2;
-    coinLog(player, 2, 'Phase 2 choices');
-    log(`Phase 2 · Choice: ${nm(player)} takes 2 coin.`);
+    coinLog(player, 2, _T('Phase 2 choices'));
+    log(_T`Phase 2 · Choice: ${nm(player)} takes 2 coin.`);
   } else {
-    log(`Phase 2 · Choice: ${nm(player)} draws an arena card.`);
+    log(_T`Phase 2 · Choice: ${nm(player)} draws an arena card.`);
     await drawArena(player);
   }
   checkEnd();
@@ -1189,34 +1189,34 @@ async function takeChoice(player, which) {
   }
   if (player.forceEnd) {
     player.mv = 0;
-    log(`${nm(player)} is lashed and must end the turn.`, 'bad');
+    log(_T`${nm(player)} is lashed and must end the turn.`, 'bad');
   }
   if (swimming(player) && player.mv > 1) {
     player.mv--;
-    log(`${nm(player)} is swimming: −1 movement and −1 weapon range.`);
+    log(_T`${nm(player)} is swimming: −1 movement and −1 weapon range.`);
   }
-  if (player.netted) log(`${nm(player)} is tangled in a net and cannot move this turn.`);
+  if (player.netted) log(_T`${nm(player)} is tangled in a net and cannot move this turn.`);
   if (caAllowed()) {
     const av = player.abilVal || 1;
     if (player.abil === 'coin') {
       player.coin += av;
-      coinLog(player, av, 'class ability');
-      log(`${nm(player)} collects ${av} coin (class ability).`);
+      coinLog(player, av, _T('class ability'));
+      log(_T`${nm(player)} collects ${av} coin (class ability).`);
     }
     if (player.abil === 'cf') {
-      cfWhy('class ability');
+      cfWhy(_T('class ability'));
       player.cf += av;
-      log(`${nm(player)} earns ${av} CF (class ability).`);
+      log(_T`${nm(player)} earns ${av} CF (class ability).`);
     }
     if (player.abil === 'vet') {
       if (player.vetPref === 'cf') {
-        cfWhy('class ability');
+        cfWhy(_T('class ability'));
         player.cf += av;
-        log(`${nm(player)} takes ${av} CF (Lanista).`);
+        log(_T`${nm(player)} takes ${av} CF (Lanista).`);
       } else {
         player.coin += av;
-        coinLog(player, av, 'class ability');
-        log(`${nm(player)} takes ${av} coin (Lanista).`);
+        coinLog(player, av, _T('class ability'));
+        log(_T`${nm(player)} takes ${av} coin (Lanista).`);
       }
     }
     if (player.abil === 'mv' && !player.netted) player.mv = Math.min(7, player.mv + av);
@@ -1225,7 +1225,7 @@ async function takeChoice(player, which) {
       const w = ['R', 'L'].map(a => player['w' + a]).find(weapon => weapon && weapon.stones);
       if (w) {
         w.ammoLeft = Math.min(6, w.ammoLeft + av);
-        log(`${nm(player)} gathers ${av > 1 ? av + ' stones' : 'a stone'} (${w.ammoLeft} in the sling).`);
+        log(_T`${nm(player)} gathers ${av > 1 ? av + ' stones' : _T('a stone')} (${w.ammoLeft} in the sling).`);
       }
     }
   }
@@ -1241,11 +1241,11 @@ async function endTurn() {
   S.mode = 'move';
   if (p.alive && !p.exited) {
     if (RD().zone > 1 && p.grace <= 0 && !inZone(p.r, p.c) && !p.underground) {
-      cfWhy('outside the zone');
+      cfWhy(_T('outside the zone'));
       p.cf -= 2;
-      log(`${nm(p)} ends outside the zone: −2 CF (now ${p.cf}).`, 'bad');
+      log(_T`${nm(p)} ends outside the zone: −2 CF (now ${p.cf}).`, 'bad');
       if (p.cf < 0) {
-        log(`${nm(p)}'s crowd favor turns negative.`, 'bad');
+        log(_T`${nm(p)}'s crowd favor turns negative.`, 'bad');
         eliminate(p, {
           type: 'env'
         });
@@ -1258,28 +1258,28 @@ async function endTurn() {
       const cards = p.items.filter(i => i.kind === 'card');
       let it;
       if (p.cpu) it = cards[0];else {
-        const id = await modal('Hand limit', '<p>Your hand holds more than 10 cards. Discard one.</p>', cards.map(c => ({
+        const id = await modal(_T('Hand limit'), '<p>Your hand holds more than 10 cards. Discard one.</p>', cards.map(c => ({
           label: CARDS[c.key].n,
           value: c.id
         })));
         it = cards.find(c => c.id === id) || cards[0];
       }
       p.items = p.items.filter(x => x !== it);
-      log(`${nm(p)} discards ${CARDS[it.key].n} (hand limit).`);
+      log(_T`${nm(p)} discards ${CARDS[it.key].n} (hand limit).`);
     }
     checkMandata(p);
   }
   if (S.active.restless > 0 && !isChariot()) {
     if (p.alive && !p.exited && p.attacks === 0 && !S.active.telemachus) {
-      log(`${nm(p)} made no attack. The crowd grows restless and stones every gladiator!`, 'bad');
+      log(_T`${nm(p)} made no attack. The crowd grows restless and stones every gladiator!`, 'bad');
       crowdReact('nohit');
       for (const q of activePlayers()) if (!q.underground) await hurt(q, rollLoc(q), 2, {
         type: 'env'
-      }, 'Stones from the restless crowd');
+      }, _T('Stones from the restless crowd'));
     }
     if (--S.active.restless <= 0) {
       S.active.restless = 0;
-      log('The crowd settles. The Crowd Grows Restless is discarded.');
+      log(_T('The crowd settles. The Crowd Grows Restless is discarded.'));
     }
   }
   await flushMF();
@@ -1323,10 +1323,10 @@ function advanceTurn() {
     if (wrapped && S.evKey === 'gauntlet' && S.rotation - (S.lastDmgRot ?? S.rotation) >= 3 && !S.over) {
       const gp = activePlayers()[0];
       if (gp) {
-        log(`Three rotations without blood. <b>The editor's lash</b>: the handlers whip ${nm(gp)} back toward the beasts (1 damage).`, 'bad');
+        log(_T`Three rotations without blood. <b>The editor's lash</b>: the handlers whip ${nm(gp)} back toward the beasts (1 damage).`, 'bad');
         await hurt(gp, rollLoc(gp), 1, {
           type: 'env'
-        }, "The editor's lash", {
+        }, _T("The editor's lash"), {
           noShield: true
         });
         checkEnd();
@@ -1336,7 +1336,7 @@ function advanceTurn() {
     }
     if (wrapped && !isChariot() && RD().pvp && !S.active.restless && S.rotation - (S.lastDmgRot ?? S.rotation) >= 6 && activePlayers().length > 1) {
       S.active.restless = 4;
-      log('Six rotations without blood. <b>The crowd grows restless</b> on its own: for the next 4 turns, a gladiator who does not attack gets everyone stoned.', 'big');
+      log(_T('Six rotations without blood. <b>The crowd grows restless</b> on its own: for the next 4 turns, a gladiator who does not attack gets everyone stoned.'), 'big');
       cardShow('c:restless');
       S.lastDmgRot = S.rotation;
     }
@@ -1352,8 +1352,8 @@ function advanceTurn() {
       if (!S.sim && (S.rotation >= 200 || S.lastDmgRot != null && S.rotation - S.lastDmgRot >= 40 && !isChariot())) {
         const act = activePlayers();
         const top = [...act].sort((x, y) => y.cf - x.cf)[0];
-        log(`The sun is setting and ${edName()} rises from the box. <b>The editor calls the event.</b> Whatever still prowls the sand is led away by the handlers.`, 'big');
-        if (top) gameOver([top], `${top.name} holds the most Crowd Favor as the editor calls time.`);else gameOver([], 'The editor calls time on an empty arena.');
+        log(_T`The sun is setting and ${edName()} rises from the box. <b>The editor calls the event.</b> Whatever still prowls the sand is led away by the handlers.`, 'big');
+        if (top) gameOver([top], _T`${top.name} holds the most Crowd Favor as the editor calls time.`);else gameOver([], _T('The editor calls time on an empty arena.'));
         return;
       }
       if (S.pendingCommodus) {
@@ -1402,7 +1402,7 @@ async function movePlayer(player, path) {
     draw();
     if (spikeAt(r, c)) await hurt(player, rollLoc(player), 2, {
       type: 'env'
-    }, 'Floor spike');
+    }, _T('Floor spike'));
     await pickupAt(r, c);
     checkEnd();
     if (!player.alive || S.over || S.pending) break;
@@ -1415,12 +1415,12 @@ function chFootPickup(player) {
     if (f.kind === 'wheel' && !player.ch.wheel) {
       player.ch.wheel = f.part;
       S.floor = S.floor.filter(x => x !== f);
-      log(`${nm(player)} fits a spare ${f.part.name || 'wheel'} (${f.part.hp} HP) to their chariot.`);
+      log(_T`${nm(player)} fits a spare ${f.part.name || 'wheel'} (${f.part.hp} HP) to their chariot.`);
     }
     if (f.kind === 'horse' && !player.ch.horse) {
       player.ch.horse = f.part;
       S.floor = S.floor.filter(x => x !== f);
-      log(`${nm(player)} harnesses ${f.part.name || 'a spare horse'} to their chariot.`);
+      log(_T`${nm(player)} harnesses ${f.part.name || _T('a spare horse')} to their chariot.`);
     }
   }
 }
@@ -1457,11 +1457,11 @@ async function doPush(player, target) {
   if (target.pl) {
     target.pl.r = r2;
     target.pl.c = c2;
-    log(`${nm(player)} shoves the pillar to ${tl(r2, c2)}${tunnelAt(r2, c2) ? ', sealing the tunnel' : ''}.`);
+    log(_T`${nm(player)} shoves the pillar to ${tl(r2, c2)}${tunnelAt(r2, c2) ? _T(', sealing the tunnel') : ''}.`);
   } else {
     target.u.r = r2;
     target.u.c = c2;
-    log(`${nm(player)} pushes ${nm(target.u)} to ${tl(r2, c2)}.`);
+    log(_T`${nm(player)} pushes ${nm(target.u)} to ${tl(r2, c2)}.`);
     if (!target.u.cls && target.u.tamedBy == null) setAggro(target.u, player, 'push');
     if (target.u.cls) {
       stat(player, 'pushPlayer');
@@ -1472,7 +1472,7 @@ async function doPush(player, target) {
       if (target.u.cls) await hurt(target.u, rollLoc(target.u), 2, {
         type: 'player',
         p: player
-      }, 'Pushed onto a floor spike');else hurtNPC(target.u, 2, player, 'Pushed onto a floor spike');
+      }, _T('Pushed onto a floor spike'));else hurtNPC(target.u, 2, player, _T('Pushed onto a floor spike'));
     }
     if (target.u.cls) await pickupAt(r2, c2);
   }
@@ -1508,10 +1508,10 @@ async function doTopple(player, pillar) {
     dc
   });
   shake();
-  fx(pillar.r, pillar.c, 'CRASH!', '#e6d3b0', {
+  fx(pillar.r, pillar.c, _T('CRASH!'), '#e6d3b0', {
     big: 1
   });
-  log(`${nm(player)} topples the pillar at ${tl(pillar.r, pillar.c)}!`, 'big');
+  log(_T`${nm(player)} topples the pillar at ${tl(pillar.r, pillar.c)}!`, 'big');
   for (const k of [1, 2]) {
     const r = pillar.r + dr * k,
       c = pillar.c + dc * k;
@@ -1520,16 +1520,16 @@ async function doTopple(player, pillar) {
     if (q && q !== player) {
       if (inTruce(player, q)) {
         S.truces.delete(truceKey(player.id, q.id));
-        log(`${nm(player)} breaks the truce with ${nm(q)}!`, 'bad');
+        log(_T`${nm(player)} breaks the truce with ${nm(q)}!`, 'bad');
       }
       await hurt(q, rollLoc(q), 3, {
         type: 'player',
         p: player
-      }, 'Falling pillar');
-      bumpRel(q, player, -15, 'dropped a pillar on them');
+      }, _T('Falling pillar'));
+      bumpRel(q, player, -15, _T('dropped a pillar on them'));
     }
     const n = npcAt(r, c);
-    if (n) hurtNPC(n, 3, player, 'Falling pillar');
+    if (n) hurtNPC(n, 3, player, _T('Falling pillar'));
   }
   if (pillar.pots.length) await breakPot(pillar, player, [pillar.r + dr * 3, pillar.c + dc * 3], true);
   checkMandata(player);
@@ -1558,7 +1558,7 @@ async function doTunnel(player, target) {
   player.c = target.c;
   player.underground = true;
   stat(player, 'tunnel');
-  log(`${nm(player)} uses an Arena Key and vanishes underground, surfacing at ${tl(target.r, target.c)} next turn.`);
+  log(_T`${nm(player)} uses an Arena Key and vanishes underground, surfacing at ${tl(target.r, target.c)} next turn.`);
   checkMandata(player);
 }
 /* reteTargets — players and beasts within 4 tiles and line of sight that a net (Rete) can target. TWEAK: range (4). */
@@ -1577,7 +1577,7 @@ async function openChest(player) {
   player.keys--;
   const key = S.chest.weapons.pop();
   stat(player, 'chest');
-  log(`${nm(player)} unlocks the Arena Chest!`, 'big');
+  log(_T`${nm(player)} unlocks the Arena Chest!`, 'big');
   await gainWeapon(player, key);
   if (player.carrying) {
     player.carrying = false;
@@ -1588,10 +1588,10 @@ async function openChest(player) {
     S.chest.r = r;
     S.chest.c = c;
     S.chest.held = null;
-    log(`The chest respawns, locked, at ${tl(r, c)}.`);
+    log(_T`The chest respawns, locked, at ${tl(r, c)}.`);
   } else {
     S.chest = null;
-    log('The chest is empty and leaves the arena.');
+    log(_T('The chest is empty and leaves the arena.'));
   }
   checkMandata(player);
 }
@@ -1604,7 +1604,7 @@ function lootOptions(player) {
       t: 'w',
       i,
       label: weapon.n,
-      sub: `from ${pl.name}${pl.corpse ? "'s corpse" : ''} · ${wStats(weapon)}`,
+      sub: _T`from ${pl.name}${pl.corpse ? _T("'s corpse") : ''} · ${wStats(weapon)}`,
       val: wScore(weapon)
     }));
     pl.armor.forEach((a, i) => out.push({
@@ -1612,14 +1612,14 @@ function lootOptions(player) {
       t: 'a',
       i,
       label: a.n,
-      sub: `from ${pl.name} · ${a.ap} AP`,
+      sub: _T`from ${pl.name} · ${a.ap} AP`,
       val: a.ap
     }));
     if (pl.coin) out.push({
       pl,
       t: 'c',
-      label: `${pl.coin} coin`,
-      sub: `all of ${pl.name}'s coin`,
+      label: _T`${pl.coin} coin`,
+      sub: _T`all of ${pl.name}'s coin`,
       val: pl.coin * 0.6
     });
     pl.items.forEach((it, i) => out.push({
@@ -1627,7 +1627,7 @@ function lootOptions(player) {
       t: 'i',
       i,
       label: itemInfo(it).n,
-      sub: `from ${pl.name} · ${itemInfo(it).t}`,
+      sub: _T`from ${pl.name} · ${itemInfo(it).t}`,
       val: 3
     }));
   }
@@ -1635,7 +1635,7 @@ function lootOptions(player) {
     floor: f,
     t: 'fw',
     label: f.w.n,
-    sub: `lying in the sand · ${wStats(f.w)}`,
+    sub: _T`lying in the sand · ${wStats(f.w)}`,
     val: wScore(f.w)
   });
   return out;
@@ -1644,7 +1644,7 @@ function lootOptions(player) {
 async function doLoot(player, o) {
   if (o.t === 'fw') {
     S.floor = S.floor.filter(x => x !== o.floor);
-    log(`${nm(player)} picks up the ${o.floor.w.n}.`);
+    log(_T`${nm(player)} picks up the ${o.floor.w.n}.`);
     await gainWeapon(player, null, o.floor.w);
     return;
   }
@@ -1652,26 +1652,26 @@ async function doLoot(player, o) {
   const pl = o.pl;
   if (o.t === 'w') {
     const w = pl.weapons.splice(o.i, 1)[0];
-    log(`${nm(player)} loots the ${w.n} from ${pl.name}.`);
+    log(_T`${nm(player)} loots the ${w.n} from ${pl.name}.`);
     await gainWeapon(player, null, w);
   }
   if (o.t === 'a') {
     const a = pl.armor.splice(o.i, 1)[0];
-    log(`${nm(player)} loots ${a.n} (${a.ap} AP) from ${pl.name}.`);
+    log(_T`${nm(player)} loots ${a.n} (${a.ap} AP) from ${pl.name}.`);
     await gainArmorPiece(player, a.key, a.ap, {
       single: true
     });
   }
   if (o.t === 'c') {
     player.coin += pl.coin;
-    coinLog(player, pl.coin, 'looting the fallen');
-    log(`${nm(player)} loots ${pl.coin} coin from ${pl.name}.`);
+    coinLog(player, pl.coin, _T('looting the fallen'));
+    log(_T`${nm(player)} loots ${pl.coin} coin from ${pl.name}.`);
     pl.coin = 0;
   }
   if (o.t === 'i') {
     const it = pl.items.splice(o.i, 1)[0];
     player.items.push(it);
-    log(`${nm(player)} loots ${itemInfo(it).n} from ${pl.name}.`);
+    log(_T`${nm(player)} loots ${itemInfo(it).n} from ${pl.name}.`);
   }
 }
 /* tradePartners — active players within 4 tiles (not underground) who can trade. TWEAK: range (4). */
@@ -1682,12 +1682,12 @@ function tradeables(player) {
   if (player.coin > 0) for (const v of [1, 3, 5, 10]) if (player.coin >= v) out.push({
     t: 'coin',
     v,
-    label: `${v} coin`,
+    label: _T`${v} coin`,
     val: v
   });
   if (player.keys > 0) out.push({
     t: 'key',
-    label: '1 Arena Key',
+    label: _T('1 Arena Key'),
     val: 4
   });
   player.items.filter(i => i.kind !== 'mf').forEach(it => out.push({
@@ -1741,10 +1741,10 @@ function itemVal(it) {
 /* makeTruce — swears a truce (refused in the tutorial or after truces were torn up); both sides like each other more. TWEAK: relationship gain (15). */
 function makeTruce(player, other) {
   if (S.tutorial || S.truceGone) {
-    log(`${S.tutorial ? edName() : 'The editor'} waves the pact away: ${S.tutorial ? 'this is a lesson in fighting — the truce is broken' : 'no truces are sworn again this event'}.`, 'bad');
+    log(_T`${S.tutorial ? edName() : _T('The editor')} waves the pact away: ${S.tutorial ? _T('this is a lesson in fighting — the truce is broken') : _T('no truces are sworn again this event')}.`, 'bad');
     if (!player.cpu || !other.cpu) {
       try {
-        mToast(S.tutorial ? `👎 ${esc(edName())} breaks the truce — this lesson is about fighting.` : '👎 No truces are allowed any more this event.');
+        mToast(S.tutorial ? _T`👎 ${esc(edName())} breaks the truce — this lesson is about fighting.` : _T('👎 No truces are allowed any more this event.'));
       } catch (e) {}
     }
     return;
@@ -1758,7 +1758,7 @@ function makeTruce(player, other) {
   bumpRel(other, player, 15, 'truce');
   stat(player, 'truce');
   stat(other, 'truce');
-  log(`${nm(player)} and ${nm(other)} agree to a truce.`, 'big');
+  log(_T`${nm(player)} and ${nm(other)} agree to a truce.`, 'big');
   checkMandata(player);
   checkMandata(other);
 }
@@ -1766,11 +1766,11 @@ function makeTruce(player, other) {
 function doTrade(player, other, give, get) {
   transfer(player, other, give);
   transfer(other, player, get);
-  bumpRel(player, other, 8, 'fair trade');
-  bumpRel(other, player, 8, 'fair trade');
+  bumpRel(player, other, 8, _T('fair trade'));
+  bumpRel(other, player, 8, _T('fair trade'));
   stat(player, 'trade');
   stat(other, 'trade');
-  log(`${nm(player)} trades ${give.label} to ${nm(other)} for ${get.label}.`, 'big');
+  log(_T`${nm(player)} trades ${give.label} to ${nm(other)} for ${get.label}.`, 'big');
   checkMandata(player);
   checkMandata(other);
 }
@@ -1780,9 +1780,9 @@ function doGift(player, other, x, why = '') {
     p: player
   });
   transfer(player, other, x);
-  bumpRel(other, player, 20, 'a gift');
+  bumpRel(other, player, 20, _T('a gift'));
   stat(player, 'gifts');
-  log(`${nm(player)} gives ${x.label} to ${nm(other)}${why ? ' ' + why : ''}.`, 'big');
+  log(_T`${nm(player)} gives ${x.label} to ${nm(other)}${why ? ' ' + why : ''}.`, 'big');
 }
 /* transfer — moves coin, a key, an item or a weapon between players; a traded weapon is tagged with its source and turn and goes to a free hand or the receiver's pile. */
 function transfer(from, to, x) {
@@ -1843,7 +1843,7 @@ function doExit(player) {
     player.eagle = 0;
     placeFloor('eagle', 'eagle', 6, 6);
   }
-  log(`${nm(player)} exits the arena!`, 'big');
+  log(_T`${nm(player)} exits the arena!`, 'big');
   checkEnd();
 }
 
@@ -1867,19 +1867,19 @@ async function flaviusTruceCheck() {
   if (!S.truceGone && act.every(other => other.cpu)) {
     S.truces.clear();
     S.truceGone = 1;
-    if (!S.sim) banner('The truces are broken', 'The editor rises — the pacts are torn up');
-    log(`⚔ ${edName()} rises and the truce-bound understand: <b>they tear up their pacts and fight on.</b> No truce may be sworn again this event.`, 'big');
+    if (!S.sim) banner(_T('The truces are broken'), _T('The editor rises — the pacts are torn up'));
+    log(_T`⚔ ${edName()} rises and the truce-bound understand: <b>they tear up their pacts and fight on.</b> No truce may be sworn again this event.`, 'big');
     return;
   }
   /* v0.46: a human among the truce-bound may tear the pacts up and fight on — but then no truce stands again this event */
   if (!S.truceGone && act.some(other => !other.cpu)) {
-    const v = S.tutorial ? 'fight' : await modal(`${edName()} rises from the editor’s seat`, `<div class="decree"><p>Every gladiator still standing (${act.map(other => esc(other.name)).join(', ')}) is bound by truce — and the crowd did not pay to watch friendship.</p><p><b>Break the truces and fight it out</b>, or let the thumb turn down on everyone.</p><p class="rc-sub">Break them and no truce may be sworn again for the rest of this event.</p></div>`, [{
-      label: '⚔ Break the truces — fight on',
+    const v = S.tutorial ? 'fight' : await modal(_T`${edName()} rises from the editor’s seat`, `<div class="decree"><p>${_T`Every gladiator still standing (${act.map(other => esc(other.name)).join(', ')}) is bound by truce — and the crowd did not pay to watch friendship.`}</p><p>${_T`<b>Break the truces and fight it out</b>, or let the thumb turn down on everyone.`}</p><p class="rc-sub">${_T`Break them and no truce may be sworn again for the rest of this event.`}</p></div>`, [{
+      label: _T('⚔ Break the truces — fight on'),
       value: 'fight',
       primary: 1
     }, {
-      label: '👎 Accept the thumb',
-      sub: 'every survivor is executed',
+      label: _T('👎 Accept the thumb'),
+      sub: _T('every survivor is executed'),
       value: 'thumb'
     }], {
       close: 'fight'
@@ -1888,8 +1888,8 @@ async function flaviusTruceCheck() {
     if (v === 'fight') {
       S.truces.clear();
       S.truceGone = 1;
-      banner('The truces are broken', 'Fight on — no more pacts this event');
-      log(`⚔ The truces are torn up before ${edName()}’s box. <b>No truce may be sworn again this event.</b> Fight on!`, 'big');
+      banner(_T('The truces are broken'), _T('Fight on — no more pacts this event'));
+      log(_T`⚔ The truces are torn up before ${edName()}’s box. <b>No truce may be sworn again this event.</b> Fight on!`, 'big');
       if (typeof crowdReact === 'function') try {
         crowdReact('boss', {
           n: 'war'
@@ -1902,11 +1902,11 @@ async function flaviusTruceCheck() {
   // v0.37 THUMBS DOWN: an arena that ends in friendship is no ending at all. Flavius turns his thumb down on
   // every survivor, and each is executed by the d12 of the Fates table — nobody wins.
   S.thumbsDown = act.map(other => other.id);
-  banner(`${edName()} turns the thumb down`, 'Friendship is not a spectacle');
-  log(`<b>${edName()} rises from the editor’s seat.</b> Every gladiator left standing (${act.map(other => nm(other)).join(', ')}) is bound by truce — and the crowd did not pay to watch friendship. <b>His thumb turns down.</b> Each will meet a death drawn from the d12 of the Fates.`, 'big');
-  for (const q of act) think(q, pickOne(['So it ends like this.', 'We should have fought.', 'Flavius has spoken.', 'Forgive me, friend.']), 'think');
-  const pr = modal(`${edName()} turns the thumb down`, `<div class="decree"><p><b>${edName()} rises from the editor’s seat.</b></p><p>Every gladiator still standing (${act.map(other => esc(other.name)).join(', ')}) is bound by truce, so no one can win this ${esc(EV().short)}.</p><p>“The people did not come to watch friendship!” <b>The thumb turns down.</b> Each survivor is executed, their death drawn from the d12 of the Fates.</p></div>`, [{
-    label: 'So be it',
+  banner(_T`${edName()} turns the thumb down`, _T('Friendship is not a spectacle'));
+  log(_T`<b>${edName()} rises from the editor’s seat.</b> Every gladiator left standing (${act.map(other => nm(other)).join(', ')}) is bound by truce — and the crowd did not pay to watch friendship. <b>His thumb turns down.</b> Each will meet a death drawn from the d12 of the Fates.`, 'big');
+  for (const q of act) think(q, pickOne([_T('So it ends like this.'), _T('We should have fought.'), _T('Flavius has spoken.'), _T('Forgive me, friend.')]), 'think');
+  const pr = modal(_T`${edName()} turns the thumb down`, `<div class="decree"><p>${_T`<b>${edName()} rises from the editor’s seat.</b>`}</p><p>${_T`Every gladiator still standing (${act.map(other => esc(other.name)).join(', ')}) is bound by truce, so no one can win this ${esc(EV().short)}.`}</p><p>${_T`“The people did not come to watch friendship!” <b>The thumb turns down.</b> Each survivor is executed, their death drawn from the d12 of the Fates.`}</p></div>`, [{
+    label: _T('So be it'),
     value: 1,
     primary: 1
   }]);
@@ -1917,7 +1917,7 @@ async function flaviusTruceCheck() {
     } catch (e) {}
   }, 3500);
   if (G9 !== S || S.over) return;
-  await gameOver([], `Everyone left standing was bound by truce. ${edName()} turned the thumb down on them all.`);
+  await gameOver([], _T`Everyone left standing was bound by truce. ${edName()} turned the thumb down on them all.`);
 }
 
 /* ================= PERFORMANCE HISTORY ================= */
@@ -1963,18 +1963,18 @@ function recordHist() {
 /* ================= RETIRE ================= */
 /* retirePlayer — after confirming, retires the gladiator: CF set to 0 and eliminated. */
 async function retirePlayer(player) {
-  const ok = await modal(`Retire ${player.name}?`, `<p>Retiring walks your gladiator out of the arena for good. Their Fate is set to <b>0 CF (Ad Memoriae)</b>, they are eliminated from this event, and ${player.saved ? 'their saved record in the Ludus' : 'any saved record or missio for them'} is removed.</p>`, [{
-    label: 'Retire from the event',
+  const ok = await modal(_T`Retire ${player.name}?`, `<p>${_T`Retiring walks your gladiator out of the arena for good. Their Fate is set to <b>0 CF (Ad Memoriae)</b>, they are eliminated from this event, and ${player.saved ? _T('their saved record in the Ludus') : _T('any saved record or missio for them')} is removed.`}</p>`, [{
+    label: _T('Retire from the event'),
     value: 1,
     primary: 1
   }, {
-    label: 'Cancel',
+    label: _T('Cancel'),
     value: 0
   }]);
   if (!ok) return;
   player.retired = true;
   player.cf = 0;
-  log(`${nm(player)} lays down their weapons and retires from the event. Fate: 0 CF.`, 'big');
+  log(_T`${nm(player)} lays down their weapons and retires from the event. Fate: 0 CF.`, 'big');
   eliminate(player, {
     type: 'retire'
   });
@@ -1986,7 +1986,7 @@ async function chPartPickup(player) {
   if (!isChariot() || !player.ch) return;
   /* hpOf / desc — a part's current HP (a horse uses its face HP minus damage) and its menu label. */
   const hpOf = x => x ? x.sides ? x.sides[x.face].hp - x.dmg : x.hp : 0;
-  const desc = x => x.sides ? `${x.name || 'horse'} (${hpOf(x)} HP, +${x.sides[x.face].mv} MV)` : `${x.name || 'wheel'} (${x.hp} HP)`;
+  const desc = x => x.sides ? _T`${x.name || 'horse'} (${hpOf(x)} HP, +${x.sides[x.face].mv} MV)` : _T`${x.name || 'wheel'} (${x.hp} HP)`;
   for (const f of S.floor.filter(f => f.r === player.r && f.c === player.c && (f.kind === 'wheel' || f.kind === 'horse'))) {
     const ch = player.ch,
       key = f.kind;
@@ -1994,24 +1994,24 @@ async function chPartPickup(player) {
     if (!cur) {
       S.floor = S.floor.filter(x => x !== f);
       ch[key] = f.part;
-      log(`${nm(player)} fits the spare ${desc(f.part)} to their chariot.`, 'big');
+      log(_T`${nm(player)} fits the spare ${desc(f.part)} to their chariot.`, 'big');
       fx(player.r, player.c, '+' + key, '#9bd070');
       continue;
     }
     let swap;
-    if (player.cpu) swap = hpOf(f.part) > hpOf(cur);else swap = await modal(`Spare ${key}`, `<p>Your chariot already has a ${desc(cur)}. Swap it for this ${desc(f.part)}? Your old ${key} is left on this tile.</p>`, [{
-      label: 'Swap',
+    if (player.cpu) swap = hpOf(f.part) > hpOf(cur);else swap = await modal(_T`Spare ${key}`, `<p>${_T`Your chariot already has a ${desc(cur)}. Swap it for this ${desc(f.part)}? Your old ${key} is left on this tile.`}</p>`, [{
+      label: _T('Swap'),
       value: 1,
       primary: 1
     }, {
-      label: 'Keep mine',
+      label: _T('Keep mine'),
       value: 0
     }]);
     if (!swap) continue;
     const spare = f.part;
     f.part = cur;
     ch[key] = spare;
-    log(`${nm(player)} swaps in the spare ${desc(spare)} and leaves their old ${key} behind.`);
+    log(_T`${nm(player)} swaps in the spare ${desc(spare)} and leaves their old ${key} behind.`);
     fx(player.r, player.c, 'swap ' + key, '#9bd070');
   }
 }
@@ -2023,12 +2023,12 @@ async function simToEnd(skipAsk) {
   const G = S;
   if (!skipAsk && !HEADLESS && typeof modal === 'function') {
     if (modalBusy()) return;
-    const ok = await modal('⏭ Sim to end?', '<p>Every gladiator hands to the CPU and the event <b>resolves at once</b> — straight to the results.</p><p class="rc-sub">Just want the CPUs quicker? Use the <b>Fast</b> speed instead. Want to stop playing a fighter but keep watching? Use <b>🤖 Hand to CPU</b> on their board.</p>', [{
-      label: 'Sim to end',
+    const ok = await modal(_T('⏭ Sim to end?'), '<p>Every gladiator hands to the CPU and the event <b>resolves at once</b> — straight to the results.</p><p class="rc-sub">Just want the CPUs quicker? Use the <b>Fast</b> speed instead. Want to stop playing a fighter but keep watching? Use <b>🤖 Hand to CPU</b> on their board.</p>', [{
+      label: _T('Sim to end'),
       value: 1,
       primary: 1
     }, {
-      label: 'Keep playing',
+      label: _T('Keep playing'),
       value: 0
     }], {
       close: 0
@@ -2047,7 +2047,7 @@ async function simToEnd(skipAsk) {
   if (!HEADLESS && typeof simSnapShow === 'function') simSnapShow();
   SPEED = 'snap';
   document.querySelectorAll('[data-speed]').forEach(x => x.classList.remove('on'));
-  log(`⏭ The rest is simulated — the event snaps to its end.`, 'thought');
+  log(_T`⏭ The rest is simulated — the event snaps to its end.`, 'thought');
   if (!waiting) return; // mid-animation: the loop will find a CPU at the next step
   S.busy = true;
   if (S.phase === 'choice') {

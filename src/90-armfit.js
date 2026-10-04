@@ -49,12 +49,12 @@ function armBox(key,l){const A=ARM[key];const f=armFit(key);if(!A||A.img==null||
 /* rulebook p.22: a location's armor is damaged as one pool; at 0 AP every piece on it is destroyed together */
 function armShares(p,l){const P=p.pieces[l]||[];const tot=P.reduce((a,pc)=>a+(pc.ap||0),0);const cur=Math.max(0,p.ap[l]||0);const ratio=tot?Math.min(1,cur/tot):1;return P.map(pc=>({pc,cur,ratio}))}
 const ARM_FALL=[];const ARM_SEEN={};
-function armPieceSVG(B,key,ratio,extra,uid){const c=B.crop;const x=B.cx-B.w/2,y=B.cy-B.h/2;const k=B.w/c[2];const id=`acp${String(uid||'').replace(/[^\w-]/g,'')}${key}${extra?'f':''}`;
+function armPieceSVG(B,key,ratio,extra,uid){const c=B.crop;const x=B.cx-B.w/2,y=B.cy-B.h/2;const k=B.w/c[2];const id=_T`acp${String(uid||'').replace(/[^\w-]/g,'')}${key}${extra?'f':''}`;
   const tr=`${B.mirror?`translate(${2*B.cx} 0) scale(-1 1) `:''}${B.r?`rotate(${B.r*(B.mirror?-1:1)*(B.side?-1:1)} ${B.cx} ${B.cy})`:''}`;
   let cracks='';const n=ratio<1?Math.ceil((1-ratio)*3):0;
   for(let i=0;i<n;i++){const sx=x+B.w*(0.25+0.25*i),sy=y+B.h*(0.15+0.2*i);cracks+=`<path d="M${sx.toFixed(1)} ${sy.toFixed(1)}l${(B.w*.12).toFixed(1)} ${(B.h*.1).toFixed(1)}l${(-B.w*.07).toFixed(1)} ${(B.h*.08).toFixed(1)}l${(B.w*.1).toFixed(1)} ${(B.h*.12).toFixed(1)}" fill="none" stroke="#140f0b" stroke-width=".9" stroke-opacity=".8"/>`}
   const href=typeof assetURL==='function'?assetURL(ARM_SHEET.f):ASSET+ARM_SHEET.f;
-  const inner=`<g class="armpc" opacity="${(1-ARM_DIM*(1-ratio)).toFixed(2)}" transform="${tr}"><clipPath id="${id}"><rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${B.w.toFixed(1)}" height="${B.h.toFixed(1)}"/></clipPath><image href="${href}" x="${(x-c[0]*k).toFixed(2)}" y="${(y-c[1]*k).toFixed(2)}" width="${(ARM_SHEET.w*k).toFixed(1)}" height="${(ARM_SHEET.h*k).toFixed(1)}" clip-path="url(#${id})" preserveAspectRatio="none"${B.gold?` style="filter:${BRACER_GOLD}"`:''}/>${cracks}</g>`;
+  const inner=`<g class="armpc" opacity="${(1-ARM_DIM*(1-ratio)).toFixed(2)}" transform="${tr}"><clipPath id="${id}"><rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${B.w.toFixed(1)}" height="${B.h.toFixed(1)}"/></clipPath><image href="${href}" x="${(x-c[0]*k).toFixed(2)}" y="${(y-c[1]*k).toFixed(2)}" width="${(ARM_SHEET.w*k).toFixed(1)}" height="${(ARM_SHEET.h*k).toFixed(1)}" clip-path="url(#${id})" preserveAspectRatio="none"${B.gold?_T` style="filter:${BRACER_GOLD}"`:''}/>${cracks}</g>`;
   return extra?`<g class="${extra.cls}" style="${extra.style}">${inner}</g>`:inner}
 /* draw order: padded and wraps first, plate over them, the belt last */
 const armZ=key=>key==='balteus'||key==='balteus1'?3:ARM[key]&&ARM[key].stack?0:key==='spaulder'||key==='galerus'?2:1;
@@ -80,11 +80,11 @@ function afitPlayer(key){const A=ARM[key];const p={id:'afit',name:'fit',hp:{},ap
   const locs=A.slot==='head'?['head']:A.slot==='chest'?['chest']:A.slot==='arm'?['rarm','larm']:['rleg','lleg'];for(const l of locs){p.pieces[l].push({key,n:A.n,ap:A.ap});p.ap[l]=A.ap}return p}
 function afitHTML(){if(typeof DEV_KEY!=='function'||!DEV_KEY())return '';const keys=Object.keys(ARM).filter(k=>!ARM[k].custom&&ARM_FIT[k]);const f=armFit(AFIT.key)||{};
   const sl=(k,l,min,max)=>`<label class="rc-sub">${l} <b>${f[k]||0}</b><input type="range" min="${min}" max="${max}" step="1" value="${f[k]||0}" data-afit="${k}" style="width:100%"></label>`;
-  return `<div class="card2 afit"><h4 style="margin:0 0 6px">🎯 Fit the printed set <span class="rc-sub">editors · saved in this browser · Export to keep</span></h4>
+  return `<div class="card2 afit"><h4 style="margin:0 0 6px">${_T`🎯 Fit the printed set`} <span class="rc-sub">${_T`editors · saved in this browser · Export to keep`}</span></h4>
    <div style="display:grid;grid-template-columns:220px 1fr;gap:12px;align-items:start"><div id="afPrev" class="afprev">${avatarSVG(afitPlayer(AFIT.key))}</div>
-   <div><label>Piece<select data-afkey>${keys.map(k=>`<option value="${k}" ${k===AFIT.key?'selected':''}>${esc(ARM[k].n)} · ${ARM[k].slot}${ARM_FIT_OVR[k]?' ✎':''}</option>`).join('')}</select></label>
-    ${sl('dx','Across',-30,30)}${sl('dy','Up / down',-40,40)}${sl('w','Width',10,110)}${sl('r','Turn',-45,45)}
-    <div class="acts"><button class="btn tksm" type="button" data-afact="prev">◀</button><button class="btn tksm" type="button" data-afact="next">▶</button><button class="btn tksm" type="button" data-afact="reset">↺ Default</button><button class="btn tksm" type="button" data-afact="export">⇪ Export all</button></div>
+   <div><label>${_T`Piece`}<select data-afkey>${keys.map(k=>`<option value="${k}" ${k===AFIT.key?'selected':''}>${esc(ARM[k].n)} · ${ARM[k].slot}${ARM_FIT_OVR[k]?' ✎':''}</option>`).join('')}</select></label>
+    ${sl('dx',_T('Across'),-30,30)}${sl('dy','Up / down',-40,40)}${sl('w',_T('Width'),10,110)}${sl('r',_T('Turn'),-45,45)}
+    <div class="acts"><button class="btn tksm" type="button" data-afact="prev">◀</button><button class="btn tksm" type="button" data-afact="next">▶</button><button class="btn tksm" type="button" data-afact="reset">${_T`↺ Default`}</button><button class="btn tksm" type="button" data-afact="export">${_T`⇪ Export all`}</button></div>
     <textarea id="afOut" class="tin" rows="3" style="width:100%;margin-top:6px;font:11px var(--mono)" hidden readonly></textarea></div></div></div>`}
 function afitRefresh(full){const box=document.querySelector('.afit');if(!box)return;if(full){box.outerHTML=afitHTML();return}const pv=document.getElementById('afPrev');if(pv)pv.innerHTML=avatarSVG(afitPlayer(AFIT.key));
   box.querySelectorAll('[data-afit]').forEach(i=>{const b=i.parentElement.querySelector('b');if(b)b.textContent=i.value})}
@@ -95,10 +95,10 @@ document.addEventListener('change',e=>{const s=e.target.closest('[data-afkey]');
 document.addEventListener('click',e=>{const b=e.target.closest('[data-afact]');if(!b)return;const keys=Object.keys(ARM).filter(k=>!ARM[k].custom&&ARM_FIT[k]);const i=keys.indexOf(AFIT.key);const a=b.dataset.afact;
   if(a==='prev'||a==='next'){AFIT.key=keys[(i+(a==='next'?1:keys.length-1))%keys.length];afitRefresh(true);return}
   if(a==='reset'){delete ARM_FIT_OVR[AFIT.key];afitSave();afitRefresh(true);return}
-  if(a==='export'){const out={};for(const k of keys)out[k]=armFit(k);const t=document.getElementById('afOut');t.hidden=false;t.value=JSON.stringify(out);t.select();try{navigator.clipboard.writeText(t.value)}catch(err){}if(typeof mToast==='function')mToast('Fit copied — send it to Claude')}});
+  if(a==='export'){const out={};for(const k of keys)out[k]=armFit(k);const t=document.getElementById('afOut');t.hidden=false;t.value=JSON.stringify(out);t.select();try{navigator.clipboard.writeText(t.value)}catch(err){}if(typeof mToast==='function')mToast(_T('Fit copied — send it to Claude'))}});
 /* custom forge pieces: an equip point on the body (shoulder / forearm / hand for arms, thigh / shin for legs, head, chest, belt).
    Picking one snaps the piece's fit to that point (left side mirrors it, as before); the forge's drag still fine-tunes. */
-const CA_EQ={head:[['head','Head']],chest:[['chest','Chest'],['belt','Belt']],arm:[['sho','Shoulder'],['fore','Forearm'],['hand','Hand']],leg:[['thigh','Thigh'],['shin','Shin']]};
+const CA_EQ={head:[['head',_T('Head')]],chest:[['chest',_T('Chest')],['belt',_T('Belt')]],arm:[['sho',_T('Shoulder')],['fore',_T('Forearm')],['hand',_T('Hand')]],leg:[['thigh',_T('Thigh')],['shin',_T('Shin')]]};
 {const base=gearAHTML;gearAHTML=function(){let h=base.apply(this,arguments);try{const d=ST.ca||{};const L=CA_EQ[d.slot]||[];if(!L.length)return h;
   const cur=d.eq&&L.some(x=>x[0]===d.eq)?d.eq:L[0][0];
   h=h.replace(/(<label>Body location<select data-caf="slot">[\s\S]*?<\/select><\/label>)/,`$1<label>Equip point<select data-caeq>${L.map(([k,l])=>`<option value="${k}" ${k===cur?'selected':''}>${l}</option>`).join('')}</select></label>`)}catch(e){}return h}}

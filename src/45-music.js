@@ -16,15 +16,15 @@
    ===================================================================== */
 AUD_MODES.ionian=[0,2,4,5,7,9,11];
 Object.assign(AUD_THEMES,{
-  'Manager':{root:45,mode:'harmonic',bpm:140,prog:[0,0,5,5,3,3,4,4],lead:'brass',fn:'trap',nm:'Ludus Trap',sub:'while the Manager window is open'},
-  'Annals':{root:50,mode:'ionian',bpm:66,prog:[0,3,4,0,5,3,1,4],lead:'brass',fn:'regal',nm:'Fasti Consulares',sub:'while the Annals are open'},
-  'Superbus':{root:50,mode:'aeolian',bpm:124,prog:[0,5,2,6,0,5,3,4],lead:'brass',fn:'anthem',nm:'Palma Superba',sub:'the Flavius Superbus'},
-  'Special':{root:52,mode:'mixolydian',bpm:112,prog:[0,6,3,0,0,6,4,4],lead:'reed',fn:'festive',nm:'Ludi Extraordinarii',sub:'special events and Play Now tournaments'}});
-const AUD_EXTRA=['Manager','Annals','Superbus','Special'].map(k=>[k,AUD_THEMES[k].nm]);
+  'Manager':{root:45,mode:'harmonic',bpm:140,prog:[0,0,5,5,3,3,4,4],lead:'brass',fn:'trap',nm:'Ludus Trap',sub:_T('while the Manager window is open')},
+  'Annals':{root:50,mode:'ionian',bpm:66,prog:[0,3,4,0,5,3,1,4],lead:'brass',fn:'regal',nm:'Fasti Consulares',sub:_T('while the Annals are open')},
+  'Superbus':{root:50,mode:'aeolian',bpm:124,prog:[0,5,2,6,0,5,3,4],lead:'brass',fn:'anthem',nm:'Palma Superba',sub:_T('the Flavius Superbus')},
+  'Special':{root:52,mode:'mixolydian',bpm:112,prog:[0,6,3,0,0,6,4,4],lead:'reed',fn:'festive',nm:'Ludi Extraordinarii',sub:_T('special events and Play Now tournaments')}});
+const AUD_EXTRA=[_T('Manager'),_T('Annals'),_T('Superbus'),_T('Special')].map(k=>[k,AUD_THEMES[k].nm]);
 const AUD_BRIDGES=[[3,4,5,4,3,4,6,6],[5,3,6,4,5,3,4,4],[2,5,3,6,2,5,4,4],[3,1,4,6,3,1,4,4],[5,6,3,4,5,6,1,4]];
 /* the form: which section a step falls in, and how far into it */
 const audSect=step=>{const s=Math.floor(step/64)%4;return {s,kind:s===2?'B':s===1?'A2':'A',bar:Math.floor(step/8)%8,st:step%8,last:(step%64)>=56}};
-{const _th=audTheme;audTheme=function(name){const th=_th(name);let h=7;for(const ch of (name||'Roma')+'·bridge')h=(h*33+ch.charCodeAt(0))>>>0;const R=()=>{h=(h*1664525+1013904223)>>>0;return h/4294967296};
+{const _th=audTheme;audTheme=function(name){const th=_th(name);let h=7;for(const ch of (name||_T('Roma'))+'·bridge')h=(h*33+ch.charCodeAt(0))>>>0;const R=()=>{h=(h*1664525+1013904223)>>>0;return h/4294967296};
   th.brProg=th.bridge||(()=>{const b=[...AUD_BRIDGES[h%AUD_BRIDGES.length]];b[1]=[1,2,5,6][(h>>>4)%4];b[5]=[2,3,5,6][(h>>>7)%4];b[2]=[3,4,5,6][(h>>>10)%4];return b})(); /* each theme's bridge is its own */
   /* the bridge melody: fewer, longer notes that climb, then fall back toward the tonic */
   th.brMel=[];for(let bar=0;bar<8;bar++){const row=Array(8).fill(null);const c=th.brProg[bar];row[0]=c+[0,2,4,7][Math.floor(R()*4)];if(R()<0.7)row[3]=c+[2,4,5][Math.floor(R()*3)];if(R()<0.55)row[6]=c+[4,5,7,9][Math.floor(R()*4)];th.brMel.push(row)}
@@ -111,17 +111,17 @@ const audVis=id=>{const e=document.getElementById(id);const m=document.getElemen
 function audSuperbusOn(){try{if(!audLive()||!S.specCtx)return false;const w=typeof W_==='function'?W_():null;return !!(w&&w.special&&w.special.D&&w.special.D.finale)}catch(e){return false}}
 function audSpecialOn(){try{return audLive()&&!!(S.specCtx||S.tourn)&&!audSuperbusOn()}catch(e){return false}}
 audWant=function(){if(AUD.manual)return AUD.manual;
-  if(audSuperbusOn())return 'Superbus';if(audFinalOn())return 'Finale';if(audSpecialOn())return 'Special';
+  if(audSuperbusOn())return _T('Superbus');if(audFinalOn())return _T('Finale');if(audSpecialOn())return _T('Special');
   if(audLive()&&LOCATIONS[S.locIdx])return LOCATIONS[S.locIdx].n;
-  if(audVis('mgrBody'))return 'Manager';if(audVis('hallBody'))return 'Annals';
-  {const t=AUD_TRACKS[AUD.pl%AUD_TRACKS.length][0];return musicUnlocked(t)?t:'Roma'}};
+  if(audVis('mgrBody'))return _T('Manager');if(audVis('hallBody'))return _T('Annals');
+  {const t=AUD_TRACKS[AUD.pl%AUD_TRACKS.length][0];return musicUnlocked(t)?t:_T('Roma')}};
 {const _mu=musicUnlocked;musicUnlocked=function(n){return AUD_THEMES[n]&&AUD_THEMES[n].fn?true:_mu(n)}}
 /* Settings → Audio: the other themes listed under the cities */
 {const _lh=audListHTML;audListHTML=function(){const cur=AUD.loc;const base=_lh();
-  return base.replace(/<\/div>$/,'')+`<div class="rc-sub" style="margin:8px 0 2px;font:600 10.5px var(--mono);letter-spacing:.1em">THE OTHER THEMES</div>${AUD_EXTRA.map(([k,nm],i)=>{const on=cur===k&&AUD.playing;const paused=cur===k&&AUD.paused;const T=AUD_THEMES[k];
-    return `<div class="trackrow ${on?'on':''}"><span class="n">${String(AUD_TRACKS.length+i+1).padStart(2,'0')}</span><span><b>${esc(nm)}</b><br><span class="rc-sub">${esc(T.sub)} · ${T.bpm} bpm <b class="trst" style="color:var(--gold2)">${on?'♪ now playing':paused?'paused':''}</b></span></span>
-      <span class="seg"><button type="button" data-trk="${on?'pause':'play'}" data-city="${k}" title="${on?'Pause':'Play'}">${on?'❚❚':'▶'}</button><button type="button" data-trk="restart" data-city="${k}" title="Restart from the top">↺</button></span></div>`}).join('')}</div>`}}
+  return base.replace(/<\/div>$/,'')+`<div class="rc-sub" style="margin:8px 0 2px;font:600 10.5px var(--mono);letter-spacing:.1em">${_T`THE OTHER THEMES`}</div>${AUD_EXTRA.map(([k,nm],i)=>{const on=cur===k&&AUD.playing;const paused=cur===k&&AUD.paused;const T=AUD_THEMES[k];
+    return `<div class="trackrow ${on?'on':''}"><span class="n">${String(AUD_TRACKS.length+i+1).padStart(2,'0')}</span><span><b>${esc(nm)}</b><br><span class="rc-sub">${_T`${esc(T.sub)} · ${T.bpm} bpm <b class="trst" style="color:var(--gold2)">${on?_T('♪ now playing'):paused?_T('paused'):''}</b>`}</span></span>
+      <span class="seg"><button type="button" data-trk="${on?'pause':'play'}" data-city="${k}" title="${on?_T('Pause'):_T('Play')}">${on?'❚❚':'▶'}</button><button type="button" data-trk="restart" data-city="${k}" title="${_T`Restart from the top`}">↺</button></span></div>`}).join('')}</div>`}}
 audListRefresh=function(){const el=document.getElementById('audTracks');if(!el)return;const ALL=[...AUD_TRACKS,...AUD_EXTRA];const rows=el.querySelectorAll('.trackrow');if(rows.length!==ALL.length){el.innerHTML=audListHTML();return}
   ALL.forEach(([city],i)=>{const row=rows[i];const on=AUD.loc===city&&AUD.playing;const paused=AUD.loc===city&&AUD.paused;row.classList.toggle('on',on);
-    const b=row.querySelector('[data-trk="play"],[data-trk="pause"]');if(b){const want=on?'pause':'play';if(b.dataset.trk!==want){b.dataset.trk=want;b.textContent=on?'❚❚':'▶';b.title=on?'Pause':'Play'}}
-    const st=row.querySelector('.trst');if(st){const t=on?'♪ now playing':paused?'paused':'';if(st.textContent!==t)st.textContent=t}})};
+    const b=row.querySelector('[data-trk="play"],[data-trk="pause"]');if(b){const want=on?'pause':'play';if(b.dataset.trk!==want){b.dataset.trk=want;b.textContent=on?'❚❚':'▶';b.title=on?_T('Pause'):_T('Play')}}
+    const st=row.querySelector('.trst');if(st){const t=on?_T('♪ now playing'):paused?'paused':'';if(st.textContent!==t)st.textContent=t}})};

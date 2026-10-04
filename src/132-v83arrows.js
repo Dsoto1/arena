@@ -52,7 +52,7 @@ function stuckClear83(){if(S){S.stuck83={};S.stuck83n=0}}
 {const base=hurtNPC;hurtNPC=function(npc,damage,player,prefix,weapon,byNpc){let kind=null,head=false;
   try{kind=weapon&&player&&player.cls?shotKind83(weapon):null;head=!!(kind&&AT83&&AT83.p===player&&AT83.focus);
     /* Tholo house rule: a bolt in his aimed head */
-    if(kind==='bolt'&&head&&npc&&npc.alive&&npc.t==='tholo'&&damage>=1){if(damage<npc.hp)damage=npc.hp;prefix='🎯 A bolt through the eye'}}catch(e){}
+    if(kind==='bolt'&&head&&npc&&npc.alive&&npc.t==='tholo'&&damage>=1){if(damage<npc.hp)damage=npc.hp;prefix=_T('🎯 A bolt through the eye')}}catch(e){}
   const was=npc&&npc.alive;const r=base.call(this,npc,damage,player,prefix,weapon,byNpc);
   try{if(kind&&was&&damage>0)stuckAdd83(npc,head?'head':'body',kind,player)}catch(e){console.error(e)}
   return r}}

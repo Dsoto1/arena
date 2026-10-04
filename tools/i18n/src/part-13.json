@@ -1,0 +1,1698 @@
+[
+ {
+  "k": "the named regulars coming to this week’s games",
+  "w": "25-city.js:60"
+ },
+ {
+  "k": "regulars who call this city home",
+  "w": "25-city.js:60"
+ },
+ {
+  "k": "<b>{0}</b><small>{1} fan · {2}{3}{4}</small>",
+  "w": "25-city.js:60"
+ },
+ {
+  "k": "· backs <b>{0}</b>",
+  "w": "25-city.js:60"
+ },
+ {
+  "k": "· travels from {0}",
+  "w": "25-city.js:60"
+ },
+ {
+  "k": "👥 The spectator roster",
+  "w": "25-city.js:62"
+ },
+ {
+  "k": "{0}K spectators across the empire",
+  "w": "25-city.js:62"
+ },
+ {
+  "k": "<b>{0}</b><small>{1} · {2} visits{3}</small>",
+  "w": "25-city.js:62"
+ },
+ {
+  "k": "🛣 Travel to <b>{0}</b> first — pay the road on Match Week.",
+  "w": "25-city.js:69"
+ },
+ {
+  "k": "🎺 The horns have sounded — the arena gates are shut until the",
+  "w": "25-city.js:72"
+ },
+ {
+  "k": "The Square",
+  "w": "25-city.js:76"
+ },
+ {
+  "k": "The banner of {0}",
+  "w": "25-city.js:76"
+ },
+ {
+  "k": "How fast the square lives — strolling, walking, the countdown, all of it",
+  "w": "25-city.js:79"
+ },
+ {
+  "k": "Your treasury — every shop, gift and auction bid draws on it",
+  "w": "25-city.js:80"
+ },
+ {
+  "k": "Leave the square ✕",
+  "w": "25-city.js:82"
+ },
+ {
+  "k": "👪 Kin",
+  "w": "25-city.js:84"
+ },
+ {
+  "k": "👥 Roster",
+  "w": "25-city.js:84"
+ },
+ {
+  "k": "🐾 Menagerie",
+  "w": "25-city.js:84"
+ },
+ {
+  "k": "Fold the sidebar away",
+  "w": "25-city.js:84"
+ },
+ {
+  "k": "Click a tile to walk (movement is free here) · click anyone for their card · click a building to visit it{0}",
+  "w": "25-city.js:85"
+ },
+ {
+  "k": "· the games begin when the horns sound",
+  "w": "25-city.js:85"
+ },
+ {
+  "k": "You step into {0} at {1}.",
+  "w": "25-city.js:99"
+ },
+ {
+  "k": "the square",
+  "w": "25-city.js:99"
+ },
+ {
+  "k": "📜 <b>Tonight:</b> {0} — {1} bout{2} to fight",
+  "w": "25-city.js:119"
+ },
+ {
+  "k": "📜 Tonight's games are done — the results are posted",
+  "w": "25-city.js:119"
+ },
+ {
+  "k": "📜 <b>Next games here:</b> {0} · {1} ({2} week{3} off)",
+  "w": "25-city.js:123"
+ },
+ {
+  "k": "📜 No games scheduled here for two seasons — the sand waits",
+  "w": "25-city.js:124"
+ },
+ {
+  "k": "They say {0} marches on {1}…",
+  "w": "25-city.js:160"
+ },
+ {
+  "k": "Have you heard? {0}{1}.",
+  "w": "25-city.js:160"
+ },
+ {
+  "k": ", over in {0}",
+  "w": "25-city.js:160"
+ },
+ {
+  "k": "{0} fights next — I have coin on it.",
+  "w": "25-city.js:162"
+ },
+ {
+  "k": "{0}? The odds are long, the heart is willing.",
+  "w": "25-city.js:162"
+ },
+ {
+  "k": "{0}. The augurs are busy today.",
+  "w": "25-city.js:163"
+ },
+ {
+  "k": "Fine wool, two coins the arm-length!",
+  "w": "25-city.js:164"
+ },
+ {
+  "k": "The bread line was shorter under the old aedile.",
+  "w": "25-city.js:164"
+ },
+ {
+  "k": "Mind the mule.",
+  "w": "25-city.js:164"
+ },
+ {
+  "k": "A denarius says the small one wins.",
+  "w": "25-city.js:164"
+ },
+ {
+  "k": "Fair skies, at least.",
+  "w": "25-city.js:164"
+ },
+ {
+  "k": "A {0} is led across the square toward the beast gate.",
+  "w": "25-city.js:184"
+ },
+ {
+  "k": "🎺 the games begin — to the arena!",
+  "w": "25-city.js:191"
+ },
+ {
+  "k": "🏛 the games begin in {0}s",
+  "w": "25-city.js:191"
+ },
+ {
+  "k": "🎺 The horns! The crowd streams toward the arena gate.",
+  "w": "25-city.js:200"
+ },
+ {
+  "k": "⏎ Return to your ludus",
+  "w": "25-city.js:219"
+ },
+ {
+  "k": "Tonight’s games here are already fought — the results are posted on Match Week.",
+  "w": "25-city.js:228"
+ },
+ {
+  "k": "This week’s games are at <b>{0}</b>, not here.",
+  "w": "25-city.js:228"
+ },
+ {
+  "k": "No games are called on this sand right now.",
+  "w": "25-city.js:228"
+ },
+ {
+  "k": "🔒 The arena gate is barred",
+  "w": "25-city.js:229"
+ },
+ {
+  "k": "{0} The gatekeeper does not even look up.",
+  "w": "25-city.js:229"
+ },
+ {
+  "k": "Keep strolling",
+  "w": "25-city.js:230"
+ },
+ {
+  "k": "👤 A face from the stands",
+  "w": "25-city.js:383"
+ },
+ {
+  "k": "{0} is home. You have seen them in the tiers{1}.",
+  "w": "25-city.js:384"
+ },
+ {
+  "k": "{0} time{1}",
+  "w": "25-city.js:384"
+ },
+ {
+  "k": "👤 A passer-by",
+  "w": "25-city.js:385"
+ },
+ {
+  "k": "{0} Not a regular of your stands — yet.",
+  "w": "25-city.js:385"
+ },
+ {
+  "k": "Shopping for the week.",
+  "w": "25-city.js:385"
+ },
+ {
+  "k": "Late for something, clearly.",
+  "w": "25-city.js:385"
+ },
+ {
+  "k": "Here for the games, like everyone.",
+  "w": "25-city.js:385"
+ },
+ {
+  "k": "Arguing about chariot teams.",
+  "w": "25-city.js:385"
+ },
+ {
+  "k": "Selling nothing anyone wants.",
+  "w": "25-city.js:385"
+ },
+ {
+  "k": "🛡 A legionary on watch",
+  "w": "25-city.js:386"
+ },
+ {
+  "k": "\"Move along, citizen.\" {0}",
+  "w": "25-city.js:386"
+ },
+ {
+  "k": "The legions are hungry for men this season — lanistae keep their best fighters out of sight when the levy officer walks.",
+  "w": "25-city.js:386"
+ },
+ {
+  "k": "Quiet rounds today. The levy lists stay rolled up.",
+  "w": "25-city.js:386"
+ },
+ {
+  "k": "🎭 The editor of the games, on the balcony",
+  "w": "25-city.js:387"
+ },
+ {
+  "k": "A fine crowd today. My crowd.",
+  "w": "25-city.js:388"
+ },
+ {
+  "k": "Enjoy my square. Spend freely.",
+  "w": "25-city.js:388"
+ },
+ {
+  "k": "The games? Oh, they will be worth watching. I paid for them.",
+  "w": "25-city.js:388"
+ },
+ {
+  "k": "You there — bring me a winner and we shall talk.",
+  "w": "25-city.js:388"
+ },
+ {
+  "k": "🗡 A gladiator in the square",
+  "w": "25-city.js:390"
+ },
+ {
+  "k": "{0} · {1} · of {2}",
+  "w": "25-city.js:390"
+ },
+ {
+  "k": "{0}-{1} on the sand",
+  "w": "25-city.js:391"
+ },
+ {
+  "k": "fights for {0}",
+  "w": "25-city.js:391"
+ },
+ {
+  "k": "⚔ Fights on tonight's card — {0}",
+  "w": "25-city.js:392"
+ },
+ {
+  "k": "Watch the sand tonight. You will remember my name.",
+  "w": "25-city.js:393"
+ },
+ {
+  "k": "I fight at the",
+  "w": "25-city.js:393"
+ },
+ {
+  "k": "A quiet walk before the noise.",
+  "w": "25-city.js:393"
+ },
+ {
+  "k": "The baths here are better than Roma’s. Tell no one.",
+  "w": "25-city.js:393"
+ },
+ {
+  "k": "Between contracts. Between everything.",
+  "w": "25-city.js:393"
+ },
+ {
+  "k": "I fought here once. Good crowd, bad sand.",
+  "w": "25-city.js:393"
+ },
+ {
+  "k": "★ On your board",
+  "w": "25-city.js:394"
+ },
+ {
+  "k": "☆ Pin to Favorites",
+  "w": "25-city.js:394"
+ },
+ {
+  "k": "🎺 The horns have sounded",
+  "w": "25-city.js:397"
+ },
+ {
+  "k": "The square empties; the tiers fill. {0}",
+  "w": "25-city.js:397"
+ },
+ {
+  "k": "Your card is waiting.",
+  "w": "25-city.js:397"
+ },
+ {
+  "k": "The games are beginning.",
+  "w": "25-city.js:397"
+ },
+ {
+  "k": "⚔ Enter the arena",
+  "w": "25-city.js:398"
+ },
+ {
+  "k": "Linger a moment",
+  "w": "25-city.js:398"
+ },
+ {
+  "k": "{0} pinned to your Favorites.",
+  "w": "25-city.js:401"
+ },
+ {
+  "k": "{0} removed from your board.",
+  "w": "25-city.js:401"
+ },
+ {
+  "k": "old bones",
+  "w": "25-city.js:405"
+ },
+ {
+  "k": "a wet cough",
+  "w": "25-city.js:405"
+ },
+ {
+  "k": "too fond of the table",
+  "w": "25-city.js:405"
+ },
+ {
+  "k": "a condemned man",
+  "w": "25-city.js:405"
+ },
+ {
+  "k": "\"no one hires a woman\", says the seller",
+  "w": "25-city.js:405"
+ },
+ {
+  "k": "freezes at the sight of beasts",
+  "w": "25-city.js:405"
+ },
+ {
+  "k": "too old to retrain, they say",
+  "w": "25-city.js:405"
+ },
+ {
+  "k": "⚖ The auction block",
+  "w": "25-city.js:415"
+ },
+ {
+  "k": "\"HONEST VULSO'S — fighters no ludus wants, at prices no lanista can refuse!\" The unwanted go cheap. Most are exactly what they look like. <b>Most.</b> You learn the truth only if they win their first bout under your name.",
+  "w": "25-city.js:416"
+ },
+ {
+  "k": "Buy · {0} coin<small>signs 6 weeks at 2/wk</small>",
+  "w": "25-city.js:419"
+ },
+ {
+  "k": "bought off the auction block at {0} for {1} coin ({2})",
+  "w": "25-city.js:423"
+ },
+ {
+  "k": "⚖ Bought {0} off the auction block at {1} ({2} coin). {3}.",
+  "w": "25-city.js:424"
+ },
+ {
+  "k": "bought {0} at auction ({1} coin)",
+  "w": "25-city.js:425"
+ },
+ {
+  "k": "{0} is yours. Vulso bites the coin and grins.",
+  "w": "25-city.js:426"
+ },
+ {
+  "k": "💎 <b>{0}</b> — the auction-block castoff — fights like a champion! The doctores re-rate them at <b>{1}</b>. Vulso's face, when he hears.",
+  "w": "25-city.js:431"
+ },
+ {
+  "k": "💎 Hidden gem: {0} is re-rated at {1} (+{2}).",
+  "w": "25-city.js:432"
+ },
+ {
+  "k": "revealed as a hidden gem — re-rated {0}",
+  "w": "25-city.js:432"
+ },
+ {
+  "k": "⚔️ The arms market",
+  "w": "25-city.js:447"
+ },
+ {
+  "k": "🛡 The armorer",
+  "w": "25-city.js:447"
+ },
+ {
+  "k": "Gear bought here is carried into the fighter's <b>next bout this week</b> — they start equipped instead of waiting on the arena market. Their class loadout stays; a swapped-out starting weapon is still theirs to use. Three items a fighter, at most.",
+  "w": "25-city.js:448"
+ },
+ {
+  "k": "{0} · {1} · kit {2}/3",
+  "w": "25-city.js:450"
+ },
+ {
+  "k": "{0} {1} <small>{2} · {3} coin{4}</small>",
+  "w": "25-city.js:451"
+ },
+ {
+  "k": "🛁 The bathhouse",
+  "w": "25-city.js:453"
+ },
+ {
+  "k": "Steam, strigils and gossip. {0}",
+  "w": "25-city.js:453"
+ },
+ {
+  "k": "The attendant nods you toward the public pool.",
+  "w": "25-city.js:453"
+ },
+ {
+  "k": "disabled title=\"Already steamed this week\"",
+  "w": "25-city.js:454"
+ },
+ {
+  "k": "Steam the whole stable<small>{0} coin · weekly · +2 morale each</small>",
+  "w": "25-city.js:454"
+ },
+ {
+  "k": "🍷 The tavern",
+  "w": "25-city.js:455"
+ },
+ {
+  "k": "Sour wine, loud opinions, and everything worth knowing in {0}.",
+  "w": "25-city.js:455"
+ },
+ {
+  "k": "disabled title=\"You already stood a round this week\"",
+  "w": "25-city.js:456"
+ },
+ {
+  "k": "Stand a round<small>{0} coin · weekly · +3 morale each, and someone talks</small>",
+  "w": "25-city.js:456"
+ },
+ {
+  "k": "🌙 The lupanar",
+  "w": "25-city.js:457"
+ },
+ {
+  "k": "Lamplight and discretion. The door-keeper looks you over: \"The house hears everything, lanista. Senators, stewards… <i>rival lanistae.</i>\"",
+  "w": "25-city.js:457"
+ },
+ {
+  "k": "disabled title=\"The house has already been generous this week\"",
+  "w": "25-city.js:458"
+ },
+ {
+  "k": "An evening of diplomacy<small>{0} coin · weekly · a rival house warms to you</small>",
+  "w": "25-city.js:458"
+ },
+ {
+  "k": "In {0}'s kit",
+  "w": "25-city.js:462"
+ },
+ {
+  "k": "<span class=\"rc-sub\">Nothing yet — they walk out with their class loadout.</span>",
+  "w": "25-city.js:462"
+ },
+ {
+  "k": "Three items is the limit — the fighter has only so many hands.",
+  "w": "25-city.js:465"
+ },
+ {
+  "k": "{0} wrapped for {1}.",
+  "w": "25-city.js:466"
+ },
+ {
+  "k": "🛁 The whole stable steamed at the bathhouse: +2 morale each.",
+  "w": "25-city.js:472"
+ },
+ {
+  "k": "The stable emerges pink and cheerful. +2 morale each.",
+  "w": "25-city.js:472"
+ },
+ {
+  "k": "🍷 Stood a round at {0}: +3 morale each{1}.",
+  "w": "25-city.js:476"
+ },
+ {
+  "k": ", and a drunk swears <b>{0}</b> is better than the scrolls say (scouted)",
+  "w": "25-city.js:476"
+ },
+ {
+  "k": "+3 morale each — and a tip about {0}.",
+  "w": "25-city.js:477"
+ },
+ {
+  "k": "+3 morale all around.",
+  "w": "25-city.js:477"
+ },
+ {
+  "k": "softened toward {0} after a certain evening at the {1} lupanar",
+  "w": "25-city.js:481"
+ },
+ {
+  "k": "🌙 An evening of diplomacy at {0}{1}.",
+  "w": "25-city.js:482"
+ },
+ {
+  "k": "{0} will hear of your generosity. +4 opinion.",
+  "w": "25-city.js:482"
+ },
+ {
+  "k": "A pleasant, expensive evening.",
+  "w": "25-city.js:482"
+ },
+ {
+  "k": "Not during the lesson — explore the squares in your own career",
+  "w": "25-city.js:485"
+ },
+ {
+  "k": "Only {0} this week — each square opens in the week of its games",
+  "w": "25-city.js:486"
+ },
+ {
+  "k": "this week’s city",
+  "w": "25-city.js:486"
+ },
+ {
+  "k": "Pay the road to {0} first ({1} coin, on Match Week)",
+  "w": "25-city.js:487"
+ },
+ {
+  "k": "Sword",
+  "w": "26-gear.js:43"
+ },
+ {
+  "k": "Dagger",
+  "w": "26-gear.js:43"
+ },
+ {
+  "k": "Hammer",
+  "w": "26-gear.js:43"
+ },
+ {
+  "k": "Memento mori",
+  "w": "26-gear.js:44"
+ },
+ {
+  "k": "Lightning",
+  "w": "26-gear.js:44"
+ },
+ {
+  "k": "Watching eye",
+  "w": "26-gear.js:44"
+ },
+ {
+  "k": "Attack power",
+  "w": "26-gear.js:87"
+ },
+ {
+  "k": "Shield absorb",
+  "w": "26-gear.js:87"
+ },
+ {
+  "k": "Soul steal",
+  "w": "26-gear.js:87"
+ },
+ {
+  "k": "Crowd favor",
+  "w": "26-gear.js:87"
+ },
+ {
+  "k": "Both attacks",
+  "w": "26-gear.js:87"
+ },
+ {
+  "k": "Damage dealt for each hit rolled in an attack.",
+  "w": "26-gear.js:88"
+ },
+ {
+  "k": "How far a player (or NPC) can be from a target to make an attack.",
+  "w": "26-gear.js:88"
+ },
+ {
+  "k": "Damage absorbed by the shield before it hits a player.",
+  "w": "26-gear.js:88"
+ },
+ {
+  "k": "Initial ammo value of a weapon, managed via ammo dice and replenished via arena cards.",
+  "w": "26-gear.js:88"
+ },
+ {
+  "k": "For each hit rolled with this weapon, 1 HP to the player holding it — distributed to any body location.",
+  "w": "26-gear.js:88"
+ },
+ {
+  "k": "For every hit rolled with this weapon, 1 CF to the player holding it.",
+  "w": "26-gear.js:88"
+ },
+ {
+  "k": "The number of times a weapon can be used for attacks. Discard the card at 0 uses.",
+  "w": "26-gear.js:88"
+ },
+ {
+  "k": "The number of times a weapon can be thrown, using a second set of weapon values. Discard the card at 0 throws.",
+  "w": "26-gear.js:88"
+ },
+ {
+  "k": "The weapon may be used for both of a player’s attacks on a turn — still two unique targets.",
+  "w": "26-gear.js:88"
+ },
+ {
+  "k": "Attack power: normal | thrown",
+  "w": "26-gear.js:94"
+ },
+ {
+  "k": "Range: normal | thrown",
+  "w": "26-gear.js:94"
+ },
+ {
+  "k": "Throw: {0}",
+  "w": "26-gear.js:96"
+ },
+ {
+  "k": "Crowd favor: +1 CF per hit",
+  "w": "26-gear.js:98"
+ },
+ {
+  "k": "Soul steal: 1 HP per hit",
+  "w": "26-gear.js:98"
+ },
+ {
+  "k": "Unnamed",
+  "w": "26-gear.js:103"
+ },
+ {
+  "k": "may be used for both attacks",
+  "w": "26-gear.js:105"
+ },
+ {
+  "k": "breaks after {0} attacks",
+  "w": "26-gear.js:105"
+ },
+ {
+  "k": "+1 Crowd Favor per hit",
+  "w": "26-gear.js:105"
+ },
+ {
+  "k": "drains 1 HP per hit",
+  "w": "26-gear.js:105"
+ },
+ {
+  "k": "a Flavius item: +2 CF to a winner holding it",
+  "w": "26-gear.js:105"
+ },
+ {
+  "k": "reloads from Stones",
+  "w": "26-gear.js:105"
+ },
+ {
+  "k": "LEVEL {0}",
+  "w": "26-gear.js:116"
+ },
+ {
+  "k": "Sculpt",
+  "w": "26-gear.js:170"
+ },
+ {
+  "k": "add a shape, then <b>drag it on the preview</b> — exactly like the token designer",
+  "w": "26-gear.js:170"
+ },
+ {
+  "k": "Width",
+  "w": "26-gear.js:173"
+ },
+ {
+  "k": "Height",
+  "w": "26-gear.js:173"
+ },
+ {
+  "k": "Rotate",
+  "w": "26-gear.js:174"
+ },
+ {
+  "k": "Round helm",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Helm with neck-guard",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Grilled helm (murmillo)",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Smooth helm (secutor)",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Broad belt",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Chest plate on straps",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Scale shirt",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Muscled cuirass",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Great plate + shoulders",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Padded wraps",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Segmented arm (manica)",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Layered shoulder",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Studded fist",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "High shoulder-plate",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Bracer pair",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Studded skirt",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Greave",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Greave pair",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Thigh plate",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Tall ornate greave",
+  "w": "26-gear.js:207"
+ },
+ {
+  "k": "Forge a weapon and its <b>card</b> — the same sideways card the printed weapons use. Stats assemble only from behaviors and bounds that exist on printed cards, and the <b>market level derives from the stats</b>, so nothing outbids the printed game. It enters play only when added to the rolls.",
+  "w": "26-gear.js:215"
+ },
+ {
+  "k": "the weapon · sculpt it here",
+  "w": "26-gear.js:216"
+ },
+ {
+  "k": "its card · Level {0} · {1}",
+  "w": "26-gear.js:216"
+ },
+ {
+  "k": "common steel",
+  "w": "26-gear.js:216"
+ },
+ {
+  "k": "fine work",
+  "w": "26-gear.js:216"
+ },
+ {
+  "k": "a master’s piece",
+  "w": "26-gear.js:216"
+ },
+ {
+  "k": "e.g. Fang of Nemausus",
+  "w": "26-gear.js:217"
+ },
+ {
+  "k": "Start from",
+  "w": "26-gear.js:218"
+ },
+ {
+  "k": "Metal",
+  "w": "26-gear.js:219"
+ },
+ {
+  "k": "Haft wood",
+  "w": "26-gear.js:219"
+ },
+ {
+  "k": "Motif",
+  "w": "26-gear.js:220"
+ },
+ {
+  "k": "Weapon card icons",
+  "w": "26-gear.js:222"
+ },
+ {
+  "k": "as the rulebook prints them — tick what this weapon has; numbers stay within printed bounds",
+  "w": "26-gear.js:222"
+ },
+ {
+  "k": "has it",
+  "w": "26-gear.js:225"
+ },
+ {
+  "k": "Absorb {0}",
+  "w": "26-gear.js:227"
+ },
+ {
+  "k": "Use {0}",
+  "w": "26-gear.js:227"
+ },
+ {
+  "k": "a shield",
+  "w": "26-gear.js:227"
+ },
+ {
+  "k": "Value {0}",
+  "w": "26-gear.js:229"
+ },
+ {
+  "k": "Throws {0}",
+  "w": "26-gear.js:231"
+ },
+ {
+  "k": "Thrown power {0}",
+  "w": "26-gear.js:231"
+ },
+ {
+  "k": "Thrown range {0}",
+  "w": "26-gear.js:231"
+ },
+ {
+  "k": "Ammo {0}",
+  "w": "26-gear.js:232"
+ },
+ {
+  "k": "🪨 reloads from Stones",
+  "w": "26-gear.js:232"
+ },
+ {
+  "k": "Uses {0}",
+  "w": "26-gear.js:233"
+ },
+ {
+  "k": "Counts as one of Flavius’s own: +2 CF to a winner holding it, like the Gladius of Flavius",
+  "w": "26-gear.js:238"
+ },
+ {
+  "k": "🏛 A Flavius item",
+  "w": "26-gear.js:238"
+ },
+ {
+  "k": "(not a card icon — +2 CF to a winner holding it)",
+  "w": "26-gear.js:238"
+ },
+ {
+  "k": "📜 <b>The rolls</b> — once saved, add this weapon to the market deck and the character loadouts with the <b>📜 Add to the rolls</b> button on the weapon itself, in the list below.",
+  "w": "26-gear.js:239"
+ },
+ {
+  "k": "💾 Save weapon &amp; card",
+  "w": "26-gear.js:240"
+ },
+ {
+  "k": "↺ Fresh steel",
+  "w": "26-gear.js:240"
+ },
+ {
+  "k": "Your weapons · {0}",
+  "w": "26-gear.js:241"
+ },
+ {
+  "k": "in the market",
+  "w": "26-gear.js:241"
+ },
+ {
+  "k": "· in loadouts",
+  "w": "26-gear.js:241"
+ },
+ {
+  "k": "Shape a piece of armor. The <b>sculpted set</b> below recreates all {0} printed pieces — pick any of them (or choose one under <b>Start from</b>) to begin from its rulebook stats. Settings → Tokens → Armor swaps between Sculpted and the Original Drawn Armor. New pieces use printed bounds: AP 2–7, the same slots and points, and enter play only when added to the rolls.",
+  "w": "26-gear.js:244"
+ },
+ {
+  "k": "The piece",
+  "w": "26-gear.js:245"
+ },
+ {
+  "k": "On the avatar",
+  "w": "26-gear.js:245"
+ },
+ {
+  "k": "Drag the piece to fit it on the body · click a body zone to equip it there",
+  "w": "26-gear.js:246"
+ },
+ {
+  "k": "On the avatar, a drag moves the <b>whole piece</b>. Switch to <b>The piece</b> to move single shapes.",
+  "w": "26-gear.js:247"
+ },
+ {
+  "k": "Size on the body",
+  "w": "26-gear.js:247"
+ },
+ {
+  "k": "↺ Default fit",
+  "w": "26-gear.js:247"
+ },
+ {
+  "k": "{0} · {1} AP",
+  "w": "26-gear.js:248"
+ },
+ {
+  "k": "Unnamed piece",
+  "w": "26-gear.js:248"
+ },
+ {
+  "k": "e.g. Lionheart Cuirass",
+  "w": "26-gear.js:249"
+ },
+ {
+  "k": "{0} · {1} · {2} AP · L{3}",
+  "w": "26-gear.js:250"
+ },
+ {
+  "k": "Body location",
+  "w": "26-gear.js:252"
+ },
+ {
+  "k": "Point",
+  "w": "26-gear.js:253"
+ },
+ {
+  "k": "Helm",
+  "w": "26-gear.js:253"
+ },
+ {
+  "k": "Upper",
+  "w": "26-gear.js:253"
+ },
+ {
+  "k": "Lower",
+  "w": "26-gear.js:253"
+ },
+ {
+  "k": "Hand",
+  "w": "26-gear.js:253"
+ },
+ {
+  "k": "Market level",
+  "w": "26-gear.js:256"
+ },
+ {
+  "k": "Stackable (padding)",
+  "w": "26-gear.js:257"
+ },
+ {
+  "k": "Pair (covers both sides)",
+  "w": "26-gear.js:258"
+ },
+ {
+  "k": "Bonus AP to",
+  "w": "26-gear.js:259"
+ },
+ {
+  "k": "Right leg",
+  "w": "26-gear.js:259"
+ },
+ {
+  "k": "Left leg",
+  "w": "26-gear.js:259"
+ },
+ {
+  "k": "Bonus amount",
+  "w": "26-gear.js:260"
+ },
+ {
+  "k": "📜 <b>The rolls</b> — once saved, add this piece to the market deck and the character loadouts with the <b>📜 Add to the rolls</b> button on the piece itself, in the list below.",
+  "w": "26-gear.js:261"
+ },
+ {
+  "k": "💾 Save armor",
+  "w": "26-gear.js:262"
+ },
+ {
+  "k": "↺ Fresh bronze",
+  "w": "26-gear.js:262"
+ },
+ {
+  "k": "The sculpted set · every printed piece",
+  "w": "26-gear.js:263"
+ },
+ {
+  "k": "system pieces are locked — copy one to start a new design from it, with its rulebook stats",
+  "w": "26-gear.js:263"
+ },
+ {
+  "k": "{0} · {1} · {2} AP{3}",
+  "w": "26-gear.js:263"
+ },
+ {
+  "k": "Start a new piece from it",
+  "w": "26-gear.js:263"
+ },
+ {
+  "k": "<span>{0}</span><small>{1} AP · L{2}</small>{3}",
+  "w": "26-gear.js:263"
+ },
+ {
+  "k": "Your armor · {0}",
+  "w": "26-gear.js:264"
+ },
+ {
+  "k": "Fang",
+  "w": "26-gear.js:271"
+ },
+ {
+  "k": "Oath",
+  "w": "26-gear.js:271"
+ },
+ {
+  "k": "Kiss",
+  "w": "26-gear.js:271"
+ },
+ {
+  "k": "Wrath",
+  "w": "26-gear.js:271"
+ },
+ {
+  "k": "Sting",
+  "w": "26-gear.js:271"
+ },
+ {
+  "k": "Mercy",
+  "w": "26-gear.js:271"
+ },
+ {
+  "k": "Thorn",
+  "w": "26-gear.js:271"
+ },
+ {
+  "k": "Talon",
+  "w": "26-gear.js:271"
+ },
+ {
+  "k": "Nameless Steel",
+  "w": "26-gear.js:274"
+ },
+ {
+  "k": "The Bargain",
+  "w": "26-gear.js:274"
+ },
+ {
+  "k": "Vulso’s Pride",
+  "w": "26-gear.js:274"
+ },
+ {
+  "k": "⚔ <b>{0}</b> is forged{1}.",
+  "w": "26-gear.js:277"
+ },
+ {
+  "k": "— and on the rolls",
+  "w": "26-gear.js:277"
+ },
+ {
+  "k": "— add it to the rolls when ready",
+  "w": "26-gear.js:277"
+ },
+ {
+  "k": "🛡 <b>{0}</b> is hammered out.",
+  "w": "26-gear.js:287"
+ },
+ {
+  "k": "The banner of",
+  "w": "27-flags.js:22"
+ },
+ {
+  "k": "🚩 The house banner",
+  "w": "27-flags.js:33"
+ },
+ {
+  "k": "flies over your masthead, the league table, the stands and the square ·",
+  "w": "27-flags.js:33"
+ },
+ {
+  "k": "🎲 new spread",
+  "w": "27-flags.js:33"
+ },
+ {
+  "k": "your design",
+  "w": "27-flags.js:34"
+ },
+ {
+  "k": "The banner of the {0} family — every fighter is born under one; kin share it",
+  "w": "27-flags.js:47"
+ },
+ {
+  "k": "Copy onto the bench",
+  "w": "27-flags.js:53"
+ },
+ {
+  "k": "The <b>Banner press</b> — the same press that prints every banner in the empire. The order of cloth: <b>one banner for the empire</b>, <b>one for each city</b> (its spectators and its guard rep it), <b>one per ludus</b> (yours flies on the masthead, the league table, the square and the stands), and every gladiator is born under a <b>family banner</b> shared with their kin. Design a house banner here and it hangs in the banner rack whenever a lanista is created.",
+  "w": "27-flags.js:54"
+ },
+ {
+  "k": "Unnamed banner",
+  "w": "27-flags.js:55"
+ },
+ {
+  "k": "e.g. The Boar of Capua",
+  "w": "27-flags.js:56"
+ },
+ {
+  "k": "Field",
+  "w": "27-flags.js:58"
+ },
+ {
+  "k": "Device &amp; letters",
+  "w": "27-flags.js:58"
+ },
+ {
+  "k": "Start from a device",
+  "w": "27-flags.js:59"
+ },
+ {
+  "k": "— the heraldic term for the emblem on the cloth · or keep the cloth blank and sculpt your own",
+  "w": "27-flags.js:59"
+ },
+ {
+  "k": "💾 Save banner",
+  "w": "27-flags.js:60"
+ },
+ {
+  "k": "↺ Fresh cloth",
+  "w": "27-flags.js:60"
+ },
+ {
+  "k": "Your banners · {0}",
+  "w": "27-flags.js:61"
+ },
+ {
+  "k": "🏛 The empire's banners",
+  "w": "27-flags.js:62"
+ },
+ {
+  "k": "— presets: click one to copy it onto the bench and make it your own",
+  "w": "27-flags.js:62"
+ },
+ {
+  "k": "THE EMPIRE",
+  "w": "27-flags.js:63"
+ },
+ {
+  "k": "The one banner over them all — S·P·Q·R",
+  "w": "27-flags.js:63"
+ },
+ {
+  "k": "The banner of {0} — its spectators rep it in the stands and the square",
+  "w": "27-flags.js:63"
+ },
+ {
+  "k": "🚩 <b>{0}</b> comes off the press.",
+  "w": "27-flags.js:70"
+ },
+ {
+  "k": "to run a ludus of their own one day",
+  "w": "28-purses.js:14"
+ },
+ {
+  "k": "for the family back home",
+  "w": "28-purses.js:14"
+ },
+ {
+  "k": "to retire rich — or die trying",
+  "w": "28-purses.js:14"
+ },
+ {
+  "k": "The fighter's own purse — a tenth of every purse they win for the house and a fifth of their wage, saved.",
+  "w": "28-purses.js:19"
+ },
+ {
+  "k": "👛 Own purse <b>{0}</b> coin · saving {1} {2}{3}",
+  "w": "28-purses.js:19"
+ },
+ {
+  "k": "for the family back in {0}",
+  "w": "28-purses.js:19"
+ },
+ {
+  "k": "their city",
+  "w": "28-purses.js:19"
+ },
+ {
+  "k": "· <span style=\"color:var(--blood2)\">you refused their offer for the house</span>",
+  "w": "28-purses.js:19"
+ },
+ {
+  "k": "{0} withdraws the offer for the house — for now.",
+  "w": "28-purses.js:23"
+ },
+ {
+  "k": "🏛 <b>{0} asks for a word in private</b> — and offers to BUY {1}. The offer waits on Your ludus.",
+  "w": "28-purses.js:27"
+ },
+ {
+  "k": "👛 <b>{0}</b> asks to buy their freedom for {1} coin — decide on Match Week.",
+  "w": "28-purses.js:32"
+ },
+ {
+  "k": "👛 <b>{0}</b> buys their freedom from {1} for {2} coin.",
+  "w": "28-purses.js:33"
+ },
+ {
+  "k": "<b>🏛 {0} offers to buy {1}</b>",
+  "w": "28-purses.js:38"
+ },
+ {
+  "k": "“I have fought for this house, bled for it, saved every coin it paid me. Sell it to me, lanista. I will keep the name, keep the fighters — and pay you <b>{0} coin</b>.”",
+  "w": "28-purses.js:39"
+ },
+ {
+  "k": "Accept: {0} becomes the house's lanista (a rival from now on, roster and all), and <b>{1} coin founds your new ludus</b> in this same league{2} — you go straight to creating it. Refuse: {3}'s morale drops, and they may walk out to found a house of their own — against you.",
+  "w": "28-purses.js:40"
+ },
+ {
+  "k": "(less the {0} still owed to {1})",
+  "w": "28-purses.js:40"
+ },
+ {
+  "k": "✍ Sell the house<small>{0} coin · found a new ludus</small>",
+  "w": "28-purses.js:41"
+ },
+ {
+  "k": "✋ Refuse<small>the house is not for sale</small>",
+  "w": "28-purses.js:41"
+ },
+ {
+  "k": "Fought for {0}, offered to buy it, was refused — and built a rival across the square.",
+  "w": "28-purses.js:48"
+ },
+ {
+  "k": "walked out of {0} to found {1}",
+  "w": "28-purses.js:50"
+ },
+ {
+  "k": "⚔ <b>{0} walks out</b> — and founds <b>{1}</b> in {2}. The new house wants your fighters, and it knows their names.",
+  "w": "28-purses.js:52"
+ },
+ {
+  "k": "{0} leaves {1} to found {2}. A rivalry is born.",
+  "w": "28-purses.js:53"
+ },
+ {
+  "k": "Sold to",
+  "w": "28-purses.js:58"
+ },
+ {
+  "k": "Sold for {0} coin to {1}, who fought for it first.",
+  "w": "28-purses.js:58"
+ },
+ {
+  "k": "Fought for {0}, then bought it from {1}.",
+  "w": "28-purses.js:60"
+ },
+ {
+  "k": "bought {0} from {1} for {2} coin — lanista now",
+  "w": "28-purses.js:62"
+ },
+ {
+  "k": "Sold {0} and started again.",
+  "w": "28-purses.js:67"
+ },
+ {
+  "k": "✍ <b>{0} is sold</b> to {1} for {2} coin{3}. {4} opens <b>{5}</b> in {6} with {7} coin and one raw recruit.",
+  "w": "28-purses.js:73"
+ },
+ {
+  "k": "({0} went to clear the debt)",
+  "w": "28-purses.js:73"
+ },
+ {
+  "k": "Draw an arena card — you are healthy and have Crowd Favor to spare, so a card's swing is worth the risk.",
+  "w": "29-guide.js:22"
+ },
+ {
+  "k": "Take the 2 coin — you are hurt, and a bad card could finish you.",
+  "w": "29-guide.js:23"
+ },
+ {
+  "k": "Take the safe 2 coin: it buys armor and weapons at the market.",
+  "w": "29-guide.js:23"
+ },
+ {
+  "k": "Make your moves, then end your turn.",
+  "w": "29-guide.js:24"
+ },
+ {
+  "k": "{0} is down to {1} HP — a hit or two finishes it: {2} CF, {3} coin and a trophy.",
+  "w": "29-guide.js:28"
+ },
+ {
+  "k": "{0} is hunting you anyway — hurt it while it is in reach.",
+  "w": "29-guide.js:29"
+ },
+ {
+  "k": "{0} is in reach, but attacking makes it hunt you.",
+  "w": "29-guide.js:29"
+ },
+ {
+  "k": "A Blessings pot is in reach. With power {0} you can break it (it needs 2 damage): 2 coin, 1 CF and a hidden offering.",
+  "w": "29-guide.js:30"
+ },
+ {
+  "k": "A Blessings pot is in reach — at power {0} you need both hit dice to land.",
+  "w": "29-guide.js:30"
+ },
+ {
+  "k": "{0} is in reach{1}. Gladiator trophies are worth 10 CF.",
+  "w": "29-guide.js:31"
+ },
+ {
+  "k": "with {0} location{1} one strong hit from falling",
+  "w": "29-guide.js:31"
+ },
+ {
+  "k": "{0} with your {1}: {2}",
+  "w": "29-guide.js:33"
+ },
+ {
+  "k": "You are standing on dropped gear — loot one item this turn.",
+  "w": "29-guide.js:36"
+ },
+ {
+  "k": "You hold a key and stand at the Arena Chest: open it for a level-4 weapon.",
+  "w": "29-guide.js:37"
+ },
+ {
+  "k": "{0} is on you and you are badly hurt — dive into a tunnel (1 key) to escape.",
+  "w": "29-guide.js:39"
+ },
+ {
+  "k": "You are outside the zone — get back in before your turn ends, or it costs 2 CF.",
+  "w": "29-guide.js:43"
+ },
+ {
+  "k": "Move next to the pillar at {0} — its Blessings pot will be in reach to attack.",
+  "w": "29-guide.js:47"
+ },
+ {
+  "k": "Head for the pillar at {0}: its Blessings pot is worth coin, CF and an offering.",
+  "w": "29-guide.js:47"
+ },
+ {
+  "k": "Nothing better to do this turn — end it and let the arena move.",
+  "w": "29-guide.js:49"
+ },
+ {
+  "k": "Use your <b>{0}</b> from your hand{1}. Offerings are free to use on your turn.",
+  "w": "29-guide.js:68"
+ },
+ {
+  "k": "You hold the <b>{0}</b> card{1}. Play it when it helps (its Use button is on your board).",
+  "w": "29-guide.js:69"
+ },
+ {
+  "k": "<b>📰 Since your last turn</b>",
+  "w": "29-guide.js:89"
+ },
+ {
+  "k": "<b>💡 Suggested</b> {0}{1}",
+  "w": "29-guide.js:98"
+ },
+ {
+  "k": "<span class=\"rc-sub\">(then the gold tile on the board)</span>",
+  "w": "29-guide.js:98"
+ },
+ {
+  "k": "Pillars: from an adjacent tile you can attack the Blessings pots on top — 2 damage breaks one (2 coin, 1 CF, a hidden offering). Push a pillar (2 movement) onto a tunnel to seal it, or topple it (3 movement): the next two tiles take 3 damage and every pot breaks.",
+  "w": "29-guide.js:110"
+ },
+ {
+  "k": "Tunnels: 1 Arena Key takes you underground. You choose the exit tunnel, your turn ends, and you surface there at the start of your next turn — untouchable while underground. A gladiator standing on a tunnel is fair game. A pillar pushed onto a tunnel seals it.",
+  "w": "29-guide.js:113"
+ },
+ {
+  "k": "Floor spikes: entering this tile deals 2 damage. Push rivals and beasts onto them.",
+  "w": "29-guide.js:114"
+ },
+ {
+  "k": "The Arena Chest: 1 Arena Key opens it for a level-4 weapon. You can also pick it up and carry it (−1 movement while held).",
+  "w": "29-guide.js:115"
+ },
+ {
+  "k": "Dropped gear: standing on it, you may loot 1 item a turn (thrown weapons are always free to pick up).",
+  "w": "29-guide.js:116"
+ },
+ {
+  "k": "An offering in the sand: step on it to pick it up.",
+  "w": "29-guide.js:118"
+ },
+ {
+  "k": "Move: straight steps cost 1 movement, diagonals 2. Orange tiles show where you can go and what it costs.",
+  "w": "29-guide.js:119"
+ },
+ {
+  "k": "Push (2 movement): shove an adjacent pillar, gladiator or beast one tile away — onto spikes, or a pillar onto a tunnel.",
+  "w": "29-guide.js:120"
+ },
+ {
+  "k": "Tunnel (1 Arena Key): go underground and surface at another open tunnel. Ends your turn.",
+  "w": "29-guide.js:122"
+ },
+ {
+  "k": "Open the Arena Chest (1 Arena Key): take a level-4 weapon.",
+  "w": "29-guide.js:123"
+ },
+ {
+  "k": "Pick up the chest: −1 movement while you carry it.",
+  "w": "29-guide.js:123"
+ },
+ {
+  "k": "Drop the chest where you stand. Free.",
+  "w": "29-guide.js:123"
+ },
+ {
+  "k": "Loot: take one item from the gear at your feet this turn.",
+  "w": "29-guide.js:124"
+ },
+ {
+  "k": "Crowd Favor: spend CF on keys, cards, elixirs and armor. Never let it fall below 0 — you would be eliminated.",
+  "w": "29-guide.js:125"
+ },
+ {
+  "k": "Trade or truce with a gladiator within 4 tiles. Truces break when Flavius decides — and an arena that ends in truce ends in a thumbs-down.",
+  "w": "29-guide.js:126"
+ },
+ {
+  "k": "Spear a spectator (3 CF, once per event): the crowd remembers.",
+  "w": "29-guide.js:127"
+ },
+ {
+  "k": "Wager on yourself at today’s odds — paid only if you win the event.",
+  "w": "29-guide.js:127"
+ },
+ {
+  "k": "Release Zora, the golden eagle, once per event: command him on your turn.",
+  "w": "29-guide.js:128"
+ },
+ {
+  "k": "Exit the arena: your event ends here, and your Fate is drawn on what you hold.",
+  "w": "29-guide.js:128"
+ },
+ {
+  "k": "Focus roll: spend all your movement to choose 1 of 3 rolled hit locations.",
+  "w": "29-guide.js:129"
+ },
+ {
+  "k": "Phase 2 · Choice: take 2 coin — the safe pick.",
+  "w": "29-guide.js:130"
+ },
+ {
+  "k": "Phase 2 · Choice: draw an arena card — it can help you or hurt you, and some hit everyone.",
+  "w": "29-guide.js:130"
+ },
+ {
+  "k": "Attack: roll the hit die per point of power (thrown weapons use their thrown numbers, a|b = normal|thrown). Each hit lands on a rolled location — armor first, then HP.",
+  "w": "29-guide.js:139"
+ },
+ {
+  "k": "🎯 Throw",
+  "w": "29-guide.js:149"
+ },
+ {
+  "k": "⚔ Attack",
+  "w": "29-guide.js:149"
+ },
+ {
+  "k": "the Blessings pot",
+  "w": "29-guide.js:149"
+ },
+ {
+  "k": "✋ Push it away · 2 movement",
+  "w": "29-guide.js:150"
+ },
+ {
+  "k": "🏛 Topple the pillar · 3 movement",
+  "w": "29-guide.js:151"
+ },
+ {
+  "k": "🕳 Tunnel out here · 1 key, ends turn",
+  "w": "29-guide.js:152"
+ },
+ {
+  "k": "👣 Move here · {0} movement",
+  "w": "29-guide.js:153"
+ },
+ {
+  "k": "🎒 Loot the gear here",
+  "w": "29-guide.js:155"
+ },
+ {
+  "k": "🗝 Open the Arena Chest",
+  "w": "29-guide.js:155"
+ },
+ {
+  "k": "📦 Pick up the chest",
+  "w": "29-guide.js:155"
+ },
+ {
+  "k": "📦 Drop the chest",
+  "w": "29-guide.js:155"
+ },
+ {
+  "k": "⚖ Open the market",
+  "w": "29-guide.js:155"
+ },
+ {
+  "k": "🌾 Spend Crowd Favor",
+  "w": "29-guide.js:155"
+ },
+ {
+  "k": "🤝 Trade or truce",
+  "w": "29-guide.js:155"
+ },
+ {
+  "k": "⏭ End turn",
+  "w": "29-guide.js:155"
+ },
+ {
+  "k": "🤝 Trade or truce with {0}",
+  "w": "29-guide.js:156"
+ },
+ {
+  "k": "🔍 Inspect {0}",
+  "w": "29-guide.js:157"
+ },
+ {
+  "k": "Nothing you can do here this turn.",
+  "w": "29-guide.js:162"
+ },
+ {
+  "k": "Wait for your turn to act here.",
+  "w": "29-guide.js:162"
+ },
+ {
+  "k": "💭 <b>{0}</b> thinks: “{1}”",
+  "w": "29-guide.js:178"
+ },
+ {
+  "k": "<b>Your player board.</b> Health (HP) and armor (AP) for each body location, your two weapons, your movement, and the cards and offerings in your hand. Lose your head or chest — and you are out.",
+  "w": "29-guide.js:192"
+ },
+ {
+  "k": "<b>The gladiators.</b> Everyone on the sand at a glance: health, <b>Crowd Favor</b> (CF) and coin. Click one to see their board. CF decides your Fate at the end — and buys things mid-bout.",
+  "w": "29-guide.js:193"
+ },
+ {
+  "k": "<b>Your actions.</b> The buttons for this phase of your turn. The one glowing <b style=\"color:var(--gold2)\">gold</b> is a good idea.",
+  "w": "29-guide.js:194"
+ },
+ {
+  "k": "<b>Hints.</b> A suggested move with its reason, and a recap of what happened while you waited.",
+  "w": "29-guide.js:195"
+ },
+ {
+  "k": "<b>CPU speed.</b> Slow, Normal or Fast — or <b>⏯ Step</b> to watch each CPU move one at a time. <b>Space</b> pauses.",
+  "w": "29-guide.js:196"
+ },
+ {
+  "k": "<b>The arena log.</b> Every roll, hit and cheer, newest first.",
+  "w": "29-guide.js:197"
+ },
+ {
+  "k": "<b>📊 Standings.</b> The race for Crowd Favor, as it stands — the dot wears the leader's color.",
+  "w": "29-guide.js:198"
+ },
+ {
+  "k": "<b>📜 Rules.</b> The rules at a glance, the strategy guide, the full rulebook — and these lessons, any time.",
+  "w": "29-guide.js:199"
+ },
+ {
+  "k": "<b>🏛 The main menu.</b> During a lesson it asks before you leave. (New events, Manager mode and Settings wait until the lesson is done.)",
+  "w": "29-guide.js:200"
+ },
+ {
+  "k": "<b>Choice:</b> take the safe <b>2 coin</b>.",
+  "w": "29-guide.js:202"
+ },
+ {
+  "k": "<b>Move</b> to the gold tile beside the pillar — its <b>Blessings pot</b> holds coin, Crowd Favor and a hidden offering.",
+  "w": "29-guide.js:203"
+ },
+ {
+  "k": "<b>Attack the pot</b> — press your attack, then the gold ring. It needs 2 damage to break (strike again if it holds).",
+  "w": "29-guide.js:204"
+ },
+ {
+  "k": "The pot gave you an offering — it waits in <b>your hand</b> on your board. Press its gold <b>Use</b>.",
+  "w": "29-guide.js:205"
+ },
+ {
+  "k": "Keep it for later ▶",
+  "w": "29-guide.js:205"
+ },
+ {
+  "k": "<b>Tunnels.</b> Beside you is a tunnel mouth. One <b>Arena Key</b> takes you under the sand: you surface at another tunnel <b>next turn</b>, and every beast forgets you. Your rival is across the arena — let us get closer.",
+  "w": "29-guide.js:206"
+ },
+ {
+  "k": "Press <b>Tunnel</b>, then the gold tunnel nearest your rival. (It ends your turn.)",
+  "w": "29-guide.js:207"
+ },
+ {
+  "k": "You are under the sand. Watch your rival go after the wolf…",
+  "w": "29-guide.js:208"
+ },
+ {
+  "k": "You surface — and something stirs by the pillar beside you. <b>Take 2 coin</b> first.",
+  "w": "29-guide.js:209"
+ },
+ {
+  "k": "<b>{0}</b> lurks by the pillar beside you. <b>Attack it</b> — slay it for Crowd Favor, coin and a trophy.",
+  "w": "29-guide.js:210"
+ },
+ {
+  "k": "The snake",
+  "w": "29-guide.js:210"
+ },
+ {
+  "k": "Well struck. <b>End your turn</b>.",
+  "w": "29-guide.js:211"
+ },
+ {
+  "k": "Two beasts are down — round two is coming…",
+  "w": "29-guide.js:212"
+ },
+ {
+  "k": "<b>{0}.</b> Two beasts are down, and with only two gladiators left the games go straight to the fight: the <b>zone has shrunk to {1}×{2}</b> (outside it you bleed Crowd Favor) and gladiators may now fight each other. The handlers have driven you both together. You also drew <b>arena cards</b> for surviving round one — they are in your hand.",
+  "w": "29-guide.js:213"
+ },
+ {
+  "k": "<b>Take 2 coin</b> — then we fight.",
+  "w": "29-guide.js:214"
+ }
+]

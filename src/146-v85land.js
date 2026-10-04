@@ -29,32 +29,32 @@ const v85Coin=()=>typeof ICO!=='undefined'&&ICO.coin?ICO.coin:'🪙';
 
 /* ---------------- 1 · the showcases ---------------- */
 function v85Where(e){return `${esc2(onlEvName(e.ev))} <span class="v85at">at</span> ${esc2(onlCityName(e.loc))}`}
-function v85House(e){return e&&e.dom&&e.dn?`<button type="button" class="dom84c v85hc" data-onl83="prof" data-v="${esc2(e.dom)}" title="Open the house">🏛 ${esc2(onlHouse82(e.dn))}</button>`:''}
+function v85House(e){return e&&e.dom&&e.dn?`<button type="button" class="dom84c v85hc" data-onl83="prof" data-v="${esc2(e.dom)}" title="${_T`Open the house`}">🏛 ${esc2(onlHouse82(e.dn))}</button>`:''}
 function v85Fig(e,k){return `<div class="v85sc-fig">${onl80Face(e,'md')}<span class="v85sc-tok">${e.cls?onlFig(e.cls,e.look,64):''}</span></div>`}
-function v85FellHow(e){if(e.how==='damnatio')return 'Abandoned the sand — <b>Damnatio</b>';if(e.kb==='g'&&e.kn)return `Slain by <b>${esc2(e.kn)}</b>`;
-  if(e.kb==='b')return 'Slain by a beast';return 'Taken by the Fate'}
+function v85FellHow(e){if(e.how==='damnatio')return _T('Abandoned the sand — <b>Damnatio</b>');if(e.kb==='g'&&e.kn)return _T`Slain by <b>${esc2(e.kn)}</b>`;
+  if(e.kb==='b')return _T('Slain by a beast');return _T('Taken by the Fate')}
 function v85ShowHTML(){const T=typeof ONL80F!=='undefined'?ONL80F.today:null;const yd=!!(T&&T.day==='yesterday');const B=ONLC.dayBest(T);const day=yd?'yesterday':'today';
-  const W=onlW81(),C=v85Coin();const list=`<button type="button" class="v85list" data-v85="list" title="The day's lists">See ${day}'s list ›</button>`;
+  const W=onlW81(),C=v85Coin();const list=`<button type="button" class="v85list" data-v85="list" title="${_T`The day's lists`}">${_T`See ${day}'s list ›`}</button>`;
   const head=(ic,t,sub)=>`<div class="v85sc-h" title="${sub}"><span><b>${ic} ${t}</b><small>${sub}</small></span>${list}</div>`;
   const w=B.winner,l=B.loser;
-  const hw=head('🏆','Biggest winner',`most CF in one bout ${day}`),hl=head('🪦','Biggest loser',`best-ranked fallen ${day}`);
+  const hw=head('🏆',_T('Biggest winner'),_T`most CF in one bout ${day}`),hl=head('🪦',_T('Biggest loser'),_T`best-ranked fallen ${day}`);
   const win=w?`<div class="v85sc win" data-v85who="win">${v85Fig(w)}<div class="v85sc-i">${hw}
       <div class="v85sc-n"><b>${esc2(w.name)}</b>${v85House(w)}</div><div class="v85sc-r">${onlRankChip(w.rank||'tiro')} <span>${esc2((CLASSES[w.cls]||{}).name||'')}</span></div>
-      <div class="v85sc-ev">Won ${v85Where(w)}${w.ranked===false?' · Custom':''}</div>
-      <div class="v85sc-num"><span title="Crowd Favor earned in that bout">${W}<b>${w.cf|0}</b> CF</span><span title="Coin earned in that bout">${C}<b>${w.coin|0}</b> coin</span></div></div></div>`
-    :`<div class="v85sc win none" data-v85who="win"><div class="v85sc-i">${hw}<div class="v85sc-empty">No victor yet ${day} — the sand waits.</div></div></div>`;
-  const lost=l&&(l.gear!=null||l.purse!=null)?`<div class="v85sc-lost"><small>Lost</small><span title="The value of the gear he brought">${C}<b>${l.gear|0}</b> in gear</span><span title="His purse">${C}<b>${l.purse|0}</b> purse</span></div>`:'';
+      <div class="v85sc-ev">${_T`Won ${v85Where(w)}${w.ranked===false?_T(' · Custom'):''}`}</div>
+      <div class="v85sc-num"><span title="${_T`Crowd Favor earned in that bout`}">${_T`${W}<b>${w.cf|0}</b> CF`}</span><span title="${_T`Coin earned in that bout`}">${_T`${C}<b>${w.coin|0}</b> coin`}</span></div></div></div>`
+    :`<div class="v85sc win none" data-v85who="win"><div class="v85sc-i">${hw}<div class="v85sc-empty">${_T`No victor yet ${day} — the sand waits.`}</div></div></div>`;
+  const lost=l&&(l.gear!=null||l.purse!=null)?`<div class="v85sc-lost">${_T`<small>Lost</small>`}<span title="${_T`The value of the gear he brought`}">${_T`${C}<b>${l.gear|0}</b> in gear`}</span><span title="${_T`His purse`}">${_T`${C}<b>${l.purse|0}</b> purse`}</span></div>`:'';
   const loss=l?`<div class="v85sc fall" data-v85who="fall">${v85Fig(l)}<div class="v85sc-i">${hl}
-      <div class="v85sc-n"><b>${esc2(l.name)}</b>${v85House(l)}</div><div class="v85sc-r">${onlRankChip(l.rank||'tiro')} <span>${esc2((CLASSES[l.cls]||{}).name||'')}</span><span>${W}<b>${l.cf|0}</b> CF</span></div>
+      <div class="v85sc-n"><b>${esc2(l.name)}</b>${v85House(l)}</div><div class="v85sc-r">${_T`${onlRankChip(l.rank||'tiro')} <span>${esc2((CLASSES[l.cls]||{}).name||'')}</span><span>${W}<b>${l.cf|0}</b> CF</span>`}</div>
       <div class="v85sc-ev">${v85FellHow(l)} · ${v85Where(l)}</div>${lost}</div></div>`
-    :`<div class="v85sc fall none" data-v85who="fall"><div class="v85sc-i">${hl}<div class="v85sc-empty">No one fell ${day} — the sand waits.</div></div></div>`;
+    :`<div class="v85sc fall none" data-v85who="fall"><div class="v85sc-i">${hl}<div class="v85sc-empty">${_T`No one fell ${day} — the sand waits.`}</div></div></div>`;
   return `<div class="v85show" id="v85show">${win}${loss}</div>`}
 /* the landing: no ribbon; the playlists and the showcases share the bottom */
 {const base=onlPlayHTML;onlPlayHTML=function(){const h=base.apply(this,arguments);try{if(typeof h!=='string'||h.indexOf('onl-play81')<0)return h;
   const T=document.createElement('template');T.innerHTML=h;const g=T.content.querySelector('.onl-play81');const pls=g&&g.querySelector(':scope>.a81-pls');if(!g||!pls)return h;
   const td=g.querySelector(':scope>.a81-today');if(td)td.remove();g.classList.add('v85');
   const bot=document.createElement('div');bot.className='a85-bot';pls.replaceWith(bot);bot.appendChild(pls);
-  const sh=document.createElement('div');sh.className='a85-show';sh.innerHTML=`<h3 class="onl-h">The day in the arena <span class="rc-sub" title="The online day turns at 8 PM New York time">turns at 8 PM New York</span></h3>${v85ShowHTML()}`;bot.appendChild(sh);
+  const sh=document.createElement('div');sh.className='a85-show';sh.innerHTML=`<h3 class="onl-h">${_T`The day in the arena`} <span class="rc-sub" title="${_T`The online day turns at 8 PM New York time`}">${_T`turns at 8 PM New York`}</span></h3>${v85ShowHTML()}`;bot.appendChild(sh);
   return T.innerHTML}catch(e){console.error(e);return h}}}
 /* a new hello: the showcases follow */
 {const base=onlToday80Patch;onlToday80Patch=function(){const r=base.apply(this,arguments);try{const el=document.getElementById('v85show');if(el){const h=v85ShowHTML();if(el.outerHTML!==h)el.outerHTML=h}}catch(e){console.error(e)}return r}}
@@ -64,18 +64,18 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 {const base=onlPartyHTML;onlPartyHTML=function(){const h=base.apply(this,arguments);try{if(typeof h!=='string'||h.indexOf('onl-pbox')<0)return h;
   const T=document.createElement('template');T.innerHTML=h;const box=T.content.querySelector('.onl-pbox');const row=T.content.querySelector('.onl-party');if(!box||!row)return h;box.remove();
   const P=ONL.party;const n=P?P.members.length:0;
-  const btn=document.createElement('button');btn.type='button';btn.className='onl-slot v85pbtn'+(V85.party?' on':'');btn.dataset.v85p='open';btn.title='Your party: share a code or join one';btn.setAttribute('aria-expanded',V85.party?'true':'false');
-  btn.innerHTML=`<span class="v85pi">👥</span><small>Party${P?` · ${n}`:''}</small>`;const wr=document.createElement('div');wr.className='v85pw';wr.appendChild(btn);row.appendChild(wr);
+  const btn=document.createElement('button');btn.type='button';btn.className='onl-slot v85pbtn'+(V85.party?' on':'');btn.dataset.v85p='open';btn.title=_T('Your party: share a code or join one');btn.setAttribute('aria-expanded',V85.party?'true':'false');
+  btn.innerHTML=`<span class="v85pi">👥</span>${_T`<small>Party${P?` · ${n}`:''}</small>`}`;const wr=document.createElement('div');wr.className='v85pw';wr.appendChild(btn);row.appendChild(wr);
   if(V85.party){const pp=document.createElement('div');pp.className='v85pp';pp.setAttribute('role','dialog');pp.setAttribute('aria-label','Party');pp.innerHTML=v85PartyPanel();wr.appendChild(pp)}
   return T.innerHTML}catch(e){console.error(e);return h}}}
-function v85PartyPanel(){const P=ONL.party;const me=ONL.acct&&ONL.acct.id;const x=`<button type="button" class="v85px" data-v85p="close" title="Close" aria-label="Close">✕</button>`;
-  if(P){const lead=P.leader===me;const names=P.members.map(m=>`<li>${m===me?'<b>You</b>':esc2((P.names||{})[m]||'Lanista')}${P.leader===m?' <small>· leader</small>':''}</li>`).join('');
-    return `${x}<div class="v85pp-h">👥 Your party</div><div class="v85pp-code"><span>Code</span><b class="onl-code" id="v85code">${esc2(P.code)}</b><button type="button" class="btn tksm" data-v85p="copy">📋 Copy</button></div>
-      <ul class="v85pp-m">${names}</ul><small class="rc-sub">${lead?'You pick the game — your party sits with you (one team in team events).':'Your leader picks the game.'}</small>
-      <div class="acts"><button type="button" class="btn tksm" data-onl="pleave">Leave the party</button></div>`}
-  return `${x}<div class="v85pp-h">👥 Party</div><div class="v85pp-s"><b>Share your code</b><small class="rc-sub">Friends who enter it sit with you; in team events you fight on one side.</small>
-      <button type="button" class="btn primary tksm" data-onl="pinvite">👥 Make my party code</button></div>
-    <div class="v85pp-s"><b>Join with a code</b><div class="v85pp-j"><input class="tin" id="onlPCode" maxlength="6" placeholder="CODE" autocomplete="off" spellcheck="false"><button type="button" class="btn tksm" data-onl="pjoin">Join</button></div></div>`}
+function v85PartyPanel(){const P=ONL.party;const me=ONL.acct&&ONL.acct.id;const x=`<button type="button" class="v85px" data-v85p="close" title="${_T`Close`}" aria-label="${_T`Close`}">✕</button>`;
+  if(P){const lead=P.leader===me;const names=P.members.map(m=>`<li>${m===me?_T('<b>You</b>'):esc2((P.names||{})[m]||_T('Lanista'))}${P.leader===m?' <small>· leader</small>':''}</li>`).join('');
+    return `${x}<div class="v85pp-h">${_T`👥 Your party`}</div><div class="v85pp-code">${_T`<span>Code</span><b class="onl-code" id="v85code">${esc2(P.code)}</b>`}<button type="button" class="btn tksm" data-v85p="copy">${_T`📋 Copy`}</button></div>
+      <ul class="v85pp-m">${names}</ul><small class="rc-sub">${lead?_T('You pick the game — your party sits with you (one team in team events).'):_T('Your leader picks the game.')}</small>
+      <div class="acts"><button type="button" class="btn tksm" data-onl="pleave">${_T`Leave the party`}</button></div>`}
+  return `${x}<div class="v85pp-h">${_T`👥 Party`}</div><div class="v85pp-s">${_T`<b>Share your code</b><small class="rc-sub">Friends who enter it sit with you; in team events you fight on one side.</small>`}
+      <button type="button" class="btn primary tksm" data-onl="pinvite">${_T`👥 Make my party code`}</button></div>
+    <div class="v85pp-s">${_T`<b>Join with a code</b>`}<div class="v85pp-j"><input class="tin" id="onlPCode" maxlength="6" placeholder="CODE" autocomplete="off" spellcheck="false"><button type="button" class="btn tksm" data-onl="pjoin">${_T`Join`}</button></div></div>`}
 /* open/close in place (no redraw: a click that closes the panel still reaches the button it landed on) */
 function v85PartySet(on){V85.party=!!on;const wr=document.querySelector('#onl .v85pw');if(!wr)return;for(const p of document.querySelectorAll('#onl .v85pp'))p.remove();
   const b=wr.querySelector('.v85pbtn');if(b){b.classList.toggle('on',V85.party);b.setAttribute('aria-expanded',V85.party?'true':'false')}
@@ -83,7 +83,7 @@ function v85PartySet(on){V85.party=!!on;const wr=document.querySelector('#onl .v
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-v85p]');if(!b)return;e.preventDefault();e.stopPropagation();const a=b.dataset.v85p;
   if(a==='open'){v85PartySet(!V85.party);if(V85.party)setTimeout(()=>{const i=document.getElementById('onlPCode');if(i&&!ONL.party)try{i.focus()}catch(err){}},0);return}
   if(a==='close'){v85PartySet(false);return}
-  if(a==='copy'){const c=ONL.party&&ONL.party.code;if(!c)return;try{navigator.clipboard&&navigator.clipboard.writeText(c).catch(()=>{})}catch(err){}if(typeof mToast==='function')mToast(`📋 Party code <b>${esc2(c)}</b> copied — send it to a friend.`)}},true);
+  if(a==='copy'){const c=ONL.party&&ONL.party.code;if(!c)return;try{navigator.clipboard&&navigator.clipboard.writeText(c).catch(()=>{})}catch(err){}if(typeof mToast==='function')mToast(_T`📋 Party code <b>${esc2(c)}</b> copied — send it to a friend.`)}},true);
 /* an Invite slot makes the party (112) and shows its code here */
 window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-onl="pinvite"]');if(!b||!ONL.char)return;V85.party=true},true);
 /* a click elsewhere or Esc closes it */

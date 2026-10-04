@@ -56,5 +56,5 @@ drawShipTile=function(r,c){if(!shipLive())return;if(S.drainLine!=null&&r+c<=S.dr
   if(r===N-1&&c===N-1)drawShipBows()};
 /* boarding: a grapple line from where they came, "⚓ Aboard!", and a line in the log */
 {const base=naumStep;naumStep=async function(p,step,or,oc){const was=or!=null?nTerr(or,oc):null;const r=await base.apply(this,arguments);
-  try{const sh=shipAt(p.r,p.c);if(sh&&was&&was!=='ship'){fxLine({r:or,c:oc},{r:p.r,c:p.c},'#d8b878');fx(p.r,p.c,'⚓ Aboard!','#f0cf7d',{big:1});
-    log(`${nm(p)} ${sh.team===p.team?'climbs back aboard':'storms aboard'} the <b>${esc(sh.name)}</b>.`,sh.team===p.team?'':'big')}}catch(e){}return r}}
+  try{const sh=shipAt(p.r,p.c);if(sh&&was&&was!=='ship'){fxLine({r:or,c:oc},{r:p.r,c:p.c},'#d8b878');fx(p.r,p.c,_T('⚓ Aboard!'),'#f0cf7d',{big:1});
+    log(_T`${nm(p)} ${sh.team===p.team?_T('climbs back aboard'):_T('storms aboard')} the <b>${esc(sh.name)}</b>.`,sh.team===p.team?'':'big')}}catch(e){}return r}}

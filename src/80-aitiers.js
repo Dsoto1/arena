@@ -14,11 +14,11 @@
    printed CPU's Intelligence); Manager and Studio gladiators get theirs from their rating (a broken spirit drops one tier).
    ===================================================================== */
 const AI_TIERS=[
-  {k:'novice',n:'Novice',lo:50,int:58,diff:'easy',noise:3.4,blunder:0.45,blend:0,sk:{shop:false},d:'hesitates, skips the market, misjudges often'},
-  {k:'apprentice',n:'Apprentice',lo:65,int:70,diff:'easy',noise:3.4,blunder:0.3,blend:0,sk:{shop:true,steady:true},d:'works the market and fights, but wanders into danger'},
-  {k:'fighter',n:'Fighter',lo:76,int:80,diff:'normal',noise:3.4,blend:0,blunder:0.15,d:'never shies from a fight, plans routes, trades and truces'},
-  {k:'veteran',n:'Veteran',lo:86,int:90,diff:'normal',noise:3.4,blend:0.5,blunder:0.07,sk:{focus:true},d:'rolls Focus on close foes'},
-  {k:'master',n:'Master',lo:96,int:97,diff:'hard',noise:3.4,blend:1,blunder:0,sk:{dodge:true,merchant:true,route:true,focusKill:true},d:'hunts the leader, Focuses for the kill, steps to safety after striking'}];
+  {k:'novice',n:'Novice',lo:50,int:58,diff:'easy',noise:3.4,blunder:0.45,blend:0,sk:{shop:false},d:_T('hesitates, skips the market, misjudges often')},
+  {k:'apprentice',n:'Apprentice',lo:65,int:70,diff:'easy',noise:3.4,blunder:0.3,blend:0,sk:{shop:true,steady:true},d:_T('works the market and fights, but wanders into danger')},
+  {k:'fighter',n:'Fighter',lo:76,int:80,diff:'normal',noise:3.4,blend:0,blunder:0.15,d:_T('never shies from a fight, plans routes, trades and truces')},
+  {k:'veteran',n:'Veteran',lo:86,int:90,diff:'normal',noise:3.4,blend:0.5,blunder:0.07,sk:{focus:true},d:_T('rolls Focus on close foes')},
+  {k:'master',n:'Master',lo:96,int:97,diff:'hard',noise:3.4,blend:1,blunder:0,sk:{dodge:true,merchant:true,route:true,focusKill:true},d:_T('hunts the leader, Focuses for the kill, steps to safety after striking')}];
 /* AIW_TUNED — the attack weights tools/aitune.js found (Master plays these; Veteran halfway). TWEAK: re-run the tuner after rule changes. */
 const AIW_TUNED={...AIW_BASE};
 const aiTierOf=int=>{let t=0;for(let i=0;i<AI_TIERS.length;i++)if((int||0)>=AI_TIERS[i].lo)t=i;return t};
@@ -44,7 +44,7 @@ noise=function(player,scale=1){const T=AI_TIERS[aiTier(player)];const bl=player&
 {const base=beginTurn;beginTurn=async function(){try{const p=S&&cur();if(p&&p.cpu&&p.tier!=null)p.diff=p.aiDiff||AI_TIERS[p.tier].diff}catch(e){}return base.apply(this,arguments)}}
 /* statBonuses names the tier too (read by the chips, the ratings card and the growth news) */
 {const base=statBonuses;statBonuses=function(st){const b=base.apply(this,arguments);b.tier=aiTierOf((st||{}).int||0);b.tierName=AI_TIERS[b.tier].n;return b}}
-function aiTierChip(int){const T=AI_TIERS[aiTierOf(int)];return `<span class="aitier t${aiTierOf(int)}" title="${esc(T.n)} mind: ${esc(T.d)}"><i class="brain b${aiTierOf(int)}">🧠</i> ${esc(T.n)}</span>`}
+function aiTierChip(int){const T=AI_TIERS[aiTierOf(int)];return `<span class="aitier t${aiTierOf(int)}" title="${_T`${esc(T.n)} mind: ${esc(T.d)}`}"><i class="brain b${aiTierOf(int)}">🧠</i> ${esc(T.n)}</span>`}
 {const st=document.createElement('style');st.textContent=`.aitier{display:inline-block;font-size:11px;padding:1px 6px;border-radius:9px;border:1px solid var(--line2);color:var(--muted);white-space:nowrap}
 .aitier.t2{color:#cfc6b4}.aitier.t3{color:#9cc4e8;border-color:#4f7fc4}.aitier.t4{color:var(--gold2);border-color:var(--gold)}`;document.head.appendChild(st)}
 /* the tier rides beside the ratings wherever they show; the glossary and the ratings guide name the five minds */
@@ -56,8 +56,8 @@ function aiTierChip(int){const T=AI_TIERS[aiTierOf(int)];return `<span class="ai
 .brain.b0{filter:grayscale(1) brightness(1.05)}.brain.b1{filter:hue-rotate(150deg) saturate(1.3)}.brain.b2{filter:sepia(1) saturate(1.6) hue-rotate(-12deg) brightness(.95)}
 .brain.b3{filter:hue-rotate(245deg) saturate(1.4)}.brain.b4{filter:sepia(1) saturate(3) hue-rotate(5deg) brightness(1.2) drop-shadow(0 0 2px rgba(240,207,125,.6))}
 .aitier.t0{color:#a9a39a}.aitier.t1{color:#9cc46e;border-color:#4f7a35}`;document.head.appendChild(st)}
-const AI_TIERS_TXT='Novice below 65, Apprentice 65, Fighter 76, Veteran 86, Master 96';
-try{if(typeof GLOSS!=='undefined'&&GLOSS.int)GLOSS.int.d=`How sharply a CPU plays the gladiator — five minds: ${AI_TIERS_TXT}. Personality still decides how they play. Grows by surviving and winning.`}catch(e){}
+const AI_TIERS_TXT=_T('Novice below 65, Apprentice 65, Fighter 76, Veteran 86, Master 96');
+try{if(typeof GLOSS!=='undefined'&&GLOSS.int)GLOSS.int.d=_T`How sharply a CPU plays the gladiator — five minds: ${AI_TIERS_TXT}. Personality still decides how they play. Grows by surviving and winning.`}catch(e){}
 /* ---------- SKILLS BY SUBSYSTEM: each tier sets the play level (easy / normal / hard) of each part of the CPU separately.
    While a subsystem's function runs, the player's diff is that subsystem's level; nested calls set their own and restore.
    act = the turn itself (hesitation, Focus, escapes, tunnels) · goals = where to walk · choice = the turn's coin/CF/card choice ·

@@ -14,26 +14,26 @@ function weekMoney(){const w=W_(),m=me();const ros=rosterOf(m);const wages=ros.r
   const gate=typeof gateShare==='function'?gateShare(m):0;const net=gate+fees-wages;const runway=net>=0?Infinity:Math.max(0,Math.floor(m.coin/-net));return {wages,fees,gate,net,runway,coin:m.coin}}
 function weekChecklist(){const w=W_(),m=me();const ros=rosterOf(m);const n=w.night;const I=[];const go=(tab,l)=>`<button class="btn tksm" type="button" data-mg="tab" data-id="${tab}">${l}</button>`;
   const item=(done,ic,txt,btn)=>I.push({done,ic,txt,btn});
-  if((w.pend||[]).length)item(false,'⚖',`<b>${w.pend.length} verdict${w.pend.length===1?'':'s'}</b> wait for you`,go('night','Settle'));
+  if((w.pend||[]).length)item(false,'⚖',_T`<b>${w.pend.length} verdict${w.pend.length===1?'':'s'}</b> wait for you`,go('night',_T('Settle')));
   const hurt=ros.filter(g=>g.inj&&!g.inj.war&&g.medWk!==w.week&&g.bathWk!==w.week);
-  item(!hurt.length,'⚕',hurt.length?`${hurt.map(g=>esc(g.name)).join(', ')} ${hurt.length===1?'is':'are'} hurt`:'No untreated wounds',hurt.length?go('infirm','Infirmary'):'');
+  item(!hurt.length,'⚕',hurt.length?_T`${hurt.map(g=>esc(g.name)).join(', ')} ${hurt.length===1?_T('is'):_T('are')} hurt`:_T('No untreated wounds'),hurt.length?go('infirm',_T('Infirmary')):'');
   const exp=ros.filter(g=>g.contract&&g.contract.weeks<=1);
-  item(!exp.length,'📜',exp.length?`${exp.map(g=>`<b>${esc(g.name)}</b>`).join(', ')}: contract ends ${exp.length===1?'':'— each '}this week`:'No contract runs out this week',exp.length?exp.slice(0,2).map(g=>`<button class="btn tksm" type="button" data-mg="extend" data-id="${g.id}">Renew ${esc(g.name.split(' ')[0])}<small>${askWage(g)}/wk</small></button>`).join(''):'');
-  item(!!w.train&&w.train!=='off','🏋',w.train&&w.train!=='off'?`Regime: ${esc((TRAIN_REGIMES[w.train]||{}).n||w.train)}`:'No drills set for the week',w.train&&w.train!=='off'?'':go('practice','Set drills'));
-  const th=typeof thLeft==='function'?thLeft(w):0;item(!th||!ros.length,'⏳',th?`<b>${th}</b> training hour${th===1?'':'s'} unspent`:'Training hours planned',th&&ros.length?go('practice','Plan hours'):'');
+  item(!exp.length,'📜',exp.length?_T`${exp.map(g=>`<b>${esc(g.name)}</b>`).join(', ')}: contract ends ${exp.length===1?'':'— each '}this week`:_T('No contract runs out this week'),exp.length?exp.slice(0,2).map(g=>`<button class="btn tksm" type="button" data-mg="extend" data-id="${g.id}">${_T`Renew ${esc(g.name.split(' ')[0])}<small>${askWage(g)}/wk</small>`}</button>`).join(''):'');
+  item(!!w.train&&w.train!=='off','🏋',w.train&&w.train!=='off'?_T`Regime: ${esc((TRAIN_REGIMES[w.train]||{}).n||w.train)}`:_T('No drills set for the week'),w.train&&w.train!=='off'?'':go('practice',_T('Set drills')));
+  const th=typeof thLeft==='function'?thLeft(w):0;item(!th||!ros.length,'⏳',th?_T`<b>${th}</b> training hour${th===1?'':'s'} unspent`:_T('Training hours planned'),th&&ros.length?go('practice',_T('Plan hours')):'');
   const mine=new Set(ros.map(g=>g.id));const entered=n?n.bouts.filter(b=>b.ents.some(id=>mine.has(id))).length:0;const open=n?n.bouts.filter(b=>!b.done).length:0;const fit=ros.filter(g=>!g.inj&&g.morale>15).length;
-  item(entered>=Math.min(open,fit)||!fit,'⚔',entered?`${entered} of ${open} bout${open===1?'':'s'} carry your fighters`:fit?'None of your fighters is on this week\'s card':'Nobody fit to fight',entered>=Math.min(open,fit)?'':go('night','Enter fighters'));
+  item(entered>=Math.min(open,fit)||!fit,'⚔',entered?_T`${entered} of ${open} bout${open===1?'':'s'} carry your fighters`:fit?_T('None of your fighters is on this week\'s card'):_T('Nobody fit to fight'),entered>=Math.min(open,fit)?'':go('night',_T('Enter fighters')));
   const onBoard=w.glads.filter(g=>g.alive&&g.favd&&!g.contract).length; /* v0.73: a recruit on the board clears it */
-  item(ros.length>=4||onBoard>0,'🤝',ros.length>=4?`${ros.length} fighters on the roster`:onBoard?`Short-handed — ${onBoard} recruit${onBoard===1?'':'s'} on your board`:`Short-handed — only ${ros.length} fighter${ros.length===1?'':'s'}. Put a recruit on your board.`,ros.length>=4||onBoard?'':go('recruit','Recruit'));
+  item(ros.length>=4||onBoard>0,'🤝',ros.length>=4?_T`${ros.length} fighters on the roster`:onBoard?_T`Short-handed — ${onBoard} recruit${onBoard===1?'':'s'} on your board`:_T`Short-handed — only ${ros.length} fighter${ros.length===1?'':'s'}. Put a recruit on your board.`,ros.length>=4||onBoard?'':go('recruit',_T('Recruit')));
   return I}
 function checklistHTML(){const I=weekChecklist();const todo=I.filter(x=>!x.done),done=I.filter(x=>x.done);
-  return `<div class="todobox wkcheck"><div class="sect" style="margin-top:0">✅ This week <span class="rc-sub">${todo.length?`${todo.length} to do`:'all done — end the week when ready'}</span></div>
+  return `<div class="todobox wkcheck"><div class="sect" style="margin-top:0">${_T`✅ This week`} <span class="rc-sub">${todo.length?_T`${todo.length} to do`:_T('all done — end the week when ready')}</span></div>
     ${todo.map(x=>`<div class="wkitem"><span class="wkic">${x.ic}</span><span class="wktxt">${x.txt}</span><span class="wkbtn">${x.btn||''}</span></div>`).join('')}
-    ${done.length?`<details class="wkdone"><summary class="rc-sub">✓ ${done.length} done</summary>${done.map(x=>`<div class="wkitem done"><span class="wkic">✓</span><span class="wktxt">${x.txt}</span></div>`).join('')}</details>`:''}</div>`}
+    ${done.length?`<details class="wkdone"><summary class="rc-sub">${_T`✓ ${done.length} done`}</summary>${done.map(x=>`<div class="wkitem done"><span class="wkic">✓</span><span class="wktxt">${x.txt}</span></div>`).join('')}</details>`:''}</div>`}
 {const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_(),m=me();if(!w||w.dead||!m||MGR.view)return h;
   /* the ledger strip in the header */
   const M=weekMoney();const tone=M.net>=0?'good':M.runway<=2?'bad':M.runway<=5?'warn':'';
-  const led=`<span class="badge ledger ${tone}" title="This week: wages and drills ${M.wages} · gate share +${M.gate} · appearance fees +${M.fees} (fighters entered) — purses and bets on top">${M.net>=0?'▲':'▼'} ${M.net>=0?'+':''}${M.net}/wk${M.net<0?` · ${M.runway===Infinity?'':M.runway+' wk runway'}`:''}${!M.fees&&w.night&&w.night.bouts.some(b=>!b.done)?' · before fees':''}</span>`;
+  const led=`<span class="badge ledger ${tone}" title="${_T`This week: wages and drills ${M.wages} · gate share +${M.gate} · appearance fees +${M.fees} (fighters entered) — purses and bets on top`}">${_T`${M.net>=0?'▲':'▼'} ${M.net>=0?'+':''}${M.net}/wk${M.net<0?` · ${M.runway===Infinity?'':M.runway+_T(' wk runway')}`:''}${!M.fees&&w.night&&w.night.bouts.some(b=>!b.done)?_T(' · before fees'):''}`}</span>`;
   h=h.replace(/(<span class="badge [^"]*">Treasury [^<]*<\/span>)/,`$1${led}`);
   /* the checklist replaces the to-do box */
   if(MGR.tab==='ludus'){const i=h.indexOf('<div class="todobox">');if(i>=0){const c=cutDiv(h,i);if(c)h=c[1].slice(0,i)+checklistHTML()+c[1].slice(i)}}}catch(e){console.error(e)}return h}}
@@ -55,7 +55,7 @@ function rivalRegime(m){const d=(m.p&&m.p.discipline)||50;let k=d>=75?'hard':d>=
 function rivalTrain(w){if(!RIVAL_TRAIN)return;for(const m of w.mgrs){if(m.isPlayer||m.dead)continue;const ros=rosterOf(m);if(!ros.length)continue;
   const reg=rivalRegime(m),R=TRAIN_REGIMES[reg]||TRAIN_REGIMES.off;m.coin-=R.c||0;m.train=reg;const y=facLvl(m,'yard');const d=((m.p&&m.p.discipline)||50)/100;
   const fit=[];for(const g of ros){gStats(g);if(g.inj)continue;if(gFat(g)>RIV_REST){g.restWk=w.week;continue}
-    if(R.c&&Math.random()<R.inj*(1-.2*y)){g.inj={until:w.week+2,label:'a training knock',pen:3};g.morale=clamp(g.morale-5,0,100);continue}
+    if(R.c&&Math.random()<R.inj*(1-.2*y)){g.inj={until:w.week+2,label:_T('a training knock'),pen:3};g.morale=clamp(g.morale-5,0,100);continue}
     const tr=TRAIN_STAT[reg]||0;if(tr)gainAll(g,{str:tr,spd:tr*0.8,int:tr*0.2});g.fat=Math.min(100,gFat(g)+(FAT_REG[reg]||0));fit.push(g)}
   let hrs=Math.round((TH_BASE+TH_YARD*y)*(RIV_HOURS_MIN+(1-RIV_HOURS_MIN)*d));
   for(const g of fit.sort((a,b)=>effOvr(b)-effOvr(a))){if(hrs<=0)break;const h=Math.min(TH_FIGHTER,hrs);hrs-=h;const s=gStats(g);

@@ -47,29 +47,29 @@ runDraft=async function(){
   const picks=player=>ev.draft.all||(player.team==='J'?ev.draft.jugg:ev.draft.team);
   const maxRounds=Math.max(...S.players.map(picks));
   const OFFER=8;
-  log(`Snake draft: ${S.players.map(player=>`${player.name} ${picks(player)} picks`).join(', ')}. Each pick offers a random ${OFFER} of the remaining level 1-3 weapons and armor that still fit the gladiator.`,'hd');
+  log(_T`Snake draft: ${S.players.map(player=>_T`${player.name} ${picks(player)} picks`).join(', ')}. Each pick offers a random ${OFFER} of the remaining level 1-3 weapons and armor that still fit the gladiator.`,'hd');
   const done=new Set();let order=S.players.map(player=>player.id);
   for(let rd=0;rd<maxRounds;rd++){
     for(const id of order){const p=S.players[id];
       if(rd>=picks(p)||done.has(p.id))continue;
       const left=pool.filter(x=>!x.by&&x.lv<=maxLv(p));if(!left.length)continue;
       const fit=left.filter(x=>draftFits81(p,x));
-      if(!fit.length){done.add(p.id);log(`${nm(p)}'s draft ends early: both hands are full and every spot is covered.`);continue}
+      if(!fit.length){done.add(p.id);log(_T`${nm(p)}'s draft ends early: both hands are full and every spot is covered.`);continue}
       const offered=new Set(shuffle([...fit]).slice(0,OFFER).map(x=>x.id));
       const avail=fit.filter(x=>offered.has(x.id));
       let pick;
       if(p.cpu)pick=cpuDraftPick(p,avail);
       else{
         const ord=(a,b)=>(a.kind>b.kind?-1:a.kind<b.kind?1:0)||a.lv-b.lv;
-        const grid=[...avail].sort(ord).map(x=>({label:itemName81(x),sub:`LV${x.lv} · ${x.kind==='w'?wStats(mkW(x.k)):armorDesc(x.k)}`,value:x.id,style:'border-color:var(--gold)',card:(x.kind==='w'?'w:':'a:')+x.k}));
+        const grid=[...avail].sort(ord).map(x=>({label:itemName81(x),sub:_T`LV${x.lv} · ${x.kind==='w'?wStats(mkW(x.k)):armorDesc(x.k)}`,value:x.id,style:'border-color:var(--gold)',card:(x.kind==='w'?'w:':'a:')+x.k}));
         const rest=[...pool].filter(x=>!offered.has(x.id)).sort(ord);
-        const chip=x=>{if(x.by){const q=S.players[x.by-1];return `<span class="pc81 tk81" style="border-color:${q.color}" title="taken by ${esc(q.name)}">${esc(itemName81(x))}<i>${esc(q.name)}</i></span>`}
-          const why=x.lv>maxLv(p)?'above your draft level':!draftFits81(p,x)?'no free spot':'not offered this pick';
-          return `<span class="pc81" title="${why}">${esc(itemName81(x))}<i>LV${x.lv}</i></span>`};
-        const idx=await modal(`Draft · ${p.name} · pick ${rd+1} of ${picks(p)}`,`<p>Choose one weapon or armor from the <b style="color:var(--gold2)">${avail.length} offered</b> this pick. Weapons go to a free hand; armor equips straight away.</p><div class="pickgrid two81" id="pickgrid"></div><details class="pool81"><summary>Rest of the pool · ${rest.length}</summary><div class="pool81b">${rest.map(chip).join('')}</div></details>`,[],{wide:1,grid});
+        const chip=x=>{if(x.by){const q=S.players[x.by-1];return `<span class="pc81 tk81" style="border-color:${q.color}" title="${_T`taken by ${esc(q.name)}`}">${esc(itemName81(x))}<i>${esc(q.name)}</i></span>`}
+          const why=x.lv>maxLv(p)?_T('above your draft level'):!draftFits81(p,x)?_T('no free spot'):_T('not offered this pick');
+          return `<span class="pc81" title="${why}">${_T`${esc(itemName81(x))}<i>LV${x.lv}</i>`}</span>`};
+        const idx=await modal(_T`Draft · ${p.name} · pick ${rd+1} of ${picks(p)}`,`<p>${_T`Choose one weapon or armor from the <b style="color:var(--gold2)">${avail.length} offered</b> this pick. Weapons go to a free hand; armor equips straight away.`}</p><div class="pickgrid two81" id="pickgrid"></div><details class="pool81"><summary>${_T`Rest of the pool · ${rest.length}`}</summary><div class="pool81b">${rest.map(chip).join('')}</div></details>`,[],{wide:1,grid});
         pick=avail.find(x=>x.id===idx)||avail[0]}
       pick.by=p.id+1;
-      log(`${nm(p)} drafts <b>${itemName81(pick)}</b>.`);
+      log(_T`${nm(p)} drafts <b>${itemName81(pick)}</b>.`);
       draftPull81(pick);
       if(pick.kind==='w')await gainWeapon(p,pick.k);else await gainArmorPiece(p,pick.k);
       render()}
@@ -79,11 +79,11 @@ runDraft=async function(){
       const leftN=k=>deck?deck.slice(1).filter(x=>x===k).length:1;
       for(let i=0;i<5;i++){let k;const opts=DECLARE_PICKS.filter(x=>leftN(x)>0);if(!opts.length)break;
         if(j.cpu){k=['ward','focus','forge3','hercules2','rete','hercules1','forge2','hygeia','ammo','mchoice','discount','lure','lyre'].find(x=>opts.includes(x))||opts[0]}
-        else k=await modal(`Juggernaut card ${i+1} of 5`,'<p>Choose a Declare-type arena card. The card leaves the arena deck.</p><div class="pickgrid two81 jc81" id="pickgrid"></div>',[],{wide:1,grid:opts.map(x=>({label:CARDS[x].n,sub:`×${leftN(x)} left · ${CARDS[x].d}`,value:x,card:'c:'+x}))});
+        else k=await modal(_T`Juggernaut card ${i+1} of 5`,'<p>Choose a Declare-type arena card. The card leaves the arena deck.</p><div class="pickgrid two81 jc81" id="pickgrid"></div>',[],{wide:1,grid:opts.map(x=>({label:CARDS[x].n,sub:_T`×${leftN(x)} left · ${CARDS[x].d}`,value:x,card:'c:'+x}))});
         if(!k||!opts.includes(k))k=opts[0];
         if(deck){const at=deck.lastIndexOf(k);if(at>0)deck.splice(at,1)}
         j.items.push(mkCard(k))}
-      log(`${nm(j)} chooses 5 declare cards.`)}}
+      log(_T`${nm(j)} chooses 5 declare cards.`)}}
 };
 (()=>{const st=document.createElement('style');st.textContent=`.pickgrid.two81{grid-template-columns:repeat(2,minmax(0,1fr));max-height:none;overflow:visible;gap:8px}
 .pickgrid.two81 .btn{display:flex;align-items:center;gap:10px;text-align:left;justify-content:flex-start;min-height:64px}
@@ -108,15 +108,15 @@ doTopple=async function(player,pillar){
   S.pillars=S.pillars.filter(x=>x!==pillar);
   stat(player,'topple');crowdReact('topple',{p:player});
   (S.rubble||(S.rubble=[])).push({r:pillar.r,c:pillar.c,dr,dc});
-  shake();fx(pillar.r,pillar.c,'CRASH!','#e6d3b0',{big:1});
+  shake();fx(pillar.r,pillar.c,_T('CRASH!'),'#e6d3b0',{big:1});
   const rub=[0,1,2].map(k=>[pillar.r+dr*k,pillar.c+dc*k]).filter(([r,c])=>inB(r,c)).map(([r,c])=>tl(r,c));
   const far=[3,2,1].map(k=>[pillar.r+dr*k,pillar.c+dc*k]).find(([r,c])=>inB(r,c));
-  log(`${nm(player)} topples the pillar at ${tl(pillar.r,pillar.c)}${far?` toward ${tl(far[0],far[1])}`:''}! Rubble on ${rub.join(', ')}${pillar.pots.length?'':' — no Blessings left on it'}.`,'big');
+  log(_T`${nm(player)} topples the pillar at ${tl(pillar.r,pillar.c)}${far?_T` toward ${tl(far[0],far[1])}`:''}! Rubble on ${rub.join(', ')}${pillar.pots.length?'':_T(' — no Blessings left on it')}.`,'big');
   for(const k of [1,2]){const r=pillar.r+dr*k,c=pillar.c+dc*k;if(!inB(r,c))continue;
     const q=playerAt(r,c);
-    if(q&&q!==player){if(inTruce(player,q)){S.truces.delete(truceKey(player.id,q.id));log(`${nm(player)} breaks the truce with ${nm(q)}!`,'bad')}
-      await hurt(q,rollLoc(q),3,{type:'player',p:player},'Falling pillar');bumpRel(q,player,-15,'dropped a pillar on them')}
-    const n=npcAt(r,c);if(n)hurtNPC(n,3,player,'Falling pillar')}
+    if(q&&q!==player){if(inTruce(player,q)){S.truces.delete(truceKey(player.id,q.id));log(_T`${nm(player)} breaks the truce with ${nm(q)}!`,'bad')}
+      await hurt(q,rollLoc(q),3,{type:'player',p:player},_T('Falling pillar'));bumpRel(q,player,-15,_T('dropped a pillar on them'))}
+    const n=npcAt(r,c);if(n)hurtNPC(n,3,player,_T('Falling pillar'))}
   if(pillar.pots.length){const L=landing81(pillar,dr,dc);TOP81=L;
     try{await breakPot(pillar,player,[L.r,L.c],true)}finally{TOP81=null}}
   checkMandata(player);checkEnd()};
@@ -125,9 +125,9 @@ doTopple=async function(player,pillar){
   const r=L.r,c=L.c,O=OFFER[off];
   placeFloor('offer',off,r,c);
   const q=playerAt(r,c),n=npcAt(r,c);
-  const note=L.why==='back'?' A pillar stands in the way: it lands one tile back.':L.why==='edge'?' It rolls to the edge of the sand.':'';
-  const where=q?` — right at ${nm(q)}'s feet`:n?` — it lies under ${nm(n)}`:spikeAt(r,c)?' — it falls into the spikes':'';
-  log(`The offering falls onto ${tl(r,c)}: <b>${O.n}</b> (${O.s})${where}.${note}`);
+  const note=L.why==='back'?_T(' A pillar stands in the way: it lands one tile back.'):L.why==='edge'?_T(' It rolls to the edge of the sand.'):'';
+  const where=q?_T` — right at ${nm(q)}'s feet`:n?_T` — it lies under ${nm(n)}`:spikeAt(r,c)?_T(' — it falls into the spikes'):'';
+  log(_T`The offering falls onto ${tl(r,c)}: <b>${O.n}</b> (${O.s})${where}.${note}`);
   fx(r,c,'✦','#f0cf7d',{big:1});
   await pickupAt(r,c)}}
 

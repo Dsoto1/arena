@@ -14,27 +14,27 @@ function sideTabsEnsure(){const side=document.querySelector('aside.side');if(!si
     const pane=document.createElement('div');pane.id='standsPane';pane.className='panel standspane';pane.hidden=true;side.appendChild(pane)}
   return bar}
 function sideTabsHTML(){const n=standsCount(),k=S&&S.npcKills||0;
-  return [['fighter','⚔ Fighter'],['field',`🐾 Field${k?` · ${k} slain`:''}`],['stands',`🏟 Stands · ${n}K`]].map(([t,l])=>`<button type="button" role="tab" data-sidetab="${t}" aria-selected="${SIDE.tab===t}" class="${SIDE.tab===t?'on':''}">${l}</button>`).join('')}
-function standsPaneHTML(){if(!S||!S.spect||!S.spect.length)return `<p class="hint" style="margin:0">The stands are empty this event.</p>${typeof standsDrawerHTML==='function'?standsDrawerHTML({chronOnly:1}):''}`;
+  return [['fighter',_T('⚔ Fighter')],['field',_T`🐾 Field${k?_T` · ${k} slain`:''}`],['stands',`🏟 Stands · ${n}K`]].map(([t,l])=>`<button type="button" role="tab" data-sidetab="${t}" aria-selected="${SIDE.tab===t}" class="${SIDE.tab===t?'on':''}">${l}</button>`).join('')}
+function standsPaneHTML(){if(!S||!S.spect||!S.spect.length)return `<p class="hint" style="margin:0">${_T`The stands are empty this event.`}</p>${typeof standsDrawerHTML==='function'?standsDrawerHTML({chronOnly:1}):''}`;
   if(typeof standsDrawerHTML!=='function')return crowdPanelHTML();
   /* the crowd first; the arena's chronicle as one quiet line after the stands log, then the roster */
   const h=standsDrawerHTML({noChron:1}).replace('<div class="sect">In the stands right now</div>',''),ch=standsDrawerHTML({chronOnly:1})||'';const i=h.indexOf('<div class="sect">Spectator roster');
   return i<0?h+ch:h.slice(0,i)+ch+h.slice(i)}
-function fieldHeadHTML(){const d=S&&S.deck&&EV()&&EV().deck?`${S.deck.length} arena card${S.deck.length===1?'':'s'} left`:'';
-  return `<div class="fieldhd"><span class="rc-sub">${d}</span><button class="btn tksm" type="button" data-bestiary>📖 Bestiary</button></div>`}
+function fieldHeadHTML(){const d=S&&S.deck&&EV()&&EV().deck?_T`${S.deck.length} arena card${S.deck.length===1?'':'s'} left`:'';
+  return `<div class="fieldhd"><span class="rc-sub">${d}</span><button class="btn tksm" type="button" data-bestiary>${_T`📖 Bestiary`}</button></div>`}
 function sideApply(){const bar=sideTabsEnsure();if(!bar)return;const live=sideLive();bar.hidden=!live;
   const t=live?SIDE.tab:'fighter';bar.innerHTML=live?sideTabsHTML():'';
   const vis=(id,on)=>{const el=document.getElementById(id);if(el)el.classList.toggle('sidehide',!on)};
   vis('board',t==='fighter');vis('rosterGrp',t==='field');vis('npcPanel',t==='field');vis('crowdPanel',false);const npc=document.getElementById('npcPanel');if(npc&&live)npc.hidden=false;
   const pane=document.getElementById('standsPane');if(pane){pane.hidden=t!=='stands';if(t==='stands'){const sc=pane.scrollTop;pane.innerHTML=standsPaneHTML();pane.scrollTop=sc}}
   const np=document.getElementById('npcPanel');if(np&&t==='field'&&!np.querySelector('.fieldhd'))np.insertAdjacentHTML('afterbegin',fieldHeadHTML());
-  const bb=document.getElementById('btnDrawB');if(bb){bb.innerHTML=`🏟 Stands · <b>${standsCount()}K</b>`;bb.title='The stands: the crowd, the stands log and the spectator roster, in the right column';bb.classList.toggle('on',t==='stands')}
+  const bb=document.getElementById('btnDrawB');if(bb){bb.innerHTML=`🏟 Stands · <b>${standsCount()}K</b>`;bb.title=_T('The stands: the crowd, the stands log and the spectator roster, in the right column');bb.classList.toggle('on',t==='stands')}
   tickerApply()}
 function sideTab(t){SIDE.tab=t;try{localStorage.setItem('flavius_sidetab',t)}catch(e){}if(document.body.classList.contains('phoneL')){const d=document.querySelector('#plDock [data-pl="side"]');if(d&&!document.body.classList.contains('pl-side'))d.click()}sideApply()}
 /* the crowd ticker under the board */
 let TICK_LAST=0;
 function tickerApply(){let el=document.getElementById('crowdTick');const wrap=document.querySelector('.canvas-wrap');
-  if(!el&&wrap){el=document.createElement('button');el.type='button';el.id='crowdTick';el.className='crowdtick';el.title='Open the stands';wrap.insertAdjacentElement('afterend',el)}
+  if(!el&&wrap){el=document.createElement('button');el.type='button';el.id='crowdTick';el.className='crowdtick';el.title=_T('Open the stands');wrap.insertAdjacentElement('afterend',el)}
   if(!el)return;const L=S&&S.spectLog||[];const e=L[L.length-1];el.hidden=!(sideLive()&&e&&!S.over);if(el.hidden)return;
   el.innerHTML=`<span class="tk">🏟</span><span class="tkr">R${e.r}</span><span class="tkt">${e.html}</span>`;
   if(L.length!==TICK_LAST){if(TICK_LAST&&!(typeof reduceMotion==='function'&&reduceMotion())){el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')}TICK_LAST=L.length}}
@@ -49,7 +49,7 @@ document.addEventListener('click',e=>{
 /* the Menagerie → the Bestiary: lore and all-time ledgers only (what is on the sand lives in the Field tab) */
 function bestiaryHTML(){const box=document.createElement('div');box.innerHTML=menagerieHTML();const g=box.querySelector('.setup-grid');const right=g&&g.children[1];return right?right.innerHTML:box.innerHTML}
 openMenagerie=async function(){if(typeof modalBusy==='function'&&modalBusy())return;await loadBestiary();
-  await modal('📖 Bestiary · the beasts and their ledgers',`<div id="menagBody">${bestiaryHTML()}</div>`,[{label:'Close',value:0}],{wide:1})};
+  await modal(_T('📖 Bestiary · the beasts and their ledgers'),`<div id="menagBody">${bestiaryHTML()}</div>`,[{label:_T('Close'),value:0}],{wide:1})};
 {const base=showRules;showRules=function(){const r=base.apply(this,arguments);setTimeout(()=>{try{const t=document.querySelector('#mBody [data-rul="learn"]');if(t&&!document.querySelector('#mBody [data-bestiary]'))t.insertAdjacentHTML('afterend','<button type="button" data-bestiary>📖 Bestiary</button>')}catch(e){}},60);return r}}
 (()=>{const st=document.createElement('style');st.textContent=`
 .sidetabs{display:flex;gap:0;position:sticky;top:0;z-index:5;background:var(--panel,#1f1711)}

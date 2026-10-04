@@ -15,5 +15,5 @@ function duelCam(){if(HEADLESS)return 1;const want=duelZoneOn()&&!S.zoomOut;
   return DUEL.z}
 function duelVignette(Wd,Hd){if(DUEL.z<=1.01)return;const g=ctx.createRadialGradient(Wd/2,Hd/2,Math.min(Wd,Hd)*0.26,Wd/2,Hd/2,Math.max(Wd,Hd)*0.7);
   const a=0.75*Math.min(1,(DUEL.z-1)/0.75);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,`rgba(8,3,2,${a})`);ctx.save();ctx.setTransform(window.devicePixelRatio||1,0,0,window.devicePixelRatio||1,0,0);ctx.fillStyle=g;ctx.fillRect(0,0,Wd,Hd);ctx.restore()}
-function duelUI(){const b=document.getElementById('btnZoom');if(!b)return;const show=duelZoneOn();b.hidden=!show;if(show){const t=S.zoomOut?'🔍 Lean in':'🔍 Zoom out';if(b.textContent!==t)b.textContent=t;b.title=S.zoomOut?'Back to the duel camera':'Pull the camera back to the normal view'}}
+function duelUI(){const b=document.getElementById('btnZoom');if(!b)return;const show=duelZoneOn();b.hidden=!show;if(show){const t=S.zoomOut?_T('🔍 Lean in'):_T('🔍 Zoom out');if(b.textContent!==t)b.textContent=t;b.title=S.zoomOut?_T('Back to the duel camera'):_T('Pull the camera back to the normal view')}}
 document.addEventListener('click',e=>{if(e.target.closest('#btnZoom')&&S){S.zoomOut=!S.zoomOut;draw()}});

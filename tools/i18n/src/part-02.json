@@ -1,0 +1,2102 @@
+[
+ {
+  "k": "<b>{0} severed</b>",
+  "w": "03-engine.js:805"
+ },
+ {
+  "k": "drops the chest",
+  "w": "03-engine.js:814"
+ },
+ {
+  "k": "gladiator trophies",
+  "w": "03-engine.js:842"
+ },
+ {
+  "k": "beast trophies",
+  "w": "03-engine.js:842"
+ },
+ {
+  "k": "Zora flies off with his fallen master.",
+  "w": "03-engine.js:924"
+ },
+ {
+  "k": "{0} is wild again.",
+  "w": "03-engine.js:927"
+ },
+ {
+  "k": "The Golden Eagle falls to the sand.",
+  "w": "03-engine.js:934"
+ },
+ {
+  "k": "killed {0}",
+  "w": "03-engine.js:944"
+ },
+ {
+  "k": "Gladiator (",
+  "w": "03-engine.js:953"
+ },
+ {
+  "k": "{0} is eliminated by {1} (+10 CF, trophy).",
+  "w": "03-engine.js:961"
+ },
+ {
+  "k": "Gladiator (by",
+  "w": "03-engine.js:965"
+ },
+ {
+  "k": "{0} is slain by {1}, tamed by {2} (+10 CF, trophy).",
+  "w": "03-engine.js:967"
+ },
+ {
+  "k": "slain by a beast",
+  "w": "03-engine.js:969"
+ },
+ {
+  "k": "{0} is slain by {1} (−5 CF).",
+  "w": "03-engine.js:975"
+ },
+ {
+  "k": "{0} is eliminated.",
+  "w": "03-engine.js:977"
+ },
+ {
+  "k": "{0} is <b>pulled from the sand</b> — exhibition rules: the doctors call it before anyone dies.",
+  "w": "03-engine.js:978"
+ },
+ {
+  "k": "{0} → {1} falls! {2} earns {3} coin, {4} CF and a trophy.",
+  "w": "03-engine.js:1037"
+ },
+ {
+  "k": "{0} → {1} falls.",
+  "w": "03-engine.js:1038"
+ },
+ {
+  "k": "slew {0}",
+  "w": "03-engine.js:1041"
+ },
+ {
+  "k": "Tholo drops the Arena Chest at {0}.",
+  "w": "03-engine.js:1047"
+ },
+ {
+  "k": "{0} → {1} −{2} HP ({3}/{4} left).{5}",
+  "w": "03-engine.js:1054"
+ },
+ {
+  "k": "<b>{0} is now {1}!</b>",
+  "w": "03-engine.js:1054"
+ },
+ {
+  "k": "It is only getting angrier.",
+  "w": "03-engine.js:1055"
+ },
+ {
+  "k": "Careful, it is raging now.",
+  "w": "03-engine.js:1055"
+ },
+ {
+  "k": "It staggers. Finish it!",
+  "w": "03-engine.js:1055"
+ },
+ {
+  "k": "Fazed! Now is the moment.",
+  "w": "03-engine.js:1055"
+ },
+ {
+  "k": "{0} attacked their own tamed {1}. The bond breaks.",
+  "w": "03-engine.js:1059"
+ },
+ {
+  "k": "Both snakes are dead. The lions are released!",
+  "w": "03-engine.js:1074"
+ },
+ {
+  "k": "Both wolves are dead. Commodus has been removed from this Gauntlet.",
+  "w": "03-engine.js:1080"
+ },
+ {
+  "k": "Both wolves are dead. Commodus enters!",
+  "w": "03-engine.js:1081"
+ },
+ {
+  "k": "Both bears are dead. Tholo is unleashed!",
+  "w": "03-engine.js:1087"
+ },
+ {
+  "k": "{0} has already entered this event — the pens stay shut.",
+  "w": "03-engine.js:1136"
+ },
+ {
+  "k": "{0} bursts into the arena at {1}, on top of {2}!",
+  "w": "03-engine.js:1160"
+ },
+ {
+  "k": "{0} takes 1 unavoidable damage to the head.",
+  "w": "03-engine.js:1162"
+ },
+ {
+  "k": "{0} enters the arena at {1}.",
+  "w": "03-engine.js:1169"
+ },
+ {
+  "k": "Commodus demands tribute: 2 damage to one body location every gladiator agrees on. They settle on the <b>{0}</b>.",
+  "w": "03-engine.js:1182"
+ },
+ {
+  "k": "Commodus' entrance",
+  "w": "03-engine.js:1188"
+ },
+ {
+  "k": "The floor spikes have already risen.",
+  "w": "03-engine.js:1197"
+ },
+ {
+  "k": "Floor spikes rise from the sand at D, I, 4 and 9!",
+  "w": "03-engine.js:1204"
+ },
+ {
+  "k": "Floor spike",
+  "w": "03-engine.js:1211"
+ },
+ {
+  "k": "There is no room for Zora to land.",
+  "w": "03-engine.js:1220"
+ },
+ {
+  "k": "Zora",
+  "w": "03-engine.js:1224"
+ },
+ {
+  "k": "{0} releases <b>Zora</b> the eagle at {1}.",
+  "w": "03-engine.js:1228"
+ },
+ {
+  "k": "Choose",
+  "w": "03-engine.js:1322"
+ },
+ {
+  "k": "Slot {0}: {1}",
+  "w": "03-engine.js:1323"
+ },
+ {
+  "k": "{0} uses Market Choice for slot {1}.",
+  "w": "03-engine.js:1327"
+ },
+ {
+  "k": "Slot {0} is empty; the closest is slot {1}.",
+  "w": "03-engine.js:1341"
+ },
+ {
+  "k": "Empty market slot",
+  "w": "03-engine.js:1345"
+ },
+ {
+  "k": "Slot {0} is empty. Slots {1} are equally close: choose one.",
+  "w": "03-engine.js:1345"
+ },
+ {
+  "k": "Slot {0} is empty; {1} takes from slot {2}.",
+  "w": "03-engine.js:1350"
+ },
+ {
+  "k": "{0} rolls the market die: <b>{1}</b> ({2}).",
+  "w": "03-engine.js:1356"
+ },
+ {
+  "k": "Market die",
+  "w": "03-engine.js:1362"
+ },
+ {
+  "k": "The die shows <b>{0}</b>: {1}. Take it, or re-roll for 2 coin (you have {2}).",
+  "w": "03-engine.js:1362"
+ },
+ {
+  "k": "Take it",
+  "w": "03-engine.js:1363"
+ },
+ {
+  "k": "{0} pays 2 coin to re-roll.",
+  "w": "03-engine.js:1374"
+ },
+ {
+  "k": "The market is empty at that level.",
+  "w": "03-engine.js:1392"
+ },
+ {
+  "k": "{0} has no arms to hold the {1}.",
+  "w": "03-engine.js:1398"
+ },
+ {
+  "k": "{0} equips <b>{1}</b> ({2}) in the {3} hand.",
+  "w": "03-engine.js:1405"
+ },
+ {
+  "k": "New weapon: {0}",
+  "w": "03-engine.js:1412"
+ },
+ {
+  "k": "{0}. Both hands are full. Swap one out (it drops at your feet), or leave the new one.",
+  "w": "03-engine.js:1412"
+ },
+ {
+  "k": "Replace {0}: {1}",
+  "w": "03-engine.js:1413"
+ },
+ {
+  "k": "Leave it",
+  "w": "03-engine.js:1417"
+ },
+ {
+  "k": "{0} swaps {1} for <b>{2}</b>.",
+  "w": "03-engine.js:1425"
+ },
+ {
+  "k": "control 1 NPC each Resolve",
+  "w": "03-engine.js:1432"
+ },
+ {
+  "k": "occupies this slot",
+  "w": "03-engine.js:1433"
+ },
+ {
+  "k": "absorb {0} · {1} use{2} left · no attack",
+  "w": "03-engine.js:1434"
+ },
+ {
+  "k": "· ammo {0}",
+  "w": "03-engine.js:1436"
+ },
+ {
+  "k": "· absorb {0} · {1} uses",
+  "w": "03-engine.js:1437"
+ },
+ {
+  "k": "· throw P{0} R{1} ×{2}",
+  "w": "03-engine.js:1438"
+ },
+ {
+  "k": "· {0} use{1} left",
+  "w": "03-engine.js:1439"
+ },
+ {
+  "k": "· both attacks",
+  "w": "03-engine.js:1440"
+ },
+ {
+  "k": "· soul steal {0}",
+  "w": "03-engine.js:1441"
+ },
+ {
+  "k": "· +{0} CF per hit",
+  "w": "03-engine.js:1442"
+ },
+ {
+  "k": "No level {0} {1} remain.",
+  "w": "03-engine.js:1455"
+ },
+ {
+  "k": "Level {0} {1}",
+  "w": "03-engine.js:1459"
+ },
+ {
+  "k": "Play Minerva's Push",
+  "w": "04-rules.js:101"
+ },
+ {
+  "k": "step 1 tile and dodge all of it",
+  "w": "04-rules.js:102"
+ },
+ {
+  "k": "Play Fidelis Constans",
+  "w": "04-rules.js:107"
+ },
+ {
+  "k": "remove 1 hit die → {0} damage",
+  "w": "04-rules.js:108"
+ },
+ {
+  "k": "Take the hit",
+  "w": "04-rules.js:113"
+ },
+ {
+  "k": "Incoming attack",
+  "w": "04-rules.js:117"
+ },
+ {
+  "k": "{0} will deal <b>{1}</b> damage to your {2} ({3} AP, {4} HP).",
+  "w": "04-rules.js:117"
+ },
+ {
+  "k": "dodged!",
+  "w": "04-rules.js:120"
+ },
+ {
+  "k": "{0} plays <b>Minerva's Push</b> and dodges the attack!",
+  "w": "04-rules.js:124"
+ },
+ {
+  "k": "{0} plays <b>Fidelis Constans</b>: one hit die removed.",
+  "w": "04-rules.js:131"
+ },
+ {
+  "k": "Minerva's Push",
+  "w": "04-rules.js:150"
+ },
+ {
+  "k": "{0} from {1}",
+  "w": "04-rules.js:152"
+ },
+ {
+  "k": "Stay put",
+  "w": "04-rules.js:158"
+ },
+ {
+  "k": "{0} steps to {1}.",
+  "w": "04-rules.js:170"
+ },
+ {
+  "k": "Focus!",
+  "w": "04-rules.js:191"
+ },
+ {
+  "k": "Choose where to strike {0}. 💡 The gold one is the quickest way to put them down.",
+  "w": "04-rules.js:191"
+ },
+ {
+  "k": "AP {0} · HP {1}{2}",
+  "w": "04-rules.js:193"
+ },
+ {
+  "k": "· the fastest finish",
+  "w": "04-rules.js:193"
+ },
+ {
+  "k": "{0} focuses: the location die shows {1}.",
+  "w": "04-rules.js:200"
+ },
+ {
+  "k": "🎯 Focus roll",
+  "w": "04-rules.js:206"
+ },
+ {
+  "k": "The location die was rolled three times for <b>{0}</b>:",
+  "w": "04-rules.js:206"
+ },
+ {
+  "k": "Pick one result to strike. 💡 The gold one is the quickest way to put {0} down.",
+  "w": "04-rules.js:206"
+ },
+ {
+  "k": "AP {0} · HP {1}{2}{3}",
+  "w": "04-rules.js:208"
+ },
+ {
+  "k": "· a vital spot",
+  "w": "04-rules.js:208"
+ },
+ {
+  "k": "throws the {0}",
+  "w": "04-rules.js:231"
+ },
+ {
+  "k": "attacks with {0}",
+  "w": "04-rules.js:231"
+ },
+ {
+  "k": "the pot on {0}",
+  "w": "04-rules.js:232"
+ },
+ {
+  "k": "Omnia Mutantur",
+  "w": "04-rules.js:237"
+ },
+ {
+  "k": "You rolled {0} of {1} hits against {2}. Turn misses into hits?",
+  "w": "04-rules.js:237"
+ },
+ {
+  "k": "{0} {1} at {2} {3} {4}×{5}{6} = {7}",
+  "w": "04-rules.js:260"
+ },
+ {
+  "k": "{0} → the {1}'s pillar ({2} of 12 HP left).",
+  "w": "04-rules.js:267"
+ },
+ {
+  "k": "— the chains snap.",
+  "w": "04-rules.js:271"
+ },
+ {
+  "k": "{0} — the pot holds (needs 2).",
+  "w": "04-rules.js:274"
+ },
+ {
+  "k": "{0} — a focused Arcuballista bolt to Tholo's head!",
+  "w": "04-rules.js:281"
+ },
+ {
+  "k": "Headshot",
+  "w": "04-rules.js:282"
+ },
+ {
+  "k": "— dodged.",
+  "w": "04-rules.js:298"
+ },
+ {
+  "k": "The {0} falls apart after its last use.",
+  "w": "04-rules.js:319"
+ },
+ {
+  "k": "The {0} is worn out.",
+  "w": "04-rules.js:326"
+ },
+ {
+  "k": "{0}'s soul steal",
+  "w": "04-rules.js:329"
+ },
+ {
+  "k": "{0} gains {1} CF from the crowd ({2}).",
+  "w": "04-rules.js:333"
+ },
+ {
+  "k": "The {0} lands on {1} ({2} throw{3} left).",
+  "w": "04-rules.js:353"
+ },
+ {
+  "k": "The {0} is spent.",
+  "w": "04-rules.js:354"
+ },
+ {
+  "k": "broke their truce",
+  "w": "04-rules.js:363"
+ },
+ {
+  "k": "{0} breaks the truce with {1}!",
+  "w": "04-rules.js:364"
+ },
+ {
+  "k": "Traitor! The gods saw that.",
+  "w": "04-rules.js:365"
+ },
+ {
+  "k": "So much for Roman honor.",
+  "w": "04-rules.js:365"
+ },
+ {
+  "k": "I will remember this,",
+  "w": "04-rules.js:365"
+ },
+ {
+  "k": "Tholo scoops up the Arena Chest!",
+  "w": "04-rules.js:441"
+ },
+ {
+  "k": "{0} struggles in the net.",
+  "w": "04-rules.js:472"
+ },
+ {
+  "k": "{0} circles {1} but the Ward holds it back.",
+  "w": "04-rules.js:478"
+ },
+ {
+  "k": "{0}{1} attacks {2} {3}×{4} = {5}",
+  "w": "04-rules.js:494"
+ },
+ {
+  "k": "{0} ({1}'s) attacks {2} {3}×{4} = {5}",
+  "w": "04-rules.js:534"
+ },
+ {
+  "k": "at a Blessings pot — it shatters!",
+  "w": "04-rules.js:538"
+ },
+ {
+  "k": "at a Blessings pot — it holds.",
+  "w": "04-rules.js:540"
+ },
+ {
+  "k": "{0} counter-attacks {1} = {2}",
+  "w": "04-rules.js:550"
+ },
+ {
+  "k": "{0}'s {1} is lost.",
+  "w": "04-rules.js:551"
+ },
+ {
+  "k": "set a beast on them",
+  "w": "04-rules.js:565"
+ },
+ {
+  "k": "Lyre of Orpheus",
+  "w": "04-rules.js:598"
+ },
+ {
+  "k": "Serenade one beast and lead it toward your starting tile {0}. Two captures let you exit. Step off your starting tile so the beast can reach it.",
+  "w": "04-rules.js:598"
+ },
+ {
+  "k": "no path",
+  "w": "04-rules.js:600"
+ },
+ {
+  "k": "moves away",
+  "w": "04-rules.js:600"
+ },
+ {
+  "k": "Skip",
+  "w": "04-rules.js:603"
+ },
+ {
+  "k": "{0} plays the Lyre. {1} follows the music.",
+  "w": "04-rules.js:611"
+ },
+ {
+  "k": "{0} captures {1}! ({2} of 2)",
+  "w": "04-rules.js:619"
+ },
+ {
+  "k": "The first capture is made. Both lions are released!",
+  "w": "04-rules.js:622"
+ },
+ {
+  "k": "— their tamed beast struck it",
+  "w": "04-rules.js:640"
+ },
+ {
+  "k": "— the card sends it",
+  "w": "04-rules.js:641"
+ },
+ {
+  "k": "{0} turns its aggro from {1} to {2}{3}.",
+  "w": "04-rules.js:645"
+ },
+ {
+  "k": "{0} is now aggro on {1}{2}.",
+  "w": "04-rules.js:645"
+ },
+ {
+  "k": "The crowd pelts {0} with a stone",
+  "w": "04-rules.js:670"
+ },
+ {
+  "k": "The Calydonian Boar charges {0} (rolled {1}, odd)",
+  "w": "04-rules.js:677"
+ },
+ {
+  "k": "{0} rolls {1} and leaps clear of the Calydonian Boar.",
+  "w": "04-rules.js:678"
+ },
+ {
+  "k": "The Calydonian Boar is driven back into the hypogeum.",
+  "w": "04-rules.js:681"
+ },
+ {
+  "k": "Phase 1 · Resolve: no beasts stir.",
+  "w": "04-rules.js:705"
+ },
+ {
+  "k": "Phase 1 · Resolve: {0} {1}.",
+  "w": "04-rules.js:705"
+ },
+ {
+  "k": "lashes out in reach",
+  "w": "04-rules.js:707"
+ },
+ {
+  "k": "within reach",
+  "w": "04-rules.js:708"
+ },
+ {
+  "k": "Mandata Flavi!",
+  "w": "04-rules.js:768"
+ },
+ {
+  "k": "{0} reveals a Mandata Flavi: <b>{1}</b>. {2} Reward: {3}.",
+  "w": "04-rules.js:771"
+ },
+ {
+  "k": "📜 Revealed",
+  "w": "04-rules.js:772"
+ },
+ {
+  "k": "The crowd offers a generous applause.",
+  "w": "04-rules.js:773"
+ },
+ {
+  "k": "{0} faces the crowd: “{1}”",
+  "w": "04-rules.js:782"
+ },
+ {
+  "k": "The market has no weapons left to trade for.",
+  "w": "04-rules.js:798"
+ },
+ {
+  "k": "Limb Justice",
+  "w": "04-rules.js:803"
+ },
+ {
+  "k": "LV{0} · {1}",
+  "w": "04-rules.js:805"
+ },
+ {
+  "k": "{0} hands over the {1}.",
+  "w": "04-rules.js:816"
+ },
+ {
+  "k": "{0} is taken from the market.",
+  "w": "04-rules.js:823"
+ },
+ {
+  "k": "The arena deck is empty.",
+  "w": "04-rules.js:828"
+ },
+ {
+  "k": "🂠 Drawn",
+  "w": "04-rules.js:838"
+ },
+ {
+  "k": "{0} reveals <b>{1}</b>: {2}",
+  "w": "04-rules.js:840"
+ },
+ {
+  "k": "No {0} is in the arena. The Piaculum is discarded.",
+  "w": "04-rules.js:845"
+ },
+ {
+  "k": "Everyone pays the {0}: {1} collects {2} coin.",
+  "w": "04-rules.js:855"
+ },
+ {
+  "k": "{0} pays {1} {2} coin.",
+  "w": "04-rules.js:862"
+ },
+ {
+  "k": "{0}'s {1} armor falls away (0 AP).",
+  "w": "04-rules.js:870"
+ },
+ {
+  "k": "There was no armor there to lose.",
+  "w": "04-rules.js:871"
+ },
+ {
+  "k": "{0} draws <b>Wealth of Saturn</b>: +{1} coin.",
+  "w": "04-rules.js:881"
+ },
+ {
+  "k": "{0}'s {1} falls apart and is discarded.",
+  "w": "04-rules.js:892"
+ },
+ {
+  "k": "Cheap Capuan steel!",
+  "w": "04-rules.js:893"
+ },
+ {
+  "k": "Of course it breaks now.",
+  "w": "04-rules.js:893"
+ },
+ {
+  "k": "Nothing in that hand to lose.",
+  "w": "04-rules.js:894"
+ },
+ {
+  "k": "All bad fortune is conquered by endurance.",
+  "w": "04-rules.js:900"
+ },
+ {
+  "k": "{0} draws <b>Speed of Mercury</b>: +{1} movement this turn.",
+  "w": "04-rules.js:905"
+ },
+ {
+  "k": "{0} draws <b>Speed of Mercury</b> (active): +1 movement for the rest of the round.",
+  "w": "04-rules.js:909"
+ },
+ {
+  "k": "{0} is gone or tamed: {1} gains 2 CF instead.",
+  "w": "04-rules.js:918"
+ },
+ {
+  "k": "{0} draws <b>Flavius Telonium</b> and pays {1} coin in tax.",
+  "w": "04-rules.js:935"
+ },
+ {
+  "k": "An offering lands on {0}.",
+  "w": "04-rules.js:947"
+ },
+ {
+  "k": "{0} draws another arena card.",
+  "w": "04-rules.js:950"
+ },
+ {
+  "k": "Lashings",
+  "w": "04-rules.js:959"
+ },
+ {
+  "k": "Flavius Rule",
+  "w": "04-rules.js:982"
+ },
+ {
+  "k": "4 hit dice · attackers choose the location",
+  "w": "04-rules.js:982"
+ },
+ {
+  "k": "Flavius Rule is in play: every attack now rolls 4 hit dice and the attacker chooses the hit location.",
+  "w": "04-rules.js:983"
+ },
+ {
+  "k": "{0} draws <b>{1}</b> ({2}) and keeps it in hand.",
+  "w": "04-rules.js:1021"
+ },
+ {
+  "k": "{0} · {1} HP{2}",
+  "w": "04-rules.js:1036"
+ },
+ {
+  "k": "· tamed by",
+  "w": "04-rules.js:1036"
+ },
+ {
+  "k": "a Health Elixir",
+  "w": "04-rules.js:1052"
+ },
+ {
+  "k": "{0} declares Speed of Mercury: +{1} movement.",
+  "w": "04-rules.js:1069"
+ },
+ {
+  "k": "Crowd Favor is locked",
+  "w": "04-rules.js:1072"
+ },
+ {
+  "k": "{0} trades the Golden Eagle to the crowd for 5 CF. It respawns atop a pillar.",
+  "w": "04-rules.js:1079"
+ },
+ {
+  "k": "Nothing to regrow",
+  "w": "04-rules.js:1099"
+ },
+ {
+  "k": "Blessings of Hygeia",
+  "w": "04-rules.js:1105"
+ },
+ {
+  "k": "{0}'s {1} regrows (4 HP).",
+  "w": "04-rules.js:1111"
+ },
+ {
+  "k": "{0} declares the Ward of the Evil Eye.",
+  "w": "04-rules.js:1116"
+ },
+ {
+  "k": "Meat Lure",
+  "w": "04-rules.js:1124"
+ },
+ {
+  "k": "Choose the NPC to lure.",
+  "w": "04-rules.js:1124"
+ },
+ {
+  "k": "Throw the lure at which gladiator (within 4 tiles)? {0} will hunt them.",
+  "w": "04-rules.js:1136"
+ },
+ {
+  "k": "{0} tiles from {1}",
+  "w": "04-rules.js:1138"
+ },
+ {
+  "k": "The tame bond between {0} and {1} is severed.",
+  "w": "04-rules.js:1144"
+ },
+ {
+  "k": "{0} throws a Meat Lure at {1}.",
+  "w": "04-rules.js:1146"
+ },
+ {
+  "k": "meat lure",
+  "w": "04-rules.js:1148"
+ },
+ {
+  "k": "Choose the beast to tame. Fazed beasts cannot be tamed.",
+  "w": "04-rules.js:1154"
+ },
+ {
+  "k": "{0} steals {1} from {2}!",
+  "w": "04-rules.js:1156"
+ },
+ {
+  "k": "{0} tames {1}. It obeys from their next Resolve phase.",
+  "w": "04-rules.js:1160"
+ },
+ {
+  "k": "{0} declares Focus! for their next attack.",
+  "w": "04-rules.js:1165"
+ },
+ {
+  "k": "{0} declares Herculean Vigor: +{1} damage if their next attack lands.",
+  "w": "04-rules.js:1174"
+ },
+ {
+  "k": "{0} declares % Off: market items cost 2 less this turn.",
+  "w": "04-rules.js:1178"
+ },
+ {
+  "k": "{0} declares Choose: market purchases this turn are chosen, not rolled.",
+  "w": "04-rules.js:1182"
+ },
+ {
+  "k": "Replenish all ammo",
+  "w": "04-rules.js:1200"
+ },
+ {
+  "k": "Exchange 2 Ammo cards",
+  "w": "04-rules.js:1205"
+ },
+ {
+  "k": "for any available ammo weapon",
+  "w": "04-rules.js:1206"
+ },
+ {
+  "k": "Ammo",
+  "w": "04-rules.js:1210"
+ },
+ {
+  "k": "{0} replenishes {1}.",
+  "w": "04-rules.js:1225"
+ },
+ {
+  "k": "Ammo exchange",
+  "w": "04-rules.js:1230"
+ },
+ {
+  "k": "{0} exchanges two Ammo cards for the {1}.",
+  "w": "04-rules.js:1243"
+ },
+ {
+  "k": "Arena Key",
+  "w": "04-rules.js:1279"
+ },
+ {
+  "k": "the Arena Chest",
+  "w": "04-rules.js:1300"
+ },
+ {
+  "k": "{0} snatches up {1}. His movement is halved while carrying.",
+  "w": "04-rules.js:1342"
+ },
+ {
+  "k": "{0} drops the Arena Chest {1}.",
+  "w": "04-rules.js:1354"
+ },
+ {
+  "k": "'s feet",
+  "w": "04-rules.js:1354"
+ },
+ {
+  "k": "{0} delivers {1} to {2}.",
+  "w": "04-rules.js:1358"
+ },
+ {
+  "k": "{0} drops {1} on {2}.",
+  "w": "04-rules.js:1387"
+ },
+ {
+  "k": "starting purse",
+  "w": "05-flow.js:109"
+ },
+ {
+  "k": "The dice are cast from seed <b>{0}</b> — enter it under Options → Dice seed to replay these exact rolls.",
+  "w": "05-flow.js:280"
+ },
+ {
+  "k": "🎲 Seed {0} with this setup has been fought before — the same crowd, sky and news return for the replay.",
+  "w": "05-flow.js:339"
+ },
+ {
+  "k": "{0} festival · event {1} of 3.",
+  "w": "05-flow.js:377"
+ },
+ {
+  "k": "Missio of {0} · step {1} of 5: {2}",
+  "w": "05-flow.js:378"
+ },
+ {
+  "k": "Roma",
+  "w": "05-flow.js:384"
+ },
+ {
+  "k": "{0} at {1}. The horns sound.",
+  "w": "05-flow.js:385"
+ },
+ {
+  "k": "<i>The pompa winds once around the sand — musicians, priests, and the fighters behind them. The editor rises. The herald fills his lungs:</i>",
+  "w": "05-flow.js:387"
+ },
+ {
+  "k": "“Citizens of {0}! By the generosity of the editor, <b>FLAVIUS</b>, we present {1}{2}! {3}!”",
+  "w": "05-flow.js:388"
+ },
+ {
+  "k": "— a {0} bout",
+  "w": "05-flow.js:388"
+ },
+ {
+  "k": "One brave soul enters the sand alone",
+  "w": "05-flow.js:388"
+ },
+ {
+  "k": "{0} shall enter the sand",
+  "w": "05-flow.js:388"
+ },
+ {
+  "k": "Two",
+  "w": "05-flow.js:388"
+ },
+ {
+  "k": "Three",
+  "w": "05-flow.js:388"
+ },
+ {
+  "k": "Four",
+  "w": "05-flow.js:388"
+ },
+ {
+  "k": "Five",
+  "w": "05-flow.js:388"
+ },
+ {
+  "k": "Six",
+  "w": "05-flow.js:388"
+ },
+ {
+  "k": "Seven",
+  "w": "05-flow.js:388"
+ },
+ {
+  "k": "Eight",
+  "w": "05-flow.js:388"
+ },
+ {
+  "k": "The roll is called: {0}.",
+  "w": "05-flow.js:389"
+ },
+ {
+  "k": "{0} the {1}",
+  "w": "05-flow.js:389"
+ },
+ {
+  "k": "<i>The empire turns out: <b>{0}K</b> spectators in the stands — {1}{2}.</i>",
+  "w": "05-flow.js:390"
+ },
+ {
+  "k": ", swayed by {0}",
+  "w": "05-flow.js:390"
+ },
+ {
+  "k": "<b>{0}</b> {1} Rounds: {2}.",
+  "w": "05-flow.js:391"
+ },
+ {
+  "k": "{0} and {1} enter under one banner — sworn to a truce, until {2} decides otherwise.",
+  "w": "05-flow.js:426"
+ },
+ {
+  "k": "carried in",
+  "w": "05-flow.js:440"
+ },
+ {
+  "k": "{0} carries {1} CF into this event.",
+  "w": "05-flow.js:442"
+ },
+ {
+  "k": "home crowd",
+  "w": "05-flow.js:445"
+ },
+ {
+  "k": "{0} fights at home for {1}: the stands roar (+2 CF).",
+  "w": "05-flow.js:447"
+ },
+ {
+  "k": "{0} carries a festival boon: a {1}.",
+  "w": "05-flow.js:454"
+ },
+ {
+  "k": "{0} enters without a {1} (missio limb persistence).",
+  "w": "05-flow.js:461"
+ },
+ {
+  "k": "{0} discards their helm to start.",
+  "w": "05-flow.js:465"
+ },
+ {
+  "k": "training boost",
+  "w": "05-flow.js:472"
+ },
+ {
+  "k": "+{0} AP (training)",
+  "w": "05-flow.js:474"
+ },
+ {
+  "k": "Each gladiator is secretly handed a Mandata Flavi.",
+  "w": "05-flow.js:500"
+ },
+ {
+  "k": "The Lyres of Orpheus are locked in the Arena Chest. Three offerings are scattered in the sand.",
+  "w": "05-flow.js:508"
+ },
+ {
+  "k": "A Golden Eagle waits on the center tile. Three items and two Arena Keys are scattered in the sand.",
+  "w": "05-flow.js:520"
+ },
+ {
+  "k": "Both lions prowl the arena. Two Arena Keys lie in the sand.",
+  "w": "05-flow.js:529"
+ },
+ {
+  "k": "🎲 The lots are drawn: Team {0} takes the first turn.",
+  "w": "05-flow.js:535"
+ },
+ {
+  "k": "the {0} modifier",
+  "w": "05-flow.js:573"
+ },
+ {
+  "k": "the {0} modifier (+{1} AP)",
+  "w": "05-flow.js:573"
+ },
+ {
+  "k": "location modifier",
+  "w": "05-flow.js:574"
+ },
+ {
+  "k": "{0} starts with +{1} CF ({2}).",
+  "w": "05-flow.js:576"
+ },
+ {
+  "k": "{0} loses {1} coin ({2}).",
+  "w": "05-flow.js:579"
+ },
+ {
+  "k": "{0} modifier",
+  "w": "05-flow.js:582"
+ },
+ {
+  "k": "{0} starts without a shield.",
+  "w": "05-flow.js:587"
+ },
+ {
+  "k": "{0} starts without the Cestus.",
+  "w": "05-flow.js:596"
+ },
+ {
+  "k": "{0} starts without the Rudis.",
+  "w": "05-flow.js:599"
+ },
+ {
+  "k": "{0} cannot call Zora in this event.",
+  "w": "05-flow.js:602"
+ },
+ {
+  "k": "{0} starts with one arm.",
+  "w": "05-flow.js:607"
+ },
+ {
+  "k": "{0} starts with one leg.",
+  "w": "05-flow.js:612"
+ },
+ {
+  "k": "Snake draft: {0}. Each pick offers a random {1} of the remaining level 1-3 weapons and armor.",
+  "w": "05-flow.js:640"
+ },
+ {
+  "k": "{0} {1} picks",
+  "w": "05-flow.js:640"
+ },
+ {
+  "k": "taken by {0}",
+  "w": "05-flow.js:659"
+ },
+ {
+  "k": "LV{0} · {1}{2}",
+  "w": "05-flow.js:670"
+ },
+ {
+  "k": "· above your draft level",
+  "w": "05-flow.js:670"
+ },
+ {
+  "k": "· not offered this pick",
+  "w": "05-flow.js:670"
+ },
+ {
+  "k": "Draft · {0} · pick {1} of {2}",
+  "w": "05-flow.js:677"
+ },
+ {
+  "k": "Choose one weapon or armor from the <b style=\"color:var(--gold2)\">{0} offered</b> this pick (gold borders). Picks already taken show the drafter's color. Weapons go to a free hand; armor equips straight away.",
+  "w": "05-flow.js:677"
+ },
+ {
+  "k": "{0} drafts <b>{1}</b>.",
+  "w": "05-flow.js:684"
+ },
+ {
+  "k": "Juggernaut card {0} of 5",
+  "w": "05-flow.js:695"
+ },
+ {
+  "k": "{0} chooses 5 declare cards.",
+  "w": "05-flow.js:703"
+ },
+ {
+  "k": "{0}{1}{2}{3} · {4} AP{5}{6}{7}",
+  "w": "05-flow.js:710"
+ },
+ {
+  "k": "A gladiator fell before Commodus did. {0} laughs, and everyone loses.",
+  "w": "05-flow.js:732"
+ },
+ {
+  "k": "No gladiator survives.",
+  "w": "05-flow.js:737"
+ },
+ {
+  "k": "Last gladiator standing.",
+  "w": "05-flow.js:745"
+ },
+ {
+  "k": "a gladiator has fallen",
+  "w": "05-flow.js:749"
+ },
+ {
+  "k": "two beasts are slain",
+  "w": "05-flow.js:749"
+ },
+ {
+  "k": "four beasts are slain",
+  "w": "05-flow.js:749"
+ },
+ {
+  "k": "fourteen rotations have passed",
+  "w": "05-flow.js:749"
+ },
+ {
+  "k": "two gladiators remain",
+  "w": "05-flow.js:758"
+ },
+ {
+  "k": "Every beast in the Gauntlet is slain.",
+  "w": "05-flow.js:768"
+ },
+ {
+  "k": "The first gladiator has fallen. The highest Crowd Favor takes the Triumviratus.",
+  "w": "05-flow.js:774"
+ },
+ {
+  "k": "Last team standing.",
+  "w": "05-flow.js:779"
+ },
+ {
+  "k": "twenty turn rotations have passed",
+  "w": "05-flow.js:786"
+ },
+ {
+  "k": "ten turn rotations have passed",
+  "w": "05-flow.js:794"
+ },
+ {
+  "k": "a lion has fallen",
+  "w": "05-flow.js:801"
+ },
+ {
+  "k": "Commodus is dethroned!",
+  "w": "05-flow.js:806"
+ },
+ {
+  "k": "First to complete three laps!",
+  "w": "05-flow.js:810"
+ },
+ {
+  "k": "Last racer standing.",
+  "w": "05-flow.js:811"
+ },
+ {
+  "k": "two gladiators have exited",
+  "w": "05-flow.js:819"
+ },
+ {
+  "k": "{0} grows impatient and waves {1} through to the Duel Finale ({2} capture{3}).",
+  "w": "05-flow.js:829"
+ },
+ {
+  "k": "{0} ended the capture round",
+  "w": "05-flow.js:834"
+ },
+ {
+  "k": "Only one gladiator remained for the Duel Finale.",
+  "w": "05-flow.js:839"
+ },
+ {
+  "k": "Only one gladiator escaped the Capture round.",
+  "w": "05-flow.js:844"
+ },
+ {
+  "k": "No one escaped.",
+  "w": "05-flow.js:844"
+ },
+ {
+  "k": "There are not enough beasts left to capture. Every gladiator still in the arena is eliminated.",
+  "w": "05-flow.js:850"
+ },
+ {
+  "k": "Team {0} captured three eagles and exited first.",
+  "w": "05-flow.js:863"
+ },
+ {
+  "k": "{0}. The highest Crowd Favor still standing takes the event.",
+  "w": "05-flow.js:874"
+ },
+ {
+  "k": "{0}: the highest Crowd Favor wins.",
+  "w": "05-flow.js:877"
+ },
+ {
+  "k": "{0} ends: {1}.",
+  "w": "05-flow.js:897"
+ },
+ {
+  "k": "round rewards",
+  "w": "05-flow.js:902"
+ },
+ {
+  "k": "Survivors receive {0} coin and {1} CF.",
+  "w": "05-flow.js:906"
+ },
+ {
+  "k": "Each survivor draws {0} of the set-aside arena cards.",
+  "w": "05-flow.js:910"
+ },
+ {
+  "k": "{0} receives an offering: {1} ({2}).",
+  "w": "05-flow.js:922"
+ },
+ {
+  "k": "Reward for {0}",
+  "w": "05-flow.js:939"
+ },
+ {
+  "k": "{0} did not earn enough favor and is removed from the Ludus.",
+  "w": "05-flow.js:962"
+ },
+ {
+  "k": "{0} failed to exit and is eliminated.",
+  "w": "05-flow.js:968"
+ },
+ {
+  "k": "{0}: choose your beast",
+  "w": "05-flow.js:979"
+ },
+ {
+  "k": "{0} enters the Duel Finale with {1}.",
+  "w": "05-flow.js:990"
+ },
+ {
+  "k": "no abilities",
+  "w": "05-flow.js:1004"
+ },
+ {
+  "k": "Round {0} · {1}",
+  "w": "05-flow.js:1005"
+ },
+ {
+  "k": "The zone shrinks to {0}×{1}",
+  "w": "05-flow.js:1005"
+ },
+ {
+  "k": "🚫 This round: <b>{0}</b>.{1}",
+  "w": "05-flow.js:1006"
+ },
+ {
+  "k": "Crowd Favor still counts — it just cannot be spent.",
+  "w": "05-flow.js:1006"
+ },
+ {
+  "k": "Round {0} · {1}. {2} {3}",
+  "w": "05-flow.js:1008"
+ },
+ {
+  "k": "The zone shrinks to {0}×{1}. Two turns of grace to get inside.",
+  "w": "05-flow.js:1008"
+ },
+ {
+  "k": "PvP is allowed.",
+  "w": "05-flow.js:1008"
+ },
+ {
+  "k": "No PvP.",
+  "w": "05-flow.js:1008"
+ },
+ {
+  "k": "The bout was stopped; the highest Crowd Favor takes it.",
+  "w": "05-flow.js:1062"
+ },
+ {
+  "k": "The sand-glass runs out",
+  "w": "05-flow.js:1066"
+ },
+ {
+  "k": "{0}'s turn · {1}, rotation {2}",
+  "w": "05-flow.js:1068"
+ },
+ {
+  "k": "{0} rolls {1}: Telemachus is dragged out of the arena. Attacks resume!",
+  "w": "05-flow.js:1081"
+ },
+ {
+  "k": "{0} rolls {1}: Telemachus still stands between the gladiators. No attacks.",
+  "w": "05-flow.js:1082"
+ },
+ {
+  "k": "Phase 1 · Movement: {0} · lap {1}/3.",
+  "w": "05-flow.js:1087"
+ },
+ {
+  "k": "on foot",
+  "w": "05-flow.js:1087"
+ },
+ {
+  "k": "{0} emerges from the tunnel; all aggro is shaken off.",
+  "w": "05-flow.js:1107"
+ },
+ {
+  "k": "Phase 2 · Choice: there is no purse-filling in the Gauntlet — the editor paid for blood, not loitering.",
+  "w": "05-flow.js:1171"
+ },
+ {
+  "k": "Phase 2 choices",
+  "w": "05-flow.js:1175"
+ },
+ {
+  "k": "Phase 2 · Choice: {0} takes 2 coin.",
+  "w": "05-flow.js:1176"
+ },
+ {
+  "k": "Phase 2 · Choice: {0} draws an arena card.",
+  "w": "05-flow.js:1178"
+ },
+ {
+  "k": "{0} is lashed and must end the turn.",
+  "w": "05-flow.js:1192"
+ },
+ {
+  "k": "{0} is swimming: −1 movement and −1 weapon range.",
+  "w": "05-flow.js:1196"
+ },
+ {
+  "k": "{0} is tangled in a net and cannot move this turn.",
+  "w": "05-flow.js:1198"
+ },
+ {
+  "k": "class ability",
+  "w": "05-flow.js:1203"
+ },
+ {
+  "k": "{0} collects {1} coin (class ability).",
+  "w": "05-flow.js:1204"
+ },
+ {
+  "k": "{0} earns {1} CF (class ability).",
+  "w": "05-flow.js:1209"
+ },
+ {
+  "k": "{0} takes {1} CF (Lanista).",
+  "w": "05-flow.js:1215"
+ },
+ {
+  "k": "{0} takes {1} coin (Lanista).",
+  "w": "05-flow.js:1219"
+ },
+ {
+  "k": "{0} gathers {1} ({2} in the sling).",
+  "w": "05-flow.js:1228"
+ },
+ {
+  "k": "a stone",
+  "w": "05-flow.js:1228"
+ },
+ {
+  "k": "outside the zone",
+  "w": "05-flow.js:1244"
+ },
+ {
+  "k": "{0} ends outside the zone: −2 CF (now {1}).",
+  "w": "05-flow.js:1246"
+ },
+ {
+  "k": "{0}'s crowd favor turns negative.",
+  "w": "05-flow.js:1248"
+ },
+ {
+  "k": "Hand limit",
+  "w": "05-flow.js:1261"
+ },
+ {
+  "k": "{0} discards {1} (hand limit).",
+  "w": "05-flow.js:1268"
+ },
+ {
+  "k": "{0} made no attack. The crowd grows restless and stones every gladiator!",
+  "w": "05-flow.js:1274"
+ },
+ {
+  "k": "Stones from the restless crowd",
+  "w": "05-flow.js:1278"
+ },
+ {
+  "k": "The crowd settles. The Crowd Grows Restless is discarded.",
+  "w": "05-flow.js:1282"
+ },
+ {
+  "k": "Three rotations without blood. <b>The editor's lash</b>: the handlers whip {0} back toward the beasts (1 damage).",
+  "w": "05-flow.js:1326"
+ },
+ {
+  "k": "The editor's lash",
+  "w": "05-flow.js:1329"
+ },
+ {
+  "k": "Six rotations without blood. <b>The crowd grows restless</b> on its own: for the next 4 turns, a gladiator who does not attack gets everyone stoned.",
+  "w": "05-flow.js:1339"
+ },
+ {
+  "k": "The sun is setting and {0} rises from the box. <b>The editor calls the event.</b> Whatever still prowls the sand is led away by the handlers.",
+  "w": "05-flow.js:1355"
+ },
+ {
+  "k": "{0} holds the most Crowd Favor as the editor calls time.",
+  "w": "05-flow.js:1356"
+ },
+ {
+  "k": "The editor calls time on an empty arena.",
+  "w": "05-flow.js:1356"
+ },
+ {
+  "k": "{0} fits a spare {1} ({2} HP) to their chariot.",
+  "w": "05-flow.js:1418"
+ },
+ {
+  "k": "{0} harnesses {1} to their chariot.",
+  "w": "05-flow.js:1423"
+ },
+ {
+  "k": "a spare horse",
+  "w": "05-flow.js:1423"
+ },
+ {
+  "k": "{0} shoves the pillar to {1}{2}.",
+  "w": "05-flow.js:1460"
+ },
+ {
+  "k": ", sealing the tunnel",
+  "w": "05-flow.js:1460"
+ },
+ {
+  "k": "{0} pushes {1} to {2}.",
+  "w": "05-flow.js:1464"
+ },
+ {
+  "k": "Pushed onto a floor spike",
+  "w": "05-flow.js:1475"
+ },
+ {
+  "k": "CRASH!",
+  "w": "05-flow.js:1511"
+ },
+ {
+  "k": "{0} topples the pillar at {1}!",
+  "w": "05-flow.js:1514"
+ },
+ {
+  "k": "Falling pillar",
+  "w": "05-flow.js:1528"
+ },
+ {
+  "k": "dropped a pillar on them",
+  "w": "05-flow.js:1529"
+ },
+ {
+  "k": "{0} uses an Arena Key and vanishes underground, surfacing at {1} next turn.",
+  "w": "05-flow.js:1561"
+ },
+ {
+  "k": "{0} unlocks the Arena Chest!",
+  "w": "05-flow.js:1580"
+ },
+ {
+  "k": "The chest respawns, locked, at {0}.",
+  "w": "05-flow.js:1591"
+ },
+ {
+  "k": "The chest is empty and leaves the arena.",
+  "w": "05-flow.js:1594"
+ },
+ {
+  "k": "from {0}{1} · {2}",
+  "w": "05-flow.js:1607"
+ },
+ {
+  "k": "'s corpse",
+  "w": "05-flow.js:1607"
+ },
+ {
+  "k": "from {0} · {1} AP",
+  "w": "05-flow.js:1615"
+ },
+ {
+  "k": "all of {0}'s coin",
+  "w": "05-flow.js:1622"
+ },
+ {
+  "k": "from {0} · {1}",
+  "w": "05-flow.js:1630"
+ },
+ {
+  "k": "lying in the sand · {0}",
+  "w": "05-flow.js:1638"
+ },
+ {
+  "k": "{0} picks up the {1}.",
+  "w": "05-flow.js:1647"
+ },
+ {
+  "k": "{0} loots the {1} from {2}.",
+  "w": "05-flow.js:1655"
+ },
+ {
+  "k": "{0} loots {1} ({2} AP) from {3}.",
+  "w": "05-flow.js:1660"
+ },
+ {
+  "k": "looting the fallen",
+  "w": "05-flow.js:1667"
+ },
+ {
+  "k": "{0} loots {1} coin from {2}.",
+  "w": "05-flow.js:1668"
+ },
+ {
+  "k": "{0} loots {1} from {2}.",
+  "w": "05-flow.js:1674"
+ },
+ {
+  "k": "1 Arena Key",
+  "w": "05-flow.js:1690"
+ },
+ {
+  "k": "{0} waves the pact away: {1}.",
+  "w": "05-flow.js:1744"
+ },
+ {
+  "k": "The editor",
+  "w": "05-flow.js:1744"
+ },
+ {
+  "k": "this is a lesson in fighting — the truce is broken",
+  "w": "05-flow.js:1744"
+ },
+ {
+  "k": "no truces are sworn again this event",
+  "w": "05-flow.js:1744"
+ },
+ {
+  "k": "👎 {0} breaks the truce — this lesson is about fighting.",
+  "w": "05-flow.js:1747"
+ },
+ {
+  "k": "👎 No truces are allowed any more this event.",
+  "w": "05-flow.js:1747"
+ },
+ {
+  "k": "{0} and {1} agree to a truce.",
+  "w": "05-flow.js:1761"
+ },
+ {
+  "k": "fair trade",
+  "w": "05-flow.js:1769"
+ },
+ {
+  "k": "{0} trades {1} to {2} for {3}.",
+  "w": "05-flow.js:1773"
+ },
+ {
+  "k": "a gift",
+  "w": "05-flow.js:1783"
+ },
+ {
+  "k": "{0} gives {1} to {2}{3}.",
+  "w": "05-flow.js:1785"
+ },
+ {
+  "k": "{0} exits the arena!",
+  "w": "05-flow.js:1846"
+ },
+ {
+  "k": "The truces are broken",
+  "w": "05-flow.js:1870"
+ },
+ {
+  "k": "The editor rises — the pacts are torn up",
+  "w": "05-flow.js:1870"
+ },
+ {
+  "k": "⚔ {0} rises and the truce-bound understand: <b>they tear up their pacts and fight on.</b> No truce may be sworn again this event.",
+  "w": "05-flow.js:1871"
+ },
+ {
+  "k": "{0} rises from the editor’s seat",
+  "w": "05-flow.js:1876"
+ },
+ {
+  "k": "Every gladiator still standing ({0}) is bound by truce — and the crowd did not pay to watch friendship.",
+  "w": "05-flow.js:1876"
+ },
+ {
+  "k": "<b>Break the truces and fight it out</b>, or let the thumb turn down on everyone.",
+  "w": "05-flow.js:1876"
+ },
+ {
+  "k": "Break them and no truce may be sworn again for the rest of this event.",
+  "w": "05-flow.js:1876"
+ },
+ {
+  "k": "⚔ Break the truces — fight on",
+  "w": "05-flow.js:1877"
+ },
+ {
+  "k": "👎 Accept the thumb",
+  "w": "05-flow.js:1881"
+ },
+ {
+  "k": "every survivor is executed",
+  "w": "05-flow.js:1882"
+ },
+ {
+  "k": "Fight on — no more pacts this event",
+  "w": "05-flow.js:1891"
+ },
+ {
+  "k": "⚔ The truces are torn up before {0}’s box. <b>No truce may be sworn again this event.</b> Fight on!",
+  "w": "05-flow.js:1892"
+ },
+ {
+  "k": "{0} turns the thumb down",
+  "w": "05-flow.js:1905"
+ },
+ {
+  "k": "Friendship is not a spectacle",
+  "w": "05-flow.js:1905"
+ },
+ {
+  "k": "<b>{0} rises from the editor’s seat.</b> Every gladiator left standing ({1}) is bound by truce — and the crowd did not pay to watch friendship. <b>His thumb turns down.</b> Each will meet a death drawn from the d12 of the Fates.",
+  "w": "05-flow.js:1906"
+ },
+ {
+  "k": "So it ends like this.",
+  "w": "05-flow.js:1907"
+ },
+ {
+  "k": "We should have fought.",
+  "w": "05-flow.js:1907"
+ },
+ {
+  "k": "Flavius has spoken.",
+  "w": "05-flow.js:1907"
+ },
+ {
+  "k": "Forgive me, friend.",
+  "w": "05-flow.js:1907"
+ },
+ {
+  "k": "<b>{0} rises from the editor’s seat.</b>",
+  "w": "05-flow.js:1908"
+ },
+ {
+  "k": "Every gladiator still standing ({0}) is bound by truce, so no one can win this {1}.",
+  "w": "05-flow.js:1908"
+ },
+ {
+  "k": "“The people did not come to watch friendship!” <b>The thumb turns down.</b> Each survivor is executed, their death drawn from the d12 of the Fates.",
+  "w": "05-flow.js:1908"
+ },
+ {
+  "k": "So be it",
+  "w": "05-flow.js:1909"
+ },
+ {
+  "k": "Everyone left standing was bound by truce. {0} turned the thumb down on them all.",
+  "w": "05-flow.js:1920"
+ },
+ {
+  "k": "Retire {0}?",
+  "w": "05-flow.js:1966"
+ },
+ {
+  "k": "Retiring walks your gladiator out of the arena for good. Their Fate is set to <b>0 CF (Ad Memoriae)</b>, they are eliminated from this event, and {0} is removed.",
+  "w": "05-flow.js:1966"
+ },
+ {
+  "k": "their saved record in the Ludus",
+  "w": "05-flow.js:1966"
+ },
+ {
+  "k": "any saved record or missio for them",
+  "w": "05-flow.js:1966"
+ },
+ {
+  "k": "Retire from the event",
+  "w": "05-flow.js:1967"
+ },
+ {
+  "k": "{0} lays down their weapons and retires from the event. Fate: 0 CF.",
+  "w": "05-flow.js:1977"
+ },
+ {
+  "k": "{0} ({1} HP, +{2} MV)",
+  "w": "05-flow.js:1989"
+ },
+ {
+  "k": "{0} ({1} HP)",
+  "w": "05-flow.js:1989"
+ },
+ {
+  "k": "{0} fits the spare {1} to their chariot.",
+  "w": "05-flow.js:1997"
+ },
+ {
+  "k": "Spare {0}",
+  "w": "05-flow.js:2002"
+ },
+ {
+  "k": "Your chariot already has a {0}. Swap it for this {1}? Your old {2} is left on this tile.",
+  "w": "05-flow.js:2002"
+ },
+ {
+  "k": "Swap",
+  "w": "05-flow.js:2003"
+ },
+ {
+  "k": "Keep mine",
+  "w": "05-flow.js:2007"
+ },
+ {
+  "k": "{0} swaps in the spare {1} and leaves their old {2} behind.",
+  "w": "05-flow.js:2014"
+ },
+ {
+  "k": "⏭ Sim to end?",
+  "w": "05-flow.js:2026"
+ },
+ {
+  "k": "Sim to end",
+  "w": "05-flow.js:2027"
+ },
+ {
+  "k": "Keep playing",
+  "w": "05-flow.js:2031"
+ },
+ {
+  "k": "⏭ The rest is simulated — the event snaps to its end.",
+  "w": "05-flow.js:2050"
+ },
+ {
+  "k": "Heals early, dodges, retreats and hides in tunnels when hurt",
+  "w": "06-ai.js:4"
+ },
+ {
+  "k": "NPC hunting",
+  "w": "06-ai.js:4"
+ },
+ {
+  "k": "Chases beasts for trophies, coin and CF",
+  "w": "06-ai.js:4"
+ },
+ {
+  "k": "Coin",
+  "w": "06-ai.js:4"
+ },
+ {
+  "k": "Takes coin over cards, loots purses, buys when rich",
+  "w": "06-ai.js:4"
+ },
+ {
+  "k": "Crowd Favor",
+  "w": "06-ai.js:4"
+ },
+ {
+  "k": "Breaks pots, plays to the crowd and chases freedom (50 CF)",
+  "w": "06-ai.js:4"
+ },
+ {
+  "k": "PvP aggression",
+  "w": "06-ai.js:4"
+ },
+ {
+  "k": "Attacks gladiators, refuses truces",
+  "w": "06-ai.js:4"
+ },
+ {
+  "k": "Loyalty",
+  "w": "06-ai.js:4"
+ },
+ {
+  "k": "Helps allies with gifts and focus fire; keeps truces",
+  "w": "06-ai.js:4"
+ },
+ {
+  "k": "Another name for the crowd to forget.",
+  "w": "06-ai.js:146"
+ },
+ {
+  "k": "The people wanted blood. There it is.",
+  "w": "06-ai.js:146"
+ },
+ {
+  "k": "Hail Flavius!",
+  "w": "06-ai.js:146"
+ },
+ {
+  "k": "Stay down.",
+  "w": "06-ai.js:146"
+ },
+ {
+  "k": "One step closer to the Rudis.",
+  "w": "06-ai.js:146"
+ },
+ {
+  "k": "That one stung.",
+  "w": "06-ai.js:147"
+ },
+ {
+  "k": "I can still stand. I think.",
+  "w": "06-ai.js:147"
+ },
+ {
+  "k": "Hygeia, now would be nice.",
+  "w": "06-ai.js:147"
+ },
+ {
+  "k": "Not like this. Not in the sand.",
+  "w": "06-ai.js:147"
+ },
+ {
+  "k": "Eyes on the crowd, feet in the sand.",
+  "w": "06-ai.js:148"
+ },
+ {
+  "k": "Patience. Let them bleed first.",
+  "w": "06-ai.js:148"
+ },
+ {
+  "k": "Today I earn my freedom.",
+  "w": "06-ai.js:148"
+ },
+ {
+  "k": "The pots first, then the beasts.",
+  "w": "06-ai.js:148"
+ },
+ {
+  "k": "Come here, beast.",
+  "w": "06-ai.js:149"
+ },
+ {
+  "k": "A trophy for the wall.",
+  "w": "06-ai.js:149"
+ },
+ {
+  "k": "That pelt will fetch coin.",
+  "w": "06-ai.js:149"
+ },
+ {
+  "k": "Nothing personal, friend.",
+  "w": "06-ai.js:150"
+ },
+ {
+  "k": "The crowd wants a duel.",
+  "w": "06-ai.js:150"
+ },
+ {
+  "k": "Only one of us walks out.",
+  "w": "06-ai.js:150"
+ },
+ {
+  "k": "Take it. You need it more than I do.",
+  "w": "06-ai.js:151"
+ },
+ {
+  "k": "For the familia.",
+  "w": "06-ai.js:151"
+ },
+ {
+  "k": "Stay alive, ally.",
+  "w": "06-ai.js:151"
+ },
+ {
+  "k": "Fall back. Live to fight.",
+  "w": "06-ai.js:152"
+ },
+ {
+  "k": "Not today, Flavius.",
+  "w": "06-ai.js:152"
+ },
+ {
+  "k": "Let them come to me.",
+  "w": "06-ai.js:152"
+ },
+ {
+  "k": "Coin well spent.",
+  "w": "06-ai.js:153"
+ },
+ {
+  "k": "Better steel, better odds.",
+  "w": "06-ai.js:153"
+ },
+ {
+  "k": "Allies, for now.",
+  "w": "06-ai.js:154"
+ },
+ {
+  "k": "Watch my back and I watch yours.",
+  "w": "06-ai.js:154"
+ },
+ {
+  "k": "Devoted",
+  "w": "06-ai.js:183"
+ },
+ {
+  "k": "Friendly",
+  "w": "06-ai.js:183"
+ },
+ {
+  "k": "Neutral",
+  "w": "06-ai.js:183"
+ },
+ {
+  "k": "Hostile",
+  "w": "06-ai.js:183"
+ },
+ {
+  "k": "Vengeful",
+  "w": "06-ai.js:183"
+ },
+ {
+  "k": "I like your style, {n}.",
+  "w": "06-ai.js:190"
+ },
+ {
+  "k": "{n}, you are all right.",
+  "w": "06-ai.js:190"
+ },
+ {
+  "k": "I would bleed for you, {n}.",
+  "w": "06-ai.js:191"
+ },
+ {
+  "k": "Brothers in the sand, {n}.",
+  "w": "06-ai.js:191"
+ },
+ {
+  "k": "Watch yourself, {n}.",
+  "w": "06-ai.js:194"
+ },
+ {
+  "k": "You will regret that, {n}.",
+  "w": "06-ai.js:194"
+ },
+ {
+  "k": "{n} dies by my hand. Today.",
+  "w": "06-ai.js:195"
+ },
+ {
+  "k": "I will not rest until {n} falls!",
+  "w": "06-ai.js:195"
+ },
+ {
+  "k": "{0} now feels <b>{1}</b> toward {2}{3}.",
+  "w": "06-ai.js:211"
+ },
+ {
+  "k": "Accept without conceit, relinquish without reluctance.",
+  "w": "06-ai.js:330"
+ },
+ {
+  "k": "{0} plays {1} and tames {2}!",
+  "w": "06-ai.js:342"
+ },
+ {
+  "k": "Easy now, beast",
+  "w": "06-ai.js:344"
+ },
+ {
+  "k": "{0} throws the Rete over {1}.",
+  "w": "06-ai.js:354"
+ },
+ {
+  "k": "{0} spends 3 CF to unlock the market.",
+  "w": "06-ai.js:388"
+ },
+ {
+  "k": "{0} declares % Off.",
+  "w": "06-ai.js:392"
+ },
+ {
+  "k": "{0} declares Choose.",
+  "w": "06-ai.js:398"
+ },
+ {
+  "k": "{0} buys at level {1}.",
+  "w": "06-ai.js:420"
+ },
+ {
+  "k": "The Truce",
+  "w": "06-ai.js:440"
+ },
+ {
+  "k": "The Trade",
+  "w": "06-ai.js:440"
+ },
+ {
+  "k": "{0} offers a truce",
+  "w": "06-ai.js:451"
+ },
+ {
+  "k": "{0} (CPU) proposes a truce. Neither of you will be targeted by the other, but there is no penalty for breaking it. Only one gladiator can win.",
+  "w": "06-ai.js:451"
+ },
+ {
+  "k": "Accept truce",
+  "w": "06-ai.js:452"
+ },
+ {
+  "k": "Refuse",
+  "w": "06-ai.js:456"
+ },
+ {
+  "k": "{0} refuses {1}'s truce.",
+  "w": "06-ai.js:462"
+ },
+ {
+  "k": "{0} proposes a trade",
+  "w": "06-ai.js:472"
+ },
+ {
+  "k": "{0} offers <b>{1}</b> for your <b>{2}</b>.",
+  "w": "06-ai.js:472"
+ },
+ {
+  "k": "Accept trade",
+  "w": "06-ai.js:473"
+ },
+ {
+  "k": "{0} refuses {1}'s trade.",
+  "w": "06-ai.js:482"
+ }
+]

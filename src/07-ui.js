@@ -156,7 +156,7 @@ function onTile(r, c) {
     u.netted = true;
     if (u.cls) bumpRel(u, p, -10, 'netted');
     p.items = p.items.filter(x => x.id !== S.reteItem);
-    log(`${nm(p)} throws the Rete over ${nm(u)}. It loses its movement next turn.`);
+    log(_T`${nm(p)} throws the Rete over ${nm(u)}. It loses its movement next turn.`);
     S.mode = 'move';
   });
 }
@@ -171,7 +171,7 @@ function humanCommand(player, n) {
       lock: false,
       res
     };
-    log(`Command ${nm(n)}: move it, attack an adjacent enemy, or finish.`);
+    log(_T`Command ${nm(n)}: move it, attack an adjacent enemy, or finish.`);
     render();
   });
 }
@@ -400,7 +400,7 @@ const CLEAN_PH = {
     }
     if (!C.escDid) {
       C.escDid = 1;
-      if ((S.lastResult && S.lastResult.winners || []).includes(p.id)) log(`${nm(p)} is walked to the gate first, arms raised to the crowd.`, 'thought');
+      if ((S.lastResult && S.lastResult.winners || []).includes(p.id)) log(_T`${nm(p)} is walked to the gate first, arms raised to the crowd.`, 'thought');
     }
     if (!C.escG) C.escG = nearGate9(p.r, p.c);
     if (step9(p, C.escG[0], C.escG[1])) {
@@ -416,7 +416,7 @@ const CLEAN_PH = {
     if (!L.length) return C.boDid ? 1 : 2;
     if (!C.boDid) {
       C.boDid = 1;
-      log('Handlers with nets and long poles herd the surviving beasts out through the beast gates.', 'thought');
+      log(_T('Handlers with nets and long poles herd the surviving beasts out through the beast gates.'), 'thought');
     }
     for (const n of L) {
       n.aggro = null;
@@ -439,7 +439,7 @@ const CLEAN_PH = {
     if (!wt.length) return C.fiDid ? 1 : 2;
     if (!C.fiDid) {
       C.fiDid = 1;
-      log('Boatmen pole across the flooded arena, fishing out every token — some of them bite.', 'thought');
+      log(_T('Boatmen pole across the flooded arena, fishing out every token — some of them bite.'), 'thought');
     }
     for (const cw of C.crew) {
       const tgt = (S.waterTok || []).reduce((b, x) => {
@@ -459,7 +459,7 @@ const CLEAN_PH = {
     if (!isNaum() || S.drained) return 2;
     if (C.drainLine == null) {
       C.drainLine = -1;
-      log('The sluices open: the sea drains out of the arena, corner to corner, and the sand comes back.', 'thought');
+      log(_T('The sluices open: the sea drains out of the arena, corner to corner, and the sand comes back.'), 'thought');
     }
     C.drainLine += 2;
     S.drainLine = C.drainLine;
@@ -481,7 +481,7 @@ const CLEAN_PH = {
         mode: 'in'
       };
       C.chDid = 1;
-      log(`A hush falls. Through the Porta Libitinensis stalks a masked figure in <b>Charun's</b> likeness, a long iron hook in hand — come for <b>${esc(tgt.name)}</b>, as the Fates decreed.`, 'big');
+      log(_T`A hush falls. Through the Porta Libitinensis stalks a masked figure in <b>Charun's</b> likeness, a long iron hook in hand — come for <b>${esc(tgt.name)}</b>, as the Fates decreed.`, 'big');
       return 0;
     }
     const ch = C.ch,
@@ -495,7 +495,7 @@ const CLEAN_PH = {
     if (step9(ch, N - 1, 0)) {
       t.corpse = false;
       t.gone = 1;
-      log(`${esc(t.name)} is dragged from the sand, hook under the arm, heels carving a line in the sand.`, 'thought');
+      log(_T`${esc(t.name)} is dragged from the sand, hook under the arm, heels carving a line in the sand.`, 'thought');
       C.ch = null;
       return 0;
     }
@@ -524,7 +524,7 @@ const CLEAN_PH = {
           ct.tgt = t;
           if (!C.cartDid) {
             C.cartDid = 1;
-            log('Slaves wheel small carts onto the sand and heave the fallen aboard.', 'thought');
+            log(_T('Slaves wheel small carts onto the sand and heave the fallen aboard.'), 'thought');
           }
         }
       }
@@ -559,7 +559,7 @@ const CLEAN_PH = {
     if (!S.blood || !S.blood.length) return C.bloodDid ? 1 : 2;
     if (!C.bloodDid) {
       C.bloodDid = 1;
-      log('Chained slaves shuffle across the sand with rags and rakes, wiping away the day’s blood.', 'thought');
+      log(_T('Chained slaves shuffle across the sand with rags and rakes, wiping away the day’s blood.'), 'thought');
     }
     for (const cw of C.crew) {
       const tgt = S.blood.reduce((b, x) => {
@@ -583,7 +583,7 @@ const CLEAN_PH = {
     }
     if (!C.laurDid) {
       C.laurDid = 1;
-      log('Boys with baskets gather the laurels and flowers the crowd threw.', 'thought');
+      log(_T('Boys with baskets gather the laurels and flowers the crowd threw.'), 'thought');
     }
     for (const cw of C.crew) {
       const tgt = L.reduce((b, x) => {
@@ -612,7 +612,7 @@ const CLEAN_PH = {
     if (!tg.length) return C.lootDid ? 1 : 2;
     if (!C.lootDid) {
       C.lootDid = 1;
-      log('The crew sweeps the sand for what the fighters left behind — dropped kit, offerings, thrown steel — every scrap carried to the vaults.', 'thought');
+      log(_T('The crew sweeps the sand for what the fighters left behind — dropped kit, offerings, thrown steel — every scrap carried to the vaults.'), 'thought');
     }
     for (const cw of C.crew) {
       const tgt = tg.filter(x => !x.o.claim8).reduce((b, x) => {
@@ -666,7 +666,7 @@ const CLEAN_PH = {
         };
         if (!C.haulDid) {
           C.haulDid = 1;
-          log(isNaum() ? 'The crews unstep the ships\u2019 masts and drag them out \u2014 the sand is being set for Classic games.' : 'The crew hauls away the stone that does not belong.', 'thought');
+          log(isNaum() ? _T('The crews unstep the ships\u2019 masts and drag them out \u2014 the sand is being set for Classic games.') : _T('The crew hauls away the stone that does not belong.'), 'thought');
         }
         return 0;
       }
@@ -680,7 +680,7 @@ const CLEAN_PH = {
         };
         if (!C.pilDid) {
           C.pilDid = 1;
-          log(isNaum() ? 'Teams of slaves carry out twelve pillars and set them on the Classic marks, fresh Blessings pots chained above.' : 'Teams of slaves heave the fallen pillars back onto their plinths and chain fresh Blessings pots above.', 'thought');
+          log(isNaum() ? _T('Teams of slaves carry out twelve pillars and set them on the Classic marks, fresh Blessings pots chained above.') : _T('Teams of slaves heave the fallen pillars back onto their plinths and chain fresh Blessings pots above.'), 'thought');
         }
         return 0;
       }
@@ -698,7 +698,7 @@ const CLEAN_PH = {
         };
         if (!C.pilDid) {
           C.pilDid = 1;
-          log('Fresh Blessings pots are chained atop the pillars.', 'thought');
+          log(_T('Fresh Blessings pots are chained atop the pillars.'), 'thought');
         }
         return 0;
       }
@@ -725,7 +725,7 @@ const CLEAN_PH = {
     if (!S.spikes || !S.spikes.length) return C.spkDid ? 1 : 2;
     if (!C.spkDid) {
       C.spkDid = 1;
-      log('Below the sand, the winches turn: the spikes sink back into their housings.', 'thought');
+      log(_T('Below the sand, the winches turn: the spikes sink back into their housings.'), 'thought');
     }
     C.spikeH -= 0.18;
     if (C.spikeH <= 0) {
@@ -741,7 +741,7 @@ const CLEAN_PH = {
     if (S.chest && S.chest.r === t.r && S.chest.c === t.c && S.chest.held == null) return C.chsDid ? 1 : 2;
     if (!C.chsDid) {
       C.chsDid = 1;
-      log('The Arena Chest is carried back to its mark.', 'thought');
+      log(_T('The Arena Chest is carried back to its mark.'), 'thought');
     }
     if (!S.chest) S.chest = {
       r: 0,
@@ -759,7 +759,7 @@ const CLEAN_PH = {
     if (!sp.length) return C.stDid ? 1 : 2;
     if (!C.stDid) {
       C.stDid = 1;
-      log('The ushers work the tiers: the last spectators drain out through the vomitoria, still arguing about the card.', 'thought');
+      log(_T('The ushers work the tiers: the last spectators drain out through the vomitoria, still arguing about the card.'), 'thought');
     }
     const k = Math.max(2, Math.ceil((S.spect || []).length / 10));
     for (let i = 0; i < k && i < sp.length; i++) sp[i].gone = true;
@@ -788,7 +788,7 @@ const CLEAN_PH = {
     if (moving) {
       if (!C.npcDid) {
         C.npcDid = 1;
-        log('Last of all, the handlers lead the beasts back in and walk them to their marks.', 'thought');
+        log(_T('Last of all, the handlers lead the beasts back in and walk them to their marks.'), 'thought');
       }
       return 0;
     }
@@ -909,7 +909,7 @@ function startCleanCrew() {
     spikeH: 1,
     t: null
   };
-  log('The games are done. The Porta Triumphalis opens for the living; the crew of the arena takes the sand.', 'thought');
+  log(_T('The games are done. The Porta Triumphalis opens for the living; the crew of the arena takes the sand.'), 'thought');
   const G9 = S,
     C = S.clean;
   cleanHUD(C);
@@ -959,7 +959,7 @@ function cleanTick9(G9, C) {
           afterShowPrompt();
         }, 1600);
       } /* v0.46 */
-      log('The sand is raked smooth, the ropes come down to open the full square, the pillars stand dressed, and the beast gates are barred. The arena waits for its next games.', 'thought');
+      log(_T('The sand is raked smooth, the ropes come down to open the full square, the pillars stand dressed, and the beast gates are barred. The arena waits for its next games.'), 'thought');
       try {
         draw();
       } catch (e) {}
@@ -1132,7 +1132,7 @@ function cleanHUD(C) {
   }
   const secs = Math.max(1, Math.round(cleanEstTicks(C) * 0.32));
   const mgr = !!S.mgrCtx;
-  const html = `<span>🧹 <b>The arena crew</b> · ~${secs}s to reset</span><button class="btn tksm" type="button" data-clskip="1">${mgr ? '⏎ Return to Match Week' : '⏭ Skip the show'}</button>`;
+  const html = `${_T`<span>🧹 <b>The arena crew</b> · ~${secs}s to reset</span>`}<button class="btn tksm" type="button" data-clskip="1">${mgr ? _T('⏎ Return to Match Week') : _T('⏭ Skip the show')}</button>`;
   if (el.dataset.h !== html) {
     el.dataset.h = html;
     el.innerHTML = html;
@@ -1163,23 +1163,23 @@ function fadeTo(cb) {
 }
 /* v0.46: the show is over — a new match, or stay and look at the arena */
 async function afterShowPrompt() {
-  const v = await modal('🧹 The arena is ready', '<p>The crew has reset the sand. What next?</p>', [{
-    label: '⚔️ Start a new match',
-    sub: 'choose the arena, event and gladiators',
+  const v = await modal(_T('🧹 The arena is ready'), '<p>The crew has reset the sand. What next?</p>', [{
+    label: _T('⚔️ Start a new match'),
+    sub: _T('choose the arena, event and gladiators'),
     value: 'new',
     primary: 1
   }, {
-    label: '🏟 Back to the arena',
-    sub: 'stay and look around',
+    label: _T('🏟 Back to the arena'),
+    sub: _T('stay and look around'),
     value: 'stay'
   }, {
     label: '🏛',
-    sub: 'main menu',
+    sub: _T('main menu'),
     value: 'menu'
   }], {
     close: 'stay'
   });
-  if (v === 'new') openSetup(true);else if (v === 'menu' && typeof transitRun === 'function') transitRun(() => menuShow(), 'The main menu…');
+  if (v === 'new') openSetup(true);else if (v === 'menu' && typeof transitRun === 'function') transitRun(() => menuShow(), _T('The main menu…'));
 }
 /* mgrFadeBack — fades back to Manager mode's Match Week (the 'night' tab). */
 function mgrFadeBack() {
@@ -2343,7 +2343,7 @@ function pick(eventDef) {
 }
 /* describeTile — hover text for a tile: who or what stands there, terrain, tokens, piles, zones and move cost. */
 function describeTile(target) {
-  if (!target || !S) return 'Hover or tap a tile to inspect it.';
+  if (!target || !S) return _T('Hover or tap a tile to inspect it.');
   const {
     r,
     c
@@ -2352,40 +2352,40 @@ function describeTile(target) {
   const p = playerAt(r, c),
     n = npcAt(r, c),
     pl = pillarAt(r, c);
-  if (p && p.underground) bits.push(`⬇ ${nm(p)} is <b>underground</b> — surfaces on this tunnel at the start of their next turn, and cannot be attacked until then`);else if (p) bits.push(`${nm(p)} · Head ${p.hp.head}/${p.ap.head}AP · Chest ${p.hp.chest}/${p.ap.chest}AP · CF ${p.cf}${p.underground ? ' · underground' : ''}`);
+  if (p && p.underground) bits.push(_T`⬇ ${nm(p)} is <b>underground</b> — surfaces on this tunnel at the start of their next turn, and cannot be attacked until then`);else if (p) bits.push(_T`${nm(p)} · Head ${p.hp.head}/${p.ap.head}AP · Chest ${p.hp.chest}/${p.ap.chest}AP · CF ${p.cf}${p.underground ? ' · underground' : ''}`);
   if (n) {
     const T = NPCT[n.t],
       st = npcStats(n);
-    bits.push(`${nm(n)} (${npcKind(n.t)}) · ${n.hp} HP · MV ${st.mv} · ATK ${st.ap}${st.state ? ` · ${st.state}` : ''}${n.aggro != null ? ' · aggro on ' + S.players[n.aggro].name : ''}${n.tamedBy != null ? ' · tamed by ' + S.players[n.tamedBy].name : ''}`);
+    bits.push(_T`${nm(n)} (${npcKind(n.t)}) · ${n.hp} HP · MV ${st.mv} · ATK ${st.ap}${st.state ? ` · ${st.state}` : ''}${n.aggro != null ? _T(' · aggro on ') + S.players[n.aggro].name : ''}${n.tamedBy != null ? _T(' · tamed by ') + S.players[n.tamedBy].name : ''}`);
   }
-  if (pl) bits.push(pl.pots.length ? `Pillar with ${pl.pots.length} Blessings pot${pl.pots.length > 1 ? 's' : ''} (contents hidden)` : 'Pillar');
+  if (pl) bits.push(pl.pots.length ? _T`Pillar with ${pl.pots.length} Blessings pot${pl.pots.length > 1 ? 's' : ''} (contents hidden)` : _T('Pillar'));
   if (isNaum()) {
     const sh = shipAt(r, c);
-    bits.push(sh ? `${sh.name} (Team ${sh.team}, ${Math.max(0, sh.hp)} HP)` : nTerr(r, c) === 'solid' ? 'Sunken pillar top (solid footing)' : 'Water');
-    if (doorAt(r, c)) bits.push('Floating door (board for 2 movement)');
+    bits.push(sh ? _T`${sh.name} (Team ${sh.team}, ${Math.max(0, sh.hp)} HP)` : nTerr(r, c) === 'solid' ? _T('Sunken pillar top (solid footing)') : _T('Water'));
+    if (doorAt(r, c)) bits.push(_T('Floating door (board for 2 movement)'));
   }
   if (isChariot()) {
-    if (chHatched(r, c)) bits.push('Cannot be traversed');else if (inPlayerZone(r, c)) bits.push('Player-only zone');else bits.push('Race track');
-    if (CH_GATES.some(([a, b]) => a === r && b === c)) bits.push('Pillar gate');
+    if (chHatched(r, c)) bits.push(_T('Cannot be traversed'));else if (inPlayerZone(r, c)) bits.push(_T('Player-only zone'));else bits.push(_T('Race track'));
+    if (CH_GATES.some(([a, b]) => a === r && b === c)) bits.push(_T('Pillar gate'));
   }
-  if (tunnelAt(r, c)) bits.push(tunnelUsable(tunnelAt(r, c)) ? 'Tunnel' : 'Tunnel (sealed by a pillar)');
-  if (spikeAt(r, c)) bits.push('Floor spike (2 damage on entry)');
-  if (S.chest && S.chest.held == null && S.chest.r === r && S.chest.c === c) bits.push(`Arena Chest (locked, ${S.chest.weapons.length} inside)`);
-  for (const f of S.floor) if (f.r === r && f.c === c) bits.push(f.kind === 'weapon' ? `${f.owner != null && S.players[f.owner] ? S.players[f.owner].name + "'s thrown" : 'Thrown'} ${f.w.n} (free to pick up)` : f.kind === 'wheel' ? 'Spare wheel' : f.kind === 'horse' ? 'Spare horse' : f.kind === 'eagle' ? 'Golden Eagle' : f.kind === 'key' ? 'Arena Key' : `Offering: ${OFFER[f.key].n} (${OFFER[f.key].s})`);
-  for (const pile of pilesAt(r, c)) bits.push(`${pile.corpse ? 'Corpse of ' + pile.name : pile.owner < 0 ? 'Left in the sand' : 'Items dropped by ' + pile.name}: ${[...pile.weapons.map(weapon => weapon.n), ...pile.armor.map(a => a.n), pile.coin ? pile.coin + ' coin' : '', ...pile.items.map(i => itemInfo(i).n)].filter(Boolean).join(', ')}`);
-  if (S.capture && S.capture.r === r && S.capture.c === c) bits.push('Golden Eagle capture tile');
+  if (tunnelAt(r, c)) bits.push(tunnelUsable(tunnelAt(r, c)) ? _T('Tunnel') : _T('Tunnel (sealed by a pillar)'));
+  if (spikeAt(r, c)) bits.push(_T('Floor spike (2 damage on entry)'));
+  if (S.chest && S.chest.held == null && S.chest.r === r && S.chest.c === c) bits.push(_T`Arena Chest (locked, ${S.chest.weapons.length} inside)`);
+  for (const f of S.floor) if (f.r === r && f.c === c) bits.push(f.kind === 'weapon' ? _T`${f.owner != null && S.players[f.owner] ? S.players[f.owner].name + _T("'s thrown") : _T('Thrown')} ${f.w.n} (free to pick up)` : f.kind === 'wheel' ? _T('Spare wheel') : f.kind === 'horse' ? _T('Spare horse') : f.kind === 'eagle' ? _T('Golden Eagle') : f.kind === 'key' ? _T('Arena Key') : _T`Offering: ${OFFER[f.key].n} (${OFFER[f.key].s})`);
+  for (const pile of pilesAt(r, c)) bits.push(`${pile.corpse ? _T('Corpse of ') + pile.name : pile.owner < 0 ? _T('Left in the sand') : _T('Items dropped by ') + pile.name}: ${[...pile.weapons.map(weapon => weapon.n), ...pile.armor.map(a => a.n), pile.coin ? pile.coin + ' coin' : '', ...pile.items.map(i => itemInfo(i).n)].filter(Boolean).join(', ')}`);
+  if (S.capture && S.capture.r === r && S.capture.c === c) bits.push(_T('Golden Eagle capture tile'));
   for (const b of S.npcs) if (b.zone && b.alive && b.tamedBy == null && inRect(b.zone, {
     r,
     c
-  })) bits.push(`${b.name}'s zone`);
-  if (!inZone(r, c)) bits.push('outside the playable zone');
+  })) bits.push(_T`${b.name}'s zone`);
+  if (!inZone(r, c)) bits.push(_T('outside the playable zone'));
   const q = quadOf({
     r,
     c
   });
   if (q && S.spect.length) bits.push(`Q${q}`);
   const h = HL.get(r * N + c);
-  if (h && (h.t === 'move' || h.t === 'cmove')) bits.push(`move cost ${h.cost}`);
+  if (h && (h.t === 'move' || h.t === 'cmove')) bits.push(_T`move cost ${h.cost}`);
   return bits.join(' · ');
 }
 cv.addEventListener('mousemove', e => {
@@ -2470,7 +2470,7 @@ function avatarSVG(player) {
       cy: 238
     }
   };
-  let s = `<svg viewBox="0 0 150 332" role="img" aria-label="${player.name}'s body: health and armor by location">`;
+  let s = `<svg viewBox="0 0 150 332" role="img" aria-label="${_T`${player.name}'s body: health and armor by location`}">`;
   s += `<defs><linearGradient id="met${player.id}" x1="0" x2="1"><stop offset="0" stop-color="#7d868f"/><stop offset=".45" stop-color="#e6ebef"/><stop offset="1" stop-color="#8a939c"/></linearGradient></defs>`;
   s += `<image href="${typeof assetURL === 'function' ? assetURL('avatar.png') : ASSET + 'avatar.png'}" x="7" y="6" width="136" height="301" opacity="0.96"/>`;
   // v0.39: custom armor fitted on the avatar in the Armor forge is WORN there (mirrored on the left side)
@@ -2491,7 +2491,7 @@ function avatarSVG(player) {
       continue;
     }
     const wound = 1 - hp / BASE_HP[l];
-    s += `<path d="${P.d}" fill="${wound > 0 ? '#c0392b' : 'none'}" fill-opacity="${(wound * 0.3).toFixed(2)}" stroke="none"><title>${LOCN[l]}: ${hp} HP, ${player.ap[l]} AP${player.pieces[l].length ? ' \u00b7 ' + player.pieces[l].map(x => x.n).join(', ') : ''}</title></path>`;
+    s += `<path d="${P.d}" fill="${wound > 0 ? '#c0392b' : 'none'}" fill-opacity="${(wound * 0.3).toFixed(2)}" stroke="none"><title>${_T`${LOCN[l]}: ${hp} HP, ${player.ap[l]} AP${player.pieces[l].length ? ' \u00b7 ' + player.pieces[l].map(x => x.n).join(', ') : ''}`}</title></path>`;
     if (player.ap[l] > 0) s += `<path d="${P.d}" fill="url(#met${player.id})" fill-opacity="${(0.14 + player.ap[l] * 0.055).toFixed(2)}" stroke="#dfe5ea" stroke-opacity=".8" stroke-width="${(0.6 + player.ap[l] * 0.22).toFixed(1)}" pointer-events="none"/>`;
   }
   // HP / AP chips
@@ -2501,7 +2501,7 @@ function avatarSVG(player) {
     s += `<circle cx="${P.cx}" cy="${P.cy}" r="9" fill="#140f0b" fill-opacity=".8"/><text x="${P.cx}" y="${P.cy + 1}" fill="#efe3cc" font-size="10" font-family="IBM Plex Mono, monospace" text-anchor="middle" dominant-baseline="middle">${player.hp[l]}</text>`;
     if (player.ap[l] > 0) s += `<circle cx="${P.cx + 11}" cy="${P.cy - 10}" r="7" fill="#b9c1c9"/><text x="${P.cx + 11}" y="${P.cy - 9}" fill="#140f0b" font-size="8" font-weight="700" font-family="IBM Plex Mono, monospace" text-anchor="middle" dominant-baseline="middle">${player.ap[l]}</text>`;
   }
-  if (greavesOn(player)) s += `<path d="M52 300h18M78 300h18" stroke="#d6ab4c" stroke-width="3"><title>Flavius' Greaves: +1 movement</title></path>`;
+  if (greavesOn(player)) s += `<path d="M52 300h18M78 300h18" stroke="#d6ab4c" stroke-width="3"><title>${_T`Flavius' Greaves: +1 movement`}</title></path>`;
   /* wl — weapon name label for one hand ('fist' when empty; nothing if the arm is gone). */
   const wl = (a, x, anchor) => {
     const w = player['w' + a];
@@ -2522,88 +2522,88 @@ const sideBadge = l => LOCSIDE[l] ? `<span class="side-badge ${LOCSIDE[l]}" aria
    interactive shows the Use/Declare buttons. */
 function boardHTML(player, interactive) {
   const badges = [];
-  if (statDmgB(player) || hasCestus(player, 'R') || hasCestus(player, 'L')) badges.push(`<span class="badge good">+${statDmgB(player) + (hasCestus(player, 'R') || hasCestus(player, 'L') ? 1 : 0)} DMG${hasCestus(player, 'R') || hasCestus(player, 'L') ? ' (Cestus)' : ''}</span>`);
-  if (greavesOn(player)) badges.push('<span class="badge good">+1 MV Greaves</span>');
-  if (player.hercules) badges.push(`<span class="badge good">Hercules +${player.hercules}</span>`);
-  if (player.focusNext) badges.push('<span class="badge gold">Focus! ready</span>');
-  if (player.warded) badges.push('<span class="badge good">Ward active</span>');
-  if (S && player.mercRound === S.ri) badges.push('<span class="badge good">+1 MV this round</span>');
-  if (player.mercBonus) badges.push(`<span class="badge good">+${player.mercBonus} MV this turn</span>`);
+  if (statDmgB(player) || hasCestus(player, 'R') || hasCestus(player, 'L')) badges.push(`<span class="badge good">${_T`+${statDmgB(player) + (hasCestus(player, 'R') || hasCestus(player, 'L') ? 1 : 0)} DMG${hasCestus(player, 'R') || hasCestus(player, 'L') ? _T(' (Cestus)') : ''}`}</span>`);
+  if (greavesOn(player)) badges.push(_T('<span class="badge good">+1 MV Greaves</span>'));
+  if (player.hercules) badges.push(`<span class="badge good">${_T`Hercules +${player.hercules}`}</span>`);
+  if (player.focusNext) badges.push(_T('<span class="badge gold">Focus! ready</span>'));
+  if (player.warded) badges.push(_T('<span class="badge good">Ward active</span>'));
+  if (S && player.mercRound === S.ri) badges.push(_T('<span class="badge good">+1 MV this round</span>'));
+  if (player.mercBonus) badges.push(`<span class="badge good">${_T`+${player.mercBonus} MV this turn`}</span>`);
   if (player.cpu && player.rel) {
     for (const q of S.players) {
       if (q === player || !q.alive) continue;
       const v = relOf(player, q);
       const st = relState(v);
-      if (st[1] !== 'Neutral') badges.push(`<span class="badge ${v > 0 ? 'good' : 'bad'}" title="${esc(player.name)}'s feeling toward ${esc(q.name)}: ${v}">${st[2]} ${st[1]} toward ${esc(q.name)}</span>`);
+      if (st[1] !== 'Neutral') badges.push(`<span class="badge ${v > 0 ? 'good' : 'bad'}" title="${_T`${esc(player.name)}'s feeling toward ${esc(q.name)}: ${v}`}">${_T`${st[2]} ${st[1]} toward ${esc(q.name)}`}</span>`);
     }
   }
   if (player.cpu && player.pers && S.over) {
     const P = player.pers;
     const top = PERS_KEYS.map(([k, l]) => [l, P[k]]).sort((a, b) => b[1] - a[1]).slice(0, 2);
-    badges.push(`<span class="badge" title="${PERS_KEYS.map(([k, l]) => l + ' ' + P[k]).join(' · ')}">Priorities: ${top.map(([l, v]) => l + ' ' + v).join(', ')}</span>`);
+    badges.push(`<span class="badge" title="${PERS_KEYS.map(([k, l]) => l + ' ' + P[k]).join(' · ')}">${_T`Priorities: ${top.map(([l, v]) => l + ' ' + v).join(', ')}`}</span>`);
   }
-  if (player.netted) badges.push('<span class="badge bad">Netted</span>');
-  if (player.carrying) badges.push('<span class="badge gold">Carrying chest (−1 MV)</span>');
-  if (player.eagle) badges.push('<span class="badge gold">Golden Eagle</span>');
-  if (player.captured.length) badges.push(`<span class="badge gold">Captured ${player.captured.length}/2</span>`);
-  if (EV().teams || EV().coop) badges.push(`<span class="badge" style="border-color:${teamColor(player.team)}">Team ${player.team}</span>`);
-  for (const q of S.players) if (q !== player && inTruce(player, q)) badges.push(`<span class="badge">Truce with ${q.name}</span>`);
-  for (const n of S.npcs) if (n.alive && n.tamedBy === player.id) badges.push(`<span class="badge good">Ally: ${n.name}</span>`);
-  if (player.noEagle) badges.push('<span class="badge bad">No Zora</span>');
+  if (player.netted) badges.push(_T('<span class="badge bad">Netted</span>'));
+  if (player.carrying) badges.push(_T('<span class="badge gold">Carrying chest (−1 MV)</span>'));
+  if (player.eagle) badges.push(_T('<span class="badge gold">Golden Eagle</span>'));
+  if (player.captured.length) badges.push(`<span class="badge gold">${_T`Captured ${player.captured.length}/2`}</span>`);
+  if (EV().teams || EV().coop) badges.push(`<span class="badge" style="border-color:${teamColor(player.team)}">${_T`Team ${player.team}`}</span>`);
+  for (const q of S.players) if (q !== player && inTruce(player, q)) badges.push(`<span class="badge">${_T`Truce with ${q.name}`}</span>`);
+  for (const n of S.npcs) if (n.alive && n.tamedBy === player.id) badges.push(`<span class="badge good">${_T`Ally: ${n.name}`}</span>`);
+  if (player.noEagle) badges.push(_T('<span class="badge bad">No Zora</span>'));
   if (swimming(player)) badges.push('<span class="badge bad">Swimming: −1 MV, −1 range</span>');
-  if (player.onDoor != null && isNaum()) badges.push('<span class="badge good">Riding a floating door</span>');
-  for (const n of S.npcs) if (n.alive && n.tamedBy === player.id && n.carry) badges.push(`<span class="badge gold">${n.name} carries ${n.carry.label}</span>`);
+  if (player.onDoor != null && isNaum()) badges.push(_T('<span class="badge good">Riding a floating door</span>'));
+  for (const n of S.npcs) if (n.alive && n.tamedBy === player.id && n.carry) badges.push(`<span class="badge gold">${_T`${n.name} carries ${n.carry.label}`}</span>`);
   if (player.ch) {
     const ch = player.ch;
-    badges.push(`<span class="badge gold">Lap ${ch.laps}/3</span>`, `<span class="badge ${ch.wheel ? 'good' : 'bad'}">Wheel ${ch.wheel ? ch.wheel.hp + ' HP' : 'missing (−2 MV)'}</span>`, `<span class="badge ${ch.horse ? 'good' : 'bad'}">${ch.horse ? `Horse ${ch.horse.sides[ch.horse.face].hp - ch.horse.dmg} HP · +${ch.horse.sides[ch.horse.face].mv} MV` : 'Horse missing'}</span>`);
+    badges.push(`<span class="badge gold">${_T`Lap ${ch.laps}/3`}</span>`, `<span class="badge ${ch.wheel ? 'good' : 'bad'}">${_T`Wheel ${ch.wheel ? ch.wheel.hp + ' HP' : _T('missing (−2 MV)')}`}</span>`, `<span class="badge ${ch.horse ? 'good' : 'bad'}">${ch.horse ? _T`Horse ${ch.horse.sides[ch.horse.face].hp - ch.horse.dmg} HP · +${ch.horse.sides[ch.horse.face].mv} MV` : _T('Horse missing')}</span>`);
   }
   const isCur = S.players[S.cur] === player && S.phase === 'action';
-  return `<div class="pb-head" style="--pc:${player.color}">${clsPieceHTML(player.cls, 58, 'stnd phead') || '<span class="sw"></span>'}<div><div class="pname">${player.name}</div><div class="pcls">${CLASSES[player.cls].name} · ${CLASSES[player.cls].sub}${player.drafted ? ' (drafted)' : ''} · ${player.cpu ? 'CPU ' + cpuMind(player) : 'You'} · ${player.exited ? 'exited' : player.alive ? tl(player.r, player.c) : 'fallen'}</div>${typeof seatChipHTML === 'function' ? seatChipHTML(player) : ''}</div></div>
-   <div class="econ"><div class="stat" title="${player.coinLog ? Object.entries(player.coinLog).map(([k2, v2]) => `${v2 > 0 ? '+' : ''}${v2} ${k2}`).join(String.fromCharCode(10)) : 'No coin has moved yet.'}"><span>Coin ⓘ</span><b>${ICO.coin} ${player.coin}</b></div><div class="stat" title="${player.cfLog && Object.keys(player.cfLog).length ? Object.entries(player.cfLog).sort((x, y) => Math.abs(y[1]) - Math.abs(x[1])).map(([k2, v2]) => `${v2 > 0 ? '+' : ''}${v2} ${k2}`).join(String.fromCharCode(10)) : 'No Crowd Favor has moved yet.'}">${(() => {
+  return `<div class="pb-head" style="--pc:${player.color}">${clsPieceHTML(player.cls, 58, _T('stnd phead')) || '<span class="sw"></span>'}<div><div class="pname">${player.name}</div><div class="pcls">${CLASSES[player.cls].name} · ${CLASSES[player.cls].sub}${player.drafted ? ' (drafted)' : ''} · ${player.cpu ? 'CPU ' + cpuMind(player) : _T('You')} · ${player.exited ? 'exited' : player.alive ? tl(player.r, player.c) : 'fallen'}</div>${typeof seatChipHTML === 'function' ? seatChipHTML(player) : ''}</div></div>
+   <div class="econ"><div class="stat" title="${player.coinLog ? Object.entries(player.coinLog).map(([k2, v2]) => `${v2 > 0 ? '+' : ''}${v2} ${k2}`).join(String.fromCharCode(10)) : _T('No coin has moved yet.')}">${_T`<span>Coin ⓘ</span><b>${ICO.coin} ${player.coin}</b>`}</div><div class="stat" title="${player.cfLog && Object.keys(player.cfLog).length ? Object.entries(player.cfLog).sort((x, y) => Math.abs(y[1]) - Math.abs(x[1])).map(([k2, v2]) => `${v2 > 0 ? '+' : ''}${v2} ${k2}`).join(String.fromCharCode(10)) : _T('No Crowd Favor has moved yet.')}">${(() => {
     const rr = S.over && S.result ? S.result.rows.find(x => x.id === player.id) : null;
-    return rr ? `<span title="The final Fate score — the same number the results show">Fate ⓘ</span><b>${ICO.wheat} ${rr.f}</b>` : `<span>CF ⓘ</span><b>${ICO.wheat} ${player.cf}</b>`;
+    return rr ? `<span title="${_T`The final Fate score — the same number the results show`}">${_T`Fate ⓘ`}</span><b>${ICO.wheat} ${rr.f}</b>` : `<span>CF ⓘ</span><b>${ICO.wheat} ${player.cf}</b>`;
   })()}${(() => {
     try {
       if (S.over && S.result) {
         const rr = S.result.rows.find(x => x.id === player.id);
-        return rr && rr.f !== player.cf ? `<small class="ifwin" title="Crowd Favor held when the event ended${rr.won ? '; the winner\u2019s bonuses make up the difference' : ''}">held ${player.cf}</small>` : '';
+        return rr && rr.f !== player.cf ? `<small class="ifwin" title="${_T`Crowd Favor held when the event ended${rr.won ? _T('; the winner\u2019s bonuses make up the difference') : ''}`}">${_T`held ${player.cf}`}</small>` : '';
       }
       const wv = finalCF(player, true);
-      return wv !== player.cf && player.alive ? `<small class="ifwin" title="Final Fate score if this gladiator wins now: held CF plus the winner's bonuses (event reward, 5 per 3 trophies, Flavius items, a held Golden Eagle), minus 5 per hidden Mandata Flavi">win → ${wv}</small>` : '';
+      return wv !== player.cf && player.alive ? `<small class="ifwin" title="${_T`Final Fate score if this gladiator wins now: held CF plus the winner's bonuses (event reward, 5 per 3 trophies, Flavius items, a held Golden Eagle), minus 5 per hidden Mandata Flavi`}">win → ${wv}</small>` : '';
     } catch (e) {
       return '';
     }
-  })()}</div><div class="stat"><span>Keys</span><b>${ICO.key} ${player.keys}</b></div><button class="stat" type="button" data-act="trophies" data-pid="${player.id}" title="Trophies: ${player.trophies.filter(target => target.pk === 'player').length} gladiators, ${player.trophies.filter(target => target.pk !== 'player').length} beasts"><span>Trophies ▸</span><b>${ICO.trophy} ${player.trophies.filter(target => target.pk === 'player').length}<span style="font-size:11px;color:var(--dim)"> ⚔ </span>${player.trophies.filter(target => target.pk !== 'player').length}<span style="font-size:11px;color:var(--dim)"> 🐾</span></b></button></div>
+  })()}</div><div class="stat">${_T`<span>Keys</span><b>${ICO.key} ${player.keys}</b>`}</div><button class="stat" type="button" data-act="trophies" data-pid="${player.id}" title="${_T`Trophies: ${player.trophies.filter(target => target.pk === 'player').length} gladiators, ${player.trophies.filter(target => target.pk !== 'player').length} beasts`}">${_T`<span>Trophies ▸</span><b>${ICO.trophy} ${player.trophies.filter(target => target.pk === 'player').length}`}<span style="font-size:11px;color:var(--dim)"> ⚔ </span>${player.trophies.filter(target => target.pk !== 'player').length}<span style="font-size:11px;color:var(--dim)"> 🐾</span></b></button></div>
    <div class="boardgrid"><div class="avatar">${avatarSVG(player)}</div>
    <div class="locs">${LOCS.map(l => {
     const v = player.hp[l];
-    return `<div class="loc"><span class="ln">${sideBadge(l)}${LOCS_SHORT[l]}</span><span class="nums">${v <= 0 ? `<span class="sevd">${sevLabel(l).toUpperCase()}</span>` : `HP ${v} · AP ${player.ap[l]}`}</span><div class="bars">${seg7(Math.max(0, v), 'h', v <= 2)}${seg7(player.ap[l], 'a')}</div>${player.pieces[l].length ? `<div class="pieces">${player.pieces[l].map(x => `<span data-card="a:${x.key}" style="cursor:help">${cardHTML('a:' + x.key, 'xs')} ${x.n}</span>`).join(' ')}</div>` : ''}</div>`;
+    return `<div class="loc"><span class="ln">${sideBadge(l)}${LOCS_SHORT[l]}</span><span class="nums">${v <= 0 ? `<span class="sevd">${sevLabel(l).toUpperCase()}</span>` : _T`HP ${v} · AP ${player.ap[l]}`}</span><div class="bars">${seg7(Math.max(0, v), 'h', v <= 2)}${seg7(player.ap[l], 'a')}</div>${player.pieces[l].length ? `<div class="pieces">${player.pieces[l].map(x => `<span data-card="a:${x.key}" style="cursor:help">${cardHTML('a:' + x.key, 'xs')} ${x.n}</span>`).join(' ')}</div>` : ''}</div>`;
   }).join('')}</div></div>
-   ${player.st ? `<div class="badges statrow" title="Ratings: Speed, Strength, Intelligence, Luck, Charisma">${statChips(player.st)}</div>` : ''}
+   ${player.st ? `<div class="badges statrow" title="${_T`Ratings: Speed, Strength, Intelligence, Luck, Charisma`}">${statChips(player.st)}</div>` : ''}
    ${badges.length ? `<div class="badges">${badges.join('')}</div>` : ''}
-   ${player.ch && player.ch.mounted ? `<div class="sect">Chariot</div><div class="wrow"><span class="wn">${player.ch.art ? cardHTML('g:' + player.ch.art, 'xs') : ''}<span><b>${esc(player.ch.name || 'Chariot')}</b></span></span><span class="ws">${player.ch.horse ? `<span data-card="h:${player.ch.horse.sides[player.ch.horse.face].art || 'saxoA'}" style="cursor:help">${cardHTML('h:' + (player.ch.horse.sides[player.ch.horse.face].art || 'saxoA'), 'xs')} ${esc(player.ch.horse.name || 'horse')} ${player.ch.horse.sides[player.ch.horse.face].hp - player.ch.horse.dmg}HP</span>` : 'no horse'} · ${player.ch.wheel ? `<span data-card="h:${player.ch.wheel.art || 'wheel8'}" style="cursor:help">${cardHTML('h:' + (player.ch.wheel.art || 'wheel8'), 'xs')} ${player.ch.wheel.hp}HP</span>` : 'no wheel'}</span></div>` : ''}
-   <div class="sect">Weapons</div>
+   ${player.ch && player.ch.mounted ? `<div class="sect">${_T`Chariot`}</div><div class="wrow"><span class="wn">${player.ch.art ? cardHTML('g:' + player.ch.art, 'xs') : ''}<span><b>${esc(player.ch.name || _T('Chariot'))}</b></span></span><span class="ws">${player.ch.horse ? `<span data-card="h:${player.ch.horse.sides[player.ch.horse.face].art || 'saxoA'}" style="cursor:help">${_T`${cardHTML('h:' + (player.ch.horse.sides[player.ch.horse.face].art || 'saxoA'), 'xs')} ${esc(player.ch.horse.name || 'horse')} ${player.ch.horse.sides[player.ch.horse.face].hp - player.ch.horse.dmg}HP`}</span>` : _T('no horse')} · ${player.ch.wheel ? `<span data-card="h:${player.ch.wheel.art || 'wheel8'}" style="cursor:help">${_T`${cardHTML('h:' + (player.ch.wheel.art || 'wheel8'), 'xs')} ${player.ch.wheel.hp}HP`}</span>` : _T('no wheel')}</span></div>` : ''}
+   <div class="sect">${_T`Weapons`}</div>
    ${['R', 'L'].map(a => {
     const w = player['w' + a];
     const used = armAlive(player, a) && player.armUses[a] >= (w && w.both ? 2 : 1);
-    return `<div class="wrow ${used ? 'used' : ''}"><span class="wn">${w && armAlive(player, a) ? w.gart ? cardHTML(w.gart, 'xs') : w.lyre ? cardHTML('c:lyre', 'xs') : cardRef('w:' + w.key) ? cardHTML('w:' + w.key, 'xs') : '' : ''}<span>${a === 'R' ? 'Right (primary)' : 'Left (secondary)'}: <b>${armAlive(player, a) ? w ? w.n : 'empty hand' : '—'}</b></span></span><span class="ws">${armAlive(player, a) ? w ? wStats(w) : 'punch P1 · R1' : 'severed'}${used ? ' · spent' : ''}</span></div>`;
+    return `<div class="wrow ${used ? 'used' : ''}"><span class="wn">${w && armAlive(player, a) ? w.gart ? cardHTML(w.gart, 'xs') : w.lyre ? cardHTML('c:lyre', 'xs') : cardRef('w:' + w.key) ? cardHTML('w:' + w.key, 'xs') : '' : ''}<span>${a === 'R' ? _T('Right (primary)') : _T('Left (secondary)')}: <b>${armAlive(player, a) ? w ? w.n : _T('empty hand') : '—'}</b></span></span><span class="ws">${armAlive(player, a) ? w ? wStats(w) : _T('punch P1 · R1') : 'severed'}${used ? ' · spent' : ''}</span></div>`;
   }).join('')}
-   <div class="sect">Movement ${isCur ? `· ${player.mv} left` : `· ${mvMax(player)}${statMvB(player) ? '+' + statMvB(player) : ''} per turn`}</div>
+   <div class="sect">${_T`Movement ${isCur ? _T`· ${player.mv} left` : _T`· ${mvMax(player)}${statMvB(player) ? '+' + statMvB(player) : ''} per turn`}`}</div>
    <div class="mvtrack" aria-label="movement">${Array.from({
     length: 7
   }, (_, i) => `<i class="${isCur ? i < player.mv ? 'f' : '' : i < mvMax(player) ? '' : 'cap'}"></i>`).join('')}</div>
-   ${player.items.length ? `<div class="sect">Hand, offerings & objectives</div><div class="items">${player.items.map(it => {
+   ${player.items.length ? `<div class="sect">${_T`Hand, offerings & objectives`}</div><div class="items">${player.items.map(it => {
     const hidden = it.kind === 'mf' && player.cpu && !S.over;
     const I = hidden ? {
       n: 'Mandata Flavi',
-      t: 'Secret objective',
+      t: _T('Secret objective'),
       d: ''
     } : itemInfo(it);
     const ref = it.kind === 'card' ? 'c:' + it.key : it.kind === 'mf' && !hidden ? 'm:' + it.idx : null;
     const canUse = interactive && (it.kind !== 'mf' || MANDATA[it.idx].declare);
-    return `<div class="item ${it.kind === 'mf' ? 'mf' : ''}"><span>${ref ? cardHTML(ref, 'xs') : it.kind === 'offer' && typeof offerTokHTML === 'function' ? offerTokHTML(it.key, 30) : ''}<span>${I.n}<em>${I.t}${I.d ? ' · ' + I.d : ''}</em></span></span>${canUse ? `<button class="btn" type="button" data-act="item" data-id="${it.id}">${it.kind === 'mf' ? 'Declare' : 'Use'}</button>` : ''}</div>`;
+    return `<div class="item ${it.kind === 'mf' ? 'mf' : ''}"><span>${ref ? cardHTML(ref, 'xs') : it.kind === 'offer' && typeof offerTokHTML === 'function' ? offerTokHTML(it.key, 30) : ''}<span>${I.n}<em>${I.t}${I.d ? ' · ' + I.d : ''}</em></span></span>${canUse ? `<button class="btn" type="button" data-act="item" data-id="${it.id}">${it.kind === 'mf' ? _T('Declare') : _T('Use')}</button>` : ''}</div>`;
   }).join('')}</div>` : ''}
-   <div class="hint"><span data-card="k:${player.cls}" style="text-decoration:underline dotted;cursor:help">${CLASSES[player.cls].name} card</span> · ${player.drafted ? 'Drafted gladiator: no class ability or weakness.' : CLASSES[player.cls].ab}${player.abil === 'vet' ? ` <button class="btn" type="button" data-act="vetpref" style="padding:2px 8px">Lanista takes: ${player.vetPref === 'cf' ? 'CF' : 'coin'}</button>` : ''}</div>`;
+   <div class="hint"><span data-card="k:${player.cls}" style="text-decoration:underline dotted;cursor:help">${_T`${CLASSES[player.cls].name} card`}</span> · ${player.drafted ? _T('Drafted gladiator: no class ability or weakness.') : CLASSES[player.cls].ab}${player.abil === 'vet' ? ` <button class="btn" type="button" data-act="vetpref" style="padding:2px 8px">${_T`Lanista takes: ${player.vetPref === 'cf' ? 'CF' : _T('coin')}`}</button>` : ''}</div>`;
 }
 
 /* ================= RENDER PANELS ================= */
@@ -2621,9 +2621,9 @@ function updateLeadDot() {
   const lead = (top[0].cf || 0) > (top[1] ? top[1].cf || 0 : -1) ? top[0] : S.players.find(player => player.id === LEAD_ID) || top[0]; // ties keep the old leader
   d.hidden = false;
   d.style.setProperty('--lc', lead.color);
-  d.title = `${lead.name} leads with ${lead.cf || 0} CF`;
+  d.title = _T`${lead.name} leads with ${lead.cf || 0} CF`;
   const btn = document.getElementById('btnGraph');
-  if (btn) btn.title = `Standings — ${lead.name} leads with ${lead.cf || 0} CF`;
+  if (btn) btn.title = _T`Standings — ${lead.name} leads with ${lead.cf || 0} CF`;
   if (LEAD_ID !== lead.id) {
     if (LEAD_ID != null) {
       d.classList.remove('flip');
@@ -2652,7 +2652,7 @@ function render() {
   const z = ZONES[rd.zone],
     zs = z[1] - z[0] + 1;
   /* flag — a small allowed / not-allowed chip. */
-  const flag = (ok, l) => `<span class="chip ${ok ? 'yes' : 'no'}" title="${l} ${ok ? 'allowed' : 'not allowed'}">${l}</span>`;
+  const flag = (ok, l) => `<span class="chip ${ok ? 'yes' : 'no'}" title="${l} ${ok ? 'allowed' : _T('not allowed')}">${l}</span>`;
   // the status bar (v0.21): WHERE · WHEN · WHO WATCHES, then the event, then the round. Beasts slain ride on the Menagerie button.
   {
     const live = S && !S.over && S.phase !== 'setup';
@@ -2668,29 +2668,29 @@ function render() {
   } // v0.22: event-only controls hide between events
   {
     const bb = $('#btnDrawB');
-    if (bb) bb.innerHTML = `🐾 Menagerie${S.npcKills ? ` · <b>${S.npcKills}</b> slain` : ''}`;
+    if (bb) bb.innerHTML = _T`🐾 Menagerie${S.npcKills ? _T` · <b>${S.npcKills}</b> slain` : ''}`;
   }
   const idle = S.phase === 'setup'; // v0.22: no event on the sand → the location reads “?” (or the New event pick) and the date is the empire's own
   const cal = typeof calNow === 'function' ? idle ? calNow() : S.cal || calNow() : null;
   const dt = cal ? empireDate(cal.season, cal.week) : null;
   const rules = [rd.pve ? 'PvE' : null, rd.pvp ? 'PvP' : null, cfAllowed() ? 'CF' : null, rd.ca ? 'cards' : null].filter(Boolean);
-  const off = [rd.pve ? null : 'no PvE', rd.pvp ? null : 'no PvP', cfAllowed() ? null : RD().cf && commodusIn() ? 'no CF (Commodus is in the arena)' : 'no CF'].filter(Boolean);
-  $('#status').innerHTML = `<span class="chip calchip" id="calChip" role="button" tabindex="0" style="border-color:var(--gold);cursor:pointer" title="Click for the season schedule · ${dt ? dt.long : ''}${LOCATIONS[S.locIdx] && LOCATIONS[S.locIdx].good ? ' · class modifiers apply here (see New event)' : ''}${S.cal && S.cal.onSched === false ? ' · off the season schedule' : ''}">📍 ${idle ? '?' : LOCATIONS[S.locIdx] ? LOCATIONS[S.locIdx].n : 'Roma'}${dt ? ` · 📅 ${dt.short}` : ''}${!idle && S.spect && S.spect.length ? ` · 🏟 ${houseHTML(S.spect.length, S.seed, S.locIdx)}` : ''}</span><span class="chip" title="${ev.n}${ev.sr ? ' · Summa Rudis ' + ev.sr : ''}">${ev.short}${ev.sr ? ' · ' + ev.sr : ''}</span><span class="chip" title="Round ${S.ri + 1} of ${ev.rounds.length}: ${rd.n}. Zone ${zs}×${zs}. Allowed now: ${rules.join(', ') || '—'}${off.length ? '. ' + off.join(', ') : ''}">Round ${S.ri + 1}/${ev.rounds.length} · ${rd.n} · ${zs}×${zs}</span>${(() => {
+  const off = [rd.pve ? null : _T('no PvE'), rd.pvp ? null : _T('no PvP'), cfAllowed() ? null : RD().cf && commodusIn() ? _T('no CF (Commodus is in the arena)') : _T('no CF')].filter(Boolean);
+  $('#status').innerHTML = `<span class="chip calchip" id="calChip" role="button" tabindex="0" style="border-color:var(--gold);cursor:pointer" title="${_T`Click for the season schedule · ${dt ? dt.long : ''}${LOCATIONS[S.locIdx] && LOCATIONS[S.locIdx].good ? _T(' · class modifiers apply here (see New event)') : ''}${S.cal && S.cal.onSched === false ? _T(' · off the season schedule') : ''}`}">📍 ${idle ? '?' : LOCATIONS[S.locIdx] ? LOCATIONS[S.locIdx].n : _T('Roma')}${dt ? ` · 📅 ${dt.short}` : ''}${!idle && S.spect && S.spect.length ? ` · 🏟 ${houseHTML(S.spect.length, S.seed, S.locIdx)}` : ''}</span><span class="chip" title="${ev.n}${ev.sr ? _T(' · Summa Rudis ') + ev.sr : ''}">${ev.short}${ev.sr ? ' · ' + ev.sr : ''}</span><span class="chip" title="${_T`Round ${S.ri + 1} of ${ev.rounds.length}: ${rd.n}. Zone ${zs}×${zs}. Allowed now: ${rules.join(', ') || '—'}${off.length ? '. ' + off.join(', ') : ''}`}">${_T`Round ${S.ri + 1}/${ev.rounds.length} · ${rd.n} · ${zs}×${zs}`}</span>${(() => {
     const rr = roundRules(rd, true);
-    return Object.keys(RULE_INFO).filter(k => !rr[k]).map(k => `<span class="chip rulechip" role="button" tabindex="0" title="${esc(RULE_INFO[k][3])} — click for the event briefing">🚫 ${RULE_INFO[k][0]} ${k === 'ca' ? 'No abilities' : 'No ' + RULE_INFO[k][1]}${k === 'cf' && rd.cf && commodusIn() ? ' · Commodus is in' : ''}</span>`).join('');
-  })()}${S.evKey === 'ludus' ? `<span>Rotation <b>${S.rotation}</b>/10</span>` : ''}${S.evKey === 'goldenEagle' ? Object.keys(S.teamPts).length ? `<span>Eagles ${Object.entries(S.teamPts).map(([t, v]) => `${t}: <b>${v}</b>`).join(' · ')}</span>` : '<span>Eagles 0</span>' : ''}${isNaum() ? S.ships.map(ship => `<span class="chip ${ship.sunk ? 'no' : ''}">${ship.name.replace('Ship of ', '')} ${ship.team}·${Math.max(0, ship.hp)}</span>`).join('') : ''}${S.fest ? `<span class="chip">${festName(S.fest.kind)} · event ${S.fest.stage + 1}/3</span>` : ''}${S.missio ? `<span class="chip">Missio · ${S.missio.name} · step ${S.missio.step + 1}/5</span>` : ''}`;
+    return Object.keys(RULE_INFO).filter(k => !rr[k]).map(k => `<span class="chip rulechip" role="button" tabindex="0" title="${_T`${esc(RULE_INFO[k][3])} — click for the event briefing`}">🚫 ${RULE_INFO[k][0]} ${k === 'ca' ? _T('No abilities') : 'No ' + RULE_INFO[k][1]}${k === 'cf' && rd.cf && commodusIn() ? _T(' · Commodus is in') : ''}</span>`).join('');
+  })()}${S.evKey === 'ludus' ? _T`<span>Rotation <b>${S.rotation}</b>/10</span>` : ''}${S.evKey === 'goldenEagle' ? Object.keys(S.teamPts).length ? _T`<span>Eagles ${Object.entries(S.teamPts).map(([t, v]) => `${t}: <b>${v}</b>`).join(' · ')}</span>` : _T('<span>Eagles 0</span>') : ''}${isNaum() ? S.ships.map(ship => `<span class="chip ${ship.sunk ? 'no' : ''}">${ship.name.replace('Ship of ', '')} ${ship.team}·${Math.max(0, ship.hp)}</span>`).join('') : ''}${S.fest ? `<span class="chip">${_T`${festName(S.fest.kind)} · event ${S.fest.stage + 1}/3`}</span>` : ''}${S.missio ? `<span class="chip">${_T`Missio · ${S.missio.name} · step ${S.missio.step + 1}/5`}</span>` : ''}`;
   if (idle) {
     const pv = window.SETUP_OPEN && typeof CFG !== 'undefined' && EVENTS[CFG.ev] ? {
       L: LOCATIONS[CFG.loc],
       E: EVENTS[CFG.ev]
     } : null;
-    $('#status').innerHTML = `<span class="chip calchip" id="calChip" role="button" tabindex="0" style="border-color:var(--gold);cursor:pointer" title="Click for the season schedule · ${dt ? dt.long : ''}">📍 ${pv && pv.L ? pv.L.n : '?'}${dt ? ` · 📅 ${dt.short}` : ''}</span>${pv ? `<span class="chip" title="Selected in New event">${esc(pv.E.short || pv.E.n)}${pv.E.sr ? ' · ' + pv.E.sr : ''} · <i>selected</i></span>` : '<span class="chip" style="opacity:.7">No event on the sand</span>'}`;
+    $('#status').innerHTML = `<span class="chip calchip" id="calChip" role="button" tabindex="0" style="border-color:var(--gold);cursor:pointer" title="${_T`Click for the season schedule · ${dt ? dt.long : ''}`}">📍 ${pv && pv.L ? pv.L.n : '?'}${dt ? ` · 📅 ${dt.short}` : ''}</span>${pv ? `<span class="chip" title="${_T`Selected in New event`}">${esc(pv.E.short || pv.E.n)}${pv.E.sr ? ' · ' + pv.E.sr : ''} · <i>selected</i></span>` : _T('<span class="chip" style="opacity:.7">No event on the sand</span>')}`;
   }
   {
     const hd = $('#rosterHd');
     if (hd) {
       const st = S.players.filter(other => other.alive && !other.exited).length;
-      hd.innerHTML = S.phase === 'setup' ? '' : `<span>⚔ Fighting in this event</span><small>${st} of ${S.players.length} standing</small>`;
+      hd.innerHTML = S.phase === 'setup' ? '' : _T`<span>⚔ Fighting in this event</span><small>${st} of ${S.players.length} standing</small>`;
     }
   }
   {
@@ -2700,12 +2700,12 @@ function render() {
     if (bb) bb.hidden = !(S.mgrCtx || S.specCtx);
   }
   $('#roster').innerHTML = S.players.map(other => `<button type="button" class="rc ${other === p && !S.over || S.over && S.boardPid === other.id ? 'cur' : ''} ${other.alive ? '' : 'dead'}" style="--pc:${other.color}" data-act="inspect" data-pid="${other.id}">
-    <div class="top">${(S.mgrCtx || S.specCtx) && other.mgrGid && typeof gById === 'function' && gById(other.mgrGid) ? `<span class="favstar ${gById(other.mgrGid).favd ? 'on' : ''}" role="button" tabindex="0" data-favg="${other.mgrGid}" title="${gById(other.mgrGid).favd ? 'On your ★ Favorites board — click to remove' : 'Add to your ★ Favorites board (Manager mode)'}">${gById(other.mgrGid).favd ? '★' : '☆'}</span>` : ''}<span class="nm">${other.name}</span><span class="tag">${CLASSES[other.cls].name}${EV().teams || EV().coop ? ' · Team ' + other.team : ''} · ${other.cpu ? 'CPU ' + cpuMind(other) : 'You'}</span></div>
+    <div class="top">${(S.mgrCtx || S.specCtx) && other.mgrGid && typeof gById === 'function' && gById(other.mgrGid) ? `<span class="favstar ${gById(other.mgrGid).favd ? 'on' : ''}" role="button" tabindex="0" data-favg="${other.mgrGid}" title="${gById(other.mgrGid).favd ? _T('On your ★ Favorites board — click to remove') : _T('Add to your ★ Favorites board (Manager mode)')}">${gById(other.mgrGid).favd ? '★' : '☆'}</span>` : ''}<span class="nm">${other.name}</span><span class="tag">${CLASSES[other.cls].name}${EV().teams || EV().coop ? _T(' · Team ') + other.team : ''} · ${other.cpu ? 'CPU ' + cpuMind(other) : _T('You')}</span></div>
     <div class="mini">${[['head', 'chest'], ['rarm', 'larm'], ['rleg', 'lleg']].flat().map(l => {
     const v = other.hp[l];
     return `<div class="mloc"><span class="lab">${sideBadge(l)}${LOCS_SHORT[l]}</span><div class="mbars">${v <= 0 ? `<span class="sevd">${sevLabel(l).toLowerCase()}</span>` : seg7(v, 'h', v <= 2) + seg7(other.ap[l], 'a')}</div></div>`;
   }).join('')}</div>
-    ${other.cpu && other.alive && other.lastThought ? `<div class="thought">“${esc(other.lastThought)}”</div>` : ''}<div class="nums">${other.exited ? 'Exited the arena' : other.alive ? `${other.ch ? `Lap ${other.ch.laps}/3${other.ch.mounted ? '' : ' · on foot'} · ` : ''}${swimming(other) ? 'swimming · ' : ''}CF ${other.cf} · coin ${other.coin} · ⚔ ${other.trophies.filter(target => target.pk === 'player').length} 🐾 ${other.trophies.filter(target => target.pk !== 'player').length}${other.underground ? ' · underground' : ''}${rd.zone > 1 && !inZone(other.r, other.c) ? ' · outside zone' : ''}` : 'Eliminated'}</div></button>`).join('');
+    ${other.cpu && other.alive && other.lastThought ? `<div class="thought">“${esc(other.lastThought)}”</div>` : ''}<div class="nums">${other.exited ? _T('Exited the arena') : other.alive ? _T`${other.ch ? _T`Lap ${other.ch.laps}/3${other.ch.mounted ? '' : _T(' · on foot')} · ` : ''}${swimming(other) ? 'swimming · ' : ''}CF ${other.cf} · coin ${other.coin} · ⚔ ${other.trophies.filter(target => target.pk === 'player').length} 🐾 ${other.trophies.filter(target => target.pk !== 'player').length}${other.underground ? ' · underground' : ''}${rd.zone > 1 && !inZone(other.r, other.c) ? _T(' · outside zone') : ''}` : _T('Eliminated')}</div></button>`).join('');
   const shown = typeof boardShown === 'function' ? boardShown(p) : S.over && S.boardPid != null && S.players[S.boardPid] ? S.players[S.boardPid] : p;
   $('#board').innerHTML = boardHTML(shown, humanTurn() && S.phase === 'action' && !shown.cpu && shown === p);
   // actions
@@ -2715,22 +2715,22 @@ function render() {
   if (S.over) a = '<p class="hint">The event is over. Start a new one from the top bar.</p>';else if (ph === 'command' && S.cmd) {
     const n = S.cmd.n,
       zo = n.t === 'zora' ? zoraPickOptions(n) : [];
-    a = `<p class="hint">Command <b>${n.name}</b>: click an orange tile to move${S.cmd.moved ? ' (moved)' : ''}${n.carry ? `. Carrying ${n.carry.label}: half movement, no attacks` : ', or a red ring to attack'}${n.t === 'zora' ? '. Zora flies over everything and can land on pillars' : ''}.</p><div class="acts">${zo.map((o, i) => `<button class="btn" type="button" data-act="zpick" data-i="${i}">Pick up ${o.label}<small>halves his movement</small></button>`).join('')}${n.carry ? `<button class="btn" type="button" data-act="zdrop">${cheb(n, S.cmd.p) <= 1 ? 'Deliver to ' + S.cmd.p.name : 'Drop here'}<small>${n.carry.label}</small></button>` : ''}<button class="btn primary" type="button" data-act="cmddone">Done commanding</button></div>`;
-  } else if (p.cpu) a = `<p class="hint">${p.name} (CPU, ${typeof AI_TIERS !== 'undefined' && p.tier != null ? AI_TIERS[p.tier].n : p.diff}) is taking their turn…</p>`;else if (ph === 'resolve') a = '<p class="hint">The arena reacts to you. NPCs are moving…</p>';else if (ph === 'choice') a = `<div class="acts"><button class="btn primary" type="button" data-act="coin" ${S.busy ? 'disabled' : ''}>Take 2 coin<small>safe</small></button><button class="btn" type="button" data-act="card" ${S.busy || !canDraw() ? 'disabled' : ''}>Draw arena card<small>${canDraw() ? S.deck.length + ' left · high risk' : 'no arena deck in this event'}</small></button></div>`;else if (ph === 'action' && isChariot()) {
+    a = `<p class="hint">${_T`Command <b>${n.name}</b>: click an orange tile to move${S.cmd.moved ? ' (moved)' : ''}${n.carry ? `. Carrying ${n.carry.label}: half movement, no attacks` : _T(', or a red ring to attack')}${n.t === 'zora' ? '. Zora flies over everything and can land on pillars' : ''}.`}</p><div class="acts">${zo.map((o, i) => `<button class="btn" type="button" data-act="zpick" data-i="${i}">${_T`Pick up ${o.label}<small>halves his movement</small>`}</button>`).join('')}${n.carry ? `<button class="btn" type="button" data-act="zdrop">${cheb(n, S.cmd.p) <= 1 ? _T('Deliver to ') + S.cmd.p.name : _T('Drop here')}<small>${n.carry.label}</small></button>` : ''}<button class="btn primary" type="button" data-act="cmddone">${_T`Done commanding`}</button></div>`;
+  } else if (p.cpu) a = `<p class="hint">${_T`${p.name} (CPU, ${typeof AI_TIERS !== 'undefined' && p.tier != null ? AI_TIERS[p.tier].n : p.diff}) is taking their turn…`}</p>`;else if (ph === 'resolve') a = '<p class="hint">The arena reacts to you. NPCs are moving…</p>';else if (ph === 'choice') a = `<div class="acts"><button class="btn primary" type="button" data-act="coin" ${S.busy ? 'disabled' : ''}>${_T`Take 2 coin<small>safe</small>`}</button><button class="btn" type="button" data-act="card" ${S.busy || !canDraw() ? 'disabled' : ''}>${_T`Draw arena card<small>${canDraw() ? S.deck.length + _T(' left · high risk') : _T('no arena deck in this event')}</small>`}</button></div>`;else if (ph === 'action' && isChariot()) {
     const srcs = attackSources(p).filter(s => !s.thr);
     const m = S.mode;
     const ch = p.ch;
     /* btn — one action-dock button (on = current mode, en = enabled; always disabled while busy). */
     const btn = (act, label, sub, on, en = true) => `<button class="btn ${on ? 'on' : ''}" type="button" data-act="${act}" ${!en || S.busy ? 'disabled' : ''}>${label}<small>${sub}</small></button>`;
-    a = `<div class="acts">${btn('m-move', ch.mounted ? 'Drive' : 'Move on foot', `${p.mv} movement${ch.mounted ? ' · forward or forward-diagonal only' : ''}`, m === 'move')}
+    a = `<div class="acts">${btn('m-move', ch.mounted ? _T('Drive') : _T('Move on foot'), _T`${p.mv} movement${ch.mounted ? _T(' · forward or forward-diagonal only') : ''}`, m === 'move')}
       ${srcs.map(s => {
       const id = 'm-atk' + s.arm;
       const n = targetsFor(p, s).length;
-      return btn(id, `Attack · ${s.w.n}`, chCanAttack(p) ? `${n} in range · once per lap` : ch.laps < 1 ? 'after your first lap' : 'already attacked this lap', m === id.slice(2), chCanAttack(p));
+      return btn(id, _T`Attack · ${s.w.n}`, chCanAttack(p) ? _T`${n} in range · once per lap` : ch.laps < 1 ? _T('after your first lap') : _T('already attacked this lap'), m === id.slice(2), chCanAttack(p));
     }).join('')}
-      ${ch.mounted ? btn('dismount', 'Dismount', 'fetch spare wheels or horses on foot', false) : p.r === ch.cr && p.c === ch.cc ? btn('mount', 'Mount chariot', 'free', false) : ''}
-      <button class="btn primary" type="button" data-act="end" ${S.busy ? 'disabled' : ''}>End turn<small>next racer</small></button></div>
-    <p class="hint">Race counter-clockwise: north up the right side, west along the top, south down the left, east along the bottom across the red finish line. Lap ${ch.laps}/3. Pillar gates at the top and bottom middle flip your horse, draw an offering and give a free step.${ch.mounted ? '' : ' On foot you can enter the center to pick up spare wheels and horses; a chariot that hits you eliminates you.'}</p>`;
+      ${ch.mounted ? btn('dismount', _T('Dismount'), _T('fetch spare wheels or horses on foot'), false) : p.r === ch.cr && p.c === ch.cc ? btn('mount', _T('Mount chariot'), 'free', false) : ''}
+      <button class="btn primary" type="button" data-act="end" ${S.busy ? 'disabled' : ''}>${_T`End turn<small>next racer</small>`}</button></div>
+    <p class="hint">${_T`Race counter-clockwise: north up the right side, west along the top, south down the left, east along the bottom across the red finish line. Lap ${ch.laps}/3. Pillar gates at the top and bottom middle flip your horse, draw an offering and give a free step.${ch.mounted ? '' : _T(' On foot you can enter the center to pick up spare wheels and horses; a chariot that hits you eliminates you.')}`}</p>`;
   } else if (ph === 'action') {
     const srcs = attackSources(p);
     const m = S.mode;
@@ -2739,42 +2739,42 @@ function render() {
     const atkBtns = srcs.map(s => {
       const n = targetsFor(p, s).length;
       const id = 'm-atk' + s.arm + (s.thr ? 'T' : '');
-      return btn(id, `${s.thr ? 'Throw' : 'Attack'} · ${s.w.n}`, `${s.arm === 'R' ? 'right' : 'left'} · ${n} target${n === 1 ? '' : 's'}`, m === id.slice(2), n > 0 || m === id.slice(2));
+      return btn(id, `${s.thr ? _T('Throw') : _T('Attack')} · ${s.w.n}`, _T`${s.arm === 'R' ? _T('right') : _T('left')} · ${n} target${n === 1 ? '' : 's'}`, m === id.slice(2), n > 0 || m === id.slice(2));
     }).join(''); /* v0.53: no target in reach = no attack */
     const focusTargets = srcs.some(s => targetsFor(p, s).some(target => target.kind === 'player'));
     const loot = lootOptions(p).filter(o => o.t === 'fw' || !p.looted);
     const ex = tunnelExits(p);
     a = `<div class="acts">
-      ${btn('m-move', 'Move', p.focusRoll ? 'locked — Focus spends your movement' : `${p.mv} movement · diagonal 2`, m === 'move' && !p.focusRoll, !p.focusRoll)}
-      <div class="atkgrp ${p.focusRoll ? 'focused' : ''}">${RD().pvp && p.mv > 0 && srcs.length ? `<button class="btn focbtn ${p.focusRoll ? 'on' : ''}" type="button" data-act="focus" ${S.busy || !focusTargets && !p.focusRoll ? 'disabled' : ''} title="Spend ALL your remaining movement: the location die is rolled three times and you pick where your next attack on a gladiator lands">🎯 Focus roll: ${p.focusRoll ? '<b>ON</b>' : 'off'}<small>${p.focusRoll ? 'your next attack picks 1 of 3 rolled locations' : `costs your ${p.mv} movement · pick 1 of 3 locations`}</small></button>` : ''}${atkBtns || btn('none', 'Attack', 'no attacks left', false, false)}</div>
-      ${btn('m-push', 'Push', '2 movement', m === 'push', pushTargets(p).length > 0)}
-      ${btn('m-topple', 'Topple pillar', '3 movement', m === 'topple', toppleTargets(p).length > 0)}
-      ${!weak(p, 'noTunnel') ? btn('m-tunnel', 'Tunnel', '1 Arena Key · ends turn', m === 'tunnel', ex.length > 0) : ''}
-      ${canOpenChest(p) ? btn('chest', 'Open Arena Chest', '1 Arena Key', false) : ''}
-      ${S.chest && onChestTile(p) && !p.carrying && armsAttached(p).length === 2 ? btn('chestup', 'Pick up chest', '−1 movement while held', false) : ''}
-      ${p.carrying ? btn('chestdown', 'Drop chest', 'free', false) : ''}
-      ${loot.length ? btn('loot', 'Loot', p.looted ? 'thrown weapons only' : '1 item per turn', false) : ''}
-      ${EV().noMarket ? '' : btn('market', 'Market', p.market ? 'unlocked' : cfAllowed() ? '3 CF to unlock' : 'CF locked', false)}
-      ${btn('crowd', 'Crowd Favor', cfAllowed() ? `${p.cf} CF to spend` : 'locked this round', false, cfAllowed())}
-      ${tradePartners(p).length ? btn('trade', 'Trade or truce', 'within 4 tiles', false) : ''}
-      ${spearTargets(p).length ? btn('spear', 'Spear a spectator', '3 CF · once per event', false) : ''}
-      ${canSelfWager(p) ? btn('selfbet', 'Wager on yourself', 'coin at today\'s odds', false) : ''}
-      ${p.abil === 'zora' && caAllowed() && (p.zoraUsed || 0) < (p.abilVal || 1) && !p.noEagle ? btn('zora', 'Release Zora', (p.abilVal || 1) > 1 ? `${(p.abilVal || 1) - (p.zoraUsed || 0)} release${(p.abilVal || 1) - (p.zoraUsed || 0) === 1 ? '' : 's'} left` : 'once per event', false) : ''}
-      ${canExit(p) ? btn('exit', 'Exit the arena', 'ends your event here', false) : ''}
-      ${isNaum() && p.onDoor != null ? btn('leavedoor', 'Leave the door', 'swim from here', false) : ''}
-      <button class="btn primary ${turnSpent(p, srcs, loot, ex) ? 'heartbeat' : ''}" type="button" data-act="end" ${S.busy ? 'disabled' : ''}>End turn<small>${turnSpent(p, srcs, loot, ex) ? 'nothing left to do this turn' : 'Phase 4'}</small></button>
+      ${btn('m-move', _T('Move'), p.focusRoll ? _T('locked — Focus spends your movement') : _T`${p.mv} movement · diagonal 2`, m === 'move' && !p.focusRoll, !p.focusRoll)}
+      <div class="atkgrp ${p.focusRoll ? 'focused' : ''}">${RD().pvp && p.mv > 0 && srcs.length ? `<button class="btn focbtn ${p.focusRoll ? 'on' : ''}" type="button" data-act="focus" ${S.busy || !focusTargets && !p.focusRoll ? 'disabled' : ''} title="${_T`Spend ALL your remaining movement: the location die is rolled three times and you pick where your next attack on a gladiator lands`}">${_T`🎯 Focus roll: ${p.focusRoll ? '<b>ON</b>' : _T('off')}<small>${p.focusRoll ? _T('your next attack picks 1 of 3 rolled locations') : _T`costs your ${p.mv} movement · pick 1 of 3 locations`}</small>`}</button>` : ''}${atkBtns || btn('none', _T('Attack'), _T('no attacks left'), false, false)}</div>
+      ${btn('m-push', _T('Push'), '2 movement', m === 'push', pushTargets(p).length > 0)}
+      ${btn('m-topple', _T('Topple pillar'), '3 movement', m === 'topple', toppleTargets(p).length > 0)}
+      ${!weak(p, 'noTunnel') ? btn('m-tunnel', _T('Tunnel'), _T('1 Arena Key · ends turn'), m === 'tunnel', ex.length > 0) : ''}
+      ${canOpenChest(p) ? btn('chest', _T('Open Arena Chest'), _T('1 Arena Key'), false) : ''}
+      ${S.chest && onChestTile(p) && !p.carrying && armsAttached(p).length === 2 ? btn('chestup', _T('Pick up chest'), _T('−1 movement while held'), false) : ''}
+      ${p.carrying ? btn('chestdown', _T('Drop chest'), 'free', false) : ''}
+      ${loot.length ? btn('loot', _T('Loot'), p.looted ? _T('thrown weapons only') : _T('1 item per turn'), false) : ''}
+      ${EV().noMarket ? '' : btn('market', _T('Market'), p.market ? 'unlocked' : cfAllowed() ? _T('3 CF to unlock') : _T('CF locked'), false)}
+      ${btn('crowd', _T('Crowd Favor'), cfAllowed() ? _T`${p.cf} CF to spend` : _T('locked this round'), false, cfAllowed())}
+      ${tradePartners(p).length ? btn('trade', _T('Trade or truce'), _T('within 4 tiles'), false) : ''}
+      ${spearTargets(p).length ? btn('spear', _T('Spear a spectator'), _T('3 CF · once per event'), false) : ''}
+      ${canSelfWager(p) ? btn('selfbet', _T('Wager on yourself'), _T('coin at today\'s odds'), false) : ''}
+      ${p.abil === 'zora' && caAllowed() && (p.zoraUsed || 0) < (p.abilVal || 1) && !p.noEagle ? btn('zora', _T('Release Zora'), (p.abilVal || 1) > 1 ? _T`${(p.abilVal || 1) - (p.zoraUsed || 0)} release${(p.abilVal || 1) - (p.zoraUsed || 0) === 1 ? '' : 's'} left` : _T('once per event'), false) : ''}
+      ${canExit(p) ? btn('exit', _T('Exit the arena'), _T('ends your event here'), false) : ''}
+      ${isNaum() && p.onDoor != null ? btn('leavedoor', _T('Leave the door'), _T('swim from here'), false) : ''}
+      <button class="btn primary ${turnSpent(p, srcs, loot, ex) ? 'heartbeat' : ''}" type="button" data-act="end" ${S.busy ? 'disabled' : ''}>${_T`End turn<small>${turnSpent(p, srcs, loot, ex) ? _T('nothing left to do this turn') : _T('Phase 4')}</small>`}</button>
     </div>
     <p class="hint">${{
-      move: 'Click an orange tile to move. Numbers show the movement it costs.',
-      push: 'Click a yellow tile to push that pillar, player or NPC one tile away. Push beasts or rivals onto spikes, or pillars onto tunnels to seal them.',
-      topple: 'Click a pillar to topple it away from you. Anything on the next two tiles takes 3 damage and every pot on it breaks.',
-      tunnel: 'Click a blue tunnel to exit there. You stay underground until your next turn.',
-      rete: 'Click a teal target to throw the net.'
-    }[m] || 'Click a red-ringed target. Pots need 2 damage to break.'}${rd.zone > 1 && p.grace > 0 ? ` Grace: ${p.grace} turn${p.grace > 1 ? 's' : ''} left to reach the zone.` : ''}</p>`;
+      move: _T('Click an orange tile to move. Numbers show the movement it costs.'),
+      push: _T('Click a yellow tile to push that pillar, player or NPC one tile away. Push beasts or rivals onto spikes, or pillars onto tunnels to seal them.'),
+      topple: _T('Click a pillar to topple it away from you. Anything on the next two tiles takes 3 damage and every pot on it breaks.'),
+      tunnel: _T('Click a blue tunnel to exit there. You stay underground until your next turn.'),
+      rete: _T('Click a teal target to throw the net.')
+    }[m] || _T('Click a red-ringed target. Pots need 2 damage to break.')}${rd.zone > 1 && p.grace > 0 ? _T` Grace: ${p.grace} turn${p.grace > 1 ? 's' : ''} left to reach the zone.` : ''}</p>`;
   }
   const hs = typeof MTUT !== 'undefined' && MTUT.on ? [] : strategyHints(p);
   $('#actions').innerHTML = pbar + a;
-  $('#hintDock').innerHTML = hs.length ? `<div class="hintbox" aria-label="Hints"><h4>Hints</h4><ul>${hs.map(h => `<li>${h}</li>`).join('')}</ul></div>` : '';
+  $('#hintDock').innerHTML = hs.length ? `<div class="hintbox" aria-label="${_T`Hints`}"><h4>${_T`Hints`}</h4><ul>${hs.map(h => `<li>${h}</li>`).join('')}</ul></div>` : '';
   try {
     if (typeof matchSaveUI === 'function') matchSaveUI();
   } catch (e) {}
@@ -2880,18 +2880,18 @@ document.addEventListener('click', e => {
     p.carrying = true;
     S.chest.held = 'p' + p.id;
     p.mv = Math.max(0, p.mv - 1);
-    log(`${nm(p)} lifts the Arena Chest.`);
+    log(_T`${nm(p)} lifts the Arena Chest.`);
   });
   if (k === 'chestdown') act(async () => {
     p.carrying = false;
     S.chest.held = null;
     S.chest.r = p.r;
     S.chest.c = p.c;
-    log(`${nm(p)} sets the chest down.`);
+    log(_T`${nm(p)} sets the chest down.`);
   });
   if (k === 'loot') act(async () => {
     const opts = lootOptions(p).filter(o => o.t === 'fw' || !p.looted);
-    const i = await modal('Loot', `<p>Take one item per turn from a corpse or a dropped pile. Thrown weapons in the sand can always be picked up.</p>`, opts.map((o, i) => {
+    const i = await modal(_T('Loot'), `<p>${_T`Take one item per turn from a corpse or a dropped pile. Thrown weapons in the sand can always be picked up.`}</p>`, opts.map((o, i) => {
       const w = o.t === 'w' ? o.pl.weapons[o.i] : o.t === 'fw' ? o.floor.w : null;
       const own = o.pl && S.players[o.pl.owner];
       return {
@@ -2901,7 +2901,7 @@ document.addEventListener('click', e => {
         card: w && w.key ? 'w:' + w.key : own ? 'b:' + own.cls : null
       };
     }).concat([{
-      label: 'Cancel',
+      label: _T('Cancel'),
       value: null
     }]));
     if (i != null) await doLoot(p, opts[i]);
@@ -2915,15 +2915,15 @@ document.addEventListener('click', e => {
   if (k === 'dismount') act(async () => {
     p.ch.mounted = false;
     p.mv = Math.min(p.mv, 3);
-    log(`${nm(p)} dismounts.`);
+    log(_T`${nm(p)} dismounts.`);
   });
   if (k === 'mount') act(async () => {
     p.ch.mounted = true;
-    log(`${nm(p)} mounts their chariot.`);
+    log(_T`${nm(p)} mounts their chariot.`);
   });
   if (k === 'leavedoor') act(async () => {
     p.onDoor = null;
-    log(`${nm(p)} slips off the door into the water.`);
+    log(_T`${nm(p)} slips off the door into the water.`);
   });
   if (k === 'exit') act(async () => {
     doExit(p);
@@ -2938,20 +2938,20 @@ document.addEventListener('click', e => {
 /* showTrophies — shows a gladiator's trophy tables, reusing the open window if there is one. */
 function showTrophies(player) {
   if (!$('#modal').hidden) {
-    $('#mTitle').textContent = `${player.name}'s trophies`;
+    $('#mTitle').textContent = _T`${player.name}'s trophies`;
     $('#mBody').innerHTML = trophyHTML(player);
     return;
   }
-  modal(`${player.name}'s trophies`, trophyHTML(player), [{
-    label: 'Close',
+  modal(_T`${player.name}'s trophies`, trophyHTML(player), [{
+    label: _T('Close'),
     value: 1
   }]);
 }
 /* trophyHTML — trophy tables (gladiators, then beasts) with coin and CF totals. */
 function trophyHTML(player) {
   /* tbl — one titled trophy table, or "None yet". */
-  const tbl = (list, title) => `<h4>${title} · ${list.length}</h4>` + (list.length ? `<table class="tally"><tr><th>Trophy</th><th>Type</th><th>Round</th><th>Coin</th><th>CF</th></tr>${list.map(target => `<tr><td>${target.name}</td><td>${target.kind}</td><td class="n">${target.round}</td><td class="n">${target.coin}</td><td class="n">${target.cf}</td></tr>`).join('')}<tr><td><b>Total</b></td><td></td><td></td><td class="n"><b>${list.reduce((s, target) => s + target.coin, 0)}</b></td><td class="n"><b>${list.reduce((s, target) => s + target.cf, 0)}</b></td></tr></table>` : '<p>None yet.</p>');
-  return `<p>Every 3 trophies held by a winner add 5 CF at the end. ${player.trophies.length} in total.</p>${tbl(player.trophies.filter(target => target.pk === 'player'), 'Gladiators eliminated (players &amp; CPUs)')}${tbl(player.trophies.filter(target => target.pk !== 'player'), 'Beasts eliminated (NPCs)')}`;
+  const tbl = (list, title) => `<h4>${title} · ${list.length}</h4>` + (list.length ? `<table class="tally"><tr><th>${_T`Trophy`}</th><th>${_T`Type`}</th><th>${_T`Round`}</th><th>${_T`Coin`}</th><th>CF</th></tr>${list.map(target => `<tr><td>${target.name}</td><td>${target.kind}</td><td class="n">${target.round}</td><td class="n">${target.coin}</td><td class="n">${target.cf}</td></tr>`).join('')}<tr><td>${_T`<b>Total</b>`}</td><td></td><td></td><td class="n"><b>${list.reduce((s, target) => s + target.coin, 0)}</b></td><td class="n"><b>${list.reduce((s, target) => s + target.cf, 0)}</b></td></tr></table>` : '<p>None yet.</p>');
+  return `<p>${_T`Every 3 trophies held by a winner add 5 CF at the end. ${player.trophies.length} in total.`}</p>${tbl(player.trophies.filter(target => target.pk === 'player'), _T('Gladiators eliminated (players &amp; CPUs)'))}${tbl(player.trophies.filter(target => target.pk !== 'player'), _T('Beasts eliminated (NPCs)'))}`;
 }
 
 /* ================= MODALS ================= */
@@ -3098,7 +3098,7 @@ function modal(title, body, buttons, opt = {}) {
       e.stopPropagation();
       $('#modal').hidden = true;
       const r = $('#mReturn');
-      r.textContent = 'Back to: ' + $('#mTitle').textContent;
+      r.textContent = _T('Back to: ') + $('#mTitle').textContent;
       r.hidden = false;
       r.onclick = () => {
         r.hidden = true;
@@ -3138,14 +3138,14 @@ function distModal(player, n, why, kind) {
   const okLoc = l => player.hp[l] > 0 && cap(l) > 0;
   const left = () => n - LOCS.reduce((s, l) => s + plan[l], 0);
   /* body — renders the distribution rows and the amount left to assign. */
-  const body = () => `<p>Distribute <b>${n} ${kind === 'hp' ? 'HP' : 'AP'}</b> from ${why}. Put it all in one location or spread it. Nothing can exceed 7.</p>
-   <div class="dist">${LOCS.map(l => `<span>${sideBadge(l)} ${LOCN[l]} <span style="color:var(--dim);font:12px var(--mono)">${kind === 'hp' ? player.hp[l] : player.ap[l]} → ${(kind === 'hp' ? player.hp[l] : player.ap[l]) + plan[l]}</span></span><button class="btn" type="button" data-d="-" data-l="${l}" ${plan[l] ? '' : 'disabled'} aria-label="Remove from ${LOCN[l]}">−</button><span class="v">${plan[l]}</span><button class="btn" type="button" data-d="+" data-l="${l}" ${okLoc(l) && plan[l] < cap(l) && left() > 0 ? '' : 'disabled'} aria-label="Add to ${LOCN[l]}">+</button>`).join('')}</div>
-   <p style="margin-top:10px">Left to assign: <b id="distLeft">${left()}</b></p>`;
-  return modal(kind === 'hp' ? 'Distribute health' : 'Distribute armor', body(), [{
-    label: 'Auto: head, chest, arms, legs',
+  const body = () => `<p>${_T`Distribute <b>${n} ${kind === 'hp' ? 'HP' : 'AP'}</b> from ${why}. Put it all in one location or spread it. Nothing can exceed 7.`}</p>
+   <div class="dist">${LOCS.map(l => `<span>${sideBadge(l)} ${LOCN[l]} <span style="color:var(--dim);font:12px var(--mono)">${kind === 'hp' ? player.hp[l] : player.ap[l]} → ${(kind === 'hp' ? player.hp[l] : player.ap[l]) + plan[l]}</span></span><button class="btn" type="button" data-d="-" data-l="${l}" ${plan[l] ? '' : 'disabled'} aria-label="${_T`Remove from ${LOCN[l]}`}">−</button><span class="v">${plan[l]}</span><button class="btn" type="button" data-d="+" data-l="${l}" ${okLoc(l) && plan[l] < cap(l) && left() > 0 ? '' : 'disabled'} aria-label="${_T`Add to ${LOCN[l]}`}">+</button>`).join('')}</div>
+   <p style="margin-top:10px">${_T`Left to assign: <b id="distLeft">${left()}</b>`}</p>`;
+  return modal(kind === 'hp' ? _T('Distribute health') : _T('Distribute armor'), body(), [{
+    label: _T('Auto: head, chest, arms, legs'),
     value: 'auto'
   }, {
-    label: 'Confirm',
+    label: _T('Confirm'),
     value: 'ok',
     primary: 1
   }], {
@@ -3192,7 +3192,7 @@ async function openMarket(player) {
   // v0.34 THE SUTLER'S STALL: the market is a proper stall now — striped awning, plank shelves,
   // the PRINTED cards racked face-up in their slots, the deck face-down beside them. Same rules,
   // same die; it just finally looks like a place a gladiator would spend coin between rounds.
-  const sutler = ['Barbatus', 'Mercator Felix', 'Old Vibius', 'Naso the sutler', 'Crassus Minor', 'the widow Tertia'][Math.abs(S && S.seed || 0) % 6]; // one sutler per event — he remembers you
+  const sutler = [_T('Barbatus'), _T('Mercator Felix'), _T('Old Vibius'), _T('Naso the sutler'), _T('Crassus Minor'), _T('the widow Tertia')][Math.abs(S && S.seed || 0) % 6]; // one sutler per event — he remembers you
   for (;;) {
     const m = S.market;
     const vetCF = vetOn && player.taxPref === 'cf' ? 1 : 0,
@@ -3202,56 +3202,56 @@ async function openMarket(player) {
     const shelf = (kind, lv) => {
       const M = m[kind][lv];
       const slots = M.slots.map((k, i) => `<span class="slotwrap"><span class="slotn">${i + 1}</span>${k ? cardHTML((kind === 'w' ? 'w:' : 'a:') + k, 'sm') : '<span class="cardback mtEmpty">✕</span>'}</span>`).join('');
-      const fd = `<span class="slotwrap"><span class="slotn">4</span><span class="cardback" title="${M.deck.length} card${M.deck.length === 1 ? '' : 's'} face-down in the level ${lv} deck">🏛<small>×${M.deck.length}</small></span></span>`;
-      return `<div class="shelf"><div class="shelf-hd"><b>LEVEL ${RM[lv - 1]}</b><span class="shelf-price">${purchaseCost(player, lv) + vet} coin</span></div><div class="shelf-slots">${slots}${fd}</div></div>`;
+      const fd = `<span class="slotwrap"><span class="slotn">4</span><span class="cardback" title="${_T`${M.deck.length} card${M.deck.length === 1 ? '' : 's'} face-down in the level ${lv} deck`}">🏛<small>×${M.deck.length}</small></span></span>`;
+      return `<div class="shelf"><div class="shelf-hd">${_T`<b>LEVEL ${RM[lv - 1]}</b>`}<span class="shelf-price">${_T`${purchaseCost(player, lv) + vet} coin`}</span></div><div class="shelf-slots">${slots}${fd}</div></div>`;
     };
-    const notes = [vetOn ? `⚖ Old debts: +1 ${vetCF ? 'CF' : 'coin'} per purchase` : '', player.discount ? `％ Discount: −${player.discount} coin this turn` : '', player.mchoice ? '☝ Choose: pick your slot, no die' : ''].filter(Boolean);
+    const notes = [vetOn ? _T`⚖ Old debts: +1 ${vetCF ? 'CF' : _T('coin')} per purchase` : '', player.discount ? _T`％ Discount: −${player.discount} coin this turn` : '', player.mchoice ? _T('☝ Choose: pick your slot, no die') : ''].filter(Boolean);
     const body = `<div class="stall">
       <div class="stall-awn"></div>
-      <div class="stall-sign"><span>⚖ MERCATVS FLAVII ⚖</span><span class="rc-sub">the market die (1-4) picks the slot · re-roll 2 coin</span></div>
+      <div class="stall-sign">${_T`<span>⚖ MERCATVS FLAVII ⚖</span>`}<span class="rc-sub">${_T`the market die (1-4) picks the slot · re-roll 2 coin`}</span></div>
       <div class="stall-body">
-        <div><div class="shelfcol-hd">🗡 The weapon racks</div>${[3, 2, 1].map(lv => shelf('w', lv)).join('')}</div>
-        <div><div class="shelfcol-hd">🛡 The armor shelves</div>${[3, 2, 1].map(lv => shelf('a', lv)).join('')}</div>
+        <div><div class="shelfcol-hd">${_T`🗡 The weapon racks`}</div>${[3, 2, 1].map(lv => shelf('w', lv)).join('')}</div>
+        <div><div class="shelfcol-hd">${_T`🛡 The armor shelves`}</div>${[3, 2, 1].map(lv => shelf('a', lv)).join('')}</div>
       </div>
-      <div class="stall-foot"><span>${typeof specFaceSVG === 'function' ? specFaceSVG({
+      <div class="stall-foot">${_T`<span>${typeof specFaceSVG === 'function' ? specFaceSVG({
       skin: '#d8a47a',
       hair: '#8a7a60',
       beard: true,
       robe: '#7a5a2a'
-    }) : '👤'} <b>${esc(sutler)}</b> eyes your purse</span><span class="stall-purse">💰 <b>${player.coin}</b> coin · 🌾 <b>${player.cf}</b> CF${player.market ? ' · <b style="color:var(--gold2)">stall open</b>' : ''}</span></div>
-      ${player.market ? '' : `<div class="stall-lock"><div><div style="font-size:30px">🔒</div><b>The shutters are up.</b><br><span class="rc-sub">3 Crowd Favor opens the stall for this turn — then buy as often as your coin allows.</span></div></div>`}
+    }) : '👤'} <b>${esc(sutler)}</b> eyes your purse</span>`}<span class="stall-purse">${_T`💰 <b>${player.coin}</b> coin · 🌾 <b>${player.cf}</b> CF${player.market ? _T(' · <b style="color:var(--gold2)">stall open</b>') : ''}`}</span></div>
+      ${player.market ? '' : `<div class="stall-lock"><div><div style="font-size:30px">🔒</div>${_T`<b>The shutters are up.</b>`}<br><span class="rc-sub">${_T`3 Crowd Favor opens the stall for this turn — then buy as often as your coin allows.`}</span></div></div>`}
     </div>${notes.length ? `<p class="rc-sub" style="margin:6px 0 0">${notes.join(' · ')}</p>` : ''}${hint('market')}`;
     const btns = [];
     if (!player.market) btns.push({
-      label: 'Unlock market',
-      sub: cfAllowed() ? '3 CF' : 'Crowd Favor is locked',
+      label: _T('Unlock market'),
+      sub: cfAllowed() ? '3 CF' : _T('Crowd Favor is locked'),
       value: 'unlock',
       disabled: player.cf < 3 || !cfAllowed(),
       primary: 1
     });else {
       for (const lv of [1, 2, 3]) btns.push({
-        label: `Weapon LV ${lv}`,
-        sub: `${purchaseCost(player, lv) + vet} coin${vetCF ? ' + 1 CF' : ''}`,
+        label: _T`Weapon LV ${lv}`,
+        sub: _T`${purchaseCost(player, lv) + vet} coin${vetCF ? ' + 1 CF' : ''}`,
         value: 'w' + lv,
         disabled: player.coin < purchaseCost(player, lv) + vet || vetCF && player.cf < 1
       });
       for (const lv of [1, 2, 3]) btns.push({
-        label: `Armor LV ${lv}`,
-        sub: `${purchaseCost(player, lv) + vet} coin${vetCF ? ' + 1 CF' : ''}`,
+        label: _T`Armor LV ${lv}`,
+        sub: _T`${purchaseCost(player, lv) + vet} coin${vetCF ? ' + 1 CF' : ''}`,
         value: 'a' + lv,
         disabled: player.coin < purchaseCost(player, lv) + vet || vetCF && player.cf < 1
       });
     }
     if (player.market && vetOn) btns.push({
-      label: vetCF ? '⚖ Pay old debts in coin' : '⚖ Pay old debts in CF',
-      sub: 'Veteranus: +1 per purchase',
+      label: vetCF ? _T('⚖ Pay old debts in coin') : _T('⚖ Pay old debts in CF'),
+      sub: _T('Veteranus: +1 per purchase'),
       value: 'taxswap'
     });
     btns.push({
-      label: 'Close market',
+      label: _T('Close market'),
       value: 'close'
     });
-    const v = await modal('Market of Flavius', body, btns, {
+    const v = await modal(_T('Market of Flavius'), body, btns, {
       wide: 1
     });
     if (v === 'close' || !v) break;
@@ -3262,19 +3262,19 @@ async function openMarket(player) {
     if (v === 'unlock') {
       player.cf -= 3;
       player.market = true;
-      log(`${nm(player)} spends 3 CF to unlock the market.`);
+      log(_T`${nm(player)} spends 3 CF to unlock the market.`);
       continue;
     }
     const kind = v[0],
       lv = +v[1];
     player.coin -= purchaseCost(player, lv) + vet;
     if (vetCF) player.cf -= 1;
-    coinLog(player, -(purchaseCost(player, lv) + vet), 'market purchases');
+    coinLog(player, -(purchaseCost(player, lv) + vet), _T('market purchases'));
     stat(player, 'buy');
     crowdReact('buy', {
       p: player
     });
-    log(`${nm(player)} buys at level ${lv}.`);
+    log(_T`${nm(player)} buys at level ${lv}.`);
     const key = await marketRoll(player, kind, lv);
     if (kind === 'w') await gainWeapon(player, key);else if (key) await gainArmorPiece(player, key);
     checkMandata(player);
@@ -3287,50 +3287,50 @@ async function openCrowd(player) {
   for (;;) {
     if (!cfAllowed()) return;
     const opts = [{
-      label: 'Unlock market for this turn',
+      label: _T('Unlock market for this turn'),
       sub: '3 CF',
       value: 'mk',
       disabled: player.cf < 3 || player.market || !!EV().noMarket
     }, {
-      label: 'Arena Key',
+      label: _T('Arena Key'),
       sub: '5 CF',
       value: 'key',
       disabled: player.cf < 5
     }, {
-      label: 'Arena card',
+      label: _T('Arena card'),
       sub: '5 CF',
       value: 'card',
       disabled: player.cf < 5 || !canDraw()
     }, {
-      label: 'Health Elixir token (+4 HP)',
+      label: _T('Health Elixir token (+4 HP)'),
       sub: '8 CF',
       value: 'el',
       disabled: player.cf < 8
     }, {
-      label: 'AP Upgrade token (+3 AP)',
+      label: _T('AP Upgrade token (+3 AP)'),
       sub: '8 CF',
       value: 'ap',
       disabled: player.cf < 8
     }, {
-      label: 'Discard 10 coin for 2 CF',
+      label: _T('Discard 10 coin for 2 CF'),
       sub: '10 coin',
       value: 'dc',
       disabled: player.coin < 10
     }, {
-      label: 'Close',
+      label: _T('Close'),
       value: 'close'
     }];
-    const v = await modal('Crowd Favor', `<p>Crowd Favor is spent in Phase 3. If it ever drops below zero, you are eliminated. You have <b>${player.cf} CF</b> and <b>${player.coin} coin</b>.</p>`, opts);
+    const v = await modal(_T('Crowd Favor'), `<p>${_T`Crowd Favor is spent in Phase 3. If it ever drops below zero, you are eliminated. You have <b>${player.cf} CF</b> and <b>${player.coin} coin</b>.`}</p>`, opts);
     if (v === 'close' || !v) break;
     if (v === 'mk') {
       player.cf -= 3;
       player.market = true;
-      log(`${nm(player)} spends 3 CF to unlock the market.`);
+      log(_T`${nm(player)} spends 3 CF to unlock the market.`);
     }
     if (v === 'key') {
       player.cf -= 5;
       player.keys++;
-      log(`${nm(player)} buys an Arena Key.`);
+      log(_T`${nm(player)} buys an Arena Key.`);
     }
     if (v === 'card') {
       player.cf -= 5;
@@ -3339,18 +3339,18 @@ async function openCrowd(player) {
     if (v === 'el') {
       player.cf -= 8;
       player.items.push(mkOffer('elix4'));
-      log(`${nm(player)} buys a Health Elixir token.`);
+      log(_T`${nm(player)} buys a Health Elixir token.`);
     }
     if (v === 'ap') {
       player.cf -= 8;
       player.items.push(mkOffer('ap3'));
-      log(`${nm(player)} buys an AP Upgrade token.`);
+      log(_T`${nm(player)} buys an AP Upgrade token.`);
     }
     if (v === 'dc') {
       player.coin -= 10;
-      coinLog(player, -10, 'thrown to the crowd');
+      coinLog(player, -10, _T('thrown to the crowd'));
       player.cf += 2;
-      log(`${nm(player)} throws 10 coin to the crowd (+2 CF).`);
+      log(_T`${nm(player)} throws 10 coin to the crowd (+2 CF).`);
     }
     render();
     if (S.over || !player.alive) break;
@@ -3359,108 +3359,108 @@ async function openCrowd(player) {
 /* openTrade — human trade window: pick a gladiator in range, then trade, gift, or propose / break a truce. CPUs answer via cpuAcceptsTrade / cpuAcceptsTruce; humans get a dialog. */
 async function openTrade(player) {
   const partners = tradePartners(player);
-  const qid = await modal('Trade or truce', '<p>Trading is a one-to-one exchange with a gladiator within 4 tiles. A truce is a verbal pact with no penalty for breaking it.</p>', partners.map(other => ({
+  const qid = await modal(_T('Trade or truce'), '<p>Trading is a one-to-one exchange with a gladiator within 4 tiles. A truce is a verbal pact with no penalty for breaking it.</p>', partners.map(other => ({
     label: other.name,
-    sub: `${other.cpu ? 'CPU' : 'player'} · ${cheb(player, other)} tiles away${inTruce(player, other) ? ' · in truce' : ''}`,
+    sub: _T`${other.cpu ? 'CPU' : _T('player')} · ${cheb(player, other)} tiles away${inTruce(player, other) ? _T(' · in truce') : ''}`,
     value: other.id
   })).concat([{
-    label: 'Cancel',
+    label: _T('Cancel'),
     value: null
   }]));
   if (qid == null) return;
   const q = S.players[qid];
-  const what = await modal(`With ${q.name}`, '<p>What would you like to propose?</p>', [{
-    label: 'Propose a trade',
+  const what = await modal(_T`With ${q.name}`, '<p>What would you like to propose?</p>', [{
+    label: _T('Propose a trade'),
     value: 'trade',
     primary: 1
   }, {
-    label: 'Give a gift',
-    sub: 'hand over an item, coin or weapon',
+    label: _T('Give a gift'),
+    sub: _T('hand over an item, coin or weapon'),
     value: 'gift'
   }, {
-    label: inTruce(player, q) ? 'Break the truce' : 'Propose a truce',
+    label: inTruce(player, q) ? _T('Break the truce') : _T('Propose a truce'),
     value: 'truce',
     disabled: (!!EV().noTruce || !!S.truceGone) && !inTruce(player, q),
-    sub: S.truceGone && !inTruce(player, q) ? 'no more truces this event' : S.tutorial && !inTruce(player, q) ? 'Flavius will not allow it in a lesson' : undefined
+    sub: S.truceGone && !inTruce(player, q) ? _T('no more truces this event') : S.tutorial && !inTruce(player, q) ? _T('Flavius will not allow it in a lesson') : undefined
   }, {
-    label: 'Cancel',
+    label: _T('Cancel'),
     value: null
   }]);
   if (what === 'truce') {
     if (inTruce(player, q)) {
       S.truces.delete(truceKey(player.id, q.id));
-      log(`${nm(player)} ends the truce with ${nm(q)}.`);
+      log(_T`${nm(player)} ends the truce with ${nm(q)}.`);
       return;
     }
     let ok;
-    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await modal(`${q.name}: truce offer`, `<p>${typeof truceWho==='function'?truceWho(player):player.name} proposes a truce. Accept?</p>`, [{
-      label: 'Accept',
+    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await modal(_T`${q.name}: truce offer`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} proposes a truce. Accept?`}</p>`, [{
+      label: _T('Accept'),
       value: 1,
       primary: 1
     }, {
-      label: 'Refuse',
+      label: _T('Refuse'),
       value: 0
     }]);
     if (ok) {
       makeTruce(player, q);
-    } else log(`${nm(q)} refuses the truce.`);
+    } else log(_T`${nm(q)} refuses the truce.`);
     return;
   }
   if (what === 'gift') {
     const mine = tradeables(player);
     if (!mine.length) return;
-    const gi = await modal(`Gift to ${q.name}`, '<p>Choose what to give. Allies remember generosity.</p>', mine.map((x, i) => ({
+    const gi = await modal(_T`Gift to ${q.name}`, '<p>Choose what to give. Allies remember generosity.</p>', mine.map((x, i) => ({
       label: x.label,
       value: i
     })).concat([{
-      label: 'Cancel',
+      label: _T('Cancel'),
       value: null
     }]));
     if (gi == null) return;
     doGift(player, q, mine[gi]);
-    if (q.cpu) think(q, pickOne(['Gratias, friend.', 'I will not forget this.', 'The gods smile on you.']), 'gift');
+    if (q.cpu) think(q, pickOne([_T('Gratias, friend.'), _T('I will not forget this.'), _T('The gods smile on you.')]), 'gift');
     return;
   }
   if (what !== 'trade') return;
   const mine = tradeables(player),
     theirs = tradeables(q);
   if (!mine.length || !theirs.length) {
-    await modal('Nothing to trade', '<p>One of you has nothing tradeable.</p>', [{
+    await modal(_T('Nothing to trade'), '<p>One of you has nothing tradeable.</p>', [{
       label: 'OK',
       value: 1
     }]);
     return;
   }
-  const gi = await modal('You give…', '', mine.map((x, i) => ({
+  const gi = await modal(_T('You give…'), '', mine.map((x, i) => ({
     label: x.label,
     value: i
   })).concat([{
-    label: 'Cancel',
+    label: _T('Cancel'),
     value: null
   }]));
   if (gi == null) return;
-  const ti = await modal('…and ask for', `<p>${q.name} holds:</p>`, theirs.map((x, i) => ({
+  const ti = await modal(_T('…and ask for'), `<p>${_T`${q.name} holds:`}</p>`, theirs.map((x, i) => ({
     label: x.label,
     value: i
   })).concat([{
-    label: 'Cancel',
+    label: _T('Cancel'),
     value: null
   }]));
   if (ti == null) return;
   const give = mine[gi],
     get = theirs[ti];
   let ok;
-  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await modal(`${q.name}: trade offer`, `<p>${player.name} offers ${give.label} for your ${get.label}. Accept?</p>`, [{
-    label: 'Accept',
+  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await modal(_T`${q.name}: trade offer`, `<p>${_T`${player.name} offers ${give.label} for your ${get.label}. Accept?`}</p>`, [{
+    label: _T('Accept'),
     value: 1,
     primary: 1
   }, {
-    label: 'Refuse',
+    label: _T('Refuse'),
     value: 0
   }]);
   if (ok) {
     doTrade(player, q, give, get);
-  } else log(`${nm(q)} refuses the trade.`);
+  } else log(_T`${nm(q)} refuses the trade.`);
 }
 document.addEventListener('click', e => {
   if (e.target.closest('#btnSimEnd')) simToEnd();
@@ -3471,30 +3471,30 @@ document.addEventListener('click', e => {
    for it), names the event, where, who fights, each round's rules and how the round ends, and how to WIN.
    The 📋 Event button on the top bar reopens it at any time. Settings → General can switch the opening one off. */
 const END_TXT = {
-  'npc4|elim1': 'four beasts are slain, or one gladiator falls',
-  'alive2': 'only two gladiators remain',
-  'alive1': 'one gladiator (or side) is left standing',
-  allnpc: 'every beast in the arena is slain or tamed',
-  commodus: 'Commodus is dethroned',
-  eagle: 'the Golden Eagles are carried to the gates',
-  exit2: 'two gladiators have escaped through the gates',
-  lion1: 'a lion has fallen',
-  race: 'a chariot completes three laps',
-  rot20: 'twenty rotations have passed',
-  rot10: 'ten rotations have passed',
-  team1: 'one team is left standing',
-  elim1: 'the first gladiator falls',
-  npc: 'enough beasts are slain',
-  rot: 'enough rotations have passed',
-  cf: 'a gladiator reaches the Crowd Favor target',
-  beasts: 'every beast is slain or tamed',
-  survive: 'the rotations run out — everyone standing wins'
+  'npc4|elim1': _T('four beasts are slain, or one gladiator falls'),
+  'alive2': _T('only two gladiators remain'),
+  'alive1': _T('one gladiator (or side) is left standing'),
+  allnpc: _T('every beast in the arena is slain or tamed'),
+  commodus: _T('Commodus is dethroned'),
+  eagle: _T('the Golden Eagles are carried to the gates'),
+  exit2: _T('two gladiators have escaped through the gates'),
+  lion1: _T('a lion has fallen'),
+  race: _T('a chariot completes three laps'),
+  rot20: _T('twenty rotations have passed'),
+  rot10: _T('ten rotations have passed'),
+  team1: _T('one team is left standing'),
+  elim1: _T('the first gladiator falls'),
+  npc: _T('enough beasts are slain'),
+  rot: _T('enough rotations have passed'),
+  cf: _T('a gladiator reaches the Crowd Favor target'),
+  beasts: _T('every beast is slain or tamed'),
+  survive: _T('the rotations run out — everyone standing wins')
 };
 const RULE_INFO = {
-  pve: ['🐾', 'PvE', 'beasts may be attacked', 'No PvE: beasts cannot be attacked this round'],
-  pvp: ['⚔', 'PvP', 'gladiators may attack each other', 'No PvP: gladiators cannot attack each other this round'],
-  cf: ['👑', 'CF', 'Crowd Favor can be spent (market, crowd purchases, the Eagle)', 'No CF: Crowd Favor cannot be SPENT this round — no market unlock, no crowd purchases, no Eagle redemption. You still earn it.'],
-  ca: ['✦', 'Abilities', 'class abilities work', 'No class abilities this round']
+  pve: ['🐾', 'PvE', _T('beasts may be attacked'), _T('No PvE: beasts cannot be attacked this round')],
+  pvp: ['⚔', 'PvP', _T('gladiators may attack each other'), _T('No PvP: gladiators cannot attack each other this round')],
+  cf: ['👑', 'CF', _T('Crowd Favor can be spent (market, crowd purchases, the Eagle)'), _T('No CF: Crowd Favor cannot be SPENT this round — no market unlock, no crowd purchases, no Eagle redemption. You still earn it.')],
+  ca: ['✦', _T('Abilities'), _T('class abilities work'), _T('No class abilities this round')]
 };
 /* roundRules — which of PvE, PvP, CF and abilities a round allows; live uses the current CF state (e.g. Commodus in the arena). */
 function roundRules(roundDef, live) {
@@ -3518,18 +3518,18 @@ function briefingHTML() {
     const zs = ZONES[roundDef.zone] ? ZONES[roundDef.zone][1] - ZONES[roundDef.zone][0] + 1 : 13;
     const chips = Object.keys(RULE_INFO).map(k => `<span class="rchip ${rr[k] ? 'yes' : 'no'}" title="${esc(rr[k] ? RULE_INFO[k][2] : RULE_INFO[k][3])}">${rr[k] ? '' : '🚫 '}${RULE_INFO[k][0]} ${RULE_INFO[k][1]}</span>`).join('');
     const rw = roundDef.reward || {};
-    const rwTxt = [rw.win ? `the winner takes ${rw.win} CF` : '', rw.coin ? `+${rw.coin} coin` : '', rw.cf ? `+${rw.cf} CF` : '', rw.cards ? `${rw.cards} cards` : ''].filter(Boolean).join(' · ');
-    return `<div class="brround ${on ? 'on' : ''} ${i < S.ri ? 'done' : ''}"><div class="brhd"><b>Round ${i + 1} · ${esc(roundDef.n)}</b>${on ? '<em>now</em>' : i < S.ri ? '<em>done</em>' : ''}<span class="rc-sub">${zs}×${zs} zone</span></div><div class="brchips">${chips}</div><div class="brend">Ends when <b>${esc(END_TXT[roundDef.end] || roundDef.end)}</b>${rwTxt ? ` <span class="rc-sub">· ${esc(rwTxt)}</span>` : ''}</div></div>`;
+    const rwTxt = [rw.win ? _T`the winner takes ${rw.win} CF` : '', rw.coin ? _T`+${rw.coin} coin` : '', rw.cf ? _T`+${rw.cf} CF` : '', rw.cards ? _T`${rw.cards} cards` : ''].filter(Boolean).join(' · ');
+    return `<div class="brround ${on ? 'on' : ''} ${i < S.ri ? 'done' : ''}"><div class="brhd">${_T`<b>Round ${i + 1} · ${esc(roundDef.n)}</b>${on ? '<em>now</em>' : i < S.ri ? '<em>done</em>' : ''}`}<span class="rc-sub">${_T`${zs}×${zs} zone`}</span></div><div class="brchips">${chips}</div><div class="brend">${_T`Ends when <b>${esc(END_TXT[roundDef.end] || roundDef.end)}</b>${rwTxt ? ` <span class="rc-sub">· ${esc(rwTxt)}</span>` : ''}`}</div></div>`;
   }).join('');
   const last = ev.rounds[ev.rounds.length - 1];
-  const how = ev.teams || ev.coop ? `Be the side still standing when <b>${esc(END_TXT[last.end] || last.end)}</b>.` : `Survive every round. The event is won when <b>${esc(END_TXT[last.end] || last.end)}</b>${last.reward && last.reward.win ? ` — worth <b>${last.reward.win} CF</b>` : ''}. Crowd Favor decides your Fate at the end.`;
-  const glads = S.players.map(player => `<span class="brglad ${player.alive ? '' : 'out'}" style="--pc:${player.color}"><b>${esc(player.name)}</b> ${esc(CLASSES[player.cls] ? CLASSES[player.cls].name : '')}${teams ? ' · Team ' + esc(String(player.team)) : ''} · ${player.cpu ? 'CPU' : S.hotseat ? '🎮 player' : 'you'}${player.alive ? '' : player.exited ? ' · exited' : ' · ✝'}</span>`).join('');
-  return `<div class="brief"><div class="brtop">${cardHTML('e:' + S.evKey, 'md') || ''}<div><div class="ei-tag">${esc(ev.tag || ev.short || '')}${S.fest ? ' · ' + esc(festName(S.fest.kind)) : ''}${S.missio ? ' · Missio' : ''}</div>
-    <div class="brname">${esc(ev.n)}</div><div class="rc-sub">📍 ${esc(L ? L.n : '')} · ⚔ ${n} gladiator${n === 1 ? '' : 's'}${teams ? ` in ${teams} ${ev.coop ? 'as one side' : 'teams'}` : ''}${S.spect && S.spect.length ? ` · 🏟 ${S.spect.filter(x => !x.gone).length}K spectators in the stands` : ''}${ev.sr ? ` · Summa rudis: ${esc(ev.sr)}` : ''}</div>
-    ${ev.blurb ? `<p style="margin:6px 0 0">${esc(ev.blurb)}</p>` : ''}<div class="brhow">🏆 <b>How to win.</b> ${how}</div></div></div>
-    <h4 class="secth">The rounds</h4><div class="brrounds">${rows}</div>
-    <h4 class="secth">On the sand</h4><div class="brglads">${glads}</div>
-    <p class="rc-sub" style="margin-top:8px">🚫 marks what is <b>not allowed</b> in that round — hover a chip for the full rule. Reopen this any time with <b>📋 Event</b> on the top bar.</p></div>`;
+  const how = ev.teams || ev.coop ? _T`Be the side still standing when <b>${esc(END_TXT[last.end] || last.end)}</b>.` : _T`Survive every round. The event is won when <b>${esc(END_TXT[last.end] || last.end)}</b>${last.reward && last.reward.win ? _T` — worth <b>${last.reward.win} CF</b>` : ''}. Crowd Favor decides your Fate at the end.`;
+  const glads = S.players.map(player => `<span class="brglad ${player.alive ? '' : 'out'}" style="--pc:${player.color}"><b>${esc(player.name)}</b> ${esc(CLASSES[player.cls] ? CLASSES[player.cls].name : '')}${teams ? _T(' · Team ') + esc(String(player.team)) : ''} · ${player.cpu ? 'CPU' : S.hotseat ? '🎮 player' : 'you'}${player.alive ? '' : player.exited ? ' · exited' : ' · ✝'}</span>`).join('');
+  return `<div class="brief"><div class="brtop">${cardHTML('e:' + S.evKey, 'md') || ''}<div><div class="ei-tag">${esc(ev.tag || ev.short || '')}${S.fest ? ' · ' + esc(festName(S.fest.kind)) : ''}${S.missio ? _T(' · Missio') : ''}</div>
+    <div class="brname">${esc(ev.n)}</div><div class="rc-sub">${_T`📍 ${esc(L ? L.n : '')} · ⚔ ${n} gladiator${n === 1 ? '' : 's'}${teams ? _T` in ${teams} ${ev.coop ? _T('as one side') : _T('teams')}` : ''}${S.spect && S.spect.length ? _T` · 🏟 ${S.spect.filter(x => !x.gone).length}K spectators in the stands` : ''}${ev.sr ? _T` · Summa rudis: ${esc(ev.sr)}` : ''}`}</div>
+    ${ev.blurb ? `<p style="margin:6px 0 0">${esc(ev.blurb)}</p>` : ''}<div class="brhow">${_T`🏆 <b>How to win.</b> ${how}`}</div></div></div>
+    <h4 class="secth">${_T`The rounds`}</h4><div class="brrounds">${rows}</div>
+    <h4 class="secth">${_T`On the sand`}</h4><div class="brglads">${glads}</div>
+    <p class="rc-sub" style="margin-top:8px">${_T`🚫 marks what is <b>not allowed</b> in that round — hover a chip for the full rule. Reopen this any time with <b>📋 Event</b> on the top bar.`}</p></div>`;
 }
 /* eventBriefing — opens the briefing window (at the start, or from the Event button). Falls back to the splash in sims, tutorials, when switched off, or if another window stays open (waits up to 1.5 s). */
 async function eventBriefing(opening) {
@@ -3549,8 +3549,8 @@ async function eventBriefing(opening) {
     }
   }
   if (typeof sfx === 'function' && opening) sfx('cheer');
-  await modal(opening ? '📋 The briefing' : '📋 This event', briefingHTML(), [{
-    label: opening ? '⚔ To the sand' : 'Back to the sand',
+  await modal(opening ? _T('📋 The briefing') : _T('📋 This event'), briefingHTML(), [{
+    label: opening ? _T('⚔ To the sand') : _T('Back to the sand'),
     value: 1,
     primary: 1
   }], {
@@ -3574,7 +3574,7 @@ function eventIntroSplash() {
   const d = document.createElement('div');
   d.id = 'evIntro';
   d.className = 'evintro';
-  d.innerHTML = `<div class="ei-card">${cardHTML('e:' + S.evKey, 'md') || ''}<div class="ei-txt"><div class="ei-tag">${esc(ev.tag || ev.short || '')}</div><div class="ei-name">${esc(ev.n)}</div><div class="ei-where">📍 ${esc(L ? L.n : '')} <span>·</span> ⚔ ${n} gladiator${n === 1 ? '' : 's'}</div></div></div>`;
+  d.innerHTML = `<div class="ei-card">${cardHTML('e:' + S.evKey, 'md') || ''}<div class="ei-txt"><div class="ei-tag">${esc(ev.tag || ev.short || '')}</div><div class="ei-name">${esc(ev.n)}</div><div class="ei-where">${_T`📍 ${esc(L ? L.n : '')} <span>·</span> ⚔ ${n} gladiator${n === 1 ? '' : 's'}`}</div></div></div>`;
   d.onclick = () => d.remove();
   wrap.appendChild(d);
   setTimeout(() => {
@@ -3585,7 +3585,7 @@ function eventIntroSplash() {
 document.addEventListener('click', e => {
   if (e.target.closest('#btnEvInfo,.rulechip')) {
     if (!S || S.phase === 'setup') {
-      mToastSafe('No event on the sand yet — sound the horns from New event.');
+      mToastSafe(_T('No event on the sand yet — sound the horns from New event.'));
       return;
     }
     if (!modalBusy()) eventBriefing(false);

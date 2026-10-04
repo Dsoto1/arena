@@ -26,7 +26,7 @@ function sparkSVG(vals,w=64,h=18){if(!vals||vals.length<2)return '';const lo=Mat
   return `<svg class="spark" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(--gold2)" stroke-width="1.6" stroke-linejoin="round"/></svg>`}
 function boutSalesStat(b){let S2=null;try{S2=boutSales(b)}catch(e){}if(!S2)return '';const pct=Math.round(S2.sold/S2.cap*100);
   const tr=S2.delta>0?`<em class="up">▲ ${houseK(S2.delta)}</em>`:S2.delta<0?`<em class="dn">▼ ${houseK(-S2.delta)}</em>`:'<em class="rc-sub">—</em>';
-  return `<span class="bstat tix" title="Tickets sold for this bout, of the arena's ${S2.cap.toLocaleString()} seats. Demand follows the billing, the fighters' fame, the city and the week's news; sales climb as game day nears. The arrow is the change since the last sale was counted."><i>${b.done?'Attendance':'Tickets sold'}</i><b>🎟 ${houseK(S2.sold)} <span class="rc-sub">/ ${houseK(S2.cap)} · ${pct}%</span> ${b.done?'':tr}</b>${b.done?'':sparkSVG(S2.log)}</span>`}
+  return `<span class="bstat tix" title="${_T`Tickets sold for this bout, of the arena's ${S2.cap.toLocaleString()} seats. Demand follows the billing, the fighters' fame, the city and the week's news; sales climb as game day nears. The arrow is the change since the last sale was counted.`}"><i>${b.done?_T('Attendance'):_T('Tickets sold')}</i><b>🎟 ${houseK(S2.sold)} <span class="rc-sub">/ ${houseK(S2.cap)} · ${pct}%</span> ${b.done?'':tr}</b>${b.done?'':sparkSVG(S2.log)}</span>`}
 
 /* ================= v0.42 SEAT CONTROL =================
    Every fighter's board carries a chip: 🎮 Take control of a CPU gladiator, or 🤖 Hand to CPU your own.
@@ -35,10 +35,10 @@ function boutSalesStat(b){let S2=null;try{S2=boutSales(b)}catch(e){}if(!S2)retur
 function seatCanToggle(p){if(!S||S.over||S.phase==='setup'||!p||!p.alive||p.exited||S.snap)return false;if(S.tutorial)return false;
   if(S.mgrCtx||S.specCtx)return !!p.mine||(p.mgrGid&&typeof gById==='function'&&(()=>{const g=gById(p.mgrGid);return g&&g.contract&&typeof me==='function'&&me()&&g.contract.mgr===me().id})());
   return true}
-function seatChipHTML(p){if(!seatCanToggle(p))return '';return `<button type="button" class="seatchip ${p.cpu?'take':'give'}" data-seat="${p.id}" title="${p.cpu?'Play this gladiator yourself':'Let the CPU play this gladiator'}">${p.cpu?'🎮 Take control':'🤖 Hand to CPU'}</button>`}
+function seatChipHTML(p){if(!seatCanToggle(p))return '';return `<button type="button" class="seatchip ${p.cpu?'take':'give'}" data-seat="${p.id}" title="${p.cpu?_T('Play this gladiator yourself'):_T('Let the CPU play this gladiator')}">${p.cpu?_T('🎮 Take control'):_T('🤖 Hand to CPU')}</button>`}
 async function seatToggle(p){if(!seatCanToggle(p))return;const G=S;
-  if(p.cpu){p.cpu=false;p.simmed=false;log(`🎮 You take the reins of ${nm(p)}${cur()===p&&S.busy?' — from their next turn':''}.`,'big');render();return}
-  p.cpu=true;p.diff=p.diff||'normal';log(`🤖 ${nm(p)} is handed to the CPU.`,'thought');render();
+  if(p.cpu){p.cpu=false;p.simmed=false;log(_T`🎮 You take the reins of ${nm(p)}${cur()===p&&S.busy?_T(' — from their next turn'):''}.`,'big');render();return}
+  p.cpu=true;p.diff=p.diff||'normal';log(_T`🤖 ${nm(p)} is handed to the CPU.`,'thought');render();
   if(cur()!==p||S.busy)return; // the loop will find a CPU at its next step
   S.busy=true;
   if(S.phase==='choice'){await takeChoice(p,cpuChoice(p));await flushMF();checkEnd();await settle();if(G!==S||S.over)return;
@@ -73,13 +73,13 @@ function drawTosses(){if(!S||!S.tosses||!S.tosses.length)return;const now=perfor
    The arena deck carries only the Piacula of the classes on the sand. A custom character — who has no
    printed card — gets one drawn for them in their own color, named for them, and shuffled in. */
 function piaCustomCard(cls){const C=CLASSES[cls];if(!C)return null;const k='pia_'+cls;
-  CARDS[k]={n:'Piaculum',type:'instant',d:`Give ${C.name} 2 coin. If that player is you, everyone gives you 2 coin.`,q:'To bear this worthily is good fortune',img:null,cls,custom:1};return k}
+  CARDS[k]={n:'Piaculum',type:'instant',d:_T`Give ${C.name} 2 coin. If that player is you, everyone gives you 2 coin.`,q:_T('To bear this worthily is good fortune'),img:null,cls,custom:1};return k}
 const PIA_URLS={};
 function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[cls]||{name:'Gladiator',color:'#a3281f'};const col=C.color||'#a3281f';const nm=String(C.name||'').toUpperCase().slice(0,16);
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 350"><rect width="250" height="350" rx="14" fill="#2a1d12"/><rect x="8" y="8" width="234" height="334" rx="10" fill="${col}"/><rect x="16" y="16" width="218" height="318" rx="6" fill="#efe2c4"/>
    <rect x="16" y="16" width="218" height="46" fill="${col}"/><text x="125" y="48" text-anchor="middle" font-family="Georgia,serif" font-size="26" font-weight="700" letter-spacing="4" fill="#f5e8cc">PIACULUM</text>
    <circle cx="125" cy="150" r="62" fill="${col}" opacity=".18"/><circle cx="125" cy="150" r="46" fill="#e6b93a" stroke="#8a6a2a" stroke-width="4"/><text x="125" y="168" text-anchor="middle" font-family="Georgia,serif" font-size="48" font-weight="700" fill="#6a4e14">2</text>
    <text x="125" y="236" text-anchor="middle" font-family="Georgia,serif" font-size="${nm.length>11?16:20}" font-weight="700" fill="${col}">${nm.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</text>
-   <text x="125" y="262" text-anchor="middle" font-family="Georgia,serif" font-size="12.5" fill="#3a2a1a">Give this gladiator 2 coin.</text><text x="125" y="280" text-anchor="middle" font-family="Georgia,serif" font-size="12.5" fill="#3a2a1a">If it is you, everyone gives you 2.</text>
-   <text x="125" y="316" text-anchor="middle" font-family="Georgia,serif" font-size="11" font-style="italic" fill="#6a5a44">“To bear this worthily is good fortune”</text></svg>`;
+   <text x="125" y="262" text-anchor="middle" font-family="Georgia,serif" font-size="12.5" fill="#3a2a1a">${_T`Give this gladiator 2 coin.`}</text><text x="125" y="280" text-anchor="middle" font-family="Georgia,serif" font-size="12.5" fill="#3a2a1a">${_T`If it is you, everyone gives you 2.`}</text>
+   <text x="125" y="316" text-anchor="middle" font-family="Georgia,serif" font-size="11" font-style="italic" fill="#6a5a44">${_T`“To bear this worthily is good fortune”`}</text></svg>`;
   return PIA_URLS[cls]='data:image/svg+xml,'+encodeURIComponent(svg)}

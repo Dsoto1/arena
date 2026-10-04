@@ -98,37 +98,37 @@ async function defend(victim, damage, location, pw, bonus, h, attackerName, atta
   } else {
     const btns = [];
     if (hasM) btns.push({
-      label: "Play Minerva's Push",
-      sub: 'step 1 tile and dodge all of it',
+      label: _T("Play Minerva's Push"),
+      sub: _T('step 1 tile and dodge all of it'),
       value: 'm',
       card: 'c:minerva'
     });
     if (hasF && h > 0) btns.push({
-      label: 'Play Fidelis Constans',
-      sub: `remove 1 hit die → ${Math.max(0, (h - 1) * pw + (h - 1 > 0 ? bonus : 0))} damage`,
+      label: _T('Play Fidelis Constans'),
+      sub: _T`remove 1 hit die → ${Math.max(0, (h - 1) * pw + (h - 1 > 0 ? bonus : 0))} damage`,
       value: 'f',
       card: 'c:fidelis'
     });
     btns.push({
-      label: 'Take the hit',
+      label: _T('Take the hit'),
       value: 'take',
       primary: 1
     });
-    choice = await modal('Incoming attack', `<p>${attackerName} will deal <b>${damage}</b> damage to your ${LOCN[location]} (${victim.ap[location]} AP, ${victim.hp[location]} HP).</p>${hint('defend')}`, btns);
+    choice = await modal(_T('Incoming attack'), `<p>${_T`${attackerName} will deal <b>${damage}</b> damage to your ${LOCN[location]} (${victim.ap[location]} AP, ${victim.hp[location]} HP).`}</p>${hint('defend')}`, btns);
   }
   if (choice === 'm') {
-    fx(victim.r, victim.c, 'dodged!', '#9fd3ff', {
+    fx(victim.r, victim.c, _T('dodged!'), '#9fd3ff', {
       big: 1
     });
     victim.items.splice(victim.items.findIndex(x => x.kind === 'card' && x.key === 'minerva'), 1);
-    log(`${nm(victim)} plays <b>Minerva's Push</b> and dodges the attack!`, 'big');
+    log(_T`${nm(victim)} plays <b>Minerva's Push</b> and dodges the attack!`, 'big');
     cardShow('c:minerva', victim);
     await minervaStep(victim, attacker);
     return -1;
   }
   if (choice === 'f') {
     victim.items.splice(victim.items.findIndex(x => x.kind === 'card' && x.key === 'fidelis'), 1);
-    log(`${nm(victim)} plays <b>Fidelis Constans</b>: one hit die removed.`, 'big');
+    log(_T`${nm(victim)} plays <b>Fidelis Constans</b>: one hit die removed.`, 'big');
     cardShow('c:fidelis', victim);
     return h - 1;
   }
@@ -147,15 +147,15 @@ async function minervaStep(victim, attacker) {
     r: a[0],
     c: a[1]
   }, attacker) : 0)[0];else {
-    const k = await modal("Minerva's Push", '<p>Step one tile in any direction.</p>', free.map(([r, c]) => ({
+    const k = await modal(_T("Minerva's Push"), '<p>Step one tile in any direction.</p>', free.map(([r, c]) => ({
       label: tl(r, c),
-      sub: attacker ? `${cheb({
+      sub: attacker ? _T`${cheb({
         r,
         c
       }, attacker)} from ${attacker.name}` : '',
       value: r * N + c
     })).concat([{
-      label: 'Stay put',
+      label: _T('Stay put'),
       value: -1
     }]));
     if (k == null || k < 0) return;
@@ -167,7 +167,7 @@ async function minervaStep(victim, attacker) {
     S.chest.r = victim.r;
     S.chest.c = victim.c;
   }
-  log(`${nm(victim)} steps to ${tl(victim.r, victim.c)}.`);
+  log(_T`${nm(victim)} steps to ${tl(victim.r, victim.c)}.`);
   draw();
   await pickupAt(victim.r, victim.c);
 }
@@ -188,24 +188,24 @@ async function chooseLocation(player, other, how) {
     if (player.cpu) return weak[0];
     {
       const best = focusBest(other, locs);
-      return await modal('Focus!', `<p>Choose where to strike ${esc(other.name)}. 💡 The gold one is the quickest way to put them down.</p>`, locs.map(l => ({
+      return await modal(_T('Focus!'), `<p>${_T`Choose where to strike ${esc(other.name)}. 💡 The gold one is the quickest way to put them down.`}</p>`, locs.map(l => ({
         label: `${l === best ? '💡 ' : ''}${LOCN[l]}`,
-        sub: `AP ${other.ap[l]} · HP ${other.hp[l]}${l === best ? ' · the fastest finish' : ''}`,
+        sub: _T`AP ${other.ap[l]} · HP ${other.hp[l]}${l === best ? _T(' · the fastest finish') : ''}`,
         value: l,
         primary: l === best
       })));
     }
   }
   const rolls = [rollLoc(other), rollLoc(other), rollLoc(other)];
-  log(`${nm(player)} focuses: the location die shows ${rolls.map(l => LOCN[l]).join(', ')}.`);
+  log(_T`${nm(player)} focuses: the location die shows ${rolls.map(l => LOCN[l]).join(', ')}.`);
   const opts = [...new Set(rolls)].sort((a, b) => weak.indexOf(a) - weak.indexOf(b));
   if (player.cpu) return opts[0];
   /* v0.46: show the three dice, and point at the location that finishes the target fastest (a lost head or chest is out) */
   const best = focusBest(other, opts);
   const dice = rolls.map(l => `<span class="focdie ${l === best ? 'best' : ''}">${typeof locIcon === 'function' ? locIcon(l) : ''}<b>${LOCN[l]}</b></span>`).join('');
-  return await modal('🎯 Focus roll', `<p>The location die was rolled three times for <b>${esc(other.name)}</b>:</p><div class="focdice">${dice}</div><p class="rc-sub" style="margin:6px 0 0">Pick one result to strike. 💡 The gold one is the quickest way to put ${esc(other.name)} down.</p>`, opts.map(l => ({
+  return await modal(_T('🎯 Focus roll'), `<p>${_T`The location die was rolled three times for <b>${esc(other.name)}</b>:`}</p><div class="focdice">${dice}</div><p class="rc-sub" style="margin:6px 0 0">${_T`Pick one result to strike. 💡 The gold one is the quickest way to put ${esc(other.name)} down.`}</p>`, opts.map(l => ({
     label: `${l === best ? '💡 ' : ''}${LOCN[l]}`,
-    sub: `AP ${other.ap[l]} · HP ${other.hp[l]}${l === best ? ' · the fastest finish' : ''}${l === 'head' || l === 'chest' ? ' · a vital spot' : ''}`,
+    sub: _T`AP ${other.ap[l]} · HP ${other.hp[l]}${l === best ? _T(' · the fastest finish') : ''}${l === 'head' || l === 'chest' ? _T(' · a vital spot') : ''}`,
     value: l,
     primary: l === best
   })));
@@ -228,13 +228,13 @@ async function doAttack(player, source, target, {
   }
   const n = S.endgame ? 4 : target.kind === 'npc' ? 4 : 2;
   let hits = rollHits(n);
-  const verb = w.punch ? 'punches' : source.thr ? `throws the ${w.n}` : `attacks with ${w.n}`;
-  const tgtName = target.kind === 'pot' ? `the pot on ${tl(target.r, target.c)}` : target.kind === 'ship' ? target.ref.name : target.ref.name;
+  const verb = w.punch ? 'punches' : source.thr ? _T`throws the ${w.n}` : _T`attacks with ${w.n}`;
+  const tgtName = target.kind === 'pot' ? _T`the pot on ${tl(target.r, target.c)}` : target.kind === 'ship' ? target.ref.name : target.ref.name;
   if (hits.some(x => !x)) {
     const miss = hits.filter(x => !x).length;
     /* wants — CPU test for playing Omnia Mutantur: always vs players, vs beasts when under 2 hits, vs pots when damage would be under 2. */
     const wants = () => target.kind === 'player' || target.kind === 'npc' && cnt(hits) < 2 || target.kind === 'pot' && cnt(hits) * pw < 2;
-    const ok = await askCard(player, miss >= 2 ? ['omnia2', 'omnia1'] : ['omnia1', 'omnia2'], 'Omnia Mutantur', `You rolled ${cnt(hits)} of ${n} hits against ${tgtName}. Turn misses into hits?`, wants);
+    const ok = await askCard(player, miss >= 2 ? ['omnia2', 'omnia1'] : ['omnia1', 'omnia2'], _T('Omnia Mutantur'), _T`You rolled ${cnt(hits)} of ${n} hits against ${tgtName}. Turn misses into hits?`, wants);
     if (ok) {
       let f = CARDS[ok].flip;
       hits = hits.map(x => {
@@ -257,29 +257,29 @@ async function doAttack(player, source, target, {
     c: target.c
   } : target.ref, source.w.punch ? '#e6d3b0' : '#ff6a55');
   if (dmg <= 0) fx(target.r, target.c, 'miss', '#b8b0a4');
-  const pre = `${nm(player)} ${verb} at ${tgtName} ${diceHtml(hits)} ${h}×${pw}${bonus() ? '+' + bonus() : ''} = ${dmg}`;
+  const pre = _T`${nm(player)} ${verb} at ${tgtName} ${diceHtml(hits)} ${h}×${pw}${bonus() ? '+' + bonus() : ''} = ${dmg}`;
   if (dmg > 0 && typeof hitFlash === 'function' && (target.kind === 'pot' || target.kind === 'ship')) hitFlash(target.r, target.c, target.kind === 'pot' ? 'pot' : 'pillar'); /* v0.46 */
   if (dmg >= 8) stat(player, 'bighit');
   stat(player, 'dmgDealt', 0);
   if (target.kind === 'ship') {
     const sh = target.ref;
     sh.hp -= dmg;
-    log(`${pre} → the ${sh.name}'s pillar (${Math.max(0, sh.hp)} of 12 HP left).`);
+    log(_T`${pre} → the ${sh.name}'s pillar (${Math.max(0, sh.hp)} of 12 HP left).`);
     if (sh.hp <= 0) sinkShip(sh, player);
   } else if (target.kind === 'pot') {
     if (dmg >= 2) {
-      log(pre + ' — the chains snap.');
+      log(pre + _T(' — the chains snap.'));
       const pl = target.ref;
       await breakPot(pl, player, [pl.r + Math.sign(player.r - pl.r), pl.c + Math.sign(player.c - pl.c)]);
-    } else log(`${pre} — the pot holds (needs 2).`);
+    } else log(_T`${pre} — the pot holds (needs 2).`);
   } else if (target.kind === 'npc') {
     const nn = target.ref;
     if (w.punch && nn.t === 'bear') stat(player, 'punchBear');
     stat(player, 'dmgDealt', dmg);
     if (nn.t === 'tholo' && w.key === 'arcu' && (usedFocus || player.focusNext) && dmg > 0) {
       player.focusNext = false;
-      log(`${pre} — a focused Arcuballista bolt to Tholo's head!`, 'big');
-      hurtNPC(nn, nn.hp, player, 'Headshot', w);
+      log(_T`${pre} — a focused Arcuballista bolt to Tholo's head!`, 'big');
+      hurtNPC(nn, nn.hp, player, _T('Headshot'), w);
     } else hurtNPC(nn, dmg, player, pre, w);
   } else {
     const q = target.ref;
@@ -295,7 +295,7 @@ async function doAttack(player, source, target, {
     } else if (usedFocus) loc = await chooseLocation(player, q, 'roll', dmg);else loc = rollLoc(q);
     const nh = await defend(q, dmg, loc, pw, bonus(), h, player.name, player);
     if (nh < 0) {
-      log(pre + ' — dodged.');
+      log(pre + _T(' — dodged.'));
     } else {
       h = nh;
       dmg = h * pw + bonus();
@@ -316,21 +316,21 @@ async function doAttack(player, source, target, {
     w.atkLeft--;
     if (w.atkLeft <= 0) {
       player['w' + source.arm] = null;
-      log(`The ${w.n} falls apart after its last use.`);
+      log(_T`The ${w.n} falls apart after its last use.`);
     }
   }
   if (w.shield && w.p > 0 && player['w' + source.arm] === w) {
     w.usesLeft--;
     if (w.usesLeft <= 0) {
       player['w' + source.arm] = null;
-      log(`The ${w.n} is worn out.`);
+      log(_T`The ${w.n} is worn out.`);
     }
   }
-  if (h > 0 && w.soul && player.alive) await distributeHP(player, h * w.soul, `${w.n}'s soul steal`);
+  if (h > 0 && w.soul && player.alive) await distributeHP(player, h * w.soul, _T`${w.n}'s soul steal`);
   if (h > 0 && w.cfw) {
     cfWhy('crowd-pleasing weapons');
     player.cf += h * w.cfw;
-    log(`${nm(player)} gains ${h * w.cfw} CF from the crowd (${w.n}).`);
+    log(_T`${nm(player)} gains ${h * w.cfw} CF from the crowd (${w.n}).`);
   }
   if (source.thr && player['w' + source.arm] === w) {
     player['w' + source.arm] = null;
@@ -350,8 +350,8 @@ async function doAttack(player, source, target, {
         thrown: S.turnNo,
         owner: player.id
       });
-      log(`The ${w.n} lands on ${tl(r, c)} (${w.throwsLeft} throw${w.throwsLeft > 1 ? 's' : ''} left).`);
-    } else log(`The ${w.n} is spent.`);
+      log(_T`The ${w.n} lands on ${tl(r, c)} (${w.throwsLeft} throw${w.throwsLeft > 1 ? 's' : ''} left).`);
+    } else log(_T`The ${w.n} is spent.`);
   }
   checkMandata(player);
   checkEnd();
@@ -360,9 +360,9 @@ async function doAttack(player, source, target, {
 function breakTruce(player, other, forced) {
   S.truces.delete(truceKey(player.id, other.id));
   if (!forced) {
-    bumpRel(other, player, -35, 'broke their truce');
-    log(`${nm(player)} breaks the truce with ${nm(other)}!`, 'bad');
-    think(other, pickOne(['Traitor! The gods saw that.', 'So much for Roman honor.', 'I will remember this, ' + player.name + '.']), 'angry');
+    bumpRel(other, player, -35, _T('broke their truce'));
+    log(_T`${nm(player)} breaks the truce with ${nm(other)}!`, 'bad');
+    think(other, pickOne([_T('Traitor! The gods saw that.'), _T('So much for Roman honor.'), _T('I will remember this, ') + player.name + '.']), 'angry');
   }
 }
 
@@ -438,7 +438,7 @@ async function npcWalk(npc, goals, mv) {
     }
     if (npc.t === 'tholo' && S.chest && S.chest.held == null && npc.r === S.chest.r && npc.c === S.chest.c) {
       S.chest.held = npc.id;
-      log('Tholo scoops up the Arena Chest!', 'big');
+      log(_T('Tholo scoops up the Arena Chest!'), 'big');
     }
     return moved;
   }
@@ -460,7 +460,7 @@ async function npcWalk(npc, goals, mv) {
   }
   if (npc.t === 'tholo' && S.chest && S.chest.held == null && npc.r === S.chest.r && npc.c === S.chest.c) {
     S.chest.held = npc.id;
-    log('Tholo scoops up the Arena Chest!', 'big');
+    log(_T('Tholo scoops up the Arena Chest!'), 'big');
   }
   return moved;
 }
@@ -469,13 +469,13 @@ async function npcAct(npc, player, stay = false) {
   const st = npcStats(npc);
   if (cheb(npc, player) > st.rng && !stay) {
     if (npc.netted) {
-      log(`${nm(npc)} struggles in the net.`);
+      log(_T`${nm(npc)} struggles in the net.`);
       npc.netted = false;
     } else await npcWalk(npc, adjTiles(player), st.mv);
   }
   if (cheb(npc, player) <= st.rng && player.alive && !player.exited) {
     if (player.warded) {
-      log(`${nm(npc)} circles ${nm(player)} but the Ward holds it back.`);
+      log(_T`${nm(npc)} circles ${nm(player)} but the Ward holds it back.`);
       return;
     }
     const hits = rollHits(2);
@@ -491,7 +491,7 @@ async function npcAct(npc, player, stay = false) {
     await hurt(player, loc, dmg, {
       type: 'npc',
       n: npc
-    }, `${nm(npc)}${st.state && st.state !== 'Initial' ? ' (' + st.state + ')' : ''} attacks ${diceHtml(hits)} ${h}×${st.ap} = ${dmg}`);
+    }, _T`${nm(npc)}${st.state && st.state !== 'Initial' ? ' (' + st.state + ')' : ''} attacks ${diceHtml(hits)} ${h}×${st.ap} = ${dmg}`);
   }
 }
 /* tamedTargets — what a tamed beast may attack: adjacent beasts not owned by its master or allies, adjacent harmable players not in truce with the master, and (Zora only) adjacent pots. Nothing while it carries something. */
@@ -531,13 +531,13 @@ async function tamedAttack(npc, player, target) {
   const hits = rollHits(2);
   let h = cnt(hits);
   let dmg = h * st.ap;
-  const pre = `${nm(npc)} (${player.name}'s) attacks ${diceHtml(hits)} ${h}×${st.ap} = ${dmg}`;
+  const pre = _T`${nm(npc)} (${player.name}'s) attacks ${diceHtml(hits)} ${h}×${st.ap} = ${dmg}`;
   if (target.kind === 'pot') {
     const pl = target.ref;
     if (dmg >= 2) {
-      log(pre + ' at a Blessings pot — it shatters!');
+      log(pre + _T(' at a Blessings pot — it shatters!'));
       await breakPot(pl, player, [pl.r + Math.sign(npc.r - pl.r), pl.c + Math.sign(npc.c - pl.c)]);
-    } else log(pre + ' at a Blessings pot — it holds.');
+    } else log(pre + _T(' at a Blessings pot — it holds.'));
     return;
   }
   if (target.kind === 'npc') {
@@ -547,8 +547,8 @@ async function tamedAttack(npc, player, target) {
       const ms = npcStats(m);
       const ch = rollHits(2);
       const cd = cnt(ch) * ms.ap;
-      hurtNPC(npc, cd, null, `${nm(m)} counter-attacks ${diceHtml(ch)} = ${cd}`);
-      if (!npc.alive) log(`${player.name}'s ${npc.name} is lost.`, 'bad');
+      hurtNPC(npc, cd, null, _T`${nm(m)} counter-attacks ${diceHtml(ch)} = ${cd}`);
+      if (!npc.alive) log(_T`${player.name}'s ${npc.name} is lost.`, 'bad');
     }
   } else {
     const q = target.ref,
@@ -562,7 +562,7 @@ async function tamedAttack(npc, player, target) {
         n: npc,
         owner: player
       }, pre);
-      bumpRel(q, player, -(4 + dmg), 'set a beast on them');
+      bumpRel(q, player, -(4 + dmg), _T('set a beast on them'));
     }
   }
 }
@@ -595,12 +595,12 @@ async function lyreControl(player) {
       d: dOf(x)
     })).filter(o => o.d < 1e9).sort((a, b) => a.d - b.d)[0]?.x;
   } else {
-    const id = await modal('Lyre of Orpheus', `<p>Serenade one beast and lead it toward your starting tile ${tl(sr, sc)}. Two captures let you exit. Step off your starting tile so the beast can reach it.</p>`, cands.map(x => ({
+    const id = await modal(_T('Lyre of Orpheus'), `<p>${_T`Serenade one beast and lead it toward your starting tile ${tl(sr, sc)}. Two captures let you exit. Step off your starting tile so the beast can reach it.`}</p>`, cands.map(x => ({
       label: `${x.name} (${NPCT[x.t].n})`,
-      sub: `${tl(x.r, x.c)} · ${dOf(x) >= 1e9 ? 'no path' : dOf(x) + ' moves away'}`,
+      sub: `${tl(x.r, x.c)} · ${dOf(x) >= 1e9 ? _T('no path') : dOf(x) + _T(' moves away')}`,
       value: x.id
     })).concat([{
-      label: 'Skip',
+      label: _T('Skip'),
       value: null
     }]));
     n = cands.find(x => x.id === id);
@@ -608,7 +608,7 @@ async function lyreControl(player) {
   if (!n) return;
   n.lyred = player.id;
   n.aggro = null;
-  log(`${nm(player)} plays the Lyre. ${nm(n)} follows the music.`);
+  log(_T`${nm(player)} plays the Lyre. ${nm(n)} follows the music.`);
   await npcWalk(n, [[sr, sc]], npcStats(n).mv);
   if (n.r === sr && n.c === sc) {
     n.alive = false;
@@ -616,12 +616,12 @@ async function lyreControl(player) {
       t: n.t,
       name: n.name
     });
-    log(`${nm(player)} captures ${nm(n)}! (${player.captured.length} of 2)`, 'big');
+    log(_T`${nm(player)} captures ${nm(n)}! (${player.captured.length} of 2)`, 'big');
     if (!S.lionsOut) {
       S.lionsOut = 1;
-      log('The first capture is made. Both lions are released!', 'big');
-      spawnNPC('lion', 'Leo');
-      spawnNPC('lion', 'Leaena');
+      log(_T('The first capture is made. Both lions are released!'), 'big');
+      spawnNPC('lion', _T('Leo'));
+      spawnNPC('lion', _T('Leaena'));
     }
     checkEnd();
   }
@@ -637,12 +637,12 @@ function setAggro(npc, player, why) {
   if (prev !== player.id) {
     const old = prev != null ? S.players[prev] : null;
     const because = {
-      tamed: ' — their tamed beast struck it',
-      card: ' — the card sends it',
+      tamed: _T(' — their tamed beast struck it'),
+      card: _T(' — the card sends it'),
       push: ' — pushed',
       lure: ' — lured'
     }[why] || '';
-    if (old && old.alive) log(`${nm(npc)} turns its aggro from ${nm(old)} to ${nm(player)}${because}.`);else log(`${nm(npc)} is now aggro on ${nm(player)}${because}.`);
+    if (old && old.alive) log(_T`${nm(npc)} turns its aggro from ${nm(old)} to ${nm(player)}${because}.`);else log(_T`${nm(npc)} is now aggro on ${nm(player)}${because}.`);
   }
 }
 /* npcTrigger — why a beast acts in this player's Resolve phase: 'aggro' (targeting them), 'adjacent'/'opportunist' (within 1 tile), 'zone' (player in its home zone), 'scan' (player is closest); null = idle. Also clears aggro whose target is gone. */
@@ -667,18 +667,18 @@ async function resolvePhase(player) {
   if (weak(player, 'pelted') && !player.drafted) {
     await hurt(player, rollLoc(player), 1, {
       type: 'env'
-    }, `The crowd pelts ${player.name} with a stone`);
+    }, _T`The crowd pelts ${player.name} with a stone`);
   }
   if (S.active.boar && player.alive) {
     const r = d6();
     if (r % 2) {
       await hurt(player, rollLoc(player), 2, {
         type: 'env'
-      }, `The Calydonian Boar charges ${player.name} (rolled ${r}, odd)`);
-    } else log(`${nm(player)} rolls ${r} and leaps clear of the Calydonian Boar.`);
+      }, _T`The Calydonian Boar charges ${player.name} (rolled ${r}, odd)`);
+    } else log(_T`${nm(player)} rolls ${r} and leaps clear of the Calydonian Boar.`);
     if (--S.active.boar.left <= 0) {
       S.active.boar = null;
-      log('The Calydonian Boar is driven back into the hypogeum.');
+      log(_T('The Calydonian Boar is driven back into the hypogeum.'));
     }
   }
   sectionCheer(player);
@@ -702,13 +702,13 @@ async function resolvePhase(player) {
     }
   }
   acts.sort((a, b) => cheb(b, player) - cheb(a, player));
-  if (!acts.length) log('Phase 1 · Resolve: no beasts stir.');else log(`Phase 1 · Resolve: ${acts.map(n => nm(n) + ` <span class="why">(${{
+  if (!acts.length) log(_T('Phase 1 · Resolve: no beasts stir.'));else log(_T`Phase 1 · Resolve: ${acts.map(n => nm(n) + ` <span class="why">(${{
     aggro: 'aggro',
-    opportunist: 'lashes out in reach',
-    adjacent: 'within reach',
+    opportunist: _T('lashes out in reach'),
+    adjacent: _T('within reach'),
     zone: 'zone',
     scan: 'scan'
-  }[n.lastWhy]})</span>`).join(', ')} ${acts.length > 1 ? 'activate' : 'activates'}.`);
+  }[n.lastWhy]})</span>`).join(', ')} ${acts.length > 1 ? _T('activate') : _T('activates')}.`);
   for (const n of acts) {
     if (!player.alive || S.over || G !== S) break;
     await npcAct(n, player, n.lastWhy === 'opportunist');
@@ -765,12 +765,12 @@ async function payMandata(player, idx) {
   crowdReact('mf', {
     p: player
   });
-  fx(player.r, player.c, 'Mandata Flavi!', '#f0cf7d', {
+  fx(player.r, player.c, _T('Mandata Flavi!'), '#f0cf7d', {
     big: 1
   });
-  log(`${nm(player)} reveals a Mandata Flavi: <b>${M.n}</b>. ${M.d} Reward: ${M.r}.`, 'big');
-  cardShow('m:' + idx, player, '📜 Revealed');
-  if (/applause/.test(M.r)) log('The crowd offers a generous applause.');
+  log(_T`${nm(player)} reveals a Mandata Flavi: <b>${M.n}</b>. ${M.d} Reward: ${M.r}.`, 'big');
+  cardShow('m:' + idx, player, _T('📜 Revealed'));
+  if (/applause/.test(M.r)) log(_T('The crowd offers a generous applause.'));
   await M.reward(player);
   render();
 }
@@ -779,7 +779,7 @@ async function declareMandata(player, it) {
   const M = MANDATA[it.idx];
   if (!M.declare) return false;
   player.items = player.items.filter(x => x !== it);
-  log(`${nm(player)} faces the crowd: “${M.declare}”`, 'big');
+  log(_T`${nm(player)} faces the crowd: “${M.declare}”`, 'big');
   think(player, `“${M.declare}”`, 'say');
   await payMandata(player, it.idx);
   return true;
@@ -795,14 +795,14 @@ async function mfLimbSwap(player) {
     });
   }
   if (!pool.length) {
-    log('The market has no weapons left to trade for.');
+    log(_T('The market has no weapons left to trade for.'));
     return;
   }
   let pick;
   if (player.cpu) pick = pool.sort((a, b) => wScore(W[b.k]) - wScore(W[a.k]))[0];else {
-    const i = await modal('Limb Justice', '<p>Trade a severed limb weapon for any remaining weapon in the market.</p>', pool.map((x, i) => ({
+    const i = await modal(_T('Limb Justice'), '<p>Trade a severed limb weapon for any remaining weapon in the market.</p>', pool.map((x, i) => ({
       label: W[x.k].n,
-      sub: `LV${x.lv} · ${wStats(mkW(x.k))}`,
+      sub: _T`LV${x.lv} · ${wStats(mkW(x.k))}`,
       value: i,
       card: 'w:' + x.k
     })));
@@ -813,19 +813,19 @@ async function mfLimbSwap(player) {
   if (si >= 0) m.slots[si] = m.deck.pop() || null;else m.deck.splice(m.deck.indexOf(pick.k), 1);
   const arm = ['R', 'L'].find(a => player['w' + a] && player['w' + a].limb);
   if (arm) {
-    log(`${nm(player)} hands over the ${player['w' + arm].n}.`);
+    log(_T`${nm(player)} hands over the ${player['w' + arm].n}.`);
     player['w' + arm] = null;
   }
   await gainWeapon(player, pick.k);
 }
 /* mfClaimArmor — removes an armor piece from the market (used by Mandata rewards). */
 function mfClaimArmor(player, key) {
-  if (marketPullArmor(key)) log(`${ARM[key].n} is taken from the market.`);
+  if (marketPullArmor(key)) log(_T`${ARM[key].n} is taken from the market.`);
 }
 /* drawArena — draws the top arena card and resolves it; logs if the deck is empty. */
 async function drawArena(player) {
   if (!S.deck.length) {
-    log('The arena deck is empty.');
+    log(_T('The arena deck is empty.'));
     return;
   }
   const k = S.deck.pop();
@@ -835,14 +835,14 @@ async function drawArena(player) {
 /* resolveDrawn — applies a drawn arena card: Piacula (class coin tax), armor-loss cards and instant effects (coin, broken weapons, spawns, spikes, Flavius Rule...); anything else goes to the hand. TWEAK: the per-card amounts (Piaculum 2 coin, Wealth 3/5, Telonium 4, Fortuna +2 CF/+2 coin, Lashings 2 damage, 2 CF when the bear is gone). */
 async function resolveDrawn(player, k) {
   const C = CARDS[k];
-  cardShow('c:' + k, player, '🂠 Drawn');
+  cardShow('c:' + k, player, _T('🂠 Drawn'));
   /* reveal — logs the card reveal with the given log style. */
-  const reveal = (cls = 'big') => log(`${nm(player)} reveals <b>${C.n}</b>: ${C.d}`, cls);
+  const reveal = (cls = 'big') => log(_T`${nm(player)} reveals <b>${C.n}</b>: ${C.d}`, cls);
   if (C.cls) {
     // Piaculum
     const tgt = activePlayers().find(other => other.cls === C.cls);
     reveal('');
-    if (!tgt) log(`No ${CLASSES[C.cls].name} is in the arena. The Piaculum is discarded.`);else if (tgt === player) {
+    if (!tgt) log(_T`No ${CLASSES[C.cls].name} is in the arena. The Piaculum is discarded.`);else if (tgt === player) {
       let tot = 0;
       for (const q of activePlayers()) if (q !== player) {
         const v = Math.min(2, q.coin);
@@ -852,14 +852,14 @@ async function resolveDrawn(player, k) {
       }
       player.coin += tot;
       coinLog(player, tot, 'cards');
-      log(`Everyone pays the ${CLASSES[C.cls].name}: ${nm(player)} collects ${tot} coin.`);
+      log(_T`Everyone pays the ${CLASSES[C.cls].name}: ${nm(player)} collects ${tot} coin.`);
     } else {
       const v = Math.min(2, player.coin);
       player.coin -= v;
       coinLog(player, -v, 'cards');
       tgt.coin += v;
       coinLog(tgt, v, 'cards');
-      log(`${nm(player)} pays ${nm(tgt)} ${v} coin.`);
+      log(_T`${nm(player)} pays ${nm(tgt)} ${v} coin.`);
     }
     return;
   }
@@ -867,8 +867,8 @@ async function resolveDrawn(player, k) {
     reveal('bad');
     if (player.hp[C.loc] > 0 && (player.ap[C.loc] > 0 || player.pieces[C.loc].length)) {
       stripLoc(player, C.loc);
-      log(`${nm(player)}'s ${LOCN[C.loc].toLowerCase()} armor falls away (0 AP).`);
-    } else log('There was no armor there to lose.');
+      log(_T`${nm(player)}'s ${LOCN[C.loc].toLowerCase()} armor falls away (0 AP).`);
+    } else log(_T('There was no armor there to lose.'));
     return;
   }
   switch (k) {
@@ -878,7 +878,7 @@ async function resolveDrawn(player, k) {
         const v = k === 'wealth3' ? 3 : 5;
         player.coin += v;
         coinLog(player, v, 'cards');
-        log(`${nm(player)} draws <b>Wealth of Saturn</b>: +${v} coin.`);
+        log(_T`${nm(player)} draws <b>Wealth of Saturn</b>: +${v} coin.`);
         return;
       }
     case 'wpnR':
@@ -889,24 +889,24 @@ async function resolveDrawn(player, k) {
         reveal('bad');
         if (w && !w.lyre && !w.noAtk) {
           player['w' + a] = null;
-          log(`${nm(player)}'s ${w.n} falls apart and is discarded.`, 'bad');
-          think(player, pickOne(['Cheap Capuan steel!', 'Of course it breaks now.']), 'angry');
-        } else log('Nothing in that hand to lose.');
+          log(_T`${nm(player)}'s ${w.n} falls apart and is discarded.`, 'bad');
+          think(player, pickOne([_T('Cheap Capuan steel!'), _T('Of course it breaks now.')]), 'angry');
+        } else log(_T('Nothing in that hand to lose.'));
         return;
       }
     case 'fallsApart':
       reveal('bad');
       for (const l of LOCS) stripLoc(player, l);
-      think(player, 'All bad fortune is conquered by endurance.', 'quote');
+      think(player, _T('All bad fortune is conquered by endurance.'), 'quote');
       return;
     case 'merc1':
     case 'merc2':
       player.mercBonus = (player.mercBonus || 0) + C.mv;
-      log(`${nm(player)} draws <b>Speed of Mercury</b>: +${C.mv} movement this turn.`);
+      log(_T`${nm(player)} draws <b>Speed of Mercury</b>: +${C.mv} movement this turn.`);
       return;
     case 'mercRound':
       player.mercRound = S.ri;
-      log(`${nm(player)} draws <b>Speed of Mercury</b> (active): +1 movement for the rest of the round.`);
+      log(_T`${nm(player)} draws <b>Speed of Mercury</b> (active): +1 movement for the rest of the round.`);
       return;
     case 'ursa':
     case 'brutum':
@@ -915,7 +915,7 @@ async function resolveDrawn(player, k) {
         reveal();
         if (!n || !n.alive || n.tamedBy != null) {
           player.cf += 2;
-          log(`${beastName(C.bear)} is gone or tamed: ${nm(player)} gains 2 CF instead.`);
+          log(_T`${beastName(C.bear)} is gone or tamed: ${nm(player)} gains 2 CF instead.`);
         } else {
           n.aggro = null;
           setAggro(n, player, 'card');
@@ -932,7 +932,7 @@ async function resolveDrawn(player, k) {
         const v = Math.min(4, player.coin);
         player.coin -= v;
         coinLog(player, -v, 'cards');
-        log(`${nm(player)} draws <b>Flavius Telonium</b> and pays ${v} coin in tax.`, 'bad');
+        log(_T`${nm(player)} draws <b>Flavius Telonium</b> and pays ${v} coin in tax.`, 'bad');
         return;
       }
     case 'fortuna':
@@ -944,10 +944,10 @@ async function resolveDrawn(player, k) {
         for (let i = 0; i < 2; i++) {
           const [r, c] = freeGrid();
           placeFloor('offer', drawOffer(), r, c);
-          log(`An offering lands on ${tl(r, c)}.`);
+          log(_T`An offering lands on ${tl(r, c)}.`);
         }
         if (S.deck.length) {
-          log(`${nm(player)} draws another arena card.`);
+          log(_T`${nm(player)} draws another arena card.`);
           await drawArena(player);
         }
         return;
@@ -956,7 +956,7 @@ async function resolveDrawn(player, k) {
       reveal('bad');
       await hurt(player, 'chest', 2, {
         type: 'env'
-      }, 'Lashings', {
+      }, _T('Lashings'), {
         noShield: 1,
         direct: 1
       });
@@ -979,8 +979,8 @@ async function resolveDrawn(player, k) {
     case 'endgame':
       S.endgame = 1;
       reveal();
-      banner('Flavius Rule', '4 hit dice · attackers choose the location');
-      log('Flavius Rule is in play: every attack now rolls 4 hit dice and the attacker chooses the hit location.', 'hd');
+      banner(_T('Flavius Rule'), _T('4 hit dice · attackers choose the location'));
+      log(_T('Flavius Rule is in play: every attack now rolls 4 hit dice and the attacker chooses the hit location.'), 'hd');
       await popRule('endgame');
       return;
     case 'boar':
@@ -993,13 +993,13 @@ async function resolveDrawn(player, k) {
     case 'spawnLeo':
     case 'spawnLeaena':
       reveal();
-      spawnNPC('lion', k === 'spawnLeo' ? 'Leo' : 'Leaena');
+      spawnNPC('lion', k === 'spawnLeo' ? _T('Leo') : _T('Leaena'));
       draw();
       await sleep(400);
       return;
     case 'spawnTholo':
       reveal();
-      spawnNPC('tholo', 'Tholo', S.ri < 2 ? [6, 6] : null);
+      spawnNPC('tholo', _T('Tholo'), S.ri < 2 ? [6, 6] : null);
       draw();
       await sleep(400);
       return;
@@ -1018,7 +1018,7 @@ async function resolveDrawn(player, k) {
     return;
   }
   player.items.push(mkCard(k));
-  log(`${nm(player)} draws <b>${C.n}</b> (${C.type}) and keeps it in hand.`);
+  log(_T`${nm(player)} draws <b>${C.n}</b> (${C.type}) and keeps it in hand.`);
 }
 /* pickNPC — asks the player to choose a beast matching filter (CPU takes the closest); null if none or cancelled. */
 async function pickNPC(player, title, filter, note = '') {
@@ -1033,10 +1033,10 @@ async function pickNPC(player, title, filter, note = '') {
   if (player.cpu) return c.sort((a, b) => cheb(player, a) - cheb(player, b))[0];
   const id = await modal(title, `<p>${note}</p>`, c.map(n => ({
     label: `${n.name} (${NPCT[n.t].n})`,
-    sub: `${tl(n.r, n.c)} · ${n.hp} HP${n.tamedBy != null ? ' · tamed by ' + S.players[n.tamedBy].name : ''}`,
+    sub: _T`${tl(n.r, n.c)} · ${n.hp} HP${n.tamedBy != null ? _T(' · tamed by ') + S.players[n.tamedBy].name : ''}`,
     value: n.id
   })).concat([{
-    label: 'Cancel',
+    label: _T('Cancel'),
     value: null
   }]));
   return c.find(n => n.id === id) || null;
@@ -1049,7 +1049,7 @@ async function useItem(player, it) {
   if (it.kind === 'mf') return declareMandata(player, it);
   if (it.kind === 'offer') {
     const k = it.key;
-    if (k === 'elix2' || k === 'elix4') await distributeHP(player, k === 'elix2' ? 2 : 4, 'a Health Elixir');else if (k === 'ap2' || k === 'ap3') {
+    if (k === 'elix2' || k === 'elix4') await distributeHP(player, k === 'elix2' ? 2 : 4, _T('a Health Elixir'));else if (k === 'ap2' || k === 'ap3') {
       if (!(await apUp(player, k === 'ap2' ? 2 : 3))) return false;
     } else if (k[0] === 'm' && k[1] === 'w') {
       const lv = +k[2];
@@ -1066,17 +1066,17 @@ async function useItem(player, it) {
     } else if (k === 'merc1' || k === 'merc2') {
       const v = k === 'merc1' ? 1 : 2;
       player.mv = Math.min(7, player.mv + v);
-      log(`${nm(player)} declares Speed of Mercury: +${v} movement.`);
+      log(_T`${nm(player)} declares Speed of Mercury: +${v} movement.`);
     } else if (k === 'eagle') {
       if (!cfAllowed()) {
-        if (!player.cpu) await modal('Crowd Favor is locked', '<p>Crowd Favor cannot be redeemed right now.</p>', [{
+        if (!player.cpu) await modal(_T('Crowd Favor is locked'), '<p>Crowd Favor cannot be redeemed right now.</p>', [{
           label: 'OK',
           value: 1
         }]);
         return false;
       }
       player.cf += 5;
-      log(`${nm(player)} trades the Golden Eagle to the crowd for 5 CF. It respawns atop a pillar.`);
+      log(_T`${nm(player)} trades the Golden Eagle to the crowd for 5 CF. It respawns atop a pillar.`);
       const pl = pickOne(S.pillars);
       if (pl) pl.pots.push('eagle');
     } else return false;
@@ -1090,30 +1090,30 @@ async function useItem(player, it) {
   switch (k) {
     case 'elixir4':
     case 'elixir2':
-      await distributeHP(player, C.hp, 'a Health Elixir');
+      await distributeHP(player, C.hp, _T('a Health Elixir'));
       break;
     case 'hygeia':
       {
         const sev = LOCS.filter(l => player.hp[l] <= 0 && l !== 'head' && l !== 'chest');
         if (!sev.length) {
-          if (!player.cpu) await modal('Nothing to regrow', '<p>You have no severed limbs.</p>', [{
+          if (!player.cpu) await modal(_T('Nothing to regrow'), '<p>You have no severed limbs.</p>', [{
             label: 'OK',
             value: 1
           }]);
           return false;
         }
-        const l = player.cpu ? sev[0] : await modal('Blessings of Hygeia', '<p>Choose the limb to regrow.</p>', sev.map(x => ({
+        const l = player.cpu ? sev[0] : await modal(_T('Blessings of Hygeia'), '<p>Choose the limb to regrow.</p>', sev.map(x => ({
           label: LOCN[x],
           value: x
         })));
         if (!l) return false;
         player.hp[l] = 4;
-        log(`${nm(player)}'s ${LOCN[l]} regrows (4 HP).`, 'big');
+        log(_T`${nm(player)}'s ${LOCN[l]} regrows (4 HP).`, 'big');
         break;
       }
     case 'ward':
       player.warded = true;
-      log(`${nm(player)} declares the Ward of the Evil Eye.`);
+      log(_T`${nm(player)} declares the Ward of the Evil Eye.`);
       break;
     case 'rete':
       S.mode = 'rete';
@@ -1121,11 +1121,11 @@ async function useItem(player, it) {
       return false;
     case 'lure':
       {
-        const n = await pickNPC(player, 'Meat Lure', n => n.alive && n.t !== 'zora', 'Choose the NPC to lure.');
+        const n = await pickNPC(player, _T('Meat Lure'), n => n.alive && n.t !== 'zora', _T('Choose the NPC to lure.'));
         if (!n) return false;
         const targets = activePlayers().filter(other => other !== player && !other.underground && cheb(player, other) <= 4);
         if (!targets.length) {
-          if (!player.cpu) await modal('Meat Lure', '<p>No other gladiator is within 4 tiles to throw the lure at.</p>', [{
+          if (!player.cpu) await modal(_T('Meat Lure'), '<p>No other gladiator is within 4 tiles to throw the lure at.</p>', [{
             label: 'OK',
             value: 1
           }]);
@@ -1133,36 +1133,36 @@ async function useItem(player, it) {
         }
         let q;
         if (player.cpu) q = targets.sort((a, b) => cheb(n, a) - cheb(n, b))[0];else {
-          const id = await modal('Meat Lure', `<p>Throw the lure at which gladiator (within 4 tiles)? ${n.name} will hunt them.</p>`, targets.map(target => ({
+          const id = await modal(_T('Meat Lure'), `<p>${_T`Throw the lure at which gladiator (within 4 tiles)? ${n.name} will hunt them.`}</p>`, targets.map(target => ({
             label: target.name,
-            sub: `${cheb(n, target)} tiles from ${n.name}`,
+            sub: _T`${cheb(n, target)} tiles from ${n.name}`,
             value: target.id
           })));
           q = S.players[id];
         }
         if (!q) return false;
-        if (n.tamedBy != null) log(`The tame bond between ${S.players[n.tamedBy].name} and ${n.name} is severed.`, 'bad');
+        if (n.tamedBy != null) log(_T`The tame bond between ${S.players[n.tamedBy].name} and ${n.name} is severed.`, 'bad');
         n.tamedBy = null;
-        log(`${nm(player)} throws a Meat Lure at ${nm(q)}.`, 'big');
+        log(_T`${nm(player)} throws a Meat Lure at ${nm(q)}.`, 'big');
         setAggro(n, q, 'lure');
-        bumpRel(q, player, -25, 'meat lure');
+        bumpRel(q, player, -25, _T('meat lure'));
         break;
       }
     case 'lyre':
     case 'tame':
       {
-        const n = await pickNPC(player, C.n, n => tameable(n) && n.tamedBy !== player.id, 'Choose the beast to tame. Fazed beasts cannot be tamed.');
+        const n = await pickNPC(player, C.n, n => tameable(n) && n.tamedBy !== player.id, _T('Choose the beast to tame. Fazed beasts cannot be tamed.'));
         if (!n) return false;
-        if (n.tamedBy != null) log(`${nm(player)} steals ${n.name} from ${S.players[n.tamedBy].name}!`, 'big');
+        if (n.tamedBy != null) log(_T`${nm(player)} steals ${n.name} from ${S.players[n.tamedBy].name}!`, 'big');
         n.tamedBy = player.id;
         n.aggro = null;
         stat(player, 'tame');
-        log(`${nm(player)} tames ${nm(n)}. It obeys from their next Resolve phase.`, 'big');
+        log(_T`${nm(player)} tames ${nm(n)}. It obeys from their next Resolve phase.`, 'big');
         break;
       }
     case 'focus':
       player.focusNext = true;
-      log(`${nm(player)} declares Focus! for their next attack.`);
+      log(_T`${nm(player)} declares Focus! for their next attack.`);
       break;
     case 'forge3':
     case 'forge2':
@@ -1171,15 +1171,15 @@ async function useItem(player, it) {
     case 'hercules1':
     case 'hercules2':
       player.hercules = (player.hercules || 0) + C.dmg;
-      log(`${nm(player)} declares Herculean Vigor: +${C.dmg} damage if their next attack lands.`);
+      log(_T`${nm(player)} declares Herculean Vigor: +${C.dmg} damage if their next attack lands.`);
       break;
     case 'discount':
       player.discount = (player.discount || 0) + 2;
-      log(`${nm(player)} declares % Off: market items cost 2 less this turn.`);
+      log(_T`${nm(player)} declares % Off: market items cost 2 less this turn.`);
       break;
     case 'mchoice':
       player.mchoice = true;
-      log(`${nm(player)} declares Choose: market purchases this turn are chosen, not rolled.`);
+      log(_T`${nm(player)} declares Choose: market purchases this turn are chosen, not rolled.`);
       break;
     case 'ammo':
       {
@@ -1197,37 +1197,37 @@ async function useItem(player, it) {
         if (player.cpu) mode = need.length ? 'refill' : pair && pool.length && armsAttached(player).some(a => !player['w' + a] || wScore(player['w' + a]) < 3) ? 'swap' : null;else {
           const b = [];
           if (need.length) b.push({
-            label: 'Replenish all ammo',
+            label: _T('Replenish all ammo'),
             sub: need.map(weapon => weapon.n).join(', '),
             value: 'refill'
           });
           if (pair && pool.length) b.push({
-            label: 'Exchange 2 Ammo cards',
-            sub: 'for any available ammo weapon',
+            label: _T('Exchange 2 Ammo cards'),
+            sub: _T('for any available ammo weapon'),
             value: 'swap'
           });
           if (!b.length) {
-            await modal('Ammo', '<p>No weapon needs ammo, and you need 2 Ammo cards to exchange for an ammo weapon.</p>', [{
+            await modal(_T('Ammo'), '<p>No weapon needs ammo, and you need 2 Ammo cards to exchange for an ammo weapon.</p>', [{
               label: 'OK',
               value: 1
             }]);
             return false;
           }
           b.push({
-            label: 'Cancel',
+            label: _T('Cancel'),
             value: null
           });
-          mode = await modal('Ammo', hint('ammo'), b);
+          mode = await modal(_T('Ammo'), hint('ammo'), b);
         }
         if (!mode) return false;
         if (mode === 'refill') {
           for (const w of need) w.ammoLeft = w.ammo;
-          log(`${nm(player)} replenishes ${need.map(weapon => weapon.n).join(' and ')}.`);
+          log(_T`${nm(player)} replenishes ${need.map(weapon => weapon.n).join(' and ')}.`);
           break;
         }
         let pick;
         if (player.cpu) pick = pool.sort((a, b) => wScore(W[b.x]) - wScore(W[a.x]))[0];else {
-          const i = await modal('Ammo exchange', '<p>Choose an ammo weapon.</p>', pool.map((o, i) => ({
+          const i = await modal(_T('Ammo exchange'), '<p>Choose an ammo weapon.</p>', pool.map((o, i) => ({
             label: W[o.x].n,
             sub: wStats(mkW(o.x)),
             value: i,
@@ -1240,7 +1240,7 @@ async function useItem(player, it) {
         const m = S.market.w[pick.lv];
         const si = m.slots.indexOf(pick.x);
         if (si >= 0) m.slots[si] = m.deck.pop() || null;else m.deck.splice(m.deck.indexOf(pick.x), 1);
-        log(`${nm(player)} exchanges two Ammo cards for the ${W[pick.x].n}.`);
+        log(_T`${nm(player)} exchanges two Ammo cards for the ${W[pick.x].n}.`);
         await gainWeapon(player, pick.x);
         break;
       }
@@ -1262,7 +1262,7 @@ async function useItem(player, it) {
   }
   if (ok) {
     player.items = player.items.filter(x => x !== it);
-    cardShow('c:' + k, player, '📣 Declared');
+    cardShow('c:' + k, player, _T('📣 Declared'));
     stat(player, 'cardsPlayed');
   }
   return ok;
@@ -1276,7 +1276,7 @@ function zoraPickOptions(npc) {
   for (const f of S.floor) if (f.r === npc.r && f.c === npc.c && (f.kind === 'offer' || f.kind === 'key' || f.kind === 'weapon')) out.push({
     src: 'floor',
     f,
-    label: f.kind === 'weapon' ? f.w.n : f.kind === 'key' ? 'Arena Key' : OFFER[f.key].n + ' (' + OFFER[f.key].s + ')',
+    label: f.kind === 'weapon' ? f.w.n : f.kind === 'key' ? _T('Arena Key') : OFFER[f.key].n + ' (' + OFFER[f.key].s + ')',
     val: f.kind === 'weapon' ? wScore(f.w) : 4
   });
   for (const pl of pilesAt(npc.r, npc.c)) {
@@ -1297,7 +1297,7 @@ function zoraPickOptions(npc) {
   }
   if (S.chest && S.chest.held == null && S.chest.r === npc.r && S.chest.c === npc.c) out.push({
     src: 'chest',
-    label: 'the Arena Chest',
+    label: _T('the Arena Chest'),
     val: 6
   });
   return out;
@@ -1336,10 +1336,10 @@ function zoraPickup(npc, o) {
     S.chest.held = npc.id;
     npc.carry = {
       kind: 'chest',
-      label: 'the Arena Chest'
+      label: _T('the Arena Chest')
     };
   }
-  log(`${nm(npc)} snatches up ${npc.carry.label}. His movement is halved while carrying.`);
+  log(_T`${nm(npc)} snatches up ${npc.carry.label}. His movement is halved while carrying.`);
 }
 /* zoraDrop — Zora drops what he carries: handed to his owner if adjacent, otherwise left on his tile (armor as a small pile, weapons on the floor). */
 async function zoraDrop(npc, player) {
@@ -1351,11 +1351,11 @@ async function zoraDrop(npc, player) {
     S.chest.held = null;
     S.chest.r = toOwner ? player.r : npc.r;
     S.chest.c = toOwner ? player.c : npc.c;
-    log(`${nm(npc)} drops the Arena Chest ${toOwner ? 'at ' + player.name + "'s feet" : 'on ' + tl(npc.r, npc.c)}.`);
+    log(_T`${nm(npc)} drops the Arena Chest ${toOwner ? 'at ' + player.name + _T("'s feet") : 'on ' + tl(npc.r, npc.c)}.`);
     return;
   }
   if (toOwner) {
-    log(`${nm(npc)} delivers ${c.label} to ${nm(player)}.`);
+    log(_T`${nm(npc)} delivers ${c.label} to ${nm(player)}.`);
     if (c.kind === 'offer') player.items.push(mkOffer(c.key));else if (c.kind === 'key') player.keys++;else if (c.kind === 'weapon') await gainWeapon(player, null, c.w);else if (c.kind === 'armor') await gainArmorPiece(player, c.a.key, c.a.ap, {
       single: true
     });
@@ -1384,7 +1384,7 @@ async function zoraDrop(npc, player) {
     c: npc.c,
     thrown: -1
   });else placeFloor(c.kind, c.key, npc.r, npc.c);
-  log(`${nm(npc)} drops ${c.label} on ${tl(npc.r, npc.c)}.`);
+  log(_T`${nm(npc)} drops ${c.label} on ${tl(npc.r, npc.c)}.`);
   await pickupAt(npc.r, npc.c);
 }
 /* cpuZora — CPU orders for Zora: deliver carried loot, else grab the best item here and bring it, else fetch the nearest floor item in reach. Returns false if there was nothing to do. TWEAK: minimum item value worth grabbing (3). */

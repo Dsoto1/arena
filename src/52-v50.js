@@ -16,7 +16,7 @@ const achLocal=()=>{try{return JSON.parse(localStorage.getItem('flavius_ach_got'
 {const _ns=newState;newState=function(cfg){const r=_ns(cfg);try{if(S&&S.players){const zoraOpt=!!(cfg&&cfg.opts&&cfg.opts.zoraCard);
   if(Array.isArray(S.deck)&&!zoraOpt)S.deck=S.deck.filter(k=>k!=='zora');
   for(const p of S.players)if(p.abil==='zora'&&!p.noEagle&&!(p.items||[]).some(i=>i.kind==='card'&&i.key==='zora')){const n=Math.max(1,p.abilVal||1);for(let i=0;i<n;i++)p.items.push(mkCard('zora'));p.zoraUsed=n}}}catch(e){console.error(e)}return r}}
-{const _oh=optionsHTML;optionsHTML=function(ev,L){const h=_oh(ev,L);try{const o=CFG.opts;if(!ev||!ev.deck||/id="oZora"/.test(h))return h;const box=optBox('oZora','zoraCard',o.zoraCard,'Zora in the arena deck <span class="rc-sub">(anyone can draw him · the Venatore always carries his own)</span>',ev.noVenatore?'This event keeps Zora out':null);
+{const _oh=optionsHTML;optionsHTML=function(ev,L){const h=_oh(ev,L);try{const o=CFG.opts;if(!ev||!ev.deck||/id="oZora"/.test(h))return h;const box=optBox('oZora','zoraCard',o.zoraCard,_T('Zora in the arena deck <span class="rc-sub">(anyone can draw him · the Venatore always carries his own)</span>'),ev.noVenatore?_T('This event keeps Zora out'):null);
   const out=h.replace(/(<label[^>]*><input type="checkbox" id="oEagle"[\s\S]*?<\/label>)/,`$1${box}`);return out===h?h+box:out}catch(e){return h}}}
 
 /* ---------- the nav drawer: 🏛 stays; New event, sound and settings slide out from the right when asked ---------- */
@@ -37,13 +37,13 @@ setInterval(()=>{try{if(HEADLESS)return;if(!S||S.over||S.phase==='setup')turnTin
 /* ---------- hot seat: what happened while you were away ---------- */
 const hsSnap=p=>({hp:Object.values(p.hp||{}).reduce((a,v)=>a+(+v||0),0),ap:Object.values(p.ap||{}).reduce((a,v)=>a+(+v||0),0),cf:Math.round(p.cf||0),coin:p.coin||0,items:(p.items||[]).length,tro:(p.trophies||[]).length,alive:p.alive,log:(S.logLines||[]).length});
 function hsAwayHTML(p,a){const b=hsSnap(p);const d=(k,lab,ico,good)=>{const v=b[k]-a[k];if(!v)return '';const up=v>0;return `<span class="awaychip ${up===good?'pos':'neg'}">${ico} ${up?'+':''}${v} ${lab}</span>`};
-  const chips=[d('hp','HP','❤',true),d('ap','AP','🛡',true),d('cf','CF','👑',true),d('coin','coin','💰',true),d('items','in hand','🂠',true),d('tro','trophies','🏆',true)].join('');
+  const chips=[d('hp','HP','❤',true),d('ap','AP','🛡',true),d('cf','CF','👑',true),d('coin','coin','💰',true),d('items',_T('in hand'),'🂠',true),d('tro','trophies','🏆',true)].join('');
   const name=String(p.name);const L=(S.logLines||[]).slice(a.log).filter(l=>l.cls!=='hd'&&l.text&&l.text.includes(name)).slice(-6);
   return `<div class="away">${chips?`<div class="awaychips">${chips}</div>`:'<p class="rc-sub" style="margin:0 0 6px">Nothing touched you.</p>'}${L.length?`<ul class="awaylog">${L.map(l=>`<li>${esc(l.text)}</li>`).join('')}</ul>`:''}</div>`}
 {const _bt=beginTurn;beginTurn=async function(){try{const p=cur();turnTint(p);
   if(S&&S.hotseat&&!S.over&&!HEADLESS&&!S.sim){S.hsSnaps=S.hsSnaps||{};const prev=S.hsPrevP;if(prev&&prev!==p&&!prev.cpu)S.hsSnaps[prev.id]=hsSnap(prev);S.hsPrevP=p;
     const a=S.hsSnaps[p.id];if(p&&!p.cpu&&a&&S.hotseat.players.length>=2){const P=(typeof HS_PROFILES!=='undefined'&&HS_PROFILES.find(x=>x.id===p.pid))||null;
-      await modal(`🎮 ${esc(P?P.name:p.name)} — your turn`,`<p class="rc-sub" style="margin:0 0 6px">Since your last turn</p>${hsAwayHTML(p,a)}`,[{label:'Start my turn',value:1,primary:1}],{close:1})}}}catch(e){console.error(e)}
+      await modal(_T`🎮 ${esc(P?P.name:p.name)} — your turn`,`<p class="rc-sub" style="margin:0 0 6px">${_T`Since your last turn`}</p>${hsAwayHTML(p,a)}`,[{label:_T('Start my turn'),value:1,primary:1}],{close:1})}}}catch(e){console.error(e)}
   return _bt.apply(this,arguments)}}
 
 /* =====================================================================
@@ -59,30 +59,30 @@ function hsAwayHTML(p,a){const b=hsSnap(p);const d=(k,lab,ico,good)=>{const v=b[
    briefing, rule pop-ups and Manager mode. Screens lose their small print: it lives in these tooltips now.
    ===================================================================== */
 const GLOSS={
-  cf:{t:'Crowd Favor (CF)',re:/\bCF\b|Crowd Favou?r/,d:'Your score with the crowd. Earn it from [[blessings|pots]], beast trophies, kills and your class. At the end: 20+ saves you to the [[ludusf|Ludus Flavius]], 50+ wins freedom, 17–19 faces the [[thumb|Thumb of Flavius]], under 17 the [[fate|Fate table]].'},
-  ap:{t:'Armor Points (AP)',re:/\bAP\b/,d:'Armor on each body location, at most 7. A hit strips AP before it reaches [[hp|HP]]. Shields can absorb a hit instead.'},
-  hp:{t:'Health (HP)',re:/\bHP\b/,d:'Health on each body location. Lose the head or the chest and you are out; lose an arm or a leg and it is severed.'},
-  fate:{t:'The Fate table',re:/Fate table|\bFates\b/,d:'At the end, a gladiator under 17 [[cf|CF]] rolls the d12: Damnatio, the Fatal Charades or worse. In Manager mode, [[blood|blood money]] can buy them back.'},
-  thumb:{t:'Thumb of Flavius',re:/Thumb of Flavius/,d:'For 17–19 [[cf|CF]]: a d6 decides. 4–6 spares you; 1–3 the thumb goes down and the [[fate|Fate table]] follows.'},
-  ludusf:{t:'Ludus Flavius',re:/Ludus Flavius/,d:'Gladiators who end with 20+ [[cf|CF]] and survive are saved here, and can be summoned into later events.'},
-  rudis:{t:'The rudis',re:/\brudis\b/,d:'The wooden sword of freedom. A fighter with enough events and wins can be granted it: freed, or kept for the house.'},
-  blessings:{t:'Blessings pots',re:/Blessings pots?|Blessings bag/,d:'Pots on the pillars. Break one (2 damage) for 2 coin, 1 [[cf|CF]] and a hidden offering. Power-2 weapons break them best.'},
-  mandati:{t:'Mandata Flavi',re:/Mandata Flavi/,d:'Secret objectives dealt at the start. Each one still hidden at the end costs 5 [[cf|CF]].'},
-  aggro:{t:'Aggro',re:/\baggro\b/,d:'The gladiator a beast is hunting: the last one to hit it. Tunnels and the Ward of the Evil Eye shake it off.'},
-  raged:{t:'Raged and Fazed',re:/\bRaged\b|\bFazed\b/,d:'Lions, Commodus and Tholo turn Raged as they lose HP (harder hits, faster), then Fazed near death (slow, weak). Finish a Fazed boss before a rival steals the trophy.'},
-  truce:{t:'Truce',re:/\btruces?\b/,d:'A pact not to attack. It ends the moment either side strikes.'},
-  blood:{t:'Blood money',re:/blood money/,d:'Manager mode: pay the editor to spare a condemned fighter the [[fate|Fate table]]. Small, struggling houses pay half.'},
-  fee:{t:'Appearance fee',re:/appearance fee/,d:'Paid to your house for every fighter on the card, win or lose.'},
-  morale:{t:'Morale',re:/\bmorale\b/,d:'80+: +1 [[ap|AP]] and +1 [[cf|CF]] on the sand. Under 35: −1 AP. Under 20: the fighter thinks a tier worse.'},
-  starters:{t:'Starters and bench',re:/\bstarters\b/,d:'Starters are the fighters you can enter on [[mweek|Match Week]]. The bench trains or goes on loan.'},
-  mweek:{t:'Match Week',re:/Match Week/,d:'Flavius’s travelling games: three bouts in one city each week — the Undercard on Friday, the Feature on Saturday, the Main event on Sunday.'},
-  superbus:{t:'The Flavius Superbus',re:/Superbus/,d:'The season’s championship in Roma for the top four houses. The awards, the recap paper and the [[ledger|Quaestor’s Ledger]] follow it.'},
-  ledger:{t:'The Quaestor’s Ledger',re:/Quaestor[’']s Ledger/,d:'The season’s pay to every house: a stipend, tax returns, bounties, [[fame]] and league finish. Thriving houses get no stipend.'},
-  fame:{t:'Fame',re:/\bfame\b/,d:'How known your house is. It opens doors to recruits and drifts back toward 35 at every season’s close.'},
-  omen:{t:'The omen',re:/\bomen\b/,d:'The week’s sign from the gods: it sways attendance, purses and moods.'},
-  zora:{t:'Zora',re:/\bZora\b/,d:'The Venatore’s tamed golden eagle: moves 6, carries items and attacks for him. The Venatore carries his card; others meet it only if the arena deck includes it.'},
-  hygeia:{t:'Hygeia’s Blessing',re:/Hygeia[’']s Blessing/,d:'Once a season, every house can heal its whole roster for free.'},
-  thriving:{t:'Thriving house',re:/\bthriving\b/,d:'350+ coin, or fame 55+ with 150+ coin. A thriving house gets no loans, cart, paid road or stipend.'}};
+  cf:{t:_T('Crowd Favor (CF)'),re:/\bCF\b|Crowd Favou?r/,d:_T('Your score with the crowd. Earn it from [[blessings|pots]], beast trophies, kills and your class. At the end: 20+ saves you to the [[ludusf|Ludus Flavius]], 50+ wins freedom, 17–19 faces the [[thumb|Thumb of Flavius]], under 17 the [[fate|Fate table]].')},
+  ap:{t:_T('Armor Points (AP)'),re:/\bAP\b/,d:_T('Armor on each body location, at most 7. A hit strips AP before it reaches [[hp|HP]]. Shields can absorb a hit instead.')},
+  hp:{t:_T('Health (HP)'),re:/\bHP\b/,d:_T('Health on each body location. Lose the head or the chest and you are out; lose an arm or a leg and it is severed.')},
+  fate:{t:_T('The Fate table'),re:/Fate table|\bFates\b/,d:_T('At the end, a gladiator under 17 [[cf|CF]] rolls the d12: Damnatio, the Fatal Charades or worse. In Manager mode, [[blood|blood money]] can buy them back.')},
+  thumb:{t:_T('Thumb of Flavius'),re:/Thumb of Flavius/,d:'For 17–19 [[cf|CF]]: a d6 decides. 4–6 spares you; 1–3 the thumb goes down and the [[fate|Fate table]] follows.'},
+  ludusf:{t:_T('Ludus Flavius'),re:/Ludus Flavius/,d:_T('Gladiators who end with 20+ [[cf|CF]] and survive are saved here, and can be summoned into later events.')},
+  rudis:{t:_T('The rudis'),re:/\brudis\b/,d:_T('The wooden sword of freedom. A fighter with enough events and wins can be granted it: freed, or kept for the house.')},
+  blessings:{t:_T('Blessings pots'),re:/Blessings pots?|Blessings bag/,d:_T('Pots on the pillars. Break one (2 damage) for 2 coin, 1 [[cf|CF]] and a hidden offering. Power-2 weapons break them best.')},
+  mandati:{t:_T('Mandata Flavi'),re:/Mandata Flavi/,d:_T('Secret objectives dealt at the start. Each one still hidden at the end costs 5 [[cf|CF]].')},
+  aggro:{t:_T('Aggro'),re:/\baggro\b/,d:_T('The gladiator a beast is hunting: the last one to hit it. Tunnels and the Ward of the Evil Eye shake it off.')},
+  raged:{t:_T('Raged and Fazed'),re:/\bRaged\b|\bFazed\b/,d:_T('Lions, Commodus and Tholo turn Raged as they lose HP (harder hits, faster), then Fazed near death (slow, weak). Finish a Fazed boss before a rival steals the trophy.')},
+  truce:{t:_T('Truce'),re:/\btruces?\b/,d:_T('A pact not to attack. It ends the moment either side strikes.')},
+  blood:{t:_T('Blood money'),re:/blood money/,d:_T('Manager mode: pay the editor to spare a condemned fighter the [[fate|Fate table]]. Small, struggling houses pay half.')},
+  fee:{t:_T('Appearance fee'),re:/appearance fee/,d:_T('Paid to your house for every fighter on the card, win or lose.')},
+  morale:{t:_T('Morale'),re:/\bmorale\b/,d:_T('80+: +1 [[ap|AP]] and +1 [[cf|CF]] on the sand. Under 35: −1 AP. Under 20: the fighter thinks a tier worse.')},
+  starters:{t:_T('Starters and bench'),re:/\bstarters\b/,d:_T('Starters are the fighters you can enter on [[mweek|Match Week]]. The bench trains or goes on loan.')},
+  mweek:{t:_T('Match Week'),re:/Match Week/,d:_T('Flavius’s travelling games: three bouts in one city each week — the Undercard on Friday, the Feature on Saturday, the Main event on Sunday.')},
+  superbus:{t:_T('The Flavius Superbus'),re:/Superbus/,d:_T('The season’s championship in Roma for the top four houses. The awards, the recap paper and the [[ledger|Quaestor’s Ledger]] follow it.')},
+  ledger:{t:_T('The Quaestor’s Ledger'),re:/Quaestor[’']s Ledger/,d:_T('The season’s pay to every house: a stipend, tax returns, bounties, [[fame]] and league finish. Thriving houses get no stipend.')},
+  fame:{t:_T('Fame'),re:/\bfame\b/,d:_T('How known your house is. It opens doors to recruits and drifts back toward 35 at every season’s close.')},
+  omen:{t:_T('The omen'),re:/\bomen\b/,d:_T('The week’s sign from the gods: it sways attendance, purses and moods.')},
+  zora:{t:_T('Zora'),re:/\bZora\b/,d:'The Venatore’s tamed golden eagle: moves 6, carries items and attacks for him. The Venatore carries his card; others meet it only if the arena deck includes it.'},
+  hygeia:{t:_T('Hygeia’s Blessing'),re:/Hygeia[’']s Blessing/,d:_T('Once a season, every house can heal its whole roster for free.')},
+  thriving:{t:_T('Thriving house'),re:/\bthriving\b/,d:_T('350+ coin, or fame 55+ with 150+ coin. A thriving house gets no loans, cart, paid road or stipend.')}};
 const glossMark=s=>String(s).replace(/\[\[(\w+)(?:\|([^\]]+))?\]\]/g,(m,k,l)=>`<span class="gl" data-tt="${k}">${l||(GLOSS[k]?GLOSS[k].t:k)}</span>`);
 const TT={stack:[],hideT:null,openT:null,lockT:null};
 function ttHTML(a){if(a.dataset.tt&&GLOSS[a.dataset.tt]){const G=GLOSS[a.dataset.tt];return `<div class="ttt">${esc(G.t)}</div><div class="ttd">${glossMark(G.d)}</div>`}
@@ -135,7 +135,7 @@ function glSweep(){try{{const i=TT.stack.findIndex(t=>!t.a.isConnected);if(i>=0)
 if(!HEADLESS)glObs.observe(document.body,{childList:true,subtree:true});
 
 /* ---------- the main menu: names only; what each one does is a hover away ---------- */
-const MM_NAMES={learn:'🎓 Learn to Play',learnmgr:'💼 Learn Manager Mode',play:'⚔️ Play Now',multi:'👥 Multiplayer',manager:'💼 Manager Mode',studio:'🎨 Creator Studio',annals:'🏛️ The Annals',rules:'📜 Rules & Strategy',settings:'⚙️ Settings',hotseat:'🪑 Hot Seat',lan:'🖧 LAN',online:'🌐 Online'};
+const MM_NAMES={learn:_T('🎓 Learn to Play'),learnmgr:_T('💼 Learn Manager Mode'),play:_T('⚔️ Play Now'),multi:_T('👥 Multiplayer'),manager:_T('💼 Manager Mode'),studio:_T('🎨 Creator Studio'),annals:_T('🏛️ The Annals'),rules:'📜 Rules & Strategy',settings:_T('⚙️ Settings'),hotseat:_T('🪑 Hot Seat'),lan:'🖧 LAN',online:_T('🌐 Online')};
 function mmQuiet(){const box=document.querySelector('#mainMenu .mmbtns');if(!box)return;for(const b of box.querySelectorAll('[data-mm]')){if(b.dataset.quietDone)continue;const sm=b.querySelector('small');const tip=sm?sm.textContent.trim():'';
     if(MM_NAMES[b.dataset.mm]){b.textContent=MM_NAMES[b.dataset.mm]}else if(sm)sm.remove();if(tip)b.dataset.tip=esc(tip.charAt(0).toUpperCase()+tip.slice(1));b.dataset.quietDone='1'}
   const f=document.querySelector('#mainMenu .mmfoot');if(f)f.innerHTML='© 2026 Flavius Rule · <button type="button" class="mmlink" data-proto title="The prototype this game was distilled from">D.Soto</button>'}
@@ -144,12 +144,12 @@ setTimeout(mmQuiet,30);setTimeout(mmQuiet,600);
 /* ---------- the setup: the options fold away, the calendar is one line ---------- */
 {const _oh=optionsHTML;optionsHTML=function(ev,L){let h=_oh(ev,L);try{const o=CFG.opts;const on=[o.mods,o.mandata,o.carmina,o.optOffers,o.eaglePot,o.zoraCard].filter(Boolean).length;
   h=h.replace('<h4>Options</h4><div class="opts">',`<details class="optfold" ${CFG.optOpen?'open':''}><summary><b>⚙ Options</b> <span class="rc-sub">${on} on</span></summary><div class="opts">`);
-  h=h.replace(/<p style="font-size:13px;color:var\(--muted\);margin-top:6px">([\s\S]*?)<\/p>\s*$/,(m0,t)=>`<p class="rc-sub" style="margin-top:6px"><span class="qi" data-tip="${esc(t.replace(/<[^>]+>/g,''))}">ⓘ How the Blessings bag works</span></p></details>`);
+  h=h.replace(/<p style="font-size:13px;color:var\(--muted\);margin-top:6px">([\s\S]*?)<\/p>\s*$/,(m0,t)=>`<p class="rc-sub" style="margin-top:6px"><span class="qi" data-tip="${esc(t.replace(/<[^>]+>/g,''))}">${_T`ⓘ How the Blessings bag works`}</span></p></details>`);
   if(!/<\/details>\s*$/.test(h))h+='</details>'}catch(e){}return h}}
 document.addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('optfold'))CFG.optOpen=e.target.open},true);
 {const _sb=setupBody;setupBody=function(){let h=_sb();try{
   h=h.replace(/<div class="card2" style="margin-bottom:8px;border-color:[^"]*"><b>📅 ([^<]*)<\/b>[\s\S]*?<\/div>\s*(?=<label style="display:grid;gap:4px;font-size:14px">Event)/,(m0,date)=>{const c=calNow();const L=LOCATIONS[c.fx.loc];const on=c.fx.loc===CFG.loc&&c.fx.ev===CFG.ev;
-    return `<div class="calline ${on?'on':''}"><b data-tip="The empire's calendar: each week Flavius's games play in one city. Follow the schedule to fight where the empire is watching — or play anywhere; the empire won't mind.">📅 ${date} <span class="qi">ⓘ</span></b> <span class="rc-sub">this week: <b>${esc(L?L.n:'?')}</b> · ${esc((EVENTS[c.fx.ev]||{}).short||(EVENTS[c.fx.ev]||{}).n||'')}</span>${on?'<span class="badge gold">on schedule</span>':'<button type="button" class="btn tksm" data-calgo="1">Follow</button>'}</div>`});
+    return `<div class="calline ${on?'on':''}"><b data-tip="The empire's calendar: each week Flavius's games play in one city. Follow the schedule to fight where the empire is watching — or play anywhere; the empire won't mind.">📅 ${date} <span class="qi">ⓘ</span></b> <span class="rc-sub">${_T`this week: <b>${esc(L?L.n:'?')}</b> · ${esc((EVENTS[c.fx.ev]||{}).short||(EVENTS[c.fx.ev]||{}).n||'')}`}</span>${on?_T('<span class="badge gold">on schedule</span>'):'<button type="button" class="btn tksm" data-calgo="1">Follow</button>'}</div>`});
   h=h.replace(/<span>City <span class="rc-sub" style="font-size:12px">· or click a city on the map<\/span><\/span>/,'<span>City</span>');
   h=h.replace(/Class modifiers \(applied once, before the event\):/,'<span data-tip="Each city favours some classes and hinders others — applied once, before the event.">Class modifiers <span class="qi">ⓘ</span></span>');
   }catch(e){console.error(e)}return h}}
@@ -157,7 +157,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-calgo]');i
   CFG.loc=c.fx.loc;CFG.ev=c.fx.ev;const box=document.getElementById('mBody');if(box){box.innerHTML=setupBody();try{render()}catch(err){}}},true);
 
 /* ---------- Your ludus: the welcome is for the first week; after that it is one click away ---------- */
-{const _mh=mgrHTML;mgrHTML=function(){let h=_mh();try{const w=W_();if(w&&!w.dead&&(w.week-(w.founded||1))>=1){h=h.replace(/<div class="revbox"><div class="sect" style="margin-top:0">👋 Welcome to ([^<]*)<\/div>([\s\S]*?)<\/div>`?/,(m0,nm,body)=>`<details class="revbox welcfold"><summary>👋 How a week works</summary>${body}</details>`)}}catch(e){}return h}}
+{const _mh=mgrHTML;mgrHTML=function(){let h=_mh();try{const w=W_();if(w&&!w.dead&&(w.week-(w.founded||1))>=1){h=h.replace(/<div class="revbox"><div class="sect" style="margin-top:0">👋 Welcome to ([^<]*)<\/div>([\s\S]*?)<\/div>`?/,(m0,nm,body)=>`<details class="revbox welcfold"><summary>${_T`👋 How a week works`}</summary>${body}</details>`)}}catch(e){}return h}}
 
 /* ---------- the city themes, take two: every one of them trap, and in tune with itself ----------
    • the melody's strong beats land on chord tones (passing notes stay on the off-beats); the bridge the same

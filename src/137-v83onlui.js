@@ -55,7 +55,7 @@ mockRankCounts82=function(w){const o={};for(const R of ONLC.RANKS)o[R.k]=0;for(c
 const TEST_GATE83=new Set(['lobby.create','lobby.quick','lobby.join','lobby.accept','lobby.sit','lobby.again']);
 {const base=mockReq;mockReq=async function(t,d){const me=mockMe();
   if(me&&TEST_GATE83.has(t)&&d){const w=mockLoad();let ranked=false;if(t==='lobby.create'||t==='lobby.quick')ranked=!!d.ranked;else{const L=w.lobbies[t==='lobby.again'?(d.id||d.lobbyId):d.id];ranked=!!(L&&L.ranked)}
-    if(ranked&&mockParty82(w,me).some(a=>(w.accounts[a]||{}).dtest))throw onlErr82('Test houses play Custom only.','testHouse')}
+    if(ranked&&mockParty82(w,me).some(a=>(w.accounts[a]||{}).dtest))throw onlErr82(_T('Test houses play Custom only.'),'testHouse')}
   return base.apply(this,arguments)}}
 {const base=MOCK_ROUTES['hello'];MOCK_ROUTES['hello']=(w,d,me)=>{const o=base(w,d,me);if(me&&!mockIsGuest82(me)&&mockTester83())o.tester=true;return o}}
 {const base=MOCK_ROUTES['domus.get'];MOCK_ROUTES['domus.get']=(w,d,me)=>{const o=base(w,d,me);const A=w.accounts[me];const D=mockDomus82(w,A&&A.domus);o.gifts=(D&&D.gifts)||[];o.offers=(D&&D.offers)||[];return o}}
@@ -63,8 +63,8 @@ Object.assign(MOCK_ROUTES,{
   /* 🎁 a house gift, opened for the active gladiator (into the house with none); a gift still on a gladiator opens for him */
   'gift.open':(w,d,me)=>{const A=w.accounts[me];const D0=mockDomus82(w,A&&A.domus);let old=null;
     if(d.char){const c0=w.chars[d.char];if(c0&&c0.owner===me&&c0.alive&&(c0.gifts||[]).some(g=>g.id===d.gift))old=c0}
-    if(!old&&!(D0&&(D0.gifts||[]).some(g=>g.id===d.gift)))throw new Error('No such gift.');
-    const ch=old||onlMockChar(w,me);if(ch&&mockCharBusy82(w,ch.id))throw onlErr82(`${ch.name} is in a match — open it afterwards.`,'in_match');
+    if(!old&&!(D0&&(D0.gifts||[]).some(g=>g.id===d.gift)))throw new Error(_T('No such gift.'));
+    const ch=old||onlMockChar(w,me);if(ch&&mockCharBusy82(w,ch.id))throw onlErr82(_T`${ch.name} is in a match — open it afterwards.`,'in_match');
     const cat=onlCatalog();const rw=ONLC.rollGift(Math.random,cat,ch?ONLC.rankFor(ch).k:'tiro');let P=null;
     if(rw.k==='named'){w.chest83=w.chest83||[];w.uniq83=w.uniq83||[];if(w.chest83.length&&Math.random()<0.5){const x=w.chest83.splice(Math.floor(Math.random()*w.chest83.length),1)[0];P={item:x.item,pc:x.pc}}
       else{let def=ONLC.rollNamed(Math.random,cat,rw.rar,w.uniq83);if(def&&def.uq){if(w.uniq83.includes(def.uq))def=ONLC.rollNamed(Math.random,cat,'epic',[]);else w.uniq83.push(def.uq)}if(def)P=ONLC.namedPiece(def,ch||D0)}
@@ -75,15 +75,15 @@ Object.assign(MOCK_ROUTES,{
     const piece=P?ONLC.pieceInfo(P,cat):rw.k==='gear'?(ch?ONLC.pieceOf(ch,rw.item,cat):ONLC.pieceInfo({item:rw.item,pc:null},cat)):null;const D=D2||D0;
     return {reward:{...rw,...(piece?{piece}:{}),...(res.coin?{coin:res.coin}:{}),...(res.sold?{sold:true}:{})},to:res.to,char:ch||null,...(D?{domus:mockDRow82(D),gear:D.gear||[],pcs:D.pcs||{},gifts:D.gifts||[]}:{})}},
   /* 🧪 one offering between the house shelf and a satchel */
-  'offer.move':(w,d,me)=>{const A=w.accounts[me];const D=mockDomus82(w,A&&A.domus);if(!D)throw onlErr82('Name your house first.','need_domus');const k=String(d.key||'');
-    const side=x=>{if(x==='house')return D;const ch=mockOwn83(w,me,x);if(ch.domus!==D.id)throw new Error('Not of your house.');if(mockCharBusy82(w,ch.id))throw onlErr82(`${ch.name} is in a match — the satchel waits.`,'in_match');return ch};
-    if(d.from===d.to)throw new Error('Pick where it goes.');const src=side(d.from),dst=side(d.to);ONLC.offerMove(src,dst,k);const out=x=>x===D?{house:true,offers:D.offers||[]}:x;return {from:out(src),to:out(dst),domus:mockDRow82(D)}},
+  'offer.move':(w,d,me)=>{const A=w.accounts[me];const D=mockDomus82(w,A&&A.domus);if(!D)throw onlErr82(_T('Name your house first.'),'need_domus');const k=String(d.key||'');
+    const side=x=>{if(x==='house')return D;const ch=mockOwn83(w,me,x);if(ch.domus!==D.id)throw new Error(_T('Not of your house.'));if(mockCharBusy82(w,ch.id))throw onlErr82(_T`${ch.name} is in a match — the satchel waits.`,'in_match');return ch};
+    if(d.from===d.to)throw new Error(_T('Pick where it goes.'));const src=side(d.from),dst=side(d.to);ONLC.offerMove(src,dst,k);const out=x=>x===D?{house:true,offers:D.offers||[]}:x;return {from:out(src),to:out(dst),domus:mockDRow82(D)}},
   /* 🧪 tester grants (the mock's tester flag: localStorage flavius_onltester83) */
-  'admin.grant':(w,d,me)=>{if(!mockTester83()||mockIsGuest82(me))throw onlErr82('Only testers may do that.','notTester');const A=w.accounts[me];const D=mockDomus82(w,A&&A.domus);if(!D)throw onlErr82('Name your house first.','need_domus');
-    const ch=onlMockChar(w,me);if(ch&&mockCharBusy82(w,ch.id))throw onlErr82(`${ch.name} is in a match — grant afterwards.`,'in_match');const cat=onlCatalog();
+  'admin.grant':(w,d,me)=>{if(!mockTester83()||mockIsGuest82(me))throw onlErr82(_T('Only testers may do that.'),'notTester');const A=w.accounts[me];const D=mockDomus82(w,A&&A.domus);if(!D)throw onlErr82(_T('Name your house first.'),'need_domus');
+    const ch=onlMockChar(w,me);if(ch&&mockCharBusy82(w,ch.id))throw onlErr82(_T`${ch.name} is in a match — grant afterwards.`,'in_match');const cat=onlCatalog();
     const coin=Math.max(0,Math.min(100000,d.coin|0)),gifts=Math.max(0,Math.min(10,d.gift|0)),glory=Math.max(0,Math.min(10000,+d.glory||0));
     const gear=(Array.isArray(d.gear)?d.gear:[]).map(String).filter(k=>cat[k]).slice(0,10),offs=(Array.isArray(d.offering)?d.offering:[]).map(String).filter(k=>ONLC.OFFERS83.includes(k)).slice(0,10);
-    if(!coin&&!gifts&&!glory&&!gear.length&&!offs.length)throw new Error('Nothing to grant.');const t=Date.now();D.test=true;A.dtest=true;
+    if(!coin&&!gifts&&!glory&&!gear.length&&!offs.length)throw new Error(_T('Nothing to grant.'));const t=Date.now();D.test=true;A.dtest=true;
     for(const c of Object.values(w.chars))if(c.domus===D.id&&c.alive)c.test=true;const shelf={gear:[],offs:[]};
     if(ch){ch.wallet=(ch.wallet|0)+coin;if(glory){ch.glory=Math.round((ONLC.gloryOf(ch)+glory)*100)/100;const R=ONLC.rankFor(ch);ch.rank=R.k;if(ONLC.rankIdx(R.k)>ONLC.rankIdx(ch.rankK||'tiro'))ch.rankK=R.k}
       for(const k of gear){if(!cat[k].stack&&(ch.gear||[]).some(g=>ONLC.itemBase(g)===k))shelf.gear.push(k);else ONLC.putPiece(ch,{item:k,pc:null},true)}
@@ -121,16 +121,16 @@ function nw83Card(I,o){o=o||{};const w=I.w||{};const R=ONLC.rarOf(I.rar||w.rar);
   const art=typeof cardHTML==='function'&&bw.n?cardHTML('w:'+base,'sm'):'⚔';const brk=I.st==='broken';
   return `<div class="nw83 r-${R.k} ${brk?'brk83':''} ${o.sm?'sm':''}" style="--rc:${col}" title="${esc2(w.n||I.n)} · ${R.n}">
     <div class="nw83-art">${art}<i class="nw83-tint"></i><span class="nw83-gem">${R.n}</span></div>
-    <div class="nw83-b"><b class="nw83-n">${esc2(w.n||I.n)}</b>${base?`<small class="nw83-base">${esc2(bw.n||base)} · power ${w.p!=null?w.p:'—'} · range ${w.r!=null?w.r:'—'}</small>`:''}
+    <div class="nw83-b">${_T`<b class="nw83-n">${esc2(w.n||I.n)}</b>${base?_T`<small class="nw83-base">${esc2(bw.n||base)} · power ${w.p!=null?w.p:'—'} · range ${w.r!=null?w.r:'—'}</small>`:''}
      ${(w.aff||[]).length?`<div class="nw83-aff">${w.aff.map(a=>`<span>✦ ${esc2((ONLC.AFFIX[a]||{}).n||a)}</span>`).join('')}</div>`:''}
      ${U?`<p class="nw83-uq"><b>${esc2(U.n)}</b> — ${esc2(U.d)}</p>`:''}
-     <small class="nw83-val">${brk?'💔 Broken · ':''}Value ${c83()} <b>${ONLC.valueOf(I)}</b></small>${o.hist?onl83Hist(I.hist):''}</div></div>`}
+     <small class="nw83-val">${brk?_T('💔 Broken · '):''}Value ${c83()} <b>${ONLC.valueOf(I)}</b></small>${o.hist?onl83Hist(I.hist):''}`}</div></div>`}
 /* the owner history of a piece (who held it, how it left) */
-function onl83Hist(h){if(!(h||[]).length)return '';return `<div class="hist83">${h.slice(-4).map(x=>`<small>${x.how==='taken'?'⚔ taken from':'🪦 fell with'} <b>${esc2(x.glad||'?')}</b>${x.house?` · ${esc2(onlHouse82(x.house))}`:''} · ${esc2(date83(x.when))}</small>`).join('')}</div>`}
-const histTip83=h=>(h||[]).map(x=>`${x.how==='taken'?'taken from':'fell with'} ${x.glad||'?'}${x.house?' ('+onlHouse82(x.house)+')':''} ${date83(x.when)}`).join(' · ');
+function onl83Hist(h){if(!(h||[]).length)return '';return `<div class="hist83">${h.slice(-4).map(x=>`<small>${x.how==='taken'?_T('⚔ taken from'):_T('🪦 fell with')} <b>${esc2(x.glad||'?')}</b>${x.house?` · ${esc2(onlHouse82(x.house))}`:''} · ${esc2(date83(x.when))}</small>`).join('')}</div>`}
+const histTip83=h=>(h||[]).map(x=>`${x.how==='taken'?_T('taken from'):_T('fell with')} ${x.glad||'?'}${x.house?' ('+onlHouse82(x.house)+')':''} ${date83(x.when)}`).join(' · ');
 /* a piece as a small card (printed or named) */
 function onl83PieceCard(I,o){o=o||{};if(!I)return '';if(I.named)return nw83Card(I,{sm:1,hist:o.hist});const art=typeof cardHTML==='function'?cardHTML((I.kind==='w'?'w:':'a:')+I.base,'sm'):'';
-  return `<div class="pc83 ${I.st==='broken'?'brk83':''}" ${(I.hist||[]).length?`title="${esc2(histTip83(I.hist))}"`:''}><div class="pc83-art">${art}</div><b>${esc2(I.n)}</b><small>Level ${I.lv}${I.kind==='a'?` · ${I.ap|0} AP`:''} · ${c83()} ${ONLC.valueOf(I)}</small>${I.st==='broken'?'<small class="brk83t">💔 Broken</small>':''}${o.hist?onl83Hist(I.hist):''}</div>`}
+  return `<div class="pc83 ${I.st==='broken'?'brk83':''}" ${(I.hist||[]).length?`title="${esc2(histTip83(I.hist))}"`:''}><div class="pc83-art">${art}</div>${_T`<b>${esc2(I.n)}</b><small>Level ${I.lv}${I.kind==='a'?_T` · ${I.ap|0} AP`:''} · ${c83()} ${ONLC.valueOf(I)}</small>${I.st==='broken'?_T('<small class="brk83t">💔 Broken</small>'):''}${o.hist?onl83Hist(I.hist):''}`}</div>`}
 
 /* ---------------- 1 · the RANK BAR: eight ranks, taller; tokens open the profile ---------------- */
 {const base=onlRankBar82;onlRankBar82=function(){const h=base.apply(this,arguments);return h.replace('<aside class="rb82"','<aside class="rb82 rb83"').replace(/<span class="rb82-tok /g,'<span data-onl83="myprof" class="rb82-tok ')}}
@@ -140,21 +140,21 @@ function onl83PieceCard(I,o){o=o||{};if(!I)return '';if(I.named)return nw83Card(
     h=h.replace(/<label class="chk"><input type="checkbox" data-onlgeq="(\d+)"[^>]*>[\s\S]*?<\/label>/g,(m,i)=>{const it=(sel.gear||[])[+i];if(it==null)return m;const I=ONL83.piece(sel,it);if(!I)return m;const why=ONLC.wearWhy(sel,it);
       if(why&&D)D.on[+i]=false;const on=D?D.on[+i]:ONLC.equipOf(sel).includes(it);
       const tag=I.named?`<span class="rar83" style="--rc:${ONL83.rarCol[I.rar]}">${esc2(ONLC.rarOf(I.rar).n)}</span>`:'';
-      return `<label class="chk ${why?'no83':''}" ${why?`title="${esc2(why)}"`:''}><input type="checkbox" data-onlgeq="${i}" ${on&&!why?'checked':''} ${why?'disabled':''}> ${I.named?`<b style="color:${ONL83.rarCol[I.rar]}">${esc2(I.n)}</b>`:esc2(I.n)} <small class="rc-sub">L${I.lv}</small>${tag}${I.st==='broken'?' <small class="brk83t">💔 broken</small>':''}${I.named&&!ONLC.canWearNamed(sel)?' <small class="lk83">🔒 Veteranus+</small>':''}</label>`})}catch(e){console.error(e)}return h}}
+      return `<label class="chk ${why?'no83':''}" ${why?`title="${esc2(why)}"`:''}><input type="checkbox" data-onlgeq="${i}" ${on&&!why?'checked':''} ${why?'disabled':''}> ${I.named?`<b style="color:${ONL83.rarCol[I.rar]}">${esc2(I.n)}</b>`:esc2(I.n)} <small class="rc-sub">L${I.lv}</small>${tag}${I.st==='broken'?' <small class="brk83t">💔 broken</small>':''}${I.named&&!ONLC.canWearNamed(sel)?_T(' <small class="lk83">🔒 Veteranus+</small>'):''}</label>`})}catch(e){console.error(e)}return h}}
 
 /* ---------------- 3 · the DOMUS: treasury, gifts chest, trophy shelf, tester panel ---------------- */
 function onl83GiftN(){const D=ONL.domus||{};const own=onl83Live().reduce((a,c)=>a+((c.gifts||[]).length),0);const dg=ONL82.dg&&ONL82.dg.gifts;return Math.max(D.gifts|0,Array.isArray(dg)?dg.length:0)+own}
 function onl83Chest(sz,where){if(!ONL.acct||onlIsGuest82()||ONL.needDomus)return '';const n=onl83GiftN();
-  return `<button type="button" class="gift83 ${n?'on':''} ${where||''}" data-onl83="gift" title="${n?`Flavius's gifts · ${n} unopened`:'Flavius sends a gift at every new rank and every 5 Ranked bouts survived'}">${typeof rtokHTML==='function'?rtokHTML('chest',sz,''):'🎁'}${n?`<b class="gift83n">${n}</b>`:''}<small>${n?'Open':'Gifts'}</small></button>`}
+  return `<button type="button" class="gift83 ${n?'on':''} ${where||''}" data-onl83="gift" title="${n?_T`Flavius's gifts · ${n} unopened`:_T('Flavius sends a gift at every new rank and every 5 Ranked bouts survived')}">${typeof rtokHTML==='function'?rtokHTML('chest',sz,''):'🎁'}${n?`<b class="gift83n">${n}</b>`:''}<small>${n?_T('Open'):_T('Gifts')}</small></button>`}
 const TROPHY_IC83=k=>{const [a,b]=String(k).split(':');if(a==='first')return '🏆';if(a==='rank')return rk83(b).ic;if(a==='slew')return b==='commodus'?'👑':b==='tholo'?'🦁':'💀';return {surv10:'🛡',surv25:'🛡',thumb:'👍',vday:'☀'}[a]||'🏅'};
 function onl83Trophies(list,empty){const T=(list||[]).slice().sort((a,b)=>(b.at||0)-(a.at||0));
-  return `<div class="tr83"><div class="tr83-h">🏛 Trophy room <small class="rc-sub">${T.length}</small></div>${T.length?`<div class="tr83-shelf">${T.map(t=>`<div class="tr83-t" title="${esc2(t.n||ONLC.trophyName(t.k))}${t.glad?' · '+esc2(t.glad):''}"><span class="tr83-ic">${TROPHY_IC83(t.k)}${(t.x|0)>1?`<i>×${t.x}</i>`:''}</span><b>${esc2(t.n||ONLC.trophyName(t.k))}</b><small>${esc2(date83(t.at))}${t.glad?' · '+esc2(t.glad):''}</small></div>`).join('')}</div>`:`<p class="rc-sub tr83-none">${empty||'No trophies yet — first Ranked wins, ranks reached, Commodus or Tholo slain.'}</p>`}</div>`}
+  return `<div class="tr83"><div class="tr83-h">${_T`🏛 Trophy room <small class="rc-sub">${T.length}</small>`}</div>${T.length?`<div class="tr83-shelf">${T.map(t=>`<div class="tr83-t" title="${esc2(t.n||ONLC.trophyName(t.k))}${t.glad?' · '+esc2(t.glad):''}"><span class="tr83-ic">${TROPHY_IC83(t.k)}${(t.x|0)>1?`<i>×${t.x}</i>`:''}</span><b>${esc2(t.n||ONLC.trophyName(t.k))}</b><small>${esc2(date83(t.at))}${t.glad?' · '+esc2(t.glad):''}</small></div>`).join('')}</div>`:`<p class="rc-sub tr83-none">${empty||_T('No trophies yet — first Ranked wins, ranks reached, Commodus or Tholo slain.')}</p>`}</div>`}
 function onl83Tester(){if(!ONL83U.tester)return '';const cat=onlCatalog();const opts=Object.entries(cat).sort((a,b)=>a[1].kind.localeCompare(b[1].kind)||a[1].lv-b[1].lv||a[1].n.localeCompare(b[1].n)).map(([k,it])=>`<option value="${k}">${it.kind==='w'?'⚔':'🛡'} L${it.lv} ${esc2(it.n)}</option>`).join('');
-  return `<details class="tst83" ${ONL83U.tstOpen?'open':''}><summary>🧪 Tester <small class="rc-sub">grants make this a TEST house for good — Custom only, out of Today and the ranks</small></summary>
-    <div class="tst83-g"><label>Coin<input class="tin" type="number" min="0" max="100000" id="tst83coin" value="0"></label><label>Gifts<input class="tin" type="number" min="0" max="10" id="tst83gift" value="0"></label>
-     <label>Glory<input class="tin" type="number" min="0" max="10000" id="tst83glory" value="0"></label><label>Gear<select class="tin" id="tst83gear"><option value="">—</option>${opts}</select></label>
-     <label>Offering<select class="tin" id="tst83off"><option value="">—</option>${ONLC.OFFERS83.map(k=>`<option value="${k}">${esc2(OFF83N(k))}</option>`).join('')}</select></label></div>
-    <div class="acts"><button type="button" class="btn primary tksm" data-onl83="grant">🧪 Grant</button></div></details>`}
+  return `<details class="tst83" ${ONL83U.tstOpen?'open':''}><summary>${_T`🧪 Tester <small class="rc-sub">grants make this a TEST house for good — Custom only, out of Today and the ranks</small>`}</summary>
+    <div class="tst83-g"><label>${_T`Coin`}<input class="tin" type="number" min="0" max="100000" id="tst83coin" value="0"></label><label>${_T`Gifts`}<input class="tin" type="number" min="0" max="10" id="tst83gift" value="0"></label>
+     <label>${_T`Glory`}<input class="tin" type="number" min="0" max="10000" id="tst83glory" value="0"></label><label>${_T`Gear`}<select class="tin" id="tst83gear"><option value="">—</option>${opts}</select></label>
+     <label>${_T`Offering`}<select class="tin" id="tst83off"><option value="">—</option>${ONLC.OFFERS83.map(k=>`<option value="${k}">${esc2(OFF83N(k))}</option>`).join('')}</select></label></div>
+    <div class="acts"><button type="button" class="btn primary tksm" data-onl83="grant">${_T`🧪 Grant`}</button></div></details>`}
 {const base=onlDomusHTML82;onlDomusHTML82=function(){let h=base.apply(this,arguments);try{const D=ONL.domus||{};const G=ONL82.dg||{};
     h=h.replace('<small>Purses</small></div>',`<small>Purses</small></div><div class="tre83"><b>${c83()} ${D.treasury|0}</b><small>Treasury</small></div>`);
     h=h.replace(/(<div class="dom82-ttl">[\s\S]*?<\/small><\/div>)(<\/div>)/,(m,a,b)=>a+onl83Chest(44,'dom')+b);
@@ -164,74 +164,74 @@ function onl83Tester(){if(!ONL83U.tester)return '';const cat=onlCatalog();const 
 
 /* ---------------- the Storeroom, rewritten (pieces, named, broken + repair, shelf buys, offerings) ---------------- */
 onlStoreHTML82=function(){if(!ONL.acct||onlIsGuest82())return '';const cat=onlCatalog();const live=onl83Live();const busy=onlBusy82();const sel=ONL82.srSel||'all';const T=(ONL.domus||{}).treasury|0;
-  const house={house:true,name:onlHouse82(onlMyDomus82()||'the house'),...onl83Holder('house')};const rows=[];
+  const house={house:true,name:onlHouse82(onlMyDomus82()||_T('the house')),...onl83Holder('house')};const rows=[];
   for(const c of live){const eq=ONLC.equipOf(c).slice();for(const k of c.gear||[]){const i=eq.indexOf(k);const on=i>=0;if(on)eq.splice(i,1);rows.push({k,o:c,on,I:ONL83.piece(c,k)})}}
   for(const k of house.gear)rows.push({k,o:house,on:false,I:ONL83.piece(house,k)});
   const shown=rows.filter(r=>r.I&&(sel==='all'||(sel==='house'?r.o.house:r.o.id===sel)));
   const chip=(v,l,n)=>`<button type="button" class="sr82-chip ${sel===v?'on':''}" data-onl82="srsel" data-v="${esc2(v)}">${l} <small>${n}</small></button>`;
-  const dest=r=>[...live.filter(c=>c!==r.o).map(c=>{const why=busy.has(c.id)?'in a match':ONLC.gearMoveWhy(r.o,c,r.k,cat);return `<option value="${esc2(c.id)}" ${why?'disabled':''}>→ ${esc2(c.name)}${why?` (${esc2(why.replace(/\.$/,''))})`:''}</option>`}),r.o.house?'':'<option value="house">→ the shelf</option>'].join('');
+  const dest=r=>[...live.filter(c=>c!==r.o).map(c=>{const why=busy.has(c.id)?_T('in a match'):ONLC.gearMoveWhy(r.o,c,r.k,cat);return `<option value="${esc2(c.id)}" ${why?'disabled':''}>→ ${esc2(c.name)}${why?` (${esc2(why.replace(/\.$/,''))})`:''}</option>`}),r.o.house?'':'<option value="house">→ the shelf</option>'].join('');
   const row=r=>{const I=r.I;const lock=!r.o.house&&busy.has(r.o.id);const from=r.o.house?'house':r.o.id;const why=r.o.house?'':ONLC.wearWhy(r.o,r.k);const brk=I.st==='broken';const named=I.named;
     const art=named?`<div class="sr83-nw" style="--rc:${ONL83.rarCol[I.rar]}">${typeof cardHTML==='function'&&(I.kind==='a'?ARM[I.w.base]:W[I.w.base])?cardHTML((I.kind==='a'?'a:':'w:')+I.w.base,'sm'):(I.kind==='a'?'🛡':'⚔')}<i class="nw83-tint"></i></div>`:(typeof cardHTML==='function'?cardHTML((I.kind==='w'?'w:':'a:')+I.base,'sm'):'');
-    return `<div class="sr82-it sr83 ${lock?'lock':''} ${brk?'brk83':''} ${named?'named83':''}" data-sr82="${esc2(r.k)}" ${named?`style="--rc:${ONL83.rarCol[I.rar]}"`:''} ${(I.hist||[]).length?`title="${esc2(histTip83(I.hist))}"`:''}><div class="sr82-art">${art}</div>
-      <div class="sr82-b"><b ${named?`style="color:${ONL83.rarCol[I.rar]}"`:''}>${esc2(I.n)}</b><small>${named?`${esc2(ONLC.rarOf(I.rar).n)} · `:''}Level ${I.lv}${I.kind==='a'?` · ${I.ap|0} AP`:''} · ${c83()} ${ONLC.valueOf(I)}</small>
-      <small class="sr82-who">${r.o.house?'🗄 on the shelf':`with <b>${esc2(r.o.name)}</b>`}</small>${lock?'<small class="sr82-lk">🔒 In a match</small>':''}${named&&!r.o.house&&!ONLC.canWearNamed(r.o)?'<small class="lk83">🔒 Veteranus+ to bring</small>':''}${brk?'<small class="brk83t">💔 Broken — repair to bring</small>':''}</div>
-      <div class="sr82-c">${brk?`<button type="button" class="btn tksm rep83" data-onl83="repair" data-v="${esc2(from)}|${esc2(r.k)}" ${lock?'disabled':''}>🔧 Repair · ${ONLC.repairCost(I)}</button>`:''}${r.o.house?'':`<label class="chk ${why?'no83':''}" ${why?`title="${esc2(why)}"`:''}><input type="checkbox" data-sr82eq="${esc2(r.o.id)}|${esc2(r.k)}" ${r.on&&!why?'checked':''} ${lock||why?'disabled':''}> Bring</label>`}
-      <select class="tin" data-sr83mv="${esc2(from)}|${esc2(r.k)}" ${lock?'disabled':''}><option value="">Move…</option>${dest(r)}</select></div></div>`};
+    return `<div class="sr82-it sr83 ${lock?'lock':''} ${brk?'brk83':''} ${named?'named83':''}" data-sr82="${esc2(r.k)}" ${named?_T`style="--rc:${ONL83.rarCol[I.rar]}"`:''} ${(I.hist||[]).length?`title="${esc2(histTip83(I.hist))}"`:''}><div class="sr82-art">${art}</div>
+      <div class="sr82-b"><b ${named?_T`style="color:${ONL83.rarCol[I.rar]}"`:''}>${esc2(I.n)}</b>${_T`<small>${named?`${esc2(ONLC.rarOf(I.rar).n)} · `:''}Level ${I.lv}${I.kind==='a'?_T` · ${I.ap|0} AP`:''} · ${c83()} ${ONLC.valueOf(I)}</small>
+      <small class="sr82-who">${r.o.house?_T('🗄 on the shelf'):_T`with <b>${esc2(r.o.name)}</b>`}</small>${lock?_T('<small class="sr82-lk">🔒 In a match</small>'):''}${named&&!r.o.house&&!ONLC.canWearNamed(r.o)?_T('<small class="lk83">🔒 Veteranus+ to bring</small>'):''}${brk?_T('<small class="brk83t">💔 Broken — repair to bring</small>'):''}`}</div>
+      <div class="sr82-c">${brk?`<button type="button" class="btn tksm rep83" data-onl83="repair" data-v="${esc2(from)}|${esc2(r.k)}" ${lock?'disabled':''}>${_T`🔧 Repair · ${ONLC.repairCost(I)}`}</button>`:''}${r.o.house?'':`<label class="chk ${why?'no83':''}" ${why?`title="${esc2(why)}"`:''}><input type="checkbox" data-sr82eq="${esc2(r.o.id)}|${esc2(r.k)}" ${r.on&&!why?'checked':''} ${lock||why?'disabled':''}> ${_T`Bring`}</label>`}
+      <select class="tin" data-sr83mv="${esc2(from)}|${esc2(r.k)}" ${lock?'disabled':''}><option value="">${_T`Move…`}</option>${dest(r)}</select></div></div>`};
   /* offerings: each satchel + the shelf */
   const offs=[...live.map(c=>({o:c,id:c.id,name:c.name,list:c.offers||[],eq:ONLC.offersBrought(c)})),{o:house,id:'house',name:'🗄 Shelf',list:house.offers||[],eq:[]}];
   const offRow=x=>{const lock=x.id!=='house'&&busy.has(x.id);const eq=x.eq.slice();
-    return `<div class="of83-row"><b>${esc2(x.name)}</b>${x.id!=='house'?`<small class="rc-sub">brings ${x.eq.length}/${ONLC.OFF_CARRY}</small>`:''}<div class="of83-toks">${x.list.map(k=>{const j=eq.indexOf(k);const br=j>=0;if(br)eq.splice(j,1);
+    return `<div class="of83-row"><b>${esc2(x.name)}</b>${x.id!=='house'?_T`<small class="rc-sub">brings ${x.eq.length}/${ONLC.OFF_CARRY}</small>`:''}<div class="of83-toks">${x.list.map(k=>{const j=eq.indexOf(k);const br=j>=0;if(br)eq.splice(j,1);
       const dests=offs.filter(y=>y.id!==x.id).map(y=>`<option value="${esc2(y.id)}" ${y.id!=='house'&&busy.has(y.id)?'disabled':''}>→ ${esc2(y.name)}</option>`).join('');
-      return `<span class="of83 ${br?'br':''}" title="${esc2(OFF83N(k))}${br?' · brought into the next match':''}">${offTok83(k,30)}${x.id!=='house'?`<label><input type="checkbox" data-of83br="${esc2(x.id)}|${k}" ${br?'checked':''} ${lock?'disabled':''}>bring</label>`:''}<select class="tin" data-of83mv="${esc2(x.id)}|${k}" ${lock?'disabled':''} aria-label="Move"><option value="">⇄</option>${dests}</select></span>`}).join('')||'<small class="rc-sub">empty</small>'}</div></div>`};
+      return `<span class="of83 ${br?'br':''}" title="${esc2(OFF83N(k))}${br?_T(' · brought into the next match'):''}">${offTok83(k,30)}${x.id!=='house'?`<label><input type="checkbox" data-of83br="${esc2(x.id)}|${k}" ${br?'checked':''} ${lock?'disabled':''}>bring</label>`:''}<select class="tin" data-of83mv="${esc2(x.id)}|${k}" ${lock?'disabled':''} aria-label="${_T`Move`}"><option value="">⇄</option>${dests}</select></span>`}).join('')||'<small class="rc-sub">empty</small>'}</div></div>`};
   const buyable=Object.entries(cat).sort((a,b)=>a[1].kind.localeCompare(b[1].kind)||a[1].lv-b[1].lv||a[1].n.localeCompare(b[1].n));
-  const shop=`<details class="buy83" ${ONL83U.srOpen.buy?'open':''} data-d83="buy"><summary>🏛 Buy for the shelf <small class="rc-sub">paid from the treasury · ${c83()} ${T}</small></summary>
-    <div class="buy83-g"><select class="tin" id="buy83sel">${buyable.map(([k,it])=>{const p=ONLC.priceOf(it);return `<option value="${k}" ${p>T?'disabled':''}>${it.kind==='w'?'⚔':'🛡'} L${it.lv} ${esc2(it.n)} · ${p}</option>`}).join('')}</select><button type="button" class="btn tksm primary" data-onl83="dbuy">Buy</button></div>
-    <small class="rc-sub">The shelf outlives every gladiator; move pieces to whoever needs them.</small></details>`;
-  return `<div class="sr82" id="sr82"><div class="onl-lbtop"><h3>🗄 Storeroom <span class="rc-sub">${rows.length} piece${rows.length===1?'':'s'} · tick to bring · move between your gladiators</span></h3></div>
-   <div class="sr82-chips">${chip('all','All',rows.length)}${live.map(c=>chip(c.id,`${busy.has(c.id)?'🔒 ':''}${esc2(c.name)}`,rows.filter(r=>r.o===c).length)).join('')}${chip('house','🗄 Shelf',house.gear.length)}</div>
+  const shop=`<details class="buy83" ${ONL83U.srOpen.buy?'open':''} data-d83="buy"><summary>${_T`🏛 Buy for the shelf <small class="rc-sub">paid from the treasury · ${c83()} ${T}</small>`}</summary>
+    <div class="buy83-g"><select class="tin" id="buy83sel">${buyable.map(([k,it])=>{const p=ONLC.priceOf(it);return `<option value="${k}" ${p>T?'disabled':''}>${it.kind==='w'?'⚔':'🛡'} L${it.lv} ${esc2(it.n)} · ${p}</option>`}).join('')}</select><button type="button" class="btn tksm primary" data-onl83="dbuy">${_T`Buy`}</button></div>
+    ${_T`<small class="rc-sub">The shelf outlives every gladiator; move pieces to whoever needs them.</small>`}</details>`;
+  return `<div class="sr82" id="sr82"><div class="onl-lbtop"><h3>${_T`🗄 Storeroom`} <span class="rc-sub">${_T`${rows.length} piece${rows.length===1?'':'s'} · tick to bring · move between your gladiators`}</span></h3></div>
+   <div class="sr82-chips">${chip('all',_T('All'),rows.length)}${live.map(c=>chip(c.id,`${busy.has(c.id)?'🔒 ':''}${esc2(c.name)}`,rows.filter(r=>r.o===c).length)).join('')}${chip('house',_T('🗄 Shelf'),house.gear.length)}</div>
    <div class="sr82-grid">${shown.map(row).join('')||'<p class="rc-sub">Nothing here yet — the Armory sells to your gladiators.</p>'}</div>${shop}
-   <div class="of83-box"><div class="tr83-h">🧪 Offerings <small class="rc-sub">at most ${ONLC.OFF_CARRY} brought into a match · the unused come back</small></div>${offs.map(offRow).join('')}</div></div>`};
+   <div class="of83-box"><div class="tr83-h">${_T`🧪 Offerings <small class="rc-sub">at most ${ONLC.OFF_CARRY} brought into a match · the unused come back</small>`}</div>${offs.map(offRow).join('')}</div></div>`};
 document.addEventListener('toggle',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.d83)ONL83U.srOpen[t.dataset.d83]=t.open;if(t&&t.classList&&t.classList.contains('tst83'))ONL83U.tstOpen=t.open},true);
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset)return;
   if(t.dataset.sr83mv&&t.value){const [from,item]=t.dataset.sr83mv.split('|');const to=t.value;e.stopPropagation();const I=ONL83.piece(onl83Holder(from)||{},item);
-    return onlDo(async()=>{const r=await NET.req('domus.move',{item,from,to});await onlStoreAfter82(r);const nm=to==='house'?'the shelf':((ONL.chars||[]).find(c=>c.id===to)||{}).name;onlToast80(`🗄 ${esc2((I&&I.n)||item)} → ${esc2(nm||'')}`)})}
+    return onlDo(async()=>{const r=await NET.req('domus.move',{item,from,to});await onlStoreAfter82(r);const nm=to==='house'?_T('the shelf'):((ONL.chars||[]).find(c=>c.id===to)||{}).name;onlToast80(`🗄 ${esc2((I&&I.n)||item)} → ${esc2(nm||'')}`)})}
   if(t.dataset.of83mv&&t.value){const [from,key]=t.dataset.of83mv.split('|');const to=t.value;e.stopPropagation();
-    return onlDo(async()=>{const r=await NET.req('offer.move',{key,from,to});for(const s of [r.from,r.to])if(s&&s.cls)onl83Put(s);onlToast80(`🧪 ${esc2(OFF83N(key))} moved.`)})}
+    return onlDo(async()=>{const r=await NET.req('offer.move',{key,from,to});for(const s of [r.from,r.to])if(s&&s.cls)onl83Put(s);onlToast80(_T`🧪 ${esc2(OFF83N(key))} moved.`)})}
   if(t.dataset.of83br){const [cid,key]=t.dataset.of83br.split('|');const c=onl83Holder(cid);if(!c)return;e.stopPropagation();let keys=ONLC.offersBrought(c).slice();
-    if(t.checked){if(keys.length>=ONLC.OFF_CARRY){t.checked=false;onlToast80(`At most ${ONLC.OFF_CARRY} offerings go into a match.`);return}keys.push(key)}else{const i=keys.indexOf(key);if(i>=0)keys.splice(i,1)}
+    if(t.checked){if(keys.length>=ONLC.OFF_CARRY){t.checked=false;onlToast80(_T`At most ${ONLC.OFF_CARRY} offerings go into a match.`);return}keys.push(key)}else{const i=keys.indexOf(key);if(i>=0)keys.splice(i,1)}
     return onlDo(async()=>{onl83Put(await NET.req('offer.bring',{char:cid,keys}))})}},true);
 
 /* ---------------- 5 · repair: the treasury or a purse ---------------- */
 function onl83Repair(from,item){const H=onl83Holder(from);const I=H&&ONL83.piece(H,item);if(!I)return;const cost=ONLC.repairCost(I);const T=(ONL.domus||{}).treasury|0;const live=onl83Live();
-  const pays=[{v:'treasury',l:`🏛 The treasury`,have:T},...live.map(c=>({v:c.id,l:`${esc2(c.name)}’s purse`,have:c.wallet|0}))];
-  const bg=onl83Pop('rep83pop',`<h3 class="pop83h">🔧 Repair ${esc2(I.n)}</h3><div class="rep83-card">${onl83PieceCard(I)}</div><p>A third of its value: <b>${c83()} ${cost}</b>. Who pays?</p>
+  const pays=[{v:'treasury',l:_T`🏛 The treasury`,have:T},...live.map(c=>({v:c.id,l:_T`${esc2(c.name)}’s purse`,have:c.wallet|0}))];
+  const bg=onl83Pop('rep83pop',`<h3 class="pop83h">${_T`🔧 Repair ${esc2(I.n)}`}</h3><div class="rep83-card">${onl83PieceCard(I)}</div><p>${_T`A third of its value: <b>${c83()} ${cost}</b>. Who pays?`}</p>
     <div class="rep83-pay">${pays.map(p=>`<button type="button" class="btn ${p.have>=cost?'primary':''}" data-rep83="${esc2(p.v)}" ${p.have<cost?'disabled':''}>${p.l} <small>${c83()} ${p.have}</small></button>`).join('')}</div>
-    <div class="acts"><button type="button" class="btn" data-rep83="x">Not now</button></div>`);
+    <div class="acts"><button type="button" class="btn" data-rep83="x">${_T`Not now`}</button></div>`);
   bg.addEventListener('click',e=>{const b=e.target.closest('[data-rep83]');if(!b)return;const v=b.dataset.rep83;bg.remove();if(v==='x')return;
-    onlDo(async()=>{const r=await NET.req('gear.repair',{holder:from,item,pay:v});if(r.holder&&r.holder.cls)onl83Put(r.holder);if(r.payer)onl83Put(r.payer);ONL82.dgAt=0;onlToast80(`🔧 ${esc2(I.n)} is whole again (${r.cost} coin).`)})})}
+    onlDo(async()=>{const r=await NET.req('gear.repair',{holder:from,item,pay:v});if(r.holder&&r.holder.cls)onl83Put(r.holder);if(r.payer)onl83Put(r.payer);ONL82.dgAt=0;onlToast80(_T`🔧 ${esc2(I.n)} is whole again (${r.cost} coin).`)})})}
 
 /* ---------------- 4 · the MARKET BOARD (offerings row, weapons | armor by level) + the USED market ---------------- */
 function onl83Board(ch){const cat=onlCatalog();const lv=[3,2,1];const coin=c83();
   const tile=(k,it)=>{const why=ONLC.canBuy(ch,k,cat);const own=(ch.gear||[]).some(g=>ONLC.itemBase(g)===k)&&!it.stack;const pr=ONLC.priceOf(it);
-    return `<button type="button" class="mb83-it ${why&&!own?'no':''} ${own?'own':''}" data-onl82="buy" data-v="${k}" ${why||own?'disabled':''} title="${esc2(it.n)} · level ${it.lv}${it.kind==='a'?` · ${it.ap|0} AP`:''}${why?' — '+esc2(why):''}">${typeof cardHTML==='function'?cardHTML((it.kind==='w'?'w:':'a:')+k,'sm'):''}<b>${esc2(it.n)}</b><small>${own?'Yours':`${coin} ${pr}`}</small></button>`};
+    return `<button type="button" class="mb83-it ${why&&!own?'no':''} ${own?'own':''}" data-onl82="buy" data-v="${k}" ${why||own?'disabled':''} title="${_T`${esc2(it.n)} · level ${it.lv}${it.kind==='a'?_T` · ${it.ap|0} AP`:''}${why?' — '+esc2(why):''}`}">${typeof cardHTML==='function'?cardHTML((it.kind==='w'?'w:':'a:')+k,'sm'):''}<b>${esc2(it.n)}</b><small>${own?_T('Yours'):`${coin} ${pr}`}</small></button>`};
   const side=kind=>lv.map(l=>{const items=Object.entries(cat).filter(([k,it])=>it.kind===kind&&it.lv===l).sort((a,b)=>ONLC.priceOf(a[1])-ONLC.priceOf(b[1])||a[1].n.localeCompare(b[1].n));
     return `<div class="mb83-row"><span class="mb83-lv">${'I'.repeat(l)}</span><div class="mb83-items">${items.map(([k,it])=>tile(k,it)).join('')}</div></div>`}).join('');
   const sat=ch.offers||[];const full=sat.length>=ONLC.OFF_MAX;
   const offers=ONLC.OFFERS83.slice().sort((a,b)=>ONLC.PRICE_OFF[a]-ONLC.PRICE_OFF[b]).map(k=>{const why=ONLC.offerBuyWhy(ch,k);
-    return `<button type="button" class="mb83-of" data-onl83="obuy" data-v="${k}" ${why?`disabled title="${esc2(why)}"`:`title="${esc2(OFF83N(k))}"`}>${offTok83(k,42)}<small>${esc2(OFF83N(k))}</small><b>${coin} ${ONLC.PRICE_OFF[k]}</b></button>`}).join('');
+    return `<button type="button" class="mb83-of" data-onl83="obuy" data-v="${k}" ${why?_T`disabled title="${esc2(why)}"`:`title="${esc2(OFF83N(k))}"`}>${offTok83(k,42)}<small>${esc2(OFF83N(k))}</small><b>${coin} ${ONLC.PRICE_OFF[k]}</b></button>`}).join('');
   const br=ONLC.offersBrought(ch);
-  return `<div class="mb83"><div class="mb83-offs"><div class="mb83-h">🧪 Offerings <small>${sat.length}/${ONLC.OFF_MAX} in ${esc2(ch.name)}’s satchel${full?' — full':''} · brings ${br.length?br.map(k=>esc2(OFFER[k]?OFFER[k].s||k:k)).join(' + '):'none'}</small></div><div class="mb83-ofrow">${offers}</div></div>
-    <div class="mb83-halves"><div class="mb83-half w"><div class="mb83-h">⚔ Weapons</div>${side('w')}</div><div class="mb83-half a"><div class="mb83-h">🛡 Armor</div>${side('a')}</div></div></div>`}
+  return `<div class="mb83"><div class="mb83-offs"><div class="mb83-h">${_T`🧪 Offerings <small>${sat.length}/${ONLC.OFF_MAX} in ${esc2(ch.name)}’s satchel${full?' — full':''} · brings ${br.length?br.map(k=>esc2(OFFER[k]?OFFER[k].s||k:k)).join(' + '):_T('none')}</small>`}</div><div class="mb83-ofrow">${offers}</div></div>
+    <div class="mb83-halves"><div class="mb83-half w"><div class="mb83-h">${_T`⚔ Weapons`}</div>${side('w')}</div><div class="mb83-half a"><div class="mb83-h">${_T`🛡 Armor`}</div>${side('a')}</div></div></div>`}
 function onl83Used(ch){if(!ONL83U.used||Date.now()-ONL83U.usedAt>15000){ONL83U.usedAt=Date.now();NET.req('market.list',{}).then(r=>{ONL83U.used=r.used||[];if(ONL.tab==='armory'&&ONL83U.mkt==='used'&&!onlFocus80())onlRedraw()}).catch(()=>{})}
   const U=ONL83U.used;if(!U)return '<p class="rc-sub">Opening the stalls…</p>';if(!U.length)return '<p class="rc-sub">Nothing used for sale — the fallen’s gear comes here, with its history.</p>';const cat=onlCatalog();
   return `<div class="us83">${U.map(x=>{const I=ONLC.pieceInfo({item:x.item,pc:{st:x.st,hist:x.hist}},cat)||{n:x.n,lv:x.lv,kind:x.kind,base:x.base,st:x.st,hist:x.hist,val:x.price};
-    const own=(ch.gear||[]).some(g=>ONLC.itemBase(g)===x.base)&&!(cat[x.base]||{}).stack;const no=own?'Already yours.':(ch.wallet|0)<x.price?`Costs ${x.price} coin.`:'';
-    return `<div class="us83-it ${x.st==='broken'?'brk83':''}">${onl83PieceCard({...I,st:x.st,hist:x.hist})}<div class="us83-f">${x.st==='broken'?`<small class="brk83t">💔 Broken · ⅔ price · repair ${ONLC.repairCost(I)}</small>`:''}
-      <small class="us83-from">${x.from?`from <b>${esc2(x.from.glad||'?')}</b>${x.from.house?' · '+esc2(onlHouse82(x.from.house)):''}`:''}</small>${onl83Hist(x.hist)}
-      <button type="button" class="btn tksm ${no?'':'primary'}" data-onl83="ubuy" data-v="${esc2(x.id)}" ${no?`disabled title="${esc2(no)}"`:''}>Buy · ${c83()} ${x.price}</button></div></div>`}).join('')}</div>`}
+    const own=(ch.gear||[]).some(g=>ONLC.itemBase(g)===x.base)&&!(cat[x.base]||{}).stack;const no=own?_T('Already yours.'):(ch.wallet|0)<x.price?_T`Costs ${x.price} coin.`:'';
+    return `<div class="us83-it ${x.st==='broken'?'brk83':''}">${onl83PieceCard({...I,st:x.st,hist:x.hist})}<div class="us83-f">${x.st==='broken'?_T`<small class="brk83t">💔 Broken · ⅔ price · repair ${ONLC.repairCost(I)}</small>`:''}
+      <small class="us83-from">${x.from?_T`from <b>${esc2(x.from.glad||'?')}</b>${x.from.house?' · '+esc2(onlHouse82(x.from.house)):''}`:''}</small>${onl83Hist(x.hist)}
+      <button type="button" class="btn tksm ${no?'':'primary'}" data-onl83="ubuy" data-v="${esc2(x.id)}" ${no?_T`disabled title="${esc2(no)}"`:''}>${_T`Buy · ${c83()} ${x.price}`}</button></div></div>`}).join('')}</div>`}
 {const base=onlArmoryHTML;onlArmoryHTML=function(){const ch=ONL.char;if(!ch||onlIsGuest82())return base.apply(this,arguments);const R=ONLC.rankFor(ch);const t=ONL83U.mkt;
-  return `<div class="onl-lbtop"><h3>🛒 Armory &amp; Market</h3><div class="rc-sub">${esc2(ch.name)}’s purse ${c83()} <b>${ch.wallet}</b> · ${esc2(R.n)} wears up to level ${R.mkt}${R.mkt<4?' (named pieces: Veteranus+)':''}</div></div>
-   <div class="seg mk83seg" style="margin-bottom:8px"><button type="button" data-onl83="mkt" data-v="board" class="${t==='board'?'on':''}">🛒 Flavius’s market</button><button type="button" data-onl83="mkt" data-v="used" class="${t==='used'?'on':''}">🏺 Used</button></div>
+  return `<div class="onl-lbtop"><h3>${_T`🛒 Armory &amp; Market`}</h3><div class="rc-sub">${_T`${esc2(ch.name)}’s purse ${c83()} <b>${ch.wallet}</b> · ${esc2(R.n)} wears up to level ${R.mkt}${R.mkt<4?_T(' (named pieces: Veteranus+)'):''}`}</div></div>
+   <div class="seg mk83seg" style="margin-bottom:8px"><button type="button" data-onl83="mkt" data-v="board" class="${t==='board'?'on':''}">${_T`🛒 Flavius’s market`}</button><button type="button" data-onl83="mkt" data-v="used" class="${t==='used'?'on':''}">${_T`🏺 Used`}</button></div>
    ${t==='used'?onl83Used(ch):onl83Board(ch)}`}}
 
 /* ---------------- 6 · the LOOT window ---------------- */
@@ -239,53 +239,53 @@ function onl83LootQ(X){if(!X||!X.id)return;const k=X.id+'#'+X.seat;if(ONL83U.loo
 function onl83LootNext(){if(document.querySelector('.loot83pop'))return;const X=ONL83U.lootQ.shift();if(!X)return;const left=()=>Math.max(0,Math.ceil((X.until-onlNow82())/1000));
   const cat=onlCatalog();const Ps=(X.pieces||[]).map(p=>({p,I:ONLC.isNamed(p.item)?{...p,named:true,w:(p.w||{n:p.n,rar:p.rar,kind:p.kind}),val:p.val}:(ONLC.pieceInfo({item:p.item,pc:{st:p.st,hist:p.hist}},cat)||p)}));
   const best=ONLC.lootBest(X.pieces||[]);
-  const bg=onl83Pop('loot83pop',`<h3 class="pop83h">⚔ The spoils of ${esc2(X.dead&&X.dead.name||'the fallen')}</h3>
-    <p class="rc-sub" style="margin:0 0 8px">${esc2(X.dead&&X.dead.domus?onlHouse82(X.dead.domus):'')} · take ONE piece; the rest goes to the market. <b class="loot83cd">⏳ <span id="loot83s">${left()}</span> s</b></p>
-    <div class="loot83-g">${Ps.map(({p,I},i)=>`<button type="button" class="loot83-it ${i===best?'best':''}" data-loot83="${esc2(p.item)}">${I.named?nw83Card(I,{sm:1}):onl83PieceCard(I)}<span class="loot83-take">Take it</span></button>`).join('')}</div>
-    <div class="acts"><button type="button" class="btn" data-loot83="">🎲 Let Flavius choose</button></div>`,{sticky:1});
+  const bg=onl83Pop('loot83pop',`<h3 class="pop83h">${_T`⚔ The spoils of ${esc2(X.dead&&X.dead.name||_T('the fallen'))}`}</h3>
+    <p class="rc-sub" style="margin:0 0 8px">${_T`${esc2(X.dead&&X.dead.domus?onlHouse82(X.dead.domus):'')} · take ONE piece; the rest goes to the market. <b class="loot83cd">⏳`} <span id="loot83s">${left()}</span> s</b></p>
+    <div class="loot83-g">${Ps.map(({p,I},i)=>`<button type="button" class="loot83-it ${i===best?'best':''}" data-loot83="${esc2(p.item)}">${I.named?nw83Card(I,{sm:1}):onl83PieceCard(I)}<span class="loot83-take">${_T`Take it`}</span></button>`).join('')}</div>
+    <div class="acts"><button type="button" class="btn" data-loot83="">${_T`🎲 Let Flavius choose`}</button></div>`,{sticky:1});
   const iv=setInterval(()=>{const s=document.getElementById('loot83s');if(!s||!document.body.contains(bg)){clearInterval(iv);return}s.textContent=left();if(left()<=0){clearInterval(iv);bg.remove();onl83LootNext()}},500);
   bg.addEventListener('click',e=>{const b=e.target.closest('[data-loot83]');if(!b)return;let item=b.dataset.loot83;if(!item)item=(X.pieces[best]||{}).item;clearInterval(iv);bg.remove();
     onlDo(async()=>{try{const r=await NET.req('loot.pick',{id:X.id,seat:X.seat,item});if(r.char)onl83Put(r.char);const g=r.got||{};
-        onlToast80(`⚔ ${esc2(g.n||'The piece')} is yours${r.to==='house'?' — on the shelf (it waits there)':''}.`)}
-      catch(err){if(err&&err.code==='loot_done')onlToast80('⚔ The pick was already made.');else throw err}finally{setTimeout(onl83LootNext,300)}})})}
+        onlToast80(_T`⚔ ${esc2(g.n||_T('The piece'))} is yours${r.to==='house'?_T(' — on the shelf (it waits there)'):''}.`)}
+      catch(err){if(err&&err.code==='loot_done')onlToast80(_T('⚔ The pick was already made.'));else throw err}finally{setTimeout(onl83LootNext,300)}})})}
 NET.on('loot.offer',d=>{if(ONL.acct&&d)onl83LootQ(d)});
 NET.on('loot.done',d=>{if(d&&d.char)onl83Put(d.char)});
 
 /* ---------------- 7 · FLAVIUS'S GIFTS: the reveal ---------------- */
-const GIFT_WHY83=g=>{const [a,b]=String(g&&g.why||'').split(':');if(a==='rank')return `for reaching ${rk83(b).n}`;if(a==='surv')return `for ${b} Ranked bouts survived`;if(a==='test')return 'a tester’s grant';return ''};
+const GIFT_WHY83=g=>{const [a,b]=String(g&&g.why||'').split(':');if(a==='rank')return _T`for reaching ${rk83(b).n}`;if(a==='surv')return _T`for ${b} Ranked bouts survived`;if(a==='test')return _T('a tester’s grant');return ''};
 async function onl83GiftOpen(){if(ONL83U.giftBusy)return;ONL83U.giftBusy=true;try{
     let g=null;try{const r=await NET.req('domus.get',{});g=(r.gifts||[])[0]||null}catch(e){}
     let char=null;if(!g){const c=onl83Live().find(x=>(x.gifts||[]).length);if(c){g=c.gifts[0];char=c.id}}
-    if(!g){onlToast80('🎁 No gifts waiting. Flavius sends one at every new rank and every 5 Ranked bouts survived.');return}
-    const who=ONL.char?esc2(ONL.char.name):esc2(onlHouse82(onlMyDomus82()||'the house'));
-    const bg=onl83Pop('gift83pop',`<div class="gft83"><div class="gft83-tok spin">${typeof rtokHTML==='function'?rtokHTML('chest',150,''):'🎁'}</div><h3 class="pop83h">Flavius’s gift</h3><p class="rc-sub">${esc2(GIFT_WHY83(g))}${g.glad?` · earned by ${esc2(g.glad)}`:''} · opened for ${who}</p><div class="gft83-prize" id="gft83p"></div></div>`,{sticky:1});
+    if(!g){onlToast80(_T('🎁 No gifts waiting. Flavius sends one at every new rank and every 5 Ranked bouts survived.'));return}
+    const who=ONL.char?esc2(ONL.char.name):esc2(onlHouse82(onlMyDomus82()||_T('the house')));
+    const bg=onl83Pop('gift83pop',`<div class="gft83"><div class="gft83-tok spin">${typeof rtokHTML==='function'?rtokHTML('chest',150,''):'🎁'}</div><h3 class="pop83h">${_T`Flavius’s gift`}</h3><p class="rc-sub">${_T`${esc2(GIFT_WHY83(g))}${g.glad?_T` · earned by ${esc2(g.glad)}`:''} · opened for ${who}`}</p><div class="gft83-prize" id="gft83p"></div></div>`,{sticky:1});
     const t0=Date.now();let r=null,err=null;try{r=await NET.req('gift.open',{gift:g.id,...(char?{char}:{})})}catch(e){err=e}
     await new Promise(z=>setTimeout(z,Math.max(0,1500-(Date.now()-t0))));
     const tok=bg.querySelector('.gft83-tok');if(tok){tok.classList.remove('spin');tok.classList.add('done')}
-    const P=bg.querySelector('#gft83p');if(err){P.innerHTML=`<p class="onl-err">${esc2(err.message)}</p><div class="acts"><button type="button" class="btn" data-g83="x">Close</button></div>`}
+    const P=bg.querySelector('#gft83p');if(err){P.innerHTML=`<p class="onl-err">${esc2(err.message)}</p><div class="acts"><button type="button" class="btn" data-g83="x">${_T`Close`}</button></div>`}
     else{if(r.char&&r.char.id)onl83Put(r.char);if(r.domus)ONL.domus=r.domus;P.innerHTML=onl83Prize(r);const n=onl83GiftN();
-      P.insertAdjacentHTML('beforeend',`<div class="acts">${n?`<button type="button" class="btn primary" data-g83="next">🎁 Open the next (${n})</button>`:''}<button type="button" class="btn" data-g83="x">${n?'Later':'Close'}</button></div>`)}
+      P.insertAdjacentHTML('beforeend',`<div class="acts">${n?`<button type="button" class="btn primary" data-g83="next">${_T`🎁 Open the next (${n})`}</button>`:''}<button type="button" class="btn" data-g83="x">${n?_T('Later'):_T('Close')}</button></div>`)}
     bg.classList.add('opened');
     bg.addEventListener('click',e=>{const b=e.target.closest('[data-g83]');if(!b)return;bg.remove();onlRedraw();if(b.dataset.g83==='next')setTimeout(onl83GiftOpen,50)})}
   finally{ONL83U.giftBusy=false}}
-function onl83Prize(r){const w=r.reward||{};const to=r.to==='house';const where=to?'into the house':(r.char?`to ${esc2(r.char.name)}`:'');
-  if(w.k==='coin')return `<div class="pz83 coin"><span class="pz83-big">${c83()} +${w.v}</span><p>${to?'Into the treasury':`Into ${esc2((r.char||{}).name||'the')}’s purse`}.</p></div>`;
-  if(w.k==='cf')return w.coin?`<div class="pz83 coin"><span class="pz83-big">${c83()} +${w.coin}</span><p>A Crowd Favor blessing with no gladiator to carry it — into the treasury.</p></div>`
-    :`<div class="pz83 cf"><span class="pz83-big">${onlW81()} +${w.v}</span><p>Starting Crowd Favor in ${esc2((r.char||{}).name||'your gladiator')}’s next Ranked bout.</p></div>`;
-  if(w.k==='off')return `<div class="pz83 off">${offTok83(w.key,96)}<b>${esc2(OFF83N(w.key))}</b><p>${w.sold?'The satchel was full — sold for half its price.':to?'Onto the house shelf.':`Into ${esc2((r.char||{}).name||'the')}’s satchel.`}</p></div>`;
-  if(w.k==='gear'&&w.piece)return `<div class="pz83 gear">${onl83PieceCard(w.piece)}<p>${to?'Onto the house shelf.':`For ${esc2((r.char||{}).name||'your gladiator')} — ticked to bring.`}</p></div>`;
-  if(w.k==='named'&&w.piece)return `<div class="pz83 named r-${w.piece.rar}" style="--rc:${ONL83.rarCol[w.piece.rar]}"><div class="pz83-rays"></div>${nw83Card(w.piece,{hist:1})}<p>${to?'It waits in the Storeroom until Veteranus.':`${esc2((r.char||{}).name||'')} brings it to the sand.`}</p></div>`;
+function onl83Prize(r){const w=r.reward||{};const to=r.to==='house';const where=to?_T('into the house'):(r.char?_T`to ${esc2(r.char.name)}`:'');
+  if(w.k==='coin')return `<div class="pz83 coin"><span class="pz83-big">${c83()} +${w.v}</span><p>${to?_T('Into the treasury'):_T`Into ${esc2((r.char||{}).name||'the')}’s purse`}.</p></div>`;
+  if(w.k==='cf')return w.coin?`<div class="pz83 coin"><span class="pz83-big">${c83()} +${w.coin}</span><p>${_T`A Crowd Favor blessing with no gladiator to carry it — into the treasury.`}</p></div>`
+    :`<div class="pz83 cf"><span class="pz83-big">${onlW81()} +${w.v}</span><p>${_T`Starting Crowd Favor in ${esc2((r.char||{}).name||_T('your gladiator'))}’s next Ranked bout.`}</p></div>`;
+  if(w.k==='off')return `<div class="pz83 off">${offTok83(w.key,96)}<b>${esc2(OFF83N(w.key))}</b><p>${w.sold?_T('The satchel was full — sold for half its price.'):to?_T('Onto the house shelf.'):_T`Into ${esc2((r.char||{}).name||'the')}’s satchel.`}</p></div>`;
+  if(w.k==='gear'&&w.piece)return `<div class="pz83 gear">${onl83PieceCard(w.piece)}<p>${to?_T('Onto the house shelf.'):_T`For ${esc2((r.char||{}).name||_T('your gladiator'))} — ticked to bring.`}</p></div>`;
+  if(w.k==='named'&&w.piece)return `<div class="pz83 named r-${w.piece.rar}" style="--rc:${ONL83.rarCol[w.piece.rar]}"><div class="pz83-rays"></div>${nw83Card(w.piece,{hist:1})}<p>${to?_T('It waits in the Storeroom until Veteranus.'):_T`${esc2((r.char||{}).name||'')} brings it to the sand.`}</p></div>`;
   return `<div class="pz83"><p>${where}</p></div>`}
 
 /* ---------------- 8 · the landing: gifts chest, followed houses, Ludi Infames ---------------- */
 function onl83InfCard(){const ch=ONL.char;const ok=!!ch&&ONLC.rankIdx(ONLC.rankFor(ch).k)>=ONLC.rankIdx(ONLC.INFAMES_MIN);const open=(ONL.lobbies||[]).filter(L=>L.inf&&L.status==='waiting');
-  return `<div class="onl-pl pl81 inf83 ${ok?'':'locked'}" data-pl81="infames"><div class="onl-plart inf83-art">${typeof rtokHTML==='function'?rtokHTML('chest',64,''):''}<span>✦</span></div><div class="onl-plb"><b>Ludi Infames</b><span class="badge inf83b">Veteranus and above</span><small>Named gear is the point · ${open.length} open</small>
-    <div class="acts">${ok?`<select class="tin tksm" data-onl83inf="ev">${ONLC.EVENTS_ALL.filter(k=>!ONLC.EVENTS_TEAM.includes(k)).map(k=>`<option value="${k}" ${ONL83U.infEv===k?'selected':''}>${esc2(onlEvName(k))}</option>`).join('')}</select><button type="button" class="btn primary tksm" data-onl83="infq" data-v="1">⚔ Ranked</button><button type="button" class="btn tksm" data-onl83="infq" data-v="0">Custom</button>`:'<small class="lk83">🔒 Reach Veteranus</small>'}</div></div></div>`}
+  return `<div class="onl-pl pl81 inf83 ${ok?'':'locked'}" data-pl81="infames"><div class="onl-plart inf83-art">${typeof rtokHTML==='function'?rtokHTML('chest',64,''):''}<span>✦</span></div><div class="onl-plb">${_T`<b>Ludi Infames</b>`}<span class="badge inf83b">${_T`Veteranus and above`}</span>${_T`<small>Named gear is the point · ${open.length} open</small>`}
+    <div class="acts">${ok?`<select class="tin tksm" data-onl83inf="ev">${ONLC.EVENTS_ALL.filter(k=>!ONLC.EVENTS_TEAM.includes(k)).map(k=>`<option value="${k}" ${ONL83U.infEv===k?'selected':''}>${esc2(onlEvName(k))}</option>`).join('')}</select><button type="button" class="btn primary tksm" data-onl83="infq" data-v="1">${_T`⚔ Ranked`}</button><button type="button" class="btn tksm" data-onl83="infq" data-v="0">${_T`Custom`}</button>`:_T('<small class="lk83">🔒 Reach Veteranus</small>')}</div></div></div>`}
 function onl83Follows(){if(!ONL.acct||onlIsGuest82())return '';const F=ONL83U.follows||[];const room=onlMyLobby();const inRoom=room&&room.status==='waiting';
-  const st={off:'⚫ away',free:'🟢 here',room:'🟡 in a room',fight:'🔴 fighting'};
-  return `<div class="card2 fl83"><b>★ Followed houses</b>${F.length?F.map(f=>`<div class="fl83-r"><button type="button" class="fl83-n" data-onl83="prof" data-v="${esc2(f.id)}">🏛 ${esc2(onlHouse82(f.name))}</button><small class="fl83-st">${st[f.st]||''}${f.glad?' · '+esc2(f.glad):''}</small>
-     <span class="fl83-a">${f.st==='free'&&f.acct?`<button type="button" class="btn tksm" data-onl83="finv" data-v="${esc2(f.acct)}" ${inRoom?'':'disabled title="Open a room first"'}>✉ Invite</button>`:''}${f.st==='room'&&f.room?`<button type="button" class="btn tksm" data-onl="join" data-v="${esc2(f.room)}">Join</button>`:''}${f.st==='fight'&&f.match?`<button type="button" class="btn tksm" data-onl="watch" data-v="${esc2(f.match)}">👁 Watch</button>`:''}</span></div>`).join('')
-    :'<p class="rc-sub" style="margin:4px 0 0">Tap any house name, then ★ Follow — see when they are here, in a room or fighting.</p>'}</div>`}
+  const st={off:'⚫ away',free:'🟢 here',room:_T('🟡 in a room'),fight:'🔴 fighting'};
+  return `<div class="card2 fl83">${_T`<b>★ Followed houses</b>${F.length?F.map(f=>`<div class="fl83-r"><button type="button" class="fl83-n" data-onl83="prof" data-v="${esc2(f.id)}">🏛 ${esc2(onlHouse82(f.name))}</button><small class="fl83-st">${st[f.st]||''}${f.glad?' · '+esc2(f.glad):''}</small>
+     <span class="fl83-a">${f.st==='free'&&f.acct?`<button type="button" class="btn tksm" data-onl83="finv" data-v="${esc2(f.acct)}" ${inRoom?'':_T('disabled title="Open a room first"')}>${_T`✉ Invite`}</button>`:''}${f.st==='room'&&f.room?`<button type="button" class="btn tksm" data-onl="join" data-v="${esc2(f.room)}">${_T`Join`}</button>`:''}${f.st==='fight'&&f.match?`<button type="button" class="btn tksm" data-onl="watch" data-v="${esc2(f.match)}">${_T`👁 Watch`}</button>`:''}</span></div>`).join('')
+    :'<p class="rc-sub" style="margin:4px 0 0">Tap any house name, then ★ Follow — see when they are here, in a room or fighting.</p>'}`}</div>`}
 {const base=onlPlayHTML;onlPlayHTML=function(){let h=base.apply(this,arguments);try{
     h=h.replace('<div class="a81-stage">',`<div class="a81-stage">${onl83Chest(52,'stage')}`);
     h=h.replace(/(<div class="a81-week card2">[\s\S]*?<\/div>)(\s*<div class="a81-forum">)/,(m,a,b)=>`<div class="a81-week">${a.replace('<div class="a81-week card2">','<div class="card2 wk83">')}${onl83Follows()}</div>${b}`);
@@ -299,31 +299,31 @@ function onl83Stakes(L){const S83=ONL83.stakes(L);
   const cpu=Math.max(0,(L.seats|0)-S83.length);
   return `<div class="cd83-line">${S83.map(s=>{const p=L.players[s.seat]||{};const k=p.kit||{};const human=!/^bot/.test(p.id||'');
     return `<div class="cd83-s ${human?'':'cpu'}">${k.cls?onlFig(k.cls,k.look,46):''}<div class="cd83-sb"><b>${esc2(p.name||'CPU')}</b><small>${p.rank?onlRankChip(p.rank):''}${s.domus?` ${esc2(onlHouse82(s.domus))}`:''}</small>
-      <div class="cd83-gear">${s.pieces.map(I=>`<span class="cd83-pc ${I.named?'nw':''}" ${I.named?`style="--rc:${ONL83.rarCol[I.rar]}"`:''} title="${esc2(I.n)} · ${ONLC.valueOf(I)}">${esc2(I.n)}</span>`).join('')||'<small class="rc-sub">recruit kit</small>'}
-      ${(s.offer||[]).map(o=>`<span class="cd83-of" title="${esc2(OFF83N(o))}">${offTok83(o,18)}</span>`).join('')}${s.cfb?`<span class="cd83-pc">+${s.cfb} CF</span>`:''}</div>
-      <small class="cd83-val">${L.ranked?'At stake':'Brought'}: ${c83()} ${s.value}</small></div></div>`}).join('')}${Array.from({length:cpu},()=>`<div class="cd83-s cpu"><span class="onl-rq">🤖</span><div class="cd83-sb"><b>CPU</b><small class="rc-sub">fills the open seat</small></div></div>`).join('')}</div>`}
+      <div class="cd83-gear">${s.pieces.map(I=>`<span class="cd83-pc ${I.named?'nw':''}" ${I.named?_T`style="--rc:${ONL83.rarCol[I.rar]}"`:''} title="${esc2(I.n)} · ${ONLC.valueOf(I)}">${esc2(I.n)}</span>`).join('')||_T('<small class="rc-sub">recruit kit</small>')}
+      ${(s.offer||[]).map(o=>`<span class="cd83-of" title="${esc2(OFF83N(o))}">${offTok83(o,18)}</span>`).join('')}${s.cfb?`<span class="cd83-pc">${_T`+${s.cfb} CF`}</span>`:''}</div>
+      <small class="cd83-val">${L.ranked?_T('At stake'):_T('Brought')}: ${c83()} ${s.value}</small></div></div>`}).join('')}${Array.from({length:cpu},()=>`<div class="cd83-s cpu"><span class="onl-rq">🤖</span><div class="cd83-sb">${_T`<b>CPU</b><small class="rc-sub">fills the open seat</small>`}</div></div>`).join('')}</div>`}
 {const base=onlRoomHTML80;onlRoomHTML80=function(L,grey){let h=base.apply(this,arguments);try{if(!L||L.status!=='waiting'||grey)return h;const host=L.host&&L.host.id===onlMe80();
     const left=L.startAt!=null?ONL83.countLeft(L):null;let box='';
-    if(left!=null){ONL83U.cdSeen[L.id]=L.startAt;box=`<div class="cd83" id="cd83" data-at="${L.startAt}"><div class="cd83-top"><span class="cd83-n" id="cd83n">${Math.max(0,Math.ceil(left/1000))}</span><div><b>The horns sound in…</b><small class="rc-sub">${L.ranked?'Ranked: what each gladiator brings is at stake.':'Custom: no deaths, nothing lost.'} Any change to the line-up stops it.</small></div>${host?'<button type="button" class="btn" data-onl83="hold">✕ Hold</button>':''}</div>${onl83Stakes(L)}</div>`}
-    else if(ONL83U.stop[L.id]&&Date.now()-ONL83U.stop[L.id]<8000)box=`<div class="cd83 stop"><b>⏸ Countdown stopped</b><small class="rc-sub">${host?'Press ▶ Start again when you are ready.':'The host will start again.'}</small></div>`;
+    if(left!=null){ONL83U.cdSeen[L.id]=L.startAt;box=`<div class="cd83" id="cd83" data-at="${L.startAt}"><div class="cd83-top"><span class="cd83-n" id="cd83n">${Math.max(0,Math.ceil(left/1000))}</span><div>${_T`<b>The horns sound in…</b><small class="rc-sub">${L.ranked?_T('Ranked: what each gladiator brings is at stake.'):_T('Custom: no deaths, nothing lost.')} Any change to the line-up stops it.</small>`}</div>${host?'<button type="button" class="btn" data-onl83="hold">✕ Hold</button>':''}</div>${onl83Stakes(L)}</div>`}
+    else if(ONL83U.stop[L.id]&&Date.now()-ONL83U.stop[L.id]<8000)box=`<div class="cd83 stop">${_T`<b>⏸ Countdown stopped</b><small class="rc-sub">${host?_T('Press ▶ Start again when you are ready.'):_T('The host will start again.')}</small>`}</div>`;
     if(box)h=h.replace('<div class="r80-body">',box+'<div class="r80-body">');
     if(left!=null)h=h.replace(/<button type="button" class="btn primary" data-onl="start"[^>]*>▶ Start<\/button>/,'<button type="button" class="btn primary" disabled>⏳ The horns are coming…</button>')}catch(e){console.error(e)}return h}}
 setInterval(()=>{try{const el=document.getElementById('cd83');if(!el)return;const n=document.getElementById('cd83n');const at=+el.dataset.at;const s=Math.max(0,Math.ceil((at-onlNow82())/1000));if(n&&n.textContent!==String(s))n.textContent=s;el.classList.toggle('go',s<=3)}catch(e){}},250);
 
 /* ---------------- 11 · PROFILES + ★ FOLLOW + the share link ---------------- */
-async function onl83Profile(x){if(!x)return;let r;try{r=await ONL83.profile(x)}catch(e){if(e&&e.code==='no_domus'&&typeof x==='string'&&/^House /i.test(x))return onl83Profile(x.replace(/^House /i,''));onlToast80('🏛 '+esc2(e.message||'No such house.'));return}
-  const D=r.domus||{};const nowS={off:'⚫ Away',free:'🟢 In the arena',room:'🟡 In a room',fight:'🔴 Fighting now'}[(r.now||{}).st]||'';const rec=[['Bouts',D.bouts|0],['Won',D.wins|0],['Survived',D.survived|0],['Fallen',D.fallen|0],['Lifetime CF',D.lifeCF|0],['Fame',D.fame|0]];
-  const glads=(r.glads||[]).map(g=>`<div class="pf83-g">${onlFig(g.cls,{token:(g.look||{}).token,color:(g.look||{}).color},70)}<b>${esc2(g.name)}</b><small>${onlRankChip(g.rank)}</small><small>✦ ${g.glory} Glory · ${g.survived} survived · ${g.wins} won</small></div>`).join('')||'<p class="rc-sub">No living gladiators.</p>';
-  const recent=(D.recent||[]).map(m=>`<div class="pf83-m ${m.died?'died':m.won?'won':''}"><b>${m.died?'🪦':m.won?'🏆':'⚔'} ${esc2(m.glad)}</b><small>${esc2(onlEvName(m.ev))} · ${esc2(onlCityName(m.loc))} · ${m.ranked?'Ranked':'Custom'} · ${m.cf} CF${m.place?` · #${m.place}`:''} · ${esc2(date83(m.at))}</small></div>`).join('')||'<p class="rc-sub">No matches yet.</p>';
-  const bg=onl83Pop('pf83pop',`<div class="pf83"><div class="pf83-head"><div class="dom82-crest">🏛</div><div class="pf83-t"><h3>${esc2(onlHouse82(D.name))}${D.test?' <i class="test83">TEST</i>':''}</h3><small class="rc-sub">${D.founded?'founded '+esc2(date83(D.founded))+' · ':''}best rank ${esc2(rk83(r.rank).n)} · ${esc2(nowS)}${D.archived?' · archived':''}</small></div>
-      <div class="pf83-act">${r.mine||onlIsGuest82()||!ONL.acct?'':`<button type="button" class="btn ${r.following?'':'primary'}" data-pf83="follow" data-v="${esc2(D.id)}" data-on="${r.following?0:1}">${r.following?'★ Following':'☆ Follow'}</button>`}<button type="button" class="btn" data-pf83="share" data-v="${esc2(D.id)}">🔗 Share</button>${(r.now||{}).st==='fight'&&r.now.match?`<button type="button" class="btn" data-pf83="watch" data-v="${esc2(r.now.match)}">👁 Watch</button>`:''}</div></div>
+async function onl83Profile(x){if(!x)return;let r;try{r=await ONL83.profile(x)}catch(e){if(e&&e.code==='no_domus'&&typeof x==='string'&&/^House /i.test(x))return onl83Profile(x.replace(/^House /i,''));onlToast80('🏛 '+esc2(e.message||_T('No such house.')));return}
+  const D=r.domus||{};const nowS={off:_T('⚫ Away'),free:_T('🟢 In the arena'),room:_T('🟡 In a room'),fight:_T('🔴 Fighting now')}[(r.now||{}).st]||'';const rec=[[_T('Bouts'),D.bouts|0],[_T('Won'),D.wins|0],[_T('Survived'),D.survived|0],[_T('Fallen'),D.fallen|0],[_T('Lifetime CF'),D.lifeCF|0],[_T('Fame'),D.fame|0]];
+  const glads=(r.glads||[]).map(g=>`<div class="pf83-g">${_T`${onlFig(g.cls,{token:(g.look||{}).token,color:(g.look||{}).color},70)}<b>${esc2(g.name)}</b><small>${onlRankChip(g.rank)}</small><small>✦ ${g.glory} Glory · ${g.survived} survived · ${g.wins} won</small>`}</div>`).join('')||'<p class="rc-sub">No living gladiators.</p>';
+  const recent=(D.recent||[]).map(m=>`<div class="pf83-m ${m.died?'died':m.won?'won':''}">${_T`<b>${m.died?'🪦':m.won?'🏆':'⚔'} ${esc2(m.glad)}</b><small>${esc2(onlEvName(m.ev))} · ${esc2(onlCityName(m.loc))} · ${m.ranked?_T('Ranked'):_T('Custom')} · ${m.cf} CF${m.place?` · #${m.place}`:''} · ${esc2(date83(m.at))}</small>`}</div>`).join('')||'<p class="rc-sub">No matches yet.</p>';
+  const bg=onl83Pop('pf83pop',`<div class="pf83"><div class="pf83-head"><div class="dom82-crest">🏛</div><div class="pf83-t"><h3>${esc2(onlHouse82(D.name))}${D.test?' <i class="test83">TEST</i>':''}</h3>${_T`<small class="rc-sub">${D.founded?'founded '+esc2(date83(D.founded))+' · ':''}best rank ${esc2(rk83(r.rank).n)} · ${esc2(nowS)}${D.archived?' · archived':''}</small>`}</div>
+      <div class="pf83-act">${r.mine||onlIsGuest82()||!ONL.acct?'':`<button type="button" class="btn ${r.following?'':'primary'}" data-pf83="follow" data-v="${esc2(D.id)}" data-on="${r.following?0:1}">${r.following?_T('★ Following'):_T('☆ Follow')}</button>`}<button type="button" class="btn" data-pf83="share" data-v="${esc2(D.id)}">${_T`🔗 Share`}</button>${(r.now||{}).st==='fight'&&r.now.match?`<button type="button" class="btn" data-pf83="watch" data-v="${esc2(r.now.match)}">${_T`👁 Watch`}</button>`:''}</div></div>
     <div class="dom82-rec pf83-rec">${rec.map(([k,v])=>`<div><b>${v}</b><small>${k}</small></div>`).join('')}</div>
-    <div class="pf83-sec"><b>Gladiators</b><div class="pf83-gs">${glads}</div></div>${onl83Trophies(D.trophies,'No trophies yet.')}
-    <div class="pf83-sec"><b>Recent matches</b>${recent}</div><div class="acts"><button type="button" class="btn" data-pf83="x">Close</button></div></div>`);
+    <div class="pf83-sec">${_T`<b>Gladiators</b>`}<div class="pf83-gs">${glads}</div></div>${onl83Trophies(D.trophies,_T('No trophies yet.'))}
+    <div class="pf83-sec">${_T`<b>Recent matches</b>${recent}`}</div><div class="acts"><button type="button" class="btn" data-pf83="x">${_T`Close`}</button></div></div>`);
   bg.addEventListener('click',async e=>{const b=e.target.closest('[data-pf83]');if(!b)return;const a=b.dataset.pf83,v=b.dataset.v;
     if(a==='x'){bg.remove();return}
     if(a==='share'){const link=ONL83.share(v);let ok=false;try{await navigator.clipboard.writeText(link);ok=true}catch(err){}if(!ok){try{const t=document.createElement('textarea');t.value=link;document.body.appendChild(t);t.select();ok=document.execCommand('copy');t.remove()}catch(err){}}
-      b.textContent=ok?'✓ Link copied':'🔗 '+link;ONL83U.lastShare=link;return}
+      b.textContent=ok?_T('✓ Link copied'):'🔗 '+link;ONL83U.lastShare=link;return}
     if(a==='follow'){try{const r2=await ONL83.follow(v,b.dataset.on==='1');ONL83U.follows=r2.follows||[];bg.remove();onl83Profile(v);if(document.getElementById('onl'))onlRedraw()}catch(err){onlToast80('⚠ '+esc2(err.message))}return}
     if(a==='watch'){bg.remove();const L=(ONL.lobbies||[]).find(x=>x.id===v);if(L&&typeof onlWatch==='function')onlDo(()=>onlWatch(L))}})}
 /* any house chip, the stage's house line, Forum / room / invitation names */
@@ -340,32 +340,32 @@ document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest
 function onl83Wagers(){if(!ONL83U.wl||Date.now()-ONL83U.wlAt>10000){ONL83U.wlAt=Date.now();NET.req('wager.list',{}).then(r=>{ONL83U.wl=r;if(ONL.tab==='wagers'&&document.getElementById('onl')&&!onlFocus80())onlRedraw()}).catch(e=>{ONL83U.wl=ONL83U.wl||{open:[],mine:[],top:[],err:e.message}})}
   const X=ONL83U.wl;if(!X)return '<h3>💰 Wagers</h3><p class="rc-sub">Reading the bookmakers’ tablets…</p>';
   const open=(X.open||[]).map(L=>{const names=Object.fromEntries((L.players||[]).map(p=>[p.seat,p]));
-    return `<div class="card2 wg83-pot"><div class="wg83-h">${typeof cardHTML==='function'?`<span class="wg83-ev">${cardHTML('e:'+L.ev,'sm')}</span>`:''}<div><b>${esc2(onlEvName(L.ev))}</b> <small class="rc-sub">${esc2(onlCityName(L.loc))} · ${L.ranked?'⚔ Ranked':'Custom'} · ${L.status==='live'?'🔴 live':'waiting'}</small>
-      <div class="wg83-pool">Pool ${c83()} <b>${L.pool|0}</b>${L.pot?` + tickets ${L.pot}`:''}</div></div></div>
-      <table class="wg83-t"><tr><th>Seat</th><th>Staked</th><th>Pays</th></tr>${(L.seats||[]).map(s=>{const p=names[s.seat];return `<tr><td>${p?`${esc2(p.name)}${p.domus?` <small class="dom82c">🏛 ${esc2(onlHouse82(p.domus))}</small>`:''}`:`Seat ${s.seat+1}`}</td><td>${s.stake?`${c83()} ${s.stake}`:'—'}</td><td>${s.odds!=null?`<b class="wg83-odds">×${s.odds}</b>`:'—'}</td></tr>`}).join('')}</table>
-      ${L.status==='waiting'&&ONL.char&&!onlIsGuest82()?`<div class="acts"><button type="button" class="btn tksm" data-onl="bet" data-v="${esc2(L.id)}">💰 Wager</button></div>`:''}</div>`}).join('')||'<p class="rc-sub">No open pots — wager on a room in the Lobby Browser.</p>';
+    return `<div class="card2 wg83-pot"><div class="wg83-h">${typeof cardHTML==='function'?`<span class="wg83-ev">${cardHTML('e:'+L.ev,'sm')}</span>`:''}<div><b>${esc2(onlEvName(L.ev))}</b> <small class="rc-sub">${esc2(onlCityName(L.loc))} · ${L.ranked?_T('⚔ Ranked'):_T('Custom')} · ${L.status==='live'?'🔴 live':'waiting'}</small>
+      <div class="wg83-pool">${_T`Pool ${c83()} <b>${L.pool|0}</b>${L.pot?_T` + tickets ${L.pot}`:''}`}</div></div></div>
+      <table class="wg83-t"><tr><th>${_T`Seat`}</th><th>${_T`Staked`}</th><th>${_T`Pays`}</th></tr>${(L.seats||[]).map(s=>{const p=names[s.seat];return `<tr><td>${p?`${esc2(p.name)}${p.domus?` <small class="dom82c">🏛 ${esc2(onlHouse82(p.domus))}</small>`:''}`:_T`Seat ${s.seat+1}`}</td><td>${s.stake?`${c83()} ${s.stake}`:'—'}</td><td>${s.odds!=null?`<b class="wg83-odds">×${s.odds}</b>`:'—'}</td></tr>`}).join('')}</table>
+      ${L.status==='waiting'&&ONL.char&&!onlIsGuest82()?`<div class="acts"><button type="button" class="btn tksm" data-onl="bet" data-v="${esc2(L.id)}">${_T`💰 Wager`}</button></div>`:''}</div>`}).join('')||'<p class="rc-sub">No open pots — wager on a room in the Lobby Browser.</p>';
   const res={open:'⏳ open',won:'🏆 won',lost:'✕ lost',refund:'↺ refunded'};
   const mine=(X.mine||[]).map(b=>`<tr class="wg83-${b.res}"><td>${esc2(date83(b.at))}</td><td>${esc2(onlEvName(b.ev))} <small class="rc-sub">${esc2(onlCityName(b.loc))}</small></td><td>${esc2(b.target||'')}</td><td>${c83()} ${b.amt}</td><td>${res[b.res]||b.res}${b.res==='won'?` <b>+${b.pay}</b>`:''}</td></tr>`).join('');
   const top=(X.top||[]).map((t,i)=>`<tr><td>${['🥇','🥈','🥉'][i]||i+1}</td><td><b>${esc2(t.name)}</b>${t.domus?` <small class="dom82c">🏛 ${esc2(onlHouse82(t.domus))}</small>`:''}</td><td class="${t.net>=0?'pos':'neg'}">${t.net>=0?'+':''}${t.net}</td><td>${c83()} ${t.staked}</td></tr>`).join('');
-  return `<div class="onl-lbtop"><h3>💰 Wagers</h3><div class="acts"><button type="button" class="btn tksm" data-onl83="wlr">↻</button></div></div>
-   ${ONL.betting&&typeof onlBetHTML==='function'?onlBetHTML():''}<div class="wg83"><div class="wg83-open"><h4 class="onl-h">Open pots</h4><div class="wg83-pots">${open}</div></div>
-    <div class="wg83-side">${onlIsGuest82()?'':`<div class="card2"><b>My bets</b>${mine?`<div class="wg83-scroll"><table class="tally wg83-t">${mine}</table></div>`:'<p class="rc-sub">No bets yet.</p>'}</div>`}
-     <div class="card2"><b>This week’s best bettors</b>${top?`<table class="tally wg83-t">${top}</table>`:'<p class="rc-sub">No winners yet this week.</p>'}</div></div></div>`}
+  return `<div class="onl-lbtop"><h3>${_T`💰 Wagers`}</h3><div class="acts"><button type="button" class="btn tksm" data-onl83="wlr">↻</button></div></div>
+   ${ONL.betting&&typeof onlBetHTML==='function'?onlBetHTML():''}<div class="wg83"><div class="wg83-open"><h4 class="onl-h">${_T`Open pots`}</h4><div class="wg83-pots">${open}</div></div>
+    <div class="wg83-side">${onlIsGuest82()?'':`<div class="card2">${_T`<b>My bets</b>${mine?`<div class="wg83-scroll"><table class="tally wg83-t">${mine}</table></div>`:'<p class="rc-sub">No bets yet.</p>'}`}</div>`}
+     <div class="card2">${_T`<b>This week’s best bettors</b>${top?`<table class="tally wg83-t">${top}</table>`:'<p class="rc-sub">No winners yet this week.</p>'}`}</div></div></div>`}
 /* the rail: 💰 Wagers before the Hall; a TEST chip beside test houses' names */
 {const base=onlHTML;onlHTML=function(){const want=ONL.tab==='wagers';if(want)ONL.tab='hall';let h;try{h=base.apply(this,arguments)}finally{if(want)ONL.tab='wagers'}
-  try{if(ONL.acct&&h.includes('class="onl-rail"')&&!ONL.newGlad){const btn=`<button type="button" data-onl="tab" data-v="wagers" class="${want?'on':''}">💰 Wagers</button>`;
+  try{if(ONL.acct&&h.includes('class="onl-rail"')&&!ONL.newGlad){const btn=`<button type="button" data-onl="tab" data-v="wagers" class="${want?'on':''}">${_T`💰 Wagers`}</button>`;
       h=h.replace(/(<button type="button" data-[a-z0-9]+="tab" data-v="hall")/,btn+'$1');
       if(want){h=h.replace(/(<button type="button" data-[a-z0-9]+="tab" data-v="hall" class=")on(")/,'$1$2');const a=h.indexOf('<main class="onl-main">'),b=h.lastIndexOf('</main>');if(a>=0&&b>a)h=h.slice(0,a+23)+onl83Wagers()+h.slice(b)}}
-    if(ONL83U.testDom.size)h=h.replace(/(<small class="dom82c">🏛 )([^<]*)(<\/small>)/g,(m,a,n,c)=>{const raw=n.replace(/^House /,'');return ONL83U.testDom.has(raw)||ONL83U.testDom.has(n)?`${a}${n} <i class="test83">TEST</i>${c}`:m})}catch(e){console.error(e)}return h}}
+    if(ONL83U.testDom.size)h=h.replace(/(<small class="dom82c">🏛 )([^<]*)(<\/small>)/g,(m,a,n,c)=>{const raw=n.replace(/^House /,'');return ONL83U.testDom.has(raw)||ONL83U.testDom.has(n)?_T`${a}${n} <i class="test83">TEST</i>${c}`:m})}catch(e){console.error(e)}return h}}
 /* guests: the wagers tab is open to them (read only) */
 if(typeof GUEST_ACTS82!=='undefined')GUEST_ACTS82.add('tab');
 
 /* ---------------- 3 · the result: award − the lanista's cut = pay; broken pieces, offerings back, gifts ---------------- */
 {const base=onlSettled;onlSettled=function(res){const r=base.apply(this,arguments);try{const o=res&&res.out;if(!o||res.void)return r;const bits=[];
-    if(!o.died&&(o.award|0)>0)bits.push(`💰 Award ${o.award} − the lanista’s cut ${o.cut|0} (to the treasury) = <b>${o.pay} coin</b>`);
-    if((o.broken||[]).length)bits.push(`💔 ${o.broken.length} piece${o.broken.length===1?'':'s'} came back broken — 🔧 repair in the Storeroom`);
-    if((o.offBack||[]).length)bits.push(`🧪 ${o.offBack.length} offering${o.offBack.length===1?'':'s'} back in the satchel`);
-    if((o.gifts||[]).length)bits.push(`🎁 Flavius sends ${o.gifts.length===1?'a gift':o.gifts.length+' gifts'} to the house`);
+    if(!o.died&&(o.award|0)>0)bits.push(_T`💰 Award ${o.award} − the lanista’s cut ${o.cut|0} (to the treasury) = <b>${o.pay} coin</b>`);
+    if((o.broken||[]).length)bits.push(_T`💔 ${o.broken.length} piece${o.broken.length===1?'':'s'} came back broken — 🔧 repair in the Storeroom`);
+    if((o.offBack||[]).length)bits.push(_T`🧪 ${o.offBack.length} offering${o.offBack.length===1?'':'s'} back in the satchel`);
+    if((o.gifts||[]).length)bits.push(_T`🎁 Flavius sends ${o.gifts.length===1?_T('a gift'):o.gifts.length+' gifts'} to the house`);
     if(bits.length)setTimeout(()=>onlToast80(bits.join('<br>')),5200);ONL82.dgAt=0}catch(e){}return r}}
 
 /* ---------------- the controls ---------------- */
@@ -378,19 +378,19 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   if(a==='repair'){const [from,item]=v.split('|');return onl83Repair(from,item)}
   if(a==='hold'){const L=onlMyLobby();if(L)NET.req('lobby.hold',{id:L.id}).then(R=>{ONL83U.stop[L.id]=Date.now();if(R&&R.id)onlUpsert80(R);onlRedraw()}).catch(err=>onlToast80('⚠ '+esc2(err.message)));return}
   if(a==='obuy'){const ch=ONL.char;if(!ch)return;const pr=ONLC.PRICE_OFF[v];
-    return ask76('🧪 Buy this offering?',`<div style="display:flex;gap:12px;align-items:center">${offTok83(v,64)}<p style="margin:0"><b>${esc2(OFF83N(v))}</b> for <b>${pr} coin</b> into ${esc2(ch.name)}’s satchel.<br><small class="rc-sub">Up to ${ONLC.OFF_CARRY} go into a match; the unused come back.</small></p></div>`,`Buy · ${pr}`,'Not now')
-      .then(ok=>{if(ok)onlDo(async()=>{const c=await NET.req('offer.buy',{char:ch.id,key:v});onl83Put(c);ONL.char=c;onlToast80(`🧪 ${esc2(OFF83N(v))} is in the satchel.`)})})}
+    return ask76(_T('🧪 Buy this offering?'),`<div style="display:flex;gap:12px;align-items:center">${offTok83(v,64)}<p style="margin:0">${_T`<b>${esc2(OFF83N(v))}</b> for <b>${pr} coin</b> into ${esc2(ch.name)}’s satchel.<br><small class="rc-sub">Up to ${ONLC.OFF_CARRY} go into a match; the unused come back.</small>`}</p></div>`,_T`Buy · ${pr}`,_T('Not now'))
+      .then(ok=>{if(ok)onlDo(async()=>{const c=await NET.req('offer.buy',{char:ch.id,key:v});onl83Put(c);ONL.char=c;onlToast80(_T`🧪 ${esc2(OFF83N(v))} is in the satchel.`)})})}
   if(a==='ubuy'){const ch=ONL.char;const x=(ONL83U.used||[]).find(y=>y.id===v);if(!ch||!x)return;
-    return ask76('🏺 Buy it used?',`<p style="margin:0">Buy <b>${esc2(x.n)}</b>${x.st==='broken'?' (<b>broken</b>)':''} for <b>${x.price} coin</b>?</p>${x.from?`<p class="rc-sub" style="margin:6px 0 0">Once ${esc2(x.from.glad||'someone')}’s.</p>`:''}`,`Buy · ${x.price}`,'Not now')
-      .then(ok=>{if(ok)onlDo(async()=>{try{const r=await NET.req('market.buy',{char:ch.id,id:v});onl83Put(r.char);ONL.char=r.char;onlToast80(`🏺 ${esc2(x.n)} is ${esc2(ch.name)}’s now.`)}finally{ONL83U.usedAt=0;ONL83U.used=null}})})}
+    return ask76(_T('🏺 Buy it used?'),`<p style="margin:0">${_T`Buy <b>${esc2(x.n)}</b>${x.st==='broken'?' (<b>broken</b>)':''} for <b>${x.price} coin</b>?`}</p>${x.from?`<p class="rc-sub" style="margin:6px 0 0">${_T`Once ${esc2(x.from.glad||'someone')}’s.`}</p>`:''}`,_T`Buy · ${x.price}`,_T('Not now'))
+      .then(ok=>{if(ok)onlDo(async()=>{try{const r=await NET.req('market.buy',{char:ch.id,id:v});onl83Put(r.char);ONL.char=r.char;onlToast80(_T`🏺 ${esc2(x.n)} is ${esc2(ch.name)}’s now.`)}finally{ONL83U.usedAt=0;ONL83U.used=null}})})}
   if(a==='dbuy'){const s=document.getElementById('buy83sel');const k=s&&s.value;const it=onlCatalog()[k];if(!it)return;const p=ONLC.priceOf(it);
-    return ask76('🏛 Buy for the shelf?',`<p style="margin:0"><b>${esc2(it.n)}</b> (level ${it.lv}) for <b>${p} coin</b> from the treasury (${(ONL.domus||{}).treasury|0}).</p>`,`Buy · ${p}`,'Not now')
-      .then(ok=>{if(ok)onlDo(async()=>{await NET.req('domus.buy',{item:k});ONL82.dgAt=0;onlToast80(`🏛 ${esc2(it.n)} is on the shelf.`)})})}
-  if(a==='finv'){const L=onlMyLobby();if(!L)return;return onlDo(async()=>{await NET.req('lobby.invite',{id:L.id,to:v});onlToast80('✉ Invitation sent.')})}
-  if(a==='infq'){const ev=ONL83U.infEv;return onlDo(async()=>{const r=await onlReq80('lobby.quick',{ev,ranked:v==='1',inf:1});onlToast80(r.made?`✦ A new Ludi Infames room — ${esc2(onlEvName(ev))}.`:`✦ You joined ${esc2(r.lobby.host.name)}’s Ludi Infames room.`)})}
+    return ask76(_T('🏛 Buy for the shelf?'),`<p style="margin:0">${_T`<b>${esc2(it.n)}</b> (level ${it.lv}) for <b>${p} coin</b> from the treasury (${(ONL.domus||{}).treasury|0}).`}</p>`,_T`Buy · ${p}`,_T('Not now'))
+      .then(ok=>{if(ok)onlDo(async()=>{await NET.req('domus.buy',{item:k});ONL82.dgAt=0;onlToast80(_T`🏛 ${esc2(it.n)} is on the shelf.`)})})}
+  if(a==='finv'){const L=onlMyLobby();if(!L)return;return onlDo(async()=>{await NET.req('lobby.invite',{id:L.id,to:v});onlToast80(_T('✉ Invitation sent.'))})}
+  if(a==='infq'){const ev=ONL83U.infEv;return onlDo(async()=>{const r=await onlReq80('lobby.quick',{ev,ranked:v==='1',inf:1});onlToast80(r.made?_T`✦ A new Ludi Infames room — ${esc2(onlEvName(ev))}.`:_T`✦ You joined ${esc2(r.lobby.host.name)}’s Ludi Infames room.`)})}
   if(a==='grant'){const num=id=>Math.max(0,+((document.getElementById(id)||{}).value)||0);const g=(document.getElementById('tst83gear')||{}).value,o=(document.getElementById('tst83off')||{}).value;
     const d={coin:num('tst83coin'),gift:num('tst83gift'),glory:num('tst83glory'),gear:g?[g]:[],offering:o?[o]:[]};
-    return onlDo(async()=>{const r=await NET.req('admin.grant',d);if(r.char)onl83Put(r.char);if(r.domus)ONL.domus=r.domus;ONL82.dgAt=0;await onlRefresh();onlToast80('🧪 Granted. This is a TEST house now.')})}},true);
+    return onlDo(async()=>{const r=await NET.req('admin.grant',d);if(r.char)onl83Put(r.char);if(r.domus)ONL.domus=r.domus;ONL82.dgAt=0;await onlRefresh();onlToast80(_T('🧪 Granted. This is a TEST house now.'))})}},true);
 document.addEventListener('change',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.onl83inf){ONL83U.infEv=t.value;e.stopPropagation()}},true);
 
 {const st=document.createElement('style');st.textContent=`

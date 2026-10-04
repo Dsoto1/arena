@@ -1,0 +1,1834 @@
+[
+ {
+  "k": "No victor",
+  "w": "10-meta.js:241"
+ },
+ {
+  "k": "Results &amp; Fates",
+  "w": "10-meta.js:243"
+ },
+ {
+  "k": "Performance graph",
+  "w": "10-meta.js:243"
+ },
+ {
+  "k": "⚖️ The Fates table",
+  "w": "10-meta.js:243"
+ },
+ {
+  "k": "Wagers",
+  "w": "10-meta.js:244"
+ },
+ {
+  "k": "Final Fate score = Crowd Favor held, −5 per Mandata Flavi still hidden; winners add the event reward, 5 CF per 3 trophies, 2 CF per Flavius item, 15 for a held Golden Eagle and 10 for a Damnatio win. Gladiators slain by beasts already lost 5 CF when they fell.",
+  "w": "10-meta.js:246"
+ },
+ {
+  "k": "Continue the festival",
+  "w": "10-meta.js:249"
+ },
+ {
+  "k": "Classic Elimination",
+  "w": "10-meta.js:249"
+ },
+ {
+  "k": "Next missio event",
+  "w": "10-meta.js:250"
+ },
+ {
+  "k": "step {0} of 5",
+  "w": "10-meta.js:250"
+ },
+ {
+  "k": "Back to your ludus",
+  "w": "10-meta.js:251"
+ },
+ {
+  "k": "read the exhibition report",
+  "w": "10-meta.js:251"
+ },
+ {
+  "k": "back to the invitational bracket",
+  "w": "10-meta.js:252"
+ },
+ {
+  "k": "Back to the bracket",
+  "w": "10-meta.js:253"
+ },
+ {
+  "k": "the tournament goes on",
+  "w": "10-meta.js:253"
+ },
+ {
+  "k": "🏛 Save all to the Ludus Flavius",
+  "w": "10-meta.js:257"
+ },
+ {
+  "k": "every survivor not yet saved",
+  "w": "10-meta.js:257"
+ },
+ {
+  "k": "the next bout is waiting — enter, fight, watch or simulate it",
+  "w": "10-meta.js:258"
+ },
+ {
+  "k": "Watch the crew reset the arena",
+  "w": "10-meta.js:258"
+ },
+ {
+  "k": "Match Week fades back in when they finish",
+  "w": "10-meta.js:258"
+ },
+ {
+  "k": "Export log",
+  "w": "10-meta.js:258"
+ },
+ {
+  "k": "🧹 The show is over",
+  "w": "10-meta.js:259"
+ },
+ {
+  "k": "🧹 Watch the clean-up show",
+  "w": "10-meta.js:259"
+ },
+ {
+  "k": "the crew has swept the sand",
+  "w": "10-meta.js:259"
+ },
+ {
+  "k": "the crew resets the arena — then the main menu",
+  "w": "10-meta.js:259"
+ },
+ {
+  "k": "🏛 Back to the main menu",
+  "w": "10-meta.js:259"
+ },
+ {
+  "k": "New event",
+  "w": "10-meta.js:260"
+ },
+ {
+  "k": "🔁 Replay event",
+  "w": "10-meta.js:260"
+ },
+ {
+  "k": "same arena, gladiators and settings",
+  "w": "10-meta.js:260"
+ },
+ {
+  "k": "Look at the board",
+  "w": "10-meta.js:260"
+ },
+ {
+  "k": "Back to the main menu",
+  "w": "10-meta.js:260"
+ },
+ {
+  "k": "Continue",
+  "w": "10-meta.js:269"
+ },
+ {
+  "k": "{0} is saved in the Ludus Flavius with {1} CF (returns with {2}).",
+  "w": "10-meta.js:272"
+ },
+ {
+  "k": "✓ All survivors saved",
+  "w": "10-meta.js:273"
+ },
+ {
+  "k": "see them in the Ludus Flavius",
+  "w": "10-meta.js:273"
+ },
+ {
+  "k": "The die leaves {0}’s hand… <b>{1}</b>",
+  "w": "10-meta.js:277"
+ },
+ {
+  "k": "{0} did not survive the thumb; their Ludus record is struck from the rolls for good.",
+  "w": "10-meta.js:281"
+ },
+ {
+  "k": "{0} takes the <b>rudis</b> and walks free, to a standing crowd. Their name joins the Liberti.",
+  "w": "10-meta.js:283"
+ },
+ {
+  "k": "Freedom · the rudis",
+  "w": "10-meta.js:318"
+ },
+ {
+  "k": "🏥 <b>{0}</b> dies in the Ludus infirmary — four events on a cot and nobody paid for care.",
+  "w": "10-meta.js:343"
+ },
+ {
+  "k": "limped out of the Ludus infirmary untreated and never looked back: {0} events, {1} wins",
+  "w": "10-meta.js:345"
+ },
+ {
+  "k": "🏥 <b>{0}</b> limps out of the infirmary in the night, wounds and all — gone from the rolls. The ushers say someone very like them now heckles from the cheap seats.",
+  "w": "10-meta.js:348"
+ },
+ {
+  "k": "🏥 <b>{0}</b> grits their teeth and walks out of the infirmary HEALED by sheer spite — back on the rolls (−3 CF for the limp).",
+  "w": "10-meta.js:350"
+ },
+ {
+  "k": "Won the event",
+  "w": "10-meta.js:363"
+ },
+ {
+  "k": "Retired",
+  "w": "10-meta.js:363"
+ },
+ {
+  "k": "Eliminated on turn {0}{1}",
+  "w": "10-meta.js:363"
+ },
+ {
+  "k": "Exited",
+  "w": "10-meta.js:363"
+ },
+ {
+  "k": "Survived",
+  "w": "10-meta.js:363"
+ },
+ {
+  "k": "· festival champion",
+  "w": "10-meta.js:367"
+ },
+ {
+  "k": "Win the Learn-to-play bout.",
+  "w": "10-meta.js:396"
+ },
+ {
+  "k": "Graduate of the Ludus",
+  "w": "10-meta.js:396"
+ },
+ {
+  "k": "Title: Graduate of the Ludus",
+  "w": "10-meta.js:396"
+ },
+ {
+  "k": "Win an event with a gladiator of your own.",
+  "w": "10-meta.js:397"
+ },
+ {
+  "k": "The laurel wreath for your tokens",
+  "w": "10-meta.js:397"
+ },
+ {
+  "k": "Finish an event with 50+ Crowd Favor.",
+  "w": "10-meta.js:398"
+ },
+ {
+  "k": "Beloved of the Crowd",
+  "w": "10-meta.js:398"
+ },
+ {
+  "k": "Title: Beloved of the Crowd",
+  "w": "10-meta.js:398"
+ },
+ {
+  "k": "Eliminate Tholo.",
+  "w": "10-meta.js:399"
+ },
+ {
+  "k": "Tholo's great blunted club for your tokens",
+  "w": "10-meta.js:399"
+ },
+ {
+  "k": "Eliminate Commodus.",
+  "w": "10-meta.js:400"
+ },
+ {
+  "k": "The imperial eagle shield emblem",
+  "w": "10-meta.js:400"
+ },
+ {
+  "k": "Tame a beast.",
+  "w": "10-meta.js:401"
+ },
+ {
+  "k": "The spiked collar for your beast tokens",
+  "w": "10-meta.js:401"
+ },
+ {
+  "k": "Eliminate every one of the eight classes (over any number of events).",
+  "w": "10-meta.js:402"
+ },
+ {
+  "k": "The obsidian token base",
+  "w": "10-meta.js:402"
+ },
+ {
+  "k": "Win an event with each of the eight classes.",
+  "w": "10-meta.js:403"
+ },
+ {
+  "k": "The golden cloak",
+  "w": "10-meta.js:403"
+ },
+ {
+  "k": "Win at all twelve arenas (any gladiators).",
+  "w": "10-meta.js:404"
+ },
+ {
+  "k": "Hero of the Twelve Arenas",
+  "w": "10-meta.js:404"
+ },
+ {
+  "k": "Title: Hero of the Twelve Arenas",
+  "w": "10-meta.js:404"
+ },
+ {
+  "k": "See one of your gladiators take the rudis.",
+  "w": "10-meta.js:405"
+ },
+ {
+  "k": "Friend of the Liberti",
+  "w": "10-meta.js:405"
+ },
+ {
+  "k": "Title: Friend of the Liberti",
+  "w": "10-meta.js:405"
+ },
+ {
+  "k": "Play 25 events.",
+  "w": "10-meta.js:406"
+ },
+ {
+  "k": "+25 coin for every new Manager career",
+  "w": "10-meta.js:406"
+ },
+ {
+  "k": "Walk three stages of the Road of Flavius.",
+  "w": "10-meta.js:407"
+ },
+ {
+  "k": "Road war paint for your tokens",
+  "w": "10-meta.js:407"
+ },
+ {
+  "k": "Win all twelve arenas, in the Hall’s order, with ONE gladiator.",
+  "w": "10-meta.js:408"
+ },
+ {
+  "k": "Walker of the Road",
+  "w": "10-meta.js:408"
+ },
+ {
+  "k": "Flavius's own gilded armor — and immortality in the Annals",
+  "w": "10-meta.js:408"
+ },
+ {
+  "k": "🏆 <b>Achievement: {0}</b> — {1}",
+  "w": "10-meta.js:416"
+ },
+ {
+  "k": "🏆 <b>Achievement unlocked: {0}</b> — {1} Engraved in the Annals.",
+  "w": "10-meta.js:416"
+ },
+ {
+  "k": "🛣 <b>The Road of Flavius</b>: {0} conquers {1} — stage {2} of 12.",
+  "w": "10-meta.js:438"
+ },
+ {
+  "k": "👑 <b>{0} HAS WALKED THE ROAD OF FLAVIUS.</b> Twelve arenas, in order, one gladiator. The Annals will never forget.",
+  "w": "10-meta.js:439"
+ },
+ {
+  "k": "lost the event",
+  "w": "10-meta.js:440"
+ },
+ {
+  "k": "fell on the sand",
+  "w": "10-meta.js:440"
+ },
+ {
+  "k": "🛣 The Road of Flavius ends for {0} at {1}, stage {2}. The road forgives no one.",
+  "w": "10-meta.js:440"
+ },
+ {
+  "k": "from the old scrolls",
+  "w": "10-meta.js:448"
+ },
+ {
+  "k": "📜 Career{0}",
+  "w": "10-meta.js:458"
+ },
+ {
+  "k": "<span class=\"rc-sub\">(freed before career ledgers — last-event figures)</span>",
+  "w": "10-meta.js:458"
+ },
+ {
+  "k": "· {0} season{1}{2}{3}",
+  "w": "10-meta.js:458"
+ },
+ {
+  "k": "· freed at",
+  "w": "10-meta.js:458"
+ },
+ {
+  "k": "· on the rolls since {0}",
+  "w": "10-meta.js:458"
+ },
+ {
+  "k": "Events",
+  "w": "10-meta.js:459"
+ },
+ {
+  "k": "Wins",
+  "w": "10-meta.js:459"
+ },
+ {
+  "k": "⚔ Gladiators slain",
+  "w": "10-meta.js:459"
+ },
+ {
+  "k": "🐾 Beasts slain",
+  "w": "10-meta.js:459"
+ },
+ {
+  "k": "👥 Fans",
+  "w": "10-meta.js:460"
+ },
+ {
+  "k": "Named regulars across the empire who still follow them — each stands for about a thousand Romans",
+  "w": "10-meta.js:460"
+ },
+ {
+  "k": "★ Fame",
+  "w": "10-meta.js:460"
+ },
+ {
+  "k": "Renown across the empire, 0–100",
+  "w": "10-meta.js:460"
+ },
+ {
+  "k": "🗡 Damage dealt",
+  "w": "10-meta.js:460"
+ },
+ {
+  "k": "🩸 Damage taken",
+  "w": "10-meta.js:460"
+ },
+ {
+  "k": "Best Fate CF",
+  "w": "10-meta.js:461"
+ },
+ {
+  "k": "Career Fate CF",
+  "w": "10-meta.js:461"
+ },
+ {
+  "k": "Every Fate score of every event, added up",
+  "w": "10-meta.js:461"
+ },
+ {
+  "k": "🏟 Watched by",
+  "w": "10-meta.js:461"
+ },
+ {
+  "k": "Everyone who ever watched them fight",
+  "w": "10-meta.js:461"
+ },
+ {
+  "k": "Arenas",
+  "w": "10-meta.js:461"
+ },
+ {
+  "k": "Their last events, oldest first",
+  "w": "10-meta.js:462"
+ },
+ {
+  "k": "{0} · {1} · {2} CF",
+  "w": "10-meta.js:462"
+ },
+ {
+  "k": "Took the rudis with <b>{0} CF</b> after {1}{2}{3}.",
+  "w": "10-meta.js:463"
+ },
+ {
+  "k": "· missio fulfilled",
+  "w": "10-meta.js:463"
+ },
+ {
+  "k": "+3 CF to every gladiator between events",
+  "w": "10-meta.js:477"
+ },
+ {
+  "k": "+4 coin to every gladiator between events",
+  "w": "10-meta.js:478"
+ },
+ {
+  "k": "a Health Elixir token (2 HP) for every gladiator between events",
+  "w": "10-meta.js:479"
+ },
+ {
+  "k": "+2 AP forged onto every gladiator's armor between events",
+  "w": "10-meta.js:480"
+ },
+ {
+  "k": "+2 CF and +2 coin to every gladiator — Fortuna spreads it around",
+  "w": "10-meta.js:481"
+ },
+ {
+  "k": "Festival",
+  "w": "10-meta.js:484"
+ },
+ {
+  "k": "Between events the {0} grants its gift: {1}. Race order sets the turn order.",
+  "w": "10-meta.js:493"
+ },
+ {
+  "k": "Carmina Fescennina: each gladiator recites one verse.",
+  "w": "10-meta.js:499"
+ },
+ {
+  "k": "Carmina Fescennina · {0}",
+  "w": "10-meta.js:505"
+ },
+ {
+  "k": "Opt out",
+  "w": "10-meta.js:505"
+ },
+ {
+  "k": "{0} declines to recite.",
+  "w": "10-meta.js:506"
+ },
+ {
+  "k": "{0} recites: “{1}” ({2}).",
+  "w": "10-meta.js:507"
+ },
+ {
+  "k": "🎭 Recited",
+  "w": "10-meta.js:507"
+ },
+ {
+  "k": "<b>Missio complete!</b> {0} claims the Missio Spoils: a Rudis, a Laurel Crown, {1} coin from the Royal Reserve, freedom, and a hearty “Gratulationes”.",
+  "w": "10-meta.js:552"
+ },
+ {
+  "k": "{0} finished all five events but missed the missio requirement ({1}{2}).",
+  "w": "10-meta.js:552"
+ },
+ {
+  "k": "{0}/{1} coin in RR",
+  "w": "10-meta.js:552"
+ },
+ {
+  "k": "{0}/{1} trophies",
+  "w": "10-meta.js:552"
+ },
+ {
+  "k": "{0} advances to step {1} of their missio, carrying {2} CF. Royal Reserve: {3} coin.{4}",
+  "w": "10-meta.js:553"
+ },
+ {
+  "k": "Severed limbs persist: {0}.",
+  "w": "10-meta.js:553"
+ },
+ {
+  "k": "{0} did not survive. The missio and the character are struck from the rolls.",
+  "w": "10-meta.js:556"
+ },
+ {
+  "k": "{0}'s missio ends here (this step had to be won). {1} survives with {2} CF and can still be saved in the Ludus. The Royal Reserve is forfeit.",
+  "w": "10-meta.js:557"
+ },
+ {
+  "k": "How each gladiator's fate was decided",
+  "w": "10-meta.js:573"
+ },
+ {
+  "k": "Gladiator",
+  "w": "10-meta.js:573"
+ },
+ {
+  "k": "Final CF",
+  "w": "10-meta.js:573"
+ },
+ {
+  "k": "Fate",
+  "w": "10-meta.js:573"
+ },
+ {
+  "k": "The Fates (p.54-55)",
+  "w": "10-meta.js:575"
+ },
+ {
+  "k": "if they win",
+  "w": "10-meta.js:577"
+ },
+ {
+  "k": "{0} (if win)",
+  "w": "10-meta.js:577"
+ },
+ {
+  "k": "Where each gladiator stands right now",
+  "w": "10-meta.js:578"
+ },
+ {
+  "k": "CF now",
+  "w": "10-meta.js:578"
+ },
+ {
+  "k": "If they fall",
+  "w": "10-meta.js:578"
+ },
+ {
+  "k": "If they win",
+  "w": "10-meta.js:578"
+ },
+ {
+  "k": "{0} CF · <b>{1}</b>",
+  "w": "10-meta.js:578"
+ },
+ {
+  "k": "“If they fall” subtracts 5 CF per unrevealed Mandata Flavi. “If they win” adds the event reward, 5 CF per 3 trophies and 2 CF per Flavius item.",
+  "w": "10-meta.js:578"
+ },
+ {
+  "k": "Infamis",
+  "w": "10-meta.js:586"
+ },
+ {
+  "k": "Event records",
+  "w": "10-meta.js:586"
+ },
+ {
+  "k": "Hall of Flavius",
+  "w": "10-meta.js:586"
+ },
+ {
+  "k": "Liberti",
+  "w": "10-meta.js:586"
+ },
+ {
+  "k": "🏆 Trophy case",
+  "w": "10-meta.js:586"
+ },
+ {
+  "k": "Missios",
+  "w": "10-meta.js:586"
+ },
+ {
+  "k": "🛡 Your Play Now Gladiators",
+  "w": "10-meta.js:586"
+ },
+ {
+  "k": "<b>{0} event record{1} empty.</b>",
+  "w": "10-meta.js:591"
+ },
+ {
+  "k": "s lie",
+  "w": "10-meta.js:591"
+ },
+ {
+  "k": "The scribes can unroll the old scrolls: three bouts of hard CPUs for each event, and the best Fate stands as the record to beat.",
+  "w": "10-meta.js:591"
+ },
+ {
+  "k": "disabled title=\"Finish the event on the sand first\"",
+  "w": "10-meta.js:591"
+ },
+ {
+  "k": "📜 Unroll the old scrolls",
+  "w": "10-meta.js:591"
+ },
+ {
+  "k": "The best Fate score ever recorded in each event, with the <b>attendance</b> that watched it. Records marked <i>from the old scrolls</i> were filled by the scribes — beat them.",
+  "w": "10-meta.js:591"
+ },
+ {
+  "k": "Section cheers scale with the crowd (a house over 8 cheers louder, not richer), so a packed arena means glory, not free Crowd Favor.",
+  "w": "10-meta.js:591"
+ },
+ {
+  "k": "Event",
+  "w": "10-meta.js:592"
+ },
+ {
+  "k": "Record holder",
+  "w": "10-meta.js:592"
+ },
+ {
+  "k": "Class",
+  "w": "10-meta.js:592"
+ },
+ {
+  "k": "Attendance",
+  "w": "10-meta.js:592"
+ },
+ {
+  "k": "🏺 <b>The Ludus Archives</b> — the leather-bound season recaps of every Manager-mode career: the finale, the crown, the ledger. (The full shelf, week by week, lives in Manager mode → Archives.)",
+  "w": "10-meta.js:597"
+ },
+ {
+  "k": "<b>Season {0}</b> · {1} <small>{2} · {3}{4}{5}{6}</small>",
+  "w": "10-meta.js:599"
+ },
+ {
+  "k": "· {0} finale: {1}",
+  "w": "10-meta.js:599"
+ },
+ {
+  "k": "· crown: {0}{1}",
+  "w": "10-meta.js:599"
+ },
+ {
+  "k": "· record {0}",
+  "w": "10-meta.js:599"
+ },
+ {
+  "k": "The <b>Liberti</b>: gladiators who won an event with <b>50+ Crowd Favor</b> and took the <b>rudis</b> — the wooden sword of freedom — instead of returning to the Ludus. They have left the sands, and the game, forever. Only their glory remains.",
+  "w": "10-meta.js:604"
+ },
+ {
+  "k": "{0} · freed {1}{2}",
+  "w": "10-meta.js:606"
+ },
+ {
+  "k": "🗡 Rudis · {0} CF",
+  "w": "10-meta.js:606"
+ },
+ {
+  "k": "{0} — and walked out of the arena to a standing crowd, the wooden sword in hand.",
+  "w": "10-meta.js:607"
+ },
+ {
+  "k": "Won {0} at {1}",
+  "w": "10-meta.js:607"
+ },
+ {
+  "k": "Classic",
+  "w": "10-meta.js:615"
+ },
+ {
+  "k": "FR Creator",
+  "w": "10-meta.js:615"
+ },
+ {
+  "k": "FR QA Team",
+  "w": "10-meta.js:615"
+ },
+ {
+  "k": "Most recent playthrough",
+  "w": "10-meta.js:617"
+ },
+ {
+  "k": "{0} · {1} at {2} · {3}{4}{5}",
+  "w": "10-meta.js:619"
+ },
+ {
+  "k": "· managed by",
+  "w": "10-meta.js:619"
+ },
+ {
+  "k": "Final Fate score: Crowd Favor held at the end plus the winner's bonuses — the number the Infamis ranks",
+  "w": "10-meta.js:620"
+ },
+ {
+  "k": "{0} Fate CF{1} · {2}",
+  "w": "10-meta.js:620"
+ },
+ {
+  "k": "(held {0} {1} {2} {3})",
+  "w": "10-meta.js:620"
+ },
+ {
+  "k": "winner’s bonus",
+  "w": "10-meta.js:620"
+ },
+ {
+  "k": "hidden Mandata",
+  "w": "10-meta.js:620"
+ },
+ {
+  "k": "🏟 {0}K spectators",
+  "w": "10-meta.js:620"
+ },
+ {
+  "k": "Shown whether they won or fell. The Fate score is what the Infamis ranks: the CF a gladiator held at the end, plus the winner's bonuses — which is why a winner's board card (held CF) reads lower than this.",
+  "w": "10-meta.js:621"
+ },
+ {
+  "k": "The <b>top 20</b> Fate scores of <b>{0}</b>, ordered by final Crowd Favor. The board resets at the start of every month ({1} day{2} left); each month's best is kept below as its champion. RR is the Royal Reserve; FF marks Flavius Fidelis (a revealed Mandata Flavi). Custom characters and custom events are not eligible.{3}",
+  "w": "10-meta.js:622"
+ },
+ {
+  "k": "Records are shared with everyone who opens this page.",
+  "w": "10-meta.js:622"
+ },
+ {
+  "k": "Records are kept in this browser.",
+  "w": "10-meta.js:622"
+ },
+ {
+  "k": "Character",
+  "w": "10-meta.js:623"
+ },
+ {
+  "k": "Notes",
+  "w": "10-meta.js:623"
+ },
+ {
+  "k": "held {0} CF at the end",
+  "w": "10-meta.js:624"
+ },
+ {
+  "k": "{0} CF{1}",
+  "w": "10-meta.js:624"
+ },
+ {
+  "k": "No winners recorded yet in {0}.",
+  "w": "10-meta.js:624"
+ },
+ {
+  "k": "{0} CF",
+  "w": "10-meta.js:625"
+ },
+ {
+  "k": "{0} (rulebook example)",
+  "w": "10-meta.js:625"
+ },
+ {
+  "k": "Past monthly champions",
+  "w": "10-meta.js:626"
+ },
+ {
+  "k": "Month",
+  "w": "10-meta.js:626"
+ },
+ {
+  "k": "Champion",
+  "w": "10-meta.js:626"
+ },
+ {
+  "k": "Earlier",
+  "w": "10-meta.js:626"
+ },
+ {
+  "k": "🛣 The Road of Flavius",
+  "w": "10-meta.js:635"
+ },
+ {
+  "k": "one gladiator · twelve arenas · in order · no second chances",
+  "w": "10-meta.js:635"
+ },
+ {
+  "k": "⚔ Walk stage {0}: {1}<small>opens New event with {2} summoned</small>",
+  "w": "10-meta.js:638"
+ },
+ {
+  "k": "Abandon the road",
+  "w": "10-meta.js:638"
+ },
+ {
+  "k": "the Hall's oldest, hardest honor",
+  "w": "10-meta.js:639"
+ },
+ {
+  "k": "Commit one gladiator of your Ludus to the <b>Road</b>: win all twelve arenas in the Hall's order — Arles to Roma — each at its own event, with that same gladiator. Lose once and the road is over. No one has ever finished it.",
+  "w": "10-meta.js:640"
+ },
+ {
+  "k": "👑 <b>{0}</b> walked the whole Road.",
+  "w": "10-meta.js:641"
+ },
+ {
+  "k": "Last walker: <b>{0}</b> — fell at {1}, stage {2}.",
+  "w": "10-meta.js:641"
+ },
+ {
+  "k": "{0} · {1} · {2} wins",
+  "w": "10-meta.js:642"
+ },
+ {
+  "k": "🛣 Commit to the Road",
+  "w": "10-meta.js:642"
+ },
+ {
+  "k": "🏺 Retired houses · the lanistae who left in glory",
+  "w": "10-meta.js:645"
+ },
+ {
+  "k": "{0} · {1} legacy",
+  "w": "10-meta.js:645"
+ },
+ {
+  "k": "{0} · {1} season{2} · {3} · fame {4} · {5} trophies · {6}",
+  "w": "10-meta.js:645"
+ },
+ {
+  "k": "🏆 Achievements",
+  "w": "10-meta.js:646"
+ },
+ {
+  "k": "{0} of {1}{2}",
+  "w": "10-meta.js:646"
+ },
+ {
+  "k": "· titles: {0}",
+  "w": "10-meta.js:646"
+ },
+ {
+  "k": "🏛 earned {0} — engraved in the Annals",
+  "w": "10-meta.js:647"
+ },
+ {
+  "k": "not yet earned",
+  "w": "10-meta.js:647"
+ },
+ {
+  "k": "The twelve arenas",
+  "w": "10-meta.js:648"
+ },
+ {
+  "k": "wins by human gladiators, in the Hall's order",
+  "w": "10-meta.js:648"
+ },
+ {
+  "k": "Classes eliminated so far: {0}.",
+  "w": "10-meta.js:650"
+ },
+ {
+  "k": "Walkers of the Road",
+  "w": "10-meta.js:652"
+ },
+ {
+  "k": "{0} · {1} arena{2} won",
+  "w": "10-meta.js:652"
+ },
+ {
+  "k": "walked all twelve",
+  "w": "10-meta.js:652"
+ },
+ {
+  "k": "fell at {0} (stage {1})",
+  "w": "10-meta.js:652"
+ },
+ {
+  "k": "Missio campaigns (p.56-57). Start or continue one from New event → Missio.",
+  "w": "10-meta.js:655"
+ },
+ {
+  "k": "Step",
+  "w": "10-meta.js:655"
+ },
+ {
+  "k": "Status",
+  "w": "10-meta.js:655"
+ },
+ {
+  "k": "Trophies",
+  "w": "10-meta.js:655"
+ },
+ {
+  "k": "History",
+  "w": "10-meta.js:655"
+ },
+ {
+  "k": "🏛️ The Annals · Infamis, Hall of Flavius & Liberti",
+  "w": "10-meta.js:664"
+ },
+ {
+  "k": "🏛 Back to Main Menu",
+  "w": "10-meta.js:664"
+ },
+ {
+  "k": "🛣 <b>{0}</b> sets out on the Road of Flavius. Twelve arenas. One life.",
+  "w": "10-meta.js:665"
+ },
+ {
+  "k": "That gladiator can no longer walk the road.",
+  "w": "10-meta.js:667"
+ },
+ {
+  "k": "<b>📜 The scribes are at work</b>",
+  "w": "10-meta.js:690"
+ },
+ {
+  "k": "Opening the archive…",
+  "w": "10-meta.js:690"
+ },
+ {
+  "k": "🏆 <b>{0}</b> — {1} ({2}), <b>{3} CF</b> at {4}",
+  "w": "10-meta.js:692"
+ },
+ {
+  "k": "Copying the scrolls of",
+  "w": "10-meta.js:693"
+ },
+ {
+  "k": "Unrolling the ledgers of",
+  "w": "10-meta.js:693"
+ },
+ {
+  "k": "Reading the tallies of",
+  "w": "10-meta.js:693"
+ },
+ {
+  "k": "Dusting off the records of",
+  "w": "10-meta.js:693"
+ },
+ {
+  "k": "✔ Every scroll is copied.",
+  "w": "10-meta.js:695"
+ },
+ {
+  "k": "(arena card)",
+  "w": "11-extra.js:66"
+ },
+ {
+  "k": "(weapon card)",
+  "w": "11-extra.js:67"
+ },
+ {
+  "k": "Weapon card",
+  "w": "11-extra.js:67"
+ },
+ {
+  "k": "Mandata Flavi",
+  "w": "11-extra.js:68"
+ },
+ {
+  "k": "(Summa Rudis card)",
+  "w": "11-extra.js:69"
+ },
+ {
+  "k": "Wagon Wheel token",
+  "w": "11-extra.js:70"
+ },
+ {
+  "k": "Laurel Wheel token",
+  "w": "11-extra.js:70"
+ },
+ {
+  "k": "Gilded Wheel token",
+  "w": "11-extra.js:70"
+ },
+ {
+  "k": "Chariot horse token",
+  "w": "11-extra.js:70"
+ },
+ {
+  "k": "(chariot card)",
+  "w": "11-extra.js:71"
+ },
+ {
+  "k": "Naumachia water token",
+  "w": "11-extra.js:72"
+ },
+ {
+  "k": "Fate:",
+  "w": "11-extra.js:73"
+ },
+ {
+  "k": "class card",
+  "w": "11-extra.js:74"
+ },
+ {
+  "k": "(armor token)",
+  "w": "11-extra.js:75"
+ },
+ {
+  "k": "Armor token",
+  "w": "11-extra.js:75"
+ },
+ {
+  "k": "Card",
+  "w": "11-extra.js:76"
+ },
+ {
+  "k": "Piaculum (custom)",
+  "w": "11-extra.js:80"
+ },
+ {
+  "k": "custom weapon",
+  "w": "11-extra.js:83"
+ },
+ {
+  "k": "<b>{0}</b> · level {1}{2}<br>{3}",
+  "w": "11-extra.js:92"
+ },
+ {
+  "k": "(Arena Chest)",
+  "w": "11-extra.js:92"
+ },
+ {
+  "k": "<b>{0}</b><br>{1}<br>Reward: {2}",
+  "w": "11-extra.js:93"
+ },
+ {
+  "k": "<b>{0}</b> · level {1} armor token<br>{2}",
+  "w": "11-extra.js:96"
+ },
+ {
+  "k": "<b>Palmatus</b> · chariot horse · speed +3, 10 HP on this face",
+  "w": "11-extra.js:97"
+ },
+ {
+  "k": "<b>Palmatus</b> (flipped) · speed +2, 12 HP",
+  "w": "11-extra.js:97"
+ },
+ {
+  "k": "<b>Ocianus</b> · chariot horse · speed +2, 8 HP on this face",
+  "w": "11-extra.js:97"
+ },
+ {
+  "k": "<b>Ocianus</b> (flipped) · speed +2, 10 HP",
+  "w": "11-extra.js:97"
+ },
+ {
+  "k": "<b>Saxo</b> · chariot horse · speed +1, 8 HP on this face",
+  "w": "11-extra.js:97"
+ },
+ {
+  "k": "<b>Saxo</b> (flipped) · speed +1, 12 HP",
+  "w": "11-extra.js:97"
+ },
+ {
+  "k": "<b>Vindex</b> · chariot horse · speed +3, 8 HP on this face",
+  "w": "11-extra.js:97"
+ },
+ {
+  "k": "<b>Vindex</b> (flipped) · speed +3, 12 HP",
+  "w": "11-extra.js:97"
+ },
+ {
+  "k": "<b>Wagon Wheel</b> · 8 HP",
+  "w": "11-extra.js:97"
+ },
+ {
+  "k": "<b>Laurel Wheel</b> · 10 HP",
+  "w": "11-extra.js:97"
+ },
+ {
+  "k": "<b>Gilded Wheel</b> · 12 HP",
+  "w": "11-extra.js:97"
+ },
+ {
+  "k": "<b>Chariot</b> token",
+  "w": "11-extra.js:97"
+ },
+ {
+  "k": "<b>Bellum Quadriga</b> · the war quadriga: bronze-studded and mean",
+  "w": "11-extra.js:98"
+ },
+ {
+  "k": "<b>Aureus Triumphus</b> · gilded for the victory parade",
+  "w": "11-extra.js:98"
+ },
+ {
+  "k": "<b>Bellator Aequus</b> · the steady warhorse of chariots",
+  "w": "11-extra.js:98"
+ },
+ {
+  "k": "<b>Invicta Gloria</b> · unconquered glory, painted in blood-red",
+  "w": "11-extra.js:98"
+ },
+ {
+  "k": "<b>Azureus Magnus</b> · the great blue of the Circus faction",
+  "w": "11-extra.js:98"
+ },
+ {
+  "k": "<b>Fulgens Velox</b> · shining and fast, dyed in Tyrian purple",
+  "w": "11-extra.js:98"
+ },
+ {
+  "k": "<b>Water Tile</b> · calm water",
+  "w": "11-extra.js:99"
+ },
+ {
+  "k": "<b>Crocodile!</b> · the bitten location is reduced to 1 HP",
+  "w": "11-extra.js:99"
+ },
+ {
+  "k": "<b>Level 1 Weapon</b> · fished from the wreckage",
+  "w": "11-extra.js:99"
+ },
+ {
+  "k": "<b>Level 2 Weapon</b> · fished from the wreckage",
+  "w": "11-extra.js:99"
+ },
+ {
+  "k": "<b>Level 3 Weapon</b> · fished from the wreckage",
+  "w": "11-extra.js:99"
+ },
+ {
+  "k": "<b>Level 1 Armor</b> · washed up at your feet",
+  "w": "11-extra.js:99"
+ },
+ {
+  "k": "<b>Level 2 Armor</b> · washed up at your feet",
+  "w": "11-extra.js:99"
+ },
+ {
+  "k": "<b>Level 3 Armor</b> · washed up at your feet",
+  "w": "11-extra.js:99"
+ },
+ {
+  "k": "<b>Armor Upgrade</b> · +2 AP, distributed as you choose",
+  "w": "11-extra.js:99"
+ },
+ {
+  "k": "<b>Armor Upgrade</b> · +3 AP, distributed as you choose",
+  "w": "11-extra.js:99"
+ },
+ {
+  "k": "Naumachia token",
+  "w": "11-extra.js:99"
+ },
+ {
+  "k": "🂠 Card",
+  "w": "11-extra.js:125"
+ },
+ {
+  "k": "Minerva's Push dodges the whole attack and steps you 1 tile away, so save it for hits that would sever a limb or kill you. Fidelis Constans only removes one hit die.",
+  "w": "11-extra.js:145"
+ },
+ {
+  "k": "A truce stops both of you from being targeted, but only one gladiator can win. If everyone left standing is in a truce, Flavius breaks them all.",
+  "w": "11-extra.js:146"
+ },
+ {
+  "k": "Replenishing refills every ammo weapon you hold. Two Ammo cards can instead be exchanged for any ammo weapon still in the market.",
+  "w": "11-extra.js:147"
+ },
+ {
+  "k": "Unlocking costs 3 CF. Level 1/2/3 cost 4/8/12 coin. Re-rolls cost 2 coin. Choose (arena card) lets you skip the die entirely.",
+  "w": "11-extra.js:148"
+ },
+ {
+  "k": "Raising a shield is a choice: spend a use to absorb its stated value, and the remainder still hits armor then flesh. Save uses for big hits and severing threats.",
+  "w": "11-extra.js:149"
+ },
+ {
+  "k": "Scout to learn what a fighter wants, then pitch the motives you grade well. Gifts sway the coin-hungry, feasts sway everyone, and a pledged main event is +12 interest — if you keep your word.",
+  "w": "11-extra.js:150"
+ },
+ {
+  "k": "<b>Hint</b>{0}",
+  "w": "11-extra.js:153"
+ },
+ {
+  "k": "Got it",
+  "w": "11-extra.js:161"
+ },
+ {
+  "k": "Turn hints off",
+  "w": "11-extra.js:161"
+ },
+ {
+  "k": "Telemachus Interdico!",
+  "w": "11-extra.js:166"
+ },
+ {
+  "k": "The Crowd Grows Restless",
+  "w": "11-extra.js:167"
+ },
+ {
+  "k": "Flavius Rule: End Game",
+  "w": "11-extra.js:168"
+ },
+ {
+  "k": "The Calydonian Boar",
+  "w": "11-extra.js:169"
+ },
+ {
+  "k": "Aggro",
+  "w": "11-extra.js:170"
+ },
+ {
+  "k": "The zone shrinks",
+  "w": "11-extra.js:171"
+ },
+ {
+  "k": "Your turn",
+  "w": "11-extra.js:172"
+ },
+ {
+  "k": "The Thumb of Flavius",
+  "w": "11-extra.js:174"
+ },
+ {
+  "k": "dive into a tunnel (1 key)",
+  "w": "11-extra.js:184"
+ },
+ {
+  "k": "declare your Ward of the Evil Eye",
+  "w": "11-extra.js:184"
+ },
+ {
+  "k": "throw your Meat Lure at a rival",
+  "w": "11-extra.js:184"
+ },
+ {
+  "k": "{0} is aggro on you{1}. {2}",
+  "w": "11-extra.js:185"
+ },
+ {
+  "k": "({0}: {1} attack, {2} move)",
+  "w": "11-extra.js:185"
+ },
+ {
+  "k": "It is low: finish it for the trophy.",
+  "w": "11-extra.js:185"
+ },
+ {
+  "k": "To shake it:",
+  "w": "11-extra.js:185"
+ },
+ {
+  "k": "Stay out of its reach or fight it near allies.",
+  "w": "11-extra.js:185"
+ },
+ {
+  "k": "A Blessings pot is in reach. It needs 2 damage: with power {0} you break it {1}% of the time (2 coin, 1 CF and a hidden offering).",
+  "w": "11-extra.js:188"
+ },
+ {
+  "k": "You are outside the zone{0}. Ending here costs 2 CF.",
+  "w": "11-extra.js:189"
+ },
+ {
+  "k": "({0} grace turn{1} left)",
+  "w": "11-extra.js:189"
+ },
+ {
+  "k": "You are badly hurt and hold a Health Elixir. An elixir can also save a location the moment it hits 0.",
+  "w": "11-extra.js:190"
+ },
+ {
+  "k": "Focus! is declared: your next attack on a gladiator picks the location. Aim at their least armored limb or a weak head.",
+  "w": "11-extra.js:191"
+ },
+ {
+  "k": "Herculean Vigor adds {0} damage to your next attack that lands a hit.",
+  "w": "11-extra.js:192"
+ },
+ {
+  "k": "Your Mandata Flavi ({0}) is completed by declaring it: use it from your hand.",
+  "w": "11-extra.js:193"
+ },
+ {
+  "k": "Mandata Flavi: {0} ({1}).",
+  "w": "11-extra.js:193"
+ },
+ {
+  "k": "At {0} CF you sit in the Thumb of Flavius range (17-19). Reaching 20 CF secures the Ludus Flavius.",
+  "w": "11-extra.js:194"
+ },
+ {
+  "k": "Your weapons are weak and you can afford a level 2 weapon (3 CF to unlock + {0} coin).",
+  "w": "11-extra.js:195"
+ },
+ {
+  "k": "You stand on a pile: loot 1 item this turn.",
+  "w": "11-extra.js:196"
+ },
+ {
+  "k": "Telemachus blocks all attacks. Reposition, loot, trade or shop this turn.",
+  "w": "11-extra.js:197"
+ },
+ {
+  "k": "The crowd is restless: make at least one attack this turn, even at a pot, or everyone is stoned.",
+  "w": "11-extra.js:198"
+ },
+ {
+  "k": "An ally near you is badly hurt. You could gift them your {0} from Trade or truce.",
+  "w": "11-extra.js:200"
+ },
+ {
+  "k": "Nearest Blessings pot: the pillar at {0}, {1} tile{2} from reach.",
+  "w": "11-extra.js:203"
+ },
+ {
+  "k": "{0} ({1}, {2} HP) is {3} tiles away: an easier trophy worth {4} CF and {5} coin. Attacking makes it aggro on you.",
+  "w": "11-extra.js:205"
+ },
+ {
+  "k": "You hold {0} item{1} you can use this turn: {2}.",
+  "w": "11-extra.js:206"
+ },
+ {
+  "k": "Commanding",
+  "w": "11-extra.js:223"
+ },
+ {
+  "k": "· your turn",
+  "w": "11-extra.js:226"
+ },
+ {
+  "k": "{0} · turn {1} · rotation {2}{3}{4}",
+  "w": "11-extra.js:226"
+ },
+ {
+  "k": "Who holds the arena right now — every mode shares this one board",
+  "w": "11-extra.js:226"
+ },
+ {
+  "k": "· <b style=\"color:var(--gold2)\">CPU paused</b>",
+  "w": "11-extra.js:226"
+ },
+ {
+  "k": "can declare him once per event.",
+  "w": "11-extra.js:234"
+ },
+ {
+  "k": "The Zora arena card also releases him for whoever draws it.",
+  "w": "11-extra.js:234"
+ },
+ {
+  "k": "No Zora card remains in the deck.",
+  "w": "11-extra.js:234"
+ },
+ {
+  "k": "Released when both snakes are slain.",
+  "w": "11-extra.js:235"
+ },
+ {
+  "k": "Removed from this Gauntlet.",
+  "w": "11-extra.js:235"
+ },
+ {
+  "k": "Enters when both wolves are slain.",
+  "w": "11-extra.js:235"
+ },
+ {
+  "k": "Unleashed when both bears are slain.",
+  "w": "11-extra.js:235"
+ },
+ {
+  "k": "Both lions are released after the first capture.",
+  "w": "11-extra.js:236"
+ },
+ {
+  "k": "Enters at the start of round 2 with 20 HP.",
+  "w": "11-extra.js:237"
+ },
+ {
+  "k": "Not used in this event.",
+  "w": "11-extra.js:238"
+ },
+ {
+  "k": "Enters when the {0} arena card is drawn ({1} cards left in the deck).",
+  "w": "11-extra.js:242"
+ },
+ {
+  "k": "Its arena card has already been drawn or removed.",
+  "w": "11-extra.js:242"
+ },
+ {
+  "k": "Not in this event's arena deck.",
+  "w": "11-extra.js:243"
+ },
+ {
+  "k": "Spectators in all four quadrants can also chant for Tholo.",
+  "w": "11-extra.js:244"
+ },
+ {
+  "k": "In rounds 1-2 Tholo spawns on the center tile and grabs the chest.",
+  "w": "11-extra.js:245"
+ },
+ {
+  "k": "On entry every gladiator takes 2 damage; no CF can be spent while he lives.",
+  "w": "11-extra.js:246"
+ },
+ {
+  "k": "{0} · {1}/{2} HP · attack {3} · range {4} · move {5}{6}{7}{8}{9}. Elimination: {10} coin, {11} CF, 1 trophy.{12}",
+  "w": "11-extra.js:256"
+ },
+ {
+  "k": "· aggro on {0}",
+  "w": "11-extra.js:256"
+ },
+ {
+  "k": "· guards {0}-{1}/{2}-{3}",
+  "w": "11-extra.js:256"
+ },
+ {
+  "k": "Behavior states:",
+  "w": "11-extra.js:256"
+ },
+ {
+  "k": "{0} {1}+ HP ({2} atk, {3} mv)",
+  "w": "11-extra.js:256"
+ },
+ {
+  "k": "{0} was slain{1}.",
+  "w": "11-extra.js:256"
+ },
+ {
+  "k": "slain{0}",
+  "w": "11-extra.js:257"
+ },
+ {
+  "k": "tamed by {0}",
+  "w": "11-extra.js:257"
+ },
+ {
+  "k": "guarding its zone · {0}",
+  "w": "11-extra.js:257"
+ },
+ {
+  "k": "stnd sm",
+  "w": "11-extra.js:258"
+ },
+ {
+  "k": "{0} ({1}) · not in play. {2}",
+  "w": "11-extra.js:263"
+ },
+ {
+  "k": "{0} HP",
+  "w": "11-extra.js:263"
+ },
+ {
+  "k": "not in play · {0}",
+  "w": "11-extra.js:263"
+ },
+ {
+  "k": "Telemachus",
+  "w": "11-extra.js:266"
+ },
+ {
+  "k": "no attacks · d6 of 1 or 6 removes him",
+  "w": "11-extra.js:266"
+ },
+ {
+  "k": "Crowd Restless",
+  "w": "11-extra.js:267"
+ },
+ {
+  "k": "{0} turn{1} left",
+  "w": "11-extra.js:267"
+ },
+ {
+  "k": "Calydonian Boar",
+  "w": "11-extra.js:268"
+ },
+ {
+  "k": "{0} resolve phase{1} left",
+  "w": "11-extra.js:268"
+ },
+ {
+  "k": "4 hit dice · attacker picks location",
+  "w": "11-extra.js:269"
+ },
+ {
+  "k": "Speed of Mercury",
+  "w": "11-extra.js:270"
+ },
+ {
+  "k": "{0} +1 MV this round",
+  "w": "11-extra.js:270"
+ },
+ {
+  "k": "Beasts &amp; active cards",
+  "w": "11-extra.js:272"
+ },
+ {
+  "k": "Not in play · hover for how they enter",
+  "w": "11-extra.js:274"
+ },
+ {
+  "k": "Slain",
+  "w": "11-extra.js:275"
+ },
+ {
+  "k": "Performance",
+  "w": "11-extra.js:297"
+ },
+ {
+  "k": "combined CF, coin, health, AP, weapons, trophies and items",
+  "w": "11-extra.js:297"
+ },
+ {
+  "k": "Health",
+  "w": "11-extra.js:297"
+ },
+ {
+  "k": "total HP",
+  "w": "11-extra.js:297"
+ },
+ {
+  "k": "Fans",
+  "w": "11-extra.js:297"
+ },
+ {
+  "k": "spectators backing them",
+  "w": "11-extra.js:297"
+ },
+ {
+  "k": "trophies taken",
+  "w": "11-extra.js:297"
+ },
+ {
+  "k": "turn 1",
+  "w": "11-extra.js:318"
+ },
+ {
+  "k": "turn {0}",
+  "w": "11-extra.js:318"
+ },
+ {
+  "k": "if they had lived",
+  "w": "11-extra.js:324"
+ },
+ {
+  "k": "{0} of each gladiator per turn, with dashed projections",
+  "w": "11-extra.js:325"
+ },
+ {
+  "k": "Standings",
+  "w": "11-extra.js:332"
+ },
+ {
+  "k": "📊 Standings",
+  "w": "11-extra.js:332"
+ },
+ {
+  "k": "The Ludus rolls are full: {0}'s old record ({1}) is cleared to make room.",
+  "w": "11-extra.js:395"
+ },
+ {
+  "k": "{0}, {1}, {2} CF",
+  "w": "11-extra.js:409"
+ },
+ {
+  "k": "⚔ {0} · 🐾 {1} · {2} ev",
+  "w": "11-extra.js:414"
+ },
+ {
+  "k": "{0} · {1} · {2} CF · returns with {3}<br>⚔ {4} gladiators · 🐾 {5} beasts · {6}/{7} wins",
+  "w": "11-extra.js:421"
+ },
+ {
+  "k": "freed · took the rudis",
+  "w": "11-extra.js:421"
+ },
+ {
+  "k": "active roster",
+  "w": "11-extra.js:421"
+ },
+ {
+  "k": "in the Ludus",
+  "w": "11-extra.js:421"
+ },
+ {
+  "k": "{0}{1}<br><i>Click for the full record.</i>",
+  "w": "11-extra.js:422"
+ },
+ {
+  "k": "{0} · <b>{1}</b> at {2}: {3}, {4} CF",
+  "w": "11-extra.js:422"
+ },
+ {
+  "k": "No history yet.",
+  "w": "11-extra.js:422"
+ },
+ {
+  "k": "· {0} · {1} · saved {2}{3}",
+  "w": "11-extra.js:429"
+ },
+ {
+  "k": "<b style=\"color:var(--gold2)\">freed · the rudis</b>",
+  "w": "11-extra.js:429"
+ },
+ {
+  "k": "<span style=\"color:var(--muted)\">retired · lays down the sword</span>",
+  "w": "11-extra.js:429"
+ },
+ {
+  "k": "<b style=\"color:var(--gold2)\">active roster</b>",
+  "w": "11-extra.js:429"
+ },
+ {
+  "k": "in the Ludus Flavius",
+  "w": "11-extra.js:429"
+ },
+ {
+  "k": "{0} CF last event",
+  "w": "11-extra.js:430"
+ },
+ {
+  "k": "Returns with {0} CF",
+  "w": "11-extra.js:430"
+ },
+ {
+  "k": "{0}/{1} wins",
+  "w": "11-extra.js:430"
+ },
+ {
+  "k": "Royal Reserve {0} coin",
+  "w": "11-extra.js:430"
+ },
+ {
+  "k": "Severed: {0}",
+  "w": "11-extra.js:430"
+ },
+ {
+  "k": "All-time trophies",
+  "w": "11-extra.js:431"
+ },
+ {
+  "k": "<span><b>{0}</b>⚔ Gladiators</span><span><b>{1}</b>🐾 Beasts</span><span><b>{2}</b>Wins</span><span><b>{3}</b>Events</span><span><b>{4}</b>Royal Reserve</span>",
+  "w": "11-extra.js:431"
+ },
+ {
+  "k": "Date",
+  "w": "11-extra.js:432"
+ },
+ {
+  "k": "Kills P/N",
+  "w": "11-extra.js:432"
+ },
+ {
+  "k": "Drop from the active roster",
+  "w": "11-extra.js:435"
+ },
+ {
+  "k": "Add to the active roster<small>{0}/{1} places taken</small>",
+  "w": "11-extra.js:435"
+ },
+ {
+  "k": "Summon to a new event<small>you control them · returns with {0} CF and fresh class gear</small>",
+  "w": "11-extra.js:435"
+ },
+ {
+  "k": "Field as a CPU rival<small>keeps their personality</small>",
+  "w": "11-extra.js:435"
+ },
+ {
+  "k": "Retire &amp; erase<small>struck from the game forever — though a rare few dodge Flavius and turn up in the stands</small>",
+  "w": "11-extra.js:435"
+ },
+ {
+  "k": "Continue as a missio<small>starts at step {0} of 5</small>",
+  "w": "11-extra.js:435"
+ },
+ {
+  "k": "⇄ Swap tile position<small>then click any other tile to trade places</small>",
+  "w": "11-extra.js:435"
+ },
+ {
+  "k": "Family in the stands",
+  "w": "11-extra.js:436"
+ },
+ {
+  "k": "{0} — they arrive in family colors whenever {1} fights.",
+  "w": "11-extra.js:436"
+ },
+ {
+  "k": "{0}, active roster",
+  "w": "11-extra.js:443"
+ },
+ {
+  "k": "{0} · {1} CF · {2}/{3} won",
+  "w": "11-extra.js:445"
+ },
+ {
+  "k": "open place",
+  "w": "11-extra.js:446"
+ },
+ {
+  "k": "⭐ Active roster · {0}/{1}",
+  "w": "11-extra.js:447"
+ },
+ {
+  "k": "Click a gladiator for their record · use <b>Add to / Drop from the active roster</b> on their record",
+  "w": "11-extra.js:447"
+ },
+ {
+  "k": "The active roster is your <b>fielded squad</b>: only these {0} can be picked in New event's seat dropdowns (as your own seat, or a seat the computer plays). Everyone else stays safe on the rolls below — still saved, still summonable from their record — until you promote them. You choose who joins it: open a gladiator’s record and press <b>Add to the active roster</b>.",
+  "w": "11-extra.js:448"
+ },
+ {
+  "k": "Gladiators whose Fate reached the <b>Ludus Flavius</b> (20+ CF) or freedom live here — up to 92 of them — 32 on the active roster and 60 on the rolls. Once saved, their record updates <b>automatically</b> after every event they are summoned to: survive and the legend grows, fall short and they are struck from the rolls for good. Summon one to fight again (half their final CF up to 25, fresh class gear, severed limbs persist), or continue them as a missio — the five-event campaign of their class.{0}",
+  "w": "11-extra.js:450"
+ },
+ {
+  "k": "The Ludus is shared with everyone who opens this page.",
+  "w": "11-extra.js:450"
+ },
+ {
+  "k": "Saved in this browser.",
+  "w": "11-extra.js:450"
+ },
+ {
+  "k": "🏥 The Ludus infirmary",
+  "w": "11-extra.js:451"
+ },
+ {
+  "k": "Carried from the sand too hurt to stand on the rolls. Care is paid by your <b>active lanista's</b> treasury. Four events untended and a wound writes its own ending — death, flight, or a limp for life.",
+  "w": "11-extra.js:451"
+ },
+ {
+  "k": "<b>{0}</b><small>needs {1} · {2} coin · untended for {3} of 4 events{4}</small>",
+  "w": "11-extra.js:452"
+ },
+ {
+  "k": "· severed: {0}",
+  "w": "11-extra.js:452"
+ },
+ {
+  "k": "Pay for care<small>{0} coin · back to the rolls</small>",
+  "w": "11-extra.js:452"
+ },
+ {
+  "k": "📜 The rolls",
+  "w": "11-extra.js:453"
+ },
+ {
+  "k": "{0} more gladiators are stored beyond the first 60.",
+  "w": "11-extra.js:453"
+ },
+ {
+  "k": "🛡 Your Play Now Gladiators · Ludus Flavius",
+  "w": "11-extra.js:459"
+ },
+ {
+  "k": "← Back to the Annals",
+  "w": "11-extra.js:459"
+ },
+ {
+  "k": "⇄ Now click the tile to trade with<small>or click this again to cancel</small>",
+  "w": "11-extra.js:466"
+ },
+ {
+  "k": "Roster full ({0}): drop someone first",
+  "w": "11-extra.js:478"
+ },
+ {
+  "k": "Needs {0} coin from an active lanista<small>{1}</small>",
+  "w": "11-extra.js:485"
+ },
+ {
+  "k": "treasury too light — win purses or bets",
+  "w": "11-extra.js:485"
+ },
+ {
+  "k": "set one in Manager mode or at the Wagers table",
+  "w": "11-extra.js:485"
+ },
+ {
+  "k": "🏥 {0} is treated ({1} coin) and discharged — back on the Ludus rolls, fit to fight.",
+  "w": "11-extra.js:489"
+ },
+ {
+  "k": "CONFIRM · erase forever<small>one more click and they are gone from the game</small>",
+  "w": "11-extra.js:493"
+ },
+ {
+  "k": "used to BE a gladiator: {0} events, {1} wins, {2} gladiators and {3} beasts on the wall",
+  "w": "11-extra.js:504"
+ },
+ {
+  "k": "<b style=\"color:var(--gold2)\">{0} vanishes in the night.</b>",
+  "w": "11-extra.js:506"
+ },
+ {
+  "k": "The record is burned, the cell is empty — and a week later the ushers swear they saw the same face in the cheap seats, eating {0} and heckling the undercard like they never swung a sword. Some people just cannot leave the arena. (Find them in the Spectator roster.)",
+  "w": "11-extra.js:506"
+ }
+]

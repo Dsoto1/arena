@@ -50,22 +50,22 @@ function itemInfo(it) {
     const C = CARDS[it.key];
     return {
       n: C.n,
-      t: 'Arena card · ' + C.type,
+      t: _T('Arena card · ') + C.type,
       d: C.d || ''
     };
   }
   if (it.kind === 'mf') {
     const M = MANDATA[it.idx];
     return {
-      n: 'Mandata Flavi: ' + M.n,
-      t: 'Secret objective' + (M.declare ? ' · declare on your turn' : ''),
-      d: `${M.d} Reward: ${M.r}. Still hidden at the end: −5 CF.`
+      n: _T('Mandata Flavi: ') + M.n,
+      t: _T('Secret objective') + (M.declare ? _T(' · declare on your turn') : ''),
+      d: _T`${M.d} Reward: ${M.r}. Still hidden at the end: −5 CF.`
     };
   }
   const O = OFFER[it.key];
   return {
     n: O.n,
-    t: 'Offering · ' + O.s,
+    t: _T('Offering · ') + O.s,
     d: ''
   };
 }
@@ -356,11 +356,11 @@ async function chooseArmorLoc(player, key, title, single = false) {
     const free = opts.filter(l => !armorConflict(player, l, key));
     return [(free.length ? free : opts).sort((a, b) => player.ap[a] - player.ap[b])[0]];
   }
-  const v = await modal(title || `Equip ${d.n}`, `<p>${d.n}: ${d.ap} AP on the ${PT_NAME[d.pt]} equip point${d.stack ? ' (stackable)' : ''}${d.bonus ? ' · bonus ' + Object.entries(d.bonus).map(([l, a]) => `+${a} ${LOCN[l]}`).join(', ') : ''}. Choose a side.</p>`, opts.map(l => {
+  const v = await modal(title || _T`Equip ${d.n}`, `<p>${_T`${d.n}: ${d.ap} AP on the ${PT_NAME[d.pt]} equip point${d.stack ? ' (stackable)' : ''}${d.bonus ? ' · bonus ' + Object.entries(d.bonus).map(([l, a]) => `+${a} ${LOCN[l]}`).join(', ') : ''}. Choose a side.`}</p>`, opts.map(l => {
     const c = armorConflict(player, l, key);
     return {
       label: LOCN[l],
-      sub: `AP ${player.ap[l]} → ${Math.min(7, player.ap[l] + d.ap - (c ? Math.min(c.ap, player.ap[l]) : 0))}${c ? ' · replaces ' + c.n : ''}`,
+      sub: _T`AP ${player.ap[l]} → ${Math.min(7, player.ap[l] + d.ap - (c ? Math.min(c.ap, player.ap[l]) : 0))}${c ? ' · replaces ' + c.n : ''}`,
       value: l
     };
   }), {
@@ -375,7 +375,7 @@ async function gainArmorPiece(player, key, apOverride, {
   const d = ARM[key];
   const locs = await chooseArmorLoc(player, key, null, single);
   if (!locs.length) {
-    log(`${nm(player)} has nowhere to wear the ${d.n}.`);
+    log(_T`${nm(player)} has nowhere to wear the ${d.n}.`);
     pileFor(player).armor.push({
       key,
       n: d.n,
@@ -390,13 +390,13 @@ async function gainArmorPiece(player, key, apOverride, {
     if (c) {
       // same equip point already taken in this layer: swap or keep
       let swap;
-      if (player.cpu) swap = (apOverride ?? d.ap) + (d.bonus ? Object.values(d.bonus).reduce((a, b) => a + b, 0) : 0) > Math.min(c.ap, player.ap[l]) + (ARM[c.key].bonus ? 1 : 0);else swap = await modal(`${LOCN[l]}: equip point taken`, `<p>Your ${LOCN[l].toLowerCase()} already wears <b>${c.n}</b> (${Math.min(c.ap, player.ap[l])} AP) on the ${PT_NAME[ARM[c.key].pt] || PT_NAME[d.pt]} point. Only one ${d.stack ? 'stackable' : 'regular'} armor fits there${d.stack ? '' : '; stackable padding and belts can sit beneath it'}.</p>`, [{
-        label: `Swap in ${d.n}`,
-        sub: `${apOverride ?? d.ap} AP · the old piece drops at your feet`,
+      if (player.cpu) swap = (apOverride ?? d.ap) + (d.bonus ? Object.values(d.bonus).reduce((a, b) => a + b, 0) : 0) > Math.min(c.ap, player.ap[l]) + (ARM[c.key].bonus ? 1 : 0);else swap = await modal(_T`${LOCN[l]}: equip point taken`, `<p>${_T`Your ${LOCN[l].toLowerCase()} already wears <b>${c.n}</b> (${Math.min(c.ap, player.ap[l])} AP) on the ${PT_NAME[ARM[c.key].pt] || PT_NAME[d.pt]} point. Only one ${d.stack ? _T('stackable') : _T('regular')} armor fits there${d.stack ? '' : _T('; stackable padding and belts can sit beneath it')}.`}</p>`, [{
+        label: _T`Swap in ${d.n}`,
+        sub: _T`${apOverride ?? d.ap} AP · the old piece drops at your feet`,
         value: 1,
         primary: 1
       }, {
-        label: `Keep ${c.n}`,
+        label: _T`Keep ${c.n}`,
         value: 0
       }], {
         card: 'a:' + key
@@ -407,8 +407,8 @@ async function gainArmorPiece(player, key, apOverride, {
     }
     if (equipPiece(player, key, l, apOverride)) put.push(l);
   }
-  if (put.length) log(`${nm(player)} equips <b>${d.n}</b> on ${put.map(l => LOCN[l]).join(' and ')}.`);else {
-    log(`${nm(player)} leaves the ${d.n} at their feet.`);
+  if (put.length) log(_T`${nm(player)} equips <b>${d.n}</b> on ${put.map(l => LOCN[l]).join(' and ')}.`);else {
+    log(_T`${nm(player)} leaves the ${d.n} at their feet.`);
     pileFor(player).armor.push({
       key,
       n: d.n,
@@ -436,10 +436,10 @@ function cpuHealPlan(player, n) {
   return plan;
 }
 /* distributeHP — heals n HP over locations below 7 (CPU plan or a human dialog), capped at 7 per location. */
-async function distributeHP(player, n, why = 'Health Elixir') {
+async function distributeHP(player, n, why = _T('Health Elixir')) {
   const locs = LOCS.filter(l => player.hp[l] > 0 && player.hp[l] < 7);
   if (!locs.length) {
-    log(`${nm(player)} is already at full health.`);
+    log(_T`${nm(player)} is already at full health.`);
     return;
   }
   let plan;
@@ -451,9 +451,9 @@ async function distributeHP(player, n, why = 'Health Elixir') {
   }
   {
     const tot = LOCS.reduce((s, l) => s + (plan[l] || 0), 0);
-    if (tot) fx(player.r, player.c, `+${tot} HP`, '#7fe07a');
+    if (tot) fx(player.r, player.c, _T`+${tot} HP`, '#7fe07a');
   }
-  log(`${nm(player)} uses ${why}: ${parts.join(', ') || 'nothing'}.`);
+  log(_T`${nm(player)} uses ${why}: ${parts.join(', ') || 'nothing'}.`);
 }
 /* distributeAP — adds n AP over living locations below 7; a CPU puts each point on its lowest-AP location (HEAL_ORDER breaks ties), a human uses the dialog. Cap 7. */
 async function distributeAP(player, n, why) {
@@ -472,31 +472,31 @@ async function distributeAP(player, n, why) {
   const parts = [];
   for (const l of LOCS) if (plan[l]) {
     player.ap[l] = Math.min(7, player.ap[l] + plan[l]);
-    parts.push(`${LOCN[l]} +${plan[l]} AP`);
+    parts.push(_T`${LOCN[l]} +${plan[l]} AP`);
   }
-  log(`${nm(player)} gains ${why}: ${parts.join(', ')}.`);
+  log(_T`${nm(player)} gains ${why}: ${parts.join(', ')}.`);
 }
 /* apUp — adds n AP to ONE location that already has armor (cap 7); returns false if there is none or the human cancels. */
 async function apUp(player, n) {
   const locs = LOCS.filter(l => player.hp[l] > 0 && player.ap[l] > 0 && player.ap[l] < 7);
   if (!locs.length) {
-    if (!player.cpu) await modal('No armored location', '<p>AP upgrades only apply to a location that already has armor.</p>', [{
+    if (!player.cpu) await modal(_T('No armored location'), '<p>AP upgrades only apply to a location that already has armor.</p>', [{
       label: 'OK',
       value: 1
     }]);
     return false;
   }
-  const loc = player.cpu ? locs.sort((a, b) => player.ap[a] - player.ap[b] || HEAL_ORDER.indexOf(a) - HEAL_ORDER.indexOf(b))[0] : await modal(`AP Upgrade (+${n})`, '<p>Choose one armored location. A location can never exceed 7 AP.</p>', locs.map(l => ({
+  const loc = player.cpu ? locs.sort((a, b) => player.ap[a] - player.ap[b] || HEAL_ORDER.indexOf(a) - HEAL_ORDER.indexOf(b))[0] : await modal(_T`AP Upgrade (+${n})`, '<p>Choose one armored location. A location can never exceed 7 AP.</p>', locs.map(l => ({
     label: LOCN[l],
-    sub: `AP ${player.ap[l]} → ${Math.min(7, player.ap[l] + n)}`,
+    sub: _T`AP ${player.ap[l]} → ${Math.min(7, player.ap[l] + n)}`,
     value: l
   })).concat([{
-    label: 'Cancel',
+    label: _T('Cancel'),
     value: null
   }]));
   if (!loc) return false;
   player.ap[loc] = Math.min(7, player.ap[loc] + n);
-  log(`${nm(player)} reinforces ${LOCN[loc]} to ${player.ap[loc]} AP.`);
+  log(_T`${nm(player)} reinforces ${LOCN[loc]} to ${player.ap[loc]} AP.`);
   return true;
 }
 
@@ -559,18 +559,18 @@ async function pickupAt(r, c) {
           r: cr,
           c: cc
         };
-        log(`${nm(p)} lifts a Golden Eagle! The grid dice set its capture tile at <b>${tl(cr, cc)}</b>.`, 'big');
-      } else log(`${nm(p)} grabs the Golden Eagle. Capture tile: ${tl(S.capture.r, S.capture.c)}.`, 'big');
+        log(_T`${nm(p)} lifts a Golden Eagle! The grid dice set its capture tile at <b>${tl(cr, cc)}</b>.`, 'big');
+      } else log(_T`${nm(p)} grabs the Golden Eagle. Capture tile: ${tl(S.capture.r, S.capture.c)}.`, 'big');
       continue;
     }
     S.floor = S.floor.filter(x => x !== f);
     if (f.key === 'key') {
       p.keys++;
-      log(`${nm(p)} picks up an Arena Key.`);
+      log(_T`${nm(p)} picks up an Arena Key.`);
       continue;
     }
     p.items.push(mkOffer(f.key));
-    log(`${nm(p)} picks up <b>${OFFER[f.key].n}</b> (${OFFER[f.key].s}).`);
+    log(_T`${nm(p)} picks up <b>${OFFER[f.key].n}</b> (${OFFER[f.key].s}).`);
   }
   await checkEagleScore(p);
 }
@@ -583,8 +583,8 @@ async function checkEagleScore(player) {
     S.teamPts[player.team] = (S.teamPts[player.team] || 0) + 1;
     stat(player, 'eagles');
     placeFloor('eagle', 'eagle', 6, 6);
-    log(`${nm(player)} captures the Golden Eagle! Team ${player.team}: ${S.teamPts[player.team]} of 3.`, 'big');
-    if (S.teamPts[player.team] >= 3) log(`Team ${player.team} may now exit through their starting tiles.`, 'big');
+    log(_T`${nm(player)} captures the Golden Eagle! Team ${player.team}: ${S.teamPts[player.team]} of 3.`, 'big');
+    if (S.teamPts[player.team] >= 3) log(_T`Team ${player.team} may now exit through their starting tiles.`, 'big');
   }
 }
 
@@ -593,12 +593,12 @@ async function checkEagleScore(player) {
 async function revealOffering(player, off, land) {
   const O = OFFER[off];
   if (off === 'spiders') {
-    log(`Spiders pour out onto ${nm(player)}!`, 'bad');
+    log(_T`Spiders pour out onto ${nm(player)}!`, 'bad');
     if (typeof hitFlash === 'function') hitFlash(player.r, player.c, 'spiders');
     if (!HEADLESS && !S.sim) await sleep(900);
     for (const l of ['larm', 'rarm', 'rleg', 'lleg']) if (player.alive && player.hp[l] > 0) await hurt(player, l, 1, {
       type: 'env'
-    }, 'Spiders bite', {
+    }, _T('Spiders bite'), {
       noShield: 1,
       noCards: 1
     });
@@ -607,10 +607,10 @@ async function revealOffering(player, off, land) {
   if (off === 'curse') {
     const r = d6(),
       l = rollLoc(player);
-    log(`A Curse Tablet! ${nm(player)} rolls ${r}.`, 'bad');
+    log(_T`A Curse Tablet! ${nm(player)} rolls ${r}.`, 'bad');
     await hurt(player, l, r, {
       type: 'env'
-    }, 'The curse strikes', {
+    }, _T('The curse strikes'), {
       noShield: 1,
       noCards: 1
     });
@@ -619,10 +619,10 @@ async function revealOffering(player, off, land) {
   if (off === 'cf1' || off === 'cf2') {
     const v = off === 'cf1' ? 1 : 2;
     if (weak(player, 'noBlessCF')) {
-      log(`The crowd cheers, but ${nm(player)} gains no CF from Blessings.`);
+      log(_T`The crowd cheers, but ${nm(player)} gains no CF from Blessings.`);
     } else {
       player.cf += v;
-      log(`${nm(player)} gains ${v} CF from the crowd.`);
+      log(_T`${nm(player)} gains ${v} CF from the crowd.`);
     }
     return;
   }
@@ -634,7 +634,7 @@ async function revealOffering(player, off, land) {
     c = player.c;
   }
   placeFloor('offer', off, r, c);
-  log(`An offering spills onto ${tl(r, c)}: <b>${O.n}</b> (${O.s}).`);
+  log(_T`An offering spills onto ${tl(r, c)}: <b>${O.n}</b> (${O.s}).`);
   await pickupAt(r, c);
 }
 /* breakPot — breaks one pot (or all) on a pillar: each gives +2 coin, +1 CF (none for noBlessCF) and reveals its offering. TWEAK: the 2 coin and 1 CF. */
@@ -643,9 +643,9 @@ async function breakPot(pillar, player, land, all = false) {
   for (let i = 0; i < n && pillar.pots.length; i++) {
     const off = pillar.pots.pop();
     player.coin += 2;
-    coinLog(player, 2, 'breaking pots');
+    coinLog(player, 2, _T('breaking pots'));
     const cfGain = weak(player, 'noBlessCF') ? 0 : 1;
-    cfWhy('breaking pots');
+    cfWhy(_T('breaking pots'));
     player.cf += cfGain;
     stat(player, 'pots');
     fx(pillar.r, pillar.c, '', '', {
@@ -656,7 +656,7 @@ async function breakPot(pillar, player, land, all = false) {
     crowdReact && crowdReact('pot', {
       p: player
     });
-    log(`${nm(player)} shatters a Blessings pot on ${tl(pillar.r, pillar.c)}: +2 coin${cfGain ? ', +1 CF' : ''}.${pillar.pots.length ? ` ${pillar.pots.length} more pot${pillar.pots.length > 1 ? 's' : ''} still chained above.` : ''}`);
+    log(_T`${nm(player)} shatters a Blessings pot on ${tl(pillar.r, pillar.c)}: +2 coin${cfGain ? ', +1 CF' : ''}.${pillar.pots.length ? _T` ${pillar.pots.length} more pot${pillar.pots.length > 1 ? 's' : ''} still chained above.` : ''}`);
     await revealOffering(player, off, land);
     if (!player.alive) break;
   }
@@ -674,19 +674,19 @@ async function askCard(player, keys, title, text, cpuWants) {
   if (!it) return null;
   let use;
   if (player.cpu) use = (player.diff === 'hard' || rand() < (player.diff === 'easy' ? .5 : .75)) && cpuWants(it.key);else use = await modal(title, `<p>${text}</p>`, [{
-    label: `Play ${CARDS[it.key].n}`,
+    label: _T`Play ${CARDS[it.key].n}`,
     sub: CARDS[it.key].d,
     value: 1,
     primary: 1,
     card: 'c:' + it.key
   }, {
-    label: 'Keep it',
+    label: _T('Keep it'),
     value: 0
   }]);
   if (use) {
     player.items = player.items.filter(x => x !== it);
-    log(`${nm(player)} plays <b>${CARDS[it.key].n}</b>!`, 'big');
-    cardShow('c:' + it.key, player, '📣 Declared');
+    log(_T`${nm(player)} plays <b>${CARDS[it.key].n}</b>!`, 'big');
+    cardShow('c:' + it.key, player, _T('📣 Declared'));
     return it.key;
   }
   return null;
@@ -724,48 +724,48 @@ async function hurt(victim, location, damage, source, prefix, {
       const ab = Math.min(rem, w.absorb);
       let use;
       if (victim.cpu) use = victim.diff === 'hard' ? ab >= 2 || victim.ap[location] + victim.hp[location] - rem <= 1 || w.usesLeft >= 3 : rand() < (victim.diff === 'easy' ? .8 : .95); // hard lanistae save uses on chip damage when they can afford to
-      else use = await modal(`Raise the ${w.n}?`, `<p>${esc(prefix || 'An attack')} brings <b>${rem} damage</b> at your ${LOCN[location].toLowerCase()}. The ${w.n} can absorb <b>${ab}</b> of it; the rest falls on armor, then flesh.</p>${typeof hint === 'function' ? hint('shield') : ''}`, [{
-        label: `Absorb ${ab} damage`,
-        sub: `${w.usesLeft - 1 === 0 ? 'this use BREAKS the shield' : `${w.usesLeft - 1} use${w.usesLeft - 1 === 1 ? '' : 's'} left after`}`,
+      else use = await modal(_T`Raise the ${w.n}?`, `<p>${_T`${esc(prefix || _T('An attack'))} brings <b>${rem} damage</b> at your ${LOCN[location].toLowerCase()}. The ${w.n} can absorb <b>${ab}</b> of it; the rest falls on armor, then flesh.`}</p>${typeof hint === 'function' ? hint('shield') : ''}`, [{
+        label: _T`Absorb ${ab} damage`,
+        sub: `${w.usesLeft - 1 === 0 ? _T('this use BREAKS the shield') : _T`${w.usesLeft - 1} use${w.usesLeft - 1 === 1 ? '' : 's'} left after`}`,
         value: 1,
         primary: 1,
         card: 'w:' + w.key
       }, {
-        label: 'Save the shield',
-        sub: 'take the full hit on armor and flesh',
+        label: _T('Save the shield'),
+        sub: _T('take the full hit on armor and flesh'),
         value: 0
       }]);
       if (use) {
         rem -= ab;
         w.usesLeft--;
-        parts.push(`${w.n} absorbs ${ab}`);
-        fx(victim.r, victim.c, `blocked ${ab}`, '#9fd3ff');
+        parts.push(_T`${w.n} absorbs ${ab}`);
+        fx(victim.r, victim.c, _T`blocked ${ab}`, '#9fd3ff');
         if (w.usesLeft <= 0) {
           victim['w' + sh.a] = null;
-          parts.push(`${w.n} breaks`);
+          parts.push(_T`${w.n} breaks`);
         }
-      } else if (!victim.cpu) parts.push(`keeps the ${w.n} lowered`);
+      } else if (!victim.cpu) parts.push(_T`keeps the ${w.n} lowered`);
     }
   }
   if (rem > 0 && source.punch && victim.ap[location] > 0 && !source.cestus) {
-    parts.push('the fist glances off armor');
+    parts.push(_T('the fist glances off armor'));
     rem = 0;
   }
   if (rem > 0 && victim.ap[location] > 0 && !direct) {
     const t = Math.min(rem, victim.ap[location]);
     victim.ap[location] -= t;
     rem -= t;
-    parts.push(`−${t} AP`);
-    fx(victim.r, victim.c, `−${t} AP`, '#c9d2da');
+    parts.push(_T`−${t} AP`);
+    fx(victim.r, victim.c, _T`−${t} AP`, '#c9d2da');
     if (victim.ap[location] === 0) {
       stripLoc(victim, location);
-      parts.push('armor destroyed');
+      parts.push(_T('armor destroyed'));
     }
   }
   if (rem > 0) {
     victim.hp[location] -= rem;
     stat(victim, 'dmgTaken', rem);
-    parts.push(`−${rem} HP`);
+    parts.push(_T`−${rem} HP`);
     fx(victim.r, victim.c, `−${rem}`, '#ff5a44', {
       big: rem >= 4
     });
@@ -776,15 +776,15 @@ async function hurt(victim, location, damage, source, prefix, {
       log(`${prefix} → ${nm(victim)} ${LOCN[location]}: ${parts.join(', ')}`, 'bad');
       parts.length = 0;
       const need = 1 - victim.hp[location];
-      const saved = await askCard(victim, need <= 2 ? ['elixir2', 'elixir4'] : ['elixir4', 'elixir2'], `${LOCN[location]} at ${victim.hp[location]} HP`, `${victim.name}'s ${LOCN[location].toLowerCase()} has dropped to ${victim.hp[location]} HP${lethal ? ' and this would eliminate them' : ' and the limb will be severed'}. Play a Health Elixir to restore it to 1 HP and distribute the rest?`, k => lethal || victim.diff === 'hard' || pers(victim).survival > 65 && CARDS[k].hp >= need);
+      const saved = await askCard(victim, need <= 2 ? ['elixir2', 'elixir4'] : ['elixir4', 'elixir2'], _T`${LOCN[location]} at ${victim.hp[location]} HP`, _T`${victim.name}'s ${LOCN[location].toLowerCase()} has dropped to ${victim.hp[location]} HP${lethal ? _T(' and this would eliminate them') : _T(' and the limb will be severed')}. Play a Health Elixir to restore it to 1 HP and distribute the rest?`, k => lethal || victim.diff === 'hard' || pers(victim).survival > 65 && CARDS[k].hp >= need);
       if (saved && CARDS[saved].hp >= need) {
         victim.hp[location] = 1;
         const rest = Math.max(0, CARDS[saved].hp - need);
-        if (rest) await distributeHP(victim, rest, 'the rest of the Health Elixir');
-        parts.push('saved by a Health Elixir');
+        if (rest) await distributeHP(victim, rest, _T('the rest of the Health Elixir'));
+        parts.push(_T('saved by a Health Elixir'));
       } else if (saved) {
         victim.hp[location] += CARDS[saved].hp;
-        parts.push('the Health Elixir is not enough');
+        parts.push(_T('the Health Elixir is not enough'));
       }
     }
     if (victim.hp[location] <= 0) {
@@ -792,7 +792,7 @@ async function hurt(victim, location, damage, source, prefix, {
         const a = location === 'rarm' ? 'R' : 'L';
         const w = victim['w' + a];
         if (w) {
-          parts.push(`drops ${w.n}`);
+          parts.push(_T`drops ${w.n}`);
           dropWeapon(victim, w);
         }
         victim['w' + a] = null;
@@ -802,7 +802,7 @@ async function hurt(victim, location, damage, source, prefix, {
           from: victim.id,
           n: `Severed Arm (${victim.name})`
         });
-        parts.push(`<b>${LOCN[location]} severed</b>`);
+        parts.push(_T`<b>${LOCN[location]} severed</b>`);
         if (victim.carrying) {
           victim.carrying = false;
           S.chest = {
@@ -811,7 +811,7 @@ async function hurt(victim, location, damage, source, prefix, {
             c: victim.c,
             held: null
           };
-          parts.push('drops the chest');
+          parts.push(_T('drops the chest'));
         }
         if (source.type === 'player') stat(source.p, 'sever');
         if (source.type === 'npc' && source.owner) stat(source.owner, 'sever');
@@ -822,7 +822,7 @@ async function hurt(victim, location, damage, source, prefix, {
           from: victim.id,
           n: `Severed Leg (${victim.name})`
         });
-        parts.push(`<b>${LOCN[location]} severed</b>`);
+        parts.push(_T`<b>${LOCN[location]} severed</b>`);
         victim.mv = Math.min(victim.mv, mvMax(victim));
         if (source.type === 'player') stat(source.p, 'sever');
       }
@@ -839,10 +839,10 @@ async function hurt(victim, location, damage, source, prefix, {
 /* addTrophy — gives a killer the trophy's coin and CF and records it in player.trophies. */
 function addTrophy(player, name, kind, coin, cf, pk = 'npc') {
   player.coin += coin;
-  coinLog(player, coin, pk === 'player' ? 'gladiator trophies' : 'beast trophies');
-  cfWhy(pk === 'player' ? 'gladiator trophies' : 'beast trophies');
+  coinLog(player, coin, pk === 'player' ? _T('gladiator trophies') : _T('beast trophies'));
+  cfWhy(pk === 'player' ? _T('gladiator trophies') : _T('beast trophies'));
   player.cf += cf;
-  fx(player.r, player.c, `+${cf} CF`, '#f0cf7d', {
+  fx(player.r, player.c, _T`+${cf} CF`, '#f0cf7d', {
     big: 1
   });
   player.trophies.push({
@@ -921,17 +921,17 @@ function eliminate(victim, source) {
     if (n.tamedBy === victim.id) {
       if (n.t === 'zora') {
         n.alive = false;
-        log(`Zora flies off with his fallen master.`);
+        log(_T`Zora flies off with his fallen master.`);
       } else {
         n.tamedBy = null;
-        log(`${nm(n)} is wild again.`);
+        log(_T`${nm(n)} is wild again.`);
       }
     }
   }
   if (victim.eagle) {
     victim.eagle = 0;
     placeFloor('eagle', 'eagle', victim.r, victim.c);
-    log('The Golden Eagle falls to the sand.');
+    log(_T('The Golden Eagle falls to the sand.'));
   }
   if (victim.carrying) {
     victim.carrying = false;
@@ -941,7 +941,7 @@ function eliminate(victim, source) {
   }
   for (const k of [...S.truces]) if (k.split('-').includes(String(victim.id))) S.truces.delete(k);
   const killer = source.type === 'player' ? source.p : source.type === 'npc' && source.n && source.n.tamedBy != null ? S.players[source.n.tamedBy] : null;
-  if (killer && killer !== victim) for (const r of S.players) if (r !== killer && r !== victim && r.alive && relOf(r, victim) >= 25) bumpRel(r, killer, -30, `killed ${victim.name}`);
+  if (killer && killer !== victim) for (const r of S.players) if (r !== killer && r !== victim && r.alive && relOf(r, victim) >= 25) bumpRel(r, killer, -30, _T`killed ${victim.name}`);
   (S.elimOrder || (S.elimOrder = [])).push({
     id: victim.id,
     turn: S.turnNo,
@@ -950,7 +950,7 @@ function eliminate(victim, source) {
     by: killer ? killer.name : source.type === 'npc' && source.n ? source.n.name : source.type === 'retire' ? 'retired' : source.type === 'env' ? 'the arena' : null
   });
   if (source.type === 'player' && source.p && source.p !== victim) {
-    addTrophy(source.p, victim.name, 'Gladiator (' + CLASSES[victim.cls].name + ')', 0, 10, 'player');
+    addTrophy(source.p, victim.name, _T('Gladiator (') + CLASSES[victim.cls].name + ')', 0, 10, 'player');
     stat(source.p, 'kill_player');
     if (source.w) {
       if (source.w.limb) stat(source.p, 'kill_limb');
@@ -958,24 +958,24 @@ function eliminate(victim, source) {
     }
     think(source.p, pickOne(QUOTES.kill), 'win');
     if (!source.p.cpu) (S.killedClasses || (S.killedClasses = new Set())).add(victim.cls);
-    log(`${nm(victim)} is eliminated by ${nm(source.p)} (+10 CF, trophy).`, 'big');
+    log(_T`${nm(victim)} is eliminated by ${nm(source.p)} (+10 CF, trophy).`, 'big');
   } else if (source.type === 'npc') {
     if (source.n.tamedBy != null && S.players[source.n.tamedBy] && S.players[source.n.tamedBy] !== victim) {
       const o = S.players[source.n.tamedBy];
-      addTrophy(o, victim.name, 'Gladiator (by ' + source.n.name + ')', 0, 10, 'player');
+      addTrophy(o, victim.name, _T('Gladiator (by ') + source.n.name + ')', 0, 10, 'player');
       stat(o, 'kill_player');
-      log(`${nm(victim)} is slain by ${nm(source.n)}, tamed by ${nm(o)} (+10 CF, trophy).`, 'big');
+      log(_T`${nm(victim)} is slain by ${nm(source.n)}, tamed by ${nm(o)} (+10 CF, trophy).`, 'big');
     } else {
-      cfWhy('slain by a beast');
+      cfWhy(_T('slain by a beast'));
       victim.cf -= 5;
       if (source.n.t === 'tholo') {
         source.n.hoard += pl.coin;
         pl.coin = 0;
       }
-      log(`${nm(victim)} is slain by ${nm(source.n)} (−5 CF).`, 'big');
+      log(_T`${nm(victim)} is slain by ${nm(source.n)} (−5 CF).`, 'big');
     }
-  } else log(`${nm(victim)} is eliminated.`, 'big');
-  if (S.exhib) log(`${nm(victim)} is <b>pulled from the sand</b> — exhibition rules: the doctors call it before anyone dies.`, 'thought');
+  } else log(_T`${nm(victim)} is eliminated.`, 'big');
+  if (S.exhib) log(_T`${nm(victim)} is <b>pulled from the sand</b> — exhibition rules: the doctors call it before anyone dies.`, 'thought');
   crowdReact('elim', {
     v: victim,
     killer: killer || (source.type === 'npc' ? source.n : null)
@@ -992,7 +992,7 @@ function npcStats(npc) {
       ap: Math.max(1, (T.states ? T.states[0][1] : T.ap) + (npc.tamedBy != null ? 0 : dm)),
       rng: T.rng || 1,
       mv: npc.carry ? Math.floor(mv / 2) : mv,
-      state: T.states ? 'Initial' : null
+      state: T.states ? _T('Initial') : null
     };
   }
   const s = T.states.find(s => npc.hp >= s[0]) || T.states[T.states.length - 1];
@@ -1034,29 +1034,29 @@ function hurtNPC(npc, damage, player, prefix, weapon = null, byNpc = null) {
       stat(player, 'kill_' + npc.t);
       if (npc.tamedBy != null && npc.tamedBy !== player.id) stat(player, 'kill_tamed');
       if (weapon && weapon.limb) stat(player, 'kill_limb');
-      log(`${prefix} → ${nm(npc)} falls! ${nm(player)} earns ${T.coin + npc.hoard} coin, ${T.cf} CF and a trophy.`, 'big');
-    } else log(`${prefix} → ${nm(npc)} falls.`, 'big');
+      log(_T`${prefix} → ${nm(npc)} falls! ${nm(player)} earns ${T.coin + npc.hoard} coin, ${T.cf} CF and a trophy.`, 'big');
+    } else log(_T`${prefix} → ${nm(npc)} falls.`, 'big');
     if (player && player.cls && npc.aggro != null && npc.aggro !== player.id) {
       const saved = S.players[npc.aggro];
-      if (saved && saved.alive) bumpRel(saved, player, 12, `slew ${npc.name}`);
+      if (saved && saved.alive) bumpRel(saved, player, 12, _T`slew ${npc.name}`);
     }
     if (npc.t === 'tholo' && S.chest && S.chest.held === npc.id) {
       S.chest.held = null;
       S.chest.r = npc.r;
       S.chest.c = npc.c;
-      log(`Tholo drops the Arena Chest at ${tl(npc.r, npc.c)}.`);
+      log(_T`Tholo drops the Arena Chest at ${tl(npc.r, npc.c)}.`);
     }
     if (npc.t === 'commodus') S.commodusDead = 1;
     if (npc.t === 'lion') S.lionDead = 1;
     gauntletChain();
   } else {
     const after = npcStats(npc).state;
-    log(`${prefix} → ${nm(npc)} −${damage} HP (${npc.hp}/${NPCT[npc.t].hp} left).${after && after !== before ? ` <b>${npc.name} is now ${after}!</b>` : ''}`);
-    if (after && after !== before && player && player.cls) think(player, after === 'Raged' ? pickOne(['It is only getting angrier.', 'Careful, it is raging now.']) : pickOne(['It staggers. Finish it!', 'Fazed! Now is the moment.']), 'think');
+    log(_T`${prefix} → ${nm(npc)} −${damage} HP (${npc.hp}/${NPCT[npc.t].hp} left).${after && after !== before ? _T` <b>${npc.name} is now ${after}!</b>` : ''}`);
+    if (after && after !== before && player && player.cls) think(player, after === 'Raged' ? pickOne([_T('It is only getting angrier.'), _T('Careful, it is raging now.')]) : pickOne([_T('It staggers. Finish it!'), _T('Fazed! Now is the moment.')]), 'think');
     if (player && player.cls) {
       if (npc.tamedBy === player.id) {
         npc.tamedBy = null;
-        log(`${nm(player)} attacked their own tamed ${npc.name}. The bond breaks.`, 'bad');
+        log(_T`${nm(player)} attacked their own tamed ${npc.name}. The bond breaks.`, 'bad');
       }
       /* v0.54: a tamed beast's attack does NOT steal aggro — only a player's own blow does */
       if (npc.tamedBy == null && !byNpc) setAggro(npc, player, 'attack');
@@ -1071,21 +1071,21 @@ function gauntletChain() {
   const dead = target => S.npcs.filter(n => n.t === target && n.base).every(n => !n.alive);
   if (!S.gSnake && dead('snake')) {
     S.gSnake = 1;
-    log('Both snakes are dead. The lions are released!', 'big');
-    spawnNPC('lion', 'Leo');
-    spawnNPC('lion', 'Leaena');
+    log(_T('Both snakes are dead. The lions are released!'), 'big');
+    spawnNPC('lion', _T('Leo'));
+    spawnNPC('lion', _T('Leaena'));
   }
   if (!S.gWolf && dead('wolf')) {
     S.gWolf = 1;
-    if (S.noCommodus) log('Both wolves are dead. Commodus has been removed from this Gauntlet.', 'big');else {
-      log('Both wolves are dead. Commodus enters!', 'big');
+    if (S.noCommodus) log(_T('Both wolves are dead. Commodus has been removed from this Gauntlet.'), 'big');else {
+      log(_T('Both wolves are dead. Commodus enters!'), 'big');
       S.pendingCommodus = 1;
     }
   }
   if (!S.gBear && dead('bear')) {
     S.gBear = 1;
-    log('Both bears are dead. Tholo is unleashed!', 'big');
-    spawnNPC('tholo', 'Tholo', [6, 6]);
+    log(_T('Both bears are dead. Tholo is unleashed!'), 'big');
+    spawnNPC('tholo', _T('Tholo'), [6, 6]);
   }
 }
 
@@ -1122,7 +1122,7 @@ const UNIQUE_SPAWN = {
   Leaena: 1
 };
 /* spawnKey — the once-per-event key (Tholo, Commodus, Leo, Leaena) for a spawn, or null if it may appear any number of times. */
-const spawnKey = (target, name) => target === 'tholo' ? 'Tholo' : target === 'commodus' ? 'Commodus' : target === 'lion' && UNIQUE_SPAWN[name] ? name : null;
+const spawnKey = (target, name) => target === 'tholo' ? _T('Tholo') : target === 'commodus' ? _T('Commodus') : target === 'lion' && UNIQUE_SPAWN[name] ? name : null;
 /* bossSpent — true if that unique beast has already entered this event. */
 function bossSpent(key) {
   return !!(S && S.spawnedOnce && S.spawnedOnce[key]) || (S && S.npcs || []).some(n => spawnKey(n.t, n.key) === key);
@@ -1133,7 +1133,7 @@ function spawnNPC(target, name, at, extra = {}) {
     const k9 = extra.tamedBy == null ? spawnKey(target, name) : null;
     if (k9) {
       if (bossSpent(k9)) {
-        log(`${k9} has already entered this event — the pens stay shut.`);
+        log(_T`${k9} has already entered this event — the pens stay shut.`);
         return null;
       }
       (S.spawnedOnce = S.spawnedOnce || {})[k9] = 1;
@@ -1157,35 +1157,35 @@ function spawnNPC(target, name, at, extra = {}) {
       n.aggroWhy = 'spawn';
     }
     S.npcs.push(n);
-    log(`${nm(n)} bursts into the arena at ${tl(n.r, n.c)}, on top of ${nm(p)}!`, 'big');
+    log(_T`${nm(n)} bursts into the arena at ${tl(n.r, n.c)}, on top of ${nm(p)}!`, 'big');
     p.hp.head -= 1;
-    log(`${nm(p)} takes 1 unavoidable damage to the head.`, 'bad');
+    log(_T`${nm(p)} takes 1 unavoidable damage to the head.`, 'bad');
     if (isDead(p)) eliminate(p, {
       type: 'npc',
       n
     });
   } else {
     S.npcs.push(n);
-    log(`${nm(n)} enters the arena at ${tl(n.r, n.c)}.`, 'big');
+    log(_T`${nm(n)} enters the arena at ${tl(n.r, n.c)}.`, 'big');
   }
   return n;
 }
 /* spawnCommodus — spawns Commodus (optional HP override) and hits every active gladiator for 2 on the location the group can best afford (highest weakest HP+AP). TWEAK: the 2 damage. */
 async function spawnCommodus(hp) {
-  const n = spawnNPC('commodus', 'Commodus', null);
+  const n = spawnNPC('commodus', _T('Commodus'), null);
   if (!n) return;
   if (hp) n.hp = hp;
   const act = activePlayers();
   /* score — the lowest HP+AP any active player has at location l (99 if severed). */
   const score = l => Math.min(...act.map(other => other.hp[l] > 0 ? other.hp[l] + other.ap[l] : 99));
   const loc = [...LOCS].sort((a, b) => score(b) - score(a))[0];
-  log(`Commodus demands tribute: 2 damage to one body location every gladiator agrees on. They settle on the <b>${LOCN[loc]}</b>.`, 'big');
+  log(_T`Commodus demands tribute: 2 damage to one body location every gladiator agrees on. They settle on the <b>${LOCN[loc]}</b>.`, 'big');
   for (const q of activePlayers()) {
     const l = q.hp[loc] > 0 ? loc : rollLoc(q);
     await hurt(q, l, 2, {
       type: 'npc',
       n
-    }, 'Commodus\' entrance', {
+    }, _T('Commodus\' entrance'), {
       noShield: 1,
       noCards: 1
     });
@@ -1194,38 +1194,38 @@ async function spawnCommodus(hp) {
 /* raiseSpikes — raises the four floor spikes at SPIKE_SPOTS (removing any pillar there) and deals 2 damage to whoever stands on them. TWEAK: the 2 damage. */
 async function raiseSpikes() {
   if (S.spikes.length) {
-    log('The floor spikes have already risen.');
+    log(_T('The floor spikes have already risen.'));
     return;
   }
   S.spikes = SPIKE_SPOTS.map(([r, c]) => ({
     r,
     c
   }));
-  log('Floor spikes rise from the sand at D, I, 4 and 9!', 'big');
+  log(_T('Floor spikes rise from the sand at D, I, 4 and 9!'), 'big');
   for (const s of S.spikes) {
     const pl = pillarAt(s.r, s.c);
     if (pl) S.pillars = S.pillars.filter(x => x !== pl);
     const p = playerAt(s.r, s.c);
     if (p) await hurt(p, rollLoc(p), 2, {
       type: 'env'
-    }, 'Floor spike');
+    }, _T('Floor spike'));
     const n = npcAt(s.r, s.c);
-    if (n) hurtNPC(n, 2, null, 'Floor spike');
+    if (n) hurtNPC(n, 2, null, _T('Floor spike'));
   }
 }
 /* spawnZora — lands the player's tamed eagle Zora on the first free adjacent tile; false if there is no room. */
 function spawnZora(player) {
   const free = adjTiles(player).filter(([r, c]) => !pillarAt(r, c) && !unitAt(r, c));
   if (!free.length) {
-    log('There is no room for Zora to land.');
+    log(_T('There is no room for Zora to land.'));
     return false;
   }
   const [r, c] = free[0];
-  const z = mkNPC('zora', 'Zora', r, c, {
+  const z = mkNPC('zora', _T('Zora'), r, c, {
     tamedBy: player.id
   });
   S.npcs.push(z);
-  log(`${nm(player)} releases <b>Zora</b> the eagle at ${tl(r, c)}.`, 'big');
+  log(_T`${nm(player)} releases <b>Zora</b> the eagle at ${tl(r, c)}.`, 'big');
   return true;
 }
 
@@ -1319,12 +1319,12 @@ async function marketRoll(player, kind, lv, {
   // returns key
   let slot;
   if (player.mchoice && !free) {
-    slot = player.cpu ? [1, 2, 3].sort((a, b) => itemValue(kind, S.market[kind][lv].slots[b - 1]) - itemValue(kind, S.market[kind][lv].slots[a - 1]))[0] : await modal('Choose', '<p>Pick the slot you want.</p>', [1, 2, 3, 4].map(s => ({
-      label: `Slot ${s}: ${kName(kind, marketPeek(kind, lv, s))}`,
+    slot = player.cpu ? [1, 2, 3].sort((a, b) => itemValue(kind, S.market[kind][lv].slots[b - 1]) - itemValue(kind, S.market[kind][lv].slots[a - 1]))[0] : await modal(_T('Choose'), '<p>Pick the slot you want.</p>', [1, 2, 3, 4].map(s => ({
+      label: _T`Slot ${s}: ${kName(kind, marketPeek(kind, lv, s))}`,
       value: s,
       card: kind === 'w' && s <= 3 && S.market.w[lv].slots[s - 1] ? 'w:' + S.market.w[lv].slots[s - 1] : null
     })));
-    log(`${nm(player)} uses Market Choice for slot ${slot}.`);
+    log(_T`${nm(player)} uses Market Choice for slot ${slot}.`);
     return marketTake(kind, lv, slot);
   }
   /* nearest — for an empty slot, returns the closest slot that still has something; ties are chosen by the buyer (CPU takes the better item). */
@@ -1338,29 +1338,29 @@ async function marketRoll(player, kind, lv, {
     const dmin = Math.min(...cands.map(s => Math.abs(s - slot)));
     const near = cands.filter(s => Math.abs(s - slot) === dmin);
     if (near.length === 1) {
-      log(`Slot ${slot} is empty; the closest is slot ${near[0]}.`);
+      log(_T`Slot ${slot} is empty; the closest is slot ${near[0]}.`);
       return near[0];
     }
     let pick;
-    if (player.cpu) pick = near.sort((a, b) => itemValue(kind, b <= 3 ? m.slots[b - 1] : null) - itemValue(kind, a <= 3 ? m.slots[a - 1] : null))[0];else pick = await modal('Empty market slot', `<p>Slot ${slot} is empty. Slots ${near.join(' and ')} are equally close: choose one.</p>`, near.map(s => ({
-      label: `Slot ${s}: ${kName(kind, marketPeek(kind, lv, s))}`,
+    if (player.cpu) pick = near.sort((a, b) => itemValue(kind, b <= 3 ? m.slots[b - 1] : null) - itemValue(kind, a <= 3 ? m.slots[a - 1] : null))[0];else pick = await modal(_T('Empty market slot'), `<p>${_T`Slot ${slot} is empty. Slots ${near.join(' and ')} are equally close: choose one.`}</p>`, near.map(s => ({
+      label: _T`Slot ${s}: ${kName(kind, marketPeek(kind, lv, s))}`,
       value: s,
       card: kind === 'w' && s <= 3 ? 'w:' + m.slots[s - 1] : null
     })));
-    log(`Slot ${slot} is empty; ${nm(player)} takes from slot ${pick}.`);
+    log(_T`Slot ${slot} is empty; ${nm(player)} takes from slot ${pick}.`);
     return pick || near[0];
   };
   for (;;) {
     slot = 1 + rnd(4);
     const peek = marketPeek(kind, lv, slot);
-    log(`${nm(player)} rolls the market die: <b>${slot}</b> (${kName(kind, peek)}).`);
+    log(_T`${nm(player)} rolls the market die: <b>${slot}</b> (${kName(kind, peek)}).`);
     if (peek === '(empty)') {
       slot = await nearest(slot);
     }
     if (free || player.coin < 2) return marketTake(kind, lv, slot);
     let reroll = false;
-    if (player.cpu) reroll = player.diff === 'hard' && itemValue(kind, peek === 'face-down' ? null : S.market[kind][lv].slots[slot - 1]) < lv * 2 && player.coin >= 2 && rand() < .5;else reroll = await modal('Market die', `<p>The die shows <b>${slot}</b>: ${kName(kind, peek)}. Take it, or re-roll for 2 coin (you have ${player.coin}).</p>`, [{
-      label: 'Take it',
+    if (player.cpu) reroll = player.diff === 'hard' && itemValue(kind, peek === 'face-down' ? null : S.market[kind][lv].slots[slot - 1]) < lv * 2 && player.coin >= 2 && rand() < .5;else reroll = await modal(_T('Market die'), `<p>${_T`The die shows <b>${slot}</b>: ${kName(kind, peek)}. Take it, or re-roll for 2 coin (you have ${player.coin}).`}</p>`, [{
+      label: _T('Take it'),
       value: 0,
       primary: 1
     }, {
@@ -1371,7 +1371,7 @@ async function marketRoll(player, kind, lv, {
     if (!reroll) return marketTake(kind, lv, slot);
     player.coin -= 2;
     coinLog(player, -2, 'market re-rolls');
-    log(`${nm(player)} pays 2 coin to re-roll.`);
+    log(_T`${nm(player)} pays 2 coin to re-roll.`);
   }
 }
 /* itemValue — CPU worth of a market item: unknown 2.5, weapons by wScore, armor = AP +1 bonus +1.5 pair +2 greaves +1 cestus. TWEAK: these weights. */
@@ -1389,57 +1389,57 @@ const wScore = weapon => !weapon ? 0 : weapon.lyre ? S && S.evKey === 'orpheus' 
 /* gainWeapon — puts a weapon in a free hand; with both hands full a CPU replaces its worst if the new one scores higher, a human chooses. Replaced or unholdable weapons drop at the player's feet. */
 async function gainWeapon(player, key, fromWeapon) {
   if (!key && !fromWeapon) {
-    log('The market is empty at that level.');
+    log(_T('The market is empty at that level.'));
     return;
   }
   const w = fromWeapon || mkW(key);
   const arms = armsAttached(player);
   if (!arms.length) {
-    log(`${nm(player)} has no arms to hold the ${w.n}.`);
+    log(_T`${nm(player)} has no arms to hold the ${w.n}.`);
     dropWeapon(player, w);
     return;
   }
   const free = arms.filter(a => !player['w' + a]);
   if (free.length) {
     player['w' + free[0]] = w;
-    log(`${nm(player)} equips <b>${w.n}</b> (${wStats(w)}) in the ${free[0] === 'R' ? 'right' : 'left'} hand.`);
+    log(_T`${nm(player)} equips <b>${w.n}</b> (${wStats(w)}) in the ${free[0] === 'R' ? _T('right') : _T('left')} hand.`);
     return;
   }
   let choice;
   if (player.cpu) {
     const worst = [...arms].sort((a, b) => wScore(player['w' + a]) - wScore(player['w' + b]))[0];
     choice = wScore(w) > wScore(player['w' + worst]) ? worst : 'drop';
-  } else choice = await modal(`New weapon: ${w.n}`, `<p>${wStats(w)}. Both hands are full. Swap one out (it drops at your feet), or leave the new one.</p>`, [...arms.map(a => ({
-    label: `Replace ${a === 'R' ? 'right' : 'left'}: ${player['w' + a].n}`,
+  } else choice = await modal(_T`New weapon: ${w.n}`, `<p>${_T`${wStats(w)}. Both hands are full. Swap one out (it drops at your feet), or leave the new one.`}</p>`, [...arms.map(a => ({
+    label: _T`Replace ${a === 'R' ? _T('right') : _T('left')}: ${player['w' + a].n}`,
     sub: wStats(player['w' + a]),
     value: a
   })), {
-    label: 'Leave it',
+    label: _T('Leave it'),
     value: 'drop'
   }]);
   if (choice === 'drop' || !choice) {
     dropWeapon(player, w);
-    log(`${nm(player)} leaves the ${w.n} at their feet.`);
+    log(_T`${nm(player)} leaves the ${w.n} at their feet.`);
     return;
   }
-  log(`${nm(player)} swaps ${player['w' + choice].n} for <b>${w.n}</b>.`);
+  log(_T`${nm(player)} swaps ${player['w' + choice].n} for <b>${w.n}</b>.`);
   dropWeapon(player, player['w' + choice]);
   player['w' + choice] = w;
 }
 /* wStats — short stat line for a weapon (power, range, ammo, shield uses, throws, specials). */
 function wStats(weapon) {
   if (!weapon) return '—';
-  if (weapon.lyre) return 'control 1 NPC each Resolve';
-  if (weapon.noAtk) return 'occupies this slot';
-  if (weapon.shield && !weapon.p) return `absorb ${weapon.absorb} · ${weapon.usesLeft} use${weapon.usesLeft === 1 ? '' : 's'} left · no attack`;
+  if (weapon.lyre) return _T('control 1 NPC each Resolve');
+  if (weapon.noAtk) return _T('occupies this slot');
+  if (weapon.shield && !weapon.p) return _T`absorb ${weapon.absorb} · ${weapon.usesLeft} use${weapon.usesLeft === 1 ? '' : 's'} left · no attack`;
   let s = `P${weapon.p} · R${weapon.r}`;
-  if (weapon.ammo != null) s += ` · ammo ${weapon.ammoLeft}`;
-  if (weapon.shield) s += ` · absorb ${weapon.absorb} · ${weapon.usesLeft} uses`;
-  if (weapon.throw) s += ` · throw P${weapon.throw.p} R${weapon.throw.r} ×${weapon.throwsLeft}`;
-  if (weapon.atkUses) s += ` · ${weapon.atkLeft} use${weapon.atkLeft === 1 ? '' : 's'} left`;
-  if (weapon.both) s += ' · both attacks';
-  if (weapon.soul) s += ` · soul steal ${weapon.soul}`;
-  if (weapon.cfw) s += ` · +${weapon.cfw} CF per hit`;
+  if (weapon.ammo != null) s += _T` · ammo ${weapon.ammoLeft}`;
+  if (weapon.shield) s += _T` · absorb ${weapon.absorb} · ${weapon.usesLeft} uses`;
+  if (weapon.throw) s += _T` · throw P${weapon.throw.p} R${weapon.throw.r} ×${weapon.throwsLeft}`;
+  if (weapon.atkUses) s += _T` · ${weapon.atkLeft} use${weapon.atkLeft === 1 ? '' : 's'} left`;
+  if (weapon.both) s += _T(' · both attacks');
+  if (weapon.soul) s += _T` · soul steal ${weapon.soul}`;
+  if (weapon.cfw) s += _T` · +${weapon.cfw} CF per hit`;
   return s;
 }
 /* purchaseCost — coin price at a market level: COST[lv] x S.priceMul, minus the player's discount, never below 0. */
@@ -1452,11 +1452,11 @@ async function chooseMarket(player, kind, lv) {
   const m = S.market[kind][lv];
   const pool = [...m.slots.filter(Boolean), ...m.deck];
   if (!pool.length) {
-    log(`No level ${lv} ${kind === 'w' ? 'weapons' : 'armor'} remain.`);
+    log(_T`No level ${lv} ${kind === 'w' ? _T('weapons') : _T('armor')} remain.`);
     return;
   }
   let k;
-  if (player.cpu) k = pool.sort((a, b) => itemValue(kind, b) - itemValue(kind, a))[0];else k = await modal(`Level ${lv} ${kind === 'w' ? 'weapon' : 'armor'}`, '<p>Choose any remaining piece.</p>', pool.map(x => ({
+  if (player.cpu) k = pool.sort((a, b) => itemValue(kind, b) - itemValue(kind, a))[0];else k = await modal(_T`Level ${lv} ${kind === 'w' ? _T('weapon') : _T('armor')}`, '<p>Choose any remaining piece.</p>', pool.map(x => ({
     label: kind === 'w' ? W[x].n : ARM[x].n,
     sub: kind === 'w' ? wStats(mkW(x)) : armorDesc(x),
     value: x,

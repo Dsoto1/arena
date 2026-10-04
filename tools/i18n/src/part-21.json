@@ -1,0 +1,2286 @@
+[
+ {
+  "k": "{0}<b>{1}</b><small>{2} · {3}</small><small>{4} {5} · ⭐ {6} CF</small>{7}",
+  "w": "116-onl79.js:36"
+ },
+ {
+  "k": "<span class=\"badge gold\">⚔ Active</span>",
+  "w": "116-onl79.js:36"
+ },
+ {
+  "k": "＋<b>New gladiator</b><small>starts as a Tiro</small>",
+  "w": "116-onl79.js:37"
+ },
+ {
+  "k": "{0}/{1} living · the active one fights",
+  "w": "116-onl79.js:43"
+ },
+ {
+  "k": "⏳ In a game ({0}) — changes wait until it is over.",
+  "w": "116-onl79.js:45"
+ },
+ {
+  "k": "The board token",
+  "w": "116-onl79.js:47"
+ },
+ {
+  "k": "⚔ Make active",
+  "w": "116-onl79.js:48"
+ },
+ {
+  "k": "<span class=\"badge gold\">⚔ Active gladiator</span>",
+  "w": "116-onl79.js:48"
+ },
+ {
+  "k": "switch freely between events — ratings, rank and bought gear stay",
+  "w": "116-onl79.js:51"
+ },
+ {
+  "k": "Recruit kit: {0}",
+  "w": "116-onl79.js:53"
+ },
+ {
+  "k": "Look",
+  "w": "116-onl79.js:54"
+ },
+ {
+  "k": "Headgear",
+  "w": "116-onl79.js:56"
+ },
+ {
+  "k": "Hairstyle",
+  "w": "116-onl79.js:56"
+ },
+ {
+  "k": "Eyes",
+  "w": "116-onl79.js:57"
+ },
+ {
+  "k": "Marks",
+  "w": "116-onl79.js:57"
+ },
+ {
+  "k": "Garb",
+  "w": "116-onl79.js:57"
+ },
+ {
+  "k": "Build",
+  "w": "116-onl79.js:58"
+ },
+ {
+  "k": "Expression",
+  "w": "116-onl79.js:58"
+ },
+ {
+  "k": "Earring",
+  "w": "116-onl79.js:59"
+ },
+ {
+  "k": "Colour",
+  "w": "116-onl79.js:59"
+ },
+ {
+  "k": "Board token",
+  "w": "116-onl79.js:61"
+ },
+ {
+  "k": "My own token",
+  "w": "116-onl79.js:62"
+ },
+ {
+  "k": "(off: the class mini)",
+  "w": "116-onl79.js:62"
+ },
+ {
+  "k": "Body",
+  "w": "116-onl79.js:63"
+ },
+ {
+  "k": "Shield emblem",
+  "w": "116-onl79.js:63"
+ },
+ {
+  "k": "Main colour",
+  "w": "116-onl79.js:64"
+ },
+ {
+  "k": "Trim colour",
+  "w": "116-onl79.js:64"
+ },
+ {
+  "k": "Hair colour",
+  "w": "116-onl79.js:64"
+ },
+ {
+  "k": "Gear to bring",
+  "w": "116-onl79.js:66"
+ },
+ {
+  "k": "bought in the Armory",
+  "w": "116-onl79.js:66"
+ },
+ {
+  "k": "<span class=\"rc-sub\">Nothing bought yet — the recruit kit only.</span>",
+  "w": "116-onl79.js:67"
+ },
+ {
+  "k": "💾 Save {0}",
+  "w": "116-onl79.js:68"
+ },
+ {
+  "k": "The fallen",
+  "w": "116-onl79.js:70"
+ },
+ {
+  "k": "⚔ <b>{0}</b> is your active gladiator.",
+  "w": "116-onl79.js:79"
+ },
+ {
+  "k": "💾 <b>{0}</b> is ready.",
+  "w": "116-onl79.js:82"
+ },
+ {
+  "k": "<small>Open — a CPU if empty</small>",
+  "w": "116-onl79.js:103"
+ },
+ {
+  "k": "<b>Rules of this game</b>",
+  "w": "116-onl79.js:105"
+ },
+ {
+  "k": "Leaving the sand {0}",
+  "w": "116-onl79.js:106"
+ },
+ {
+  "k": "a CPU takes the seat",
+  "w": "116-onl79.js:106"
+ },
+ {
+  "k": "the gladiator is eliminated",
+  "w": "116-onl79.js:106"
+ },
+ {
+  "k": "Ranked: eliminated — Damnatio, the gladiator dies",
+  "w": "116-onl79.js:106"
+ },
+ {
+  "k": "The stands {0}",
+  "w": "116-onl79.js:107"
+ },
+ {
+  "k": "may act in round 1",
+  "w": "116-onl79.js:107"
+ },
+ {
+  "k": "watch only",
+  "w": "116-onl79.js:107"
+ },
+ {
+  "k": "Message the room",
+  "w": "116-onl79.js:109"
+ },
+ {
+  "k": "Send",
+  "w": "116-onl79.js:109"
+ },
+ {
+  "k": "▶ Start the match",
+  "w": "116-onl79.js:110"
+ },
+ {
+  "k": "⚔ Rejoin the match",
+  "w": "116-onl79.js:111"
+ },
+ {
+  "k": "<b>{0}</b> · {1} at {2} · {3}{4}",
+  "w": "116-onl79.js:112"
+ },
+ {
+  "k": "🎟 Your seat in the stands",
+  "w": "116-onl79.js:112"
+ },
+ {
+  "k": "⚔ Your game",
+  "w": "116-onl79.js:112"
+ },
+ {
+  "k": "{0} lanista{1} · {2}/{3} seated",
+  "w": "116-onl79.js:113"
+ },
+ {
+  "k": "🔴 Live",
+  "w": "116-onl79.js:113"
+ },
+ {
+  "k": "Close the game",
+  "w": "116-onl79.js:117"
+ },
+ {
+  "k": "🚪 You left that match — you may watch it.",
+  "w": "116-onl79.js:137"
+ },
+ {
+  "k": "🔌 A CPU holds your seat now — you may watch.",
+  "w": "116-onl79.js:137"
+ },
+ {
+  "k": "⚔ Back to the sand — fetching the arena…",
+  "w": "116-onl79.js:142"
+ },
+ {
+  "k": "⚠ Nobody answered — try Rejoin again in a moment.",
+  "w": "116-onl79.js:143"
+ },
+ {
+  "k": "🌐 Back to Online",
+  "w": "116-onl79.js:158"
+ },
+ {
+  "k": "🚪 Abandon match",
+  "w": "116-onl79.js:158"
+ },
+ {
+  "k": "🚪 Leave",
+  "w": "116-onl79.js:158"
+ },
+ {
+  "k": "Back to the Online arena",
+  "w": "116-onl79.js:159"
+ },
+ {
+  "k": "Leave the match — in Ranked your gladiator dies (Damnatio)",
+  "w": "116-onl79.js:159"
+ },
+ {
+  "k": "Leave the match",
+  "w": "116-onl79.js:159"
+ },
+ {
+  "k": "Stop watching",
+  "w": "116-onl79.js:159"
+ },
+ {
+  "k": "🚪 Abandon the match?",
+  "w": "116-onl79.js:165"
+ },
+ {
+  "k": "<b>Ranked:</b> your gladiator is eliminated and <b>dies by Damnatio</b>. This cannot be undone.",
+  "w": "116-onl79.js:165"
+ },
+ {
+  "k": "Your gladiator is eliminated — the bout is over for you.",
+  "w": "116-onl79.js:165"
+ },
+ {
+  "k": "A CPU takes your seat and fights on.",
+  "w": "116-onl79.js:165"
+ },
+ {
+  "k": "You may come back to watch, but not to fight.",
+  "w": "116-onl79.js:165"
+ },
+ {
+  "k": "Abandon",
+  "w": "116-onl79.js:166"
+ },
+ {
+  "k": "🌫 Your gladiator abandoned the sand — Damnatio.",
+  "w": "116-onl79.js:167"
+ },
+ {
+  "k": "to fight in a playlist",
+  "w": "116-onl79.js:204"
+ },
+ {
+  "k": "to join a game",
+  "w": "116-onl79.js:204"
+ },
+ {
+  "k": "to host a game",
+  "w": "116-onl79.js:204"
+ },
+ {
+  "k": "to start a game",
+  "w": "116-onl79.js:204"
+ },
+ {
+  "k": "to take a seat",
+  "w": "116-onl79.js:204"
+ },
+ {
+  "k": "to place a wager — it is paid from a gladiator’s wallet",
+  "w": "116-onl79.js:205"
+ },
+ {
+  "k": "to buy a ticket — it is paid from a gladiator’s wallet",
+  "w": "116-onl79.js:205"
+ },
+ {
+  "k": "to buy gear",
+  "w": "116-onl79.js:206"
+ },
+ {
+  "k": "to form a party",
+  "w": "116-onl79.js:206"
+ },
+ {
+  "k": "to join a party",
+  "w": "116-onl79.js:206"
+ },
+ {
+  "k": "⚔ You need a gladiator",
+  "w": "116-onl79.js:207"
+ },
+ {
+  "k": "You need a gladiator {0}. Make one now? It takes a minute: a name and a class.",
+  "w": "116-onl79.js:207"
+ },
+ {
+  "k": "for that",
+  "w": "116-onl79.js:207"
+ },
+ {
+  "k": "Watching live matches and the Hall of the Fallen are open without one.",
+  "w": "116-onl79.js:207"
+ },
+ {
+  "k": "⚔ Make my gladiator",
+  "w": "116-onl79.js:207"
+ },
+ {
+  "k": "Not now",
+  "w": "116-onl79.js:207"
+ },
+ {
+  "k": "<b>No gladiator yet</b>",
+  "w": "116-onl79.js:209"
+ },
+ {
+  "k": "{0} Watching live matches and the Hall of the Fallen are open to everyone.",
+  "w": "116-onl79.js:209"
+ },
+ {
+  "k": "⚔ Make your gladiator",
+  "w": "116-onl79.js:210"
+ },
+ {
+  "k": "Make one to fight, host, wager or buy a ticket.",
+  "w": "116-onl79.js:214"
+ },
+ {
+  "k": "The armory sells to a gladiator, from their own wallet.",
+  "w": "116-onl79.js:215"
+ },
+ {
+  "k": "0/{0} living",
+  "w": "116-onl79.js:217"
+ },
+ {
+  "k": "A lanista",
+  "w": "118-onl80.js:41"
+ },
+ {
+  "k": "Someone in your party is already in a room.",
+  "w": "118-onl80.js:58"
+ },
+ {
+  "k": "You are already in a room.",
+  "w": "118-onl80.js:58"
+ },
+ {
+  "k": "No such lanista.",
+  "w": "118-onl80.js:68"
+ },
+ {
+  "k": "Not in the arena now.",
+  "w": "118-onl80.js:69"
+ },
+ {
+  "k": "Fighting right now.",
+  "w": "118-onl80.js:69"
+ },
+ {
+  "k": "Already in the room.",
+  "w": "118-onl80.js:70"
+ },
+ {
+  "k": "Ranked: {0} only.",
+  "w": "118-onl80.js:71"
+ },
+ {
+  "k": "One invite at a time.",
+  "w": "118-onl80.js:72"
+ },
+ {
+  "k": "You invited them a moment ago.",
+  "w": "118-onl80.js:72"
+ },
+ {
+  "k": "Enough invites for this hour.",
+  "w": "118-onl80.js:73"
+ },
+ {
+  "k": "That room is gone.",
+  "w": "118-onl80.js:75"
+ },
+ {
+  "k": "You are not in that room.",
+  "w": "118-onl80.js:76"
+ },
+ {
+  "k": "Quick chat only.",
+  "w": "118-onl80.js:86"
+ },
+ {
+  "k": "Every seat is taken.",
+  "w": "118-onl80.js:110"
+ },
+ {
+  "k": "The crier has called three times.",
+  "w": "118-onl80.js:111"
+ },
+ {
+  "k": "The crier needs a breath — {0} s.",
+  "w": "118-onl80.js:112"
+ },
+ {
+  "k": "Fight in that match first.",
+  "w": "118-onl80.js:115"
+ },
+ {
+  "k": "One phrase every 3 seconds.",
+  "w": "118-onl80.js:119"
+ },
+ {
+  "k": "Make a gladiator first.",
+  "w": "118-onl80.js:127"
+ },
+ {
+  "k": "The Forum heard you — {0} s.",
+  "w": "118-onl80.js:128"
+ },
+ {
+  "k": "That match is long over.",
+  "w": "118-onl80.js:134"
+ },
+ {
+  "k": "a CPU",
+  "w": "118-onl80.js:148"
+ },
+ {
+  "k": "{0} entered the room",
+  "w": "118-onl80.js:180"
+ },
+ {
+  "k": "was removed",
+  "w": "118-onl80.js:180"
+ },
+ {
+  "k": "👑 {0} the room",
+  "w": "118-onl80.js:181"
+ },
+ {
+  "k": "You host",
+  "w": "118-onl80.js:181"
+ },
+ {
+  "k": "{0} sat down",
+  "w": "118-onl80.js:182"
+ },
+ {
+  "k": "{0} stood up",
+  "w": "118-onl80.js:182"
+ },
+ {
+  "k": "{0} {1} ready",
+  "w": "118-onl80.js:183"
+ },
+ {
+  "k": "{0} → Team {1}",
+  "w": "118-onl80.js:183"
+ },
+ {
+  "k": "The game is now {0} · {1} seats",
+  "w": "118-onl80.js:184"
+ },
+ {
+  "k": "The games move to {0}",
+  "w": "118-onl80.js:184"
+ },
+ {
+  "k": "✕ The host removed you from the room.",
+  "w": "118-onl80.js:192"
+ },
+ {
+  "k": "🚪 The room closed.",
+  "w": "118-onl80.js:194"
+ },
+ {
+  "k": "Give the room to them",
+  "w": "118-onl80.js:206"
+ },
+ {
+  "k": "Remove from the room (5 minutes)",
+  "w": "118-onl80.js:206"
+ },
+ {
+  "k": "<b>Open seat</b><small>a CPU if empty{0}</small>",
+  "w": "118-onl80.js:207"
+ },
+ {
+  "k": "🪑 Sit",
+  "w": "118-onl80.js:207"
+ },
+ {
+  "k": "<b>Standing</b>{0}",
+  "w": "118-onl80.js:213"
+ },
+ {
+  "k": "disabled title=\"Classic events seat four\"",
+  "w": "118-onl80.js:217"
+ },
+ {
+  "k": "Teams",
+  "w": "118-onl80.js:218"
+ },
+ {
+  "k": "Leaving",
+  "w": "118-onl80.js:220"
+ },
+ {
+  "k": "a CPU fights on",
+  "w": "118-onl80.js:220"
+ },
+ {
+  "k": "Stands",
+  "w": "118-onl80.js:221"
+ },
+ {
+  "k": "act in round 1",
+  "w": "118-onl80.js:221"
+ },
+ {
+  "k": "Ticket",
+  "w": "118-onl80.js:222"
+ },
+ {
+  "k": "Leaving: {0} · Stands: {1} · Ticket: {2}{3}",
+  "w": "118-onl80.js:223"
+ },
+ {
+  "k": "· {0} teams{1}",
+  "w": "118-onl80.js:223"
+ },
+ {
+  "k": "(balanced at the horns)",
+  "w": "118-onl80.js:223"
+ },
+ {
+  "k": "▶ Start",
+  "w": "118-onl80.js:225"
+ },
+ {
+  "k": "Stand up",
+  "w": "118-onl80.js:225"
+ },
+ {
+  "k": "title=\"The crier calls free lanistas to your room\"",
+  "w": "118-onl80.js:226"
+ },
+ {
+  "k": "📣 Call <small>{0} left</small>",
+  "w": "118-onl80.js:226"
+ },
+ {
+  "k": "✉ Invite",
+  "w": "118-onl80.js:227"
+ },
+ {
+  "k": "{0}{1} <small>at {2}</small>",
+  "w": "118-onl80.js:231"
+ },
+ {
+  "k": "<span class=\"badge\">Custom</span>",
+  "w": "118-onl80.js:232"
+ },
+ {
+  "k": "👥 {0} teams",
+  "w": "118-onl80.js:232"
+ },
+ {
+  "k": "🪑 {0}/{1} seated",
+  "w": "118-onl80.js:232"
+ },
+ {
+  "k": "👤 {0}/{1} in the room",
+  "w": "118-onl80.js:232"
+ },
+ {
+  "k": "<b>The horns sounded without you.</b><span>Back to Online in <b id=\"r80cd\">{0}</b> s</span>",
+  "w": "118-onl80.js:237"
+ },
+ {
+  "k": "Back now",
+  "w": "118-onl80.js:237"
+ },
+ {
+  "k": "{0} room{1}",
+  "w": "118-onl80.js:246"
+ },
+ {
+  "k": "＋ Ranked room",
+  "w": "118-onl80.js:246"
+ },
+ {
+  "k": "＋ Custom room",
+  "w": "118-onl80.js:246"
+ },
+ {
+  "k": "Lanistas",
+  "w": "118-onl80.js:248"
+ },
+ {
+  "k": "Seated",
+  "w": "118-onl80.js:248"
+ },
+ {
+  "k": "A seat in the stands until the horns. The coin goes into the wager pot.",
+  "w": "118-onl80.js:250"
+ },
+ {
+  "k": "<b>{0}</b> lanista{1} online · {2} fighting · {3} waiting",
+  "w": "118-onl80.js:253"
+ },
+ {
+  "k": "Orbis Terrarum<small id=\"omapCap\">{0}</small>",
+  "w": "118-onl80.js:257"
+ },
+ {
+  "k": "Open the map",
+  "w": "118-onl80.js:257"
+ },
+ {
+  "k": "Ranked",
+  "w": "118-onl80.js:259"
+ },
+ {
+  "k": "⚔ Take a seat",
+  "w": "118-onl80.js:262"
+ },
+ {
+  "k": "📯 <b>{0}</b> opened {1} — {2} seat{3} free{4}",
+  "w": "118-onl80.js:264"
+ },
+ {
+  "k": "📣 <b>{0}</b> calls for {1} more · {2}{3}",
+  "w": "118-onl80.js:265"
+ },
+ {
+  "k": "✉ <b>{0}</b> invited you · {1}{2}",
+  "w": "118-onl80.js:266"
+ },
+ {
+  "k": "⚖ {0} at {1} — void, no result",
+  "w": "118-onl80.js:267"
+ },
+ {
+  "k": "🏆 {0} won {1} at {2}{3}",
+  "w": "118-onl80.js:267"
+ },
+ {
+  "k": "Nobody",
+  "w": "118-onl80.js:267"
+ },
+ {
+  "k": "— {0} CF",
+  "w": "118-onl80.js:267"
+ },
+ {
+  "k": "📯 The Forum<small>quick calls</small>",
+  "w": "118-onl80.js:271"
+ },
+ {
+  "k": "Who is here",
+  "w": "118-onl80.js:271"
+ },
+ {
+  "k": "👥 {0} here",
+  "w": "118-onl80.js:271"
+ },
+ {
+  "k": "Quiet: no banners or invite pop-ups",
+  "w": "118-onl80.js:271"
+ },
+ {
+  "k": "Banners and invites pop up",
+  "w": "118-onl80.js:271"
+ },
+ {
+  "k": "🔕 Quiet",
+  "w": "118-onl80.js:271"
+ },
+ {
+  "k": "✕ Close",
+  "w": "118-onl80.js:291"
+ },
+ {
+  "k": "Orbis Terrarum<small>{0}</small>",
+  "w": "118-onl80.js:291"
+ },
+ {
+  "k": "calls for {0} more",
+  "w": "118-onl80.js:303"
+ },
+ {
+  "k": "opened a room",
+  "w": "118-onl80.js:303"
+ },
+ {
+  "k": "<b>✉ {0} invites you</b>",
+  "w": "118-onl80.js:315"
+ },
+ {
+  "k": "{0}/{1} seated · {2}/{3} in the room",
+  "w": "118-onl80.js:315"
+ },
+ {
+  "k": "⚔ Join",
+  "w": "118-onl80.js:316"
+ },
+ {
+  "k": "🔇 Mute",
+  "w": "118-onl80.js:316"
+ },
+ {
+  "k": "in a room",
+  "w": "118-onl80.js:320"
+ },
+ {
+  "k": "🔊 Unmute",
+  "w": "118-onl80.js:326"
+ },
+ {
+  "k": "<b>👥 Lanistas here · {0}</b>",
+  "w": "118-onl80.js:328"
+ },
+ {
+  "k": "to open a room",
+  "w": "118-onl80.js:334"
+ },
+ {
+  "k": "to speak in the Forum",
+  "w": "118-onl80.js:334"
+ },
+ {
+  "k": "to call lanistas",
+  "w": "118-onl80.js:334"
+ },
+ {
+  "k": "to invite lanistas",
+  "w": "118-onl80.js:334"
+ },
+ {
+  "k": "to speak in the room",
+  "w": "118-onl80.js:334"
+ },
+ {
+  "k": "to join a room",
+  "w": "118-onl80.js:334"
+ },
+ {
+  "k": "🔕 Quiet — no banners or invite pop-ups.",
+  "w": "118-onl80.js:342"
+ },
+ {
+  "k": "🔔 Banners and invites pop up again.",
+  "w": "118-onl80.js:342"
+ },
+ {
+  "k": "🔇 Muted — no phrases, calls or invites from them.",
+  "w": "118-onl80.js:351"
+ },
+ {
+  "k": "🔊 Unmuted.",
+  "w": "118-onl80.js:351"
+ },
+ {
+  "k": "📯 A new {0} room — the crier calls for lanistas.",
+  "w": "118-onl80.js:353"
+ },
+ {
+  "k": "⚔ You joined {0}’s room.",
+  "w": "118-onl80.js:353"
+ },
+ {
+  "k": "📯 Your room is open — the crier calls.",
+  "w": "118-onl80.js:354"
+ },
+ {
+  "k": "🪑 You sat down in {0}’s room.",
+  "w": "118-onl80.js:356"
+ },
+ {
+  "k": "👤 You stand in {0}’s room — every seat is taken.",
+  "w": "118-onl80.js:356"
+ },
+ {
+  "k": "📣 The crier calls — {0} call{1} left.",
+  "w": "118-onl80.js:364"
+ },
+ {
+  "k": "✉ Invitation sent.",
+  "w": "118-onl80.js:366"
+ },
+ {
+  "k": "✉ Sent",
+  "w": "118-onl80.js:366"
+ },
+ {
+  "k": "Quick phrases",
+  "w": "118-onl80.js:397"
+ },
+ {
+  "k": "⚔ Again",
+  "w": "118-onl80.js:399"
+ },
+ {
+  "k": "A new room with the same game — the others are invited",
+  "w": "118-onl80.js:399"
+ },
+ {
+  "k": "⚔ A new room — {0}.",
+  "w": "118-onl80.js:406"
+ },
+ {
+  "k": "the others are elsewhere",
+  "w": "118-onl80.js:406"
+ },
+ {
+  "k": "💰 The bookmaker keeps no book online.",
+  "w": "119-onl80rules.js:83"
+ },
+ {
+  "k": "🧭 No hints in Ranked — they return after the match.",
+  "w": "119-onl80rules.js:104"
+ },
+ {
+  "k": "⏩ The online arena never pauses — your own pace stays.",
+  "w": "119-onl80rules.js:109"
+ },
+ {
+  "k": "⚖ <b>{0}</b> was out of step with the others — the arena holds to the majority.",
+  "w": "119-onl80rules.js:152"
+ },
+ {
+  "k": "No one to judge.",
+  "w": "119-onl80rules.js:182"
+ },
+ {
+  "k": "🔄 The others hold a different arena — taking theirs…",
+  "w": "121-onl80fix.js:61"
+ },
+ {
+  "k": "⚖ A move from <b>{0}</b> did not fit the arena — skipped.",
+  "w": "121-onl80fix.js:94"
+ },
+ {
+  "k": "Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.",
+  "w": "121-onl80fix.js:158"
+ },
+ {
+  "k": "Someone in your party is still in a match.",
+  "w": "121-onl80fix.js:158"
+ },
+ {
+  "k": "The match is not over.",
+  "w": "121-onl80fix.js:179"
+ },
+ {
+  "k": "<b>{0} {1} is still on the sand</b>\n    <small>{2} at {3} · {4}{5}</small>",
+  "w": "121-onl80fix.js:204"
+ },
+ {
+  "k": "· a CPU fights in your seat",
+  "w": "121-onl80fix.js:205"
+ },
+ {
+  "k": "⚔ Back to your match",
+  "w": "121-onl80fix.js:206"
+ },
+ {
+  "k": "🚪 Abandon",
+  "w": "121-onl80fix.js:206"
+ },
+ {
+  "k": "⌛ That match is over.",
+  "w": "121-onl80fix.js:217"
+ },
+ {
+  "k": "🌐 Sign in to Online first — then 🚪 Abandon from your match card.",
+  "w": "121-onl80fix.js:220"
+ },
+ {
+  "k": "🌫 <b>{0}</b> abandoned the sand — Damnatio.",
+  "w": "121-onl80fix.js:222"
+ },
+ {
+  "k": "🚪 You left the match.",
+  "w": "121-onl80fix.js:222"
+ },
+ {
+  "k": "⌛ That match is already over.",
+  "w": "121-onl80fix.js:222"
+ },
+ {
+  "k": "On the sand now: ⭐ {0} CF · {1} {2}",
+  "w": "121-onl80fix.js:236"
+ },
+ {
+  "k": "<b>Ranked — Damnatio.</b> {0} dies and is struck from your roster for good, with {1} {2} and {3} piece{4} of gear{5}. This cannot be undone.{6}",
+  "w": "121-onl80fix.js:237"
+ },
+ {
+  "k": "({0} left at home)",
+  "w": "121-onl80fix.js:237"
+ },
+ {
+  "k": "<br>A CPU is fighting for them now — let it, and they may still survive.",
+  "w": "121-onl80fix.js:237"
+ },
+ {
+  "k": "{0} Nothing is lost — the bout does not count for {1}.",
+  "w": "121-onl80fix.js:238"
+ },
+ {
+  "k": "{0} is out of this bout.",
+  "w": "121-onl80fix.js:238"
+ },
+ {
+  "k": "<span>⚔ <b>{0}</b> won · <b>{1}</b> lost</span><span>🛡 {2} survived</span><span>⭐ {3} CF</span><span>{4} {5}</span>",
+  "w": "121-onl80fix.js:241"
+ },
+ {
+  "k": "<b>Brought into this match</b>{0}{1}{2}",
+  "w": "121-onl80fix.js:243"
+ },
+ {
+  "k": "Let the CPU fight on",
+  "w": "121-onl80fix.js:245"
+ },
+ {
+  "k": "👁 Watch — a CPU fights for you",
+  "w": "121-onl80fix.js:256"
+ },
+ {
+  "k": "⚔ Back to the sand",
+  "w": "121-onl80fix.js:256"
+ },
+ {
+  "k": "just now",
+  "w": "121-onl80fix.js:266"
+ },
+ {
+  "k": "{0} min ago",
+  "w": "121-onl80fix.js:266"
+ },
+ {
+  "k": "{0} h ago",
+  "w": "121-onl80fix.js:266"
+ },
+ {
+  "k": "{0} bouts · {1} won ·",
+  "w": "121-onl80fix.js:270"
+ },
+ {
+  "k": "🏆 Won {0} with <b>{1} CF</b>",
+  "w": "121-onl80fix.js:272"
+ },
+ {
+  "k": "<b>{0}</b> · {1} CF · {2}",
+  "w": "121-onl80fix.js:272"
+ },
+ {
+  "k": "No victor yet {0} — the sand waits.",
+  "w": "121-onl80fix.js:273"
+ },
+ {
+  "k": "🌫 Abandoned {0} — <b>Damnatio</b>",
+  "w": "121-onl80fix.js:274"
+ },
+ {
+  "k": "🪦 Fell to the Fate in {0}{1}",
+  "w": "121-onl80fix.js:274"
+ },
+ {
+  "k": "— the Hall keeps the name",
+  "w": "121-onl80fix.js:274"
+ },
+ {
+  "k": "⚔ <b>{0}</b> {1} humbled <b>{2}</b> {3} · {4}",
+  "w": "121-onl80fix.js:275"
+ },
+ {
+  "k": "the Fate",
+  "w": "121-onl80fix.js:276"
+ },
+ {
+  "k": "⚔ Humbled by <b>{0}</b> {1} in {2}",
+  "w": "121-onl80fix.js:277"
+ },
+ {
+  "k": "No one fell {0}.",
+  "w": "121-onl80fix.js:278"
+ },
+ {
+  "k": "{0}<small>the day's biggest wins and falls</small>",
+  "w": "121-onl80fix.js:279"
+ },
+ {
+  "k": "🌙 Yesterday in the arena",
+  "w": "121-onl80fix.js:279"
+ },
+ {
+  "k": "☀ Today in the arena",
+  "w": "121-onl80fix.js:279"
+ },
+ {
+  "k": "🏆 Victors of the day",
+  "w": "121-onl80fix.js:280"
+ },
+ {
+  "k": "🪦 Fallen &amp; humbled",
+  "w": "121-onl80fix.js:280"
+ },
+ {
+  "k": "Snake draft: {0}. Each pick offers a random {1} of the remaining level 1-3 weapons and armor that still fit the gladiator.",
+  "w": "122-v81play.js:50"
+ },
+ {
+  "k": "{0}'s draft ends early: both hands are full and every spot is covered.",
+  "w": "122-v81play.js:57"
+ },
+ {
+  "k": "above your draft level",
+  "w": "122-v81play.js:67"
+ },
+ {
+  "k": "no free spot",
+  "w": "122-v81play.js:67"
+ },
+ {
+  "k": "not offered this pick",
+  "w": "122-v81play.js:67"
+ },
+ {
+  "k": "{0}<i>LV{1}</i>",
+  "w": "122-v81play.js:68"
+ },
+ {
+  "k": "Choose one weapon or armor from the <b style=\"color:var(--gold2)\">{0} offered</b> this pick. Weapons go to a free hand; armor equips straight away.",
+  "w": "122-v81play.js:69"
+ },
+ {
+  "k": "Rest of the pool · {0}",
+  "w": "122-v81play.js:69"
+ },
+ {
+  "k": "×{0} left · {1}",
+  "w": "122-v81play.js:82"
+ },
+ {
+  "k": "{0} topples the pillar at {1}{2}! Rubble on {3}{4}.",
+  "w": "122-v81play.js:114"
+ },
+ {
+  "k": "toward {0}",
+  "w": "122-v81play.js:114"
+ },
+ {
+  "k": "— no Blessings left on it",
+  "w": "122-v81play.js:114"
+ },
+ {
+  "k": "A pillar stands in the way: it lands one tile back.",
+  "w": "122-v81play.js:128"
+ },
+ {
+  "k": "It rolls to the edge of the sand.",
+  "w": "122-v81play.js:128"
+ },
+ {
+  "k": "— right at {0}'s feet",
+  "w": "122-v81play.js:129"
+ },
+ {
+  "k": "— it lies under {0}",
+  "w": "122-v81play.js:129"
+ },
+ {
+  "k": "— it falls into the spikes",
+  "w": "122-v81play.js:129"
+ },
+ {
+  "k": "The offering falls onto {0}: <b>{1}</b> ({2}){3}.{4}",
+  "w": "122-v81play.js:130"
+ },
+ {
+  "k": "⏳ Your bout is over — waiting for the others to confirm the result.",
+  "w": "124-v81onl.js:42"
+ },
+ {
+  "k": "💰 +{0} coin · {1} +{2} lifetime CF{3}",
+  "w": "124-v81onl.js:89"
+ },
+ {
+  "k": "That room closed before you got there.",
+  "w": "124-v81onl.js:93"
+ },
+ {
+  "k": "⌛ That bout is over.",
+  "w": "124-v81onl.js:110"
+ },
+ {
+  "k": "<b>{0}</b> at {1} · {2}",
+  "w": "124-v81onl.js:118"
+ },
+ {
+  "k": "⏳ Waiting for the others to confirm the result",
+  "w": "124-v81onl.js:118"
+ },
+ {
+  "k": "<small class=\"rc-sub\">Your bout is over and your result was sent. Pay, CF and the Fate land when the others confirm.</small>",
+  "w": "124-v81onl.js:118"
+ },
+ {
+  "k": "🚪 Leave the match?",
+  "w": "124-v81onl.js:127"
+ },
+ {
+  "k": "<b>🚪 That room closed before you got there</b>",
+  "w": "124-v81onl.js:159"
+ },
+ {
+  "k": "The horns already sounded — you may watch the bout for free.",
+  "w": "124-v81onl.js:159"
+ },
+ {
+  "k": "🌐 The <b>Online server</b> box shows on the Online sign-in screen.",
+  "w": "124-v81onl.js:177"
+ },
+ {
+  "k": "🌐 Shows the \"Online server\" box on the Online sign-in screen (for test servers)",
+  "w": "124-v81onl.js:178"
+ },
+ {
+  "k": "📯 The Forum",
+  "w": "124-v81onl.js:191"
+ },
+ {
+  "k": "👥 Here now",
+  "w": "124-v81onl.js:191"
+ },
+ {
+  "k": "The sand waits.",
+  "w": "124-v81onl.js:211"
+ },
+ {
+  "k": "🏆 Victor {0}",
+  "w": "124-v81onl.js:214"
+ },
+ {
+  "k": "of the day",
+  "w": "124-v81onl.js:214"
+ },
+ {
+  "k": "Won {0} with {1}<b>{2} CF</b>",
+  "w": "124-v81onl.js:214"
+ },
+ {
+  "k": "<small>🏆 No victor yet</small>",
+  "w": "124-v81onl.js:214"
+ },
+ {
+  "k": "🪦 Fallen {0}",
+  "w": "124-v81onl.js:215"
+ },
+ {
+  "k": "Abandoned {0} — <b>Damnatio</b>",
+  "w": "124-v81onl.js:215"
+ },
+ {
+  "k": "Fell to the Fate in {0}",
+  "w": "124-v81onl.js:215"
+ },
+ {
+  "k": "⚔ Humbled",
+  "w": "124-v81onl.js:216"
+ },
+ {
+  "k": "by <b>{0}</b> in {1}",
+  "w": "124-v81onl.js:216"
+ },
+ {
+  "k": "<small>🪦 No one fell {0}</small>",
+  "w": "124-v81onl.js:216"
+ },
+ {
+  "k": "The day's lists",
+  "w": "124-v81onl.js:218"
+ },
+ {
+  "k": "+{0} more",
+  "w": "124-v81onl.js:218"
+ },
+ {
+  "k": "{0} is already in this event — that card is set aside and another is drawn.",
+  "w": "126-v82fix.js:16"
+ },
+ {
+  "k": "📜 Rules",
+  "w": "126-v82fix.js:50"
+ },
+ {
+  "k": "🏛️ Annals",
+  "w": "126-v82fix.js:50"
+ },
+ {
+  "k": "🎓 Tutorials<small>learn Classic or Manager mode</small>",
+  "w": "126-v82fix.js:54"
+ },
+ {
+  "k": "House",
+  "w": "127-v82onl.js:37"
+ },
+ {
+  "k": "🎟 Patron of {0}",
+  "w": "127-v82onl.js:39"
+ },
+ {
+  "k": "🎟 Patron · {0}",
+  "w": "127-v82onl.js:39"
+ },
+ {
+  "k": "Your two hours as a guest are up — sign in to keep watching.",
+  "w": "127-v82onl.js:64"
+ },
+ {
+  "k": "The arena turned the connection away.",
+  "w": "127-v82onl.js:64"
+ },
+ {
+  "k": "speak in the Forum",
+  "w": "127-v82onl.js:98"
+ },
+ {
+  "k": "buy a ticket",
+  "w": "127-v82onl.js:98"
+ },
+ {
+  "k": "raise gladiators",
+  "w": "127-v82onl.js:98"
+ },
+ {
+  "k": "found a house",
+  "w": "127-v82onl.js:98"
+ },
+ {
+  "k": "Sign in to {0}.",
+  "w": "127-v82onl.js:102"
+ },
+ {
+  "k": "Name your house first — every lanista needs a Domus.",
+  "w": "127-v82onl.js:103"
+ },
+ {
+  "k": "That room has closed.",
+  "w": "127-v82onl.js:112"
+ },
+ {
+  "k": "That game has started — you can watch it.",
+  "w": "127-v82onl.js:112"
+ },
+ {
+  "k": "That room has filled up.",
+  "w": "127-v82onl.js:112"
+ },
+ {
+  "k": "The lanista who invited you has left the room.",
+  "w": "127-v82onl.js:112"
+ },
+ {
+  "k": "Name your house first.",
+  "w": "127-v82onl.js:129"
+ },
+ {
+  "k": "Someone in your party has no house yet.",
+  "w": "127-v82onl.js:129"
+ },
+ {
+  "k": "You are signed in.",
+  "w": "127-v82onl.js:131"
+ },
+ {
+  "k": "Not of your house.",
+  "w": "127-v82onl.js:136"
+ },
+ {
+  "k": "{0} is in a match — the storeroom waits.",
+  "w": "127-v82onl.js:136"
+ },
+ {
+  "k": "Pick where it goes.",
+  "w": "127-v82onl.js:137"
+ },
+ {
+  "k": "Your house already has gladiators — it stands as it is.",
+  "w": "127-v82onl.js:140"
+ },
+ {
+  "k": "Another lanista’s house has that name.",
+  "w": "127-v82onl.js:141"
+ },
+ {
+  "k": "A house with gladiators keeps its name.",
+  "w": "127-v82onl.js:146"
+ },
+ {
+  "k": "That invitation is gone.",
+  "w": "127-v82onl.js:150"
+ },
+ {
+  "k": "The pass seats a gladiator’s house — make a gladiator first.",
+  "w": "127-v82onl.js:154"
+ },
+ {
+  "k": "Leave your room first.",
+  "w": "127-v82onl.js:156"
+ },
+ {
+  "k": "Not a look.",
+  "w": "127-v82onl.js:160"
+ },
+ {
+  "k": "fight in a playlist",
+  "w": "127-v82onl.js:198"
+ },
+ {
+  "k": "join a room",
+  "w": "127-v82onl.js:198"
+ },
+ {
+  "k": "take a seat",
+  "w": "127-v82onl.js:198"
+ },
+ {
+  "k": "open a room",
+  "w": "127-v82onl.js:198"
+ },
+ {
+  "k": "see who is here",
+  "w": "127-v82onl.js:199"
+ },
+ {
+  "k": "form a party",
+  "w": "127-v82onl.js:199"
+ },
+ {
+  "k": "join a party",
+  "w": "127-v82onl.js:199"
+ },
+ {
+  "k": "leave a room",
+  "w": "127-v82onl.js:199"
+ },
+ {
+  "k": "buy gear",
+  "w": "127-v82onl.js:199"
+ },
+ {
+  "k": "{0} h {1} min",
+  "w": "127-v82onl.js:200"
+ },
+ {
+  "k": "{0} min",
+  "w": "127-v82onl.js:200"
+ },
+ {
+  "k": "<b>Watching as a guest</b>",
+  "w": "127-v82onl.js:201"
+ },
+ {
+  "k": "Live bouts, the Forum, Today and the Hall are open for <b id=\"g82left\">{0}</b>. Sign in to found a house, raise gladiators, wager and fight.",
+  "w": "127-v82onl.js:201"
+ },
+ {
+  "k": "Sign in",
+  "w": "127-v82onl.js:202"
+ },
+ {
+  "k": "⌛ Your two hours as a guest are up",
+  "w": "127-v82onl.js:205"
+ },
+ {
+  "k": "Sign in to keep watching — and to found a house of your own.",
+  "w": "127-v82onl.js:205"
+ },
+ {
+  "k": "<span>👁 Guest</span><small>{0}</small>",
+  "w": "127-v82onl.js:208"
+ },
+ {
+  "k": "time is up",
+  "w": "127-v82onl.js:208"
+ },
+ {
+  "k": "{0} left",
+  "w": "127-v82onl.js:208"
+ },
+ {
+  "k": "data-g82=\"{0}\" aria-disabled=\"true\" title=\"Sign in to {1}\"",
+  "w": "127-v82onl.js:209"
+ },
+ {
+  "k": "👁 Watch as a guest",
+  "w": "127-v82onl.js:211"
+ },
+ {
+  "k": "<small class=\"rc-sub\">No sign-in: watch live bouts and read the Forum, Today and the Hall for two hours.</small>",
+  "w": "127-v82onl.js:211"
+ },
+ {
+  "k": "⌛ Your two hours as a guest are up — sign in to keep watching.",
+  "w": "127-v82onl.js:217"
+ },
+ {
+  "k": "<b>{0}</b> lanista{1} · <b>{2}</b> guest{3} · {4} fighting · {5} waiting",
+  "w": "127-v82onl.js:219"
+ },
+ {
+  "k": "Vettii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Aemilii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Cornelii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Iunii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Licinii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Valerii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Fabii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Claudii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Sempronii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Domitii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Antonii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Caecilii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Sulpicii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Postumii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Marcii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Calpurnii",
+  "w": "127-v82onl.js:225"
+ },
+ {
+  "k": "Found your house",
+  "w": "127-v82onl.js:227"
+ },
+ {
+  "k": "Every lanista online keeps a <b>Domus</b>. Its name stands beside your gladiators’ names — in rooms, invitations and the Forum.{0}",
+  "w": "127-v82onl.js:228"
+ },
+ {
+  "k": "Your {0} gladiator{1} join{2} it with their record.",
+  "w": "127-v82onl.js:228"
+ },
+ {
+  "k": "e.g. Vettii",
+  "w": "127-v82onl.js:229"
+ },
+ {
+  "k": "A Roman house name",
+  "w": "127-v82onl.js:229"
+ },
+ {
+  "k": "🏛 Found the house",
+  "w": "127-v82onl.js:229"
+ },
+ {
+  "k": "<small class=\"rc-sub\">{0}–{1} letters · no two houses share a name · it can change only until your first gladiator.</small>",
+  "w": "127-v82onl.js:230"
+ },
+ {
+  "k": "data-d82=\"{0}\" aria-disabled=\"true\" title=\"Found your house first\"",
+  "w": "127-v82onl.js:231"
+ },
+ {
+  "k": "⚖ {0} · seat 4 for the full purse",
+  "w": "127-v82onl.js:247"
+ },
+ {
+  "k": "2 lanistas: half rewards",
+  "w": "127-v82onl.js:247"
+ },
+ {
+  "k": "3 lanistas: three-quarter rewards",
+  "w": "127-v82onl.js:247"
+ },
+ {
+  "k": "<b>{0} {1}</b><small>{2} Glory</small>",
+  "w": "127-v82onl.js:271"
+ },
+ {
+  "k": "Living gladiators at this rank, every house",
+  "w": "127-v82onl.js:271"
+ },
+ {
+  "k": "● {0} living",
+  "w": "127-v82onl.js:271"
+ },
+ {
+  "k": "{0} · {1} Glory",
+  "w": "127-v82onl.js:274"
+ },
+ {
+  "k": "Ranks by Glory",
+  "w": "127-v82onl.js:275"
+ },
+ {
+  "k": "Fallen",
+  "w": "127-v82onl.js:277"
+ },
+ {
+  "k": "Purses",
+  "w": "127-v82onl.js:277"
+ },
+ {
+  "k": "<small class=\"rc-sub\">{0}{1} gladiator{2} raised</small>",
+  "w": "127-v82onl.js:279"
+ },
+ {
+  "k": "founded {0} ·",
+  "w": "127-v82onl.js:279"
+ },
+ {
+  "k": "🔒 A house with gladiators keeps its name.",
+  "w": "127-v82onl.js:281"
+ },
+ {
+  "k": "✎ Rename",
+  "w": "127-v82onl.js:281"
+ },
+ {
+  "k": "The old house is archived with its record",
+  "w": "127-v82onl.js:281"
+ },
+ {
+  "k": "🏛 Found a new house",
+  "w": "127-v82onl.js:281"
+ },
+ {
+  "k": "<small class=\"rc-sub\">Only until your first gladiator.</small>",
+  "w": "127-v82onl.js:281"
+ },
+ {
+  "k": "✎ Patron <small class=\"rc-sub\">your seat in the stands</small>",
+  "w": "127-v82onl.js:282"
+ },
+ {
+  "k": "in a match",
+  "w": "127-v82onl.js:295"
+ },
+ {
+  "k": "<b>{0}</b><small>Level {1}{2}</small>\n      <small class=\"sr82-who\">{3}</small>{4}",
+  "w": "127-v82onl.js:297"
+ },
+ {
+  "k": "· {0} AP",
+  "w": "127-v82onl.js:297"
+ },
+ {
+  "k": "🗄 on the shelf",
+  "w": "127-v82onl.js:298"
+ },
+ {
+  "k": "with <b>{0}</b>",
+  "w": "127-v82onl.js:298"
+ },
+ {
+  "k": "<small class=\"sr82-lk\">🔒 In a match</small>",
+  "w": "127-v82onl.js:298"
+ },
+ {
+  "k": "Bring",
+  "w": "127-v82onl.js:299"
+ },
+ {
+  "k": "Move…",
+  "w": "127-v82onl.js:300"
+ },
+ {
+  "k": "🗄 Storeroom",
+  "w": "127-v82onl.js:301"
+ },
+ {
+  "k": "{0} piece{1} · tick to bring · move between your gladiators",
+  "w": "127-v82onl.js:301"
+ },
+ {
+  "k": "🗄 Shelf",
+  "w": "127-v82onl.js:302"
+ },
+ {
+  "k": "the shelf",
+  "w": "127-v82onl.js:309"
+ },
+ {
+  "k": "<b>Your patron</b> <small class=\"rc-sub\">sits in the stands when you hold a ticket — “{0}”</small>",
+  "w": "127-v82onl.js:328"
+ },
+ {
+  "k": "Hat{0}",
+  "w": "127-v82onl.js:330"
+ },
+ {
+  "k": "Mantle",
+  "w": "127-v82onl.js:331"
+ },
+ {
+  "k": "Cushion",
+  "w": "127-v82onl.js:331"
+ },
+ {
+  "k": "Cushion trim",
+  "w": "127-v82onl.js:331"
+ },
+ {
+  "k": "🎲 New patron",
+  "w": "127-v82onl.js:332"
+ },
+ {
+  "k": "↺ The house default",
+  "w": "127-v82onl.js:332"
+ },
+ {
+  "k": "Wallet {0} <b>{1}</b> · {2} buys up to level {3} · weapons {4} / {5} / {6} · armor {7} / {8} / {9} a point of AP",
+  "w": "127-v82onl.js:340"
+ },
+ {
+  "k": "{0}<b>{1}</b><small>Level {2}{3} · <b class=\"pr82\">{4} coin</b></small>{5}",
+  "w": "127-v82onl.js:343"
+ },
+ {
+  "k": "Buy · {0}",
+  "w": "127-v82onl.js:343"
+ },
+ {
+  "k": "· ✦ +{0} Glory",
+  "w": "127-v82onl.js:350"
+ },
+ {
+  "k": "· {0} for a small table",
+  "w": "127-v82onl.js:350"
+ },
+ {
+  "k": "⚖ Custom bout — no purse · {0} +{1} lifetime CF{2}{3}{4}",
+  "w": "127-v82onl.js:351"
+ },
+ {
+  "k": "💰 +{0} coin <small>({1} {2}{3}{4}{5})</small> · {6} +{7} lifetime CF{8}{9}",
+  "w": "127-v82onl.js:353"
+ },
+ {
+  "k": "· {0} in a row +{1}%",
+  "w": "127-v82onl.js:353"
+ },
+ {
+  "k": "· {0} table",
+  "w": "127-v82onl.js:353"
+ },
+ {
+  "k": "<b>Flavius's guest pass</b>",
+  "w": "127-v82onl.js:385"
+ },
+ {
+  "k": "A free seat in the stands at <b>{0}</b> · {1}",
+  "w": "127-v82onl.js:385"
+ },
+ {
+  "k": "({0}’s room{1})",
+  "w": "127-v82onl.js:385"
+ },
+ {
+  "k": "· {0} coin for others",
+  "w": "127-v82onl.js:385"
+ },
+ {
+  "k": "<small class=\"rc-sub\">Once a day while your purse is thin. Sit through the bout: +{0} Fame for {1}.</small>",
+  "w": "127-v82onl.js:386"
+ },
+ {
+  "k": "your house",
+  "w": "127-v82onl.js:386"
+ },
+ {
+  "k": "🎟 Take the seat",
+  "w": "127-v82onl.js:386"
+ },
+ {
+  "k": "👁 {0} — <b>Sign in</b> on the left.",
+  "w": "127-v82onl.js:391"
+ },
+ {
+  "k": "Sign in to play.",
+  "w": "127-v82onl.js:391"
+ },
+ {
+  "k": "🏛 Found your house first — name it above.",
+  "w": "127-v82onl.js:392"
+ },
+ {
+  "k": "✎ Your house is now <b>{0}</b>.",
+  "w": "127-v82onl.js:402"
+ },
+ {
+  "k": "🏛 <b>{0}</b> is founded{1}.",
+  "w": "127-v82onl.js:402"
+ },
+ {
+  "k": "— {0} gladiator{1} joined with their record",
+  "w": "127-v82onl.js:402"
+ },
+ {
+  "k": "— now your first gladiator",
+  "w": "127-v82onl.js:402"
+ },
+ {
+  "k": "🛒 Buy this piece?",
+  "w": "127-v82onl.js:406"
+ },
+ {
+  "k": "Buy <b>{0}</b> (level {1}{2}) for <b>{3} coin</b>?",
+  "w": "127-v82onl.js:406"
+ },
+ {
+  "k": "Wallet {0} → {1}.",
+  "w": "127-v82onl.js:406"
+ },
+ {
+  "k": "🛒 Bought {0} for {1} coin.",
+  "w": "127-v82onl.js:407"
+ },
+ {
+  "k": "🎟 Flavius's guest pass — a free seat at {0}. Sit through the bout for +{1} Fame.",
+  "w": "127-v82onl.js:409"
+ },
+ {
+  "k": "🎟 The stands sit this rotation out.",
+  "w": "128-v82stands.js:51"
+ },
+ {
+  "k": "🎟 The stands are choosing… <b>{0}s</b>",
+  "w": "128-v82stands.js:82"
+ },
+ {
+  "k": "You watch this rotation.",
+  "w": "128-v82stands.js:88"
+ },
+ {
+  "k": "✓ Your choice is in — the stands throw together.",
+  "w": "128-v82stands.js:88"
+ },
+ {
+  "k": "The stands have chosen.",
+  "w": "128-v82stands.js:89"
+ },
+ {
+  "k": "🪨 Stone at {0}",
+  "w": "128-v82stands.js:95"
+ },
+ {
+  "k": "2 CF · lands on {0} — whoever stands there then is hit",
+  "w": "128-v82stands.js:95"
+ },
+ {
+  "k": "🎁 Offering to {0}",
+  "w": "128-v82stands.js:96"
+ },
+ {
+  "k": "8 CF · falls on {0} — whoever stands there gets it",
+  "w": "128-v82stands.js:96"
+ },
+ {
+  "k": "📣 Chant “Tholo!”",
+  "w": "128-v82stands.js:97"
+ },
+ {
+  "k": "3 CF · every quadrant must join (other ticket holders, or the crowd)",
+  "w": "128-v82stands.js:97"
+ },
+ {
+  "k": "👏 Cheer for {0}",
+  "w": "128-v82stands.js:98"
+ },
+ {
+  "k": "👁 Watch this rotation",
+  "w": "128-v82stands.js:99"
+ },
+ {
+  "k": "🎟 Your turn in the stands",
+  "w": "128-v82stands.js:102"
+ },
+ {
+  "k": "{0} · <b>{1} CF</b> · {2} (Q{3}) · one action · only you see this",
+  "w": "128-v82stands.js:103"
+ },
+ {
+  "k": "🚶 Change section · 3 CF",
+  "w": "128-v82stands.js:105"
+ },
+ {
+  "k": "Stones and offerings are locked to the tile you pick.",
+  "w": "128-v82stands.js:106"
+ },
+ {
+  "k": "No gladiator stands in Q{0} — cheer, chant or move.",
+  "w": "128-v82stands.js:106"
+ },
+ {
+  "k": "⏳ Time — you watch this rotation.",
+  "w": "128-v82stands.js:112"
+ },
+ {
+  "k": "🎟 The stands act together.",
+  "w": "128-v82stands.js:116"
+ },
+ {
+  "k": "{0} {1} afford a stone (2 CF).",
+  "w": "128-v82stands.js:120"
+ },
+ {
+  "k": "{0} {1} a stone at {2} — {3}.",
+  "w": "128-v82stands.js:122"
+ },
+ {
+  "k": "it bounces off {0}",
+  "w": "128-v82stands.js:122"
+ },
+ {
+  "k": "it lands on empty sand",
+  "w": "128-v82stands.js:122"
+ },
+ {
+  "k": "<b>{0}</b>'s stone lands on {1} at {2}.",
+  "w": "128-v82stands.js:122"
+ },
+ {
+  "k": "empty sand",
+  "w": "128-v82stands.js:122"
+ },
+ {
+  "k": "{0} cannot afford an offering (8 CF).",
+  "w": "128-v82stands.js:123"
+ },
+ {
+  "k": "{0} {1} an offering onto {2}: <b>{3}</b> ({4}) — {5} catches it.",
+  "w": "128-v82stands.js:124"
+ },
+ {
+  "k": "<b>{0}</b> pays 8 CF: an offering lands at {1}'s feet — {2}.",
+  "w": "128-v82stands.js:124"
+ },
+ {
+  "k": "{0} {1} an offering onto {2}: <b>{3}</b> ({4}){5}.",
+  "w": "128-v82stands.js:125"
+ },
+ {
+  "k": "— it lies on the sand",
+  "w": "128-v82stands.js:125"
+ },
+ {
+  "k": "<b>{0}</b>'s offering lands on {1}.",
+  "w": "128-v82stands.js:125"
+ },
+ {
+  "k": "{0} cannot afford to change section (3 CF).",
+  "w": "128-v82stands.js:127"
+ },
+ {
+  "k": "{0} {1} from {2} to {3}.",
+  "w": "128-v82stands.js:128"
+ },
+ {
+  "k": "{0} {1} for {2}.",
+  "w": "128-v82stands.js:129"
+ },
+ {
+  "k": "<b>{0}</b> cheers for {1}.",
+  "w": "128-v82stands.js:129"
+ },
+ {
+  "k": "The chant for Tholo ({0}) goes unanswered — he does not come to this event.",
+  "w": "128-v82stands.js:134"
+ },
+ {
+  "k": "The chant for Tholo ({0}) needs 3 CF a voice.",
+  "w": "128-v82stands.js:136"
+ },
+ {
+  "k": "The chant for Tholo ({0}) dies out — not every quadrant joins in.",
+  "w": "128-v82stands.js:138"
+ },
+ {
+  "k": "Flavius refunds the ticket — he hates to see his spectators speared.",
+  "w": "128-v82stands.js:147"
+ },
+ {
+  "k": "🎟 Speared! Flavius refunds your ticket{0}. Your wager stands — keep watching.",
+  "w": "128-v82stands.js:148"
+ },
+ {
+  "k": "({0} coin)",
+  "w": "128-v82stands.js:148"
+ },
+ {
+  "k": "Only the host opens the stands.",
+  "w": "128-v82stands.js:162"
+ },
+ {
+  "k": "The match is not live.",
+  "w": "128-v82stands.js:163"
+ },
+ {
+  "k": "This game has no stands.",
+  "w": "128-v82stands.js:163"
+ },
+ {
+  "k": "Which rotation?",
+  "w": "128-v82stands.js:163"
+ },
+ {
+  "k": "Nobody holds a ticket.",
+  "w": "128-v82stands.js:164"
+ },
+ {
+  "k": "The stands already chose this rotation.",
+  "w": "128-v82stands.js:165"
+ },
+ {
+  "k": "The stands have chosen — wait for the next rotation.",
+  "w": "128-v82stands.js:168"
+ },
+ {
+  "k": "Only ticket holders choose from the stands.",
+  "w": "128-v82stands.js:168"
+ },
+ {
+  "k": "You already chose this rotation.",
+  "w": "128-v82stands.js:169"
+ },
+ {
+  "k": "No stands window for that rotation.",
+  "w": "128-v82stands.js:172"
+ },
+ {
+  "k": "Only the host closes the stands.",
+  "w": "128-v82stands.js:173"
+ },
+ {
+  "k": "The stands are still choosing.",
+  "w": "128-v82stands.js:173"
+ },
+ {
+  "k": "Only the fighters report a spearing.",
+  "w": "128-v82stands.js:177"
+ },
+ {
+  "k": "No such ticket holder.",
+  "w": "128-v82stands.js:177"
+ },
+ {
+  "k": "Padded lower arms",
+  "w": "128-v82stands.js:186"
+ },
+ {
+  "k": "Padded lower legs",
+  "w": "128-v82stands.js:186"
+ },
+ {
+  "k": "Neck",
+  "w": "128-v82stands.js:229"
+ },
+ {
+  "k": "Face",
+  "w": "128-v82stands.js:229"
+ },
+ {
+  "k": "🎲 Random token",
+  "w": "128-v82stands.js:232"
+ },
+ {
+  "k": "↺ From the class",
+  "w": "128-v82stands.js:232"
+ },
+ {
+  "k": "✏️ Sculpt shapes",
+  "w": "128-v82stands.js:233"
+ },
+ {
+  "k": "Up to {0} shapes on an online token.",
+  "w": "128-v82stands.js:240"
+ },
+ {
+  "k": "Face piece",
+  "w": "128-v82stands.js:277"
+ },
+ {
+  "k": "e.g. the Iron Wall",
+  "w": "128-v82stands.js:278"
+ },
+ {
+  "k": "Birthplace",
+  "w": "128-v82stands.js:278"
+ },
+ {
+  "k": "· from {0}",
+  "w": "128-v82stands.js:291"
+ },
+ {
+  "k": "Roll an epithet",
+  "w": "128-v82stands.js:292"
+ },
+ {
+  "k": "Name, class, epithet, birthplace, look and token",
+  "w": "128-v82stands.js:294"
+ },
+ {
+  "k": "📜 Roll everything",
+  "w": "128-v82stands.js:294"
+ },
+ {
+  "k": "face, accessories, backdrop",
+  "w": "128-v82stands.js:296"
+ },
+ {
+  "k": "sculpted · everyone sees it, whatever their token style",
+  "w": "128-v82stands.js:297"
+ },
+ {
+  "k": "My spectators are not targets!",
+  "w": "129-v82beasts.js:34"
+ },
+ {
+  "k": "Who pays for that seat now?",
+  "w": "129-v82beasts.js:34"
+ },
+ {
+  "k": "Hunts the closest gladiator.",
+  "w": "129-v82beasts.js:45"
+ },
+ {
+  "k": "Hunts the gladiator with the most Crowd Favor.",
+  "w": "129-v82beasts.js:45"
+ },
+ {
+  "k": "Guards its zone and attacks gladiators who come close.",
+  "w": "129-v82beasts.js:45"
+ },
+ {
+  "k": "Can be tamed",
+  "w": "129-v82beasts.js:51"
+ },
+ {
+  "k": "Cannot be tamed",
+  "w": "129-v82beasts.js:51"
+ },
+ {
+  "k": "Enters an event at most once",
+  "w": "129-v82beasts.js:52"
+ },
+ {
+  "k": "Slain: {0} coin · {1} CF.",
+  "w": "129-v82beasts.js:54"
+ },
+ {
+  "k": "{0} — beast card",
+  "w": "129-v82beasts.js:58"
+ },
+ {
+  "k": "{0}{1} HP",
+  "w": "129-v82beasts.js:74"
+ },
+ {
+  "k": "width:{0}px",
+  "w": "129-v82beasts.js:76"
+ },
+ {
+  "k": "{0}Esc to close",
+  "w": "129-v82beasts.js:106"
+ },
+ {
+  "k": "Click the card to turn it ·",
+  "w": "129-v82beasts.js:106"
+ },
+ {
+  "k": "{0} enters the arena: spawn it by the grid dice. {1}{2}",
+  "w": "129-v82beasts.js:130"
+ },
+ {
+  "k": "Once per event.",
+  "w": "129-v82beasts.js:130"
+ },
+ {
+  "k": "{0} draws a beast card for a beast that is no longer in the pens.",
+  "w": "129-v82beasts.js:142"
+ },
+ {
+  "k": "{0} (arena card)",
+  "w": "129-v82beasts.js:146"
+ },
+ {
+  "k": "the HP where this state starts",
+  "w": "129-v82beasts.js:151"
+ },
+ {
+  "k": "From HP",
+  "w": "129-v82beasts.js:151"
+ },
+ {
+  "k": "Behaviour states",
+  "w": "129-v82beasts.js:152"
+ },
+ {
+  "k": "1 — one row (same all fight long)",
+  "w": "129-v82beasts.js:152"
+ },
+ {
+  "k": "Unique — enters an event at most once",
+  "w": "129-v82beasts.js:153"
+ },
+ {
+  "k": "Its card · front and back",
+  "w": "129-v82beasts.js:154"
+ },
+ {
+  "k": "<b>🃏 Arena deck beasts</b>",
+  "w": "129-v82beasts.js:194"
+ },
+ {
+  "k": "{0} · at most 4 beast cards",
+  "w": "129-v82beasts.js:194"
+ },
+ {
+  "k": "your slots",
+  "w": "129-v82beasts.js:194"
+ },
+ {
+  "k": "the rulebook",
+  "w": "129-v82beasts.js:194"
+ },
+ {
+  "k": "Tholo stays in every deck (the rulebook removes him from Orpheus and the Juggernaut)",
+  "w": "129-v82beasts.js:195"
+ },
+ {
+  "k": "🔒 Tholo",
+  "w": "129-v82beasts.js:195"
+ },
+ {
+  "k": "Arena deck beasts",
+  "w": "129-v82beasts.js:221"
+ },
+ {
+  "k": "At most 4 beast cards: Tholo + 3 slots. Untick Tholo to free his place. Beasts you place on the board use no slot.",
+  "w": "129-v82beasts.js:221"
+ },
+ {
+  "k": "Zora card stays in the deck",
+  "w": "129-v82beasts.js:223"
+ },
+ {
+  "k": "Flavius scowls and refunds {0}'s seat (−{1} coin).",
+  "w": "129-v82beasts.js:244"
+ },
+ {
+  "k": "{0} draws a Mandati Flavi (Mandate from Flavius).",
+  "w": "129-v82beasts.js:247"
+ },
+ {
+  "k": "{0} — stats side",
+  "w": "129-v82beasts.js:297"
+ },
+ {
+  "k": "Strategy: when to fight, when to hold back",
+  "w": "131-v83council.js:22"
+ },
+ {
+  "k": "Recruiter",
+  "w": "131-v83council.js:23"
+ },
+ {
+  "k": "Scouts free agents; the ★ pick on the board",
+  "w": "131-v83council.js:23"
+ },
+ {
+  "k": "Doctore",
+  "w": "131-v83council.js:24"
+ },
+ {
+  "k": "Drills, growth and the Training Yard",
+  "w": "131-v83council.js:24"
+ },
+ {
+  "k": "Wounds, rest and the ward",
+  "w": "131-v83council.js:25"
+ },
+ {
+  "k": "Clerk",
+  "w": "131-v83council.js:26"
+ },
+ {
+  "k": "Purse, wages and contracts",
+  "w": "131-v83council.js:26"
+ },
+ {
+  "k": "Barracks master",
+  "w": "131-v83council.js:27"
+ }
+]

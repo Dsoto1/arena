@@ -1,0 +1,1774 @@
+[
+ {
+  "k": "without a spearing",
+  "w": "16-crowd.js:1147"
+ },
+ {
+  "k": "No spectator has ever been speared in this arena. The front rows sit easy.",
+  "w": "16-crowd.js:1147"
+ },
+ {
+  "k": "· Today: <b>{0}</b>.",
+  "w": "16-crowd.js:1147"
+ },
+ {
+  "k": "Spectator roster · {0}K spectators known to the ushers",
+  "w": "16-crowd.js:1153"
+ },
+ {
+  "k": "🔍 Find a spectator — name, city, or the gladiator they follow",
+  "w": "16-crowd.js:1154"
+ },
+ {
+  "k": "{0} of the gladiator {1}",
+  "w": "16-crowd.js:1156"
+ },
+ {
+  "k": "staying away ({0})",
+  "w": "16-crowd.js:1156"
+ },
+ {
+  "k": "{0} fan · {1} · {2} visit{3}",
+  "w": "16-crowd.js:1156"
+ },
+ {
+  "k": "In the stands right now",
+  "w": "16-crowd.js:1158"
+ },
+ {
+  "k": "Nobody by that name in the stands — the ushers know {0}K spectators.",
+  "w": "16-crowd.js:1161"
+ },
+ {
+  "k": "<span class=\"trb\">known troublemaker</span>",
+  "w": "16-crowd.js:1167"
+ },
+ {
+  "k": "{0} years old · lives by {1} · always buys {2}",
+  "w": "16-crowd.js:1168"
+ },
+ {
+  "k": "👪 <b>{0}</b> of the gladiator <b>{1}</b> — family colors when they fight",
+  "w": "16-crowd.js:1169"
+ },
+ {
+  "k": "What they remember (fades after ~5 events)",
+  "w": "16-crowd.js:1174"
+ },
+ {
+  "k": "Banned from the arena{0}. The ushers know the face.",
+  "w": "16-crowd.js:1175"
+ },
+ {
+  "k": "since {0}",
+  "w": "16-crowd.js:1175"
+ },
+ {
+  "k": "Currently staying away: {0} ({1} event{2} more, unless treated).",
+  "w": "16-crowd.js:1176"
+ },
+ {
+  "k": "Lift the ban",
+  "w": "16-crowd.js:1178"
+ },
+ {
+  "k": "Ban from the arena",
+  "w": "16-crowd.js:1178"
+ },
+ {
+  "k": "all is forgiven",
+  "w": "16-crowd.js:1178"
+ },
+ {
+  "k": "the ushers have been asking for this",
+  "w": "16-crowd.js:1178"
+ },
+ {
+  "k": "they will not be seated again",
+  "w": "16-crowd.js:1178"
+ },
+ {
+  "k": "🎟 Ticket bought",
+  "w": "16-crowd.js:1179"
+ },
+ {
+  "k": "🎟 Buy them a ticket",
+  "w": "16-crowd.js:1179"
+ },
+ {
+  "k": "they will be at the next event",
+  "w": "16-crowd.js:1179"
+ },
+ {
+  "k": "2 coin · seated right now, over someone else",
+  "w": "16-crowd.js:1179"
+ },
+ {
+  "k": "2 coin · guaranteed a seat at the next event",
+  "w": "16-crowd.js:1179"
+ },
+ {
+  "k": "Stand them a round<small>goodwill: clears any grudge against the games, +mood next visit</small>",
+  "w": "16-crowd.js:1180"
+ },
+ {
+  "k": "✔ YES — signed to your ludus",
+  "w": "16-crowd.js:1181"
+ },
+ {
+  "k": "✖ NO — they refused",
+  "w": "16-crowd.js:1181"
+ },
+ {
+  "k": "Offer them the sword",
+  "w": "16-crowd.js:1181"
+ },
+ {
+  "k": "they fight for you now: find them on your Roster",
+  "w": "16-crowd.js:1181"
+ },
+ {
+  "k": "refused for good — a Roman is only asked once",
+  "w": "16-crowd.js:1181"
+ },
+ {
+  "k": "one ask, ever — they miss the sand, they will likely say yes",
+  "w": "16-crowd.js:1181"
+ },
+ {
+  "k": "one ask, ever — yes and they join at once; no is final",
+  "w": "16-crowd.js:1181"
+ },
+ {
+  "k": "Buy their cheers<small>5 coin from your lanista — they back that name wherever it fights</small>",
+  "w": "16-crowd.js:1184"
+ },
+ {
+  "k": "🤚 You have already done that with <b>{0}</b> this week.",
+  "w": "16-crowd.js:1201"
+ },
+ {
+  "k": "🤚 <b>{0}</b> has had quite enough of your attention this week (three dealings at most).",
+  "w": "16-crowd.js:1202"
+ },
+ {
+  "k": "🍷 You stand <b>{0}</b> a round of honeyed wine — any grudge against the games is forgiven, and they arrive in a good mood (+15) next time.",
+  "w": "16-crowd.js:1206"
+ },
+ {
+  "k": "✅ <b>{0}</b> is welcome back in the arena.",
+  "w": "16-crowd.js:1207"
+ },
+ {
+  "k": "🚫 <b>{0}</b> is banned — the ushers memorize the face.",
+  "w": "16-crowd.js:1207"
+ },
+ {
+  "k": "🎟 A ticket for <b>{0}</b> — {1}.",
+  "w": "16-crowd.js:1208"
+ },
+ {
+  "k": "they take a seat right now",
+  "w": "16-crowd.js:1208"
+ },
+ {
+  "k": "guaranteed a seat at the next event",
+  "w": "16-crowd.js:1208"
+ },
+ {
+  "k": "<b>{0}</b> is banned from the arena. The ushers memorize the face.",
+  "w": "16-crowd.js:1211"
+ },
+ {
+  "k": "{0}'s ban is lifted. They swear they have changed.",
+  "w": "16-crowd.js:1211"
+ },
+ {
+  "k": "the editor stood them a round of honeyed wine",
+  "w": "16-crowd.js:1213"
+ },
+ {
+  "k": "A round of honeyed wine finds its way to <b>{0}</b>. They will remember it.",
+  "w": "16-crowd.js:1213"
+ },
+ {
+  "k": "Buying cheers takes 5 coin from an active lanista’s treasury.",
+  "w": "16-crowd.js:1217"
+ },
+ {
+  "k": "Buying cheers takes 5 coin from an active lanista’s treasury — and yours is",
+  "w": "16-crowd.js:1217"
+ },
+ {
+  "k": "too light",
+  "w": "16-crowd.js:1217"
+ },
+ {
+  "k": "not set",
+  "w": "16-crowd.js:1217"
+ },
+ {
+  "k": "took 5 coin to cheer for {0} (\"purely on merit,\" they insist)",
+  "w": "16-crowd.js:1219"
+ },
+ {
+  "k": "<b>{0}</b> suddenly discovers a deep, lifelong admiration for {1}. Completely unrelated: a heavier purse.",
+  "w": "16-crowd.js:1222"
+ },
+ {
+  "k": "📣 Five coin later, <b>{0}</b> is {1}'s loudest supporter.",
+  "w": "16-crowd.js:1223"
+ },
+ {
+  "k": "Five coin later, <b>{0}</b> is {1}'s loudest supporter. Rome runs on conviction like this.",
+  "w": "16-crowd.js:1224"
+ },
+ {
+  "k": "Signing a spectator needs an active lanista — set one in Manager mode.",
+  "w": "16-crowd.js:1230"
+ },
+ {
+  "k": "Signing a spectator needs an active lanista — set one in Manager mode (or at the Wagers table).",
+  "w": "16-crowd.js:1230"
+ },
+ {
+  "k": "✖ <b>NO.</b> <b>{0}</b> looks at the practice sword, then at their snack — and keeps the snack. That answer is final.",
+  "w": "16-crowd.js:1233"
+ },
+ {
+  "k": "<b>{0}</b> looks at the practice sword, looks at their {1}, and chooses the snack. {2}",
+  "w": "16-crowd.js:1234"
+ },
+ {
+  "k": "“I’ve SEEN what happens down there,” they explain, gesturing at the sand.",
+  "w": "16-crowd.js:1234"
+ },
+ {
+  "k": "“My mother didn’t raise a trophy,” they say, not unkindly.",
+  "w": "16-crowd.js:1234"
+ },
+ {
+  "k": "They laugh so hard the row behind joins in without knowing why.",
+  "w": "16-crowd.js:1234"
+ },
+ {
+  "k": "“Ask the sausage guy,” they say. The sausage guy also declines.",
+  "w": "16-crowd.js:1234"
+ },
+ {
+  "k": "✔ <b>YES.</b> <b>{0}</b> signs with {1} as a raw recruit (rated {2}) — on your Roster now.",
+  "w": "16-crowd.js:1241"
+ },
+ {
+  "k": "<b>{0}</b> puts down the {1} and picks up a practice sword: signed to {2} as a raw recruit (rated {3}).",
+  "w": "16-crowd.js:1242"
+ },
+ {
+  "k": "<b>{0}</b> plays the odds: 2 CF on <b>{1}</b>.",
+  "w": "16-crowd.js:1291"
+ },
+ {
+  "k": "Ambition",
+  "w": "17-manager.js:19"
+ },
+ {
+  "k": "Chases stars and titles, spends big",
+  "w": "17-manager.js:19"
+ },
+ {
+  "k": "Cunning",
+  "w": "17-manager.js:19"
+ },
+ {
+  "k": "Better scouting, poaching and betting",
+  "w": "17-manager.js:19"
+ },
+ {
+  "k": "Keeps promises; fighters trust them; poaching costs them",
+  "w": "17-manager.js:19"
+ },
+ {
+  "k": "Greed",
+  "w": "17-manager.js:19"
+ },
+ {
+  "k": "Takes a bigger cut of every purse; fighters resent it",
+  "w": "17-manager.js:19"
+ },
+ {
+  "k": "Showmanship",
+  "w": "17-manager.js:19"
+ },
+ {
+  "k": "Draws crowds and fame; showmen love them",
+  "w": "17-manager.js:19"
+ },
+ {
+  "k": "Discipline",
+  "w": "17-manager.js:19"
+ },
+ {
+  "k": "Trains fighters harder: faster improvement",
+  "w": "17-manager.js:19"
+ },
+ {
+  "k": "Risk",
+  "w": "17-manager.js:19"
+ },
+ {
+  "k": "Bolder bets and entries",
+  "w": "17-manager.js:19"
+ },
+ {
+  "k": "Balanced",
+  "w": "17-manager.js:21"
+ },
+ {
+  "k": "The Honorable",
+  "w": "17-manager.js:21"
+ },
+ {
+  "k": "The Schemer",
+  "w": "17-manager.js:21"
+ },
+ {
+  "k": "The Showman",
+  "w": "17-manager.js:21"
+ },
+ {
+  "k": "The Drillmaster",
+  "w": "17-manager.js:21"
+ },
+ {
+  "k": "The Gambler",
+  "w": "17-manager.js:21"
+ },
+ {
+  "k": "The Miser",
+  "w": "17-manager.js:21"
+ },
+ {
+  "k": "The Butcher",
+  "w": "17-manager.js:21"
+ },
+ {
+  "k": "The Patrician",
+  "w": "17-manager.js:21"
+ },
+ {
+  "k": "The Scholar",
+  "w": "17-manager.js:21"
+ },
+ {
+  "k": "The Zealot",
+  "w": "17-manager.js:21"
+ },
+ {
+  "k": "The Merchant",
+  "w": "17-manager.js:21"
+ },
+ {
+  "k": "Ludus Crispinus",
+  "w": "17-manager.js:24"
+ },
+ {
+  "k": "Old Capuan money. Buys stars, works them hard and pays late.",
+  "w": "17-manager.js:24"
+ },
+ {
+  "k": "Ludus Severianus",
+  "w": "17-manager.js:25"
+ },
+ {
+  "k": "A drillmaster with a spotless name. Her fighters would die for her, and sometimes do.",
+  "w": "17-manager.js:25"
+ },
+ {
+  "k": "The Pompeian Pit",
+  "w": "17-manager.js:26"
+ },
+ {
+  "k": "Forty years of sand in his sandals. Cheap, patient, and rarely wrong about a fighter.",
+  "w": "17-manager.js:26"
+ },
+ {
+  "k": "Ludus Vulpes",
+  "w": "17-manager.js:27"
+ },
+ {
+  "k": "Poacher, briber, bookmaker's friend. If your star goes missing, check his stables.",
+  "w": "17-manager.js:27"
+ },
+ {
+  "k": "House of Aurelia",
+  "w": "17-manager.js:28"
+ },
+ {
+  "k": "Silk banners, perfumed sand and fighters who play to the gods in the upper tiers.",
+  "w": "17-manager.js:28"
+ },
+ {
+  "k": "Ludus Punicus",
+  "w": "17-manager.js:29"
+ },
+ {
+  "k": "Bets the stable on long odds, and wins often enough to keep doing it.",
+  "w": "17-manager.js:29"
+ },
+ {
+  "k": "The Veronese Brotherhood",
+  "w": "17-manager.js:30"
+ },
+ {
+  "k": "A former priest of Mars who takes in the fighters nobody else wants.",
+  "w": "17-manager.js:30"
+ },
+ {
+  "k": "Ludus Nervanus",
+  "w": "17-manager.js:31"
+ },
+ {
+  "k": "A rich heir with more coin than sense and a burning need to be somebody.",
+  "w": "17-manager.js:31"
+ },
+ {
+  "k": "Ludus Olearius",
+  "w": "17-manager.js:32"
+ },
+ {
+  "k": "Olive-oil money from the African plains. Builds her amphitheater bigger every year, and her roster with it.",
+  "w": "17-manager.js:32"
+ },
+ {
+  "k": "Schola Nemausensis",
+  "w": "17-manager.js:33"
+ },
+ {
+  "k": "A veteran of the legions who runs his school like a camp: bread at dawn, drill till dusk, no excuses.",
+  "w": "17-manager.js:33"
+ },
+ {
+  "k": "House of the Lighthouse",
+  "w": "17-manager.js:34"
+ },
+ {
+  "k": "Trade-fleet fortune, bookmaker friends, and a talent for buying fighters the week before they break out.",
+  "w": "17-manager.js:34"
+ },
+ {
+  "k": "The Istrian Pens",
+  "w": "17-manager.js:35"
+ },
+ {
+  "k": "Runs the smallest arena in the league and the loudest crowd in it. Recruits fishermen, and they fight like it.",
+  "w": "17-manager.js:35"
+ },
+ {
+  "k": "Raise it: grow the treasury (win purses, bet well), keep Greed low, and keep your betting net positive. Ambition helps a little.",
+  "w": "17-manager.js:40"
+ },
+ {
+  "k": "Raise it: Discipline, plus every fighter you have actually improved (+1.5 each). Drillmasters recruit on this.",
+  "w": "17-manager.js:44"
+ },
+ {
+  "k": "Raise it: keep the stable lean. Past five fighters, each extra one costs a little arena time in a recruit's eyes — how much is set by the Arena-time pressure slider (Sandbox).",
+  "w": "17-manager.js:46"
+ },
+ {
+  "k": "wants to be paid well",
+  "w": "17-manager.js:49"
+ },
+ {
+  "k": "Glory",
+  "w": "17-manager.js:49"
+ },
+ {
+  "k": "wants a winning, famous ludus",
+  "w": "17-manager.js:49"
+ },
+ {
+  "k": "wants a lanista who keeps their word",
+  "w": "17-manager.js:49"
+ },
+ {
+  "k": "Spectacle",
+  "w": "17-manager.js:49"
+ },
+ {
+  "k": "wants big crowds and showmanship",
+  "w": "17-manager.js:49"
+ },
+ {
+  "k": "Training",
+  "w": "17-manager.js:49"
+ },
+ {
+  "k": "wants to get better",
+  "w": "17-manager.js:49"
+ },
+ {
+  "k": "Home",
+  "w": "17-manager.js:49"
+ },
+ {
+  "k": "wants to fight close to home",
+  "w": "17-manager.js:49"
+ },
+ {
+  "k": "Arena time",
+  "w": "17-manager.js:49"
+ },
+ {
+  "k": "wants to fight every week",
+  "w": "17-manager.js:49"
+ },
+ {
+  "k": "Legendary",
+  "w": "17-manager.js:61"
+ },
+ {
+  "k": "Imperial",
+  "w": "17-manager.js:61"
+ },
+ {
+  "k": "Regional",
+  "w": "17-manager.js:61"
+ },
+ {
+  "k": "Local",
+  "w": "17-manager.js:61"
+ },
+ {
+  "k": "{0} stars",
+  "w": "17-manager.js:65"
+ },
+ {
+  "k": "Fame {0}/100 — how widely the empire knows this name",
+  "w": "17-manager.js:69"
+ },
+ {
+  "k": "High spirits: +1 AP and +1 CF when the bout begins, and a bolder fighter",
+  "w": "17-manager.js:198"
+ },
+ {
+  "k": "Steady: no effect on the sand",
+  "w": "17-manager.js:198"
+ },
+ {
+  "k": "Low spirits: −1 AP when the bout begins, and a more cautious fighter",
+  "w": "17-manager.js:198"
+ },
+ {
+  "k": "Broken: −1 AP and they fight a whole tier worse (their skill deserts them)",
+  "w": "17-manager.js:198"
+ },
+ {
+  "k": "Signed with you",
+  "w": "17-manager.js:243"
+ },
+ {
+  "k": "Won't consider you: wants a {0} ludus (fame {1}+)",
+  "w": "17-manager.js:243"
+ },
+ {
+  "k": "Signed with {0} · loyalty {1}",
+  "w": "17-manager.js:244"
+ },
+ {
+  "k": "Leaning your way",
+  "w": "17-manager.js:245"
+ },
+ {
+  "k": "Top 3 (#{0})",
+  "w": "17-manager.js:245"
+ },
+ {
+  "k": "Listening",
+  "w": "17-manager.js:245"
+ },
+ {
+  "k": "Barely aware of you",
+  "w": "17-manager.js:245"
+ },
+ {
+  "k": "A newcomer with a leaky roof and big dreams.",
+  "w": "17-manager.js:263"
+ },
+ {
+  "k": "{0} opens {1} in {2} with 100 coin and one raw recruit: {3}. Nobody in the league has heard of you.",
+  "w": "17-manager.js:284"
+ },
+ {
+  "k": "You take the reins of {0} in {1}.",
+  "w": "17-manager.js:285"
+ },
+ {
+  "k": "📅 You join season {0} at week {1}: the league is already {2} week{3} old, and the old stables carry their records into your first match night.",
+  "w": "17-manager.js:291"
+ },
+ {
+  "k": "Ludus",
+  "w": "17-manager.js:302"
+ },
+ {
+  "k": "A lanista steps up to the bookmaker's table: <b>{0}</b> of {1}, 40 coin in hand. Shape them any time in Manager mode.",
+  "w": "17-manager.js:306"
+ },
+ {
+  "k": "<b>{0}'s arena is CLOSED</b> — {1} {2}. The editor moves the week's games to {3}.",
+  "w": "17-manager.js:322"
+ },
+ {
+  "k": "World news reaches {0}: {1} — attendance {2}{3}% (purses {4}).",
+  "w": "17-manager.js:328"
+ },
+ {
+  "k": "{0} over {1}. {2}{3}",
+  "w": "17-manager.js:330"
+ },
+ {
+  "k": "Attendance {0}{1}%: purses {2} with it.",
+  "w": "17-manager.js:330"
+ },
+ {
+  "k": "{0} fights before their home city of {1} this week{2}.",
+  "w": "17-manager.js:333"
+ },
+ {
+  "k": "— under a bad omen (morale −4)",
+  "w": "17-manager.js:333"
+ },
+ {
+  "k": "⚔️ The levy officer calls at {0} for <b>{1}</b>: {2} march against {3}. He can be persuaded otherwise — for {4} coin.",
+  "w": "17-manager.js:341"
+ },
+ {
+  "k": "The levy wants {0}. Bribe the officer ({1} coin) on Match Week, or watch them march.",
+  "w": "17-manager.js:342"
+ },
+ {
+  "k": "serving with {0} against {1}",
+  "w": "17-manager.js:343"
+ },
+ {
+  "k": "called up: marched with {0} against {1}",
+  "w": "17-manager.js:344"
+ },
+ {
+  "k": "⚔️ <b>{0}</b>{1} is called to the standards: {2} march against {3} at {4}.",
+  "w": "17-manager.js:345"
+ },
+ {
+  "k": "{0} was conscripted — {1} against {2}. Pray.",
+  "w": "17-manager.js:346"
+ },
+ {
+  "k": "20-49 CF: Survival — back to the Ludus Flavius",
+  "w": "17-manager.js:383"
+ },
+ {
+  "k": "17-19 CF: the d6 showed 4-6 — the thumb went up",
+  "w": "17-manager.js:384"
+ },
+ {
+  "k": "👍 thumb up — spared",
+  "w": "17-manager.js:384"
+ },
+ {
+  "k": "Condemned by the Fate table, but the editor waved it away (sandbox clemency)",
+  "w": "17-manager.js:385"
+ },
+ {
+  "k": "Condemned by the Fate table, but their lanista paid the editor blood money",
+  "w": "17-manager.js:386"
+ },
+ {
+  "k": "💰 condemned · bought back",
+  "w": "17-manager.js:386"
+ },
+ {
+  "k": "Condemned by the Fate table and nobody paid: gone from the league for good",
+  "w": "17-manager.js:387"
+ },
+ {
+  "k": "50+ CF: took the rudis and left the league a free person",
+  "w": "17-manager.js:388"
+ },
+ {
+  "k": "🗡 took the rudis — freed",
+  "w": "17-manager.js:388"
+ },
+ {
+  "k": "50+ CF: earned the rudis, chose to keep fighting",
+  "w": "17-manager.js:389"
+ },
+ {
+  "k": "🗡 earned the rudis — fights on",
+  "w": "17-manager.js:389"
+ },
+ {
+  "k": "<b style=\"color:var(--gold2)\">⏳ awaiting the thumb</b>",
+  "w": "17-manager.js:390"
+ },
+ {
+  "k": "<b style=\"color:#e0a060\">⏳ condemned — your call</b>{0}",
+  "w": "17-manager.js:391"
+ },
+ {
+  "k": "<b style=\"color:var(--gold2)\">⏳ the rudis — your call</b>",
+  "w": "17-manager.js:392"
+ },
+ {
+  "k": "Condemned by the Fate table ({0} · {1}); this bout predates verdict records",
+  "w": "17-manager.js:397"
+ },
+ {
+  "k": "↩ Your {0}-coin wager on {1} is void — they are off the card. Stake returned.",
+  "w": "17-manager.js:413"
+ },
+ {
+  "k": "that fighter",
+  "w": "17-manager.js:413"
+ },
+ {
+  "k": "🤝 <b>Co-op:</b> {0} fight together against the beasts.",
+  "w": "17-manager.js:423"
+ },
+ {
+  "k": "👑 Juggernaut",
+  "w": "17-manager.js:424"
+ },
+ {
+  "k": "<b>{0}</b> — drafts 7 picks — <i>versus</i>",
+  "w": "17-manager.js:424"
+ },
+ {
+  "k": "The team",
+  "w": "17-manager.js:424"
+ },
+ {
+  "k": "Team A",
+  "w": "17-manager.js:426"
+ },
+ {
+  "k": "{0} <i>versus</i>",
+  "w": "17-manager.js:426"
+ },
+ {
+  "k": "Team B",
+  "w": "17-manager.js:426"
+ },
+ {
+  "k": "The {0} was called off ({1}).",
+  "w": "17-manager.js:452"
+ },
+ {
+  "k": "no result",
+  "w": "17-manager.js:452"
+ },
+ {
+  "k": "<b>{0}</b> impressed from your box seats ({1} CF{2}) — chalked onto your recruiting board.",
+  "w": "17-manager.js:473"
+ },
+ {
+  "k": ", the win",
+  "w": "17-manager.js:473"
+ },
+ {
+  "k": "<i>the judges' verdict raises eyebrows — {0} is declared the victor</i>",
+  "w": "17-manager.js:484"
+ },
+ {
+  "k": "won the {0} at {1}{2} ({3} CF)",
+  "w": "17-manager.js:489"
+ },
+ {
+  "k": "for {0}",
+  "w": "17-manager.js:489"
+ },
+ {
+  "k": "{0} wins for {1} (+{2} coin to the lanista)",
+  "w": "17-manager.js:489"
+ },
+ {
+  "k": "{0}, a free agent, wins and raises their price",
+  "w": "17-manager.js:490"
+ },
+ {
+  "k": "{0} loses a {1}",
+  "w": "17-manager.js:492"
+ },
+ {
+  "k": "a torn shoulder",
+  "w": "17-manager.js:494"
+ },
+ {
+  "k": "a deep thigh cut",
+  "w": "17-manager.js:494"
+ },
+ {
+  "k": "cracked ribs",
+  "w": "17-manager.js:494"
+ },
+ {
+  "k": "a rattled skull",
+  "w": "17-manager.js:494"
+ },
+ {
+  "k": "a mangled hand",
+  "w": "17-manager.js:494"
+ },
+ {
+  "k": "{0} leaves the sand hurt ({1})",
+  "w": "17-manager.js:495"
+ },
+ {
+  "k": "{0} came back from the bout with {1} — benched until it heals or the Medicus clears it.",
+  "w": "17-manager.js:495"
+ },
+ {
+  "k": "<b>{0} falls in the sand — the house dies with its lanista</b>",
+  "w": "17-manager.js:504"
+ },
+ {
+  "k": "Fell as the underdog",
+  "w": "17-manager.js:505"
+ },
+ {
+  "k": "When the money ran out, the lanista took the sand himself. The crowd stood. The debt is paid.",
+  "w": "17-manager.js:505"
+ },
+ {
+  "k": "fell in the arena as the underdog — the Debtor's Gambit",
+  "w": "17-manager.js:506"
+ },
+ {
+  "k": "✝ <b>{0} dies on the sand.</b> The Debtor's Gambit is lost. The Annals keep the story — which is more than the creditors ever would have.",
+  "w": "17-manager.js:507"
+ },
+ {
+  "k": "the editor tears up the loan papers, for the theater of it",
+  "w": "17-manager.js:510"
+ },
+ {
+  "k": "💀→🏛 <b>The Debtor's Gambit is {0}.</b> {1} walks off the sand {2} — the editor settles the books: treasury {3}, fame +{4}. The creditors melt away.",
+  "w": "17-manager.js:512"
+ },
+ {
+  "k": "to the crowd chanting the house name",
+  "w": "17-manager.js:512"
+ },
+ {
+  "k": "bloodied but upright",
+  "w": "17-manager.js:512"
+ },
+ {
+  "k": "{0} died against your fighter",
+  "w": "17-manager.js:522"
+ },
+ {
+  "k": "{0} got the main event {1} promised. Word kept; the barracks notice.",
+  "w": "17-manager.js:525"
+ },
+ {
+  "k": "Your bet on {0}: {1}",
+  "w": "17-manager.js:528"
+ },
+ {
+  "k": "({0} to the Emperor's tenth)",
+  "w": "17-manager.js:528"
+ },
+ {
+  "k": "Bookmaker's cut: {0} wagered {1} on {2} — you take {3}.",
+  "w": "17-manager.js:537"
+ },
+ {
+  "k": "{0} wins {1} coin on {2} at {3}×.",
+  "w": "17-manager.js:538"
+ },
+ {
+  "k": "<b>SCANDAL:</b> Flavius's clerks unpick the {0}'s ledgers — {1} FIXED the bout. Fame −12, fined 40 coin.{2}",
+  "w": "17-manager.js:550"
+ },
+ {
+  "k": "A second offense forfeits the ludus.",
+  "w": "17-manager.js:550"
+ },
+ {
+  "k": "CAUGHT fixing the {0}: fame −12, 40 coin fine. Strike {1} of 2.",
+  "w": "17-manager.js:551"
+ },
+ {
+  "k": "seized by Flavius for fixing bouts — twice",
+  "w": "17-manager.js:552"
+ },
+ {
+  "k": "The fixed {0} pays out quietly. Nobody talks. This time.",
+  "w": "17-manager.js:553"
+ },
+ {
+  "k": "Week {0} · {1}'s {2} at {3}: {4}. {5}",
+  "w": "17-manager.js:555"
+ },
+ {
+  "k": "no victor",
+  "w": "17-manager.js:555"
+ },
+ {
+  "k": "{0}'s contract has run out. Re-sign them from Your ludus before next week or they walk.",
+  "w": "17-manager.js:571"
+ },
+ {
+  "k": "{0} leaves {1} as a free agent.",
+  "w": "17-manager.js:571"
+ },
+ {
+  "k": "{0} walked — contract expired unsigned.",
+  "w": "17-manager.js:571"
+ },
+ {
+  "k": "{0}'s contract expired — re-sign or lose them.",
+  "w": "17-manager.js:571"
+ },
+ {
+  "k": "{0} leaves {1} and becomes a free agent.",
+  "w": "17-manager.js:572"
+ },
+ {
+  "k": "walked out of {0} over unpaid wages",
+  "w": "17-manager.js:573"
+ },
+ {
+  "k": "{0} cannot pay its fighters. {1} walks out.",
+  "w": "17-manager.js:573"
+ },
+ {
+  "k": "{0} walked out — the treasury could not cover wages.",
+  "w": "17-manager.js:573"
+ },
+ {
+  "k": "{0}, maimed, lays down the sword for good.",
+  "w": "17-manager.js:578"
+ },
+ {
+  "k": "fell in the war against {0}",
+  "w": "17-manager.js:585"
+ },
+ {
+  "k": "fell with {0} against {1}",
+  "w": "17-manager.js:586"
+ },
+ {
+  "k": "⚔️ <b>{0}</b> fell with {1} against {2}. The barracks pour one on the sand.",
+  "w": "17-manager.js:587"
+ },
+ {
+  "k": "{0} fell in the war.",
+  "w": "17-manager.js:588"
+ },
+ {
+  "k": "returned from the war a hero (+{0} rating)",
+  "w": "17-manager.js:590"
+ },
+ {
+  "k": "🦅 <b>{0}</b> returns from the war a HERO: +{1} rating, +15 fame, and half the empire chanting the name.",
+  "w": "17-manager.js:592"
+ },
+ {
+  "k": "{0} came home a war hero: +{1} rating, +15 fame.",
+  "w": "17-manager.js:593"
+ },
+ {
+  "k": "died of {0} left untreated",
+  "w": "17-manager.js:598"
+ },
+ {
+  "k": "{0}, left to fester",
+  "w": "17-manager.js:599"
+ },
+ {
+  "k": "✝ <b>{0}</b> dies of {1} — three weeks in the infirmary and no surgeon came.",
+  "w": "17-manager.js:600"
+ },
+ {
+  "k": "{0} died untreated in the infirmary. The barracks saw who didn't pay.",
+  "w": "17-manager.js:601"
+ },
+ {
+  "k": "fled the infirmary, {0} and all",
+  "w": "17-manager.js:602"
+ },
+ {
+  "k": "<b>{0}</b> limps out of the infirmary in the night and is gone — {1}, no surgeon, no goodbye.",
+  "w": "17-manager.js:603"
+ },
+ {
+  "k": "{0} fled the infirmary untreated.",
+  "w": "17-manager.js:604"
+ },
+ {
+  "k": "fought through an untreated wound (−2 rating, for good)",
+  "w": "17-manager.js:605"
+ },
+ {
+  "k": "<b>{0}</b> grits through the pain and walks out of the infirmary — the wound never quite closes (−2 rating).",
+  "w": "17-manager.js:606"
+ },
+ {
+  "k": "{0} fought through the untreated wound: back, but −2 rating for good.",
+  "w": "17-manager.js:607"
+ },
+ {
+  "k": "{0}'s {1} is FESTERING — a surgeon (Infirmary tab, {2} coin) or it ends badly next week.",
+  "w": "17-manager.js:609"
+ },
+ {
+  "k": "sat out — {0}",
+  "w": "17-manager.js:621"
+ },
+ {
+  "k": "a sprained ankle",
+  "w": "17-manager.js:625"
+ },
+ {
+  "k": "a pulled shoulder",
+  "w": "17-manager.js:625"
+ },
+ {
+  "k": "a cracked rib",
+  "w": "17-manager.js:625"
+ },
+ {
+  "k": "fell on their own sword (shallow, but the barracks will not let it go)",
+  "w": "17-manager.js:625"
+ },
+ {
+  "k": "a wrenched knee at the palus",
+  "w": "17-manager.js:625"
+ },
+ {
+  "k": "<b>injured</b> — {0}: −{1} rating and benched a week (the Medicus or a bathhouse day clears it){2}",
+  "w": "17-manager.js:627"
+ },
+ {
+  "k": "— the omens did warn of a slick yard",
+  "w": "17-manager.js:627"
+ },
+ {
+  "k": "{0} injured in {1} training: {2}.",
+  "w": "17-manager.js:628"
+ },
+ {
+  "k": "+{0} rating{1} — {2}{3}",
+  "w": "17-manager.js:630"
+ },
+ {
+  "k": "(personal trainer)",
+  "w": "17-manager.js:630"
+ },
+ {
+  "k": "footwork drills",
+  "w": "17-manager.js:630"
+ },
+ {
+  "k": "shield discipline",
+  "w": "17-manager.js:630"
+ },
+ {
+  "k": "long mornings at the palus",
+  "w": "17-manager.js:630"
+ },
+ {
+  "k": "breath and nerve work",
+  "w": "17-manager.js:630"
+ },
+ {
+  "k": "weighted sword work",
+  "w": "17-manager.js:630"
+ },
+ {
+  "k": "sparring the doctors",
+  "w": "17-manager.js:630"
+ },
+ {
+  "k": ", despite ill omens over the yard",
+  "w": "17-manager.js:630"
+ },
+ {
+  "k": "a private session",
+  "w": "17-manager.js:631"
+ },
+ {
+  "k": "(the omens counselled rest)",
+  "w": "17-manager.js:631"
+ },
+ {
+  "k": "; they have reached their potential",
+  "w": "17-manager.js:631"
+ },
+ {
+  "k": "Training ({0}{1}): {2} improved, {3} injured.",
+  "w": "17-manager.js:634"
+ },
+ {
+  "k": "+ personal trainers",
+  "w": "17-manager.js:634"
+ },
+ {
+  "k": "a winter fever",
+  "w": "17-manager.js:638"
+ },
+ {
+  "k": "a tavern knife over a bookie’s debt",
+  "w": "17-manager.js:638"
+ },
+ {
+  "k": "an angry spectator with a roof tile",
+  "w": "17-manager.js:638"
+ },
+ {
+  "k": "a practice bout that went a hand too deep",
+  "w": "17-manager.js:638"
+ },
+ {
+  "k": "the levy — marched off to war and never seen again",
+  "w": "17-manager.js:638"
+ },
+ {
+  "k": "bad oysters at a victory feast",
+  "w": "17-manager.js:638"
+ },
+ {
+  "k": "a rival’s hired blade in an alley",
+  "w": "17-manager.js:638"
+ },
+ {
+  "k": "died: {0}",
+  "w": "17-manager.js:639"
+ },
+ {
+  "k": "<b>{0}</b> ({1}) is dead — {2}. The sand had nothing to do with it.",
+  "w": "17-manager.js:641"
+ },
+ {
+  "k": "{0} died: {1}.",
+  "w": "17-manager.js:642"
+ },
+ {
+  "k": "{0} gives up the sand and goes home to {1}.",
+  "w": "17-manager.js:643"
+ },
+ {
+  "k": "<b>{0} broke the pledge</b> to {1}: no main event came. {2}",
+  "w": "17-manager.js:650"
+ },
+ {
+  "k": "Honor-minded fighters will hear of it.",
+  "w": "17-manager.js:650"
+ },
+ {
+  "k": "<i>“{0}”</i> — {1}, to anyone who will listen.",
+  "w": "17-manager.js:654"
+ },
+ {
+  "k": "Tell {0} the sand is waiting.",
+  "w": "17-manager.js:654"
+ },
+ {
+  "k": "Their fighters die tired, nothing more.",
+  "w": "17-manager.js:654"
+ },
+ {
+  "k": "I will buy their ludus for kindling.",
+  "w": "17-manager.js:654"
+ },
+ {
+  "k": "Every one of their victories is borrowed.",
+  "w": "17-manager.js:654"
+ },
+ {
+  "k": "hung up the sword at {0}",
+  "w": "17-manager.js:662"
+ },
+ {
+  "k": "<b>{0}</b>, {1}, hangs up the sword after {2} event{3} and {4} win{5}. The barracks drink to an old sand-hand.",
+  "w": "17-manager.js:663"
+ },
+ {
+  "k": "{0} retired at {1} — age comes for every sword arm.",
+  "w": "17-manager.js:664"
+ },
+ {
+  "k": "at {0} request",
+  "w": "17-manager.js:672"
+ },
+ {
+  "k": "on a doctor’s advice",
+  "w": "17-manager.js:672"
+ },
+ {
+  "k": "after a winter of new drills and tactics",
+  "w": "17-manager.js:672"
+ },
+ {
+  "k": "by personal choice — the old style stopped feeling right",
+  "w": "17-manager.js:672"
+ },
+ {
+  "k": "to counter the season’s fashion in the arena",
+  "w": "17-manager.js:672"
+ },
+ {
+  "k": "re-badged from {0} to {1} ({2})",
+  "w": "17-manager.js:673"
+ },
+ {
+  "k": "{0} ({1}) re-badges from {2} to <b>{3}</b> {4}.",
+  "w": "17-manager.js:674"
+ },
+ {
+  "k": "{0} now fights as a {1} ({2}).",
+  "w": "17-manager.js:675"
+ },
+ {
+  "k": "went home — no ludus came calling",
+  "w": "17-manager.js:682"
+ },
+ {
+  "k": "Hard times swell the recruiting yards: {0} send their desperate to the sand.",
+  "w": "17-manager.js:685"
+ },
+ {
+  "k": "A new fighter arrives: <b>{0}</b> of {1}, {2} years old, rated {3} {4}.",
+  "w": "17-manager.js:686"
+ },
+ {
+  "k": "{0} weeks in the red — the Debtor's Gambit went unfought",
+  "w": "17-manager.js:699"
+ },
+ {
+  "k": "💀 <b>The creditors gather at your gate.</b> One door remains open: the editor will pay handsomely to watch a LANISTA bleed. Take the sand yourself in next week's main event — the <b>Debtor's Gambit</b> waits on Match Week. Refuse, and the ludus falls.",
+  "w": "17-manager.js:701"
+ },
+ {
+  "k": "{0} weeks in the red",
+  "w": "17-manager.js:702"
+ },
+ {
+  "k": "<b>Your treasury is {0} coin.</b> {1} week{2} in the red before the creditors close the ludus. Win purses, bet well or release your dearest wages.",
+  "w": "17-manager.js:703"
+ },
+ {
+  "k": "ending the season in debt",
+  "w": "17-manager.js:706"
+ },
+ {
+  "k": "🏛 The creditors give a new house until the end of its first full season. {0} starts the next one in debt — and on notice.",
+  "w": "17-manager.js:707"
+ },
+ {
+  "k": "🏛 <b>The regular season is over.</b> The Flavius Superbus is set for Roma: {0} are invited — one fighter each. {1} chose the {2} gift.",
+  "w": "17-manager.js:715"
+ },
+ {
+  "k": "🏛 <b>You are invited to the Flavius Superbus!</b> Choose your champion on Match Week when it opens next week.",
+  "w": "17-manager.js:716"
+ },
+ {
+  "k": "Season {0} ends. Top of the table: <b>{1}</b> ({2}, {3} points, {4}-{5}).",
+  "w": "17-manager.js:717"
+ },
+ {
+  "k": "bought their freedom at {0}",
+  "w": "17-manager.js:724"
+ },
+ {
+  "k": "the Gate of Life",
+  "w": "17-manager.js:724"
+ },
+ {
+  "k": "bought their freedom",
+  "w": "17-manager.js:724"
+ },
+ {
+  "k": "<b>{0}</b>, {1}, counts out a lifetime of purse-cuts and <b>buys their freedom</b> at season's end. They walk out the Gate of Life with the crowd on its feet.",
+  "w": "17-manager.js:725"
+ },
+ {
+  "k": "{0} bought their freedom — you cannot argue with a full purse and a finished story.",
+  "w": "17-manager.js:726"
+ },
+ {
+  "k": "their heart gave out in the baths",
+  "w": "17-manager.js:728"
+ },
+ {
+  "k": "the old wounds finally collected their debt",
+  "w": "17-manager.js:728"
+ },
+ {
+  "k": "they went to sleep after the feast and did not wake",
+  "w": "17-manager.js:728"
+ },
+ {
+  "k": "one winter too many for a body full of scars",
+  "w": "17-manager.js:728"
+ },
+ {
+  "k": "died at {0}: {1}",
+  "w": "17-manager.js:729"
+ },
+ {
+  "k": "<b>{0}</b>, {1}, fought to the very end — {2}.",
+  "w": "17-manager.js:731"
+ },
+ {
+  "k": "{0} died at season's end: {1}.",
+  "w": "17-manager.js:732"
+ },
+ {
+  "k": "took the rudis",
+  "w": "17-manager.js:735"
+ },
+ {
+  "k": "died in the league",
+  "w": "17-manager.js:735"
+ },
+ {
+  "k": "sold to the silver mines to settle the debts",
+  "w": "17-manager.js:767"
+ },
+ {
+  "k": "taken as a bodyguard by a senator’s son",
+  "w": "17-manager.js:767"
+ },
+ {
+  "k": "enlisted with the legions on the Danube",
+  "w": "17-manager.js:767"
+ },
+ {
+  "k": "slipped away in the night and was never seen again",
+  "w": "17-manager.js:767"
+ },
+ {
+  "k": "went home to farm, swearing never to hold a sword again",
+  "w": "17-manager.js:767"
+ },
+ {
+  "k": "seized by the creditors and sold at auction",
+  "w": "17-manager.js:767"
+ },
+ {
+  "k": "Unwritten",
+  "w": "17-manager.js:770"
+ },
+ {
+  "k": "A footnote",
+  "w": "17-manager.js:770"
+ },
+ {
+  "k": "A respected house",
+  "w": "17-manager.js:770"
+ },
+ {
+  "k": "A name in the taverns",
+  "w": "17-manager.js:770"
+ },
+ {
+  "k": "A great house",
+  "w": "17-manager.js:770"
+ },
+ {
+  "k": "A dynasty",
+  "w": "17-manager.js:770"
+ },
+ {
+  "k": "Legend of the sand",
+  "w": "17-manager.js:770"
+ },
+ {
+  "k": "Seasons completed",
+  "w": "17-manager.js:773"
+ },
+ {
+  "k": "Bouts won",
+  "w": "17-manager.js:773"
+ },
+ {
+  "k": "Flavian Cups",
+  "w": "17-manager.js:773"
+ },
+ {
+  "k": "Superbus crowns",
+  "w": "17-manager.js:773"
+ },
+ {
+  "k": "Other silverware",
+  "w": "17-manager.js:774"
+ },
+ {
+  "k": "Peak fame",
+  "w": "17-manager.js:774"
+ },
+ {
+  "k": "Facilities built",
+  "w": "17-manager.js:774"
+ },
+ {
+  "k": "Champions freed with the rudis",
+  "w": "17-manager.js:775"
+ },
+ {
+  "k": "Hidden gems found",
+  "w": "17-manager.js:775"
+ },
+ {
+  "k": "Debts honored",
+  "w": "17-manager.js:775"
+ },
+ {
+  "k": "Pledges broken",
+  "w": "17-manager.js:775"
+ },
+ {
+  "k": "First blood",
+  "w": "17-manager.js:780"
+ },
+ {
+  "k": "Win a bout",
+  "w": "17-manager.js:780"
+ },
+ {
+  "k": "A full barracks",
+  "w": "17-manager.js:780"
+ },
+ {
+  "k": "Five fighters under contract",
+  "w": "17-manager.js:780"
+ },
+ {
+  "k": "Known in the forum",
+  "w": "17-manager.js:780"
+ },
+ {
+  "k": "Reach 40 fame",
+  "w": "17-manager.js:780"
+ },
+ {
+  "k": "A house with walls",
+  "w": "17-manager.js:781"
+ },
+ {
+  "k": "Ludus grade B or better",
+  "w": "17-manager.js:781"
+ },
+ {
+  "k": "Silverware",
+  "w": "17-manager.js:781"
+ },
+ {
+  "k": "Win any trophy",
+  "w": "17-manager.js:781"
+ },
+ {
+  "k": "Top of the table",
+  "w": "17-manager.js:781"
+ },
+ {
+  "k": "Win the Flavian Cup",
+  "w": "17-manager.js:781"
+ },
+ {
+  "k": "The Superbus",
+  "w": "17-manager.js:782"
+ },
+ {
+  "k": "Win the season finale",
+  "w": "17-manager.js:782"
+ },
+ {
+  "k": "The long game",
+  "w": "17-manager.js:782"
+ },
+ {
+  "k": "Complete three seasons",
+  "w": "17-manager.js:782"
+ },
+ {
+  "k": "Legacy 260+",
+  "w": "17-manager.js:782"
+ },
+ {
+  "k": "🏛 The legacy of {0}",
+  "w": "17-manager.js:785"
+ },
+ {
+  "k": "{0} legacy — {1}",
+  "w": "17-manager.js:785"
+ },
+ {
+  "k": "<b>{0} legacy</b> · {1}{2}. Manager mode has no forced ending — the legacy IS the long game. Retire when the story is told, and the house enters the Annals.",
+  "w": "17-manager.js:786"
+ },
+ {
+  "k": "· {0} to “{1}”",
+  "w": "17-manager.js:786"
+ },
+ {
+  "k": "· the highest tier there is",
+  "w": "17-manager.js:786"
+ },
+ {
+  "k": "The ledger of it — every point, and the milestones",
+  "w": "17-manager.js:787"
+ },
+ {
+  "k": "<span class=\"rc-sub\">Nothing yet — win something.</span>",
+  "w": "17-manager.js:787"
+ },
+ {
+  "k": "Milestones · {0}/{1}",
+  "w": "17-manager.js:788"
+ },
+ {
+  "k": "🏺 Retire with honors<small>close the house at its peak — it enters the Annals for good</small>",
+  "w": "17-manager.js:789"
+ },
+ {
+  "k": "Honors are for houses the taverns talk about: legacy 160 ('A name in the taverns', grade B) or better. {0} stands at {1}.",
+  "w": "17-manager.js:790"
+ },
+ {
+  "k": "🏺 Retire with honors<small>🔒 needs legacy 160+ (grade B) — yours is {0}</small>",
+  "w": "17-manager.js:790"
+ },
+ {
+  "k": "🚪 Shut down the ludus<small>always your right — the fighters are turned out, no honors, no annal</small>",
+  "w": "17-manager.js:791"
+ },
+ {
+  "k": "walked free when {0} collapsed — into free agency",
+  "w": "17-manager.js:796"
+ },
+ {
+  "k": "free agency — rival stables are already asking",
+  "w": "17-manager.js:796"
+ },
+ {
+  "k": "{0} when {1} collapsed",
+  "w": "17-manager.js:797"
+ },
+ {
+  "k": "<b>{0} collapses.</b> The creditors seize the sand, the fighters walk free, and {1}'s name is struck from the lanistae's rolls ({2}).",
+  "w": "17-manager.js:801"
+ },
+ {
+  "k": "courted {0}",
+  "w": "17-manager.js:811"
+ },
+ {
+  "k": "{0} courts <b>{1}</b> — your scouts say the feast ran late.",
+  "w": "17-manager.js:811"
+ },
+ {
+  "k": "signed {0}{1}",
+  "w": "17-manager.js:813"
+ },
+ {
+  "k": "— paying far over the odds",
+  "w": "17-manager.js:813"
+ },
+ {
+  "k": "{0} signs <b>{1}</b> ({2}).",
+  "w": "17-manager.js:813"
+ },
+ {
+  "k": "poached {0} from {1} ({2} coin buyout)",
+  "w": "17-manager.js:816"
+ },
+ {
+  "k": "lost {0} to {1}'s poaching",
+  "w": "17-manager.js:816"
+ },
+ {
+  "k": "poached from {0} by {1}",
+  "w": "17-manager.js:816"
+ },
+ {
+  "k": "the feud is on",
+  "w": "17-manager.js:816"
+ },
+ {
+  "k": "{0} poached {1} from you ({2}-coin buyout).",
+  "w": "17-manager.js:816"
+ },
+ {
+  "k": "<b>{0} poaches {1}</b> from {2} for a {3}-coin buyout.",
+  "w": "17-manager.js:816"
+ },
+ {
+  "k": "released by {0}",
+  "w": "17-manager.js:817"
+ },
+ {
+  "k": "released {0}",
+  "w": "17-manager.js:817"
+ },
+ {
+  "k": "{0} releases {1}.",
+  "w": "17-manager.js:817"
+ },
+ {
+  "k": "died at {0}: {1} · {2}",
+  "w": "17-manager.js:835"
+ },
+ {
+  "k": "{0} died on the sand — {1} · {2} — aged {3}.",
+  "w": "17-manager.js:837"
+ },
+ {
+  "k": "the league{0}",
+  "w": "17-manager.js:839"
+ },
+ {
+  "k": "took the rudis at {0} — freedom",
+  "w": "17-manager.js:841"
+ },
+ {
+  "k": "took the rudis in the league",
+  "w": "17-manager.js:841"
+ },
+ {
+  "k": "<b>{0}</b> takes the <b>rudis</b> at {1}: 50+ Crowd Favor buys a lifetime's freedom. The crowd stands.",
+  "w": "17-manager.js:842"
+ },
+ {
+  "k": "{0} took the rudis and walked free.",
+  "w": "17-manager.js:843"
+ },
+ {
+  "k": "condemned ({0} · {1}) — bought back by {2} for {3} coin",
+  "w": "17-manager.js:846"
+ },
+ {
+  "k": "Paid the editor {0} coin for {1}'s life ({2}). They will not forget it.",
+  "w": "17-manager.js:847"
+ },
+ {
+  "k": "Ludus Flavius",
+  "w": "17-manager.js:854"
+ },
+ {
+  "k": "earned the rudis at {0} ({1} CF) — but not the record to claim it yet",
+  "w": "17-manager.js:856"
+ },
+ {
+  "k": "Rudis · not yet",
+  "w": "17-manager.js:857"
+ },
+ {
+  "k": "{0} earns the rudis ({1} CF) — but freedom needs a record: {2}/{3} events and {4}/{5} wins. Back to the ludus.",
+  "w": "17-manager.js:857"
+ },
+ {
+  "k": "Rudis",
+  "w": "17-manager.js:859"
+ },
+ {
+  "k": "{0} earns the <b>rudis</b> ({1} CF) — your decision awaits",
+  "w": "17-manager.js:859"
+ },
+ {
+  "k": "{0} takes the rudis and walks free",
+  "w": "17-manager.js:860"
+ },
+ {
+  "k": "earned the rudis at {0} ({1} CF) — and chose to fight on",
+  "w": "17-manager.js:861"
+ },
+ {
+  "k": "{0} earns the rudis — and chooses to fight on",
+  "w": "17-manager.js:861"
+ },
+ {
+  "k": "Thumb of Flavius",
+  "w": "17-manager.js:865"
+ },
+ {
+  "k": "{0} faces the <b>Thumb of Flavius</b> ({1} CF) — you roll the die on Match Week",
+  "w": "17-manager.js:865"
+ },
+ {
+  "k": "{0} faces the thumb ({1} CF) — it goes up. Spared.",
+  "w": "17-manager.js:866"
+ },
+ {
+  "k": "condemned ({0}) — the crowd would not allow it: clemency, as always",
+  "w": "17-manager.js:869"
+ },
+ {
+  "k": "{0} is condemned ({1} CF) — and the whole arena rises for <b>{2}</b>. The editor has no choice. Clemency.",
+  "w": "17-manager.js:869"
+ },
+ {
+  "k": "condemned as a rookie ({0}) — the editor spared the green one",
+  "w": "17-manager.js:870"
+ },
+ {
+  "k": "{0} is condemned, but the editor spares a rookie",
+  "w": "17-manager.js:870"
+ },
+ {
+  "k": "condemned ({0}) — the editor showed clemency",
+  "w": "17-manager.js:872"
+ },
+ {
+  "k": "{0} is condemned ({1}, {2} CF) — but the editor waves it away. Clemency.",
+  "w": "17-manager.js:873"
+ },
+ {
+  "k": "{0} is <b>condemned</b> — {1} ({2} CF). Blood money: {3} coin, your decision",
+  "w": "17-manager.js:875"
+ },
+ {
+  "k": "{0} is condemned ({1}) — {2} pays {3} coin in blood money",
+  "w": "17-manager.js:877"
+ },
+ {
+  "k": "<b>{0} dies</b> — {1} · {2} ({3} CF)",
+  "w": "17-manager.js:878"
+ },
+ {
+  "k": "faced the Thumb of Flavius at {0} — the d6 showed {1}: spared",
+  "w": "17-manager.js:895"
+ },
+ {
+  "k": "{0} faced the thumb and rolled {1}: spared.",
+  "w": "17-manager.js:895"
+ },
+ {
+  "k": "The thumb goes up for {0}.",
+  "w": "17-manager.js:895"
+ },
+ {
+  "k": "The thumb goes down ({0}); the d12 names {1}. You may still pay the editor {2} coin.",
+  "w": "17-manager.js:897"
+ },
+ {
+  "k": "Not enough coin for the editor.",
+  "w": "17-manager.js:899"
+ },
+ {
+  "k": "{0} coin changes hands. {1} lives — and owes you a life.",
+  "w": "17-manager.js:899"
+ },
+ {
+  "k": "The sentence stands. {0} is gone: {1}.",
+  "w": "17-manager.js:900"
+ },
+ {
+  "k": "Not enough coin for the officer.",
+  "w": "17-manager.js:902"
+ }
+]

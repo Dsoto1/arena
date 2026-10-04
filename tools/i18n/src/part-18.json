@@ -1,0 +1,1750 @@
+[
+ {
+  "k": "🏛 The Senate pays half your wages for the bye week: +{0} coin.",
+  "w": "59-bye.js:25"
+ },
+ {
+  "k": "🏋 The bye-week camp paid off: {0} of your fighters gained +1 rating.",
+  "w": "59-bye.js:28"
+ },
+ {
+  "k": "🌿 Bye week · week {0} of season {1}",
+  "w": "59-bye.js:32"
+ },
+ {
+  "k": "No bouts anywhere in the league this week. Use it to build the house:",
+  "w": "59-bye.js:33"
+ },
+ {
+  "k": "🛒 <b>Vulso’s cart</b> is at your gate{0} (top of any tab).",
+  "w": "59-bye.js:34"
+ },
+ {
+  "k": "with {0} lot{1}",
+  "w": "59-bye.js:34"
+ },
+ {
+  "k": "🏪 <b>Market day</b> on your home square in {0}: no road to pay.",
+  "w": "59-bye.js:35"
+ },
+ {
+  "k": "Visit the square",
+  "w": "59-bye.js:35"
+ },
+ {
+  "k": "⏳ <b>{0} hours</b> this week (+{1}) for",
+  "w": "59-bye.js:36"
+ },
+ {
+  "k": "exhibitions.",
+  "w": "59-bye.js:36"
+ },
+ {
+  "k": "⚕ Rest: injuries heal a week sooner, and no one sulks for missing a bout.",
+  "w": "59-bye.js:37"
+ },
+ {
+  "k": "🏋 Bye-week camp: fighters below their potential may gain +1 rating when the week ends.",
+  "w": "59-bye.js:38"
+ },
+ {
+  "k": "🏛 The Senate pays half of every house’s wages.",
+  "w": "59-bye.js:39"
+ },
+ {
+  "k": "🏠 Home",
+  "w": "59-bye.js:45"
+ },
+ {
+  "k": "<b>🌿 Bye week</b>",
+  "w": "59-bye.js:45"
+ },
+ {
+  "k": "no bouts · cart · market day · +{0} h",
+  "w": "59-bye.js:45"
+ },
+ {
+  "k": "🌿 That is a bye week — there is no bout to bill.",
+  "w": "59-bye.js:47"
+ },
+ {
+  "k": "turnind slim",
+  "w": "60-v53.js:21"
+ },
+ {
+  "k": "<b>{0}</b>{1}<br>Phase: {2}<br>Turn {3} · rotation {4}{5}{6}",
+  "w": "60-v53.js:22"
+ },
+ {
+  "k": "<br>Speed: Paused",
+  "w": "60-v53.js:22"
+ },
+ {
+  "k": "🔍 Zoom in",
+  "w": "60-v53.js:42"
+ },
+ {
+  "k": "Pull the camera back",
+  "w": "60-v53.js:42"
+ },
+ {
+  "k": "Lean the camera in",
+  "w": "60-v53.js:42"
+ },
+ {
+  "k": "Marcus Attilius",
+  "w": "61-studio53.js:20"
+ },
+ {
+  "k": "The fish-helmed heavy fighter: slow, patient, hard to break.",
+  "w": "61-studio53.js:20"
+ },
+ {
+  "k": "Spiculus",
+  "w": "61-studio53.js:21"
+ },
+ {
+  "k": "Curved blade, quick feet, griffin on the helm.",
+  "w": "61-studio53.js:21"
+ },
+ {
+  "k": "Priscus",
+  "w": "61-studio53.js:22"
+ },
+ {
+  "k": "Spear first, dagger when it gets close.",
+  "w": "61-studio53.js:22"
+ },
+ {
+  "k": "Flamma",
+  "w": "61-studio53.js:23"
+ },
+ {
+  "k": "The chaser: sent after nets and tridents.",
+  "w": "61-studio53.js:23"
+ },
+ {
+  "k": "Tetraites",
+  "w": "61-studio53.js:24"
+ },
+ {
+  "k": "Two blades and no shield: the crowd loves the risk.",
+  "w": "61-studio53.js:24"
+ },
+ {
+  "k": "Aquila",
+  "w": "61-studio53.js:25"
+ },
+ {
+  "k": "Keeps the sand between itself and everyone else.",
+  "w": "61-studio53.js:25"
+ },
+ {
+  "k": "Hermes",
+  "w": "61-studio53.js:26"
+ },
+ {
+  "k": "The challenger: a breastplate’s worth of arm guard and something to prove.",
+  "w": "61-studio53.js:26"
+ },
+ {
+  "k": "Sacrovir",
+  "w": "61-studio53.js:27"
+ },
+ {
+  "k": "Iron from head to knee. Heavy, slow, stubborn.",
+  "w": "61-studio53.js:27"
+ },
+ {
+  "k": "The token of",
+  "w": "61-studio53.js:69"
+ },
+ {
+  "k": "the character",
+  "w": "61-studio53.js:69"
+ },
+ {
+  "k": "who takes",
+  "w": "61-studio53.js:69"
+ },
+ {
+  "k": "this class",
+  "w": "61-studio53.js:69"
+ },
+ {
+  "k": "— its champion —",
+  "w": "61-studio53.js:74"
+ },
+ {
+  "k": "the character designer",
+  "w": "61-studio53.js:88"
+ },
+ {
+  "k": "<b>{0}</b> {1}<small>{2} · {3} · {4} coin{5} · used by {6}</small>",
+  "w": "61-studio53.js:92"
+ },
+ {
+  "k": "<b>{0}</b><small>printed · {1}</small>",
+  "w": "61-studio53.js:93"
+ },
+ {
+  "k": "Manager mode’s lanista picker",
+  "w": "61-studio53.js:104"
+ },
+ {
+  "k": "Design a <b>lanista</b>: the face, the house and the temperament. Manager mode’s <b>Create your lanista</b> can start from any lanista on the rolls.",
+  "w": "61-studio53.js:109"
+ },
+ {
+  "k": "✚ New lanista",
+  "w": "61-studio53.js:110"
+ },
+ {
+  "k": "Home city",
+  "w": "61-studio53.js:113"
+ },
+ {
+  "k": "Save lanista",
+  "w": "61-studio53.js:118"
+ },
+ {
+  "k": "Your lanistas · {0}",
+  "w": "61-studio53.js:119"
+ },
+ {
+  "k": "System lanistas · {0}",
+  "w": "61-studio53.js:119"
+ },
+ {
+  "k": "✓ Saved the lanista <b>{0}</b>",
+  "w": "61-studio53.js:130"
+ },
+ {
+  "k": "<b>🎩 Studio lanistas</b>{0}",
+  "w": "61-studio53.js:142"
+ },
+ {
+  "k": "— start from one —",
+  "w": "61-studio53.js:142"
+ },
+ {
+  "k": "<span class=\"rc-sub\">none yet — design them in the Creator Studio</span>",
+  "w": "61-studio53.js:142"
+ },
+ {
+  "k": "💾 Save this lanista to the Studio",
+  "w": "61-studio53.js:142"
+ },
+ {
+  "k": "🎩 <b>{0}</b> is saved in the Creator Studio",
+  "w": "61-studio53.js:149"
+ },
+ {
+  "k": "🏆 Tournaments",
+  "w": "61-studio53.js:152"
+ },
+ {
+  "k": "{0} (none left)",
+  "w": "62-rules53.js:32"
+ },
+ {
+  "k": "{0}’s loadout shares pieces with a gladiator already armed — stand-ins: {1}.",
+  "w": "62-rules53.js:42"
+ },
+ {
+  "k": "Sever both arms and they are out. One severed arm drops its weapon and costs them 1 attack (2 attacks max per turn).",
+  "w": "62-rules53.js:54"
+ },
+ {
+  "k": "A severed leg only slows them (less movement). It never puts them out.",
+  "w": "62-rules53.js:55"
+ },
+ {
+  "k": "Lose the head and they are out.",
+  "w": "62-rules53.js:55"
+ },
+ {
+  "k": "Lose the chest and they are out.",
+  "w": "62-rules53.js:55"
+ },
+ {
+  "k": "Choose where to strike {0}.{1}",
+  "w": "62-rules53.js:62"
+ },
+ {
+  "k": "💡 Gold is the fastest finish.",
+  "w": "62-rules53.js:62"
+ },
+ {
+  "k": "· only slows",
+  "w": "62-rules53.js:62"
+ },
+ {
+  "k": "Rolling the location die three times for <b>{0}</b>…",
+  "w": "62-rules53.js:69"
+ },
+ {
+  "k": "Click a die to strike there.{0}",
+  "w": "62-rules53.js:69"
+ },
+ {
+  "k": "💡 The gold one finishes fastest.",
+  "w": "62-rules53.js:69"
+ },
+ {
+  "k": "<b>{0}</b>, this one is yours to answer — pass the device.",
+  "w": "62-rules53.js:85"
+ },
+ {
+  "k": "the host city",
+  "w": "63-empire53.js:19"
+ },
+ {
+  "k": "<b>No arena in the empire can host this week</b> — {0} is shut ({1}). The editor calls an impromptu bye.",
+  "w": "63-empire53.js:20"
+ },
+ {
+  "k": "🌋 Impromptu bye: {0} is shut ({1}) and no arena can take the games.",
+  "w": "63-empire53.js:20"
+ },
+ {
+  "k": "🛣 This week’s games move from <b>{0}</b> ({1}) to <b>{2}</b>, the nearest open arena.",
+  "w": "63-empire53.js:21"
+ },
+ {
+  "k": "🛣 <b>The games moved.</b> {0} is shut ({1}); the nearest open arena, <b>{2}</b>, hosts this week.",
+  "w": "63-empire53.js:23"
+ },
+ {
+  "k": "Piaculum · {0}",
+  "w": "64-v54.js:41"
+ },
+ {
+  "k": "Give",
+  "w": "64-v54.js:41"
+ },
+ {
+  "k": "⚠ “{0}” is taken — class names are unique.",
+  "w": "64-v54.js:78"
+ },
+ {
+  "k": "⚠ Too close to {0}’s colour — pick another, or",
+  "w": "64-v54.js:79"
+ },
+ {
+  "k": "🎲 a free colour",
+  "w": "64-v54.js:79"
+ },
+ {
+  "k": "<b>{0}</b> {1}<small>{2} · {3} coin{4} · used by {5}</small>",
+  "w": "64-v54.js:84"
+ },
+ {
+  "k": "no one yet",
+  "w": "64-v54.js:84"
+ },
+ {
+  "k": "<small>{0}</small><small>{1} · {2} coin · {3} key{4}{5}</small>",
+  "w": "64-v54.js:86"
+ },
+ {
+  "k": "🎭 That class name is taken — class names are unique.",
+  "w": "64-v54.js:91"
+ },
+ {
+  "k": "🎨 That colour is too close to another class — pick another.",
+  "w": "64-v54.js:91"
+ },
+ {
+  "k": "The invitational",
+  "w": "64-v54.js:107"
+ },
+ {
+  "k": "{0} · HP {1} · ATK {2}",
+  "w": "64-v54.js:119"
+ },
+ {
+  "k": "✓ On the board",
+  "w": "64-v54.js:119"
+ },
+ {
+  "k": "✚ Add",
+  "w": "64-v54.js:119"
+ },
+ {
+  "k": "✓ In the event",
+  "w": "64-v54.js:123"
+ },
+ {
+  "k": "🏟 Stock beasts",
+  "w": "64-v54.js:124"
+ },
+ {
+  "k": "✦ Your beasts",
+  "w": "64-v54.js:124"
+ },
+ {
+  "k": "📜 Myth starters",
+  "w": "64-v54.js:124"
+ },
+ {
+  "k": "🐾 Beasts &amp; cohorts",
+  "w": "64-v54.js:125"
+ },
+ {
+  "k": "add them to this event — move beasts with the Beast tool",
+  "w": "64-v54.js:125"
+ },
+ {
+  "k": "📜 {0} is now one of your beasts — tweak it any time under 🐾 Beasts.",
+  "w": "64-v54.js:141"
+ },
+ {
+  "k": "🎲 A random theme each time",
+  "w": "64-v54.js:151"
+ },
+ {
+  "k": "🎶 Arena music",
+  "w": "64-v54.js:153"
+ },
+ {
+  "k": "Themes unlock as you win in each city. The final duel keeps its boss theme.",
+  "w": "64-v54.js:153"
+ },
+ {
+  "k": "banked {0} coin from the {1}",
+  "w": "64-v54.js:162"
+ },
+ {
+  "k": "{0} <b>{1}</b> has gone {2} weeks without a house and offers to <b>pay you {3} coin</b> to join — they want a name. Answer it at the top of any tab.",
+  "w": "64-v54.js:170"
+ },
+ {
+  "k": "got the fight they asked for",
+  "w": "64-v54.js:172"
+ },
+ {
+  "k": "😠 {0} asked to fight and sat out again (−{1} morale).",
+  "w": "64-v54.js:172"
+ },
+ {
+  "k": "🗣 <b>{0}</b> wants to be on this week’s card — {1} weeks without a fight is too long for someone chasing a name.",
+  "w": "64-v54.js:176"
+ },
+ {
+  "k": "<b>{0} {1} will pay to join {2}</b>",
+  "w": "64-v54.js:181"
+ },
+ {
+  "k": "“No house will look at me. Take me on and I’ll pay you <b>{0} coin</b> — give me the sand and I’ll give you a name.”",
+  "w": "64-v54.js:181"
+ },
+ {
+  "k": "{0} · rated ~{1} · {2} weeks at {3}/wk",
+  "w": "64-v54.js:181"
+ },
+ {
+  "k": "✍ Take them on<small>+{0} coin</small>",
+  "w": "64-v54.js:182"
+ },
+ {
+  "k": "✋ No thanks",
+  "w": "64-v54.js:182"
+ },
+ {
+  "k": "<b>🗣 Asking for a fight this week:</b> {0}",
+  "w": "64-v54.js:184"
+ },
+ {
+  "k": "enter them on Match Week (+{0} morale) or they sulk (−{1})",
+  "w": "64-v54.js:184"
+ },
+ {
+  "k": "⚔️ Match Week",
+  "w": "64-v54.js:184"
+ },
+ {
+  "k": "paid {0} coin to join {1}",
+  "w": "64-v54.js:187"
+ },
+ {
+  "k": "✍ {0} joins {1} and pays {2} coin for the chance.",
+  "w": "64-v54.js:187"
+ },
+ {
+  "k": "👋 How a week works · {0}",
+  "w": "64-v54.js:194"
+ },
+ {
+  "k": "★ Favorites · {0}",
+  "w": "64-v54.js:198"
+ },
+ {
+  "k": "your shortlist — click one for their card and every courting action",
+  "w": "64-v54.js:198"
+ },
+ {
+  "k": "Remove from Favorites",
+  "w": "64-v54.js:198"
+ },
+ {
+  "k": "· free agent",
+  "w": "64-v54.js:198"
+ },
+ {
+  "k": "interest {0}",
+  "w": "64-v54.js:198"
+ },
+ {
+  "k": "Speed",
+  "w": "65-stats55.js:17"
+ },
+ {
+  "k": "Strength",
+  "w": "65-stats55.js:17"
+ },
+ {
+  "k": "Intelligence",
+  "w": "65-stats55.js:17"
+ },
+ {
+  "k": "Luck",
+  "w": "65-stats55.js:17"
+ },
+ {
+  "k": "Charisma",
+  "w": "65-stats55.js:17"
+ },
+ {
+  "k": "+{0} movement",
+  "w": "65-stats55.js:31"
+ },
+ {
+  "k": "+{0} damage",
+  "w": "65-stats55.js:31"
+ },
+ {
+  "k": "+{0} movement (Speed)",
+  "w": "65-stats55.js:67"
+ },
+ {
+  "k": "+{0} coin (Luck)",
+  "w": "65-stats55.js:68"
+ },
+ {
+  "k": "+{0} CF (Charisma)",
+  "w": "65-stats55.js:69"
+ },
+ {
+  "k": "{0} {1}: {2} mind",
+  "w": "65-stats55.js:74"
+ },
+ {
+  "k": "Normal",
+  "w": "65-stats55.js:74"
+ },
+ {
+  "k": "Hard",
+  "w": "65-stats55.js:74"
+ },
+ {
+  "k": "Easy",
+  "w": "65-stats55.js:74"
+ },
+ {
+  "k": "There is no room for the {0} to come out.",
+  "w": "65-stats55.js:89"
+ },
+ {
+  "k": "{0} releases a tamed <b>{1}</b> at {2}.",
+  "w": "65-stats55.js:91"
+ },
+ {
+  "k": "Ability: leans {0} (ratings grant {1}).{2}",
+  "w": "65-stats55.js:95"
+ },
+ {
+  "k": "now a {0} mind",
+  "w": "66-mgr55.js:32"
+ },
+ {
+  "k": "now plays {0}",
+  "w": "66-mgr55.js:32"
+ },
+ {
+  "k": "damage per hit",
+  "w": "66-mgr55.js:32"
+ },
+ {
+  "k": "coin a turn",
+  "w": "66-mgr55.js:32"
+ },
+ {
+  "k": "CF a turn",
+  "w": "66-mgr55.js:32"
+ },
+ {
+  "k": "⭐ <b>{0}</b> reaches {1} {2} — {3}.",
+  "w": "66-mgr55.js:33"
+ },
+ {
+  "k": "⭐ {0} of {1} reaches {2} {3} — {4}.",
+  "w": "66-mgr55.js:33"
+ },
+ {
+  "k": "reached {0} {1} — {2}",
+  "w": "66-mgr55.js:34"
+ },
+ {
+  "k": "📈 Growth this week: {0}.",
+  "w": "66-mgr55.js:62"
+ },
+ {
+  "k": "+{0} coin a turn",
+  "w": "66-mgr55.js:67"
+ },
+ {
+  "k": "+{0} CF a turn",
+  "w": "66-mgr55.js:67"
+ },
+ {
+  "k": "{0} mind",
+  "w": "66-mgr55.js:67"
+ },
+ {
+  "k": "plays {0}",
+  "w": "66-mgr55.js:67"
+ },
+ {
+  "k": "{0} to the next band ({1})",
+  "w": "66-mgr55.js:70"
+ },
+ {
+  "k": "· {0}% to {1}",
+  "w": "66-mgr55.js:70"
+ },
+ {
+  "k": "Ratings{0}",
+  "w": "66-mgr55.js:71"
+ },
+ {
+  "k": "one scouting: a range",
+  "w": "66-mgr55.js:71"
+ },
+ {
+  "k": "scout them to see",
+  "w": "66-mgr55.js:71"
+ },
+ {
+  "k": "from {0} · week {1}",
+  "w": "66-mgr55.js:79"
+ },
+ {
+  "k": "Put it away",
+  "w": "66-mgr55.js:79"
+ },
+ {
+  "k": "{0} <b>{1}</b>{2} — attendance {3}%, mood {4}",
+  "w": "66-mgr55.js:89"
+ },
+ {
+  "k": "(felt from {0})",
+  "w": "66-mgr55.js:89"
+ },
+ {
+  "k": "the Consilium",
+  "w": "66-mgr55.js:90"
+ },
+ {
+  "k": "Counsel for {0}: hold our fighters back",
+  "w": "66-mgr55.js:90"
+ },
+ {
+  "k": "Lanista — the news from around {0} is poor:",
+  "w": "66-mgr55.js:91"
+ },
+ {
+  "k": "All told the stands will be about <b>{0}%</b> on a normal week and the crowd's temper <b>{1}</b>{2}. Thin gates and a sour crowd mean poor ticket sales, little Crowd Favor and a hostile verdict. <b>We counsel you to enter no one this week.</b> The decision is yours.",
+  "w": "66-mgr55.js:91"
+ },
+ {
+  "k": ", and the omens are against us",
+  "w": "66-mgr55.js:91"
+ },
+ {
+  "k": "💸 Loan: +{0} interest · {1} owed to {2} · this week's minimum <b>{3}</b>{4}.",
+  "w": "66-mgr55.js:105"
+ },
+ {
+  "k": "· <b>{0} week{1} short</b>",
+  "w": "66-mgr55.js:105"
+ },
+ {
+  "k": "Sica's syndicate",
+  "w": "66-mgr55.js:107"
+ },
+ {
+  "k": "A friendly reminder",
+  "w": "66-mgr55.js:107"
+ },
+ {
+  "k": "Two weeks now, and the minimum unpaid. Sica is a patient man. Patience is not the same as forgiveness.",
+  "w": "66-mgr55.js:108"
+ },
+ {
+  "k": "<b>Pay at least {0} coin this week</b>, or the next time one of your fighters steps onto the sand, someone in the stands will settle the account for us.",
+  "w": "66-mgr55.js:108"
+ },
+ {
+  "k": "The account will be settled",
+  "w": "66-mgr55.js:110"
+ },
+ {
+  "k": "Three weeks. We did write.",
+  "w": "66-mgr55.js:111"
+ },
+ {
+  "k": "The next event or practice your house enters, a friend of ours will be in the stands. Your best fighter will not see the end of it.",
+  "w": "66-mgr55.js:111"
+ },
+ {
+  "k": "(At rotation {0}, a spear from the crowd eliminates your highest-rated entrant.)",
+  "w": "66-mgr55.js:111"
+ },
+ {
+  "k": "🗡 <b>Sica's syndicate has run out of patience.</b> Your next event or practice will cost you your best fighter.",
+  "w": "66-mgr55.js:112"
+ },
+ {
+  "k": "<b>{0} coin owed</b> · {1}% interest a week, added to the debt · nobody takes it from your treasury: you pay by hand.\n    {2}{3}",
+  "w": "66-mgr55.js:116"
+ },
+ {
+  "k": "This week's minimum: <b>{0}</b>{1}.",
+  "w": "66-mgr55.js:117"
+ },
+ {
+  "k": "(paid {0}{1})",
+  "w": "66-mgr55.js:117"
+ },
+ {
+  "k": ", {0} to go",
+  "w": "66-mgr55.js:117"
+ },
+ {
+  "k": "No minimum due yet this week.",
+  "w": "66-mgr55.js:117"
+ },
+ {
+  "k": "<b style=\"color:var(--blood2)\">{0} week{1} short{2}.</b>",
+  "w": "66-mgr55.js:117"
+ },
+ {
+  "k": "— {0} and the syndicate collects in blood",
+  "w": "66-mgr55.js:117"
+ },
+ {
+  "k": "Pay the minimum · {0}",
+  "w": "66-mgr55.js:118"
+ },
+ {
+  "k": "{0}% interest a week, added to the debt. Each week has a minimum payment; miss it {1} weeks running and they collect another way.",
+  "w": "66-mgr55.js:122"
+ },
+ {
+  "k": "💸 Paid the week's minimum to {0}: {1} coin.",
+  "w": "66-mgr55.js:127"
+ },
+ {
+  "k": "🗡 A spear flies from the stands — no one sees who threw it. <b>{0}</b> goes down. Somewhere in the crowd, Sica's man is already leaving.",
+  "w": "66-mgr55.js:138"
+ },
+ {
+  "k": "🗡 The syndicate collects: {0} is speared from the stands.",
+  "w": "66-mgr55.js:139"
+ },
+ {
+  "k": "A small purse, between friends",
+  "w": "66-mgr55.js:146"
+ },
+ {
+  "k": "{0} heard times are hard at {1}. Enclosed: <b>{2} coin</b>. No interest, no terms — only remember who stood by you.",
+  "w": "66-mgr55.js:146"
+ },
+ {
+  "k": "🎁 {0} sends {1} coin, between friends.",
+  "w": "66-mgr55.js:147"
+ },
+ {
+  "k": "+4K home spectators backing {0}",
+  "w": "66-mgr55.js:153"
+ },
+ {
+  "k": "<b class=\"hometag\">🏠 Home</b> · {0}",
+  "w": "66-mgr55.js:154"
+ },
+ {
+  "k": "<b class=\"hometag\">🏠 Home games this week</b>",
+  "w": "66-mgr55.js:155"
+ },
+ {
+  "k": "{0} is your city: your fighters start with +2 CF and your regulars fill the stands.",
+  "w": "66-mgr55.js:155"
+ },
+ {
+  "k": "{0}Grade {1}</span>",
+  "w": "66-mgr55.js:161"
+ },
+ {
+  "k": "Your fighter, fighting for another house this week",
+  "w": "66-mgr55.js:177"
+ },
+ {
+  "k": "🤝 your fighter · on loan to {0}",
+  "w": "66-mgr55.js:177"
+ },
+ {
+  "k": "Tamed ally",
+  "w": "67-studio55.js:11"
+ },
+ {
+  "k": "Releases a tamed ally (Zora the eagle, or another beast) once per event (Venatore).",
+  "w": "67-studio55.js:11"
+ },
+ {
+  "k": "+1 ally release per event",
+  "w": "67-studio55.js:11"
+ },
+ {
+  "k": "Golden Eagle (Zora)",
+  "w": "67-studio55.js:13"
+ },
+ {
+  "k": "Ratings",
+  "w": "67-studio55.js:19"
+ },
+ {
+  "k": "sandbox: no pool",
+  "w": "67-studio55.js:19"
+ },
+ {
+  "k": "share a pool of {0}",
+  "w": "67-studio55.js:19"
+ },
+ {
+  "k": "{0} / {1} points ·",
+  "w": "67-studio55.js:20"
+ },
+ {
+  "k": "{0} · plays {1}",
+  "w": "67-studio55.js:20"
+ },
+ {
+  "k": "no perks yet",
+  "w": "67-studio55.js:20"
+ },
+ {
+  "k": "how a CPU plays (Normal at 76, Hard at 96)",
+  "w": "67-studio55.js:21"
+ },
+ {
+  "k": "+1 damage at 76, +2 at 87, +3 at 96",
+  "w": "67-studio55.js:21"
+ },
+ {
+  "k": "+1 {0} at 76, +2 at 96",
+  "w": "67-studio55.js:21"
+ },
+ {
+  "k": "Movement, damage, coin and CF bonuses pay in rounds that allow class abilities. In Manager mode, ratings grow with training and fights.",
+  "w": "67-studio55.js:22"
+ },
+ {
+  "k": "tamed ally: {0}, released {1} per event",
+  "w": "67-studio55.js:33"
+ },
+ {
+  "k": "Zora the eagle",
+  "w": "67-studio55.js:33"
+ },
+ {
+  "k": "Ability: {0}{1}{2}",
+  "w": "67-studio55.js:34"
+ },
+ {
+  "k": "ratings grant",
+  "w": "67-studio55.js:34"
+ },
+ {
+  "k": "no rating perks yet.",
+  "w": "67-studio55.js:34"
+ },
+ {
+  "k": "Ratings: 🏃 Speed <b>{0}</b> · 💪 Strength <b>{1}</b> <span>— set by Movement and Attack</span>",
+  "w": "67-studio55.js:38"
+ },
+ {
+  "k": "🔇 Sound is held back — tap to turn it on",
+  "w": "68-fix55.js:18"
+ },
+ {
+  "k": "Invitation",
+  "w": "69-v56.js:16"
+ },
+ {
+  "k": "Letter",
+  "w": "69-v56.js:16"
+ },
+ {
+  "k": "Report",
+  "w": "69-v56.js:16"
+ },
+ {
+  "k": "the Quaestor",
+  "w": "69-v56.js:21"
+ },
+ {
+  "k": "The Quaestor's ledger",
+  "w": "69-v56.js:21"
+ },
+ {
+  "k": "your barracks",
+  "w": "69-v56.js:22"
+ },
+ {
+  "k": "Fighters asking for a fight",
+  "w": "69-v56.js:22"
+ },
+ {
+  "k": "a free agent",
+  "w": "69-v56.js:23"
+ },
+ {
+  "k": "A rope, for a price",
+  "w": "69-v56.js:25"
+ },
+ {
+  "k": "the capital",
+  "w": "69-v56.js:26"
+ },
+ {
+  "k": "A letter from the capital",
+  "w": "69-v56.js:26"
+ },
+ {
+  "k": "the Flavian Awards",
+  "w": "69-v56.js:27"
+ },
+ {
+  "k": "the editors",
+  "w": "69-v56.js:27"
+ },
+ {
+  "k": "{0} · from {1} · week {2}",
+  "w": "69-v56.js:55"
+ },
+ {
+  "k": "File it away",
+  "w": "69-v56.js:55"
+ },
+ {
+  "k": "<b>📬 Mail</b>",
+  "w": "69-v56.js:57"
+ },
+ {
+  "k": "{0} this week{1}",
+  "w": "69-v56.js:57"
+ },
+ {
+  "k": "· <b>{0} unread</b>",
+  "w": "69-v56.js:57"
+ },
+ {
+  "k": "nothing waiting this week",
+  "w": "69-v56.js:57"
+ },
+ {
+  "k": "Past mail",
+  "w": "69-v56.js:59"
+ },
+ {
+  "k": "{0} kept",
+  "w": "69-v56.js:59"
+ },
+ {
+  "k": "{0} · from {1} · S{2} W{3}{4}",
+  "w": "69-v56.js:59"
+ },
+ {
+  "k": "· answered or expired",
+  "w": "69-v56.js:59"
+ },
+ {
+  "k": "🏛 The Consilium advises against entering this week.",
+  "w": "69-v56.js:71"
+ },
+ {
+  "k": "Read the letter",
+  "w": "69-v56.js:71"
+ },
+ {
+  "k": "🗣 Asking for a fight: {0}",
+  "w": "69-v56.js:71"
+ },
+ {
+  "k": "(enter them for +{0} morale)",
+  "w": "69-v56.js:71"
+ },
+ {
+  "k": "(now {0}{1})",
+  "w": "69-v56.js:82"
+ },
+ {
+  "k": ", {0} to the next band",
+  "w": "69-v56.js:82"
+ },
+ {
+  "k": "your doctores",
+  "w": "69-v56.js:84"
+ },
+ {
+  "k": "How the fighters grew this week",
+  "w": "69-v56.js:84"
+ },
+ {
+  "k": "your clerk",
+  "w": "69-v56.js:87"
+ },
+ {
+  "k": "Contract{0} ending soon",
+  "w": "69-v56.js:87"
+ },
+ {
+  "k": "{0}. Re-sign from the fighter's card on the Roster tab before they walk.",
+  "w": "69-v56.js:87"
+ },
+ {
+  "k": "<b>{0}</b> ({1} week{2} left)",
+  "w": "69-v56.js:87"
+ },
+ {
+  "k": "Five numbers from 50 to 99 every gladiator carries: [[spd|Speed]], [[str|Strength]], [[int|Intelligence]], [[lck|Luck]] and [[cha|Charisma]]. Crossing 76 (and higher bands) earns a perk. Perks pay only in rounds that allow class abilities, and they stack.",
+  "w": "69-v56.js:91"
+ },
+ {
+  "k": "Movement. Base 3 (two legs); +1 at 76, +2 at 96. Grows with drills and fights.",
+  "w": "69-v56.js:92"
+ },
+ {
+  "k": "Damage per successful attack: +1 at 76, +2 at 87, +3 at 96. Grows with drills, wins and kills.",
+  "w": "69-v56.js:93"
+ },
+ {
+  "k": "How a CPU plays the gladiator: Easy below 76, Normal from 76, Hard from 96. Grows by surviving and winning.",
+  "w": "69-v56.js:94"
+ },
+ {
+  "k": "Coin each turn: +1 at 76, +2 at 96. Grows with time at a ludus and the bonds you build.",
+  "w": "69-v56.js:95"
+ },
+ {
+  "k": "Crowd Favor each turn: +1 at 76, +2 at 96. Grows with big crowds, high CF, fame and being spared.",
+  "w": "69-v56.js:96"
+ },
+ {
+  "k": "<b>Every gladiator has five ratings</b> from 50 to 99. Classes set the loadout; the ratings set the perks. A Slave tends to be fast and a Soldier strong, but not every one is.",
+  "w": "69-v56.js:104"
+ },
+ {
+  "k": "<b>Speed</b>: +1 movement at 76, +2 at 96. <b>Strength</b>: +1 damage per hit at 76, +2 at 87, +3 at 96. <b>Luck</b>: +1 coin a turn at 76, +2 at 96. <b>Charisma</b>: +1 CF a turn at 76, +2 at 96. They stack.",
+  "w": "69-v56.js:105"
+ },
+ {
+  "k": "<b>When they pay</b>: only in rounds that allow class abilities. In a Classic event that is round 1, so a strong gladiator should hit early and hard.",
+  "w": "69-v56.js:106"
+ },
+ {
+  "k": "<b>Intelligence</b> sets a CPU's mind — Novice below 65, Apprentice 65, Fighter 76, Veteran 86, Master 96. It never adds gear or coin.",
+  "w": "69-v56.js:107"
+ },
+ {
+  "k": "Ratings that grow",
+  "w": "69-v56.js:109"
+ },
+ {
+  "k": "<b>Slow and steady</b>: a busy, winning fighter climbs about one band a season. Gains slow above 90 and stop at 99.",
+  "w": "69-v56.js:110"
+ },
+ {
+  "k": "<b>What grows what</b>: Strength and Speed from the Training Yard (brutal drills most), fights survived and won, and kills. Intelligence from surviving and winning. Charisma from big CF, fame and being spared. Luck from weeks with your house and the bonds you build (meals, bonuses, kin tickets).",
+  "w": "69-v56.js:111"
+ },
+ {
+  "k": "<b>Watch the free agents</b>: they drill on their own, and rival yards train too. A fighter who reaches 96 makes the news.",
+  "w": "69-v56.js:113"
+ },
+ {
+  "k": "<b>Your mail</b> carries a weekly growth report from the doctores; a new band also makes your ludus ledger.",
+  "w": "69-v56.js:114"
+ },
+ {
+  "k": "<b>{0}</b> is {1} {2} from {3} — standard or brutal drills, or a personal trainer, this week.",
+  "w": "69-v56.js:121"
+ },
+ {
+  "k": "Your ratings pay this round: {0}.",
+  "w": "69-v56.js:125"
+ },
+ {
+  "k": "Class abilities are off this round, so your rating perks ({0}) rest until a round that allows them.",
+  "w": "69-v56.js:125"
+ },
+ {
+  "k": "No perks",
+  "w": "69-v56.js:139"
+ },
+ {
+  "k": "One perk",
+  "w": "69-v56.js:139"
+ },
+ {
+  "k": "Two or more",
+  "w": "69-v56.js:139"
+ },
+ {
+  "k": "{0}: wins {1}% · average {2} CF · {3} gladiators",
+  "w": "69-v56.js:139"
+ },
+ {
+  "k": "{0}: wins {1}% (without: {2}%) · average {3} CF",
+  "w": "69-v56.js:140"
+ },
+ {
+  "k": "Win rate by rating perk",
+  "w": "69-v56.js:141"
+ },
+ {
+  "k": "share of events won · hover for CF",
+  "w": "69-v56.js:141"
+ },
+ {
+  "k": "250 coin and two fighters on the roster",
+  "w": "70-v57.js:16"
+ },
+ {
+  "k": "125 coin and one fighter",
+  "w": "70-v57.js:16"
+ },
+ {
+  "k": "50 coin and an empty roster",
+  "w": "70-v57.js:16"
+ },
+ {
+  "k": "🏛 The Senate’s founding grant — {0} start",
+  "w": "70-v57.js:21"
+ },
+ {
+  "k": "🛡 {0} raw recruit{1} under contract",
+  "w": "70-v57.js:21"
+ },
+ {
+  "k": "Starting difficulty",
+  "w": "70-v57.js:22"
+ },
+ {
+  "k": "{0}<small style=\"display:block;font-size:11px;color:var(--muted)\">{1}c · {2} fighter{3}</small>",
+  "w": "70-v57.js:22"
+ },
+ {
+  "k": "<b>{0}</b><small>{1} · {2} · fame 22 · 180 coin · {3} and three fighters</small><small style=\"color:var(--bone)\">{4}</small>",
+  "w": "70-v57.js:25"
+ },
+ {
+  "k": "one raw recruit",
+  "w": "70-v57.js:29"
+ },
+ {
+  "k": "two raw recruits",
+  "w": "70-v57.js:29"
+ },
+ {
+  "k": "no fighters",
+  "w": "70-v57.js:29"
+ },
+ {
+  "k": "That house could not be found in the league.",
+  "w": "70-v57.js:33"
+ },
+ {
+  "k": "🛡 {0} fighters already under contract",
+  "w": "70-v57.js:36"
+ },
+ {
+  "k": "Week {0}: you offered {1} coin a week for {2} weeks. {3}",
+  "w": "70-v57.js:51"
+ },
+ {
+  "k": "They would sign.",
+  "w": "70-v57.js:51"
+ },
+ {
+  "k": "They want about {0} coin a week.",
+  "w": "70-v57.js:51"
+ },
+ {
+  "k": "💬 {0}c×{1}wk{2}",
+  "w": "70-v57.js:51"
+ },
+ {
+  "k": "· ✓ would sign",
+  "w": "70-v57.js:51"
+ },
+ {
+  "k": "· asks {0}c",
+  "w": "70-v57.js:51"
+ },
+ {
+  "k": "· not yet",
+  "w": "70-v57.js:51"
+ },
+ {
+  "k": "On loan from {0} to {1} · {2} coin a week · {3} week{4} left{5}",
+  "w": "70-v57.js:56"
+ },
+ {
+  "k": "· your fighter",
+  "w": "70-v57.js:56"
+ },
+ {
+  "k": "Travel to {0} first ({1} coin) — pay the road at the top of Match Week, then enter, watch or walk the sand.",
+  "w": "70-v57.js:59"
+ },
+ {
+  "k": "A bye week: no games, and much to do",
+  "w": "70-v57.js:65"
+ },
+ {
+  "k": "No bouts this week, lanista. The houses that win seasons use these weeks well:",
+  "w": "70-v57.js:66"
+ },
+ {
+  "k": "<b>Recruit</b>: you have {0} extra lanista's hours — scout, pitch and sign before the others wake up.",
+  "w": "70-v57.js:66"
+ },
+ {
+  "k": "<b>Plan</b>: bill a fighter on the Season tab for a big bout three or more weeks out.",
+  "w": "70-v57.js:66"
+ },
+ {
+  "k": "They fight for the borrowing house this week — call them back after the bout.",
+  "w": "70-v57.js:72"
+ },
+ {
+  "k": "The treasury cannot cover the {0} coin recall fee.",
+  "w": "70-v57.js:72"
+ },
+ {
+  "k": "Pay {0} {1} coin — the rest of the loan plus a quarter — and {2} returns to your roster now.",
+  "w": "70-v57.js:72"
+ },
+ {
+  "k": "called home early from {0} ({1} coin)",
+  "w": "70-v57.js:75"
+ },
+ {
+  "k": "a loan",
+  "w": "70-v57.js:75"
+ },
+ {
+  "k": "↩ {0} is called home from {1} — {2} coin paid.",
+  "w": "70-v57.js:75"
+ },
+ {
+  "k": "the loan",
+  "w": "70-v57.js:75"
+ },
+ {
+  "k": "⛵ <b>{0}</b> · Team {1} · {2}/12 HP — smash its pillar to sink it ·",
+  "w": "71-v58.js:36"
+ },
+ {
+  "k": "The board, mid-game",
+  "w": "71-v58.js:38"
+ },
+ {
+  "k": "The arena and its pillars",
+  "w": "71-v58.js:38"
+ },
+ {
+  "k": "Cards, tokens and the market",
+  "w": "71-v58.js:38"
+ },
+ {
+  "k": "The arena, lit",
+  "w": "71-v58.js:38"
+ },
+ {
+  "k": "The sand, close up",
+  "w": "71-v58.js:38"
+ },
+ {
+  "k": "The prototype",
+  "w": "71-v58.js:41"
+ },
+ {
+  "k": "The hand-built board game that Flavius Rule Arena was distilled from — by D.Soto.",
+  "w": "71-v58.js:41"
+ },
+ {
+  "k": "Loading Play now…",
+  "w": "72-v59.js:12"
+ },
+ {
+  "k": "Mute all sound",
+  "w": "72-v59.js:20"
+ },
+ {
+  "k": "Sound is off — click to turn it on",
+  "w": "72-v59.js:20"
+ },
+ {
+  "k": "🎲 Ludus tie ({0} CF, {1} coin) — d12: {2}.",
+  "w": "72-v59.js:54"
+ },
+ {
+  "k": "⏭ To the end",
+  "w": "72-v59.js:60"
+ },
+ {
+  "k": "Resolve the rest of the event at once — straight to the results",
+  "w": "72-v59.js:60"
+ },
+ {
+  "k": "Website",
+  "w": "73-credits.js:9"
+ },
+ {
+  "k": "Email",
+  "w": "73-credits.js:9"
+ },
+ {
+  "k": "Tabletop Simulator",
+  "w": "73-credits.js:10"
+ },
+ {
+  "k": "Magnus Edition on the Steam Workshop",
+  "w": "73-credits.js:10"
+ },
+ {
+  "k": "Flavius Rule on BGG",
+  "w": "73-credits.js:12"
+ },
+ {
+  "k": "Discord",
+  "w": "73-credits.js:12"
+ },
+ {
+  "k": "Steam",
+  "w": "73-credits.js:13"
+ },
+ {
+  "k": "Virgilante",
+  "w": "73-credits.js:13"
+ },
+ {
+  "k": "target=\"_blank\" rel=\"noopener noreferrer\"",
+  "w": "73-credits.js:15"
+ },
+ {
+  "k": "<span>Aut viam inveniam aut faciam</span>",
+  "w": "73-credits.js:16"
+ },
+ {
+  "k": "This is a <b>digital standalone edition</b> of D.Soto's board game <i>Flavius Rule</i> — built from the original\n    <b>Magnus Edition</b> on Tabletop Simulator and the <b>Print &amp; Play Edition</b> sold through Barnes &amp; Noble.",
+  "w": "73-credits.js:17"
+ },
+ {
+  "k": "Mosaic portrait",
+  "w": "73-credits.js:19"
+ },
+ {
+  "k": "<i>Behold!</i> I implore you all to embark on any daring quests of creativity one can devise, embracing even the most obscure ideas, for the wisdom gained on these paths shall surpass any mere creation.\n  In the year 2016, I set forth on a momentous journey that has forged the very essence of <i>Flavius Rule</i> as you now behold it. From humble beginnings, tiny sparks of inspiration ignited, propelling me into uncharted territories where new, exhilarating challenges awaited. As I now reach the culmination of this odyssey, should this game kindle even a flicker of entertainment, joy, or inspiration within a select few, I shall consider my mission triumphantly fulfilled, surpassing all initial aspirations.",
+  "w": "73-credits.js:20"
+ },
+ {
+  "k": "I extend profound gratitude to my esteemed <i>Flavius</i> community, the valiant fr-qa-team, the venerable Indie Game Lab, and the illustrious board game design communities for their invaluable contributions, their sagacious counsel, and the endless wellspring of provided inspiration.\n  Furthermore, I humbly express boundless love and reverence to my father, who lent his guiding hand in designing and constructing the very first prototype of <i>Flavius Rule</i>, forever etching his legacy into this immersive realm.",
+  "w": "73-credits.js:22"
+ },
+ {
+  "k": "Finally, I pour my heartfelt appreciation to each and every one of you, noble players, for it is through your participation that the spirit of <i>Flavius Rule</i> is brought to life. May your ventures within this ancient realm resonate with valor, cunning, and a glimmer of the divine. God bless &amp; <i>Bonam fortunam!</i>",
+  "w": "73-credits.js:24"
+ },
+ {
+  "k": "North Carolina flag",
+  "w": "73-credits.js:26"
+ },
+ {
+  "k": "Mifune Media",
+  "w": "73-credits.js:26"
+ },
+ {
+  "k": "QR code",
+  "w": "73-credits.js:26"
+ },
+ {
+  "k": "<i>© 2016-2026. Mifune Media. All rights reserved.</i><br>WARNING! Small parts. Choking hazard. Not suitable for children under 3 years. Recommended for ages 13+. This product is not a toy. Actual components may vary from those shown.<br>Reprinting or publishing of the rulebook, game components, or illustrations is prohibited without prior permission.",
+  "w": "73-credits.js:27"
+ },
+ {
+  "k": "Credits",
+  "w": "73-credits.js:32"
+ },
+ {
+  "k": "Prototype",
+  "w": "73-credits.js:33"
+ },
+ {
+  "k": "⚓ Aboard!",
+  "w": "75-naum59.js:59"
+ },
+ {
+  "k": "{0} {1} the <b>{2}</b>.",
+  "w": "75-naum59.js:60"
+ },
+ {
+  "k": "climbs back aboard",
+  "w": "75-naum59.js:60"
+ },
+ {
+  "k": "storms aboard",
+  "w": "75-naum59.js:60"
+ },
+ {
+  "k": "{0} drafts the chariot <b>{1}</b>.",
+  "w": "76-chariot59.js:23"
+ },
+ {
+  "k": "Next week is <b>Rivalry Week</b> — Familia, two on two. Your rival: <b>{0}</b> ({1}). Name two fighters to stand together.",
+  "w": "77-rivalry.js:29"
+ },
+ {
+  "k": "⚔ Name them",
+  "w": "77-rivalry.js:30"
+ },
+ {
+  "k": "You have {0} fit fighter{1}. Sign or heal one this week, or the house loses {2} fame and the editor fills your places.",
+  "w": "77-rivalry.js:31"
+ },
+ {
+  "k": "Name no one and the Consilium sends your best two.",
+  "w": "77-rivalry.js:32"
+ },
+ {
+  "k": "Next week is <b>Rivalry Week</b>, but the league pairs off without you — the odd house out. Rest, and watch the feuds settle.",
+  "w": "77-rivalry.js:33"
+ },
+ {
+  "k": "Rivalry Week: {0}",
+  "w": "77-rivalry.js:34"
+ },
+ {
+  "k": "Rivalry Week: a bye for us",
+  "w": "77-rivalry.js:34"
+ },
+ {
+  "k": "⚔ <b>Rivalry Week is set.</b> {0}",
+  "w": "77-rivalry.js:36"
+ },
+ {
+  "k": "{0} meets <b>{1}</b> — two on two, Familia, next week.",
+  "w": "77-rivalry.js:36"
+ },
+ {
+  "k": "{0} is the odd house out — a bye.",
+  "w": "77-rivalry.js:36"
+ },
+ {
+  "k": "Choose two different fighters.",
+  "w": "77-rivalry.js:40"
+ },
+ {
+  "k": "⚔ For Rivalry Week you name <b>{0}</b> and <b>{1}</b>.",
+  "w": "77-rivalry.js:41"
+ },
+ {
+  "k": "{0} cannot field two fighters for Rivalry Week: −{1} fame, and the editor fills {2} with free agents.",
+  "w": "77-rivalry.js:47"
+ },
+ {
+  "k": "the place",
+  "w": "77-rivalry.js:47"
+ },
+ {
+  "k": "both places",
+  "w": "77-rivalry.js:47"
+ },
+ {
+  "k": "⚔ Rivalry Week: <b>{0}</b> ({1}) beat {2} ({3}) — +{4} fame.",
+  "w": "77-rivalry.js:68"
+ },
+ {
+  "k": "⚔ <b>{0}</b> wins the rivalry against {1} (+{2} fame).",
+  "w": "77-rivalry.js:77"
+ },
+ {
+  "k": "their rival",
+  "w": "77-rivalry.js:77"
+ },
+ {
+  "k": "<b>⚔ Rivalry Week</b> — every house against its fiercest rival, two on two (Familia). {0} {1}",
+  "w": "77-rivalry.js:81"
+ },
+ {
+  "k": "Yours: <b>{0}</b> — fight with one of your pair, the other at your side.",
+  "w": "77-rivalry.js:81"
+ },
+ {
+  "k": "You are the odd house out this week.",
+  "w": "77-rivalry.js:81"
+ },
+ {
+  "k": "{0} more rivalr{1} settled in the background at the week's end.",
+  "w": "77-rivalry.js:81"
+ },
+ {
+  "k": "y is",
+  "w": "77-rivalry.js:81"
+ },
+ {
+  "k": "ies are",
+  "w": "77-rivalry.js:81"
+ },
+ {
+  "k": "⚔ <b>Week {0} · Rivalry Week</b> (Familia, two on two) vs <b>{1}</b>{2} · byes in weeks {3}.",
+  "w": "77-rivalry.js:83"
+ },
+ {
+  "k": "— a bye —",
+  "w": "77-rivalry.js:83"
+ },
+ {
+  "k": "— set at the start of week 11, when the Consilium writes",
+  "w": "77-rivalry.js:83"
+ },
+ {
+  "k": "Opens New event with {0} summoned",
+  "w": "78-v60.js:17"
+ },
+ {
+  "k": "⚔ Walk stage {0}: {1}",
+  "w": "78-v60.js:17"
+ },
+ {
+  "k": "Win the twelve arenas in order with {0}{1}",
+  "w": "78-v60.js:18"
+ },
+ {
+  "k": "— replaces {0}",
+  "w": "78-v60.js:18"
+ },
+ {
+  "k": "🛡 Choose from Your Play Now Gladiators",
+  "w": "78-v60.js:28"
+ },
+ {
+  "k": "open a gladiator's record and press 🛣 Send on the Road",
+  "w": "78-v60.js:28"
+ },
+ {
+  "k": "{0} will answer for {1} in their own Resolve.",
+  "w": "78-v60.js:51"
+ },
+ {
+  "k": "{0} picks up a Crowd Favor offering, but gains no CF from Blessings.",
+  "w": "78-v60.js:63"
+ },
+ {
+  "k": "{0} picks up a Crowd Favor offering: +{1} CF.",
+  "w": "78-v60.js:64"
+ },
+ {
+  "k": "hesitates, skips the market, misjudges often",
+  "w": "80-aitiers.js:17"
+ },
+ {
+  "k": "works the market and fights, but wanders into danger",
+  "w": "80-aitiers.js:18"
+ },
+ {
+  "k": "never shies from a fight, plans routes, trades and truces",
+  "w": "80-aitiers.js:19"
+ },
+ {
+  "k": "rolls Focus on close foes",
+  "w": "80-aitiers.js:20"
+ },
+ {
+  "k": "hunts the leader, Focuses for the kill, steps to safety after striking",
+  "w": "80-aitiers.js:21"
+ },
+ {
+  "k": "{0} mind: {1}",
+  "w": "80-aitiers.js:47"
+ },
+ {
+  "k": "Novice below 65, Apprentice 65, Fighter 76, Veteran 86, Master 96",
+  "w": "80-aitiers.js:59"
+ },
+ {
+  "k": "How sharply a CPU plays the gladiator — five minds: {0}. Personality still decides how they play. Grows by surviving and winning.",
+  "w": "80-aitiers.js:60"
+ },
+ {
+  "k": "Needs {0} training hour{1} — {2} left. Hours refill when the week ends.",
+  "w": "81-v63.js:24"
+ },
+ {
+  "k": "Speed drill",
+  "w": "81-v63.js:25"
+ },
+ {
+  "k": "Strength drill",
+  "w": "81-v63.js:25"
+ },
+ {
+  "k": "Tactics",
+  "w": "81-v63.js:25"
+ },
+ {
+  "k": "Crowd work",
+  "w": "81-v63.js:25"
+ },
+ {
+  "k": "Rehab",
+  "w": "81-v63.js:25"
+ },
+ {
+  "k": "Each fighter can train 4 hours a week.",
+  "w": "81-v63.js:65"
+ },
+ {
+  "k": "{0}: rehab — back a week sooner",
+  "w": "81-v63.js:73"
+ },
+ {
+  "k": "{0} & {1}: bonded (+loyalty)",
+  "w": "81-v63.js:78"
+ },
+ {
+  "k": "a sparring knock",
+  "w": "81-v63.js:80"
+ },
+ {
+  "k": "{0} took a sparring knock",
+  "w": "81-v63.js:80"
+ },
+ {
+  "k": "{0} & {1}: sparred in-house",
+  "w": "81-v63.js:81"
+ },
+ {
+  "k": "Training hours: {0} session{1} — {2}{3}",
+  "w": "81-v63.js:82"
+ },
+ {
+  "k": "⏳ Training hours",
+  "w": "81-v63.js:97"
+ },
+ {
+  "k": "{0} of {1} left · spent when the week ends",
+  "w": "81-v63.js:97"
+ },
+ {
+  "k": "🧑‍🏫 <b>Doctore</b> {0}",
+  "w": "81-v63.js:99"
+ },
+ {
+  "k": "each hour sharpens this week's regime (max {0})",
+  "w": "81-v63.js:99"
+ },
+ {
+  "k": "🏃 Speed · 💪 Strength · 📜 Tactics (Intelligence) · 🎭 Crowd work (Charisma, fame) · 🩹 Rehab (2 h = a week sooner) · max {0} h a fighter",
+  "w": "81-v63.js:101"
+ },
+ {
+  "k": "Last week: {0}",
+  "w": "81-v63.js:104"
+ },
+ {
+  "k": "Show the ratings",
+  "w": "81-v63.js:121"
+ },
+ {
+  "k": "Fold the ratings away",
+  "w": "81-v63.js:121"
+ },
+ {
+  "k": "<b>Reduce motion</b>",
+  "w": "82-access.js:37"
+ },
+ {
+  "k": "No shakes, flashes, flying missiles or animated panels. On by itself when your system asks for reduced motion.",
+  "w": "82-access.js:37"
+ },
+ {
+  "k": "<b>Colour-blind palette</b>",
+  "w": "82-access.js:38"
+ },
+ {
+  "k": "Class colours anyone can tell apart, a class letter on every token, blue/orange for good/bad.",
+  "w": "82-access.js:38"
+ },
+ {
+  "k": "<b>Text size</b>",
+  "w": "82-access.js:39"
+ },
+ {
+  "k": "Panels, log, windows and menus. The arena keeps its size.",
+  "w": "82-access.js:39"
+ },
+ {
+  "k": "Basics",
+  "w": "83-edsteps.js:13"
+ },
+ {
+  "k": "Board",
+  "w": "83-edsteps.js:13"
+ },
+ {
+  "k": "Rules",
+  "w": "83-edsteps.js:13"
+ },
+ {
+  "k": "🧭 Guided steps",
+  "w": "83-edsteps.js:41"
+ },
+ {
+  "k": "All sections",
+  "w": "83-edsteps.js:41"
+ },
+ {
+  "k": "← Back",
+  "w": "83-edsteps.js:47"
+ },
+ {
+  "k": "Still to do: {0}",
+  "w": "83-edsteps.js:47"
+ },
+ {
+  "k": "<span class=\"rc-sub\">Ready — save it, or save and play.</span>",
+  "w": "83-edsteps.js:47"
+ },
+ {
+  "k": "Next →",
+  "w": "83-edsteps.js:47"
+ },
+ {
+  "k": "{0} has fallen — the missio is lost.",
+  "w": "84-v64.js:20"
+ }
+]

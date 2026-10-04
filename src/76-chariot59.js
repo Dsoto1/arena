@@ -9,25 +9,25 @@
    - THE TOKENS ON THE CHARIOT: each mounted chariot carries its horse token (the face up) and wheel token on the board,
      each with a durability bar; the horse token flips over at a gate; a broken wheel or a lost horse falls off.
    ===================================================================== */
-const CH_CARDS59=[['chRed','Invicta Gloria'],['chBlue','Azureus Magnus'],['chTeal','Bellum Quadriga'],['chGold','Aureus Triumphus'],['chSilver','Bellator Aequus'],['chPurple','Fulgens Velox']];
+const CH_CARDS59=[['chRed',_T('Invicta Gloria')],['chBlue',_T('Azureus Magnus')],['chTeal',_T('Bellum Quadriga')],['chGold',_T('Aureus Triumphus')],['chSilver',_T('Bellator Aequus')],['chPurple',_T('Fulgens Velox')]];
 chariotDraft=async function(){
   log('Chariot draft — a snake draft: every racer drafts a chariot card, head armor, chest armor and a level 1-2 weapon; wheel and horse tokens are dealt at random.','hd');
   const heads=['galea','galea','cassis','crista','murmillo','cassis'],chests=['balteus','pectorale','pectorale','lorica','lorica','balteus1'],weps=[...MARKET_W[1],...MARKET_W[2]];
-  const rounds=[['Chariot',CH_CARDS59.map(x=>x[0]),'c'],['Head armor',heads,'a'],['Chest armor',chests,'a'],['Weapon',weps,'w']];
+  const rounds=[[_T('Chariot'),CH_CARDS59.map(x=>x[0]),'c'],[_T('Head armor'),heads,'a'],[_T('Chest armor'),chests,'a'],[_T('Weapon'),weps,'w']];
   rounds.forEach(([title,pool,kind],ri)=>rounds[ri].avail=[...pool]);
   for(let ri=0;ri<rounds.length;ri++){const [title,,kind]=rounds[ri];const avail=rounds[ri].avail;const order=ri%2?[...S.players].reverse():S.players;
     for(const p of order){let k;
       if(kind==='c'){const want=p.ch?p.ch.art:null;
         if(p.cpu)k=avail.includes(want)?want:avail[0];
-        else{const i=await modal(`Draft · ${p.name} · ${title}`,'<p>Pick your chariot card.</p>',avail.map((x,i)=>({label:CH_CARDS59.find(c=>c[0]===x)[1],value:i,card:'g:'+x})));k=avail[i??0]}
-        avail.splice(avail.indexOf(k),1);if(p.ch){p.ch.art=k;p.ch.name=CH_CARDS59.find(c=>c[0]===k)[1]}log(`${nm(p)} drafts the chariot <b>${esc(p.ch?p.ch.name:k)}</b>.`);continue}
+        else{const i=await modal(_T`Draft · ${p.name} · ${title}`,'<p>Pick your chariot card.</p>',avail.map((x,i)=>({label:CH_CARDS59.find(c=>c[0]===x)[1],value:i,card:'g:'+x})));k=avail[i??0]}
+        avail.splice(avail.indexOf(k),1);if(p.ch){p.ch.art=k;p.ch.name=CH_CARDS59.find(c=>c[0]===k)[1]}log(_T`${nm(p)} drafts the chariot <b>${esc(p.ch?p.ch.name:k)}</b>.`);continue}
       if(p.cpu)k=avail.sort((a,b)=>itemValue(kind,b)-itemValue(kind,a))[0];
-      else{const i=await modal(`Draft · ${p.name} · ${title}`,'<p>Pick one.</p>',avail.map((x,i)=>({label:kind==='w'?W[x].n:ARM[x].n,sub:kind==='w'?wStats(mkW(x)):armorDesc(x),value:i})));k=avail[i??0]}
+      else{const i=await modal(_T`Draft · ${p.name} · ${title}`,'<p>Pick one.</p>',avail.map((x,i)=>({label:kind==='w'?W[x].n:ARM[x].n,sub:kind==='w'?wStats(mkW(x)):armorDesc(x),value:i})));k=avail[i??0]}
       avail.splice(avail.indexOf(k),1);
       if(kind==='w')p.wR=mkW(k);else equipPiece(p,k,ARM[k].slot);
-      log(`${nm(p)} drafts ${kind==='w'?W[k].n:ARM[k].n}.`)}}
+      log(_T`${nm(p)} drafts ${kind==='w'?W[k].n:ARM[k].n}.`)}}
   for(const p of S.players){p.wL=mkW('chariotCard');if(p.ch)p.wL.gart='g:'+p.ch.art;p.keys=2;p.cf+=3}
-  log('Each racer receives an Arena Key token (2 keys) and 3 CF. The chariot card fills the secondary weapon slot.');
+  log(_T('Each racer receives an Arena Key token (2 keys) and 3 CF. The chariot card fills the secondary weapon slot.'));
 };
 /* the gate step: base chStep gives +2 movement; the rulebook gives one free tile (adjacent or diagonal) */
 {const base=chStep;chStep=async function(p,or,oc){const ch=p&&p.ch;const mv0=p?p.mv:0;const flip0=ch&&ch.horse?ch.horse.face:null;

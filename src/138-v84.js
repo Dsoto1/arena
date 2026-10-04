@@ -43,24 +43,24 @@ function recruiter84(w){const m=me();if(!w||!m||w.tutorial||w.dead)return null;c
     const avg=peers.reduce((a,x)=>a+askWage(x),0)/peers.length;const ask=askWage(g);const f=recFit(g,m);if(ask<=avg*COUNCIL84.bargain&&f.gap&&f.aff)deals.push({g,ask,avg:Math.round(avg),f})}
   deals.sort((a,b)=>effOvr(b.g)-effOvr(a.g));
   const seen=w.rec84=w.rec84||{};const recent=g=>seen[g.id]!=null&&w.week-seen[g.id]<COUNCIL84.pickGap;
-  let L=null;const btn=g=>`<div class="acts"><button class="btn tksm" type="button" data-rec84="${esc(g.id)}">👁 See them in Recruiting</button></div>`;
+  let L=null;const btn=g=>`<div class="acts"><button class="btn tksm" type="button" data-rec84="${esc(g.id)}">${_T`👁 See them in Recruiting`}</button></div>`;
   const d=deals.find(x=>!recent(x.g));
-  if(d){const g=d.g;L={title:`A bargain: ${g.name}`,seal:'🪙',body:`<p><b>${esc(g.name)}</b> · ${esc(cname(g))} · rating ${esc(estOvr(g).txt)} — asks <b>${d.ask}</b> a week. Fighters of that level ask about <b>${d.avg}</b>.</p><p>${esc(d.f.why)}.</p>${btn(g)}`}}
+  if(d){const g=d.g;L={title:_T`A bargain: ${g.name}`,seal:'🪙',body:`<p>${_T`<b>${esc(g.name)}</b> · ${esc(cname(g))} · rating ${esc(estOvr(g).txt)} — asks <b>${d.ask}</b> a week. Fighters of that level ask about <b>${d.avg}</b>.`}</p><p>${esc(d.f.why)}.</p>${btn(g)}`}}
   else{const pick=fa.filter(g=>!recent(g)&&recFit(g,m).mark==='✓').sort((a,b)=>effOvr(b)-effOvr(a))[0];
-    if(pick){const f=recFit(pick,m);L={title:`★ Pick of the week: ${pick.name}`,seal:'★',body:`<p><b>${esc(pick.name)}</b> · ${esc(cname(pick))} · rating ${esc(estOvr(pick).txt)} · asks <b>${askWage(pick)}</b> a week.</p><p>${esc(f.why)}.</p>${btn(pick)}`,gid:pick.id}}}
+    if(pick){const f=recFit(pick,m);L={title:_T`★ Pick of the week: ${pick.name}`,seal:'★',body:`<p>${_T`<b>${esc(pick.name)}</b> · ${esc(cname(pick))} · rating ${esc(estOvr(pick).txt)} · asks <b>${askWage(pick)}</b> a week.`}</p><p>${esc(f.why)}.</p>${btn(pick)}`,gid:pick.id}}}
   if(!L)return null;const gid=L.gid||(d&&d.g.id);seen[gid]=w.week;
-  sendLetter(w,{key,kind:'letter',from:'your recruiter',adv:'recruiter',seal:L.seal,title:L.title,body:L.body});return key}
+  sendLetter(w,{key,kind:'letter',from:_T('your recruiter'),adv:'recruiter',seal:L.seal,title:L.title,body:L.body});return key}
 function medicus84Risks(w){const m=me();if(!m)return [];const out=[];
   for(const g of rosterOf(m)){if(!g.alive)continue;const f=typeof gFat==='function'?gFat(g):0;const sev=(g.severed||[]).length;
     const card=typeof onCard==='function'&&onCard(g);
-    if(card&&(f>COUNCIL84.cardFat||sev)){out.push({g,k:'card',t:`<b>${esc(g.name)}</b> is on this week's card ${sev?'missing a limb':`worn down (fatigue ${f})`} — take them off before the arena does.`});continue}
-    if(typeof serious76==='function'&&serious76(g)&&!(typeof inBed76==='function'&&inBed76(g))&&!(g.inj&&g.inj.war)){out.push({g,k:'bed',t:`<b>${esc(g.name)}</b>'s wound${g.inj&&g.inj.label?` (${esc(g.inj.label)})`:''} needs a bed and rest.`});continue}
-    if(f>COUNCIL84.fatRisk&&g.restWk!==w.week)out.push({g,k:'fat',t:`<b>${esc(g.name)}</b> is worn out (fatigue ${f}) — a rest week before something tears.`})}
+    if(card&&(f>COUNCIL84.cardFat||sev)){out.push({g,k:'card',t:_T`<b>${esc(g.name)}</b> is on this week's card ${sev?_T('missing a limb'):_T`worn down (fatigue ${f})`} — take them off before the arena does.`});continue}
+    if(typeof serious76==='function'&&serious76(g)&&!(typeof inBed76==='function'&&inBed76(g))&&!(g.inj&&g.inj.war)){out.push({g,k:'bed',t:_T`<b>${esc(g.name)}</b>'s wound${g.inj&&g.inj.label?` (${esc(g.inj.label)})`:''} needs a bed and rest.`});continue}
+    if(f>COUNCIL84.fatRisk&&g.restWk!==w.week)out.push({g,k:'fat',t:_T`<b>${esc(g.name)}</b> is worn out (fatigue ${f}) — a rest week before something tears.`})}
   return out}
 function medicus84(w,onlyCard){if(!w||w.tutorial||w.dead)return null;const key='med84-'+council84Week(w);if((w.letters||[]).some(l=>l.key===key))return null;
   let R=medicus84Risks(w);if(onlyCard)R=R.filter(x=>x.k==='card');if(!R.length)return null;R=R.slice(0,3);
-  sendLetter(w,{key,kind:'letter',from:'your medicus',adv:'medicus',seal:'⚕',title:R.length>1?`${R.length} fighters at risk`:`${R[0].g.name} is at risk`,
-    body:`<ul>${R.map(x=>`<li>${x.t}</li>`).join('')}</ul><div class="acts"><button class="btn tksm" type="button" data-med84="1">⚕ To the ward</button></div>`});return key}
+  sendLetter(w,{key,kind:'letter',from:_T('your medicus'),adv:'medicus',seal:'⚕',title:R.length>1?_T`${R.length} fighters at risk`:_T`${R[0].g.name} is at risk`,
+    body:`<ul>${R.map(x=>`<li>${x.t}</li>`).join('')}</ul><div class="acts"><button class="btn tksm" type="button" data-med84="1">${_T`⚕ To the ward`}</button></div>`});return key}
 {const base=endWeek;endWeek=async function(){const w0=W_();const s0=w0&&w0.season;const r=await base.apply(this,arguments);
   try{const w=W_();if(r!==false&&w&&w===w0&&!w.dead&&!w.tutorial){if(w.season>s0)bk84Bump('season');const a=recruiter84(w),b=medicus84(w);if(a||b)saveWorld()}}catch(e){console.error(e)}return r}}
 {const base=ludusTabHTML;ludusTabHTML=function(){try{const w=W_();if(w&&medicus84(w,true))setTimeout(()=>{try{saveWorld()}catch(e){}},0)}catch(e){console.error(e)}return base.apply(this,arguments)}}
@@ -100,7 +100,7 @@ function lite84On(){const v=SETTINGS.lite84||'auto';if(v==='on')return true;if(v
 {const base=draw;draw=function(){if(!(typeof SAND83!=='undefined'&&lite84On()))return base.apply(this,arguments);const s0={g:SAND83.grain,s:SAND83.shade,a:typeof SCAR83!=='undefined'?SCAR83.alpha:0};
   SAND83.grain=0;SAND83.shade=0;if(typeof SCAR83!=='undefined')SCAR83.alpha=0;try{return base.apply(this,arguments)}finally{SAND83.grain=s0.g;SAND83.shade=s0.s;if(typeof SCAR83!=='undefined')SCAR83.alpha=s0.a}}}
 {const base=settingsHTML;settingsHTML=function(tab){const h=base.apply(this,arguments);if(tab!=='general'&&tab)return h;try{const v=SETTINGS.lite84||'auto';
-  const row=`<div class="setrow a11yrow"><span><b>Light board for older phones</b><br><span class="hint" style="margin:0">Skips the sand grain and scars. Auto: on sharp phone screens with a large board.</span></span><div class="seg">${[['auto','Auto'],['on','On'],['off','Off']].map(([k,l])=>`<button type="button" data-lite84="${k}" class="${v===k?'on':''}">${l}</button>`).join('')}</div></div>`;
+  const row=`<div class="setrow a11yrow"><span>${_T`<b>Light board for older phones</b>`}<br><span class="hint" style="margin:0">${_T`Skips the sand grain and scars. Auto: on sharp phone screens with a large board.`}</span></span><div class="seg">${[['auto',_T('Auto')],['on','On'],['off',_T('Off')]].map(([k,l])=>`<button type="button" data-lite84="${k}" class="${v===k?'on':''}">${l}</button>`).join('')}</div></div>`;
   const mark='<h4 style="grid-column:1/-1;margin:6px 0 0">Visuals</h4>';return h.includes(mark)?h.replace(mark,mark+row):h}catch(e){return h}}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-lite84]');if(!b)return;SETTINGS.lite84=b.dataset.lite84;applySettings();
   b.parentElement.querySelectorAll('[data-lite84]').forEach(x=>x.classList.toggle('on',x===b));try{if(S)draw()}catch(err){}});
@@ -118,20 +118,20 @@ const tab84Kind=key=>/^career:/.test(key)?'career':'match';
 async function tabClaim84(key){if(!TAB84.bc||TAB84.held.has(key))return true;TAB84.lost.delete(key);TAB84.pend=key;TAB84.missed=false;
   try{const nonce=Math.random().toString(36).slice(2);let seen=false;const got=new Promise(res=>{TAB84.wait.set(nonce,()=>{seen=true;res()});setTimeout(res,400)});tab84Post({t:'who',key,nonce});await got;TAB84.wait.delete(nonce);
     if(!seen){TAB84.held.add(key);return true}
-    const what=tab84Kind(key)==='career'?'This career':'This match';
-    const ok=await ask76(`📑 ${what} is open in another tab`,`Continue here and the other tab stops saving it — or cancel and keep playing there.`,'Continue here','Cancel');
+    const what=tab84Kind(key)==='career'?_T('This career'):_T('This match');
+    const ok=await ask76(_T`📑 ${what} is open in another tab`,_T`Continue here and the other tab stops saving it — or cancel and keep playing there.`,_T('Continue here'),_T('Cancel'));
     if(ok){tab84Post({t:'take',key});TAB84.held.add(key)}return ok}
   finally{TAB84.pend=null;if(TAB84.missed&&TAB84.held.has(key)&&tab84Kind(key)==='career'){TAB84.missed=false;try{saveWorld()}catch(e){}}}}
 function tab84Lost(key){if(HEADLESS)return;let b=document.getElementById('tab84');if(!b){b=document.createElement('div');b.id='tab84';b.setAttribute('role','status');document.body.appendChild(b)}b.hidden=false;
-  b.innerHTML=`<span>📑 <b>${tab84Kind(key)==='career'?'This career':'This match'}</b> is now open in another tab — this tab has stopped saving.</span><button type="button" class="btn tksm primary" data-tab84="go">Reload</button>`;
-  try{mToast('📑 Opened in another tab — this tab no longer saves.')}catch(e){}}
+  b.innerHTML=`${_T`<span>📑 <b>${tab84Kind(key)==='career'?_T('This career'):_T('This match')}</b> is now open in another tab — this tab has stopped saving.</span>`}<button type="button" class="btn tksm primary" data-tab84="go">${_T`Reload`}</button>`;
+  try{mToast(_T('📑 Opened in another tab — this tab no longer saves.'))}catch(e){}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-tab84]');if(!b)return;e.preventDefault();e.stopPropagation();location.reload()},true);
 /* the 109-v761 guard: a tab that gave its save away writes nothing more */
 {const base=saveBlocked76;saveBlocked76=function(){if(TAB84.lost.size)return true;return base.apply(this,arguments)}}
 {const base=saveWorld;saveWorld=function(){const w=W_();if(TAB84.pend&&w&&TAB84.pend==='career:'+w.id){TAB84.missed=true;return}return base.apply(this,arguments)}}
 {const base=matchLoad;matchLoad=function(k){const snap=MSAVE_SLOTS.includes(String(k))?matchSlotGet(k):null;const r=base.apply(this,arguments); /* stays synchronous (onlmLoad relies on it); the question comes after */
   try{if(snap&&snap.game==='flavius-match'){const key='match:'+k+':'+snap.at;const S0=S;Promise.resolve(r).then(ok=>{if(!ok||S!==S0)return;if(TAB84.match&&TAB84.match!==key)TAB84.held.delete(TAB84.match);TAB84.match=key;TAB84.matchS=S0;
-    return tabClaim84(key).then(mine=>{if(mine||S!==S0)return;TAB84.match=null;TAB84.matchS=null;S0.over=true;try{mToast('⚔ Left in the other tab.')}catch(e){}try{menuShow()}catch(e){}})}).catch(()=>{})}}catch(e){console.error(e)}return r}}
+    return tabClaim84(key).then(mine=>{if(mine||S!==S0)return;TAB84.match=null;TAB84.matchS=null;S0.over=true;try{mToast(_T('⚔ Left in the other tab.'))}catch(e){}try{menuShow()}catch(e){}})}).catch(()=>{})}}catch(e){console.error(e)}return r}}
 function tab84Sweep(){try{if(TAB84.match&&TAB84.matchS!==S){TAB84.held.delete(TAB84.match);TAB84.match=null;TAB84.matchS=null}
   const w=MGR.world;const key=w&&w.id&&!w.tutorial?'career:'+w.id:null;if(key===TAB84.career)return;if(TAB84.career)TAB84.held.delete(TAB84.career);TAB84.career=key;if(!key)return;bk84Set({mgr:1});
   tabClaim84(key).then(ok=>{if(ok||TAB84.career!==key)return;TAB84.career=null;if(MGR.world&&MGR.world.id===w.id){MGR.world=null;try{if(CUR_MODAL)CUR_MODAL.done(null)}catch(e){}}})}catch(e){console.error(e)}}
@@ -143,38 +143,38 @@ function bk84Get(){let o={};try{o=JSON.parse(localStorage.getItem(BK84.key)||'{}
 function bk84Set(p){const o={...bk84Get(),...p};try{localStorage.setItem(BK84.key,JSON.stringify(o))}catch(e){}return o}
 function bk84Bump(k){const o=bk84Get();if(k==='ev')o.ev=(o.ev||0)+1;if(k==='season')o.season=1;bk84Set(o);try{bk84Paint()}catch(e){}}
 function bk84Due(){const o=bk84Get();const now=Date.now();if(o.later&&now<o.later)return '';
-  if(o.season)return 'A Manager season ended';if((o.ev||0)>=BK84.events)return `${o.ev} events since your last backup`;
-  const since=now-(o.last||o.first);if(since>=BK84.days*864e5&&((o.ev||0)>0||o.mgr))return o.last?`${Math.floor(since/864e5)} days since your last backup`:'No backup yet';return ''}
+  if(o.season)return _T('A Manager season ended');if((o.ev||0)>=BK84.events)return _T`${o.ev} events since your last backup`;
+  const since=now-(o.last||o.first);if(since>=BK84.days*864e5&&((o.ev||0)>0||o.mgr))return o.last?_T`${Math.floor(since/864e5)} days since your last backup`:_T('No backup yet');return ''}
 const bk84When=()=>{const o=bk84Get();return o.last?new Date(o.last).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}):'never'};
 const bk84Hosted=()=>/^https?:$/.test(location.protocol);
-const BK84_OFF='Want to play offline? Download the game, then back up here and Import in the download (Saves → Backups).';
-function bk84HTML(why){return `<div class="bk84" id="bk84" role="note"><div class="bk84t"><b>⬇ Back up your saves</b><small>${esc(why)} · last backup: ${esc(bk84When())}</small><small>Careers, matches and creations live only in this browser — Online lives on the server.</small></div><div class="bk84b"><button type="button" class="btn tksm primary" data-bk84="go">⬇ Back up now</button><button type="button" class="btn tksm" data-bk84="later">Remind me later</button></div></div>`}
+const BK84_OFF=_T('Want to play offline? Download the game, then back up here and Import in the download (Saves → Backups).');
+function bk84HTML(why){return `<div class="bk84" id="bk84" role="note"><div class="bk84t">${_T`<b>⬇ Back up your saves</b><small>${esc(why)} · last backup: ${esc(bk84When())}</small><small>Careers, matches and creations live only in this browser — Online lives on the server.</small>`}</div><div class="bk84b"><button type="button" class="btn tksm primary" data-bk84="go">${_T`⬇ Back up now`}</button><button type="button" class="btn tksm" data-bk84="later">${_T`Remind me later`}</button></div></div>`}
 function bk84Paint(){const mm=document.getElementById('mainMenu');if(!mm)return;let el=mm.querySelector('#bk84');const why=bk84Due();
   if(!why||mm.hidden){if(el)el.remove();return}const h=bk84HTML(why);if(el){if(el.dataset.why!==why){el.outerHTML=h;el=mm.querySelector('#bk84')}}
   else{const box=mm.querySelector('.mmbtns');if(!box)return;box.insertAdjacentHTML('afterend',h);el=mm.querySelector('#bk84')}if(el)el.dataset.why=why}
-async function bk84Go(){try{await downloadSnapshot(await snapshotAll());return true}catch(e){try{mToast('⚠ The backup could not be made here.')}catch(err){}return false}}
+async function bk84Go(){try{await downloadSnapshot(await snapshotAll());return true}catch(e){try{mToast(_T('⚠ The backup could not be made here.'))}catch(err){}return false}}
 {const base=downloadSnapshot;downloadSnapshot=async function(){const r=await base.apply(this,arguments);bk84Set({last:Date.now(),ev:0,season:0,later:0});try{bk84Paint()}catch(e){}return r}}
 document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('[data-bk84]');if(!b)return;e.preventDefault();e.stopPropagation();
   if(b.dataset.bk84==='later')bk84Set({later:Date.now()+BK84.laterDays*864e5});else await bk84Go();
   bk84Paint();for(const x of document.querySelectorAll('#hub76 #bk84'))x.remove();const hb=document.getElementById('hub76');if(hb&&typeof hubRedraw76==='function')hubRedraw76()},true);
 {const base=menuShow;menuShow=function(){const r=base.apply(this,arguments);try{bk84Paint()}catch(e){}return r}}
 {const base=hubBody76;hubBody76=async function(tab){let h=await base.apply(this,arguments);try{const why=bk84Due();if(why)h=h.replace('<div class="hub76body">',bk84HTML(why)+'<div class="hub76body">');
-  if(tab==='backups'){const note=`<p class="bk84last">🗄 Last backup: <b>${esc(bk84When())}</b>. Backups cover the offline modes — Online progress lives on the server.</p>${bk84Hosted()?`<p class="rc-sub">${esc(BK84_OFF)}</p>`:'<p class="rc-sub">This downloaded copy keeps its own saves — Restore a backup from the site to carry careers over.</p>'}`;
+  if(tab==='backups'){const note=`<p class="bk84last">${_T`🗄 Last backup: <b>${esc(bk84When())}</b>. Backups cover the offline modes — Online progress lives on the server.`}</p>${bk84Hosted()?`<p class="rc-sub">${esc(BK84_OFF)}</p>`:'<p class="rc-sub">This downloaded copy keeps its own saves — Restore a backup from the site to carry careers over.</p>'}`;
     h=h.replace(/(<div class="hub76body">[\s\S]*?<\/p>)/,'$1'+note)}}catch(e){console.error(e)}return h}}
 {const base=gameOver;gameOver=function(){try{if(!HEADLESS&&S&&!S.sim&&!S.onl&&!S.tutorial&&!GO84.has(S)){GO84.add(S);bk84Bump('ev')}}catch(e){}return base.apply(this,arguments)}}
 const GO84=new WeakSet();
 setTimeout(()=>{try{if(HEADLESS||!navigator.storage||!navigator.storage.persist)return;navigator.storage.persisted().then(p=>{if(!p)return navigator.storage.persist()}).catch(()=>{})}catch(e){}},1500);
 /* the standalone (file://) has no online: the button points at the site */
 const STANDALONE84=location.protocol==='file:';
-{const base=onlMenuBtn;onlMenuBtn=function(){const r=base.apply(this,arguments);try{if(STANDALONE84){const b=document.querySelector('#mainMenu [data-mm="online"]');if(b){b.disabled=false;b.title='Online plays at flaviusrule.com/play';b.dataset.std84='1';let s=b.querySelector('small');if(!s){s=document.createElement('small');b.appendChild(s)}s.textContent='Online plays at flaviusrule.com/play'}}}catch(e){}return r}}
+{const base=onlMenuBtn;onlMenuBtn=function(){const r=base.apply(this,arguments);try{if(STANDALONE84){const b=document.querySelector('#mainMenu [data-mm="online"]');if(b){b.disabled=false;b.title=_T('Online plays at flaviusrule.com/play');b.dataset.std84='1';let s=b.querySelector('small');if(!s){s=document.createElement('small');b.appendChild(s)}s.textContent=_T('Online plays at flaviusrule.com/play')}}}catch(e){}return r}}
 window.addEventListener('click',e=>{if(!STANDALONE84)return;const o=e.target.closest&&e.target.closest('#mainMenu [data-mm="online"]');if(!o)return;e.preventDefault();e.stopImmediatePropagation();
   try{window.open(BK84.url,'_blank','noopener')}catch(err){}},true);
 if(STANDALONE84)document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#mainMenu [data-mm="multi"]'))setTimeout(()=>{try{onlMenuBtn()}catch(err){}},0)});
 
 /* ================= E · browser-translate safe ================= */
-const GAME_TERMS=['Soldier','Royalty','Hero','Slave','Veteranus','Amazonia','Venatore','Damnatio','Tiro','Novicius','Gregarius','Primus Palus','Summa Rudis','Rudiarius','Invictus',
-  'Fate','Fates','Thumb of Flavius','Missio','Lanista','Domus','Mandata Flavi','Piacula','CF','AP','HP','PvE','PvP','Focus','Tholo','Commodus','Zora','Leo','Leaena',
-  'Flavius','Ludus','Ludus Flavius','Naumachia','Familia','Juggernaut','Gauntlet','Orpheus','Golden Eagle','Triumviratus','Democritus','Egidious','Cassian','Ludi Infames','Arena Chest','Blessings','Hygeia','Praeco','Orbis Terrarum'];
+const GAME_TERMS=[_T('Soldier'),_T('Royalty'),_T('Hero'),_T('Slave'),_T('Veteranus'),_T('Amazonia'),_T('Venatore'),_T('Damnatio'),_T('Tiro'),_T('Novicius'),_T('Gregarius'),_T('Primus Palus'),_T('Summa Rudis'),_T('Rudiarius'),_T('Invictus'),
+  _T('Fate'),_T('Fates'),_T('Thumb of Flavius'),_T('Missio'),_T('Lanista'),_T('Domus'),_T('Mandata Flavi'),_T('Piacula'),'CF','AP','HP','PvE','PvP',_T('Focus'),_T('Tholo'),_T('Commodus'),_T('Zora'),_T('Leo'),_T('Leaena'),
+  _T('Flavius'),_T('Ludus'),_T('Ludus Flavius'),_T('Naumachia'),_T('Familia'),_T('Juggernaut'),_T('Gauntlet'),_T('Orpheus'),_T('Golden Eagle'),_T('Triumviratus'),_T('Democritus'),_T('Egidious'),_T('Cassian'),_T('Ludi Infames'),_T('Arena Chest'),_T('Blessings'),_T('Hygeia'),_T('Praeco'),_T('Orbis Terrarum')];
 let GT84_RE=null,GT84_N=0;
 function gt84Re(){const ev=typeof EVENTS==='object'?Object.keys(EVENTS):[];if(GT84_RE&&GT84_N===ev.length)return GT84_RE;GT84_N=ev.length;const set=new Set(GAME_TERMS);
   for(const k of ev){const E=EVENTS[k];if(E&&!E.custom){if(E.n&&E.n.length<40)set.add(E.n);if(E.short&&E.short.length<30)set.add(E.short)}}

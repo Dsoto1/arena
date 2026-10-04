@@ -14,36 +14,36 @@
 /* ---------- what each tab has left ---------- */
 function infirmNeed73(){const w=W_(),m=me();if(!w||!m)return 0;return rosterOf(m).filter(g=>g.inj&&!g.inj.war&&g.medWk!==w.week&&g.bathWk!==w.week).length}
 function ludusTodo73(){try{return weekChecklist().filter(x=>!x.done).length}catch(e){return 0}}
-function nightTodo73(){const w=W_(),m=me();if(!w||!m||!w.night)return null;const pend=(w.pend||[]).length;if(pend)return [pend,pend===1?'verdict waits':'verdicts wait'];
+function nightTodo73(){const w=W_(),m=me();if(!w||!m||!w.night)return null;const pend=(w.pend||[]).length;if(pend)return [pend,pend===1?_T('verdict waits'):_T('verdicts wait')];
   const ros=rosterOf(m);const mine=new Set(ros.map(g=>g.id));const open=w.night.bouts.filter(b=>!b.done);const entered=open.filter(b=>b.ents.some(id=>mine.has(id))).length;
-  const fit=ros.filter(g=>!g.inj&&g.morale>15).length;const want=Math.min(open.length,fit);return want>entered?[want-entered,want-entered===1?'bout to enter':'bouts to enter']:null}
-function rosterTodo73(){const w=W_(),m=me();if(!w||!m)return null;const exp=rosterOf(m).filter(g=>g.contract&&g.contract.weeks<=1).length;return exp?[exp,exp===1?'contract ends':'contracts end']:null}
+  const fit=ros.filter(g=>!g.inj&&g.morale>15).length;const want=Math.min(open.length,fit);return want>entered?[want-entered,want-entered===1?_T('bout to enter'):_T('bouts to enter')]:null}
+function rosterTodo73(){const w=W_(),m=me();if(!w||!m)return null;const exp=rosterOf(m).filter(g=>g.contract&&g.contract.weeks<=1).length;return exp?[exp,exp===1?_T('contract ends'):_T('contracts end')]:null}
 /* tab → [number, label, extra html] or null */
 function tabStat73(k){const w=W_();if(!w||w.dead)return null;
-  if(k==='ludus'){const n=ludusTodo73();return n?[n,n===1?'task left':'tasks left']:null}
-  if(k==='recruit'){const h=w.hours||0,mx=hoursMax();return [h+' h',`of ${mx} · the lanista's hours`,hoursPips73(h,mx,'#7fae5f')]}
-  if(k==='practice'){const h=thLeft(w),mx=thMax();return h?[h+' h',`training hours of ${mx} left`,hoursPips73(h,mx,'#d9a441')]:null}
-  if(k==='infirm'){const n=infirmNeed73();return n?[n,n===1?'needs care':'need care']:null}
+  if(k==='ludus'){const n=ludusTodo73();return n?[n,n===1?_T('task left'):_T('tasks left')]:null}
+  if(k==='recruit'){const h=w.hours||0,mx=hoursMax();return [h+' h',_T`of ${mx} · the lanista's hours`,hoursPips73(h,mx,'#7fae5f')]}
+  if(k==='practice'){const h=thLeft(w),mx=thMax();return h?[h+' h',_T`training hours of ${mx} left`,hoursPips73(h,mx,'#d9a441')]:null}
+  if(k==='infirm'){const n=infirmNeed73();return n?[n,n===1?_T('needs care'):_T('need care')]:null}
   if(k==='night')return nightTodo73();
   if(k==='roster')return rosterTodo73();
   return null}
-function hoursPips73(h,mx,col){return `<span class="hpips">${Array.from({length:mx},(_,i)=>`<i style="${i<h?`background:${col}`:''}"></i>`).join('')}</span>`}
+function hoursPips73(h,mx,col){return `<span class="hpips">${Array.from({length:mx},(_,i)=>`<i style="${i<h?_T`background:${col}`:''}"></i>`).join('')}</span>`}
 function bannerStat73(k){const s=tabStat73(k);if(!s)return '';return `<div class="roomstat rs2"><div class="ptbox on">${s[0]}</div><span>${s[1]}</span>${s[2]||''}</div>`} /* v0.74: the perk-point box (Virgilante: swap) */
 
 /* ---------- the scenes ---------- */
 const BANNERS73={
-  ludus:['🏛 Your ludus','the house, the ledger and the morning mail'],
-  roster:['🛡 The roster','the men and women who carry your name onto the sand'],
-  recruit:['🤝 Recruiting','the forum stalls, the dockside pits and a good word in the right ear'],
-  board:['★ Favorites','names worth watching'],
-  night:['⚔️ Match Week','three days of games — and the crowd keeps count'],
-  exch:['💰 Wagers','where the smart money sits in the shade'],
-  news:['📯 News','the criers, the walls and the gossip of the baths'],
-  league:['📊 The league','every house, every point, twelve weeks long'],
-  imp:['🌍 The Imperium','roads, legions, fans and weather from Gades to Antioch'],
-  trophy:['🏆 Trophies','silver on the shelf, and room for more'],
-  sched:['📅 The season','twelve weeks, two byes and the Grand Games'],
-  me:['👤 The lanista','your seal, your temper and your reputation']};
+  ludus:[_T('🏛 Your ludus'),_T('the house, the ledger and the morning mail')],
+  roster:[_T('🛡 The roster'),_T('the men and women who carry your name onto the sand')],
+  recruit:[_T('🤝 Recruiting'),_T('the forum stalls, the dockside pits and a good word in the right ear')],
+  board:[_T('★ Favorites'),_T('names worth watching')],
+  night:[_T('⚔️ Match Week'),_T('three days of games — and the crowd keeps count')],
+  exch:[_T('💰 Wagers'),_T('where the smart money sits in the shade')],
+  news:[_T('📯 News'),_T('the criers, the walls and the gossip of the baths')],
+  league:[_T('📊 The league'),_T('every house, every point, twelve weeks long')],
+  imp:[_T('🌍 The Imperium'),_T('roads, legions, fans and weather from Gades to Antioch')],
+  trophy:[_T('🏆 Trophies'),_T('silver on the shelf, and room for more')],
+  sched:[_T('📅 The season'),_T('twelve weeks, two byes and the Grand Games')],
+  me:[_T('👤 The lanista'),_T('your seal, your temper and your reputation')]};
 function roomScene73(k){const sky=(a,b)=>`<defs><linearGradient id="b73${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect x="-700" width="2000" height="120" fill="url(#b73${k})"/>`;
   const col=(x,h=80,w=16,c='#d9cdb4')=>`<rect x="${x}" y="${118-h}" width="${w}" height="${h}" fill="${c}"/><rect x="${x-4}" y="${114-h}" width="${w+8}" height="6" fill="${c}"/><rect x="${x-4}" y="112" width="${w+8}" height="6" fill="${c}"/>`;
   const man=(x,y,c='#c98e62',s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle cx="0" cy="-46" r="7" fill="${c}"/><path d="M0-38v22M0-32l10 10M0-32l-10 10M0-16l-7 16M0-16l7 16" stroke="${c}" stroke-width="5" stroke-linecap="round"/></g>`;
@@ -64,8 +64,8 @@ function roomScene73(k){const sky=(a,b)=>`<defs><linearGradient id="b73${k}" x1=
   else s=sky('#3a2a1c','#1a120c');
   return `<svg viewBox="0 0 600 120" preserveAspectRatio="xMidYMid meet" style="overflow:hidden" aria-hidden="true">${s}</svg>`}
 /* the Wagers banner: this week's three bouts along the top (day, bout, event; ★ your fighter in it, ✓ fought, the next one lit) */
-function weekStrip73(){const w=W_(),m=me();if(!w||!w.night)return '';const mine=new Set(rosterOf(m).map(g=>g.id));const DAY={under:'Fri',feature:'Sat',main:'Sun'};const nx=w.night.bouts.findIndex(b=>!b.done);
-  return `<div class="b73wk">${w.night.bouts.map((b,i)=>`<span class="wkb ${b.done?'done':''} ${i===nx?'next':''}" title="${esc((TIERS[b.tier]||{}).n||'')} · ${esc(EVENTS[b.ev]?EVENTS[b.ev].n:'')}${b.ents.some(id=>mine.has(id))?' · your fighter is on this card':''}"><b>${DAY[b.tier]||''}</b> ${esc((TIERS[b.tier]||{}).n||'')} · ${esc(EVENTS[b.ev]?EVENTS[b.ev].n:'')}${b.ents.some(id=>mine.has(id))?' <i>★</i>':''}${b.done?' ✓':''}</span>`).join('')}</div>`}
+function weekStrip73(){const w=W_(),m=me();if(!w||!w.night)return '';const mine=new Set(rosterOf(m).map(g=>g.id));const DAY={under:_T('Fri'),feature:_T('Sat'),main:_T('Sun')};const nx=w.night.bouts.findIndex(b=>!b.done);
+  return `<div class="b73wk">${w.night.bouts.map((b,i)=>`<span class="wkb ${b.done?'done':''} ${i===nx?'next':''}" title="${esc((TIERS[b.tier]||{}).n||'')} · ${esc(EVENTS[b.ev]?EVENTS[b.ev].n:'')}${b.ents.some(id=>mine.has(id))?_T(' · your fighter is on this card'):''}"><b>${DAY[b.tier]||''}</b> ${esc((TIERS[b.tier]||{}).n||'')} · ${esc(EVENTS[b.ev]?EVENTS[b.ev].n:'')}${b.ents.some(id=>mine.has(id))?' <i>★</i>':''}${b.done?' ✓':''}</span>`).join('')}</div>`}
 function banner73(k){const B=BANNERS73[k];if(!B)return '';return `<div class="roomhd b73 b73-${k}">${roomScene73(k)}${k==='exch'?weekStrip73():''}<div class="roomttl"><b>${B[0]}</b><span>${B[1]}</span></div>${bannerStat73(k)}</div>`}
 
 /* ---------- mgrHTML: banners, header hours out, rail ovals ---------- */
@@ -77,7 +77,7 @@ function banner73(k){const B=BANNERS73[k];if(!B)return '';return `<div class="ro
   h=h.replace(/⚕ Infirmary · \d+/,'⚕ Infirmary')}catch(e){console.error(e)}return h}}
 /* the rail ovals (kept live by the sweep, like the hour chips of v0.65) */
 setInterval(()=>{try{if(typeof W_!=='function'||!W_()||W_().dead)return;const w=W_();
-  const vals={ludus:[ludusTodo73(),n=>`📋 ${n}`,n=>`${n} task${n===1?'':'s'} left this week`],recruit:[w.hours||0,n=>`${n} h`,n=>`${n} of the lanista's hours left`],practice:[thLeft(w),n=>`${n} h`,n=>`${n} training hours left`],infirm:[infirmNeed73(),n=>`⚕ ${n}`,n=>`${n} fighter${n===1?'':'s'} need care`]};
+  const vals={ludus:[ludusTodo73(),n=>`📋 ${n}`,n=>_T`${n} task${n===1?'':'s'} left this week`],recruit:[w.hours||0,n=>`${n} h`,n=>_T`${n} of the lanista's hours left`],practice:[thLeft(w),n=>`${n} h`,n=>_T`${n} training hours left`],infirm:[infirmNeed73(),n=>`⚕ ${n}`,n=>_T`${n} fighter${n===1?'':'s'} need care`]};
   for(const [k,[v,t,tt]] of Object.entries(vals)){const b=document.querySelector(`.mtabs [data-mg="tab"][data-id="${k}"]`);if(!b)continue;
     const old=b.querySelector('.hrchip');if(old)old.remove();let c=b.querySelector('.mcount.c73');
     if(!c){c=document.createElement('span');c.className='mcount c73';b.appendChild(c)}const txt=v?t(v):'';if(c.textContent!==txt){c.textContent=txt;c.title=v?tt(v):''}c.hidden=!v}}catch(e){}},500);
@@ -85,7 +85,7 @@ setInterval(()=>{try{if(typeof W_!=='function'||!W_()||W_().dead)return;const w=
 /* ---------- scouting: ratings + personality on the free agent's card ---------- */
 function persTags73(g){if(g.report&&g.report.tags)return g.report.tags;try{const st=styleOf({cpu:true,pers:g.pers,diff:'normal',cls:CLASSES[g.cls]?g.cls:'soldier',stats:{},trophies:[],coin:0,cf:0});return PERS_KEYS.map(([k,l])=>[l,st[k]]).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0])}catch(e){return []}}
 {const base=detailHTML;detailHTML=function(g){let h=base.apply(this,arguments);try{if(!g||g.contract||!h.includes('class="rsteps"'))return h;
-  const tags=g.scout?persTags73(g):[];const add=(typeof ratingsHTML==='function'?ratingsHTML(g):'')+(g.scout?`<div class="sect">Personality</div><div class="ptags">${tags.map(t=>`<span class="badge gold">${esc(t)}</span>`).join(' ')||'<span class="rc-sub">—</span>'}</div>`:'<p class="rc-sub" style="margin:4px 0 0">Scout them to see their ratings and personality.</p>');
+  const tags=g.scout?persTags73(g):[];const add=(typeof ratingsHTML==='function'?ratingsHTML(g):'')+(g.scout?`<div class="sect">${_T`Personality`}</div><div class="ptags">${tags.map(t=>`<span class="badge gold">${esc(t)}</span>`).join(' ')||'<span class="rc-sub">—</span>'}</div>`:'<p class="rc-sub" style="margin:4px 0 0">Scout them to see their ratings and personality.</p>');
   const i=h.indexOf('<div class="rpane">');if(i>=0)h=h.slice(0,i)+`<div class="scoutsee">${add}</div>`+h.slice(i)}catch(e){console.error(e)}return h}}
 
 (()=>{const st=document.createElement('style');st.textContent=`
@@ -109,7 +109,7 @@ function srBtnAt(x,y,d){const cv=document.getElementById('cv');if(!cv)return;con
     b.addEventListener('click',e=>{e.stopPropagation();SR_OPEN=!SR_OPEN;b.classList.toggle('on',SR_OPEN);if(SR_OPEN)srPopShow(b);else srPopHide()});wrap.appendChild(b)}
   const k=cv.clientWidth/cv.width;b.style.left=(cv.offsetLeft+x*k-11)+'px';b.style.top=(cv.offsetTop+y*k-9)+'px';b.hidden=false;b._t=Date.now()}
 function srPopShow(b){const ev=typeof EV==='function'?EV():null;const key=srKey(ev);let p=document.getElementById('srPop');if(!p){p=document.createElement('div');p.id='srPop';p.className='srpop';document.body.appendChild(p)}
-  p.innerHTML=`<div class="srph">⚖ The Summa Rudis${ev&&ev.sr?` · <b>${esc(ev.sr)}</b>`:''}</div><div class="srpb">${S&&S.evKey&&typeof cardHTML==='function'?cardHTML('e:'+S.evKey,'md')||'':''}${key?srImgHTML(key,110):''}</div><div class="rc-sub">${ev?esc(ev.n||''):''}${SR_OPEN?' · tap the seal to close':''}</div>`;
+  p.innerHTML=`<div class="srph">${_T`⚖ The Summa Rudis${ev&&ev.sr?` · <b>${esc(ev.sr)}</b>`:''}`}</div><div class="srpb">${S&&S.evKey&&typeof cardHTML==='function'?cardHTML('e:'+S.evKey,'md')||'':''}${key?srImgHTML(key,110):''}</div><div class="rc-sub">${ev?esc(ev.n||''):''}${SR_OPEN?_T(' · tap the seal to close'):''}</div>`;
   p.hidden=false;const r=b.getBoundingClientRect();const w=p.offsetWidth||260;let x=r.right+8;if(x+w>innerWidth-8)x=r.left-w-8;p.style.left=Math.max(8,x)+'px';p.style.top=Math.max(8,Math.min(innerHeight-p.offsetHeight-8,r.top))+'px'}
 function srPopHide(){const p=document.getElementById('srPop');if(p)p.hidden=true}
 document.addEventListener('click',e=>{if(SR_OPEN&&!e.target.closest('#srInfo,#srPop')){SR_OPEN=false;const b=document.getElementById('srInfo');if(b)b.classList.remove('on');srPopHide()}});
@@ -123,11 +123,11 @@ setInterval(()=>{const b=document.getElementById('srInfo');if(b&&!b.hidden&&Date
 /* ---------- v0.73: offer to clear the gladiators older builds recruited on their own (recruit:true, never fought) ---------- */
 const oldRecruits73=()=>(typeof LUDUS_CACHE!=='undefined'?LUDUS_CACHE:[]).filter(g=>g&&g.recruit&&!(g.events>0));
 {const base=ludusHTML;ludusHTML=async function(){let h=await base.apply(this,arguments);try{let off=false;try{off=localStorage.getItem('flavius_oldrec73')==='keep'}catch(e){}const L=oldRecruits73();
-  if(L.length&&!off)h=`<div class="card2 oldrec"><b>🧹 ${L.length} gladiator${L.length===1?'':'s'} the ludus recruited on its own</b> <span class="rc-sub">older versions filled your roster with them; none has fought yet.</span><div class="acts" style="margin-top:6px"><button class="btn primary" type="button" data-oldrec="del">Remove them</button><button class="btn" type="button" data-oldrec="keep">Keep them</button></div></div>`+h}catch(e){console.error(e)}return h}}
+  if(L.length&&!off)h=`<div class="card2 oldrec">${_T`<b>🧹 ${L.length} gladiator${L.length===1?'':'s'} the ludus recruited on its own</b>`} <span class="rc-sub">${_T`older versions filled your roster with them; none has fought yet.`}</span><div class="acts" style="margin-top:6px"><button class="btn primary" type="button" data-oldrec="del">${_T`Remove them`}</button><button class="btn" type="button" data-oldrec="keep">${_T`Keep them`}</button></div></div>`+h}catch(e){console.error(e)}return h}}
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-oldrec]');if(!b)return;e.stopPropagation();
   if(b.dataset.oldrec==='keep'){try{localStorage.setItem('flavius_oldrec73','keep')}catch(err){}const c=b.closest('.oldrec');if(c)c.remove();return}
   const L=oldRecruits73();for(const g of L){await Store.del('gladiators',g.id).catch(()=>{})}LUDUS_CACHE=LUDUS_CACHE.filter(g=>!L.includes(g));
-  const box=document.getElementById('ludusBody');if(box)box.innerHTML=await ludusHTML();if(typeof mToast==='function')mToast(`🧹 ${L.length} removed.`)},true);
+  const box=document.getElementById('ludusBody');if(box)box.innerHTML=await ludusHTML();if(typeof mToast==='function')mToast(_T`🧹 ${L.length} removed.`)},true);
 
 /* ---------- v0.73: the ratings in the fighter panel's header start folded (until you open them) ---------- */
 try{RAT_SHUT=localStorage.getItem('flavius_ratshut')!=='0'}catch(e){RAT_SHUT=true}
@@ -149,13 +149,13 @@ function tabDone73(k){const w=W_(),m=me();if(!w||!m||w.dead)return false;
   return false}
 {const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/(⚔️ Match Week) ✓/,'$1')}catch(e){}return h}}
 setInterval(()=>{try{if(typeof W_!=='function'||!W_()||W_().dead)return;for(const k of ['recruit','practice','infirm','night']){const b=document.querySelector(`.mtabs [data-mg="tab"][data-id="${k}"]`);if(!b)continue;
-  const d=tabDone73(k);let c=b.querySelector('.tabchk.c73');if(d&&!c){c=document.createElement('span');c.className='tabchk c73';c.title='Done for the week';c.textContent='✓';b.appendChild(c)}else if(!d&&c)c.remove()}}catch(e){}},500);
+  const d=tabDone73(k);let c=b.querySelector('.tabchk.c73');if(d&&!c){c=document.createElement('span');c.className='tabchk c73';c.title=_T('Done for the week');c.textContent='✓';b.appendChild(c)}else if(!d&&c)c.remove()}}catch(e){}},500);
 
 /* ---------- (v0.74) optional checklist items can be dismissed for the week; only the verdicts (⚖) are required ---------- */
 const CK_KEY={'⚕':'hurt','📜':'contract','🏋':'regime','⏳':'hours','⚔':'enter','🤝':'roster'};
 {const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const w=W_();const sk=w.ckSkip&&w.ckSkip.wk===w.week&&w.ckSkip.s===w.season?w.ckSkip.keys:[];
   for(const x of I){const k=CK_KEY[x.ic];if(!k||x.done)continue;if(sk.includes(k)){x.done=true;x.txt+=' <span class="rc-sub">· dismissed</span>';x.skipped=true}
-    else x.btn=(x.btn||'')+`<button class="btn tksm ckskip" type="button" data-ckskip="${k}" title="Not this week — take it off the list">Dismiss</button>`}}catch(e){console.error(e)}return I}}
+    else x.btn=(x.btn||'')+`<button class="btn tksm ckskip" type="button" data-ckskip="${k}" title="${_T`Not this week — take it off the list`}">${_T`Dismiss`}</button>`}}catch(e){console.error(e)}return I}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ckskip]');if(!b)return;e.stopPropagation();const w=W_();if(!w)return;
   if(!w.ckSkip||w.ckSkip.wk!==w.week||w.ckSkip.s!==w.season)w.ckSkip={wk:w.week,s:w.season,keys:[]};if(!w.ckSkip.keys.includes(b.dataset.ckskip))w.ckSkip.keys.push(b.dataset.ckskip);saveWorld();MGR_REDRAW()},true);
 (()=>{const st=document.createElement('style');st.textContent=`.wkbtn{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.ckskip{opacity:.75}.ckskip:hover{opacity:1}`;document.head.appendChild(st)})();

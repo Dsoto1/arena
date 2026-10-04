@@ -13,7 +13,7 @@ function uniqueOut82(key){const k=UNIQUE_CARD82[key];if(!k||!S)return;let n=0;
   try{const k=extra&&extra.tamedBy!=null?null:spawnKey(target,name);if(r&&k)uniqueOut82(k)}catch(e){}return r}}
 {const base=drawArena;drawArena=async function(player){
   try{for(let g=0;g<6&&S&&S.deck&&S.deck.length;g++){const top=S.deck[S.deck.length-1];const key=Object.keys(UNIQUE_CARD82).find(x=>UNIQUE_CARD82[x]===top);
-    if(!key||!bossSpent(key))break;S.deck.pop();log(`${key} is already in this event — that card is set aside and another is drawn.`)}}catch(e){}
+    if(!key||!bossSpent(key))break;S.deck.pop();log(_T`${key} is already in this event — that card is set aside and another is drawn.`)}}catch(e){}
   return base.apply(this,arguments)}}
 /* an event that starts with a unique beast on the sand: clean the deck once it is built */
 {const base=beginTurn;beginTurn=async function(){try{if(S&&!S._uq82&&S.deck){S._uq82=1;for(const k of Object.keys(UNIQUE_CARD82))if(bossSpent(k))uniqueOut82(k)}}catch(e){}return base.apply(this,arguments)}}
@@ -47,11 +47,11 @@ if(typeof TOKEN_DEF!=='undefined'&&TOKEN_DEF.tholo)Object.assign(TOKEN_DEF.tholo
 #mainMenu .mmbtns>.mmrow>#mmMute{flex:0 0 44px}
 #mainMenu .mmbtns>*:not([data-mm="play"]):not([data-mm="manager"]):not([data-mm="continue"]){opacity:.92}
 @media (max-width:520px){#mainMenu .mmbtns>[data-mm="annals"],#mainMenu .mmbtns>[data-mm="rules"]{grid-column:span 6}#mainMenu .mmbtns>.mmrow{grid-column:span 12}#mainMenu .mmbtns>#mmLearn,#mainMenu .mmbtns>[data-mm="studio"]{grid-column:span 12}}`;document.head.appendChild(st)}
-{const b=document.querySelector('#mainMenu [data-mm="rules"]');if(b)b.innerHTML='📜 Rules';const a=document.querySelector('#mainMenu [data-mm="annals"]');if(a&&a.firstChild&&a.firstChild.nodeType===3)a.firstChild.textContent='🏛️ Annals'}
+{const b=document.querySelector('#mainMenu [data-mm="rules"]');if(b)b.innerHTML=_T('📜 Rules');const a=document.querySelector('#mainMenu [data-mm="annals"]');if(a&&a.firstChild&&a.firstChild.nodeType===3)a.firstChild.textContent=_T('🏛️ Annals')}
 /* the two lessons sit behind one "🎓 Tutorials" button (his ask) — it opens the Classic / Manager lessons like Multiplayer opens its row */
 {const box=document.querySelector('#mainMenu .mmbtns'),L=document.getElementById('mmLearn');
   if(box&&L&&!box.querySelector('[data-mm82="tut"]')){const t=document.createElement('button');t.type='button';t.className='btn';t.dataset.mm82='tut';
-    t.innerHTML='🎓 Tutorials<small>learn Classic or Manager mode</small>';box.appendChild(t);L.classList.add('tut82');
+    t.innerHTML=_T('🎓 Tutorials<small>learn Classic or Manager mode</small>');box.appendChild(t);L.classList.add('tut82');
     t.addEventListener('click',()=>{const open=!L.classList.contains('on');L.classList.toggle('on',open);t.classList.toggle('on',open)})}
   const st=document.createElement('style');st.textContent=`#mainMenu .mmbtns>[data-mm82="tut"]{order:5;grid-column:span 6}
 #mainMenu .mmbtns>[data-mm82="tut"] small{display:none}
@@ -62,9 +62,9 @@ if(typeof TOKEN_DEF!=='undefined'&&TOKEN_DEF.tholo)Object.assign(TOKEN_DEF.tholo
 #mainMenu .mmbtns>[data-mm="studio"]{order:5!important}`;document.head.appendChild(st)}
 /* v0.84 (his asks): Saves wears a floppy disc 💾 (Rules keeps the scroll) and sits before Settings — row = Annals · Rules · Saves · Settings · mute */
 {const st=document.createElement('style');st.textContent='#mainMenu .mmrow>[data-mm="saves"]{order:1}#mainMenu .mmrow>[data-mm="settings"]{order:2}#mainMenu .mmrow>#mmMute{order:3}';document.head.appendChild(st)}
-function mmSaves84(){const s=document.querySelector('#mainMenu [data-mm="saves"]');if(s&&s.firstChild&&s.firstChild.nodeType===3&&!/^💾/.test(s.firstChild.textContent))s.firstChild.textContent='💾 Saves'}
-function mmLabels82(){try{mmSaves84()}catch(e){}const b=document.querySelector('#mainMenu [data-mm="rules"]');if(b&&!/^📜 Rules$/.test((b.dataset.en84||b.textContent).trim()))b.innerHTML='📜 Rules';
-  const a=document.querySelector('#mainMenu [data-mm="annals"]');if(a&&!/^🏛️ Annals$/.test((a.dataset.en84||a.textContent).trim()))a.innerHTML='🏛️ Annals'}
+function mmSaves84(){const s=document.querySelector('#mainMenu [data-mm="saves"]');if(s&&s.firstChild&&s.firstChild.nodeType===3&&!/^💾/.test(s.firstChild.textContent))s.firstChild.textContent=_T('💾 Saves')}
+function mmLabels82(){try{mmSaves84()}catch(e){}const b=document.querySelector('#mainMenu [data-mm="rules"]');if(b&&!/^📜 Rules$/.test((b.dataset.en84||b.textContent).trim()))b.innerHTML=_T('📜 Rules');
+  const a=document.querySelector('#mainMenu [data-mm="annals"]');if(a&&!/^🏛️ Annals$/.test((a.dataset.en84||a.textContent).trim()))a.innerHTML=_T('🏛️ Annals')}
 {const base=menuShow;menuShow=function(){const r=base.apply(this,arguments);try{mmLabels82()}catch(e){}return r}}
 setTimeout(()=>{try{mmLabels82()}catch(e){}},500);setTimeout(()=>{try{mmLabels82()}catch(e){}},2500);
 /* Online Domus: the gladiator showcase sits on his parchment (dark cards on light parchment, framed in gold) */

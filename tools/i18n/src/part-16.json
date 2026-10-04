@@ -1,0 +1,2026 @@
+[
+ {
+  "k": "Hygeia’s priests",
+  "w": "42-rooms.js:23"
+ },
+ {
+  "k": "{0} rating · morale {1}",
+  "w": "42-rooms.js:25"
+ },
+ {
+  "k": "What this wound needs",
+  "w": "42-rooms.js:25"
+ },
+ {
+  "k": "· −{0} rating",
+  "w": "42-rooms.js:26"
+ },
+ {
+  "k": "· {0} week{1} to mend on their own",
+  "w": "42-rooms.js:26"
+ },
+ {
+  "k": "How bad it is",
+  "w": "42-rooms.js:26"
+ },
+ {
+  "k": "✂ {0} lost — only Hygeia regrows a limb",
+  "w": "42-rooms.js:27"
+ },
+ {
+  "k": "<b>⚕ The Valetudinarium</b><span>steam, salves, and men who charge by the scream</span>",
+  "w": "42-rooms.js:29"
+ },
+ {
+  "k": "Patients",
+  "w": "42-rooms.js:30"
+ },
+ {
+  "k": "{0} / {1} beds",
+  "w": "42-rooms.js:30"
+ },
+ {
+  "k": "overcrowded — mending is slower",
+  "w": "42-rooms.js:30"
+ },
+ {
+  "k": "Physicians’ weekly budget",
+  "w": "42-rooms.js:30"
+ },
+ {
+  "k": "{0} of {1}",
+  "w": "42-rooms.js:30"
+ },
+ {
+  "k": "how much care they can still give this week · paid from your treasury · Valetudinarium {0}/3 raises it",
+  "w": "42-rooms.js:30"
+ },
+ {
+  "k": "Cleared for the sand",
+  "w": "42-rooms.js:30"
+ },
+ {
+  "k": "nobody can fight!",
+  "w": "42-rooms.js:30"
+ },
+ {
+  "k": "Temple of Asclepius",
+  "w": "42-rooms.js:30"
+ },
+ {
+  "k": "outside help",
+  "w": "42-rooms.js:30"
+ },
+ {
+  "k": "does not count against the physicians",
+  "w": "42-rooms.js:30"
+ },
+ {
+  "k": "<b>Care must match the wound</b>: rest heals bruises, the Medicus mends muscle, only the <b>surgeon's knife</b> stops a festering wound, and only Hygeia's priests regrow a limb. Every cure is paid from your treasury.",
+  "w": "42-rooms.js:31"
+ },
+ {
+  "k": "🕊 The beds are made and empty; the surgeon sharpens his knives on nothing. May it stay that way.",
+  "w": "42-rooms.js:32"
+ },
+ {
+  "k": "🗡 Cleared for the sand",
+  "w": "42-rooms.js:33"
+ },
+ {
+  "k": "{0} coin a week",
+  "w": "42-rooms.js:36"
+ },
+ {
+  "k": "odds of +1 rating per fighter",
+  "w": "42-rooms.js:36"
+ },
+ {
+  "k": "{0} → potential {1}{2}",
+  "w": "42-rooms.js:37"
+ },
+ {
+  "k": "· {0} to grow",
+  "w": "42-rooms.js:37"
+ },
+ {
+  "k": "· at their peak",
+  "w": "42-rooms.js:37"
+ },
+ {
+  "k": "rating toward potential",
+  "w": "42-rooms.js:38"
+ },
+ {
+  "k": "disabled title=\"Hurt fighters rest\"",
+  "w": "42-rooms.js:39"
+ },
+ {
+  "k": "⚒ {0}<small>{1}c this week</small>",
+  "w": "42-rooms.js:39"
+ },
+ {
+  "k": "Doctore hired",
+  "w": "42-rooms.js:39"
+ },
+ {
+  "k": "Hire a doctore",
+  "w": "42-rooms.js:39"
+ },
+ {
+  "k": "<b>🏋 The Training Yard</b><span>palus posts, wet sand and shouting doctores</span>",
+  "w": "42-rooms.js:41"
+ },
+ {
+  "k": "Yard facility",
+  "w": "42-rooms.js:42"
+ },
+ {
+  "k": "+{0}% gains · {1}% fewer injuries",
+  "w": "42-rooms.js:42"
+ },
+ {
+  "k": "build it on Your ludus → Facilities",
+  "w": "42-rooms.js:42"
+ },
+ {
+  "k": "your lanista trait: +{0}% chance a fighter gains +1 rating each week, and better sparring gains · raise it on the Lanista tab",
+  "w": "42-rooms.js:42"
+ },
+ {
+  "k": "Doctores hired",
+  "w": "42-rooms.js:42"
+ },
+ {
+  "k": "{0}c each, week by week",
+  "w": "42-rooms.js:42"
+ },
+ {
+  "k": "Last week",
+  "w": "42-rooms.js:42"
+ },
+ {
+  "k": "{0} improved",
+  "w": "42-rooms.js:42"
+ },
+ {
+  "k": "{0} injured",
+  "w": "42-rooms.js:42"
+ },
+ {
+  "k": "no drills yet",
+  "w": "42-rooms.js:42"
+ },
+ {
+  "k": "This week's regime",
+  "w": "42-rooms.js:43"
+ },
+ {
+  "k": "resolved when the week ends — the report prints in the Acta Diurna",
+  "w": "42-rooms.js:43"
+ },
+ {
+  "k": "🎯 The drill board",
+  "w": "42-rooms.js:44"
+ },
+ {
+  "k": "each fighter's rating toward their potential · a personal doctore gives the best odds of all",
+  "w": "42-rooms.js:44"
+ },
+ {
+  "k": "Last week in the yard",
+  "w": "42-rooms.js:45"
+ },
+ {
+  "k": "Blood bronze",
+  "w": "43-beasts.js:14"
+ },
+ {
+  "k": "In the middle",
+  "w": "43-beasts.js:50"
+ },
+ {
+  "k": "Top edge",
+  "w": "43-beasts.js:50"
+ },
+ {
+  "k": "Bottom edge",
+  "w": "43-beasts.js:50"
+ },
+ {
+  "k": "Left edge",
+  "w": "43-beasts.js:50"
+ },
+ {
+  "k": "Right edge",
+  "w": "43-beasts.js:50"
+ },
+ {
+  "k": "Top-left corner",
+  "w": "43-beasts.js:50"
+ },
+ {
+  "k": "Top-right corner",
+  "w": "43-beasts.js:50"
+ },
+ {
+  "k": "Bottom-left corner",
+  "w": "43-beasts.js:50"
+ },
+ {
+  "k": "Bottom-right corner",
+  "w": "43-beasts.js:50"
+ },
+ {
+  "k": "title=\"{0} · {1}’s zone\"",
+  "w": "43-beasts.js:61"
+ },
+ {
+  "k": "The zone, with the beast's starting tile",
+  "w": "43-beasts.js:71"
+ },
+ {
+  "k": "<b>🛡 The zone it guards</b>",
+  "w": "43-beasts.js:75"
+ },
+ {
+  "k": "it stays inside, attacking anyone who steps in — placed in the Event Designer, the zone shows on the board",
+  "w": "43-beasts.js:75"
+ },
+ {
+  "k": "How big{0}",
+  "w": "43-beasts.js:76"
+ },
+ {
+  "k": "3 × 3 — one tile around it",
+  "w": "43-beasts.js:76"
+ },
+ {
+  "k": "5 × 5 — two tiles around it",
+  "w": "43-beasts.js:76"
+ },
+ {
+  "k": "7 × 7 — three tiles around it",
+  "w": "43-beasts.js:76"
+ },
+ {
+  "k": "Where it starts in the zone{0}",
+  "w": "43-beasts.js:76"
+ },
+ {
+  "k": "<b>🪙 The round token</b>",
+  "w": "43-beasts.js:77"
+ },
+ {
+  "k": "the NPC token in the printed game's bronze ring — used in the Menagerie, the NPC tracker, hover cards, the event designer and on the board in cylinder style",
+  "w": "43-beasts.js:77"
+ },
+ {
+  "k": "Ring{0}",
+  "w": "43-beasts.js:78"
+ },
+ {
+  "k": "Ground",
+  "w": "43-beasts.js:78"
+ },
+ {
+  "k": "Start from a printed token{0}",
+  "w": "43-beasts.js:79"
+ },
+ {
+  "k": "— the plain ring —",
+  "w": "43-beasts.js:79"
+ },
+ {
+  "k": "Letter color",
+  "w": "43-beasts.js:80"
+ },
+ {
+  "k": "Show the token letter",
+  "w": "43-beasts.js:81"
+ },
+ {
+  "k": "Its golden hide turned every blade — Heracles had to strangle it.",
+  "w": "43-beasts.js:91"
+ },
+ {
+  "k": "Cut one head and two grow back; it guards its swamp to the last.",
+  "w": "43-beasts.js:93"
+ },
+ {
+  "k": "Three heads at the gate of the dead — Orpheus lulled it with the lyre.",
+  "w": "43-beasts.js:95"
+ },
+ {
+  "k": "Half bull, half man, and all hunger — the labyrinth was built to hold it.",
+  "w": "43-beasts.js:97"
+ },
+ {
+  "k": "Lion, goat and serpent, breathing fire — it plays to the crowd.",
+  "w": "43-beasts.js:99"
+ },
+ {
+  "k": "The snatchers: wings of a vulture and a face that laughs.",
+  "w": "43-beasts.js:101"
+ },
+ {
+  "k": "Bronze beaks, bronze feathers it throws like darts.",
+  "w": "43-beasts.js:103"
+ },
+ {
+  "k": "Heracles drove it into deep snow and carried it home alive.",
+  "w": "43-beasts.js:105"
+ },
+ {
+  "k": "Poseidon’s white bull from the sea, father of the Minotaur.",
+  "w": "43-beasts.js:107"
+ },
+ {
+  "k": "Eagle and lion — it guards the gold of the north.",
+  "w": "43-beasts.js:109"
+ },
+ {
+  "k": "The one-eyed shepherd of Sicily — Nobody blinded him.",
+  "w": "43-beasts.js:111"
+ },
+ {
+  "k": "Sprung from Medusa’s neck; only Bellerophon ever rode him.",
+  "w": "43-beasts.js:113"
+ },
+ {
+  "k": "Artemis’s deer with golden antlers — faster than an arrow.",
+  "w": "43-beasts.js:115"
+ },
+ {
+  "k": "She out-wove Athena and was made to weave forever.",
+  "w": "43-beasts.js:117"
+ },
+ {
+  "k": "The earth-dragon of the oracle, slain by Apollo’s arrows.",
+  "w": "43-beasts.js:119"
+ },
+ {
+  "k": "The bronze giant who walked Crete’s shores three times a day.",
+  "w": "43-beasts.js:121"
+ },
+ {
+  "k": "{0} HP · attack {1} · range {2} · move {3}{4}{5}",
+  "w": "43-beasts.js:130"
+ },
+ {
+  "k": "The system beasts · {0}",
+  "w": "43-beasts.js:131"
+ },
+ {
+  "k": "the stock of the classic game — locked, so the defaults are always there; copy one to make it yours",
+  "w": "43-beasts.js:131"
+ },
+ {
+  "k": "<b>{0}</b><small>{1}</small><small>slain: {2} coin, {3} CF · {4}</small>",
+  "w": "43-beasts.js:132"
+ },
+ {
+  "k": "guards a zone",
+  "w": "43-beasts.js:132"
+ },
+ {
+  "k": "Myth starters · {0}",
+  "w": "43-beasts.js:133"
+ },
+ {
+  "k": "creatures of Greek and Roman myth, ready to tweak — press one to start a beast from it",
+  "w": "43-beasts.js:133"
+ },
+ {
+  "k": "<b>{0}</b><small>{1} HP · atk {2} · move {3}{4}</small><small class=\"rc-sub\">{5}</small>",
+  "w": "43-beasts.js:134"
+ },
+ {
+  "k": "{0}: <b>{1}</b> is on the bench — save it to keep it.",
+  "w": "43-beasts.js:139"
+ },
+ {
+  "k": "🏛 Myth starter",
+  "w": "43-beasts.js:139"
+ },
+ {
+  "k": "⧉ Copied",
+  "w": "43-beasts.js:139"
+ },
+ {
+  "k": "special event",
+  "w": "44-studio.js:25"
+ },
+ {
+  "k": "roster set",
+  "w": "44-studio.js:25"
+ },
+ {
+  "k": "What the banner is for",
+  "w": "44-studio.js:33"
+ },
+ {
+  "k": "🚩 House banner<small>the banner rack, masthead, stands</small>",
+  "w": "44-studio.js:33"
+ },
+ {
+  "k": "🖼 Portrait banner<small>behind a portrait's face only</small>",
+  "w": "44-studio.js:33"
+ },
+ {
+  "k": "🖼 portrait banners hang only behind portraits (the character creator and system portraits) — the rack never shows them",
+  "w": "44-studio.js:37"
+ },
+ {
+  "k": "Summa Rudis",
+  "w": "44-studio.js:45"
+ },
+ {
+  "k": "SVMMA RVDIS",
+  "w": "44-studio.js:50"
+ },
+ {
+  "k": "Custom event",
+  "w": "44-studio.js:53"
+ },
+ {
+  "k": "{0} (cohort card)",
+  "w": "44-studio.js:58"
+ },
+ {
+  "k": "srp.",
+  "w": "44-studio.js:62"
+ },
+ {
+  "k": "<b>🧑‍⚖️ The Summa Rudis</b>",
+  "w": "44-studio.js:63"
+ },
+ {
+  "k": "the referee of the rounds below — give them a name and a face; they go on the event's Summa Rudis card",
+  "w": "44-studio.js:63"
+ },
+ {
+  "k": "The Summa Rudis card",
+  "w": "44-studio.js:64"
+ },
+ {
+  "k": "No face yet",
+  "w": "44-studio.js:64"
+ },
+ {
+  "k": "🧑 Make their face",
+  "w": "44-studio.js:64"
+ },
+ {
+  "k": "maxlength=\"22\" placeholder=\"e.g. Democritus\"",
+  "w": "44-studio.js:65"
+ },
+ {
+  "k": "Sash color",
+  "w": "44-studio.js:65"
+ },
+ {
+  "k": "Man",
+  "w": "44-studio.js:71"
+ },
+ {
+  "k": "Woman",
+  "w": "44-studio.js:71"
+ },
+ {
+  "k": "Smiling",
+  "w": "44-studio.js:71"
+ },
+ {
+  "k": "🎲 Another face",
+  "w": "44-studio.js:73"
+ },
+ {
+  "k": "✖ No face",
+  "w": "44-studio.js:73"
+ },
+ {
+  "k": "Team duo",
+  "w": "44-studio.js:78"
+ },
+ {
+  "k": "two fighters (or a fighter and a beast) bound to each other",
+  "w": "44-studio.js:78"
+ },
+ {
+  "k": "Team of four",
+  "w": "44-studio.js:78"
+ },
+ {
+  "k": "four who enter together",
+  "w": "44-studio.js:78"
+ },
+ {
+  "k": "one character and the beasts they keep (1–3)",
+  "w": "44-studio.js:78"
+ },
+ {
+  "k": "Pack",
+  "w": "44-studio.js:78"
+ },
+ {
+  "k": "two to four beasts that hunt together",
+  "w": "44-studio.js:78"
+ },
+ {
+  "k": "Trio",
+  "w": "44-studio.js:78"
+ },
+ {
+  "k": "any three",
+  "w": "44-studio.js:78"
+ },
+ {
+  "k": "Family",
+  "w": "44-studio.js:79"
+ },
+ {
+  "k": "Friends",
+  "w": "44-studio.js:79"
+ },
+ {
+  "k": "The Blood of Asclepius",
+  "w": "44-studio.js:79"
+ },
+ {
+  "k": "Lovers",
+  "w": "44-studio.js:79"
+ },
+ {
+  "k": "Brothers in arms",
+  "w": "44-studio.js:79"
+ },
+ {
+  "k": "Sworn enemies",
+  "w": "44-studio.js:79"
+ },
+ {
+  "k": "The runaway who pulled the thorn — the lion remembers him.",
+  "w": "44-studio.js:81"
+ },
+ {
+  "k": "Two she-wolves of the Lupercal, loose on the sand.",
+  "w": "44-studio.js:82"
+ },
+ {
+  "k": "Castor and Pollux: one mortal, one divine, never parted.",
+  "w": "44-studio.js:83"
+ },
+ {
+  "k": "The old physician’s line and the serpent of the staff.",
+  "w": "44-studio.js:84"
+ },
+ {
+  "k": "Four sworn to the editor’s box.",
+  "w": "44-studio.js:85"
+ },
+ {
+  "k": "a {0} needs {1} members",
+  "w": "44-studio.js:96"
+ },
+ {
+  "k": "a pack is beasts only",
+  "w": "44-studio.js:97"
+ },
+ {
+  "k": "a keeper pairing has exactly one character",
+  "w": "44-studio.js:97"
+ },
+ {
+  "k": "Pairing",
+  "w": "44-studio.js:101"
+ },
+ {
+  "k": "When drawn, the beasts burst onto the sand.",
+  "w": "44-studio.js:104"
+ },
+ {
+  "k": "When drawn, the crowd hears their story.",
+  "w": "44-studio.js:104"
+ },
+ {
+  "k": "Their keeper, if on the sand, commands them.",
+  "w": "44-studio.js:105"
+ },
+ {
+  "k": "+2 CF to whoever draws it.",
+  "w": "44-studio.js:105"
+ },
+ {
+  "k": "{0}{1}: {2}. When drawn, its beasts burst onto the sand{3}.",
+  "w": "44-studio.js:108"
+ },
+ {
+  "k": "— and a keeper on the sand commands them",
+  "w": "44-studio.js:108"
+ },
+ {
+  "k": "🤝 <b>{0}</b>{1}: {2} are on the same sand. The crowd knows the story: +{3} CF each.",
+  "w": "44-studio.js:114"
+ },
+ {
+  "k": "🤝 <b>{0}</b> {1}: {2} {3} loose on the sand{4}.",
+  "w": "44-studio.js:115"
+ },
+ {
+  "k": "— and answer to {0}",
+  "w": "44-studio.js:115"
+ },
+ {
+  "k": "🤝 {0} draws <b>{1}</b> — the crowd loves a story: +2 CF.",
+  "w": "44-studio.js:116"
+ },
+ {
+  "k": "is drawn by {0}",
+  "w": "44-studio.js:118"
+ },
+ {
+  "k": "enters with the pompa",
+  "w": "44-studio.js:120"
+ },
+ {
+  "k": "Off (not sent)",
+  "w": "44-studio.js:123"
+ },
+ {
+  "k": "Rare",
+  "w": "44-studio.js:123"
+ },
+ {
+  "k": "Occasional",
+  "w": "44-studio.js:123"
+ },
+ {
+  "k": "Common",
+  "w": "44-studio.js:123"
+ },
+ {
+  "k": "A single bout",
+  "w": "44-studio.js:125"
+ },
+ {
+  "k": "Two heats → a final",
+  "w": "44-studio.js:125"
+ },
+ {
+  "k": "Four heats → a final",
+  "w": "44-studio.js:125"
+ },
+ {
+  "k": "Ides",
+  "w": "44-studio.js:127"
+ },
+ {
+  "k": "Kalends",
+  "w": "44-studio.js:127"
+ },
+ {
+  "k": "Saturnalia",
+  "w": "44-studio.js:127"
+ },
+ {
+  "k": "Vulcan",
+  "w": "44-studio.js:127"
+ },
+ {
+  "k": "Janus",
+  "w": "44-studio.js:127"
+ },
+ {
+  "k": "Mars",
+  "w": "44-studio.js:127"
+ },
+ {
+  "k": "Invitational",
+  "w": "44-studio.js:127"
+ },
+ {
+  "k": "Your own invitational, {0}.",
+  "w": "44-studio.js:133"
+ },
+ {
+  "k": "({0} a heat)",
+  "w": "44-studio.js:133"
+ },
+ {
+  "k": "opponents rated {0}–{1}",
+  "w": "44-studio.js:133"
+ },
+ {
+  "k": "🤝 {0} take part",
+  "w": "44-studio.js:133"
+ },
+ {
+  "k": "an exhibition: no Fates",
+  "w": "44-studio.js:133"
+ },
+ {
+  "k": "only the printed game: none of your creations",
+  "w": "44-studio.js:148"
+ },
+ {
+  "k": "every creation you have added to the rolls (the old behaviour)",
+  "w": "44-studio.js:148"
+ },
+ {
+  "k": "🎪 Events",
+  "w": "44-studio.js:150"
+ },
+ {
+  "k": "📚 The roster switched to <b>Everything on the rolls</b> so your creation can play.",
+  "w": "44-studio.js:163"
+ },
+ {
+  "k": "Which of your creations are in play. Make sets in the Creator Studio.",
+  "w": "44-studio.js:165"
+ },
+ {
+  "k": "📚 Roster set",
+  "w": "44-studio.js:165"
+ },
+ {
+  "k": "your picks:",
+  "w": "44-studio.js:166"
+ },
+ {
+  "k": "no creations ticked — plays like Classic",
+  "w": "44-studio.js:166"
+ },
+ {
+  "k": "Set name",
+  "w": "44-studio.js:188"
+ },
+ {
+  "k": "🏛 The system set",
+  "w": "44-studio.js:190"
+ },
+ {
+  "k": "always in — locked",
+  "w": "44-studio.js:190"
+ },
+ {
+  "k": "✦ Your creations",
+  "w": "44-studio.js:191"
+ },
+ {
+  "k": "{0} of {1} ticked",
+  "w": "44-studio.js:191"
+ },
+ {
+  "k": "Tick all",
+  "w": "44-studio.js:191"
+ },
+ {
+  "k": "Untick all",
+  "w": "44-studio.js:191"
+ },
+ {
+  "k": "💾 Save roster set",
+  "w": "44-studio.js:193"
+ },
+ {
+  "k": "↺ A fresh set",
+  "w": "44-studio.js:193"
+ },
+ {
+  "k": "Roster sets · {0}",
+  "w": "44-studio.js:194"
+ },
+ {
+  "k": "<span class=\"badge gold\">New event uses this</span>",
+  "w": "44-studio.js:194"
+ },
+ {
+  "k": "Use this set on the New event screen",
+  "w": "44-studio.js:194"
+ },
+ {
+  "k": "▶ Use for New event",
+  "w": "44-studio.js:194"
+ },
+ {
+  "k": "Special event",
+  "w": "44-studio.js:202"
+ },
+ {
+  "k": "💰 {0} purse · 🪙 {1} a fighter · ⭐ +{2} fame{3}",
+  "w": "44-studio.js:202"
+ },
+ {
+  "k": "Off — not sent in Manager mode yet",
+  "w": "44-studio.js:202"
+ },
+ {
+  "k": "Sent in Manager mode:",
+  "w": "44-studio.js:202"
+ },
+ {
+  "k": "Design the <b>special events</b> that arrive as invitations in Manager mode — how often they come, the field, the purse and the prize — and the <b>pairings</b> that make them memorable. The system invitationals sit at the bottom: locked, copy one to make it yours. {0}",
+  "w": "44-studio.js:206"
+ },
+ {
+  "k": "Icon{0}",
+  "w": "44-studio.js:208"
+ },
+ {
+  "k": "City{0}",
+  "w": "44-studio.js:209"
+ },
+ {
+  "k": "How often it comes{0}",
+  "w": "44-studio.js:209"
+ },
+ {
+  "k": "Format{0}",
+  "w": "44-studio.js:210"
+ },
+ {
+  "k": "The heats",
+  "w": "44-studio.js:210"
+ },
+ {
+  "k": "(for {0})",
+  "w": "44-studio.js:210"
+ },
+ {
+  "k": "Your fighters invited {0}",
+  "w": "44-studio.js:211"
+ },
+ {
+  "k": "Stars (difficulty) {0}",
+  "w": "44-studio.js:211"
+ },
+ {
+  "k": "Opponents rated from {0}",
+  "w": "44-studio.js:212"
+ },
+ {
+  "k": "…up to {0}",
+  "w": "44-studio.js:212"
+ },
+ {
+  "k": "Winner's purse {0}",
+  "w": "44-studio.js:213"
+ },
+ {
+  "k": "Appearance fee {0}",
+  "w": "44-studio.js:213"
+ },
+ {
+  "k": "Fame to the winner {0}",
+  "w": "44-studio.js:213"
+ },
+ {
+  "k": "Trophy{0}",
+  "w": "44-studio.js:214"
+ },
+ {
+  "k": "Blurb",
+  "w": "44-studio.js:215"
+ },
+ {
+  "k": "What the invitation says…",
+  "w": "44-studio.js:215"
+ },
+ {
+  "k": "The Fate table applies",
+  "w": "44-studio.js:216"
+ },
+ {
+  "k": "🤝 Cohorts in this event",
+  "w": "44-studio.js:217"
+ },
+ {
+  "k": "their characters are invited into one heat; their beasts enter every heat",
+  "w": "44-studio.js:217"
+ },
+ {
+  "k": "💾 Save special event",
+  "w": "44-studio.js:219"
+ },
+ {
+  "k": "↺ A fresh one",
+  "w": "44-studio.js:219"
+ },
+ {
+  "k": "Your special events · {0}",
+  "w": "44-studio.js:220"
+ },
+ {
+  "k": "<b>{0}</b> {1}<small>{2} · {3} · {4} · {5} purse{6}</small>",
+  "w": "44-studio.js:220"
+ },
+ {
+  "k": "🏛 The system special events",
+  "w": "44-studio.js:221"
+ },
+ {
+  "k": "locked — copy one to make it yours",
+  "w": "44-studio.js:221"
+ },
+ {
+  "k": "<b>{0}</b><small>{1}</small><small>{2} · {3} purse · {4}</small>",
+  "w": "44-studio.js:221"
+ },
+ {
+  "k": "Link characters and beasts — system or your own. A cohort can ride in a special event, join the <b>arena deck</b> as a card (📜 Add to the rolls on the cohort), and be placed in any custom event (Event Designer → Classes &amp; NPCs).",
+  "w": "44-studio.js:222"
+ },
+ {
+  "k": "The cohort card",
+  "w": "44-studio.js:223"
+ },
+ {
+  "k": "e.g. The Twins of Capua",
+  "w": "44-studio.js:224"
+ },
+ {
+  "k": "Kind of pairing",
+  "w": "44-studio.js:224"
+ },
+ {
+  "k": "Their bond",
+  "w": "44-studio.js:225"
+ },
+ {
+  "k": "Member {0}",
+  "w": "44-studio.js:226"
+ },
+ {
+  "k": "Their story",
+  "w": "44-studio.js:227"
+ },
+ {
+  "k": "💾 Save pairing",
+  "w": "44-studio.js:229"
+ },
+ {
+  "k": "Your cohorts · {0}",
+  "w": "44-studio.js:230"
+ },
+ {
+  "k": "· 🃏 in the arena deck",
+  "w": "44-studio.js:230"
+ },
+ {
+  "k": "🏛 The system cohorts",
+  "w": "44-studio.js:231"
+ },
+ {
+  "k": "Manager mode’s invitations",
+  "w": "44-studio.js:233"
+ },
+ {
+  "k": "the arena deck",
+  "w": "44-studio.js:235"
+ },
+ {
+  "k": "⭐ <b>{0}</b> is in the calendar’s drawer{1}.",
+  "w": "44-studio.js:240"
+ },
+ {
+  "k": "(off — not sent)",
+  "w": "44-studio.js:240"
+ },
+ {
+  "k": "🤝 Cohort <b>{0}</b> saved.",
+  "w": "44-studio.js:242"
+ },
+ {
+  "k": "📚 Roster set <b>{0}</b> saved — pick it when you found a career or on the New event screen.",
+  "w": "44-studio.js:244"
+ },
+ {
+  "k": "⧉ <b>{0}</b> is on the bench — save it to keep it.",
+  "w": "44-studio.js:251"
+ },
+ {
+  "k": "📚 New event will use <b>{0}</b>.",
+  "w": "44-studio.js:264"
+ },
+ {
+  "k": "their beasts enter with the pompa; characters of a cohort who are on the sand share the crowd's love of the story",
+  "w": "44-studio.js:281"
+ },
+ {
+  "k": "<span class=\"rc-sub\">Make cohorts under Fighters → 🤝 Cohorts.</span>",
+  "w": "44-studio.js:281"
+ },
+ {
+  "k": "{0} · {1} purse",
+  "w": "44-studio.js:285"
+ },
+ {
+  "k": "🃏 In the arena deck",
+  "w": "44-studio.js:286"
+ },
+ {
+  "k": "Roster set",
+  "w": "44-studio.js:287"
+ },
+ {
+  "k": "while the Manager window is open",
+  "w": "45-music.js:19"
+ },
+ {
+  "k": "while the Annals are open",
+  "w": "45-music.js:20"
+ },
+ {
+  "k": "the Flavius Superbus",
+  "w": "45-music.js:21"
+ },
+ {
+  "k": "special events and Play Now tournaments",
+  "w": "45-music.js:22"
+ },
+ {
+  "k": "Manager",
+  "w": "45-music.js:23"
+ },
+ {
+  "k": "Annals",
+  "w": "45-music.js:23"
+ },
+ {
+  "k": "Superbus",
+  "w": "45-music.js:23"
+ },
+ {
+  "k": "Special",
+  "w": "45-music.js:23"
+ },
+ {
+  "k": "THE OTHER THEMES",
+  "w": "45-music.js:121"
+ },
+ {
+  "k": "{0} · {1} bpm <b class=\"trst\" style=\"color:var(--gold2)\">{2}</b>",
+  "w": "45-music.js:122"
+ },
+ {
+  "k": "Four raw recruits, one bout in Roma — the gentlest way into a bracket.",
+  "w": "46-tourney.js:19"
+ },
+ {
+  "k": "Two heats in the provinces, then the best four meet for the Lion.",
+  "w": "46-tourney.js:20"
+ },
+ {
+  "k": "Invited champions only. Egidious presides over every heat.",
+  "w": "46-tourney.js:21"
+ },
+ {
+  "k": "Sixteen of the empire’s best: four heats, two semi-finals, a final under the Flavian amphitheater.",
+  "w": "46-tourney.js:22"
+ },
+ {
+  "k": "Thirty-two gladiators across the empire. Four rounds. One crown.",
+  "w": "46-tourney.js:23"
+ },
+ {
+  "k": "random summa each heat",
+  "w": "46-tourney.js:32"
+ },
+ {
+  "k": "{0}-gladiator bracket · {1} · top 2 of each heat go through · {2} · final in {3}{4}",
+  "w": "46-tourney.js:33"
+ },
+ {
+  "k": "the final",
+  "w": "46-tourney.js:33"
+ },
+ {
+  "k": "during the",
+  "w": "46-tourney.js:33"
+ },
+ {
+  "k": "Consul’s",
+  "w": "46-tourney.js:34"
+ },
+ {
+  "k": "Senate’s",
+  "w": "46-tourney.js:34"
+ },
+ {
+  "k": "Bracket",
+  "w": "46-tourney.js:34"
+ },
+ {
+  "k": "Heat",
+  "w": "46-tourney.js:86"
+ },
+ {
+  "k": "· your ludus",
+  "w": "46-tourney.js:87"
+ },
+ {
+  "k": "the Annals' trophy case",
+  "w": "46-tourney.js:91"
+ },
+ {
+  "k": "their shelf (a rival holds it)",
+  "w": "46-tourney.js:91"
+ },
+ {
+  "k": "⏩ Simulate my heat",
+  "w": "46-tourney.js:92"
+ },
+ {
+  "k": "<b>Tournaments</b> are brackets of 4-gladiator heats — Democritus, Egidious or Cassian presiding. The <b>top two</b> of every heat go through (a field of 32 → 16 → 8 → 4 → the final), each heat in its own city, the final in Roma. Design your own in the Creator Studio → 🏆 Tournament Designer.",
+  "w": "46-tourney.js:103"
+ },
+ {
+  "k": "{0} · field of {1}",
+  "w": "46-tourney.js:107"
+ },
+ {
+  "k": "invited opponents rated {0}–{1}{2}",
+  "w": "46-tourney.js:108"
+ },
+ {
+  "k": "· {0} seats filled from your ludus",
+  "w": "46-tourney.js:108"
+ },
+ {
+  "k": "Champion takes {0}",
+  "w": "46-tourney.js:108"
+ },
+ {
+  "k": "the glory",
+  "w": "46-tourney.js:108"
+ },
+ {
+  "k": "🎮 You fight the {0} seat{1} ticked in the designer.",
+  "w": "46-tourney.js:109"
+ },
+ {
+  "k": "— invited (the ludus of Flavius lends one) —",
+  "w": "46-tourney.js:118"
+ },
+ {
+  "k": "You control this gladiator in their heats",
+  "w": "46-tourney.js:119"
+ },
+ {
+  "k": "Design a <b>tournament</b> for Play Now → New event → 🏆 Tournament. Pick the bracket size, then fill the first-round seats from <b>Your Play Now Gladiators</b> (Main Menu → Annals). Seats you leave open get invited gladiators — lent for this tournament only, never saved. Tick 🎮 on the seats you fight yourself; the rest are played by the computer. {0}",
+  "w": "46-tourney.js:121"
+ },
+ {
+  "k": "Tournament",
+  "w": "46-tourney.js:122"
+ },
+ {
+  "k": "• invited opponents rated {0}–{1}",
+  "w": "46-tourney.js:122"
+ },
+ {
+  "k": "• {0} of {1} seats from your ludus · {2} for you to fight",
+  "w": "46-tourney.js:122"
+ },
+ {
+  "k": "Icon",
+  "w": "46-tourney.js:123"
+ },
+ {
+  "k": "Bracket size",
+  "w": "46-tourney.js:124"
+ },
+ {
+  "k": "Summa rudis",
+  "w": "46-tourney.js:125"
+ },
+ {
+  "k": "🎲 Random for every heat",
+  "w": "46-tourney.js:125"
+ },
+ {
+  "k": "The final's city",
+  "w": "46-tourney.js:126"
+ },
+ {
+  "k": "Festival for the final",
+  "w": "46-tourney.js:127"
+ },
+ {
+  "k": "Trophy for the champion",
+  "w": "46-tourney.js:128"
+ },
+ {
+  "k": "Stars (difficulty)",
+  "w": "46-tourney.js:129"
+ },
+ {
+  "k": "Invited opponents from",
+  "w": "46-tourney.js:130"
+ },
+ {
+  "k": "…up to",
+  "w": "46-tourney.js:130"
+ },
+ {
+  "k": "⚔ The first round",
+  "w": "46-tourney.js:133"
+ },
+ {
+  "k": "{0} heat{1} of 4 · each heat in its own city",
+  "w": "46-tourney.js:133"
+ },
+ {
+  "k": "⭐ Fill open seats from my roster",
+  "w": "46-tourney.js:133"
+ },
+ {
+  "k": "Clear",
+  "w": "46-tourney.js:133"
+ },
+ {
+  "k": "Your active roster has {0} gladiator{1} — the other seats will be invited.",
+  "w": "46-tourney.js:134"
+ },
+ {
+  "k": "💾 Save tournament",
+  "w": "46-tourney.js:137"
+ },
+ {
+  "k": "Your tournaments · {0}",
+  "w": "46-tourney.js:138"
+ },
+ {
+  "k": "🏛 The system tournaments",
+  "w": "46-tourney.js:139"
+ },
+ {
+  "k": "Give the tournament a name.",
+  "w": "46-tourney.js:140"
+ },
+ {
+  "k": "Pick a bracket size.",
+  "w": "46-tourney.js:140"
+ },
+ {
+  "k": "The opponents’ rating range is upside down.",
+  "w": "46-tourney.js:140"
+ },
+ {
+  "k": "Play Now",
+  "w": "46-tourney.js:141"
+ },
+ {
+  "k": "🏆 <b>{0}</b> is on the Play Now tournament list.",
+  "w": "46-tourney.js:154"
+ },
+ {
+  "k": "· the trophy case · {0} piece{1}",
+  "w": "47-mgr47.js:26"
+ },
+ {
+  "k": "🏆 <b>{0}</b> (CPU) takes <b>{1}</b> — it goes on their shelf, not yours.",
+  "w": "47-mgr47.js:38"
+ },
+ {
+  "k": "🏺 Held by rivals",
+  "w": "47-mgr47.js:41"
+ },
+ {
+  "k": "trophies a CPU gladiator took home — win them back",
+  "w": "47-mgr47.js:41"
+ },
+ {
+  "k": "Match Week has not been fought yet",
+  "w": "47-mgr47.js:45"
+ },
+ {
+  "k": "📊 Your record",
+  "w": "47-mgr47.js:56"
+ },
+ {
+  "k": "<span><b>{0}</b>this season · of {1}</span><span><b>{2}</b>points</span><span><b>{3}–{4}</b>season W–L</span>",
+  "w": "47-mgr47.js:57"
+ },
+ {
+  "k": "<span><b>{0}–{1}</b>all-time W–L</span><span><b>{2}%</b>win rate</span><span><b>{3}</b>season{4} done</span>",
+  "w": "47-mgr47.js:58"
+ },
+ {
+  "k": "<span><b>{0}</b>best finish</span><span><b>{1}</b>Superbus crowns</span><span><b>{2}</b>trophies</span>",
+  "w": "47-mgr47.js:59"
+ },
+ {
+  "k": "Fame {0} (best {1})",
+  "w": "47-mgr47.js:60"
+ },
+ {
+  "k": "Finish",
+  "w": "47-mgr47.js:61"
+ },
+ {
+  "k": "<b>👥 {0}K active fans of your house</b>",
+  "w": "47-mgr47.js:69"
+ },
+ {
+  "k": "regulars who follow a fighter on your roster — every one counts",
+  "w": "47-mgr47.js:69"
+ },
+ {
+  "k": "a fan of",
+  "w": "47-mgr47.js:69"
+ },
+ {
+  "k": "patron of",
+  "w": "47-mgr47.js:69"
+ },
+ {
+  "k": "…and {0} more",
+  "w": "47-mgr47.js:69"
+ },
+ {
+  "k": "<span class=\"rc-sub\">Nobody yet — win in front of a crowd and they will come.</span>",
+  "w": "47-mgr47.js:69"
+ },
+ {
+  "k": "🏛 The Senate’s stipend — your house stood the whole season",
+  "w": "47-mgr47.js:79"
+ },
+ {
+  "k": "📜 Tax return on the wages you paid (",
+  "w": "47-mgr47.js:79"
+ },
+ {
+  "k": "🎲 Rebate on the tax you paid on lost wagers",
+  "w": "47-mgr47.js:79"
+ },
+ {
+  "k": "🤝 Recruiting bounty —",
+  "w": "47-mgr47.js:80"
+ },
+ {
+  "k": "new signing",
+  "w": "47-mgr47.js:80"
+ },
+ {
+  "k": "⭐ Fame gained this season (",
+  "w": "47-mgr47.js:80"
+ },
+ {
+  "k": "👥 New fans (",
+  "w": "47-mgr47.js:80"
+ },
+ {
+  "k": "📊 League finish —",
+  "w": "47-mgr47.js:81"
+ },
+ {
+  "k": "⚖ The quaestor’s ceiling ({0})",
+  "w": "47-mgr47.js:82"
+ },
+ {
+  "k": "🏛 <b>The Quaestor’s Ledger</b> for season {0}: +{1} coin — {2}.",
+  "w": "47-mgr47.js:84"
+ },
+ {
+  "k": "🏛 The Quaestor’s Ledger · season {0}",
+  "w": "47-mgr47.js:94"
+ },
+ {
+  "k": "paid to every house that stood the season",
+  "w": "47-mgr47.js:94"
+ },
+ {
+  "k": "<b>Paid into your treasury</b>",
+  "w": "47-mgr47.js:95"
+ },
+ {
+  "k": "Seal the ledger",
+  "w": "47-mgr47.js:96"
+ },
+ {
+  "k": "📨 <b>{0}</b> sends a trade offer for <b>{1}</b> — see the top of any tab.",
+  "w": "47-mgr47.js:108"
+ },
+ {
+  "k": "📨 A trade offer from {0} {1}",
+  "w": "47-mgr47.js:111"
+ },
+ {
+  "k": "answer by week {0}",
+  "w": "47-mgr47.js:111"
+ },
+ {
+  "k": "They want",
+  "w": "47-mgr47.js:112"
+ },
+ {
+  "k": "rated {0} · {1}/wk",
+  "w": "47-mgr47.js:112"
+ },
+ {
+  "k": "They pay",
+  "w": "47-mgr47.js:113"
+ },
+ {
+  "k": "You get",
+  "w": "47-mgr47.js:113"
+ },
+ {
+  "k": "✔ Accept",
+  "w": "47-mgr47.js:114"
+ },
+ {
+  "k": "✖ Decline",
+  "w": "47-mgr47.js:114"
+ },
+ {
+  "k": "traded to {0}",
+  "w": "47-mgr47.js:116"
+ },
+ {
+  "k": "traded for {0}",
+  "w": "47-mgr47.js:117"
+ },
+ {
+  "k": "🔁 <b>{0}</b> moves from {1} to {2}{3}.",
+  "w": "47-mgr47.js:117"
+ },
+ {
+  "k": "for {0} coin",
+  "w": "47-mgr47.js:117"
+ },
+ {
+  "k": "🤝 Loan fee: {0} pays {1} coin for {2}.",
+  "w": "47-mgr47.js:122"
+ },
+ {
+  "k": "🤝 You pay {0} coin to {1} for {2}.",
+  "w": "47-mgr47.js:122"
+ },
+ {
+  "k": "back home to {0} after a loan",
+  "w": "47-mgr47.js:123"
+ },
+ {
+  "k": "🤝 {0}’s loan ends — back to {1}.",
+  "w": "47-mgr47.js:123"
+ },
+ {
+  "k": "🤝 <b>{0}</b> asks to borrow <b>{1}</b> off your bench.",
+  "w": "47-mgr47.js:126"
+ },
+ {
+  "k": "loaned to {0} for {1} weeks at {2}/wk",
+  "w": "47-mgr47.js:128"
+ },
+ {
+  "k": "borrowed {0} from {1}",
+  "w": "47-mgr47.js:128"
+ },
+ {
+  "k": "🤝 {0} goes on loan to {1} — {2} weeks at {3} coin a week.",
+  "w": "47-mgr47.js:128"
+ },
+ {
+  "k": "loaned to {0} for {1} weeks",
+  "w": "47-mgr47.js:129"
+ },
+ {
+  "k": "loaned {0} to {1}",
+  "w": "47-mgr47.js:129"
+ },
+ {
+  "k": "🤝 {0} joins you on loan from {1} — {2} weeks at {3} coin a week (plus their wage).",
+  "w": "47-mgr47.js:129"
+ },
+ {
+  "k": "{0}{1} wk left",
+  "w": "47-mgr47.js:131"
+ },
+ {
+  "k": "on loan from",
+  "w": "47-mgr47.js:131"
+ },
+ {
+  "k": "Lend out…",
+  "w": "47-mgr47.js:132"
+ },
+ {
+  "k": "📋 Depth chart",
+  "w": "47-mgr47.js:134"
+ },
+ {
+  "k": "starters fight the headline bouts; the bench can earn its keep on loan — never to a rival",
+  "w": "47-mgr47.js:134"
+ },
+ {
+  "k": "⭐ Starters",
+  "w": "47-mgr47.js:135"
+ },
+ {
+  "k": "🪑 Bench",
+  "w": "47-mgr47.js:135"
+ },
+ {
+  "k": "🤝 Out on loan",
+  "w": "47-mgr47.js:136"
+ },
+ {
+  "k": "at {0} · {1}/wk · {2} wk left",
+  "w": "47-mgr47.js:136"
+ },
+ {
+  "k": "🧲 Borrow a fighter",
+  "w": "47-mgr47.js:137"
+ },
+ {
+  "k": "From a friendly house…",
+  "w": "47-mgr47.js:137"
+ },
+ {
+  "k": "That deal cannot go through any more.",
+  "w": "47-mgr47.js:145"
+ },
+ {
+  "k": "<span data-tokz=\"",
+  "w": "48-arena47.js:42"
+ },
+ {
+  "k": "The same sand, again…",
+  "w": "48-arena47.js:63"
+ },
+ {
+  "k": "💰 Your wagers{0}",
+  "w": "48-arena47.js:69"
+ },
+ {
+  "k": "· {0} treasury now {1}",
+  "w": "48-arena47.js:69"
+ },
+ {
+  "k": "total won",
+  "w": "48-arena47.js:70"
+ },
+ {
+  "k": "total lost",
+  "w": "48-arena47.js:70"
+ },
+ {
+  "k": "{0} at {1}",
+  "w": "48-arena47.js:71"
+ },
+ {
+  "k": "🗡 Gladiators on themselves",
+  "w": "48-arena47.js:72"
+ },
+ {
+  "k": "👥 The crowd",
+  "w": "48-arena47.js:73"
+ },
+ {
+  "k": "· in Crowd Favor",
+  "w": "48-arena47.js:73"
+ },
+ {
+  "k": "slips laid",
+  "w": "48-arena47.js:74"
+ },
+ {
+  "k": "CF staked",
+  "w": "48-arena47.js:74"
+ },
+ {
+  "k": "backed the winner",
+  "w": "48-arena47.js:74"
+ },
+ {
+  "k": "lost their bet",
+  "w": "48-arena47.js:74"
+ },
+ {
+  "k": "CF paid out",
+  "w": "48-arena47.js:74"
+ },
+ {
+  "k": "Who collected ({0})",
+  "w": "48-arena47.js:76"
+ },
+ {
+  "k": "on {0}",
+  "w": "48-arena47.js:76"
+ },
+ {
+  "k": "<b>+{0} CF</b>",
+  "w": "48-arena47.js:76"
+ },
+ {
+  "k": "🎲 Wagers",
+  "w": "48-arena47.js:78"
+ },
+ {
+  "k": "Win a Play Now tournament of 16 or more gladiators with a gladiator you control.",
+  "w": "48-arena47.js:82"
+ },
+ {
+  "k": "Win a wager on yourself at odds of 4.0 or longer.",
+  "w": "48-arena47.js:83"
+ },
+ {
+  "k": "The Road of Flavius: twelve arenas, in order",
+  "w": "48-arena47.js:94"
+ },
+ {
+  "k": "one gladiator · twelve arenas · in the Hall's order · no second chances",
+  "w": "48-arena47.js:103"
+ },
+ {
+  "k": "Send one of <b>Your Play Now Gladiators</b> down the Road: win all twelve arenas in the Hall's order — Arles to Roma — each at its own event, with that same gladiator. Lose once and the road is over. <b>To send one:</b> open their record (Annals → 🛡 Your Play Now Gladiators) and press <b>🛣 Send on the Road</b> — or pick them here.",
+  "w": "48-arena47.js:106"
+ },
+ {
+  "k": "🛣 Send on the Road",
+  "w": "48-arena47.js:108"
+ },
+ {
+  "k": "⚠ {0} is on the Road — press again to replace them",
+  "w": "48-arena47.js:113"
+ },
+ {
+  "k": "🛣 {0} is already on the Road.",
+  "w": "48-arena47.js:114"
+ },
+ {
+  "k": "Press <b>🕳 Tunnel</b> — it spends your <b>Arena Key</b> — then click the gold tunnel nearest your rival. (It ends your turn.)",
+  "w": "48-arena47.js:123"
+ },
+ {
+  "k": "Walk to the <b>tunnel mouth</b> (the gold tile), then press <b>🕳 Tunnel</b> — it spends your <b>Arena Key</b>.",
+  "w": "48-arena47.js:123"
+ },
+ {
+  "k": "🎓 Lesson complete",
+  "w": "48-arena47.js:129"
+ },
+ {
+  "k": "<b>Victory.</b> You are a graduate of the ludus — Flavius will remember the name.",
+  "w": "48-arena47.js:129"
+ },
+ {
+  "k": "<b>You fell</b> — every champion did, once. The sand teaches.",
+  "w": "48-arena47.js:129"
+ },
+ {
+  "k": "What next? Play a real event, learn Manager mode, or head back to the menu.",
+  "w": "48-arena47.js:129"
+ },
+ {
+  "k": "⚔ Play a real event",
+  "w": "48-arena47.js:130"
+ },
+ {
+  "k": "Play Now → New event",
+  "w": "48-arena47.js:130"
+ },
+ {
+  "k": "💼 Learn Manager mode",
+  "w": "48-arena47.js:130"
+ },
+ {
+  "k": "one guided week of a ludus",
+  "w": "48-arena47.js:130"
+ },
+ {
+  "k": "Play now…",
+  "w": "48-arena47.js:132"
+ },
+ {
+  "k": "Loading the Manager lesson…",
+  "w": "48-arena47.js:133"
+ },
+ {
+  "k": "Great cat — lion, tiger, leopard",
+  "w": "49-studio47.js:16"
+ },
+ {
+  "k": "Hound — wolf, hyena, Cerberus",
+  "w": "49-studio47.js:16"
+ },
+ {
+  "k": "Boar",
+  "w": "49-studio47.js:16"
+ },
+ {
+  "k": "Bull — aurochs, Minotaur",
+  "w": "49-studio47.js:16"
+ },
+ {
+  "k": "Stag or hind",
+  "w": "49-studio47.js:16"
+ },
+ {
+  "k": "Serpent — hydra, python",
+  "w": "49-studio47.js:16"
+ },
+ {
+  "k": "Bird — eagle, griffin, harpy",
+  "w": "49-studio47.js:16"
+ },
+ {
+  "k": "Crocodile",
+  "w": "49-studio47.js:16"
+ },
+ {
+  "k": "Spider or scorpion",
+  "w": "49-studio47.js:16"
+ },
+ {
+  "k": "Giant — cyclops, bronze man",
+  "w": "49-studio47.js:16"
+ },
+ {
+  "k": "Bull horns",
+  "w": "49-studio47.js:17"
+ },
+ {
+  "k": "Ram horns",
+  "w": "49-studio47.js:17"
+ },
+ {
+  "k": "Antlers",
+  "w": "49-studio47.js:17"
+ },
+ {
+  "k": "Laurel crown",
+  "w": "49-studio47.js:19"
+ },
+ {
+  "k": "War helm",
+  "w": "49-studio47.js:19"
+ },
+ {
+  "k": "Nose ring",
+  "w": "49-studio47.js:19"
+ },
+ {
+  "k": "face.",
+  "w": "49-studio47.js:82"
+ },
+ {
+  "k": "Hide the face on the token (sculpt your own instead)",
+  "w": "49-studio47.js:85"
+ },
+ {
+  "k": "<b>🦁 The face</b>",
+  "w": "49-studio47.js:86"
+ },
+ {
+  "k": "like a character's portrait — it heads this page, fills the round token and colours the board figure",
+  "w": "49-studio47.js:86"
+ },
+ {
+  "k": "Species{0}",
+  "w": "49-studio47.js:87"
+ },
+ {
+  "k": "Horns{0}",
+  "w": "49-studio47.js:87"
+ },
+ {
+  "k": "Many (spiders)",
+  "w": "49-studio47.js:88"
+ },
+ {
+  "k": "Markings &amp; muzzle",
+  "w": "49-studio47.js:89"
+ },
+ {
+  "k": "Eye colour",
+  "w": "49-studio47.js:89"
+ },
+ {
+  "k": "Fangs",
+  "w": "49-studio47.js:91"
+ },
+ {
+  "k": "Battle scar",
+  "w": "49-studio47.js:91"
+ },
+ {
+  "k": "↺ Face of its kind",
+  "w": "49-studio47.js:92"
+ },
+ {
+  "k": "Sent by Artemis to ravage Calydon — the heroes of Greece gathered to hunt it. The same boar that storms out of the arena deck.",
+  "w": "49-studio47.js:112"
+ },
+ {
+  "k": "The master fights beside the man he owns — and never turns his back on him.",
+  "w": "49-studio47.js:121"
+ },
+ {
+  "k": "Same ludus, same drills, same bad soup for twenty years.",
+  "w": "49-studio47.js:122"
+ },
+ {
+  "k": "The crowd’s darling and the condemned man who swore to end him.",
+  "w": "49-studio47.js:123"
+ },
+ {
+  "k": "The huntress and the hounds of the goddess.",
+  "w": "49-studio47.js:124"
+ },
+ {
+  "k": "Two bears, one pit, no patience.",
+  "w": "49-studio47.js:125"
+ },
+ {
+  "k": "The oracle’s snakes, loosed on the sand.",
+  "w": "49-studio47.js:126"
+ },
+ {
+  "k": "A pride brought over from Africa for the games.",
+  "w": "49-studio47.js:127"
+ },
+ {
+  "k": "Three women of the sword, and a debt to settle.",
+  "w": "49-studio47.js:128"
+ },
+ {
+  "k": "A <b>cohort</b> is a group bound by something — a duo with a bond (family, friends, master &amp; slave, co-workers, the Blood of Asclepius…), a team of four, a keeper and their beasts, a pack. Members come from <b>Your Play Now Gladiators</b> (the active roster) and from the beasts. A cohort can ride in a ⭐ special event, join the <b>arena deck</b> as a card, and be placed in any custom event. {0}",
+  "w": "49-studio47.js:135"
+ },
+ {
+  "k": "Cohort",
+  "w": "49-studio47.js:146"
+ },
+ {
+  "k": "<b>▶ Loaded now</b> · Play Now / New event: <b>{0}</b>{1}",
+  "w": "49-studio47.js:155"
+ },
+ {
+  "k": "· your open career ({0}) plays with <b>{1}</b> — chosen at its founding, it never changes",
+  "w": "49-studio47.js:155"
+ },
+ {
+  "k": "📚 Loaded for Play Now: <b>{0}</b>",
+  "w": "49-studio47.js:157"
+ },
+ {
+  "k": "Add at least one round.",
+  "w": "49-studio47.js:160"
+ },
+ {
+  "k": "Round {0} needs an end condition.",
+  "w": "49-studio47.js:161"
+ },
+ {
+  "k": "Name round {0}.",
+  "w": "49-studio47.js:161"
+ },
+ {
+  "k": "Round {0} ends when gladiators fall, but PVP is off and there are no beasts — nobody could fall.",
+  "w": "49-studio47.js:162"
+ },
+ {
+  "k": "Round {0} ends on slain beasts, but there are none on the board or in the deck.",
+  "w": "49-studio47.js:163"
+ },
+ {
+  "k": "Place one start tile per player.",
+  "w": "49-studio47.js:164"
+ },
+ {
+  "k": "A team event needs at least two players.",
+  "w": "49-studio47.js:165"
+ },
+ {
+  "k": "⚠ A beast needs at least 1 HP.",
+  "w": "49-studio47.js:167"
+ },
+ {
+  "k": "⚠ Set the beast’s movement.",
+  "w": "49-studio47.js:167"
+ },
+ {
+  "k": "{0} coin/wk · {1} wk left{2}",
+  "w": "50-v48.js:26"
+ },
+ {
+  "k": "· contract {0} wk",
+  "w": "50-v48.js:26"
+ },
+ {
+  "k": "· 🏋 sparred (+1 AP +2 CF tonight)",
+  "w": "50-v48.js:30"
+ },
+ {
+  "k": "on loan from {0}",
+  "w": "50-v48.js:30"
+ },
+ {
+  "k": "⭐ Make starter",
+  "w": "50-v48.js:31"
+ },
+ {
+  "k": "starters can be entered on Match Week",
+  "w": "50-v48.js:33"
+ },
+ {
+  "k": "⭐ Starters · {0}",
+  "w": "50-v48.js:34"
+ },
+ {
+  "k": "🪑 Bench · {0}",
+  "w": "50-v48.js:34"
+ },
+ {
+  "k": "⚕ Hurt · {0}",
+  "w": "50-v48.js:34"
+ },
+ {
+  "k": "· goes home when you sign your own fighter",
+  "w": "50-v48.js:36"
+ },
+ {
+  "k": "🤝 Loans",
+  "w": "50-v48.js:37"
+ },
+ {
+  "k": "🤝 <b>{0}</b> has heard your barracks are empty and offers you <b>{1}</b> on loan. Answer it at the top of any tab.",
+  "w": "50-v48.js:45"
+ },
+ {
+  "k": "🛒 <b>Vulso's cart</b> rattles up to your gate: three lots off the auction block, no road to pay. See the top of any tab.",
+  "w": "50-v48.js:47"
+ },
+ {
+  "k": "🛒 Vulso's cart at your gate",
+  "w": "50-v48.js:49"
+ },
+ {
+  "k": "this week only · no road to pay",
+  "w": "50-v48.js:49"
+ },
+ {
+  "k": "disabled title=\"Not enough coin\"",
+  "w": "50-v48.js:50"
+ },
+ {
+  "k": "Buy · {0} coin<small>6 weeks at 2/wk</small>",
+  "w": "50-v48.js:50"
+ },
+ {
+  "k": "back home to {0}: the borrowing house signed its own fighter",
+  "w": "50-v48.js:51"
+ },
+ {
+  "k": "🤝 <b>{0}</b> goes home to {1} — you have a fighter of your own now. {2} sends their regards.",
+  "w": "50-v48.js:52"
+ },
+ {
+  "k": "⚱ <b>{0}</b> died on loan under your colours. {1} is owed {2} coin — taken from your treasury{3}.",
+  "w": "50-v48.js:58"
+ },
+ {
+  "k": "(you now owe it)",
+  "w": "50-v48.js:58"
+ },
+ {
+  "k": "paid {0} {1} coin for {2}, who died on loan",
+  "w": "50-v48.js:58"
+ },
+ {
+  "k": "⚱ {0} died on loan at {1} — they pay you {2} coin.",
+  "w": "50-v48.js:58"
+ },
+ {
+  "k": "📨 A letter from {0} {1}",
+  "w": "50-v48.js:65"
+ },
+ {
+  "k": "\"Word is your barracks stand empty. Take <b>{0}</b> for a while — {1} weeks, {2} coin a week. Send them home when you have a fighter of your own.\"",
+  "w": "50-v48.js:66"
+ },
+ {
+  "k": "rated {0} · {1}",
+  "w": "50-v48.js:67"
+ },
+ {
+  "k": "{0} weeks · they keep paying the wage",
+  "w": "50-v48.js:67"
+ },
+ {
+  "k": "✔ Accept the loan",
+  "w": "50-v48.js:68"
+ },
+ {
+  "k": "{0} fighters watched: <b>+{1} coin</b> at the gate (from their own purses). {2} carries a Match Week edge this week (+1 AP, +2 CF).",
+  "w": "50-v48.js:75"
+ },
+ {
+  "k": "🌿 <b>Hygeia's Blessing</b>: the goddess's priests walk your infirmary — {0} {1} healed. The blessing returns next season.",
+  "w": "50-v48.js:82"
+ }
+]

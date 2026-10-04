@@ -1,0 +1,2154 @@
+[
+ {
+  "k": "📨 <b>An invitation:</b> {0} at {1}, {2} (week {3}). {4}{5} Open it on Your ludus.",
+  "w": "22-trophies.js:257"
+ },
+ {
+  "k": "🕊 <b>Exhibition edition</b>: the host pays the editor — no Fates, and a third off the purse.",
+  "w": "22-trophies.js:257"
+ },
+ {
+  "k": "📌 <b>{0}</b> tops the posters for the {1} — billed {2} weeks ahead: +10 coin appearance, +1 fame, and a 15% purse bonus if they win.",
+  "w": "22-trophies.js:265"
+ },
+ {
+  "k": "📌 {0} was billed for this week, but no bout on the card fits their rating — the billing lapses (no penalty).",
+  "w": "22-trophies.js:266"
+ },
+ {
+  "k": "📌 This week's early billing lapsed — {0} (no penalty).",
+  "w": "22-trophies.js:267"
+ },
+ {
+  "k": "is not fit to fight",
+  "w": "22-trophies.js:267"
+ },
+ {
+  "k": "the fighter is gone",
+  "w": "22-trophies.js:267"
+ },
+ {
+  "k": "📌 The billing pays: {0} won as advertised — +{1} coin poster bonus.",
+  "w": "22-trophies.js:272"
+ },
+ {
+  "k": "{0} cannot go on — {1} advances in their place",
+  "w": "22-trophies.js:304"
+ },
+ {
+  "k": "The winner",
+  "w": "22-trophies.js:304"
+ },
+ {
+  "k": "{0}: {1} ({2} CF)",
+  "w": "22-trophies.js:305"
+ },
+ {
+  "k": "Final",
+  "w": "22-trophies.js:305"
+ },
+ {
+  "k": "Round {0} heat {1}",
+  "w": "22-trophies.js:305"
+ },
+ {
+  "k": "won the Flavius Superbus of season {0} in Roma ({1} CF)",
+  "w": "22-trophies.js:314"
+ },
+ {
+  "k": "🏆 <b>{0}</b>{1} wins <b>the Flavius Superbus</b> before a roaring Roma ({2} CF).",
+  "w": "22-trophies.js:317"
+ },
+ {
+  "k": "Won {0} (season {1})",
+  "w": "22-trophies.js:319"
+ },
+ {
+  "k": "⭐ <b>{0}</b> of {1} wins <b>{2}</b>! +{3} coin, +{4} fame.",
+  "w": "22-trophies.js:320"
+ },
+ {
+  "k": "⭐ <b>{0}</b>{1} wins <b>{2}</b>.",
+  "w": "22-trophies.js:321"
+ },
+ {
+  "k": "(an invited outsider)",
+  "w": "22-trophies.js:321"
+ },
+ {
+  "k": "a heat was called off",
+  "w": "22-trophies.js:326"
+ },
+ {
+  "k": "{0} · rated {1}",
+  "w": "22-trophies.js:337"
+ },
+ {
+  "k": "The final",
+  "w": "22-trophies.js:338"
+ },
+ {
+  "k": "The bout",
+  "w": "22-trophies.js:338"
+ },
+ {
+  "k": "Round {0}",
+  "w": "22-trophies.js:338"
+ },
+ {
+  "k": "Heat {0}",
+  "w": "22-trophies.js:340"
+ },
+ {
+  "k": "· {0} turns",
+  "w": "22-trophies.js:340"
+ },
+ {
+  "k": "▶ Sim {0}",
+  "w": "22-trophies.js:341"
+ },
+ {
+  "k": "👁 Watch live",
+  "w": "22-trophies.js:341"
+ },
+ {
+  "k": "🎟 Spectate · {0}",
+  "w": "22-trophies.js:341"
+ },
+ {
+  "k": "⚔ Fight it",
+  "w": "22-trophies.js:341"
+ },
+ {
+  "k": "🏛 THE SEASON FINALE · season {0} · by invitation only",
+  "w": "22-trophies.js:344"
+ },
+ {
+  "k": "⭐ SPECIAL EVENT · the league’s week is paused",
+  "w": "22-trophies.js:344"
+ },
+ {
+  "k": "📍 {0} · {1} · purse {2} · +{3} fame · {4} coin a heat for each of yours{5}{6}",
+  "w": "22-trophies.js:345"
+ },
+ {
+  "k": "· trophy: <b>{0}</b>",
+  "w": "22-trophies.js:345"
+ },
+ {
+  "k": "· the champion gains +20 fame",
+  "w": "22-trophies.js:345"
+ },
+ {
+  "k": "Yours! {0}+{1} coin · +{2} fame",
+  "w": "22-trophies.js:347"
+ },
+ {
+  "k": "→ the trophy room ·",
+  "w": "22-trophies.js:347"
+ },
+ {
+  "k": "🎭 On to the Flavian Awards",
+  "w": "22-trophies.js:348"
+ },
+ {
+  "k": "Close the invitational → back to the week",
+  "w": "22-trophies.js:348"
+ },
+ {
+  "k": "⏩ Sim everything left",
+  "w": "22-trophies.js:349"
+ },
+ {
+  "k": "The regular card waits until this is settled. {0}",
+  "w": "22-trophies.js:350"
+ },
+ {
+  "k": "This event is Fate-free: nobody dies, nobody is freed.",
+  "w": "22-trophies.js:350"
+ },
+ {
+  "k": "The <b>Fate table applies</b> after every heat, as in any bout — thumbs, blood money and the rudis wait for you below.",
+  "w": "22-trophies.js:350"
+ },
+ {
+  "k": "Your champion:",
+  "w": "22-trophies.js:354"
+ },
+ {
+  "k": "Send them",
+  "w": "22-trophies.js:354"
+ },
+ {
+  "k": "— optional 2nd fighter —",
+  "w": "22-trophies.js:359"
+ },
+ {
+  "k": "— choose a fighter —",
+  "w": "22-trophies.js:359"
+ },
+ {
+  "k": "📍 {0} · {1} (in {2} wk{3})",
+  "w": "22-trophies.js:360"
+ },
+ {
+  "k": "· win {0} coin{1}",
+  "w": "22-trophies.js:360"
+ },
+ {
+  "k": "The host will remember (−2 fame)",
+  "w": "22-trophies.js:361"
+ },
+ {
+  "k": "Withdraw",
+  "w": "22-trophies.js:361"
+ },
+ {
+  "k": "Answer ▸",
+  "w": "22-trophies.js:362"
+ },
+ {
+  "k": "{0} · {1} coin a heat to appear{2}",
+  "w": "22-trophies.js:363"
+ },
+ {
+  "k": "Decline",
+  "w": "22-trophies.js:364"
+ },
+ {
+  "k": "is on this week — the league's card waits",
+  "w": "22-trophies.js:365"
+ },
+ {
+  "k": "Go to it ▸",
+  "w": "22-trophies.js:365"
+ },
+ {
+  "k": "⭐ Special events",
+  "w": "22-trophies.js:366"
+ },
+ {
+  "k": "invitations arrive 3–5 weeks ahead",
+  "w": "22-trophies.js:366"
+ },
+ {
+  "k": "on the posters",
+  "w": "22-trophies.js:375"
+ },
+ {
+  "k": "<span class=\"rc-sub\">enter on Match Week</span>",
+  "w": "22-trophies.js:375"
+ },
+ {
+  "k": "bill a fighter…",
+  "w": "22-trophies.js:377"
+ },
+ {
+  "k": "<span class=\"badge\" title=\"The regular season ends here; the top four are invited to the Flavius Superbus\">last regular week</span>",
+  "w": "22-trophies.js:379"
+ },
+ {
+  "k": "An invitational runs this week, before the regular card",
+  "w": "22-trophies.js:379"
+ },
+ {
+  "k": "after week 12",
+  "w": "22-trophies.js:382"
+ },
+ {
+  "k": "📍 Roma",
+  "w": "22-trophies.js:382"
+ },
+ {
+  "k": "<b>The Flavius Superbus</b>",
+  "w": "22-trophies.js:382"
+ },
+ {
+  "k": "— by invitation: the top 4 of the league table, one fighter each. You are <b>#{0}</b> of {1} right now{2}. No early billing: invitation only.",
+  "w": "22-trophies.js:382"
+ },
+ {
+  "k": "— in the four",
+  "w": "22-trophies.js:382"
+ },
+ {
+  "k": "<b>Season {0}</b> — billing opens early",
+  "w": "22-trophies.js:383"
+ },
+ {
+  "k": "📅 SEASON {0}",
+  "w": "22-trophies.js:384"
+ },
+ {
+  "k": "<b style=\"font:400 24px var(--display);color:var(--gold2)\">Week {0} of 12</b>",
+  "w": "22-trophies.js:384"
+ },
+ {
+  "k": "Week {0}",
+  "w": "22-trophies.js:385"
+ },
+ {
+  "k": "The Flavius Superbus",
+  "w": "22-trophies.js:385"
+ },
+ {
+  "k": "League table: <b style=\"color:var(--gold2)\">#{0}</b> of {1} · {2} pts<br>{3}",
+  "w": "22-trophies.js:386"
+ },
+ {
+  "k": "Superbus-bound if it holds",
+  "w": "22-trophies.js:386"
+ },
+ {
+  "k": "{0} point{1} behind the top four",
+  "w": "22-trophies.js:386"
+ },
+ {
+  "k": "Early billing: name a fighter 3+ weeks ahead",
+  "w": "22-trophies.js:387"
+ },
+ {
+  "k": "📌 Billing",
+  "w": "22-trophies.js:387"
+ },
+ {
+  "k": "Past invitationals &amp; finals",
+  "w": "22-trophies.js:390"
+ },
+ {
+  "k": "🏛 The Flavius Superbus",
+  "w": "22-trophies.js:391"
+ },
+ {
+  "k": "Past champions: {0}.",
+  "w": "22-trophies.js:391"
+ },
+ {
+  "k": "An invitational pauses this week first",
+  "w": "22-trophies.js:395"
+ },
+ {
+  "k": "<span class=\"rc-sub\">locked in</span>",
+  "w": "22-trophies.js:396"
+ },
+ {
+  "k": "Bill early",
+  "w": "22-trophies.js:396"
+ },
+ {
+  "k": "<span class=\"rc-sub\">window closed (under 3 weeks)</span>",
+  "w": "22-trophies.js:396"
+ },
+ {
+  "k": "📌 Early billing",
+  "w": "22-trophies.js:397"
+ },
+ {
+  "k": "name a fighter for a future week's card — at least 3 weeks ahead",
+  "w": "22-trophies.js:397"
+ },
+ {
+  "k": "A billed fighter goes on the posters: on the night they are entered in the biggest bout that fits their rating, earn +10 coin appearance and +1 fame, and a win pays a 15% poster bonus. Entirely optional — you can always enter fighters on Match Week as usual. If they are hurt or gone by then, the billing simply lapses.",
+  "w": "22-trophies.js:398"
+ },
+ {
+  "k": "Fixture",
+  "w": "22-trophies.js:399"
+ },
+ {
+  "k": "Billed",
+  "w": "22-trophies.js:399"
+ },
+ {
+  "k": "Choose at least one fighter to send.",
+  "w": "22-trophies.js:411"
+ },
+ {
+  "k": "✓ Accepted: {0} — {1} will travel to {2}.",
+  "w": "22-trophies.js:411"
+ },
+ {
+  "k": "Declined with thanks: {0}.",
+  "w": "22-trophies.js:413"
+ },
+ {
+  "k": "Withdrawn from {0} — the host will remember (−2 fame).",
+  "w": "22-trophies.js:414"
+ },
+ {
+  "k": "Pick a fighter to bill.",
+  "w": "22-trophies.js:415"
+ },
+ {
+  "k": "The billing window has closed for that week.",
+  "w": "22-trophies.js:415"
+ },
+ {
+  "k": "📌 {0} is already billed for week {1}. One billing per fighter — undo that one first.",
+  "w": "22-trophies.js:416"
+ },
+ {
+  "k": "📌 {0} is billed for week {1} — {2} weeks ahead.",
+  "w": "22-trophies.js:416"
+ },
+ {
+  "k": "Too late — the posters are printed.",
+  "w": "22-trophies.js:417"
+ },
+ {
+  "k": "{0} will fight for {1} in the Superbus.",
+  "w": "22-trophies.js:424"
+ },
+ {
+  "k": "<b>A tournament is under way:</b> {0} —",
+  "w": "22-trophies.js:439"
+ },
+ {
+  "k": "Abandon it",
+  "w": "22-trophies.js:439"
+ },
+ {
+  "k": "Choose the tournament",
+  "w": "22-trophies.js:440"
+ },
+ {
+  "k": "{0} heats of {1}",
+  "w": "22-trophies.js:440"
+ },
+ {
+  "k": "bout of",
+  "w": "22-trophies.js:440"
+ },
+ {
+  "k": "Champion takes {0}into the Annals' trophy case",
+  "w": "22-trophies.js:443"
+ },
+ {
+  "k": "Your gladiator",
+  "w": "22-trophies.js:444"
+ },
+ {
+  "k": "Enter the tournament",
+  "w": "22-trophies.js:446"
+ },
+ {
+  "k": "Rules in this build",
+  "w": "22-trophies.js:446"
+ },
+ {
+  "k": "{0} → the Annals' trophy case · {1}",
+  "w": "22-trophies.js:479"
+ },
+ {
+  "k": "⚔ Fight your heat",
+  "w": "22-trophies.js:480"
+ },
+ {
+  "k": "Later",
+  "w": "22-trophies.js:480"
+ },
+ {
+  "k": "⏩ Play out the bracket",
+  "w": "22-trophies.js:480"
+ },
+ {
+  "k": "🏟 Tournament",
+  "w": "22-trophies.js:481"
+ },
+ {
+  "k": "🏆 <b>{0}</b> goes into the Annals' trophy case — {1}",
+  "w": "22-trophies.js:490"
+ },
+ {
+  "k": "Trophies won outside Manager mode — tournaments from New event → Tournament, and your own events with a trophy attached. Manager careers keep theirs in their own trophy rooms.",
+  "w": "22-trophies.js:496"
+ },
+ {
+  "k": "THE ANNALS · TROPHY CASE",
+  "w": "22-trophies.js:497"
+ },
+ {
+  "k": "📜 Every trophy's history ({0} won)",
+  "w": "22-trophies.js:498"
+ },
+ {
+  "k": "Design trophies for your events. A trophy is <b>shape + material + base + topper + gem + inscription</b> — and anything you <b>sculpt</b> on top, with rewards for whoever wins it. Attach one to a custom event in the <b>Event Designer → Rounds &amp; rules</b>: win that event (or its Manager-mode invitational, or its Tournament) and the trophy is yours.",
+  "w": "22-trophies.js:508"
+ },
+ {
+  "k": "Drag a shape to move it",
+  "w": "22-trophies.js:509"
+ },
+ {
+  "k": "Unnamed trophy",
+  "w": "22-trophies.js:509"
+ },
+ {
+  "k": "e.g. The Cup of Capua",
+  "w": "22-trophies.js:510"
+ },
+ {
+  "k": "Inscription (on the plate)",
+  "w": "22-trophies.js:510"
+ },
+ {
+  "k": "Description",
+  "w": "22-trophies.js:511"
+ },
+ {
+  "k": "What it is awarded for",
+  "w": "22-trophies.js:511"
+ },
+ {
+  "k": "Start from{0}",
+  "w": "22-trophies.js:512"
+ },
+ {
+  "k": "— Blank canvas —",
+  "w": "22-trophies.js:512"
+ },
+ {
+  "k": "Material",
+  "w": "22-trophies.js:512"
+ },
+ {
+  "k": "Base{0}",
+  "w": "22-trophies.js:513"
+ },
+ {
+  "k": "Topper{0}",
+  "w": "22-trophies.js:513"
+ },
+ {
+  "k": "Gem",
+  "w": "22-trophies.js:514"
+ },
+ {
+  "k": "Its tile glows gold wherever it stands — the honour the Superbus Cup and the Flavian Cup carry",
+  "w": "22-trophies.js:514"
+ },
+ {
+  "k": "✨ Gilded frame",
+  "w": "22-trophies.js:514"
+ },
+ {
+  "k": "Save trophy",
+  "w": "22-trophies.js:518"
+ },
+ {
+  "k": "🎲 Surprise me",
+  "w": "22-trophies.js:518"
+ },
+ {
+  "k": "Your trophies · {0}",
+  "w": "22-trophies.js:519"
+ },
+ {
+  "k": "· on: {0}",
+  "w": "22-trophies.js:519"
+ },
+ {
+  "k": "· not attached to an event yet",
+  "w": "22-trophies.js:519"
+ },
+ {
+  "k": "The built-in silverware ({0})",
+  "w": "22-trophies.js:521"
+ },
+ {
+  "k": "Cup",
+  "w": "22-trophies.js:525"
+ },
+ {
+  "k": "Shield",
+  "w": "22-trophies.js:525"
+ },
+ {
+  "k": "Horn",
+  "w": "22-trophies.js:525"
+ },
+ {
+  "k": "Palm",
+  "w": "22-trophies.js:525"
+ },
+ {
+  "k": "🏆 Saved <b>{0}</b> — attach it to an event in the Event Designer",
+  "w": "22-trophies.js:530"
+ },
+ {
+  "k": "No trophy",
+  "w": "22-trophies.js:535"
+ },
+ {
+  "k": "Better palus posts, sand pits and weights",
+  "w": "23-ludus.js:15"
+ },
+ {
+  "k": "+{0}% training gains · {1}% fewer drill injuries",
+  "w": "23-ludus.js:15"
+ },
+ {
+  "k": "A proper infirmary wing for your physicians",
+  "w": "23-ludus.js:16"
+ },
+ {
+  "k": "physicians' weekly cap +{0} coin of work",
+  "w": "23-ludus.js:16"
+ },
+ {
+  "k": "Dry cells, real beds, a cook who cares",
+  "w": "23-ludus.js:17"
+ },
+ {
+  "k": "+{0} morale for every fighter each week · fighters sign for {1}% less",
+  "w": "23-ludus.js:17"
+ },
+ {
+  "k": "Fitted armor for every fighter who leaves your ludus",
+  "w": "23-ludus.js:18"
+ },
+ {
+  "k": "+{0} AP fitted at the start of every bout",
+  "w": "23-ludus.js:18"
+ },
+ {
+  "k": "Benches where the city pays to watch you train",
+  "w": "23-ludus.js:19"
+ },
+ {
+  "k": "+{0} coin a week from practice crowds · Spectacle grade +{1}",
+  "w": "23-ludus.js:19"
+ },
+ {
+  "k": "Horses, wagons and a road crew of your own",
+  "w": "23-ludus.js:20"
+ },
+ {
+  "k": "travel to away games costs {0}% less",
+  "w": "23-ludus.js:20"
+ },
+ {
+  "k": "🏗 Facilities",
+  "w": "23-ludus.js:35"
+ },
+ {
+  "k": "Permanent. Recruits grade your house on them — together they set your <b>Ludus grade</b>. One project a week.",
+  "w": "23-ludus.js:35"
+ },
+ {
+  "k": "Ludus grade — from {0} of {1} facility levels",
+  "w": "23-ludus.js:35"
+ },
+ {
+  "k": "Next: {0}",
+  "w": "23-ludus.js:37"
+ },
+ {
+  "k": "Your builders are already busy this week.",
+  "w": "23-ludus.js:38"
+ },
+ {
+  "k": "Build {0}<small>{1} coin</small>",
+  "w": "23-ludus.js:38"
+ },
+ {
+  "k": "🏗 built the {0} {1} ({2} coin) — {3}",
+  "w": "23-ludus.js:41"
+ },
+ {
+  "k": "🏗 <b>{0}</b> {1}completes the {2} {3}. Ludus grade {4}.",
+  "w": "23-ludus.js:42"
+ },
+ {
+  "k": "🏟 The practice stands took {0} coin in tickets this week.",
+  "w": "23-ludus.js:47"
+ },
+ {
+  "k": "💼 debts bought out by a new backer (−8 fame)",
+  "w": "23-ludus.js:57"
+ },
+ {
+  "k": "💼 <b>{0}</b> was drowning in debt — a wealthy backer buys the house and its debts. The gossip costs them 8 fame.",
+  "w": "23-ludus.js:57"
+ },
+ {
+  "k": "signed with {0} to fill the barracks",
+  "w": "23-ludus.js:60"
+ },
+ {
+  "k": "signed {0} to fill the barracks",
+  "w": "23-ludus.js:60"
+ },
+ {
+  "k": "🏋 ran brutal drills — {0} fighters in the yard at dawn",
+  "w": "23-ludus.js:63"
+ },
+ {
+  "k": "⚕ paid the Medicus for {0}",
+  "w": "23-ludus.js:65"
+ },
+ {
+  "k": "🔪 sent {0} under the surgeon's knife",
+  "w": "23-ludus.js:65"
+ },
+ {
+  "k": "🎟 bought tickets for {0}'s family",
+  "w": "23-ludus.js:68"
+ },
+ {
+  "k": "🍷 shared a meal with {0}",
+  "w": "23-ludus.js:68"
+ },
+ {
+  "k": "💰 paid {0} a {1}-coin bonus",
+  "w": "23-ludus.js:68"
+ },
+ {
+  "k": "🍞 fed the people of {0} in the ludus's name (+1 fame)",
+  "w": "23-ludus.js:70"
+ },
+ {
+  "k": "📢 hired the criers — every free agent hears the name {0}",
+  "w": "23-ludus.js:70"
+ },
+ {
+  "k": "🎪 sponsored the games — the house's name over the gate (+2 fame)",
+  "w": "23-ludus.js:70"
+ },
+ {
+  "k": "A bitter rivalry with your house",
+  "w": "23-ludus.js:79"
+ },
+ {
+  "k": "Rivalry and old grudges",
+  "w": "23-ludus.js:79"
+ },
+ {
+  "k": "Both of {0}",
+  "w": "23-ludus.js:80"
+ },
+ {
+  "k": "Your honor is known",
+  "w": "23-ludus.js:81"
+ },
+ {
+  "k": "Your word is doubted",
+  "w": "23-ludus.js:81"
+ },
+ {
+  "k": "Gifts, trades and pacts",
+  "w": "23-ludus.js:82"
+ },
+ {
+  "k": "You poached {0} of theirs",
+  "w": "23-ludus.js:83"
+ },
+ {
+  "k": "Your public insults",
+  "w": "23-ludus.js:84"
+ },
+ {
+  "k": "Non-poaching pact",
+  "w": "23-ludus.js:85"
+ },
+ {
+  "k": "Cold",
+  "w": "23-ludus.js:88"
+ },
+ {
+  "k": "Say what you came to say, and leave my gate.",
+  "w": "23-ludus.js:90"
+ },
+ {
+  "k": "My fighters remember your name. So do I.",
+  "w": "23-ludus.js:90"
+ },
+ {
+  "k": "You have courage, sending an envoy here.",
+  "w": "23-ludus.js:90"
+ },
+ {
+  "k": "Speak. Quickly.",
+  "w": "23-ludus.js:90"
+ },
+ {
+  "k": "We are listening — for now.",
+  "w": "23-ludus.js:90"
+ },
+ {
+  "k": "The steward will show you to a chair. Not a good one.",
+  "w": "23-ludus.js:90"
+ },
+ {
+  "k": "Well met. What does your house want?",
+  "w": "23-ludus.js:91"
+ },
+ {
+  "k": "The sand is wide enough for both of us. Usually.",
+  "w": "23-ludus.js:91"
+ },
+ {
+  "k": "Wine? No? Then business.",
+  "w": "23-ludus.js:91"
+ },
+ {
+  "k": "Ah — a friend of the house! Sit, sit.",
+  "w": "23-ludus.js:91"
+ },
+ {
+  "k": "Your envoy is always welcome here.",
+  "w": "23-ludus.js:91"
+ },
+ {
+  "k": "Whatever it is, the answer is probably yes.",
+  "w": "23-ludus.js:91"
+ },
+ {
+  "k": "And remember — nothing here is free.",
+  "w": "23-ludus.js:92"
+ },
+ {
+  "k": "My word is my bond.",
+  "w": "23-ludus.js:92"
+ },
+ {
+  "k": "S{0} W{1} · {2} · {3} at {4} · {5} · {6} CF",
+  "w": "23-ludus.js:99"
+ },
+ {
+  "k": "{0} your Favorites",
+  "w": "23-ludus.js:100"
+ },
+ {
+  "k": "{0}/wk · {1} wk",
+  "w": "23-ludus.js:100"
+ },
+ {
+  "k": "🎁 Send gifts",
+  "w": "23-ludus.js:102"
+ },
+ {
+  "k": "🏋 Propose a practice",
+  "w": "23-ludus.js:103"
+ },
+ {
+  "k": "an exhibition against their fighters (Practice tab)",
+  "w": "23-ludus.js:103"
+ },
+ {
+  "k": "{0} will not spar with a house they despise (opinion {1}, needs 25).",
+  "w": "23-ludus.js:103"
+ },
+ {
+  "k": "🔁 Propose a trade",
+  "w": "23-ludus.js:104"
+ },
+ {
+  "k": "one of yours for one of theirs, coin to sweeten",
+  "w": "23-ludus.js:104"
+ },
+ {
+  "k": "{0} will not trade with you (opinion {1}, needs 20).",
+  "w": "23-ludus.js:104"
+ },
+ {
+  "k": "🤝 Non-poaching pact",
+  "w": "23-ludus.js:105"
+ },
+ {
+  "k": "30 coin · 8 weeks: neither house poaches the other",
+  "w": "23-ludus.js:105"
+ },
+ {
+  "k": "A pact needs trust (opinion {0}, needs 55).",
+  "w": "23-ludus.js:105"
+ },
+ {
+  "k": "🕵 Ask for gossip",
+  "w": "23-ludus.js:106"
+ },
+ {
+  "k": "they talk about one of their fighters (scouted)",
+  "w": "23-ludus.js:106"
+ },
+ {
+  "k": "They do not gossip with strangers (opinion {0}, needs 40).",
+  "w": "23-ludus.js:106"
+ },
+ {
+  "k": "🗡 Insult them publicly",
+  "w": "23-ludus.js:107"
+ },
+ {
+  "k": "+2 fame (the crowd loves a feud) · −15 opinion, +15 rivalry",
+  "w": "23-ludus.js:107"
+ },
+ {
+  "k": "← Back to the League",
+  "w": "23-ludus.js:109"
+ },
+ {
+  "k": "{0} · {1} · a house of {2} standing",
+  "w": "23-ludus.js:112"
+ },
+ {
+  "k": "Ludus grade",
+  "w": "23-ludus.js:113"
+ },
+ {
+  "k": "<span><b>{0}</b>★ Fame</span><span><b>{1}</b>Record</span><span><b>{2}</b>Fighters</span><span><b>{3}</b>Treasury</span><span><b>{4}/15</b>Facility levels</span>",
+  "w": "23-ludus.js:114"
+ },
+ {
+  "k": "🛡 Roster",
+  "w": "23-ludus.js:116"
+ },
+ {
+  "k": "ratings with ~ are the public estimate — scout for the truth",
+  "w": "23-ludus.js:116"
+ },
+ {
+  "k": "Last five bouts, oldest first: W = won, 2 = runner-up",
+  "w": "23-ludus.js:116"
+ },
+ {
+  "k": "Recent",
+  "w": "23-ludus.js:116"
+ },
+ {
+  "k": "📅 Coming up for {0}",
+  "w": "23-ludus.js:117"
+ },
+ {
+  "k": "— {0}, {1} at {2}{3}",
+  "w": "23-ludus.js:118"
+ },
+ {
+  "k": "· this week",
+  "w": "23-ludus.js:118"
+ },
+ {
+  "k": "Send an envoy",
+  "w": "23-ludus.js:126"
+ },
+ {
+  "k": "· your envoy has already called this week",
+  "w": "23-ludus.js:126"
+ },
+ {
+  "k": "· one envoy per house a week",
+  "w": "23-ludus.js:126"
+ },
+ {
+  "k": "Your envoy has already called on this house this week.",
+  "w": "23-ludus.js:127"
+ },
+ {
+  "k": "💸 Your debt to this house",
+  "w": "23-ludus.js:129"
+ },
+ {
+  "k": "<b>{0} coin owed</b> · 8% a week. Paying early warms them to you.",
+  "w": "23-ludus.js:129"
+ },
+ {
+  "k": "Pay 50",
+  "w": "23-ludus.js:129"
+ },
+ {
+  "k": "Pay all · {0}",
+  "w": "23-ludus.js:129"
+ },
+ {
+  "k": "🤝 Non-poaching pact until week {0}.",
+  "w": "23-ludus.js:130"
+ },
+ {
+  "k": "📜 Their ledger",
+  "w": "23-ludus.js:131"
+ },
+ {
+  "k": "what this house has been doing",
+  "w": "23-ludus.js:131"
+ },
+ {
+  "k": "🔁 A trade with {0}",
+  "w": "23-ludus.js:137"
+ },
+ {
+  "k": "You send",
+  "w": "23-ludus.js:138"
+ },
+ {
+  "k": "For",
+  "w": "23-ludus.js:139"
+ },
+ {
+  "k": "Contracts travel with the fighters (same wage, same weeks). They weigh rating, potential, fame, age and wage — and how much they like you.",
+  "w": "23-ludus.js:141"
+ },
+ {
+  "k": "Your envoy has already called on {0} this week — try again next week.",
+  "w": "23-ludus.js:143"
+ },
+ {
+  "k": "Send the proposal",
+  "w": "23-ludus.js:143"
+ },
+ {
+  "k": "The {0} {1} costs {2} coin.",
+  "w": "23-ludus.js:146"
+ },
+ {
+  "k": "🏗 Built the {0} {1} — {2}. Ludus grade {3}.",
+  "w": "23-ludus.js:147"
+ },
+ {
+  "k": "🏗 The {0} {1} is built. Ludus grade <b>{2}</b>.",
+  "w": "23-ludus.js:147"
+ },
+ {
+  "k": "received gifts from {0}",
+  "w": "23-ludus.js:153"
+ },
+ {
+  "k": "🎁 {0} accepts your gifts. Opinion {1}.",
+  "w": "23-ludus.js:153"
+ },
+ {
+  "k": "signed a non-poaching pact with {0}",
+  "w": "23-ludus.js:155"
+ },
+ {
+  "k": "🤝 Non-poaching pact with {0} until week {1}.",
+  "w": "23-ludus.js:155"
+ },
+ {
+  "k": "🤝 {0} agrees: neither house poaches the other until week {1}.",
+  "w": "23-ludus.js:155"
+ },
+ {
+  "k": "{0} shrugs — you already know everything about their fighters.",
+  "w": "23-ludus.js:156"
+ },
+ {
+  "k": "🕵 Over wine, {0} lets slip what {1} is really worth: rating {2}, morale {3}, {4} weeks left at {5}/wk.",
+  "w": "23-ludus.js:156"
+ },
+ {
+  "k": "was publicly insulted by {0}",
+  "w": "23-ludus.js:157"
+ },
+ {
+  "k": "🗡 {0} insults <b>{1}</b> in the forum. The crowd loves a feud.",
+  "w": "23-ludus.js:157"
+ },
+ {
+  "k": "🗡 The insult lands. +2 fame; {0} will not forget it.",
+  "w": "23-ludus.js:157"
+ },
+ {
+  "k": "Your treasury cannot cover that sweetener.",
+  "w": "23-ludus.js:162"
+ },
+ {
+  "k": "“{0} is the house. No.” — {1}",
+  "w": "23-ludus.js:165"
+ },
+ {
+  "k": "✉ {0} refuses: {1} is not for sale.",
+  "w": "23-ludus.js:165"
+ },
+ {
+  "k": "“Not enough.” — {0}. {1}",
+  "w": "23-ludus.js:166"
+ },
+ {
+  "k": "About {0} more coin might change their mind — next week.",
+  "w": "23-ludus.js:166"
+ },
+ {
+  "k": "They want a better fighter.",
+  "w": "23-ludus.js:166"
+ },
+ {
+  "k": "turned down a trade offer from {0}",
+  "w": "23-ludus.js:166"
+ },
+ {
+  "k": "✉ {0} turns down your trade.",
+  "w": "23-ludus.js:166"
+ },
+ {
+  "k": "traded from {0} to {1}",
+  "w": "23-ludus.js:168"
+ },
+ {
+  "k": "traded {0} to {1} for {2}{3}",
+  "w": "23-ludus.js:168"
+ },
+ {
+  "k": "and {0} coin",
+  "w": "23-ludus.js:168"
+ },
+ {
+  "k": "(plus {0} coin)",
+  "w": "23-ludus.js:169"
+ },
+ {
+  "k": "🔁 Traded {0}{1} to {2} for {3}.",
+  "w": "23-ludus.js:169"
+ },
+ {
+  "k": "+ {0} coin",
+  "w": "23-ludus.js:169"
+ },
+ {
+  "k": "🔁 Done — {0} joins {1}.",
+  "w": "23-ludus.js:170"
+ },
+ {
+  "k": "Promote",
+  "w": "23-ludus.js:195"
+ },
+ {
+  "k": "fame {0}",
+  "w": "23-ludus.js:195"
+ },
+ {
+  "k": "Schooling",
+  "w": "23-ludus.js:195"
+ },
+ {
+  "k": "Facilities",
+  "w": "23-ludus.js:196"
+ },
+ {
+  "k": "Consilium",
+  "w": "23-ludus.js:196"
+ },
+ {
+  "k": "your advisors",
+  "w": "23-ludus.js:196"
+ },
+ {
+  "k": "Ledger",
+  "w": "23-ludus.js:196"
+ },
+ {
+  "k": "{0} entries",
+  "w": "23-ludus.js:196"
+ },
+ {
+  "k": "🏛 Running the ludus",
+  "w": "23-ludus.js:200"
+ },
+ {
+  "k": "data-mg=\"tab\" data-id=\"practice\" title=\"Opens the Training Yard tab\"",
+  "w": "23-ludus.js:200"
+ },
+ {
+  "k": "Editor of the games, lord of the sand",
+  "w": "24-sponsors.js:9"
+ },
+ {
+  "k": "Builder of the grain fleet",
+  "w": "24-sponsors.js:12"
+ },
+ {
+  "k": "Patroness of the northern games",
+  "w": "24-sponsors.js:13"
+ },
+ {
+  "k": "Veteran of the Fourth Legion",
+  "w": "24-sponsors.js:14"
+ },
+ {
+  "k": "Heir to the oldest ludus in Capua",
+  "w": "24-sponsors.js:15"
+ },
+ {
+  "k": "Voice of the goddess in Thysdrus",
+  "w": "24-sponsors.js:16"
+ },
+ {
+  "k": "Prince of the chariot circus",
+  "w": "24-sponsors.js:17"
+ },
+ {
+  "k": "Owner of the finest baths in Pompeii",
+  "w": "24-sponsors.js:18"
+ },
+ {
+  "k": "Son of Africa, friend of emperors",
+  "w": "24-sponsors.js:19"
+ },
+ {
+  "k": "Poet of Uthina",
+  "w": "24-sponsors.js:20"
+ },
+ {
+  "k": "Keeper of the Pola fish market",
+  "w": "24-sponsors.js:21"
+ },
+ {
+  "k": "Harbor-master of Puteoli",
+  "w": "24-sponsors.js:22"
+ },
+ {
+  "k": "Good for business.",
+  "w": "24-sponsors.js:26"
+ },
+ {
+  "k": "The ledger smiles.",
+  "w": "24-sponsors.js:26"
+ },
+ {
+  "k": "Worth every denarius.",
+  "w": "24-sponsors.js:26"
+ },
+ {
+  "k": "Ha! Put that on a poster!",
+  "w": "24-sponsors.js:26"
+ },
+ {
+  "k": "Profit AND blood!",
+  "w": "24-sponsors.js:26"
+ },
+ {
+  "k": "SOLD! To the crowd!",
+  "w": "24-sponsors.js:26"
+ },
+ {
+  "k": "That is a season ticket, right there!",
+  "w": "24-sponsors.js:26"
+ },
+ {
+  "k": "Magnificent returns!",
+  "w": "24-sponsors.js:26"
+ },
+ {
+  "k": "I am paying for THIS?",
+  "w": "24-sponsors.js:26"
+ },
+ {
+  "k": "Refunds. Everyone wants refunds.",
+  "w": "24-sponsors.js:26"
+ },
+ {
+  "k": "Fight or I sell you to the mines.",
+  "w": "24-sponsors.js:26"
+ },
+ {
+  "k": "There goes my margin.",
+  "w": "24-sponsors.js:27"
+ },
+ {
+  "k": "Who scouted this one?",
+  "w": "24-sponsors.js:27"
+ },
+ {
+  "k": "My insurance!",
+  "w": "24-sponsors.js:27"
+ },
+ {
+  "k": "The masonry is NOT cheap!",
+  "w": "24-sponsors.js:27"
+ },
+ {
+  "k": "Time is money. This is neither.",
+  "w": "24-sponsors.js:27"
+ },
+ {
+  "k": "Wake me when it pays.",
+  "w": "24-sponsors.js:27"
+ },
+ {
+  "k": "As I invested.",
+  "w": "24-sponsors.js:27"
+ },
+ {
+  "k": "Bought low, cheering high.",
+  "w": "24-sponsors.js:27"
+ },
+ {
+  "k": "I will name a ship after this one.",
+  "w": "24-sponsors.js:27"
+ },
+ {
+  "k": "Priceless. And I know prices.",
+  "w": "24-sponsors.js:27"
+ },
+ {
+  "k": "How very fine.",
+  "w": "24-sponsors.js:28"
+ },
+ {
+  "k": "Charming.",
+  "w": "24-sponsors.js:28"
+ },
+ {
+  "k": "Yes, that will do.",
+  "w": "24-sponsors.js:28"
+ },
+ {
+  "k": "Oh! How deliciously vulgar!",
+  "w": "24-sponsors.js:28"
+ },
+ {
+  "k": "Darling, did you SEE that?",
+  "w": "24-sponsors.js:28"
+ },
+ {
+  "k": "Bravo! BRAVO!",
+  "w": "24-sponsors.js:28"
+ },
+ {
+  "k": "Throw them roses!",
+  "w": "24-sponsors.js:28"
+ },
+ {
+  "k": "Dreadful. Simply dreadful.",
+  "w": "24-sponsors.js:28"
+ },
+ {
+  "k": "Do they not know who is watching?",
+  "w": "24-sponsors.js:28"
+ },
+ {
+  "k": "How tiresome.",
+  "w": "24-sponsors.js:29"
+ },
+ {
+  "k": "Someone fetch my smelling salts.",
+  "w": "24-sponsors.js:29"
+ },
+ {
+  "k": "Good heavens!",
+  "w": "24-sponsors.js:29"
+ },
+ {
+  "k": "My dear!",
+  "w": "24-sponsors.js:29"
+ },
+ {
+  "k": "I have seen more passion at a tax hearing.",
+  "w": "24-sponsors.js:29"
+ },
+ {
+  "k": "Is it over yet?",
+  "w": "24-sponsors.js:29"
+ },
+ {
+  "k": "I did say so.",
+  "w": "24-sponsors.js:29"
+ },
+ {
+  "k": "Naturally.",
+  "w": "24-sponsors.js:29"
+ },
+ {
+  "k": "Oh, my heart…",
+  "w": "24-sponsors.js:29"
+ },
+ {
+  "k": "I shall weep at dinner.",
+  "w": "24-sponsors.js:29"
+ },
+ {
+  "k": "Solid work.",
+  "w": "24-sponsors.js:30"
+ },
+ {
+  "k": "Good form.",
+  "w": "24-sponsors.js:30"
+ },
+ {
+  "k": "Keep the shield up.",
+  "w": "24-sponsors.js:30"
+ },
+ {
+  "k": "HA! Like the Rhine campaign!",
+  "w": "24-sponsors.js:30"
+ },
+ {
+  "k": "That one would have made centurion!",
+  "w": "24-sponsors.js:30"
+ },
+ {
+  "k": "FOR ROME!",
+  "w": "24-sponsors.js:30"
+ },
+ {
+  "k": "THAT is a soldier!",
+  "w": "24-sponsors.js:30"
+ },
+ {
+  "k": "Hold the line — no, take it!",
+  "w": "24-sponsors.js:30"
+ },
+ {
+  "k": "Discipline, you dogs!",
+  "w": "24-sponsors.js:30"
+ },
+ {
+  "k": "My recruits fight harder asleep.",
+  "w": "24-sponsors.js:30"
+ },
+ {
+  "k": "Sloppy.",
+  "w": "24-sponsors.js:31"
+ },
+ {
+  "k": "Who trained this rabble?",
+  "w": "24-sponsors.js:31"
+ },
+ {
+  "k": "Ambush!",
+  "w": "24-sponsors.js:31"
+ },
+ {
+  "k": "By Mars!",
+  "w": "24-sponsors.js:31"
+ },
+ {
+  "k": "March faster.",
+  "w": "24-sponsors.js:31"
+ },
+ {
+  "k": "I have stood night watches with more excitement.",
+  "w": "24-sponsors.js:31"
+ },
+ {
+  "k": "Textbook.",
+  "w": "24-sponsors.js:31"
+ },
+ {
+  "k": "As drilled.",
+  "w": "24-sponsors.js:31"
+ },
+ {
+  "k": "A good death.",
+  "w": "24-sponsors.js:31"
+ },
+ {
+  "k": "The legion salutes you.",
+  "w": "24-sponsors.js:31"
+ },
+ {
+  "k": "The goddess approves.",
+  "w": "24-sponsors.js:32"
+ },
+ {
+  "k": "A fair omen.",
+  "w": "24-sponsors.js:32"
+ },
+ {
+  "k": "Even the gods laugh!",
+  "w": "24-sponsors.js:32"
+ },
+ {
+  "k": "Tanit is amused!",
+  "w": "24-sponsors.js:32"
+ },
+ {
+  "k": "The heavens roar!",
+  "w": "24-sponsors.js:32"
+ },
+ {
+  "k": "An offering worthy of the altar!",
+  "w": "24-sponsors.js:32"
+ },
+ {
+  "k": "You insult the gods!",
+  "w": "24-sponsors.js:32"
+ },
+ {
+  "k": "The omens darken!",
+  "w": "24-sponsors.js:32"
+ },
+ {
+  "k": "The entrails warned me.",
+  "w": "24-sponsors.js:33"
+ },
+ {
+  "k": "Sacrilege.",
+  "w": "24-sponsors.js:33"
+ },
+ {
+  "k": "A sign!",
+  "w": "24-sponsors.js:33"
+ },
+ {
+  "k": "The birds fly left!",
+  "w": "24-sponsors.js:33"
+ },
+ {
+  "k": "The gods grow restless.",
+  "w": "24-sponsors.js:33"
+ },
+ {
+  "k": "Even the sacred chickens are asleep.",
+  "w": "24-sponsors.js:33"
+ },
+ {
+  "k": "It was foretold.",
+  "w": "24-sponsors.js:33"
+ },
+ {
+  "k": "I read it in the smoke.",
+  "w": "24-sponsors.js:33"
+ },
+ {
+  "k": "The gods receive you.",
+  "w": "24-sponsors.js:33"
+ },
+ {
+  "k": "Go with the goddess.",
+  "w": "24-sponsors.js:33"
+ },
+ {
+  "k": "A fine stanza.",
+  "w": "24-sponsors.js:34"
+ },
+ {
+  "k": "Almost… lyrical.",
+  "w": "24-sponsors.js:34"
+ },
+ {
+  "k": "Comedy! Pure comedy!",
+  "w": "24-sponsors.js:34"
+ },
+ {
+  "k": "I shall write a satire!",
+  "w": "24-sponsors.js:34"
+ },
+ {
+  "k": "Sing, O Muse!",
+  "w": "24-sponsors.js:34"
+ },
+ {
+  "k": "An epic in a single blow!",
+  "w": "24-sponsors.js:34"
+ },
+ {
+  "k": "Odes! I need more tablets!",
+  "w": "24-sponsors.js:34"
+ },
+ {
+  "k": "Where is the drama?",
+  "w": "24-sponsors.js:34"
+ },
+ {
+  "k": "This scene needs rewriting.",
+  "w": "24-sponsors.js:34"
+ },
+ {
+  "k": "Clumsy prose.",
+  "w": "24-sponsors.js:35"
+ },
+ {
+  "k": "A tragedy, and not the good kind.",
+  "w": "24-sponsors.js:35"
+ },
+ {
+  "k": "What a twist!",
+  "w": "24-sponsors.js:35"
+ },
+ {
+  "k": "Not in my draft!",
+  "w": "24-sponsors.js:35"
+ },
+ {
+  "k": "Too long, too dull.",
+  "w": "24-sponsors.js:35"
+ },
+ {
+  "k": "Cut this act.",
+  "w": "24-sponsors.js:35"
+ },
+ {
+  "k": "I foresaw the ending.",
+  "w": "24-sponsors.js:35"
+ },
+ {
+  "k": "Rhymes with glory.",
+  "w": "24-sponsors.js:35"
+ },
+ {
+  "k": "Such pathos…",
+  "w": "24-sponsors.js:35"
+ },
+ {
+  "k": "I shall write your elegy.",
+  "w": "24-sponsors.js:35"
+ },
+ {
+  "k": "Nice move!",
+  "w": "24-sponsors.js:36"
+ },
+ {
+  "k": "The crowd likes that.",
+  "w": "24-sponsors.js:36"
+ },
+ {
+  "k": "What a SHOW!",
+  "w": "24-sponsors.js:36"
+ },
+ {
+  "k": "Crash! Beautiful!",
+  "w": "24-sponsors.js:36"
+ },
+ {
+  "k": "WHAT A RACE!",
+  "w": "24-sponsors.js:36"
+ },
+ {
+  "k": "ON YOUR FEET, NEMAUSUS!",
+  "w": "24-sponsors.js:36"
+ },
+ {
+  "k": "A lap of honor!",
+  "w": "24-sponsors.js:36"
+ },
+ {
+  "k": "BORING! Faster!",
+  "w": "24-sponsors.js:36"
+ },
+ {
+  "k": "Give them a show!",
+  "w": "24-sponsors.js:36"
+ },
+ {
+  "k": "Rookie mistake.",
+  "w": "24-sponsors.js:37"
+ },
+ {
+  "k": "Who taught them to steer?",
+  "w": "24-sponsors.js:37"
+ },
+ {
+  "k": "Whoa-ho!",
+  "w": "24-sponsors.js:37"
+ },
+ {
+  "k": "Mind the wall!",
+  "w": "24-sponsors.js:37"
+ },
+ {
+  "k": "I have seen livelier mules.",
+  "w": "24-sponsors.js:37"
+ },
+ {
+  "k": "Pick up the pace!",
+  "w": "24-sponsors.js:37"
+ },
+ {
+  "k": "Called it.",
+  "w": "24-sponsors.js:37"
+ },
+ {
+  "k": "All according to the script.",
+  "w": "24-sponsors.js:37"
+ },
+ {
+  "k": "A legend of the circus.",
+  "w": "24-sponsors.js:37"
+ },
+ {
+  "k": "They will sing of this lap.",
+  "w": "24-sponsors.js:37"
+ },
+ {
+  "k": "Not bad, dearie.",
+  "w": "24-sponsors.js:38"
+ },
+ {
+  "k": "Fresh as the morning catch.",
+  "w": "24-sponsors.js:38"
+ },
+ {
+  "k": "Hee hee! Serves him right!",
+  "w": "24-sponsors.js:38"
+ },
+ {
+  "k": "Oh, I needed that!",
+  "w": "24-sponsors.js:38"
+ },
+ {
+  "k": "Gut him like a mackerel!",
+  "w": "24-sponsors.js:38"
+ },
+ {
+  "k": "THAT is my kind of fishing!",
+  "w": "24-sponsors.js:38"
+ },
+ {
+  "k": "Soft as week-old squid.",
+  "w": "24-sponsors.js:38"
+ },
+ {
+  "k": "My grandsons hit harder.",
+  "w": "24-sponsors.js:38"
+ },
+ {
+  "k": "Oh, for Neptune’s sake.",
+  "w": "24-sponsors.js:39"
+ },
+ {
+  "k": "Seen better at the market.",
+  "w": "24-sponsors.js:39"
+ },
+ {
+  "k": "Mind my stall!",
+  "w": "24-sponsors.js:39"
+ },
+ {
+  "k": "Well I never!",
+  "w": "24-sponsors.js:39"
+ },
+ {
+  "k": "Wake me for the gutting.",
+  "w": "24-sponsors.js:39"
+ },
+ {
+  "k": "Slow as a Pola tide.",
+  "w": "24-sponsors.js:39"
+ },
+ {
+  "k": "Told you so, didn’t I?",
+  "w": "24-sponsors.js:39"
+ },
+ {
+  "k": "Old Histria knows.",
+  "w": "24-sponsors.js:39"
+ },
+ {
+  "k": "Poor lamb.",
+  "w": "24-sponsors.js:39"
+ },
+ {
+  "k": "The sea takes them all, in the end.",
+  "w": "24-sponsors.js:39"
+ },
+ {
+  "k": "🔑 The developer’s key is already turned. Re-lock it in Settings → Editors.",
+  "w": "24-sponsors.js:68"
+ },
+ {
+  "k": "🔑 <b>Unlocked.</b> The Editor creator and every city editor are yours — Creator Studio → 🎭 Editors.",
+  "w": "24-sponsors.js:68"
+ },
+ {
+  "k": "🎶 All sixteen themes are yours — the twelve cities and the four others. Settings → Audio.",
+  "w": "24-sponsors.js:70"
+ },
+ {
+  "k": "💰 <b>LUDUS.</b> +50 coin in {0}'s treasury.",
+  "w": "24-sponsors.js:72"
+ },
+ {
+  "k": "No lanista holds the wallet yet — open Manager mode first.",
+  "w": "24-sponsors.js:73"
+ },
+ {
+  "k": "💰 <b>LUDUS.</b> +50 coin in the active wallet’s treasury.",
+  "w": "24-sponsors.js:73"
+ },
+ {
+  "k": "No ludus to pay — open Manager mode first.",
+  "w": "24-sponsors.js:74"
+ },
+ {
+  "k": "🔑 Every city editor and the Editor creator unlocked without the need to win in each city",
+  "w": "24-sponsors.js:76"
+ },
+ {
+  "k": "🎶 All sixteen themes in Settings → Audio — the twelve cities and the four others",
+  "w": "24-sponsors.js:76"
+ },
+ {
+  "k": "💰 +50 coin to your ludus treasury (or the active wallet) — as often as you like",
+  "w": "24-sponsors.js:76"
+ },
+ {
+  "k": "🔑 Words of power",
+  "w": "24-sponsors.js:78"
+ },
+ {
+  "k": "Cheats. Press <b>C</b> on the main menu (on a phone or tablet: hold the version badge) and speak one. They stay hidden until you ask.",
+  "w": "24-sponsors.js:78"
+ },
+ {
+  "k": "🔑 Reveal the words",
+  "w": "24-sponsors.js:79"
+ },
+ {
+  "k": "🙈 Hide them again",
+  "w": "24-sponsors.js:83"
+ },
+ {
+  "k": "🔑 A voice from behind the curtain",
+  "w": "24-sponsors.js:86"
+ },
+ {
+  "k": "Speak it",
+  "w": "24-sponsors.js:86"
+ },
+ {
+  "k": "The curtain stays closed.",
+  "w": "24-sponsors.js:89"
+ },
+ {
+  "k": "Version — click to speak a word of power",
+  "w": "24-sponsors.js:91"
+ },
+ {
+  "k": "Flavius",
+  "w": "24-sponsors.js:99"
+ },
+ {
+  "k": "The city’s seated editor (default)",
+  "w": "24-sponsors.js:105"
+ },
+ {
+  "k": "🎭 Today's games are given by <b>{0}</b>, editor of the games{1}.",
+  "w": "24-sponsors.js:108"
+ },
+ {
+  "k": "🎭 <b>{0}</b>, editor of {1}, is unlocked — seat them in Settings → Editors to have them give the games there",
+  "w": "24-sponsors.js:111"
+ },
+ {
+  "k": "🎭 You have won in all twelve cities — the <b>Editor creator</b> is open in the Creator Studio!",
+  "w": "24-sponsors.js:112"
+ },
+ {
+  "k": "🔑 <b>Developer’s key turned</b> — every editor and the Editor creator are open regardless of wins.",
+  "w": "24-sponsors.js:117"
+ },
+ {
+  "k": "The <b>editor of the games</b> is the face in the framed box over the arena — the one who pays for the games, and the rulebook's own word for them. Flavius edits every city's games to begin with; <b>win a match as a human player</b> at a city and its own editor is <b>unlocked</b> — pick them for that city below to seat them in the box (and their name replaces Flavius in the herald’s lines). Win at all twelve and the <b>Editor creator</b> opens in the Creator Studio.",
+  "w": "24-sponsors.js:117"
+ },
+ {
+  "k": "({0}/12 cities won)",
+  "w": "24-sponsors.js:117"
+ },
+ {
+  "k": "editor: {0}",
+  "w": "24-sponsors.js:119"
+ },
+ {
+  "k": "Default (Flavius)",
+  "w": "24-sponsors.js:120"
+ },
+ {
+  "k": "The Editor creator is locked",
+  "w": "24-sponsors.js:128"
+ },
+ {
+  "k": "Win one match <b>as a human player</b> (not a simulation) in <b>every one of the twelve cities</b> to open it. Each win also seats that city's own editor in the box.",
+  "w": "24-sponsors.js:129"
+ },
+ {
+  "k": "The editors of the empire",
+  "w": "24-sponsors.js:131"
+ },
+ {
+  "k": "🔒 win at",
+  "w": "24-sponsors.js:131"
+ },
+ {
+  "k": "Design an editor for the framed box: their face, their colors and their <b>voice</b> — what they shout when the blood flows or the fight bores them. Use them for any city (Settings → Editors) or any custom event (Event Designer → Rounds &amp; rules).",
+  "w": "24-sponsors.js:135"
+ },
+ {
+  "k": "e.g. Marcia the Wine Queen",
+  "w": "24-sponsors.js:137"
+ },
+ {
+  "k": "Label on the frame",
+  "w": "24-sponsors.js:137"
+ },
+ {
+  "k": "Title",
+  "w": "24-sponsors.js:138"
+ },
+ {
+  "k": "Queen of the Falernian vineyards",
+  "w": "24-sponsors.js:138"
+ },
+ {
+  "k": "Skin",
+  "w": "24-sponsors.js:139"
+ },
+ {
+  "k": "Hair",
+  "w": "24-sponsors.js:139"
+ },
+ {
+  "k": "Long hair{0}",
+  "w": "24-sponsors.js:139"
+ },
+ {
+  "k": "Yes",
+  "w": "24-sponsors.js:139"
+ },
+ {
+  "k": "Full",
+  "w": "24-sponsors.js:140"
+ },
+ {
+  "k": "Flower crown",
+  "w": "24-sponsors.js:140"
+ },
+ {
+  "k": "Diadem",
+  "w": "24-sponsors.js:140"
+ },
+ {
+  "k": "Crested helm",
+  "w": "24-sponsors.js:140"
+ },
+ {
+  "k": "Turban",
+  "w": "24-sponsors.js:140"
+ },
+ {
+  "k": "In hand when thrilled{0}",
+  "w": "24-sponsors.js:141"
+ },
+ {
+  "k": "A goblet",
+  "w": "24-sponsors.js:141"
+ },
+ {
+  "k": "A scroll",
+  "w": "24-sponsors.js:141"
+ },
+ {
+  "k": "A fan",
+  "w": "24-sponsors.js:141"
+ },
+ {
+  "k": "A fistful of coin",
+  "w": "24-sponsors.js:141"
+ },
+ {
+  "k": "Robe trim",
+  "w": "24-sponsors.js:142"
+ },
+ {
+  "k": "Background (top)",
+  "w": "24-sponsors.js:142"
+ },
+ {
+  "k": "Background (bottom)",
+  "w": "24-sponsors.js:142"
+ },
+ {
+  "k": "Voice{0}",
+  "w": "24-sponsors.js:143"
+ },
+ {
+  "k": "Cruel editor (Flavius)",
+  "w": "24-sponsors.js:143"
+ },
+ {
+  "k": "Merchant",
+  "w": "24-sponsors.js:143"
+ },
+ {
+  "k": "Noble",
+  "w": "24-sponsors.js:143"
+ },
+ {
+  "k": "Old soldier",
+  "w": "24-sponsors.js:143"
+ },
+ {
+  "k": "Poet",
+  "w": "24-sponsors.js:143"
+ },
+ {
+  "k": "Showman",
+  "w": "24-sponsors.js:143"
+ },
+ {
+  "k": "Market crone",
+  "w": "24-sponsors.js:143"
+ },
+ {
+  "k": "Catchphrase when thrilled",
+  "w": "24-sponsors.js:144"
+ },
+ {
+  "k": "e.g. Pour the Falernian!",
+  "w": "24-sponsors.js:144"
+ },
+ {
+  "k": "Catchphrase when bored or angry",
+  "w": "24-sponsors.js:145"
+ },
+ {
+  "k": "e.g. I have seen grapes fight harder.",
+  "w": "24-sponsors.js:145"
+ },
+ {
+  "k": "Save editor",
+  "w": "24-sponsors.js:146"
+ },
+ {
+  "k": "Your editors · {0}",
+  "w": "24-sponsors.js:147"
+ },
+ {
+  "k": "Unnamed sponsor",
+  "w": "24-sponsors.js:149"
+ },
+ {
+  "k": "🎭 Saved <b>{0}</b> — assign them in Settings → Sponsors or on a custom event",
+  "w": "24-sponsors.js:158"
+ },
+ {
+  "k": "the harbor cranes swing behind the arena wall",
+  "w": "25-city.js:17"
+ },
+ {
+  "k": "the Harbor Square",
+  "w": "25-city.js:17"
+ },
+ {
+  "k": "cypress hills rise beyond the gate",
+  "w": "25-city.js:18"
+ },
+ {
+  "k": "the Piazza of the Two Rivers",
+  "w": "25-city.js:18"
+ },
+ {
+  "k": "legion veterans dice in the shade",
+  "w": "25-city.js:19"
+ },
+ {
+  "k": "the Veterans’ Forum",
+  "w": "25-city.js:19"
+ },
+ {
+  "k": "the oldest ludus in the empire looms next door",
+  "w": "25-city.js:20"
+ },
+ {
+  "k": "the Gladiators’ Market",
+  "w": "25-city.js:20"
+ },
+ {
+  "k": "heat shimmers over African sand",
+  "w": "25-city.js:21"
+ },
+ {
+  "k": "the Caravan Square",
+  "w": "25-city.js:21"
+ },
+ {
+  "k": "the Flavian amphitheater blots out the sun",
+  "w": "25-city.js:22"
+ },
+ {
+  "k": "the Forum before the Arena",
+  "w": "25-city.js:22"
+ },
+ {
+  "k": "chariot teams parade their colors",
+  "w": "25-city.js:23"
+ },
+ {
+  "k": "the Circus Yard",
+  "w": "25-city.js:23"
+ },
+ {
+  "k": "the mountain smokes gently to the north",
+  "w": "25-city.js:24"
+ },
+ {
+  "k": "the Palaestra Square",
+  "w": "25-city.js:24"
+ },
+ {
+  "k": "marble colonnades gleam against the sea",
+  "w": "25-city.js:25"
+ },
+ {
+  "k": "the Severan Colonnade",
+  "w": "25-city.js:25"
+ },
+ {
+  "k": "poets argue by the fountain",
+  "w": "25-city.js:26"
+ },
+ {
+  "k": "the Poets’ Court",
+  "w": "25-city.js:26"
+ },
+ {
+  "k": "gulls fight over the fish market",
+  "w": "25-city.js:27"
+ },
+ {
+  "k": "the Quay Market",
+  "w": "25-city.js:27"
+ },
+ {
+  "k": "grain ships crowd the harbor",
+  "w": "25-city.js:28"
+ },
+ {
+  "k": "the Harbor-master’s Square",
+  "w": "25-city.js:28"
+ },
+ {
+  "k": "THE ARENA",
+  "w": "25-city.js:31"
+ },
+ {
+  "k": "Arms market",
+  "w": "25-city.js:32"
+ },
+ {
+  "k": "Armorer",
+  "w": "25-city.js:33"
+ },
+ {
+  "k": "Bathhouse",
+  "w": "25-city.js:34"
+ },
+ {
+  "k": "Tavern",
+  "w": "25-city.js:35"
+ },
+ {
+  "k": "Lupanar",
+  "w": "25-city.js:36"
+ },
+ {
+  "k": "Auction block",
+  "w": "25-city.js:37"
+ },
+ {
+  "k": "<b>{0}</b><small>{1} of <b>{2}</b>{3}{4}</small>",
+  "w": "25-city.js:57"
+ },
+ {
+  "k": "· <b style=\"color:var(--gold2)\">fights here this week</b>",
+  "w": "25-city.js:57"
+ },
+ {
+  "k": "🎟 Ticket holders · Match Week",
+  "w": "25-city.js:60"
+ },
+ {
+  "k": "🏟 The stands of {0}",
+  "w": "25-city.js:60"
+ }
+]

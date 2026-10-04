@@ -26,19 +26,19 @@ function worldKey(){
 }
 /* WORLD_TYPES — world event types: icon, color and [headline, attendance change, mood change] stories. TWEAK: the effects. */
 const WORLD_TYPES={
-  politics:{i:'🏛️',c:'#c9a0dc',ev:[['Senate feud spills into the streets',-.05,-8],['An election year: candidates buy the games',.25,8],['A new governor wants to be loved',.18,6],['Proscription lists posted in the forum',-.2,-12]]},
-  military:{i:'⚔️',c:'#d24a3a',ev:[['The legions march north',-.18,-4],['Veterans return from the frontier',.15,10],['Barbarian raid on the border towns',-.25,-10],['A triumph through the city gates',.3,14]]},
-  economy:{i:'💰',c:'#d6ab4c',ev:[['The grain fleet arrives early',.15,8],['Silver shortage; coin clipped thin',-.1,-6],['Tax riots in the market',-.12,-10],['A merchant prince pays for the games',.28,7]]},
-  famine:{i:'🌾',c:'#b08a52',ev:[['Blight in the fields',-.25,-12],['Bread lines at dawn',-.2,-9]]},
-  geo:{i:'🌋',c:'#e0843a',ev:[['An earthquake cracks the aqueduct',-.3,-10],['The river floods the lower town',-.25,-8],['Ash falls from the mountain',-.35,-12]]},
-  plague:{i:'☠️',c:'#8fae6a',ev:[['Fever in the harbor district',-.35,-10],['Quarantine at the city gates',-.4,-8]]},
-  trade:{i:'⛵',c:'#5fc7c0',ev:[['Spice caravans reach the city',.1,6],['Pirates close the sea lanes',-.12,-6],['A new road opens to the provinces',.12,5]]},
+  politics:{i:'🏛️',c:'#c9a0dc',ev:[[_T('Senate feud spills into the streets'),-.05,-8],[_T('An election year: candidates buy the games'),.25,8],[_T('A new governor wants to be loved'),.18,6],[_T('Proscription lists posted in the forum'),-.2,-12]]},
+  military:{i:'⚔️',c:'#d24a3a',ev:[[_T('The legions march north'),-.18,-4],[_T('Veterans return from the frontier'),.15,10],[_T('Barbarian raid on the border towns'),-.25,-10],[_T('A triumph through the city gates'),.3,14]]},
+  economy:{i:'💰',c:'#d6ab4c',ev:[[_T('The grain fleet arrives early'),.15,8],[_T('Silver shortage; coin clipped thin'),-.1,-6],[_T('Tax riots in the market'),-.12,-10],[_T('A merchant prince pays for the games'),.28,7]]},
+  famine:{i:'🌾',c:'#b08a52',ev:[[_T('Blight in the fields'),-.25,-12],[_T('Bread lines at dawn'),-.2,-9]]},
+  geo:{i:'🌋',c:'#e0843a',ev:[[_T('An earthquake cracks the aqueduct'),-.3,-10],[_T('The river floods the lower town'),-.25,-8],[_T('Ash falls from the mountain'),-.35,-12]]},
+  plague:{i:'☠️',c:'#8fae6a',ev:[[_T('Fever in the harbor district'),-.35,-10],[_T('Quarantine at the city gates'),-.4,-8]]},
+  trade:{i:'⛵',c:'#5fc7c0',ev:[[_T('Spice caravans reach the city'),.1,6],[_T('Pirates close the sea lanes'),-.12,-6],[_T('A new road opens to the provinces'),.12,5]]},
 };
-WORLD_TYPES.volcano={i:'🌋',c:'#ff5a2a',ev:[['Vesuvius grumbles; ash on the wind',-.3,-10],['VESUVIUS ERUPTS',-.6,-22]]};
+WORLD_TYPES.volcano={i:'🌋',c:'#ff5a2a',ev:[[_T('Vesuvius grumbles; ash on the wind'),-.3,-10],[_T('VESUVIUS ERUPTS'),-.6,-22]]};
 /* WAR_TRIBES — enemies a war can bring. */
-const WAR_TRIBES=['the Marcomanni','the Quadi','Numidian raiders','the Garamantes','Ligurian hill clans','Illyrian pirates'];
+const WAR_TRIBES=[_T('the Marcomanni'),_T('the Quadi'),_T('Numidian raiders'),_T('the Garamantes'),_T('Ligurian hill clans'),_T('Illyrian pirates')];
 /* WAR_LEGIONS — Roman forces that hold the line. */
-const WAR_LEGIONS=['Legio II Augusta','Legio X Fretensis','Legio III Gallica','the city garrison','Legio VI Victrix'];
+const WAR_LEGIONS=[_T('Legio II Augusta'),_T('Legio X Fretensis'),_T('Legio III Gallica'),_T('the city garrison'),_T('Legio VI Victrix')];
 /* WORLD_CACHE — world events cached by key. */
 const WORLD_CACHE={};
 /* v0.26 THE WORLD EVOLVES: stories are no longer re-rolled each week. Every week (a "tick" on the empire's
@@ -70,7 +70,7 @@ function worldEvents(key=worldKey()){
   for(let b=T-5;b<=T;b++)for(const s of worldBorn(base,b)){const age=T-s.born;if(age>=s.dur)continue;
     // the arc: breaks one notch under its peak, holds, then eases in its final week
     const last=age===s.dur-1&&s.dur>1;const sev=clamp(age===0&&s.dur>2?s.peak-1:last?s.peak-1:s.peak,1,3);
-    const tag=s.dur===1?'this week only':age===0?'breaking':last?'easing':`week ${age+1} of ${s.dur}`;
+    const tag=s.dur===1?_T('this week only'):age===0?'breaking':last?'easing':_T`week ${age+1} of ${s.dur}`;
     const e={t:s.t,i:s.i,c:s.c,n:s.n,li:s.li,city:s.city,x:s.x,y:s.y,sev,age,dur:s.dur,tag,sid:s.id,
       att:s.att0*(0.6+sev*0.2),mood:Math.round(s.mood0*(0.6+sev*0.2)),reach:s.volc?(s.peak>=3?0.3:0.16):0.18+sev*0.05};
     if(s.war)e.war={foe:s.war.foe,rome:s.war.rome,ang:s.war.ang0+s.war.drift*age}; // the front line creeps week by week
@@ -87,7 +87,7 @@ function worldImpact(locIdx,key=worldKey()){
   return {att:clamp(att,-.6,.6),mood:clamp(Math.round(mood),-25,25),list,closed};
 }
 /* WX_DESC — weather descriptions for the map tooltips. */
-const WX_DESC={storm:'Thunderstorm — lightning and hard rain; crowds thin and augurs get busy.',rain:'Rain — wet sand and damp benches; the regulars still come.',heat:'Heatwave — scorching sun; the awnings (vela) go up and tempers run short.',fog:'Sea fog — a grey blanket off the water; the far stands can barely see the sand.',wind:'Hard wind — dust and snapping awnings; arrows and nets fly strangely.'};
+const WX_DESC={storm:_T('Thunderstorm — lightning and hard rain; crowds thin and augurs get busy.'),rain:_T('Rain — wet sand and damp benches; the regulars still come.'),heat:_T('Heatwave — scorching sun; the awnings (vela) go up and tempers run short.'),fog:_T('Sea fog — a grey blanket off the water; the far stands can barely see the sand.'),wind:_T('Hard wind — dust and snapping awnings; arrows and nets fly strangely.')};
 /* WEATHER_T — weather types: name and two colors. */
 const WEATHER_T={storm:{n:'Thunderstorm',c:'#e04a3a',c2:'#f0cf7d'},rain:{n:'Rain',c:'#3a7fd0',c2:'#6fd07a'},heat:{n:'Heatwave',c:'#f0843a',c2:'#f0cf7d'},fog:{n:'Sea fog',c:'#b8c0c8',c2:'#e8ecef'},wind:{n:'Hard wind',c:'#8fc3ea',c2:'#e8ecef'}};
 /* v0.26 SEASONAL WEATHER THAT MOVES: each week of the calendar is a month of the Roman year. Fronts form with the
@@ -133,14 +133,14 @@ const MAP_PX=(x,y)=>[clamp(x,0.02,0.98)*MAPW,clamp(y,0.02,0.98)*MAPH];
 const SEA_NODES={tyrrhenum:[.565,.42],fretum:[.665,.53],sinusAfr:[.50,.615],ligusticum:[.30,.31],syrticum:[.735,.78]};
 /* ROUTE_EDGES — the road and sea-lane graph between cities: [from, to, land | sea]. */
 const ROUTE_EDGES=[ // [from,to,'land'|'sea']
-  ['Verona','Pola','land'],['Verona','Roma','land'],['Roma','Capua','land'],['Capua','Pompeii','land'],
-  ['Pompeii','Puteoli','land'],['Puteoli','Roma','land'],['Arles','Nemausus','land'],['Arles','Verona','land'],
-  ['Uthina','Thysdrus','land'],['Thysdrus','Leptis Magna','land'],
-  ['Roma','tyrrhenum','sea'],['Puteoli','tyrrhenum','sea'],['Pompeii','tyrrhenum','sea'],
-  ['Nemausus','ligusticum','sea'],['Arles','ligusticum','sea'],['ligusticum','tyrrhenum','sea'],
-  ['tyrrhenum','fretum','sea'],['fretum','Syracusae','sea'],['tyrrhenum','sinusAfr','sea'],
-  ['sinusAfr','Uthina','sea'],['sinusAfr','Thysdrus','sea'],['fretum','syrticum','sea'],
-  ['syrticum','Leptis Magna','sea'],['Syracusae','syrticum','sea'],['Syracusae','sinusAfr','sea'],['Pola','Verona','land']];
+  [_T('Verona'),_T('Pola'),'land'],[_T('Verona'),_T('Roma'),'land'],[_T('Roma'),_T('Capua'),'land'],[_T('Capua'),_T('Pompeii'),'land'],
+  [_T('Pompeii'),_T('Puteoli'),'land'],[_T('Puteoli'),_T('Roma'),'land'],[_T('Arles'),_T('Nemausus'),'land'],[_T('Arles'),_T('Verona'),'land'],
+  [_T('Uthina'),_T('Thysdrus'),'land'],[_T('Thysdrus'),_T('Leptis Magna'),'land'],
+  [_T('Roma'),'tyrrhenum','sea'],[_T('Puteoli'),'tyrrhenum','sea'],[_T('Pompeii'),'tyrrhenum','sea'],
+  [_T('Nemausus'),'ligusticum','sea'],[_T('Arles'),'ligusticum','sea'],['ligusticum','tyrrhenum','sea'],
+  ['tyrrhenum','fretum','sea'],['fretum',_T('Syracusae'),'sea'],['tyrrhenum','sinusAfr','sea'],
+  ['sinusAfr',_T('Uthina'),'sea'],['sinusAfr',_T('Thysdrus'),'sea'],['fretum','syrticum','sea'],
+  ['syrticum',_T('Leptis Magna'),'sea'],[_T('Syracusae'),'syrticum','sea'],[_T('Syracusae'),'sinusAfr','sea'],[_T('Pola'),_T('Verona'),'land']];
 /* routeNodes — every route node's map position (cities and sea waypoints). */
 function routeNodes(){const nd={};for(const L of LOCATIONS)if(L)nd[L.n]=[L.x,L.y];for(const [k,v] of Object.entries(SEA_NODES))nd[k]=v;return nd}
 /* routePath — the shortest road/sea route between two cities (sea legs a little cheaper) → points, leg kinds. */
@@ -170,7 +170,7 @@ function routeSVG(fromCity,count,col,who){
     segs+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${col}" stroke-width="${w2}" stroke-opacity="${who?.8:.4}" stroke-linecap="round" ${R.kinds[i]==='sea'?'stroke-dasharray="7 9" class="flow"':'class="flowland"'}/>`;
     if(R.kinds[i]==='sea'&&!boat)boat=`<text x="${(a[0]+b[0])/2}" y="${(a[1]+b[1])/2}" font-size="15" text-anchor="middle">⛵</text>`}
   const [sx,sy]=px[0];
-  return `<g><title>${count} from ${esc(fromCity)}${who?` · for ${esc(who)}`:' · no allegiance yet'}${R.sea?' · by road and sail':' · by road'}</title>${segs}${boat}<circle cx="${sx}" cy="${sy}" r="${3+Math.min(6,count)}" fill="${col}" fill-opacity=".85"/></g>`;
+  return `<g><title>${_T`${count} from ${esc(fromCity)}${who?_T` · for ${esc(who)}`:_T(' · no allegiance yet')}${R.sea?_T(' · by road and sail'):_T(' · by road')}`}</title>${segs}${boat}<circle cx="${sx}" cy="${sy}" r="${3+Math.min(6,count)}" fill="${col}" fill-opacity=".85"/></g>`;
 }
 /* imperiumMapSVG — the Imperium map: weather, fans on the roads, world events, the war map and the city markers (closed arenas marked). */
 function imperiumMapSVG(key){
@@ -178,7 +178,7 @@ function imperiumMapSVG(key){
   let layers='';
   if(HUB.layers.weather){ // stronger cells, no radar: the sky reads at a glance
     layers+=`<g class="wx">${weatherCells(key).map((c,i)=>{const [x,y]=MAP_PX(c.x,c.y);const W=WEATHER_T[c.t];const R2=c.r*MAPW;
-      return `<radialGradient id="wg${i}"><stop offset="0" stop-color="${W.c2}" stop-opacity=".8"/><stop offset=".45" stop-color="${W.c}" stop-opacity=".6"/><stop offset="1" stop-color="${W.c}" stop-opacity="0"/></radialGradient><circle class="wxcell" cx="${x}" cy="${y}" r="${R2}" fill="url(#wg${i})"><title>${WX_DESC[c.t]||W.n}${c.here?' (over today\u2019s arena)':''}</title></circle><text class="wxico" x="${x}" y="${y+5}" text-anchor="middle" font-size="16" opacity=".9" style="cursor:help"><title>${WX_DESC[c.t]||W.n}${c.here?' (over today\u2019s arena)':''}</title>${{storm:'⛈',rain:'🌧',heat:'☀️',fog:'🌫',wind:'💨'}[c.t]||''}</text>`}).join('')}</g>`;
+      return `<radialGradient id="wg${i}"><stop offset="0" stop-color="${W.c2}" stop-opacity=".8"/><stop offset=".45" stop-color="${W.c}" stop-opacity=".6"/><stop offset="1" stop-color="${W.c}" stop-opacity="0"/></radialGradient><circle class="wxcell" cx="${x}" cy="${y}" r="${R2}" fill="url(#wg${i})"><title>${WX_DESC[c.t]||W.n}${c.here?_T(' (over today\u2019s arena)'):''}</title></circle><text class="wxico" x="${x}" y="${y+5}" text-anchor="middle" font-size="16" opacity=".9" style="cursor:help"><title>${WX_DESC[c.t]||W.n}${c.here?_T(' (over today\u2019s arena)'):''}</title>${{storm:'⛈',rain:'🌧',heat:'☀️',fog:'🌫',wind:'💨'}[c.t]||''}</text>`}).join('')}</g>`;
   }
   if(HUB.layers.fans){
     const flows={};
@@ -192,7 +192,7 @@ function imperiumMapSVG(key){
   if(HUB.layers.events){
     layers+=`<g class="wev">${worldEvents(key).filter(e=>e.t!=='military'||!HUB.layers.war).map(e=>{const [x,y]=MAP_PX(e.x,e.y);
       const ox=e.t==='volcano'?0:24,oy=e.t==='volcano'?0:-22; // icons sit up-and-right of their city; the volcano sits on the mountain itself
-      return `<g transform="translate(${x+ox} ${y+oy})" style="pointer-events:none"><circle class="wpulse" r="${9+e.sev*3}" fill="none" stroke="${e.c}" stroke-width="2"/><circle r="10" fill="#1c1410" stroke="${e.c}" stroke-width="1.6"/><text y="4.5" text-anchor="middle" font-size="12">${e.i}</text><title>${esc(e.n)} — ${esc(e.city)} (severity ${e.sev}): attendance ${e.att>=0?'+':''}${Math.round(e.att*100)}%, mood ${e.mood>=0?'+':''}${e.mood}${e.sev>=3?' · ARENA CLOSED while it lasts':''}</title></g>`}).join('')}</g>`;
+      return `<g transform="translate(${x+ox} ${y+oy})" style="pointer-events:none"><circle class="wpulse" r="${9+e.sev*3}" fill="none" stroke="${e.c}" stroke-width="2"/><circle r="10" fill="#1c1410" stroke="${e.c}" stroke-width="1.6"/><text y="4.5" text-anchor="middle" font-size="12">${e.i}</text><title>${_T`${esc(e.n)} — ${esc(e.city)} (severity ${e.sev}): attendance ${e.att>=0?'+':''}${Math.round(e.att*100)}%, mood ${e.mood>=0?'+':''}${e.mood}${e.sev>=3?_T(' · ARENA CLOSED while it lasts'):''}`}</title></g>`}).join('')}</g>`;
   }
   if(HUB.layers.war){ // the war map: who is pressing, who holds the line
     layers+=`<g class="warg">${worldEvents(key).filter(e=>e.war).map(e=>{const [x,y]=MAP_PX(e.x,e.y);const a=e.war.ang;const dx=Math.cos(a),dy=Math.sin(a);const R2=34+e.sev*10;
@@ -200,7 +200,7 @@ function imperiumMapSVG(key){
       const perp=[-dy,dx];const jag=[];const segs=7;
       for(let k=0;k<=segs;k++){const t=(k/segs-0.5)*2;jag.push([x+perp[0]*t*R2*1.4+dx*R2*0.35+(k%2?dx*7:-dx*7),y+perp[1]*t*R2*1.4+dy*R2*0.35+(k%2?dy*7:-dy*7)])}
       const d2=jag.map((p2,k)=>`${k?'L':'M'}${p2[0]} ${p2[1]}`).join('');
-      return `<g><title>${esc(e.n)} at ${esc(e.city)}: ${esc(e.war.foe)} press the walls; ${esc(e.war.rome)} hold the line. Severity ${e.sev}${e.sev>=3?' — the arena is CLOSED and the legions are calling men up':''}.</title>
+      return `<g><title>${esc(e.n)} at ${esc(e.city)}: ${esc(e.war.foe)} press the walls; ${esc(e.war.rome)} hold the line. Severity ${e.sev}${e.sev>=3?_T(' — the arena is CLOSED and the legions are calling men up'):''}.</title>
         <path d="${d2}" fill="none" stroke="#d24a3a" stroke-width="3.5" stroke-dasharray="3 4"/>
         <line x1="${fx2}" y1="${fy2}" x2="${x+dx*R2*0.5}" y2="${y+dy*R2*0.5}" stroke="#d24a3a" stroke-width="2.5" marker-end="" opacity=".8"/>
         <g transform="translate(${fx2} ${fy2})"><circle r="13" fill="#3a1512" stroke="#d24a3a" stroke-width="2"/><text y="5" text-anchor="middle" font-size="13">⚑</text><text y="24" text-anchor="middle" font-size="11.5" fill="#f2a497" font-family="IBM Plex Mono">${esc(e.war.foe)}</text></g>
@@ -208,25 +208,25 @@ function imperiumMapSVG(key){
   }
   const key2=key;
   const cities=LOCATIONS.map((L,i)=>{if(!L)return '';const [x,y]=MAP_PX(L.x,L.y);const on=i===F;const closed=worldImpact(i,key2).closed;
-    return `<g class="city" data-hubloc="${i}" style="cursor:pointer"><title>${esc(L.n)}${closed?' — ARENA CLOSED: '+esc(closed.n):''} — click to focus</title>${on?`<circle cx="${x}" cy="${y}" r="40" fill="none" stroke="#f0cf7d" stroke-width="4"/>`:''}<circle cx="${x}" cy="${y}" r="${on?32:27}" fill="${closed?'#5a2018':on?'#a3281f':'#2a1d13'}" stroke="${closed?'#ff5a44':on?'#f0cf7d':'#d6ab4c'}" stroke-width="2.2"/><text x="${x}" y="${y+1}" fill="#f5e8cc" font-size="${on?26:22}" font-weight="700" font-family="IBM Plex Mono, monospace" text-anchor="middle" dominant-baseline="middle" pointer-events="none">${closed?'🚫':i}</text></g>`}).join('');
-  return `<svg viewBox="0 0 ${MAPW} ${MAPH}" class="impmap" role="img" aria-label="Map of the empire"><image href="${typeof assetURL==='function'?assetURL('map.jpg'):'assets/map.jpg'}" width="${MAPW}" height="${MAPH}" opacity=".85"/>${layers}${cities}</svg>`;
+    return `<g class="city" data-hubloc="${i}" style="cursor:pointer"><title>${_T`${esc(L.n)}${closed?_T(' — ARENA CLOSED: ')+esc(closed.n):''} — click to focus`}</title>${on?`<circle cx="${x}" cy="${y}" r="40" fill="none" stroke="#f0cf7d" stroke-width="4"/>`:''}<circle cx="${x}" cy="${y}" r="${on?32:27}" fill="${closed?'#5a2018':on?'#a3281f':'#2a1d13'}" stroke="${closed?'#ff5a44':on?'#f0cf7d':'#d6ab4c'}" stroke-width="2.2"/><text x="${x}" y="${y+1}" fill="#f5e8cc" font-size="${on?26:22}" font-weight="700" font-family="IBM Plex Mono, monospace" text-anchor="middle" dominant-baseline="middle" pointer-events="none">${closed?'🚫':i}</text></g>`}).join('');
+  return `<svg viewBox="0 0 ${MAPW} ${MAPH}" class="impmap" role="img" aria-label="${_T`Map of the empire`}"><image href="${typeof assetURL==='function'?assetURL('map.jpg'):'assets/map.jpg'}" width="${MAPW}" height="${MAPH}" opacity=".85"/>${layers}${cities}</svg>`;
 }
 /* the focused city, as a framed tile worth reading */
 /* ---------- the city, up close (v0.20) ---------- */
 // small news a city talks about on its own: never moves the gate much, but sets the mood at the taverns
 /* small local news a city talks about. */
-const LOCAL_NEWS=[['🍞','The bakers’ guild is feuding with the millers again'],['🐟','The fish market smells of a good catch'],['🎭','A troupe of mimes has been thrown out of two taverns'],['💍','A senator’s daughter is to be married on the games’ eve'],['🐎','Someone’s prize horse got loose in the forum'],['🏛','The magistrates have repaved the arena road'],['🍷','The new vintage is in, and the whole town knows it'],['⚖️','A bookmaker was flogged for short odds'],['🔥','A kitchen fire in the potters’ quarter, nobody hurt'],['🎶','A famous lyre player is in town — the gladiators are jealous'],['🛒','Cloth merchants from the south fill the square'],['🐕','A pack of stray dogs has adopted the ushers'],['📜','Graffiti on the ludus wall names next week’s winner'],['🌾','The harvest came in early; the wine flows'],['🧹','The city fathers ordered the stands scrubbed'],['🪙','A hoard of old coin turned up under a tavern floor']];
+const LOCAL_NEWS=[['🍞',_T('The bakers’ guild is feuding with the millers again')],['🐟',_T('The fish market smells of a good catch')],['🎭',_T('A troupe of mimes has been thrown out of two taverns')],['💍',_T('A senator’s daughter is to be married on the games’ eve')],['🐎',_T('Someone’s prize horse got loose in the forum')],['🏛',_T('The magistrates have repaved the arena road')],['🍷',_T('The new vintage is in, and the whole town knows it')],['⚖️',_T('A bookmaker was flogged for short odds')],['🔥',_T('A kitchen fire in the potters’ quarter, nobody hurt')],['🎶',_T('A famous lyre player is in town — the gladiators are jealous')],['🛒',_T('Cloth merchants from the south fill the square')],['🐕',_T('A pack of stray dogs has adopted the ushers')],['📜',_T('Graffiti on the ludus wall names next week’s winner')],['🌾',_T('The harvest came in early; the wine flows')],['🧹',_T('The city fathers ordered the stands scrubbed')],['🪙',_T('A hoard of old coin turned up under a tavern floor')]];
 /* cityNews — 2–4 local news lines for a city this week (seeded by city + key). */
 function cityNews(locIdx,key){const R=mulberry32(hashStr('local'+locIdx+key));const n=2+Math.floor(R.next()*3);const out=[];const used=new Set();
   while(out.length<n){const k=Math.floor(R.next()*LOCAL_NEWS.length);if(used.has(k))continue;used.add(k);out.push(LOCAL_NEWS[k])}return out}
 /* cityMoodWord — a town mood number in words. */
-const cityMoodWord=mood=>mood>=12?'jubilant':mood>=5?'cheerful':mood>-5?'ordinary — bread, gossip, and the games':mood>-12?'sour':'grim';
+const cityMoodWord=mood=>mood>=12?'jubilant':mood>=5?'cheerful':mood>-5?_T('ordinary — bread, gossip, and the games'):mood>-12?'sour':'grim';
 // what a resident is doing right now — from the day's key and their own habits
 /* whereabouts — what a resident is doing right now (in the stands, staying away, at the baths…), seeded by their id + key. */
-function whereabouts(reg,key,live){const R=mulberry32(hashStr(reg.id+key));const lore=typeof specLore==='function'?specLore(reg):{snack:'olives',district:'the forum'};
-  if(live&&S.spect.some(x=>x.rid===reg.id&&!x.gone))return `in the stands, ${['on their feet','eating '+lore.snack,'arguing with the usher','shouting themselves hoarse','placing a small bet'][Math.floor(R.next()*5)]}`;
-  if(reg.quit)return `staying away — ${reg.quit.reason}`;if(reg.banned)return 'barred at the gate, loudly';if(reg.ticket)return 'clutching a ticket for the next games';
-  return ['haggling in the market','asleep in the baths','at the tavern, betting on tomorrow','queuing for the grain dole','watching the ludus train from the wall','mending nets by the harbor','at the temple, buying an omen','walking the dog around '+lore.district,'eating '+lore.snack+' by the fountain','telling the story of the last games, again'][Math.floor(R.next()*10)]}
+function whereabouts(reg,key,live){const R=mulberry32(hashStr(reg.id+key));const lore=typeof specLore==='function'?specLore(reg):{snack:'olives',district:_T('the forum')};
+  if(live&&S.spect.some(x=>x.rid===reg.id&&!x.gone))return _T`in the stands, ${[_T('on their feet'),'eating '+lore.snack,_T('arguing with the usher'),_T('shouting themselves hoarse'),_T('placing a small bet')][Math.floor(R.next()*5)]}`;
+  if(reg.quit)return _T`staying away — ${reg.quit.reason}`;if(reg.banned)return _T('barred at the gate, loudly');if(reg.ticket)return _T('clutching a ticket for the next games');
+  return [_T('haggling in the market'),_T('asleep in the baths'),_T('at the tavern, betting on tomorrow'),_T('queuing for the grain dole'),_T('watching the ludus train from the wall'),_T('mending nets by the harbor'),_T('at the temple, buying an omen'),_T('walking the dog around ')+lore.district,'eating '+lore.snack+_T(' by the fountain'),_T('telling the story of the last games, again')][Math.floor(R.next()*10)]}
 /* localHeroes — the top 5 fighters tied to a city (rating + fans). */
 function localHeroes(location){ // top 5 fighters tied to this city: rated best, most beloved
   const w=typeof mgrWorldAny==='function'?mgrWorldAny():null;const fans={};for(const r of CROWD_CACHE){for(const n of [r.fanOf,r.patronFav,r.kin&&r.kin.name])if(n)fans[String(n).toLowerCase()]=(fans[String(n).toLowerCase()]||0)+1}
@@ -244,23 +244,23 @@ function cityTileHTML(key){
   const residents=CROWD_CACHE.filter(r=>r.city===L.n&&!r.recruited);const news=cityNews(F,key);const mood=imp.mood+(live?Math.round(S.spect.reduce((a,x)=>a+x.mood,0)/S.spect.length/4):0);
   const heroes=localHeroes(L);const B=CITY_BEASTS[L.n];
   const notable=live?S.spect.filter(x=>!x.gone&&!x.human).map(sp=>{const r=CROWD_CACHE.find(y=>y.id===sp.rid);
-      const tags=[sp.glad?`🗡 fighter for ${esc(sp.glad.ludus)}`:'',r&&r.kin?`👪 ${esc(r.kin.rel)} of ${esc(r.kin.name)}`:'',r&&r.custom?'✦ your creation':'',r&&r.exGlad?'ex-gladiator':'',sp.ticketed||(r&&r.ticketed)?'🎟 ticketed':''].filter(Boolean);
+      const tags=[sp.glad?_T`🗡 fighter for ${esc(sp.glad.ludus)}`:'',r&&r.kin?_T`👪 ${esc(r.kin.rel)} of ${esc(r.kin.name)}`:'',r&&r.custom?_T('✦ your creation'):'',r&&r.exGlad?'ex-gladiator':'',sp.ticketed||(r&&r.ticketed)?'🎟 ticketed':''].filter(Boolean);
       return tags.length?`<div>${specFaceSVG(sp.look)} <b>${esc(sp.name)}</b> <span class="rc-sub">${tags.join(' · ')}</span></div>`:''}).filter(Boolean):[];
   return `<div class="citytile">
-    <div class="ct-head"><span class="ct-num">${F}</span><div><b>${esc(L.n)}${typeof CITY_FLAG!=='undefined'&&CITY_FLAG[L.n]&&typeof flagURIk==='function'?` <img class="flagchip" src="${flagURIk(CITY_FLAG[L.n])}" style="height:15px;vertical-align:-2px" alt="" title="The banner of ${esc(L.n)} — its people rep it in the stands and the square">`:''}</b><div class="rc-sub">${EVENTS[L.ev]?EVENTS[L.ev].n:''} · ${live&&!S.over?'<span class="badge gold">event on the sand</span>':imp.closed?`<span class="badge bad">🚫 ARENA CLOSED — ${esc(imp.closed.n)}</span>`:'the sand rests'}</div></div>
-      <span class="ct-wx" title="${wx?WX_DESC[wx.t]||WEATHER_T[wx.t].n:'Fair skies — clear and calm'}">${wx?{storm:'⛈',rain:'🌧',heat:'☀️',fog:'🌫',wind:'💨'}[wx.t]:'☀️'}</span></div>
-    <div class="acts" style="margin:6px 0">${(()=>{const why=typeof citySquareGate==='function'?citySquareGate(F):null;return why?`<button class="btn tksm" type="button" disabled title="${esc(why)}">🔒 City square closed to you<small>${esc(why)}</small></button>`:`<button class="btn primary tksm" type="button" data-ct="square" data-li="${F}">🏛 Visit the city square<small>walk it — the crowd, the shops, the auction block</small></button>`})()}</div>
+    <div class="ct-head"><span class="ct-num">${F}</span><div><b>${esc(L.n)}${typeof CITY_FLAG!=='undefined'&&CITY_FLAG[L.n]&&typeof flagURIk==='function'?` <img class="flagchip" src="${flagURIk(CITY_FLAG[L.n])}" style="height:15px;vertical-align:-2px" alt="" title="${_T`The banner of ${esc(L.n)} — its people rep it in the stands and the square`}">`:''}</b><div class="rc-sub">${EVENTS[L.ev]?EVENTS[L.ev].n:''} · ${live&&!S.over?_T('<span class="badge gold">event on the sand</span>'):imp.closed?`<span class="badge bad">${_T`🚫 ARENA CLOSED — ${esc(imp.closed.n)}`}</span>`:_T('the sand rests')}</div></div>
+      <span class="ct-wx" title="${wx?WX_DESC[wx.t]||WEATHER_T[wx.t].n:_T('Fair skies — clear and calm')}">${wx?{storm:'⛈',rain:'🌧',heat:'☀️',fog:'🌫',wind:'💨'}[wx.t]:'☀️'}</span></div>
+    <div class="acts" style="margin:6px 0">${(()=>{const why=typeof citySquareGate==='function'?citySquareGate(F):null;return why?`<button class="btn tksm" type="button" disabled title="${esc(why)}">${_T`🔒 City square closed to you<small>${esc(why)}</small>`}</button>`:`<button class="btn primary tksm" type="button" data-ct="square" data-li="${F}">${_T`🏛 Visit the city square<small>walk it — the crowd, the shops, the auction block</small>`}</button>`})()}</div>
     ${LC?`<p class="rc-sub" style="margin:4px 0">${esc(LC.n)}</p>`:''}
-    <div class="ct-row"><span title="Named regulars who call this city home">🏠 ${residents.length}K spectators</span><span title="From world events">🎟 ${imp.att>=0?'+':''}${Math.round(imp.att*100)}% attendance</span><span title="The mood around town">😐 ${esc(cityMoodWord(mood))}</span></div>
-    <div class="sect">🏛 The city today</div>
-    <div style="font-size:12px;display:grid;gap:2px">${imp.list.map(e=>`<div>${e.i} <b>${esc(e.n)}</b>${e.k<1?' <span class="rc-sub">(felt from '+esc(e.city)+')</span>':''}${e.war?` — <span style="color:#f2a497">${esc(e.war.foe)}</span> vs <span style="color:#bcd6ea">${esc(e.war.rome)}</span>`:''}</div>`).join('')}${news.map(([i,t])=>`<div>${i} ${esc(t)}</div>`).join('')}</div>
+    <div class="ct-row"><span title="${_T`Named regulars who call this city home`}">${_T`🏠 ${residents.length}K spectators`}</span><span title="${_T`From world events`}">🎟 ${imp.att>=0?'+':''}${Math.round(imp.att*100)}% attendance</span><span title="${_T`The mood around town`}">😐 ${esc(cityMoodWord(mood))}</span></div>
+    <div class="sect">${_T`🏛 The city today`}</div>
+    <div style="font-size:12px;display:grid;gap:2px">${imp.list.map(e=>`<div>${e.i} <b>${esc(e.n)}</b>${e.k<1?_T(' <span class="rc-sub">(felt from ')+esc(e.city)+')</span>':''}${e.war?` — <span style="color:#f2a497">${esc(e.war.foe)}</span> vs <span style="color:#bcd6ea">${esc(e.war.rome)}</span>`:''}</div>`).join('')}${news.map(([i,t])=>`<div>${i} ${esc(t)}</div>`).join('')}</div>
     ${typeof standsDrawerHTML==='function'?`<div class="ctchron">${standsDrawerHTML({li:F,chronOnly:1})}</div>`:''}
-    <div class="sect">🏟 The stands</div>
-    ${A&&(A.events||0)?`<div class="ct-row"><span>${A.events} events held</span><span>✝ ${A.elims||0} fallen</span><span>🍯 ${A.conc||0} concessions</span>${A.spears?`<span>🔱 ${A.spears} speared</span>`:''}${A.brawls?`<span>👊 ${A.brawls} brawls</span>`:''}</div>${A.spearLast?`<p class="rc-sub" style="margin:2px 0 0">Last speared here: <b>${esc(A.spearLast.name)}</b>, by ${esc(A.spearLast.by)}.</p>`:''}`:'<p class="rc-sub" style="margin:2px 0 0">No games on record here yet.</p>'}
+    <div class="sect">${_T`🏟 The stands`}</div>
+    ${A&&(A.events||0)?`<div class="ct-row">${_T`<span>${A.events} events held</span><span>✝ ${A.elims||0} fallen</span><span>🍯 ${A.conc||0} concessions</span>${A.spears?_T`<span>🔱 ${A.spears} speared</span>`:''}${A.brawls?_T`<span>👊 ${A.brawls} brawls</span>`:''}`}</div>${A.spearLast?`<p class="rc-sub" style="margin:2px 0 0">${_T`Last speared here: <b>${esc(A.spearLast.name)}</b>, by ${esc(A.spearLast.by)}.`}</p>`:''}`:'<p class="rc-sub" style="margin:2px 0 0">No games on record here yet.</p>'}
     ${B?`<p class="rc-sub" style="margin:4px 0 0">The pens: ${esc(B.Ursa)} &amp; ${esc(B.Brutum)} (bears), ${esc(B.Valencia)} &amp; ${esc(B.Moechus)} (wolves), ${esc(B.Glykon)} &amp; ${esc(B.Arenosus)} (snakes); the lions ${esc(B.Leo)} &amp; ${esc(B.Leaena)}; the champion <b>${esc(B.Commodus)}</b>.</p>`:''}
-    ${live?`<div class="sect">In the stands now · ${S.spect.length}K spectators</div>${notable.length?`<div style="font-size:12.5px;display:grid;gap:3px;max-height:120px;overflow:auto">${notable.join('')}</div>`:'<p class="rc-sub" style="margin:0">No kin, creations, ticket-holders or off-duty fighters — just the city.</p>'}${S.famous?`<p style="margin:4px 0 0">👑 <b>${esc(S.famous.n)}</b> — ${esc(S.famous.who)} (${S.famous.eff}).</p>`:''}`:''}
-    <div class="sect">🏆 Local heroes</div>${heroes.length?`<div style="font-size:12.5px;display:grid;gap:2px">${heroes.map((h,i)=>`<div>${RN(i+1)}. <b>${esc(h.name)}</b> <span class="stars">${'★'.repeat(h.stars)}</span> <span class="rc-sub">${CLASSES[h.cls]?CLASSES[h.cls].name:h.cls} · ${esc(h.src)} · ${h.fans}K fans</span></div>`).join('')}</div>`:'<p class="rc-sub" style="margin:0">No fighter of note calls this city home yet.</p>'}
-    <div class="sect">🏠 Who lives here · what they are up to</div>${residents.length?`<div style="font-size:12px;display:grid;gap:2px;max-height:150px;overflow:auto">${residents.slice(0,20).map(r=>`<div class="sprow" data-spid="${esc(r.id)}" style="padding:2px 0">${specFaceSVG(r.look)}<span><b>${esc(r.name)}</b> <span class="rc-sub">— ${esc(whereabouts(r,key,live))}</span></span></div>`).join('')}</div>`:'<p class="rc-sub" style="margin:0">Nobody named lives here yet — hold games and the neighborhood forms.</p>'}
+    ${live?`<div class="sect">${_T`In the stands now · ${S.spect.length}K spectators`}</div>${notable.length?`<div style="font-size:12.5px;display:grid;gap:3px;max-height:120px;overflow:auto">${notable.join('')}</div>`:'<p class="rc-sub" style="margin:0">No kin, creations, ticket-holders or off-duty fighters — just the city.</p>'}${S.famous?`<p style="margin:4px 0 0">👑 <b>${esc(S.famous.n)}</b> — ${esc(S.famous.who)} (${S.famous.eff}).</p>`:''}`:''}
+    <div class="sect">${_T`🏆 Local heroes`}</div>${heroes.length?`<div style="font-size:12.5px;display:grid;gap:2px">${heroes.map((h,i)=>`<div>${RN(i+1)}. <b>${esc(h.name)}</b> <span class="stars">${'★'.repeat(h.stars)}</span> <span class="rc-sub">${_T`${CLASSES[h.cls]?CLASSES[h.cls].name:h.cls} · ${esc(h.src)} · ${h.fans}K fans`}</span></div>`).join('')}</div>`:'<p class="rc-sub" style="margin:0">No fighter of note calls this city home yet.</p>'}
+    <div class="sect">${_T`🏠 Who lives here · what they are up to`}</div>${residents.length?`<div style="font-size:12px;display:grid;gap:2px;max-height:150px;overflow:auto">${residents.slice(0,20).map(r=>`<div class="sprow" data-spid="${esc(r.id)}" style="padding:2px 0">${specFaceSVG(r.look)}<span><b>${esc(r.name)}</b> <span class="rc-sub">— ${esc(whereabouts(r,key,live))}</span></span></div>`).join('')}</div>`:'<p class="rc-sub" style="margin:0">Nobody named lives here yet — hold games and the neighborhood forms.</p>'}
   </div>`;
 }
 /* imperiumHTML — the Imperium window: empire strip, layered map, top world stories, family ties, and the city tile or the spectator roster. */
@@ -271,12 +271,12 @@ function imperiumHTML(){
   const dt=typeof calNow==='function'?(()=>{const c=calNow();return empireDate(c.season,c.week)})():null;
   const nReg=CROWD_CACHE.filter(r=>!r.recruited).length;const vt=(k,l)=>`<button type="button" data-hubview="${k}" class="${HUB.view===k?'on':''}">${l}</button>`;
   return `${typeof empireStripHTML==='function'?empireStripHTML():''}<div class="impgrid">
-   <div class="impleft"><div class="seg" style="margin-bottom:6px">${tog('fans','👥 Fans & roads')}${tog('weather','🌦 Weather')}${tog('events','📯 World events')}${tog('war','⚔️ War map')}</div>
+   <div class="impleft"><div class="seg" style="margin-bottom:6px">${tog('fans','👥 Fans & roads')}${tog('weather',_T('🌦 Weather'))}${tog('events',_T('📯 World events'))}${tog('war',_T('⚔️ War map'))}</div>
     ${imperiumMapSVG(key)}
-    <p class="rc-sub" style="margin:4px 0 0">Click a city to focus it. Hover the weather for the sky. Fans travel the roads (solid) and the sea lanes (dashed, ⛵), colored by whom they cheer.${live&&S.turnoutWhy?` Today's turnout: ${S.turnoutWhy.join(', ')}.`:''}</p>
-    <div class="sect">🌍 The empire today${typeof EMPIRE_FLAG!=='undefined'&&typeof houseFlagURI==='function'?` <img class="flagchip" src="${houseFlagURI(EMPIRE_FLAG)}" style="height:14px;vertical-align:-2px" alt="" title="The empire's one banner — S·P·Q·R, over every city banner, every house banner, every family">`:''} · top 10${dt?` <span class="rc-sub">· 📅 ${esc(dt.short)}</span>`:''}</div>
-    <div style="font-size:12.5px;display:grid;gap:3px;max-height:220px;overflow:auto">${evs.map(e=>`<div>${e.i} <b>${esc(e.n)}</b> <span class="rc-sub">· ${esc(e.city)} · severity ${'●'.repeat(e.sev)}${'○'.repeat(3-e.sev)}${e.tag?` · <i>${esc(e.tag)}</i>`:''} · gate ${e.att>=0?'+':''}${Math.round(e.att*100)}%, mood ${e.mood>=0?'+':''}${e.mood}${e.sev>=3?' · <b style="color:var(--blood2)">major</b>':''}</span></div>`).join('')}</div>${typeof familyTiesHTML==='function'?familyTiesHTML():''}</div>
-   <div><div class="seg" style="margin-bottom:6px">${vt('city','🏙 '+esc(LOCATIONS[F]?LOCATIONS[F].n:'City'))}${vt('roster',`👥 Spectator roster · ${nReg}`)}</div>
+    <p class="rc-sub" style="margin:4px 0 0">${_T`Click a city to focus it. Hover the weather for the sky. Fans travel the roads (solid) and the sea lanes (dashed, ⛵), colored by whom they cheer.${live&&S.turnoutWhy?_T` Today's turnout: ${S.turnoutWhy.join(', ')}.`:''}`}</p>
+    <div class="sect">${_T`🌍 The empire today${typeof EMPIRE_FLAG!=='undefined'&&typeof houseFlagURI==='function'?` <img class="flagchip" src="${houseFlagURI(EMPIRE_FLAG)}" style="height:14px;vertical-align:-2px" alt="" title="${_T`The empire's one banner — S·P·Q·R, over every city banner, every house banner, every family`}">`:''} · top 10${dt?` <span class="rc-sub">· 📅 ${esc(dt.short)}</span>`:''}`}</div>
+    <div style="font-size:12.5px;display:grid;gap:3px;max-height:220px;overflow:auto">${evs.map(e=>`<div>${e.i} <b>${esc(e.n)}</b> <span class="rc-sub">${_T`· ${esc(e.city)} · severity ${'●'.repeat(e.sev)}${'○'.repeat(3-e.sev)}${e.tag?` · <i>${esc(e.tag)}</i>`:''} · gate ${e.att>=0?'+':''}${Math.round(e.att*100)}%, mood ${e.mood>=0?'+':''}${e.mood}${e.sev>=3?' · <b style="color:var(--blood2)">major</b>':''}`}</span></div>`).join('')}</div>${typeof familyTiesHTML==='function'?familyTiesHTML():''}</div>
+   <div><div class="seg" style="margin-bottom:6px">${vt('city','🏙 '+esc(LOCATIONS[F]?LOCATIONS[F].n:_T('City')))}${vt('roster',_T`👥 Spectator roster · ${nReg}`)}</div>
     ${HUB.view==='roster'&&typeof standsRosterViewHTML==='function'?standsRosterViewHTML():cityTileHTML(key)}
    </div></div>`;
 }

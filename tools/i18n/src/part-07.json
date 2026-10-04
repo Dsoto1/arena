@@ -1,0 +1,2042 @@
+[
+ {
+  "k": "🏛 No pillars yet — the Blessings sit on pillars.",
+  "w": "15-custom.js:772"
+ },
+ {
+  "k": "🎲 {0} blessing{1} shuffled across the pillars — each one different — tune any of them below.",
+  "w": "15-custom.js:776"
+ },
+ {
+  "k": "✚ {0} different blessings placed — tune each one in the list.",
+  "w": "15-custom.js:778"
+ },
+ {
+  "k": "Stands:",
+  "w": "16-crowd.js:17"
+ },
+ {
+  "k": "light gray",
+  "w": "16-crowd.js:30"
+ },
+ {
+  "k": "dark gray",
+  "w": "16-crowd.js:31"
+ },
+ {
+  "k": "{0} named regular{1} in the seats — each stands for about a thousand Romans: {2} spectators today",
+  "w": "16-crowd.js:62"
+ },
+ {
+  "k": "Dry sand, an easy crowd.",
+  "w": "16-crowd.js:70"
+ },
+ {
+  "k": "The upper tiers empty early and tempers fray.",
+  "w": "16-crowd.js:71"
+ },
+ {
+  "k": "Only the devoted sit through it.",
+  "w": "16-crowd.js:72"
+ },
+ {
+  "k": "The whole city pours in, garlanded and loud.",
+  "w": "16-crowd.js:73"
+ },
+ {
+  "k": "The crowd is still drunk on glory (and wine).",
+  "w": "16-crowd.js:74"
+ },
+ {
+  "k": "Half the benches sit empty.",
+  "w": "16-crowd.js:75"
+ },
+ {
+  "k": "Full bellies, generous moods.",
+  "w": "16-crowd.js:76"
+ },
+ {
+  "k": "The crowd came to see somebody else suffer for a change.",
+  "w": "16-crowd.js:77"
+ },
+ {
+  "k": "The city honors its own.",
+  "w": "16-crowd.js:78"
+ },
+ {
+  "k": "The augurs frown; the city is uneasy.",
+  "w": "16-crowd.js:79"
+ },
+ {
+  "k": "a good omen",
+  "w": "16-crowd.js:84"
+ },
+ {
+  "k": "an ill omen",
+  "w": "16-crowd.js:84"
+ },
+ {
+  "k": "a neutral sky",
+  "w": "16-crowd.js:84"
+ },
+ {
+  "k": "Attendance {0}.",
+  "w": "16-crowd.js:90"
+ },
+ {
+  "k": "hometown crowd",
+  "w": "16-crowd.js:92"
+ },
+ {
+  "k": "{0} fights before their home city of {1}: the stands roar their name (+2 CF).",
+  "w": "16-crowd.js:92"
+ },
+ {
+  "k": "The omen hangs over {0}, {1}'s own: the home crowd is silent (−1 CF).",
+  "w": "16-crowd.js:93"
+ },
+ {
+  "k": "the baker",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the tanner",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the scribe",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the potter",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the midwife",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the wine merchant",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the stonecutter",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the weaver",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the barber",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the moneylender",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the cook",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the sailor",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the dyer",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the perfumer",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the widow",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the schoolmaster",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "the olive presser",
+  "w": "16-crowd.js:116"
+ },
+ {
+  "k": "madder red",
+  "w": "16-crowd.js:133"
+ },
+ {
+  "k": "Tyrian purple",
+  "w": "16-crowd.js:133"
+ },
+ {
+  "k": "undyed wool",
+  "w": "16-crowd.js:133"
+ },
+ {
+  "k": "weld green",
+  "w": "16-crowd.js:133"
+ },
+ {
+  "k": "woad blue",
+  "w": "16-crowd.js:133"
+ },
+ {
+  "k": "bleached white",
+  "w": "16-crowd.js:133"
+ },
+ {
+  "k": "walnut brown",
+  "w": "16-crowd.js:133"
+ },
+ {
+  "k": "A ticket costs 2 coin from an active lanista’s treasury —",
+  "w": "16-crowd.js:138"
+ },
+ {
+  "k": "yours is too light",
+  "w": "16-crowd.js:138"
+ },
+ {
+  "k": "<b>{0}</b> arrives with a ticket{1} — an usher moves a stranger to the cheap seats.",
+  "w": "16-crowd.js:144"
+ },
+ {
+  "k": "A ticket for <b>{0}</b>{1}: guaranteed a seat at the next event.",
+  "w": "16-crowd.js:145"
+ },
+ {
+  "k": "Brawlers",
+  "w": "16-crowd.js:235"
+ },
+ {
+  "k": "loves a gladiator who goes for the throat",
+  "w": "16-crowd.js:235"
+ },
+ {
+  "k": "Beast hunters",
+  "w": "16-crowd.js:235"
+ },
+ {
+  "k": "loves trophies from the beasts",
+  "w": "16-crowd.js:235"
+ },
+ {
+  "k": "Showmen",
+  "w": "16-crowd.js:235"
+ },
+ {
+  "k": "loves pots, spectacle and crowd-pleasers",
+  "w": "16-crowd.js:235"
+ },
+ {
+  "k": "High rollers",
+  "w": "16-crowd.js:235"
+ },
+ {
+  "k": "loves rich gladiators and big market buys",
+  "w": "16-crowd.js:235"
+ },
+ {
+  "k": "Survivors",
+  "w": "16-crowd.js:235"
+ },
+ {
+  "k": "loves the patient, careful fighter",
+  "w": "16-crowd.js:235"
+ },
+ {
+  "k": "Honor",
+  "w": "16-crowd.js:235"
+ },
+ {
+  "k": "loves loyal allies and fair trades",
+  "w": "16-crowd.js:235"
+ },
+ {
+  "k": "Underdogs",
+  "w": "16-crowd.js:235"
+ },
+ {
+  "k": "always cheers for whoever is losing",
+  "w": "16-crowd.js:235"
+ },
+ {
+  "k": "throws stones quickly when angry",
+  "w": "16-crowd.js:237"
+ },
+ {
+  "k": "Generous",
+  "w": "16-crowd.js:237"
+ },
+ {
+  "k": "showers a favorite with offerings",
+  "w": "16-crowd.js:237"
+ },
+ {
+  "k": "Fickle",
+  "w": "16-crowd.js:237"
+ },
+ {
+  "k": "switches favorites and sections easily",
+  "w": "16-crowd.js:237"
+ },
+ {
+  "k": "Loyal",
+  "w": "16-crowd.js:237"
+ },
+ {
+  "k": "sticks with one gladiator to the end",
+  "w": "16-crowd.js:237"
+ },
+ {
+  "k": "Bloodthirsty",
+  "w": "16-crowd.js:237"
+ },
+ {
+  "k": "happy at any bloodshed, bored without it",
+  "w": "16-crowd.js:237"
+ },
+ {
+  "k": "hoards CF for the big moments",
+  "w": "16-crowd.js:237"
+ },
+ {
+  "k": "Old Marcus the baker",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "Flavia of the fish stalls",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "Gaius the tanner",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "Vibia and her sister",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "Big Sextus",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "The widow Cornelia",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "Lucius the drunk",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "Little Titus",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "Aelia the midwife",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "Brother Quintus",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "Decimus One-Eye",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "Livia the gossip",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "Rufus the butcher",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "Servius the scribe",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "Tertia the weaver",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "Publius the potter",
+  "w": "16-crowd.js:239"
+ },
+ {
+  "k": "He came for glory",
+  "w": "16-crowd.js:242"
+ },
+ {
+  "k": "He leaves as luggage",
+  "w": "16-crowd.js:242"
+ },
+ {
+  "k": "A bold strategy",
+  "w": "16-crowd.js:243"
+ },
+ {
+  "k": "And the sand agrees: no",
+  "w": "16-crowd.js:243"
+ },
+ {
+  "k": "You hate to see it",
+  "w": "16-crowd.js:244"
+ },
+ {
+  "k": "I absolutely do not hate to see it",
+  "w": "16-crowd.js:244"
+ },
+ {
+  "k": "That’s going to hurt in the morning",
+  "w": "16-crowd.js:245"
+ },
+ {
+  "k": "That’s going to hurt forever, actually",
+  "w": "16-crowd.js:245"
+ },
+ {
+  "k": "He zigged",
+  "w": "16-crowd.js:246"
+ },
+ {
+  "k": "History will record that he should not have",
+  "w": "16-crowd.js:246"
+ },
+ {
+  "k": "Right you are",
+  "w": "16-crowd.js:247"
+ },
+ {
+  "k": "I usually am",
+  "w": "16-crowd.js:247"
+ },
+ {
+  "k": "A textbook maneuver",
+  "w": "16-crowd.js:248"
+ },
+ {
+  "k": "Wrong textbook, though",
+  "w": "16-crowd.js:248"
+ },
+ {
+  "k": "The crowd is on its feet",
+  "w": "16-crowd.js:249"
+ },
+ {
+  "k": "Mostly to see better, let’s be honest",
+  "w": "16-crowd.js:249"
+ },
+ {
+  "k": "“{0}{1}!” shouts a man selling sausages. “{2},” agrees his customer.",
+  "w": "16-crowd.js:252"
+ },
+ {
+  "k": "Ave!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "Yes!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "Magnificent!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "Again!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "My coin is on you!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "That's my gladiator!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "Io! Io!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "Coward!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "Boo!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "Kill him!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "Rubbish!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "No…",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "Get up!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "Not like this",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "More blood!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "Iugula!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "Finish it!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "Wake up!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "Fight!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "Tholo! Tholo!",
+  "w": "16-crowd.js:254"
+ },
+ {
+  "k": "{0}'s own appetite ({1}K)",
+  "w": "16-crowd.js:261"
+ },
+ {
+  "k": "the city",
+  "w": "16-crowd.js:261"
+ },
+ {
+  "k": "+{0}K hometown spectators",
+  "w": "16-crowd.js:263"
+ },
+ {
+  "k": "+{0}K following today's fighters",
+  "w": "16-crowd.js:266"
+ },
+ {
+  "k": "+{0}K for returning Ludus names",
+  "w": "16-crowd.js:267"
+ },
+ {
+  "k": "+{0}K for the draw — famous names on the card",
+  "w": "16-crowd.js:268"
+ },
+ {
+  "k": "+{0}K for the {1}",
+  "w": "16-crowd.js:269"
+ },
+ {
+  "k": "main event",
+  "w": "16-crowd.js:269"
+ },
+ {
+  "k": "+8 festival crowds",
+  "w": "16-crowd.js:270"
+ },
+ {
+  "k": "{0}{1}K from world events ({2})",
+  "w": "16-crowd.js:271"
+ },
+ {
+  "k": "a free sword",
+  "w": "16-crowd.js:312"
+ },
+ {
+  "k": "<b>{0}</b> ({1}), off duty, takes a seat — {2}.",
+  "w": "16-crowd.js:320"
+ },
+ {
+  "k": "scouting the competition",
+  "w": "16-crowd.js:320"
+ },
+ {
+  "k": "resting a bruised arm",
+  "w": "16-crowd.js:320"
+ },
+ {
+  "k": "here to heckle an old rival",
+  "w": "16-crowd.js:320"
+ },
+ {
+  "k": "sizing up next week’s opponents",
+  "w": "16-crowd.js:320"
+ },
+ {
+  "k": "Go on, %!",
+  "w": "16-crowd.js:330"
+ },
+ {
+  "k": "% has the legs for it!",
+  "w": "16-crowd.js:330"
+ },
+ {
+  "k": "Look at % fly!",
+  "w": "16-crowd.js:330"
+ },
+ {
+  "k": "That is my coin on %, and it is SAFE.",
+  "w": "16-crowd.js:330"
+ },
+ {
+  "k": "% — the gods love that one today.",
+  "w": "16-crowd.js:330"
+ },
+ {
+  "k": "Faster, %! FASTER!",
+  "w": "16-crowd.js:330"
+ },
+ {
+  "k": "% is going backwards!",
+  "w": "16-crowd.js:330"
+ },
+ {
+  "k": "My grandmother steers better than %.",
+  "w": "16-crowd.js:330"
+ },
+ {
+  "k": "Sink, %, sink!",
+  "w": "16-crowd.js:330"
+ },
+ {
+  "k": "Who taught % to hold the reins?",
+  "w": "16-crowd.js:330"
+ },
+ {
+  "k": "% is done. Done!",
+  "w": "16-crowd.js:330"
+ },
+ {
+  "k": "I want my two sestertii back from %.",
+  "w": "16-crowd.js:330"
+ },
+ {
+  "k": "Clean footwork. Somebody taught that one properly.",
+  "w": "16-crowd.js:332"
+ },
+ {
+  "k": "That is how you use a shield. Take notes.",
+  "w": "16-crowd.js:332"
+ },
+ {
+  "k": "I would not want to draw that one on a bad day.",
+  "w": "16-crowd.js:332"
+ },
+ {
+  "k": "Quick hands. Very quick.",
+  "w": "16-crowd.js:332"
+ },
+ {
+  "k": "The doctors will not need to call THAT one.",
+  "w": "16-crowd.js:332"
+ },
+ {
+  "k": "My grandmother parries better.",
+  "w": "16-crowd.js:333"
+ },
+ {
+  "k": "Too slow on the left. Every time.",
+  "w": "16-crowd.js:333"
+ },
+ {
+  "k": "If that was a real bout, we would be singing dirges.",
+  "w": "16-crowd.js:333"
+ },
+ {
+  "k": "They telegraph every swing like a town crier.",
+  "w": "16-crowd.js:333"
+ },
+ {
+  "k": "Somebody is wasting their lanista’s coin.",
+  "w": "16-crowd.js:333"
+ },
+ {
+  "k": "the emperor who opened the Flavian Amphitheater",
+  "w": "16-crowd.js:352"
+ },
+ {
+  "k": "every gladiator +2 CF from the emperor’s favor",
+  "w": "16-crowd.js:352"
+ },
+ {
+  "k": "The imperial box fills. The whole arena rises for Titus.",
+  "w": "16-crowd.js:352"
+ },
+ {
+  "k": "emperor, singer, arsonist (allegedly)",
+  "w": "16-crowd.js:353"
+ },
+ {
+  "k": "Nero arrives with a lyre and an entourage. Nobody asks him to play. He plays.",
+  "w": "16-crowd.js:353"
+ },
+ {
+  "k": "Stoic philosopher, famously unimpressed by the games",
+  "w": "16-crowd.js:354"
+ },
+ {
+  "k": "the stands feel judged (mood −10)",
+  "w": "16-crowd.js:354"
+ },
+ {
+  "k": "Seneca takes a seat, sighs audibly, and begins writing a very long letter about it.",
+  "w": "16-crowd.js:354"
+ },
+ {
+  "k": "physician to the gladiators of Pergamon",
+  "w": "16-crowd.js:355"
+ },
+ {
+  "k": "every gladiator receives a Health Elixir (2 HP) from his bag",
+  "w": "16-crowd.js:355"
+ },
+ {
+  "k": "Galen, physician of Pergamon’s gladiators, sets down a bag of salves by the gate.",
+  "w": "16-crowd.js:355"
+ },
+ {
+  "k": "the poet who wrote the Book of Spectacles",
+  "w": "16-crowd.js:356"
+ },
+ {
+  "k": "he promises {0} an epigram (+3 CF)",
+  "w": "16-crowd.js:356"
+ },
+ {
+  "k": "Martial the poet is here, stylus ready. Everyone fights a little more quotably.",
+  "w": "16-crowd.js:356"
+ },
+ {
+  "k": "the gladiator who refused the rudis four times",
+  "w": "16-crowd.js:357"
+ },
+ {
+  "k": "he nods at the underdog, {0} (+4 CF)",
+  "w": "16-crowd.js:357"
+ },
+ {
+  "k": "Flamma — four times offered freedom, four times refused — watches from the front row.",
+  "w": "16-crowd.js:357"
+ },
+ {
+  "k": "the most famous beast-fighter of Rome",
+  "w": "16-crowd.js:358"
+ },
+ {
+  "k": "Venatores +4 CF under his eye",
+  "w": "16-crowd.js:358"
+ },
+ {
+  "k": "Carpophorus, slayer of twenty beasts in a day, has come to see the animals work.",
+  "w": "16-crowd.js:358"
+ },
+ {
+  "k": "the pair whose famous bout ended in a draw — and freedom for both",
+  "w": "16-crowd.js:359"
+ },
+ {
+  "k": "a little honor for everyone (+1 CF each)",
+  "w": "16-crowd.js:359"
+ },
+ {
+  "k": "Priscus and Verus sit side by side, as they have since the day neither would fall.",
+  "w": "16-crowd.js:359"
+ },
+ {
+  "k": "naturalist, admiral, compulsive note-taker",
+  "w": "16-crowd.js:360"
+ },
+ {
+  "k": "he tips every gladiator a coin for letting him sketch their armor",
+  "w": "16-crowd.js:360"
+ },
+ {
+  "k": "Pliny the Elder is sketching the beasts. And the sand. And the ushers.",
+  "w": "16-crowd.js:360"
+ },
+ {
+  "k": "a famous visitor",
+  "w": "16-crowd.js:366"
+ },
+ {
+  "k": "👑 <b>{0}</b> — {1} — is in attendance. {2} <i>({3}{4})</i>",
+  "w": "16-crowd.js:369"
+ },
+ {
+  "k": "; crowd mood {0}{1}",
+  "w": "16-crowd.js:369"
+ },
+ {
+  "k": "👑 <b>{0}</b> takes a seat. {1}",
+  "w": "16-crowd.js:370"
+ },
+ {
+  "k": "The stands carry the empire's news in with them: {0} — crowd mood {1}{2}.",
+  "w": "16-crowd.js:378"
+ },
+ {
+  "k": "<b>{0}</b> is back — and remembers {1} spearing {2} from the stands. Revenge is on the menu.",
+  "w": "16-crowd.js:385"
+ },
+ {
+  "k": "their friend",
+  "w": "16-crowd.js:385"
+ },
+ {
+  "k": "<b>{0}</b> came to see <b>{1}</b> — their favorite gladiator.",
+  "w": "16-crowd.js:387"
+ },
+ {
+  "k": "<b>{0}</b>, a regular of {1} event{2}, is back to cheer {3} again.",
+  "w": "16-crowd.js:389"
+ },
+ {
+  "k": "<b>{0}</b> takes a seat in family colors — {1} of <b>{2}</b>, who fights today.",
+  "w": "16-crowd.js:394"
+ },
+ {
+  "k": "<b>{0}</b> arrives already chanting {1}'s name. Money well spent, someone's.",
+  "w": "16-crowd.js:397"
+ },
+ {
+  "k": "<b>{0}</b> turns up in {1} {2} — nobody of that class fights today. They may yet pick a new hero.",
+  "w": "16-crowd.js:403"
+ },
+ {
+  "k": "{0} to win",
+  "w": "16-crowd.js:408"
+ },
+ {
+  "k": "{0}K spectators take their seats in the stands: {1}K arrive as fans, {2}K still to be won over. Open the crowd panel for every name.",
+  "w": "16-crowd.js:411"
+ },
+ {
+  "k": "<b>{0}</b> ({1}, {2}) sits in {3}{4}.",
+  "w": "16-crowd.js:412"
+ },
+ {
+  "k": ", backing <b>{0}</b> with a 2 CF wager",
+  "w": "16-crowd.js:412"
+ },
+ {
+  "k": "Good riddance!",
+  "w": "16-crowd.js:434"
+ },
+ {
+  "k": "Timber!",
+  "w": "16-crowd.js:436"
+ },
+ {
+  "k": "What a kill!",
+  "w": "16-crowd.js:437"
+ },
+ {
+  "k": "The Emperor!",
+  "w": "16-crowd.js:438"
+ },
+ {
+  "k": "Cowards!",
+  "w": "16-crowd.js:439"
+ },
+ {
+  "k": "Come back and fight!",
+  "w": "16-crowd.js:440"
+ },
+ {
+  "k": "Murderer!",
+  "w": "16-crowd.js:445"
+ },
+ {
+  "k": "<b>{0}</b> wants nothing more to do with {1}.",
+  "w": "16-crowd.js:445"
+ },
+ {
+  "k": "<b>{0}</b> is won over by {1}{2}.",
+  "w": "16-crowd.js:451"
+ },
+ {
+  "k": "'s kill",
+  "w": "16-crowd.js:451"
+ },
+ {
+  "k": "'s showmanship",
+  "w": "16-crowd.js:451"
+ },
+ {
+  "k": "<b>{0}</b> turns their back on {1}. Nobody paid to watch {2}.",
+  "w": "16-crowd.js:453"
+ },
+ {
+  "k": "{0} spectator{1} in {2} cheer for {3} — a thin share of a crowd of {4}; the favor builds ({5}% of a CF).",
+  "w": "16-crowd.js:471"
+ },
+ {
+  "k": "section cheers",
+  "w": "16-crowd.js:472"
+ },
+ {
+  "k": "{0} spectator{1} in {2} cheer for {3} (+{4} CF{5}).",
+  "w": "16-crowd.js:473"
+ },
+ {
+  "k": ", scaled for a crowd of {0}{1}",
+  "w": "16-crowd.js:473"
+ },
+ {
+  "k": "spearing a spectator",
+  "w": "16-crowd.js:483"
+ },
+ {
+  "k": "{0} hurls a spear into {1} {2}: <b>{3}</b> is carried out of the arena!",
+  "w": "16-crowd.js:484"
+ },
+ {
+  "k": "<b>{0}</b> is speared by {1} and carried out of the arena. The stands will remember.",
+  "w": "16-crowd.js:484"
+ },
+ {
+  "k": "front row",
+  "w": "16-crowd.js:484"
+ },
+ {
+  "k": "{0} hurls a spear into {1} {2} and misses {3}.",
+  "w": "16-crowd.js:485"
+ },
+ {
+  "k": "{0}'s spear misses <b>{1}</b> by a hand's width.",
+  "w": "16-crowd.js:485"
+ },
+ {
+  "k": "3 CF, once per event. Roll 2 hit dice; 1 hit removes the spectator. You can only reach spectators whose section faces your quadrant (Q{0}). Every other spectator will hate you for it.",
+  "w": "16-crowd.js:490"
+ },
+ {
+  "k": "(the human spectator)",
+  "w": "16-crowd.js:490"
+ },
+ {
+  "k": "{0} · {1} fan · {2} CF · {3}{4}",
+  "w": "16-crowd.js:490"
+ },
+ {
+  "k": "on {0}: “{1}”",
+  "w": "16-crowd.js:498"
+ },
+ {
+  "k": "<b>{0}</b> on {1}: “{2}”",
+  "w": "16-crowd.js:503"
+ },
+ {
+  "k": "<b>{0}</b> {1} back{2} {3} now.",
+  "w": "16-crowd.js:512"
+ },
+ {
+  "k": "sets aside their old colors and",
+  "w": "16-crowd.js:512"
+ },
+ {
+  "k": "has seen enough:",
+  "w": "16-crowd.js:512"
+ },
+ {
+  "k": "<b>{0}</b> switches allegiance from {1} to {2}.",
+  "w": "16-crowd.js:513"
+ },
+ {
+  "k": "{0} switches allegiance to {1}.",
+  "w": "16-crowd.js:513"
+ },
+ {
+  "k": "With two gladiators or fewer left, the spectators can no longer spend their CF.",
+  "w": "16-crowd.js:516"
+ },
+ {
+  "k": "Tholo!",
+  "w": "16-crowd.js:525"
+ },
+ {
+  "k": "Spectators in every quadrant ({0}) pay 3 CF each and chant “Tholo! Tholo!”",
+  "w": "16-crowd.js:526"
+ },
+ {
+  "k": "<b>{0}</b> pay 3 CF each and chant for Tholo.",
+  "w": "16-crowd.js:526"
+ },
+ {
+  "k": "For you!",
+  "w": "16-crowd.js:535"
+ },
+ {
+  "k": "{0} ({1}) throws {2} an offering: <b>{3}</b> ({4}).",
+  "w": "16-crowd.js:535"
+ },
+ {
+  "k": "<b>{0}</b> pays 8 CF to throw {1} an offering: {2}.",
+  "w": "16-crowd.js:535"
+ },
+ {
+  "k": "{0} pays 3 CF to move from {1} to {2}{3}.",
+  "w": "16-crowd.js:545"
+ },
+ {
+  "k": ", to get closer to {0}",
+  "w": "16-crowd.js:545"
+ },
+ {
+  "k": ", to cheer {0}",
+  "w": "16-crowd.js:545"
+ },
+ {
+  "k": "<b>{0}</b> moves to {1} ({2} {3}).",
+  "w": "16-crowd.js:545"
+ },
+ {
+  "k": "You hurl",
+  "w": "16-crowd.js:551"
+ },
+ {
+  "k": "{0} a stone at {1} {2}",
+  "w": "16-crowd.js:552"
+ },
+ {
+  "k": "<b>{0}</b> pays 2 CF and hits {1} with a stone.",
+  "w": "16-crowd.js:552"
+ },
+ {
+  "k": "{0} stone finishes {1}. {2} all {3} of their Crowd Favor.",
+  "w": "16-crowd.js:553"
+ },
+ {
+  "k": "Your",
+  "w": "16-crowd.js:553"
+ },
+ {
+  "k": "You collect",
+  "w": "16-crowd.js:553"
+ },
+ {
+  "k": "The spectator collects",
+  "w": "16-crowd.js:553"
+ },
+ {
+  "k": "<b>{0}</b>'s stone finishes {1} — they collect all {2} of their CF.",
+  "w": "16-crowd.js:553"
+ },
+ {
+  "k": "{0} a stone at {1} {2} and misses.",
+  "w": "16-crowd.js:554"
+ },
+ {
+  "k": "<b>{0}</b> hurls a stone at {1} and misses.",
+  "w": "16-crowd.js:554"
+ },
+ {
+  "k": "Throw a stone at {0}",
+  "w": "16-crowd.js:565"
+ },
+ {
+  "k": "2 CF · 1 hit die, 1 damage to a rolled location{0}",
+  "w": "16-crowd.js:565"
+ },
+ {
+  "k": "· finish them and you take their {0} CF",
+  "w": "16-crowd.js:565"
+ },
+ {
+  "k": "Throw an offering to {0}",
+  "w": "16-crowd.js:566"
+ },
+ {
+  "k": "8 CF · a random offering from the Blessings bag",
+  "w": "16-crowd.js:566"
+ },
+ {
+  "k": "Change section",
+  "w": "16-crowd.js:567"
+ },
+ {
+  "k": "3 CF · move to another stand",
+  "w": "16-crowd.js:567"
+ },
+ {
+  "k": "Chant “Tholo!”",
+  "w": "16-crowd.js:568"
+ },
+ {
+  "k": "every quadrant has a spectator with 3 CF: each pays 3",
+  "w": "16-crowd.js:568"
+ },
+ {
+  "k": "Tholo has already entered this event — once per event",
+  "w": "16-crowd.js:568"
+ },
+ {
+  "k": "needs a spectator with 3 CF in every quadrant",
+  "w": "16-crowd.js:568"
+ },
+ {
+  "k": "Watch this rotation",
+  "w": "16-crowd.js:569"
+ },
+ {
+  "k": "Spectator upkeep · you have {0} CF",
+  "w": "16-crowd.js:570"
+ },
+ {
+  "k": "{0}<b>One action per upkeep.</b> You sit in <b>{1}</b> (Q{2}), the section of {3}. You can only reach gladiators standing in Q{4}: {5}.",
+  "w": "16-crowd.js:570"
+ },
+ {
+  "k": "📣 You cheer for <b>{0}</b>.",
+  "w": "16-crowd.js:570"
+ },
+ {
+  "k": "no gladiator",
+  "w": "16-crowd.js:570"
+ },
+ {
+  "k": "nobody right now",
+  "w": "16-crowd.js:570"
+ },
+ {
+  "k": "Spectators earn 1 CF per turn rotation. A stone that eliminates a gladiator hands you all of their CF.",
+  "w": "16-crowd.js:570"
+ },
+ {
+  "k": "You throw {0} an offering from the stands: <b>{1}</b> ({2}).",
+  "w": "16-crowd.js:573"
+ },
+ {
+  "k": "Change section · 3 CF",
+  "w": "16-crowd.js:574"
+ },
+ {
+  "k": "Pick a new stand. Its gladiator earns 1 CF from you every turn.",
+  "w": "16-crowd.js:574"
+ },
+ {
+  "k": "You move to {0}.",
+  "w": "16-crowd.js:574"
+ },
+ {
+  "k": "The stands take up your chant: “Tholo! Tholo!”",
+  "w": "16-crowd.js:575"
+ },
+ {
+  "k": "wearing {0}",
+  "w": "16-crowd.js:582"
+ },
+ {
+  "k": "'s colors",
+  "w": "16-crowd.js:582"
+ },
+ {
+  "k": "carried out of the arena",
+  "w": "16-crowd.js:583"
+ },
+ {
+  "k": "{0} fan · {1} · Q{2}{3}{4}{5}",
+  "w": "16-crowd.js:583"
+ },
+ {
+  "k": "· bet {0} CF on {1}",
+  "w": "16-crowd.js:583"
+ },
+ {
+  "k": "The stands · {0}K spectators",
+  "w": "16-crowd.js:588"
+ },
+ {
+  "k": "Stands log",
+  "w": "16-crowd.js:588"
+ },
+ {
+  "k": "Team {0} ({1})",
+  "w": "16-crowd.js:631"
+ },
+ {
+  "k": "{0}Bank with {1}",
+  "w": "16-crowd.js:653"
+ },
+ {
+  "k": "{0} · season {1}, week {2}{3}{4}",
+  "w": "16-crowd.js:653"
+ },
+ {
+  "k": "· {0} coin",
+  "w": "16-crowd.js:653"
+ },
+ {
+  "k": "Quick-create a lanista",
+  "w": "16-crowd.js:654"
+ },
+ {
+  "k": "a random gambler with 40 coin, ready to bet now — shape them in Manager mode any time",
+  "w": "16-crowd.js:654"
+ },
+ {
+  "k": "Open Manager mode",
+  "w": "16-crowd.js:655"
+ },
+ {
+  "k": "create or take over a ludus properly",
+  "w": "16-crowd.js:655"
+ },
+ {
+  "k": "Who holds the coin?",
+  "w": "16-crowd.js:657"
+ },
+ {
+  "k": "<span>🏛 THE BOOKIE'S HAVEN</span>",
+  "w": "16-crowd.js:672"
+ },
+ {
+  "k": "under the arches of {0} · every slip below was really laid",
+  "w": "16-crowd.js:672"
+ },
+ {
+  "k": "the arena",
+  "w": "16-crowd.js:672"
+ },
+ {
+  "k": "<i>Favorite</i>",
+  "w": "16-crowd.js:673"
+ },
+ {
+  "k": "<i>Longshot</i>",
+  "w": "16-crowd.js:673"
+ },
+ {
+  "k": "<i>Smart money</i><b>{0}</b><span>{1}</span>",
+  "w": "16-crowd.js:673"
+ },
+ {
+  "k": "coin open",
+  "w": "16-crowd.js:673"
+ },
+ {
+  "k": "no coin laid yet",
+  "w": "16-crowd.js:673"
+ },
+ {
+  "k": "<i>The crowd's pick</i><b>{0}</b><span>{1}</span>",
+  "w": "16-crowd.js:673"
+ },
+ {
+  "k": "CF of opening slips",
+  "w": "16-crowd.js:673"
+ },
+ {
+  "k": "an empty house",
+  "w": "16-crowd.js:673"
+ },
+ {
+  "k": "<i>Today's handle</i><b>{0}c</b><span>+ {1} CF from the stands · {2} slips</span>",
+  "w": "16-crowd.js:673"
+ },
+ {
+  "k": "📈 The exchange",
+  "w": "16-crowd.js:674"
+ },
+ {
+  "k": "orders across the empire, newest first",
+  "w": "16-crowd.js:674"
+ },
+ {
+  "k": "💰 Wagers live in Manager mode — a lanista bets from the treasury. (In any bout a gladiator can still wager their own coin on themselves.)",
+  "w": "16-crowd.js:680"
+ },
+ {
+  "k": "Wagers come out of <b>{0}'s treasury</b>{1} — your active manager career banks every win and loss. Odds are fixed when you bet and paid as stake × odds — less <b>the Emperor's tenth</b> (10% of the profit), and no slip may pay more than 500 coin (long odds take small stakes). The book closes at the final round or when only two gladiators remain.",
+  "w": "16-crowd.js:691"
+ },
+ {
+  "k": "your lanista",
+  "w": "16-crowd.js:691"
+ },
+ {
+  "k": "Treasury {0} coin",
+  "w": "16-crowd.js:692"
+ },
+ {
+  "k": "Won {0} · lost {1} over {2} bets",
+  "w": "16-crowd.js:692"
+ },
+ {
+  "k": "<span class=\"badge good\">Book open</span>",
+  "w": "16-crowd.js:692"
+ },
+ {
+  "k": "<span class=\"badge bad\">Book closed</span>",
+  "w": "16-crowd.js:692"
+ },
+ {
+  "k": "Who wins the event",
+  "w": "16-crowd.js:694"
+ },
+ {
+  "k": "Chance (bookmaker)",
+  "w": "16-crowd.js:694"
+ },
+ {
+  "k": "Bet",
+  "w": "16-crowd.js:694"
+ },
+ {
+  "k": "First to fall",
+  "w": "16-crowd.js:695"
+ },
+ {
+  "k": "Your open wagers",
+  "w": "16-crowd.js:696"
+ },
+ {
+  "k": "<span>{0}<em>{1} coin at {2} · pays {3} after the tenth</em></span>",
+  "w": "16-crowd.js:696"
+ },
+ {
+  "k": "Gladiators betting on themselves",
+  "w": "16-crowd.js:697"
+ },
+ {
+  "k": "{0}: {1} coin at {2}",
+  "w": "16-crowd.js:697"
+ },
+ {
+  "k": "{0} wins the event",
+  "w": "16-crowd.js:703"
+ },
+ {
+  "k": "{0} falls first",
+  "w": "16-crowd.js:703"
+ },
+ {
+  "k": "You wager {0} coin on <b>{1}</b> at {2}.",
+  "w": "16-crowd.js:705"
+ },
+ {
+  "k": "pays {0} if {1}",
+  "w": "16-crowd.js:716"
+ },
+ {
+  "k": "your team wins",
+  "w": "16-crowd.js:716"
+ },
+ {
+  "k": "you win",
+  "w": "16-crowd.js:716"
+ },
+ {
+  "k": "The bookmaker offers <b>{0}</b> on {1}. Coin you stake leaves your purse now; if you win the event, the payout is added to your coin (and your Royal Reserve). Once per event.",
+  "w": "16-crowd.js:717"
+ },
+ {
+  "k": "{0} (on themselves)",
+  "w": "16-crowd.js:721"
+ },
+ {
+  "k": "{0} slips {1} coin to the bookmaker, on {2} at {3}.",
+  "w": "16-crowd.js:721"
+ },
+ {
+  "k": "My coin is on me.",
+  "w": "16-crowd.js:726"
+ },
+ {
+  "k": "{0} bet {1} on {2}: {3}",
+  "w": "16-crowd.js:731"
+ },
+ {
+  "k": "<b style=\"color:var(--gold2)\">won {0} coin</b>",
+  "w": "16-crowd.js:731"
+ },
+ {
+  "k": "Your wager on {0} ({1} at {2}): {3}",
+  "w": "16-crowd.js:738"
+ },
+ {
+  "k": "<b style=\"color:var(--gold2)\">pays {0}</b>{1}",
+  "w": "16-crowd.js:738"
+ },
+ {
+  "k": "after the Emperor's tenth ({0})",
+  "w": "16-crowd.js:738"
+ },
+ {
+  "k": "<b>Net {0}{1} coin · {2} treasury now {3}</b>",
+  "w": "16-crowd.js:739"
+ },
+ {
+  "k": "Bookmaker's cut on {0}: +{1} coin (8% of {2} wagered).",
+  "w": "16-crowd.js:745"
+ },
+ {
+  "k": "The bookmaker pays the lanistae their cut of the handle: {0}.",
+  "w": "16-crowd.js:746"
+ },
+ {
+  "k": "The crowd: {0}{1}.",
+  "w": "16-crowd.js:749"
+ },
+ {
+  "k": "{0} collects {1} CF",
+  "w": "16-crowd.js:749"
+ },
+ {
+  "k": "no spectator backed the winner",
+  "w": "16-crowd.js:749"
+ },
+ {
+  "k": "; {0} lost their bet",
+  "w": "16-crowd.js:749"
+ },
+ {
+  "k": "speared out of the stands by {0}",
+  "w": "16-crowd.js:768"
+ },
+ {
+  "k": "a gladiator",
+  "w": "16-crowd.js:768"
+ },
+ {
+  "k": "saw {0} win {1}",
+  "w": "16-crowd.js:770"
+ },
+ {
+  "k": "watched {0} fall",
+  "w": "16-crowd.js:771"
+ },
+ {
+  "k": "collected a winning bet",
+  "w": "16-crowd.js:772"
+ },
+ {
+  "k": "watched their {0} {1} die on the sand",
+  "w": "16-crowd.js:775"
+ },
+ {
+  "k": "mourning their {0}",
+  "w": "16-crowd.js:776"
+ },
+ {
+  "k": "<b>{0}</b> leaves without a word — their {1} died on the sand today",
+  "w": "16-crowd.js:776"
+ },
+ {
+  "k": "their {0} {1} took the palm — drinks were bought",
+  "w": "16-crowd.js:777"
+ },
+ {
+  "k": "their friend {0} was speared by {1}",
+  "w": "16-crowd.js:780"
+ },
+ {
+  "k": "<b>{0}</b> carries {1} out and swears revenge on {2}",
+  "w": "16-crowd.js:780"
+ },
+ {
+  "k": "too much blood",
+  "w": "16-crowd.js:783"
+ },
+ {
+  "k": "<b>{0}</b> goes home pale and won't be back for a while (too much blood)",
+  "w": "16-crowd.js:783"
+ },
+ {
+  "k": "not enough blood",
+  "w": "16-crowd.js:784"
+ },
+ {
+  "k": "<b>{0}</b> wants their coin back — no blood at all. They'll skip a few events",
+  "w": "16-crowd.js:784"
+ },
+ {
+  "k": "decided to give the games another chance",
+  "w": "16-crowd.js:791"
+ },
+ {
+  "k": "The stands empty out. {0}.",
+  "w": "16-crowd.js:795"
+ },
+ {
+  "k": "A brawl breaks out in the tiers: <b>{0}</b> and <b>{1}</b> are dragged out by the ushers.",
+  "w": "16-crowd.js:804"
+ },
+ {
+  "k": "a stranger",
+  "w": "16-crowd.js:804"
+ },
+ {
+  "k": "<b>{0}</b> starts a brawl over a spilled cup. The ushers earn their pay.",
+  "w": "16-crowd.js:804"
+ },
+ {
+  "k": "Good.",
+  "w": "16-crowd.js:819"
+ },
+ {
+  "k": "More of that.",
+  "w": "16-crowd.js:819"
+ },
+ {
+  "k": "Acceptable.",
+  "w": "16-crowd.js:819"
+ },
+ {
+  "k": "The crowd stirs…",
+  "w": "16-crowd.js:819"
+ },
+ {
+  "k": "HA!",
+  "w": "16-crowd.js:820"
+ },
+ {
+  "k": "Delightful!",
+  "w": "16-crowd.js:820"
+ },
+ {
+  "k": "Again! Again!",
+  "w": "16-crowd.js:820"
+ },
+ {
+  "k": "Ahahaha!",
+  "w": "16-crowd.js:820"
+ },
+ {
+  "k": "MAGNIFICENT!",
+  "w": "16-crowd.js:821"
+ },
+ {
+  "k": "Glory to the sand!",
+  "w": "16-crowd.js:821"
+ },
+ {
+  "k": "YES!",
+  "w": "16-crowd.js:821"
+ },
+ {
+  "k": "A generous applause!",
+  "w": "16-crowd.js:821"
+ },
+ {
+  "k": "I did not pay for friendship.",
+  "w": "16-crowd.js:822"
+ },
+ {
+  "k": "Fight, curs!",
+  "w": "16-crowd.js:822"
+ },
+ {
+  "k": "Boring me is a crime.",
+  "w": "16-crowd.js:822"
+ },
+ {
+  "k": "Where is the BLOOD?",
+  "w": "16-crowd.js:822"
+ },
+ {
+  "k": "Cowardice.",
+  "w": "16-crowd.js:823"
+ },
+ {
+  "k": "Sentiment. Ugh.",
+  "w": "16-crowd.js:823"
+ },
+ {
+  "k": "Why do I fund this?",
+  "w": "16-crowd.js:823"
+ },
+ {
+  "k": "My grandmother hits harder.",
+  "w": "16-crowd.js:823"
+ },
+ {
+  "k": "By the gods—!",
+  "w": "16-crowd.js:824"
+ },
+ {
+  "k": "My pillars!",
+  "w": "16-crowd.js:824"
+ },
+ {
+  "k": "Careful with the masonry!",
+  "w": "16-crowd.js:824"
+ },
+ {
+  "k": "Wake me for the blood.",
+  "w": "16-crowd.js:825"
+ },
+ {
+  "k": "I have watched paint dry with more nerve.",
+  "w": "16-crowd.js:825"
+ },
+ {
+  "k": "Yawn.",
+  "w": "16-crowd.js:825"
+ },
+ {
+  "k": "As I arranged.",
+  "w": "16-crowd.js:826"
+ },
+ {
+  "k": "Everything in this arena is mine. Including that.",
+  "w": "16-crowd.js:826"
+ },
+ {
+  "k": "Predictable. Profitable.",
+  "w": "16-crowd.js:826"
+ },
+ {
+  "k": "Magnificent bastard…",
+  "w": "16-crowd.js:827"
+ },
+ {
+  "k": "Even I have a heart. Somewhere.",
+  "w": "16-crowd.js:827"
+ },
+ {
+  "k": "The sand will remember this one.",
+  "w": "16-crowd.js:827"
+ },
+ {
+  "k": "the Subura",
+  "w": "16-crowd.js:965"
+ },
+ {
+  "k": "the docks",
+  "w": "16-crowd.js:965"
+ },
+ {
+  "k": "the potters’ quarter",
+  "w": "16-crowd.js:965"
+ },
+ {
+  "k": "the cattle market",
+  "w": "16-crowd.js:965"
+ },
+ {
+  "k": "the hill villas",
+  "w": "16-crowd.js:965"
+ },
+ {
+  "k": "the tanneries",
+  "w": "16-crowd.js:965"
+ },
+ {
+  "k": "outside the walls",
+  "w": "16-crowd.js:965"
+ },
+ {
+  "k": "the old forum",
+  "w": "16-crowd.js:965"
+ },
+ {
+  "k": "salted chickpeas",
+  "w": "16-crowd.js:966"
+ },
+ {
+  "k": "honeyed wine",
+  "w": "16-crowd.js:966"
+ },
+ {
+  "k": "fried smelt",
+  "w": "16-crowd.js:966"
+ },
+ {
+  "k": "stuffed dates",
+  "w": "16-crowd.js:966"
+ },
+ {
+  "k": "sausage rolls",
+  "w": "16-crowd.js:966"
+ },
+ {
+  "k": "sour posca",
+  "w": "16-crowd.js:966"
+ },
+ {
+  "k": "olives by the fistful",
+  "w": "16-crowd.js:966"
+ },
+ {
+  "k": "flatbread with garum",
+  "w": "16-crowd.js:966"
+ },
+ {
+  "k": "spits twice when Damnatio enters",
+  "w": "16-crowd.js:967"
+ },
+ {
+  "k": "won’t sit in a Q3 seat",
+  "w": "16-crowd.js:967"
+ },
+ {
+  "k": "wears the same lucky cap",
+  "w": "16-crowd.js:967"
+ },
+ {
+  "k": "touches the rail before every bout",
+  "w": "16-crowd.js:967"
+ },
+ {
+  "k": "never bets on the first blood",
+  "w": "16-crowd.js:967"
+ },
+ {
+  "k": "counts pillars before sitting",
+  "w": "16-crowd.js:967"
+ },
+ {
+  "k": "arrives before the gates open",
+  "w": "16-crowd.js:968"
+ },
+ {
+  "k": "leaves before the Fates are read",
+  "w": "16-crowd.js:968"
+ },
+ {
+  "k": "heckles the bookmaker",
+  "w": "16-crowd.js:968"
+ },
+ {
+  "k": "knows every gladiator’s record",
+  "w": "16-crowd.js:968"
+ },
+ {
+  "k": "brings the whole family",
+  "w": "16-crowd.js:968"
+ },
+ {
+  "k": "naps through the undercard",
+  "w": "16-crowd.js:968"
+ },
+ {
+  "k": "Beasts & cards in play",
+  "w": "16-crowd.js:981"
+ },
+ {
+  "k": "The Stands",
+  "w": "16-crowd.js:981"
+ },
+ {
+  "k": "<i>Species: Nāgá.</i> “Cherished companions of Flavius, these serpents become formidable contenders, embodying the essence of Asclepius, ensuring a ceaseless crimson cascade upon the arena sands.” <span class=\"rc-sub\">— Virgilante, ludus notes</span>",
+  "w": "16-crowd.js:1010"
+ },
+ {
+  "k": "<i>Species: Canis lupus.</i> “Valencia and Moechus, masters of the hunt, possess an insatiable appetite within the arena, their natural prowess and docility allowing them to effortlessly track their prey.” <span class=\"rc-sub\">— Cassius Dio, ludus notes</span>",
+  "w": "16-crowd.js:1011"
+ },
+ {
+  "k": "<i>Species: Atlas.</i> “Ursa may hold the upper paw, but do not underestimate the thunderous might of Brutum. Beware, for crossing their paths means daring to challenge their dominion, even at the cost of their cherished treasure.” <span class=\"rc-sub\">— Pomponius Mela, ludus notes</span>",
+  "w": "16-crowd.js:1012"
+ },
+ {
+  "k": "<i>Species: Barbary Lion.</i> “Transported clandestinely across the treacherous Mediterranean during the frigid grip of last winter’s mare clausum, these untamed exotic beasts ignite a frenzy of excitement within the crowd as they unleash their primal fury, tearing limbs asunder and delivering savage face-maulings.” <span class=\"rc-sub\">— Pomponius Mela, ludus notes</span>",
+  "w": "16-crowd.js:1013"
+ },
+ {
+  "k": "<i>Species: unknown.</i> “With its otherworldly visage and unparalleled brutality, Tholo stands as a living testament to the extraordinary and the unfathomable, seizing the gaze of spectators from across the empire, instilling fear that resonates within their souls.” <span class=\"rc-sub\">— Virgilante, ludus notes</span>",
+  "w": "16-crowd.js:1014"
+ },
+ {
+  "k": "<i>Species: Human.</i> “Master of deception and self-proclaimed Champion Victorious, Commodus, a consummate fabricator, forges a path devoid of allies, shamelessly usurping the title within the realms of Flavius Rule.” <span class=\"rc-sub\">— Cassius Dio, ludus notes</span>",
+  "w": "16-crowd.js:1015"
+ },
+ {
+  "k": "The golden eagle of the games: too fast to hit, too proud to land, happiest carrying off something a gladiator was about to enjoy.",
+  "w": "16-crowd.js:1016"
+ },
+ {
+  "k": "<b>{0}</b>{1}{2}\n      <small>{3}</small>\n      <small>HP {4} · ATK {5} · MV {6} · worth {7} coin, {8} CF{9}</small>\n      <small><b>The ledger:</b> {10} slain in your events · {11} gladiator{12} eaten · {13}</small>",
+  "w": "16-crowd.js:1023"
+ },
+ {
+  "k": "{0} on the sand now",
+  "w": "16-crowd.js:1023"
+ },
+ {
+  "k": "A creature of the editor’s menagerie.",
+  "w": "16-crowd.js:1024"
+ },
+ {
+  "k": "· behavior states",
+  "w": "16-crowd.js:1025"
+ },
+ {
+  "k": "never tamed",
+  "w": "16-crowd.js:1026"
+ },
+ {
+  "k": "Round {0}: {1} · {2} · {3}{4}",
+  "w": "16-crowd.js:1028"
+ },
+ {
+  "k": "· <b style=\"color:var(--gold2)\">END GAME</b>",
+  "w": "16-crowd.js:1028"
+ },
+ {
+  "k": "On the sand now",
+  "w": "16-crowd.js:1029"
+ },
+ {
+  "k": "The arena deck",
+  "w": "16-crowd.js:1030"
+ },
+ {
+  "k": "{0} card{1} remain{2}; Flavius Rule waits at the bottom. {3}",
+  "w": "16-crowd.js:1030"
+ },
+ {
+  "k": "{0} more set aside for round 2.",
+  "w": "16-crowd.js:1030"
+ },
+ {
+  "k": "Cards seen this event",
+  "w": "16-crowd.js:1031"
+ },
+ {
+  "k": "📖 The Bestiary",
+  "w": "16-crowd.js:1034"
+ },
+ {
+  "k": "its ledgers survive every event",
+  "w": "16-crowd.js:1034"
+ },
+ {
+  "k": "<small>{0}</small><small>HP {1} · ATK {2} · MV {3}</small><small><b>The ledger:</b> {4} slain · {5} gladiator{6} eaten · {7} tamed</small>",
+  "w": "16-crowd.js:1036"
+ },
+ {
+  "k": "A beast of your own devising (Creator Studio).",
+  "w": "16-crowd.js:1036"
+ },
+ {
+  "k": "slain by gladiators",
+  "w": "16-crowd.js:1044"
+ },
+ {
+  "k": "gladiators it eliminated",
+  "w": "16-crowd.js:1044"
+ },
+ {
+  "k": "times tamed",
+  "w": "16-crowd.js:1044"
+ },
+ {
+  "k": "events it won — no gladiator left standing",
+  "w": "16-crowd.js:1044"
+ },
+ {
+  "k": "on the sand · {0} HP",
+  "w": "16-crowd.js:1049"
+ },
+ {
+  "k": "{0} The beasts of {1} {2}",
+  "w": "16-crowd.js:1051"
+ },
+ {
+  "k": "· champion: {0}",
+  "w": "16-crowd.js:1051"
+ },
+ {
+  "k": "The beasts of {0}",
+  "w": "16-crowd.js:1053"
+ },
+ {
+  "k": "The beasts of the empire",
+  "w": "16-crowd.js:1053"
+ },
+ {
+  "k": "every city names its own — ledger: 🏟 events · ⚔ slain · ☠ gladiators taken · 🪢 tamed · 🏆 wins",
+  "w": "16-crowd.js:1053"
+ },
+ {
+  "k": "🔥 On the sand now",
+  "w": "16-crowd.js:1054"
+ },
+ {
+  "k": "🌑 Every arena",
+  "w": "16-crowd.js:1055"
+ },
+ {
+  "k": "🐾 Menagerie · beasts, cards & the bestiary",
+  "w": "16-crowd.js:1060"
+ },
+ {
+  "k": "🌍 Imperium · the empire and its stands",
+  "w": "16-crowd.js:1065"
+ },
+ {
+  "k": "The empire",
+  "w": "16-crowd.js:1076"
+ },
+ {
+  "k": "kin of fighters",
+  "w": "16-crowd.js:1076"
+ },
+ {
+  "k": "known troublemakers",
+  "w": "16-crowd.js:1076"
+ },
+ {
+  "k": "events held everywhere",
+  "w": "16-crowd.js:1076"
+ },
+ {
+  "k": "gladiators fallen",
+  "w": "16-crowd.js:1076"
+ },
+ {
+  "k": "coin of concessions",
+  "w": "16-crowd.js:1076"
+ },
+ {
+  "k": "spectators speared",
+  "w": "16-crowd.js:1076"
+ },
+ {
+  "k": "❤ Most beloved",
+  "w": "16-crowd.js:1077"
+ },
+ {
+  "k": "fans + bought cheers + family (×2)",
+  "w": "16-crowd.js:1077"
+ },
+ {
+  "k": "🏠 Where the regulars live",
+  "w": "16-crowd.js:1083"
+ },
+ {
+  "k": "The home cities of your named regulars. They will travel to any arena, but they fill their <b>home city's</b> stands first — so a city with many regulars draws bigger, louder home crowds (and cheers hardest for fighters born there).",
+  "w": "16-crowd.js:1083"
+ },
+ {
+  "k": "👪 Family ties",
+  "w": "16-crowd.js:1087"
+ },
+ {
+  "k": "kin in the stands, and the gladiators they come to see",
+  "w": "16-crowd.js:1087"
+ },
+ {
+  "k": "👪 <b>{0}</b> — {1} of <b>{2}</b>{3}",
+  "w": "16-crowd.js:1087"
+ },
+ {
+  "k": "· of {0}",
+  "w": "16-crowd.js:1087"
+ },
+ {
+  "k": "The empire in numbers",
+  "w": "16-crowd.js:1102"
+ },
+ {
+  "k": "<b>{0}</b>named regulars",
+  "w": "16-crowd.js:1104"
+ },
+ {
+  "k": "<b>{0}</b>ex-gladiators in the seats",
+  "w": "16-crowd.js:1105"
+ },
+ {
+  "k": "<b>{0}</b>kin of fighters",
+  "w": "16-crowd.js:1106"
+ },
+ {
+  "k": "<b>{0}</b>known troublemakers",
+  "w": "16-crowd.js:1107"
+ },
+ {
+  "k": "<b>{0}</b>banned",
+  "w": "16-crowd.js:1108"
+ },
+ {
+  "k": "<b>{0}</b>events held everywhere",
+  "w": "16-crowd.js:1109"
+ },
+ {
+  "k": "<b>{0}</b>gladiators fallen",
+  "w": "16-crowd.js:1110"
+ },
+ {
+  "k": "<b>{0}</b>coin of concessions",
+  "w": "16-crowd.js:1111"
+ },
+ {
+  "k": "<b>{0}</b>spectators speared",
+  "w": "16-crowd.js:1112"
+ },
+ {
+  "k": "Beloved across the empire",
+  "w": "16-crowd.js:1114"
+ },
+ {
+  "k": "Where the regulars live",
+  "w": "16-crowd.js:1116"
+ },
+ {
+  "k": "they attend anywhere, but pack their home stands first",
+  "w": "16-crowd.js:1116"
+ },
+ {
+  "k": "Family ties",
+  "w": "16-crowd.js:1118"
+ },
+ {
+  "k": "👪 <b>{0}</b> — {1} of the gladiator <b>{2}</b>{3}",
+  "w": "16-crowd.js:1118"
+ },
+ {
+  "k": "Round {0}: {1} · {2} · {3}{4}{5}",
+  "w": "16-crowd.js:1128"
+ },
+ {
+  "k": "· <b style=\"color:var(--blood2)\">crowd restless</b>",
+  "w": "16-crowd.js:1128"
+ },
+ {
+  "k": "The arena at {0}",
+  "w": "16-crowd.js:1138"
+ },
+ {
+  "k": "<b>{0}</b>events held",
+  "w": "16-crowd.js:1140"
+ },
+ {
+  "k": "<b>{0}</b>stones thrown",
+  "w": "16-crowd.js:1143"
+ },
+ {
+  "k": "<b>{0}</b>brawls in the tiers",
+  "w": "16-crowd.js:1144"
+ },
+ {
+  "k": "The omen seen most often over this arena — hover the icon",
+  "w": "16-crowd.js:1145"
+ },
+ {
+  "k": "<b>{0}</b>most frequent omen",
+  "w": "16-crowd.js:1145"
+ },
+ {
+  "k": "Last spectator speared here: <b>{0}</b>, by {1} ({2} — {3}). The ushers are proud of the streak.",
+  "w": "16-crowd.js:1147"
+ }
+]

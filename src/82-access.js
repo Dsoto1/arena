@@ -33,10 +33,10 @@ function applyAccess(){try{const b=document.body;if(!b)return;b.classList.toggle
 /* Settings → General: the three controls, just above Visuals */
 {const base=settingsHTML;settingsHTML=function(tab){const h=base.apply(this,arguments);if(tab!=='general'&&tab)return h;try{
   const ts=+SETTINGS.tscale||100;
-  const block=`<h4 style="grid-column:1/-1;margin:6px 0 0">Accessibility</h4>
-    <label class="setrow"><input type="checkbox" data-set="calm" ${SETTINGS.calm?'checked':''}><span><b>Reduce motion</b><br><span class="hint" style="margin:0">No shakes, flashes, flying missiles or animated panels. On by itself when your system asks for reduced motion.</span></span></label>
-    <label class="setrow"><input type="checkbox" data-set="cvd" ${SETTINGS.cvd?'checked':''}><span><b>Colour-blind palette</b><br><span class="hint" style="margin:0">Class colours anyone can tell apart, a class letter on every token, blue/orange for good/bad.</span></span></label>
-    <div class="setrow a11yrow"><span><b>Text size</b><br><span class="hint" style="margin:0">Panels, log, windows and menus. The arena keeps its size.</span></span><div class="seg">${[100,115,130].map(v=>`<button type="button" data-tscale="${v}" class="${ts===v?'on':''}">${v}%</button>`).join('')}</div></div>`;
+  const block=`<h4 style="grid-column:1/-1;margin:6px 0 0">${_T`Accessibility`}</h4>
+    <label class="setrow"><input type="checkbox" data-set="calm" ${SETTINGS.calm?'checked':''}><span>${_T`<b>Reduce motion</b>`}<br><span class="hint" style="margin:0">${_T`No shakes, flashes, flying missiles or animated panels. On by itself when your system asks for reduced motion.`}</span></span></label>
+    <label class="setrow"><input type="checkbox" data-set="cvd" ${SETTINGS.cvd?'checked':''}><span>${_T`<b>Colour-blind palette</b>`}<br><span class="hint" style="margin:0">${_T`Class colours anyone can tell apart, a class letter on every token, blue/orange for good/bad.`}</span></span></label>
+    <div class="setrow a11yrow"><span>${_T`<b>Text size</b>`}<br><span class="hint" style="margin:0">${_T`Panels, log, windows and menus. The arena keeps its size.`}</span></span><div class="seg">${[100,115,130].map(v=>`<button type="button" data-tscale="${v}" class="${ts===v?'on':''}">${v}%</button>`).join('')}</div></div>`;
   const mark='<h4 style="grid-column:1/-1;margin:6px 0 0">Visuals</h4>';return h.includes(mark)?h.replace(mark,block+mark):h}catch(e){return h}}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-tscale]');if(!b)return;SETTINGS.tscale=+b.dataset.tscale;applySettings();
   b.parentElement.querySelectorAll('[data-tscale]').forEach(x=>x.classList.toggle('on',x===b))});

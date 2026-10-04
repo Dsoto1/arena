@@ -19,9 +19,9 @@ function caPlaceFromSystem(d,k){const f=armFit(k)||ARM_FIT[k];if(!f||!f.at||!EQ[
 /* the printed part as the designer's equip point */
 const caEqOf=k=>{const f=ARM_FIT[k];return f&&f.at?f.at:(ARM[k].slot==='head'?'head':'chest')};
 function caStartHTML(d){const sys=Object.keys(ARM).filter(k=>!ARM[k].custom);const groups=CA_EQ_ALL.map(([eq,l])=>[l,sys.filter(k=>caEqOf(k)===eq)]).filter(g=>g[1].length);
-  return `<label>Start from<select data-caf="start"><option value="" ${d.base?'':'selected'}>✦ A blank piece</option>${groups.map(([l,ks])=>`<optgroup label="${esc(l)}">${ks.map(k=>`<option value="${k}" ${d.base===k?'selected':''}>${esc(ARM[k].n)} · ${ARM[k].ap} AP · L${ARM[k].lv}</option>`).join('')}</optgroup>`).join('')}</select></label>
-   <label>Base shape<select data-caf="shape">${CA_SHAPES.map(([k,l])=>`<option value="${k}" ${d.shape===k?'selected':''}>${l}</option>`).join('')}</select></label>
-   ${d.art&&ARM[d.art]?`<label class="caartrow"><input type="checkbox" data-caart ${caArtOn(d)?'checked':''} ${(d.layers||[]).length||(d.baked||[]).length?'disabled':''}> Wear the printed art of <b>${esc(ARM[d.art].n)}</b>${(d.layers||[]).length||(d.baked||[]).length?' <span class="rc-sub">(your sculpt replaces it)</span>':''}</label>`:''}`}
+  return `<label>${_T`Start from`}<select data-caf="start"><option value="" ${d.base?'':'selected'}>${_T`✦ A blank piece`}</option>${groups.map(([l,ks])=>`<optgroup label="${esc(l)}">${ks.map(k=>`<option value="${k}" ${d.base===k?'selected':''}>${_T`${esc(ARM[k].n)} · ${ARM[k].ap} AP · L${ARM[k].lv}`}</option>`).join('')}</optgroup>`).join('')}</select></label>
+   <label>${_T`Base shape`}<select data-caf="shape">${CA_SHAPES.map(([k,l])=>`<option value="${k}" ${d.shape===k?'selected':''}>${l}</option>`).join('')}</select></label>
+   ${d.art&&ARM[d.art]?`<label class="caartrow"><input type="checkbox" data-caart ${caArtOn(d)?'checked':''} ${(d.layers||[]).length||(d.baked||[]).length?'disabled':''}> ${_T`Wear the printed art of <b>${esc(ARM[d.art].n)}</b>${(d.layers||[]).length||(d.baked||[]).length?_T(' <span class="rc-sub">(your sculpt replaces it)</span>'):''}`}</label>`:''}`}
 {const base=gearAHTML;gearAHTML=function(){let h=base.apply(this,arguments);try{const d=ST.ca;if(!d)return h;
   h=h.replace(/<label>Start from<select data-caf="shape">[\s\S]*?<\/select><\/label>/,caStartHTML(d));
   if(caArtOn(d))h=h.replace(/(<div class="scart[^"]*" id="caPiece"[^>]*>)[\s\S]*?(<\/div>)/,`$1<div class="caartprev">${armArtCell(d.art,200)}</div>$2`)}catch(e){console.error(e)}return h}}

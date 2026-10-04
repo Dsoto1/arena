@@ -1,0 +1,1026 @@
+[
+ {
+  "k": "Slain by <b>{0}</b>",
+  "w": "146-v85land.js:34"
+ },
+ {
+  "k": "Slain by a beast",
+  "w": "146-v85land.js:35"
+ },
+ {
+  "k": "Taken by the Fate",
+  "w": "146-v85land.js:35"
+ },
+ {
+  "k": "See {0}'s list ›",
+  "w": "146-v85land.js:37"
+ },
+ {
+  "k": "Biggest winner",
+  "w": "146-v85land.js:40"
+ },
+ {
+  "k": "most CF in one bout {0}",
+  "w": "146-v85land.js:40"
+ },
+ {
+  "k": "Biggest loser",
+  "w": "146-v85land.js:40"
+ },
+ {
+  "k": "best-ranked fallen {0}",
+  "w": "146-v85land.js:40"
+ },
+ {
+  "k": "Won {0}{1}",
+  "w": "146-v85land.js:43"
+ },
+ {
+  "k": "· Custom",
+  "w": "146-v85land.js:43"
+ },
+ {
+  "k": "Crowd Favor earned in that bout",
+  "w": "146-v85land.js:44"
+ },
+ {
+  "k": "{0}<b>{1}</b> CF",
+  "w": "146-v85land.js:44"
+ },
+ {
+  "k": "Coin earned in that bout",
+  "w": "146-v85land.js:44"
+ },
+ {
+  "k": "{0}<b>{1}</b> coin",
+  "w": "146-v85land.js:44"
+ },
+ {
+  "k": "<small>Lost</small>",
+  "w": "146-v85land.js:46"
+ },
+ {
+  "k": "The value of the gear he brought",
+  "w": "146-v85land.js:46"
+ },
+ {
+  "k": "{0}<b>{1}</b> in gear",
+  "w": "146-v85land.js:46"
+ },
+ {
+  "k": "His purse",
+  "w": "146-v85land.js:46"
+ },
+ {
+  "k": "{0}<b>{1}</b> purse",
+  "w": "146-v85land.js:46"
+ },
+ {
+  "k": "{0} <span>{1}</span><span>{2}<b>{3}</b> CF</span>",
+  "w": "146-v85land.js:48"
+ },
+ {
+  "k": "No one fell {0} — the sand waits.",
+  "w": "146-v85land.js:50"
+ },
+ {
+  "k": "The day in the arena",
+  "w": "146-v85land.js:57"
+ },
+ {
+  "k": "The online day turns at 8 PM New York time",
+  "w": "146-v85land.js:57"
+ },
+ {
+  "k": "turns at 8 PM New York",
+  "w": "146-v85land.js:57"
+ },
+ {
+  "k": "Your party: share a code or join one",
+  "w": "146-v85land.js:67"
+ },
+ {
+  "k": "<small>Party{0}</small>",
+  "w": "146-v85land.js:68"
+ },
+ {
+  "k": "👥 Your party",
+  "w": "146-v85land.js:73"
+ },
+ {
+  "k": "<span>Code</span><b class=\"onl-code\" id=\"v85code\">{0}</b>",
+  "w": "146-v85land.js:73"
+ },
+ {
+  "k": "📋 Copy",
+  "w": "146-v85land.js:73"
+ },
+ {
+  "k": "You pick the game — your party sits with you (one team in team events).",
+  "w": "146-v85land.js:74"
+ },
+ {
+  "k": "Your leader picks the game.",
+  "w": "146-v85land.js:74"
+ },
+ {
+  "k": "👥 Party",
+  "w": "146-v85land.js:76"
+ },
+ {
+  "k": "<b>Share your code</b><small class=\"rc-sub\">Friends who enter it sit with you; in team events you fight on one side.</small>",
+  "w": "146-v85land.js:76"
+ },
+ {
+  "k": "👥 Make my party code",
+  "w": "146-v85land.js:77"
+ },
+ {
+  "k": "<b>Join with a code</b>",
+  "w": "146-v85land.js:78"
+ },
+ {
+  "k": "📋 Party code <b>{0}</b> copied — send it to a friend.",
+  "w": "146-v85land.js:86"
+ },
+ {
+  "k": "🎶 Every theme is yours — the twelve cities and all the others. Settings → Audio.",
+  "w": "147-v85music.js:19"
+ },
+ {
+  "k": "🎶 Every theme in Settings → Audio — the twelve cities and all the others",
+  "w": "147-v85music.js:20"
+ },
+ {
+  "k": "the Online menus and rooms",
+  "w": "147-v85music.js:27"
+ },
+ {
+  "k": "Ave Arena",
+  "w": "147-v85music.js:28"
+ },
+ {
+  "k": "open Online to hear it",
+  "w": "147-v85music.js:28"
+ },
+ {
+  "k": "Arena locations map",
+  "w": "08-setup.js:28"
+ },
+ {
+  "k": "{0}{1} ({2} players)",
+  "w": "08-setup.js:31"
+ },
+ {
+  "k": "· no CF",
+  "w": "08-setup.js:41"
+ },
+ {
+  "k": "· no CA",
+  "w": "08-setup.js:41"
+ },
+ {
+  "k": "{0}Seat {1}",
+  "w": "08-setup.js:56"
+ },
+ {
+  "k": "Class for seat {0}",
+  "w": "08-setup.js:57"
+ },
+ {
+  "k": "Controller for seat {0}",
+  "w": "08-setup.js:58"
+ },
+ {
+  "k": "CPU mind for seat {0}",
+  "w": "08-setup.js:59"
+ },
+ {
+  "k": "How sharply the computer plays this gladiator (sets their Intelligence)",
+  "w": "08-setup.js:59"
+ },
+ {
+  "k": "CPU personality for seat {0}",
+  "w": "08-setup.js:60"
+ },
+ {
+  "k": "Personality: class default",
+  "w": "08-setup.js:60"
+ },
+ {
+  "k": "Random",
+  "w": "08-setup.js:60"
+ },
+ {
+  "k": "Custom…",
+  "w": "08-setup.js:60"
+ },
+ {
+  "k": "Tune",
+  "w": "08-setup.js:61"
+ },
+ {
+  "k": "Field an active-roster Ludus gladiator in CPU seat {0}",
+  "w": "08-setup.js:62"
+ },
+ {
+  "k": "Generated rival",
+  "w": "08-setup.js:62"
+ },
+ {
+  "k": "Ludus rival: {0} ({1}{2})",
+  "w": "08-setup.js:62"
+ },
+ {
+  "k": "{0} (default name)",
+  "w": "08-setup.js:62"
+ },
+ {
+  "k": "The name you give a class is remembered and used every time you pick it",
+  "w": "08-setup.js:62"
+ },
+ {
+  "k": "Gladiator name for seat {0}",
+  "w": "08-setup.js:62"
+ },
+ {
+  "k": "Summon an active-roster gladiator for seat {0}",
+  "w": "08-setup.js:63"
+ },
+ {
+  "k": "New gladiator",
+  "w": "08-setup.js:63"
+ },
+ {
+  "k": "Ludus: {0} ({1}, returns with {2} CF)",
+  "w": "08-setup.js:63"
+ },
+ {
+  "k": "Only the Ludus screen's active roster (up to 10) is listed here",
+  "w": "08-setup.js:63"
+ },
+ {
+  "k": "(active roster)",
+  "w": "08-setup.js:63"
+ },
+ {
+  "k": "Team for seat {0}",
+  "w": "08-setup.js:64"
+ },
+ {
+  "k": "Team",
+  "w": "08-setup.js:64"
+ },
+ {
+  "k": "Drafted event: class sets name and color only.",
+  "w": "08-setup.js:65"
+ },
+ {
+  "k": "Starts on a",
+  "w": "08-setup.js:65"
+ },
+ {
+  "k": "home tile.",
+  "w": "08-setup.js:65"
+ },
+ {
+  "k": "<b style=\"color:var(--gold2)\">Summoned from the Ludus.</b>",
+  "w": "08-setup.js:65"
+ },
+ {
+  "k": "Easy: loose aim, rarely shops or plays cards.",
+  "w": "08-setup.js:65"
+ },
+ {
+  "k": "Normal: solid play with the odd slip.",
+  "w": "08-setup.js:65"
+ },
+ {
+  "k": "Hard: sharpest play (dodges, focus, market, beast hunting).",
+  "w": "08-setup.js:65"
+ },
+ {
+  "k": "<i>Shares a class: gets its own color and a numbered name in the arena.</i>",
+  "w": "08-setup.js:65"
+ },
+ {
+  "k": "{0} priority for seat {1}",
+  "w": "08-setup.js:66"
+ },
+ {
+  "k": "1-100 priorities. Moving a slider switches this seat to Custom.",
+  "w": "08-setup.js:66"
+ },
+ {
+  "k": "Drafted and capture events ignore class modifiers",
+  "w": "08-setup.js:82"
+ },
+ {
+  "k": "Only classic events deal Mandata Flavi",
+  "w": "08-setup.js:83"
+ },
+ {
+  "k": "Chariot Racing uses its own offerings (Speed of Mercury, Crowd Favor, Curse Tablets)",
+  "w": "08-setup.js:85"
+ },
+ {
+  "k": "No Blessings pots in the flooded arena",
+  "w": "08-setup.js:85"
+ },
+ {
+  "k": "No Blessings pots in this event",
+  "w": "08-setup.js:86"
+ },
+ {
+  "k": "The Golden Eagle is already the objective of this event",
+  "w": "08-setup.js:86"
+ },
+ {
+  "k": "Options",
+  "w": "08-setup.js:94"
+ },
+ {
+  "k": "Apply {0}'s class modifiers",
+  "w": "08-setup.js:95"
+ },
+ {
+  "k": "Carmina Fescennina before the event",
+  "w": "08-setup.js:97"
+ },
+ {
+  "k": "Shuffle the optional offerings into the Blessings bag (Crowd Favor, Speed of Mercury, Curse Tablet)",
+  "w": "08-setup.js:98"
+ },
+ {
+  "k": "Include the Golden Eagle as one of the 12 Blessings",
+  "w": "08-setup.js:99"
+ },
+ {
+  "k": "Allow PvP attacks during the race",
+  "w": "08-setup.js:100"
+ },
+ {
+  "k": "Leave blank for fresh dice. Enter a seed from a past event's results screen to replay its exact rolls.",
+  "w": "08-setup.js:101"
+ },
+ {
+  "k": "Dice seed",
+  "w": "08-setup.js:101"
+ },
+ {
+  "k": "🎲 Random — the empire decides",
+  "w": "08-setup.js:102"
+ },
+ {
+  "k": "Set a number",
+  "w": "08-setup.js:102"
+ },
+ {
+  "k": "<span class=\"rc-sub\" style=\"flex:1 1 280px\">none allowed in this event</span>",
+  "w": "08-setup.js:102"
+ },
+ {
+  "k": "<span class=\"rc-sub\" style=\"flex:1 1 280px\">this crowd only watches: cheers, jeers and words — no stones, gifts or spears</span>",
+  "w": "08-setup.js:102"
+ },
+ {
+  "k": "<span class=\"rc-sub\" style=\"flex:1 1 280px\">city appetite, hometown regulars, fans of today’s fighters, billing and omen fill the stands · up to 96, each ≈1,000 Romans</span>",
+  "w": "08-setup.js:102"
+ },
+ {
+  "k": "<span class=\"rc-sub\" style=\"flex:1 1 280px\">0–96 named regulars, each ≈1,000 Romans with their own tastes, moods and CF (rulebook p.35)</span>",
+  "w": "08-setup.js:102"
+ },
+ {
+  "k": "Crowd personality",
+  "w": "08-setup.js:103"
+ },
+ {
+  "k": "(interactivity {0}% · saved in this browser)",
+  "w": "08-setup.js:103"
+ },
+ {
+  "k": "Scales how often spectators throw stones and offerings, change sections, chant for Tholo and emote.",
+  "w": "08-setup.js:105"
+ },
+ {
+  "k": "Interactivity",
+  "w": "08-setup.js:105"
+ },
+ {
+  "k": "Trait weights shape the tempers of <b>new faces</b> joining the crowd; your regulars keep the tempers you already know them by. 100% everywhere is the printed game.",
+  "w": "08-setup.js:107"
+ },
+ {
+  "k": "<b>Local flavor at {0}</b>: {1} — interactivity ×{2}%{3}. Layered on top of your sliders.",
+  "w": "08-setup.js:108"
+ },
+ {
+  "k": "this arena",
+  "w": "08-setup.js:108"
+ },
+ {
+  "k": "style=\"opacity:.45\" title=\"Only non-players can spectate\"",
+  "w": "08-setup.js:110"
+ },
+ {
+  "k": "🎟 <b>Play as a spectator</b> (all seats CPU): earn CF each rotation, throw stones or offerings, change sections and chant for Tholo",
+  "w": "08-setup.js:110"
+ },
+ {
+  "k": "Every Blessings token goes into one face-down bag ({0} tokens). Twelve are drawn, one pot per pillar; nobody knows what's inside until a pot breaks. Offerings spawned later by cards, spectators or events are drawn from the same bag. Events with an arena deck use the full 70 cards (12 more are set aside for round 2 in classic events), with Flavius Rule placed at the bottom.",
+  "w": "08-setup.js:111"
+ },
+ {
+  "k": "Single event",
+  "w": "08-setup.js:115"
+ },
+ {
+  "k": "Summa Rudis for the main event",
+  "w": "08-setup.js:122"
+ },
+ {
+  "k": "Begin the festival",
+  "w": "08-setup.js:125"
+ },
+ {
+  "k": "<b>Missios</b> (p.56-57) are five-event campaigns for one character. Finish each event with a win or at least 20 CF to advance. Half your CF (up to 25) carries over, coin goes to the Royal Reserve, and severed limbs persist.",
+  "w": "08-setup.js:132"
+ },
+ {
+  "k": "Continue a missio",
+  "w": "08-setup.js:133"
+ },
+ {
+  "k": "<span><b>{0}</b> · {1} · step {2}/5<em>Next: {3}{4} at {5} · RR {6} · carrying {7} CF</em></span>",
+  "w": "08-setup.js:133"
+ },
+ {
+  "k": "Start from the Ludus",
+  "w": "08-setup.js:134"
+ },
+ {
+  "k": "<span><b>{0}</b> · {1}<em>missios use the printed classes</em></span>",
+  "w": "08-setup.js:134"
+ },
+ {
+  "k": "missio in progress · step {0}/5",
+  "w": "08-setup.js:134"
+ },
+ {
+  "k": "{0}starts at step {1}/5 with {2} CF",
+  "w": "08-setup.js:134"
+ },
+ {
+  "k": "{0} step{1} already earned from past events ·",
+  "w": "08-setup.js:134"
+ },
+ {
+  "k": "Start",
+  "w": "08-setup.js:134"
+ },
+ {
+  "k": "Start a new missio",
+  "w": "08-setup.js:136"
+ },
+ {
+  "k": "Character name",
+  "w": "08-setup.js:138"
+ },
+ {
+  "k": "Requirement: {0}{1}.",
+  "w": "08-setup.js:139"
+ },
+ {
+  "k": "coin in the Royal Reserve",
+  "w": "08-setup.js:139"
+ },
+ {
+  "k": "trophies on record",
+  "w": "08-setup.js:139"
+ },
+ {
+  "k": "{0}{1} at {2}:",
+  "w": "08-setup.js:139"
+ },
+ {
+  "k": "Begin the missio",
+  "w": "08-setup.js:141"
+ },
+ {
+  "k": "· the city's own event: {0}",
+  "w": "08-setup.js:147"
+ },
+ {
+  "k": "Class modifiers (applied once, before the event):",
+  "w": "08-setup.js:147"
+ },
+ {
+  "k": "Roll a d6: a random city from 1–6",
+  "w": "08-setup.js:148"
+ },
+ {
+  "k": "🎲 Random 1–6",
+  "w": "08-setup.js:148"
+ },
+ {
+  "k": "Roll a d12: a random city, 1–12 — 1s and 12s re-rolled with 4+ gladiators",
+  "w": "08-setup.js:148"
+ },
+ {
+  "k": "🎲 Random 1–12",
+  "w": "08-setup.js:148"
+ },
+ {
+  "k": "This week the editor's games are at <b>{0}</b>: <b>{1}</b>{2}",
+  "w": "08-setup.js:151"
+ },
+ {
+  "k": "— <span style=\"color:var(--gold2)\">you are on the schedule</span>",
+  "w": "08-setup.js:151"
+ },
+ {
+  "k": "Follow the schedule",
+  "w": "08-setup.js:151"
+ },
+ {
+  "k": "or play off-schedule; the empire won't mind",
+  "w": "08-setup.js:151"
+ },
+ {
+  "k": "The season's schedule",
+  "w": "08-setup.js:151"
+ },
+ {
+  "k": "· or click a city on the map",
+  "w": "08-setup.js:153"
+ },
+ {
+  "k": "— this event’s home",
+  "w": "08-setup.js:153"
+ },
+ {
+  "k": "· home of",
+  "w": "08-setup.js:153"
+ },
+ {
+  "k": "{0} · {1} pillars · {2} beasts · loadout: {3}{4}{5}{6}. Custom events do not count toward the Infamis or the Hall of Flavius.",
+  "w": "08-setup.js:154"
+ },
+ {
+  "k": "Co-op against the beasts",
+  "w": "08-setup.js:154"
+ },
+ {
+  "k": "class gear",
+  "w": "08-setup.js:154"
+ },
+ {
+  "k": "snake draft",
+  "w": "08-setup.js:154"
+ },
+ {
+  "k": "· market closed",
+  "w": "08-setup.js:154"
+ },
+ {
+  "k": "rotation limit",
+  "w": "08-setup.js:154"
+ },
+ {
+  "k": "minute limit",
+  "w": "08-setup.js:154"
+ },
+ {
+  "k": "Sound the horns",
+  "w": "08-setup.js:161"
+ },
+ {
+  "k": "Choose the arena, event and gladiators",
+  "w": "08-setup.js:171"
+ },
+ {
+  "k": "d6 rolled {0}.",
+  "w": "08-setup.js:183"
+ },
+ {
+  "k": "d12 rolled {0}.",
+  "w": "08-setup.js:184"
+ },
+ {
+  "k": "Choose exactly one Juggernaut.",
+  "w": "08-setup.js:194"
+ },
+ {
+  "k": "Split the gladiators into at least two teams.",
+  "w": "08-setup.js:195"
+ },
+ {
+  "k": "Setup closed. Press <b>New event</b> when you are ready.",
+  "w": "08-setup.js:227"
+ },
+ {
+  "k": "📜 From the original Magnus Edition of Flavius Rule",
+  "w": "08-setup.js:249"
+ },
+ {
+  "k": "Played as printed — page references are to the Magnus Edition rulebook. The same game is on the table as the <b>print &amp; play</b> edition and as the <b>Tabletop Simulator mod</b>.",
+  "w": "08-setup.js:249"
+ },
+ {
+  "k": "<b>The arena</b><span>Board from p.9: 12 pillars, 4 tunnels, the chest, spikes and 6 base beasts with their zones.</span>",
+  "w": "08-setup.js:249"
+ },
+ {
+  "k": "<b>Turns & combat</b><span>Phases, movement, pushing & toppling, tunnels, focus rolls, throws, looting, trading and truces. PvP 2 hit dice, PvE 4, NPCs 2; shields absorb by choice.</span>",
+  "w": "08-setup.js:249"
+ },
+ {
+  "k": "<b>Armor & weapons</b><span>Every armor piece (to 7 AP) and all 40 weapon cards, the market, and the level 4 treasures.</span>",
+  "w": "08-setup.js:249"
+ },
+ {
+  "k": "<b>Beasts</b><span>Base and spawned NPCs with Initial / Raged / Fazed states, Commodus, Tholo, the lions, Zora, taming and lures.</span>",
+  "w": "08-setup.js:249"
+ },
+ {
+  "k": "<b>Summa rudis & Fates</b><span>Per-round PvE/PvP/CF/ability flags, rewards, the zone, and your Fate from final CF.</span>",
+  "w": "08-setup.js:249"
+ },
+ {
+  "k": "<b>Locations</b><span>The 12-city map, d6/d12 rolls and class modifiers.</span>",
+  "w": "08-setup.js:249"
+ },
+ {
+  "k": "<b>Special events</b><span>Chariot racing, Naumachia, festivals, Carmina Fescennina, missios, events for 5–8 gladiators.</span>",
+  "w": "08-setup.js:249"
+ },
+ {
+  "k": "<b>Spectators</b><span>8 sections, section cheers, stones, offerings and the Tholo chant (p.34-35).</span>",
+  "w": "08-setup.js:249"
+ },
+ {
+  "k": "<b>Every card</b><span>The 70-card arena deck, round-2 cards, Mandata Flavi, Carmina, class and event cards, the Fates.</span>",
+  "w": "08-setup.js:249"
+ },
+ {
+  "k": "<b>Infamis & Hall</b><span>The monthly high-score table and the Hall of Flavius.</span>",
+  "w": "08-setup.js:249"
+ },
+ {
+  "k": "✨ Extra in this digital standalone edition",
+  "w": "08-setup.js:250"
+ },
+ {
+  "k": "Built around the printed game — none of it changes a printed rule.",
+  "w": "08-setup.js:250"
+ },
+ {
+  "k": "<b>Manager mode</b><span>A living league: stables, contracts, morale, the fate table, blood money, Match Week, the Acta Diurna.</span>",
+  "w": "08-setup.js:250"
+ },
+ {
+  "k": "<b>Imperium & the crowd</b><span>Named regulars with memories and tempers, fans on the roads, world events, weather and omens.</span>",
+  "w": "08-setup.js:250"
+ },
+ {
+  "k": "<b>Creator Studio</b><span>Custom characters, beasts, events, spectators and board tokens — with a shape editor.</span>",
+  "w": "08-setup.js:250"
+ },
+ {
+  "k": "<b>Calendar</b><span>A shared empire calendar and 12-week season schedule; every event moves it on.</span>",
+  "w": "08-setup.js:250"
+ },
+ {
+  "k": "<b>Wagers & exchange</b><span>A bookmaker for every event and one betting ledger across the empire.</span>",
+  "w": "08-setup.js:250"
+ },
+ {
+  "k": "<b>Annals & the Road</b><span>Achievements with real rewards, seeded records, the Liberti and the Road of Flavius.</span>",
+  "w": "08-setup.js:250"
+ },
+ {
+  "k": "<b>Sponsors</b><span>A patron for every city, unlocked by winning there, and a Sponsor creator once you have won in all twelve.</span>",
+  "w": "08-setup.js:250"
+ },
+ {
+  "k": "<b>Trophies &amp; tournaments</b><span>A trophy room and the Flavian Awards in Manager mode, invitationals that pause the week, bracket tournaments, and a trophy designer for your own events.</span>",
+  "w": "08-setup.js:250"
+ },
+ {
+  "k": "<b>Audio</b><span>A generated theme for every arena and sound effects.</span>",
+  "w": "08-setup.js:250"
+ },
+ {
+  "k": "<b>Saves</b><span>Named game saves and portable save files.</span>",
+  "w": "08-setup.js:250"
+ },
+ {
+  "k": "<b>Interpretations, simplifications and the card sheets</b>",
+  "w": "08-setup.js:251"
+ },
+ {
+  "k": "where the digital game had to decide",
+  "w": "08-setup.js:251"
+ },
+ {
+  "k": "From your card sheets (v0.4)",
+  "w": "08-setup.js:252"
+ },
+ {
+  "k": "All 40 weapon cards (power, range, ammo, uses, throws, absorb, CF per hit, soul steal, both attacks); one card of each in the market, class weapons pulled out for the gladiators in play, and the level 4 Labrys, Psykhe and Shield of Achilles in the Arena Chest.",
+  "w": "08-setup.js:253"
+ },
+ {
+  "k": "The full 70-card arena deck and the 12 round-2 cards, the 15 Mandata Flavi, the 12 Carmina verses, the 8 class cards, the 13 Summa Rudis event cards and the 12 Fates. Hover any card name or thumbnail to see the card.",
+  "w": "08-setup.js:254"
+ },
+ {
+  "k": "Interpretations",
+  "w": "08-setup.js:255"
+ },
+ {
+  "k": "Commodus' entrance damage goes to the location every gladiator can best afford. Lure and Rete use range 4 from the thrower. Herculean Vigor applies to your next attack. \"A generous applause\" is flavor.",
+  "w": "08-setup.js:256"
+ },
+ {
+  "k": "The Naumachia water tokens now use the printed set (water tiles, crocodiles, sunken Level 1–3 weapons and armor, and +2/+3 AP Armor Upgrades; 16 drawn face-down), and the chariot horses (Palmatus, Ocianus, Saxo, Vindex), wheels (Wagon, Laurel, Gilded) and chariot names use the printed token stats. The 36 Blessings tokens remain an estimated mix.",
+  "w": "08-setup.js:257"
+ },
+ {
+  "k": "Simplifications",
+  "w": "08-setup.js:258"
+ },
+ {
+  "k": "Naumachia teams take turns one gladiator at a time (grouped by team) rather than moving simultaneously. Festival and missio events always use CPU opponents for the empty seats.",
+  "w": "08-setup.js:259"
+ },
+ {
+  "k": "New in v0.39: one sculptor (drag, bake and unbake) in the Token, Weapon, Armor, Trophy and Banner designers, blank canvases with a Start-from picker, a weapon-first forge with its card below, and armor fitted on the avatar and worn in play.",
+  "w": "08-setup.js:262"
+ },
+ {
+  "k": "New in v0.38: spectating everywhere — Play-as-spectator for all-CPU games, tickets mid-match from the active wallet, Spectate buttons for every Match Week bout, special and the Superbus (helping your own costs fame), a founding house rule for it — and the menu show’s beasts, Commodus’s triumph and the dust-cloud duel.",
+  "w": "08-setup.js:263"
+ },
+ {
+  "k": "New in v0.37: Learn to play (a guided first bout with Flavius), gold turn hints, rule hints on hover, a start-of-turn recap, right-click context menus, the Step speed, thumbs-down endings for all-truce arenas, Both attacks, and a complete All creations list.",
+  "w": "08-setup.js:264"
+ },
+ {
+  "k": "New in v0.36: fighters’ own purses and the ludus buyout (or the walk-out that founds a rival), home cities with real perks, working Easy/Standard/Hard house rules, a balanced Lanista tab, Naumachia reset to Classic, a developer’s key, unique creation names, trophy sculpting and materials, eight new banner devices, a headless Tholo, baked details that follow the body, a twelve-track playlist with fades, printed-style custom weapon cards, every printed ability in the forge, and settings that apply live.",
+  "w": "08-setup.js:265"
+ },
+ {
+  "k": "New in v0.35: once-per-event bosses, full-screen modes that return to the menu, a frozen group photo, Load game, save overwrite, the share build saving properly, the reordered post-show (with Naumachia fishing and draining), its countdown and Return to Match Week, live bouts landing back on Match Week, a sealed gate when no games are on, clear YES/NO when recruiting a spectator, banners above the board, Visuals folded into General, and a self-sorting version history.",
+  "w": "08-setup.js:266"
+ },
+ {
+  "k": "New in v0.34: the rebranded main menu with the group photo, the Sutler’s Stall market, the crew sweeping up leftovers and emptying the stands, the Debtor’s Gambit, the one-file share build, honors gated by legacy, Shut down the ludus, Easy/Standard/Hard house rules.",
+  "w": "08-setup.js:267"
+ },
+ {
+  "k": "New in v0.33: the main menu (first cut), the post-show arena reset with Charun and the corpse carts, corpse states for everything slain, the banner hierarchy and press presets, the gate lock after the horns, the arena-owner tag, stands-list parity.",
+  "w": "08-setup.js:268"
+ },
+ {
+  "k": "New in v0.31: the Gear forge (custom weapons with printed-bounds stats and their own cards, custom armor), the drawn armor set from the designer's own scans (with a legacy toggle), house flags everywhere (picker, Flag press, the stands superfan), one unified spectator system (full figures in the city, faces in the tiers), textured city shops, spectator dealings limited to three a week, loans sized to fame and record, house rules locked at creation.",
+  "w": "08-setup.js:270"
+ },
+ {
+  "k": "New in v0.30: explorable city squares in every arena city (crowds, shops, the auction block, beasts, the horns and a fade into the arena), start-of-bout kit shopping, loans from a syndicate or a friendly house, the Legacy score and retirement into the Annals, Match Week in order, exhibition (Fate-free) invitations, the Archives moved into News.",
+  "w": "08-setup.js:271"
+ },
+ {
+  "k": "New in v0.29: one empire clock (End the week), the weekly loop with End the week at the far right of the tabs, league points and the table, Fates on every sand (with a Fate-free switch), a Running-the-ludus dashboard, compact invitations, sixteen Flavian Awards, team form and fixtures, recruit search, a healthier league economy, attendance wording, the sling, audio fixes.",
+  "w": "08-setup.js:272"
+ },
+ {
+  "k": "New in v0.28: coin-first recruiting (one of each action per recruit a week, three pitches), facilities and the Ludus grade, team screens with correspondence and trades, rival houses that act (and keep ledgers), the Flavius Superbus finale, city sponsors and the Sponsor creator, beast kinds, the Emperor's tenth on betting, a unified Season tab, the Imperium and Wagers tabs, the care guide and wage breakdown, spectator search.",
+  "w": "08-setup.js:273"
+ },
+ {
+  "k": "New in v0.27: the trophy room and the Flavian Awards, invitational special events with brackets, early billing, New event → Tournament, a trophy designer (and trophies on custom events), Liberti career plaques, the Fate score explained (held CF vs the winner's bonus), an event's home city and a City dropdown, the Imperium map inside News.",
+  "w": "08-setup.js:274"
+ },
+ {
+  "k": "New in v0.26: big crowds scale Crowd Favor by exact share of the house (max 3 CF per cheer over 8 seated), world stories and weather evolve week to week on the empire calendar, a career started mid-season joins a league already under way, a tidier Spectators option.",
+  "w": "08-setup.js:275"
+ },
+ {
+  "k": "New in v0.25: an event title card, all three token styles side by side, a token library, hair under helmets and no more portrait checkboxes, a mute button, crowds counted in thousands, close buttons on the right, a broadsheet Acta Diurna, the Road of Flavius in plain sight, and this reorganised rules window (see <b>What's new</b>).",
+  "w": "08-setup.js:276"
+ },
+ {
+  "k": "New in v0.24: <b>🔊 Audio</b> — a generated theme for every arena (pulsing strings, soft pads, a plucky lead, timpani) and sound effects, all in Settings → Audio · sculpted <b>figure tokens by default</b> (two secret styles hide in Settings → Tokens), a cyclopean Tholo with his great club, dozens of new token wearables and a <b>shape editor</b> (add, drag, resize, rotate, commit) · a compact Settings window · the <b>Hall of Flavius</b> comes alive: twelve achievements with real rewards, and an old inscription about a Road… · the scribes fill every empty event record · every freedom — even in the league — joins the Liberti · results show portraits and tokens, drawn and declared cards are labelled, the Fates view knows when it's over · betting slips carry empire dates and hours · <b>Manager mode</b>: a letter from the capital when your career falls behind the empire (let the doctores catch up), the Consilium of advisors, separate Roster and Recruiting tabs, and the Acta Diurna's Darwinius Awards.",
+  "w": "08-setup.js:277"
+ },
+ {
+  "k": "New in v0.22: the <b>classic standees</b> — the real Flavius Rule minis for all eight classes and the default beasts (Tholo, Commodus, Leo &amp; Leaena, Ursa &amp; Brutum, Valencia &amp; Moechus, Glykon &amp; Arenosus) stand on the board, in the Menagerie, the beast tracker, the seats and the gladiator card (Settings → Classic standees) · the Menagerie quotes the rulebook's own <b>ludus notes</b> · any window pauses a live match and resuming picks up at the same pace · “?” when no event is on · gold coin, wheat (CF), key and trophy icons · <b>Manager mode</b>: a landing page with the week in review and a to-do list, the ludus tools above the roster, morale that really changes how fighters fight, careers that join the empire's calendar where it stands, gladiators from 16 to 80, fight cards that name teams and the Juggernaut, laurel-wreath fame · <b>the betting exchange</b>: a real ledger of every wager laid across the empire · an <b>All creations</b> table in the Creator Studio · empire banners behind portraits · optional add-ons start unchecked · the Empire Today shows its top ten.",
+  "w": "08-setup.js:279"
+ },
+ {
+  "k": "New in v0.21 (part 2): <b>💾 Game saves</b> (Settings → Game saves: named saves in this browser, download a save file, open one on any device) · <b>empire banners</b> — fourteen city flags for the page background (Settings → Visuals) · <b>the Bookie's Haven</b> — a live ticker of money moving through the betting network, drifting odds, smart money and the house handle · the <b>Creator Studio</b> opens every tab ready to create, with your creations listed beneath · more looks for custom characters (hairstyles, beard styles, eyes, scars and marks, garb, six new helmets, earrings, new hair dyes and backdrops) and hats for spectators.",
+  "w": "08-setup.js:280"
+ },
+ {
+  "k": "New in v0.21 (part 1): custom creations join the league only when you <b>add them to the rolls</b> — and the fallen stay fallen · <b>⏩ Sim to end</b> at any moment of an event, even while fighting it yourself · a redesigned <b>Match Week</b> card (purse, appearance fee, summa rudis, ratings, fame) · the <b>Acta Diurna</b> leads with the week's biggest story by the numbers, recaps the empire, lets you ☆ favorite living gladiators and strikes out the dead and freed in old editions · the Ludus tab gathers training, schooling, promotion, ledger and the Fallen · ⚕ injury badges and healing right from the roster · 🏵 fame marks · richer obituaries · rivalries between old stables · four new stables and five new lanista presets · take over a ludus under your own name · a gentler default league (rookie mercy, \"arena time\") · × close buttons everywhere · English calendar dates and a Season tab · many alignment and window fixes.",
+  "w": "08-setup.js:281"
+ },
+ {
+  "k": "New in v0.40",
+  "w": "08-setup.js:300"
+ },
+ {
+  "k": "New in v0.39",
+  "w": "08-setup.js:302"
+ },
+ {
+  "k": "✏️ <b>One sculptor, every designer.</b> The Token Designer’s shape bench — add, click or <b>drag on the preview</b> (it keeps your grip), nudge, bring forward / send back, duplicate, delete, color, outline, width, height, rotation, opacity, <b>🔨 Commit</b> (bake) and <b>Unbake</b> — is now the very same bench in the Token Designer, the Weapon forge, the Armor forge, the Trophy designer and the Banner press. Baked shapes are drawn under the live ones and saved with the piece.",
+  "w": "08-setup.js:303"
+ },
+ {
+  "k": "⬜ <b>Blank canvases.</b> New weapons, armor pieces, trophies and banners start empty, on a gridded canvas. A <b>Start from…</b> picker still offers every printed silhouette, casting and heraldic device as a template. Characters and beasts keep their bodies.",
+  "w": "08-setup.js:304"
+ },
+ {
+  "k": "⚔ <b>The Weapon forge, weapon first.</b> The weapon itself is drawn large, upright, and sculpted there; its printed-style <b>card</b> is generated from it underneath — the same arrangement as the character creator’s portrait and token.",
+  "w": "08-setup.js:305"
+ },
+ {
+  "k": "🛡 <b>Armor on the body.</b> Toggle <b>On the avatar</b> to see the piece on the blank player avatar: drag it into place, size it, and click a body zone (head, chest, arm, leg) to choose where it equips. A fitted piece is <b>worn</b> on your player-board avatar in play (mirrored on the left side).",
+  "w": "08-setup.js:306"
+ },
+ {
+  "k": "New in v0.38",
+  "w": "08-setup.js:307"
+ },
+ {
+  "k": "🎟 <b>Spectating is back — everywhere.</b> In Play now, with every seat CPU, <b>Play as a spectator</b> seats you in the stands before the horns (the crowd is filled in if you had none). During any match with no fighter of yours standing — none entered, or yours has fallen — <b>🎟 Buy a ticket</b> seats you mid-bout, paid from the active wallet (general admission 4 coin, not counted as betting). Each rotation you earn 1 CF and may throw stones or offerings, change sections or join a chant for Tholo.",
+  "w": "08-setup.js:308"
+ },
+ {
+  "k": "🏛 <b>Manager mode.</b> Every Match Week bout, special heat and the Superbus has a <b>🎟 Spectate</b> button: the ticket comes from your treasury, priced by the billing (Undercard 3 · Feature 6 · Main event 12 · a special 10 · the Superbus 20). Everything is allowed — but noticed: each offering to your own fighter, or stone at their rivals, costs your house <b>1 fame</b>, at most 3 a bout. Whether a career may spectate is a house rule chosen at the founding (on by default).",
+  "w": "08-setup.js:309"
+ },
+ {
+  "k": "🦅 <b>The show goes on.</b> On the main menu, after the Damnatio is hauled off, the base beasts come for the rest: the eagle drops from above, the bear rises from behind, wolves and snakes come in from the front, and Tholo reaches out of the shadows. With the sand empty, <b>Commodus</b> strides in and raises his sword as laurels and flowers rain at his feet — and now and then a gladiator comes back, fights him in a cloud of dust, and kneels over his body.",
+  "w": "08-setup.js:310"
+ },
+ {
+  "k": "Rules at a glance",
+  "w": "08-setup.js:312"
+ },
+ {
+  "k": "What's new",
+  "w": "08-setup.js:312"
+ },
+ {
+  "k": "Play Now guide",
+  "w": "08-setup.js:312"
+ },
+ {
+  "k": "Manager guide",
+  "w": "08-setup.js:312"
+ },
+ {
+  "k": "🎓 Lessons",
+  "w": "08-setup.js:312"
+ },
+ {
+  "k": "📖 Read the full rulebook ↗",
+  "w": "08-setup.js:313"
+ },
+ {
+  "k": "the printed rules this build is based on (PDF, opens in a new tab)",
+  "w": "08-setup.js:313"
+ },
+ {
+  "k": "Abandon this event?",
+  "w": "08-setup.js:325"
+ },
+ {
+  "k": "An event is still on the sand. Before the main menu, decide what happens to it:",
+  "w": "08-setup.js:325"
+ },
+ {
+  "k": "The event on the sand has not resolved. Walking away now has consequences:",
+  "w": "08-setup.js:325"
+ },
+ {
+  "k": "<b>{0}</b> {1} summoned from the Ludus. Deserting the arena is death in the crowd's eyes: {2} will be <b>struck from the rolls for good</b>.",
+  "w": "08-setup.js:326"
+ },
+ {
+  "k": "their records",
+  "w": "08-setup.js:326"
+ },
+ {
+  "k": "the record",
+  "w": "08-setup.js:326"
+ },
+ {
+  "k": "Your open wagers — <b>{0} coin</b> staked — are forfeit to the bookmaker.",
+  "w": "08-setup.js:327"
+ },
+ {
+  "k": "Abandoning awards no Fates; nothing reaches the Ludus, the Infamis or the records.",
+  "w": "08-setup.js:328"
+ },
+ {
+  "k": "<b>💾 Save &amp; leave</b> keeps the match exactly as it stands — every token, wound and coin — in a save slot you can load from <b>Load game</b>.",
+  "w": "08-setup.js:329"
+ },
+ {
+  "k": "<i>Saving the match is possible on your own move (action phase, nothing waiting).</i>",
+  "w": "08-setup.js:329"
+ },
+ {
+  "k": "pick a slot, then the main menu",
+  "w": "08-setup.js:330"
+ },
+ {
+  "k": "accept the consequences above",
+  "w": "08-setup.js:330"
+ },
+ {
+  "k": "walk away",
+  "w": "08-setup.js:330"
+ },
+ {
+  "k": "Deserted the arena",
+  "w": "08-setup.js:333"
+ },
+ {
+  "k": "{0} deserted the arena: struck from the Ludus rolls.",
+  "w": "08-setup.js:334"
+ },
+ {
+  "k": "The bookmaker pockets your {0} coin in abandoned wagers with a smile.",
+  "w": "08-setup.js:335"
+ },
+ {
+  "k": "⚠ {0} could not open: {1}",
+  "w": "08-setup.js:368"
+ },
+ {
+  "k": "That mode",
+  "w": "08-setup.js:368"
+ },
+ {
+  "k": "Loading {0}…",
+  "w": "08-setup.js:369"
+ },
+ {
+  "k": "⚔️ Play now",
+  "w": "08-setup.js:377"
+ },
+ {
+  "k": "⚔️ New event",
+  "w": "08-setup.js:377"
+ },
+ {
+  "k": "choose the arena, the event and the gladiators",
+  "w": "08-setup.js:377"
+ },
+ {
+  "k": "📂 Load game",
+  "w": "08-setup.js:377"
+ },
+ {
+  "k": "continue a saved Play now match",
+  "w": "08-setup.js:377"
+ },
+ {
+  "k": "no saved matches yet",
+  "w": "08-setup.js:377"
+ },
+ {
+  "k": "🗂 Manage saves",
+  "w": "08-setup.js:377"
+ },
+ {
+  "k": "rename, download or delete your match saves",
+  "w": "08-setup.js:377"
+ },
+ {
+  "k": "Play now",
+  "w": "08-setup.js:378"
+ },
+ {
+  "k": "📂 Load a Play now match",
+  "w": "08-setup.js:381"
+ },
+ {
+  "k": "🗂 Play now saves",
+  "w": "08-setup.js:381"
+ },
+ {
+  "k": "💼 Manager mode",
+  "w": "08-setup.js:387"
+ },
+ {
+  "k": "▶ Continue · {0}",
+  "w": "08-setup.js:387"
+ }
+]

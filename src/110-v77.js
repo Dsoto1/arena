@@ -25,12 +25,12 @@ function rs77Rolls(){const s={};s.chars=(CUSTOM.chars||[]).filter(onRolls).map(c
 function rs77Sel(R){if(!R||R.id==='classic')return {};if(R.id==='rolls')return rs77Rolls();return R.sel||{}}
 function rs77Count(R){const s=rs77Sel(R);return RS_KINDS.map(([k,l])=>[k,l,(s[k]||[]).length]).filter(x=>x[2])}
 /* careers that play with a set: the open one is known; the saved ones carry their roster in the summary when present */
-function rs77Careers(R){const out=[];try{const w=typeof MGR!=='undefined'&&MGR.world;if(w&&w.roster&&w.roster.id===R.id)out.push((w.mgrs.find(m=>m.isPlayer)||{}).ludus||'your career')}catch(e){}return out}
+function rs77Careers(R){const out=[];try{const w=typeof MGR!=='undefined'&&MGR.world;if(w&&w.roster&&w.roster.id===R.id)out.push((w.mgrs.find(m=>m.isPlayer)||{}).ludus||_T('your career'))}catch(e){}return out}
 function rs77SetCard(R,openId){const cur=(typeof CFG!=='undefined'&&CFG.roster)||'classic';const n=rs77Count(R);const car=rs77Careers(R);
-  const chips=R.id==='classic'?'<span class="rc-sub">the printed game only</span>':n.length?n.map(([k,l,c])=>`<span class="rs77n" title="${esc(l.split(' ').slice(1).join(' '))}">${l.split(' ')[0]} ${c}</span>`).join(''):'<span class="rc-sub">nothing of yours yet — plays like Classic</span>';
+  const chips=R.id==='classic'?_T('<span class="rc-sub">the printed game only</span>'):n.length?n.map(([k,l,c])=>`<span class="rs77n" title="${esc(l.split(' ').slice(1).join(' '))}">${l.split(' ')[0]} ${c}</span>`).join(''):_T('<span class="rc-sub">nothing of yours yet — plays like Classic</span>');
   return `<div class="rs77set ${R.id===openId?'on':''} ${R.sys?'sys':''}" data-rs77open="${esc(R.id)}" role="button" tabindex="0"><div class="rs77sh"><b>${R.sys?'🏛':'📚'} ${esc(R.name)}</b>${R.locked?' <span title="Locked">🔒</span>':''}</div>
     <div class="rs77chips">${chips}</div>
-    <div class="rs77tags">${R.id===cur?'<span class="badge gold">▶ Play Now</span>':''}${car.map(c=>`<span class="badge">💼 ${esc(c)}</span>`).join('')}</div></div>`}
+    <div class="rs77tags">${R.id===cur?_T('<span class="badge gold">▶ Play Now</span>'):''}${car.map(c=>`<span class="badge">💼 ${esc(c)}</span>`).join('')}</div></div>`}
 /* a bigger picture per item (falls back to the old row icon) */
 function rs77Ico(kind,id,ic){try{
   if(kind==='chars'){const c=(CUSTOM.chars||[]).find(x=>x.id===id);if(c)return portraitHTML(c,'sm')}
@@ -46,29 +46,29 @@ function rs77Ico(kind,id,ic){try{
 function rs77KindHTML(kind,label,d,ro,q){const {sys,mine}=rsItems(kind);const sel=new Set((d.sel||{})[kind]||[]);
   const vis=mine.filter(m=>!q||String(m[1]||'').toLowerCase().includes(q));const tab=RS77_TAB[kind];const word=label.split(' ').slice(1).join(' ');
   if(q&&!vis.length)return '';
-  const head=`<div class="rs77kh"><b>${label}</b> <span class="rc-sub">${mine.length?`${mine.filter(m=>sel.has(m[0])).length} of ${mine.length} in`:''}</span>${!ro&&mine.length?`<span class="rs77an"><button type="button" class="btn tksm" data-rs77all="${kind}">All</button><button type="button" class="btn tksm" data-rs77none="${kind}">None</button></span>`:''}</div>`;
+  const head=`<div class="rs77kh"><b>${label}</b> <span class="rc-sub">${mine.length?_T`${mine.filter(m=>sel.has(m[0])).length} of ${mine.length} in`:''}</span>${!ro&&mine.length?`<span class="rs77an"><button type="button" class="btn tksm" data-rs77all="${kind}">${_T`All`}</button><button type="button" class="btn tksm" data-rs77none="${kind}">${_T`None`}</button></span>`:''}</div>`;
   const tiles=vis.map(([id,n,ic,st])=>{const on=sel.has(id);return `<button type="button" class="rs77t ${on?'on':''}" ${ro||st?'disabled':''} data-rs77t="${kind}|${esc(id)}" title="${esc(n||'')}${st?' ('+esc(st)+')':''}"><span class="ic">${rs77Ico(kind,id,ic)}</span><span class="nm">${esc(n||'')}</span><span class="ck">${on?'✓ in':'out'}</span></button>`}).join('');
   if(!mine.length)return '';const empty='';
-  const sysl=sys.length?`<details class="rs77sys"><summary>🔒 ${sys.length} printed — always in</summary><div class="rs77sl">${sys.map(([k,n])=>`<span>${esc(n)}</span>`).join(' · ')}</div></details>`:'';
+  const sysl=sys.length?`<details class="rs77sys"><summary>${_T`🔒 ${sys.length} printed — always in`}</summary><div class="rs77sl">${sys.map(([k,n])=>`<span>${esc(n)}</span>`).join(' · ')}</div></details>`:'';
   return `<section class="rs77k">${head}${tiles?`<div class="rs77grid">${tiles}</div>`:''}${empty}${sysl}</section>`}
 function rs77Unmade(){const L=RS_KINDS.filter(([k])=>!rsItems(k).mine.length);if(!L.length)return '';
-  return `<section class="rs77k rs77un"><div class="rs77kh"><b>Not made yet</b> <span class="rc-sub">the printed pieces of these are always in</span></div><div class="rs77ul">${L.map(([k,l])=>RS77_TAB[k]?`<button type="button" class="btn tksm" data-st="tab" data-v="${RS77_TAB[k]}" title="Open the designer">${l} ＋</button>`:`<span class="rs77n">${l}</span>`).join('')}</div></section>`}
+  return `<section class="rs77k rs77un"><div class="rs77kh">${_T`<b>Not made yet</b>`} <span class="rc-sub">${_T`the printed pieces of these are always in`}</span></div><div class="rs77ul">${L.map(([k,l])=>RS77_TAB[k]?`<button type="button" class="btn tksm" data-st="tab" data-v="${RS77_TAB[k]}" title="${_T`Open the designer`}">${l} ＋</button>`:`<span class="rs77n">${l}</span>`).join('')}</div></section>`}
 function rs77Summary(d){const n=RS_KINDS.map(([k,l])=>[(d.sel&&d.sel[k]||[]).length,l.split(' ').slice(1).join(' ').toLowerCase()]).filter(x=>x[0]);
-  return n.length?`Plays like Classic + ${n.map(([c,l])=>`${c} ${c===1?l.replace(/s$/,''):l}`).join(', ')}`:'Plays like Classic — put some of your creations in'}
+  return n.length?_T`Plays like Classic + ${n.map(([c,l])=>`${c} ${c===1?l.replace(/s$/,''):l}`).join(', ')}`:_T('Plays like Classic — put some of your creations in')}
 rosterStudioHTML=function(){const L=[...ROSTER_SYS,...(CUSTOM.rosters||[])];if(!ST.rs77){if(!ST.rsd)ST.rsd=rsBlank();ST.rs77=ST.rsd.id}const openId=ST.rs77;
   const sysR=ROSTER_SYS.find(r=>r.id===openId);const q=String(ST.rs77q||'').toLowerCase();let right;
   if(sysR){const d={sel:rs77Sel(sysR)};
-    right=`<div class="rs77hd"><div><h3>🏛 ${esc(sysR.name)}</h3><div class="rc-sub">${esc(sysR.desc||'')}</div></div><div class="acts"><button class="btn primary tksm" type="button" data-rs="copy" data-v="${sysR.id}">⧉ Copy &amp; edit</button><button class="btn tksm" type="button" data-rs="useplay" data-v="${sysR.id}">▶ Use for Play Now</button></div></div>
-      ${sysR.id==='classic'?'<p class="rs77note">Only the printed game — every class, beast, weapon and event from the box, none of your creations.</p>':`<p class="rs77note">Follows the 📜 rolls: whatever you add to the rolls in each designer joins this set by itself.</p>${RS_KINDS.map(([k,l])=>rs77KindHTML(k,l,d,true,q)).join('')}`}`}
+    right=`<div class="rs77hd"><div><h3>🏛 ${esc(sysR.name)}</h3><div class="rc-sub">${esc(sysR.desc||'')}</div></div><div class="acts"><button class="btn primary tksm" type="button" data-rs="copy" data-v="${sysR.id}">${_T`⧉ Copy &amp; edit`}</button><button class="btn tksm" type="button" data-rs="useplay" data-v="${sysR.id}">${_T`▶ Use for Play Now`}</button></div></div>
+      ${sysR.id==='classic'?'<p class="rs77note">Only the printed game — every class, beast, weapon and event from the box, none of your creations.</p>':`<p class="rs77note">${_T`Follows the 📜 rolls: whatever you add to the rolls in each designer joins this set by itself.`}</p>${RS_KINDS.map(([k,l])=>rs77KindHTML(k,l,d,true,q)).join('')}`}`}
   else{const d=ST.rsd||(ST.rsd=rsBlank());const mine=(CUSTOM.rosters||[]).find(r=>r.id===d.id);
-    right=`<div class="rs77hd"><div style="flex:1"><label class="rc-sub">Set name<input class="tin" data-rsf="name" value="${esc(d.name)}" maxlength="32" style="display:block;width:100%;max-width:340px"></label><div class="rs77sum">${rs77Summary(d)}</div></div>
-       <div class="acts"><button class="btn primary" type="button" data-rs="save">💾 Save set</button>${mine?`<button class="btn tksm" type="button" data-rs="useplay" data-v="${esc(d.id)}">▶ Use for Play Now</button>${lockBtn(mine).replace('data-st="lock"',`data-rs="lock" data-v="${esc(d.id)}"`)}<button class="btn tksm" type="button" data-rs="copy" data-v="${esc(d.id)}">⧉ Copy</button><button class="btn tksm" type="button" data-rs="del" data-v="${esc(d.id)}" ${mine.locked?'disabled':''}>Delete</button>`:''}</div></div>
-      <input class="tin rs77q" id="rs77q" placeholder="🔍 Find a creation…" value="${esc(ST.rs77q||'')}">
+    right=`<div class="rs77hd"><div style="flex:1"><label class="rc-sub">${_T`Set name`}<input class="tin" data-rsf="name" value="${esc(d.name)}" maxlength="32" style="display:block;width:100%;max-width:340px"></label><div class="rs77sum">${rs77Summary(d)}</div></div>
+       <div class="acts"><button class="btn primary" type="button" data-rs="save">${_T`💾 Save set`}</button>${mine?`<button class="btn tksm" type="button" data-rs="useplay" data-v="${esc(d.id)}">${_T`▶ Use for Play Now`}</button>${lockBtn(mine).replace('data-st="lock"',`data-rs="lock" data-v="${esc(d.id)}"`)}<button class="btn tksm" type="button" data-rs="copy" data-v="${esc(d.id)}">${_T`⧉ Copy`}</button><button class="btn tksm" type="button" data-rs="del" data-v="${esc(d.id)}" ${mine.locked?'disabled':''}>${_T`Delete`}</button>`:''}</div></div>
+      <input class="tin rs77q" id="rs77q" placeholder="${_T`🔍 Find a creation…`}" value="${esc(ST.rs77q||'')}">
       ${RS_KINDS.map(([k,l])=>rs77KindHTML(k,l,d,!!(mine&&mine.locked),q)).join('')}${q?'':rs77Unmade()}`}
   const w=typeof MGR!=='undefined'&&MGR.world;
-  return `<p class="intro77">📚 A roster set decides which of your creations play. The printed game is always in. <span class="qi" data-tip="Classic is the default for every New event and every new career. Pick a set on the Play Now screen, or when you found a career — a career keeps its set for life.">ⓘ</span></p>
-   <div class="rs77"><div class="rs77sets">${L.map(r=>rs77SetCard(r,openId)).join('')}<button type="button" class="rs77set rs77new" data-rs77new="1"><b>＋ New set</b><span class="rc-sub">start empty, then click tiles</span></button>
-     ${w&&w.roster?`<div class="rc-sub rs77car">💼 Your open career plays with <b>${esc(w.roster.name)}</b> — fixed at its founding.</div>`:''}</div>
+  return `<p class="intro77">${_T`📚 A roster set decides which of your creations play. The printed game is always in.`} <span class="qi" data-tip="${_T`Classic is the default for every New event and every new career. Pick a set on the Play Now screen, or when you found a career — a career keeps its set for life.`}">ⓘ</span></p>
+   <div class="rs77"><div class="rs77sets">${L.map(r=>rs77SetCard(r,openId)).join('')}<button type="button" class="rs77set rs77new" data-rs77new="1">${_T`<b>＋ New set</b>`}<span class="rc-sub">${_T`start empty, then click tiles`}</span></button>
+     ${w&&w.roster?`<div class="rc-sub rs77car">${_T`💼 Your open career plays with <b>${esc(w.roster.name)}</b> — fixed at its founding.`}</div>`:''}</div>
     <div class="rs77open">${right}</div></div>`};
 /* the bench follows the card you open */
 document.addEventListener('click',e=>{if(typeof ST==='undefined')return;const st=document.getElementById('studio');if(!st)return;
@@ -93,12 +93,12 @@ function st77Counts(){const n=x=>(x||[]).length;const sp=(typeof CROWD_CACHE!=='
   c.all=Object.entries(c).filter(([k])=>k!=='names').reduce((a,[,v])=>a+v,0);return c}
 
 /* ---------------- C · All creations ---------------- */
-const ST77_FIRST=[['chars','🛡','a character'],['classes','🎭','a class'],['npcs','🐾','a beast'],['gear:w','⚔','a weapon'],['gear:a','🛡','armor'],['events','🎪','an event'],['flags','🚩','a banner'],['trophies','🏆','a trophy'],['tokens','🗿','a token'],['lanistas','🎩','a lanista'],['tourneys','🏆','a tournament'],['spect','👥','a regular']];
+const ST77_FIRST=[['chars','🛡',_T('a character')],['classes','🎭',_T('a class')],['npcs','🐾',_T('a beast')],['gear:w','⚔',_T('a weapon')],['gear:a','🛡','armor'],['events','🎪',_T('an event')],['flags','🚩',_T('a banner')],['trophies','🏆',_T('a trophy')],['tokens','🗿',_T('a token')],['lanistas','🎩',_T('a lanista')],['tourneys','🏆',_T('a tournament')],['spect','👥',_T('a regular')]];
 const ST77_K2SEL={chars:'chars',npcs:'npcs',events:'events',weapons:'weapons',armor:'armor',flags:'flags',trophies:'trophies',sponsors:'sponsors',specials:'specials',pairings:'pairs',tourneys:'tourneys',classes:'classes',lanistas:'lanistas'};
 function st77AllTidy(root){const tb=root.querySelector('table.tally');if(!tb)return;const R=rosterById((typeof CFG!=='undefined'&&CFG.roster)||'classic');const sel=rs77Sel(R);
   const rows=[...tb.querySelectorAll('tr')];if(rows.length<=2&&/Nothing made yet/.test(tb.textContent)){const wrap=tb.closest('div');const box=document.createElement('div');box.className='st77first';
-    box.innerHTML=`<p class="intro77">Nothing made yet. Start anywhere:</p><div class="st77fgrid">${ST77_FIRST.map(([t,ic,l])=>`<button type="button" class="st77f" data-st="tab" data-v="${t}"><span>${ic}</span>Make ${l}</button>`).join('')}</div>`;(wrap||tb).replaceWith(box);return}
-  const hd=rows[0];if(!hd||hd.dataset.s77)return;hd.dataset.s77=1;const th=document.createElement('th');th.textContent='Play Now set';th.title=R.name;hd.insertBefore(th,hd.lastElementChild);
+    box.innerHTML=`<p class="intro77">${_T`Nothing made yet. Start anywhere:`}</p><div class="st77fgrid">${ST77_FIRST.map(([t,ic,l])=>`<button type="button" class="st77f" data-st="tab" data-v="${t}">${_T`<span>${ic}</span>Make ${l}`}</button>`).join('')}</div>`;(wrap||tb).replaceWith(box);return}
+  const hd=rows[0];if(!hd||hd.dataset.s77)return;hd.dataset.s77=1;const th=document.createElement('th');th.textContent=_T('Play Now set');th.title=R.name;hd.insertBefore(th,hd.lastElementChild);
   for(const tr of rows.slice(1)){const b=tr.querySelector('[data-st="allopen"]');const td=document.createElement('td');td.className='rc-sub';if(b){const [k,id]=b.dataset.v.split('|');const sk=ST77_K2SEL[k];td.innerHTML=sk?((sel[sk]||[]).includes(id)?'<span class="badge gold">✓ in</span>':'—'):''}tr.insertBefore(td,tr.lastElementChild)}}
 
 /* ---------------- D · Names: pin and use ---------------- */
@@ -107,30 +107,30 @@ function nm77Save(L){try{localStorage.setItem('flavius_namepins77',JSON.stringif
 function nm77Tidy(root){const list=root.querySelector('#ngList');if(!list||list.dataset.s77)return;list.dataset.s77=1;const pins=nm77Pins();
   const segs=[...root.querySelectorAll('.seg[role="group"]')].filter(s=>s.querySelector('[data-ngpat]'));if(segs.length===2&&!root.querySelector('.nm77row')){const row=document.createElement('div');row.className='nm77row';segs[0].before(row);row.append(...segs)}
   for(const r of list.querySelectorAll('.lrow')){const n=(r.querySelector('b')||{}).textContent||'';const a=document.createElement('div');a.className='a';
-    a.innerHTML=`<button type="button" class="btn tksm" data-nm77pin="${esc(n)}" title="Keep this name">${pins.includes(n)?'📌 Pinned':'📌 Pin'}</button><button type="button" class="btn tksm" data-nm77use="${esc(n)}" title="Start a character with this name">✎ Use</button>`;r.append(a)}
-  if(pins.length&&!root.querySelector('.nm77pins')){const p=document.createElement('div');p.className='card2 nm77pins';p.innerHTML=`<b>📌 Pinned names</b> <span class="rc-sub">kept in this browser</span><div class="nm77pl">${pins.map(n=>`<span class="nm77p"><b>${esc(n)}</b><button type="button" class="btn tksm" data-nm77use="${esc(n)}">✎ Use</button><button type="button" class="btn tksm" data-nm77pin="${esc(n)}" title="Unpin">✕</button></span>`).join('')}</div>`;list.before(p)}}
+    a.innerHTML=`<button type="button" class="btn tksm" data-nm77pin="${esc(n)}" title="${_T`Keep this name`}">${pins.includes(n)?_T('📌 Pinned'):_T('📌 Pin')}</button><button type="button" class="btn tksm" data-nm77use="${esc(n)}" title="${_T`Start a character with this name`}">${_T`✎ Use`}</button>`;r.append(a)}
+  if(pins.length&&!root.querySelector('.nm77pins')){const p=document.createElement('div');p.className='card2 nm77pins';p.innerHTML=`${_T`<b>📌 Pinned names</b>`} <span class="rc-sub">${_T`kept in this browser`}</span><div class="nm77pl">${pins.map(n=>`<span class="nm77p"><b>${esc(n)}</b><button type="button" class="btn tksm" data-nm77use="${esc(n)}">${_T`✎ Use`}</button><button type="button" class="btn tksm" data-nm77pin="${esc(n)}" title="${_T`Unpin`}">✕</button></span>`).join('')}</div>`;list.before(p)}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-nm77pin],[data-nm77use]');if(!b||typeof ST==='undefined')return;e.preventDefault();e.stopPropagation();
   if(b.dataset.nm77pin!=null){const n=b.dataset.nm77pin;const L=nm77Pins();const i=L.indexOf(n);if(i>=0)L.splice(i,1);else L.unshift(n);nm77Save(L);studioRedraw();return}
-  const n=b.dataset.nm77use;ST.tab='chars';ST.draft=blankChar();ST.draft.name=n;ST.view='edit';studioRedraw();const box=$('#mBody');if(box)box.scrollTop=0;if(typeof mToast==='function')mToast(`✎ <b>${esc(n)}</b> is on the bench — finish the character and save.`)},true);
+  const n=b.dataset.nm77use;ST.tab='chars';ST.draft=blankChar();ST.draft.name=n;ST.view='edit';studioRedraw();const box=$('#mBody');if(box)box.scrollTop=0;if(typeof mToast==='function')mToast(_T`✎ <b>${esc(n)}</b> is on the bench — finish the character and save.`)},true);
 
 /* ---------------- E · Spectators ---------------- */
 function sp77Tidy(root){const nm=root.querySelector('#spName');if(!nm)return;const fg=nm.closest('.formgrid');if(!fg||fg.dataset.s77)return;fg.dataset.s77=1;
   const lab=t=>[...fg.children].find(l=>l.tagName==='LABEL'&&l.firstChild&&String(l.firstChild.textContent).trim().startsWith(t));
   const hd=(t,before)=>{if(!before)return;const d=document.createElement('div');d.className='sect sp77h';d.style.gridColumn='1/-1';d.innerHTML=t;before.before(d)};
-  hd('🎭 Personality <span class="rc-sub">how they watch</span>',lab('Taste'));hd('👤 Look <span class="rc-sub">face in the stands, figure in the city</span>',lab('Skin'));
+  hd(_T('🎭 Personality <span class="rc-sub">how they watch</span>'),lab(_T('Taste')));hd(_T('👤 Look <span class="rc-sub">face in the stands, figure in the city</span>'),lab(_T('Skin')));
   const h4=[...root.querySelectorAll('h4')].find(h=>/Your custom regulars/.test(h.textContent));const L=h4&&h4.nextElementSibling;if(L&&L.classList.contains('list2'))L.classList.add('sp77list')}
 
 /* ---------------- F · Editors: the lock as progress ---------------- */
 function ed77Tidy(root){const lc=root.querySelector('.lockcard');if(!lc||lc.dataset.s77)return;lc.dataset.s77=1;const won=lc.querySelectorAll('.spongrid .badge.gold').length;const all=lc.querySelectorAll('.spongrid .badge').length||12;
-  const p=document.createElement('div');p.className='ed77bar';p.innerHTML=`<div class="ed77fill" style="width:${Math.round(won/all*100)}%"></div><span>${won} of ${all} cities won</span>`;const g=lc.querySelector('.spongrid');if(g)g.before(p)}
+  const p=document.createElement('div');p.className='ed77bar';p.innerHTML=`<div class="ed77fill" style="width:${Math.round(won/all*100)}%"></div>${_T`<span>${won} of ${all} cities won</span>`}`;const g=lc.querySelector('.spongrid');if(g)g.before(p)}
 
 /* ---------------- G · Invitationals in steps; tournament seats ---------------- */
 function sx77Tidy(root){const nmL=[...root.querySelectorAll('label')].find(l=>l.querySelector('[data-sxf="name"]'));if(!nmL)return;const fg=nmL.parentElement;if(!fg||fg.dataset.s77)return;fg.dataset.s77=1;
   const lab=f=>{const x=fg.querySelector(`[data-sxf="${f}"]`);let l=x&&x.closest('label');while(l&&l.parentElement!==fg)l=l.parentElement;return l};
   const hd=(t,el)=>{if(!el)return;const d=document.createElement('div');d.className='sect sx77h';d.style.gridColumn='1/-1';d.innerHTML=t;el.before(d)};
   const t0=[...root.querySelectorAll('div,span,b,small')].find(x=>!x.children.length&&x.textContent.trim().toUpperCase()==='THE INVITATIONAL');if(t0)t0.textContent='① Arena & trophy';
-  hd('② The invitation',nmL);hd('③ The field',lab('format'));hd('④ Purse &amp; fame',lab('purse'));hd('⑤ Words',lab('blurb'))}
-function tn77Tidy(root){for(const l of root.querySelectorAll('.tseat label.chk')){if(l.dataset.s77)continue;l.dataset.s77=1;const i=l.querySelector('input');l.classList.add('tn77you');for(const n of [...l.childNodes])if(n.nodeType===3)n.remove();l.append(' 🎮 You');if(i&&i.checked)l.classList.add('on')}}
+  hd(_T('② The invitation'),nmL);hd(_T('③ The field'),lab('format'));hd(_T('④ Purse &amp; fame'),lab('purse'));hd(_T('⑤ Words'),lab('blurb'))}
+function tn77Tidy(root){for(const l of root.querySelectorAll('.tseat label.chk')){if(l.dataset.s77)continue;l.dataset.s77=1;const i=l.querySelector('input');l.classList.add('tn77you');for(const n of [...l.childNodes])if(n.nodeType===3)n.remove();l.append(_T(' 🎮 You'));if(i&&i.checked)l.classList.add('on')}}
 document.addEventListener('change',e=>{const i=e.target;if(i&&i.dataset&&i.dataset.tnh!=null){const l=i.closest('label');if(l)l.classList.toggle('on',i.checked)}},true);
 
 /* ---------------- H · one-line intros, counts, the tidy pass ---------------- */

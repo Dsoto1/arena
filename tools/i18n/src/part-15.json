@@ -1,0 +1,1370 @@
+[
+ {
+  "k": "Event Designer: the draft option says it replaces the class loadout",
+  "w": "34-notes.js:34"
+ },
+ {
+  "k": "⏭ To the end now sits in the Speed tray, right of Fast",
+  "w": "34-notes.js:34"
+ },
+ {
+  "k": "Ludus: a tie at the cut goes to the most CF, then the most coin, then d12 roll-offs",
+  "w": "34-notes.js:34"
+ },
+ {
+  "k": "A new turn clears the last turn's card pop-ups and thoughts",
+  "w": "34-notes.js:34"
+ },
+ {
+  "k": "No menu or arena flash when Play opens from Ludus Flavius or Manager mode loads",
+  "w": "34-notes.js:34"
+ },
+ {
+  "k": "The floating sound chip is gone",
+  "w": "34-notes.js:34"
+ },
+ {
+  "k": "Invitationals: the frequency line reads plainly",
+  "w": "34-notes.js:34"
+ },
+ {
+  "k": "The printed ships, the prototype",
+  "w": "34-notes.js:35"
+ },
+ {
+  "k": "Naumachia ships are the printed 3 x 5 hulls with Virgilante's deck art, set in a ring around the middle",
+  "w": "34-notes.js:35"
+ },
+ {
+  "k": "Each hull shows its HP; hover its pillar for the ship's name",
+  "w": "34-notes.js:35"
+ },
+ {
+  "k": "Arena deck, event and weapon cards from the original scans, twice as sharp",
+  "w": "34-notes.js:35"
+ },
+ {
+  "k": "Click D.Soto in the main menu (or the Play Now guide) to see the prototype the game was distilled from",
+  "w": "34-notes.js:35"
+ },
+ {
+  "k": "A cleaner sand, a fairer start",
+  "w": "34-notes.js:36"
+ },
+ {
+  "k": "New houses choose a starting difficulty: Easy (250 coin, two fighters), Normal (125, one) or Hard (50, none)",
+  "w": "34-notes.js:36"
+ },
+ {
+  "k": "Houses called in by a word can be taken over like any other",
+  "w": "34-notes.js:36"
+ },
+ {
+  "k": "Courting shows on the shortlist (what you offered, what they ask); scouting or courting shortlists a fighter",
+  "w": "34-notes.js:36"
+ },
+ {
+  "k": "Call a loaned fighter home for the rest of the loan plus a quarter",
+  "w": "34-notes.js:36"
+ },
+ {
+  "k": "A letter for your first bye week; saved careers show record and treasury",
+  "w": "34-notes.js:36"
+ },
+ {
+  "k": "Laurels fly only after the closing horns; the start marks fade once play begins; no beasts are left on the sand after the clean-up",
+  "w": "34-notes.js:36"
+ },
+ {
+  "k": "Saving gladiators keeps the results window up",
+  "w": "34-notes.js:36"
+ },
+ {
+  "k": "Mail keeps only what you have not read",
+  "w": "34-notes.js:36"
+ },
+ {
+  "k": "Consilium and Schooling swap places; one billing per fighter on the Season tab",
+  "w": "34-notes.js:36"
+ },
+ {
+  "k": "The lanista's mail",
+  "w": "34-notes.js:37"
+ },
+ {
+  "k": "A mailbox in Your ludus: offers, invitations, letters and reports arrive as mail — accept or refuse right from the letter, and past mail stays readable",
+  "w": "34-notes.js:37"
+ },
+ {
+  "k": "The left menu counts unread mail; Match Week keeps one quiet line when the Consilium advises against entering",
+  "w": "34-notes.js:37"
+ },
+ {
+  "k": "The five ratings join the glossary, tooltips, both guides, the to-do list and the arena hints",
+  "w": "34-notes.js:37"
+ },
+ {
+  "k": "The Play Now guide re-run on 600 simulated events, with a new chart: wins by rating perk",
+  "w": "34-notes.js:37"
+ },
+ {
+  "k": "Rolled Intelligence follows a fighter's overall rating, so most CPUs play Normal again",
+  "w": "34-notes.js:37"
+ },
+ {
+  "k": "Ratings that grow, a syndicate that collects",
+  "w": "34-notes.js:38"
+ },
+ {
+  "k": "Five ratings for every gladiator: Speed (movement), Strength (damage), Intelligence (CPU play), Luck (coin) and Charisma (CF) — classes no longer grant those perks, the ratings do",
+  "w": "34-notes.js:38"
+ },
+ {
+  "k": "Sica's syndicate lends only to houses in the red, never touches your treasury — but miss the weekly minimum three times and a spear finds your best fighter",
+  "w": "34-notes.js:38"
+ },
+ {
+  "k": "Home games, letters from the Consilium, gold-shining A grades, a folding left menu, your fighters marked on Match Week",
+  "w": "34-notes.js:38"
+ },
+ {
+  "k": "Hard CPUs no longer get bonus coin and an elixir",
+  "w": "34-notes.js:38"
+ },
+ {
+  "k": "Pay-to-join offers only in Your ludus and Recruiting",
+  "w": "34-notes.js:38"
+ },
+ {
+  "k": "Sound on Safari, iPhone and iPad copies, with a chip when the browser holds it back",
+  "w": "34-notes.js:38"
+ },
+ {
+  "k": "Piacula, invitationals, a friendlier designer",
+  "w": "34-notes.js:39"
+ },
+ {
+  "k": "Every class on the sand brings its own Piaculum — drawn in the printed style with the class name in its colour",
+  "w": "34-notes.js:39"
+ },
+ {
+  "k": "Event Designer: a Beasts & cohorts picker with real tokens (stock, yours, myth starters, cohorts), real pieces on the grid, and arena music",
+  "w": "34-notes.js:39"
+ },
+ {
+  "k": "Invitationals (was Special events): pick an arena and a trophy, then purse, field and frequency",
+  "w": "34-notes.js:39"
+ },
+ {
+  "k": "Favorites live in Recruiting; Sort is a compact tray; a taken-over house shows its treasury, and How a week works starts open",
+  "w": "34-notes.js:39"
+ },
+ {
+  "k": "Play Now plays a random unlocked theme; hints start off; the Play Now roster fills only by hand",
+  "w": "34-notes.js:39"
+ },
+ {
+  "k": "Lanistas, sharper Focus, one of each",
+  "w": "34-notes.js:40"
+ },
+ {
+  "k": "Lanista designer in the Creator Studio; Manager mode can start from one or save yours",
+  "w": "34-notes.js:40"
+ },
+ {
+  "k": "Zoom in and out any time from the arena tools; a Glossary tab in Rules & strategy",
+  "w": "34-notes.js:40"
+ },
+ {
+  "k": "Only padded armor has copies; loadouts take their pieces from the market, and shared pieces get a stand-in",
+  "w": "34-notes.js:40"
+ },
+ {
+  "k": "Closed host cities move the games to the nearest open arena (an impromptu bye only if none can host, once a season)",
+  "w": "34-notes.js:40"
+ },
+ {
+  "k": "Focus suggests the true fastest finish (arms and legs explained), only with the strategy panel on",
+  "w": "34-notes.js:40"
+ },
+ {
+  "k": "No attack or Focus without a target in reach; hot-seat defenders are asked by name",
+  "w": "34-notes.js:40"
+ },
+ {
+  "k": "Tooltips stop at two levels; tunnels show the door side, the dark shaft marks an exit; arrows and bolts fade",
+  "w": "34-notes.js:40"
+ },
+ {
+  "k": "Core engine files renamed and commented for reading",
+  "w": "34-notes.js:40"
+ },
+ {
+  "k": "Classes, cleaner arena",
+  "w": "34-notes.js:41"
+ },
+ {
+  "k": "Lanista creator rebuilt to match the other designers, with far more accessories in every designer",
+  "w": "34-notes.js:41"
+ },
+ {
+  "k": "Arena tools drawer (🧰) with a hints switch; loading bar and quotes between screens; a welcome for new players (hints start off)",
+  "w": "34-notes.js:41"
+ },
+ {
+  "k": "Event rounds follow the rulebook (Triumviratus, Familia, Ludus, Chariot, Naumachia); “no CF” says when Commodus is the reason",
+  "w": "34-notes.js:41"
+ },
+ {
+  "k": "Thrown spears drop under the target; arrows and bolts stay in until that spot is destroyed; stones fade, and misses at a Damnatio refill his sling",
+  "w": "34-notes.js:41"
+ },
+ {
+  "k": "Log names at normal size, clear of Flavius; tiles named in move and spawn lines",
+  "w": "34-notes.js:41"
+ },
+ {
+  "k": "Tooltips open beside what they explain; one card on Ludus Flavius, the record on top",
+  "w": "34-notes.js:41"
+ },
+ {
+  "k": "Menagerie in the top bar, Save match in the top-right tray, CPU speed as a compact tray, “Event Details”; ⓘ on Keys and Trophies",
+  "w": "34-notes.js:41"
+ },
+ {
+  "k": "“Sound the horns” no longer drops you back at the main menu",
+  "w": "34-notes.js:41"
+ },
+ {
+  "k": "What flies, what sticks",
+  "w": "34-notes.js:42"
+ },
+ {
+  "k": "Thrown and shot weapons fly across the sand; speared spectators are carried off by the crew",
+  "w": "34-notes.js:42"
+ },
+ {
+  "k": "Phone layout: the arena first, with tabs for Actions, Fighter, Gladiators and Log",
+  "w": "34-notes.js:42"
+ },
+ {
+  "k": "Your gladiator stays in the panel; bigger weapon cards",
+  "w": "34-notes.js:42"
+ },
+ {
+  "k": "Log edged in the actor’s colour, with a 📌 toggle; moves logged",
+  "w": "34-notes.js:42"
+ },
+ {
+  "k": "Saves carry their version; the version button is on the main menu",
+  "w": "34-notes.js:42"
+ },
+ {
+  "k": "No punching with two weapons; music pauses in a background tab",
+  "w": "34-notes.js:42"
+ },
+ {
+  "k": "Tooltips that nest",
+  "w": "34-notes.js:43"
+ },
+ {
+  "k": "A game-wide glossary of nesting tooltips",
+  "w": "34-notes.js:43"
+ },
+ {
+  "k": "The Play Now guide rebuilt from 600 simulated events, with charts",
+  "w": "34-notes.js:43"
+ },
+ {
+  "k": "Hot seat: a “since your last turn” card and the acting player’s colour",
+  "w": "34-notes.js:43"
+ },
+ {
+  "k": "Small print on busy screens moved into tooltips",
+  "w": "34-notes.js:43"
+ },
+ {
+  "k": "The Venatore carries Zora; Zora in the deck is optional",
+  "w": "34-notes.js:43"
+ },
+ {
+  "k": "Truce-bound CPUs break truces instead of all falling",
+  "w": "34-notes.js:43"
+ },
+ {
+  "k": "Simmed events don’t count for achievements; no achievement twice",
+  "w": "34-notes.js:43"
+ },
+ {
+  "k": "Hot seat and Match Week",
+  "w": "34-notes.js:44"
+ },
+ {
+  "k": "Hot seat for up to 8 on one device, with named profiles",
+  "w": "34-notes.js:44"
+ },
+ {
+  "k": "Match Week: Undercard Friday, Feature Saturday, Main event Sunday",
+  "w": "34-notes.js:44"
+ },
+ {
+  "k": "Music: trap beats for every city and a seek bar",
+  "w": "34-notes.js:44"
+ },
+ {
+  "k": "New houses get a fair start; thriving houses get no help",
+  "w": "34-notes.js:44"
+ },
+ {
+  "k": "Special-event picks gain morale; saves can be uploaded",
+  "w": "34-notes.js:44"
+ },
+ {
+  "k": "Depth chart and loans",
+  "w": "34-notes.js:45"
+ },
+ {
+  "k": "Depth chart of starters; a Loans panel",
+  "w": "34-notes.js:45"
+ },
+ {
+  "k": "Hygeia’s Blessing heals a roster once a season",
+  "w": "34-notes.js:45"
+ },
+ {
+  "k": "Two strategy guides: Play Now and Manager",
+  "w": "34-notes.js:45"
+ },
+ {
+  "k": "Loans and Vulso’s cart for empty barracks",
+  "w": "34-notes.js:45"
+ },
+ {
+  "k": "Fixes for fame creep, coin hoarding and free-agent bloat",
+  "w": "34-notes.js:45"
+ },
+ {
+  "k": "Match night glows instead of flickering",
+  "w": "34-notes.js:45"
+ },
+ {
+  "k": "Tournaments and cohorts",
+  "w": "34-notes.js:46"
+ },
+ {
+  "k": "Tournament Designer: brackets of 4 to 32",
+  "w": "34-notes.js:46"
+ },
+ {
+  "k": "Rival houses trade, lend and borrow; the Quaestor’s Ledger",
+  "w": "34-notes.js:46"
+ },
+ {
+  "k": "Four new music themes",
+  "w": "34-notes.js:46"
+ },
+ {
+  "k": "Offerings as printed tokens; Replay event",
+  "w": "34-notes.js:46"
+ },
+ {
+  "k": "Achievements are honors only; the Road of Flavius walks your token",
+  "w": "34-notes.js:46"
+ },
+ {
+  "k": "Myths and special events",
+  "w": "34-notes.js:47"
+ },
+ {
+  "k": "Beast designer with sixteen myth starters",
+  "w": "34-notes.js:47"
+ },
+ {
+  "k": "Special events designer and pairings",
+  "w": "34-notes.js:47"
+ },
+ {
+  "k": "Roster sets for careers and New event",
+  "w": "34-notes.js:47"
+ },
+ {
+  "k": "The classic lesson rebuilt",
+  "w": "34-notes.js:47"
+ },
+ {
+  "k": "Freedom by record or purchase; infirmary and training yard rebuilt",
+  "w": "34-notes.js:47"
+ },
+ {
+  "k": "Same seed = same event; many fixes",
+  "w": "34-notes.js:47"
+ },
+ {
+  "k": "Briefings and saved matches",
+  "w": "34-notes.js:48"
+ },
+ {
+  "k": "An event briefing with 🚫 rule chips",
+  "w": "34-notes.js:48"
+ },
+ {
+  "k": "Save a match on your move (three slots and an autosave)",
+  "w": "34-notes.js:48"
+ },
+ {
+  "k": "A deeper Manager lesson; the House of Sotonium",
+  "w": "34-notes.js:48"
+ },
+ {
+  "k": "Stables, stacked trophies, mirror and undo in sculptors",
+  "w": "34-notes.js:48"
+ },
+ {
+  "k": "Two lessons",
+  "w": "34-notes.js:49"
+ },
+ {
+  "k": "Learn to Play Manager Mode",
+  "w": "34-notes.js:49"
+ },
+ {
+  "k": "Lessons on the menu and under Rules & strategy",
+  "w": "34-notes.js:49"
+ },
+ {
+  "k": "The classic lesson tours the tabs",
+  "w": "34-notes.js:49"
+ },
+ {
+  "k": "Every Studio list shares the same buttons; Blessings list in the Event Designer",
+  "w": "34-notes.js:49"
+ },
+ {
+  "k": "A fairer league",
+  "w": "34-notes.js:50"
+ },
+ {
+  "k": "Every rival house gets its Match night turn",
+  "w": "34-notes.js:50"
+ },
+ {
+  "k": "One master Hints switch (H)",
+  "w": "34-notes.js:50"
+ },
+ {
+  "k": "Wagers as win/loss slips",
+  "w": "34-notes.js:50"
+ },
+ {
+  "k": "City themes unlock where you win",
+  "w": "34-notes.js:50"
+ },
+ {
+  "k": "A lighter arena bar",
+  "w": "34-notes.js:50"
+ },
+ {
+  "k": "The lesson and the finale",
+  "w": "34-notes.js:51"
+ },
+ {
+  "k": "Learn to Play opens with a screen tour",
+  "w": "34-notes.js:51"
+ },
+ {
+  "k": "Seat map; ⏭ Sim to end",
+  "w": "34-notes.js:51"
+ },
+ {
+  "k": "A boss theme for every classic final",
+  "w": "34-notes.js:51"
+ },
+ {
+  "k": "Travel costs by road",
+  "w": "34-notes.js:51"
+ },
+ {
+  "k": "Weapon abilities as printed",
+  "w": "34-notes.js:51"
+ },
+ {
+  "k": "Hide and lock layers in sculptors",
+  "w": "34-notes.js:51"
+ },
+ {
+  "k": "The box office",
+  "w": "34-notes.js:52"
+ },
+ {
+  "k": "Ticket sales through the week, with trends",
+  "w": "34-notes.js:52"
+ },
+ {
+  "k": "Every spectator follows a favorite",
+  "w": "34-notes.js:52"
+ },
+ {
+  "k": "Smooth passages between modes; Save & quit",
+  "w": "34-notes.js:52"
+ },
+ {
+  "k": "Space pauses; bigger city maps",
+  "w": "34-notes.js:52"
+ },
+ {
+  "k": "The full-screen rail",
+  "w": "34-notes.js:53"
+ },
+ {
+  "k": "Manager mode and the Creator Studio keep their tabs in a grouped left rail in full screen",
+  "w": "34-notes.js:53"
+ },
+ {
+  "k": "Ludus · Arena · World · Lanista — and Overview · Fighters · Gear · Arena · Tools",
+  "w": "34-notes.js:53"
+ },
+ {
+  "k": "One sculptor",
+  "w": "34-notes.js:54"
+ },
+ {
+  "k": "The Token Designer’s bench — drag, bake, unbake — in every designer",
+  "w": "34-notes.js:54"
+ },
+ {
+  "k": "Blank canvases with a Start-from picker; the weapon drawn large with its card below",
+  "w": "34-notes.js:54"
+ },
+ {
+  "k": "Armor fitted on the avatar, and worn there in play",
+  "w": "34-notes.js:54"
+ },
+ {
+  "k": "A seat in the stands",
+  "w": "34-notes.js:55"
+ },
+ {
+  "k": "Spectate any match: all-CPU games, tickets mid-bout, every Match-night bout, special and the Superbus",
+  "w": "34-notes.js:55"
+ },
+ {
+  "k": "Helping your own house from the stands costs fame",
+  "w": "34-notes.js:55"
+ },
+ {
+  "k": "The menu show: the beasts take the photo, Commodus takes the laurels",
+  "w": "34-notes.js:55"
+ },
+ {
+  "k": "Learn to play",
+  "w": "34-notes.js:56"
+ },
+ {
+  "k": "A guided first bout with Flavius",
+  "w": "34-notes.js:56"
+ },
+ {
+  "k": "Gold turn hints, rule hints on hover, a turn recap, right-click menus and the Step speed",
+  "w": "34-notes.js:56"
+ },
+ {
+  "k": "All-truce arenas end in a thumbs-down",
+  "w": "34-notes.js:56"
+ },
+ {
+  "k": "Purses and buyouts",
+  "w": "34-notes.js:57"
+ },
+ {
+  "k": "Fighters keep their own coin — and may buy your ludus, or walk out and found a rival",
+  "w": "34-notes.js:57"
+ },
+ {
+  "k": "Home cities with real perks; house-rule presets; a developer’s key",
+  "w": "34-notes.js:57"
+ },
+ {
+  "k": "Trophy materials and sculpting; a twelve-track playlist; printed-style weapon cards",
+  "w": "34-notes.js:57"
+ },
+ {
+  "k": "The front door",
+  "w": "34-notes.js:58"
+ },
+ {
+  "k": "The main menu and its group photo",
+  "w": "34-notes.js:58"
+ },
+ {
+  "k": "The post-show: carts, Charun, the crew sweeping the sand clean",
+  "w": "34-notes.js:58"
+ },
+ {
+  "k": "Full-screen modes, saves and the one-file share build",
+  "w": "34-notes.js:58"
+ },
+ {
+  "k": "Cities, gear and blood",
+  "w": "34-notes.js:59"
+ },
+ {
+  "k": "Walkable city squares with shops, the auction block and the horns",
+  "w": "34-notes.js:59"
+ },
+ {
+  "k": "The Gear forge and the drawn armor set; house banners everywhere",
+  "w": "34-notes.js:59"
+ },
+ {
+  "k": "Blood, severed limbs and the clean-up crew",
+  "w": "34-notes.js:59"
+ },
+ {
+  "k": "The league season",
+  "w": "34-notes.js:60"
+ },
+ {
+  "k": "One empire clock, league points and the table",
+  "w": "34-notes.js:60"
+ },
+ {
+  "k": "The Flavian Awards, invitationals and the Flavius Superbus",
+  "w": "34-notes.js:60"
+ },
+ {
+  "k": "Rival houses that act; facilities and the Ludus grade",
+  "w": "34-notes.js:60"
+ },
+ {
+  "k": "Tokens and sound",
+  "w": "34-notes.js:61"
+ },
+ {
+  "k": "The classic standees, sculpted figures and the Token creator",
+  "w": "34-notes.js:61"
+ },
+ {
+  "k": "A generated theme for every arena, and sound effects",
+  "w": "34-notes.js:61"
+ },
+ {
+  "k": "Event title cards and crowds counted in thousands",
+  "w": "34-notes.js:61"
+ },
+ {
+  "k": "A Roman calendar and a 12-week season schedule",
+  "w": "34-notes.js:62"
+ },
+ {
+  "k": "The Imperium map, the Menagerie and its Bestiary",
+  "w": "34-notes.js:62"
+ },
+ {
+  "k": "Game saves and the empire’s banners",
+  "w": "34-notes.js:62"
+ },
+ {
+  "k": "The stands come alive",
+  "w": "34-notes.js:63"
+ },
+ {
+  "k": "The Stands drawer, festivals and the pompa",
+  "w": "34-notes.js:63"
+ },
+ {
+  "k": "Seeded dice: replay any match roll for roll",
+  "w": "34-notes.js:63"
+ },
+ {
+  "k": "Ages, faces and careers for league fighters",
+  "w": "34-notes.js:63"
+ },
+ {
+  "k": "Foundations",
+  "w": "34-notes.js:64"
+ },
+ {
+  "k": "Spectators with tastes, tempers and memories; the bookmaker",
+  "w": "34-notes.js:64"
+ },
+ {
+  "k": "The Creator Studio and Manager mode by the printed Fate table",
+  "w": "34-notes.js:64"
+ },
+ {
+  "k": "Shields by choice, the rudis, sharper CPUs",
+  "w": "34-notes.js:64"
+ },
+ {
+  "k": "✦ New",
+  "w": "34-notes.js:65"
+ },
+ {
+  "k": "🔧 Fixes &amp; changes",
+  "w": "34-notes.js:65"
+ },
+ {
+  "k": "Earlier milestones are under <b>Version history</b>.",
+  "w": "34-notes.js:66"
+ },
+ {
+  "k": "🛣 Your fighters were already booked at {0}: the road cost {1} coin.",
+  "w": "35-travel.js:19"
+ },
+ {
+  "k": "their patrons want to see",
+  "w": "35-travel.js:23"
+ },
+ {
+  "k": "the crowd at the gate is asking for",
+  "w": "35-travel.js:23"
+ },
+ {
+  "k": "their bookmakers have money riding on",
+  "w": "35-travel.js:23"
+ },
+ {
+  "k": "🛣 Travel to <b>{0}</b> first ({1} coin) — then you can {2}.",
+  "w": "35-travel.js:26"
+ },
+ {
+  "k": "<b>🏠 Home sand</b> — this week's games are in {0}, your own city. No road to pay for.",
+  "w": "35-travel.js:28"
+ },
+ {
+  "k": "<b>🛣 On the road to {0}</b>",
+  "w": "35-travel.js:30"
+ },
+ {
+  "k": "{0} · from {1}",
+  "w": "35-travel.js:30"
+ },
+ {
+  "k": "paid by {0}",
+  "w": "35-travel.js:30"
+ },
+ {
+  "k": "another house",
+  "w": "35-travel.js:30"
+ },
+ {
+  "k": "{0} coin paid",
+  "w": "35-travel.js:30"
+ },
+ {
+  "k": "{0} The deal: enter <b>{1}</b> tonight{2}",
+  "w": "35-travel.js:30"
+ },
+ {
+  "k": "— done.",
+  "w": "35-travel.js:30"
+ },
+ {
+  "k": "— or repay them double at the week’s end.",
+  "w": "35-travel.js:30"
+ },
+ {
+  "k": "<b>🛣 Match Week at {0} is over</b> — you stayed home, and there is no road left to pay for this week.{1}",
+  "w": "35-travel.js:33"
+ },
+ {
+  "k": "Next week: <b>{0}</b> — its road opens when you end the week.",
+  "w": "35-travel.js:33"
+ },
+ {
+  "k": "Your house is in {0}. Until you travel you can read and simulate Match Week, but you can’t enter fighters, walk the sand, visit the square or watch live.",
+  "w": "35-travel.js:35"
+ },
+ {
+  "k": "🛣 Road to {0}",
+  "w": "35-travel.js:35"
+ },
+ {
+  "k": "disabled title=\"Not enough in the treasury\"",
+  "w": "35-travel.js:36"
+ },
+ {
+  "k": "💰 Travel · {0} coin",
+  "w": "35-travel.js:36"
+ },
+ {
+  "k": "📜 <b>{0}</b> offers to cover the road — {1} <b>{2}</b>. Enter them in any bout tonight and the trip is theirs.",
+  "w": "35-travel.js:37"
+ },
+ {
+  "k": "🤝 Accept the deal",
+  "w": "35-travel.js:38"
+ },
+ {
+  "k": "🛣 This week’s games are over — the next road opens with the new week.",
+  "w": "35-travel.js:39"
+ },
+ {
+  "k": "🛣 Travelled to {0} from {1}: {2} coin.",
+  "w": "35-travel.js:40"
+ },
+ {
+  "k": "🤝 {0} pays your road to {1} — as long as {2} fights tonight.",
+  "w": "35-travel.js:41"
+ },
+ {
+  "k": "Another house",
+  "w": "35-travel.js:41"
+ },
+ {
+  "k": "your fighter",
+  "w": "35-travel.js:41"
+ },
+ {
+  "k": "💢 {0} never fought — {1} takes back its road money twice over: −{2} coin, and a grudge.",
+  "w": "35-travel.js:47"
+ },
+ {
+  "k": "the house",
+  "w": "35-travel.js:47"
+ },
+ {
+  "k": "Welcome, <b>lanista</b>. This is a sandbox league made for this lesson — nothing is saved. Up top: your <b>treasury</b> (we lent you plenty), <b>fame</b>, ludus grade, record and the week's <b>lanista's hours</b>.",
+  "w": "36-mtutor.js:23"
+ },
+ {
+  "k": "The <b>tabs</b> run your ludus — your house, the arena, the wider world, and you. Work them left to right each week; the coach will walk you through them.",
+  "w": "36-mtutor.js:24"
+ },
+ {
+  "k": "Open <b>🛡 Roster</b> — the fighters under contract to your house.",
+  "w": "36-mtutor.js:26"
+ },
+ {
+  "k": "You have two fighters. Click <b>{0}</b> in the list to open <b>their card</b> beside it.",
+  "w": "36-mtutor.js:27"
+ },
+ {
+  "k": "The card: rating, morale, loyalty, contract. Under <b>Keeping them</b> you spend hours and coin to keep a fighter happy and loyal. Click <b>🍷 Share a meal</b> with {0}.",
+  "w": "36-mtutor.js:28"
+ },
+ {
+  "k": "Morale and loyalty rise. <b>Morale</b> walks onto the sand with them (80+ adds AP and CF); <b>loyalty</b> is what a rival must beat to poach them.",
+  "w": "36-mtutor.js:29"
+ },
+ {
+  "k": "Now <b>🤝 Recruiting</b> — the free agents of the empire.",
+  "w": "36-mtutor.js:31"
+ },
+ {
+  "k": "Click any <b>free agent</b> in the list to open their recruiting card.",
+  "w": "36-mtutor.js:32"
+ },
+ {
+  "k": "Courting starts with knowing them. Press <b>Scout</b> — six sparring bouts in your ludus reveal what they want and how they grade your house.",
+  "w": "36-mtutor.js:33"
+ },
+ {
+  "k": "Now <b>pitch</b> them — sell what they care about most (the grades you just revealed). One pitch per recruit a week; each costs an hour.",
+  "w": "36-mtutor.js:34"
+ },
+ {
+  "k": "Their <b>interest</b> climbs as you court them — feasts, pitches, a famous house, a fair wage. When it is high enough, <b>Offer a contract</b>. Not today: we have a card to fight.",
+  "w": "36-mtutor.js:35"
+ },
+ {
+  "k": "{0} came home hurt last week. Open the <b>⚕ Infirmary</b>.",
+  "w": "36-mtutor.js:37"
+ },
+ {
+  "k": "A hurt fighter cannot be entered. Call the <b>Medicus</b> for {0} — it clears the wound and lifts their spirits.",
+  "w": "36-mtutor.js:38"
+ },
+ {
+  "k": "Cleared for play. Now <b>🏛 Your ludus</b> — where coin and points become a better house.",
+  "w": "36-mtutor.js:40"
+ },
+ {
+  "k": "Open <b>🏗 Facilities</b>: permanent upgrades — one project a week.",
+  "w": "36-mtutor.js:41"
+ },
+ {
+  "k": "Build the <b>🐎 Stables</b> — your own road crew makes every away trip cheaper. (The yard, the infirmary wing, the barracks, the armory and the practice stands each help in their own way; together they set your <b>Ludus grade</b>, which recruits look at.)",
+  "w": "36-mtutor.js:42"
+ },
+ {
+  "k": "Coin builds the house; <b>perk points</b> build <i>you</i>. Open <b>🎓 Schooling</b>.",
+  "w": "36-mtutor.js:43"
+ },
+ {
+  "k": "Spend your perk point on any trait — Honor, Showmanship, Discipline… Recruits grade you on exactly these. You earn more each week: wins, kept pledges, training.",
+  "w": "36-mtutor.js:44"
+ },
+ {
+  "k": "The weekly drills live in the <b>🏋 Training Yard</b> tab (with sparring against other stables). This tile takes you there any week.",
+  "w": "36-mtutor.js:45"
+ },
+ {
+  "k": "The heart of it: <b>⚔️ Match Week</b>.",
+  "w": "36-mtutor.js:47"
+ },
+ {
+  "k": "Each week's games are in one city — and in that week you can walk its <b>city square</b>: shops, the tavern, the auction block, the crowd. Explore it in your own career (after paying the road, away from home). Not in this lesson.",
+  "w": "36-mtutor.js:48"
+ },
+ {
+  "k": "Pick <b>{0}</b> in the Undercard's list and press <b>Enter your fighter</b>.",
+  "w": "36-mtutor.js:50"
+ },
+ {
+  "k": "Now watch {0} fight — <b>👁 Watch it live</b> from your box, or <b>🎟 Spectate</b> from a seat in the stands.",
+  "w": "36-mtutor.js:51"
+ },
+ {
+  "k": "The bout is live on the sand (close the briefing first — it tells you the event's rules). You could watch it to the end; for the lesson, press <b>⏭ Sim to end</b> to resolve it now.",
+  "w": "36-mtutor.js:52"
+ },
+ {
+  "k": "The result is in. Press <b>⏎ Return to Match Week</b>.",
+  "w": "36-mtutor.js:53"
+ },
+ {
+  "k": "A <b>verdict awaits</b> for {0}: the Fate table sent them to the <b>Thumb of Flavius</b>. Face it — roll the d6 yourself.",
+  "w": "36-mtutor.js:54"
+ },
+ {
+  "k": "The <b>Feature bout</b>. You do have a fighter who could go in — {0} — but we are saving them for the <b>Main event</b>. So <b>bet</b> on this one instead: raise your stake with <b>+5</b>.",
+  "w": "36-mtutor.js:55"
+ },
+ {
+  "k": "Now press <b>Bet</b> beside the lit fighter — the bookmaker's favourite (the lowest odds).",
+  "w": "36-mtutor.js:56"
+ },
+ {
+  "k": "Slip in hand. The card runs in order — press <b>⚡ Simulate</b> on the Feature bout to fight it now. (You could also watch it or fight it yourself.)",
+  "w": "36-mtutor.js:57"
+ },
+ {
+  "k": "The <b>Main event</b> — the big purse. Pick <b>{0}</b> and press <b>Enter your fighter</b>.",
+  "w": "36-mtutor.js:58"
+ },
+ {
+  "k": "Now <b>⚡ Simulate Match Week</b> — the main event is fought in a moment, with {0} in it. (In your own career you can also <b>watch it live</b> or <b>fight it yourself</b> — take your fighter's reins on the sand. For the lesson, we simulate.)",
+  "w": "36-mtutor.js:59"
+ },
+ {
+  "k": "Another verdict from the main event — settle it the same way before the week can end.",
+  "w": "36-mtutor.js:61"
+ },
+ {
+  "k": "<b>📊 League</b> — the table. A win is 3 points, a runner-up finish 1; the top four go to the Superbus at season's end.",
+  "w": "36-mtutor.js:63"
+ },
+ {
+  "k": "Every house can be visited. Click <b>{0}</b>{1}.",
+  "w": "36-mtutor.js:64"
+ },
+ {
+  "k": "a rival house",
+  "w": "36-mtutor.js:64"
+ },
+ {
+  "k": "— {0}'s stable, the most famous in the league",
+  "w": "36-mtutor.js:64"
+ },
+ {
+  "k": "Their lanista, roster and ledger — and <b>correspondence</b>. Send an envoy: <b>🎁 gifts</b> warm a rival (trades and pacts need a warm opinion).",
+  "w": "36-mtutor.js:65"
+ },
+ {
+  "k": "<b>🌍 Imperium</b> — the map of the empire.",
+  "w": "36-mtutor.js:66"
+ },
+ {
+  "k": "Fans on the roads, weather, wars and plagues, each city's crowd and mood — all of it moves attendance, purses and risk. A war can even call your fighters to the levy.",
+  "w": "36-mtutor.js:67"
+ },
+ {
+  "k": "<b>📅 Season</b> — the schedule.",
+  "w": "36-mtutor.js:68"
+ },
+ {
+  "k": "Twelve weeks, a city each week; festivals and invitationals on the side; the Superbus in Roma at the end. Plan your roads and your stars around it.",
+  "w": "36-mtutor.js:69"
+ },
+ {
+  "k": "Last: <b>⏭ End the week</b>. Wages are paid, the yard trains, rivals scheme — and the empire moves on.",
+  "w": "36-mtutor.js:70"
+ },
+ {
+  "k": "Confirm it.",
+  "w": "36-mtutor.js:71"
+ },
+ {
+  "k": "The <b>Acta Diurna</b> — the week's gazette: results, deaths, signings, the league's top fives. When you have read it, <b>set the paper down</b> to finish this lesson.",
+  "w": "36-mtutor.js:72"
+ },
+ {
+  "k": "Learn to play · Manager mode · {0} of {1}",
+  "w": "36-mtutor.js:89"
+ },
+ {
+  "k": "✔ Finish this lesson",
+  "w": "36-mtutor.js:90"
+ },
+ {
+  "k": "🎓 One thing at a time — {0} (or ✖ Leave the lesson).",
+  "w": "36-mtutor.js:112"
+ },
+ {
+  "k": "press <b>Next ▶</b> on the coach",
+  "w": "36-mtutor.js:112"
+ },
+ {
+  "k": "follow the coach",
+  "w": "36-mtutor.js:112"
+ },
+ {
+  "k": "Ludus Discipuli",
+  "w": "36-mtutor.js:117"
+ },
+ {
+  "k": "🎓 Tutorial completed",
+  "w": "36-mtutor.js:138"
+ },
+ {
+  "k": "<b>You have run a week of a ludus.</b> Recruit, keep, heal, build, enter, watch, bet, settle the verdicts, court your rivals — and climb the table toward the Superbus.",
+  "w": "36-mtutor.js:138"
+ },
+ {
+  "k": "Nothing from the lesson was kept.",
+  "w": "36-mtutor.js:138"
+ },
+ {
+  "k": "🏛 Main menu",
+  "w": "36-mtutor.js:139"
+ },
+ {
+  "k": "💼 Start a new Manager career",
+  "w": "36-mtutor.js:139"
+ },
+ {
+  "k": "↺ Restart the tutorial",
+  "w": "36-mtutor.js:139"
+ },
+ {
+  "k": "not taken yet",
+  "w": "36-mtutor.js:152"
+ },
+ {
+  "k": "Take it again",
+  "w": "36-mtutor.js:152"
+ },
+ {
+  "k": "Start the lesson",
+  "w": "36-mtutor.js:152"
+ },
+ {
+  "k": "Learn to Play (Classic)",
+  "w": "36-mtutor.js:153"
+ },
+ {
+  "k": "A tour of the arena screen, then a guided bout against one rival and two beasts: the choice, moving, breaking a Blessings pot, your hand, ending the turn — and the fight to the finish.",
+  "w": "36-mtutor.js:153"
+ },
+ {
+  "k": "One full guided week of a ludus in a sandbox league: a fighter’s card and keeping them happy, courting a recruit, the infirmary, facilities and schooling, Match Week (watch a bout live, bet, enter the main event), a verdict, a rival house, the Imperium, the season — and the Acta Diurna.",
+  "w": "36-mtutor.js:153"
+ },
+ {
+  "k": "they hide once both are done; tick to keep them",
+  "w": "36-mtutor.js:154"
+ },
+ {
+  "k": "the market & loadouts",
+  "w": "37-crlist.js:12"
+ },
+ {
+  "k": "the banner rack",
+  "w": "37-crlist.js:18"
+ },
+ {
+  "k": "the events’ prizes",
+  "w": "37-crlist.js:20"
+ },
+ {
+  "k": "the cities",
+  "w": "37-crlist.js:22"
+ },
+ {
+  "k": "Add to",
+  "w": "37-crlist.js:25"
+ },
+ {
+  "k": "📜 Added to",
+  "w": "37-crlist.js:28"
+ },
+ {
+  "k": "Removed from",
+  "w": "37-crlist.js:28"
+ },
+ {
+  "k": "Copied as <b>{0}</b> — now on the bench.",
+  "w": "37-crlist.js:32"
+ },
+ {
+  "k": "System sets are locked so the defaults are always there — copy one to make it yours",
+  "w": "37-crlist.js:40"
+ },
+ {
+  "k": "🔒 System",
+  "w": "37-crlist.js:40"
+ },
+ {
+  "k": "Part of the classic game",
+  "w": "37-crlist.js:40"
+ },
+ {
+  "k": "📜 In the rolls",
+  "w": "37-crlist.js:40"
+ },
+ {
+  "k": "System sets are locked — copy it to edit",
+  "w": "37-crlist.js:40"
+ },
+ {
+  "k": "⧉ Copy &amp; edit",
+  "w": "37-crlist.js:40"
+ },
+ {
+  "k": "{0} at {1} · round {2}/{3} · rotation {4} · {5}/{6} standing",
+  "w": "38-matchsave.js:19"
+ },
+ {
+  "k": "💾 A match can be saved on your own move — when nothing is resolving and no window is open.",
+  "w": "38-matchsave.js:27"
+ },
+ {
+  "k": "Slot {0}{1}",
+  "w": "38-matchsave.js:29"
+ },
+ {
+  "k": "save the match here",
+  "w": "38-matchsave.js:29"
+ },
+ {
+  "k": "💾 Save this match",
+  "w": "38-matchsave.js:30"
+ },
+ {
+  "k": "Saves <b>{0}</b> exactly as it stands. Load it later from <b>Play now → Load game</b> on the main menu.",
+  "w": "38-matchsave.js:30"
+ },
+ {
+  "k": "💾 Match saved to slot {0}{1}",
+  "w": "38-matchsave.js:35"
+ },
+ {
+  "k": "— see you back on the sand.",
+  "w": "38-matchsave.js:35"
+ },
+ {
+  "k": "This browser would not keep the save (storage full?).",
+  "w": "38-matchsave.js:35"
+ },
+ {
+  "k": "That slot is empty.",
+  "w": "38-matchsave.js:40"
+ },
+ {
+  "k": "💾 The match resumes from “{0}” — {1}.",
+  "w": "38-matchsave.js:54"
+ },
+ {
+  "k": "🔁 <b>Autosave</b>",
+  "w": "38-matchsave.js:59"
+ },
+ {
+  "k": "💾 <b>Slot {0}</b>",
+  "w": "38-matchsave.js:59"
+ },
+ {
+  "k": "Rename",
+  "w": "38-matchsave.js:59"
+ },
+ {
+  "k": "Download this save",
+  "w": "38-matchsave.js:59"
+ },
+ {
+  "k": "Save here",
+  "w": "38-matchsave.js:59"
+ },
+ {
+  "k": "You are on your move: the match can be saved now.",
+  "w": "38-matchsave.js:60"
+ },
+ {
+  "k": "Save a match on your own move in the arena (💾 on the canvas toolbar, or when leaving for the main menu).",
+  "w": "38-matchsave.js:60"
+ },
+ {
+  "k": "Save name",
+  "w": "38-matchsave.js:64"
+ },
+ {
+  "k": "💾 Saved to slot {0}",
+  "w": "38-matchsave.js:66"
+ },
+ {
+  "k": "This browser would not keep the save.",
+  "w": "38-matchsave.js:66"
+ },
+ {
+  "k": "saved just now",
+  "w": "38-matchsave.js:66"
+ },
+ {
+  "k": "Save this match exactly as it stands — three slots, plus an automatic save every rotation",
+  "w": "38-matchsave.js:68"
+ },
+ {
+  "k": "Saving waits for your own move (a CPU is acting, or a window is open)",
+  "w": "38-matchsave.js:68"
+ },
+ {
+  "k": "Ludus Sotonium",
+  "w": "39-sotonium.js:20"
+ },
+ {
+  "k": "Brother of Virgilante Sotonium of Pompeii and father of the Great Zeldinius. A Capuan of the old school: generous with bread, stubborn with his daughter, and never, ever for sale.",
+  "w": "39-sotonium.js:22"
+ },
+ {
+  "k": "fights for her father’s house, the Ludus Sotonium of Capua",
+  "w": "39-sotonium.js:24"
+ },
+ {
+  "k": "🗡 <b>{0}</b> lays her sword at her father’s feet and <b>takes the rudis</b>. Every arena in the empire stands. Richardious Sotonium weeps openly in the editor’s box.",
+  "w": "39-sotonium.js:25"
+ },
+ {
+  "k": "lanista of Capua, brother of Virgilante Sotonium of Pompeii, father of the Great Zeldinius",
+  "w": "39-sotonium.js:26"
+ },
+ {
+  "k": "Richardious Sotonium of Capua takes his usual seat, a purple cloak over one shoulder and a story about his daughter ready for anyone within earshot.",
+  "w": "39-sotonium.js:26"
+ },
+ {
+  "k": "Ludus Anatinus",
+  "w": "39-sotonium.js:27"
+ },
+ {
+  "k": "A Puteolan shipowner who made his fortune in the harbour and spends it on the sand. Waddles when he walks, and nobody laughs twice.",
+  "w": "39-sotonium.js:29"
+ },
+ {
+  "k": "fights for his father’s house, the Ludus Anatinus of Puteoli",
+  "w": "39-sotonium.js:31"
+ },
+ {
+  "k": "🗡 <b>{0}</b> sets down his sword before Gaius Anatinus Duckio and <b>takes the rudis</b>. The harbour of Puteoli rings every bell it has.",
+  "w": "39-sotonium.js:32"
+ },
+ {
+  "k": "shipowner and lanista of Puteoli, father of Supducus Praeclarus",
+  "w": "39-sotonium.js:33"
+ },
+ {
+  "k": "Gaius Anatinus Duckio waddles to his seat by the harbour gate, trailed by a clerk and a basket of bread for the birds.",
+  "w": "39-sotonium.js:33"
+ },
+ {
+  "k": "🏛 <b>{0}</b> of {1} opens the <b>{2}</b> to the league — with {3}, <b>{4}</b>, on the roster (from season {5}).",
+  "w": "39-sotonium.js:55"
+ },
+ {
+  "k": "his daughter",
+  "w": "39-sotonium.js:55"
+ },
+ {
+  "k": "his son",
+  "w": "39-sotonium.js:55"
+ },
+ {
+  "k": "left the league with {0}",
+  "w": "39-sotonium.js:58"
+ },
+ {
+  "k": "released when the {0} disbanded",
+  "w": "39-sotonium.js:58"
+ },
+ {
+  "k": "🏛 The <b>{0}</b> closes its gates and leaves the league. Its fighters are free agents now.",
+  "w": "39-sotonium.js:62"
+ },
+ {
+  "k": "signed with the rising {0}",
+  "w": "39-sotonium.js:73"
+ },
+ {
+  "k": "took the rudis after three seasons — freedom, with the whole empire on its feet",
+  "w": "39-sotonium.js:75"
+ },
+ {
+  "k": "took the rudis at the height of their fame",
+  "w": "39-sotonium.js:76"
+ },
+ {
+  "k": "🏛 <b>{0}.</b> The Ludus Sotonium joins the league — Richardious and the Great Zeldinius. (Speak it again to remove them.)",
+  "w": "39-sotonium.js:84"
+ },
+ {
+  "k": "🏛 <b>{0}.</b> The Ludus Sotonium leaves the league.",
+  "w": "39-sotonium.js:84"
+ },
+ {
+  "k": "🦆 <b>{0}.</b> The Ludus Anatinus joins the league — Gaius Anatinus Duckio and Supducus Praeclarus. (Speak it again to remove them.)",
+  "w": "39-sotonium.js:85"
+ },
+ {
+  "k": "🦆 <b>{0}.</b> The Ludus Anatinus leaves the league.",
+  "w": "39-sotonium.js:85"
+ },
+ {
+  "k": "🏛 The House of Sotonium — Richardious and the Great Zeldinius join Manager mode (again to remove)",
+  "w": "39-sotonium.js:86"
+ },
+ {
+  "k": "🦆 The House of Duckio — Gaius Anatinus Duckio and Supducus Praeclarus join Manager mode (again to remove)",
+  "w": "39-sotonium.js:86"
+ },
+ {
+  "k": "he tips {0} 2 coin anyway",
+  "w": "39-sotonium.js:90"
+ },
+ {
+  "k": "he claps politely",
+  "w": "39-sotonium.js:90"
+ },
+ {
+  "k": "he roars for every {0}, as he does for his child (+3 CF each)",
+  "w": "39-sotonium.js:90"
+ },
+ {
+  "k": "🔍 Lean in",
+  "w": "41-duel.js:18"
+ },
+ {
+  "k": "🔍 Zoom out",
+  "w": "41-duel.js:18"
+ },
+ {
+  "k": "Back to the duel camera",
+  "w": "41-duel.js:18"
+ },
+ {
+  "k": "Pull the camera back to the normal view",
+  "w": "41-duel.js:18"
+ },
+ {
+  "k": "the legions",
+  "w": "42-rooms.js:23"
+ }
+]

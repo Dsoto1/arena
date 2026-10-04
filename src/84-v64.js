@@ -17,9 +17,9 @@ const missioHero=()=>S&&S.missio?S.players.find(p=>!p.cpu&&p.name===S.missio.nam
 function missioNoFate(p){return !!(S&&S.missio&&p&&p===missioHero()&&missioNoCF(S.evKey))}
 /* elimination ends the missio at once */
 {const base=checkEnd;checkEnd=function(){if(S&&S.missio&&!S.over&&!S.pending&&S.phase!=='setup'&&!(S.fest&&S.fest.stage===1)){const h=missioHero();
-  if(h&&!h.alive){S.pending={over:1,winners:activePlayers().filter(p=>p!==h).length===1?activePlayers().filter(p=>p!==h):[],reason:`${h.name} has fallen — the missio is lost.`};S.missioFell=true;return}}
+  if(h&&!h.alive){S.pending={over:1,winners:activePlayers().filter(p=>p!==h).length===1?activePlayers().filter(p=>p!==h):[],reason:_T`${h.name} has fallen — the missio is lost.`};S.missioFell=true;return}}
   return base.apply(this,arguments)}}
-{const base=simToEnd;simToEnd=async function(){if(S&&S.missio&&!HEADLESS){try{mToast('A missio is fought by hand.')}catch(e){}return}return base.apply(this,arguments)}}
+{const base=simToEnd;simToEnd=async function(){if(S&&S.missio&&!HEADLESS){try{mToast(_T('A missio is fought by hand.'))}catch(e){}return}return base.apply(this,arguments)}}
 advanceMissio=async function(rows){
   const recs=await Store.list('missios');const rec=recs.find(r=>r.id===S.missio.id);if(!rec)return null;
   const x=rows.find(x=>!x.p.cpu&&x.p.name===rec.name)||rows.find(x=>x.p.name===rec.name)||rows[0];const p=x.p;
@@ -36,16 +36,16 @@ advanceMissio=async function(rows){
     rec.rr+=p.coin;rec.cfCarry=Math.min(25,Math.floor(x.f/2));rec.severed=['rarm','larm','rleg','lleg'].filter(l=>p.hp[l]<=0&&((rec.severed||[]).includes(l)||!(p.modLoss||[]).includes(l)));rec.step++;
     if(rec.step>=5){const req=MISSIOS[rec.cls].req||{};const ok=(!req.rr||rec.rr>=req.rr)&&(!req.trophies||rec.trophies>=req.trophies);
       rec.status=ok?'complete':'incomplete';
-      msg=ok?head('Missio complete','ok')+`${esc(rec.name)} claims the Missio Spoils: a Rudis, a Laurel Crown, ${rec.rr} coin from the Royal Reserve, freedom, and a hearty “Gratulationes”.`
-        :head('Missio incomplete','bad')+`${esc(rec.name)} finished all five events but missed the requirement (${req.rr?`${rec.rr}/${req.rr} coin in RR`:''}${req.trophies?`${rec.trophies}/${req.trophies} trophies`:''}).`}
-    else msg=head(`Step ${rec.step} of 5 complete`,'ok')+`${esc(rec.name)} moves on to step ${rec.step+1}, carrying ${rec.cfCarry} CF. Royal Reserve: ${rec.rr} coin.${rec.severed.length?` Severed limbs persist: ${rec.severed.map(l=>LOCN[l]).join(', ')}.`:''}`;
+      msg=ok?head(_T('Missio complete'),'ok')+_T`${esc(rec.name)} claims the Missio Spoils: a Rudis, a Laurel Crown, ${rec.rr} coin from the Royal Reserve, freedom, and a hearty “Gratulationes”.`
+        :head(_T('Missio incomplete'),'bad')+_T`${esc(rec.name)} finished all five events but missed the requirement (${req.rr?_T`${rec.rr}/${req.rr} coin in RR`:''}${req.trophies?_T`${rec.trophies}/${req.trophies} trophies`:''}).`}
+    else msg=head(_T`Step ${rec.step} of 5 complete`,'ok')+_T`${esc(rec.name)} moves on to step ${rec.step+1}, carrying ${rec.cfCarry} CF. Royal Reserve: ${rec.rr} coin.${rec.severed.length?_T` Severed limbs persist: ${rec.severed.map(l=>LOCN[l]).join(', ')}.`:''}`;
   } else if(dead){
     rec.status='fallen';rec.rr=0;
     if(rec.gladId&&p.saved){try{await markFallen(p,x)}catch(e){console.error(e)}}
-    msg=head('Missio failed','bad')+`${esc(rec.name)} ${fell?'was eliminated':'did not survive the Fates'} at step ${rec.step+1} of 5. Their story ends here${rec.gladId?' — they are marked fallen in the Ludus':''}, and the Royal Reserve is lost.`;
+    msg=head(_T('Missio failed'),'bad')+_T`${esc(rec.name)} ${fell?_T('was eliminated'):_T('did not survive the Fates')} at step ${rec.step+1} of 5. Their story ends here${rec.gladId?_T(' — they are marked fallen in the Ludus'):''}, and the Royal Reserve is lost.`;
   } else {
-    rec.status='failed';const why=st.win?'this step had to be won':noCF?'they did not make it to the end':`${x.f} CF — 20 were needed, or a win`;
-    msg=head('Missio failed','bad')+`${esc(rec.name)} survives, but the missio ends at step ${rec.step+1} of 5 (${why}). The Royal Reserve is forfeit; ${esc(rec.name)} returns to the rolls.`}
+    rec.status='failed';const why=st.win?_T('this step had to be won'):noCF?_T('they did not make it to the end'):_T`${x.f} CF — 20 were needed, or a win`;
+    msg=head(_T('Missio failed'),'bad')+_T`${esc(rec.name)} survives, but the missio ends at step ${rec.step+1} of 5 (${why}). The Royal Reserve is forfeit; ${esc(rec.name)} returns to the rolls.`}
   await Store.put('missios',rec.id,rec);
   if(rec.gladId&&pass){const g=LUDUS_CACHE.find(y=>y.id===rec.gladId);if(g){p.saved=g.id;await saveGladiator(x);x.savedDone=true}}
   return {rec,next:rec.status==='active',msg}};

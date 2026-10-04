@@ -80,7 +80,7 @@ for(const [nm,val] of [['recordEvent',undefined],['achievementsAfterEvent',undef
 {const base=careerHoldsClock;careerHoldsClock=async function(){if(onl80Rec()){onl80Skip('calendar');return true}return base.apply(this,arguments)}}
 {const base=matchSaveOK;matchSaveOK=function(){return onl80Live()?false:base.apply(this,arguments)}}
 /* the bookmaker (win odds + the Manager wallet) never opens online */
-{const base=openWagers;openWagers=async function(){if(onl80Live()&&!S.over){if(typeof mToast==='function')mToast('💰 The bookmaker keeps no book online.');return}return base.apply(this,arguments)}}
+{const base=openWagers;openWagers=async function(){if(onl80Live()&&!S.over){if(typeof mToast==='function')mToast(_T('💰 The bookmaker keeps no book online.'));return}return base.apply(this,arguments)}}
 /* the results window: no Ludus Flavius (Save / Claim freedom / Save all) and no offline replay of an online match */
 {const base=resultCard;resultCard=function(){const h=base.apply(this,arguments);if(!onl80Live()||typeof h!=='string')return h;
   return h.replace(/<button class="btn" type="button" data-(save|free)="[^"]*"[^>]*>[\s\S]*?<\/button>/g,'')}}
@@ -101,12 +101,12 @@ function onl80HintsUI(quiet){try{document.querySelectorAll('[data-hints]').forEa
 {const base=applySettings;applySettings=function(){const h=ONL80R.hints;if(!h)return base.apply(this,arguments);if(SETTINGS.hints===false)SETTINGS.hints=h.sh;
   let r;try{r=base.apply(this,arguments)}finally{h.H=HINTS;h.sh=SETTINGS.hints;HINTS=false;SETTINGS.hints=false}return r}}
 for(const nm of ['setHints','hintsMaster']){try{const base=eval(nm);if(typeof base!=='function')continue;
-  const w=function(){if(ONL80R.hints){if(typeof mToast==='function')mToast('🧭 No hints in Ranked — they return after the match.');return}return base.apply(this,arguments)};eval(`${nm}=w`)}catch(e){}}
+  const w=function(){if(ONL80R.hints){if(typeof mToast==='function')mToast(_T('🧭 No hints in Ranked — they return after the match.'));return}return base.apply(this,arguments)};eval(`${nm}=w`)}catch(e){}}
 
 /* ---------------- 4 · no pause online ---------------- */
 const onl80NoPause=()=>!!(typeof S!=='undefined'&&S&&S.onl&&!S.over);
 document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('[data-speed="pause"],[data-speed="step"],[data-sspeed="pause"],[data-sspeed="step"]');
-  if(!b||!onl80NoPause())return;e.preventDefault();e.stopImmediatePropagation();if(e.isTrusted&&typeof mToast==='function')mToast('⏩ The online arena never pauses — your own pace stays.')},true);
+  if(!b||!onl80NoPause())return;e.preventDefault();e.stopImmediatePropagation();if(e.isTrusted&&typeof mToast==='function')mToast(_T('⏩ The online arena never pauses — your own pace stays.'))},true);
 window.addEventListener('keydown',e=>{if(e.code!=='Space'||!onl80NoPause())return;const t=document.activeElement;if(t&&(['INPUT','TEXTAREA','SELECT'].includes(t.tagName)||t.isContentEditable))return;
   if(typeof STEP!=='undefined'&&STEP.res)return;e.stopImmediatePropagation();if(!CUR_MODAL)e.preventDefault()},true);
 setInterval(()=>{try{if(typeof SPEED==='undefined')return;if(!['pause','step','snap'].includes(SPEED))ONL80R.pace=SPEED;if(!onl80NoPause())return;
@@ -149,12 +149,12 @@ function onl80Decide(V){if(V.done)return;V.done=true;clearTimeout(V.t);if(ONL80R
     /* the mover is out of step: skip its input here (already taken off the queue) and everything it sent on that state */
     const seat=V.inp.seat,g=+V.inp.g||0;ONLM.odd[seat]=Math.max(ONLM.odd[seat]!=null?ONLM.odd[seat]:-Infinity,g);ONL80R.oddSkips++;
     {const k=majSeats.indexOf(ONLM.me);setTimeout(()=>NET.req('match.odd',{id:V.lobby,seat}).catch(()=>{}),Math.max(0,k)*400)}
-    try{log(`⚖ <b>${esc(onlmName(seat))}</b> was out of step with the others — the arena holds to the majority.`,'thought')}catch(e){}
+    try{log(_T`⚖ <b>${esc(onlmName(seat))}</b> was out of step with the others — the arena holds to the majority.`,'thought')}catch(e){}
     if(majSeats[0]===ONLM.me&&ONL80R.oddSent[seat]!==g){ONL80R.oddSent[seat]=g;onl80SendOdd(seat)}
     ONLM.resyncing=false;setTimeout(onlmPump,30);return}
   /* I am in a minority: the arena of the lowest majority seat */
   const src=majSeats.find(i=>i!==ONLM.me);ONLM.resyncs++;ONLM.lastResync={seq:V.seq,k:V.inp.k,minority:1};ONLM.needAt=V.seq;
-  if(typeof mToast==='function')mToast('🔄 Out of step with the others — fetching their arena…');
+  if(typeof mToast==='function')mToast(_T('🔄 Out of step with the others — fetching their arena…'));
   NET.req('match.snapreq',{id:V.lobby,to:ONLM.owners[src],seq:V.seq}).catch(()=>{});setTimeout(()=>{if(ONLM.resyncing){ONLM.resyncing=false;onlmPump()}},15000)}
 /* the 113 resync (snapshot from the mover), kept for the cases that still use it */
 function onlmResyncBase(inp){ONLM.resyncing=false;return ONL80_RESYNC0(inp)}
@@ -174,12 +174,12 @@ NET.on('match.hasha',d=>{const V=ONL80R.V;if(!V||V.done||!d||d.id!==V.lobby||(d.
 function mockLiveHumans(L,M){const gone=a=>(M.dropped||{})[a]||(M.abandoned||{})[a];
   return L.players.filter(p=>!/^bot/.test(p.id)&&!gone(p.id)).map(p=>p.id).concat((L.stands||[]).map(s=>s.id).filter(a=>!gone(a)))}
 Object.assign(MOCK_ROUTES,{
-  'match.hashq':(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');if(mockSeat(L,me)<0)throw new Error('Not your match.');
+  'match.hashq':(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];if(!L||!M)throw new Error(_T('No such match.'));if(mockSeat(L,me)<0)throw new Error(_T('Not your match.'));
     mockPush('match.hashq',{id:d.id,seq:d.seq|0,from:me,to:mockLiveHumans(L,M).filter(a=>a!==me)});return {}},
-  'match.hasha':(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');const seat=mockSeat(L,me);if(seat<0)throw new Error('Not your match.');
+  'match.hasha':(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];if(!L||!M)throw new Error(_T('No such match.'));const seat=mockSeat(L,me);if(seat<0)throw new Error(_T('Not your match.'));
     mockPush('match.hasha',{id:d.id,seq:d.seq|0,to:String(d.to||''),from:me,seat,h:String(d.h||'').slice(0,40)});return {}},
-  'match.odd':(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');if(mockSeat(L,me)<0)throw new Error('Not your match.');
-    const seat=d.seat|0;const acct=seat<L.seats?(L.players[seat]||{}).id:((L.stands||[])[seat-L.seats]||{}).id;if(!acct||acct===me||/^bot/.test(acct))throw new Error('No one to judge.');
+  'match.odd':(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];if(!L||!M)throw new Error(_T('No such match.'));if(mockSeat(L,me)<0)throw new Error(_T('Not your match.'));
+    const seat=d.seat|0;const acct=seat<L.seats?(L.players[seat]||{}).id:((L.stands||[])[seat-L.seats]||{}).id;if(!acct||acct===me||/^bot/.test(acct))throw new Error(_T('No one to judge.'));
     /* the votes keep their own item: the shared mock world is rewritten by every window, a vote must not be lost to that */
     const O=mockOdd80();const m=O[d.id]=O[d.id]||{votes:{},struck:{}};const v=m.votes[acct]=m.votes[acct]||[];if(!v.includes(me))v.push(me);const n=mockLiveHumans(L,M).length;let struck=false;
     if(n>=3&&v.length>=Math.floor(n/2)+1&&!m.struck[acct]){m.struck[acct]=1;mockStrike80(w,acct,d.id);struck=true;

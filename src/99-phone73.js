@@ -10,7 +10,7 @@
 const PP={tab:'act',turn:null};
 const phoneP2=()=>typeof phonePort==='function'&&phonePort();
 function ppBuild(){if(document.getElementById('ppTabs'))return;const t=document.createElement('div');t.id='ppTabs';
-  t.innerHTML=`<button type="button" data-pp="act">⚔ Actions</button><button type="button" data-pp="side">🛡 Fighter</button><button type="button" data-pp="log">📜 Log</button><button type="button" data-pp="nav" class="ppmore" title="Speed, rules and the menu">⋯</button>`;document.body.appendChild(t)}
+  t.innerHTML=`<button type="button" data-pp="act">${_T`⚔ Actions`}</button><button type="button" data-pp="side">${_T`🛡 Fighter`}</button><button type="button" data-pp="log">${_T`📜 Log`}</button><button type="button" data-pp="nav" class="ppmore" title="${_T`Speed, rules and the menu`}">⋯</button>`;document.body.appendChild(t)}
 function ppSync(){const B=document.body;for(const k of ['act','side','log'])B.classList.toggle('pp-'+k,PP.tab===k);
   document.querySelectorAll('#ppTabs [data-pp]').forEach(b=>b.classList.toggle('on',b.dataset.pp==='nav'?B.classList.contains('pp-nav'):PP.tab===b.dataset.pp));
   const wrap=document.querySelector('.canvas-wrap');if(wrap){const r=wrap.getBoundingClientRect();B.style.setProperty('--ppTop',Math.max(120,Math.round(r.bottom))+'px')}}

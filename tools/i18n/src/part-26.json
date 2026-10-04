@@ -1,0 +1,432 @@
+[
+ {
+  "k": "stackable",
+  "w": "03-engine.js:393",
+  "ctx": "_T`Your ${LOCN[l].toLowerCase()} already wears <b>${c.n}</b> (${Math.min(c.ap, player.ap[l])} AP) on the ${PT_NAME[ARM[c.key].pt] || PT_NAME[d.pt]} point. Only "
+ },
+ {
+  "k": "regular",
+  "w": "03-engine.js:393",
+  "ctx": "_T`Your ${LOCN[l].toLowerCase()} already wears <b>${c.n}</b> (${Math.min(c.ap, player.ap[l])} AP) on the ${PT_NAME[ARM[c.key].pt] || PT_NAME[d.pt]} point. Only "
+ },
+ {
+  "k": "right",
+  "w": "03-engine.js:1405",
+  "ctx": "_T`${nm(player)} equips <b>${w.n}</b> (${wStats(w)}) in the ${free[0] === 'R' ? 'right' : 'left'} hand.`"
+ },
+ {
+  "k": "left",
+  "w": "03-engine.js:1405",
+  "ctx": "_T`${nm(player)} equips <b>${w.n}</b> (${wStats(w)}) in the ${free[0] === 'R' ? 'right' : 'left'} hand.`"
+ },
+ {
+  "k": "weapons",
+  "w": "03-engine.js:1455",
+  "ctx": "_T`No level ${lv} ${kind === 'w' ? 'weapons' : 'armor'} remain.`"
+ },
+ {
+  "k": "armor",
+  "w": "03-engine.js:1455",
+  "ctx": "_T`No level ${lv} ${kind === 'w' ? 'weapons' : 'armor'} remain.`"
+ },
+ {
+  "k": "weapon",
+  "w": "03-engine.js:1459",
+  "ctx": "_T`Level ${lv} ${kind === 'w' ? 'weapon' : 'armor'}`"
+ },
+ {
+  "k": "activate",
+  "w": "04-rules.js:711",
+  "ctx": "_T`Phase 1 · Resolve: ${acts.map(n => nm(n) + ` <span class=\"why\">(${{\n    aggro: 'aggro',\n    opportunist: _T('lashes out in reach'),\n    adjacent: _T('within "
+ },
+ {
+  "k": "activates",
+  "w": "04-rules.js:711",
+  "ctx": "_T`Phase 1 · Resolve: ${acts.map(n => nm(n) + ` <span class=\"why\">(${{\n    aggro: 'aggro',\n    opportunist: _T('lashes out in reach'),\n    adjacent: _T('within "
+ },
+ {
+  "k": "token",
+  "w": "05-flow.js:454",
+  "ctx": "_T`${nm(p)} carries a festival boon: a ${OFFER[k] ? OFFER[k].n : 'token'}.`"
+ },
+ {
+  "k": "coin",
+  "w": "07-ui.js:2606",
+  "ctx": "_T`Lanista takes: ${player.vetPref === 'cf' ? 'CF' : 'coin'}`"
+ },
+ {
+  "k": "off",
+  "w": "07-ui.js:2749",
+  "ctx": "_T`🎯 Focus roll: ${p.focusRoll ? '<b>ON</b>' : 'off'}<small>${p.focusRoll ? _T('your next attack picks 1 of 3 rolled locations') : _T`costs your ${p.mv} moveme"
+ },
+ {
+  "k": "player",
+  "w": "07-ui.js:3364",
+  "ctx": "_T`${other.cpu ? 'CPU' : 'player'} · ${cheb(player, other)} tiles away${inTruce(player, other) ? _T(' · in truce') : ''}`"
+ },
+ {
+  "k": "teams",
+  "w": "07-ui.js:3528",
+  "ctx": "_T` in ${teams} ${ev.coop ? _T('as one side') : 'teams'}`"
+ },
+ {
+  "k": "victory",
+  "w": "10-meta.js:153",
+  "ctx": "_T`${row.f} CF — one short of certainty. The arena falls silent; every eye turns to the editor's box. Flavius weighs your ${row.won?'victory':'showing'}… and re"
+ },
+ {
+  "k": "showing",
+  "w": "10-meta.js:153",
+  "ctx": "_T`${row.f} CF — one short of certainty. The arena falls silent; every eye turns to the editor's box. Flavius weighs your ${row.won?'victory':'showing'}… and re"
+ },
+ {
+  "k": "updated",
+  "w": "10-meta.js:163",
+  "ctx": "_T`✓ ${esc(p.name)}'s Ludus record ${p.saved?'updated':'saved'}<small>${p.saved?_T('automatic for summoned gladiators'):_T('one save per event')}</small>`"
+ },
+ {
+  "k": "saved",
+  "w": "10-meta.js:163",
+  "ctx": "_T`✓ ${esc(p.name)}'s Ludus record ${p.saved?'updated':'saved'}<small>${p.saved?_T('automatic for summoned gladiators'):_T('one save per event')}</small>`"
+ },
+ {
+  "k": "lies",
+  "w": "10-meta.js:591",
+  "ctx": "_T`<b>${empty.length} event record${empty.length===1?' lies':_T('s lie')} empty.</b>`"
+ },
+ {
+  "k": "none",
+  "w": "10-meta.js:650",
+  "ctx": "_T`Classes eliminated so far: ${hall.killed.length?hall.killed.map(c=>CLASSES[c].name).join(', '):'none'}.`"
+ },
+ {
+  "k": "fallen",
+  "w": "11-extra.js:421",
+  "ctx": "_T`${C.name} · ${glad.status==='fallen'?'fallen':glad.status==='freed'?_T('freed · took the rudis'):glad.status==='retired'?'retired':glad.roster?_T('active ros"
+ },
+ {
+  "k": "retired",
+  "w": "11-extra.js:421",
+  "ctx": "_T`${C.name} · ${glad.status==='fallen'?'fallen':glad.status==='freed'?_T('freed · took the rudis'):glad.status==='retired'?'retired':glad.roster?_T('active ros"
+ },
+ {
+  "k": "won",
+  "w": "11-extra.js:422",
+  "ctx": "_T`${esc(x.date)} · <b>${esc(x.event)}</b> at ${esc(x.loc)}: ${x.won?'won':'survived'}, ${x.cf} CF`"
+ },
+ {
+  "k": "survived",
+  "w": "11-extra.js:422",
+  "ctx": "_T`${esc(x.date)} · <b>${esc(x.event)}</b> at ${esc(x.loc)}: ${x.won?'won':'survived'}, ${x.cf} CF`"
+ },
+ {
+  "k": "many",
+  "w": "11-extra.js:564",
+  "ctx": "_T`Advice distilled from the rulebook and from <b>${st?st.games:'many'} simulated all-CPU events</b>${st&&st.games===300?_T(' — three hundred of them, because s"
+ },
+ {
+  "k": "unlock",
+  "w": "15-custom.js:120",
+  "ctx": "_T`${item.locked?'LOCKED':_T('Unlocked')} — click to ${item.locked?'unlock':'lock'} against edits and deletion.\\nCreated ${item.created||'?'}${item.updated?_T` "
+ },
+ {
+  "k": "lock",
+  "w": "15-custom.js:120",
+  "ctx": "_T`${item.locked?'LOCKED':_T('Unlocked')} — click to ${item.locked?'unlock':'lock'} against edits and deletion.\\nCreated ${item.created||'?'}${item.updated?_T` "
+ },
+ {
+  "k": "beast",
+  "w": "15-custom.js:397",
+  "ctx": "_T`${t.spec&&t.spec.kind==='beast'?'beast':'figure'} · in the token library`"
+ },
+ {
+  "k": "figure",
+  "w": "15-custom.js:397",
+  "ctx": "_T`${t.spec&&t.spec.kind==='beast'?'beast':'figure'} · in the token library`"
+ },
+ {
+  "k": "yes",
+  "w": "15-custom.js:462",
+  "ctx": "_T`<span>Trophy count: <b>${c.trophies||0}</b></span><span>Royal Reserve (RR): <b>${c.rr||0}</b> coin</span><span>Flavius Fidelis: <b>${c.ff?'yes':_T('not yet')"
+ },
+ {
+  "k": "swells",
+  "w": "16-crowd.js:90",
+  "ctx": "_T` Attendance ${om.att>0?'swells':'thins'}.`"
+ },
+ {
+  "k": "thins",
+  "w": "16-crowd.js:90",
+  "ctx": "_T` Attendance ${om.att>0?'swells':'thins'}.`"
+ },
+ {
+  "k": "billing",
+  "w": "16-crowd.js:269",
+  "ctx": "_T`+${t}K for the ${config.mgrTier==='main'?_T('main event'):'billing'}`"
+ },
+ {
+  "k": "them",
+  "w": "16-crowd.js:385",
+  "ctx": "_T`<b>${esc(sp.name)}</b> is back — and remembers ${esc(tgt.name)} spearing ${rev?_T('their friend'):'them'} from the stands. Revenge is on the menu.`"
+ },
+ {
+  "k": "friendship",
+  "w": "16-crowd.js:453",
+  "ctx": "_T`<b>${esc(sp.name)}</b> turns their back on ${esc(fav.name)}. Nobody paid to watch ${kind==='truce'?'friendship':'hiding'}.`"
+ },
+ {
+  "k": "hiding",
+  "w": "16-crowd.js:453",
+  "ctx": "_T`<b>${esc(sp.name)}</b> turns their back on ${esc(fav.name)}. Nobody paid to watch ${kind==='truce'?'friendship':'hiding'}.`"
+ },
+ {
+  "k": "hunting",
+  "w": "16-crowd.js:545",
+  "ctx": "_T`<b>${esc(s.name)}</b> moves to ${SECTIONS[to].n} (${want===grudge?'hunting':'following'} ${esc(want.name)}).`"
+ },
+ {
+  "k": "following",
+  "w": "16-crowd.js:545",
+  "ctx": "_T`<b>${esc(s.name)}</b> moves to ${SECTIONS[to].n} (${want===grudge?'hunting':'following'} ${esc(want.name)}).`"
+ },
+ {
+  "k": "themselves",
+  "w": "16-crowd.js:721",
+  "ctx": "_T`${nm(player)} slips ${stake} coin to the bookmaker, on ${player.cpu?'themselves':'yourself'} at ${fmtOdds(odds)}.`"
+ },
+ {
+  "k": "yourself",
+  "w": "16-crowd.js:721",
+  "ctx": "_T`${nm(player)} slips ${stake} coin to the bookmaker, on ${player.cpu?'themselves':'yourself'} at ${fmtOdds(odds)}.`"
+ },
+ {
+  "k": "lost",
+  "w": "16-crowd.js:731",
+  "ctx": "_T`${esc(p.name)} bet ${b.stake} on ${p.cpu?'themselves':'yourself'}: ${won?_T`<b style=\"color:var(--gold2)\">won ${pay} coin</b>`:'lost'}`"
+ },
+ {
+  "k": "PvP",
+  "w": "16-crowd.js:1028",
+  "ctx": "_T`Round ${S.ri+1}: ${esc(rd.n)} · ${rd.pvp?'PvP':_T('no PvP')} · ${rd.pve?'PvE':_T('no PvE')}${S.endgame?_T(' · <b style=\\\"color:var(--gold2)\\\">END GAME</b>'):"
+ },
+ {
+  "k": "PvE",
+  "w": "16-crowd.js:1028",
+  "ctx": "_T`Round ${S.ri+1}: ${esc(rd.n)} · ${rd.pvp?'PvP':_T('no PvP')} · ${rd.pve?'PvE':_T('no PvE')}${S.endgame?_T(' · <b style=\\\"color:var(--gold2)\\\">END GAME</b>'):"
+ },
+ {
+  "k": "today",
+  "w": "16-crowd.js:1147",
+  "ctx": "_T`Last spectator speared here: <b>${esc(A.spearLast.name)}</b>, by ${esc(A.spearLast.by)} (${esc(A.spearLast.date)} — ${days===0?'today':days+' day'+(days===1?"
+ },
+ {
+  "k": "up",
+  "w": "17-manager.js:328",
+  "ctx": "_T`World news reaches ${esc(LOCATIONS[loc0].n)}: ${wi.list.map(e=>`${e.i} ${esc(e.n)}`).join('; ')} — attendance ${wi.att>=0?'+':'−'}${Math.abs(Math.round(wi.at"
+ },
+ {
+  "k": "down",
+  "w": "17-manager.js:328",
+  "ctx": "_T`World news reaches ${esc(LOCATIONS[loc0].n)}: ${wi.list.map(e=>`${e.i} ${esc(e.n)}`).join('; ')} — attendance ${wi.att>=0?'+':'−'}${Math.abs(Math.round(wi.at"
+ },
+ {
+  "k": "you",
+  "w": "17-manager.js:525",
+  "ctx": "_T`${esc(g.name)} got the main event ${m2&&m2.isPlayer?'you':m2?m2.name:''} promised. Word kept; the barracks notice.`"
+ },
+ {
+  "k": "your",
+  "w": "17-manager.js:672",
+  "ctx": "_T`at ${m2.isPlayer?'your':esc(m2.ludus)+\"'s\"} request`"
+ },
+ {
+  "k": "her",
+  "w": "17-manager.js:1011",
+  "ctx": "_T`${glad.name} fights for ${glad.fem?'her':'his'} father's house — no purse on earth will move ${glad.fem?'her':'him'}.`"
+ },
+ {
+  "k": "his",
+  "w": "17-manager.js:1011",
+  "ctx": "_T`${glad.name} fights for ${glad.fem?'her':'his'} father's house — no purse on earth will move ${glad.fem?'her':'him'}.`"
+ },
+ {
+  "k": "him",
+  "w": "17-manager.js:1011",
+  "ctx": "_T`${glad.name} fights for ${glad.fem?'her':'his'} father's house — no purse on earth will move ${glad.fem?'her':'him'}.`"
+ },
+ {
+  "k": "rest",
+  "w": "17-manager.js:1045",
+  "ctx": "_T`In the infirmary: ${esc(glad.inj.label)} — needs ${injReq(glad.inj)==='rest'?'rest':injReq(glad.inj)==='medicus'?_T('the Medicus'):_T('the surgeon')}. Cannot"
+ },
+ {
+  "k": "are",
+  "w": "17-manager.js:1130",
+  "ctx": "_T`${hurt.map(g=>esc(g.name)).join(', ')} ${hurt.length===1?'is':'are'} hurt and cannot fight until treated.`"
+ },
+ {
+  "k": "restless",
+  "w": "17-manager.js:1654",
+  "ctx": "_T`The empire outshouts the arena this week: <b>${esc(e.n)}</b> at ${esc(e.city)}${e.war?_T` — ${esc(e.war.rome)} against ${esc(e.war.foe)}`:''}. ${e.att>0?_T`A"
+ },
+ {
+  "k": "cheerful",
+  "w": "17-manager.js:1703",
+  "ctx": "_T`${'▮'.repeat(e.sev)} · the crowds ${e.mood>=5?'cheerful':e.mood<=-5?'sour':'uneasy'}`"
+ },
+ {
+  "k": "sour",
+  "w": "17-manager.js:1703",
+  "ctx": "_T`${'▮'.repeat(e.sev)} · the crowds ${e.mood>=5?'cheerful':e.mood<=-5?'sour':'uneasy'}`"
+ },
+ {
+  "k": "uneasy",
+  "w": "17-manager.js:1703",
+  "ctx": "_T`${'▮'.repeat(e.sev)} · the crowds ${e.mood>=5?'cheerful':e.mood<=-5?'sour':'uneasy'}`"
+ },
+ {
+  "k": "allowed",
+  "w": "17-manager.js:1748",
+  "ctx": "_T`🎟 Spectating ${w.spectOK===false?_T('not allowed'):'allowed'}`"
+ },
+ {
+  "k": "paused",
+  "w": "21-audio.js:150",
+  "ctx": "_T`${esc(city)} · ${AUD_THEMES[city].mode} · ${AUD_THEMES[city].bpm} bpm <b class=\"trst\" style=\"color:var(--gold2)\">${on?_T('♪ now playing'):paused?'paused':''}"
+ },
+ {
+  "k": "empty",
+  "w": "22-trophies.js:155",
+  "ctx": "_T`<b>Shelf spot ${sel.slot+1}</b> — ${cur?`${_T`<b>${esc(cur.name)}</b>${(cur.count||1)>1?` <span class=\"badge gold\">won ×${cur.count}</span>`:''} (season ${cu"
+ },
+ {
+  "k": "invited",
+  "w": "22-trophies.js:337",
+  "ctx": "_T`${m?esc(m.ludus):'invited'} · rated ${effOvr(g)}`"
+ },
+ {
+  "k": "heat",
+  "w": "22-trophies.js:341",
+  "ctx": "_T`▶ Sim ${rd.length>1?'heat':'it'}`"
+ },
+ {
+  "k": "it",
+  "w": "22-trophies.js:341",
+  "ctx": "_T`▶ Sim ${rd.length>1?'heat':'it'}`"
+ },
+ {
+  "k": "fought",
+  "w": "23-ludus.js:99",
+  "ctx": "_T`S${x.s} W${x.wk} · ${esc(x.t)} · ${esc(x.ev)} at ${esc(x.loc)} · ${x.won?'won':x.place?'#'+x.place:'fought'} · ${x.f} CF`"
+ },
+ {
+  "k": "rich",
+  "w": "23-ludus.js:114",
+  "ctx": "_T`<span><b>${m.fame}</b>★ Fame</span><span><b>${rec}</b>Record</span><span><b>${ros.length}</b>Fighters</span><span><b>${m.coin>500?'rich':m.coin>150?'comforta"
+ },
+ {
+  "k": "comfortable",
+  "w": "23-ludus.js:114",
+  "ctx": "_T`<span><b>${m.fame}</b>★ Fame</span><span><b>${rec}</b>Record</span><span><b>${ros.length}</b>Fighters</span><span><b>${m.coin>500?'rich':m.coin>150?'comforta"
+ },
+ {
+  "k": "lean",
+  "w": "23-ludus.js:114",
+  "ctx": "_T`<span><b>${m.fame}</b>★ Fame</span><span><b>${rec}</b>Record</span><span><b>${ros.length}</b>Fighters</span><span><b>${m.coin>500?'rich':m.coin>150?'comforta"
+ },
+ {
+  "k": "broke",
+  "w": "23-ludus.js:114",
+  "ctx": "_T`<span><b>${m.fame}</b>★ Fame</span><span><b>${rec}</b>Record</span><span><b>${ros.length}</b>Fighters</span><span><b>${m.coin>500?'rich':m.coin>150?'comforta"
+ },
+ {
+  "k": "fighter",
+  "w": "39-sotonium.js:90",
+  "ctx": "_T`he roars for every ${CLASSES[V.cls]?CLASSES[V.cls].name:'fighter'}, as he does for his child (+3 CF each)`"
+ },
+ {
+  "k": "die",
+  "w": "54-v51.js:77",
+  "ctx": "_T`Power ${w.p}: ${w.p} hit ${w.p===1?'die':'dice'} per attack point.`"
+ },
+ {
+  "k": "dice",
+  "w": "54-v51.js:77",
+  "ctx": "_T`Power ${w.p}: ${w.p} hit ${w.p===1?'die':'dice'} per attack point.`"
+ },
+ {
+  "k": "once",
+  "w": "67-studio55.js:33",
+  "ctx": "_T`tamed ally: ${esc(NPCT[C.ally]?(C.ally==='zora'?_T('Zora the eagle'):NPCT[C.ally].n):_T('Zora'))}, released ${c.abilVal>1?c.abilVal+' times':'once'} per even"
+ },
+ {
+  "k": "watching",
+  "w": "106-v75.js:279",
+  "ctx": "_T`<b>${esc(ev.n)}</b> at <b>${esc(L?L.n:'?')}</b> · ${CFG.n} gladiator${CFG.n===1?'':'s'} · You: <b>${you?esc((CLASSES[you.cls]||{}).name||you.cls):'watching'}"
+ },
+ {
+  "k": "needs",
+  "w": "108-v76.js:266",
+  "ctx": "_T`${wait.slice(0,free).map(g=>esc(g.name)).join(', ')} ${Math.min(free,wait.length)===1?'needs':'need'} a bed`"
+ },
+ {
+  "k": "need",
+  "w": "108-v76.js:266",
+  "ctx": "_T`${wait.slice(0,free).map(g=>esc(g.name)).join(', ')} ${Math.min(free,wait.length)===1?'needs':'need'} a bed`"
+ },
+ {
+  "k": "done",
+  "w": "108-v76.js:478",
+  "ctx": "_T`📜 Study the card<small>${X.study?'done':_T('1 h · scout this week · a little Intelligence')}</small>`"
+ },
+ {
+  "k": "bond",
+  "w": "108-v76.js:491",
+  "ctx": "_T`${k==='bond'?'🤝':'⚔'} ${esc(gById(gid).name)} and ${esc(gById(mate).name)} ${k==='bond'?'bond':'spar'} this week (2 h each).`"
+ },
+ {
+  "k": "spar",
+  "w": "108-v76.js:491",
+  "ctx": "_T`${k==='bond'?'🤝':'⚔'} ${esc(gById(gid).name)} and ${esc(gById(mate).name)} ${k==='bond'?'bond':'spar'} this week (2 h each).`"
+ },
+ {
+  "k": "eliminated",
+  "w": "118-onl80.js:223",
+  "ctx": "_T`Leaving: ${L.ranked?_T('Damnatio'):rule==='fate'?'eliminated':_T('a CPU fights on')} · Stands: ${L.standsOff?_T('watch only'):_T('act in round 1')} · Ticket:"
+ },
+ {
+  "k": "yesterday",
+  "w": "121-onl80fix.js:273",
+  "ctx": "_T`No victor yet ${yd?'yesterday':'today'} — the sand waits.`"
+ },
+ {
+  "k": "half",
+  "w": "127-v82onl.js:350",
+  "ctx": "_T` · ${f===0.5?'half':'¾'} for a small table`"
+ },
+ {
+  "k": "waits",
+  "w": "141-v85faith.js:228",
+  "ctx": "_T`${nm(wait)} ${wait.length===1?'waits':'wait'} for the beasts`"
+ },
+ {
+  "k": "wait",
+  "w": "141-v85faith.js:228",
+  "ctx": "_T`${nm(wait)} ${wait.length===1?'waits':'wait'} for the beasts`"
+ },
+ {
+  "k": "were",
+  "w": "08-setup.js:326",
+  "ctx": "_T`<b>${summoned.map(player=>esc(player.name)).join(', ')}</b> ${summoned.length>1?'were':'was'} summoned from the Ludus. Deserting the arena is death in the cr"
+ },
+ {
+  "k": "was",
+  "w": "08-setup.js:326",
+  "ctx": "_T`<b>${summoned.map(player=>esc(player.name)).join(', ')}</b> ${summoned.length>1?'were':'was'} summoned from the Ludus. Deserting the arena is death in the cr"
+ },
+ {
+  "k": "is",
+  "w": "17-manager.js:1130",
+  "ctx": "_T`${hurt.map(g=>esc(g.name)).join(', ')} ${hurt.length===1?'is':_T('are')} hurt and cannot fight until treated.`"
+ }
+]

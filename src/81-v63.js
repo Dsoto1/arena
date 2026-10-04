@@ -21,8 +21,8 @@ function thPlan(w){w=w||W_();if(!w.tplan||w.tplan.wk!==w.week)w.tplan={wk:w.week
 const thOfG=(P,id)=>Object.values(P.g[id]||{}).reduce((a,b)=>a+b,0)+P.pairs.filter(x=>x.a===id||x.b===id).length*2;
 function thUsed(w){const P=thPlan(w);return Object.keys(P.g).reduce((a,id)=>a+Object.values(P.g[id]).reduce((x,y)=>x+y,0),0)+P.doc+P.pairs.length*2+(P.spent||0)}
 function thLeft(w){return Math.max(0,thMax()-thUsed(w||W_()))}
-const needTHrs=(w,h)=>[thLeft(w)<h,`Needs ${h} training hour${h===1?'':'s'} — ${thLeft(w)} left. Hours refill when the week ends.`];
-const TH_KINDS=[['spd','🏃','Speed drill'],['str','💪','Strength drill'],['int','📜','Tactics'],['cha','🎭','Crowd work'],['rehab','🩹','Rehab']];
+const needTHrs=(w,h)=>[thLeft(w)<h,_T`Needs ${h} training hour${h===1?'':'s'} — ${thLeft(w)} left. Hours refill when the week ends.`];
+const TH_KINDS=[['spd','🏃',_T('Speed drill')],['str','💪',_T('Strength drill')],['int','📜',_T('Tactics')],['cha','🎭',_T('Crowd work')],['rehab','🩹',_T('Rehab')]];
 
 /* ---------- the rail: to-do borders ---------- */
 {const st=document.createElement('style');st.textContent=`
@@ -62,7 +62,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tp]');if(!
     const v=Math.max(0,cur+dd);P.g[a]=P.g[a]||{};if(v)P.g[a][c]=v;else delete P.g[a][c]}
   else if(k==='doc'){const v=P.doc+(+a);if(v<0||v>TH_DOC||(+a>0&&left<1))return;P.doc=v}
   else if(k==='pair'){const x=document.getElementById('thPa'),y=document.getElementById('thPb');if(!x||!y||x.value===y.value||left<2)return;
-    if(thOfG(P,x.value)+2>TH_FIGHTER||thOfG(P,y.value)+2>TH_FIGHTER){mToast('Each fighter can train 4 hours a week.');return}P.pairs.push({k:a,a:x.value,b:y.value})}
+    if(thOfG(P,x.value)+2>TH_FIGHTER||thOfG(P,y.value)+2>TH_FIGHTER){mToast(_T('Each fighter can train 4 hours a week.'));return}P.pairs.push({k:a,a:x.value,b:y.value})}
   else if(k==='unpair')P.pairs.splice(+a,1);
   saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()});
 
@@ -70,16 +70,16 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tp]');if(!
 function thResolve(w){const P=thPlan(w),m=me();if(P.done)return;P.done=true;const out=[];const nm=id=>{const g=gById(id);return g?esc(g.name):'?'};
   for(const [id,hs] of Object.entries(P.g)){const g=gById(id);if(!g||!g.alive||!rosterOf(m).includes(g))continue;
     for(const [k,h] of Object.entries(hs)){if(!h)continue;
-      if(k==='rehab'){if(g.inj&&h>=2){g.inj.until=Math.max(w.week,g.inj.until-1);out.push(`${nm(id)}: rehab — back a week sooner`)}continue}
+      if(k==='rehab'){if(g.inj&&h>=2){g.inj.until=Math.max(w.week,g.inj.until-1);out.push(_T`${nm(id)}: rehab — back a week sooner`)}continue}
       if(typeof statGain==='function')statGain(g,k,h*TH_DRILL);
       if(k==='cha'){g.fame=clamp((g.fame||0)+Math.floor(h*TH_FAME),0,100)}
       out.push(`${nm(id)}: ${h} h ${TH_KINDS.find(x=>x[0]===k)[2].toLowerCase()}`)}}
   for(const p of P.pairs){const a=gById(p.a),b=gById(p.b);if(!a||!b)continue;
-    if(p.k==='bond'){for(const g of [a,b]){g.loyB=Math.min(25,(g.loyB||0)+2);g.morale=clamp((g.morale||50)+3,0,100)}out.push(`${nm(p.a)} & ${nm(p.b)}: bonded (+loyalty)`)}
+    if(p.k==='bond'){for(const g of [a,b]){g.loyB=Math.min(25,(g.loyB||0)+2);g.morale=clamp((g.morale||50)+3,0,100)}out.push(_T`${nm(p.a)} & ${nm(p.b)}: bonded (+loyalty)`)}
     else{for(const g of [a,b]){if(typeof statGain==='function'){statGain(g,'spd',0.25);statGain(g,'str',0.25)}}
-      const hurt=Math.random()<0.04?pickOneUI([a,b]):null;if(hurt&&!hurt.inj){hurt.inj={until:w.week+2,label:'a sparring knock',pen:2};out.push(`${nm(hurt.id)} took a sparring knock`)}
-      out.push(`${nm(p.a)} & ${nm(p.b)}: sparred in-house`)}}
-  if(out.length){w.lastPlan=out;if(typeof tnews==='function')tnews(`Training hours: ${out.length} session${out.length===1?'':'s'} — ${out.slice(0,3).join('; ')}${out.length>3?'…':''}`)}}
+      const hurt=Math.random()<0.04?pickOneUI([a,b]):null;if(hurt&&!hurt.inj){hurt.inj={until:w.week+2,label:_T('a sparring knock'),pen:2};out.push(_T`${nm(hurt.id)} took a sparring knock`)}
+      out.push(_T`${nm(p.a)} & ${nm(p.b)}: sparred in-house`)}}
+  if(out.length){w.lastPlan=out;if(typeof tnews==='function')tnews(_T`Training hours: ${out.length} session${out.length===1?'':'s'} — ${out.slice(0,3).join('; ')}${out.length>3?'…':''}`)}}
 const pickOneUI=a=>a[Math.floor(Math.random()*a.length)]; /* not the dice RNG */
 /* doctore hours: the player's yard counts a quarter level higher per hour while the week resolves (facLvl is a const arrow) */
 {const base=endWeek;endWeek=async function(){const w=W_(),m=w&&me();const wk=w&&w.week;let lift=0;
@@ -94,19 +94,19 @@ function thPlanHTML(){const w=W_(),m=me();const P=thPlan(w);const ros=rosterOf(m
     return `<div class="thg"><b title="${esc(g.name)}">${g.inj?'⚕ ':''}${esc(g.name)}</b><span class="thks">${ks.map(([k,i,n])=>`<span title="${n}">${i}${ctr(`g|${g.id}|${k}`,hs[k]||0,left>0&&used<TH_FIGHTER&&!(k==='rehab'&&(hs[k]||0)>=2),(hs[k]||0)>0)}</span>`).join('')}</span><span class="rc-sub">${used}/${TH_FIGHTER} h</span></div>`}).join('');
   const opts=ros.filter(g=>!g.inj).map(g=>`<option value="${g.id}">${esc(g.name)}</option>`).join('');
   const pairs=P.pairs.map((p,i)=>`<div class="throw">${p.k==='bond'?'🤝':'⚔'} ${esc((gById(p.a)||{}).name||'?')} & ${esc((gById(p.b)||{}).name||'?')} <span class="rc-sub">2 h</span> <button class="btn tksm" type="button" data-tp="unpair|${i}">✕</button></div>`).join('');
-  return `<div class="card2"><div class="sect" style="margin-top:0">⏳ Training hours <span class="rc-sub">${left} of ${mx} left · spent when the week ends</span></div>
+  return `<div class="card2"><div class="sect" style="margin-top:0">${_T`⏳ Training hours`} <span class="rc-sub">${_T`${left} of ${mx} left · spent when the week ends`}</span></div>
     <div class="thmeter"><i style="width:${Math.round((mx-left)/Math.max(1,mx)*100)}%"></i></div>
-    <div class="throw">🧑‍🏫 <b>Doctore</b> ${ctr('doc',P.doc,left>0&&P.doc<TH_DOC,P.doc>0)}<span class="rc-sub">each hour sharpens this week's regime (max ${TH_DOC})</span></div>
+    <div class="throw">${_T`🧑‍🏫 <b>Doctore</b> ${ctr('doc',P.doc,left>0&&P.doc<TH_DOC,P.doc>0)}`}<span class="rc-sub">${_T`each hour sharpens this week's regime (max ${TH_DOC})`}</span></div>
     ${rows||'<p class="rc-sub">No fighters in the yard.</p>'}
-    <p class="rc-sub" style="margin:4px 0">🏃 Speed · 💪 Strength · 📜 Tactics (Intelligence) · 🎭 Crowd work (Charisma, fame) · 🩹 Rehab (2 h = a week sooner) · max ${TH_FIGHTER} h a fighter</p>
+    <p class="rc-sub" style="margin:4px 0">${_T`🏃 Speed · 💪 Strength · 📜 Tactics (Intelligence) · 🎭 Crowd work (Charisma, fame) · 🩹 Rehab (2 h = a week sooner) · max ${TH_FIGHTER} h a fighter`}</p>
     ${ros.filter(g=>!g.inj).length>1?`<div class="throw"><select class="tin" id="thPa" style="width:auto">${opts}</select> & <select class="tin" id="thPb" style="width:auto">${ros.filter(g=>!g.inj).map((g,i)=>`<option value="${g.id}" ${i===1?'selected':''}>${esc(g.name)}</option>`).join('')}</select>
       <button class="btn tksm" type="button" data-tp="pair|bond" ${left<2?'disabled':''}>🤝 Bond · 2 h</button><button class="btn tksm" type="button" data-tp="pair|spar" ${left<2?'disabled':''}>⚔ Spar · 2 h</button></div>`:''}
-    ${pairs}${(w.lastPlan||[]).length?`<div class="rc-sub" style="margin-top:6px">Last week: ${w.lastPlan.slice(0,4).map(x=>x).join(' · ')}</div>`:''}</div>`}
+    ${pairs}${(w.lastPlan||[]).length?`<div class="rc-sub" style="margin-top:6px">${_T`Last week: ${w.lastPlan.slice(0,4).map(x=>x).join(' · ')}`}</div>`:''}</div>`}
 {const base=practiceHTML;practiceHTML=function(){const h=base.apply(this,arguments);try{
   const mark='<div class="sect" style="margin-top:14px">⚔ Train with other teams</div>';const i=h.indexOf(mark);if(i<0)return h;
   let yard=h.slice(0,i),arena=h.slice(i+mark.length);
   const j=yard.indexOf('<div class="roomtiles">');const banner=j>0?yard.slice(0,j):'';if(j>0)yard=yard.slice(j);
-  return `${banner}<div class="yardtop">${thPlanHTML()}<div class="card2"><div class="sect" style="margin-top:0">⚔ Train with other teams</div>${arena}</div></div>${yard}`}catch(e){console.error(e);return h}}}
+  return `${banner}<div class="yardtop">${thPlanHTML()}<div class="card2"><div class="sect" style="margin-top:0">${_T`⚔ Train with other teams`}</div>${arena}</div></div>${yard}`}catch(e){console.error(e);return h}}}
 
 
 /* ---------- the fighter panel: the ratings sit in the header's empty top-right corner, not under the figure's feet ---------- */
@@ -118,6 +118,6 @@ let RAT_SHUT=(()=>{try{return localStorage.getItem('flavius_ratshut')==='1'}catc
 function panelStatsUp(){const b=document.getElementById('board');if(!b)return;const r=b.querySelector(':scope>.statrow'),h=b.querySelector(':scope>.pb-head');if(!r||!h)return;
   h.appendChild(r);r.classList.toggle('shut',RAT_SHUT);
   if(!r.querySelector('.ratfold')){const t=document.createElement('button');t.type='button';t.className='ratfold';r.prepend(t)}
-  const t=r.querySelector('.ratfold');t.textContent=RAT_SHUT?'📊 ◂':'▸';t.title=RAT_SHUT?'Show the ratings':'Fold the ratings away';t.setAttribute('aria-expanded',String(!RAT_SHUT))}
+  const t=r.querySelector('.ratfold');t.textContent=RAT_SHUT?'📊 ◂':'▸';t.title=RAT_SHUT?_T('Show the ratings'):_T('Fold the ratings away');t.setAttribute('aria-expanded',String(!RAT_SHUT))}
 document.addEventListener('click',e=>{const t=e.target.closest('.ratfold');if(!t)return;e.preventDefault();RAT_SHUT=!RAT_SHUT;try{localStorage.setItem('flavius_ratshut',RAT_SHUT?'1':'0')}catch(err){}panelStatsUp()});
 {const b0=()=>{const b=document.getElementById('board');if(b)new MutationObserver(panelStatsUp).observe(b,{childList:true});panelStatsUp()};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',b0);else b0()}

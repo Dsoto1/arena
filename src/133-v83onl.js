@@ -39,8 +39,8 @@ ONL83.regNamed=function(defs){for(const d0 of defs||[]){const d=ONLC.cleanNamed(
 
 /* ---------------- offerings brought: cf1/cf2 are played from the hand (the printed ones resolve on reveal) ---------------- */
 {const base=useItem;useItem=async function(player,it){if(it&&it.kind==='offer'&&(it.key==='cf1'||it.key==='cf2')){
-    if(!cfAllowed()){if(!player.cpu)await modal('Crowd Favor is locked','<p>Crowd Favor cannot be gained right now.</p>',[{label:'OK',value:1}]);return false}
-    const v=it.key==='cf1'?1:2;cfWhy('offerings');player.cf+=v;log(`${nm(player)} offers to the crowd: <b>+${v} CF</b>.`);player.items=player.items.filter(x=>x!==it);return true}
+    if(!cfAllowed()){if(!player.cpu)await modal(_T('Crowd Favor is locked'),'<p>Crowd Favor cannot be gained right now.</p>',[{label:'OK',value:1}]);return false}
+    const v=it.key==='cf1'?1:2;cfWhy('offerings');player.cf+=v;log(_T`${nm(player)} offers to the crowd: <b>+${v} CF</b>.`);player.items=player.items.filter(x=>x!==it);return true}
   return base.apply(this,arguments)}}
 
 /* ---------------- the uniques and the armor-piercing affix (deterministic engine hooks) ---------------- */
@@ -49,22 +49,22 @@ const onl83HP=p=>p&&p.hp?Object.values(p.hp).reduce((a,v)=>a+Math.max(0,v|0),0):
 {const base=hurt;hurt=async function(victim,location,damage,source,prefix,opts){
   const w=source&&source.type==='player'&&source.w&&source.w.named83?source.w:null;const att=w?source.p:null;const pvp=!!(victim&&victim.cls);
   if(w&&pvp&&damage>0&&w.uq==='ultor'&&att&&att.lastHitBy===victim.id&&victim!==att)damage++;
-  if(pvp&&damage>0&&!(opts&&opts.direct)&&onl83Held(victim,'aegis')&&S){const k=S.ri+':'+S.rotation;if(victim._aeg83!==k){victim._aeg83=k;damage--;log(`${nm(victim)}'s Aegis turns 1 damage aside.`)}}
+  if(pvp&&damage>0&&!(opts&&opts.direct)&&onl83Held(victim,'aegis')&&S){const k=S.ri+':'+S.rotation;if(victim._aeg83!==k){victim._aeg83=k;damage--;log(_T`${nm(victim)}'s Aegis turns 1 damage aside.`)}}
   const hp0=pvp?onl83HP(victim):0;const limb0=pvp&&victim.hp?victim.hp[location]:0;const pr=w?(w.uq==='percussor'?2:(w.pierce|0)):0;let r;
   if(pr&&damage>0&&pvp&&!source.punch&&victim.ap&&victim.ap[location]>0&&!(opts&&opts.direct)){const d1=Math.min(pr,damage);
     r=await base.call(this,victim,location,damage-d1,source,prefix,opts);
-    if(victim.alive&&victim.hp[location]>0)await base.call(this,victim,location,d1,source,`${prefix||''} — the ${w.n} pierces`,{...(opts||{}),noShield:true,direct:true})}
+    if(victim.alive&&victim.hp[location]>0)await base.call(this,victim,location,d1,source,_T`${prefix||''} — the ${w.n} pierces`,{...(opts||{}),noShield:true,direct:true})}
   else r=await base.call(this,victim,location,damage,source,prefix,opts);
   try{if(w&&att&&pvp&&damage>0&&victim!==att){
-    if(w.uq==='gloria'&&cfAllowed()){cfWhy('a legendary weapon');att.cf+=2;log(`${nm(att)}'s ${w.n}: the crowd roars (+2 CF).`)}
-    if(w.uq==='fortuna'){att.coin+=2;if(typeof coinLog==='function')coinLog(att,2,'a legendary weapon');log(`${nm(att)}'s ${w.n}: +2 coin.`)}
-    if(w.uq==='sanguis'&&att.alive&&onl83HP(victim)<hp0)await distributeHP(att,1,`${w.n}'s blood-price`);
-    if(w.uq==='messor'&&location!=='head'&&location!=='chest'&&limb0>0&&victim.hp[location]<=0&&cfAllowed()){cfWhy('a legendary weapon');att.cf+=3;log(`${nm(att)}'s ${w.n} reaps a limb (+3 CF).`)}}}catch(e){console.error(e)}
+    if(w.uq==='gloria'&&cfAllowed()){cfWhy(_T('a legendary weapon'));att.cf+=2;log(_T`${nm(att)}'s ${w.n}: the crowd roars (+2 CF).`)}
+    if(w.uq==='fortuna'){att.coin+=2;if(typeof coinLog==='function')coinLog(att,2,_T('a legendary weapon'));log(_T`${nm(att)}'s ${w.n}: +2 coin.`)}
+    if(w.uq==='sanguis'&&att.alive&&onl83HP(victim)<hp0)await distributeHP(att,1,_T`${w.n}'s blood-price`);
+    if(w.uq==='messor'&&location!=='head'&&location!=='chest'&&limb0>0&&victim.hp[location]<=0&&cfAllowed()){cfWhy(_T('a legendary weapon'));att.cf+=3;log(_T`${nm(att)}'s ${w.n} reaps a limb (+3 CF).`)}}}catch(e){console.error(e)}
   return r}}
 {const base=hurtNPC;hurtNPC=function(npc,damage,player,prefix,weapon,byNpc){const w=weapon&&weapon.named83?weapon:null;if(w&&w.uq==='ferox'&&damage>0)damage++;
   const was=!!(npc&&npc.alive);const r=base.call(this,npc,damage,player,prefix,weapon,byNpc);
-  try{if(w&&w.uq==='venator'&&was&&npc&&!npc.alive&&player&&player.cls&&cfAllowed()){cfWhy('a legendary weapon');player.cf+=3;log(`${nm(player)}'s ${w.n}: the hunt pleases the crowd (+3 CF).`)}}catch(e){}return r}}
-{const base=resetTurn;resetTurn=function(player){const r=base.apply(this,arguments);try{if(player&&player.alive&&onl83Held(player,'regius')&&cfAllowed()){cfWhy('a legendary weapon');player.cf+=1;log(`${nm(player)}'s royal weapon: +1 CF.`)}}catch(e){}return r}}
+  try{if(w&&w.uq==='venator'&&was&&npc&&!npc.alive&&player&&player.cls&&cfAllowed()){cfWhy(_T('a legendary weapon'));player.cf+=3;log(_T`${nm(player)}'s ${w.n}: the hunt pleases the crowd (+3 CF).`)}}catch(e){}return r}}
+{const base=resetTurn;resetTurn=function(player){const r=base.apply(this,arguments);try{if(player&&player.alive&&onl83Held(player,'regius')&&cfAllowed()){cfWhy(_T('a legendary weapon'));player.cf+=1;log(_T`${nm(player)}'s royal weapon: +1 CF.`)}}catch(e){}return r}}
 
 /* ---------------- result rows: who put a seat out, what broke, what came back ---------------- */
 {const base=eliminate;eliminate=function(victim,source){const was=!!(victim&&victim.alive);const r=base.apply(this,arguments);
@@ -89,7 +89,7 @@ ONL83.hold=id=>NET.req('lobby.hold',{id});
     for(let i=0;i<200;i++){const wait=L.startAt-(Date.now()+skew);if(wait>0)await new Promise(r=>setTimeout(r,Math.min(wait+60,1500)));
       if(L.startAt-(Date.now()+skew)>0)continue;try{return await base.call(self,'lobby.start',{id:d.id,go:1})}
       catch(e){if(e&&e.code==='count_wait'){const x=e.extra||{};if(x.startAt)L={...L,startAt:x.startAt};await new Promise(r=>setTimeout(r,250));continue}throw e}}
-    throw new Error('The horns did not sound — press Start again.')})()}}
+    throw new Error(_T('The horns did not sound — press Start again.'))})()}}
 
 /* ---------------- ONL83: helpers for the screens ---------------- */
 ONL83.piece=(holder,item)=>ONLC.pieceOf(holder,item,onlCatalog());
@@ -107,8 +107,8 @@ ONL83.share=id=>{try{return location.origin+location.pathname+ONLC.domusLink(id)
 /* =========================== THE MOCK SERVER (v0.83, as server/src/routes.js) =========================== */
 const MOCK_CD83='flavius_onlcd83';
 const mockCount83=()=>{try{const v=localStorage.getItem(MOCK_CD83);if(v!=null&&v!=='')return Math.max(0,+v|0)}catch(e){}return ONLC.COUNTDOWN_MS};
-const mockOwn83=(w,me,cid)=>{const ch=w.chars[cid];if(!ch||ch.owner!==me||!ch.alive)throw new Error('Not yours.');return ch};
-const mockHouse83=(w,me)=>{const A=w.accounts[me];const D=mockDomus82(w,A&&A.domus);if(!D)throw onlErr82('Name your house first.','need_domus');return D};
+const mockOwn83=(w,me,cid)=>{const ch=w.chars[cid];if(!ch||ch.owner!==me||!ch.alive)throw new Error(_T('Not yours.'));return ch};
+const mockHouse83=(w,me)=>{const A=w.accounts[me];const D=mockDomus82(w,A&&A.domus);if(!D)throw onlErr82(_T('Name your house first.'),'need_domus');return D};
 const mockShelf83=D=>({house:true,gear:D.gear||[],pcs:D.pcs||{}});
 function mockToMarket83(w,P,from){const I=ONLC.pieceInfo(P,onlCatalog());if(!I)return;w.chest83=w.chest83||[];w.market83=w.market83||[];
   if(I.named){w.chest83.push({item:P.item,pc:P.pc||null,at:Date.now(),from});return}
@@ -134,17 +134,17 @@ function mockVday83(w){const y=ONLC.dayPrevKey(Date.now());w.vday83=w.vday83||{}
 
 Object.assign(MOCK_ROUTES,{
   'offer.buy':(w,d,me)=>{const ch=mockOwn83(w,me,d.char);ONLC.offerBuy(ch,String(d.key||''));return ch},
-  'offer.bring':(w,d,me)=>{const ch=mockOwn83(w,me,d.char);if(mockCharBusy82(w,ch.id))throw onlErr82(`${ch.name} is in a match — the satchel waits.`,'in_match');ONLC.offerBring(ch,d.keys);return ch},
+  'offer.bring':(w,d,me)=>{const ch=mockOwn83(w,me,d.char);if(mockCharBusy82(w,ch.id))throw onlErr82(_T`${ch.name} is in a match — the satchel waits.`,'in_match');ONLC.offerBring(ch,d.keys);return ch},
   'gear.repair':(w,d,me)=>{const D=mockHouse83(w,me);const item=String(d.item||'');let H=D,hc=null;
-    if(d.holder!=='house'){hc=mockOwn83(w,me,d.holder);if(hc.domus!==D.id)throw new Error('Not of your house.');if(mockCharBusy82(w,hc.id))throw onlErr82(`${hc.name} is in a match — the forge waits.`,'in_match');H=hc}
-    const I=(H.gear||[]).includes(item)?ONLC.pieceOf(H,item,onlCatalog()):null;if(!I)throw new Error('That piece is not there.');if(I.st!=='broken')throw new Error('That piece is whole.');const cost=ONLC.repairCost(I);
+    if(d.holder!=='house'){hc=mockOwn83(w,me,d.holder);if(hc.domus!==D.id)throw new Error(_T('Not of your house.'));if(mockCharBusy82(w,hc.id))throw onlErr82(_T`${hc.name} is in a match — the forge waits.`,'in_match');H=hc}
+    const I=(H.gear||[]).includes(item)?ONLC.pieceOf(H,item,onlCatalog()):null;if(!I)throw new Error(_T('That piece is not there.'));if(I.st!=='broken')throw new Error(_T('That piece is whole.'));const cost=ONLC.repairCost(I);
     const byT=d.pay==='treasury'||(d.pay==null&&!hc);let payer=null;
-    if(byT){if((D.treasury|0)<cost)throw onlErr82(`The treasury needs ${cost} coin.`,'no_coin',{cost});D.treasury-=cost}
-    else{payer=mockOwn83(w,me,d.pay||hc.id);if(payer.domus!==D.id)throw new Error('Not of your house.');if((payer.wallet|0)<cost)throw onlErr82(`The repair costs ${cost} coin.`,'no_coin',{cost});payer.wallet-=cost}
+    if(byT){if((D.treasury|0)<cost)throw onlErr82(_T`The treasury needs ${cost} coin.`,'no_coin',{cost});D.treasury-=cost}
+    else{payer=mockOwn83(w,me,d.pay||hc.id);if(payer.domus!==D.id)throw new Error(_T('Not of your house.'));if((payer.wallet|0)<cost)throw onlErr82(_T`The repair costs ${cost} coin.`,'no_coin',{cost});payer.wallet-=cost}
     ONLC.repairItem(H,item);return {cost,item,holder:hc?hc:mockShelf83(D),domus:mockDRow82(D),...(payer&&payer!==hc?{payer}:{})}},
-  'domus.buy':(w,d,me)=>{const D=mockHouse83(w,me);const it=onlCatalog()[d.item];if(!it)throw new Error('No such piece.');const p=ONLC.priceOf(it);
-    if((D.treasury|0)<p)throw onlErr82(`The treasury needs ${p} coin.`,'no_coin',{cost:p});D.treasury-=p;D.gear=[...(D.gear||[]),d.item];return {domus:mockDRow82(D),gear:D.gear,pcs:D.pcs||{}}},
-  'gift.open':(w,d,me)=>{const ch=mockOwn83(w,me,d.char);if(!(ch.gifts||[]).some(g=>g.id===d.gift))throw new Error('No such gift.');if(mockCharBusy82(w,ch.id))throw onlErr82(`${ch.name} is in a match — open it afterwards.`,'in_match');
+  'domus.buy':(w,d,me)=>{const D=mockHouse83(w,me);const it=onlCatalog()[d.item];if(!it)throw new Error(_T('No such piece.'));const p=ONLC.priceOf(it);
+    if((D.treasury|0)<p)throw onlErr82(_T`The treasury needs ${p} coin.`,'no_coin',{cost:p});D.treasury-=p;D.gear=[...(D.gear||[]),d.item];return {domus:mockDRow82(D),gear:D.gear,pcs:D.pcs||{}}},
+  'gift.open':(w,d,me)=>{const ch=mockOwn83(w,me,d.char);if(!(ch.gifts||[]).some(g=>g.id===d.gift))throw new Error(_T('No such gift.'));if(mockCharBusy82(w,ch.id))throw onlErr82(_T`${ch.name} is in a match — open it afterwards.`,'in_match');
     const cat=onlCatalog();const rw=ONLC.rollGift(Math.random,cat,ONLC.rankFor(ch).k);let P=null;
     if(rw.k==='named'){w.chest83=w.chest83||[];w.uniq83=w.uniq83||[];if(w.chest83.length&&Math.random()<0.5){const x=w.chest83.splice(Math.floor(Math.random()*w.chest83.length),1)[0];P={item:x.item,pc:x.pc}}
       else{let def=ONLC.rollNamed(Math.random,cat,rw.rar,w.uniq83);if(def&&def.uq){if(w.uniq83.includes(def.uq))def=ONLC.rollNamed(Math.random,cat,'epic',[]);else w.uniq83.push(def.uq)}if(def)P=ONLC.namedPiece(def,ch)}
@@ -152,39 +152,39 @@ Object.assign(MOCK_ROUTES,{
     ONLC.giftTake(ch,d.gift);let res,D2=null;if(P&&!ONLC.canWearNamed(ch)){D2=mockDomus82(w,ch.domus);if(D2)ONLC.putPiece(D2,P,false);else ONLC.putPiece(ch,P,false);res={to:D2?'house':'glad'}}else res=ONLC.applyGift(ch,null,rw,P);
     const piece=P?ONLC.pieceInfo(P,cat):rw.k==='gear'?ONLC.pieceOf(ch,rw.item,cat):null;return {reward:{...rw,...(piece?{piece}:{})},to:res.to,char:ch,...(D2?{domus:mockDRow82(D2),gear:D2.gear||[],pcs:D2.pcs||{}}:{})}},
   'loot.list':(w,d,me)=>{mockLootSweep83(w);return mockLootMine83(w,me).map(mockLootOut83)},
-  'loot.pick':(w,d,me)=>{const X=(w.loot83||{})[d.id+'#'+(d.seat|0)];if(!X||!X.killer||X.killer.acct!==me)throw new Error('Nothing to take.');if(X.done)throw onlErr82('The pick is made.','loot_done',{picked:X.picked});
-    let i=X.pieces.findIndex(p=>p.item===d.item);if(i<0)throw new Error('Pick one of the pieces.');if(Date.now()>X.until)i=null;return mockLootResolve83(w,X,i)},
+  'loot.pick':(w,d,me)=>{const X=(w.loot83||{})[d.id+'#'+(d.seat|0)];if(!X||!X.killer||X.killer.acct!==me)throw new Error(_T('Nothing to take.'));if(X.done)throw onlErr82(_T('The pick is made.'),'loot_done',{picked:X.picked});
+    let i=X.pieces.findIndex(p=>p.item===d.item);if(i<0)throw new Error(_T('Pick one of the pieces.'));if(Date.now()>X.until)i=null;return mockLootResolve83(w,X,i)},
   'market.list':(w)=>{mockLootSweep83(w);return {used:(w.market83||[]).slice(0,60).map(x=>({id:x.id,item:x.item,base:x.base,n:x.n,kind:x.kind,lv:x.lv,st:x.st,price:x.price,at:x.at,from:x.from||null,hist:(x.pc&&x.pc.hist)||[]}))}},
-  'market.buy':(w,d,me)=>{const ch=mockOwn83(w,me,d.char);const i=(w.market83||[]).findIndex(x=>x.id===d.id);if(i<0)throw onlErr82('Someone bought it first.','sold');const X=w.market83[i];
-    const I=ONLC.pieceInfo({item:X.item,pc:X.pc},onlCatalog());if(!I.stack&&(ch.gear||[]).some(g=>ONLC.itemBase(g)===I.base))throw new Error('Already yours.');
-    if((ch.wallet|0)<X.price)throw onlErr82(`Costs ${X.price} coin.`,'no_coin',{cost:X.price});ch.wallet-=X.price;ONLC.putPiece(ch,{item:X.item,pc:X.pc},!ONLC.wearWhy(ch,X.item,X.pc));w.market83.splice(i,1);return {char:ch}},
-  'domus.profile':(w,d,me)=>{let D=d.id?mockDomus82(w,String(d.id)):null;if(!D&&d.name){const id=(w.dnames82||{})[ONLC.domusKey(d.name)];D=mockDomus82(w,id)}if(!D)throw onlErr82('No such house.','no_domus');
+  'market.buy':(w,d,me)=>{const ch=mockOwn83(w,me,d.char);const i=(w.market83||[]).findIndex(x=>x.id===d.id);if(i<0)throw onlErr82(_T('Someone bought it first.'),'sold');const X=w.market83[i];
+    const I=ONLC.pieceInfo({item:X.item,pc:X.pc},onlCatalog());if(!I.stack&&(ch.gear||[]).some(g=>ONLC.itemBase(g)===I.base))throw new Error(_T('Already yours.'));
+    if((ch.wallet|0)<X.price)throw onlErr82(_T`Costs ${X.price} coin.`,'no_coin',{cost:X.price});ch.wallet-=X.price;ONLC.putPiece(ch,{item:X.item,pc:X.pc},!ONLC.wearWhy(ch,X.item,X.pc));w.market83.splice(i,1);return {char:ch}},
+  'domus.profile':(w,d,me)=>{let D=d.id?mockDomus82(w,String(d.id)):null;if(!D&&d.name){const id=(w.dnames82||{})[ONLC.domusKey(d.name)];D=mockDomus82(w,id)}if(!D)throw onlErr82(_T('No such house.'),'no_domus');
     const glads=Object.values(w.chars).filter(c=>c.domus===D.id&&c.alive).map(c=>{const L=ONLC.cleanLook(c.look);return {id:c.id,name:c.name,cls:c.cls,rank:ONLC.rankFor(c).k,glory:Math.round(ONLC.gloryOf(c)),bouts:c.bouts|0,wins:c.wins|0,survived:c.survived|0,look:L.token?{token:L.token,color:L.color}:{}}});
     const rank=glads.reduce((b,g)=>ONLC.rankIdx(g.rank)>ONLC.rankIdx(b)?g.rank:b,'tiro');const A=w.accounts[me];
     return {domus:{...mockDRow82(D),archived:!!D.archived,trophies:D.trophies||[],recent:D.recent||[]},glads,rank,link:ONLC.domusLink(D.id),following:!!(A&&(A.follows||[]).some(f=>f.id===D.id)),mine:!!(A&&A.domus===D.id),now:mockFollows83(w,[{id:D.id,name:D.name}])[0]}},
-  'domus.follow':(w,d,me)=>{const A=w.accounts[me];const D=mockDomus82(w,String(d.id||''));if(!D)throw onlErr82('No such house.','no_domus');if(D.id===A.domus)throw new Error('That is your own house.');
-    let f=(A.follows||[]).filter(x=>x.id!==D.id);if(d.on!==false){if(f.length>=ONLC.FOLLOW_MAX)throw new Error(`Up to ${ONLC.FOLLOW_MAX} houses.`);f.push({id:D.id,name:D.name})}A.follows=f;return {follows:mockFollows83(w,f)}},
+  'domus.follow':(w,d,me)=>{const A=w.accounts[me];const D=mockDomus82(w,String(d.id||''));if(!D)throw onlErr82(_T('No such house.'),'no_domus');if(D.id===A.domus)throw new Error(_T('That is your own house.'));
+    let f=(A.follows||[]).filter(x=>x.id!==D.id);if(d.on!==false){if(f.length>=ONLC.FOLLOW_MAX)throw new Error(_T`Up to ${ONLC.FOLLOW_MAX} houses.`);f.push({id:D.id,name:D.name})}A.follows=f;return {follows:mockFollows83(w,f)}},
   'wager.list':(w,d,me)=>{const f=mockFlag80(w,me);const open=Object.values(w.lobbies).filter(L=>(L.status==='waiting'||L.status==='live')&&!L.mock&&!!L.flag===f&&((L.bets||[]).length||(L.pot|0))).slice(0,30)
       .map(L=>({id:L.id,ev:L.ev,loc:L.loc,status:L.status,ranked:!!L.ranked,seats:L.seats,players:(L.players||[]).map((p,i)=>({seat:i,name:p.name,domus:p.domus||null,cls:p.kit&&p.kit.cls||null})),...ONLC.oddsOf(L)}));
     const mine=mockIsGuest82(me)?[]:((w.bets83||{})[me]||[]).slice(0,30);const wk=ONLC.weekKey(Date.now());const T=(w.wk83||{})[wk]||{};
     const top=Object.entries(T).sort((a,b)=>(b[1].net|0)-(a[1].net|0)).slice(0,10).map(([a,x])=>({name:x.name||mockName80(w,a),domus:x.domus||(w.accounts[a]||{}).dname||null,dom:(w.accounts[a]||{}).domus||null,net:x.net|0,won:x.won|0,staked:x.staked|0}));
     return {open,mine,top,week:wk}},
-  'lobby.hold':(w,d,me)=>{const L=mockLobby80(w,d.id);if(L.host.id!==me)throw new Error('Only the host holds the horns.');if(L.status!=='waiting')throw new Error('Already under way.');if(ONLC.stopCount(L))mockUpd80(w,L,{held:1});return mockRoomOut80(w,L)}});
+  'lobby.hold':(w,d,me)=>{const L=mockLobby80(w,d.id);if(L.host.id!==me)throw new Error(_T('Only the host holds the horns.'));if(L.status!=='waiting')throw new Error(_T('Already under way.'));if(ONLC.stopCount(L))mockUpd80(w,L,{held:1});return mockRoomOut80(w,L)}});
 /* guests may read house pages and the open pots */
 {const base=mockReq;mockReq=async function(t,d){const me=mockMe();
-  if(me&&!mockIsGuest82(me)&&['offer.buy','offer.bring','gear.repair','domus.buy','gift.open','loot.pick','market.buy','domus.follow'].includes(t)){const w=mockLoad();const A=w.accounts[me];if(A&&!A.domus)throw onlErr82('Name your house first — every lanista needs a Domus.','need_domus')}
+  if(me&&!mockIsGuest82(me)&&['offer.buy','offer.bring','gear.repair','domus.buy','gift.open','loot.pick','market.buy','domus.follow'].includes(t)){const w=mockLoad();const A=w.accounts[me];if(A&&!A.domus)throw onlErr82(_T('Name your house first — every lanista needs a Domus.'),'need_domus')}
   return base.apply(this,arguments)}}
 /* the countdown: Start → startAt; {go:1} at startAt → the horns; ✕ Hold or a line-up change stops it */
 {const base=MOCK_ROUTES['lobby.start'];MOCK_ROUTES['lobby.start']=(w,d,me)=>{const ms=mockCount83();if(ms<=0)return base(w,d,me);const L=mockLobby80(w,d.id);ONLC.countCheck(L);const now=mockNow();
-  if(L.startAt==null){if(d.go)throw onlErr82('The countdown was stopped — press Start again.','count_stopped');const conn={};const here=new Set(mockHere80(w).map(h=>h.id));for(const p of ONLC.humansOf(L))conn[p.id]=here.has(p.id);
+  if(L.startAt==null){if(d.go)throw onlErr82(_T('The countdown was stopped — press Start again.'),'count_stopped');const conn={};const here=new Set(mockHere80(w).map(h=>h.id));for(const p of ONLC.humansOf(L))conn[p.id]=here.has(p.id);
     const why=ONLC.canStart(L,me,conn);if(why)throw new Error(why);L.startAt=now+ms;L.startBy=me;L.startSig=ONLC.lineupSig(L);mockUpd80(w,L,{count:L.startAt});return {...mockRoomOut80(w,L),now}}
-  if(now<L.startAt){if(!d.go&&me===L.host.id)return {...mockRoomOut80(w,L),now};throw onlErr82('The horns are not yet.','count_wait',{startAt:L.startAt,now})}
-  const seated=L.players.some(p=>p.id===me);if(me!==L.host.id&&!(seated&&now>=L.startAt+5000))throw new Error('The host sounds the horns.');
+  if(now<L.startAt){if(!d.go&&me===L.host.id)return {...mockRoomOut80(w,L),now};throw onlErr82(_T('The horns are not yet.'),'count_wait',{startAt:L.startAt,now})}
+  const seated=L.players.some(p=>p.id===me);if(me!==L.host.id&&!(seated&&now>=L.startAt+5000))throw new Error(_T('The host sounds the horns.'));
   ONLC.stopCount(L);return base(w,d,L.host.id)}}
 {const base=mockUpd80;mockUpd80=function(w,L){try{if(L&&L.status==='waiting')ONLC.countCheck(L)}catch(e){}return base.apply(this,arguments)}}
 /* Ludi Infames: Veteranus and above */
-{const base=MOCK_ROUTES['lobby.create'];MOCK_ROUTES['lobby.create']=(w,d,me)=>{if(d&&d.inf&&mockGroup(w,me).some(x=>ONLC.rankIdx(x.rank||'tiro')<ONLC.rankIdx(ONLC.INFAMES_MIN)))throw new Error('Ludi Infames: Veteranus and above.');return base(w,d,me)}}
-{const base=MOCK_ROUTES['lobby.quick'];MOCK_ROUTES['lobby.quick']=(w,d,me)=>{if(!d||!d.inf)return base(w,d,me);const g=mockGroup(w,me);if(g.some(x=>ONLC.rankIdx(x.rank||'tiro')<ONLC.rankIdx(ONLC.INFAMES_MIN)))throw new Error('Ludi Infames: Veteranus and above.');
+{const base=MOCK_ROUTES['lobby.create'];MOCK_ROUTES['lobby.create']=(w,d,me)=>{if(d&&d.inf&&mockGroup(w,me).some(x=>ONLC.rankIdx(x.rank||'tiro')<ONLC.rankIdx(ONLC.INFAMES_MIN)))throw new Error(_T('Ludi Infames: Veteranus and above.'));return base(w,d,me)}}
+{const base=MOCK_ROUTES['lobby.quick'];MOCK_ROUTES['lobby.quick']=(w,d,me)=>{if(!d||!d.inf)return base(w,d,me);const g=mockGroup(w,me);if(g.some(x=>ONLC.rankIdx(x.rank||'tiro')<ONLC.rankIdx(ONLC.INFAMES_MIN)))throw new Error(_T('Ludi Infames: Veteranus and above.'));
   const now=mockNow();const flag=g.some(x=>x.strikes>=ONLC.STRIKES_OUT);const ev=ONLC.EVENTS_ALL.includes(d.ev)?d.ev:'democritus';const L=ONLC.quickPick(Object.values(w.lobbies).filter(x=>!x.mock),g,ev,!!d.ranked,flag,now,true);
   if(L){const why=ONLC.roomJoin(L,g,now);if(why)throw new Error(why);mockUpd80(w,L);return {lobby:mockRoomOut80(w,L),made:false}}return {lobby:mockRoomOut80(w,mockCreate80(w,{ev,ranked:!!d.ranked,inf:1},me,true)),made:true}}}
 /* hello: the houses you follow, your open loot windows, Victor of the Day */

@@ -19,7 +19,7 @@ function mgrFlagOf(m){if(!m)return null;if(m.flag)return m.flag;
 const HFLAG_CACHE={};
 function flagSculpt(f){return (f.layers&&f.layers.length)||(f.baked&&f.baked.length)?`<g transform='scale(6)'>${scbLayersSVG(f)}</g>`:''}
 function houseFlagURI(f){if(!f)return null;const ex=typeof scbLayersSVG==='function'?flagSculpt(f):'';if(ex&&f===ST.fd)return flagURI(f.bg,f.fg,f.txt,f.shape,ex);const k=[f.bg,f.fg,f.txt,f.shape].join('|')+(ex?'|'+hashStr(ex):'');return HFLAG_CACHE[k]||(HFLAG_CACHE[k]=flagURI(f.bg,f.fg,f.txt,f.shape,ex))}
-function flagChip(m,h=20,title){const f=mgrFlagOf(m);if(!f)return '';return `<img class="flagchip" src="${houseFlagURI(f)}" style="height:${h}px" alt="" title="${esc(title||('The banner of '+(m.ludus||'')))}">`}
+function flagChip(m,h=20,title){const f=mgrFlagOf(m);if(!f)return '';return `<img class="flagchip" src="${houseFlagURI(f)}" style="height:${h}px" alt="" title="${esc(title||(_T('The banner of ')+(m.ludus||'')))}">`}
 function flagImg(f){const k='im:'+[f.bg,f.fg,f.txt,f.shape].join('|')+((f.layers||[]).length||(f.baked||[]).length?'|'+hashStr(JSON.stringify([f.layers,f.baked])):'');let im=HFLAG_CACHE[k];if(!im){im=new Image();im.src=houseFlagURI(f);HFLAG_CACHE[k]=im}return im.complete&&im.naturalWidth?im:null}
 // twenty seeded designs for the creation picker (deterministic per shuffle seed)
 function flagSpread(seed,ludus){const R0=mulberry32(hashStr('flags'+seed+(ludus||'')));const R=()=>R0.next();const out=[];const txt=ludusInitials(ludus);
@@ -30,8 +30,8 @@ function flagSpread(seed,ludus){const R0=mulberry32(hashStr('flags'+seed+(ludus|
   return out}
 function flagPickerHTML(cur,seed,ludus){const spread=flagSpread(seed,ludus);const customs=((typeof CUSTOM!=='undefined'&&CUSTOM.flags)||[]).filter(f=>f.rack!==false&&f.fmt!=='portrait'&&(typeof rosterGate!=='function'||rosterGate('flags',f,true))); // v0.44: only banners on the rack
   const cell=(f,src)=>`<button type="button" class="flagcell ${cur&&cur.bg===f.bg&&cur.fg===f.fg&&cur.shape===f.shape&&cur.txt===f.txt?'on':''}" data-nmflag='${esc(JSON.stringify(f))}' title="${src||''}"><img src="${houseFlagURI(f)}" alt=""></button>`;
-  return `<div class="sect">🚩 The house banner <span class="rc-sub">flies over your masthead, the league table, the stands and the square · <button class="btn tksm" type="button" data-mg="nmflagshuffle">🎲 new spread</button></span></div>
-   <div class="flaggrid">${customs.map(f=>cell({bg:f.bg,fg:f.fg,txt:f.txt,shape:f.shape},'✦ '+(f.name||'your design'))).join('')}${spread.map(f=>cell(f)).join('')}</div>`}
+  return `<div class="sect">${_T`🚩 The house banner`} <span class="rc-sub">${_T`flies over your masthead, the league table, the stands and the square ·`} <button class="btn tksm" type="button" data-mg="nmflagshuffle">${_T`🎲 new spread`}</button></span></div>
+   <div class="flaggrid">${customs.map(f=>cell({bg:f.bg,fg:f.fg,txt:f.txt,shape:f.shape},'✦ '+(f.name||_T('your design')))).join('')}${spread.map(f=>cell(f)).join('')}</div>`}
 
 /* ---------------- THE BANNER HIERARCHY (v0.33) ----------------
    ONE banner for the empire (the S·P·Q·R eagle), ONE per city (spectators and their
@@ -44,30 +44,30 @@ function famFlagOf(x){const nm2=typeof x==='string'?x:(x&&x.name||'');const fam=
   const pal=FLAG_PALS[Math.abs(hashStr('fam'+key))%FLAG_PALS.length];
   const shape=FLAG_SHAPES12[Math.abs(hashStr('famsh'+key))%FLAG_SHAPES12.length];
   return {bg:pal[0],fg:pal[1],txt:fam.slice(0,8).toUpperCase(),shape,fam}}
-function famFlagChip(x,h=15){const f=famFlagOf(x);if(!f)return '';return `<img class="flagchip" src="${houseFlagURI(f)}" style="height:${h}px" alt="" title="The banner of the ${esc(f.fam)} family — every fighter is born under one; kin share it">`}
+function famFlagChip(x,h=15){const f=famFlagOf(x);if(!f)return '';return `<img class="flagchip" src="${houseFlagURI(f)}" style="height:${h}px" alt="" title="${_T`The banner of the ${esc(f.fam)} family — every fighter is born under one; kin share it`}">`}
 
 /* ---------------- the Flag press (Creator Studio) ---------------- */
 function blankFlag(){return {id:'f'+Date.now().toString(36),name:'',bg:'#6e1414',fg:'#e2b64a',txt:'LVDVS',shape:'none',layers:[],baked:[],v:1}}
 async function loadFlags(){try{CUSTOM.flags=(await Store.list('customFlags')).sort((a,b)=>String(a.name).localeCompare(String(b.name)))}catch(e){CUSTOM.flags=CUSTOM.flags||[]}}
 function flagStudioHTML(){const d=ST.fd||(ST.fd=blankFlag());const L=CUSTOM.flags||[];
-  const preset=(f,label,tip)=>`<span style="text-align:center"><button type="button" class="flagcell" data-fdp='${esc(JSON.stringify({bg:f.bg,fg:f.fg,txt:f.txt,shape:f.shape}))}' title="${esc(tip||'Copy onto the bench')}"><img src="${houseFlagURI(f)}" alt=""></button><br><span class="rc-sub" style="font-size:10px">${esc(label)}</span></span>`;
-  return `<p>The <b>Banner press</b> — the same press that prints every banner in the empire. The order of cloth: <b>one banner for the empire</b>, <b>one for each city</b> (its spectators and its guard rep it), <b>one per ludus</b> (yours flies on the masthead, the league table, the square and the stands), and every gladiator is born under a <b>family banner</b> shared with their kin. Design a house banner here and it hangs in the banner rack whenever a lanista is created.</p>
-   <div class="trstudio"><div class="trprev scart scflag" data-scbprev="f" title="Drag a shape to move it"><img id="fdPrev" draggable="false" src="${houseFlagURI(d)}" style="width:100%;max-width:320px;border-radius:6px;box-shadow:0 4px 18px rgba(0,0,0,.5)"><div class="rc-sub" style="text-align:center;margin-top:4px">${esc(d.name||'Unnamed banner')}</div></div>
-    <div class="formgrid"><label>Name<input type="text" data-fdf="name" value="${esc(d.name)}" maxlength="24" placeholder="e.g. The Boar of Capua"></label>
+  const preset=(f,label,tip)=>`<span style="text-align:center"><button type="button" class="flagcell" data-fdp='${esc(JSON.stringify({bg:f.bg,fg:f.fg,txt:f.txt,shape:f.shape}))}' title="${esc(tip||_T('Copy onto the bench'))}"><img src="${houseFlagURI(f)}" alt=""></button><br><span class="rc-sub" style="font-size:10px">${esc(label)}</span></span>`;
+  return `<p>${_T`The <b>Banner press</b> — the same press that prints every banner in the empire. The order of cloth: <b>one banner for the empire</b>, <b>one for each city</b> (its spectators and its guard rep it), <b>one per ludus</b> (yours flies on the masthead, the league table, the square and the stands), and every gladiator is born under a <b>family banner</b> shared with their kin. Design a house banner here and it hangs in the banner rack whenever a lanista is created.`}</p>
+   <div class="trstudio"><div class="trprev scart scflag" data-scbprev="f" title="${_T`Drag a shape to move it`}"><img id="fdPrev" draggable="false" src="${houseFlagURI(d)}" style="width:100%;max-width:320px;border-radius:6px;box-shadow:0 4px 18px rgba(0,0,0,.5)"><div class="rc-sub" style="text-align:center;margin-top:4px">${esc(d.name||_T('Unnamed banner'))}</div></div>
+    <div class="formgrid"><label>${_T`Name`}<input type="text" data-fdf="name" value="${esc(d.name)}" maxlength="24" placeholder="${_T`e.g. The Boar of Capua`}"></label>
      <label>Motto / letters<input type="text" data-fdf="txt" value="${esc(d.txt)}" maxlength="10"></label>
-     <label>Field<input type="color" data-fdf="bg" value="${esc(d.bg)}"></label><label>Device &amp; letters<input type="color" data-fdf="fg" value="${esc(d.fg)}"></label>
-     <label style="grid-column:1/-1">Start from a device <span class="rc-sub">— the heraldic term for the emblem on the cloth · or keep the cloth blank and sculpt your own</span>${`<div class="flaggrid" style="margin-top:4px">${['none',...FLAG_SHAPES].map(sh=>`<button type="button" class="flagcell ${d.shape===sh?'on':''}" data-fds="${sh}"><img src="${houseFlagURI({...d,shape:sh})}" alt="${sh}"></button>`).join('')}</div>`}</label>${scbBenchHTML('f')}</div></div>
-   <div class="mbtns"><button class="btn primary" type="button" data-fda="save">💾 Save banner</button><button class="btn" type="button" data-fda="new">↺ Fresh cloth</button></div>
-   <h4>Your banners · ${L.length}</h4>${L.length?`<div class="flaggrid">${L.map(f=>`<span style="text-align:center"><img src="${houseFlagURI(f)}" style="height:44px;border-radius:3px"><br><span class="rc-sub" style="font-size:10.5px">${esc(f.name||'')}</span><br>${crActs('f',f)}</span>`).join('')}</div>`:'<p class="rc-sub">The press is idle.</p>'}
-   <h4>🏛 The empire's banners <span class="rc-sub" style="font-weight:400">— presets: click one to copy it onto the bench and make it your own</span></h4>
-   <div class="flaggrid">${preset(EMPIRE_FLAG,'THE EMPIRE','The one banner over them all — S·P·Q·R')}${Object.entries(FLAGS).map(([k,F])=>{const [bg,fg,txt,shape]=F.v[0];return preset({bg,fg,txt,shape},F.n,`The banner of ${F.n} — its spectators rep it in the stands and the square`)}).join('')}</div>`}
+     <label>${_T`Field`}<input type="color" data-fdf="bg" value="${esc(d.bg)}"></label><label>${_T`Device &amp; letters`}<input type="color" data-fdf="fg" value="${esc(d.fg)}"></label>
+     <label style="grid-column:1/-1">${_T`Start from a device`} <span class="rc-sub">${_T`— the heraldic term for the emblem on the cloth · or keep the cloth blank and sculpt your own`}</span>${`<div class="flaggrid" style="margin-top:4px">${['none',...FLAG_SHAPES].map(sh=>`<button type="button" class="flagcell ${d.shape===sh?'on':''}" data-fds="${sh}"><img src="${houseFlagURI({...d,shape:sh})}" alt="${sh}"></button>`).join('')}</div>`}</label>${scbBenchHTML('f')}</div></div>
+   <div class="mbtns"><button class="btn primary" type="button" data-fda="save">${_T`💾 Save banner`}</button><button class="btn" type="button" data-fda="new">${_T`↺ Fresh cloth`}</button></div>
+   <h4>${_T`Your banners · ${L.length}`}</h4>${L.length?`<div class="flaggrid">${L.map(f=>`<span style="text-align:center"><img src="${houseFlagURI(f)}" style="height:44px;border-radius:3px"><br><span class="rc-sub" style="font-size:10.5px">${esc(f.name||'')}</span><br>${crActs('f',f)}</span>`).join('')}</div>`:'<p class="rc-sub">The press is idle.</p>'}
+   <h4>${_T`🏛 The empire's banners`} <span class="rc-sub" style="font-weight:400">${_T`— presets: click one to copy it onto the bench and make it your own`}</span></h4>
+   <div class="flaggrid">${preset(EMPIRE_FLAG,_T('THE EMPIRE'),_T('The one banner over them all — S·P·Q·R'))}${Object.entries(FLAGS).map(([k,F])=>{const [bg,fg,txt,shape]=F.v[0];return preset({bg,fg,txt,shape},F.n,_T`The banner of ${F.n} — its spectators rep it in the stands and the square`)}).join('')}</div>`}
 async function flagStudioClick(b,redraw){const a=b.dataset.fda,id=b.dataset.id;
   if(a==='new'){ST.fd=blankFlag();redraw();return}
   if(a==='edit'){const f=(CUSTOM.flags||[]).find(x=>x.id===id);if(f)ST.fd=JSON.parse(JSON.stringify(f));redraw();return}
   if(a==='del'){CUSTOM.flags=(CUSTOM.flags||[]).filter(x=>x.id!==id);await Store.del('customFlags',id).catch(()=>{});redraw();return}
-  if(a==='save'){const d=ST.fd;if(!String(d.name).trim())d.name='Banner '+d.txt;if(!nameGuard('flags',d,'[data-fdf="name"]'))return;d.v=(d.v||0)+1;
+  if(a==='save'){const d=ST.fd;if(!String(d.name).trim())d.name=_T('Banner ')+d.txt;if(!nameGuard('flags',d,'[data-fdf="name"]'))return;d.v=(d.v||0)+1;
     CUSTOM.flags=[...(CUSTOM.flags||[]).filter(x=>x.id!==d.id),JSON.parse(JSON.stringify(d))];await Store.put('customFlags',d.id,d).catch(()=>{});
-    if(typeof mToast==='function')mToast(`🚩 <b>${esc(d.name)}</b> comes off the press.`);redraw();return}}
+    if(typeof mToast==='function')mToast(_T`🚩 <b>${esc(d.name)}</b> comes off the press.`);redraw();return}}
 function flagStudioInput(t){const d=ST.fd;if(!d)return false;if(t.dataset.fdf==null)return false;
   d[t.dataset.fdf]=t.value;const pv=document.getElementById('fdPrev');if(pv)pv.src=houseFlagURI(d);return true}
 

@@ -38,7 +38,7 @@ function pg84Fx(w,aw){
   const f=typeof fixtureFor==='function'?fixtureFor(pg84Season(w,aw),aw):null;return f?{loc:f.loc,ev:f.ev,bye}:null}
 function pg84Dead(P){const g=P&&gById(P.gid);return !!P&&(!!P.memorial||(g&&g.alive===false))}
 function pg84MemCheck(w,m,P){if(!P||P.memorial)return;const g=gById(P.gid);if(!g||g.alive!==false)return;P.memorial=w.week;
-  if(m.isPlayer){tnews(`🖌 The programmata for ${esc(P.gname)} become a memorial.`);mnews(`✝ In ${esc(pg84Names(P.cities))} the painted notices for <b>${esc(P.gname)}</b> of ${esc(m.ludus)} now honour the dead.`)}}
+  if(m.isPlayer){tnews(_T`🖌 The programmata for ${esc(P.gname)} become a memorial.`);mnews(_T`✝ In ${esc(pg84Names(P.cities))} the painted notices for <b>${esc(P.gname)}</b> of ${esc(m.ludus)} now honour the dead.`)}}
 /* regulars of those cities who turn fans of the featured fighter */
 function pg84Fans(w,P,wk,p){const g=gById(P.gid);if(!g||g.alive===false)return 0;g.fame=clamp((g.fame||0)+1,0,100);let n=0;
   if(typeof CROWD_CACHE!=='undefined'){const R=pg84R(w,'fans'+P.gid+':'+wk);const names=new Set(P.cities.map(pg84City));
@@ -52,29 +52,29 @@ function pg84DefRoll(w,m,P,wk){const cands=w.mgrs.filter(m2=>!m2.isPlayer&&!m2.d
   if(!force&&roll>=p)return null;
   const wt=m2=>1+Math.pow(pg84Bitter(w,m,m2),2)/50;let x=R.next()*cands.reduce((a,m2)=>a+wt(m2),0),who=cands[0];for(const m2 of cands){if((x-=wt(m2))<0){who=m2;break}}
   P.def[wk]=who.id;const b=pg84Bitter(w,m,who);
-  sendLetter(w,{key:'pg84def-'+wk,kind:'letter',from:'the Consilium',adv:'consilium',seal:'🖌',title:'Our notices were painted over',until:wk+2,
-    body:`<p>Men of <b>${esc(who.ludus)}</b>${b>=35?' — '+rivalTier(b).toLowerCase()+' rivals —':''} whitewashed our programmata in ${esc(pg84Names(P.cities))} overnight. This week they bring us nothing.</p>`});
-  tnews(`🖌 ${esc(who.ludus)} painted over your notices: no gain this week.`,'bad');return who}
+  sendLetter(w,{key:'pg84def-'+wk,kind:'letter',from:_T('the Consilium'),adv:'consilium',seal:'🖌',title:_T('Our notices were painted over'),until:wk+2,
+    body:`<p>${_T`Men of <b>${esc(who.ludus)}</b>${b>=35?' — '+rivalTier(b).toLowerCase()+' rivals —':''} whitewashed our programmata in ${esc(pg84Names(P.cities))} overnight. This week they bring us nothing.`}</p>`});
+  tnews(_T`🖌 ${esc(who.ludus)} painted over your notices: no gain this week.`,'bad');return who}
 /* ---- start / cancel ---- */
 function pg84Start(cities,weeks,gid){const w=W_(),m=me();if(!w||!m||m.prog84)return false;cities=[...new Set(cities)].filter(li=>LOCATIONS[li]).slice(0,PROG84.maxCities);
   const cost=PROG84.perCity*cities.length;const g=gById(gid);
   if(!cities.length||!PROG84.weeks.includes(+weeks)||!g||g.alive===false||w.hours<PROG84.hours||m.coin<cost)return false;
   w.hours-=PROG84.hours;m.coin-=cost;
   m.prog84={cities,from:w.week,until:w.week+(+weeks)-1,gid,gname:g.name,cost,paid:w.week,def:{},fame:0,fans:0,gate:0,gl:[],memorial:0};
-  tnews(`🖌 Programmata for ${esc(g.name)} in ${esc(pg84Names(cities))}: ${weeks} weeks, ${cost} coin a week.`);mlog(m,`painted programmata for ${g.name} in ${pg84Names(cities)}`);
+  tnews(_T`🖌 Programmata for ${esc(g.name)} in ${esc(pg84Names(cities))}: ${weeks} weeks, ${cost} coin a week.`);mlog(m,_T`painted programmata for ${g.name} in ${pg84Names(cities)}`);
   return true}
-function pg84Cancel(){const w=W_(),m=me();const P=m&&m.prog84;if(!P)return false;tnews(`🖌 The programmata in ${esc(pg84Names(P.cities))} were called off.`);delete m.prog84;return true}
+function pg84Cancel(){const w=W_(),m=me();const P=m&&m.prog84;if(!P)return false;tnews(_T`🖌 The programmata in ${esc(pg84Names(P.cities))} were called off.`);delete m.prog84;return true}
 /* ---- the week (endWeek wrapper) ---- */
 function pg84Week(w,wk){const m=me();const P=m&&m.prog84;
   if(P&&pg84On(P,wk)){pg84MemCheck(w,m,P);
     if(P.def[wk]){/* defaced: nothing this week */}
     else{const f=PROG84.fame+((m.p&&m.p.show||0)>=PROG84.showAt?1:0);m.fame=clamp(m.fame+f,0,100);P.fame+=f;
       const n=P.memorial?0:pg84Fans(w,P,wk,PROG84.fanP);
-      tnews(P.memorial?`✝ The memorial notices for ${esc(P.gname)}: fame +${f}.`:`🖌 Programmata: fame +${f}, ${esc(P.gname)} +1 fame${n?`, ${n}K new fans`:''}.`)}
-    if(wk>=P.until){tnews(`🖌 The programmata in ${esc(pg84Names(P.cities))} fade: fame +${P.fame}, ${P.fans}K fans, +${P.gate} gate.`);delete m.prog84}
-    else if(m.coin<P.cost){sendLetter(w,{key:'pg84lapse-'+wk,kind:'letter',from:'your clerk',adv:'clerk',seal:'🖌',title:'The painters stopped',until:wk+2,
-        body:`<p>We could not pay the painters their ${P.cost} coin for the week. The notices in ${esc(pg84Names(P.cities))} are gone.</p>`});tnews('🖌 The programmata lapsed: no coin for the painters.','bad');delete m.prog84}
-    else{m.coin-=P.cost;P.paid=wk+1;tnews(`🖌 Programmata: ${P.cost} coin for the painters.`);pg84DefRoll(w,m,P,wk+1)}}
+      tnews(P.memorial?_T`✝ The memorial notices for ${esc(P.gname)}: fame +${f}.`:_T`🖌 Programmata: fame +${f}, ${esc(P.gname)} +1 fame${n?_T`, ${n}K new fans`:''}.`)}
+    if(wk>=P.until){tnews(_T`🖌 The programmata in ${esc(pg84Names(P.cities))} fade: fame +${P.fame}, ${P.fans}K fans, +${P.gate} gate.`);delete m.prog84}
+    else if(m.coin<P.cost){sendLetter(w,{key:'pg84lapse-'+wk,kind:'letter',from:_T('your clerk'),adv:'clerk',seal:'🖌',title:_T('The painters stopped'),until:wk+2,
+        body:`<p>${_T`We could not pay the painters their ${P.cost} coin for the week. The notices in ${esc(pg84Names(P.cities))} are gone.`}</p>`});tnews(_T('🖌 The programmata lapsed: no coin for the painters.'),'bad');delete m.prog84}
+    else{m.coin-=P.cost;P.paid=wk+1;tnews(_T`🖌 Programmata: ${P.cost} coin for the painters.`);pg84DefRoll(w,m,P,wk+1)}}
   else if(P&&wk>P.until)delete m.prog84;
   /* the other houses */
   for(const m2 of w.mgrs){if(m2.isPlayer||m2.dead)continue;const Q=m2.prog84;
@@ -86,7 +86,7 @@ function pg84Week(w,wk){const m=me();const P=m&&m.prog84;
     cities.splice(1+Math.floor(R.next()*2));const star=rosterOf(m2).filter(g=>g.alive!==false).sort((x,y)=>effOvr(y)-effOvr(x))[0];
     const cost=PROG84.perCity*cities.length;if(!cities.length||!star||(m2.coin||0)<cost)continue;if(force)PROG84.force=null;
     m2.coin-=cost;m2.prog84={cities,from:wk+1,until:wk+weeks,gid:star.id,gname:star.name,cost,paid:wk+1,def:{},fame:0,fans:0,gate:0,memorial:0};
-    mnews(`🖌 <b>${esc(m2.ludus)}</b> paints programmata for ${esc(star.name)} on the walls of ${esc(pg84Names(cities))}.`);mlog(m2,`painted programmata in ${pg84Names(cities)}`)}
+    mnews(_T`🖌 <b>${esc(m2.ludus)}</b> paints programmata for ${esc(star.name)} on the walls of ${esc(pg84Names(cities))}.`);mlog(m2,_T`painted programmata in ${pg84Names(cities)}`)}
 }
 {const base=endWeek;endWeek=async function(){const w0=W_();const wk=w0&&w0.week;const r=await base.apply(this,arguments);
   try{const w=W_();if(w&&w===w0&&!w.dead&&wk!=null&&w.week!==wk){pg84Week(w,wk);saveWorld()}}catch(e){console.error(e)}return r}}
@@ -96,42 +96,42 @@ function pg84Gate(w,b){const li=w.night.loc,wk=w.week;
     if(!Q||!pg84On(Q,wk)||Q.def[wk]||!Q.cities.includes(li))continue;
     const row=(b.res.rows||[]).find(x=>x.gid===gid);const base=(b.fee||0)+(row&&row.won?Math.round((b.purse||0)*(0.5+((M.p&&M.p.greed)||0)/300)):0);
     const add=Math.max(1,Math.round(base*PROG84.gate));M.coin+=add;Q.gate=(Q.gate||0)+add;
-    if(M.isPlayer){(Q.gl=Q.gl||[]).push({wk,tier:b.tier,gid,n:add});tnews(`🖌 Your notices in ${esc(pg84City(li))} filled seats: +${add} coin (${esc(g.name)}).`)}}}
+    if(M.isPlayer){(Q.gl=Q.gl||[]).push({wk,tier:b.tier,gid,n:add});tnews(_T`🖌 Your notices in ${esc(pg84City(li))} filled seats: +${add} coin (${esc(g.name)}).`)}}}
 {const base=applyBout;applyBout=function(bi,res,opt){const w=W_();const b=w&&w.night&&w.night.bouts[bi];const was=b&&b.done;const r=base.apply(this,arguments);
   try{if(b&&!was&&b.done&&b.res)pg84Gate(w,b);for(const m of w.mgrs)if(m.prog84)pg84MemCheck(w,m,m.prog84)}catch(e){console.error(e)}return r}}
 /* ---- the Promote panel ---- */
 function pg84UI(){const m=me();MGR.pg84=MGR.pg84||{open:false,cities:[],weeks:3,gid:null};const U=MGR.pg84;
   const ros=rosterOf(m).filter(g=>g.alive!==false);if(!U.gid||!ros.some(g=>g.id===U.gid))U.gid=(ros.sort((x,y)=>effOvr(y)-effOvr(x))[0]||{}).id||null;return U}
 function pg84BtnHTML(){const w=W_(),m=me();const P=m.prog84;
-  if(P)return `<button class="btn" type="button" data-pg84="none" data-dis="One campaign at a time — cancel the one on the walls first.">🖌 Paint the programmata<small>on the walls now · ${P.until-w.week+1} week${P.until-w.week?'s':''} left</small></button>`;
+  if(P)return `<button class="btn" type="button" data-pg84="none" data-dis="One campaign at a time — cancel the one on the walls first.">${_T`🖌 Paint the programmata<small>on the walls now · ${P.until-w.week+1} week${P.until-w.week?'s':''} left</small>`}</button>`;
   const U=pg84UI();
-  return `<button class="btn${U.open?' on':''}" type="button" data-pg84="open" ${dis([!rosterOf(m).some(g=>g.alive!==false),'You need a fighter to feature.'],needHrs(w,PROG84.hours))}>🖌 Paint the programmata<small>${PROG84.hours} h · ${PROG84.perCity} coin a city a week · 2–4 weeks: fame, gate and fans where you fight</small></button>`}
+  return `<button class="btn${U.open?' on':''}" type="button" data-pg84="open" ${dis([!rosterOf(m).some(g=>g.alive!==false),_T('You need a fighter to feature.')],needHrs(w,PROG84.hours))}>${_T`🖌 Paint the programmata<small>${PROG84.hours} h · ${PROG84.perCity} coin a city a week · 2–4 weeks: fame, gate and fans where you fight</small>`}</button>`}
 function pg84SetupHTML(){const w=W_(),m=me();const U=pg84UI();const n=U.weeks;
   const fx={};for(let k=0;k<n;k++){const f=pg84Fx(w,w.week+k);if(f&&!f.bye&&LOCATIONS[f.loc])(fx[f.loc]=fx[f.loc]||[]).push(wkOf(w.week+k))}
   const lis=LOCATIONS.map((L,i)=>L?i:null).filter(i=>i!=null);
   lis.sort((a,b)=>((fx[a]?fx[a][0]:99)-(fx[b]?fx[b][0]:99))||pg84City(a).localeCompare(pg84City(b)));
   const rivals=w.mgrs.filter(m2=>!m2.isPlayer&&m2.prog84&&pg84On(m2.prog84,w.week));
   const cost=PROG84.perCity*U.cities.length;const ros=rosterOf(m).filter(g=>g.alive!==false).sort((x,y)=>effOvr(y)-effOvr(x));
-  return `<div class="pg84set"><div class="pg84h"><b>🖌 Paint the programmata</b><button class="btn tksm" type="button" data-pg84="close" title="Close">✕</button></div>
-    <div class="pg84lab">Cities <span class="rc-sub">up to ${PROG84.maxCities} · ⚔ = your league fights there</span></div>
+  return `<div class="pg84set"><div class="pg84h">${_T`<b>🖌 Paint the programmata</b>`}<button class="btn tksm" type="button" data-pg84="close" title="${_T`Close`}">✕</button></div>
+    <div class="pg84lab">${_T`Cities`} <span class="rc-sub">${_T`up to ${PROG84.maxCities} · ⚔ = your league fights there`}</span></div>
     <div class="pg84cities">${lis.map(li=>{const on=U.cities.includes(li);const full=!on&&U.cities.length>=PROG84.maxCities;const rv=rivals.filter(m2=>m2.prog84.cities.includes(li));
-      return `<button type="button" class="pg84c${on?' on':''}${fx[li]?' fx':''}" data-pg84="city" data-v="${li}" ${full?`data-dis="Three cities at most."`:''}><b>${esc(pg84City(li))}</b>${fx[li]?`<span>⚔ wk ${fx[li].join(', ')}</span>`:''}${rv.length?`<span class="pg84rv" title="Already on the walls">🖌 ${rv.map(m2=>esc(m2.ludus)).join(', ')}</span>`:''}</button>`}).join('')}</div>
-    <div class="pg84row"><span class="pg84lab">Weeks</span><span class="seg">${PROG84.weeks.map(k=>`<button type="button" class="${k===n?'on':''}" data-pg84="wk" data-v="${k}">${k}</button>`).join('')}</span>
-      <span class="pg84lab">Featured</span><select id="pg84g">${ros.map(g=>`<option value="${esc(g.id)}" ${g.id===U.gid?'selected':''}>${esc(g.name)}</option>`).join('')}</select></div>
-    <p class="rc-sub" style="margin:4px 0">Each week: fame +${PROG84.fame} (+${PROG84.fame+1} with Showmanship ${PROG84.showAt}+), +${Math.round(PROG84.gate*100)}% fees and purses at your bouts there, new fans for your fighter. Rivals may paint over them.</p>
-    <div class="acts"><button class="btn primary" type="button" data-pg84="go" ${dis([!U.cities.length,'Pick at least one city.'],[!U.gid,'Pick a fighter to feature.'],needHrs(w,PROG84.hours),needCoin(m,cost))}>🖌 Paint · ${cost} coin a week<small>${U.cities.length?`${cost*n} over ${n} weeks · first week now`:'pick a city'}</small></button></div></div>`}
+      return `<button type="button" class="pg84c${on?' on':''}${fx[li]?' fx':''}" data-pg84="city" data-v="${li}" ${full?_T`data-dis="Three cities at most."`:''}><b>${esc(pg84City(li))}</b>${fx[li]?_T`<span>⚔ wk ${fx[li].join(', ')}</span>`:''}${rv.length?`<span class="pg84rv" title="${_T`Already on the walls`}">🖌 ${rv.map(m2=>esc(m2.ludus)).join(', ')}</span>`:''}</button>`}).join('')}</div>
+    <div class="pg84row"><span class="pg84lab">${_T`Weeks`}</span><span class="seg">${PROG84.weeks.map(k=>`<button type="button" class="${k===n?'on':''}" data-pg84="wk" data-v="${k}">${k}</button>`).join('')}</span>
+      <span class="pg84lab">${_T`Featured`}</span><select id="pg84g">${ros.map(g=>`<option value="${esc(g.id)}" ${g.id===U.gid?'selected':''}>${esc(g.name)}</option>`).join('')}</select></div>
+    <p class="rc-sub" style="margin:4px 0">${_T`Each week: fame +${PROG84.fame} (+${PROG84.fame+1} with Showmanship ${PROG84.showAt}+), +${Math.round(PROG84.gate*100)}% fees and purses at your bouts there, new fans for your fighter. Rivals may paint over them.`}</p>
+    <div class="acts"><button class="btn primary" type="button" data-pg84="go" ${dis([!U.cities.length,_T('Pick at least one city.')],[!U.gid,_T('Pick a fighter to feature.')],needHrs(w,PROG84.hours),needCoin(m,cost))}>${_T`🖌 Paint · ${cost} coin a week<small>${U.cities.length?_T`${cost*n} over ${n} weeks · first week now`:_T('pick a city')}</small>`}</button></div></div>`}
 function pg84WallHTML(){const w=W_(),m=me();const P=m.prog84;if(!P)return '';const g=gById(P.gid);const dead=pg84Dead(P);const up=s=>esc(String(s||'').toUpperCase());
   const weeks=[];for(let k=P.from;k<=P.until;k++){const st=P.def[k]?'def':k<w.week?'done':k===w.week?'now':'next';const who=P.def[k]&&mgrById(P.def[k]);
-    weeks.push(`<i class="pg84w ${st}" title="Week ${wkOf(k)}${st==='def'?` — painted over by ${esc(who?who.ludus:'a rival')}`:st==='now'?' — this week (paid)':st==='done'?' — done':' — to come'}">${st==='def'?'✗':''}</i>`)}
+    weeks.push(`<i class="pg84w ${st}" title="${_T`Week ${wkOf(k)}${st==='def'?_T` — painted over by ${esc(who?who.ludus:_T('a rival'))}`:st==='now'?_T(' — this week (paid)'):st==='done'?' — done':_T(' — to come')}`}">${st==='def'?'✗':''}</i>`)}
   const left=P.until-w.week+1;
   const cityTx=P.cities.map(pg84City).map(up).join(' · ');
-  const lines=dead?`<div class="pg84l1">${typeof faithMark85==='function'?faithMark85(gById(P.gid)):'D · M'}</div><div class="pg84l2">${up(P.gname)}</div><div class="pg84l3">FELL FOR THE FAMILIA OF ${up(m.ludus)}</div><div class="pg84l4">${cityTx} · REMEMBER HIM</div>`
-    :`<div class="pg84l1">THE FAMILIA GLADIATORIA OF</div><div class="pg84l2">${up(m.ludus)}</div><div class="pg84l3">${up(P.gname)} FIGHTS AT</div><div class="pg84l4">${cityTx} · FELICITER</div>`;
+  const lines=dead?`<div class="pg84l1">${typeof faithMark85==='function'?faithMark85(gById(P.gid)):'D · M'}</div><div class="pg84l2">${up(P.gname)}</div><div class="pg84l3">${_T`FELL FOR THE FAMILIA OF ${up(m.ludus)}`}</div><div class="pg84l4">${_T`${cityTx} · REMEMBER HIM`}</div>`
+    :`<div class="pg84l1">${_T`THE FAMILIA GLADIATORIA OF`}</div><div class="pg84l2">${up(m.ludus)}</div><div class="pg84l3">${_T`${up(P.gname)} FIGHTS AT`}</div><div class="pg84l4">${cityTx} · FELICITER</div>`;
   return `<div class="pg84wall${dead?' mem':''}" id="pg84wall"><div class="pg84plaster">${lines}</div>
-    <div class="pg84foot"><div class="pg84bar" title="${left} week${left===1?'':'s'} left">${weeks.join('')}</div>
-      <span>${dead?'✝ Memorial':'🖌 On the walls'} · ${left} week${left===1?'':'s'} left · ${P.cost} coin a week</span>
-      <span class="rc-sub">fame +${P.fame}${dead?'':` · ${P.fans}K fans`} · gate +${P.gate}</span>
-      <button class="btn tksm" type="button" data-pg84="cancel">✕ Cancel</button></div></div>`}
+    <div class="pg84foot"><div class="pg84bar" title="${_T`${left} week${left===1?'':'s'} left`}">${weeks.join('')}</div>
+      ${_T`<span>${dead?_T('✝ Memorial'):_T('🖌 On the walls')} · ${left} week${left===1?'':'s'} left · ${P.cost} coin a week</span>`}
+      <span class="rc-sub">fame +${P.fame}${dead?'':_T` · ${P.fans}K fans`} · gate +${P.gate}</span>
+      <button class="btn tksm" type="button" data-pg84="cancel">${_T`✕ Cancel`}</button></div></div>`}
 function pg84PanelHTML(){const m=me();if(m.prog84)return pg84WallHTML();return MGR.pg84&&MGR.pg84.open?pg84SetupHTML():''}
 {const base=promoteCardHTML;promoteCardHTML=function(){const h=base.apply(this,arguments);try{const i=h.lastIndexOf('</div></div>');if(i<0)return h;
   return h.slice(0,i)+pg84BtnHTML()+'</div>'+pg84PanelHTML()+'</div>'+h.slice(i+12)}catch(e){console.error(e);return h}}}
@@ -141,8 +141,8 @@ document.addEventListener('click',async e=>{const t=e.target.closest&&e.target.c
   if(a==='close'){U.open=false;re();return}
   if(a==='city'){const li=+v;U.cities=U.cities.includes(li)?U.cities.filter(x=>x!==li):U.cities.length<PROG84.maxCities?[...U.cities,li]:U.cities;re();return}
   if(a==='wk'){U.weeks=+v;re();return}
-  if(a==='go'){if(pg84Start(U.cities,U.weeks,U.gid)){U.open=false;U.cities=[];saveWorld();re();mToast(`🖌 The painters are at work in ${esc(pg84Names(me().prog84.cities))}.`)}return}
-  if(a==='cancel'){const P=me().prog84;if(!P)return;const ok=await ask76('🖌 Cancel the programmata?',`The notices in <b>${esc(pg84Names(P.cities))}</b> come down. This week's ${P.cost} coin is not refunded.`,'Cancel them','Keep');
+  if(a==='go'){if(pg84Start(U.cities,U.weeks,U.gid)){U.open=false;U.cities=[];saveWorld();re();mToast(_T`🖌 The painters are at work in ${esc(pg84Names(me().prog84.cities))}.`)}return}
+  if(a==='cancel'){const P=me().prog84;if(!P)return;const ok=await ask76(_T('🖌 Cancel the programmata?'),_T`The notices in <b>${esc(pg84Names(P.cities))}</b> come down. This week's ${P.cost} coin is not refunded.`,_T('Cancel them'),_T('Keep'));
     if(ok&&pg84Cancel()){saveWorld();re()}return}},true);
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='pg84g'){pg84UI().gid=e.target.value}});
 /* ---- the Imperium map + the city tile ---- */
@@ -150,12 +150,12 @@ function pg84All(){const w=typeof W_==='function'?W_():null;if(!w||!w.mgrs)retur
 {const base=imperiumMapSVG;imperiumMapSVG=function(){const h=base.apply(this,arguments);try{const all=pg84All();if(!all.length)return h;const w=W_();const by={};
   for(const {m,P} of all)for(const li of P.cities)(by[li]=by[li]||[]).push({m,P});
   const mk=Object.entries(by).map(([li,arr])=>{const L=LOCATIONS[li];if(!L)return '';const [x,y]=MAP_PX(L.x,L.y);const mine=arr.some(o=>o.m.isPlayer);
-    const tip=arr.map(({m,P})=>`${m.isPlayer?'Your':esc(m.ludus)+'’s'} ${pg84Dead(P)?'memorial notices for':'programmata for'} ${esc(P.gname)} · ${P.until-w.week+1} wk left${P.def[w.week]?' (painted over)':''}`).join('\n');
+    const tip=arr.map(({m,P})=>_T`${m.isPlayer?_T('Your'):esc(m.ludus)+'’s'} ${pg84Dead(P)?_T('memorial notices for'):_T('programmata for')} ${esc(P.gname)} · ${P.until-w.week+1} wk left${P.def[w.week]?_T(' (painted over)'):''}`).join('\n');
     return `<g class="pg84mk${mine?' mine':''}" transform="translate(${x+34} ${y+30})"><circle r="21" fill="${mine?'#f3e6c8':'#cfc6b4'}" stroke="${mine?'#a3241c':'#6b6358'}" stroke-width="4"/><text y="8" text-anchor="middle" font-size="22">🖌</text><title>🖌 ${esc(L.n)}\n${tip}</title></g>`}).join('');
   const i=h.lastIndexOf('</svg>');return i<0?h:h.slice(0,i)+`<g class="pg84mks">${mk}</g>`+h.slice(i)}catch(e){console.error(e);return h}}}
 {const base=cityTileHTML;cityTileHTML=function(){const h=base.apply(this,arguments);try{const F=hubFocus();const L=LOCATIONS[F];const all=pg84All().filter(o=>o.P.cities.includes(F));
   const mark='<div class="sect">🏛 The city today</div>';if(!all.length||!L||!h.includes(mark))return h;
-  const line=`<p class="rc-sub pg84city">🖌 On the walls: ${all.map(({m,P})=>`<b>${m.isPlayer?'your':esc(m.ludus)}</b> ${pg84Dead(P)?'memorial for':'notices for'} ${esc(P.gname)}`).join(' · ')}</p>`;
+  const line=`<p class="rc-sub pg84city">${_T`🖌 On the walls: ${all.map(({m,P})=>`<b>${m.isPlayer?'your':esc(m.ludus)}</b> ${pg84Dead(P)?_T('memorial for'):_T('notices for')} ${esc(P.gname)}`).join(' · ')}`}</p>`;
   return h.replace(mark,line+mark)}catch(e){console.error(e);return h}}}
 {const st=document.createElement('style');st.textContent=`
 .pg84set{margin-top:8px;padding:8px 10px;border:1px solid var(--line,#5a4a36);border-radius:8px;background:rgba(0,0,0,.18)}

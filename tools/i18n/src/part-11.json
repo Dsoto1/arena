@@ -1,0 +1,2214 @@
+[
+ {
+  "k": "Save and leave this career",
+  "w": "17-manager.js:1749"
+ },
+ {
+  "k": "How fighters grade you",
+  "w": "17-manager.js:1750"
+ },
+ {
+  "k": "(hover for how to raise each)",
+  "w": "17-manager.js:1750"
+ },
+ {
+  "k": "<b>Raising your name</b>",
+  "w": "17-manager.js:1751"
+ },
+ {
+  "k": "— how each grade above is earned",
+  "w": "17-manager.js:1751"
+ },
+ {
+  "k": "Ludus Novus",
+  "w": "17-manager.js:1788"
+ },
+ {
+  "k": "{0}'s treasury now bankrolls your wagers everywhere.",
+  "w": "17-manager.js:1792"
+ },
+ {
+  "k": "This lanista",
+  "w": "17-manager.js:1792"
+ },
+ {
+  "k": "🎓 The city square waits for your own career — not during the lesson.",
+  "w": "17-manager.js:1796"
+ },
+ {
+  "k": "visit the square",
+  "w": "17-manager.js:1797"
+ },
+ {
+  "k": "🎺 The horns have sounded — the gates are shut until the",
+  "w": "17-manager.js:1798"
+ },
+ {
+  "k": "is fought.",
+  "w": "17-manager.js:1798"
+ },
+ {
+  "k": "offered to buy {0} — refused",
+  "w": "17-manager.js:1801"
+ },
+ {
+  "k": "✋ You refuse {0}. They say nothing, which says a great deal. Morale −10 — and they may not stay.",
+  "w": "17-manager.js:1801"
+ },
+ {
+  "k": "💸 Borrowed {0} coin from {1} (8%/week, collected weekly).",
+  "w": "17-manager.js:1809"
+ },
+ {
+  "k": "lent {0} coin to {1}",
+  "w": "17-manager.js:1809"
+ },
+ {
+  "k": "Confirm: retire",
+  "w": "17-manager.js:1813"
+ },
+ {
+  "k": "for good",
+  "w": "17-manager.js:1813"
+ },
+ {
+  "k": "released with a purse when {0} retired in glory",
+  "w": "17-manager.js:1815"
+ },
+ {
+  "k": "They filled the stands at {0} for years.",
+  "w": "17-manager.js:1816"
+ },
+ {
+  "k": "Paid every debt, kept every pledge — mostly.",
+  "w": "17-manager.js:1816"
+ },
+ {
+  "k": "The sand remembers the house, and so do the bookmakers.",
+  "w": "17-manager.js:1816"
+ },
+ {
+  "k": "Retired undefeated by the creditors, which is rarer than any cup.",
+  "w": "17-manager.js:1816"
+ },
+ {
+  "k": "retired with honors — legacy {0} ({1})",
+  "w": "17-manager.js:1817"
+ },
+ {
+  "k": "🏺 <b>{0} retires in glory.</b> Legacy {1} — {2} ({3}). The Annals take the name; the fighters walk out paid and free.",
+  "w": "17-manager.js:1818"
+ },
+ {
+  "k": "⚠ Confirm: shut down",
+  "w": "17-manager.js:1821"
+ },
+ {
+  "k": "for good — fighters turned out, no honors",
+  "w": "17-manager.js:1821"
+ },
+ {
+  "k": "turned out when {0} shut its gates",
+  "w": "17-manager.js:1822"
+ },
+ {
+  "k": "shut down by its own lanista",
+  "w": "17-manager.js:1823"
+ },
+ {
+  "k": "🚪 <b>{0} shuts its gates.</b> The fighters are turned out into the pool; the bookmakers strike the name from their slates.",
+  "w": "17-manager.js:1824"
+ },
+ {
+  "k": "💸 <b>Debt cleared</b> — {0} drinks to your health.",
+  "w": "17-manager.js:1828"
+ },
+ {
+  "k": "⏩ Your doctores ran the ludus for <b>{0} week{1}</b>: {2} win{3}, treasury {4}{5}, fame {6}{7}. The Acta Diurna has every week on the Archives shelf.",
+  "w": "17-manager.js:1835"
+ },
+ {
+  "k": "All {0} pitches are spent this week.",
+  "w": "17-manager.js:1840"
+ },
+ {
+  "k": "Scouting report on {0} is in.{1}",
+  "w": "17-manager.js:1843"
+ },
+ {
+  "k": "Your scouts lean close: this one is a GEM.",
+  "w": "17-manager.js:1843"
+ },
+ {
+  "k": "Quietly: the public rating flatters them.",
+  "w": "17-manager.js:1843"
+ },
+ {
+  "k": "The exhibition was rained out.",
+  "w": "17-manager.js:1851"
+ },
+ {
+  "k": "from {0}, for {1}'s family",
+  "w": "17-manager.js:1860"
+ },
+ {
+  "k": "Bought tickets for {0}'s family ({1}).",
+  "w": "17-manager.js:1861"
+ },
+ {
+  "k": "{0} will be in the stands for {1}. Morale {2}, loyalty {3}.",
+  "w": "17-manager.js:1862"
+ },
+ {
+  "k": "Fed {0} in the ludus's name: {1}K spectators now cheer {2}.",
+  "w": "17-manager.js:1866"
+ },
+ {
+  "k": "your colors",
+  "w": "17-manager.js:1866"
+ },
+ {
+  "k": "{0} feeds {1} — bread, wine and {2} name on every loaf.",
+  "w": "17-manager.js:1867"
+ },
+ {
+  "k": "the ludus’s",
+  "w": "17-manager.js:1867"
+ },
+ {
+  "k": "{0} eats well and remembers: {1} new fans{2}, +1 fame.",
+  "w": "17-manager.js:1868"
+ },
+ {
+  "k": "Sponsored the games: +2 fame.",
+  "w": "17-manager.js:1871"
+ },
+ {
+  "k": "The week's games run under {0}'s name. Fame +2; several lanistae are heard muttering.",
+  "w": "17-manager.js:1871"
+ },
+ {
+  "k": "Your name hangs over the arena. Fame +2.",
+  "w": "17-manager.js:1871"
+ },
+ {
+  "k": "Hired the criers: +2 interest with every free agent.",
+  "w": "17-manager.js:1874"
+ },
+ {
+  "k": "By nightfall every barracks has heard your name: +2 interest across the market.",
+  "w": "17-manager.js:1874"
+ },
+ {
+  "k": "You break bread with {0}. Morale {1}, loyalty {2}.",
+  "w": "17-manager.js:1875"
+ },
+ {
+  "k": "Paid {0} a {1}-coin bonus.",
+  "w": "17-manager.js:1876"
+ },
+ {
+  "k": "{0} coin changes hands. {1} will remember who paid: loyalty {2}.",
+  "w": "17-manager.js:1876"
+ },
+ {
+  "k": "Raised {0}'s wage to {1}/wk.",
+  "w": "17-manager.js:1877"
+ },
+ {
+  "k": "wage raised to {0}/wk by {1}",
+  "w": "17-manager.js:1877"
+ },
+ {
+  "k": "{0} now earns {1} a week. Morale {2}, loyalty {3}.",
+  "w": "17-manager.js:1877"
+ },
+ {
+  "k": "Promised {0} the main event by week {1}.",
+  "w": "17-manager.js:1878"
+ },
+ {
+  "k": "{0} holds you to it: the main event by week {1}.",
+  "w": "17-manager.js:1878"
+ },
+ {
+  "k": "The wage keeps me fed. It does not keep me here.",
+  "w": "17-manager.js:1881"
+ },
+ {
+  "k": "I did not come to the sand to lose in front of empty seats.",
+  "w": "17-manager.js:1881"
+ },
+ {
+  "k": "Men talk about how this ludus treats its word.",
+  "w": "17-manager.js:1881"
+ },
+ {
+  "k": "The crowd forgets a fighter nobody puts in front of them.",
+  "w": "17-manager.js:1881"
+ },
+ {
+  "k": "I am not getting better here. I can feel it.",
+  "w": "17-manager.js:1881"
+ },
+ {
+  "k": "I sit. I watch. I sit again.",
+  "w": "17-manager.js:1881"
+ },
+ {
+  "k": "I have no complaints. Today.",
+  "w": "17-manager.js:1881"
+ },
+ {
+  "k": "My {0} aches.",
+  "w": "17-manager.js:1882"
+ },
+ {
+  "k": "And my contract is nearly up.",
+  "w": "17-manager.js:1882"
+ },
+ {
+  "k": "{0} talks. Their weakest grade of you: <b>{1}</b>.",
+  "w": "17-manager.js:1882"
+ },
+ {
+  "k": "That trait is as honed as it gets (95).",
+  "w": "17-manager.js:1884"
+ },
+ {
+  "k": "{0} rises to {1} (you spent a perk point — {2} left in the bank). The fighters notice how you carry yourself.",
+  "w": "17-manager.js:1884"
+ },
+ {
+  "k": "fought a trial bout on {0}'s sand{1}",
+  "w": "17-manager.js:1899"
+ },
+ {
+  "k": "— and took the palm",
+  "w": "17-manager.js:1899"
+ },
+ {
+  "k": "{0} fights {1}on your sand{2}: +{3} interest, fully scouted{4}.",
+  "w": "17-manager.js:1900"
+ },
+ {
+  "k": "beside {0}",
+  "w": "17-manager.js:1900"
+ },
+ {
+  "k": "and wins",
+  "w": "17-manager.js:1900"
+ },
+ {
+  "k": "— and your doctors swear you have found a GEM 💎",
+  "w": "17-manager.js:1900"
+ },
+ {
+  "k": "— and your doctors mutter the stars flatter this one",
+  "w": "17-manager.js:1900"
+ },
+ {
+  "k": "You pitch {0} to {1}: interest {2}{3}.{4}",
+  "w": "17-manager.js:1901"
+ },
+ {
+  "k": "Your grade there hurt you.",
+  "w": "17-manager.js:1901"
+ },
+ {
+  "k": "{0} feasts at {1}: interest +{2}.",
+  "w": "17-manager.js:1902"
+ },
+ {
+  "k": "Signed {0} ({1}/wk, {2} weeks{3}{4}).",
+  "w": "17-manager.js:1903"
+ },
+ {
+  "k": ", {0} bonus",
+  "w": "17-manager.js:1903"
+ },
+ {
+  "k": ", main-event pledge",
+  "w": "17-manager.js:1903"
+ },
+ {
+  "k": "{0} signs{1}!",
+  "w": "17-manager.js:1903"
+ },
+ {
+  "k": "— and expects the main event within 2 weeks",
+  "w": "17-manager.js:1903"
+ },
+ {
+  "k": "{0} received your last gift a little too recently.",
+  "w": "17-manager.js:1904"
+ },
+ {
+  "k": "Amphorae arrive at {0}'s door: interest +{1}.",
+  "w": "17-manager.js:1904"
+ },
+ {
+  "k": "{0} joins you. {1}… well, you.",
+  "w": "17-manager.js:1905"
+ },
+ {
+  "k": "{0} refuses to extend (morale {1}).",
+  "w": "17-manager.js:1906"
+ },
+ {
+  "k": "{0} extends for 8 more weeks at {1} a week.",
+  "w": "17-manager.js:1906"
+ },
+ {
+  "k": "Released {0} from their contract.",
+  "w": "17-manager.js:1907"
+ },
+ {
+  "k": "The repair budget is spent for this week ({0} coin a week).",
+  "w": "17-manager.js:1908"
+ },
+ {
+  "k": "Not enough coin for the priests of Hygeia.",
+  "w": "17-manager.js:1908"
+ },
+ {
+  "k": "The Blessings of Hygeia regrow {0}{1}'s limbs{2}.",
+  "w": "17-manager.js:1908"
+ },
+ {
+  "k": "one of",
+  "w": "17-manager.js:1908"
+ },
+ {
+  "k": "({0} still severed — the budget ran out)",
+  "w": "17-manager.js:1908"
+ },
+ {
+  "k": "{0} has already seen the Medicus this week.",
+  "w": "17-manager.js:1909"
+ },
+ {
+  "k": "Not enough coin for the Medicus.",
+  "w": "17-manager.js:1909"
+ },
+ {
+  "k": "{0} is with the legions — no Medicus reaches a marching camp.",
+  "w": "17-manager.js:1909"
+ },
+ {
+  "k": "{0}'s {1} is beyond the Medicus — it wants the surgeon's knife (Infirmary tab).",
+  "w": "17-manager.js:1910"
+ },
+ {
+  "k": "The Medicus puts {0} on a Health Elixir regimen{1}: morale {2}.",
+  "w": "17-manager.js:1911"
+ },
+ {
+  "k": "and a bathhouse day — the {0} is cleared",
+  "w": "17-manager.js:1911"
+ },
+ {
+  "k": "the surgeon's knife slipped on {0}",
+  "w": "17-manager.js:1914"
+ },
+ {
+  "k": "The knife slips. {0} keeps the {1} another week — the surgeon keeps the coin.",
+  "w": "17-manager.js:1914"
+ },
+ {
+  "k": "under the surgeon's knife: {0}, cleanly mended",
+  "w": "17-manager.js:1915"
+ },
+ {
+  "k": "Clean work. {0}'s wound is closed, stitched and salved: fit to fight.",
+  "w": "17-manager.js:1915"
+ },
+ {
+  "k": "Steam, oil and a strigil: {0} walks out loose-shouldered and HEALED.",
+  "w": "17-manager.js:1917"
+ },
+ {
+  "k": "{0} spends the day in the caldarium: a week off the healing, +4 morale.",
+  "w": "17-manager.js:1917"
+ },
+ {
+  "k": "healed in the temple of Asclepius",
+  "w": "17-manager.js:1919"
+ },
+ {
+  "k": "Paid the priests of Asclepius {0} coin: {1}'s {2} is healed.",
+  "w": "17-manager.js:1920"
+ },
+ {
+  "k": "Incense, serpents, and one long night in the temple: {0} wakes with the {1} gone. (Lost limbs are Hygeia's work, not Asclepius's.)",
+  "w": "17-manager.js:1920"
+ },
+ {
+  "k": "You fixed this bout. No bookmaker in the empire will take a wager on it from you — and betting on your own fix is how lanistae end up in the mines.",
+  "w": "17-manager.js:1921"
+ },
+ {
+  "k": "The bookmaker takes at most {0} coin at {1}× — no slip may pay more than {2}.",
+  "w": "17-manager.js:1921"
+ },
+ {
+  "k": "You bet {0} on {1} at {2}×.",
+  "w": "17-manager.js:1921"
+ },
+ {
+  "k": "The main event is already decided — and the creditors will not wait past the week.",
+  "w": "17-manager.js:1925"
+ },
+ {
+  "k": "The card runs in order — settle the earlier bouts first, then take the sand.",
+  "w": "17-manager.js:1926"
+ },
+ {
+  "k": "No seat can be bought on this card.",
+  "w": "17-manager.js:1930"
+ },
+ {
+  "k": "💀 <b>{0} takes the Debtor's Gambit</b> — the lanista himself on tonight's card{1}. The bookmakers lose their minds.",
+  "w": "17-manager.js:1936"
+ },
+ {
+  "k": ", {0} at his side under truce",
+  "w": "17-manager.js:1936"
+ },
+ {
+  "k": "enter fighters",
+  "w": "17-manager.js:1939"
+ },
+ {
+  "k": "🔒 You withdrew from the {0} twice — the card is closed to your house this week.",
+  "w": "17-manager.js:1939"
+ },
+ {
+  "k": "🔒 Two withdrawals from the {0} — the editor will take no more entries from your house for it this week.",
+  "w": "17-manager.js:1941"
+ },
+ {
+  "k": "CONFIRM · this is a crime<small>Flavius seizes ludi for less. Twice caught in a career and yours is gone.</small>",
+  "w": "17-manager.js:1943"
+ },
+ {
+  "k": "Fixed the {0}: {1} coin under the table for {2}'s \"win\".",
+  "w": "17-manager.js:1945"
+ },
+ {
+  "k": "Coin moves in dark corners. {0} will win the {1} — as long as nobody talks.",
+  "w": "17-manager.js:1946"
+ },
+ {
+  "k": "The card runs in order — settle the earlier bout first.",
+  "w": "17-manager.js:1947"
+ },
+ {
+  "k": "watch from the stands",
+  "w": "17-manager.js:1949"
+ },
+ {
+  "k": "An invitational is on this week — settle it on Match Week first.",
+  "w": "17-manager.js:1953"
+ },
+ {
+  "k": "Settle the verdicts awaiting you first — thumbs, blood money and rudis choices.",
+  "w": "17-manager.js:1953"
+ },
+ {
+  "k": "Finish every bout first.",
+  "w": "17-manager.js:1953"
+ },
+ {
+  "k": "walk the sand",
+  "w": "17-manager.js:1957"
+ },
+ {
+  "k": "The sand is packed hard on the east side — pillars topple toward the tunnels.",
+  "w": "17-manager.js:1960"
+ },
+ {
+  "k": "The upper tiers are nearest the Q1 stands: play to them and the cheers come cheap.",
+  "w": "17-manager.js:1960"
+ },
+ {
+  "k": "The ushers here let troublemakers in; expect stones.",
+  "w": "17-manager.js:1960"
+ },
+ {
+  "k": "The local beasts are underfed this week — the bears go for the first man they see.",
+  "w": "17-manager.js:1960"
+ },
+ {
+  "k": "The editor here rewards a long fight; do not rush the killing.",
+  "w": "17-manager.js:1960"
+ },
+ {
+  "k": "an ordinary crowd",
+  "w": "17-manager.js:1961"
+ },
+ {
+  "k": "Scouted {0} ahead of the games (2 h, 6 coin): +1 AP, +1 coin for every fighter you enter.",
+  "w": "17-manager.js:1961"
+ },
+ {
+  "k": "★ <b>{0}</b> is on your Favorites board.",
+  "w": "17-manager.js:1976"
+ },
+ {
+  "k": "☆ {0} is off your Favorites board.",
+  "w": "17-manager.js:1976"
+ },
+ {
+  "k": "Senate feud spills into the streets",
+  "w": "18-world.js:29"
+ },
+ {
+  "k": "An election year: candidates buy the games",
+  "w": "18-world.js:29"
+ },
+ {
+  "k": "A new governor wants to be loved",
+  "w": "18-world.js:29"
+ },
+ {
+  "k": "Proscription lists posted in the forum",
+  "w": "18-world.js:29"
+ },
+ {
+  "k": "The legions march north",
+  "w": "18-world.js:30"
+ },
+ {
+  "k": "Veterans return from the frontier",
+  "w": "18-world.js:30"
+ },
+ {
+  "k": "Barbarian raid on the border towns",
+  "w": "18-world.js:30"
+ },
+ {
+  "k": "A triumph through the city gates",
+  "w": "18-world.js:30"
+ },
+ {
+  "k": "The grain fleet arrives early",
+  "w": "18-world.js:31"
+ },
+ {
+  "k": "Silver shortage; coin clipped thin",
+  "w": "18-world.js:31"
+ },
+ {
+  "k": "Tax riots in the market",
+  "w": "18-world.js:31"
+ },
+ {
+  "k": "A merchant prince pays for the games",
+  "w": "18-world.js:31"
+ },
+ {
+  "k": "Blight in the fields",
+  "w": "18-world.js:32"
+ },
+ {
+  "k": "Bread lines at dawn",
+  "w": "18-world.js:32"
+ },
+ {
+  "k": "An earthquake cracks the aqueduct",
+  "w": "18-world.js:33"
+ },
+ {
+  "k": "The river floods the lower town",
+  "w": "18-world.js:33"
+ },
+ {
+  "k": "Ash falls from the mountain",
+  "w": "18-world.js:33"
+ },
+ {
+  "k": "Fever in the harbor district",
+  "w": "18-world.js:34"
+ },
+ {
+  "k": "Quarantine at the city gates",
+  "w": "18-world.js:34"
+ },
+ {
+  "k": "Spice caravans reach the city",
+  "w": "18-world.js:35"
+ },
+ {
+  "k": "Pirates close the sea lanes",
+  "w": "18-world.js:35"
+ },
+ {
+  "k": "A new road opens to the provinces",
+  "w": "18-world.js:35"
+ },
+ {
+  "k": "Vesuvius grumbles; ash on the wind",
+  "w": "18-world.js:37"
+ },
+ {
+  "k": "VESUVIUS ERUPTS",
+  "w": "18-world.js:37"
+ },
+ {
+  "k": "the Marcomanni",
+  "w": "18-world.js:39"
+ },
+ {
+  "k": "the Quadi",
+  "w": "18-world.js:39"
+ },
+ {
+  "k": "Numidian raiders",
+  "w": "18-world.js:39"
+ },
+ {
+  "k": "the Garamantes",
+  "w": "18-world.js:39"
+ },
+ {
+  "k": "Ligurian hill clans",
+  "w": "18-world.js:39"
+ },
+ {
+  "k": "Illyrian pirates",
+  "w": "18-world.js:39"
+ },
+ {
+  "k": "Legio II Augusta",
+  "w": "18-world.js:41"
+ },
+ {
+  "k": "Legio X Fretensis",
+  "w": "18-world.js:41"
+ },
+ {
+  "k": "Legio III Gallica",
+  "w": "18-world.js:41"
+ },
+ {
+  "k": "the city garrison",
+  "w": "18-world.js:41"
+ },
+ {
+  "k": "Legio VI Victrix",
+  "w": "18-world.js:41"
+ },
+ {
+  "k": "this week only",
+  "w": "18-world.js:73"
+ },
+ {
+  "k": "week {0} of {1}",
+  "w": "18-world.js:73"
+ },
+ {
+  "k": "Thunderstorm — lightning and hard rain; crowds thin and augurs get busy.",
+  "w": "18-world.js:90"
+ },
+ {
+  "k": "Rain — wet sand and damp benches; the regulars still come.",
+  "w": "18-world.js:90"
+ },
+ {
+  "k": "Heatwave — scorching sun; the awnings (vela) go up and tempers run short.",
+  "w": "18-world.js:90"
+ },
+ {
+  "k": "Sea fog — a grey blanket off the water; the far stands can barely see the sand.",
+  "w": "18-world.js:90"
+ },
+ {
+  "k": "Hard wind — dust and snapping awnings; arrows and nets fly strangely.",
+  "w": "18-world.js:90"
+ },
+ {
+  "k": "Verona",
+  "w": "18-world.js:136"
+ },
+ {
+  "k": "Pola",
+  "w": "18-world.js:136"
+ },
+ {
+  "k": "Capua",
+  "w": "18-world.js:136"
+ },
+ {
+  "k": "Pompeii",
+  "w": "18-world.js:136"
+ },
+ {
+  "k": "Puteoli",
+  "w": "18-world.js:137"
+ },
+ {
+  "k": "Arles",
+  "w": "18-world.js:137"
+ },
+ {
+  "k": "Nemausus",
+  "w": "18-world.js:137"
+ },
+ {
+  "k": "Uthina",
+  "w": "18-world.js:138"
+ },
+ {
+  "k": "Thysdrus",
+  "w": "18-world.js:138"
+ },
+ {
+  "k": "Leptis Magna",
+  "w": "18-world.js:138"
+ },
+ {
+  "k": "Syracusae",
+  "w": "18-world.js:141"
+ },
+ {
+  "k": "{0} from {1}{2}{3}",
+  "w": "18-world.js:173"
+ },
+ {
+  "k": "· for {0}",
+  "w": "18-world.js:173"
+ },
+ {
+  "k": "· no allegiance yet",
+  "w": "18-world.js:173"
+ },
+ {
+  "k": "· by road and sail",
+  "w": "18-world.js:173"
+ },
+ {
+  "k": "· by road",
+  "w": "18-world.js:173"
+ },
+ {
+  "k": "(over today’s arena)",
+  "w": "18-world.js:181"
+ },
+ {
+  "k": "{0} — {1} (severity {2}): attendance {3}{4}%, mood {5}{6}{7}",
+  "w": "18-world.js:195"
+ },
+ {
+  "k": "· ARENA CLOSED while it lasts",
+  "w": "18-world.js:195"
+ },
+ {
+  "k": "— the arena is CLOSED and the legions are calling men up",
+  "w": "18-world.js:203"
+ },
+ {
+  "k": "{0}{1} — click to focus",
+  "w": "18-world.js:211"
+ },
+ {
+  "k": "— ARENA CLOSED:",
+  "w": "18-world.js:211"
+ },
+ {
+  "k": "Map of the empire",
+  "w": "18-world.js:212"
+ },
+ {
+  "k": "The bakers’ guild is feuding with the millers again",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "The fish market smells of a good catch",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "A troupe of mimes has been thrown out of two taverns",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "A senator’s daughter is to be married on the games’ eve",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "Someone’s prize horse got loose in the forum",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "The magistrates have repaved the arena road",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "The new vintage is in, and the whole town knows it",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "A bookmaker was flogged for short odds",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "A kitchen fire in the potters’ quarter, nobody hurt",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "A famous lyre player is in town — the gladiators are jealous",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "Cloth merchants from the south fill the square",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "A pack of stray dogs has adopted the ushers",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "Graffiti on the ludus wall names next week’s winner",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "The harvest came in early; the wine flows",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "The city fathers ordered the stands scrubbed",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "A hoard of old coin turned up under a tavern floor",
+  "w": "18-world.js:218"
+ },
+ {
+  "k": "ordinary — bread, gossip, and the games",
+  "w": "18-world.js:223"
+ },
+ {
+  "k": "the forum",
+  "w": "18-world.js:226"
+ },
+ {
+  "k": "in the stands, {0}",
+  "w": "18-world.js:227"
+ },
+ {
+  "k": "on their feet",
+  "w": "18-world.js:227"
+ },
+ {
+  "k": "arguing with the usher",
+  "w": "18-world.js:227"
+ },
+ {
+  "k": "shouting themselves hoarse",
+  "w": "18-world.js:227"
+ },
+ {
+  "k": "placing a small bet",
+  "w": "18-world.js:227"
+ },
+ {
+  "k": "staying away — {0}",
+  "w": "18-world.js:228"
+ },
+ {
+  "k": "barred at the gate, loudly",
+  "w": "18-world.js:228"
+ },
+ {
+  "k": "clutching a ticket for the next games",
+  "w": "18-world.js:228"
+ },
+ {
+  "k": "haggling in the market",
+  "w": "18-world.js:229"
+ },
+ {
+  "k": "asleep in the baths",
+  "w": "18-world.js:229"
+ },
+ {
+  "k": "at the tavern, betting on tomorrow",
+  "w": "18-world.js:229"
+ },
+ {
+  "k": "queuing for the grain dole",
+  "w": "18-world.js:229"
+ },
+ {
+  "k": "watching the ludus train from the wall",
+  "w": "18-world.js:229"
+ },
+ {
+  "k": "mending nets by the harbor",
+  "w": "18-world.js:229"
+ },
+ {
+  "k": "at the temple, buying an omen",
+  "w": "18-world.js:229"
+ },
+ {
+  "k": "walking the dog around",
+  "w": "18-world.js:229"
+ },
+ {
+  "k": "by the fountain",
+  "w": "18-world.js:229"
+ },
+ {
+  "k": "telling the story of the last games, again",
+  "w": "18-world.js:229"
+ },
+ {
+  "k": "🗡 fighter for {0}",
+  "w": "18-world.js:247"
+ },
+ {
+  "k": "👪 {0} of {1}",
+  "w": "18-world.js:247"
+ },
+ {
+  "k": "✦ your creation",
+  "w": "18-world.js:247"
+ },
+ {
+  "k": "The banner of {0} — its people rep it in the stands and the square",
+  "w": "18-world.js:250"
+ },
+ {
+  "k": "<span class=\"badge gold\">event on the sand</span>",
+  "w": "18-world.js:250"
+ },
+ {
+  "k": "🚫 ARENA CLOSED — {0}",
+  "w": "18-world.js:250"
+ },
+ {
+  "k": "the sand rests",
+  "w": "18-world.js:250"
+ },
+ {
+  "k": "Fair skies — clear and calm",
+  "w": "18-world.js:251"
+ },
+ {
+  "k": "🔒 City square closed to you<small>{0}</small>",
+  "w": "18-world.js:252"
+ },
+ {
+  "k": "🏛 Visit the city square<small>walk it — the crowd, the shops, the auction block</small>",
+  "w": "18-world.js:252"
+ },
+ {
+  "k": "Named regulars who call this city home",
+  "w": "18-world.js:254"
+ },
+ {
+  "k": "🏠 {0}K spectators",
+  "w": "18-world.js:254"
+ },
+ {
+  "k": "From world events",
+  "w": "18-world.js:254"
+ },
+ {
+  "k": "The mood around town",
+  "w": "18-world.js:254"
+ },
+ {
+  "k": "🏛 The city today",
+  "w": "18-world.js:255"
+ },
+ {
+  "k": "<span class=\"rc-sub\">(felt from",
+  "w": "18-world.js:256"
+ },
+ {
+  "k": "🏟 The stands",
+  "w": "18-world.js:258"
+ },
+ {
+  "k": "<span>{0} events held</span><span>✝ {1} fallen</span><span>🍯 {2} concessions</span>{3}{4}",
+  "w": "18-world.js:259"
+ },
+ {
+  "k": "<span>🔱 {0} speared</span>",
+  "w": "18-world.js:259"
+ },
+ {
+  "k": "<span>👊 {0} brawls</span>",
+  "w": "18-world.js:259"
+ },
+ {
+  "k": "Last speared here: <b>{0}</b>, by {1}.",
+  "w": "18-world.js:259"
+ },
+ {
+  "k": "In the stands now · {0}K spectators",
+  "w": "18-world.js:261"
+ },
+ {
+  "k": "🏆 Local heroes",
+  "w": "18-world.js:262"
+ },
+ {
+  "k": "{0} · {1} · {2}K fans",
+  "w": "18-world.js:262"
+ },
+ {
+  "k": "🏠 Who lives here · what they are up to",
+  "w": "18-world.js:263"
+ },
+ {
+  "k": "🌦 Weather",
+  "w": "18-world.js:274"
+ },
+ {
+  "k": "📯 World events",
+  "w": "18-world.js:274"
+ },
+ {
+  "k": "⚔️ War map",
+  "w": "18-world.js:274"
+ },
+ {
+  "k": "Click a city to focus it. Hover the weather for the sky. Fans travel the roads (solid) and the sea lanes (dashed, ⛵), colored by whom they cheer.{0}",
+  "w": "18-world.js:276"
+ },
+ {
+  "k": "Today's turnout: {0}.",
+  "w": "18-world.js:276"
+ },
+ {
+  "k": "🌍 The empire today{0} · top 10{1}",
+  "w": "18-world.js:277"
+ },
+ {
+  "k": "The empire's one banner — S·P·Q·R, over every city banner, every house banner, every family",
+  "w": "18-world.js:277"
+ },
+ {
+  "k": "· {0} · severity {1}{2}{3} · gate {4}{5}%, mood {6}{7}{8}",
+  "w": "18-world.js:278"
+ },
+ {
+  "k": "City",
+  "w": "18-world.js:279"
+ },
+ {
+  "k": "👥 Spectator roster · {0}",
+  "w": "18-world.js:279"
+ },
+ {
+  "k": "Ianuarius",
+  "w": "19-calendar.js:17"
+ },
+ {
+  "k": "Februarius",
+  "w": "19-calendar.js:17"
+ },
+ {
+  "k": "Martius",
+  "w": "19-calendar.js:17"
+ },
+ {
+  "k": "Aprilis",
+  "w": "19-calendar.js:17"
+ },
+ {
+  "k": "Maius",
+  "w": "19-calendar.js:17"
+ },
+ {
+  "k": "Iunius",
+  "w": "19-calendar.js:17"
+ },
+ {
+  "k": "Iulius",
+  "w": "19-calendar.js:17"
+ },
+ {
+  "k": "Augustus",
+  "w": "19-calendar.js:17"
+ },
+ {
+  "k": "Kalendae {0}",
+  "w": "19-calendar.js:58"
+ },
+ {
+  "k": "Nonae {0}",
+  "w": "19-calendar.js:58"
+ },
+ {
+  "k": "Idus {0}",
+  "w": "19-calendar.js:58"
+ },
+ {
+  "k": "a.d. {0} Non. {1}",
+  "w": "19-calendar.js:59"
+ },
+ {
+  "k": "a.d. {0} Id. {1}",
+  "w": "19-calendar.js:59"
+ },
+ {
+  "k": "a.d. {0} Kal. {1}",
+  "w": "19-calendar.js:59"
+ },
+ {
+  "k": "{0} {1} — season {2}, week {3} of 12 ({4})",
+  "w": "19-calendar.js:62"
+ },
+ {
+  "k": "Week",
+  "w": "19-calendar.js:71"
+ },
+ {
+  "k": "Arena",
+  "w": "19-calendar.js:71"
+ },
+ {
+  "k": "Purse",
+  "w": "19-calendar.js:71"
+ },
+ {
+  "k": "me schednow",
+  "w": "19-calendar.js:71"
+ },
+ {
+  "k": "<span class=\"badge\" title=\"The regular season ends here; the top four stables are invited to the Flavius Superbus\">last regular week</span>",
+  "w": "19-calendar.js:71"
+ },
+ {
+  "k": "📅 Season {0} schedule",
+  "w": "19-calendar.js:77"
+ },
+ {
+  "k": "Thraex griffin",
+  "w": "20-tokens.js:15"
+ },
+ {
+  "k": "Hood",
+  "w": "20-tokens.js:15"
+ },
+ {
+  "k": "Crown",
+  "w": "20-tokens.js:15"
+ },
+ {
+  "k": "Tunic",
+  "w": "20-tokens.js:16"
+ },
+ {
+  "k": "Lorica (armor)",
+  "w": "20-tokens.js:16"
+ },
+ {
+  "k": "Scale mail",
+  "w": "20-tokens.js:16"
+ },
+ {
+  "k": "Robe",
+  "w": "20-tokens.js:16"
+ },
+ {
+  "k": "Rags",
+  "w": "20-tokens.js:16"
+ },
+ {
+  "k": "Flavius’s gilded armor",
+  "w": "20-tokens.js:16"
+ },
+ {
+  "k": "No shield",
+  "w": "20-tokens.js:21"
+ },
+ {
+  "k": "Scutum (tall)",
+  "w": "20-tokens.js:21"
+ },
+ {
+  "k": "Parma (square)",
+  "w": "20-tokens.js:21"
+ },
+ {
+  "k": "Buckler",
+  "w": "20-tokens.js:21"
+ },
+ {
+  "k": "Net (rete)",
+  "w": "20-tokens.js:21"
+ },
+ {
+  "k": "Empty hand",
+  "w": "20-tokens.js:22"
+ },
+ {
+  "k": "Gladius",
+  "w": "20-tokens.js:22"
+ },
+ {
+  "k": "Spear",
+  "w": "20-tokens.js:22"
+ },
+ {
+  "k": "Trident",
+  "w": "20-tokens.js:22"
+ },
+ {
+  "k": "Bow",
+  "w": "20-tokens.js:22"
+ },
+ {
+  "k": "Axe",
+  "w": "20-tokens.js:22"
+ },
+ {
+  "k": "Club",
+  "w": "20-tokens.js:22"
+ },
+ {
+  "k": "Great blunted club",
+  "w": "20-tokens.js:22"
+ },
+ {
+  "k": "Mace",
+  "w": "20-tokens.js:22"
+ },
+ {
+  "k": "Sica",
+  "w": "20-tokens.js:22"
+ },
+ {
+  "k": "War hammer",
+  "w": "20-tokens.js:22"
+ },
+ {
+  "k": "Flail",
+  "w": "20-tokens.js:22"
+ },
+ {
+  "k": "Scythe",
+  "w": "20-tokens.js:22"
+ },
+ {
+  "k": "Sling",
+  "w": "20-tokens.js:22"
+ },
+ {
+  "k": "Two eyes",
+  "w": "20-tokens.js:23"
+ },
+ {
+  "k": "One great eye (cyclops)",
+  "w": "20-tokens.js:23"
+ },
+ {
+  "k": "Glowing eyes",
+  "w": "20-tokens.js:23"
+ },
+ {
+  "k": "Hidden (visor)",
+  "w": "20-tokens.js:23"
+ },
+ {
+  "k": "Short",
+  "w": "20-tokens.js:25"
+ },
+ {
+  "k": "Mohawk",
+  "w": "20-tokens.js:25"
+ },
+ {
+  "k": "Braid",
+  "w": "20-tokens.js:25"
+ },
+ {
+  "k": "Bare arms",
+  "w": "20-tokens.js:26"
+ },
+ {
+  "k": "Manica (sword arm)",
+  "w": "20-tokens.js:26"
+ },
+ {
+  "k": "Leather bracers",
+  "w": "20-tokens.js:26"
+ },
+ {
+  "k": "Shoulder plate",
+  "w": "20-tokens.js:26"
+ },
+ {
+  "k": "Manica + shoulder plate",
+  "w": "20-tokens.js:26"
+ },
+ {
+  "k": "Bare legs",
+  "w": "20-tokens.js:27"
+ },
+ {
+  "k": "Greaves",
+  "w": "20-tokens.js:27"
+ },
+ {
+  "k": "Leg wraps",
+  "w": "20-tokens.js:27"
+ },
+ {
+  "k": "Tall boots",
+  "w": "20-tokens.js:27"
+ },
+ {
+  "k": "Nothing",
+  "w": "20-tokens.js:28"
+ },
+ {
+  "k": "Gold torc",
+  "w": "20-tokens.js:28"
+ },
+ {
+  "k": "Slave chain",
+  "w": "20-tokens.js:28"
+ },
+ {
+  "k": "Bead necklace",
+  "w": "20-tokens.js:28"
+ },
+ {
+  "k": "Sash across the chest",
+  "w": "20-tokens.js:28"
+ },
+ {
+  "k": "Woad (blue face)",
+  "w": "20-tokens.js:29"
+ },
+ {
+  "k": "Tattoos",
+  "w": "20-tokens.js:29"
+ },
+ {
+  "k": "Plain",
+  "w": "20-tokens.js:30"
+ },
+ {
+  "k": "Eagle",
+  "w": "20-tokens.js:30"
+ },
+ {
+  "k": "Thunderbolt",
+  "w": "20-tokens.js:30"
+ },
+ {
+  "k": "Star",
+  "w": "20-tokens.js:30"
+ },
+ {
+  "k": "Sun",
+  "w": "20-tokens.js:30"
+ },
+ {
+  "k": "Wolf head",
+  "w": "20-tokens.js:30"
+ },
+ {
+  "k": "Bronze boss",
+  "w": "20-tokens.js:30"
+ },
+ {
+  "k": "Pugio (dagger)",
+  "w": "20-tokens.js:31"
+ },
+ {
+  "k": "Torch",
+  "w": "20-tokens.js:31"
+ },
+ {
+  "k": "Whip",
+  "w": "20-tokens.js:31"
+ },
+ {
+  "k": "Plain hide",
+  "w": "20-tokens.js:32"
+ },
+ {
+  "k": "Stripes",
+  "w": "20-tokens.js:32"
+ },
+ {
+  "k": "Spots",
+  "w": "20-tokens.js:32"
+ },
+ {
+  "k": "Armored plates",
+  "w": "20-tokens.js:32"
+ },
+ {
+  "k": "Scales",
+  "w": "20-tokens.js:32"
+ },
+ {
+  "k": "Spiked collar",
+  "w": "20-tokens.js:33"
+ },
+ {
+  "k": "Broken chains",
+  "w": "20-tokens.js:33"
+ },
+ {
+  "k": "War saddle",
+  "w": "20-tokens.js:33"
+ },
+ {
+  "k": "Great fangs",
+  "w": "20-tokens.js:33"
+ },
+ {
+  "k": "Serpent",
+  "w": "20-tokens.js:34"
+ },
+ {
+  "k": "Bird",
+  "w": "20-tokens.js:34"
+ },
+ {
+  "k": "Brute (two legs)",
+  "w": "20-tokens.js:34"
+ },
+ {
+  "k": "Ooze",
+  "w": "20-tokens.js:34"
+ },
+ {
+  "k": "No tail",
+  "w": "20-tokens.js:35"
+ },
+ {
+  "k": "Bushy",
+  "w": "20-tokens.js:35"
+ },
+ {
+  "k": "Spiked",
+  "w": "20-tokens.js:35"
+ },
+ {
+  "k": "Tufted",
+  "w": "20-tokens.js:35"
+ },
+ {
+  "k": "● Circle",
+  "w": "20-tokens.js:210"
+ },
+ {
+  "k": "⬭ Oval",
+  "w": "20-tokens.js:210"
+ },
+ {
+  "k": "■ Box",
+  "w": "20-tokens.js:210"
+ },
+ {
+  "k": "▲ Triangle",
+  "w": "20-tokens.js:210"
+ },
+ {
+  "k": "◆ Diamond",
+  "w": "20-tokens.js:210"
+ },
+ {
+  "k": "★ Star",
+  "w": "20-tokens.js:210"
+ },
+ {
+  "k": "☾ Crescent",
+  "w": "20-tokens.js:210"
+ },
+ {
+  "k": "╱ Bar",
+  "w": "20-tokens.js:210"
+ },
+ {
+  "k": "➤ Spike",
+  "w": "20-tokens.js:210"
+ },
+ {
+  "k": "◯ Ring",
+  "w": "20-tokens.js:210"
+ },
+ {
+  "k": "Ave Imperator",
+  "w": "21-audio.js:98"
+ },
+ {
+  "k": "The School of Batiatus",
+  "w": "21-audio.js:98"
+ },
+ {
+  "k": "Under the Mountain",
+  "w": "21-audio.js:98"
+ },
+ {
+  "k": "Harbor of Archimedes",
+  "w": "21-audio.js:98"
+ },
+ {
+  "k": "The Rose Stone",
+  "w": "21-audio.js:98"
+ },
+ {
+  "k": "Dusk on the Rhône",
+  "w": "21-audio.js:98"
+ },
+ {
+  "k": "Olive Gold",
+  "w": "21-audio.js:99"
+ },
+ {
+  "k": "The Crocodile Coin",
+  "w": "21-audio.js:99"
+ },
+ {
+  "k": "Sea Gate of Severus",
+  "w": "21-audio.js:99"
+ },
+ {
+  "k": "Dunes and Drums",
+  "w": "21-audio.js:99"
+ },
+ {
+  "k": "The White Amphitheatre",
+  "w": "21-audio.js:99"
+ },
+ {
+  "k": "Sulphur Harbor",
+  "w": "21-audio.js:99"
+ },
+ {
+  "k": "Finale",
+  "w": "21-audio.js:109"
+ },
+ {
+  "k": "🔒 Win at {0} to unlock its theme.",
+  "w": "21-audio.js:138"
+ },
+ {
+  "k": "win an event at <b>{0}</b> with a gladiator of your own to unlock",
+  "w": "21-audio.js:149"
+ },
+ {
+  "k": "{0} · {1} · {2} bpm <b class=\"trst\" style=\"color:var(--gold2)\">{3}</b>",
+  "w": "21-audio.js:150"
+ },
+ {
+  "k": "♪ now playing",
+  "w": "21-audio.js:150"
+ },
+ {
+  "k": "Pause",
+  "w": "21-audio.js:151"
+ },
+ {
+  "k": "Restart from the top",
+  "w": "21-audio.js:151"
+ },
+ {
+  "k": "Mute all sound (M)",
+  "w": "21-audio.js:185"
+ },
+ {
+  "k": "Sound is muted — click to unmute (M)",
+  "w": "21-audio.js:185"
+ },
+ {
+  "k": "Gold",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Iron",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Electrum",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Copper",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Rose gold",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Obsidian",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Marble",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Imperial porphyry",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Lapis lazuli",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Jade",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Ivory",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Terracotta",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Oak",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Olive wood",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Cedar of Lebanon",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Ebony",
+  "w": "22-trophies.js:20"
+ },
+ {
+  "k": "Metals",
+  "w": "22-trophies.js:22"
+ },
+ {
+  "k": "Stones",
+  "w": "22-trophies.js:22"
+ },
+ {
+  "k": "Woods",
+  "w": "22-trophies.js:22"
+ },
+ {
+  "k": "Walnut",
+  "w": "22-trophies.js:26"
+ },
+ {
+  "k": "Cedar",
+  "w": "22-trophies.js:26"
+ },
+ {
+  "k": "Travertine",
+  "w": "22-trophies.js:26"
+ },
+ {
+  "k": "Porphyry",
+  "w": "22-trophies.js:26"
+ },
+ {
+  "k": "Lapis",
+  "w": "22-trophies.js:26"
+ },
+ {
+  "k": "Bronze plinth",
+  "w": "22-trophies.js:26"
+ },
+ {
+  "k": "Gilded",
+  "w": "22-trophies.js:26"
+ },
+ {
+  "k": "No base",
+  "w": "22-trophies.js:26"
+ },
+ {
+  "k": "Loving cup",
+  "w": "22-trophies.js:28"
+ },
+ {
+  "k": "The great bowl (Stanley style)",
+  "w": "22-trophies.js:28"
+ },
+ {
+  "k": "Parade shield",
+  "w": "22-trophies.js:28"
+ },
+ {
+  "k": "Eagle on a column",
+  "w": "22-trophies.js:28"
+ },
+ {
+  "k": "Champion’s galea",
+  "w": "22-trophies.js:28"
+ },
+ {
+  "k": "Championship belt",
+  "w": "22-trophies.js:29"
+ },
+ {
+  "k": "Obelisk",
+  "w": "22-trophies.js:29"
+ },
+ {
+  "k": "The rudis (wooden sword)",
+  "w": "22-trophies.js:29"
+ },
+ {
+  "k": "A sandal",
+  "w": "22-trophies.js:29"
+ },
+ {
+  "k": "A sponge on a stick",
+  "w": "22-trophies.js:29"
+ },
+ {
+  "k": "Laurel",
+  "w": "22-trophies.js:31"
+ },
+ {
+  "k": "Flame",
+  "w": "22-trophies.js:31"
+ },
+ {
+  "k": "Mural crown",
+  "w": "22-trophies.js:31"
+ },
+ {
+  "k": "Little trident",
+  "w": "22-trophies.js:31"
+ },
+ {
+  "k": "Sol Invictus",
+  "w": "22-trophies.js:31"
+ },
+ {
+  "k": "Crescent moon",
+  "w": "22-trophies.js:31"
+ },
+ {
+  "k": "Minerva’s owl",
+  "w": "22-trophies.js:31"
+ },
+ {
+  "k": "Lanista of the Season — top of the league table.",
+  "w": "22-trophies.js:79"
+ },
+ {
+  "k": "Champion of the Flavius Superbus — the great final of the season in Roma.",
+  "w": "22-trophies.js:80"
+ },
+ {
+  "k": "Gladiator of the Season: most wins on the sand.",
+  "w": "22-trophies.js:81"
+ },
+ {
+  "k": "Rookie of the Season: the best first season on the sand.",
+  "w": "22-trophies.js:82"
+ },
+ {
+  "k": "Most gladiators beaten on the sand this season.",
+  "w": "22-trophies.js:83"
+ },
+ {
+  "k": "Most beasts brought down this season.",
+  "w": "22-trophies.js:84"
+ },
+ {
+  "k": "The single greatest Fate score of the season.",
+  "w": "22-trophies.js:85"
+ },
+ {
+  "k": "Most damage dealt this season.",
+  "w": "22-trophies.js:86"
+ },
+ {
+  "k": "The hardest to kill: most bouts walked away from this season.",
+  "w": "22-trophies.js:87"
+ },
+ {
+  "k": "The biggest leap in rating this season — the drills paid off.",
+  "w": "22-trophies.js:88"
+ },
+ {
+  "k": "The people’s choice: the most fans across the empire.",
+  "w": "22-trophies.js:89"
+ },
+ {
+  "k": "THE PEOPLE",
+  "w": "22-trophies.js:89"
+ },
+ {
+  "k": "Soaked up more punishment than anyone alive. Somebody hand them the stick.",
+  "w": "22-trophies.js:90"
+ },
+ {
+  "k": "Most bouts fought without a single win. The crowd loves a trier.",
+  "w": "22-trophies.js:91"
+ },
+ {
+  "k": "TRIED HARD",
+  "w": "22-trophies.js:91"
+ },
+ {
+  "k": "The lowest Fate score of the season. Tholo is still laughing.",
+  "w": "22-trophies.js:92"
+ },
+ {
+  "k": "HEE HEE",
+  "w": "22-trophies.js:92"
+ },
+ {
+  "k": "The lanista who lost the most at the betting windows.",
+  "w": "22-trophies.js:93"
+ },
+ {
+  "k": "BET LESS",
+  "w": "22-trophies.js:93"
+ },
+ {
+  "k": "Never missed a night: the most bouts fought this season.",
+  "w": "22-trophies.js:94"
+ },
+ {
+  "k": "EVERY NIGHT",
+  "w": "22-trophies.js:94"
+ },
+ {
+  "k": "Champion of the Colossus Invitational — sixteen of the empire’s best, one crown.",
+  "w": "22-trophies.js:95"
+ },
+ {
+  "k": "Won the Golden Trident Challenge at Pompeii against three invited champions.",
+  "w": "22-trophies.js:96"
+ },
+ {
+  "k": "Took the Leptis Magna Cup: two heats, then a duel in the African sun.",
+  "w": "22-trophies.js:97"
+ },
+ {
+  "k": "{0} {1} coin",
+  "w": "22-trophies.js:107"
+ },
+ {
+  "k": "{0} {1} CF",
+  "w": "22-trophies.js:107"
+ },
+ {
+  "k": "★ {0} fame",
+  "w": "22-trophies.js:107"
+ },
+ {
+  "k": "glory alone",
+  "w": "22-trophies.js:107"
+ },
+ {
+  "k": "won {0}",
+  "w": "22-trophies.js:125"
+ },
+ {
+  "k": "🏆 <b>{0}</b> comes home to the trophy room{1}. {2}.",
+  "w": "22-trophies.js:126"
+ },
+ {
+  "k": "{0} · season {1}{2}",
+  "w": "22-trophies.js:143"
+ },
+ {
+  "k": "An empty place on the shelf",
+  "w": "22-trophies.js:143"
+ },
+ {
+  "k": "Won {0} times",
+  "w": "22-trophies.js:143"
+ },
+ {
+  "k": "🏆 The trophy room",
+  "w": "22-trophies.js:148"
+ },
+ {
+  "k": "{0} won · {1} pieces · {2} on display",
+  "w": "22-trophies.js:148"
+ },
+ {
+  "k": "Silverware from the Flavian Awards, invitationals and your own events. Click a shelf spot, then choose what stands there — swap them whenever you like.",
+  "w": "22-trophies.js:149"
+ },
+ {
+  "k": "{0} · HALL OF HONOURS",
+  "w": "22-trophies.js:151"
+ },
+ {
+  "k": "The built-in silverware ({0}) — what the league and the invitationals award",
+  "w": "22-trophies.js:152"
+ },
+ {
+  "k": "The shelves are bare. Win an award at season's end, take an invitational, or win one of your own events with a trophy attached — and the first piece of silver goes up here.",
+  "w": "22-trophies.js:153"
+ },
+ {
+  "k": "<b>Shelf spot {0}</b> — {1}\n      {2}",
+  "w": "22-trophies.js:154"
+ },
+ {
+  "k": "<b>{0}</b>{1} (season {2}{3}) ·",
+  "w": "22-trophies.js:154"
+ },
+ {
+  "k": "Take it down",
+  "w": "22-trophies.js:154"
+ },
+ {
+  "k": "📜 Its history",
+  "w": "22-trophies.js:155"
+ },
+ {
+  "k": "🏆 Season {0}{1}{2}",
+  "w": "22-trophies.js:155"
+ },
+ {
+  "k": "<span class=\"rc-sub\">No record kept.</span>",
+  "w": "22-trophies.js:155"
+ },
+ {
+  "k": "Swap in",
+  "w": "22-trophies.js:156"
+ },
+ {
+  "k": "Display",
+  "w": "22-trophies.js:156"
+ },
+ {
+  "k": "📦 The storeroom",
+  "w": "22-trophies.js:157"
+ },
+ {
+  "k": "{0} not on display — pick a shelf spot to put one up",
+  "w": "22-trophies.js:157"
+ },
+ {
+  "k": "{0} points · {1}-{2}",
+  "w": "22-trophies.js:169"
+ },
+ {
+  "k": "the Flavius Superbus · {0} CF",
+  "w": "22-trophies.js:170"
+ },
+ {
+  "k": "{0} win{1} in {2}",
+  "w": "22-trophies.js:171"
+ },
+ {
+  "k": "{0}-{1} in their first season",
+  "w": "22-trophies.js:172"
+ },
+ {
+  "k": "{0} gladiators beaten",
+  "w": "22-trophies.js:173"
+ },
+ {
+  "k": "{0} beasts downed",
+  "w": "22-trophies.js:174"
+ },
+ {
+  "k": "{0} CF in one night",
+  "w": "22-trophies.js:175"
+ },
+ {
+  "k": "{0} damage dealt",
+  "w": "22-trophies.js:176"
+ },
+ {
+  "k": "walked away from {0} of {1} bouts",
+  "w": "22-trophies.js:177"
+ },
+ {
+  "k": "+{0} rating ({1} → {2})",
+  "w": "22-trophies.js:178"
+ },
+ {
+  "k": "≈{0}K fans",
+  "w": "22-trophies.js:179"
+ },
+ {
+  "k": "{0} damage taken — and still here",
+  "w": "22-trophies.js:181"
+ },
+ {
+  "k": "0 wins in {0} bouts",
+  "w": "22-trophies.js:182"
+ },
+ {
+  "k": "{0} CF — a personal worst",
+  "w": "22-trophies.js:183"
+ },
+ {
+  "k": "{0} coin at the betting windows",
+  "w": "22-trophies.js:184"
+ },
+ {
+  "k": "{0} bouts",
+  "w": "22-trophies.js:185"
+ },
+ {
+  "k": "🎭 <b>The Flavian Awards of season {0}</b>: {1}.",
+  "w": "22-trophies.js:189"
+ },
+ {
+  "k": "{0} to {1}",
+  "w": "22-trophies.js:189"
+ },
+ {
+  "k": "😄 For the laughs",
+  "w": "22-trophies.js:196"
+ },
+ {
+  "k": "🏛 The honours",
+  "w": "22-trophies.js:196"
+ },
+ {
+  "k": "Yours! → the trophy room · {0}",
+  "w": "22-trophies.js:198"
+ },
+ {
+  "k": "✉<span>{0} · the envelope, please…</span>",
+  "w": "22-trophies.js:199"
+ },
+ {
+  "k": "For the laughs",
+  "w": "22-trophies.js:199"
+ },
+ {
+  "k": "The honours",
+  "w": "22-trophies.js:199"
+ },
+ {
+  "k": "Not awarded this season — nobody qualified.",
+  "w": "22-trophies.js:201"
+ },
+ {
+  "k": "🎭 The Flavian Awards<small>Season {0} · live from the Theatre of Marcellus · your host, Flavius himself</small>",
+  "w": "22-trophies.js:202"
+ },
+ {
+  "k": "✉ Open the next envelope <small>{0} of {1}</small>",
+  "w": "22-trophies.js:204"
+ },
+ {
+  "k": "Open them all",
+  "w": "22-trophies.js:204"
+ },
+ {
+  "k": "📰 On to the season recap",
+  "w": "22-trophies.js:205"
+ },
+ {
+  "k": "Sixteen of the empire’s best under the Flavian amphitheater. Four heats of four; each heat’s winner goes through to a Cassian final.",
+  "w": "22-trophies.js:211"
+ },
+ {
+  "k": "4 heats of 4 → a final of 4",
+  "w": "22-trophies.js:211"
+ },
+ {
+  "k": "opponents rated 68–86",
+  "w": "22-trophies.js:211"
+ },
+ {
+  "k": "the Fate table applies, as in any event",
+  "w": "22-trophies.js:211"
+ },
+ {
+  "k": "Golden Eagle in the Blessings bag",
+  "w": "22-trophies.js:211"
+ },
+ {
+  "k": "One bout, one night, three invited champions and the biggest crowd of the year on the Bay of Naples.",
+  "w": "22-trophies.js:213"
+ },
+ {
+  "k": "a single bout of 4 — you against three champions",
+  "w": "22-trophies.js:213"
+ },
+ {
+  "k": "opponents rated 76–90",
+  "w": "22-trophies.js:213"
+ },
+ {
+  "k": "a sold-out house: purses and fame run high",
+  "w": "22-trophies.js:213"
+ },
+ {
+  "k": "Two heats in the African sun, then the two heat winners duel for the Lion.",
+  "w": "22-trophies.js:215"
+ },
+ {
+  "k": "2 heats of 4 → a duel for the cup",
+  "w": "22-trophies.js:215"
+ },
+ {
+  "k": "opponents rated 64–82",
+  "w": "22-trophies.js:215"
+ },
+ {
+  "k": "by invitation only: the top 4 of the league table, one fighter each",
+  "w": "22-trophies.js:218"
+ },
+ {
+  "k": "a Classic Elimination with Cassian as summa rudis",
+  "w": "22-trophies.js:218"
+ },
+ {
+  "k": "Your own event, {0}, staged as an invitational — its trophy goes to the winner.",
+  "w": "22-trophies.js:222"
+ },
+ {
+  "k": "a single bout of {0}",
+  "w": "22-trophies.js:222"
+ },
+ {
+  "k": "opponents rated 62–84",
+  "w": "22-trophies.js:222"
+ },
+ {
+  "k": "your event’s own rules",
+  "w": "22-trophies.js:222"
+ },
+ {
+  "k": "Difficulty {0} of 5",
+  "w": "22-trophies.js:225"
+ },
+ {
+  "k": "The invitation to <b>{0}</b> lapsed unanswered.",
+  "w": "22-trophies.js:236"
+ },
+ {
+  "k": "🏛 <b>The Flavius Superbus</b> opens in Roma — {0}. The league waits on the final.",
+  "w": "22-trophies.js:242"
+ },
+ {
+  "k": "<b>{0}</b> is pushed back a week — the league has another event on.",
+  "w": "22-trophies.js:244"
+ },
+ {
+  "k": "Nobody fit to send to <b>{0}</b> — the host is insulted (−3 fame).",
+  "w": "22-trophies.js:247"
+ },
+ {
+  "k": "an EXHIBITION: the host pays the editor — no Fates, purse a third smaller",
+  "w": "22-trophies.js:248"
+ },
+ {
+  "k": "⭐ <b>{0}</b> opens at {1} — the league's week waits on the invitational.",
+  "w": "22-trophies.js:248"
+ }
+]

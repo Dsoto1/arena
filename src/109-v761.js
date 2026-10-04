@@ -17,19 +17,19 @@ function newerSeen76(){let n=null;try{const v=localStorage.getItem(NEWEST76);if(
 function updBar76(v,stale){if(typeof HEADLESS!=='undefined'&&HEADLESS)return;let b=document.getElementById('upd76');
   if(!b){b=document.createElement('div');b.id='upd76';b.setAttribute('role','status');document.body.appendChild(b)}
   if(b.dataset.v===v+(stale?'s':'')&&!b.hidden)return;b.dataset.v=v+(stale?'s':'');b.hidden=false;
-  b.innerHTML=stale?`<span>🆕 <b>v${esc(v)}</b> is open in another tab or was saved there — this copy won't save until you reload.</span><button type="button" class="btn tksm primary" data-upd76="go">Reload</button>`
-    :`<span>🆕 <b>v${esc(v)}</b> is out — finish your match, then reload.</span><button type="button" class="btn tksm primary" data-upd76="go">Reload</button><button type="button" class="btn tksm" data-upd76="x" aria-label="Later">Later</button>`}
+  b.innerHTML=stale?`${_T`<span>🆕 <b>v${esc(v)}</b> is open in another tab or was saved there — this copy won't save until you reload.</span>`}<button type="button" class="btn tksm primary" data-upd76="go">${_T`Reload`}</button>`
+    :`${_T`<span>🆕 <b>v${esc(v)}</b> is out — finish your match, then reload.</span>`}<button type="button" class="btn tksm primary" data-upd76="go">${_T`Reload`}</button><button type="button" class="btn tksm" data-upd76="x" aria-label="${_T`Later`}">${_T`Later`}</button>`}
 document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('[data-upd76]');if(!b)return;e.preventDefault();e.stopPropagation();const bar=document.getElementById('upd76');
   if(b.dataset.upd76==='x'){if(bar)bar.hidden=true;return}
   const live=typeof S!=='undefined'&&S&&!S.over&&S.phase!=='setup';
-  if(live&&typeof ask76==='function'&&!(await ask76('Reload now?','This match ends here unless it is saved.','Reload','Keep playing')))return;
+  if(live&&typeof ask76==='function'&&!(await ask76(_T('Reload now?'),_T('This match ends here unless it is saved.'),_T('Reload'),_T('Keep playing'))))return;
   location.reload()},true);
 async function verPoll76(){if(!/^https?:$/.test(location.protocol))return;try{const r=await fetch('version.json',{cache:'no-store'});if(!r.ok)return;const j=await r.json();const v=j&&String(j.v||'');
   if(v&&/^\d+\.\d+$/.test(v)&&verCmp(v,GAME_VER)>0){try{if(verCmp(localStorage.getItem(NEWEST76)||'0',v)<0)localStorage.setItem(NEWEST76,v)}catch(e){}updBar76(v,false)}}catch(e){}}
 setTimeout(verPoll76,8000);setInterval(verPoll76,VERPOLL76);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')verPoll76()});
 /* the guard: an older build never writes over what a newer one saved */
 let blockSaid76=0;
-function saveBlocked76(){const n=newerSeen76();if(!n)return false;updBar76(n,true);if(Date.now()-blockSaid76>20000&&typeof mToast==='function'){blockSaid76=Date.now();mToast(`🆕 A newer version (v${esc(n)}) is in use — reload to keep saving.`)}return true}
+function saveBlocked76(){const n=newerSeen76();if(!n)return false;updBar76(n,true);if(Date.now()-blockSaid76>20000&&typeof mToast==='function'){blockSaid76=Date.now();mToast(_T`🆕 A newer version (v${esc(n)}) is in use — reload to keep saving.`)}return true}
 {const base=Store.put;Store.put=function(){if(saveBlocked76())return Promise.resolve(null);return base.apply(this,arguments)}}
 {const base=saveWorld;saveWorld=function(){if(saveBlocked76())return Promise.resolve(null);return base.apply(this,arguments)}}
 {const base=matchSlotPut;matchSlotPut=function(){if(saveBlocked76())return false;return base.apply(this,arguments)}}
@@ -41,9 +41,9 @@ function saveBlocked76(){const n=newerSeen76();if(!n)return false;updBar76(n,tru
 /* ---------- every delete of a custom creation asks first (a centred popup naming it; one answer — the old two-click
    "Confirm delete" buttons go straight through after it) ---------- */
 const DEL76='[data-st="del"],[data-st="spdel"],[data-clsa="del"],[data-trs="del"],[data-sps="del"],[data-fda="del"],[data-gs="wdel"],[data-gs="adel"],[data-cr="del"],[data-rs="del"]';
-function delName76(b){const box=b.closest('.lrow,.setcard,.card2,tr,li,.studcard,.row')||b.parentElement;const n=box&&box.querySelector('b,strong,.nm,.name');const t=(n&&n.textContent||'').trim();return t&&t.length<60?t:'this creation'}
+function delName76(b){const box=b.closest('.lrow,.setcard,.card2,tr,li,.studcard,.row')||b.parentElement;const n=box&&box.querySelector('b,strong,.nm,.name');const t=(n&&n.textContent||'').trim();return t&&t.length<60?t:_T('this creation')}
 document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest(DEL76);if(!b||b.disabled)return;if(b.dataset.del76ok){delete b.dataset.del76ok;return}
-  e.preventDefault();e.stopPropagation();const ok=await ask76(`🗑 Delete ${esc(delName76(b))}?`,'It is gone for good — this cannot be undone.','Delete','Keep it');if(!ok||!b.isConnected)return;
+  e.preventDefault();e.stopPropagation();const ok=await ask76(_T`🗑 Delete ${esc(delName76(b))}?`,_T('It is gone for good — this cannot be undone.'),_T('Delete'),_T('Keep it'));if(!ok||!b.isConnected)return;
   b.dataset.del76ok='1';if(b.dataset.st)b.dataset.armed='1';b.click()},true);
 
 /* ---------- Studio fixes (after v0.76, Virgilante):
@@ -63,9 +63,9 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 {const base=classStudioHTML;classStudioHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/(<div class="lrow" style="--pc:[^"]*" data-card="k:(\w+)">)[\s\S]*?(<div class="t">)/g,(m0,a,k,t)=>a+`<span class="clscard76">${cardHTML('k:'+k,'sm')}</span>`+t)}catch(e){console.error(e)}return h}}
 (()=>{const st=document.createElement('style');st.textContent=`.clscard76{flex:none;width:92px;display:block}.clscard76 .cimg,.clscard76 img{width:92px!important;height:auto}`;document.head.appendChild(st)})();
 /* the system class rows quote his printed cards (ability + weakness); where the digital game pays it through a rating, say which */
-const CLS_CARD_TXT76={soldier:'+1 damage on every successful round 1 attack.',royalty:'1 coin each turn — here, from Luck.',hero:'1 CF each turn — here, from Charisma.',slave:'1 extra movement each turn — here, from Speed.',
-  veteranus:'1 coin or 1 CF each turn — here, from Luck and Charisma. Weakness: weapons, armor and CF purchases cost 1 more.',amazonia:'None. Weakness: never receives CF from Blessings.',
-  venatore:'Declare Zora and place her mini into play. Weakness: can never use tunnels.',damnatio:'Gain 1 stone each turn; +10 CF to the final score if they win any event. Weakness: pelted with 1 stone (1 damage) each turn in phase 1.'};
+const CLS_CARD_TXT76={soldier:_T('+1 damage on every successful round 1 attack.'),royalty:_T('1 coin each turn — here, from Luck.'),hero:_T('1 CF each turn — here, from Charisma.'),slave:_T('1 extra movement each turn — here, from Speed.'),
+  veteranus:_T('1 coin or 1 CF each turn — here, from Luck and Charisma. Weakness: weapons, armor and CF purchases cost 1 more.'),amazonia:_T('None. Weakness: never receives CF from Blessings.'),
+  venatore:_T('Declare Zora and place her mini into play. Weakness: can never use tunnels.'),damnatio:'Gain 1 stone each turn; +10 CF to the final score if they win any event. Weakness: pelted with 1 stone (1 damage) each turn in phase 1.'};
 {const base=classStudioHTML;classStudioHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/(data-card="k:(\w+)">[\s\S]*?<div class="t">[\s\S]*?<\/span>)<small>[^<]*<\/small>/g,(m0,a,k)=>CLS_CARD_TXT76[k]?a+`<small>${esc(CLS_CARD_TXT76[k])}</small>`:m0)}catch(e){console.error(e)}return h}}
 
 /* ---- Level 4 custom weapons: the Arena Chest ----
@@ -76,7 +76,7 @@ const CHEST_W0_76=[...CHEST_W];
 {const base=gearRebuild;gearRebuild=function(){const r=base.apply(this,arguments);CHEST_W.length=0;CHEST_W.push(...CHEST_W0_76);
   for(const cw of CUSTOM.weapons||[]){const w=W['cw_'+cw.id];if(w&&w.cwChest&&(typeof rosterGate!=='function'||rosterGate('weapons',cw,true)))CHEST_W.push('cw_'+cw.id)}return r}}
 {const base=gearStudioInput;gearStudioInput=function(t){const r=base.apply(this,arguments);if(t&&t.dataset&&t.dataset.cwf==='chest'){ST.cw.chest=t.value==='1'?1:0;return 'redraw'}return r}}
-{const base=gearWHTML;gearWHTML=function(){let h=base.apply(this,arguments);try{const d=ST.cw||{};const lvSel=`<label>Level<select data-cwf="chest"><option value="" ${d.chest?'':'selected'}>By its stats (1–3) · market</option><option value="1" ${d.chest?'selected':''}>4 · the Arena Chest</option></select></label>`;
+{const base=gearWHTML;gearWHTML=function(){let h=base.apply(this,arguments);try{const d=ST.cw||{};const lvSel=`<label>${_T`Level`}<select data-cwf="chest"><option value="" ${d.chest?'':'selected'}>${_T`By its stats (1–3) · market`}</option><option value="1" ${d.chest?'selected':''}>${_T`4 · the Arena Chest`}</option></select></label>`;
   h=h.replace(/(<label>Start from<select data-cwf="a\.type">)/,lvSel+'$1');
   if(d.chest)h=h.replace(/its card · Level 4 · [^<]*/,'its card · Level 4 · a chest prize — on the rolls it joins the Arena Chest’s draw');
   for(const cw of CUSTOM.weapons||[]){const wk=W['cw_'+cw.id];if(wk&&wk.cwChest)h=h.replace(new RegExp(`(<b>${esc(cw.name).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}</b> <span class="rc-sub">)`),'$1🗝 in the Arena Chest')}

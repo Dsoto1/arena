@@ -1,0 +1,1210 @@
+[
+ {
+  "k": "<b style=\"color:var(--blood2)\">{0} is erased.</b>",
+  "w": "11-extra.js:508"
+ },
+ {
+  "k": "The record is burned, the name is chiselled off the rolls, and the sand forgets faster than anyone likes to admit. Retirement from Flavius's arena is just death with better paperwork.",
+  "w": "11-extra.js:508"
+ },
+ {
+  "k": "Gladiators with 2+ beast trophies won 28% of events and reached the Ludus 44% of the time; with none, 18% and 18%. The beasts are the arena's savings account.",
+  "w": "11-extra.js:533"
+ },
+ {
+  "k": "Buying 2+ market items: 28% win rate, versus 14% for gladiators who never bought. Coin left in the purse wins nothing.",
+  "w": "11-extra.js:533"
+ },
+ {
+  "k": "Breaking 2+ pots: 32% win rate and 41% reached the Ludus, versus 12% and 25% for the pot-shy. A power-1 weapon breaks a pot only 1 time in 4 — pots are a job for power-2 weapons, a Cestus or Herculean Vigor.",
+  "w": "11-extra.js:533"
+ },
+ {
+  "k": "Drawing 2+ arena cards: 27% win rate versus 18% for coin-only players, and the card players reached the Ludus twice as often (39% vs 19%).",
+  "w": "11-extra.js:533"
+ },
+ {
+  "k": "Very cautious gladiators (survival 70+) averaged 13.5 CF against 22.4 for the bold (30 or less). The crowd pays for nerve, not for hiding.",
+  "w": "11-extra.js:533"
+ },
+ {
+  "k": "Keen beast hunters (hunt 70+) averaged 18.2 CF against 13.8 for gladiators who ignore the beasts.",
+  "w": "11-extra.js:533"
+ },
+ {
+  "k": "Difficulty check (100 further events with one Easy, one Normal and two Hard CPUs): Easy won 3%, Normal 20%, each Hard CPU 39%. Hard CPUs now ration shield uses, route around danger and never lose track of a walled-in beast.",
+  "w": "11-extra.js:533"
+ },
+ {
+  "k": "An event lasted 55 turns on average, and winners finished with about 50 CF — under the new crowd scaling, big attendance changes the noise, not the number.",
+  "w": "11-extra.js:533"
+ },
+ {
+  "k": "300 events, four gladiators each, random classes and personalities, normal difficulty, v0.11 rules. Dominant trait = the highest of the six priorities; win rates sit near 25% because four gladiators enter each event.",
+  "w": "11-extra.js:533"
+ },
+ {
+  "k": "throw P{0} R{1} ×{2}",
+  "w": "11-extra.js:540"
+ },
+ {
+  "k": "{0} ammo",
+  "w": "11-extra.js:540"
+ },
+ {
+  "k": "{0} uses",
+  "w": "11-extra.js:540"
+ },
+ {
+  "k": "absorbs {0} × {1}",
+  "w": "11-extra.js:540"
+ },
+ {
+  "k": "+{0} CF per hit",
+  "w": "11-extra.js:540"
+ },
+ {
+  "k": "+{0} HP per hit",
+  "w": "11-extra.js:540"
+ },
+ {
+  "k": "both attacks",
+  "w": "11-extra.js:540"
+ },
+ {
+  "k": "Flavius item (+2 CF if you win)",
+  "w": "11-extra.js:540"
+ },
+ {
+  "k": "Arms",
+  "w": "11-extra.js:546"
+ },
+ {
+  "k": "Legs",
+  "w": "11-extra.js:546"
+ },
+ {
+  "k": "Best weapons",
+  "w": "11-extra.js:547"
+ },
+ {
+  "k": "Expected damage per attack assumes every hit die is a coin flip: 2 dice against gladiators, 4 against beasts. Range matters as much as power: an attack from 3+ tiles away rarely gets hit back.",
+  "w": "11-extra.js:548"
+ },
+ {
+  "k": "<b>Level 4 · Arena Chest (1 key):</b> the Labrys attacks twice for 4, the Psykhe heals you 1 HP per hit, and the Shield of Achilles absorbs 2 per hit for 12 uses while still striking for 2.",
+  "w": "11-extra.js:552"
+ },
+ {
+  "k": "Level",
+  "w": "11-extra.js:553"
+ },
+ {
+  "k": "Power",
+  "w": "11-extra.js:553"
+ },
+ {
+  "k": "Range",
+  "w": "11-extra.js:553"
+ },
+ {
+  "k": "Exp. dmg PvP",
+  "w": "11-extra.js:553"
+ },
+ {
+  "k": "Exp. dmg PvE",
+  "w": "11-extra.js:553"
+ },
+ {
+  "k": "Best armor",
+  "w": "11-extra.js:554"
+ },
+ {
+  "k": "Each body location holds at most one padded (stackable) piece plus one piece per equip point, and never more than 7 AP. Padded wraps sit under bracers and greaves; a Balteus belt stacks with any chest armor.",
+  "w": "11-extra.js:555"
+ },
+ {
+  "k": "{0} ({1} AP{2}{3}{4}{5}, level {6})",
+  "w": "11-extra.js:556"
+ },
+ {
+  "k": "each side",
+  "w": "11-extra.js:556"
+ },
+ {
+  "k": ", +1 movement as a pair",
+  "w": "11-extra.js:556"
+ },
+ {
+  "k": "Priorities: armor the head and chest first (losing either eliminates you), then the arm that holds your best weapon. The {0} is the single strongest piece ({1} AP{2}).",
+  "w": "11-extra.js:557"
+ },
+ {
+  "k": "{0} AP on the {1}",
+  "w": "11-extra.js:557"
+ },
+ {
+  "k": "Advice distilled from the rulebook and from <b>{0} simulated all-CPU events</b>{1} Turn <b>Hints</b> on in the top bar for rule popups the first time something happens and live suggestions in your Action panel.",
+  "w": "11-extra.js:564"
+ },
+ {
+  "k": "— three hundred of them, because some numbers demand it. <i>This is the arena.</i>",
+  "w": "11-extra.js:564"
+ },
+ {
+  "k": "Winning the crowd",
+  "w": "11-extra.js:565"
+ },
+ {
+  "k": "<b>Your Fate is your score.</b> 20+ CF reaches the Ludus Flavius (you can save your gladiator); 50+ earns freedom. 17-19 is the Thumb of Flavius, a coin flip with your life.",
+  "w": "11-extra.js:566"
+ },
+ {
+  "k": "Early CF comes from <b>Blessings pots</b> (2 coin + 1 CF + a hidden offering, 2 damage breaks one), <b>beast trophies</b> (snake 3, wolf 4, bear 5, lion 5, Commodus and Tholo 6) and your class ability. A gladiator elimination is worth 10 CF and a trophy.",
+  "w": "11-extra.js:567"
+ },
+ {
+  "k": "Winners add 15 CF, 5 CF per 3 trophies and 2 CF per Flavius item. Every Mandata Flavi still hidden at the end costs 5 CF, so work on yours early.",
+  "w": "11-extra.js:568"
+ },
+ {
+  "k": "In the simulations winners averaged <b>{0} CF</b>; {1}% of all gladiators reached the Ludus Flavius, and gladiators who broke 2+ pots in round 1 won {2}% of events versus {3}% for those who broke none.",
+  "w": "11-extra.js:569"
+ },
+ {
+  "k": "What {0} simulated events say",
+  "w": "11-extra.js:571"
+ },
+ {
+  "k": "Each turn",
+  "w": "11-extra.js:572"
+ },
+ {
+  "k": "<b>Resolve</b>: check which beasts are aggro on you (the NPC tracker shows it). An NPC holds one aggro target, the last gladiator to hit it, and still lashes out at anyone adjacent.",
+  "w": "11-extra.js:573"
+ },
+ {
+  "k": "<b>Choice</b>: 2 coin is safe. Of the arena deck's 33 instant cards, 18 cost you something (armor or weapons falling apart, Lashings, Telonium, Piaculum). Draw when you are healthy or need a spike: Omnia Mutantur, Minerva's Push and Elixirs win fights.",
+  "w": "11-extra.js:574"
+ },
+ {
+  "k": "Push beasts or rivals onto floor spikes (2 damage), push pillars onto tunnels to seal them, and topple pillars (3 movement) for 3 damage on the next two tiles plus every pot on top.",
+  "w": "11-extra.js:576"
+ },
+ {
+  "k": "Beasts and behavior states",
+  "w": "11-extra.js:579"
+ },
+ {
+  "k": "Lions, Commodus and Tholo start <b>Initial</b>, turn <b>Raged</b> (harder hits, faster) as they lose HP, then <b>Fazed</b> (slow, weak) near death. Don't stand next to a Raged Tholo (5 attack); finish a Fazed one before a rival steals the trophy.",
+  "w": "11-extra.js:580"
+ },
+ {
+  "k": "Tunnels and the Ward of the Evil Eye shake aggro. A Meat Lure hands a beast's aggro to a rival within 4 tiles.",
+  "w": "11-extra.js:582"
+ },
+ {
+  "k": "Tholo can only be head-shot with a focused Arcuballista, and he steals the chest if he walks over it.",
+  "w": "11-extra.js:583"
+ },
+ {
+  "k": "Allies, truces and teams",
+  "w": "11-extra.js:585"
+ },
+ {
+  "k": "Allied CPUs gift elixirs and AP to hurt teammates, share keys for the chest and focus fire on whatever is hitting their allies. You can gift items too from Trade or truce.",
+  "w": "11-extra.js:586"
+ },
+ {
+  "k": "A truce ends the moment either side attacks. When every gladiator left is in truce in an elimination event, Flavius breaks every truce.",
+  "w": "11-extra.js:587"
+ },
+ {
+  "k": "The newer rules, mastered",
+  "w": "11-extra.js:589"
+ },
+ {
+  "k": "<b>Shields are a choice.</b> Each incoming hit you decide whether to spend a use absorbing the shield's stated value; the rest falls on armor, then flesh. Spend uses on 2+ damage hits and on any hit that threatens a severing; let chip damage land on healthy armor.",
+  "w": "11-extra.js:590"
+ },
+ {
+  "k": "<b>Big crowds cheer louder, not richer.</b> Up to 8 seated, every fan in your section is 1 CF (the printed rule). Over 8, your section is worth its share of the house (fans × 8 ÷ attendance), fractions carry turn to turn, and no section pays more than 3 CF per resolve — so packing the stands with your fans helps, but freedom still has to be won with trophies and the final bout. Attendance is recorded with every result.",
+  "w": "11-extra.js:591"
+ },
+ {
+  "k": "<b>Mind the omen.</b> Weather and city news sway attendance and moods, and a hometown gladiator gains (or loses) CF before their own city. In Manager mode the omen also scales the night's purses.",
+  "w": "11-extra.js:592"
+ },
+ {
+  "k": "<b>The Gauntlet pays for blood only.</b> No coin from the Choice phase, at most 12 (stingy) spectators, and three quiet rotations earn the editor's lash. Kill fast or die tired.",
+  "w": "11-extra.js:593"
+ },
+ {
+  "k": "<b>The editor's patience is finite everywhere:</b> 40 rotations without blood (or 200 total) and Flavius calls the event on Crowd Favor.",
+  "w": "11-extra.js:594"
+ },
+ {
+  "k": "Manager mode: how recruiting really works",
+  "w": "11-extra.js:596"
+ },
+ {
+  "k": "Every fighter weighs three <b>motives</b> (coin, glory, honor, spectacle, training, home, arena time) and grades your ludus A–F on each. Interest ≈ the weighted sum. <b>Scout first</b>: it reveals their motives, so your pitches stop guessing.",
+  "w": "11-extra.js:597"
+ },
+ {
+  "k": "<b>Rivalry is real.</b> Poach a stable, outbid a suitor or beat their fighters and that lanista runs hot: bitter rivals poach YOUR fighters first and bet against your entries. The League tab shows every feud.",
+  "w": "11-extra.js:600"
+ },
+ {
+  "k": "Watch the books: three week-ends in the red (or a season ended in debt) and the creditors close the ludus for good. The weekly repair budget ({0} coin) covers Hygeia limb regrowth and the Medicus.",
+  "w": "11-extra.js:601"
+ },
+ {
+  "k": "Manager mode: the life of a league fighter",
+  "w": "11-extra.js:603"
+ },
+ {
+  "k": "<b>The training yard</b>: set a weekly drill budget in Your ludus. More coin per fighter means better odds of +1 rating (your Discipline helps), the report prints in the Acta Diurna — and a hard week or an ill omen can injure someone: benched and rating-docked until the Medicus (or a week of rest) clears it.",
+  "w": "11-extra.js:608"
+ },
+ {
+  "k": "Classes",
+  "w": "11-extra.js:610"
+ },
+ {
+  "k": "Soldiers lean strong: with Strength 76+ every hit lands harder while class abilities are on, so strike early, then armor up.",
+  "w": "11-extra.js:610"
+ },
+ {
+  "k": "Heroes lean on Charisma: 76+ adds CF each turn. The Scutum absorbs 2 per hit for 4 hits, so play long.",
+  "w": "11-extra.js:610"
+ },
+ {
+  "k": "Best armor in the game (5 AP head and chest) but the Rudis falls apart after 6 uses, so buy a weapon early.",
+  "w": "11-extra.js:610"
+ },
+ {
+  "k": "Axe and Falcata both hit for 2 and the Cestus adds 1. You gain no CF from pots, so hunt beasts and gladiators.",
+  "w": "11-extra.js:610"
+ },
+ {
+  "k": "Release Zora early: he breaks pots and carries loot. Your Tame card turns a wolf or bear into a bodyguard.",
+  "w": "11-extra.js:610"
+ },
+ {
+  "k": "No armor worth the name and a stone to the head each turn. The Stone Sling reaches 5 tiles; stay far away and win for +10 CF.",
+  "w": "11-extra.js:610"
+ },
+ {
+  "k": "(sim win rate {0}%, avg CF {1})",
+  "w": "11-extra.js:610"
+ },
+ {
+  "k": "Personalities in the simulations",
+  "w": "11-extra.js:611"
+ },
+ {
+  "k": "Dominant trait",
+  "w": "11-extra.js:611"
+ },
+ {
+  "k": "Games",
+  "w": "11-extra.js:611"
+ },
+ {
+  "k": "Win rate",
+  "w": "11-extra.js:611"
+ },
+ {
+  "k": "Avg final CF",
+  "w": "11-extra.js:611"
+ },
+ {
+  "k": "Reached Ludus",
+  "w": "11-extra.js:611"
+ },
+ {
+  "k": "Manager mode, beyond the sand (v0.21–v0.25)",
+  "w": "11-extra.js:612"
+ },
+ {
+  "k": "<b>Morale fights with them.</b> 80+ morale walks out with +1 AP and +1 CF and a bolder style; under 35 costs 1 AP; under 20 drops them a whole difficulty tier. A shared meal or kin tickets before Match Week is cheap insurance.",
+  "w": "11-extra.js:613"
+ },
+ {
+  "k": "<b>Walk the sand</b> every week you enter someone: 2 hours and 6 coin buys +1 AP and +1 coin for each of your fighters on that card — better value than most training.",
+  "w": "11-extra.js:614"
+ },
+ {
+  "k": "<b>Enter a fighter every week.</b> The appearance fee is paid win or lose, so an entry is never a loss even before the purse.",
+  "w": "11-extra.js:615"
+ },
+ {
+  "k": "<b>Read the Consilium.</b> The Quaestor's runway is the number to watch: under three weeks of wages, stop signing and start entering.",
+  "w": "11-extra.js:616"
+ },
+ {
+  "k": "<b>Bet on value, not favorites.</b> Scouted fighters show your own estimate beside the bookmaker's; ▲ value marks the only bets worth making. Every slip lands in the shared exchange, so you can see who else is laying coin.",
+  "w": "11-extra.js:617"
+ },
+ {
+  "k": "<b>Fell behind the empire?</b> The doctores can run the missing weeks with sensible verdicts — or keep your own calendar if you'd rather play every week yourself.",
+  "w": "11-extra.js:618"
+ },
+ {
+  "k": "What a rating means (Manager mode)",
+  "w": "11-extra.js:619"
+ },
+ {
+  "k": "<b>Rating sets the brain.</b> Below 60 a fighter plays like an <b>Easy</b> CPU: noisy decisions, random card and coin choices, no truces, no clever tunnel play. 60-79 plays <b>Normal</b>. <b>80+</b> plays <b>Hard</b>: almost no noise, banks coin for the market, avoids the deck when hurt, uses tunnels and truces well.",
+  "w": "11-extra.js:620"
+ },
+ {
+  "k": "<b>Rating fits armor and fills the purse.</b> Before the bout a fighter gets +1 AP for every 6 points above 62 (65 → +1, 74 → +2, 80 → +3, 86+ → +4-5) and +1 coin for every 5 points above 70 (75 → +1, 90 → +4). A 37 walks out bare with an empty purse; a 65 with one extra AP; an 85 with four AP, three coin and the Hard brain.",
+  "w": "11-extra.js:621"
+ },
+ {
+  "k": "<b>So a 37 against a 65 is not a fair fight</b> — but it is still a dice game. Hit dice, the Blessings bag, beasts and the crowd give the underdog real upsets, which is exactly why the bookmaker offers long odds on them.",
+  "w": "11-extra.js:622"
+ },
+ {
+  "k": "<b>Morale moves it.</b> High morale: +1 AP, +1 CF. Low: −1 AP. Broken: one tier worse at thinking. Injuries lower the rating itself (−3 to −5), and every severed limb costs 6.",
+  "w": "11-extra.js:623"
+ },
+ {
+  "k": "The square and the long game (v0.30)",
+  "w": "11-extra.js:624"
+ },
+ {
+  "k": "<b>Walk the square before Match Week.</b> The tavern scouts someone for 6 coin, the bathhouse is the cheapest morale in the game, and kit from the arms market means your fighter starts armed instead of spending first-turn coin at the arena market.",
+  "w": "11-extra.js:625"
+ },
+ {
+  "k": "<b>The auction block is a lottery ticket.</b> A few coins for a body in the barracks; roughly one in eight is a hidden gem who re-rates upward on their first win for you.",
+  "w": "11-extra.js:626"
+ },
+ {
+  "k": "<b>Loans are a bridge, not a business.</b> 8% a week compounds brutally; borrow only what one good Match Week can repay — and pay a friendly house back early, since they remember it.",
+  "w": "11-extra.js:627"
+ },
+ {
+  "k": "<b>Play for Legacy.</b> There is no forced ending: cups and Superbus crowns are worth the most, and retirement at a high tier is the closest thing to \"beating\" Manager mode.",
+  "w": "11-extra.js:628"
+ },
+ {
+  "k": "The table and the week (v0.29)",
+  "w": "11-extra.js:629"
+ },
+ {
+  "k": "<b>Points win seasons, fame wins recruits.</b> A win is 3, a runner-up finish 1. The top four go to the Superbus. Feature and main-event wins count the same as undercard wins, so entering every bout you can win matters more than chasing one big purse.",
+  "w": "11-extra.js:630"
+ },
+ {
+  "k": "<b>Work left to right, then End the week.</b> Ludus → Roster → Recruiting → … → Match Week. End the week pays wages and moves the empire; you can't undo it, so spend the lanista's hours first.",
+  "w": "11-extra.js:631"
+ },
+ {
+  "k": "<b>Invitations are deadly now.</b> A heat winner rarely falls to the Fates (the winner's bonus lifts their score), but the rest of the field plays for its life. Send fighters you can afford to lose — or pick events marked Fate-free.",
+  "w": "11-extra.js:632"
+ },
+ {
+  "k": "Money, facilities and the market (v0.28)",
+  "w": "11-extra.js:633"
+ },
+ {
+  "k": "<b>Money talks.</b> A recruit's interest counts the wage you put on the table: every coin over their ask adds interest (1.5× the ask ≈ +45), and a big enough offer buys past the fame they would normally demand. A humble ludus can sign a blue-chip fighter — if it pays like a palace. Stars (4★/5★) ask 25%/50% more to begin with.",
+  "w": "11-extra.js:634"
+ },
+ {
+  "k": "<b>One of each, three pitches.</b> Each week you can scout, feast, gift, trial, pitch and make an offer to a recruit once each, with three pitches in total. Spread your hours across prospects instead of hammering one.",
+  "w": "11-extra.js:635"
+ },
+ {
+  "k": "<b>Facilities are where big winnings belong.</b> The Training yard, Valetudinarium, Barracks, Armory and Practice stands are permanent, cost 250 / 600 / 1200 a level, and set your Ludus grade — recruits weigh it, and each one works every single week.",
+  "w": "11-extra.js:636"
+ },
+ {
+  "k": "<b>The bookmaker has limits.</b> No slip pays more than 500 coin, and the Emperor takes a tenth of the profit on every winning bet.",
+  "w": "11-extra.js:637"
+ },
+ {
+  "k": "Silverware (v0.27)",
+  "w": "11-extra.js:638"
+ },
+ {
+  "k": "<b>The Flavian Awards reward seasons, not nights.</b> The Aureus Gladius goes to the most wins, the Darling of the Stands to the single best Fate score, the Iron Thumb and the Bestiarius Horn to the most gladiators and beasts beaten. Spreading bouts across one star fighter chases the Aureus; a deep roster chases the Iron Sandal.",
+  "w": "11-extra.js:639"
+ },
+ {
+  "k": "<b>Trophy CF rides into the next bout.</b> A trophy's CF reward is banked on the fighter who won it and added to their starting CF next time out — a head start toward the rudis.",
+  "w": "11-extra.js:641"
+ },
+ {
+  "k": "<b>Early billing is a small, safe edge.</b> +10 coin and +1 fame just for planning; the 15% poster bonus only if they win. Bill a steady fighter for a week whose fixture suits them.",
+  "w": "11-extra.js:642"
+ },
+ {
+  "k": "<b>The Fate score is not the CF on the card.</b> Winners add the event reward, 5 per 3 trophies, 2 per Flavius item and 15 for a held Golden Eagle — watch the <i>win → N</i> line to see how close the rudis really is.",
+  "w": "11-extra.js:643"
+ },
+ {
+  "k": "The Hall and the Road",
+  "w": "11-extra.js:644"
+ },
+ {
+  "k": "Achievements unlock token parts and titles; <b>Sand in the Sandals</b> (25 events) adds 25 coin to every new Manager career — worth earning early.",
+  "w": "11-extra.js:645"
+ },
+ {
+  "k": "<b>The Road of Flavius</b> starts at Arles and ends at Roma. Commit a well-armored, high-HP gladiator from your Ludus: one loss ends it, so the survivable classes (Soldier, Veteranus) walk further than glass cannons.",
+  "w": "11-extra.js:646"
+ },
+ {
+  "k": "(prefers-reduced-motion: reduce)",
+  "w": "11-extra.js:655"
+ },
+ {
+  "k": "Background",
+  "w": "12-settings.js:15"
+ },
+ {
+  "k": "Panels",
+  "w": "12-settings.js:15"
+ },
+ {
+  "k": "Borders",
+  "w": "12-settings.js:15"
+ },
+ {
+  "k": "Text",
+  "w": "12-settings.js:15"
+ },
+ {
+  "k": "Secondary text",
+  "w": "12-settings.js:15"
+ },
+ {
+  "k": "Accent",
+  "w": "12-settings.js:15"
+ },
+ {
+  "k": "Accent (bright)",
+  "w": "12-settings.js:15"
+ },
+ {
+  "k": "Primary buttons",
+  "w": "12-settings.js:15"
+ },
+ {
+  "k": "Danger",
+  "w": "12-settings.js:15"
+ },
+ {
+  "k": "Health bars",
+  "w": "12-settings.js:15"
+ },
+ {
+  "k": "Low health",
+  "w": "12-settings.js:15"
+ },
+ {
+  "k": "Armor bars",
+  "w": "12-settings.js:15"
+ },
+ {
+  "k": "Movement",
+  "w": "12-settings.js:15"
+ },
+ {
+  "k": "Sand tile (light)",
+  "w": "12-settings.js:17"
+ },
+ {
+  "k": "Sand tile (dark)",
+  "w": "12-settings.js:17"
+ },
+ {
+  "k": "Arena wall",
+  "w": "12-settings.js:17"
+ },
+ {
+  "k": "Tile lines",
+  "w": "12-settings.js:17"
+ },
+ {
+  "k": "Move highlight",
+  "w": "12-settings.js:17"
+ },
+ {
+  "k": "Attack highlight",
+  "w": "12-settings.js:17"
+ },
+ {
+  "k": "Push / topple highlight",
+  "w": "12-settings.js:17"
+ },
+ {
+  "k": "Target ring",
+  "w": "12-settings.js:17"
+ },
+ {
+  "k": "Stand benches (dark)",
+  "w": "12-settings.js:19"
+ },
+ {
+  "k": "Stand benches (light)",
+  "w": "12-settings.js:19"
+ },
+ {
+  "k": "Pillars",
+  "w": "12-settings.js:19"
+ },
+ {
+  "k": "Pillar bases",
+  "w": "12-settings.js:19"
+ },
+ {
+  "k": "Clay pots",
+  "w": "12-settings.js:19"
+ },
+ {
+  "k": "Spikes",
+  "w": "12-settings.js:19"
+ },
+ {
+  "k": "Chest (wood)",
+  "w": "12-settings.js:19"
+ },
+ {
+  "k": "Chest (gold)",
+  "w": "12-settings.js:19"
+ },
+ {
+  "k": "Toppled rubble",
+  "w": "12-settings.js:19"
+ },
+ {
+  "k": "Greek limestone over a turquoise harbor",
+  "w": "12-settings.js:28"
+ },
+ {
+  "k": "the pink marble of the Veronese arena",
+  "w": "12-settings.js:29"
+ },
+ {
+  "k": "honey stone and lavender dusk",
+  "w": "12-settings.js:30"
+ },
+ {
+  "k": "the first great ludus: dark sand, old iron",
+  "w": "12-settings.js:31"
+ },
+ {
+  "k": "African amber and burnt sienna",
+  "w": "12-settings.js:32"
+ },
+ {
+  "k": "travertine, awnings and imperial gold",
+  "w": "12-settings.js:33"
+ },
+ {
+  "k": "cool Gallic stone ringed with laurels",
+  "w": "12-settings.js:34"
+ },
+ {
+  "k": "gray ash over cinnabar frescoes",
+  "w": "12-settings.js:35"
+ },
+ {
+  "k": "white marble blazing over desert sand",
+  "w": "12-settings.js:36"
+ },
+ {
+  "k": "Carthaginian crimson and dusk violet",
+  "w": "12-settings.js:37"
+ },
+ {
+  "k": "sea-bleached stone and Adriatic blue",
+  "w": "12-settings.js:38"
+ },
+ {
+  "k": "tuff stone and a whiff of sulfur",
+  "w": "12-settings.js:39"
+ },
+ {
+  "k": "Themes",
+  "w": "12-settings.js:43"
+ },
+ {
+  "k": "Gold, red and carbon black",
+  "w": "12-settings.js:44"
+ },
+ {
+  "k": "Roman",
+  "w": "12-settings.js:45"
+ },
+ {
+  "k": "Tyrian purple and gold leaf",
+  "w": "12-settings.js:45"
+ },
+ {
+  "k": "Cinnabar red and ochre",
+  "w": "12-settings.js:46"
+ },
+ {
+  "k": "Cool marble, slate and laurel",
+  "w": "12-settings.js:47"
+ },
+ {
+  "k": "Accessibility",
+  "w": "12-settings.js:48"
+ },
+ {
+  "k": "For deuteranopia and protanopia: blue/orange signals, Okabe-Ito class colors",
+  "w": "12-settings.js:48"
+ },
+ {
+  "k": "For tritanopia: red/teal signals",
+  "w": "12-settings.js:49"
+ },
+ {
+  "k": "Black, white and bright yellow; stronger highlights",
+  "w": "12-settings.js:50"
+ },
+ {
+  "k": "Default colors at 120% size",
+  "w": "12-settings.js:51"
+ },
+ {
+  "k": "linear-gradient(90deg,#6e1414,#8a1c1c 50%,#6e1414)",
+  "w": "12-settings.js:86"
+ },
+ {
+  "k": "linear-gradient(180deg,#1c3566 0 50%,#d9d0bb 50%)",
+  "w": "12-settings.js:87"
+ },
+ {
+  "k": "linear-gradient(135deg,#b3261e 0 50%,#d9a52b 50%)",
+  "w": "12-settings.js:89"
+ },
+ {
+  "k": "linear-gradient(90deg,#1d4a2a 0 50%,#8c1f1a 50%)",
+  "w": "12-settings.js:91"
+ },
+ {
+  "k": "linear-gradient(180deg,#e8b26a 0 30%,#1d3f5c 30%)",
+  "w": "12-settings.js:92"
+ },
+ {
+  "k": "linear-gradient(90deg,#24324a 0 33%,#d7c29a 33% 66%,#24324a 66%)",
+  "w": "12-settings.js:94"
+ },
+ {
+  "k": "linear-gradient(180deg,#4a1a3d 0 60%,#b36a2a 60%)",
+  "w": "12-settings.js:98"
+ },
+ {
+  "k": "linear-gradient(rgba(12,8,6,.42),rgba(12,8,6,.62)) fixed,{0} center/cover no-repeat fixed,{1} fixed",
+  "w": "12-settings.js:101"
+ },
+ {
+  "k": "{0}px",
+  "w": "12-settings.js:109"
+ },
+ {
+  "k": "General",
+  "w": "12-settings.js:146"
+ },
+ {
+  "k": "🎨 Themes",
+  "w": "12-settings.js:146"
+ },
+ {
+  "k": "🗿 Tokens",
+  "w": "12-settings.js:146"
+ },
+ {
+  "k": "🎭 Editors",
+  "w": "12-settings.js:146"
+ },
+ {
+  "k": "🔊 Audio",
+  "w": "12-settings.js:146"
+ },
+ {
+  "k": "Profiles",
+  "w": "12-settings.js:146"
+ },
+ {
+  "k": "💾 Saves",
+  "w": "12-settings.js:146"
+ },
+ {
+  "k": "<b>CPU speed</b>",
+  "w": "12-settings.js:151"
+ },
+ {
+  "k": "The same switch as on the arena bar. Pause stops CPU turns at their next step; Step waits for you after each CPU action.",
+  "w": "12-settings.js:151"
+ },
+ {
+  "k": "Step: each CPU action waits for you — Next ▶ or Space — with a caption explaining it",
+  "w": "12-settings.js:151"
+ },
+ {
+  "k": "❚❚ Pause",
+  "w": "12-settings.js:151"
+ },
+ {
+  "k": "⏯ Step",
+  "w": "12-settings.js:151"
+ },
+ {
+  "k": "<b>🎓 Lesson buttons on the main menu</b>",
+  "w": "12-settings.js:152"
+ },
+ {
+  "k": "Learn to Play (Classic) and Manager Mode. They hide themselves once both are done; tick to keep them.",
+  "w": "12-settings.js:152"
+ },
+ {
+  "k": "<b>📋 Event briefing when the horns sound</b>",
+  "w": "12-settings.js:153"
+ },
+ {
+  "k": "The event, its rounds and what is not allowed in each, how to win and who fights. 📋 Event on the top bar reopens it any time.",
+  "w": "12-settings.js:153"
+ },
+ {
+  "k": "Skip the main menu",
+  "w": "12-settings.js:154"
+ },
+ {
+  "k": "Boot straight into the arena the old way. The 🏛 button on the top bar opens the menu either way.",
+  "w": "12-settings.js:154"
+ },
+ {
+  "k": "💡 Hints — master switch (H)",
+  "w": "12-settings.js:155"
+ },
+ {
+  "k": "Every hint at once: the hint panel on the arena screen, rule popups and the switches below. Press H anywhere to toggle.",
+  "w": "12-settings.js:155"
+ },
+ {
+  "k": "<b>🧭 Strategy panel</b>",
+  "w": "12-settings.js:157"
+ },
+ {
+  "k": "— the hint box under your actions: what your hand, your position and the sand suggest right now.",
+  "w": "12-settings.js:157"
+ },
+ {
+  "k": "<b>📖 Rule popups</b>",
+  "w": "12-settings.js:158"
+ },
+ {
+  "k": "— a short window the first time each rule comes up in play.",
+  "w": "12-settings.js:158"
+ },
+ {
+  "k": "<b>💡 Turn hints</b>",
+  "w": "12-settings.js:159"
+ },
+ {
+  "k": "— each turn, one suggested move: its button glows gold (and its tile, on the board), with a brief spotlight and a line on why.",
+  "w": "12-settings.js:159"
+ },
+ {
+  "k": "<b>📜 Rule hints</b>",
+  "w": "12-settings.js:160"
+ },
+ {
+  "k": "— hovering a tile, a figure or an action button adds a line on what the rules say about it.",
+  "w": "12-settings.js:160"
+ },
+ {
+  "k": "<b>📰 Turn recap</b>",
+  "w": "12-settings.js:161"
+ },
+ {
+  "k": "— at the start of your turn, what the crowd, the beasts and the arena did since your last one.",
+  "w": "12-settings.js:161"
+ },
+ {
+  "k": "<b>🖱 Context menus</b>",
+  "w": "12-settings.js:163"
+ },
+ {
+  "k": "Right-click (or long-press) anything on the sand for every action you can take on it. On for every player, hints or not.",
+  "w": "12-settings.js:163"
+ },
+ {
+  "k": "Floating combat numbers",
+  "w": "12-settings.js:164"
+ },
+ {
+  "k": "Damage, healing, CF and coin rise from the board when they happen.",
+  "w": "12-settings.js:164"
+ },
+ {
+  "k": "Card reveals",
+  "w": "12-settings.js:165"
+ },
+ {
+  "k": "Drawn and played cards appear in the corner of the arena.",
+  "w": "12-settings.js:165"
+ },
+ {
+  "k": "Log on the arena",
+  "w": "12-settings.js:166"
+ },
+ {
+  "k": "The latest log lines appear in the corner of the arena, edged in the colour of whoever acted. The 📌 button beside Export log does the same.",
+  "w": "12-settings.js:166"
+ },
+ {
+  "k": "Visuals",
+  "w": "12-settings.js:167"
+ },
+ {
+  "k": "<b>🩸 Blood &amp; severed limbs</b>",
+  "w": "12-settings.js:168"
+ },
+ {
+  "k": "Figures lose limbs as the bout takes them, blood pools where they fall, the fallen lie where they drop — and the crew rakes it all away after the games. Off hides the red; the limbs still count.",
+  "w": "12-settings.js:168"
+ },
+ {
+  "k": "<b>Home-city banners behind Manager-mode portraits</b>",
+  "w": "12-settings.js:169"
+ },
+ {
+  "k": "Each lanista's portrait hangs before their city's banner.",
+  "w": "12-settings.js:169"
+ },
+ {
+  "k": "Voices &amp; bubbles",
+  "w": "12-settings.js:170"
+ },
+ {
+  "k": "— every talking system, on its own switch",
+  "w": "12-settings.js:170"
+ },
+ {
+  "k": "<b>Spectator emotes</b>",
+  "w": "12-settings.js:171"
+ },
+ {
+  "k": "The 😄😡🎁 that pop over the stands as the crowd reacts.",
+  "w": "12-settings.js:171"
+ },
+ {
+  "k": "<b>Spectator shouts</b>",
+  "w": "12-settings.js:172"
+ },
+ {
+  "k": "The words in the bubbles — \"Bread and blood!\", \"Murderer!\" and the rest.",
+  "w": "12-settings.js:172"
+ },
+ {
+  "k": "<b>City-square chatter</b>",
+  "w": "12-settings.js:173"
+ },
+ {
+  "k": "Townsfolk gossiping about the empire, the card and the price of wool.",
+  "w": "12-settings.js:173"
+ },
+ {
+  "k": "The editor in the box",
+  "w": "12-settings.js:174"
+ },
+ {
+  "k": "Flavius (or the local editor) reacts to the action from the framed box — cheers, insults, the occasional tear.",
+  "w": "12-settings.js:174"
+ },
+ {
+  "k": "CPU thought bubbles",
+  "w": "12-settings.js:175"
+ },
+ {
+  "k": "CPU gladiators speak their minds, react to how you treat them and quote the cards they play.",
+  "w": "12-settings.js:175"
+ },
+ {
+  "k": "Screen shake on big hits",
+  "w": "12-settings.js:176"
+ },
+ {
+  "k": "A short jolt when a hit deals 6+ damage or a gladiator falls. Off if your system asks for reduced motion.",
+  "w": "12-settings.js:176"
+ },
+ {
+  "k": "Famous visitors",
+  "w": "12-settings.js:177"
+ },
+ {
+  "k": "Now and then a real figure from Roman history takes a seat — an emperor, a poet, a physician, a legendary gladiator — nudging the crowd and the event a little. Off to keep every event anonymous.",
+  "w": "12-settings.js:177"
+ },
+ {
+  "k": "Location flavors",
+  "w": "12-settings.js:178"
+ },
+ {
+  "k": "Each arena location tints the sand and stone in its own palette when an event starts there. Your chosen theme still rules everything else.",
+  "w": "12-settings.js:178"
+ },
+ {
+  "k": "Fade pillars and figures in front of what you are looking at. Also on the X key.",
+  "w": "12-settings.js:179"
+ },
+ {
+  "k": "<span class=\"badge gold\">in use</span>",
+  "w": "12-settings.js:185"
+ },
+ {
+  "k": "🗿 Gladiators &amp; beasts",
+  "w": "12-settings.js:186"
+ },
+ {
+  "k": "How gladiators and beasts stand on the board. Your own creations always wear their sculpted figures.",
+  "w": "12-settings.js:186"
+ },
+ {
+  "k": "🗿 Figures",
+  "w": "12-settings.js:187"
+ },
+ {
+  "k": "sculpted tokens for every class, beast and creation — reshape any of them in Creator Studio → Tokens",
+  "w": "12-settings.js:187"
+ },
+ {
+  "k": "🏛 Standees",
+  "w": "12-settings.js:188"
+ },
+ {
+  "k": "the classic minis from the original <b>Magnus Edition</b> (print &amp; play and the Tabletop Simulator mod) — the eight classes and the default beasts",
+  "w": "12-settings.js:188"
+ },
+ {
+  "k": "⚪ Cylinders",
+  "w": "12-settings.js:189"
+ },
+ {
+  "k": "the simple flat tokens from the first digital builds",
+  "w": "12-settings.js:189"
+ },
+ {
+  "k": "🛡 Armor",
+  "w": "12-settings.js:190"
+ },
+ {
+  "k": "How armor pieces are drawn — on the board, the avatar, the market and every card list.",
+  "w": "12-settings.js:190"
+ },
+ {
+  "k": "🖋 Sculpted",
+  "w": "12-settings.js:195"
+ },
+ {
+  "k": "every printed piece remade as clean sculpted art — the same set the armor creator starts from",
+  "w": "12-settings.js:195"
+ },
+ {
+  "k": "📜 Original Drawn Armor",
+  "w": "12-settings.js:195"
+ },
+ {
+  "k": "the hand-drawn armor from the printed game, as scanned from the rulebook",
+  "w": "12-settings.js:195"
+ },
+ {
+  "k": "Sound (unmuted)",
+  "w": "12-settings.js:197"
+ },
+ {
+  "k": "Music and effects. The 🔊 button (or M) does the same.",
+  "w": "12-settings.js:197"
+ },
+ {
+  "k": "Arena music",
+  "w": "12-settings.js:197"
+ },
+ {
+  "k": "A theme for every arena that grows with the rounds.",
+  "w": "12-settings.js:197"
+ },
+ {
+  "k": "Sound effects",
+  "w": "12-settings.js:197"
+ },
+ {
+  "k": "Hits, coin, cards and fanfares.",
+  "w": "12-settings.js:197"
+ },
+ {
+  "k": "Music between events",
+  "w": "12-settings.js:197"
+ },
+ {
+  "k": "Keep Roma’s theme playing softly while no event is on.",
+  "w": "12-settings.js:197"
+ },
+ {
+  "k": "<span><b>Music volume</b></span>",
+  "w": "12-settings.js:198"
+ },
+ {
+  "k": "<span><b>Effects volume</b></span>",
+  "w": "12-settings.js:199"
+ },
+ {
+  "k": "<b>Try it</b>",
+  "w": "12-settings.js:200"
+ },
+ {
+  "k": "Hit",
+  "w": "12-settings.js:200"
+ },
+ {
+  "k": "Fall",
+  "w": "12-settings.js:200"
+ },
+ {
+  "k": "Victory",
+  "w": "12-settings.js:200"
+ },
+ {
+  "k": "🎶 The music — every city's theme",
+  "w": "12-settings.js:201"
+ },
+ {
+  "k": "Figures lose limbs as the bout takes them, blood pools where they fall, stumps drag trails — and the chained clean-up crew rakes it all away after the games. Off hides the red; the limbs still count.",
+  "w": "12-settings.js:205"
+ },
+ {
+  "k": "Colors, presets and the page banner moved to the <b>🎨 Themes</b> tab.",
+  "w": "12-settings.js:207"
+ },
+ {
+  "k": "Looking for the empire's banners? They fly from the <b>Creator Studio → 🚩 Banners</b> press now — one for the empire, one per city — ready to copy onto your own cloth.",
+  "w": "12-settings.js:214"
+ },
+ {
+  "k": "Sliders",
+  "w": "12-settings.js:215"
+ },
+ {
+  "k": "<span>Text & UI size</span>",
+  "w": "12-settings.js:216"
+ },
+ {
+  "k": "<span>Highlight strength</span>",
+  "w": "12-settings.js:217"
+ },
+ {
+  "k": "<span>Outside-zone shade</span>",
+  "w": "12-settings.js:218"
+ },
+ {
+  "k": "<span>Board brightness</span>",
+  "w": "12-settings.js:219"
+ },
+ {
+  "k": "Interface colors",
+  "w": "12-settings.js:221"
+ },
+ {
+  "k": "Board colors",
+  "w": "12-settings.js:222"
+ },
+ {
+  "k": "Arena furniture",
+  "w": "12-settings.js:223"
+ },
+ {
+  "k": "Stands, pillars, pots, spikes, the chest and toppled rubble. Everything here (colors AND sliders) is captured when you save a profile below.",
+  "w": "12-settings.js:224"
+ },
+ {
+  "k": "Reset to default",
+  "w": "12-settings.js:225"
+ },
+ {
+  "k": "🗄 Game saves",
+  "w": "12-settings.js:227"
+ },
+ {
+  "k": "Save name (e.g. Season II, before the finale)",
+  "w": "12-settings.js:228"
+ },
+ {
+  "k": "💾 Save the game now",
+  "w": "12-settings.js:228"
+ },
+ {
+  "k": "⬇ Download a save file<small>everything, as it is right now</small>",
+  "w": "12-settings.js:229"
+ },
+ {
+  "k": "⬆ Open a save file<small>.json from a download</small>",
+  "w": "12-settings.js:229"
+ },
+ {
+  "k": "Saves in this browser",
+  "w": "12-settings.js:230"
+ },
+ {
+  "k": "Reading the shelf…",
+  "w": "12-settings.js:230"
+ },
+ {
+  "k": "Loading a save replaces your current progress, then reloads the page. Save first if you want to keep where you are. The shared Infamis board is never overwritten.",
+  "w": "12-settings.js:231"
+ },
+ {
+  "k": "Save the current colors, sizes and options as a named profile and switch between them any time. A profile is kept in this browser the moment you press <b>Save profile</b> — no game save needed (game saves include your profiles too).",
+  "w": "12-settings.js:233"
+ },
+ {
+  "k": "Profile name",
+  "w": "12-settings.js:234"
+ },
+ {
+  "k": "Save current",
+  "w": "12-settings.js:234"
+ },
+ {
+  "k": "Apply",
+  "w": "12-settings.js:235"
+ },
+ {
+  "k": "Delete",
+  "w": "12-settings.js:235"
+ },
+ {
+  "k": "{0} career{1} · {2} Ludus gladiators · {3} custom characters · {4} regulars",
+  "w": "12-settings.js:245"
+ },
+ {
+  "k": "Save",
+  "w": "12-settings.js:252"
+ },
+ {
+  "k": "Load",
+  "w": "12-settings.js:252"
+ },
+ {
+  "k": "Replace this save with the game as it stands right now",
+  "w": "12-settings.js:252"
+ },
+ {
+  "k": "✎ Overwrite",
+  "w": "12-settings.js:252"
+ },
+ {
+  "k": "Downloads are not available in this view.",
+  "w": "12-settings.js:257"
+ }
+]

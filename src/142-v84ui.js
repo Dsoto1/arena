@@ -37,7 +37,7 @@
 const LANGS84=[{k:'en',n:'English'}]; /* more languages join here (Spanish first) */
 const TS84={min:90,max:130,step:5};   /* TWEAK: the text-size slider */
 const SET84={full:false,armed:false};
-const SET84_TABS=[['general','General'],['themes','🎨 Themes'],['tokens','🗿 Tokens'],['sponsors','🎭 Editors'],['audio','🔊 Audio'],['saves','💾 Saves']];
+const SET84_TABS=[['general',_T('General')],['themes',_T('🎨 Themes')],['tokens',_T('🗿 Tokens')],['sponsors',_T('🎭 Editors')],['audio',_T('🔊 Audio')],['saves',_T('💾 Saves')]];
 const tsClamp84=v=>{v=Math.round((+v||100)/TS84.step)*TS84.step;return Math.max(TS84.min,Math.min(TS84.max,v))};
 /* dead pickers and the Large text theme */
 {const dead=['chestWood','chestGold'];for(let i=FURN_TOKENS.length-1;i>=0;i--)if(dead.includes(FURN_TOKENS[i][0]))FURN_TOKENS.splice(i,1)}
@@ -71,26 +71,26 @@ function setTabs84(tab){return `<div class="seg" role="tablist" style="margin-bo
 const SET84_TABRE=/<div class="seg" role="tablist" style="margin-bottom:12px">[\s\S]*?<\/div>/;
 function setGeneral84(h){
   h=h.replace(/<div class="setrow"><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" data-lessonsmenu[\s\S]*?<\/label><\/div>/,'');
-  const lang=`<div class="setrow lang84" style="grid-column:1/-1"><span><b>🌐 Language</b><br><span class="hint" data-keep="1" style="margin:0">Your browser's Translate works on this game; game terms stay English.</span></span><select data-lang84="1" aria-label="Language">${LANGS84.map(L=>`<option value="${L.k}" ${(SETTINGS.lang||'en')===L.k?'selected':''}>${esc(L.n)}</option>`).join('')}</select></div>`;
+  const lang=`<div class="setrow lang84" style="grid-column:1/-1"><span>${_T`<b>🌐 Language</b>`}<br><span class="hint" data-keep="1" style="margin:0">${_T`Your browser's Translate works on this game; game terms stay English.`}</span></span><select data-lang84="1" aria-label="${_T`Language`}">${LANGS84.map(L=>`<option value="${L.k}" ${(SETTINGS.lang||'en')===L.k?'selected':''}>${esc(L.n)}</option>`).join('')}</select></div>`;
   h=h.replace('<div class="setgrid">','<div class="setgrid">'+lang);
   const cm=SETTINGS.cvdMode||'off';
-  const cvd=`<div class="setrow a11yrow cvd84"><span><b>Colour-blind</b><br><span class="hint" style="margin:0">Applies the Red-green safe or Blue-yellow safe theme (🎨 Themes). Red-green also puts a class letter on every token and blue/orange on good/bad.</span></span><select data-cvd84="1" aria-label="Colour-blind">${[['off','Off'],['rg','Red-green'],['by','Blue-yellow']].map(([k,l])=>`<option value="${k}" ${cm===k?'selected':''}>${l}</option>`).join('')}</select></div>`;
+  const cvd=`<div class="setrow a11yrow cvd84"><span><b>Colour-blind</b><br><span class="hint" style="margin:0">${_T`Applies the Red-green safe or Blue-yellow safe theme (🎨 Themes). Red-green also puts a class letter on every token and blue/orange on good/bad.`}</span></span><select data-cvd84="1" aria-label="Colour-blind">${[['off',_T('Off')],['rg','Red-green'],['by','Blue-yellow']].map(([k,l])=>`<option value="${k}" ${cm===k?'selected':''}>${l}</option>`).join('')}</select></div>`;
   h=h.replace(/<label class="setrow"><input type="checkbox" data-set="cvd"[\s\S]*?<\/label>/,cvd);
   const v=tsClamp84(SETTINGS.tscale);
-  const ts=`<label class="setrow slider ts84"><span><b>Text size</b><br><span class="hint" style="margin:0">Panels, log, windows and menus. The arena keeps its size.</span></span><input type="range" min="${TS84.min}" max="${TS84.max}" step="${TS84.step}" data-ts84="1" value="${v}" aria-label="Text size"><output>${v}%</output></label>`;
+  const ts=`<label class="setrow slider ts84"><span>${_T`<b>Text size</b>`}<br><span class="hint" style="margin:0">${_T`Panels, log, windows and menus. The arena keeps its size.`}</span></span><input type="range" min="${TS84.min}" max="${TS84.max}" step="${TS84.step}" data-ts84="1" value="${v}" aria-label="${_T`Text size`}"><output>${v}%</output></label>`;
   h=h.replace(/<div class="setrow a11yrow"><span><b>Text size<\/b>[\s\S]*?<\/div><\/div>/,ts);
-  const ce=`<label class="setrow"><input type="checkbox" data-set="confirmEnd" ${SETTINGS.confirmEnd?'checked':''}><span><b>Confirm before ⏭ End turn</b><br><span class="hint" style="margin:0">Asks first while you can still move or attack.</span></span></label>`;
+  const ce=`<label class="setrow"><input type="checkbox" data-set="confirmEnd" ${SETTINGS.confirmEnd?'checked':''}><span>${_T`<b>Confirm before ⏭ End turn</b>`}<br><span class="hint" style="margin:0">${_T`Asks first while you can still move or attack.`}</span></span></label>`;
   const at='<label class="setrow"><input type="checkbox" data-set="ctxMenu"';if(h.includes(at))h=h.replace(at,ce+at);
-  return h+`<div class="mbtns rst84"><button type="button" class="btn" data-rst84="1">↺ Restore all defaults<small>settings and theme · saves stay</small></button></div>`}
+  return h+`<div class="mbtns rst84"><button type="button" class="btn" data-rst84="1">${_T`↺ Restore all defaults<small>settings and theme · saves stay</small>`}</button></div>`}
 function setThemes84(h,base){
   h=h.replace(/<label class="slider"><span>Text &amp; UI size<\/span>[\s\S]*?<\/label>|<label class="slider"><span>Text & UI size<\/span>[\s\S]*?<\/label>/,'');
   h=h.replace(/Stands, pillars, pots, spikes, the chest and toppled rubble\. Everything here \(colors AND sliders\) is captured when you save a profile below\./,'Stands, pillars, pots, spike caps and toppled rubble. Everything here (colors and sliders) is kept when you save a look below.');
   let p='';try{p=String(base('profiles')||'').replace(SET84_TABRE,'')}catch(e){}
   p=p.replace(/^\s*<p>Save the current colors[\s\S]*?<\/p>/,'<p class="hint" style="margin:0 0 6px">Keep the colors, sliders and options as a named look and switch back any time.</p>').replace('placeholder="Profile name"','placeholder="Look name"').replace('No saved profiles yet.','No saved looks yet.').replace(/class="hint"(?! data-keep)/g,'class="hint" data-keep="1"');
-  return h+`<h4 id="look84">💾 Save this look</h4><div class="look84">${p}</div>`}
+  return h+`<h4 id="look84">${_T`💾 Save this look`}</h4><div class="look84">${p}</div>`}
 function setTokens84(h){return h.replace(/<h4 style="margin:12px 0 4px">🛡 Armor<\/h4><p class="rc-sub"[^>]*>[\s\S]*?<\/p>/,'').replace(/<button type="button" class="tokrow[^"]*" data-sarmor="[^"]*">[\s\S]*?<\/button>/g,'')}
 {const base=settingsHTML;settingsHTML=function(tab){if(tab==='profiles')tab='themes';tab=tab||'general';
-  if(tab==='saves'&&!SET84.full)return setTabs84('saves')+`<div class="sv84"><p>Matches, careers, campaigns and backups live in the 💾 Saves window.</p><div class="mbtns"><button type="button" class="btn primary" data-sv84="hub">💾 Open Saves</button></div></div>`;
+  if(tab==='saves'&&!SET84.full)return setTabs84('saves')+`<div class="sv84"><p>${_T`Matches, careers, campaigns and backups live in the 💾 Saves window.`}</p><div class="mbtns"><button type="button" class="btn primary" data-sv84="hub">${_T`💾 Open Saves`}</button></div></div>`;
   let h=base.call(this,tab);if(typeof h!=='string')return h;
   try{h=h.replace(SET84_TABRE,setTabs84(tab));
     h=h.replace(/<p class="hint"(?! data-keep)/g,'<p class="hint" data-keep="1"'); /* a loose paragraph hint stays a line: as a tooltip it hung on the whole #setBody (52-v50 quietHints) */
@@ -108,25 +108,25 @@ document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
   if(t.closest('#setBody [data-sreset]')){cvdSet84('off',true);return}
   if(t.closest('#setBody [data-papply]'))setTimeout(()=>{try{if(SETTINGS.cvdMode==null){SETTINGS.cvdMode=cvdFromTheme84(USER_THEME||THEME);SETTINGS.cvd=SETTINGS.cvdMode==='rg'}applySettings()}catch(err){}},0);
   const rs=t.closest('#setBody [data-rst84]');if(rs){e.preventDefault();e.stopPropagation();
-    ask76('↺ Restore all defaults?','Every setting and the theme go back to how the game ships. Your saves, careers and creations stay.','Restore defaults','Cancel').then(ok=>{if(ok)setRestore84()})}},true);
+    ask76(_T('↺ Restore all defaults?'),_T('Every setting and the theme go back to how the game ships. Your saves, careers and creations stay.'),_T('Restore defaults'),_T('Cancel')).then(ok=>{if(ok)setRestore84()})}},true);
 function setRestore84(){SETTINGS={...SETTINGS_DEF,armorStyle:'scan',cvdMode:'off',cvd:false,tscale:100,lang:'en'};
   try{lsSet('hints',SETTINGS.hints?'on':'off')}catch(e){}applySettings();applyTheme({});
   try{settingsLive('tokenStyle')}catch(e){}try{if(typeof audApplyVol==='function')audApplyVol();if(typeof audMuteUI==='function')audMuteUI()}catch(e){}
-  try{const g=document.querySelector('#setBody [data-stab="general"]');if(g)g.click()}catch(e){}try{mToast('↺ Settings and theme are back to their defaults.')}catch(e){}}
+  try{const g=document.querySelector('#setBody [data-stab="general"]');if(g)g.click()}catch(e){}try{mToast(_T('↺ Settings and theme are back to their defaults.'))}catch(e){}}
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset)return;
   if(t.dataset.lang84){SETTINGS.lang=t.value;applySettings();return}
   if(t.dataset.cvd84){cvdSet84(t.value);return}});
 document.addEventListener('input',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.ts84)return;SETTINGS.tscale=tsClamp84(t.value);applySettings();const o=t.nextElementSibling;if(o)o.textContent=SETTINGS.tscale+'%'});
 
 /* Confirm before ⏭ End turn */
-function endLeft84(p){const out=[];try{if(p.mv>0&&!p.focusRoll&&[...reach(p).tiles].some(([k,c])=>c>0&&c<=p.mv))out.push(`${p.mv} movement`)}catch(e){}
-  try{if(attackSources(p).some(s=>targetsFor(p,s).length>0))out.push('an attack')}catch(e){}return out.join(' and ')}
+function endLeft84(p){const out=[];try{if(p.mv>0&&!p.focusRoll&&[...reach(p).tiles].some(([k,c])=>c>0&&c<=p.mv))out.push(_T`${p.mv} movement`)}catch(e){}
+  try{if(attackSources(p).some(s=>targetsFor(p,s).length>0))out.push(_T('an attack'))}catch(e){}return out.join(' and ')}
 const END84={go:false};
 window.addEventListener('click',e=>{if(END84.go||!e.isTrusted||!SETTINGS.confirmEnd)return;const b=e.target.closest&&e.target.closest('[data-act="end"]');if(!b||b.disabled)return;
   try{if(!S||S.over||S.onl||S.sim||HEADLESS||S.phase!=='action'||!humanTurn())return;if(typeof tutLive==='function'&&tutLive())return;
     const dock=b.closest('.acts');if(!dock||!dock.querySelector('[data-act="m-move"]'))return;const left=endLeft84(cur());if(!left)return;
     e.preventDefault();e.stopImmediatePropagation();
-    ask76('⏭ End your turn?',`You still have ${left}.`,'End turn','Keep playing').then(ok=>{if(!ok)return;const n=document.querySelector('#actions [data-act="end"]:not([disabled])')||document.querySelector('[data-act="end"]:not([disabled])');
+    ask76(_T('⏭ End your turn?'),_T`You still have ${left}.`,_T('End turn'),_T('Keep playing')).then(ok=>{if(!ok)return;const n=document.querySelector('#actions [data-act="end"]:not([disabled])')||document.querySelector('[data-act="end"]:not([disabled])');
       if(!n)return;END84.go=true;try{n.click()}finally{END84.go=false}})}catch(err){console.error(err)}},true);
 
 {const st=document.createElement('style');st.textContent=`

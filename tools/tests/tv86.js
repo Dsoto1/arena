@@ -1,0 +1,114 @@
+/* v0.86 (00-lang, 00-lang-es, 148-v86lang): the game in Spanish.
+   A first run on a Spanish browser asks once (Sí → reload in Spanish; Keep English → never asked again)
+   B Spanish walk: main menu → Play Now → a turn by its buttons → Settings (Español selected) → Rules & strategy → Manager tabs →
+     Studio → Online (mock) — no page errors, <html lang="es">, the screens read Spanish, game terms/names stay English
+   C leftover English (text nodes that still read as English sentences) and overflow (text cut in buttons/chips) are counted and
+     written to $REPORT (default: no file) — the release keeps them under a ceiling
+   D switching back: Settings → English reloads in English; the select lists English + Español
+   E English untouched: a page without flavius_lang has LANG 'en', no dictionary, and _T is identity. */
+const path=require('path'),fs=require('fs');const REPORT=process.env.REPORT||'';const SHOT=process.env.SHOT||'';
+const {chromium}=require('playwright');(async()=>{const URL0='file://'+path.resolve(process.argv[2]);
+const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const out={};
+const mk=async(locale,init)=>{const ctx=await b.newContext({viewport:{width:1300,height:900},locale});await ctx.route(/fonts\./,r=>r.abort());
+  await ctx.addInitScript(init||(()=>{}));await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});return ctx};
+const open=async(ctx,n)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);await p.waitForTimeout(2400);return p};
+const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,`v86_${n}.png`)})};
+
+/* ── A · first run on a Spanish browser ── */
+{const ctx=await mk('es-MX');const p=await open(ctx,'A');
+  out.aAsk=await p.waitForSelector('#lang86ask',{timeout:8000}).then(()=>true).catch(()=>false);
+  out.aLang0=await p.evaluate(()=>LANG);
+  if(out.aAsk){await Promise.all([p.waitForNavigation({timeout:10000}).catch(()=>null),p.click('#lang86ask [data-lang86yes]')]);await p.waitForTimeout(2400)}
+  out.aLang1=await p.evaluate(()=>({LANG,html:document.documentElement.lang,dict:!!LANG_DICT}));
+  await ctx.close();
+  const c2=await mk('es-ES');const p2=await open(c2,'A2');await p2.waitForTimeout(1200);
+  await p2.click('#lang86ask [data-lang86no]').catch(()=>{});await p2.waitForTimeout(400);await p2.reload();await p2.waitForTimeout(3000);
+  out.aNo=await p2.evaluate(()=>({LANG,ask:!!document.getElementById('lang86ask')}));await c2.close()}
+ok(out.aAsk&&out.aLang0==='en','A: Spanish browser asked once on the main menu');
+ok(out.aLang1.LANG==='es'&&out.aLang1.html==='es'&&out.aLang1.dict,'A: Sí → reloads in Spanish '+JSON.stringify(out.aLang1));
+ok(out.aNo.LANG==='en'&&!out.aNo.ask,'A: Keep English → English, not asked again '+JSON.stringify(out.aNo));
+
+/* ── B/C · the Spanish walk ── */
+const ctx=await mk('en-US',()=>{localStorage.setItem('flavius_lang','es');localStorage.setItem('flavius_online77','1')});
+const P=await open(ctx,'B');
+/* English-looking text in what is visible right now */
+const sweep=async(where)=>P.evaluate(where=>{
+  const EN=new Set('the and your you of to with for is are a an his her their this that it on in at by from or not be will can has have was were when who what which each every one more no all only than then there they them out up into over after before'.split(' '));
+  const ES=new Set('el la los las de del y tu tus su sus con para por es son un una al en que se no más o le lo a cada todo todos hay'.split(' '));
+  const names=new Set(GAME_TERMS);
+  const vis=el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&getComputedStyle(el).visibility!=='hidden'};
+  const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);const left=new Map();let n,tot=0;
+  while((n=w.nextNode())){const p=n.parentElement;if(!p||/^(SCRIPT|STYLE|TEXTAREA|OPTION|TITLE)$/.test(p.tagName)||p.closest('[translate="no"],svg,#log'))continue;
+    const t=n.data.replace(/\s+/g,' ').trim();if(t.length<8||!/[a-z]{3}/.test(t))continue;if(!vis(p))continue;tot++;
+    const ws=t.toLowerCase().match(/[a-záéíóúñü']+/g)||[];const en=ws.filter(x=>EN.has(x)).length,es=ws.filter(x=>ES.has(x)).length;
+    if(en>=2&&en>es)left.set(t.slice(0,90),(left.get(t.slice(0,90))||0)+1)}
+  /* overflow: text cut inside buttons / chips / tabs */
+  const cut=[...document.querySelectorAll('button,.btn,.chip,.badge,.tabs button,.mtabs button,[data-tab],.ptpill')].filter(el=>vis(el)&&getComputedStyle(el).overflow!=='visible'&&(el.scrollWidth>el.clientWidth+2)).slice(0,30).map(el=>el.textContent.replace(/\s+/g,' ').trim().slice(0,40));
+  return {where,tot,left:[...left.keys()],cut}},where);
+const C={left:[],cut:[],tot:0};const add=r=>{C.tot+=r.tot;for(const x of r.left)C.left.push(r.where+' | '+x);for(const x of r.cut)C.cut.push(r.where+' | '+x)};
+const closeAll=async()=>{for(let i=0;i<6;i++){const m=await P.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);if(!m)break;await P.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)});await P.waitForTimeout(350)}};
+out.b={};
+out.b.menu=await P.evaluate(()=>({LANG,html:document.documentElement.lang,txt:document.querySelector('#mainMenu').innerText.slice(0,400)}));
+add(await sweep('menu'));await shot(P,'menu');
+/* Play Now → a turn */
+const step=async(n,fn)=>{try{await fn();return true}catch(e){errs.push('B step '+n+': '+e.message.split('\n')[0]);return false}};
+out.b.play=await step('play',async()=>{await P.click('#mainMenu [data-mm="play"]');await P.waitForTimeout(1200);add(await sweep('playnow-menu'));await P.click('[data-mi="0"]');await P.waitForTimeout(1800);add(await sweep('setup'));await shot(P,'setup');await P.click('#goBtn')});
+let turn=false;for(let i=0;i<60&&!turn;i++){await P.waitForTimeout(500);const st=await P.evaluate(()=>({m:!!CUR_MODAL&&!document.getElementById('modal').hidden,h:typeof humanTurn==='function'&&humanTurn()&&S.phase}));
+  if(st.m){if(i===2)add(await sweep('briefing'));await P.evaluate(()=>{const b=document.querySelector('#mBtns button.primary')||document.querySelector('#mBtns button');if(b)b.click()})}else if(st.h==='choice')turn=true}
+out.b.turn=turn;
+if(turn){add(await sweep('arena'));await shot(P,'arena');const t0=await P.evaluate(()=>({who:S.turn,n:S.turnNo}));
+  await step('coin',()=>P.click('#actions [data-act="coin"]'));await P.waitForTimeout(1200);
+  for(let i=0;i<10;i++){const m=await P.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);if(!m)break;add(await sweep('turn-window'));await P.evaluate(()=>{const b=document.querySelector('#mBtns button');if(b)b.click()});await P.waitForTimeout(400)}
+  await step('end',()=>P.click('#actions [data-act="end"]'));await P.waitForTimeout(1500);await closeAll();
+  out.b.moved=await P.evaluate(t0=>S.turnNo!==t0.n||S.turn!==t0.who,t0);
+  out.b.log=await P.evaluate(()=>{const L=[...document.querySelectorAll('#log > li:not(#slogPin)')].slice(0,30).map(li=>li.textContent);return {n:L.length,sample:L.slice(0,6)}})}
+out.b.names=await P.evaluate(()=>{const s=[...document.querySelectorAll('.gt84')];return {n:s.length,eng:s.every(x=>GAME_TERMS.some(t=>x.textContent.includes(t)))}});
+await P.evaluate(()=>{S.over=true});await closeAll();
+/* Settings */
+out.b.set=await step('settings',async()=>{await P.evaluate(()=>{menuHide();openSettings()});await P.waitForTimeout(900);add(await sweep('settings'));await shot(P,'settings')});
+out.b.sel=await P.evaluate(()=>{const s=document.querySelector('select[data-lang84]');return s?{v:s.value,opts:[...s.options].map(o=>o.value)}:null});
+await closeAll();
+/* Rules & strategy */
+out.b.rules=await step('rules',async()=>{await P.evaluate(()=>showRules());await P.waitForTimeout(900);add(await sweep('rules'))});await closeAll();
+/* Manager, each tab */
+out.b.mgr=await step('manager',async()=>{await P.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));menuHide();MM.fromMenu=true;openManager();await W8(900);if(!W_()){newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null}});
+  for(const t of ['ludus','roster','recruit','practice','infirm','night','board','league','sched','trophy']){await P.evaluate(t=>{MGR.tab=t;MGR_REDRAW()},t);await P.waitForTimeout(500);add(await sweep('mgr-'+t));if(t==='ludus'||t==='recruit')await shot(P,'mgr_'+t)}});
+await closeAll();
+/* Studio */
+out.b.studio=await step('studio',async()=>{await P.evaluate(()=>{menuShow()});await P.waitForTimeout(500);await P.click('#mainMenu [data-mm="studio"]');await P.waitForTimeout(2000);add(await sweep('studio'));
+  const tabs=await P.$$('#mBody [data-sttab]');for(const t of tabs.slice(0,6)){await t.click().catch(()=>{});await P.waitForTimeout(400);add(await sweep('studio-tab'))}});
+await closeAll();
+/* Online (mock) */
+out.b.onl=await step('online',async()=>{await P.evaluate(()=>{menuShow()});await P.waitForTimeout(400);await P.evaluate(()=>{if(typeof onlineOpen==='function')onlineOpen()});await P.waitForTimeout(2500);add(await sweep('online'));await shot(P,'online')});
+await closeAll();
+out.missN=await P.evaluate(()=>LANG_MISS.size);out.missTop=await P.evaluate(()=>[...LANG_MISS.keys()].slice(0,40));
+const leftU=[...new Set(C.left)],cutU=[...new Set(C.cut)];
+out.c={texts:C.tot,left:leftU.length,cut:cutU.length};
+if(REPORT)fs.writeFileSync(REPORT,JSON.stringify({out,left:leftU,cut:cutU,miss:out.missTop},null,1));
+ok(out.b.menu.LANG==='es'&&out.b.menu.html==='es','B: <html lang="es"> '+JSON.stringify(out.b.menu).slice(0,120));
+ok(!/Play Now|Manager mode|Settings/.test(out.b.menu.txt)||/Jugar|Ajustes/.test(out.b.menu.txt),'B: the main menu reads Spanish');
+ok(out.b.play&&out.b.turn&&out.b.moved,'B: Play Now → the horns → a turn played in Spanish');
+ok(out.b.log&&out.b.log.n>0,'B: the log runs');
+ok(out.b.set&&out.b.sel&&out.b.sel.v==='es'&&out.b.sel.opts.join()==='en,es','B: Settings language select '+JSON.stringify(out.b.sel));
+ok(out.b.rules&&out.b.mgr&&out.b.studio&&out.b.onl,'B: Rules, Manager, Studio, Online open in Spanish');
+ok(out.b.names.n===0||out.b.names.eng,'B: game terms stay English');
+const LEFT_MAX=+(process.env.LEFT_MAX||60),CUT_MAX=+(process.env.CUT_MAX||25);
+ok(leftU.length<=LEFT_MAX,`C: leftover English lines ${leftU.length} ≤ ${LEFT_MAX}: `+leftU.slice(0,8).join(' ‖ '));
+ok(cutU.length<=CUT_MAX,`C: cut-off texts ${cutU.length} ≤ ${CUT_MAX}: `+cutU.slice(0,8).join(' ‖ '));
+
+/* ── D · back to English ── */
+await P.evaluate(()=>{menuHide();openSettings()});await P.waitForTimeout(900);
+await Promise.all([P.waitForNavigation({timeout:10000}).catch(()=>null),P.selectOption('select[data-lang84]','en')]);await P.waitForTimeout(2600);
+out.d=await P.evaluate(()=>({LANG,dict:!!LANG_DICT,html:document.documentElement.lang}));
+ok(out.d.LANG==='en'&&!out.d.dict&&out.d.html==='en','D: English again after the switch '+JSON.stringify(out.d));
+await ctx.close();
+
+/* ── E · English untouched ── */
+{const c=await mk('en-US');const p=await open(c,'E');
+  out.e=await p.evaluate(()=>{const x=5,y='Leo';return {LANG,dict:!!LANG_DICT,id:_T`Your gladiator ${y} has ${x} coin.`==='Your gladiator Leo has 5 coin.'&&_T('Attack')==='Attack',ask:!!document.getElementById('lang86ask')}});
+  await c.close()}
+ok(out.e.LANG==='en'&&!out.e.dict&&out.e.id&&!out.e.ask,'E: English untouched '+JSON.stringify(out.e));
+
+console.log(JSON.stringify({c:out.c,missN:out.missN,b:{turn:out.b.turn,log:out.b.log&&out.b.log.sample}}).slice(0,1500));
+console.log('ERRS',JSON.stringify(errs.slice(0,10)));console.log('MISS',JSON.stringify(miss));
+await b.close();process.exit(errs.length||miss.length?1:0)})();

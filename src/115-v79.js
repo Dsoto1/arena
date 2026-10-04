@@ -7,7 +7,7 @@
    The online parts of v0.79 live in 111-114 (shared rules, window, lockstep, socket) and server/.
    ===================================================================== */
 function verNotes79(){if(typeof modalBusy==='function'&&modalBusy())return;
-  return modal(`📜 What's new · v${GAME_VER}`,`${typeof whatsNewHTML==='function'?whatsNewHTML():''}`,[{label:'Version history',value:'hist'},{label:'Close',value:null,primary:1}],{close:null}).then(v=>{if(v==='hist'&&typeof showRules==='function')showRules('hist')})}
+  return modal(_T`📜 What's new · v${GAME_VER}`,`${typeof whatsNewHTML==='function'?whatsNewHTML():''}`,[{label:_T('Version history'),value:'hist'},{label:_T('Close'),value:null,primary:1}],{close:null}).then(v=>{if(v==='hist'&&typeof showRules==='function')showRules('hist')})}
 function menuUp79(){const m=document.getElementById('mainMenu');return !!(m&&!m.hidden)}
 window.addEventListener('keydown',e=>{if(e.key!=='c'&&e.key!=='C')return;if(e.ctrlKey||e.metaKey||e.altKey||e.repeat)return;
   const t=document.activeElement;if(t&&(['INPUT','TEXTAREA','SELECT'].includes(t.tagName)||t.isContentEditable))return;

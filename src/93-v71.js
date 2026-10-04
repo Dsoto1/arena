@@ -11,7 +11,7 @@
    • A gold wager bubble pops above whoever places a live wager (spectators, gladiators, you). */
 const SR_KEYS=['democritus','egidious','cassian'];
 const srKey=ev=>{const k=String((ev&&ev.sr)||'').toLowerCase();return SR_KEYS.includes(k)?k:null};
-const srImgHTML=(k,size,cls)=>k?`<img class="srmed ${cls||''}" src="${assetURL('sr_'+k+'.webp')}" alt="Summa Rudis ${k[0].toUpperCase()+k.slice(1)}" title="Summa Rudis ${k[0].toUpperCase()+k.slice(1)}" style="width:${size}px;height:${size}px">`:'';
+const srImgHTML=(k,size,cls)=>k?`<img class="srmed ${cls||''}" src="${assetURL('sr_'+k+'.webp')}" alt="${_T`Summa Rudis ${k[0].toUpperCase()+k.slice(1)}`}" title="${_T`Summa Rudis ${k[0].toUpperCase()+k.slice(1)}`}" style="width:${size}px;height:${size}px">`:'';
 /* the coin */
 ICO.coin=`<img class="ico coinimg" src="${assetURL('coin.webp')}" alt="coin">`;
 /* summa rudis beside Flavius (canvas) */
@@ -23,7 +23,7 @@ const SR_IMG={};const srImage=k=>{if(SR_IMG[k])return SR_IMG[k].complete&&SR_IMG
 {const base=briefingHTML;briefingHTML=function(){let h=base.apply(this,arguments);try{const k=srKey(EV());if(k)h=h.replace('<div class="brname">',`<div class="brsr">${srImgHTML(k,58)}<span class="rc-sub">Summa Rudis<br><b>${esc(EV().sr)}</b></span></div><div class="brname">`)}catch(e){}return h}}
 function statusDecor(){const st=document.getElementById('status');if(!st||!S||S.phase==='setup')return;
   for(const c of st.querySelectorAll('.chip')){const t=c.getAttribute('title')||'';
-    const m=/^Round (\d+) of/.exec(t);if(m&&!c.querySelector('.roundmk')){c.classList.add('roundchip');c.innerHTML=c.innerHTML.replace(/^Round \d+\/\d+ · /,'');c.insertAdjacentHTML('afterbegin',`<span class="roundmk" aria-label="Round ${m[1]}"><img src="${assetURL('round.webp')}" alt=""><b>${m[1]}</b></span>`)}
+    const m=/^Round (\d+) of/.exec(t);if(m&&!c.querySelector('.roundmk')){c.classList.add('roundchip');c.innerHTML=c.innerHTML.replace(/^Round \d+\/\d+ · /,'');c.insertAdjacentHTML('afterbegin',`<span class="roundmk" aria-label="${_T`Round ${m[1]}`}"><img src="${assetURL('round.webp')}" alt=""><b>${m[1]}</b></span>`)}
     const k=srKey(EV());if(k&&/Summa Rudis/.test(t)&&!c.querySelector('.srmed'))c.insertAdjacentHTML('afterbegin',srImgHTML(k,20,'inchip'))}}
 {const base=render;render=function(){const r=base.apply(this,arguments);try{statusDecor()}catch(e){}return r}}
 /* festival setup: the medallion beside the picker */
@@ -32,14 +32,14 @@ document.addEventListener('change',e=>{if(e.target&&e.target.id==='festSR'){cons
 /* Manager: Cassian presides over the Grand Games */
 {const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(' · the Grand Games: purses ×1.6',` · ${srImgHTML('cassian',22,'inline')} the Grand Games, Cassian presiding: purses ×1.6`)}catch(e){}return h}}
 /* the Mandata Flavi card back on hidden objectives */
-{const base=boardHTML;boardHTML=function(){let h=base.apply(this,arguments);try{h=h.split('<div class="item mf"><span><span>Mandata Flavi<em>Secret objective').join(`<div class="item mf"><span><img class="mfback" src="${assetURL('mandata_back.webp')}" alt="Mandata Flavi card back"><span>Mandata Flavi<em>Secret objective`)}catch(e){}return h}}
+{const base=boardHTML;boardHTML=function(){let h=base.apply(this,arguments);try{h=h.split('<div class="item mf"><span><span>Mandata Flavi<em>Secret objective').join(`<div class="item mf"><span><img class="mfback" src="${assetURL('mandata_back.webp')}" alt="${_T`Mandata Flavi card back`}"><span>${_T`Mandata Flavi<em>Secret objective`}`)}catch(e){}return h}}
 /* the stands line, pinned at the top of the arena log */
 tickerApply=function(){const el=document.getElementById('crowdTick');if(el)el.hidden=true;slogPinApply()};
 let SLOG_N=0;
 function slogPinApply(){const ol=document.getElementById('log');if(!ol)return;let li=document.getElementById('slogPin');
   const L=S&&S.spectLog||[];const e=L[L.length-1];const on=!!(S&&S.phase!=='setup'&&!S.over&&e);
   if(!on){if(li)li.remove();SLOG_N=0;return}
-  if(!li){li=document.createElement('li');li.id='slogPin';li.className='slogpin';li.setAttribute('role','button');li.tabIndex=0;li.title='Open the stands'}
+  if(!li){li=document.createElement('li');li.id='slogPin';li.className='slogpin';li.setAttribute('role','button');li.tabIndex=0;li.title=_T('Open the stands')}
   if(ol.firstChild!==li)ol.prepend(li);
   if(L.length!==SLOG_N){li.innerHTML=`<span class="tk">🏟</span><span class="tkr">R${e.r}</span><span class="tkt">${e.html}</span>`;
     if(SLOG_N&&!(typeof reduceMotion==='function'&&reduceMotion())){li.classList.remove('flash');void li.offsetWidth;li.classList.add('flash')}SLOG_N=L.length}}
@@ -49,14 +49,14 @@ document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.tar
 /* live wager bubbles */
 const WB_SEEN=new WeakSet();let WB_SELF=0,WB_ME=0,WB_EV=null;
 function wagerBubble(x,y,amt,unit,who){if(HEADLESS)return;let box=document.getElementById('wbubs');if(!box){const cw=document.querySelector('.canvas-wrap');if(!cw)return;box=document.createElement('div');box.id='wbubs';cw.appendChild(box)}const el=document.createElement('div');el.className='wbub';
-  el.innerHTML=`${unit==='cf'?ICO.wheat:ICO.coin}<b>${amt}</b>${unit==='cf'?'<small>CF</small>':''}`;if(who)el.title=`${who} places a wager`;
+  el.innerHTML=`${unit==='cf'?ICO.wheat:ICO.coin}<b>${amt}</b>${unit==='cf'?'<small>CF</small>':''}`;if(who)el.title=_T`${who} places a wager`;
   el.style.left=x+'px';el.style.top=y+'px';box.appendChild(el);setTimeout(()=>el.remove(),2300)}
 function wagerWatch(){if(HEADLESS||!S||S.phase==='setup'||S.sim||S.snap||S.over)return;
   if(WB_EV!==S){WB_EV=S;WB_SELF=0;WB_ME=(S.bets||[]).length;for(const sp of S.spect||[])if(sp.bet)WB_SEEN.add(sp.bet);for(const p of S.players)if(p.selfBet)WB_SEEN.add(p.selfBet);return}
   for(const sp of S.spect||[]){if(!sp.bet||WB_SEEN.has(sp.bet)||sp.gone)continue;WB_SEEN.add(sp.bet);if(sp._x!=null&&STANDS)wagerBubble(sp._x,sp._y-TW*0.5,sp.bet.amt,'cf',sp.name)}
   for(const p of S.players){if(!p.selfBet||WB_SEEN.has(p.selfBet))continue;WB_SEEN.add(p.selfBet);if(p.alive){const m=center(p.r,p.c);wagerBubble(m.x,m.y-TW*1.1,p.selfBet.stake,'coin',p.name)}}
   const B=S.bets||[];if(B.length>WB_ME){const b=B[B.length-1];const me=(S.spect||[]).find(s=>s.human);const p=S.players.find(q=>!q.cpu&&q.alive);
-    if(me&&me._x!=null&&STANDS)wagerBubble(me._x,me._y-TW*0.5,b.stake,'coin','You');else if(p){const m=center(p.r,p.c);wagerBubble(m.x,m.y-TW*1.1,b.stake,'coin','You')}}WB_ME=B.length}
+    if(me&&me._x!=null&&STANDS)wagerBubble(me._x,me._y-TW*0.5,b.stake,'coin',_T('You'));else if(p){const m=center(p.r,p.c);wagerBubble(m.x,m.y-TW*1.1,b.stake,'coin',_T('You'))}}WB_ME=B.length}
 setInterval(()=>{try{wagerWatch();slogPinApply()}catch(e){}},300);
 (()=>{const st=document.createElement('style');st.textContent=`
 .ico.coinimg{width:1.15em;height:1.15em;vertical-align:-.22em;object-fit:contain;display:inline-block}
@@ -79,7 +79,7 @@ body.chromeoff #wbubs{display:none}`;document.head.appendChild(st)})();
 /* the old-save question opens as its own small centred window (it used to be inserted beside the button and squeezed save cards) */
 verAsk=function(anchor,v){return new Promise(res=>{for(const o of document.querySelectorAll('.verask,.veraskbg'))o.remove();
   const bg=document.createElement('div');bg.className='veraskbg';const bar=document.createElement('div');bar.className='card2 verask';bar.setAttribute('role','dialog');bar.setAttribute('aria-modal','true');
-  bar.innerHTML=`<b>⬆ This save is from ${esc(verLabel(v))}.</b><div class="rc-sub" style="margin:4px 0 10px">It will be upgraded to v${GAME_VER} as it loads: fields newer versions need are filled in (fighters’ purses, season records) and broken offers are dropped. Your record, roster and treasury stay as they are.</div><div class="acts"><button type="button" class="btn primary" data-verask="yes">Upgrade and load</button><button type="button" class="btn" data-verask="no">Cancel</button></div>`;
+  bar.innerHTML=`${_T`<b>⬆ This save is from ${esc(verLabel(v))}.</b>`}<div class="rc-sub" style="margin:4px 0 10px">${_T`It will be upgraded to v${GAME_VER} as it loads: fields newer versions need are filled in (fighters’ purses, season records) and broken offers are dropped. Your record, roster and treasury stay as they are.`}</div><div class="acts"><button type="button" class="btn primary" data-verask="yes">${_T`Upgrade and load`}</button><button type="button" class="btn" data-verask="no">${_T`Cancel`}</button></div>`;
   bg.appendChild(bar);document.body.appendChild(bg);const done=ok=>{bg.remove();document.removeEventListener('keydown',key,true);res(ok)};
   const key=e=>{if(e.key==='Escape'){e.stopPropagation();e.preventDefault();done(false)}};document.addEventListener('keydown',key,true);
   bg.addEventListener('click',e=>{e.stopPropagation();const b=e.target.closest('[data-verask]');if(b)done(b.dataset.verask==='yes');else if(e.target===bg)done(false)});

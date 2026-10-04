@@ -14,27 +14,27 @@ const CITY={open:false};
 const CITY_N=14; // v0.32: one tile roomier
 // per-city dressing: ground and awning hues, a landmark line, and what the square is called
 const CITY_DRESS={
-  Syracusae:{g1:'#b9a06e',g2:'#ad9464',aw:'#2f4a6b',land:'the harbor cranes swing behind the arena wall',sq:'the Harbor Square'},
-  Verona:{g1:'#b3a273',g2:'#a79768',aw:'#7a2230',land:'cypress hills rise beyond the gate',sq:'the Piazza of the Two Rivers'},
-  Arles:{g1:'#b7a476',g2:'#ab996c',aw:'#3f5a3a',land:'legion veterans dice in the shade',sq:'the Veterans’ Forum'},
-  Capua:{g1:'#bda671',g2:'#b09a66',aw:'#4b2a5a',land:'the oldest ludus in the empire looms next door',sq:'the Gladiators’ Market'},
-  Thysdrus:{g1:'#c4ab72',g2:'#b89f67',aw:'#a86a2a',land:'heat shimmers over African sand',sq:'the Caravan Square'},
-  Roma:{g1:'#b5a26e',g2:'#a99663',aw:'#7a2230',land:'the Flavian amphitheater blots out the sun',sq:'the Forum before the Arena'},
-  Nemausus:{g1:'#b2a171',g2:'#a69566',aw:'#2e6a3a',land:'chariot teams parade their colors',sq:'the Circus Yard'},
-  Pompeii:{g1:'#b8a267',g2:'#ac975d',aw:'#b04a6a',land:'the mountain smokes gently to the north',sq:'the Palaestra Square'},
-  'Leptis Magna':{g1:'#c6ad74',g2:'#baa269',aw:'#8a2a2a',land:'marble colonnades gleam against the sea',sq:'the Severan Colonnade'},
-  Uthina:{g1:'#c1a870',g2:'#b59d65',aw:'#1f6a6a',land:'poets argue by the fountain',sq:'the Poets’ Court'},
-  Pola:{g1:'#b0a173',g2:'#a49668',aw:'#3a4a5a',land:'gulls fight over the fish market',sq:'the Quay Market'},
-  Puteoli:{g1:'#b6a46f',g2:'#aa9864',aw:'#1e2e4e',land:'grain ships crowd the harbor',sq:'the Harbor-master’s Square'}};
+  Syracusae:{g1:'#b9a06e',g2:'#ad9464',aw:'#2f4a6b',land:_T('the harbor cranes swing behind the arena wall'),sq:_T('the Harbor Square')},
+  Verona:{g1:'#b3a273',g2:'#a79768',aw:'#7a2230',land:_T('cypress hills rise beyond the gate'),sq:_T('the Piazza of the Two Rivers')},
+  Arles:{g1:'#b7a476',g2:'#ab996c',aw:'#3f5a3a',land:_T('legion veterans dice in the shade'),sq:_T('the Veterans’ Forum')},
+  Capua:{g1:'#bda671',g2:'#b09a66',aw:'#4b2a5a',land:_T('the oldest ludus in the empire looms next door'),sq:_T('the Gladiators’ Market')},
+  Thysdrus:{g1:'#c4ab72',g2:'#b89f67',aw:'#a86a2a',land:_T('heat shimmers over African sand'),sq:_T('the Caravan Square')},
+  Roma:{g1:'#b5a26e',g2:'#a99663',aw:'#7a2230',land:_T('the Flavian amphitheater blots out the sun'),sq:_T('the Forum before the Arena')},
+  Nemausus:{g1:'#b2a171',g2:'#a69566',aw:'#2e6a3a',land:_T('chariot teams parade their colors'),sq:_T('the Circus Yard')},
+  Pompeii:{g1:'#b8a267',g2:'#ac975d',aw:'#b04a6a',land:_T('the mountain smokes gently to the north'),sq:_T('the Palaestra Square')},
+  'Leptis Magna':{g1:'#c6ad74',g2:'#baa269',aw:'#8a2a2a',land:_T('marble colonnades gleam against the sea'),sq:_T('the Severan Colonnade')},
+  Uthina:{g1:'#c1a870',g2:'#b59d65',aw:'#1f6a6a',land:_T('poets argue by the fountain'),sq:_T('the Poets’ Court')},
+  Pola:{g1:'#b0a173',g2:'#a49668',aw:'#3a4a5a',land:_T('gulls fight over the fish market'),sq:_T('the Quay Market')},
+  Puteoli:{g1:'#b6a46f',g2:'#aa9864',aw:'#1e2e4e',land:_T('grain ships crowd the harbor'),sq:_T('the Harbor-master’s Square')}};
 // the buildings of every square: [key, r0,r1,c0,c1, height, label, icon]
 const CITY_BLDG=[
-  ['arena',0,1,3,9,2.6,'THE ARENA','🏛'],
-  ['arms',3,4,0,1,1.6,'Arms market','⚔️'],
-  ['armor',7,8,0,1,1.6,'Armorer','🛡'],
-  ['bath',12,13,1,3,1.5,'Bathhouse','🛁'],
-  ['tavern',12,13,9,11,1.5,'Tavern','🍷'],
-  ['lupanar',7,8,12,13,1.6,'Lupanar','🌙'],
-  ['auction',3,4,12,13,1.3,'Auction block','⚖'],
+  ['arena',0,1,3,9,2.6,_T('THE ARENA'),'🏛'],
+  ['arms',3,4,0,1,1.6,_T('Arms market'),'⚔️'],
+  ['armor',7,8,0,1,1.6,_T('Armorer'),'🛡'],
+  ['bath',12,13,1,3,1.5,_T('Bathhouse'),'🛁'],
+  ['tavern',12,13,9,11,1.5,_T('Tavern'),'🍷'],
+  ['lupanar',7,8,12,13,1.6,_T('Lupanar'),'🌙'],
+  ['auction',3,4,12,13,1.3,_T('Auction block'),'⚖'],
 ];
 /* CITY_GATE — the arena gate tile: walk here (or wait for the horns) to enter. */
 const CITY_GATE=[2,6]; // the arena gate tile — walk here (or wait for the horns) to enter
@@ -54,35 +54,35 @@ function citySideDraw(){const el=document.getElementById('citySideBody');if(!el|
   const w=CITY.w;const night=w&&w.night&&w.night.loc===CITY.li?w.night:null;const card=night?night.bouts.flatMap(b=>b.ents).map(id=>typeof gById==='function'?gById(id):null).filter(Boolean):[];
   let h='';
   if(CITY.side==='kin'){const kin=regs.filter(r=>r.kin&&r.kin.name);const fight=new Set(card.map(g=>g.name.toLowerCase()));
-    h=`<div class="sect" style="margin-top:0">👪 Family ties <span class="rc-sub">kin in the stands, and the gladiators they come to see</span></div>${kin.length?kin.sort((a,b)=>(fight.has(String(b.kin.name).toLowerCase())?1:0)-(fight.has(String(a.kin.name).toLowerCase())?1:0)).slice(0,40).map(r=>`<div class="csrow ${fight.has(String(r.kin.name).toLowerCase())?'hot':''}">${face(r)}<div><b>${esc(r.name)}</b><small>${esc(r.kin.rel)} of <b>${esc(r.kin.name)}</b>${r.city?` · of ${esc(r.city)}`:''}${fight.has(String(r.kin.name).toLowerCase())?' · <b style="color:var(--gold2)">fights here this week</b>':''}</small></div></div>`).join(''):'<p class="rc-sub">No kin in the crowd yet — family trees grow as fighters make names.</p>'}`}
+    h=`<div class="sect" style="margin-top:0">${_T`👪 Family ties`} <span class="rc-sub">${_T`kin in the stands, and the gladiators they come to see`}</span></div>${kin.length?kin.sort((a,b)=>(fight.has(String(b.kin.name).toLowerCase())?1:0)-(fight.has(String(a.kin.name).toLowerCase())?1:0)).slice(0,40).map(r=>`<div class="csrow ${fight.has(String(r.kin.name).toLowerCase())?'hot':''}">${face(r)}<div>${_T`<b>${esc(r.name)}</b><small>${esc(r.kin.rel)} of <b>${esc(r.kin.name)}</b>${r.city?_T` · of ${esc(r.city)}`:''}${fight.has(String(r.kin.name).toLowerCase())?_T(' · <b style="color:var(--gold2)">fights here this week</b>'):''}</small>`}</div></div>`).join(''):'<p class="rc-sub">No kin in the crowd yet — family trees grow as fighters make names.</p>'}`}
   else if(CITY.side==='stands'){const here=regs.filter(r=>r.city===L.n);const fans=night?regs.filter(r=>r.favG&&card.some(g=>g.name===r.favG)&&r.city!==L.n):[];
     const tix=[...here,...fans];
-    h=`<div class="sect" style="margin-top:0">${night?`🎟 Ticket holders · Match Week`:`🏟 The stands of ${esc(L.n)}`} <span class="rc-sub">${night?'the named regulars coming to this week\u2019s games':'regulars who call this city home'}</span></div>${tix.length?tix.slice(0,48).map(r=>`<div class="csrow">${face(r)}<div><b>${esc(r.name)}</b><small>${esc((SPECT_TASTES[r.taste]||['?'])[0])} fan · ${esc((SPECT_TEMPERS[r.temper]||['?'])[0].toLowerCase())}${r.favG?` · backs <b>${esc(r.favG)}</b>`:''}${r.city!==L.n?` · travels from ${esc(r.city||'?')}`:''}</small></div></div>`).join(''):'<p class="rc-sub">No named regulars here yet.</p>'}
+    h=`<div class="sect" style="margin-top:0">${night?_T`🎟 Ticket holders · Match Week`:_T`🏟 The stands of ${esc(L.n)}`} <span class="rc-sub">${night?_T('the named regulars coming to this week\u2019s games'):_T('regulars who call this city home')}</span></div>${tix.length?tix.slice(0,48).map(r=>`<div class="csrow">${face(r)}<div>${_T`<b>${esc(r.name)}</b><small>${esc((SPECT_TASTES[r.taste]||['?'])[0])} fan · ${esc((SPECT_TEMPERS[r.temper]||['?'])[0].toLowerCase())}${r.favG?_T` · backs <b>${esc(r.favG)}</b>`:''}${r.city!==L.n?_T` · travels from ${esc(r.city||'?')}`:''}</small>`}</div></div>`).join(''):'<p class="rc-sub">No named regulars here yet.</p>'}
       ${night&&typeof boutTickets==='function'?'':''}`}
-  else if(CITY.side==='roster'){h=`<div class="sect" style="margin-top:0">👥 The spectator roster <span class="rc-sub">${regs.length}K spectators across the empire</span></div>${regs.slice().sort((a,b)=>(b.visits||0)-(a.visits||0)).slice(0,80).map(r=>`<div class="csrow">${face(r)}<div><b>${esc(r.name)}</b><small>${esc(r.city||'')} · ${r.visits||0} visits${r.trouble?' · <span style="color:var(--blood2)">troublemaker</span>':''}</small></div></div>`).join('')}`}
+  else if(CITY.side==='roster'){h=`<div class="sect" style="margin-top:0">${_T`👥 The spectator roster`} <span class="rc-sub">${_T`${regs.length}K spectators across the empire`}</span></div>${regs.slice().sort((a,b)=>(b.visits||0)-(a.visits||0)).slice(0,80).map(r=>`<div class="csrow">${face(r)}<div>${_T`<b>${esc(r.name)}</b><small>${esc(r.city||'')} · ${r.visits||0} visits${r.trouble?' · <span style="color:var(--blood2)">troublemaker</span>':''}</small>`}</div></div>`).join('')}`}
   else if(CITY.side==='beasts'){h=typeof cityBeastsHTML==='function'?cityBeastsHTML(CITY.li,{h:9999,only:true}):''}
   el.innerHTML=h}
 /* openCitySquare — opens a city's square (only after paying the road when it is this week's host): builds the canvas, the crowd, the HUD and starts the loop. */
 function openCitySquare(locIdx,opts={}){
   if(HEADLESS||CITY.open)return;const L=LOCATIONS[locIdx];if(!L)return;
   const w=typeof W_==='function'?W_():null;
-  if(w&&w.night&&w.night.loc===locIdx&&typeof travelOK==='function'&&!travelOK(w)){if(typeof mToast==='function')mToast(`🛣 Travel to <b>${esc(L.n)}</b> first — pay the road on Match Week.`);return} // v0.42
+  if(w&&w.night&&w.night.loc===locIdx&&typeof travelOK==='function'&&!travelOK(w)){if(typeof mToast==='function')mToast(_T`🛣 Travel to <b>${esc(L.n)}</b> first — pay the road on Match Week.`);return} // v0.42
   // v0.33: horns sounded on this city's card → every door back into the square is barred until the bout is fought
   if(w&&w.night&&w.night.loc===locIdx&&w.night.hornsLock!=null){const n9=w.night;const b9=n9.bouts[n9.hornsLock];
-    if(b9&&!b9.done){if(typeof mToast==='function')mToast('🎺 The horns have sounded — the arena gates are shut until the '+(typeof TIERS!=='undefined'?esc(TIERS[b9.tier].n):'bout')+' is fought.');return}}
+    if(b9&&!b9.done){if(typeof mToast==='function')mToast(_T('🎺 The horns have sounded — the arena gates are shut until the ')+(typeof TIERS!=='undefined'?esc(TIERS[b9.tier].n):'bout')+_T(' is fought.'));return}}
   Object.assign(CITY,{open:true,li:locIdx,L,w,mgr:!!(w&&typeof me==='function'&&me()),opts,sel:null,npcs:[],player:null,path:[],stepT:0,mode:'stroll',
     remain:opts.prematch?150000:0,speed:1,lastT:0,filedAt:0,beastT:performance.now()+9000+Math.random()*9000,chatT:performance.now()+2500,hover:null,imgs:{},t0:performance.now()});
   const ov=document.createElement('div');ov.id='cityOv';ov.innerHTML=`
-    <div class="citybar"><b>🏛 ${esc((CITY_DRESS[L.n]||{}).sq||'The Square')} · ${esc(L.n)}</b>${typeof CITY_FLAG!=='undefined'&&CITY_FLAG[L.n]&&typeof flagURIk==='function'?`<img class="flagchip" src="${flagURIk(CITY_FLAG[L.n])}" style="height:16px" alt="" title="The banner of ${esc(L.n)}">`:''}<span class="rc-sub" id="cityLand">${esc((CITY_DRESS[L.n]||{}).land||'')}</span>
+    <div class="citybar"><b>🏛 ${esc((CITY_DRESS[L.n]||{}).sq||_T('The Square'))} · ${esc(L.n)}</b>${typeof CITY_FLAG!=='undefined'&&CITY_FLAG[L.n]&&typeof flagURIk==='function'?`<img class="flagchip" src="${flagURIk(CITY_FLAG[L.n])}" style="height:16px" alt="" title="${_T`The banner of ${esc(L.n)}`}">`:''}<span class="rc-sub" id="cityLand">${esc((CITY_DRESS[L.n]||{}).land||'')}</span>
       <span id="cityClock" class="cityclock" hidden></span><span style="flex:1"></span>
       <span id="cityNext" class="rc-sub"></span>
-      <div class="seg" title="How fast the square lives — strolling, walking, the countdown, all of it">${[1,2,4].map(v=>`<button type="button" data-cspd="${v}" class="${v===1?'on':''}">${v}×</button>`).join('')}</div>
-      <span class="cityclock" id="cityCoin" title="Your treasury — every shop, gift and auction bid draws on it"></span>
+      <div class="seg" title="${_T`How fast the square lives — strolling, walking, the countdown, all of it`}">${[1,2,4].map(v=>`<button type="button" data-cspd="${v}" class="${v===1?'on':''}">${v}×</button>`).join('')}</div>
+      <span class="cityclock" id="cityCoin" title="${_T`Your treasury — every shop, gift and auction bid draws on it`}"></span>
       ${opts.prematch?'<button class="btn tksm" type="button" id="cityBell" title="Sound the horns early — the crowd files in and the games begin">🎺 Sound the horns</button>':''}
-      <button class="btn tksm" type="button" id="cityLeave">${opts.prematch?'Leave the square ✕':'LEAVE_LBL'}</button></div>
+      <button class="btn tksm" type="button" id="cityLeave">${opts.prematch?_T('Leave the square ✕'):'LEAVE_LBL'}</button></div>
     <div class="citymain2"><div class="citymain"><canvas id="cityCv"></canvas><div id="cityPanel" class="citypanel" hidden></div></div>
-      <aside class="cityside" id="citySide"><div class="seg citysidetabs">${[['kin','👪 Kin'],['stands','🏟 The stands'],['roster','👥 Roster'],['beasts','🐾 Menagerie']].map(([k,l],i)=>`<button type="button" data-cside="${k}" class="${i===1?'on':''}">${l}</button>`).join('')}<button type="button" data-cside="hide" title="Fold the sidebar away">⇥</button></div><div id="citySideBody" class="citysidebody"></div></aside></div>
-    <div class="cityhint rc-sub">Click a tile to walk (movement is free here) · click anyone for their card · click a building to visit it${opts.prematch?' · the games begin when the horns sound':''}</div>`;
+      <aside class="cityside" id="citySide"><div class="seg citysidetabs">${[['kin',_T('👪 Kin')],['stands',_T('🏟 The stands')],['roster',_T('👥 Roster')],['beasts',_T('🐾 Menagerie')]].map(([k,l],i)=>`<button type="button" data-cside="${k}" class="${i===1?'on':''}">${l}</button>`).join('')}<button type="button" data-cside="hide" title="${_T`Fold the sidebar away`}">⇥</button></div><div id="citySideBody" class="citysidebody"></div></aside></div>
+    <div class="cityhint rc-sub">${_T`Click a tile to walk (movement is free here) · click anyone for their card · click a building to visit it${opts.prematch?_T(' · the games begin when the horns sound'):''}`}</div>`;
   document.body.appendChild(ov);
   const fd=document.createElement('div');fd.id='cityFade';document.body.appendChild(fd);
   requestAnimationFrame(()=>{fd.classList.add('dark');setTimeout(()=>fd.classList.remove('dark'),60)});
@@ -96,7 +96,7 @@ function openCitySquare(locIdx,opts={}){
   CITY.esc=e=>{if(e.key==='Escape'){e.stopPropagation();closeCity()}};document.addEventListener('keydown',CITY.esc,true);
   cityPopulate();citySize();CITY.raf=requestAnimationFrame(cityLoop);
   window.addEventListener('resize',citySize);
-  log2city(`You step into ${(CITY_DRESS[L.n]||{}).sq||'the square'} at ${L.n}.`);
+  log2city(_T`You step into ${(CITY_DRESS[L.n]||{}).sq||_T('the square')} at ${L.n}.`);
 }
 /* closeCity — closes the square (then runs the callback; from a pre-match visit it returns to Match Week). */
 function closeCity(then){if(!CITY.open)return;if(!then&&CITY.mgr&&CITY.opts&&CITY.opts.prematch&&typeof MGR!=='undefined'){MGR.tab='night';then=()=>{if(typeof MGR_REDRAW==='function'&&document.getElementById('mgrBody'))MGR_REDRAW();const mb=document.getElementById('mBody');if(mb)mb.scrollTop=0} } // leaving before the games → straight to Match Week
@@ -105,7 +105,7 @@ function closeCity(then){if(!CITY.open)return;if(!then&&CITY.mgr&&CITY.opts&&CIT
     const ov=document.getElementById('cityOv');if(ov)ov.remove();if(then)then();setTimeout(()=>{const f2=document.getElementById('cityFade');if(f2){f2.classList.remove('dark');setTimeout(()=>f2.remove(),650)}},80)};
   if(fd){fd.classList.add('dark');setTimeout(fin,620)}else fin()}
 /* cityHUD — the square's coin / visiting label. */
-function cityHUD(){const el=document.getElementById('cityCoin');if(!el)return;const t=CITY.mgr?`${typeof ICO!=='undefined'&&ICO.coin?ICO.coin:'🟡'} ${me().coin} coin`:'👁 visiting';if(el.dataset.v!==t){el.dataset.v=t;el.innerHTML=t}}
+function cityHUD(){const el=document.getElementById('cityCoin');if(!el)return;const t=CITY.mgr?_T`${typeof ICO!=='undefined'&&ICO.coin?ICO.coin:'🟡'} ${me().coin} coin`:'👁 visiting';if(el.dataset.v!==t){el.dataset.v=t;el.innerHTML=t}}
 /* citySize — sizes the square's canvas to its box. */
 function citySize(){if(!CITY.open)return;const cv=CITY.cv;const r=cv.parentElement.getBoundingClientRect();cv.width=r.width;cv.height=r.height;
   CITY.TW=Math.max(34,Math.min(r.width/(CITY_N+1.2),(r.height*2)/(CITY_N+5.6)));CITY.OX=r.width/2;CITY.OY=CITY.TW*2.2}
@@ -116,12 +116,12 @@ function log2city(text){CITY.toast={t:text,until:performance.now()+3600}}
 // what's next on THIS city's sand — this week's card if we are hosting, else the schedule's next visit
 function cityNextEventLine(){const w=CITY.w;const li=CITY.li;
   if(w&&w.night&&w.night.loc===li){const b=w.night.bouts.find(x=>!x.done);const f=w.night.fx||{};
-    return b?`📜 <b>Tonight:</b> ${esc((EVENTS[w.night.bouts[2].ev]||{}).n||'the games')} — ${w.night.bouts.filter(x=>!x.done).length} bout${w.night.bouts.filter(x=>!x.done).length===1?'':'s'} to fight`:`📜 Tonight's games are done — the results are posted`}
+    return b?_T`📜 <b>Tonight:</b> ${esc((EVENTS[w.night.bouts[2].ev]||{}).n||_T('the games'))} — ${w.night.bouts.filter(x=>!x.done).length} bout${w.night.bouts.filter(x=>!x.done).length===1?'':'s'} to fight`:_T`📜 Tonight's games are done — the results are posted`}
   // v0.41: read the real season schedule forward from today (the old walk lost the week outside Manager mode)
   const c0=w?{season:w.season,week:((w.week-1)%12)+1}:(typeof calNow==='function'?calNow():{season:1,week:1});
   for(let k=1;k<=24;k++){const i=(c0.week-1)+k;const season=c0.season+Math.floor(i/12),wk=(i%12)+1;
-    const f=typeof fixtureFor==='function'?fixtureFor(season,wk):null;if(f&&f.loc===li)return `📜 <b>Next games here:</b> ${esc((EVENTS[f.ev]||{}).n||f.ev)} · ${esc(empireDate(season,wk).short)} (${k} week${k===1?'':'s'} off)`}
-  return `📜 No games scheduled here for two seasons — the sand waits`}
+    const f=typeof fixtureFor==='function'?fixtureFor(season,wk):null;if(f&&f.loc===li)return _T`📜 <b>Next games here:</b> ${esc((EVENTS[f.ev]||{}).n||f.ev)} · ${esc(empireDate(season,wk).short)} (${k} week${k===1?'':'s'} off)`}
+  return _T`📜 No games scheduled here for two seasons — the sand waits`}
 /* cityPopulate — fills the square: residents (the same regulars as the stands), passers-by, this week's card, soldiers, the sponsor, beasts. NOTE: uses rnd() — the seeded dice — from UI code. */
 function cityPopulate(){
   const L=CITY.L,w=CITY.w;const npcs=[];let id=0;
@@ -157,11 +157,11 @@ function cityPopulate(){
   const key=w?`m:${w.id}:${w.season}:${w.week}`:'now'+new Date().toISOString().slice(0,10);
   const chat=[];
   try{const imp=typeof worldImpact==='function'?worldImpact(CITY.li,key):{list:[]};
-    for(const e of imp.list||[])chat.push(e.war?`They say ${e.war.rome} marches on ${e.war.foe}…`:`Have you heard? ${e.n}${e.k<1?`, over in ${e.city}`:''}.`)}catch(e){}
+    for(const e of imp.list||[])chat.push(e.war?_T`They say ${e.war.rome} marches on ${e.war.foe}…`:_T`Have you heard? ${e.n}${e.k<1?_T`, over in ${e.city}`:''}.`)}catch(e){}
   try{for(const n2 of (typeof cityNews==='function'?cityNews(CITY.li,key):[]))chat.push(String(n2.t||n2).replace(/<[^>]*>/g,''))}catch(e){}
-  if(w&&w.night){const b=w.night.bouts.find(x=>!x.done);if(b){const names=b.ents.map(x=>(gById(x)||{}).name).filter(Boolean);if(names.length)chat.push(`${names[0]} fights next — I have coin on it.`,`${names[names.length-1]}? The odds are long, the heart is willing.`)}
-    if(w.night.omen&&w.night.omen.k!=='clear')chat.push(`${w.night.omen.n}. The augurs are busy today.`)}
-  chat.push('Fine wool, two coins the arm-length!','The bread line was shorter under the old aedile.','Mind the mule.','A denarius says the small one wins.',(CITY_DRESS[L.n]||{}).land||'Fair skies, at least.');
+  if(w&&w.night){const b=w.night.bouts.find(x=>!x.done);if(b){const names=b.ents.map(x=>(gById(x)||{}).name).filter(Boolean);if(names.length)chat.push(_T`${names[0]} fights next — I have coin on it.`,_T`${names[names.length-1]}? The odds are long, the heart is willing.`)}
+    if(w.night.omen&&w.night.omen.k!=='clear')chat.push(_T`${w.night.omen.n}. The augurs are busy today.`)}
+  chat.push(_T('Fine wool, two coins the arm-length!'),_T('The bread line was shorter under the old aedile.'),_T('Mind the mule.'),_T('A denarius says the small one wins.'),(CITY_DRESS[L.n]||{}).land||_T('Fair skies, at least.'));
   CITY.chatter=chat.filter(Boolean);
 }
 
@@ -181,14 +181,14 @@ function cityLoop(ts){if(!CITY.open)return;const now=performance.now();const dt=
     const kinds=Object.values(BEAST_KINDS);const K=kinds[rnd(kinds.length)];
     const row=5+rnd(5);CITY.npcs.push({id:'b'+now,kind:'beast',name:`${K.n} for the pens`,tok:K.tok,r:row,c:CITY_N-1,static:false,leaving:true,wt:0,t0:now,
       path:cityBFS([row,CITY_N-1],[CITY_GATE[0]+1,CITY_GATE[1]]).concat([[CITY_GATE[0],CITY_GATE[1]]])});
-    log2city(`A ${K.n.toLowerCase()} is led across the square toward the beast gate.`)}
+    log2city(_T`A ${K.n.toLowerCase()} is led across the square toward the beast gate.`)}
   // idle chatter
   if(now>CITY.chatT&&CITY.mode!=='filing'){CITY.chatT=now+(3800+Math.random()*4200)/spd;const cand=CITY.npcs.filter(n=>['spec','filler','glad','soldier'].includes(n.kind)&&!n.say);
     if(typeof SETTINGS!=='undefined'&&SETTINGS.cityChatter===false){}else if(cand.length&&CITY.chatter.length){const n=pickOne(cand);n.say=pickOne(CITY.chatter);n.sayUntil=now+4200}}
   for(const n of CITY.npcs)if(n.say&&now>n.sayUntil)n.say=null;
   // the horns: time runs out and the square empties into the arena
   if(CITY.remain>0||CITY.mode==='filing'){if(CITY.mode!=='filing')CITY.remain-=dt*spd;const left=CITY.remain;const ck=document.getElementById('cityClock');
-    if(ck){ck.hidden=false;ck.textContent=CITY.mode==='filing'?'🎺 the games begin — to the arena!':`🏛 the games begin in ${Math.max(0,Math.ceil(left/1000))}s`;ck.classList.toggle('soon',left<30000&&CITY.mode!=='filing')}
+    if(ck){ck.hidden=false;ck.textContent=CITY.mode==='filing'?_T('🎺 the games begin — to the arena!'):_T`🏛 the games begin in ${Math.max(0,Math.ceil(left/1000))}s`;ck.classList.toggle('soon',left<30000&&CITY.mode!=='filing')}
     if(left<=0&&CITY.mode!=='filing')cityHorns()}
   cityHUD();cityDraw();CITY.raf=requestAnimationFrame(cityLoop)}
 /* cityHorns — the horns sound: the gates lock and the crowd files toward the arena gate. */
@@ -197,7 +197,7 @@ function cityHorns(){if(CITY.mode==='filing')return;CITY.mode='filing';CITY.rema
   try{const w9=CITY.w;if(CITY.mgr&&w9&&w9.night&&w9.night.loc===CITY.li){const bi9=w9.night.bouts.findIndex(b2=>!b2.done);if(bi9>=0)w9.night.hornsLock=bi9}}catch(e){}
   for(const n of CITY.npcs)if(['spec','filler','glad'].includes(n.kind)){n.leaving=true;n.static=false;
     n.path=cityBFS([n.r,n.c],[CITY_GATE[0]+1,CITY_GATE[1]+(rnd(3)-1)]);n.path.push([CITY_GATE[0],CITY_GATE[1]]);n.t0=performance.now()+rnd(2600)}
-  log2city('🎺 The horns! The crowd streams toward the arena gate.');
+  log2city(_T('🎺 The horns! The crowd streams toward the arena gate.'));
   citySelect({kind:'enter'})}
 /* cityEnterArena — follows the crowd into the arena (the bout starts behind the fade). */
 function cityEnterArena(){if(CITY.entering)return;CITY.entering=true;const wasMgr=CITY.mgr,li9=CITY.li;
@@ -216,7 +216,7 @@ function cityExitKind(){const w=CITY.w;if(!CITY.mgr||!w||!w.night)return 'leave'
   if(w.night.loc===CITY.li)return 'night';                  // this city hosts the week — Match Week is where you belong
   return 'ludus'}                                           // the week's games are elsewhere — home to the ludus
 /* CITY_EXIT_LBL — labels of the exit buttons by kind. */
-const CITY_EXIT_LBL={night:'⏎ Return to Match Week',ludus:'⏎ Return to your ludus',leave:'Leave the square ✕'};
+const CITY_EXIT_LBL={night:_T('⏎ Return to Match Week'),ludus:_T('⏎ Return to your ludus'),leave:_T('Leave the square ✕')};
 /* cityExit — leaves the square the way cityExitKind says. */
 function cityExit(){const k=cityExitKind();
   if(k==='leave'){closeCity();return}
@@ -225,9 +225,9 @@ function cityExit(){const k=cityExitKind();
     const mb=document.getElementById('mBody');if(mb)mb.scrollTop=0})}
 /* citySealedPanel — the sealed-gate panel when no games are on this sand. */
 function citySealedPanel(){const w=CITY.w;const k=cityExitKind();
-  const why=CITY.mgr&&w&&w.night&&w.night.loc===CITY.li?'Tonight’s games here are already fought — the results are posted on Match Week.':CITY.mgr&&w&&w.night?`This week’s games are at <b>${esc(LOCATIONS[w.night.loc].n)}</b>, not here.`:'No games are called on this sand right now.';
-  cityPanel(`<div class="sect" style="margin-top:0">🔒 The arena gate is barred</div><div class="card2"><p style="margin:0">${why} The gatekeeper does not even look up.</p>
-    <div class="acts" style="margin-top:8px"><button class="btn primary" type="button" onclick="cityExit()">${CITY_EXIT_LBL[k]}</button><button class="btn tksm" type="button" onclick="cityPanel('')">Keep strolling</button></div></div>`)}
+  const why=CITY.mgr&&w&&w.night&&w.night.loc===CITY.li?_T('Tonight’s games here are already fought — the results are posted on Match Week.'):CITY.mgr&&w&&w.night?_T`This week’s games are at <b>${esc(LOCATIONS[w.night.loc].n)}</b>, not here.`:_T('No games are called on this sand right now.');
+  cityPanel(`<div class="sect" style="margin-top:0">${_T`🔒 The arena gate is barred`}</div><div class="card2"><p style="margin:0">${_T`${why} The gatekeeper does not even look up.`}</p>
+    <div class="acts" style="margin-top:8px"><button class="btn primary" type="button" onclick="cityExit()">${CITY_EXIT_LBL[k]}</button><button class="btn tksm" type="button" onclick="cityPanel('')">${_T`Keep strolling`}</button></div></div>`)}
 /* cityBFS — shortest walkable path between two square tiles (breadth-first). */
 function cityBFS(from,to){const seen={};const q=[[from,[]]];seen[from[0]+','+from[1]]=1;
   while(q.length){const [[r,c],path]=q.shift();if(r===to[0]&&c===to[1])return path;
@@ -380,29 +380,29 @@ function cityPanel(html){const p=document.getElementById('cityPanel');if(!p)retu
     setTimeout(()=>{if(CITY.open&&CITY.sel&&CITY.sel.kind==='spec')citySelect(CITY.sel)},120)})}}
 /* citySelect — opens the side panel for what was clicked (a regular, a passer-by, a fighter, the sponsor, a shop, the auction, the gate…). */
 function citySelect(sel){CITY.sel=sel;const w=CITY.w,mgr=CITY.mgr;const pm=mgr?me():null;
-  if(sel.kind==='spec'&&sel.reg){cityPanel(`<div class="sect" style="margin-top:0">👤 A face from the stands</div>${typeof spectInspectorHTML==='function'?spectInspectorHTML(sel.reg):`<b>${esc(sel.name)}</b>`}
-    <p class="rc-sub">${esc(sel.reg.city||CITY.L.n)} is home. You have seen them in the tiers${sel.reg.visits?` ${sel.reg.visits} time${sel.reg.visits===1?'':'s'}`:''}.</p>`);return}
-  if(sel.kind==='filler'){cityPanel(`<div class="sect" style="margin-top:0">👤 A passer-by</div><div class="card2"><b>${esc(sel.name)}</b><p class="rc-sub" style="margin:4px 0 0">${pickOne(['Shopping for the week.','Late for something, clearly.','Here for the games, like everyone.','Arguing about chariot teams.','Selling nothing anyone wants.'])} Not a regular of your stands — yet.</p></div>`);return}
-  if(sel.kind==='soldier'){cityPanel(`<div class="sect" style="margin-top:0">🛡 A legionary on watch</div><div class="card2"><p style="margin:0">"Move along, citizen." ${w&&w.glads.some(g=>g.inj&&g.inj.war)?'The legions are hungry for men this season — lanistae keep their best fighters out of sight when the levy officer walks.':'Quiet rounds today. The levy lists stay rolled up.'}</p></div>`);return}
-  if(sel.kind==='sponsor'){const sp=sel.sp;cityPanel(`<div class="sect" style="margin-top:0">🎭 The editor of the games, on the balcony</div><div class="card2" style="text-align:center"><img src="${flavFaceURL('pleased',sp)}" style="width:130px;border-radius:4px"><br><b>${esc(sp.name)}</b><div class="rc-sub">${esc(sp.title||'')}</div>
-    <p class="commsq">“${esc(pickOne(['A fine crowd today. My crowd.','Enjoy my square. Spend freely.','The games? Oh, they will be worth watching. I paid for them.','You there — bring me a winner and we shall talk.']))}”</p></div>`);return}
+  if(sel.kind==='spec'&&sel.reg){cityPanel(`<div class="sect" style="margin-top:0">${_T`👤 A face from the stands`}</div>${typeof spectInspectorHTML==='function'?spectInspectorHTML(sel.reg):`<b>${esc(sel.name)}</b>`}
+    <p class="rc-sub">${_T`${esc(sel.reg.city||CITY.L.n)} is home. You have seen them in the tiers${sel.reg.visits?_T` ${sel.reg.visits} time${sel.reg.visits===1?'':'s'}`:''}.`}</p>`);return}
+  if(sel.kind==='filler'){cityPanel(`<div class="sect" style="margin-top:0">${_T`👤 A passer-by`}</div><div class="card2"><b>${esc(sel.name)}</b><p class="rc-sub" style="margin:4px 0 0">${_T`${pickOne([_T('Shopping for the week.'),_T('Late for something, clearly.'),_T('Here for the games, like everyone.'),_T('Arguing about chariot teams.'),_T('Selling nothing anyone wants.')])} Not a regular of your stands — yet.`}</p></div>`);return}
+  if(sel.kind==='soldier'){cityPanel(`<div class="sect" style="margin-top:0">${_T`🛡 A legionary on watch`}</div><div class="card2"><p style="margin:0">${_T`"Move along, citizen." ${w&&w.glads.some(g=>g.inj&&g.inj.war)?_T('The legions are hungry for men this season — lanistae keep their best fighters out of sight when the levy officer walks.'):_T('Quiet rounds today. The levy lists stay rolled up.')}`}</p></div>`);return}
+  if(sel.kind==='sponsor'){const sp=sel.sp;cityPanel(`<div class="sect" style="margin-top:0">${_T`🎭 The editor of the games, on the balcony`}</div><div class="card2" style="text-align:center"><img src="${flavFaceURL('pleased',sp)}" style="width:130px;border-radius:4px"><br><b>${esc(sp.name)}</b><div class="rc-sub">${esc(sp.title||'')}</div>
+    <p class="commsq">“${esc(pickOne([_T('A fine crowd today. My crowd.'),_T('Enjoy my square. Spend freely.'),_T('The games? Oh, they will be worth watching. I paid for them.'),_T('You there — bring me a winner and we shall talk.')]))}”</p></div>`);return}
   if(sel.kind==='glad'){const g=sel.g;const stars='★'.repeat(starsOf(pubOvr(g)));const lud=g.contract&&typeof mgrById==='function'?mgrById(g.contract.mgr):null;
-    cityPanel(`<div class="sect" style="margin-top:0">🗡 A gladiator in the square</div><div class="card2"><div style="display:flex;gap:10px">${typeof gArt==='function'?gArt(g,'sm'):''}<div><b>${esc(g.name)}</b> <span class="stars">${stars}</span><div class="rc-sub">${CLASSES[g.cls]?CLASSES[g.cls].name:''} · ${gAge(g)} · of ${esc(g.city||'?')}</div>
-      <div class="rc-sub">${g.rec?`${g.rec.w}-${Math.max(0,g.rec.ev-g.rec.w)} on the sand`:''} · ${lud?`fights for ${esc(lud.ludus)}`:'a free sword'}</div>
-      ${sel.bout?`<div style="color:var(--gold2);margin-top:4px">⚔ Fights on tonight's card — ${esc(TIERS[sel.bout.tier].n)}</div>`:''}</div></div>
-      <p class="commsq" style="margin:6px 0 0">“${esc(sel.bout?pickOne(['Watch the sand tonight. You will remember my name.','I fight at the '+(TIERS[sel.bout.tier].n.toLowerCase())+'. Pray for the other one.','A quiet walk before the noise.']):pickOne(['The baths here are better than Roma’s. Tell no one.','Between contracts. Between everything.','I fought here once. Good crowd, bad sand.']))}”</p>
-      ${mgr&&!sel.ephemeral?`<div class="acts" style="margin-top:6px"><button class="btn tksm" type="button" onclick="cityFav('${g.id}')">${g.favd?'★ On your board':'☆ Pin to Favorites'}</button></div>`:''}</div>`);return}
+    cityPanel(`<div class="sect" style="margin-top:0">${_T`🗡 A gladiator in the square`}</div><div class="card2"><div style="display:flex;gap:10px">${typeof gArt==='function'?gArt(g,'sm'):''}<div><b>${esc(g.name)}</b> <span class="stars">${stars}</span><div class="rc-sub">${_T`${CLASSES[g.cls]?CLASSES[g.cls].name:''} · ${gAge(g)} · of ${esc(g.city||'?')}`}</div>
+      <div class="rc-sub">${g.rec?_T`${g.rec.w}-${Math.max(0,g.rec.ev-g.rec.w)} on the sand`:''} · ${lud?_T`fights for ${esc(lud.ludus)}`:_T('a free sword')}</div>
+      ${sel.bout?`<div style="color:var(--gold2);margin-top:4px">${_T`⚔ Fights on tonight's card — ${esc(TIERS[sel.bout.tier].n)}`}</div>`:''}</div></div>
+      <p class="commsq" style="margin:6px 0 0">“${esc(sel.bout?pickOne([_T('Watch the sand tonight. You will remember my name.'),_T('I fight at the ')+(TIERS[sel.bout.tier].n.toLowerCase())+'. Pray for the other one.',_T('A quiet walk before the noise.')]):pickOne([_T('The baths here are better than Roma’s. Tell no one.'),_T('Between contracts. Between everything.'),_T('I fought here once. Good crowd, bad sand.')]))}”</p>
+      ${mgr&&!sel.ephemeral?`<div class="acts" style="margin-top:6px"><button class="btn tksm" type="button" onclick="cityFav('${g.id}')">${g.favd?_T('★ On your board'):_T('☆ Pin to Favorites')}</button></div>`:''}</div>`);return}
   if(sel.kind==='auction')return cityAuctionPanel();
   if(sel.kind==='bldg')return cityShopPanel(sel.key);
-  if(sel.kind==='enter'){cityPanel(`<div class="sect" style="margin-top:0">🎺 The horns have sounded</div><div class="card2"><p style="margin:0">The square empties; the tiers fill. ${CITY.mgr?'Your card is waiting.':'The games are beginning.'}</p>
-    <div class="acts" style="margin-top:8px"><button class="btn primary" type="button" onclick="cityEnterArena()">⚔ Enter the arena</button><button class="btn tksm" type="button" onclick="cityPanel('')">Linger a moment</button></div></div>`);return}
+  if(sel.kind==='enter'){cityPanel(`<div class="sect" style="margin-top:0">${_T`🎺 The horns have sounded`}</div><div class="card2"><p style="margin:0">${_T`The square empties; the tiers fill. ${CITY.mgr?_T('Your card is waiting.'):_T('The games are beginning.')}`}</p>
+    <div class="acts" style="margin-top:8px"><button class="btn primary" type="button" onclick="cityEnterArena()">${_T`⚔ Enter the arena`}</button><button class="btn tksm" type="button" onclick="cityPanel('')">${_T`Linger a moment`}</button></div></div>`);return}
 }
 /* cityFav — pins / unpins a fighter on your Favorites board from the square. */
-function cityFav(gid){const g=gById(gid);if(!g)return;g.favd=!g.favd;if(typeof saveWorld==='function')saveWorld();citySelect(CITY.sel);log2city(g.favd?`${g.name} pinned to your Favorites.`:`${g.name} removed from your board.`)}
+function cityFav(gid){const g=gById(gid);if(!g)return;g.favd=!g.favd;if(typeof saveWorld==='function')saveWorld();citySelect(CITY.sel);log2city(g.favd?_T`${g.name} pinned to your Favorites.`:_T`${g.name} removed from your board.`)}
 
 /* ---------------- the auction block: the unwanted, going cheap ---------------- */
 /* AUCTION_WOES — why an auction lot is cheap, and what that does to the fighter. */
-const AUCTION_WOES=[['old bones',g=>{g.age=36+rnd(8)}],['a wet cough',g=>{g.ovr=Math.max(38,g.ovr-6)}],['too fond of the table',g=>{g.ovr=Math.max(38,g.ovr-4)}],['a condemned man',g=>{g.cls='damnatio'}],['"no one hires a woman", says the seller',g=>{g.fem=true;g.cls='amazonia'}],['half-blind in one eye',g=>{g.ovr=Math.max(38,g.ovr-5)}],['freezes at the sight of beasts',g=>{}],['too old to retrain, they say',g=>{g.age=34+rnd(6)}]];
+const AUCTION_WOES=[[_T('old bones'),g=>{g.age=36+rnd(8)}],[_T('a wet cough'),g=>{g.ovr=Math.max(38,g.ovr-6)}],[_T('too fond of the table'),g=>{g.ovr=Math.max(38,g.ovr-4)}],[_T('a condemned man'),g=>{g.cls='damnatio'}],[_T('"no one hires a woman", says the seller'),g=>{g.fem=true;g.cls='amazonia'}],['half-blind in one eye',g=>{g.ovr=Math.max(38,g.ovr-5)}],[_T('freezes at the sight of beasts'),g=>{}],[_T('too old to retrain, they say'),g=>{g.age=34+rnd(6)}]];
 /* cityAuctionLot — this week's auction block lot (2–3 cheap fighters, some hidden gems), created once per week and city. TWEAK: the .18 gem chance, the 5–13 coin prices. */
 function cityAuctionLot(){const w=CITY.w;if(!w)return [];
   if(!w.cityAuction||w.cityAuction.wk!==w.week||w.cityAuction.li!==CITY.li){
@@ -412,24 +412,24 @@ function cityAuctionLot(){const w=CITY.w;if(!w)return [];
   return w.cityAuction.ids.map(gById).filter(g=>g&&g.alive&&!g.contract)}
 /* cityAuctionPanel — the auction block panel. */
 function cityAuctionPanel(){const mgr=CITY.mgr;const lot=cityAuctionLot();const pm=mgr?me():null;
-  cityPanel(`<div class="sect" style="margin-top:0">⚖ The auction block</div>
-   <p class="rc-sub" style="margin:0 0 6px">"HONEST VULSO'S — fighters no ludus wants, at prices no lanista can refuse!" The unwanted go cheap. Most are exactly what they look like. <b>Most.</b> You learn the truth only if they win their first bout under your name.</p>
+  cityPanel(`<div class="sect" style="margin-top:0">${_T`⚖ The auction block`}</div>
+   <p class="rc-sub" style="margin:0 0 6px">${_T`"HONEST VULSO'S — fighters no ludus wants, at prices no lanista can refuse!" The unwanted go cheap. Most are exactly what they look like. <b>Most.</b> You learn the truth only if they win their first bout under your name.`}</p>
    ${!CITY.w?'<p class="rc-sub">Come back wearing a lanista’s ring — Vulso only sells to managers.</p>':lot.length?lot.map(g=>`<div class="card2" style="margin-bottom:6px"><div style="display:flex;gap:8px">${typeof gArt==='function'?gArt(g,'sm'):''}<div style="flex:1"><b>${esc(g.name)}</b> <span class="stars">${'★'.repeat(starsOf(pubOvr(g)))}</span>
       <div class="rc-sub">${CLASSES[g.cls]?CLASSES[g.cls].name:''} · ${gAge(g)} · rated ~${pubOvr(g)} · <i>${esc(g.woe)}</i></div>
-      <div class="acts" style="margin-top:4px"><button class="btn primary tksm" type="button" ${mgr&&pm.coin>=g.price?'':'disabled'} onclick="cityBuyLot('${g.id}')">Buy · ${g.price} coin<small>signs 6 weeks at 2/wk</small></button></div></div></div></div>`).join(''):'<p class="rc-sub">The block stands empty — sold out, or nobody desperate enough this week.</p>'}`)}
+      <div class="acts" style="margin-top:4px"><button class="btn primary tksm" type="button" ${mgr&&pm.coin>=g.price?'':'disabled'} onclick="cityBuyLot('${g.id}')">${_T`Buy · ${g.price} coin<small>signs 6 weeks at 2/wk</small>`}</button></div></div></div></div>`).join(''):'<p class="rc-sub">The block stands empty — sold out, or nobody desperate enough this week.</p>'}`)}
 /* cityBuyLot — buys an auction lot onto your roster (wage 2, 6 weeks). */
 function cityBuyLot(gid){const g=gById(gid);const pm=me();const w=CITY.w;if(!g||!pm||pm.coin<g.price)return;
   pm.coin-=g.price;g.contract={mgr:pm.id,wage:2,weeks:6,since:w.week};delete g.auction;g.morale=55;g.scout=1;g.unsigned=0;
-  ghist(g,`bought off the auction block at ${CITY.L.n} for ${g.price} coin (${g.woe})`);
-  tnews(`⚖ Bought ${esc(g.name)} off the auction block at ${esc(CITY.L.n)} (${g.price} coin). ${g.woe}.`);
-  if(typeof mlog==='function')mlog(pm,`bought ${g.name} at auction (${g.price} coin)`);
-  saveWorld();log2city(`${g.name} is yours. Vulso bites the coin and grins.`);cityAuctionPanel()}
+  ghist(g,_T`bought off the auction block at ${CITY.L.n} for ${g.price} coin (${g.woe})`);
+  tnews(_T`⚖ Bought ${esc(g.name)} off the auction block at ${esc(CITY.L.n)} (${g.price} coin). ${g.woe}.`);
+  if(typeof mlog==='function')mlog(pm,_T`bought ${g.name} at auction (${g.price} coin)`);
+  saveWorld();log2city(_T`${g.name} is yours. Vulso bites the coin and grins.`);cityAuctionPanel()}
 // the hidden gem shows their true worth the first time they WIN for you
 function gemCheck(glad,mgr){if(!glad||!glad.gemHid||!mgr||!mgr.isPlayer)return;const up=glad.gemHid;glad.gemHid=0;
   glad.ovr=clamp(glad.ovr+up,38,94);glad.pot=Math.max(glad.pot||glad.ovr,glad.ovr+3+rnd(5));
   {const w9=W_();w9.gemsFound=(w9.gemsFound||0)+1}
-  mnews(`💎 <b>${esc(glad.name)}</b> — the auction-block castoff — fights like a champion! The doctores re-rate them at <b>${glad.ovr}</b>. Vulso's face, when he hears.`,'big');
-  tnews(`💎 Hidden gem: ${esc(glad.name)} is re-rated at ${glad.ovr} (+${up}).`,'big');ghist(glad,`revealed as a hidden gem — re-rated ${glad.ovr}`)}
+  mnews(_T`💎 <b>${esc(glad.name)}</b> — the auction-block castoff — fights like a champion! The doctores re-rate them at <b>${glad.ovr}</b>. Vulso's face, when he hears.`,'big');
+  tnews(_T`💎 Hidden gem: ${esc(glad.name)} is re-rated at ${glad.ovr} (+${up}).`,'big');ghist(glad,_T`revealed as a hidden gem — re-rated ${glad.ovr}`)}
 
 /* ---------------- the shops: a start-of-bout kit, the baths, the tavern ---------------- */
 /* v0.36 HOME CITY: in the city where your ludus stands, the merchants know your face — a quarter off everything */
@@ -444,46 +444,46 @@ const CITY_ARMOR=[['ma1',6],['ma2',12],['ma3',20],['elix2',5],['elix4',9]];
 function cityShopPanel(key){const w=CITY.w,mgr=CITY.mgr;const pm=mgr?me():null;
   if(key==='arena'){if(cityGamesHere())citySelect({kind:'enter'});else citySealedPanel();return}
   if(key==='arms'||key==='armor'){const stock=key==='arms'?CITY_ARMS:CITY_ARMOR;const ros=mgr?rosterOf(pm).sort((a,b)=>effOvr(b)-effOvr(a)):[];
-    cityPanel(`<div class="sect" style="margin-top:0">${key==='arms'?'⚔️ The arms market':'🛡 The armorer'}</div>
-     <p class="rc-sub" style="margin:0 0 6px">Gear bought here is carried into the fighter's <b>next bout this week</b> — they start equipped instead of waiting on the arena market. Their class loadout stays; a swapped-out starting weapon is still theirs to use. Three items a fighter, at most.</p>
+    cityPanel(`<div class="sect" style="margin-top:0">${key==='arms'?_T('⚔️ The arms market'):_T('🛡 The armorer')}</div>
+     <p class="rc-sub" style="margin:0 0 6px">${_T`Gear bought here is carried into the fighter's <b>next bout this week</b> — they start equipped instead of waiting on the arena market. Their class loadout stays; a swapped-out starting weapon is still theirs to use. Three items a fighter, at most.`}</p>
      ${!mgr?'<p class="rc-sub">The smith looks up: "Lanistae only. The arena has its own market for fighters."</p>':`
-     <label class="rc-sub">For <select id="cityKitWho" class="tin">${ros.map(g=>`<option value="${g.id}">${esc(g.name)} · ${effOvr(g)} · kit ${(g.kit||[]).length}/3</option>`).join('')}</select></label>
-     <div class="acts" style="margin-top:6px;flex-direction:column;align-items:stretch">${cityHome()?'<p class="rc-sub" style="margin:0">🏠 <b>Home-city prices</b> — a quarter off, for the lanista whose ludus stands here.</p>':''}${stock.map(([k,pr0])=>{const pr=cityPr(pr0);return `<button class="btn" type="button" onclick="cityBuyKit('${k}',${pr})" ${pm.coin<pr?'disabled':''}>${OFFER[k].g} ${OFFER[k].n} <small>${OFFER[k].s} · ${pr} coin${pr<pr0?` <s>${pr0}</s>`:''}</small></button>`}).join('')}</div>
+     <label class="rc-sub">${_T`For`} <select id="cityKitWho" class="tin">${ros.map(g=>`<option value="${g.id}">${_T`${esc(g.name)} · ${effOvr(g)} · kit ${(g.kit||[]).length}/3`}</option>`).join('')}</select></label>
+     <div class="acts" style="margin-top:6px;flex-direction:column;align-items:stretch">${cityHome()?'<p class="rc-sub" style="margin:0">🏠 <b>Home-city prices</b> — a quarter off, for the lanista whose ludus stands here.</p>':''}${stock.map(([k,pr0])=>{const pr=cityPr(pr0);return `<button class="btn" type="button" onclick="cityBuyKit('${k}',${pr})" ${pm.coin<pr?'disabled':''}>${_T`${OFFER[k].g} ${OFFER[k].n} <small>${OFFER[k].s} · ${pr} coin${pr<pr0?` <s>${pr0}</s>`:''}</small>`}</button>`}).join('')}</div>
      <div id="cityKitList">${cityKitListHTML(ros[0])}</div>`}`);return}
-  if(key==='bath'){cityPanel(`<div class="sect" style="margin-top:0">🛁 The bathhouse</div><div class="card2"><p style="margin:0">Steam, strigils and gossip. ${mgr?'':'The attendant nods you toward the public pool.'}</p>
-    ${mgr?`<div class="acts" style="margin-top:6px"><button class="btn primary tksm" type="button" ${w.bathWk===w.week?'disabled title="Already steamed this week"':me().coin<cityPr(8)?'disabled':''} onclick="cityBath()">Steam the whole stable<small>${cityPr(8)} coin · weekly · +2 morale each</small></button></div>`:''}</div>`);return}
-  if(key==='tavern'){cityPanel(`<div class="sect" style="margin-top:0">🍷 The tavern</div><div class="card2"><p style="margin:0">Sour wine, loud opinions, and everything worth knowing in ${esc(CITY.L.n)}.</p>
-    ${mgr?`<div class="acts" style="margin-top:6px"><button class="btn primary tksm" type="button" ${w.tavWk===w.week?'disabled title="You already stood a round this week"':me().coin<cityPr(6)?'disabled':''} onclick="cityTavern()">Stand a round<small>${cityPr(6)} coin · weekly · +3 morale each, and someone talks</small></button></div>`:''}</div>`);return}
-  if(key==='lupanar'){cityPanel(`<div class="sect" style="margin-top:0">🌙 The lupanar</div><div class="card2"><p style="margin:0">Lamplight and discretion. The door-keeper looks you over: "The house hears everything, lanista. Senators, stewards… <i>rival lanistae.</i>"</p>
-    ${mgr?`<div class="acts" style="margin-top:6px"><button class="btn primary tksm" type="button" ${w.lupWk===w.week?'disabled title="The house has already been generous this week"':me().coin<cityPr(10)?'disabled':''} onclick="cityLup()">An evening of diplomacy<small>${cityPr(10)} coin · weekly · a rival house warms to you</small></button></div>`:''}</div>`);return}
+  if(key==='bath'){cityPanel(`<div class="sect" style="margin-top:0">${_T`🛁 The bathhouse`}</div><div class="card2"><p style="margin:0">${_T`Steam, strigils and gossip. ${mgr?'':_T('The attendant nods you toward the public pool.')}`}</p>
+    ${mgr?`<div class="acts" style="margin-top:6px"><button class="btn primary tksm" type="button" ${w.bathWk===w.week?_T('disabled title="Already steamed this week"'):me().coin<cityPr(8)?'disabled':''} onclick="cityBath()">${_T`Steam the whole stable<small>${cityPr(8)} coin · weekly · +2 morale each</small>`}</button></div>`:''}</div>`);return}
+  if(key==='tavern'){cityPanel(`<div class="sect" style="margin-top:0">${_T`🍷 The tavern`}</div><div class="card2"><p style="margin:0">${_T`Sour wine, loud opinions, and everything worth knowing in ${esc(CITY.L.n)}.`}</p>
+    ${mgr?`<div class="acts" style="margin-top:6px"><button class="btn primary tksm" type="button" ${w.tavWk===w.week?_T('disabled title="You already stood a round this week"'):me().coin<cityPr(6)?'disabled':''} onclick="cityTavern()">${_T`Stand a round<small>${cityPr(6)} coin · weekly · +3 morale each, and someone talks</small>`}</button></div>`:''}</div>`);return}
+  if(key==='lupanar'){cityPanel(`<div class="sect" style="margin-top:0">${_T`🌙 The lupanar`}</div><div class="card2"><p style="margin:0">${_T`Lamplight and discretion. The door-keeper looks you over: "The house hears everything, lanista. Senators, stewards… <i>rival lanistae.</i>"`}</p>
+    ${mgr?`<div class="acts" style="margin-top:6px"><button class="btn primary tksm" type="button" ${w.lupWk===w.week?_T('disabled title="The house has already been generous this week"'):me().coin<cityPr(10)?'disabled':''} onclick="cityLup()">${_T`An evening of diplomacy<small>${cityPr(10)} coin · weekly · a rival house warms to you</small>`}</button></div>`:''}</div>`);return}
   if(key==='auction')return cityAuctionPanel();
 }
 /* cityKitListHTML — what a fighter carries in their kit for this week's bout. */
-function cityKitListHTML(glad){if(!glad)return '';return `<div class="sect">In ${esc(glad.name)}'s kit</div>${(glad.kit||[]).length?(glad.kit||[]).map((k,i)=>`<div style="font-size:12.5px">${OFFER[k].g} ${OFFER[k].n} (${OFFER[k].s}) <button class="btn tksm" type="button" onclick="cityKitDrop('${glad.id}',${i})">↩ return</button></div>`).join(''):'<span class="rc-sub">Nothing yet — they walk out with their class loadout.</span>'}`}
+function cityKitListHTML(glad){if(!glad)return '';return `<div class="sect">${_T`In ${esc(glad.name)}'s kit`}</div>${(glad.kit||[]).length?(glad.kit||[]).map((k,i)=>`<div style="font-size:12.5px">${OFFER[k].g} ${OFFER[k].n} (${OFFER[k].s}) <button class="btn tksm" type="button" onclick="cityKitDrop('${glad.id}',${i})">↩ return</button></div>`).join(''):_T('<span class="rc-sub">Nothing yet — they walk out with their class loadout.</span>')}`}
 /* cityBuyKit — buys a kit item for the chosen fighter. */
 function cityBuyKit(key,price){const pm=me();const sel=document.getElementById('cityKitWho');const g=sel&&gById(sel.value);if(!g||pm.coin<price)return;
-  g.kit=g.kit||[];if(g.kit.length>=3){log2city('Three items is the limit — the fighter has only so many hands.');return}
-  pm.coin-=price;g.kit.push(key);g.kitWk=CITY.w.week;saveWorld();log2city(`${OFFER[key].n} wrapped for ${g.name}.`);
-  const box=document.getElementById('cityKitList');if(box)box.innerHTML=cityKitListHTML(g);const o=sel.querySelector(`option[value="${g.id}"]`);if(o)o.textContent=`${g.name} · ${effOvr(g)} · kit ${g.kit.length}/3`}
+  g.kit=g.kit||[];if(g.kit.length>=3){log2city(_T('Three items is the limit — the fighter has only so many hands.'));return}
+  pm.coin-=price;g.kit.push(key);g.kitWk=CITY.w.week;saveWorld();log2city(_T`${OFFER[key].n} wrapped for ${g.name}.`);
+  const box=document.getElementById('cityKitList');if(box)box.innerHTML=cityKitListHTML(g);const o=sel.querySelector(`option[value="${g.id}"]`);if(o)o.textContent=_T`${g.name} · ${effOvr(g)} · kit ${g.kit.length}/3`}
 /* cityKitDrop — sells a kit item back (70%). */
 function cityKitDrop(gid,i){const g=gById(gid);const pm=me();if(!g||!g.kit)return;const k=g.kit.splice(i,1)[0];pm.coin+=Math.ceil((CITY_ARMS.concat(CITY_ARMOR).find(x=>x[0]===k)||[0,4])[1]*0.7);saveWorld();
   const box=document.getElementById('cityKitList');if(box)box.innerHTML=cityKitListHTML(g)}
 /* cityBath — the bathhouse: +2 morale for the whole stable, once a week. TWEAK: 8 coin. */
-function cityBath(){const w=CITY.w,pm=me();const f=cityPr(8);if(w.bathWk===w.week||pm.coin<f)return;pm.coin-=f;w.bathWk=w.week;for(const g of rosterOf(pm))g.morale=clamp(g.morale+2,0,100);tnews('🛁 The whole stable steamed at the bathhouse: +2 morale each.');saveWorld();log2city('The stable emerges pink and cheerful. +2 morale each.');cityShopPanel('bath')}
+function cityBath(){const w=CITY.w,pm=me();const f=cityPr(8);if(w.bathWk===w.week||pm.coin<f)return;pm.coin-=f;w.bathWk=w.week;for(const g of rosterOf(pm))g.morale=clamp(g.morale+2,0,100);tnews(_T('🛁 The whole stable steamed at the bathhouse: +2 morale each.'));saveWorld();log2city(_T('The stable emerges pink and cheerful. +2 morale each.'));cityShopPanel('bath')}
 /* cityTavern — the tavern: +3 morale for the stable and a tip that scouts one unknown fighter, once a week. TWEAK: 6 coin. */
 function cityTavern(){const w=CITY.w,pm=me();const f=cityPr(6);if(w.tavWk===w.week||pm.coin<f)return;pm.coin-=f;w.tavWk=w.week;for(const g of rosterOf(pm))g.morale=clamp(g.morale+3,0,100);
   const un=w.glads.filter(g=>g.alive&&(g.scout||0)<1&&(!g.contract||g.contract.mgr!==pm.id));const tip=un.length?pickOne(un):null;if(tip)tip.scout=Math.max(tip.scout||0,1);
-  tnews(`🍷 Stood a round at ${esc(CITY.L.n)}: +3 morale each${tip?`, and a drunk swears <b>${esc(tip.name)}</b> is better than the scrolls say (scouted)`:''}.`);saveWorld();
-  log2city(tip?`+3 morale each — and a tip about ${tip.name}.`:'+3 morale all around.');cityShopPanel('tavern')}
+  tnews(_T`🍷 Stood a round at ${esc(CITY.L.n)}: +3 morale each${tip?_T`, and a drunk swears <b>${esc(tip.name)}</b> is better than the scrolls say (scouted)`:''}.`);saveWorld();
+  log2city(tip?_T`+3 morale each — and a tip about ${tip.name}.`:_T('+3 morale all around.'));cityShopPanel('tavern')}
 /* cityLup — the lupanar: once a week, an evening there softens your coldest rival (+4 opinion). TWEAK: 10 coin. */
 function cityLup(){const w=CITY.w,pm=me();const f=cityPr(10);if(w.lupWk===w.week||pm.coin<f)return;pm.coin-=f;w.lupWk=w.week;
   const riv=w.mgrs.filter(m=>!m.isPlayer).sort((a,b)=>(typeof opinionOf==='function'?opinionOf(a).v-opinionOf(b).v:0))[0];
-  if(riv){riv.relB=(riv.relB||0)+4;if(typeof mlog==='function')mlog(riv,`softened toward ${pm.ludus} after a certain evening at the ${CITY.L.n} lupanar`)}
-  tnews(`🌙 An evening of diplomacy at ${esc(CITY.L.n)}${riv?`: ${esc(riv.ludus)} warms to you a little (+4 opinion)`:''}.`);saveWorld();log2city(riv?`${riv.name} will hear of your generosity. +4 opinion.`:'A pleasant, expensive evening.');cityShopPanel('lupanar')}
+  if(riv){riv.relB=(riv.relB||0)+4;if(typeof mlog==='function')mlog(riv,_T`softened toward ${pm.ludus} after a certain evening at the ${CITY.L.n} lupanar`)}
+  tnews(_T`🌙 An evening of diplomacy at ${esc(CITY.L.n)}${riv?`: ${esc(riv.ludus)} warms to you a little (+4 opinion)`:''}.`);saveWorld();log2city(riv?_T`${riv.name} will hear of your generosity. +4 opinion.`:_T('A pleasant, expensive evening.'));cityShopPanel('lupanar')}
 // clicks from the Imperium's city tiles land here, wherever they are rendered
 /* v0.45: in a career you can only walk a city's square in the week you fight there, once the road is paid */
-function citySquareGate(locIdx){const w=typeof W_==='function'?W_():null;if(!w||!w.night)return null;if(w.tutorial)return 'Not during the lesson — explore the squares in your own career';
-  if(+locIdx!==+w.night.loc)return `Only ${LOCATIONS[w.night.loc]?LOCATIONS[w.night.loc].n:'this week’s city'} this week — each square opens in the week of its games`;
-  const t=typeof travelState==='function'?travelState(w):null;if(t&&!t.paid)return `Pay the road to ${LOCATIONS[locIdx].n} first (${t.cost} coin, on Match Week)`;return null}
+function citySquareGate(locIdx){const w=typeof W_==='function'?W_():null;if(!w||!w.night)return null;if(w.tutorial)return _T('Not during the lesson — explore the squares in your own career');
+  if(+locIdx!==+w.night.loc)return _T`Only ${LOCATIONS[w.night.loc]?LOCATIONS[w.night.loc].n:_T('this week’s city')} this week — each square opens in the week of its games`;
+  const t=typeof travelState==='function'?travelState(w):null;if(t&&!t.paid)return _T`Pay the road to ${LOCATIONS[locIdx].n} first (${t.cost} coin, on Match Week)`;return null}
 /* Imperium "Visit the city square" buttons (gated in careers). */
 document.addEventListener('click',e=>{const b=e.target.closest('[data-ct="square"]');if(!b)return;e.preventDefault();const why=citySquareGate(+b.dataset.li);if(why){if(typeof mToast==='function')mToast('🔒 '+esc(why));return}openCitySquare(+b.dataset.li,{})},true);

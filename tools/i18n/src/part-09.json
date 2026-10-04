@@ -1,0 +1,1618 @@
+[
+ {
+  "k": "the levy took them despite a bribe — {0} against {1}",
+  "w": "17-manager.js:903"
+ },
+ {
+  "k": "The officer pocketed {0} coin and took {1} anyway. Fame −3.",
+  "w": "17-manager.js:903"
+ },
+ {
+  "k": "The officer takes your {0} coin, thanks you — and marches {1} off regardless. Word gets around (fame −3).",
+  "w": "17-manager.js:903"
+ },
+ {
+  "k": "spared the levy — {0} paid the officer {1} coin",
+  "w": "17-manager.js:904"
+ },
+ {
+  "k": "Bribed the levy officer {0} coin to keep {1}.",
+  "w": "17-manager.js:904"
+ },
+ {
+  "k": "{0} coin and {1}'s name comes off the list. They know who paid (+4 loyalty).",
+  "w": "17-manager.js:904"
+ },
+ {
+  "k": "{0} marched with {1} against {2}. Pray.",
+  "w": "17-manager.js:906"
+ },
+ {
+  "k": "{0} marches. Survive the war and they come home a hero.",
+  "w": "17-manager.js:906"
+ },
+ {
+  "k": "bought their freedom from {0} for {1} coin",
+  "w": "17-manager.js:908"
+ },
+ {
+  "k": "{0} counts {1} coin onto your table and walks out free. The treasury is richer; the roster is not.",
+  "w": "17-manager.js:909"
+ },
+ {
+  "k": "asked to buy their freedom — and was refused",
+  "w": "17-manager.js:910"
+ },
+ {
+  "k": "You refuse. {0} pockets the coin again, jaw set (morale −12, loyalty −4).",
+  "w": "17-manager.js:910"
+ },
+ {
+  "k": "{0} walks out the Gate of Life. Your Honor rises for letting them go.",
+  "w": "17-manager.js:912"
+ },
+ {
+  "k": "earned the rudis — and stayed with {0}",
+  "w": "17-manager.js:914"
+ },
+ {
+  "k": "{0} sets the rudis on your table… and stays. Loyalty like that is rare.",
+  "w": "17-manager.js:914"
+ },
+ {
+  "k": "{0} hears you out, thanks you, and walks free anyway.",
+  "w": "17-manager.js:915"
+ },
+ {
+  "k": "⚖ Verdicts awaiting you — the week cannot end until they are settled",
+  "w": "17-manager.js:921"
+ },
+ {
+  "k": "⚔️ the levy",
+  "w": "17-manager.js:923"
+ },
+ {
+  "k": "👛 a freedom purchase",
+  "w": "17-manager.js:923"
+ },
+ {
+  "k": "the Thumb of Flavius (17-19 CF)",
+  "w": "17-manager.js:923"
+ },
+ {
+  "k": "condemned: {0}",
+  "w": "17-manager.js:923"
+ },
+ {
+  "k": "the Rudis (50+ CF): freedom is theirs to take",
+  "w": "17-manager.js:923"
+ },
+ {
+  "k": "{0} march against {1} at {2}. Soldiers of the sand serve {3} week{4}; many do not return — those who do come home heroes.",
+  "w": "17-manager.js:924"
+ },
+ {
+  "k": "💰 Bribe the officer {0} coin<small>keeps them home · +4 loyalty · −1 Honor · a small chance he takes both</small>",
+  "w": "17-manager.js:924"
+ },
+ {
+  "k": "Let them march<small>+1 Honor · a hero's return, or a grave</small>",
+  "w": "17-manager.js:924"
+ },
+ {
+  "k": "🎲 Face the thumb<small>roll the d6 yourself: 4-6 spares them</small>",
+  "w": "17-manager.js:925"
+ },
+ {
+  "k": "Blood money is {0} coin — the treasury holds {1}. Win it, bet it, or let the sentence stand.",
+  "w": "17-manager.js:926"
+ },
+ {
+  "k": "💰 Pay the editor {0} coin<small>they live, owe you (+8 loyalty), −4 morale</small>",
+  "w": "17-manager.js:926"
+ },
+ {
+  "k": "Let the sentence stand<small>they die: {0}</small>",
+  "w": "17-manager.js:926"
+ },
+ {
+  "k": "{0} has saved <b>{1}</b> coin of their own and asks to buy their freedom for <b>{2}</b> — before the record the rudis asks for ({3}/{4} events, {5}/{6} wins).",
+  "w": "17-manager.js:927"
+ },
+ {
+  "k": "💰 Take the coin — let them go<small>+{0} coin · +1 Honor</small>",
+  "w": "17-manager.js:927"
+ },
+ {
+  "k": "Refuse<small>morale −12 · loyalty −4</small>",
+  "w": "17-manager.js:927"
+ },
+ {
+  "k": "🗡 Grant them freedom<small>they leave the league · +2 Honor</small>",
+  "w": "17-manager.js:928"
+ },
+ {
+  "k": "Ask them to stay<small>loyalty {0} decides — they may leave anyway</small>",
+  "w": "17-manager.js:928"
+ },
+ {
+  "k": "Blood feud",
+  "w": "17-manager.js:951"
+ },
+ {
+  "k": "Bitter",
+  "w": "17-manager.js:951"
+ },
+ {
+  "k": "Wary",
+  "w": "17-manager.js:951"
+ },
+ {
+  "k": "Cordial",
+  "w": "17-manager.js:951"
+ },
+ {
+  "k": "<b>{0}</b> now counts {1} a {2}{3}.",
+  "w": "17-manager.js:956"
+ },
+ {
+  "k": "BLOOD ENEMY",
+  "w": "17-manager.js:956"
+ },
+ {
+  "k": "{0} won't sign with an {1} ludus (fame {2}+ expected) — unless the money is extraordinary: about {3} coin a week would do it.",
+  "w": "17-manager.js:998"
+ },
+ {
+  "k": "{0} is not interested enough yet ({1}/{2}, of which {3} is your money). Raise the wage — every coin over {4} a week counts most — or pitch, visit and scout next week.",
+  "w": "17-manager.js:999"
+ },
+ {
+  "k": "{0} is leaning toward {1} ({2} interest vs your {3} with the money). Outbid them: a bigger wage or bonus moves this fastest.",
+  "w": "17-manager.js:1000"
+ },
+ {
+  "k": "{0} wants about {1} coin a week{2}.",
+  "w": "17-manager.js:1002"
+ },
+ {
+  "k": "(bonus included)",
+  "w": "17-manager.js:1002"
+ },
+ {
+  "k": "Your treasury cannot cover the bonus and the first week.",
+  "w": "17-manager.js:1003"
+ },
+ {
+  "k": "signed with {0} ({1}/wk)",
+  "w": "17-manager.js:1007"
+ },
+ {
+  "k": "<b>{0} signs with {1}</b>: {2} coin a week for {3} weeks{4}.",
+  "w": "17-manager.js:1007"
+ },
+ {
+  "k": ", {0} coin bonus",
+  "w": "17-manager.js:1007"
+ },
+ {
+  "k": "outbid for {0}",
+  "w": "17-manager.js:1007"
+ },
+ {
+  "k": "{0} fights for {1} father's house — no purse on earth will move {2}.",
+  "w": "17-manager.js:1011"
+ },
+ {
+  "k": "You have a non-poaching pact with {0} until week {1}.",
+  "w": "17-manager.js:1012"
+ },
+ {
+  "k": "{0} won't consider an {1} ludus — unless you pay about {2} a week.",
+  "w": "17-manager.js:1013"
+ },
+ {
+  "k": "{0}'s loyalty to {1} ({2}) is higher than their interest in you ({3}, {4} of it your money). Pay more, or pitch and visit first; unhappy fighters are easier.",
+  "w": "17-manager.js:1014"
+ },
+ {
+  "k": "They would want at least {0} coin a week.",
+  "w": "17-manager.js:1015"
+ },
+ {
+  "k": "The buyout is {0} coin; your treasury cannot cover it.",
+  "w": "17-manager.js:1016"
+ },
+ {
+  "k": "<b>You poach {0}</b> from {1} for a {2}-coin buyout. {3}",
+  "w": "17-manager.js:1023"
+ },
+ {
+  "k": "Honorable fighters will remember it.",
+  "w": "17-manager.js:1023"
+ },
+ {
+  "k": "Poached {0} from {1} ({2} coin buyout).",
+  "w": "17-manager.js:1024"
+ },
+ {
+  "k": "you poached {0}",
+  "w": "17-manager.js:1026"
+ },
+ {
+  "k": "In the infirmary: {0} — needs {1}. Cannot be entered until cleared.",
+  "w": "17-manager.js:1045"
+ },
+ {
+  "k": "the Medicus",
+  "w": "17-manager.js:1045"
+ },
+ {
+  "k": "the surgeon",
+  "w": "17-manager.js:1045"
+ },
+ {
+  "k": "<span class=\"badge bad\" title=\"Away with the legions\">⚔️ at war</span>",
+  "w": "17-manager.js:1045"
+ },
+ {
+  "k": "Severed: {0} — the Blessings of Hygeia regrow them",
+  "w": "17-manager.js:1045"
+ },
+ {
+  "k": "From the Ludus Flavius",
+  "w": "17-manager.js:1045"
+ },
+ {
+  "k": "Ludus{0}",
+  "w": "17-manager.js:1045"
+ },
+ {
+  "k": "Leave the arena?",
+  "w": "17-manager.js:1050"
+ },
+ {
+  "k": "The sand is not empty: <b>{0}</b>{1} is still running on the board — there is only one arena, and Manager mode needs it.",
+  "w": "17-manager.js:1050"
+ },
+ {
+  "k": "an event",
+  "w": "17-manager.js:1050"
+ },
+ {
+  "k": "This bout will be abandoned; you can simulate it from Match Week instead.",
+  "w": "17-manager.js:1050"
+ },
+ {
+  "k": "The event in progress will be cleanly abandoned — no Fates, nothing recorded.",
+  "w": "17-manager.js:1050"
+ },
+ {
+  "k": "Abandon the event",
+  "w": "17-manager.js:1050"
+ },
+ {
+  "k": "Stay in the arena",
+  "w": "17-manager.js:1050"
+ },
+ {
+  "k": "Manager mode",
+  "w": "17-manager.js:1060"
+ },
+ {
+  "k": "💾 Saved — {0}",
+  "w": "17-manager.js:1062"
+ },
+ {
+  "k": "your career",
+  "w": "17-manager.js:1062"
+ },
+ {
+  "k": "✖ Leave the lesson",
+  "w": "17-manager.js:1071"
+ },
+ {
+  "k": "Leave the Manager lesson (nothing is saved)",
+  "w": "17-manager.js:1071"
+ },
+ {
+  "k": "Save this career and go back to the main menu",
+  "w": "17-manager.js:1071"
+ },
+ {
+  "k": "{0} has collapsed",
+  "w": "17-manager.js:1078"
+ },
+ {
+  "k": "{0} finished you in week {1} of season {2}. The creditors seized the sand, your fighters walked free, and <b>{3}</b>'s name was struck from the lanistae's rolls. In this game the sand keeps what it takes: there is no buying your way back in.",
+  "w": "17-manager.js:1079"
+ },
+ {
+  "k": "Where your fighters went",
+  "w": "17-manager.js:1080"
+ },
+ {
+  "k": "Those who reached free agency will be in the recruiting pool of your next career.",
+  "w": "17-manager.js:1080"
+ },
+ {
+  "k": "Final fame {0} · {1}",
+  "w": "17-manager.js:1081"
+ },
+ {
+  "k": "Record {0}",
+  "w": "17-manager.js:1081"
+ },
+ {
+  "k": "Betting {0}{1}",
+  "w": "17-manager.js:1081"
+ },
+ {
+  "k": "Deaths {0}",
+  "w": "17-manager.js:1081"
+ },
+ {
+  "k": "Leave the ruin<small>the career stays in your list as a monument</small>",
+  "w": "17-manager.js:1082"
+ },
+ {
+  "k": "Delete this career",
+  "w": "17-manager.js:1082"
+ },
+ {
+  "k": "Lethality",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "How often a condemned Fate actually kills. Below 100%, the editor shows clemency the rest of the time.",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "Blood money prices",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "What the editor charges to buy back a condemned fighter.",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "Injuries",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "Bout and training injury rates.",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "Training gains",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "How fast drills improve ratings.",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "Rookie influx",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "How quickly the league refills with new blood.",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "Deaths beyond the sand",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "Fevers, bookies, roof tiles.",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "Arena-time pressure",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "How much a big roster puts off recruits who want to fight every week (0% = roster size never matters).",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "Rookie mercy",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "Chance the editor spares a condemned fighter with fewer than 3 bouts — lets young talent survive long enough to grow.",
+  "w": "17-manager.js:1085"
+ },
+ {
+  "k": "<b>🏜 House rules (sandbox)</b>",
+  "w": "17-manager.js:1089"
+ },
+ {
+  "k": "optional — set them NOW or play the printed game; they are baked in for the whole career once the ludus opens",
+  "w": "17-manager.js:1089"
+ },
+ {
+  "k": "🌿 Easy",
+  "w": "17-manager.js:1090"
+ },
+ {
+  "k": "A forgiving sand: clemency common, cheap buybacks, fewer fevers, fast training.",
+  "w": "17-manager.js:1090"
+ },
+ {
+  "k": "🏛 Standard",
+  "w": "17-manager.js:1090"
+ },
+ {
+  "k": "The printed game, as the founding rules read.",
+  "w": "17-manager.js:1090"
+ },
+ {
+  "k": "🔥 Hard",
+  "w": "17-manager.js:1090"
+ },
+ {
+  "k": "The iron league: the editor rarely blinks, buybacks gouge, training crawls, fate is cruel.",
+  "w": "17-manager.js:1090"
+ },
+ {
+  "k": "🎪 Your festival, should you lead the league at season's end:",
+  "w": "17-manager.js:1092"
+ },
+ {
+  "k": "🎟 Let me spectate: buy a ticket to watch any bout, special or the Superbus from the stands (helping my own fighters from there costs fame)",
+  "w": "17-manager.js:1093"
+ },
+ {
+  "k": "Make {0} yours",
+  "w": "17-manager.js:1096"
+ },
+ {
+  "k": "rename the house, its lanista and its colors — the fighters, coin, fame and old feuds come with it",
+  "w": "17-manager.js:1096"
+ },
+ {
+  "k": "✍ Found your new house",
+  "w": "17-manager.js:1096"
+ },
+ {
+  "k": "the old one is sold — the sale closes when this one opens, in the same league",
+  "w": "17-manager.js:1096"
+ },
+ {
+  "k": "Create your lanista {0}",
+  "w": "17-manager.js:1096"
+ },
+ {
+  "k": "Ludus name",
+  "w": "17-manager.js:1097"
+ },
+ {
+  "k": "Where your ludus stands. Fighters from this city lean your way (+8 interest) and scout at half price; its square sells to you at a quarter off; walking your own sand costs half.",
+  "w": "17-manager.js:1097"
+ },
+ {
+  "k": "🏠 Home city — where your ludus stands",
+  "w": "17-manager.js:1097"
+ },
+ {
+  "k": "disabled title=\"A house you take over keeps its home city\"",
+  "w": "17-manager.js:1097"
+ },
+ {
+  "k": "Personality",
+  "w": "17-manager.js:1099"
+ },
+ {
+  "k": "The house keeps its lanista’s temperament — grow it with perk points from the Lanista tab.",
+  "w": "17-manager.js:1101"
+ },
+ {
+  "k": "You start with 40 coin, no fame and one raw recruit. Stars will not even talk to an Unknown ludus: scout cheap fighters, win undercards and bet wisely to build a name.",
+  "w": "17-manager.js:1101"
+ },
+ {
+  "k": "Take the reins",
+  "w": "17-manager.js:1105"
+ },
+ {
+  "k": "✍ Sign the sale and open the new house",
+  "w": "17-manager.js:1105"
+ },
+ {
+  "k": "Open the ludus",
+  "w": "17-manager.js:1105"
+ },
+ {
+  "k": "Back",
+  "w": "17-manager.js:1105"
+ },
+ {
+  "k": "🗂 Manage your Manager saves",
+  "w": "17-manager.js:1107"
+ },
+ {
+  "k": "📂 Load a Manager career",
+  "w": "17-manager.js:1107"
+ },
+ {
+  "k": "<b>{0}</b> {1}<small>{2} · season {3}, week {4}{5}{6} · saved {7}</small>",
+  "w": "17-manager.js:1107"
+ },
+ {
+  "k": "· record <b>{0}-{1}</b>",
+  "w": "17-manager.js:1107"
+ },
+ {
+  "k": "· treasury <b>{0}</b>",
+  "w": "17-manager.js:1107"
+ },
+ {
+  "k": "⬇ Download",
+  "w": "17-manager.js:1107"
+ },
+ {
+  "k": "🗑 Delete",
+  "w": "17-manager.js:1107"
+ },
+ {
+  "k": "Visit the ruin",
+  "w": "17-manager.js:1107"
+ },
+ {
+  "k": "▶ Load",
+  "w": "17-manager.js:1107"
+ },
+ {
+  "k": "← All options",
+  "w": "17-manager.js:1107"
+ },
+ {
+  "k": "Take control of a ludus",
+  "w": "17-manager.js:1108"
+ },
+ {
+  "k": "<b>{0}</b><small>{1} · {2} · fame {3} ({4}) · {5} coin · {6} fighters</small><small style=\"color:var(--bone)\">{7}</small><small>{8}</small>",
+  "w": "17-manager.js:1108"
+ },
+ {
+  "k": "Take over",
+  "w": "17-manager.js:1108"
+ },
+ {
+  "k": "Run a ludus as its <b>lanista</b>. Recruit fighters the way college coaches recruit: every fighter has an <b>interest</b> level in every ludus, driven by what they want (coin, glory, honor, spectacle, training, home, arena time) and by how your personality and record grade on each. Scout them with sparring bouts simulated in the Ludus, enter them on match nights, bet on the bouts, and poach stars from rival stables. Every bout is a real Flavius Rule event: simulate it instantly or watch it live on the board. And mind the books — three week-ends in the red, or a season ended in debt, and the creditors close the ludus <b>for good</b>.",
+  "w": "17-manager.js:1109"
+ },
+ {
+  "k": "Create a new lanista<small>start Unknown, with 40 coin and one raw recruit</small>",
+  "w": "17-manager.js:1110"
+ },
+ {
+  "k": "Take over an existing ludus<small>{0} lanistae, from struggling to Imperial</small>",
+  "w": "17-manager.js:1110"
+ },
+ {
+  "k": "Career leaderboard",
+  "w": "17-manager.js:1111"
+ },
+ {
+  "k": "Fame",
+  "w": "17-manager.js:1111"
+ },
+ {
+  "k": "Record",
+  "w": "17-manager.js:1111"
+ },
+ {
+  "k": "Treasury",
+  "w": "17-manager.js:1111"
+ },
+ {
+  "k": "Betting",
+  "w": "17-manager.js:1111"
+ },
+ {
+  "k": "Deaths",
+  "w": "17-manager.js:1111"
+ },
+ {
+  "k": "Ranked by fame, then wins. Collapsed ludi stay on the board as monuments — that is the point of a monument.",
+  "w": "17-manager.js:1111"
+ },
+ {
+  "k": "Saved careers",
+  "w": "17-manager.js:1112"
+ },
+ {
+  "k": "One career is your <b>active wallet</b>: its treasury bankrolls every wager you place outside Manager mode (the Wagers window, watching any event).",
+  "w": "17-manager.js:1112"
+ },
+ {
+  "k": "<b>{0}</b> {1}{2}{3}<small>{4} · season {5}, week {6}{7}{8} · saved {9}</small>",
+  "w": "17-manager.js:1112"
+ },
+ {
+  "k": "<span class=\"badge gold\" title=\"This treasury bankrolls your wagers everywhere\">★ active wallet</span>",
+  "w": "17-manager.js:1112"
+ },
+ {
+  "k": "Use for wagers",
+  "w": "17-manager.js:1112"
+ },
+ {
+  "k": "🏛 Your ludus",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "🛡 Roster · {0}",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "🤝 Recruiting",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "★ Favorites{0}",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "⚕ Infirmary{0}",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "🏋 Training Yard",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "Weekly team drills and exhibitions against other stables",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "{0}⚔️ Match Week{1}",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "💰 Wagers",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "Your bets and the betting exchange — the same Wagers window as on the main bar",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "📯 News",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "📊 League",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "🌍 Imperium",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "The Imperium map: fans, roads, weather, wars and the world’s stories",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "🏆 Trophies{0}",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "📅 Season",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "👤 Lanista",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "Lanista: the owner-manager of a gladiator school — you. The trainers who drill your fighters are the doctores.",
+  "w": "17-manager.js:1118"
+ },
+ {
+  "k": "Your house banner — change it on the Lanista tab",
+  "w": "17-manager.js:1119"
+ },
+ {
+  "k": "{0} · {1} · season {2}, week {3}{4}",
+  "w": "17-manager.js:1119"
+ },
+ {
+  "k": "· <b style=\"color:var(--gold2)\">the Grand Games</b>",
+  "w": "17-manager.js:1119"
+ },
+ {
+  "k": "Treasury {0}",
+  "w": "17-manager.js:1120"
+ },
+ {
+  "k": "Owed to {0} — {1}% interest a week",
+  "w": "17-manager.js:1120"
+ },
+ {
+  "k": "Debt −{0}",
+  "w": "17-manager.js:1120"
+ },
+ {
+  "k": "Treasury minus debt",
+  "w": "17-manager.js:1120"
+ },
+ {
+  "k": "Net {0}",
+  "w": "17-manager.js:1120"
+ },
+ {
+  "k": "Three consecutive week-ends in the red and the creditors close the ludus",
+  "w": "17-manager.js:1120"
+ },
+ {
+  "k": "☠ in the red {0}/{1}",
+  "w": "17-manager.js:1120"
+ },
+ {
+  "k": "{0} Fame {1} · {2}{3}",
+  "w": "17-manager.js:1120"
+ },
+ {
+  "k": "Ludus grade — from your facilities; recruits weigh it",
+  "w": "17-manager.js:1120"
+ },
+ {
+  "k": "Grade {0}",
+  "w": "17-manager.js:1120"
+ },
+ {
+  "k": "{0} fighter{1}",
+  "w": "17-manager.js:1120"
+ },
+ {
+  "k": "Recruiting hours {0}/{1}",
+  "w": "17-manager.js:1120"
+ },
+ {
+  "k": "<b>Note</b>{0}{1}",
+  "w": "17-manager.js:1121"
+ },
+ {
+  "k": "(after you pressed <b>{0}</b>)",
+  "w": "17-manager.js:1121"
+ },
+ {
+  "k": "tabs mtabs",
+  "w": "17-manager.js:1122"
+ },
+ {
+  "k": "ready primary",
+  "w": "17-manager.js:1122"
+ },
+ {
+  "k": "title=\"Pay wages, train, print the Acta — and move the empire on a week\"",
+  "w": "17-manager.js:1122"
+ },
+ {
+  "k": "⏭ End the week",
+  "w": "17-manager.js:1122"
+ },
+ {
+  "k": "🛡 Your roster",
+  "w": "17-manager.js:1124"
+ },
+ {
+  "k": "click a fighter to open their card · re-sign, heal, train and bond from the card",
+  "w": "17-manager.js:1124"
+ },
+ {
+  "k": "<b>{0} verdict{1}</b> wait for you — thumbs, blood money or the rudis.",
+  "w": "17-manager.js:1128"
+ },
+ {
+  "k": "Match Week",
+  "w": "17-manager.js:1128"
+ },
+ {
+  "k": "Your treasury is <b>{0}</b>. Win purses, bet well or trim wages before the creditors come.",
+  "w": "17-manager.js:1129"
+ },
+ {
+  "k": "Roster",
+  "w": "17-manager.js:1129"
+ },
+ {
+  "k": "{0} {1} hurt and cannot fight until treated.",
+  "w": "17-manager.js:1130"
+ },
+ {
+  "k": "Infirmary",
+  "w": "17-manager.js:1130"
+ },
+ {
+  "k": "None of your fighters is on this week's card at <b>{0}</b> — enter one for the purse and the appearance fee.",
+  "w": "17-manager.js:1132"
+ },
+ {
+  "k": "Walk the sand at {0} before the games — your fighters on this week's card arrive with +1 AP and +1 coin.",
+  "w": "17-manager.js:1133"
+ },
+ {
+  "k": "Walk the sand",
+  "w": "17-manager.js:1133"
+ },
+ {
+  "k": "<b>{0}</b> of the lanista's hours left this week — scout free agents, pitch a signing, or run a trial bout.",
+  "w": "17-manager.js:1134"
+ },
+ {
+  "k": "Recruiting",
+  "w": "17-manager.js:1134"
+ },
+ {
+  "k": "The Training Yard is idle — pick this week's drills; light drills are cheap and safe.",
+  "w": "17-manager.js:1135"
+ },
+ {
+  "k": "Training Yard",
+  "w": "17-manager.js:1135"
+ },
+ {
+  "k": "{0} {1} in low spirits (−1 AP on the sand). A shared meal, kin tickets or a bonus lifts them.",
+  "w": "17-manager.js:1136"
+ },
+ {
+  "k": "Contract{0} ending soon: {1}.",
+  "w": "17-manager.js:1137"
+ },
+ {
+  "k": "{0} ({1} wk)",
+  "w": "17-manager.js:1137"
+ },
+ {
+  "k": "Invest in <b>{0}</b> ({1} → potential {2}): a personal trainer — a <i>doctore</i> — ({3}c a week) gives the best odds of growth.",
+  "w": "17-manager.js:1139"
+ },
+ {
+  "k": "Only {0} fighter{1} signed — a deeper roster covers injuries and the fate table.",
+  "w": "17-manager.js:1140"
+ },
+ {
+  "k": "You have <b>{0} perk point{1}</b> to spend in the lanista's schooling — every point raises a trait recruits grade you on.",
+  "w": "17-manager.js:1141"
+ },
+ {
+  "k": "Spend",
+  "w": "17-manager.js:1141"
+ },
+ {
+  "k": "Your fame is low ({0}). Promote the ludus below to win fans across the empire.",
+  "w": "17-manager.js:1142"
+ },
+ {
+  "k": "<b>📜 A letter from the capital</b>",
+  "w": "17-manager.js:1149"
+ },
+ {
+  "k": "sealed {0}",
+  "w": "17-manager.js:1149"
+ },
+ {
+  "k": "While you were away the empire lived <b>{0} week{1}</b> without you — games were fought, purses paid, rivals grew fat. Your ludus still keeps {2}.",
+  "w": "17-manager.js:1150"
+ },
+ {
+  "k": "⏩ Let the doctores run the ludus<small>simulate {0} week{1}: bouts, verdicts (blood money for your best, the thumb for the rest, the rudis refused), wages and training</small>",
+  "w": "17-manager.js:1151"
+ },
+ {
+  "k": "Keep our own calendar<small>this career lives on its own dates; the empire won't wait</small>",
+  "w": "17-manager.js:1151"
+ },
+ {
+  "k": "📅 Week {0} in review",
+  "w": "17-manager.js:1163"
+ },
+ {
+  "k": "season {0}",
+  "w": "17-manager.js:1163"
+ },
+ {
+  "k": "<b>{0} {1}</b>treasury (now {2})",
+  "w": "17-manager.js:1164"
+ },
+ {
+  "k": "<b>{0} {1}</b>fame",
+  "w": "17-manager.js:1164"
+ },
+ {
+  "k": "<b>{0}/{1}</b>wins / bouts",
+  "w": "17-manager.js:1164"
+ },
+ {
+  "k": "<b>{0}</b>fallen",
+  "w": "17-manager.js:1164"
+ },
+ {
+  "k": "{0} · {1} · {2} CF · {3}",
+  "w": "17-manager.js:1165"
+ },
+ {
+  "k": "✝ Lost: {0}",
+  "w": "17-manager.js:1166"
+ },
+ {
+  "k": "📜 Read the Acta Diurna<small>the week's gazette</small>",
+  "w": "17-manager.js:1167"
+ },
+ {
+  "k": "👋 Welcome to {0}",
+  "w": "17-manager.js:1168"
+ },
+ {
+  "k": "This is your ludus — you start every week here. The to-do list on the right shows what still needs doing.",
+  "w": "17-manager.js:1168"
+ },
+ {
+  "k": "<b>Prepare.</b> <b>Roster</b> sets your starters. <b>Recruiting</b> signs free agents (you have 10 hours a week). <b>Training Yard</b> sets drills and spends your 10 training hours. <b>Infirmary</b> heals.",
+  "w": "17-manager.js:1170"
+ },
+ {
+  "k": "<b>Fight.</b> <b>Match Week</b> is Flavius's travelling games. It brings three bouts to a city: the Undercard on Friday, the Feature on Saturday and the Main event on Sunday. Enter your starters, then fight, watch or simulate each bout.",
+  "w": "17-manager.js:1171"
+ },
+ {
+  "k": "<b>Decide.</b> After the bouts, you rule on thumbs, blood money and the rudis.",
+  "w": "17-manager.js:1172"
+ },
+ {
+  "k": "<b>End the week.</b> Wages are paid, fighters train and heal, contracts tick down, and the <b>Acta Diurna</b> prints the week's news.",
+  "w": "17-manager.js:1173"
+ },
+ {
+  "k": "Win bouts for points: the top four houses after 12 weeks go to the <b>Flavius Superbus</b>. Three week-ends in the red closes the ludus. <b>Rules &amp; strategy → Manager guide</b> has the rest.",
+  "w": "17-manager.js:1175"
+ },
+ {
+  "k": "✅ This week · {0}",
+  "w": "17-manager.js:1176"
+ },
+ {
+  "k": "to see to",
+  "w": "17-manager.js:1176"
+ },
+ {
+  "k": "all in order",
+  "w": "17-manager.js:1176"
+ },
+ {
+  "k": "You fixed this bout — the bookmaker will not take your money on it.",
+  "w": "17-manager.js:1186"
+ },
+ {
+  "k": "<span>🏛 THE EXCHANGE</span>",
+  "w": "17-manager.js:1188"
+ },
+ {
+  "k": "the lanista's box over the bookmakers' arches · the same ledger as the Wagers window",
+  "w": "17-manager.js:1188"
+ },
+ {
+  "k": "<i>Your betting</i><b>{0}{1}c</b><span>{2} won of {3} settled</span>",
+  "w": "17-manager.js:1189"
+ },
+ {
+  "k": "<i>Open slips</i><b>{0}</b><span>{1} coin at risk</span>",
+  "w": "17-manager.js:1189"
+ },
+ {
+  "k": "<i>Bookmaker's cut</i><b>{0}c</b><span>8% of all coin laid on your fighters</span>",
+  "w": "17-manager.js:1189"
+ },
+ {
+  "k": "<i>This week's handle</i><b>{0}c</b><span>{1} slips at {2}</span>",
+  "w": "17-manager.js:1189"
+ },
+ {
+  "k": "<i>Best score</i><b>{0}</b><span>{1}</span>",
+  "w": "17-manager.js:1189"
+ },
+ {
+  "k": "no winners yet",
+  "w": "17-manager.js:1189"
+ },
+ {
+  "k": "🔮 The tipsters' board",
+  "w": "17-manager.js:1190"
+ },
+ {
+  "k": "this week's card · your scouts against the public line",
+  "w": "17-manager.js:1190"
+ },
+ {
+  "k": "coin · treasury {0} ·",
+  "w": "17-manager.js:1191"
+ },
+ {
+  "k": "No slip may pay more than {0} coin, so long odds take small stakes; winnings pay a 10% imperial tax on the profit",
+  "w": "17-manager.js:1191"
+ },
+ {
+  "k": "house limit {0} a slip · the Emperor's tenth on winnings",
+  "w": "17-manager.js:1191"
+ },
+ {
+  "k": "Fighter",
+  "w": "17-manager.js:1192"
+ },
+ {
+  "k": "Book",
+  "w": "17-manager.js:1192"
+ },
+ {
+  "k": "Scouts",
+  "w": "17-manager.js:1192"
+ },
+ {
+  "k": "🎲 The lanistae at the rail",
+  "w": "17-manager.js:1193"
+ },
+ {
+  "k": "who wins and loses on the book",
+  "w": "17-manager.js:1193"
+ },
+ {
+  "k": "Net",
+  "w": "17-manager.js:1193"
+ },
+ {
+  "k": "Rivalry",
+  "w": "17-manager.js:1193"
+ },
+ {
+  "k": "<b>📈 The ledger</b>",
+  "w": "17-manager.js:1194"
+ },
+ {
+  "k": "Yours",
+  "w": "17-manager.js:1194"
+ },
+ {
+  "k": "Lanistae",
+  "w": "17-manager.js:1194"
+ },
+ {
+  "k": "The crowd",
+  "w": "17-manager.js:1194"
+ },
+ {
+  "k": "Gladiators",
+  "w": "17-manager.js:1194"
+ },
+ {
+  "k": "every wager laid across the empire, newest first",
+  "w": "17-manager.js:1194"
+ },
+ {
+  "k": "The treasury is <b>{0}</b>. Win a purse, bet only on value, or release a wage — the creditors count your week-ends.",
+  "w": "17-manager.js:1200"
+ },
+ {
+  "k": "Wages of <b>{0}/wk</b> leave <b>{1} week{2}</b> of coin. Enter fighters on Match Week — every entry earns the appearance fee.",
+  "w": "17-manager.js:1200"
+ },
+ {
+  "k": "Wages {0}/wk against {1} coin: <b>{2}</b> of runway.{3} You can afford to invest.",
+  "w": "17-manager.js:1200"
+ },
+ {
+  "k": "no wages owed",
+  "w": "17-manager.js:1200"
+ },
+ {
+  "k": "Last week the sand paid about {0}.",
+  "w": "17-manager.js:1200"
+ },
+ {
+  "k": "{0} {1} hurt — heal before Match Week or they sit it out.",
+  "w": "17-manager.js:1203"
+ },
+ {
+  "k": "<b>{0}</b> is low ({1} morale): a meal or kin tickets before they fight a tier worse.",
+  "w": "17-manager.js:1203"
+ },
+ {
+  "k": "<b>{0}</b> has the most room to grow ({1} → {2}). A personal trainer (doctore) this week is money well spent.",
+  "w": "17-manager.js:1203"
+ },
+ {
+  "k": "Sign fighters first — the yard is empty.",
+  "w": "17-manager.js:1203"
+ },
+ {
+  "k": "Best value you can afford: <b>{0}</b> — ~{1} for {2}/wk{3}.",
+  "w": "17-manager.js:1206"
+ },
+ {
+  "k": "(unscouted — could be a gem or a trap)",
+  "w": "17-manager.js:1206"
+ },
+ {
+  "k": "No free agent fits your purse and fame right now. Promote the ludus to widen the market.",
+  "w": "17-manager.js:1206"
+ },
+ {
+  "k": ", rich purse",
+  "w": "17-manager.js:1208"
+ },
+ {
+  "k": "{0}Coming: {1}. Fighters from those cities fight harder at home.",
+  "w": "17-manager.js:1209"
+ },
+ {
+  "k": "This week: <b>{0}</b>{1}.",
+  "w": "17-manager.js:1209"
+ },
+ {
+  "k": "under <i>{0}</i>",
+  "w": "17-manager.js:1209"
+ },
+ {
+  "k": "🧭 The Consilium",
+  "w": "17-manager.js:1211"
+ },
+ {
+  "k": "your advisors' counsel this week",
+  "w": "17-manager.js:1211"
+ },
+ {
+  "k": "The Quaestor",
+  "w": "17-manager.js:1212"
+ },
+ {
+  "k": "The Doctore",
+  "w": "17-manager.js:1212"
+ },
+ {
+  "k": "The Scout",
+  "w": "17-manager.js:1212"
+ },
+ {
+  "k": "The Augur",
+  "w": "17-manager.js:1212"
+ },
+ {
+  "k": "Season",
+  "w": "17-manager.js:1212"
+ },
+ {
+  "k": "Rating ⓘ",
+  "w": "17-manager.js:1216"
+ },
+ {
+  "k": "Morale",
+  "w": "17-manager.js:1216"
+ },
+ {
+  "k": "Contract",
+  "w": "17-manager.js:1216"
+ },
+ {
+  "k": "{0} {1} · {2} yrs · {3} · fame {4} · first sand S{5} W{6}",
+  "w": "17-manager.js:1216"
+ },
+ {
+  "k": "pot {0}",
+  "w": "17-manager.js:1216"
+ },
+ {
+  "k": "{0} · loyalty {1} (what a rival must beat to poach them; high loyalty renews contracts)",
+  "w": "17-manager.js:1216"
+ },
+ {
+  "k": "wk left",
+  "w": "17-manager.js:1216"
+ },
+ {
+  "k": "Wages {0} coin a week, paid when the week ends · physicians' weekly cap: {1}/{2} coin of work left · click a fighter to open their card.",
+  "w": "17-manager.js:1217"
+ },
+ {
+  "k": "<b>📖 How the league works</b>",
+  "w": "17-manager.js:1219"
+ },
+ {
+  "k": "fates, blood money, the infirmary, money",
+  "w": "17-manager.js:1219"
+ },
+ {
+  "k": "<b>How the grades are reckoned.</b> Coin grades your treasury, generosity and betting; Glory your fame and win rate; Honor your personality minus every poach and broken contract; Spectacle your showmanship and fame; Training your discipline and how many fighters you have improved; Arena time how crowded your stable is. Home depends on each fighter's city.",
+  "w": "17-manager.js:1221"
+ },
+ {
+  "k": "<b>Morale</b> is how a fighter feels this week, and it walks out onto the sand with them: <b>80+</b> high spirits (+1 AP, +1 CF when the bout begins, fights bolder) · <b>35-79</b> steady · <b>under 35</b> low (−1 AP, fights cautiously) · <b>under 20</b> broken (also fights a whole tier worse). It rises with bouts, fair wages, meals, kin tickets and bonuses, and falls with idle weeks, low pay and a greedy lanista. Very low morale also invites early retirement and poachers.\n     <b>Loyalty</b> is their bond to your ludus (from your Honor, their morale, minus your Greed, plus the bonds you build). It is the number a rival must beat to poach them, it decides who stays when the legions call, and it keeps contracts renewing.",
+  "w": "17-manager.js:1222"
+ },
+ {
+  "k": "<b>Money.</b> Everything is paid from your <b>treasury</b>. The Medicus, the surgeon and Hygeia's priests also count against your physicians' <b>weekly cap</b> (how much work they can do) ({0} coin a week) — a cap, not a separate purse. Three week-ends in the red, or a season ended in debt, and the creditors close the ludus.",
+  "w": "17-manager.js:1224"
+ },
+ {
+  "k": "💸 Your debt to {0}",
+  "w": "17-manager.js:1235"
+ },
+ {
+  "k": "<b>{0} coin owed</b> · 8% interest a week · they collect ~15% each week's end. {1}",
+  "w": "17-manager.js:1236"
+ },
+ {
+  "k": "The syndicate’s men are polite. So far.",
+  "w": "17-manager.js:1236"
+ },
+ {
+  "k": "Pay early on {0}’s team page, or here.",
+  "w": "17-manager.js:1236"
+ },
+ {
+  "k": "Pay 50 now",
+  "w": "17-manager.js:1237"
+ },
+ {
+  "k": "⚖ Pay it all off · {0}",
+  "w": "17-manager.js:1237"
+ },
+ {
+  "k": "💸 A rope, for a price",
+  "w": "17-manager.js:1240"
+ },
+ {
+  "k": "<b>{0}</b> — cordial with your house — offers to carry your debts.",
+  "w": "17-manager.js:1241"
+ },
+ {
+  "k": "A man with a boxer's ears introduces himself: <b>Sica's syndicate</b> lends to lanistae the banks won't touch.",
+  "w": "17-manager.js:1241"
+ },
+ {
+  "k": "8% interest a week; about 15% of the balance is collected every week's end. Fall behind and your name suffers.",
+  "w": "17-manager.js:1242"
+ },
+ {
+  "k": "They lend against what they can seize: your fame and your record set the ceiling.",
+  "w": "17-manager.js:1243"
+ },
+ {
+  "k": "Borrow {0}",
+  "w": "17-manager.js:1244"
+ },
+ {
+  "k": "Refuse — a lanista pays his own way",
+  "w": "17-manager.js:1244"
+ },
+ {
+  "k": "<b>🎭 The Flavian Awards of season {0} are waiting</b> — envelopes sealed, the curtain down.",
+  "w": "17-manager.js:1251"
+ },
+ {
+  "k": "Take your seat",
+  "w": "17-manager.js:1251"
+ },
+ {
+  "k": "<b style=\"color:var(--blood2)\">☠ Your treasury is {0} coin</b> — {1} week-end{2} in the red before the creditors close the ludus.",
+  "w": "17-manager.js:1251"
+ },
+ {
+  "k": "📜 Ludus ledger",
+  "w": "17-manager.js:1252"
+ },
+ {
+  "k": "everything that touched your stable",
+  "w": "17-manager.js:1252"
+ },
+ {
+  "k": "Show {0} older entr{1}",
+  "w": "17-manager.js:1252"
+ },
+ {
+  "k": "✝ The fallen",
+  "w": "17-manager.js:1253"
+ },
+ {
+  "k": "{0} of yours · {1} across the league",
+  "w": "17-manager.js:1253"
+ },
+ {
+  "k": "free agent",
+  "w": "17-manager.js:1253"
+ },
+ {
+  "k": "{0} ev, {1} w",
+  "w": "17-manager.js:1253"
+ },
+ {
+  "k": "Show {0} more",
+  "w": "17-manager.js:1253"
+ },
+ {
+  "k": "No week in progress.",
+  "w": "17-manager.js:1260"
+ },
+ {
+  "k": "{0} is on — settle it on Match Week first.",
+  "w": "17-manager.js:1260"
+ },
+ {
+  "k": "Match Week is not finished — fight, watch or simulate every bout first.",
+  "w": "17-manager.js:1261"
+ },
+ {
+  "k": "Verdicts are waiting on Match Week — thumbs, blood money, the rudis or the levy.",
+  "w": "17-manager.js:1262"
+ },
+ {
+  "k": "🏛 Back to Your ludus<small>finish the week's other work</small>",
+  "w": "17-manager.js:1264"
+ },
+ {
+  "k": "⏭ End the week<small>{0}</small>",
+  "w": "17-manager.js:1264"
+ },
+ {
+  "k": "wages, training, the Acta — and the empire moves on",
+  "w": "17-manager.js:1264"
+ },
+ {
+  "k": "⏭ End week {0} of season {1}?",
+  "w": "17-manager.js:1268"
+ },
+ {
+  "k": "Wages{0} are paid: about <b>{1}</b> coin (treasury {2} → ~{3}).",
+  "w": "17-manager.js:1269"
+ },
+ {
+  "k": "and drills",
+  "w": "17-manager.js:1269"
+ },
+ {
+  "k": "Training resolves, injuries heal or fester, contracts tick down, rivals recruit, build and poach.",
+  "w": "17-manager.js:1269"
+ },
+ {
+  "k": "The Acta Diurna prints this week's results{0}.",
+  "w": "17-manager.js:1269"
+ },
+ {
+  "k": "— and the <b>season recap</b>; the Flavius Superbus opens next",
+  "w": "17-manager.js:1269"
+ },
+ {
+  "k": "The empire's calendar moves to <b>{0}</b>, week {1}{2}.",
+  "w": "17-manager.js:1269"
+ },
+ {
+  "k": "of season {0}",
+  "w": "17-manager.js:1269"
+ },
+ {
+  "k": "⏳ You still have <b>{0}</b> of the lanista's hours — they do not carry over.",
+  "w": "17-manager.js:1270"
+ },
+ {
+  "k": "🎓 <b>{0}</b> perk point{1} unspent (they keep).",
+  "w": "17-manager.js:1270"
+ },
+ {
+  "k": "Confirm — end the week",
+  "w": "17-manager.js:1271"
+ },
+ {
+  "k": "Not yet",
+  "w": "17-manager.js:1271"
+ },
+ {
+  "k": "<b>{0}</b> — called off.",
+  "w": "17-manager.js:1275"
+ },
+ {
+  "k": "{0} coin on {1} at {2}×",
+  "w": "17-manager.js:1280"
+ },
+ {
+  "k": "{0} · {1} turns",
+  "w": "17-manager.js:1281"
+ },
+ {
+  "k": "How many came to see it",
+  "w": "17-manager.js:1281"
+ },
+ {
+  "k": "spectators in the stands",
+  "w": "17-manager.js:1281"
+ },
+ {
+  "k": "attendance not counted",
+  "w": "17-manager.js:1281"
+ },
+ {
+  "k": "🏆 {0}{1}{2} · purse {3} {4}",
+  "w": "17-manager.js:1281"
+ },
+ {
+  "k": "no winner",
+  "w": "17-manager.js:1281"
+ },
+ {
+  "k": "💰 Your wagers",
+  "w": "17-manager.js:1282"
+ },
+ {
+  "k": "{0}{1} coin",
+  "w": "17-manager.js:1282"
+ },
+ {
+  "k": "<b>🏁 Match Week results · {0}</b>",
+  "w": "17-manager.js:1284"
+ },
+ {
+  "k": "{0} coin in purses{1} — settle any verdicts, then end the week",
+  "w": "17-manager.js:1284"
+ },
+ {
+  "k": "· your betting {0}{1}",
+  "w": "17-manager.js:1284"
+ },
+ {
+  "k": "Flavius himself",
+  "w": "17-manager.js:1293"
+ },
+ {
+  "k": "the editor",
+  "w": "17-manager.js:1293"
+ },
+ {
+  "k": "· ⚔ your fighter is on the card",
+  "w": "17-manager.js:1294"
+ },
+ {
+  "k": "· 🗺 sand walked: +1 AP +1 coin",
+  "w": "17-manager.js:1294"
+ },
+ {
+  "k": "<span class=\"badge gold\" title=\"",
+  "w": "17-manager.js:1294"
+ },
+ {
+  "k": "\">special · bigger purse, stranger rules</span>",
+  "w": "17-manager.js:1294"
+ },
+ {
+  "k": "Goes to the winner's lanista (less the fighter's cut)",
+  "w": "17-manager.js:1295"
+ },
+ {
+  "k": "<i>Purse</i><b>{0} {1}</b>",
+  "w": "17-manager.js:1295"
+ },
+ {
+  "k": "The editor hires every fighter on the card: each stable is PAID this appearance fee per fighter it enters, win or lose. Entering never costs you coin.",
+  "w": "17-manager.js:1295"
+ },
+ {
+  "k": "<i>Appearance fee</i><b>+{0}</b>",
+  "w": "17-manager.js:1295"
+ },
+ {
+  "k": "The official who judges the bout: {0}",
+  "w": "17-manager.js:1295"
+ },
+ {
+  "k": "<i>Summa rudis</i><b>⚖ {0}</b>",
+  "w": "17-manager.js:1295"
+ },
+ {
+  "k": "Only fighters rated in this band are booked",
+  "w": "17-manager.js:1295"
+ },
+ {
+  "k": "<i>Ratings</i><b>{0}</b>",
+  "w": "17-manager.js:1295"
+ },
+ {
+  "k": "Fame earned by the winner's stable",
+  "w": "17-manager.js:1295"
+ },
+ {
+  "k": "<i>Fame</i><b>{0} +{1}</b>",
+  "w": "17-manager.js:1295"
+ },
+ {
+  "k": "💰 <b>Your stake</b>",
+  "w": "17-manager.js:1297"
+ },
+ {
+  "k": "coin — then press <b>Bet</b> beside a fighter · treasury {0}",
+  "w": "17-manager.js:1297"
+ },
+ {
+  "k": "Your scouts",
+  "w": "17-manager.js:1298"
+ },
+ {
+  "k": "Fights under",
+  "w": "17-manager.js:1300"
+ },
+ {
+  "k": "{0} your recruiting board",
+  "w": "17-manager.js:1300"
+ },
+ {
+  "k": "Remove from",
+  "w": "17-manager.js:1300"
+ },
+ {
+  "k": "Pin to",
+  "w": "17-manager.js:1300"
+ },
+ {
+  "k": "<span title=\"",
+  "w": "17-manager.js:1300"
+ },
+ {
+  "k": "(on loan from: {0})",
+  "w": "17-manager.js:1300"
+ },
+ {
+  "k": "<span class=\"rc-sub\">free agent</span>",
+  "w": "17-manager.js:1300"
+ },
+ {
+  "k": "<span class=\"rc-sub\" title=\"Scout them (Recruiting tab, 3h) or run a trial bout to see their true chance here\">not scouted</span>",
+  "w": "17-manager.js:1300"
+ },
+ {
+  "k": "{0}{1} · {2} CF",
+  "w": "17-manager.js:1301"
+ },
+ {
+  "k": "Last gladiator standing",
+  "w": "17-manager.js:1301"
+ },
+ {
+  "k": "Standing when the bout ended",
+  "w": "17-manager.js:1301"
+ },
+ {
+  "k": "Your bets: {0}",
+  "w": "17-manager.js:1302"
+ },
+ {
+  "k": "{0} on {1} at {2}×",
+  "w": "17-manager.js:1302"
+ },
+ {
+  "k": "{0} · {1} turns. {2}",
+  "w": "17-manager.js:1303"
+ },
+ {
+  "k": "⏳ Waiting its turn — the card runs in order: {0} first.",
+  "w": "17-manager.js:1303"
+ },
+ {
+  "k": "🔒 Closed to your house this week — two withdrawals",
+  "w": "17-manager.js:1303"
+ },
+ {
+  "k": "Enter your fighter<small>replaces a free agent</small>",
+  "w": "17-manager.js:1303"
+ },
+ {
+  "k": "🪑 Only benched fighters fit this bout — make them starters on the Roster tab.",
+  "w": "17-manager.js:1303"
+ },
+ {
+  "k": "Fight it yourself<small>take your fighter's reins, live on the board</small>",
+  "w": "17-manager.js:1303"
+ },
+ {
+  "k": "Pulling out unsettles the box office; after two withdrawals this bout is closed to your house for the week",
+  "w": "17-manager.js:1303"
+ }
+]

@@ -19,12 +19,12 @@
       mail: six faces with name, title and a one-line specialty (#council83, .c83p). Phone width: two columns.
    ===================================================================== */
 const COUNCIL83=[
-  {k:'consilium',role:'Consilium',spec:'Strategy: when to fight, when to hold back',robe:'#7a2230',hats:['wreath','','wreath'],old:true},
-  {k:'recruiter',role:'Recruiter',spec:'Scouts free agents; the ★ pick on the board',robe:'#a86a2a',hats:['straw','','pileus']},
-  {k:'doctore',role:'Doctore',spec:'Drills, growth and the Training Yard',robe:'#8a3b1c',hats:['helm','','helm']},
-  {k:'medicus',role:'Medicus',spec:'Wounds, rest and the ward',robe:'#35606a',hats:['','hood',''],fem:true},
-  {k:'clerk',role:'Clerk',spec:'Purse, wages and contracts',robe:'#c9b27a',hats:['pileus','','turban'],fem:true},
-  {k:'barracks',role:'Barracks master',spec:"The fighters' moods and requests",robe:'#5a4636',hats:['','hood','']}];
+  {k:'consilium',role:_T('Consilium'),spec:_T('Strategy: when to fight, when to hold back'),robe:'#7a2230',hats:['wreath','','wreath'],old:true},
+  {k:'recruiter',role:_T('Recruiter'),spec:_T('Scouts free agents; the ★ pick on the board'),robe:'#a86a2a',hats:['straw','','pileus']},
+  {k:'doctore',role:_T('Doctore'),spec:_T('Drills, growth and the Training Yard'),robe:'#8a3b1c',hats:['helm','','helm']},
+  {k:'medicus',role:_T('Medicus'),spec:_T('Wounds, rest and the ward'),robe:'#35606a',hats:['','hood',''],fem:true},
+  {k:'clerk',role:_T('Clerk'),spec:_T('Purse, wages and contracts'),robe:'#c9b27a',hats:['pileus','','turban'],fem:true},
+  {k:'barracks',role:_T('Barracks master'),spec:_T("The fighters' moods and requests"),robe:'#5a4636',hats:['','hood','']}];
 /* who signs which letter (lower-case sender) */
 const ADV_FROM83={'the consilium':'consilium','your doctores':'doctore','your doctore':'doctore','your clerk':'clerk','your barracks':'barracks','your medicus':'medicus','your recruiter':'recruiter'};
 const femCog83=c=>/us$/.test(c)?c.slice(0,-2)+'a':/o$/.test(c)?c+'nia':c;
@@ -47,7 +47,7 @@ const adv83Head=a=>`<div class="adv83"><span class="adv83f">${face83(a,46)}</spa
   return base.call(this,live)}}
 /* the council card */
 function council83HTML(){const w=W_();if(!w)return '';const C=council83(w);if(!C.length)return '';
-  return `<div class="card2 council83" id="council83"><div class="c83hd"><b>🏛 The Council</b><span class="rc-sub">your advisors, for life</span></div><div class="c83row">${C.map(a=>`<div class="c83p" data-c83="${a.k}"><span class="c83f">${face83(a,58)}</span><b>${esc(a.name)}</b><span class="c83r">${esc(a.role)}</span><small>${esc(a.spec)}</small></div>`).join('')}</div></div>`}
+  return `<div class="card2 council83" id="council83"><div class="c83hd">${_T`<b>🏛 The Council</b>`}<span class="rc-sub">${_T`your advisors, for life`}</span></div><div class="c83row">${C.map(a=>`<div class="c83p" data-c83="${a.k}"><span class="c83f">${face83(a,58)}</span><b>${esc(a.name)}</b><span class="c83r">${esc(a.role)}</span><small>${esc(a.spec)}</small></div>`).join('')}</div></div>`}
 {const base=ludusTabHTML;ludusTabHTML=function(){const h=base.apply(this,arguments);try{const c=council83HTML();if(!c)return h;const t=document.createElement('template');t.innerHTML=h;
   const kids=[...t.content.children];const after=kids.find(e=>e.classList.contains('landing'))||kids.find(e=>e.id==='mailBox');const t2=document.createElement('template');t2.innerHTML=c;
   if(after)after.after(t2.content);else t.content.appendChild(t2.content);return t.innerHTML}catch(e){console.error(e);return h}}}

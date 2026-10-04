@@ -42,10 +42,10 @@ CW_ICO.brk=CW_ICO.use;
 cwIcoSVG=function(k,px=26){return `<svg viewBox="-9 -9 18 18" width="${px}" height="${px}" aria-hidden="true">${(CW_ICO[k]||CW_ICO.dmg)(null,9)}</svg>`};
 /* the fighter board's weapon rows: his icons with the numbers instead of "P1 · R1 · ammo 3" */
 function wStatsIco75(w){if(!w||w.lyre||w.noAtk)return null;const I=(k,v,t)=>`<span class="wi75" title="${esc(t)}"><img src="${WICO75[k]}" alt="">${v}</span>`;const o=[];
-  if(w.shield&&!w.p){o.push(I('abs',w.absorb,'Shield absorb'),I('use',w.usesLeft,'Uses left'));return o.join('')+'<span class="wi75 no">no attack</span>'}
-  o.push(I('dmg',w.p,'Attack power'),I('rng',w.r,'Range'));if(w.ammo!=null)o.push(I('ammo',w.ammoLeft,'Ammo'));if(w.shield)o.push(I('abs',w.absorb,'Shield absorb'),I('use',w.usesLeft,'Uses left'));
-  if(w.throw)o.push(I('thr',`P${w.throw.p} R${w.throw.r} ×${w.throwsLeft}`,'Throw: power, range, throws left'));if(w.atkUses)o.push(I('use',w.atkLeft,'Uses left'));if(w.both)o.push(I('both','','Both attacks'));
-  if(w.soul)o.push(I('soul',w.soul,'Soul steal'));if(w.cfw)o.push(I('cf','+'+w.cfw,'Crowd favor per hit'));return o.join('')}
+  if(w.shield&&!w.p){o.push(I('abs',w.absorb,_T('Shield absorb')),I('use',w.usesLeft,_T('Uses left')));return o.join('')+_T('<span class="wi75 no">no attack</span>')}
+  o.push(I('dmg',w.p,_T('Attack power')),I('rng',w.r,_T('Range')));if(w.ammo!=null)o.push(I('ammo',w.ammoLeft,_T('Ammo')));if(w.shield)o.push(I('abs',w.absorb,_T('Shield absorb')),I('use',w.usesLeft,_T('Uses left')));
+  if(w.throw)o.push(I('thr',`P${w.throw.p} R${w.throw.r} ×${w.throwsLeft}`,_T('Throw: power, range, throws left')));if(w.atkUses)o.push(I('use',w.atkLeft,_T('Uses left')));if(w.both)o.push(I('both','',_T('Both attacks')));
+  if(w.soul)o.push(I('soul',w.soul,_T('Soul steal')));if(w.cfw)o.push(I('cf','+'+w.cfw,_T('Crowd favor per hit')));return o.join('')}
 {const base=boardHTML;boardHTML=function(player){let h=base.apply(this,arguments);try{if(player)for(const a of ['R','L']){const w=player['w'+a];const ic=wStatsIco75(w);if(!ic)continue;
   const t=`<span class="ws">${wStats(w)}`;const i=h.indexOf(t);if(i>=0)h=h.slice(0,i)+`<span class="ws ws75">${ic}`+h.slice(i+t.length)}}catch(e){console.error(e)}return h}}
 (()=>{const st=document.createElement('style');st.textContent=`.ws75{display:inline-flex;flex-wrap:wrap;gap:2px 7px;justify-content:flex-end;align-items:center}
@@ -78,8 +78,8 @@ function statusRow75(){const st=document.getElementById('status');if(!st)return;
   if(!S||S.phase==='setup')return;const ev=EV();
   st.querySelectorAll('.rulechip').forEach(c=>c.remove());
   const evc=[...st.querySelectorAll('.chip')].find(c=>(c.getAttribute('title')||'').startsWith(ev.n));
-  if(evc&&!evc.classList.contains('evchip75')){const fest=S.fest?` · ${festName(S.fest.kind)} ${S.fest.stage+1}/3`:'',mis=S.missio?` · Missio ${S.missio.step+1}/5`:'';
-    evc.outerHTML=`<span class="chip evchip75" role="button" tabindex="0" data-evpop aria-haspopup="dialog" aria-label="${esc(ev.n)}: the event card">${evTok75(ev)}<b>${esc(ev.short||ev.n)}</b>${fest||mis?`<small>${esc(fest||mis)}</small>`:''}</span>`}
+  if(evc&&!evc.classList.contains('evchip75')){const fest=S.fest?` · ${festName(S.fest.kind)} ${S.fest.stage+1}/3`:'',mis=S.missio?_T` · Missio ${S.missio.step+1}/5`:'';
+    evc.outerHTML=`<span class="chip evchip75" role="button" tabindex="0" data-evpop aria-haspopup="dialog" aria-label="${_T`${esc(ev.n)}: the event card`}">${evTok75(ev)}<b>${esc(ev.short||ev.n)}</b>${fest||mis?`<small>${esc(fest||mis)}</small>`:''}</span>`}
   [...st.querySelectorAll('.chip')].forEach(c=>{if(/^Selected|Festival|Missio · /.test(c.textContent)&&!c.classList.contains('evchip75')&&(S.fest||S.missio)&&/event \d\/3|step \d\/5/.test(c.textContent))c.remove()});
   const rc=st.querySelector('.roundchip');if(rc)rc.innerHTML=rc.innerHTML.replace(/ · \d+×\d+\s*$/,'')}
 {const base=render;render=function(){const r=base.apply(this,arguments);try{statusRow75()}catch(e){console.error(e)}return r}}
@@ -89,12 +89,12 @@ function evPopHTML75(){const ev=EV();const L=LOCATIONS[S.locIdx];const cal=S.cal
   const card=hasCard?`<span class="evp-card" style="${cardStyle('e:'+S.evKey)}"></span>`:`<span class="evp-card evp-txt"><b>${esc(ev.n)}</b><small>${ev.rounds.map((r,i)=>`${i+1}. ${esc(r.n)}`).join('<br>')}</small></span>`;
   const house=S.spect&&S.spect.length&&typeof houseHTML==='function'?` · 🏟 ${houseHTML(S.spect.length,S.seed,S.locIdx)}`:'';
   return `<div class="evp-frame"><img src="${assetURL('event_frame.webp')}" alt="">${card}</div>
-   <div class="evp-info"><div class="evp-nm">${evTok75(ev,30)}<b>${esc(ev.n)}</b>${ev.sr?`<small>Summa Rudis ${esc(ev.sr)}</small>`:''}</div>
-    <div>📍 ${esc(L?L.n:'Roma')}${dt?` · 📅 ${esc(dt.short)}`:''}${house}</div>
+   <div class="evp-info"><div class="evp-nm">${evTok75(ev,30)}<b>${esc(ev.n)}</b>${ev.sr?_T`<small>Summa Rudis ${esc(ev.sr)}</small>`:''}</div>
+    <div>📍 ${esc(L?L.n:_T('Roma'))}${dt?` · 📅 ${esc(dt.short)}`:''}${house}</div>
     ${dt?`<div class="rc-sub">${esc(dt.long)}</div>`:''}
-    ${fx&&LOCATIONS[fx.loc]?`<div>This week: ${esc(LOCATIONS[fx.loc].n)} · ${esc(EVENTS[fx.ev]?EVENTS[fx.ev].n:fx.ev)}${S.cal&&S.cal.onSched===false?' <span class="rc-sub">(you are off the schedule)</span>':''}</div>`:''}
-    <div>Board ${zs}×${zs} · Round ${S.ri+1} of ${ev.rounds.length}: ${esc(RD().n)}</div>
-    <div class="evp-btns"><button class="btn" type="button" data-evdet75>📋 Event details</button><button class="btn" type="button" data-evsched75>📅 Season schedule</button></div></div>`}
+    ${fx&&LOCATIONS[fx.loc]?`<div>${_T`This week: ${esc(LOCATIONS[fx.loc].n)} · ${esc(EVENTS[fx.ev]?EVENTS[fx.ev].n:fx.ev)}${S.cal&&S.cal.onSched===false?_T(' <span class="rc-sub">(you are off the schedule)</span>'):''}`}</div>`:''}
+    <div>${_T`Board ${zs}×${zs} · Round ${S.ri+1} of ${ev.rounds.length}: ${esc(RD().n)}`}</div>
+    <div class="evp-btns"><button class="btn" type="button" data-evdet75>${_T`📋 Event details`}</button><button class="btn" type="button" data-evsched75>${_T`📅 Season schedule`}</button></div></div>`}
 let EVPOP75={el:null,pin:false,t:0};
 function evPopShow75(anchor,pin){if(!S||S.phase==='setup')return;let p=EVPOP75.el;if(!p){p=document.createElement('div');p.id='evPop75';p.setAttribute('role','dialog');p.setAttribute('aria-label','Event card');document.body.appendChild(p);EVPOP75.el=p;
     p.addEventListener('mouseenter',()=>clearTimeout(EVPOP75.t));p.addEventListener('mouseleave',()=>{if(!EVPOP75.pin)evPopHide75(250)})}
@@ -113,7 +113,7 @@ document.addEventListener('keydown',e=>{const a=e.target&&e.target.closest&&e.ta
 /* ---------- the turn panel: who is up, the phase, and what this round forbids, in one plate at the arena's top right ---------- */
 {const base=renderTurnInd;renderTurnInd=function(){const r=base.apply(this,arguments);try{const box=document.getElementById('turnInd');if(!box||box.hidden||!S||S.phase==='setup')return r;
   box.classList.add('tp75');const rd=RD();const rr=roundRules(rd,true);
-  const off=Object.keys(RULE_INFO).filter(k=>!rr[k]).map(k=>`<span class="rulechip tpr75" role="button" tabindex="0" title="${esc(RULE_INFO[k][3])} — click for the event briefing"><i aria-hidden="true">⃠</i>${k==='ca'?'Abilities':RULE_INFO[k][1]}${k==='cf'&&rd.cf&&commodusIn()?' · Commodus':''}</span>`).join('');
+  const off=Object.keys(RULE_INFO).filter(k=>!rr[k]).map(k=>`<span class="rulechip tpr75" role="button" tabindex="0" title="${_T`${esc(RULE_INFO[k][3])} — click for the event briefing`}"><i aria-hidden="true">⃠</i>${k==='ca'?_T('Abilities'):RULE_INFO[k][1]}${k==='cf'&&rd.cf&&commodusIn()?_T(' · Commodus'):''}</span>`).join('');
   if(!box.querySelector('.tprow')){const head=document.createElement('div');head.className='tprow';while(box.firstChild)head.appendChild(box.firstChild);box.appendChild(head)}
   let rl=box.querySelector('.tprules');if(off){if(!rl){rl=document.createElement('div');rl.className='tprules';box.appendChild(rl)}rl.innerHTML=off}else if(rl)rl.remove()}catch(e){console.error(e)}return r}}
 
@@ -140,7 +140,7 @@ document.addEventListener('keydown',e=>{const a=e.target&&e.target.closest&&e.ta
 
 /* ---------- one crowd count: 1 spectator = 1K ---------- */
 houseCount=function(n){return Math.max(0,Math.round(+n||0))*1000};
-houseHTML=function(n){n=Math.max(0,Math.round(+n||0));return `<span class="house" title="${n}K spectators — each spectator in the stands stands for roughly 1,000 Romans">${n}K</span>`};
+houseHTML=function(n){n=Math.max(0,Math.round(+n||0));return `<span class="house" title="${_T`${n}K spectators — each spectator in the stands stands for roughly 1,000 Romans`}">${n}K</span>`};
 
 /* ---------- the market to the rulebook ---------- */
 const WDEF75=W; /* the weapon table (market code below names a level's weapon side W) */
@@ -167,33 +167,33 @@ const aVal75=(kind,key)=>key?itemValue(kind,key):0;
 function slotOpts75(lv,slot,sides){const W=S.market.w[lv],A=S.market.a[lv];const o=[];
   if(sides.includes('w'))for(const s of nearest75(x=>wHas75(W,x),slot)){const key=s<=3?W.slots[s-1]:(wOpen75(W)?W.up4:null);o.push({kind:'w',s,key,blind:s===4&&!wOpen75(W)})}
   if(sides.includes('a'))for(const s of nearest75(x=>aHas75(A,x),slot))for(const key of A.piles[s-1])o.push({kind:'a',s,key});return o}
-function optLabel75(o){return o.kind==='w'?(o.blind?`Weapon · slot 4 · the top card (face down)`:`${W[o.key].n} · weapon slot ${o.s}`):`${ARM[o.key].n} · armor slot ${o.s}`}
-function optSub75(o){return o.kind==='w'?(o.blind?'flip it and take it':wStats(mkW(o.key))):armorDesc(o.key)}
+function optLabel75(o){return o.kind==='w'?(o.blind?_T`Weapon · slot 4 · the top card (face down)`:_T`${W[o.key].n} · weapon slot ${o.s}`):_T`${ARM[o.key].n} · armor slot ${o.s}`}
+function optSub75(o){return o.kind==='w'?(o.blind?_T('flip it and take it'):wStats(mkW(o.key))):armorDesc(o.key)}
 /* marketBuy75 — one purchase (already paid) or a free item: roll (or Market Choice), re-roll for 2 coin, then take the slot's weapon or
    one armor piece. only: 'w'|'a' for items that name their side. pref: the CPU's leaning. Returns {kind,key}. */
 async function marketBuy75(player,lv,opt={}){mktFix75();const W=S.market.w[lv],A=S.market.a[lv];const sides=opt.only?[opt.only]:['w','a'];
   const sideHas=k=>[1,2,3,4].some(s=>k==='w'?wHas75(W,s):aHas75(A,s));
-  if(!sides.some(sideHas)){log(`Nothing is left at level ${lv}${opt.only?(opt.only==='w'?' (weapons)':' (armor)'):''}.`);return {kind:null,key:null}}
+  if(!sides.some(sideHas)){log(_T`Nothing is left at level ${lv}${opt.only?(opt.only==='w'?' (weapons)':' (armor)'):''}.`);return {kind:null,key:null}}
   const cpuPick=os=>os.slice().sort((a,b)=>(aVal75(b.kind,b.key)+(b.blind?lv*1.6:0)+(b.kind===opt.pref?1:0))-(aVal75(a.kind,a.key)+(a.blind?lv*1.6:0)+(a.kind===opt.pref?1:0)))[0];
   let slot,opts;
   if(player.mchoice&&!opt.free){
     if(player.cpu){slot=[1,2,3,4].map(s=>[s,slotOpts75(lv,s,sides)]).filter(([,os])=>os.length).sort((a,b)=>aVal75(cpuPick(b[1]).kind,cpuPick(b[1]).key)-aVal75(cpuPick(a[1]).kind,cpuPick(a[1]).key))[0][0]}
-    else slot=await modal('Market Choice','<p>Pick the slot you want — no die.</p>',[1,2,3,4].map(s=>({label:`Slot ${s}`,sub:slotOpts75(lv,s,sides).map(o=>o.blind?'a face-down weapon':o.kind==='w'?WDEF75[o.key].n:ARM[o.key].n).join(' · ')||'empty',value:s})));
-    slot=slot||1;log(`${nm(player)} uses Market Choice for slot ${slot}.`);opts=slotOpts75(lv,slot,sides)}
+    else slot=await modal(_T('Market Choice'),'<p>Pick the slot you want — no die.</p>',[1,2,3,4].map(s=>({label:_T`Slot ${s}`,sub:slotOpts75(lv,s,sides).map(o=>o.blind?'a face-down weapon':o.kind==='w'?WDEF75[o.key].n:ARM[o.key].n).join(' · ')||'empty',value:s})));
+    slot=slot||1;log(_T`${nm(player)} uses Market Choice for slot ${slot}.`);opts=slotOpts75(lv,slot,sides)}
   else for(;;){slot=1+rnd(4);
-    if(slot===4&&sides.includes('w')&&!wOpen75(W)&&W.deck.length){W.up4=W.deck[W.deck.length-1];log(`${nm(player)} rolls the market die: <b>4</b> — the top weapon is flipped: <b>${esc(WDEF75[W.up4].n)}</b>.`)}
-    else log(`${nm(player)} rolls the market die: <b>${slot}</b>.`);
+    if(slot===4&&sides.includes('w')&&!wOpen75(W)&&W.deck.length){W.up4=W.deck[W.deck.length-1];log(_T`${nm(player)} rolls the market die: <b>4</b> — the top weapon is flipped: <b>${esc(WDEF75[W.up4].n)}</b>.`)}
+    else log(_T`${nm(player)} rolls the market die: <b>${slot}</b>.`);
     opts=slotOpts75(lv,slot,sides);
     if(opt.free||player.coin<2||!opts.length)break;
     let re=false;
     if(player.cpu){const b=cpuPick(opts);re=player.diff==='hard'&&aVal75(b.kind,b.key)<lv*2&&rand()<.5}
-    else{const v=await modal(`Market die · ${slot}`,`<p>The die shows <b>${slot}</b>. Take one of these, or pay 2 coin to roll again${slot===4&&wOpen75(W)?' (the flipped weapon stays face up in slot 4)':''}.</p>`,
+    else{const v=await modal(_T`Market die · ${slot}`,`<p>${_T`The die shows <b>${slot}</b>. Take one of these, or pay 2 coin to roll again${slot===4&&wOpen75(W)?_T(' (the flipped weapon stays face up in slot 4)'):''}.`}</p>`,
       [...opts.map((o,i)=>({label:optLabel75(o),sub:optSub75(o),value:'t'+i,card:o.key?(o.kind==='w'?'w:':'a:')+o.key:null})),{label:'Re-roll',sub:'2 coin',value:'re'}]);
       if(v&&v[0]==='t'){const o=opts[+v.slice(1)];return {kind:o.kind,key:o.kind==='w'?wTake75(W,o.s):aTake75(A,o.s,o.key)}}re=v==='re'}
-    if(!re)break;player.coin-=2;coinLog(player,-2,'market re-rolls');log(`${nm(player)} pays 2 coin to re-roll.`)}
+    if(!re)break;player.coin-=2;coinLog(player,-2,'market re-rolls');log(_T`${nm(player)} pays 2 coin to re-roll.`)}
   if(!opts.length)return {kind:null,key:null};
   let o;if(opts.length===1||player.cpu)o=player.cpu?cpuPick(opts):opts[0];
-  else{const v=await modal(`Market · slot ${slot}`,'<p>Take the weapon or one armor piece.</p>',opts.map((x,i)=>({label:optLabel75(x),sub:optSub75(x),value:i,card:x.key?(x.kind==='w'?'w:':'a:')+x.key:null})));o=opts[v!=null?v:0]}
+  else{const v=await modal(_T`Market · slot ${slot}`,'<p>Take the weapon or one armor piece.</p>',opts.map((x,i)=>({label:optLabel75(x),sub:optSub75(x),value:i,card:x.key?(x.kind==='w'?'w:':'a:')+x.key:null})));o=opts[v!=null?v:0]}
   return {kind:o.kind,key:o.kind==='w'?wTake75(W,o.s):aTake75(A,o.s,o.key)}}
 /* items that name their side (offerings, cards) roll on that side only, with no re-roll */
 marketRoll=async function(player,kind,lv,opt={}){const r=await marketBuy75(player,lv,{...opt,only:kind});return r.key};
@@ -207,29 +207,29 @@ function boardHTML75(player){const m=S.market;const cell=(x,y,inner,cls='')=>`<d
   for(const lv of [3,2,1]){const y=MB75.rows[lv];const W=m.w[lv],A=m.a[lv];
     for(let s=1;s<=4;s++){const x=MB75.w[s-1];let inner='';
       if(s<=3)inner=W.slots[s-1]?`<span class="mb-w" data-card="w:${W.slots[s-1]}" style="${cardStyle('w:'+W.slots[s-1])}" title="${esc(WDEF75[W.slots[s-1]].n)}"></span>`:'';
-      else inner=W.deck.length?(wOpen75(W)?`<span class="mb-w" data-card="w:${W.up4}" style="${cardStyle('w:'+W.up4)}" title="${esc(WDEF75[W.up4].n)} (flipped)"></span><span class="mb-n">×${W.deck.length}</span>`:`<span class="mb-back" data-lv="${lv}" title="${W.deck.length} face down"><b>FLAVIUS<br>RULE</b><small>×${W.deck.length}</small></span>`):'';
+      else inner=W.deck.length?(wOpen75(W)?`<span class="mb-w" data-card="w:${W.up4}" style="${cardStyle('w:'+W.up4)}" title="${esc(WDEF75[W.up4].n)} (flipped)"></span><span class="mb-n">×${W.deck.length}</span>`:`<span class="mb-back" data-lv="${lv}" title="${_T`${W.deck.length} face down`}">${_T`<b>FLAVIUS<br>RULE</b><small>×${W.deck.length}</small>`}</span>`):'';
       h+=cell(x,y,inner,'w')}
     for(let s=1;s<=4;s++){const x=MB75.a[s-1];const p=A.piles[s-1]||[];const n=p.length;
       const inner=p.map(k=>`<span class="mb-a" data-card="a:${k}" style="${cardStyle('a:'+k)}" title="${esc(ARM[k].n)}"></span>`).join('');h+=cell(x,y,`<div class="mb-pile n${Math.min(n,6)}">${inner}</div>`,'a')}}
-  return `<div class="mboard75"><img src="${assetURL('market_board.webp')}" alt="The market board">${h}</div>`}
+  return `<div class="mboard75"><img src="${assetURL('market_board.webp')}" alt="${_T`The market board`}">${h}</div>`}
 openMarket=async function(player){mktFix75();const vetOn=weak(player,'tax');if(vetOn&&player.cpu)player.taxPref=player.cf>player.coin?'cf':'coin';
   for(;;){const vetCF=vetOn&&player.taxPref==='cf'?1:0,vet=vetOn&&!vetCF?1:0;
-    const notes=[vetOn?`⚖ Old debts: +1 ${vetCF?'CF':'coin'} per purchase`:'',player.discount?`％ Discount: −${player.discount} coin this turn`:'',player.mchoice?'☝ Market Choice: pick your slot, no die':''].filter(Boolean);
+    const notes=[vetOn?_T`⚖ Old debts: +1 ${vetCF?'CF':_T('coin')} per purchase`:'',player.discount?_T`％ Discount: −${player.discount} coin this turn`:'',player.mchoice?_T('☝ Market Choice: pick your slot, no die'):''].filter(Boolean);
     const body=`<div class="mkt75">${boardHTML75(player)}
-      <div class="mkt75-foot"><span>Pay for a level, roll the market die, then take that slot's <b>weapon</b> or <b>one armor piece</b> · re-roll 2 coin</span><span class="stall-purse">${ICO&&ICO.coin?ICO.coin:'🪙'} <b>${player.coin}</b> coin · 🌾 <b>${player.cf}</b> CF${player.market?' · <b style="color:var(--gold2)">open</b>':''}</span></div>
-      ${player.market?'':`<div class="mkt75-lock"><div><div style="font-size:30px">🔒</div><b>The market is closed.</b><br><span class="rc-sub">3 Crowd Favor opens it for this turn — then buy as often as your coin allows.</span></div></div>`}</div>${notes.length?`<p class="rc-sub" style="margin:6px 0 0">${notes.join(' · ')}</p>`:''}${typeof hint==='function'?hint('market'):''}`;
+      <div class="mkt75-foot">${_T`<span>Pay for a level, roll the market die, then take that slot's <b>weapon</b> or <b>one armor piece</b> · re-roll 2 coin</span>`}<span class="stall-purse">${_T`${ICO&&ICO.coin?ICO.coin:'🪙'} <b>${player.coin}</b> coin · 🌾 <b>${player.cf}</b> CF${player.market?' · <b style="color:var(--gold2)">open</b>':''}`}</span></div>
+      ${player.market?'':`<div class="mkt75-lock"><div><div style="font-size:30px">🔒</div>${_T`<b>The market is closed.</b>`}<br><span class="rc-sub">${_T`3 Crowd Favor opens it for this turn — then buy as often as your coin allows.`}</span></div></div>`}</div>${notes.length?`<p class="rc-sub" style="margin:6px 0 0">${notes.join(' · ')}</p>`:''}${typeof hint==='function'?hint('market'):''}`;
     const btns=[];
-    if(!player.market)btns.push({label:'Unlock market',sub:cfAllowed()?'3 CF':'Crowd Favor is locked',value:'unlock',disabled:player.cf<3||!cfAllowed(),primary:1});
+    if(!player.market)btns.push({label:_T('Unlock market'),sub:cfAllowed()?'3 CF':_T('Crowd Favor is locked'),value:'unlock',disabled:player.cf<3||!cfAllowed(),primary:1});
     else for(const lv of [1,2,3]){const left=[1,2,3,4].some(s=>wHas75(S.market.w[lv],s)||aHas75(S.market.a[lv],s));
-      btns.push({label:`Buy at level ${lv}`,sub:`${purchaseCost(player,lv)+vet} coin${vetCF?' + 1 CF':''}${left?'':' · empty'}`,value:'b'+lv,disabled:!left||player.coin<purchaseCost(player,lv)+vet||vetCF&&player.cf<1})}
-    if(player.market&&vetOn)btns.push({label:vetCF?'⚖ Pay old debts in coin':'⚖ Pay old debts in CF',sub:'Veteranus: +1 per purchase',value:'taxswap'});
-    btns.push({label:'Close market',value:'close'});
-    const v=await modal('Market of Flavius',body,btns,{wide:1});
+      btns.push({label:_T`Buy at level ${lv}`,sub:_T`${purchaseCost(player,lv)+vet} coin${vetCF?' + 1 CF':''}${left?'':' · empty'}`,value:'b'+lv,disabled:!left||player.coin<purchaseCost(player,lv)+vet||vetCF&&player.cf<1})}
+    if(player.market&&vetOn)btns.push({label:vetCF?_T('⚖ Pay old debts in coin'):_T('⚖ Pay old debts in CF'),sub:_T('Veteranus: +1 per purchase'),value:'taxswap'});
+    btns.push({label:_T('Close market'),value:'close'});
+    const v=await modal(_T('Market of Flavius'),body,btns,{wide:1});
     if(v==='close'||!v)break;
     if(v==='taxswap'){player.taxPref=vetCF?'coin':'cf';continue}
-    if(v==='unlock'){player.cf-=3;player.market=true;log(`${nm(player)} spends 3 CF to unlock the market.`);continue}
-    const lv=+v[1];player.coin-=purchaseCost(player,lv)+vet;if(vetCF)player.cf-=1;coinLog(player,-(purchaseCost(player,lv)+vet),'market purchases');stat(player,'buy');crowdReact('buy',{p:player});
-    log(`${nm(player)} buys at level ${lv}.`);
+    if(v==='unlock'){player.cf-=3;player.market=true;log(_T`${nm(player)} spends 3 CF to unlock the market.`);continue}
+    const lv=+v[1];player.coin-=purchaseCost(player,lv)+vet;if(vetCF)player.cf-=1;coinLog(player,-(purchaseCost(player,lv)+vet),_T('market purchases'));stat(player,'buy');crowdReact('buy',{p:player});
+    log(_T`${nm(player)} buys at level ${lv}.`);
     const got=await marketBuy75(player,lv);if(got.kind==='w'&&got.key)await gainWeapon(player,got.key);else if(got.key)await gainArmorPiece(player,got.key);
     checkMandata(player);render()}};
 (()=>{const st=document.createElement('style');st.textContent=`
@@ -251,8 +251,8 @@ openMarket=async function(player){mktFix75();const vetOn=weak(player,'tax');if(v
 /* ---------- Play Now: the mockup's layout over the existing controls ---------- */
 const PN75={er:null};
 function pnLoadRecs75(){try{Store.getDoc('hall','eventRecords').then(er=>{PN75.er=er||{};const el=document.querySelector('#mBody .pn-rec');if(el)el.outerHTML=pnRecHTML75(CFG.ev)}).catch(()=>{})}catch(e){}}
-function pnRecHTML75(k){const r=PN75.er&&PN75.er[k];return `<div class="pn-rec">${r?`🏆 Record: <b>${r.cf} CF</b> · ${esc(r.name)}${r.clsName?` (${esc(r.clsName)})`:''}${r.won?' · won':''}`:'🏆 No record yet — set one'}</div>`}
-function pnBadge75(ev){const t=ev.min===ev.max?`${ev.min}`:`${ev.min}–${ev.max}`;return `<div class="pn-badge" title="${t} gladiators"><img src="${assetURL('badge_players.webp')}" alt=""><b>${t} ${ev.max===1?'PLAYER':'PLAYERS'}</b></div>`}
+function pnRecHTML75(k){const r=PN75.er&&PN75.er[k];return `<div class="pn-rec">${r?_T`🏆 Record: <b>${r.cf} CF</b> · ${esc(r.name)}${r.clsName?` (${esc(r.clsName)})`:''}${r.won?' · won':''}`:_T('🏆 No record yet — set one')}</div>`}
+function pnBadge75(ev){const t=ev.min===ev.max?`${ev.min}`:`${ev.min}–${ev.max}`;return `<div class="pn-badge" title="${_T`${t} gladiators`}"><img src="${assetURL('badge_players.webp')}" alt=""><b>${t} ${ev.max===1?'PLAYER':'PLAYERS'}</b></div>`}
 function pnPresets75(){try{return JSON.parse(localStorage.getItem('flavius_pnpresets')||'[]')||[]}catch(e){return []}}
 function pnPresetsSave75(L){try{localStorage.setItem('flavius_pnpresets',JSON.stringify(L.slice(0,8)))}catch(e){}}
 function pnLayout75(h){const T=document.createElement('template');T.innerHTML=h;const f=T.content;const grid=f.querySelector('.setup-grid');if(!grid||grid.children.length<2)return h;
@@ -267,23 +267,23 @@ function pnLayout75(h){const T=document.createElement('template');T.innerHTML=h;
     return `<button type="button" class="pn-ev ${k===CFG.ev?'on':''}" data-pnev="${k}" title="${esc(E.n)}">${has?`<span class="pn-evc" style="${cardStyle('e:'+k)}"></span>`:`<span class="pn-evc pn-cust">✦</span>`}<span class="pn-evn">${esc(nmx)}</span></button>`}).join('');
   const has=!ev.custom&&typeof cardRef==='function'&&cardRef('e:'+CFG.ev);
   const big=`<div class="pn-big"><div class="evp-frame pn-frame"><img src="${assetURL('event_frame.webp')}" alt="">${has?`<span class="evp-card" style="${cardStyle('e:'+CFG.ev)}" data-card="e:${CFG.ev}"></span>`:`<span class="evp-card evp-txt"><b>${esc(ev.n)}</b><small>${ev.rounds.map((r,i)=>`${i+1}. ${esc(r.n)}`).join('<br>')}</small></span>`}</div>
-    <div class="pn-bigr"><div class="pn-evt">${evTok75(ev,40)}<div><h3>${esc(ev.n)}</h3><small>${esc(ev.short||'')}${ev.sr?` · Summa Rudis ${esc(ev.sr)}`:''}</small></div>${pnBadge75(ev)}</div>
+    <div class="pn-bigr"><div class="pn-evt">${evTok75(ev,40)}<div><h3>${esc(ev.n)}</h3><small>${esc(ev.short||'')}${ev.sr?_T` · Summa Rudis ${esc(ev.sr)}`:''}</small></div>${pnBadge75(ev)}</div>
      ${desc?`<div class="pn-desc">${desc.querySelector('div')?desc.querySelector('div').innerHTML:desc.innerHTML}</div>`:''}${pnRecHTML75(CFG.ev)}${nLab?nLab.outerHTML:''}</div></div>`;
   const C=CFG.seats.slice(0,CFG.n);const you=C.find(s=>!s.cpu);
   const wrap=document.createElement('div');wrap.className='pn75';
-  wrap.innerHTML=`<div class="pn-top"><div class="pn-tabs"></div><div class="pn-cal"></div><div class="pn-acts"><button type="button" class="btn pn-quick" data-pnquick title="This week's games, you as a random class against CPUs — straight to the sand">⚡ Quick start</button><button type="button" class="btn" data-pnpre aria-expanded="false">★ Presets</button><div class="pn-premenu" hidden></div></div></div>
-   <div class="pn-bands"><section class="pn-card"><div class="pn-lbl">Where · the city</div><div class="pn-where"></div></section>
-    <section class="pn-card"><div class="pn-lbl"><span>What · the event</span><span class="pn-evsel"></span></div><div class="pn-strip">${strip}</div>${big}</section></div>
-   <section class="pn-card pn-who"><div class="pn-lbl">Who · the gladiators</div><div class="pn-whobody"></div></section>
+  wrap.innerHTML=`<div class="pn-top"><div class="pn-tabs"></div><div class="pn-cal"></div><div class="pn-acts"><button type="button" class="btn pn-quick" data-pnquick title="${_T`This week's games, you as a random class against CPUs — straight to the sand`}">${_T`⚡ Quick start`}</button><button type="button" class="btn" data-pnpre aria-expanded="false">${_T`★ Presets`}</button><div class="pn-premenu" hidden></div></div></div>
+   <div class="pn-bands"><section class="pn-card"><div class="pn-lbl">${_T`Where · the city`}</div><div class="pn-where"></div></section>
+    <section class="pn-card"><div class="pn-lbl">${_T`<span>What · the event</span>`}<span class="pn-evsel"></span></div><div class="pn-strip">${strip}</div>${big}</section></div>
+   <section class="pn-card pn-who"><div class="pn-lbl">${_T`Who · the gladiators`}</div><div class="pn-whobody"></div></section>
    <section class="pn-card pn-optc"></section>
-   <div class="pn-start"><div class="pn-sum"><b>${esc(ev.n)}</b> at <b>${esc(L?L.n:'?')}</b> · ${CFG.n} gladiator${CFG.n===1?'':'s'} · You: <b>${you?esc((CLASSES[you.cls]||{}).name||you.cls):'watching'}</b></div><div class="pn-go"></div></div>`;
+   <div class="pn-start"><div class="pn-sum">${_T`<b>${esc(ev.n)}</b> at <b>${esc(L?L.n:'?')}</b> · ${CFG.n} gladiator${CFG.n===1?'':'s'} · You: <b>${you?esc((CLASSES[you.cls]||{}).name||you.cls):_T('watching')}</b>`}</div><div class="pn-go"></div></div>`;
   if(tabs)wrap.querySelector('.pn-tabs').appendChild(tabs);if(cal)wrap.querySelector('.pn-cal').appendChild(cal);
   const wh=wrap.querySelector('.pn-where');while(left.firstChild)wh.appendChild(left.firstChild);if(locLab)wh.appendChild(locLab);
   if(evLab){evLab.classList.add('pn-evlab');wrap.querySelector('.pn-evsel').appendChild(evLab)}
   const wb=wrap.querySelector('.pn-whobody');while(right.firstChild)wb.appendChild(right.firstChild);if(seats){wb.appendChild(seats);
     [...seats.querySelectorAll(':scope>.seat')].forEach((el,i)=>{const s=CFG.seats[i];if(!s)return;const k=s.cls;const url=typeof MINI_URL!=='undefined'&&MINI_URL[k];
       if(url)el.insertAdjacentHTML('afterbegin',`<div class="pn-fig"><img src="${assetURL(url.slice(7))}" alt=""></div>`);
-      const sw=typeof SIM50!=='undefined'&&SIM50.cls&&SIM50.cls[k];if(sw){const row=el.querySelector('.row');if(row)row.insertAdjacentHTML('afterend',`<div class="pn-win" title="From the guide's ${SIM50.games} simulated classic events"><em>Wins <b>${sw.win}%</b> of classic events</em><span><i style="width:${Math.min(100,sw.win*2.5)}%"></i></span></div>`)}})}
+      const sw=typeof SIM50!=='undefined'&&SIM50.cls&&SIM50.cls[k];if(sw){const row=el.querySelector('.row');if(row)row.insertAdjacentHTML('afterend',`<div class="pn-win" title="${_T`From the guide's ${SIM50.games} simulated classic events`}">${_T`<em>Wins <b>${sw.win}%</b> of classic events</em>`}<span><i style="width:${Math.min(100,sw.win*2.5)}%"></i></span></div>`)}})}
   if(opts)wrap.querySelector('.pn-optc').appendChild(opts);const go=wrap.querySelector('.pn-go');if(err)go.appendChild(err);if(btns)go.appendChild(btns);
   /* anything else the modes added keeps its place after the layout */
   const out=document.createElement('div');out.appendChild(wrap);const rest=[...f.childNodes].filter(n=>n!==grid&&!(n.nodeType===3&&!n.textContent.trim()));rest.forEach(n=>{if(n.isConnected===false&&n!==tabs&&n!==opts&&n!==err&&n!==btns)out.appendChild(n)});
@@ -298,9 +298,9 @@ document.addEventListener('click',e=>{const t=e.target;if(!t.closest||!t.closest
     CFG.seats.slice(0,CFG.n).forEach((st,i)=>{st.cls=sh[i%sh.length];st.cpu=i!==0;st.saved=null;st.name=clsSavedName(st.cls)});pnRedraw75();
     setTimeout(()=>{const g=document.getElementById('goBtn');if(g)g.click()},60);return}
   const pb=t.closest('[data-pnpre]');if(pb){const m=document.querySelector('#mBody .pn-premenu');if(!m)return;const L=pnPresets75();
-    m.innerHTML=`${L.map((p,i)=>`<div class="pn-prerow"><button type="button" class="btn" data-pnload="${i}">${esc(p.name)}</button><button type="button" class="btn" data-pndel="${i}" aria-label="Delete ${esc(p.name)}">✕</button></div>`).join('')||'<div class="rc-sub">No presets yet.</div>'}<button type="button" class="btn primary" data-pnsave>★ Save this setup</button>`;
+    m.innerHTML=`${L.map((p,i)=>`<div class="pn-prerow"><button type="button" class="btn" data-pnload="${i}">${esc(p.name)}</button><button type="button" class="btn" data-pndel="${i}" aria-label="${_T`Delete ${esc(p.name)}`}">✕</button></div>`).join('')||'<div class="rc-sub">No presets yet.</div>'}<button type="button" class="btn primary" data-pnsave>${_T`★ Save this setup`}</button>`;
     m.hidden=!m.hidden;pb.setAttribute('aria-expanded',String(!m.hidden));return}
-  if(t.closest('[data-pnsave]')){const E=EVENTS[CFG.ev],L=LOCATIONS[CFG.loc];const L2=pnPresets75();L2.unshift({name:`${E.short||E.n} · ${L?L.n:'?'} · ${CFG.n}`,cfg:{loc:CFG.loc,ev:CFG.ev,n:CFG.n,seats:JSON.parse(JSON.stringify(CFG.seats.slice(0,8))),opts:JSON.parse(JSON.stringify(CFG.opts||{}))}});pnPresetsSave75(L2);if(typeof mToast==='function')mToast('★ Preset saved');pnRedraw75();return}
+  if(t.closest('[data-pnsave]')){const E=EVENTS[CFG.ev],L=LOCATIONS[CFG.loc];const L2=pnPresets75();L2.unshift({name:`${E.short||E.n} · ${L?L.n:'?'} · ${CFG.n}`,cfg:{loc:CFG.loc,ev:CFG.ev,n:CFG.n,seats:JSON.parse(JSON.stringify(CFG.seats.slice(0,8))),opts:JSON.parse(JSON.stringify(CFG.opts||{}))}});pnPresetsSave75(L2);if(typeof mToast==='function')mToast(_T('★ Preset saved'));pnRedraw75();return}
   const ld=t.closest('[data-pnload]');if(ld){const p=pnPresets75()[+ld.dataset.pnload];if(p&&EVENTS[p.cfg.ev]){Object.assign(CFG,{mode:'event',loc:p.cfg.loc,ev:p.cfg.ev,n:p.cfg.n});p.cfg.seats.forEach((s,i)=>{if(CFG.seats[i]&&CLASSES[s.cls])Object.assign(CFG.seats[i],s)});CFG.opts={...CFG.opts,...p.cfg.opts};pnRedraw75()}return}
   const dl=t.closest('[data-pndel]');if(dl){const L=pnPresets75();L.splice(+dl.dataset.pndel,1);pnPresetsSave75(L);const b=document.querySelector('#mBody [data-pnpre]');const m=document.querySelector('#mBody .pn-premenu');if(m)m.hidden=true;if(b)b.click();return}},true);
 (()=>{const st=document.createElement('style');st.textContent=`

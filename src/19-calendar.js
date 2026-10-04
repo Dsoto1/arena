@@ -14,7 +14,7 @@
 /* CAL_KEY — localStorage key of the empire calendar. */
 const CAL_KEY='flavius_calendar';
 /* ROMAN_MONTHS — Latin month names for the Roman date form. */
-const ROMAN_MONTHS=['Ianuarius','Februarius','Martius','Aprilis','Maius','Iunius','Iulius','Augustus','September','October','November','December'];
+const ROMAN_MONTHS=[_T('Ianuarius'),_T('Februarius'),_T('Martius'),_T('Aprilis'),_T('Maius'),_T('Iunius'),_T('Iulius'),_T('Augustus'),_T('September'),_T('October'),_T('November'),_T('December')];
 /* RN — a number in Roman numerals ("—" for 0). */
 const RN=num=>{const t=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];let s='';for(const [v,r] of t)while(num>=v){s+=r;num-=v}return s||'—'};
 // weight of each event kind on the schedule: classics dominate; specials are rare and pay more
@@ -55,11 +55,11 @@ function calNow(){const C=calLoad();return {season:C.season,week:C.week,fx:fixtu
 function empireDate(season,week){
   const dayOfYear=((week-1)*30+((season-1)*7)%30)%360;const m=Math.floor(dayOfYear/30),d=dayOfYear%30+1;
   const month=ROMAN_MONTHS[m];const nextMonth=ROMAN_MONTHS[(m+1)%12];
-  let s;if(d===1)s=`Kalendae ${month}`;else if(d===5)s=`Nonae ${month}`;else if(d===13)s=`Idus ${month}`;
-  else if(d<5)s=`a.d. ${RN(6-d)} Non. ${month}`;else if(d<13)s=`a.d. ${RN(14-d)} Id. ${month}`;else s=`a.d. ${RN(32-d)} Kal. ${nextMonth}`;
+  let s;if(d===1)s=_T`Kalendae ${month}`;else if(d===5)s=_T`Nonae ${month}`;else if(d===13)s=_T`Idus ${month}`;
+  else if(d<5)s=_T`a.d. ${RN(6-d)} Non. ${month}`;else if(d<13)s=_T`a.d. ${RN(14-d)} Id. ${month}`;else s=_T`a.d. ${RN(32-d)} Kal. ${nextMonth}`;
   // v0.21: plain English for everyday reading; the Roman form survives in tooltips
-  const EN=['January','February','March','April','May','June','July','August','September','October','November','December'][m];
-  return {short:`${EN} ${d}`,long:`${EN} ${d} — season ${season}, week ${week} of 12 (${s})`,roman:s,season,week};
+  const EN=[_T('January'),_T('February'),_T('March'),_T('April'),_T('May'),_T('June'),_T('July'),_T('August'),_T('September'),_T('October'),_T('November'),_T('December')][m];
+  return {short:`${EN} ${d}`,long:_T`${EN} ${d} — season ${season}, week ${week} of 12 (${s})`,roman:s,season,week};
 }
 /* calAdvance — moves the empire on one week (a new season after week 12). */
 function calAdvance(){const C=calLoad();C.week++;if(C.week>12){C.week=1;C.season++}C.frozen=1;calSave();return calNow()}
@@ -68,13 +68,13 @@ function calSet(season,week){const C=calLoad();C.season=season;C.week=week;C.fro
 /* scheduleHTML — the season's 12-week schedule table, the current week marked. */
 function scheduleHTML(season,week){
   const fx=seasonSchedule(season);
-  return `<table class="tally" style="margin-top:6px"><tr><th>Week</th><th>Date</th><th>Arena</th><th>Games</th><th>Purse</th></tr>${fx.map(f=>`<tr class="${f.wk===week?'me schednow':''}"><td class="n">${f.wk===week?'▶ ':''}${f.wk}</td><td class="rc-sub">${empireDate(season,f.wk).short}</td><td>📍 ${esc(LOCATIONS[f.loc].n)}</td><td>${esc(EVENTS[f.ev]?EVENTS[f.ev].n:f.ev)}${/democritus|egidious|cassian/.test(f.ev)?'':' <span class="badge gold" title="A special: riskier, and it pays">special</span>'}${f.wk===12?' <span class="badge" title="The regular season ends here; the top four stables are invited to the Flavius Superbus">last regular week</span>':''}</td><td class="n">×${f.purse}</td></tr>`).join('')}</table>`;
+  return `<table class="tally" style="margin-top:6px"><tr><th>${_T`Week`}</th><th>${_T`Date`}</th><th>${_T`Arena`}</th><th>${_T`Games`}</th><th>${_T`Purse`}</th></tr>${fx.map(f=>`<tr class="${f.wk===week?_T('me schednow'):''}"><td class="n">${f.wk===week?'▶ ':''}${f.wk}</td><td class="rc-sub">${empireDate(season,f.wk).short}</td><td>📍 ${esc(LOCATIONS[f.loc].n)}</td><td>${esc(EVENTS[f.ev]?EVENTS[f.ev].n:f.ev)}${/democritus|egidious|cassian/.test(f.ev)?'':' <span class="badge gold" title="A special: riskier, and it pays">special</span>'}${f.wk===12?_T(' <span class="badge" title="The regular season ends here; the top four stables are invited to the Flavius Superbus">last regular week</span>'):''}</td><td class="n">×${f.purse}</td></tr>`).join('')}</table>`;
 }
 
 // v0.21: the season schedule, from anywhere — the date chip on the main screen opens it
 function openSchedule(){
   if(typeof modalBusy==='function'&&modalBusy())return;const c=calNow();const dt=empireDate(c.season,c.week);
-  modal(`📅 Season ${c.season} schedule`,`<p>Today in the empire: <b>${dt.short}</b>, week ${c.week} of 12. One arena hosts the editor's games each week; classics dominate, and the rarer specials carry fatter purses. Manager mode and New event both follow this schedule.</p>${scheduleHTML(c.season,c.week)}`,[{label:'Close',value:0}],{wide:1});
+  modal(_T`📅 Season ${c.season} schedule`,`<p>Today in the empire: <b>${dt.short}</b>, week ${c.week} of 12. One arena hosts the editor's games each week; classics dominate, and the rarer specials carry fatter purses. Manager mode and New event both follow this schedule.</p>${scheduleHTML(c.season,c.week)}`,[{label:_T('Close'),value:0}],{wide:1});
 }
 /* the date chip opens the schedule. */
 document.addEventListener('click',e=>{if(e.target.closest('#calChip'))openSchedule()});

@@ -15,6 +15,6 @@ function silentWavURL(){if(AUD_EL.url)return AUD_EL.url;const n=2205,buf=new Arr
 function audElUnlock(){if(HEADLESS||AUD_EL.el||!audSet().on)return;try{const a=new Audio();a.src=silentWavURL();a.loop=true;a.setAttribute('playsinline','');const p=a.play();if(p&&p.catch)p.catch(()=>{AUD_EL.el=null});AUD_EL.el=a}catch(e){}}
 function audChip(){let c=document.getElementById('audChip');const blocked=audSet().on&&AUD.ctx&&AUD.ctx.state!=='running';
   if(!blocked){if(c)c.hidden=true;return}
-  if(!c){c=document.createElement('button');c.id='audChip';c.type='button';c.textContent='🔇 Sound is held back — tap to turn it on';c.addEventListener('click',()=>{AUD_EL.el=null;audElUnlock();audUnlock();setTimeout(audChip,500)});document.body.appendChild(c)}
+  if(!c){c=document.createElement('button');c.id='audChip';c.type='button';c.textContent=_T('🔇 Sound is held back — tap to turn it on');c.addEventListener('click',()=>{AUD_EL.el=null;audElUnlock();audUnlock();setTimeout(audChip,500)});document.body.appendChild(c)}
   c.hidden=false}
 for(const ev of ['touchend','click','keydown'])document.addEventListener(ev,()=>{audElUnlock();setTimeout(audChip,700)},{passive:true,capture:true});

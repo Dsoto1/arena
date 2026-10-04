@@ -16,7 +16,7 @@ function tutGuard(e){if(!tutLive())return;const t=e.target;if(!t||!t.closest)ret
   if(!tutTourNow()&&t.closest(TUT_PLAY))return;
   if(!t.closest('button,a,select,input,textarea,summary,label,[data-act],[data-card],[role="button"],canvas'))return;
   e.preventDefault();e.stopPropagation();
-  if(e.type==='click'&&typeof mToast==='function')mToast(tutTourNow()?'🎓 Just looking for now — press <b>Next ▶</b> on the coach.':'🎓 One thing at a time — follow the coach (✖ Exit is always there).')}
+  if(e.type==='click'&&typeof mToast==='function')mToast(tutTourNow()?_T('🎓 Just looking for now — press <b>Next ▶</b> on the coach.'):_T('🎓 One thing at a time — follow the coach (✖ Exit is always there).'))}
 for(const ev of ['click','pointerdown','mousedown','touchstart'])document.addEventListener(ev,tutGuard,{capture:true,passive:false});
 {const st=document.createElement('style');st.textContent=`
 body.tutlock header.bar .navmid button,body.tutlock header.bar .navright button:not(#btnMenu):not(#btnMute),body.tutlock #arenaDrawer button,body.tutlock #btnSimEnd{opacity:.35;filter:grayscale(.6);cursor:not-allowed}
@@ -65,8 +65,8 @@ body.phoneL .logbar{left:0;top:0;bottom:0;width:min(380px,62vw);transform:transl
   background:rgba(28,20,14,.94);border:1px solid var(--line2);border-radius:10px;padding:6px 10px;font-size:13px}
 body.phoneP.pl-rotx #plRot{display:none}`;document.head.appendChild(st)}
 function plBuild(){if(document.getElementById('plDock'))return;const d=document.createElement('div');d.id='plDock';
-  d.innerHTML=`<button type="button" data-pl="nav" title="Top bar: speed, rules, menu">☰</button><button type="button" data-pl="act" title="Your actions">⚔</button><button type="button" data-pl="side" title="Fighter board and gladiators">🛡</button><button type="button" data-pl="log" title="Arena log">📜</button><button type="button" data-pl="zoom" title="Zoom (or pinch the sand)">🔍</button>`;
-  document.body.appendChild(d);const r=document.createElement('div');r.id='plRot';r.innerHTML=`<span>↻ Turn your phone sideways for the full arena</span><button class="btn tksm" type="button" data-pl="rotx">✕</button>`;document.body.appendChild(r)}
+  d.innerHTML=`<button type="button" data-pl="nav" title="${_T`Top bar: speed, rules, menu`}">☰</button><button type="button" data-pl="act" title="${_T`Your actions`}">⚔</button><button type="button" data-pl="side" title="${_T`Fighter board and gladiators`}">🛡</button><button type="button" data-pl="log" title="${_T`Arena log`}">📜</button><button type="button" data-pl="zoom" title="${_T`Zoom (or pinch the sand)`}">🔍</button>`;
+  document.body.appendChild(d);const r=document.createElement('div');r.id='plRot';r.innerHTML=`${_T`<span>↻ Turn your phone sideways for the full arena</span>`}<button class="btn tksm" type="button" data-pl="rotx">✕</button>`;document.body.appendChild(r)}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-pl]');if(!b)return;e.preventDefault();const k=b.dataset.pl,B=document.body;
   if(k==='zoom'){if(S){S.zoomIn=!(S.zoomIn||CAM.z>1.02);CAM.z=null;try{draw();duelUI()}catch(err){}}return}
   if(k==='rotx'){B.classList.add('pl-rotx');return}

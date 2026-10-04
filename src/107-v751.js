@@ -13,7 +13,7 @@ const WBACK75=lv=>assetURL('weapon_back'+lv+'b.webp'); /* v0.83: every level fro
 {const base=boardHTML75;boardHTML75=function(){let h=base.apply(this,arguments);try{h=h.replace(/<span class="mb-back" data-lv="(\d)" title="([^"]*)"><b>FLAVIUS<br>RULE<\/b><small>(×\d+)<\/small><\/span>/g,
   (m,lv,t,n)=>`<span class="mb-back mb-back75" title="${t}" style="background-image:url('${WBACK75(lv)}')"><small>${n}</small></span>`)}catch(e){}return h}}
 {const base=openChest;openChest=async function(player){try{if(player&&!player.cpu&&!HEADLESS&&!(S&&S.sim)&&S.chest&&S.chest.weapons.length){const key=S.chest.weapons[S.chest.weapons.length-1];
-    if(W[key]&&typeof modal==='function')await modal('🗝 The Arena Chest',`<div class="chest75"><div class="chest75-card"><span class="chest75-face chest75-back" style="background-image:url('${WBACK75(4)}')"></span><span class="chest75-face chest75-front"><span class="cimg" style="${cardStyle('w:'+key)}"></span></span></div><p><b>${esc(W[key].n)}</b> · ${esc(wStats(mkW(key)))}</p></div>`,[{label:'Take it',value:1,primary:1}])}}catch(e){console.error(e)}
+    if(W[key]&&typeof modal==='function')await modal(_T('🗝 The Arena Chest'),`<div class="chest75"><div class="chest75-card"><span class="chest75-face chest75-back" style="background-image:url('${WBACK75(4)}')"></span><span class="chest75-face chest75-front"><span class="cimg" style="${cardStyle('w:'+key)}"></span></span></div><p><b>${esc(W[key].n)}</b> · ${esc(wStats(mkW(key)))}</p></div>`,[{label:_T('Take it'),value:1,primary:1}])}}catch(e){console.error(e)}
   return base.apply(this,arguments)}}
 
 /* ---------- Match Week: the host city's banner ---------- */
@@ -55,7 +55,7 @@ function cityScene75(name){const C=CITY75[name];if(!C)return null;const k=name.r
     case 'lighthouse':s+=`<rect x="-700" y="86" width="2000" height="20" fill="#3f6f8e"/><g transform="translate(470 86)"><rect x="-18" y="-20" width="36" height="20" fill="${st}"/><rect x="-13" y="-46" width="26" height="26" fill="${st}"/><rect x="-9" y="-66" width="18" height="20" fill="${st}"/><circle cx="0" cy="-72" r="7" fill="#ffd36a"/><circle cx="0" cy="-72" r="16" fill="#ffd36a" opacity=".25"/></g>${boat75(140,90)}${boat75(260,92,'#5a3a2a')}${boat75(360,88,'#7a2a1a')}${[30,80,580].map((x,i)=>`<circle cx="${x}" cy="${92-i*4}" r="${8+i*3}" fill="#e8e0c0" opacity=".35"/>`).join('')}${ground}`;break}
   return `<svg viewBox="0 0 600 120" preserveAspectRatio="xMidYMid meet" style="overflow:hidden" aria-hidden="true">${s}</svg>`}
 {const base=banner73;banner73=function(k){try{if(k==='night'){const w=W_();const L=w&&w.night&&LOCATIONS[w.night.loc];const sc=L&&cityScene75(L.n);
-    if(sc)return `<div class="roomhd b73 b73-night b75city">${sc}<div class="roomttl"><b>${esc(L.n)}</b><span>⚔️ Match Week · week ${typeof wkOf==='function'?wkOf(w.week):w.week} of 12 · three days of games</span></div>${bannerStat73(k)}</div>`}}catch(e){console.error(e)}
+    if(sc)return `<div class="roomhd b73 b73-night b75city">${sc}<div class="roomttl">${_T`<b>${esc(L.n)}</b><span>⚔️ Match Week · week ${typeof wkOf==='function'?wkOf(w.week):w.week} of 12 · three days of games</span>`}</div>${bannerStat73(k)}</div>`}}catch(e){console.error(e)}
   return base.apply(this,arguments)}}
 
 /* ---------- Settings: no "Skip the main menu" ---------- */
@@ -71,8 +71,8 @@ try{if(SETTINGS.skipMenu){SETTINGS.skipMenu=false;applySettings()}}catch(e){}
 
 /* ---------- the fighter panel's weapon chips: his icons ---------- */
 weaponChips=function(w){const I=(k,v,t)=>`<span class="wchip wchip75" title="${esc(t)}"><img src="${WICO75[k]}" alt="">${v}</span>`;
-  if(!w)return I('dmg','1','Power (fists)')+I('rng','1','Range');if(w.lyre)return '<span class="wchip">🎵 lyre</span>';if(w.noAtk)return '<span class="wchip">✋ held</span>';const c=[];
-  if(w.p)c.push(I('dmg',w.p,'Attack power'));if(w.r)c.push(I('rng',w.r,'Range'));if(w.ammo!=null)c.push(I('ammo',w.ammoLeft??w.ammo,'Ammo'));
-  if(w.throw)c.push(I('thr',`${w.throw.p}·${w.throw.r}`,'Throw: power · range'));if(w.shield)c.push(I('abs',`${w.absorb}×${w.usesLeft??w.uses}`,'Shield: absorb × uses'));
-  if(w.atkUses)c.push(I('use',w.atkLeft??w.atkUses,'Uses left'));if(w.both)c.push(I('both','','Both attacks'));if(w.cfw)c.push(I('cf','+'+w.cfw,'Crowd favor per hit'));if(w.soul)c.push(I('soul','+'+w.soul,'Soul steal'));return c.join('')};
+  if(!w)return I('dmg','1',_T('Power (fists)'))+I('rng','1',_T('Range'));if(w.lyre)return '<span class="wchip">🎵 lyre</span>';if(w.noAtk)return '<span class="wchip">✋ held</span>';const c=[];
+  if(w.p)c.push(I('dmg',w.p,_T('Attack power')));if(w.r)c.push(I('rng',w.r,_T('Range')));if(w.ammo!=null)c.push(I('ammo',w.ammoLeft??w.ammo,_T('Ammo')));
+  if(w.throw)c.push(I('thr',`${w.throw.p}·${w.throw.r}`,_T('Throw: power · range')));if(w.shield)c.push(I('abs',`${w.absorb}×${w.usesLeft??w.uses}`,_T('Shield: absorb × uses')));
+  if(w.atkUses)c.push(I('use',w.atkLeft??w.atkUses,_T('Uses left')));if(w.both)c.push(I('both','',_T('Both attacks')));if(w.cfw)c.push(I('cf','+'+w.cfw,_T('Crowd favor per hit')));if(w.soul)c.push(I('soul','+'+w.soul,_T('Soul steal')));return c.join('')};
 (()=>{const st=document.createElement('style');st.textContent=`.wchip.wchip75{display:inline-flex;align-items:center;gap:3px;padding-left:2px}.wchip75 img{width:18px;height:18px;display:block}`;document.head.appendChild(st)})();

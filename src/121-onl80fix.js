@@ -52,13 +52,13 @@ function onl80fSnapOK(d){if(!d||!ONL.acct||d.to!==ONL.acct.id)return true;
   if(t==='match.snap'&&!onl80fSnapOK(d))return;
   if(t==='lobby.update'&&d&&d.id){try{const o=(ONL.lobbies||[]).find(x=>x.id===d.id);
     if(d.lobby&&d.lobby.status==='live'&&o&&o.status==='waiting')ONL80F.liveSeen[d.id]=Date.now();
-    if(d.lobby&&d.closed&&!['empty','merged'].includes(d.closed)&&o&&o.status==='waiting'&&(o.members||[]).some(m=>m.id===onlMe80()))onlToast80('🚪 The room closed.')}catch(e){}}
+    if(d.lobby&&d.closed&&!['empty','merged'].includes(d.closed)&&o&&o.status==='waiting'&&(o.members||[]).some(m=>m.id===onlMe80()))onlToast80(_T('🚪 The room closed.'))}catch(e){}}
   return base.apply(this,arguments)}}
 /* the server says the others hold a different arena: ask the lowest-seat voter for theirs */
 NET.on('match.youodd',d=>{if(!onlmOn()||!d||d.id!==S.onl.lobby)return;if(d.to&&ONL.acct&&d.to!==ONL.acct.id)return;if(ONLM.me<0||(d.seat|0)!==ONLM.me)return;
   if(Date.now()-ONL80F.oddAt<20000)return;ONL80F.oddAt=Date.now();
   const voters=(d.voters||[]).map(a=>[a,(ONLM.owners||[]).indexOf(a)]).filter(x=>x[1]>=0).sort((a,b)=>a[1]-b[1]).map(x=>x[0]);if(!voters.length)return;
-  ONLM.resyncs++;ONLM.resyncing=true;ONLM.lastResync={odd:1,seq:ONLM.next};onlToast80('🔄 The others hold a different arena — taking theirs…');
+  ONLM.resyncs++;ONLM.resyncing=true;ONLM.lastResync={odd:1,seq:ONLM.next};onlToast80(_T('🔄 The others hold a different arena — taking theirs…'));
   const id=d.id;let k=0;const ask=()=>{if(!ONLM.resyncing||!S||!S.onl||S.onl.lobby!==id)return;if(k>=voters.length){ONLM.resyncing=false;onlmPump();return}
     NET.req('match.snapreq',{id,to:voters[k++],seq:ONLM.next}).catch(()=>{});setTimeout(ask,8000)};ask()});
 /* the majority never sends an unasked arena any more */
@@ -91,7 +91,7 @@ function onl80fStuckCheck(){if(!onlmOn()||ONLM.resyncing){ONL80F.stuck=null;retu
   const st=ONL80F.stuck;if(!st||st.seq!==h.seq){ONL80F.stuck={seq:h.seq,at:Date.now()};return}if(Date.now()-st.at<2500)return;ONL80F.stuck=null;
   ONLM.q.shift();ONLM.next=h.seq+1;const mine=h.k==='modal'?onlmPendHash():onlHash();const theirs=h.k==='modal'?h.pre:h.h;
   if(theirs&&mine!==theirs){onlmResync(h);return}
-  ONLM.hlog['s'+h.seq]=mine;ONL80F.badSkips++;try{log(`⚖ A move from <b>${esc(onlmName(h.seat))}</b> did not fit the arena — skipped.`,'thought')}catch(e){}setTimeout(onlmPump,30)}
+  ONLM.hlog['s'+h.seq]=mine;ONL80F.badSkips++;try{log(_T`⚖ A move from <b>${esc(onlmName(h.seat))}</b> did not fit the arena — skipped.`,'thought')}catch(e){}setTimeout(onlmPump,30)}
 {const base=onlmPump;onlmPump=function(){const r=base.apply(this,arguments);try{onl80fStuckCheck()}catch(e){console.error(e)}return r}}
 
 /* ---------------- after the match: the socket stays 10 minutes; ⚔ Again after the report ---------------- */
@@ -140,14 +140,14 @@ onlDots80=function(k){const z=(ONLF.here||{}).zones||{};return Object.entries(z)
   return `<i class="omap-dot" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;width:${s.toFixed(0)}px;height:${s.toFixed(0)}px;animation-delay:${j[2].toFixed(1)}s"></i>`}).join('')};
 onlMapBig80=function(){for(const o of document.querySelectorAll('.omapbig'))o.remove();const o=document.createElement('div');o.className='omapbig onl80pop';
   const k=Math.max(.6,Math.min(1.8,Math.min(innerWidth*.92,1240)/1240*1.8));
-  o.innerHTML=`<button type="button" class="x">✕ Close</button><div class="cap">Orbis Terrarum<small>${onlCap80()}</small></div><div class="frame"><div class="omap-in"></div><div class="omap-dots" aria-hidden="true">${onlDots80(k)}</div></div>`;
+  o.innerHTML=`<button type="button" class="x">${_T`✕ Close`}</button><div class="cap">${_T`Orbis Terrarum<small>${onlCap80()}</small>`}</div><div class="frame"><div class="omap-in"></div><div class="omap-dots" aria-hidden="true">${onlDots80(k)}</div></div>`;
   o.addEventListener('click',e=>{e.stopPropagation();o.remove()});document.body.appendChild(o)};
 
 /* ---------------- MOCK: like the server ---------------- */
 const MOCK_SEEN80='flavius_onlmock_seen80';
 function mockSeen80(me){let s={};try{s=JSON.parse(localStorage.getItem(MOCK_SEEN80)||'{}')||{}}catch(e){}if(me){s[me]=mockNow();try{localStorage.setItem(MOCK_SEEN80,JSON.stringify(s))}catch(e){}}return s}
 /* a request that changed nothing never writes the shared world back (another window may have written since it was read) */
-mockReq=async function(t,d){const R=MOCK_ROUTES[t];if(!R)throw new Error('Unknown request: '+t);await new Promise(r=>setTimeout(r,30+Math.random()*60));d=d||{};
+mockReq=async function(t,d){const R=MOCK_ROUTES[t];if(!R)throw new Error(_T('Unknown request: ')+t);await new Promise(r=>setTimeout(r,30+Math.random()*60));d=d||{};
   const w=mockLoad();const me=mockMe();const sn=mockSeen80(me);for(const a of Object.values(w.accounts||{}))if(sn[a.id]&&!(a.seen>=sn[a.id]))a.seen=sn[a.id];
   const s0=JSON.stringify(w);mockSeedWorld(w);mock80Fix(w);
   MOCK_OUT=[];let out;try{out=R(w,d,me)}catch(e){MOCK_OUT=[];throw e}if(JSON.stringify(w)!==s0)mockSave(w);const q=MOCK_OUT;MOCK_OUT=[];mockFlush80(q);
@@ -155,8 +155,8 @@ mockReq=async function(t,d){const R=MOCK_ROUTES[t];if(!R)throw new Error('Unknow
 function mockLive80(w,me){for(const L of Object.values(w.lobbies||{})){if(L.status!=='live'||!L.players.some(p=>p.id===me))continue;const M=w.matches[L.id];if(!M||M.status==='done')continue;
     if((M.abandoned||{})[me]||(M.reports||{})[me])continue;return {id:L.id,ev:L.ev,loc:L.loc,ranked:!!L.ranked,dropped:!!(M.dropped||{})[me]}}return null}
 {const base=mockGroup;mockGroup=function(w,me){const g=base.apply(this,arguments);
-  for(const x of g)if(mockLive80(w,x.id))throw new Error(x.id===me?'Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.':'Someone in your party is still in a match.');return g}}
-{const base=MOCK_ROUTES['lobby.ticket'];MOCK_ROUTES['lobby.ticket']=(w,d,me)=>{if(mockLive80(w,me))throw new Error('Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.');return base(w,d,me)}}
+  for(const x of g)if(mockLive80(w,x.id))throw new Error(x.id===me?_T('Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.'):_T('Someone in your party is still in a match.'));return g}}
+{const base=MOCK_ROUTES['lobby.ticket'];MOCK_ROUTES['lobby.ticket']=(w,d,me)=>{if(mockLive80(w,me))throw new Error(_T('Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.'));return base(w,d,me)}}
 function mockToday80(w){const D=w.days80||{};const t=Date.now();const k=ONLC.dayKey(t);if(ONLC.dayHas(D[k]))return ONLC.dayOut(D[k],'today');
   const y=D[ONLC.dayPrevKey(t)];return ONLC.dayHas(y)?ONLC.dayOut(y,'yesterday'):ONLC.dayOut(D[k],'today')}
 function mockDay80(w,fn){w.days80=w.days80||{};const k=ONLC.dayKey(Date.now());w.days80[k]=fn(w.days80[k]||{})||w.days80[k];const old=ONLC.dayKey(Date.now()-2*864e5);
@@ -175,8 +175,8 @@ function mockDay80(w,fn){w.days80=w.days80||{};const k=ONLC.dayKey(Date.now());w
   const acct=seat<L.seats?(L.players[seat]||{}).id:((L.stands||[])[seat-L.seats]||{}).id;const n=mockLiveHumans(L,M).length;const v=((mockOdd80()[d.id]||{}).votes||{})[acct]||[];
   if(acct&&n>=3&&v.length>=Math.floor(n/2)+1)mockPush('match.youodd',{id:d.id,seat,voters:v.slice(),to:acct})}catch(e){}return r}}
 /* ⚔ Again as on the server: after your own report (or abandon), only {ev, loc, ranked, seats}, the match's fighters invited */
-MOCK_ROUTES['lobby.again']=(w,d,me)=>{const O=mockLobby80(w,d.id);const M=w.matches[d.id];if(!O.players.some(p=>p.id===me)||!M)throw new Error('Not your match.');
-  if(!(O.status==='done'||M.status==='done'||(M.reports||{})[me]||(M.abandoned||{})[me]))throw new Error('The match is not over.');
+MOCK_ROUTES['lobby.again']=(w,d,me)=>{const O=mockLobby80(w,d.id);const M=w.matches[d.id];if(!O.players.some(p=>p.id===me)||!M)throw new Error(_T('Not your match.'));
+  if(!(O.status==='done'||M.status==='done'||(M.reports||{})[me]||(M.abandoned||{})[me]))throw new Error(_T('The match is not over.'));
   const L=mockCreate80(w,{ev:O.ev,loc:O.loc,ranked:!!O.ranked,seats:O.seats},me,false);const invited=[];const st=O.status;O.status='done';
   try{for(const p of O.players){if(/^bot/.test(p.id)||p.id===me||ONLC.memberOf(L,p.id))continue;if(!mockInvite80(w,me,L,p.id,true))invited.push(p.id)}}finally{O.status=st}
   return {lobby:mockRoomOut80(w,L),invited}};
@@ -201,9 +201,9 @@ function onlLive80Menu(){const m=document.getElementById('mainMenu');if(!m)retur
   if(!show){if(row)row.remove();return}const box=m.querySelector('.mmbtns');if(!box)return;
   if(!row||row.parentNode!==box){if(row)row.remove();row=document.createElement('div');row.id='mmLive80';box.prepend(row)}
   const c=x.char||{};const key=JSON.stringify([x.id,x.dropped,c.name,x.ev,x.loc]);if(row.dataset.k===key)return;row.dataset.k=key;
-  row.innerHTML=`<span class="ml80-fig">${c.cls?onlFig(c.cls,c.look,60):'⚔'}</span><span class="ml80-txt"><b>${x.dropped?'🔌':'⚔'} ${esc2(c.name||'Your gladiator')} is still on the sand</b>
-    <small>${esc2(onlEvName(x.ev))} at ${esc2(onlCityName(x.loc))} · ${x.ranked?'Ranked':'Custom'}${x.dropped?' · a CPU fights in your seat':''}</small></span>
-    <span class="ml80-acts"><button type="button" class="btn primary" data-mml80="back">⚔ Back to your match</button><button type="button" class="btn" data-mml80="abandon">🚪 Abandon</button></span>`}
+  row.innerHTML=`<span class="ml80-fig">${c.cls?onlFig(c.cls,c.look,60):'⚔'}</span><span class="ml80-txt">${_T`<b>${x.dropped?'🔌':'⚔'} ${esc2(c.name||_T('Your gladiator'))} is still on the sand</b>
+    <small>${esc2(onlEvName(x.ev))} at ${esc2(onlCityName(x.loc))} · ${x.ranked?_T('Ranked'):_T('Custom')}${x.dropped?_T(' · a CPU fights in your seat'):''}</small>`}</span>
+    <span class="ml80-acts"><button type="button" class="btn primary" data-mml80="back">${_T`⚔ Back to your match`}</button><button type="button" class="btn" data-mml80="abandon">${_T`🚪 Abandon`}</button></span>`}
 {const base=menuShow;menuShow=function(){const r=base.apply(this,arguments);try{onlLive80Menu();onlLive80Check()}catch(e){}return r}}
 setInterval(()=>{try{const m=document.getElementById('mainMenu');if(m&&!m.hidden)onlLive80Menu()}catch(e){}},2000);
 /* the menu asks the server once a minute whether the match still runs (then the socket closes again) */
@@ -214,13 +214,13 @@ async function onlLive80Net(){try{await netPick();if(NET.mode==='aws'){const c=a
 async function onlLive80Back(){const x=onlLive80Get();if(!x)return;try{if(typeof menuHide==='function')menuHide()}catch(e){}onlineOpen('play');
   for(let i=0;i<80&&!(document.getElementById('onl')&&ONL.acct);i++)await new Promise(r=>setTimeout(r,150));if(!ONL.acct)return;
   let L=(ONL.lobbies||[]).find(l=>l.id===x.id);if(!L){try{const rows=await NET.req('lobby.list');if(Array.isArray(rows)){ONL.lobbies=rows;L=rows.find(l=>l.id===x.id)}}catch(e){}}
-  if(!L||L.status!=='live'){onlLive80Clear(x.id);onlToast80('⌛ That match is over.');try{onlRedraw()}catch(e){}return}onlDo(()=>onlAttach(L,'seat'))}
+  if(!L||L.status!=='live'){onlLive80Clear(x.id);onlToast80(_T('⌛ That match is over.'));try{onlRedraw()}catch(e){}return}onlDo(()=>onlAttach(L,'seat'))}
 async function onlLive80Abandon(){const x=onlLive80Get();if(!x)return;
   const ok=await onlAbandonAsk80({ranked:x.ranked,rule:x.rule,dropped:x.dropped,char:x.char,kit:x.kit});if(!ok)return;
-  if(!(await onlLive80Net())){onlToast80('🌐 Sign in to Online first — then 🚪 Abandon from your match card.');try{if(typeof menuHide==='function')menuHide()}catch(e){}onlineOpen('play');return}
+  if(!(await onlLive80Net())){onlToast80(_T('🌐 Sign in to Online first — then 🚪 Abandon from your match card.'));try{if(typeof menuHide==='function')menuHide()}catch(e){}onlineOpen('play');return}
   try{const r=await NET.req('match.abandon',{id:x.id});(ONL.leftMatch=ONL.leftMatch||{})[x.id]=1;onlLive80Clear(x.id);
-    onlToast80(r&&r.rule?(r.out&&r.out.died?`🌫 <b>${esc2((x.char||{}).name||'Your gladiator')}</b> abandoned the sand — Damnatio.`:'🚪 You left the match.'):'⌛ That match is already over.')}
-  catch(err){const m=String(err.message||err);if(/No such match|Not your match|gone/i.test(m)){onlLive80Clear(x.id);onlToast80('⌛ That match is already over.')}else onlToast80('⚠ '+esc2(m))}
+    onlToast80(r&&r.rule?(r.out&&r.out.died?_T`🌫 <b>${esc2((x.char||{}).name||_T('Your gladiator'))}</b> abandoned the sand — Damnatio.`:_T('🚪 You left the match.')):_T('⌛ That match is already over.'))}
+  catch(err){const m=String(err.message||err);if(/No such match|Not your match|gone/i.test(m)){onlLive80Clear(x.id);onlToast80(_T('⌛ That match is already over.'))}else onlToast80('⚠ '+esc2(m))}
   setTimeout(()=>{try{netIdleClose()}catch(e){}},1500)}
 document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('#mmLive80 [data-mml80]');if(!b)return;e.preventDefault();e.stopPropagation();
   if(b.dataset.mml80==='back')onlLive80Back();else onlLive80Abandon()},true);
@@ -229,55 +229,55 @@ document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.targ
 function onl80Face(c,size){const L=c&&c.look||{};const col=L.color||(CLASSES[c&&c.cls]||{}).color||'#a3281f';
   return typeof portraitHTML==='function'?portraitHTML({name:(c&&c.name)||'',portrait:L.portrait||{},color:col},size||'md'):onlMini(c&&c.cls,90)}
 function onlGearName80(k){return (W[k]&&W[k].n)||(ARM[k]&&ARM[k].n)||k}
-function onlStakeHTML80(o){const c=o.char||{};const nm=esc2(c.name||'Your gladiator');const brought=(o.kit&&o.kit.gear)||ONLC.equipOf(c);
+function onlStakeHTML80(o){const c=o.char||{};const nm=esc2(c.name||_T('Your gladiator'));const brought=(o.kit&&o.kit.gear)||ONLC.equipOf(c);
   const wpn=brought.filter(k=>W[k]),arm=brought.filter(k=>!W[k]);const all=(c.gear||[]).length;const home=Math.max(0,all-brought.length);const lost=(c.bouts|0)-(c.wins|0);
   const st=(typeof STATS!=='undefined'?STATS:[]).map(([k,n,ic])=>`<span class="stk80-st" title="${esc2(n)}">${ic} <b>${(c.stats||{})[k]|0}</b><i>${esc2(n)}</i></span>`).join('');
   const coin=typeof ICO!=='undefined'&&ICO.coin?ICO.coin:'🪙';
-  const now=o.now?`<div class="stk80-now">On the sand now: ⭐ ${o.now.cf|0} CF · ${coin} ${o.now.coin|0}</div>`:'';
-  const stake=o.ranked?`<div class="stk80-warn"><b>Ranked — Damnatio.</b> ${nm} dies and is struck from your roster for good, with ${coin} ${c.wallet|0} and ${all} piece${all===1?'':'s'} of gear${home?` (${home} left at home)`:''}. This cannot be undone.${o.dropped?'<br>A CPU is fighting for them now — let it, and they may still survive.':''}</div>`
-    :`<div class="stk80-ok">${o.rule==='fate'?`${nm} is out of this bout.`:'A CPU takes your seat and fights on.'} Nothing is lost — the bout does not count for ${nm}.</div>`;
+  const now=o.now?`<div class="stk80-now">${_T`On the sand now: ⭐ ${o.now.cf|0} CF · ${coin} ${o.now.coin|0}`}</div>`:'';
+  const stake=o.ranked?`<div class="stk80-warn">${_T`<b>Ranked — Damnatio.</b> ${nm} dies and is struck from your roster for good, with ${coin} ${c.wallet|0} and ${all} piece${all===1?'':'s'} of gear${home?_T` (${home} left at home)`:''}. This cannot be undone.${o.dropped?_T('<br>A CPU is fighting for them now — let it, and they may still survive.'):''}`}</div>`
+    :`<div class="stk80-ok">${_T`${o.rule==='fate'?_T`${nm} is out of this bout.`:_T('A CPU takes your seat and fights on.')} Nothing is lost — the bout does not count for ${nm}.`}</div>`;
   return `<div class="stk80"><div class="stk80-art">${onl80Face(c,'md')}<span class="stk80-tok">${c.cls?onlFig(c.cls,c.look,84):''}</span></div>
     <div class="stk80-info"><div class="stk80-name">${nm}</div><div class="stk80-sub">${esc2((CLASSES[c.cls]||{}).name||'')} · ${onlRankChip(c.rank||'tiro')}</div>
-      <div class="stk80-rec"><span>⚔ <b>${c.wins|0}</b> won · <b>${Math.max(0,lost)}</b> lost</span><span>🛡 ${c.survived|0} survived</span><span>⭐ ${c.lifeCF|0} CF</span><span>${coin} ${c.wallet|0}</span></div>
+      <div class="stk80-rec">${_T`<span>⚔ <b>${c.wins|0}</b> won · <b>${Math.max(0,lost)}</b> lost</span><span>🛡 ${c.survived|0} survived</span><span>⭐ ${c.lifeCF|0} CF</span><span>${coin} ${c.wallet|0}</span>`}</div>
       <div class="stk80-stats">${st}</div></div></div>${now}
-   <div class="stk80-gear"><b>Brought into this match</b>${wpn.length?`<div>🗡 ${wpn.map(k=>esc2(onlGearName80(k))).join(' · ')}</div>`:''}${arm.length?`<div>🛡 ${arm.map(k=>esc2(onlGearName80(k))).join(' · ')}</div>`:''}${brought.length?'':'<div class="rc-sub">Only the class kit.</div>'}</div>
-   ${stake}<p class="rc-sub" style="margin:6px 0 0">You may come back to watch, but not to fight.</p>`}
-function onlAbandonAsk80(o){return ask76('🚪 Abandon the match?',onlStakeHTML80(o),'🚪 Abandon',o.dropped?'Let the CPU fight on':'Stay')}
+   <div class="stk80-gear">${_T`<b>Brought into this match</b>${wpn.length?`<div>🗡 ${wpn.map(k=>esc2(onlGearName80(k))).join(' · ')}</div>`:''}${arm.length?`<div>🛡 ${arm.map(k=>esc2(onlGearName80(k))).join(' · ')}</div>`:''}${brought.length?'':'<div class="rc-sub">Only the class kit.</div>'}`}</div>
+   ${stake}<p class="rc-sub" style="margin:6px 0 0">${_T`You may come back to watch, but not to fight.`}</p>`}
+function onlAbandonAsk80(o){return ask76(_T('🚪 Abandon the match?'),onlStakeHTML80(o),_T('🚪 Abandon'),o.dropped?_T('Let the CPU fight on'):_T('Stay'))}
 /* the arena bar's 🚪 Abandon match */
 window.addEventListener('click',async e=>{const b=e.target&&e.target.closest&&e.target.closest('#btnOnlLeave');if(!b||b.dataset.mode!=='abandon')return;e.preventDefault();e.stopImmediatePropagation();ONLM.uiAt=Date.now();
   const id=S&&S.onl&&S.onl.lobby;if(!id)return;const L=(ONL.lobbies||[]).find(x=>x.id===id);const rule=S.onl.ranked?'fate':(L&&L.abandon==='fate'?'fate':'cpu');const seat=S.onl.seat;
   const lp=L&&L.players[seat];const cid=(ONL.live&&ONL.live.id===id&&ONL.live.char)||(lp&&lp.char);const c=(ONL.chars||[]).find(x=>x.id===cid)||ONL.char;const p=S.players[seat];
   const ok=await onlAbandonAsk80({ranked:!!S.onl.ranked,rule,char:c?onlLive80Char(c):null,kit:lp&&lp.kit?{gear:lp.kit.gear||[]}:null,now:p?{cf:p.cf,coin:p.coin}:null});if(!ok)return;
-  try{const r=await NET.req('match.abandon',{id});(ONL.leftMatch=ONL.leftMatch||{})[id]=1;onlLive80Clear(id);if(r&&r.out&&r.out.died)setTimeout(()=>onlToast80('🌫 Your gladiator abandoned the sand — Damnatio.'),600)}
+  try{const r=await NET.req('match.abandon',{id});(ONL.leftMatch=ONL.leftMatch||{})[id]=1;onlLive80Clear(id);if(r&&r.out&&r.out.died)setTimeout(()=>onlToast80(_T('🌫 Your gladiator abandoned the sand — Damnatio.')),600)}
   catch(err){onlToast80('⚠ '+esc2(err.message))}onlExit()},true);
 /* the Online card of a live match: 🚪 Abandon beside ⚔ Back to the sand */
 {const base=onlRoomTop80;onlRoomTop80=function(){let h=base.apply(this,arguments);try{const L=onlMyLobby();const me=onlMe80();
   if(L&&L.status==='live'&&L.players.some(p=>p.id===me)&&!(ONL.leftMatch||{})[L.id]&&h.includes('data-onl="enter"')){const x=onlLive80Get();const dropped=!!(x&&x.id===L.id&&x.dropped);
-    h=h.replace(/(<button type="button" class="btn primary" data-onl="enter"[^>]*>)[^<]*(<\/button>)/,`$1${dropped?'👁 Watch — a CPU fights for you':'⚔ Back to the sand'}$2<button type="button" class="btn" data-onl80f="abandon" data-v="${esc2(L.id)}">🚪 Abandon</button>`)}}catch(e){}return h}}
+    h=h.replace(/(<button type="button" class="btn primary" data-onl="enter"[^>]*>)[^<]*(<\/button>)/,`$1${dropped?_T('👁 Watch — a CPU fights for you'):_T('⚔ Back to the sand')}$2<button type="button" class="btn" data-onl80f="abandon" data-v="${esc2(L.id)}">🚪 Abandon</button>`)}}catch(e){}return h}}
 window.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('#onl [data-onl80f]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();const v=b.dataset.v;
   if(b.dataset.onl80f!=='abandon')return;const L=(ONL.lobbies||[]).find(x=>x.id===v);if(!L)return;const me=onlMe80();const p=L.players.find(q=>q.id===me)||{};
   const c=(ONL.chars||[]).find(x=>x.id===p.char)||ONL.char;const x=onlLive80Get();
   onlAbandonAsk80({ranked:!!L.ranked,rule:ONLC.abandonRule(L),dropped:!!(x&&x.id===L.id&&x.dropped),char:c?onlLive80Char(c):null,kit:p.kit?{gear:p.kit.gear||[]}:null}).then(async ok=>{if(!ok)return;
-    try{const r=await NET.req('match.abandon',{id:v});(ONL.leftMatch=ONL.leftMatch||{})[v]=1;onlLive80Clear(v);onlToast80(r&&r.out&&r.out.died?'🌫 Your gladiator abandoned the sand — Damnatio.':'🚪 You left the match.');
+    try{const r=await NET.req('match.abandon',{id:v});(ONL.leftMatch=ONL.leftMatch||{})[v]=1;onlLive80Clear(v);onlToast80(r&&r.out&&r.out.died?_T('🌫 Your gladiator abandoned the sand — Damnatio.'):_T('🚪 You left the match.'));
       await onlRefresh();onlRedraw()}catch(err){onlToast80('⚠ '+esc2(err.message))}})},true);
 
 /* ---------------- ☀ Today in the arena (the Online landing) ---------------- */
 function onlTodayHTML80(){const T=ONL80F.today;if(!T)return '';const yd=T.day==='yesterday';const WN=T.wins||[],F=T.fallen||[],U=T.upsets||[];
-  const ago=at=>{const m=Math.max(0,Math.round((Date.now()+(ONL80F.skew||0)-(at||0))/60000));return m<1?'just now':m<60?`${m} min ago`:`${Math.round(m/60)} h ago`};
-  const where=e=>`${esc2(onlEvName(e.ev))} at ${esc2(onlCityName(e.loc))}`;const cls=e=>esc2((CLASSES[e.cls]||{}).name||'');
+  const ago=at=>{const m=Math.max(0,Math.round((Date.now()+(ONL80F.skew||0)-(at||0))/60000));return m<1?_T('just now'):m<60?_T`${m} min ago`:_T`${Math.round(m/60)} h ago`};
+  const where=e=>_T`${esc2(onlEvName(e.ev))} at ${esc2(onlCityName(e.loc))}`;const cls=e=>esc2((CLASSES[e.cls]||{}).name||'');
   const show=(e,line,k)=>`<div class="td80-show ${k}"><div class="td80-art">${onl80Face(e,'md')}<span class="td80-tok">${onlFig(e.cls,e.look,60)}</span></div>
     <div class="td80-info"><div class="td80-name">${esc2(e.name)}</div><div class="td80-sub">${onlRankChip(e.rank)} ${cls(e)}</div><div class="td80-out">${line}</div>
-    <small>${e.bouts!=null?`${e.bouts|0} bouts · ${e.wins|0} won · `:''}${e.ranked?'Ranked':'Custom'} · ${ago(e.at)}</small></div></div>`;
+    <small>${e.bouts!=null?_T`${e.bouts|0} bouts · ${e.wins|0} won · `:''}${e.ranked?_T('Ranked'):_T('Custom')} · ${ago(e.at)}</small></div></div>`;
   const row=(e,txt)=>`<div class="td80-row"><span class="td80-mini">${onlFig(e.cls,e.look,34)}</span><span>${txt}</span></div>`;
-  const b1=WN.length?show(WN[0],`🏆 Won ${where(WN[0])} with <b>${WN[0].cf|0} CF</b>`,'win')+WN.slice(1,4).map(e=>row(e,`<b>${esc2(e.name)}</b> · ${e.cf|0} CF · ${where(e)}`)).join('')
-    :`<div class="td80-empty">No victor yet ${yd?'yesterday':'today'} — the sand waits.</div>`;
-  const fell=e=>e.how==='damnatio'?`🌫 Abandoned ${where(e)} — <b>Damnatio</b>`:`🪦 Fell to the Fate in ${where(e)}${e.hall?' — the Hall keeps the name':''}`;
-  const upTxt=u=>`⚔ <b>${esc2(u.w.name)}</b> ${onlRankChip(u.w.rank)} humbled <b>${esc2(u.l.name)}</b> ${onlRankChip(u.l.rank)} · ${where(u)}`;
-  let b2='';if(F.length)b2=show(F[0],fell(F[0]),'fall')+F.slice(1,3).map(e=>row(e,`<b>${esc2(e.name)}</b> ${onlRankChip(e.rank)} · ${e.how==='damnatio'?'Damnatio':'the Fate'} · ${where(e)}`)).join('');
-  else if(U.length){const u=U[0];b2=show({...u.l,at:u.at,ranked:u.ranked,ev:u.ev,loc:u.loc},`⚔ Humbled by <b>${esc2(u.w.name)}</b> ${onlRankChip(u.w.rank)} in ${where(u)}`,'fall')}
-  const ups=(F.length?U:U.slice(1)).slice(0,3).map(u=>row(u.w,upTxt(u))).join('');if(!b2&&!ups)b2=`<div class="td80-empty">No one fell ${yd?'yesterday':'today'}.</div>`;
-  return `<div class="td80" id="onlToday80"><div class="ow-h">${yd?'🌙 Yesterday in the arena':'☀ Today in the arena'}<small>the day's biggest wins and falls</small></div>
-   <div class="td80-grid"><div class="td80-box"><div class="td80-h">🏆 Victors of the day</div>${b1}</div><div class="td80-box dark"><div class="td80-h">🪦 Fallen &amp; humbled</div>${b2}${ups}</div></div></div>`}
+  const b1=WN.length?show(WN[0],_T`🏆 Won ${where(WN[0])} with <b>${WN[0].cf|0} CF</b>`,'win')+WN.slice(1,4).map(e=>row(e,_T`<b>${esc2(e.name)}</b> · ${e.cf|0} CF · ${where(e)}`)).join('')
+    :`<div class="td80-empty">${_T`No victor yet ${yd?_T('yesterday'):_T('today')} — the sand waits.`}</div>`;
+  const fell=e=>e.how==='damnatio'?_T`🌫 Abandoned ${where(e)} — <b>Damnatio</b>`:_T`🪦 Fell to the Fate in ${where(e)}${e.hall?_T(' — the Hall keeps the name'):''}`;
+  const upTxt=u=>_T`⚔ <b>${esc2(u.w.name)}</b> ${onlRankChip(u.w.rank)} humbled <b>${esc2(u.l.name)}</b> ${onlRankChip(u.l.rank)} · ${where(u)}`;
+  let b2='';if(F.length)b2=show(F[0],fell(F[0]),'fall')+F.slice(1,3).map(e=>row(e,`<b>${esc2(e.name)}</b> ${onlRankChip(e.rank)} · ${e.how==='damnatio'?_T('Damnatio'):_T('the Fate')} · ${where(e)}`)).join('');
+  else if(U.length){const u=U[0];b2=show({...u.l,at:u.at,ranked:u.ranked,ev:u.ev,loc:u.loc},_T`⚔ Humbled by <b>${esc2(u.w.name)}</b> ${onlRankChip(u.w.rank)} in ${where(u)}`,'fall')}
+  const ups=(F.length?U:U.slice(1)).slice(0,3).map(u=>row(u.w,upTxt(u))).join('');if(!b2&&!ups)b2=`<div class="td80-empty">${_T`No one fell ${yd?_T('yesterday'):_T('today')}.`}</div>`;
+  return `<div class="td80" id="onlToday80"><div class="ow-h">${_T`${yd?_T('🌙 Yesterday in the arena'):_T('☀ Today in the arena')}<small>the day's biggest wins and falls</small>`}</div>
+   <div class="td80-grid"><div class="td80-box"><div class="td80-h">${_T`🏆 Victors of the day`}</div>${b1}</div><div class="td80-box dark"><div class="td80-h">${_T`🪦 Fallen &amp; humbled`}</div>${b2}${ups}</div></div></div>`}
 {const base=onlLandingHTML80;onlLandingHTML80=function(){return base.apply(this,arguments)+onlTodayHTML80()}}
 function onlToday80Patch(){const el=document.getElementById('onlToday80');if(!el)return;const h=onlTodayHTML80();if(h&&el.outerHTML!==h)el.outerHTML=h}
 

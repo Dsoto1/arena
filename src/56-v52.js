@@ -4,7 +4,7 @@
    • Damnatio keeps the stones the crowd misses him with (+1 in the sling, up to 6).
    ===================================================================== */
 {const _ss=spectStone;spectStone=async function(s,q){const before=q?hpSumOf(q):0;const r=await _ss(s,q);
-  try{if(q&&q.alive&&q.abil==='stone'&&hpSumOf(q)>=before){const w=['R','L'].map(a=>q['w'+a]).find(w=>w&&w.stones);if(w&&w.ammoLeft<6){w.ammoLeft++;log(`${nm(q)} picks up the stone (${w.ammoLeft} in the sling).`)}}}catch(e){}
+  try{if(q&&q.alive&&q.abil==='stone'&&hpSumOf(q)>=before){const w=['R','L'].map(a=>q['w'+a]).find(w=>w&&w.stones);if(w&&w.ammoLeft<6){w.ammoLeft++;log(_T`${nm(q)} picks up the stone (${w.ammoLeft} in the sling).`)}}}catch(e){}
   return r}}
 
 /* ---------- grid coordinates in the log: tokens placed on the sand name their tiles ---------- */
@@ -18,14 +18,14 @@ let PF_BUF=[];
     if(!seg.classList.contains('open')&&b.classList.contains('on')){e.stopImmediatePropagation();e.preventDefault();seg.classList.add('open');return}
     setTimeout(()=>seg.classList.remove('open'),0)},true);
   document.addEventListener('pointerdown',e=>{if(!e.target.closest('#speedTray'))seg.classList.remove('open')});
-  seg.querySelectorAll('[data-speed]').forEach(b=>b.title=(b.title?b.title+' · ':'')+'click the active pace to change it')}}
+  seg.querySelectorAll('[data-speed]').forEach(b=>b.title=(b.title?b.title+' · ':'')+_T('click the active pace to change it'))}}
 /* the tray must still show something when no pace is lit (a snapshot jump) */
 {const fix=()=>{const seg=document.querySelector('#speedTray .speedseg');if(seg&&!seg.querySelector('.on')){const b=seg.querySelector(`[data-speed="${typeof SPEED!=='undefined'&&SPEED!=='snap'?SPEED:'slow'}"]`)||seg.querySelector('[data-speed="slow"]');if(b)b.classList.add('on')}};setInterval(()=>{try{fix()}catch(e){}},700)}
 
 /* ---------- arena tools drawer (bottom right) with the hints master switch ---------- */
 function ctSync(){const t=document.getElementById('cTools'),b=document.getElementById('ctTog');let open=false;try{open=localStorage.getItem('flavius_ctopen')==='1'}catch(e){}
-  if(t)t.classList.toggle('open',open);if(b){b.setAttribute('aria-expanded',String(open));b.textContent=open?'✕':'🧰';b.title=open?'Hide the arena tools':'Arena tools: stands, see-through, hints, zoom'}
-  const h=document.getElementById('btnHintsM');if(h){const on=typeof HINTS!=='undefined'&&!!HINTS;h.classList.toggle('on',on);h.setAttribute('aria-pressed',String(on));h.title=on?'Hints are on — click to turn every hint off (H)':'Hints are off — click to turn them on (H)'}}
+  if(t)t.classList.toggle('open',open);if(b){b.setAttribute('aria-expanded',String(open));b.textContent=open?'✕':'🧰';b.title=open?_T('Hide the arena tools'):_T('Arena tools: stands, see-through, hints, zoom')}
+  const h=document.getElementById('btnHintsM');if(h){const on=typeof HINTS!=='undefined'&&!!HINTS;h.classList.toggle('on',on);h.setAttribute('aria-pressed',String(on));h.title=on?_T('Hints are on — click to turn every hint off (H)'):_T('Hints are off — click to turn them on (H)')}}
 document.addEventListener('click',e=>{
   if(e.target.closest('#ctTog')){let open=false;try{open=localStorage.getItem('flavius_ctopen')==='1'}catch(_){}try{localStorage.setItem('flavius_ctopen',open?'0':'1')}catch(_){}ctSync();return}
   if(e.target.closest('#btnHintsM')){try{hintsMaster(!HINTS)}catch(_){setHints(!HINTS)}ctSync();return}});
@@ -54,10 +54,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&(
   return _ac()}}
 
 /* ---------- the passage between screens: a health bar that fills, and a line to read ---------- */
-const RULE_LINES=['When a weapon runs out of throws, discard it from play.','Thrown weapons cannot be picked up in the same turn.','Ammo cards can only refill a weapon to its original ammo.',
-  'Lose the head or the chest and you are out of the event.','A hit strips armor before it reaches health.','Crowd Favor of 20 or more saves you to the Ludus Flavius.','50 Crowd Favor wins your freedom.',
-  'Every 3 trophies held by the winner add 5 CF.','Hidden Mandata Flavi cost 5 CF each at the end.','No CF can be spent while Commodus is in the arena.','Beasts you attack will hunt you: that is aggro.',
-  'Spectators may throw a stone for 2 CF.','Arena keys open the chest or a tunnel.','The zone shrinks each round: two turns of grace to get inside.'];
+const RULE_LINES=[_T('When a weapon runs out of throws, discard it from play.'),_T('Thrown weapons cannot be picked up in the same turn.'),_T('Ammo cards can only refill a weapon to its original ammo.'),
+  _T('Lose the head or the chest and you are out of the event.'),_T('A hit strips armor before it reaches health.'),_T('Crowd Favor of 20 or more saves you to the Ludus Flavius.'),_T('50 Crowd Favor wins your freedom.'),
+  _T('Every 3 trophies held by the winner add 5 CF.'),_T('Hidden Mandata Flavi cost 5 CF each at the end.'),_T('No CF can be spent while Commodus is in the arena.'),_T('Beasts you attack will hunt you: that is aggro.'),
+  _T('Spectators may throw a stone for 2 CF.'),_T('Arena keys open the chest or a tunnel.'),_T('The zone shrinks each round: two turns of grace to get inside.')];
 function transitQuote(){const pool=[];try{for(const k in CARDS){const q=CARDS[k].q;if(q&&!pool.includes('“'+q+'”'))pool.push('“'+q+'”')}}catch(e){}
   for(const l of RULE_LINES)pool.push('📜 '+l);
   try{for(const k in GLOSS){const d=String(GLOSS[k].d||'').replace(/\[\[[^|\]]*\|([^\]]*)\]\]/g,'$1').replace(/\[\[([^\]]*)\]\]/g,'$1');const s=d.split(/(?<=\.)\s/)[0];if(s&&s.length<120)pool.push('💡 '+GLOSS[k].t+': '+s)}}catch(e){}
@@ -80,18 +80,18 @@ ttPlace=function(el,a){const r=a.getBoundingClientRect();el.style.left='0px';el.
   el.style.pointerEvents=el.querySelector('.gl,[data-tt],[data-tip],a,button')?'auto':'none'};
 
 /* ---------- the lesson-buttons switch also lives on the Lessons tab ---------- */
-document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.lessonsmenu||t.closest('#setBody'))return;SETTINGS.lessonsMenu=t.checked;applySettings();try{lessonsMenuVis()}catch(err){}if(typeof mToast==='function')mToast(t.checked?'🎓 Lesson buttons shown on the main menu':'🎓 Lesson buttons hidden from the main menu')});
+document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.lessonsmenu||t.closest('#setBody'))return;SETTINGS.lessonsMenu=t.checked;applySettings();try{lessonsMenuVis()}catch(err){}if(typeof mToast==='function')mToast(t.checked?_T('🎓 Lesson buttons shown on the main menu'):_T('🎓 Lesson buttons hidden from the main menu'))});
 
 /* ---------- first run: the lessons, and hints you choose ---------- */
-const HINT_LABELS={turnHints:['💡 Turn hints','a suggested move each turn'],ruleHints:['📜 Rule hints','what the rules say about what you hover'],hintDock:['🧭 Strategy panel','the hint box under your actions'],rulePops:['📖 Rule popups','a short note the first time a rule comes up'],turnRecap:['📰 Turn recap','what happened since your last turn']};
+const HINT_LABELS={turnHints:[_T('💡 Turn hints'),_T('a suggested move each turn')],ruleHints:[_T('📜 Rule hints'),_T('what the rules say about what you hover')],hintDock:[_T('🧭 Strategy panel'),_T('the hint box under your actions')],rulePops:[_T('📖 Rule popups'),_T('a short note the first time a rule comes up')],turnRecap:[_T('📰 Turn recap'),_T('what happened since your last turn')]};
 async function firstRunPrompt(){let st=null;try{st=localStorage.getItem('flavius_firstrun')}catch(e){}if(st!=='pending'||navigator.webdriver)return;
   if(CUR_MODAL||$('#mainMenu').hidden)return setTimeout(firstRunPrompt,1500);
   try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}
   const rows=Object.entries(HINT_LABELS).map(([k,[t,d]])=>`<label class="setrow" style="display:flex;gap:8px;align-items:center"><input type="checkbox" data-frh="${k}"><span><b>${t}</b> <span class="rc-sub">${d}</span></span></label>`).join('');
-  const body=`<p>New to the sand? A short lesson teaches the arena in a few minutes.</p>
-   <div class="sect">Hints</div><p class="rc-sub" style="margin-top:0">They start off. Tick any you want, or press <b>H</b> or 💡 in the arena tools any time.</p>
-   <label class="setrow" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="frhAll"><span><b>All hints</b></span></label><div style="display:grid;gap:4px;padding-left:22px">${rows}</div>`;
-  const v=await modal('👋 Welcome to Flavius Rule',body,[{label:'🎓 Learn to Play',value:'learn',primary:1},{label:'💼 Manager lesson',value:'learnmgr'},{label:'Just play',value:'play'}],{onOpen:()=>{const mb=$('#mBody');
+  const body=`<p>${_T`New to the sand? A short lesson teaches the arena in a few minutes.`}</p>
+   <div class="sect">${_T`Hints`}</div><p class="rc-sub" style="margin-top:0">${_T`They start off. Tick any you want, or press <b>H</b> or 💡 in the arena tools any time.`}</p>
+   <label class="setrow" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="frhAll">${_T`<span><b>All hints</b></span>`}</label><div style="display:grid;gap:4px;padding-left:22px">${rows}</div>`;
+  const v=await modal(_T('👋 Welcome to Flavius Rule'),body,[{label:_T('🎓 Learn to Play'),value:'learn',primary:1},{label:_T('💼 Manager lesson'),value:'learnmgr'},{label:_T('Just play'),value:'play'}],{onOpen:()=>{const mb=$('#mBody');
       mb.addEventListener('change',e=>{const t=e.target;if(t.id==='frhAll')mb.querySelectorAll('[data-frh]').forEach(x=>x.checked=t.checked);else if(t.dataset.frh){const all=[...mb.querySelectorAll('[data-frh]')];$('#frhAll').checked=all.every(x=>x.checked)}});
       mb.addEventListener('change',()=>{const on=[...mb.querySelectorAll('[data-frh]')].filter(x=>x.checked).map(x=>x.dataset.frh);for(const k of Object.keys(HINT_LABELS))SETTINGS[k]=on.includes(k);SETTINGS.hints=on.length>0;applySettings()})}});
   if(v==='learn'||v==='learnmgr'){const b=document.querySelector(`#mainMenu [data-mm="${v}"]`);if(b)b.click();else if(v==='learn'&&typeof startTutorial==='function'){menuHide();startTutorial()}else if(typeof startManagerTutorial==='function'){menuHide();startManagerTutorial()}}}
@@ -100,5 +100,5 @@ setTimeout(()=>{try{if(!$('#mainMenu').hidden)firstRunPrompt()}catch(e){}},2200)
 /* …and the stones a gladiator slings at him and misses */
 {const _da=doAttack;doAttack=async function(p,src,t,opt){const q=t&&t.ref;const isStone=src&&src.w&&(src.w.key==='stones'||src.w.key==='sling'||src.w.stones);const before=q&&isStone&&q.abil==='stone'?hpSumOf(q):null;
   const r=await _da(p,src,t,opt);
-  try{if(before!=null&&q.alive&&hpSumOf(q)>=before){const w=['R','L'].map(a=>q['w'+a]).find(w=>w&&w.stones);if(w&&w.ammoLeft<6){w.ammoLeft++;log(`${nm(q)} picks up the missed stone (${w.ammoLeft} in the sling).`)}}}catch(e){}
+  try{if(before!=null&&q.alive&&hpSumOf(q)>=before){const w=['R','L'].map(a=>q['w'+a]).find(w=>w&&w.stones);if(w&&w.ammoLeft<6){w.ammoLeft++;log(_T`${nm(q)} picks up the missed stone (${w.ammoLeft} in the sling).`)}}}catch(e){}
   return r}}

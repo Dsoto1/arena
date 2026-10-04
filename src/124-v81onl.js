@@ -39,7 +39,7 @@ function onlOver81(id,acct){if(!id)return false;if(ONL81.over[id])return true;ac
   for(const k of keys){const o=onlOverAll81(k.slice(OVER81_KEY.length+1));if(o[id]&&Date.now()-o[id]<3*864e5)return true}return false}
 function onlOverMark81(id){if(!id)return;ONL81.over[id]=Date.now();const acct=onlRepMe81()||'?';const o=onlOverAll81(acct);o[id]=Date.now();
   const keep=Object.entries(o).filter(([,t])=>Date.now()-t<3*864e5).sort((a,b)=>b[1]-a[1]).slice(0,30);try{localStorage.setItem(OVER81_KEY+'.'+acct,JSON.stringify(Object.fromEntries(keep)))}catch(e){}}
-function onlOverNote81(id){if(Date.now()-(ONL81.noteAt[id]||0)<4000)return;ONL81.noteAt[id]=Date.now();onlToast80('⏳ Your bout is over — waiting for the others to confirm the result.')}
+function onlOverNote81(id){if(Date.now()-(ONL81.noteAt[id]||0)<4000)return;ONL81.noteAt[id]=Date.now();onlToast80(_T('⏳ Your bout is over — waiting for the others to confirm the result.'))}
 
 /* ---------------- the report: frozen at the end, kept until the server has it ---------------- */
 /* one saved report per account (flavius_onlreport81.<acct>): two windows of one browser are two lanistas in the mock */
@@ -71,7 +71,7 @@ async function onlRepSend81(why){const x=onlRepGet81();if(!x||ONL81.sending)retu
   ONL81.sending=false;ONL81.tries=0;ONL81.sentAt[x.id]=Date.now();if(ONL.live&&ONL.live.id===x.id)ONL.live.reported=true;
   /* the server has it. Pending: the copy stays (acked) until the match settles or hello stops listing it — a resend is harmless */
   try{if(res&&res.pending){const first=!x.acked;if(onlRepGet81())onlRepPut81({...x,acked:Date.now()});ONL.waitSettle=x.id;
-      if(first){if(why==='end')setTimeout(()=>onlToast80('⏳ Waiting for the other lanistas to confirm the result…'),2500);ONL81.retryT=setTimeout(()=>onlRepSend81('check'),NET.mode==='mock'?2500:8000)}}
+      if(first){if(why==='end')setTimeout(()=>onlToast80(_T('⏳ Waiting for the other lanistas to confirm the result…')),2500);ONL81.retryT=setTimeout(()=>onlRepSend81('check'),NET.mode==='mock'?2500:8000)}}
     else{onlRepClear81(x.id,x.acct);if(res&&(ONL.waitSettle===x.id||why!=='check'))onlSettled(res);if(ONL.waitSettle===x.id)ONL.waitSettle=null}}catch(e){console.error(e)}
   try{if(document.getElementById('onl'))onlRedraw()}catch(e){}}
 NET.on('match.settled',d=>{if(d&&d.id&&(!d.to||!ONL.acct||d.to===ONL.acct.id))onlRepClear81(d.id,ONL.acct&&ONL.acct.id)});
@@ -83,14 +83,14 @@ onlReport=async function(winners){const L=ONL.live;if(!L)return;L.reported=true;
   const R={G:S,id:L.id,winners,h:typeof onlHash==='function'?onlHash():'',seat:L.seat,char:L.char,acct:ONL.acct.id};return onlRepFinish81(R)};
 /* the outcome, with the wheat */
 onlSettled=function(res){if(res.char)ONL.char=res.char.alive?res.char:null;const o=res.out;let msg;
-  if(res.void)msg='⚖ The lanistas did not agree on the result — the match is void: no pay, no deaths.';
-  else if(!o)msg='⚖ The match is settled.';
-  else msg=o.died?(o.hall?`🪦 <b>${esc2(res.char.name)}</b> is dead. The Hall of the Fallen keeps the name.`:`🌫 <b>${esc2(res.char.name)}</b> is dead — and forgotten.`)
-    :`💰 +${o.pay} coin · ${onlW81()} +${o.cf} lifetime CF${o.rankUp?` · ⚔ now <b>${esc2(onlRank(o.rankUp).n)}</b>`:''}`;
+  if(res.void)msg=_T('⚖ The lanistas did not agree on the result — the match is void: no pay, no deaths.');
+  else if(!o)msg=_T('⚖ The match is settled.');
+  else msg=o.died?(o.hall?_T`🪦 <b>${esc2(res.char.name)}</b> is dead. The Hall of the Fallen keeps the name.`:_T`🌫 <b>${esc2(res.char.name)}</b> is dead — and forgotten.`)
+    :_T`💰 +${o.pay} coin · ${onlW81()} +${o.cf} lifetime CF${o.rankUp?_T` · ⚔ now <b>${esc2(onlRank(o.rankUp).n)}</b>`:''}`;
   setTimeout(()=>onlToast80(msg),2500)};
 /* resend: on hello, when the socket comes back, once after a reload; an invitation's room is read before joining */
 ONL81.invRooms=new Set();NET.on('lobby.invite',d=>{if(d&&d.row&&d.row.id)ONL81.invRooms.add(d.row.id)});
-const ONL_DEAD81='That room closed before you got there.';
+const ONL_DEAD81=_T('That room closed before you got there.');
 {const base=NET.req;NET.req=function(t,d){
   /* 🚪 after the bout: nothing to abandon — the result was sent */
   if(t==='match.abandon'&&d&&onlOver81(d.id))return Promise.resolve({done:1,over:1});
@@ -107,7 +107,7 @@ setTimeout(async()=>{try{if(!onlRepGet81()||!(typeof ONL_ON==='function'&&ONL_ON
 /* ---------------- an over match is never entered again ---------------- */
 {const base=onlEnter;onlEnter=function(L){if(L&&onlOver81(L.id)){onlOverNote81(L.id);return}return base.apply(this,arguments)}}
 {const base=onlAttach;onlAttach=async function(L,role){if(L&&onlOver81(L.id)){onlOverNote81(L.id);return}return base.apply(this,arguments)}}
-{const base=onlWatch;onlWatch=async function(L){if(L&&onlOver81(L.id)){onlToast80('⌛ That bout is over.');return}return base.apply(this,arguments)}}
+{const base=onlWatch;onlWatch=async function(L){if(L&&onlOver81(L.id)){onlToast80(_T('⌛ That bout is over.'));return}return base.apply(this,arguments)}}
 {const base=onlLive80Get;onlLive80Get=function(){const x=base.apply(this,arguments);return x&&onlOver81(x.id,x.acct)?null:x}}
 /* the raw record is removed by id (the Get above hides over matches) */
 {const base=onlLive80Clear;onlLive80Clear=function(id){try{const x=JSON.parse(localStorage.getItem('flavius_onlmatch80')||'null');if(x&&(!id||x.id===id))localStorage.removeItem('flavius_onlmatch80')}catch(e){}return base.apply(this,arguments)}}
@@ -115,16 +115,16 @@ setTimeout(async()=>{try{if(!onlRepGet81()||!(typeof ONL_ON==='function'&&ONL_ON
 /* the Online card of a match over on this screen: waiting for the others */
 {const base=onlRoomTop80;onlRoomTop80=function(){const L=onlMyLobby();const me=onlMe80();
   if(L&&L.status==='live'&&L.players.some(p=>p.id===me)&&onlOver81(L.id)&&!(ONL.unseated80&&Date.now()<ONL.unseated80.until))
-    return `<div class="card2 onl-mine onl-wait81" id="onlWait81"><b>${esc2(onlEvName(L.ev))}</b> at ${esc2(onlCityName(L.loc))} · ${L.ranked?'⚔ Ranked':'Custom'}<div class="ow81">⏳ Waiting for the others to confirm the result</div><small class="rc-sub">Your bout is over and your result was sent. Pay, CF and the Fate land when the others confirm.</small></div>`;
+    return `<div class="card2 onl-mine onl-wait81" id="onlWait81">${_T`<b>${esc2(onlEvName(L.ev))}</b> at ${esc2(onlCityName(L.loc))} · ${L.ranked?_T('⚔ Ranked'):_T('Custom')}`}<div class="ow81">${_T`⏳ Waiting for the others to confirm the result`}</div>${_T`<small class="rc-sub">Your bout is over and your result was sent. Pay, CF and the Fate land when the others confirm.</small>`}</div>`;
   return base.apply(this,arguments)}}
 {const base=onlLobbyHTML;onlLobbyHTML=function(){let h=base.apply(this,arguments);for(const L of ONL.lobbies||[])if(L.status==='live'&&onlOver81(L.id))
   h=h.replace(new RegExp(`<button[^>]*data-onl="rejoin" data-v="${String(L.id).replace(/[^\w-]/g,'')}"[^>]*>[^<]*</button>`),'<span class="badge" title="Waiting for the others to confirm the result">⏳ Confirming</span>');return h}}
 /* the abandon popup after the bout: no Damnatio, you just leave */
 {const base=onlStakeHTML80;onlStakeHTML80=function(o){let h=onlWheat81(base.apply(this,arguments));
-  if(o&&o.over){const nm=esc2((o.char||{}).name||'Your gladiator');h=h.replace(/<div class="stk80-(warn|ok)">[\s\S]*?<\/div>(?=<p class="rc-sub")/,`<div class="stk80-ok"><b>The bout is over.</b> Your result was sent — leaving changes nothing for ${nm}: pay, CF and the Fate come from the result.</div>`)
+  if(o&&o.over){const nm=esc2((o.char||{}).name||_T('Your gladiator'));h=h.replace(/<div class="stk80-(warn|ok)">[\s\S]*?<\/div>(?=<p class="rc-sub")/,`<div class="stk80-ok"><b>The bout is over.</b> Your result was sent — leaving changes nothing for ${nm}: pay, CF and the Fate come from the result.</div>`)
     .replace('You may come back to watch, but not to fight.','You simply leave.')}return h}}
 onlAbandonAsk80=function(o){o=o||{};if(!o.over&&S&&S.onl&&S.over&&!S.onl.watch&&onlOver81(S.onl.lobby))o={...o,over:true};
-  return o.over?ask76('🚪 Leave the match?',onlStakeHTML80(o),'🚪 Leave','Stay'):ask76('🚪 Abandon the match?',onlStakeHTML80(o),'🚪 Abandon',o.dropped?'Let the CPU fight on':'Stay')};
+  return o.over?ask76(_T('🚪 Leave the match?'),onlStakeHTML80(o),_T('🚪 Leave'),_T('Stay')):ask76(_T('🚪 Abandon the match?'),onlStakeHTML80(o),_T('🚪 Abandon'),o.dropped?_T('Let the CPU fight on'):_T('Stay'))};
 
 /* ---------------- "… is on the move" only over the arena; leaving cleans up ---------------- */
 function onlArenaShown81(){if(!onlmOn())return false;if(document.getElementById('onl'))return false;const m=document.getElementById('mainMenu');if(m&&!m.hidden&&getComputedStyle(m).display!=='none')return false;return true}
@@ -134,9 +134,9 @@ setInterval(()=>{try{onlWaitGuard81()}catch(e){}},300);
 {const base=onlExit;onlExit=function(){ONL81.joinTok++;const r=base.apply(this,arguments);try{ONLM.on=false;ONLM.q=[];ONLM.pend=null;ONLM.me=-1;ONLM.resyncing=false;ONLM.override=null;
   const el=document.getElementById('onlWait');if(el)el.hidden=true;document.body.classList.remove('onl-off')}catch(e){}return r}}
 /* the wait for the host's opening stops when you leave, or when the bout is over */
-onlJoinMatch=async function(L,onl){const tok=++ONL81.joinTok;const gone=()=>tok!==ONL81.joinTok||onlOver81(L.id);onlToast80('⚔ Waiting for the host to open the arena…');let g=null;
+onlJoinMatch=async function(L,onl){const tok=++ONL81.joinTok;const gone=()=>tok!==ONL81.joinTok||onlOver81(L.id);onlToast80(_T('⚔ Waiting for the host to open the arena…'));let g=null;
   for(let i=0;i<150&&!(g&&g.open);i++){if(gone())return;try{g=await NET.req('match.get',{id:L.id,from:0})}catch(e){}if(!(g&&g.open))await new Promise(r=>setTimeout(r,400))}
-  if(gone())return;if(!g||!g.open){onlToast80('⚠ The host never opened the arena.');return}
+  if(gone())return;if(!g||!g.open){onlToast80(_T('⚠ The host never opened the arena.'));return}
   onlmLoad(g.open,{...onl,opened:true});ONLM.on=true;ONLM.me=onl.seat;ONLM.owners=onl.owners;ONLM.next=0;ONLM.q=[];ONLM.pend=null;ONLM.sent=0;ONLM.own=new Set();
   for(const inp of g.inputs||[])if(inp.from!==ONL.acct.id)ONLM.q.push(inp);
   try{if(typeof menuHide==='function')menuHide()}catch(e){}S.startedAt=Date.now();later(()=>beginTurn(),60)};
@@ -156,8 +156,8 @@ setInterval(()=>{try{const mine=onlMyLobby();if(mine&&mine.status==='waiting'){O
 /* a room that started before you got there: 👁 Watch (a closed one is the join's own message) */
 function onlDeadPop81(c){if(!c||!c.L||c.L.status!=='live')return;for(const o of document.querySelectorAll('.dead81bg'))o.remove();
   const bg=document.createElement('div');bg.className='veraskbg onl80pop dead81bg';
-  bg.innerHTML=`<div class="card2 verask" role="dialog" aria-modal="true"><b>🚪 That room closed before you got there</b><div style="margin:6px 0 10px" class="rc-sub">The horns already sounded — you may watch the bout for free.</div>
-    <div class="acts"><button type="button" class="btn primary" data-onl81="dwatch" data-v="${esc2(c.L.id)}">👁 Watch</button><button type="button" class="btn" data-onl81="dclose">Close</button></div></div>`;
+  bg.innerHTML=`<div class="card2 verask" role="dialog" aria-modal="true">${_T`<b>🚪 That room closed before you got there</b>`}<div style="margin:6px 0 10px" class="rc-sub">${_T`The horns already sounded — you may watch the bout for free.`}</div>
+    <div class="acts"><button type="button" class="btn primary" data-onl81="dwatch" data-v="${esc2(c.L.id)}">${_T`👁 Watch`}</button><button type="button" class="btn" data-onl81="dclose">${_T`Close`}</button></div></div>`;
   bg.addEventListener('click',e=>{if(e.target===bg)bg.remove()});document.body.appendChild(bg)}
 window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.dead81bg [data-onl81],#onl [data-onl81],.td81pop [data-onl81]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();
   const a=b.dataset.onl81,v=b.dataset.v;
@@ -174,32 +174,32 @@ window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('
 
 /* ---------------- sign-in: the server box only after the word ---------------- */
 const onlSrvOn81=()=>{try{return localStorage.getItem('flavius_onlsrv81')==='1'}catch(e){return false}};
-cheatRegister('h2944489914',()=>{try{localStorage.setItem('flavius_onlsrv81','1')}catch(e){}try{if(document.getElementById('onl'))onlRedraw()}catch(e){}return '🌐 The <b>Online server</b> box shows on the Online sign-in screen.'},'Online server box');
-CHEAT_SHOW.push([[86,85,83,90,89,93],'🌐 Shows the "Online server" box on the Online sign-in screen (for test servers)']);
+cheatRegister('h2944489914',()=>{try{localStorage.setItem('flavius_onlsrv81','1')}catch(e){}try{if(document.getElementById('onl'))onlRedraw()}catch(e){}return _T('🌐 The <b>Online server</b> box shows on the Online sign-in screen.')},'Online server box');
+CHEAT_SHOW.push([[86,85,83,90,89,93],_T('🌐 Shows the "Online server" box on the Online sign-in screen (for test servers)')]);
 {const base=onlSignInHTML;onlSignInHTML=function(){let h=base.apply(this,arguments);
   h=h.replace('Signing in shares your Google name and e-mail with the arena.','Signing in shares your Google name and e-mail with the arena. Other players see only your gladiator’s name.');
   if(!onlSrvOn81())h=h.replace(/<details class="onl-srv">[\s\S]*?<\/details>/,'');return h}}
 
 /* ---------------- the landing: your gladiator on the world ---------------- */
-function onlStageMap81(){return `<div class="smap81" id="onlStageMap81" data-onl="omap" role="button" tabindex="0" title="Open the map"><div class="omap-in"></div><div class="omap-dots" aria-hidden="true">${onlDots80(.85)}</div></div>`}
-function onlStageCap81(){return `<div class="scap81">🌍 <span id="omapCap">${onlCap80()}</span><button type="button" class="btn tksm" data-onl="omap" title="Open the map">🔍</button></div>`}
+function onlStageMap81(){return `<div class="smap81" id="onlStageMap81" data-onl="omap" role="button" tabindex="0" title="${_T`Open the map`}"><div class="omap-in"></div><div class="omap-dots" aria-hidden="true">${onlDots80(.85)}</div></div>`}
+function onlStageCap81(){return `<div class="scap81">🌍 <span id="omapCap">${onlCap80()}</span><button type="button" class="btn tksm" data-onl="omap" title="${_T`Open the map`}">🔍</button></div>`}
 function onlStage81(ch){const map=onlStageMap81(),cap=onlStageCap81();
-  if(!ch)return `<div class="onl-stage onl-stage81 ng81">${map}<div class="ng81in">${onlNoGladHTML('Make one to fight, host, wager or buy a ticket.')}</div>${cap}</div>`;
+  if(!ch)return `<div class="onl-stage onl-stage81 ng81">${map}<div class="ng81in">${onlNoGladHTML(_T('Make one to fight, host, wager or buy a ticket.'))}</div>${cap}</div>`;
   let h=onlWheat81(onlStageHTML(ch));const pre='<div class="onl-stage">';
   if(h.startsWith(pre)&&h.endsWith('</div>'))return `<div class="onl-stage onl-stage81">${map}${h.slice(pre.length,-6)}${cap}</div>`;return h}
 function onlForum81(){const q=onlQuiet80();
-  return `<div class="ofor81" id="onlForum81"><div class="ow-h">📯 The Forum<span class="f80-ctl"><button type="button" class="btn tksm" data-onl="who" title="Who is here">👥 Here now</button><button type="button" class="btn tksm ${q?'on':''}" data-onl="quiet" title="${q?'Quiet: no banners or invite pop-ups':'Banners and invites pop up'}">${q?'🔕 Quiet':'🔔'}</button></span></div>
+  return `<div class="ofor81" id="onlForum81"><div class="ow-h">${_T`📯 The Forum`}<span class="f80-ctl"><button type="button" class="btn tksm" data-onl="who" title="${_T`Who is here`}">${_T`👥 Here now`}</button><button type="button" class="btn tksm ${q?'on':''}" data-onl="quiet" title="${q?_T('Quiet: no banners or invite pop-ups'):_T('Banners and invites pop up')}">${q?_T('🔕 Quiet'):'🔔'}</button></span></div>
     <div class="ofor"><div class="ofor-feed" id="onlFeed80">${onlFeedHTML80()}</div><div class="ofor-chips">${ONLC.QC.forum.map(x=>`<button type="button" data-onl="fsay" data-v="${x}">${esc2(onlQ80(x))}</button>`).join('')}</div></div></div>`}
 const ONL_PLTONE81={democritus:'bronze',egidious:'red',cassian:'steel',familia:'olive'};
 onlPlayHTML=function(){const ch=ONL.char;const S9=ONL.stats||{};const ch3=S9.challenges||[];
   const lists=ONLC.EVENTS_ALL.map(k=>{const open=(ONL.lobbies||[]).filter(L=>L.ev===k&&L.status==='waiting');const tm=ONLC.EVENTS_TEAM.includes(k);
-    return `<div class="onl-pl pl81 pl81-${ONL_PLTONE81[k]||'bronze'} ${tm?'team':''}" data-pl81="${k}"><div class="onl-plart">${typeof cardHTML==='function'?cardHTML('e:'+k,'sm'):''}</div><div class="onl-plb"><b>${esc2(onlEvName(k))}</b>${tm?'<span class="badge gold">👥 Teams · 4–8 seats</span>':''}<small>${open.length} open · ${open.filter(L=>L.ranked).length} ranked</small>
-      <div class="acts"><button type="button" class="btn primary tksm" data-onl="quick" data-v="${k}|1">⚔ Ranked</button><button type="button" class="btn tksm" data-onl="quick" data-v="${k}|0">Custom</button></div></div></div>`}).join('');
+    return `<div class="onl-pl pl81 pl81-${ONL_PLTONE81[k]||'bronze'} ${tm?'team':''}" data-pl81="${k}"><div class="onl-plart">${typeof cardHTML==='function'?cardHTML('e:'+k,'sm'):''}</div><div class="onl-plb">${_T`<b>${esc2(onlEvName(k))}</b>${tm?'<span class="badge gold">👥 Teams · 4–8 seats</span>':''}<small>${open.length} open · ${open.filter(L=>L.ranked).length} ranked</small>`}
+      <div class="acts"><button type="button" class="btn primary tksm" data-onl="quick" data-v="${k}|1">${_T`⚔ Ranked`}</button><button type="button" class="btn tksm" data-onl="quick" data-v="${k}|0">${_T`Custom`}</button></div></div></div>`}).join('');
   return `${onlRoomTop80()}<div class="onl-play onl-play81"><div class="a81-stage">${onlStage81(ch)}</div>
-    <div class="a81-week card2"><b>⚡ This week</b>${ch3.map(([t])=>`<div class="onl-ch">◻ ${esc2(t)}</div>`).join('')}</div>
+    <div class="a81-week card2">${_T`<b>⚡ This week</b>${ch3.map(([t])=>`<div class="onl-ch">◻ ${esc2(t)}</div>`).join('')}`}</div>
     <div class="a81-forum">${onlForum81()}</div>
     <div class="a81-today">${onlTodayHTML80()}</div>
-    <div class="a81-pls"><h3 class="onl-h">Playlists <span class="rc-sub">Ranked pairs your rank only · Custom is anyone, no Fate deaths</span></h3><div class="onl-pls onl-pls81">${lists}</div></div></div>`};
+    <div class="a81-pls"><h3 class="onl-h">${_T`Playlists`} <span class="rc-sub">${_T`Ranked pairs your rank only · Custom is anyone, no Fate deaths`}</span></h3><div class="onl-pls onl-pls81">${lists}</div></div></div>`};
 onlPatchMap80=function(){const c=document.getElementById('omapCap');if(c)c.innerHTML=onlCap80();for(const d of document.querySelectorAll('#onlStageMap81 .omap-dots,#onlRow80 .omap-dots'))d.innerHTML=onlDots80(d.closest('#onlStageMap81')?.85:1)};
 /* sideways playlists: a vertical wheel scrolls them sideways while they can move */
 document.addEventListener('wheel',e=>{const r=e.target.closest&&e.target.closest('.onl-pls81');if(!r||r.scrollWidth<=r.clientWidth+2||Math.abs(e.deltaY)<=Math.abs(e.deltaX))return;
@@ -208,17 +208,17 @@ document.addEventListener('wheel',e=>{const r=e.target.closest&&e.target.closest
 /* ---------------- ☀ Today: a slim Victor | Fallen ribbon ---------------- */
 const ONL_TODAYFULL81=onlTodayHTML80;
 onlTodayHTML80=function(){const T=ONL80F.today;const yd=T&&T.day==='yesterday';const WN=(T&&T.wins)||[],F=(T&&T.fallen)||[],U=(T&&T.upsets)||[];
-  if(!WN.length&&!F.length&&!U.length)return `<div class="td81 quiet" id="onlToday80">The sand waits.</div>`;
-  const where=e=>`${esc2(onlEvName(e.ev))} at ${esc2(onlCityName(e.loc))}`;
+  if(!WN.length&&!F.length&&!U.length)return `<div class="td81 quiet" id="onlToday80">${_T`The sand waits.`}</div>`;
+  const where=e=>_T`${esc2(onlEvName(e.ev))} at ${esc2(onlCityName(e.loc))}`;
   const card=(e,k,h,line)=>`<div class="td81-c ${k}"><span class="td81-art">${onl80Face(e,'sm')}<span class="td81-tok">${onlFig(e.cls,e.look,40)}</span></span><span class="td81-t"><small>${h}</small><b>${esc2(e.name)}</b><span>${line}</span></span></div>`;
-  const w=WN[0];const c1=w?card(w,'win',`🏆 Victor ${yd?'yesterday':'of the day'}`,`Won ${where(w)} with ${onlW81()}<b>${w.cf|0} CF</b>`):`<div class="td81-c win none"><small>🏆 No victor yet</small></div>`;
-  let c2;const f=F[0];if(f)c2=card(f,'fall',`🪦 Fallen ${yd?'yesterday':'today'}`,f.how==='damnatio'?`Abandoned ${where(f)} — <b>Damnatio</b>`:`Fell to the Fate in ${where(f)}`);
-  else if(U.length){const u=U[0];c2=card({...u.l},'fall','⚔ Humbled',`by <b>${esc2(u.w.name)}</b> in ${where(u)}`)}else c2=`<div class="td81-c fall none"><small>🪦 No one fell ${yd?'yesterday':'today'}</small></div>`;
+  const w=WN[0];const c1=w?card(w,'win',_T`🏆 Victor ${yd?_T('yesterday'):_T('of the day')}`,_T`Won ${where(w)} with ${onlW81()}<b>${w.cf|0} CF</b>`):`<div class="td81-c win none">${_T`<small>🏆 No victor yet</small>`}</div>`;
+  let c2;const f=F[0];if(f)c2=card(f,'fall',_T`🪦 Fallen ${yd?_T('yesterday'):_T('today')}`,f.how==='damnatio'?_T`Abandoned ${where(f)} — <b>Damnatio</b>`:_T`Fell to the Fate in ${where(f)}`);
+  else if(U.length){const u=U[0];c2=card({...u.l},'fall',_T('⚔ Humbled'),_T`by <b>${esc2(u.w.name)}</b> in ${where(u)}`)}else c2=`<div class="td81-c fall none">${_T`<small>🪦 No one fell ${yd?_T('yesterday'):_T('today')}</small>`}</div>`;
   const more=Math.max(0,WN.length-1)+Math.max(0,F.length-(f?1:0))+Math.max(0,U.length-(f?0:1));
-  return `<div class="td81" id="onlToday80">${c1}${c2}${more?`<button type="button" class="td81-more" data-onl81="today" title="The day's lists">+${more} more</button>`:''}</div>`};
+  return `<div class="td81" id="onlToday80">${c1}${c2}${more?`<button type="button" class="td81-more" data-onl81="today" title="${_T`The day's lists`}">${_T`+${more} more`}</button>`:''}</div>`};
 function onlTodayPop81(){for(const o of document.querySelectorAll('.td81pop'))o.remove();const h=ONL_TODAYFULL81();if(!h)return;
   const bg=document.createElement('div');bg.className='veraskbg onl80pop td81pop';
-  bg.innerHTML=`<div class="card2 verask td81box" role="dialog" aria-modal="true">${h.replace('id="onlToday80"','').replace(/<b>(\d+) CF<\/b>/g,`${onlW81()}<b>$1 CF</b>`).replace(/ · (\d+) CF · /g,` · ${onlW81()}$1 CF · `)}<div class="acts"><button type="button" class="btn" data-onl81="tdx">Close</button></div></div>`;
+  bg.innerHTML=`<div class="card2 verask td81box" role="dialog" aria-modal="true">${h.replace('id="onlToday80"','').replace(/<b>(\d+) CF<\/b>/g,`${onlW81()}<b>$1 CF</b>`).replace(/ · (\d+) CF · /g,` · ${onlW81()}$1 CF · `)}<div class="acts"><button type="button" class="btn" data-onl81="tdx">${_T`Close`}</button></div></div>`;
   bg.addEventListener('click',e=>{if(e.target===bg)bg.remove()});document.body.appendChild(bg)}
 
 {const st=document.createElement('style');st.textContent=`

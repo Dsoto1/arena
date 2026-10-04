@@ -23,7 +23,7 @@ function offerTokHTML(k,size=28){const O=typeof OFFER!=='undefined'?OFFER[k]:nul
 const NPC_TOK={snake:['glykon','arenosus'],wolf:['valencia','moechus'],bear:['ursa','brutum'],lion:['leo','leaena'],commodus:['commodus'],tholo:['tholo'],zora:['zora'],boar:['boar'],croc:['croc'],crocodile:['croc']};
 function npcTokName(n){if(!n)return null;const L=NPC_TOK[n.t];if(!L)return null;if(L.length===1)return L[0];
   // which of the pair: match the base role name, else the city's name for it, else alternate by id
-  const roles={glykon:'Glykon',arenosus:'Arenosus',valencia:'Valencia',moechus:'Moechus',ursa:'Ursa',brutum:'Brutum',leo:'Leo',leaena:'Leaena'};
+  const roles={glykon:_T('Glykon'),arenosus:_T('Arenosus'),valencia:_T('Valencia'),moechus:_T('Moechus'),ursa:_T('Ursa'),brutum:_T('Brutum'),leo:_T('Leo'),leaena:_T('Leaena')};
   for(const k of L){const R=roles[k];if(n.name===R||(typeof beastName==='function'&&n.name===beastName(R)))return k}
   return L[(n.id||0)%2]}
 function npcTokHTML(n,size=28){const k=npcTokName(n);return k?rtokHTML(k,size,n.name):''}

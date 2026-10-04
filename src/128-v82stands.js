@@ -48,7 +48,7 @@ const st82Fighter=()=>ONLM.me>=0&&ONLM.me<onlmFighters()&&!(S.onl&&S.onl.watch);
   STD82.pend=null;clearTimeout(STD82.closeT);clearTimeout(STD82.fallT);st82Banner();st82PopClose();
   if(G!==S||!S||S.over)return;
   if(inp&&inp.k==='stands.result'){STD82.applied++;await st82Apply(inp)}
-  else log('🎟 The stands sit this rotation out.','thought');
+  else log(_T('🎟 The stands sit this rotation out.'),'thought');
   render()}}
 function st82Open(rot){const id=S.onl.lobby;
   if(S.onl.host&&st82Fighter()){NET.req('match.stands.open',{id,rot}).then(()=>{STD82.closeT=setTimeout(()=>{NET.req('match.stands.close',{id,rot}).catch(()=>{})},ONLC.STANDS_MS)})
@@ -79,73 +79,73 @@ function st82Banner(){let el=document.getElementById('st82Wait');const P=STD82.p
   if(!on){if(el)el.hidden=true;clearInterval(STD82.bT);STD82.bT=0;return}
   if(!el){el=document.createElement('div');el.id='st82Wait';document.body.appendChild(el)}
   const tick=()=>{const P2=STD82.pend;if(!P2||!onlmOn()){el.hidden=true;clearInterval(STD82.bT);STD82.bT=0;return}const s=Math.max(0,Math.ceil((ONLC.STANDS_MS-(Date.now()-P2.at))/1000));
-    el.innerHTML=`🎟 The stands are choosing… <b>${s}s</b>`;el.hidden=!!document.getElementById('st82Pop');const w=document.getElementById('onlWait');if(w)w.hidden=true};
+    el.innerHTML=_T`🎟 The stands are choosing… <b>${s}s</b>`;el.hidden=!!document.getElementById('st82Pop');const w=document.getElementById('onlWait');if(w)w.hidden=true};
   tick();if(!STD82.bT)STD82.bT=setInterval(tick,250)}
 {const base=onlmWaitShow;onlmWaitShow=function(){const r=base.apply(this,arguments);if(STD82.pend)setTimeout(()=>{if(STD82.pend){const w=document.getElementById('onlWait');if(w)w.hidden=true}},120);return r}}
 function st82PopClose(){clearInterval(STD82.popT);STD82.popT=0;const o=document.getElementById('st82Pop');if(o)o.remove();STD82.pop=null;const b=document.getElementById('st82Wait');if(b&&STD82.pend)b.hidden=false}
 NET.on('stands.window',d=>{try{if(!d||!S||!S.onl||d.id!==S.onl.lobby||!ONL.acct)return;if(d.seat!==ONLM.me)return;st82Popup(d)}catch(e){console.error(e)}});
 function st82Pick(d,pick){const P=STD82.pop;if(!P||P.sent)return;P.sent=1;const o=document.getElementById('st82Pop');if(o)for(const b of o.querySelectorAll('button,select'))b.disabled=true;
-  const msg=o&&o.querySelector('.st82msg');if(msg)msg.textContent=pick.a==='pass'?'You watch this rotation.':'✓ Your choice is in — the stands throw together.';
-  NET.req('match.stands.pick',{id:d.id,rot:d.rot,pick}).then(()=>{setTimeout(st82PopClose,pick.a==='pass'?600:1400)}).catch(e=>{if(msg)msg.textContent='⚠ '+(e.message||'The stands have chosen.');setTimeout(st82PopClose,1800)})}
+  const msg=o&&o.querySelector('.st82msg');if(msg)msg.textContent=pick.a==='pass'?_T('You watch this rotation.'):_T('✓ Your choice is in — the stands throw together.');
+  NET.req('match.stands.pick',{id:d.id,rot:d.rot,pick}).then(()=>{setTimeout(st82PopClose,pick.a==='pass'?600:1400)}).catch(e=>{if(msg)msg.textContent='⚠ '+(e.message||_T('The stands have chosen.'));setTimeout(st82PopClose,1800)})}
 function st82Popup(d){st82PopClose();const s=(S.spect||[]).find(x=>x.onlIdx===d.seat);
   STD82.pop={rot:d.rot,sent:0,d};if(!s||s.gone||!s.human){st82Pick(d,{a:'pass'});return}
   const q=SECTIONS[s.sec].q;const act=activePlayers();const inQ=act.filter(p=>!p.underground&&quadOf(p)===q);
-  const tholoOK=!bossSpent('Tholo')&&!EV().noBoss&&!EV().noTholo&&!isChariot()&&!isNaum();
+  const tholoOK=!bossSpent(_T('Tholo'))&&!EV().noBoss&&!EV().noTholo&&!isChariot()&&!isNaum();
   const btn=(pick,label,sub,dis)=>`<button type="button" class="st82b" data-st82='${esc(JSON.stringify(pick))}' ${dis?'disabled':''}><b>${label}</b>${sub?`<small>${sub}</small>`:''}</button>`;
-  const rows=[...inQ.filter(p=>p.id!==s.fav).map(p=>btn({a:'stone',r:p.r,c:p.c},`🪨 Stone at ${esc(p.name)}`,`2 CF · lands on ${tl(p.r,p.c)} — whoever stands there then is hit`,s.cf<2)),
-    ...inQ.map(p=>btn({a:'offer',r:p.r,c:p.c},`🎁 Offering to ${esc(p.name)}`,`8 CF · falls on ${tl(p.r,p.c)} — whoever stands there gets it`,s.cf<8)),
-    tholoOK?btn({a:'tholo'},'📣 Chant “Tholo!”','3 CF · every quadrant must join (other ticket holders, or the crowd)',s.cf<3):'',
-    ...act.map(p=>btn({a:'cheer',v:p.id},`👏 Cheer for ${esc(p.name)}`,'free',false)),
-    btn({a:'pass'},'👁 Watch this rotation','',false)].filter(Boolean).join('');
+  const rows=[...inQ.filter(p=>p.id!==s.fav).map(p=>btn({a:'stone',r:p.r,c:p.c},_T`🪨 Stone at ${esc(p.name)}`,_T`2 CF · lands on ${tl(p.r,p.c)} — whoever stands there then is hit`,s.cf<2)),
+    ...inQ.map(p=>btn({a:'offer',r:p.r,c:p.c},_T`🎁 Offering to ${esc(p.name)}`,_T`8 CF · falls on ${tl(p.r,p.c)} — whoever stands there gets it`,s.cf<8)),
+    tholoOK?btn({a:'tholo'},_T('📣 Chant “Tholo!”'),_T('3 CF · every quadrant must join (other ticket holders, or the crowd)'),s.cf<3):'',
+    ...act.map(p=>btn({a:'cheer',v:p.id},_T`👏 Cheer for ${esc(p.name)}`,'free',false)),
+    btn({a:'pass'},_T('👁 Watch this rotation'),'',false)].filter(Boolean).join('');
   const secs=SECTIONS.map((x,i)=>i).filter(i=>i!==s.sec).map(i=>`<option value="${i}">${esc(SECTIONS[i].n)} (Q${SECTIONS[i].q})</option>`).join('');
   const o=document.createElement('div');o.id='st82Pop';o.setAttribute('role','dialog');o.setAttribute('aria-label','Your turn in the stands');
-  o.innerHTML=`<div class="st82hd">🎟 Your turn in the stands <span class="st82t" id="st82T">20s</span></div>
-    <div class="st82sub">${esc(s.name)} · <b>${s.cf} CF</b> · ${esc(SECTIONS[s.sec].n)} (Q${q}) · one action · only you see this</div>
+  o.innerHTML=`<div class="st82hd">${_T`🎟 Your turn in the stands`} <span class="st82t" id="st82T">20s</span></div>
+    <div class="st82sub">${_T`${esc(s.name)} · <b>${s.cf} CF</b> · ${esc(SECTIONS[s.sec].n)} (Q${q}) · one action · only you see this`}</div>
     <div class="st82list">${rows}</div>
-    <div class="st82mv"><select class="tin" id="st82Sec" ${s.cf<3?'disabled':''}>${secs}</select><button type="button" class="btn tksm" id="st82Move" ${s.cf<3?'disabled':''}>🚶 Change section · 3 CF</button></div>
-    <div class="st82msg rc-sub">${inQ.length?'Stones and offerings are locked to the tile you pick.':`No gladiator stands in Q${q} — cheer, chant or move.`}</div>`;
+    <div class="st82mv"><select class="tin" id="st82Sec" ${s.cf<3?'disabled':''}>${secs}</select><button type="button" class="btn tksm" id="st82Move" ${s.cf<3?'disabled':''}>${_T`🚶 Change section · 3 CF`}</button></div>
+    <div class="st82msg rc-sub">${inQ.length?_T('Stones and offerings are locked to the tile you pick.'):_T`No gladiator stands in Q${q} — cheer, chant or move.`}</div>`;
   document.body.appendChild(o);const bw=document.getElementById('st82Wait');if(bw)bw.hidden=true;
   o.addEventListener('click',e=>{const b=e.target.closest('[data-st82]');if(b&&!b.disabled){st82Pick(d,JSON.parse(b.dataset.st82));return}
     if(e.target.closest('#st82Move')){const v=+document.getElementById('st82Sec').value;if(Number.isInteger(v))st82Pick(d,{a:'move',sec:v})}});
   const end=Date.now()+Math.max(1000,Math.min(ONLC.STANDS_MS,(d.until||0)-Date.now()||ONLC.STANDS_MS))-400;
   STD82.popT=setInterval(()=>{const left=Math.max(0,Math.ceil((end-Date.now())/1000));const t=document.getElementById('st82T');if(t)t.textContent=left+'s';
-    if(left<=0){if(STD82.pop&&!STD82.pop.sent){const m=o.querySelector('.st82msg');if(m)m.textContent='⏳ Time — you watch this rotation.'}setTimeout(st82PopClose,700);clearInterval(STD82.popT)}},250)}
+    if(left<=0){if(STD82.pop&&!STD82.pop.sent){const m=o.querySelector('.st82msg');if(m)m.textContent=_T('⏳ Time — you watch this rotation.')}setTimeout(st82PopClose,700);clearInterval(STD82.popT)}},250)}
 
 /* ---------------- applying the stands' choices (the same on every client) ---------------- */
 async function st82Apply(inp){const picks=(inp.picks||[]).slice().sort((a,b)=>a.seat-b.seat);const chant=[];
-  if(picks.some(x=>x.pick&&x.pick.a!=='pass'))log('🎟 The stands act together.','thought');
+  if(picks.some(x=>x.pick&&x.pick.a!=='pass'))log(_T('🎟 The stands act together.'),'thought');
   for(const {seat,pick} of picks){if(!S||S.over)return;const s=(S.spect||[]).find(x=>x.onlIdx===seat);if(!s||s.gone||!s.human||!pick)continue;
-    const me=seat===ONLM.me;const who=me?'You':`<b>${esc(s.name)}</b>`;const v=(a,b)=>me?a:b;const prev=ONLM.specName;ONLM.specName=me?null:s.name;
+    const me=seat===ONLM.me;const who=me?_T('You'):`<b>${esc(s.name)}</b>`;const v=(a,b)=>me?a:b;const prev=ONLM.specName;ONLM.specName=me?null:s.name;
     try{const a=pick.a;const r=pick.r|0,c=pick.c|0;
-      if(a==='stone'){if(s.cf<2){log(`${who} ${v('cannot','cannot')} afford a stone (2 CF).`);continue}s.cf-=2;const q=playerAt(r,c);
+      if(a==='stone'){if(s.cf<2){log(_T`${who} ${v('cannot','cannot')} afford a stone (2 CF).`);continue}s.cf-=2;const q=playerAt(r,c);
         if(q&&!q.underground)await spectStone(s,q);
-        else{S.stonesThrown=(S.stonesThrown||0)+1;emote(s,'🪨','');const n=npcAt(r,c);log(`${who} ${v('hurl','hurls')} a stone at ${tl(r,c)} — ${n?`it bounces off ${nm(n)}`:'it lands on empty sand'}.`);slog(`<b>${esc(s.name)}</b>'s stone lands on ${n?'a beast':'empty sand'} at ${tl(r,c)}.`)}}
-      else if(a==='offer'){if(s.cf<8){log(`${who} cannot afford an offering (8 CF).`);continue}s.cf-=8;const off=drawOffer();const O=OFFER[off]||{n:off,s:''};const q=playerAt(r,c);emote(s,'🎁','');
-        if(q&&!q.underground){q.items.push(mkOffer(off));stat(q,'spectOffers');stat(q,'spectVal',OFFER_VAL[off]||4);log(`${who} ${v('throw','throws')} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s}) — ${nm(q)} catches it.`);slog(`<b>${esc(s.name)}</b> pays 8 CF: an offering lands at ${esc(q.name)}'s feet — ${O.n}.`,'big')}
-        else if(inB(r,c)){placeFloor('offer',off,r,c);const n=npcAt(r,c);log(`${who} ${v('throw','throws')} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s})${n?` — it lies under ${nm(n)}`:typeof spikeAt==='function'&&spikeAt(r,c)?' — it falls into the spikes':' — it lies on the sand'}.`);slog(`<b>${esc(s.name)}</b>'s offering lands on ${tl(r,c)}.`)}
+        else{S.stonesThrown=(S.stonesThrown||0)+1;emote(s,'🪨','');const n=npcAt(r,c);log(_T`${who} ${v('hurl','hurls')} a stone at ${tl(r,c)} — ${n?_T`it bounces off ${nm(n)}`:_T('it lands on empty sand')}.`);slog(_T`<b>${esc(s.name)}</b>'s stone lands on ${n?_T('a beast'):_T('empty sand')} at ${tl(r,c)}.`)}}
+      else if(a==='offer'){if(s.cf<8){log(_T`${who} cannot afford an offering (8 CF).`);continue}s.cf-=8;const off=drawOffer();const O=OFFER[off]||{n:off,s:''};const q=playerAt(r,c);emote(s,'🎁','');
+        if(q&&!q.underground){q.items.push(mkOffer(off));stat(q,'spectOffers');stat(q,'spectVal',OFFER_VAL[off]||4);log(_T`${who} ${v('throw','throws')} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s}) — ${nm(q)} catches it.`);slog(_T`<b>${esc(s.name)}</b> pays 8 CF: an offering lands at ${esc(q.name)}'s feet — ${O.n}.`,'big')}
+        else if(inB(r,c)){placeFloor('offer',off,r,c);const n=npcAt(r,c);log(_T`${who} ${v('throw','throws')} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s})${n?_T` — it lies under ${nm(n)}`:typeof spikeAt==='function'&&spikeAt(r,c)?_T(' — it falls into the spikes'):_T(' — it lies on the sand')}.`);slog(_T`<b>${esc(s.name)}</b>'s offering lands on ${tl(r,c)}.`)}
         try{fx(r,c,'✦','#f0cf7d',{big:1})}catch(e){}}
-      else if(a==='move'){const to=pick.sec|0;if(to<0||to>=SECTIONS.length||to===s.sec)continue;if(s.cf<3){log(`${who} cannot afford to change section (3 CF).`);continue}
-        s.cf-=3;log(`${who} ${v('move','moves')} from ${SECTIONS[s.sec].n} to ${SECTIONS[to].n}.`);s.sec=to;emote(s,'🚶','')}
-      else if(a==='cheer'){const p=S.players[pick.v|0];if(!p||!p.alive||p.exited)continue;s.fav=p.id;s.favCls=p.cls;emote(s,'📣','');log(`${who} ${v('cheer','cheers')} for ${nm(p)}.`);slog(`<b>${esc(s.name)}</b> cheers for ${esc(p.name)}.`)}
+      else if(a==='move'){const to=pick.sec|0;if(to<0||to>=SECTIONS.length||to===s.sec)continue;if(s.cf<3){log(_T`${who} cannot afford to change section (3 CF).`);continue}
+        s.cf-=3;log(_T`${who} ${v('move','moves')} from ${SECTIONS[s.sec].n} to ${SECTIONS[to].n}.`);s.sec=to;emote(s,'🚶','')}
+      else if(a==='cheer'){const p=S.players[pick.v|0];if(!p||!p.alive||p.exited)continue;s.fav=p.id;s.favCls=p.cls;emote(s,'📣','');log(_T`${who} ${v('cheer','cheers')} for ${nm(p)}.`);slog(_T`<b>${esc(s.name)}</b> cheers for ${esc(p.name)}.`)}
       else if(a==='tholo')chant.push(s)}
     finally{ONLM.specName=prev}}
   if(chant.length&&S&&!S.over)st82Tholo(chant)}
 function st82Tholo(chant){const names=chant.map(s=>s.onlIdx===ONLM.me?'you':esc(s.name)).join(', ');
-  if(bossSpent('Tholo')||EV().noBoss||EV().noTholo||isChariot()||isNaum()){log(`The chant for Tholo (${names}) goes unanswered — he does not come to this event.`);return}
+  if(bossSpent(_T('Tholo'))||EV().noBoss||EV().noTholo||isChariot()||isNaum()){log(_T`The chant for Tholo (${names}) goes unanswered — he does not come to this event.`);return}
   const pay={};for(const s of chant)if(s.cf>=3){const q=SECTIONS[s.sec].q;if(!pay[q])pay[q]=s}
-  if(!Object.keys(pay).length){log(`The chant for Tholo (${names}) needs 3 CF a voice.`);return}
+  if(!Object.keys(pay).length){log(_T`The chant for Tholo (${names}) needs 3 CF a voice.`);return}
   for(const s of S.spect)if(!s.gone&&!s.human&&s.cf>=3){const q=SECTIONS[s.sec].q;if(!pay[q]||(!pay[q].human&&s.cf>pay[q].cf))pay[q]=s}
-  if(Object.keys(pay).length<4){log(`The chant for Tholo (${names}) dies out — not every quadrant joins in.`);return}
-  const ps=Object.values(pay);for(const s of ps){s.cf-=3;emote(s,'📣','Tholo!')}
-  log(`Spectators in every quadrant (${ps.map(s=>s.onlIdx===ONLM.me?'you':esc(s.name)).join(', ')}) pay 3 CF each and chant “Tholo! Tholo!”`,'big');
-  slog(`<b>${ps.map(s=>esc(s.name)).join(', ')}</b> pay 3 CF each and chant for Tholo.`,'big');spawnNPC('tholo','Tholo',S.ri<2?[6,6]:null);crowdReact('boss',{n:'Tholo'})}
+  if(Object.keys(pay).length<4){log(_T`The chant for Tholo (${names}) dies out — not every quadrant joins in.`);return}
+  const ps=Object.values(pay);for(const s of ps){s.cf-=3;emote(s,'📣',_T('Tholo!'))}
+  log(_T`Spectators in every quadrant (${ps.map(s=>s.onlIdx===ONLM.me?'you':esc(s.name)).join(', ')}) pay 3 CF each and chant “Tholo! Tholo!”`,'big');
+  slog(_T`<b>${ps.map(s=>esc(s.name)).join(', ')}</b> pay 3 CF each and chant for Tholo.`,'big');spawnNPC('tholo',_T('Tholo'),S.ri<2?[6,6]:null);crowdReact('boss',{n:'Tholo'})}
 
 /* =========================== THE SPEAR REFUND =========================== */
 function st82Ticket(){const L=(ONL.lobbies||[]).find(x=>S&&S.onl&&x.id===S.onl.lobby);return (S.onl&&S.onl.ticket)||(L&&L.ticket)||0}
 {const base=doSpear;doSpear=async function(p,s){const was=!!(s&&s.gone);const r=await base.apply(this,arguments);
   try{if(s&&!was&&s.gone&&s.onlIdx!=null&&s.ticket&&S&&S.onl)st82Refund(s)}catch(e){console.error(e)}return r}}
-function st82Refund(s){log('Flavius refunds the ticket — he hates to see his spectators speared.','big');s.refund82=1;
-  if(s.onlIdx===ONLM.me&&typeof mToast==='function'){const n=st82Ticket();mToast(`🎟 Speared! Flavius refunds your ticket${n?` (${n} coin)`:''}. Your wager stands — keep watching.`)}
+function st82Refund(s){log(_T('Flavius refunds the ticket — he hates to see his spectators speared.'),'big');s.refund82=1;
+  if(s.onlIdx===ONLM.me&&typeof mToast==='function'){const n=st82Ticket();mToast(_T`🎟 Speared! Flavius refunds your ticket${n?_T` (${n} coin)`:''}. Your wager stands — keep watching.`)}
   if(st82Fighter())NET.req('match.speared',{id:S.onl.lobby,seat:s.onlIdx}).catch(()=>{})}
 NET.on('stands.refund',d=>{try{if(!d||!ONL.acct)return;if(ONL.char&&d.amt)ONL.char.wallet=(ONL.char.wallet|0)+(d.amt|0);STD82.refunded=(STD82.refunded|0)+(d.amt|0)}catch(e){}});
 /* the ticket price rides with the match (the room row may be gone by the time someone is speared) */
@@ -159,22 +159,22 @@ function mockStands82Close(w,id,M,L,rot){const W=M.stw[rot];if(!W||!W.open)retur
   const inp={k:'stands.result',rot,picks,missed,from:'server',seq:M.inputs.length};M.inputs.push(inp);mockPush('match.input',{id,in:inp});return inp}
 const mockLive82=(L,M)=>L.players.filter(p=>!/^bot/.test(p.id)&&!(M.dropped||{})[p.id]&&!(M.abandoned||{})[p.id]).map(p=>p.id);
 Object.assign(MOCK_ROUTES,{
-  'match.stands.open':(w,d,me)=>{const L=w.lobbies[d.id],M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');if(L.host.id!==me)throw new Error('Only the host opens the stands.');
-    if(L.status!=='live'||M.status==='done')throw new Error('The match is not live.');if(L.standsOff)throw st82Fail('no_stands','This game has no stands.');const rot=d.rot|0;if(rot<0)throw new Error('Which rotation?');
-    const holders=(L.stands||[]).map(t=>t.id).filter(a=>!(M.dropped||{})[a]&&!(M.abandoned||{})[a]);if(!holders.length)throw st82Fail('no_stands','Nobody holds a ticket.');
-    M.stw=M.stw||{};if(M.stw[rot])throw st82Fail('stands_twice','The stands already chose this rotation.');const at=mockNow();M.stw[rot]={open:true,at,holders,picks:{}};const until=at+ONLC.STANDS_MS;
+  'match.stands.open':(w,d,me)=>{const L=w.lobbies[d.id],M=w.matches[d.id];if(!L||!M)throw new Error(_T('No such match.'));if(L.host.id!==me)throw new Error(_T('Only the host opens the stands.'));
+    if(L.status!=='live'||M.status==='done')throw new Error(_T('The match is not live.'));if(L.standsOff)throw st82Fail('no_stands',_T('This game has no stands.'));const rot=d.rot|0;if(rot<0)throw new Error(_T('Which rotation?'));
+    const holders=(L.stands||[]).map(t=>t.id).filter(a=>!(M.dropped||{})[a]&&!(M.abandoned||{})[a]);if(!holders.length)throw st82Fail('no_stands',_T('Nobody holds a ticket.'));
+    M.stw=M.stw||{};if(M.stw[rot])throw st82Fail('stands_twice',_T('The stands already chose this rotation.'));const at=mockNow();M.stw[rot]={open:true,at,holders,picks:{}};const until=at+ONLC.STANDS_MS;
     for(const a of holders)mockTo([a],'stands.window',{id:d.id,rot,until,seat:mockSeat(L,a)});return {rot,until,holders:holders.map(a=>mockSeat(L,a))}},
-  'match.stands.pick':(w,d,me)=>{const L=w.lobbies[d.id],M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');const rot=d.rot|0;const W=(M.stw||{})[rot];
-    if(!W||!W.open)throw st82Fail('stands_closed','The stands have chosen — wait for the next rotation.');if(!W.holders.includes(me))throw new Error('Only ticket holders choose from the stands.');
-    const why=ONLC.standsPickOK(d.pick);if(why)throw new Error(why);if(W.picks[me])throw st82Fail('stands_twice','You already chose this rotation.');
+  'match.stands.pick':(w,d,me)=>{const L=w.lobbies[d.id],M=w.matches[d.id];if(!L||!M)throw new Error(_T('No such match.'));const rot=d.rot|0;const W=(M.stw||{})[rot];
+    if(!W||!W.open)throw st82Fail('stands_closed',_T('The stands have chosen — wait for the next rotation.'));if(!W.holders.includes(me))throw new Error(_T('Only ticket holders choose from the stands.'));
+    const why=ONLC.standsPickOK(d.pick);if(why)throw new Error(why);if(W.picks[me])throw st82Fail('stands_twice',_T('You already chose this rotation.'));
     W.picks[me]={seat:mockSeat(L,me),pick:ONLC.cleanPick(d.pick)};const closed=Object.keys(W.picks).length>=W.holders.length?mockStands82Close(w,d.id,M,L,rot):null;
     return {rot,ok:true,...(closed?{closed:true,seq:closed.seq}:{})}},
-  'match.stands.close':(w,d,me)=>{const L=w.lobbies[d.id],M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');const rot=d.rot|0;const W=(M.stw||{})[rot];if(!W)throw new Error('No stands window for that rotation.');
-    if(L.host.id!==me){if(!mockLive82(L,M).includes(me))throw new Error('Only the host closes the stands.');if(mockNow()-W.at<ONLC.STANDS_MS+5000)throw new Error('The stands are still choosing.')}
+  'match.stands.close':(w,d,me)=>{const L=w.lobbies[d.id],M=w.matches[d.id];if(!L||!M)throw new Error(_T('No such match.'));const rot=d.rot|0;const W=(M.stw||{})[rot];if(!W)throw new Error(_T('No stands window for that rotation.'));
+    if(L.host.id!==me){if(!mockLive82(L,M).includes(me))throw new Error(_T('Only the host closes the stands.'));if(mockNow()-W.at<ONLC.STANDS_MS+5000)throw new Error(_T('The stands are still choosing.'))}
     const inp=W.open?mockStands82Close(w,d.id,M,L,rot):null;return inp?{closed:true,seq:inp.seq}:{closed:false}},
   /* a ticket holder speared: refunded once a strict majority of the live human fighters report it (a lone human is believed) */
-  'match.speared':(w,d,me)=>{const L=w.lobbies[d.id],M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');if(L.status!=='live')throw new Error('The match is not live.');
-    const live=mockLive82(L,M);if(!live.includes(me))throw new Error('Only the fighters report a spearing.');const k=(d.seat|0)-L.seats;const t=(L.stands||[])[k];if(!t)throw new Error('No such ticket holder.');
+  'match.speared':(w,d,me)=>{const L=w.lobbies[d.id],M=w.matches[d.id];if(!L||!M)throw new Error(_T('No such match.'));if(L.status!=='live')throw new Error(_T('The match is not live.'));
+    const live=mockLive82(L,M);if(!live.includes(me))throw new Error(_T('Only the fighters report a spearing.'));const k=(d.seat|0)-L.seats;const t=(L.stands||[])[k];if(!t)throw new Error(_T('No such ticket holder.'));
     M.spr=M.spr||{};const R=M.spr[k]=M.spr[k]||{by:{},done:0};R.by[me]=1;if(R.done)return {refunded:true,amt:0};
     if(Object.keys(R.by).filter(a=>live.includes(a)).length*2<=live.length)return {refunded:false};
     R.done=1;const amt=t.paid|0;if(amt>0){const c=onlMockChar(w,t.id);if(c)c.wallet+=amt;t.refunded=amt;t.paid=0;L.pot=Math.max(0,(L.pot|0)-amt)}
@@ -182,8 +182,8 @@ Object.assign(MOCK_ROUTES,{
 
 /* =========================== SCULPTED ONLINE TOKENS =========================== */
 const SC82_MAX=16,SC82_SH=SHAPES.map(s=>s[0]);
-const SC82_OPT={body:[['tunic','Tunic'],['bare','Bare-chested'],['robe','Robe'],['rags','Rags']],helm:[['none','Bare head'],['hood','Hood'],['laurel','Laurel wreath'],['crown','Crown']],
-  hair:T_HAIRS,beard:T_BEARD,neck:T_NECK,face:T_FACE,arms:[['','Bare arms'],['bracers','Padded lower arms']],legs:[['','Bare legs'],['wraps','Padded lower legs']]};
+const SC82_OPT={body:[['tunic',_T('Tunic')],['bare','Bare-chested'],['robe',_T('Robe')],['rags',_T('Rags')]],helm:[['none',_T('Bare head')],['hood',_T('Hood')],['laurel',_T('Laurel wreath')],['crown',_T('Crown')]],
+  hair:T_HAIRS,beard:T_BEARD,neck:T_NECK,face:T_FACE,arms:[['',_T('Bare arms')],['bracers',_T('Padded lower arms')]],legs:[['',_T('Bare legs')],['wraps',_T('Padded lower legs')]]};
 const SC82_COL=['c1','c2','hairC','skin'];
 const SC82_KEYS=[...Object.keys(SC82_OPT),...SC82_COL,'cape'];
 for(const k of ['sc',...SC82_KEYS,...Array.from({length:SC82_MAX},(_,i)=>'l'+i)])if(!ONL_TOKKEYS.includes(k))ONL_TOKKEYS.push(k);
@@ -225,19 +225,19 @@ function sc82SectionHTML(noHead){const C=SC82.cur;if(!C)return '';const sp=C.spe
   const sel=(k,label)=>`<label>${label}<select class="tin" data-onlsc="${k}">${SC82_OPT[k].map(([v,l])=>`<option value="${esc2(v)}" ${String(sp[k]??'')===v?'selected':''}>${esc2(l)}</option>`).join('')}</select></label>`;
   const col=(k,label,def)=>`<label>${label}<input type="color" data-onlsc="${k}" value="${sc82Hex(sp[k])?sp[k]:def}"></label>`;
   return `${noHead?'<p class="rc-sub" style="margin:2px 0 6px">No weapons or armor on the token.</p>':'<div class="sect">Board token <span class="rc-sub">sculpted — every lanista sees it, whatever their token style · no weapons or armor</span></div>'}
-   <div class="onl-sc82"><div class="onl-sc82prev" id="onlScPrev" data-scbprev="onl" title="Drag a shape to move it">${figureHTML(sp,190,null,{selLayer:scbSelGet('onl')})}</div>
-    <div class="formgrid onl-g2">${sel('body','Body')}${sel('helm','Headgear')}${sel('hair','Hair')}${sel('beard','Beard')}${sel('neck','Neck')}${sel('face','Face')}${sel('arms','Arms')}${sel('legs','Legs')}
-     ${col('c1','Main colour','#a3281f')}${col('c2','Trim colour','#d6ab4c')}${col('hairC','Hair colour','#3a2616')}${col('skin','Skin','#e0ac7e')}
-     <label class="chk" style="align-self:end"><input type="checkbox" data-onlsc="cape" ${sp.cape?'checked':''}> Cape</label>
-     <div class="mbtns" style="grid-column:1/-1;margin:0"><button type="button" class="btn tksm" data-onl82="tokroll">🎲 Random token</button><button type="button" class="btn tksm" data-onl82="tokclass">↺ From the class</button></div></div></div>
-   <details class="onl-sc82b" ${SC82.open?'open':''}><summary>✏️ Sculpt shapes <span class="rc-sub">${(sp.baked||[]).length+(sp.layers||[]).length}/${SC82_MAX}</span></summary>${scbBenchHTML('onl',{inGrid:false})}</details>`}
+   <div class="onl-sc82"><div class="onl-sc82prev" id="onlScPrev" data-scbprev="onl" title="${_T`Drag a shape to move it`}">${figureHTML(sp,190,null,{selLayer:scbSelGet('onl')})}</div>
+    <div class="formgrid onl-g2">${sel('body',_T('Body'))}${sel('helm',_T('Headgear'))}${sel('hair',_T('Hair'))}${sel('beard',_T('Beard'))}${sel('neck',_T('Neck'))}${sel('face',_T('Face'))}${sel('arms',_T('Arms'))}${sel('legs',_T('Legs'))}
+     ${col('c1',_T('Main colour'),'#a3281f')}${col('c2',_T('Trim colour'),'#d6ab4c')}${col('hairC',_T('Hair colour'),'#3a2616')}${col('skin',_T('Skin'),'#e0ac7e')}
+     <label class="chk" style="align-self:end"><input type="checkbox" data-onlsc="cape" ${sp.cape?'checked':''}> ${_T`Cape`}</label>
+     <div class="mbtns" style="grid-column:1/-1;margin:0"><button type="button" class="btn tksm" data-onl82="tokroll">${_T`🎲 Random token`}</button><button type="button" class="btn tksm" data-onl82="tokclass">${_T`↺ From the class`}</button></div></div></div>
+   <details class="onl-sc82b" ${SC82.open?'open':''}><summary>${_T`✏️ Sculpt shapes`} <span class="rc-sub">${(sp.baked||[]).length+(sp.layers||[]).length}/${SC82_MAX}</span></summary>${scbBenchHTML('onl',{inGrid:false})}</details>`}
 function sc82Rand(cls){const r=a=>a[Math.floor(Math.random()*a.length)];const pal=['#a3281f','#3f8f3a','#3a5fb0','#c9a03a','#6a3a8a','#b04a3a','#2f7f7a','#8a9098','#d4b13c','#5a3a22'];
   return {body:r(SC82_OPT.body)[0],helm:r(SC82_OPT.helm)[0],hair:r(SC82_OPT.hair)[0],beard:r(SC82_OPT.beard)[0],neck:Math.random()<.4?r(SC82_OPT.neck)[0]:'',face:Math.random()<.3?r(SC82_OPT.face)[0]:'',
     arms:Math.random()<.35?'bracers':'',legs:Math.random()<.35?'wraps':'',c1:r(pal),c2:r(['#d6ab4c','#e8dcc0','#c9a458','#8a5a20','#e6b93a']),hairC:r(['#3a2616','#1a120c','#6a4424','#a86a2a','#d8c08a','#8a8a8a']),
     skin:r(typeof TOKEN_SKINS!=='undefined'?TOKEN_SKINS:['#e0ac7e']),cape:Math.random()<.3}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-scb][data-k="onl"],#onl [data-onl82]');if(!b)return;
   if(b.dataset.scb!=null){e.stopPropagation();SC82.open=1;const before=JSON.stringify([SC82.cur&&SC82.cur.spec.baked,SC82.cur&&SC82.cur.spec.layers]);
-    scbClick(b,()=>{if(SC82.cur){const L=SC82.cur.spec;if((L.baked||[]).length+(L.layers||[]).length>SC82_MAX){L.layers.splice(SC82_MAX-(L.baked||[]).length);if(typeof mToast==='function')mToast(`Up to ${SC82_MAX} shapes on an online token.`)}}
+    scbClick(b,()=>{if(SC82.cur){const L=SC82.cur.spec;if((L.baked||[]).length+(L.layers||[]).length>SC82_MAX){L.layers.splice(SC82_MAX-(L.baked||[]).length);if(typeof mToast==='function')mToast(_T`Up to ${SC82_MAX} shapes on an online token.`)}}
       sc82Sync(JSON.stringify([SC82.cur&&SC82.cur.spec.baked,SC82.cur&&SC82.cur.spec.layers])===before);onlRedraw()});return}
   const a=b.dataset.onl82;const C=SC82.cur;
   if(a==='tokroll'&&C){Object.assign(C.spec,sc82Rand(C.cls));sc82Sync();onlRedraw();return}
@@ -274,8 +274,8 @@ const sc82Txt=v=>String(v||'').replace(/[<>"'`\\]/g,'').slice(0,40);
     sc82Ensure('g:'+D.id,()=>ONL.ged&&ONL.ged.id===D.id?ONL.ged.look:null,D.cls);
     const a=h.indexOf('<div class="sect">Board token</div>'),b=h.indexOf('<div class="sect">Gear to bring');if(a>=0&&b>a)h=h.slice(0,a)+sc82SectionHTML()+h.slice(b);
     const p=D.look.portrait||{};const P=(path,label,opts,val)=>`<label>${label}${onlSel(path,opts,val,'data-onlgp')}</label>`;
-    const more=P('portrait.neck','Neck',NECKS,p.neck||'')+P('portrait.face','Face piece',FACES,p.face||'')+P('portrait.bg','Backdrop',BGS.map((v,i)=>[v,BG_NAMES[i]||'Backdrop '+(i+1)]),p.bg||'')
-      +`<label>Epithet<input class="tin" data-onlgp="portrait.nick" maxlength="40" value="${esc2(p.nick||'')}" placeholder="e.g. the Iron Wall"></label>`+P('portrait.home','Birthplace',[['','—'],...HOME_CITIES().map(x=>[x,x])],p.home||'');
+    const more=P('portrait.neck',_T('Neck'),NECKS,p.neck||'')+P('portrait.face',_T('Face piece'),FACES,p.face||'')+P('portrait.bg',_T('Backdrop'),BGS.map((v,i)=>[v,BG_NAMES[i]||_T('Backdrop ')+(i+1)]),p.bg||'')
+      +`<label>${_T`Epithet`}<input class="tin" data-onlgp="portrait.nick" maxlength="40" value="${esc2(p.nick||'')}" placeholder="${_T`e.g. the Iron Wall`}"></label>`+P('portrait.home',_T('Birthplace'),[['','—'],...HOME_CITIES().map(x=>[x,x])],p.home||'');
     const k=h.indexOf('<label>Colour<input type="color" data-onlgp="color"');if(k>=0)h=h.slice(0,k)+more+h.slice(k);
     h=h.replace('<div id="onlGTok" title="The board token">','<div id="onlGTok" title="The board token (sculpted)">')}catch(e){console.error(e)}return h}}
 
@@ -287,14 +287,14 @@ function sc82Creating(){const fem=Math.random()<.35;const pt=typeof randomPortra
   return {name:sc82Safe(()=>typeof genName==='function'?genName({female:fem}):''),cls:sc82Cls(),look:{portrait:pt}}}
 {const base=onlCreatorHTML;onlCreatorHTML=function(){if(!ONL.creating)ONL.creating=sc82Creating();const d=ONL.creating;d.look=d.look||{};if(!d.look.portrait)d.look.portrait=typeof randomPortrait==='function'?randomPortrait():{};
   sc82Ensure('c',()=>ONL.creating&&ONL.creating.look,d.cls);let h=base.apply(this,arguments);try{const C=SC82.cur;const p=d.look.portrait;
-    const i=h.indexOf('<div class="onl-cname">');if(i>=0)h=h.slice(0,i)+`<div class="onl-ctok82" id="onlCTok" title="The board token">${figureHTML(C.spec,120)}</div>`+h.slice(i);
-    const j=h.indexOf('<div class="rc-sub">',h.indexOf('<div class="onl-cname">'));if(j>=0)h=h.slice(0,j)+`<div class="onl-cnick82">${p.nick?`“${esc2(p.nick)}”`:''}${p.home?` · from ${esc2(p.home)}`:''}</div>`+h.slice(j);
-    const det=`<div class="formgrid onl-g2 onl-cdet82"><label>Epithet<span style="display:flex;gap:4px"><input class="tin" data-onl82c="nick" maxlength="40" value="${esc2(p.nick||'')}"><button type="button" class="btn" data-onl82="nick" style="padding:4px 8px" aria-label="Roll an epithet">🎲</button></span></label>
-      <label>Birthplace<select class="tin" data-onl82c="home">${[['','—'],...HOME_CITIES().map(x=>[x,x])].map(([v,l])=>`<option value="${esc2(v)}" ${p.home===v?'selected':''}>${esc2(l)}</option>`).join('')}</select></label></div>
-      <div class="mbtns" style="margin:2px 0"><button type="button" class="btn" data-onl82="roll" title="Name, class, epithet, birthplace, look and token">📜 Roll everything</button></div>`;
+    const i=h.indexOf('<div class="onl-cname">');if(i>=0)h=h.slice(0,i)+`<div class="onl-ctok82" id="onlCTok" title="${_T`The board token`}">${figureHTML(C.spec,120)}</div>`+h.slice(i);
+    const j=h.indexOf('<div class="rc-sub">',h.indexOf('<div class="onl-cname">'));if(j>=0)h=h.slice(0,j)+`<div class="onl-cnick82">${p.nick?`“${esc2(p.nick)}”`:''}${p.home?_T` · from ${esc2(p.home)}`:''}</div>`+h.slice(j);
+    const det=`<div class="formgrid onl-g2 onl-cdet82"><label>${_T`Epithet`}<span style="display:flex;gap:4px"><input class="tin" data-onl82c="nick" maxlength="40" value="${esc2(p.nick||'')}"><button type="button" class="btn" data-onl82="nick" style="padding:4px 8px" aria-label="${_T`Roll an epithet`}">🎲</button></span></label>
+      <label>${_T`Birthplace`}<select class="tin" data-onl82c="home">${[['','—'],...HOME_CITIES().map(x=>[x,x])].map(([v,l])=>`<option value="${esc2(v)}" ${p.home===v?'selected':''}>${esc2(l)}</option>`).join('')}</select></label></div>
+      <div class="mbtns" style="margin:2px 0"><button type="button" class="btn" data-onl82="roll" title="${_T`Name, class, epithet, birthplace, look and token`}">${_T`📜 Roll everything`}</button></div>`;
     const k=h.indexOf('<div class="sect">Class</div>');if(k>=0)h=h.slice(0,k)+det+h.slice(k);
-    const look=`<details class="onl-clook82"><summary class="sect">Look <span class="rc-sub">face, accessories, backdrop</span></summary>${portraitControlsHTML(p,'data-onl82p').replace('>Lanista (woman)<','>Gladiatrix<').replace('>Lanista<','>Gladiator<')}</details>
-      <details class="onl-ctokd82" ${SC82.copen?'open':''}><summary class="sect">Board token <span class="rc-sub">sculpted · everyone sees it, whatever their token style</span></summary>${sc82SectionHTML(1)}</details>`;
+    const look=`<details class="onl-clook82"><summary class="sect">${_T`Look`} <span class="rc-sub">${_T`face, accessories, backdrop`}</span></summary>${portraitControlsHTML(p,'data-onl82p').replace('>Lanista (woman)<','>Gladiatrix<').replace('>Lanista<','>Gladiator<')}</details>
+      <details class="onl-ctokd82" ${SC82.copen?'open':''}><summary class="sect">${_T`Board token`} <span class="rc-sub">${_T`sculpted · everyone sees it, whatever their token style`}</span></summary>${sc82SectionHTML(1)}</details>`;
     const m=h.lastIndexOf('<div class="mbtns"><button type="button" class="btn primary" data-onl="create">');if(m>=0)h=h.slice(0,m)+look+h.slice(m)}catch(e){console.error(e)}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-onl82="roll"],#onl [data-onl82="nick"],#onl .onl-ctokd82>summary');if(!b)return;
   if(b.tagName==='SUMMARY'){SC82.copen=!b.parentElement.open;return}const d=ONL.creating;if(!d)return;
@@ -302,7 +302,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   const n=sc82Creating();d.name=n.name;d.cls=n.cls;d.look={portrait:n.look.portrait};if(SC82.cur&&SC82.cur.key==='c'){SC82.cur.cls=d.cls;SC82.cur.touched=false;SC82.cur.spec=sc82Spec(d.cls,{portrait:n.look.portrait});Object.assign(SC82.cur.spec,sc82Rand(d.cls))}
   onlRedraw()},true);
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.closest||!t.closest('#onl'))return;const d=ONL.creating;if(!d)return;
-  if(t.dataset.onl82c){d.look.portrait[t.dataset.onl82c]=sc82Txt(t.value);const n=document.querySelector('.onl-cnick82');if(n){const p=d.look.portrait;n.textContent=(p.nick?`“${p.nick}”`:'')+(p.home?` · from ${p.home}`:'')}return}
+  if(t.dataset.onl82c){d.look.portrait[t.dataset.onl82c]=sc82Txt(t.value);const n=document.querySelector('.onl-cnick82');if(n){const p=d.look.portrait;n.textContent=(p.nick?`“${p.nick}”`:'')+(p.home?_T` · from ${p.home}`:'')}return}
   if(t.dataset.onl82p){const f=t.dataset.onl82p;let v=t.value;if(f==='fem'||f==='smile')v=v==='1';const P=d.look.portrait;if(f==='bs')P.beard=false;if(f==='hs')P.long=false;if(f==='mark'){P.scar=false;P.paint=false}P[f]=v;
     const st=document.querySelector('.onl-cstage .portrait');if(st&&typeof portraitHTML==='function')st.outerHTML=portraitHTML({name:d.name,portrait:P,color:(CLASSES[d.cls]||{}).color},'lg')}},true);
 document.addEventListener('input',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.onl82c==='nick'&&ONL.creating){ONL.creating.look.portrait.nick=sc82Txt(t.value)}},true);

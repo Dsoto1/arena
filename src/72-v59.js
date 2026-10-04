@@ -9,7 +9,7 @@
 const HANDOFF_SEL='[data-summon],[data-summoncpu],[data-road="go"]';
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest(HANDOFF_SEL);if(!b||HEADLESS)return;
   const held=MM.fromMenu;MM.fromMenu=false;
-  const t=transitEl();transitLabel('Loading Play now…');t.classList.add('on');clearTimeout(t._t);
+  const t=transitEl();transitLabel(_T('Loading Play now…'));t.classList.add('on');clearTimeout(t._t);
   const t0=Date.now();const wait=()=>{const up=window.SETUP_OPEN&&!$('#modal').hidden&&CUR_MODAL;
     if(up||Date.now()-t0>15000){if(held){MM.fromMenu=true;MM.launchedAt=Date.now()}setTimeout(transitUncover,120);
       if(!up&&held&&$('#modal').hidden&&!CUR_MODAL&&!(S&&!S.over&&S.phase!=='setup'))menuShow();return}
@@ -17,7 +17,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 /* ---------- SOUND: no floating "held back" chip; a mute button beside Settings on the main menu ----------
    The browser still needs one tap before it plays sound; any tap (including this button) unlocks it (68-fix55). */
 audChip=function(){const c=document.getElementById('audChip');if(c)c.remove()};audChip();
-function mmMuteUI(){const b=document.getElementById('mmMute');if(!b)return;const on=audSet().on;b.textContent=on?'🔊':'🔇';b.classList.toggle('muted',!on);b.title=on?'Mute all sound':'Sound is off — click to turn it on';b.setAttribute('aria-label',b.title)}
+function mmMuteUI(){const b=document.getElementById('mmMute');if(!b)return;const on=audSet().on;b.textContent=on?'🔊':'🔇';b.classList.toggle('muted',!on);b.title=on?_T('Mute all sound'):_T('Sound is off — click to turn it on');b.setAttribute('aria-label',b.title)}
 function mmMuteInstall(){const st=document.querySelector('#mainMenu .mmbtns [data-mm="settings"]');if(!st||document.getElementById('mmMute'))return;
   const row=document.createElement('div');row.className='mmrow';st.replaceWith(row);row.appendChild(st);
   const m=document.createElement('button');m.type='button';m.className='btn';m.id='mmMute';row.appendChild(m);mmMuteUI()}
@@ -51,12 +51,12 @@ function turnSweep(){if(HEADLESS)return;for(const id of ['cardShow','bubbles']){
 function ludusRank(list,cut=2){const L=[...list].sort((a,b)=>b.cf-a.cf||(b.coin||0)-(a.coin||0));if(L.length<=cut)return L;
   const edge=L[cut-1],same=p=>p.cf===edge.cf&&(p.coin||0)===(edge.coin||0);const tied=L.filter(same);if(tied.length<2||!tied.some(p=>L.indexOf(p)>=cut))return L;
   const rollOff=pool=>{if(pool.length<2)return pool;const rs=pool.map(p=>({p,r:1+Math.floor(rand()*12)}));
-    log(`🎲 Ludus tie (${edge.cf} CF, ${edge.coin||0} coin) — d12: ${rs.map(x=>`${nm(x.p)} ${x.r}`).join(', ')}.`);
+    log(_T`🎲 Ludus tie (${edge.cf} CF, ${edge.coin||0} coin) — d12: ${rs.map(x=>`${nm(x.p)} ${x.r}`).join(', ')}.`);
     const vals=[...new Set(rs.map(x=>x.r))].sort((a,b)=>b-a);return vals.flatMap(v=>rollOff(rs.filter(x=>x.r===v).map(x=>x.p)))};
   const i0=L.findIndex(same);return [...L.slice(0,i0),...rollOff(tied),...L.slice(i0+tied.length)]}
 /* ---------- "Sim to end" lives in the Speed tray, right of Fast (it is the last pace, after all); the same #btnSimEnd element
    moves there (always shown beside the active pace when it applies), so its click, its show/hide in render() and the Manager lesson's pointer all still work ---------- */
 {const se=document.getElementById('btnSimEnd'),seg=document.querySelector('#speedTray .speedseg');
-  if(se&&seg){se.classList.remove('btn');se.textContent='⏭ To the end';se.title='Resolve the rest of the event at once — straight to the results';seg.appendChild(se);
+  if(se&&seg){se.classList.remove('btn');se.textContent=_T('⏭ To the end');se.title=_T('Resolve the rest of the event at once — straight to the results');seg.appendChild(se);
     se.addEventListener('click',()=>setTimeout(()=>seg.classList.remove('open'),0))}
   const st=document.createElement('style');st.textContent=`#speedTray #btnSimEnd[hidden]{display:none!important}.speedtray .seg:not(.open) #btnSimEnd:not([hidden]){display:inline-block}#speedTray #btnSimEnd{border-left:1px solid var(--line2)}`;document.head.appendChild(st)}

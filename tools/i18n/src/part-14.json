@@ -1,0 +1,1342 @@
+[
+ {
+  "k": "Play <b>Herculean Vigor</b> from your hand: +2 damage if your next attack lands. Declare it <i>before</i> you attack.",
+  "w": "29-guide.js:215"
+ },
+ {
+  "k": "Now <b>🎯 Focus roll</b>: it spends your movement, but you choose where the blow lands from three rolled locations.",
+  "w": "29-guide.js:216"
+ },
+ {
+  "k": "<b>Attack {0}</b> — then pick the <b>💡 gold</b> location: the quickest way to put them down.",
+  "w": "29-guide.js:217"
+ },
+ {
+  "k": "your rival",
+  "w": "29-guide.js:217"
+ },
+ {
+  "k": "Fight on until one of you falls: <b>move</b>, <b>Focus</b>, <b>attack</b> — and <b>End turn</b> when you are spent. The gold glow shows the way.",
+  "w": "29-guide.js:218"
+ },
+ {
+  "k": "{0} runs the wolf through",
+  "w": "29-guide.js:236"
+ },
+ {
+  "k": "{0} slays {1} — one beast down.",
+  "w": "29-guide.js:236"
+ },
+ {
+  "k": "{0} slithers out of its hole by the pillar.",
+  "w": "29-guide.js:238"
+ },
+ {
+  "k": "The handlers drive {0} and {1} into the centre of the shrinking sand. {2} arrives winded from the wolf.",
+  "w": "29-guide.js:244"
+ },
+ {
+  "k": "Learn to play · the bout is over",
+  "w": "29-guide.js:258"
+ },
+ {
+  "k": "{0} Stay for the <b>clean-up show</b>, or head back to the menu.",
+  "w": "29-guide.js:258"
+ },
+ {
+  "k": "<b>Victory!</b> You are a graduate of the ludus — the crowd will remember the name.",
+  "w": "29-guide.js:258"
+ },
+ {
+  "k": "<b>You fell</b> — but every champion did, once. The sand teaches.",
+  "w": "29-guide.js:258"
+ },
+ {
+  "k": "The crew has already swept the sand",
+  "w": "29-guide.js:259"
+ },
+ {
+  "k": "The screen · {0} of {1}",
+  "w": "29-guide.js:265"
+ },
+ {
+  "k": "The bout · {0} of {1}",
+  "w": "29-guide.js:265"
+ },
+ {
+  "k": "Learn to play · {0}",
+  "w": "29-guide.js:270"
+ },
+ {
+  "k": "Next ▶",
+  "w": "29-guide.js:270"
+ },
+ {
+  "k": "✖ Exit tutorial",
+  "w": "29-guide.js:270"
+ },
+ {
+  "k": "A small 🎓 button stays in the corner to bring him back",
+  "w": "29-guide.js:272"
+ },
+ {
+  "k": "Hide the coach",
+  "w": "29-guide.js:272"
+ },
+ {
+  "k": "Leave the lesson?",
+  "w": "29-guide.js:289"
+ },
+ {
+  "k": "Leave the lesson",
+  "w": "29-guide.js:289"
+ },
+ {
+  "k": "Stay",
+  "w": "29-guide.js:289"
+ },
+ {
+  "k": "🎓 Finish the lesson first — or ✖ Exit tutorial.",
+  "w": "29-guide.js:331"
+ },
+ {
+  "k": "general admission",
+  "w": "30-spectate.js:20"
+ },
+ {
+  "k": "the Superbus",
+  "w": "30-spectate.js:20"
+ },
+ {
+  "k": "a special",
+  "w": "30-spectate.js:20"
+ },
+ {
+  "k": "a Match Week bout",
+  "w": "30-spectate.js:20"
+ },
+ {
+  "k": "🎟 A ticket · {0} coin",
+  "w": "30-spectate.js:29"
+ },
+ {
+  "k": "A seat for <b>{0}</b> costs <b>{1} coin</b>, but <b>{2}</b>'s treasury holds {3}.",
+  "w": "30-spectate.js:29"
+ },
+ {
+  "k": "🎟 Choose your seat · {0} coin",
+  "w": "30-spectate.js:30"
+ },
+ {
+  "k": "🎟 Choose your seat",
+  "w": "30-spectate.js:30"
+ },
+ {
+  "k": "A seat for <b>{0}</b> costs <b>{1} coin</b> from <b>{2}</b>'s treasury ({3} coin). Click a stand.",
+  "w": "30-spectate.js:30"
+ },
+ {
+  "k": "Pick any stand — the seat is yours. Click a stand.",
+  "w": "30-spectate.js:30"
+ },
+ {
+  "k": "⚖ Helping your own fighter from the stands costs your house 1 fame each time (at most 3 a bout).",
+  "w": "30-spectate.js:30"
+ },
+ {
+  "k": "Bought a {0}-coin ticket for {1} and sat in {2}.",
+  "w": "30-spectate.js:32"
+ },
+ {
+  "k": "🎟 {0} a seat in <b>{1}</b>. From the next rotation, the stands are yours to use.",
+  "w": "30-spectate.js:36"
+ },
+ {
+  "k": "You buy a ticket ({0} coin) and take",
+  "w": "30-spectate.js:36"
+ },
+ {
+  "k": "You take",
+  "w": "30-spectate.js:36"
+ },
+ {
+  "k": "<b>You</b> take a seat in {0}.",
+  "w": "30-spectate.js:37"
+ },
+ {
+  "k": "<i>The editors have stopped counting.</i>",
+  "w": "30-spectate.js:47"
+ },
+ {
+  "k": "👁 Heads turn in the editor's box: the lanista of <b>{0}</b> is helping their own from the stands. <b>−1 fame</b>{1}.",
+  "w": "30-spectate.js:49"
+ },
+ {
+  "k": "(that is the most it can cost this bout)",
+  "w": "30-spectate.js:49"
+ },
+ {
+  "k": "Seen helping your own fighter from the stands: −1 fame.",
+  "w": "30-spectate.js:50"
+ },
+ {
+  "k": "🎟 Buy a ticket <small>{0} coin</small>",
+  "w": "30-spectate.js:53"
+ },
+ {
+  "k": "🎟 Take a seat",
+  "w": "30-spectate.js:53"
+ },
+ {
+  "k": "Take a seat in the stands as a spectator — paid from the active wallet",
+  "w": "30-spectate.js:53"
+ },
+ {
+  "k": "Take a seat in the stands and interact with the event as a spectator",
+  "w": "30-spectate.js:53"
+ },
+ {
+  "k": "📣 Who do you cheer for?",
+  "w": "30-spectate.js:58"
+ },
+ {
+  "k": "{0}{1} · CF {2}",
+  "w": "30-spectate.js:59"
+ },
+ {
+  "k": "No one — I just love the games",
+  "w": "30-spectate.js:59"
+ },
+ {
+  "k": "📣 You cheer for <b>{0}</b> from {1}.",
+  "w": "30-spectate.js:60"
+ },
+ {
+  "k": "📣 You cheer for no one in particular.",
+  "w": "30-spectate.js:60"
+ },
+ {
+  "k": "The arena from above",
+  "w": "30-spectate.js:71"
+ },
+ {
+  "k": "{0} · Q{1}{2} · {3}K seated",
+  "w": "30-spectate.js:73"
+ },
+ {
+  "k": "’s section",
+  "w": "30-spectate.js:73"
+ },
+ {
+  "k": "<span></span><em>{0}<small>Q{1}{2} · {3}K seated</small></em>",
+  "w": "30-spectate.js:73"
+ },
+ {
+  "k": "Your stand’s quadrant decides whom you can reach. {0}",
+  "w": "30-spectate.js:74"
+ },
+ {
+  "k": "✏️ Sculpt",
+  "w": "31-sculpt.js:48"
+ },
+ {
+  "k": "add a shape, <b>drag it on the preview</b>, resize, rotate — then 🔨 commit to bake it in",
+  "w": "31-sculpt.js:48"
+ },
+ {
+  "k": "Layers",
+  "w": "31-sculpt.js:50"
+ },
+ {
+  "k": "top of the list is drawn on top · click to select · 👁 hide · 🔒 lock",
+  "w": "31-sculpt.js:50"
+ },
+ {
+  "k": "{0} this layer",
+  "w": "31-sculpt.js:50"
+ },
+ {
+  "k": "Show",
+  "w": "31-sculpt.js:50"
+ },
+ {
+  "k": "Hide",
+  "w": "31-sculpt.js:50"
+ },
+ {
+  "k": "{0} this layer — a locked layer cannot be dragged",
+  "w": "31-sculpt.js:50"
+ },
+ {
+  "k": "Outline",
+  "w": "31-sculpt.js:51"
+ },
+ {
+  "k": "Opacity",
+  "w": "31-sculpt.js:53"
+ },
+ {
+  "k": "Bring forward",
+  "w": "31-sculpt.js:54"
+ },
+ {
+  "k": "Send back",
+  "w": "31-sculpt.js:54"
+ },
+ {
+  "k": "Duplicate",
+  "w": "31-sculpt.js:54"
+ },
+ {
+  "k": "A mirrored copy on the other side of the centre line",
+  "w": "31-sculpt.js:54"
+ },
+ {
+  "k": "⇋ Mirror copy",
+  "w": "31-sculpt.js:54"
+ },
+ {
+  "k": "Flip this shape left–right in place",
+  "w": "31-sculpt.js:54"
+ },
+ {
+  "k": "↔ Flip",
+  "w": "31-sculpt.js:54"
+ },
+ {
+  "k": "<b>✂ Cut</b>",
+  "w": "31-sculpt.js:55"
+ },
+ {
+  "k": "this shape becomes an eraser — it carves its outline out of everything drawn beneath it (move it up or down the list to choose what it cuts)",
+  "w": "31-sculpt.js:55"
+ },
+ {
+  "k": "Undo the last sculpt change",
+  "w": "31-sculpt.js:56"
+ },
+ {
+  "k": "⟲ Undo",
+  "w": "31-sculpt.js:56"
+ },
+ {
+  "k": "Redo",
+  "w": "31-sculpt.js:56"
+ },
+ {
+  "k": "⟳ Redo",
+  "w": "31-sculpt.js:56"
+ },
+ {
+  "k": "Remove every live (unbaked) shape",
+  "w": "31-sculpt.js:56"
+ },
+ {
+  "k": "🧹 Clear shapes",
+  "w": "31-sculpt.js:56"
+ },
+ {
+  "k": "🔨 Commit shapes<small>bake them in</small>",
+  "w": "31-sculpt.js:57"
+ },
+ {
+  "k": "Unbake<small>{0} baked</small>",
+  "w": "31-sculpt.js:57"
+ },
+ {
+  "k": "🔨 Shapes baked in — save to keep them",
+  "w": "31-sculpt.js:73"
+ },
+ {
+  "k": "🏛 Ludus",
+  "w": "32-rail.js:9"
+ },
+ {
+  "k": "⚔️ Arena",
+  "w": "32-rail.js:9"
+ },
+ {
+  "k": "🌍 World",
+  "w": "32-rail.js:9"
+ },
+ {
+  "k": "📋 Overview",
+  "w": "32-rail.js:10"
+ },
+ {
+  "k": "🛡 Fighters",
+  "w": "32-rail.js:10"
+ },
+ {
+  "k": "⚔ Gear",
+  "w": "32-rail.js:10"
+ },
+ {
+  "k": "🏟 Arena",
+  "w": "32-rail.js:10"
+ },
+ {
+  "k": "🎲 Tools",
+  "w": "32-rail.js:10"
+ },
+ {
+  "k": "More",
+  "w": "32-rail.js:15"
+ },
+ {
+  "k": "Open the site",
+  "w": "32-rail.js:21"
+ },
+ {
+  "k": "Copy the address",
+  "w": "32-rail.js:21"
+ },
+ {
+  "k": "Copied:",
+  "w": "32-rail.js:21"
+ },
+ {
+  "k": "▶ Resumed",
+  "w": "32-rail.js:28"
+ },
+ {
+  "k": "⏸ Paused — Space to resume",
+  "w": "32-rail.js:28"
+ },
+ {
+  "k": "💡 Hints on — H to hide them",
+  "w": "32-rail.js:48"
+ },
+ {
+  "k": "💡 Hints off — H to bring them back",
+  "w": "32-rail.js:48"
+ },
+ {
+  "k": "Tickets sold for this bout, of the arena's {0} seats. Demand follows the billing, the fighters' fame, the city and the week's news; sales climb as game day nears. The arrow is the change since the last sale was counted.",
+  "w": "33-tickets.js:29"
+ },
+ {
+  "k": "Tickets sold",
+  "w": "33-tickets.js:29"
+ },
+ {
+  "k": "Play this gladiator yourself",
+  "w": "33-tickets.js:38"
+ },
+ {
+  "k": "Let the CPU play this gladiator",
+  "w": "33-tickets.js:38"
+ },
+ {
+  "k": "🎮 Take control",
+  "w": "33-tickets.js:38"
+ },
+ {
+  "k": "🤖 Hand to CPU",
+  "w": "33-tickets.js:38"
+ },
+ {
+  "k": "🎮 You take the reins of {0}{1}.",
+  "w": "33-tickets.js:40"
+ },
+ {
+  "k": "— from their next turn",
+  "w": "33-tickets.js:40"
+ },
+ {
+  "k": "🤖 {0} is handed to the CPU.",
+  "w": "33-tickets.js:41"
+ },
+ {
+  "k": "Give {0} 2 coin. If that player is you, everyone gives you 2 coin.",
+  "w": "33-tickets.js:76"
+ },
+ {
+  "k": "Give this gladiator 2 coin.",
+  "w": "33-tickets.js:83"
+ },
+ {
+  "k": "If it is you, everyone gives you 2.",
+  "w": "33-tickets.js:83"
+ },
+ {
+  "k": "“To bear this worthily is good fortune”",
+  "w": "33-tickets.js:84"
+ },
+ {
+  "k": "Faith, the recruiting wall and the smuggler’s theme",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Manager: faith — Christians among your fighters, a bond between believers, governors’ edicts, the beasts or the flames, and martyrs remembered",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Recruiting as tablets on a wall: one-line next steps with their topic, the advisor’s ★, a one-line list and the lanista’s hours",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Match Week: a bout tracker on the banner (rudes, iron and golden gladii for the fought), the walks beside the road, road deals that enter your fighter",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Online: playlists beside the day’s biggest winner and loser, the map zoomed on you, a Party button, a day that turns at 8 PM New York — and Ave Arena, its own theme",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Clicking a free agent no longer pins him; no rail flicker from the card",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Wounds taken on the road wait for next week",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "The Forum starts fresh each day (late lines linger 30 minutes)",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "One word unlocks every theme",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Named armor, the auction and the painted walls",
+  "w": "34-notes.js:9"
+ },
+ {
+  "k": "Blood soaks into the sand and fades, dust settles on the fallen, rubble settles",
+  "w": "34-notes.js:9"
+ },
+ {
+  "k": "One tab per save, gentle backup reminders, the downloaded game points to Online on the site, and the page survives browser translation",
+  "w": "34-notes.js:9"
+ },
+ {
+  "k": "Main menu: Manager under Play Now, 💾 Saves before Settings",
+  "w": "34-notes.js:9"
+ },
+ {
+  "k": "Settings tidied: one text size, colour-blind themes, language row, light board for old phones, restore defaults, optional end-turn confirm",
+  "w": "34-notes.js:9"
+ },
+ {
+  "k": "Online landing fits without scrolling",
+  "w": "34-notes.js:9"
+ },
+ {
+  "k": "Roster depth chart as plaques on the barracks wall — no empty columns",
+  "w": "34-notes.js:9"
+ },
+ {
+  "k": "Wagers wear 💰 everywhere",
+  "w": "34-notes.js:9"
+ },
+ {
+  "k": "A named and a printed piece can’t share one spot",
+  "w": "34-notes.js:9"
+ },
+ {
+  "k": "Treasures, scars and the council",
+  "w": "34-notes.js:10"
+ },
+ {
+  "k": "Online: eight ranks, a house treasury, Armory offerings, broken gear and repairs, a killer’s loot, Flavius’s Gifts with named weapons, Ludi Infames, a start countdown, trophies, house profiles you can follow, and a Wagers tab",
+  "w": "34-notes.js:10"
+ },
+ {
+  "k": "Manager: a council of six advisors with faces — they sign their letters",
+  "w": "34-notes.js:10"
+ },
+ {
+  "k": "Arrows and bolts stick where they hit (they turn with the minis); a bolt through Tholo’s eye fells him",
+  "w": "34-notes.js:10"
+ },
+ {
+  "k": "The sand looks lived in: 3D spike caps, the Arena Chest as on its token, 3D pots, sand grain and old scars",
+  "w": "34-notes.js:10"
+ },
+ {
+  "k": "Padding stacks per point — upper and lower padding on one leg, greaves on top",
+  "w": "34-notes.js:10"
+ },
+ {
+  "k": "The carried chest sits in the inventory as its token",
+  "w": "34-notes.js:10"
+ },
+ {
+  "k": "Sharp weapon card backs for every level; Leather Tasset card turned the right way",
+  "w": "34-notes.js:10"
+ },
+ {
+  "k": "Main-menu show scales down on phones; letter buttons readable on the parchment",
+  "w": "34-notes.js:10"
+ },
+ {
+  "k": "Floor Spikes medallion",
+  "w": "34-notes.js:10"
+ },
+ {
+  "k": "Domus, Glory and the beasts’ own cards",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "Guests can watch without signing in; invites end with their room; free seats and Flavius’s guest pass for the poor",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "Every beast has its two-sided card — it turns over when the beast enters; make your own beasts unique, give them 1 or 3 states and a spawn card; Tholo + 3 beast slots per arena deck",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "Spear a spectator and Flavius scowls, refunds the seat and hands you a Mandate from Flavius",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "Phones and tablets: hold the menu’s version badge for words of power",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "Phones sideways: your move keeps the board clear — ⚔ glows and opens the actions, picking one shuts them",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "Flavius’s box is smaller on phones",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "Fewer spiders in the Blessings bag (2)",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "Open Arena Chest glimmers gold; the chest’s Level 4 card turns over landscape",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "The round’s rules sit only in the turn panel’s ⓘ",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "Pillar shadows sit under the base; floor spikes in iron and bronze; pieces turn to face what they attack",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "Sculpted tokens for online gladiators; a random class to start",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "Main menu: Play Now and Manager Mode side by side, lessons under Tutorials",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "Tholo’s card is pulled once he is on the sand; the Hero stands as tall as the rest; Tholo looks like his card",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "Fair drafts, falling pillars, sharper armor",
+  "w": "34-notes.js:12"
+ },
+ {
+  "k": "Drafts offer only what fits your gladiator, two to a row; the Juggernaut picks from the real arena deck",
+  "w": "34-notes.js:12"
+ },
+ {
+  "k": "A toppled pillar says where its offering fell: one tile back from another pillar, under a beast, straight to a gladiator, into the spikes",
+  "w": "34-notes.js:12"
+ },
+ {
+  "k": "Sharper armor art, the Thracian Helm for the Hero, Forged Chest Armor for the Veteranus; dropped gear shows the class mosaic",
+  "w": "34-notes.js:12"
+ },
+ {
+  "k": "Online: results are sent the moment the bout ends, invites die with their room, a new landing with the world behind your gladiator",
+  "w": "34-notes.js:12"
+ },
+ {
+  "k": "Belt I, Steel Helm, Leather Greaves, Centurian Helm and Ornate Chest back in the market",
+  "w": "34-notes.js:12"
+ },
+ {
+  "k": "The bar under the arena stays put",
+  "w": "34-notes.js:12"
+ },
+ {
+  "k": "Online CF shows the wheat",
+  "w": "34-notes.js:12"
+ },
+ {
+  "k": "Pair leg cards read as a V",
+  "w": "34-notes.js:12"
+ },
+ {
+  "k": "Stands in wood",
+  "w": "34-notes.js:12"
+ },
+ {
+  "k": "Online: rooms, quick calls and the world map",
+  "w": "34-notes.js:13"
+ },
+ {
+  "k": "The Praeco: Find me a fight, 📣 calls to free lanistas, invitations, mute and quiet",
+  "w": "34-notes.js:13"
+ },
+ {
+  "k": "⚔ Back to your match and 🚪 Abandon on the main menu while your gladiator is still on the sand; the abandon window shows what is at stake",
+  "w": "34-notes.js:13"
+ },
+ {
+  "k": "Today in the arena: the day’s biggest wins and its fallen",
+  "w": "34-notes.js:13"
+ },
+ {
+  "k": "Online uses the printed gear only and never writes your offline records; Ranked has no hints or win odds; the online arena never pauses",
+  "w": "34-notes.js:13"
+ },
+ {
+  "k": "A lanista out of step is outvoted by the majority instead of overwriting the others",
+  "w": "34-notes.js:13"
+ },
+ {
+  "k": "Hot seat no longer leaks into lessons, Manager bouts or the beast pen; no ghost Ludus records at the Gate of Life",
+  "w": "34-notes.js:13"
+ },
+ {
+  "k": "No empty arena flash when the page loads; the Summa Rudis seal beside Flavius is gone",
+  "w": "34-notes.js:13"
+ },
+ {
+  "k": "Online: your gladiators and the pre-match room",
+  "w": "34-notes.js:14"
+ },
+ {
+  "k": "A pre-match room with chat and the host’s rules; a match starts only with two or more lanistas",
+  "w": "34-notes.js:14"
+ },
+ {
+  "k": "Abandon is the only way out of an online match (in Ranked the gladiator dies by Damnatio); rejoin any time after a disconnect",
+  "w": "34-notes.js:14"
+ },
+ {
+  "k": "Sign in at login.flaviusrule.com",
+  "w": "34-notes.js:14"
+ },
+ {
+  "k": "The version badge shows what is new; press C on the main menu for words of power",
+  "w": "34-notes.js:14"
+ },
+ {
+  "k": "Online always opens on Play; a smaller figure on the stage",
+  "w": "34-notes.js:14"
+ },
+ {
+  "k": "The Multiplayer row holds two buttons",
+  "w": "34-notes.js:14"
+ },
+ {
+  "k": "A loading screen after Google sign-in instead of flashing screens",
+  "w": "34-notes.js:14"
+ },
+ {
+  "k": "Abandoned games and empty matches leave the lobby list",
+  "w": "34-notes.js:14"
+ },
+ {
+  "k": "Online: watch, the stands and parties",
+  "w": "34-notes.js:15"
+ },
+ {
+  "k": "Watch any live online match for free, move by move",
+  "w": "34-notes.js:15"
+ },
+ {
+  "k": "Parties: share a code, your leader picks the game and you sit down together",
+  "w": "34-notes.js:15"
+ },
+ {
+  "k": "Familia 2 v 2 online: your party fights on one team",
+  "w": "34-notes.js:15"
+ },
+ {
+  "k": "The Creator Studio, tidied",
+  "w": "34-notes.js:16"
+ },
+ {
+  "k": "Roster sets as a deck builder: your sets as cards, the open set as tiles you click in or out, printed pieces always in",
+  "w": "34-notes.js:16"
+ },
+ {
+  "k": "Every Studio tab shows how many you made; first-make tiles, name pins, grouped spectators, invitational steps",
+  "w": "34-notes.js:16"
+ },
+ {
+  "k": "Level 4 weapons of your own join the Arena Chest’s draw",
+  "w": "34-notes.js:16"
+ },
+ {
+  "k": "Deleting a creation always asks first",
+  "w": "34-notes.js:16"
+ },
+ {
+  "k": "A notice when a new version is out (finish your match, then reload); an older page never overwrites newer saves",
+  "w": "34-notes.js:16"
+ },
+ {
+  "k": "The beast pen",
+  "w": "34-notes.js:17"
+ },
+ {
+  "k": "▶ Continue and a 📜 Saves window on the main menu: matches, careers, campaigns and backups in one place",
+  "w": "34-notes.js:17"
+ },
+ {
+  "k": "Training Yard: a card per fighter — drills with their gains shown, care, one bout a week — and the beast pen: your fighter against a snake, wolf, bear or lion in a roped stake cage while the roster watches",
+  "w": "34-notes.js:17"
+ },
+ {
+  "k": "Infirmary as a ward: beds for serious wounds, the bench, the bathhouse, and a house medicus to hire",
+  "w": "34-notes.js:17"
+ },
+ {
+  "k": "Contract clauses, the Darling of the Arena, rival letters (taunts, challenges, truces), kitchen and shrine rooms",
+  "w": "34-notes.js:17"
+ },
+ {
+  "k": "Play Now: a roster chip and new seat cards (class picker with win rates, You | CPU, mind chip)",
+  "w": "34-notes.js:17"
+ },
+ {
+  "k": "A bout started from the Manager no longer opens behind the main menu",
+  "w": "34-notes.js:17"
+ },
+ {
+  "k": "The round’s rules (no PvP and so on) moved into the turn panel’s ⓘ",
+  "w": "34-notes.js:17"
+ },
+ {
+  "k": "The market board",
+  "w": "34-notes.js:18"
+ },
+ {
+  "k": "The market follows the rulebook: pay for a level, roll once, take that slot’s weapon or one armor piece — laid out on Virgilante’s market board, armor dealt across all four slots",
+  "w": "34-notes.js:18"
+ },
+ {
+  "k": "Play Now redesigned: pick the city and the event from a card strip, the chosen card in its frame, seat cards with the minis and win rates, Quick start and presets",
+  "w": "34-notes.js:18"
+ },
+ {
+  "k": "A slimmer arena bar: the FR mark, the event’s token and name (hover for the card, the date, this week and the board), the round",
+  "w": "34-notes.js:18"
+ },
+ {
+  "k": "One turn panel at the arena’s top right: who is up, the phase and what this round forbids",
+  "w": "34-notes.js:18"
+ },
+ {
+  "k": "The 3D minis replace the standees; the pillars are shorter and wear the painted stone of his pillar standee",
+  "w": "34-notes.js:18"
+ },
+ {
+  "k": "His weapon-card icons, his Ornate Chest Armor for the Royalty and a single Flavius’ Greave",
+  "w": "34-notes.js:18"
+ },
+ {
+  "k": "His textures: stone blocks on the city square’s buildings, parchment under the mail and letters",
+  "w": "34-notes.js:18"
+ },
+ {
+  "k": "Match Week wears its host city: the city’s name and its own banner for each of the twelve arenas",
+  "w": "34-notes.js:18"
+ },
+ {
+  "k": "His weapon card backs on the market board; the Arena Chest flips its card over",
+  "w": "34-notes.js:18"
+ },
+ {
+  "k": "His weapon icons on the fighter panel’s weapon chips",
+  "w": "34-notes.js:18"
+ },
+ {
+  "k": "Every crowd count shows the same number: each spectator stands for roughly 1,000 Romans (13K)",
+  "w": "34-notes.js:18"
+ },
+ {
+  "k": "The ratings fold above the avatar answers even while turns are playing",
+  "w": "34-notes.js:18"
+ },
+ {
+  "k": "Settings: the Skip the main menu switch is gone",
+  "w": "34-notes.js:18"
+ },
+ {
+  "k": "The printed set",
+  "w": "34-notes.js:19"
+ },
+ {
+  "k": "Virgilante’s class cards for all eight classes; custom classes get a live card in the same design",
+  "w": "34-notes.js:19"
+ },
+ {
+  "k": "The Infirmary shows each hurt fighter’s body: the wound, the lost limbs",
+  "w": "34-notes.js:19"
+ },
+ {
+  "k": "Recruiting is your call: Watch them train, Ask around, a Private note in three tones — the advisor suggests, you choose",
+  "w": "34-notes.js:19"
+ },
+ {
+  "k": "Classes follow his cards: Soldier’s Centurian Helm, Venatore’s Steel Helm, Hero and Slave padded shins, Hero’s Thracian Shield, the Manica on the shoulder",
+  "w": "34-notes.js:19"
+ },
+ {
+  "k": "Veteranus pays old debts in coin or CF",
+  "w": "34-notes.js:19"
+ },
+ {
+  "k": "Optional tasks can be dismissed; each tab shows a ✓ when its work is done",
+  "w": "34-notes.js:19"
+ },
+ {
+  "k": "Banner counts in each tab’s colour; the Wagers banner lists the week’s three bouts",
+  "w": "34-notes.js:19"
+ },
+ {
+  "k": "Card pop-ups no longer linger",
+  "w": "34-notes.js:19"
+ },
+ {
+  "k": "The Summa Rudis waits behind a seal on Flavius’s box: hover it for the event card and medallion",
+  "w": "34-notes.js:19"
+ },
+ {
+  "k": "Sica’s Syndicate",
+  "w": "34-notes.js:20"
+ },
+ {
+  "k": "Sica’s Syndicate joins the league: enforcers on the sand, spears from the stands, bribes and lured fighters",
+  "w": "34-notes.js:20"
+ },
+ {
+  "k": "Every Manager tab has its banner, with what is left to do at the right; gold counts on the rail",
+  "w": "34-notes.js:20"
+ },
+ {
+  "k": "Custom armor in levels I · II · III (iron, bronze, gold)",
+  "w": "34-notes.js:20"
+ },
+ {
+  "k": "Hover the avatar for HP, AP and armor; struck parts flash; try armor on in the market",
+  "w": "34-notes.js:20"
+ },
+ {
+  "k": "Recruiting: a weekly plan, compare two fighters side by side, the signing card",
+  "w": "34-notes.js:20"
+ },
+ {
+  "k": "Custom class cards show the class wearing its armor",
+  "w": "34-notes.js:20"
+ },
+ {
+  "k": "The 3D minis turn to face where they move",
+  "w": "34-notes.js:20"
+ },
+ {
+  "k": "Start from in the armor designer loads the printed piece — its stats, its art and where it is worn",
+  "w": "34-notes.js:20"
+ },
+ {
+  "k": "The Summa Rudis medallion waits behind ⓘ beside Flavius",
+  "w": "34-notes.js:20"
+ },
+ {
+  "k": "Scouting shows ratings and personality on the fighter’s card",
+  "w": "34-notes.js:20"
+ },
+ {
+  "k": "Recruiting and training hours moved into their tabs; the short-handed warning clears with a recruit on your board",
+  "w": "34-notes.js:20"
+ },
+ {
+  "k": "Ratings start folded in the fighter panel; no armor pictures under the bars",
+  "w": "34-notes.js:20"
+ },
+ {
+  "k": "Your Crocodile medallion; an offer to clear old auto-recruits",
+  "w": "34-notes.js:20"
+ },
+ {
+  "k": "3D minis",
+  "w": "34-notes.js:21"
+ },
+ {
+  "k": "Virgilante’s sculpted minis and pillars as a new token style (Settings → Tokens): the eight classes, the beasts and Zora on their bases",
+  "w": "34-notes.js:21"
+ },
+ {
+  "k": "New avatar art on the player board",
+  "w": "34-notes.js:21"
+ },
+ {
+  "k": "System sets shown the same way in every designer: your sets first, then the locked system sets with 📜 rolls · Copy & edit",
+  "w": "34-notes.js:21"
+ },
+ {
+  "k": "Weapons get their system set too",
+  "w": "34-notes.js:21"
+ },
+ {
+  "k": "Switching the armor art keeps the system armor in the designer — only the art changes",
+  "w": "34-notes.js:21"
+ },
+ {
+  "k": "The armor fit tool lives inside the armor designer (🎯 Fit on a printed piece) and fits custom pairs side by side",
+  "w": "34-notes.js:21"
+ },
+ {
+  "k": "His second round of armor fits",
+  "w": "34-notes.js:21"
+ },
+ {
+  "k": "The printed pieces",
+  "w": "34-notes.js:22"
+ },
+ {
+  "k": "Virgilante’s medallion tokens: chests, keys, weapons, armor, upgrades, elixirs, Speed of Mercury, Crowd Favor, spiders, curse, eagle and more",
+  "w": "34-notes.js:22"
+ },
+ {
+  "k": "The gold coin of the board game, everywhere coin is shown",
+  "w": "34-notes.js:22"
+ },
+ {
+  "k": "The Summa Rudis officiating each event beside Flavius, in the briefing and on the status bar",
+  "w": "34-notes.js:22"
+ },
+ {
+  "k": "Live wagers pop a gold bubble above whoever bets",
+  "w": "34-notes.js:22"
+ },
+ {
+  "k": "The round marker on the status bar",
+  "w": "34-notes.js:22"
+ },
+ {
+  "k": "The stands line sits pinned at the top of the arena log",
+  "w": "34-notes.js:22"
+ },
+ {
+  "k": "Mandata Flavi card back on hidden objectives; “Mandata” spelled as printed",
+  "w": "34-notes.js:22"
+ },
+ {
+  "k": "Sharper tunnel art",
+  "w": "34-notes.js:22"
+ },
+ {
+  "k": "The old-save upgrade question opens in its own small window instead of squeezing the save card",
+  "w": "34-notes.js:22"
+ },
+ {
+  "k": "Armor that fits",
+  "w": "34-notes.js:23"
+ },
+ {
+  "k": "Every printed armor piece sits where Virgilante placed it on the avatar",
+  "w": "34-notes.js:23"
+ },
+ {
+  "k": "Arm and leg pieces mirror cleanly on the left side; turning mirrors too",
+  "w": "34-notes.js:23"
+ },
+ {
+  "k": "Provocator Manica is a lower-arm piece",
+  "w": "34-notes.js:23"
+ },
+ {
+  "k": "Padded Leg Armor (upper) is now Leather Upper Leg Armor",
+  "w": "34-notes.js:23"
+ },
+ {
+  "k": "The Studio avatars sit lower, with room for helmets",
+  "w": "34-notes.js:23"
+ },
+ {
+  "k": "The armor designer",
+  "w": "34-notes.js:24"
+ },
+ {
+  "k": "The avatar mock-up sits right under the piece — drag your armor anywhere on it, scale it with the wheel, turn or mirror it",
+  "w": "34-notes.js:24"
+ },
+ {
+  "k": "Every new piece names its equip point (head, chest, belt, upper or lower arm, hand, upper or lower leg) and keeps its fit there, mirrored on the left side; single arm and leg pieces cover one limb",
+  "w": "34-notes.js:24"
+ },
+ {
+  "k": "Fit the printed set: adjust where each printed piece sits on the avatar, saved with your game",
+  "w": "34-notes.js:24"
+ },
+ {
+  "k": "Flavius’ Bracers in gold",
+  "w": "34-notes.js:24"
+ },
+ {
+  "k": "The sculpted set shows only with Sculpted armor in Settings",
+  "w": "34-notes.js:24"
+ },
+ {
+  "k": "Phones: the match controls no longer cover the main menu or other screens",
+  "w": "34-notes.js:24"
+ },
+ {
+  "k": "Tablets: the arena fits above the turn actions",
+  "w": "34-notes.js:24"
+ },
+ {
+  "k": "Armor you can see",
+  "w": "34-notes.js:25"
+ },
+ {
+  "k": "The printed armor is worn on the fighter’s avatar at its equip points, scaled to the rulebook — it dims and cracks as a location loses AP and falls away at 0",
+  "w": "34-notes.js:25"
+ },
+ {
+  "k": "The arena’s right column has tabs: Fighter · Field · Stands — the crowd and the stands log at full height, a crowd ticker under the board",
+  "w": "34-notes.js:25"
+ },
+ {
+  "k": "Bigger appearance fees, lower wages, a weekly gate share by fame and a larger starting purse",
+  "w": "34-notes.js:25"
+ },
+ {
+  "k": "The Menagerie is now the Bestiary; the top bar opens the Stands",
+  "w": "34-notes.js:25"
+ },
+ {
+  "k": "Brain icons coloured by mind; one Juggernaut in Play Now setup; Send on the Road sits in the record’s button row",
+  "w": "34-notes.js:25"
+ },
+ {
+  "k": "Padded Leg Armor (upper) shows its printed art",
+  "w": "34-notes.js:25"
+ },
+ {
+  "k": "A recruiting board",
+  "w": "34-notes.js:26"
+ },
+ {
+  "k": "Your favourites become a recruiting board: Watching → Scouted → Courting → Ready to sign, each card with its next step as a button",
+  "w": "34-notes.js:26"
+ },
+ {
+  "k": "The free-agent list shows Fit (fills a gap you have, affordable) and your odds against the leading rival, with Affordable / Fits my roster / Courting me filters",
+  "w": "34-notes.js:26"
+ },
+ {
+  "k": "A fighter's card in three steps — Scout, Court (their biggest wants first, with the expected gain), Offer (a wage slider with a live “would they sign?” meter)",
+  "w": "34-notes.js:26"
+ },
+ {
+  "k": "A wager on a fighter taken off the card is void and refunded",
+  "w": "34-notes.js:26"
+ },
+ {
+  "k": "Start screen switch: bring your Ludus Flavius gladiators into the league, or not",
+  "w": "34-notes.js:26"
+ },
+ {
+  "k": "Bouts fill from the league pool before anyone new is created",
+  "w": "34-notes.js:26"
+ },
+ {
+  "k": "Training Yard: the facility, discipline, doctore and last-week squares sit beside the regime",
+  "w": "34-notes.js:26"
+ },
+ {
+  "k": "Bumpers and phones",
+  "w": "34-notes.js:27"
+ },
+ {
+  "k": "The camera follows the action: zoom in (🔍 or pinch the sand) and the view stays on whoever is acting",
+  "w": "34-notes.js:27"
+ },
+ {
+  "k": "In portrait, a hint suggests turning the phone",
+  "w": "34-notes.js:27"
+ },
+ {
+  "k": "A clearer yard, a smarter infirmary",
+  "w": "34-notes.js:28"
+ },
+ {
+  "k": "Infirmary treatment plans: Rest, Medicus or Surgeon, Bathhouse and Asclepius, each with its cost and the week the fighter is fit — plus a recovery timeline and a warning when a patient is on this week's card",
+  "w": "34-notes.js:28"
+ },
+ {
+  "k": "This week's regime sits above the hours plan and the practice arena",
+  "w": "34-notes.js:28"
+ },
+ {
+  "k": "Hours left show on the Recruiting and Training Yard tabs",
+  "w": "34-notes.js:28"
+ },
+ {
+  "k": "Softer to-do outlines on the rail",
+  "w": "34-notes.js:28"
+ },
+ {
+  "k": "Missios by the rulebook",
+  "w": "34-notes.js:29"
+ },
+ {
+  "k": "Chariot, Familia, Naumachia, Golden Eagle, Juggernaut, Gauntlet and Commodus give no CF, so surviving to the end passes — and no Fate is drawn",
+  "w": "34-notes.js:29"
+ },
+ {
+  "k": "The missio picker lists your whole roster in a scrolling box (custom classes greyed)",
+  "w": "34-notes.js:29"
+ },
+ {
+  "k": "No \"To the end\" during a missio",
+  "w": "34-notes.js:29"
+ },
+ {
+  "k": "A start-of-event modifier no longer leaves a missio gladiator one-armed for good",
+  "w": "34-notes.js:29"
+ },
+ {
+  "k": "Seeded events replay the crowd too: spectators' favourites and wagers follow the seed",
+  "w": "34-notes.js:29"
+ },
+ {
+  "k": "Training hours, clearer tabs",
+  "w": "34-notes.js:30"
+ },
+ {
+  "k": "Training hours: a weekly pool for speed and strength drills, tactics, crowd work, rehab, doctore time, bonding and in-house sparring — exhibitions draw on it too",
+  "w": "34-notes.js:30"
+ },
+ {
+  "k": "The Training Yard opens with your hours plan beside the practice arena",
+  "w": "34-notes.js:30"
+ },
+ {
+  "k": "Accessibility: reduce motion, a colour-blind palette with class letters on tokens, and larger text",
+  "w": "34-notes.js:30"
+ },
+ {
+  "k": "Event Designer: guided steps from Basics to Finish, or every section at once",
+  "w": "34-notes.js:30"
+ },
+ {
+  "k": "The free-agent list fills the screen",
+  "w": "34-notes.js:30"
+ },
+ {
+  "k": "House home cities are the twelve arena cities",
+  "w": "34-notes.js:30"
+ },
+ {
+  "k": "Share builds are a third smaller",
+  "w": "34-notes.js:30"
+ },
+ {
+  "k": "CPU turns and the roster name each CPU's mind",
+  "w": "34-notes.js:30"
+ },
+ {
+  "k": "The fighter panel shows the ratings top right, out of the way — and they fold away",
+  "w": "34-notes.js:30"
+ },
+ {
+  "k": "Five minds",
+  "w": "34-notes.js:31"
+ },
+ {
+  "k": "Intelligence now sets one of five CPU minds — Novice, Apprentice, Fighter, Veteran, Master — shown beside the ratings",
+  "w": "34-notes.js:31"
+ },
+ {
+  "k": "Each mind unlocks real skills: the market, steady nerves, routes and truces, Focus, and for a Master: stepping to safety after a blow and Focusing for the kill",
+  "w": "34-notes.js:31"
+ },
+ {
+  "k": "Play Now seats pick a mind; Manager growth news says when a fighter reaches a new one",
+  "w": "34-notes.js:31"
+ },
+ {
+  "k": "Each mind beats the one below it in self-play (about 55–66% of wins)",
+  "w": "34-notes.js:31"
+ },
+ {
+  "k": "Smoother screens",
+  "w": "34-notes.js:32"
+ },
+ {
+  "k": "One screen manager decides what shows when a window closes — no more menu flashes or loops between windows",
+  "w": "34-notes.js:32"
+ },
+ {
+  "k": "Windows open faster from the main menu (the curtain lifts as soon as the next window is up)",
+  "w": "34-notes.js:32"
+ },
+ {
+  "k": "The Road from the record",
+  "w": "34-notes.js:33"
+ },
+ {
+  "k": "🛣 Send on the Road sits on every living gladiator's record in Your Play Now Gladiators (custom characters too); the walker's record has ⚔ Walk stage",
+  "w": "34-notes.js:33"
+ },
+ {
+  "k": "The Venatore's Tame card shows the Lyre of Orpheus face",
+  "w": "34-notes.js:33"
+ },
+ {
+  "k": "Tamed beasts carry no aggro; counter-attacks only when a wild beast attacks (a tamed beast striking a wild one draws its aggro onto the owner; striking a rival's tamed beast waits for its owner's Resolve)",
+  "w": "34-notes.js:33"
+ },
+ {
+  "k": "Crowd Favor offerings fall face up where the offering lands (3 tiles out from a toppled pillar)",
+  "w": "34-notes.js:33"
+ },
+ {
+  "k": "Truce offers show the class in its colour; truced gladiators wear a 🕊 and a dashed ring",
+  "w": "34-notes.js:33"
+ },
+ {
+  "k": "The Annals no longer loop back to the main menu",
+  "w": "34-notes.js:33"
+ },
+ {
+  "k": "Moving between the Annals, Your Play Now Gladiators and the Road is covered by the curtain — no menu flashes",
+  "w": "34-notes.js:33"
+ },
+ {
+  "k": "The Hall's Road box drops its long dropdown for a button to your gladiators",
+  "w": "34-notes.js:33"
+ },
+ {
+  "k": "Rivals, ships and chariots by the book",
+  "w": "34-notes.js:34"
+ },
+ {
+  "k": "Naumachia by the rulebook: the printed layout, 10-tile decks, boarding only from boarding tiles, the water-token pinwheel, waist-deep swimmers",
+  "w": "34-notes.js:34"
+ },
+ {
+  "k": "Chariot Racing by the rulebook: a snake draft with chariot cards, one free tile past a gate, horse and wheel tokens riding on each chariot",
+  "w": "34-notes.js:34"
+ },
+ {
+  "k": "Credits (click D.Soto) with the prototype photos; Zora stands on the board as his own mini",
+  "w": "34-notes.js:34"
+ },
+ {
+  "k": "Five event cards repainted to match the rulebook; a mute button beside Settings",
+  "w": "34-notes.js:34"
+ },
+ {
+  "k": "Naumachia: a random team takes the first turn",
+  "w": "34-notes.js:34"
+ }
+]

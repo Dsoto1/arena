@@ -33,41 +33,41 @@ function onlDraft(ch){if(ONL.ged&&ONL.ged.id===ch.id)return ONL.ged;const L=ch.l
 function onlSel(path,opts,val,attr){return `<select class="tin" ${attr}="${path}">${opts.map(([v,l])=>`<option value="${esc2(v??'')}" ${String(val??'')===String(v??'')?'selected':''}>${esc2(l)}</option>`).join('')}</select>`}
 onlCharHTML=function(){const live=ONL.chars.filter(c=>c.alive).sort((a,b)=>a.born-b.born);const dead=ONL.chars.filter(c=>!c.alive);
   const sel=live.find(c=>c.id===ONL.gsel)||ONL.char||live[0];if(!sel)return '';ONL.gsel=sel.id;const D=onlDraft(sel);const busy=onlBusy();const cat=onlCatalog();const p=D.look.portrait;
-  const slot=c=>{const act=c.id===(ONL.char&&ONL.char.id);return `<button type="button" class="onl-gslot ${c.id===sel.id?'on':''}" data-onl="gpick" data-v="${c.id}">${onlFig(c.cls,c.look,96)}<b>${esc2(c.name)}</b><small>${esc2((CLASSES[c.cls]||{}).name||'')} · ${onlRankChip(ONLC.rankFor(c).k)}</small><small>${typeof ICO!=='undefined'&&ICO.coin?ICO.coin:'🪙'} ${c.wallet} · ⭐ ${c.lifeCF} CF</small>${act?'<span class="badge gold">⚔ Active</span>':''}</button>`};
-  const empty=Array.from({length:Math.max(0,ONLC.GLAD_MAX-live.length)},()=>`<button type="button" class="onl-gslot empty" data-onl="gnew">＋<b>New gladiator</b><small>starts as a Tiro</small></button>`).join('');
+  const slot=c=>{const act=c.id===(ONL.char&&ONL.char.id);return `<button type="button" class="onl-gslot ${c.id===sel.id?'on':''}" data-onl="gpick" data-v="${c.id}">${_T`${onlFig(c.cls,c.look,96)}<b>${esc2(c.name)}</b><small>${esc2((CLASSES[c.cls]||{}).name||'')} · ${onlRankChip(ONLC.rankFor(c).k)}</small><small>${typeof ICO!=='undefined'&&ICO.coin?ICO.coin:'🪙'} ${c.wallet} · ⭐ ${c.lifeCF} CF</small>${act?_T('<span class="badge gold">⚔ Active</span>'):''}`}</button>`};
+  const empty=Array.from({length:Math.max(0,ONLC.GLAD_MAX-live.length)},()=>`<button type="button" class="onl-gslot empty" data-onl="gnew">${_T`＋<b>New gladiator</b><small>starts as a Tiro</small>`}</button>`).join('');
   const P=(path,label,opts,val)=>`<label>${label}${onlSel(path,opts,val,'data-onlgp')}</label>`;
   const T=(f,label,opts)=>`<label>${label}${onlSel(f,opts,(D.look.token||{})[f]||(onlTokenOf(D.cls,{token:{x:1}})||{})[f]||'','data-onlgt')}</label>`;
   const TC=(f,label,def)=>`<label>${label}<input type="color" data-onlgt="${f}" value="${/^#[0-9a-f]{6}$/i.test((D.look.token||{})[f]||'')?D.look.token[f]:def}"></label>`;
   const gearRows=(sel.gear||[]).map((k,i)=>`<label class="chk"><input type="checkbox" data-onlgeq="${i}" ${D.on[i]?'checked':''}> ${esc2((cat[k]||{}).n||k)} <small class="rc-sub">L${(cat[k]||{}).lv||'?'}</small></label>`).join('');
   const CK=CLASSES[D.cls]||{};const kit=[CK.R,CK.L].filter(Boolean).map(k=>(W[k]||{}).n).filter(Boolean);
-  return `<div class="onl-lbtop"><h3>🛡 My Gladiators <span class="rc-sub">${live.length}/${ONLC.GLAD_MAX} living · the active one fights</span></h3></div>
+  return `<div class="onl-lbtop"><h3>${_T`🛡 My Gladiators`} <span class="rc-sub">${_T`${live.length}/${ONLC.GLAD_MAX} living · the active one fights`}</span></h3></div>
    <div class="onl-gslots">${live.map(slot).join('')}${empty}</div>
-   ${busy?`<p class="onl-busy">⏳ In a game (${esc2(onlEvName(busy.ev))}) — changes wait until it is over.</p>`:''}
+   ${busy?`<p class="onl-busy">${_T`⏳ In a game (${esc2(onlEvName(busy.ev))}) — changes wait until it is over.`}</p>`:''}
    <div class="onl-ged"><div class="onl-gprev"><div id="onlGPort">${typeof portraitHTML==='function'?portraitHTML({...onlPortraitOf({name:D.name,cls:D.cls,look:D.look})},'lg'):''}</div>
-      <div id="onlGTok" title="The board token">${onlFig(D.cls,D.look,120)}</div>
-      ${sel.id!==(ONL.char&&ONL.char.id)?`<button type="button" class="btn primary" data-onl="gact" data-v="${sel.id}" ${busy?'disabled':''}>⚔ Make active</button>`:'<span class="badge gold">⚔ Active gladiator</span>'}</div>
+      <div id="onlGTok" title="${_T`The board token`}">${onlFig(D.cls,D.look,120)}</div>
+      ${sel.id!==(ONL.char&&ONL.char.id)?`<button type="button" class="btn primary" data-onl="gact" data-v="${sel.id}" ${busy?'disabled':''}>${_T`⚔ Make active`}</button>`:_T('<span class="badge gold">⚔ Active gladiator</span>')}</div>
     <div class="onl-gform">
-     <label>Name<input class="tin" data-onlge="name" maxlength="24" value="${esc2(D.name)}"></label>
-     <div class="sect">Class <span class="rc-sub">switch freely between events — ratings, rank and bought gear stay</span></div>
+     <label>${_T`Name`}<input class="tin" data-onlge="name" maxlength="24" value="${esc2(D.name)}"></label>
+     <div class="sect">${_T`Class`} <span class="rc-sub">${_T`switch freely between events — ratings, rank and bought gear stay`}</span></div>
      <div class="onl-clsgrid">${ONLC.CLASSES8.map(k=>`<button type="button" class="onl-cls ${D.cls===k?'on':''}" data-onl="gcls" data-v="${k}">${typeof cardHTML==='function'?cardHTML('k:'+k,'sm'):''}<span>${esc2(CLASSES[k].name)}</span></button>`).join('')}</div>
-     <p class="rc-sub" style="margin:2px 0 0">Recruit kit: ${esc2(kit.join(', ')||'the class weapons')}</p>
-     <div class="sect">Look</div>
-     <div class="formgrid onl-g2">${P('portrait.skin','Skin',SKINS.map((v,i)=>[v,SKIN_NAMES[i]||'Tone '+(i+1)]),p.skin)}${P('portrait.hair','Hair',HAIRS.map((v,i)=>[v,HAIR_NAMES[i]||'Shade '+(i+1)]),p.hair)}
-      ${P('portrait.helm','Headgear',HELMS,p.helm)}${P('portrait.hs','Hairstyle',HAIRSTYLES,p.hs||(p.long?'long':''))}${P('portrait.bs','Beard',BEARDS,p.bs&&p.bs!=='none'?p.bs:(p.beard?'full':''))}
-      ${P('portrait.eyes','Eyes',EYES,p.eyes||EYES[0][0])}${P('portrait.mark','Marks',MARKS,p.mark||'')}${P('portrait.garb','Garb',GARBS,p.garb||'')}
-      ${P('portrait.fem','Build',[['','Gladiator'],['1','Gladiatrix']],p.fem?'1':'')}${P('portrait.smile','Expression',[['','Stern'],['1','Grin']],p.smile?'1':'')}
-      ${typeof EARRINGS!=='undefined'?P('portrait.ear','Earring',EARRINGS,p.ear||''):''}<label>Colour<input type="color" data-onlgp="color" value="${esc2(D.look.color)}"></label></div>
-     <div class="mbtns" style="margin:4px 0"><button type="button" class="btn tksm" data-onl="grlook">🎲 Random look</button></div>
-     <div class="sect">Board token</div>
-     <label class="chk"><input type="checkbox" data-onl="gtok" ${D.look.token?'checked':''}> My own token <span class="rc-sub">(off: the class mini)</span></label>
-     ${D.look.token?`<div class="formgrid onl-g2">${T('body','Body',T_BODIES)}${T('helm','Headgear',T_HELMS)}${T('shield','Shield',T_SHIELDS)}${T('emblem','Shield emblem',T_EMBLEM)}${T('hair','Hair',T_HAIRS)}
-       ${T('skin','Skin',TOKEN_SKINS.map((v,i)=>[v,'Tone '+(i+1)]))}${TC('c1','Main colour','#a3281f')}${TC('c2','Trim colour','#d6ab4c')}${TC('hairC','Hair colour','#3a2616')}
-       <label class="chk" style="align-self:end"><input type="checkbox" data-onlgt="cape" ${(D.look.token||{}).cape?'checked':''}> Cape</label></div>`:''}
-     <div class="sect">Gear to bring <span class="rc-sub">bought in the Armory</span></div>
-     <div class="chkgrid">${gearRows||'<span class="rc-sub">Nothing bought yet — the recruit kit only.</span>'}</div>
-     <div class="mbtns"><button type="button" class="btn primary" data-onl="gsave" ${busy?'disabled':''}>💾 Save ${esc2(D.name)}</button></div>
+     <p class="rc-sub" style="margin:2px 0 0">${_T`Recruit kit: ${esc2(kit.join(', ')||_T('the class weapons'))}`}</p>
+     <div class="sect">${_T`Look`}</div>
+     <div class="formgrid onl-g2">${P('portrait.skin',_T('Skin'),SKINS.map((v,i)=>[v,SKIN_NAMES[i]||_T('Tone ')+(i+1)]),p.skin)}${P('portrait.hair',_T('Hair'),HAIRS.map((v,i)=>[v,HAIR_NAMES[i]||_T('Shade ')+(i+1)]),p.hair)}
+      ${P('portrait.helm',_T('Headgear'),HELMS,p.helm)}${P('portrait.hs',_T('Hairstyle'),HAIRSTYLES,p.hs||(p.long?'long':''))}${P('portrait.bs',_T('Beard'),BEARDS,p.bs&&p.bs!=='none'?p.bs:(p.beard?'full':''))}
+      ${P('portrait.eyes',_T('Eyes'),EYES,p.eyes||EYES[0][0])}${P('portrait.mark',_T('Marks'),MARKS,p.mark||'')}${P('portrait.garb',_T('Garb'),GARBS,p.garb||'')}
+      ${P('portrait.fem',_T('Build'),[['',_T('Gladiator')],['1',_T('Gladiatrix')]],p.fem?'1':'')}${P('portrait.smile',_T('Expression'),[['',_T('Stern')],['1',_T('Grin')]],p.smile?'1':'')}
+      ${typeof EARRINGS!=='undefined'?P('portrait.ear',_T('Earring'),EARRINGS,p.ear||''):''}<label>${_T`Colour`}<input type="color" data-onlgp="color" value="${esc2(D.look.color)}"></label></div>
+     <div class="mbtns" style="margin:4px 0"><button type="button" class="btn tksm" data-onl="grlook">${_T`🎲 Random look`}</button></div>
+     <div class="sect">${_T`Board token`}</div>
+     <label class="chk"><input type="checkbox" data-onl="gtok" ${D.look.token?'checked':''}> ${_T`My own token`} <span class="rc-sub">${_T`(off: the class mini)`}</span></label>
+     ${D.look.token?`<div class="formgrid onl-g2">${T('body',_T('Body'),T_BODIES)}${T('helm',_T('Headgear'),T_HELMS)}${T('shield',_T('Shield'),T_SHIELDS)}${T('emblem',_T('Shield emblem'),T_EMBLEM)}${T('hair',_T('Hair'),T_HAIRS)}
+       ${T('skin',_T('Skin'),TOKEN_SKINS.map((v,i)=>[v,_T('Tone ')+(i+1)]))}${TC('c1',_T('Main colour'),'#a3281f')}${TC('c2',_T('Trim colour'),'#d6ab4c')}${TC('hairC',_T('Hair colour'),'#3a2616')}
+       <label class="chk" style="align-self:end"><input type="checkbox" data-onlgt="cape" ${(D.look.token||{}).cape?'checked':''}> ${_T`Cape`}</label></div>`:''}
+     <div class="sect">${_T`Gear to bring`} <span class="rc-sub">${_T`bought in the Armory`}</span></div>
+     <div class="chkgrid">${gearRows||_T('<span class="rc-sub">Nothing bought yet — the recruit kit only.</span>')}</div>
+     <div class="mbtns"><button type="button" class="btn primary" data-onl="gsave" ${busy?'disabled':''}>${_T`💾 Save ${esc2(D.name)}`}</button></div>
     </div></div>
-   ${dead.length?`<div class="sect">The fallen</div><div class="rc-sub">${dead.map(c=>esc2(c.name)).join(' · ')}</div>`:''}`};
+   ${dead.length?`<div class="sect">${_T`The fallen`}</div><div class="rc-sub">${dead.map(c=>esc2(c.name)).join(' · ')}</div>`:''}`};
 function onlGPrev(){const D=ONL.ged;if(!D)return;const a=document.getElementById('onlGPort');if(a&&typeof portraitHTML==='function')a.innerHTML=portraitHTML(onlPortraitOf({name:D.name,cls:D.cls,look:D.look}),'lg');
   const b=document.getElementById('onlGTok');if(b)b.innerHTML=onlFig(D.cls,D.look,120)}
 document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl]');if(!b)return;const a=b.dataset.onl,v=b.dataset.v;const D=ONL.ged;
@@ -76,10 +76,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl]'
   if(a==='gcls'&&D){D.cls=v;D.dirty=true;onlRedraw();return}
   if(a==='grlook'&&D){D.look.portrait=typeof randomPortrait==='function'?randomPortrait():D.look.portrait;D.dirty=true;onlRedraw();return}
   if(a==='gtok'&&D){D.look.token=D.look.token?null:{...(onlTokenOf(D.cls,{token:{x:1}})||{}),c1:D.look.color};delete (D.look.token||{}).x;D.dirty=true;onlRedraw();return}
-  if(a==='gact')return onlDo(async()=>{await NET.req('char.active',{char:v});ONL.active=v;await onlRefresh();if(typeof mToast==='function')mToast(`⚔ <b>${esc2(ONL.char.name)}</b> is your active gladiator.`)});
+  if(a==='gact')return onlDo(async()=>{await NET.req('char.active',{char:v});ONL.active=v;await onlRefresh();if(typeof mToast==='function')mToast(_T`⚔ <b>${esc2(ONL.char.name)}</b> is your active gladiator.`)});
   if(a==='gsave'&&D)return onlDo(async()=>{const ch=ONL.chars.find(c=>c.id===D.id);const equip=(ch.gear||[]).filter((k,i)=>D.on[i]);
     const tok=D.look.token?Object.fromEntries(Object.entries(D.look.token).filter(([k])=>ONL_TOKKEYS.includes(k))):null;
-    await NET.req('char.edit',{char:D.id,name:D.name,cls:D.cls,look:{portrait:D.look.portrait,color:D.look.color,...(tok?{token:tok}:{})},equip});ONL.ged=null;await onlRefresh();if(typeof mToast==='function')mToast(`💾 <b>${esc2(D.name)}</b> is ready.`)})},true);
+    await NET.req('char.edit',{char:D.id,name:D.name,cls:D.cls,look:{portrait:D.look.portrait,color:D.look.color,...(tok?{token:tok}:{})},equip});ONL.ged=null;await onlRefresh();if(typeof mToast==='function')mToast(_T`💾 <b>${esc2(D.name)}</b> is ready.`)})},true);
 document.addEventListener('input',e=>{const t=e.target;if(!t||!t.closest||!t.closest('#onl'))return;const D=ONL.ged;if(!D)return;
   if(t.dataset.onlge){D[t.dataset.onlge]=t.value;D.dirty=true;return}
   if(t.dataset.onlgp){const f=t.dataset.onlgp;let v=t.value;if(f==='portrait.fem'||f==='portrait.smile')v=!!v;if(f==='color')D.look.color=v;else setPath(D.look,f,v);D.dirty=true;onlGPrev();return}
@@ -100,21 +100,21 @@ function onlMyLobby(){const me=ONL.acct&&ONL.acct.id;return (ONL.lobbies||[]).fi
 onlMyLobbyHTML=function(){const me=ONL.acct&&ONL.acct.id;const L=onlMyLobby();if(!L)return '';const host=L.host.id===me;const fan=!L.players.some(p=>p.id===me);const tm=ONLC.seatTeams(L);
   const humans=ONLC.humansOf(L);const why=host?ONLC.canStart(L,me):'';const left=(ONL.leftMatch||{})[L.id];const inMatch=S&&S.onl&&S.onl.lobby===L.id&&!S.over;
   const seat=i=>{const p=L.players[i];const t=tm?`<i class="onl-team t${tm[i]}">${tm[i]}</i>`:'';const k=p&&p.kit;
-    return `<div class="onl-rseat ${p?'on':''}">${p&&k?onlFig(k.cls,k.look,54):'<span class="onl-rq">?</span>'}<div>${t}${p?`<b>${esc2(p.name)}</b>${p.id===L.host.id?' 👑':''}${p.ready?' <span class="onl-rdy">✓ ready</span>':''}<small>${k?esc2((CLASSES[k.cls]||{}).name||'')+' · ':''}${onlRankChip(p.rank)}</small>`:'<small>Open — a CPU if empty</small>'}</div></div>`};
+    return `<div class="onl-rseat ${p?'on':''}">${p&&k?onlFig(k.cls,k.look,54):'<span class="onl-rq">?</span>'}<div>${t}${p?`<b>${esc2(p.name)}</b>${p.id===L.host.id?' 👑':''}${p.ready?' <span class="onl-rdy">✓ ready</span>':''}<small>${k?esc2((CLASSES[k.cls]||{}).name||'')+' · ':''}${onlRankChip(p.rank)}</small>`:_T('<small>Open — a CPU if empty</small>')}</div></div>`};
   const rule=ONLC.abandonRule(L);
-  const settings=L.status==='waiting'?`<div class="onl-rset"><b>Rules of this game</b>
-     <label>Leaving the sand ${host&&!L.ranked?`<select class="tin" data-onlset="abandon"><option value="cpu" ${rule==='cpu'?'selected':''}>a CPU takes the seat</option><option value="fate" ${rule==='fate'?'selected':''}>the gladiator is eliminated</option></select>`:`<span>${L.ranked?'Ranked: eliminated — Damnatio, the gladiator dies':rule==='fate'?'the gladiator is eliminated':'a CPU takes the seat'}</span>`}</label>
-     <label>The stands ${host?`<select class="tin" data-onlset="standsOff"><option value="0" ${L.standsOff?'':'selected'}>may act in round 1</option><option value="1" ${L.standsOff?'selected':''}>watch only</option></select>`:`<span>${L.standsOff?'watch only':'may act in round 1'}</span>`}</label></div>`:'';
+  const settings=L.status==='waiting'?`<div class="onl-rset">${_T`<b>Rules of this game</b>`}
+     <label>${_T`Leaving the sand ${host&&!L.ranked?`<select class="tin" data-onlset="abandon"><option value="cpu" ${rule==='cpu'?'selected':''}>${_T`a CPU takes the seat`}</option><option value="fate" ${rule==='fate'?'selected':''}>${_T`the gladiator is eliminated`}</option></select>`:`<span>${L.ranked?_T('Ranked: eliminated — Damnatio, the gladiator dies'):rule==='fate'?_T('the gladiator is eliminated'):_T('a CPU takes the seat')}</span>`}`}</label>
+     <label>${_T`The stands ${host?`<select class="tin" data-onlset="standsOff"><option value="0" ${L.standsOff?'':'selected'}>${_T`may act in round 1`}</option><option value="1" ${L.standsOff?'selected':''}>${_T`watch only`}</option></select>`:`<span>${L.standsOff?_T('watch only'):_T('may act in round 1')}</span>`}`}</label></div>`:'';
   const chat=L.status==='waiting'?`<div class="onl-chat"><div class="onl-chatlog" id="onlChatLog">${(L.chat||[]).map(m=>`<div><b>${esc2(m.name)}</b> ${esc2(m.text)}</div>`).join('')||'<div class="rc-sub">Say ave to the other lanistas.</div>'}</div>
-     <div class="onl-chatrow"><input class="tin" id="onlChat" maxlength="${ONLC.CHAT_LEN}" placeholder="Message the room"><button type="button" class="btn tksm" data-onl="chat" data-v="${L.id}">Send</button></div></div>`:'';
-  const acts=L.status==='waiting'?(fan?'':(host?`<button type="button" class="btn primary" data-onl="start" data-v="${L.id}" ${why?`disabled title="${esc2(why)}"`:''}>▶ Start the match</button>`:`<button type="button" class="btn" data-onl="ready" data-v="${L.id}">✓ Ready</button>`))
-    :(inMatch?'':left||fan?`<button type="button" class="btn primary" data-onl="${fan&&!left?'enter':'watch'}" data-v="${L.id}">${fan&&!left?'🎟 Take your seat':'👁 Watch'}</button>`:`<button type="button" class="btn primary" data-onl="rejoin" data-v="${L.id}">⚔ Rejoin the match</button>`);
-  return `<div class="card2 onl-mine onl-room"><div class="onl-rhead"><b>${fan?'🎟 Your seat in the stands':'⚔ Your game'}</b> · ${esc2(onlEvName(L.ev))} at ${esc2(onlCityName(L.loc))} · ${L.ranked?'⚔ Ranked':'Custom'}${L.team?' · 👥 Team A vs Team B':''}
-     <span class="rc-sub">${L.status==='waiting'?`${humans.length} lanista${humans.length===1?'':'s'} · ${L.players.length}/${L.seats} seated`:'🔴 Live'}</span></div>
+     <div class="onl-chatrow"><input class="tin" id="onlChat" maxlength="${ONLC.CHAT_LEN}" placeholder="${_T`Message the room`}"><button type="button" class="btn tksm" data-onl="chat" data-v="${L.id}">${_T`Send`}</button></div></div>`:'';
+  const acts=L.status==='waiting'?(fan?'':(host?`<button type="button" class="btn primary" data-onl="start" data-v="${L.id}" ${why?_T`disabled title="${esc2(why)}"`:''}>${_T`▶ Start the match`}</button>`:`<button type="button" class="btn" data-onl="ready" data-v="${L.id}">${_T`✓ Ready`}</button>`))
+    :(inMatch?'':left||fan?`<button type="button" class="btn primary" data-onl="${fan&&!left?'enter':'watch'}" data-v="${L.id}">${fan&&!left?_T('🎟 Take your seat'):_T('👁 Watch')}</button>`:`<button type="button" class="btn primary" data-onl="rejoin" data-v="${L.id}">${_T`⚔ Rejoin the match`}</button>`);
+  return `<div class="card2 onl-mine onl-room"><div class="onl-rhead">${_T`<b>${fan?_T('🎟 Your seat in the stands'):_T('⚔ Your game')}</b> · ${esc2(onlEvName(L.ev))} at ${esc2(onlCityName(L.loc))} · ${L.ranked?_T('⚔ Ranked'):_T('Custom')}${L.team?_T(' · 👥 Team A vs Team B'):''}`}
+     <span class="rc-sub">${L.status==='waiting'?_T`${humans.length} lanista${humans.length===1?'':'s'} · ${L.players.length}/${L.seats} seated`:_T('🔴 Live')}</span></div>
    <div class="onl-rbody"><div><div class="onl-rseats">${Array.from({length:L.seats},(_,i)=>seat(i)).join('')}</div>
-     ${(L.stands||[]).length?`<div class="rc-sub">🎟 In the stands: ${L.stands.map(t=>esc2(t.name)).join(', ')} · pot ${L.pot||0} coin</div>`:''}
+     ${(L.stands||[]).length?`<div class="rc-sub">${_T`🎟 In the stands: ${L.stands.map(t=>esc2(t.name)).join(', ')} · pot ${L.pot||0} coin`}</div>`:''}
      ${host&&why&&L.status==='waiting'?`<p class="onl-busy">⏳ ${esc2(why)}</p>`:''}${settings}
-     <div class="acts">${acts}${L.status==='waiting'?`<button type="button" class="btn" data-onl="leave" data-v="${L.id}">${fan?'Give back the ticket':host?'Close the game':'Leave'}</button>`:''}</div></div>${chat}</div></div>`};
+     <div class="acts">${acts}${L.status==='waiting'?`<button type="button" class="btn" data-onl="leave" data-v="${L.id}">${fan?_T('Give back the ticket'):host?_T('Close the game'):_T('Leave')}</button>`:''}</div></div>${chat}</div></div>`};
 document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl]');if(!b)return;const a=b.dataset.onl,v=b.dataset.v;
   if(a==='chat')return onlChatSend(v);
   if(a==='rejoin'){const L=ONL.lobbies.find(x=>x.id===v);if(L)onlDo(()=>onlAttach(L,'seat'));return}},true);
@@ -134,13 +134,13 @@ NET.on('lobby.update',d=>{setTimeout(async()=>{if(!ONL.acct||!document.getElemen
 
 /* ---------------- rejoin / watch: a fresh snapshot from another lanista ---------------- */
 async function onlAttach(L,role){const r=await NET.req('match.watch',{id:L.id});const lob=r.lobby||L;const me=ONL.acct.id;
-  if(role==='seat'&&((r.abandoned||[]).includes(me)||(r.dropped||[]).includes(me))){role='watch';if(typeof mToast==='function')mToast(r.abandoned.includes(me)?'🚪 You left that match — you may watch it.':'🔌 A CPU holds your seat now — you may watch.')}
+  if(role==='seat'&&((r.abandoned||[]).includes(me)||(r.dropped||[]).includes(me))){role='watch';if(typeof mToast==='function')mToast(r.abandoned.includes(me)?_T('🚪 You left that match — you may watch it.'):_T('🔌 A CPU holds your seat now — you may watch.'))}
   if(role!=='seat')return onlWatch(lob);
   const seats=onlSeatsFor(lob);let seat=lob.players.findIndex(p=>p.id===me);const tk=(lob.stands||[]).findIndex(t=>t.id===me);if(seat<0&&tk>=0)seat=lob.seats+tk;if(seat<0)return onlWatch(lob);
   const onl={lobby:lob.id,ranked:!!lob.ranked,seat,owners:onlOwnersFor(lob,seats),host:lob.host.id===me,opened:true,stands:(lob.stands||[]).map(t=>({id:t.id,name:t.name})),fighters:lob.seats,team:!!lob.team,standsOff:!!lob.standsOff};
   ONL.live={id:lob.id,ranked:!!lob.ranked,seat,char:(lob.players[seat]||{}).char||null,seed:lob.seed};ONL.entered[lob.id]=1;ONL.watching={id:lob.id,onl,buf:[],at:Date.now(),seat:true};
-  if(CUR_MODAL)CUR_MODAL.done('rejoin');if(typeof mToast==='function')mToast('⚔ Back to the sand — fetching the arena…');
-  const ask=(r.players||[]).filter(a=>a!==me).concat(r.specs||[]);let k=0;const tryOne=()=>{const W=ONL.watching;if(!W||W.id!==lob.id||W.done)return;if(k>=ask.length){if(typeof mToast==='function')mToast('⚠ Nobody answered — try Rejoin again in a moment.');ONL.watching=null;return}
+  if(CUR_MODAL)CUR_MODAL.done('rejoin');if(typeof mToast==='function')mToast(_T('⚔ Back to the sand — fetching the arena…'));
+  const ask=(r.players||[]).filter(a=>a!==me).concat(r.specs||[]);let k=0;const tryOne=()=>{const W=ONL.watching;if(!W||W.id!==lob.id||W.done)return;if(k>=ask.length){if(typeof mToast==='function')mToast(_T('⚠ Nobody answered — try Rejoin again in a moment.'));ONL.watching=null;return}
     NET.req('match.snapreq',{id:lob.id,to:ask[k++],seq:0}).catch(()=>{});setTimeout(tryOne,7000)};tryOne()}
 /* the watcher path (113) loads as seat -1; a rejoining fighter takes their own seat back */
 {const base=onlmWatchOn;onlmWatchOn=function(next,ins){const r=base.apply(this,arguments);const W=ONL.watching;if(W&&W.seat&&S&&S.onl){S.onl.watch=false;ONLM.me=S.onl.seat}return r}}
@@ -155,16 +155,16 @@ function onlBarSync(){const on=!!(S&&S.onl&&!S.over&&(ONLM.on||S.onl.watch));doc
   if(!on&&!(S&&S.onl&&S.over)){if(b)b.remove();return}
   if(!b){const m=document.getElementById('btnMenu');if(!m)return;b=document.createElement('button');b.id='btnOnlLeave';b.type='button';b.className='btn';m.after(b)}
   const fighter=S.onl.seat>=0&&S.onl.seat<(S.onl.fighters||S.players.length)&&ONLM.me>=0;
-  b.textContent=S.over?'🌐 Back to Online':fighter?'🚪 Abandon match':'🚪 Leave';b.dataset.mode=S.over?'back':fighter?'abandon':'leave';
-  b.title=S.over?'Back to the Online arena':fighter?(S.onl.ranked?'Leave the match — in Ranked your gladiator dies (Damnatio)':'Leave the match'):'Stop watching'}
+  b.textContent=S.over?_T('🌐 Back to Online'):fighter?_T('🚪 Abandon match'):_T('🚪 Leave');b.dataset.mode=S.over?'back':fighter?'abandon':'leave';
+  b.title=S.over?_T('Back to the Online arena'):fighter?(S.onl.ranked?_T('Leave the match — in Ranked your gladiator dies (Damnatio)'):_T('Leave the match')):_T('Stop watching')}
 setInterval(()=>{try{onlBarSync()}catch(e){}},500);
 document.addEventListener('click',async e=>{const b=e.target.closest('#btnOnlLeave');if(!b)return;e.preventDefault();e.stopPropagation();ONLM.uiAt=Date.now();const mode=b.dataset.mode;const id=S&&S.onl&&S.onl.lobby;
   if(mode==='back'){onlExit();return}
   if(mode==='leave'){if(ONL.watching)NET.req('match.unwatch',{id}).catch(()=>{});onlExit();return}
   const rule=S.onl.ranked?'fate':((ONL.lobbies||[]).find(x=>x.id===id)||{}).abandon==='fate'?'fate':'cpu';
-  const v=await modal('🚪 Abandon the match?',`<p>${S.onl.ranked?'<b>Ranked:</b> your gladiator is eliminated and <b>dies by Damnatio</b>. This cannot be undone.':rule==='fate'?'Your gladiator is eliminated — the bout is over for you.':'A CPU takes your seat and fights on.'}</p><p class="rc-sub">You may come back to watch, but not to fight.</p>`,
-    [{label:'Abandon',value:'go'},{label:'Stay',value:null,primary:1}],{close:null});
-  if(v!=='go')return;try{const r=await NET.req('match.abandon',{id});(ONL.leftMatch=ONL.leftMatch||{})[id]=1;if(r&&r.out&&r.out.died&&typeof mToast==='function')setTimeout(()=>mToast('🌫 Your gladiator abandoned the sand — Damnatio.'),600)}catch(err){if(typeof mToast==='function')mToast('⚠ '+esc(err.message))}onlExit()},true);
+  const v=await modal(_T('🚪 Abandon the match?'),`<p>${S.onl.ranked?_T('<b>Ranked:</b> your gladiator is eliminated and <b>dies by Damnatio</b>. This cannot be undone.'):rule==='fate'?_T('Your gladiator is eliminated — the bout is over for you.'):_T('A CPU takes your seat and fights on.')}</p><p class="rc-sub">${_T`You may come back to watch, but not to fight.`}</p>`,
+    [{label:_T('Abandon'),value:'go'},{label:_T('Stay'),value:null,primary:1}],{close:null});
+  if(v!=='go')return;try{const r=await NET.req('match.abandon',{id});(ONL.leftMatch=ONL.leftMatch||{})[id]=1;if(r&&r.out&&r.out.died&&typeof mToast==='function')setTimeout(()=>mToast(_T('🌫 Your gladiator abandoned the sand — Damnatio.')),600)}catch(err){if(typeof mToast==='function')mToast('⚠ '+esc(err.message))}onlExit()},true);
 function onlExit(){try{if(S&&!S.over){S.over=true}}catch(e){}ONLM.on=false;ONL.watching=null;ONL.live=ONL.live&&ONL.live.reported?ONL.live:null;onlBarSync();
   try{if(typeof cleanFinishNow==='function')cleanFinishNow()}catch(e){}try{if(typeof menuShow==='function')menuShow()}catch(e){}setTimeout(()=>{try{onlineOpen('play')}catch(e){}},200)}
 {const st=document.createElement('style');st.textContent=`
@@ -201,19 +201,19 @@ const ONL_NEEDS_GLAD=new Set(['quick','join','newgame','host','bet','betgo','tic
 window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-onl]');if(!b||ONL.char||!ONL.acct)return;if(!ONL_NEEDS_GLAD.has(b.dataset.onl))return;
   e.preventDefault();e.stopImmediatePropagation();onlNeedGlad(b.dataset.onl)},true);
 /* ask first (a small centred popup over the Online window — never a second modal) */
-const ONL_WHY={quick:'to fight in a playlist',join:'to join a game',newgame:'to host a game',host:'to host a game',start:'to start a game',ready:'to take a seat',
-  bet:'to place a wager — it is paid from a gladiator’s wallet',betgo:'to place a wager — it is paid from a gladiator’s wallet',ticket:'to buy a ticket — it is paid from a gladiator’s wallet',
-  buy:'to buy gear',pinvite:'to form a party',pjoin:'to join a party'};
-async function onlNeedGlad(act){const go=typeof ask76==='function'?await ask76('⚔ You need a gladiator',`<p style="margin:0">You need a gladiator ${esc2(ONL_WHY[act]||'for that')}. Make one now? It takes a minute: a name and a class.</p><p class="rc-sub" style="margin:6px 0 0">Watching live matches and the Hall of the Fallen are open without one.</p>`,'⚔ Make my gladiator','Not now'):true;
+const ONL_WHY={quick:_T('to fight in a playlist'),join:_T('to join a game'),newgame:_T('to host a game'),host:_T('to host a game'),start:_T('to start a game'),ready:_T('to take a seat'),
+  bet:_T('to place a wager — it is paid from a gladiator’s wallet'),betgo:_T('to place a wager — it is paid from a gladiator’s wallet'),ticket:_T('to buy a ticket — it is paid from a gladiator’s wallet'),
+  buy:_T('to buy gear'),pinvite:_T('to form a party'),pjoin:_T('to join a party')};
+async function onlNeedGlad(act){const go=typeof ask76==='function'?await ask76(_T('⚔ You need a gladiator'),`<p style="margin:0">${_T`You need a gladiator ${esc2(ONL_WHY[act]||_T('for that'))}. Make one now? It takes a minute: a name and a class.`}</p><p class="rc-sub" style="margin:6px 0 0">${_T`Watching live matches and the Hall of the Fallen are open without one.`}</p>`,_T('⚔ Make my gladiator'),_T('Not now')):true;
   if(!go)return;ONL.newGlad=true;ONL.creating=null;onlRedraw()}
-function onlNoGladHTML(what){return `<div class="card2 onl-noglad"><div class="onl-ngfig">${onlMini('hero',96)}</div><div><b>No gladiator yet</b><p class="rc-sub" style="margin:4px 0 8px">${what} Watching live matches and the Hall of the Fallen are open to everyone.</p>
-  <button type="button" class="btn primary" data-onl="gnew">⚔ Make your gladiator</button></div></div>`}
+function onlNoGladHTML(what){return `<div class="card2 onl-noglad"><div class="onl-ngfig">${onlMini('hero',96)}</div><div>${_T`<b>No gladiator yet</b>`}<p class="rc-sub" style="margin:4px 0 8px">${_T`${what} Watching live matches and the Hall of the Fallen are open to everyone.`}</p>
+  <button type="button" class="btn primary" data-onl="gnew">${_T`⚔ Make your gladiator`}</button></div></div>`}
 {const base=onlPlayHTML;onlPlayHTML=function(){if(ONL.char)return base.apply(this,arguments);
   const fake={id:'-',name:'',cls:'hero',stats:{...ONLC.START_STATS},wallet:0,lifeCF:0,bouts:0,survived:0,wins:0,gear:[],look:{}};const keep=ONL.char;ONL.char=fake;let h;try{h=base.apply(this,arguments)}finally{ONL.char=keep}
   /* the stage becomes the invitation; the playlists stay (their buttons open the creator) */
-  return h.replace(/<div class="onl-stage">[\s\S]*?<div class="onl-side">/,`${onlNoGladHTML('Make one to fight, host, wager or buy a ticket.')}<div class="onl-side">`)}}
-{const base=onlArmoryHTML;onlArmoryHTML=function(){return ONL.char?base.apply(this,arguments):`<h3>🛒 Armory &amp; Market</h3>${onlNoGladHTML('The armory sells to a gladiator, from their own wallet.')}`}}
+  return h.replace(/<div class="onl-stage">[\s\S]*?<div class="onl-side">/,`${onlNoGladHTML(_T('Make one to fight, host, wager or buy a ticket.'))}<div class="onl-side">`)}}
+{const base=onlArmoryHTML;onlArmoryHTML=function(){return ONL.char?base.apply(this,arguments):`<h3>${_T`🛒 Armory &amp; Market`}</h3>${onlNoGladHTML(_T('The armory sells to a gladiator, from their own wallet.'))}`}}
 {const base=onlCharHTML;onlCharHTML=function(){if(ONL.chars.some(c=>c.alive))return base.apply(this,arguments);
-  return `<div class="onl-lbtop"><h3>🛡 My Gladiators <span class="rc-sub">0/${ONLC.GLAD_MAX} living</span></h3></div><div class="onl-gslots">${Array.from({length:ONLC.GLAD_MAX},()=>`<button type="button" class="onl-gslot empty" data-onl="gnew">＋<b>New gladiator</b><small>starts as a Tiro</small></button>`).join('')}</div>`}}
+  return `<div class="onl-lbtop"><h3>${_T`🛡 My Gladiators`} <span class="rc-sub">${_T`0/${ONLC.GLAD_MAX} living`}</span></h3></div><div class="onl-gslots">${Array.from({length:ONLC.GLAD_MAX},()=>`<button type="button" class="onl-gslot empty" data-onl="gnew">${_T`＋<b>New gladiator</b><small>starts as a Tiro</small>`}</button>`).join('')}</div>`}}
 {const st=document.createElement('style');st.textContent=`.onl-noglad{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;padding:18px 20px;min-height:180px;border-color:var(--gold,#e8c96a)!important}
 .onl-cstage{gap:10px}.onl-cmini{opacity:.95}.onl-cstage .portrait{border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.5)}`;document.head.appendChild(st)}

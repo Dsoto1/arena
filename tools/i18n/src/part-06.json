@@ -1,0 +1,2470 @@
+[
+ {
+  "k": "That is not a Flavius Rule save.",
+  "w": "12-settings.js:259"
+ },
+ {
+  "k": "Restoring the save…",
+  "w": "12-settings.js:260"
+ },
+ {
+  "k": "Settings",
+  "w": "12-settings.js:268"
+ },
+ {
+  "k": "That file is not a Flavius Rule save.",
+  "w": "12-settings.js:271"
+ },
+ {
+  "k": "<b>⚠ Restore “{0}”?</b>",
+  "w": "12-settings.js:273"
+ },
+ {
+  "k": "this backup",
+  "w": "12-settings.js:273"
+ },
+ {
+  "k": "It replaces every save — careers, matches, the Annals and your creations — with the file’s. On a shared page that is everyone’s saves. This can’t be undone; download a save first if you want to keep what’s here.",
+  "w": "12-settings.js:273"
+ },
+ {
+  "k": "Replace everything",
+  "w": "12-settings.js:273"
+ },
+ {
+  "k": "Save · {0}",
+  "w": "12-settings.js:279"
+ },
+ {
+  "k": "💾 Saved “{0}”",
+  "w": "12-settings.js:279"
+ },
+ {
+  "k": "This browser will not keep saves here — use Download instead.",
+  "w": "12-settings.js:279"
+ },
+ {
+  "k": "Confirm: replace my progress",
+  "w": "12-settings.js:281"
+ },
+ {
+  "k": "Confirm: overwrite",
+  "w": "12-settings.js:283"
+ },
+ {
+  "k": "✎ Overwrote “{0}” with the game as it stands.",
+  "w": "12-settings.js:285"
+ },
+ {
+  "k": "This browser would not write the save.",
+  "w": "12-settings.js:285"
+ },
+ {
+  "k": "Confirm delete",
+  "w": "12-settings.js:286"
+ },
+ {
+  "k": "🏛 You found the <b>Ludus Flavius standees</b> — the real minis are now a board style.",
+  "w": "12-settings.js:288"
+ },
+ {
+  "k": "⚪ You found the <b>original cylinders</b> — the flat tokens are back as a board style.",
+  "w": "12-settings.js:288"
+ },
+ {
+  "k": "This browser offers no Web Audio — no sound is possible here.",
+  "w": "12-settings.js:290"
+ },
+ {
+  "k": "Sound is muted — press 🔊 on the main bar (or the M key) to hear it.",
+  "w": "12-settings.js:291"
+ },
+ {
+  "k": "Sound effects are switched off above — tick them to hear the preview.",
+  "w": "12-settings.js:292"
+ },
+ {
+  "k": "The browser is still holding audio back (state:",
+  "w": "12-settings.js:296"
+ },
+ {
+  "k": "). Tap once anywhere on the page, then Try again.",
+  "w": "12-settings.js:296"
+ },
+ {
+  "k": "Profile {0}",
+  "w": "12-settings.js:303"
+ },
+ {
+  "k": "Reading the page…",
+  "w": "12-settings.js:329"
+ },
+ {
+  "k": "Embedding {0}/{1} — {2}…",
+  "w": "12-settings.js:337"
+ },
+ {
+  "k": "Binding the volume…",
+  "w": "12-settings.js:340"
+ },
+ {
+  "k": "Confirm the save in the dialog…",
+  "w": "12-settings.js:347"
+ },
+ {
+  "k": "✅ Saved — flavius-rule-arena.html ({0} MB) is in your Downloads folder, ready to send",
+  "w": "12-settings.js:348"
+ },
+ {
+  "k": "📦 Download the share build",
+  "w": "12-settings.js:349"
+ },
+ {
+  "k": "✅ Share build downloaded — {0} MB, look in your Downloads folder",
+  "w": "12-settings.js:353"
+ },
+ {
+  "k": "⚠ Could not gather the page here — open the game from its web link (claude.ai) and try again",
+  "w": "12-settings.js:354"
+ },
+ {
+  "k": "No class ability.",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "no ability",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "Iron Fist",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "+1 damage to every successful attack in round 1 (Soldier).",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "+1 damage per hit in round 1",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "Patron's Purse",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "+1 coin each turn, phase 3 (Royalty).",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "+1 coin each turn",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "Crowd Darling",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "+1 CF each turn, phase 3 (Hero).",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "+1 CF each turn",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "+1 movement each turn (Slave).",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "+1 movement each turn",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "+1 coin or +1 CF each turn, your choice (Veteranus).",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "+1 coin OR +1 CF each turn, your choice",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "Stone Gatherer",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "Gathers 1 stone each turn for a Stone Sling (Damnatio).",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "+1 sling stone each turn",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "Eagle Handler",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "Declare Zora the golden eagle once per event (Venatore).",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "+1 Zora release per event",
+  "w": "15-custom.js:16"
+ },
+ {
+  "k": "(value {0})",
+  "w": "15-custom.js:18"
+ },
+ {
+  "k": "Alpine fair",
+  "w": "15-custom.js:23"
+ },
+ {
+  "k": "Gallic fair",
+  "w": "15-custom.js:23"
+ },
+ {
+  "k": "Latin light",
+  "w": "15-custom.js:23"
+ },
+ {
+  "k": "Latin olive",
+  "w": "15-custom.js:23"
+ },
+ {
+  "k": "Etruscan tan",
+  "w": "15-custom.js:23"
+ },
+ {
+  "k": "Iberian bronze",
+  "w": "15-custom.js:23"
+ },
+ {
+  "k": "Illyrian bronze",
+  "w": "15-custom.js:23"
+ },
+ {
+  "k": "Numidian brown",
+  "w": "15-custom.js:23"
+ },
+ {
+  "k": "Syrian brown",
+  "w": "15-custom.js:23"
+ },
+ {
+  "k": "Egyptian deep",
+  "w": "15-custom.js:23"
+ },
+ {
+  "k": "Kushite deep",
+  "w": "15-custom.js:23"
+ },
+ {
+  "k": "Nubian dark",
+  "w": "15-custom.js:23"
+ },
+ {
+  "k": "Aethiopian dark",
+  "w": "15-custom.js:23"
+ },
+ {
+  "k": "Raven black",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Umbrian dark",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Dark brown",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Chestnut",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Tawny",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Auburn",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Gallic blond",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Germanic flaxen",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Iron gray",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Silver",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Tyrrhenian red",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Dyed madder",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Woad blue",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Druid green",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Henna orange",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Chalk white",
+  "w": "15-custom.js:26"
+ },
+ {
+  "k": "Bare head",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Galea",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Crested galea",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Murmillo grill",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Retiarius hood",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Laurel wreath",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Horned helm",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Bronze circlet",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Leather band",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Suebian knot",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Thraex griffin crest",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Provocator visor",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Pileus (freedman cap)",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Royal diadem",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Wolf pelt (signifer)",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Priestly veil",
+  "w": "15-custom.js:28"
+ },
+ {
+  "k": "Umber",
+  "w": "15-custom.js:31"
+ },
+ {
+  "k": "Night harbor",
+  "w": "15-custom.js:31"
+ },
+ {
+  "k": "Wine dark",
+  "w": "15-custom.js:31"
+ },
+ {
+  "k": "Moss",
+  "w": "15-custom.js:31"
+ },
+ {
+  "k": "Plum dusk",
+  "w": "15-custom.js:31"
+ },
+ {
+  "k": "Sand",
+  "w": "15-custom.js:31"
+ },
+ {
+  "k": "Amphora",
+  "w": "15-custom.js:31"
+ },
+ {
+  "k": "Aegean",
+  "w": "15-custom.js:31"
+ },
+ {
+  "k": "Colonnade",
+  "w": "15-custom.js:31"
+ },
+ {
+  "k": "Laurel grove",
+  "w": "15-custom.js:31"
+ },
+ {
+  "k": "Imperial purple",
+  "w": "15-custom.js:31"
+ },
+ {
+  "k": "Vesuvian ash",
+  "w": "15-custom.js:31"
+ },
+ {
+  "k": "Carthage dusk",
+  "w": "15-custom.js:31"
+ },
+ {
+  "k": "Saffron",
+  "w": "15-custom.js:31"
+ },
+ {
+  "k": "Short (default)",
+  "w": "15-custom.js:33"
+ },
+ {
+  "k": "Long",
+  "w": "15-custom.js:33"
+ },
+ {
+  "k": "Cropped",
+  "w": "15-custom.js:33"
+ },
+ {
+  "k": "Curly",
+  "w": "15-custom.js:33"
+ },
+ {
+  "k": "Braided",
+  "w": "15-custom.js:33"
+ },
+ {
+  "k": "Mohawk crest",
+  "w": "15-custom.js:33"
+ },
+ {
+  "k": "Shaven",
+  "w": "15-custom.js:33"
+ },
+ {
+  "k": "Full beard",
+  "w": "15-custom.js:34"
+ },
+ {
+  "k": "Goatee",
+  "w": "15-custom.js:34"
+ },
+ {
+  "k": "Moustache",
+  "w": "15-custom.js:34"
+ },
+ {
+  "k": "Stubble",
+  "w": "15-custom.js:34"
+ },
+ {
+  "k": "Forked (Gallic)",
+  "w": "15-custom.js:34"
+ },
+ {
+  "k": "Scar",
+  "w": "15-custom.js:35"
+ },
+ {
+  "k": "War paint",
+  "w": "15-custom.js:35"
+ },
+ {
+  "k": "Crossed scars",
+  "w": "15-custom.js:35"
+ },
+ {
+  "k": "Slave brand",
+  "w": "15-custom.js:35"
+ },
+ {
+  "k": "Thracian tattoos",
+  "w": "15-custom.js:35"
+ },
+ {
+  "k": "Woad face paint",
+  "w": "15-custom.js:35"
+ },
+ {
+  "k": "Eyepatch",
+  "w": "15-custom.js:35"
+ },
+ {
+  "k": "Milky eye",
+  "w": "15-custom.js:35"
+ },
+ {
+  "k": "Dark",
+  "w": "15-custom.js:36"
+ },
+ {
+  "k": "Brown",
+  "w": "15-custom.js:36"
+ },
+ {
+  "k": "Green",
+  "w": "15-custom.js:36"
+ },
+ {
+  "k": "Blue",
+  "w": "15-custom.js:36"
+ },
+ {
+  "k": "Amber",
+  "w": "15-custom.js:36"
+ },
+ {
+  "k": "Gray",
+  "w": "15-custom.js:36"
+ },
+ {
+  "k": "Manica arm guard",
+  "w": "15-custom.js:37"
+ },
+ {
+  "k": "Fur mantle",
+  "w": "15-custom.js:37"
+ },
+ {
+  "k": "Toga praetexta",
+  "w": "15-custom.js:37"
+ },
+ {
+  "k": "Scale shoulder",
+  "w": "15-custom.js:37"
+ },
+ {
+  "k": "Chain mail",
+  "w": "15-custom.js:37"
+ },
+ {
+  "k": "AP Upgrade token (3 AP)",
+  "w": "15-custom.js:39"
+ },
+ {
+  "k": "AP Upgrade token (2 AP)",
+  "w": "15-custom.js:39"
+ },
+ {
+  "k": "Health Elixir token (4 HP)",
+  "w": "15-custom.js:39"
+ },
+ {
+  "k": "Health Elixir token (2 HP)",
+  "w": "15-custom.js:39"
+ },
+ {
+  "k": "Speed of Mercury (+1 MV)",
+  "w": "15-custom.js:39"
+ },
+ {
+  "k": "Ward of the Evil Eye (card)",
+  "w": "15-custom.js:39"
+ },
+ {
+  "k": "Rete (card)",
+  "w": "15-custom.js:39"
+ },
+ {
+  "k": "Meat Lure (card)",
+  "w": "15-custom.js:39"
+ },
+ {
+  "k": "Tame (card)",
+  "w": "15-custom.js:39"
+ },
+ {
+  "k": "Focus! (card)",
+  "w": "15-custom.js:39"
+ },
+ {
+  "k": "Minerva's Push (card)",
+  "w": "15-custom.js:39"
+ },
+ {
+  "k": "Herculean Vigor +1 (card)",
+  "w": "15-custom.js:39"
+ },
+ {
+  "k": "Forge of Vulcan +2 (card)",
+  "w": "15-custom.js:39"
+ },
+ {
+  "k": "Omnia Mutantur (card)",
+  "w": "15-custom.js:39"
+ },
+ {
+  "k": "Custom gladiator",
+  "w": "15-custom.js:114"
+ },
+ {
+  "k": "{0} — click to {1} against edits and deletion.\nCreated {2}{3}{4}{5}",
+  "w": "15-custom.js:120"
+ },
+ {
+  "k": "Unlocked",
+  "w": "15-custom.js:120"
+ },
+ {
+  "k": "· last edited {0}",
+  "w": "15-custom.js:120"
+ },
+ {
+  "k": "Last locked {0}",
+  "w": "15-custom.js:120"
+ },
+ {
+  "k": "Last unlocked {0} — so people know the truth.",
+  "w": "15-custom.js:120"
+ },
+ {
+  "k": "Never unlocked.",
+  "w": "15-custom.js:120"
+ },
+ {
+  "k": "Unlock",
+  "w": "15-custom.js:121"
+ },
+ {
+  "k": "Lock",
+  "w": "15-custom.js:121"
+ },
+ {
+  "k": "Ability: {0}{1}{2}{3}",
+  "w": "15-custom.js:166"
+ },
+ {
+  "k": "Weakness:",
+  "w": "15-custom.js:166"
+ },
+ {
+  "k": "Last gladiator (or team) standing",
+  "w": "15-custom.js:183"
+ },
+ {
+  "k": "Two gladiators remain",
+  "w": "15-custom.js:183"
+ },
+ {
+  "k": "Four beasts slain or one gladiator falls",
+  "w": "15-custom.js:183"
+ },
+ {
+  "k": "The first gladiator falls",
+  "w": "15-custom.js:183"
+ },
+ {
+  "k": "N beasts slain this round",
+  "w": "15-custom.js:183"
+ },
+ {
+  "k": "N turn rotations this round",
+  "w": "15-custom.js:183"
+ },
+ {
+  "k": "A gladiator reaches N Crowd Favor",
+  "w": "15-custom.js:183"
+ },
+ {
+  "k": "Every beast slain or tamed",
+  "w": "15-custom.js:183"
+ },
+ {
+  "k": "Survive N rotations (everyone standing wins)",
+  "w": "15-custom.js:183"
+ },
+ {
+  "k": "The",
+  "w": "15-custom.js:193"
+ },
+ {
+  "k": "A custom event from the Creator Studio.",
+  "w": "15-custom.js:206"
+ },
+ {
+  "k": "+{0} Arena Key{1}",
+  "w": "15-custom.js:265"
+ },
+ {
+  "k": "Event rules: every gladiator starts with {0}.",
+  "w": "15-custom.js:266"
+ },
+ {
+  "k": "the event's +{0} HP",
+  "w": "15-custom.js:267"
+ },
+ {
+  "k": "the event's +{0} AP",
+  "w": "15-custom.js:267"
+ },
+ {
+  "k": "The market is closed for this event.",
+  "w": "15-custom.js:268"
+ },
+ {
+  "k": "Time limit: {0}. When it runs out, the highest Crowd Favor still standing wins.",
+  "w": "15-custom.js:269"
+ },
+ {
+  "k": "turn rotations",
+  "w": "15-custom.js:269"
+ },
+ {
+  "k": "; the highest Crowd Favor wins",
+  "w": "15-custom.js:275"
+ },
+ {
+  "k": "{0} turn rotations have passed; the highest Crowd Favor wins",
+  "w": "15-custom.js:277"
+ },
+ {
+  "k": "Every beast is slain.",
+  "w": "15-custom.js:282"
+ },
+ {
+  "k": "A gladiator has fallen",
+  "w": "15-custom.js:284"
+ },
+ {
+  "k": "Four beasts are slain",
+  "w": "15-custom.js:284"
+ },
+ {
+  "k": "The first gladiator has fallen",
+  "w": "15-custom.js:285"
+ },
+ {
+  "k": "{0} beasts are slain",
+  "w": "15-custom.js:286"
+ },
+ {
+  "k": "{0} turn rotations have passed",
+  "w": "15-custom.js:287"
+ },
+ {
+  "k": "{0} reached {1} Crowd Favor",
+  "w": "15-custom.js:288"
+ },
+ {
+  "k": "Every beast is slain or tamed",
+  "w": "15-custom.js:289"
+ },
+ {
+  "k": "The gladiators survived {0} rotations",
+  "w": "15-custom.js:290"
+ },
+ {
+  "k": "✝ {0} is struck from the rolls — {1}. Their design stays in the Creator Studio; copy it to raise a successor.",
+  "w": "15-custom.js:304"
+ },
+ {
+  "k": "Class ·",
+  "w": "15-custom.js:326"
+ },
+ {
+  "k": "Beast ·",
+  "w": "15-custom.js:326"
+ },
+ {
+  "k": "✦ Character ·",
+  "w": "15-custom.js:327"
+ },
+ {
+  "k": "✦ Beast ·",
+  "w": "15-custom.js:327"
+ },
+ {
+  "k": "📚 Library ·",
+  "w": "15-custom.js:327"
+ },
+ {
+  "k": "— earn “{0}”",
+  "w": "15-custom.js:338"
+ },
+ {
+  "k": "Body{0}",
+  "w": "15-custom.js:343"
+ },
+ {
+  "k": "Headgear{0}",
+  "w": "15-custom.js:343"
+ },
+ {
+  "k": "Weapon{0}",
+  "w": "15-custom.js:343"
+ },
+ {
+  "k": "Shield{0}",
+  "w": "15-custom.js:343"
+ },
+ {
+  "k": "Shield emblem{0}",
+  "w": "15-custom.js:344"
+ },
+ {
+  "k": "Off hand{0}",
+  "w": "15-custom.js:344"
+ },
+ {
+  "k": "Arms{0}",
+  "w": "15-custom.js:344"
+ },
+ {
+  "k": "Legs{0}",
+  "w": "15-custom.js:344"
+ },
+ {
+  "k": "Neck{0}",
+  "w": "15-custom.js:345"
+ },
+ {
+  "k": "Face{0}",
+  "w": "15-custom.js:345"
+ },
+ {
+  "k": "Eyes{0}",
+  "w": "15-custom.js:345"
+ },
+ {
+  "k": "Beard{0}",
+  "w": "15-custom.js:345"
+ },
+ {
+  "k": "Hair{0}",
+  "w": "15-custom.js:346"
+ },
+ {
+  "k": "Stance{0}",
+  "w": "15-custom.js:346"
+ },
+ {
+  "k": "Upright",
+  "w": "15-custom.js:346"
+ },
+ {
+  "k": "Hunched",
+  "w": "15-custom.js:346"
+ },
+ {
+  "k": "Skin{0}",
+  "w": "15-custom.js:346"
+ },
+ {
+  "k": "Fair",
+  "w": "15-custom.js:346"
+ },
+ {
+  "k": "Olive",
+  "w": "15-custom.js:346"
+ },
+ {
+  "k": "Tan",
+  "w": "15-custom.js:346"
+ },
+ {
+  "k": "Bronze",
+  "w": "15-custom.js:346"
+ },
+ {
+  "k": "Deep",
+  "w": "15-custom.js:346"
+ },
+ {
+  "k": "Ruddy",
+  "w": "15-custom.js:346"
+ },
+ {
+  "k": "Tone",
+  "w": "15-custom.js:346"
+ },
+ {
+  "k": "Size{0}",
+  "w": "15-custom.js:346"
+ },
+ {
+  "k": "Main color{0}",
+  "w": "15-custom.js:347"
+ },
+ {
+  "k": "Trim color{0}",
+  "w": "15-custom.js:347"
+ },
+ {
+  "k": "Hair color{0}",
+  "w": "15-custom.js:347"
+ },
+ {
+  "k": "Base color{0}",
+  "w": "15-custom.js:347"
+ },
+ {
+  "k": "Cloak{0}",
+  "w": "15-custom.js:348"
+ },
+ {
+  "k": "House colors",
+  "w": "15-custom.js:348"
+ },
+ {
+  "k": "Golden cloak",
+  "w": "15-custom.js:348"
+ },
+ {
+  "k": "Base finish{0}",
+  "w": "15-custom.js:348"
+ },
+ {
+  "k": "Chosen color",
+  "w": "15-custom.js:348"
+ },
+ {
+  "k": "Cape",
+  "w": "15-custom.js:348"
+ },
+ {
+  "k": "Tail{0}",
+  "w": "15-custom.js:349"
+ },
+ {
+  "k": "Pattern{0}",
+  "w": "15-custom.js:349"
+ },
+ {
+  "k": "Gear{0}",
+  "w": "15-custom.js:349"
+ },
+ {
+  "k": "One great eye",
+  "w": "15-custom.js:350"
+ },
+ {
+  "k": "Hide{0}",
+  "w": "15-custom.js:351"
+ },
+ {
+  "k": "Markings{0}",
+  "w": "15-custom.js:351"
+ },
+ {
+  "k": "Eye color{0}",
+  "w": "15-custom.js:351"
+ },
+ {
+  "k": "Mane",
+  "w": "15-custom.js:352"
+ },
+ {
+  "k": "Horns",
+  "w": "15-custom.js:352"
+ },
+ {
+  "k": "Wings",
+  "w": "15-custom.js:352"
+ },
+ {
+  "k": "Bulky",
+  "w": "15-custom.js:352"
+ },
+ {
+  "k": "<b>📚 Library token</b>",
+  "w": "15-custom.js:356"
+ },
+ {
+  "k": "free-standing — hand it to any creation",
+  "w": "15-custom.js:356"
+ },
+ {
+  "k": "Token name",
+  "w": "15-custom.js:356"
+ },
+ {
+  "k": "Assign to a creation…",
+  "w": "15-custom.js:356"
+ },
+ {
+  "k": "(wearing it)",
+  "w": "15-custom.js:356"
+ },
+ {
+  "k": "Assign",
+  "w": "15-custom.js:356"
+ },
+ {
+  "k": "<b>How tokens work.</b> Every class and default beast has a figure. Every <b>custom character</b> gets one automatically from its portrait (Creator Studio → Characters), and every <b>custom beast</b> wears the figure of its kind (a ready-made animal, or one drawn automatically for a custom kind) — pick either in <i>Token for</i> to sculpt it. You can also sculpt <b>free-standing library tokens</b> (📚 below) and hand them to any creation, here or from the character and beast editors. Tokens show on the board when Settings → Tokens is on <b>Figures</b>; your creations always wear theirs. {0}",
+  "w": "15-custom.js:357"
+ },
+ {
+  "k": "Token for",
+  "w": "15-custom.js:359"
+ },
+ {
+  "k": "Drag a selected shape here",
+  "w": "15-custom.js:360"
+ },
+ {
+  "k": "A gladiator",
+  "w": "15-custom.js:361"
+ },
+ {
+  "k": "A beast",
+  "w": "15-custom.js:361"
+ },
+ {
+  "k": "default piece",
+  "w": "15-custom.js:361"
+ },
+ {
+  "k": "your creation",
+  "w": "15-custom.js:361"
+ },
+ {
+  "k": "Battle states",
+  "w": "15-custom.js:363"
+ },
+ {
+  "k": "how this figure looks as the sand takes its price (automatic in play)",
+  "w": "15-custom.js:363"
+ },
+ {
+  "k": "the last stand",
+  "w": "15-custom.js:364"
+ },
+ {
+  "k": "System figures are locked so the defaults are always there",
+  "w": "15-custom.js:365"
+ },
+ {
+  "k": "🔒 System figure",
+  "w": "15-custom.js:365"
+ },
+ {
+  "k": "System figures are locked — your changes are saved as a copy in the token library",
+  "w": "15-custom.js:365"
+ },
+ {
+  "k": "⧉ Save as a copy (library token)",
+  "w": "15-custom.js:365"
+ },
+ {
+  "k": "💾 Save token",
+  "w": "15-custom.js:365"
+ },
+ {
+  "k": "📚 Save as a new library token",
+  "w": "15-custom.js:365"
+ },
+ {
+  "k": "🎲 Randomize",
+  "w": "15-custom.js:365"
+ },
+ {
+  "k": "From portrait",
+  "w": "15-custom.js:365"
+ },
+ {
+  "k": "From the beast",
+  "w": "15-custom.js:365"
+ },
+ {
+  "k": "Default",
+  "w": "15-custom.js:365"
+ },
+ {
+  "k": "Make it a beast",
+  "w": "15-custom.js:365"
+ },
+ {
+  "k": "Make it a humanoid",
+  "w": "15-custom.js:365"
+ },
+ {
+  "k": "The lineup",
+  "w": "15-custom.js:366"
+ },
+ {
+  "k": "📋 All creations",
+  "w": "15-custom.js:371"
+ },
+ {
+  "k": "🎭 Classes",
+  "w": "15-custom.js:371"
+ },
+ {
+  "k": "🛡 Characters",
+  "w": "15-custom.js:371"
+ },
+ {
+  "k": "🎩 Lanistas",
+  "w": "15-custom.js:371"
+ },
+ {
+  "k": "🤝 Cohorts",
+  "w": "15-custom.js:371"
+ },
+ {
+  "k": "🎪 Event Designer",
+  "w": "15-custom.js:371"
+ },
+ {
+  "k": "🏆 Tournament Designer",
+  "w": "15-custom.js:371"
+ },
+ {
+  "k": "👥 Spectators",
+  "w": "15-custom.js:371"
+ },
+ {
+  "k": "⚔ Weapons",
+  "w": "15-custom.js:371"
+ },
+ {
+  "k": "🚩 Banners",
+  "w": "15-custom.js:371"
+ },
+ {
+  "k": "🏆 Trophies",
+  "w": "15-custom.js:371"
+ },
+ {
+  "k": "⭐ Invitationals",
+  "w": "15-custom.js:371"
+ },
+ {
+  "k": "📚 Roster sets",
+  "w": "15-custom.js:371"
+ },
+ {
+  "k": "🎲 Names",
+  "w": "15-custom.js:371"
+ },
+ {
+  "k": "tabs sttabs",
+  "w": "15-custom.js:371"
+ },
+ {
+  "k": "Your {0} · {1}",
+  "w": "15-custom.js:376"
+ },
+ {
+  "k": "✝ Fallen",
+  "w": "15-custom.js:390"
+ },
+ {
+  "k": "📜 On the rolls",
+  "w": "15-custom.js:390"
+ },
+ {
+  "k": "✎ Design only",
+  "w": "15-custom.js:390"
+ },
+ {
+  "k": "{0} · {1} · {2} events",
+  "w": "15-custom.js:393"
+ },
+ {
+  "k": "Beast",
+  "w": "15-custom.js:394"
+ },
+ {
+  "k": "{0} · {1} HP · atk {2} · move {3}",
+  "w": "15-custom.js:394"
+ },
+ {
+  "k": "{0}{1} players · {2} round{3}",
+  "w": "15-custom.js:395"
+ },
+ {
+  "k": "Spectator",
+  "w": "15-custom.js:396"
+ },
+ {
+  "k": "{0} · {1} · {2} visits",
+  "w": "15-custom.js:396"
+ },
+ {
+  "k": "Token",
+  "w": "15-custom.js:397"
+ },
+ {
+  "k": "{0} · in the token library",
+  "w": "15-custom.js:397"
+ },
+ {
+  "k": "level {0} · {1}",
+  "w": "15-custom.js:398"
+ },
+ {
+  "k": "power {0} · range {1}",
+  "w": "15-custom.js:398"
+ },
+ {
+  "k": "Armor",
+  "w": "15-custom.js:399"
+ },
+ {
+  "k": "{0} · {1} AP · level {2}",
+  "w": "15-custom.js:399"
+ },
+ {
+  "k": "Banner",
+  "w": "15-custom.js:400"
+ },
+ {
+  "k": "🏟 on an event",
+  "w": "15-custom.js:401"
+ },
+ {
+  "k": "Editor",
+  "w": "15-custom.js:402"
+ },
+ {
+  "k": "Characters",
+  "w": "15-custom.js:403"
+ },
+ {
+  "k": "Beasts",
+  "w": "15-custom.js:403"
+ },
+ {
+  "k": "Spectators",
+  "w": "15-custom.js:403"
+ },
+ {
+  "k": "Tokens",
+  "w": "15-custom.js:403"
+ },
+ {
+  "k": "Banners",
+  "w": "15-custom.js:403"
+ },
+ {
+  "k": "Editors",
+  "w": "15-custom.js:403"
+ },
+ {
+  "k": "Tournaments",
+  "w": "15-custom.js:403"
+ },
+ {
+  "k": "Special events",
+  "w": "15-custom.js:403"
+ },
+ {
+  "k": "Cohorts",
+  "w": "15-custom.js:403"
+ },
+ {
+  "k": "Roster sets",
+  "w": "15-custom.js:403"
+ },
+ {
+  "k": "Search by name…",
+  "w": "15-custom.js:405"
+ },
+ {
+  "k": "All ·",
+  "w": "15-custom.js:405"
+ },
+ {
+  "k": "Name",
+  "w": "15-custom.js:406"
+ },
+ {
+  "k": "Details",
+  "w": "15-custom.js:406"
+ },
+ {
+  "k": "Updated",
+  "w": "15-custom.js:406"
+ },
+ {
+  "k": "Open",
+  "w": "15-custom.js:406"
+ },
+ {
+  "k": "Hand-craft a <b>regular</b> for the stands: they join the crowd pool like anyone else — attending events, forming grudges, quitting in disgust — and appear in the Spectator roster (🌍 Imperium window, T key). {0}",
+  "w": "15-custom.js:410"
+ },
+ {
+  "k": "IN THE STANDS",
+  "w": "15-custom.js:411"
+ },
+ {
+  "k": "IN THE CITY",
+  "w": "15-custom.js:411"
+ },
+ {
+  "k": "one person, two renders — the face fills the tiers, the figure walks the squares",
+  "w": "15-custom.js:411"
+ },
+ {
+  "k": "🎲 Randomize<small>new face, taste and temper</small>",
+  "w": "15-custom.js:411"
+ },
+ {
+  "k": "Taste{0}",
+  "w": "15-custom.js:413"
+ },
+ {
+  "k": "Temper{0}",
+  "w": "15-custom.js:414"
+ },
+ {
+  "k": "Shade",
+  "w": "15-custom.js:416"
+ },
+ {
+  "k": "Headwear{0}",
+  "w": "15-custom.js:417"
+ },
+ {
+  "k": "Pileus cap",
+  "w": "15-custom.js:417"
+ },
+ {
+  "k": "Straw sun-hat",
+  "w": "15-custom.js:417"
+ },
+ {
+  "k": "Traveler’s hood",
+  "w": "15-custom.js:417"
+ },
+ {
+  "k": "Matron’s veil",
+  "w": "15-custom.js:417"
+ },
+ {
+  "k": "Old legion helmet",
+  "w": "15-custom.js:417"
+ },
+ {
+  "k": "Eastern turban",
+  "w": "15-custom.js:417"
+ },
+ {
+  "k": "Tunic (under) color",
+  "w": "15-custom.js:418"
+ },
+ {
+  "k": "default: their city's wool",
+  "w": "15-custom.js:418"
+ },
+ {
+  "k": "Mantle color",
+  "w": "15-custom.js:419"
+ },
+ {
+  "k": "Female",
+  "w": "15-custom.js:420"
+ },
+ {
+  "k": "Beard",
+  "w": "15-custom.js:420"
+ },
+ {
+  "k": "Long hair",
+  "w": "15-custom.js:420"
+ },
+ {
+  "k": "Troublemaker (the ushers watch them; quicker to throw stones)",
+  "w": "15-custom.js:420"
+ },
+ {
+  "k": "<b style=\"font-size:13px\">👪 Family in the arena</b>",
+  "w": "15-custom.js:421"
+ },
+ {
+  "k": "(optional) — kin arrive in family colors whenever this gladiator fights, and grieve if they fall",
+  "w": "15-custom.js:421"
+ },
+ {
+  "k": "Kin of",
+  "w": "15-custom.js:422"
+ },
+ {
+  "k": "Relation",
+  "w": "15-custom.js:423"
+ },
+ {
+  "k": "old cellmate",
+  "w": "15-custom.js:423"
+ },
+ {
+  "k": "This spectator is the <b>{0}</b> of <b>{1}</b>. Their kinfolk in the crowd pool: {2}.",
+  "w": "15-custom.js:424"
+ },
+ {
+  "k": "none yet — a family tree starts somewhere",
+  "w": "15-custom.js:424"
+ },
+ {
+  "k": "Save changes",
+  "w": "15-custom.js:425"
+ },
+ {
+  "k": "Add to the crowd",
+  "w": "15-custom.js:425"
+ },
+ {
+  "k": "New spectator",
+  "w": "15-custom.js:425"
+ },
+ {
+  "k": "Your custom regulars",
+  "w": "15-custom.js:426"
+ },
+ {
+  "k": "<b>{0}</b> {1}{2}<small>{3} · {4} · {5} visits{6}</small>",
+  "w": "15-custom.js:426"
+ },
+ {
+  "k": "Edit",
+  "w": "15-custom.js:426"
+ },
+ {
+  "k": "Roll 24 more names",
+  "w": "15-custom.js:428"
+ },
+ {
+  "k": "Create and track custom characters, as on the character sheet (p.60): portrait, name, home city, nickname, ability, Flavius Fidelis, trophy count, Royal Reserve, favorite weapons, backstory and event history. Loadouts are built from real armor tokens and weapon cards within a {0}-point budget (the eight classes cost 14 to 24). Custom characters can fight in any event that allows classes. {1}",
+  "w": "15-custom.js:429"
+ },
+ {
+  "k": "New character",
+  "w": "15-custom.js:430"
+ },
+ {
+  "k": "Generate a random character",
+  "w": "15-custom.js:430"
+ },
+ {
+  "k": "<b>{0}</b> {1}<small>“{2}” · {3} · {4}{5}</small><small>🏆 {6} trophies · RR {7} · {8} events{9}</small><small>{10}</small>",
+  "w": "15-custom.js:431"
+ },
+ {
+  "k": "· Flavius Fidelis",
+  "w": "15-custom.js:431"
+ },
+ {
+  "k": "<b style=\"color:var(--blood2)\">✝ Fallen</b> — {0}{1}. Struck from the rolls; copy the design to raise a successor.",
+  "w": "15-custom.js:431"
+ },
+ {
+  "k": "<b style=\"color:var(--gold2)\">🗡 Freed</b> — retired with the rudis.",
+  "w": "15-custom.js:431"
+ },
+ {
+  "k": "<b style=\"color:#8fe07a\">📜 On the rolls</b> — can be fielded in New event and joins new Manager careers.",
+  "w": "15-custom.js:431"
+ },
+ {
+  "k": "<b style=\"color:var(--muted)\">✎ Design only</b> — not yet on the rolls.",
+  "w": "15-custom.js:431"
+ },
+ {
+  "k": "Remove from the rolls",
+  "w": "15-custom.js:431"
+ },
+ {
+  "k": "📜 Add to the rolls",
+  "w": "15-custom.js:431"
+ },
+ {
+  "k": "disabled title=\"Add them to the rolls first\"",
+  "w": "15-custom.js:431"
+ },
+ {
+  "k": "Play",
+  "w": "15-custom.js:431"
+ },
+ {
+  "k": "disabled title=\"Locked: unlock first\"",
+  "w": "15-custom.js:431"
+ },
+ {
+  "k": "Copy",
+  "w": "15-custom.js:431"
+ },
+ {
+  "k": "Design your own beasts for custom events: stats, rewards, behavior (guard a zone, hunt the closest gladiator, or hunt the highest Crowd Favor like Commodus), flight, taming and Initial / Raged / Fazed behavior states. {0}",
+  "w": "15-custom.js:432"
+ },
+ {
+  "k": "New beast",
+  "w": "15-custom.js:433"
+ },
+ {
+  "k": "<b>{0}</b> {1}<small>{2} · {3} HP · attack {4} · range {5} · move {6}{7}{8}</small><small>{9} · slain: {10} coin, {11} CF</small>",
+  "w": "15-custom.js:434"
+ },
+ {
+  "k": "hunts the closest gladiator",
+  "w": "15-custom.js:434"
+ },
+ {
+  "k": "hunts the highest CF",
+  "w": "15-custom.js:434"
+ },
+ {
+  "k": "Design events like the custom events sheet (p.64): player count, rounds with zone and PvE / PvP / CF / CA flags, end conditions, time limits, offering tokens, allowed classes, NPCs and a full board layout with up to 12 pillars, Blessings pots, spikes, tunnels, the chest, Golden Eagles, beasts, offerings, keys, weapons and armor. {0}",
+  "w": "15-custom.js:435"
+ },
+ {
+  "k": "<b>{0}</b> {1}<small>{2} players · {3} · {4} round{5} · {6} pillars · {7} beasts</small><small>{8}</small>",
+  "w": "15-custom.js:437"
+ },
+ {
+  "k": "L{0} · {1} · {2} AP{3}",
+  "w": "15-custom.js:442"
+ },
+ {
+  "k": "Right arm",
+  "w": "15-custom.js:447"
+ },
+ {
+  "k": "Left arm",
+  "w": "15-custom.js:447"
+ },
+ {
+  "k": "Upper{0}",
+  "w": "15-custom.js:448"
+ },
+ {
+  "k": "arm.{0}.upper",
+  "w": "15-custom.js:448"
+ },
+ {
+  "k": "Lower{0}",
+  "w": "15-custom.js:448"
+ },
+ {
+  "k": "arm.{0}.lower",
+  "w": "15-custom.js:448"
+ },
+ {
+  "k": "arm.{0}.wraps",
+  "w": "15-custom.js:449"
+ },
+ {
+  "k": "Padded wraps (stackable)",
+  "w": "15-custom.js:449"
+ },
+ {
+  "k": "arm.{0}.cestus",
+  "w": "15-custom.js:449"
+ },
+ {
+  "k": "Cestus (+1 damage)",
+  "w": "15-custom.js:449"
+ },
+ {
+  "k": "✚ New character",
+  "w": "15-custom.js:451"
+ },
+ {
+  "k": "🎲 Randomize character",
+  "w": "15-custom.js:451"
+ },
+ {
+  "k": "Backdrop{0}",
+  "w": "15-custom.js:454"
+ },
+ {
+  "k": "Backdrop",
+  "w": "15-custom.js:454"
+ },
+ {
+  "k": "🏳 City banner ·",
+  "w": "15-custom.js:454"
+ },
+ {
+  "k": "🖼 Portrait banner ·",
+  "w": "15-custom.js:454"
+ },
+ {
+  "k": "✦ Your banner ·",
+  "w": "15-custom.js:454"
+ },
+ {
+  "k": "Hairstyle{0}",
+  "w": "15-custom.js:455"
+ },
+ {
+  "k": "Marks{0}",
+  "w": "15-custom.js:456"
+ },
+ {
+  "k": "Backdrop banners · click one to hang it behind the portrait",
+  "w": "15-custom.js:457"
+ },
+ {
+  "k": "your banner",
+  "w": "15-custom.js:457"
+ },
+ {
+  "k": "Garb{0}",
+  "w": "15-custom.js:458"
+ },
+ {
+  "k": "Build{0}",
+  "w": "15-custom.js:459"
+ },
+ {
+  "k": "Expression{0}",
+  "w": "15-custom.js:459"
+ },
+ {
+  "k": "Stern",
+  "w": "15-custom.js:459"
+ },
+ {
+  "k": "Grin",
+  "w": "15-custom.js:459"
+ },
+ {
+  "k": "Earring{0}",
+  "w": "15-custom.js:459"
+ },
+ {
+  "k": "Gold earring",
+  "w": "15-custom.js:459"
+ },
+ {
+  "k": "🎲 Random look",
+  "w": "15-custom.js:460"
+ },
+ {
+  "k": "🗿 Board token",
+  "w": "15-custom.js:460"
+ },
+ {
+  "k": "The board token this character wears",
+  "w": "15-custom.js:460"
+ },
+ {
+  "k": "Board token{0}",
+  "w": "15-custom.js:460"
+ },
+ {
+  "k": "Sculpted for this character",
+  "w": "15-custom.js:460"
+ },
+ {
+  "k": "Built from the portrait",
+  "w": "15-custom.js:460"
+ },
+ {
+  "k": "Character sheet",
+  "w": "15-custom.js:461"
+ },
+ {
+  "k": "<span>Trophy count: <b>{0}</b></span><span>Royal Reserve (RR): <b>{1}</b> coin</span><span>Flavius Fidelis: <b>{2}</b></span><span>Favorite weapons: <b>{3}</b></span>",
+  "w": "15-custom.js:462"
+ },
+ {
+  "k": "not yet",
+  "w": "15-custom.js:462"
+ },
+ {
+  "k": "Nickname",
+  "w": "15-custom.js:469"
+ },
+ {
+  "k": "Generate a nickname",
+  "w": "15-custom.js:469"
+ },
+ {
+  "k": "Home city{0}",
+  "w": "15-custom.js:470"
+ },
+ {
+  "k": "Color",
+  "w": "15-custom.js:471"
+ },
+ {
+  "k": "CPU personality (when a CPU plays this character)",
+  "w": "15-custom.js:473"
+ },
+ {
+  "k": "Presets:",
+  "w": "15-custom.js:473"
+ },
+ {
+  "k": "Every slider rolled at random",
+  "w": "15-custom.js:473"
+ },
+ {
+  "k": "🎲 Random",
+  "w": "15-custom.js:473"
+ },
+ {
+  "k": "Backstory",
+  "w": "15-custom.js:474"
+ },
+ {
+  "k": "Where they come from, what they fight for…",
+  "w": "15-custom.js:474"
+ },
+ {
+  "k": "🎲 Write a backstory",
+  "w": "15-custom.js:474"
+ },
+ {
+  "k": "Save character",
+  "w": "15-custom.js:475"
+ },
+ {
+  "k": "↺ Start a fresh one",
+  "w": "15-custom.js:475"
+ },
+ {
+  "k": "<br>Initial ≥{0} HP · Raged ≥{1} HP (+1 attack, +1 move) · Fazed below",
+  "w": "15-custom.js:482"
+ },
+ {
+  "k": "Sculpted for this beast",
+  "w": "15-custom.js:482"
+ },
+ {
+  "k": "The {0} figure (matches its kind)",
+  "w": "15-custom.js:482"
+ },
+ {
+  "k": "Drawn automatically from its kind",
+  "w": "15-custom.js:482"
+ },
+ {
+  "k": "🏟 Default",
+  "w": "15-custom.js:482"
+ },
+ {
+  "k": "Pick any existing figure, a library token, or sculpt one of its own.",
+  "w": "15-custom.js:482"
+ },
+ {
+  "k": "🗿 Sculpt its token",
+  "w": "15-custom.js:482"
+ },
+ {
+  "k": "Start from an existing beast{0}",
+  "w": "15-custom.js:484"
+ },
+ {
+  "k": "— fully custom —",
+  "w": "15-custom.js:484"
+ },
+ {
+  "k": "{0} (HP {1} · ATK {2} · MV {3})",
+  "w": "15-custom.js:484"
+ },
+ {
+  "k": "Picking one copies its stats and look; the name stays yours — call it Bill the Beast Boi if you like.",
+  "w": "15-custom.js:485"
+ },
+ {
+  "k": "Kind of beast",
+  "w": "15-custom.js:486"
+ },
+ {
+  "k": "Custom kind…",
+  "w": "15-custom.js:486"
+ },
+ {
+  "k": "Set HP, AP, range, movement, rewards and behavior to what this kind of animal usually has",
+  "w": "15-custom.js:486"
+ },
+ {
+  "k": "Typical stats",
+  "w": "15-custom.js:486"
+ },
+ {
+  "k": "maxlength=\"20\" placeholder=\"Name your kind — e.g. Hippogriff\"",
+  "w": "15-custom.js:486"
+ },
+ {
+  "k": "Token letter{0}",
+  "w": "15-custom.js:487"
+ },
+ {
+  "k": "Health {0}",
+  "w": "15-custom.js:488"
+ },
+ {
+  "k": "Attack (damage per hit) {0}",
+  "w": "15-custom.js:488"
+ },
+ {
+  "k": "Range {0}",
+  "w": "15-custom.js:488"
+ },
+ {
+  "k": "Coin when slain {0}",
+  "w": "15-custom.js:489"
+ },
+ {
+  "k": "CF when slain {0}",
+  "w": "15-custom.js:489"
+ },
+ {
+  "k": "Behavior{0}",
+  "w": "15-custom.js:490"
+ },
+ {
+  "k": "Guards a zone around where it is placed",
+  "w": "15-custom.js:490"
+ },
+ {
+  "k": "Hunts the closest gladiator",
+  "w": "15-custom.js:490"
+ },
+ {
+  "k": "Hunts the gladiator with the most CF",
+  "w": "15-custom.js:490"
+ },
+ {
+  "k": "Flies over pillars and units",
+  "w": "15-custom.js:491"
+ },
+ {
+  "k": "Can be tamed (Tame card, Lyre)",
+  "w": "15-custom.js:491"
+ },
+ {
+  "k": "Behavior states (Initial, Raged, Fazed)",
+  "w": "15-custom.js:491"
+ },
+ {
+  "k": "Beasts attack with 2 hit dice against gladiators; each hit deals their attack value. Place them on the board in the Event Designer.",
+  "w": "15-custom.js:492"
+ },
+ {
+  "k": "Save beast",
+  "w": "15-custom.js:493"
+ },
+ {
+  "k": "Pillar (P)",
+  "w": "15-custom.js:496"
+ },
+ {
+  "k": "Blessings pot",
+  "w": "15-custom.js:496"
+ },
+ {
+  "k": "Spike (S)",
+  "w": "15-custom.js:496"
+ },
+ {
+  "k": "Tunnel (T)",
+  "w": "15-custom.js:496"
+ },
+ {
+  "k": "Chest (C)",
+  "w": "15-custom.js:496"
+ },
+ {
+  "k": "Golden Eagle (GE)",
+  "w": "15-custom.js:496"
+ },
+ {
+  "k": "Start tile",
+  "w": "15-custom.js:496"
+ },
+ {
+  "k": "Offering",
+  "w": "15-custom.js:496"
+ },
+ {
+  "k": "Coin pile",
+  "w": "15-custom.js:496"
+ },
+ {
+  "k": "Eraser",
+  "w": "15-custom.js:496"
+ },
+ {
+  "k": "with a pot ({0})",
+  "w": "15-custom.js:505"
+ },
+ {
+  "k": "random blessing",
+  "w": "15-custom.js:505"
+ },
+ {
+  "k": "Arena Chest",
+  "w": "15-custom.js:508"
+ },
+ {
+  "k": "--sc:{0}",
+  "w": "15-custom.js:509"
+ },
+ {
+  "k": "start tile",
+  "w": "15-custom.js:509"
+ },
+ {
+  "k": "hunts top CF",
+  "w": "15-custom.js:510"
+ },
+ {
+  "k": "Pot contents{0}",
+  "w": "15-custom.js:519"
+ },
+ {
+  "k": "Random blessing from the bag",
+  "w": "15-custom.js:519"
+ },
+ {
+  "k": "Beast{0}",
+  "w": "15-custom.js:520"
+ },
+ {
+  "k": "Default for this beast",
+  "w": "15-custom.js:520"
+ },
+ {
+  "k": "Guards a zone",
+  "w": "15-custom.js:520"
+ },
+ {
+  "k": "Hunts the most CF",
+  "w": "15-custom.js:520"
+ },
+ {
+  "k": "Offering{0}",
+  "w": "15-custom.js:521"
+ },
+ {
+  "k": "Armor token{0}",
+  "w": "15-custom.js:523"
+ },
+ {
+  "k": "Coin in the pile{0}",
+  "w": "15-custom.js:524"
+ },
+ {
+  "k": "Seat{0}",
+  "w": "15-custom.js:525"
+ },
+ {
+  "k": "Player",
+  "w": "15-custom.js:525"
+ },
+ {
+  "k": "Chest holds (level 4)",
+  "w": "15-custom.js:526"
+ },
+ {
+  "k": "Click a tile to use the tool. Rows A-L run top to bottom and columns 1-12 left to right, as on the arena board; the center row and column are the dividing lines between quadrants.",
+  "w": "15-custom.js:529"
+ },
+ {
+  "k": "Pillars {0}/12",
+  "w": "15-custom.js:532"
+ },
+ {
+  "k": "Blessings pots {0}/{1}",
+  "w": "15-custom.js:532"
+ },
+ {
+  "k": "Spikes {0}",
+  "w": "15-custom.js:532"
+ },
+ {
+  "k": "Tunnels {0}",
+  "w": "15-custom.js:532"
+ },
+ {
+  "k": "Beasts {0}",
+  "w": "15-custom.js:532"
+ },
+ {
+  "k": "Items {0}",
+  "w": "15-custom.js:532"
+ },
+ {
+  "k": "Start tiles {0}",
+  "w": "15-custom.js:532"
+ },
+ {
+  "k": "Blessings of the People",
+  "w": "15-custom.js:533"
+ },
+ {
+  "k": "<span>Randomize pots on</span>",
+  "w": "15-custom.js:534"
+ },
+ {
+  "k": "<span>of {0} pillars</span>",
+  "w": "15-custom.js:534"
+ },
+ {
+  "k": "Shuffle the blessings in use across the pillars (adding random pots up to the number chosen)",
+  "w": "15-custom.js:534"
+ },
+ {
+  "k": "🎲 Randomize blessings",
+  "w": "15-custom.js:534"
+ },
+ {
+  "k": "— no pot —",
+  "w": "15-custom.js:535"
+ },
+ {
+  "k": "🏺 Random blessing from the bag",
+  "w": "15-custom.js:535"
+ },
+ {
+  "k": "Guarantee a Golden Eagle among the random pots",
+  "w": "15-custom.js:536"
+ },
+ {
+  "k": "Classic arena layout",
+  "w": "15-custom.js:537"
+ },
+ {
+  "k": "Clear the board",
+  "w": "15-custom.js:537"
+ },
+ {
+  "k": "🎲 Random arena",
+  "w": "15-custom.js:537"
+ },
+ {
+  "k": "<b style=\"font-family:var(--display);color:var(--gold2)\">Round {0}</b>{1}",
+  "w": "15-custom.js:542"
+ },
+ {
+  "k": "Remove",
+  "w": "15-custom.js:542"
+ },
+ {
+  "k": "Name{0}",
+  "w": "15-custom.js:543"
+ },
+ {
+  "k": "rounds.{0}.n",
+  "w": "15-custom.js:543"
+ },
+ {
+  "k": "Zone{0}",
+  "w": "15-custom.js:543"
+ },
+ {
+  "k": "rounds.{0}.zone",
+  "w": "15-custom.js:543"
+ },
+ {
+  "k": "Zone 1 · whole arena 13×13",
+  "w": "15-custom.js:543"
+ },
+ {
+  "k": "Zone 2 · 9×9",
+  "w": "15-custom.js:543"
+ },
+ {
+  "k": "Zone 3 · 5×5",
+  "w": "15-custom.js:543"
+ },
+ {
+  "k": "End condition{0}",
+  "w": "15-custom.js:544"
+ },
+ {
+  "k": "rounds.{0}.end",
+  "w": "15-custom.js:544"
+ },
+ {
+  "k": "rounds.{0}.endN",
+  "w": "15-custom.js:544"
+ },
+ {
+  "k": "rounds.{0}.pve",
+  "w": "15-custom.js:545"
+ },
+ {
+  "k": "rounds.{0}.pvp",
+  "w": "15-custom.js:545"
+ },
+ {
+  "k": "rounds.{0}.cf",
+  "w": "15-custom.js:545"
+ },
+ {
+  "k": "CF (crowd favor can be spent)",
+  "w": "15-custom.js:545"
+ },
+ {
+  "k": "rounds.{0}.ca",
+  "w": "15-custom.js:545"
+ },
+ {
+  "k": "CA (class abilities)",
+  "w": "15-custom.js:545"
+ },
+ {
+  "k": "Survivors get coin {0}",
+  "w": "15-custom.js:546"
+ },
+ {
+  "k": "rounds.{0}.reward.coin",
+  "w": "15-custom.js:546"
+ },
+ {
+  "k": "…and CF {0}",
+  "w": "15-custom.js:546"
+ },
+ {
+  "k": "rounds.{0}.reward.cf",
+  "w": "15-custom.js:546"
+ },
+ {
+  "k": "…and arena cards {0}",
+  "w": "15-custom.js:546"
+ },
+ {
+  "k": "rounds.{0}.reward.cards",
+  "w": "15-custom.js:546"
+ },
+ {
+  "k": "Event name{0}",
+  "w": "15-custom.js:547"
+ },
+ {
+  "k": "Mode{0}",
+  "w": "15-custom.js:548"
+ },
+ {
+  "k": "Teams (set in setup)",
+  "w": "15-custom.js:548"
+ },
+ {
+  "k": "Co-op: everyone vs the beasts",
+  "w": "15-custom.js:548"
+ },
+ {
+  "k": "Players, fewest {0}",
+  "w": "15-custom.js:549"
+ },
+ {
+  "k": "Players, most {0}",
+  "w": "15-custom.js:549"
+ },
+ {
+  "k": "Arena location{0}",
+  "w": "15-custom.js:550"
+ },
+ {
+  "k": "Win reward (CF) {0}",
+  "w": "15-custom.js:550"
+ },
+ {
+  "k": "Rounds",
+  "w": "15-custom.js:551"
+ },
+ {
+  "k": "Add a round",
+  "w": "15-custom.js:551"
+ },
+ {
+  "k": "Time constraints",
+  "w": "15-custom.js:552"
+ },
+ {
+  "k": "Turn rotations (0 = none) {0}",
+  "w": "15-custom.js:552"
+ },
+ {
+  "k": "Minutes (0 = none) {0}",
+  "w": "15-custom.js:552"
+ },
+ {
+  "k": "Arena rules",
+  "w": "15-custom.js:553"
+ },
+ {
+  "k": "Arena deck (arena cards)",
+  "w": "15-custom.js:553"
+ },
+ {
+  "k": "Mandata Flavi secret objectives",
+  "w": "15-custom.js:553"
+ },
+ {
+  "k": "Market open",
+  "w": "15-custom.js:553"
+ },
+ {
+  "k": "Truces allowed",
+  "w": "15-custom.js:553"
+ },
+ {
+  "k": "Optional offerings in the bag",
+  "w": "15-custom.js:553"
+ },
+ {
+  "k": "Chariot offering tokens added to the bag {0}",
+  "w": "15-custom.js:554"
+ },
+ {
+  "k": "Market prices (%) {0}",
+  "w": "15-custom.js:554"
+ },
+ {
+  "k": "Spectators {0}",
+  "w": "15-custom.js:554"
+ },
+ {
+  "k": "Beast health (%) {0}",
+  "w": "15-custom.js:555"
+ },
+ {
+  "k": "Beast damage (±) {0}",
+  "w": "15-custom.js:555"
+ },
+ {
+  "k": "Starting bonuses for every gladiator",
+  "w": "15-custom.js:556"
+ },
+ {
+  "k": "Coin {0}",
+  "w": "15-custom.js:556"
+ },
+ {
+  "k": "Crowd Favor {0}",
+  "w": "15-custom.js:556"
+ },
+ {
+  "k": "Arena Keys {0}",
+  "w": "15-custom.js:556"
+ },
+ {
+  "k": "Extra HP to place {0}",
+  "w": "15-custom.js:556"
+ },
+ {
+  "k": "Extra AP to place {0}",
+  "w": "15-custom.js:556"
+ },
+ {
+  "k": "Story, special rules, what the crowd expects…",
+  "w": "15-custom.js:557"
+ },
+ {
+  "k": "Classes &amp; starting gear (select allowed classes)",
+  "w": "15-custom.js:562"
+ },
+ {
+  "k": "Custom characters ✦",
+  "w": "15-custom.js:562"
+ },
+ {
+  "k": "Gladiators start with{0}",
+  "w": "15-custom.js:563"
+ },
+ {
+  "k": "Their class loadout",
+  "w": "15-custom.js:563"
+ },
+ {
+  "k": "Nothing (fists and a loincloth)",
+  "w": "15-custom.js:563"
+ },
+ {
+  "k": "A snake draft of market gear (replaces the class loadout)",
+  "w": "15-custom.js:563"
+ },
+ {
+  "k": "Draft picks each {0}",
+  "w": "15-custom.js:563"
+ },
+ {
+  "k": "NPCs (select NPCs)",
+  "w": "15-custom.js:564"
+ },
+ {
+  "k": "Ticking places the beast on the board at its usual spot; move it with the Beast tool. Untick to remove it.",
+  "w": "15-custom.js:564"
+ },
+ {
+  "k": "Arena deck spawn cards",
+  "w": "15-custom.js:566"
+ },
+ {
+  "k": "deckSpawns.",
+  "w": "15-custom.js:566"
+ },
+ {
+  "k": "{0} card stays in the deck",
+  "w": "15-custom.js:566"
+ },
+ {
+  "k": "Board layout",
+  "w": "15-custom.js:571"
+ },
+ {
+  "k": "Trophy for the winner{0}",
+  "w": "15-custom.js:572"
+ },
+ {
+  "k": "Editor in the box{0}",
+  "w": "15-custom.js:572"
+ },
+ {
+  "k": "<span><b>Fate-free sand</b> — nobody is condemned, spared or freed after this event (it still counts as a win or loss). Leave unticked to play by the Fate table, as the printed game does — in single events, tournaments and Manager-mode invitationals alike.</span>",
+  "w": "15-custom.js:572"
+ },
+ {
+  "k": "{0} · rewards: {1}. Win this event and it goes into the Annals' trophy case — and hosts may invite your Manager stable to it.",
+  "w": "15-custom.js:572"
+ },
+ {
+  "k": "Design one in Creator Studio → 🏆 Trophies, or pick from the built-in silverware.",
+  "w": "15-custom.js:572"
+ },
+ {
+  "k": "Trophy designer",
+  "w": "15-custom.js:572"
+ },
+ {
+  "k": "Save event",
+  "w": "15-custom.js:574"
+ },
+ {
+  "k": "Save and play",
+  "w": "15-custom.js:574"
+ },
+ {
+  "k": "Name the event.",
+  "w": "15-custom.js:579"
+ },
+ {
+  "k": "At most 12 pillars.",
+  "w": "15-custom.js:580"
+ },
+ {
+  "k": "The fewest players cannot exceed the most.",
+  "w": "15-custom.js:581"
+ },
+ {
+  "k": "Place at least one start tile — an event needs somewhere for a gladiator to stand.",
+  "w": "15-custom.js:582"
+ },
+ {
+  "k": "Place {0} start tiles (one per player) with the Start tile tool — {1} placed.",
+  "w": "15-custom.js:582"
+ },
+ {
+  "k": "Allow at least one class.",
+  "w": "15-custom.js:583"
+ },
+ {
+  "k": "Co-op events need a beast, rotation or CF end condition.",
+  "w": "15-custom.js:584"
+ },
+ {
+  "k": "🏺 A Blessings pot must sit on a <b>pillar</b> — place a pillar there first (Pillar tool).",
+  "w": "15-custom.js:593"
+ },
+ {
+  "k": "armor piece",
+  "w": "15-custom.js:627"
+ },
+ {
+  "k": "⚠ A {0} named <b>{1}</b> already exists — names are unique. Suggested: <b>{2}</b> (filled in). Press Save again to keep it, or type another.",
+  "w": "15-custom.js:639"
+ },
+ {
+  "k": "✎ Names are unique now. Renamed {0} duplicate{1}: {2}{3}",
+  "w": "15-custom.js:648"
+ },
+ {
+  "k": "Creator Studio {0}",
+  "w": "15-custom.js:666"
+ },
+ {
+  "k": "✖ Exit Creator Studio",
+  "w": "15-custom.js:666"
+ },
+ {
+  "k": "🚩 The press copies the cloth — recolor it, change the device, make it yours.",
+  "w": "15-custom.js:693"
+ },
+ {
+  "k": "🔨 Shapes baked into the token — save it to keep it",
+  "w": "15-custom.js:713"
+ },
+ {
+  "k": "Beast token",
+  "w": "15-custom.js:719"
+ },
+ {
+  "k": "Gladiator token",
+  "w": "15-custom.js:719"
+ },
+ {
+  "k": "📚 “{0}” is in your token library — assign it to any creation.",
+  "w": "15-custom.js:719"
+ },
+ {
+  "k": "🗿 {0} now wears this token.",
+  "w": "15-custom.js:720"
+ },
+ {
+  "k": "🗿 Token saved",
+  "w": "15-custom.js:726"
+ },
+ {
+  "k": "play:{0}:{1}",
+  "w": "15-custom.js:757"
+ },
+ {
+  "k": "✓ Saved <b>{0}</b> — the next one is ready",
+  "w": "15-custom.js:759"
+ },
+ {
+  "k": "This gladiator",
+  "w": "15-custom.js:765"
+ },
+ {
+  "k": "🧹 The sand is bare — start tiles too. Place one per player before you save.",
+  "w": "15-custom.js:770"
+ }
+]

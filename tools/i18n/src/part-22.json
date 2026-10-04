@@ -1,0 +1,2126 @@
+[
+ {
+  "k": "The fighters' moods and requests",
+  "w": "131-v83council.js:27"
+ },
+ {
+  "k": "<b>🏛 The Council</b>",
+  "w": "131-v83council.js:50"
+ },
+ {
+  "k": "your advisors, for life",
+  "w": "131-v83council.js:50"
+ },
+ {
+  "k": "🎯 A bolt through the eye",
+  "w": "132-v83arrows.js:55"
+ },
+ {
+  "k": "Floor spike (",
+  "w": "134-v83spikes.js:15"
+ },
+ {
+  "k": "<span>{0}<span><b>The Arena Chest</b><em>Locked · {1} inside · open it with an Arena Key · −1 movement while held</em></span></span>",
+  "w": "135-v83chest.js:65"
+ },
+ {
+  "k": "{0} offers to the crowd: <b>+{1} CF</b>.",
+  "w": "133-v83onl.js:43"
+ },
+ {
+  "k": "{0}'s Aegis turns 1 damage aside.",
+  "w": "133-v83onl.js:52"
+ },
+ {
+  "k": "{0} — the {1} pierces",
+  "w": "133-v83onl.js:56"
+ },
+ {
+  "k": "a legendary weapon",
+  "w": "133-v83onl.js:59"
+ },
+ {
+  "k": "{0}'s {1}: the crowd roars (+2 CF).",
+  "w": "133-v83onl.js:59"
+ },
+ {
+  "k": "{0}'s {1}: +2 coin.",
+  "w": "133-v83onl.js:60"
+ },
+ {
+  "k": "{0}'s blood-price",
+  "w": "133-v83onl.js:61"
+ },
+ {
+  "k": "{0}'s {1} reaps a limb (+3 CF).",
+  "w": "133-v83onl.js:62"
+ },
+ {
+  "k": "{0}'s {1}: the hunt pleases the crowd (+3 CF).",
+  "w": "133-v83onl.js:66"
+ },
+ {
+  "k": "{0}'s royal weapon: +1 CF.",
+  "w": "133-v83onl.js:67"
+ },
+ {
+  "k": "The horns did not sound — press Start again.",
+  "w": "133-v83onl.js:92"
+ },
+ {
+  "k": "{0} is in a match — the satchel waits.",
+  "w": "133-v83onl.js:137"
+ },
+ {
+  "k": "{0} is in a match — the forge waits.",
+  "w": "133-v83onl.js:139"
+ },
+ {
+  "k": "That piece is not there.",
+  "w": "133-v83onl.js:140"
+ },
+ {
+  "k": "That piece is whole.",
+  "w": "133-v83onl.js:140"
+ },
+ {
+  "k": "The treasury needs {0} coin.",
+  "w": "133-v83onl.js:142"
+ },
+ {
+  "k": "The repair costs {0} coin.",
+  "w": "133-v83onl.js:143"
+ },
+ {
+  "k": "No such piece.",
+  "w": "133-v83onl.js:145"
+ },
+ {
+  "k": "No such gift.",
+  "w": "133-v83onl.js:147"
+ },
+ {
+  "k": "{0} is in a match — open it afterwards.",
+  "w": "133-v83onl.js:147"
+ },
+ {
+  "k": "Nothing to take.",
+  "w": "133-v83onl.js:155"
+ },
+ {
+  "k": "The pick is made.",
+  "w": "133-v83onl.js:155"
+ },
+ {
+  "k": "Pick one of the pieces.",
+  "w": "133-v83onl.js:156"
+ },
+ {
+  "k": "Someone bought it first.",
+  "w": "133-v83onl.js:158"
+ },
+ {
+  "k": "Already yours.",
+  "w": "133-v83onl.js:159"
+ },
+ {
+  "k": "Costs {0} coin.",
+  "w": "133-v83onl.js:160"
+ },
+ {
+  "k": "No such house.",
+  "w": "133-v83onl.js:161"
+ },
+ {
+  "k": "That is your own house.",
+  "w": "133-v83onl.js:165"
+ },
+ {
+  "k": "Up to {0} houses.",
+  "w": "133-v83onl.js:166"
+ },
+ {
+  "k": "Only the host holds the horns.",
+  "w": "133-v83onl.js:172"
+ },
+ {
+  "k": "The countdown was stopped — press Start again.",
+  "w": "133-v83onl.js:179"
+ },
+ {
+  "k": "The horns are not yet.",
+  "w": "133-v83onl.js:181"
+ },
+ {
+  "k": "The host sounds the horns.",
+  "w": "133-v83onl.js:182"
+ },
+ {
+  "k": "Ludi Infames: Veteranus and above.",
+  "w": "133-v83onl.js:186"
+ },
+ {
+  "k": "Test houses play Custom only.",
+  "w": "137-v83onlui.js:58"
+ },
+ {
+  "k": "Only testers may do that.",
+  "w": "137-v83onlui.js:82"
+ },
+ {
+  "k": "{0} is in a match — grant afterwards.",
+  "w": "137-v83onlui.js:83"
+ },
+ {
+  "k": "Nothing to grant.",
+  "w": "137-v83onlui.js:86"
+ },
+ {
+  "k": "<b class=\"nw83-n\">{0}</b>{1}\n     {2}\n     {3}\n     <small class=\"nw83-val\">{4}Value {5} <b>{6}</b></small>{7}",
+  "w": "137-v83onlui.js:124"
+ },
+ {
+  "k": "<small class=\"nw83-base\">{0} · power {1} · range {2}</small>",
+  "w": "137-v83onlui.js:124"
+ },
+ {
+  "k": "💔 Broken ·",
+  "w": "137-v83onlui.js:127"
+ },
+ {
+  "k": "⚔ taken from",
+  "w": "137-v83onlui.js:129"
+ },
+ {
+  "k": "🪦 fell with",
+  "w": "137-v83onlui.js:129"
+ },
+ {
+  "k": "taken from",
+  "w": "137-v83onlui.js:130"
+ },
+ {
+  "k": "fell with",
+  "w": "137-v83onlui.js:130"
+ },
+ {
+  "k": "<b>{0}</b><small>Level {1}{2} · {3} {4}</small>{5}{6}",
+  "w": "137-v83onlui.js:133"
+ },
+ {
+  "k": "<small class=\"brk83t\">💔 Broken</small>",
+  "w": "137-v83onlui.js:133"
+ },
+ {
+  "k": "<small class=\"lk83\">🔒 Veteranus+</small>",
+  "w": "137-v83onlui.js:143"
+ },
+ {
+  "k": "Flavius's gifts · {0} unopened",
+  "w": "137-v83onlui.js:148"
+ },
+ {
+  "k": "Flavius sends a gift at every new rank and every 5 Ranked bouts survived",
+  "w": "137-v83onlui.js:148"
+ },
+ {
+  "k": "Gifts",
+  "w": "137-v83onlui.js:148"
+ },
+ {
+  "k": "🏛 Trophy room <small class=\"rc-sub\">{0}</small>",
+  "w": "137-v83onlui.js:151"
+ },
+ {
+  "k": "No trophies yet — first Ranked wins, ranks reached, Commodus or Tholo slain.",
+  "w": "137-v83onlui.js:151"
+ },
+ {
+  "k": "🧪 Tester <small class=\"rc-sub\">grants make this a TEST house for good — Custom only, out of Today and the ranks</small>",
+  "w": "137-v83onlui.js:153"
+ },
+ {
+  "k": "Gear",
+  "w": "137-v83onlui.js:155"
+ },
+ {
+  "k": "🧪 Grant",
+  "w": "137-v83onlui.js:157"
+ },
+ {
+  "k": "style=\"--rc:{0}\"",
+  "w": "137-v83onlui.js:175"
+ },
+ {
+  "k": "style=\"color:{0}\"",
+  "w": "137-v83onlui.js:176"
+ },
+ {
+  "k": "<small>{0}Level {1}{2} · {3} {4}</small>\n      <small class=\"sr82-who\">{5}</small>{6}{7}{8}",
+  "w": "137-v83onlui.js:176"
+ },
+ {
+  "k": "<small class=\"lk83\">🔒 Veteranus+ to bring</small>",
+  "w": "137-v83onlui.js:177"
+ },
+ {
+  "k": "<small class=\"brk83t\">💔 Broken — repair to bring</small>",
+  "w": "137-v83onlui.js:177"
+ },
+ {
+  "k": "🔧 Repair · {0}",
+  "w": "137-v83onlui.js:178"
+ },
+ {
+  "k": "<small class=\"rc-sub\">brings {0}/{1}</small>",
+  "w": "137-v83onlui.js:183"
+ },
+ {
+  "k": "· brought into the next match",
+  "w": "137-v83onlui.js:185"
+ },
+ {
+  "k": "🏛 Buy for the shelf <small class=\"rc-sub\">paid from the treasury · {0} {1}</small>",
+  "w": "137-v83onlui.js:187"
+ },
+ {
+  "k": "<small class=\"rc-sub\">The shelf outlives every gladiator; move pieces to whoever needs them.</small>",
+  "w": "137-v83onlui.js:189"
+ },
+ {
+  "k": "🧪 Offerings <small class=\"rc-sub\">at most {0} brought into a match · the unused come back</small>",
+  "w": "137-v83onlui.js:193"
+ },
+ {
+  "k": "🧪 {0} moved.",
+  "w": "137-v83onlui.js:199"
+ },
+ {
+  "k": "At most {0} offerings go into a match.",
+  "w": "137-v83onlui.js:201"
+ },
+ {
+  "k": "🏛 The treasury",
+  "w": "137-v83onlui.js:206"
+ },
+ {
+  "k": "{0}’s purse",
+  "w": "137-v83onlui.js:206"
+ },
+ {
+  "k": "🔧 Repair {0}",
+  "w": "137-v83onlui.js:207"
+ },
+ {
+  "k": "A third of its value: <b>{0} {1}</b>. Who pays?",
+  "w": "137-v83onlui.js:207"
+ },
+ {
+  "k": "🔧 {0} is whole again ({1} coin).",
+  "w": "137-v83onlui.js:211"
+ },
+ {
+  "k": "{0} · level {1}{2}{3}",
+  "w": "137-v83onlui.js:216"
+ },
+ {
+  "k": "🧪 Offerings <small>{0}/{1} in {2}’s satchel{3} · brings {4}</small>",
+  "w": "137-v83onlui.js:223"
+ },
+ {
+  "k": "<small class=\"brk83t\">💔 Broken · ⅔ price · repair {0}</small>",
+  "w": "137-v83onlui.js:229"
+ },
+ {
+  "k": "from <b>{0}</b>{1}",
+  "w": "137-v83onlui.js:230"
+ },
+ {
+  "k": "Buy · {0} {1}",
+  "w": "137-v83onlui.js:231"
+ },
+ {
+  "k": "{0}’s purse {1} <b>{2}</b> · {3} wears up to level {4}{5}",
+  "w": "137-v83onlui.js:233"
+ },
+ {
+  "k": "(named pieces: Veteranus+)",
+  "w": "137-v83onlui.js:233"
+ },
+ {
+  "k": "🛒 Flavius’s market",
+  "w": "137-v83onlui.js:234"
+ },
+ {
+  "k": "🏺 Used",
+  "w": "137-v83onlui.js:234"
+ },
+ {
+  "k": "⚔ The spoils of {0}",
+  "w": "137-v83onlui.js:242"
+ },
+ {
+  "k": "the fallen",
+  "w": "137-v83onlui.js:242"
+ },
+ {
+  "k": "{0} · take ONE piece; the rest goes to the market. <b class=\"loot83cd\">⏳",
+  "w": "137-v83onlui.js:243"
+ },
+ {
+  "k": "🎲 Let Flavius choose",
+  "w": "137-v83onlui.js:245"
+ },
+ {
+  "k": "⚔ {0} is yours{1}.",
+  "w": "137-v83onlui.js:249"
+ },
+ {
+  "k": "— on the shelf (it waits there)",
+  "w": "137-v83onlui.js:249"
+ },
+ {
+  "k": "⚔ The pick was already made.",
+  "w": "137-v83onlui.js:250"
+ },
+ {
+  "k": "for reaching {0}",
+  "w": "137-v83onlui.js:255"
+ },
+ {
+  "k": "for {0} Ranked bouts survived",
+  "w": "137-v83onlui.js:255"
+ },
+ {
+  "k": "a tester’s grant",
+  "w": "137-v83onlui.js:255"
+ },
+ {
+  "k": "🎁 No gifts waiting. Flavius sends one at every new rank and every 5 Ranked bouts survived.",
+  "w": "137-v83onlui.js:259"
+ },
+ {
+  "k": "Flavius’s gift",
+  "w": "137-v83onlui.js:261"
+ },
+ {
+  "k": "{0}{1} · opened for {2}",
+  "w": "137-v83onlui.js:261"
+ },
+ {
+  "k": "· earned by {0}",
+  "w": "137-v83onlui.js:261"
+ },
+ {
+  "k": "🎁 Open the next ({0})",
+  "w": "137-v83onlui.js:267"
+ },
+ {
+  "k": "into the house",
+  "w": "137-v83onlui.js:271"
+ },
+ {
+  "k": "to {0}",
+  "w": "137-v83onlui.js:271"
+ },
+ {
+  "k": "Into the treasury",
+  "w": "137-v83onlui.js:272"
+ },
+ {
+  "k": "Into {0}’s purse",
+  "w": "137-v83onlui.js:272"
+ },
+ {
+  "k": "A Crowd Favor blessing with no gladiator to carry it — into the treasury.",
+  "w": "137-v83onlui.js:273"
+ },
+ {
+  "k": "Starting Crowd Favor in {0}’s next Ranked bout.",
+  "w": "137-v83onlui.js:274"
+ },
+ {
+  "k": "your gladiator",
+  "w": "137-v83onlui.js:274"
+ },
+ {
+  "k": "The satchel was full — sold for half its price.",
+  "w": "137-v83onlui.js:275"
+ },
+ {
+  "k": "Onto the house shelf.",
+  "w": "137-v83onlui.js:275"
+ },
+ {
+  "k": "Into {0}’s satchel.",
+  "w": "137-v83onlui.js:275"
+ },
+ {
+  "k": "For {0} — ticked to bring.",
+  "w": "137-v83onlui.js:276"
+ },
+ {
+  "k": "It waits in the Storeroom until Veteranus.",
+  "w": "137-v83onlui.js:277"
+ },
+ {
+  "k": "{0} brings it to the sand.",
+  "w": "137-v83onlui.js:277"
+ },
+ {
+  "k": "<b>Ludi Infames</b>",
+  "w": "137-v83onlui.js:282"
+ },
+ {
+  "k": "Veteranus and above",
+  "w": "137-v83onlui.js:282"
+ },
+ {
+  "k": "<small>Named gear is the point · {0} open</small>",
+  "w": "137-v83onlui.js:282"
+ },
+ {
+  "k": "<small class=\"lk83\">🔒 Reach Veteranus</small>",
+  "w": "137-v83onlui.js:283"
+ },
+ {
+  "k": "🟡 in a room",
+  "w": "137-v83onlui.js:285"
+ },
+ {
+  "k": "<b>★ Followed houses</b>{0}",
+  "w": "137-v83onlui.js:286"
+ },
+ {
+  "k": "disabled title=\"Open a room first\"",
+  "w": "137-v83onlui.js:287"
+ },
+ {
+  "k": "<small class=\"rc-sub\">recruit kit</small>",
+  "w": "137-v83onlui.js:302"
+ },
+ {
+  "k": "At stake",
+  "w": "137-v83onlui.js:304"
+ },
+ {
+  "k": "Brought",
+  "w": "137-v83onlui.js:304"
+ },
+ {
+  "k": "<b>CPU</b><small class=\"rc-sub\">fills the open seat</small>",
+  "w": "137-v83onlui.js:304"
+ },
+ {
+  "k": "<b>The horns sound in…</b><small class=\"rc-sub\">{0} Any change to the line-up stops it.</small>",
+  "w": "137-v83onlui.js:307"
+ },
+ {
+  "k": "Ranked: what each gladiator brings is at stake.",
+  "w": "137-v83onlui.js:307"
+ },
+ {
+  "k": "Custom: no deaths, nothing lost.",
+  "w": "137-v83onlui.js:307"
+ },
+ {
+  "k": "<b>⏸ Countdown stopped</b><small class=\"rc-sub\">{0}</small>",
+  "w": "137-v83onlui.js:308"
+ },
+ {
+  "k": "Press ▶ Start again when you are ready.",
+  "w": "137-v83onlui.js:308"
+ },
+ {
+  "k": "The host will start again.",
+  "w": "137-v83onlui.js:308"
+ },
+ {
+  "k": "⚫ Away",
+  "w": "137-v83onlui.js:315"
+ },
+ {
+  "k": "🟢 In the arena",
+  "w": "137-v83onlui.js:315"
+ },
+ {
+  "k": "🟡 In a room",
+  "w": "137-v83onlui.js:315"
+ },
+ {
+  "k": "🔴 Fighting now",
+  "w": "137-v83onlui.js:315"
+ },
+ {
+  "k": "{0}<b>{1}</b><small>{2}</small><small>✦ {3} Glory · {4} survived · {5} won</small>",
+  "w": "137-v83onlui.js:316"
+ },
+ {
+  "k": "<b>{0} {1}</b><small>{2} · {3} · {4} · {5} CF{6} · {7}</small>",
+  "w": "137-v83onlui.js:317"
+ },
+ {
+  "k": "<small class=\"rc-sub\">{0}best rank {1} · {2}{3}</small>",
+  "w": "137-v83onlui.js:318"
+ },
+ {
+  "k": "★ Following",
+  "w": "137-v83onlui.js:319"
+ },
+ {
+  "k": "☆ Follow",
+  "w": "137-v83onlui.js:319"
+ },
+ {
+  "k": "🔗 Share",
+  "w": "137-v83onlui.js:319"
+ },
+ {
+  "k": "<b>Gladiators</b>",
+  "w": "137-v83onlui.js:321"
+ },
+ {
+  "k": "No trophies yet.",
+  "w": "137-v83onlui.js:321"
+ },
+ {
+  "k": "<b>Recent matches</b>{0}",
+  "w": "137-v83onlui.js:322"
+ },
+ {
+  "k": "✓ Link copied",
+  "w": "137-v83onlui.js:326"
+ },
+ {
+  "k": "Pool {0} <b>{1}</b>{2}",
+  "w": "137-v83onlui.js:344"
+ },
+ {
+  "k": "+ tickets {0}",
+  "w": "137-v83onlui.js:344"
+ },
+ {
+  "k": "Staked",
+  "w": "137-v83onlui.js:345"
+ },
+ {
+  "k": "Pays",
+  "w": "137-v83onlui.js:345"
+ },
+ {
+  "k": "Seat {0}",
+  "w": "137-v83onlui.js:345"
+ },
+ {
+  "k": "💰 Wager",
+  "w": "137-v83onlui.js:346"
+ },
+ {
+  "k": "Open pots",
+  "w": "137-v83onlui.js:351"
+ },
+ {
+  "k": "<b>My bets</b>{0}",
+  "w": "137-v83onlui.js:352"
+ },
+ {
+  "k": "<b>This week’s best bettors</b>{0}",
+  "w": "137-v83onlui.js:353"
+ },
+ {
+  "k": "{0}{1} <i class=\"test83\">TEST</i>{2}",
+  "w": "137-v83onlui.js:359"
+ },
+ {
+  "k": "💰 Award {0} − the lanista’s cut {1} (to the treasury) = <b>{2} coin</b>",
+  "w": "137-v83onlui.js:365"
+ },
+ {
+  "k": "💔 {0} piece{1} came back broken — 🔧 repair in the Storeroom",
+  "w": "137-v83onlui.js:366"
+ },
+ {
+  "k": "🧪 {0} offering{1} back in the satchel",
+  "w": "137-v83onlui.js:367"
+ },
+ {
+  "k": "🎁 Flavius sends {0} to the house",
+  "w": "137-v83onlui.js:368"
+ },
+ {
+  "k": "🧪 Buy this offering?",
+  "w": "137-v83onlui.js:381"
+ },
+ {
+  "k": "<b>{0}</b> for <b>{1} coin</b> into {2}’s satchel.<br><small class=\"rc-sub\">Up to {3} go into a match; the unused come back.</small>",
+  "w": "137-v83onlui.js:381"
+ },
+ {
+  "k": "🧪 {0} is in the satchel.",
+  "w": "137-v83onlui.js:382"
+ },
+ {
+  "k": "🏺 Buy it used?",
+  "w": "137-v83onlui.js:384"
+ },
+ {
+  "k": "Buy <b>{0}</b>{1} for <b>{2} coin</b>?",
+  "w": "137-v83onlui.js:384"
+ },
+ {
+  "k": "Once {0}’s.",
+  "w": "137-v83onlui.js:384"
+ },
+ {
+  "k": "🏺 {0} is {1}’s now.",
+  "w": "137-v83onlui.js:385"
+ },
+ {
+  "k": "🏛 Buy for the shelf?",
+  "w": "137-v83onlui.js:387"
+ },
+ {
+  "k": "<b>{0}</b> (level {1}) for <b>{2} coin</b> from the treasury ({3}).",
+  "w": "137-v83onlui.js:387"
+ },
+ {
+  "k": "🏛 {0} is on the shelf.",
+  "w": "137-v83onlui.js:388"
+ },
+ {
+  "k": "✦ A new Ludi Infames room — {0}.",
+  "w": "137-v83onlui.js:390"
+ },
+ {
+  "k": "✦ You joined {0}’s Ludi Infames room.",
+  "w": "137-v83onlui.js:390"
+ },
+ {
+  "k": "🧪 Granted. This is a TEST house now.",
+  "w": "137-v83onlui.js:393"
+ },
+ {
+  "k": "🛡 {0} stays home — the same equip point.",
+  "w": "139-v84onl.js:52"
+ },
+ {
+  "k": "{0}'s {1} remembers the blow: +1 damage.",
+  "w": "139-v84onl.js:61"
+ },
+ {
+  "k": "{0}'s {1} turn{2} {3} damage aside.",
+  "w": "139-v84onl.js:65"
+ },
+ {
+  "k": "a legendary armor",
+  "w": "139-v84onl.js:68"
+ },
+ {
+  "k": "{0}'s {1}: the blow rings off — the crowd roars (+1 CF).",
+  "w": "139-v84onl.js:68"
+ },
+ {
+  "k": "{0}'s {1}: +1 CF.",
+  "w": "139-v84onl.js:74"
+ },
+ {
+  "k": "{0}'s {1} mends: +1 AP.",
+  "w": "139-v84onl.js:75"
+ },
+ {
+  "k": "🔌 The CPU fights on in <b>{0}</b>’s seat.",
+  "w": "139-v84onl.js:94"
+ },
+ {
+  "k": "⚔ <b>{0}</b>’s lanista takes the seat back from the CPU.",
+  "w": "139-v84onl.js:99"
+ },
+ {
+  "k": "⚔ Your seat is yours again — fight on!",
+  "w": "139-v84onl.js:103"
+ },
+ {
+  "k": "⏳ <b>{0}</b>’s turn comes round — will the lanista take the seat back?",
+  "w": "139-v84onl.js:108"
+ },
+ {
+  "k": "<span>🔌 A CPU holds your seat{0}</span>",
+  "w": "139-v84onl.js:123"
+ },
+ {
+  "k": "— asking Flavius…",
+  "w": "139-v84onl.js:123"
+ },
+ {
+  "k": "⚔ Take it back · {0}:{1}",
+  "w": "139-v84onl.js:123"
+ },
+ {
+  "k": "🔌 Flavius hears you — your seat is yours at its next turn.",
+  "w": "139-v84onl.js:126"
+ },
+ {
+  "k": "Too late.",
+  "w": "139-v84onl.js:127"
+ },
+ {
+  "k": "⚔ Your turn — {0}",
+  "w": "139-v84onl.js:141"
+ },
+ {
+  "k": "⚔ Your turn",
+  "w": "139-v84onl.js:143"
+ },
+ {
+  "k": "waits for your word",
+  "w": "139-v84onl.js:143"
+ },
+ {
+  "k": "⚔🔔 Turn alerts",
+  "w": "139-v84onl.js:150"
+ },
+ {
+  "k": "When it is your decision in an online match and this tab is hidden or in the background.",
+  "w": "139-v84onl.js:150"
+ },
+ {
+  "k": "Flash the tab title + a horn <small class=\"rc-sub\">(the game’s mute applies)</small>",
+  "w": "139-v84onl.js:151"
+ },
+ {
+  "k": "Desktop notice: <b>{0}</b>",
+  "w": "139-v84onl.js:152"
+ },
+ {
+  "k": "blocked by the browser",
+  "w": "139-v84onl.js:152"
+ },
+ {
+  "k": "not in this browser",
+  "w": "139-v84onl.js:152"
+ },
+ {
+  "k": "not asked yet",
+  "w": "139-v84onl.js:152"
+ },
+ {
+  "k": "There is no seat of yours to take back.",
+  "w": "139-v84onl.js:177"
+ },
+ {
+  "k": "Too late — the CPU has fought on in your seat. You may watch.",
+  "w": "139-v84onl.js:178"
+ },
+ {
+  "k": "Your gladiator is gone.",
+  "w": "139-v84onl.js:178"
+ },
+ {
+  "k": "Too late — the CPU has begun your next turn. You may watch.",
+  "w": "139-v84onl.js:179"
+ },
+ {
+  "k": "No one to name.",
+  "w": "139-v84onl.js:182"
+ },
+ {
+  "k": "{0} won {1} at Flavius’s auction.",
+  "w": "139-v84onl.js:203"
+ },
+ {
+  "k": "a named piece",
+  "w": "139-v84onl.js:203"
+ },
+ {
+  "k": "Test houses may not bid.",
+  "w": "139-v84onl.js:205"
+ },
+ {
+  "k": "Flavius sells to Veteranus and above.",
+  "w": "139-v84onl.js:205"
+ },
+ {
+  "k": "Your house already won a lot this week.",
+  "w": "139-v84onl.js:206"
+ },
+ {
+  "k": "Sign in to bid.",
+  "w": "139-v84onl.js:210"
+ },
+ {
+  "k": "Test houses may not bid at Flavius’s auction.",
+  "w": "139-v84onl.js:212"
+ },
+ {
+  "k": "No such lot.",
+  "w": "139-v84onl.js:213"
+ },
+ {
+  "k": "The hammer has fallen on that lot.",
+  "w": "139-v84onl.js:214"
+ },
+ {
+  "k": "Your house already leads another lot — one win a house a week.",
+  "w": "139-v84onl.js:216"
+ },
+ {
+  "k": "Your house leads this lot already.",
+  "w": "139-v84onl.js:217"
+ },
+ {
+  "k": "{0}’s purse holds less than {1} coin.",
+  "w": "139-v84onl.js:218"
+ },
+ {
+  "k": "left arm",
+  "w": "139-v84onl.js:234"
+ },
+ {
+  "k": "right arm",
+  "w": "139-v84onl.js:234"
+ },
+ {
+  "k": "left leg",
+  "w": "139-v84onl.js:234"
+ },
+ {
+  "k": "right leg",
+  "w": "139-v84onl.js:234"
+ },
+ {
+  "k": "+1 AP to the {0}",
+  "w": "139-v84onl.js:237"
+ },
+ {
+  "k": "<b class=\"nw83-n\">{0}</b><small class=\"nw83-base\">{1} · {2}{3} · <b>{4} AP</b></small>\n     {5}\n     {6}\n     <small class=\"nw83-val\">{7}Value {8} <b>{9}</b></small>{10}",
+  "w": "139-v84onl.js:240"
+ },
+ {
+  "k": "🔨 won at Flavius’s auction by",
+  "w": "139-v84onl.js:248"
+ },
+ {
+  "k": "Win {0} at {1}",
+  "w": "139-v84onl.js:254"
+ },
+ {
+  "k": "Survive {0} at {1} in a Ranked bout",
+  "w": "139-v84onl.js:254"
+ },
+ {
+  "k": "Finish 3 bouts",
+  "w": "139-v84onl.js:254"
+ },
+ {
+  "k": "<b>⭐ This week: {0} at {1}</b><small class=\"rc-sub\">Season {2} · week {3} of 12 · ends in {4}{5}</small>",
+  "w": "139-v84onl.js:256"
+ },
+ {
+  "k": "· the schedule names {0}",
+  "w": "139-v84onl.js:256"
+ },
+ {
+  "k": "🎁 Flavius’s gift for the week is in your house.",
+  "w": "139-v84onl.js:258"
+ },
+ {
+  "k": "🎁 All done — a gift comes with your next win.",
+  "w": "139-v84onl.js:258"
+ },
+ {
+  "k": "🎁 All three (with a win) earn ONE Flavius gift a week.",
+  "w": "139-v84onl.js:258"
+ },
+ {
+  "k": "<b>This week: {0}</b>",
+  "w": "139-v84onl.js:260"
+ },
+ {
+  "k": "at {0}",
+  "w": "139-v84onl.js:260"
+ },
+ {
+  "k": "<small>The weekly challenge · season {0}, week {1}</small>",
+  "w": "139-v84onl.js:260"
+ },
+ {
+  "k": "<small class=\"rc-sub\">Raise a gladiator to play</small>",
+  "w": "139-v84onl.js:261"
+ },
+ {
+  "k": "⭐ You joined this week’s {0} at {1}.",
+  "w": "139-v84onl.js:271"
+ },
+ {
+  "k": "⭐ A room for this week’s challenge: {0} at {1}.",
+  "w": "139-v84onl.js:272"
+ },
+ {
+  "k": "Open the house",
+  "w": "139-v84onl.js:276"
+ },
+ {
+  "k": "🏛 <b>{0}</b>{1} leads with {2} <b>{3}</b>",
+  "w": "139-v84onl.js:283"
+ },
+ {
+  "k": "No bid yet · opens at {0} <b>{1}</b>",
+  "w": "139-v84onl.js:283"
+ },
+ {
+  "k": "🔨 Sold to <b>{0}</b>{1} for {2} <b>{3}</b>",
+  "w": "139-v84onl.js:286"
+ },
+ {
+  "k": "Unsold — back to Flavius’s chest",
+  "w": "139-v84onl.js:286"
+ },
+ {
+  "k": "<b class=\"au84-snipe\">a late bid adds 5 minutes</b>",
+  "w": "139-v84onl.js:287"
+ },
+ {
+  "k": "Your bid",
+  "w": "139-v84onl.js:288"
+ },
+ {
+  "k": "🔨 Bid",
+  "w": "139-v84onl.js:288"
+ },
+ {
+  "k": "<small class=\"rc-sub\">at least {0}</small>",
+  "w": "139-v84onl.js:288"
+ },
+ {
+  "k": "<small class=\"au84-me\">★ Your house leads — the coin waits in escrow.</small>",
+  "w": "139-v84onl.js:289"
+ },
+ {
+  "k": "Your house won a lot this week.",
+  "w": "139-v84onl.js:289"
+ },
+ {
+  "k": "Your house leads another lot — one win a week.",
+  "w": "139-v84onl.js:289"
+ },
+ {
+  "k": "{0} bid{1}",
+  "w": "139-v84onl.js:290"
+ },
+ {
+  "k": "🔨 Flavius’s Auction",
+  "w": "139-v84onl.js:292"
+ },
+ {
+  "k": "season {0}, week {1}",
+  "w": "139-v84onl.js:292"
+ },
+ {
+  "k": "🔨 Auction",
+  "w": "139-v84onl.js:299"
+ },
+ {
+  "k": "🔨 Outbid at Flavius’s auction — {0} {1} back {2}.",
+  "w": "139-v84onl.js:302"
+ },
+ {
+  "k": "in the treasury",
+  "w": "139-v84onl.js:302"
+ },
+ {
+  "k": "in the purse",
+  "w": "139-v84onl.js:302"
+ },
+ {
+  "k": "🔨 Sold to your house: <b>{0}</b> for {1} {2}.",
+  "w": "139-v84onl.js:303"
+ },
+ {
+  "k": "the lot",
+  "w": "139-v84onl.js:303"
+ },
+ {
+  "k": "🔨 Your bid of {0} {1} leads — the coin waits in escrow.",
+  "w": "139-v84onl.js:311"
+ },
+ {
+  "k": "🤖 The CPU fought most of that bout in your seat — Flavius pays a quarter, and no gifts.",
+  "w": "139-v84onl.js:314"
+ },
+ {
+  "k": "👁 See them in Recruiting",
+  "w": "138-v84.js:46"
+ },
+ {
+  "k": "A bargain: {0}",
+  "w": "138-v84.js:48"
+ },
+ {
+  "k": "<b>{0}</b> · {1} · rating {2} — asks <b>{3}</b> a week. Fighters of that level ask about <b>{4}</b>.",
+  "w": "138-v84.js:48"
+ },
+ {
+  "k": "★ Pick of the week: {0}",
+  "w": "138-v84.js:50"
+ },
+ {
+  "k": "<b>{0}</b> · {1} · rating {2} · asks <b>{3}</b> a week.",
+  "w": "138-v84.js:50"
+ },
+ {
+  "k": "your recruiter",
+  "w": "138-v84.js:52"
+ },
+ {
+  "k": "<b>{0}</b> is on this week's card {1} — take them off before the arena does.",
+  "w": "138-v84.js:56"
+ },
+ {
+  "k": "missing a limb",
+  "w": "138-v84.js:56"
+ },
+ {
+  "k": "worn down (fatigue {0})",
+  "w": "138-v84.js:56"
+ },
+ {
+  "k": "<b>{0}</b>'s wound{1} needs a bed and rest.",
+  "w": "138-v84.js:57"
+ },
+ {
+  "k": "<b>{0}</b> is worn out (fatigue {1}) — a rest week before something tears.",
+  "w": "138-v84.js:58"
+ },
+ {
+  "k": "your medicus",
+  "w": "138-v84.js:62"
+ },
+ {
+  "k": "{0} fighters at risk",
+  "w": "138-v84.js:62"
+ },
+ {
+  "k": "{0} is at risk",
+  "w": "138-v84.js:62"
+ },
+ {
+  "k": "⚕ To the ward",
+  "w": "138-v84.js:63"
+ },
+ {
+  "k": "<b>Light board for older phones</b>",
+  "w": "138-v84.js:103"
+ },
+ {
+  "k": "Skips the sand grain and scars. Auto: on sharp phone screens with a large board.",
+  "w": "138-v84.js:103"
+ },
+ {
+  "k": "Auto",
+  "w": "138-v84.js:103"
+ },
+ {
+  "k": "Off",
+  "w": "138-v84.js:103"
+ },
+ {
+  "k": "This career",
+  "w": "138-v84.js:121"
+ },
+ {
+  "k": "This match",
+  "w": "138-v84.js:121"
+ },
+ {
+  "k": "📑 {0} is open in another tab",
+  "w": "138-v84.js:122"
+ },
+ {
+  "k": "Continue here and the other tab stops saving it — or cancel and keep playing there.",
+  "w": "138-v84.js:122"
+ },
+ {
+  "k": "Continue here",
+  "w": "138-v84.js:122"
+ },
+ {
+  "k": "<span>📑 <b>{0}</b> is now open in another tab — this tab has stopped saving.</span>",
+  "w": "138-v84.js:126"
+ },
+ {
+  "k": "📑 Opened in another tab — this tab no longer saves.",
+  "w": "138-v84.js:127"
+ },
+ {
+  "k": "⚔ Left in the other tab.",
+  "w": "138-v84.js:134"
+ },
+ {
+  "k": "A Manager season ended",
+  "w": "138-v84.js:146"
+ },
+ {
+  "k": "{0} events since your last backup",
+  "w": "138-v84.js:146"
+ },
+ {
+  "k": "{0} days since your last backup",
+  "w": "138-v84.js:147"
+ },
+ {
+  "k": "No backup yet",
+  "w": "138-v84.js:147"
+ },
+ {
+  "k": "Want to play offline? Download the game, then back up here and Import in the download (Saves → Backups).",
+  "w": "138-v84.js:150"
+ },
+ {
+  "k": "<b>⬇ Back up your saves</b><small>{0} · last backup: {1}</small><small>Careers, matches and creations live only in this browser — Online lives on the server.</small>",
+  "w": "138-v84.js:151"
+ },
+ {
+  "k": "⬇ Back up now",
+  "w": "138-v84.js:151"
+ },
+ {
+  "k": "Remind me later",
+  "w": "138-v84.js:151"
+ },
+ {
+  "k": "🗄 Last backup: <b>{0}</b>. Backups cover the offline modes — Online progress lives on the server.",
+  "w": "138-v84.js:162"
+ },
+ {
+  "k": "Online plays at flaviusrule.com/play",
+  "w": "138-v84.js:169"
+ },
+ {
+  "k": "Soldier",
+  "w": "138-v84.js:175"
+ },
+ {
+  "k": "Royalty",
+  "w": "138-v84.js:175"
+ },
+ {
+  "k": "Hero",
+  "w": "138-v84.js:175"
+ },
+ {
+  "k": "Slave",
+  "w": "138-v84.js:175"
+ },
+ {
+  "k": "Veteranus",
+  "w": "138-v84.js:175"
+ },
+ {
+  "k": "Amazonia",
+  "w": "138-v84.js:175"
+ },
+ {
+  "k": "Venatore",
+  "w": "138-v84.js:175"
+ },
+ {
+  "k": "Tiro",
+  "w": "138-v84.js:175"
+ },
+ {
+  "k": "Novicius",
+  "w": "138-v84.js:175"
+ },
+ {
+  "k": "Gregarius",
+  "w": "138-v84.js:175"
+ },
+ {
+  "k": "Invictus",
+  "w": "138-v84.js:175"
+ },
+ {
+  "k": "Fates",
+  "w": "138-v84.js:176"
+ },
+ {
+  "k": "Missio",
+  "w": "138-v84.js:176"
+ },
+ {
+  "k": "Domus",
+  "w": "138-v84.js:176"
+ },
+ {
+  "k": "Piacula",
+  "w": "138-v84.js:176"
+ },
+ {
+  "k": "Focus",
+  "w": "138-v84.js:176"
+ },
+ {
+  "k": "Naumachia",
+  "w": "138-v84.js:177"
+ },
+ {
+  "k": "Familia",
+  "w": "138-v84.js:177"
+ },
+ {
+  "k": "Juggernaut",
+  "w": "138-v84.js:177"
+ },
+ {
+  "k": "Gauntlet",
+  "w": "138-v84.js:177"
+ },
+ {
+  "k": "Orpheus",
+  "w": "138-v84.js:177"
+ },
+ {
+  "k": "Triumviratus",
+  "w": "138-v84.js:177"
+ },
+ {
+  "k": "Ludi Infames",
+  "w": "138-v84.js:177"
+ },
+ {
+  "k": "Blessings",
+  "w": "138-v84.js:177"
+ },
+ {
+  "k": "Hygeia",
+  "w": "138-v84.js:177"
+ },
+ {
+  "k": "Praeco",
+  "w": "138-v84.js:177"
+ },
+ {
+  "k": "Orbis Terrarum",
+  "w": "138-v84.js:177"
+ },
+ {
+  "k": "🖌 The programmata for {0} become a memorial.",
+  "w": "140-v84prog.js:41"
+ },
+ {
+  "k": "✝ In {0} the painted notices for <b>{1}</b> of {2} now honour the dead.",
+  "w": "140-v84prog.js:41"
+ },
+ {
+  "k": "Our notices were painted over",
+  "w": "140-v84prog.js:55"
+ },
+ {
+  "k": "Men of <b>{0}</b>{1} whitewashed our programmata in {2} overnight. This week they bring us nothing.",
+  "w": "140-v84prog.js:56"
+ },
+ {
+  "k": "🖌 {0} painted over your notices: no gain this week.",
+  "w": "140-v84prog.js:57"
+ },
+ {
+  "k": "🖌 Programmata for {0} in {1}: {2} weeks, {3} coin a week.",
+  "w": "140-v84prog.js:64"
+ },
+ {
+  "k": "painted programmata for {0} in {1}",
+  "w": "140-v84prog.js:64"
+ },
+ {
+  "k": "🖌 The programmata in {0} were called off.",
+  "w": "140-v84prog.js:66"
+ },
+ {
+  "k": "✝ The memorial notices for {0}: fame +{1}.",
+  "w": "140-v84prog.js:73"
+ },
+ {
+  "k": "🖌 Programmata: fame +{0}, {1} +1 fame{2}.",
+  "w": "140-v84prog.js:73"
+ },
+ {
+  "k": ", {0}K new fans",
+  "w": "140-v84prog.js:73"
+ },
+ {
+  "k": "🖌 The programmata in {0} fade: fame +{1}, {2}K fans, +{3} gate.",
+  "w": "140-v84prog.js:74"
+ },
+ {
+  "k": "The painters stopped",
+  "w": "140-v84prog.js:75"
+ },
+ {
+  "k": "We could not pay the painters their {0} coin for the week. The notices in {1} are gone.",
+  "w": "140-v84prog.js:76"
+ },
+ {
+  "k": "🖌 The programmata lapsed: no coin for the painters.",
+  "w": "140-v84prog.js:76"
+ },
+ {
+  "k": "🖌 Programmata: {0} coin for the painters.",
+  "w": "140-v84prog.js:77"
+ },
+ {
+  "k": "🖌 <b>{0}</b> paints programmata for {1} on the walls of {2}.",
+  "w": "140-v84prog.js:89"
+ },
+ {
+  "k": "painted programmata in {0}",
+  "w": "140-v84prog.js:89"
+ },
+ {
+  "k": "🖌 Your notices in {0} filled seats: +{1} coin ({2}).",
+  "w": "140-v84prog.js:99"
+ },
+ {
+  "k": "🖌 Paint the programmata<small>on the walls now · {0} week{1} left</small>",
+  "w": "140-v84prog.js:106"
+ },
+ {
+  "k": "You need a fighter to feature.",
+  "w": "140-v84prog.js:108"
+ },
+ {
+  "k": "🖌 Paint the programmata<small>{0} h · {1} coin a city a week · 2–4 weeks: fame, gate and fans where you fight</small>",
+  "w": "140-v84prog.js:108"
+ },
+ {
+  "k": "<b>🖌 Paint the programmata</b>",
+  "w": "140-v84prog.js:115"
+ },
+ {
+  "k": "Cities",
+  "w": "140-v84prog.js:116"
+ },
+ {
+  "k": "up to {0} · ⚔ = your league fights there",
+  "w": "140-v84prog.js:116"
+ },
+ {
+  "k": "data-dis=\"Three cities at most.\"",
+  "w": "140-v84prog.js:118"
+ },
+ {
+  "k": "<span>⚔ wk {0}</span>",
+  "w": "140-v84prog.js:118"
+ },
+ {
+  "k": "Already on the walls",
+  "w": "140-v84prog.js:118"
+ },
+ {
+  "k": "Featured",
+  "w": "140-v84prog.js:120"
+ },
+ {
+  "k": "Each week: fame +{0} (+{1} with Showmanship {2}+), +{3}% fees and purses at your bouts there, new fans for your fighter. Rivals may paint over them.",
+  "w": "140-v84prog.js:121"
+ },
+ {
+  "k": "Pick at least one city.",
+  "w": "140-v84prog.js:122"
+ },
+ {
+  "k": "Pick a fighter to feature.",
+  "w": "140-v84prog.js:122"
+ },
+ {
+  "k": "🖌 Paint · {0} coin a week<small>{1}</small>",
+  "w": "140-v84prog.js:122"
+ },
+ {
+  "k": "{0} over {1} weeks · first week now",
+  "w": "140-v84prog.js:122"
+ },
+ {
+  "k": "pick a city",
+  "w": "140-v84prog.js:122"
+ },
+ {
+  "k": "Week {0}{1}",
+  "w": "140-v84prog.js:125"
+ },
+ {
+  "k": "— painted over by {0}",
+  "w": "140-v84prog.js:125"
+ },
+ {
+  "k": "a rival",
+  "w": "140-v84prog.js:125"
+ },
+ {
+  "k": "— this week (paid)",
+  "w": "140-v84prog.js:125"
+ },
+ {
+  "k": "— to come",
+  "w": "140-v84prog.js:125"
+ },
+ {
+  "k": "FELL FOR THE FAMILIA OF {0}",
+  "w": "140-v84prog.js:128"
+ },
+ {
+  "k": "{0} · REMEMBER HIM",
+  "w": "140-v84prog.js:128"
+ },
+ {
+  "k": "THE FAMILIA GLADIATORIA OF",
+  "w": "140-v84prog.js:129"
+ },
+ {
+  "k": "{0} FIGHTS AT",
+  "w": "140-v84prog.js:129"
+ },
+ {
+  "k": "{0} week{1} left",
+  "w": "140-v84prog.js:131"
+ },
+ {
+  "k": "<span>{0} · {1} week{2} left · {3} coin a week</span>",
+  "w": "140-v84prog.js:132"
+ },
+ {
+  "k": "✝ Memorial",
+  "w": "140-v84prog.js:132"
+ },
+ {
+  "k": "🖌 On the walls",
+  "w": "140-v84prog.js:132"
+ },
+ {
+  "k": "· {0}K fans",
+  "w": "140-v84prog.js:133"
+ },
+ {
+  "k": "✕ Cancel",
+  "w": "140-v84prog.js:134"
+ },
+ {
+  "k": "🖌 The painters are at work in {0}.",
+  "w": "140-v84prog.js:144"
+ },
+ {
+  "k": "🖌 Cancel the programmata?",
+  "w": "140-v84prog.js:145"
+ },
+ {
+  "k": "The notices in <b>{0}</b> come down. This week's {1} coin is not refunded.",
+  "w": "140-v84prog.js:145"
+ },
+ {
+  "k": "Cancel them",
+  "w": "140-v84prog.js:145"
+ },
+ {
+  "k": "Keep",
+  "w": "140-v84prog.js:145"
+ },
+ {
+  "k": "{0} {1} {2} · {3} wk left{4}",
+  "w": "140-v84prog.js:153"
+ },
+ {
+  "k": "memorial notices for",
+  "w": "140-v84prog.js:153"
+ },
+ {
+  "k": "programmata for",
+  "w": "140-v84prog.js:153"
+ },
+ {
+  "k": "(painted over)",
+  "w": "140-v84prog.js:153"
+ },
+ {
+  "k": "🖌 On the walls: {0}",
+  "w": "140-v84prog.js:158"
+ },
+ {
+  "k": "memorial for",
+  "w": "140-v84prog.js:158"
+ },
+ {
+  "k": "notices for",
+  "w": "140-v84prog.js:158"
+ },
+ {
+  "k": "<b>🌐 Language</b>",
+  "w": "142-v84ui.js:74"
+ },
+ {
+  "k": "Your browser's Translate works on this game; game terms stay English.",
+  "w": "142-v84ui.js:74"
+ },
+ {
+  "k": "Language",
+  "w": "142-v84ui.js:74"
+ },
+ {
+  "k": "Applies the Red-green safe or Blue-yellow safe theme (🎨 Themes). Red-green also puts a class letter on every token and blue/orange on good/bad.",
+  "w": "142-v84ui.js:77"
+ },
+ {
+  "k": "Text size",
+  "w": "142-v84ui.js:80"
+ },
+ {
+  "k": "<b>Confirm before ⏭ End turn</b>",
+  "w": "142-v84ui.js:82"
+ },
+ {
+  "k": "Asks first while you can still move or attack.",
+  "w": "142-v84ui.js:82"
+ },
+ {
+  "k": "↺ Restore all defaults<small>settings and theme · saves stay</small>",
+  "w": "142-v84ui.js:84"
+ },
+ {
+  "k": "💾 Save this look",
+  "w": "142-v84ui.js:90"
+ },
+ {
+  "k": "Matches, careers, campaigns and backups live in the 💾 Saves window.",
+  "w": "142-v84ui.js:93"
+ },
+ {
+  "k": "💾 Open Saves",
+  "w": "142-v84ui.js:93"
+ },
+ {
+  "k": "↺ Restore all defaults?",
+  "w": "142-v84ui.js:111"
+ },
+ {
+  "k": "Every setting and the theme go back to how the game ships. Your saves, careers and creations stay.",
+  "w": "142-v84ui.js:111"
+ },
+ {
+  "k": "Restore defaults",
+  "w": "142-v84ui.js:111"
+ },
+ {
+  "k": "↺ Settings and theme are back to their defaults.",
+  "w": "142-v84ui.js:115"
+ },
+ {
+  "k": "{0} movement",
+  "w": "142-v84ui.js:122"
+ },
+ {
+  "k": "an attack",
+  "w": "142-v84ui.js:123"
+ },
+ {
+  "k": "⏭ End your turn?",
+  "w": "142-v84ui.js:129"
+ },
+ {
+  "k": "You still have {0}.",
+  "w": "142-v84ui.js:129"
+ },
+ {
+  "k": "End turn",
+  "w": "142-v84ui.js:129"
+ },
+ {
+  "k": "On loan from {0}",
+  "w": "143-v84roster.js:22"
+ },
+ {
+  "k": "Make starter",
+  "w": "143-v84roster.js:23"
+ },
+ {
+  "k": "Send to the bench",
+  "w": "143-v84roster.js:23"
+ },
+ {
+  "k": "⭐ Start",
+  "w": "143-v84roster.js:23"
+ },
+ {
+  "k": "Lend out for 3 weeks",
+  "w": "143-v84roster.js:24"
+ },
+ {
+  "k": "Lend…",
+  "w": "143-v84roster.js:24"
+ },
+ {
+  "k": "Starters",
+  "w": "143-v84roster.js:29"
+ },
+ {
+  "k": "None — make someone a starter.",
+  "w": "143-v84roster.js:29"
+ },
+ {
+  "k": "Bench",
+  "w": "143-v84roster.js:29"
+ },
+ {
+  "k": "Nobody on the bench.",
+  "w": "143-v84roster.js:29"
+ },
+ {
+  "k": "Nobody hurt.",
+  "w": "143-v84roster.js:29"
+ },
+ {
+  "k": "A martyr: died under the governor's edict",
+  "w": "141-v85faith.js:49"
+ },
+ {
+  "k": "Christian martyr",
+  "w": "141-v85faith.js:49"
+ },
+ {
+  "k": "✝ Martyr",
+  "w": "141-v85faith.js:49"
+ },
+ {
+  "k": "Christian",
+  "w": "141-v85faith.js:49"
+ },
+ {
+  "k": "✝ {0} will not honour the gods — no blessing for {1}.",
+  "w": "141-v85faith.js:70"
+ },
+ {
+  "k": "the crowd jeers a Christian",
+  "w": "141-v85faith.js:75"
+ },
+ {
+  "k": "The crowd of {0} jeers <b>{1}</b>, a Christian{2}.",
+  "w": "141-v85faith.js:76"
+ },
+ {
+  "k": "(−{0} CF)",
+  "w": "141-v85faith.js:76"
+ },
+ {
+  "k": "{0} denounces {1}",
+  "w": "141-v85faith.js:91"
+ },
+ {
+  "k": "The governor of {0} issues an edict",
+  "w": "141-v85faith.js:91"
+ },
+ {
+  "k": "Men of <b>{0}</b> have named {1} to the magistrates as a Christian. The governor of <b>{2}</b> orders {3} brought in.",
+  "w": "141-v85faith.js:92"
+ },
+ {
+  "k": "The governor of <b>{0}</b> orders that those who will not sacrifice to the gods be brought before him. {1} of our house {2} named.",
+  "w": "141-v85faith.js:92"
+ },
+ {
+  "k": "Decide this week. Hidden, a fighter sits the week out. A bribe may strike a name. Facing it means the beasts, beside the other condemned — a fighter may live. Refusing to fight means the fire.",
+  "w": "141-v85faith.js:93"
+ },
+ {
+  "k": "🌙 Hide",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "sits out this week",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "The magistrate knows where to look",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "💰 Bribe · {0} coin",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "{0}% · the coin is gone either way",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "Already tried",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "🦁 Face the beasts",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "with the other condemned",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "🔥 {0} will not fight",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "Ad Flamma — {0} dies",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "🌙 {0} is hidden this week.",
+  "w": "141-v85faith.js:99"
+ },
+ {
+  "k": "💰 The magistrate struck {0}'s name.",
+  "w": "141-v85faith.js:99"
+ },
+ {
+  "k": "🔥 {0} would not fight — Ad Flamma. A martyr.",
+  "w": "141-v85faith.js:99"
+ },
+ {
+  "k": "🕊 {0} survived the beasts and is pardoned.",
+  "w": "141-v85faith.js:99"
+ },
+ {
+  "k": "✝ {0} died before the beasts. A martyr.",
+  "w": "141-v85faith.js:99"
+ },
+ {
+  "k": "{0} awaits your decision.",
+  "w": "141-v85faith.js:99"
+ },
+ {
+  "k": "✝ {0} denounces <b>{1}</b> as a Christian. The governor of {2} has the fighter brought in.",
+  "w": "141-v85faith.js:108"
+ },
+ {
+  "k": "✝ The governor of {0} issues an edict against the Christians.{1}",
+  "w": "141-v85faith.js:109"
+ },
+ {
+  "k": "Named: {0}.",
+  "w": "141-v85faith.js:109"
+ },
+ {
+  "k": "No fighter of the league is named.",
+  "w": "141-v85faith.js:109"
+ },
+ {
+  "k": "✝ {0} is named in the edict of {1} — decide on Match Week.",
+  "w": "141-v85faith.js:110"
+ },
+ {
+  "k": "The Christians keep together",
+  "w": "141-v85faith.js:121"
+ },
+ {
+  "k": "{0} pray together before dawn. While two or more of them share the barracks, each takes heart: +{1} morale a week.",
+  "w": "141-v85faith.js:122"
+ },
+ {
+  "k": "✝ {0} keep together: +{1} morale a week.",
+  "w": "141-v85faith.js:122"
+ },
+ {
+  "k": "✝ Martyr ·",
+  "w": "141-v85faith.js:130"
+ },
+ {
+  "k": "✝ {0} mourn {1} and take heart: +{2} morale.",
+  "w": "141-v85faith.js:132"
+ },
+ {
+  "k": "✝ <b>{0}</b>{1} dies a martyr at {2} — {3}.",
+  "w": "141-v85faith.js:133"
+ },
+ {
+  "k": "survived the beasts at {0} under the governor's edict — pardoned",
+  "w": "141-v85faith.js:136"
+ },
+ {
+  "k": "🕊 <b>{0}</b>{1} survives the beasts at {2} and is pardoned.",
+  "w": "141-v85faith.js:137"
+ },
+ {
+  "k": "The condemned of the edict, against the beasts.",
+  "w": "141-v85faith.js:140"
+ },
+ {
+  "k": "Ad Flamma",
+  "w": "141-v85faith.js:153"
+ },
+ {
+  "k": "Ad Bestias",
+  "w": "141-v85faith.js:155"
+ },
+ {
+  "k": "After the edict of {0}",
+  "w": "141-v85faith.js:158"
+ },
+ {
+  "k": "Every beast is slain — the survivors are pardoned.",
+  "w": "141-v85faith.js:168"
+ },
+ {
+  "k": "The editor calls the beasts back — the survivors are pardoned.",
+  "w": "141-v85faith.js:169"
+ },
+ {
+  "k": "🦁 {0} walks out to the beasts at {1}.",
+  "w": "141-v85faith.js:175"
+ },
+ {
+  "k": "🕊 <b>{0}</b> survives and is pardoned",
+  "w": "141-v85faith.js:182"
+ },
+ {
+  "k": "✝ <b>{0}</b> dies a martyr",
+  "w": "141-v85faith.js:182"
+ },
+ {
+  "k": "✝ {0} other condemned fell",
+  "w": "141-v85faith.js:182"
+ },
+ {
+  "k": "✝ Ad bestias",
+  "w": "141-v85faith.js:183"
+ },
+ {
+  "k": "🕊 Ad bestias",
+  "w": "141-v85faith.js:183"
+ },
+ {
+  "k": "Back to Match Week",
+  "w": "141-v85faith.js:183"
+ },
+ {
+  "k": "✝ The soldiers take {0} for the beasts.",
+  "w": "141-v85faith.js:187"
+ },
+ {
+  "k": "🦁 Ad bestias at {0}",
+  "w": "141-v85faith.js:198"
+ },
+ {
+  "k": "🌙 {0} is hidden this week and sits out.",
+  "w": "141-v85faith.js:200"
+ },
+ {
+  "k": "💰 {0} coin to the magistrate: {1}'s name is struck.",
+  "w": "141-v85faith.js:202"
+ },
+ {
+  "k": "💰 The magistrate kept the {0} coin — {1}'s name stands.",
+  "w": "141-v85faith.js:202"
+ },
+ {
+  "k": "💰 The name is struck",
+  "w": "141-v85faith.js:203"
+ },
+ {
+  "k": "💰 The bribe failed",
+  "w": "141-v85faith.js:203"
+ },
+ {
+  "k": "{0} is free of the edict.",
+  "w": "141-v85faith.js:203"
+ },
+ {
+  "k": "The magistrate pocketed {0} coin and the sentence stands. {1} must face the beasts — or refuse.",
+  "w": "141-v85faith.js:203"
+ },
+ {
+  "k": "🦁 {0} will face the beasts at {1}.",
+  "w": "141-v85faith.js:204"
+ },
+ {
+  "k": "🔥 {0} will not fight?",
+  "w": "141-v85faith.js:205"
+ },
+ {
+  "k": "<b>{0}</b> will not raise a hand in the arena. The sentence is the fire: {1} dies.",
+  "w": "141-v85faith.js:205"
+ },
+ {
+  "k": "🔥 Ad Flamma",
+  "w": "141-v85faith.js:205"
+ },
+ {
+  "k": "✝ {0} · Ad Flamma",
+  "w": "141-v85faith.js:206"
+ },
+ {
+  "k": "{0} is remembered as a martyr.",
+  "w": "141-v85faith.js:206"
+ },
+ {
+  "k": "Remember {0}",
+  "w": "141-v85faith.js:206"
+ },
+ {
+  "k": "✝ {0} cannot be entered this week (the edict).",
+  "w": "141-v85faith.js:210"
+ },
+ {
+  "k": "Denounced by {0}",
+  "w": "141-v85faith.js:214"
+ },
+ {
+  "k": "The edict of {0}",
+  "w": "141-v85faith.js:214"
+ },
+ {
+  "k": "carried out",
+  "w": "141-v85faith.js:214"
+ },
+ {
+  "k": "🦁 Ad bestias at {0}: {1} condemned{2} against a lion, a bear and two wolves · {3} rotations",
+  "w": "141-v85faith.js:216"
+ },
+ {
+  "k": "from several houses",
+  "w": "141-v85faith.js:216"
+ },
+ {
+  "k": "⚔ Fight it yourself<small>you play {0}</small>",
+  "w": "141-v85faith.js:216"
+ },
+ {
+  "k": "⏩ Let the sand decide<small>runs now</small>",
+  "w": "141-v85faith.js:216"
+ },
+ {
+  "k": "✝ The crowd of {0} jeers Christians: {1} start{2} {3} CF down.",
+  "w": "141-v85faith.js:217"
+ },
+ {
+  "k": "{0} {1} named in the edict of {2}",
+  "w": "141-v85faith.js:228"
+ },
+ {
+  "k": "{0} {1} for the beasts",
+  "w": "141-v85faith.js:228"
+ },
+ {
+  "k": "Decide",
+  "w": "141-v85faith.js:229"
+ },
+ {
+  "k": "Pagan",
+  "w": "141-v85faith.js:232"
+ },
+ {
+  "k": "✝ Christian",
+  "w": "141-v85faith.js:232"
+ },
+ {
+  "k": "✍ Sign",
+  "w": "144-v85rec.js:48"
+ },
+ {
+  "k": "🗣 Pitch {0}",
+  "w": "144-v85rec.js:48"
+ },
+ {
+  "k": "class=\"btn pst85{0}\"",
+  "w": "144-v85rec.js:49"
+ },
+ {
+  "k": "title=\"★ Advisor suggests: {0}\"",
+  "w": "144-v85rec.js:51"
+ },
+ {
+  "k": "The next step on the way to signing them.",
+  "w": "144-v85rec.js:52"
+ },
+ {
+  "k": "★ Advisor suggests — {0}",
+  "w": "144-v85rec.js:53"
+ },
+ {
+  "k": "<b>{0}</b><span>ask {1}</span>",
+  "w": "144-v85rec.js:59"
+ },
+ {
+  "k": "On your board — tap to remove",
+  "w": "144-v85rec.js:60"
+ },
+ {
+  "k": "📜 <b>This week:</b> {0} scouting · {1} courting planned",
+  "w": "144-v85rec.js:72"
+ },
+ {
+  "k": "Signed",
+  "w": "144-v85rec.js:77"
+ },
+ {
+  "k": "Interested",
+  "w": "144-v85rec.js:77"
+ },
+ {
+  "k": "Stable",
+  "w": "144-v85rec.js:77"
+ },
+ {
+  "k": "Your interest {0} · {1}",
+  "w": "144-v85rec.js:90"
+ },
+ {
+  "k": "· they want more fame first",
+  "w": "144-v85rec.js:90"
+ },
+ {
+  "k": "fighters on the card: <b>+1 AP, +1 coin</b>",
+  "w": "145-v85fix.js:63"
+ },
+ {
+  "k": "· up next",
+  "w": "145-v85fix.js:95"
+ },
+ {
+  "k": "⚔ <b>{0}</b> is entered in the {1}, as the deal asks.",
+  "w": "145-v85fix.js:117"
+ },
+ {
+  "k": "— assess the wounds now; treatment opens after the games",
+  "w": "145-v85fix.js:131"
+ },
+ {
+  "k": "{0} bout{1} still to fight this week",
+  "w": "145-v85fix.js:145"
+ },
+ {
+  "k": "You are here",
+  "w": "145-v85fix.js:200"
+ },
+ {
+  "k": "<span>🧹 <b>{0}</b> retired gladiator{1} from older versions — they can't fight, be summoned or go on a missio.</span>",
+  "w": "145-v85fix.js:212"
+ },
+ {
+  "k": "Clear {0}",
+  "w": "145-v85fix.js:212"
+ },
+ {
+  "k": "🧹 Clear the retired",
+  "w": "145-v85fix.js:215"
+ },
+ {
+  "k": "Delete {0} retired gladiator{1} from Ludus Flavius for good?",
+  "w": "145-v85fix.js:215"
+ },
+ {
+  "k": "Delete the retired gladiators?",
+  "w": "145-v85fix.js:215"
+ },
+ {
+  "k": "🧹 {0} retired gladiator{1} cleared.",
+  "w": "145-v85fix.js:217"
+ },
+ {
+  "k": "Abandoned the sand — <b>Damnatio</b>",
+  "w": "146-v85land.js:34"
+ }
+]

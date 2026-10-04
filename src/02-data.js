@@ -80,12 +80,12 @@ const sleep = ms => {
   return t <= 0 ? Promise.resolve() : new Promise(r => setTimeout(r, t));
 };
 /* sevLabel — the word used when a location reaches 0 HP: chest 'Caved in', head 'Crushed', limbs 'Severed'. TWEAK: the label text. */
-const sevLabel = l => l === 'chest' ? 'Caved in' : l === 'head' ? 'Crushed' : 'Severed';
+const sevLabel = l => l === 'chest' ? _T('Caved in') : l === 'head' ? _T('Crushed') : _T('Severed');
 /* ROWL / COLL — board coordinate labels for the 13 rows (A-L) and columns (1-12); index 6 is the center line shown as '·'. TWEAK: label text (keep 13 entries each). */
 const ROWL = ['A', 'B', 'C', 'D', 'E', 'F', '·', 'G', 'H', 'I', 'J', 'K', 'L'];
 const COLL = ['1', '2', '3', '4', '5', '6', '·', '7', '8', '9', '10', '11', '12'];
 /* tl — turns a row/col into a tile label like 'C-4', or 'the center' for (6,6). */
-const tl = (r, c) => r === 6 && c === 6 ? 'the center' : ROWL[r] + '-' + COLL[c];
+const tl = (r, c) => r === 6 && c === 6 ? _T('the center') : ROWL[r] + '-' + COLL[c];
 /* inB — true if (r,c) is on the 13x13 board. */
 const inB = (r, c) => r >= 0 && c >= 0 && r < N && c < N;
 /* cheb — Chebyshev distance between two {r,c} points (a diagonal step counts as 1); used for range and movement checks. */
@@ -166,7 +166,7 @@ function cfTrack(player) {
       const d = victim - this._cf;
       this._cf = victim;
       if (!d) return;
-      const why = CF_WHY || (S && S.phase === 'resolve' ? 'section cheers & upkeep' : S && S.phase === 'choice' ? 'choice phase' : S && S.phase === 'action' ? 'actions & cards' : 'the event');
+      const why = CF_WHY || (S && S.phase === 'resolve' ? _T('section cheers & upkeep') : S && S.phase === 'choice' ? _T('choice phase') : S && S.phase === 'action' ? 'actions & cards' : _T('the event'));
       (this.cfLog = this.cfLog || {})[why] = (this.cfLog[why] || 0) + d;
       CF_WHY = null;
     },
@@ -183,20 +183,20 @@ const coinLog = (player, n, why) => {
 /* LOCS / LOCN / LOCS_SHORT / LOCSIDE — the six body location keys, their full names, short names and L/R side. Keys are used everywhere; only change the display text. */
 const LOCS = ['head', 'chest', 'rarm', 'larm', 'rleg', 'lleg'];
 const LOCN = {
-  head: 'Head',
-  chest: 'Chest',
-  larm: 'Left Arm',
-  rarm: 'Right Arm',
-  rleg: 'Right Leg',
-  lleg: 'Left Leg'
+  head: _T('Head'),
+  chest: _T('Chest'),
+  larm: _T('Left Arm'),
+  rarm: _T('Right Arm'),
+  rleg: _T('Right Leg'),
+  lleg: _T('Left Leg')
 };
 const LOCS_SHORT = {
-  head: 'Head',
-  chest: 'Chest',
-  rarm: 'Arm',
-  larm: 'Arm',
-  rleg: 'Leg',
-  lleg: 'Leg'
+  head: _T('Head'),
+  chest: _T('Chest'),
+  rarm: _T('Arm'),
+  larm: _T('Arm'),
+  rleg: _T('Leg'),
+  lleg: _T('Leg')
 };
 const LOCSIDE = {
   rarm: 'R',
@@ -285,7 +285,7 @@ const NPCT = {
     col: '#c98a2e',
     scan: 1,
     tameable: 1,
-    states: [[9, 3, 1, 3, 'Initial'], [5, 4, 1, 3, 'Raged'], [0, 3, 1, 1, 'Fazed']]
+    states: [[9, 3, 1, 3, _T('Initial')], [5, 4, 1, 3, _T('Raged')], [0, 3, 1, 1, _T('Fazed')]]
   },
   tholo: {
     n: 'Tholo',
@@ -297,7 +297,7 @@ const NPCT = {
     cf: 6,
     col: '#6a3580',
     scan: 1,
-    states: [[15, 4, 1, 2, 'Initial'], [6, 5, 1, 3, 'Raged'], [0, 3, 1, 1, 'Fazed']]
+    states: [[15, 4, 1, 2, _T('Initial')], [6, 5, 1, 3, _T('Raged')], [0, 3, 1, 1, _T('Fazed')]]
   },
   commodus: {
     n: 'Commodus',
@@ -308,7 +308,7 @@ const NPCT = {
     coin: 10,
     cf: 6,
     col: '#b8b8c8',
-    states: [[11, 3, 1, 2, 'Initial'], [6, 4, 1, 3, 'Raged'], [0, 2, 1, 1, 'Fazed']]
+    states: [[11, 3, 1, 2, _T('Initial')], [6, 4, 1, 3, _T('Raged')], [0, 2, 1, 1, _T('Fazed')]]
   },
   zora: {
     n: 'Golden Eagle',
@@ -361,163 +361,163 @@ const BASE_NPCS = [{
    Role keys: Glykon, Arenosus (snakes) · Valencia, Moechus (wolves) · Ursa, Brutum (bears) · Leo, Leaena (lions) · Commodus (the champion). */
 /* v0.22: what a named beast IS, for labels like “Archimedes (Human)” */
 const NPC_KIND = {
-  snake: 'Snake',
-  wolf: 'Wolf',
-  bear: 'Bear',
-  lion: 'Lion',
-  commodus: 'Human',
-  tholo: 'Unknown',
-  zora: 'Golden eagle'
+  snake: _T('Snake'),
+  wolf: _T('Wolf'),
+  bear: _T('Bear'),
+  lion: _T('Lion'),
+  commodus: _T('Human'),
+  tholo: _T('Unknown'),
+  zora: _T('Golden eagle')
 };
 /* npcKind — human-readable kind for an NPC type key (NPC_KIND, else the NPCT name, else the key itself). */
 const npcKind = target => NPC_KIND[target] || (typeof NPCT !== 'undefined' && NPCT[target] ? NPCT[target].n : target);
 /* npcLbl — display label 'Name (Kind)' for an NPC; the rulebook Tholo is labelled just 'Tholo'. */
-const npcLbl = npc => npc.t === 'tholo' && npc.name === 'Tholo' ? 'Tholo' : `${npc.name} (${npcKind(npc.t)})`;
+const npcLbl = npc => npc.t === 'tholo' && npc.name === 'Tholo' ? _T('Tholo') : `${npc.name} (${npcKind(npc.t)})`;
 /* CITY_BEASTS — per-location names for each beast role key (see the role list above); champ is the champion's flavor line. Edit names freely; keep the role keys. */
 const CITY_BEASTS = {
   Roma: {
-    Glykon: 'Glykon',
-    Arenosus: 'Arenosus',
-    Valencia: 'Valencia',
-    Moechus: 'Moechus',
-    Ursa: 'Ursa',
-    Brutum: 'Brutum',
-    Leo: 'Leo',
-    Leaena: 'Leaena',
-    Commodus: 'Commodus',
-    champ: 'Commodus, the emperor who fought as a secutor'
+    Glykon: _T('Glykon'),
+    Arenosus: _T('Arenosus'),
+    Valencia: _T('Valencia'),
+    Moechus: _T('Moechus'),
+    Ursa: _T('Ursa'),
+    Brutum: _T('Brutum'),
+    Leo: _T('Leo'),
+    Leaena: _T('Leaena'),
+    Commodus: _T('Commodus'),
+    champ: _T('Commodus, the emperor who fought as a secutor')
   },
   Syracusae: {
-    Glykon: 'Scylla',
-    Arenosus: 'Charybdis',
-    Valencia: 'Aetna',
-    Moechus: 'Cyane',
-    Ursa: 'Ortygia',
-    Brutum: 'Dionys',
-    Leo: 'Hiero',
-    Leaena: 'Arethusa',
-    Commodus: 'Archimedes',
-    champ: 'Archimedes of Syracuse, who burned a fleet with mirrors'
+    Glykon: _T('Scylla'),
+    Arenosus: _T('Charybdis'),
+    Valencia: _T('Aetna'),
+    Moechus: _T('Cyane'),
+    Ursa: _T('Ortygia'),
+    Brutum: _T('Dionys'),
+    Leo: _T('Hiero'),
+    Leaena: _T('Arethusa'),
+    Commodus: _T('Archimedes'),
+    champ: _T('Archimedes of Syracuse, who burned a fleet with mirrors')
   },
   Verona: {
-    Glykon: 'Adige',
-    Arenosus: 'Benaco',
-    Valencia: 'Lupa Veneta',
-    Moechus: 'Cimbro',
-    Ursa: 'Montebaldo',
-    Brutum: 'Lessinia',
-    Leo: 'Catullo',
-    Leaena: 'Lesbia',
-    Commodus: 'Catullus',
-    champ: 'Catullus the poet, who fights with words and a falcata'
+    Glykon: _T('Adige'),
+    Arenosus: _T('Benaco'),
+    Valencia: _T('Lupa Veneta'),
+    Moechus: _T('Cimbro'),
+    Ursa: _T('Montebaldo'),
+    Brutum: _T('Lessinia'),
+    Leo: _T('Catullo'),
+    Leaena: _T('Lesbia'),
+    Commodus: _T('Catullus'),
+    champ: _T('Catullus the poet, who fights with words and a falcata')
   },
   Arles: {
-    Glykon: 'Rhodanus',
-    Arenosus: 'Camargue',
-    Valencia: 'Alyscamps',
-    Moechus: 'Crau',
-    Ursa: 'Ventoux',
-    Brutum: 'Luberon',
-    Leo: 'Sextius',
-    Leaena: 'Ligura',
-    Commodus: 'Sextius',
-    champ: 'Sextius Calvinus, founder of the colony'
+    Glykon: _T('Rhodanus'),
+    Arenosus: _T('Camargue'),
+    Valencia: _T('Alyscamps'),
+    Moechus: _T('Crau'),
+    Ursa: _T('Ventoux'),
+    Brutum: _T('Luberon'),
+    Leo: _T('Sextius'),
+    Leaena: _T('Ligura'),
+    Commodus: _T('Sextius'),
+    champ: _T('Sextius Calvinus, founder of the colony')
   },
   Capua: {
-    Glykon: 'Volturnus',
-    Arenosus: 'Liternum',
-    Valencia: 'Batiatus',
-    Moechus: 'Lentulus',
-    Ursa: 'Tifata',
-    Brutum: 'Sannio',
-    Leo: 'Crixus',
-    Leaena: 'Oenomaus',
-    Commodus: 'Spartacus',
-    champ: 'Spartacus, the Thracian who broke out of this very ludus'
+    Glykon: _T('Volturnus'),
+    Arenosus: _T('Liternum'),
+    Valencia: _T('Batiatus'),
+    Moechus: _T('Lentulus'),
+    Ursa: _T('Tifata'),
+    Brutum: _T('Sannio'),
+    Leo: _T('Crixus'),
+    Leaena: _T('Oenomaus'),
+    Commodus: _T('Spartacus'),
+    champ: _T('Spartacus, the Thracian who broke out of this very ludus')
   },
   Thysdrus: {
-    Glykon: 'Sahel',
-    Arenosus: 'Byrsa',
-    Valencia: 'Sufetula',
-    Moechus: 'Numida',
-    Ursa: 'Atlas',
-    Brutum: 'Aures',
-    Leo: 'Massinissa',
-    Leaena: 'Sophonisba',
-    Commodus: 'Gordian',
-    champ: 'Gordian, proclaimed emperor in this amphitheater'
+    Glykon: _T('Sahel'),
+    Arenosus: _T('Byrsa'),
+    Valencia: _T('Sufetula'),
+    Moechus: _T('Numida'),
+    Ursa: _T('Atlas'),
+    Brutum: _T('Aures'),
+    Leo: _T('Massinissa'),
+    Leaena: _T('Sophonisba'),
+    Commodus: _T('Gordian'),
+    champ: _T('Gordian, proclaimed emperor in this amphitheater')
   },
   Nemausus: {
-    Glykon: 'Vardo',
-    Arenosus: 'Fontaine',
-    Valencia: 'Cevenna',
-    Moechus: 'Garrigue',
-    Ursa: 'Aigoual',
+    Glykon: _T('Vardo'),
+    Arenosus: _T('Fontaine'),
+    Valencia: _T('Cevenna'),
+    Moechus: _T('Garrigue'),
+    Ursa: _T('Aigoual'),
     Brutum: 'Lozère',
-    Leo: 'Antoninus',
-    Leaena: 'Nemausa',
-    Commodus: 'Antoninus',
-    champ: 'Antoninus Pius, son of Nemausus, who fights with imperial calm'
+    Leo: _T('Antoninus'),
+    Leaena: _T('Nemausa'),
+    Commodus: _T('Antoninus'),
+    champ: _T('Antoninus Pius, son of Nemausus, who fights with imperial calm')
   },
   Pompeii: {
-    Glykon: 'Sarnus',
-    Arenosus: 'Cinis',
-    Valencia: 'Bark Boi Arlosefus',
-    Moechus: 'Herculanea',
-    Ursa: 'Fumus',
-    Brutum: 'Lapillus',
-    Leo: 'Toshiro Mifune',
-    Leaena: 'Miss Fernadette III',
-    /* v0.45: the house pets of Pompeii */Commodus: 'Celadus',
-    champ: 'Celadus the Thracian, "sigh of the girls", scratched on these very walls'
+    Glykon: _T('Sarnus'),
+    Arenosus: _T('Cinis'),
+    Valencia: _T('Bark Boi Arlosefus'),
+    Moechus: _T('Herculanea'),
+    Ursa: _T('Fumus'),
+    Brutum: _T('Lapillus'),
+    Leo: _T('Toshiro Mifune'),
+    Leaena: _T('Miss Fernadette III'),
+    /* v0.45: the house pets of Pompeii */Commodus: _T('Celadus'),
+    champ: _T('Celadus the Thracian, "sigh of the girls", scratched on these very walls')
   },
   'Leptis Magna': {
-    Glykon: 'Lebda',
-    Arenosus: 'Garama',
-    Valencia: 'Syrtis',
-    Moechus: 'Tripolis',
-    Ursa: 'Gebel',
-    Brutum: 'Sirte',
-    Leo: 'Severus',
-    Leaena: 'Domna',
-    Commodus: 'Severus',
-    champ: 'Septimius Severus, the African emperor, home at last'
+    Glykon: _T('Lebda'),
+    Arenosus: _T('Garama'),
+    Valencia: _T('Syrtis'),
+    Moechus: _T('Tripolis'),
+    Ursa: _T('Gebel'),
+    Brutum: _T('Sirte'),
+    Leo: _T('Severus'),
+    Leaena: _T('Domna'),
+    Commodus: _T('Severus'),
+    champ: _T('Septimius Severus, the African emperor, home at last')
   },
   Uthina: {
-    Glykon: 'Oudna',
-    Arenosus: 'Zaghouan',
-    Valencia: 'Punica',
-    Moechus: 'Bagrada',
-    Ursa: 'Hannibal',
-    Brutum: 'Hasdrubal',
-    Leo: 'Hamilcar',
-    Leaena: 'Dido',
-    Commodus: 'Hannibal',
-    champ: 'Hannibal Barca, who fights as he marched — with elephants in mind'
+    Glykon: _T('Oudna'),
+    Arenosus: _T('Zaghouan'),
+    Valencia: _T('Punica'),
+    Moechus: _T('Bagrada'),
+    Ursa: _T('Hannibal'),
+    Brutum: _T('Hasdrubal'),
+    Leo: _T('Hamilcar'),
+    Leaena: _T('Dido'),
+    Commodus: _T('Hannibal'),
+    champ: _T('Hannibal Barca, who fights as he marched — with elephants in mind')
   },
   Pola: {
-    Glykon: 'Histria',
-    Arenosus: 'Brioni',
-    Valencia: 'Iapod',
-    Moechus: 'Liburna',
+    Glykon: _T('Histria'),
+    Arenosus: _T('Brioni'),
+    Valencia: _T('Iapod'),
+    Moechus: _T('Liburna'),
     Ursa: 'Učka',
-    Brutum: 'Kvarner',
-    Leo: 'Diocletian',
-    Leaena: 'Prisca',
-    Commodus: 'Diocletian',
-    champ: 'Diocletian, the soldier-emperor who retired to grow cabbages'
+    Brutum: _T('Kvarner'),
+    Leo: _T('Diocletian'),
+    Leaena: _T('Prisca'),
+    Commodus: _T('Diocletian'),
+    champ: _T('Diocletian, the soldier-emperor who retired to grow cabbages')
   },
   Puteoli: {
-    Glykon: 'Solfatara',
-    Arenosus: 'Avernus',
-    Valencia: 'Cumae',
-    Moechus: 'Baiae',
-    Ursa: 'Misenum',
-    Brutum: 'Ischia',
-    Leo: 'Sibylla',
-    Leaena: 'Lucrinus',
-    Commodus: 'Petronius',
-    champ: 'Petronius, arbiter of taste, who dines before he duels'
+    Glykon: _T('Solfatara'),
+    Arenosus: _T('Avernus'),
+    Valencia: _T('Cumae'),
+    Moechus: _T('Baiae'),
+    Ursa: _T('Misenum'),
+    Brutum: _T('Ischia'),
+    Leo: _T('Sibylla'),
+    Leaena: _T('Lucrinus'),
+    Commodus: _T('Petronius'),
+    champ: _T('Petronius, arbiter of taste, who dines before he duels')
   }
 };
 /* beastName — the local name of a beast role key at location li (default: the current event's location, else Roma); falls back to the key. */
@@ -1074,8 +1074,8 @@ const COST = {
 const CLASSES = {
   soldier: {
     name: 'Soldier',
-    sub: 'Legionnaire',
-    hero: 'Decimus Triarius',
+    sub: _T('Legionnaire'),
+    hero: _T('Decimus Triarius'),
     city: 'Nemausus',
     img: 0,
     color: '#c0433a',
@@ -1085,12 +1085,12 @@ const CLASSES = {
     keys: 2,
     items: ['ap3'],
     abil: 'dmg',
-    ab: 'Ability: +1 damage to every successful attack in round 1.'
+    ab: _T('Ability: +1 damage to every successful attack in round 1.')
   },
   royalty: {
     name: 'Royalty',
-    sub: 'Patrician',
-    hero: 'Varinius Gracchi',
+    sub: _T('Patrician'),
+    hero: _T('Varinius Gracchi'),
     city: 'Capua',
     img: 2,
     color: '#4f7fc4',
@@ -1100,12 +1100,12 @@ const CLASSES = {
     keys: 2,
     items: [],
     abil: 'coin',
-    ab: 'Ability: +1 coin each turn (phase 3).'
+    ab: _T('Ability: +1 coin each turn (phase 3).')
   },
   hero: {
     name: 'Hero',
-    sub: 'Provocator',
-    hero: 'Thraex Murmillo',
+    sub: _T('Provocator'),
+    hero: _T('Thraex Murmillo'),
     city: 'Pompeii',
     img: 3,
     color: '#4f9a57',
@@ -1116,12 +1116,12 @@ const CLASSES = {
     keys: 2,
     items: ['c:ward'],
     abil: 'cf',
-    ab: 'Ability: +1 CF each turn (phase 3).'
+    ab: _T('Ability: +1 CF each turn (phase 3).')
   },
   slave: {
     name: 'Slave',
-    sub: 'Retiarius',
-    hero: 'Don Retiarius',
+    sub: _T('Retiarius'),
+    hero: _T('Don Retiarius'),
     city: 'Leptis Magna',
     img: 1,
     color: '#d4b13c',
@@ -1131,12 +1131,12 @@ const CLASSES = {
     keys: 2,
     items: ['c:rete'],
     abil: 'mv',
-    ab: 'Ability: +1 movement each turn.'
+    ab: _T('Ability: +1 movement each turn.')
   },
   veteranus: {
     name: 'Veteranus',
-    sub: 'Lanista',
-    hero: 'Cato Quirinus',
+    sub: _T('Lanista'),
+    hero: _T('Cato Quirinus'),
     city: 'Arles',
     img: 4,
     color: '#cfc6b4',
@@ -1146,12 +1146,12 @@ const CLASSES = {
     keys: 2,
     items: [],
     abil: 'vet',
-    ab: 'Ability: +1 coin or +1 CF each turn. Weakness: weapons, armor and CF purchases cost 1 coin or 1 CF more.'
+    ab: _T('Ability: +1 coin or +1 CF each turn. Weakness: weapons, armor and CF purchases cost 1 coin or 1 CF more.')
   },
   amazonia: {
     name: 'Amazonia',
-    sub: 'Gladiatrix',
-    hero: 'Tullia Maxima',
+    sub: _T('Gladiatrix'),
+    hero: _T('Tullia Maxima'),
     city: 'Syracusae',
     img: 7,
     color: '#dc7a34',
@@ -1162,12 +1162,12 @@ const CLASSES = {
     keys: 2,
     items: [],
     abil: null,
-    ab: 'Ability: none (Cestus +1 damage, greaves +1 movement). Weakness: never receives CF from Blessings.'
+    ab: _T('Ability: none (Cestus +1 damage, greaves +1 movement). Weakness: never receives CF from Blessings.')
   },
   venatore: {
     name: 'Venatore',
-    sub: 'Bestiarius',
-    hero: 'Trajan Falto',
+    sub: _T('Bestiarius'),
+    hero: _T('Trajan Falto'),
     city: 'Uthina',
     img: 6,
     color: '#8a5cc0',
@@ -1177,12 +1177,12 @@ const CLASSES = {
     keys: 0,
     items: ['c:tame'],
     abil: 'zora',
-    ab: 'Ability: declare Zora the golden eagle once per event. Weakness: can never use tunnels.'
+    ab: _T('Ability: declare Zora the golden eagle once per event. Weakness: can never use tunnels.')
   },
   damnatio: {
     name: 'Damnatio',
-    sub: 'Condemned',
-    hero: 'Damnatio',
+    sub: _T('Condemned'),
+    hero: _T('Damnatio'),
     city: 'Roma',
     img: 5,
     color: '#9a8f84',
@@ -1205,11 +1205,11 @@ const CLASS_WEAK = {
 };
 /* WEAKNESSES — weakness code → [label, description, point value]; the value is subtracted from a Creator Studio character's point cost. TWEAK: labels, text, point values. */
 const WEAKNESSES = {
-  none: ['None', 'No drawback.', 0],
-  noBlessCF: ['No Blessings CF', 'Never receives CF from Blessings pots or crowd offerings (Amazonia).', 2],
-  noTunnel: ['Claustrophobic', 'Can never use tunnels (Venatore).', 1],
-  pelted: ['Hated by the crowd', 'Pelted with a stone (1 damage) every Resolve phase, but +10 CF if they win (Damnatio).', 4],
-  tax: ['Old debts', 'Weapons, armor and CF purchases cost 1 more (Veteranus).', 2]
+  none: [_T('None'), _T('No drawback.'), 0],
+  noBlessCF: [_T('No Blessings CF'), _T('Never receives CF from Blessings pots or crowd offerings (Amazonia).'), 2],
+  noTunnel: [_T('Claustrophobic'), _T('Can never use tunnels (Venatore).'), 1],
+  pelted: [_T('Hated by the crowd'), _T('Pelted with a stone (1 damage) every Resolve phase, but +10 CF if they win (Damnatio).'), 4],
+  tax: [_T('Old debts'), _T('Weapons, armor and CF purchases cost 1 more (Veteranus).'), 2]
 };
 /* weak — true if the player's class has weakness k (a custom character's own weak field, else CLASS_WEAK). */
 const weak = (player, k) => {
@@ -1222,58 +1222,58 @@ const BASE_CLS = Object.keys(CLASSES);
 /* ---- Arena deck (70 cards) and the 12 round-2 cards, from the card sheets.
    type: instant (resolve on draw) · declare (phase 3) · anytime (even off-turn) · active (stays in play) · npc (spawn).
    img = index in assets/arena.jpg (row*10+col; 70+ are the round-2 sheet) ---- */
-const Q_BAD = 'All bad fortune is conquered by endurance',
-  Q_BUY = 'Let the buyer beware';
+const Q_BAD = _T('All bad fortune is conquered by endurance'),
+  Q_BUY = _T('Let the buyer beware');
 /* CARDS fields: n name · type (see above) · d card text · q quote · img art index · effect numbers: hp heal amount, loc armor location lost, mv movement, ap Forge AP, lv armor level, dmg Hercules bonus damage, flip Omnia strength, bear which bear aggros, cls Piaculum class. d is text only; the numbers drive the effect. */
 const CARDS = {
   wealth3: {
     n: 'Wealth of Saturn',
     type: 'instant',
-    d: 'You are awarded 3 coin.',
-    q: 'Accept the things to which fate binds you',
+    d: _T('You are awarded 3 coin.'),
+    q: _T('Accept the things to which fate binds you'),
     img: 0
   },
   wealth5: {
     n: 'Wealth of Saturn',
     type: 'instant',
-    d: 'You are awarded 5 coin.',
-    q: 'Accept the things to which fate binds you',
+    d: _T('You are awarded 5 coin.'),
+    q: _T('Accept the things to which fate binds you'),
     img: 2
   },
   elixir4: {
     n: 'Health Elixir',
     type: 'anytime',
-    d: 'Distribute 4 HP to any remaining body parts (or save a location that drops to 0 HP).',
-    q: 'From head to heel',
+    d: _T('Distribute 4 HP to any remaining body parts (or save a location that drops to 0 HP).'),
+    q: _T('From head to heel'),
     img: 4,
     hp: 4
   },
   elixir2: {
     n: 'Health Elixir',
     type: 'anytime',
-    d: 'Distribute 2 HP to any remaining body parts (or save a location that drops to 0 HP).',
-    q: 'From head to heel',
+    d: _T('Distribute 2 HP to any remaining body parts (or save a location that drops to 0 HP).'),
+    q: _T('From head to heel'),
     img: 6,
     hp: 2
   },
   wpnR: {
     n: 'Primary Weapon Falls Apart!',
     type: 'instant',
-    d: 'Discard your primary (right-hand) weapon.',
+    d: _T('Discard your primary (right-hand) weapon.'),
     q: Q_BAD,
     img: 8
   },
   wpnL: {
     n: 'Secondary Weapon Falls Apart!',
     type: 'instant',
-    d: 'Discard your secondary (left-hand) weapon.',
+    d: _T('Discard your secondary (left-hand) weapon.'),
     q: Q_BAD,
     img: 9
   },
   armHead: {
     n: 'Your Head Armor Falls Apart!',
     type: 'instant',
-    d: 'Discard all armor on your head and set its AP to 0.',
+    d: _T('Discard all armor on your head and set its AP to 0.'),
     q: Q_BAD,
     img: 10,
     loc: 'head'
@@ -1281,7 +1281,7 @@ const CARDS = {
   armChest: {
     n: 'Your Chest Armor Falls Apart',
     type: 'instant',
-    d: 'Discard all armor on your chest and set its AP to 0.',
+    d: _T('Discard all armor on your chest and set its AP to 0.'),
     q: Q_BAD,
     img: 11,
     loc: 'chest'
@@ -1289,7 +1289,7 @@ const CARDS = {
   armRarm: {
     n: 'Your Right Arm Armor Falls Apart!',
     type: 'instant',
-    d: 'Discard all armor on your right arm and set its AP to 0.',
+    d: _T('Discard all armor on your right arm and set its AP to 0.'),
     q: Q_BAD,
     img: 12,
     loc: 'rarm'
@@ -1297,7 +1297,7 @@ const CARDS = {
   armLarm: {
     n: 'Your Left Arm Armor Falls Apart!',
     type: 'instant',
-    d: 'Discard all armor on your left arm and set its AP to 0.',
+    d: _T('Discard all armor on your left arm and set its AP to 0.'),
     q: Q_BAD,
     img: 13,
     loc: 'larm'
@@ -1305,7 +1305,7 @@ const CARDS = {
   armRleg: {
     n: 'Your Right Leg Armor Falls Apart!',
     type: 'instant',
-    d: 'Discard all armor on your right leg and set its AP to 0.',
+    d: _T('Discard all armor on your right leg and set its AP to 0.'),
     q: Q_BAD,
     img: 14,
     loc: 'rleg'
@@ -1313,7 +1313,7 @@ const CARDS = {
   armLleg: {
     n: 'Your Left Leg Armor Falls Apart!',
     type: 'instant',
-    d: 'Discard all armor on your left leg and set its AP to 0.',
+    d: _T('Discard all armor on your left leg and set its AP to 0.'),
     q: Q_BAD,
     img: 15,
     loc: 'lleg'
@@ -1321,336 +1321,336 @@ const CARDS = {
   fallsApart: {
     n: 'All of Your Armor Falls Apart!',
     type: 'instant',
-    d: 'Discard all of your equipped armor and set all AP to 0.',
+    d: _T('Discard all of your equipped armor and set all AP to 0.'),
     q: Q_BAD,
     img: 16
   },
   merc1: {
     n: 'Speed of Mercury',
     type: 'instant',
-    d: '1 extra movement for this turn only.',
-    q: 'Fortune favors the bold',
+    d: _T('1 extra movement for this turn only.'),
+    q: _T('Fortune favors the bold'),
     img: 17,
     mv: 1
   },
   merc2: {
     n: 'Speed of Mercury',
     type: 'instant',
-    d: '2 extra movement for this turn only.',
-    q: 'Fortune favors the bold',
+    d: _T('2 extra movement for this turn only.'),
+    q: _T('Fortune favors the bold'),
     img: 19,
     mv: 2
   },
   mercRound: {
     n: 'Speed of Mercury',
     type: 'active',
-    d: '1 extra movement for the remainder of the round.',
-    q: 'Fortune favors the bold',
+    d: _T('1 extra movement for the remainder of the round.'),
+    q: _T('Fortune favors the bold'),
     img: 21
   },
   focus: {
     n: 'Focus!',
     type: 'declare',
-    d: 'Choose the hit location for 1 attack this turn. Declare before rolling any attack dice.',
-    q: 'Honor to the vanquished',
+    d: _T('Choose the hit location for 1 attack this turn. Declare before rolling any attack dice.'),
+    q: _T('Honor to the vanquished'),
     img: 22
   },
   lure: {
     n: 'Meat Lure',
     type: 'declare',
     d: 'Throw a meat lure (range 4): aggro any 1 NPC in play onto another player. Works on Tholo; breaks a tame bond.',
-    q: 'Accept without conceit, relinquish without reluctance',
+    q: _T('Accept without conceit, relinquish without reluctance'),
     img: 23
   },
   mchoice: {
     n: 'Choose',
     type: 'declare',
-    d: 'If you purchase from the market this turn, you may choose your items.',
+    d: _T('If you purchase from the market this turn, you may choose your items.'),
     q: Q_BUY,
     img: 24
   },
   discount: {
     n: '% Off',
     type: 'declare',
-    d: 'If you purchase from the market this turn, weapons and armor cost 2 less coin.',
+    d: _T('If you purchase from the market this turn, weapons and armor cost 2 less coin.'),
     q: Q_BUY,
     img: 25
   },
   forge3: {
     n: 'Forge of Vulcan',
     type: 'declare',
-    d: 'Add 3 AP to one of your equipped armor locations.',
-    q: 'Do brave deeds and endure',
+    d: _T('Add 3 AP to one of your equipped armor locations.'),
+    q: _T('Do brave deeds and endure'),
     img: 26,
     ap: 3
   },
   forge2: {
     n: 'Forge of Vulcan',
     type: 'declare',
-    d: 'Add 2 AP to one of your equipped armor locations.',
-    q: 'Do brave deeds and endure',
+    d: _T('Add 2 AP to one of your equipped armor locations.'),
+    q: _T('Do brave deeds and endure'),
     img: 27,
     ap: 2
   },
   ursa: {
     n: 'Ursa Aggros You!',
     type: 'instant',
-    d: "Ursa's aggro token moves to you. If Ursa is already eliminated or tamed, gain 2 CF.",
-    q: 'Devote yourself to inevitable death',
+    d: _T("Ursa's aggro token moves to you. If Ursa is already eliminated or tamed, gain 2 CF."),
+    q: _T('Devote yourself to inevitable death'),
     img: 28,
-    bear: 'Ursa'
+    bear: _T('Ursa')
   },
   brutum: {
     n: 'Brutum Aggros You!',
     type: 'instant',
-    d: "Brutum's aggro token moves to you. If Brutum is already eliminated or tamed, gain 2 CF.",
-    q: 'Devote yourself to inevitable death',
+    d: _T("Brutum's aggro token moves to you. If Brutum is already eliminated or tamed, gain 2 CF."),
+    q: _T('Devote yourself to inevitable death'),
     img: 29,
-    bear: 'Brutum'
+    bear: _T('Brutum')
   },
   rete: {
     n: 'Rete',
     type: 'declare',
-    d: 'Throw a net (range 4) on 1 player or NPC. The target loses its movement on its next turn.',
-    q: 'A man should be upright, not kept upright',
+    d: _T('Throw a net (range 4) on 1 player or NPC. The target loses its movement on its next turn.'),
+    q: _T('A man should be upright, not kept upright'),
     img: 30
   },
   marm1: {
     n: 'Level 1 Armor',
     type: 'instant',
-    d: 'Go directly to the market and choose any remaining level 1 armor.',
-    q: 'Riches do not profit in the day of wrath',
+    d: _T('Go directly to the market and choose any remaining level 1 armor.'),
+    q: _T('Riches do not profit in the day of wrath'),
     img: 32,
     lv: 1
   },
   marm2: {
     n: 'Level 2 Armor',
     type: 'instant',
-    d: 'Go directly to the market and choose any remaining level 2 armor.',
-    q: 'Riches do not profit in the day of wrath',
+    d: _T('Go directly to the market and choose any remaining level 2 armor.'),
+    q: _T('Riches do not profit in the day of wrath'),
     img: 33,
     lv: 2
   },
   telonium: {
     n: 'Flavius Telonium',
     type: 'instant',
-    d: 'Discard 4 coin.',
-    q: 'Accept the things to which fate binds you',
+    d: _T('Discard 4 coin.'),
+    q: _T('Accept the things to which fate binds you'),
     img: 34
   },
   hygeia: {
     n: 'Blessings of Hygeia',
     type: 'declare',
-    d: '"Regrow" 1 severed arm or leg and set it to 4 HP.',
-    q: 'No mortal is wise at all times',
+    d: _T('"Regrow" 1 severed arm or leg and set it to 4 HP.'),
+    q: _T('No mortal is wise at all times'),
     img: 35
   },
   fortuna: {
     n: "Fortuna's Bounty",
     type: 'instant',
-    d: 'Gain 2 CF and 2 coin. Spawn 2 offerings and draw another arena card.',
-    q: 'Let them hate so long as they fear',
+    d: _T('Gain 2 CF and 2 coin. Spawn 2 offerings and draw another arena card.'),
+    q: _T('Let them hate so long as they fear'),
     img: 36
   },
   hercules1: {
     n: 'Herculean Vigor',
     type: 'declare',
-    d: 'If your next attack lands at least 1 hit, add 1 to the total damage. Declare before rolling.',
-    q: 'Leave all else to the gods',
+    d: _T('If your next attack lands at least 1 hit, add 1 to the total damage. Declare before rolling.'),
+    q: _T('Leave all else to the gods'),
     img: 38,
     dmg: 1
   },
   hercules2: {
     n: 'Herculean Vigor',
     type: 'declare',
-    d: 'If your next attack lands at least 1 hit, add 2 to the total damage. Declare before rolling.',
-    q: 'Leave all else to the gods',
+    d: _T('If your next attack lands at least 1 hit, add 2 to the total damage. Declare before rolling.'),
+    q: _T('Leave all else to the gods'),
     img: 72,
     dmg: 2
   },
   omnia1: {
     n: 'Omnia Mutantur',
     type: 'anytime',
-    d: 'Turn 1 miss into a hit.',
-    q: 'Everything changes, nothing perishes',
+    d: _T('Turn 1 miss into a hit.'),
+    q: _T('Everything changes, nothing perishes'),
     img: 40,
     flip: 1
   },
   omnia2: {
     n: 'Omnia Mutantur',
     type: 'anytime',
-    d: 'Turn 2 misses into hits.',
-    q: 'Everything changes, nothing perishes',
+    d: _T('Turn 2 misses into hits.'),
+    q: _T('Everything changes, nothing perishes'),
     img: 42,
     flip: 2
   },
   lashings: {
     n: 'Lashings!',
     type: 'instant',
-    d: 'You are dealt 2 damage directly to your chest health. End your turn.',
-    q: 'There is no easy way from the earth to the stars',
+    d: _T('You are dealt 2 damage directly to your chest health. End your turn.'),
+    q: _T('There is no easy way from the earth to the stars'),
     img: 43
   },
   ward: {
     n: 'Ward of the Evil Eye',
     type: 'declare',
-    d: 'NPCs cannot attack you during your next resolve phase.',
-    q: 'Remember that you are alive',
+    d: _T('NPCs cannot attack you during your next resolve phase.'),
+    q: _T('Remember that you are alive'),
     img: 44
   },
   spikes: {
     n: 'Floor Spikes!',
     type: 'instant',
-    d: 'The arena shakes as floor spikes rise at D, I, 4 and 9. Anyone on or pushed onto a spike takes 2 damage.',
-    q: 'It is how well you live that matters, not how long',
+    d: _T('The arena shakes as floor spikes rise at D, I, 4 and 9. Anyone on or pushed onto a spike takes 2 damage.'),
+    q: _T('It is how well you live that matters, not how long'),
     img: 46
   },
   pia_royalty: {
     n: 'Piaculum',
     type: 'instant',
-    d: 'Give Royalty 2 coin. If that player is you, everyone gives you 2 coin.',
-    q: 'To bear this worthily is good fortune',
+    d: _T('Give Royalty 2 coin. If that player is you, everyone gives you 2 coin.'),
+    q: _T('To bear this worthily is good fortune'),
     img: 47,
     cls: 'royalty'
   },
   pia_soldier: {
     n: 'Piaculum',
     type: 'instant',
-    d: 'Give Soldier 2 coin. If that player is you, everyone gives you 2 coin.',
-    q: 'To bear this worthily is good fortune',
+    d: _T('Give Soldier 2 coin. If that player is you, everyone gives you 2 coin.'),
+    q: _T('To bear this worthily is good fortune'),
     img: 48,
     cls: 'soldier'
   },
   pia_slave: {
     n: 'Piaculum',
     type: 'instant',
-    d: 'Give Slave 2 coin. If that player is you, everyone gives you 2 coin.',
-    q: 'To bear this worthily is good fortune',
+    d: _T('Give Slave 2 coin. If that player is you, everyone gives you 2 coin.'),
+    q: _T('To bear this worthily is good fortune'),
     img: 49,
     cls: 'slave'
   },
   pia_hero: {
     n: 'Piaculum',
     type: 'instant',
-    d: 'Give Hero 2 coin. If that player is you, everyone gives you 2 coin.',
-    q: 'To bear this worthily is good fortune',
+    d: _T('Give Hero 2 coin. If that player is you, everyone gives you 2 coin.'),
+    q: _T('To bear this worthily is good fortune'),
     img: 50,
     cls: 'hero'
   },
   pia_amazonia: {
     n: 'Piaculum',
     type: 'instant',
-    d: 'Give Amazonia 2 coin. If that player is you, everyone gives you 2 coin.',
-    q: 'To bear this worthily is good fortune',
+    d: _T('Give Amazonia 2 coin. If that player is you, everyone gives you 2 coin.'),
+    q: _T('To bear this worthily is good fortune'),
     img: 51,
     cls: 'amazonia'
   },
   pia_venatore: {
     n: 'Piaculum',
     type: 'instant',
-    d: 'Give Venatore 2 coin. If that player is you, everyone gives you 2 coin.',
-    q: 'To bear this worthily is good fortune',
+    d: _T('Give Venatore 2 coin. If that player is you, everyone gives you 2 coin.'),
+    q: _T('To bear this worthily is good fortune'),
     img: 52,
     cls: 'venatore'
   },
   pia_veteranus: {
     n: 'Piaculum',
     type: 'instant',
-    d: 'Give Veteranus 2 coin. If that player is you, everyone gives you 2 coin.',
-    q: 'To bear this worthily is good fortune',
+    d: _T('Give Veteranus 2 coin. If that player is you, everyone gives you 2 coin.'),
+    q: _T('To bear this worthily is good fortune'),
     img: 53,
     cls: 'veteranus'
   },
   ammo: {
     n: 'Ammo',
     type: 'declare',
-    d: 'Replenish all of your ammo, or exchange 2 Ammo cards for any available market weapon that uses ammo.',
-    q: 'We mortals are but shadows and dust',
+    d: _T('Replenish all of your ammo, or exchange 2 Ammo cards for any available market weapon that uses ammo.'),
+    q: _T('We mortals are but shadows and dust'),
     img: 54
   },
   lyre: {
     n: 'Lyre of Orpheus',
     type: 'declare',
-    d: 'Form a tame bond with 1 snake, wolf, bear or lion in play. Control begins at your next resolve phase.',
-    q: "Only the truth gives to the word the Orpheus' Lyre power",
+    d: _T('Form a tame bond with 1 snake, wolf, bear or lion in play. Control begins at your next resolve phase.'),
+    q: _T("Only the truth gives to the word the Orpheus' Lyre power"),
     img: 58
   },
   minerva: {
     n: "Minerva's Push",
     type: 'anytime',
-    d: 'Move 1 tile and dodge all damage from 1 incoming attack.',
-    q: 'The goddess indubitable was revealed in her step',
+    d: _T('Move 1 tile and dodge all damage from 1 incoming attack.'),
+    q: _T('The goddess indubitable was revealed in her step'),
     img: 60
   },
   telemachus: {
     n: 'Telemachus Interdico!',
     type: 'active',
-    d: 'Players cannot attack while Telemachus is in play. Roll a d6 to start each player turn; only a 1 or 6 removes him.',
-    q: 'Fear is proof of a degenerate mind',
+    d: _T('Players cannot attack while Telemachus is in play. Roll a d6 to start each player turn; only a 1 or 6 removes him.'),
+    q: _T('Fear is proof of a degenerate mind'),
     img: 61
   },
   restless: {
     n: 'The Crowd Grows Restless',
     type: 'active',
-    d: 'If the player in turn does not attack at least once, each player is stoned for 2 damage to a rolled location. Discard after 4 turns.',
-    q: 'The universe is transformation; life is opinion',
+    d: _T('If the player in turn does not attack at least once, each player is stoned for 2 damage to a rolled location. Discard after 4 turns.'),
+    q: _T('The universe is transformation; life is opinion'),
     img: 62
   },
   endgame: {
     n: 'Flavius Rule',
     type: 'active',
-    d: 'End Game. All players roll 4 hit dice and choose the hit location for any of their attacks. Active for the remainder of play.',
-    q: 'Hidden talent counts for nothing',
+    d: _T('End Game. All players roll 4 hit dice and choose the hit location for any of their attacks. Active for the remainder of play.'),
+    q: _T('Hidden talent counts for nothing'),
     img: 63
   },
   spawnLeo: {
     n: 'Leo',
     type: 'npc',
-    d: 'Spawn Leo using the grid dice. Leo targets the closest living player each resolve phase.',
+    d: _T('Spawn Leo using the grid dice. Leo targets the closest living player each resolve phase.'),
     img: 64
   },
   spawnLeaena: {
     n: 'Leaena',
     type: 'npc',
-    d: 'Spawn Leaena using the grid dice. Leaena targets the closest living player each resolve phase.',
+    d: _T('Spawn Leaena using the grid dice. Leaena targets the closest living player each resolve phase.'),
     img: 65
   },
   spawnCommodus: {
     n: 'Commodus',
     type: 'npc',
-    d: 'Spawn Commodus; all players take 2 damage to an agreed body location. No CF while he is in play; he hunts the closest player (most CF first).',
+    d: _T('Spawn Commodus; all players take 2 damage to an agreed body location. No CF while he is in play; he hunts the closest player (most CF first).'),
     img: 66
   },
   spawnTholo: {
     n: 'Tholo',
     type: 'npc',
-    d: 'In rounds 1-2 Tholo spawns on the arena center and grabs the chest. Cannot be tamed; collects the coin of anyone it eliminates.',
+    d: _T('In rounds 1-2 Tholo spawns on the arena center and grabs the chest. Cannot be tamed; collects the coin of anyone it eliminates.'),
     img: 67
   },
   zora: {
     n: 'Zora',
     type: 'npc',
-    d: 'Tamed golden eagle: place Zora on a tile next to you. He moves 6, carries items and attacks for you.',
+    d: _T('Tamed golden eagle: place Zora on a tile next to you. He moves 6, carries items and attacks for you.'),
     img: 68
   },
   boar: {
     n: 'Calydonian Boar!',
     type: 'active',
-    d: 'To start each resolve phase, players must roll an even number to dodge 2 damage from the boar. Discard after 1 turn rotation.',
-    q: 'Fear is proof of a degenerate mind',
+    d: _T('To start each resolve phase, players must roll an even number to dodge 2 damage from the boar. Discard after 1 turn rotation.'),
+    q: _T('Fear is proof of a degenerate mind'),
     img: 69
   },
   fidelis: {
     n: 'Fidelis Constans',
     type: 'anytime',
-    d: 'Remove 1 hit die from an attack.',
-    q: 'The gods conceal from men the happiness of death, that they may endure life',
+    d: _T('Remove 1 hit die from an attack.'),
+    q: _T('The gods conceal from men the happiness of death, that they may endure life'),
     img: 81
   },
   tame: {
     n: 'Tame',
     type: 'declare',
-    d: 'Tame 1 snake, wolf, bear or lion anywhere in the arena (Venatore starting card).',
+    d: _T('Tame 1 snake, wolf, bear or lion anywhere in the arena (Venatore starting card).'),
     img: null
   }
 };
@@ -1672,20 +1672,20 @@ const isForge = k => k === 'forge3' || k === 'forge2';
 /* MANDATA fields: n name · d task · r reward text · test(player) auto-completion check (usually a player.stats counter) · declare spoken line that completes it · img · reward(player) async effect. TWEAK: the CF numbers inside reward. */
 const MANDATA = [{
   n: 'Are You Not Entertained?',
-  d: 'Face the spectators and firmly declare, "Are you not entertained!?!"',
-  r: 'Spawn 3 offerings',
-  declare: 'Are you not entertained!?!',
+  d: _T('Face the spectators and firmly declare, "Are you not entertained!?!"'),
+  r: _T('Spawn 3 offerings'),
+  declare: _T('Are you not entertained!?!'),
   img: 0,
   reward: async player => {
     for (let i = 0; i < 3; i++) {
       const [r, c] = freeGrid();
       placeFloor('offer', drawOffer(), r, c);
     }
-    log('Three offerings tumble into the sand.');
+    log(_T('Three offerings tumble into the sand.'));
   }
 }, {
   n: 'The Push',
-  d: 'Go push another player.',
+  d: _T('Go push another player.'),
   r: '2 CF',
   test: player => player.stats.pushPlayer >= 1,
   img: 1,
@@ -1694,7 +1694,7 @@ const MANDATA = [{
   }
 }, {
   n: 'The Trade',
-  d: 'Trade with another player.',
+  d: _T('Trade with another player.'),
   r: '2 CF',
   test: player => player.stats.trade >= 1,
   img: 2,
@@ -1703,8 +1703,8 @@ const MANDATA = [{
   }
 }, {
   n: 'Limb Justice',
-  d: 'Use a severed arm or leg weapon to eliminate 1 NPC or player.',
-  r: 'Trade a severed limb weapon for any remaining market weapon',
+  d: _T('Use a severed arm or leg weapon to eliminate 1 NPC or player.'),
+  r: _T('Trade a severed limb weapon for any remaining market weapon'),
   test: player => player.stats.kill_limb >= 1,
   img: 3,
   reward: async player => {
@@ -1712,18 +1712,18 @@ const MANDATA = [{
   }
 }, {
   n: 'Undying Loyalty',
-  d: 'Look each player in the eyes and declare, "Hail Flavius! I hereby declare my undying loyalty to the republic!"',
+  d: _T('Look each player in the eyes and declare, "Hail Flavius! I hereby declare my undying loyalty to the republic!"'),
   r: '4 CF',
-  declare: 'Hail Flavius! I hereby declare my undying loyalty to the republic!',
+  declare: _T('Hail Flavius! I hereby declare my undying loyalty to the republic!'),
   img: 4,
   reward: async player => {
     player.cf += 4;
   }
 }, {
   n: 'Praise Flavius',
-  d: 'Look each player in the eyes and declare, "Praise you Flavius! May the Gods favor you in return!"',
-  r: "Claim Flavius' chest armor",
-  declare: 'Praise you Flavius! May the Gods favor you in return!',
+  d: _T('Look each player in the eyes and declare, "Praise you Flavius! May the Gods favor you in return!"'),
+  r: _T("Claim Flavius' chest armor"),
+  declare: _T('Praise you Flavius! May the Gods favor you in return!'),
   img: 5,
   reward: async player => {
     mfClaimArmor(player, 'flavchest');
@@ -1731,7 +1731,7 @@ const MANDATA = [{
   }
 }, {
   n: 'Borrowed Blade',
-  d: 'Convince another player to trade you a weapon and attack them with it in the same turn.',
+  d: _T('Convince another player to trade you a weapon and attack them with it in the same turn.'),
   r: '5 CF',
   test: player => player.stats.tradeAttack >= 1,
   img: 6,
@@ -1740,7 +1740,7 @@ const MANDATA = [{
   }
 }, {
   n: 'Broken Bond',
-  d: 'Eliminate a tamed NPC.',
+  d: _T('Eliminate a tamed NPC.'),
   r: '3 CF',
   test: player => player.stats.kill_tamed >= 1,
   img: 7,
@@ -1749,7 +1749,7 @@ const MANDATA = [{
   }
 }, {
   n: 'Humble Steel',
-  d: 'Eliminate a player using a level 1 weapon.',
+  d: _T('Eliminate a player using a level 1 weapon.'),
   r: '5 CF',
   test: player => player.stats.kill_l1 >= 1,
   img: 8,
@@ -1758,8 +1758,8 @@ const MANDATA = [{
   }
 }, {
   n: 'Poetic Justice',
-  d: 'Equip the severed limb of another player and attack them with it.',
-  r: '3 CF and a generous applause',
+  d: _T('Equip the severed limb of another player and attack them with it.'),
+  r: _T('3 CF and a generous applause'),
   test: player => player.stats.limbRevenge >= 1,
   img: 9,
   reward: async player => {
@@ -1767,8 +1767,8 @@ const MANDATA = [{
   }
 }, {
   n: 'Bear Puncher',
-  d: 'Go punch a bear.',
-  r: '3 CF and a generous applause',
+  d: _T('Go punch a bear.'),
+  r: _T('3 CF and a generous applause'),
   test: player => player.stats.punchBear >= 1,
   img: 10,
   reward: async player => {
@@ -1776,18 +1776,18 @@ const MANDATA = [{
   }
 }, {
   n: 'Underground',
-  d: 'Find the nearest tunnel and enter. Once underground, reveal this card.',
-  r: 'All players above ground are stoned for 2 damage',
+  d: _T('Find the nearest tunnel and enter. Once underground, reveal this card.'),
+  r: _T('All players above ground are stoned for 2 damage'),
   test: player => player.underground,
   img: 11,
   reward: async player => {
     for (const q of activePlayers()) if (q !== player && !q.underground) await hurt(q, rollLoc(q), 2, {
       type: 'env'
-    }, 'The crowd stones those above ground');
+    }, _T('The crowd stones those above ground'));
   }
 }, {
   n: 'Trophy Hunter',
-  d: 'Collect 3 player or NPC trophy tokens.',
+  d: _T('Collect 3 player or NPC trophy tokens.'),
   r: '4 CF',
   test: player => player.trophies.length >= 3,
   img: 12,
@@ -1796,7 +1796,7 @@ const MANDATA = [{
   }
 }, {
   n: "Flavius' Treasure",
-  d: 'Open the arena chest.',
+  d: _T('Open the arena chest.'),
   r: '2 CF',
   test: player => player.stats.chest >= 1,
   img: 13,
@@ -1805,7 +1805,7 @@ const MANDATA = [{
   }
 }, {
   n: 'The Truce',
-  d: 'Truce with another player.',
+  d: _T('Truce with another player.'),
   r: '2 CF',
   test: player => player.stats.truce >= 1,
   img: 14,
@@ -1839,37 +1839,37 @@ const OFFER = {
   },
   ma1: {
     n: 'Market Armor',
-    s: 'Level 1',
+    s: _T('Level 1'),
     g: 'R'
   },
   ma2: {
     n: 'Market Armor',
-    s: 'Level 2',
+    s: _T('Level 2'),
     g: 'R'
   },
   ma3: {
     n: 'Market Armor',
-    s: 'Level 3',
+    s: _T('Level 3'),
     g: 'R'
   },
   mw1: {
     n: 'Market Weapon',
-    s: 'Level 1',
+    s: _T('Level 1'),
     g: 'W'
   },
   mw2: {
     n: 'Market Weapon',
-    s: 'Level 2',
+    s: _T('Level 2'),
     g: 'W'
   },
   mw3: {
     n: 'Market Weapon',
-    s: 'Level 3',
+    s: _T('Level 3'),
     g: 'W'
   },
   spiders: {
     n: 'Spiders',
-    s: '1 damage to each limb',
+    s: _T('1 damage to each limb'),
     g: '!',
     instant: 1
   },
@@ -1897,13 +1897,13 @@ const OFFER = {
   },
   curse: {
     n: 'Curse Tablet',
-    s: 'd6 damage, unavoidable',
+    s: _T('d6 damage, unavoidable'),
     g: '†',
     instant: 1
   },
   eagle: {
     n: 'Golden Eagle',
-    s: '5 CF now, or 15 CF if you win',
+    s: _T('5 CF now, or 15 CF if you win'),
     g: 'E'
   },
   key: {
@@ -1933,22 +1933,22 @@ const EVENTS = {
     img: 0,
     n: 'Classic · Democritus',
     short: 'Classic Elimination',
-    sr: 'Democritus',
+    sr: _T('Democritus'),
     tag: 'Classic',
     loc: 6,
     min: 4,
     max: 4,
     deck: 1,
     mandata: 1,
-    blurb: 'Flavius Rule as it was originally intended. Outlast the other three gladiators.',
-    rounds: [R('Bestiarii', 1, [1, 0, 1, 1], 'npc4|elim1', {
+    blurb: _T('Flavius Rule as it was originally intended. Outlast the other three gladiators.'),
+    rounds: [R(_T('Bestiarii'), 1, [1, 0, 1, 1], 'npc4|elim1', {
       cards: 3,
       coin: 2,
       cf: 2
-    }), R('Royale', 2, [1, 1, 1, 0], 'alive2', {
+    }), R(_T('Royale'), 2, [1, 1, 1, 0], 'alive2', {
       coin: 2,
       cf: 2
-    }), R('Duel', 3, [1, 1, 0, 0], 'alive1', {
+    }), R(_T('Duel'), 3, [1, 1, 0, 0], 'alive1', {
       win: 15
     })]
   },
@@ -1956,22 +1956,22 @@ const EVENTS = {
     img: 1,
     n: 'Classic · Egidious',
     short: 'Classic Elimination',
-    sr: 'Egidious',
+    sr: _T('Egidious'),
     tag: 'Easy',
     loc: 2,
     min: 4,
     max: 4,
     deck: 1,
     mandata: 1,
-    blurb: 'Classic Flavius Rule with a slightly forgiving officiator.',
-    rounds: [R('Bestiarii', 1, [1, 0, 1, 1], 'npc4|elim1', {
+    blurb: _T('Classic Flavius Rule with a slightly forgiving officiator.'),
+    rounds: [R(_T('Bestiarii'), 1, [1, 0, 1, 1], 'npc4|elim1', {
       cards: 3,
       coin: 4,
       cf: 3
-    }), R('Royale', 2, [1, 1, 1, 1], 'alive2', {
+    }), R(_T('Royale'), 2, [1, 1, 1, 1], 'alive2', {
       coin: 4,
       cf: 3
-    }), R('Duel', 3, [1, 1, 0, 0], 'alive1', {
+    }), R(_T('Duel'), 3, [1, 1, 0, 0], 'alive1', {
       win: 15
     })]
   },
@@ -1979,21 +1979,21 @@ const EVENTS = {
     img: 2,
     n: 'Classic · Cassian',
     short: 'Classic Elimination',
-    sr: 'Cassian',
+    sr: _T('Cassian'),
     tag: 'Hard',
     loc: 4,
     min: 4,
     max: 4,
     deck: 1,
     mandata: 1,
-    blurb: 'A faintly more difficult variant: PvP from the first round and no class abilities.',
-    rounds: [R('Bestiarii', 1, [1, 1, 1, 0], 'npc4|elim1', {
+    blurb: _T('A faintly more difficult variant: PvP from the first round and no class abilities.'),
+    rounds: [R(_T('Bestiarii'), 1, [1, 1, 1, 0], 'npc4|elim1', {
       cards: 2,
       coin: 2,
       cf: 2
-    }), R('Royale', 2, [1, 1, 1, 0], 'alive2', {
+    }), R(_T('Royale'), 2, [1, 1, 1, 0], 'alive2', {
       applause: 1
-    }), R('Duel', 3, [1, 1, 0, 0], 'alive1', {
+    }), R(_T('Duel'), 3, [1, 1, 0, 0], 'alive1', {
       win: 15
     })]
   },
@@ -2007,8 +2007,8 @@ const EVENTS = {
     max: 1,
     deck: 0,
     noVenatore: 1,
-    blurb: 'A solo challenge against every NPC. Both snakes down spawns the lions, both wolves spawns Commodus, both bears spawns Tholo. Eliminate them all.',
-    rounds: [R('Royale', 1, [1, 0, 0, 0], 'allnpc', {
+    blurb: _T('A solo challenge against every NPC. Both snakes down spawns the lions, both wolves spawns Commodus, both bears spawns Tholo. Eliminate them all.'),
+    rounds: [R(_T('Royale'), 1, [1, 0, 0, 0], 'allnpc', {
       win: 15
     })]
   },
@@ -2024,8 +2024,8 @@ const EVENTS = {
     mandata: 1,
     noTruce: 1,
     classes: ['slave', 'soldier', 'royalty', 'amazonia', 'damnatio'],
-    blurb: 'Three gladiators, no trucing. The moment the first gladiator is eliminated the event ends, and the highest Crowd Favor wins.',
-    rounds: [R('Royale', 1, [1, 1, 1, 1], 'elim1', {
+    blurb: _T('Three gladiators, no trucing. The moment the first gladiator is eliminated the event ends, and the highest Crowd Favor wins.'),
+    rounds: [R(_T('Royale'), 1, [1, 1, 1, 1], 'elim1', {
       win: 15
     })]
   },
@@ -2040,10 +2040,10 @@ const EVENTS = {
     deck: 1,
     noBoss: 1,
     kind: 'orpheus',
-    blurb: 'Win a Lyre from the chest, lead 2 beasts onto your starting tile to capture them, then exit. The first two to exit duel with a tamed beast.',
-    rounds: [R('Capture Royale', 1, [1, 1, 1, 0], 'exit2', {
+    blurb: _T('Win a Lyre from the chest, lead 2 beasts onto your starting tile to capture them, then exit. The first two to exit duel with a tamed beast.'),
+    rounds: [R(_T('Capture Royale'), 1, [1, 1, 1, 0], 'exit2', {
       offering: 1
-    }), R('Duel Finale', 2, [1, 1, 0, 0], 'alive1', {
+    }), R(_T('Duel Finale'), 2, [1, 1, 0, 0], 'alive1', {
       win: 15
     })]
   },
@@ -2058,8 +2058,8 @@ const EVENTS = {
     deck: 1,
     teams: 1,
     kind: 'eagle',
-    blurb: 'Teams race to carry Golden Eagle tokens to capture tiles. Three captures lets a team exit through a starting tile. Everyone starts with nothing.',
-    rounds: [R('Team Capture Royale', 1, [1, 1, 0, 0], 'eagle', {
+    blurb: _T('Teams race to carry Golden Eagle tokens to capture tiles. Three captures lets a team exit through a starting tile. Everyone starts with nothing.'),
+    rounds: [R(_T('Team Capture Royale'), 1, [1, 1, 0, 0], 'eagle', {
       win: 15
     })]
   },
@@ -2073,8 +2073,8 @@ const EVENTS = {
     max: 8,
     deck: 1,
     teams: 1,
-    blurb: 'Team elimination royale. No friendly fire. The last team standing wins.',
-    rounds: [R('Elimination Royale', 1, [1, 1, 0, 0], 'team1', {
+    blurb: _T('Team elimination royale. No friendly fire. The last team standing wins.'),
+    rounds: [R(_T('Elimination Royale'), 1, [1, 1, 0, 0], 'team1', {
       win: 15
     })]
   },
@@ -2093,8 +2093,8 @@ const EVENTS = {
       jugg: 7,
       team: 3
     },
-    blurb: 'One Juggernaut drafts 7 picks (levels 1-3) and 5 declare cards. Everyone else drafts 3 picks (levels 1-2) and fights as a team.',
-    rounds: [R('Team Scenario', 1, [1, 1, 0, 0], 'team1', {
+    blurb: _T('One Juggernaut drafts 7 picks (levels 1-3) and 5 declare cards. Everyone else drafts 3 picks (levels 1-2) and fights as a team.'),
+    rounds: [R(_T('Team Scenario'), 1, [1, 1, 0, 0], 'team1', {
       win: 15
     })]
   },
@@ -2111,10 +2111,10 @@ const EVENTS = {
       all: 5
     },
     noSpect: 1,
-    blurb: 'Snake-draft your gladiator. After 10 turn rotations (or when one gladiator remains) the top two by CF duel.',
-    rounds: [R('Elimination Royale', 1, [1, 1, 1, 0], 'rot10', {
+    blurb: _T('Snake-draft your gladiator. After 10 turn rotations (or when one gladiator remains) the top two by CF duel.'),
+    rounds: [R(_T('Elimination Royale'), 1, [1, 1, 1, 0], 'rot10', {
       applause: 1
-    }), R('Duel Finale', 2, [1, 1, 0, 0], 'alive1', {
+    }), R(_T('Duel Finale'), 2, [1, 1, 0, 0], 'alive1', {
       win: 15
     })]
   },
@@ -2129,8 +2129,8 @@ const EVENTS = {
     deck: 0,
     kind: 'chariot',
     passiveSpect: 1,
-    blurb: 'Draft a chariot and race three laps counter-clockwise around the outer track. Pillar gates flip your horse and hand out offerings. PvP only after your first lap, once per lap.',
-    rounds: [R('Chariot Race', 1, [1, 1, 0, 0], 'race', {
+    blurb: _T('Draft a chariot and race three laps counter-clockwise around the outer track. Pillar gates flip your horse and hand out offerings. PvP only after your first lap, once per lap.'),
+    rounds: [R(_T('Chariot Race'), 1, [1, 1, 0, 0], 'race', {
       win: 15
     })]
   },
@@ -2149,8 +2149,8 @@ const EVENTS = {
       all: 3
     },
     passiveSpect: 1,
-    blurb: 'The arena is flooded. Teams start aboard their ships; swim or ride floating doors, board enemy ships and smash their pillars (12 HP) to sink them. Last team afloat wins.',
-    rounds: [R('Elimination Royale', 1, [0, 1, 0, 0], 'team1', {
+    blurb: _T('The arena is flooded. Teams start aboard their ships; swim or ride floating doors, board enemy ships and smash their pillars (12 HP) to sink them. Last team afloat wins.'),
+    rounds: [R(_T('Elimination Royale'), 1, [0, 1, 0, 0], 'team1', {
       win: 15
     })]
   },
@@ -2166,10 +2166,10 @@ const EVENTS = {
     coop: 1,
     noTholo: 1,
     kind: 'commodus',
-    blurb: 'Face the lions, then Commodus himself. If any gladiator falls before Commodus, everyone loses.',
-    rounds: [R('The Lions', 1, [1, 0, 0, 0], 'lion1', {
+    blurb: _T('Face the lions, then Commodus himself. If any gladiator falls before Commodus, everyone loses.'),
+    rounds: [R(_T('The Lions'), 1, [1, 0, 0, 0], 'lion1', {
       choose2: 1
-    }), R('Commodus', 2, [1, 0, 0, 0], 'commodus', {
+    }), R(_T('Commodus'), 2, [1, 0, 0, 0], 'commodus', {
       win: 15
     })]
   }
@@ -2264,18 +2264,18 @@ const LOCATIONS = [null, {
 }];
 /* modText — renders a location modifier like ['royalty','cf',5] as readable text, e.g. 'Royalty +5 CF'. */
 function modText(m) {
-  if (!m) return 'None';
-  const who = m[0] === 'all' ? 'All' : CLASSES[m[0]].name;
+  if (!m) return _T('None');
+  const who = m[0] === 'all' ? _T('All') : CLASSES[m[0]].name;
   const t = {
-    hp: `+${m[2]} HP`,
-    ap: `+${m[2]} AP`,
-    cf: `+${m[2]} CF`,
-    coin: `${m[2]} coin`,
-    dmg: `${m[2]} damage`,
-    noEagle: 'no Eagle',
-    noRudis: 'no Rudis',
-    noCestus: 'no Cestus',
-    noShield: 'no Shield',
+    hp: _T`+${m[2]} HP`,
+    ap: _T`+${m[2]} AP`,
+    cf: _T`+${m[2]} CF`,
+    coin: _T`${m[2]} coin`,
+    dmg: _T`${m[2]} damage`,
+    noEagle: _T('no Eagle'),
+    noRudis: _T('no Rudis'),
+    noCestus: _T('no Cestus'),
+    noShield: _T('no Shield'),
     minusArm: '−1 arm',
     minusLeg: '−1 leg'
   }[m[1]];
@@ -2288,12 +2288,12 @@ function fateFor(cf) {
   const f = fateRow(cf);
   if (f.n === 'Thumb of Flavius') {
     const r = d6();
-    if (r >= 4) return Object.assign(['Thumb of Flavius · spared', `Flavius rolls ${r}: spared. Fate set to 20 CF and sent to the Ludus Flavius.`], {
+    if (r >= 4) return Object.assign([_T('Thumb of Flavius · spared'), _T`Flavius rolls ${r}: spared. Fate set to 20 CF and sent to the Ludus Flavius.`], {
       d6: r
     });
     const d = 1 + rnd(12);
     const s = fateRow(d);
-    return Object.assign([`Thumb of Flavius · ${s.n}`, `Flavius rolls ${r}; the d12 shows ${d}: ${s.t}`], {
+    return Object.assign([_T`Thumb of Flavius · ${s.n}`, `Flavius rolls ${r}; the d12 shows ${d}: ${s.t}`], {
       d6: r,
       d12: d,
       sub: s
@@ -2362,11 +2362,11 @@ async function carmWeapon(player, lv, key) {
   }
   const pool = [...S.market.w[lv].slots.filter(Boolean), ...S.market.w[lv].deck];
   if (!pool.length) {
-    log('No level ' + lv + ' weapon remains.');
+    log(_T('No level ') + lv + _T(' weapon remains.'));
     return;
   }
   let k;
-  if (player.cpu) k = pool.sort((a, b) => wScore(W[b]) - wScore(W[a]))[0];else k = await modal('Choose a weapon', '<p>Any remaining level ' + lv + ' weapon.</p>', pool.map(x => ({
+  if (player.cpu) k = pool.sort((a, b) => wScore(W[b]) - wScore(W[a]))[0];else k = await modal(_T('Choose a weapon'), '<p>Any remaining level ' + lv + _T(' weapon.</p>'), pool.map(x => ({
     label: W[x].n,
     sub: wStats(mkW(x)),
     value: x,
@@ -2378,29 +2378,29 @@ async function carmWeapon(player, lv, key) {
 const CARMINA = [{
   img: 0,
   v: 'Mars, god of war, bless my blades! The crowd roars for blood, but help me fight for freedom, not accolades!',
-  d: 'Any 1 remaining level 1 weapon',
+  d: _T('Any 1 remaining level 1 weapon'),
   apply: async player => {
     await carmWeapon(player, 1);
   }
 }, {
   img: 0,
   v: 'Minerva, goddess of the strategic arts, teach me to fight with a cunning heart!',
-  d: "1 Minerva's Push arena card",
+  d: _T("1 Minerva's Push arena card"),
   apply: async player => {
     player.items.push(mkCard('minerva'));
   }
 }, {
   img: 0,
   v: 'Hercules, son of Jupiter, grant me strength like that of lore. Allow these muscles to flex with your endurance! Prepare me for war!',
-  d: '3 HP and 3 AP',
+  d: _T('3 HP and 3 AP'),
   apply: async player => {
-    await distributeHP(player, 3, 'the verse of Hercules');
+    await distributeHP(player, 3, _T('the verse of Hercules'));
     if (!(await apUp(player, 3))) await distributeAP(player, 3, '3 AP');
   }
 }, {
   img: 0,
   v: 'Vulcan, god of fire and forge divine, grant me protection and allow my strikes to align.',
-  d: '2 AP and 3 AP',
+  d: _T('2 AP and 3 AP'),
   apply: async player => {
     if (!(await apUp(player, 2))) await distributeAP(player, 2, '2 AP');
     if (!(await apUp(player, 3))) await distributeAP(player, 3, '3 AP');
@@ -2408,14 +2408,14 @@ const CARMINA = [{
 }, {
   img: 1,
   v: 'O Diana! Hear this plea - guide my arrows true, guide my arrows free!',
-  d: '1 level 2 Parthian Bow',
+  d: _T('1 level 2 Parthian Bow'),
   apply: async player => {
     await carmWeapon(player, 2, 'bow');
   }
 }, {
   img: 1,
   v: 'Praise be to Flavius, who provides us with these glorious spectacles! Let this victory be a tribute, to his giant!',
-  d: '3 CF and 3 coin',
+  d: _T('3 CF and 3 coin'),
   apply: async player => {
     player.cf += 3;
     player.coin += 3;
@@ -2423,7 +2423,7 @@ const CARMINA = [{
 }, {
   img: 1,
   v: 'The thought of Flavius as emperor... *LAUGH* - Fools! Sic semper tyrannis!',
-  d: '1 Cestus armor',
+  d: _T('1 Cestus armor'),
   apply: async player => {
     await gainArmorPiece(player, 'cestus');
   }
@@ -2437,7 +2437,7 @@ const CARMINA = [{
 }, {
   img: 2,
   v: 'Sponsor Flavius! Favor me with your wealth and power! Let your generosity be rewarded, as I blossom like a flower!',
-  d: '4 coin and 2 CF',
+  d: _T('4 coin and 2 CF'),
   apply: async player => {
     player.coin += 4;
     player.cf += 2;
@@ -2461,7 +2461,7 @@ const CARMINA = [{
   v: 'Hygeia! Goddess of health and healing, let me escape this arena unscathed and still feeling',
   d: '5 HP',
   apply: async player => {
-    await distributeHP(player, 5, 'the verse of Hygeia');
+    await distributeHP(player, 5, _T('the verse of Hygeia'));
   }
 }];
 
@@ -2536,7 +2536,7 @@ const WHEELS = [{
   art: 'wheel12'
 }];
 // The printed chariot cards, matched to the driver's color
-const CHARIOT_NAMES = [['#c0433a', 'Invicta Gloria', 'chRed'], ['#4f7fc4', 'Azureus Magnus', 'chBlue'], ['#4f9a57', 'Bellum Quadriga', 'chTeal'], ['#d4b13c', 'Aureus Triumphus', 'chGold'], ['#dc7a34', 'Aureus Triumphus', 'chGold'], ['#cfc6b4', 'Bellator Aequus', 'chSilver'], ['#6f655b', 'Bellator Aequus', 'chSilver'], ['#8a5cc0', 'Fulgens Velox', 'chPurple']];
+const CHARIOT_NAMES = [['#c0433a', _T('Invicta Gloria'), 'chRed'], ['#4f7fc4', _T('Azureus Magnus'), 'chBlue'], ['#4f9a57', _T('Bellum Quadriga'), 'chTeal'], ['#d4b13c', _T('Aureus Triumphus'), 'chGold'], ['#dc7a34', _T('Aureus Triumphus'), 'chGold'], ['#cfc6b4', _T('Bellator Aequus'), 'chSilver'], ['#6f655b', _T('Bellator Aequus'), 'chSilver'], ['#8a5cc0', _T('Fulgens Velox'), 'chPurple']];
 /* chariotFor — picks the CHARIOT_NAMES entry whose color is closest (RGB distance) to the driver's color. */
 function chariotFor(color) {
   /* hx — parses '#rrggbb' into [r, g, b]. */
@@ -2595,226 +2595,226 @@ const DOORS = [[5, 5], [5, 7], [7, 5], [7, 7]];
 /* MISSIOS fields, per class: goal text · req unlock requirement (rr coin deposited, trophies) · path of events {ev event key, loc location, t text, win (must win), plus solo / fest / pair / jugg conditions}. */
 const MISSIOS = {
   soldier: {
-    goal: 'Find honor and rest for a weary warrior.',
+    goal: _T('Find honor and rest for a weary warrior.'),
     path: [{
       ev: 'familia',
       loc: 5,
-      t: 'A life of service, only to leave dishonored. The right partner could help your reclamation.'
+      t: _T('A life of service, only to leave dishonored. The right partner could help your reclamation.')
     }, {
       ev: 'naumachia',
       loc: 6,
-      t: 'Survive in what may prove to be your most difficult skirmish yet.'
+      t: _T('Survive in what may prove to be your most difficult skirmish yet.')
     }, {
       ev: 'democritus',
       loc: 6,
-      t: 'Roma Classica, in all her glory. May they echo your feats across the great republic.'
+      t: _T('Roma Classica, in all her glory. May they echo your feats across the great republic.')
     }, {
       ev: 'goldenEagle',
       loc: 9,
-      t: 'Pass down your Ferrata techniques. Reclaim the merit and crest of your legion.'
+      t: _T('Pass down your Ferrata techniques. Reclaim the merit and crest of your legion.')
     }, {
       ev: 'ludus',
       loc: 3,
-      t: 'The ludus can make even the greatest soldiers weep. Win and retire with honor.',
+      t: _T('The ludus can make even the greatest soldiers weep. Win and retire with honor.'),
       win: 1
     }]
   },
   royalty: {
-    goal: 'Regain the respect and wealth of your family.',
+    goal: _T('Regain the respect and wealth of your family.'),
     req: {
       rr: 60
     },
     path: [{
       ev: 'egidious',
       loc: 2,
-      t: "Erasing the shame you've brought upon your name begins in this Egidious officiated classic event."
+      t: _T("Erasing the shame you've brought upon your name begins in this Egidious officiated classic event.")
     }, {
       ev: 'triumviratus',
       loc: 12,
-      t: 'Less competition, more focus on you. Hopefully this Triumviratus poses enough of a challenge.'
+      t: _T('Less competition, more focus on you. Hopefully this Triumviratus poses enough of a challenge.')
     }, {
       ev: 'democritus',
       loc: 6,
-      t: 'The infami of Roma should bring you back to terra firma.'
+      t: _T('The infami of Roma should bring you back to terra firma.')
     }, {
       ev: 'commodus',
       loc: 8,
-      t: 'Defeat your royal rival, Commodus.',
+      t: _T('Defeat your royal rival, Commodus.'),
       solo: 1
     }, {
       ev: 'cassian',
       loc: 4,
-      t: 'Return home and win a Cassian officiated festival Saturnalia.',
+      t: _T('Return home and win a Cassian officiated festival Saturnalia.'),
       fest: 'saturnalia',
       win: 1
     }]
   },
   hero: {
-    goal: 'A myth etched in stone, infamis legendario.',
+    goal: _T('A myth etched in stone, infamis legendario.'),
     req: {
       trophies: 15
     },
     path: [{
       ev: 'democritus',
       loc: 6,
-      t: 'Remind Roma why they call you the Hero.'
+      t: _T('Remind Roma why they call you the Hero.')
     }, {
       ev: 'cassian',
       loc: 4,
-      t: 'Wow the people before a Cassian officiated classic event.'
+      t: _T('Wow the people before a Cassian officiated classic event.')
     }, {
       ev: 'gauntlet',
       loc: 1,
-      t: 'They will tell stories of how you handily vanquished beast after beast.',
+      t: _T('They will tell stories of how you handily vanquished beast after beast.'),
       noCommodus: 1
     }, {
       ev: 'commodus',
       loc: 8,
-      t: 'The great Hero is brought before Commodus. Dethrone him.',
+      t: _T('The great Hero is brought before Commodus. Dethrone him.'),
       solo: 1
     }, {
       ev: 'juggernaut',
       loc: 11,
-      t: 'Win against all odds, give the people a legend.',
+      t: _T('Win against all odds, give the people a legend.'),
       jugg: 1,
       win: 1
     }]
   },
   slave: {
-    goal: 'Left to die far from home, claw back and destroy the person that put you on this missio.',
+    goal: _T('Left to die far from home, claw back and destroy the person that put you on this missio.'),
     path: [{
       ev: 'goldenEagle',
       loc: 9,
-      t: 'Get your start with the Golden Eagle event.'
+      t: _T('Get your start with the Golden Eagle event.')
     }, {
       ev: 'familia',
       loc: 5,
-      t: 'Teamwork, though a strong partner could carry you safely away from these northern coasts.'
+      t: _T('Teamwork, though a strong partner could carry you safely away from these northern coasts.')
     }, {
       ev: 'chariot',
       loc: 7,
-      t: 'Cross the sea and risk it all in a death-defying survival chariot race.',
+      t: _T('Cross the sea and risk it all in a death-defying survival chariot race.'),
       pvp: 1
     }, {
       ev: 'democritus',
       loc: 6,
-      t: 'Reveal yourself to the people, become their champion. Discard your 2 AP helm to start.',
+      t: _T('Reveal yourself to the people, become their champion. Discard your 2 AP helm to start.'),
       noHelm: 1
     }, {
       ev: 'commodus',
       loc: 8,
-      t: 'Summoned to Pompeii, you must win against your greatest foe: Commodus.',
+      t: _T('Summoned to Pompeii, you must win against your greatest foe: Commodus.'),
       win: 1
     }]
   },
   veteranus: {
-    goal: "Dust off the gladius for this veteran's final missio.",
+    goal: _T("Dust off the gladius for this veteran's final missio."),
     path: [{
       ev: 'triumviratus',
       loc: 12,
-      t: "A showcase of the most 'exotic' fighters Flavius has to offer.",
+      t: _T("A showcase of the most 'exotic' fighters Flavius has to offer."),
       vs: ['venatore', 'amazonia']
     }, {
       ev: 'ludus',
       loc: 3,
-      t: 'Regain your strength while training with your brothers.'
+      t: _T('Regain your strength while training with your brothers.')
     }, {
       ev: 'familia',
       loc: 5,
-      t: 'A true testament of will: how will you let this dead weight affect your missio?',
+      t: _T('A true testament of will: how will you let this dead weight affect your missio?'),
       pair: 'damnatio'
     }, {
       ev: 'goldenEagle',
       loc: 9,
-      t: 'Liven up with an event all the kids are playing.'
+      t: _T('Liven up with an event all the kids are playing.')
     }, {
       ev: 'democritus',
       loc: 6,
-      t: 'Find yourself in the magnitude of all that is Roma during the festival Ludi Apollinare.',
+      t: _T('Find yourself in the magnitude of all that is Roma during the festival Ludi Apollinare.'),
       fest: 'ludi'
     }]
   },
   amazonia: {
-    goal: 'Even the most exotic roads can lead to Roma.',
+    goal: _T('Even the most exotic roads can lead to Roma.'),
     path: [{
       ev: 'triumviratus',
       loc: 12,
-      t: "A showcase of the most 'exotic' fighters Flavius has to offer.",
+      t: _T("A showcase of the most 'exotic' fighters Flavius has to offer."),
       vs: ['venatore', 'veteranus']
     }, {
       ev: 'orpheus',
       loc: 10,
-      t: "You dare win on terra Roma?! Pray you're eaten swiftly in this Orpheus event!"
+      t: _T("You dare win on terra Roma?! Pray you're eaten swiftly in this Orpheus event!")
     }, {
       ev: 'familia',
       loc: 5,
-      t: 'Will you need to rely on familia to survive, or can you win solo?'
+      t: _T('Will you need to rely on familia to survive, or can you win solo?')
     }, {
       ev: 'cassian',
       loc: 4,
-      t: 'A true test of worth. No mistakes can be made here, Amazonia.'
+      t: _T('A true test of worth. No mistakes can be made here, Amazonia.')
     }, {
       ev: 'democritus',
       loc: 6,
-      t: 'The city awaits you, Gladiatrix.'
+      t: _T('The city awaits you, Gladiatrix.')
     }]
   },
   venatore: {
-    goal: 'Build wealth and display your skills to the world.',
+    goal: _T('Build wealth and display your skills to the world.'),
     req: {
       rr: 60
     },
     path: [{
       ev: 'triumviratus',
       loc: 12,
-      t: "A showcase of the most 'exotic' fighters Flavius has to offer.",
+      t: _T("A showcase of the most 'exotic' fighters Flavius has to offer."),
       vs: ['veteranus', 'amazonia']
     }, {
       ev: 'familia',
       loc: 5,
-      t: 'How will you fare against a larger familia? You play on a solo team.',
+      t: _T('How will you fare against a larger familia? You play on a solo team.'),
       soloTeam: 1
     }, {
       ev: 'goldenEagle',
       loc: 9,
-      t: 'I will hold your pet while you play. Bonam fortunam! Zora is removed.',
+      t: _T('I will hold your pet while you play. Bonam fortunam! Zora is removed.'),
       noZora: 1
     }, {
       ev: 'cassian',
       loc: 4,
-      t: 'Summoned by the wealthiest of spectators, put on a show worth the coin.'
+      t: _T('Summoned by the wealthiest of spectators, put on a show worth the coin.')
     }, {
       ev: 'democritus',
       loc: 6,
-      t: 'The people of Roma wish to see your fantastical skills. Win and soar!',
+      t: _T('The people of Roma wish to see your fantastical skills. Win and soar!'),
       win: 1
     }]
   },
   damnatio: {
-    goal: "Literally who? You shouldn't even have a missio.",
+    goal: _T("Literally who? You shouldn't even have a missio."),
     path: [{
       ev: 'chariot',
       loc: 7,
-      t: "There won't be an easy way out of this race, Damnatio!",
+      t: _T("There won't be an easy way out of this race, Damnatio!"),
       pvp: 1
     }, {
       ev: 'naumachia',
       loc: 6,
-      t: "Now you will be offered to the legions in an 'honorable' re-enactment of our great naval victories!"
+      t: _T("Now you will be offered to the legions in an 'honorable' re-enactment of our great naval victories!")
     }, {
       ev: 'familia',
       loc: 5,
-      t: 'You dare to continue living?! I hope this old coot ruins you!',
+      t: _T('You dare to continue living?! I hope this old coot ruins you!'),
       pair: 'veteranus'
     }, {
       ev: 'juggernaut',
       loc: 11,
-      t: "You can't possibly defeat a triumvir of this merit... You play solo.",
+      t: _T("You can't possibly defeat a triumvir of this merit... You play solo."),
       jugg: 1
     }, {
       ev: 'democritus',
       loc: 6,
-      t: 'Fine! Back to Roma it is! Win that precious freedom and begone with your wretched soul!',
+      t: _T('Fine! Back to Roma it is! Win that precious freedom and begone with your wretched soul!'),
       win: 1
     }]
   }
@@ -2822,82 +2822,82 @@ const MISSIOS = {
 /* Hall of Flavius (p.58): location order 1-12 */
 const HALL_ORDER = [3, 7, 10, 5, 9, 1, 12, 8, 4, 11, 2, 6]; // Arles, Nemausus, Uthina, Thysdrus, Leptis Magna, Syracusae, Puteoli, Pompeii, Capua, Pola, Verona, Roma
 /* HALL_GOALS — Hall of Flavius achievement texts. */
-const HALL_GOALS = ['Win all events in order with 1x gladiator', 'Win all events with 1x gladiator', 'Win all events with any gladiator(s)', 'Deposit 100 coin in RR; max 5 events', 'Record 20 trophies; max 5 events', 'Eliminate every class at least once', 'Win Classic Flavius Rule'];
+const HALL_GOALS = [_T('Win all events in order with 1x gladiator'), _T('Win all events with 1x gladiator'), _T('Win all events with any gladiator(s)'), _T('Deposit 100 coin in RR; max 5 events'), _T('Record 20 trophies; max 5 events'), _T('Eliminate every class at least once'), _T('Win Classic Flavius Rule')];
 
 /* ---- Fate table (p.54-55) ---- */
 /* FATES fields: lo..hi CF range · g group · n name · t text (img is added below). Ranges must cover 0 upward with no gaps. TWEAK: lo / hi to move thresholds such as survival (20) or freedom (50). */
 const FATES = [{
   lo: 0,
   hi: 5,
-  g: 'Damnatio',
+  g: _T('Damnatio'),
   n: 'Ad Memoriae',
-  t: 'A fate consigned to condemned memory. The relentless onslaught of blunted stones batters your body, as you succumb to an eternity of empty darkness, fading from all remembrance.'
+  t: _T('A fate consigned to condemned memory. The relentless onslaught of blunted stones batters your body, as you succumb to an eternity of empty darkness, fading from all remembrance.')
 }, {
   lo: 6,
   hi: 7,
-  g: 'Damnatio',
+  g: _T('Damnatio'),
   n: 'Ad Bestias',
-  t: "Today, you fulfilled a grim purpose: satisfying Flavius' insatiable beasts. As the ravenous creatures rend your body asunder, you curse Hygieia and ponder... if only I was elixired?!"
+  t: _T("Today, you fulfilled a grim purpose: satisfying Flavius' insatiable beasts. As the ravenous creatures rend your body asunder, you curse Hygieia and ponder... if only I was elixired?!")
 }, {
   lo: 8,
   hi: 9,
-  g: 'Damnatio',
+  g: _T('Damnatio'),
   n: 'Ad Flamma',
-  t: 'Your body shall illuminate the walls of our majestic arenas. Bound atop a wooden pole, flames lick hungrily at your feet before the enthralled, fiery-eyed spectators.'
+  t: _T('Your body shall illuminate the walls of our majestic arenas. Bound atop a wooden pole, flames lick hungrily at your feet before the enthralled, fiery-eyed spectators.')
 }, {
   lo: 10,
   hi: 10,
-  g: 'Damnatio',
+  g: _T('Damnatio'),
   n: 'Ad Tholo',
-  t: "The resounding chants of 'Tholo' reverberate through the arena. Its unsettling giggle fills the air as it smashes your skull in with blunted clubs, reveling in your petty demise."
+  t: _T("The resounding chants of 'Tholo' reverberate through the arena. Its unsettling giggle fills the air as it smashes your skull in with blunted clubs, reveling in your petty demise.")
 }, {
   lo: 11,
   hi: 11,
-  g: 'Fatal Charades',
+  g: _T('Fatal Charades'),
   n: 'Prometheus',
-  t: "Amidst the obscuring rays of the sun, a Bestiarii materializes at Flavius' side. His loyal eagle claws at your liver, wrenching forth crimson strands that weave a macabre tapestry from within your very being."
+  t: _T("Amidst the obscuring rays of the sun, a Bestiarii materializes at Flavius' side. His loyal eagle claws at your liver, wrenching forth crimson strands that weave a macabre tapestry from within your very being.")
 }, {
   lo: 12,
   hi: 12,
-  g: 'Fatal Charades',
+  g: _T('Fatal Charades'),
   n: 'Tunic of Nessus',
-  t: 'Acidic, doused robes constrict your body, searing flesh with a deliberate and methodical intensity. Your sizzling sacrifice serves as a morbid source of delight for the ravenous spectators.'
+  t: _T('Acidic, doused robes constrict your body, searing flesh with a deliberate and methodical intensity. Your sizzling sacrifice serves as a morbid source of delight for the ravenous spectators.')
 }, {
   lo: 13,
   hi: 13,
-  g: 'Fatal Charades',
+  g: _T('Fatal Charades'),
   n: "Pasiphae's Curse",
-  t: 'With a grunt and hoofs scuffing against the sand, the robust bull directs his menacing horns towards your laughable attire, and the crowd erupts in raucous laughter.'
+  t: _T('With a grunt and hoofs scuffing against the sand, the robust bull directs his menacing horns towards your laughable attire, and the crowd erupts in raucous laughter.')
 }, {
   lo: 14,
   hi: 14,
-  g: 'Fatal Charades',
+  g: _T('Fatal Charades'),
   n: 'Wings of Icarus',
-  t: 'Cast down from the highest perch, your body crashes upon the unforgiving sandstone floor, a grotesque spectacle of entangled feathers and melted wax.'
+  t: _T('Cast down from the highest perch, your body crashes upon the unforgiving sandstone floor, a grotesque spectacle of entangled feathers and melted wax.')
 }, {
   lo: 15,
   hi: 16,
-  g: 'Fatal Charades',
+  g: _T('Fatal Charades'),
   n: 'Charun',
-  t: 'With one eye barely clinging to your ravaged face, you realize the thunderous crowd is cheering your name. Your departure from this mortal plane is met with resounding approval.'
+  t: _T('With one eye barely clinging to your ravaged face, you realize the thunderous crowd is cheering your name. Your departure from this mortal plane is met with resounding approval.')
 }, {
   lo: 17,
   hi: 19,
-  g: 'Judgement',
+  g: _T('Judgement'),
   n: 'Thumb of Flavius',
-  t: 'Flavius rolls 1 d6. On 4 or greater you are spared: Fate set to 20 CF and sent to the Ludus Flavius. Otherwise, a d12 decides how you are sacrificed.'
+  t: _T('Flavius rolls 1 d6. On 4 or greater you are spared: Fate set to 20 CF and sent to the Ludus Flavius. Otherwise, a d12 decides how you are sacrificed.')
 }, {
   lo: 20,
   hi: 49,
-  g: 'Survival',
+  g: _T('Survival'),
   n: 'Ludus Flavius',
-  t: "A skilled fighter is a rare gem to behold. You haven't amassed enough to secure your freedom, but you may return in your missio with half the Crowd Favor earned today. Severed limbs persist."
+  t: _T("A skilled fighter is a rare gem to behold. You haven't amassed enough to secure your freedom, but you may return in your missio with half the Crowd Favor earned today. Severed limbs persist.")
 }, {
   lo: 50,
   hi: 9999,
-  g: 'Freedom',
+  g: _T('Freedom'),
   n: 'Rudis',
-  t: 'Gratulationes! You have garnered enough favor to secure your freedom. Embrace a life of freedom in exchange for 50 CF, or return to carve a legendary path with half your Crowd Favor.'
+  t: _T('Gratulationes! You have garnered enough favor to secure your freedom. Embrace a life of freedom in exchange for 50 CF, or return to carve a legendary path with half your Crowd Favor.')
 }];
 FATES.forEach((f, i) => f.img = i);
 /* fateRow — the FATES row whose lo..hi range contains cf (the first row if none does). */

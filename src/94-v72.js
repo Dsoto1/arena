@@ -10,12 +10,12 @@
 const armArtCell=(k,size)=>{const st=typeof SETTINGS!=='undefined'?(SETTINGS.armorStyle||'drawn'):'drawn';
   if(st==='scan'&&typeof cardRef==='function'&&cardRef('a:'+k))return `<span class="cimg armlu setart" style="${cardStyle('a:'+k)};width:${size}px;height:${size}px"></span>`;
   return `<img class="setart" src="${armArtURL(k)}" alt="" style="width:${size}px;height:${size}px;object-fit:contain">`};
-const armSub=A=>`${A.slot}${A.pt&&!['helm','chest'].includes(A.pt)?' '+A.pt:''} · ${A.ap} AP · L${A.lv||1}${A.bonus?' · +'+Object.values(A.bonus)[0]+' '+Object.keys(A.bonus)[0]:''}${A.stack?' · stackable':''}`;
+const armSub=A=>_T`${A.slot}${A.pt&&!['helm','chest'].includes(A.pt)?' '+A.pt:''} · ${A.ap} AP · L${A.lv||1}${A.bonus?' · +'+Object.values(A.bonus)[0]+' '+Object.keys(A.bonus)[0]:''}${A.stack?' · stackable':''}`;
 function armSetsHTML(){const sys=Object.keys(ARM).filter(k=>!ARM[k].custom);const L=CUSTOM.armor||[];const fit=typeof afitOn==='function'&&afitOn();
   const mine=L.map(c=>{const A=ARM['ca_'+c.id]||c;return `<div class="lrow" style="--pc:#8a5cc0">${armSVG('ca_'+c.id).replace('<svg','<svg class="setart"')}<div class="t"><b>${esc(c.name)}</b><small>${esc(armSub({...A,slot:c.slot,pt:c.pt,ap:c.ap,lv:c.lv}))}</small></div>${crActs('a',c)}</div>`}).join('');
   const sysc=sys.map(k=>{const A=ARM[k];return `<div class="lrow ${ST.ca&&ST.ca.base===k?'on':''}">${armArtCell(k,72)}<div class="t"><b>${esc(A.n)}</b><small>${esc(armSub(A))}</small></div>${sysActs(`data-gs="casys" data-id="${k}"`).replace('</div>',fit?`<button class="btn tksm" type="button" data-afit3="${k}" title="Fit this printed piece on the avatar — applies for everyone">🎯 Fit</button></div>`:'</div>')}</div>`}).join('');
-  return `<h4>Your armor · ${L.length}</h4>${L.length?`<div class="list2 setgrid">${mine}</div>`:'<p class="rc-sub">Nothing forged yet — save a piece above, or copy a printed one.</p>'}
-   <h4>🔒 System armor · ${sys.length} <span class="rc-sub">the printed pieces · ${(typeof SETTINGS!=='undefined'&&SETTINGS.armorStyle==='scan')?'original drawn art':'sculpted art'} (Settings → Tokens → Armor)</span></h4><div class="list2 setgrid sys">${sysc}</div>`}
+  return `<h4>${_T`Your armor · ${L.length}`}</h4>${L.length?`<div class="list2 setgrid">${mine}</div>`:'<p class="rc-sub">Nothing forged yet — save a piece above, or copy a printed one.</p>'}
+   <h4>${_T`🔒 System armor · ${sys.length}`} <span class="rc-sub">${_T`the printed pieces · ${(typeof SETTINGS!=='undefined'&&SETTINGS.armorStyle==='scan')?_T('original drawn art'):_T('sculpted art')} (Settings → Tokens → Armor)`}</span></h4><div class="list2 setgrid sys">${sysc}</div>`}
 /* the armor designer: the lists replaced; the fit mode takes the designer's place */
 AFIT.mode=false;
 {const base=gearAHTML;gearAHTML=function(){let h=base.apply(this,arguments);try{
@@ -25,7 +25,7 @@ AFIT.mode=false;
   h=h.replace(/The <b>sculpted set<\/b> below recreates all \d+ printed pieces — pick any of them \(or choose one under <b>Start from<\/b>\) to begin from its rulebook stats\./,'Copy a printed piece from the system set below — or choose one under <b>Start from</b> — to begin from its rulebook stats.');
   if(AFIT.mode&&typeof afitOn==='function'&&afitOn()){const ti=h.indexOf('<div class="trstudio big">');const c=ti>=0?cutDiv(h,ti):null;
     const panel=(_afitHTML()||'').replace('<div class="card2 afit">','<div class="card2 afit fitmode">').replace(/<button class="btn tksm" type="button" data-afhide>[^<]*<\/button>/,'<span><button class="btn tksm" type="button" data-afhide>🔒 Hide the fit tool</button> <button class="btn tksm primary" type="button" data-afdone>✓ Done</button></span>');
-    const banner=`<div class="fitbanner">🎯 Fitting a printed piece · <b>${esc((ARM[AFIT.key]||{}).n||'')}</b> · changes apply for everyone</div>`;
+    const banner=`<div class="fitbanner">${_T`🎯 Fitting a printed piece · <b>${esc((ARM[AFIT.key]||{}).n||'')}</b> · changes apply for everyone`}</div>`;
     if(c)h=c[1].slice(0,ti)+banner+panel+c[1].slice(ti)}
   h+=armSetsHTML();if(!h.includes('id="caRedraw"'))h+='<button hidden type="button" id="caRedraw" data-gs="caview" data-id="piece"></button>' /* fit mode removed the designer's own hook */}catch(e){console.error(e)}return h}}
 const _afitHTML=afitHTML;afitHTML=function(){return ''};
@@ -42,14 +42,14 @@ function cwFromSystem(k){const X=W[k];if(!X)return;const d=blankCW();d.name=X.n+
   Object.assign(d.stats,{p:X.p||1,r:X.r||1,ammo:X.ammo||0,thrN:X.throw?X.throw.n:0,thrP:X.throw?X.throw.p:0,thrR:X.throw?X.throw.r:0,shield:X.shield?1:0,absorb:X.absorb||1,uses:X.uses||3,cfw:X.cfw?1:0,soul:X.soul?1:0,both:X.both?1:0,atkUses:X.atkUses||0});
   if(X.stones)d.stats.stones=1;if(X.flav)d.stats.flav=1;d.base=k;ST.cw=d}
 function wpnSetsHTML(){const sys=sysWeapons();const L=CUSTOM.weapons||[];
-  const mine=L.map(c=>{const wk=W['cw_'+c.id];return `<div class="lrow" style="--pc:#8a5cc0"><div class="setart wcard">${cwCardSVG(c)}</div><div class="t"><b>${esc(c.name)}</b><small>${wk?`L${wk.lv} · ${wk.p} dmg · range ${wk.r}`:''}</small></div>${crActs('w',c)}</div>`}).join('');
+  const mine=L.map(c=>{const wk=W['cw_'+c.id];return `<div class="lrow" style="--pc:#8a5cc0"><div class="setart wcard">${cwCardSVG(c)}</div><div class="t"><b>${esc(c.name)}</b><small>${wk?_T`L${wk.lv} · ${wk.p} dmg · range ${wk.r}`:''}</small></div>${crActs('w',c)}</div>`}).join('');
   const sysc=sys.map(k=>{const X=W[k];return `<div class="lrow"><span class="setart wcard">${cardHTML('w:'+k,'md')}</span><div class="t"><b>${esc(X.n)}</b><small>L${X.lv} · ${X.shield?'shield':X.p+' dmg · range '+X.r}${X.throw?' · throws':''}</small></div>${sysActs(`data-gs="cwsys" data-id="${k}"`)}</div>`}).join('');
-  return `<h4>Your weapons · ${L.length}</h4>${L.length?`<div class="list2 setgrid">${mine}</div>`:'<p class="rc-sub">The forge is cold. Nothing yet — save a weapon above, or copy a printed one.</p>'}
-   <h4>🔒 System weapons · ${sys.length} <span class="rc-sub">the printed cards</span></h4><div class="list2 setgrid sys">${sysc}</div>`}
+  return `<h4>${_T`Your weapons · ${L.length}`}</h4>${L.length?`<div class="list2 setgrid">${mine}</div>`:'<p class="rc-sub">The forge is cold. Nothing yet — save a weapon above, or copy a printed one.</p>'}
+   <h4>${_T`🔒 System weapons · ${sys.length}`} <span class="rc-sub">${_T`the printed cards`}</span></h4><div class="list2 setgrid sys">${sysc}</div>`}
 {const base=gearWHTML;gearWHTML=function(){let h=base.apply(this,arguments);try{const i=h.indexOf('<h4>Your weapons');if(i>=0)h=h.slice(0,i) /* the old list was the template's tail */;h+=wpnSetsHTML()}catch(e){console.error(e)}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-gs="cwsys"]');if(!b)return;e.stopImmediatePropagation();cwFromSystem(b.dataset.id);ST.gearSub='w';
   const r=document.querySelector('[data-st="tab"][data-v="gear:w"]');if(r)r.click();else openStudio('gear');setTimeout(()=>{const t=document.querySelector('#mBody .trstudio,#cwPrev');if(t)t.scrollIntoView({block:'start'})},120);
-  mToast(`Started from the printed <b>${esc(W[b.dataset.id].n)}</b> — make it yours and save.`)},true);
+  mToast(_T`Started from the printed <b>${esc(W[b.dataset.id].n)}</b> — make it yours and save.`)},true);
 /* ---------- one grid for every designer's lists ---------- */
 function setGridify(root){root=root||document.getElementById('mBody');if(!root||!root.querySelector('[data-st="tab"]'))return;
   for(const h of root.querySelectorAll('h4')){if(h.dataset.sg)continue;const t=h.textContent;
@@ -57,7 +57,7 @@ function setGridify(root){root=root||document.getElementById('mBody');if(!root||
     let n=h.nextElementSibling;while(n&&!(n.classList.contains('list2')||n.classList.contains('armgrid'))&&n.tagName!=='H4')n=n.nextElementSibling;if(!n||n.tagName==='H4')continue;
     h.dataset.sg=1;n.classList.add('setgrid');n.classList.remove('one','onecol');if(sys)n.classList.add('sys');
     if(sys&&!/^\s*🔒/.test(t)){const sub=h.querySelector('.rc-sub');const name=t.replace(sub?sub.textContent:'','').replace(/^\s*(🏛\s*)?(The )?(system |System )?/,'').replace(/\s*·.*$/,'').trim();
-      const cnt=n.querySelectorAll(':scope > .lrow, :scope > .armcell').length;h.innerHTML=`🔒 System ${esc(name.replace(/^printed /i,''))} · ${cnt} `+(sub?sub.outerHTML:'')}}}
+      const cnt=n.querySelectorAll(':scope > .lrow, :scope > .armcell').length;h.innerHTML=_T`🔒 System ${esc(name.replace(/^printed /i,''))} · ${cnt} `+(sub?sub.outerHTML:'')}}}
 {let T=null;new MutationObserver(()=>{clearTimeout(T);T=setTimeout(()=>{try{setGridify()}catch(e){}},30)}).observe(document.body,{childList:true,subtree:true})}
 /* ---------- custom armor: the left side's own fit ---------- */
 ST.caSide='R';
@@ -66,7 +66,7 @@ ST.caSide='R';
 {const base=caMockHTML;caMockHTML=function(d){let h=base.apply(this,arguments);if(!d||!(d.slot==='arm'||d.slot==='leg')||!d.pair)return h;
   const side=ST.caSide==='L'?'L':'R';const f=side==='L'&&d.f2&&d.f2.L?{...caF2(d),...d.f2.L}:caF2(d);
   h=h.replace(/(<label class="rc-sub cavl">Size <b>)\d+(<\/b><input[^>]*value=")\d+/,`$1${f.s}$2${f.s}`).replace(/(<label class="rc-sub cavl">Turn <b>)-?\d+(<\/b><input[^>]*value=")-?\d+/,`$1${f.r}$2${f.r}`);
-  return h.replace('<div class="scart caav" id="caAv">',`<div class="seg" style="margin:0 0 6px">${[['R','Right side'],['L','Left side']].map(([s,l])=>`<button type="button" data-caside="${s}" class="${side===s?'on':''}">${l}</button>`).join('')}</div><div class="scart caav" id="caAv">`)}}
+  return h.replace('<div class="scart caav" id="caAv">',`<div class="seg" style="margin:0 0 6px">${[['R',_T('Right side')],['L',_T('Left side')]].map(([s,l])=>`<button type="button" data-caside="${s}" class="${side===s?'on':''}">${l}</button>`).join('')}</div><div class="scart caav" id="caAv">`)}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-caside]');if(!b)return;ST.caSide=b.dataset.caside;caRedraw()});
 /* while the left side is chosen, the sliders and the drag edit f2.L (offset mirrored, as the pointer goes) */
 document.addEventListener('input',e=>{const i=e.target.closest('input[type="range"][data-cav]');if(!i||!ST.ca||ST.caSide!=='L')return;e.stopImmediatePropagation();const d=ST.ca;const f=caF2(d);
@@ -125,7 +125,7 @@ miniApply();
 {const base=settingsHTML;settingsHTML=function(tab){let h=base.apply(this,arguments);if(tab!=='tokens'||typeof h!=='string')return h;const on=miniOn();
   if(on)h=h.replace(/(<button type="button" class="tokrow) on(" data-tokstyle="standee">[\s\S]*?)<span class="badge gold">in use<\/span>/,'$1$2');
   const line=BASE_CLS.map(c=>MINI_URL[c]?`<img class="stnd" src="${MINI_URL[c]}" alt="" style="height:58px">`:'').join('');
-  const row=`<button type="button" class="tokrow ${on?'on':''}" data-tokstyle="mini3d"><div class="tokrowhd"><b>🏺 3D minis</b>${on?'<span class="badge gold">in use</span>':''}<small>Virgilante's sculpted minis and pillars, on their bases — the eight classes and the default beasts</small></div><div class="toklineup">${line}</div></button>`;
+  const row=`<button type="button" class="tokrow ${on?'on':''}" data-tokstyle="mini3d"><div class="tokrowhd">${_T`<b>🏺 3D minis</b>${on?_T('<span class="badge gold">in use</span>'):''}<small>Virgilante's sculpted minis and pillars, on their bases — the eight classes and the default beasts</small>`}</div><div class="toklineup">${line}</div></button>`;
   const j=h.search(/<button type="button" class="tokrow ?(on)?" data-tokstyle="cylinder"/);return j<0?h:h.slice(0,j)+row+h.slice(j)}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-tokstyle]');if(!b)return;const v=b.dataset.tokstyle;
   SETTINGS.mini3d=v==='mini3d';if(v==='mini3d'){b.dataset.tokstyle='standee';setTimeout(()=>{b.dataset.tokstyle='mini3d'},0)}

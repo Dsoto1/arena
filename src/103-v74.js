@@ -24,11 +24,11 @@ Object.assign(ARM_FIT,{balteus1:{...ARM_FIT.balteus},centurion:{at:'head',dy:-12
 /* Manica (the old Provocator Manica) back on the upper arm, worn like the shoulder guard it is on the Hero card */
 ARM.provmanica.pt='upper';ARM_FIT.provmanica={...ARM_FIT.spaulder};
 /* his names */
-const ARM_NAMES74={galea:'Iron Helm',cassis:'Horned Helm',crista:'Hoplomachus Helm',murmillo:'Steel Gated Helm',helm5:'Steel Dome Helm',flavhelm:'Helm of Flavius',
-  balteus:'Leather Gladiator Belt II',balteus1:'Leather Gladiator Belt I',pectorale:'Bronze Chest Armor',lorica:'Scaled Chest Armor',musculata:'Forged Chest Armor',
-  amazon:'Plated Chest Armor',flavchest:"Flavius' Chest Armor",thorax:'Reinforced Chest Armor',wraps:'Padded Arm Armor',manica:'Galerus',provmanica:'Manica',
-  spaulder:'Iron Spaulder',cestus:'Cestus',galerus:'Lorica Segmentata',bracers:"Flavius' Bracers",legwrapsU:'Leather Tasset Armor',legwraps:'Padded Leg Armor',
-  femoralia:'Iron Tasset Armor',ocrea:'Greaves',greaves:"Flavius' Greaves",thighplate:'Tasset Armor',cnemis:'Steel Greaves'};
+const ARM_NAMES74={galea:_T('Iron Helm'),cassis:_T('Horned Helm'),crista:_T('Hoplomachus Helm'),murmillo:_T('Steel Gated Helm'),helm5:_T('Steel Dome Helm'),flavhelm:_T('Helm of Flavius'),
+  balteus:_T('Leather Gladiator Belt II'),balteus1:_T('Leather Gladiator Belt I'),pectorale:_T('Bronze Chest Armor'),lorica:_T('Scaled Chest Armor'),musculata:_T('Forged Chest Armor'),
+  amazon:_T('Plated Chest Armor'),flavchest:_T("Flavius' Chest Armor"),thorax:_T('Reinforced Chest Armor'),wraps:_T('Padded Arm Armor'),manica:_T('Galerus'),provmanica:_T('Manica'),
+  spaulder:_T('Iron Spaulder'),cestus:_T('Cestus'),galerus:_T('Lorica Segmentata'),bracers:_T("Flavius' Bracers"),legwrapsU:_T('Leather Tasset Armor'),legwraps:_T('Padded Leg Armor'),
+  femoralia:_T('Iron Tasset Armor'),ocrea:_T('Greaves'),greaves:_T("Flavius' Greaves"),thighplate:_T('Tasset Armor'),cnemis:_T('Steel Greaves')};
 for(const [k,n] of Object.entries(ARM_NAMES74))if(ARM[k])ARM[k].n=n;
 if(ARM.galerus)ARM.galerus.bonus={head:1}; /* Lorica Segmentata: +1 head (his list) */
 /* the market carries the new pieces */
@@ -39,8 +39,8 @@ MARKET_A[1].push('steelhelm','balteus1','lgreaves');MARKET_A[2].push('centurion'
   set('venatore',[['steelhelm','head'],['balteus1','chest'],['wraps','rarm'],['wraps','larm'],['legwraps','rleg'],['legwraps','lleg']]);
   set('hero',[['murmillo','head'],['provmanica','larm'],['wraps','rarm'],['wraps','larm'],['legwraps','rleg'],['legwraps','lleg']]);
   set('slave',[['galea','head'],['manica','larm'],['wraps','rarm'],['wraps','larm'],['legwraps','rleg'],['legwraps','lleg']]);
-  if(C.hero&&W.thracian)C.hero.L='thracian';if(W.trident)W.trident.n='Trident';
-  if(C.soldier)C.soldier.ab='Ability: +1 damage to every successful attack while class abilities are on.';
+  if(C.hero&&W.thracian)C.hero.L='thracian';if(W.trident)W.trident.n=_T('Trident');
+  if(C.soldier)C.soldier.ab=_T('Ability: +1 damage to every successful attack while class abilities are on.');
   for(const k of Object.keys(C))if(C[k].ab&&/round 1/.test(C[k].ab))C[k].ab=C[k].ab.replace(/in round 1/,'while class abilities are on')}
 /* cards and thumbnails use the pair cell; the avatar keeps the single cut */
 {const base=cardRef;cardRef=function(ref){const r=base.apply(this,arguments);try{if(r&&ref&&ref[0]==='a'){const A=ARM[ref.slice(2)];if(A&&A.thumb!=null)return {...r,i:A.thumb}}}catch(e){}return r}}

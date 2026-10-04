@@ -8,7 +8,7 @@
    • 🎯 Fit the printed set: open to everyone (no code) — drag, Size, Turn, Mirror per printed piece; saved in the game data
      (Store 'armorFit', in the backup) and applied at once. Temporary: once Virgilante's fits are baked into ARM_FIT it goes.
    • Flavius' Bracers' token wears the gold grade (BRACER_GOLD, 90-armfit). */
-const CA_EQ_ALL=[['head','Head','head','helm'],['chest','Chest','chest','chest'],['belt','Belt (waist)','chest','chest'],['sho','Upper arm','arm','upper'],['fore','Lower arm','arm','lower'],['hand','Hand','arm','hand'],['thigh','Upper leg','leg','upper'],['shin','Lower leg','leg','lower']];
+const CA_EQ_ALL=[['head',_T('Head'),'head','helm'],['chest',_T('Chest'),'chest','chest'],['belt',_T('Belt (waist)'),'chest','chest'],['sho',_T('Upper arm'),'arm','upper'],['fore',_T('Lower arm'),'arm','lower'],['hand',_T('Hand'),'arm','hand'],['thigh',_T('Upper leg'),'leg','upper'],['shin',_T('Lower leg'),'leg','lower']];
 const caEqRow=k=>CA_EQ_ALL.find(x=>x[0]===k);
 const CA_S_DEF={head:46,chest:58,arm:34,leg:30};
 function caF2(ca){const f=ca.f2||{};return {dx:+f.dx||0,dy:+f.dy||0,s:+f.s||CA_S_DEF[ca.slot]||46,r:+f.r||0,flip:f.flip?1:0}}
@@ -29,10 +29,10 @@ function caMockRefresh(){const el=document.getElementById('caAv');if(el&&ST.ca)e
   if(f)document.querySelectorAll('[data-cav]').forEach(i=>{const k=i.dataset.cav;if(k==='flip')i.checked=!!f.flip;else if(i.type==='range'&&document.activeElement!==i){i.value=f[k];const b=i.parentElement.querySelector('b');if(b)b.textContent=f[k]}})}
 {const base=caPrevRefresh;caPrevRefresh=function(){const r=base.apply(this,arguments);try{caMockRefresh()}catch(e){}return r}}
 function caMockHTML(d){const f=caF2(d);const sl=(k,l,min,max)=>`<label class="rc-sub cavl">${l} <b>${f[k]}</b><input type="range" min="${min}" max="${max}" step="1" value="${f[k]}" data-cav="${k}"></label>`;
-  return `<div class="cavbox"><div class="sect" style="margin:8px 0 4px">On the avatar ${d.eq?`<span class="rc-sub">· ${esc(caEqRow(d.eq)[1])} · drag it anywhere · the wheel scales it</span>`:'<span class="rc-sub" style="color:var(--gold2)">· choose its equip point</span>'}</div>
+  return `<div class="cavbox"><div class="sect" style="margin:8px 0 4px">${_T`On the avatar ${d.eq?`<span class="rc-sub">${_T`· ${esc(caEqRow(d.eq)[1])} · drag it anywhere · the wheel scales it`}</span>`:_T('<span class="rc-sub" style="color:var(--gold2)">· choose its equip point</span>')}`}</div>
     <div class="scart caav" id="caAv">${caMockSVG(d)}</div>
-    ${sl('s','Size',10,160)}${sl('r','Turn',-60,60)}<div class="acts" style="justify-content:center;align-items:center"><label class="rc-sub" style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-cav="flip" ${f.flip?'checked':''}> Mirror</label><button class="btn tksm" type="button" data-cav="snap">⌖ Back on the point</button></div></div>`}
-function caEqSelectHTML(d){return `<label>Equip point <span class="rc-sub">(required)</span><select data-caeq2><option value="" ${d.eq?'':'selected'} disabled>— choose —</option>${CA_EQ_ALL.map(([k,l])=>`<option value="${k}" ${d.eq===k?'selected':''}>${l}</option>`).join('')}</select></label>`}
+    ${sl('s',_T('Size'),10,160)}${sl('r',_T('Turn'),-60,60)}<div class="acts" style="justify-content:center;align-items:center"><label class="rc-sub" style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-cav="flip" ${f.flip?'checked':''}> ${_T`Mirror`}</label><button class="btn tksm" type="button" data-cav="snap">${_T`⌖ Back on the point`}</button></div></div>`}
+function caEqSelectHTML(d){return `<label>${_T`Equip point`} <span class="rc-sub">(required)</span><select data-caeq2><option value="" ${d.eq?'':'selected'} disabled>— choose —</option>${CA_EQ_ALL.map(([k,l])=>`<option value="${k}" ${d.eq===k?'selected':''}>${l}</option>`).join('')}</select></label>`}
 const armSculptOn=()=>(typeof SETTINGS==='undefined'||(SETTINGS.armorStyle||'drawn')==='drawn');
 {const base=gearAHTML;gearAHTML=function(){const d=ST.ca||(ST.ca=blankCA());
   if(d.eq&&caEqRow(d.eq)&&caEqRow(d.eq)[2]!==d.slot)d.eq=null; /* a new slot from "Start from" clears a point that no longer fits */
@@ -59,11 +59,11 @@ document.addEventListener('input',e=>{const i=e.target.closest('[data-cav]');if(
   if(k==='flip')f.flip=i.checked?1:0;else f[k]=+i.value;d.f2=f;caSync(d);caMockRefresh()});
 document.addEventListener('change',e=>{const i=e.target.closest('input[type="checkbox"][data-cav]');if(!i||!ST.ca)return;const f=caF2(ST.ca);f.flip=i.checked?1:0;ST.ca.f2=f;caSync(ST.ca);caMockRefresh()});
 document.addEventListener('click',e=>{const b=e.target.closest('button[data-cav="snap"]');if(b&&ST.ca){const f=caF2(ST.ca);ST.ca.f2={...f,dx:0,dy:0};caSync(ST.ca);caMockRefresh();return}
-  const sv=e.target.closest('[data-gs="asave"]');if(sv&&ST.ca&&!ST.ca.eq){e.stopImmediatePropagation();e.preventDefault();mToast('Choose the piece’s <b>equip point</b> first — where it sits on the body.');const el=document.querySelector('[data-caeq2]');if(el)el.focus();return}
+  const sv=e.target.closest('[data-gs="asave"]');if(sv&&ST.ca&&!ST.ca.eq){e.stopImmediatePropagation();e.preventDefault();mToast(_T('Choose the piece’s <b>equip point</b> first — where it sits on the body.'));const el=document.querySelector('[data-caeq2]');if(el)el.focus();return}
   if(sv&&ST.ca)caSync(ST.ca)},true);
 /* free drag anywhere on the mock-up (only the avatar's own box limits it); the wheel scales */
 (()=>{let drag=null;const pt=(e,el)=>{const sv=el.querySelector('svg');if(!sv)return null;const r=sv.getBoundingClientRect();return [AV_VB[0]+(e.clientX-r.left)/r.width*AV_VB[2],AV_VB[1]+(e.clientY-r.top)/r.height*AV_VB[3]]};
-  document.addEventListener('pointerdown',e=>{const el=e.target.closest('#caAv');if(!el||!ST.ca)return;if(!ST.ca.eq){mToast('Choose the piece’s <b>equip point</b> first.');return}
+  document.addEventListener('pointerdown',e=>{const el=e.target.closest('#caAv');if(!el||!ST.ca)return;if(!ST.ca.eq){mToast(_T('Choose the piece’s <b>equip point</b> first.'));return}
     const p=pt(e,el);if(!p)return;drag={el,p0:p,f0:caF2(ST.ca)};e.preventDefault()});
   document.addEventListener('pointermove',e=>{if(!drag)return;const p=pt(e,drag.el);if(!p)return;const d=ST.ca;const P=EQ[d.eq];
     const dx=Math.round(Math.max(-P[0],Math.min(150-P[0],drag.f0.dx+p[0]-drag.p0[0]))),dy=Math.round(Math.max(-P[1],Math.min(332-P[1],drag.f0.dy+p[1]-drag.p0[1])));
@@ -78,13 +78,13 @@ afitSave=function(){try{localStorage.setItem('flavius_armfit',JSON.stringify(ARM
 afitHTML=function(){const keys=Object.keys(ARM).filter(k=>!ARM[k].custom&&ARM_FIT[k]);if(!keys.includes(AFIT.key))AFIT.key=keys[0];const f=armFit(AFIT.key)||{};const A=ARM[AFIT.key];
   const sl=(k,l,min,max)=>`<label class="rc-sub">${l} <b>${f[k]||0}</b><input type="range" min="${min}" max="${max}" step="1" value="${f[k]||0}" data-afit="${k}" style="width:100%"></label>`;
   const done=keys.filter(k=>ARM_FIT_OVR[k]).length;
-  return `<div class="card2 afit"><h4 style="margin:0 0 6px">🎯 Fit the printed set <span class="rc-sub">${done} of ${keys.length} adjusted · saved in your game data (Settings → Save file)</span></h4>
-   <div class="afgrid"><div id="afPrev" class="afprev" title="Drag the piece · the wheel scales it">${avatarSVG(afitPlayer(AFIT.key))}</div>
-   <div><label>Piece<select data-afkey>${keys.map(k=>`<option value="${k}" ${k===AFIT.key?'selected':''}>${ARM_FIT_OVR[k]?'✎ ':''}${esc(ARM[k].n)} · ${ARM[k].slot}${ARM[k].pt&&ARM[k].pt!=='helm'&&ARM[k].pt!=='chest'?' '+ARM[k].pt:''}</option>`).join('')}</select></label>
-    <p class="rc-sub" style="margin:4px 0">Sits on: <b>${esc((caEqRow(f.at)||[0,f.at])[1])}</b>${A.slot==='arm'||A.slot==='leg'?' — the left side mirrors it':''}. Drag it on the avatar; the wheel scales it.</p>
-    ${sl('dx','Across',-60,60)}${sl('dy','Up / down',-90,90)}${sl('w','Size',8,140)}${sl('r','Turn',-60,60)}
-    <label class="rc-sub" style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-afflip ${f.flip?'checked':''}> Mirror the art</label>
-    <div class="acts"><button class="btn tksm" type="button" data-afact="prev">◀</button><button class="btn tksm" type="button" data-afact="next">▶</button><button class="btn tksm" type="button" data-afact="reset">↺ Default</button><button class="btn tksm" type="button" data-afact="export">⇪ Copy as text</button></div>
+  return `<div class="card2 afit"><h4 style="margin:0 0 6px">${_T`🎯 Fit the printed set`} <span class="rc-sub">${_T`${done} of ${keys.length} adjusted · saved in your game data (Settings → Save file)`}</span></h4>
+   <div class="afgrid"><div id="afPrev" class="afprev" title="${_T`Drag the piece · the wheel scales it`}">${avatarSVG(afitPlayer(AFIT.key))}</div>
+   <div><label>${_T`Piece`}<select data-afkey>${keys.map(k=>`<option value="${k}" ${k===AFIT.key?'selected':''}>${ARM_FIT_OVR[k]?'✎ ':''}${esc(ARM[k].n)} · ${ARM[k].slot}${ARM[k].pt&&ARM[k].pt!=='helm'&&ARM[k].pt!=='chest'?' '+ARM[k].pt:''}</option>`).join('')}</select></label>
+    <p class="rc-sub" style="margin:4px 0">Sits on: <b>${esc((caEqRow(f.at)||[0,f.at])[1])}</b>${A.slot==='arm'||A.slot==='leg'?_T(' — the left side mirrors it'):''}. Drag it on the avatar; the wheel scales it.</p>
+    ${sl('dx',_T('Across'),-60,60)}${sl('dy','Up / down',-90,90)}${sl('w',_T('Size'),8,140)}${sl('r',_T('Turn'),-60,60)}
+    <label class="rc-sub" style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-afflip ${f.flip?'checked':''}> ${_T`Mirror the art`}</label>
+    <div class="acts"><button class="btn tksm" type="button" data-afact="prev">◀</button><button class="btn tksm" type="button" data-afact="next">▶</button><button class="btn tksm" type="button" data-afact="reset">${_T`↺ Default`}</button><button class="btn tksm" type="button" data-afact="export">${_T`⇪ Copy as text`}</button></div>
     <textarea id="afOut" class="tin" rows="3" style="width:100%;margin-top:6px;font:11px var(--mono)" hidden readonly></textarea></div></div></div>`};
 document.addEventListener('change',e=>{const c=e.target.closest('[data-afflip]');if(!c)return;const k=AFIT.key;ARM_FIT_OVR[k]={...(ARM_FIT_OVR[k]||{}),flip:c.checked?1:0};afitSave();afitRefresh()});
 (()=>{let drag=null;const pt=e=>{const sv=document.querySelector('#afPrev svg');if(!sv)return null;const r=sv.getBoundingClientRect();return [(e.clientX-r.left)/r.width*150,(e.clientY-r.top)/r.height*332]};

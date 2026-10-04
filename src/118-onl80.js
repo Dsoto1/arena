@@ -38,7 +38,7 @@ function mock80Fix(w){w.forum=w.forum||[];w.chats=w.chats||{};
   for(const L of Object.values(w.lobbies)){if(!Array.isArray(L.members))L.members=(L.players||[]).map(p=>({id:p.id,name:p.name,char:p.char||null,rank:p.rank||'tiro',kit:p.kit||null,at:L.created||0}));
     if(!L.cry)L.cry=[];if(!L.kicked)L.kicked={};if(L.teams==null)L.teams=2}}
 const mockNow=()=>Date.now();
-function mockName80(w,id){const ch=onlMockChar(w,id);const a=w.accounts[id];return (ch&&ch.name)||(a&&a.name)||'A lanista'}
+function mockName80(w,id){const ch=onlMockChar(w,id);const a=w.accounts[id];return (ch&&ch.name)||(a&&a.name)||_T('A lanista')}
 function mockFighting80(w,id){return Object.values(w.lobbies).some(L=>{if(L.status!=='live'||!L.players.some(p=>p.id===id))return false;const M=w.matches[L.id];return !(M&&((M.abandoned||{})[id]||(M.dropped||{})[id]))})}
 function mockRoomOf80(w,id){return Object.values(w.lobbies).find(L=>L.status==='waiting'&&(L.members||[]).some(m=>m.id===id))||null}
 function mockHere80(w){const now=mockNow();return Object.values(w.accounts).filter(a=>a.bot||(a.seen&&now-a.seen<60000)).map(a=>({id:a.id,tz:a.tz||'',match:mockFighting80(w,a.id),seen:a.bot?0:a.seen,bot:!!a.bot}))}
@@ -53,9 +53,9 @@ function mockList80(w,me){for(const L of Object.values(w.lobbies))if(L.status===
   const f=mockFlag80(w,me);return Object.values(w.lobbies).filter(L=>L.status!=='done'&&!!L.flag===f).sort((a,b)=>b.created-a.created)
     .map(L=>(L.members||[]).some(m=>m.id===me)||(L.players||[]).some(p=>p.id===me)||(L.stands||[]).some(s=>s.id===me)?mockRoomOut80(w,L):ONLC.liteRow(L))}
 /* the lanista and their party as room members: the active gladiator's name; one room at a time */
-mockGroup=function(w,me){const a=w.accounts[me];if(!a)throw new Error('Sign in first.');const P=a.party&&w.parties&&w.parties[a.party];if(P&&P.leader!==me)throw new Error('Your party leader picks the game.');
+mockGroup=function(w,me){const a=w.accounts[me];if(!a)throw new Error(_T('Sign in first.'));const P=a.party&&w.parties&&w.parties[a.party];if(P&&P.leader!==me)throw new Error(_T('Your party leader picks the game.'));
   const out=(P?P.members:[me]).map(m=>{const ch=onlMockChar(w,m);return {id:m,name:mockName80(w,m),char:ch&&ch.id,rank:ch?ONLC.rankFor(ch).k:'tiro',kit:ONLC.kitOf(ch),party:P?P.id:undefined,strikes:(w.accounts[m]||{}).strikes||0}});
-  for(const x of out)if(mockRoomOf80(w,x.id))throw new Error(out.length>1?'Someone in your party is already in a room.':'You are already in a room.');return out};
+  for(const x of out)if(mockRoomOf80(w,x.id))throw new Error(out.length>1?_T('Someone in your party is already in a room.'):_T('You are already in a room.'));return out};
 mockBusy=function(w,me){return Object.values(w.lobbies).find(L=>(L.status==='waiting'&&(L.members||[]).some(m=>m.id===me))||(L.status==='live'&&L.players.some(p=>p.id===me)))||null};
 /* the Forum: a line is stored (≤60) and pushed to the free lanistas it concerns */
 function mockLine80(w,line){line.at=line.at||mockNow();w.forum.push(line);if(w.forum.length>60)w.forum=w.forum.slice(-60);return line}
@@ -65,16 +65,16 @@ function mockFree80(w,by,L){const here=mockHere80(w).filter(h=>!h.bot&&h.id!==by
       if(L.ranked){const ch=onlMockChar(w,h.id);if(!ch||ONLC.rankFor(ch).k!==L.rank)return false}}return true}).sort((a,b)=>(b.seen||0)-(a.seen||0)).slice(0,ONLC.RATE.fanCap).map(h=>h.id)}
 function mockCry80(w,L,by,k){const line=mockLine80(w,{k,by,name:mockName80(w,by),row:ONLC.liteRow(L),need:Math.max(0,L.seats-L.players.length),ev:L.ev,loc:L.loc});mockTo(mockFree80(w,by,L),'forum.line',{line});return line}
 /* an invite under the rules (rates unless soft); '' or the reason */
-function mockInvite80(w,me,L,to,soft){const A=w.accounts[me],T=w.accounts[to];const now=mockNow();if(!T||to===me)return 'No such lanista.';
-  const here=mockHere80(w).find(h=>h.id===to&&!h.bot);if(!here)return 'Not in the arena now.';if(here.match)return 'Fighting right now.';
-  if((L.members||[]).some(m=>m.id===to))return 'Already in the room.';if(mockFlag80(w,to)!==!!L.flag)return 'Not in the arena now.';
-  if(L.ranked){const ch=onlMockChar(w,to);if(!ch||ONLC.rankFor(ch).k!==L.rank)return `Ranked: ${(ONLC.RANKS[ONLC.rankIdx(L.rank)]||{}).n} only.`}
-  if(!soft){if(!mockRate80(A,'ivAt',ONLC.RATE.invGap,now))return 'One invite at a time.';if(A['iv_'+to]&&now-A['iv_'+to]<ONLC.RATE.invSame)return 'You invited them a moment ago.'}
-  const hr=Math.floor(now/3600e3);A.ivH=A.ivH&&A.ivH.h===hr?A.ivH:{h:hr,n:0};if(A.ivH.n>=ONLC.RATE.invHour)return 'Enough invites for this hour.';
+function mockInvite80(w,me,L,to,soft){const A=w.accounts[me],T=w.accounts[to];const now=mockNow();if(!T||to===me)return _T('No such lanista.');
+  const here=mockHere80(w).find(h=>h.id===to&&!h.bot);if(!here)return _T('Not in the arena now.');if(here.match)return _T('Fighting right now.');
+  if((L.members||[]).some(m=>m.id===to))return _T('Already in the room.');if(mockFlag80(w,to)!==!!L.flag)return _T('Not in the arena now.');
+  if(L.ranked){const ch=onlMockChar(w,to);if(!ch||ONLC.rankFor(ch).k!==L.rank)return _T`Ranked: ${(ONLC.RANKS[ONLC.rankIdx(L.rank)]||{}).n} only.`}
+  if(!soft){if(!mockRate80(A,'ivAt',ONLC.RATE.invGap,now))return _T('One invite at a time.');if(A['iv_'+to]&&now-A['iv_'+to]<ONLC.RATE.invSame)return _T('You invited them a moment ago.')}
+  const hr=Math.floor(now/3600e3);A.ivH=A.ivH&&A.ivH.h===hr?A.ivH:{h:hr,n:0};if(A.ivH.n>=ONLC.RATE.invHour)return _T('Enough invites for this hour.');
   A['iv_'+to]=now;A.ivH.n++;if((T.mutes||[]).includes(me))return '';mockTo([to],'lobby.invite',{row:ONLC.liteRow(L),from:mockName80(w,me),fromId:me});return ''}
-const mockLobby80=(w,id)=>{const L=w.lobbies[id];if(!L)throw new Error('That room is gone.');return L};
-const mockMember80=(L,me)=>{if(!(L.members||[]).some(m=>m.id===me))throw new Error('You are not in that room.')};
-function mockCreate80(w,d,me,cry){const g=mockGroup(w,me);const m=g.find(x=>x.id===me)||g[0];if(d.ranked&&!m.char)throw new Error('Ranked needs a living gladiator.');const now=mockNow();
+const mockLobby80=(w,id)=>{const L=w.lobbies[id];if(!L)throw new Error(_T('That room is gone.'));return L};
+const mockMember80=(L,me)=>{if(!(L.members||[]).some(m=>m.id===me))throw new Error(_T('You are not in that room.'))};
+function mockCreate80(w,d,me,cry){const g=mockGroup(w,me);const m=g.find(x=>x.id===me)||g[0];if(d.ranked&&!m.char)throw new Error(_T('Ranked needs a living gladiator.'));const now=mockNow();
   const L=ONLC.newLobby(d,{id:me,name:m.name,char:m.char,rank:m.rank},'L'+(w.seq++),now);if(g.some(x=>x.strikes>=ONLC.STRIKES_OUT))L.flag=1;
   const why=ONLC.roomJoin(L,g,now);if(why)throw new Error(why);L.ping=12;w.lobbies[L.id]=L;if(cry){L.cry=[now];mockCry80(w,L,me,'open')}mockUpd80(w,L);return L}
 Object.assign(MOCK_ROUTES,{
@@ -83,9 +83,9 @@ Object.assign(MOCK_ROUTES,{
     if(d.all&&a){o.lobbies=mockList80(w,me);const here=mockHere80(w);o.here=ONLC.hereSummary(here,Object.values(w.lobbies));o.online=here.length;o.forum=w.forum.slice(-30)}return o})(MOCK_ROUTES['hello']),
   'world.news':(w)=>{const here=mockHere80(w);return {news:w.news.slice(0,8),online:here.length,here:ONLC.hereSummary(here,Object.values(w.lobbies)),challenges:ONLC.weekChallenges(mockNow())}},
   'lobby.list':(w,d,me)=>mockList80(w,me),
-  'lobby.chat':()=>{throw new Error('Quick chat only.')},
+  'lobby.chat':()=>{throw new Error(_T('Quick chat only.'))},
   'lobby.create':(w,d,me)=>mockRoomOut80(w,mockCreate80(w,d,me,d.cry!==false)),
-  'lobby.join':(w,d,me)=>{const L=mockLobby80(w,d.id);const g=mockGroup(w,me);if(!!L.flag!==g.some(x=>x.strikes>=ONLC.STRIKES_OUT))throw new Error('That room is gone.');
+  'lobby.join':(w,d,me)=>{const L=mockLobby80(w,d.id);const g=mockGroup(w,me);if(!!L.flag!==g.some(x=>x.strikes>=ONLC.STRIKES_OUT))throw new Error(_T('That room is gone.'));
     const why=ONLC.roomJoin(L,g,mockNow());if(why)throw new Error(why);mockUpd80(w,L);return mockRoomOut80(w,L)},
   'lobby.sit':(w,d,me)=>{const L=mockLobby80(w,d.id);const why=ONLC.roomSit(L,me,mockNow());if(why)throw new Error(why);mockUpd80(w,L);return mockRoomOut80(w,L)},
   'lobby.stand':(w,d,me)=>{const L=mockLobby80(w,d.id);mockMember80(L,me);const why=ONLC.roomStand(L,me);if(why)throw new Error(why);mockUpd80(w,L);return mockRoomOut80(w,L)},
@@ -98,7 +98,7 @@ Object.assign(MOCK_ROUTES,{
   'lobby.set':(w,d,me)=>{const L=mockLobby80(w,d.id);const x={};for(const k of ['ev','loc','seats','ticket','free','abandon','standsOff','teams','autoBal'])if(d[k]!=null)x[k]=d[k];
     const why=ONLC.roomSet(L,me,x,mockNow());if(why)throw new Error(why);mockUpd80(w,L);return mockRoomOut80(w,L)},
   'lobby.team':(w,d,me)=>{const L=mockLobby80(w,d.id);const why=ONLC.roomTeam(L,me,d.who,d.team);if(why)throw new Error(why);mockUpd80(w,L);return mockRoomOut80(w,L)},
-  'lobby.ready':(w,d,me)=>{const L=mockLobby80(w,d.id);if(L.status!=='waiting')throw new Error('Already under way.');const p=L.players.find(p=>p.id===me);if(p)p.ready=!!d.ready;mockUpd80(w,L);return mockRoomOut80(w,L)},
+  'lobby.ready':(w,d,me)=>{const L=mockLobby80(w,d.id);if(L.status!=='waiting')throw new Error(_T('Already under way.'));const p=L.players.find(p=>p.id===me);if(p)p.ready=!!d.ready;mockUpd80(w,L);return mockRoomOut80(w,L)},
   'lobby.start':(w,d,me)=>{const L=mockLobby80(w,d.id);const conn={};const here=new Set(mockHere80(w).map(h=>h.id));for(const p of ONLC.humansOf(L))conn[p.id]=here.has(p.id);
     const why=ONLC.canStart(L,me,conn);if(why)throw new Error(why);const out=ONLC.startRoom(L);
     L.status='live';L.seed=(Math.random()*2**31)>>>0;L.started=mockNow();w.matches[L.id]={id:L.id,seed:L.seed,inputs:[],results:{},open:null,watch:{},abandoned:{},abandon:ONLC.abandonRule(L),standsOff:!!L.standsOff};
@@ -107,32 +107,32 @@ Object.assign(MOCK_ROUTES,{
     const L=ONLC.quickPick(Object.values(w.lobbies).filter(x=>!x.mock),g,ev,!!d.ranked,flag,now);
     if(L){const why=ONLC.roomJoin(L,g,now);if(why)throw new Error(why);mockUpd80(w,L);return {lobby:mockRoomOut80(w,L),made:false}}
     return {lobby:mockRoomOut80(w,mockCreate80(w,{ev,ranked:!!d.ranked},me,true)),made:true}},
-  'lobby.call':(w,d,me)=>{const L=mockLobby80(w,d.id);mockMember80(L,me);if(L.status!=='waiting')throw new Error('Already under way.');if(L.players.length>=L.seats)throw new Error('Every seat is taken.');
-    L.cry=L.cry||[];const now=mockNow();if(L.cry.length>=ONLC.RATE.cryMax)throw new Error('The crier has called three times.');const last=L.cry[L.cry.length-1]||0;
-    if(now-last<ONLC.RATE.cryGap)throw new Error(`The crier needs a breath — ${Math.ceil((ONLC.RATE.cryGap-(now-last))/1000)} s.`);
+  'lobby.call':(w,d,me)=>{const L=mockLobby80(w,d.id);mockMember80(L,me);if(L.status!=='waiting')throw new Error(_T('Already under way.'));if(L.players.length>=L.seats)throw new Error(_T('Every seat is taken.'));
+    L.cry=L.cry||[];const now=mockNow();if(L.cry.length>=ONLC.RATE.cryMax)throw new Error(_T('The crier has called three times.'));const last=L.cry[L.cry.length-1]||0;
+    if(now-last<ONLC.RATE.cryGap)throw new Error(_T`The crier needs a breath — ${Math.ceil((ONLC.RATE.cryGap-(now-last))/1000)} s.`);
     L.cry.push(now);mockCry80(w,L,me,'call');mockUpd80(w,L);return {left:ONLC.RATE.cryMax-L.cry.length}},
-  'lobby.invite':(w,d,me)=>{const L=mockLobby80(w,d.id);mockMember80(L,me);if(L.status!=='waiting')throw new Error('Already under way.');const why=mockInvite80(w,me,L,d.to,false);if(why)throw new Error(why);return {}},
-  'lobby.again':(w,d,me)=>{const O=mockLobby80(w,d.id);if(!O.players.some(p=>p.id===me)||O.status==='waiting')throw new Error('Fight in that match first.');
+  'lobby.invite':(w,d,me)=>{const L=mockLobby80(w,d.id);mockMember80(L,me);if(L.status!=='waiting')throw new Error(_T('Already under way.'));const why=mockInvite80(w,me,L,d.to,false);if(why)throw new Error(why);return {}},
+  'lobby.again':(w,d,me)=>{const O=mockLobby80(w,d.id);if(!O.players.some(p=>p.id===me)||O.status==='waiting')throw new Error(_T('Fight in that match first.'));
     const L=mockCreate80(w,{ev:O.ev,loc:O.loc,ranked:!!O.ranked,seats:O.seats,abandon:O.abandon,standsOff:O.standsOff,ticket:O.ticket},me,false);
     const invited=[];for(const p of O.players){if(/^bot/.test(p.id)||p.id===me)continue;if(!mockInvite80(w,me,L,p.id,true))invited.push(p.id)}return {lobby:mockRoomOut80(w,L),invited}},
-  'lobby.say':(w,d,me)=>{const L=mockLobby80(w,d.id);const A=w.accounts[me];if(!mockAud80(L).includes(me))throw new Error('You are not in that room.');if(!ONLC.phraseOK('room',d.q))throw new Error('Quick chat only.');
-    if(!mockRate80(A,'sayAt',ONLC.RATE.say,mockNow()))throw new Error('One phrase every 3 seconds.');const line={by:me,name:mockName80(w,me),q:d.q,at:mockNow()};
+  'lobby.say':(w,d,me)=>{const L=mockLobby80(w,d.id);const A=w.accounts[me];if(!mockAud80(L).includes(me))throw new Error(_T('You are not in that room.'));if(!ONLC.phraseOK('room',d.q))throw new Error(_T('Quick chat only.'));
+    if(!mockRate80(A,'sayAt',ONLC.RATE.say,mockNow()))throw new Error(_T('One phrase every 3 seconds.'));const line={by:me,name:mockName80(w,me),q:d.q,at:mockNow()};
     const c=w.chats[L.id]=(w.chats[L.id]||[]);c.push(line);if(c.length>ONLC.CHAT_KEEP)c.splice(0,c.length-ONLC.CHAT_KEEP);
     mockTo(mockAud80(L).filter(x=>x!==me&&!((w.accounts[x]||{}).mutes||[]).includes(me)),'lobby.say',{id:L.id,line});
     if(d.q==='ready'&&L.status==='waiting'){const p=L.players.find(p=>p.id===me);if(p&&!p.ready){p.ready=true;mockUpd80(w,L)}}return {line}},
-  'lobby.chatlog':(w,d,me)=>{const L=mockLobby80(w,d.id);if(!mockAud80(L).includes(me))throw new Error('You are not in that room.');return (w.chats[L.id]||[]).slice(-ONLC.CHAT_KEEP)},
+  'lobby.chatlog':(w,d,me)=>{const L=mockLobby80(w,d.id);if(!mockAud80(L).includes(me))throw new Error(_T('You are not in that room.'));return (w.chats[L.id]||[]).slice(-ONLC.CHAT_KEEP)},
   'who.list':(w,d,me)=>mockHere80(w).filter(h=>!h.bot&&h.id!==me).sort((a,b)=>(b.seen||0)-(a.seen||0)).slice(0,40).map(h=>{const ch=onlMockChar(w,h.id);
     return {id:h.id,name:mockName80(w,h.id),rank:ch?ONLC.rankFor(ch).k:'tiro',st:h.match?'fight':mockRoomOf80(w,h.id)?'room':'free'}}),
   'forum.get':(w)=>w.forum.slice(-30),
-  'forum.say':(w,d,me)=>{if(!onlMockChar(w,me))throw new Error('Make a gladiator first.');if(!ONLC.phraseOK('forum',d.q))throw new Error('Quick chat only.');const A=w.accounts[me];const now=mockNow();
-    if(A.fAt&&now-A.fAt<ONLC.RATE.forum)throw new Error(`The Forum heard you — ${Math.ceil((ONLC.RATE.forum-(now-A.fAt))/1000)} s.`);A.fAt=now;
+  'forum.say':(w,d,me)=>{if(!onlMockChar(w,me))throw new Error(_T('Make a gladiator first.'));if(!ONLC.phraseOK('forum',d.q))throw new Error(_T('Quick chat only.'));const A=w.accounts[me];const now=mockNow();
+    if(A.fAt&&now-A.fAt<ONLC.RATE.forum)throw new Error(_T`The Forum heard you — ${Math.ceil((ONLC.RATE.forum-(now-A.fAt))/1000)} s.`);A.fAt=now;
     const line=mockLine80(w,{k:'say',by:me,name:mockName80(w,me),q:d.q});const day=Math.floor(now/864e5);w.fmeter=w.fmeter&&w.fmeter.d===day?w.fmeter:{d:day,n:0};
     if(w.fmeter.n<ONLC.RATE.meterDay){const to=mockHere80(w).filter(h=>!h.bot&&h.id!==me&&!h.match&&!((w.accounts[h.id]||{}).mutes||[]).includes(me)).map(h=>h.id);w.fmeter.n+=to.length;mockTo(to,'forum.line',{line})}return {line}},
   'forum.mute':(w,d,me)=>{const A=w.accounts[me];const m=new Set(A.mutes||[]);if(d.on)m.add(d.who);else m.delete(d.who);A.mutes=[...m].slice(-50);return {mutes:A.mutes}},
-  'match.say':(w,d,me)=>{const L=mockLobby80(w,d.id);const M=w.matches[d.id];const seat=mockSeat(L,me);if(!M||seat<0)throw new Error('Not your match.');
+  'match.say':(w,d,me)=>{const L=mockLobby80(w,d.id);const M=w.matches[d.id];const seat=mockSeat(L,me);if(!M||seat<0)throw new Error(_T('Not your match.'));
     /* the closing phrases also pass while the others are still reporting the result (the bout ended on this screen first) */
-    const done=L.status!=='live';if(!(ONLC.phraseOK('after',d.q)||!done&&ONLC.phraseOK('match',d.q)))throw new Error('Quick chat only.');if(done&&mockNow()-(M.doneAt||L.started||0)>600000)throw new Error('That match is long over.');
-    if(!mockRate80(w.accounts[me],'sayAt',ONLC.RATE.say,mockNow()))throw new Error('One phrase every 3 seconds.');
+    const done=L.status!=='live';if(!(ONLC.phraseOK('after',d.q)||!done&&ONLC.phraseOK('match',d.q)))throw new Error(_T('Quick chat only.'));if(done&&mockNow()-(M.doneAt||L.started||0)>600000)throw new Error(_T('That match is long over.'));
+    if(!mockRate80(w.accounts[me],'sayAt',ONLC.RATE.say,mockNow()))throw new Error(_T('One phrase every 3 seconds.'));
     const to=L.players.map(p=>p.id).concat((L.stands||[]).map(s=>s.id),Object.keys(M.watch||{})).filter(x=>x!==me&&!((w.accounts[x]||{}).mutes||[]).includes(me));
     mockTo(to,'match.say',{id:L.id,seat,q:d.q,by:me});return {seat}}});
 /* the old routes push the room they changed (no more lobby.list storms) */
@@ -145,7 +145,7 @@ for(const k of ['party.create','party.join']){const base=MOCK_ROUTES[k];MOCK_ROU
 /* a settled match: a 'res' line in the Forum (the winners' names, the winner's CF), the room's update to its fighters */
 {const base=MOCK_ROUTES['match.result'];MOCK_ROUTES['match.result']=(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];const was=M&&M.status;const r=base(w,d,me);
   if(L&&M&&M.status==='done'&&was!=='done'){M.doneAt=mockNow();const A=ONLC.agree(M.reports||{});const rows=(A.table||[]).filter(x=>x.won);
-    const win=rows.map(x=>{const p=L.players[x.seat];return p?((p.kit&&p.kit.name)||p.name):'a CPU'});
+    const win=rows.map(x=>{const p=L.players[x.seat];return p?((p.kit&&p.kit.name)||p.name):_T('a CPU')});
     const line=mockLine80(w,{k:'res',ev:L.ev,loc:L.loc,win,cf:rows.length?Math.max(...rows.map(x=>x.f|0)):0,void:!!A.void});
     mockTo(mockHere80(w).filter(h=>!h.bot&&!h.match).map(h=>h.id),'forum.line',{line});mockTo(L.players.map(p=>p.id),'lobby.update',{id:L.id,lobby:mockRoomOut80(w,L)})}return r}}
 /* a room closed for good: its people hear it (not the whole world) */
@@ -153,7 +153,7 @@ mockClose=function(w,L,why){const M=w.matches[L.id];if(M)M.status='done';const s
   for(const [by,v] of Object.entries(st.payouts)){const c=onlMockChar(w,by);if(c)c.wallet+=v}L.status='done';L.closed=why;L.bets=[];L.pool=0;L.pot=0;
   mockTo(mockAud80(L).concat(L.players.map(p=>p.id)),'lobby.update',{id:L.id,closed:why})};
 /* every request stamps presence; pushes leave after the world is saved (a window reading on a push sees the change) */
-mockReq=async function(t,d){const R=MOCK_ROUTES[t];if(!R)throw new Error('Unknown request: '+t);await new Promise(r=>setTimeout(r,30+Math.random()*60));d=d||{};
+mockReq=async function(t,d){const R=MOCK_ROUTES[t];if(!R)throw new Error(_T('Unknown request: ')+t);await new Promise(r=>setTimeout(r,30+Math.random()*60));d=d||{};
   const w=mockLoad();mockSeedWorld(w);mock80Fix(w);const me=mockMe();if(me&&w.accounts[me])w.accounts[me].seen=mockNow();
   MOCK_OUT=[];let out;try{out=R(w,d,me)}catch(e){MOCK_OUT=[];throw e}mockSave(w);const q=MOCK_OUT;MOCK_OUT=[];mockFlush80(q);
   return JSON.parse(JSON.stringify(out===undefined?{}:out))};
@@ -176,12 +176,12 @@ const onlWaitRoom80=()=>{const L=onlMyLobby();return L&&L.status==='waiting'&&(L
 const onlInMatch80=()=>!!(S&&S.onl&&!S.over);
 /* the room's news, worked out here from the old and new copies (no server cost) */
 function onlRoomNews80(o,L){const me=onlMe80();if(!o||!Array.isArray(o.members)||!Array.isArray(L.members)||L.status!=='waiting')return;
-  const out=[];const nm=x=>x.id===me?'You':esc2(x.name);const om=new Set(o.members.map(m=>m.id)),nmS=new Set(L.members.map(m=>m.id));const op=new Map(o.players.map(p=>[p.id,p])),np=new Map(L.players.map(p=>[p.id,p]));
-  for(const m of L.members)if(!om.has(m.id))out.push(`${nm(m)} entered the room`);for(const m of o.members)if(!nmS.has(m.id))out.push(`${nm(m)} ${(L.kicked||{})[m.id]&&!(o.kicked||{})[m.id]?'was removed':'left'}`);
-  if(o.host.id!==L.host.id)out.push(`👑 ${L.host.id===me?'You host':esc2(L.host.name)+' hosts'} the room`);
-  for(const p of L.players)if(om.has(p.id)&&!op.has(p.id))out.push(`${nm(p)} sat down`);for(const p of o.players)if(nmS.has(p.id)&&!np.has(p.id))out.push(`${nm(p)} stood up`);
-  for(const p of L.players){const q=op.get(p.id);if(q&&p.ready&&!q.ready)out.push(`${nm(p)} ${p.id===me?'are':'is'} ready`);if(q&&p.team&&q.team&&p.team!==q.team)out.push(`${nm(p)} → Team ${esc2(p.team)}`)}
-  if(o.ev!==L.ev||o.seats!==L.seats)out.push(`The game is now ${esc2(onlEvName(L.ev))} · ${L.seats|0} seats`);if(o.loc!==L.loc)out.push(`The games move to ${esc2(onlCityName(L.loc))}`);
+  const out=[];const nm=x=>x.id===me?_T('You'):esc2(x.name);const om=new Set(o.members.map(m=>m.id)),nmS=new Set(L.members.map(m=>m.id));const op=new Map(o.players.map(p=>[p.id,p])),np=new Map(L.players.map(p=>[p.id,p]));
+  for(const m of L.members)if(!om.has(m.id))out.push(_T`${nm(m)} entered the room`);for(const m of o.members)if(!nmS.has(m.id))out.push(`${nm(m)} ${(L.kicked||{})[m.id]&&!(o.kicked||{})[m.id]?_T('was removed'):'left'}`);
+  if(o.host.id!==L.host.id)out.push(_T`👑 ${L.host.id===me?_T('You host'):esc2(L.host.name)+' hosts'} the room`);
+  for(const p of L.players)if(om.has(p.id)&&!op.has(p.id))out.push(_T`${nm(p)} sat down`);for(const p of o.players)if(nmS.has(p.id)&&!np.has(p.id))out.push(_T`${nm(p)} stood up`);
+  for(const p of L.players){const q=op.get(p.id);if(q&&p.ready&&!q.ready)out.push(_T`${nm(p)} ${p.id===me?_T('are'):_T('is')} ready`);if(q&&p.team&&q.team&&p.team!==q.team)out.push(_T`${nm(p)} → Team ${esc2(p.team)}`)}
+  if(o.ev!==L.ev||o.seats!==L.seats)out.push(_T`The game is now ${esc2(onlEvName(L.ev))} · ${L.seats|0} seats`);if(o.loc!==L.loc)out.push(_T`The games move to ${esc2(onlCityName(L.loc))}`);
   const c=ONLF.chat[L.id]=(ONLF.chat[L.id]||[]);for(const t of out)c.push({sys:1,text:t,at:Date.now()});if(c.length>60)c.splice(0,c.length-60)}
 function onlUpsert80(L){if(!L||!L.id)return;ONL.lobbies=ONL.lobbies||[];const i=ONL.lobbies.findIndex(x=>x.id===L.id);const o=i>=0?ONL.lobbies[i]:null;
   if(L.status==='done'){if(i>=0)ONL.lobbies.splice(i,1);return}if(o&&o.status==='waiting'&&(o.members||[]).some(m=>m.id===onlMe80()))onlRoomNews80(o,L);
@@ -189,9 +189,9 @@ function onlUpsert80(L){if(!L||!L.id)return;ONL.lobbies=ONL.lobbies||[];const i=
 const onlUp80=()=>{if(document.getElementById('onl'))onlRedraw()};
 NET.on('lobby.update',d=>{if(!d||!d.id||!ONL.acct)return;const me=onlMe80();ONL.lobbies=ONL.lobbies||[];const i=ONL.lobbies.findIndex(x=>x.id===d.id);const o=i>=0?ONL.lobbies[i]:null;
   if(d.lobby){onlUpsert80(d.lobby);onlUp80();return}
-  if(d.kicked){if(i>=0)ONL.lobbies.splice(i,1);ONL.kicked80[d.id]=Date.now()+ONLC.KICK_MS;onlToast80('✕ The host removed you from the room.');onlUp80();return}
+  if(d.kicked){if(i>=0)ONL.lobbies.splice(i,1);ONL.kicked80[d.id]=Date.now()+ONLC.KICK_MS;onlToast80(_T('✕ The host removed you from the room.'));onlUp80();return}
   if(d.started&&d.unseated){if(o){ONL.lobbies[i]={...o,status:'live',members:(o.members||[]).filter(m=>m.id!==me)};ONL.unseated80={L:o,id:d.id,until:Date.now()+10000};onlCountdown80()}onlUp80();return}
-  if(d.closed){if(i>=0){ONL.lobbies.splice(i,1);if(o.status==='waiting'&&(o.members||[]).some(m=>m.id===me)&&d.closed!=='empty')onlToast80('🚪 The room closed.')}onlUp80()}});
+  if(d.closed){if(i>=0){ONL.lobbies.splice(i,1);if(o.status==='waiting'&&(o.members||[]).some(m=>m.id===me)&&d.closed!=='empty')onlToast80(_T('🚪 The room closed.'))}onlUp80()}});
 /* 'started without you': a greyed room for 10 s, then back to Online (👁 Watch meanwhile) */
 let ONL_CD80=0;
 function onlCountdown80(){clearInterval(ONL_CD80);ONL_CD80=setInterval(()=>{const U=ONL.unseated80;if(!U){clearInterval(ONL_CD80);return}const left=Math.ceil((U.until-Date.now())/1000);
@@ -200,41 +200,41 @@ function onlCountdown80(){clearInterval(ONL_CD80);ONL_CD80=setInterval(()=>{cons
 /* ---------------- the room screen ---------------- */
 const onlTeamChip80=t=>t?`<i class="onl-team t${esc2(t)}">${esc2(t)}</i>`:'';
 function onlRoomLog80(L){const me=onlMe80();const c=(ONLF.chat[L.id]||[]).filter(l=>l.sys||!ONLF.muted.has(l.by)).slice(-40);
-  return c.map(l=>l.sys?`<div class="sys">· ${l.text}</div>`:`<div><b>${l.by===me?'You':esc2(l.name)}</b> ${esc2(onlQ80(l.q))}</div>`).join('')||'<div class="rc-sub">Say ave to the room.</div>'}
+  return c.map(l=>l.sys?`<div class="sys">· ${l.text}</div>`:`<div><b>${l.by===me?_T('You'):esc2(l.name)}</b> ${esc2(onlQ80(l.q))}</div>`).join('')||'<div class="rc-sub">Say ave to the room.</div>'}
 function onlRoomHTML80(L,grey){const me=onlMe80();const host=L.host.id===me;const member=(L.members||[]).some(m=>m.id===me);const seated=L.players.some(p=>p.id===me);const fan=!member&&(L.stands||[]).some(t=>t.id===me);
   const tm=ONLC.seatTeams(L);const keys=L.team?ONLC.teamKeys(L):[];const free=L.players.length<L.seats;const custTeams=L.team&&!L.ranked;
-  const ctl=id=>host&&id!==me&&!grey?`<span class="r80-ctl"><button type="button" class="btn tksm" data-onl="rhost" data-v="${esc2(id)}" title="Give the room to them">👑</button><button type="button" class="btn tksm" data-onl="rkick" data-v="${esc2(id)}" title="Remove from the room (5 minutes)">✕</button></span>`:'';
-  const seat=i=>{const p=L.players[i];if(!p)return `<div class="r80-seat empty"><span class="onl-rq">🪑</span><div class="r80-who"><b>Open seat</b><small>a CPU if empty${tm?` · ${onlTeamChip80(tm[i])}`:''}</small></div>${member&&!seated&&!grey?`<button type="button" class="btn tksm primary" data-onl="rsit" data-v="${L.id}">🪑 Sit</button>`:''}</div>`;
+  const ctl=id=>host&&id!==me&&!grey?`<span class="r80-ctl"><button type="button" class="btn tksm" data-onl="rhost" data-v="${esc2(id)}" title="${_T`Give the room to them`}">👑</button><button type="button" class="btn tksm" data-onl="rkick" data-v="${esc2(id)}" title="${_T`Remove from the room (5 minutes)`}">✕</button></span>`:'';
+  const seat=i=>{const p=L.players[i];if(!p)return `<div class="r80-seat empty"><span class="onl-rq">🪑</span><div class="r80-who">${_T`<b>Open seat</b><small>a CPU if empty${tm?` · ${onlTeamChip80(tm[i])}`:''}</small>`}</div>${member&&!seated&&!grey?`<button type="button" class="btn tksm primary" data-onl="rsit" data-v="${L.id}">${_T`🪑 Sit`}</button>`:''}</div>`;
     const k=p.kit;const t=tm&&tm[i];
-    const move=custTeams&&!grey&&!L.autoBal&&(host||p.id===me)?`<span class="r80-tm">${keys.map(x=>`<button type="button" class="r80-tb ${x===t?'on':''}" data-onl="rteam" data-v="${esc2(p.id)}|${x}" title="Team ${x}">${x}</button>`).join('')}</span>`:'';
-    return `<div class="r80-seat on ${p.id===me?'me':''}">${k?onlFig(k.cls,k.look,54):'<span class="onl-rq">?</span>'}<div class="r80-who">${onlTeamChip80(t)}<b>${esc2(p.id===me?'You':p.name)}</b>${p.id===L.host.id?' <span title="Host">👑</span>':''}${p.ready?' <span class="onl-rdy">✓</span>':''}
+    const move=custTeams&&!grey&&!L.autoBal&&(host||p.id===me)?`<span class="r80-tm">${keys.map(x=>`<button type="button" class="r80-tb ${x===t?'on':''}" data-onl="rteam" data-v="${esc2(p.id)}|${x}" title="${_T`Team ${x}`}">${x}</button>`).join('')}</span>`:'';
+    return `<div class="r80-seat on ${p.id===me?'me':''}">${k?onlFig(k.cls,k.look,54):'<span class="onl-rq">?</span>'}<div class="r80-who">${onlTeamChip80(t)}<b>${esc2(p.id===me?_T('You'):p.name)}</b>${p.id===L.host.id?' <span title="Host">👑</span>':''}${p.ready?' <span class="onl-rdy">✓</span>':''}
       <small>${k?esc2((CLASSES[k.cls]||{}).name||'')+' · ':''}${onlRankChip(p.rank)}</small>${move}</div>${ctl(p.id)}</div>`};
   const standing=(L.members||[]).filter(m=>!L.players.some(p=>p.id===m.id));
-  const stand=standing.length?`<div class="r80-stand"><b>Standing</b>${standing.map(m=>`<span class="r80-sm ${m.id===me?'me':''}">${esc2(m.id===me?'You':m.name)} ${onlRankChip(m.rank)}${m.id===L.host.id?' 👑':''}${ctl(m.id)}</span>`).join('')}</div>`:'';
+  const stand=standing.length?`<div class="r80-stand">${_T`<b>Standing</b>${standing.map(m=>`<span class="r80-sm ${m.id===me?'me':''}">${esc2(m.id===me?_T('You'):m.name)} ${onlRankChip(m.rank)}${m.id===L.host.id?' 👑':''}${ctl(m.id)}</span>`).join('')}`}</div>`:'';
   const opt=(v,l,cur)=>`<option value="${v}" ${String(cur)===String(v)?'selected':''}>${esc2(l)}</option>`;const [lo,hi]=ONLC.seatRange(L.ev);const rule=ONLC.abandonRule(L);
-  const set=host&&!grey?`<div class="r80-set"><label>Event<select class="tin" data-onlrs="ev">${ONLC.EVENTS_ALL.map(k=>opt(k,onlEvName(k)+(ONLC.EVENTS_TEAM.includes(k)?' · teams':''),L.ev)).join('')}</select></label>
-     <label>City<select class="tin" data-onlrs="loc">${LOCATIONS.map((x,i)=>x?opt(i,x.n,L.loc):'').join('')}</select></label>
-     <label>Seats<select class="tin" data-onlrs="seats" ${lo===hi?'disabled title="Classic events seat four"':''}>${Array.from({length:hi-lo+1},(_,j)=>opt(lo+j,lo+j,L.seats)).join('')}</select></label>
-     ${L.team?`<label>Teams<select class="tin" data-onlrs="teams">${Array.from({length:Math.max(1,Math.min(8,L.seats)-1)},(_,j)=>opt(j+2,j+2,L.teams||2)).join('')}</select></label>`:''}
+  const set=host&&!grey?`<div class="r80-set"><label>${_T`Event`}<select class="tin" data-onlrs="ev">${ONLC.EVENTS_ALL.map(k=>opt(k,onlEvName(k)+(ONLC.EVENTS_TEAM.includes(k)?' · teams':''),L.ev)).join('')}</select></label>
+     <label>${_T`City`}<select class="tin" data-onlrs="loc">${LOCATIONS.map((x,i)=>x?opt(i,x.n,L.loc):'').join('')}</select></label>
+     <label>${_T`Seats`}<select class="tin" data-onlrs="seats" ${lo===hi?_T('disabled title="Classic events seat four"'):''}>${Array.from({length:hi-lo+1},(_,j)=>opt(lo+j,lo+j,L.seats)).join('')}</select></label>
+     ${L.team?`<label>${_T`Teams`}<select class="tin" data-onlrs="teams">${Array.from({length:Math.max(1,Math.min(8,L.seats)-1)},(_,j)=>opt(j+2,j+2,L.teams||2)).join('')}</select></label>`:''}
      ${custTeams?`<label class="chk"><input type="checkbox" data-onlrs="autoBal" ${L.autoBal?'checked':''}> ⚖ Auto-balance</label>`:''}
-     ${!L.ranked?`<label>Leaving<select class="tin" data-onlrs="abandon">${opt('cpu','a CPU fights on',rule)}${opt('fate','eliminated',rule)}</select></label>`:''}
-     <label>Stands<select class="tin" data-onlrs="standsOff">${opt(0,'act in round 1',L.standsOff?1:0)}${opt(1,'watch only',L.standsOff?1:0)}</select></label>
-     <label>Ticket<select class="tin" data-onlrs="ticket" ${L.standsOff?'disabled':''}>${[0,2,5,10,20].map(n=>opt(n,n?n+' coin':'none',L.ticket|0)).join('')}</select></label></div>`
-   :`<div class="r80-rules rc-sub">Leaving: ${L.ranked?'Damnatio':rule==='fate'?'eliminated':'a CPU fights on'} · Stands: ${L.standsOff?'watch only':'act in round 1'} · Ticket: ${L.ticket?(L.ticket|0)+' coin':'none'}${L.team?` · ${L.teams||2} teams${L.ranked||L.autoBal?' (balanced at the horns)':''}`:''}</div>`;
+     ${!L.ranked?`<label>${_T`Leaving`}<select class="tin" data-onlrs="abandon">${opt('cpu',_T('a CPU fights on'),rule)}${opt('fate','eliminated',rule)}</select></label>`:''}
+     <label>${_T`Stands`}<select class="tin" data-onlrs="standsOff">${opt(0,_T('act in round 1'),L.standsOff?1:0)}${opt(1,_T('watch only'),L.standsOff?1:0)}</select></label>
+     <label>${_T`Ticket`}<select class="tin" data-onlrs="ticket" ${L.standsOff?'disabled':''}>${[0,2,5,10,20].map(n=>opt(n,n?n+' coin':'none',L.ticket|0)).join('')}</select></label></div>`
+   :`<div class="r80-rules rc-sub">${_T`Leaving: ${L.ranked?_T('Damnatio'):rule==='fate'?_T('eliminated'):_T('a CPU fights on')} · Stands: ${L.standsOff?_T('watch only'):_T('act in round 1')} · Ticket: ${L.ticket?(L.ticket|0)+' coin':_T('none')}${L.team?_T` · ${L.teams||2} teams${L.ranked||L.autoBal?_T(' (balanced at the horns)'):''}`:''}`}</div>`;
   const why=host?ONLC.canStart(L,me):'';const me0=L.players.find(p=>p.id===me);const cries=Math.max(0,ONLC.RATE.cryMax-(L.cry||[]).length);
-  const go=grey||fan?'':`${host?`<button type="button" class="btn primary" data-onl="start" data-v="${L.id}" ${why?`disabled title="${esc2(why)}"`:''}>▶ Start</button>`:seated?`<button type="button" class="btn ${me0&&me0.ready?'':'primary'}" data-onl="rready" data-v="${me0&&me0.ready?0:1}">${me0&&me0.ready?'✓ Ready — undo':'✓ Ready'}</button><button type="button" class="btn" data-onl="rstand" data-v="${L.id}">Stand up</button>`:''}
-     <button type="button" class="btn" data-onl="rcall" data-v="${L.id}" ${!free||!cries?`disabled title="${!free?'Every seat is taken.':'The crier has called three times.'}"`:'title="The crier calls free lanistas to your room"'}>📣 Call <small>${cries} left</small></button>
-     <button type="button" class="btn" data-onl="rinvite" data-v="${L.id}">✉ Invite</button>`;
-  const leave=grey?'':`<button type="button" class="btn" data-onl="leave" data-v="${L.id}">${fan?'Give back the ticket':'Leave'}</button>`;
+  const go=grey||fan?'':`${host?`<button type="button" class="btn primary" data-onl="start" data-v="${L.id}" ${why?_T`disabled title="${esc2(why)}"`:''}>${_T`▶ Start`}</button>`:seated?`<button type="button" class="btn ${me0&&me0.ready?'':'primary'}" data-onl="rready" data-v="${me0&&me0.ready?0:1}">${me0&&me0.ready?'✓ Ready — undo':_T('✓ Ready')}</button><button type="button" class="btn" data-onl="rstand" data-v="${L.id}">${_T`Stand up`}</button>`:''}
+     <button type="button" class="btn" data-onl="rcall" data-v="${L.id}" ${!free||!cries?_T`disabled title="${!free?_T('Every seat is taken.'):_T('The crier has called three times.')}"`:_T('title="The crier calls free lanistas to your room"')}>${_T`📣 Call <small>${cries} left</small>`}</button>
+     <button type="button" class="btn" data-onl="rinvite" data-v="${L.id}">${_T`✉ Invite`}</button>`;
+  const leave=grey?'':`<button type="button" class="btn" data-onl="leave" data-v="${L.id}">${fan?_T('Give back the ticket'):_T('Leave')}</button>`;
   const chips=grey?'':ONLC.QC.room.map(q=>`<button type="button" data-onl="rsay" data-v="${q}">${esc2(onlQ80(q))}</button>`).join('');
   return `<div class="card2 onl-room80 ${grey?'grey':''}" id="onlRoom80" data-room="${L.id}"><div class="r80-head">${typeof cardHTML==='function'?`<div class="r80-ev">${cardHTML('e:'+L.ev,'sm')}</div>`:''}
-     <div class="r80-ttl"><h3>${fan?'🎟 ':''}${esc2(onlEvName(L.ev))} <small>at ${esc2(onlCityName(L.loc))}</small></h3>
-      <div class="r80-tags">${L.ranked?`<span class="badge gold">⚔ Ranked</span> ${onlRankChip(L.rank)}`:'<span class="badge">Custom</span>'}${L.team?`<span class="badge">👥 ${L.teams||2} teams</span>`:''}<span class="badge">🪑 ${L.players.length}/${L.seats} seated</span><span class="badge">👤 ${(L.members||[]).length}/${ONLC.ROOM_MAX} in the room</span>${(L.stands||[]).length?`<span class="badge">🎟 ${L.stands.length}</span>`:''}</div></div>
+     <div class="r80-ttl"><h3>${_T`${fan?'🎟 ':''}${esc2(onlEvName(L.ev))} <small>at ${esc2(onlCityName(L.loc))}</small>`}</h3>
+      <div class="r80-tags">${L.ranked?`<span class="badge gold">${_T`⚔ Ranked`}</span> ${onlRankChip(L.rank)}`:_T('<span class="badge">Custom</span>')}${L.team?`<span class="badge">${_T`👥 ${L.teams||2} teams`}</span>`:''}<span class="badge">${_T`🪑 ${L.players.length}/${L.seats} seated`}</span><span class="badge">${_T`👤 ${(L.members||[]).length}/${ONLC.ROOM_MAX} in the room`}</span>${(L.stands||[]).length?`<span class="badge">🎟 ${L.stands.length}</span>`:''}</div></div>
      <div class="r80-lv">${leave}</div></div>
    <div class="r80-body"><div class="r80-main"><div class="r80-seats">${Array.from({length:L.seats},(_,i)=>seat(i)).join('')}</div>${stand}${set}
      ${host&&why&&!grey?`<p class="onl-busy">⏳ ${esc2(why)}</p>`:''}<div class="acts r80-go">${go}</div></div>
     <div class="r80-talk"><div class="r80-log" id="r80Log">${onlRoomLog80(L)}</div><div class="ofor-chips">${chips}</div></div></div>
-   ${grey?`<div class="r80-over"><b>The horns sounded without you.</b><span>Back to Online in <b id="r80cd">${Math.max(0,Math.ceil(((ONL.unseated80||{}).until-Date.now())/1000)||0)}</b> s</span><div class="acts"><button type="button" class="btn primary" data-onl="uwatch" data-v="${L.id}">👁 Watch</button><button type="button" class="btn" data-onl="uback">Back now</button></div></div>`:''}</div>`}
+   ${grey?`<div class="r80-over">${_T`<b>The horns sounded without you.</b><span>Back to Online in <b id="r80cd">${Math.max(0,Math.ceil(((ONL.unseated80||{}).until-Date.now())/1000)||0)}</b> s</span>`}<div class="acts"><button type="button" class="btn primary" data-onl="uwatch" data-v="${L.id}">${_T`👁 Watch`}</button><button type="button" class="btn" data-onl="uback">${_T`Back now`}</button></div></div>`:''}</div>`}
 const ONL_ROOM79=onlMyLobbyHTML;
 /* the room at the top of Play and the Lobby Browser; a live room keeps the v0.79 card (Rejoin / Watch / Take your seat) */
 function onlRoomTop80(){const U=ONL.unseated80;if(U&&Date.now()<U.until)return onlRoomHTML80(U.L,true);const L=onlMyLobby();if(!L)return '';return L.status==='waiting'?onlRoomHTML80(L,false):ONL_ROOM79()}
@@ -242,33 +242,33 @@ onlMyLobbyHTML=function(){return ONL._play80?onlLandingHTML80():onlRoomTop80()};
 {const base=onlPlayHTML;onlPlayHTML=function(){ONL._play80=1;let h;try{h=base.apply(this,arguments)}finally{ONL._play80=0}
   return onlRoomTop80()+h.replace('👥 Team · 2 v 2','👥 Teams · 4–8 seats')}}
 /* the Lobby Browser: rooms, made in one click */
-onlLobbyHTML=function(){const me=onlMe80();const rows=ONL.lobbies||[];const st=L=>L.status==='waiting'?'<span class="badge gold">Waiting</span>':'<span class="badge">In progress</span>';
-  return `<div class="onl-lbtop"><h3>📜 Lobby Browser <span class="rc-sub">${rows.length} room${rows.length===1?'':'s'}</span></h3><div class="acts"><button type="button" class="btn" data-onl="refresh">↻ Refresh</button><button type="button" class="btn primary" data-onl="mkroom" data-v="1">＋ Ranked room</button><button type="button" class="btn" data-onl="mkroom" data-v="0">＋ Custom room</button></div></div>
+onlLobbyHTML=function(){const me=onlMe80();const rows=ONL.lobbies||[];const st=L=>L.status==='waiting'?_T('<span class="badge gold">Waiting</span>'):_T('<span class="badge">In progress</span>');
+  return `<div class="onl-lbtop"><h3>${_T`📜 Lobby Browser`} <span class="rc-sub">${_T`${rows.length} room${rows.length===1?'':'s'}`}</span></h3><div class="acts"><button type="button" class="btn" data-onl="refresh">${_T`↻ Refresh`}</button><button type="button" class="btn primary" data-onl="mkroom" data-v="1">${_T`＋ Ranked room`}</button><button type="button" class="btn" data-onl="mkroom" data-v="0">${_T`＋ Custom room`}</button></div></div>
    ${ONL.betting?onlBetHTML():''}${onlRoomTop80()}
-   <table class="tally onl-lb"><tr><th>Host</th><th>Event</th><th>City</th><th>Lanistas</th><th>Seated</th><th>Rank</th><th>Status</th><th></th></tr>${rows.map(L=>{const mine=(L.members||[]).some(m=>m.id===me)||L.players.some(p=>p.id===me)||(L.stands||[]).some(t=>t.id===me);const kicked=ONL.kicked80[L.id]&&Date.now()<ONL.kicked80[L.id];
-     return `<tr class="${mine?'mine':''}" data-row="${L.id}"><td><b>${esc2(L.host.name)}</b></td><td>${esc2(onlEvName(L.ev))}${L.team?` <span class="badge">👥 ${L.teams||2} teams</span>`:''}</td><td>${esc2(onlCityName(L.loc))}</td><td>${(L.members||L.players).length}/${ONLC.ROOM_MAX}</td><td>${L.players.length}/${L.seats}${(L.stands||[]).length?` <small class="rc-sub">🎟${L.stands.length}</small>`:''}</td><td>${L.ranked?onlRankChip(L.rank):'<span class="rc-sub">Custom · any</span>'}</td><td>${st(L)}</td>
-      <td class="acts">${L.status==='waiting'&&!mine&&!kicked?`<button type="button" class="btn tksm primary" data-onl="join" data-v="${L.id}">${L.players.length<L.seats?'Join':'Join · stand'}</button>`:''}${L.status==='waiting'?`<button type="button" class="btn tksm" data-onl="bet" data-v="${L.id}" title="Wager from your wallet">💰${L.pool?' '+L.pool:''}</button>`:''}${L.status==='live'?(L.players.some(p=>p.id===me)&&!(ONL.leftMatch||{})[L.id]?`<button type="button" class="btn tksm primary" data-onl="rejoin" data-v="${L.id}" title="Back to your match">⚔ Rejoin</button>`:`<button type="button" class="btn tksm" data-onl="watch" data-v="${L.id}" title="Watch for free">👁</button>`):''}${L.ticket&&L.status==='waiting'&&!mine?`<button type="button" class="btn tksm" data-onl="ticket" data-v="${L.id}" title="A seat in the stands until the horns. The coin goes into the wager pot.">🎟 ${L.ticket}</button>`:''}</td></tr>`}).join('')||'<tr><td colspan="8" class="rc-sub">No rooms open. Open one.</td></tr>'}</table>`};
+   <table class="tally onl-lb"><tr><th>${_T`Host`}</th><th>${_T`Event`}</th><th>${_T`City`}</th><th>${_T`Lanistas`}</th><th>${_T`Seated`}</th><th>${_T`Rank`}</th><th>${_T`Status`}</th><th></th></tr>${rows.map(L=>{const mine=(L.members||[]).some(m=>m.id===me)||L.players.some(p=>p.id===me)||(L.stands||[]).some(t=>t.id===me);const kicked=ONL.kicked80[L.id]&&Date.now()<ONL.kicked80[L.id];
+     return `<tr class="${mine?'mine':''}" data-row="${L.id}"><td><b>${esc2(L.host.name)}</b></td><td>${esc2(onlEvName(L.ev))}${L.team?` <span class="badge">${_T`👥 ${L.teams||2} teams`}</span>`:''}</td><td>${esc2(onlCityName(L.loc))}</td><td>${(L.members||L.players).length}/${ONLC.ROOM_MAX}</td><td>${L.players.length}/${L.seats}${(L.stands||[]).length?` <small class="rc-sub">🎟${L.stands.length}</small>`:''}</td><td>${L.ranked?onlRankChip(L.rank):'<span class="rc-sub">Custom · any</span>'}</td><td>${st(L)}</td>
+      <td class="acts">${L.status==='waiting'&&!mine&&!kicked?`<button type="button" class="btn tksm primary" data-onl="join" data-v="${L.id}">${L.players.length<L.seats?_T('Join'):'Join · stand'}</button>`:''}${L.status==='waiting'?`<button type="button" class="btn tksm" data-onl="bet" data-v="${L.id}" title="${_T`Wager from your wallet`}">💰${L.pool?' '+L.pool:''}</button>`:''}${L.status==='live'?(L.players.some(p=>p.id===me)&&!(ONL.leftMatch||{})[L.id]?`<button type="button" class="btn tksm primary" data-onl="rejoin" data-v="${L.id}" title="${_T`Back to your match`}">${_T`⚔ Rejoin`}</button>`:`<button type="button" class="btn tksm" data-onl="watch" data-v="${L.id}" title="${_T`Watch for free`}">👁</button>`):''}${L.ticket&&L.status==='waiting'&&!mine?`<button type="button" class="btn tksm" data-onl="ticket" data-v="${L.id}" title="${_T`A seat in the stands until the horns. The coin goes into the wager pot.`}">🎟 ${L.ticket}</button>`:''}</td></tr>`}).join('')||'<tr><td colspan="8" class="rc-sub">No rooms open. Open one.</td></tr>'}</table>`};
 
 /* ---------------- the landing row: Orbis Terrarum + the Forum ---------------- */
-function onlCap80(){const H=ONLF.here||{};const n=H.n|0;return `<b>${n}</b> lanista${n===1?'':'s'} online · ${H.fight|0} fighting · ${H.wait|0} waiting`}
+function onlCap80(){const H=ONLF.here||{};const n=H.n|0;return _T`<b>${n}</b> lanista${n===1?'':'s'} online · ${H.fight|0} fighting · ${H.wait|0} waiting`}
 function onlDots80(k){const z=(ONLF.here||{}).zones||{};return Object.entries(z).map(([tz,c])=>{const ll=typeof onlTzLL==='function'?onlTzLL(tz):null;if(!ll)return '';
   const j=ONLF.jit[tz]||(ONLF.jit[tz]=[Math.random()-.5,Math.random()-.5,Math.random()*4]);const x=(ll[1]+180)/360*100+j[0]*.6,y=(76-ll[0])/128*100+j[1]*1.2;const s=(10+Math.sqrt(c|0)*9)*k;
   return `<i class="omap-dot" style="left:${x.toFixed(2)}%;top:${y.toFixed(2)}%;width:${s.toFixed(0)}px;height:${s.toFixed(0)}px;animation-delay:${j[2].toFixed(1)}s"></i>`}).join('')}
-function onlOrbisHTML80(){return `<div class="ow-h">Orbis Terrarum<small id="omapCap">${onlCap80()}</small></div><div class="omap" data-onl="omap" role="button" tabindex="0" title="Open the map"><div class="omap-in"></div><div class="omap-dots" aria-hidden="true">${onlDots80(1)}</div></div>`}
+function onlOrbisHTML80(){return `<div class="ow-h">${_T`Orbis Terrarum<small id="omapCap">${onlCap80()}</small>`}</div><div class="omap" data-onl="omap" role="button" tabindex="0" title="${_T`Open the map`}"><div class="omap-in"></div><div class="omap-dots" aria-hidden="true">${onlDots80(1)}</div></div>`}
 function onlCanTake80(id,at){const R=onlMyLobby();if(R&&R.status==='waiting')return false;const L=(ONL.lobbies||[]).find(x=>x.id===id);return L?(L.status==='waiting'&&L.players.length<L.seats):Date.now()-(at||0)<30000}
-function onlRowTxt80(r){if(!r)return '';return `${esc2(onlEvName(r.ev))} · ${r.ranked?'Ranked':'Custom'} · ${esc2(onlCityName(r.loc))}`}
+function onlRowTxt80(r){if(!r)return '';return `${esc2(onlEvName(r.ev))} · ${r.ranked?_T('Ranked'):_T('Custom')} · ${esc2(onlCityName(r.loc))}`}
 function onlFeedHTML80(){const me=onlMe80();const L=[...(ONLF.lines||[]),...ONLF.local].filter(l=>!(l.by&&ONLF.muted.has(l.by))).sort((a,b)=>(a.at||0)-(b.at||0)).slice(-40);
   if(!L.length)return '<div class="rc-sub">The Forum is quiet. Say ave.</div>';
-  return L.map(l=>{const who=l.by===me?'You':esc2(l.name||'A lanista');const r=l.row||{};const take=r.id&&l.by!==me&&onlCanTake80(r.id,l.at)?`<button type="button" class="take" data-onl="take" data-v="${esc2(r.id)}">⚔ Take a seat</button>`:'';
+  return L.map(l=>{const who=l.by===me?_T('You'):esc2(l.name||_T('A lanista'));const r=l.row||{};const take=r.id&&l.by!==me&&onlCanTake80(r.id,l.at)?`<button type="button" class="take" data-onl="take" data-v="${esc2(r.id)}">${_T`⚔ Take a seat`}</button>`:'';
     if(l.k==='say')return `<div><span class="who">${who}:</span> ${esc2(onlQ80(l.q))}</div>`;
-    if(l.k==='open')return `<div class="pr">📯 <b>${who}</b> opened ${onlRowTxt80(r)} — ${l.need|0} seat${l.need===1?'':'s'} free${take}</div>`;
-    if(l.k==='call')return `<div class="pr">📣 <b>${who}</b> calls for ${l.need|0} more · ${onlRowTxt80(r)}${take}</div>`;
-    if(l.k==='inv')return `<div class="pr">✉ <b>${esc2(l.from||'A lanista')}</b> invited you · ${onlRowTxt80(r)}${take}</div>`;
-    if(l.k==='res')return l.void?`<div class="res">⚖ ${esc2(onlEvName(l.ev))} at ${esc2(onlCityName(l.loc))} — void, no result</div>`:`<div class="res">🏆 ${esc2((l.win||[]).join(' & ')||'Nobody')} won ${esc2(onlEvName(l.ev))} at ${esc2(onlCityName(l.loc))}${l.cf?` — ${l.cf|0} CF`:''}</div>`;
+    if(l.k==='open')return `<div class="pr">${_T`📯 <b>${who}</b> opened ${onlRowTxt80(r)} — ${l.need|0} seat${l.need===1?'':'s'} free${take}`}</div>`;
+    if(l.k==='call')return `<div class="pr">${_T`📣 <b>${who}</b> calls for ${l.need|0} more · ${onlRowTxt80(r)}${take}`}</div>`;
+    if(l.k==='inv')return `<div class="pr">${_T`✉ <b>${esc2(l.from||_T('A lanista'))}</b> invited you · ${onlRowTxt80(r)}${take}`}</div>`;
+    if(l.k==='res')return l.void?`<div class="res">${_T`⚖ ${esc2(onlEvName(l.ev))} at ${esc2(onlCityName(l.loc))} — void, no result`}</div>`:`<div class="res">${_T`🏆 ${esc2((l.win||[]).join(' & ')||_T('Nobody'))} won ${esc2(onlEvName(l.ev))} at ${esc2(onlCityName(l.loc))}${l.cf?_T` — ${l.cf|0} CF`:''}`}</div>`;
     return ''}).join('')}
 function onlLandingHTML80(){const q=onlQuiet80();
   return `<div class="ow-row" id="onlRow80"><div class="ow-col ow-map">${onlOrbisHTML80()}</div>
-   <div class="ow-col"><div class="ow-h">📯 The Forum<small>quick calls</small><span class="f80-ctl"><button type="button" class="btn tksm" data-onl="who" title="Who is here">👥 ${(ONLF.here||{}).n|0} here</button><button type="button" class="btn tksm ${q?'on':''}" data-onl="quiet" title="${q?'Quiet: no banners or invite pop-ups':'Banners and invites pop up'}">${q?'🔕 Quiet':'🔔'}</button></span></div>
+   <div class="ow-col"><div class="ow-h">${_T`📯 The Forum<small>quick calls</small>`}<span class="f80-ctl"><button type="button" class="btn tksm" data-onl="who" title="${_T`Who is here`}">${_T`👥 ${(ONLF.here||{}).n|0} here`}</button><button type="button" class="btn tksm ${q?'on':''}" data-onl="quiet" title="${q?_T('Quiet: no banners or invite pop-ups'):_T('Banners and invites pop up')}">${q?_T('🔕 Quiet'):'🔔'}</button></span></div>
     <div class="ofor"><div class="ofor-feed" id="onlFeed80">${onlFeedHTML80()}</div><div class="ofor-chips">${ONLC.QC.forum.map(x=>`<button type="button" data-onl="fsay" data-v="${x}">${esc2(onlQ80(x))}</button>`).join('')}</div></div></div></div>`}
 /* small patches instead of a whole redraw */
 function onlPatchFeed80(){const f=document.getElementById('onlFeed80');if(f){f.innerHTML=onlFeedHTML80();f.scrollTop=f.scrollHeight}}
@@ -288,7 +288,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   NET.req('lobby.list').then(rows=>{if(Array.isArray(rows)){ONL.lobbies=rows;if(ONL.tab==='lobby')onlRedraw()}}).catch(()=>{})},true);
 /* the large map: a centred view over everything (never a modal() over the Online window) */
 function onlMapBig80(){for(const o of document.querySelectorAll('.omapbig'))o.remove();const o=document.createElement('div');o.className='omapbig onl80pop';
-  o.innerHTML=`<button type="button" class="x">✕ Close</button><div class="cap">Orbis Terrarum<small>${onlCap80()}</small></div><div class="frame"><div class="omap-in"></div><div class="omap-dots" aria-hidden="true">${onlDots80(1.8)}</div></div>`;
+  o.innerHTML=`<button type="button" class="x">${_T`✕ Close`}</button><div class="cap">${_T`Orbis Terrarum<small>${onlCap80()}</small>`}</div><div class="frame"><div class="omap-in"></div><div class="omap-dots" aria-hidden="true">${onlDots80(1.8)}</div></div>`;
   o.addEventListener('click',e=>{e.stopPropagation();o.remove()});document.body.appendChild(o)}
 
 /* ---------------- the Forum and the Praeco: pushes ---------------- */
@@ -300,7 +300,7 @@ NET.on('forum.line',d=>{const l=d&&(d.line||d);if(!l||!l.k||!ONL.acct)return;if(
 /* the 📣 banner: 15 s; not with Quiet, nor in a room or a fight, nor with the Online window shut */
 function onlCryBanner80(l){if(onlQuiet80()||onlInMatch80()||onlWaitRoom80()||!document.getElementById('onl'))return;const r=l.row||{};if(!r.id||!onlCanTake80(r.id,Date.now()))return;
   let b=document.getElementById('onlCry80');if(!b){b=document.createElement('div');b.id='onlCry80';b.setAttribute('role','status');document.body.appendChild(b)}
-  b.innerHTML=`<span>${l.k==='call'?'📣':'📯'} <b>${esc2(l.name||'A lanista')}</b> ${l.k==='call'?`calls for ${l.need|0} more`:'opened a room'} · ${onlRowTxt80(r)}</span><button type="button" class="btn tksm primary" data-onl="take" data-v="${esc2(r.id)}">⚔ Take a seat</button><button type="button" class="btn tksm" data-onl="cryx" title="Dismiss">✕</button>`;
+  b.innerHTML=`<span>${l.k==='call'?'📣':'📯'} <b>${esc2(l.name||_T('A lanista'))}</b> ${l.k==='call'?_T`calls for ${l.need|0} more`:_T('opened a room')} · ${onlRowTxt80(r)}</span><button type="button" class="btn tksm primary" data-onl="take" data-v="${esc2(r.id)}">${_T`⚔ Take a seat`}</button><button type="button" class="btn tksm" data-onl="cryx" title="${_T`Dismiss`}">✕</button>`;
   b.hidden=false;clearTimeout(ONLF.cryT);ONLF.cryT=setTimeout(()=>{const x=document.getElementById('onlCry80');if(x)x.hidden=true},15000)}
 /* the banner never outlives the Online window */
 setInterval(()=>{const b=document.getElementById('onlCry80');if(b&&!b.hidden&&(!document.getElementById('onl')||onlInMatch80()||onlWaitRoom80()))b.hidden=true},700);
@@ -312,26 +312,26 @@ function onlPopOpen80(){return !!document.querySelector('.ask76bg,.veraskbg,.onl
 setInterval(()=>{try{/* v0.81: no timer — an invite dies with its room (124) */if(!ONLF.invq.length||!document.getElementById('onl')||onlPopOpen80()||onlInMatch80())return;
   const it=ONLF.invq.shift();if(onlWaitRoom80()||onlQuiet80()){ONLF.local.push({k:'inv',from:it.from,by:it.fromId,row:it.row,at:it.at});onlPatchFeed80();return}onlInvitePop80(it)}catch(e){}},400);
 function onlInvitePop80(it){const r=it.row;const bg=document.createElement('div');bg.className='veraskbg onl80pop inv80bg';
-  bg.innerHTML=`<div class="card2 verask" role="dialog" aria-modal="true"><b>✉ ${esc2(it.from||'A lanista')} invites you</b><div style="margin:6px 0 10px">${onlRowTxt80(r)}<div class="rc-sub">${(r.players||[]).length}/${r.seats|0} seated · ${(r.members||[]).length}/${ONLC.ROOM_MAX} in the room</div></div>
-   <div class="acts"><button type="button" class="btn primary" data-onl="ijoin" data-v="${esc2(r.id)}">⚔ Join</button><button type="button" class="btn" data-onl="ino">Not now</button><button type="button" class="btn" data-onl="imute" data-v="${esc2(it.fromId||'')}">🔇 Mute</button></div></div>`;
+  bg.innerHTML=`<div class="card2 verask" role="dialog" aria-modal="true">${_T`<b>✉ ${esc2(it.from||_T('A lanista'))} invites you</b>`}<div style="margin:6px 0 10px">${onlRowTxt80(r)}<div class="rc-sub">${_T`${(r.players||[]).length}/${r.seats|0} seated · ${(r.members||[]).length}/${ONLC.ROOM_MAX} in the room`}</div></div>
+   <div class="acts"><button type="button" class="btn primary" data-onl="ijoin" data-v="${esc2(r.id)}">${_T`⚔ Join`}</button><button type="button" class="btn" data-onl="ino">${_T`Not now`}</button><button type="button" class="btn" data-onl="imute" data-v="${esc2(it.fromId||'')}">${_T`🔇 Mute`}</button></div></div>`;
   bg.addEventListener('click',e=>{if(e.target===bg)bg.remove()});document.body.appendChild(bg)}
 /* the who list: lanistas here now */
 async function onlWho80(){let rows=[];try{rows=await NET.req('who.list')}catch(e){onlToast80('⚠ '+esc2(e.message));return}for(const o of document.querySelectorAll('.w80bg'))o.remove();
-  const room=onlWaitRoom80();const st={free:'free',room:'in a room',fight:'fighting'};
+  const room=onlWaitRoom80();const st={free:'free',room:_T('in a room'),fight:'fighting'};
   const row=w=>{const R=(ONL.lobbies||[]).find(L=>L.status==='waiting'&&(L.members||[]).some(m=>m.id===w.id));const F=(ONL.lobbies||[]).find(L=>L.status==='live'&&L.players.some(p=>p.id===w.id));const mu=ONLF.muted.has(w.id);
     return `<div class="w80r" data-who="${esc2(w.id)}"><b>${esc2(w.name)}</b> ${onlRankChip(w.rank)} <span class="badge ${w.st==='free'?'gold':''}">${st[w.st]||esc2(w.st)}</span><span class="acts">
-      ${room&&w.st!=='fight'&&!(room.members||[]).some(m=>m.id===w.id)?`<button type="button" class="btn tksm" data-onl="winv" data-v="${esc2(w.id)}">✉ Invite</button>`:''}
-      ${!room&&R&&w.st==='room'?`<button type="button" class="btn tksm primary" data-onl="wjoin" data-v="${R.id}">⚔ Join</button>`:''}
-      ${F&&w.st==='fight'?`<button type="button" class="btn tksm" data-onl="wwatch" data-v="${F.id}">👁 Watch</button>`:''}
-      <button type="button" class="btn tksm" data-onl="wmute" data-v="${esc2(w.id)}" data-on="${mu?0:1}">${mu?'🔊 Unmute':'🔇 Mute'}</button></span></div>`};
+      ${room&&w.st!=='fight'&&!(room.members||[]).some(m=>m.id===w.id)?`<button type="button" class="btn tksm" data-onl="winv" data-v="${esc2(w.id)}">${_T`✉ Invite`}</button>`:''}
+      ${!room&&R&&w.st==='room'?`<button type="button" class="btn tksm primary" data-onl="wjoin" data-v="${R.id}">${_T`⚔ Join`}</button>`:''}
+      ${F&&w.st==='fight'?`<button type="button" class="btn tksm" data-onl="wwatch" data-v="${F.id}">${_T`👁 Watch`}</button>`:''}
+      <button type="button" class="btn tksm" data-onl="wmute" data-v="${esc2(w.id)}" data-on="${mu?0:1}">${mu?_T('🔊 Unmute'):_T('🔇 Mute')}</button></span></div>`};
   const bg=document.createElement('div');bg.className='veraskbg onl80pop w80bg';
-  bg.innerHTML=`<div class="card2 verask w80" role="dialog" aria-modal="true"><div class="w80h"><b>👥 Lanistas here · ${rows.length}</b><button type="button" class="btn tksm" data-onl="wx">✕</button></div><div class="w80list">${rows.map(row).join('')||'<p class="rc-sub">Nobody else is here right now.</p>'}</div></div>`;
+  bg.innerHTML=`<div class="card2 verask w80" role="dialog" aria-modal="true"><div class="w80h">${_T`<b>👥 Lanistas here · ${rows.length}</b>`}<button type="button" class="btn tksm" data-onl="wx">✕</button></div><div class="w80list">${rows.map(row).join('')||'<p class="rc-sub">Nobody else is here right now.</p>'}</div></div>`;
   bg.addEventListener('click',e=>{if(e.target===bg)bg.remove()});document.body.appendChild(bg)}
 const onlPopClose80=el=>{const p=el&&el.closest('.onl80pop');if(p)p.remove()};
 
 /* ---------------- the controls ---------------- */
 for(const a of ['mkroom','rsit','rready','take','fsay','rcall','rinvite','rsay','ijoin','wjoin','winv'])ONL_NEEDS_GLAD.add(a);
-Object.assign(ONL_WHY,{mkroom:'to open a room',rsit:'to take a seat',rready:'to take a seat',take:'to take a seat',fsay:'to speak in the Forum',rcall:'to call lanistas',rinvite:'to invite lanistas',rsay:'to speak in the room',ijoin:'to join a room',wjoin:'to join a room',winv:'to invite lanistas'});
+Object.assign(ONL_WHY,{mkroom:_T('to open a room'),rsit:_T('to take a seat'),rready:_T('to take a seat'),take:_T('to take a seat'),fsay:_T('to speak in the Forum'),rcall:_T('to call lanistas'),rinvite:_T('to invite lanistas'),rsay:_T('to speak in the room'),ijoin:_T('to join a room'),wjoin:_T('to join a room'),winv:_T('to invite lanistas')});
 const ONL_ACTS80=new Set(['quick','join','leave','ready','ticket','betgo','mkroom','newgame','rsit','rstand','rready','rhost','rkick','rteam','rcall','rinvite','rsay','fsay','take','who','quiet','omap','cryx','ijoin','ino','imute','wjoin','winv','wwatch','wmute','wx','uwatch','uback']);
 const onlReq80=async(t,d)=>{const r=await NET.req(t,d);if(r&&r.lobby)onlUpsert80(r.lobby);else if(r&&r.id&&r.players)onlUpsert80(r);return r};
 const onlRoomId80=()=>(onlMyLobby()||{}).id;
@@ -339,7 +339,7 @@ window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('
   e.preventDefault();e.stopImmediatePropagation();const inOnl=!!b.closest('#onl');
   if(!inOnl&&ONL_NEEDS_GLAD.has(a)&&!ONL.char&&ONL.acct){onlPopClose80(b);onlNeedGlad(a==='ijoin'||a==='take'?'join':a);return}
   if(a==='omap'){onlMapBig80();return}
-  if(a==='quiet'){try{localStorage.setItem('flavius_onlquiet80',onlQuiet80()?'0':'1')}catch(err){}onlToast80(onlQuiet80()?'🔕 Quiet — no banners or invite pop-ups.':'🔔 Banners and invites pop up again.');onlRedraw();return}
+  if(a==='quiet'){try{localStorage.setItem('flavius_onlquiet80',onlQuiet80()?'0':'1')}catch(err){}onlToast80(onlQuiet80()?_T('🔕 Quiet — no banners or invite pop-ups.'):_T('🔔 Banners and invites pop up again.'));onlRedraw();return}
   if(a==='cryx'){const x=document.getElementById('onlCry80');if(x)x.hidden=true;return}
   if(a==='who'){onlWho80();return}
   if(a==='wx'||a==='ino'){onlPopClose80(b);return}
@@ -348,12 +348,12 @@ window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('
   if(a==='wwatch'){onlPopClose80(b);const L=(ONL.lobbies||[]).find(x=>x.id===v);if(L)onlDo(()=>onlWatch(L));return}
   if(a==='wmute'||a==='imute'){const on=a==='imute'||b.dataset.on==='1';if(a==='imute')onlPopClose80(b);if(!v)return;
     return onlDo(async()=>{await NET.req('forum.mute',{who:v,on});if(on)ONLF.muted.add(v);else ONLF.muted.delete(v);onlMuteSave80();ONLF.invq=ONLF.invq.filter(x=>x.fromId!==v);
-      onlToast80(on?'🔇 Muted — no phrases, calls or invites from them.':'🔊 Unmuted.');if(a==='wmute'){const p=document.querySelector('.w80bg');if(p){p.remove();onlWho80()}}})}
+      onlToast80(on?_T('🔇 Muted — no phrases, calls or invites from them.'):_T('🔊 Unmuted.'));if(a==='wmute'){const p=document.querySelector('.w80bg');if(p){p.remove();onlWho80()}}})}
   if(a==='quick'){const [ev,rk]=String(v).split('|');return onlDo(async()=>{const r=await onlReq80('lobby.quick',{ev,ranked:rk==='1'});
-    onlToast80(r.made?`📯 A new ${esc2(onlEvName(ev))} room — the crier calls for lanistas.`:`⚔ You joined ${esc2(r.lobby.host.name)}’s room.`)})}
-  if(a==='mkroom'||a==='newgame')return onlDo(async()=>{await onlReq80('lobby.create',{ranked:v==='1'||a==='newgame'});onlToast80('📯 Your room is open — the crier calls.')});
+    onlToast80(r.made?_T`📯 A new ${esc2(onlEvName(ev))} room — the crier calls for lanistas.`:_T`⚔ You joined ${esc2(r.lobby.host.name)}’s room.`)})}
+  if(a==='mkroom'||a==='newgame')return onlDo(async()=>{await onlReq80('lobby.create',{ranked:v==='1'||a==='newgame'});onlToast80(_T('📯 Your room is open — the crier calls.'))});
   if(a==='join'||a==='take'||a==='ijoin'||a==='wjoin'){onlPopClose80(b);if(a==='take'){const x=document.getElementById('onlCry80');if(x)x.hidden=true}
-    return onlDo(async()=>{const L=await onlReq80('lobby.join',{id:v});if(ONL.tab!=='lobby')ONL.tab='play';const sat=L.players.some(p=>p.id===onlMe80());onlToast80(sat?`🪑 You sat down in ${esc2(L.host.name)}’s room.`:`👤 You stand in ${esc2(L.host.name)}’s room — every seat is taken.`)})}
+    return onlDo(async()=>{const L=await onlReq80('lobby.join',{id:v});if(ONL.tab!=='lobby')ONL.tab='play';const sat=L.players.some(p=>p.id===onlMe80());onlToast80(sat?_T`🪑 You sat down in ${esc2(L.host.name)}’s room.`:_T`👤 You stand in ${esc2(L.host.name)}’s room — every seat is taken.`)})}
   if(a==='leave')return onlDo(async()=>{await onlReq80('lobby.leave',{id:v})});
   if(a==='ready'||a==='rready')return onlDo(async()=>{await onlReq80('lobby.ready',{id:onlRoomId80()||v,ready:a==='ready'||v==='1'})});
   if(a==='rsit')return onlDo(async()=>{await onlReq80('lobby.sit',{id:v})});
@@ -361,13 +361,13 @@ window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('
   if(a==='rhost')return onlDo(async()=>{await onlReq80('lobby.host',{id:onlRoomId80(),to:v})});
   if(a==='rkick')return onlDo(async()=>{await onlReq80('lobby.kick',{id:onlRoomId80(),who:v})});
   if(a==='rteam'){const [who,team]=String(v).split('|');return onlDo(async()=>{await onlReq80('lobby.team',{id:onlRoomId80(),who,team})})}
-  if(a==='rcall')return onlDo(async()=>{const r=await NET.req('lobby.call',{id:v});const L=onlMyLobby();if(L)L.cry=(L.cry||[]).concat(Date.now());onlToast80(`📣 The crier calls — ${r.left|0} call${r.left===1?'':'s'} left.`)});
+  if(a==='rcall')return onlDo(async()=>{const r=await NET.req('lobby.call',{id:v});const L=onlMyLobby();if(L)L.cry=(L.cry||[]).concat(Date.now());onlToast80(_T`📣 The crier calls — ${r.left|0} call${r.left===1?'':'s'} left.`)});
   if(a==='rinvite'){onlWho80();return}
-  if(a==='winv')return onlDo(async()=>{await NET.req('lobby.invite',{id:onlRoomId80(),to:v});onlToast80('✉ Invitation sent.');b.disabled=true;b.textContent='✉ Sent'});
+  if(a==='winv')return onlDo(async()=>{await NET.req('lobby.invite',{id:onlRoomId80(),to:v});onlToast80(_T('✉ Invitation sent.'));b.disabled=true;b.textContent=_T('✉ Sent')});
   if(a==='rsay')return onlSayRoom80(v);
   if(a==='fsay')return onlDo(async()=>{const r=await NET.req('forum.say',{q:v});const l=r&&r.line;if(l&&!ONLF.lines.some(x=>x.at===l.at&&x.by===l.by))ONLF.lines.push(l)});
-  if(a==='ticket')return onlDo(async()=>{const r=await onlReq80('lobby.ticket',{id:v});ONL.char=r.char;onlToast80(`🎟 A seat in the stands at ${esc2(onlCityName(r.lobby.loc))} — it opens when the horns sound.`)});
-  if(a==='betgo')return onlDo(async()=>{const r=await onlReq80('bet.place',{id:v,seat:+($('#onlBetSeat')||{}).value,amt:+($('#onlBetAmt')||{}).value});ONL.char=r.char;ONL.betting=null;onlToast80('💰 Wager placed.')})},true);
+  if(a==='ticket')return onlDo(async()=>{const r=await onlReq80('lobby.ticket',{id:v});ONL.char=r.char;onlToast80(_T`🎟 A seat in the stands at ${esc2(onlCityName(r.lobby.loc))} — it opens when the horns sound.`)});
+  if(a==='betgo')return onlDo(async()=>{const r=await onlReq80('bet.place',{id:v,seat:+($('#onlBetSeat')||{}).value,amt:+($('#onlBetAmt')||{}).value});ONL.char=r.char;ONL.betting=null;onlToast80(_T('💰 Wager placed.'))})},true);
 async function onlSayRoom80(q){const id=onlRoomId80();if(!id)return;try{const r=await NET.req('lobby.say',{id,q});const l=r&&r.line;if(l){const c=ONLF.chat[id]=(ONLF.chat[id]||[]);if(!c.some(x=>!x.sys&&x.at===l.at&&x.by===l.by))c.push(l)}onlPatchLog80()}
   catch(e){onlToast80('⚠ '+esc2(e.message))}}
 /* the host's settings: one change → lobby.set → the room comes back */
@@ -384,7 +384,7 @@ setInterval(()=>{try{if(!document.getElementById('onl')||!ONL.acct)return;const 
 {const base=onlRefresh;onlRefresh=async function(){const r=await base.apply(this,arguments);try{if(ONLF.here&&ONLF.here.n)ONL.stats={...(ONL.stats||{}),online:ONLF.here.n}}catch(e){}return r}}
 
 /* ---------------- in the match: 💬 phrases, bubbles over the gladiator, ⚔ Again ---------------- */
-function onlSeatName80(seat){const p=S&&S.players[seat];if(p)return p.name;const t=((S&&S.onl&&S.onl.stands)||[])[seat-((S&&S.onl&&S.onl.fighters)||0)];return t?t.name:'A lanista'}
+function onlSeatName80(seat){const p=S&&S.players[seat];if(p)return p.name;const t=((S&&S.onl&&S.onl.stands)||[])[seat-((S&&S.onl&&S.onl.fighters)||0)];return t?t.name:_T('A lanista')}
 function onlBubble80(seat,q){if(typeof HEADLESS!=='undefined'&&HEADLESS)return;if(!S)return;let box=document.getElementById('wbubs');if(!box){const cw=document.querySelector('.canvas-wrap');if(!cw)return;box=document.createElement('div');box.id='wbubs';cw.appendChild(box)}
   const p=S.players[seat];const el=document.createElement('div');el.className='qbub80';let x,y;
   if(p&&p.alive&&!p.exited&&p.r!=null){const m=center(p.r,p.c);x=m.x;y=m.y-TW*1.25;el.innerHTML=`${esc2(onlQ80(q))}`}else{x=box.clientWidth/2;y=48;el.innerHTML=`<small>${esc2(onlSeatName80(seat))}</small> ${esc2(onlQ80(q))}`;el.classList.add('far')}
@@ -394,16 +394,16 @@ NET.on('match.say',d=>{if(!d||!S||!S.onl||d.id!==S.onl.lobby)return;if(d.by&&(d.
 function onlSayable80(){return !!(S&&S.onl&&S.onl.seat>=0&&!S.onl.watch&&(ONLM.me>=0||S.over)&&!(ONL.leftMatch||{})[S.onl.lobby])}
 function onlSayBar80(){const lv=document.getElementById('btnOnlLeave');let s=document.getElementById('btnOnlSay80');let ag=document.getElementById('btnOnlAgain80');
   if(!lv||!onlSayable80()){if(s)s.remove();if(ag)ag.remove();const p=document.getElementById('onlSay80');if(p)p.remove();return}
-  if(!s){s=document.createElement('button');s.id='btnOnlSay80';s.type='button';s.className='btn';s.textContent='💬';s.title='Quick phrases';lv.after(s)}
+  if(!s){s=document.createElement('button');s.id='btnOnlSay80';s.type='button';s.className='btn';s.textContent='💬';s.title=_T('Quick phrases');lv.after(s)}
   const fighter=S.onl.seat<(S.onl.fighters||S.players.length);
-  if(S.over&&fighter){if(!ag){ag=document.createElement('button');ag.id='btnOnlAgain80';ag.type='button';ag.className='btn primary';ag.textContent='⚔ Again';ag.title='A new room with the same game — the others are invited';s.after(ag)}}else if(ag)ag.remove()}
+  if(S.over&&fighter){if(!ag){ag=document.createElement('button');ag.id='btnOnlAgain80';ag.type='button';ag.className='btn primary';ag.textContent=_T('⚔ Again');ag.title=_T('A new room with the same game — the others are invited');s.after(ag)}}else if(ag)ag.remove()}
 setInterval(()=>{try{onlSayBar80()}catch(e){}},500);
 function onlSayPop80(){let p=document.getElementById('onlSay80');if(p){p.remove();return}const b=document.getElementById('btnOnlSay80');if(!b)return;const r=b.getBoundingClientRect();
   p=document.createElement('div');p.id='onlSay80';const sc=S.over?'after':'match';p.innerHTML=ONLC.QC[sc].map(q=>`<button type="button" data-msay="${q}">${esc2(onlQ80(q))}</button>`).join('');
   p.style.left=Math.max(8,Math.min(innerWidth-260,r.left))+'px';p.style.top=(r.bottom+6)+'px';document.body.appendChild(p)}
 async function onlMatchSay80(q){try{await NET.req('match.say',{id:S.onl.lobby,q});onlBubble80(S.onl.seat,q);return true}catch(err){onlToast80('⚠ '+esc2(err.message));return false}}
 async function onlAgain80(){const id=S&&S.onl&&S.onl.lobby;if(!id)return;
-  try{const r=await NET.req('lobby.again',{id});onlUpsert80(r.lobby);const n=(r.invited||[]).length;onlToast80(`⚔ A new room — ${n?n+' lanista'+(n===1?'':'s')+' invited':'the others are elsewhere'}.`);ONL.tab='play';onlExit();return r}
+  try{const r=await NET.req('lobby.again',{id});onlUpsert80(r.lobby);const n=(r.invited||[]).length;onlToast80(_T`⚔ A new room — ${n?n+' lanista'+(n===1?'':'s')+' invited':_T('the others are elsewhere')}.`);ONL.tab='play';onlExit();return r}
   catch(err){onlToast80('⚠ '+esc2(err.message));return null}}
 document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
   if(t.closest('#btnOnlSay80')){e.preventDefault();e.stopPropagation();ONLM.uiAt=Date.now();onlSayPop80();return}

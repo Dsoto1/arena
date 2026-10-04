@@ -75,29 +75,29 @@ async function chStep(player,fromR,fromC){
   const ch=player.ch;if(!ch||!ch.mounted)return;
   // trample anyone on foot
   const foot=S.players.find(other=>other!==player&&other.alive&&other.r===player.r&&other.c===player.c&&other.ch&&!other.ch.mounted);
-  if(foot){log(`${nm(player)}'s chariot runs down ${nm(foot)} on foot. Bye, Felicius!`,'big');eliminate(foot,{type:'player',p:player})}
+  if(foot){log(_T`${nm(player)}'s chariot runs down ${nm(foot)} on foot. Bye, Felicius!`,'big');eliminate(foot,{type:'player',p:player})}
   const a=chProg(fromR,fromC),b=chProg(player.r,player.c);
   if(b>0.4&&b<0.6)ch.check=true;
-  if(a>0.75&&b<0.25&&ch.check){ch.laps++;ch.check=false;log(`${nm(player)} completes lap ${ch.laps} of 3!`,'big');if(ch.laps>=3){S.raceWinner=player.id;checkEnd()}}
+  if(a>0.75&&b<0.25&&ch.check){ch.laps++;ch.check=false;log(_T`${nm(player)} completes lap ${ch.laps} of 3!`,'big');if(ch.laps>=3){S.raceWinner=player.id;checkEnd()}}
   if(CH_GATES.some(([r,c])=>r===player.r&&c===player.c)){
-    log(`${nm(player)} passes through a pillar gate.`);
-    if(ch.horse){ch.horse.face^=1;ch.horse.dmg=0;const f=ch.horse.sides[ch.horse.face];log(`${ch.horse.name||'The horse'}'s token flips: ${f.hp} HP, +${f.mv} movement.`)}
+    log(_T`${nm(player)} passes through a pillar gate.`);
+    if(ch.horse){ch.horse.face^=1;ch.horse.dmg=0;const f=ch.horse.sides[ch.horse.face];log(_T`${ch.horse.name||_T('The horse')}'s token flips: ${f.hp} HP, +${f.mv} movement.`)}
     const o=drawChOffer();
-    if(o==='merc1'||o==='merc2'){const v=o==='merc1'?1:2;player.mv+=v;log(`Speed of Mercury: +${v} movement.`)}
-    else if(o==='cf1'||o==='cf2'){const v=o==='cf1'?1:2;cfWhy('breaking pots');player.cf+=v;log(`The crowd roars: +${v} CF.`)}
+    if(o==='merc1'||o==='merc2'){const v=o==='merc1'?1:2;player.mv+=v;log(_T`Speed of Mercury: +${v} movement.`)}
+    else if(o==='cf1'||o==='cf2'){const v=o==='cf1'?1:2;cfWhy(_T('breaking pots'));player.cf+=v;log(_T`The crowd roars: +${v} CF.`)}
     else if(o==='curse'){
-      let pay;if(player.cpu)pay=player.cf>=6;else pay=player.cf>=3&&await modal('Curse Tablet','<p>Pay 3 CF, or roll a d6 and deal that much damage to both your horse and your wheel.</p>',[{label:'Pay 3 CF',value:1,primary:1},{label:'Roll the d6',value:0}]);
-      if(pay){player.cf-=3;log(`${nm(player)} pays 3 CF to lift the Curse Tablet.`)}
-      else{const d=d6();log(`Curse Tablet: ${nm(player)} rolls ${d}.`,'bad');chHitPart(player,'wheel',d);chHitPart(player,'horse',d)}
+      let pay;if(player.cpu)pay=player.cf>=6;else pay=player.cf>=3&&await modal(_T('Curse Tablet'),'<p>Pay 3 CF, or roll a d6 and deal that much damage to both your horse and your wheel.</p>',[{label:_T('Pay 3 CF'),value:1,primary:1},{label:_T('Roll the d6'),value:0}]);
+      if(pay){player.cf-=3;log(_T`${nm(player)} pays 3 CF to lift the Curse Tablet.`)}
+      else{const d=d6();log(_T`Curse Tablet: ${nm(player)} rolls ${d}.`,'bad');chHitPart(player,'wheel',d);chHitPart(player,'horse',d)}
     }
-    player.mv+=2;log(`${nm(player)} gains a free step beyond the gate.`);
+    player.mv+=2;log(_T`${nm(player)} gains a free step beyond the gate.`);
   }
 }
 /* chHitPart — deals damage to a chariot's wheel (shatters at 0 HP) or horse (lost when its face's HP is used up). Wrapped by 76-chariot59. */
 function chHitPart(player,part,damage){
   const ch=player.ch;
-  if(part==='wheel'&&ch.wheel){ch.wheel.hp-=damage;if(ch.wheel.hp<=0){ch.wheel=null;log(`${nm(player)}'s ${ch.name?ch.name+"'s ":''}wheel shatters (−2 movement until replaced).`,'bad')}else log(`${nm(player)}'s ${ch.wheel.name||'wheel'}: ${ch.wheel.hp} HP left.`)}
-  if(part==='horse'&&ch.horse){ch.horse.dmg+=damage;const f=ch.horse.sides[ch.horse.face];if(ch.horse.dmg>=f.hp){log(`${nm(player)}'s horse ${ch.horse.name||''} is lost!`,'bad');ch.horse=null}else log(`${nm(player)}'s ${ch.horse.name||'horse'}: ${f.hp-ch.horse.dmg} HP left on this face.`)}
+  if(part==='wheel'&&ch.wheel){ch.wheel.hp-=damage;if(ch.wheel.hp<=0){ch.wheel=null;log(_T`${nm(player)}'s ${ch.name?ch.name+"'s ":''}wheel shatters (−2 movement until replaced).`,'bad')}else log(_T`${nm(player)}'s ${ch.wheel.name||'wheel'}: ${ch.wheel.hp} HP left.`)}
+  if(part==='horse'&&ch.horse){ch.horse.dmg+=damage;const f=ch.horse.sides[ch.horse.face];if(ch.horse.dmg>=f.hp){log(_T`${nm(player)}'s horse ${ch.horse.name||''} is lost!`,'bad');ch.horse=null}else log(_T`${nm(player)}'s ${ch.horse.name||'horse'}: ${f.hp-ch.horse.dmg} HP left on this face.`)}
 }
 /* chCanAttack — a racer may attack once per lap, from the first finished lap, in a PvP round with chariot PvP allowed. */
 function chCanAttack(player){const ch=player.ch;return ch&&ch.laps>=1&&ch.attackLap!==ch.laps&&RD().pvp&&S.opts.chPvp!==false}
@@ -109,9 +109,9 @@ async function chAttack(player,source,target){
   const locs=LOCS.filter(l=>q.hp[l]>0);
   let tgt;
   if(player.cpu)tgt=parts.includes('horse')?'horse':parts.includes('wheel')?'wheel':locs.sort((a,b)=>(q.hp[a]+q.ap[a])-(q.hp[b]+q.ap[b]))[0];
-  else tgt=await modal(`Attack ${q.name}`,'<p>In a chariot race the attacker chooses the target: the wheel, the horse, or any body location.</p>',[...parts.map(x=>({label:x==='wheel'?`${q.ch.wheel.name||'Wheel'} (${q.ch.wheel.hp} HP)`:`${q.ch.horse.name||'Horse'} (${q.ch.horse.sides[q.ch.horse.face].hp-q.ch.horse.dmg} HP)`,card:x==='wheel'?'h:'+(q.ch.wheel.art||'wheel8'):'h:'+(q.ch.horse.sides[q.ch.horse.face].art||'saxoA'),value:x})),...locs.map(l=>({label:LOCN[l],sub:`AP ${q.ap[l]} · HP ${q.hp[l]}`,value:l}))]);
+  else tgt=await modal(_T`Attack ${q.name}`,'<p>In a chariot race the attacker chooses the target: the wheel, the horse, or any body location.</p>',[...parts.map(x=>({label:x==='wheel'?_T`${q.ch.wheel.name||_T('Wheel')} (${q.ch.wheel.hp} HP)`:_T`${q.ch.horse.name||_T('Horse')} (${q.ch.horse.sides[q.ch.horse.face].hp-q.ch.horse.dmg} HP)`,card:x==='wheel'?'h:'+(q.ch.wheel.art||'wheel8'):'h:'+(q.ch.horse.sides[q.ch.horse.face].art||'saxoA'),value:x})),...locs.map(l=>({label:LOCN[l],sub:_T`AP ${q.ap[l]} · HP ${q.hp[l]}`,value:l}))]);
   const hits=rollHits(2),h=cnt(hits),dmg=h*pw+(h?(hasCestus(player,source.arm)?1:0):0);
-  const pre=`${nm(player)} attacks ${nm(q)} with ${w.n} ${diceHtml(hits)} = ${dmg}`;
+  const pre=_T`${nm(player)} attacks ${nm(q)} with ${w.n} ${diceHtml(hits)} = ${dmg}`;
   if(tgt==='wheel'||tgt==='horse'){log(`${pre} → ${tgt}`);chHitPart(q,tgt,dmg)}
   else await hurt(q,tgt,dmg,{type:'player',p:player},pre);
   checkEnd();
@@ -123,25 +123,25 @@ function chariotSetup(){
   S.npcs=[];S.chest=null;
   for(const [kind,r,c] of CH_SPARES)placeFloor(kind,kind,r,c,{part:kind==='wheel'?(w=>({name:w.n,art:w.art,hp:w.hp,max:w.hp}))(pickOne(WHEELS)):(H=>({name:H.n,sides:H.sides,face:0,dmg:0}))(pickOne(HORSES))});
   S.players.forEach((player,i)=>{[player.r,player.c]=CH_STARTS[i];player.start=[player.r,player.c];
-    const W0=pickOne(WHEELS),H0=pickOne(HORSES),CN=chariotFor(player.color);player.ch={mounted:true,name:CN.n,art:CN.art,cr:player.r,cc:player.c,wheel:{name:W0.n,art:W0.art,hp:W0.hp,max:W0.hp},horse:{name:H0.n,sides:H0.sides,face:0,dmg:0},laps:0,check:false,attackLap:-1};if(!player.cpu)cardShow('g:'+CN.art,player);log(`${nm(player)} takes the reins of the <b data-card="g:${CN.art}">${CN.n}</b>, drawn by <b data-card="h:${H0.sides[0].art}">${H0.n}</b> (+${H0.sides[0].mv} speed, ${H0.sides[0].hp} HP) on a <span data-card="h:${W0.art}">${W0.n}</span> (${W0.hp} HP).`)});
+    const W0=pickOne(WHEELS),H0=pickOne(HORSES),CN=chariotFor(player.color);player.ch={mounted:true,name:CN.n,art:CN.art,cr:player.r,cc:player.c,wheel:{name:W0.n,art:W0.art,hp:W0.hp,max:W0.hp},horse:{name:H0.n,sides:H0.sides,face:0,dmg:0},laps:0,check:false,attackLap:-1};if(!player.cpu)cardShow('g:'+CN.art,player);log(`${_T`${nm(player)} takes the reins of the`} <b data-card="g:${CN.art}">${CN.n}</b>${_T`, drawn by`} <b data-card="h:${H0.sides[0].art}">${H0.n}</b> ${_T`(+${H0.sides[0].mv} speed, ${H0.sides[0].hp} HP) on a`} <span data-card="h:${W0.art}">${W0.n}</span> ${_T`(${W0.hp} HP).`}`)});
 }
 /* chariotDraft — the chariot draft: head armor, chest armor and a level 1–2 weapon picked in turn; each racer gets 2 keys and 3 CF. Replaced by 76-chariot59. */
 async function chariotDraft(){
-  log('Chariot draft: every racer draws a chariot, a wheel and a horse, then drafts head armor, chest armor and a level 1-2 weapon.','hd');
+  log(_T('Chariot draft: every racer draws a chariot, a wheel and a horse, then drafts head armor, chest armor and a level 1-2 weapon.'),'hd');
   const heads=['galea','galea','cassis','crista','murmillo','cassis'],chests=['balteus','pectorale','pectorale','lorica','lorica','balteus'],weps=[...MARKET_W[1],...MARKET_W[2]];
-  for(const [title,pool,kind] of [['Head armor',heads,'a'],['Chest armor',chests,'a'],['Weapon',weps,'w']]){
+  for(const [title,pool,kind] of [[_T('Head armor'),heads,'a'],[_T('Chest armor'),chests,'a'],[_T('Weapon'),weps,'w']]){
     const avail=[...pool];
     for(const p of S.players){
       let k;
       if(p.cpu)k=avail.sort((a,b)=>itemValue(kind,b)-itemValue(kind,a))[0];
-      else{const i=await modal(`Draft · ${p.name} · ${title}`,'<p>Pick one.</p>',avail.map((x,i)=>({label:kind==='w'?W[x].n:ARM[x].n,sub:kind==='w'?wStats(mkW(x)):armorDesc(x),value:i})));k=avail[i??0]}
+      else{const i=await modal(_T`Draft · ${p.name} · ${title}`,'<p>Pick one.</p>',avail.map((x,i)=>({label:kind==='w'?W[x].n:ARM[x].n,sub:kind==='w'?wStats(mkW(x)):armorDesc(x),value:i})));k=avail[i??0]}
       avail.splice(avail.indexOf(k),1);
       if(kind==='w')p.wR=mkW(k);else equipPiece(p,k,ARM[k].slot);
-      log(`${nm(p)} drafts ${kind==='w'?W[k].n:ARM[k].n}.`);
+      log(_T`${nm(p)} drafts ${kind==='w'?W[k].n:ARM[k].n}.`);
     }
   }
   for(const p of S.players){p.wL=mkW('chariotCard');if(p.ch)p.wL.gart='g:'+p.ch.art;p.keys=2;p.cf+=3} // the printed chariot card sits in the secondary slot
-  log('Each racer receives an Arena Key token (2 keys) and 3 CF. The chariot card fills the secondary weapon slot.');
+  log(_T('Each racer receives an Arena Key token (2 keys) and 3 CF. The chariot card fills the secondary weapon slot.'));
 }
 /* chRaceOrder — turn order for the next round: mounted racers from last to first place, then those on foot by CF. */
 function chRaceOrder(){
@@ -155,7 +155,7 @@ async function cpuChariot(player){
   // a chariot missing a wheel or horse sends its driver on foot to the nearest spare, then back to the reins
   const need=['wheel','horse'].filter(k=>!ch[k]);
   const spare=need.length?S.floor.filter(f=>need.includes(f.kind)).sort((a,b)=>cheb(player,a)-cheb(player,b))[0]:null;
-  if(ch.mounted&&spare&&cheb(player,spare)<=7&&player.diff!=='easy'){ch.mounted=false;player.mv=Math.min(player.mv,3);log(`${nm(player)} jumps down to fetch a spare ${spare.kind}.`);think(player,'I need that '+spare.kind+'!','think')}
+  if(ch.mounted&&spare&&cheb(player,spare)<=7&&player.diff!=='easy'){ch.mounted=false;player.mv=Math.min(player.mv,3);log(_T`${nm(player)} jumps down to fetch a spare ${spare.kind}.`);think(player,_T('I need that ')+spare.kind+'!','think')}
   if(!ch.mounted){
     const goal=spare&&need.length?[spare.r,spare.c]:[ch.cr,ch.cc];
     for(let g=0;g<4&&player.mv>0&&player.alive;g++){
@@ -163,7 +163,7 @@ async function cpuChariot(player){
       const R=reach(player);let best=null;for(const [k,c] of R.tiles){if(c>player.mv)continue;const r=Math.floor(k/N),cc=k%N;const d=Math.max(Math.abs(r-goal[0]),Math.abs(cc-goal[1]));if(!best||d<best.d||(d===best.d&&c<best.c))best={k,d,c}}
       if(!best||best.k===player.r*N+player.c)break;const path=R.path(best.k);if(!path)break;await movePlayer(player,path);render();if(!player.alive||S.over||S.pending)return;
     }
-    if(player.r===ch.cr&&player.c===ch.cc&&!['wheel','horse'].some(k=>!ch[k]&&S.floor.some(f=>f.kind===k&&cheb(player,f)<=7))){ch.mounted=true;log(`${nm(player)} remounts.`)}
+    if(player.r===ch.cr&&player.c===ch.cc&&!['wheel','horse'].some(k=>!ch[k]&&S.floor.some(f=>f.kind===k&&cheb(player,f)<=7))){ch.mounted=true;log(_T`${nm(player)} remounts.`)}
     if(!ch.mounted)return;
   }
   for(let g=0;g<6&&player.alive&&player.mv>0;g++){
@@ -200,7 +200,7 @@ function naumSetup(){
   S.chest={r:6,c:6,weapons:shuffle(['arcu','flavgl','jade']),held:null};
   for(const team of teams){const ships=S.ships.filter(s=>s.team===team);const tiles=shuffle(ships.flatMap(s=>[...s.tiles]).filter(k=>!S.pillars.some(pl=>pl.r*N+pl.c===k)));
     S.players.filter(player=>player.team===team).forEach((player,i)=>{const k=tiles[i];player.r=Math.floor(k/N);player.c=k%N;player.start=[player.r,player.c]})}
-  log(`The arena floods. ${S.ships.map(s=>`${s.name} (Team ${s.team})`).join(', ')} drop anchor.`,'hd');
+  log(_T`The arena floods. ${S.ships.map(s=>_T`${s.name} (Team ${s.team})`).join(', ')} drop anchor.`,'hd');
 }
 /* shipAt — the afloat ship covering r,c, if any. */
 function shipAt(r,c){return S.ships&&S.ships.find(s=>!s.sunk&&s.tiles.has(r*N+c))}
@@ -233,7 +233,7 @@ async function naumStep(player,step,fromR,fromC){
   const prevDoor=player.onDoor!=null?S.doors[player.onDoor]:null;
   const dHere=doorAt(player.r,player.c);
   if(step.door){
-    if(dHere&&(!prevDoor||dHere!==prevDoor)){player.onDoor=dHere.id;log(`${nm(player)} boards a floating door.`)}
+    if(dHere&&(!prevDoor||dHere!==prevDoor)){player.onDoor=dHere.id;log(_T`${nm(player)} boards a floating door.`)}
     else if(prevDoor&&!dHere){prevDoor.r=player.r;prevDoor.c=player.c}
   } else if(prevDoor){player.onDoor=null}
   const wt=S.waterTok.find(t=>t.r===player.r&&t.c===player.c);
@@ -242,26 +242,26 @@ async function naumStep(player,step,fromR,fromC){
 
 // the printed Naumachia water/offering tokens and what they do when flipped
 async function flipWaterToken(player,kind){
-  const show=k=>{cardShow('n:'+k,player,'🌊 Flipped')};
-  if(kind==='croc'){show('croc');const l=rollLoc(player);log(`${nm(player)} flips a water token: <b data-card="n:croc">a crocodile!</b> It clamps down — the ${LOCN[l]} is reduced to 1 HP.`,'big');crowdReact('beastAttack',{});if(player.hp[l]>1)player.hp[l]=1;return}
-  if(kind==='water'||kind==='calm'){log(`${nm(player)} flips a <span data-card="n:water">water token</span>: calm water.`);return}
+  const show=k=>{cardShow('n:'+k,player,_T('🌊 Flipped'))};
+  if(kind==='croc'){show('croc');const l=rollLoc(player);log(_T`${nm(player)} flips a water token: <b data-card="n:croc">a crocodile!</b> It clamps down — the ${LOCN[l]} is reduced to 1 HP.`,'big');crowdReact('beastAttack',{});if(player.hp[l]>1)player.hp[l]=1;return}
+  if(kind==='water'||kind==='calm'){log(`${_T`${nm(player)} flips a`} <span data-card="n:water">${_T`water token`}</span>: calm water.`);return}
   if(/^wpn/.test(kind)){const lv=+kind.slice(3);show(kind);
     const pool=Object.keys(W).filter(k=>W[k].lv===lv&&!W[k].limb&&!W[k].lyre&&!W[k].noAtk);
     const k=pickOne(pool);const w=mkW(k);
     const free=['R','L'].find(a=>!player['w'+a]&&armAlive(player,a));
-    if(free){player['w'+free]=w;log(`${nm(player)} flips a water token: a <b>Level ${lv} Weapon</b> — fishes a <b data-card="w:${k}">${w.n}</b> from the wreckage (${free==='R'?'right':'left'} hand).`,'big')}
+    if(free){player['w'+free]=w;log(`${_T`${nm(player)} flips a water token: a <b>Level ${lv} Weapon</b> — fishes a`} <b data-card="w:${k}">${w.n}</b> ${_T`from the wreckage (${free==='R'?_T('right'):_T('left')} hand).`}`,'big')}
     else{let pl=S.piles.find(x=>x.r===player.r&&x.c===player.c&&!x.corpse);if(!pl){pl={id:uid++,owner:-1,r:player.r,c:player.c,weapons:[],armor:[],coin:0,items:[]};S.piles.push(pl)}
-      pl.weapons.push(w);log(`${nm(player)} flips a water token: a <b>Level ${lv} Weapon</b> — a <b data-card="w:${k}">${w.n}</b> surfaces at ${tl(player.r,player.c)} (hands full: loot it from this tile).`,'big')}
+      pl.weapons.push(w);log(`${_T`${nm(player)} flips a water token: a <b>Level ${lv} Weapon</b> — a`} <b data-card="w:${k}">${w.n}</b> ${_T`surfaces at ${tl(player.r,player.c)} (hands full: loot it from this tile).`}`,'big')}
     return}
   if(/^arm/.test(kind)){const lv=+kind.slice(3);show(kind);
     const pool=Object.keys(ARM).filter(k=>ARM[k].lv===lv&&!ARM[k].flav);
     const k=pickOne(pool);const A=ARM[k];
     let pl=S.piles.find(x=>x.r===player.r&&x.c===player.c&&!x.corpse);if(!pl){pl={id:uid++,owner:-1,r:player.r,c:player.c,weapons:[],armor:[],coin:0,items:[]};S.piles.push(pl)}
     pl.armor.push({key:k,n:A.n,ap:A.ap,from:A.slot==='arm'?'rarm':A.slot==='leg'?'rleg':A.slot});
-    log(`${nm(player)} flips a water token: <b>Level ${lv} Armor</b> — a <b data-card="a:${k}">${A.n}</b> washes up at their feet (loot it from this tile).`,'big');return}
+    log(`${_T`${nm(player)} flips a water token: <b>Level ${lv} Armor</b> — a`} <b data-card="a:${k}">${A.n}</b> ${_T`washes up at their feet (loot it from this tile).`}`,'big');return}
   if(/^up/.test(kind)){const n=+kind.slice(2);show(kind);
-    log(`${nm(player)} flips a water token: an <b data-card="n:${kind}">Armor Upgrade</b> — +${n} AP to distribute.`,'big');
-    await distributeAP(player,n,'the Armor Upgrade token');return}
+    log(`${_T`${nm(player)} flips a water token: an`} <b data-card="n:${kind}">${_T`Armor Upgrade`}</b> ${_T`— +${n} AP to distribute.`}`,'big');
+    await distributeAP(player,n,_T('the Armor Upgrade token'));return}
 }
 /* shipTargets — the enemy ship a player stands on, as an attack target (once per turn). */
 function shipTargets(player){
@@ -271,9 +271,9 @@ function shipTargets(player){
 /* sinkShip — sinks a ship: its pillar goes, its riders fall in, and a team with no ships left is eliminated. */
 function sinkShip(ship,player){
   ship.sunk=true;S.pillars=S.pillars.filter(pl=>pl.ship!==ship.id);
-  log(`The ${ship.name} (Team ${ship.team}) sinks!${player?` ${nm(player)} is credited.`:''}`,'big');
-  for(const q of S.players)if(q.alive&&ship.tiles.has(q.r*N+q.c))log(`${nm(q)} falls into the water.`);
-  if(!S.ships.some(s=>s.team===ship.team&&!s.sunk)){log(`Team ${ship.team} has no ships left and is eliminated.`,'big');for(const q of S.players)if(q.alive&&q.team===ship.team){q.alive=false;S.elims++}}
+  log(_T`The ${ship.name} (Team ${ship.team}) sinks!${player?_T` ${nm(player)} is credited.`:''}`,'big');
+  for(const q of S.players)if(q.alive&&ship.tiles.has(q.r*N+q.c))log(_T`${nm(q)} falls into the water.`);
+  if(!S.ships.some(s=>s.team===ship.team&&!s.sunk)){log(_T`Team ${ship.team} has no ships left and is eliminated.`,'big');for(const q of S.players)if(q.alive&&q.team===ship.team){q.alive=false;S.elims++}}
   checkEnd();
 }
 /* cpuNaum — Naumachia CPU: attacks (ships first), opens the chest, loots, then moves toward enemy ships, firing spots or loose weapons, avoiding open water. TWEAK: the target scores (ship 14, player 12) and the move priorities. */

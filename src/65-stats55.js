@@ -14,7 +14,7 @@
    roll that leans by printed class (STAT_LEAN) — Play Now rolls from the event seed without touching the dice.
    Beasts carry Speed and Strength read off their rulebook movement and attack (npcRatings).
    ===================================================================== */
-const STATS=[['spd','Speed','🏃','movement'],['str','Strength','💪','damage'],['int','Intelligence','🧠','tactics'],['lck','Luck','🍀','coin'],['cha','Charisma','🎭','CF']];
+const STATS=[['spd',_T('Speed'),'🏃','movement'],['str',_T('Strength'),'💪','damage'],['int',_T('Intelligence'),'🧠','tactics'],['lck',_T('Luck'),'🍀','coin'],['cha',_T('Charisma'),'🎭','CF']];
 const STAT_KEYS=STATS.map(s=>s[0]);
 const STAT_MIN=50,STAT_MAX=99,STAT_BUDGET=375; /* TWEAK: the range and the Studio point pool */
 const statFix=v=>clamp(Math.round(+v||STAT_MIN),STAT_MIN,STAT_MAX);
@@ -28,7 +28,7 @@ const STAT_ABILS=new Set(Object.keys(ABIL_TO_STAT));
 /* statBonuses — what a set of ratings grants: {mv, dmg, coin, cf, diff}. */
 function statBonuses(st){st=st||{};return {mv:band2(st.spd||0),dmg:band3(st.str||0),coin:band2(st.lck||0),cf:band2(st.cha||0),diff:bandInt(st.int||0)}}
 /* statPerks — the earned perks as short labels, e.g. ['+1 movement','+2 damage']. */
-function statPerks(st){const b=statBonuses(st);const o=[];if(b.mv)o.push(`+${b.mv} movement`);if(b.dmg)o.push(`+${b.dmg} damage`);if(b.coin)o.push(`+${b.coin} coin`);if(b.cf)o.push(`+${b.cf} CF`);return o}
+function statPerks(st){const b=statBonuses(st);const o=[];if(b.mv)o.push(_T`+${b.mv} movement`);if(b.dmg)o.push(_T`+${b.dmg} damage`);if(b.coin)o.push(_T`+${b.coin} coin`);if(b.cf)o.push(_T`+${b.cf} CF`);return o}
 /* nextBand — the next threshold above v for a stat, or null at the top. */
 function nextBand(k,v){const steps=k==='str'?[76,87,96]:[76,96];return steps.find(s=>v<s)||null}
 /* leanOf — which ratings a class leans toward: printed classes by key, custom classes through their printed base. */
@@ -64,14 +64,14 @@ function statDmgB(p){return p&&p.st&&S&&caAllowed()?band3(p.st.str):0}
 function statMvB(p){return p&&p.st&&S&&caAllowed()?band2(p.st.spd):0}
 /* statTurn — phase 3 upkeep, called inside takeChoice's class-ability block: Speed movement, Luck coin, Charisma CF. */
 function statTurn(p){if(!p||!p.st)return;const b=statBonuses(p.st);const bits=[];
-  if(b.mv&&!p.netted){p.mv=Math.min(7,p.mv+b.mv);bits.push(`+${b.mv} movement (Speed)`)}
-  if(b.coin){p.coin+=b.coin;coinLog(p,b.coin,'Luck');bits.push(`+${b.coin} coin (Luck)`)}
-  if(b.cf){cfWhy('Charisma');p.cf+=b.cf;bits.push(`+${b.cf} CF (Charisma)`)}
+  if(b.mv&&!p.netted){p.mv=Math.min(7,p.mv+b.mv);bits.push(_T`+${b.mv} movement (Speed)`)}
+  if(b.coin){p.coin+=b.coin;coinLog(p,b.coin,_T('Luck'));bits.push(_T`+${b.coin} coin (Luck)`)}
+  if(b.cf){cfWhy(_T('Charisma'));p.cf+=b.cf;bits.push(_T`+${b.cf} CF (Charisma)`)}
   if(bits.length&&(b.coin||b.cf))log(`${nm(p)}: ${bits.join(' · ')}.`)}
 /* statChips — the five ratings as compact chips; perk bands glow. opt.small for tight panels. */
 function statChips(st,opt={}){if(!st)return '';const b=statBonuses(st);
   const perk={spd:b.mv,str:b.dmg,lck:b.coin,cha:b.cf,int:st.int>=76?1:0};
-  return `<span class="statchips${opt.small?' sm':''}">${STATS.map(([k,n,ic])=>{const v=statFix(st[k]);const t=k==='int'?`${n} ${v}: ${b.tierName||(b.diff==='normal'?'Normal':b.diff==='hard'?'Hard':'Easy')} mind`:`${n} ${v}${perk[k]?`: +${perk[k]} ${STATS.find(x=>x[0]===k)[3]}`:''}`;
+  return `<span class="statchips${opt.small?' sm':''}">${STATS.map(([k,n,ic])=>{const v=statFix(st[k]);const t=k==='int'?_T`${n} ${v}: ${b.tierName||(b.diff==='normal'?_T('Normal'):b.diff==='hard'?_T('Hard'):_T('Easy'))} mind`:`${n} ${v}${perk[k]?`: +${perk[k]} ${STATS.find(x=>x[0]===k)[3]}`:''}`;
     return `<span class="statchip${perk[k]?' up':''}${v>=96?' top':''}" title="${t}">${ic}<b>${v}</b></span>`}).join('')}</span>`}
 /* ---- beasts: Speed and Strength read off the rulebook movement and attack ---- */
 const NPC_SPD={1:55,2:66,3:73,4:84,5:93,6:97,7:99}; /* TWEAK */
@@ -86,10 +86,10 @@ const apFromStr=v=>{let best=1;for(const [a,s] of Object.entries(NPC_STR))if(v>=
 /* a tamed ally (custom classes): the Zora mechanic with another beast type */
 {const base=spawnZora;spawnZora=function(player){if(!player||!player.allyT||player.allyT==='zora'||!NPCT[player.allyT])return base.apply(this,arguments);
   const free=adjTiles(player).filter(([r,c])=>!pillarAt(r,c)&&!unitAt(r,c));const T=NPCT[player.allyT];
-  if(!free.length){log(`There is no room for the ${esc(T.n)} to come out.`);return false}
+  if(!free.length){log(_T`There is no room for the ${esc(T.n)} to come out.`);return false}
   const [r,c]=free[0];S.npcs.push(mkNPC(player.allyT,T.n,r,c,{tamedBy:player.id}));
-  log(`${nm(player)} releases a tamed <b>${esc(T.n)}</b> at ${tl(r,c)}.`,'big');return true}}
-const allyName=p=>p&&p.allyT&&NPCT[p.allyT]?NPCT[p.allyT].n:'Zora';
+  log(_T`${nm(player)} releases a tamed <b>${esc(T.n)}</b> at ${tl(r,c)}.`,'big');return true}}
+const allyName=p=>p&&p.allyT&&NPCT[p.allyT]?NPCT[p.allyT].n:_T('Zora');
 /* printed class cards: the ability line now names the ratings the class leans toward */
 for(const [k,C] of Object.entries(CLASSES))if(!C.custom&&STAT_ABILS.has(C.abil)&&STAT_LEAN[k]){const rest=String(C.ab||'').replace(/^Ability:[^.]*\.\s*/,'');
-  C.ab=`Ability: leans ${STAT_LEAN[k].map(x=>STATS.find(s=>s[0]===x)[1]).join(' and ')} (ratings grant ${STAT_LEAN[k].map(x=>STATS.find(s=>s[0]===x)[3]).join(' and ')}).${rest?' '+rest:''}`}
+  C.ab=_T`Ability: leans ${STAT_LEAN[k].map(x=>STATS.find(s=>s[0]===x)[1]).join(' and ')} (ratings grant ${STAT_LEAN[k].map(x=>STATS.find(s=>s[0]===x)[3]).join(' and ')}).${rest?' '+rest:''}`}
