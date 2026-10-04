@@ -18,7 +18,7 @@ const FORUM_KEEP=30;
 /* a refusal the client can act on: err = the player-facing text, code = a stable key, extra fields ride along in the reply */
 function fail(code,msg,extra){const e=new Error(msg);e.code=code;if(extra)e.extra=extra;return e}
 /* v0.82: requests an account without a house may not make (needDomus) */
-const NEED_DOMUS=new Set(['char.create','char.buy','char.edit','char.active','lobby.create','lobby.join','lobby.accept','lobby.quick','lobby.sit','lobby.ticket','lobby.invite','lobby.call','lobby.again','lobby.say','bet.place','party.create','party.join','forum.say']);
+const NEED_DOMUS=new Set(['char.create','char.buy','char.edit','char.active','lobby.create','lobby.join','lobby.accept','lobby.quick','lobby.sit','lobby.ticket','lobby.invite','lobby.call','lobby.again','lobby.say','bet.place','party.create','party.join','forum.say','domus.move','domus.equip']);
 /* what a guest is told when a request needs a sign-in */
 const GUEST_WHY={'forum.say':'speak in the Forum','bet.place':'wager','lobby.ticket':'buy a ticket','char.create':'raise gladiators','domus.create':'found a house'};
 function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=>Math.random(),dev=false,hereMs=0}){
@@ -32,6 +32,8 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   const inRoom=(L,a)=>L.players.some(p=>p.id===a)||(L.status==='waiting'&&!!C.memberOf(L,a));
   const inStands=(L,a)=>(L.stands||[]).some(s=>s.id===a);
   /* the gladiator a lanista is fighting with right now (a waiting room or a live match): edits wait until it is over */
+  /* a gladiator seated in a waiting room or a live match (its gear is locked) */
+  const charBusy=(cid,list)=>(list||[]).some(L=>(L.status==='waiting'||L.status==='live')&&(L.players||[]).some(p=>p.char===cid));
   async function busyIn(acct){for(const L of await lobbies())if((L.status==='waiting'||L.status==='live')&&inRoom(L,acct))return L;return null}
   const getLobby=async id=>{const L=await store.get('LOBBY#'+id,'LOBBY');if(!L)throw new Error('That game is gone.');L.members=L.members||[];L.players=L.players||[];return L};
   /* v0.80: rooms and gladiators are written only over the version that was read (L.rev / ch.rev): two requests at once can never both
@@ -159,7 +161,8 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     for(const a of A.minority)await store.counter('ACCT#'+a,'PROFILE','strikes');
     const dseats=[];
     if(!A.void)for(const a of M.players){if((M.abandoned||{})[a])continue;const pl=L.players.find(p=>p.id===a);const row=A.table.find(r=>r.seat===M.seats[a]);if(!pl||!row)continue;let out=null,before='tiro';
-      const ch=await editChar(pl.char,c=>{if(!c.alive)return false;before=C.rankFor(c).k;out=C.applyResult(c,row,!!L.ranked)});if(!ch||!out)continue;M.outs[a]=out;dseats.push({acct:a,ch,before,row,out});
+      const ch=await editChar(pl.char,c=>{if(!c.alive)return false;before=C.rankFor(c).k;out=C.applyResult(c,row,!!L.ranked,{humans:(M.players||[]).length})});if(!ch||!out)continue;M.outs[a]=out;dseats.push({acct:a,ch,before,row,out});
+      if(out.died)await countRank(before,-1);else if(out.rankUp){await countRank(before,-1);await countRank(out.rankUp,1)}
       await domusResult(ch,row,out,!!L.ranked);
       if(out.died){const e={name:ch.name,cls:ch.cls,rank:ch.died.rank,lifeCF:ch.lifeCF,survived:ch.survived,diedAt:now(),why:out.hall?C.hallWhy(ch):''};
         if(out.hall){const H=await world('HALL');H.list=[e,...H.list].slice(0,200);await store.put('WORLD','HALL',H)}await news(out.hall?['🪦',`${ch.name} fell. The Hall of the Fallen keeps the name.`]:['🌫',`${ch.name} fell and is forgotten.`])}
@@ -198,6 +201,9 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
         const awayAll=left.length&&left.every(a=>(M.away||{})[a]&&t-M.away[a]>10*60e3);if(!left.length||awayAll){await closeMatch(L.id,'empty');continue}}}
       out.push(L)}catch(e){out.push(L)}}return out}
   const world=async k=>(await store.get('WORLD',k))||{list:[]};
+  /* v0.82 living gladiators by rank, every house: WORLD COUNTS {tiro:n,…} kept by atomic counters (creation +1, rank-up −1/+1, death −1) — never a scan */
+  async function countRank(k,by){try{if(k)await store.counter('WORLD','COUNTS',k,by)}catch(e){}}
+  async function rankCounts(){const X=(await store.get('WORLD','COUNTS'))||{};const o={};for(const R of C.RANKS)o[R.k]=Math.max(0,X[R.k]|0);return o}
   const news=async line=>{const N=await world('NEWS');N.list=[line,...N.list].slice(0,12);await store.put('WORLD','NEWS',N)};
   /* ☀ Today in the arena (WORLD DAY#<utc day>): versioned edits, never allowed to break a settlement */
   let dayC=null,dayAt=0;
@@ -239,7 +245,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     'hello':async(d,ctx)=>{
       /* v0.82 a guest: the landing only (rooms as lite rows, presence, the Forum, news, Today) */
       if(!ctx.acct&&ctx.guest){const G=ctx.guest;const list=await prune((await lobbies()).filter(L=>!L.flag));const out={ver:C.VER,mode:'aws',me:null,guest:{id:G.id,until:(G.first||now())+C.GUEST_MS},now:now()};
-        out.lobbies=listFor(list,G.id,false);out.here=await summary(list);out.online=out.here.n;out.forum=await forumLines();out.news=(await world('NEWS')).list.slice(0,8);out.challenges=C.weekChallenges(now());out.today=await today();
+        out.lobbies=listFor(list,G.id,false);out.here=await summary(list);out.online=out.here.n;out.forum=await forumLines();out.news=(await world('NEWS')).list.slice(0,8);out.challenges=C.weekChallenges(now());out.today=await today();out.rankCounts=await rankCounts();
         while(out.lobbies.length>1&&JSON.stringify(out).length>115000)out.lobbies.pop();return out}
       const A=await acctOf(ctx.acct);const me=strip(A);const out={ver:C.VER,mode:'aws',me,now:now()};
       /* v0.82 the house: needDomus until it is named (an old account keeps its gladiators — they join the house when it is founded) */
@@ -251,7 +257,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       if(JSON.stringify(me.here||null)!==JSON.stringify(hr)){await store.set('ACCT#'+ctx.acct,'PROFILE',{here:hr});out.me={...me,here:hr};const c=(hereC||[]).find(x=>x.id===ctx.acct);if(c)c.here=hr}
       const list=await prune((await lobbies()).filter(L=>!!L.flag===f));out.lobbies=listFor(list,ctx.acct,f);
       out.here=await summary(list);out.online=out.here.n;out.forum=await forumLines();
-      out.news=(await world('NEWS')).list.slice(0,8);out.challenges=C.weekChallenges(now());out.today=await today();out.party=me.party?await partyOut(await store.get('PARTY#'+me.party,'PARTY')):null;
+      out.news=(await world('NEWS')).list.slice(0,8);out.challenges=C.weekChallenges(now());out.today=await today();out.rankCounts=await rankCounts();out.party=me.party?await partyOut(await store.get('PARTY#'+me.party,'PARTY')):null;
       /* the match this lanista's gladiator is still in (also when a CPU holds the seat): the menu offers Rejoin / Abandon */
       const LM=await stillFighting(A);if(LM){const LL=list.find(x=>x.id===LM.id)||await store.get('LOBBY#'+LM.id,'LOBBY');out.live={id:LM.id,ev:LL&&LL.ev,loc:LL&&LL.loc,ranked:!!LM.ranked,dropped:!!(LM.dropped||{})[ctx.acct]}}
       /* one WebSocket frame is at most 128 KB: other rooms' rows go first */
@@ -264,7 +270,21 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       const tz=C.cleanTz(d.tz);await store.set('GUEST#'+G.id,'GUEST',{tz});const c=(gC||[]).find(x=>x.id===G.id);if(c)c.tz=tz;return {guest:true,id:G.id,first:G.first,until:(G.first||now())+C.GUEST_MS,now:now()}},
     /* ── v0.82 DOMUS ── */
     'domus.get':async(d,ctx)=>{const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);const old=[];for(const x of (A&&A.domusOld)||[]){const o=await domusGet(x);if(o)old.push(C.domusRow(o))}
-      return {domus:C.domusRow(D),needDomus:!D,glads:await domusGlads(D),archived:old}},
+      const list=await lobbies();const mine=(await store.byIndex('OWNER#'+ctx.acct)).filter(c=>c.alive);
+      return {domus:C.domusRow(D),needDomus:!D,glads:await domusGlads(D),archived:old,gear:(D&&D.gear)||[],busy:mine.filter(c=>charBusy(c.id,list)).map(c=>c.id)}},
+    /* v0.82 🗄 the storeroom: move one piece between the house's gladiators and the house itself ('house'); tick a piece to bring */
+    'domus.move':async(d,ctx)=>{const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);if(!D)throw fail('need_domus','Name your house first.');const item=String(d.item||'');const list=await lobbies();
+      const side=async x=>{if(x==='house')return {house:true};const ch=await charById(x);if(!ch||ch.owner!==ctx.acct||ch.domus!==D.id)throw new Error('Not of your house.');if(charBusy(ch.id,list))throw fail('in_match',`${ch.name} is in a match — the storeroom waits.`);return {ch}};
+      const S0=await side(d.from),T0=await side(d.to);if(d.from===d.to)throw new Error('Pick where it goes.');
+      const why=C.gearMoveWhy(S0.house?{gear:D.gear||[]}:S0.ch,T0.house?{gear:D.gear||[]}:T0.ch,item,catalog);if(why)throw new Error(why);
+      /* take it out first (versioned), then put it in; a failed put returns it */
+      const take=async()=>S0.house?await editDomus(D.id,X=>{const g=X.gear||[];const i=g.indexOf(item);if(i<0)return false;g.splice(i,1);X.gear=g}):await editChar(S0.ch.id,c=>{if(!c.alive||!(c.gear||[]).includes(item))return false;C.gearMove(c,{gear:[]},item,catalog)});
+      const give=async()=>T0.house?await editDomus(D.id,X=>{X.gear=[...(X.gear||[]),item]}):await editChar(T0.ch.id,c=>{if(C.gearMoveWhy({gear:[item]},c,item,catalog))return false;C.gearMove({gear:[item]},c,item,catalog)});
+      if(!(await take()))throw new Error('That piece moved a moment ago — try again.');
+      if(!(await give())){if(S0.house)await editDomus(D.id,X=>{X.gear=[...(X.gear||[]),item]});else await editChar(S0.ch.id,c=>{c.gear=[...(c.gear||[]),item]});throw new Error('It could not go there — it stayed where it was.')}
+      return {from:S0.house?{house:true,gear:(await domusGet(D.id)).gear||[]}:strip(await charById(S0.ch.id)),to:T0.house?{house:true,gear:(await domusGet(D.id)).gear||[]}:strip(await charById(T0.ch.id))}},
+    'domus.equip':async(d,ctx)=>{const ch=await charById(d.char);if(!ch||ch.owner!==ctx.acct)throw new Error('Not yours.');if(charBusy(ch.id,await lobbies()))throw fail('in_match',`${ch.name} is in a match — the storeroom waits.`);
+      const c=await editChar(ch.id,x=>{C.gearEquip(x,String(d.item||''),!!d.on)});return strip(c)},
     /* found a house (or, while the current one has never had a gladiator, a new one — the old is archived with its record) */
     'domus.create':async(d,ctx)=>{const A=await acctOf(ctx.acct);if(!A)throw new Error('Sign in first.');const why=C.domusWhy(d.name);if(why)throw fail('domus_name',why);
       const cur=await domusGet(A.domus);if(cur&&(await domusGlads(cur))>0)throw fail('domus_locked','Your house already has gladiators — it stands as it is.');
@@ -285,7 +305,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     'char.mine':async(d,ctx)=>(await store.byIndex('OWNER#'+ctx.acct)).map(strip),
     'char.create':async(d,ctx)=>{const live=(await store.byIndex('OWNER#'+ctx.acct)).filter(c=>c.alive);if(live.length>=C.GLAD_MAX)throw new Error(`Up to ${C.GLAD_MAX} living gladiators.`);const ch=C.newChar(d,ctx.acct,id('g'),now());
       const A=await acctOf(ctx.acct);ch.domus=A&&A.domus||null;if(A&&!live.some(c=>c.id===A.active))await store.set('ACCT#'+A.id,'PROFILE',{active:ch.id});await putChar(ch);
-      await editDomus(ch.domus,D=>{D.glads=(D.glads|0)+1});return strip(ch)},
+      await editDomus(ch.domus,D=>{D.glads=(D.glads|0)+1});await countRank(C.rankFor(ch).k,1);return strip(ch)},
     'char.active':async(d,ctx)=>{const ch=await charById(d.char);if(!ch||ch.owner!==ctx.acct||!ch.alive)throw new Error('Not yours.');if(await busyIn(ctx.acct))throw new Error('Finish or leave your game first.');
       await store.set('ACCT#'+ctx.acct,'PROFILE',{active:ch.id});return strip(ch)},
     'char.edit':async(d,ctx)=>{const ch=await charById(d.char);if(!ch||ch.owner!==ctx.acct)throw new Error('Not yours.');if(await busyIn(ctx.acct))throw new Error('Finish or leave your game first.');
@@ -484,12 +504,12 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       if(!B.item.abandoned)await store.put('MATCH#'+d.id,'META',{...B.item,abandoned:{[ctx.acct]:rule}});else await store.setIn('MATCH#'+d.id,'META','abandoned',ctx.acct,rule);
       await toMatch(B.item,'match.input',{id:d.id,in:inp});let out=null;
       if(L.ranked){const pl=L.players.find(p=>p.id===ctx.acct);let before='tiro';const ch=pl&&await editChar(pl.char,c=>{if(!c.alive)return false;before=C.rankFor(c).k;out=C.applyResult(c,{won:false,place:L.seats,f:0,coin:0,survives:false},true);out.abandoned=1});
-        if(ch&&out){await fallen(ch,out);await domusResult(ch,{won:false},out,true);await store.setIn('MATCH#'+d.id,'META','outs',ctx.acct,out);await dayEdit(D=>C.dayFell(D,{id:d.id,acct:ctx.acct,ev:L.ev,loc:L.loc,at:now(),ch,before,hall:out.hall}))}}
+        if(ch&&out){if(out.died)await countRank(before,-1);await fallen(ch,out);await domusResult(ch,{won:false},out,true);await store.setIn('MATCH#'+d.id,'META','outs',ctx.acct,out);await dayEdit(D=>C.dayFell(D,{id:d.id,acct:ctx.acct,ev:L.ev,loc:L.loc,at:now(),ch,before,hall:out.hall}))}}
       const M2=await meta(d.id);const left=(M2.players||[]).filter(a=>!(M2.abandoned||{})[a]&&!(M2.dropped||{})[a]);
       if(!left.length)await closeMatch(d.id,'empty');else if(left.every(a=>(M2.reports||{})[a]))await settleMatch(d.id,M2,ctx.acct);
       const A=await acctOf(ctx.acct);if(A&&A.match===d.id)await store.set('ACCT#'+A.id,'PROFILE',{match:null});return {done:1,out,rule}},
     'hall.list':async()=>(await world('HALL')).list.slice(0,60),
-    'world.news':async()=>({news:(await world('NEWS')).list.slice(0,8),online:(await here()).length,guests:(await guestsHere()).length,challenges:C.weekChallenges(now()),today:await today()}),
+    'world.news':async()=>({news:(await world('NEWS')).list.slice(0,8),online:(await here()).length,guests:(await guestsHere()).length,challenges:C.weekChallenges(now()),today:await today(),rankCounts:await rankCounts()}),
     /* ── v0.82 STANDS GROUP TURN. MATCH#<id> STW#<rot6> = the window {rot,open,at,holders}; STP#<rot6>#<acct> = one private pick.
        The host opens it once a rotation; every ticket holder hears stands.window and sends ONE pick (stored, never pushed);
        the host closes it (20 s) — or it closes when all have answered, or any fighter may close it 25 s after it opened —
@@ -508,7 +528,17 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       return {rot,ok:true,...(closed?{closed:true,seq:closed.seq}:{})}},
     'match.stands.close':async(d,ctx)=>{const M=await meta(d.id);const rot=d.rot|0;const W=await store.get('MATCH#'+d.id,'STW#'+rk(rot));if(!W)throw new Error('No stands window for that rotation.');
       if(M.host!==ctx.acct){if(!liveHumans(M).includes(ctx.acct)||(M.specs||[]).includes(ctx.acct))throw new Error('Only the host closes the stands.');if(now()-W.at<C.STANDS_MS+5000)throw new Error('The stands are still choosing.')}
-      const inp=W.open?await closeStands(d.id,M,rot):null;return inp?{closed:true,seq:inp.seq}:{closed:false}}};
+      const inp=W.open?await closeStands(d.id,M,rot):null;return inp?{closed:true,seq:inp.seq}:{closed:false}},
+    /* v0.82 a ticket holder was speared: every live human FIGHTER reports it once (SPR#<seat>#<acct>); when a strict majority of them
+       agree, the ticket price goes back to the holder exactly once (the lobby's copy is edited versioned) → push stands.refund */
+    'match.speared':async(d,ctx)=>{const M=await meta(d.id);if(M.status!=='live')throw new Error('That match is over.');const seat=d.seat|0;
+      const fighters=(M.players||[]).filter(a=>!(M.dropped||{})[a]&&!(M.abandoned||{})[a]);if(!fighters.includes(ctx.acct))throw new Error('Only the fighters report a speared spectator.');
+      const holder=(M.specs||[]).find(a=>(M.seats||{})[a]===seat);if(!holder)throw new Error('No ticket holder in that seat.');
+      await store.putNew('MATCH#'+d.id,'SPR#'+rk(seat)+'#'+ctx.acct,{at:now(),ttl:ttl(2)});
+      const votes=(await store.query('MATCH#'+d.id,'SPR#'+rk(seat)+'#')).filter(x=>fighters.includes(String(x.SK).split('#').pop())).length;const need=Math.floor(fighters.length/2)+1;
+      if(votes<need)return {votes,need,refunded:0};
+      let amt=0;await editLobby(d.id,X=>{amt=0;const t=(X.stands||[]).find(s=>s.id===holder);if(!t||!(t.paid|0))return false;amt=t.paid|0;t.paid=0;t.speared=1;X.pot=Math.max(0,(X.pot|0)-amt)});
+      if(amt){await credit(holder,amt);await deliver([holder],'stands.refund',{id:d.id,seat,amt})}return {votes,need,refunded:amt}}};
   /* the window closes once: every pick becomes one input in the match's order */
   async function closeStands(id,M,rot){if(!(await store.flip('MATCH#'+id,'STW#'+rk(rot),'open',true,false)))return null;const W=await store.get('MATCH#'+id,'STW#'+rk(rot));
     const ps=(await store.query('MATCH#'+id,'STP#'+rk(rot)+'#')).filter(p=>(W.holders||[]).includes(p.acct));const got=new Set(ps.map(p=>p.acct));

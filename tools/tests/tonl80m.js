@@ -10,7 +10,7 @@ await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1')});
 const errs=[];const A=await ctx.newPage(),B=await ctx.newPage();for(const [n,p] of [['A',A],['B',B]])p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));
 await A.goto(URL0);await A.evaluate(()=>{localStorage.removeItem('flavius_onlmock');localStorage.removeItem('flavius_onlmatch80')});await B.goto(URL0);await A.waitForTimeout(2500);
-const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls})},[name,cls]);
+const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls})},[name,cls]);
 await setup(A,'Alpha','hero');await setup(B,'Beta','soldier');
 /* Beta has a record, a purse and gear to lose */
 await B.evaluate(async()=>{const w=mockLoad();const c=w.chars[ONL.char.id];Object.assign(c,{wins:3,bouts:5,survived:4,lifeCF:150,wallet:120,gear:['gladius','galea','wraps'],stats:{spd:61,str:58,int:55,lck:57,cha:60}});

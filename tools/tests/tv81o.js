@@ -20,7 +20,7 @@ const sign=async()=>A.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuH
 const sign0=await sign();
 const word=await A.evaluate(()=>{const C2=CHEATS[cheatKey(String.fromCharCode(79,78,76,83,82,86))];const m=C2?C2.run():'';onlRedraw();return {m,box:!!document.querySelector('#onl .onl-srv')}});
 await A.evaluate(()=>{localStorage.removeItem('flavius_onlsrv81');if(CUR_MODAL)CUR_MODAL.done('close')});await wait(400);
-const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls});
+const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls});
   window.T81=[];const mt=mToast;mToast=function(m){T81.push(String(m));return mt.apply(this,arguments)}},[name,cls]);
 await setup(A,'Alpha','hero');await setup(B,'Beta','soldier');await setup(C,'Gamma','amazonia');
 const L=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:true}));
@@ -62,7 +62,7 @@ await A.evaluate(async()=>{window.T81=[];const mt=mToast;mToast=function(m){T81.
 const land=await A.evaluate(()=>{const o=document.getElementById('onl');const t=document.getElementById('onlToday80');
   return {map:!!o.querySelector('.onl-stage #onlStageMap81 .omap-in'),dots:o.querySelectorAll('#onlStageMap81 .omap-dot').length,oval:!!o.querySelector('.omap'),row80:!!document.getElementById('onlRow80'),
     forum:!!o.querySelector('.a81-forum #onlFeed80'),news:o.querySelectorAll('#onlFeed80 .news81').length,empire:/The empire/.test(o.textContent),cap:(document.getElementById('omapCap')||{}).textContent||'',
-    online:(o.textContent.match(/lanistas? online/g)||[]).length,today:t?{ribbon:t.classList.contains('td81'),txt:t.textContent.replace(/\s+/g,' '),wheat:!!t.querySelector('svg.ico')}:null,
+    online:(o.textContent.match(/lanistas? · \d+ guests?/g)||[]).length,today:t?{ribbon:t.classList.contains('td81'),txt:t.textContent.replace(/\s+/g,' '),wheat:!!t.querySelector('svg.ico')}:null,
     stageWheat:!!o.querySelector('.onl-pstats svg.ico'),star:/⭐/.test(o.textContent),tones:[...o.querySelectorAll('.onl-pl.pl81')].map(e=>getComputedStyle(e).borderTopColor)}});
 if(SHOT)await A.screenshot({path:path.join(SHOT,'onl_landing.png')});
 await A.evaluate(()=>{const s=document.querySelector('#onlStageMap81');if(s)s.click()});await wait(400);const big=await A.evaluate(()=>{const o=document.querySelector('.omapbig');if(o)o.remove();return !!o});
@@ -88,7 +88,7 @@ if(SHOT)await A.screenshot({path:path.join(SHOT,'onl_deadinvite.png')});
 await A.evaluate(()=>{const x=document.querySelector('.dead81bg [data-onl81="dclose"]');if(x)x.click()});
 /* phones: the stage in one column, the playlists sideways */
 const ctx2=await b.newContext({viewport:{width:390,height:844}});await ctx2.route(/fonts\./,r=>r.abort());await ctx2.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1')});const P=await ctx2.newPage();P.on('pageerror',e=>errs.push('P:'+e.message));await P.goto(URL0);await P.waitForTimeout(2500);
-await P.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name:'Delta'});ONL.char=await NET.req('char.create',{name:'Delta the Bold',cls:'venatore'});onlineOpen('play')});await P.waitForTimeout(2500);
+await P.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name:'Delta'});await NET.req('domus.create',{name:'Domus Delta'});ONL.char=await NET.req('char.create',{name:'Delta the Bold',cls:'venatore'});onlineOpen('play')});await P.waitForTimeout(2500);
 const ph=await P.evaluate(async()=>{const r=document.querySelector('.onl-pls81');const sg=document.querySelector('.onl-stage');const o={flex:r&&getComputedStyle(r).display,over:r?r.scrollWidth>r.clientWidth+10:false,cols:sg?getComputedStyle(sg).gridTemplateColumns.split(' ').length:0,hscroll:document.documentElement.scrollWidth>innerWidth+2};
   r.scrollIntoView();r.dispatchEvent(new WheelEvent('wheel',{deltaY:240,bubbles:true,cancelable:true}));await new Promise(q=>setTimeout(q,200));o.left=r.scrollLeft;
   const pos=s=>{const e=document.querySelector(s);return e?e.getBoundingClientRect().top:-1};o.order=[pos('.a81-stage'),pos('.a81-today'),pos('.a81-pls'),pos('.a81-forum')];return o});

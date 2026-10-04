@@ -111,3 +111,44 @@ Ticket holders' seats are `M.seats[acct]` = fighters' seats + k (as v0.78). Requ
 Rooms, quick chat, Praeco, Forum, presence for lanistas, Today, majority resync, results by agreement, wagers/tickets, abandon/drop.
 Storage additions are listed at the top of server/src/store.js (DOMUS#, DNAME#, GUEST#, INVITE#, MATCH# STW#/STP#; ACCT domus/dname/domusOld;
 CHAR domus). template.yaml needs no change. Deploy the server (protocol 5) together with the client.
+
+## 8. GLORY and the table size (added with the client half)
+- `ONLC.gloryOf(ch)` = lifetime CF + 12 × Ranked bouts survived + 8 × Ranked wins, every part gained at the match's **table factor**.
+  Stored on the gladiator as `ch.glory` (fractional, 2 decimals) with `ch.rwins` (Ranked wins). Gladiators from before v0.82 start from their
+  record (`rwins` unknown → all wins). `RANKS[].glory` thresholds: Tiro 0 · Gregarius 180 · Veteranus 550 · Primus Palus 1150 · Summa Rudis 2100
+  (`bouts`/`cf` are gone). `rankFor` = the rank by Glory, but **never lower** than `ch.rankK` (highest reached) or the stored `ch.rank` (so old
+  gladiators keep the rank they had). `nextRank` / `rankProgress` follow Glory. Market tiers still by rank (`mkt`).
+- `ONLC.tableFactor(humans)`: 2 → 0.5 · 3 → 0.75 · 4+ → 1 (humans seated in the match; CPU fillers do not count; unknown → 1).
+  `applyResult(ch, row, ranked, {humans})` multiplies the coin award AND the Glory gained; the Fate applies in full.
+  `out` gains `factor` and `glory` (gained, 1 decimal). The server passes `{humans: M.players.length}`; the mock `{humans}` of non-bot players.
+- **`rankCounts`** `{tiro:n, gregarius:n, …}` on `hello` (signed in and guest) and `world.news`: living gladiators at each rank in every house,
+  from one item WORLD COUNTS kept by atomic counters (`store.counter`): char.create +1 · a rank-up −1/+1 · a death −1 (settled or abandoned).
+  Never a scan. Gladiators made before this deploy are not in the counts until they change rank or die (start from zero).
+
+## 9. 🗄 THE STOREROOM
+Every piece a house owns sits with one of its gladiators (`ch.gear`) or on the house's shelf (`DOMUS.gear`).
+- `domus.get` gains `gear` (the shelf) and `busy` (ids of the caller's living gladiators seated in a waiting room or a live match).
+- **`domus.move {item, from, to}`** — `from`/`to` = a gladiator id of the caller's house or `'house'`. Refused: `need_domus`; another house;
+  code **`in_match`** when either gladiator is seated in a waiting room or a live match; `ONLC.gearMoveWhy`: the piece is not there, the
+  receiver's rank may not carry its level (`mkt`), a second copy of a non-stacking piece, the dead. Versioned: taken out first, then put in
+  (a failed put returns it). → `{from, to}` (a gladiator, or `{house:true, gear}`). A moved piece is ticked to bring when the receiver keeps an
+  equip list; leaving a gladiator unticks it there.
+- **`domus.equip {char, item, on}`** — tick / untick one copy to bring (`ONLC.gearEquip`); `in_match` while that gladiator is seated. → the gladiator.
+- Both need a house (NEED_DOMUS). Death rules unchanged (a Ranked death loses the gladiator's gear).
+
+## 10. A speared ticket holder (server route for 128-v82stands)
+- **`match.speared {id, seat}`** — only from a live human FIGHTER of that live match; one vote per fighter (`MATCH#<id> SPR#<seat>#<acct>`, putNew).
+  When a strict majority of the live human fighters voted for that ticket seat: the lobby copy is edited (versioned) — that ticket's `paid` → 0
+  (`speared:1`), `L.pot` −amt — the holder's active gladiator is credited `amt` exactly once, and the holder gets the push
+  **`stands.refund {id, seat, amt}`**. → `{votes, need, refunded}`. Settlement needs no change (the pot already lost it).
+
+## 11. Client-only for now (mock), server work still missing
+- **Free tickets**: the host's "Tickets: free" — the mock keeps `L.free82` (`lobby.set {free:1}`) and sells seats at 0. The server's `ticketOK`
+  treats `ticket 0` as "no tickets" and `lobby.set` drops `free` → needs a `free` flag in ONLC.newLobby/roomSet/ticketOK + `lobby.ticket`.
+- **Flavius's guest pass**: mock route `lobby.pass {id}` (house required, wallet < 15, once a UTC day per house: `DOMUS.passDay`, a room
+  waiting with stands on and not full, selling at any price or free → a 0-coin ticket `{pass:1}`); +1 house `fame` when that match settles
+  (not void, the holder not dropped). Server: the route, `DOMUS.passDay`, `DOMUS.fame` in `domusRow`, the settle hook.
+- **Houses of ticket holders**: the stands entries carry no `domus` on the server (`L.stands[]` = `{id,name,paid}`); the client learns houses
+  from who.list / rooms / the Forum. Add `domus` to stands entries (and liteRow stands) so "🎟 Patron of House …" never falls back.
+- **The patron look** lives in localStorage `flavius_patron82.<acct>`; others see a look generated from the account id. A `patron` field
+  on the house (cleanLook-style, ≤1 KB), sent with stands entries, would let everyone see the chosen one.

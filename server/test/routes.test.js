@@ -48,7 +48,7 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   const ra=await route('match.result',{id:L.id,table,hash:'h1'},A);assert.ok(ra.pending,'waits for the other report');
   const rb=await route('match.result',{id:L.id,table,hash:'h1'},B);
   assert.ok(!rb.void);assert.ok(!rb.out.died);assert.strictEqual(rb.char.survived,1);assert.strictEqual(rb.char.streak,1);assert.strictEqual(rb.char.stats.spd+rb.char.stats.str+rb.char.stats.int+rb.char.stats.lck+rb.char.stats.cha,275+2,'+1 survived, +1 won');
-  assert.strictEqual(rb.char.wallet,30+12+10,'v0.82: the Tiro award ×1.5 for the win (no coin carried out) + the pool back');
+  assert.strictEqual(rb.char.wallet,30+6+10,'v0.82: the Tiro award ×1.5 for the win, ×0.5 at two lanistas (no coin carried out) + the pool back');
   assert.ok(pushed.some(([a,ty,d])=>a==='dev-a'&&ty==='match.settled'&&d.out&&d.out.died),'A hears the verdict');
   assert.ok(!(await db.get('CHAR#'+ca.id,'CHAR')).alive,'A is dead');assert.strictEqual((await route('hall.list',{},A)).length,0,'a fallen Tiro is forgotten');
   assert.strictEqual((await db.get('LOBBY#'+L.id,'LOBBY')).status,'done');
@@ -410,7 +410,8 @@ async function v82(){
   const actL=(await lan.req('hello',{all:1})).active;await setC(actL,{streak:3,wallet:5});const w0=(await getC(nan.ch.id)).wallet;
   const rt=RR.players.map((p,i)=>({seat:i,won:p.id===lan.acct,place:p.id===lan.acct?1:2,f:p.id===lan.acct?30:7,coin:60,survives:true}));
   for(const x of [lan,nan])await x.req('match.result',{id:RR.id,table:rt,hash:'d'});
-  assert.strictEqual((await getC(actL)).wallet,5+Math.round(8*1.5*1.3),'Tiro win with a streak of 3: 8 ×1.5 ×1.3 (carried coin is never paid)');assert.strictEqual((await getC(nan.ch.id)).wallet,w0+8,'Tiro survivor: 8');
+  assert.strictEqual((await getC(actL)).wallet,5+Math.round(8*1.5*1.3*0.5),'Tiro win with a streak of 3, two lanistas: 8 ×1.5 ×1.3 ×0.5 (carried coin is never paid)');assert.strictEqual((await getC(nan.ch.id)).wallet,w0+4,'Tiro survivor, two lanistas: 8 ×0.5');
+  assert.strictEqual((await getC(nan.ch.id)).glory,(7+12)*0.5,'Glory at the table factor: (7 CF + 12 survived) ×0.5');assert.strictEqual((await getC(actL)).glory,(30+12+8)*0.5,'a win adds 8');
   const hd=(await lan.req('domus.get',{})).domus;assert.deepStrictEqual([hd.bouts,hd.wins,hd.survived,hd.fallen,hd.lifeCF],[1,1,1,0,30],'the house record');
   /* Custom pays no coin */
   let CR=await lan.req('lobby.create',{ev:'egidious',cry:false});await nan.req('lobby.join',{id:CR.id});CR=await lan.req('lobby.start',{id:CR.id});const w1=(await getC(nan.ch.id)).wallet;
@@ -426,6 +427,18 @@ async function v82(){
   assert.strictEqual(pay('summa',{won:true},true,{survived:60,lifeCF:1200,streak:15}),Math.round(35*1.5*2),'the streak caps at +100%');
   assert.strictEqual(pay('primus',{won:true},false,{survived:35,lifeCF:650}),0,'Custom pays nothing');assert.strictEqual(pay('tiro',{won:false,survives:false},true),0,'the dead are not paid');
   assert.ok(!('PURSE' in C),'the old purse table is gone');
+  /* ── 2b. GLORY, no demotion, the table-size factor, living counts by rank ── */
+  assert.deepStrictEqual(C.RANKS.map(r=>r.glory),[0,180,550,1150,2100]);assert.deepStrictEqual([2,3,4,5].map(C.tableFactor),[0.5,0.75,1,1]);
+  const gl=C.newChar({name:'Glory Seeker',cls:'hero'},'x','gs',0);assert.strictEqual(C.gloryOf(gl),0);assert.strictEqual(C.rankFor(gl).k,'tiro');
+  let go=C.applyResult(gl,{won:true,place:1,f:40,survives:true},true,{humans:3});assert.strictEqual(go.pay,Math.round(12*0.75),'Tiro win at three lanistas');assert.strictEqual(gl.glory,(40+12+8)*0.75);assert.strictEqual(go.glory,45);
+  gl.glory=179.5;go=C.applyResult(gl,{won:false,place:2,f:0,survives:true},false,{humans:4});assert.strictEqual(gl.glory,179.5,'Custom with no CF adds nothing');assert.strictEqual(C.rankFor(gl).k,'tiro');
+  go=C.applyResult(gl,{won:false,place:2,f:1,survives:true},false,{humans:2});assert.strictEqual(gl.glory,180);assert.strictEqual(go.rankUp,'gregarius');assert.strictEqual(gl.rankK,'gregarius');
+  gl.glory=50;assert.strictEqual(C.rankFor(gl).k,'gregarius','never demoted');assert.strictEqual(C.rankProgress(gl),0);
+  const og=C.newChar({name:'Old Timer',cls:'hero'},'x','ot',0);delete og.glory;delete og.rwins;delete og.rankK;Object.assign(og,{survived:20,lifeCF:300,wins:5,rank:'veteranus'});
+  assert.strictEqual(C.gloryOf(og),300+240+40,'old gladiators start from their record');assert.strictEqual(C.rankByGlory(580).k,'veteranus');og.lifeCF=100;assert.strictEqual(C.rankFor(og).k,'veteranus','an old rank is kept when the new formula is lower');
+  const fate=C.newChar({name:'Fated',cls:'hero'},'x','fa',0);const fo=C.applyResult(fate,{won:false,place:4,f:3,survives:false},true,{humans:2});assert.ok(fo.died,'the Fate applies in full');assert.strictEqual(fo.pay,0);
+  const rc=(await nan.req('hello',{all:1})).rankCounts;assert.ok(rc&&Number.isInteger(rc.tiro)&&rc.tiro>=2&&'summa' in rc,'hello carries living counts by rank');
+  assert.deepStrictEqual(Object.keys((await nan.req('world.news',{})).rankCounts),C.RANKS.map(r=>r.k));
 
   /* ── 3. PRICES by level (weapons) and by AP (armor) ── */
   const arm=Object.entries(catalog).filter(([k,v])=>v.kind==='a');assert.ok(arm.length>10&&arm.every(([k,v])=>Number.isInteger(v.ap)&&v.ap>0),'the catalog carries every armor piece’s AP');
@@ -433,6 +446,19 @@ async function v82(){
   assert.strictEqual(C.priceOf({kind:'a',lv:2,ap:4}),220);assert.strictEqual(C.priceOf({kind:'a',lv:3,ap:5}),750);
   const gal=catalog.galea;await setC(nan.ch.id,{wallet:C.priceOf(gal)-1});await rejects(nan.req('char.buy',{char:nan.ch.id,item:'galea'}),null,new RegExp('Costs '+C.priceOf(gal)+' coin'));
   await setC(nan.ch.id,{wallet:C.priceOf(gal)+60});let bc=await nan.req('char.buy',{char:nan.ch.id,item:'galea'});assert.strictEqual(bc.wallet,60);bc=await nan.req('char.buy',{char:nan.ch.id,item:'mace'});assert.strictEqual(bc.wallet,0,'a level-1 weapon costs 60');
+
+  /* ── 3b. THE STOREROOM: move pieces between the house's gladiators and the house; tick to bring; locked in a match ── */
+  const n2=await nan.req('char.create',{name:'Nan Secunda',cls:'slave'});
+  let mv=await nan.req('domus.move',{item:'galea',from:nan.ch.id,to:n2.id});assert.ok(mv.to.gear.includes('galea')&&!mv.from.gear.includes('galea'),'moved to the second gladiator');
+  mv=await nan.req('domus.move',{item:'galea',from:n2.id,to:'house'});assert.deepStrictEqual(mv.to.gear,['galea']);assert.deepStrictEqual((await nan.req('domus.get',{})).gear,['galea'],'the house keeps it');
+  mv=await nan.req('domus.move',{item:'galea',from:'house',to:nan.ch.id});assert.ok(mv.to.gear.includes('galea'));
+  const nD=(await nan.req('domus.get',{})).domus;const DD=await getD(nD.id);DD.gear=['cassis'];await db.put('DOMUS#'+nD.id,'DOMUS',DD);
+  await rejects(nan.req('domus.move',{item:'cassis',from:'house',to:n2.id}),null,/up to level 1/);await rejects(nan.req('domus.move',{item:'galea',from:n2.id,to:'house'}),null,/not there/);
+  let eqc=await nan.req('domus.equip',{char:nan.ch.id,item:'galea',on:false});assert.ok(!C.equipOf(eqc).includes('galea')&&eqc.gear.includes('galea'),'untick: stays home');
+  eqc=await nan.req('domus.equip',{char:nan.ch.id,item:'galea',on:true});assert.ok(C.equipOf(eqc).includes('galea'),'tick: brought');
+  const actN=(await nan.req('hello',{all:1})).active;const SR=await nan.req('lobby.create',{ev:'democritus',cry:false});
+  await rejects(nan.req('domus.move',{item:'galea',from:actN,to:'house'}),'in_match');await rejects(nan.req('domus.equip',{char:actN,item:'galea',on:false}),'in_match');
+  assert.deepStrictEqual((await nan.req('domus.get',{})).busy,[actN],'the seated gladiator is busy');await nan.req('lobby.leave',{id:SR.id});
 
   /* ── 5. INVITES die with the room ── */
   const iv={};for(const n of ['iva','ivb','ivc','ivd','ive','ivf','ivg','ivh','ivi','ivj','ivk','ivl','ivm'])iv[n]=await client(n);
@@ -489,6 +515,13 @@ async function v82(){
   const sins=(await sa.req('match.get',{id:SL.id,from:0})).inputs.filter(x=>x.k==='stands.result');assert.deepStrictEqual(sins.map(x=>x.rot),[1,2],'one result input a rotation, in the ordered stream');
   /* rotation 3: nobody answers; after 25 s any fighter may close */
   await sa.req('match.stands.open',{id:SL.id,rot:3});T+=C.STANDS_MS+5000;assert.ok((await sb.req('match.stands.close',{id:SL.id,rot:3})).closed);
+  /* a speared ticket holder: the fighters report it; a strict majority → the ticket price back once (stands.refund) */
+  await rejects(sc.req('match.speared',{id:SL.id,seat:4}),null,/Only the fighters/);await rejects(sa.req('match.speared',{id:SL.id,seat:1}),null,/No ticket holder/);
+  const wSc=(await getC(sc.ch.id)).wallet;let sp=await sa.req('match.speared',{id:SL.id,seat:4});assert.deepStrictEqual(sp,{votes:1,need:2,refunded:0});
+  sp=await sa.req('match.speared',{id:SL.id,seat:4});assert.strictEqual(sp.votes,1,'one vote a fighter');
+  m0=mark();sp=await sb.req('match.speared',{id:SL.id,seat:4});assert.strictEqual(sp.refunded,5);assert.deepStrictEqual(sc.got('stands.refund',m0),[{id:SL.id,seat:4,amt:5}]);
+  assert.strictEqual((await getC(sc.ch.id)).wallet,wSc+5,'the price back');const LP=await db.get('LOBBY#'+SL.id,'LOBBY');assert.strictEqual(LP.pot,5);assert.strictEqual(LP.stands.find(x=>x.id===sc.acct).paid,0);
+  sp=await sa.req('match.speared',{id:SL.id,seat:4});assert.strictEqual(sp.refunded,0,'refunded once');assert.strictEqual((await getC(sc.ch.id)).wallet,wSc+5);
   /* stands off, or nobody in them: no window */
   const sx=await client('stx'),sy=await client('sty');let SO=await sx.req('lobby.create',{ev:'egidious',cry:false,standsOff:true});await sy.req('lobby.join',{id:SO.id});SO=await sx.req('lobby.start',{id:SO.id});
   await rejects(sx.req('match.stands.open',{id:SO.id,rot:1}),'no_stands');

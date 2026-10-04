@@ -9,7 +9,7 @@ await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()
 const errs=[];const P={};for(const n of ['A','B','C']){P[n]=await ctx.newPage();P[n].on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]))}
 await P.A.goto(URL0);await P.A.evaluate(()=>localStorage.removeItem('flavius_onlmock'));for(const n of ['B','C'])await P[n].goto(URL0);await P.A.waitForTimeout(2500);
 const {A,B,C}=P;const wait=ms=>A.waitForTimeout(ms);
-const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls})},[name,cls]);
+const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls})},[name,cls]);
 await setup(A,'Alpha','hero');await setup(B,'Beta','soldier');await setup(C,'Gamma','slave');
 /* the map table is filled by 117 (art step); give it the bots' zones if it is still empty */
 for(const p of [A,B,C])await p.evaluate(()=>{if(!onlTzLL('Europe/Rome'))Object.assign(ONL_TZ,{'Europe/Rome':[41.9,12.5],'America/New_York':[40.71,-74],'Asia/Tokyo':[35.7,139.7],'Europe/London':[51.5,-0.12],'America/Sao_Paulo':[-23.55,-46.63],'Australia/Sydney':[-33.87,151.2]});
@@ -95,7 +95,7 @@ const muted={list:await C.evaluate(id=>(mockLoad().accounts[ONL.acct.id].mutes||
 const out={landing,big,rA,rB,twins,rC,fam,hostB:hostB&&hostB.host,afterKick,blocked,logB,lists:[lists0,lists1],readyA,forumA,ban,callLine,who,pop1,pop2,rC2,grey,inMatch,backA,bub,res,againBtn,again,pop3,muted};
 console.log(JSON.stringify(out));
 const miss=[];
-if(!landing.row||!landing.dots||!/online/.test(landing.cap)||landing.chips.length!==6)miss.push('landing: stage map + Forum (v0.81)');if(!big.on||!big.dots)miss.push('big map');
+if(!landing.row||!landing.dots||!/lanistas? · \d+ guests?/.test(landing.cap)||landing.chips.length!==6)miss.push('landing: stage map + Forum (v0.81)');if(!big.on||!big.dots)miss.push('big map');
 if(!rA||rA.ev!=='democritus'||rA.seats!==4)miss.push('＋ Custom room');if(!rB||rB.id!==rA.id||twins!==1)miss.push('playlist joins, no twin');if(!rC||rC.id!==rA.id||rC.players.length!==3)miss.push('join from the browser');
 if(!fam||fam.ev!=='familia'||fam.seats!==6||fam.teams!==3||!(fam.players.find(x=>/Gamma/.test(x[0]))||[])[1]==='B')miss.push('Familia 6 seats + teams');
 if(!/Beta/.test(hostB&&hostB.host||''))miss.push('give host');if(afterKick.c||afterKick.b.members.some(n=>/Gamma/.test(n)))miss.push('remove');if(!/removed you/.test(blocked))miss.push('removed lanista blocked');

@@ -20,7 +20,7 @@ for(const p of [A,B,C])await p.goto(URL0);await wait(2500);
 /* poll until fn (in the page) is truthy */
 const until=async(p,fn,arg,ms=10000)=>{const t0=Date.now();let v;while(Date.now()-t0<ms){try{v=await p.evaluate(fn,arg)}catch(e){v=null}if(v)return v;await p.waitForTimeout(200)}return v};
 const click=async(p,sel,ms=8000)=>{try{await p.waitForSelector(sel,{timeout:ms});await p.click(sel);await p.waitForTimeout(400);return true}catch(e){notes.push('no '+sel);return false}};
-const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();await netPick();ONL.acct=await NET.req('auth.signin',{name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls});return NET.mode},[name,cls]);
+const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();await netPick();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls});return NET.mode},[name,cls]);
 const modes=[];for(const [p,n,c] of [[A,'Alpha','hero'],[B,'Beta','soldier'],[C,'Gamma','slave']])modes.push(await setup(p,n,c));
 for(const p of [A,B,C])p.evaluate(()=>{onlineOpen('play')}).catch(()=>{});
 for(const p of [A,B,C])await until(p,()=>!!document.querySelector('#onl .onl-main'));await wait(800);

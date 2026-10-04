@@ -12,6 +12,9 @@
      ×(1 + 10% per ranked bout survived in a row, up to +100%). Custom pays no coin. Wagers/tickets unchanged.
    • v0.82 DOMUS: every account names a house (3–24 letters, word-filtered, unique) before any gladiator; up to 4 gladiators
      (GLAD_MAX), one active; the house keeps a record (bouts, wins, survived, fallen, lifetime CF, founded).
+   • v0.82 GLORY: ranks by Glory (gloryOf = lifetime CF + 12 a Ranked bout survived + 8 a Ranked win): Tiro 0, Gregarius 180, Veteranus 550,
+     Primus Palus 1150, Summa Rudis 2100; never demoted (ch.rankK). TABLE SIZE (tableFactor): 2 humans seated → ×0.5, 3 → ×0.75, 4+ → ×1 on the
+     coin award and on the Glory gained; the Fate applies in full.
    • v0.82 GUESTS: read-only watchers without sign-in (GUEST_OK requests), 2 hours (GUEST_MS), counted apart (hereSummary guests/gzones).
    • v0.82 STANDS GROUP TURN: one private pick per ticket holder per rotation (standsPickOK), applied together as one server input.
    • Wagers: online wallets only, escrowed by the server, split among winning bets (5% to the host); fighters back only themselves.
@@ -32,11 +35,11 @@ const ONLC=(function(){
   /* v0.79: up to 3 living gladiators an account, one active; a match needs 2 humans; lobby chat */
   const GLAD_MAX=4, MIN_HUMANS=2, CHAT_KEEP=40, CHAT_LEN=200;
   const RANKS=[
-    {k:'tiro',n:'Tiro',bouts:0,cf:0,mkt:1,ic:'🪵'},
-    {k:'gregarius',n:'Gregarius',bouts:6,cf:90,mkt:2,ic:'🛡'},
-    {k:'veteranus',n:'Veteranus',bouts:18,cf:300,mkt:3,ic:'⚔'},
-    {k:'primus',n:'Primus Palus',bouts:35,cf:650,mkt:3,ic:'🏛'},
-    {k:'summa',n:'Summa Rudis',bouts:60,cf:1200,mkt:3,ic:'👑'}];
+    {k:'tiro',n:'Tiro',glory:0,mkt:1,ic:'🪵'},
+    {k:'gregarius',n:'Gregarius',glory:180,mkt:2,ic:'🛡'},
+    {k:'veteranus',n:'Veteranus',glory:550,mkt:3,ic:'⚔'},
+    {k:'primus',n:'Primus Palus',glory:1150,mkt:3,ic:'🏛'},
+    {k:'summa',n:'Summa Rudis',glory:2100,mkt:3,ic:'👑'}];
   const STAT_KEYS=['spd','str','int','lck','cha'];const STAT_POOL=375,STAT_MIN=50,STAT_MAX=99;
   /* every new gladiator starts the same, low; ratings grow only by surviving: +1 to the lowest rating per bout survived,
      +1 more for a win (ties go in STAT_KEYS order), never above 99 */
@@ -50,10 +53,17 @@ const ONLC=(function(){
   const AWARD={tiro:8,gregarius:12,veteranus:18,primus:25,summa:35}, WIN_BONUS=0.5;
   function awardOf(rank,won,streak){return Math.round((AWARD[rank]||AWARD.tiro)*(won?1+WIN_BONUS:1)*(1+Math.min(1,(streak|0)*0.1)))}
   const rankIdx=k=>Math.max(0,RANKS.findIndex(r=>r.k===k));
-  function rankFor(ch){let r=RANKS[0];for(const R of RANKS)if((ch.survived||0)>=R.bouts&&(ch.lifeCF||0)>=R.cf)r=R;return r}
+  /* v0.82 GLORY: one number ranks a gladiator — lifetime CF + 12 a Ranked bout survived + 8 a Ranked win, every part at the match's
+     table-size factor (tableFactor). Kept on the gladiator (ch.glory, fractional); gladiators from before v0.82 start from their record
+     (ch.rwins = Ranked wins when known, else all wins). NO DEMOTION: the highest rank reached (ch.rankK; else the stored ch.rank) holds. */
+  const GLORY={cf:1,survived:12,win:8};
+  function gloryOf(ch){if(!ch)return 0;if(typeof ch.glory==='number'&&isFinite(ch.glory))return ch.glory;return (ch.lifeCF|0)+GLORY.survived*(ch.survived|0)+GLORY.win*(ch.rwins!=null?ch.rwins|0:ch.wins|0)}
+  function rankByGlory(g){let r=RANKS[0];for(const R of RANKS)if(g>=R.glory)r=R;return r}
+  function rankFor(ch){let r=rankByGlory(gloryOf(ch));for(const k of [ch&&ch.rankK,ch&&ch.rank]){const K=k&&RANKS.find(R=>R.k===k);if(K&&rankIdx(K.k)>rankIdx(r.k))r=K}return r}
   function nextRank(ch){const i=rankIdx(rankFor(ch).k);return RANKS[i+1]||null}
-  function rankProgress(ch){const N=nextRank(ch);if(!N)return 1;const cur=rankFor(ch);
-    const a=Math.min(1,((ch.survived||0)-cur.bouts)/Math.max(1,N.bouts-cur.bouts)),b=Math.min(1,((ch.lifeCF||0)-cur.cf)/Math.max(1,N.cf-cur.cf));return Math.max(0,Math.min(a,b))}
+  function rankProgress(ch){const N=nextRank(ch);if(!N)return 1;const cur=rankFor(ch);return Math.max(0,Math.min(1,(gloryOf(ch)-cur.glory)/Math.max(1,N.glory-cur.glory)))}
+  /* v0.82 TABLE SIZE: humans seated in the match (CPU fillers do not count): 2 → half, 3 → three quarters, 4+ → full (coin and Glory; the Fate in full) */
+  const tableFactor=n=>n==null?1:n>=4?1:n===3?0.75:0.5;
   function cleanName(s){return String(s||'').replace(/[<>&"'`\\]/g,'').replace(/\s+/g,' ').trim().slice(0,24)}
   function statsOK(st){if(!st)return false;let sum=0;for(const k of STAT_KEYS){const v=st[k];if(!Number.isInteger(v)||v<STAT_MIN||v>STAT_MAX)return false;sum+=v}return sum<=STAT_POOL}
   /* validate + build a fresh character (the server does this; the mock calls it too) */
@@ -62,7 +72,7 @@ const ONLC=(function(){
   function newChar(spec,owner,id,now){const name=cleanName(spec&&spec.name);if(name.length<2)throw new Error('Name: 2–24 letters.');if(nameBad(name))throw new Error('Pick another name.');
     if(!CLASSES8.includes(spec.cls))throw new Error('Pick one of the eight printed classes.');
     const look=spec.look&&typeof spec.look==='object'?JSON.parse(JSON.stringify(spec.look)):{};
-    return {id,owner,name,cls:spec.cls,stats:{...START_STATS},look:cleanLook(look),rank:'tiro',wallet:0,lifeCF:0,bouts:0,survived:0,wins:0,kills:0,gear:[],feats:[],alive:true,born:now,died:null,v:VER}}
+    return {id,owner,name,cls:spec.cls,stats:{...START_STATS},look:cleanLook(look),rank:'tiro',rankK:'tiro',glory:0,rwins:0,wallet:0,lifeCF:0,bouts:0,survived:0,wins:0,kills:0,gear:[],feats:[],alive:true,born:now,died:null,v:VER}}
   /* what a gladiator may buy: market level ≤ rank's level, not already owned (only padded/belt pieces stack) */
   function canBuy(ch,item,catalog){const it=catalog[item];if(!it)return 'No such piece.';if(!ch.alive)return 'The dead buy nothing.';
     const R=rankFor(ch);if(it.lv>R.mkt)return `${R.n} may buy up to level ${R.mkt}.`;if(!it.stack&&(ch.gear||[]).includes(item))return 'Already yours.';
@@ -70,15 +80,18 @@ const ONLC=(function(){
   function buy(ch,item,catalog){const why=canBuy(ch,item,catalog);if(why)throw new Error(why);ch.wallet-=priceOf(catalog[item]);ch.gear=[...(ch.gear||[]),item];return ch}
   /* the result of one match for one gladiator. row = the event's result row for that seat:
      {won, place (1 = best), f (final CF), coin (ignored since v0.82), kills, survives, slew:['commodus',…]} */
-  function applyResult(ch,row,ranked){const before=rankFor(ch);const out={died:false,rankUp:null,pay:0,cf:0,hall:false};
+  function applyResult(ch,row,ranked,x){const before=rankFor(ch);const g0=gloryOf(ch);const f=tableFactor(x&&x.humans);const out={died:false,rankUp:null,pay:0,cf:0,hall:false,factor:f,glory:0};
+    const surv=row.survives!==false;const gain=f*(Math.max(0,row.f|0)+(ranked&&surv?GLORY.survived:0)+(ranked&&surv&&row.won?GLORY.win:0));
+    if(ch.rwins==null)ch.rwins=ch.glory==null?(ch.wins|0):0;if(ranked&&row.won)ch.rwins++;ch.glory=Math.round((g0+gain)*100)/100;out.glory=Math.round(gain*10)/10;
+    if(!ch.rankK||rankIdx(before.k)>rankIdx(ch.rankK))ch.rankK=before.k;
     ch.bouts=(ch.bouts||0)+1;if(row.won)ch.wins=(ch.wins||0)+1;ch.kills=(ch.kills||0)+(row.kills|0);
     const cf=Math.max(0,row.f|0);out.cf=cf;ch.lifeCF=(ch.lifeCF||0)+cf;
     /* v0.82: the award (Ranked, survived) — streak counted before this bout */
-    out.pay=ranked&&row.survives!==false?awardOf(before.k,!!row.won,ch.streak||0):0;ch.wallet=(ch.wallet||0)+out.pay;
+    out.pay=ranked&&row.survives!==false?Math.round(awardOf(before.k,!!row.won,ch.streak||0)*f):0;ch.wallet=(ch.wallet||0)+out.pay;
     for(const s of row.slew||[])if(!ch.feats.includes('slew:'+s))ch.feats.push('slew:'+s);
     if(ranked&&row.survives===false){ch.alive=false;out.died=true;ch.died={at:Date.now(),cf,rank:before.k};out.hall=hallWorthy(ch);return out}
     if(ranked){ch.survived=(ch.survived||0)+1;ch.streak=(ch.streak||0)+1}if(row.survives!==false)grow(ch,1+(row.won?1:0));
-    const after=rankFor(ch);ch.rank=after.k;if(after.k!==before.k)out.rankUp=after.k;return out}
+    const after=rankFor(ch);ch.rank=after.k;if(rankIdx(after.k)>rankIdx(ch.rankK))ch.rankK=after.k;if(after.k!==before.k)out.rankUp=after.k;return out}
   /* what a lobby seat needs to field the gladiator on every client */
   function kitOf(ch){return ch?{cls:ch.cls,name:ch.name,stats:{...ch.stats},gear:equipOf(ch),look:cleanLook(ch.look)}:null}
   /* what a gladiator brings: the pieces ticked in My Gladiators (all bought gear until something is unticked) */
@@ -227,6 +240,20 @@ const ONLC=(function(){
   /* the house record built from gladiators made before houses existed (no data lost) */
   function domusFromChars(D,chars){for(const c of chars||[]){D.bouts=(D.bouts|0)+(c.bouts|0);D.wins=(D.wins|0)+(c.wins|0);D.survived=(D.survived|0)+(c.survived|0);D.lifeCF=(D.lifeCF|0)+(c.lifeCF|0);if(!c.alive)D.fallen=(D.fallen|0)+1}D.glads=(D.glads|0)+(chars||[]).length;return D}
   const domusRow=D=>D?{id:D.id,name:D.name,founded:D.founded,bouts:D.bouts|0,wins:D.wins|0,survived:D.survived|0,fallen:D.fallen|0,lifeCF:D.lifeCF|0,glads:D.glads|0}:null;
+  /* ── v0.82 THE STOREROOM: every piece a house owns sits with one of its gladiators (ch.gear) or in the house itself (D.gear).
+     A piece moves between them (domus.move) and is ticked to bring or not (domus.equip) — never for a gladiator seated in a waiting
+     room or a live match. A gladiator may carry only what its rank may buy (market level ≤ rank's mkt); one copy of a non-stacking piece. ── */
+  const isGlad=x=>!!(x&&x.cls&&x.owner);
+  function gearMoveWhy(src,dst,item,catalog){const it=catalog[item];if(!it)return 'No such piece.';if(!src||!(src.gear||[]).includes(item))return 'That piece is not there.';if(!dst||src===dst)return 'Pick where it goes.';
+    if(isGlad(src)&&!src.alive)return 'The dead keep what they fell with.';
+    if(isGlad(dst)){if(!dst.alive)return 'The dead carry nothing.';const R=rankFor(dst);if(it.lv>R.mkt)return `A ${R.n} may carry up to level ${R.mkt}.`;if(!it.stack&&(dst.gear||[]).includes(item))return 'They already have one.'}return ''}
+  function gearMove(src,dst,item,catalog){const why=gearMoveWhy(src,dst,item,catalog);if(why)throw new Error(why);
+    const eq=isGlad(src)?equipOf(src):null;src.gear=(src.gear||[]).slice();src.gear.splice(src.gear.indexOf(item),1);
+    if(eq&&Array.isArray(src.equip)){const i=eq.indexOf(item);if(i>=0)eq.splice(i,1);src.equip=eq}
+    dst.gear=[...(dst.gear||[]),item];if(isGlad(dst)&&Array.isArray(dst.equip))dst.equip=[...dst.equip,item];return {src,dst}}
+  /* tick / untick one piece to bring (one copy) */
+  function gearEquip(ch,item,on){if(!ch.alive)throw new Error('The dead stay as they fell.');const eq=equipOf(ch);const have=(ch.gear||[]).filter(k=>k===item).length,inEq=eq.filter(k=>k===item).length;
+    if(!have)throw new Error('That piece is not theirs.');if(on&&inEq<have)eq.push(item);else if(!on&&inEq){eq.splice(eq.indexOf(item),1)}ch.equip=eq;return ch}
   /* ── v0.82 GUESTS: a connection without sign-in may only look (these requests), for 2 hours from its first connect ── */
   const GUEST_MS=2*3600e3, GUEST_OK=['hello','auth.guest','lobby.list','match.watch','match.unwatch','match.get','match.snapreq','forum.get','hall.list','world.news'];
   /* ── v0.82 STANDS GROUP TURN: once a rotation every ticket holder picks ONE action in private; the server applies all picks as one
@@ -293,5 +320,5 @@ const ONLC=(function(){
   /* weekly challenges rotate with the week of the year */
   const CHALLENGES=[['Survive 3 ranked bouts',3,'survived'],['Earn 60 CF in one bout',60,'cf1'],['Win a bout at Capua',1,'win:3'],['Slay 5 beasts',5,'beasts'],['Finish 5 bouts',5,'bouts'],['Win with 20+ coin left',1,'rich']];
   function weekChallenges(t){const wk=Math.floor((t||0)/604800000);const out=[];for(let i=0;i<3;i++)out.push(CHALLENGES[(wk+i*2)%CHALLENGES.length]);return out}
-  return {PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
+  return {gearMoveWhy,gearMove,gearEquip,GLORY,gloryOf,rankByGlory,tableFactor,PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
