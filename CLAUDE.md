@@ -714,6 +714,10 @@ One global script; files are concatenated in order. Later "version modules" patc
   on spikes → it falls INTO the spikes (pick it up = take the spike damage). SPECTATOR GROUP TURN (online only): every ticket holder gets
   their own private popup at the same time (nobody else sees the choices), one action each per window; a thrown stone/offering is LOCKED to
   its tile and still fires — whoever stands there when it lands is hit / receives it.
+- **Custom beast spawn cards (asked 2026-10-04, v0.82; open: 1 card look, 2 unique tick, 3 deck section/copies, 5 which events —
+  my picks 1a/2a/3a/5a):** each Studio beast gets an arena spawn card (printed-card frame + token/portrait + name); Q4 DECIDED: a drawn
+  custom beast enters by the GRID DICE like Leo/Leaena. Custom events already place Studio beasts (15-custom layout 'cn:') and have
+  deckSpawns ticks for the printed Leo/Leaena/Tholo/Commodus/Zora only. 126-v82fix pulls a unique beast's card once it is in.
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
