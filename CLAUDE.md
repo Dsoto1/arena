@@ -659,7 +659,8 @@ One global script; files are concatenated in order. Later "version modules" patc
   full/off) — no card when nothing is on; the card names that room; sitting through a match on it gives
   the Domus a small bonus (default +1 house Fame — a new Fame line on the house record; he said "Fame or CF"). Watching stays free for all.
   Spear reaction: Flavius hates seeing spectators speared (refund line: "Flavius refunds the ticket…"); offline he LAUGHS today
-  (16-crowd flaviusMood 'laugh') — asked him whether to switch it to a scowl.
+  (16-crowd flaviusReact case 'spear' → flaviusMood('laugh')) — HIS PICK: SCOWL. v0.82: flaviusMood('angry',3600,.8) with spear lines
+  ("My spectators are not targets!", "Who pays for that seat now?"), offline and online alike.
   ONLINE PRICES (v0.82, with the coin rework; ONLC PRICE is shared with the server): weapons L1 60 / L2 250 / L3 750; armor by AP
   15 / 55 / 150 coin per AP at L1/L2/L3 (Greaves L2 4 AP = 220, Forged Chest L3 5 AP = 750); owned gear and wallets untouched.
   COIN (online): no pay-out for carried coin — flat survival award by rank (Tiro 8 / Gregarius 12 / Veteranus 18 / Primus 25 / Summa 35,
