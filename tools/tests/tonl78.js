@@ -1,4 +1,4 @@
-/* online: a party of two in Familia (one team, CPUs on the other), a ticket holder taking stands turns, and a free watcher
+/* online: a party of two in Familia (one team, CPUs on the other), a ticket holder taking stands turns (v0.82: the group turn's private popup), and a free watcher
    who joins mid-match from a fighter's snapshot — four windows on the mock server, all in lockstep */
 const http=require('http'),fs=require('fs'),path=require('path');
 const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.resolve(process.argv[2])),page=path.basename(process.argv[2]);
@@ -18,7 +18,7 @@ const tk=await P.C.evaluate(async id=>{const r=await NET.req('lobby.ticket',{id}
 const L2=await P.A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},L.id);
 await P.B.evaluate(L=>onlEnter(L),L2);await P.C.evaluate(L=>onlEnter(L),L2);
 const late=await P.C.evaluate(async id=>{try{await NET.req('lobby.ticket',{id});return 'sold'}catch(e){return e.message}},L.id);
-const drive=async(p,stone)=>{const r=await p.evaluate(stone=>{if(CUR_MODAL&&(!ONLM.on||onlmMine()||ONLM.info>0)){const bs=[...document.querySelectorAll('#modal .mbtns button')].filter(b=>!b.disabled);
+const drive=async(p,stone)=>{const r=await p.evaluate(stone=>{const sp=document.querySelector('#st82Pop');if(sp){const bs=[...sp.querySelectorAll('[data-st82]')].filter(b=>!b.disabled);if(!bs.length)return ['','','wait'];const st=(stone&&bs.find(b=>/stone|offer/.test(b.dataset.st82)))||bs[bs.length-1];st.setAttribute('data-drv','1');return ['sel','#st82Pop [data-drv="1"]','stands']}if(CUR_MODAL&&(!ONLM.on||onlmMine()||ONLM.info>0)){const bs=[...document.querySelectorAll('#modal .mbtns button')].filter(b=>!b.disabled);
     const st=stone&&bs.find(b=>/Throw a stone|Throw an offering/.test(b.textContent));if(st){st.setAttribute('data-drv','1');return ['sel','#modal [data-drv="1"]','stands']}
     const pb=document.querySelector('#modal .mbtns .primary')?'#modal .mbtns .primary':bs.length?'#modal .mbtns button:not([disabled])':null;return pb?['sel',pb,'modal']:['','','modal?']}
   if(!S||S.over||!ONLM.on)return ['','','off'];if(!onlmMine()||S.busy)return ['','','wait'];
@@ -30,16 +30,16 @@ const drive=async(p,stone)=>{const r=await p.evaluate(stone=>{if(CUR_MODAL&&(!ON
     S._drv=0;if(document.querySelector('[data-act="end"]'))return ['sel','[data-act="end"]','end']}return ['','','idle']},stone);
   if(r[0]==='sel')await p.click(r[1],{timeout:2000}).catch(()=>{});if(r[0]==='xy')await p.mouse.click(r[1][0],r[1][1]);return r[2]};
 const t0=Date.now();let watching=false;const acts={A:0,B:0,C:0};
-while(Date.now()-t0<80000){for(const n of ['A','B','C']){const v=await drive(P[n],n==='C');if(v!=='wait'&&v!=='off'&&v!=='idle')acts[n]++}
+while(Date.now()-t0<(process.env.T78||110000)){for(const n of ['A','B','C']){const v=await drive(P[n],n==='C');if(v!=='wait'&&v!=='off'&&v!=='idle')acts[n]++}
   if(!watching&&Date.now()-t0>9000){watching=true;await P.D.evaluate(async id=>{ONL.lobbies=await NET.req('lobby.list');onlWatch(ONL.lobbies.find(x=>x.id===id))},L.id)}
   await P.A.waitForTimeout(250);if(await P.A.evaluate(()=>S&&S.over))break}
 await P.A.waitForTimeout(2500);
 const inputs=await P.A.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from,x.h||x.pre,x.k]));
 const H={};for(const n of ['A','B','C','D'])H[n]=await P[n].evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs,me:ONLM.me,acct:ONL.acct.id,on:!!(S&&S.onl),watch:!!(S&&S.onl&&S.onl.watch),next:ONLM.next}));
-let same=0,diff=0,dSame=0,dDiff=0;const diffs=[];for(const [seq,from,h] of inputs){for(const n of ['A','B','C','D']){if(H[n].acct===from)continue;const o=H[n].h['s'+seq];if(!o)continue;const ok=o===h;if(n==='D'){ok?dSame++:dDiff++}else{ok?same++:(diff++,diffs.push(n+seq))}}}
+let same=0,diff=0,dSame=0,dDiff=0;const diffs=[];for(const [seq,from,h] of inputs){if(!h)continue;/* server inputs (v0.82 stands.result) carry no hash */for(const n of ['A','B','C','D']){if(H[n].acct===from)continue;const o=H[n].h['s'+seq];if(!o)continue;const ok=o===h;if(n==='D'){ok?dSame++:dDiff++}else{ok?same++:(diff++,diffs.push(n+seq))}}}
 
 const setupA=await P.A.evaluate(()=>({teams:S.players.map(p=>p.team),names:S.players.map(p=>p.name),stands:(S.spect||[]).filter(s=>s.human).map(s=>[s.name,s.onlIdx])}));
-const fromC=inputs.filter(x=>x[1]===H.C.acct).length;
+const fromC=await P.A.evaluate(async seat=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.filter(x=>x.k==='stands.result'&&(x.picks||[]).some(p=>p.seat===seat)).length,4);
 console.log(JSON.stringify({lead,tk,late,inputs:inputs.length,fromC,same,diff,dSame,dDiff,resync:[H.A.r,H.B.r,H.C.r,H.D.r],watch:H.D.watch,dNext:H.D.next,aNext:H.A.next,acts,setupA,diffs:diffs.slice(0,6)}));
 const miss=[];if(!/leader picks/.test(lead))miss.push('only the leader picks');if(tk.w!==25||tk.pot!==5)miss.push('ticket paid into the pot');if(!/until the horns/.test(late))miss.push('tickets close at the horns');
 if(JSON.stringify(setupA.teams.slice(0,2))!=='["A","A"]'||setupA.teams.filter(t=>t==='B').length!==2)miss.push('the party on one team');
