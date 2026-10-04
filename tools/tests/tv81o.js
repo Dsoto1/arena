@@ -63,10 +63,10 @@ const land=await A.evaluate(()=>{const o=document.getElementById('onl');const t=
   return {map:!!o.querySelector('.onl-stage #onlStageMap81 .omap-in'),dots:o.querySelectorAll('#onlStageMap81 .omap-dot').length,oval:!!o.querySelector('.omap'),row80:!!document.getElementById('onlRow80'),
     forum:!!o.querySelector('.a81-forum #onlFeed80'),news:o.querySelectorAll('#onlFeed80 .news81').length,empire:/The empire/.test(o.textContent),cap:(document.getElementById('omapCap')||{}).textContent||'',
     online:(o.textContent.match(/lanistas? · \d+ guests?/g)||[]).length,today:t?{ribbon:t.classList.contains('td81'),txt:t.textContent.replace(/\s+/g,' '),wheat:!!t.querySelector('svg.ico')}:null,
-    stageWheat:!!o.querySelector('.onl-pstats svg.ico'),star:/⭐/.test(o.textContent),tones:[...o.querySelectorAll('.onl-pl.pl81')].map(e=>getComputedStyle(e).borderTopColor)}});
+    stageWheat:!!o.querySelector('.onl-pstats svg.ico'),star:/⭐\s*\d+\s*(lifetime )?CF|CF\s*⭐/.test(o.textContent),tones:[...o.querySelectorAll('.onl-pl.pl81')].map(e=>getComputedStyle(e).borderTopColor)}});
 if(SHOT)await A.screenshot({path:path.join(SHOT,'onl_landing.png')});
 await A.evaluate(()=>{const s=document.querySelector('#onlStageMap81');if(s)s.click()});await wait(400);const big=await A.evaluate(()=>{const o=document.querySelector('.omapbig');if(o)o.remove();return !!o});
-const wheat=await A.evaluate(()=>{onlSettled({char:ONL.char,out:{pay:12,cf:9}});return new Promise(r=>setTimeout(()=>r(T81.some(t=>/<svg class="ico"/.test(t)&&/lifetime CF/.test(t))&&!T81.some(t=>/⭐/.test(t))),2800))});
+const wheat=await A.evaluate(()=>{onlSettled({char:ONL.char,out:{pay:12,cf:9}});return new Promise(r=>setTimeout(()=>r(T81.some(t=>/<svg class="ico"/.test(t)&&/lifetime CF/.test(t))&&!T81.some(t=>/⭐\s*\d+\s*(lifetime )?CF|CF\s*⭐/.test(t)) /* v0.84: the week card's ⭐ is not a CF star */),2800))});
 const hall=await A.evaluate(async()=>{ONL.hall=[{name:'Old Crixus',cls:'veteranus',rank:'veteranus',lifeCF:320,survived:20,why:'Veteranus'}];ONL.hallAt=Date.now();const h=onlHallHTML();return /<svg class="ico"[\s\S]*320 CF/.test(h)});
 /* invites: a room that does not exist never pops up */
 await A.evaluate(()=>NET.emit('lobby.invite',{row:{id:'Lnope',ev:'democritus',loc:6,ranked:false,seats:4,players:[],members:[]},from:'Nobody',fromId:'u_x'}));await wait(1800);
