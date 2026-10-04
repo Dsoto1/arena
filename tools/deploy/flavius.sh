@@ -52,9 +52,10 @@ cmd_game(){ need_zip "${1:-}"; local d; d=$(unpack "$1"); local p="$d/play"
   local v; v=$(sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p' "$p/version.json"); say "Game update v$v"
   if [ -d "$p/assets" ]; then say "New art first (old files are kept)"; run aws s3 sync "$p/assets" "s3://$BUCKET/play/assets/" --only-show-errors; ok "play/assets synced"; fi
   put "$p/index.html" "play/index.html"
+  [ -f "$p/flavius-rule-arena.zip" ] && put "$p/flavius-rule-arena.zip" "play/flavius-rule-arena.zip"
   put "$p/version.json" "play/version.json"
   [ -f "$p/online.json" ] && printf '   (play/online.json in the zip was NOT uploaded — use: bash flavius.sh online …)\n'
-  clear_cdn "/play/" "/play/index.html" "/play/version.json"
+  clear_cdn "/play/" "/play/index.html" "/play/version.json" "/play/flavius-rule-arena.zip"
   [ "${DRY:-}" = 1 ] || { local live; live=$(curl -s "$SITE/play/version.json?x=$RANDOM" | sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p'); [ "$live" = "$v" ] && ok "live: v$live" || printf '   live version reads "%s" — give it a minute and run: bash flavius.sh status\n' "$live"; }
   rm -rf "$d"; }
 

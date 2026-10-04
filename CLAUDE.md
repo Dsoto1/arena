@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.80**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.81**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -65,7 +65,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Module ordering matters: a wrapper only sees wrappers installed before it.
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
   `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
-  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`.
+  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`.
   Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
 
 ### Core globals (engine)
@@ -492,6 +492,27 @@ One global script; files are concatenated in order. Later "version modules" patc
   `#boot` cover (01-head) until the menu or a window is up. Tests: `tonl80` (rooms, phrases, Forum, Orbis, invites), `tonl80r` (rules +
   majority resync with a tampered client), `tonl80m` (main-menu rejoin/abandon popup, Today), `tonlws80` (three windows on the REAL
   handler via server/test/localws.js), `thsleak80`; server: `cd server && npm test` (3 suites).
+- **v0.81 (122-125):** `122-v81play` — drafts (`runDraft` replaced): only this pick's offers, 2 per row, rest folded; offers fit the
+  drafter (no 3rd weapon, armor only on a free spot, ends early when nothing fits; CPUs too); drafted gear leaves the market; L1 = one
+  Belt I + one Belt II; `MARKET_A0` refilled from the live lists (the 1 s gearRebuild reset no longer drops v0.74/75 pieces); Juggernaut
+  declare cards only from `S.deck` ("×N left", taken cards leave it). Pillars (`doTopple` replaced, `landing81`): log names fall line +
+  rubble ("no Blessings left"), offering on the 4th tile (one back from a pillar, edge of the sand, under a beast, straight to a gladiator,
+  into the spikes). Turn bar: #hover fixed 2 lines; desktop fit cached per window/layout (`FIT81`, max dock seen, ≥170), `body.dockfit81`
+  unsticks the dock; 07-ui stands divisor 10.9. `123-v81art` — his sharper pieces as files `assets/arm81_*` (`ARM[k].art81`), pair
+  thumbnails Λ→V `armthumb81_*`, his 12 fits baked (ARMFIT_BAKED 2026-10-03T19:57:18Z), Belt I over the chest, `thrachelm` Thracian Helm
+  (L2 head 4, Hero), Veteranus musculata, hidden data `chestarm81`/`rarmarm81`, token rounds for dropped gear (`dropTok81`, `ptok81_<cls>`,
+  custom classes recoloured at runtime, `ptokring81`), stands wood (`standsTex81`). `124-v81onl` — results: hash at gameOver, report sent at
+  once, kept per account in localStorage `flavius_onlreport81.<acct>` and resent (net.back/hello/reload); over-bout abandon = leave (no
+  Damnatio); stale matches (`flavius_onlover81.<acct>`) never re-entered, "⏳ Waiting for the others to confirm"; #onlWait only over the
+  arena; invites checked via lobby.list (no timer; "That room closed before you got there" + 👁 Watch); ICO.wheat for online CF; ONLSRV
+  word (`flavius_onlsrv81`) shows the server box; landing Option 1 (world map = stage backdrop, Forum right column with 📰 headlines,
+  Today ribbon, playlists last, phone one column), playlists scroll sideways ≤760 px, border tones per event. `125-v81fix` — #cardShow
+  scales on phones/tablets; ratings always show (fold removed); Online rail one swipe row on phones. Also: 106 ratfold touch double toggle
+  (RAT_PD), 05-flow armorDesc no "chest chest". Tests `tv81p`, `tv81a`, `tv81o`. tools: per-test kill limit = max(400, 1.6×time+60);
+  release.sh share build only with SHARE=1; flavius.sh `release` = server → game (+ play/flavius-rule-arena.zip) → site → privacy,
+  `login` (two-step login.flaviusrule.com, remembered in ~/.flavius.conf). Site v0.81 (website/, not in git): Contact off the nav, Media =
+  Videos only, Play page Online card + What's new. v0.82 SERVER HALF built on branch worktree-agent-ae08b484d7ebd2404 (commit ad4feef,
+  protocol VER 5, contract tools/plans/onl82-contract.md) — NOT merged until the v0.82 client half.
 - **Guide data:** `SIM50` in 53-guide50 is regenerated by `node tools/simguide.js flavius-arena.html 600` (SIMVER env);
   it includes `perk` (wins by rating perk), charted by 69-v56.
 - **Music:** procedural Web Audio (21-audio, 45-music, 16 themes; unlocked by winning in cities). Play Now plays a
@@ -622,6 +643,11 @@ One global script; files are concatenated in order. Later "version modules" patc
   rules (printed gear, no offline records, Ranked no hints, no pause, majority resync); hot-seat leak + ghost record + boot cover fixes.
   (Published as artifact Version 93; server zip flavius-server-8, protocol 4 — deploy the server FIRST; site update zip v0.80 +
   privacy page.) Release run: 149/151 — t12 passes alone in 432 s (over the runner's 400 s limit), tonl80r flaky under load.
+- **v0.81** fair drafts (fit-only, 2 per row, Juggernaut from the real deck), pillar offerings by the rules + log, steady turn bar; his
+  sharper armor + 12 fits + Thracian Helm + Forged Chest Veteranus + V pair cards + token rounds + wood stands; online results sent at the
+  bout's end (resent), no stale matches, invites die with rooms, wheat CF, new landing, playlists scroll; ratings always shown, phone cards
+  scaled. (Published as artifact Version 94; no server change; game zip flavius-site-update-v0.81 + site zip flavius-site-v0.81.)
+  Release run: 151/151 (tlive flaky once; tv73 updated for the always-on ratings).
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the

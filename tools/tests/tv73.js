@@ -30,7 +30,7 @@ o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));co
   await W8(2800);for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(200)}setSpeedUI('pause');await W8(600);
   const p=S.players[0];render();await W8(80);p.hp.head-=1;render();await W8(80);const av=document.querySelector('#board .avatar');
   r.noChips=!!av&&!/r="9"/.test(av.innerHTML);r.zones=document.querySelectorAll('#board [data-avloc]').length>=6;r.flash=!!document.querySelector('#board .avhit');
-  r.sr=typeof SR_OPEN!=='undefined'&&SR_OPEN===false;r.ratShut=RAT_SHUT===true;
+  r.sr=typeof SR_OPEN!=='undefined'&&SR_OPEN===false;r.ratShut=RAT_SHUT===false; /* v0.81: the ratings always show */
   /* 3D mini facing */
   SETTINGS.tokenStyle='standee';SETTINGS.mini3d=true;applySettings();const q={r:5,c:5};miniFace(q,'hero');q.c=6;r.face=miniFace(q,'hero')===1;q.r=6;r.face2=miniFace(q,'hero')===7;
   SETTINGS.mini3d=false;SETTINGS.tokenStyle='figure';applySettings();return r});
@@ -42,6 +42,6 @@ o.p=await ph.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   document.querySelector('#ppTabs [data-pp="side"]').click();await W8(300);r.board=getComputedStyle(document.getElementById('board')).display!=='none';return r});
 const m=o.m,a=o.a,p=o.p;ok(m.banner&&!m.missing&&m.recStat,'tab banners + count');ok(m.noHrs,'hours out of the header');ok(m.ovals,'rail ovals');ok(m.scout,'scouting shows ratings + personality');
 ok(m.short&&m.cleared,'roster check clears with a board recruit');ok(m.plan&&m.cmp,'recruiting plan + compare');ok(m.sica&&m.spear&&m.noSuperbus,'Sica house');
-ok(!a.groups&&a.start,'no Start from; a printed piece still loads');ok(a.levels,'armor levels');ok(a.croc,'croc token');ok(a.noChips&&a.zones&&a.flash,'avatar hover zones + flash');ok(a.sr&&a.ratShut,'summa rudis hidden + ratings folded');
+ok(!a.groups&&a.start,'no Start from; a printed piece still loads');ok(a.levels,'armor levels');ok(a.croc,'croc token');ok(a.noChips&&a.zones&&a.flash,'avatar hover zones + flash');ok(a.sr&&a.ratShut,'summa rudis hidden + ratings always show (v0.81)');
 ok(a.face&&a.face2,'mini facing');ok(p.pp&&p.tabs&&p.board,'phone portrait sheet');
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();
