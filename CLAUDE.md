@@ -113,7 +113,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   glossary tab in Rules & strategy.
 - **Cheats:** never put code words in plain text anywhere in the page. Register with
   `cheatRegister('h'+hashStr('code:'+WORD), run, label)`; the reveal list `CHEAT_SHOW` stores char codes +7.
-  Current words: EDITOR12 (all editors), MUSICA16 (all 16 themes), LUDUS50 (+50 coin), CHARD / DUCKIO (bonus houses), ARMORFIT (the printed-set fit tool), LOBBY77 (Online preview), ONLSRV (shows the Online server box on the sign-in card).
+  Current words: EDITOR12 (all editors), MUSICA16 (all 16 themes), LUDUS50 (+50 coin), CHARD / DUCKIO (bonus houses), ARMORFIT (the printed-set fit tool), LOBBY77 (Online preview), ONLSRV (shows the Online server box on the sign-in card). Touch screens: HOLD the main menu version badge (126) = the C key.
 - **Ratings (65/66/67, v0.55):** every gladiator has `st`/`g.stats` = {spd,str,int,lck,cha}, 50–99 (`STATS`,
   `statBonuses`). Speed → +1/+2 movement (76/96), Strength → +1/+2/+3 damage (76/87/96), Luck → coin/turn, Charisma →
   CF/turn (76/96), Intelligence → CPU difficulty (`bandInt`: Easy <76, Normal, Hard 96+). Movement/damage/coin/CF pay
@@ -674,7 +674,7 @@ share copy — the site download play/flavius-rule-arena.zip.)
   their backs, custom beasts in the arena deck (Tholo + 3 slots, unique tick), sculpted online tokens, Tholo's new token, Hero height,
   tidier main menu, pillar shadows, iron spikes, pieces face their target. his beast stats sides, sharper Level 4 back,
   landscape chest card + gold chest button, 2 spiders, smaller Flavius on phones, phones sideways keep the board clear on your move; release
-  makes the play.html advert shot. (Published as artifact Version 95; server zip flavius-server-9, protocol 5 — full stack deploy FIRST;
+  makes the play.html advert shot. (Published as artifact Version 95, + hold-the-version-badge words of power on touch = Version 96; server zip flavius-server-9, protocol 5 — full stack deploy FIRST;
   game zip flavius-site-update-v0.82 carries the v0.81 art too + play/arena_shot.webp; site zip v0.82 points play.html at it.)
   Release run: 150/151 + tv64 flaky (passed alone); late fixes covered by tv66/tv71/tv82b/tv53/tv75.
 
