@@ -37974,6 +37974,8 @@ const reduceMotion85=()=>{try{return typeof reduceMotion==='function'&&reduceMot
        green, Training Yard light grey, Your ludus — the letters oval on parchment and the tasks oval light blue
        (the weekly checklist box and the ludus banner's count box match it), and Match Week gets a purple oval
        with the number of bouts still to fight in gold.
+  11 · The free agent card's steps (1 Scout · 2 Court · 3 Offer) swap only the card column — no MGR_REDRAW,
+       so the rail is never rebuilt (clicking them again and again made the left rail flicker, like ⋯ did).
    ===================================================================== */
 const FIX85={offering:0};
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mg="offer"]');if(!b)return;FIX85.offering++;setTimeout(()=>{FIX85.offering=Math.max(0,FIX85.offering-1)},0)},true);
@@ -38068,6 +38070,12 @@ setInterval(()=>{try{if(typeof W_!=='function'||!W_()||W_().dead)return;const w=
 .mtabs [data-id="night"] .mcount.c85n{float:right;margin-left:6px;background:#5b3a8e;color:#f0cf7d;box-shadow:inset 0 0 0 1px #8a6ac0}
 .wkcheck{border-color:#9cc3e6!important;box-shadow:inset 0 0 0 1px rgba(156,195,230,.35)}
 .b73-ludus .roomstat.rs2 .ptbox.on{background:radial-gradient(circle at 40% 35%,#eef6ff,#9cc3e6 60%,#3f6f99)!important;box-shadow:0 0 12px rgba(156,195,230,.5)!important;color:#0e2c45}`;document.head.appendChild(st)}
+
+/* 11 · the card's step tabs swap the card only */
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-recstep]');if(!b||typeof MGR==='undefined'||MGR.tab!=='recruit')return;
+  const body=document.getElementById('mgrBody');const col=body&&body.querySelector('.mgrid > div:nth-child(2)');const g=MGR.sel&&gById(MGR.sel);if(!col||!g||!col.contains(b))return;
+  e.preventDefault();e.stopPropagation();const n=+b.dataset.recstep;if(MGR.recStep===n&&b.classList.contains('cur'))return;MGR.recStep=n;
+  try{col.innerHTML=detailHTML(g)}catch(err){console.error(err);if(typeof MGR_REDRAW==='function')MGR_REDRAW()}},true);
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

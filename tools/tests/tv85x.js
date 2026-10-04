@@ -29,6 +29,11 @@ const z=await pg.evaluate(async()=>{const w=W_(),m=me();const t=w.night.travel;t
   MGR.tab='ludus';MGR_REDRAW();await new Promise(x=>setTimeout(x,300));const flag=!!document.querySelector('.banner73 svg image, .room73 svg image, svg image[href^="data:"]');
   return {done:!!it&&it.done&&/treatment opens after the games/.test(it.txt),need,lt,road,tem,flag}});
 ok(z.done&&z.need===0&&!z.lt,'a wound taken on the road waits for next week without nagging');ok(z.road&&z.tem,'prices read Cost: N coin');console.log(JSON.stringify(z));
+const st=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));MGR.tab='recruit';const g=freeAgents()[0];MGR.sel=g.id;MGR_REDRAW();await W8(400);
+  const rail=document.querySelector('.mtabs');let n=0;const R=window.MGR_REDRAW;window.MGR_REDRAW=function(){n++;return R.apply(this,arguments)};
+  for(let i=0;i<10;i++){const b=document.querySelector(`[data-recstep="${1+i%3}"]`);if(b)b.click();await W8(60)}
+  const cur=(document.querySelector('.rstep.cur')||{}).textContent||'';window.MGR_REDRAW=R;return {n,same:rail===document.querySelector('.mtabs'),cur}});
+ok(st.n===0&&st.same&&/Court|Scout|Offer/.test(st.cur),'card steps swap without a redraw');console.log(JSON.stringify(st));
 ok(r.n>=3,'free agents listed');ok(r.after.every(x=>!x.fav&&!x.court),'clicking a free agent does not favorite him');ok(!r.meter.fav&&!r.meter.court,'the offer meter does not favorite');
 ok(!r.offered||(r.real.fav&&r.real.court),'a real offer still records the court line');
 console.log(JSON.stringify(r));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();
