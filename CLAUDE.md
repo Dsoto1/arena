@@ -692,6 +692,10 @@ One global script; files are concatenated in order. Later "version modules" patc
   real ticket holder gets coin back). And the SPEARER draws an EXTRA Mandata Flavi card (on top of those held) — an angry emperor's
   demand; log line: "… a Mandati Flavi (Mandate from Flavius)" (his wording for this line; the cards stay "Mandata Flavi"). Online: the draw is in the lockstep stream (same card on every screen). If the Mandata deck is empty, no card is
   issued (the scowl and the refund still happen; the log just names the spearing).
+  GLORY (v0.82, his ask "a mix of record and CF"): rank by glory = lifeCF + 12×survived + 8×wins (Ranked); Tiro 0 / Gregarius 180 /
+  Veteranus 550 / Primus 1150 / Summa 2100; never demoted (ch.rankK keeps the best). TABLE SIZE: humans seated 2 → ×0.5, 3 → ×0.75,
+  4+ → ×1 on coin AND glory (the Fate in full); the room says so. RANK BAR on the RIGHT of the Domus screen (tokens at their glory like a
+  fundraiser bar, live count of LIVING gladiators per rank via hello.rankCounts). New online gladiators start on a RANDOM class.
   ONLINE PRICES (v0.82, with the coin rework; ONLC PRICE is shared with the server): weapons L1 60 / L2 250 / L3 750; armor by AP
   15 / 55 / 150 coin per AP at L1/L2/L3 (Greaves L2 4 AP = 220, Forged Chest L3 5 AP = 750); owned gear and wallets untouched.
   COIN (online): no pay-out for carried coin — flat survival award by rank (Tiro 8 / Gregarius 12 / Veteranus 18 / Primus 25 / Summa 35,
