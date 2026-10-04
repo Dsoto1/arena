@@ -865,6 +865,10 @@ share copy — the site download play/flavius-rule-arena.zip.)
   to the 💾 Saves window, Profiles → bottom of Themes ("Save this look"), 🌐 Language row first in General (English only; LANGS list),
   Performance row (Auto/Full/Light) + backup date/reminder switch, optional confirm before End turn (default off), Restore all defaults;
   Online notices/Quiet stay in Online. Online landing must fit WITHOUT SCROLLING on desktop (stage not stretched; playlists' first row visible).
+- **RECRUITING TIDY (his yes 2026-10-04, v0.85):** weekly plan folds to one line; the board = the Roster's wall look (compact tablets,
+  empty lanes = narrow posts, names fit); free-agent list rows on ONE line; 🆕 only for this week's arrivals; detail card before scouting
+  = one "Ratings: scout to see" line; hours shown in banner + rail only; the advisor's pick = ★ on the right button (no separate box);
+  filters in one toolbar optional; PHONES: recruit cards/tablets must not skew or squash (check 390 portrait + landscape).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
