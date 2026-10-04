@@ -1,5 +1,5 @@
 {
- "run": 77,
+ "run": 78,
  "lastFull": 1791137143169,
  "tests": {
   "tseed4": {
@@ -2656,14 +2656,14 @@
   },
   "tv81o": {
    "streak": 0,
-   "runs": 3,
-   "fails": 2,
+   "runs": 4,
+   "fails": 3,
    "flaky": [
     53,
     71
    ],
-   "lastRun": 71,
-   "time": 212,
+   "lastRun": 78,
+   "time": 171,
    "sh": "e4dfd67a51",
    "lastPass": 46,
    "deps": {}
@@ -2742,21 +2742,16 @@
    "deps": {}
   },
   "tonl83u": {
-   "streak": 1,
-   "runs": 3,
-   "fails": 2,
+   "streak": 0,
+   "runs": 4,
+   "fails": 3,
    "flaky": [
-    69
+    69,
+    78
    ],
-   "lastRun": 71,
-   "time": 80,
-   "deps": {
-    "build.sh": "c305a641777d",
-    "src/01-head.html": "cef591375508",
-    "tools/smartreg.js": "b886a474fc81",
-    "tools/regcov.js": "4b05c01ae7aa",
-    "tools/tests/tonl83u.js": "693ad8a5b632"
-   },
+   "lastRun": 78,
+   "time": 118,
+   "deps": {},
    "sh": "e1d8727cc6",
    "lastPass": 71
   },
@@ -2775,13 +2770,14 @@
   },
   "tonl84": {
    "streak": 0,
-   "runs": 2,
-   "fails": 1,
+   "runs": 3,
+   "fails": 2,
    "flaky": [
-    71
+    71,
+    78
    ],
-   "lastRun": 71,
-   "time": 107,
+   "lastRun": 78,
+   "time": 194,
    "sh": "a866fde107",
    "lastPass": 69,
    "deps": {}
@@ -2872,15 +2868,15 @@
    }
   },
   "tv84u": {
-   "streak": 2,
-   "runs": 2,
+   "streak": 3,
+   "runs": 3,
    "fails": 0,
    "flaky": [],
-   "lastRun": 72,
-   "time": 61,
-   "lastPass": 72,
+   "lastRun": 78,
+   "time": 118,
+   "lastPass": 78,
    "deps": {
-    "build.sh": "56a9a54568c4",
+    "build.sh": "bc6bed1fdda8",
     "src/01-head.html": "cef591375508",
     "tools/smartreg.js": "b886a474fc81",
     "tools/regcov.js": "4b05c01ae7aa",
