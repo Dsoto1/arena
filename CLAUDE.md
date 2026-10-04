@@ -696,6 +696,10 @@ One global script; files are concatenated in order. Later "version modules" patc
   Veteranus 550 / Primus 1150 / Summa 2100; never demoted (ch.rankK keeps the best). TABLE SIZE: humans seated 2 → ×0.5, 3 → ×0.75,
   4+ → ×1 on coin AND glory (the Fate in full); the room says so. RANK BAR on the RIGHT of the Domus screen (tokens at their glory like a
   fundraiser bar, live count of LIVING gladiators per rank via hello.rankCounts). New online gladiators start on a RANDOM class.
+  HOUSE TREASURY (his pick b, NEXT server update / v0.83): 20% of every survival award goes to the house treasury ("the lanista's
+  cut"); the treasury buys gear into the Storeroom for any of the house's gladiators; it and the Storeroom outlive a gladiator's death
+  (his own purse + carried gear are lost); table-size factors apply. v0.82 shows the gladiators' total purses on the house record.
+  PATRON (his pick a): chosen while founding the house (127 found card), editable later from the folded "✎ Patron" on the Domus screen.
   ONLINE PRICES (v0.82, with the coin rework; ONLC PRICE is shared with the server): weapons L1 60 / L2 250 / L3 750; armor by AP
   15 / 55 / 150 coin per AP at L1/L2/L3 (Greaves L2 4 AP = 220, Forged Chest L3 5 AP = 750); owned gear and wallets untouched.
   COIN (online): no pay-out for carried coin — flat survival award by rank (Tiro 8 / Gregarius 12 / Veteranus 18 / Primus 25 / Summa 35,
