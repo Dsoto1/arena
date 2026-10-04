@@ -35202,7 +35202,8 @@ function council83HTML(){const w=W_();if(!w)return '';const C=council83(w);if(!C
    • THOLO HOUSE RULE: a BOLT that hits Tholo in his Focus-aimed head kills him with any damage (≥1). The Arcuballista
      already did this in 04-rules; this extends it to every bolt weapon and names it "A bolt through the eye".
    ===================================================================== */
-const STUCK83_MAX=3;
+const STUCK83_MAX=2; /* v0.83: at most two per location on the board, then +N */
+const STUCK83_K={standee:0.9,figure:1,cylinder:1}; /* TWEAK: arrow size per token style (the 3D minis are busier) */
 let AT83=null,TOP83=null;
 /* shotKind83 — 'arrow' | 'bolt' | null for a weapon */
 function shotKind83(w){if(!w||w.punch||w.shield)return null;const k=w.key||'';
@@ -35263,7 +35264,8 @@ function stuckAvatarSVG83(p){const L=stuckOf83(p);if(!L.length)return '';let s='
     if(xs.length>STUCK83_MAX){const tx=l==='rarm'||l==='rleg'?A[0]-14:l==='larm'||l==='lleg'?A[0]+14:A[0]+24;const ty=l==='head'||l==='chest'?A[1]+14:A[1];
       s+=`<g class="stk83n" pointer-events="none"><rect x="${tx-8}" y="${ty-6}" width="16" height="11" rx="5.5" fill="#140f0b" fill-opacity=".82" stroke="#c9a458" stroke-width=".6"/><text x="${tx}" y="${ty+0.4}" fill="#f0cf7d" font-size="8" font-weight="700" font-family="IBM Plex Mono, monospace" text-anchor="middle" dominant-baseline="middle">+${xs.length-STUCK83_MAX}</text></g>`}}
   return s}
-{const base=avatarSVG;avatarSVG=function(p){let s=base.apply(this,arguments);try{if(p&&p.hp&&S&&S.stuck83&&S.players&&S.players.includes(p)){const a=stuckAvatarSVG83(p);if(a){const i=s.lastIndexOf('</svg>');if(i>=0)s=s.slice(0,i)+a+s.slice(i)}}}catch(e){console.error(e)}return s}}
+const STUCK_AVATAR83=false; /* v0.83 (his call): arrows show on the arena token/mini only, never on the fighter-board avatar */
+{const base=avatarSVG;avatarSVG=function(p){let s=base.apply(this,arguments);try{if(STUCK_AVATAR83&&p&&p.hp&&S&&S.stuck83&&S.players&&S.players.includes(p)){const a=stuckAvatarSVG83(p);if(a){const i=s.lastIndexOf('</svg>');if(i>=0)s=s.slice(0,i)+a+s.slice(i)}}}catch(e){console.error(e)}return s}}
 
 /* ---------- the arena token / mini ---------- */
 /* drawArrow83 — tip at (x,y), shaft out along ang (radians), length in px */
@@ -35289,8 +35291,8 @@ function drawStuckOn83(q,m,top,isNpc,sink){const L=stuckOf83(q);if(!L.length)ret
       else{const T=TOK83[l];px=T[0]*TW+(fr83(x.s,1)*2-1)*0.035*TW;py=m.y-H*T[1]+(fr83(x.s,2)*2-1)*0.03*TW}
       const side=px<-0.02*TW?-1:px>0.02*TW?1:(fr83(x.s,4)<0.5?-1:1);
       const ang=(x.a!=null?x.a:(side<0?Math.PI*1.12:-Math.PI*0.12))+(fr83(x.s,3)*2-1)*0.38;
-      const X=m.x+px,Y=py;if(sink&&Y>m.y)return;drawArrow83(x.k,X,Y,ang,TW*(x.k==='bolt'?0.18:0.27));lastX=X;lastY=Y});
-    if(xs.length>STUCK83_MAX){const t='+'+(xs.length-STUCK83_MAX);ctx.save();ctx.font=`700 ${Math.max(8,Math.round(TW*0.15))}px IBM Plex Mono, monospace`;ctx.textAlign='center';ctx.textBaseline='middle';
+      const X=m.x+px,Y=py;if(sink&&Y>m.y)return;drawArrow83(x.k,X,Y,ang,TW*(x.k==='bolt'?0.11:0.165)*(STUCK83_K[tokenStyle()]||1));lastX=X;lastY=Y});
+    if(xs.length>STUCK83_MAX){const t='+'+(xs.length-STUCK83_MAX);ctx.save();ctx.font=`700 ${Math.max(8,Math.round(TW*0.12))}px IBM Plex Mono, monospace`;ctx.textAlign='center';ctx.textBaseline='middle';
       ctx.lineWidth=3;ctx.strokeStyle='rgba(0,0,0,.85)';ctx.strokeText(t,lastX,lastY-TW*0.09);ctx.fillStyle='#f0cf7d';ctx.fillText(t,lastX,lastY-TW*0.09);ctx.restore()}}}
 {const base=drawStandee;drawStandee=function(){const t=base.apply(this,arguments);TOP83=t;return t}}
 {const base=drawFigureTok;drawFigureTok=function(){const t=base.apply(this,arguments);TOP83=t;return t}}

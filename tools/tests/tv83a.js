@@ -63,10 +63,10 @@ ok(JSON.stringify(a.kinds)===JSON.stringify(['arrow','bolt',null,null,null]),'bo
 ok(a.n1>=6&&a.allArrows&&a.angles,'bow hits stick as arrows with a location, seed and angle '+a.n1);
 ok(a.hashSame,'stuck arrows are not in onlHash');
 ok(a.rarmN>=5,'aimed shots pile in the right arm '+a.rarmN);
-ok(a.avArrows===a.expDrawn&&a.avArrows>0,'avatar draws ≤3 per location '+a.avArrows+'/'+a.expDrawn);
-ok(a.avPlus>=1&&a.avPlusSum===a.expPlus&&a.expPlus>=a.rarmN-3,'avatar shows +N beyond 3 '+a.avPlus+' +'+a.avPlusSum+'/'+a.expPlus);
+ok(a.avArrows===0,'v0.83 his call: the avatar draws no arrows (board only) '+a.avArrows);
+ok(a.avPlus===0,'no +N on the avatar either');
 ok(a.severed&&a.rarmAfter===0,'a severed arm takes its arrows '+a.rarmAfter);
-ok(a.bolt&&a.boltSvg,'arcuballista leaves bolts (and the avatar draws one)');
+ok(a.bolt&&!a.boltSvg,'arcuballista leaves bolts (in state; not on the avatar)');
 ok(a.wolfBody,'beast: plain shots stick in the body');ok(a.wolfHead,'beast: a Focus shot sticks in the head');
 ok(a.tholoBodyAlive,'Tholo survives an unaimed bolt');ok(a.tholoDead&&a.eyeLog&&a.tholoHeadBolt,'Tholo falls to an aimed bolt: '+JSON.stringify([a.tholoDead,a.eyeLog,a.tholoHeadBolt]));
 ok(a.tholoArrowNoKill,'an aimed ARROW does not kill Tholo outright');
