@@ -22,6 +22,17 @@ function rules(){
   C.putPiece(t,P,false);const I=C.pieceOf(t,P.item,catalog);assert.strictEqual(I.kind,'a');assert.strictEqual(I.lv,4);assert.strictEqual(I.val,1500*4);assert.strictEqual(I.ap,def.ap);
   assert.match(C.wearWhy(t,P.item),/Veteranus/,'the same wear rule');t.glory=600;C.gearEquip(t,P.item,true);const kit=C.kitOf(t);
   assert.ok(kit.gear.includes('na_'+C.itemUid(P.item)));assert.strictEqual(kit.named[0].kind,'a');assert.strictEqual(kit.named[0].key,'na_'+C.itemUid(P.item));
+  /* equip points: a named piece and a printed one on the same point are never brought together (as 03-engine armorConflict) */
+  C.setCatalog(catalog);let hd=null;for(let s=1;s<500&&!hd;s++){const a=C.rollNamedArmor(seeded(s),catalog,'rare',[]);if(a.slot==='head')hd=a}
+  const ep=C.newChar({name:'Equip Point',cls:'hero'},'o','ep',0);ep.glory=600;C.putPiece(ep,{item:'galea',pc:null},true);const HP=C.namedPiece(hd,ep);C.putPiece(ep,HP,true);
+  assert.deepStrictEqual(C.equipOf(ep),['galea'],'two helms: the first is brought, never both');assert.ok(!C.kitOf(ep).gear.includes(HP.pc.w.key));
+  C.gearEquip(ep,HP.item,true);assert.deepStrictEqual(C.equipOf(ep),[HP.item],'ticking the named helm unticks the printed one');assert.deepStrictEqual(C.kitOf(ep).gear,[HP.pc.w.key]);
+  C.gearEquip(ep,'galea',true);assert.deepStrictEqual(C.equipOf(ep),['galea'],'and back');
+  C.editChar(ep,{equip:[HP.item,'galea']});assert.deepStrictEqual(C.equipOf(ep),[HP.item],'char.edit keeps the first of a clashing pair');
+  const fitOf=g=>C.armFit({},g,catalog);
+  assert.deepStrictEqual(fitOf(['legwraps','ocrea']),[true,true],'padding sits beneath a hard piece on the same point');
+  assert.deepStrictEqual(fitOf(['manica','provmanica','galerus']),[true,true,false],'two single arm pieces take both sides; a third has no room');
+  assert.deepStrictEqual(fitOf(['ocrea','greaves']),[true,false],'two pairs on the lower leg: no');assert.deepStrictEqual(fitOf(['gladius','galea','mace']),[true,true,true],'weapons always');
   /* the gift's kind is drawn after the rarity: v0.83's randomness rolls the same rarity */
   const q=[0.995,0.995,0.1];const g=C.rollGift(()=>q.shift(),catalog,'tiro');assert.deepStrictEqual([g.k,g.rar,g.kind],['named','legendary','a']);
   assert.strictEqual(C.rollGift(()=>0.995,catalog,'tiro').kind,'w');
@@ -98,6 +109,11 @@ async function routes(){
   let m0=mark();const tl=[0,1,2,3].map(i=>i===lv.sa?{seat:i,survives:false,ks:lv.sb,kb:'g',f:1}:{seat:i,f:5,won:i===lv.sb});for(const x of [ann,bob])await x.req('match.result',{id:lv.L.id,table:tl,hash:'L'});
   const lo=bob.got('loot.offer',m0)[0];const lp=lo&&lo.pieces.find(p=>/^na#/.test(p.item));assert.ok(lp&&lp.w&&lp.w.uq===ad.uq&&lp.kind==='a','the loot offer carries the named armor’s whole card');
 
+  /* ── equip points through the server: domus.equip unticks the clashing piece; the kit never brings it ── */
+  {const ivy=await client('ivy');await setC(ivy.ch.id,{glory:600,wallet:500});await ivy.req('char.buy',{char:ivy.ch.id,item:'galea'});
+    let hd=null;for(let s=1;s<500&&!hd;s++){const a=C.rollNamedArmor(seeded(s),catalog,'epic',[]);if(a.slot==='head')hd=a}const c0=await getC(ivy.ch.id);const HP=C.namedPiece(hd,c0);C.putPiece(c0,HP,false);await db.put('CHAR#'+c0.id,'CHAR',c0);
+    const eq=await ivy.req('domus.equip',{char:ivy.ch.id,item:HP.item,on:true});assert.ok(C.equipOf(eq).includes(HP.item)&&!C.equipOf(eq).includes('galea'),'domus.equip unticks the printed helm');
+    const R=await ivy.req('lobby.create',{ev:'democritus',cry:false});const k=R.players[0].kit;assert.deepStrictEqual(k.items.filter(x=>x==='galea'||x===HP.item),[HP.item],'the kit brings one helm');await ivy.req('lobby.leave',{id:R.id})}
   /* ── RECLAIM a seat a CPU took ── */
   const cid=await client('cid'),dan=await client('dan');
   let rc=await bout(cid,dan,{ev:'egidious',loc:1,live:true});const sid=rc.L.id;

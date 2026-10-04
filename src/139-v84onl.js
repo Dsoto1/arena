@@ -44,15 +44,25 @@ const ONL84_LOCS=d=>d.slot==='head'?['head']:d.slot==='chest'||d.slot==='belt'?[
 ONL83.kitPieces=function(kit){if(!kit)return [];const cat=onlCatalog();const nm=Object.fromEntries((kit.named||[]).map(d=>[d.key,d]));
   return (kit.gear||[]).map((k,i)=>{const it=(kit.items||[])[i]||k;if(/^n[wa]_/.test(k)){const d=nm[k];return d?ONLC.pieceInfo({item:it,pc:{st:'whole',rar:d.rar,w:d}},cat):null}return ONLC.pieceInfo({item:it,pc:null},cat)}).filter(Boolean)};
 
+/* My Gladiators' Bring ticks: ticking an armor piece unticks whatever shares its equip point (ONLC.armFit; the server does the same) */
+document.addEventListener('input',e=>{const t=e.target;if(!t||!t.dataset||t.dataset.onlgeq==null||!t.checked||!t.closest('#onl'))return;const D=ONL.ged;if(!D)return;
+  const ch=(ONL.chars||[]).find(c=>c.id===D.id);if(!ch)return;const i=+t.dataset.onlgeq;const g=ch.gear||[];const others=g.map((k,j)=>j).filter(j=>j!==i&&D.on[j]);
+  const ok=ONLC.armFit(ch,[g[i],...others.map(j=>g[j])],onlCatalog());const off=others.filter((j,k)=>!ok[k+1]);if(!off.length)return;
+  for(const j of off){D.on[j]=false;const b=document.querySelector(`#onl input[data-onlgeq="${j}"]`);if(b)b.checked=false}
+  onlToast80(`🛡 ${esc2(off.map(j=>(ONL83.piece(ch,g[j])||{}).n||g[j]).join(', '))} stays home — the same equip point.`)},true);
+
 /* ---------------- the engine hooks (named armor while WORN; deterministic) ---------------- */
 function na84On(p,f){if(!p||!p.pieces)return null;for(const l of Object.keys(p.pieces))for(const pc of p.pieces[l]||[]){const A=ARM[pc.key];if(A&&A.named84&&f(A,pc,l))return {A,pc,l}}return null}
 const na84Unhurt=p=>!!p&&!!p.hp&&Object.keys(BASE_HP).every(l=>(p.hp[l]|0)>=BASE_HP[l]);
 {const base=hurt;hurt=async function(victim,location,damage,source,prefix,opts){
   const pvp=!!(victim&&victim.cls&&victim.pieces);if(!pvp||!(damage>0))return base.apply(this,arguments);
   const direct=!!(opts&&opts.direct);const att=source&&source.type==='player'&&source.p&&source.p!==victim?source.p:null;let d=damage;
+  /* every source; ONE log line per hit, and only when something was actually turned aside */
   try{if(att&&att.lastHitBy===victim.id){const v=na84On(att,A=>A.uq==='vindex');if(v){d++;log(`${nm(att)}'s ${v.A.n} remembers the blow: +1 damage.`)}}
-    if(!direct&&S){const w=na84On(victim,A=>A.ward);const k=S.ri+':'+S.rotation;if(w&&victim._ward84!==k&&d>0){victim._ward84=k;d--;log(`${nm(victim)}'s ${w.A.n} turns 1 damage aside.`)}}
-    if(!direct&&d>=2){const iv=na84On(victim,(A,pc,l)=>A.uq==='invicta'&&l===location);if(iv){d--;log(`${nm(victim)}'s ${iv.A.n} holds: −1 damage.`)}}}catch(e){console.error(e)}
+    const cut=[];
+    if(!direct&&S&&d>0){const w=na84On(victim,A=>A.ward);const k=S.ri+':'+S.rotation;if(w&&victim._ward84!==k){victim._ward84=k;d--;cut.push(w.A.n)}}
+    if(!direct&&d>=2){const iv=na84On(victim,(A,pc,l)=>A.uq==='invicta'&&l===location);if(iv){d--;if(!cut.includes(iv.A.n))cut.push(iv.A.n)}}
+    if(cut.length)log(`${nm(victim)}'s ${cut.join(' and ')} turn${cut.length>1?'':'s'} ${cut.length} damage aside.`)}catch(e){console.error(e)}
   const glo=att?na84On(victim,A=>A.uq==='gloriosa'):null;const hp0=victim.hp[location];
   const r=await base.call(this,victim,location,d,source,prefix,opts);
   try{if(glo&&d>0&&victim.alive&&victim.hp[location]===hp0&&cfAllowed()){cfWhy('a legendary armor');victim.cf+=1;log(`${nm(victim)}'s ${glo.A.n}: the blow rings off — the crowd roars (+1 CF).`)}}catch(e){}

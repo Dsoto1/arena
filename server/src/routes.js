@@ -40,7 +40,7 @@ const NEED_DOMUS=new Set(['auction.bid','offer.move','offer.buy','offer.bring','
 /* what a guest is told when a request needs a sign-in */
 const GUEST_WHY={'forum.say':'speak in the Forum','bet.place':'wager','lobby.ticket':'buy a ticket','char.create':'raise gladiators','domus.create':'found a house','lobby.pass':'take a seat in the stands'};
 function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=>Math.random(),dev=false,hereMs=0,countdown=C.COUNTDOWN_MS}){
-  const ttl=days=>Math.floor(now()/1000)+days*DAY;
+  const ttl=days=>Math.floor(now()/1000)+days*DAY;if(C.setCatalog)C.setCatalog(catalog); /* v0.84: equip points (C.equipOf / gearEquip) read the catalog */
   const acctOf=async id=>id?await store.get('ACCT#'+id,'PROFILE'):null;
   /* the account's ACTIVE gladiator (v0.79: up to 3 living, one active) — the one that fights, bets and buys tickets */
   const liveChar=async(acct,A)=>{const all=(await store.byIndex('OWNER#'+acct)).filter(c=>c.alive);if(!all.length)return null;if(A===undefined)A=await acctOf(acct);return all.find(c=>A&&c.id===A.active)||all[all.length-1]};
