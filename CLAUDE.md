@@ -795,6 +795,15 @@ share copy — the site download play/flavius-rule-arena.zip.)
   Doctore (yard), Medicus (ward), Clerk (money letters), Barracks master; faces from the spectator/patron face maker, rolled ONCE per career
   from its seed (fixed, no re-roll; old careers get theirs on first load, saved once); they never leave (the poachable house medicus stays a
   separate hire). The face shows only INSIDE an opened letter (envelopes unchanged) + a council card in Your ludus (faces, names, specialty).
+- **v0.84 plan (his picks 2026-10-04; wait for his go):** NAMED ARMOR (Rare/Epic/Legendary like the weapons) + the upper tiers' card
+  BORDER SHIMMERS holographic (Epic/Legendary; Rare subtle). ONLINE SEASONS = the system schedule (the Manager 12-week calendar): the
+  week's fixture shows on the Online main menu and is always the WEEKLY CHALLENGE; complete all challenges + win an event → a Flavius
+  Gift — but GIFTS MUST STAY RARE (cap them: ~1 a week from challenges, no stacking). "YOUR TURN" notices. RECLAIM A SEAT a CPU took —
+  only within a limited window (not at the last second after the CPU did the work); a match a CPU finished/won for them pays SEVERELY
+  reduced rewards. ARROWS ON MINIS turn with the facing. MANAGER COUNCIL speaks more (Recruiter ★ picks / bargains, Medicus risk
+  letters…). BOARD LIFE: blood soaks into the sand and fades, light dust drifting toward where a corpse falls (subtle — "not Pigpen"),
+  rubble settling. NO online tutorial. READABILITY PASS (08+) + PHONE PASS (every v0.82/83 screen at 390 px + landscape, lighter
+  rendering for old phones). TRANSLATIONS asked about (es/de/pt/ja/zh) — see the estimate given 2026-10-04.
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
