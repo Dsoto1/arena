@@ -9,7 +9,9 @@
    v0.82 (protocol 5, contract tools/plans/onl82-contract.md): DOMUS (domus.create / rename / get; needDomus gating), the coin rework (ONLC.applyResult),
    prices by AP (ONLC.priceOf), GUESTS (ctx.guest: read-only GUEST_OK requests for 2 h, counted apart), stored INVITES that die with the room
    (lobby.accept → room_gone; invite.gone pushes), and the STANDS GROUP TURN (match.stands.open / pick / close → one 'stands.result' input).
-   Refusals may carry a code: throw fail(code,msg,extra) → the reply {ok:false, err, code, ...extra}. */
+   Refusals may carry a code: throw fail(code,msg,extra) → the reply {ok:false, err, code, ...extra}.
+   v0.82 STANDS FOR THE POOR: free seats (L.free, lobby.set {free}), 🎟 lobby.pass (Flavius's guest pass: one a UTC day a house, DOMUS PASS#<day>),
+   +1 house fame for a pass sat through (settleMatch), stands entries carry {domus, patron}, domus.patron {look}; rankCounts seeded once by a scan. */
 'use strict';
 const C=require('./onlcore.js');
 const DAY=86400;
@@ -18,9 +20,9 @@ const FORUM_KEEP=30;
 /* a refusal the client can act on: err = the player-facing text, code = a stable key, extra fields ride along in the reply */
 function fail(code,msg,extra){const e=new Error(msg);e.code=code;if(extra)e.extra=extra;return e}
 /* v0.82: requests an account without a house may not make (needDomus) */
-const NEED_DOMUS=new Set(['char.create','char.buy','char.edit','char.active','lobby.create','lobby.join','lobby.accept','lobby.quick','lobby.sit','lobby.ticket','lobby.invite','lobby.call','lobby.again','lobby.say','bet.place','party.create','party.join','forum.say','domus.move','domus.equip']);
+const NEED_DOMUS=new Set(['char.create','char.buy','char.edit','char.active','lobby.create','lobby.join','lobby.accept','lobby.quick','lobby.sit','lobby.ticket','lobby.invite','lobby.call','lobby.again','lobby.say','bet.place','party.create','party.join','forum.say','domus.move','domus.equip','lobby.pass','domus.patron']);
 /* what a guest is told when a request needs a sign-in */
-const GUEST_WHY={'forum.say':'speak in the Forum','bet.place':'wager','lobby.ticket':'buy a ticket','char.create':'raise gladiators','domus.create':'found a house'};
+const GUEST_WHY={'forum.say':'speak in the Forum','bet.place':'wager','lobby.ticket':'buy a ticket','char.create':'raise gladiators','domus.create':'found a house','lobby.pass':'take a seat in the stands'};
 function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=>Math.random(),dev=false,hereMs=0}){
   const ttl=days=>Math.floor(now()/1000)+days*DAY;
   const acctOf=async id=>id?await store.get('ACCT#'+id,'PROFILE'):null;
@@ -88,6 +90,8 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   const releaseName=async D=>{const k=C.domusKey(D.name);const X=await store.get('DNAME#'+k,'DNAME');if(X&&X.domus===D.id)await store.del('DNAME#'+k,'DNAME')};
   /* a gladiator's settled result into its house record (never allowed to break a settlement) */
   const domusResult=async(ch,row,out,ranked)=>{try{if(ch&&ch.domus)await editDomus(ch.domus,D=>{C.domusNote(D,row,out,ranked)})}catch(e){}};
+  /* v0.82 a seat in the stands: the gladiator's name, the house and its patron look ride along ("🎟 Patron of House …" on every screen) */
+  const standEntry=(acct,ch,A,D,paid,extra)=>({id:acct,name:ch.name,paid,...(A&&A.dname?{domus:A.dname}:{}),...(D&&D.patron&&Object.keys(D.patron).length?{patron:D.patron}:{}),...(extra||{})});
 
   /* ── pushes: known connections first (no ACCT read), in batches of 10; a gone socket falls back to one fresh read ── */
   const muting=(A,by)=>!!(by&&A&&(A.mutes||[]).includes(by));
@@ -168,8 +172,11 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
         if(out.hall){const H=await world('HALL');H.list=[e,...H.list].slice(0,200);await store.put('WORLD','HALL',H)}await news(out.hall?['🪦',`${ch.name} fell. The Hall of the Fallen keeps the name.`]:['🌫',`${ch.name} fell and is forgotten.`])}
       if(out.rankUp)await news(['⚔',`${ch.name} is now ${C.RANKS[C.rankIdx(out.rankUp)].n}.`])}
     if(dseats.length)await dayEdit(D=>C.dayFromMatch(D,{id,ev:L.ev,loc:L.loc,at:now(),ranked:!!L.ranked,seats:dseats}));
+    /* 🎟 a guest pass sat through to the end (a ticket holder of this match, not left / dropped / abandoned, not away for AWAY_MS) → +1 house Fame */
+    const famed=[];if(!A.void)try{const gone=a=>(M.dropped||{})[a]||(M.abandoned||{})[a]||(M.left||{})[a]||((M.away||{})[a]&&now()-M.away[a]>=C.AWAY_MS);
+      for(const s of L.stands)if(s.pass&&(M.specs||[]).includes(s.id)&&!gone(s.id)){const P=await acctOf(s.id);if(P&&P.domus&&(await editDomus(P.domus,X=>{X.fame=(X.fame|0)+C.PASS.fame})))famed.push(s.id)}}catch(e){}
     /* the room closes first (retried over any concurrent change); the wagers and the pot pay out from what was closed */
-    let st=null;L=await editLobby(id,X=>{if(X.status==='done')return false;st=null;if((X.bets||[]).length||X.pot){const wins=A.void?[]:A.table.filter(r=>r.won).map(r=>r.seat);const seatAcct={};X.players.forEach((p,i)=>{seatAcct[i]=p.id});
+    let st=null;L=await editLobby(id,X=>{if(X.status==='done')return false;st=null;for(const s of X.stands||[])if(famed.includes(s.id))s.fame=C.PASS.fame;if((X.bets||[]).length||X.pot){const wins=A.void?[]:A.table.filter(r=>r.won).map(r=>r.seat);const seatAcct={};X.players.forEach((p,i)=>{seatAcct[i]=p.id});
         st=C.settle(X.bets||[],wins,{pot:X.pot|0,tix:(X.stands||[]).map(s=>({by:s.id,amt:s.paid|0})),seatAcct,void:!!A.void});X.settled=st}X.status='done'})||L;
     if(st){for(const [by,v] of Object.entries(st.payouts))await credit(by,v);if(st.cut)await credit(L.host.id,st.cut)}
     await store.put('MATCH#'+id,'META',M);
@@ -203,7 +210,14 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   const world=async k=>(await store.get('WORLD',k))||{list:[]};
   /* v0.82 living gladiators by rank, every house: WORLD COUNTS {tiro:n,…} kept by atomic counters (creation +1, rank-up −1/+1, death −1) — never a scan */
   async function countRank(k,by){try{if(k)await store.counter('WORLD','COUNTS',k,by)}catch(e){}}
-  async function rankCounts(){const X=(await store.get('WORLD','COUNTS'))||{};const o={};for(const R of C.RANKS)o[R.k]=Math.max(0,X[R.k]|0);return o}
+  async function rankCounts(){let X=await store.get('WORLD','COUNTS');if(!X||X.seeded==null)X=await (seeding||(seeding=seedCounts().finally(()=>{seeding=null})));
+    const o={};for(const R of C.RANKS)o[R.k]=Math.max(0,(X||{})[R.k]|0);return o}
+  /* gladiators made before the counters existed: ONE scan of the living, written only while the item has no 'seeded' mark (a conditional put —
+     the first seeding wins, later ones read it); the counters carry on from there */
+  let seeding=null;
+  async function seedCounts(){try{const o={seeded:now()};for(const R of C.RANKS)o[R.k]=0;
+      for(const c of await store.scan('CHAR#','CHAR'))if(c&&c.alive){const k=C.rankFor(c).k;o[k]=(o[k]|0)+1}
+      if(await store.putUnless('WORLD','COUNTS',o,'seeded'))return o}catch(e){}return (await store.get('WORLD','COUNTS'))||{}}
   const news=async line=>{const N=await world('NEWS');N.list=[line,...N.list].slice(0,12);await store.put('WORLD','NEWS',N)};
   /* ☀ Today in the arena (WORLD DAY#<utc day>): versioned edits, never allowed to break a settlement */
   let dayC=null,dayAt=0;
@@ -345,7 +359,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     'lobby.kick':async(d,ctx)=>{const L=await getLobby(d.id);const why=C.roomKick(L,ctx.acct,d.who,now());if(why)throw new Error(why);await putLobby(L);await toRoom(L,null,{except:ctx.acct});
       await deliver([d.who],'lobby.update',{id:L.id,kicked:1});return room(L)},
     /* the host's settings until the horns: ev, loc, seats, ticket, abandon, standsOff, teams, autoBal */
-    'lobby.set':async(d,ctx)=>{const L=await getLobby(d.id);const x={};for(const k of ['ev','loc','seats','ticket','abandon','standsOff','teams','autoBal'])if(d[k]!=null)x[k]=d[k];
+    'lobby.set':async(d,ctx)=>{const L=await getLobby(d.id);const x={};for(const k of ['ev','loc','seats','ticket','free','abandon','standsOff','teams','autoBal'])if(d[k]!=null)x[k]=d[k];
       const why=C.roomSet(L,ctx.acct,x,now());if(why)throw new Error(why);await putLobby(L);await toRoom(L,null,{except:ctx.acct});return room(L)},
     'lobby.team':async(d,ctx)=>{const L=await getLobby(d.id);const why=C.roomTeam(L,ctx.acct,d.who||ctx.acct,d.team);if(why)throw new Error(why);await putLobby(L);await toRoom(L,null,{except:ctx.acct});return room(L)},
     'lobby.ready':async(d,ctx)=>{const L=await getLobby(d.id);if(L.status!=='waiting')throw new Error('Already under way.');const p=L.players.find(p=>p.id===ctx.acct);if(!p)throw new Error('Sit down first.');
@@ -356,7 +370,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       L.status='live';L.seed=Math.floor(rnd()*2**31)>>>0;L.started=now();await putLobby(L);const humans=L.players.filter(p=>!/^bot/.test(p.id)).map(p=>p.id);const specs=(L.stands||[]).map(s=>s.id);const conns={};
       for(const a of humans.concat(specs)){const A=await acctOf(a);if(A){conns[a]=A.conn||null;await store.set('ACCT#'+a,'PROFILE',{match:L.id})}}
       const seats={};L.players.forEach((p,i)=>{if(humans.includes(p.id))seats[p.id]=i});specs.forEach((a,k)=>{seats[a]=L.seats+k});
-      await store.put('MATCH#'+L.id,'META',{id:L.id,seed:L.seed,n:0,players:humans,specs,seats,conns,watch:{},away:{},dropped:{},abandoned:{},outs:{},reports:{},host:L.host.id,status:'live',ranked:!!L.ranked,abandon:C.abandonRule(L),standsOff:!!L.standsOff,ttl:ttl(2)});
+      await store.put('MATCH#'+L.id,'META',{id:L.id,seed:L.seed,n:0,players:humans,specs,seats,conns,watch:{},away:{},dropped:{},abandoned:{},left:{},outs:{},reports:{},host:L.host.id,status:'live',ranked:!!L.ranked,abandon:C.abandonRule(L),standsOff:!!L.standsOff,ttl:ttl(2)});
       hereC=null;await toRoom(L,null,{except:ctx.acct});await deliver(unseated,'lobby.update',{id:L.id,started:1,unseated:1});return room(L)},
     /* playlists: sit in the fullest fitting room, else open one (and the Praeco cries it). No twin rooms. */
     'lobby.quick':async(d,ctx)=>{const ev=C.EVENTS_ALL.includes(d.ev)?d.ev:'democritus';const ranked=!!d.ranked;const {g,list}=await groupOf(ctx.acct);const flag=g.some(w=>w.strikes>=C.STRIKES_OUT);
@@ -418,13 +432,29 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     /* a seat in the stands, before the horns; the coin goes into the wager pot (a standing member gives up the room for it) */
     'lobby.ticket':async(d,ctx)=>{const A=await acctOf(ctx.acct);if(await stillFighting(A))throw new Error('Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.');
       const L0=await getLobby(d.id);const c0=await liveChar(ctx.acct,A);const ch=c0&&await charById(c0.id);if(!ch)throw new Error('Tickets are paid from a gladiator’s wallet.');
-      const why=C.ticketOK(L0,ctx.acct,ch.wallet);if(why)throw new Error(why);const price=L0.ticket;
-      /* pay first (only over the gladiator copy read), then take the seat in the stands; a refused seat is paid back */
-      ch.wallet-=price;await putChar(ch);let err='';
-      const L=await editLobby(d.id,X=>{err=C.ticketOK(X,ctx.acct,price);if(err||X.ticket!==price)return false;if(C.memberOf(X,ctx.acct))C.roomLeave(X,ctx.acct,now());
-        (X.stands=X.stands||[]).push({id:ctx.acct,name:ch.name,paid:price});X.tickets=X.stands.length;X.pot=(X.pot||0)+price}).catch(e=>{err=e.message;return null});
-      if(!L){await credit(ctx.acct,price);throw new Error(err||'The ticket price changed — try again.')}
+      const why=C.ticketOK(L0,ctx.acct,ch.wallet);if(why)throw new Error(why);const price=L0.ticket|0;const D=await domusGet(A&&A.domus);
+      /* pay first (only over the gladiator copy read), then take the seat in the stands; a refused seat is paid back. A free seat (L.free) pays nothing. */
+      if(price){ch.wallet-=price;await putChar(ch)}let err='';
+      const L=await editLobby(d.id,X=>{err=C.ticketOK(X,ctx.acct,price);if(err||(X.ticket|0)!==price)return false;if(C.memberOf(X,ctx.acct))C.roomLeave(X,ctx.acct,now());
+        (X.stands=X.stands||[]).push(standEntry(ctx.acct,ch,A,D,price,price?null:{free:1}));X.tickets=X.stands.length;X.pot=(X.pot||0)+price}).catch(e=>{err=e.message;return null});
+      if(!L){if(price)await credit(ctx.acct,price);throw new Error(err||'The ticket price changed — try again.')}
       await toRoom(L,null,{except:ctx.acct});return {lobby:room(L),char:strip(await charById(ch.id))}},
+    /* v0.82 🎟 Flavius's guest pass: once a UTC day a house (DOMUS PASS#<day>, claimed with putNew), while the active gladiator's wallet is under
+       PASS.wallet — a free seat (paid 0, pass:1) in a waiting room that sells seats with room in the stands. Sat through → +1 Fame (settleMatch). */
+    'lobby.pass':async(d,ctx)=>{const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);if(!D)throw fail('need_domus','Name your house first.');
+      if(await stillFighting(A))throw new Error('Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.');
+      const c0=await liveChar(ctx.acct,A);const ch=c0&&await charById(c0.id);if(!ch)throw new Error('The pass seats a gladiator’s house — make a gladiator first.');
+      const day=C.dayKey(now());const L0=await getLobby(d.id);const why=C.passOK(L0,ctx.acct,ch.wallet,D.passDay,day);if(why)throw new Error(why);
+      if(await busyIn(ctx.acct))throw new Error('Leave your room first.');
+      if(!(await store.putNew('DOMUS#'+D.id,'PASS#'+day,{room:d.id,acct:ctx.acct,at:now(),ttl:ttl(3)})))throw new Error('One guest pass a day for each house — come back tomorrow.');
+      let err='';const L=await editLobby(d.id,X=>{err=C.passOK(X,ctx.acct,0,null,day)||(C.memberOf(X,ctx.acct)?'Leave your room first.':'');if(err)return false;
+        (X.stands=X.stands||[]).push(standEntry(ctx.acct,ch,A,D,0,{pass:1}));X.tickets=X.stands.length}).catch(e=>{err=e.message;return null});
+      if(!L){await store.del('DOMUS#'+D.id,'PASS#'+day);throw new Error(err||'Try again.')}
+      const D2=(await editDomus(D.id,X=>{X.passDay=day}))||D;await toRoom(L,null,{except:ctx.acct});return {lobby:room(L),char:strip(ch),domus:C.domusRow(D2)}},
+    /* v0.82 the house's patron look (the face in the stands): cleaned, ≤1 KB; {} or null = the generated default */
+    'domus.patron':async(d,ctx)=>{const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);if(!D)throw fail('need_domus','Name your house first.');
+      if(d.look!=null&&(typeof d.look!=='object'||Array.isArray(d.look)))throw new Error('Not a look.');if(d.look!=null&&JSON.stringify(d.look).length>4000)throw new Error('That look is too large.');const p=C.cleanPatron(d.look);
+      const X=await editDomus(D.id,Y=>{if(Object.keys(p).length)Y.patron=p;else delete Y.patron});if(!X)throw new Error('Try again.');return {domus:C.domusRow(X)}},
     /* parties: a code to share; the leader picks the game and the whole party sits down together */
     'party.create':async(d,ctx)=>{const a=await acctOf(ctx.acct);if(a.party){const P=await store.get('PARTY#'+a.party,'PARTY');if(P)return await partyOut(P)}
       let code;for(let i=0;i<6;i++){code=C.partyCode(rnd);if(!(await store.get('PCODE#'+code,'PCODE')))break}const P={id:id('P'),code,leader:ctx.acct,members:[ctx.acct],names:{[ctx.acct]:nameOf(a,await liveChar(ctx.acct,a))},ttl:ttl(1)};
@@ -448,7 +478,9 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       if(!inMatch(M,me)){if(n>=30&&!(M.watch||{})[me])throw new Error('The free stands are full — 30 watching.');if(!M.watch){M.watch={};await store.put('MATCH#'+d.id,'META',{...M,watch:{[me]:ctx.conn||null}})}else await store.setIn('MATCH#'+d.id,'META','watch',me,ctx.conn||null)}
       const L=await editLobby(d.id,X=>{X.watchers=(X.watchers||0)+1}).catch(()=>null)||await getLobby(d.id);
       return {lobby:room(L),players:M.players,specs:M.specs||[],seed:M.seed,abandoned:Object.keys(M.abandoned||{}),dropped:Object.keys(M.dropped||{})}},
-    'match.unwatch':async(d,ctx)=>{const me=viewer(ctx);const M=await store.get('MATCH#'+d.id,'META');if(M&&(M.watch||{})[me]!==undefined)await store.setIn('MATCH#'+d.id,'META','watch',me,null);return {}},
+    'match.unwatch':async(d,ctx)=>{const me=viewer(ctx);const M=await store.get('MATCH#'+d.id,'META');if(M&&(M.watch||{})[me]!==undefined)await store.setIn('MATCH#'+d.id,'META','watch',me,null);
+      /* v0.82 a ticket holder leaving the stands before the end (a guest pass then earns no Fame) */
+      if(M&&M.status==='live'&&(M.specs||[]).includes(me)&&!(M.left||{})[me]){if(!M.left)await store.set('MATCH#'+d.id,'META',{left:{[me]:now()}});else await store.setIn('MATCH#'+d.id,'META','left',me,now())}return {}},
     'match.get':async(d)=>{const M=await meta(d.id);const O=await store.get('MATCH#'+d.id,'OPEN');const from=Math.max(0,d.from|0);
       const ins=(await store.query('MATCH#'+d.id,'IN#')).map(x=>x.in).filter(x=>x.seq>=from);return {open:O?O.snap:null,inputs:ins,seed:M.seed}},
     /* the hot path: ONE update (the seq + the match record) + ONE small put + a push to each OTHER player */

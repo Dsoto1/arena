@@ -116,7 +116,7 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   console.log('server routes: all checks passed');
   await v80();console.log('server v0.80 (rooms, quick chat, Praeco, Forum, presence, resync): all checks passed');
   await v80b();console.log('server v0.80 review (races, busy rule, names, mutes, odd push, Today in the arena): all checks passed');
-  await v82();console.log('server v0.82 (domus, coin, prices, guests, invites, stands group turn): all checks passed')})().catch(e=>{console.error(e);process.exit(1)});
+  await v82();console.log('server v0.82 (domus, coin, prices, guests, invites, stands group turn, free seats, guest pass + Fame, patrons, rank-count seeding): all checks passed')})().catch(e=>{console.error(e);process.exit(1)});
 
 /* ── v0.80 through the real handler (index.js makeHandler): presence, rooms, quick chat, the Praeco, the Forum, resync helpers ── */
 async function v80(){
@@ -525,6 +525,62 @@ async function v82(){
   /* stands off, or nobody in them: no window */
   const sx=await client('stx'),sy=await client('sty');let SO=await sx.req('lobby.create',{ev:'egidious',cry:false,standsOff:true});await sy.req('lobby.join',{id:SO.id});SO=await sx.req('lobby.start',{id:SO.id});
   await rejects(sx.req('match.stands.open',{id:SO.id,rot:1}),'no_stands');
+
+  /* ── 7. STANDS FOR THE POOR: free seats, Flavius's guest pass (+1 house Fame), the house + patron look on stands entries ── */
+  const fa=await client('fra'),fb=await client('frb'),fc=await client('frc'),fd=await client('frd'),fe=await client('fre'),ff=await client('frf');
+  /* the patron look: cleaned (plain short values), kept on the house, null = the generated default */
+  await rejects(fc.req('domus.patron',{look:'pileus'}),null,/Not a look/);await rejects(fc.req('domus.patron',{look:{a:'x'.repeat(5000)}}),null,/too large/);
+  let pt=await fc.req('domus.patron',{look:{skin:'#c58c5c',hat:'pileus',beard:true,c1:'#7a2230',evil:'<b>x</b>',junk:{x:1},'bad key':1}});
+  assert.deepStrictEqual(pt.domus.patron,{skin:'#c58c5c',hat:'pileus',beard:true,c1:'#7a2230',evil:'bx/b'},'the patron is cleaned');
+  assert.ok(!('patron' in (await fc.req('domus.patron',{look:null})).domus),'null: back to the default');pt=await fc.req('domus.patron',{look:{skin:'#c58c5c',hat:'pileus',c1:'#7a2230'}});
+  assert.deepStrictEqual((await fc.req('domus.get',{})).domus.patron,{skin:'#c58c5c',hat:'pileus',c1:'#7a2230'});assert.strictEqual((await fc.req('hello',{all:1})).domus.patron.hat,'pileus','hello carries it');
+  /* free seats: 0 = no tickets until the host says free */
+  let FL=await fa.req('lobby.create',{ev:'democritus',cry:false});assert.strictEqual(FL.free,false);await rejects(fc.req('lobby.ticket',{id:FL.id}),null,/sells no tickets/);
+  await rejects(fb.req('lobby.set',{id:FL.id,free:1}),null,/Only the host/);FL=await fa.req('lobby.set',{id:FL.id,free:1});assert.deepStrictEqual([FL.free,FL.ticket],[true,0]);
+  await setC(fc.ch.id,{wallet:0});let ft=await fc.req('lobby.ticket',{id:FL.id});const tc=ft.lobby.stands.find(x=>x.id===fc.acct);
+  assert.deepStrictEqual([tc.paid,tc.free,tc.domus,tc.name],[0,1,'Domus frc','Frc Gladius'],'a free seat');assert.deepStrictEqual(tc.patron,{skin:'#c58c5c',hat:'pileus',c1:'#7a2230'},'the patron rides on the entry');
+  assert.strictEqual(ft.char.wallet,0);assert.strictEqual(ft.lobby.pot,0);
+  const lrow=(await ff.req('lobby.list',{})).find(x=>x.id===FL.id);assert.ok(lrow.lite&&lrow.free);assert.deepStrictEqual(lrow.stands,[{id:fc.acct,name:'Frc Gladius',domus:'Domus frc'}],'lists: the house, no look');
+  /* the guest pass: a thin purse, once a day a house, a room selling seats */
+  await setC(fd.ch.id,{wallet:15});await rejects(fd.req('lobby.pass',{id:FL.id}),null,/thin purses — under 15/);await setC(fd.ch.id,{wallet:3});
+  const SO2=await fb.req('lobby.create',{ev:'egidious',cry:false,standsOff:true});await rejects(fd.req('lobby.pass',{id:SO2.id}),null,/sells no tickets/);
+  const NT=await ff.req('lobby.create',{ev:'cassian',cry:false});await rejects(fd.req('lobby.pass',{id:NT.id}),null,/sells no tickets/,'no tickets, no pass');
+  await rejects(ff.req('lobby.pass',{id:FL.id}),null,/thin purses|Leave your room/);await fb.req('lobby.leave',{id:SO2.id});await ff.req('lobby.leave',{id:NT.id});
+  const day=C.dayKey(T);let ps=await fd.req('lobby.pass',{id:FL.id});const td=ps.lobby.stands.find(x=>x.id===fd.acct);
+  assert.deepStrictEqual([td.paid,td.pass,td.domus],[0,1,'Domus frd'],'a pass seat');assert.strictEqual(ps.domus.passDay,day);assert.strictEqual(ps.char.wallet,3,'the pass costs nothing');
+  assert.ok(await db.get('DOMUS#'+ps.domus.id,'PASS#'+day),'the day’s marker');
+  const FL2=await fb.req('lobby.create',{ev:'egidious',cry:false,ticket:2});await fb.req('lobby.leave',{id:FL2.id});
+  /* a price again: free ends; a paying ticket carries its house; a pass in a priced room is still free */
+  FL=await fa.req('lobby.set',{id:FL.id,ticket:5});assert.deepStrictEqual([FL.free,FL.ticket],[false,5]);await setC(ff.ch.id,{wallet:10});ft=await ff.req('lobby.ticket',{id:FL.id});
+  assert.deepStrictEqual((({paid,domus,free})=>[paid,domus,free])(ft.lobby.stands.find(x=>x.id===ff.acct)),[5,'Domus frf',undefined]);assert.strictEqual(ft.char.wallet,5);
+  await setC(fe.ch.id,{wallet:0});await fe.req('lobby.pass',{id:FL.id});
+  {const R2=await fb.req('lobby.create',{ev:'cassian',cry:false,ticket:1});await rejects(fd.req('lobby.pass',{id:R2.id}),null,/One guest pass a day/);await fb.req('lobby.leave',{id:R2.id})}
+  FL=await fa.req('lobby.set',{id:FL.id,ticket:0});assert.deepStrictEqual([FL.free,FL.ticket],[false,0],'none: no more seats sold');FL=await fa.req('lobby.set',{id:FL.id,free:1,standsOff:true});assert.deepStrictEqual([FL.free,FL.ticket],[false,0],'stands off ends free');
+  FL=await fa.req('lobby.set',{id:FL.id,standsOff:false,free:1});assert.strictEqual(FL.free,true);
+  /* the horns; fe leaves the stands early; the result settles: fd's house +1 Fame, nobody else's */
+  await fb.req('lobby.join',{id:FL.id});FL=await fa.req('lobby.start',{id:FL.id});assert.strictEqual(FL.stands.length,4);
+  const MF=await db.get('MATCH#'+FL.id,'META');assert.deepStrictEqual(MF.specs.sort(),[fc.acct,fd.acct,fe.acct,ff.acct].sort());
+  const wt2=await fe.req('match.watch',{id:FL.id});assert.ok(wt2.lobby.stands.find(x=>x.id===fc.acct).patron,'watchers get the patrons');
+  await fe.req('match.unwatch',{id:FL.id});assert.ok((await db.get('MATCH#'+FL.id,'META')).left[fe.acct],'left the stands');
+  const ftb=FL.players.map((p,i)=>({seat:i,won:i===0,place:i+1,f:5,coin:0,survives:true}));for(const x of [fa,fb])await x.req('match.result',{id:FL.id,table:ftb,hash:'f'});
+  const fameOf=async x=>(await x.req('domus.get',{})).domus.fame;
+  assert.deepStrictEqual([await fameOf(fd),await fameOf(fe),await fameOf(fc),await fameOf(ff)],[1,0,0,0],'only the pass sat through earns Fame');
+  assert.strictEqual((await db.get('LOBBY#'+FL.id,'LOBBY')).stands.find(x=>x.id===fd.acct).fame,1);assert.strictEqual((await fd.req('hello',{all:1})).domus.fame,1,'hello shows the Fame');
+  /* the next UTC day: a new pass; away for AWAY_MS at the end → no Fame */
+  T+=86400e3;await setC(fd.ch.id,{wallet:3});let FM=await fa.req('lobby.create',{ev:'democritus',cry:false,free:1});assert.strictEqual(FM.free,true,'free at creation');
+  await fd.req('lobby.pass',{id:FM.id});await fb.req('lobby.join',{id:FM.id});FM=await fa.req('lobby.start',{id:FM.id});await db.set('MATCH#'+FM.id,'META',{away:{[fd.acct]:T-C.AWAY_MS-1}});
+  for(const x of [fa,fb])await x.req('match.result',{id:FM.id,table:FM.players.map((p,i)=>({seat:i,won:i===0,place:i+1,f:5,coin:0,survives:true})),hash:'g'});
+  assert.strictEqual(await fameOf(fd),1,'away at the end: no Fame');
+
+  /* ── 8. rankCounts: seeded ONCE from a scan of the living (gladiators made before the counters), then counted ── */
+  const scanCount=async()=>{const o={};for(const R of C.RANKS)o[R.k]=0;for(const c of await db.scan('CHAR#','CHAR'))if(c.alive)o[C.rankFor(c).k]++;return o};
+  await db.put('WORLD','COUNTS',{tiro:1});await db.put('CHAR#pre1','CHAR',{...C.newChar({name:'Pre Deploy',cls:'hero'},old.acct,'pre1',T),glory:600,rank:'veteranus',rankK:'veteranus',GSI1PK:'OWNER#zz',GSI1SK:T});
+  const want=await scanCount();assert.ok(want.veteranus>=1&&want.tiro>5);assert.deepStrictEqual((await fa.req('hello',{all:1})).rankCounts,want,'seeded from the scan');assert.ok((await db.get('WORLD','COUNTS')).seeded);
+  await db.put('CHAR#pre2','CHAR',{...C.newChar({name:'Pre Two',cls:'hero'},old.acct,'pre2',T),GSI1PK:'OWNER#zz',GSI1SK:T});
+  assert.deepStrictEqual((await fa.req('world.news',{})).rankCounts,want,'seeded once: no second scan');
+  assert.strictEqual(await db.putUnless('WORLD','COUNTS',{tiro:0},'seeded'),false,'the conditional write keeps the first seeding');
+  await db.del('WORLD','COUNTS');await fa.req('hello',{all:1});await mob.req('char.create',{name:'Mob Gladius',cls:'hero'});
+  const w2=await scanCount();assert.deepStrictEqual((await fa.req('hello',{all:1})).rankCounts,w2,'a missing item seeds again, then the counters follow');
 
   /* ── 4. GUESTS ── */
   const gconn=async gid=>{const conn='g'+(++nc);live.add(conn);const r=await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{guest:gid,ver:String(C.VER)}});return {conn,status:r.statusCode,body:r.body}};

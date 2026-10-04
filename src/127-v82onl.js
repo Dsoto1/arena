@@ -10,8 +10,9 @@
      at the top, thresholds, the live count of living gladiators at each rank (hello.rankCounts), the house's gladiators' tokens at
      their Glory, filled up to the active one (phones: a strip above the slots). The pre-match room names the table-size factor.
    PATRON • An optional patron look on the Domus screen (the stands' face: skin, hair, hat, beard, tunic, mantle + a seat cushion in the
-     house colours), generated from the account by default. Kept in localStorage flavius_patron82.<acct> (the server has no field for it):
-     every screen draws the generated look, your own screen draws yours. A ticket holder is "🎟 Patron of House <domus>" everywhere in the
+     house colours), generated from the account by default. Saved on the house (domus.patron {look}, ≤1 KB); every stands entry carries
+     {domus, patron}, so every screen draws the chosen look (learned from rooms: ONL82.pat). localStorage flavius_patron82.<acct> is only the
+     editor's unsaved draft. A ticket holder is "🎟 Patron of House <domus>" everywhere in the
      match (stands, spear list, log, wager bubbles): the host names them when seating the stands; everyone else loads that snapshot.
    COIN • Prices by ONLC.priceOf (weapons by level, armor by AP) in the Armory and the buy confirmation; the result toast shows the flat award
      (rank × win × streak × table) or "Custom bout — no purse".
@@ -19,15 +20,15 @@
      auth.guest {tz}); the landing read-only, the lobby list, Watch, the Forum (read), Today, the Hall; every other control says "Sign in
      to …"; the two hours run out → a notice. The map glows guests in their own colour; the count reads "N lanistas · G guests".
    INVITES • Accepted through lobby.accept; room_gone → the room's fate (👁 Watch when it started); invite.gone removes those invitations.
-   FREE TICKETS + GUEST PASS (mock only — the server has no route for them yet; onlExt82): the host may sell seats for free; a daily
+   FREE TICKETS + GUEST PASS (server + mock: L.free via lobby.set {free}, lobby.pass): the host may sell seats for free; a daily
      "🎟 Flavius's guest pass" card on the landing only while the wallet is under 15 coin and some room sells seats (named on the card);
-     one tap seats you free; sitting through that match gives the house +1 Fame.
+     one tap seats you free; sitting through that match gives the house +1 Fame (leaving the stands early sends match.unwatch → no Fame).
    MOCK: domus.*, need_domus / guest gating, guests' presence, invites stored + lobby.accept + invite.gone, free tickets, lobby.pass, Fame,
      the house in rooms / who / Forum / invites / stands, rankCounts, as the server does (server/src/routes.js).
    ===================================================================== */
 const ONL82={dom:{},until:0,expired:false,dg:null,dgAt:0,pre:null,ferr:'',draft:'',whoAt:0,gnote:0,rc:null};
 const GUEST82_KEY='flavius_onlguest82',GMODE82='flavius_onlguestmode82';
-const PASS82={wallet:15,fame:1};
+const PASS82=ONLC.PASS;
 const onlGuestOn82=()=>{try{return sessionStorage.getItem(GMODE82)==='1'}catch(e){return false}};
 function onlGuestSet82(on){try{if(on)sessionStorage.setItem(GMODE82,'1');else sessionStorage.removeItem(GMODE82)}catch(e){}}
 function onlGuestId82(){let v=null;try{v=sessionStorage.getItem(GUEST82_KEY)}catch(e){}
@@ -37,8 +38,6 @@ const onlHouse82=n=>{n=String(n||'').trim();return !n?'':/^(house|domus|ludus|fa
 const onlDomChip82=n=>n?` <small class="dom82c">🏛 ${esc2(onlHouse82(n))}</small>`:'';
 const onlPatronName82=(name,domus)=>domus?`🎟 Patron of ${onlHouse82(domus)}`:`🎟 Patron · ${name||'a lanista'}`;
 function onlErr82(msg,code,extra){const e=new Error(msg);if(code)e.code=code;if(extra)e.extra=extra;return e}
-/* free tickets, the guest pass, Fame and the houses of ticket holders live in the mock until the server learns them */
-const onlExt82=()=>NET.mode==='mock';
 const onlDay82=()=>ONLC.dayKey(Date.now()+((typeof ONL80F!=='undefined'&&ONL80F.skew)||0));
 function onlH32(s){let h=2166136261;for(const c of String(s||''))h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0}
 const onlNow82=()=>Date.now()+((typeof ONL80F!=='undefined'&&ONL80F.skew)||0);
@@ -46,7 +45,7 @@ const onlNow82=()=>Date.now()+((typeof ONL80F!=='undefined'&&ONL80F.skew)||0);
 /* ---------------- houses learned from every room, line, invitation and who row ---------------- */
 function onlLearn82(x,d){d=d|0;if(!x||typeof x!=='object'||d>5)return;if(Array.isArray(x)){for(const y of x.slice(0,200))onlLearn82(y,d+1);return}
   if(typeof x.domus==='string'&&x.domus){const id=typeof x.id==='string'&&x.name!=null?x.id:typeof x.by==='string'?x.by:null;if(id)ONL82.dom[id]=x.domus}
-  if(typeof x.dname==='string'&&typeof x.id==='string')ONL82.dom[x.id]=x.dname;if(x.fromId&&x.fromDomus)ONL82.dom[x.fromId]=x.fromDomus;
+  if(typeof x.dname==='string'&&typeof x.id==='string')ONL82.dom[x.id]=x.dname;if(x.patron&&typeof x.patron==='object'&&typeof x.id==='string'&&x.paid!=null)(ONL82.pat=ONL82.pat||{})[x.id]=x.patron;if(x.fromId&&x.fromDomus)ONL82.dom[x.fromId]=x.fromDomus;
   for(const k of ['players','members','stands','lobbies','lobby','row','line','forum','me','host'])if(x[k]&&typeof x[k]==='object')onlLearn82(x[k],d+1)}
 const onlDomOf82=id=>id?ONL82.dom[id]||null:null;
 const onlMyDomus82=()=>(ONL.domus&&ONL.domus.name)||onlDomOf82(ONL.acct&&ONL.acct.id);
@@ -105,7 +104,7 @@ const GUEST_WHY82={'forum.say':'speak in the Forum','bet.place':'wager','lobby.t
   return base.apply(this,arguments)}}
 function mockDomus82(w,id){w.domus82=w.domus82||{};return id?w.domus82[id]||null:null}
 function mockGlads82(w,D){if(!D)return 0;return Math.max(D.glads|0,Object.values(w.chars).filter(c=>c.domus===D.id).length)}
-const mockDRow82=D=>D?{...ONLC.domusRow(D),fame:D.fame|0,passDay:D.passDay||null}:null;
+const mockDRow82=D=>ONLC.domusRow(D);
 const mockGuestsLive82=()=>{const t=Date.now();return Object.values(mockGuests82()).filter(g=>t-(g.seen||0)<60000&&t-(g.first||0)<ONLC.GUEST_MS).map(g=>({tz:g.tz||''}))};
 const mockHereSum82=w=>ONLC.hereSummary(mockHere80(w),Object.values(w.lobbies),mockGuestsLive82());
 function mockRankCounts82(w){const o={};for(const R of ONLC.RANKS)o[R.k]=0;for(const c of Object.values(w.chars))if(c.alive)o[ONLC.rankFor(c).k]++;return o}
@@ -149,15 +148,19 @@ Object.assign(MOCK_ROUTES,{
     D.name=name;A.dname=name;return {domus:mockDRow82(D)}},
   'lobby.accept':(w,d,me)=>{const L=w.lobbies[d.id];const dead=mockDead82(L,me);if(dead){mockDrop82(w,me,d.id);throw onlErr82(GONE82[dead.why],'room_gone',{why:dead.why,...(dead.live?{live:true}:{})})}
     if(!((w.invites82||{})[me]||[]).some(x=>x.room===d.id))throw onlErr82('That invitation is gone.','no_invite');return MOCK_ROUTES['lobby.join'](w,{id:d.id},me)},
-  /* 🎟 Flavius's guest pass (mock only): once a day a house, while the wallet is thin, a free seat in a room selling seats */
-  'lobby.pass':(w,d,me)=>{const A=w.accounts[me];const D=mockDomus82(w,A&&A.domus);if(!D)throw onlErr82('Name your house first.','need_domus');const ch=onlMockChar(w,me);
-    if(!ch)throw new Error('The pass seats a gladiator’s house — make a gladiator first.');if((ch.wallet|0)>=PASS82.wallet)throw new Error(`The guest pass is for thin purses — under ${PASS82.wallet} coin.`);
-    const day=ONLC.dayKey(Date.now());if(D.passDay===day)throw new Error('One guest pass a day for each house — come back tomorrow.');if(mockLive80(w,me))throw new Error('Your gladiator is still fighting a match.');
-    const L=w.lobbies[d.id];if(!L)throw new Error('That room is gone.');if(!(L.ticket>0||L.free82))throw new Error('This game sells no tickets.');const why=mockSeatWhy82(L,me);if(why)throw new Error(why);
-    D.passDay=day;(L.stands=L.stands||[]).push({id:me,name:mockName80(w,me),paid:0,pass:1,domus:A.dname});L.tickets=L.stands.length;mockUpd80(w,L);return {lobby:mockRoomOut80(w,L),char:ch,domus:mockDRow82(D)}}});
+  /* 🎟 Flavius's guest pass (as the server): once a UTC day a house, while the wallet is thin, a free seat in a room selling seats */
+  'lobby.pass':(w,d,me)=>{const A=w.accounts[me];const D=mockDomus82(w,A&&A.domus);if(!D)throw onlErr82('Name your house first.','need_domus');
+    if(mockLive80(w,me))throw new Error('Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.');const ch=onlMockChar(w,me);
+    if(!ch)throw new Error('The pass seats a gladiator’s house — make a gladiator first.');const day=ONLC.dayKey(Date.now());
+    const L=w.lobbies[d.id];if(!L)throw new Error('That game is gone.');const why=ONLC.passOK(L,me,ch.wallet,D.passDay,day);if(why)throw new Error(why);
+    if(Object.values(w.lobbies).some(X=>X.status==='waiting'&&ONLC.memberOf(X,me)))throw new Error('Leave your room first.');
+    D.passDay=day;(L.stands=L.stands||[]).push(mockStand82(w,me,0,{pass:1}));L.tickets=L.stands.length;mockUpd80(w,L);return {lobby:mockRoomOut80(w,L),char:ch,domus:mockDRow82(D)}},
+  /* the house's patron look (as the server: cleaned, ≤1 KB; null = the default) */
+  'domus.patron':(w,d,me)=>{const A=w.accounts[me];const D=mockDomus82(w,A&&A.domus);if(!D)throw onlErr82('Name your house first.','need_domus');
+    if(d.look!=null&&(typeof d.look!=='object'||Array.isArray(d.look)))throw new Error('Not a look.');const p=ONLC.cleanPatron(d.look);if(Object.keys(p).length)D.patron=p;else delete D.patron;return {domus:mockDRow82(D)}}});
+/* a seat in the stands carries the house and its patron look */
+function mockStand82(w,me,paid,extra){const A=w.accounts[me]||{};const D=mockDomus82(w,A.domus);return {id:me,name:mockName80(w,me),paid,...(A.dname?{domus:A.dname}:{}),...(D&&D.patron?{patron:D.patron}:{}),...(extra||{})}}
 const mockCharBusy82=(w,cid)=>Object.values(w.lobbies).some(L=>(L.status==='waiting'||L.status==='live')&&(L.players||[]).some(p=>p.char===cid));
-function mockSeatWhy82(L,me){if(L.standsOff)return 'This game sells no tickets.';if(L.status!=='waiting')return 'Tickets are sold until the horns.';if(L.players.some(p=>p.id===me))return 'Fighters take the sand, not the stands.';
-  if((L.stands||[]).some(s=>s.id===me))return 'You already hold a ticket.';if((L.stands||[]).length>=ONLC.STANDS_MAX)return 'The stands are sold out.';return ''}
 {const base=MOCK_ROUTES['hello'];MOCK_ROUTES['hello']=(w,d,me)=>{
   if(mockIsGuest82(me)){const G=mockGuests82()[me]||{first:Date.now()};const rows=Object.values(w.lobbies).filter(L=>L.status!=='done'&&!L.flag).sort((a,b)=>b.created-a.created).map(ONLC.liteRow);
     const here=mockHereSum82(w);return {ver:ONLC.VER,mode:'mock',me:null,guest:{id:me,until:(G.first||Date.now())+ONLC.GUEST_MS},now:Date.now(),lobbies:rows,here,online:here.n,forum:w.forum.slice(-30),news:w.news.slice(0,8),challenges:ONLC.weekChallenges(Date.now()),today:mockToday80(w),rankCounts:mockRankCounts82(w)}}
@@ -169,20 +172,18 @@ function mockSeatWhy82(L,me){if(L.standsOff)return 'This game sells no tickets.'
 for(const k of ['lobby.join','lobby.create','lobby.quick']){const base=MOCK_ROUTES[k];MOCK_ROUTES[k]=(w,d,me)=>{if(k==='lobby.join'&&d&&d.inv)return MOCK_ROUTES['lobby.accept'](w,{id:d.id},me);
   const r=base(w,d,me);try{const L=r&&(r.lobby||r);mockCancel82(w,mockParty82(w,me),L&&L.id)}catch(e){}return r}}
 {const base=MOCK_ROUTES['lobby.accept'];MOCK_ROUTES['lobby.accept']=(w,d,me)=>{const r=base(w,d,me);try{mockCancel82(w,mockParty82(w,me),d.id)}catch(e){}return r}}
-/* free tickets (mock only): the host sets {free:1}; a free seat is paid 0 */
-{const base=MOCK_ROUTES['lobby.set'];MOCK_ROUTES['lobby.set']=(w,d,me)=>{const L=mockLobby80(w,d.id);
-  if(d.free!=null&&L.host.id===me&&L.status==='waiting'){L.free82=!!d.free&&!L.standsOff;if(L.free82)L.ticket=0}if(d.ticket>0||d.standsOff)L.free82=false;const x={...d};delete x.free;return base(w,x,me)}}
-{const base=MOCK_ROUTES['lobby.ticket'];MOCK_ROUTES['lobby.ticket']=(w,d,me)=>{const L=w.lobbies[d.id];
-  if(L&&L.free82&&!L.ticket){const ch=onlMockChar(w,me);if(!ch)throw new Error('Tickets are paid from a gladiator’s wallet.');if(mockLive80(w,me))throw new Error('Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.');
-    const why=mockSeatWhy82(L,me);if(why)throw new Error(why);(L.stands=L.stands||[]).push({id:me,name:mockName80(w,me),paid:0,free:1,domus:(w.accounts[me]||{}).dname||null});L.tickets=L.stands.length;mockUpd80(w,L);return {lobby:mockRoomOut80(w,L),char:ch}}
-  const r=base(w,d,me);const t=L&&(L.stands||[]).find(s=>s.id===me);if(t){t.domus=(w.accounts[me]||{}).dname||null;if(r&&r.lobby)r.lobby=mockRoomOut80(w,L)}return r}}
+/* free tickets (ONLC: lobby.set {free}, ticketOK); a seat carries the house and the patron (as the server) */
+{const base=MOCK_ROUTES['lobby.ticket'];MOCK_ROUTES['lobby.ticket']=(w,d,me)=>{const L=w.lobbies[d.id];if(L&&mockLive80(w,me))throw new Error('Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.');
+  const r=base(w,d,me);const i=L?(L.stands||[]).findIndex(s=>s.id===me):-1;if(i>=0){const t=L.stands[i];L.stands[i]=mockStand82(w,me,t.paid|0,t.paid?null:{free:1});if(r&&r.lobby)r.lobby=mockRoomOut80(w,L)}return r}}
+/* a ticket holder leaving the stands before the end (no Fame for a guest pass) */
+{const base=MOCK_ROUTES['match.unwatch'];MOCK_ROUTES['match.unwatch']=(w,d,me)=>{const r=base(w,d,me);const M=w.matches[d.id],L=w.lobbies[d.id];if(M&&M.status!=='done'&&L&&L.status==='live'&&(L.stands||[]).some(t=>t.id===me))(M.left=M.left||{})[me]=Date.now();return r}}
 /* the house record follows every settled result; a guest pass sat through → +1 Fame */
 {const base=MOCK_ROUTES['match.result'];MOCK_ROUTES['match.result']=(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];const was=M&&M.status;const before=new Set(Object.keys((M&&M.outs)||{}));
   const r=base(w,d,me);
   try{if(L&&M&&M.status==='done'&&was!=='done'){const A=ONLC.agree(M.reports||{});
     for(const [a,out] of Object.entries(M.outs||{})){if(before.has(a))continue;const i=L.players.findIndex(p=>p.id===a);const ch=i>=0&&w.chars[L.players[i].char];const D=ch&&mockDomus82(w,ch.domus);
       if(D)ONLC.domusNote(D,(A.table||[]).find(x=>x.seat===i)||{},out,!!L.ranked)}
-    if(!A.void)for(const s of L.stands||[])if(s.pass&&!(M.dropped||{})[s.id]&&!(M.abandoned||{})[s.id]){const D=mockDomus82(w,(w.accounts[s.id]||{}).domus);if(D){D.fame=(D.fame|0)+PASS82.fame;s.fame82=1}}}}catch(e){console.error(e)}
+    if(!A.void)for(const s of L.stands||[])if(s.pass&&!(M.dropped||{})[s.id]&&!(M.abandoned||{})[s.id]&&!(M.left||{})[s.id]){const D=mockDomus82(w,(w.accounts[s.id]||{}).domus);if(D){D.fame=(D.fame|0)+PASS82.fame;s.fame=PASS82.fame}}}}catch(e){console.error(e)}
   return r}}
 {const base=MOCK_ROUTES['match.abandon'];MOCK_ROUTES['match.abandon']=(w,d,me)=>{const r=base(w,d,me);try{if(r&&r.out){const L=w.lobbies[d.id];const p=L&&L.players.find(x=>x.id===me);const ch=p&&w.chars[p.char];const D=ch&&mockDomus82(w,ch.domus);if(D)ONLC.domusNote(D,{won:false},r.out,true)}}catch(e){}return r}}
 
@@ -244,12 +245,12 @@ function onlMarkRoom82(L){if(!L)return L;const y={...L,players:(L.players||[]).m
   try{const host=L.host&&ONL.acct&&L.host.id===ONL.acct.id;
     /* table size: fewer lanistas, smaller rewards */
     const n=(L.players||[]).length;if(L.status==='waiting'&&n>=2&&n<4){const tx=`<p class="tbl82">⚖ ${n===2?'2 lanistas: half rewards':'3 lanistas: three-quarter rewards'} · seat 4 for the full purse</p>`;h=h.replace('<div class="acts r80-go">',tx+'<div class="acts r80-go">')}
-    if(onlExt82()&&L.status==='waiting'){if(host&&!grey){h=h.replace(/(<select class="tin" data-onlrs="ticket"[^>]*>)([\s\S]*?)(<\/select>)/,(m,a,o,c)=>a+(L.free82?o.replace(' selected',''):o)+`<option value="free" ${L.free82?'selected':''}>free</option>`+c)}
-      else if(L.free82)h=h.replace('Ticket: none','Ticket: free')}}catch(e){}return h}}
+    if(L.status==='waiting'){if(host&&!grey){h=h.replace(/(<select class="tin" data-onlrs="ticket"[^>]*>)([\s\S]*?)(<\/select>)/,(m,a,o,c)=>a+(L.free?o.replace(' selected',''):o)+`<option value="free" ${L.free?'selected':''}>free</option>`+c)}
+      else if(L.free)h=h.replace('Ticket: none','Ticket: free')}}catch(e){}return h}}
 {const base=onlLobbyHTML;onlLobbyHTML=function(){const keep=ONL.lobbies;ONL.lobbies=(keep||[]).map(onlMarkRoom82);let h;try{h=base.apply(this,arguments)}finally{ONL.lobbies=keep}h=unmk82(h);
-  if(onlExt82())for(const L of keep||[])if(L.free82&&L.status==='waiting'&&!L.ticket&&!(L.stands||[]).some(s=>s.id===onlMe80())&&!(L.members||[]).some(m=>m.id===onlMe80())){const id=String(L.id).replace(/[^\w-]/g,'');
+  if(!onlIsGuest82())for(const L of keep||[])if(L.free&&L.status==='waiting'&&!L.ticket&&!(L.stands||[]).some(s=>s.id===onlMe80())&&!(L.members||[]).some(m=>m.id===onlMe80())){const id=String(L.id).replace(/[^\w-]/g,'');
     h=h.replace(new RegExp(`(data-row="${id}">[\\s\\S]*?<td class="acts">)`),`$1<button type="button" class="btn tksm" data-onl="ticket" data-v="${id}" title="A free seat in the stands until the horns">🎟 Free</button>`)}return h}}
-{const base=onlSpectHTML;onlSpectHTML=function(){const keep=ONL.lobbies;if(onlExt82())ONL.lobbies=(keep||[]).map(L=>L.free82&&!L.ticket?{...L,ticket:'free'}:L);try{return base.apply(this,arguments)}finally{ONL.lobbies=keep}}}
+{const base=onlSpectHTML;onlSpectHTML=function(){const keep=ONL.lobbies;ONL.lobbies=(keep||[]).map(L=>L.free&&!L.ticket?{...L,ticket:'free'}:L);try{return base.apply(this,arguments)}finally{ONL.lobbies=keep}}}
 {const base=onlFeedHTML80;onlFeedHTML80=function(){const kl=ONLF.lines,kc=ONLF.local;const m=l=>({...l,name:l.name?mk82(l.name,l.by):l.name,from:l.from?mk82(l.from,l.by):l.from});
   ONLF.lines=(kl||[]).map(m);ONLF.local=(kc||[]).map(m);try{return unmk82(base.apply(this,arguments))}finally{ONLF.lines=kl;ONLF.local=kc}}}
 {const base=onlInvitePop80;onlInvitePop80=function(it){return base.call(this,it&&{...it,from:onlNameDom82(it.from,it.fromId)})}}
@@ -311,8 +312,15 @@ document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset)return
 const PAT82_KEY='flavius_patron82.';const PAT_COL82=['#7a2230','#2f4a6b','#3f5a3a','#a86a2a','#4b2a5a','#8a3b1c','#35606a','#c9b27a','#5a4636','#1e5a8a','#8e2a22','#6b7a32'];
 function onlPatronDef82(id,domus){const h=onlH32(id||'x'),k=onlH32(domus||id||'y');return {skin:SKINS[h%SKINS.length],hair:HAIRS[(h>>>4)%10],beard:!!((h>>>9)&1),long:!!((h>>>10)&1)&&!((h>>>9)&1),hat:['','','pileus','straw','hood'][(h>>>11)%5],
   tunic:'#e8dcc0',robe:PAT_COL82[k%PAT_COL82.length],c1:PAT_COL82[k%PAT_COL82.length],c2:PAT_COL82[(k>>>5)%PAT_COL82.length]===PAT_COL82[k%PAT_COL82.length]?'#d6ab4c':PAT_COL82[(k>>>5)%PAT_COL82.length]}}
-function onlPatronGet82(id,domus){const d=onlPatronDef82(id,domus);if(!id||!ONL.acct||id!==ONL.acct.id)return d;try{const x=JSON.parse(localStorage.getItem(PAT82_KEY+id)||'null');if(x&&typeof x==='object')return {...d,...x}}catch(e){}return d}
-function onlPatronPut82(p){try{if(p)localStorage.setItem(PAT82_KEY+ONL.acct.id,JSON.stringify(p));else localStorage.removeItem(PAT82_KEY+ONL.acct.id)}catch(e){}}
+/* the look: the house's saved patron (domus.patron; others' from their stands entries), else the generated one. Your own screen shows
+   the editor's unsaved draft (localStorage) until the server has it. */
+function onlPatronDraft82(id){try{const x=JSON.parse(localStorage.getItem(PAT82_KEY+id)||'null');return x&&typeof x==='object'?x:null}catch(e){return null}}
+function onlPatronGet82(id,domus){const d=onlPatronDef82(id,domus);if(!id)return d;let x=(ONL82.pat||{})[id]||null;
+  if(ONL.acct&&id===ONL.acct.id)x=onlPatronDraft82(id)||(ONL.domus&&ONL.domus.patron)||x;return x?{...d,...x}:d}
+/* keep the draft, save it to the house a moment later (p null = back to the generated default) */
+function onlPatronPut82(p){const id=ONL.acct&&ONL.acct.id;if(!id)return;try{if(p)localStorage.setItem(PAT82_KEY+id,JSON.stringify(p));else localStorage.removeItem(PAT82_KEY+id)}catch(e){}
+  if(onlIsGuest82()||ONL.needDomus)return;clearTimeout(ONL82.patT);ONL82.patT=setTimeout(async()=>{try{const r=await NET.req('domus.patron',{look:p||null});if(r&&r.domus){ONL.domus=r.domus;(ONL82.pat=ONL82.pat||{})[id]=r.domus.patron||null;
+      const now=onlPatronDraft82(id);if(!p||JSON.stringify(now)===JSON.stringify(p))localStorage.removeItem(PAT82_KEY+id)}}catch(e){}},p?600:0)}
 function onlPatronFace82(p,sz){return specFaceSVG(p).replace('width="20" height="20"',`width="${sz}" height="${sz}"`)}
 function onlCushion82(p,w){return `<svg width="${w}" height="${Math.round(w*.42)}" viewBox="0 0 50 21" aria-hidden="true"><ellipse cx="25" cy="11" rx="23" ry="9" fill="${p.c1}" stroke="rgba(0,0,0,.45)"/><path d="M4 11h42" stroke="${p.c2}" stroke-width="3"/><circle cx="25" cy="11" r="2.4" fill="${p.c2}"/></svg>`}
 function onlPatronHTML82(){if(!ONL.acct)return '';const d=onlMyDomus82();const p=onlPatronGet82(ONL.acct.id,d);const sel=(f,opts,v)=>`<select class="tin" data-pat82="${f}">${opts.map(([x,l])=>`<option value="${esc2(x)}" ${String(v||'')===String(x)?'selected':''}>${esc2(l)}</option>`).join('')}</select>`;
@@ -349,20 +357,20 @@ function onlPre82(L){try{const me=ONL.acct&&ONL.acct.id;const p=L&&(L.players||[
   if(p&&ch)ONL82.pre={id:L.id,ranked:!!L.ranked,rank:ONLC.rankFor(ch).k,streak:ch.streak|0}}catch(e){}}
 
 /* ---------------- 🎟 the patrons in the stands ---------------- */
-function onlStandsNamed82(L){if(!L||!(L.stands||[]).length)return L;return {...L,stands:L.stands.map(t=>/^🎟/.test(t.name||'')?t:{...t,name:onlPatronName82(t.name,t.domus||onlDomOf82(t.id))})}}
+function onlStandsNamed82(L){if(!L||!(L.stands||[]).length)return L;for(const t of L.stands)if(t&&t.patron&&t.id)(ONL82.pat=ONL82.pat||{})[t.id]=t.patron;return {...L,stands:L.stands.map(t=>/^🎟/.test(t.name||'')?t:{...t,name:onlPatronName82(t.name,t.domus||onlDomOf82(t.id))})}}
 {const base=onlEnter;onlEnter=function(L){onlPre82(L);return base.apply(this,[onlStandsNamed82(L)].concat([].slice.call(arguments,1)))}}
 {const base=onlAttach;onlAttach=async function(L,role){if(role==='seat')onlPre82(L);return base.apply(this,[onlStandsNamed82(L)].concat([].slice.call(arguments,1)))}}
 {const base=onlWatch;onlWatch=async function(L){return base.apply(this,[onlStandsNamed82(L)].concat([].slice.call(arguments,1)))}}
 function onlPatronize82(){if(!S||!S.onl||!Array.isArray(S.spect))return;for(const s of S.spect){if(!s.ticket||!s.rid||!/^onl:/.test(s.rid))continue;const id=s.rid.slice(4);const d=onlDomOf82(id);
-    if(!/^🎟/.test(s.name||''))s.name=onlPatronName82(s.name,d);const p=onlPatronGet82(id,d);if(!s.look||!s.look.pat82||(ONL.acct&&id===ONL.acct.id)){s.look={skin:p.skin,hair:p.hair,beard:p.beard,long:p.long,hat:p.hat,tunic:p.tunic,robe:p.robe,pat82:1}}s.cush82=[p.c1,p.c2]}
+    if(!/^🎟/.test(s.name||''))s.name=onlPatronName82(s.name,d);const p=onlPatronGet82(id,d);if(!s.look||!s.look.pat82||(ONL.acct&&id===ONL.acct.id)||((ONL82.pat||{})[id]&&s.look.pat82!==2)){s.look={skin:p.skin,hair:p.hair,beard:p.beard,long:p.long,hat:p.hat,tunic:p.tunic,robe:p.robe,pat82:(ONL82.pat||{})[id]?2:1}}s.cush82=[p.c1,p.c2]}
   for(const t of S.onl.stands||[])if(!/^🎟/.test(t.name||''))t.name=onlPatronName82(t.name,onlDomOf82(t.id))}
 {const base=onlSeatStands;onlSeatStands=function(onl){const r=base.apply(this,arguments);try{onlPatronize82()}catch(e){}return r}}
 {const base=beginTurn;beginTurn=async function(){try{if(S&&S.onl)onlPatronize82()}catch(e){}return base.apply(this,arguments)}}
 {const base=drawStands;drawStands=function(){const r=base.apply(this,arguments);try{if(S&&S.onl&&!HEADLESS)for(const sp of S.spect||[]){if(!sp.cush82||sp.gone||sp._x==null)continue;
   ctx.fillStyle=sp.cush82[0];ctx.beginPath();ctx.ellipse(sp._x,sp._y+TW*0.035,TW*0.14,TW*0.05,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle=sp.cush82[1];ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(sp._x-TW*0.12,sp._y+TW*0.035);ctx.lineTo(sp._x+TW*0.12,sp._y+TW*0.035);ctx.stroke()}}catch(e){}return r}}
-/* the host learns the houses of its ticket holders before the horns (who.list carries them) */
-NET.on('lobby.update',d=>{try{const L=d&&d.lobby;if(!L||!ONL.acct||L.host.id!==ONL.acct.id||L.status!=='waiting'||!(L.stands||[]).some(s=>!s.domus&&!onlDomOf82(s.id))||Date.now()-ONL82.whoAt<10000)return;
-  ONL82.whoAt=Date.now();NET.req('who.list').catch(()=>{})}catch(e){}});
+/* a ticket holder leaving the stands before the end tells the server (a guest pass then earns no Fame) */
+{const base=onlExit;onlExit=function(){try{if(S&&S.onl&&!S.over&&S.onl.lobby&&S.onl.seat>=(S.onl.fighters||S.players.length)&&(S.onl.stands||[]).some(t=>ONL.acct&&t.id===ONL.acct.id))
+  NET.req('match.unwatch',{id:S.onl.lobby}).catch(()=>{})}catch(e){}return base.apply(this,arguments)}}
 
 /* ---------------- invitations die with the room ---------------- */
 function onlInvGone82(rooms){const R=new Set(rooms||[]);if(!R.size)return;ONLF.invq=(ONLF.invq||[]).filter(x=>!R.has(x.row&&x.row.id));ONLF.local=(ONLF.local||[]).filter(l=>!(l.k==='inv'&&R.has((l.row||{}).id)));
@@ -370,11 +378,11 @@ function onlInvGone82(rooms){const R=new Set(rooms||[]);if(!R.size)return;ONLF.i
 NET.on('invite.gone',d=>{if(!d||!ONL.acct)return;onlInvGone82(d.rooms)});
 
 /* ---------------- 🎟 Flavius's guest pass (the landing) ---------------- */
-function onlPassRoom82(){if(!onlExt82()||onlIsGuest82()||!ONL.char||ONL.needDomus||(ONL.char.wallet|0)>=PASS82.wallet)return null;const D=ONL.domus||{};if(D.passDay&&D.passDay===ONLC.dayKey(Date.now()))return null;
+function onlPassRoom82(){if(onlIsGuest82()||!ONL.char||ONL.needDomus||(ONL.char.wallet|0)>=PASS82.wallet)return null;const D=ONL.domus||{};if(D.passDay&&D.passDay===onlDay82())return null;
   const me=onlMe80();const mine=onlMyLobby();if(mine)return null;
-  return (ONL.lobbies||[]).find(L=>L.status==='waiting'&&!L.standsOff&&(L.ticket>0||L.free82)&&(L.stands||[]).length<ONLC.STANDS_MAX&&!L.players.some(p=>p.id===me)&&!(L.members||[]).some(m=>m.id===me))||null}
+  return (ONL.lobbies||[]).find(L=>L.status==='waiting'&&!L.standsOff&&(L.ticket>0||L.free)&&(L.stands||[]).length<ONLC.STANDS_MAX&&!L.players.some(p=>p.id===me)&&!(L.members||[]).some(m=>m.id===me))||null}
 function onlPassHTML82(){const L=onlPassRoom82();if(!L)return '';
-  return `<div class="card2 pass82" id="pass82"><div class="pass82-t">🎟</div><div><b>Flavius's guest pass</b><div>A free seat in the stands at <b>${esc2(onlEvName(L.ev))}</b> · ${esc2(onlCityName(L.loc))} <span class="rc-sub">(${esc2(L.host.name)}’s room${L.free82?'':` · ${L.ticket|0} coin for others`})</span></div>
+  return `<div class="card2 pass82" id="pass82"><div class="pass82-t">🎟</div><div><b>Flavius's guest pass</b><div>A free seat in the stands at <b>${esc2(onlEvName(L.ev))}</b> · ${esc2(onlCityName(L.loc))} <span class="rc-sub">(${esc2(L.host.name)}’s room${L.free?'':` · ${L.ticket|0} coin for others`})</span></div>
     <small class="rc-sub">Once a day while your purse is thin. Sit through the bout: +${PASS82.fame} Fame for ${esc2(onlHouse82(onlMyDomus82()||'your house'))}.</small></div><button type="button" class="btn primary" data-onl82="pass" data-v="${esc2(L.id)}">🎟 Take the seat</button></div>`}
 {const base=onlPlayHTML;onlPlayHTML=function(){const h=base.apply(this,arguments);const p=onlPassHTML82();if(!p)return h;const i=h.indexOf('<div class="onl-play');return i<0?p+h:h.slice(0,i)+p+h.slice(i)}}
 
@@ -401,10 +409,10 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
     onlToast80(`🎟 Flavius's guest pass — a free seat at ${esc2(onlCityName(r.lobby.loc))}. Sit through the bout for +${PASS82.fame} Fame.`)})},true);
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target&&e.target.id==='dom82Name'){e.preventDefault();const b=document.querySelector('[data-onl82="found"]');if(b)b.click()}},true);
 document.addEventListener('input',e=>{if(e.target&&e.target.id==='dom82Name')ONL82.draft=e.target.value},true);
-/* the host's ticket select: "free" (mock) */
+/* the host's ticket select: "free" */
 window.addEventListener('change',e=>{const t=e.target;if(!t||!t.matches||!t.matches('#onl select[data-onlrs="ticket"]'))return;const L=onlMyLobby();if(!L)return;
   if(t.value==='free'){e.stopImmediatePropagation();onlDo(async()=>{await onlReq80('lobby.set',{id:L.id,free:1})});return}
-  if(L.free82){e.stopImmediatePropagation();onlDo(async()=>{await onlReq80('lobby.set',{id:L.id,free:0,ticket:+t.value})})}},true);
+  if(L.free){e.stopImmediatePropagation();onlDo(async()=>{await onlReq80('lobby.set',{id:L.id,free:0,ticket:+t.value})})}},true);
 /* the creator: the purse wording */
 {const base=onlCreatorHTML;onlCreatorHTML=function(){return base.apply(this,arguments).replace('Earn coin and CF to rank up; buy gear between bouts.','Surviving Ranked bouts pays a purse by rank; Glory (CF, bouts survived, wins) raises the rank; buy gear between bouts.')}}
 

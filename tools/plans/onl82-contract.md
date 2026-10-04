@@ -110,7 +110,8 @@ Ticket holders' seats are `M.seats[acct]` = fighters' seats + k (as v0.78). Requ
 ## 7. Unchanged
 Rooms, quick chat, Praeco, Forum, presence for lanistas, Today, majority resync, results by agreement, wagers/tickets, abandon/drop.
 Storage additions are listed at the top of server/src/store.js (DOMUS#, DNAME#, GUEST#, INVITE#, MATCH# STW#/STP#; ACCT domus/dname/domusOld;
-CHAR domus). template.yaml needs no change. Deploy the server (protocol 5) together with the client.
+CHAR domus; DOMUS fame/passDay/patron, DOMUS PASS#<day>; MATCH META left). **template.yaml: the Lambda's policy gains `dynamodb:Scan`** (the one-time
+rankCounts seeding, §8) — redeploy the stack, not only the code. Deploy the server (protocol 5) together with the client.
 
 ## 8. GLORY and the table size (added with the client half)
 - `ONLC.gloryOf(ch)` = lifetime CF + 12 × Ranked bouts survived + 8 × Ranked wins, every part gained at the match's **table factor**.
@@ -123,7 +124,10 @@ CHAR domus). template.yaml needs no change. Deploy the server (protocol 5) toget
   `out` gains `factor` and `glory` (gained, 1 decimal). The server passes `{humans: M.players.length}`; the mock `{humans}` of non-bot players.
 - **`rankCounts`** `{tiro:n, gregarius:n, …}` on `hello` (signed in and guest) and `world.news`: living gladiators at each rank in every house,
   from one item WORLD COUNTS kept by atomic counters (`store.counter`): char.create +1 · a rank-up −1/+1 · a death −1 (settled or abandoned).
-  Never a scan. Gladiators made before this deploy are not in the counts until they change rank or die (start from zero).
+  **Seeding:** when WORLD COUNTS is missing or has no `seeded` field, the server scans the living gladiators ONCE (`store.scan('CHAR#','CHAR')`,
+  rank by `rankFor`) and writes the counts with `seeded:<ms>` through a conditional put (`store.putUnless(…,'seeded')`: only while the item
+  has no `seeded`) — the first seeding wins, later requests read it; concurrent requests in one container share one scan. From then on the
+  counters carry on. So gladiators made before the deploy are counted.
 
 ## 9. 🗄 THE STOREROOM
 Every piece a house owns sits with one of its gladiators (`ch.gear`) or on the house's shelf (`DOMUS.gear`).
@@ -142,13 +146,25 @@ Every piece a house owns sits with one of its gladiators (`ch.gear`) or on the h
   (`speared:1`), `L.pot` −amt — the holder's active gladiator is credited `amt` exactly once, and the holder gets the push
   **`stands.refund {id, seat, amt}`**. → `{votes, need, refunded}`. Settlement needs no change (the pot already lost it).
 
-## 11. Client-only for now (mock), server work still missing
-- **Free tickets**: the host's "Tickets: free" — the mock keeps `L.free82` (`lobby.set {free:1}`) and sells seats at 0. The server's `ticketOK`
-  treats `ticket 0` as "no tickets" and `lobby.set` drops `free` → needs a `free` flag in ONLC.newLobby/roomSet/ticketOK + `lobby.ticket`.
-- **Flavius's guest pass**: mock route `lobby.pass {id}` (house required, wallet < 15, once a UTC day per house: `DOMUS.passDay`, a room
-  waiting with stands on and not full, selling at any price or free → a 0-coin ticket `{pass:1}`); +1 house `fame` when that match settles
-  (not void, the holder not dropped). Server: the route, `DOMUS.passDay`, `DOMUS.fame` in `domusRow`, the settle hook.
-- **Houses of ticket holders**: the stands entries carry no `domus` on the server (`L.stands[]` = `{id,name,paid}`); the client learns houses
-  from who.list / rooms / the Forum. Add `domus` to stands entries (and liteRow stands) so "🎟 Patron of House …" never falls back.
-- **The patron look** lives in localStorage `flavius_patron82.<acct>`; others see a look generated from the account id. A `patron` field
-  on the house (cleanLook-style, ≤1 KB), sent with stands entries, would let everyone see the chosen one.
+## 11. Stands for the poor + the patron (server and mock)
+- **Free seats.** A room carries `free` (bool, ONLC.newLobby `{free}`; `lobby.set {free:1}` / `{free:0}`): `ticket 0 + free:true` = seats in the
+  stands at no cost; `ticket 0 + free:false` = no tickets (as before). `lobby.set {ticket:N>0}` ends free; `{ticket:0}` without `free` ends it
+  too ("none"); `standsOff` ends both. `ONLC.ticketOK` = `standsSeatWhy` (stands off / nothing sold, the horns, a fighter, already holding,
+  ≤ `STANDS_MAX` 8) + the price. A free ticket is `{…, paid:0, free:1}`; refunds and `settle` are unchanged (0 paid, nothing in the pot).
+- **🎟 `lobby.pass {id}`** — Flavius's guest pass (needs a house: `need_domus`). Refused while the lanista is still fighting a match, without a
+  living gladiator, while the active gladiator's wallet is ≥ `ONLC.PASS.wallet` (15), when the house used its pass this UTC day, when the room
+  sells no seats / started / is full (`ONLC.passOK(L, acct, wallet, D.passDay, dayKey)`), or while the lanista is in a waiting room
+  ("Leave your room first."). One a day per house: the marker item **DOMUS#<id> PASS#<yyyy-mm-dd>** (putNew; ttl 3 days; removed again if the
+  seat could not be taken). → `{lobby (the room), char, domus (row, passDay = today)}`; the stands entry is `{id, name, paid:0, pass:1, domus, patron?}`.
+- **Fame.** At settlement (not void) every `pass` holder who stayed to the end — in `M.specs`, not dropped / abandoned, not in **`M.left`**
+  (a ticket holder's `match.unwatch` while the match is live records `left[acct]`; the client sends it on 🚪 Leave), and not away for
+  `AWAY_MS` (3 min) at that moment — gives the house `+ONLC.PASS.fame` (1) **`fame`**; the room's stands entry gets `fame:1`.
+  `domusRow` (hello.domus, domus.get, domus.*) carries **`fame`**, **`passDay`** and **`patron`** (when set).
+- **Houses + patrons in the stands.** Every stands entry (ticket, free, pass) carries **`domus`** (the house name) and **`patron`** (the house's
+  look, when it has one). `liteRow` stands carry `{id, name, domus?, pass?}` (no look); the full room (members, ticket holders, match.watch) has both.
+- **`domus.patron {look}`** → `{domus: row}`. `look` = a plain object (else "Not a look."; > 4 KB raw → "That look is too large."), cleaned by
+  **`ONLC.cleanPatron`**: ≤16 keys `[a-zA-Z0-9_]{1,16}`, values boolean / number / string ≤40 chars (< > " ' backtick and backslash stripped), ≤1 KB after cleaning
+  (else empty). `null` / an empty look removes it (every screen draws the generated default). Stands entries take the look when the seat is taken.
+- Client (127): the free option in the host's ticket select, the 🎟 Free button in the lobby list and the guest-pass card now work on the server
+  too; the patron editor keeps an unsaved draft in localStorage `flavius_patron82.<acct>` and saves it (domus.patron, 600 ms after the last
+  change); other screens draw the look from the stands entries (learned into `ONL82.pat`), no who.list fallback.

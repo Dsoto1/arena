@@ -17,6 +17,9 @@
      coin award and on the Glory gained; the Fate applies in full.
    • v0.82 GUESTS: read-only watchers without sign-in (GUEST_OK requests), 2 hours (GUEST_MS), counted apart (hereSummary guests/gzones).
    • v0.82 STANDS GROUP TURN: one private pick per ticket holder per rotation (standsPickOK), applied together as one server input.
+   • v0.82 STANDS FOR THE POOR: a room may sell FREE seats (L.free, ticket 0); Flavius's guest pass (PASS, passOK): once a UTC day a house
+     whose active gladiator holds under 15 coin takes a free seat in a room selling seats; sitting through it → +1 house Fame.
+     The house's PATRON look (cleanPatron, ≤1 KB) rides on its stands entries.
    • Wagers: online wallets only, escrowed by the server, split among winning bets (5% to the host); fighters back only themselves.
    • Anti-cheat: results by agreement (`agree`: every human reports the whole table; strict majority wins, 2 disagreeing humans →
      void, no pay, no deaths, strikes for the minority); 3 strikes → matched only with other struck accounts; a ranked player away
@@ -133,6 +136,7 @@ const ONLC=(function(){
   function newLobby(spec,host,id,now){const ev=EVENTS_ALL.includes(spec.ev)?spec.ev:'democritus';const team=EVENTS_TEAM.includes(ev);
     return {id,host:{id:host.id,name:host.name,char:host.char||null},ev,team,teams:2,autoBal:!!spec.ranked,loc:Math.max(1,Math.min(12,spec.loc|0||6)),ranked:!!spec.ranked,rank:spec.ranked?(host.rank||'tiro'):null,
       seats:clampSeats(ev,spec.seats),players:[],members:[],kicked:{},cry:[],stands:[],watchers:0,tickets:0,pot:0,ticket:spec.standsOff?0:Math.max(0,Math.min(50,spec.ticket|0)),
+      free:!spec.standsOff&&!(spec.ticket|0)&&!!spec.free,
       abandon:spec.ranked?'fate':(spec.abandon==='fate'?'fate':'cpu'),standsOff:!!spec.standsOff,chat:[],
       status:'waiting',created:now,seed:null,v:VER}}
   const memberOf=(L,id)=>(L.members||[]).find(m=>m.id===id)||null;
@@ -176,7 +180,8 @@ const ONLC=(function(){
   /* the host removes a lanista (before the horns); they may come back after KICK_MS */
   function roomKick(L,by,who,now){if(L.host.id!==by)return 'Only the host removes lanistas.';if(L.status!=='waiting')return 'Already under way.';if(who===by||!memberOf(L,who))return 'Pick someone in the room.';
     roomLeave(L,who,now);L.kicked=L.kicked||{};L.kicked[who]=(now||Date.now())+KICK_MS;return ''}
-  /* the host's settings until the horns. d may carry: ev, loc, seats, ticket, abandon, standsOff, teams, autoBal */
+  /* the host's settings until the horns. d may carry: ev, loc, seats, ticket, free, abandon, standsOff, teams, autoBal
+     (free: seats in the stands at no cost — ticket 0; a price, or 'none' without free, ends it; stands off ends both) */
   function roomSet(L,by,d,now){if(L.host.id!==by)return 'Only the host changes the game.';if(L.status!=='waiting')return 'Already under way.';let reset=false;
     if(d.ev!=null&&d.ev!==L.ev){if(!EVENTS_ALL.includes(d.ev))return 'No such event online.';const wasTeam=L.team;L.ev=d.ev;L.team=EVENTS_TEAM.includes(d.ev);reset=true;
       if(L.team&&!wasTeam){L.teams=2;L.players.forEach((p,i)=>{p.team=TEAM_KEYS[i%2]})}if(!L.team)for(const p of L.players)delete p.team}
@@ -184,7 +189,8 @@ const ONLC=(function(){
     /* fewer seats than seated: the last to sit stand up (never the host) */
     while(L.players.length>L.seats){const order=L.players.filter(p=>p.id!==L.host.id).sort((a,b)=>(b.sat||0)-(a.sat||0));if(!order.length)break;L.players.splice(seatOf(L,order[0].id),1)}
     if(d.loc!=null)L.loc=Math.max(1,Math.min(12,d.loc|0||L.loc));
-    if(d.standsOff!=null)L.standsOff=!!d.standsOff;if(d.ticket!=null)L.ticket=Math.max(0,Math.min(50,d.ticket|0));if(L.standsOff)L.ticket=0;
+    if(d.standsOff!=null)L.standsOff=!!d.standsOff;if(d.free!=null){L.free=!!d.free;if(L.free)L.ticket=0}
+    if(d.ticket!=null){L.ticket=Math.max(0,Math.min(50,d.ticket|0));if(L.ticket>0||d.free==null)L.free=false}if(L.standsOff){L.ticket=0;L.free=false}
     if(d.abandon!=null&&!L.ranked)L.abandon=d.abandon==='fate'?'fate':'cpu';
     if(d.autoBal!=null&&!L.ranked)L.autoBal=!!d.autoBal;
     if(L.team&&d.teams!=null){const t=Math.max(2,Math.min(TEAM_KEYS.length,L.seats,d.teams|0||2));if(t!==L.teams){L.teams=t;reset=true}}
@@ -214,7 +220,7 @@ const ONLC=(function(){
   /* a lobby row for lists: no kits, looks, chat or bets — the room's own members get the whole room */
   function liteRow(L){const y={...L};for(const k of ['chat','bets','seed','kicked','cry','invited'])delete y[k];
     y.players=(L.players||[]).map(p=>({id:p.id,name:p.name,rank:p.rank,ready:!!p.ready,cls:p.kit&&p.kit.cls||null,...(p.team?{team:p.team}:{}),...(p.party?{party:p.party}:{}),...(p.domus?{domus:p.domus}:{})}));
-    y.members=(L.members||[]).map(m=>({id:m.id,name:m.name,rank:m.rank,...(m.domus?{domus:m.domus}:{})}));delete y.invited;y.stands=(L.stands||[]).map(s=>({id:s.id,name:s.name}));y.lite=1;return y}
+    y.members=(L.members||[]).map(m=>({id:m.id,name:m.name,rank:m.rank,...(m.domus?{domus:m.domus}:{})}));delete y.invited;y.stands=(L.stands||[]).map(s=>({id:s.id,name:s.name,...(s.domus?{domus:s.domus}:{}),...(s.pass?{pass:1}:{})}));y.lite=1;return y}
   /* QUICK CHAT: phrases only, sent as codes (no text from players anywhere online) */
   const QC={room:['ave','ready','wait','horns','swap','seat','luck','vale'],after:['well','again','vale'],match:['truce','struck','mercy','ha'],forum:['ave','anyc','anyf','ranked','well','vale']};
   const QC_TEXT={ave:'Ave!',ready:'✓ Ready',wait:'⏳ 2 min',horns:'▶ Sound the horns?',swap:'⇄ Swap teams?',seat:'🪑 One more seat?',luck:'Good luck',vale:'Vale',
@@ -239,7 +245,13 @@ const ONLC=(function(){
     if(out&&out.died)D.fallen=(D.fallen|0)+1;else if(ranked)D.survived=(D.survived|0)+1;return D}
   /* the house record built from gladiators made before houses existed (no data lost) */
   function domusFromChars(D,chars){for(const c of chars||[]){D.bouts=(D.bouts|0)+(c.bouts|0);D.wins=(D.wins|0)+(c.wins|0);D.survived=(D.survived|0)+(c.survived|0);D.lifeCF=(D.lifeCF|0)+(c.lifeCF|0);if(!c.alive)D.fallen=(D.fallen|0)+1}D.glads=(D.glads|0)+(chars||[]).length;return D}
-  const domusRow=D=>D?{id:D.id,name:D.name,founded:D.founded,bouts:D.bouts|0,wins:D.wins|0,survived:D.survived|0,fallen:D.fallen|0,lifeCF:D.lifeCF|0,glads:D.glads|0}:null;
+  const domusRow=D=>D?{id:D.id,name:D.name,founded:D.founded,bouts:D.bouts|0,wins:D.wins|0,survived:D.survived|0,fallen:D.fallen|0,lifeCF:D.lifeCF|0,glads:D.glads|0,
+    fame:D.fame|0,passDay:D.passDay||null,...(D.patron&&Object.keys(D.patron).length?{patron:D.patron}:{})}:null;
+  /* the house's PATRON (the face in the stands): plain short values only (skin, hair, hat, beard, tunic, mantle, cushion colours…), ≤16 keys, ≤1 KB */
+  function cleanPatron(P){const out={};if(!P||typeof P!=='object'||Array.isArray(P))return out;let n=0;
+    for(const [k,v] of Object.entries(P)){if(++n>16)break;if(!/^[a-zA-Z0-9_]{1,16}$/.test(k))continue;
+      const x=typeof v==='boolean'?v:typeof v==='number'&&isFinite(v)?Math.round(v*1000)/1000:typeof v==='string'?v.replace(/[<>"'`\\]/g,'').slice(0,40):undefined;if(x!==undefined)out[k]=x}
+    return JSON.stringify(out).length>1000?{}:out}
   /* ── v0.82 THE STOREROOM: every piece a house owns sits with one of its gladiators (ch.gear) or in the house itself (D.gear).
      A piece moves between them (domus.move) and is ticked to bring or not (domus.equip) — never for a gladiator seated in a waiting
      room or a live match. A gladiator may carry only what its rank may buy (market level ≤ rank's mkt); one copy of a non-stacking piece. ── */
@@ -263,10 +275,16 @@ const ONLC=(function(){
     if(!STANDS_ACTS.includes(p.a))return 'No such action from the stands.';
     if(p.a==='stone'||p.a==='offer'){if(!Number.isInteger(p.r)||!Number.isInteger(p.c)||p.r<0||p.r>12||p.c<0||p.c>12)return 'Throw at a tile.'}return ''}
   function cleanPick(p){const o={a:p.a};for(const k of ['r','c','seat','sec','v','tok'])if(p[k]!=null&&(typeof p[k]==='number'||typeof p[k]==='string'))o[k]=typeof p[k]==='string'?p[k].slice(0,24):p[k];return o}
-  /* a seat in the stands: bought before the horns, never by a fighter of this game; the price goes into the wager pot */
-  function ticketOK(L,who,wallet){if(!L.ticket)return 'This game sells no tickets.';if(L.status!=='waiting')return 'Tickets are sold until the horns.';
+  /* a seat in the stands: bought before the horns, never by a fighter of this game; the price goes into the wager pot (a free seat: 0) */
+  function standsSeatWhy(L,who){if(L.standsOff||(!(L.ticket>0)&&!L.free))return 'This game sells no tickets.';if(L.status!=='waiting')return 'Tickets are sold until the horns.';
     if(L.players.some(p=>p.id===who))return 'Fighters take the sand, not the stands.';if((L.stands||[]).some(s=>s.id===who))return 'You already hold a ticket.';
-    if((L.stands||[]).length>=STANDS_MAX)return 'The stands are sold out.';if((wallet|0)<L.ticket)return `A ticket costs ${L.ticket} coin.`;return ''}
+    if((L.stands||[]).length>=STANDS_MAX)return 'The stands are sold out.';return ''}
+  function ticketOK(L,who,wallet){const why=standsSeatWhy(L,who);if(why)return why;if((wallet|0)<(L.ticket|0))return `A ticket costs ${L.ticket} coin.`;return ''}
+  /* 🎟 Flavius's guest pass: once a UTC day for each house (lastDay = the house's last pass day), only while the active gladiator's wallet
+     is under PASS.wallet, a free seat in a waiting room that sells seats (any price, or free) and has room in the stands */
+  const PASS={wallet:15,fame:1};
+  function passOK(L,who,wallet,lastDay,day){if((wallet|0)>=PASS.wallet)return `The guest pass is for thin purses — under ${PASS.wallet} coin.`;
+    if(lastDay&&lastDay===day)return 'One guest pass a day for each house — come back tomorrow.';return standsSeatWhy(L,who)}
   function partyCode(r){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<5;i++)s+=A[Math.floor(r()*A.length)%A.length];return s}
   /* wagers: online wallets only. A bet backs one seat; fighters may back only themselves; bets close when the match starts.
      settle(pool,winnerSeats) → {payouts:{bettor:coin}, cut} — the pool is split among winning bets by stake, 5% to the host. */
@@ -320,5 +338,5 @@ const ONLC=(function(){
   /* weekly challenges rotate with the week of the year */
   const CHALLENGES=[['Survive 3 ranked bouts',3,'survived'],['Earn 60 CF in one bout',60,'cf1'],['Win a bout at Capua',1,'win:3'],['Slay 5 beasts',5,'beasts'],['Finish 5 bouts',5,'bouts'],['Win with 20+ coin left',1,'rich']];
   function weekChallenges(t){const wk=Math.floor((t||0)/604800000);const out=[];for(let i=0;i<3;i++)out.push(CHALLENGES[(wk+i*2)%CHALLENGES.length]);return out}
-  return {gearMoveWhy,gearMove,gearEquip,GLORY,gloryOf,rankByGlory,tableFactor,PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
+  return {PASS,passOK,standsSeatWhy,cleanPatron,gearMoveWhy,gearMove,gearEquip,GLORY,gloryOf,rankByGlory,tableFactor,PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
