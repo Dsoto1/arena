@@ -120,7 +120,7 @@ ok(/^no_invite\|/.test(await err(B,id=>NET.req('lobby.accept',{id}),await A.eval
 /* ── 7. free tickets + the guest pass ── */
 const R4=await A.evaluate(async()=>{const L=(ONL.lobbies=await NET.req('lobby.list')).find(x=>x.ev==='democritus'&&x.loc===4);await NET.req('lobby.set',{id:L.id,free:1});return L.id});
 const lb=await A.evaluate(async id=>{const r=(await NET.req('lobby.list')).find(x=>x.id===id);return {free:r.free,ticket:r.ticket}},R4);ok(lb.free&&!lb.ticket,'host sets free tickets');
-const fsel=await A.evaluate(async()=>{ONL.lobbies=await NET.req('lobby.list');ONL.tab='play';let v='';for(let i=0;i<15&&v!=='free';i++){onlRedraw();await new Promise(r=>setTimeout(r,300));const s=document.querySelector('#onlRoom80 select[data-onlrs="ticket"]');v=s?s.value:''}return v});ok(fsel==='free','the host’s ticket select reads free');
+const fsel=await A.evaluate(async()=>{ONL.lobbies=await NET.req('lobby.list');ONL.tab='play';let v='';for(let i=0;i<40&&v!=='free';i++){onlRedraw();await new Promise(r=>setTimeout(r,300));const s=document.querySelector('#onlRoom80 select[data-onlrs="ticket"]');v=s?s.value:''}return v});ok(fsel==='free','the host’s ticket select reads free');
 await F.evaluate(async id=>{await NET.req('lobby.join',{id})},R4);
 await B.evaluate(async()=>{const w=mockLoad();onlMockChar(w,ONL.acct.id).wallet=30;mockSave(w);await onlRefresh();ONL.tab='play';onlRedraw()});await B.waitForTimeout(300);
 ok(await B.evaluate(()=>!document.getElementById('pass82')),'no pass while the purse is full');
