@@ -775,6 +775,10 @@ share copy — the site download play/flavius-rule-arena.zip.)
   OF THE EVENT; a SEVERED limb takes its arrows with it. THOLO HOUSE RULE (his): a bolt to Tholo's targeted head kills him outright
   with any damage. Plus: house treasury (20% cut), market board with an offerings row, offerings carried in/out, gear economy, Gifts,
   countdown. v0.82 got: stone wall behind the Domus showcase (his pick).
+  MANAGER COUNCIL (his answers 2026-10-04, for v0.83): six advisors with a face + Roman name — Consilium (strategy), Recruiter (★ pick),
+  Doctore (yard), Medicus (ward), Clerk (money letters), Barracks master; faces from the spectator/patron face maker, rolled ONCE per career
+  from its seed (fixed, no re-roll; old careers get theirs on first load, saved once); they never leave (the poachable house medicus stays a
+  separate hire). The face shows only INSIDE an opened letter (envelopes unchanged) + a council card in Your ludus (faces, names, specialty).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
