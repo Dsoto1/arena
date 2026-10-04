@@ -729,7 +729,8 @@ One global script; files are concatenated in order. Later "version modules" patc
   beast's card leaves the deck, 126-v82fix). Zora is not a beast slot. Online: printed beasts only, never custom.
 - **Online market ideas (his, 2026-10-04, for the gear batch v0.83 — questions pending):** (1) the Armory sells OFFERINGS (tokens) a
   gladiator can carry into a match in their inventory and bring back out if they survive/win; (2) the online market shows weapons and
-  armor on his market board art (boardHTML75 / assets/market_board.webp) — one side of the board for weapons, the other for armor.
+  armor on his market board art (boardHTML75 / assets/market_board.webp) — one side of the board for weapons, the other for armor. A row of OFFERINGS runs above both sides
+  (his layout).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
