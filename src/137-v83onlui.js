@@ -23,7 +23,7 @@
    PROFILE + ★ FOLLOW • any house name (🏛 chips in rooms, the Forum, invitations, the stage, the rank bar) opens domus.profile: record,
      trophies, living gladiators, recent matches, ★ Follow (domus.follow), 🔗 copy the share link (#domus=<id>; a page opened with that
      hash opens Online on the profile). "★ Followed houses" on the landing (hello.follows) with Invite / Join / Watch.
-   WAGERS • a rail tab "🎲 Wagers" (wager.list): open pots with odds, my last 30 bets, the week's best bettors.
+   WAGERS • a rail tab "💰 Wagers" (wager.list): open pots with odds, my last 30 bets, the week's best bettors.
    HOUSE GIFTS + SHELF OFFERINGS (his call) • gifts belong to the DOMUS (domus.get gifts / hello domus.gifts); the shelf holds offerings
      (domus.get offers) moved with offer.move. MOCK: gift.open from the house, settlements move gifts onto the house and a Ranked death's
      un-brought satchel onto the shelf, offer.move.
@@ -338,22 +338,22 @@ document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest
 
 /* ---------------- 12 · the WAGERS tab ---------------- */
 function onl83Wagers(){if(!ONL83U.wl||Date.now()-ONL83U.wlAt>10000){ONL83U.wlAt=Date.now();NET.req('wager.list',{}).then(r=>{ONL83U.wl=r;if(ONL.tab==='wagers'&&document.getElementById('onl')&&!onlFocus80())onlRedraw()}).catch(e=>{ONL83U.wl=ONL83U.wl||{open:[],mine:[],top:[],err:e.message}})}
-  const X=ONL83U.wl;if(!X)return '<h3>🎲 Wagers</h3><p class="rc-sub">Reading the bookmakers’ tablets…</p>';
+  const X=ONL83U.wl;if(!X)return '<h3>💰 Wagers</h3><p class="rc-sub">Reading the bookmakers’ tablets…</p>';
   const open=(X.open||[]).map(L=>{const names=Object.fromEntries((L.players||[]).map(p=>[p.seat,p]));
     return `<div class="card2 wg83-pot"><div class="wg83-h">${typeof cardHTML==='function'?`<span class="wg83-ev">${cardHTML('e:'+L.ev,'sm')}</span>`:''}<div><b>${esc2(onlEvName(L.ev))}</b> <small class="rc-sub">${esc2(onlCityName(L.loc))} · ${L.ranked?'⚔ Ranked':'Custom'} · ${L.status==='live'?'🔴 live':'waiting'}</small>
       <div class="wg83-pool">Pool ${c83()} <b>${L.pool|0}</b>${L.pot?` + tickets ${L.pot}`:''}</div></div></div>
       <table class="wg83-t"><tr><th>Seat</th><th>Staked</th><th>Pays</th></tr>${(L.seats||[]).map(s=>{const p=names[s.seat];return `<tr><td>${p?`${esc2(p.name)}${p.domus?` <small class="dom82c">🏛 ${esc2(onlHouse82(p.domus))}</small>`:''}`:`Seat ${s.seat+1}`}</td><td>${s.stake?`${c83()} ${s.stake}`:'—'}</td><td>${s.odds!=null?`<b class="wg83-odds">×${s.odds}</b>`:'—'}</td></tr>`}).join('')}</table>
-      ${L.status==='waiting'&&ONL.char&&!onlIsGuest82()?`<div class="acts"><button type="button" class="btn tksm" data-onl="bet" data-v="${esc2(L.id)}">🎲 Wager</button></div>`:''}</div>`}).join('')||'<p class="rc-sub">No open pots — wager on a room in the Lobby Browser.</p>';
+      ${L.status==='waiting'&&ONL.char&&!onlIsGuest82()?`<div class="acts"><button type="button" class="btn tksm" data-onl="bet" data-v="${esc2(L.id)}">💰 Wager</button></div>`:''}</div>`}).join('')||'<p class="rc-sub">No open pots — wager on a room in the Lobby Browser.</p>';
   const res={open:'⏳ open',won:'🏆 won',lost:'✕ lost',refund:'↺ refunded'};
   const mine=(X.mine||[]).map(b=>`<tr class="wg83-${b.res}"><td>${esc2(date83(b.at))}</td><td>${esc2(onlEvName(b.ev))} <small class="rc-sub">${esc2(onlCityName(b.loc))}</small></td><td>${esc2(b.target||'')}</td><td>${c83()} ${b.amt}</td><td>${res[b.res]||b.res}${b.res==='won'?` <b>+${b.pay}</b>`:''}</td></tr>`).join('');
   const top=(X.top||[]).map((t,i)=>`<tr><td>${['🥇','🥈','🥉'][i]||i+1}</td><td><b>${esc2(t.name)}</b>${t.domus?` <small class="dom82c">🏛 ${esc2(onlHouse82(t.domus))}</small>`:''}</td><td class="${t.net>=0?'pos':'neg'}">${t.net>=0?'+':''}${t.net}</td><td>${c83()} ${t.staked}</td></tr>`).join('');
-  return `<div class="onl-lbtop"><h3>🎲 Wagers</h3><div class="acts"><button type="button" class="btn tksm" data-onl83="wlr">↻</button></div></div>
+  return `<div class="onl-lbtop"><h3>💰 Wagers</h3><div class="acts"><button type="button" class="btn tksm" data-onl83="wlr">↻</button></div></div>
    ${ONL.betting&&typeof onlBetHTML==='function'?onlBetHTML():''}<div class="wg83"><div class="wg83-open"><h4 class="onl-h">Open pots</h4><div class="wg83-pots">${open}</div></div>
     <div class="wg83-side">${onlIsGuest82()?'':`<div class="card2"><b>My bets</b>${mine?`<div class="wg83-scroll"><table class="tally wg83-t">${mine}</table></div>`:'<p class="rc-sub">No bets yet.</p>'}</div>`}
      <div class="card2"><b>This week’s best bettors</b>${top?`<table class="tally wg83-t">${top}</table>`:'<p class="rc-sub">No winners yet this week.</p>'}</div></div></div>`}
-/* the rail: 🎲 Wagers before the Hall; a TEST chip beside test houses' names */
+/* the rail: 💰 Wagers before the Hall; a TEST chip beside test houses' names */
 {const base=onlHTML;onlHTML=function(){const want=ONL.tab==='wagers';if(want)ONL.tab='hall';let h;try{h=base.apply(this,arguments)}finally{if(want)ONL.tab='wagers'}
-  try{if(ONL.acct&&h.includes('class="onl-rail"')&&!ONL.newGlad){const btn=`<button type="button" data-onl="tab" data-v="wagers" class="${want?'on':''}">🎲 Wagers</button>`;
+  try{if(ONL.acct&&h.includes('class="onl-rail"')&&!ONL.newGlad){const btn=`<button type="button" data-onl="tab" data-v="wagers" class="${want?'on':''}">💰 Wagers</button>`;
       h=h.replace(/(<button type="button" data-[a-z0-9]+="tab" data-v="hall")/,btn+'$1');
       if(want){h=h.replace(/(<button type="button" data-[a-z0-9]+="tab" data-v="hall" class=")on(")/,'$1$2');const a=h.indexOf('<main class="onl-main">'),b=h.lastIndexOf('</main>');if(a>=0&&b>a)h=h.slice(0,a+23)+onl83Wagers()+h.slice(b)}}
     if(ONL83U.testDom.size)h=h.replace(/(<small class="dom82c">🏛 )([^<]*)(<\/small>)/g,(m,a,n,c)=>{const raw=n.replace(/^House /,'');return ONL83U.testDom.has(raw)||ONL83U.testDom.has(n)?`${a}${n} <i class="test83">TEST</i>${c}`:m})}catch(e){console.error(e)}return h}}
