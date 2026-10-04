@@ -10,6 +10,7 @@
      CORRESPONDENCE panel in the manner of a diplomatic screen — opinion with its reasons, and envoys:
      gifts, practices, trades, a non-poaching pact, gossip, or a public insult.
    ===================================================================== */
+/* FAC — the ludus facilities: name, icon, description and what each level does. TWEAK: the effect texts (the effects themselves live where they are used). */
 const FAC={
   yard:{n:'Training yard',i:'🏋',d:'Better palus posts, sand pits and weights',fx:l=>`+${l*5}% training gains · ${l*20}% fewer drill injuries`},
   valet:{n:'Valetudinarium',i:'⚕',d:'A proper infirmary wing for your physicians',fx:l=>`physicians' weekly cap +${l*25} coin of work`},
@@ -17,27 +18,37 @@ const FAC={
   armory:{n:'Armory',i:'🛡',d:'Fitted armor for every fighter who leaves your ludus',fx:l=>`+${l} AP fitted at the start of every bout`},
   stands:{n:'Practice stands',i:'🏟',d:'Benches where the city pays to watch you train',fx:l=>`+${l*10} coin a week from practice crowds · Spectacle grade +${l*6}`},
   stables:{n:'Stables',i:'🐎',d:'Horses, wagons and a road crew of your own',fx:l=>`travel to away games costs ${l*15}% less`}}; /* v0.45 */
+/* FAC_COST — coin cost of facility levels 1 / 2 / 3. TWEAK. */
 const FAC_COST=[250,600,1200];
-const facLvl=(m,k)=>m&&m.fac?(m.fac[k]||0):0;
-const facSum=m=>Object.keys(FAC).reduce((a,k)=>a+facLvl(m,k),0);
+/* facLvl — a lanista's level (0–3) in one facility. A const arrow — cannot be wrapped. */
+const facLvl=(mgr,facKey)=>mgr&&mgr.fac?(mgr.fac[facKey]||0):0;
+/* facSum — all of a lanista's facility levels added up (sets the ludus grade). */
+const facSum=mgr=>Object.keys(FAC).reduce((a,k)=>a+facLvl(mgr,k),0);
+/* [facility levels needed, grade] for the ludus grade. TWEAK. */
 const LGRADES=[[0,'D'],[1,'C'],[3,'C+'],[5,'B'],[7,'B+'],[9,'A'],[12,'A+'],[15,'S']];
-const ludusGrade=m=>{const n=facSum(m);let g='D';for(const [t,l] of LGRADES)if(n>=t)g=l;return g};
+/* ludusGrade — the ludus grade from the facility total (D … S). */
+const ludusGrade=mgr=>{const n=facSum(mgr);let g='D';for(const [t,l] of LGRADES)if(n>=t)g=l;return g};
+/* repCap — the weekly infirmary allowance: REPAIR_CAP + 25 per Valetudinarium level. */
 const repCap=()=>REPAIR_CAP+25*facLvl(me(),'valet');
+/* facilitiesHTML — the facilities panel: each facility, its level, effect and Build button (one build a week). */
 function facilitiesHTML(){const w=W_(),m=me();m.fac=m.fac||{};const built=m.facWk===w.week;
   return `<div class="card2 faccard"><div class="schoolhd"><div><div class="sect" style="margin:0">🏗 Facilities</div><span class="rc-sub">Permanent. Recruits grade your house on them — together they set your <b>Ludus grade</b>. One project a week.</span></div><div class="gradebox" style="--gc:${gradeCol(ludusGrade(m))}" title="Ludus grade — from ${facSum(m)} of ${Object.keys(FAC).length*3} facility levels">${ludusGrade(m)}</div></div>
     <div class="faclist">${Object.entries(FAC).map(([k,F])=>{const l=facLvl(m,k);const cost=FAC_COST[l];
       return `<div class="facrow"><span class="faci">${F.i}</span><div class="fact"><b>${F.n}</b> <span class="facpips">${[0,1,2].map(i=>`<i class="${i<l?'on':''}"></i>`).join('')}</span><div class="rc-sub">${l?F.fx(l):F.d}</div>${l<3?`<div class="rc-sub">Next: ${F.fx(l+1)}</div>`:''}</div>
         ${l<3?`<button class="btn tksm" type="button" data-mg="build" data-id="${k}" ${dis([built,'Your builders are already busy this week.'],needCoin(m,cost))}>Build ${['I','II','III'][l]}<small>${cost} coin</small></button>`:'<span class="badge gold">complete</span>'}</div>`}).join('')}</div></div>`}
-function facBuild(m,k,quiet){const l=facLvl(m,k);if(l>=3)return false;const cost=FAC_COST[l];if(m.coin<cost)return false;m.coin-=cost;m.fac=m.fac||{};m.fac[k]=l+1;m.facWk=W_().week;
-  const F=FAC[k];mlog(m,`🏗 built the ${F.n} ${['I','II','III'][l]} (${cost} coin) — ${F.fx(l+1)}`);
-  if(!quiet)mnews(`🏗 <b>${esc(m.ludus)}</b> ${m.isPlayer?'(you) ':''}completes the ${F.n} ${['I','II','III'][l]}. Ludus grade ${ludusGrade(m)}.`);return true}
+/* facBuild — builds the next level of a facility if the lanista can afford it. */
+function facBuild(mgr,facKey,quiet){const l=facLvl(mgr,facKey);if(l>=3)return false;const cost=FAC_COST[l];if(mgr.coin<cost)return false;mgr.coin-=cost;mgr.fac=mgr.fac||{};mgr.fac[facKey]=l+1;mgr.facWk=W_().week;
+  const F=FAC[facKey];mlog(mgr,`🏗 built the ${F.n} ${['I','II','III'][l]} (${cost} coin) — ${F.fx(l+1)}`);
+  if(!quiet)mnews(`🏗 <b>${esc(mgr.ludus)}</b> ${mgr.isPlayer?'(you) ':''}completes the ${F.n} ${['I','II','III'][l]}. Ludus grade ${ludusGrade(mgr)}.`);return true}
 // weekly facility effects for every house (called when the week ends)
+/* facWeek — weekly facility effects for every house: barracks morale, practice-stand ticket coin. */
 function facWeek(){const w=W_();for(const m of w.mgrs){const b=facLvl(m,'barracks'),st=facLvl(m,'stands');
   if(b)for(const g of rosterOf(m))g.morale=clamp(g.morale+b,0,100);
   if(st){m.coin+=st*10;if(m.isPlayer)tnews(`🏟 The practice stands took ${st*10} coin in tickets this week.`)}}}
 
 /* ---------------- rival lanistae at work: every act goes in their ledger ---------------- */
-function mlog(m,txt){if(!m)return;const w=W_();(m.log=m.log||[]).unshift({s:w.season,wk:w.week,txt});m.log=m.log.slice(0,40)}
+function mlog(mgr,txt){if(!mgr)return;const w=W_();(mgr.log=mgr.log||[]).unshift({s:w.season,wk:w.week,txt});mgr.log=mgr.log.slice(0,40)}
+/* aiLanistaWeek — rival houses run their week: backers' income, drills, feasts, medicus, family tickets, building, envoys — each act logged in their ledger. */
 function aiLanistaWeek(){const w=W_();
   for(const m of w.mgrs){if(m.isPlayer)continue;const P=m.p;
     // v0.29 A LEAGUE THAT STAYS ALIVE: old houses have old backers (weekly income that grows with fame)…
@@ -63,21 +74,25 @@ function aiLanistaWeek(){const w=W_();
   }}
 
 /* ---------------- opinion: what a rival lanista thinks of you, and why ---------------- */
-function opinionOf(m){const pm=me();const L=[];let v=50;
-  const riv=Math.max(m.rivalry||0,(m.rivals||{})[pm.id]||0);if(riv){const d=Math.round(riv*.6);L.push([-d,riv>=35?'A bitter rivalry with your house':'Rivalry and old grudges']);v-=d}
-  if(pm.city===m.city){L.push([-8,`Both of ${m.city}`]);v-=8}
+/* opinionOf — what a rival lanista thinks of you (0–100) and the reasons. */
+function opinionOf(mgr){const pm=me();const L=[];let v=50;
+  const riv=Math.max(mgr.rivalry||0,(mgr.rivals||{})[pm.id]||0);if(riv){const d=Math.round(riv*.6);L.push([-d,riv>=35?'A bitter rivalry with your house':'Rivalry and old grudges']);v-=d}
+  if(pm.city===mgr.city){L.push([-8,`Both of ${mgr.city}`]);v-=8}
   const hon=Math.round((pm.p.honor-50)/5);if(hon){L.push([hon,hon>0?'Your honor is known':'Your word is doubted']);v+=hon}
-  if(m.relB){L.push([m.relB,'Gifts, trades and pacts']);v+=m.relB}
-  if(m.poachedByMe){L.push([-m.poachedByMe*10,`You poached ${m.poachedByMe} of theirs`]);v-=m.poachedByMe*10}
-  if(m.insulted){L.push([-m.insulted,'Your public insults']);v-=m.insulted}
-  const W=W_();if(m.pact&&m.pact>=W.week){L.push([10,'Non-poaching pact']);v+=10}
+  if(mgr.relB){L.push([mgr.relB,'Gifts, trades and pacts']);v+=mgr.relB}
+  if(mgr.poachedByMe){L.push([-mgr.poachedByMe*10,`You poached ${mgr.poachedByMe} of theirs`]);v-=mgr.poachedByMe*10}
+  if(mgr.insulted){L.push([-mgr.insulted,'Your public insults']);v-=mgr.insulted}
+  const W=W_();if(mgr.pact&&mgr.pact>=W.week){L.push([10,'Non-poaching pact']);v+=10}
   return {v:clamp(Math.round(v),0,100),L}}
-const opTier=v=>v<20?['Hostile','#e04a3a']:v<40?['Cold','#e0843a']:v<60?['Neutral','#c9ccd3']:v<80?['Cordial','#9bd070']:['Friendly','#5fd07a'];
-function greetLine(m,v){const P=m.p;const hostile=['Say what you came to say, and leave my gate.','My fighters remember your name. So do I.','You have courage, sending an envoy here.'],cold=['Speak. Quickly.','We are listening — for now.','The steward will show you to a chair. Not a good one.'],
+/* opTier — an opinion as [word, color] (Hostile … Friendly). */
+const opTier=opinion=>opinion<20?['Hostile','#e04a3a']:opinion<40?['Cold','#e0843a']:opinion<60?['Neutral','#c9ccd3']:opinion<80?['Cordial','#9bd070']:['Friendly','#5fd07a'];
+/* greetLine — how a rival's steward greets your envoy, by opinion and character. */
+function greetLine(mgr,opinion){const P=mgr.p;const hostile=['Say what you came to say, and leave my gate.','My fighters remember your name. So do I.','You have courage, sending an envoy here.'],cold=['Speak. Quickly.','We are listening — for now.','The steward will show you to a chair. Not a good one.'],
   neutral=['Well met. What does your house want?','The sand is wide enough for both of us. Usually.','Wine? No? Then business.'],warm=['Ah — a friend of the house! Sit, sit.','Your envoy is always welcome here.','Whatever it is, the answer is probably yes.'];
-  const pool=v<20?hostile:v<40?cold:v<60?neutral:warm;return pool[(m.id.length+W_().week)%pool.length]+(P.greed>70?' And remember — nothing here is free.':P.honor>75?' My word is my bond.':'')}
+  const pool=opinion<20?hostile:opinion<40?cold:opinion<60?neutral:warm;return pool[(mgr.id.length+W_().week)%pool.length]+(P.greed>70?' And remember — nothing here is free.':P.honor>75?' My word is my bond.':'')}
 
 /* ---------------- the team screen ---------------- */
+/* teamHTML — a rival stable's team screen: lanista, house, roster, ledger and correspondence. */
 function teamHTML(){const w=W_(),pm=me();const m=mgrById(MGR.teamId);if(!m)return '<p>No such stable.</p>';if(m.isPlayer){MGR.tab='me';return meHTML()}
   const ros=rosterOf(m).sort((a,b)=>effOvr(b)-effOvr(a));const op=opinionOf(m);const [tn,tc]=opTier(op.v);const envoyUsed=m.envoyWk===w.week;
   const rec=`${m.wins}-${Math.max(0,m.bouts-m.wins)}`;
@@ -115,21 +130,24 @@ function teamHTML(){const w=W_(),pm=me();const m=mgrById(MGR.teamId);if(!m)retur
       ${m.pact&&m.pact>=w.week?`<p class="rc-sub" style="margin:6px 0 0">🤝 Non-poaching pact until week ${wkOf(m.pact)}.</p>`:''}</div>
     <div class="card2" style="margin-top:10px"><div class="sect" style="margin-top:0">📜 Their ledger <span class="rc-sub">what this house has been doing</span></div><div class="news" style="max-height:220px">${(m.log||[]).length?m.log.map(x=>`<div><span class="rc-sub">S${x.s} W${x.wk} · </span>${esc(x.txt)}</div>`).join(''):'<div class="rc-sub">Nothing on record yet — the ledger fills as the weeks go by.</div>'}</div></div>
    </div></div>`}
-function tradeVal(g){return effOvr(g)+Math.max(0,g.pot-g.ovr)*0.6+(g.fame||0)*0.2-Math.max(0,gAge(g)-30)*1.5-(g.contract?g.contract.wage*0.3:0)}
-function tradeHTML(m,tr){const pm=me();const mine=rosterOf(pm).sort((a,b)=>effOvr(b)-effOvr(a)),theirs=rosterOf(m).sort((a,b)=>effOvr(b)-effOvr(a));
-  return `<div class="tradebox"><div class="sect" style="margin-top:0">🔁 A trade with ${esc(m.ludus)}</div>
-    <div class="bslip"><label>You send <select class="tin" id="trMine" style="width:auto">${mine.map(g=>`<option value="${g.id}" ${tr.mine===g.id?'selected':''}>${esc(g.name)} · ${effOvr(g)} · ${g.contract.wage}/wk</option>`).join('')}</select></label>
-     <label>For <select class="tin" id="trTheirs" style="width:auto">${theirs.map(g=>`<option value="${g.id}" ${tr.theirs===g.id?'selected':''}>${esc(g.name)} · ${g.scout?effOvr(g):'~'+pubOvr(g)} · ${g.scout?g.contract.wage+'/wk':'?'}</option>`).join('')}</select></label>
-     <label>+ coin <input type="number" class="tin" id="trCoin" min="0" value="${tr.coin||0}" style="width:5em"></label></div>
+/* tradeVal — what a fighter is worth in a trade (rating, potential, fame, age, wage). */
+function tradeVal(glad){return effOvr(glad)+Math.max(0,glad.pot-glad.ovr)*0.6+(glad.fame||0)*0.2-Math.max(0,gAge(glad)-30)*1.5-(glad.contract?glad.contract.wage*0.3:0)}
+/* tradeHTML — the trade panel with a rival house. */
+function tradeHTML(mgr,trade){const pm=me();const mine=rosterOf(pm).sort((a,b)=>effOvr(b)-effOvr(a)),theirs=rosterOf(mgr).sort((a,b)=>effOvr(b)-effOvr(a));
+  return `<div class="tradebox"><div class="sect" style="margin-top:0">🔁 A trade with ${esc(mgr.ludus)}</div>
+    <div class="bslip"><label>You send <select class="tin" id="trMine" style="width:auto">${mine.map(g=>`<option value="${g.id}" ${trade.mine===g.id?'selected':''}>${esc(g.name)} · ${effOvr(g)} · ${g.contract.wage}/wk</option>`).join('')}</select></label>
+     <label>For <select class="tin" id="trTheirs" style="width:auto">${theirs.map(g=>`<option value="${g.id}" ${trade.theirs===g.id?'selected':''}>${esc(g.name)} · ${g.scout?effOvr(g):'~'+pubOvr(g)} · ${g.scout?g.contract.wage+'/wk':'?'}</option>`).join('')}</select></label>
+     <label>+ coin <input type="number" class="tin" id="trCoin" min="0" value="${trade.coin||0}" style="width:5em"></label></div>
     <p class="rc-sub" style="margin:4px 0">Contracts travel with the fighters (same wage, same weeks). They weigh rating, potential, fame, age and wage — and how much they like you.</p>
-    ${tr.msg?`<div class="traderes ${tr.ok?'ok':'no'}">${tr.ok?'✅':'✉'} ${tr.msg}</div>`:''}
-    <div class="acts">${m.envoyWk===W_().week?`<span class="rc-sub" style="align-self:center">Your envoy has already called on ${esc(m.ludus)} this week — try again next week.</span><button class="btn" type="button" data-mg="tradex">Close</button>`:`<button class="btn primary" type="button" data-mg="tradego" data-id="${m.id}">Send the proposal</button><button class="btn" type="button" data-mg="tradex">Cancel</button>`}</div></div>`}
-async function ludusClick(a,id,b,ctx){const w=W_(),pm=me();if(!w||!pm)return false;const {redraw,say}=ctx;
-  if(a==='build'){if(pm.facWk===w.week){say('Your builders are already busy this week.');return true}const l=facLvl(pm,id);if(l>=3)return true;if(pm.coin<FAC_COST[l]){say(`The ${FAC[id].n} ${['I','II','III'][l]} costs ${FAC_COST[l]} coin.`);return true}
+    ${trade.msg?`<div class="traderes ${trade.ok?'ok':'no'}">${trade.ok?'✅':'✉'} ${trade.msg}</div>`:''}
+    <div class="acts">${mgr.envoyWk===W_().week?`<span class="rc-sub" style="align-self:center">Your envoy has already called on ${esc(mgr.ludus)} this week — try again next week.</span><button class="btn" type="button" data-mg="tradex">Close</button>`:`<button class="btn primary" type="button" data-mg="tradego" data-id="${mgr.id}">Send the proposal</button><button class="btn" type="button" data-mg="tradex">Cancel</button>`}</div></div>`}
+/* ludusClick — the facilities / team screen / correspondence actions (build, envoys, gifts, pacts, trades, insults). */
+async function ludusClick(action,id,btn,ctx){const w=W_(),pm=me();if(!w||!pm)return false;const {redraw,say}=ctx;
+  if(action==='build'){if(pm.facWk===w.week){say('Your builders are already busy this week.');return true}const l=facLvl(pm,id);if(l>=3)return true;if(pm.coin<FAC_COST[l]){say(`The ${FAC[id].n} ${['I','II','III'][l]} costs ${FAC_COST[l]} coin.`);return true}
     facBuild(pm,id);tnews(`🏗 Built the ${FAC[id].n} ${['I','II','III'][l]} — ${FAC[id].fx(l+1)}. Ludus grade ${ludusGrade(pm)}.`,'big');saveWorld();say(`🏗 The ${FAC[id].n} ${['I','II','III'][l]} is built. Ludus grade <b>${ludusGrade(pm)}</b>.`);return true}
-  if(a==='run'){MGR.run=id;redraw();return true}
-  if(a==='team'){MGR.teamId=id;MGR.tab=id===pm.id?'me':'team';MGR.trade=null;redraw();return true}
-  if(a==='envoy'){const [mid,k]=id.split('|');const m=mgrById(mid);if(!m)return true;const op=opinionOf(m);
+  if(action==='run'){MGR.run=id;redraw();return true}
+  if(action==='team'){MGR.teamId=id;MGR.tab=id===pm.id?'me':'team';MGR.trade=null;redraw();return true}
+  if(action==='envoy'){const [mid,k]=id.split('|');const m=mgrById(mid);if(!m)return true;const op=opinionOf(m);
     if(k==='practice'){MGR.tab='practice';MGR.pOpp=m.id;redraw();return true}
     if(m.envoyWk===w.week){say('Your envoy has already called on this house this week.');return true}
     if(k==='gift'){if(pm.coin<25)return true;pm.coin-=25;m.relB=(m.relB||0)+12;m.envoyWk=w.week;mlog(m,`received gifts from ${pm.ludus}`);saveWorld();say(`🎁 ${esc(m.name)} accepts your gifts. Opinion ${opinionOf(m).v}.`);return true}
@@ -138,8 +156,8 @@ async function ludusClick(a,id,b,ctx){const w=W_(),pm=me();if(!w||!pm)return fal
     if(k==='gossip'){if(op.v<40)return true;const g=rosterOf(m).filter(x=>(x.scout||0)<2).sort(()=>Math.random()-.5)[0];m.envoyWk=w.week;if(!g){say(`${esc(m.name)} shrugs — you already know everything about their fighters.`);saveWorld();return true}g.scout=Math.max(g.scout||0,2);saveWorld();say(`🕵 Over wine, ${esc(m.name)} lets slip what ${esc(g.name)} is really worth: rating ${effOvr(g)}, morale ${g.morale}, ${g.contract.weeks} weeks left at ${g.contract.wage}/wk.`);return true}
     if(k==='insult'){m.insulted=(m.insulted||0)+15;m.rivalry=clamp((m.rivalry||0)+15,0,100);pm.fame=clamp(pm.fame+2,0,100);m.envoyWk=w.week;mlog(m,`was publicly insulted by ${pm.ludus}`);mnews(`🗡 ${esc(pm.ludus)} insults <b>${esc(m.ludus)}</b> in the forum. The crowd loves a feud.`);saveWorld();say(`🗡 The insult lands. +2 fame; ${esc(m.name)} will not forget it.`);return true}
     return true}
-  if(a==='tradex'){MGR.trade=null;redraw();return true}
-  if(a==='tradego'){const m=mgrById(id);const gm=gById($('#trMine').value),gt=gById($('#trTheirs').value);const coin=Math.max(0,Math.floor(+$('#trCoin').value||0));if(!m||!gm||!gt)return true;
+  if(action==='tradex'){MGR.trade=null;redraw();return true}
+  if(action==='tradego'){const m=mgrById(id);const gm=gById($('#trMine').value),gt=gById($('#trTheirs').value);const coin=Math.max(0,Math.floor(+$('#trCoin').value||0));if(!m||!gm||!gt)return true;
     MGR.trade={mid:m.id,mine:gm.id,theirs:gt.id,coin};if(m.envoyWk===w.week){MGR.trade.msg='Your envoy has already called on this house this week.';say(MGR.trade.msg);redraw();return true}
     if(coin>pm.coin){MGR.trade.msg='Your treasury cannot cover that sweetener.';redraw();return true}
     const op=opinionOf(m).v;const need=tradeVal(gt)*(1.06+(op<40?.18:0)-(op>=70?.06:0)+(m.p.greed-50)/400);const give=tradeVal(gm)+coin/6;m.envoyWk=w.week;
@@ -155,18 +173,24 @@ async function ludusClick(a,id,b,ctx){const w=W_(),pm=me();if(!w||!pm)return fal
 /* v0.29 THE LEAGUE TABLE: points, not fame, decide standings. Every bout scores its stables:
    a win 3 points, a runner-up finish 1. Ties go to the better win rate, then fame. Fame stays what it is —
    reputation (it opens recruits' doors and draws the crowds). Kept per season in m.spS[season]. */
-function msp(m,s){const w=W_();s=s??w.season;m.spS=m.spS||{};return m.spS[s]||(m.spS[s]={pts:0,w:0,b:0})}
-function leagueSort(ms,s){return [...ms].sort((a,b)=>{const A=msp(a,s),B=msp(b,s);return (B.pts-A.pts)||((B.b?B.w/B.b:0)-(A.b?A.w/A.b:0))||((b.fame||0)-(a.fame||0))})}
-function leaguePtsAfterBout(b){if(!b||!b.res)return;const w=W_();for(const r of b.res.rows){const g=gById(r.gid);if(g){(g.recent=g.recent||[]).push({s:w.season,wk:((w.week-1)%12)+1,t:TIERS[b.tier]?TIERS[b.tier].n:'',ev:(EVENTS[b.ev]||{}).short||'',loc:w.night?LOCATIONS[w.night.loc].n:'',place:r.place,won:!!r.won,f:r.f||0,vd:r.vd||''});g.recent=g.recent.slice(-8)}const m=g&&g.contract?mgrById(g.contract.mgr):null;if(!m)continue;const S2=msp(m);S2.b++;if(r.won){S2.w++;S2.pts+=3;if(typeof gemCheck==='function')try{gemCheck(g,m)}catch(e){}}else if(r.place===2)S2.pts+=1}}
+/* msp — a lanista's league points record for a season {pts, w, b} (created when missing). */
+function msp(mgr,season){const w=W_();season=season??w.season;mgr.spS=mgr.spS||{};return mgr.spS[season]||(mgr.spS[season]={pts:0,w:0,b:0})}
+/* leagueSort — lanistae in table order: points, then win rate, then fame. */
+function leagueSort(mgrs,season){return [...mgrs].sort((a,b)=>{const A=msp(a,season),B=msp(b,season);return (B.pts-A.pts)||((B.b?B.w/B.b:0)-(A.b?A.w/A.b:0))||((b.fame||0)-(a.fame||0))})}
+/* leaguePtsAfterBout — scores a bout for the league table (win 3, runner-up 1) and logs each fighter's recent form. */
+function leaguePtsAfterBout(bout){if(!bout||!bout.res)return;const w=W_();for(const r of bout.res.rows){const g=gById(r.gid);if(g){(g.recent=g.recent||[]).push({s:w.season,wk:((w.week-1)%12)+1,t:TIERS[bout.tier]?TIERS[bout.tier].n:'',ev:(EVENTS[bout.ev]||{}).short||'',loc:w.night?LOCATIONS[w.night.loc].n:'',place:r.place,won:!!r.won,f:r.f||0,vd:r.vd||''});g.recent=g.recent.slice(-8)}const m=g&&g.contract?mgrById(g.contract.mgr):null;if(!m)continue;const S2=msp(m);S2.b++;if(r.won){S2.w++;S2.pts+=3;if(typeof gemCheck==='function')try{gemCheck(g,m)}catch(e){}}else if(r.place===2)S2.pts+=1}}
 // the quality a house fields: the average rating of its five best fighters
-function rosterRating(m){const r=rosterOf(m).map(effOvr).sort((a,b)=>b-a).slice(0,5);return r.length?Math.round(r.reduce((a,b)=>a+b,0)/r.length):0}
+function rosterRating(mgr){const r=rosterOf(mgr).map(effOvr).sort((a,b)=>b-a).slice(0,5);return r.length?Math.round(r.reduce((a,b)=>a+b,0)/r.length):0}
 // development: coin spent on drills and personal trainers, remembered (decaying) — recruits who want to improve notice it
-function devNote(m,coin){m.dev=Math.round(((m.dev||0)+coin)*10)/10}
+function devNote(mgr,coin){mgr.dev=Math.round(((mgr.dev||0)+coin)*10)/10}
+/* devWeek — the development spending each house is remembered for decays by 15% a week. */
 function devWeek(){const w=W_();for(const m of w.mgrs)m.dev=Math.round((m.dev||0)*0.85*10)/10}
 
 /* v0.29 RUNNING THE LUDUS — one dashboard, no scrolling: a row of tiles shows the state of every part of the
    house at a glance (and what needs you); click a tile to work on it in the panel below. */
-const gradeCol=g=>({S:'#f0cf7d','A+':'#f0cf7d',A:'#f0cf7d','B+':'#c9d1dc',B:'#c9d1dc','C+':'#cd8a52',C:'#cd8a52',D:'#7f858c',F:'#d24a3a'})[g]||'#7f858c'; /* v0.55: the medal ladder — gold A, silver B, bronze C, iron D, blood F */
+/* gradeCol — a grade's medal color (gold A, silver B, bronze C, iron D, blood F). */
+const gradeCol=grade=>({S:'#f0cf7d','A+':'#f0cf7d',A:'#f0cf7d','B+':'#c9d1dc',B:'#c9d1dc','C+':'#cd8a52',C:'#cd8a52',D:'#7f858c',F:'#d24a3a'})[grade]||'#7f858c'; /* v0.55: the medal ladder — gold A, silver B, bronze C, iron D, blood F */
+/* runDashHTML — the Running the ludus dashboard: one tile per part of the house, the chosen one's panel below. */
 function runDashHTML(trainFn,ledgerFn){const w=W_(),m=me();const P=m.perkPts||0;const R=TRAIN_REGIMES[w.train||'off']||TRAIN_REGIMES.off;const g=ludusGrade(m);
   const tiles=[['train','🏋','Training',R.n,w.train&&w.train!=='off'?'':'idle'],['promote','📯','Promote',`fame ${m.fame}`,''],['school','🎓','Schooling',`<span class="ptbox sm${P?' on':''}">${P}</span>`,P?'ready':''],
     ['fac','🏗','Facilities',`<span class="gradebox sm" style="--gc:${gradeCol(g)}">${g}</span>`,m.facWk===w.week?'':'ready'],['consil','🏛','Consilium','your advisors',''],['ledger','📜','Ledger',`${(w.tlog||[]).length} entries`,'']];
