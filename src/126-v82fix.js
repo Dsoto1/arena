@@ -20,3 +20,7 @@ function uniqueOut82(key){const k=UNIQUE_CARD82[key];if(!k||!S)return;let n=0;
 /* the Hero's SCULPTED token (20-tokens figureSVG, stance 'hunched' — he leans in to attack) stood 8 units shorter than the others:
    a hunched gladiator is drawn 6% larger so the top of his head meets everyone else's (Tholo keeps his own scale) */
 {const base=figureSVG;figureSVG=function(sp,opts){if(sp&&sp.stance==='hunched'&&sp.kind!=='beast'&&!((sp.scale||1)>1.1))sp={...sp,scale:(sp.scale||1)*1.062};return base.call(this,sp,opts)}}
+/* Tholo's sculpted token follows his card: grey curly hair + full grey beard, a laurel wreath, the one great eye, a grey-green
+   cloth drape over his shoulders and hips, warm bronzed skin, his wooden club (owner's ask, from his card back) */
+if(typeof TOKEN_DEF!=='undefined'&&TOKEN_DEF.tholo)Object.assign(TOKEN_DEF.tholo,{hair:'long',hairC:'#d6d2c8',beard:'full',helm:'laurel',skin:'#cf8a5c',
+  c1:'#9aa596',c2:'#6f5a3a',cape:true,neck:'none',legs:'wraps',base:'#2e2a24',scale:1.32});
