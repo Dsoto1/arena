@@ -39,6 +39,9 @@
        the pick is remembered in localStorage flavius_pl85; tabs switch locally, no redraw) · Familia · Ludi Infames.
        The original cards stay inside (hidden ones display:none), so every button keeps its handler. Phones keep
        the sideways scroll.
+  15 · Ludus Flavius: gladiators with the old status "retired" (left over from versions before v0.54, when Retire kept a
+       dimmed tile — today Retire & erase deletes outright) can be cleared: a "🧹 Clear N retired" bar above the tiles,
+       one centred confirm (ask76), then they are deleted from the Store.
   14 · ONLINE landing: the Forum keeps lines from the last 30 minutes past midnight (12 · grace); the stage's Orbis map
        zooms in on YOUR time zone (×2.2 around it; the 🔍 large view still shows the whole world), your own place is a
        light-blue dot (also on the large map); the gladiator figure leaves the landing (the Domus shows your
@@ -203,3 +206,13 @@ if(typeof onlStageMap81==='function'){const base=onlStageMap81;onlStageMap81=fun
 #onl .onl-stage81 .onl-fig79{display:none!important}
 #onl .onl-stage81 .scap81{position:absolute!important;right:14px;bottom:12px;margin:0;z-index:2;background:rgba(18,12,7,.72);padding:3px 8px;border-radius:8px}
 @media (max-width:760px){#onl .onl-stage81 .scap81{position:static!important;align-self:center}}`;document.head.appendChild(st)}
+
+/* 15 · clear the old "retired" Ludus Flavius records */
+if(typeof ludusHTML==='function'){const base=ludusHTML;ludusHTML=async function(){const h=await base.apply(this,arguments);try{const n=(LUDUS_CACHE||[]).filter(g=>g.status==='retired').length;if(!n||typeof h!=='string')return h;
+  return `<div class="card2 ret85"><span>🧹 <b>${n}</b> retired gladiator${n===1?'':'s'} from older versions — they can't fight, be summoned or go on a missio.</span><button type="button" class="btn tksm" data-ret85="1">Clear ${n===1?'it':'them'}</button></div>`+h}catch(e){return h}}}
+document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('[data-ret85]');if(!b)return;e.stopPropagation();e.preventDefault();
+  const R=(LUDUS_CACHE||[]).filter(g=>g.status==='retired');if(!R.length)return;
+  const ok=typeof ask76==='function'?await ask76('🧹 Clear the retired',`Delete ${R.length} retired gladiator${R.length===1?'':'s'} from Ludus Flavius for good?<div class="rc-sub" style="margin-top:6px">${R.slice(0,12).map(g=>esc(g.name)).join(', ')}${R.length>12?' …':''}</div>`,'Delete','Keep them'):confirm('Delete the retired gladiators?');
+  if(!ok)return;for(const g of R){try{await Store.del('gladiators',g.id)}catch(err){}}LUDUS_CACHE=LUDUS_CACHE.filter(g=>g.status!=='retired');
+  const box=document.getElementById('ludusBody');if(box&&typeof ludusHTML==='function')box.innerHTML=await ludusHTML();if(typeof mToast==='function')mToast(`🧹 ${R.length} retired gladiator${R.length===1?'':'s'} cleared.`)},true);
+{const st=document.createElement('style');st.textContent='.ret85{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:8px;padding:6px 10px}';document.head.appendChild(st)}
