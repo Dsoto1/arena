@@ -6,14 +6,21 @@
    THEME is a bag of CSS variables; THEME_PRESETS fills the Visuals tab, LOC_THEMES gives
    every arena location its own sand/stone palette (layered over USER_THEME at event start,
    never replacing what the player chose). applyTheme(v, save) is the single entry point.
+   Also: the empire banners (FLAGS), the Settings window (settingsHTML/openSettings), whole-game
+   saves (SAVE_COLS — every Store collection a backup must include — snapshotAll, IndexedDB
+   shelf), the share build (shareBuild) and settingsLive (repaint after a change).
    ===================================================================== */
 /* ================= SETTINGS: general options, visual themes, presets and saved profiles =================
    Stored per viewer in this browser (localStorage); nothing here affects other players. */
 const UI_TOKENS=[['ink','Background'],['panel','Panels'],['panel2','Buttons & cards'],['line2','Borders'],['bone','Text'],['muted','Secondary text'],['gold','Accent'],['gold2','Accent (bright)'],['blood','Primary buttons'],['blood2','Danger'],['hp','Health bars'],['hplow','Low health'],['ap','Armor bars'],['mv','Movement']];
+/* BOARD_TOKENS — board color tokens shown as swatches in Settings → Themes. */
 const BOARD_TOKENS=[['tileA','Sand tile (light)'],['tileB','Sand tile (dark)'],['rim','Arena wall'],['grid','Tile lines'],['hlMove','Move highlight'],['hlAtk','Attack highlight'],['hlPush','Push / topple highlight'],['ring','Target ring']];
+/* FURN_TOKENS — arena furniture color tokens (stands, pillars, pots, spikes, chest, rubble) shown as swatches. */
 const FURN_TOKENS=[['standA','Stand benches (dark)'],['standB','Stand benches (light)'],['pillar','Pillars'],['pillarBase','Pillar bases'],['pot','Clay pots'],['spike','Spikes'],['chestWood','Chest (wood)'],['chestGold','Chest (gold)'],['rubble','Toppled rubble']];
+/* BASE_THEME — the default palette: UI and board colors plus highlight strength, outside-zone shade and text scale. TWEAK: any color here changes the default look. */
 const BASE_THEME={ink:'#140f0b',panel:'#1f1711',panel2:'#2a1f17',line2:'#4a3826',bone:'#efe3cc',muted:'#b39d80',gold:'#d6ab4c',gold2:'#f0cf7d',blood:'#a3281f',blood2:'#d24a3a',hp:'#6fae4c',hplow:'#d24a3a',ap:'#b9c1c9',mv:'#e8862e',
   tileA:'#d3ba8e',tileB:'#c6aa7c',rim:'#3b2a1c',grid:'#5a4028',standA:'#5b4130',standB:'#6d4f38',pillar:'#ece4d4',pillarBase:'#bdb3a0',pot:'#b5582f',spike:'#6d6862',chestWood:'#6a4520',chestGold:'#d6ab4c',rubble:'#bdb3a0',hlMove:'#e8862e',hlAtk:'#d23c2d',hlPush:'#e6be3c',ring:'#ff6a55',hlAlpha:0.5,outZone:0.5,scale:100,classColors:null};
+/* OKABE — Okabe–Ito color-blind-safe class colors, used by the red-green safe preset. */
 const OKABE={soldier:'#D55E00',royalty:'#0072B2',hero:'#009E73',slave:'#F0E442',veteranus:'#DDDDDD',amazonia:'#E69F00',venatore:'#CC79A7',damnatio:'#56B4E9'};
 // every arena location gets its own sand and stone. Applied automatically at event start (Settings → Location flavors),
 // and offered below as presets you can pin at will.
@@ -31,6 +38,7 @@ const LOC_THEMES={
   11:{n:'Pola · Adriatic',d:'sea-bleached stone and Adriatic blue',v:{tileA:'#d8cdb2',tileB:'#cabfa2',rim:'#1e2c3a',grid:'#46607a',ap:'#c2ccda'}},
   12:{n:'Puteoli · Sulfur Fields',d:'tuff stone and a whiff of sulfur',v:{tileA:'#d6c488',tileB:'#c8b672',rim:'#3a3313',grid:'#6e6224',hlPush:'#e6d23c'}},
 };
+/* THEME_PRESETS — named palettes in Settings → Themes (themes, Roman, accessibility; the arena flavors are added below). TWEAK: the colors. */
 const THEME_PRESETS={
   arena:{n:'Arena (default)',g:'Themes',v:{}},
   flavius:{n:'Flavius Rule',g:'Themes',d:'Gold, red and carbon black',v:{ink:'#0b0b0b',panel:'#151413',panel2:'#201e1b',line2:'#3b352b',bone:'#f4ecdb',muted:'#bda77e',gold:'#d4a02c',gold2:'#f5cf5e',blood:'#b01e1e',blood2:'#e03a32',hp:'#c9a227',hplow:'#e03a32',ap:'#c9ccd1',mv:'#d4a02c',tileA:'#3a3632',tileB:'#2e2b28',rim:'#0f0f0f',grid:'#8a6d2c',hlMove:'#d4a02c',hlAtk:'#e03a32',hlPush:'#f5cf5e',ring:'#ff4a3a'}},
@@ -43,12 +51,16 @@ const THEME_PRESETS={
   large:{n:'Large text',g:'Accessibility',d:'Default colors at 120% size',v:{scale:120}},
 };
 for(const [k,t] of Object.entries(LOC_THEMES))THEME_PRESETS['loc'+k]={n:t.n,g:'Roman · Arenas',d:t.d,v:t.v};
+/* SETTINGS_DEF — defaults for every general setting (a missing key falls back to these). */
 const SETTINGS_DEF={gore:true,hints:true,thoughts:true,fx:true,reveals:true,shake:true,flavius:true,locFlavor:true,famous:true,xray:'auto',standees:true,banners:true,skipMenu:false,turnHints:true,ruleHints:true,turnRecap:true,ctxMenu:true,hintDock:true,rulePops:true,capFeed:false};
 let SETTINGS={...SETTINGS_DEF};
 let THEME={...BASE_THEME};const TB={};
-const lsGet=(k,d)=>{try{const v=localStorage.getItem('flavius_'+k);return v?JSON.parse(v):d}catch(e){return d}};
-const lsSet=(k,v)=>{try{localStorage.setItem('flavius_'+k,JSON.stringify(v))}catch(e){}};
-function hexA(h,a){const n=parseInt(h.slice(1),16);return `rgba(${n>>16},${n>>8&255},${n&255},${a})`}
+/* lsGet — reads JSON from localStorage flavius_<key>, or the fallback. */
+const lsGet=(key,fallback)=>{try{const v=localStorage.getItem('flavius_'+key);return v?JSON.parse(v):fallback}catch(e){return fallback}};
+/* lsSet — writes JSON to localStorage flavius_<key>. */
+const lsSet=(key,value)=>{try{localStorage.setItem('flavius_'+key,JSON.stringify(value))}catch(e){}};
+/* hexA — "#rrggbb" + alpha → an rgba() string. */
+function hexA(hex,alpha){const n=parseInt(hex.slice(1),16);return `rgba(${n>>16},${n>>8&255},${n&255},${alpha})`}
 /* v0.21 EMPIRE FLAGS: a city's banner behind the whole page (Settings → Visuals). Painted in CSS, dimmed so text stays readable. */
 const flagURI=(bg,fg,txt,shape,extra='')=>{const sh={eagle:`<g fill="${fg}" opacity=".5"><path d="M300 95 c-14 0 -22 12 -20 24 l-10 6 l12 2 c2 10 4 20 8 28 l-16 60 l26 -24 l26 24 l-16 -60 c4 -8 6 -18 8 -28 z"/><path d="M288 150 c-40 -40 -100 -50 -170 -40 c40 10 60 20 70 30 c-30 0 -55 6 -80 20 c40 0 70 4 90 14 c-20 6 -36 16 -48 30 c40 -10 90 -20 138 -30z"/><path d="M312 150 c40 -40 100 -50 170 -40 c-40 10 -60 20 -70 30 c30 0 55 6 80 20 c-40 0 -70 4 -90 14 c20 6 36 16 48 30 c-40 -10 -90 -20 -138 -30z"/></g>`,sun:`<circle cx="300" cy="170" r="70" fill="${fg}" opacity=".45"/>${Array.from({length:12},(_,i)=>`<rect x="296" y="60" width="8" height="40" fill="${fg}" opacity=".4" transform="rotate(${i*30} 300 170)"/>`).join('')}`,tri:`<g fill="${fg}" opacity=".45">${[0,120,240].map(a=>`<path d="M300 170 q40 -60 20 -120 l20 10 q20 70 -30 115z" transform="rotate(${a} 300 170)"/>`).join('')}<circle cx="300" cy="170" r="26"/></g>`,mount:`<path d="M170 250 l90 -130 l30 30 l30 -50 l110 150z" fill="${fg}" opacity=".45"/><path d="M300 100 q-10 -40 10 -70" stroke="${fg}" stroke-width="10" fill="none" opacity=".5"/>`,tower:`<g fill="${fg}" opacity=".45"><rect x="275" y="90" width="50" height="160"/><path d="M265 90 h70 l-35 -40z"/><circle cx="300" cy="40" r="14"/></g>`,wave:`<path d="M140 200 q40 -40 80 0 t80 0 t80 0 t80 0" stroke="${fg}" stroke-width="14" fill="none" opacity=".45"/><path d="M140 240 q40 -40 80 0 t80 0 t80 0 t80 0" stroke="${fg}" stroke-width="14" fill="none" opacity=".35"/>`,olive:`<g fill="${fg}" opacity=".45"><rect x="296" y="80" width="8" height="180"/>${[0,1,2,3,4].map(i=>`<ellipse cx="${i%2?325:275}" cy="${100+i*30}" rx="26" ry="10" transform="rotate(${i%2?-30:30} ${i%2?325:275} ${100+i*30})"/>`).join('')}</g>`,lion:`<g fill="${fg}" opacity=".45"><circle cx="300" cy="150" r="60"/><circle cx="300" cy="150" r="36" fill="${bg}"/><rect x="250" y="200" width="100" height="50" rx="20"/></g>`,croc:`<g fill="${fg}" opacity=".45"><rect x="296" y="60" width="8" height="120"/><path d="M300 60 q-60 -10 -80 30 M300 60 q60 -10 80 30" stroke="${fg}" stroke-width="10" fill="none"/><path d="M170 220 q130 -40 260 0 q-130 30 -260 0z"/></g>`,horse:`<path d="M240 250 l20 -90 q-10 -40 30 -70 l40 -20 l10 20 q30 10 20 40 l-40 -10 l-10 40 l30 90z" fill="${fg}" opacity=".45"/>`,goat:`<g fill="${fg}" opacity=".45"><ellipse cx="300" cy="190" rx="70" ry="40"/><circle cx="360" cy="140" r="22"/><path d="M360 120 q-10 -50 -50 -60" stroke="${fg}" stroke-width="10" fill="none"/></g>`,moon:`<path d="M330 80 a90 90 0 1 0 0 180 a70 70 0 1 1 0 -180z" fill="${fg}" opacity=".45"/>`,
   /* v0.36: more devices for the Banner press */
@@ -61,10 +73,15 @@ const flagURI=(bg,fg,txt,shape,extra='')=>{const sh={eagle:`<g fill="${fg}" opac
   thunder:`<path d="M330 60 l-80 130 l50 0 l-40 110 l110 -150 l-56 0 l40 -90z" fill="${fg}" opacity=".45"/>`,
   column:`<g fill="${fg}" opacity=".45"><rect x="260" y="70" width="80" height="20"/><rect x="272" y="90" width="56" height="170"/><rect x="250" y="260" width="100" height="24"/></g>${[284,300,316].map(x=>`<rect x="${x}" y="96" width="4" height="158" fill="${bg}" opacity=".5"/>`).join('')}`}[shape]||'';
   return `data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='600' height='340' viewBox='0 0 600 340'><rect width='600' height='340' fill='${bg}'/>${sh}${extra}<text x='300' y='318' text-anchor='middle' font-family='Georgia,serif' font-size='34' letter-spacing='10' fill='${fg}' opacity='.55'>${txt}</text></svg>`)}`};
-const flagSVG=(...a)=>`url("${flagURI(...a)}")`;
+/* flagSVG — a CSS url() of flagURI's banner. */
+const flagSVG=(...args)=>`url("${flagURI(...args)}")`;
+/* CITY_FLAG — city name → FLAGS key. */
 const CITY_FLAG={Roma:'roma',Capua:'capua',Pompeii:'pompeii',Syracusae:'syracusae',Thysdrus:'thysdrus',Nemausus:'nemausus','Leptis Magna':'leptis',Pola:'pola',Verona:'verona',Arles:'arles',Arelate:'arles',Puteoli:'puteoli',Uthina:'uthina',Carthago:'carthago',Alexandria:'aegyptus'};
-const FLAG_URI_CACHE={};const flagURIk=k=>{if(String(k).startsWith('c:')){const f=((typeof CUSTOM!=='undefined'&&CUSTOM.flags)||[]).find(x=>x.id===String(k).slice(2));return f&&typeof houseFlagURI==='function'?houseFlagURI(f):null} /* v0.45: any banner made in the Creator Studio can hang behind a portrait */
-  return FLAGS[k]?(FLAG_URI_CACHE[k]||(FLAG_URI_CACHE[k]=flagURI(...FLAGS[k].v[0]))):null};
+const FLAG_URI_CACHE={};
+/* flagURIk — the banner data-URI for a FLAGS key, or a Creator Studio banner ("c:<id>"); cached. */
+const flagURIk=key=>{if(String(key).startsWith('c:')){const f=((typeof CUSTOM!=='undefined'&&CUSTOM.flags)||[]).find(x=>x.id===String(key).slice(2));return f&&typeof houseFlagURI==='function'?houseFlagURI(f):null} /* v0.45: any banner made in the Creator Studio can hang behind a portrait */
+  return FLAGS[key]?(FLAG_URI_CACHE[key]||(FLAG_URI_CACHE[key]=flagURI(...FLAGS[key].v[0]))):null};
+/* FLAGS — the empire banners: [background, device color, motto, device] plus a page gradient. TWEAK: colors and mottos. */
 const FLAGS={
   roma:{n:'Roma',v:[['#6e1414','#e2b64a','S·P·Q·R','eagle'],'linear-gradient(90deg,#6e1414,#8a1c1c 50%,#6e1414)']},
   capua:{n:'Capua',v:[['#1c3566','#e8e0cc','CAPVA','horse'],'linear-gradient(180deg,#1c3566 0 50%,#d9d0bb 50%)']},
@@ -80,10 +97,12 @@ const FLAGS={
   uthina:{n:'Uthina',v:[['#3d1c4a','#e6c46a','VTHINA','sun'],'linear-gradient(135deg,#3d1c4a,#6a2e6e)']},
   carthago:{n:'Carthago',v:[['#4a1a3d','#e8a34a','CARTHAGO','moon'],'linear-gradient(180deg,#4a1a3d 0 60%,#b36a2a 60%)']},
   aegyptus:{n:'Alexandria',v:[['#0f3a52','#f0cf7d','ALEXANDRIA','tower'],'linear-gradient(180deg,#0f3a52,#c9a14a)']}};
-function flagBG(k){const F=FLAGS[k];if(!F)return null;const [a,b]=F.v;return `linear-gradient(rgba(12,8,6,.42),rgba(12,8,6,.62)) fixed,${flagSVG(...a)} center/cover no-repeat fixed,${b} fixed`}
+/* flagBG — a city banner as a dimmed full-page CSS background. */
+function flagBG(key){const F=FLAGS[key];if(!F)return null;const [a,b]=F.v;return `linear-gradient(rgba(12,8,6,.42),rgba(12,8,6,.62)) fixed,${flagSVG(...a)} center/cover no-repeat fixed,${b} fixed`}
 let USER_THEME=null; // the theme the player actually chose, before any per-location tint
-function applyTheme(t,save=true){
-  THEME={...BASE_THEME,...t};if(save)USER_THEME={...THEME};const root=document.documentElement.style;
+/* applyTheme — THE entry point for colors: merges a theme over BASE_THEME, sets the CSS variables and board colors (TB), class colors and seat colors; save=true also stores it as the player's own theme. */
+function applyTheme(theme,save=true){
+  THEME={...BASE_THEME,...theme};if(save)USER_THEME={...THEME};const root=document.documentElement.style;
   for(const [k] of UI_TOKENS)root.setProperty('--'+k,THEME[k]);
   root.setProperty('--ap2',shade(THEME.ap,-0.25));root.setProperty('--mv2',shade(THEME.mv,0.25));
   {const fb=null; /* v0.22: banners live behind portraits now, never behind the arena */document.body.style.background=fb||THEME.ink;if(fb)document.body.style.backgroundColor=THEME.ink;document.body.classList.toggle('flagged',!!fb)}
@@ -97,6 +116,7 @@ function applyTheme(t,save=true){
   try{if(S)render();else draw()}catch(e){}
 }
 for(const k of Object.keys(CLASSES))CLASSES[k].baseColor=CLASSES[k].color;
+/* applySettings — pushes SETTINGS into the live switches (hints, thoughts, see-through) and saves them. Wrapped by several later modules. */
 function applySettings(save=true){
   HINTS=!!SETTINGS.hints;THOUGHTS=!!SETTINGS.thoughts;XRAY=SETTINGS.xray||'auto';
   document.querySelectorAll('[data-hints]').forEach(b=>b.classList.toggle('on',(b.dataset.hints==='on')===HINTS));
@@ -112,13 +132,16 @@ applySettings(false);applyTheme(lsGet('theme',{}),false);USER_THEME={...THEME};
 // keep the older controls in sync with the settings object
 /* v0.45: the master switch really is the master — it flips every hint switch below it, and H does the same */
 const HINT_SUBS=['hintDock','rulePops','turnHints','ruleHints','turnRecap']; /* v0.51: context menus are a tool, not a hint — their own switch */
-function hintsMaster(v,quiet){SETTINGS.hints=!!v;for(const k of HINT_SUBS)SETTINGS[k]=!!v;applySettings();
+function hintsMaster(on,quiet){SETTINGS.hints=!!on;for(const k of HINT_SUBS)SETTINGS[k]=!!on;applySettings();
   try{for(const k of HINT_SUBS)if(typeof settingsLive==='function')settingsLive(k)}catch(e){}
-  try{if(S)render()}catch(e){}try{const hd=document.getElementById('hintDock');if(hd&&!v)hd.innerHTML=''}catch(e){}
-  try{if(!v&&typeof tipHide==='function')tipHide()}catch(e){}
-  if(!quiet){const box=document.getElementById('setBody');if(box&&CUR_MODAL&&box.querySelector('[data-set="hints"]')){box.querySelectorAll('[data-set="hints"],'+HINT_SUBS.map(k=>`[data-set="${k}"]`).join(',')).forEach(i=>i.checked=!!v);const r=box.querySelector('.setrow[style*="padding-left:26px"]');if(r)r.classList.toggle('hintsoff',!v)}}}
-const _setHints=setHints;setHints=function(v){hintsMaster(v)};
+  try{if(S)render()}catch(e){}try{const hd=document.getElementById('hintDock');if(hd&&!on)hd.innerHTML=''}catch(e){}
+  try{if(!on&&typeof tipHide==='function')tipHide()}catch(e){}
+  if(!quiet){const box=document.getElementById('setBody');if(box&&CUR_MODAL&&box.querySelector('[data-set="hints"]')){box.querySelectorAll('[data-set="hints"],'+HINT_SUBS.map(k=>`[data-set="${k}"]`).join(',')).forEach(i=>i.checked=!!on);const r=box.querySelector('.setrow[style*="padding-left:26px"]');if(r)r.classList.toggle('hintsoff',!on)}}}
+const _setHints=setHints;
+/* setHints — the old hint switch now routes through hintsMaster. */
+setHints=function(on){hintsMaster(on)};
 
+/* settingsHTML — the Settings window body for a tab: General, Themes, Tokens, Editors, Audio, Profiles, Saves. Wrapped by many later modules. */
 function settingsHTML(tab){
   const tabs=`<div class="seg" role="tablist" style="margin-bottom:12px">${[['general','General'],['themes','🎨 Themes'],['tokens','🗿 Tokens'],['sponsors','🎭 Editors'],['audio','🔊 Audio'],['profiles','Profiles'],['saves','💾 Saves']].map(([k,l])=>`<button type="button" role="tab" data-stab="${k}" class="${tab===k?'on':''}">${l}</button>`).join('')}</div>`;
   if(tab==='sponsors'&&typeof sponsorSettingsHTML==='function')return tabs+sponsorSettingsHTML();
@@ -213,26 +236,33 @@ function settingsHTML(tab){
 }
 /* ================= v0.21 GAME SAVES: snapshot every collection + settings; keep in IndexedDB; download / open files ================= */
 const SAVE_COLS=['arena','crowd','customChars','customEvents','customNpcs','customTokens','customTrophies','customSponsors','customWeapons','customArmor','customFlags','gladiators','hall','hallTrophies','mgrArchives','mgrCareers','missios','wallet'];
-const mToastSafe=h=>{try{mToast(h)}catch(e){}};
+/* mToastSafe — mToast that never throws. */
+const mToastSafe=html=>{try{mToast(html)}catch(e){}};
+/* snapshotAll — a whole-game backup: every SAVE_COLS collection plus the flavius_* localStorage keys. */
 async function snapshotAll(){const cols={};for(const c of SAVE_COLS){try{cols[c]=await Store.list(c)}catch(e){cols[c]=[]}}
   const ls={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('flavius_')&&!SAVE_COLS.includes(k.slice(8))&&k!=='flavius_infamis')ls[k]=localStorage.getItem(k)}}catch(e){}
   const mw=cols.mgrCareers||[];return {game:'flavius-rule',v:'0.21',id:'sv'+Date.now().toString(36),at:new Date().toISOString(),cols,ls,
     summary:`${mw.length} career${mw.length===1?'':'s'} · ${(cols.gladiators||[]).length} Ludus gladiators · ${(cols.customChars||[]).length} custom characters · ${(cols.crowd||[]).length} regulars`}}
+/* savesIDB — the IndexedDB shelf of game saves: op list / get / put / del. */
 function savesIDB(op,arg){return new Promise(res=>{try{const rq=indexedDB.open('flavius-saves',1);rq.onupgradeneeded=()=>rq.result.createObjectStore('slots',{keyPath:'id'});
   rq.onerror=()=>res(op==='list'?[]:null);rq.onsuccess=()=>{try{const tx=rq.result.transaction('slots',op==='list'||op==='get'?'readonly':'readwrite');const st=tx.objectStore('slots');
     const r=op==='list'?st.getAll():op==='get'?st.get(arg):op==='put'?st.put(arg):st.delete(arg);r.onsuccess=()=>res(op==='put'||op==='del'?true:r.result);r.onerror=()=>res(op==='list'?[]:null)}catch(e){res(op==='list'?[]:null)}}}catch(e){res(op==='list'?[]:null)}})}
+/* refreshSaves — redraws the saves list in Settings → Saves. */
 async function refreshSaves(){const el=$('#saveList');if(!el)return;const L=((await savesIDB('list'))||[]).sort((a,b)=>b.at.localeCompare(a.at));
   el.innerHTML=L.length?L.map(sv=>`<div class="item"><span>💾 <b>${esc(sv.name||'Save')}</b><em>${esc(new Date(sv.at).toLocaleString())} · v${esc(sv.v||'?')} · ${esc(sv.summary||'')}</em></span><span style="display:flex;gap:4px;flex-wrap:wrap"><button class="btn" type="button" data-gload="${sv.id}">Load</button><button class="btn" type="button" data-gdl="${sv.id}">⬇</button><button class="btn" type="button" data-gover="${sv.id}" title="Replace this save with the game as it stands right now">✎ Overwrite</button><button class="btn" type="button" data-gdel="${sv.id}">🗑</button></span></div>`).join(''):'<p class="rc-sub">No saves yet. Name one above and press Save.</p>'}
+/* downloadSnapshot — downloads a game save as .json (through the host's save dialog when it has one). */
 async function downloadSnapshot(snap){const name=`flavius-save-${(snap.name||'game').replace(/[^\w-]+/g,'-').slice(0,40)}-${snap.at.slice(0,10)}.json`;const text=JSON.stringify(snap);
   let dl=null;try{dl=window.claude&&window.claude.use?await withTimeout(window.claude.use('downloads'),4000):null}catch(e){}
   if(dl){try{await dl.save({filename:name,data:text});return}catch(e){if(e&&e.code==='declined')return}}
   try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();a.remove()}catch(e){mToastSafe('Downloads are not available in this view.')}}
+/* loadSnapshot — restores a game save over every collection and the local settings, then reloads the page. */
 async function loadSnapshot(snap){if(!snap||snap.game!=='flavius-rule'||!snap.cols){mToastSafe('That is not a Flavius Rule save.');return}
   mToastSafe('Restoring the save…');
   for(const c of SAVE_COLS){const want=snap.cols[c]||[];const ids=new Set(want.map(d=>d.id));let cur=[];try{cur=await Store.list(c)}catch(e){}
     for(const d of cur)if(!ids.has(d.id))await Store.del(c,d.id);for(const d of want){const {id,...rest}=d;await Store.put(c,id,rest)}}
   try{for(const [k,v] of Object.entries(snap.ls||{}))localStorage.setItem(k,v)}catch(e){}
   setTimeout(()=>location.reload(),400)}
+/* openSettings — opens the Settings window and handles all of its tabs and controls. */
 function openSettings(tab='general'){if(tab==='visuals')tab='general'; // v0.35: Visuals folded into General
   if(modalBusy())return;
   modal('Settings',`<div id="setBody">${settingsHTML(tab)}</div>`,[{label:'Close',value:1}],{wide:1,onOpen:()=>{
@@ -285,6 +315,7 @@ function openSettings(tab='general'){if(tab==='visuals')tab='general'; // v0.35:
         else if(k==='warm'){USER_THEME={...(USER_THEME||THEME),warm:v};lsSet('theme',USER_THEME);applyTheme({...THEME,warm:v},false);o.textContent=v}}}; // saved to your theme, shown over today's arena tint
   }});
 }
+/* the top-bar Settings cog. */
 $('#btnSettings').onclick=()=>openSettings();
 
 /* ================= v0.34 THE SHARE BUILD =================
@@ -325,10 +356,10 @@ async function shareBuild(btn){
 
 /* v0.36 SETTINGS APPLY LIVE: every change repaints what it touches, right away — no reload.
    (The figure cache is keyed by design, so anything that changes how a figure is DRAWN clears it.) */
-function settingsLive(k){
-  if(k==='gore'||k==='tokenStyle'||k==='armorStyle'){try{if(typeof TOKEN_IMG!=='undefined')for(const x of Object.keys(TOKEN_IMG))delete TOKEN_IMG[x]}catch(e){}
+function settingsLive(key){
+  if(key==='gore'||key==='tokenStyle'||key==='armorStyle'){try{if(typeof TOKEN_IMG!=='undefined')for(const x of Object.keys(TOKEN_IMG))delete TOKEN_IMG[x]}catch(e){}
     try{if(typeof ARM_URLS!=='undefined')for(const x of Object.keys(ARM_URLS))delete ARM_URLS[x]}catch(e){}}
-  if(k==='locFlavor'){try{const live=S&&!S.over&&S.phase!=='setup';
+  if(key==='locFlavor'){try{const live=S&&!S.over&&S.phase!=='setup';
     if(SETTINGS.locFlavor===false||!live)applyTheme({...(typeof USER_THEME!=='undefined'&&USER_THEME||THEME)},false);
     else if(typeof LOC_THEMES!=='undefined'&&LOC_THEMES[S.locIdx])applyTheme({...(USER_THEME||THEME),...LOC_THEMES[S.locIdx].v},false)}catch(e){}}
   try{if(S)render();else draw()}catch(e){}}
