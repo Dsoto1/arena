@@ -95,7 +95,7 @@ Object.assign(MOCK_ROUTES,{
     if(r.closed){mockClose(w,L,'empty');mockTo(aud,'lobby.update',{id:L.id,closed:'empty'})}else mockUpd80(w,L);return mockRoomOut80(w,L)},
   'lobby.host':(w,d,me)=>{const L=mockLobby80(w,d.id);const why=ONLC.roomGiveHost(L,me,d.to,mockNow());if(why)throw new Error(why);mockUpd80(w,L);return mockRoomOut80(w,L)},
   'lobby.kick':(w,d,me)=>{const L=mockLobby80(w,d.id);const why=ONLC.roomKick(L,me,d.who,mockNow());if(why)throw new Error(why);mockUpd80(w,L);mockTo([d.who],'lobby.update',{id:L.id,kicked:1});return mockRoomOut80(w,L)},
-  'lobby.set':(w,d,me)=>{const L=mockLobby80(w,d.id);const x={};for(const k of ['ev','loc','seats','ticket','abandon','standsOff','teams','autoBal'])if(d[k]!=null)x[k]=d[k];
+  'lobby.set':(w,d,me)=>{const L=mockLobby80(w,d.id);const x={};for(const k of ['ev','loc','seats','ticket','free','abandon','standsOff','teams','autoBal'])if(d[k]!=null)x[k]=d[k];
     const why=ONLC.roomSet(L,me,x,mockNow());if(why)throw new Error(why);mockUpd80(w,L);return mockRoomOut80(w,L)},
   'lobby.team':(w,d,me)=>{const L=mockLobby80(w,d.id);const why=ONLC.roomTeam(L,me,d.who,d.team);if(why)throw new Error(why);mockUpd80(w,L);return mockRoomOut80(w,L)},
   'lobby.ready':(w,d,me)=>{const L=mockLobby80(w,d.id);if(L.status!=='waiting')throw new Error('Already under way.');const p=L.players.find(p=>p.id===me);if(p)p.ready=!!d.ready;mockUpd80(w,L);return mockRoomOut80(w,L)},

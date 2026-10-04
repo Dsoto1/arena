@@ -2,7 +2,8 @@
    (4 slots, record, locked name, rank bar with tokens + living counts, patron look), Glory ranks + no demotion, prices by AP + the buy
    confirmation, the flat award × table size in the result line (Custom: no purse), the pre-match room's table note, the guest landing
    (read-only, refusals, guest glows + count, two hours), invites via lobby.accept (room_gone + 👁 Watch, invite.gone), free tickets +
-   Flavius's guest pass (only while the purse is thin and a room sells seats; +1 Fame), "🎟 Patron of House …" in the stands.
+   Flavius's guest pass (only while the purse is thin and a room sells seats; +1 Fame on the Domus record), the patron look saved on the house
+   (domus.patron) and drawn on ANOTHER screen from the stands entries, "🎟 Patron of House …" in the stands.
    SHOT=<dir> saves screenshots onl_*.png. */
 const http=require('http'),fs=require('fs'),path=require('path');
 const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.resolve(process.argv[2])),page=path.basename(process.argv[2]);const SHOT=process.env.SHOT||'';
@@ -44,7 +45,9 @@ const dm=await A.evaluate(()=>{const o=document.getElementById('onl');return {ra
 ok(/🏛 Domus/.test(dm.rail)&&dm.slots===4&&dm.empty===0,'Domus tab: 4 gladiator slots');ok(/Fame/.test(dm.rec)&&/Lifetime CF/.test(dm.rec)&&dm.lock,'house record + locked name');
 ok(dm.bar===5&&/Summa/.test(dm.bandTop)&&dm.toks===4&&dm.barRight,'rank bar on the right, Summa at the top, four tokens');ok(dm.counts.length===5&&dm.counts.some(t=>/[1-9]\d* living/.test(t)),'living counts by rank');
 ok(dm.aulus==='gregarius'&&dm.brutus==='veteranus','Glory ranks, never demoted');ok(dm.pat,'patron look');
-await A.selectOption('select[data-pat82="skin"]',{index:3}).catch(()=>{});await A.waitForTimeout(200);ok(await A.evaluate(()=>!!localStorage.getItem('flavius_patron82.'+ONL.acct.id)),'patron look kept');
+await A.selectOption('select[data-pat82="skin"]',{index:3}).catch(()=>{});await A.waitForTimeout(200);ok(await A.evaluate(()=>!!localStorage.getItem('flavius_patron82.'+ONL.acct.id)),'patron draft kept while editing');
+await A.waitForTimeout(1200);const pat=await A.evaluate(async()=>({srv:(await NET.req('domus.get',{})).domus.patron,draft:localStorage.getItem('flavius_patron82.'+ONL.acct.id),skin:document.querySelector('select[data-pat82="skin"]').value}));
+ok(pat.srv&&pat.srv.skin===pat.skin&&!pat.draft,'patron look saved on the house (domus.patron), the draft cleared');
 await A.evaluate(()=>{const e=document.querySelector('.rb82');if(e)e.scrollIntoView()});await shot(A,'domus');
 /* phones: the bar is a strip above the slots */
 await A.setViewportSize({width:420,height:860});await A.waitForTimeout(400);const ph=await A.evaluate(()=>{const a=document.querySelector('.rb82').getBoundingClientRect(),s=document.querySelector('.onl-gslots').getBoundingClientRect();return a.bottom<=s.top+2&&a.width>a.height});
@@ -115,15 +118,17 @@ await B.evaluate(()=>{for(const p of document.querySelectorAll('.dead81bg'))p.re
 ok(/^no_invite\|/.test(await err(B,id=>NET.req('lobby.accept',{id}),await A.evaluate(async()=>{const w=mockLoad();const L=Object.values(w.lobbies).find(x=>x.status==='live'&&x.ev==='egidious');L.status='done';mockSave(w);return (await NET.req('lobby.create',{ev:'democritus',loc:4,ranked:false,cry:false})).id}))),'no invitation → no_invite');
 /* ── 7. free tickets + the guest pass ── */
 const R4=await A.evaluate(async()=>{const L=(ONL.lobbies=await NET.req('lobby.list')).find(x=>x.ev==='democritus'&&x.loc===4);await NET.req('lobby.set',{id:L.id,free:1});return L.id});
-const lb=await A.evaluate(async id=>{const r=(await NET.req('lobby.list')).find(x=>x.id===id);return {free:r.free82,ticket:r.ticket}},R4);ok(lb.free&&!lb.ticket,'host sets free tickets');
+const lb=await A.evaluate(async id=>{const r=(await NET.req('lobby.list')).find(x=>x.id===id);return {free:r.free,ticket:r.ticket}},R4);ok(lb.free&&!lb.ticket,'host sets free tickets');
+const fsel=await A.evaluate(async()=>{ONL.lobbies=await NET.req('lobby.list');ONL.tab='play';let v='';for(let i=0;i<15&&v!=='free';i++){onlRedraw();await new Promise(r=>setTimeout(r,300));const s=document.querySelector('#onlRoom80 select[data-onlrs="ticket"]');v=s?s.value:''}return v});ok(fsel==='free','the host’s ticket select reads free');
 await F.evaluate(async id=>{await NET.req('lobby.join',{id})},R4);
 await B.evaluate(async()=>{const w=mockLoad();onlMockChar(w,ONL.acct.id).wallet=30;mockSave(w);await onlRefresh();ONL.tab='play';onlRedraw()});await B.waitForTimeout(300);
 ok(await B.evaluate(()=>!document.getElementById('pass82')),'no pass while the purse is full');
 await B.evaluate(async()=>{const w=mockLoad();onlMockChar(w,ONL.acct.id).wallet=8;mockSave(w);await onlRefresh();onlRedraw()});await B.waitForTimeout(300);
 const ps=await B.evaluate(()=>document.getElementById('pass82')?.textContent||'');ok(/guest pass/.test(ps)&&/Democritus|democritus/i.test(ps),'pass card names the room');await shot(B,'pass');
+await B.evaluate(()=>NET.req('domus.patron',{look:{skin:'#8d5524',robe:'#123456',c1:'#112233',c2:'#445566',hat:'pileus'}}));
 await B.click('#pass82 [data-onl82="pass"]');await B.waitForTimeout(900);
 const tk=await B.evaluate(id=>{const w=mockLoad();const L=w.lobbies[id];const t=(L.stands||[]).find(s=>s.id===ONL.acct.id);return {t,wal:ONL.char.wallet,card:!!document.getElementById('pass82')}},R4);
-ok(tk.t&&tk.t.pass&&tk.t.paid===0&&tk.wal===8&&!tk.card,'one tap → a free seat; the card is gone');
+ok(tk.t&&tk.t.pass&&tk.t.paid===0&&tk.wal===8&&!tk.card&&tk.t.domus==='Aemilii'&&tk.t.patron&&tk.t.patron.robe==='#123456','one tap → a free seat (house + patron on the entry); the card is gone');
 ok(/One guest pass a day/.test(await err(B,id=>NET.req('lobby.pass',{id}),R4)),'once a day');
 /* a free ticket for another lanista */
 const C2=await pg('D');await C2.evaluate(async()=>{menuHide();ONL.acct=await NET.req('auth.signin',{name:'Delta'});await NET.req('domus.create',{name:'Domus Delta'});ONL.char=await NET.req('char.create',{name:'Delta the Bold',cls:'royalty'})});
@@ -131,12 +136,15 @@ const ft=await C2.evaluate(async id=>{const r=await NET.req('lobby.ticket',{id})
 /* ── 8. the horns: patrons in the stands; the pass pays Fame ── */
 await F.evaluate(()=>NET.req('ping'));await B.evaluate(()=>NET.req('ping'));
 await A.evaluate(async id=>{ONL.lobbies=await NET.req('lobby.list');const L=await NET.req('lobby.start',{id});onlEnter(L)},R4);await A.waitForTimeout(4500);
-const sp=await A.evaluate(()=>(S.spect||[]).filter(s=>s.ticket).map(s=>({n:s.name,c:!!s.cush82})));
+const sp=await A.evaluate(()=>(S.spect||[]).filter(s=>s.ticket).map(s=>({n:s.name,c:!!s.cush82,robe:s.look&&s.look.robe,cu:s.cush82&&s.cush82[0]})));
+ok(sp.some(s=>s.n==='🎟 Patron of House Aemilii'&&s.robe==='#123456'&&s.cu==='#112233'),'another screen draws the patron the house chose');
 ok(sp.length===2&&sp.some(s=>s.n==='🎟 Patron of House Aemilii')&&sp.some(s=>s.n==='🎟 Patron of Domus Delta')&&sp.every(s=>s.c),'"🎟 Patron of House …" in the stands with a cushion');
 await A.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);try{sideTab('stands')}catch(e){}});await A.waitForTimeout(900);
 ok(await A.evaluate(()=>/Patron of House Aemilii/.test((document.getElementById('standsPane')||document.body).textContent)),'the Stands tab names the patron');await shot(A,'stands');
 const tb=await A.evaluate(id=>{const w=mockLoad();const L=w.lobbies[id];return L.players.map((p,i)=>({seat:i,won:i===0,place:i?2:1,f:i?3:9,coin:0,survives:true}))},R4);
 for(const p of [A,F])await p.evaluate(async([id,t])=>{await NET.req('match.result',{id,table:t,hash:'z'})},[R4,tb]);
 const fame=await B.evaluate(async()=>(await NET.req('domus.get',{})).domus.fame);ok(fame===1,'sitting through the match on the pass: +1 Fame');
+const frec=await B.evaluate(async()=>{await onlRefresh();ONL82.dgAt=0;ONL.tab='char';onlRedraw();await new Promise(r=>setTimeout(r,1200));return document.querySelector('#onl .dom82-rec')?.textContent||''});
+ok(/Fame/.test(frec)&&/✦ 1/.test(frec),'the Domus record shows the Fame');
 console.log(JSON.stringify({f1,f2,g4,dm,pr,note,rA,gl,hereA,iv1:{has:iv1.has,pop:iv1.pop.slice(0,80)},lj,ps:ps.slice(0,120),tk,ft,sp,fame}));
 console.log('MISS',miss);console.log('ERRS',errs);await b.close();srv.close();process.exit(miss.length||errs.length?1:0)})();

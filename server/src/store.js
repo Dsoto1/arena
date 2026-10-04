@@ -27,6 +27,10 @@
      GUEST#<gid>       GUEST         a guest {id,first,conn,tz} (+ GSI1PK 'GON', GSI1SK <connect ms> while its socket is open; ttl 1 day from first)
      INVITE#<to>       R#<room>#<by> one invitation {room,by,name,at} (ttl 1 day; dropped when the room dies or the invitee joins a room)
      MATCH#<id>        STW#<rot6> / STP#<rot6>#<acct>   a stands window {rot,open,at,holders} / one private pick {acct,seat,pick}
+     WORLD             COUNTS        living gladiators by rank {tiro:n,…, seeded} — atomic counters; seeded once from a scan of CHAR items
+     DOMUS#<id>        DOMUS         + fame (guest passes sat through), passDay <utc day>, patron {look ≤1 KB}
+     DOMUS#<id>        PASS#<utc day> the house's guest pass that day {room,acct,at} (putNew = one a day; ttl 3 days)
+     MATCH#<id>        META          + left {acct:ms}: ticket holders who left the stands before the end (match.unwatch)
 */
 'use strict';
 function memory(){
@@ -56,11 +60,15 @@ function memory(){
     async putRev(pk,sk,item){const k=key(pk,sk);const x=t.get(k);if(x&&(x.rev??null)!==(item.rev??null))return false;const rev=(item.rev||0)+1;t.set(k,clone({...item,PK:pk,SK:sk,rev}));return rev},
     /* a one-time switch: field from → to, true only for the caller that made it */
     async flip(pk,sk,field,from,to){const x=t.get(key(pk,sk));if(!x||x[field]!==from)return false;x[field]=to;return true},
+    /* v0.82 every item whose PK starts with pkPrefix and whose SK is sk (a one-time seeding scan — never on a hot path) */
+    async scan(pkPrefix,sk){return [...t.values()].filter(x=>String(x.PK).startsWith(pkPrefix)&&x.SK===sk).map(clone)},
+    /* a put only while the stored item lacks `field` (absent item included) → true if written */
+    async putUnless(pk,sk,item,field){const k=key(pk,sk);const x=t.get(k);if(x&&x[field]!=null)return false;t.set(k,clone({...item,PK:pk,SK:sk}));return true},
     dump(){return t}};
 }
 function dynamo(table){
   const {DynamoDBClient}=require('@aws-sdk/client-dynamodb');
-  const {DynamoDBDocumentClient,GetCommand,PutCommand,DeleteCommand,QueryCommand,UpdateCommand}=require('@aws-sdk/lib-dynamodb');
+  const {DynamoDBDocumentClient,GetCommand,PutCommand,DeleteCommand,QueryCommand,UpdateCommand,ScanCommand}=require('@aws-sdk/lib-dynamodb');
   const db=DynamoDBDocumentClient.from(new DynamoDBClient({}),{marshallOptions:{removeUndefinedValues:true}});
   const all=async q=>{let out=[],k;do{const r=await db.send(new QueryCommand({...q,ExclusiveStartKey:k}));out=out.concat(r.Items||[]);k=r.LastEvaluatedKey}while(k);return out};
   return {kind:'dynamo',
@@ -82,6 +90,11 @@ function dynamo(table){
     async flip(pk,sk,field,from,to){try{await db.send(new UpdateCommand({TableName:table,Key:{PK:pk,SK:sk},UpdateExpression:'SET #f = :to',ConditionExpression:'#f = :from',
       ExpressionAttributeNames:{'#f':field},ExpressionAttributeValues:{':to':to,':from':from}}));return true}catch(e){if(e.name==='ConditionalCheckFailedException')return false;throw e}},
     async putNew(pk,sk,item){try{await db.send(new PutCommand({TableName:table,Item:{...item,PK:pk,SK:sk},ConditionExpression:'attribute_not_exists(PK)'}));return true}catch(e){if(e.name==='ConditionalCheckFailedException')return false;throw e}},
+    /* v0.82 a one-time seeding scan (needs dynamodb:Scan in the template), paginated */
+    async scan(pkPrefix,sk){let out=[],k;do{const r=await db.send(new ScanCommand({TableName:table,FilterExpression:'begins_with(PK, :p) AND SK = :s',ExpressionAttributeValues:{':p':pkPrefix,':s':sk},ExclusiveStartKey:k}));
+      out=out.concat(r.Items||[]);k=r.LastEvaluatedKey}while(k);return out},
+    async putUnless(pk,sk,item,field){try{await db.send(new PutCommand({TableName:table,Item:{...item,PK:pk,SK:sk},ConditionExpression:'attribute_not_exists(#f)',ExpressionAttributeNames:{'#f':field}}));return true}
+      catch(e){if(e.name==='ConditionalCheckFailedException')return false;throw e}},
     async set(pk,sk,fields){const ks=Object.keys(fields);if(!ks.length)return true;const N={},V={};ks.forEach((k,i)=>{N['#a'+i]=k;V[':a'+i]=fields[k]});
       try{await db.send(new UpdateCommand({TableName:table,Key:{PK:pk,SK:sk},UpdateExpression:'SET '+ks.map((k,i)=>'#a'+i+' = :a'+i).join(', '),ConditionExpression:'attribute_exists(PK)',ExpressionAttributeNames:N,ExpressionAttributeValues:V}));return true}
       catch(e){if(e.name==='ConditionalCheckFailedException')return false;throw e}},
