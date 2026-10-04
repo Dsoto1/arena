@@ -2084,13 +2084,13 @@
    "sh": "a5c15937c3"
   },
   "tv61": {
-   "streak": 18,
-   "runs": 41,
+   "streak": 17,
+   "runs": 40,
    "fails": 1,
    "flaky": [],
-   "lastRun": 68,
-   "time": 35,
-   "lastPass": 68,
+   "lastRun": 67,
+   "time": 19,
+   "lastPass": 67,
    "deps": {
     "build.sh": "31c8d9cc9de8",
     "src/01-head.html": "63bbb21df117",
@@ -2098,7 +2098,7 @@
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tv61.js": "c4eae1a7ebd8"
    },
-   "sh": "28ad94aa44"
+   "sh": "a5c15937c3"
   },
   "tv60": {
    "streak": 0,
@@ -2348,14 +2348,14 @@
    }
   },
   "tv76": {
-   "streak": 14,
-   "runs": 19,
+   "streak": 13,
+   "runs": 18,
    "fails": 1,
    "flaky": [],
-   "lastRun": 68,
-   "time": 77,
-   "sh": "28ad94aa44",
-   "lastPass": 68,
+   "lastRun": 67,
+   "time": 42,
+   "sh": "a5c15937c3",
+   "lastPass": 67,
    "deps": {
     "build.sh": "31c8d9cc9de8",
     "src/01-head.html": "63bbb21df117",
@@ -2469,14 +2469,14 @@
    }
   },
   "tv79": {
-   "streak": 11,
-   "runs": 11,
+   "streak": 10,
+   "runs": 10,
    "fails": 0,
    "flaky": [],
-   "lastRun": 68,
-   "time": 20,
-   "sh": "28ad94aa44",
-   "lastPass": 68,
+   "lastRun": 67,
+   "time": 10,
+   "sh": "a5c15937c3",
+   "lastPass": 67,
    "deps": {
     "build.sh": "31c8d9cc9de8",
     "src/01-head.html": "63bbb21df117",
@@ -2546,16 +2546,16 @@
    "lastPass": 67
   },
   "tonl80": {
-   "streak": 3,
-   "runs": 13,
+   "streak": 4,
+   "runs": 14,
    "fails": 2,
    "flaky": [
     56
    ],
-   "lastRun": 67,
-   "time": 87,
-   "sh": "a5c15937c3",
-   "lastPass": 67,
+   "lastRun": 68,
+   "time": 188,
+   "sh": "38e41f48d4",
+   "lastPass": 68,
    "deps": {
     "build.sh": "31c8d9cc9de8",
     "src/01-head.html": "63bbb21df117",
@@ -2665,21 +2665,21 @@
    }
   },
   "tv82s": {
-   "streak": 6,
-   "runs": 7,
+   "streak": 5,
+   "runs": 6,
    "fails": 1,
    "flaky": [],
-   "lastRun": 68,
-   "time": 241,
+   "lastRun": 65,
+   "time": 134,
    "deps": {
-    "build.sh": "31c8d9cc9de8",
-    "src/01-head.html": "63bbb21df117",
+    "build.sh": "6230f9e99243",
+    "src/01-head.html": "0b7b3da4b683",
     "tools/smartreg.js": "b886a474fc81",
     "tools/regcov.js": "4b05c01ae7aa",
     "tools/tests/tv82s.js": "ed2422171518"
    },
-   "sh": "28ad94aa44",
-   "lastPass": 68
+   "sh": "2c7c75eff0",
+   "lastPass": 65
   },
   "tv82o": {
    "streak": 0,
@@ -2718,6 +2718,15 @@
    "flaky": [],
    "lastRun": 66,
    "time": 1,
+   "deps": {}
+  },
+  "tonl83u": {
+   "streak": 0,
+   "runs": 1,
+   "fails": 1,
+   "flaky": [],
+   "lastRun": 68,
+   "time": 144,
    "deps": {}
   }
  },
@@ -3786,7 +3795,7 @@
    "src/137-v83onlui.js": "d9b6d411d0",
    "src/08-setup.js": "897d3d2eb7"
   },
-  "28ad94aa44": {
+  "38e41f48d4": {
    "src/02-data.js": "aecb6ee135",
    "src/02b-standees.js": "1c85ebb14c",
    "src/03-engine.js": "05eb05edf3",
@@ -3922,7 +3931,7 @@
    "src/135-v83chest.js": "ed3780a879",
    "src/136-v83sand.js": "dc27f1b9b8",
    "src/133-v83onl.js": "733d2ff77a",
-   "src/137-v83onlui.js": "d9b6d411d0",
+   "src/137-v83onlui.js": "48d785b952",
    "src/08-setup.js": "897d3d2eb7"
   }
  }
