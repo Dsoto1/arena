@@ -900,6 +900,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   that narrow (ask around < watch train < scout / trial = exact); (5) the weekly plan becomes a real planner (assign hours by priority,
   resolves at the week's end with a report letter; direct clicks still work).
 - **v0.85 server change:** the Forum starts fresh each UTC day (routes.js forumLines filters by today) — v0.85 ships a server zip (no protocol bump).
+- **ONLINE LANDING II (his "all ★", 2026-10-04, v0.85):** playlists in a 2×2 grid on the LEFT (This week · Classic with tabs ·
+  Familia · Ludi Infames); the RIGHT shows two tall SHOWCASE boxes — 🏆 Biggest winner (most CF in one match: CF + coin earned, rank,
+  house, event) and 🪦 Biggest loser (the best-ranked gladiator who fell in Ranked that day: rank, CF, what he lost — gear value + purse);
+  each with "See today's list" (the readable popup); the Today strip and "+ more" go. The online DAY turns at 8 PM New York time (DST-aware)
+  for Today AND the Forum reset (30-min grace kept). "👥 Party" button beside the Invite slots opens a small panel (your code / enter a code).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
