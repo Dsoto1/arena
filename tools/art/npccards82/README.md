@@ -6,3 +6,6 @@ v0.82 plan: these are the system beasts' cards (Bestiary, hover, spawn card show
 back_template_3states.webp (his, 822x1122): the INFO side for 3-behaviour-state beasts — rows Initial / Raged / Fazed, each with
 attack · range · movement · HP (heart), and a black circle per row on a linked track = the state's HP threshold (NPCT.states
 [minHP, atk, rng, mv, name]). Blank parchment above (name/title) and below (ability text). Filled per beast from NPCT.
+SPAWN SHOW (his ask): when a beast is drawn from the arena deck (or enters by chant/trigger), the drawn arena card shows as now,
+then the beast's card appears ART side up, turns over (3D flip) to the INFO side, holds, then shrinks into the Field tab's beast
+row; clicking the beast later shows its card with the same flip.
