@@ -30,6 +30,8 @@
      at the end come out BROKEN, repair ⅓ of the value; the dead lose what they brought: the human killer picks one, the rest go to the
      market); FLAVIUS'S GIFTS (rollGift) and GENERATED NAMED WEAPONS (rollNamed: affixes + Legendary uniques); START COUNTDOWN (10 s);
      TROPHIES; FOLLOW; the WAGERS tab (oddsOf, betResults); the Ludi Infames playlist (L.inf, Veteranus+).
+     His call after the server half: GIFTS and freebies belong to the DOMUS (D.gifts, giftsOut/giftsIn; opened for the active gladiator, or
+     into the house with none: applyGiftHouse); a Ranked death keeps the un-brought satchel on the house shelf (D.offers, offersIn, offerMove).
    • Death: Ranked only, by the game's own Fate table (the event's result row says whether the gladiator survives).
      The dead go to the Hall of the Fallen only if they were great: died at Veteranus or above, or with a legendary feat
      (25+ ranked bouts survived, 500+ lifetime CF, or Commodus slain). Everyone else is erased (damnatio memoriae).
@@ -269,7 +271,7 @@ const ONLC=(function(){
   /* the house record built from gladiators made before houses existed (no data lost) */
   function domusFromChars(D,chars){for(const c of chars||[]){D.bouts=(D.bouts|0)+(c.bouts|0);D.wins=(D.wins|0)+(c.wins|0);D.survived=(D.survived|0)+(c.survived|0);D.lifeCF=(D.lifeCF|0)+(c.lifeCF|0);if(!c.alive)D.fallen=(D.fallen|0)+1}D.glads=(D.glads|0)+(chars||[]).length;return D}
   const domusRow=D=>D?{id:D.id,name:D.name,founded:D.founded,bouts:D.bouts|0,wins:D.wins|0,survived:D.survived|0,fallen:D.fallen|0,lifeCF:D.lifeCF|0,glads:D.glads|0,
-    fame:D.fame|0,passDay:D.passDay||null,treasury:D.treasury|0,trophyN:(D.trophies||[]).length,...(D.patron&&Object.keys(D.patron).length?{patron:D.patron}:{})}:null;
+    fame:D.fame|0,passDay:D.passDay||null,treasury:D.treasury|0,trophyN:(D.trophies||[]).length,gifts:(D.gifts||[]).length,offers:(D.offers||[]).length,...(D.test?{test:true}:{}),...(D.patron&&Object.keys(D.patron).length?{patron:D.patron}:{})}:null;
   /* the house's PATRON (the face in the stands): plain short values only (skin, hair, hat, beard, tunic, mantle, cushion colours…), ≤16 keys, ≤1 KB */
   function cleanPatron(P){const out={};if(!P||typeof P!=='object'||Array.isArray(P))return out;let n=0;
     for(const [k,v] of Object.entries(P)){if(++n>16)break;if(!/^[a-zA-Z0-9_]{1,16}$/.test(k))continue;
@@ -426,12 +428,32 @@ const ONLC=(function(){
   function gearAfter(ch,kit,row,ranked){kit=kit||{};const items=kit.items||[],gear=kit.gear||[];const out={broken:[],offBack:[],carried:[],left:[]};
     const brought=(kit.offer||[]).slice();const offs=(ch.offers||[]).slice();for(const k of brought){const i=offs.indexOf(k);if(i>=0)offs.splice(i,1)}
     if(ranked&&row&&row.survives===false){for(const it of items){if((ch.gear||[]).includes(it))out.carried.push(takePiece(ch,it))}
-      for(const it of (ch.gear||[]).slice())out.left.push(takePiece(ch,it));ch.offers=[];ch.offerEq=[];ch.gifts=[];ch.cfb=0;return out}
+      for(const it of (ch.gear||[]).slice())out.left.push(takePiece(ch,it));out.offLeft=offs;out.gifts=giftsOut(ch);ch.offers=[];ch.offerEq=[];ch.cfb=0;return out}
     const back=(row&&row.off||[]).slice();for(const k of brought){const i=back.indexOf(k);if(i>=0){back.splice(i,1);offs.push(k);out.offBack.push(k)}}
     ch.offers=offs;if(Array.isArray(ch.offerEq)){const h=offs.slice();ch.offerEq=ch.offerEq.filter(k=>{const i=h.indexOf(k);if(i<0)return false;h.splice(i,1);return true})}
     if(ranked){const used=new Set();for(const k of (row&&row.brk)||[]){const j=gear.findIndex((g,i)=>g===k&&!used.has(i));if(j<0)continue;used.add(j);const nit=breakItem(ch,items[j]);if(nit)out.broken.push(nit)}
       if(kit.cfb)ch.cfb=Math.max(0,(ch.cfb|0)-(kit.cfb|0))}
-    return out}
+    out.gifts=giftsOut(ch);return out}
+  /* ── v0.83 (his call): Flavius's gifts and the freebies belong to the DOMUS, not a gladiator. applyResult still names the gift on the
+     gladiator (ch.gifts); gearAfter moves them out (out.gifts, each with the gladiator's name) and the settlement puts them on the house
+     (giftsIn → D.gifts, ≤GIFT_HOUSE; D.giftsOpened keeps them from coming back). A Ranked death: the brought offerings die with him, the
+     un-brought satchel goes onto the house shelf (out.offLeft → offersIn → D.offers, ≤OFF_SHELF; offerMove between shelf and satchels). ── */
+  const GIFT_HOUSE=40, OFF_SHELF=30;
+  function giftsOut(ch){const gs=((ch&&ch.gifts)||[]).map(g=>({...g,glad:g.glad||ch.name||null}));if(ch)ch.gifts=[];return gs}
+  function giftsIn(D,gs){D.gifts=D.gifts||[];const done=D.giftsOpened||[];for(const g of gs||[]){if(!g||!g.id||D.gifts.length>=GIFT_HOUSE)continue;if(D.gifts.some(x=>x.id===g.id)||done.includes(g.id))continue;D.gifts.push(g)}return D}
+  function offersIn(D,keys){D.offers=D.offers||[];let sold=0;for(const k of keys||[]){if(!OFFERS83.includes(k))continue;if(D.offers.length>=OFF_SHELF){sold+=Math.round(PRICE_OFF[k]/2);continue}D.offers=[...D.offers,k]}if(sold)D.treasury=(D.treasury|0)+sold;return D}
+  /* one offering between the house shelf (D) and a gladiator's satchel (or two satchels) */
+  function offerMoveWhy(src,dst,k){if(!src||!dst||src===dst)return 'Pick where it goes.';if(!(src.offers||[]).includes(k))return 'That offering is not there.';
+    const cap=dst.cls?OFF_MAX:OFF_SHELF;if((dst.offers||[]).length>=cap)return dst.cls?`Up to ${OFF_MAX} offerings in the satchel.`:'The shelf is full.';return ''}
+  function offerMove(src,dst,k){const why=offerMoveWhy(src,dst,k);if(why)throw new Error(why);const o=(src.offers||[]).slice();o.splice(o.indexOf(k),1);src.offers=o;
+    if(Array.isArray(src.offerEq)){const h=o.slice();src.offerEq=src.offerEq.filter(x=>{const i=h.indexOf(x);if(i<0)return false;h.splice(i,1);return true})}dst.offers=[...(dst.offers||[]),k];return {src,dst}}
+  /* a house gift opened with no living gladiator: coin → the treasury, a CF bonus → coin (CFB_COIN a point), offerings / gear / named → the shelf */
+  const CFB_COIN=8;
+  function applyGiftHouse(D,rw,P){if(rw.k==='coin'){D.treasury=(D.treasury|0)+(rw.v|0);return {to:'house'}}
+    if(rw.k==='cf'){D.treasury=(D.treasury|0)+(rw.v|0)*CFB_COIN;return {to:'house',coin:(rw.v|0)*CFB_COIN}}
+    if(rw.k==='off'){offersIn(D,[rw.key]);return {to:'house'}}
+    if(rw.k==='gear'){putPiece(D,{item:rw.item,pc:null},false);return {to:'house'}}
+    if(rw.k==='named'&&P){putPiece(D,P,false);return {to:'house'}}return {to:null}}
   /* the killer's pick when the window closes untaken: the most valuable (first on a tie) */
   function lootBest(pieces){let b=0;(pieces||[]).forEach((p,i)=>{if((p.val|0)>(pieces[b].val|0))b=i});return b}
   /* ── FLAVIUS'S GIFTS: one for every rank reached and every GIFT_EVERY Ranked bouts survived (ch.gifts [{id,why,at}], ≤GIFT_KEEP) ── */
@@ -530,5 +552,5 @@ const ONLC=(function(){
     const won=bets.filter(b=>winSeats.includes(b.seat));const wsum=won.reduce((a,b)=>a+b.amt,0);if(!wsum)return bets.map(b=>({res:'refund',pay:b.amt|0}));
     const all=bets.reduce((a,b)=>a+b.amt,0)+(x.pot|0);const cut=Math.floor(all*WAGER.cut);return bets.map(b=>winSeats.includes(b.seat)?{res:'won',pay:Math.floor((all-cut)*b.amt/wsum)}:{res:'lost',pay:0})}
   const weekKey=t=>'W'+Math.floor((t||0)/604800000);
-  return {TREASURY_CUT,GIFT_EVERY,GIFT_KEEP,COUNTDOWN_MS,LOOT_MS,FOLLOW_MAX,TROPHY_MAX,RECENT_KEEP,INFAMES_MIN,canWearNamed,PRICE_OFF,OFFERS83,OFF_CARRY,OFF_MAX,offersBrought,offerBuyWhy,offerBuy,offerBring,NAMED,L4_PRICE,RARITY,rarOf,itemBase,itemUid,isNamed,engineKey,pcOf,isBroken,newUid,pieceInfo,pieceOf,valueOf,repairCost,usedPrice,wearWhy,takePiece,putPiece,tagPiece,histAdd,breakItem,repairItem,gearAfter,lootBest,giftAdd,giftTake,GIFT_W,RAR_W,CFB_MAX,rollGift,applyGift,AFFIX,UNIQUES,rollNamed,namedPiece,cleanNamed,lineupSig,stopCount,countCheck,countLeft,trophyName,trophyAdd,trophiesFrom,recentRow,recentAdd,domusLink,domusFromHash,oddsOf,betResults,weekKey,PASS,passOK,standsSeatWhy,cleanPatron,gearMoveWhy,gearMove,gearEquip,GLORY,gloryOf,rankByGlory,tableFactor,PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
+  return {GIFT_HOUSE,OFF_SHELF,giftsOut,giftsIn,offersIn,offerMoveWhy,offerMove,CFB_COIN,applyGiftHouse,TREASURY_CUT,GIFT_EVERY,GIFT_KEEP,COUNTDOWN_MS,LOOT_MS,FOLLOW_MAX,TROPHY_MAX,RECENT_KEEP,INFAMES_MIN,canWearNamed,PRICE_OFF,OFFERS83,OFF_CARRY,OFF_MAX,offersBrought,offerBuyWhy,offerBuy,offerBring,NAMED,L4_PRICE,RARITY,rarOf,itemBase,itemUid,isNamed,engineKey,pcOf,isBroken,newUid,pieceInfo,pieceOf,valueOf,repairCost,usedPrice,wearWhy,takePiece,putPiece,tagPiece,histAdd,breakItem,repairItem,gearAfter,lootBest,giftAdd,giftTake,GIFT_W,RAR_W,CFB_MAX,rollGift,applyGift,AFFIX,UNIQUES,rollNamed,namedPiece,cleanNamed,lineupSig,stopCount,countCheck,countLeft,trophyName,trophyAdd,trophiesFrom,recentRow,recentAdd,domusLink,domusFromHash,oddsOf,betResults,weekKey,PASS,passOK,standsSeatWhy,cleanPatron,gearMoveWhy,gearMove,gearEquip,GLORY,gloryOf,rankByGlory,tableFactor,PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

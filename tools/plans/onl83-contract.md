@@ -17,6 +17,8 @@ Replies/refusals as v0.82: `{re, ok:true, d}` | `{re, ok:false, err, code?, ...e
 | `no_domus` | domus.profile / domus.follow: no such house | — |
 | `count_wait` | lobby.start {go:1} before `startAt` | `startAt`, `now` |
 | `count_stopped` | lobby.start {go:1} when the countdown was stopped (✕ Hold or a line-up change) | — |
+| `notTester` | admin.grant from an account that is not a tester (§15) | — |
+| `testHouse` | a TEST house (or a party with one) asks for a Ranked room: lobby.create / quick {ranked}, lobby.join / accept / sit / again on a Ranked room | — |
 
 ## 1. EIGHT RANKS (Glory)
 `ONLC.RANKS` = Tiro 0 · **Novicius 90** · Gregarius 180 · Veteranus 550 · Primus Palus 1150 · Summa Rudis 2100 · **Rudiarius 3500** · **Invictus 5500**
@@ -167,3 +169,33 @@ DOMUS + treasury, trophies, recent, pcs (shelf states) · CHAR + pcs, pcsN, offe
 `LOOT#<match> S#<seat6>` (GSI1PK 'LOOT' → 'LOOT_DONE', ttl 3 days) · `MARKET U#…` (ttl 14 days) · `CHEST P#<uid>` · `WORLD UNIQ#<k>`, `WORLD VDAY#<day>`,
 `WORLD COUNTS seeded6` · `BETS#<acct> B#…` (ttl 30 days) · `WAGERWK#<week> A#<acct>`. **No new index or permission**: template.yaml unchanged
 (LOOT uses the existing GSI1; queries are on PKs). Deploy the server (protocol 6, `node tools/mkserver.js` first: catalog with weapon stats) with the client.
+
+## 15. HIS CALLS AFTER THE SERVER HALF (v0.83 client batch): gifts belong to the DOMUS · shelf offerings · tester grants
+**Gifts + freebies belong to the house** (guest passes and free tickets already were per house / per room).
+- `applyResult` still names new gifts on the gladiator (`out.gifts`), but `gearAfter` moves them out (`gx.gifts`, each `{id, why, at, glad}`) and the
+  settlement puts them on the house: `ONLC.giftsIn(D, gs)` → `D.gifts` (≤ `GIFT_HOUSE` 40; `D.giftsOpened` keeps an opened id from coming back).
+  They survive any death. `domusRow` gains `gifts` (count), `offers` (count) and `test` (when set); `domus.get` returns `gifts:[…]` and `offers:[…]`.
+- **`gift.open {gift}`** opens a HOUSE gift for the account's **active** gladiator (coin / CF bonus / offering / gear to him; a named piece below
+  Veteranus → the shelf, `to:'house'`). With **no living gladiator** it goes into the house (`ONLC.applyGiftHouse`): coin → treasury, a CF bonus →
+  coin (`CFB_COIN` 8 a point, `reward.coin`), offering / gear / named → the shelf. A gift still on a gladiator from before (`{char, gift}`) opens as before.
+  Reply: `{reward, to:'glad'|'house', char|null, domus, gear?, pcs?, gifts}`.
+- **Offerings on a Ranked death**: the brought ones die with him; the un-brought satchel goes onto the house shelf (`gx.offLeft` → `ONLC.offersIn` →
+  `D.offers`, ≤ `OFF_SHELF` 30; overflow sold at half price into the treasury).
+- **`offer.move {key, from, to}`** (`'house'` | gladiator id): one offering between the shelf and a satchel (≤ `OFF_MAX`), never for a seated
+  gladiator (`in_match`) → `{from, to (gladiator or {house, offers}), domus}`. Helpers `ONLC.offerMoveWhy / offerMove`.
+
+**Online tester grants** (server-side only; nothing usable from the client by others).
+- Deploy: `TESTERS='a@gmail.com,b@gmail.com' sh deploy.sh …` → template parameter **`Testers`** (NoEcho, default '') → Lambda env `TESTERS`.
+  Left out of a later deploy, the stack keeps its list; `TESTERS=none` clears it. **A template change → full stack deploy.**
+- `$connect`: the verified ID token's `email` (a Google identity) is compared case-insensitively; only `tester:true` is stored on the CONN item
+  (`ctx.tester`) — the e-mail is never stored or sent. Dev stacks/tests: `?dev=<name>&email=<e-mail>`; `makeHandler({testers})`.
+- `hello` → `tester:true` for testers (the client then shows the folded 🧪 Tester panel on the Domus).
+- **`admin.grant {coin?, gift?, gear?:[catalog keys], offering?:[keys], glory?}`** → testers only (`notTester`), only their OWN house and active
+  gladiator (coin/gear/offerings/Glory to him; with none, coin → treasury and the rest → the shelf; gifts → the house). Caps: coin ≤100000,
+  gifts ≤10, Glory ≤10000, ≤10 gear / offerings. Logged in `ADMIN log` `{list:[{at, acct, domus, glad, what}]}` (≤500).
+  → `{domus, char|null, gifts, gear, pcs, offers}`.
+- A granted house is a **TEST house for good**: `D.test`, the account's `dtest`, every gladiator `ch.test` (and new ones). Custom only (`testHouse`,
+  "Test houses play Custom only."), never in Today (its seats are left out of `dayFromMatch` / `dayFell`), the rank counts (decremented once at the
+  first grant, `countRank` skips `ch.test`, the seeding scan too), the wagers' top list, Victor of the Day. Room players carry `test:1`;
+  the client draws a **TEST** chip beside the house name.
+- Mock: `localStorage flavius_onltester83 = '1'` makes the mock's accounts testers (the mock only; AWS ignores it).

@@ -72,14 +72,14 @@ async function routes(){
   const {makeHandler}=require('../src/index.js');
   let T=1950000000000;const db=store.memory();const sent=[];const live=new Set();let RND=null;
   const send=async(conn,msg)=>{if(!live.has(conn))return true;sent.push({conn,msg});return false};
-  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0,rnd:()=>RND!=null?RND:Math.random()});
+  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0,rnd:()=>RND!=null?RND:Math.random(),testers:' Tess@Example.com ,other@example.com'});
   let nc=0,rid=0;const mark=()=>sent.length;
   const ask=async(conn,t,d)=>{T+=10;const id=++rid;await h({requestContext:{routeKey:'$default',connectionId:conn},body:JSON.stringify({t,id,d})});const m=sent.find(x=>x.conn===conn&&x.msg.re===id);if(!m)throw new Error('no reply to '+t);
     if(!m.msg.ok){const e=new Error(m.msg.err);e.code=m.msg.code;e.reply=m.msg;throw e}return m.msg.d};
   const got=(conn,t,since=0)=>sent.slice(since).filter(x=>x.conn===conn&&x.msg.push===t).map(x=>x.msg.d);
   const rejects=async(p,code,re)=>{let e=null;try{await p}catch(x){e=x}assert.ok(e,'expected a refusal: '+(code||re));if(code)assert.strictEqual(e.code,code,e.message);if(re)assert.match(e.message,re);return e};
-  const connect=async name=>{const conn='v'+(++nc);live.add(conn);const r=await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER)}});assert.strictEqual(r.statusCode,200);return conn};
-  async function client(name,o={}){const cl={name,acct:'dev-'+name};cl.conn=await connect(name);cl.req=(t,d)=>ask(cl.conn,t,d);cl.got=(t,s)=>got(cl.conn,t,s);
+  const connect=async(name,email)=>{const conn='v'+(++nc);live.add(conn);const r=await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER),...(email?{email}:{})}});assert.strictEqual(r.statusCode,200);return conn};
+  async function client(name,o={}){const cl={name,acct:'dev-'+name};cl.conn=await connect(name,o.email);cl.req=(t,d)=>ask(cl.conn,t,d);cl.got=(t,s)=>got(cl.conn,t,s);
     await cl.req('auth.signin',{name:name.toUpperCase()+' Account'});cl.domus=(await cl.req('domus.create',{name:'Domus '+name})).domus;
     cl.ch=await cl.req('char.create',{name:name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});return cl}
   const getC=id=>db.get('CHAR#'+id,'CHAR');const setC=async(id,f)=>{const c=await getC(id);Object.assign(c,f);await db.put('CHAR#'+id,'CHAR',c)};
@@ -182,9 +182,45 @@ async function routes(){
   /* ── VICTOR OF THE DAY: the next day's first hello gives yesterday's best win its trophy ── */
   const best=(await ann.req('hello',{all:1})).today.wins[0];assert.ok(best.dom,'Today entries carry the house id');T+=86400e3;await hal.req('hello',{all:1});
   const vd=(await getD(best.dom)).trophies.find(t=>t.k==='vday');assert.ok(vd&&vd.x===1,'Victor of the Day');await cid.req('world.news',{});assert.strictEqual((await getD(best.dom)).trophies.find(t=>t.k==='vday').x,1,'once a day');
+  /* ── HIS CALL: gifts belong to the HOUSE (they survive a death); a Ranked death puts the un-brought satchel on the shelf ── */
+  const ida=await client('ida');await setC(ida.ch.id,{wallet:300,glory:85});await ida.req('offer.buy',{char:ida.ch.id,key:'elix2'});await ida.req('offer.buy',{char:ida.ch.id,key:'ap2'});await ida.req('offer.buy',{char:ida.ch.id,key:'merc1'});
+  await ida.req('offer.bring',{char:ida.ch.id,keys:['elix2']});const jon=await client('jon');
+  let LG=await ida.req('lobby.create',{ev:'democritus',ranked:true,cry:false});await jon.req('lobby.join',{id:LG.id});LG=await ida.req('lobby.start',{id:LG.id});T=LG.startAt+1;LG=await ida.req('lobby.start',{id:LG.id,go:1});
+  const si=C.seatOf(LG,ida.acct),sj=C.seatOf(LG,jon.acct);const tg=[0,1,2,3].map(i=>i===si?{seat:i,f:20,won:true,survives:true}:{seat:i,f:2});for(const x of [ida,jon])await x.req('match.result',{id:LG.id,table:tg,hash:'g'});
+  let IC=await getC(ida.ch.id);assert.deepStrictEqual(IC.gifts||[],[],'the new gift left the gladiator');let ID=await getD(ida.domus.id);assert.ok(ID.gifts.some(g=>g.why==='rank:novicius'&&g.glad==='Ida Gladius'),'… onto the house');
+  assert.strictEqual((await ida.req('hello',{all:1})).domus.gifts,ID.gifts.length,'the house row counts its gifts');assert.deepStrictEqual((await ida.req('domus.get',{})).gifts.map(g=>g.id),ID.gifts.map(g=>g.id));
+  /* a Ranked death: the brought offering dies with him, the rest of the satchel and the gifts stay with the house */
+  await ida.req('offer.bring',{char:ida.ch.id,keys:['ap2']});
+  await setC(jon.ch.id,{glory:C.gloryOf(await getC(ida.ch.id)),rankK:C.rankFor(await getC(ida.ch.id)).k});
+  let LD=await ida.req('lobby.create',{ev:'egidious',ranked:true,cry:false});await jon.req('lobby.join',{id:LD.id});LD=await ida.req('lobby.start',{id:LD.id});T=LD.startAt+1;LD=await ida.req('lobby.start',{id:LD.id,go:1});
+  const td=[0,1,2,3].map(i=>i===C.seatOf(LD,ida.acct)?{seat:i,f:1,survives:false,kb:'b'}:{seat:i,f:4,won:i===C.seatOf(LD,jon.acct)});for(const x of [ida,jon])await x.req('match.result',{id:LD.id,table:td,hash:'d'});
+  assert.ok(!(await getC(ida.ch.id)).alive,'Ida fell');ID=await getD(ida.domus.id);assert.deepStrictEqual(ID.offers.slice().sort(),['merc1'],'the un-brought satchel is on the shelf, the brought one is gone (elix2 was used in the first bout)');
+  assert.ok(ID.gifts.length>=1,'the gift outlived the gladiator');
+  /* opened with no living gladiator: into the house */
+  RND=0.2;const gh=await ida.req('gift.open',{gift:ID.gifts[0].id});RND=null;assert.strictEqual(gh.reward.k,'coin');assert.strictEqual(gh.to,'house');assert.strictEqual(gh.char,null);assert.strictEqual(gh.domus.treasury,(ID.treasury|0)+gh.reward.v);
+  await rejects(ida.req('gift.open',{gift:ID.gifts[0].id}),null,/No such gift/);
+  /* a new gladiator: the shelf's offerings move into the satchel; a house gift opens for the ACTIVE gladiator */
+  const ich=await ida.req('char.create',{name:'Ida Secunda',cls:'hero'});const om=await ida.req('offer.move',{key:'merc1',from:'house',to:ich.id});assert.deepStrictEqual(om.to.offers,['merc1']);assert.deepStrictEqual(om.from.offers,[]);
+  await rejects(ida.req('offer.move',{key:'curse',from:'house',to:ich.id}),null,/not there/);
+  await setD(ida.domus.id,{gifts:[{id:'hg1',why:'surv:5',at:T}]});RND=0.2;const g2=await ida.req('gift.open',{gift:'hg1'});RND=null;assert.strictEqual(g2.to,'glad');assert.strictEqual(g2.char.id,ich.id);assert.strictEqual(g2.char.wallet,g2.reward.v);
+  /* ── 🧪 TESTER GRANTS ── */
+  await rejects(jon.req('admin.grant',{coin:50}),'notTester');assert.ok(!(await jon.req('hello',{all:1})).tester,'no tester flag for others');
+  const tess=await client('tess',{email:'tess@example.COM'});assert.strictEqual((await tess.req('hello',{all:1})).tester,true,'a tester by e-mail (case-insensitive)');
+  const rc0=(await tess.req('hello',{all:1})).rankCounts.tiro;
+  const gr=await tess.req('admin.grant',{coin:500,gift:2,gear:['galea','nope'],offering:['elix4','curse'],glory:100});
+  assert.strictEqual(gr.char.wallet,500);assert.ok(gr.char.gear.includes('galea'));assert.deepStrictEqual(gr.char.offers,['elix4']);assert.strictEqual(C.rankFor(gr.char).k,'novicius');assert.strictEqual(gr.gifts.length,2);
+  assert.ok((await getD(tess.domus.id)).test,'the house is a TEST house for good');assert.ok(gr.domus.test);assert.strictEqual((await tess.req('hello',{all:1})).rankCounts.tiro,rc0-1,'out of the rank counts');
+  assert.strictEqual((await db.get('ADMIN','log')).list[0].acct,tess.acct,'every grant is logged');
+  await rejects(tess.req('lobby.create',{ev:'democritus',ranked:true,cry:false}),'testHouse');await rejects(tess.req('lobby.quick',{ev:'democritus',ranked:1}),'testHouse');
+  const RK=await jon.req('lobby.create',{ev:'cassian',ranked:true,cry:false});await rejects(tess.req('lobby.join',{id:RK.id}),'testHouse');await jon.req('lobby.leave',{id:RK.id});
+  /* a Custom win by the test house never reaches Today */
+  let LT=await tess.req('lobby.create',{ev:'cassian',ranked:false,cry:false});await jon.req('lobby.join',{id:LT.id});LT=await tess.req('lobby.start',{id:LT.id});T=LT.startAt+1;LT=await tess.req('lobby.start',{id:LT.id,go:1});
+  const tt=[0,1,2,3].map(i=>({seat:i,f:i===C.seatOf(LT,tess.acct)?99:1,won:i===C.seatOf(LT,tess.acct)}));for(const x of [tess,jon])await x.req('match.result',{id:LT.id,table:tt,hash:'t'});
+  assert.ok(!((await jon.req('hello',{all:1})).today.wins||[]).some(w=>w.dom===tess.domus.id),'a test house never shows in Today');
+  const tg2=await tess.req('char.create',{name:'Tess Secunda',cls:'slave'});assert.ok((await getC(tg2.id)).test,'a test house’s new gladiators are test gladiators');
   /* guests may read house pages and the open pots */
   const gconn='g1';live.add(gconn);assert.strictEqual((await h({requestContext:{routeKey:'$connect',connectionId:gconn},queryStringParameters:{guest:'guestabcdef1',ver:String(C.VER)}})).statusCode,200);
   assert.strictEqual((await ask(gconn,'domus.profile',{id:ann.domus.id})).domus.name,'Domus ann');assert.deepStrictEqual((await ask(gconn,'wager.list',{})).mine,[]);
-  console.log('server v0.83 (countdown, offerings, treasury, broken + repair, loot window + default pick, used market, gifts + named weapons, Ludi Infames, profile + follow, wagers tab, Victor of the Day): all checks passed')}
+  console.log('server v0.83 (countdown, offerings, treasury, broken + repair, loot window + default pick, used market, gifts + named weapons, Ludi Infames, profile + follow, wagers tab, Victor of the Day, house gifts + shelf offerings, tester grants): all checks passed')}
 
 (async()=>{rules();await routes()})().catch(e=>{console.error(e);process.exit(1)});

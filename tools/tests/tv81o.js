@@ -106,7 +106,7 @@ if(!bAb.r.over||!bAb.alive||bAb.abandoned||!/The bout is over/.test(bAb.txt)||/d
 if(aBack.status!=='done'||aBack.reps!==2||aBack.void||!aBack.outs||aBack.stored||aBack.hashes.some(h=>h!==aEnd.hashAt))miss.push('saved report resent after reload → settled');
 if(!land.map||!land.dots||land.oval||land.row80||!land.forum||!land.news||land.empire||land.online!==1)miss.push('landing: stage map, Forum with news, one online count');
 if(!land.today||!land.today.ribbon||!/Alpha the Bold/.test(land.today.txt)||!land.today.wheat)miss.push('Today ribbon');
-if(!land.stageWheat||land.star)miss.push('wheat on the stage');if(new Set(land.tones).size!==4)miss.push('playlist border tones');if(!big)miss.push('map click opens the large view');
+if(!land.stageWheat||land.star)miss.push('wheat on the stage');if(land.tones.length<4||new Set(land.tones).size!==land.tones.length)miss.push('playlist border tones');if(!big)miss.push('map click opens the large view');
 if(!wheat)miss.push('result toast wheat');if(!hall)miss.push('Hall wheat');
 if(inv0)miss.push('invite to a missing room popped up');if(!inv1||!dead1.toast||dead1.joined||dead1.pop)miss.push('closed room → message');
 if(!inv2||!dead2||!dead2.watch||!/That room closed before you got there/.test(dead2.txt))miss.push('started room → message + Watch');

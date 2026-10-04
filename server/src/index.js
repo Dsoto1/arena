@@ -10,7 +10,10 @@
 'use strict';
 const {makeRoutes,reconnect,away,online}=require('./routes.js');const C=require('./onlcore.js');const {verify}=require('./jwt.js');const store=require('./store.js');
 const catalog=require('./catalog.json');
-function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),hereMs=0,countdown,rnd}){
+/* v0.83 tester grants: TESTERS = comma-separated sign-in e-mails (deploy parameter → Lambda env). Only a yes/no rides on the connection;
+   the e-mail itself is never stored or sent. Dev stacks/tests may pass ?email= with ?dev= (dev only). */
+const testerSet=s=>new Set(String(s||'').split(',').map(x=>x.trim().toLowerCase()).filter(x=>x&&x!=='none'));
+function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),hereMs=0,countdown,rnd,testers=''}){const TESTERS=testerSet(testers);
   /* a push to a known connection: true when the socket is gone (then the account's presence is cleared) */
   /* a push that finds the socket gone clears presence AND marks the lanista away in a live match (their $disconnect may come later and find
      nothing left to clear) — so the others can drop the seat after AWAY_MS */
@@ -23,14 +26,14 @@ function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),h
         const G=await db.get('GUEST#'+gid,'GUEST');const t=now();const first=G&&G.first||t;if(t-first>C.GUEST_MS)return {statusCode:403,body:'Your two hours as a guest are up — sign in to keep watching.'};
         await db.put('GUEST#'+gid,'GUEST',{id:gid,first,conn,tz:(G&&G.tz)||'',GSI1PK:'GON',GSI1SK:t,ttl:Math.floor(first/1000)+86400});
         await db.put('CONN#'+conn,'CONN',{guest:gid,first,ttl:Math.floor(t/1000)+86400});return {statusCode:200}}
-      let sub,name;try{if(dev&&q.dev){sub='dev-'+String(q.dev).replace(/[^a-z0-9_-]/gi,'').slice(0,40);name=null}else{const b=await verifyFn(q.token,verifyCfg);sub=b.sub;name=b.name||b.given_name||String(b.email||'').split('@')[0]}}
+      let sub,name,tester=false;try{if(dev&&q.dev){sub='dev-'+String(q.dev).replace(/[^a-z0-9_-]/gi,'').slice(0,40);name=null;tester=!!q.email&&TESTERS.has(String(q.email).toLowerCase())}else{const b=await verifyFn(q.token,verifyCfg);sub=b.sub;name=b.name||b.given_name||String(b.email||'').split('@')[0];tester=!!b.email&&TESTERS.size>0&&(b.identities||[]).some(i=>i&&i.providerName==='Google')&&TESTERS.has(String(b.email).toLowerCase())}}
       catch(e){return {statusCode:401,body:'Sign in again.'}}
       const a=(await db.get('ACCT#'+sub,'PROFILE'))||(name||!dev?{id:sub,name:C.cleanName(name||'Lanista')||'Lanista',since:now()}:null);
       if(a){a.conn=conn;a.GSI1PK='ON';a.GSI1SK=now();await db.put('ACCT#'+sub,'PROFILE',a);await reconnect(db,sub,conn)}
-      await db.put('CONN#'+conn,'CONN',{acct:sub,ttl:Math.floor(now()/1000)+86400});return {statusCode:200}}
+      await db.put('CONN#'+conn,'CONN',{acct:sub,...(tester?{tester:true}:{}),ttl:Math.floor(now()/1000)+86400});return {statusCode:200}}
     if(rc.routeKey==='$disconnect'){const c=await db.get('CONN#'+conn,'CONN');await db.del('CONN#'+conn,'CONN');if(c&&c.guest)await db.clearGuest(c.guest,conn);if(c&&c.acct&&await db.clearConn(c.acct,conn,now()))await away(db,c.acct,now());return {statusCode:200}}
     let m;try{m=JSON.parse(ev.body||'{}')}catch(e){return {statusCode:400}}
-    const c=await db.get('CONN#'+conn,'CONN');const ctx={acct:c&&c.acct,conn,...(c&&c.guest?{guest:{id:c.guest,first:c.first}}:{})};
+    const c=await db.get('CONN#'+conn,'CONN');const ctx={acct:c&&c.acct,conn,...(c&&c.tester?{tester:true}:{}),...(c&&c.guest?{guest:{id:c.guest,first:c.first}}:{})};
     try{const out=await route(m.t,m.d,ctx);if(m.t==='auth.signin'&&out&&out.id)await online(db,out.id,conn,now());
       await send(conn,{re:m.id,ok:true,d:out})}catch(e){await send(conn,{...(e.extra||{}),re:m.id,ok:false,err:String(e.message||e).slice(0,200),...(e.code?{code:e.code}:{})})}
     return {statusCode:200}}}
@@ -40,6 +43,6 @@ exports.handler=async ev=>{if(!LIVE){const {ApiGatewayManagementApiClient,PostTo
     const rc=ev.requestContext;const api=new ApiGatewayManagementApiClient({endpoint:`https://${rc.domainName}/${rc.stage}`});const db=store.dynamo(process.env.TABLE);
     const send=async(conn,msg)=>{try{await api.send(new PostToConnectionCommand({ConnectionId:conn,Data:Buffer.from(JSON.stringify(msg))}));return false}
       catch(e){if(e.name==='GoneException'||e.$metadata&&e.$metadata.httpStatusCode===410){await db.del('CONN#'+conn,'CONN');return true}throw e}};
-    LIVE=makeHandler({db,send,hereMs:20000,dev:process.env.DEV_NAMES==='true',verifyCfg:{region:process.env.AWS_REGION,poolId:process.env.POOL_ID,clientId:process.env.CLIENT_ID}})}
+    LIVE=makeHandler({db,send,hereMs:20000,dev:process.env.DEV_NAMES==='true',verifyCfg:{region:process.env.AWS_REGION,poolId:process.env.POOL_ID,clientId:process.env.CLIENT_ID},testers:process.env.TESTERS||''})}
   return LIVE(ev)};
 exports.makeHandler=makeHandler;

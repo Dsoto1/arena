@@ -2,7 +2,7 @@
 # Deploys (or updates) the Online Arena from AWS CloudShell. Run inside the server/ folder:
 #   sh deploy.sh you@example.com                      first time, without Google (DevNames off: nobody can sign in yet)
 #   GOOGLE_ID=xxx GOOGLE_SECRET=yyy sh deploy.sh you@example.com     with Google sign-in
-# Optional: STACK (default flavius-arena), REGION (default us-east-1), BUDGET (default 10), AUTH_PREFIX, DEV=true (test stack only)
+# Optional: TESTERS='a@gmail.com,b@gmail.com' (online testers, see README), STACK (default flavius-arena), REGION (default us-east-1), BUDGET (default 10), AUTH_PREFIX, DEV=true (test stack only)
 set -e
 # pasted values can carry invisible characters (a carriage return, a tab, a space): strip them all
 clean(){ printf '%s' "$1" | tr -d '\r\n\t '; }
@@ -20,6 +20,8 @@ STACK="${STACK:-flavius-arena}"; REGION="${REGION:-us-east-1}"
 AUTH_DOMAIN="${AUTH_DOMAIN:-none}"; AUTH_STAGE="${AUTH_STAGE:-cert}"; ZONE=none
 case "$AUTH_STAGE" in cert|live) ;; *) echo "AUTH_STAGE is cert or live."; exit 1;; esac
 if [ "$AUTH_DOMAIN" != none ]; then PARENT="${AUTH_DOMAIN#*.}"; ZONE=$(aws route53 list-hosted-zones-by-name --dns-name "$PARENT" --query "HostedZones[?Name=='$PARENT.'].Id | [0]" --output text 2>/dev/null | sed 's#/hostedzone/##'); case "$ZONE" in Z*) echo "Sign-in address: https://$AUTH_DOMAIN (Route 53 zone $ZONE)";; *) echo "No Route 53 zone for $PARENT — keeping the amazoncognito.com sign-in address."; AUTH_DOMAIN=none; ZONE=none;; esac; fi
+# online testers: TESTERS='a@gmail.com,b@gmail.com' sets the list, TESTERS=none clears it; left out, the stack keeps the list it has
+TP=""; if [ -n "${TESTERS+x}" ]; then TP="Testers=$(printf '%s' "$TESTERS" | tr -d '\r\n\t ')"; fi
 ACCT=$(aws sts get-caller-identity --query Account --output text)
 BUCKET="flavius-arena-code-$ACCT-$REGION"
 # a first deploy that failed leaves the stack in ROLLBACK_COMPLETE, which cannot be updated: clear it first
@@ -29,6 +31,6 @@ aws s3api head-bucket --bucket "$BUCKET" 2>/dev/null || aws s3 mb "s3://$BUCKET"
 aws cloudformation package --region "$REGION" --template-file template.yaml --s3-bucket "$BUCKET" --output-template-file packaged.yaml
 aws cloudformation deploy --region "$REGION" --template-file packaged.yaml --stack-name "$STACK" --capabilities CAPABILITY_IAM \
   --parameter-overrides AlertEmail="$EMAIL" MonthlyBudgetUSD="${BUDGET:-10}" GoogleClientId="${GOOGLE_ID:-none}" GoogleClientSecret="${GOOGLE_SECRET:-none}" \
-    AuthDomainPrefix="${AUTH_PREFIX:-flaviusrule-arena}" DevNames="${DEV:-false}" CustomAuthDomain="$AUTH_DOMAIN" HostedZoneId="$ZONE" CustomAuthStage="$AUTH_STAGE"
+    AuthDomainPrefix="${AUTH_PREFIX:-flaviusrule-arena}" DevNames="${DEV:-false}" CustomAuthDomain="$AUTH_DOMAIN" HostedZoneId="$ZONE" CustomAuthStage="$AUTH_STAGE" $TP
 aws cloudformation describe-stacks --region "$REGION" --stack-name "$STACK" --query "Stacks[0].Outputs" --output table
 if [ "$AUTH_DOMAIN" != none ] && [ "$AUTH_STAGE" = cert ]; then echo "Certificate for $AUTH_DOMAIN is made. In 15 minutes, run the same deploy again with AUTH_STAGE=live to add the sign-in address."; fi

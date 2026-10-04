@@ -54,8 +54,9 @@ await A.setViewportSize({width:420,height:860});await A.waitForTimeout(400);cons
 ok(ph,'phone: the rank bar is a strip above the slots');await A.evaluate(()=>{document.querySelector('.rb82').scrollIntoView()});await shot(A,'domus_phone');await A.setViewportSize({width:1300,height:900});
 /* ── 3. prices by AP + the confirmation ── */
 await A.evaluate(async()=>{const w=mockLoad();const c=w.chars[ONL.char.id];c.wallet=100;mockSave(w);await onlRefresh();ONL.tab='armory';ONL.mkt='a';onlRedraw()});await A.waitForTimeout(300);
-const pr=await A.evaluate(()=>({ocrea:ONLC.priceOf(onlCatalog().ocrea),txt:document.querySelector('#onl [data-it82="galea"]')?.textContent||'',w1:ONLC.priceOf(onlCatalog().gladius||{kind:'w',lv:1})}));
-ok(pr.ocrea===220&&/2 AP · 30 coin/.test(pr.txt)&&pr.w1===60,'prices by AP and level');
+/* v0.83: the market board (137) — the tile's title names the AP, the tile shows the price */
+const pr=await A.evaluate(()=>{const t=document.querySelector('#onl .mb83-it[data-v="galea"]');return {ocrea:ONLC.priceOf(onlCatalog().ocrea),txt:t?(t.title+' '+t.textContent):'',w1:ONLC.priceOf(onlCatalog().gladius||{kind:'w',lv:1})}});
+ok(pr.ocrea===220&&/2 AP/.test(pr.txt)&&/ 30/.test(pr.txt)&&pr.w1===60,'prices by AP and level');
 await A.click('#onl [data-onl82="buy"][data-v="galea"]');await A.waitForTimeout(400);const cf=await A.evaluate(()=>document.querySelector('.ask76bg')?.textContent||'');await shot(A,'buy');
 await A.click('.ask76bg [data-ask76="1"]');await A.waitForTimeout(900);const wal=await A.evaluate(()=>ONL.char.wallet);ok(/30 coin/.test(cf)&&/100 → 70/.test(cf)&&wal===70,'buy confirmation with the price');
 /* ── 3b. the Storeroom: move, tick, shelf ── */
@@ -63,11 +64,11 @@ await A.evaluate(()=>{ONL.tab='char';onlRedraw()});await A.waitForTimeout(1500);
 const ids=await A.evaluate(()=>Object.fromEntries(ONL.chars.map(c=>[c.name,c.id])));
 const sr0=await A.evaluate(()=>{const o=document.getElementById('sr82');return o?{rows:o.querySelectorAll('.sr82-it').length,txt:o.textContent}:null});
 ok(sr0&&sr0.rows===1&&/Iron Helm/.test(sr0.txt)&&/with Alpha the Bold/.test(sr0.txt),'Storeroom lists the house’s gear and who has it');
-await A.selectOption(`#sr82 select[data-sr82mv="${ids['Alpha the Bold']}|galea"]`,ids['Aulus']);await A.waitForTimeout(1200);
+await A.selectOption(`#sr82 select[data-sr83mv="${ids['Alpha the Bold']}|galea"]`,ids['Aulus']);await A.waitForTimeout(1200);
 const sr1=await A.evaluate(id=>{const w=mockLoad();return {aulus:w.chars[id].gear,txt:document.getElementById('sr82').textContent}},ids['Aulus']);ok(sr1.aulus.includes('galea')&&/with Aulus/.test(sr1.txt),'move between gladiators');
 await A.click(`#sr82 input[data-sr82eq="${ids['Aulus']}|galea"]`);await A.waitForTimeout(1200);
 ok(await A.evaluate(id=>!ONLC.equipOf(mockLoad().chars[id]).includes('galea'),ids['Aulus']),'untick: left at home');await shot(A,'storeroom');
-await A.selectOption(`#sr82 select[data-sr82mv="${ids['Aulus']}|galea"]`,'house');await A.waitForTimeout(1200);
+await A.selectOption(`#sr82 select[data-sr83mv="${ids['Aulus']}|galea"]`,'house');await A.waitForTimeout(1200);
 ok(await A.evaluate(()=>/on the shelf/.test(document.getElementById('sr82').textContent)&&(ONL82.dg.gear||[]).includes('galea')),'onto the house shelf');
 /* ── 4. a Ranked bout with two lanistas: half the award; the room note ── */
 const R1=await A.evaluate(async()=>{const L=await NET.req('lobby.create',{ev:'democritus',loc:6,ranked:true,cry:false});return L.id});
@@ -87,7 +88,7 @@ const hd=await A.evaluate(async()=>(await NET.req('domus.get',{})).domus);ok(hd.
 await C.evaluate(async()=>{localStorage.removeItem('flavius_onlacct');menuHide();onlineOpen('play')});await C.waitForTimeout(1500);ok(await C.evaluate(()=>!!document.querySelector('#onl [data-onl82="guest"]')),'sign-in card offers Watch as a guest');
 await C.click('#onl [data-onl82="guest"]');await C.waitForTimeout(1800);
 const gl=await C.evaluate(()=>{const o=document.getElementById('onl');return {g:ONL.acct&&ONL.acct.guest,id:ONL.acct&&ONL.acct.id,tabs:[...o.querySelectorAll('.onl-rail [data-onl="tab"]')].map(b=>b.dataset.v),quick:o.querySelectorAll('[data-onl="quick"]').length,gq:o.querySelectorAll('[data-g82="quick"]').length,card:!!o.querySelector('.g82card'),left:(o.querySelector('#g82left')||{}).textContent||''}});
-ok(gl.g&&/^guest-g[a-z0-9]{8,}/.test(gl.id)&&gl.tabs.join()==='play,lobby,spect,hall'&&!gl.quick&&gl.gq>0&&gl.card&&/h|min/.test(gl.left),'guest landing, read-only');await shot(C,'guest');
+ok(gl.g&&/^guest-g[a-z0-9]{8,}/.test(gl.id)&&gl.tabs.join()==='play,lobby,spect,wagers,hall'&&!gl.quick&&gl.gq>0&&gl.card&&/h|min/.test(gl.left),'guest landing, read-only');await shot(C,'guest');
 await C.click('#onl [data-g82="quick"]',{force:true});await C.waitForTimeout(300);ok(await C.evaluate(()=>T82.some(t=>/Sign in to fight/.test(t))),'a guest control says Sign in to …');
 ok(/^guest\|\|Sign in to speak in the Forum/.test(await err(C,o=>NET.req('forum.say',o),{q:'ave'})),'server-side refusal for guests');
 ok(Array.isArray(await C.evaluate(()=>NET.req('lobby.list'))),'guests read the lobby list');
