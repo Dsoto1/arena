@@ -813,6 +813,10 @@ share copy — the site download play/flavius-rule-arena.zip.)
   browser not to evict the game's data); a gentle "⬇ Back up your saves" nudge (never a popup over play) on the main menu / Saves
   after milestones — a Manager season ends, every ~10 events, or 14 days since the last backup — with one-tap download + "Remind me
   later"; last-backup date shown in Backups. Online progress is on the server, so the nudge says it covers offline modes only.
+  STANDALONE (the share file / site download) runs from file:// — it has NO online: no online.json beside it and Cognito only accepts
+  the site's redirect URLs. v0.84: in the standalone the Online button says "Online plays at flaviusrule.com/play" and opens it. Its saves
+  live in that file's own browser storage, SEPARATE from the site's — so the "download the standalone" suggestion must say: back up here,
+  then Import in the standalone (Saves → Backups) to carry careers over.
   ONE TAB PER SAVE (his yes, v0.84): when the same Manager career / match save is opened in a second tab (BroadcastChannel,
   like the online mock), ask "This career is open in another tab — continue here (the other tab stops saving) / Cancel"; the losing tab
   shows a notice and blocks its saves (same mechanism as the newer-version guard in 109-v761).
