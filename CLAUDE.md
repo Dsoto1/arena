@@ -808,8 +808,12 @@ share copy — the site download play/flavius-rule-arena.zip.)
   switch; cards/tokens keep his English art and get a hover/long-press panel with the translated name + rules). KEY GAMEPLAY TERMS
   STAY ENGLISH in every language so all players share them (class names, ranks, Fate/Thumb of Flavius, Missio, Lanista, Domus, CF,
   AP/HP, PvE/PvP, Focus, Mandata Flavi, event names…) — keep one GAME_TERMS list used by both the translate="no" marks and the
-  string tables. AUCTION BLOCK for named gear (house to house, escrow, buy-now, anti-snipe, Flavius' cut, Veteranus+): PROPOSED,
-  needs his call because it lifts the 'named pieces can't be sold' rule.
+  string tables. FLAVIUS'S AUCTION (his yes 2026-10-04, v0.84) — built to avoid the pitfalls he agreed with (death losing its sting, alt-account
+  feeding, rich houses cornering the market): ONLY FLAVIUS SELLS — the weekly lots are named pieces that went back to his chest (dead
+  gladiators' unlooted gear) with their full owner history on the lot card; players bid, nobody lists. Veteranus+ only; coin held in
+  escrow, refunded the moment you're outbid; a bid in the last 5 min extends 5 min (no sniping); ONE win per house per week; minimum
+  bid = half the piece's value; the winning coin leaves the game (sink). Player listings: NOT now — only revisit if the economy looks
+  healthy, and then with a cooldown on fresh pieces, a floor price and Flavius' cut.
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
