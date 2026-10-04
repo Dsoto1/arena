@@ -115,3 +115,11 @@ document.addEventListener('pointerdown',e=>{const B=document.body;if(!B.classLis
   if(e.target&&e.target.id==='cv'&&B.classList.contains('pl-act')&&S&&S.phase==='action'){B.classList.remove('pl-act');PL.actUser=null;try{plSync()}catch(err){}}},true);
 {const st=document.createElement('style');st.textContent=`#plDock button.glow82{border-color:#e8c96a;color:#ffe9a8;background:rgba(90,66,20,.92);box-shadow:0 0 0 2px rgba(232,201,106,.55),0 0 14px rgba(240,190,70,.7);animation:chestGlow82 1.8s ease-in-out infinite}
 body.calm #plDock button.glow82{animation:none}`;document.head.appendChild(st)}
+/* words of power on touch screens (no keyboard for C): HOLD the main menu's version badge ~0.7 s → the same prompt; a tap still opens What's new */
+{let t82=null,held82=false;const clr=()=>{if(t82){clearTimeout(t82);t82=null}};
+ document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest('.mmver');if(!b)return;held82=false;clr();
+   t82=setTimeout(()=>{t82=null;if(typeof menuUp79==='function'&&!menuUp79())return;if(CUR_MODAL||(typeof modalBusy==='function'&&modalBusy()))return;held82=true;try{navigator.vibrate&&navigator.vibrate(20)}catch(err){}if(typeof cheatPrompt==='function')cheatPrompt()},700)},true);
+ for(const ev of ['pointerup','pointercancel','pointerleave'])document.addEventListener(ev,clr,true);
+ window.addEventListener('click',e=>{if(held82&&e.target.closest&&e.target.closest('.mmver')){held82=false;e.preventDefault();e.stopPropagation()}},true);
+ document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('.mmver'))e.preventDefault()},true);
+ const st=document.createElement('style');st.textContent='.mmver{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}';document.head.appendChild(st)}
