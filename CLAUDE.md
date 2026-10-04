@@ -808,7 +808,12 @@ share copy — the site download play/flavius-rule-arena.zip.)
   switch; cards/tokens keep his English art and get a hover/long-press panel with the translated name + rules). KEY GAMEPLAY TERMS
   STAY ENGLISH in every language so all players share them (class names, ranks, Fate/Thumb of Flavius, Missio, Lanista, Domus, CF,
   AP/HP, PvE/PvP, Focus, Mandata Flavi, event names…) — keep one GAME_TERMS list used by both the translate="no" marks and the
-  string tables. ONE TAB PER SAVE (his yes, v0.84): when the same Manager career / match save is opened in a second tab (BroadcastChannel,
+  string tables. BACKUP REMINDERS (his idea, v0.84): saves live in the browser (localStorage / artifact Store) and vanish if the player clears
+  site data. The 📜 Saves → 🗄 Backups tab already exports/imports everything — add: navigator.storage.persist() at start (asks the
+  browser not to evict the game's data); a gentle "⬇ Back up your saves" nudge (never a popup over play) on the main menu / Saves
+  after milestones — a Manager season ends, every ~10 events, or 14 days since the last backup — with one-tap download + "Remind me
+  later"; last-backup date shown in Backups. Online progress is on the server, so the nudge says it covers offline modes only.
+  ONE TAB PER SAVE (his yes, v0.84): when the same Manager career / match save is opened in a second tab (BroadcastChannel,
   like the online mock), ask "This career is open in another tab — continue here (the other tab stops saving) / Cancel"; the losing tab
   shows a notice and blocks its saves (same mechanism as the newer-version guard in 109-v761).
   FLAVIUS'S AUCTION (his yes 2026-10-04, v0.84) — built to avoid the pitfalls he agreed with (death losing its sting, alt-account
