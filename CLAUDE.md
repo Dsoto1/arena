@@ -780,6 +780,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
   history kept), the rest → the market; killed by beast/CPU/Fate → everything → the market. FRIENDS = ★ follow (one tap, no request).
   FLAVIUS'S GIFTS = every rank-up + every 5 Ranked bouts survived. ARMORY OFFERINGS = the printed Blessings set (elixirs, AP, Mercury,
   CF offerings) priced by level (~40 for +2, ~120 for +4/+3), at most 2 carried into a match, back out if he survives.
+  CHEST (his ask 2026-10-04): the board's Arena Chest = his chest token's chest in 3D (135-v83chest drawChest83). FLAVIUS'S GIFTS
+  online use the CHEST TOKEN ROUND (rtokHTML('chest')) — glowing PURPLE with a count badge when the player has unopened gifts.
   MANAGER COUNCIL (his answers 2026-10-04, for v0.83): six advisors with a face + Roman name — Consilium (strategy), Recruiter (★ pick),
   Doctore (yard), Medicus (ward), Clerk (money letters), Barracks master; faces from the spectator/patron face maker, rolled ONCE per career
   from its seed (fixed, no re-roll; old careers get theirs on first load, saved once); they never leave (the poachable house medicus stays a

@@ -1886,7 +1886,8 @@ function draw() {
     ctx.font = `700 ${Math.round(TW * 0.16)}px IBM Plex Mono, monospace`;
     ctx.fillText(eag ? 'E' : f.kind === 'key' ? 'K' : OFFER[f.key]?.g || '?', m.x, m.y + 1);
   }
-  if (S.chest && S.chest.held == null) {
+  if (S.chest && S.chest.held == null && typeof drawChest83 === 'function') drawChest83(center(S.chest.r, S.chest.c)); /* v0.83: his chest (135-v83chest) */
+  else if (S.chest && S.chest.held == null) {
     const m = center(S.chest.r, S.chest.c);
     const w = TW * 0.22,
       h = TW * 0.16;
