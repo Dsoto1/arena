@@ -68,3 +68,13 @@ setTimeout(()=>{try{mmLabels82()}catch(e){}},500);setTimeout(()=>{try{mmLabels82
 {const st=document.createElement('style');st.textContent=`#onl .onl-gslots{background:url(${typeof assetURL==='function'?assetURL('stone_wall.webp'):'assets/stone_wall.webp'}) center/cover;padding:14px;border-radius:10px;border:1px solid var(--gold,#d6ab4c);box-shadow:inset 0 0 40px rgba(60,40,20,.55),0 4px 18px rgba(0,0,0,.45)}
 #onl .onl-gslots>*{background:linear-gradient(180deg,#2c2016,#1d150e)!important;box-shadow:0 4px 12px rgba(40,25,10,.55)}
 #onl .onl-gslot.empty{background:rgba(30,20,12,.55);border-color:rgba(60,40,20,.6);color:#f0e2c4}`;document.head.appendChild(st)}
+/* the Domus main card (house name, record, patron) on his parchment — dark ink text, the record tiles and inputs stay dark */
+{const st=document.createElement('style');st.textContent=`#onl .dom82{background:url(${typeof assetURL==='function'?assetURL('parchment.webp'):'assets/parchment.webp'}) center/cover!important;border:1px solid var(--gold,#d6ab4c)!important;box-shadow:inset 0 0 50px rgba(90,60,25,.45),0 4px 18px rgba(0,0,0,.4);color:#3a2414}
+#onl .dom82 h3{color:#5a1e10!important;text-shadow:none}
+#onl .dom82 .rc-sub,#onl .dom82 small.rc-sub,#onl .dom82 p,#onl .dom82 label,#onl .dom82 summary,#onl .dom82 .pat82-f b{color:#4a3018!important}
+#onl .dom82 .dom82-crest{filter:sepia(1) saturate(2) brightness(.6)}
+#onl .dom82 .dom82-rec>div{background:rgba(36,24,14,.9);border-color:#6a4a26}
+#onl .dom82 .dom82-rec small{color:#d8c6a2!important}
+#onl .dom82 .pat82{border-top-color:rgba(90,60,25,.35)}
+#onl .dom82 select,#onl .dom82 .tin{background:#241a12;color:#f0e2c4}
+#onl .dom82 .btn{background:rgba(36,24,14,.9);color:#f0e2c4}`;document.head.appendChild(st)}
