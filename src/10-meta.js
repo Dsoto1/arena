@@ -10,9 +10,15 @@
    - claimFreedom(): the rudis — 50+ CF winners retire into the Liberti memorial.
    - recordEvent(): Infamis top-20 (monthly), per-event high scores with attendance,
      the latest-playthrough card, Hall of Flavius progress.
+   - Also: the betting exchange ledger (betRec/betPay/exchangeHTML), log export, the Thumb
+     of Flavius ritual (thumbRitual), achievements and the Road of Flavius, the scribes'
+     seeded event records, festivals, Carmina Fescennina, missios, the Fates table and
+     the Annals window (hallHTML/openHall).
    ===================================================================== */
 /* ================= STORAGE (shared db when available, else this browser) ================= */
-const withTimeout=(p,ms)=>Promise.race([p,new Promise(r=>setTimeout(()=>r(null),ms))]);
+/* withTimeout — resolves with the promise's value, or null if it takes longer than ms. */
+const withTimeout=(promise,ms)=>Promise.race([promise,new Promise(r=>setTimeout(()=>r(null),ms))]);
+/* Store — the persistence layer: list/put/getDoc/del on named collections — the shared artifact DB when the page has one (window.claude.use('db')), else localStorage flavius_<collection>. Failed DB writes are kept locally (_local) and merged back by list(). TWEAK: the 4000 ms DB timeout, the 450 ms retry. */
 const Store={db:undefined,
   async get(){if(this.db===undefined){try{this.db=window.claude&&window.claude.use?await withTimeout(window.claude.use('db'),4000):null}catch(e){this.db=null}}return this.db},
   local(col){try{return JSON.parse(localStorage.getItem('flavius_'+col)||'[]')}catch(e){return []}},
@@ -32,32 +38,42 @@ const Store={db:undefined,
    Written by the game itself: your wagers, gladiators betting on themselves, the crowd's opening slips (in CF),
    your Match Week bets and the rival lanistae's. Kept in this browser (last 300 slips). */
 let BETLOG=null;
+/* betlogLoad — the betting exchange ledger (localStorage flavius_betlog), loaded once. */
 function betlogLoad(){if(BETLOG)return BETLOG;try{BETLOG=JSON.parse(localStorage.getItem('flavius_betlog')||'[]')||[]}catch(e){BETLOG=[]}return BETLOG}
+/* betlogSave — saves the ledger, keeping the newest 300 slips. TWEAK: the 300. */
 function betlogSave(){try{localStorage.setItem('flavius_betlog',JSON.stringify(betlogLoad().slice(-300)))}catch(e){}}
 /* v0.24: slips carry EMPIRE time — the day of the month and the hour they were laid — so the board reads like a real week of betting */
 const EN_MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+/* betWhen — empire date and hour for a slip: "Month D · HH:MM" plus a sortable empire-time key (etk). */
 function betWhen(season,week,dayOff=0,min=720){const w12=((week-1)%12+12)%12+1;const doy=((w12-1)*30+((season-1)*7)%30+Math.max(0,Math.min(29,dayOff)))%360;const m=Math.floor(doy/30),d=doy%30+1;
   const hh=Math.floor(min/60)%24,mm=Math.floor(min%60);return {when:`${EN_MONTHS[m]} ${d} · ${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`,etk:((season-1)*360+doy)*1440+min}}
-function betRec(e){if(typeof S!=='undefined'&&S&&S.sim&&e.src==='event')return null;const L=betlogLoad();
-  const c=typeof calNow==='function'?calNow():null;const W=betWhen(e.season||(c?c.season:1),e.week||(c?c.week:1),e.dayOff??0,e.min??(600+Math.floor(Math.random()*600)));
-  const r={id:'b'+Date.now().toString(36)+Math.floor(Math.random()*1e5).toString(36),at:new Date().toISOString(),date:W.when,etk:W.etk,status:'open',cur:'coin',...e};
+/* betRec — writes a wager slip into the exchange ledger (not for sims); returns its id. Unknown times get a random hour of the day. */
+function betRec(slip){if(typeof S!=='undefined'&&S&&S.sim&&slip.src==='event')return null;const L=betlogLoad();
+  const c=typeof calNow==='function'?calNow():null;const W=betWhen(slip.season||(c?c.season:1),slip.week||(c?c.week:1),slip.dayOff??0,slip.min??(600+Math.floor(Math.random()*600)));
+  const r={id:'b'+Date.now().toString(36)+Math.floor(Math.random()*1e5).toString(36),at:new Date().toISOString(),date:W.when,etk:W.etk,status:'open',cur:'coin',...slip};
   L.push(r);if(L.length>300)L.splice(0,L.length-300);betlogSave();return r.id}
 /* v0.28 THE EMPEROR'S TENTH and THE HOUSE LIMIT: winnings (the profit, not the stake) pay a 10% imperial tax,
    and no bookmaker will write a slip that could pay more than 500 coin — long odds take small stakes. */
 const BET_TAX=0.10,BET_MAXPAY=500;
+/* betPay — what a winning slip pays: gross, the Emperor's tenth on the profit, and net. */
 function betPay(stake,odds){const gross=Math.round(stake*odds);const tax=Math.round(Math.max(0,gross-stake)*BET_TAX);return {gross,tax,net:gross-tax}}
+/* betMaxStake — the largest stake a bookmaker accepts at these odds (pay-out capped at BET_MAXPAY), never more than the bank. */
 const betMaxStake=(odds,bank)=>Math.max(1,Math.min(bank,Math.floor(BET_MAXPAY/Math.max(1.01,odds))));
+/* betSettle — marks a slip won or lost (with its pay-out). */
 function betSettle(id,won,pay){if(!id)return;const r=betlogLoad().find(x=>x.id===id);if(!r)return;r.status=won?'won':'lost';r.pay=won?(pay||0):0;r.settled=new Date().toISOString();betlogSave()}
+/* exchangeHTML — the exchange board table: the newest slips (filtered, up to limit) with stake, odds and result. */
 function exchangeHTML(filter,limit=30){const L=betlogLoad().filter(filter||(()=>true)).slice().sort((a,b)=>(b.etk||0)-(a.etk||0)||(b.at>a.at?1:-1)).slice(0,limit);
   if(!L.length)return '<p class="rc-sub" style="margin:4px 0">No slips on the board yet — the first wager of the day will appear here.</p>';
   const cur=r=>r.cur==='CF'?'CF':'c';
   return `<div class="exch"><table><tr><th>When (empire time)</th><th>Where</th><th>Bettor</th><th>Selection</th><th class="n">Stake</th><th class="n">Odds</th><th class="n">Result</th></tr>${L.map(r=>`<tr class="${r.status}"><td>${esc(r.date||new Date(r.at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}))}</td><td>${esc(r.city||'')}</td><td>${r.kind==='you'?'<b>You</b>':esc(r.who||'')}<span class="dim"> · ${esc(r.kind==='you'?'your treasury':r.kind||'')}</span></td><td>${esc(r.on||'')}</td><td class="n">${r.stake}${cur(r)}</td><td class="n">${(+r.odds).toFixed(2)}×</td><td class="n">${r.status==='open'?'<span class="opn">● open</span>':r.status==='void'?'<span class="dim">↩ void · returned</span>':r.status==='won'?`<span class="up">+${r.pay}${cur(r)}</span>`:`<span class="dn">−${r.stake}${cur(r)}</span>`}</td></tr>`).join('')}</table></div>`}
 /* ================= LOG EXPORT ================= */
+/* logText — the event log as plain text, with a header line (event, city, export time). */
 function logText(){
   const ev=S?EV():null;
   const head=`FLAVIUS RULE · ${ev?ev.n:''} at ${S&&LOCATIONS[S.locIdx]?LOCATIONS[S.locIdx].n:''}\nExported ${new Date().toLocaleString()}\n`;
   return head+(S&&S.logLines?S.logLines.map(l=>l.cls==='hd'?`\n== ${l.text} ==`:(l.cls==='big'?'* ':'  ')+l.text).join('\n'):'');
 }
+/* exportLog — downloads the log as a .txt (or shows it in a copyable box when downloads are unavailable). */
 async function exportLog(){
   const text=logText();
   const name=`flavius-log-${S?S.evKey:'event'}-${new Date().toISOString().slice(0,16).replace(/[:T]/g,'-')}.txt`;
@@ -65,27 +81,32 @@ async function exportLog(){
   if(dl){try{await dl.save({filename:name,data:text});return}catch(e){if(e&&e.code==='declined')return}}
   await modal('Arena log','<p>Saving files is not available in this view. Copy the log below instead.</p><textarea id="logCopy" readonly style="width:100%;height:320px;background:var(--ink);color:var(--bone);border:1px solid var(--line2);border-radius:4px;font:12px var(--mono);padding:8px"></textarea>',[{label:'Copy to clipboard',value:'copy',primary:1},{label:'Close',value:'close'}],{wide:1,onOpen:done=>{const ta=$('#logCopy');ta.value=text;$('#mBtns').querySelector('[data-mi="0"]').addEventListener('click',e=>{e.stopPropagation();navigator.clipboard.writeText(text).then(()=>{e.target.closest('button').firstChild.textContent='Copied'},()=>{ta.select()})},{capture:true})}});
 }
+/* the Export log button. */
 $('#btnExport').onclick=()=>{if(S&&S.logLines&&S.logLines.length)exportLog()};
 
 /* ================= GAME OVER, RECORDS ================= */
-function fateBreakdown(p,won,champ){
-  if(p.retired)return {lines:[['Retired from the event','0']],total:0};
-  const L=[['Crowd Favor held',p.cf]];
-  const mf=p.items?p.items.filter(i=>i.kind==='mf').length:0;if(mf)L.push([`Mandata Flavi still hidden ×${mf}`,-5*mf]);
+/* fateBreakdown — the Fate score lines for a gladiator: CF held, −5 per hidden Mandata, and for winners the event reward, 5 per 3 trophies, 2 per Flavius item, 15 for the Golden Eagle, 10 for a crowd-hated win, 5 for a festival champion. TWEAK: those bonuses. */
+function fateBreakdown(player,won,champ){
+  if(player.retired)return {lines:[['Retired from the event','0']],total:0};
+  const L=[['Crowd Favor held',player.cf]];
+  const mf=player.items?player.items.filter(i=>i.kind==='mf').length:0;if(mf)L.push([`Mandata Flavi still hidden ×${mf}`,-5*mf]);
   if(won){const ev=EV();L.push(['Event win',ev.rounds[ev.rounds.length-1].reward.win||15]);
-    const t3=Math.floor(p.trophies.length/3);if(t3)L.push([`Trophies: ${p.trophies.length} (5 CF per 3)`,t3*5]);
-    const fl=['R','L'].filter(a=>p['w'+a]&&p['w'+a].flav).length+LOCS.reduce((s,l)=>s+p.pieces[l].filter(pc=>ARM[pc.key].flav).length,0);if(fl)L.push([`Flavius items ×${fl}`,fl*2]);
-    if(p.items.some(i=>i.kind==='offer'&&i.key==='eagle'))L.push(['Golden Eagle held',15]);
-    if(weak(p,'pelted'))L.push([p.cls==='damnatio'?'Damnatio victory':'Crowd-hated victory',10]);}
+    const t3=Math.floor(player.trophies.length/3);if(t3)L.push([`Trophies: ${player.trophies.length} (5 CF per 3)`,t3*5]);
+    const fl=['R','L'].filter(a=>player['w'+a]&&player['w'+a].flav).length+LOCS.reduce((s,l)=>s+player.pieces[l].filter(pc=>ARM[pc.key].flav).length,0);if(fl)L.push([`Flavius items ×${fl}`,fl*2]);
+    if(player.items.some(i=>i.kind==='offer'&&i.key==='eagle'))L.push(['Golden Eagle held',15]);
+    if(weak(player,'pelted'))L.push([player.cls==='damnatio'?'Damnatio victory':'Crowd-hated victory',10]);}
   if(champ)L.push(['Festival champion',5]);
   const total=L.reduce((s,[,v])=>s+v,0);
   return {lines:L.map(([a,v])=>[a,(v>0&&a!=='Crowd Favor held'?'+':'')+v]),total};
 }
-const fateIdxOf=f=>{if(!f)return null;if(/spared/.test(f[0]))return fateRow(20).img;const F=FATES.find(F=>f[0].endsWith(F.n));return F?F.img:null};
-const aliveInUniverse=x=>!x.p.retired&&x.fate&&!/^Thumbs down/.test(x.fate[0])&&(x.f>=20||/spared/.test(x.fate[0]));
-function placements(rows,wset){
+/* fateIdxOf — which Fate card image matches a fate result ([title, text]); spared thumbs show the 20 CF card. */
+const fateIdxOf=fate=>{if(!fate)return null;if(/spared/.test(fate[0]))return fateRow(20).img;const F=FATES.find(F=>fate[0].endsWith(F.n));return F?F.img:null};
+/* aliveInUniverse — whether a result row's gladiator lives on after the event: not retired, not thumbed down, and 20+ CF or spared. */
+const aliveInUniverse=row=>!row.p.retired&&row.fate&&!/^Thumbs down/.test(row.fate[0])&&(row.f>=20||/spared/.test(row.fate[0]));
+/* placements — result rows in finishing order: winners, then survivors by CF, then the eliminated, last out first. */
+function placements(rows,winnerIds){
   const order=S.elimOrder||[];const pos=id=>order.findIndex(o=>o.id===id);
-  return [...rows].sort((a,b)=>(wset.has(b.p.id)-wset.has(a.p.id))||((b.p.alive&&!b.p.retired)-(a.p.alive&&!a.p.retired))||(b.p.alive?b.f-a.f:pos(b.p.id)-pos(a.p.id)));
+  return [...rows].sort((a,b)=>(winnerIds.has(b.p.id)-winnerIds.has(a.p.id))||((b.p.alive&&!b.p.retired)-(a.p.alive&&!a.p.retired))||(b.p.alive?b.f-a.f:pos(b.p.id)-pos(a.p.id)));
 }
 /* ================= THE THUMB OF FLAVIUS · the ritual (v0.18) =================
    A gladiator who ends on 17-19 CF faces the editor's judgement. The player rolls the d6 themself:
@@ -93,10 +114,11 @@ function placements(rows,wset){
    death on the Fate table claims them. Flavius's face reacts to every roll. Used by the results
    window AND Manager mode (same markup, same animation). */
 const D6F=['⚀','⚁','⚂','⚃','⚄','⚅'];
-function thumbStageHTML(o){ // o:{mood,msg,die,dieLbl,btn,btnAttr,fate}
-  return `<div class="thumbrite"><img class="flavface" src="${flavFaceURL(o.mood||'calm')}" alt="Flavius, ${o.mood||'calm'}">
-    <div class="tr-body"><div class="tr-die">${o.die!=null?`<span class="die-big">${o.die}</span>`:''}${o.dieLbl?`<span class="rc-sub">${o.dieLbl}</span>`:''}</div>
-    <p style="margin:4px 0 8px">${o.msg}</p>${o.fate?`<div class="rc-fname">${o.fate}</div>`:''}${o.btn?`<button class="btn primary" type="button" ${o.btnAttr}>${o.btn}</button>`:''}</div></div>`;
+/* thumbStageHTML — markup of one stage of the Thumb of Flavius ritual: Flavius's face, the die, the message, the verdict and a button. */
+function thumbStageHTML(stage){ // stage:{mood,msg,die,dieLbl,btn,btnAttr,fate}
+  return `<div class="thumbrite"><img class="flavface" src="${flavFaceURL(stage.mood||'calm')}" alt="Flavius, ${stage.mood||'calm'}">
+    <div class="tr-body"><div class="tr-die">${stage.die!=null?`<span class="die-big">${stage.die}</span>`:''}${stage.dieLbl?`<span class="rc-sub">${stage.dieLbl}</span>`:''}</div>
+    <p style="margin:4px 0 8px">${stage.msg}</p>${stage.fate?`<div class="rc-fname">${stage.fate}</div>`:''}${stage.btn?`<button class="btn primary" type="button" ${stage.btnAttr}>${stage.btn}</button>`:''}</div></div>`;
 }
 // tumble a die in place, then settle on the real (already-rolled) value
 function tumbleDie(el,final,sides,ms=950){return new Promise(res=>{
@@ -120,14 +142,15 @@ async function thumbRitual(box,{name,f,d6,d12,d12Fate}){
   try{flaviusMood('laugh',4200,.9)}catch(e){}
   return {spared:false,d6,d12};
 }
-function resultCard(x,place,interim){
-  const p=x.p,C=CLASSES[p.cls];const fb=fateBreakdown(p,x.won,x.champ);const el=(S.elimOrder||[]).find(o=>o.id===p.id);
-  const status=x.won?'<span class="badge gold">Winner</span>':p.retired?'<span class="badge bad">Retired</span>':el?`<span class="badge bad">Eliminated · turn ${el.turn}${el.by?' · '+esc(el.by):''}</span>`:p.exited?'<span class="badge good">Exited</span>':'<span class="badge good">Survived</span>';
-  const fi=fateIdxOf(x.fate);
-  if(x.thumbHide&&!x.thumbShown){ // the die has not been cast: hide the verdict behind the button
+/* resultCard — one gladiator's card in the results window: place, status, the Fate and its math, stats, and Save / Claim freedom buttons (or the hidden Thumb button). */
+function resultCard(row,place,interim){
+  const p=row.p,C=CLASSES[p.cls];const fb=fateBreakdown(p,row.won,row.champ);const el=(S.elimOrder||[]).find(o=>o.id===p.id);
+  const status=row.won?'<span class="badge gold">Winner</span>':p.retired?'<span class="badge bad">Retired</span>':el?`<span class="badge bad">Eliminated · turn ${el.turn}${el.by?' · '+esc(el.by):''}</span>`:p.exited?'<span class="badge good">Exited</span>':'<span class="badge good">Survived</span>';
+  const fi=fateIdxOf(row.fate);
+  if(row.thumbHide&&!row.thumbShown){ // the die has not been cast: hide the verdict behind the button
     return `<div class="rcard" style="--pc:${p.color}">
       <div class="rc-top"><span class="rc-place">${place}</span>${pArt(p,'sm')}<div><div class="rc-name">${esc(p.name)}</div><div class="rc-sub">${C.name} · You</div>${status}</div></div>
-      <div class="rc-fate"><div><div class="rc-fname">🖑 Thumb of Flavius</div><p style="margin:6px 0">${x.f} CF — one short of certainty. The arena falls silent; every eye turns to the editor's box. Flavius weighs your ${x.won?'victory':'showing'}… and reaches for the die.</p>
+      <div class="rc-fate"><div><div class="rc-fname">🖑 Thumb of Flavius</div><p style="margin:6px 0">${row.f} CF — one short of certainty. The arena falls silent; every eye turns to the editor's box. Flavius weighs your ${row.won?'victory':'showing'}… and reaches for the die.</p>
       <button class="btn primary" type="button" data-thumb="${p.id}" style="border-color:var(--gold)">🎲 Face the thumb — roll the d6<small>4-6 spares you to the Ludus; 1-3 hands your fate to the d12</small></button></div></div>
     </div>`;
   }
@@ -135,17 +158,17 @@ function resultCard(x,place,interim){
   const stats=[['⚔ Gladiators',p.trophies.filter(t=>t.pk==='player').length],['🐾 Beasts',p.trophies.filter(t=>t.pk!=='player').length],['Pots',st.pots||0],['Damage dealt',st.dmgDealt||0],['Cards',st.cardsDrawn||0],['Buys',st.buy||0],['Coin',p.coin]];
   const pr=p.cpu&&p.pers?`<div class="rc-sub"><b>CPU priorities</b> ${PERS_KEYS.map(([k,l])=>`${l} ${p.pers[k]}`).join(' · ')}</div>`:'';
   const feel=p.cpu&&p.rel?Object.entries(p.rel).filter(([,v])=>Math.abs(v)>=25).map(([id,v])=>`${relState(v)[2]} ${relState(v)[1]} toward ${esc(S.players[id].name)}`).join(' · '):'';
-  const survives=!interim&&aliveInUniverse(x);
-  const free50=!interim&&x.won&&x.f>=50&&survives&&!p.mgrGid&&!p.cpu&&!isCustomCls(p.cls);
-  const saveBit=survives?(x.savedDone?`<button class="btn" type="button" disabled>✓ ${esc(p.name)}'s Ludus record ${p.saved?'updated':'saved'}<small>${p.saved?'automatic for summoned gladiators':'one save per event'}</small></button>`:`<button class="btn" type="button" data-save="${p.id}">Save ${esc(p.name)} in the Ludus<small>returns with ${Math.min(25,Math.floor(x.f/2))} CF${p.cpu?' · CPU record: rival or bet-on gladiator, no missios':''}</small></button>`):'';
+  const survives=!interim&&aliveInUniverse(row);
+  const free50=!interim&&row.won&&row.f>=50&&survives&&!p.mgrGid&&!p.cpu&&!isCustomCls(p.cls);
+  const saveBit=survives?(row.savedDone?`<button class="btn" type="button" disabled>✓ ${esc(p.name)}'s Ludus record ${p.saved?'updated':'saved'}<small>${p.saved?'automatic for summoned gladiators':'one save per event'}</small></button>`:`<button class="btn" type="button" data-save="${p.id}">Save ${esc(p.name)} in the Ludus<small>returns with ${Math.min(25,Math.floor(row.f/2))} CF${p.cpu?' · CPU record: rival or bet-on gladiator, no missios':''}</small></button>`):'';
   const freeBit=free50?`<button class="btn" type="button" data-free="${p.id}" style="border-color:var(--gold)">🗡 Claim freedom · the rudis<small>leaves the sands forever, memorialized among the Liberti</small></button>`:'';
   return `<div class="rcard" style="--pc:${p.color}">
     <div class="rc-top"><span class="rc-place">${place}</span>${pArt(p,'sm')}<div><div class="rc-name">${esc(p.name)}</div><div class="rc-sub">${C.name} · ${p.cpu?'CPU '+cpuMind(p):'You'}</div>${status}</div></div>
-    <div class="rc-fate">${interim?`<div>${S.exhib?`<b>${x.f} CF</b> · exhibition: ${p.alive?'still standing when the bout was called':'pulled from the sand by the doctors — no Fate is drawn'}`:`<b>${x.f} CF</b> carried into the next event`}</div>`:`${fi!=null?cardHTML('f:'+fi,'md'):''}<div><div class="rc-fname">${esc(x.fate[0])}</div><table class="fmath">${fb.lines.map(([a,v])=>`<tr><td>${esc(a)}</td><td class="n">${v}</td></tr>`).join('')}<tr class="tot"><td>Final Fate score</td><td class="n">${x.f}</td></tr></table>${/Thumb/.test(x.fate[0])?`<div class="rc-sub">${esc(x.fate[1])}</div>`:''}${p.mgrGid?'':`<div class="rc-sub">${survives?(x.f>=50?'Free, or back for glory: can be saved in the Ludus.':'Survives to the Ludus Flavius: can be saved.'):p.retired?'Retired: this character is gone.':'Does not survive. Any saved record or missio for this character ends.'}</div>`}</div>`}</div>
+    <div class="rc-fate">${interim?`<div>${S.exhib?`<b>${row.f} CF</b> · exhibition: ${p.alive?'still standing when the bout was called':'pulled from the sand by the doctors — no Fate is drawn'}`:`<b>${row.f} CF</b> carried into the next event`}</div>`:`${fi!=null?cardHTML('f:'+fi,'md'):''}<div><div class="rc-fname">${esc(row.fate[0])}</div><table class="fmath">${fb.lines.map(([a,v])=>`<tr><td>${esc(a)}</td><td class="n">${v}</td></tr>`).join('')}<tr class="tot"><td>Final Fate score</td><td class="n">${row.f}</td></tr></table>${/Thumb/.test(row.fate[0])?`<div class="rc-sub">${esc(row.fate[1])}</div>`:''}${p.mgrGid?'':`<div class="rc-sub">${survives?(row.f>=50?'Free, or back for glory: can be saved in the Ludus.':'Survives to the Ludus Flavius: can be saved.'):p.retired?'Retired: this character is gone.':'Does not survive. Any saved record or missio for this character ends.'}</div>`}</div>`}</div>
     <details class="rc-more"><summary>Event stats</summary><div class="rc-stats">${stats.map(([a,v])=>`<span><b>${v}</b>${a}</span>`).join('')}</div></details>
     ${(st.spectCF||st.spectOffers)?`<div class="rc-sub">🏟 The stands (${houseHTML(S.attendance||0,S.seed,S.locIdx)} attended): <b>+${st.spectCF||0} CF</b> in section cheers${st.spectOffers?` · <b>${st.spectOffers}</b> offering${st.spectOffers>1?'s':''} thrown, worth ~<b>${st.spectVal||0} coin</b>`:''}${(S.attendance||0)>8?' · cheers scaled for the big house':''}.</div>`:''}
     ${pr}${feel?`<div class="rc-sub">${feel}</div>`:''}
-    ${p.mgrGid&&S.exhib?'<div class="rc-sub">Exhibition: no Fate — back to their ludus either way.</div>':p.mgrGid?`<div class="rc-sub">Manager mode fighter: this Fate applies in the league too${survives?'.':' — unless their lanista pays the editor blood money (settled on Match Week).'}</div>`:survives&&isCustomCls(p.cls)?`<div class="rc-sub"><span class="cbadge">✦ custom</span> Result logged on ${esc(p.name)}'s character sheet (Creator Studio).</div>`:x.freedDone?`<div class="rc-sub"><span class="badge gold">🗡 Freed</span> ${esc(p.name)} takes the rudis and leaves the sands forever — memorialized among the <b>Liberti</b> (the Annals).</div>`:saveBit+freeBit}
+    ${p.mgrGid&&S.exhib?'<div class="rc-sub">Exhibition: no Fate — back to their ludus either way.</div>':p.mgrGid?`<div class="rc-sub">Manager mode fighter: this Fate applies in the league too${survives?'.':' — unless their lanista pays the editor blood money (settled on Match Week).'}</div>`:survives&&isCustomCls(p.cls)?`<div class="rc-sub"><span class="cbadge">✦ custom</span> Result logged on ${esc(p.name)}'s character sheet (Creator Studio).</div>`:row.freedDone?`<div class="rc-sub"><span class="badge gold">🗡 Freed</span> ${esc(p.name)} takes the rudis and leaves the sands forever — memorialized among the <b>Liberti</b> (the Annals).</div>`:saveBit+freeBit}
   </div>`;
 }
 // v0.29 ONE CLOCK: while a living Manager career holds the wallet, ONLY its "End the week" advances the empire.
@@ -153,22 +176,23 @@ function resultCard(x,place,interim){
 async function careerHoldsClock(){try{if(typeof activeCid!=='function')return false;const id=await activeCid();if(!id)return false;const d=await Store.getDoc('mgrCareers',id);return !!(d&&!d.dead)}catch(e){return false}}
 // v0.37: a survivor under Flavius's thumbs-down is executed by the d12 of the Fates, whatever their CF
 function thumbsDownFate(){const d=1+rnd(12);const s=fateRow(d);return Object.assign([`Thumbs down · ${s.n}`,`Flavius's thumb turned down on a truce. The d12 shows ${d}: ${s.t}`],{d12:d,sub:s})}
+/* gameOver — ends the event: builds S.result / S.lastResult (sims stop here), moves the calendar, settles wagers, updates the crowd, Ludus records, missios and the Gate of Life, then shows the results window (S.showResults reopens it). Wrapped by many later modules. */
 async function gameOver(winners,reason){
   if(S.overShown)return;S.overShown=true;if(S.snap){S.snap=false;if(SPEED==='snap'){SPEED='normal';document.querySelectorAll('[data-speed]').forEach(x=>x.classList.toggle('on',x.dataset.speed==='normal'))}if(typeof simSnapHide==='function')simSnapHide()}
   S.over=true;S.phase='over';S.busy=false;render();
   if(!HEADLESS&&!S.sim)setTimeout(()=>{try{startCleanCrew()}catch(e){}},4200); // v0.33: the full post-show reset runs gore or no gore
   const G=S,ev=EV();recordHist();
   if(!S.sim&&!HEADLESS&&typeof sfx==='function'){setTimeout(()=>sfx('fanfare'),300);setTimeout(()=>sfx('horn'),1500)} /* v0.57: the closing horns, then the laurels */
-  if(!S.sim&&!HEADLESS&&typeof isSpecialShow==='function'&&isSpecialShow())setTimeout(()=>{try{const ws=(winners||[]).map(w=>typeof w==='number'?S.players[w]:w).filter(p=>p&&p.alive&&!p.exited);const tg=ws.length?ws:[{r:6,c:6}];for(const w of tg)tossFrom(Math.round(36/tg.length),w,0.6)}catch(e){}},LAUREL_DELAY); /* v0.42: laurels and flowers from the stands — v0.57: only once the closing horns have sounded */
+  if(!S.sim&&!HEADLESS&&typeof isSpecialShow==='function'&&isSpecialShow())setTimeout(()=>{try{const ws=(winners||[]).map(w=>typeof w==='number'?S.players[w]:w).filter(player=>player&&player.alive&&!player.exited);const tg=ws.length?ws:[{r:6,c:6}];for(const w of tg)tossFrom(Math.round(36/tg.length),w,0.6)}catch(e){}},LAUREL_DELAY); /* v0.42: laurels and flowers from the stands — v0.57: only once the closing horns have sounded */
   // v0.22: every event played on its own moves the empire's calendar one week (Manager bouts belong to their career's week)
   if(!S.sim&&!HEADLESS&&!S.mgrCtx&&!S.specCtx&&!S.tourn&&!S.exhib&&!(S.fest&&S.fest.stage<2)&&typeof calAdvance==='function'&&!(await careerHoldsClock())){const c=calAdvance();S.calAdvanced=c;later(()=>log(`📅 The empire moves on: it is now <b>${empireDate(c.season,c.week).short}</b> — next on the schedule, ${esc(EVENTS[c.fx.ev]?EVENTS[c.fx.ev].n:'the games')} at ${esc(LOCATIONS[c.fx.loc]?LOCATIONS[c.fx.loc].n:'')}.`,'thought'),400)}
   const wset=new Set(winners.map(w=>w.id));
   const interim=(S.fest&&S.fest.stage===1)||!!S.exhib||!!(S.specCtx&&S.specCtx.nofates)||!!(S.tourn&&S.tourn.nofates)||!!(ev.custom&&ev.nofates); // v0.29: Fates everywhere unless an event is set Fate-free // v0.27: invitational and tournament heats draw no Fate; a tournament's final does // exhibitions, like a festival's first leg, draw no Fate
-  const rows=S.players.map(p=>{const won=wset.has(p.id);const f=finalCF(p,won);const fate=interim||(typeof missioNoFate==='function'&&missioNoFate(p))?null:(p.retired?[FATES[0].g+' · '+FATES[0].n,FATES[0].t]:(S.thumbsDown||[]).includes(p.id)?thumbsDownFate():fateFor(f));
+  const rows=S.players.map(player=>{const won=wset.has(player.id);const f=finalCF(player,won);const fate=interim||(typeof missioNoFate==='function'&&missioNoFate(player))?null:(player.retired?[FATES[0].g+' · '+FATES[0].n,FATES[0].t]:(S.thumbsDown||[]).includes(player.id)?thumbsDownFate():fateFor(f));
     // a human facing the Thumb of Flavius rolls the die themselves, in the results window: the outcome
     // is already decided here (records need it), but it stays hidden until they press the button.
-    const thumbHide=!!(fate&&/^Thumb of Flavius/.test(fate[0])&&!p.cpu&&!S.sim&&!HEADLESS);
-    return {p,won,f,fate,thumbHide}});
+    const thumbHide=!!(fate&&/^Thumb of Flavius/.test(fate[0])&&!player.cpu&&!S.sim&&!HEADLESS);
+    return {p:player,won,f,fate,thumbHide}});
   S.result={winners:[...wset],rows:rows.map(x=>({id:x.p.id,cls:x.p.cls,f:x.f,won:x.won,fate:x.fate?x.fate[0]:'',pers:x.p.pers,pots:x.p.stats.pots||0,r1pots:x.p.r1pots??(x.p.stats.pots||0),kp:x.p.trophies.filter(t=>t.pk==='player').length,kn:x.p.trophies.filter(t=>t.pk!=='player').length,buys:x.p.stats.buy||0,cards:x.p.stats.cardsDrawn||0,alive:x.p.alive,diff:x.p.diff,wR:x.p.wR&&x.p.wR.key,wL:x.p.wL&&x.p.wL.key,ap:LOCS.reduce((s,l)=>s+x.p.ap[l],0),armor:LOCS.flatMap(l=>x.p.pieces[l].map(pc=>pc.key)),bought:x.p.bought||[]}))};
   {const el=id=>(S.elimOrder||[]).find(o=>o.id===id);
     S.lastResult=({winners:[...wset],reason,turns:S.turnNo,rotations:S.rotation,att:S.attendance||0,seed:S.seed,npcKills:S.npcKills,firstOut:(S.elimOrder||[])[0]?S.elimOrder[0].id:null,
@@ -270,30 +294,33 @@ async function gameOver(winners,reason){
   }};
   await S.showResults();
 }
-const isCustomCls=c=>!!(CLASSES[c]&&CLASSES[c].custom);
+/* isCustomCls — true for a Creator Studio class. */
+const isCustomCls=clsKey=>!!(CLASSES[clsKey]&&CLASSES[clsKey].custom);
 // Freedom: a winner with 50+ CF may take the rudis. They leave the system — Ludus record closed — and are memorialized among the Liberti.
-async function claimFreedom(x){
-  const p=x.p,ev=EV(),L=LOCATIONS[S.locIdx];
+async function claimFreedom(row){
+  const p=row.p,ev=EV(),L=LOCATIONS[S.locIdx];
   const rec=p.saved?(LUDUS_CACHE.find(g=>g.id===p.saved)||await Store.getDoc('gladiators',p.saved).catch(()=>null)):null;
-  const entry={name:p.name,cls:p.cls,clsName:CLASSES[p.cls].name,cf:x.f,event:`${ev.short||ev.n}${ev.sr?' · '+ev.sr:''}`,loc:L?L.n:'',date:new Date().toISOString().slice(0,10),
+  const entry={name:p.name,cls:p.cls,clsName:CLASSES[p.cls].name,cf:row.f,event:`${ev.short||ev.n}${ev.sr?' · '+ev.sr:''}`,loc:L?L.n:'',date:new Date().toISOString().slice(0,10),
     kP:rec?gk(rec,'P'):p.trophies.filter(t=>t.pk==='player').length,kN:rec?gk(rec,'N'):p.trophies.filter(t=>t.pk!=='player').length,
     wins:rec?rec.wins:1,events:rec?rec.events:1,coin:(rec?rec.coin:0)||p.coin,missio:!!S.missio,
     portrait:rec&&rec.portrait||gladPortrait(p.saved||p.name,p.cls)};
   // v0.27: the whole career, not just the last night — the saved record's totals plus this final event
   {const st=p.stats||{},R=rec||{};const hs=typeof houseCount==='function'?houseCount(S.attendance||0,S.seed,S.locIdx):0;
     entry.career={events:(R.events||0)+1,wins:(R.wins||0)+1,kP:entry.kP+(rec?0:0),kN:entry.kN,dmg:(R.dmg||0)+(st.dmgDealt||0),taken:(R.taken||0)+(st.dmgTaken||0),
-      cfSum:(R.cfSum||0)+x.f,best:Math.max(R.best||0,x.f),coin:entry.coin,pots:(R.pots||0)+(st.pots||0),house:(R.house||0)+hs,
+      cfSum:(R.cfSum||0)+row.f,best:Math.max(R.best||0,row.f),coin:entry.coin,pots:(R.pots||0)+(st.pots||0),house:(R.house||0)+hs,
       arenas:new Set([...(R.arenas||[]),S.locIdx]).size,fans:typeof fansFor==='function'?fansFor(p.name):0,
       fame:null,since:R.created||null,history:(R.history||[]).slice(-12).map(h=>({ev:h.event,loc:h.loc,won:h.won,cf:h.cf}))};
     if(rec){entry.career.kP=gk(rec,'P')+p.trophies.filter(t=>t.pk==='player').length;entry.career.kN=gk(rec,'N')+p.trophies.filter(t=>t.pk!=='player').length;entry.career.coin=(rec.coin||0)+p.coin}
-    entry.career.history.push({ev:entry.event,loc:entry.loc,won:true,cf:x.f});
+    entry.career.history.push({ev:entry.event,loc:entry.loc,won:true,cf:row.f});
     entry.kP=entry.career.kP;entry.kN=entry.career.kN;entry.wins=entry.career.wins;entry.events=entry.career.events}
   if(typeof flaviusMood==='function')flaviusMood('weep',5200,.95);
   await libertiAdd({...entry,mine:!p.cpu});
   if(rec){rec.status='freed';rec.roster=false;rec.carry=0;rec.fate='Freedom · the rudis';await Store.put('gladiators',rec.id,rec);await loadLudus().catch(()=>{})}
   return entry;
 }
+/* monthKey — "YYYY-MM" of a date — the Infamis month. */
 const monthKey=(d=new Date())=>d.toISOString().slice(0,7);
+/* monthName — "Month YYYY" for a "YYYY-MM" key. */
 const monthName=mo=>{const [y,m]=mo.split('-');return new Date(+y,+m-1,15).toLocaleString(undefined,{month:'long',year:'numeric'})};
 // The Infamis is a monthly season: only this month's top 20 stay on the board; each month's best is archived as its champion.
 async function infamisMaintain(mo=monthKey()){
@@ -306,6 +333,7 @@ async function infamisMaintain(mo=monthKey()){
     for(const r of cur.slice(20))await Store.del('infamis',r.id);
   }catch(e){}
 }
+/* infirmaryTick — each event, untended Ludus infirmary patients wait one more; after 4 the infirmary decides: 30% die, 30% limp off into the stands, 40% walk out healed (−3 CF). TWEAK: the 4 events and the .3/.6 odds. */
 async function infirmaryTick(){
   for(const g of [...LUDUS_CACHE]){if(g.status!=='infirmary')continue;
     g.infirm=g.infirm||{wait:0,need:'a Medicus regimen',cost:MEDICUS};g.infirm.wait++;
@@ -322,6 +350,7 @@ async function infirmaryTick(){
       log(`🏥 <b>${esc(g.name)}</b> grits their teeth and walks out of the infirmary HEALED by sheer spite — back on the rolls (−3 CF for the limp).`)}}
   await loadLudus().catch(()=>{});
 }
+/* recordEvent — after a counted event: the latest-playthrough card, Infamis rows for winners, per-event high scores, Hall of Flavius progress, then sponsors, the Road and achievements. Custom events only update the latest card. */
 async function recordEvent(rows){
   try{await infirmaryTick()}catch(e){}
   const ev=EV(),L=LOCATIONS[S.locIdx];
@@ -362,6 +391,7 @@ async function recordEvent(rows){
    v0.24 THE HALL OF FLAVIUS, FOR REAL: achievements that unlock rewards, the Road of Flavius,
    the scribes' seeded event records, and the Liberti fed from every road to freedom.
    ===================================================================== */
+/* ACHIEVEMENTS — the Annals achievements: key, name, how to earn it and its reward (r). TWEAK: the rewards and texts. */
 const ACHIEVEMENTS=[
   {k:'tutor',n:'Graduate of the Ludus',d:'Win the Learn-to-play bout.',r:{title:'Graduate of the Ludus'},rn:'Title: Graduate of the Ludus'},
   {k:'first',n:'First Blood of Glory',d:'Win an event with a gladiator of your own.',r:{helm:'laurel'},rn:'The laurel wreath for your tokens'},
@@ -377,10 +407,14 @@ const ACHIEVEMENTS=[
   {k:'road3',n:'Pilgrim of the Road',d:'Walk three stages of the Road of Flavius.',r:{face:'warpaint'},rn:'Road war paint for your tokens'},
   {k:'road12',n:'The Road of Flavius',d:'Win all twelve arenas, in the Hall\u2019s order, with ONE gladiator.',r:{title:'Walker of the Road',armor:'flavius'},rn:"Flavius's own gilded armor — and immortality in the Annals"}];
 window.ACH_GOT=window.ACH_GOT||{};
+/* loads the earned achievements into window.ACH_GOT shortly after start. */
 setTimeout(()=>{achLoad().then(A=>{window.ACH_GOT=A.got||{}}).catch(()=>{})},600);
+/* achLoad — the achievements record from Store hall/ach (earned dates, events played, classes that have won). */
 async function achLoad(){return (await Store.getDoc('hall','ach').catch(()=>null))||{got:{},events:0,classWins:[]}}
-async function achGrant(A,k){if(A.got[k])return false;A.got[k]=new Date().toISOString().slice(0,10);window.ACH_GOT={...A.got};const a=ACHIEVEMENTS.find(x=>x.k===k);
+/* achGrant — grants an achievement once: date, toast, fanfare and a log line. Returns false if it was already earned. */
+async function achGrant(ach,key){if(ach.got[key])return false;ach.got[key]=new Date().toISOString().slice(0,10);window.ACH_GOT={...ach.got};const a=ACHIEVEMENTS.find(x=>x.k===key);
   if(typeof mToast==='function')setTimeout(()=>mToast(`🏆 <b>Achievement: ${esc(a.n)}</b> — ${esc(a.d)}`),900);if(typeof sfx==='function')setTimeout(()=>sfx('fanfare'),900);if(S&&!S.sim)log(`🏆 <b>Achievement unlocked: ${esc(a.n)}</b> — ${esc(a.d)} Engraved in the Annals.`,'big');return true}
+/* achievementsAfterEvent — checks every achievement after a counted human event and saves the record. */
 async function achievementsAfterEvent(rows,hall){if(S.sim||HEADLESS||(EV()&&EV().custom))return;const A=await achLoad();A.events=(A.events||0)+(S.simmed?0:1);
   const mine=rows.filter(x=>!x.p.cpu);const won=mine.filter(x=>x.won);
   if(won.length&&S.tutorial)await achGrant(A,'tutor'); // v0.42
@@ -391,10 +425,13 @@ async function achievementsAfterEvent(rows,hall){if(S.sim||HEADLESS||(EV()&&EV()
   for(const x of won)if(BASE_CLS.includes(x.p.cls)&&!A.classWins.includes(x.p.cls))A.classWins.push(x.p.cls);if(BASE_CLS.every(c=>A.classWins.includes(c)))await achGrant(A,'eightwins');
   if((hall.locs||[]).length>=12)await achGrant(A,'twelve');if(A.events>=25)await achGrant(A,'veteran');
   await Store.put('hall','ach',A)}
+/* achUnlocked — the earned achievements map {key: date}. */
 async function achUnlocked(){const A=await achLoad();return A.got||{}}
 // The Road of Flavius: commit ONE Ludus gladiator; win the twelve arenas in the Hall's order, each at its own event.
 async function roadLoad(){return (await Store.getDoc('hall','road').catch(()=>null))||null}
-function roadStage(R){const li=HALL_ORDER[R.step];return {li,L:LOCATIONS[li],ev:LOCATIONS[li].ev}}
+/* roadStage — the Road of Flavius stage a road record is on: location index, location and its event. */
+function roadStage(road){const li=HALL_ORDER[road.step];return {li,L:LOCATIONS[li],ev:LOCATIONS[li].ev}}
+/* roadAfterEvent — after an event on the Road: a win moves the walker on a stage (achievements at 3 and 12), a loss ends the road; past roads are kept (20). */
 async function roadAfterEvent(rows){if(S.sim||HEADLESS||!S.road)return;const R=await roadLoad();if(!R||R.over||R.gid!==S.road.gid||R.step!==S.road.step)return;
   const x=rows.find(r=>r.p.saved===R.gid&&!r.p.cpu);if(!x)return;const st=roadStage(R);
   if(x.won){R.history.push({step:R.step,loc:st.L.n,ev:EVENTS[st.ev].n,cf:x.f,date:new Date().toISOString().slice(0,10)});R.step++;
@@ -413,21 +450,23 @@ async function seedEventRecords(onProg){if(S&&S.phase!=='setup'&&!S.over)return 
   await Store.put('hall','eventRecords',er);return true}
 // every freedom — from an event, or a Manager-mode rudis — is written among the Liberti
 // v0.27 THE CAREER PLAQUE: every Liberti keeps the totals of a whole life on the sand
-function libertiCareerHTML(r){const c=r.career||{events:r.events||1,wins:r.wins||1,kP:r.kP||0,kN:r.kN||0,coin:r.coin||0,best:r.cf,cfSum:r.cf,legacy:1};
-  const fans=c.fans??(typeof fansFor==='function'?fansFor(r.name):0);
+function libertiCareerHTML(entry){const c=entry.career||{events:entry.events||1,wins:entry.wins||1,kP:entry.kP||0,kN:entry.kN||0,coin:entry.coin||0,best:entry.cf,cfSum:entry.cf,legacy:1};
+  const fans=c.fans??(typeof fansFor==='function'?fansFor(entry.name):0);
   const fame=c.fame!=null&&c.fame!==undefined&&c.fame!==null?c.fame:Math.max(0,Math.min(100,Math.round((c.wins||0)*5+(c.events||0)+fans*2+(c.best||0)/5)));
   const pct=c.events?Math.round(100*(c.wins||0)/c.events):0;const k=v=>typeof houseK==='function'?houseK(v):v;
   const T=(v,l,t='')=>`<span title="${esc(t)}"><b>${v}</b>${l}</span>`;
   return `<div class="lcareer"><div class="sect" style="margin:6px 0 4px">📜 Career${c.legacy?' <span class="rc-sub">(freed before career ledgers — last-event figures)</span>':c.seasons?` <span class="rc-sub">· ${c.seasons} season${c.seasons===1?'':'s'}${c.ludus?' with '+esc(c.ludus):''}${c.age?' · freed at '+c.age:''}</span>`:c.since?` <span class="rc-sub">· on the rolls since ${esc(c.since)}</span>`:''}</div>
     <div class="rc-stats lc-big">${T(c.events||0,'Events')}${T(`${c.wins||0}<small> · ${pct}%</small>`,'Wins')}${T(c.kP||0,'⚔ Gladiators slain')}${T(c.kN||0,'🐾 Beasts slain')}</div>
     <div class="rc-stats">${T(fans?'≈'+k(fans*1000):'—','👥 Fans','Named regulars across the empire who still follow them — each stands for about a thousand Romans')}${T(fame,'★ Fame','Renown across the empire, 0–100')}${c.dmg!=null?T(c.dmg,'🗡 Damage dealt'):''}${c.taken!=null?T(c.taken,'🩸 Damage taken'):''}
-      ${T(c.best||r.cf,'Best Fate CF')}${c.cfSum!=null&&!c.legacy?T(c.cfSum,'Career Fate CF','Every Fate score of every event, added up'):''}${T(c.coin||0,'Coin')}${c.house?T(k(c.house),'🏟 Watched by','Everyone who ever watched them fight'):''}${c.arenas?T(c.arenas,'Arenas'):''}</div>
+      ${T(c.best||entry.cf,'Best Fate CF')}${c.cfSum!=null&&!c.legacy?T(c.cfSum,'Career Fate CF','Every Fate score of every event, added up'):''}${T(c.coin||0,'Coin')}${c.house?T(k(c.house),'🏟 Watched by','Everyone who ever watched them fight'):''}${c.arenas?T(c.arenas,'Arenas'):''}</div>
     ${c.history&&c.history.length>1?`<div class="lc-road" title="Their last events, oldest first">${c.history.map(h=>`<span class="${h.won?'w':''}" title="${esc(h.ev)} · ${esc(h.loc)} · ${h.cf} CF">${h.won?'🏆':'·'}${h.cf}</span>`).join('')}</div>`:''}
-    <div class="rc-sub" style="margin-top:4px">Took the rudis with <b>${r.cf} CF</b> after ${esc(r.event)}${r.loc?' at '+esc(r.loc):''}${r.missio?' · missio fulfilled':''}.</div></div>`}
+    <div class="rc-sub" style="margin-top:4px">Took the rudis with <b>${entry.cf} CF</b> after ${esc(entry.event)}${entry.loc?' at '+esc(entry.loc):''}${entry.missio?' · missio fulfilled':''}.</div></div>`}
+/* libertiAdd — adds a freed gladiator to the Liberti (newest first, 80 kept) and grants the freedom achievement for your own. */
 async function libertiAdd(entry){const h=(await Store.getDoc('hall','liberti').catch(()=>null))||{list:[]};if(h.list.some(x=>x.name===entry.name&&x.date===entry.date))return;h.list.unshift(entry);h.list=h.list.slice(0,80);await Store.put('hall','liberti',h);
   try{const A=await achLoad();if(entry.mine)await achGrant(A,'freed');await Store.put('hall','ach',A)}catch(e){}}
 
 /* ================= FESTIVALS ================= */
+/* startFestival — starts a festival with its first leg, the chariot race at Ludus Magnus (location 7) with no PvP. */
 function startFestival(kind,sr,seats,opts){
   const fest={kind,sr,stage:1,seats:seats.map(s=>({...s}))};
   startEvent({ev:'chariot',loc:7,seats,opts,fest,chPvp:false});
@@ -441,7 +480,9 @@ const FEST_KINDS={
   vulcanalia:{n:'Vulcanalia',boon:"+2 AP forged onto every gladiator's armor between events",ap:s=>s.boost={...(s.boost||{}),ap:2}},
   fortuna:{n:'Fors Fortuna',boon:'+2 CF and +2 coin to every gladiator — Fortuna spreads it around',ap:s=>{s.cfStart+=2;s.coinStart+=2}},
 };
+/* festName — a festival kind's display name. */
 const festName=k=>FEST_KINDS[k]?FEST_KINDS[k].n:String(k||'Festival');
+/* continueFestival — after the festival's chariot race: carries CF and coin, applies the festival's gift and starts the Summa Rudis event in race order. */
 function continueFestival(rows){
   const f=S.fest;const FK=FEST_KINDS[f.kind]||FEST_KINDS.ludi;
   const ranked=[...rows].sort((a,b)=>(b.won-a.won)||((b.p.alive-a.p.alive))||((b.p.ch.laps+chProg(b.p.r,b.p.c))-(a.p.ch.laps+chProg(a.p.r,a.p.c))));
@@ -453,6 +494,7 @@ function continueFestival(rows){
 }
 
 /* ================= CARMINA FESCENNINA ================= */
+/* runCarmina — Carmina Fescennina before the event: each gladiator recites one unclaimed verse (CPUs by personality) or opts out. */
 async function runCarmina(){
   log('Carmina Fescennina: each gladiator recites one verse.','hd');
   const used=new Set();
@@ -468,7 +510,9 @@ async function runCarmina(){
 }
 
 /* ================= MISSIOS ================= */
+/* newMissio — a fresh missio record for a character of a printed class. */
 function newMissio(cls,name){return {id:`m${Date.now()}`,name,cls,step:0,cfCarry:0,rr:0,trophies:0,events:0,severed:[],status:'active',history:[],started:new Date().toISOString().slice(0,10)}}
+/* missioCfg — the startEvent config for a missio's current step: the event, location, seats (the hero plus CPU classes the step names), teams and options. */
 function missioCfg(rec){
   const st=MISSIOS[rec.cls].path[rec.step];const ev=EVENTS[st.ev];
   const me={cls:rec.cls,cpu:false,name:rec.name,cfStart:rec.cfCarry,severed:rec.severed,noHelm:st.noHelm,noZora:st.noZora,saved:rec.gladId||undefined};
@@ -484,12 +528,14 @@ function missioCfg(rec){
   if(st.fest)return {fest:{kind:st.fest,sr:st.ev},seats,opts,missio};
   return {ev:st.ev,loc:st.loc,seats,opts,missio,noCommodus:!!st.noCommodus,chPvp:st.ev==='chariot'?true:undefined};
 }
+/* startMissio — starts a missio's current step (a festival step starts with its chariot race). */
 function startMissio(rec){
   const cfg=missioCfg(rec);S&&(S.over=true);
   if(cfg.fest){const fest={kind:cfg.fest.kind,sr:cfg.fest.sr,stage:1,seats:cfg.seats.map(s=>({...s}))};startEvent({ev:'chariot',loc:7,seats:cfg.seats,opts:cfg.opts,fest,chPvp:false,missio:cfg.missio});}
   else startEvent(cfg);
   S.missioRR=rec.rr;
 }
+/* advanceMissio — after a missio event: pass → carry CF, coin and severed limbs to the next step (complete after 5); fail → the missio ends (struck from the rolls if the hero died). Replaced by 84-v64. */
 async function advanceMissio(rows){
   const recs=await Store.list('missios');const rec=recs.find(r=>r.id===S.missio.id);if(!rec)return null;
   const x=rows.find(x=>!x.p.cpu&&x.p.name===rec.name)||rows[0];const p=x.p;
@@ -515,18 +561,19 @@ async function advanceMissio(rows){
 }
 
 /* v0.24: results show the gladiator — their portrait with their board token — not the old class-loadout cards */
-function pArt(p,size='sm'){if(CLASSES[p.cls]&&CLASSES[p.cls].custom)return `<span class="partw">${classArt(p.cls,size)}<span class="ptok">${figureHTML(tokenForCls(p.cls),size==='md'?56:38)}</span></span>`;
-  let look=null;try{const w=typeof mgrWorldAny==='function'?mgrWorldAny():null;const g=w&&p.mgrGid&&w.glads.find(x=>x.id===p.mgrGid);if(g&&typeof gLook==='function')look=gLook(g)}catch(e){}
-  if(!look&&typeof gladPortrait==='function')look=gladPortrait(p.name||String(p.id),p.cls);
-  return `<span class="partw">${look?portraitHTML({name:p.name,portrait:look,color:p.color},size):classArt(p.cls,size)}<span class="ptok">${figureHTML(tokenForCls(p.cls),size==='md'?56:38)}</span></span>`}
+function pArt(player,size='sm'){if(CLASSES[player.cls]&&CLASSES[player.cls].custom)return `<span class="partw">${classArt(player.cls,size)}<span class="ptok">${figureHTML(tokenForCls(player.cls),size==='md'?56:38)}</span></span>`;
+  let look=null;try{const w=typeof mgrWorldAny==='function'?mgrWorldAny():null;const g=w&&player.mgrGid&&w.glads.find(x=>x.id===player.mgrGid);if(g&&typeof gLook==='function')look=gLook(g)}catch(e){}
+  if(!look&&typeof gladPortrait==='function')look=gladPortrait(player.name||String(player.id),player.cls);
+  return `<span class="partw">${look?portraitHTML({name:player.name,portrait:look,color:player.color},size):classArt(player.cls,size)}<span class="ptok">${figureHTML(tokenForCls(player.cls),size==='md'?56:38)}</span></span>`}
 /* ================= FATES VIEWER ================= */
+/* fatesHTML — the Fates table: after an event, how each fate was decided; during one, where each gladiator stands (if they fall / if they win). */
 function fatesHTML(){
   // v0.24: once the event is over, the table shows what WAS decided, not guesses
   if(S&&S.over&&S.result&&S.result.rows){const R=S.result.rows;const fr=f=>fateRow(f);
     const done=`<h4>How each gladiator's fate was decided</h4><table class="tally"><tr><th>Gladiator</th><th>Result</th><th>Final CF</th><th>Fate</th></tr>${R.map(r=>{const p=S.players[r.id];return `<tr><td>${p?nm(p):'?'}</td><td>${r.won?'<b style="color:var(--gold2)">🏆 won</b>':p&&p.retired?'retired':p&&p.alive===false?'fell':'standing'}</td><td class="n">${r.f}</td><td><b>${esc(String(r.fate||fr(r.f).g+' · '+fr(r.f).n))}</b></td></tr>`}).join('')}</table>`;
     const who=f=>R.filter(r=>fr(r.f)===f).map(r=>{const p=S.players[r.id];return `<span class="badge ${r.won?'gold':''}" style="border-color:${p?p.color:''}">${p?esc(p.name):'?'}</span>`}).join(' ');
     return done+`<h4>The Fates (p.54-55)</h4><table class="tally"><tr><th>CF</th><th></th><th>Fate</th><th></th></tr>${FATES.map(f=>`<tr><td class="n" style="white-space:nowrap">${f.hi>999?f.lo+'+':f.lo===f.hi?f.lo:f.lo+'–'+f.hi}</td><td>${cardHTML('f:'+f.img,'sm')}</td><td><b>${f.g} · ${f.n}</b><br><span style="color:var(--muted);font-size:13px">${f.t}</span></td><td>${who(f)}</td></tr>`).join('')}</table>`}
-  const live=S&&S.players&&S.phase!=='setup'?S.players.map(p=>{const fall=finalCF(p,false),win=finalCF(p,true);return {p,fall,win,rf:fateRow(fall),rw:fateRow(win)}}):[];
+  const live=S&&S.players&&S.phase!=='setup'?S.players.map(player=>{const fall=finalCF(player,false),win=finalCF(player,true);return {p:player,fall,win,rf:fateRow(fall),rw:fateRow(win)}}):[];
   const who=f=>live.filter(x=>x.rf===f).map(x=>`<span class="badge" style="border-color:${x.p.color}">${x.p.name}</span>`).join(' ')+live.filter(x=>x.rw===f&&x.rw!==x.rf).map(x=>`<span class="badge gold" title="if they win">${x.p.name} (if win)</span>`).join(' ');
   return `${live.length?`<h4>Where each gladiator stands right now</h4><table class="tally"><tr><th>Gladiator</th><th>CF now</th><th>If they fall</th><th>If they win</th></tr>${live.map(x=>`<tr><td>${nm(x.p)}</td><td class="n">${x.p.cf}</td><td>${x.fall} CF · <b>${x.rf.n}</b></td><td>${x.win} CF · <b>${x.rw.n}</b></td></tr>`).join('')}</table><p style="margin-top:6px">“If they fall” subtracts 5 CF per unrevealed Mandata Flavi. “If they win” adds the event reward, 5 CF per 3 trophies and 2 CF per Flavius item.</p>`:''}
   <h4>The Fates (p.54-55)</h4><table class="tally"><tr><th>CF</th><th></th><th>Fate</th><th></th></tr>${FATES.map(f=>`<tr><td class="n" style="white-space:nowrap">${f.hi>999?f.lo+'+':f.lo===f.hi?f.lo:f.lo+'–'+f.hi}</td><td>${cardHTML('f:'+f.img,'sm')}</td><td><b>${f.g} · ${f.n}</b><br><span style="color:var(--muted);font-size:13px">${f.t}</span></td><td>${who(f)}</td></tr>`).join('')}</table>`;
@@ -534,6 +581,7 @@ function fatesHTML(){
 if($('#btnFates'))$('#btnFates').onclick=()=>{if(modalBusy())return;modal('Fate',fatesHTML(),[{label:'Close',value:1}],{wide:1})};
 
 /* ================= INFAMIS & HALL OF FLAVIUS ================= */
+/* hallHTML — the Annals window body for a tab: Infamis, event records, Hall of Flavius (achievements, arenas, the Road), Liberti, trophies, archives or missios. */
 async function hallHTML(tab){
   const tabs=`<div class="seg" role="tablist" style="margin-bottom:10px">${[['infamis','Infamis'],['events','Event records'],['hall','Hall of Flavius'],['liberti','Liberti'],['trophies','🏆 Trophy case'],['missios','Missios'],['ludus','🛡 Your Play Now Gladiators']].map(([k,l])=>`<button type="button" data-tab="${k}" class="${tab===k?'on':''}">${l}</button>`).join('')}</div>`;
   if(tab==='events'){
@@ -606,6 +654,7 @@ async function hallHTML(tab){
   const ms=(await Store.list('missios')).sort((a,b)=>b.id.localeCompare(a.id));
   return tabs+`<p>Missio campaigns (p.56-57). Start or continue one from New event → Missio.</p>${ms.length?`<table class="tally"><tr><th>Character</th><th>Class</th><th>Step</th><th>Status</th><th>RR</th><th>Trophies</th><th>History</th></tr>${ms.map(m=>`<tr><td><b>${esc(m.name)}</b></td><td>${CLASSES[m.cls].name}</td><td class="n">${Math.min(m.step+1,5)}/5</td><td>${m.status}</td><td class="n">${m.rr}</td><td class="n">${m.trophies}</td><td style="font-size:13px;color:var(--muted)">${(m.history||[]).map(h=>`${h.ev} ${h.won?'won':h.cf+' CF'}`).join(' → ')}</td></tr>`).join('')}</table>`:'<p style="color:var(--muted)">No missios yet.</p>'}`;
 }
+/* esc — HTML-escapes text (& < > ") for template literals. */
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let HALL_TO_LUDUS=0; // v0.43: the Ludus lives inside the Annals now — its tab opens the roster window and comes back here
 async function openHall(tab='infamis'){
@@ -618,19 +667,21 @@ async function openHall(tab='infamis'){
       if(act==='go'){const R=await roadLoad();if(!R||R.over)return;const g=LUDUS_CACHE.find(x=>x.id===R.gid);if(!g||!gladActive(g)){if(typeof mToast==='function')mToast('That gladiator can no longer walk the road.');return}const st=roadStage(R);
         const cur=CUR_MODAL;if(cur)cur.done(1);setTimeout(()=>{CFG.mode='event';CFG.loc=st.li;CFG.ev=st.ev;const E=EVENTS[st.ev];CFG.n=clamp(CFG.n,E.min,E.max);summonToSetup(g);CFG.road={gid:R.gid,step:R.step,loc:st.li,ev:st.ev};openSetup()},120)}}}}).then(v=>{$('#mBody').onclick=null;if(!HALL_TO_LUDUS&&typeof screenSettle!=='function'&&typeof menuShow==='function'&&$('#mainMenu').hidden&&!(S&&!S.over&&S.phase!=='setup')){setTimeout(()=>{if($('#modal').hidden&&$('#mainMenu').hidden&&!(S&&!S.over&&S.phase!=='setup')){MM.fromMenu=false;menuShow()}},320)}if(HALL_TO_LUDUS){HALL_TO_LUDUS=0;setTimeout(()=>{if(typeof openLudus==='function')openLudus(null,true)},60)}});
 }
+/* the top-bar Annals button. */
 $('#btnHall').onclick=()=>openHall('infamis');
 
 /* A Ludus gladiator can start (or pick up) the missio of their class: events already won or survived with 20+ CF,
    in the missio's order and at the right locations, count as completed steps. */
-function missioCredit(g){
-  const path=MISSIOS[g.cls].path;let step=0;
-  for(const h of (g.history||[])){if(step>=path.length)break;const st=path[step];
+function missioCredit(glad){
+  const path=MISSIOS[glad.cls].path;let step=0;
+  for(const h of (glad.history||[])){if(step>=path.length)break;const st=path[step];
     if(h.ev===st.ev&&(h.li==null||h.li===st.loc)&&(st.win?h.won:(h.won||h.cf>=20)))step++;}
   return Math.min(step,4);
 }
-async function missioFromLudus(g){
-  const step=missioCredit(g);
-  const rec={...newMissio(g.cls,g.name),step,cfCarry:g.carry||0,rr:g.coin||0,trophies:(g.kP||0)+(g.kN||0),events:g.events||0,severed:g.severed||[],gladId:g.id,history:[]};
+/* missioFromLudus — creates (and saves) a missio for a Ludus gladiator, crediting the steps their history already covers. */
+async function missioFromLudus(glad){
+  const step=missioCredit(glad);
+  const rec={...newMissio(glad.cls,glad.name),step,cfCarry:glad.carry||0,rr:glad.coin||0,trophies:(glad.kP||0)+(glad.kN||0),events:glad.events||0,severed:glad.severed||[],gladId:glad.id,history:[]};
   await Store.put('missios',rec.id,rec);return rec;
 }
 
@@ -642,4 +693,5 @@ async function seedRun(btn){if(window._seeding)return;window._seeding=1;const bo
   cb.start=(k,done,total)=>{const E=EVENTS[k];const L=LOCATIONS[E.loc||6];const el=document.getElementById('seedCity');if(el)el.innerHTML=`${pickOne(['Copying the scrolls of','Unrolling the ledgers of','Reading the tallies of','Dusting off the records of'])} <b>${esc(L?L.n:'Roma')}</b> — ${esc(E.n)}`;const c=document.getElementById('seedCount');if(c)c.textContent=`${done} / ${total}`};
   try{await seedEventRecords(cb)}finally{window._seeding=0}
   const el=document.getElementById('seedCity');if(el)el.innerHTML='✔ Every scroll is copied.';setTimeout(()=>{if($('#hallBody'))openHall('events')},1400)}
+/* the "Unroll the old scrolls" button, wherever it is drawn. */
 document.addEventListener('click',e=>{const b=e.target.closest('[data-seedrun]');if(b&&!b.disabled)seedRun(b)});
