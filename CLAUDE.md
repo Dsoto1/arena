@@ -509,7 +509,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   Today ribbon, playlists last, phone one column), playlists scroll sideways ≤760 px, border tones per event. `125-v81fix` — #cardShow
   scales on phones/tablets; ratings always show (fold removed); Online rail one swipe row on phones. Also: 106 ratfold touch double toggle
   (RAT_PD), 05-flow armorDesc no "chest chest". Tests `tv81p`, `tv81a`, `tv81o`. tools: per-test kill limit = max(400, 1.6×time+60);
-  release.sh share build only with SHARE=1; flavius.sh `release` = server → game (+ play/flavius-rule-arena.zip) → site → privacy,
+  release.sh share build always (SHARE=0 skips; it is the site download play/flavius-rule-arena.zip — his call, v0.82) + advert shot share/arena_shot.webp → play/arena_shot.webp on play.html (tools/siteshot.js); flavius.sh `release` = server → game (+ play/flavius-rule-arena.zip) → site → privacy,
   `login` (two-step login.flaviusrule.com, remembered in ~/.flavius.conf). Site v0.81 (website/, not in git): Contact off the nav, Media =
   Videos only, Play page Online card + What's new.
 - **v0.82 (126-130 + server, protocol VER 5, contract tools/plans/onl82-contract.md):** `126-v82fix` — unique spawn cards leave the deck

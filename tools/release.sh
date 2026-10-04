@@ -6,7 +6,7 @@
 #   3. page hygiene: no cheat word (from CLAUDE.md "Current words") and no e-mail address in plain text
 #   4. FULL regression (tools/smartreg.js --full — releases never skip a test)
 #   4b. the advert shot for flaviusrule.com/play.html (tools/siteshot.js → share/arena_shot.webp → the game zip's play/arena_shot.webp)
-#   5. share build (tools/mkshare.py) + its smoke test + zip — ONLY with SHARE=1 (off by default since v0.81: the site
+#   5. share build (tools/mkshare.py) + its smoke test + zip — ALWAYS (SHARE=0 skips it): the site's download is play/flavius-rule-arena.zip (his pick, v0.82; was off by default in v0.81: the site
 #      and the artifact use the page + assets; the in-game ⇩ download builds its own one-file copy in the browser)
 # Left for Claude/the owner: publish to the artifact (read the live version first), update CLAUDE.md, send the zip.
 set -e
@@ -36,7 +36,7 @@ step "4b advert shot (play.html)"
 mkdir -p share && node tools/siteshot.js "$PWD/flavius-arena.html" share/arena_shot.png | tail -1
 python3 -c "from PIL import Image;im=Image.open('share/arena_shot.png').convert('RGB');im=im.resize((1200,round(im.height*1200/im.width)),Image.LANCZOS);im.save('share/arena_shot.webp',quality=82,method=6)" && rm -f share/arena_shot.png
 echo "share/arena_shot.webp → the game zip's play/arena_shot.webp (flavius.sh game uploads it; play.html shows it)"
-if [ "$SHARE" != "1" ]; then printf '\nREADY v%s (no share build; SHARE=1 makes one) — next: publish (read the live artifact first), update CLAUDE.md, commit.\n' "$V"; exit 0; fi
+if [ "$SHARE" = "0" ]; then printf '\nREADY v%s (no share build — SHARE=0 skipped it) — next: publish (read the live artifact first), update CLAUDE.md, commit.\n' "$V"; exit 0; fi
 step "5 share build"
 python3 tools/mkshare.py "$V" | tail -1
 mkdir -p /tmp/sharetest39 && cp "share/flavius-rule-arena-v$V.html" /tmp/sharetest39/
