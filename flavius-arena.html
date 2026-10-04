@@ -1141,7 +1141,7 @@ button.railhd.fold{all:unset;box-sizing:border-box;display:none;cursor:pointer;w
 <div id="boot" aria-hidden="true"><img src="assets/logo.png" alt=""><i></i></div>
 
 <header class="bar">
-  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.83</span></div>
+  <div class="brand"><a href="https://flaviusrule.com" target="_blank" rel="noopener noreferrer" id="brandLink" title="FlaviusRule.com (opens in a new tab)"><img src="assets/logo.png" alt="Flavius Rule — FlaviusRule.com"></a><h1 class="sr">Flavius Rule</h1><span class="ed">arena · v0.84</span></div>
   <div class="status" id="status"></div>
   <div class="tools speedtray" id="speedTray">
     <div class="seg speedseg" role="group" aria-label="CPU speed"><span class="lbl">Speed</span><button type="button" data-speed="pause" title="Pause CPU turns">❚❚ Pause</button><button type="button" data-speed="step" title="Step: each CPU action waits for you — Next ▶ or Space — with a caption explaining it">⏯ Step</button><button type="button" data-speed="slow" class="on">Slow</button><button type="button" data-speed="normal">Normal</button><button type="button" data-speed="fast">Fast</button></div>
@@ -22817,6 +22817,7 @@ function piaCardURL(cls){if(PIA_URLS[cls])return PIA_URLS[cls];const C=CLASSES[c
    milestone, a title and a few highlights. Small fixes stay out. Newest first; the first card is "What's new".
    ===================================================================== */
 const MILESTONES=[
+  {v:'0.84',ic:'🔨',t:'Named armor, the auction and the painted walls',hi:['Online: named armor with holographic cards, Flavius’s Auction (only Flavius sells; escrow, late bids extend), the season’s weekly challenge with one gift a week, take back a seat a CPU took, “your turn” notices','Manager: paint the programmata — notices on city walls for fame, fans and gate money; rivals deface them; the Recruiter and Medicus write more','Blood soaks into the sand and fades, dust settles on the fallen, rubble settles','One tab per save, gentle backup reminders, the downloaded game points to Online on the site, and the page survives browser translation'],fx:['Main menu: Manager under Play Now, 💾 Saves before Settings','Settings tidied: one text size, colour-blind themes, language row, light board for old phones, restore defaults, optional end-turn confirm','Online landing fits without scrolling','Roster depth chart as plaques on the barracks wall — no empty columns','Wagers wear 💰 everywhere','A named and a printed piece can’t share one spot']},
   {v:'0.83',ic:'🗡',t:'Treasures, scars and the council',hi:['Online: eight ranks, a house treasury, Armory offerings, broken gear and repairs, a killer’s loot, Flavius’s Gifts with named weapons, Ludi Infames, a start countdown, trophies, house profiles you can follow, and a Wagers tab','Manager: a council of six advisors with faces — they sign their letters','Arrows and bolts stick where they hit (they turn with the minis); a bolt through Tholo’s eye fells him','The sand looks lived in: 3D spike caps, the Arena Chest as on its token, 3D pots, sand grain and old scars'],fx:['Padding stacks per point — upper and lower padding on one leg, greaves on top','The carried chest sits in the inventory as its token','Sharp weapon card backs for every level; Leather Tasset card turned the right way','Main-menu show scales down on phones; letter buttons readable on the parchment','Floor Spikes medallion']},
   {v:'0.82',ic:'🏛',t:'Domus, Glory and the beasts’ own cards',hi:['Online: found your house (Domus) — 4 gladiators, a record, a storeroom to equip them, a patron in the stands; ranks by Glory with a rank bar; fuller rewards at fuller tables','The stands choose together: every ticket holder gets a private window each rotation, throws land on the tile picked; speared ticket holders are refunded','Guests can watch without signing in; invites end with their room; free seats and Flavius’s guest pass for the poor','Every beast has its two-sided card — it turns over when the beast enters; make your own beasts unique, give them 1 or 3 states and a spawn card; Tholo + 3 beast slots per arena deck','Spear a spectator and Flavius scowls, refunds the seat and hands you a Mandate from Flavius'],fx:['Phones and tablets: hold the menu’s version badge for words of power','Phones sideways: your move keeps the board clear — ⚔ glows and opens the actions, picking one shuts them','Flavius’s box is smaller on phones','Fewer spiders in the Blessings bag (2)','Open Arena Chest glimmers gold; the chest’s Level 4 card turns over landscape','The round’s rules sit only in the turn panel’s ⓘ','Pillar shadows sit under the base; floor spikes in iron and bronze; pieces turn to face what they attack','Sculpted tokens for online gladiators; a random class to start','Main menu: Play Now and Manager Mode side by side, lessons under Tutorials','Tholo’s card is pulled once he is on the sand; the Hero stands as tall as the rest; Tholo looks like his card']},
   {v:'0.81',ic:'🛡',t:'Fair drafts, falling pillars, sharper armor',hi:['Drafts offer only what fits your gladiator, two to a row; the Juggernaut picks from the real arena deck','A toppled pillar says where its offering fell: one tile back from another pillar, under a beast, straight to a gladiator, into the spikes','Sharper armor art, the Thracian Helm for the Hero, Forged Chest Armor for the Veteranus; dropped gear shows the class mosaic','Online: results are sent the moment the bout ends, invites die with their room, a new landing with the world behind your gladiator'],fx:['Belt I, Steel Helm, Leather Greaves, Centurian Helm and Ornate Chest back in the market','The bar under the arena stays put','Online CF shows the wheat','Pair leg cards read as a V','Stands in wood']},
@@ -37287,6 +37288,251 @@ function pg84All(){const w=typeof W_==='function'?W_():null;if(!w||!w.mgrs)retur
 .pg84city{margin:2px 0 4px}
 @media (max-width:600px){.pg84l2{font-size:19px}.pg84cities{grid-template-columns:repeat(2,1fr)}}
 `;document.head.appendChild(st)}
+/* =====================================================================
+   142-V84UI · v0.84 Settings tidy + the Online landing on one screen (Virgilante's picks 2026-10-04)
+   =====================================================================
+   A. SETTINGS TIDY (settingsHTML / openSettings wrappers; every earlier wrapper's output is post-processed here):
+      • tabs: General · 🎨 Themes · 🗿 Tokens · 🎭 Editors · 🔊 Audio · 💾 Saves (Profiles is gone: openSettings('profiles') → Themes).
+      • General opens with 🌐 Language (LANGS84 — English only for now; SETTINGS.lang) and the browser-translate hint.
+      • 🎓 Lesson buttons row removed (General + Rules & strategy → Lessons): lessonsMenuVis no longer hides lessons — the
+        main menu's 🎓 Tutorials button (126-v82fix) folds #mmLearn, both lessons always inside.
+      • ONE text size: Accessibility → Text size is a slider 90–130 % (SETTINGS.tscale; CSS zoom via body.tsz84 + --tsz84 on
+        panels/log/side/windows/menu, never the canvas). Themes → "Text & UI size" and the "Large text" theme are gone;
+        applyTheme always runs at scale 100. Migration once (localStorage flavius_set84): an old theme scale / Large text →
+        SETTINGS.tscale.
+      • ONE colour-blind control: Accessibility → Colour-blind select Off / Red-green / Blue-yellow (SETTINGS.cvdMode) applies
+        the Red-green safe / Blue-yellow safe theme (keeping your sliders); SETTINGS.cvd (class letters, Okabe–Ito, blue/orange
+        badges) is on for Red-green only. Picking a theme in Themes moves the select with it (a cvd theme → its mode, any
+        other → Off). applyAccess no longer stomps a theme's class colours when cvd is off.
+      • Themes → Arena furniture: Chest (wood) / Chest (gold) pickers removed (135-v83chest draws his chest and reads neither;
+        the flat fallback in 07-ui keeps BASE_THEME's defaults). Spikes STAYS: 134-v83spikes' cap still takes its colour
+        from THEME.spike (spikePlate82).
+      • Tokens → the 🛡 Armor section is gone (his drawn set is the only one).
+      • 💾 Saves tab = one line + "Open 💾 Saves" (Settings closes, the Saves window opens on Backups; a screenIntent bridges
+        the gap so the menu never flashes). The hub's "🗄 Restore or manage backups" still lands on the full game-save shelf
+        (SET84.full, armed by that click only).
+      • Themes ends with "💾 Save this look" (the old Profiles: save / apply / delete, same handlers).
+      • General: "Confirm before ⏭ End turn" (SETTINGS.confirmEnd, default off): a trusted End turn click in the action dock
+        while you can still move or attack asks first (ask76). Never online, in lessons or on CPU turns.
+      • General ends with "↺ Restore all defaults" (asks first; SETTINGS_DEF + the Arena theme; saves untouched).
+      • Visuals keeps 138-v84's "Light board" row (the Performance item) — nothing else added there.
+   B. THE ONLINE LANDING FITS ON ONE SCREEN (desktop > 760 px): the stage keeps its natural height (plate → party slots →
+      party code → caption stacked close, the figure beside), the right column's Forum takes the space left (contain:size,
+      its feed scrolls inside), Followed houses one line when empty, the Today ribbon one line per card, the playlist cards
+      compact (first row visible at 1300×900 / 1440×900 / 1920×1080). Phones keep the one-column scroll. The Victor card
+      carries its house chip once (onl84TodayChips de-duplicated).
+   ===================================================================== */
+
+/* ================= A · Settings ================= */
+const LANGS84=[{k:'en',n:'English'}]; /* more languages join here (Spanish first) */
+const TS84={min:90,max:130,step:5};   /* TWEAK: the text-size slider */
+const SET84={full:false,armed:false};
+const SET84_TABS=[['general','General'],['themes','🎨 Themes'],['tokens','🗿 Tokens'],['sponsors','🎭 Editors'],['audio','🔊 Audio'],['saves','💾 Saves']];
+const tsClamp84=v=>{v=Math.round((+v||100)/TS84.step)*TS84.step;return Math.max(TS84.min,Math.min(TS84.max,v))};
+/* dead pickers and the Large text theme */
+{const dead=['chestWood','chestGold'];for(let i=FURN_TOKENS.length-1;i>=0;i--)if(dead.includes(FURN_TOKENS[i][0]))FURN_TOKENS.splice(i,1)}
+delete THEME_PRESETS.large;
+/* the theme never scales the page any more: the one text size is SETTINGS.tscale */
+{const base=applyTheme;applyTheme=function(t,save){if(t&&t.scale!=null&&+t.scale!==100)t={...t,scale:100};return base.call(this,t||{},save)}}
+/* text size + class colours */
+{const base=applyAccess;applyAccess=function(){const r=base.apply(this,arguments);try{const b=document.body;if(!b)return r;const v=tsClamp84(SETTINGS.tscale);
+  for(const c of [...b.classList])if(/^ts\d+$/.test(c))b.classList.remove(c);b.classList.toggle('tsz84',v!==100);if(v!==100)b.classList.add('ts'+v);b.style.setProperty('--tsz84',String(v/100));
+  if(!SETTINGS.cvd&&THEME.classColors)for(const k of Object.keys(THEME.classColors))if(CLASSES[k])CLASSES[k].color=THEME.classColors[k]}catch(e){}return r}}
+const CVD84={rg:'deut',by:'trit'};
+function cvdFromTheme84(t){t=t||THEME;const cc=t.classColors;if(!cc)return 'off';const same=(a,b)=>!!a&&!!b&&Object.keys(b).every(k=>String(a[k]||'').toLowerCase()===String(b[k]).toLowerCase());
+  if(same(cc,THEME_PRESETS.deut.v.classColors))return 'rg';if(same(cc,THEME_PRESETS.trit.v.classColors))return 'by';return 'off'}
+function cvdSet84(mode,fromTheme){mode=CVD84[mode]?mode:'off';const was=SETTINGS.cvdMode||'off';SETTINGS.cvdMode=mode;SETTINGS.cvd=mode==='rg';
+  if(!fromTheme&&(mode!=='off'||was!=='off')){const u=USER_THEME||THEME;const keep={};for(const k of ['hlAlpha','outZone','warm'])if(u[k]!=null)keep[k]=u[k];
+    applyTheme({...(mode==='off'?{}:THEME_PRESETS[CVD84[mode]].v),...keep})}
+  applySettings()}
+/* migration, once: an old theme scale / Large text → the one text size; the colour-blind switch → the matching mode */
+try{if(localStorage.getItem('flavius_set84')!=='1'){const ut=lsGet('theme',{})||{};const sc=+ut.scale||100;
+    if(sc!==100&&(!SETTINGS.tscale||+SETTINGS.tscale===100))SETTINGS.tscale=tsClamp84(sc);
+    if(SETTINGS.cvdMode==null){const m=cvdFromTheme84(ut);if(m!=='off')SETTINGS.cvdMode=m;else if(SETTINGS.cvd){SETTINGS.cvdMode='rg';applyTheme({...ut,...THEME_PRESETS.deut.v})}else SETTINGS.cvdMode='off';SETTINGS.cvd=SETTINGS.cvdMode==='rg'}
+    if(sc!==100)applyTheme({...(USER_THEME||THEME),scale:100});applySettings();localStorage.setItem('flavius_set84','1')}}catch(e){}
+try{applyAccess()}catch(e){}
+
+/* the lessons: always both inside the 🎓 Tutorials fold */
+lessonsMenuVis=function(){const el=document.getElementById('mmLearn');if(!el)return;for(const b of el.querySelectorAll('[data-mm="learn"],[data-mm="learnmgr"]'))b.hidden=false;el.hidden=false;el.classList.remove('single')};
+{const base=lessonsHTML;lessonsHTML=function(){const h=base.apply(this,arguments);return typeof h==='string'?h.replace(/\s*<label class="setrow"[^>]*><input type="checkbox" data-lessonsmenu[\s\S]*?<\/label>/,''):h}}
+try{lessonsMenuVis()}catch(e){}
+
+function setTabs84(tab){return `<div class="seg" role="tablist" style="margin-bottom:12px">${SET84_TABS.map(([k,l])=>`<button type="button" role="tab" data-stab="${k}" class="${tab===k?'on':''}">${l}</button>`).join('')}</div>`}
+const SET84_TABRE=/<div class="seg" role="tablist" style="margin-bottom:12px">[\s\S]*?<\/div>/;
+function setGeneral84(h){
+  h=h.replace(/<div class="setrow"><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" data-lessonsmenu[\s\S]*?<\/label><\/div>/,'');
+  const lang=`<div class="setrow lang84" style="grid-column:1/-1"><span><b>🌐 Language</b><br><span class="hint" data-keep="1" style="margin:0">Your browser's Translate works on this game; game terms stay English.</span></span><select data-lang84="1" aria-label="Language">${LANGS84.map(L=>`<option value="${L.k}" ${(SETTINGS.lang||'en')===L.k?'selected':''}>${esc(L.n)}</option>`).join('')}</select></div>`;
+  h=h.replace('<div class="setgrid">','<div class="setgrid">'+lang);
+  const cm=SETTINGS.cvdMode||'off';
+  const cvd=`<div class="setrow a11yrow cvd84"><span><b>Colour-blind</b><br><span class="hint" style="margin:0">Applies the Red-green safe or Blue-yellow safe theme (🎨 Themes). Red-green also puts a class letter on every token and blue/orange on good/bad.</span></span><select data-cvd84="1" aria-label="Colour-blind">${[['off','Off'],['rg','Red-green'],['by','Blue-yellow']].map(([k,l])=>`<option value="${k}" ${cm===k?'selected':''}>${l}</option>`).join('')}</select></div>`;
+  h=h.replace(/<label class="setrow"><input type="checkbox" data-set="cvd"[\s\S]*?<\/label>/,cvd);
+  const v=tsClamp84(SETTINGS.tscale);
+  const ts=`<label class="setrow slider ts84"><span><b>Text size</b><br><span class="hint" style="margin:0">Panels, log, windows and menus. The arena keeps its size.</span></span><input type="range" min="${TS84.min}" max="${TS84.max}" step="${TS84.step}" data-ts84="1" value="${v}" aria-label="Text size"><output>${v}%</output></label>`;
+  h=h.replace(/<div class="setrow a11yrow"><span><b>Text size<\/b>[\s\S]*?<\/div><\/div>/,ts);
+  const ce=`<label class="setrow"><input type="checkbox" data-set="confirmEnd" ${SETTINGS.confirmEnd?'checked':''}><span><b>Confirm before ⏭ End turn</b><br><span class="hint" style="margin:0">Asks first while you can still move or attack.</span></span></label>`;
+  const at='<label class="setrow"><input type="checkbox" data-set="ctxMenu"';if(h.includes(at))h=h.replace(at,ce+at);
+  return h+`<div class="mbtns rst84"><button type="button" class="btn" data-rst84="1">↺ Restore all defaults<small>settings and theme · saves stay</small></button></div>`}
+function setThemes84(h,base){
+  h=h.replace(/<label class="slider"><span>Text &amp; UI size<\/span>[\s\S]*?<\/label>|<label class="slider"><span>Text & UI size<\/span>[\s\S]*?<\/label>/,'');
+  h=h.replace(/Stands, pillars, pots, spikes, the chest and toppled rubble\. Everything here \(colors AND sliders\) is captured when you save a profile below\./,'Stands, pillars, pots, spike caps and toppled rubble. Everything here (colors and sliders) is kept when you save a look below.');
+  let p='';try{p=String(base('profiles')||'').replace(SET84_TABRE,'')}catch(e){}
+  p=p.replace(/^\s*<p>Save the current colors[\s\S]*?<\/p>/,'<p class="hint" style="margin:0 0 6px">Keep the colors, sliders and options as a named look and switch back any time.</p>').replace('placeholder="Profile name"','placeholder="Look name"').replace('No saved profiles yet.','No saved looks yet.').replace(/class="hint"(?! data-keep)/g,'class="hint" data-keep="1"');
+  return h+`<h4 id="look84">💾 Save this look</h4><div class="look84">${p}</div>`}
+function setTokens84(h){return h.replace(/<h4 style="margin:12px 0 4px">🛡 Armor<\/h4><p class="rc-sub"[^>]*>[\s\S]*?<\/p>/,'').replace(/<button type="button" class="tokrow[^"]*" data-sarmor="[^"]*">[\s\S]*?<\/button>/g,'')}
+{const base=settingsHTML;settingsHTML=function(tab){if(tab==='profiles')tab='themes';tab=tab||'general';
+  if(tab==='saves'&&!SET84.full)return setTabs84('saves')+`<div class="sv84"><p>Matches, careers, campaigns and backups live in the 💾 Saves window.</p><div class="mbtns"><button type="button" class="btn primary" data-sv84="hub">💾 Open Saves</button></div></div>`;
+  let h=base.call(this,tab);if(typeof h!=='string')return h;
+  try{h=h.replace(SET84_TABRE,setTabs84(tab));
+    h=h.replace(/<p class="hint"(?! data-keep)/g,'<p class="hint" data-keep="1"'); /* a loose paragraph hint stays a line: as a tooltip it hung on the whole #setBody (52-v50 quietHints) */
+    if(tab==='general')h=setGeneral84(h);if(tab==='themes')h=setThemes84(h,t=>base.call(this,t));if(tab==='tokens')h=setTokens84(h)}catch(e){console.error(e)}
+  return h}}
+{const base=openSettings;openSettings=function(tab){if(tab==='profiles')tab='themes';SET84.full=!!SET84.armed&&tab==='saves';SET84.armed=false;return base.call(this,tab)}}
+/* the hub's "Restore or manage backups" is the one way to the full game-save shelf */
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#hub76 [data-hubbk="manage"]');if(b)SET84.armed=true},true);
+document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
+  const st=t.closest('#setBody [data-stab]');if(st){SET84.full=false;return}
+  const sv=t.closest('#setBody [data-sv84]');if(sv){e.preventDefault();e.stopPropagation();const end=typeof screenIntent==='function'?screenIntent('settings→saves',4000):()=>{};
+    try{if(CUR_MODAL)CUR_MODAL.done(1)}catch(err){} /* the hub opens in the same task: no paint between the two windows */
+    try{const r=savesHub76('backups');if(r&&r.then)r.then(()=>{},()=>end());else end()}catch(err){end()}return}
+  const pr=t.closest('#setBody [data-preset]');if(pr){const k=pr.dataset.preset;cvdSet84(k==='deut'?'rg':k==='trit'?'by':'off',true);return}
+  if(t.closest('#setBody [data-sreset]')){cvdSet84('off',true);return}
+  if(t.closest('#setBody [data-papply]'))setTimeout(()=>{try{if(SETTINGS.cvdMode==null){SETTINGS.cvdMode=cvdFromTheme84(USER_THEME||THEME);SETTINGS.cvd=SETTINGS.cvdMode==='rg'}applySettings()}catch(err){}},0);
+  const rs=t.closest('#setBody [data-rst84]');if(rs){e.preventDefault();e.stopPropagation();
+    ask76('↺ Restore all defaults?','Every setting and the theme go back to how the game ships. Your saves, careers and creations stay.','Restore defaults','Cancel').then(ok=>{if(ok)setRestore84()})}},true);
+function setRestore84(){SETTINGS={...SETTINGS_DEF,armorStyle:'scan',cvdMode:'off',cvd:false,tscale:100,lang:'en'};
+  try{lsSet('hints',SETTINGS.hints?'on':'off')}catch(e){}applySettings();applyTheme({});
+  try{settingsLive('tokenStyle')}catch(e){}try{if(typeof audApplyVol==='function')audApplyVol();if(typeof audMuteUI==='function')audMuteUI()}catch(e){}
+  try{const g=document.querySelector('#setBody [data-stab="general"]');if(g)g.click()}catch(e){}try{mToast('↺ Settings and theme are back to their defaults.')}catch(e){}}
+document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset)return;
+  if(t.dataset.lang84){SETTINGS.lang=t.value;applySettings();return}
+  if(t.dataset.cvd84){cvdSet84(t.value);return}});
+document.addEventListener('input',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.ts84)return;SETTINGS.tscale=tsClamp84(t.value);applySettings();const o=t.nextElementSibling;if(o)o.textContent=SETTINGS.tscale+'%'});
+
+/* Confirm before ⏭ End turn */
+function endLeft84(p){const out=[];try{if(p.mv>0&&!p.focusRoll&&[...reach(p).tiles].some(([k,c])=>c>0&&c<=p.mv))out.push(`${p.mv} movement`)}catch(e){}
+  try{if(attackSources(p).some(s=>targetsFor(p,s).length>0))out.push('an attack')}catch(e){}return out.join(' and ')}
+const END84={go:false};
+window.addEventListener('click',e=>{if(END84.go||!e.isTrusted||!SETTINGS.confirmEnd)return;const b=e.target.closest&&e.target.closest('[data-act="end"]');if(!b||b.disabled)return;
+  try{if(!S||S.over||S.onl||S.sim||HEADLESS||S.phase!=='action'||!humanTurn())return;if(typeof tutLive==='function'&&tutLive())return;
+    const dock=b.closest('.acts');if(!dock||!dock.querySelector('[data-act="m-move"]'))return;const left=endLeft84(cur());if(!left)return;
+    e.preventDefault();e.stopImmediatePropagation();
+    ask76('⏭ End your turn?',`You still have ${left}.`,'End turn','Keep playing').then(ok=>{if(!ok)return;const n=document.querySelector('#actions [data-act="end"]:not([disabled])')||document.querySelector('[data-act="end"]:not([disabled])');
+      if(!n)return;END84.go=true;try{n.click()}finally{END84.go=false}})}catch(err){console.error(err)}},true);
+
+{const st=document.createElement('style');st.textContent=`
+body.tsz84 #actions,body.tsz84 .logbar,body.tsz84 aside.side,body.tsz84 #mBody,body.tsz84 #mainMenu .mmbtns,body.tsz84 #tip{zoom:var(--tsz84)}
+#setBody .lang84,#setBody .cvd84{display:flex;justify-content:space-between;align-items:center;gap:12px}
+#setBody .lang84 select,#setBody .cvd84 select{flex:none;min-width:130px;background:var(--ink);color:var(--bone);border:1px solid var(--line2);border-radius:4px;padding:5px 6px}
+#setBody .ts84{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 8px;align-content:start}#setBody .ts84>span{grid-column:1/-1}#setBody .ts84 input{width:100%;min-width:0}#setBody .ts84 output{text-align:right;min-width:40px}
+#setBody .rst84{margin-top:12px;justify-content:flex-start}#setBody .look84 .acts{margin-top:0}#setBody .sv84 p{margin:0 0 8px}
+@media(max-width:520px){#setBody .lang84,#setBody .cvd84{flex-wrap:wrap}}
+`;document.head.appendChild(st)}
+
+/* ================= B · the Online landing on one screen ================= */
+/* the house chip once per name (and never twice in a row) */
+{const base=onl84TodayChips;onl84TodayChips=function(h){let r=base.apply(this,arguments);try{if(typeof r==='string')r=r.replace(/(<button type="button" class="dom84c"[^>]*>[^<]*<\/button>)(?:\s*<button type="button" class="dom84c"[^>]*>[^<]*<\/button>)+/g,'$1')}catch(e){}return r}}
+{const st=document.createElement('style');st.textContent=`
+@media(min-width:761px){
+ #onl .onl-play81{grid-template-rows:auto 1fr auto auto;gap:10px 14px;align-items:start}
+ #onl .a81-stage{align-self:stretch}#onl .a81-stage>.onl-stage{height:auto;min-height:100%}
+ #onl .onl-stage81{min-height:0;padding:12px 16px 10px;row-gap:8px;align-items:start;align-content:start}
+ #onl .onl-stage81 .onl-plate{gap:4px;padding-top:2px;padding-bottom:4px}
+ #onl .onl-stage81 .onl-pname{font-size:27px}
+ #onl .onl-stage81 .onl-party{gap:8px;row-gap:6px}
+ #onl .onl-stage81 .onl-slot{width:74px;height:84px}#onl .onl-stage81 .onl-slot .onl-mini{max-height:62px}
+ #onl .onl-stage81 .onl-pbox{flex:1 1 100%;margin-left:2px;gap:4px;display:flex;flex-wrap:wrap;align-items:center}
+ #onl .onl-stage81 .onl-pbox>.rc-sub{flex:1 1 100%;margin:0}
+ #onl .onl-stage81 .onl-pbox input{height:30px}#onl .onl-stage81 .onl-pbox .btn{padding-top:4px;padding-bottom:4px}
+ #onl .onl-stage81 .scap81{margin-top:0}
+ #onl .onl-stage81 .onl-fig79{align-self:end;margin-bottom:-4px}
+ #onl .a81-week{display:grid;gap:8px}
+ #onl .a81-week .wk84{gap:3px;padding:8px 10px}#onl .a81-week .wk84-h b{font-size:14px}#onl .a81-week .wk84-c{font-size:12.5px}#onl .a81-week .wk84-g{font-size:11.5px}
+ #onl .a81-forum{align-self:stretch;contain:size;min-height:230px}
+ #onl .ofor81{height:100%}#onl .ofor81 .ow-h{margin:0 0 4px}
+ #onl .ofor81 .ofor{display:flex;flex-direction:column;min-height:0;flex:1 1 0}
+ #onl .ofor81 .ofor-feed{flex:1 1 0;height:auto;min-height:60px;overflow:auto;padding:8px 10px;gap:5px}
+ #onl .ofor81 .ofor-chips{flex:none;flex-wrap:nowrap;gap:4px;padding:6px 8px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin}
+ #onl .ofor81 .ofor-chips button{flex:none;padding:2px 8px;font-size:12px;white-space:nowrap}
+ #onl .fl83:not(:has(.fl83-r)){display:flex;align-items:baseline;gap:8px;padding:6px 10px;min-width:0}
+ #onl .fl83:not(:has(.fl83-r))>b{flex:none;font-size:13px}#onl .fl83:not(:has(.fl83-r))>p{margin:0;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+ #onl .fl83{padding:6px 10px}
+ #onl .td81-c{min-height:0;padding:5px 10px}
+ #onl .td81-t{display:block;line-height:1.25}#onl .td81-t>small{display:block}#onl .td81-t>b{display:inline;font-size:14px}
+ #onl .td81-t .dom84c{display:inline-block;vertical-align:1px;margin-left:6px}
+ #onl .td81-t>span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ #onl .td81-art .portrait{width:34px!important;height:46px!important}#onl .td81-art{width:34px}
+ #onl .td81.quiet{padding:6px 12px}
+ #onl .a81-pls .onl-h{margin:2px 0 6px}
+ #onl .onl-pls81{gap:10px;grid-template-columns:repeat(auto-fill,minmax(225px,1fr))}
+ #onl .onl-pls81>.onl-pl{padding:7px 8px;gap:8px;align-items:center}
+ #onl .onl-pls81 .onl-plb{gap:2px}#onl .onl-pls81 .onl-plb b{font-size:15px;line-height:1.15}
+ #onl .onl-pls81 .onl-plb small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ #onl .onl-pls81 .onl-plb .acts{flex-wrap:nowrap;gap:4px;margin-top:2px}#onl .onl-pls81 .onl-plb .acts .btn{padding:3px 7px;font-size:12px;white-space:nowrap;min-width:0}
+ #onl .onl-pls81 .inf83-art{min-height:70px}
+ #onl .pass82{padding:6px 12px;margin-bottom:10px;gap:10px}#onl .pass82-t{font-size:26px}
+}
+@media(min-width:1100px){#onl .onl-play81{grid-template-columns:minmax(0,1fr) 320px}}
+@media(min-width:761px) and (max-width:1099px){#onl .onl-play81{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"stage stage" "today today" "week forum" "pls pls";grid-template-rows:none}}`;document.head.appendChild(st)}
+/* the Forum's phrase chips sit on one row: a vertical wheel scrolls them sideways */
+document.addEventListener('wheel',e=>{const r=e.target.closest&&e.target.closest('#onl .ofor81 .ofor-chips');if(!r||r.scrollWidth<=r.clientWidth+2||Math.abs(e.deltaY)<=Math.abs(e.deltaX))return;
+  const max=r.scrollWidth-r.clientWidth;if((e.deltaY>0&&r.scrollLeft>=max-1)||(e.deltaY<0&&r.scrollLeft<=0))return;e.preventDefault();r.scrollLeft+=e.deltaY},{passive:false});
+/* =====================================================================
+   143-V84ROSTER · v0.84 — the depth chart as the barracks wall (Virgilante, approved 2026-10-04)
+   =====================================================================
+   • Manager → Roster → 📋 Depth chart: depthChartHTML (50-v48, called by name from the rosterBlockHTML wrapper)
+     is replaced. Same data and rules (starters = fit and not benched, bench, hurt; lenders = friendly non-rival
+     houses with opinion 30+ and room), same controls and handlers: the toggle `.dctog[data-m48="bench"]` and the
+     Lend select `.dclend[data-m47lend]`; loansCardHTML still follows.
+   • The look: the three columns hang on a dark stone barracks wall (assets/stone_wall.webp under a dark wash).
+     Each fighter = a small wooden plaque `.dcard` (~56px: portrait xs; the name across the top;
+     under it rating, class chip, ⚕ / 🤝 / 🏋 badges, then the ⭐ Start / 🪑 Bench stamp and, on a lendable bench fighter,
+     the Lend select).
+   • A column with fighters lays its plaques in a grid (auto-fill, minmax(200px,1fr)) and grows with its head count;
+     an EMPTY column collapses to a narrow carved post (vertical "🪑 Bench · 0"), so the populated ones get the width.
+     Columns never stretch to the tallest one.
+   • Phones (≤600px): columns stack, plaques in one column, empty columns are one-line headers.
+   Test: tv84r.
+   ===================================================================== */
+function depthChartHTML(){const pm=me(),w=W_();const own=ownRoster(pm).concat(loanedIn(pm)).sort((a,b)=>effOvr(b)-effOvr(a));
+  const hurt=own.filter(g=>g.inj),fit=own.filter(g=>!g.inj);const st=fit.filter(g=>!g.bench),bn=fit.filter(g=>g.bench);
+  const lenders=w.mgrs.filter(m=>!m.isPlayer&&!isRival(m)&&opinionOf(m).v>=30&&rosterOf(m).length<9);
+  const card=g=>{const C=CLASSES[g.cls];const cn=C?C.name:'';const from=g.loanFrom&&g.loanFrom.mid!==pm.id?((mgrById(g.loanFrom.mid)||{}).ludus||''):'';
+    const badges=`${g.inj?`<span class="dbg84 hurt" title="${esc(g.inj.label)}">⚕ ${esc(g.inj.label)}</span>`:''}${from?`<span class="dbg84 loan" title="On loan from ${esc(from)}">🤝 ${esc(from.replace(/^(Ludus|House of|The) /,''))}</span>`:''}${g.sparWk===w.week?'<span class="dbg84 spar" title="Sparred: +1 AP +2 CF tonight">🏋</span>':''}`;
+    const tog=g.inj?'':`<button type="button" class="btn tksm dctog" data-m48="bench" data-id="${g.id}" title="${g.bench?'Make starter':'Send to the bench'}">${g.bench?'⭐ Start':'🪑 Bench'}</button>`;
+    const lend=g.bench&&!g.inj&&!g.loanFrom&&lenders.length?`<select class="tin dclend" data-m47lend="${g.id}" title="Lend out for 3 weeks"><option value="">Lend…</option>${lenders.map(m=>`<option value="${m.id}">${esc(m.ludus)} · ${loanFee(g)}/wk · 3 wk</option>`).join('')}</select>`:'';
+    return `<div class="dcard ${g.bench?'bench':''} ${g.loanFrom?'loan':''} ${g.inj?'hurt84':''}" data-gid84="${g.id}"><div class="dpa84">${gArt(g,'xs')}</div><b class="dpn84" title="${esc(g.name)}">${esc(g.name)}</b><span class="dps84"><b class="dpr84">${effOvr(g)}</b>${cn?`<span class="dcl84" style="--cc:${C.color||'#a3281f'}">${esc(cn)}</span>`:''}${badges}</span>${tog||lend?`<div class="dpx84">${tog}${lend}</div>`:''}</div>`};
+  const col=(ic,t,L,none)=>L.length?`<div class="dcol84" style="--n:${L.length}"><div class="dhd">${ic} ${t} · ${L.length}</div><div class="dpl84">${L.map(card).join('')}</div></div>`
+    :`<div class="dcol84 dpost84" title="${esc(none)}"><div class="dhd">${ic} ${t} · 0</div></div>`;
+  return `<div class="card2 depth"><div class="sect" style="margin-top:0">📋 Depth chart <span class="rc-sub">starters can be entered on Match Week</span></div>
+   <div class="dgrid dg84">${col('⭐','Starters',st,'None — make someone a starter.')}${col('🪑','Bench',bn,'Nobody on the bench.')}${col('⚕','Hurt',hurt,'Nobody hurt.')}</div></div>${loansCardHTML()}`}
+(()=>{const st=document.createElement('style');const stone=typeof assetURL==='function'?assetURL('stone_wall.webp'):'assets/stone_wall.webp',wood=typeof assetURL==='function'?assetURL('stands_wood81.webp'):'assets/stands_wood81.webp';st.textContent=`
+.depth .dgrid.dg84{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;padding:10px;border-radius:8px;border:1px solid #3a2b1f;
+  background:linear-gradient(180deg,rgba(26,19,13,.86),rgba(16,11,8,.92)),url('${stone}') center/300px;box-shadow:inset 0 3px 12px rgba(0,0,0,.65)}
+.dg84 .dcol84{flex:var(--n,1) 1 214px;min-width:0}
+.dg84 .dhd{margin:0 0 6px;text-shadow:0 1px 0 #000}
+.dg84 .dpl84{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
+.dg84 .dpost84{flex:0 0 40px;align-self:stretch;min-height:104px;display:flex;align-items:center;justify-content:center;border-radius:4px;border:1px solid #4a3622;
+  background:linear-gradient(90deg,rgba(14,9,5,.88),rgba(52,36,21,.72) 45%,rgba(14,9,5,.9)),url('${wood}') center/120px;box-shadow:2px 3px 6px rgba(0,0,0,.55);cursor:help}
+.dg84 .dpost84 .dhd{margin:0;writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;color:var(--gold2,#f0cf7d);text-shadow:-1px -1px 0 rgba(0,0,0,.8),1px 1px 0 rgba(255,220,160,.12)}
+.dg84 .dcard{display:grid;grid-template-columns:28px minmax(0,1fr) auto;grid-template-rows:auto auto;gap:3px 8px;align-items:center;align-content:center;height:56px;box-sizing:border-box;margin:0;padding:4px 7px 4px 8px;position:relative;
+  border:1px solid #6b4f2e;border-top:2px solid #c9a24a;border-radius:4px;background:linear-gradient(180deg,rgba(78,55,33,.9),rgba(42,30,19,.95)),url('${wood}') center/160px;
+  box-shadow:0 2px 5px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,220,160,.1)}
+.dg84 .dcard::before,.dg84 .dcard::after{content:'';position:absolute;top:3px;width:4px;height:4px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#e8c27a,#7a5a2a 70%);box-shadow:0 1px 1px #000}
+.dg84 .dcard::before{left:3px}.dg84 .dcard::after{right:3px}
+.dg84 .dcard.bench{border-top-color:#7a6a55;background:linear-gradient(180deg,rgba(58,44,30,.92),rgba(32,24,16,.96)),url('${wood}') center/160px}
+.dg84 .dcard.hurt84{border-top-color:#a3281f;border-left:3px solid #a3281f}.dg84 .dcard.loan{border-style:dashed;border-top-style:solid}
+.dg84 .dcard>div{display:block}
+.dg84 .dpa84{grid-row:1/3;width:28px;height:40px;overflow:hidden;display:grid;place-items:center}.dg84 .dpa84 .portrait{width:26px!important;height:36px!important}.dg84 .dpa84 .cimg{max-width:28px;max-height:40px}
+.dg84 .dpn84{grid-column:2/4;min-width:0;display:block;font-size:13px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--bone,#e8dcc0)}
+.dg84 .dps84{grid-column:2;display:flex;gap:4px;align-items:center;min-width:0;overflow:hidden;white-space:nowrap;font-size:11px;color:var(--muted)}
+.dg84 .dpr84{font:600 12px var(--mono);color:var(--gold2)}
+.dg84 .dcl84{border-left:3px solid var(--cc);padding:0 4px;background:rgba(0,0,0,.25);border-radius:2px;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto;min-width:0}
+.dg84 .dbg84{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;padding:0 4px;border-radius:2px;background:rgba(0,0,0,.3)}.dg84 .dbg84.hurt{color:#f2a497}.dg84 .dbg84.loan{color:var(--gold2)}.dg84 .dbg84.spar{flex:none}
+.dg84 .dpx84{grid-column:3;display:flex!important;flex-direction:row;gap:3px;align-items:center;min-width:0}
+.dg84 .dcard .dctog{grid-column:auto;margin:0;padding:1px 5px;font-size:11px;line-height:1.3;height:20px;white-space:nowrap;min-height:0}
+.dg84 .dcard .dclend{grid-column:auto;font-size:11px;padding:1px 2px;height:20px;width:62px;min-width:0}
+@media (max-width:600px){.depth .dgrid.dg84{flex-direction:column;align-items:stretch;padding:8px;gap:8px}.dg84 .dcol84{flex:none;width:100%}.dg84 .dpl84{grid-template-columns:1fr}
+  .dg84 .dpost84{flex:none;min-height:0;width:auto;justify-content:flex-start;padding:5px 8px;background:linear-gradient(180deg,rgba(52,36,21,.85),rgba(14,9,5,.92))}.dg84 .dpost84 .dhd{writing-mode:horizontal-tb;transform:none}}`;document.head.appendChild(st)})();
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
