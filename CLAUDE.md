@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.82**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.83**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -65,7 +65,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Module ordering matters: a wrapper only sees wrappers installed before it.
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
   `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
-  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`, `126-v82fix`, `127-v82onl`, `128-v82stands`, `129-v82beasts`, `130-v82vis`.
+  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`, `126-v82fix`, `127-v82onl`, `128-v82stands`, `129-v82beasts`, `130-v82vis`, `131-v83council`, `132-v83arrows`, `134-v83spikes`, `135-v83chest`, `136-v83sand`, `133-v83onl`, `137-v83onlui` (build order as listed).
   Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
 
 ### Core globals (engine)
@@ -113,7 +113,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   glossary tab in Rules & strategy.
 - **Cheats:** never put code words in plain text anywhere in the page. Register with
   `cheatRegister('h'+hashStr('code:'+WORD), run, label)`; the reveal list `CHEAT_SHOW` stores char codes +7.
-  Current words: EDITOR12 (all editors), MUSICA16 (all 16 themes), LUDUS50 (+50 coin), CHARD / DUCKIO (bonus houses), ARMORFIT (the printed-set fit tool), LOBBY77 (Online preview), ONLSRV (shows the Online server box on the sign-in card). Touch screens: HOLD the main menu version badge (126) = the C key.
+  Current words: EDITOR12 (all editors), MUSICA16 (all 16 themes), LUDUS50 (+50 coin), CHARD / DUCKIO (bonus houses), ARMORFIT (the printed-set fit tool), LOBBY77 (Online preview), ONLSRV (shows the Online server box on the sign-in card). (Touch screens: holding the main menu version badge = the C key, 126.)
 - **Ratings (65/66/67, v0.55):** every gladiator has `st`/`g.stats` = {spd,str,int,lck,cha}, 50–99 (`STATS`,
   `statBonuses`). Speed → +1/+2 movement (76/96), Strength → +1/+2/+3 damage (76/87/96), Luck → coin/turn, Charisma →
   CF/turn (76/96), Intelligence → CPU difficulty (`bandInt`: Easy <76, Normal, Hard 96+). Movement/damage/coin/CF pay
@@ -532,6 +532,20 @@ One global script; files are concatenated in order. Later "version modules" patc
   the spearer draws a Mandati Flavi (`mfDeck82`, none if the deck is empty). `130-v82vis` — pillar shadows under the base
   (`pillarShadow82`), iron/bronze spikes (`drawSpikeTile` in 07-ui, `SPIKE82`), pieces face their attack target (minis' `_face`).
   Server: Scan permission in template.yaml → FULL stack redeploy (server zip flavius-server-9). Tests `tv82s`, `tv82o`, `tv82b`, `tv82v`.
+- **v0.83 (131-137 + server, protocol VER 6, contract tools/plans/onl83-contract.md):** `131-v83council` — Manager council
+  (`COUNCIL83`, `council83Make` from the career id, `w.council83`, face in OPENED letters via `advisor83`/`ADV_FROM83`, `#council83` card
+  in Your ludus; SAVE_MIGRATIONS '0.83'). `132-v83arrows` — `S.stuck83` arrows/bolts on board tokens ONLY (`STUCK_AVATAR83=false`), ≤2
+  per location + N, `STUCK83_K` per token style, minis turn them with `MINI_YAW` facing; Tholo: a Focus-aimed bolt kills him. `134-v83spikes`
+  — Floor Spikes medallion (rtok 'spike', tools/art/spikes83/make.py) in log/tile line/Event Designer; spike tiles = 3D sewer caps with
+  7 spikes (`drawSpikeTile` wrapper). `135-v83chest` — `drawChest83` his chest in 3D; carried chest = token in the inventory
+  (`CHEST_INV83`, 07-ui figure boxes skipped). `136-v83sand` — 3D `drawPot`, `SAND83` grain/shade, `SCAR83` scars (claw/divot/gash/
+  scuff by hash per arena). `133-v83onl` + `137-v83onlui` — 8 ranks, gear levels (L1–3 printed; named L4 wear Veteranus+), treasury 20%,
+  offerings (shelf/satchel, bring ≤2), Ranked broken/repair/loot window/used market, house gifts (chest token glows purple + count),
+  named weapons (`nw_<uid>`, rarity cards, Legendary uniques), Ludi Infames, countdown + Hold, trophies, profiles + ★ follow + #domus=
+  share, Wagers tab, TESTER grants (template param `Testers` → env TESTERS; deploy.sh `TESTERS='a@x.com'`; granted houses = test, Custom
+  only). Also: 03-engine `armorConflict` — padding stacks per equip point (upper + lower), hard pieces on top; Leather Tasset thumb
+  `armthumb81_legwrapsU`; weapon backs `weapon_back1b-4b` from his full-size scans (tools/art/cardbacks); main-menu show keeps its
+  aspect on phones; letter buttons readable. Tests `tv83c`, `tv83a`, `tonl83`, `tonl83u`.
 - **Guide data:** `SIM50` in 53-guide50 is regenerated by `node tools/simguide.js flavius-arena.html 600` (SIMVER env);
   it includes `perk` (wins by rating perk), charted by 69-v56.
 - **Music:** procedural Web Audio (21-audio, 45-music, 16 themes; unlocked by winning in cities). Play Now plays a
@@ -677,6 +691,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   makes the play.html advert shot. (Published as artifact Version 95, + hold-the-version-badge words of power on touch = Version 96; server zip flavius-server-9, protocol 5 — full stack deploy FIRST;
   game zip flavius-site-update-v0.82 carries the v0.81 art too + play/arena_shot.webp; site zip v0.82 points play.html at it.)
   Release run: 150/151 + tv64 flaky (passed alone); late fixes covered by tv66/tv71/tv82b/tv53/tv75.
+
+- **v0.83** Online treasures (8 ranks, treasury, offerings, broken gear + repair + loot, house gifts, named weapons, Ludi Infames,
+  countdown, trophies, profiles + follow, Wagers, tester grants); Manager council with faces; sticking arrows/bolts (turning on minis,
+  Tholo eye-bolt); 3D spike caps, his chest in 3D, 3D pots, sand grain + scars; padding stacks per point; sharp weapon backs.
+  (Server zip flavius-server-10, protocol 6 + Testers parameter — FULL stack deploy FIRST.)
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
