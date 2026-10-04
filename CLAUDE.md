@@ -803,7 +803,13 @@ share copy — the site download play/flavius-rule-arena.zip.)
   reduced rewards. MANAGER COUNCIL speaks more (Recruiter ★ picks / bargains, Medicus risk
   letters…). BOARD LIFE: blood soaks into the sand and fades, light dust drifting toward where a corpse falls (subtle — "not Pigpen"),
   rubble settling. NO online tutorial. READABILITY PASS (08+) + PHONE PASS (every v0.82/83 screen at 390 px + landscape, lighter
-  rendering for old phones). TRANSLATIONS asked about (es/de/pt/ja/zh) — see the estimate given 2026-10-04.
+  rendering for old phones). TRANSLATIONS (his plan 2026-10-04): v0.84 = BROWSER-TRANSLATE SAFE (game terms marked translate="no", nothing breaks when
+  Chrome/Edge translate the page, tested in es + ja). Then built-in languages ONE PER PASS, SPANISH FIRST (string tables + a language
+  switch; cards/tokens keep his English art and get a hover/long-press panel with the translated name + rules). KEY GAMEPLAY TERMS
+  STAY ENGLISH in every language so all players share them (class names, ranks, Fate/Thumb of Flavius, Missio, Lanista, Domus, CF,
+  AP/HP, PvE/PvP, Focus, Mandata Flavi, event names…) — keep one GAME_TERMS list used by both the translate="no" marks and the
+  string tables. AUCTION BLOCK for named gear (house to house, escrow, buy-now, anti-snipe, Flavius' cut, Veteranus+): PROPOSED,
+  needs his call because it lifts the 'named pieces can't be sold' rule.
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
