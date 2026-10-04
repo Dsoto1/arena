@@ -9,12 +9,16 @@
    - HINT_TEXT/rulePop: the hint system.
    - LUDUS FLAVIUS: saved gladiators (portraits, active roster, retire/fallen/freed states).
    - SIM_STATS + guideHTML: the strategy guide, fed by 300 headless simulations.
+   - Also: strategy hints, the turn indicator, the NPC tracker, thought bubbles, the
+     Standings performance graph, and the canvas feedback (fx numbers, hit flashes,
+     attack lines, shake, banner).
    ===================================================================== */
 /* ================= CARD ART (sprite sheets in assets/) ================= */
 const ASSET='assets/';
 /* v0.34 SHARE BUILD: a downloaded single-file copy carries every image embedded in
    window.ASSET_DATA, so it runs from any desk with no assets folder beside it. */
 const assetURL=f=>(typeof window!=='undefined'&&window.ASSET_DATA&&window.ASSET_DATA[f])||ASSET+f;
+/* SHEETS — the printed-art sprite sheets in assets/, by card kind letter: file, grid (cols × rows) and aspect ratio of one cell (wide = landscape cards). */
 const SHEETS={
   c:{f:'arena.jpg',cols:10,rows:9,ar:'240/352'},
   w:{f:'weapons.jpg',cols:9,rows:3,ar:'300/208',wide:1},
@@ -29,9 +33,13 @@ const SHEETS={
   nt:{f:'naum.png',cols:5,rows:2,ar:'1/1'},
   g:{f:'chcards.jpg',cols:3,rows:2,ar:'520/352',wide:1},
 };
+/* CHCARD_IDX — chariot card key → cell on chcards.jpg. */
 const CHCARD_IDX={chTeal:0,chGold:1,chSilver:2,chRed:3,chBlue:4,chPurple:5};
+/* CHTOK_IDX — horse / wheel / chariot token key → cell on chtok.webp. */
 const CHTOK_IDX={palmatusA:0,palmatusB:1,ocianusA:2,ocianusB:3,saxoA:4,saxoB:5,vindexA:6,vindexB:7,wheel8:8,wheel10:9,wheel12:10,chRed:11,chBlue:12,chTeal:13,chGold:14,chSilver:15,chPurple:16};
+/* NAUM_IDX — Naumachia water token key → cell on naum.png. */
 const NAUM_IDX={water:0,croc:1,wpn1:2,wpn2:3,wpn3:4,arm1:5,arm2:6,arm3:7,up2:8,up3:9};
+/* cardRef — resolves a card ref "kind:key" to its sheet and cell index ({sh, i}); unknown arena and weapon cards fall back to a blank, others to null. */
 function cardRef(ref){
   if(!ref)return null;const k=ref[0],key=ref.slice(2);
   let i=null;
@@ -47,10 +55,12 @@ function cardRef(ref){
   if(i==null||isNaN(i)){if(k==='c')return {sh:SHEETS.x,i:3};if(k==='w')return {sh:SHEETS.x,i:6};return null}
   return {sh:SHEETS[k==='n'?'nt':k],i};
 }
+/* cardStyle — inline CSS that shows a card ref's cell from its sprite sheet. */
 function cardStyle(ref){
   const r=cardRef(ref);if(!r)return '';const {sh,i}=r;const col=i%sh.cols,row=Math.floor(i/sh.cols);
   return `background-image:url('${assetURL(sh.f)}');background-size:${sh.cols*100}% ${sh.rows*100}%;background-position:${sh.cols>1?col/(sh.cols-1)*100:0}% ${sh.rows>1?row/(sh.rows-1)*100:0}%;aspect-ratio:${sh.ar}`;
 }
+/* cardLabel — the readable name of a card ref ("Gladius (weapon card)"). */
 function cardLabel(ref){
   if(!ref)return '';const k=ref[0],key=ref.slice(2);
   if(k==='c')return CARDS[key]?CARDS[key].n+' (arena card)':'Arena card';
@@ -65,6 +75,7 @@ function cardLabel(ref){
   if(k==='a')return ARM[key]?ARM[key].n+' (armor token)':'Armor token';
   return 'Card';
 }
+/* cardHTML — the <span> that shows a card (size xs–xl), with data-card for the hover pop-up; custom Piacula, custom classes, custom weapons and drawn armor use their own art. Wrapped by several later modules. */
 function cardHTML(ref,size='md',extra=''){
   if(ref&&ref.startsWith('c:pia_cc_')&&typeof piaCardURL==='function'){const C=CARDS[ref.slice(2)];return `<span class="cimg ${size}" style="background-image:url('${piaCardURL(C?C.cls:'')}');background-size:100% 100%;aspect-ratio:${SHEETS.c?SHEETS.c.ar:'5/7'}" role="img" aria-label="Piaculum (custom)" data-card="${ref}" ${extra}></span>`}
   // custom characters have no printed player card: their portrait stands in for it everywhere
@@ -74,6 +85,7 @@ function cardHTML(ref,size='md',extra=''){
   const r=cardRef(ref);if(!r)return '';
   return `<span class="cimg ${size} ${r.sh.wide?'wide':''}" style="${cardStyle(ref)}" role="img" aria-label="${esc(cardLabel(ref))}" data-card="${ref}" ${extra}></span>`;
 }
+/* cardText — the rules text shown under a card in the hover pop-up. */
 function cardText(ref){
   const k=ref[0],key=ref.slice(2);
   if(k==='c'&&CARDS[key]){const C=CARDS[key];return `<b>${C.n}</b> · ${C.type}<br>${C.d}${C.q?`<br><i>“${C.q}”</i>`:''}`}
@@ -88,6 +100,7 @@ function cardText(ref){
   return '';
 }
 // hover any [data-card] element to see the full card
+/* the card hover pop-up: hovering any [data-card] (or a Ludus [data-glad]) shows the full card beside the pointer. */
 (function(){
   const tip=$('#tip');let on=null;
   const place=e=>{const w=tip.offsetWidth,h=tip.offsetHeight;let x=e.clientX+18,y=e.clientY-h/2;if(x+w>innerWidth-8)x=e.clientX-w-18;y=clamp(y,8,innerHeight-h-8);tip.style.left=x+'px';tip.style.top=y+'px'};
@@ -105,24 +118,29 @@ function cardText(ref){
   document.addEventListener('scroll',()=>{tip.hidden=true;on=null},true);
 })();
 // the drawn / played card appears in the corner of the arena for a moment
-function cardShow(ref,p,label){if(typeof sfx==='function'&&S&&!S.sim)sfx('card');
-  if(S&&ref)(S.cardsSeen=S.cardsSeen||[]).push({ref,n:cardLabel(ref).replace(/ \(.*\)$/,''),by:p?p.name:''});
+function cardShow(ref,player,label){if(typeof sfx==='function'&&S&&!S.sim)sfx('card');
+  if(S&&ref)(S.cardsSeen=S.cardsSeen||[]).push({ref,n:cardLabel(ref).replace(/ \(.*\)$/,''),by:player?player.name:''});
   if(HEADLESS)return;
   const box=$('#cardShow');if(!box||!cardRef(ref))return;
-  const d=document.createElement('div');d.className='cs';d.innerHTML=`<b class="cslbl ${/Drawn/.test(label||'')?'drawn':'decl'}">${label||'🂠 Card'}</b>`+cardHTML(ref,SPEED==='fast'?'md':'lg')+(p?`<span style="border-left:3px solid ${p.color}">${esc(p.name)}</span>`:'');
+  const d=document.createElement('div');d.className='cs';d.innerHTML=`<b class="cslbl ${/Drawn/.test(label||'')?'drawn':'decl'}">${label||'🂠 Card'}</b>`+cardHTML(ref,SPEED==='fast'?'md':'lg')+(player?`<span style="border-left:3px solid ${player.color}">${esc(player.name)}</span>`:'');
   box.prepend(d);while(box.children.length>2)box.lastChild.remove();
   const ms=SPEED==='slow'?6500:SPEED==='fast'?1400:3200;
   setTimeout(()=>{d.classList.add('out');setTimeout(()=>d.remove(),700)},ms);
 }
+/* locIcon — small body-location icon (head, chest, arms, legs) from the location sprite. */
 const locIcon=l=>`<i class="loc-ic" style="background-position:${['head','chest','larm','rarm','rleg','lleg'].indexOf(l)*20}% 0" title="${LOCN[l]}"></i>`;
+/* IMG — loose images drawn on the canvas (blessing medallion, tunnel tiles); each redraws the board when it loads. */
 const IMG={};
 for(const [k,fn] of [['blessing','blessing.png'],['tunnel_open','tunnel_open.jpg'],['tunnel_door','tunnel_door.jpg']]){IMG[k]=new Image();IMG[k].onload=()=>{try{draw()}catch(e){}};IMG[k].src=assetURL(fn)}
 
 /* ================= HINTS & RULE POPUPS ================= */
 let HINTS=true;try{HINTS=localStorage.getItem('flavius_hints')!=='off'}catch(e){}
-function setHints(v){HINTS=v;try{localStorage.setItem('flavius_hints',v?'on':'off')}catch(e){}document.querySelectorAll('[data-hints]').forEach(b=>b.classList.toggle('on',(b.dataset.hints==='on')===v));if(S)render()}
+/* setHints — turns hints on or off (localStorage flavius_hints) and lights the matching top-bar buttons. */
+function setHints(on){HINTS=on;try{localStorage.setItem('flavius_hints',on?'on':'off')}catch(e){}document.querySelectorAll('[data-hints]').forEach(b=>b.classList.toggle('on',(b.dataset.hints==='on')===on));if(S)render()}
+/* the top-bar Hints on / off buttons. */
 document.querySelectorAll('[data-hints]').forEach(b=>b.onclick=()=>setHints(b.dataset.hints==='on'));
 setHints(HINTS);
+/* HINT_TEXT — short hint texts by key, shown by hint(). TWEAK: the wording. */
 const HINT_TEXT={
   defend:"Minerva's Push dodges the whole attack and steps you 1 tile away, so save it for hits that would sever a limb or kill you. Fidelis Constans only removes one hit die.",
   truce:'A truce stops both of you from being targeted, but only one gladiator can win. If everyone left standing is in a truce, Flavius breaks them all.',
@@ -131,14 +149,19 @@ const HINT_TEXT={
   shield:'Raising a shield is a choice: spend a use to absorb its stated value, and the remainder still hits armor then flesh. Save uses for big hits and severing threats.',
   recruit:'Scout to learn what a fighter wants, then pitch the motives you grade well. Gifts sway the coin-hungry, feasts sway everyone, and a pledged main event is +12 interest — if you keep your word.',
 };
-function hint(k){if(!HINTS)return '';const t=HINT_TEXT[k]||k;return t?`<div class="tiphint"><b>Hint</b>${t}</div>`:''}
+/* hint — a hint box for a key (or literal text) — empty while hints are off. */
+function hint(key){if(!HINTS)return '';const t=HINT_TEXT[key]||key;return t?`<div class="tiphint"><b>Hint</b>${t}</div>`:''}
+/* POPPED — rule pop-ups already shown this page visit (each shows once). */
 const POPPED=new Set();
-function humansIn(){return S&&S.players.some(p=>!p.cpu)}
+/* humansIn — true when a human plays a seat in the live event. */
+function humansIn(){return S&&S.players.some(player=>!player.cpu)}
+/* rulePop — shows a rule pop-up once per visit (hints on, a human playing, no tutorial); "Turn hints off" switches hints off. */
 async function rulePop(key,title,html,ref){
   if(!HINTS||(typeof SETTINGS!=='undefined'&&SETTINGS.rulePops===false)||POPPED.has(key)||!humansIn()||(typeof TUT!=='undefined'&&TUT.on))return;POPPED.add(key);
   const v=await modal(title,`<div class="rulepop">${ref?cardHTML(ref,'md'):'<span></span>'}<div>${html}</div></div>`,[{label:'Got it',value:1,primary:1},{label:'Turn hints off',value:'off'}]);
   if(v==='off')setHints(false);
 }
+/* RULE_POPS — the rule pop-ups by key: [title, html, card ref]. TWEAK: the wording. */
 const RULE_POPS={
   telemachus:['Telemachus Interdico!','<p>While Telemachus is in play <b>no gladiator can attack</b>. Each player rolls a d6 at the start of their turn; a 1 or 6 drags him out. Use the lull to break pots? No: pots need attacks too. Move, loot, trade, buy and reposition instead.</p>','c:telemachus'],
   restless:['The Crowd Grows Restless','<p>For the next 4 turns, any gladiator who ends a turn <b>without attacking</b> gets every gladiator stoned for 2 damage. Hit something, even a pot, every turn.</p>','c:restless'],
@@ -150,35 +173,37 @@ const RULE_POPS={
   mandata:['Mandata Flavi','<p>You hold a secret objective from Flavius. Complete it and it is revealed with its reward; still hidden at the end of the event costs 5 CF. Some are completed by a spoken declaration from the Action panel.</p>'],
   thumb:['The Thumb of Flavius','<p>Ending with 17-19 CF puts your life in the Thumb of Flavius: a d6 of 4+ spares you (20 CF, sent to the Ludus Flavius). 20 CF or more reaches the Ludus, which lets you save your gladiator.</p>','f:9'],
 };
-function popRule(k){if(typeof MTUT!=='undefined'&&MTUT.on)return; /* v0.46: the Manager lesson keeps a live bout quiet */const r=RULE_POPS[k];if(r)return rulePop(k,r[0],r[1],r[2])}
-function strategyHints(p){
-  if(!HINTS||!S||p.cpu||S.phase!=='action')return [];
+/* popRule — shows the rule pop-up for a key (quiet during the Manager lesson). */
+function popRule(key){if(typeof MTUT!=='undefined'&&MTUT.on)return; /* v0.46: the Manager lesson keeps a live bout quiet */const r=RULE_POPS[key];if(r)return rulePop(key,r[0],r[1],r[2])}
+/* strategyHints — up to 4 live suggestions for a human in their Action phase: aggro beasts, pots in reach (with break odds), the zone, elixirs, Focus, Mandata, the Thumb range, weak weapons, loot, allies, and nearby prey. */
+function strategyHints(player){
+  if(!HINTS||!S||player.cpu||S.phase!=='action')return [];
   const out=[];const rd=RD();
-  const threats=S.npcs.filter(n=>n.alive&&n.tamedBy==null&&n.aggro===p.id);
-  const has=k=>p.items.some(i=>i.kind==='card'&&i.key===k);
-  for(const n of threats){const st=npcStats(n);const outs=[];if(tunnelExits(p).length)outs.push('dive into a tunnel (1 key)');if(has('ward'))outs.push('declare your Ward of the Evil Eye');if(has('lure')&&activePlayers().some(q=>q!==p&&cheb(p,q)<=4))outs.push('throw your Meat Lure at a rival');
+  const threats=S.npcs.filter(npc=>npc.alive&&npc.tamedBy==null&&npc.aggro===player.id);
+  const has=k=>player.items.some(i=>i.kind==='card'&&i.key===k);
+  for(const n of threats){const st=npcStats(n);const outs=[];if(tunnelExits(player).length)outs.push('dive into a tunnel (1 key)');if(has('ward'))outs.push('declare your Ward of the Evil Eye');if(has('lure')&&activePlayers().some(other=>other!==player&&cheb(player,other)<=4))outs.push('throw your Meat Lure at a rival');
     out.push(`${n.name} is aggro on you${st.state?` (${st.state}: ${st.ap} attack, ${st.mv} move)`:''}. ${n.hp<=8?'It is low: finish it for the trophy.':outs.length?'To shake it: '+outs.join(', or ')+'.':'Stay out of its reach or fight it near allies.'}`)}
-  {const srcs=attackSources(p).filter(s=>!s.thr&&(!s.w.punch||hasCestus(p,s.arm)));const pots=S.pillars.filter(pl=>pl.pots.length&&cheb(p,pl)===1);
-   if(pots.length&&srcs.length){const best=Math.max(...srcs.map(s=>s.w.p+(hasCestus(p,s.arm)?1:0)+(p.hercules||0)+statDmgB(p)));const n=S.endgame?4:2;
+  {const srcs=attackSources(player).filter(s=>!s.thr&&(!s.w.punch||hasCestus(player,s.arm)));const pots=S.pillars.filter(pl=>pl.pots.length&&cheb(player,pl)===1);
+   if(pots.length&&srcs.length){const best=Math.max(...srcs.map(s=>s.w.p+(hasCestus(player,s.arm)?1:0)+(player.hercules||0)+statDmgB(player)));const n=S.endgame?4:2;
      const chance=best>=2?1-Math.pow(.5,n):1-Math.pow(.5,n)-n*Math.pow(.5,n);out.push(`A Blessings pot is in reach. It needs 2 damage: with power ${best} you break it ${Math.round(chance*100)}% of the time (2 coin, 1 CF and a hidden offering).`)}}
-  if(rd.zone>1&&!inZone(p.r,p.c))out.push(`You are outside the zone${p.grace>0?` (${p.grace} grace turn${p.grace>1?'s':''} left)`:''}. Ending here costs 2 CF.`);
-  if(hurtBad(p)&&p.items.some(i=>i.kind==='card'&&isElixir(i.key)||i.kind==='offer'&&(i.key==='elix2'||i.key==='elix4')))out.push('You are badly hurt and hold a Health Elixir. An elixir can also save a location the moment it hits 0.');
-  if(p.focusNext)out.push('Focus! is declared: your next attack on a gladiator picks the location. Aim at their least armored limb or a weak head.');
-  if(p.hercules)out.push(`Herculean Vigor adds ${p.hercules} damage to your next attack that lands a hit.`);
-  const mf=p.items.find(i=>i.kind==='mf');if(mf){const M=MANDATA[mf.idx];out.push(M.declare?`Your Mandata Flavi (${M.n}) is completed by declaring it: use it from your hand.`:`Mandata Flavi: ${M.d} (${M.r}).`)}
-  if(p.cf>=17&&p.cf<20)out.push(`At ${p.cf} CF you sit in the Thumb of Flavius range (17-19). Reaching 20 CF secures the Ludus Flavius.`);
-  if(!p.market&&cfAllowed()&&p.cf>=3+(weak(p,'tax')?1:0)&&p.coin>=purchaseCost(p,2)+(weak(p,'tax')?1:0)&&armsAttached(p).length&&Math.min(...armsAttached(p).map(a=>wScore(p['w'+a])))<3)out.push(`Your weapons are weak and you can afford a level 2 weapon (3 CF to unlock + ${purchaseCost(p,2)} coin).`);
-  const sev=pilesAt(p.r,p.c).length;if(sev&&!p.looted)out.push('You stand on a pile: loot 1 item this turn.');
+  if(rd.zone>1&&!inZone(player.r,player.c))out.push(`You are outside the zone${player.grace>0?` (${player.grace} grace turn${player.grace>1?'s':''} left)`:''}. Ending here costs 2 CF.`);
+  if(hurtBad(player)&&player.items.some(i=>i.kind==='card'&&isElixir(i.key)||i.kind==='offer'&&(i.key==='elix2'||i.key==='elix4')))out.push('You are badly hurt and hold a Health Elixir. An elixir can also save a location the moment it hits 0.');
+  if(player.focusNext)out.push('Focus! is declared: your next attack on a gladiator picks the location. Aim at their least armored limb or a weak head.');
+  if(player.hercules)out.push(`Herculean Vigor adds ${player.hercules} damage to your next attack that lands a hit.`);
+  const mf=player.items.find(i=>i.kind==='mf');if(mf){const M=MANDATA[mf.idx];out.push(M.declare?`Your Mandata Flavi (${M.n}) is completed by declaring it: use it from your hand.`:`Mandata Flavi: ${M.d} (${M.r}).`)}
+  if(player.cf>=17&&player.cf<20)out.push(`At ${player.cf} CF you sit in the Thumb of Flavius range (17-19). Reaching 20 CF secures the Ludus Flavius.`);
+  if(!player.market&&cfAllowed()&&player.cf>=3+(weak(player,'tax')?1:0)&&player.coin>=purchaseCost(player,2)+(weak(player,'tax')?1:0)&&armsAttached(player).length&&Math.min(...armsAttached(player).map(a=>wScore(player['w'+a])))<3)out.push(`Your weapons are weak and you can afford a level 2 weapon (3 CF to unlock + ${purchaseCost(player,2)} coin).`);
+  const sev=pilesAt(player.r,player.c).length;if(sev&&!player.looted)out.push('You stand on a pile: loot 1 item this turn.');
   if(S.active.telemachus)out.push('Telemachus blocks all attacks. Reposition, loot, trade or shop this turn.');
-  if(S.active.restless&&p.attacks===0)out.push('The crowd is restless: make at least one attack this turn, even at a pot, or everyone is stoned.');
-  const al=alliesOf(p);const giftable=p.items.filter(i=>i.kind==='offer'&&/elix|ap/.test(i.key)||i.kind==='card'&&(isElixir(i.key)||isForge(i.key)));
-  if(giftable.length&&al.some(q=>hurtBad(q)&&cheb(p,q)<=4))out.push(`An ally near you is badly hurt. You could gift them your ${itemInfo(giftable[0]).n} from Trade or truce.`);
+  if(S.active.restless&&player.attacks===0)out.push('The crowd is restless: make at least one attack this turn, even at a pot, or everyone is stoned.');
+  const al=alliesOf(player);const giftable=player.items.filter(i=>i.kind==='offer'&&/elix|ap/.test(i.key)||i.kind==='card'&&(isElixir(i.key)||isForge(i.key)));
+  if(giftable.length&&al.some(other=>hurtBad(other)&&cheb(player,other)<=4))out.push(`An ally near you is badly hurt. You could gift them your ${itemInfo(giftable[0]).n} from Trade or truce.`);
   if(out.length<2){
-    const pl=S.pillars.filter(x=>x.pots.length).sort((a,b)=>cheb(p,a)-cheb(p,b))[0];
-    if(pl&&cheb(p,pl)>1)out.push(`Nearest Blessings pot: the pillar at ${tl(pl.r,pl.c)}, ${cheb(p,pl)-1} tile${cheb(p,pl)>2?'s':''} from reach.`);
-    const prey=S.npcs.filter(n=>n.alive&&n.tamedBy==null&&(n.t==='snake'||n.t==='wolf'||n.hp<=6)).sort((a,b)=>cheb(p,a)-cheb(p,b))[0];
-    if(prey&&cheb(p,prey)<=6)out.push(`${prey.name} (${NPCT[prey.t].n}, ${prey.hp} HP) is ${cheb(p,prey)} tiles away: an easier trophy worth ${NPCT[prey.t].cf} CF and ${NPCT[prey.t].coin} coin. Attacking makes it aggro on you.`);
-    const unused=p.items.filter(i=>i.kind==='offer'||i.kind==='card'&&CARDS[i.key].type==='declare');if(unused.length)out.push(`You hold ${unused.length} item${unused.length>1?'s':''} you can use this turn: ${unused.map(i=>itemInfo(i).n).slice(0,3).join(', ')}.`);
+    const pl=S.pillars.filter(x=>x.pots.length).sort((a,b)=>cheb(player,a)-cheb(player,b))[0];
+    if(pl&&cheb(player,pl)>1)out.push(`Nearest Blessings pot: the pillar at ${tl(pl.r,pl.c)}, ${cheb(player,pl)-1} tile${cheb(player,pl)>2?'s':''} from reach.`);
+    const prey=S.npcs.filter(npc=>npc.alive&&npc.tamedBy==null&&(npc.t==='snake'||npc.t==='wolf'||npc.hp<=6)).sort((a,b)=>cheb(player,a)-cheb(player,b))[0];
+    if(prey&&cheb(player,prey)<=6)out.push(`${prey.name} (${NPCT[prey.t].n}, ${prey.hp} HP) is ${cheb(player,prey)} tiles away: an easier trophy worth ${NPCT[prey.t].cf} CF and ${NPCT[prey.t].coin} coin. Attacking makes it aggro on you.`);
+    const unused=player.items.filter(i=>i.kind==='offer'||i.kind==='card'&&CARDS[i.key].type==='declare');if(unused.length)out.push(`You hold ${unused.length} item${unused.length>1?'s':''} you can use this turn: ${unused.map(i=>itemInfo(i).n).slice(0,3).join(', ')}.`);
   }
   return out.slice(0,4);
 }
@@ -189,6 +214,7 @@ function strategyHints(p){
    holds it right now; anything that would evict a live event warns first and abandons it cleanly. */
 function arenaOwner(){if(!S)return null;
   return S.mgrCtx?{k:'manager',n:'Manager bout',i:'🏛'}:S.specCtx?{k:'spectator',n:'From the stands',i:'👁'}:S.tourn?{k:'tournament',n:'Tournament',i:'🏆'}:S.exhib?{k:'exhibition',n:'Exhibition',i:'🎪'}:S.fest?{k:'festival',n:'Festival',i:'🎉'}:S.missio?{k:'missio',n:'Missio',i:'🗡'}:{k:'play',n:'Play now',i:'⚔'}}
+/* renderTurnInd — the turn indicator in the top bar: whose turn, the phase, turn and rotation, and which mode owns the arena. Replaced by 60-v53. */
 function renderTurnInd(){
   if(HEADLESS)return;
   const el=$('#turnInd');if(!el)return;
@@ -202,27 +228,29 @@ function renderTurnInd(){
 
 /* ================= NPC TRACKER ================= */
 const SPAWNABLE=[['Leo','lion'],['Leaena','lion'],['Commodus','commodus'],['Tholo','tholo'],['Zora','zora']];
-function howToSpawn(name,t){
+/* howToSpawn — how a beast that is not on the sand can still enter this event (its deck card, the event's own rule, a chant…). */
+function howToSpawn(name,npcType){
   const ev=EV(),k=S.evKey;
-  if(t==='zora'){const v=S.players.find(p=>p.abil==='zora'&&p.alive);return `${v?v.name+' can declare him once per event. ':''}${ev.deck&&S.deck.includes('zora')?'The Zora arena card also releases him for whoever draws it.':'No Zora card remains in the deck.'}`}
-  if(k==='gauntlet'){if(t==='lion')return 'Released when both snakes are slain.';if(t==='commodus')return S.noCommodus?'Removed from this Gauntlet.':'Enters when both wolves are slain.';if(t==='tholo')return 'Unleashed when both bears are slain.'}
-  if(k==='orpheus'&&t==='lion')return 'Both lions are released after the first capture.';
-  if(k==='commodus'&&t==='commodus')return 'Enters at the start of round 2 with 20 HP.';
-  if(ev.noBoss&&(t==='tholo'||t==='commodus'))return 'Not used in this event.';
-  if(ev.noTholo&&t==='tholo')return 'Not used in this event.';
+  if(npcType==='zora'){const v=S.players.find(player=>player.abil==='zora'&&player.alive);return `${v?v.name+' can declare him once per event. ':''}${ev.deck&&S.deck.includes('zora')?'The Zora arena card also releases him for whoever draws it.':'No Zora card remains in the deck.'}`}
+  if(k==='gauntlet'){if(npcType==='lion')return 'Released when both snakes are slain.';if(npcType==='commodus')return S.noCommodus?'Removed from this Gauntlet.':'Enters when both wolves are slain.';if(npcType==='tholo')return 'Unleashed when both bears are slain.'}
+  if(k==='orpheus'&&npcType==='lion')return 'Both lions are released after the first capture.';
+  if(k==='commodus'&&npcType==='commodus')return 'Enters at the start of round 2 with 20 HP.';
+  if(ev.noBoss&&(npcType==='tholo'||npcType==='commodus'))return 'Not used in this event.';
+  if(ev.noTholo&&npcType==='tholo')return 'Not used in this event.';
   const card={Leo:'spawnLeo',Leaena:'spawnLeaena',Commodus:'spawnCommodus',Tholo:'spawnTholo'}[name];
   let s='';
   if(ev.deck&&card){const i=S.deck.indexOf(card);s+=i>=0?`Enters when the ${name} arena card is drawn (${S.deck.length} cards left in the deck).`:'Its arena card has already been drawn or removed.'}
   else s+='Not in this event\'s arena deck.';
-  if(t==='tholo'&&S.spect.length)s+=' Spectators in all four quadrants can also chant for Tholo.';
-  if(t==='tholo')s+=' In rounds 1-2 Tholo spawns on the center tile and grabs the chest.';
-  if(t==='commodus')s+=' On entry every gladiator takes 2 damage; no CF can be spent while he lives.';
+  if(npcType==='tholo'&&S.spect.length)s+=' Spectators in all four quadrants can also chant for Tholo.';
+  if(npcType==='tholo')s+=' In rounds 1-2 Tholo spawns on the center tile and grabs the chest.';
+  if(npcType==='commodus')s+=' On entry every gladiator takes 2 damage; no CF can be spent while he lives.';
   return s;
 }
+/* npcTrackerHTML — the Beasts & active cards panel: every beast with HP bar, state and aggro, the spawnable ones not in play (and how they enter), and the active arena cards. */
 function npcTrackerHTML(){
   if(!S)return '';
   const rows=[];
-  const aggroName=n=>n.aggro!=null&&S.players[n.aggro]?S.players[n.aggro].name:null;
+  const aggroName=npc=>npc.aggro!=null&&S.players[npc.aggro]?S.players[npc.aggro].name:null;
   for(const n of S.npcs){
     const T=NPCT[n.t],st=npcStats(n);const max=Math.max(T.hp,n.hp);
     const tip=n.alive?`${npcLbl(n)} · ${n.hp}/${T.hp} HP · attack ${st.ap} · range ${st.rng} · move ${st.mv}${st.state?' · '+st.state:''}${n.aggro!=null?` · aggro on ${aggroName(n)}`:''}${n.tamedBy!=null?' · tamed by '+S.players[n.tamedBy].name:''}${n.zone&&!n.displaced?` · guards ${ROWL[n.zone[0]]}-${ROWL[n.zone[1]]}/${COLL[n.zone[2]]}-${COLL[n.zone[3]]}`:''}. Elimination: ${T.coin} coin, ${T.cf} CF, 1 trophy.${T.states?' Behavior states: '+T.states.map(s=>`${s[4]} ${s[0]}+ HP (${s[1]} atk, ${s[3]} mv)`).join(', ')+'.':''}`:`${n.name} was slain${n.killedBy?' by '+n.killedBy:''}.`;
@@ -267,10 +295,12 @@ function renderBubbles(){
 
 /* ================= PERFORMANCE GRAPH ================= */
 const PERF_METRICS={s:['Performance','combined CF, coin, health, AP, weapons, trophies and items'],cf:['Crowd Favor','CF'],coin:['Coin','coin'],hp:['Health','total HP'],fans:['Fans','spectators backing them'],tr:['Trophies','trophies taken']};
+/* linfit — least-squares line through [x, y] points → {m slope, b intercept}. */
 function linfit(pts){const n=pts.length;if(n<2)return {m:0,b:pts[0]?pts[0][1]:0};let sx=0,sy=0,sxx=0,sxy=0;for(const [x,y] of pts){sx+=x;sy+=y;sxx+=x*x;sxy+=x*y}const d=n*sxx-sx*sx;const m=d?(n*sxy-sx*sy)/d:0;return {m,b:(sy-m*sx)/n}}
+/* perfChartHTML — the Standings graph (SVG) for one metric: each gladiator's line per turn plus a dashed projection of their recent trend. TWEAK: the projection uses the last 40% of turns. */
 function perfChartHTML(metric='s'){
   if(!S||!S.hist)return '';
-  const series=S.players.map(p=>({p,h:(S.hist[p.id]||[]).filter(x=>x[metric]!=null)})).filter(x=>x.h.length);
+  const series=S.players.map(player=>({p:player,h:(S.hist[player.id]||[]).filter(x=>x[metric]!=null)})).filter(x=>x.h.length);
   if(!series.length||Math.max(...series.map(x=>x.h.length))<2)return '<p class="hint">The graph fills in as turns are played.</p>';
   const tMax=Math.max(...series.flatMap(x=>x.h.map(y=>y.t)));
   const horizon=Math.max(S.players.length*3,Math.round(tMax*0.25));const tEnd=tMax+horizon;
@@ -294,8 +324,11 @@ function perfChartHTML(metric='s'){
   const legend=series.map(x=>`<span><i style="--pc:${x.p.color}"></i>${esc(x.p.name)} <b style="font-family:var(--mono)">${Math.round(x.last[metric])}</b> <i class="proj" style="--pc:${x.p.color}"></i><span style="color:var(--muted)">→ ${x.fin}${x.last.end==='elim'?' if they had lived':''}</span></span>`).join('');
   return `<div class="perf"><svg viewBox="0 0 ${W_} ${H_}" role="img" aria-label="${PERF_METRICS[metric][0]} of each gladiator per turn, with dashed projections">${g}</svg><div class="legend">${legend}</div><p class="hint">${PERF_METRICS[metric][0]}: ${PERF_METRICS[metric][1]}. Solid lines are recorded after every turn; dashed lines extend each gladiator's recent trend ${horizon} turns ahead.</p></div>`;
 }
-function perfTabs(cur='s'){return `<div class="seg" role="tablist" style="margin-top:6px">${Object.entries(PERF_METRICS).map(([k,[l]])=>`<button type="button" data-perf="${k}" class="${k===cur?'on':''}">${l}</button>`).join('')}</div>`}
+/* perfTabs — the metric buttons above the Standings graph. */
+function perfTabs(selected='s'){return `<div class="seg" role="tablist" style="margin-top:6px">${Object.entries(PERF_METRICS).map(([k,[l]])=>`<button type="button" data-perf="${k}" class="${k===selected?'on':''}">${l}</button>`).join('')}</div>`}
+/* wirePerf — makes the metric buttons under root swap the graph. */
 function wirePerf(root){root.addEventListener('click',e=>{const b=e.target.closest('[data-perf]');if(!b)return;e.stopPropagation();const w=root.querySelector('#perfWrap');if(w)w.innerHTML=perfTabs(b.dataset.perf)+perfChartHTML(b.dataset.perf)},true)}
+/* the top-bar Standings button: the graph and the Fates table (after the event it reopens the results on the graph). */
 $('#btnGraph').onclick=()=>{if(modalBusy()||!S)return;if(S.over&&S.showResults){S.showResults('graph');return} /* Standings always opens on the graph */ recordHist();modal('Standings',`<div class="seg" style="margin-bottom:8px"><button type="button" data-stpane="st" class="on">📊 Standings</button><button type="button" data-stpane="fates">⚖️ The Fates table</button></div><div id="stPaneSt"><div id="perfWrap">${perfTabs('s')+perfChartHTML('s')}</div></div><div id="stPaneFates" hidden>${fatesHTML()}</div>`,[{label:'Close',value:1}],{wide:1,onOpen:()=>{const mb=$('#mBody');wirePerf(mb);mb.addEventListener('click',e=>{const t=e.target.closest('[data-stpane]');if(!t)return;mb.querySelectorAll('[data-stpane]').forEach(b=>b.classList.toggle('on',b===t));$('#stPaneSt').hidden=t.dataset.stpane!=='st';$('#stPaneFates').hidden=t.dataset.stpane!=='fates'})}})};
 
 /* ================= LUDUS FLAVIUS: SAVED GLADIATORS ================= */
@@ -304,18 +337,22 @@ let LUDUS_CACHE=[];
 function gladPortrait(seed,cls){
   let h=2166136261;for(const ch of String(seed))h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0;
   const nx=()=>(h=(Math.imul(h,1103515245)+12345)>>>0);
-  const pick=arr=>arr[nx()%arr.length];const chance=p=>nx()%100<p*100;
+  const pick=arr=>arr[nx()%arr.length];const chance=prob=>nx()%100<prob*100;
   const HELM_OF={soldier:'galea',royalty:'laurel',hero:'crested',slave:'none',veteranus:'galea',amazonia:'none',venatore:'hood',damnatio:'none'};
   return {skin:pick(SKINS),hair:pick(HAIRS),helm:HELM_OF[cls]||pick(['none','galea','crested']),beard:chance(.45),long:chance(.25),smile:chance(.3),scar:chance(.35),paint:chance(.12),bg:pick(BGS)};
 }
+/* ROSTER_MAX — size of the Ludus Flavius active roster (the gladiators New event can field). TWEAK: the 32. */
 const ROSTER_MAX=32; /* v0.47: 32, enough for a full tournament bracket */ // the active roster: who you can FIELD (event-setup seat dropdowns); everyone else waits on the rolls
-// a saved gladiator's rating, by the same arithmetic Manager mode uses when it imports them
-const ludusOvr=g=>clamp(Math.round(50+(g.wins||0)*4+(g.events||0)*1.5+(gk(g,'P'))*2+(gk(g,'N'))+(g.cf||0)/6),45,92); // the active roster: who you can FIELD (event-setup seat dropdowns); everyone else waits on the rolls
-const gladActive=g=>g.status!=='fallen'&&g.status!=='freed'&&g.status!=='retired'&&g.status!=='infirmary'; // the hurt cannot be fielded until they are treated // fallen, freed and retired gladiators have left the system
-const rosterCount=()=>LUDUS_CACHE.filter(g=>g.roster&&gladActive(g)).length;
-async function loadLudus(){LUDUS_CACHE=(await Store.list('gladiators')).map(g=>{
+/* ludusOvr — a saved gladiator's rating from wins, events, trophies and CF, 45–92 — the same sum Manager mode uses when importing them. TWEAK: the weights. */
+const ludusOvr=glad=>clamp(Math.round(50+(glad.wins||0)*4+(glad.events||0)*1.5+(gk(glad,'P'))*2+(gk(glad,'N'))+(glad.cf||0)/6),45,92);
+/* gladActive — whether a saved gladiator can still be fielded (not fallen, freed, retired or in the infirmary). */
+const gladActive=glad=>glad.status!=='fallen'&&glad.status!=='freed'&&glad.status!=='retired'&&glad.status!=='infirmary'; // the hurt cannot be fielded until they are treated // fallen, freed and retired gladiators have left the system
+/* rosterCount — how many active-roster places are taken. */
+const rosterCount=()=>LUDUS_CACHE.filter(glad=>glad.roster&&gladActive(glad)).length;
+/* loadLudus — loads the saved gladiators into LUDUS_CACHE: upgrades old records, gives them portraits, sorts (roster, living, hand order, CF) and trims the roster to ROSTER_MAX. */
+async function loadLudus(){LUDUS_CACHE=(await Store.list('gladiators')).map(glad=>{
     // older records: carry capped at 25 (missio rule), trophy name lists become all-time totals
-    const r={...g,carry:Math.min(25,g.carry||0)};if(Array.isArray(r.trophiesP)){r.kP=(r.kP||0)+r.trophiesP.length;delete r.trophiesP}if(Array.isArray(r.trophiesN)){r.kN=(r.kN||0)+r.trophiesN.length;delete r.trophiesN}
+    const r={...glad,carry:Math.min(25,glad.carry||0)};if(Array.isArray(r.trophiesP)){r.kP=(r.kP||0)+r.trophiesP.length;delete r.trophiesP}if(Array.isArray(r.trophiesN)){r.kN=(r.kN||0)+r.trophiesN.length;delete r.trophiesN}
     if(!r.portrait)r.portrait=gladPortrait(r.id||r.name,r.cls);return r})
   // v0.15 order: active roster first, then the living, and the fallen/freed/retired always sink to the last tiles.
   // Within a group, a hand-set position (the ⇄ swap system) wins; otherwise CF ranks them.
@@ -323,104 +360,114 @@ async function loadLudus(){LUDUS_CACHE=(await Store.list('gladiators')).map(g=>{
   // records from before v0.7 have no active roster yet: the top of the rolls fills it
   /* v0.54: no automatic filling of the active roster — you pick who is fielded */
   // v0.18: the roster shrank to 8 — the lowest-CF extras step back onto the rolls
-  {const ros=LUDUS_CACHE.filter(g=>g.roster&&gladActive(g)).sort((a,b)=>(b.cf||0)-(a.cf||0));for(const g of ros.slice(ROSTER_MAX)){g.roster=false;Store.put('gladiators',g.id,{...g}).catch(()=>{})}}
+  {const ros=LUDUS_CACHE.filter(glad=>glad.roster&&gladActive(glad)).sort((a,b)=>(b.cf||0)-(a.cf||0));for(const g of ros.slice(ROSTER_MAX)){g.roster=false;Store.put('gladiators',g.id,{...g}).catch(()=>{})}}
   return LUDUS_CACHE}
-function gladiatorRecord(x,prev){
-  const p=x.p,ev=EV(),L=LOCATIONS[S.locIdx];
+/* gladiatorRecord — a saved gladiator's record after an event, built from the result row and the previous record: history entry, CF and carry (half, ≤25), severed limbs, totals and the career ledger. */
+function gladiatorRecord(row,prev){
+  const p=row.p,ev=EV(),L=LOCATIONS[S.locIdx];
   const tp=p.trophies.filter(t=>t.pk==='player'),tn=p.trophies.filter(t=>t.pk!=='player');
-  const entry={date:new Date().toISOString().slice(0,10),event:ev.short+(ev.sr?' · '+ev.sr:''),ev:S.evKey,li:S.locIdx,loc:L?L.n:'',won:!!x.won,cf:x.f,att:S.attendance||0,fate:x.fate?x.fate[0]:'',coin:p.coin,kP:tp.length,kN:tn.length,rounds:S.ri+1,survived:p.alive};
+  const entry={date:new Date().toISOString().slice(0,10),event:ev.short+(ev.sr?' · '+ev.sr:''),ev:S.evKey,li:S.locIdx,loc:L?L.n:'',won:!!row.won,cf:row.f,att:S.attendance||0,fate:row.fate?row.fate[0]:'',coin:p.coin,kP:tp.length,kN:tn.length,rounds:S.ri+1,survived:p.alive};
   const r=prev?{...prev}:{name:p.name,cls:p.cls,created:entry.date,history:[],kP:0,kN:0,events:0,wins:0,cpu:!!p.cpu};
   if(prev)r.cpu=!!prev.cpu&&!!p.cpu; // a human who survives with a CPU gladiator makes it eligible for missios
   // older records kept trophy names; the Ludus now keeps all-time totals
   if(Array.isArray(r.trophiesP)){r.kP=(r.kP||0)+r.trophiesP.length;delete r.trophiesP}if(Array.isArray(r.trophiesN)){r.kN=(r.kN||0)+r.trophiesN.length;delete r.trophiesN}
-  r.name=p.name;r.cls=p.cls;r.cf=x.f;r.carry=Math.min(25,Math.floor(x.f/2));r.fate=entry.fate;r.status='active';r.updated=entry.date;
+  r.name=p.name;r.cls=p.cls;r.cf=row.f;r.carry=Math.min(25,Math.floor(row.f/2));r.fate=entry.fate;r.status='active';r.updated=entry.date;
   r.severed=['rarm','larm','rleg','lleg'].filter(l=>p.hp[l]<=0);r.coin=(prev?prev.coin||0:0)+p.coin;
   r.kP=(r.kP||0)+entry.kP;r.kN=(r.kN||0)+entry.kN;
-  r.events=(r.events||0)+1;r.wins=(r.wins||0)+(x.won?1:0);r.history=[...(r.history||[]),entry];
+  r.events=(r.events||0)+1;r.wins=(r.wins||0)+(row.won?1:0);r.history=[...(r.history||[]),entry];
   // v0.27 career ledger: the totals a Liberti plaque (and the Ludus card) remember
-  const st=p.stats||{};r.dmg=(r.dmg||0)+(st.dmgDealt||0);r.taken=(r.taken||0)+(st.dmgTaken||0);r.cfSum=(r.cfSum||0)+x.f;r.best=Math.max(r.best||0,x.f);r.pots=(r.pots||0)+(st.pots||0);
+  const st=p.stats||{};r.dmg=(r.dmg||0)+(st.dmgDealt||0);r.taken=(r.taken||0)+(st.dmgTaken||0);r.cfSum=(r.cfSum||0)+row.f;r.best=Math.max(r.best||0,row.f);r.pots=(r.pots||0)+(st.pots||0);
   r.house=(r.house||0)+(typeof houseCount==='function'?houseCount(S.attendance||0,S.seed,S.locIdx):0);r.arenas=[...new Set([...(r.arenas||[]),S.locIdx])];entry.dmg=st.dmgDealt||0;
   if(p.pers)r.pers=p.pers;
   return r;
 }
-async function saveGladiator(x){
-  const prev=x.p.saved?LUDUS_CACHE.find(g=>g.id===x.p.saved)||await Store.getDoc('gladiators',x.p.saved):null;
-  const id=prev?prev.id:`g${Date.now()}${x.p.id}`;
-  const rec=gladiatorRecord(x,prev);
+/* saveGladiator — saves (or updates) a result row's gladiator in the Ludus Flavius; a new one clears the weakest dead record when the rolls are full. */
+async function saveGladiator(row){
+  const prev=row.p.saved?LUDUS_CACHE.find(glad=>glad.id===row.p.saved)||await Store.getDoc('gladiators',row.p.saved):null;
+  const id=prev?prev.id:`g${Date.now()}${row.p.id}`;
+  const rec=gladiatorRecord(row,prev);
   rec.portrait=(prev&&prev.portrait)||gladPortrait(id,rec.cls);
   rec.roster=prev?!!prev.roster:false; /* v0.54: the active roster is yours to fill — a new save waits on the rolls until you add it */
   // the Ludus holds 60: when a NEW valid gladiator needs a tile, the oldest dead weight is cleared first
   if(!prev&&LUDUS_CACHE.length>=(typeof LUDUS_CAP!=='undefined'?LUDUS_CAP:92)){
-    const cut=[...LUDUS_CACHE].filter(g=>!gladActive(g)).sort((a,b)=>(a.cf||0)-(b.cf||0))[0];
-    if(cut){await Store.del('gladiators',cut.id).catch(()=>{});LUDUS_CACHE=LUDUS_CACHE.filter(g=>g.id!==cut.id);
+    const cut=[...LUDUS_CACHE].filter(glad=>!gladActive(glad)).sort((a,b)=>(a.cf||0)-(b.cf||0))[0];
+    if(cut){await Store.del('gladiators',cut.id).catch(()=>{});LUDUS_CACHE=LUDUS_CACHE.filter(glad=>glad.id!==cut.id);
       log(`The Ludus rolls are full: ${esc(cut.name)}'s old record (${cut.status}) is cleared to make room.`)}}
-  rec.id=id;await Store.put('gladiators',id,rec);x.p.saved=id;await loadLudus();return rec;
+  rec.id=id;await Store.put('gladiators',id,rec);row.p.saved=id;await loadLudus();return rec;
 }
-async function markFallen(p,x){ // a saved gladiator who returns and falls short of the Ludus dies
-  const prev=LUDUS_CACHE.find(g=>g.id===p.saved)||await Store.getDoc('gladiators',p.saved);if(!prev)return;
-  const rec=gladiatorRecord(x,prev);rec.status='fallen';rec.carry=0;rec.roster=false;await Store.put('gladiators',prev.id,rec);await loadLudus();
+/* markFallen — strikes a summoned gladiator who fell short: their record is kept as fallen. */
+async function markFallen(player,row){ // a saved gladiator who returns and falls short of the Ludus dies
+  const prev=LUDUS_CACHE.find(glad=>glad.id===player.saved)||await Store.getDoc('gladiators',player.saved);if(!prev)return;
+  const rec=gladiatorRecord(row,prev);rec.status='fallen';rec.carry=0;rec.roster=false;await Store.put('gladiators',prev.id,rec);await loadLudus();
 }
-const gk=(g,w)=>(g['k'+w]||0)+(Array.isArray(g['trophies'+w])?g['trophies'+w].length:0);
-function ludusTile(g,i){
-  if(!g)return `<div class="gtile empty" aria-hidden="true"></div>`;
-  const C=CLASSES[g.cls]||CLASSES.soldier;
-  return `<button type="button" class="gtile ${g.status==='fallen'||g.status==='retired'?'fallen':g.status==='freed'?'freed':''}${g.status==='infirmary'?' infirm':''} ${g.roster||!gladActive(g)?'':'bench'}" style="--pc:${C.color}" data-glad="${g.id}" aria-label="${esc(g.name)}, ${C.name}, ${g.cf} CF">
-    <span class="face">${portraitSVG(g.portrait,C.color)}</span>
-    ${g.roster&&gladActive(g)?'<span class="act" title="In the active roster: can be summoned or fielded from event setup">★</span>':''}
-    <span class="cf">${g.cf}</span>
-    <b>${esc(g.name)}</b><span class="m">${starHTML(starsOf(ludusOvr(g)))}</span><span class="m">${C.name}${g.status==='fallen'?' · fallen':g.status==='freed'?' · freed 🗡':g.status==='retired'?' · retired':g.status==='infirmary'?' · 🏥 infirmary':''}</span>
-    <span class="m">⚔ ${gk(g,'P')} · 🐾 ${gk(g,'N')} · ${g.events} ev</span></button>`;
+/* gk — a record's all-time trophy count of a kind (P gladiators, N beasts), old name lists included. */
+const gk=(glad,kind)=>(glad['k'+kind]||0)+(Array.isArray(glad['trophies'+kind])?glad['trophies'+kind].length:0);
+/* ludusTile — one tile on the Ludus rolls (face, CF, stars, class, status, trophies); an empty slot when there is no gladiator. */
+function ludusTile(glad,i){
+  if(!glad)return `<div class="gtile empty" aria-hidden="true"></div>`;
+  const C=CLASSES[glad.cls]||CLASSES.soldier;
+  return `<button type="button" class="gtile ${glad.status==='fallen'||glad.status==='retired'?'fallen':glad.status==='freed'?'freed':''}${glad.status==='infirmary'?' infirm':''} ${glad.roster||!gladActive(glad)?'':'bench'}" style="--pc:${C.color}" data-glad="${glad.id}" aria-label="${esc(glad.name)}, ${C.name}, ${glad.cf} CF">
+    <span class="face">${portraitSVG(glad.portrait,C.color)}</span>
+    ${glad.roster&&gladActive(glad)?'<span class="act" title="In the active roster: can be summoned or fielded from event setup">★</span>':''}
+    <span class="cf">${glad.cf}</span>
+    <b>${esc(glad.name)}</b><span class="m">${starHTML(starsOf(ludusOvr(glad)))}</span><span class="m">${C.name}${glad.status==='fallen'?' · fallen':glad.status==='freed'?' · freed 🗡':glad.status==='retired'?' · retired':glad.status==='infirmary'?' · 🏥 infirmary':''}</span>
+    <span class="m">⚔ ${gk(glad,'P')} · 🐾 ${gk(glad,'N')} · ${glad.events} ev</span></button>`;
 }
-const gladFace=(g,size)=>portraitHTML({name:g.name,portrait:g.portrait,color:(CLASSES[g.cls]||CLASSES.soldier).color},size);
-function ludusTip(g){
-  const C=CLASSES[g.cls];const h=(g.history||[]).slice(-6).reverse();
-  return `<div style="display:flex;gap:10px;max-width:340px">${gladFace(g,'sm')}<div><div style="font:400 17px var(--display);color:var(--gold2)">${esc(g.name)}</div><div class="tt" style="margin:0">${C.name} · ${g.status==='fallen'?'fallen':g.status==='freed'?'freed · took the rudis':g.status==='retired'?'retired':g.roster?'active roster':'in the Ludus'} · ${g.cf} CF · returns with ${g.carry||0}<br>⚔ ${gk(g,'P')} gladiators · 🐾 ${gk(g,'N')} beasts · ${g.wins}/${g.events} wins</div></div></div>
-    <div class="tt" style="max-width:340px">${h.map(x=>`${esc(x.date)} · <b>${esc(x.event)}</b> at ${esc(x.loc)}: ${x.won?'won':'survived'}, ${x.cf} CF`).join('<br>')||'No history yet.'}${(g.history||[]).length>6?'<br>…':''}<br><i>Click for the full record.</i></div>`;
+/* gladFace — a saved gladiator's portrait. */
+const gladFace=(glad,size)=>portraitHTML({name:glad.name,portrait:glad.portrait,color:(CLASSES[glad.cls]||CLASSES.soldier).color},size);
+/* ludusTip — the hover card for a saved gladiator: face, status, CF and the last six events. */
+function ludusTip(glad){
+  const C=CLASSES[glad.cls];const h=(glad.history||[]).slice(-6).reverse();
+  return `<div style="display:flex;gap:10px;max-width:340px">${gladFace(glad,'sm')}<div><div style="font:400 17px var(--display);color:var(--gold2)">${esc(glad.name)}</div><div class="tt" style="margin:0">${C.name} · ${glad.status==='fallen'?'fallen':glad.status==='freed'?'freed · took the rudis':glad.status==='retired'?'retired':glad.roster?'active roster':'in the Ludus'} · ${glad.cf} CF · returns with ${glad.carry||0}<br>⚔ ${gk(glad,'P')} gladiators · 🐾 ${gk(glad,'N')} beasts · ${glad.wins}/${glad.events} wins</div></div></div>
+    <div class="tt" style="max-width:340px">${h.map(x=>`${esc(x.date)} · <b>${esc(x.event)}</b> at ${esc(x.loc)}: ${x.won?'won':'survived'}, ${x.cf} CF`).join('<br>')||'No history yet.'}${(glad.history||[]).length>6?'<br>…':''}<br><i>Click for the full record.</i></div>`;
 }
-function ludusDetail(g){
-  if(!g)return '';const C=CLASSES[g.cls];
-  return `<div class="gdetail" id="gDetail">${gladFace(g,'md')}<div>
-    <div style="font:400 20px var(--display);color:var(--gold2)">${esc(g.name)} <span style="font-size:14px">${starHTML(starsOf(ludusOvr(g)))} <span class="odds">${ludusOvr(g)}</span></span></div>
-    <div style="color:var(--muted);font-size:13px"><span data-card="k:${g.cls}" style="text-decoration:underline dotted;cursor:help">${C.name}</span> · ${C.sub} · ${g.status==='fallen'?'<span style="color:var(--blood2)">fallen</span>':g.status==='freed'?'<b style="color:var(--gold2)">freed · the rudis</b>':g.status==='retired'?'<span style="color:var(--muted)">retired · lays down the sword</span>':g.roster?'<b style="color:var(--gold2)">active roster</b>':'in the Ludus Flavius'} · saved ${esc(g.created)}${g.cpu?' · CPU':''}</div>
-    <div class="badges"><span class="badge gold">${g.cf} CF last event</span><span class="badge">Returns with ${g.carry||0} CF</span><span class="badge">${g.wins}/${g.events} wins</span><span class="badge">Royal Reserve ${g.coin||0} coin</span>${(g.severed||[]).length?`<span class="badge bad">Severed: ${g.severed.map(l=>LOCN[l]).join(', ')}</span>`:''}</div>
-    <h4>All-time trophies</h4><div class="rc-stats"><span><b>${gk(g,'P')}</b>⚔ Gladiators</span><span><b>${gk(g,'N')}</b>🐾 Beasts</span><span><b>${g.wins}</b>Wins</span><span><b>${g.events}</b>Events</span><span><b>${g.coin||0}</b>Royal Reserve</span></div>
-    <h4>History</h4><table class="tally"><tr><th>Date</th><th>Event</th><th>Result</th><th>CF</th><th>Kills P/N</th></tr>${(g.history||[]).slice().reverse().map(h=>`<tr><td>${esc(h.date)}</td><td>${esc(h.event)} · ${esc(h.loc)}</td><td>${h.won?'<b style="color:var(--gold2)">won</b>':'survived'} · ${esc(h.fate)}</td><td class="n">${h.cf}</td><td class="n">${Array.isArray(h.kP)?h.kP.length:h.kP||0}/${Array.isArray(h.kN)?h.kN.length:h.kN||0}</td></tr>`).join('')}</table>
-    ${g.cpu?'<p class="hint"><b>🤖 A computer-played gladiator.</b> They were saved from a CPU seat, so for now they only fight <i>against</i> you: in New event, pick them in a seat set to CPU and the computer plays them. In Manager mode you can sign them and bet on them. To play them yourself, a human must first survive one event with them.</p>':''}
-    ${g.status==='freed'?'<p class="hint">This gladiator won their freedom and left the sands forever. Their glory lives in the Liberti (the Annals).</p>':''}
-    <div class="mbtns" ${g.status==='freed'?'hidden':''}>${gladActive(g)?`<button class="btn" type="button" data-groster="${g.id}">${g.roster?'Drop from the active roster':`Add to the active roster<small>${rosterCount()}/${ROSTER_MAX} places taken</small>`}</button>`:''}<button class="btn primary" type="button" data-summon="${g.id}">Summon to a new event<small>you control them · returns with ${g.carry||0} CF and fresh class gear</small></button><button class="btn" type="button" data-summoncpu="${g.id}">Field as a CPU rival<small>keeps their personality</small></button>${gladActive(g)?`<button class="btn" type="button" data-gretire="${g.id}">Retire &amp; erase<small>struck from the game forever — though a rare few dodge Flavius and turn up in the stands</small></button>`:''}${!g.cpu&&MISSIOS[g.cls]?`<button class="btn" type="button" data-gmissio="${g.id}">Continue as a missio<small>starts at step ${missioCredit(g)+1} of 5</small></button>`:''}<button class="btn" type="button" data-gswaptile="${g.id}">⇄ Swap tile position<small>then click any other tile to trade places</small></button></div>
-    ${(typeof CROWD_CACHE!=='undefined'?CROWD_CACHE.filter(r=>r.kin&&String(r.kin.name).toLowerCase()===g.name.toLowerCase()):[]).length?`<h4>Family in the stands</h4><p class="rc-sub">${CROWD_CACHE.filter(r=>r.kin&&String(r.kin.name).toLowerCase()===g.name.toLowerCase()).map(r=>`👪 <b>${esc(r.name)}</b> (${esc(r.kin.rel)})`).join(' · ')} — they arrive in family colors whenever ${esc(g.name)} fights.</p>`:''}</div></div>`;
+/* ludusDetail — a saved gladiator's full record with its buttons (roster, summon, field as CPU, retire, missio, swap tile). */
+function ludusDetail(glad){
+  if(!glad)return '';const C=CLASSES[glad.cls];
+  return `<div class="gdetail" id="gDetail">${gladFace(glad,'md')}<div>
+    <div style="font:400 20px var(--display);color:var(--gold2)">${esc(glad.name)} <span style="font-size:14px">${starHTML(starsOf(ludusOvr(glad)))} <span class="odds">${ludusOvr(glad)}</span></span></div>
+    <div style="color:var(--muted);font-size:13px"><span data-card="k:${glad.cls}" style="text-decoration:underline dotted;cursor:help">${C.name}</span> · ${C.sub} · ${glad.status==='fallen'?'<span style="color:var(--blood2)">fallen</span>':glad.status==='freed'?'<b style="color:var(--gold2)">freed · the rudis</b>':glad.status==='retired'?'<span style="color:var(--muted)">retired · lays down the sword</span>':glad.roster?'<b style="color:var(--gold2)">active roster</b>':'in the Ludus Flavius'} · saved ${esc(glad.created)}${glad.cpu?' · CPU':''}</div>
+    <div class="badges"><span class="badge gold">${glad.cf} CF last event</span><span class="badge">Returns with ${glad.carry||0} CF</span><span class="badge">${glad.wins}/${glad.events} wins</span><span class="badge">Royal Reserve ${glad.coin||0} coin</span>${(glad.severed||[]).length?`<span class="badge bad">Severed: ${glad.severed.map(l=>LOCN[l]).join(', ')}</span>`:''}</div>
+    <h4>All-time trophies</h4><div class="rc-stats"><span><b>${gk(glad,'P')}</b>⚔ Gladiators</span><span><b>${gk(glad,'N')}</b>🐾 Beasts</span><span><b>${glad.wins}</b>Wins</span><span><b>${glad.events}</b>Events</span><span><b>${glad.coin||0}</b>Royal Reserve</span></div>
+    <h4>History</h4><table class="tally"><tr><th>Date</th><th>Event</th><th>Result</th><th>CF</th><th>Kills P/N</th></tr>${(glad.history||[]).slice().reverse().map(h=>`<tr><td>${esc(h.date)}</td><td>${esc(h.event)} · ${esc(h.loc)}</td><td>${h.won?'<b style="color:var(--gold2)">won</b>':'survived'} · ${esc(h.fate)}</td><td class="n">${h.cf}</td><td class="n">${Array.isArray(h.kP)?h.kP.length:h.kP||0}/${Array.isArray(h.kN)?h.kN.length:h.kN||0}</td></tr>`).join('')}</table>
+    ${glad.cpu?'<p class="hint"><b>🤖 A computer-played gladiator.</b> They were saved from a CPU seat, so for now they only fight <i>against</i> you: in New event, pick them in a seat set to CPU and the computer plays them. In Manager mode you can sign them and bet on them. To play them yourself, a human must first survive one event with them.</p>':''}
+    ${glad.status==='freed'?'<p class="hint">This gladiator won their freedom and left the sands forever. Their glory lives in the Liberti (the Annals).</p>':''}
+    <div class="mbtns" ${glad.status==='freed'?'hidden':''}>${gladActive(glad)?`<button class="btn" type="button" data-groster="${glad.id}">${glad.roster?'Drop from the active roster':`Add to the active roster<small>${rosterCount()}/${ROSTER_MAX} places taken</small>`}</button>`:''}<button class="btn primary" type="button" data-summon="${glad.id}">Summon to a new event<small>you control them · returns with ${glad.carry||0} CF and fresh class gear</small></button><button class="btn" type="button" data-summoncpu="${glad.id}">Field as a CPU rival<small>keeps their personality</small></button>${gladActive(glad)?`<button class="btn" type="button" data-gretire="${glad.id}">Retire &amp; erase<small>struck from the game forever — though a rare few dodge Flavius and turn up in the stands</small></button>`:''}${!glad.cpu&&MISSIOS[glad.cls]?`<button class="btn" type="button" data-gmissio="${glad.id}">Continue as a missio<small>starts at step ${missioCredit(glad)+1} of 5</small></button>`:''}<button class="btn" type="button" data-gswaptile="${glad.id}">⇄ Swap tile position<small>then click any other tile to trade places</small></button></div>
+    ${(typeof CROWD_CACHE!=='undefined'?CROWD_CACHE.filter(r=>r.kin&&String(r.kin.name).toLowerCase()===glad.name.toLowerCase()):[]).length?`<h4>Family in the stands</h4><p class="rc-sub">${CROWD_CACHE.filter(r=>r.kin&&String(r.kin.name).toLowerCase()===glad.name.toLowerCase()).map(r=>`👪 <b>${esc(r.name)}</b> (${esc(r.kin.rel)})`).join(' · ')} — they arrive in family colors whenever ${esc(glad.name)} fights.</p>`:''}</div></div>`;
 }
+/* ludusHTML — the Ludus Flavius window body: the selected record, the active roster grid, the infirmary and the rolls (60 tiles). */
 async function ludusHTML(sel){
   const all=await loadLudus();
-  const ros=all.filter(g=>g.roster&&gladActive(g));const rolls=all.filter(g=>!(g.roster&&gladActive(g)));
+  const ros=all.filter(glad=>glad.roster&&gladActive(glad));const rolls=all.filter(glad=>!(glad.roster&&gladActive(glad)));
   const cells=[];for(let i=0;i<60;i++)cells.push(ludusTile(rolls[i],i)); /* v0.47: 60 places on the rolls below the roster of 32 */
-  const slot=(g,i)=>g?`<button type="button" class="rslot" style="--pc:${(CLASSES[g.cls]||CLASSES.soldier).color}" data-glad="${g.id}" aria-label="${esc(g.name)}, active roster">
-      <span class="face">${portraitSVG(g.portrait,(CLASSES[g.cls]||CLASSES.soldier).color)}</span><span class="rs-n">${i+1}</span>
-      <b>${esc(g.name)}</b><span class="m">${starHTML(starsOf(ludusOvr(g)))} ${ludusOvr(g)}</span><span class="m">${(CLASSES[g.cls]||CLASSES.soldier).name} · ${g.cf} CF · ${g.wins}/${g.events} won</span></button>`
+  const slot=(glad,i)=>glad?`<button type="button" class="rslot" style="--pc:${(CLASSES[glad.cls]||CLASSES.soldier).color}" data-glad="${glad.id}" aria-label="${esc(glad.name)}, active roster">
+      <span class="face">${portraitSVG(glad.portrait,(CLASSES[glad.cls]||CLASSES.soldier).color)}</span><span class="rs-n">${i+1}</span>
+      <b>${esc(glad.name)}</b><span class="m">${starHTML(starsOf(ludusOvr(glad)))} ${ludusOvr(glad)}</span><span class="m">${(CLASSES[glad.cls]||CLASSES.soldier).name} · ${glad.cf} CF · ${glad.wins}/${glad.events} won</span></button>`
     :`<div class="rslot empty"><span class="rs-n">${i+1}</span><span class="m">open place</span></div>`;
-  return `<div id="gDetailWrap">${sel?ludusDetail(all.find(g=>g.id===sel)):'<p class="hint" style="margin:6px 0">Click a gladiator to open their full record — all-time trophies, history, roster and summons.</p>'}</div><div class="card2 rosterbox"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px"><h4 style="margin:0">⭐ Active roster · ${ros.length}/${ROSTER_MAX}</h4><span class="rc-sub">Click a gladiator for their record · use <b>Add to / Drop from the active roster</b> on their record</span></div>
+  return `<div id="gDetailWrap">${sel?ludusDetail(all.find(glad=>glad.id===sel)):'<p class="hint" style="margin:6px 0">Click a gladiator to open their full record — all-time trophies, history, roster and summons.</p>'}</div><div class="card2 rosterbox"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px"><h4 style="margin:0">⭐ Active roster · ${ros.length}/${ROSTER_MAX}</h4><span class="rc-sub">Click a gladiator for their record · use <b>Add to / Drop from the active roster</b> on their record</span></div>
     <p class="rc-sub" style="margin:4px 0 8px">The active roster is your <b>fielded squad</b>: only these ${ROSTER_MAX} can be picked in New event's seat dropdowns (as your own seat, or a seat the computer plays). Everyone else stays safe on the rolls below — still saved, still summonable from their record — until you promote them. You choose who joins it: open a gladiator’s record and press <b>Add to the active roster</b>.</p>
     <div class="rgrid8">${Array.from({length:ROSTER_MAX},(_,i)=>slot(ros[i],i)).join('')}</div></div>
     <p>Gladiators whose Fate reached the <b>Ludus Flavius</b> (20+ CF) or freedom live here — up to 92 of them — 32 on the active roster and 60 on the rolls. Once saved, their record updates <b>automatically</b> after every event they are summoned to: survive and the legend grows, fall short and they are struck from the rolls for good. Summon one to fight again (half their final CF up to 25, fresh class gear, severed limbs persist), or continue them as a missio — the five-event campaign of their class.${Store.db?' The Ludus is shared with everyone who opens this page.':' Saved in this browser.'}</p>
-    ${all.some(g=>g.status==='infirmary')?`<div class="card2" style="border-color:var(--blood2);margin:10px 0"><h4 style="margin-top:0">🏥 The Ludus infirmary</h4><p class="rc-sub" style="margin:0 0 6px">Carried from the sand too hurt to stand on the rolls. Care is paid by your <b>active lanista's</b> treasury. Four events untended and a wound writes its own ending — death, flight, or a limp for life.</p>
-     <div class="list2">${all.filter(g=>g.status==='infirmary').map(g=>`<div class="lrow" style="--pc:var(--blood2)"><span class="face" style="width:44px">${portraitSVG(g.portrait,(CLASSES[g.cls]||CLASSES.soldier).color)}</span><div class="t"><b>${esc(g.name)}</b><small>needs ${esc((g.infirm||{}).need||'care')} · ${(g.infirm||{}).cost||MEDICUS} coin · untended for ${(g.infirm||{}).wait||0} of 4 events${(g.severed||[]).length?` · severed: ${g.severed.map(l=>LOCN[l]).join(', ')}`:''}</small></div><div class="a"><button class="btn primary" type="button" data-ginfirm="${g.id}">Pay for care<small>${(g.infirm||{}).cost||MEDICUS} coin · back to the rolls</small></button></div></div>`).join('')}</div></div>`:''}
+    ${all.some(glad=>glad.status==='infirmary')?`<div class="card2" style="border-color:var(--blood2);margin:10px 0"><h4 style="margin-top:0">🏥 The Ludus infirmary</h4><p class="rc-sub" style="margin:0 0 6px">Carried from the sand too hurt to stand on the rolls. Care is paid by your <b>active lanista's</b> treasury. Four events untended and a wound writes its own ending — death, flight, or a limp for life.</p>
+     <div class="list2">${all.filter(glad=>glad.status==='infirmary').map(glad=>`<div class="lrow" style="--pc:var(--blood2)"><span class="face" style="width:44px">${portraitSVG(glad.portrait,(CLASSES[glad.cls]||CLASSES.soldier).color)}</span><div class="t"><b>${esc(glad.name)}</b><small>needs ${esc((glad.infirm||{}).need||'care')} · ${(glad.infirm||{}).cost||MEDICUS} coin · untended for ${(glad.infirm||{}).wait||0} of 4 events${(glad.severed||[]).length?` · severed: ${glad.severed.map(l=>LOCN[l]).join(', ')}`:''}</small></div><div class="a"><button class="btn primary" type="button" data-ginfirm="${glad.id}">Pay for care<small>${(glad.infirm||{}).cost||MEDICUS} coin · back to the rolls</small></button></div></div>`).join('')}</div></div>`:''}
     <h4>📜 The rolls</h4><div class="ludus" role="list">${cells.join('')}</div>${rolls.length>60?`<p class="hint">${rolls.length-60} more gladiators are stored beyond the first 60.</p>`:''}`;
 }
+/* openLudus — opens the Ludus Flavius window and handles its buttons (swap tiles, roster, infirmary care, retire & erase, summon, missio). */
 async function openLudus(sel,fromHall){
   if(modalBusy())return;
   const html=await ludusHTML(sel);
   const v=await modal('🛡 Your Play Now Gladiators · Ludus Flavius',`<div id="ludusBody">${html}</div>`,[{label:'Close',value:0}],{wide:1,full:1,onOpen:done=>{if(fromHall){const x=$('#mClose');if(x){x.textContent='← Back to the Annals';x.classList.add('saveq')}}
     const box=$('#ludusBody');
     let swapFrom=null; // the ⇄ system: pick a tile, click another, they trade places
-    const show=(id,go)=>{const w=$('#gDetailWrap');w.innerHTML=ludusDetail(LUDUS_CACHE.find(g=>g.id===id));if(go)try{w.scrollIntoView({block:'start',behavior:'smooth'})}catch(e){}};
+    const show=(id,go)=>{const w=$('#gDetailWrap');w.innerHTML=ludusDetail(LUDUS_CACHE.find(glad=>glad.id===id));if(go)try{w.scrollIntoView({block:'start',behavior:'smooth'})}catch(e){}};
     box.onfocusin=e=>{const t=e.target.closest('[data-glad]');if(t&&!swapFrom)show(t.dataset.glad)};
     box.onclick=async e=>{
       const sw=e.target.closest('[data-gswaptile]');
       if(sw){swapFrom=sw.dataset.gswaptile;sw.innerHTML='⇄ Now click the tile to trade with<small>or click this again to cancel</small>';sw.classList.add('primary');if(sw.dataset.armed){swapFrom=null;delete sw.dataset.armed;sw.classList.remove('primary');sw.innerHTML='⇄ Swap tile position<small>then click any other tile to trade places</small>'}else sw.dataset.armed='1';return}
       const t=e.target.closest('[data-glad]');
       if(t&&swapFrom&&t.dataset.glad!==swapFrom){
-        const a2=LUDUS_CACHE.find(g=>g.id===swapFrom),b2=LUDUS_CACHE.find(g=>g.id===t.dataset.glad);
-        if(a2&&b2){LUDUS_CACHE.forEach((g,i)=>{if(g.ord==null)g.ord=i}); // first swap pins everyone's current order
+        const a2=LUDUS_CACHE.find(glad=>glad.id===swapFrom),b2=LUDUS_CACHE.find(glad=>glad.id===t.dataset.glad);
+        if(a2&&b2){LUDUS_CACHE.forEach((glad,i)=>{if(glad.ord==null)glad.ord=i}); // first swap pins everyone's current order
           [a2.ord,b2.ord]=[b2.ord,a2.ord];
           await Store.put('gladiators',a2.id,{...a2}).catch(()=>{});await Store.put('gladiators',b2.id,{...b2}).catch(()=>{});
           await loadLudus();box.innerHTML=await ludusHTML(a2.id)}
@@ -469,20 +516,23 @@ async function openLudus(sel,fromHall){
   if(typeof v==='string'&&v.startsWith('missio:')){const g=LUDUS_CACHE.find(x=>x.id===v.slice(7));if(g){const ms=await Store.list('missios');const ex=ms.find(m=>m.gladId===g.id&&m.status==='active');const rec=ex||await missioFromLudus(g);startMissio(rec)}}
   if(fromHall&&(v===0||v==null)&&typeof openHall==='function')setTimeout(()=>openHall('infamis'),60); // v0.43: back to the Annals
 }
-function summonToSetup(g,asCpu=false){
+/* summonToSetup — puts a saved gladiator into a New event seat (seat 1, or a free CPU seat when fielded as a CPU rival). */
+function summonToSetup(glad,asCpu=false){
   CFG.mode='event';
   const i=asCpu?Math.max(1,CFG.seats.findIndex((o,j)=>j>0&&o.cpu&&!o.saved)):0;const s=CFG.seats[i<0?1:i];
   // free the class if another seat holds it
-  const clash=CFG.seats.find(o=>o!==s&&o.cls===g.cls);if(clash)clash.cls=s.cls;
-  Object.assign(s,{cls:g.cls,cpu:asCpu,name:g.name,saved:g.id});
-  if(asCpu&&g.pers){s.preset='custom';s.pers={...g.pers}}
+  const clash=CFG.seats.find(o=>o!==s&&o.cls===glad.cls);if(clash)clash.cls=s.cls;
+  Object.assign(s,{cls:glad.cls,cpu:asCpu,name:glad.name,saved:glad.id});
+  if(asCpu&&glad.pers){s.preset='custom';s.pers={...glad.pers}}
 }
+/* the top-bar Ludus button. */
 $('#btnLudus').onclick=()=>openLudus();
 
 /* ================= STRATEGY GUIDE ================= */
 /* Results of 300 simulated all-CPU classic events — THIS. IS. SPARTA. (Well. The arena.) v0.11 rules. */
 const SIM_STATS={"games": 300, "gladiators": 1200, "winCF": 50, "ludusPct": 35, "potWin": 32, "noPotWin": 12, "avgTurns": 55, "cls": {"amazonia": {"win": 31, "cf": 22}, "damnatio": {"win": 7, "cf": 8}, "hero": {"win": 34, "cf": 26}, "royalty": {"win": 31, "cf": 18}, "slave": {"win": 22, "cf": 13}, "soldier": {"win": 29, "cf": 18}, "venatore": {"win": 18, "cf": 18}, "veteranus": {"win": 29, "cf": 22}}, "pers": {"hunt": {"n": 163, "win": 21, "cf": 19.4, "ludus": 37}, "coin": {"n": 211, "win": 27, "cf": 16.1, "ludus": 28}, "loyalty": {"n": 29, "win": 24, "cf": 17.7, "ludus": 38}, "cf": {"n": 237, "win": 27, "cf": 22.1, "ludus": 46}, "aggression": {"n": 326, "win": 29, "cf": 19.7, "ludus": 37}, "survival": {"n": 234, "win": 18, "cf": 12.7, "ludus": 25}}, "findings": ["Gladiators with 2+ beast trophies won 28% of events and reached the Ludus 44% of the time; with none, 18% and 18%. The beasts are the arena's savings account.", "Buying 2+ market items: 28% win rate, versus 14% for gladiators who never bought. Coin left in the purse wins nothing.", "Breaking 2+ pots: 32% win rate and 41% reached the Ludus, versus 12% and 25% for the pot-shy. A power-1 weapon breaks a pot only 1 time in 4 \u2014 pots are a job for power-2 weapons, a Cestus or Herculean Vigor.", "Drawing 2+ arena cards: 27% win rate versus 18% for coin-only players, and the card players reached the Ludus twice as often (39% vs 19%).", "Very cautious gladiators (survival 70+) averaged 13.5 CF against 22.4 for the bold (30 or less). The crowd pays for nerve, not for hiding.", "Keen beast hunters (hunt 70+) averaged 18.2 CF against 13.8 for gladiators who ignore the beasts.", "Difficulty check (100 further events with one Easy, one Normal and two Hard CPUs): Easy won 3%, Normal 20%, each Hard CPU 39%. Hard CPUs now ration shield uses, route around danger and never lose track of a walled-in beast.", "An event lasted 55 turns on average, and winners finished with about 50 CF \u2014 under the new crowd scaling, big attendance changes the noise, not the number."], "note": "300 events, four gladiators each, random classes and personalities, normal difficulty, v0.11 rules. Dominant trait = the highest of the six priorities; win rates sit near 25% because four gladiators enter each event."};
 
+/* gearGuideHTML — the strategy guide's gear section: weapons ranked by expected damage, best armor per slot. */
 function gearGuideHTML(){
   // expected damage per attack: PvP rolls 2 hit dice, PvE 4, each hit is 50/50
   const rows=Object.entries(W).filter(([k,w])=>w.lv>=1&&!w.limb&&!w.lyre&&!w.noAtk).map(([k,w])=>{
@@ -506,6 +556,7 @@ function gearGuideHTML(){
    <ul>${['head','chest','arm','leg'].map(sl=>{const best=armor.filter(x=>x.a.slot===sl).slice(0,3);return `<li><b>${slotName[sl]}:</b> ${best.map(x=>`${x.a.n} (${x.a.ap} AP${x.a.pair?' each side':''}${x.a.bonus?', bonus '+Object.entries(x.a.bonus).map(([l,v])=>`+${v} ${LOCN[l]}`).join(' '):''}${x.a.greaves?', +1 movement as a pair':''}${x.a.cestus?', +1 damage':''}, level ${x.a.lv})`).join('; ')}</li>`}).join('')}</ul>
    <p>Priorities: armor the head and chest first (losing either eliminates you), then the arm that holds your best weapon. The ${armor[0].a.n} is the single strongest piece (${armor[0].a.ap} AP${armor[0].a.bonus?' plus '+Object.entries(armor[0].a.bonus).map(([l,v])=>`${v} AP on the ${LOCN[l].toLowerCase()}`).join(' and '):''}).</p>`;
 }
+/* guideHTML — the original strategy guide (Rules & strategy → guide), with the SIM_STATS numbers. */
 function guideHTML(){
   const st=typeof SIM_STATS!=='undefined'?SIM_STATS:null;
   const cls=BASE_CLS.map(k=>[k,CLASSES[k]]);
@@ -600,11 +651,14 @@ function guideHTML(){
 
 /* ================= VISUAL FEEDBACK: floating numbers, attack flashes, banners, shake ================= */
 const FX=[],FXL=[];let fxRAF=null;
+/* reduceMotion — true when Settings → Reduce motion is on or the system asks for reduced motion. */
 const reduceMotion=()=>{try{if(typeof SETTINGS!=='undefined'&&SETTINGS.calm)return true;return matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}}; /* v0.63: or Settings → Reduce motion */
 /* v0.46 HIT FEEDBACK: every blow that lands makes its target flash red — a figure, a beast, a Blessings pot or a pillar —
    and the Spiders offering sends a swarm crawling over whoever broke it open. */
 const HITFX=[];
+/* hitFlash — queues a red hit flash (green for heals, a spider swarm for the Spiders offering) on tile r,c. TWEAK: the durations (spiders 2600, heal 900, hit 520 ms). */
 function hitFlash(r,c,kind='hit'){if(HEADLESS||!S||S.sim||r==null)return;HITFX.push({r,c,kind,t0:performance.now(),dur:kind==='spiders'?2600:kind==='heal'?900:520,seed:Math.random()*1000});if(!fxRAF)fxLoop()}
+/* drawHitFX — draws the queued hit flashes and spider swarms on the canvas. */
 function drawHitFX(){const now=performance.now();
   for(let i=HITFX.length-1;i>=0;i--){const h=HITFX[i];const k=(now-h.t0)/h.dur;if(k>=1){HITFX.splice(i,1);continue}const m=center(h.r,h.c);
     if(h.kind==='spiders'){ctx.save();const n=14;for(let j=0;j<n;j++){const a=h.seed+j*2.399;const ph=(k*3+j/n)%1;const rad=TW*(0.12+0.26*((j*37)%10)/10);
@@ -616,6 +670,7 @@ function drawHitFX(){const now=performance.now();
     const cy=h.kind==='pot'?m.y-TW*1.05:h.kind==='pillar'?m.y-TW*0.6:m.y-TW*0.45;const rr=TW*(h.kind==='pillar'?0.6:0.5)*(1+k*0.3);
     const g=ctx.createRadialGradient(m.x,cy,0,m.x,cy,rr);const HL9=h.kind==='heal';g.addColorStop(0,HL9?`rgba(90,255,120,${a})`:`rgba(255,40,20,${a})`);g.addColorStop(0.6,HL9?`rgba(30,200,70,${a*0.5})`:`rgba(200,20,10,${a*0.5})`);g.addColorStop(1,HL9?'rgba(0,140,40,0)':'rgba(160,0,0,0)');
     ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(m.x,cy,rr*0.8,rr*(h.kind==='pillar'?1.4:1.1),0,0,Math.PI*2);ctx.fill();ctx.restore()}}
+/* fx — a floating number/text over tile r,c (stacked when several land at once); also triggers the matching flash and sound. TWEAK: the 1500 ms (900 fast) duration. */
 function fx(r,c,text,color='#fff',opt={}){
   if(/^−\d+( AP)?$/.test(String(text)))hitFlash(r,c,'hit');
   else if(/^\+\d+ (HP|AP)/.test(String(text)))hitFlash(r,c,'heal'); /* v0.47: green when health or armor is restored */
@@ -625,8 +680,11 @@ function fx(r,c,text,color='#fff',opt={}){
   FX.push({r,c,text,color,t0:performance.now()+stack*140,dur:opt.dur||(SPEED==='fast'?900:1500),big:!!opt.big,img:opt.img||null});
   if(!fxRAF)fxLoop();
 }
-function fxLine(a,b,color='#ff6a55'){if(HEADLESS||!SETTINGS.fx||!S||!a||!b)return;FXL.push({a:{r:a.r,c:a.c},b:{r:b.r,c:b.c},color,t0:performance.now(),dur:SPEED==='fast'?300:520});if(!fxRAF)fxLoop()}
+/* fxLine — a short attack line flashed from one tile to another. */
+function fxLine(from,to,color='#ff6a55'){if(HEADLESS||!SETTINGS.fx||!S||!from||!to)return;FXL.push({a:{r:from.r,c:from.c},b:{r:to.r,c:to.c},color,t0:performance.now(),dur:SPEED==='fast'?300:520});if(!fxRAF)fxLoop()}
+/* fxLoop — animation loop that redraws while any effect is still playing. */
 function fxLoop(){fxRAF=requestAnimationFrame(()=>{fxRAF=null;try{draw()}catch(e){}if(FX.length||FXL.length||HITFX.length||(S&&S.emotes&&S.emotes.length))fxLoop()})}
+/* drawFX — draws the hit flashes, attack lines and floating numbers. */
 function drawFX(){
   const now=performance.now();try{drawHitFX()}catch(e){}
   for(let i=FXL.length-1;i>=0;i--){const l=FXL[i];const k=(now-l.t0)/l.dur;if(k>=1){FXL.splice(i,1);continue}if(k<0)continue;
@@ -638,7 +696,9 @@ function drawFX(){
     ctx.save();ctx.globalAlpha=k>0.7?(1-k)/0.3:1;ctx.font=`700 ${sz}px Marcellus SC, serif`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.lineWidth=Math.max(3,sz/5);ctx.strokeStyle='rgba(10,6,4,.9)';ctx.strokeText(f.text,m.x,y);ctx.fillStyle=f.color;ctx.fillText(f.text,m.x,y);ctx.restore()}
 }
+/* shake — shakes the arena (Settings → Screen shake, not with reduced motion). */
 function shake(){if(HEADLESS||!SETTINGS.shake||reduceMotion())return;const w=cv.parentElement;w.classList.remove('shake');void w.offsetWidth;w.classList.add('shake')}
+/* banner — the big announcement banner over the arena. */
 function banner(text,sub=''){
   if(HEADLESS)return;
   const w=cv.parentElement;let b=$('#banner');if(!b){b=document.createElement('div');b.id='banner';b.className='banner';b.setAttribute('aria-live','polite');w.appendChild(b)}
