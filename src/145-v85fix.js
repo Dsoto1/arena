@@ -34,6 +34,11 @@
   12 · ONLINE: the Forum starts fresh every UTC day — the server returns only today's lines (server/src/routes.js
        forumLines), the mock does the same, and the page drops older lines it still holds (a tab left open
        over midnight).
+  13 · ONLINE playlists: ONE row of four that never wraps — ⭐ This week (its own border, set apart by a divider:
+       it shares the row, it is not a playlist) · ⚔ Classic with tabs Democritus / Egidious / Cassian (one shown;
+       the pick is remembered in localStorage flavius_pl85; tabs switch locally, no redraw) · Familia · Ludi Infames.
+       The original cards stay inside (hidden ones display:none), so every button keeps its handler. Phones keep
+       the sideways scroll.
    ===================================================================== */
 const FIX85={offering:0};
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mg="offer"]');if(!b)return;FIX85.offering++;setTimeout(()=>{FIX85.offering=Math.max(0,FIX85.offering-1)},0)},true);
@@ -152,3 +157,32 @@ const day0_85=()=>Math.floor(Date.now()/864e5)*864e5;
 if(typeof onlFeedHTML80==='function'){const base=onlFeedHTML80;onlFeedHTML80=function(){const d0=day0_85();try{if(typeof ONLF!=='undefined'){if(Array.isArray(ONLF.lines))ONLF.lines=ONLF.lines.filter(l=>!l.at||l.at>=d0);if(Array.isArray(ONLF.local))ONLF.local=ONLF.local.filter(l=>!l.at||l.at>=d0)}}catch(e){}return base.apply(this,arguments)}}
 if(typeof MOCK_ROUTES!=='undefined'){const today=a=>Array.isArray(a)?a.filter(l=>!l.at||l.at>=Math.floor((typeof mockNow==='function'?mockNow():Date.now())/864e5)*864e5):a;
   for(const k of ['forum.get','hello']){const base=MOCK_ROUTES[k];if(typeof base!=='function')continue;MOCK_ROUTES[k]=function(){const r=base.apply(this,arguments);const fix=o=>{if(k==='forum.get')return today(o);if(o&&Array.isArray(o.forum))o.forum=today(o.forum);return o};return r&&typeof r.then==='function'?r.then(fix):fix(r)}}}
+
+/* 13 · the playlist row: This week | Classic (tabbed) | Familia | Ludi Infames */
+const PL85_CL=['democritus','egidious','cassian'];
+function pl85Pick(){let k='democritus';try{k=localStorage.getItem('flavius_pl85')||k}catch(e){}return PL85_CL.includes(k)?k:'democritus'}
+if(typeof onlPlayHTML==='function'){const base=onlPlayHTML;onlPlayHTML=function(){const h=base.apply(this,arguments);try{if(typeof h!=='string'||h.indexOf('onl-pls81')<0)return h;
+  const T=document.createElement('template');T.innerHTML=h;const box=T.content.querySelector('.onl-pls81');if(!box)return h;
+  const cards=[...box.children];const keyOf=c=>{const b=c.querySelector('[data-onl="quick"]');return b?String(b.dataset.v||'').split('|')[0]:''};
+  const week=cards.find(c=>c.classList.contains('pl84'));const inf=cards.find(c=>c.classList.contains('inf83'));const fam=cards.find(c=>keyOf(c)==='familia'&&c!==week);
+  const cls=PL85_CL.map(k=>cards.find(c=>keyOf(c)===k&&c!==week)).filter(Boolean);if(!cls.length)return h;
+  const pick=pl85Pick();const tab=document.createElement('div');tab.className='onl-pl pl85cl';
+  tab.innerHTML=`<div class="pl85tabs" role="tablist">${cls.map(c=>{const k=keyOf(c);return `<button type="button" role="tab" data-pl85="${k}" class="${k===pick?'on':''}">${esc2(k[0].toUpperCase()+k.slice(1))}</button>`}).join('')}</div><div class="pl85body"></div>`;
+  const body=tab.querySelector('.pl85body');for(const c of cls){const k=keyOf(c);c.classList.add('pl85c');c.dataset.pl85k=k;if(k!==pick)c.classList.add('pl85off');body.appendChild(c)}
+  box.innerHTML='';box.classList.add('pl85row');if(week){week.classList.add('pl85wk');box.appendChild(week);const d=document.createElement('span');d.className='pl85div';box.appendChild(d)}
+  box.appendChild(tab);if(fam)box.appendChild(fam);if(inf)box.appendChild(inf);for(const c of cards)if(c!==week&&c!==inf&&c!==fam&&!cls.includes(c))box.appendChild(c);
+  return T.innerHTML}catch(e){console.error(e);return h}}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-pl85]');if(!b)return;e.preventDefault();e.stopPropagation();const k=b.dataset.pl85;try{localStorage.setItem('flavius_pl85',k)}catch(err){}
+  const tab=b.closest('.pl85cl');if(!tab)return;for(const t of tab.querySelectorAll('[data-pl85]'))t.classList.toggle('on',t===b);for(const c of tab.querySelectorAll('.pl85c'))c.classList.toggle('pl85off',c.dataset.pl85k!==k)},true);
+{const st=document.createElement('style');st.textContent=`
+#onl .onl-pls81.pl85row{display:grid!important;grid-template-columns:minmax(0,1fr) 10px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:10px;overflow:visible;flex-wrap:nowrap;align-items:stretch}
+#onl .pl85row>*{min-width:0}
+#onl .pl85row .pl85div{align-self:stretch;width:2px;margin:6px auto;background:linear-gradient(180deg,transparent,rgba(214,171,76,.55),transparent);border-radius:2px}
+#onl .pl85row .pl85wk{border-style:double!important;border-width:3px!important}
+#onl .pl85cl{width:100%!important;max-width:none!important;justify-self:stretch;display:flex!important;flex-direction:column;gap:0;padding:0!important;border:0!important;background:none!important;box-shadow:none!important}
+#onl .pl85tabs{display:flex;gap:2px;width:100%;box-sizing:border-box}
+#onl .pl85tabs button{flex:1 1 auto;min-width:0;padding:3px 2px;font:600 11px var(--sans,system-ui);border:1px solid #5a4428;border-bottom:0;border-radius:8px 8px 0 0;background:rgba(20,14,8,.6);color:#b8a682;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#onl .pl85tabs button.on{background:rgba(214,171,76,.2);color:#f0cf7d;border-color:#b08a3a}
+#onl .pl85body{flex:1;display:flex;width:100%}#onl .pl85body>.onl-pl{flex:1;width:100%;max-width:none!important;border-top-left-radius:0;border-top-right-radius:0;margin:0}
+#onl .pl85c.pl85off{display:none!important}
+@media (max-width:760px){#onl .onl-pls81.pl85row{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory}#onl .pl85row>*{flex:0 0 min(82%,300px);scroll-snap-align:start}#onl .pl85row .pl85div{display:none}}`;document.head.appendChild(st)}
