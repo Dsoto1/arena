@@ -75,11 +75,11 @@ document.addEventListener('toggle',e=>{const t=e.target;if(t&&t.classList&&t.cla
 {const base=recruitHTML;recruitHTML=function(){let h=base.apply(this,arguments);try{const w=W_(),m=me();
   h=h.replace('<div class="acts" style="margin-bottom:8px"><div class="seg">','<div class="acts rtb85" style="margin-bottom:8px"><div class="seg">');
   for(const [k,full,short] of [['signed',_T('Signed elsewhere'),_T('Signed')],['targets',_T('Interested in you'),_T('Interested')],['mine',_T('Your stable'),_T('Stable')]])h=h.replace(new RegExp(`(data-mg="filter" data-id="${k}" class="[^"]*")>${full}<`),`$1 title="${full}">${short}<`);
-  h=h.replace('<div class="seg recflt"><span class="lbl">Show</span>','<div class="seg recflt" title="Show only">').replace(/(<button type="button" data-recf="\w+" class="[^"]*")>(\S+) ([^<]+)</g,'$1 title="Show only: $3" aria-label="$3">$2<');
+  h=h.replace('<div class="seg recflt"><span class="lbl">Show</span>','<div class="seg recflt" title="Show only">').replace(/(<button type="button" data-recf="\w+" class="[^"]*")>(\S+) ([^<]+)</g,_T('$1 title="Show only: $3" aria-label="$3">$2<'));
   if(MGR.filter==='mine')return h;const t=h.indexOf('<div id="recTable"');if(t<0)return h;
   let tail=h.slice(t);
   tail=tail.replace('<table class="tally">','<table class="tally rt85"><colgroup><col><col class="c85r"><col class="c85f"><col class="c85i"><col class="c85a"></colgroup>');
-  tail=tail.replace('<th>Your interest</th>','<th><span class="l85">Your interest</span><span class="s85">Int.</span></th>').replace('Rating ⓘ</th>','<span class="l85">Rating ⓘ</span><span class="s85">Rtg</span></th>');
+  tail=tail.replace('<th>Your interest</th>',_T('<th><span class="l85">Your interest</span><span class="s85">Int.</span></th>')).replace('Rating ⓘ</th>','<span class="l85">Rating ⓘ</span><span class="s85">Rtg</span></th>');
   tail=tail.replace(/<tr class="([^"]*)" data-mg="sel" data-id="([^"]+)"[^>]*>[\s\S]*?<\/tr>/g,(row,cls,id)=>{const g=gById(id);if(!g)return row;
     const f=recFit(g,m),o=recOdds(g,m),iv=interestOf(g,m);const c=g.contract&&mgrById(g.contract.mgr);const C=CLASSES[g.cls];
     const sub=`${gSex(g)} ${C?C.name:'?'} · ${gAge(g)} · ${esc(g.city||'')}${c?` · <span style="color:${c.color}">${esc(c.ludus)}</span>`:''}`;
@@ -91,7 +91,7 @@ document.addEventListener('toggle',e=>{const t=e.target;if(t&&t.classList&&t.cla
   h=h.slice(0,t)+tail}catch(e){console.error(e)}return h}}
 /* 5 + 6 · the free agent's card: one ratings line before scouting; the advisor's ★ on the button */
 {const base=detailHTML;detailHTML=function(g){let h=base.apply(this,arguments);try{if(!g||g.contract||!h.includes('class="rsteps"'))return h;const m=me();
-  if(!g.scout){const i=h.indexOf('<div class="scoutsee">');const c=i>=0?cutDiv(h,i):null;if(c)h=h.slice(0,i)+'<div class="scoutsee rat85"><span>📊 <b>Ratings:</b> <i>scout to see</i></span></div>'+h.slice(i+c[0].length)}
+  if(!g.scout){const i=h.indexOf('<div class="scoutsee">');const c=i>=0?cutDiv(h,i):null;if(c)h=h.slice(0,i)+`<div class="scoutsee rat85">${_T`<span>📊 <b>Ratings:</b> <i>scout to see</i></span>`}</div>`+h.slice(i+c[0].length)}
   h=h.replace(/<div class="advise74">[\s\S]*?<\/div>/,'');
   const step=MGR.recStep||recStepNow(g,m);const adv=typeof recAdvice74==='function'?recAdvice74(g,m,step):null;
   if(adv)h=h.replace(/<button class="btn([^"]*\badv74\b[^"]*)"([^>]*)>/,(x,c,rest)=>{const tip=_T`★ Advisor suggests — ${adv[1]}`;
@@ -103,7 +103,7 @@ document.addEventListener('toggle',e=>{const t=e.target;if(t&&t.classList&&t.cla
   h=h.replace(/(<div class="want"[^>]*>[\s\S]*?)<b>([^<]+)<\/b>/g,(all,pre,n)=>{const k=Object.keys(MOTIVES).find(x=>MOTIVES[x][0]===n);return k?pre+motTag85(k):all})}catch(e){console.error(e)}return h}}
 /* the lanista's hours (w.hours — the same pool as recruiting) on the 📯 Promote panel too */
 {const base=promoteCardHTML;promoteCardHTML=function(){let h=base.apply(this,arguments);try{const w=W_();const n=(w&&w.hours)||0;
-  h=h.replace('<div class="acts">',`<p class="prom85">⏳ <b>${n} h</b> of the lanista's time left this week</p><div class="acts">`)}catch(e){}return h}}
+  h=h.replace('<div class="acts">',`<p class="prom85">${_T`⏳ <b>${n} h</b> of the lanista's time left this week`}</p><div class="acts">`)}catch(e){}return h}}
 /* picking a fighter on the board or in the list (the tablet, ⋯, a row) is LOCAL: only the card column and the .me marks change —
    no MGR_REDRAW, so the rail, banner and sweeps are never rebuilt (clicking ⋯ again and again made the rail flicker);
    picking the one already open does nothing but bring the card into view */

@@ -28,7 +28,7 @@ function creditsHTML(){
 function protoHTML(){return `<p class="rc-sub">${_T`The hand-built board game that Flavius Rule Arena was distilled from — by D.Soto.`}</p>
   <div class="protogrid">${PROTO.map(([f,c],i)=>`<figure><img src="${assetURL(f)}" alt="${esc(c)}" loading="lazy" data-protoz="${i}"><figcaption>${esc(c)}</figcaption></figure>`).join('')}</div>`}
 function creditsOpen(tab='credits'){let o=document.getElementById('protoBox');
-  if(!o){o=document.createElement('div');o.id='protoBox';o.setAttribute('role','dialog');o.setAttribute('aria-label','Credits');document.body.appendChild(o)}
+  if(!o){o=document.createElement('div');o.id='protoBox';o.setAttribute('role','dialog');o.setAttribute('aria-label',_T('Credits'));document.body.appendChild(o)}
   o.innerHTML=`<div class="protoin"><button type="button" class="mclose" data-protox aria-label="${_T`Close`}">×</button><h2>${tab==='proto'?_T('The prototype'):_T('Credits')}</h2>
     <div class="seg crtabs" role="tablist"><button type="button" role="tab" data-crtab="credits" class="${tab==='credits'?'on':''}" aria-selected="${tab==='credits'}">${_T`Credits`}</button><button type="button" role="tab" data-crtab="proto" class="${tab==='proto'?'on':''}" aria-selected="${tab==='proto'}">${_T`Prototype`}</button></div>
     <div class="crbody">${tab==='proto'?protoHTML():creditsHTML()}</div></div>`;o.hidden=false}

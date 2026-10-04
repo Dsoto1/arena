@@ -55,7 +55,7 @@ function spectUI(){if(HEADLESS)return;const tb=document.getElementById('btnTicke
 document.addEventListener('click',e=>{if(e.target.closest('#btnTicket'))buyTicket()});
 /* v0.41: who do you cheer for? You can't stone them, and the crowd sees your colors */
 async function spectChooseFav(me){const act=activePlayers();if(!act.length){me.fav=null;return}
-  const v=await modal(_T('📣 Who do you cheer for?'),'<p>Pick your gladiator for today. You will never throw a stone at them, and you wear their colors in the stands. (You may still throw offerings to anyone you can reach.)</p>',
+  const v=await modal(_T('📣 Who do you cheer for?'),`<p>${_T`Pick your gladiator for today. You will never throw a stone at them, and you wear their colors in the stands. (You may still throw offerings to anyone you can reach.)`}</p>`,
     [...act.map(p=>({label:p.name,sub:_T`${CLASSES[p.cls]?CLASSES[p.cls].name:''}${p.cpu?' · CPU':''} · CF ${p.cf}`,value:'p'+p.id})),{label:_T('No one — I just love the games'),value:'none'}],{close:'none'});
   me.fav=v&&v!=='none'?+String(v).slice(1):null;if(me.fav!=null){me.favCls=S.players[me.fav].cls;log(_T`📣 You cheer for <b>${esc(S.players[me.fav].name)}</b> from ${SECTIONS[me.sec].n}.`)}else log(_T('📣 You cheer for no one in particular.'))}
 /* ================= v0.42 THE SEAT MAP =================

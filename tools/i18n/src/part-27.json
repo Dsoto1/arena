@@ -1,0 +1,1066 @@
+[
+ {
+  "k": "Ability: gain 1 stone each turn; +10 CF to the final score if the Damnatio wins any event. Weakness: pelted with a stone (1 damage) each turn.",
+  "w": "02-data.js:1195"
+ },
+ {
+  "k": "Throw a meat lure (range 4): aggro any 1 NPC in play onto another player. Works on Tholo; breaks a tame bond.",
+  "w": "02-data.js:1361"
+ },
+ {
+  "k": "Any remaining level",
+  "w": "02-data.js:2369"
+ },
+ {
+  "k": "AP upgrades only apply to a location that already has armor.",
+  "w": "03-engine.js:483"
+ },
+ {
+  "k": "Choose one armored location. A location can never exceed 7 AP.",
+  "w": "03-engine.js:489"
+ },
+ {
+  "k": "Pick the slot you want.",
+  "w": "03-engine.js:1322"
+ },
+ {
+  "k": "Choose any remaining piece.",
+  "w": "03-engine.js:1459"
+ },
+ {
+  "k": "Step one tile in any direction.",
+  "w": "04-rules.js:150"
+ },
+ {
+  "k": "Trade a severed limb weapon for any remaining weapon in the market.",
+  "w": "04-rules.js:803"
+ },
+ {
+  "k": "There is no valid NPC in the arena.",
+  "w": "04-rules.js:1027"
+ },
+ {
+  "k": "Crowd Favor cannot be redeemed right now.",
+  "w": "04-rules.js:1072"
+ },
+ {
+  "k": "You have no severed limbs.",
+  "w": "04-rules.js:1099"
+ },
+ {
+  "k": "Choose the limb to regrow.",
+  "w": "04-rules.js:1105"
+ },
+ {
+  "k": "No other gladiator is within 4 tiles to throw the lure at.",
+  "w": "04-rules.js:1128"
+ },
+ {
+  "k": "No weapon needs ammo, and you need 2 Ammo cards to exchange for an ammo weapon.",
+  "w": "04-rules.js:1210"
+ },
+ {
+  "k": "Choose an ammo weapon.",
+  "w": "04-rules.js:1230"
+ },
+ {
+  "k": "This card is played as a reaction. You will be asked when an attack is rolled against you or by you.",
+  "w": "04-rules.js:1255"
+ },
+ {
+  "k": "Choose a Declare-type arena card.",
+  "w": "05-flow.js:695"
+ },
+ {
+  "k": "Choose any remaining level 2 armor or weapon from the market.",
+  "w": "05-flow.js:939"
+ },
+ {
+  "k": "Choose one captured beast to fight beside you in the Duel Finale.",
+  "w": "05-flow.js:979"
+ },
+ {
+  "k": "Your hand holds more than 10 cards. Discard one.",
+  "w": "05-flow.js:1261"
+ },
+ {
+  "k": "Every gladiator hands to the CPU and the event <b>resolves at once</b> — straight to the results.",
+  "w": "05-flow.js:2026"
+ },
+ {
+  "k": "Just want the CPUs quicker? Use the <b>Fast</b> speed instead. Want to stop playing a fighter but keep watching? Use <b>🤖 Hand to CPU</b> on their board.",
+  "w": "05-flow.js:2026"
+ },
+ {
+  "k": "The crew has reset the sand. What next?",
+  "w": "07-ui.js:1166"
+ },
+ {
+  "k": "The event is over. Start a new one from the top bar.",
+  "w": "07-ui.js:2715"
+ },
+ {
+  "k": "The arena reacts to you. NPCs are moving…",
+  "w": "07-ui.js:2719"
+ },
+ {
+  "k": "Trading is a one-to-one exchange with a gladiator within 4 tiles. A truce is a verbal pact with no penalty for breaking it.",
+  "w": "07-ui.js:3362"
+ },
+ {
+  "k": "What would you like to propose?",
+  "w": "07-ui.js:3372"
+ },
+ {
+  "k": "Choose what to give. Allies remember generosity.",
+  "w": "07-ui.js:3412"
+ },
+ {
+  "k": "One of you has nothing tradeable.",
+  "w": "07-ui.js:3428"
+ },
+ {
+  "k": "Pay 3 CF, or roll a d6 and deal that much damage to both your horse and your wheel.",
+  "w": "09-special.js:89"
+ },
+ {
+  "k": "In a chariot race the attacker chooses the target: the wheel, the horse, or any body location.",
+  "w": "09-special.js:112"
+ },
+ {
+  "k": "Pick one.",
+  "w": "09-special.js:137"
+ },
+ {
+  "k": "No slips on the board yet — the first wager of the day will appear here.",
+  "w": "10-meta.js:66"
+ },
+ {
+  "k": "Saving files is not available in this view. Copy the log below instead.",
+  "w": "10-meta.js:82"
+ },
+ {
+  "k": "Exhibition: no Fate — back to their ludus either way.",
+  "w": "10-meta.js:171"
+ },
+ {
+  "k": "Recite one unique verse for its reward, or opt out and forfeit it. Each verse can be claimed by only one gladiator.",
+  "w": "10-meta.js:505"
+ },
+ {
+  "k": "No record yet.",
+  "w": "10-meta.js:593"
+ },
+ {
+  "k": "No seasons archived yet — finish a season in Manager mode.",
+  "w": "10-meta.js:599"
+ },
+ {
+  "k": "No one has claimed the wooden sword yet. Win an event with 50+ CF and choose freedom over the Ludus.",
+  "w": "10-meta.js:608"
+ },
+ {
+  "k": "<b>{0}</b> ({1}) walks the road — stage <b>{2} of 12</b>. Next: <b>{3}</b> · {4}. Win it with {5} to go on; lose, and the road ends.",
+  "w": "10-meta.js:636"
+ },
+ {
+  "k": "You need a living Ludus gladiator of the eight classes (save one after an event).",
+  "w": "10-meta.js:642"
+ },
+ {
+  "k": "No missios yet.",
+  "w": "10-meta.js:655"
+ },
+ {
+  "k": "While Telemachus is in play <b>no gladiator can attack</b>. Each player rolls a d6 at the start of their turn; a 1 or 6 drags him out. Use the lull to break pots? No: pots need attacks too. Move, loot, trade, buy and reposition instead.",
+  "w": "11-extra.js:166"
+ },
+ {
+  "k": "For the next 4 turns, any gladiator who ends a turn <b>without attacking</b> gets every gladiator stoned for 2 damage. Hit something, even a pot, every turn.",
+  "w": "11-extra.js:167"
+ },
+ {
+  "k": "From now on every attack rolls <b>4 hit dice</b> and the attacker <b>chooses the hit location</b>. Fights end quickly: armor your head and chest, and go for the weakest location on your rivals.",
+  "w": "11-extra.js:168"
+ },
+ {
+  "k": "For one full turn rotation, each gladiator rolls a d6 at the start of their Resolve phase. Odd means the boar deals 2 damage to a rolled location.",
+  "w": "11-extra.js:169"
+ },
+ {
+  "k": "A beast you attack or push becomes <b>aggro</b> on you: it follows you anywhere and attacks during your Resolve phase. Each NPC holds only one aggro target, the most recent gladiator to hit it. It still lashes out at anyone standing next to it. Tunnels, a Ward of the Evil Eye or a Meat Lure shake it off.",
+  "w": "11-extra.js:170"
+ },
+ {
+  "k": "You have 2 turns of grace to get inside the lit zone. Ending a turn outside costs 2 CF, and negative CF eliminates you.",
+  "w": "11-extra.js:171"
+ },
+ {
+  "k": "<b>1 Resolve</b>: beasts that are aggro on you, in whose zone you stand, or next to you act. <b>2 Choice</b>: take 2 coin (safe) or draw an arena card (instant cards resolve at once and can hurt). <b>3 Action</b>: move, up to one attack per arm, push, topple, loot, trade and spend CF. <b>4 End</b>.",
+  "w": "11-extra.js:172"
+ },
+ {
+  "k": "Hover any card or weapon to see the real card.",
+  "w": "11-extra.js:172"
+ },
+ {
+  "k": "You hold a secret objective from Flavius. Complete it and it is revealed with its reward; still hidden at the end of the event costs 5 CF. Some are completed by a spoken declaration from the Action panel.",
+  "w": "11-extra.js:173"
+ },
+ {
+  "k": "Ending with 17-19 CF puts your life in the Thumb of Flavius: a d6 of 4+ spares you (20 CF, sent to the Ludus Flavius). 20 CF or more reaches the Ludus, which lets you save your gladiator.",
+  "w": "11-extra.js:174"
+ },
+ {
+  "k": "No NPCs in play.",
+  "w": "11-extra.js:273"
+ },
+ {
+  "k": "The graph fills in as turns are played.",
+  "w": "11-extra.js:304"
+ },
+ {
+  "k": "{0}: {1}. Solid lines are recorded after every turn; dashed lines extend each gladiator's recent trend {2} turns ahead.",
+  "w": "11-extra.js:325"
+ },
+ {
+  "k": "<b>🤖 A computer-played gladiator.</b> They were saved from a CPU seat, so for now they only fight <i>against</i> you: in New event, pick them in a seat set to CPU and the computer plays them. In Manager mode you can sign them and bet on them. To play them yourself, a human must first survive one event with them.",
+  "w": "11-extra.js:433"
+ },
+ {
+  "k": "This gladiator won their freedom and left the sands forever. Their glory lives in the Liberti (the Annals).",
+  "w": "11-extra.js:434"
+ },
+ {
+  "k": "Click a gladiator to open their full record — all-time trophies, history, roster and summons.",
+  "w": "11-extra.js:447"
+ },
+ {
+  "k": "<b>Level 1 (4 coin):</b> {0}. Knives and Stones reach 2-3 tiles; the Hasta and Tridenti throw for 2. Everything else hits for 1.",
+  "w": "11-extra.js:549"
+ },
+ {
+  "k": "<b>Level 2 (8 coin):</b> {0}. The Axe, Falcata and Royal Dagger hit for 2; the Parthian Bow and Stone Sling reach 5 tiles. The Scutum Shield absorbs 2 per hit for 4 hits.",
+  "w": "11-extra.js:550"
+ },
+ {
+  "k": "<b>Level 3 (12 coin):</b> the Charun and Tri-Ball Flail (power 4, range 2) are the best buys in the game; the Gladius of Flavius hits as hard at range 1 and counts as a Flavius item.",
+  "w": "11-extra.js:551"
+ },
+ {
+  "k": "<b>Action</b>: attack first if a kill or pot is in reach, then move; you get one attack per arm. Diagonals cost 2 movement.",
+  "w": "11-extra.js:575"
+ },
+ {
+  "k": "Base beasts guard zones: stand in a zone at the start of your turn and its beast comes for you. Snakes (3 HP) and wolves (6 HP) are the safest early trophies; bears hit for 3.",
+  "w": "11-extra.js:581"
+ },
+ {
+  "k": "<b>Raising your grades</b>: treasury and low greed raise Coin; wins and fame raise Glory and Spectacle; Discipline plus improved fighters raises Training; a small roster raises Arena time; and Honor is the slow one — poaches (−9) and broken pledges (−6) scar it, kept pledges (+3) heal it.",
+  "w": "11-extra.js:598"
+ },
+ {
+  "k": "<b>The tools</b>: Pitch (1h, aimed at a motive you grade well), Send a gift (2h, lands hardest on coin-hungry fighters), Host a feast (4h, the big swing), Scout (3h, sparring report + motives), and the <b>Pledge</b> — promise the main event within 2 weeks for +12 interest at the table. Keep it and the barracks notice; break it and your Honor pays for years.",
+  "w": "11-extra.js:599"
+ },
+ {
+  "k": "<b>Fates in the league.</b> Every league bout ends the way a board-game event does: each fighter meets the <b>Fate table</b> (p.54-55). Under 17 CF they are condemned (Damnatio or a Fatal Charade); 17-19 CF, the <b>Thumb of Flavius</b> — you roll the d6 yourself on Match Week (4-6 spares them, 1-3 hands them to a d12 death); 20-49 CF, the <b>Ludus Flavius</b> — they survive; 50+ CF, the <b>rudis</b> — freedom, theirs to take (you can ask them to stay). Any condemned fighter can be bought back with <b>blood money</b> paid to the editor — the price rises with their rating, fame and how grim the sentence. (A <b>missio</b>, in Flavius Rule, is something else entirely: a five-event campaign for one gladiator — see New event → Missio.)",
+  "w": "11-extra.js:604"
+ },
+ {
+  "k": "<b>How fighters enter the league</b>: two or three new faces arrive every week (mostly rookies, 17–21, low-rated but high-potential and cheap); your arena's saved Ludus Flavius gladiators and Creator Studio characters join every new career; and a bout short of entrants conscripts a fresh sword on the spot.",
+  "w": "11-extra.js:605"
+ },
+ {
+  "k": "<b>How they leave</b>: death under the thumb; two severed limbs (unless healed by Hygeia); a cheap free agent who goes unsigned ~14 weeks gives up and goes home; and <b>age</b> — every season is a birthday, and past 35 each year makes hanging up the sword likelier.",
+  "w": "11-extra.js:606"
+ },
+ {
+  "k": "<b>Age shapes class</b>: the young arrive mostly as Slaves and Soldiers; the graying re-badge as Veteranus. Mid-career (23–31) is when fighters most often change class — at a ludus's request, after new drills, on an omen-reader's advice, or plain restlessness. The news criers report every change.",
+  "w": "11-extra.js:607"
+ },
+ {
+  "k": "Royalty leans lucky: Luck 76+ pays coin each turn. Bank it into level 2-3 weapons; the Pugio hits for 2.",
+  "w": "11-extra.js:610"
+ },
+ {
+  "k": "Slaves lean fast: Speed 76+ means an extra tile a turn to race to pots and away from beasts; the Rete stops a chaser.",
+  "w": "11-extra.js:610"
+ },
+ {
+  "k": "<b>Accept invitations you can win.</b> The stars are honest: a ★★★ Leptis Cup is a fine first trophy; the ★★★★★ Colossus draws the league's best. Two fighters in the Colossus means two heats with a chance — they never meet in round one.",
+  "w": "11-extra.js:640"
+ },
+ {
+  "k": "A <b>game save</b> is a snapshot of everything this browser remembers: your Manager careers and their worlds, the Ludus and its fallen, missios, every custom character, beast, event and spectator, the crowd's regulars, the arenas' chronicles, the Hall, your settings and themes. Saves are kept in this browser; <b>download</b> one to keep it safe or move it to another device.",
+  "w": "12-settings.js:227"
+ },
+ {
+  "k": "No saved profiles yet.",
+  "w": "12-settings.js:235"
+ },
+ {
+  "k": "No saves yet. Name one above and press Save.",
+  "w": "12-settings.js:252"
+ },
+ {
+  "k": "Nothing made yet — every tab to the right starts ready to create.",
+  "w": "15-custom.js:406"
+ },
+ {
+  "k": "None yet. The organic regulars live in the 🌍 Imperium window.",
+  "w": "15-custom.js:426"
+ },
+ {
+  "k": "No custom characters yet.",
+  "w": "15-custom.js:431"
+ },
+ {
+  "k": "No custom beasts yet.",
+  "w": "15-custom.js:434"
+ },
+ {
+  "k": "No custom events yet.",
+  "w": "15-custom.js:437"
+ },
+ {
+  "k": "Event results are logged here automatically.",
+  "w": "15-custom.js:463"
+ },
+ {
+  "k": "Save the beast, then sculpt its token.",
+  "w": "15-custom.js:482"
+ },
+ {
+  "k": "Place pillars on the board first — each can carry one Blessings pot.",
+  "w": "15-custom.js:535"
+ },
+ {
+  "k": "The bookmaker only deals with a <b>lanista</b>: every wager comes out of a manager career's treasury, and every payout goes back into it — here and in Manager mode.",
+  "w": "16-crowd.js:657"
+ },
+ {
+  "k": "Start an event first. Once the horns sound, the bookmaker posts odds on every gladiator until the final round (or until only two remain).",
+  "w": "16-crowd.js:681"
+ },
+ {
+  "k": "Swap lanista",
+  "w": "16-crowd.js:692"
+ },
+ {
+  "k": "No event on the sand — but the cages are never empty. The bestiary keeps its ledgers between events.",
+  "w": "16-crowd.js:1032"
+ },
+ {
+  "k": "No allegiances yet — run events with spectators and the empire chooses its darlings.",
+  "w": "16-crowd.js:1115"
+ },
+ {
+  "k": "No home cities on record yet.",
+  "w": "16-crowd.js:1117"
+ },
+ {
+  "k": "No event on the sand.",
+  "w": "16-crowd.js:1125"
+ },
+ {
+  "k": "No regulars yet — run an event with spectators and the neighborhood forms on its own.",
+  "w": "16-crowd.js:1156"
+ },
+ {
+  "k": "🗡 an ex-gladiator — the stands are cheaper than the sand",
+  "w": "16-crowd.js:1170"
+ },
+ {
+  "k": "🎟 In attendance today<small>already in their seat</small>",
+  "w": "16-crowd.js:1179"
+ },
+ {
+  "k": "— nobody to back —",
+  "w": "16-crowd.js:1183"
+ },
+ {
+  "k": "Raise it: fame and win-rate, nothing else. Enter bouts you can win; every victory compounds.",
+  "w": "17-manager.js:41"
+ },
+ {
+  "k": "Raise it: keep your word. Poaching (−9 each) and broken contracts or pledges (−6 each) scar it for good; kept pledges (+3) heal it.",
+  "w": "17-manager.js:42"
+ },
+ {
+  "k": "Raise it: Showmanship and fame. Showmen love a famous house; win big bouts and let the criers talk.",
+  "w": "17-manager.js:43"
+ },
+ {
+  "k": "🏠 <b>Your home city</b>: its fighters lean your way (+8 interest) and scout at half price; its square sells to you at a quarter off; walking its sand costs half.",
+  "w": "17-manager.js:1098"
+ },
+ {
+  "k": "🏜 The league’s house rules stay as they were founded.",
+  "w": "17-manager.js:1104"
+ },
+ {
+  "k": "No careers saved yet.",
+  "w": "17-manager.js:1107"
+ },
+ {
+  "k": "No careers yet.",
+  "w": "17-manager.js:1112"
+ },
+ {
+  "k": "None of your fighters took the sand last week.",
+  "w": "17-manager.js:1165"
+ },
+ {
+  "k": "Nothing pressing. Enjoy the quiet — or go looking for trouble on the Recruiting board.",
+  "w": "17-manager.js:1177"
+ },
+ {
+  "k": "Every bout this week is decided — the next card posts when the week ends.",
+  "w": "17-manager.js:1192"
+ },
+ {
+  "k": "What a rating does on the sand: it sets how well the fighter plays (below 60 like an Easy CPU with loose, noisy decisions; 60-79 Normal; 80+ Hard, near-perfect choices), the armor fitted before the bout (+1 AP per 6 points above 62, up to +5) and coin in the purse (+1 per 5 points above 70, up to +4). Morale shifts it: high morale adds 1 AP and a CF, low morale takes an AP, broken morale drops a skill tier. Injuries and severed limbs lower the rating itself.",
+  "w": "17-manager.js:1216"
+ },
+ {
+  "k": "No fighters yet. Go recruiting.",
+  "w": "17-manager.js:1217"
+ },
+ {
+  "k": "League rules follow the <b>Fate table</b> (rulebook p.54-55) for every fighter in every bout, win or lose: under 17 CF they are <b>condemned</b> (Damnatio or a Fatal Charade), 17-19 CF they face the <b>Thumb of Flavius</b> (d6: 4-6 spared, else a d12 picks the death), 20-49 CF they <b>survive</b> to the Ludus Flavius, and 50+ CF earns the <b>rudis</b> — freedom, if they want it. A lanista may pay the editor <b>blood money</b> to buy back a condemned fighter; your own verdicts wait for you on Match Week. Severed limbs persist (−6 rating each) until the priests of Hygeia regrow them; a fighter with two severed limbs retires at the end of the week; the old hang up the sword on their own past 35..",
+  "w": "17-manager.js:1220"
+ },
+ {
+  "k": "Nothing yet — sign someone.",
+  "w": "17-manager.js:1252"
+ },
+ {
+  "k": "The sand has taken no one yet.",
+  "w": "17-manager.js:1253"
+ },
+ {
+  "k": "Your own scouting reports vs the bookmaker: a scouted fighter whose true chance beats the public odds is a VALUE bet; one the public overrates is a TRAP.",
+  "w": "17-manager.js:1298"
+ },
+ {
+  "k": "<b>💀 The Debtor's Gambit</b> — the treasury reads <b>{0}</b> coin and the creditors wait at the gate. The editor's offer stands: take the sand <b>yourself</b> in tonight's {1}. Walk off alive and the purse and the spectacle clear your books; fall, and the Annals write your epitaph — <b>death is real, and the career ends on the sand</b>. As a fighter you rate around <b>{2}–{3}</b>: an old hand, not a champion.",
+  "w": "17-manager.js:1322"
+ },
+ {
+  "k": "⚡ Simulate Match Week<small>quick-sims every remaining bout in order, then shows the night’s results</small>",
+  "w": "17-manager.js:1328"
+ },
+ {
+  "k": "Nobody here right now.",
+  "w": "17-manager.js:1344"
+ },
+ {
+  "k": "Unknown until you scout them.",
+  "w": "17-manager.js:1356"
+ },
+ {
+  "k": "Exhibition with {0}: {1} {2} ({3} CF). Their fighters are fully scouted; relations warm (rivalry −4); +1 perk point.{4}",
+  "w": "17-manager.js:1411"
+ },
+ {
+  "k": "The sand went hungry. Remarkable.",
+  "w": "17-manager.js:1431"
+ },
+ {
+  "k": "Nothing printed yet — end a week.",
+  "w": "17-manager.js:1441"
+ },
+ {
+  "k": "No season has finished yet. The shelf waits.",
+  "w": "17-manager.js:1442"
+ },
+ {
+  "k": "⚕ <b>The infirmary</b> — steam, salves, and men who charge by the scream. <b>Every cure is paid from your treasury.</b> The Medicus, the surgeon and Hygeia's priests also count toward your physicians' <b>weekly cap</b> — they can do at most <b>{0}</b> coin of treasury a week (<b>{1}</b> left this week); the bathhouse and the temple of Asclepius are outside help and do not count. <b>Care must match the wound</b>: rest heals bruises, the Medicus mends muscle, only the <b>surgeon's knife</b> stops a festering wound, and only <b>Hygeia</b> regrows a lost limb. Ignore a festering wound for three weeks and your fighter dies, flees, or is never quite whole again.",
+  "w": "17-manager.js:1492"
+ },
+ {
+  "k": "The steam room sits empty; the surgeon sharpens his knives on nothing. May it stay that way.",
+  "w": "17-manager.js:1494"
+ },
+ {
+  "k": "🏟 <b>The practice arena.</b> Request an <b>exhibition</b> from a rival stable: your fighter against theirs, sparring partners filling the Classic Elimination's four places. <b>Nobody dies</b> — the doctors pull a fighter before the killing blow and the bout is called. The stands fill with fighters from around the league, who pay a coin from their own purses to watch. You get their fighters fully scouted, a training chance for yours (better if they last), <b>a Match Week edge</b> this week (+1 AP, +2 CF), the gate money, a perk point, and warmer relations with that lanista. {0} hours and {1} coin each; once per fighter per week.",
+  "w": "17-manager.js:1504"
+ },
+ {
+  "k": "No edition has been printed yet. End a week first.",
+  "w": "17-manager.js:1689"
+ },
+ {
+  "k": "★ Active wallet<small>this treasury bankrolls your wagers everywhere</small>",
+  "w": "17-manager.js:1749"
+ },
+ {
+  "k": "Sparring in the Ludus…",
+  "w": "17-manager.js:1842"
+ },
+ {
+  "k": "A trial bout on your own sand…",
+  "w": "17-manager.js:1886"
+ },
+ {
+  "k": "{0} at {1}: {2} press the walls; {3} hold the line. Severity {4}{5}.",
+  "w": "18-world.js:203"
+ },
+ {
+  "k": "No games on record here yet.",
+  "w": "18-world.js:259"
+ },
+ {
+  "k": "No kin, creations, ticket-holders or off-duty fighters — just the city.",
+  "w": "18-world.js:261"
+ },
+ {
+  "k": "No fighter of note calls this city home yet.",
+  "w": "18-world.js:262"
+ },
+ {
+  "k": "Nobody named lives here yet — hold games and the neighborhood forms.",
+  "w": "18-world.js:263"
+ },
+ {
+  "k": "Today in the empire: <b>{0}</b>, week {1} of 12. One arena hosts the editor's games each week; classics dominate, and the rarer specials carry fatter purses. Manager mode and New event both follow this schedule.",
+  "w": "19-calendar.js:77"
+ },
+ {
+  "k": "No awards tonight.",
+  "w": "22-trophies.js:194"
+ },
+ {
+  "k": "The great final of season {0}: the top four stables of the league send their best to Roma. Flavius himself presides; the {1} gift rides in with every entrant.",
+  "w": "22-trophies.js:218"
+ },
+ {
+  "k": "— to be decided —",
+  "w": "22-trophies.js:342"
+ },
+ {
+  "k": "<b>📌 Early billing</b> — name a fighter for a week at least 3 weeks away. On the night they are entered in the biggest bout that fits their rating: +10 coin appearance, +1 fame, and a 15% purse bonus if they win. Optional; it lapses harmlessly if they are hurt. Invitationals and the Superbus cannot be billed — they are by invitation.",
+  "w": "22-trophies.js:388"
+ },
+ {
+  "k": "No invitations right now. Hosts send them 3–5 weeks ahead; they arrive on Your ludus.",
+  "w": "22-trophies.js:389"
+ },
+ {
+  "k": "The season's great final — Flavius's own games. When week 12 ends, the top four of the league table (points: a win 3, a runner-up finish 1) each send one fighter to Roma; the league pauses while you watch it live or play it out, and then the Flavian Awards are handed out.{0}",
+  "w": "22-trophies.js:391"
+ },
+ {
+  "k": "<b>Tournaments</b> are brackets of heats: every heat's winner goes through, and the last one standing takes the trophy home to the Annals. You fight your own heats; the other heats are played out by the CPU. Harder than a normal night — the invited field is strong. Every heat plays by the Fate table, like any event (unless the event is set Fate-free).",
+  "w": "22-trophies.js:438"
+ },
+ {
+  "k": "You are out of the tournament — the rest of the bracket can be played out to crown a champion.",
+  "w": "22-trophies.js:479"
+ },
+ {
+  "k": "Empty shelves. Win a tournament, or one of your own events with a trophy attached.",
+  "w": "22-trophies.js:498"
+ },
+ {
+  "k": "None yet — the built-in silverware (season awards and the three invitationals) is always available too.",
+  "w": "22-trophies.js:520"
+ },
+ {
+  "k": "No such stable.",
+  "w": "23-ludus.js:96"
+ },
+ {
+  "k": "An empty barracks.",
+  "w": "23-ludus.js:116"
+ },
+ {
+  "k": "Nobody from this house is on this week’s card yet.",
+  "w": "23-ludus.js:120"
+ },
+ {
+  "k": "No history between your houses.",
+  "w": "23-ludus.js:125"
+ },
+ {
+  "k": "Nothing on record yet — the ledger fills as the weeks go by.",
+  "w": "23-ludus.js:131"
+ },
+ {
+  "k": "The developer’s key",
+  "w": "24-sponsors.js:68"
+ },
+ {
+  "k": "All sixteen themes",
+  "w": "24-sponsors.js:70"
+ },
+ {
+  "k": "“Speak the word, and doors open.”",
+  "w": "24-sponsors.js:86"
+ },
+ {
+  "k": "a word of power",
+  "w": "24-sponsors.js:86"
+ },
+ {
+  "k": "🔒 this city’s editor unlocks when you win here",
+  "w": "24-sponsors.js:119"
+ },
+ {
+  "k": "Flavius’s own city",
+  "w": "24-sponsors.js:119"
+ },
+ {
+  "k": "No kin in the crowd yet — family trees grow as fighters make names.",
+  "w": "25-city.js:57"
+ },
+ {
+  "k": "No named regulars here yet.",
+  "w": "25-city.js:60"
+ },
+ {
+  "k": "Sound the horns early — the crowd files in and the games begin",
+  "w": "25-city.js:81"
+ },
+ {
+  "k": "🎺 Sound the horns",
+  "w": "25-city.js:81"
+ },
+ {
+  "k": "Come back wearing a lanista’s ring — Vulso only sells to managers.",
+  "w": "25-city.js:417"
+ },
+ {
+  "k": "The block stands empty — sold out, or nobody desperate enough this week.",
+  "w": "25-city.js:419"
+ },
+ {
+  "k": "The smith looks up: \"Lanistae only. The arena has its own market for fighters.\"",
+  "w": "25-city.js:449"
+ },
+ {
+  "k": "🏠 <b>Home-city prices</b> — a quarter off, for the lanista whose ludus stands here.",
+  "w": "25-city.js:451"
+ },
+ {
+  "k": "The forge is cold. Nothing yet.",
+  "w": "26-gear.js:241"
+ },
+ {
+  "k": "The press is idle.",
+  "w": "27-flags.js:61"
+ },
+ {
+  "k": "Gladiators: roll the hit die for each point of your weapon’s power; each hit lands on a rolled body location, armor first, then HP. A limb at 0 is severed; a head or chest at 0 eliminates. A gladiator trophy is worth 10 CF.",
+  "w": "29-guide.js:111"
+ },
+ {
+  "k": "Beasts: attacking one makes it hunt you (aggro). Slaying it earns its coin, CF and a trophy. Raged beasts hit harder; Fazed ones slow down. A beast that kills you costs you 5 CF.",
+  "w": "29-guide.js:112"
+ },
+ {
+  "k": "Topple (3 movement): bring down an adjacent pillar. Anything on the next two tiles takes 3 damage; every pot on it breaks.",
+  "w": "29-guide.js:121"
+ },
+ {
+  "k": "The market: 3 CF opens it for the turn; then buy by level (the market die picks the slot). Re-rolls cost 2 coin.",
+  "w": "29-guide.js:124"
+ },
+ {
+  "k": "<b>The sand.</b> Thirteen by thirteen tiles: pillars carrying <b>Blessings pots</b>, tunnels, spikes, the Arena Chest — and the beasts. <b>Hover</b> anything to read it; <b>right-click</b> a tile for everything you can do there.",
+  "w": "29-guide.js:191"
+ },
+ {
+  "k": "That is the arena. I am <b>Flavius</b>, editor of these games. Every turn has four phases: <b>1 Resolve</b> (the arena reacts), <b>2 Choice</b>, <b>3 Action</b>, <b>4 End</b>. I will light the button to press; I only step in to talk when something big happens.",
+  "w": "29-guide.js:201"
+ },
+ {
+  "k": "🎓 Show the coach",
+  "w": "29-guide.js:261"
+ },
+ {
+  "k": "The bout is abandoned and you return to the main menu. You can take the lesson again any time.",
+  "w": "29-guide.js:289"
+ },
+ {
+  "k": "Pick your gladiator for today. You will never throw a stone at them, and you wear their colors in the stands. (You may still throw offerings to anyone you can reach.)",
+  "w": "30-spectate.js:58"
+ },
+ {
+  "k": "Add a shape, then click it in the list (or drag it on the preview).",
+  "w": "31-sculpt.js:55"
+ },
+ {
+  "k": "<b>Simulating to the end…</b>",
+  "w": "33-tickets.js:51"
+ },
+ {
+  "k": "every fighter in the CPU’s hands",
+  "w": "33-tickets.js:51"
+ },
+ {
+  "k": "House flag over your ludus door; prices read Cost: N coin; rail ovals in their rooms’ colours",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Online: named armor with holographic cards, Flavius’s Auction (only Flavius sells; escrow, late bids extend), the season’s weekly challenge with one gift a week, take back a seat a CPU took, “your turn” notices",
+  "w": "34-notes.js:9"
+ },
+ {
+  "k": "Manager: paint the programmata — notices on city walls for fame, fans and gate money; rivals deface them; the Recruiter and Medicus write more",
+  "w": "34-notes.js:9"
+ },
+ {
+  "k": "Online: found your house (Domus) — 4 gladiators, a record, a storeroom to equip them, a patron in the stands; ranks by Glory with a rank bar; fuller rewards at fuller tables",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "The stands choose together: every ticket holder gets a private window each rotation, throws land on the tile picked; speared ticket holders are refunded",
+  "w": "34-notes.js:11"
+ },
+ {
+  "k": "Rooms: up to 8 lanistas, sit or stand, the host sets the event, city and seats until the horns; give the host away, remove a lanista, pick teams in Familia (4–8 seats, 2+ teams)",
+  "w": "34-notes.js:13"
+ },
+ {
+  "k": "Quick chat only: phrases in the room, short calls during the match as bubbles, farewells after; ⚔ Again opens the same game with the same lanistas",
+  "w": "34-notes.js:13"
+ },
+ {
+  "k": "Orbis Terrarum: where lanistas connect from, glowing on the empire map; the Forum beside it",
+  "w": "34-notes.js:13"
+ },
+ {
+  "k": "My Gladiators: up to three living gladiators, one active; each with its own look, board token, class and the gear it brings",
+  "w": "34-notes.js:14"
+ },
+ {
+  "k": "Tickets before the horns: a seat in the stands with your own stones, offerings and chants each rotation; the ticket coin goes into the wager pot",
+  "w": "34-notes.js:15"
+ },
+ {
+  "k": "Armor: one level per piece; the printed armor and weapons are examples to learn from; your printed class cards in the class designer",
+  "w": "34-notes.js:16"
+ },
+ {
+  "k": "Main menu: Saves sits beside Settings; LAN and Continue are gone (Manager keeps its own Continue)",
+  "w": "34-notes.js:16"
+ },
+ {
+  "k": "On the road: the yard and infirmary shut once you leave, road events, a temple offering in the host city; sit a week out once a season",
+  "w": "34-notes.js:17"
+ },
+ {
+  "k": "His drawn armor is the system set, with his names: new Centurian Helm, Steel Helm, Leather Greaves, two gladiator belts and the real Flavius’ Bracers; pairs show both pieces",
+  "w": "34-notes.js:19"
+ },
+ {
+  "k": "Every hour has a use: Morale talk, Study the card, Gear care in the yard; the baths in the Infirmary",
+  "w": "34-notes.js:19"
+ },
+ {
+  "k": "Phones in portrait: the arena on top, Actions · Fighter · Log below; Manager tabs along the bottom",
+  "w": "34-notes.js:20"
+ },
+ {
+  "k": "Manager: a weekly checklist in Your ludus and a money ledger (net per week, weeks of runway); rival houses now drill and rest by the same rules as you",
+  "w": "34-notes.js:25"
+ },
+ {
+  "k": "Phones in landscape: the arena fills the screen; actions, your board, the log and the top bar slide in from a small button dock — your actions open by themselves on your move",
+  "w": "34-notes.js:27"
+ },
+ {
+  "k": "The Play Now lesson has bumpers: while Flavius shows you around, buttons are look-only; in hands-on steps only the board and your actions respond; ✖ Exit is always there",
+  "w": "34-notes.js:27"
+ },
+ {
+  "k": "Training hours as fighter cards: tap a focus to add an hour, tap a pip to take it back; each rating shows the gain you are planning and the next band",
+  "w": "34-notes.js:28"
+ },
+ {
+  "k": "Fatigue: bouts and hard work wear fighters down; above 50 they may get hurt; a rest week in the Infirmary clears it",
+  "w": "34-notes.js:28"
+ },
+ {
+  "k": "Missios follow the rulebook: 20+ CF, a win or a spared thumb passes a step; \"Win\" steps must be won",
+  "w": "34-notes.js:29"
+ },
+ {
+  "k": "Eliminated on a missio: the event ends at once on a Missio failed screen; the gladiator is marked fallen",
+  "w": "34-notes.js:29"
+ },
+ {
+  "k": "Chariots: racers ride on their chariot token; the horse and wheel tokens sit on the chariot card; spare parts on the sand are the printed tokens",
+  "w": "34-notes.js:29"
+ },
+ {
+  "k": "Rail tabs with something left to do are outlined: Recruiting, Training Yard, Infirmary; Match Week in light purple",
+  "w": "34-notes.js:30"
+ },
+ {
+  "k": "Rivalry Week: the last regular week is Familia, two on two, against your fiercest rival (the Consilium writes in week 11; byes now weeks 4 and 11)",
+  "w": "34-notes.js:34"
+ },
+ {
+  "k": "Match Week: winners in gold, YOURS in blue, LOANED in purple with the terms; Wagers shows a count; enter, watch and walk wait for the road to be paid; End the week from the results hides the buttons",
+  "w": "34-notes.js:36"
+ },
+ {
+  "k": "Manager: ratings grow slowly with training, practice, fights and fame; your fighters' growth and new perks are reported each week",
+  "w": "34-notes.js:38"
+ },
+ {
+  "k": "Creator Studio: rating sliders with a 375-point pool; classes can bring a tamed ally (any beast) or stones; beasts show Speed and Strength",
+  "w": "34-notes.js:38"
+ },
+ {
+  "k": "Results: Save all to the Ludus Flavius; the Fate card and score up front",
+  "w": "34-notes.js:39"
+ },
+ {
+  "k": "Manager: fighters bank the coin they survive with; hungry free agents pay to join small houses; fame-hungry fighters ask for a fight",
+  "w": "34-notes.js:39"
+ },
+ {
+  "k": "Class designer: the printed 8 are the system defaults; unique names and colours; weakness explained; no champion field; clearer thumbnails",
+  "w": "34-notes.js:39"
+ },
+ {
+  "k": "Tamed beasts no longer steal aggro; Speed: Paused; Take a Seat; the Multiplayer tray closes on an outside click; the editors’ code word is new",
+  "w": "34-notes.js:39"
+ },
+ {
+  "k": "Class cards show the character using them: name, portrait, board token, armor art; eight new system classes",
+  "w": "34-notes.js:40"
+ },
+ {
+  "k": "Focus roll: three dice spin and settle one by one; click the one to strike",
+  "w": "34-notes.js:40"
+ },
+ {
+  "k": "Turn indicator: dot, name and phase (details in ⓘ); phases colour-coded; Speed tray; log off the arena by default",
+  "w": "34-notes.js:40"
+ },
+ {
+  "k": "Class creator in the Creator Studio: a printed-style class card that holds the loadout (weapons, armor, ability, starting coin, CF and arena cards); characters now pick a class",
+  "w": "34-notes.js:41"
+ },
+ {
+  "k": "Manager bye weeks (weeks 4 and 8): no bouts; Vulso’s cart, a market day, extra training and recruiting",
+  "w": "34-notes.js:41"
+ },
+ {
+  "k": "Three bouts: <b>undercard</b>, <b>feature</b>, <b>main event</b>. Every fighter you enter earns an appearance fee; the winner's house takes the <b>purse</b>. They are fought in order.",
+  "w": "36-mtutor.js:49"
+ },
+ {
+  "k": "<b>The results.</b> Each fighter's place, the <b>Crowd Favor</b> they earned and the <b>Fate</b> it bought (under 17 CF: condemned; 17-19: the Thumb; 20-49: back to the ludus; 50+: the rudis), your purses and fees, the crowd — and your betting slip.",
+  "w": "36-mtutor.js:60"
+ },
+ {
+  "k": "The sandbox league is discarded and you return to the main menu. You can take the lesson again from the menu or Rules &amp; strategy → 🎓 Lessons.",
+  "w": "36-mtutor.js:132"
+ },
+ {
+  "k": "class=\"btn tksm\"",
+  "w": "37-crlist.js:25"
+ },
+ {
+  "k": "⚔ Match saves",
+  "w": "38-matchsave.js:58"
+ },
+ {
+  "k": "Play now / New event, saved mid-bout — three slots and an automatic save each rotation",
+  "w": "38-matchsave.js:58"
+ },
+ {
+  "k": "No saved matches yet — save one on your move with 💾 Save match in the arena.",
+  "w": "38-matchsave.js:60"
+ },
+ {
+  "k": "House of Sotonium",
+  "w": "39-sotonium.js:84"
+ },
+ {
+  "k": "House of Duckio",
+  "w": "39-sotonium.js:85"
+ },
+ {
+  "k": "No fighters in the yard.",
+  "w": "42-rooms.js:44"
+ },
+ {
+  "k": "class=\"edcell zn {0}",
+  "w": "43-beasts.js:61"
+ },
+ {
+  "k": "The beast's round token — drag a selected shape here",
+  "w": "43-beasts.js:73"
+ },
+ {
+  "k": "ROUND TOKEN",
+  "w": "43-beasts.js:73"
+ },
+ {
+  "k": "Beasts attack with 2 hit dice",
+  "w": "43-beasts.js:83"
+ },
+ {
+  "k": "<em>the portrait's window</em>",
+  "w": "44-studio.js:35"
+ },
+ {
+  "k": "<svg class=\"pbmini\"",
+  "w": "44-studio.js:35"
+ },
+ {
+  "k": "<svg x=\"46\" y=\"60\" width=\"148\" height=\"207\"",
+  "w": "44-studio.js:46"
+ },
+ {
+  "k": "A <b>roster set</b> decides which of your creations are in play — the way sports games let you build a custom roster. <b>Classic</b> (the printed game only) is the default for every new career and every New event; pick another set when you found a career or on the New event screen. Your creations start <b>unticked</b>: tick them tab by tab, then save the set.",
+  "w": "44-studio.js:187"
+ },
+ {
+  "k": "Nothing of yours in this tab yet.",
+  "w": "44-studio.js:192"
+ },
+ {
+  "k": "None yet — the three system invitationals below keep the league busy meanwhile.",
+  "w": "44-studio.js:220"
+ },
+ {
+  "k": "None of your fighters are left in the bracket — play it out to crown a champion.",
+  "w": "46-tourney.js:91"
+ },
+ {
+  "k": "no Fates: an exhibition bracket",
+  "w": "46-tourney.js:108"
+ },
+ {
+  "k": "{0} trophy case",
+  "w": "47-mgr47.js:25"
+ },
+ {
+  "k": "The shelves are bare — so far.",
+  "w": "47-mgr47.js:27"
+ },
+ {
+  "k": "Open {0}’s trophy case",
+  "w": "47-mgr47.js:32"
+ },
+ {
+  "k": "🏆 Trophies they hold",
+  "w": "47-mgr47.js:42"
+ },
+ {
+  "k": "<details class=\"card2\" open><summary><b>Raising your name</b>",
+  "w": "47-mgr47.js:63"
+ },
+ {
+  "k": "Banked and ready (they never expire):",
+  "w": "47-mgr47.js:71"
+ },
+ {
+  "k": "Nobody.",
+  "w": "47-mgr47.js:136"
+ },
+ {
+  "k": "No friendly house will lend (opinion 30+, and never a rival).",
+  "w": "47-mgr47.js:137"
+ },
+ {
+  "k": "<b>{0}</b> ({1}) walks the Road — stage <b>{2} of 12</b>. Next: <b>{3}</b> · {4}. Win it with {5} to go on; lose, and the road ends.",
+  "w": "48-arena47.js:104"
+ },
+ {
+  "k": "You need a living gladiator of the eight classes on your roster (save one after an event).",
+  "w": "48-arena47.js:108"
+ },
+ {
+  "k": "Win the twelve arenas in order with {0}",
+  "w": "48-arena47.js:111"
+ },
+ {
+  "k": "{0}’s face",
+  "w": "49-studio47.js:83"
+ },
+ {
+  "k": "THE FACE",
+  "w": "49-studio47.js:83"
+ },
+ {
+  "k": "Your cohorts",
+  "w": "49-studio47.js:134"
+ },
+ {
+  "k": "The system cohorts",
+  "w": "49-studio47.js:134"
+ },
+ {
+  "k": "and the <b>cohorts</b> that make them memorable (made under Fighters → 🤝 Cohorts)",
+  "w": "49-studio47.js:136"
+ },
+ {
+  "k": "Cohorts in this event",
+  "w": "49-studio47.js:136"
+ },
+ {
+  "k": "Make cohorts under Fighters → 🤝 Cohorts.",
+  "w": "49-studio47.js:148"
+ },
+ {
+  "k": "<span class=\"badge gold\">▶ LOADED for Play Now</span>",
+  "w": "49-studio47.js:155"
+ },
+ {
+  "k": "locked at the founding",
+  "w": "49-studio47.js:156"
+ },
+ {
+  "k": "This career plays with <b>{0}</b>{1}.",
+  "w": "49-studio47.js:156"
+ },
+ {
+  "k": "🏜 Sandbox",
+  "w": "49-studio47.js:156"
+ },
+ {
+  "k": "🏋 Practice gate: +{0} coin from {1} watching fighters; {2} is sharp for Match Week.",
+  "w": "50-v48.js:76"
+ },
+ {
+  "k": "No players yet — names you type become profiles when the horns sound.",
+  "w": "51-v49.js:177"
+ },
+ {
+  "k": ">Sound the horns · Hot seat<",
+  "w": "51-v49.js:180"
+ },
+ {
+  "k": ">Player</option>",
+  "w": "51-v49.js:182"
+ },
+ {
+  "k": "Player name for seat {0}",
+  "w": "51-v49.js:183"
+ },
+ {
+  "k": "Nothing touched you.",
+  "w": "52-v50.js:42"
+ },
+ {
+  "k": "For 17–19 [[cf|CF]]: a d6 decides. 4–6 spares you; 1–3 the thumb goes down and the [[fate|Fate table]] follows.",
+  "w": "52-v50.js:66"
+ },
+ {
+  "k": "The Venatore’s tamed golden eagle: moves 6, carries items and attacks for him. The Venatore carries his card; others meet it only if the arena deck includes it.",
+  "w": "52-v50.js:83"
+ },
+ {
+  "k": "<b>⚙ Options</b>",
+  "w": "52-v50.js:146"
+ }
+]

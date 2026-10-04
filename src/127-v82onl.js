@@ -232,8 +232,8 @@ function onlFoundHTML82(full){const live=(ONL.chars||[]).length;
   const a=h.indexOf('<main class="onl-main">');const b=h.lastIndexOf('</main>');if(a<0||b<0)return card+h;
   return h.slice(0,a)+'<main class="onl-main">'+card+'<div class="dom82-grey" aria-disabled="true" title="Found your house first">'+h.slice(a+23,b)+'</div>'+h.slice(b)}
 {const base=onlHTML;onlHTML=function(){if(onlIsGuest82())return onlGuestHTML82();
-  if(ONL.acct&&ONL.needDomus){ONL.newGlad=false;const keep=ONL.tab;if(ONL.tab==='char'||ONL.tab==='armory')ONL.tab='play';let h;try{h=base.apply(this,arguments)}finally{ONL.tab=keep}return onlFoundHTML82(h.replace('>🛡 My Gladiators<','>🏛 Domus<'))}
-  return base.apply(this,arguments).replace('>🛡 My Gladiators<','>🏛 Domus<').replace('set in 🛡 My Gladiators','set in 🏛 Domus')}}
+  if(ONL.acct&&ONL.needDomus){ONL.newGlad=false;const keep=ONL.tab;if(ONL.tab==='char'||ONL.tab==='armory')ONL.tab='play';let h;try{h=base.apply(this,arguments)}finally{ONL.tab=keep}return onlFoundHTML82(h.replace('>🛡 My Gladiators<',_T('>🏛 Domus<')))}
+  return base.apply(this,arguments).replace('>🛡 My Gladiators<',_T('>🏛 Domus<')).replace('set in 🛡 My Gladiators',_T('set in 🏛 Domus'))}}
 
 /* ---------------- the house beside names (rooms, lobby rows, the Forum) ---------------- */
 let MK82=[];const mk82=(name,id)=>{if(!id||!onlDomOf82(id))return name;if(MK82.length>4000)MK82=[];return `${name}⟦${MK82.push(id)-1}⟧`};
@@ -246,10 +246,10 @@ function onlMarkRoom82(L){if(!L)return L;const y={...L,players:(L.players||[]).m
     /* table size: fewer lanistas, smaller rewards */
     const n=(L.players||[]).length;if(L.status==='waiting'&&n>=2&&n<4){const tx=`<p class="tbl82">${_T`⚖ ${n===2?_T('2 lanistas: half rewards'):_T('3 lanistas: three-quarter rewards')} · seat 4 for the full purse`}</p>`;h=h.replace('<div class="acts r80-go">',tx+'<div class="acts r80-go">')}
     if(L.status==='waiting'){if(host&&!grey){h=h.replace(/(<select class="tin" data-onlrs="ticket"[^>]*>)([\s\S]*?)(<\/select>)/,(m,a,o,c)=>a+(L.free?o.replace(' selected',''):o)+`<option value="free" ${L.free?'selected':''}>free</option>`+c)}
-      else if(L.free)h=h.replace('Ticket: none','Ticket: free')}}catch(e){}return h}}
+      else if(L.free)h=h.replace('Ticket: none',_T('Ticket: free'))}}catch(e){}return h}}
 {const base=onlLobbyHTML;onlLobbyHTML=function(){const keep=ONL.lobbies;ONL.lobbies=(keep||[]).map(onlMarkRoom82);let h;try{h=base.apply(this,arguments)}finally{ONL.lobbies=keep}h=unmk82(h);
   if(!onlIsGuest82())for(const L of keep||[])if(L.free&&L.status==='waiting'&&!L.ticket&&!(L.stands||[]).some(s=>s.id===onlMe80())&&!(L.members||[]).some(m=>m.id===onlMe80())){const id=String(L.id).replace(/[^\w-]/g,'');
-    h=h.replace(new RegExp(`(data-row="${id}">[\\s\\S]*?<td class="acts">)`),`$1<button type="button" class="btn tksm" data-onl="ticket" data-v="${id}" title="A free seat in the stands until the horns">🎟 Free</button>`)}return h}}
+    h=h.replace(new RegExp(`(data-row="${id}">[\\s\\S]*?<td class="acts">)`),`$1<button type="button" class="btn tksm" data-onl="ticket" data-v="${id}" title="${_T`A free seat in the stands until the horns`}">${_T`🎟 Free`}</button>`)}return h}}
 {const base=onlSpectHTML;onlSpectHTML=function(){const keep=ONL.lobbies;ONL.lobbies=(keep||[]).map(L=>L.free&&!L.ticket?{...L,ticket:'free'}:L);try{return base.apply(this,arguments)}finally{ONL.lobbies=keep}}}
 {const base=onlFeedHTML80;onlFeedHTML80=function(){const kl=ONLF.lines,kc=ONLF.local;const m=l=>({...l,name:l.name?mk82(l.name,l.by):l.name,from:l.from?mk82(l.from,l.by):l.from});
   ONLF.lines=(kl||[]).map(m);ONLF.local=(kc||[]).map(m);try{return unmk82(base.apply(this,arguments))}finally{ONLF.lines=kl;ONLF.local=kc}}}
@@ -259,7 +259,7 @@ function onlMarkRoom82(L){if(!L)return L;const y={...L,players:(L.players||[]).m
 /* the stage: the house under the gladiator's name; Glory and the next rank */
 {const base=onlStageHTML;onlStageHTML=function(ch){let h=base.apply(this,arguments);const d=onlMyDomus82();
   if(d)h=h.replace(/(<div class="onl-pname">[^<]*<\/div>)/,`$1<div class="dom82-pl">🏛 ${esc2(onlHouse82(d))}</div>`);
-  const N=ONLC.nextRank(ch);const g=Math.round(ONLC.gloryOf(ch));h=h.replace(/<small>Next: [^<]*<\/small>/,N?`<small>Next: ${esc2(N.n)} at ${N.glory} Glory · now ${g}</small>`:`<small>${g} Glory</small>`);return h}}
+  const N=ONLC.nextRank(ch);const g=Math.round(ONLC.gloryOf(ch));h=h.replace(/<small>Next: [^<]*<\/small>/,N?_T`<small>Next: ${esc2(N.n)} at ${N.glory} Glory · now ${g}</small>`:_T`<small>${g} Glory</small>`);return h}}
 
 /* ---------------- 🏛 the Domus screen ---------------- */
 function onlDomusLoad82(){if(Date.now()-ONL82.dgAt<20000||!ONL.acct||onlIsGuest82())return;ONL82.dgAt=Date.now();const k0=JSON.stringify([ONL.domus,ONL82.rc]);
@@ -280,7 +280,7 @@ function onlDomusHTML82(){onlDomusLoad82();const D=ONL.domus||{};const G=ONL82.d
    <div class="dom82-rec">${rec.map(([k,v])=>`<div><b>${v}</b><small>${k}</small></div>`).join('')}</div>
    ${locked?`<p class="rc-sub dom82-lock">${_T`🔒 A house with gladiators keeps its name.`}</p>`:`<div class="dom82-row"><input class="tin" id="dom82Ren" maxlength="${ONLC.DOMUS_MAX}" value="${esc2(D.name||'')}"><button type="button" class="btn" data-onl82="drename">${_T`✎ Rename`}</button><button type="button" class="btn" data-onl82="dnew" title="${_T`The old house is archived with its record`}">${_T`🏛 Found a new house`}</button></div>${_T`<small class="rc-sub">Only until your first gladiator.</small>`}`}
    ${ONL82.ferr&&ONL.tab==='char'?`<p class="onl-err">${esc2(ONL82.ferr)}</p>`:''}${`<details class="pat82d" ${ONL82.patOpen?'open':''}><summary>${_T`✎ Patron <small class="rc-sub">your seat in the stands</small>`}</summary>${onlPatronHTML82()}</details>`}</div>`}
-{const base=onlCharHTML;onlCharHTML=function(){let g=base.apply(this,arguments).replace('🛡 My Gladiators','⚔ Gladiators');
+{const base=onlCharHTML;onlCharHTML=function(){let g=base.apply(this,arguments).replace('🛡 My Gladiators',_T('⚔ Gladiators'));
   for(const c of ONL.chars||[])g=g.replace(`<b>${esc2(c.name)}</b><small>`,`<b>${esc2(c.name)}</b><small class="gl82">✦ ${Math.round(ONLC.gloryOf(c))} Glory</small><small>`);
   return `<div class="dom82-wrap"><div class="dom82-main">${onlDomusHTML82()}${g}${onlStoreHTML82()}</div>${onlRankBar82()}</div>`}}
 
@@ -292,7 +292,7 @@ function onlStoreHTML82(){if(!ONL.acct||onlIsGuest82())return '';const cat=onlCa
   for(const k of house.gear)rows.push({k,o:house,on:false});
   const shown=rows.filter(r=>sel==='all'||(sel==='house'?r.o.house:r.o.id===sel));
   const chip=(v,l,n)=>`<button type="button" class="sr82-chip ${sel===v?'on':''}" data-onl82="srsel" data-v="${esc2(v)}">${l} <small>${n}</small></button>`;
-  const dest=r=>[...live.filter(c=>c!==r.o).map(c=>{const why=busy.has(c.id)?_T('in a match'):ONLC.gearMoveWhy({gear:[r.k]},c,r.k,cat);return `<option value="${esc2(c.id)}" ${why?'disabled':''}>→ ${esc2(c.name)}${why?` (${esc2(why.replace(/\.$/,''))})`:''}</option>`}),r.o.house?'':'<option value="house">→ the storeroom shelf</option>'].join('');
+  const dest=r=>[...live.filter(c=>c!==r.o).map(c=>{const why=busy.has(c.id)?_T('in a match'):ONLC.gearMoveWhy({gear:[r.k]},c,r.k,cat);return `<option value="${esc2(c.id)}" ${why?'disabled':''}>→ ${esc2(c.name)}${why?` (${esc2(why.replace(/\.$/,''))})`:''}</option>`}),r.o.house?'':`<option value="house">${_T`→ the storeroom shelf`}</option>`].join('');
   const row=r=>{const it=cat[r.k]||{n:r.k,lv:'?'};const lock=!r.o.house&&busy.has(r.o.id);const art=typeof cardHTML==='function'?cardHTML((it.kind==='w'?'w:':'a:')+r.k,'sm'):'';const from=r.o.house?'house':r.o.id;
     return `<div class="sr82-it ${lock?'lock':''}" data-sr82="${esc2(r.k)}"><div class="sr82-art">${art}</div><div class="sr82-b">${_T`<b>${esc2(it.n)}</b><small>Level ${it.lv}${it.kind==='a'?_T` · ${it.ap|0} AP`:''}</small>
       <small class="sr82-who">${r.o.house?_T('🗄 on the shelf'):_T`with <b>${esc2(r.o.name)}</b>`}</small>${lock?_T('<small class="sr82-lk">🔒 In a match</small>'):''}`}</div>
@@ -300,7 +300,7 @@ function onlStoreHTML82(){if(!ONL.acct||onlIsGuest82())return '';const cat=onlCa
       <select class="tin" data-sr82mv="${esc2(from)}|${esc2(r.k)}" ${lock?'disabled':''}><option value="">${_T`Move…`}</option>${dest(r)}</select></div></div>`};
   return `<div class="sr82" id="sr82"><div class="onl-lbtop"><h3>${_T`🗄 Storeroom`} <span class="rc-sub">${_T`${rows.length} piece${rows.length===1?'':'s'} · tick to bring · move between your gladiators`}</span></h3></div>
    <div class="sr82-chips">${chip('all',_T('All'),rows.length)}${live.map(c=>chip(c.id,`${busy.has(c.id)?'🔒 ':''}${esc2(c.name)}`,rows.filter(r=>r.o===c).length)).join('')}${chip('house',_T('🗄 Shelf'),house.gear.length)}</div>
-   <div class="sr82-grid">${shown.map(row).join('')||'<p class="rc-sub">Nothing here yet — the Armory sells to your gladiators.</p>'}</div></div>`}
+   <div class="sr82-grid">${shown.map(row).join('')||`<p class="rc-sub">${_T`Nothing here yet — the Armory sells to your gladiators.`}</p>`}</div></div>`}
 async function onlStoreAfter82(r){if(r&&r.from&&r.from.cls)onlCharPut82(r.from);if(r&&r.to&&r.to.cls)onlCharPut82(r.to);if(r&&r.cls)onlCharPut82(r);ONL82.dgAt=0;try{await NET.req('domus.get',{})}catch(e){}ONL82.dgAt=Date.now()}
 function onlCharPut82(c){const i=(ONL.chars||[]).findIndex(x=>x.id===c.id);if(i>=0)ONL.chars[i]=c;if(ONL.char&&ONL.char.id===c.id)ONL.char=c;if(ONL.ged&&ONL.ged.id===c.id)ONL.ged=null}
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset)return;
@@ -414,7 +414,7 @@ window.addEventListener('change',e=>{const t=e.target;if(!t||!t.matches||!t.matc
   if(t.value==='free'){e.stopImmediatePropagation();onlDo(async()=>{await onlReq80('lobby.set',{id:L.id,free:1})});return}
   if(L.free){e.stopImmediatePropagation();onlDo(async()=>{await onlReq80('lobby.set',{id:L.id,free:0,ticket:+t.value})})}},true);
 /* the creator: the purse wording */
-{const base=onlCreatorHTML;onlCreatorHTML=function(){return base.apply(this,arguments).replace('Earn coin and CF to rank up; buy gear between bouts.','Surviving Ranked bouts pays a purse by rank; Glory (CF, bouts survived, wins) raises the rank; buy gear between bouts.')}}
+{const base=onlCreatorHTML;onlCreatorHTML=function(){return base.apply(this,arguments).replace('Earn coin and CF to rank up; buy gear between bouts.',_T('Surviving Ranked bouts pays a purse by rank; Glory (CF, bouts survived, wins) raises the rank; buy gear between bouts.'))}}
 
 {const st=document.createElement('style');st.textContent=`
 .g82in{display:grid;gap:4px;justify-items:center;margin-top:4px}.g82card .onl-ngfig{font-size:48px;display:grid;place-items:center;width:96px}

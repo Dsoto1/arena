@@ -53,11 +53,11 @@ document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.c
 document.addEventListener('change',e=>{const c=e.target.closest&&e.target.closest('input[data-calv="on"]');if(!c||typeof ST==='undefined'||!ST.ca)return;const d=ST.ca;caLevelsInit(d);const n=+c.dataset.n;
   if(!c.checked){e.stopImmediatePropagation();c.checked=true;return}for(const k of [1,2,3])if(k!==n&&d.levels[k])d.levels[k].on=0},true);
 {const base=caLevelsInit;caLevelsInit=function(ca){const r=base.apply(this,arguments);try{if(ca&&ca.levels){const on=[1,2,3].filter(n=>ca.levels[n]&&ca.levels[n].on);for(const n of on.slice(1))ca.levels[n].on=0}}catch(e){}return r}}
-{const base=caLevelsHTML;caLevelsHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/(<div class="sect" style="margin:4px 0">Levels <span class="rc-sub">)[^<]*/,'$1pick its level · AP 1 point each above the first · bonus AP 2 · stackable 1').replace(/type="checkbox" data-calv="on"/g,'type="radio" name="calv76" data-calv="on"')}catch(e){}return h}}
+{const base=caLevelsHTML;caLevelsHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/(<div class="sect" style="margin:4px 0">Levels <span class="rc-sub">)[^<]*/,_T('$1pick its level · AP 1 point each above the first · bonus AP 2 · stackable 1')).replace(/type="checkbox" data-calv="on"/g,'type="radio" name="calv76" data-calv="on"')}catch(e){}return h}}
 const sysExample76=h=>h.replace(/<button class="btn tksm" type="button" disabled title="System sets are locked[^"]*">Edit<\/button><button class="btn tksm primary" type="button" data-gs="c[aw]sys" data-id="[^"]*">⧉ Copy &amp; edit<\/button>/g,'')
-  .replace(/title="System sets are locked so the defaults are always there — copy one to make it yours">🔒 System/g,'title="The printed set — shown as examples">🔒 Example');
-{const base=armSetsHTML;armSetsHTML=function(){let h=base.apply(this,arguments);try{h=sysExample76(h).replace('Nothing forged yet — save a piece above, or copy a printed one.','Nothing forged yet — sculpt your own above.').replace(/(<h4>🔒 System armor · \d+ <span class="rc-sub">)the printed pieces/,'$1examples · the printed pieces')}catch(e){}return h}}
-{const base=wpnSetsHTML;wpnSetsHTML=function(){let h=base.apply(this,arguments);try{h=sysExample76(h).replace(/(<h4>🔒 System weapons · \d+)/,'$1 <span class="rc-sub">examples · make your own above</span>')}catch(e){}return h}}
+  .replace(/title="System sets are locked so the defaults are always there — copy one to make it yours">🔒 System/g,_T('title="The printed set — shown as examples">🔒 Example'));
+{const base=armSetsHTML;armSetsHTML=function(){let h=base.apply(this,arguments);try{h=sysExample76(h).replace('Nothing forged yet — save a piece above, or copy a printed one.',_T('Nothing forged yet — sculpt your own above.')).replace(/(<h4>🔒 System armor · \d+ <span class="rc-sub">)the printed pieces/,_T('$1examples · the printed pieces'))}catch(e){}return h}}
+{const base=wpnSetsHTML;wpnSetsHTML=function(){let h=base.apply(this,arguments);try{h=sysExample76(h).replace(/(<h4>🔒 System weapons · \d+)/,_T('$1 <span class="rc-sub">examples · make your own above</span>'))}catch(e){}return h}}
 {const base=caStartHTML;caStartHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/<label>Start from<select data-caf="start">[\s\S]*?<\/select><\/label>/,'')}catch(e){}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-gs="casys"],[data-gs="cwsys"]');if(b){e.preventDefault();e.stopImmediatePropagation()}},true);
 {const base=classStudioHTML;classStudioHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/(<div class="lrow" style="--pc:[^"]*" data-card="k:(\w+)">)[\s\S]*?(<div class="t">)/g,(m0,a,k,t)=>a+`<span class="clscard76">${cardHTML('k:'+k,'sm')}</span>`+t)}catch(e){console.error(e)}return h}}
@@ -65,7 +65,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 /* the system class rows quote his printed cards (ability + weakness); where the digital game pays it through a rating, say which */
 const CLS_CARD_TXT76={soldier:_T('+1 damage on every successful round 1 attack.'),royalty:_T('1 coin each turn — here, from Luck.'),hero:_T('1 CF each turn — here, from Charisma.'),slave:_T('1 extra movement each turn — here, from Speed.'),
   veteranus:_T('1 coin or 1 CF each turn — here, from Luck and Charisma. Weakness: weapons, armor and CF purchases cost 1 more.'),amazonia:_T('None. Weakness: never receives CF from Blessings.'),
-  venatore:_T('Declare Zora and place her mini into play. Weakness: can never use tunnels.'),damnatio:'Gain 1 stone each turn; +10 CF to the final score if they win any event. Weakness: pelted with 1 stone (1 damage) each turn in phase 1.'};
+  venatore:_T('Declare Zora and place her mini into play. Weakness: can never use tunnels.'),damnatio:_T('Gain 1 stone each turn; +10 CF to the final score if they win any event. Weakness: pelted with 1 stone (1 damage) each turn in phase 1.')};
 {const base=classStudioHTML;classStudioHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/(data-card="k:(\w+)">[\s\S]*?<div class="t">[\s\S]*?<\/span>)<small>[^<]*<\/small>/g,(m0,a,k)=>CLS_CARD_TXT76[k]?a+`<small>${esc(CLS_CARD_TXT76[k])}</small>`:m0)}catch(e){console.error(e)}return h}}
 
 /* ---- Level 4 custom weapons: the Arena Chest ----
@@ -78,8 +78,8 @@ const CHEST_W0_76=[...CHEST_W];
 {const base=gearStudioInput;gearStudioInput=function(t){const r=base.apply(this,arguments);if(t&&t.dataset&&t.dataset.cwf==='chest'){ST.cw.chest=t.value==='1'?1:0;return 'redraw'}return r}}
 {const base=gearWHTML;gearWHTML=function(){let h=base.apply(this,arguments);try{const d=ST.cw||{};const lvSel=`<label>${_T`Level`}<select data-cwf="chest"><option value="" ${d.chest?'':'selected'}>${_T`By its stats (1–3) · market`}</option><option value="1" ${d.chest?'selected':''}>${_T`4 · the Arena Chest`}</option></select></label>`;
   h=h.replace(/(<label>Start from<select data-cwf="a\.type">)/,lvSel+'$1');
-  if(d.chest)h=h.replace(/its card · Level 4 · [^<]*/,'its card · Level 4 · a chest prize — on the rolls it joins the Arena Chest’s draw');
-  for(const cw of CUSTOM.weapons||[]){const wk=W['cw_'+cw.id];if(wk&&wk.cwChest)h=h.replace(new RegExp(`(<b>${esc(cw.name).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}</b> <span class="rc-sub">)`),'$1🗝 in the Arena Chest')}
+  if(d.chest)h=h.replace(/its card · Level 4 · [^<]*/,_T('its card · Level 4 · a chest prize — on the rolls it joins the Arena Chest’s draw'));
+  for(const cw of CUSTOM.weapons||[]){const wk=W['cw_'+cw.id];if(wk&&wk.cwChest)h=h.replace(new RegExp(`(<b>${esc(cw.name).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}</b> <span class="rc-sub">)`),_T('$1🗝 in the Arena Chest'))}
   }catch(e){}return h}}
 
 /* ---- Main menu: no ▶ Continue (Manager mode's own menu has one); 📜 Saves shares the Settings row ---- */

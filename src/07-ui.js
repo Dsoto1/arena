@@ -1163,7 +1163,7 @@ function fadeTo(cb) {
 }
 /* v0.46: the show is over — a new match, or stay and look at the arena */
 async function afterShowPrompt() {
-  const v = await modal(_T('🧹 The arena is ready'), '<p>The crew has reset the sand. What next?</p>', [{
+  const v = await modal(_T('🧹 The arena is ready'), `<p>${_T`The crew has reset the sand. What next?`}</p>`, [{
     label: _T('⚔️ Start a new match'),
     sub: _T('choose the arena, event and gladiators'),
     value: 'new',
@@ -2712,11 +2712,11 @@ function render() {
   const ph = S.phase;
   const pbar = `<div class="phasebar">${[['resolve', '1 Resolve'], ['choice', '2 Choice'], ['action', '3 Action'], ['end', '4 End']].map(([k, l]) => `<span class="${ph === k || ph === 'command' && k === 'resolve' ? 'on' : ''}">${l}</span>`).join('')}</div>`;
   let a = '';
-  if (S.over) a = '<p class="hint">The event is over. Start a new one from the top bar.</p>';else if (ph === 'command' && S.cmd) {
+  if (S.over) a = `<p class="hint">${_T`The event is over. Start a new one from the top bar.`}</p>`;else if (ph === 'command' && S.cmd) {
     const n = S.cmd.n,
       zo = n.t === 'zora' ? zoraPickOptions(n) : [];
     a = `<p class="hint">${_T`Command <b>${n.name}</b>: click an orange tile to move${S.cmd.moved ? ' (moved)' : ''}${n.carry ? `. Carrying ${n.carry.label}: half movement, no attacks` : _T(', or a red ring to attack')}${n.t === 'zora' ? '. Zora flies over everything and can land on pillars' : ''}.`}</p><div class="acts">${zo.map((o, i) => `<button class="btn" type="button" data-act="zpick" data-i="${i}">${_T`Pick up ${o.label}<small>halves his movement</small>`}</button>`).join('')}${n.carry ? `<button class="btn" type="button" data-act="zdrop">${cheb(n, S.cmd.p) <= 1 ? _T('Deliver to ') + S.cmd.p.name : _T('Drop here')}<small>${n.carry.label}</small></button>` : ''}<button class="btn primary" type="button" data-act="cmddone">${_T`Done commanding`}</button></div>`;
-  } else if (p.cpu) a = `<p class="hint">${_T`${p.name} (CPU, ${typeof AI_TIERS !== 'undefined' && p.tier != null ? AI_TIERS[p.tier].n : p.diff}) is taking their turn…`}</p>`;else if (ph === 'resolve') a = '<p class="hint">The arena reacts to you. NPCs are moving…</p>';else if (ph === 'choice') a = `<div class="acts"><button class="btn primary" type="button" data-act="coin" ${S.busy ? 'disabled' : ''}>${_T`Take 2 coin<small>safe</small>`}</button><button class="btn" type="button" data-act="card" ${S.busy || !canDraw() ? 'disabled' : ''}>${_T`Draw arena card<small>${canDraw() ? S.deck.length + _T(' left · high risk') : _T('no arena deck in this event')}</small>`}</button></div>`;else if (ph === 'action' && isChariot()) {
+  } else if (p.cpu) a = `<p class="hint">${_T`${p.name} (CPU, ${typeof AI_TIERS !== 'undefined' && p.tier != null ? AI_TIERS[p.tier].n : p.diff}) is taking their turn…`}</p>`;else if (ph === 'resolve') a = `<p class="hint">${_T`The arena reacts to you. NPCs are moving…`}</p>`;else if (ph === 'choice') a = `<div class="acts"><button class="btn primary" type="button" data-act="coin" ${S.busy ? 'disabled' : ''}>${_T`Take 2 coin<small>safe</small>`}</button><button class="btn" type="button" data-act="card" ${S.busy || !canDraw() ? 'disabled' : ''}>${_T`Draw arena card<small>${canDraw() ? S.deck.length + _T(' left · high risk') : _T('no arena deck in this event')}</small>`}</button></div>`;else if (ph === 'action' && isChariot()) {
     const srcs = attackSources(p).filter(s => !s.thr);
     const m = S.mode;
     const ch = p.ch;
@@ -2950,7 +2950,7 @@ function showTrophies(player) {
 /* trophyHTML — trophy tables (gladiators, then beasts) with coin and CF totals. */
 function trophyHTML(player) {
   /* tbl — one titled trophy table, or "None yet". */
-  const tbl = (list, title) => `<h4>${title} · ${list.length}</h4>` + (list.length ? `<table class="tally"><tr><th>${_T`Trophy`}</th><th>${_T`Type`}</th><th>${_T`Round`}</th><th>${_T`Coin`}</th><th>CF</th></tr>${list.map(target => `<tr><td>${target.name}</td><td>${target.kind}</td><td class="n">${target.round}</td><td class="n">${target.coin}</td><td class="n">${target.cf}</td></tr>`).join('')}<tr><td>${_T`<b>Total</b>`}</td><td></td><td></td><td class="n"><b>${list.reduce((s, target) => s + target.coin, 0)}</b></td><td class="n"><b>${list.reduce((s, target) => s + target.cf, 0)}</b></td></tr></table>` : '<p>None yet.</p>');
+  const tbl = (list, title) => `<h4>${title} · ${list.length}</h4>` + (list.length ? `<table class="tally"><tr><th>${_T`Trophy`}</th><th>${_T`Type`}</th><th>${_T`Round`}</th><th>${_T`Coin`}</th><th>CF</th></tr>${list.map(target => `<tr><td>${target.name}</td><td>${target.kind}</td><td class="n">${target.round}</td><td class="n">${target.coin}</td><td class="n">${target.cf}</td></tr>`).join('')}<tr><td>${_T`<b>Total</b>`}</td><td></td><td></td><td class="n"><b>${list.reduce((s, target) => s + target.coin, 0)}</b></td><td class="n"><b>${list.reduce((s, target) => s + target.cf, 0)}</b></td></tr></table>` : `<p>${_T`None yet.`}</p>`);
   return `<p>${_T`Every 3 trophies held by a winner add 5 CF at the end. ${player.trophies.length} in total.`}</p>${tbl(player.trophies.filter(target => target.pk === 'player'), _T('Gladiators eliminated (players &amp; CPUs)'))}${tbl(player.trophies.filter(target => target.pk !== 'player'), _T('Beasts eliminated (NPCs)'))}`;
 }
 
@@ -3359,7 +3359,7 @@ async function openCrowd(player) {
 /* openTrade — human trade window: pick a gladiator in range, then trade, gift, or propose / break a truce. CPUs answer via cpuAcceptsTrade / cpuAcceptsTruce; humans get a dialog. */
 async function openTrade(player) {
   const partners = tradePartners(player);
-  const qid = await modal(_T('Trade or truce'), '<p>Trading is a one-to-one exchange with a gladiator within 4 tiles. A truce is a verbal pact with no penalty for breaking it.</p>', partners.map(other => ({
+  const qid = await modal(_T('Trade or truce'), `<p>${_T`Trading is a one-to-one exchange with a gladiator within 4 tiles. A truce is a verbal pact with no penalty for breaking it.`}</p>`, partners.map(other => ({
     label: other.name,
     sub: _T`${other.cpu ? 'CPU' : _T('player')} · ${cheb(player, other)} tiles away${inTruce(player, other) ? _T(' · in truce') : ''}`,
     value: other.id
@@ -3369,7 +3369,7 @@ async function openTrade(player) {
   }]));
   if (qid == null) return;
   const q = S.players[qid];
-  const what = await modal(_T`With ${q.name}`, '<p>What would you like to propose?</p>', [{
+  const what = await modal(_T`With ${q.name}`, `<p>${_T`What would you like to propose?`}</p>`, [{
     label: _T('Propose a trade'),
     value: 'trade',
     primary: 1
@@ -3409,7 +3409,7 @@ async function openTrade(player) {
   if (what === 'gift') {
     const mine = tradeables(player);
     if (!mine.length) return;
-    const gi = await modal(_T`Gift to ${q.name}`, '<p>Choose what to give. Allies remember generosity.</p>', mine.map((x, i) => ({
+    const gi = await modal(_T`Gift to ${q.name}`, `<p>${_T`Choose what to give. Allies remember generosity.`}</p>`, mine.map((x, i) => ({
       label: x.label,
       value: i
     })).concat([{
@@ -3425,7 +3425,7 @@ async function openTrade(player) {
   const mine = tradeables(player),
     theirs = tradeables(q);
   if (!mine.length || !theirs.length) {
-    await modal(_T('Nothing to trade'), '<p>One of you has nothing tradeable.</p>', [{
+    await modal(_T('Nothing to trade'), `<p>${_T`One of you has nothing tradeable.`}</p>`, [{
       label: 'OK',
       value: 1
     }]);

@@ -80,7 +80,7 @@ function rtokFaceSVG(sp,n){const F=n&&n.face;if(!F||(sp&&sp.useFace===false))ret
 /* ---------------- the beast designer, face first ---------------- */
 {const _ne=npcEditorHTML;npcEditorHTML=function(){const n=ST.draft;if(!n.face)n.face=faceBlank(n);if(n.rtok&&n.rtok.faceMig!==1){n.rtok.glyph=false;n.rtok.faceMig=1}const F=n.face;let h=_ne();
   const sel=(f,opts,v)=>fSel(_T('face.')+f,opts,v);
-  h=h.replace('<div id="rtPrev"',`<div class="bfprev" id="bfPrev" title="${esc(n.name)}’s face">${beastFaceSVG(F)}</div><div class="rc-sub" style="font:600 10px var(--mono);letter-spacing:.1em">THE FACE</div><div id="rtPrev"`);
+  h=h.replace('<div id="rtPrev"',`<div class="bfprev" id="bfPrev" title="${_T`${esc(n.name)}’s face`}">${beastFaceSVG(F)}</div><div class="rc-sub" style="font:600 10px var(--mono);letter-spacing:.1em">${_T`THE FACE`}</div><div id="rtPrev"`);
   h=h.replace(/<label>Token letter[\s\S]*?<\/label>(<label>Color)/,'$1');
   h=h.replace(/<label>Letter color[\s\S]*?<\/label><\/div>/,'</div>').replace(/<div class="chkgrid" style="margin-top:4px">\s*<label class="chk"><input type="checkbox" data-f="rtok\.glyph"[^<]*<\/label>[^<]*<\/div>/,`<div class="chkgrid" style="margin-top:4px">${fChk('rtok.useFaceOff',n.rtok&&n.rtok.useFace===false,_T('Hide the face on the token (sculpt your own instead)'))}</div>`);
   const faceCard=`<div class="card2 bfcard">${_T`<b>🦁 The face</b>`} <span class="rc-sub">${_T`like a character's portrait — it heads this page, fills the round token and colours the board figure`}</span>
@@ -131,9 +131,9 @@ SYS_PAIRINGS.push(
 /* keepers are matched by name when they come from your roster */
 {const _pe=pairEnter;pairEnter=async function(P,drawer,why){const M=(P.members||[]).map(pmParse).filter(Boolean);if(M.some(m=>m.lg)){const P2={...P,members:P.members.map(r=>{const m=pmParse(r);if(m&&m.lg){const p=S.players.find(q=>q.name===m.name);return p?'cls:'+p.cls:r}return r})};return _pe(P2,drawer,why)}return _pe(P,drawer,why)}}
 function cohortStudioHTML(){const h=specialStudioHTML();const a=h.indexOf('<h3 class="sxh3">');if(a<0)return h;
-  let c=h.slice(a).replace('<h3 class="sxh3">🤝 Pairings</h3>','<h3 class="sxh3" style="border:0;margin-top:0">🤝 Cohorts</h3>').replace(/pairing/g,'cohort').replace(/Pairing/g,'Cohort').replace(/Your cohorts/,'Your cohorts').replace(/The system cohorts/,'The system cohorts');
+  let c=h.slice(a).replace('<h3 class="sxh3">🤝 Pairings</h3>',`<h3 class="sxh3" style="border:0;margin-top:0">${_T`🤝 Cohorts`}</h3>`).replace(/pairing/g,'cohort').replace(/Pairing/g,_T('Cohort')).replace(/Your cohorts/,_T('Your cohorts')).replace(/The system cohorts/,_T('The system cohorts'));
   return `<p>${_T`A <b>cohort</b> is a group bound by something — a duo with a bond (family, friends, master &amp; slave, co-workers, the Blood of Asclepius…), a team of four, a keeper and their beasts, a pack. Members come from <b>Your Play Now Gladiators</b> (the active roster) and from the beasts. A cohort can ride in a ⭐ special event, join the <b>arena deck</b> as a card, and be placed in any custom event. ${customTag()}`}</p>`+c}
-function specialOnlyHTML(){const h=specialStudioHTML();const a=h.indexOf('<h3 class="sxh3">');return (a<0?h:h.slice(0,a)).replace('and the <b>pairings</b> that make them memorable','and the <b>cohorts</b> that make them memorable (made under Fighters → 🤝 Cohorts)').replace(/🤝 Pairings in this event/,'🤝 Cohorts in this event').replace(/Pairings in this event/,'Cohorts in this event')}
+function specialOnlyHTML(){const h=specialStudioHTML();const a=h.indexOf('<h3 class="sxh3">');return (a<0?h:h.slice(0,a)).replace('and the <b>pairings</b> that make them memorable',_T('and the <b>cohorts</b> that make them memorable (made under Fighters → 🤝 Cohorts)')).replace(/🤝 Pairings in this event/,_T('🤝 Cohorts in this event')).replace(/Pairings in this event/,_T('Cohorts in this event'))}
 /* member choices: your roster first, then the beasts */
 {const _sp=specialStudioHTML;specialStudioHTML=function(){let h=_sp();const ros=(typeof LUDUS_CACHE!=='undefined'?LUDUS_CACHE:[]).filter(g=>g.roster&&gladActive(g));
   const optsRos=ros.map(g=>`<option value="lg:${g.id}">⭐ ${esc(g.name)} · ${esc((CLASSES[g.cls]||{}).name||'')}</option>`).join('');
@@ -145,15 +145,15 @@ function specialOnlyHTML(){const h=specialStudioHTML();const a=h.indexOf('<h3 cl
 /* the All creations table calls them cohorts */
 {const _ae=allRowsExtra;allRowsExtra=function(){return _ae().map(r=>r.t==='Pairing'?{...r,t:_T('Cohort'),k:'pairings'}:r)}}
 /* the Event Designer lists cohorts, marked */
-{const _ro=edRosterHTML;edRosterHTML=function(){return _ro().replace('🤝 Pairings <span','🤝 Cohorts <span').replace(/(data-edpair="[^"]*"[^>]*>) ✦ ([^<]*)/g,'$1 ✦ $2 <span class="cbadge">custom</span>').replace('Make pairings on the ⭐ Special events tab.','Make cohorts under Fighters → 🤝 Cohorts.')}}
+{const _ro=edRosterHTML;edRosterHTML=function(){return _ro().replace('🤝 Pairings <span','🤝 Cohorts <span').replace(/(data-edpair="[^"]*"[^>]*>) ✦ ([^<]*)/g,'$1 ✦ $2 <span class="cbadge">custom</span>').replace('Make pairings on the ⭐ Special events tab.',_T('Make cohorts under Fighters → 🤝 Cohorts.'))}}
 /* every other picker marks custom content */
 {const _ao=armorOpts;armorOpts=function(f){return _ao(f).map(([k,l])=>k&&ARM[k]&&ARM[k].custom?[k,'✦ '+l+' · custom']:[k,l])}}
 {const _to=trophyOptions;trophyOptions=function(){return _to().map(([k,l])=>/^✦ /.test(l)?[k,l+' · custom']:[k,l])}}
 
 /* ---------------- 📚 which roster set is loaded ---------------- */
 {const _rs=rosterStudioHTML;rosterStudioHTML=function(){const cur=rosterById((typeof CFG!=='undefined'&&CFG.roster)||'classic');const w=typeof MGR!=='undefined'&&MGR.world;
-  return `<div class="card2 rsloaded">${_T`<b>▶ Loaded now</b> · Play Now / New event: <b>${esc(cur.name)}</b>${w&&w.roster?_T` · your open career (${esc((w.mgrs.find(m=>m.isPlayer)||{}).ludus||'')}) plays with <b>${esc(w.roster.name)}</b> — chosen at its founding, it never changes`:''}`}</div>`+_rs().replace(/<span class="badge gold">New event uses this<\/span>/,'<span class="badge gold">▶ LOADED for Play Now</span>')}}
-{const _me=meHTML;meHTML=function(){const w=W_();const h=_me();if(!w||!w.roster)return h;return h.replace('<div class="card2"><div class="sect" style="margin-top:0">🏜 Sandbox',`<div class="card2"><div class="sect" style="margin-top:0">📚 Roster set <span class="rc-sub">locked at the founding</span></div><p style="margin:0">This career plays with <b>${esc(w.roster.name)}</b>${w.roster.sel?` — ${esc(rosterSummary(w.roster))}`:''}.</p></div><div class="card2"><div class="sect" style="margin-top:0">🏜 Sandbox`)}}
+  return `<div class="card2 rsloaded">${_T`<b>▶ Loaded now</b> · Play Now / New event: <b>${esc(cur.name)}</b>${w&&w.roster?_T` · your open career (${esc((w.mgrs.find(m=>m.isPlayer)||{}).ludus||'')}) plays with <b>${esc(w.roster.name)}</b> — chosen at its founding, it never changes`:''}`}</div>`+_rs().replace(/<span class="badge gold">New event uses this<\/span>/,_T('<span class="badge gold">▶ LOADED for Play Now</span>'))}}
+{const _me=meHTML;meHTML=function(){const w=W_();const h=_me();if(!w||!w.roster)return h;return h.replace('<div class="card2"><div class="sect" style="margin-top:0">🏜 Sandbox',`<div class="card2"><div class="sect" style="margin-top:0">${_T`📚 Roster set`} <span class="rc-sub">${_T`locked at the founding`}</span></div><p style="margin:0">${_T`This career plays with <b>${esc(w.roster.name)}</b>${w.roster.sel?` — ${esc(rosterSummary(w.roster))}`:''}.`}</p></div><div class="card2"><div class="sect" style="margin-top:0">${_T`🏜 Sandbox`}`)}}
 document.addEventListener('change',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.roster==='cfg'&&typeof mToast==='function')mToast(_T`📚 Loaded for Play Now: <b>${esc(rosterById(t.value).name)}</b>`)});
 
 /* ---------------- save checks ---------------- */

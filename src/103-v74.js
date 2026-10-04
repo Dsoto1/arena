@@ -41,7 +41,7 @@ MARKET_A[1].push('steelhelm','balteus1','lgreaves');MARKET_A[2].push('centurion'
   set('slave',[['galea','head'],['manica','larm'],['wraps','rarm'],['wraps','larm'],['legwraps','rleg'],['legwraps','lleg']]);
   if(C.hero&&W.thracian)C.hero.L='thracian';if(W.trident)W.trident.n=_T('Trident');
   if(C.soldier)C.soldier.ab=_T('Ability: +1 damage to every successful attack while class abilities are on.');
-  for(const k of Object.keys(C))if(C[k].ab&&/round 1/.test(C[k].ab))C[k].ab=C[k].ab.replace(/in round 1/,'while class abilities are on')}
+  for(const k of Object.keys(C))if(C[k].ab&&/round 1/.test(C[k].ab))C[k].ab=C[k].ab.replace(/in round 1/,_T('while class abilities are on'))}
 /* cards and thumbnails use the pair cell; the avatar keeps the single cut */
 {const base=cardRef;cardRef=function(ref){const r=base.apply(this,arguments);try{if(r&&ref&&ref[0]==='a'){const A=ARM[ref.slice(2)];if(A&&A.thumb!=null)return {...r,i:A.thumb}}}catch(e){}return r}}
 /* the real Flavius' Bracers: no more gold grading */

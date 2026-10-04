@@ -96,7 +96,7 @@ function evPopHTML75(){const ev=EV();const L=LOCATIONS[S.locIdx];const cal=S.cal
     <div>${_T`Board ${zs}×${zs} · Round ${S.ri+1} of ${ev.rounds.length}: ${esc(RD().n)}`}</div>
     <div class="evp-btns"><button class="btn" type="button" data-evdet75>${_T`📋 Event details`}</button><button class="btn" type="button" data-evsched75>${_T`📅 Season schedule`}</button></div></div>`}
 let EVPOP75={el:null,pin:false,t:0};
-function evPopShow75(anchor,pin){if(!S||S.phase==='setup')return;let p=EVPOP75.el;if(!p){p=document.createElement('div');p.id='evPop75';p.setAttribute('role','dialog');p.setAttribute('aria-label','Event card');document.body.appendChild(p);EVPOP75.el=p;
+function evPopShow75(anchor,pin){if(!S||S.phase==='setup')return;let p=EVPOP75.el;if(!p){p=document.createElement('div');p.id='evPop75';p.setAttribute('role','dialog');p.setAttribute('aria-label',_T('Event card'));document.body.appendChild(p);EVPOP75.el=p;
     p.addEventListener('mouseenter',()=>clearTimeout(EVPOP75.t));p.addEventListener('mouseleave',()=>{if(!EVPOP75.pin)evPopHide75(250)})}
   clearTimeout(EVPOP75.t);p.innerHTML=evPopHTML75();p.hidden=false;EVPOP75.pin=!!pin;const r=anchor.getBoundingClientRect();const w=Math.min(560,innerWidth-16);p.style.width=w+'px';
   p.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left))+'px';p.style.top=(r.bottom+6)+'px'}
@@ -178,7 +178,7 @@ async function marketBuy75(player,lv,opt={}){mktFix75();const W=S.market.w[lv],A
   let slot,opts;
   if(player.mchoice&&!opt.free){
     if(player.cpu){slot=[1,2,3,4].map(s=>[s,slotOpts75(lv,s,sides)]).filter(([,os])=>os.length).sort((a,b)=>aVal75(cpuPick(b[1]).kind,cpuPick(b[1]).key)-aVal75(cpuPick(a[1]).kind,cpuPick(a[1]).key))[0][0]}
-    else slot=await modal(_T('Market Choice'),'<p>Pick the slot you want — no die.</p>',[1,2,3,4].map(s=>({label:_T`Slot ${s}`,sub:slotOpts75(lv,s,sides).map(o=>o.blind?'a face-down weapon':o.kind==='w'?WDEF75[o.key].n:ARM[o.key].n).join(' · ')||'empty',value:s})));
+    else slot=await modal(_T('Market Choice'),`<p>${_T`Pick the slot you want — no die.`}</p>`,[1,2,3,4].map(s=>({label:_T`Slot ${s}`,sub:slotOpts75(lv,s,sides).map(o=>o.blind?'a face-down weapon':o.kind==='w'?WDEF75[o.key].n:ARM[o.key].n).join(' · ')||'empty',value:s})));
     slot=slot||1;log(_T`${nm(player)} uses Market Choice for slot ${slot}.`);opts=slotOpts75(lv,slot,sides)}
   else for(;;){slot=1+rnd(4);
     if(slot===4&&sides.includes('w')&&!wOpen75(W)&&W.deck.length){W.up4=W.deck[W.deck.length-1];log(_T`${nm(player)} rolls the market die: <b>4</b> — the top weapon is flipped: <b>${esc(WDEF75[W.up4].n)}</b>.`)}
@@ -193,7 +193,7 @@ async function marketBuy75(player,lv,opt={}){mktFix75();const W=S.market.w[lv],A
     if(!re)break;player.coin-=2;coinLog(player,-2,'market re-rolls');log(_T`${nm(player)} pays 2 coin to re-roll.`)}
   if(!opts.length)return {kind:null,key:null};
   let o;if(opts.length===1||player.cpu)o=player.cpu?cpuPick(opts):opts[0];
-  else{const v=await modal(_T`Market · slot ${slot}`,'<p>Take the weapon or one armor piece.</p>',opts.map((x,i)=>({label:optLabel75(x),sub:optSub75(x),value:i,card:x.key?(x.kind==='w'?'w:':'a:')+x.key:null})));o=opts[v!=null?v:0]}
+  else{const v=await modal(_T`Market · slot ${slot}`,`<p>${_T`Take the weapon or one armor piece.`}</p>`,opts.map((x,i)=>({label:optLabel75(x),sub:optSub75(x),value:i,card:x.key?(x.kind==='w'?'w:':'a:')+x.key:null})));o=opts[v!=null?v:0]}
   return {kind:o.kind,key:o.kind==='w'?wTake75(W,o.s):aTake75(A,o.s,o.key)}}
 /* items that name their side (offerings, cards) roll on that side only, with no re-roll */
 marketRoll=async function(player,kind,lv,opt={}){const r=await marketBuy75(player,lv,{...opt,only:kind});return r.key};
@@ -298,7 +298,7 @@ document.addEventListener('click',e=>{const t=e.target;if(!t.closest||!t.closest
     CFG.seats.slice(0,CFG.n).forEach((st,i)=>{st.cls=sh[i%sh.length];st.cpu=i!==0;st.saved=null;st.name=clsSavedName(st.cls)});pnRedraw75();
     setTimeout(()=>{const g=document.getElementById('goBtn');if(g)g.click()},60);return}
   const pb=t.closest('[data-pnpre]');if(pb){const m=document.querySelector('#mBody .pn-premenu');if(!m)return;const L=pnPresets75();
-    m.innerHTML=`${L.map((p,i)=>`<div class="pn-prerow"><button type="button" class="btn" data-pnload="${i}">${esc(p.name)}</button><button type="button" class="btn" data-pndel="${i}" aria-label="${_T`Delete ${esc(p.name)}`}">✕</button></div>`).join('')||'<div class="rc-sub">No presets yet.</div>'}<button type="button" class="btn primary" data-pnsave>${_T`★ Save this setup`}</button>`;
+    m.innerHTML=`${L.map((p,i)=>`<div class="pn-prerow"><button type="button" class="btn" data-pnload="${i}">${esc(p.name)}</button><button type="button" class="btn" data-pndel="${i}" aria-label="${_T`Delete ${esc(p.name)}`}">✕</button></div>`).join('')||`<div class="rc-sub">${_T`No presets yet.`}</div>`}<button type="button" class="btn primary" data-pnsave>${_T`★ Save this setup`}</button>`;
     m.hidden=!m.hidden;pb.setAttribute('aria-expanded',String(!m.hidden));return}
   if(t.closest('[data-pnsave]')){const E=EVENTS[CFG.ev],L=LOCATIONS[CFG.loc];const L2=pnPresets75();L2.unshift({name:`${E.short||E.n} · ${L?L.n:'?'} · ${CFG.n}`,cfg:{loc:CFG.loc,ev:CFG.ev,n:CFG.n,seats:JSON.parse(JSON.stringify(CFG.seats.slice(0,8))),opts:JSON.parse(JSON.stringify(CFG.opts||{}))}});pnPresetsSave75(L2);if(typeof mToast==='function')mToast(_T('★ Preset saved'));pnRedraw75();return}
   const ld=t.closest('[data-pnload]');if(ld){const p=pnPresets75()[+ld.dataset.pnload];if(p&&EVENTS[p.cfg.ev]){Object.assign(CFG,{mode:'event',loc:p.cfg.loc,ev:p.cfg.ev,n:p.cfg.n});p.cfg.seats.forEach((s,i)=>{if(CFG.seats[i]&&CLASSES[s.cls])Object.assign(CFG.seats[i],s)});CFG.opts={...CFG.opts,...p.cfg.opts};pnRedraw75()}return}

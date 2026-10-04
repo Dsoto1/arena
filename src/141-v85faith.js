@@ -229,7 +229,7 @@ setInterval(()=>{try{if(MGR&&MGR.world)fillBoxes85()}catch(e){}},400);
   I.unshift({fa85:E.id,done:false,ic:'✝',txt,btn:`<button class="btn tksm" type="button" data-mg="tab" data-id="night">${_T`Decide`}</button>`})}}catch(e){console.error(e)}return I}}
 /* ---------- 10. the Studio ---------- */
 {const base=charEditorHTML;charEditorHTML=function(){const h=base.apply(this,arguments);try{const c=ST.draft;if(!c)return h;
-  return h.replace('<label>Home city',`<label>Faith${fSel('faith',[['',_T('Pagan')],['christian',_T('✝ Christian')]],c.faith==='christian'?'christian':'')}</label><label>Home city`)}catch(e){return h}}}
+  return h.replace('<label>Home city',`<label>${_T`Faith${fSel('faith',[['',_T('Pagan')],['christian',_T('✝ Christian')]],c.faith==='christian'?'christian':'')}`}</label><label>${_T`Home city`}`)}catch(e){return h}}}
 {const base=studioHTML;studioHTML=function(){let h=base.apply(this,arguments);try{if(typeof CUSTOM!=='undefined')for(const c of CUSTOM.chars||[])if(c.faith==='christian'){const k=`<b>${esc(c.name)}</b>`;h=h.split(k).join(k+' '+chipFaith85('christian'))}}catch(e){}return h}}
 (()=>{const st=document.createElement('style');st.textContent=`
 .fa85{display:inline-block;font:700 12px/1 Georgia,serif;color:#f1e3b8;background:#3a2a1a;border:1px solid #b8913f;border-radius:4px;padding:2px 4px;margin:0 3px 0 0;vertical-align:middle;cursor:default}

@@ -34,7 +34,7 @@ function caLevelsHTML(d){caLevelsInit(d);const btn=(a,n,v,l,dis)=>`<button class
       <div class="calvart" style="filter:${CA_GRADE[n]}">${art}</div>
       ${on?`<div class="calvrow">${_T`AP ${btn('ap',n,-1,'−',L.ap<=1)}<b>${L.ap}</b>${btn('ap',n,1,'+',L.ap>=7||left<1)}`}</div>
       ${d.bonusLoc?`<div class="calvrow">${_T`Bonus ${btn('bonus',n,-1,'−',!L.bonusAp)}<b>+${L.bonusAp||0}</b>${btn('bonus',n,1,'+',left<2||(L.bonusAp||0)>=4)}`}</div>`:''}
-      <div class="calvleft ${left<0?'bad':''}">${_T`${left} point${left===1?'':'s'} left`}</div><div class="rc-sub">${esc(d.name||_T('Unnamed'))} ${CA_NUM[n]}</div>`:'<div class="rc-sub" style="margin-top:6px">not made</div>'}</div>`}).join('')}</div></div>`}
+      <div class="calvleft ${left<0?'bad':''}">${_T`${left} point${left===1?'':'s'} left`}</div><div class="rc-sub">${esc(d.name||_T('Unnamed'))} ${CA_NUM[n]}</div>`:`<div class="rc-sub" style="margin-top:6px">${_T`not made`}</div>`}</div>`}).join('')}</div></div>`}
 {const base=gearAHTML;gearAHTML=function(){let h=base.apply(this,arguments);try{const d=ST.ca;if(!d)return h;caLevelsInit(d);
   h=h.replace(/<label>AP<select data-caf="ap">[\s\S]*?<\/select><\/label>/,'').replace(/<label>Market level<select data-caf="lv">[\s\S]*?<\/select><\/label>/,'').replace(/<label>Bonus amount<select data-caf="bonusAp">[\s\S]*?<\/select><\/label>/,'');
   const i=h.indexOf('<div style="grid-column:1/-1" class="rc-sub crnote">');if(i>=0)h=h.slice(0,i)+caLevelsHTML(d)+h.slice(i);

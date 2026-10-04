@@ -8,13 +8,13 @@
    E English untouched: a page without flavius_lang has LANG 'en', no dictionary, and _T is identity. */
 const path=require('path'),fs=require('fs');const REPORT=process.env.REPORT||'';const SHOT=process.env.SHOT||'';
 const {chromium}=require('playwright');(async()=>{const URL0='file://'+path.resolve(process.argv[2]);
-const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const out={};
+const T0=Date.now();const LG=(...a)=>{if(process.env.DBG)console.error('['+((Date.now()-T0)/1000|0)+'s]',...a)};const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const out={};
 const mk=async(locale,init)=>{const ctx=await b.newContext({viewport:{width:1300,height:900},locale});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(init||(()=>{}));await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});return ctx};
 const open=async(ctx,n)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);await p.waitForTimeout(2400);return p};
 const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,`v86_${n}.png`)})};
 
-/* ── A · first run on a Spanish browser ── */
+LG('── A');/* ── A · first run on a Spanish browser ── */
 {const ctx=await mk('es-MX');const p=await open(ctx,'A');
   out.aAsk=await p.waitForSelector('#lang86ask',{timeout:8000}).then(()=>true).catch(()=>false);
   out.aLang0=await p.evaluate(()=>LANG);
@@ -28,8 +28,8 @@ ok(out.aAsk&&out.aLang0==='en','A: Spanish browser asked once on the main menu')
 ok(out.aLang1.LANG==='es'&&out.aLang1.html==='es'&&out.aLang1.dict,'A: Sí → reloads in Spanish '+JSON.stringify(out.aLang1));
 ok(out.aNo.LANG==='en'&&!out.aNo.ask,'A: Keep English → English, not asked again '+JSON.stringify(out.aNo));
 
-/* ── B/C · the Spanish walk ── */
-const ctx=await mk('en-US',()=>{localStorage.setItem('flavius_lang','es');localStorage.setItem('flavius_online77','1')});
+LG('── B/C');/* ── B/C · the Spanish walk ── */
+const ctx=await mk('en-US',()=>{if(!sessionStorage.getItem('t86')){sessionStorage.setItem('t86','1');localStorage.setItem('flavius_lang','es')}localStorage.setItem('flavius_online77','1')});
 const P=await open(ctx,'B');
 /* English-looking text in what is visible right now */
 const sweep=async(where)=>P.evaluate(where=>{
@@ -50,7 +50,7 @@ const closeAll=async()=>{for(let i=0;i<6;i++){const m=await P.evaluate(()=>!!CUR
 out.b={};
 out.b.menu=await P.evaluate(()=>({LANG,html:document.documentElement.lang,txt:document.querySelector('#mainMenu').innerText.slice(0,400)}));
 add(await sweep('menu'));await shot(P,'menu');
-/* Play Now → a turn */
+LG('Play Now');/* Play Now → a turn */
 const step=async(n,fn)=>{try{await fn();return true}catch(e){errs.push('B step '+n+': '+e.message.split('\n')[0]);return false}};
 out.b.play=await step('play',async()=>{await P.click('#mainMenu [data-mm="play"]');await P.waitForTimeout(1200);add(await sweep('playnow-menu'));await P.click('[data-mi="0"]');await P.waitForTimeout(1800);add(await sweep('setup'));await shot(P,'setup');await P.click('#goBtn')});
 let turn=false;for(let i=0;i<60&&!turn;i++){await P.waitForTimeout(500);const st=await P.evaluate(()=>({m:!!CUR_MODAL&&!document.getElementById('modal').hidden,h:typeof humanTurn==='function'&&humanTurn()&&S.phase}));
@@ -62,23 +62,23 @@ if(turn){add(await sweep('arena'));await shot(P,'arena');const t0=await P.evalua
   await step('end',()=>P.click('#actions [data-act="end"]'));await P.waitForTimeout(1500);await closeAll();
   out.b.moved=await P.evaluate(t0=>S.turnNo!==t0.n||S.turn!==t0.who,t0);
   out.b.log=await P.evaluate(()=>{const L=[...document.querySelectorAll('#log > li:not(#slogPin)')].slice(0,30).map(li=>li.textContent);return {n:L.length,sample:L.slice(0,6)}})}
-out.b.names=await P.evaluate(()=>{const s=[...document.querySelectorAll('.gt84')];return {n:s.length,eng:s.every(x=>GAME_TERMS.some(t=>x.textContent.includes(t)))}});
+out.b.names=await P.evaluate(()=>{const s=[...document.querySelectorAll('.gt84')];const re=new RegExp('^(?:'+gt84Re().source+')$');return {n:s.length,eng:s.every(x=>re.test(x.textContent.trim())),bad:s.filter(x=>!re.test(x.textContent.trim())).slice(0,5).map(x=>x.textContent)}});
 await P.evaluate(()=>{S.over=true});await closeAll();
-/* Settings */
+LG('Settings');/* Settings */
 out.b.set=await step('settings',async()=>{await P.evaluate(()=>{menuHide();openSettings()});await P.waitForTimeout(900);add(await sweep('settings'));await shot(P,'settings')});
 out.b.sel=await P.evaluate(()=>{const s=document.querySelector('select[data-lang84]');return s?{v:s.value,opts:[...s.options].map(o=>o.value)}:null});
 await closeAll();
-/* Rules & strategy */
-out.b.rules=await step('rules',async()=>{await P.evaluate(()=>showRules());await P.waitForTimeout(900);add(await sweep('rules'))});await closeAll();
-/* Manager, each tab */
+LG('Rules');/* Rules & strategy */
+out.b.rules=await step('rules',async()=>{LG('r1');await P.evaluate(()=>{showRules()});LG('r2');await P.waitForTimeout(900);add(await sweep('rules'));LG('r3')});await closeAll();LG('r4');
+LG('Manager');/* Manager, each tab */
 out.b.mgr=await step('manager',async()=>{await P.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));menuHide();MM.fromMenu=true;openManager();await W8(900);if(!W_()){newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null}});
   for(const t of ['ludus','roster','recruit','practice','infirm','night','board','league','sched','trophy']){await P.evaluate(t=>{MGR.tab=t;MGR_REDRAW()},t);await P.waitForTimeout(500);add(await sweep('mgr-'+t));if(t==='ludus'||t==='recruit')await shot(P,'mgr_'+t)}});
 await closeAll();
-/* Studio */
+LG('Studio');/* Studio */
 out.b.studio=await step('studio',async()=>{await P.evaluate(()=>{menuShow()});await P.waitForTimeout(500);await P.click('#mainMenu [data-mm="studio"]');await P.waitForTimeout(2000);add(await sweep('studio'));
   const tabs=await P.$$('#mBody [data-sttab]');for(const t of tabs.slice(0,6)){await t.click().catch(()=>{});await P.waitForTimeout(400);add(await sweep('studio-tab'))}});
 await closeAll();
-/* Online (mock) */
+LG('Online');/* Online (mock) */
 out.b.onl=await step('online',async()=>{await P.evaluate(()=>{menuShow()});await P.waitForTimeout(400);await P.evaluate(()=>{if(typeof onlineOpen==='function')onlineOpen()});await P.waitForTimeout(2500);add(await sweep('online'));await shot(P,'online')});
 await closeAll();
 out.missN=await P.evaluate(()=>LANG_MISS.size);out.missTop=await P.evaluate(()=>[...LANG_MISS.keys()].slice(0,40));
@@ -96,14 +96,14 @@ const LEFT_MAX=+(process.env.LEFT_MAX||60),CUT_MAX=+(process.env.CUT_MAX||25);
 ok(leftU.length<=LEFT_MAX,`C: leftover English lines ${leftU.length} ≤ ${LEFT_MAX}: `+leftU.slice(0,8).join(' ‖ '));
 ok(cutU.length<=CUT_MAX,`C: cut-off texts ${cutU.length} ≤ ${CUT_MAX}: `+cutU.slice(0,8).join(' ‖ '));
 
-/* ── D · back to English ── */
+LG('── D');/* ── D · back to English ── */
 await P.evaluate(()=>{menuHide();openSettings()});await P.waitForTimeout(900);
 await Promise.all([P.waitForNavigation({timeout:10000}).catch(()=>null),P.selectOption('select[data-lang84]','en')]);await P.waitForTimeout(2600);
 out.d=await P.evaluate(()=>({LANG,dict:!!LANG_DICT,html:document.documentElement.lang}));
 ok(out.d.LANG==='en'&&!out.d.dict&&out.d.html==='en','D: English again after the switch '+JSON.stringify(out.d));
 await ctx.close();
 
-/* ── E · English untouched ── */
+LG('── E');/* ── E · English untouched ── */
 {const c=await mk('en-US');const p=await open(c,'E');
   out.e=await p.evaluate(()=>{const x=5,y='Leo';return {LANG,dict:!!LANG_DICT,id:_T`Your gladiator ${y} has ${x} coin.`==='Your gladiator Leo has 5 coin.'&&_T('Attack')==='Attack',ask:!!document.getElementById('lang86ask')}});
   await c.close()}

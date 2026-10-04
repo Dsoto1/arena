@@ -692,7 +692,7 @@ async function runDraft() {
     if (j) {
       for (let i = 0; i < 5; i++) {
         let k;
-        if (j.cpu) k = ['ward', 'focus', 'forge3', 'hercules2', 'rete'][i];else k = await modal(_T`Juggernaut card ${i + 1} of 5`, '<p>Choose a Declare-type arena card.</p>', DECLARE_PICKS.map(x => ({
+        if (j.cpu) k = ['ward', 'focus', 'forge3', 'hercules2', 'rete'][i];else k = await modal(_T`Juggernaut card ${i + 1} of 5`, `<p>${_T`Choose a Declare-type arena card.`}</p>`, DECLARE_PICKS.map(x => ({
           label: CARDS[x].n,
           sub: CARDS[x].d,
           value: x,
@@ -936,7 +936,7 @@ async function nextRound(why) {
       if (!opts.length) break;
       let pick;
       if (p.cpu) pick = opts.sort((a, b) => itemValue(b.kind, b.k) - itemValue(a.kind, a.k))[0];else {
-        const i = await modal(_T`Reward for ${p.name}`, '<p>Choose any remaining level 2 armor or weapon from the market.</p>', opts.map((o, i) => ({
+        const i = await modal(_T`Reward for ${p.name}`, `<p>${_T`Choose any remaining level 2 armor or weapon from the market.`}</p>`, opts.map((o, i) => ({
           label: o.kind === 'w' ? W[o.k].n : ARM[o.k].n,
           sub: o.kind === 'w' ? wStats(mkW(o.k)) : armorDesc(o.k),
           value: i,
@@ -976,7 +976,7 @@ async function nextRound(why) {
       if (p.captured.length) {
         let c;
         if (p.cpu) c = p.captured.sort((a, b) => NPCT[b.t].hp - NPCT[a.t].hp)[0];else {
-          const j = await modal(_T`${p.name}: choose your beast`, '<p>Choose one captured beast to fight beside you in the Duel Finale.</p>', p.captured.map((x, j) => ({
+          const j = await modal(_T`${p.name}: choose your beast`, `<p>${_T`Choose one captured beast to fight beside you in the Duel Finale.`}</p>`, p.captured.map((x, j) => ({
             label: `${x.name} (${NPCT[x.t].n})`,
             value: j
           })));
@@ -1258,7 +1258,7 @@ async function endTurn() {
       const cards = p.items.filter(i => i.kind === 'card');
       let it;
       if (p.cpu) it = cards[0];else {
-        const id = await modal(_T('Hand limit'), '<p>Your hand holds more than 10 cards. Discard one.</p>', cards.map(c => ({
+        const id = await modal(_T('Hand limit'), `<p>${_T`Your hand holds more than 10 cards. Discard one.`}</p>`, cards.map(c => ({
           label: CARDS[c.key].n,
           value: c.id
         })));
@@ -2023,7 +2023,7 @@ async function simToEnd(skipAsk) {
   const G = S;
   if (!skipAsk && !HEADLESS && typeof modal === 'function') {
     if (modalBusy()) return;
-    const ok = await modal(_T('⏭ Sim to end?'), '<p>Every gladiator hands to the CPU and the event <b>resolves at once</b> — straight to the results.</p><p class="rc-sub">Just want the CPUs quicker? Use the <b>Fast</b> speed instead. Want to stop playing a fighter but keep watching? Use <b>🤖 Hand to CPU</b> on their board.</p>', [{
+    const ok = await modal(_T('⏭ Sim to end?'), `<p>${_T`Every gladiator hands to the CPU and the event <b>resolves at once</b> — straight to the results.`}</p><p class="rc-sub">${_T`Just want the CPUs quicker? Use the <b>Fast</b> speed instead. Want to stop playing a fighter but keep watching? Use <b>🤖 Hand to CPU</b> on their board.`}</p>`, [{
       label: _T('Sim to end'),
       value: 1,
       primary: 1

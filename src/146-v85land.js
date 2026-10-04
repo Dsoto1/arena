@@ -66,7 +66,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   const P=ONL.party;const n=P?P.members.length:0;
   const btn=document.createElement('button');btn.type='button';btn.className='onl-slot v85pbtn'+(V85.party?' on':'');btn.dataset.v85p='open';btn.title=_T('Your party: share a code or join one');btn.setAttribute('aria-expanded',V85.party?'true':'false');
   btn.innerHTML=`<span class="v85pi">👥</span>${_T`<small>Party${P?` · ${n}`:''}</small>`}`;const wr=document.createElement('div');wr.className='v85pw';wr.appendChild(btn);row.appendChild(wr);
-  if(V85.party){const pp=document.createElement('div');pp.className='v85pp';pp.setAttribute('role','dialog');pp.setAttribute('aria-label','Party');pp.innerHTML=v85PartyPanel();wr.appendChild(pp)}
+  if(V85.party){const pp=document.createElement('div');pp.className='v85pp';pp.setAttribute('role','dialog');pp.setAttribute('aria-label',_T('Party'));pp.innerHTML=v85PartyPanel();wr.appendChild(pp)}
   return T.innerHTML}catch(e){console.error(e);return h}}}
 function v85PartyPanel(){const P=ONL.party;const me=ONL.acct&&ONL.acct.id;const x=`<button type="button" class="v85px" data-v85p="close" title="${_T`Close`}" aria-label="${_T`Close`}">✕</button>`;
   if(P){const lead=P.leader===me;const names=P.members.map(m=>`<li>${m===me?_T('<b>You</b>'):esc2((P.names||{})[m]||_T('Lanista'))}${P.leader===m?' <small>· leader</small>':''}</li>`).join('');
@@ -79,7 +79,7 @@ function v85PartyPanel(){const P=ONL.party;const me=ONL.acct&&ONL.acct.id;const 
 /* open/close in place (no redraw: a click that closes the panel still reaches the button it landed on) */
 function v85PartySet(on){V85.party=!!on;const wr=document.querySelector('#onl .v85pw');if(!wr)return;for(const p of document.querySelectorAll('#onl .v85pp'))p.remove();
   const b=wr.querySelector('.v85pbtn');if(b){b.classList.toggle('on',V85.party);b.setAttribute('aria-expanded',V85.party?'true':'false')}
-  if(V85.party){const pp=document.createElement('div');pp.className='v85pp';pp.setAttribute('role','dialog');pp.setAttribute('aria-label','Party');pp.innerHTML=v85PartyPanel();wr.appendChild(pp)}}
+  if(V85.party){const pp=document.createElement('div');pp.className='v85pp';pp.setAttribute('role','dialog');pp.setAttribute('aria-label',_T('Party'));pp.innerHTML=v85PartyPanel();wr.appendChild(pp)}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-v85p]');if(!b)return;e.preventDefault();e.stopPropagation();const a=b.dataset.v85p;
   if(a==='open'){v85PartySet(!V85.party);if(V85.party)setTimeout(()=>{const i=document.getElementById('onlPCode');if(i&&!ONL.party)try{i.focus()}catch(err){}},0);return}
   if(a==='close'){v85PartySet(false);return}

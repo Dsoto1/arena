@@ -16,7 +16,7 @@
 try{if(typeof CHEATS!=='undefined')delete CHEATS['h2501629703']}catch(e){}
 if(typeof cheatRegister==='function'&&typeof cheatKey==='function'){const WM=String.fromCharCode(77,85,83,73,67);
   cheatRegister(cheatKey(WM),()=>{try{localStorage.setItem('flavius_musica','1')}catch(e){}try{const el=document.getElementById('audTracks');if(el&&typeof audListHTML==='function')el.innerHTML=audListHTML()}catch(e){}
-    return _T('🎶 Every theme is yours — the twelve cities and all the others. Settings → Audio.')},'Every theme')}
+    return _T('🎶 Every theme is yours — the twelve cities and all the others. Settings → Audio.')},_T('Every theme'))}
 try{if(typeof CHEAT_SHOW!=='undefined'){const i=CHEAT_SHOW.findIndex(r=>/themes in Settings/.test(r[1]));const row=[[84,92,90,80,74],_T('🎶 Every theme in Settings → Audio — the twelve cities and all the others')];if(i>=0)CHEAT_SHOW[i]=row;else CHEAT_SHOW.push(row)}}catch(e){}
 
 /* 2 · CONTRABANDUS */

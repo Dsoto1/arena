@@ -58,7 +58,7 @@ function guardZone(r,c,rad,at){rad=Math.max(1,Math.min(3,+rad||1));at=at||'c';co
   ST._edZones=Z;try{return _eb()}finally{ST._edZones=null}}}
 {const _ec=edCell;edCell=function(r,c){let h=_ec(r,c);const Z=(ST._edZones||[]).filter(q=>r>=q.z[0]&&r<=q.z[1]&&c>=q.z[2]&&c<=q.z[3]);
   if(Z.length){const q=Z[0];const edge=[r===q.z[0]?'t':'',r===q.z[1]?'b':'',c===q.z[2]?'l':'',c===q.z[3]?'r':''].join('');
-    h=h.replace('class="edcell',`class="edcell zn ${edge.split('').map(x=>'zn'+x).join(' ')}`).replace('style="',`style="--zc:${q.col};`).replace(/title="([^"]*)"/,(m,t)=>_T`title="${t} · ${esc(Z.map(x=>x.nm).join(', '))}’s zone"`)}
+    h=h.replace('class="edcell',_T`class="edcell zn ${edge.split('').map(x=>'zn'+x).join(' ')}`).replace('style="',`style="--zc:${q.col};`).replace(/title="([^"]*)"/,(m,t)=>_T`title="${t} · ${esc(Z.map(x=>x.nm).join(', '))}’s zone"`)}
   const L=ST.draft&&ST.draft.layout;const n=L&&L.npcs.find(x=>x.r===r&&x.c===c);const cn=n&&cnRecord(n);
   if(cn)h=h.replace(/<span class="ic"><span style="display:inline-grid[^>]*>[^<]*<\/span><\/span>/,`<span class="ic">${cnTokHTML(cn,22)}</span>`);
   return h}}
@@ -70,8 +70,8 @@ function rtPrevRefresh(){const pv=document.getElementById('rtPrev');if(pv&&ST.dr
 function rtZoneMini(z){const rad=+z.rad||1,at=z.at||'c';const s=2*rad+1;const [r0,,c0]=guardZone(10,10,rad,at);const cells=[];for(let r=0;r<s;r++)for(let c=0;c<s;c++){const me=r0+r===10&&c0+c===10;cells.push(`<i class="${me?'me':''}"></i>`)}
   return `<span class="zmini" style="grid-template-columns:repeat(${s},1fr)" title="${_T`The zone, with the beast's starting tile`}">${cells.join('')}</span>`}
 {const _ne=npcEditorHTML;npcEditorHTML=function(){const n=ST.draft;n.rtok=n.rtok||rtokBlank(n);const sp=n.rtok;let h=_ne();
-  h=h.replace(/<div id="stNpcPrev"[^>]*>[^<]*<\/div>/,`<div id="rtPrev" class="rtprev" data-scbprev="rt" title="The beast's round token — drag a selected shape here">${rtokSVG(sp,n)}</div><div class="rc-sub" style="font:600 10px var(--mono);letter-spacing:.1em">ROUND TOKEN</div>`);
-  h=h.replace(/<label>Token letter[\s\S]*?<\/label><label>Color<input[^>]*><\/label>/,`<label>Token letter${fTxt('glyph',n.glyph,'maxlength="1"')}</label><label>Color<input type="color" class="tin" data-f="color" value="${esc(n.color)}" style="height:34px;padding:2px"></label>`);
+  h=h.replace(/<div id="stNpcPrev"[^>]*>[^<]*<\/div>/,`<div id="rtPrev" class="rtprev" data-scbprev="rt" title="${_T`The beast's round token — drag a selected shape here`}">${rtokSVG(sp,n)}</div><div class="rc-sub" style="font:600 10px var(--mono);letter-spacing:.1em">${_T`ROUND TOKEN`}</div>`);
+  h=h.replace(/<label>Token letter[\s\S]*?<\/label><label>Color<input[^>]*><\/label>/,`<label>${_T`Token letter${fTxt('glyph',n.glyph,'maxlength="1"')}`}</label><label>${_T`Color`}<input type="color" class="tin" data-f="color" value="${esc(n.color)}" style="height:34px;padding:2px"></label>`);
   const zone=n.beh==='zone'||!n.beh?(()=>{n.zone=n.zone||{rad:2,at:'c'};return `<div class="card2 zonecard">${_T`<b>🛡 The zone it guards</b>`} <span class="rc-sub">${_T`it stays inside, attacking anyone who steps in — placed in the Event Designer, the zone shows on the board`}</span>
       <div class="formgrid" style="margin-top:6px;align-items:center"><label>${_T`How big${fSel('zone.rad',[['1',_T('3 × 3 — one tile around it')],['2',_T('5 × 5 — two tiles around it')],['3',_T('7 × 7 — three tiles around it')]],String(n.zone.rad))}`}</label><label>${_T`Where it starts in the zone${fSel('zone.at',RT_AT,n.zone.at)}`}</label>${rtZoneMini(n.zone)}</div></div>`})():'';
   const tokCard=`<div class="card2 rtcard">${_T`<b>🪙 The round token</b>`} <span class="rc-sub">${_T`the NPC token in the printed game's bronze ring — used in the Menagerie, the NPC tracker, hover cards, the event designer and on the board in cylinder style`}</span>
@@ -80,7 +80,7 @@ function rtZoneMini(z){const rad=+z.rad||1,at=z.at||'c';const s=2*rad+1;const [r
       <label>${_T`Letter color`}<input type="color" data-f="rtok.glyphC" value="${esc(sp.glyphC||'#fff3d8')}" style="width:44px;height:30px;border:0;background:none;padding:0"></label></div>
       <div class="chkgrid" style="margin-top:4px">${fChk('rtok.glyph',sp.glyph,_T('Show the token letter'))}</div>${scbBenchHTML('rt')}</div>`;
   h=h.replace('<div class="chkgrid" style="margin-top:8px">',zone+'<div class="chkgrid" style="margin-top:8px">');
-  h=h.replace('<p class="hint">Beasts attack with 2 hit dice',tokCard+'<p class="hint">Beasts attack with 2 hit dice');
+  h=h.replace('<p class="hint">Beasts attack with 2 hit dice',tokCard+`<p class="hint">${_T`Beasts attack with 2 hit dice`}`);
   return h}}
 document.addEventListener('input',e=>{const t=e.target;if(t&&t.dataset&&/^rtok\./.test(t.dataset.f||'')&&ST.draft){if(t.type==='color')setPath(ST.draft,t.dataset.f,t.value);rtPrevRefresh()}});
 

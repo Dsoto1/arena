@@ -147,7 +147,7 @@ async function minervaStep(victim, attacker) {
     r: a[0],
     c: a[1]
   }, attacker) : 0)[0];else {
-    const k = await modal(_T("Minerva's Push"), '<p>Step one tile in any direction.</p>', free.map(([r, c]) => ({
+    const k = await modal(_T("Minerva's Push"), `<p>${_T`Step one tile in any direction.`}</p>`, free.map(([r, c]) => ({
       label: tl(r, c),
       sub: attacker ? _T`${cheb({
         r,
@@ -800,7 +800,7 @@ async function mfLimbSwap(player) {
   }
   let pick;
   if (player.cpu) pick = pool.sort((a, b) => wScore(W[b.k]) - wScore(W[a.k]))[0];else {
-    const i = await modal(_T('Limb Justice'), '<p>Trade a severed limb weapon for any remaining weapon in the market.</p>', pool.map((x, i) => ({
+    const i = await modal(_T('Limb Justice'), `<p>${_T`Trade a severed limb weapon for any remaining weapon in the market.`}</p>`, pool.map((x, i) => ({
       label: W[x.k].n,
       sub: _T`LV${x.lv} · ${wStats(mkW(x.k))}`,
       value: i,
@@ -1024,7 +1024,7 @@ async function resolveDrawn(player, k) {
 async function pickNPC(player, title, filter, note = '') {
   const c = S.npcs.filter(filter);
   if (!c.length) {
-    if (!player.cpu) await modal(title, '<p>There is no valid NPC in the arena.</p>', [{
+    if (!player.cpu) await modal(title, `<p>${_T`There is no valid NPC in the arena.`}</p>`, [{
       label: 'OK',
       value: 1
     }]);
@@ -1069,7 +1069,7 @@ async function useItem(player, it) {
       log(_T`${nm(player)} declares Speed of Mercury: +${v} movement.`);
     } else if (k === 'eagle') {
       if (!cfAllowed()) {
-        if (!player.cpu) await modal(_T('Crowd Favor is locked'), '<p>Crowd Favor cannot be redeemed right now.</p>', [{
+        if (!player.cpu) await modal(_T('Crowd Favor is locked'), `<p>${_T`Crowd Favor cannot be redeemed right now.`}</p>`, [{
           label: 'OK',
           value: 1
         }]);
@@ -1096,13 +1096,13 @@ async function useItem(player, it) {
       {
         const sev = LOCS.filter(l => player.hp[l] <= 0 && l !== 'head' && l !== 'chest');
         if (!sev.length) {
-          if (!player.cpu) await modal(_T('Nothing to regrow'), '<p>You have no severed limbs.</p>', [{
+          if (!player.cpu) await modal(_T('Nothing to regrow'), `<p>${_T`You have no severed limbs.`}</p>`, [{
             label: 'OK',
             value: 1
           }]);
           return false;
         }
-        const l = player.cpu ? sev[0] : await modal(_T('Blessings of Hygeia'), '<p>Choose the limb to regrow.</p>', sev.map(x => ({
+        const l = player.cpu ? sev[0] : await modal(_T('Blessings of Hygeia'), `<p>${_T`Choose the limb to regrow.`}</p>`, sev.map(x => ({
           label: LOCN[x],
           value: x
         })));
@@ -1125,7 +1125,7 @@ async function useItem(player, it) {
         if (!n) return false;
         const targets = activePlayers().filter(other => other !== player && !other.underground && cheb(player, other) <= 4);
         if (!targets.length) {
-          if (!player.cpu) await modal(_T('Meat Lure'), '<p>No other gladiator is within 4 tiles to throw the lure at.</p>', [{
+          if (!player.cpu) await modal(_T('Meat Lure'), `<p>${_T`No other gladiator is within 4 tiles to throw the lure at.`}</p>`, [{
             label: 'OK',
             value: 1
           }]);
@@ -1207,7 +1207,7 @@ async function useItem(player, it) {
             value: 'swap'
           });
           if (!b.length) {
-            await modal(_T('Ammo'), '<p>No weapon needs ammo, and you need 2 Ammo cards to exchange for an ammo weapon.</p>', [{
+            await modal(_T('Ammo'), `<p>${_T`No weapon needs ammo, and you need 2 Ammo cards to exchange for an ammo weapon.`}</p>`, [{
               label: 'OK',
               value: 1
             }]);
@@ -1227,7 +1227,7 @@ async function useItem(player, it) {
         }
         let pick;
         if (player.cpu) pick = pool.sort((a, b) => wScore(W[b.x]) - wScore(W[a.x]))[0];else {
-          const i = await modal(_T('Ammo exchange'), '<p>Choose an ammo weapon.</p>', pool.map((o, i) => ({
+          const i = await modal(_T('Ammo exchange'), `<p>${_T`Choose an ammo weapon.`}</p>`, pool.map((o, i) => ({
             label: W[o.x].n,
             sub: wStats(mkW(o.x)),
             value: i,
@@ -1252,7 +1252,7 @@ async function useItem(player, it) {
     case 'fidelis':
     case 'minerva':
     case 'elixirSave':
-      if (!player.cpu) await modal(C.n, '<p>This card is played as a reaction. You will be asked when an attack is rolled against you or by you.</p>', [{
+      if (!player.cpu) await modal(C.n, `<p>${_T`This card is played as a reaction. You will be asked when an attack is rolled against you or by you.`}</p>`, [{
         label: 'OK',
         value: 1
       }]);

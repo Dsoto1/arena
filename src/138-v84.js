@@ -101,7 +101,7 @@ function lite84On(){const v=SETTINGS.lite84||'auto';if(v==='on')return true;if(v
   SAND83.grain=0;SAND83.shade=0;if(typeof SCAR83!=='undefined')SCAR83.alpha=0;try{return base.apply(this,arguments)}finally{SAND83.grain=s0.g;SAND83.shade=s0.s;if(typeof SCAR83!=='undefined')SCAR83.alpha=s0.a}}}
 {const base=settingsHTML;settingsHTML=function(tab){const h=base.apply(this,arguments);if(tab!=='general'&&tab)return h;try{const v=SETTINGS.lite84||'auto';
   const row=`<div class="setrow a11yrow"><span>${_T`<b>Light board for older phones</b>`}<br><span class="hint" style="margin:0">${_T`Skips the sand grain and scars. Auto: on sharp phone screens with a large board.`}</span></span><div class="seg">${[['auto',_T('Auto')],['on','On'],['off',_T('Off')]].map(([k,l])=>`<button type="button" data-lite84="${k}" class="${v===k?'on':''}">${l}</button>`).join('')}</div></div>`;
-  const mark='<h4 style="grid-column:1/-1;margin:6px 0 0">Visuals</h4>';return h.includes(mark)?h.replace(mark,mark+row):h}catch(e){return h}}}
+  const mark=`<h4 style="grid-column:1/-1;margin:6px 0 0">${_T`Visuals`}</h4>`;return h.includes(mark)?h.replace(mark,mark+row):h}catch(e){return h}}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-lite84]');if(!b)return;SETTINGS.lite84=b.dataset.lite84;applySettings();
   b.parentElement.querySelectorAll('[data-lite84]').forEach(x=>x.classList.toggle('on',x===b));try{if(S)draw()}catch(err){}});
 
@@ -159,7 +159,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.c
   bk84Paint();for(const x of document.querySelectorAll('#hub76 #bk84'))x.remove();const hb=document.getElementById('hub76');if(hb&&typeof hubRedraw76==='function')hubRedraw76()},true);
 {const base=menuShow;menuShow=function(){const r=base.apply(this,arguments);try{bk84Paint()}catch(e){}return r}}
 {const base=hubBody76;hubBody76=async function(tab){let h=await base.apply(this,arguments);try{const why=bk84Due();if(why)h=h.replace('<div class="hub76body">',bk84HTML(why)+'<div class="hub76body">');
-  if(tab==='backups'){const note=`<p class="bk84last">${_T`🗄 Last backup: <b>${esc(bk84When())}</b>. Backups cover the offline modes — Online progress lives on the server.`}</p>${bk84Hosted()?`<p class="rc-sub">${esc(BK84_OFF)}</p>`:'<p class="rc-sub">This downloaded copy keeps its own saves — Restore a backup from the site to carry careers over.</p>'}`;
+  if(tab==='backups'){const note=`<p class="bk84last">${_T`🗄 Last backup: <b>${esc(bk84When())}</b>. Backups cover the offline modes — Online progress lives on the server.`}</p>${bk84Hosted()?`<p class="rc-sub">${esc(BK84_OFF)}</p>`:`<p class="rc-sub">${_T`This downloaded copy keeps its own saves — Restore a backup from the site to carry careers over.`}</p>`}`;
     h=h.replace(/(<div class="hub76body">[\s\S]*?<\/p>)/,'$1'+note)}}catch(e){console.error(e)}return h}}
 {const base=gameOver;gameOver=function(){try{if(!HEADLESS&&S&&!S.sim&&!S.onl&&!S.tutorial&&!GO84.has(S)){GO84.add(S);bk84Bump('ev')}}catch(e){}return base.apply(this,arguments)}}
 const GO84=new WeakSet();

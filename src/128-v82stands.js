@@ -98,7 +98,7 @@ function st82Popup(d){st82PopClose();const s=(S.spect||[]).find(x=>x.onlIdx===d.
     ...act.map(p=>btn({a:'cheer',v:p.id},_T`👏 Cheer for ${esc(p.name)}`,'free',false)),
     btn({a:'pass'},_T('👁 Watch this rotation'),'',false)].filter(Boolean).join('');
   const secs=SECTIONS.map((x,i)=>i).filter(i=>i!==s.sec).map(i=>`<option value="${i}">${esc(SECTIONS[i].n)} (Q${SECTIONS[i].q})</option>`).join('');
-  const o=document.createElement('div');o.id='st82Pop';o.setAttribute('role','dialog');o.setAttribute('aria-label','Your turn in the stands');
+  const o=document.createElement('div');o.id='st82Pop';o.setAttribute('role','dialog');o.setAttribute('aria-label',_T('Your turn in the stands'));
   o.innerHTML=`<div class="st82hd">${_T`🎟 Your turn in the stands`} <span class="st82t" id="st82T">20s</span></div>
     <div class="st82sub">${_T`${esc(s.name)} · <b>${s.cf} CF</b> · ${esc(SECTIONS[s.sec].n)} (Q${q}) · one action · only you see this`}</div>
     <div class="st82list">${rows}</div>
@@ -224,7 +224,7 @@ SCB_KIND.onl={obj:()=>SC82.cur&&SC82.cur.spec,vb:[100,170],add:{x:50,y:96},el:()
 function sc82SectionHTML(noHead){const C=SC82.cur;if(!C)return '';const sp=C.spec;
   const sel=(k,label)=>`<label>${label}<select class="tin" data-onlsc="${k}">${SC82_OPT[k].map(([v,l])=>`<option value="${esc2(v)}" ${String(sp[k]??'')===v?'selected':''}>${esc2(l)}</option>`).join('')}</select></label>`;
   const col=(k,label,def)=>`<label>${label}<input type="color" data-onlsc="${k}" value="${sc82Hex(sp[k])?sp[k]:def}"></label>`;
-  return `${noHead?'<p class="rc-sub" style="margin:2px 0 6px">No weapons or armor on the token.</p>':'<div class="sect">Board token <span class="rc-sub">sculpted — every lanista sees it, whatever their token style · no weapons or armor</span></div>'}
+  return `${noHead?`<p class="rc-sub" style="margin:2px 0 6px">${_T`No weapons or armor on the token.`}</p>`:`<div class="sect">${_T`Board token`} <span class="rc-sub">${_T`sculpted — every lanista sees it, whatever their token style · no weapons or armor`}</span></div>`}
    <div class="onl-sc82"><div class="onl-sc82prev" id="onlScPrev" data-scbprev="onl" title="${_T`Drag a shape to move it`}">${figureHTML(sp,190,null,{selLayer:scbSelGet('onl')})}</div>
     <div class="formgrid onl-g2">${sel('body',_T('Body'))}${sel('helm',_T('Headgear'))}${sel('hair',_T('Hair'))}${sel('beard',_T('Beard'))}${sel('neck',_T('Neck'))}${sel('face',_T('Face'))}${sel('arms',_T('Arms'))}${sel('legs',_T('Legs'))}
      ${col('c1',_T('Main colour'),'#a3281f')}${col('c2',_T('Trim colour'),'#d6ab4c')}${col('hairC',_T('Hair colour'),'#3a2616')}${col('skin',_T('Skin'),'#e0ac7e')}
@@ -293,7 +293,7 @@ function sc82Creating(){const fem=Math.random()<.35;const pt=typeof randomPortra
       <label>${_T`Birthplace`}<select class="tin" data-onl82c="home">${[['','—'],...HOME_CITIES().map(x=>[x,x])].map(([v,l])=>`<option value="${esc2(v)}" ${p.home===v?'selected':''}>${esc2(l)}</option>`).join('')}</select></label></div>
       <div class="mbtns" style="margin:2px 0"><button type="button" class="btn" data-onl82="roll" title="${_T`Name, class, epithet, birthplace, look and token`}">${_T`📜 Roll everything`}</button></div>`;
     const k=h.indexOf('<div class="sect">Class</div>');if(k>=0)h=h.slice(0,k)+det+h.slice(k);
-    const look=`<details class="onl-clook82"><summary class="sect">${_T`Look`} <span class="rc-sub">${_T`face, accessories, backdrop`}</span></summary>${portraitControlsHTML(p,'data-onl82p').replace('>Lanista (woman)<','>Gladiatrix<').replace('>Lanista<','>Gladiator<')}</details>
+    const look=`<details class="onl-clook82"><summary class="sect">${_T`Look`} <span class="rc-sub">${_T`face, accessories, backdrop`}</span></summary>${portraitControlsHTML(p,'data-onl82p').replace('>Lanista (woman)<',_T('>Gladiatrix<')).replace('>Lanista<',_T('>Gladiator<'))}</details>
       <details class="onl-ctokd82" ${SC82.copen?'open':''}><summary class="sect">${_T`Board token`} <span class="rc-sub">${_T`sculpted · everyone sees it, whatever their token style`}</span></summary>${sc82SectionHTML(1)}</details>`;
     const m=h.lastIndexOf('<div class="mbtns"><button type="button" class="btn primary" data-onl="create">');if(m>=0)h=h.slice(0,m)+look+h.slice(m)}catch(e){console.error(e)}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-onl82="roll"],#onl [data-onl82="nick"],#onl .onl-ctokd82>summary');if(!b)return;

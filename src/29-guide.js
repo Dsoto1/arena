@@ -108,8 +108,8 @@ function drawSugTile(){if(!S||!S.sugTile||S.over)return;const m=center(S.sugTile
 /* ---------------- 3 · rule hints ---------------- */
 const RULE_TILE={
   pillar:_T('Pillars: from an adjacent tile you can attack the Blessings pots on top — 2 damage breaks one (2 coin, 1 CF, a hidden offering). Push a pillar (2 movement) onto a tunnel to seal it, or topple it (3 movement): the next two tiles take 3 damage and every pot breaks.'),
-  player:'Gladiators: roll the hit die for each point of your weapon’s power; each hit lands on a rolled body location, armor first, then HP. A limb at 0 is severed; a head or chest at 0 eliminates. A gladiator trophy is worth 10 CF.',
-  npc:'Beasts: attacking one makes it hunt you (aggro). Slaying it earns its coin, CF and a trophy. Raged beasts hit harder; Fazed ones slow down. A beast that kills you costs you 5 CF.',
+  player:_T('Gladiators: roll the hit die for each point of your weapon’s power; each hit lands on a rolled body location, armor first, then HP. A limb at 0 is severed; a head or chest at 0 eliminates. A gladiator trophy is worth 10 CF.'),
+  npc:_T('Beasts: attacking one makes it hunt you (aggro). Slaying it earns its coin, CF and a trophy. Raged beasts hit harder; Fazed ones slow down. A beast that kills you costs you 5 CF.'),
   tunnel:_T('Tunnels: 1 Arena Key takes you underground. You choose the exit tunnel, your turn ends, and you surface there at the start of your next turn — untouchable while underground. A gladiator standing on a tunnel is fair game. A pillar pushed onto a tunnel seals it.'),
   spike:_T('Floor spikes: entering this tile deals 2 damage. Push rivals and beasts onto them.'),
   chest:_T('The Arena Chest: 1 Arena Key opens it for a level-4 weapon. You can also pick it up and carry it (−1 movement while held).'),
@@ -118,10 +118,10 @@ const RULE_TILE={
   offer:_T('An offering in the sand: step on it to pick it up.')};
 const RULE_ACT={'m-move':_T('Move: straight steps cost 1 movement, diagonals 2. Orange tiles show where you can go and what it costs.'),
   'm-push':_T('Push (2 movement): shove an adjacent pillar, gladiator or beast one tile away — onto spikes, or a pillar onto a tunnel.'),
-  'm-topple':'Topple (3 movement): bring down an adjacent pillar. Anything on the next two tiles takes 3 damage; every pot on it breaks.',
+  'm-topple':_T('Topple (3 movement): bring down an adjacent pillar. Anything on the next two tiles takes 3 damage; every pot on it breaks.'),
   'm-tunnel':_T('Tunnel (1 Arena Key): go underground and surface at another open tunnel. Ends your turn.'),
   chest:_T('Open the Arena Chest (1 Arena Key): take a level-4 weapon.'),chestup:_T('Pick up the chest: −1 movement while you carry it.'),chestdown:_T('Drop the chest where you stand. Free.'),
-  loot:_T('Loot: take one item from the gear at your feet this turn.'),market:'The market: 3 CF opens it for the turn; then buy by level (the market die picks the slot). Re-rolls cost 2 coin.',
+  loot:_T('Loot: take one item from the gear at your feet this turn.'),market:_T('The market: 3 CF opens it for the turn; then buy by level (the market die picks the slot). Re-rolls cost 2 coin.'),
   crowd:_T('Crowd Favor: spend CF on keys, cards, elixirs and armor. Never let it fall below 0 — you would be eliminated.'),
   trade:_T('Trade or truce with a gladiator within 4 tiles. Truces break when Flavius decides — and an arena that ends in truce ends in a thumbs-down.'),
   spear:_T('Spear a spectator (3 CF, once per event): the crowd remembers.'),selfbet:_T('Wager on yourself at today’s odds — paid only if you win the event.'),
@@ -188,7 +188,7 @@ const TUT={on:false,step:0,p:null,done:{}};
    then the first turn. Two beasts are enough to open round two (or fourteen rotations), so the rivals meet.
    The coach always offers ✖ Exit tutorial; when the bout ends it offers the clean-up show or the menu. */
 const TUT_STEPS=[
-  {id:'t_sand',spot:'#cv',say:`<b>The sand.</b> Thirteen by thirteen tiles: pillars carrying <b>Blessings pots</b>, tunnels, spikes, the Arena Chest — and the beasts. <b>Hover</b> anything to read it; <b>right-click</b> a tile for everything you can do there.`,next:1,tour:1},
+  {id:'t_sand',spot:'#cv',say:_T`<b>The sand.</b> Thirteen by thirteen tiles: pillars carrying <b>Blessings pots</b>, tunnels, spikes, the Arena Chest — and the beasts. <b>Hover</b> anything to read it; <b>right-click</b> a tile for everything you can do there.`,next:1,tour:1},
   {id:'t_board',spot:'#board',say:_T`<b>Your player board.</b> Health (HP) and armor (AP) for each body location, your two weapons, your movement, and the cards and offerings in your hand. Lose your head or chest — and you are out.`,next:1,tour:1},
   {id:'t_roster',spot:'#roster',say:_T`<b>The gladiators.</b> Everyone on the sand at a glance: health, <b>Crowd Favor</b> (CF) and coin. Click one to see their board. CF decides your Fate at the end — and buys things mid-bout.`,next:1,tour:1},
   {id:'t_actions',spot:'#actions',say:_T`<b>Your actions.</b> The buttons for this phase of your turn. The one glowing <b style="color:var(--gold2)">gold</b> is a good idea.`,next:1,tour:1},
@@ -198,7 +198,7 @@ const TUT_STEPS=[
   {id:'t_stand',spot:'#btnGraph',say:_T`<b>📊 Standings.</b> The race for Crowd Favor, as it stands — the dot wears the leader's color.`,next:1,tour:1},
   {id:'t_rules',spot:'#btnRules',say:_T`<b>📜 Rules.</b> The rules at a glance, the strategy guide, the full rulebook — and these lessons, any time.`,next:1,tour:1},
   {id:'t_menu',spot:'#btnMenu',say:_T`<b>🏛 The main menu.</b> During a lesson it asks before you leave. (New events, Manager mode and Settings wait until the lesson is done.)`,next:1,tour:1},
-  {id:'hello',info:1,say:`That is the arena. I am <b>Flavius</b>, editor of these games. Every turn has four phases: <b>1 Resolve</b> (the arena reacts), <b>2 Choice</b>, <b>3 Action</b>, <b>4 End</b>. I will light the button to press; I only step in to talk when something big happens.`,next:1},
+  {id:'hello',info:1,say:_T`That is the arena. I am <b>Flavius</b>, editor of these games. Every turn has four phases: <b>1 Resolve</b> (the arena reacts), <b>2 Choice</b>, <b>3 Action</b>, <b>4 End</b>. I will light the button to press; I only step in to talk when something big happens.`,next:1},
   {id:'choice',say:_T`<b>Choice:</b> take the safe <b>2 coin</b>.`,act:'coin',until:()=>S.phase==='action'},
   {id:'move',say:_T`<b>Move</b> to the gold tile beside the pillar — its <b>Blessings pot</b> holds coin, Crowd Favor and a hidden offering.`,sug:p=>tutGo(p,TUT.potTile),until:p=>p.r===TUT.potTile[0]&&p.c===TUT.potTile[1]},
   {id:'attack',say:_T`<b>Attack the pot</b> — press your attack, then the gold ring. It needs 2 damage to break (strike again if it holds).`,sug:p=>tutAtkSug(p,t=>t.kind==='pot'),until:p=>(p.stats.pots||0)>0,fallback:'end'},
@@ -258,7 +258,7 @@ function tutCoach(){if(HEADLESS)return;let el=document.getElementById('tutCoach'
     const h=`<img src="${typeof flavFaceURL==='function'?flavFaceURL(won?'cheer':'pleased'):''}" alt=""><div><div class="tutstep">${_T`Learn to play · the bout is over`}</div><div>${_T`${won?_T('<b>Victory!</b> You are a graduate of the ludus — the crowd will remember the name.'):_T('<b>You fell</b> — but every champion did, once. The sand teaches.')} Stay for the <b>clean-up show</b>, or head back to the menu.`}</div>
       <div class="acts" style="margin-top:6px">${S.cleanDone?`<button class="btn tksm" type="button" disabled title="${_T`The crew has already swept the sand`}">${_T`🧹 The show is over`}</button><button class="btn primary tksm" type="button" data-tut="menu">${_T`🏛 Back to the main menu`}</button>`:`<button class="btn primary tksm" type="button" data-tut="show">${_T`🧹 Watch the clean-up show`}</button><button class="btn tksm" type="button" data-tut="menu">${_T`🏛 Back to the main menu`}</button>`}</div></div>`;
     if(el.dataset.h!==h){el.dataset.h=h;el.innerHTML=h}return}
-  if(TUT.hidden){const h='<button class="btn tksm tutpill" type="button" data-tut="unhide">🎓 Show the coach</button>';if(el.dataset.h!==h){el.dataset.h=h;el.innerHTML=h;el.classList.add('mini')}tutSpot(null);TUT.lastSpot=null;return}
+  if(TUT.hidden){const h=`<button class="btn tksm tutpill" type="button" data-tut="unhide">${_T`🎓 Show the coach`}</button>`;if(el.dataset.h!==h){el.dataset.h=h;el.innerHTML=h;el.classList.add('mini')}tutSpot(null);TUT.lastSpot=null;return}
   el.classList.remove('mini');
   const st=TUT_STEPS[TUT.step];if(!st){tutEnd();return}
   if(st.spot!==TUT.lastSpot){TUT.lastSpot=st.spot;tutSpot(st.spot||null)}
@@ -286,7 +286,7 @@ function tutNext(){const was=TUT_STEPS[TUT.step];TUT.step++;
   if(was&&was.tour&&!(TUT_STEPS[TUT.step]||{}).tour){setSpeedUI('normal')} // the tour is over — the bout begins
   if(TUT.step>=TUT_STEPS.length){tutEnd();return}tutCoach();try{render()}catch(e){}}
 function tutEnd(){TUT.on=false;if(SPEED==='pause'&&S&&!S.over)setSpeedUI('normal');tutCoach();try{localStorage.setItem('flavius_tutDone','1')}catch(e){}try{render()}catch(e){}}
-async function tutExit(){if(typeof modalBusy==='function'&&modalBusy())return;const ok=await modal(_T('Leave the lesson?'),'<p>The bout is abandoned and you return to the main menu. You can take the lesson again any time.</p>',[{label:_T('Leave the lesson'),value:1,primary:1},{label:_T('Stay'),value:0}],{close:0});if(!ok)return;
+async function tutExit(){if(typeof modalBusy==='function'&&modalBusy())return;const ok=await modal(_T('Leave the lesson?'),`<p>${_T`The bout is abandoned and you return to the main menu. You can take the lesson again any time.`}</p>`,[{label:_T('Leave the lesson'),value:1,primary:1},{label:_T('Stay'),value:0}],{close:0});if(!ok)return;
   TUT.on=false;if(S){S.over=true;S.cleanDone=1;S.tutorial=false}tutCoach();tutToMenu()}
 function tutShow(){if(S&&S.cleanDone)return;const el=document.getElementById('tutCoach');if(el)el.remove();if(S)S.tutShow=1;if(typeof modalDismiss==='function'&&!$('#modal').hidden)modalDismiss()}
 function tutToMenu(){const el=document.getElementById('tutCoach');if(el)el.remove();if(S)S.tutorial=false;if(typeof modalDismiss==='function'&&!$('#modal').hidden)modalDismiss();

@@ -1192,7 +1192,7 @@ const CLASSES = {
     keys: 0,
     items: ['c:lure'],
     abil: 'stone',
-    ab: 'Ability: gain 1 stone each turn; +10 CF to the final score if the Damnatio wins any event. Weakness: pelted with a stone (1 damage) each turn.'
+    ab: _T('Ability: gain 1 stone each turn; +10 CF to the final score if the Damnatio wins any event. Weakness: pelted with a stone (1 damage) each turn.')
   }
 };
 
@@ -1358,7 +1358,7 @@ const CARDS = {
   lure: {
     n: 'Meat Lure',
     type: 'declare',
-    d: 'Throw a meat lure (range 4): aggro any 1 NPC in play onto another player. Works on Tholo; breaks a tame bond.',
+    d: _T('Throw a meat lure (range 4): aggro any 1 NPC in play onto another player. Works on Tholo; breaks a tame bond.'),
     q: _T('Accept without conceit, relinquish without reluctance'),
     img: 23
   },
@@ -2366,7 +2366,7 @@ async function carmWeapon(player, lv, key) {
     return;
   }
   let k;
-  if (player.cpu) k = pool.sort((a, b) => wScore(W[b]) - wScore(W[a]))[0];else k = await modal(_T('Choose a weapon'), '<p>Any remaining level ' + lv + _T(' weapon.</p>'), pool.map(x => ({
+  if (player.cpu) k = pool.sort((a, b) => wScore(W[b]) - wScore(W[a]))[0];else k = await modal(_T('Choose a weapon'), `<p>${_T`Any remaining level`} ` + lv + _T(' weapon.</p>'), pool.map(x => ({
     label: W[x].n,
     sub: wStats(mkW(x)),
     value: x,

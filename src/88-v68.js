@@ -39,7 +39,7 @@ function checklistHTML(){const I=weekChecklist();const todo=I.filter(x=>!x.done)
   if(MGR.tab==='ludus'){const i=h.indexOf('<div class="todobox">');if(i>=0){const c=cutDiv(h,i);if(c)h=c[1].slice(0,i)+checklistHTML()+c[1].slice(i)}}}catch(e){console.error(e)}return h}}
 /* end the week: what you are about to skip */
 {const base=endConfirmHTML;endConfirmHTML=function(){let h=base.apply(this,arguments);try{const skip=weekChecklist().filter(x=>!x.done&&!/verdict/.test(x.txt));
-  if(skip.length)h=h.replace('<div class="acts"><button class="btn primary" type="button" data-mg="endweek">',`<div class="skiplist"><b>You are about to skip:</b>${skip.map(x=>`<div>${x.ic} ${x.txt}</div>`).join('')}</div><div class="acts"><button class="btn primary" type="button" data-mg="endweek">`)}catch(e){}return h}}
+  if(skip.length)h=h.replace('<div class="acts"><button class="btn primary" type="button" data-mg="endweek">',`<div class="skiplist">${_T`<b>You are about to skip:</b>${skip.map(x=>`<div>${x.ic} ${x.txt}</div>`).join('')}`}</div><div class="acts"><button class="btn primary" type="button" data-mg="endweek">`)}catch(e){}return h}}
 {const st=document.createElement('style');st.textContent=`
 .wkcheck .wkitem{display:grid;grid-template-columns:24px 1fr auto;gap:8px;align-items:center;padding:5px 0;border-top:1px solid var(--line2)}.wkcheck .wkitem:first-of-type{border-top:0}
 .wkcheck .wkic{text-align:center;font-size:16px}.wkcheck .wkbtn{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.wkcheck .wkitem.done{opacity:.6;grid-template-columns:24px 1fr}.wkcheck .wkitem.done .wkic{color:#9cc46e}

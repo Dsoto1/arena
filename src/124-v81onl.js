@@ -118,11 +118,11 @@ setTimeout(async()=>{try{if(!onlRepGet81()||!(typeof ONL_ON==='function'&&ONL_ON
     return `<div class="card2 onl-mine onl-wait81" id="onlWait81">${_T`<b>${esc2(onlEvName(L.ev))}</b> at ${esc2(onlCityName(L.loc))} · ${L.ranked?_T('⚔ Ranked'):_T('Custom')}`}<div class="ow81">${_T`⏳ Waiting for the others to confirm the result`}</div>${_T`<small class="rc-sub">Your bout is over and your result was sent. Pay, CF and the Fate land when the others confirm.</small>`}</div>`;
   return base.apply(this,arguments)}}
 {const base=onlLobbyHTML;onlLobbyHTML=function(){let h=base.apply(this,arguments);for(const L of ONL.lobbies||[])if(L.status==='live'&&onlOver81(L.id))
-  h=h.replace(new RegExp(`<button[^>]*data-onl="rejoin" data-v="${String(L.id).replace(/[^\w-]/g,'')}"[^>]*>[^<]*</button>`),'<span class="badge" title="Waiting for the others to confirm the result">⏳ Confirming</span>');return h}}
+  h=h.replace(new RegExp(`<button[^>]*data-onl="rejoin" data-v="${String(L.id).replace(/[^\w-]/g,'')}"[^>]*>[^<]*</button>`),_T('<span class="badge" title="Waiting for the others to confirm the result">⏳ Confirming</span>'));return h}}
 /* the abandon popup after the bout: no Damnatio, you just leave */
 {const base=onlStakeHTML80;onlStakeHTML80=function(o){let h=onlWheat81(base.apply(this,arguments));
-  if(o&&o.over){const nm=esc2((o.char||{}).name||_T('Your gladiator'));h=h.replace(/<div class="stk80-(warn|ok)">[\s\S]*?<\/div>(?=<p class="rc-sub")/,`<div class="stk80-ok"><b>The bout is over.</b> Your result was sent — leaving changes nothing for ${nm}: pay, CF and the Fate come from the result.</div>`)
-    .replace('You may come back to watch, but not to fight.','You simply leave.')}return h}}
+  if(o&&o.over){const nm=esc2((o.char||{}).name||_T('Your gladiator'));h=h.replace(/<div class="stk80-(warn|ok)">[\s\S]*?<\/div>(?=<p class="rc-sub")/,`<div class="stk80-ok">${_T`<b>The bout is over.</b> Your result was sent — leaving changes nothing for ${nm}: pay, CF and the Fate come from the result.`}</div>`)
+    .replace('You may come back to watch, but not to fight.',_T('You simply leave.'))}return h}}
 onlAbandonAsk80=function(o){o=o||{};if(!o.over&&S&&S.onl&&S.over&&!S.onl.watch&&onlOver81(S.onl.lobby))o={...o,over:true};
   return o.over?ask76(_T('🚪 Leave the match?'),onlStakeHTML80(o),_T('🚪 Leave'),_T('Stay')):ask76(_T('🚪 Abandon the match?'),onlStakeHTML80(o),_T('🚪 Abandon'),o.dropped?_T('Let the CPU fight on'):_T('Stay'))};
 
@@ -174,10 +174,10 @@ window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('
 
 /* ---------------- sign-in: the server box only after the word ---------------- */
 const onlSrvOn81=()=>{try{return localStorage.getItem('flavius_onlsrv81')==='1'}catch(e){return false}};
-cheatRegister('h2944489914',()=>{try{localStorage.setItem('flavius_onlsrv81','1')}catch(e){}try{if(document.getElementById('onl'))onlRedraw()}catch(e){}return _T('🌐 The <b>Online server</b> box shows on the Online sign-in screen.')},'Online server box');
+cheatRegister('h2944489914',()=>{try{localStorage.setItem('flavius_onlsrv81','1')}catch(e){}try{if(document.getElementById('onl'))onlRedraw()}catch(e){}return _T('🌐 The <b>Online server</b> box shows on the Online sign-in screen.')},_T('Online server box'));
 CHEAT_SHOW.push([[86,85,83,90,89,93],_T('🌐 Shows the "Online server" box on the Online sign-in screen (for test servers)')]);
 {const base=onlSignInHTML;onlSignInHTML=function(){let h=base.apply(this,arguments);
-  h=h.replace('Signing in shares your Google name and e-mail with the arena.','Signing in shares your Google name and e-mail with the arena. Other players see only your gladiator’s name.');
+  h=h.replace('Signing in shares your Google name and e-mail with the arena.',_T('Signing in shares your Google name and e-mail with the arena. Other players see only your gladiator’s name.'));
   if(!onlSrvOn81())h=h.replace(/<details class="onl-srv">[\s\S]*?<\/details>/,'');return h}}
 
 /* ---------------- the landing: your gladiator on the world ---------------- */

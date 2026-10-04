@@ -105,7 +105,7 @@ onlMyLobbyHTML=function(){const me=ONL.acct&&ONL.acct.id;const L=onlMyLobby();if
   const settings=L.status==='waiting'?`<div class="onl-rset">${_T`<b>Rules of this game</b>`}
      <label>${_T`Leaving the sand ${host&&!L.ranked?`<select class="tin" data-onlset="abandon"><option value="cpu" ${rule==='cpu'?'selected':''}>${_T`a CPU takes the seat`}</option><option value="fate" ${rule==='fate'?'selected':''}>${_T`the gladiator is eliminated`}</option></select>`:`<span>${L.ranked?_T('Ranked: eliminated — Damnatio, the gladiator dies'):rule==='fate'?_T('the gladiator is eliminated'):_T('a CPU takes the seat')}</span>`}`}</label>
      <label>${_T`The stands ${host?`<select class="tin" data-onlset="standsOff"><option value="0" ${L.standsOff?'':'selected'}>${_T`may act in round 1`}</option><option value="1" ${L.standsOff?'selected':''}>${_T`watch only`}</option></select>`:`<span>${L.standsOff?_T('watch only'):_T('may act in round 1')}</span>`}`}</label></div>`:'';
-  const chat=L.status==='waiting'?`<div class="onl-chat"><div class="onl-chatlog" id="onlChatLog">${(L.chat||[]).map(m=>`<div><b>${esc2(m.name)}</b> ${esc2(m.text)}</div>`).join('')||'<div class="rc-sub">Say ave to the other lanistas.</div>'}</div>
+  const chat=L.status==='waiting'?`<div class="onl-chat"><div class="onl-chatlog" id="onlChatLog">${(L.chat||[]).map(m=>`<div><b>${esc2(m.name)}</b> ${esc2(m.text)}</div>`).join('')||`<div class="rc-sub">${_T`Say ave to the other lanistas.`}</div>`}</div>
      <div class="onl-chatrow"><input class="tin" id="onlChat" maxlength="${ONLC.CHAT_LEN}" placeholder="${_T`Message the room`}"><button type="button" class="btn tksm" data-onl="chat" data-v="${L.id}">${_T`Send`}</button></div></div>`:'';
   const acts=L.status==='waiting'?(fan?'':(host?`<button type="button" class="btn primary" data-onl="start" data-v="${L.id}" ${why?_T`disabled title="${esc2(why)}"`:''}>${_T`▶ Start the match`}</button>`:`<button type="button" class="btn" data-onl="ready" data-v="${L.id}">${_T`✓ Ready`}</button>`))
     :(inMatch?'':left||fan?`<button type="button" class="btn primary" data-onl="${fan&&!left?'enter':'watch'}" data-v="${L.id}">${fan&&!left?_T('🎟 Take your seat'):_T('👁 Watch')}</button>`:`<button type="button" class="btn primary" data-onl="rejoin" data-v="${L.id}">${_T`⚔ Rejoin the match`}</button>`);
@@ -190,7 +190,7 @@ body.onlarena #btnExport,body.onlarena #btnTicket,body.onlarena #btnBets,body.on
 
 /* ---------------- back from Google: a loading screen until the Online window is up ---------------- */
 (function(){try{const u=new URL(location.href);if(!u.searchParams.get('code')||!u.searchParams.get('state'))return;const d=document.createElement('div');d.id='onlLoad';
-  d.innerHTML='<div><div class="ring"></div>Entering the Online arena…</div>';document.body.appendChild(d);const t0=Date.now();
+  d.innerHTML=`<div><div class="ring"></div>${_T`Entering the Online arena…`}</div>`;document.body.appendChild(d);const t0=Date.now();
   const iv=setInterval(()=>{if(document.getElementById('onl')||Date.now()-t0>20000){clearInterval(iv);setTimeout(()=>d.remove(),250)}},120)}catch(e){}})();
 
 /* ---------------- no gladiator yet: the main window anyway (v0.79 follow-up) ----------------

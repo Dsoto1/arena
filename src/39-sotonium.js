@@ -81,8 +81,8 @@ function sotoSeason(w){for(const k of Object.keys(FAMILY_HOUSES)){const m=houseM
 {const _nw=newWorld;newWorld=function(choice){const w=_nw(choice);try{if(!w.tutorial){const n0=w.mgrs.length;houseSync(w);if(w.mgrs.length!==n0)saveWorld(true)}}catch(e){console.error(e)}return w}}
 /* the words at the version badge */
 if(typeof cheatRegister==='function'){const W1=String.fromCharCode(67,72,65,82,68),W2=String.fromCharCode(68,85,67,75,73,79);
-  cheatRegister(cheatKey(W1),()=>houseToggle('sotonium')?_T`🏛 <b>${W1}.</b> The Ludus Sotonium joins the league — Richardious and the Great Zeldinius. (Speak it again to remove them.)`:_T`🏛 <b>${W1}.</b> The Ludus Sotonium leaves the league.`,'House of Sotonium');
-  cheatRegister(cheatKey(W2),()=>houseToggle('duckio')?_T`🦆 <b>${W2}.</b> The Ludus Anatinus joins the league — Gaius Anatinus Duckio and Supducus Praeclarus. (Speak it again to remove them.)`:_T`🦆 <b>${W2}.</b> The Ludus Anatinus leaves the league.`,'House of Duckio')}
+  cheatRegister(cheatKey(W1),()=>houseToggle('sotonium')?_T`🏛 <b>${W1}.</b> The Ludus Sotonium joins the league — Richardious and the Great Zeldinius. (Speak it again to remove them.)`:_T`🏛 <b>${W1}.</b> The Ludus Sotonium leaves the league.`,_T('House of Sotonium'));
+  cheatRegister(cheatKey(W2),()=>houseToggle('duckio')?_T`🦆 <b>${W2}.</b> The Ludus Anatinus joins the league — Gaius Anatinus Duckio and Supducus Praeclarus. (Speak it again to remove them.)`:_T`🦆 <b>${W2}.</b> The Ludus Anatinus leaves the league.`,_T('House of Duckio'))}
 if(typeof CHEAT_SHOW!=='undefined'){CHEAT_SHOW.push([[74,79,72,89,75],_T('🏛 The House of Sotonium — Richardious and the Great Zeldinius join Manager mode (again to remove)')],[[75,92,74,82,80,86],_T('🦆 The House of Duckio — Gaius Anatinus Duckio and Supducus Praeclarus join Manager mode (again to remove)')])}
 /* the famous visitors — only while their house is in the system */
 if(typeof FAMOUS!=='undefined')for(const k of Object.keys(FAMILY_HOUSES)){const V=FAMILY_HOUSES[k].visitor;

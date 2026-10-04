@@ -74,7 +74,7 @@ function scheduleHTML(season,week){
 // v0.21: the season schedule, from anywhere — the date chip on the main screen opens it
 function openSchedule(){
   if(typeof modalBusy==='function'&&modalBusy())return;const c=calNow();const dt=empireDate(c.season,c.week);
-  modal(_T`📅 Season ${c.season} schedule`,`<p>Today in the empire: <b>${dt.short}</b>, week ${c.week} of 12. One arena hosts the editor's games each week; classics dominate, and the rarer specials carry fatter purses. Manager mode and New event both follow this schedule.</p>${scheduleHTML(c.season,c.week)}`,[{label:_T('Close'),value:0}],{wide:1});
+  modal(_T`📅 Season ${c.season} schedule`,`<p>${_T`Today in the empire: <b>${dt.short}</b>, week ${c.week} of 12. One arena hosts the editor's games each week; classics dominate, and the rarer specials carry fatter purses. Manager mode and New event both follow this schedule.`}</p>${scheduleHTML(c.season,c.week)}`,[{label:_T('Close'),value:0}],{wide:1});
 }
 /* the date chip opens the schedule. */
 document.addEventListener('click',e=>{if(e.target.closest('#calChip'))openSchedule()});

@@ -31,6 +31,7 @@ const CALLSKIP=new Set(['querySelector','querySelectorAll','getElementById','get
   'audNote','audPlay','strokeStyle','fillStyle','font','tl','gById','mgrById','storeGet','storePut','matchSlotPut','lsGet','lsSet','ls','setTimeout','setInterval',
   'Function','eval','importScripts','encodeURIComponent','decodeURIComponent','atob','btoa','parse','stringify','Number','parseInt','parseFloat','Symbol',
   'Intl','DateTimeFormat','toLocaleString','toLocaleDateString','toLocaleTimeString','assert','classOf','track','pick','pickOne','rand','rnd','sideRand']);
+const ALLARGS=new Set(['getItem','setItem','removeItem','get','put','del','query','list','req','emit','on','off','send','postMessage','fetch','addEventListener','removeEventListener','dispatchEvent','storeGet','storePut','matchSlotPut','lsGet','lsSet','ls','classOf','track','RegExp','Function','eval','parse','stringify','encodeURIComponent','decodeURIComponent','atob','btoa','toggle','has','delete','sfx','play','beep','audNote','audPlay','imgOf','asset','loadImg','img','cardHTML','cardStyle','cardRef','rtokHTML','rtokStyle','querySelector','querySelectorAll','closest','matches','getElementById','createElement','createElementNS','getAttribute','removeAttribute','hasAttribute','toggleAttribute','gById','mgrById','tl','pick','pickOne','rand','rnd','sideRand','hashStr','cheatKey','Intl','DateTimeFormat','Symbol','Number','parseInt','parseFloat','toDataURL','drawImage']);
 const CLASSLIST_SKIP=new Set(['add','remove','toggle','contains','replace']);
 const SOFT=new Set(['b','i','em','strong','small','u','br','sup','sub','span','wbr']);
 const ATTRS=/^(title|placeholder|aria-label|alt|data-tip|data-avtip)$/i;
@@ -40,7 +41,7 @@ function prose(text){
   const t=text.replace(/<[^>]*>/g,' ').replace(/\u0001/g,' § ').replace(/&[a-z#0-9]+;/gi,' ').trim();
   if(!t)return false;
   if(/^[.#\[@:]/.test(t))return false;                       /* selectors, at-rules */
-  if(/[{};]/.test(t)&&/:/.test(t))return false;              /* css */
+  if(/[{}]/.test(t)&&/:/.test(t)||/;/.test(t)&&/:/.test(t)&&!/[A-Za-z]{3,}\s+[A-Za-z]{3,}\s+[A-Za-z]{3,}/.test(t))return false; /* css */
   if(/^(https?:|data:|mailto:|\.\/|\/)/.test(t))return false;
   if(/^[\w-]+(\.[\w-]+)+$/.test(t))return false;             /* a.b.c */
   if(/^[a-z][\w-]*$/.test(t))return false;                   /* a lowercase key */
@@ -73,7 +74,11 @@ function skipCtx(node){
   if(ts.isCallExpression(p)||ts.isNewExpression(p)){
     if(p.expression===child)return true;
     const nm=ts.isCallExpression(p)?calleeName(p):(ts.isIdentifier(p.expression)?p.expression.text:'');
-    if(CALLSKIP.has(nm)||nm==='_T'||nm==='TX')return true;
+    if(nm==='_T'||nm==='TX')return true;
+    if(CALLSKIP.has(nm)){const args=p.arguments||[];const idx=args.indexOf(child);
+      if(ALLARGS.has(nm)||idx<=0)return true;
+      if(nm==='replace'||nm==='replaceAll'||nm==='setAttribute'||nm==='setProperty'||nm==='cheatRegister'){/* the replacement / attribute value / label is display text */}
+      else return true}
     const ob=ts.isCallExpression(p)?calleeObj(p):'';
     if(ob==='classList'&&CLASSLIST_SKIP.has(nm))return true;
     if(['console','localStorage','sessionStorage','Store','JSON','Math','Object','Reflect','NET','NETWS','ctx','cx','g','c2','document','window','navigator','Promise','history','location','performance','crypto','Array','String','URL'].includes(ob)&&nm!=='alert'&&nm!=='confirm'&&nm!=='prompt')return true}
@@ -177,7 +182,20 @@ function doTemplate(node,src,file){
 function doString(node,src,file){
   if(skipCtx(node))return;
   const raw=node.text;if(!prose(raw))return;
-  if(/<[a-zA-Z][^>]*>/.test(raw)&&/<(div|p|ul|li|table|tr|td|h\d|button|select|option|label|input|img|svg)\b/i.test(raw))return; /* an HTML block in a plain string: rare, leave */
+  if(/<[a-zA-Z][^>]*>/.test(raw)&&/<(div|p|ul|li|table|tr|td|h\d|button|select|option|label|input|img|svg)\b/i.test(raw)){
+    /* an HTML block in a plain string → the same literal as a template, its text runs wrapped */
+    const tsrc='x=`'+raw.replace(/\\/g,'\\\\').replace(/`/g,'\\`').replace(/\$\{/g,'\\${')+'`;';
+    const sf2=ts.createSourceFile('t.js',tsrc,ts.ScriptTarget.Latest,true,ts.ScriptKind.JS);let tnode=null;
+    (function f(n){if(!tnode&&(ts.isNoSubstitutionTemplateLiteral(n)||ts.isTemplateExpression(n)))tnode=n;ts.forEachChild(n,f)})(sf2);
+    if(!tnode)return;
+    const save=edits.splice(0),k0=keys.length;const sg=src_global;src_global=tsrc;
+    doTemplate(tnode,tsrc,file);src_global=sg;
+    const mine=edits.splice(0);edits.push(...save);
+    const line=src.slice(0,node.getStart()).split('\n').length;for(let i=k0;i<keys.length;i++){keys[i].file=file;keys[i].line=line}
+    if(!mine.length)return;
+    let t=tsrc;for(const e of mine.sort((a,b)=>b.at-a.at))t=t.slice(0,e.at)+e.ins+t.slice(e.at);
+    const lit=t.slice(2,-1);/* drop x= and ; */
+    edits.push({at:node.getStart(),del:node.end-node.getStart(),ins:lit});return}
   const line=src.slice(0,node.getStart()).split('\n').length;
   keys.push({k:raw.trim(),file,line});
   edits.push({at:node.end,ins:')'},{at:node.getStart(),ins:'_T('})}
@@ -195,7 +213,7 @@ for(const f of FILES){
   perFile[f]=keys.length-k0;total+=keys.length-k0;
   if(MODE==='write'&&edits.length){
     const E=edits.slice().sort((x,y)=>y.at-x.at);let out=src;
-    for(const e of E)out=out.slice(0,e.at)+e.ins+out.slice(e.at);
+    for(const e of E)out=out.slice(0,e.at)+e.ins+out.slice(e.at+(e.del||0));
     fs.writeFileSync(fp,out)}}
 if(MODE==='list'){process.stdout.write(JSON.stringify({total,perFile,keys},null,0))}
 else console.error('wrapped',total,'sites in',Object.keys(perFile).filter(f=>perFile[f]).length,'files');

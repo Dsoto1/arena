@@ -13,10 +13,10 @@ const LANG=(()=>{try{const l=localStorage.getItem('flavius_lang');return LANGS86
 let LANG_DICT=null;                 /* set by 00-lang-es.js when LANG==='es' */
 const LANG_MISS=new Map();          /* key → count of misses (the Spanish walk test reads it) */
 function langKey86(s){let k=s[0];for(let i=1;i<s.length;i++)k+='{'+(i-1)+'}'+s[i];return k}
-function langLook86(key,vals){
+function langLook86(key,vals,quiet){
   const m=/^(\s*)([\s\S]*?)(\s*)$/.exec(key);const core=m[2];
   const tr=LANG_DICT[core];
-  if(tr==null){if(core)LANG_MISS.set(core,(LANG_MISS.get(core)||0)+1);return null}
+  if(tr==null){if(core&&!quiet)LANG_MISS.set(core,(LANG_MISS.get(core)||0)+1);return null}
   const out=vals.length?tr.replace(/\{(\d+)\}/g,(x,n)=>{n=+n;return n<vals.length?String(vals[n]):x}):tr;
   return m[1]+out+m[3]}
 function _T(s,...v){
@@ -25,4 +25,4 @@ function _T(s,...v){
   if(LANG_DICT){const r=langLook86(langKey86(s),v);if(r!=null)return r}
   let o=s[0];for(let i=0;i<v.length;i++)o+=String(v[i])+s[i+1];return o}
 /* exact lookup for text that never went through _T (static HTML in 01-head, server replies) */
-function TX(str){if(!LANG_DICT||typeof str!=='string')return str;const r=langLook86(str,[]);return r==null?str:r}
+function TX(str){if(!LANG_DICT||typeof str!=='string')return str;const r=langLook86(str,[],true);return r==null?str:r}

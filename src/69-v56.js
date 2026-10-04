@@ -76,7 +76,7 @@ document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.ma
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mailgo]');if(!b)return;e.stopPropagation();MGR.tab='ludus';MGR.mailOpen=b.dataset.mailgo;if(typeof MGR_REDRAW==='function')MGR_REDRAW();
   setTimeout(()=>{const el=document.querySelector(`details.mail[data-mail="${CSS.escape(b.dataset.mailgo)}"]`);if(el){el.open=true;el.scrollIntoView({block:'center'})}MGR.mailOpen=null},60)},true);
 /* the left menu counts the unread */
-{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(w&&!w.dead){const live=mailLive('');const keys=new Set([...live.items.map(x=>x.key),...MAIL_BODYKEYS]);const R=new Set(w.mailRead||[]);const n=[...keys].filter(k=>!R.has(k)).length;if(n)h=h.replace('🏛 Your ludus</button>',`🏛 Your ludus <span class="mcount" title="${n} unread letter${n===1?'':'s'}">✉ ${n}</span></button>`)}}catch(err){}return h}}
+{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(w&&!w.dead){const live=mailLive('');const keys=new Set([...live.items.map(x=>x.key),...MAIL_BODYKEYS]);const R=new Set(w.mailRead||[]);const n=[...keys].filter(k=>!R.has(k)).length;if(n)h=h.replace('🏛 Your ludus</button>',`${_T`🏛 Your ludus`} <span class="mcount" title="${_T`${n} unread letter${n===1?'':'s'}`}">✉ ${n}</span></button>`)}}catch(err){}return h}}
 /* reports that used to be news lines: weekly growth and contracts ending arrive as mail too */
 {const base=growthDigest;growthDigest=function(w){const sg=w.sgain||{};const rows=[];for(const [id,o] of Object.entries(sg)){const g=gById(id);if(!g)continue;
     const bits=STATS.filter(([k])=>o[k]>0).map(([k,n])=>{const v=gStats(g)[k];const nb=nextBand(k,v);return `${n} +${(+o[k]).toFixed(1)} <span class="rc-sub">${_T`(now ${v}${nb?_T`, ${nb-v} to the next band`:''})`}</span>`});
@@ -94,7 +94,7 @@ Object.assign(GLOSS,{
   int:{t:_T('Intelligence'),re:/\bIntelligence (?=\d)/,d:_T('How a CPU plays the gladiator: Easy below 76, Normal from 76, Hard from 96. Grows by surviving and winning.')},
   lck:{t:_T('Luck'),re:/\bLuck (?=\d)/,d:_T('Coin each turn: +1 at 76, +2 at 96. Grows with time at a ludus and the bonds you build.')},
   cha:{t:_T('Charisma'),re:/\bCharisma (?=\d)/,d:_T('Crowd Favor each turn: +1 at 76, +2 at 96. Grows with big crowds, high CF, fame and being spared.')},
-  synd:{t:_T("Sica's syndicate"),re:/Sica's syndicate/,d:'The lender of last resort: only to a house in the red, 12% a week added to the debt. Pay the weekly minimum by hand; three short weeks and a spear finds your best fighter.'}});
+  synd:{t:_T("Sica's syndicate"),re:/Sica's syndicate/,d:_T('The lender of last resort: only to a house in the red, 12% a week added to the debt. Pay the weekly minimum by hand; three short weeks and a spear finds your best fighter.')}});
 /* chips and sliders carry the glossary tooltips */
 {const base=statChips;statChips=function(st,opt={}){return base.apply(this,arguments).replace(/<span class="statchip([^"]*)" title="([^"]*)">([^<]*)<b>/g,(m,c,t,ic)=>{const k=STATS.find(s=>s[2]===ic.trim());return `<span class="statchip${c}" data-tt="${k?k[0]:'ratings'}" aria-label="${t}">${ic}<b>`})}}
 {const base=ratingsHTML;ratingsHTML=function(g){return base.apply(this,arguments).replace(/<span>([^<]*) (Speed|Strength|Intelligence|Luck|Charisma)<\/span>/g,(m,ic,n)=>`<span>${ic} <span class="gl" data-tt="${STATS.find(s=>s[1]===n)[0]}">${n}</span></span>`)}}
@@ -105,11 +105,11 @@ const RATINGS_GUIDE=`<h4>${_T`Ratings: Speed, Strength, Intelligence, Luck, Char
   <li>${_T`<b>Speed</b>: +1 movement at 76, +2 at 96. <b>Strength</b>: +1 damage per hit at 76, +2 at 87, +3 at 96. <b>Luck</b>: +1 coin a turn at 76, +2 at 96. <b>Charisma</b>: +1 CF a turn at 76, +2 at 96. They stack.`}</li>
   <li>${_T`<b>When they pay</b>: only in rounds that allow class abilities. In a Classic event that is round 1, so a strong gladiator should hit early and hard.`}</li>
   <li>${_T`<b>Intelligence</b> sets a CPU's mind — Novice below 65, Apprentice 65, Fighter 76, Veteran 86, Master 96. It never adds gear or coin.`}</li>
-  <li><b>Read the chips</b> on each fighter panel: a gold chip is a perk earned; a glowing one is a top band (96+).</li></ul>`;
+  <li>${_T`<b>Read the chips</b> on each fighter panel: a gold chip is a perk earned; a glowing one is a top band (96+).`}</li></ul>`;
 const RATINGS_MGR=`<h4>${_T`Ratings that grow`}</h4><ul>
   <li>${_T`<b>Slow and steady</b>: a busy, winning fighter climbs about one band a season. Gains slow above 90 and stop at 99.`}</li>
   <li>${_T`<b>What grows what</b>: Strength and Speed from the Training Yard (brutal drills most), fights survived and won, and kills. Intelligence from surviving and winning. Charisma from big CF, fame and being spared. Luck from weeks with your house and the bonds you build (meals, bonuses, kin tickets).`}</li>
-  <li><b>Push a fighter over a line</b>: the to-do list flags anyone a few points short of a band; a personal trainer or brutal drills that week can earn the perk before the next Match Week.</li>
+  <li>${_T`<b>Push a fighter over a line</b>: the to-do list flags anyone a few points short of a band; a personal trainer or brutal drills that week can earn the perk before the next Match Week.`}</li>
   <li>${_T`<b>Watch the free agents</b>: they drill on their own, and rival yards train too. A fighter who reaches 96 makes the news.`}</li>
   <li>${_T`<b>Your mail</b> carries a weekly growth report from the doctores; a new band also makes your ludus ledger.`}</li></ul>`;
 {const base=playGuideHTML;playGuideHTML=function(){const h=base.apply(this,arguments);const i=h.indexOf('<details class="gsec"');return i<0?h.replace(/<\/div>\s*$/,RATINGS_GUIDE+'</div>'):h.slice(0,i)+`<details class="gsec" open><summary>${_T`Ratings: Speed, Strength, Intelligence, Luck, Charisma`}</summary><div class="gsecb">${RATINGS_GUIDE.replace(/^<h4>[^<]*<\/h4>/,'')}</div></details>`+h.slice(i)}}

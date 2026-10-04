@@ -16,7 +16,7 @@ for(const k of Object.keys(ARM_FIT_OVR))delete ARM_FIT_OVR[k];try{localStorage.r
 afitSave=function(){clearTimeout(AFIT_T);AFIT_T=setTimeout(()=>{try{Store.put('armorFit','sys',{id:'sys',fits:ARM_FIT_OVR,at:new Date().toISOString()}).catch(()=>{})}catch(e){}},500)};
 /* the code word */
 const afitOn=()=>{try{return localStorage.getItem('flavius_armfit_on')==='1'}catch(e){return false}};
-cheatRegister('h3828236272',()=>{try{localStorage.setItem('flavius_armfit_on','1')}catch(e){}try{const b=document.getElementById('caRedraw');if(b)b.click()}catch(e){}return _T('🎯 <b>Fit the printed set</b> is open in Creator Studio → Gear → Armor. Hide it again with 🔒 beside it.')},'🎯 fit the printed set');
+cheatRegister('h3828236272',()=>{try{localStorage.setItem('flavius_armfit_on','1')}catch(e){}try{const b=document.getElementById('caRedraw');if(b)b.click()}catch(e){}return _T('🎯 <b>Fit the printed set</b> is open in Creator Studio → Gear → Armor. Hide it again with 🔒 beside it.')},_T('🎯 fit the printed set'));
 if(typeof CHEAT_SHOW!=='undefined')CHEAT_SHOW.push([[72,89,84,86,89,77,80,91],_T('🎯 Fit the printed set — position, size, turn and mirror every printed armor piece on the avatar (Creator Studio → Gear → Armor)')]);
 /* the tool */
 AFIT.side='R';

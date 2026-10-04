@@ -101,6 +101,6 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-afact]');i
 const CA_EQ={head:[['head',_T('Head')]],chest:[['chest',_T('Chest')],['belt',_T('Belt')]],arm:[['sho',_T('Shoulder')],['fore',_T('Forearm')],['hand',_T('Hand')]],leg:[['thigh',_T('Thigh')],['shin',_T('Shin')]]};
 {const base=gearAHTML;gearAHTML=function(){let h=base.apply(this,arguments);try{const d=ST.ca||{};const L=CA_EQ[d.slot]||[];if(!L.length)return h;
   const cur=d.eq&&L.some(x=>x[0]===d.eq)?d.eq:L[0][0];
-  h=h.replace(/(<label>Body location<select data-caf="slot">[\s\S]*?<\/select><\/label>)/,`$1<label>Equip point<select data-caeq>${L.map(([k,l])=>`<option value="${k}" ${k===cur?'selected':''}>${l}</option>`).join('')}</select></label>`)}catch(e){}return h}}
+  h=h.replace(/(<label>Body location<select data-caf="slot">[\s\S]*?<\/select><\/label>)/,`$1<label>${_T`Equip point`}<select data-caeq>${L.map(([k,l])=>`<option value="${k}" ${k===cur?'selected':''}>${l}</option>`).join('')}</select></label>`)}catch(e){}return h}}
 document.addEventListener('change',e=>{const s=e.target.closest('[data-caeq]');if(!s||!ST.ca)return;const d=ST.ca;d.eq=s.value;const p=EQ[d.eq];const F=caFit(d);
   d.fit={slot:d.slot,x:p[0],y:p[1],s:F.s};const t=document.querySelector(`[data-gs="caview"][data-id="${ST.caAvatar?'avatar':'piece'}"]`);if(t)setTimeout(()=>t.click(),0)},true);

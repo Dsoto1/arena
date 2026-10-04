@@ -48,7 +48,7 @@ async function seatToggle(p){if(!seatCanToggle(p))return;const G=S;
 document.addEventListener('click',e=>{const b=e.target.closest('[data-seat]');if(!b||!S)return;e.stopPropagation();const p=S.players[+b.dataset.seat];if(p)seatToggle(p)},true);
 /* the snap: a quiet card over the board while the event resolves */
 function simSnapShow(){const w=cv&&cv.parentElement;if(!w)return;let el=document.getElementById('snapCard');if(!el){el=document.createElement('div');el.id='snapCard';el.className='snapcard';w.appendChild(el)}
-  el.innerHTML='<div class="snapspin">⏭</div><b>Simulating to the end…</b><div class="rc-sub">every fighter in the CPU’s hands</div>';el.hidden=false}
+  el.innerHTML=`<div class="snapspin">⏭</div>${_T`<b>Simulating to the end…</b>`}<div class="rc-sub">${_T`every fighter in the CPU’s hands`}</div>`;el.hidden=false}
 function simSnapHide(){const el=document.getElementById('snapCard');if(el)el.remove();try{draw()}catch(e){}}
 
 /* ================= v0.42 LAURELS FROM THE STANDS =================

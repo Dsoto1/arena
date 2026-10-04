@@ -49,8 +49,8 @@ const armSculptOn=()=>(typeof SETTINGS==='undefined'||(SETTINGS.armorStyle||'dra
     h=h.replace(/<label>Body location<select data-caf="slot">[\s\S]*?<\/select><\/label>/,caEqSelectHTML(d)).replace(/<label>Point<select data-caf="pt">[\s\S]*?<\/select><\/label>/,'');
     /* the sculpted set only with the Sculpted armor style */
     if(!armSculptOn()){const si=h.indexOf('<h4>The sculpted set');if(si>=0){const gi=h.indexOf('<div class="armgrid sysgrid">',si);const c=gi>=0?cutDiv(h,gi):null;if(c)h=h.slice(0,si)+c[1].slice(gi)}
-      h=h.replace(/The <b>sculpted set<\/b> below recreates all \d+ printed pieces — pick any of them \(or choose one under <b>Start from<\/b>\) to begin from its rulebook stats\./,'Choose a printed piece under <b>Start from</b> to begin from its rulebook stats.')}
-    h=h.replace('<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-caf="pair"','<label style="display:flex;gap:6px;align-items:center" title="Unticked: the piece covers one arm or leg — the one it is equipped to"><input type="checkbox" data-caf="pair"');
+      h=h.replace(/The <b>sculpted set<\/b> below recreates all \d+ printed pieces — pick any of them \(or choose one under <b>Start from<\/b>\) to begin from its rulebook stats\./,_T('Choose a printed piece under <b>Start from</b> to begin from its rulebook stats.'))}
+    h=h.replace('<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-caf="pair"',`<label style="display:flex;gap:6px;align-items:center" title="${_T`Unticked: the piece covers one arm or leg — the one it is equipped to`}"><input type="checkbox" data-caf="pair"`);
   }catch(e){console.error(e)}return h}}
 const caRedraw=()=>{const b=document.getElementById('caRedraw');if(b)b.click()};
 document.addEventListener('change',e=>{const s=e.target.closest('[data-caeq2]');if(!s||!ST.ca)return;const d=ST.ca;const R=caEqRow(s.value);if(!R)return;
@@ -81,7 +81,7 @@ afitHTML=function(){const keys=Object.keys(ARM).filter(k=>!ARM[k].custom&&ARM_FI
   return `<div class="card2 afit"><h4 style="margin:0 0 6px">${_T`🎯 Fit the printed set`} <span class="rc-sub">${_T`${done} of ${keys.length} adjusted · saved in your game data (Settings → Save file)`}</span></h4>
    <div class="afgrid"><div id="afPrev" class="afprev" title="${_T`Drag the piece · the wheel scales it`}">${avatarSVG(afitPlayer(AFIT.key))}</div>
    <div><label>${_T`Piece`}<select data-afkey>${keys.map(k=>`<option value="${k}" ${k===AFIT.key?'selected':''}>${ARM_FIT_OVR[k]?'✎ ':''}${esc(ARM[k].n)} · ${ARM[k].slot}${ARM[k].pt&&ARM[k].pt!=='helm'&&ARM[k].pt!=='chest'?' '+ARM[k].pt:''}</option>`).join('')}</select></label>
-    <p class="rc-sub" style="margin:4px 0">Sits on: <b>${esc((caEqRow(f.at)||[0,f.at])[1])}</b>${A.slot==='arm'||A.slot==='leg'?_T(' — the left side mirrors it'):''}. Drag it on the avatar; the wheel scales it.</p>
+    <p class="rc-sub" style="margin:4px 0">${_T`Sits on: <b>${esc((caEqRow(f.at)||[0,f.at])[1])}</b>${A.slot==='arm'||A.slot==='leg'?_T(' — the left side mirrors it'):''}. Drag it on the avatar; the wheel scales it.`}</p>
     ${sl('dx',_T('Across'),-60,60)}${sl('dy','Up / down',-90,90)}${sl('w',_T('Size'),8,140)}${sl('r',_T('Turn'),-60,60)}
     <label class="rc-sub" style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-afflip ${f.flip?'checked':''}> ${_T`Mirror the art`}</label>
     <div class="acts"><button class="btn tksm" type="button" data-afact="prev">◀</button><button class="btn tksm" type="button" data-afact="next">▶</button><button class="btn tksm" type="button" data-afact="reset">${_T`↺ Default`}</button><button class="btn tksm" type="button" data-afact="export">${_T`⇪ Copy as text`}</button></div>

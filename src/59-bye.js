@@ -37,9 +37,9 @@ function byeHTML(){const w=W_(),m=me();const L=LOCATIONS[w.night.loc]||{n:'home'
     <li>${_T`⚕ Rest: injuries heal a week sooner, and no one sulks for missing a bout.`}</li>
     <li>${_T`🏋 Bye-week camp: fighters below their potential may gain +1 rating when the week ends.`}</li>
     <li>${_T`🏛 The Senate pays half of every house’s wages.`}</li></ul>
-   ${w.special&&!w.special.done?'<p class="rc-sub">⭐ An invitational still runs this week — settle it first.</p>':''}</div>${typeof weekLoopBtns==='function'?weekLoopBtns():''}`}
+   ${w.special&&!w.special.done?`<p class="rc-sub">${_T`⭐ An invitational still runs this week — settle it first.`}</p>`:''}</div>${typeof weekLoopBtns==='function'?weekLoopBtns():''}`}
 {const _nh=nightHTML;nightHTML=function(){const w=W_();if(w&&w.night&&w.night.bye&&!(w.special&&!w.special.done))return byeHTML();return _nh.apply(this,arguments)}}
-{const _mh=mgrHTML;mgrHTML=function(){let h=_mh.apply(this,arguments);try{const w=W_();if(w&&w.night&&w.night.bye)h=h.replace('⚔️ Match Week','🌿 Bye week')}catch(e){}return h}}
+{const _mh=mgrHTML;mgrHTML=function(){let h=_mh.apply(this,arguments);try{const w=W_();if(w&&w.night&&w.night.bye)h=h.replace('⚔️ Match Week',_T('🌿 Bye week'))}catch(e){}return h}}
 /* the season table marks the byes */
 {const _st=seasonTabHTML;seasonTabHTML=function(){let h=_st.apply(this,arguments);try{
   h=h.replace(/<tr class="([^"]*)"><td class="n">(▶ )?(\d+)<\/td>(<td class="rc-sub">[^<]*<\/td>)[\s\S]*?<\/tr>/g,(m0,cls,now,wk,date)=>BYE_WKS.includes(+wk)?`<tr class="${cls} sbye"><td class="n">${now||''}${wk}</td>${date}<td>${_T`🏠 Home`}</td><td colspan="2">${_T`<b>🌿 Bye week</b>`} <span class="rc-sub">${_T`no bouts · cart · market day · +${BYE_HOURS} h`}</span></td><td class="sbill"><span class="rc-sub">—</span></td></tr>`:m0)}catch(e){}return h}}

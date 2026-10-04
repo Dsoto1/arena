@@ -51,7 +51,7 @@ advanceMissio=async function(rows){
   return {rec,next:rec.status==='active',msg}};
 {const st=document.createElement('style');st.textContent=`.missiohd{font:400 22px var(--display);margin:4px 0 6px}.missiohd.bad b{color:var(--blood2)}.missiohd.ok b{color:var(--gold2)}`;document.head.appendChild(st)}
 /* the result card of a missio character with no Fate (a no-CF event) */
-{const base=resultCard;resultCard=function(x,place,interim){if(!interim&&x&&!x.fate){const h=base.call(this,x,place,true);return h.replace(/<b>[^<]*<\/b> carried into the next event/,`<b>${x.f} CF</b> · missio — no Fate in this event`)}return base.apply(this,arguments)}}
+{const base=resultCard;resultCard=function(x,place,interim){if(!interim&&x&&!x.fate){const h=base.call(this,x,place,true);return h.replace(/<b>[^<]*<\/b> carried into the next event/,_T`<b>${x.f} CF</b> · missio — no Fate in this event`)}return base.apply(this,arguments)}}
 /* ---------- chariots: the racer rides on their chariot token; the spares on the sand are the printed tokens ---------- */
 /* chTokFlat — a round token lying on the sand: the sheet cell drawn squashed to the iso floor */
 function chTokFlat(art,x,y,w){const im=typeof chTokImg==='function'?chTokImg():null;const i=CHTOK_IDX[art];if(!im||i==null)return false;const cw=im.naturalWidth/5,h=w*0.56;

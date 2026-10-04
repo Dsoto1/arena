@@ -253,7 +253,7 @@ window.addEventListener('click',async e=>{const b=e.target&&e.target.closest&&e.
 /* the Online card of a live match: 🚪 Abandon beside ⚔ Back to the sand */
 {const base=onlRoomTop80;onlRoomTop80=function(){let h=base.apply(this,arguments);try{const L=onlMyLobby();const me=onlMe80();
   if(L&&L.status==='live'&&L.players.some(p=>p.id===me)&&!(ONL.leftMatch||{})[L.id]&&h.includes('data-onl="enter"')){const x=onlLive80Get();const dropped=!!(x&&x.id===L.id&&x.dropped);
-    h=h.replace(/(<button type="button" class="btn primary" data-onl="enter"[^>]*>)[^<]*(<\/button>)/,`$1${dropped?_T('👁 Watch — a CPU fights for you'):_T('⚔ Back to the sand')}$2<button type="button" class="btn" data-onl80f="abandon" data-v="${esc2(L.id)}">🚪 Abandon</button>`)}}catch(e){}return h}}
+    h=h.replace(/(<button type="button" class="btn primary" data-onl="enter"[^>]*>)[^<]*(<\/button>)/,`$1${dropped?_T('👁 Watch — a CPU fights for you'):_T('⚔ Back to the sand')}$2<button type="button" class="btn" data-onl80f="abandon" data-v="${esc2(L.id)}">${_T`🚪 Abandon`}</button>`)}}catch(e){}return h}}
 window.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('#onl [data-onl80f]');if(!b)return;e.preventDefault();e.stopImmediatePropagation();const v=b.dataset.v;
   if(b.dataset.onl80f!=='abandon')return;const L=(ONL.lobbies||[]).find(x=>x.id===v);if(!L)return;const me=onlMe80();const p=L.players.find(q=>q.id===me)||{};
   const c=(ONL.chars||[]).find(x=>x.id===p.char)||ONL.char;const x=onlLive80Get();

@@ -37,7 +37,7 @@ function drawShipBows(){const img=shipImg();if(!img||!S.ships)return;
 /* ---------- the prototype ---------- */
 const PROTO=[['proto1.jpg',_T('The board, mid-game')],['proto2.jpg',_T('The arena and its pillars')],['proto3.jpg',_T('Cards, tokens and the market')],['proto4.jpg',_T('The arena, lit')],['proto5.jpg',_T('The sand, close up')]]; /* TWEAK: captions */
 function protoOpen(){let o=document.getElementById('protoBox');if(o){o.hidden=false;return}
-  o=document.createElement('div');o.id='protoBox';o.setAttribute('role','dialog');o.setAttribute('aria-label','The prototype');
+  o=document.createElement('div');o.id='protoBox';o.setAttribute('role','dialog');o.setAttribute('aria-label',_T('The prototype'));
   o.innerHTML=`<div class="protoin"><button type="button" class="mclose" data-protox aria-label="${_T`Close`}">×</button><h2>${_T`The prototype`}</h2><p class="rc-sub">${_T`The hand-built board game that Flavius Rule Arena was distilled from — by D.Soto.`}</p>
     <div class="protogrid">${PROTO.map(([f,c],i)=>`<figure><img src="${assetURL(f)}" alt="${esc(c)}" loading="lazy" data-protoz="${i}"><figcaption>${esc(c)}</figcaption></figure>`).join('')}</div></div>`;
   document.body.appendChild(o)}
@@ -46,7 +46,7 @@ document.addEventListener('click',e=>{const t=e.target;if(t.closest&&t.closest('
   if(t.closest('[data-protox]')||t===box){box.hidden=true;return}
   const z=t.closest('[data-protoz]');if(z){const f=z.closest('figure');const on=!f.classList.contains('big');box.querySelectorAll('figure.big').forEach(x=>x.classList.remove('big'));if(on)f.classList.add('big')}},true);
 document.addEventListener('keydown',e=>{const box=document.getElementById('protoBox');if(e.key==='Escape'&&box&&!box.hidden){box.hidden=true;e.stopPropagation()}},true);
-{const base=playGuideHTML;playGuideHTML=function(){return base.apply(this,arguments).replace(/<\/div>\s*$/,`<p class="rc-sub" style="margin-top:12px">📷 <button type="button" class="mmlink" data-proto>See the prototype</button> — the hand-built board this game was distilled from.</p></div>`)}}
+{const base=playGuideHTML;playGuideHTML=function(){return base.apply(this,arguments).replace(/<\/div>\s*$/,`<p class="rc-sub" style="margin-top:12px">📷 <button type="button" class="mmlink" data-proto>${_T`See the prototype`}</button> ${_T`— the hand-built board this game was distilled from.`}</p></div>`)}}
 {const st=document.createElement('style');st.textContent=`
 .mmlink{all:unset;cursor:pointer;color:var(--gold2);text-decoration:underline dotted;text-underline-offset:2px}.mmlink:hover,.mmlink:focus-visible{color:#fff3c8;outline:none}
 #protoBox{position:fixed;inset:0;z-index:4000;background:rgba(8,5,3,.86);display:flex;align-items:center;justify-content:center;padding:16px}

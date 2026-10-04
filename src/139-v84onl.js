@@ -142,7 +142,7 @@ function onl84Alert(){if(!onl84AlertsOn())return;const ev=(S&&S.onl&&typeof EV==
   try{if(typeof sfx==='function')sfx('horn')}catch(e){}
   try{if('Notification' in window&&Notification.permission==='granted'){const n=new Notification(_T('⚔ Your turn'),{body:`${ev}${me?' — '+me.name+_T(' waits for your word'):''}`,tag:'flavius-turn'});n.onclick=()=>{try{window.focus();n.close()}catch(e){}}}}catch(e){}
   ONL84.alerts=(ONL84.alerts|0)+1}
-function onl84FlashOff(){if(ONL84.flash){clearInterval(ONL84.flash);ONL84.flash=0;document.title=ONL84.title0||document.title.replace(/^⚔ Your turn — .*/,'Flavius Rule Arena')}}
+function onl84FlashOff(){if(ONL84.flash){clearInterval(ONL84.flash);ONL84.flash=0;document.title=ONL84.title0||document.title.replace(/^⚔ Your turn — .*/,_T('Flavius Rule Arena'))}}
 ONL84.turnTick=function(){const mine=onl84Mine();if(mine&&!ONL84.mineWas&&onl84Away())onl84Alert();if(!mine||!onl84Away())onl84FlashOff();ONL84.mineWas=mine};
 setInterval(()=>{try{ONL84.turnTick()}catch(e){}},700);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)onl84FlashOff()});window.addEventListener('focus',onl84FlashOff);
@@ -150,7 +150,7 @@ function onl84AlertsPop(){const on=onl84AlertsOn();const N='Notification' in win
   const bg=onl83Pop('al84pop',`<h3 class="pop83h">${_T`⚔🔔 Turn alerts`}</h3><p class="rc-sub">${_T`When it is your decision in an online match and this tab is hidden or in the background.`}</p>
     <label class="chk"><input type="checkbox" data-al84="on" ${on?'checked':''}> ${_T`Flash the tab title + a horn <small class="rc-sub">(the game’s mute applies)</small>`}</label>
     <p>${_T`Desktop notice: <b>${perm==='granted'?_T('allowed'):perm==='denied'?_T('blocked by the browser'):perm==='unsupported'?_T('not in this browser'):_T('not asked yet')}</b>`}</p>
-    <div class="acts">${N&&perm==='default'?'<button type="button" class="btn primary" data-al84="ask">Allow desktop notices</button>':''}<button type="button" class="btn" data-al84="x">${_T`Close`}</button></div>`);
+    <div class="acts">${N&&perm==='default'?`<button type="button" class="btn primary" data-al84="ask">${_T`Allow desktop notices`}</button>`:''}<button type="button" class="btn" data-al84="x">${_T`Close`}</button></div>`);
   bg.addEventListener('click',async e=>{const b=e.target.closest('[data-al84]');if(!b)return;const a=b.dataset.al84;
     if(a==='on'){try{localStorage.setItem('flavius_onlturn84',b.checked?'on':'off')}catch(err){}return}
     if(a==='ask'){try{await Notification.requestPermission()}catch(err){}bg.remove();onl84AlertsPop();return}if(a==='x')bg.remove()})}
@@ -242,7 +242,7 @@ function na84Card(I,o){o=o||{};const a=I.w||{};const R=ONLC.rarOf(I.rar||a.rar);
      ${U?`<p class="nw83-uq"><b>${esc2(U.n)}</b> — ${esc2(U.d)}</p>`:''}
      <small class="nw83-val">${brk?_T('💔 Broken · '):''}Value ${c83()} <b>${ONLC.valueOf(I)}</b></small>${o.hist?onl83Hist(I.hist):''}`}</div></div>`}
 {const base=nw83Card;nw83Card=function(I,o){if(I&&(I.kind==='a'||(I.w&&I.w.kind==='a')||ONLC.isNamedA(I.item)))return na84Card({...I,kind:'a'},o);
-  const h=base.apply(this,arguments);const R=ONLC.rarOf((I&&(I.rar||(I.w&&I.w.rar)))||'common');return R.k==='common'?h:h.replace('<div class="nw83 ','<div class="nw83 holo84 ')}}
+  const h=base.apply(this,arguments);const R=ONLC.rarOf((I&&(I.rar||(I.w&&I.w.rar)))||'common');return R.k==='common'?h:h.replace('<div class="nw83 ',_T('<div class="nw83 holo84 '))}}
 /* the owner history knows the auction */
 {const base=onl83Hist;onl83Hist=function(h){if(!(h||[]).some(x=>x&&x.how==='auction'))return base.apply(this,arguments);
   return `<div class="hist83">${h.slice(-4).map(x=>`<small>${x.how==='auction'?_T('🔨 won at Flavius’s auction by'):x.how==='taken'?_T('⚔ taken from'):_T('🪦 fell with')} <b>${esc2(x.glad||'?')}</b>${x.house?` · ${esc2(onlHouse82(x.house))}`:''} · ${esc2(date83(x.when))}</small>`).join('')}</div>`}}
@@ -263,7 +263,7 @@ function onl84PlCard(){const F=onl84Fx();const ok=!!ONL.char&&!onlIsGuest82();
     const wk=onl84WeekCard();const re=/<div class="card2 wk83"><b>⚡ This week<\/b>(?:<div class="onl-ch">[\s\S]*?<\/div>)*<\/div>/;
     if(re.test(h))h=h.replace(re,wk);else h=h.replace(/<div class="a81-week card2">[\s\S]*?<\/div>(\s*<div class="a81-forum">)/,`<div class="a81-week">${wk}</div>$1`);
     h=h.replace('<div class="onl-pls onl-pls81">','<div class="onl-pls onl-pls81">'+onl84PlCard());
-    h=h.replace(/(<button type="button" class="btn tksm[^"]*" data-onl="quiet"[^>]*>[^<]*<\/button>)/,`$1<button type="button" class="btn tksm" data-onl84="alerts" title="Your-turn alerts">⚔🔔</button>`);
+    h=h.replace(/(<button type="button" class="btn tksm[^"]*" data-onl="quiet"[^>]*>[^<]*<\/button>)/,`$1<button type="button" class="btn tksm" data-onl84="alerts" title="${_T`Your-turn alerts`}">⚔🔔</button>`);
     h=onl84TodayChips(h)}catch(e){console.error(e)}return h}}
 /* the weekly playlist: a waiting room of this week's event at this week's city with a free seat, else a new one there */
 async function onl84WeekGo(ranked){const F=onl84Fx();const R=ONL.char?ONLC.rankFor(ONL.char).k:'tiro';
@@ -278,7 +278,7 @@ function onl84TodayChips(h){const T=typeof ONL80F!=='undefined'?ONL80F.today:nul
 
 /* ---------------- 🔨 the AUCTION tab ---------------- */
 function onl84Auction(){if(!ONL84.auc||Date.now()-ONL84.aucAt>10000){ONL84.aucAt=Date.now();NET.req('auction.list',{}).then(r=>{ONL84.auc=r;ONL84.aucSkew=(r.now||Date.now())-Date.now();if(ONL.tab==='auction'&&document.getElementById('onl')&&!onlFocus80())onlRedraw()}).catch(e=>{ONL84.auc=ONL84.auc||{lots:[],past:[],mine:{},err:e.message}})}
-  const X=ONL84.auc;if(!X)return '<h3>🔨 Flavius’s Auction</h3><p class="rc-sub">The auctioneer unrolls his lists…</p>';const M=X.mine||{};const now=Date.now()+(ONL84.aucSkew||0);
+  const X=ONL84.auc;if(!X)return `<h3>${_T`🔨 Flavius’s Auction`}</h3><p class="rc-sub">${_T`The auctioneer unrolls his lists…`}</p>`;const M=X.mine||{};const now=Date.now()+(ONL84.aucSkew||0);
   const lot=(L,past)=>{const I={item:L.item,named:true,kind:L.kind,rar:L.rar,w:L.w||{n:L.n,rar:L.rar},val:L.val,st:'whole',hist:L.hist||[]};const left=L.ends-now;
     const lead=L.bid?`<div class="au84-lead ${L.bid.mine?'me':''}">${_T`🏛 <b>${esc2(L.bid.name)}</b>${L.bid.dname?` · ${esc2(onlHouse82(L.bid.dname))}`:''} leads with ${c83()} <b>${L.bid.amt}</b>`}</div>`:`<div class="au84-lead none">${_T`No bid yet · opens at ${c83()} <b>${L.min}</b>`}</div>`;
     const can=!past&&!L.done&&!M.why&&!L.mine&&(!M.lead||M.lead===L.id)&&!M.won;
@@ -290,9 +290,9 @@ function onl84Auction(){if(!ONL84.auc||Date.now()-ONL84.aucAt>10000){ONL84.aucAt
       ${(L.bids||[]).length?`<details class="au84-bids"><summary>${_T`${L.bids.length} bid${L.bids.length===1?'':'s'}`}</summary>${L.bids.slice().reverse().map(b=>`<small>${c83()} ${b.amt} · ${esc2(b.name)}${b.dname?` (${esc2(onlHouse82(b.dname))})`:''}</small>`).join('')}</details>`:''}</div>`};
   const wk=X.week||{};
   return `<div class="onl-lbtop"><h3>${_T`🔨 Flavius’s Auction`} <span class="rc-sub">${_T`season ${wk.season||'—'}, week ${wk.wk||'—'}`}</span></h3><div class="acts"><button type="button" class="btn tksm" data-onl84="aur">↻</button></div></div>
-   <p class="rc-sub au84-intro">Only Flavius sells: named pieces of the fallen, back from his chest, with every owner they had. Veteranus and above bid; your coin waits in escrow and comes back the moment you are outbid. One win a house a week; the winning coin goes to Flavius.</p>
-   ${M.won?'<div class="card2 au84-won">🔨 Your house won a lot this week — it is in the Storeroom.</div>':''}
-   <div class="au84-grid">${(X.lots||[]).map(L=>lot(L,false)).join('')||'<p class="rc-sub">No lots this week — Flavius’s chest holds no fallen named pieces yet.</p>'}</div>
+   <p class="rc-sub au84-intro">${_T`Only Flavius sells: named pieces of the fallen, back from his chest, with every owner they had. Veteranus and above bid; your coin waits in escrow and comes back the moment you are outbid. One win a house a week; the winning coin goes to Flavius.`}</p>
+   ${M.won?`<div class="card2 au84-won">${_T`🔨 Your house won a lot this week — it is in the Storeroom.`}</div>`:''}
+   <div class="au84-grid">${(X.lots||[]).map(L=>lot(L,false)).join('')||`<p class="rc-sub">${_T`No lots this week — Flavius’s chest holds no fallen named pieces yet.`}</p>`}</div>
    ${(X.past||[]).length?`<h4 class="onl-h">${_T`Last week`}</h4><div class="au84-grid past">${X.past.map(L=>lot(L,true)).join('')}</div>`:''}`}
 setInterval(()=>{try{for(const el of document.querySelectorAll('.au84-cd[data-ends]')){const s=el.querySelector('span');const t=onl84Left(+el.dataset.ends-(ONL84.aucSkew||0));if(s&&s.textContent!==t)s.textContent=t}}catch(e){}},1000);
 {const base=onlHTML;onlHTML=function(){const want=ONL.tab==='auction';if(want)ONL.tab='hall';let h;try{h=base.apply(this,arguments)}finally{if(want)ONL.tab='auction'}

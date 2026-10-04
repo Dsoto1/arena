@@ -11,7 +11,7 @@
    ===================================================================== */
 const CH_CARDS59=[['chRed',_T('Invicta Gloria')],['chBlue',_T('Azureus Magnus')],['chTeal',_T('Bellum Quadriga')],['chGold',_T('Aureus Triumphus')],['chSilver',_T('Bellator Aequus')],['chPurple',_T('Fulgens Velox')]];
 chariotDraft=async function(){
-  log('Chariot draft — a snake draft: every racer drafts a chariot card, head armor, chest armor and a level 1-2 weapon; wheel and horse tokens are dealt at random.','hd');
+  log(_T('Chariot draft — a snake draft: every racer drafts a chariot card, head armor, chest armor and a level 1-2 weapon; wheel and horse tokens are dealt at random.'),'hd');
   const heads=['galea','galea','cassis','crista','murmillo','cassis'],chests=['balteus','pectorale','pectorale','lorica','lorica','balteus1'],weps=[...MARKET_W[1],...MARKET_W[2]];
   const rounds=[[_T('Chariot'),CH_CARDS59.map(x=>x[0]),'c'],[_T('Head armor'),heads,'a'],[_T('Chest armor'),chests,'a'],[_T('Weapon'),weps,'w']];
   rounds.forEach(([title,pool,kind],ri)=>rounds[ri].avail=[...pool]);
@@ -19,10 +19,10 @@ chariotDraft=async function(){
     for(const p of order){let k;
       if(kind==='c'){const want=p.ch?p.ch.art:null;
         if(p.cpu)k=avail.includes(want)?want:avail[0];
-        else{const i=await modal(_T`Draft · ${p.name} · ${title}`,'<p>Pick your chariot card.</p>',avail.map((x,i)=>({label:CH_CARDS59.find(c=>c[0]===x)[1],value:i,card:'g:'+x})));k=avail[i??0]}
+        else{const i=await modal(_T`Draft · ${p.name} · ${title}`,`<p>${_T`Pick your chariot card.`}</p>`,avail.map((x,i)=>({label:CH_CARDS59.find(c=>c[0]===x)[1],value:i,card:'g:'+x})));k=avail[i??0]}
         avail.splice(avail.indexOf(k),1);if(p.ch){p.ch.art=k;p.ch.name=CH_CARDS59.find(c=>c[0]===k)[1]}log(_T`${nm(p)} drafts the chariot <b>${esc(p.ch?p.ch.name:k)}</b>.`);continue}
       if(p.cpu)k=avail.sort((a,b)=>itemValue(kind,b)-itemValue(kind,a))[0];
-      else{const i=await modal(_T`Draft · ${p.name} · ${title}`,'<p>Pick one.</p>',avail.map((x,i)=>({label:kind==='w'?W[x].n:ARM[x].n,sub:kind==='w'?wStats(mkW(x)):armorDesc(x),value:i})));k=avail[i??0]}
+      else{const i=await modal(_T`Draft · ${p.name} · ${title}`,`<p>${_T`Pick one.`}</p>`,avail.map((x,i)=>({label:kind==='w'?W[x].n:ARM[x].n,sub:kind==='w'?wStats(mkW(x)):armorDesc(x),value:i})));k=avail[i??0]}
       avail.splice(avail.indexOf(k),1);
       if(kind==='w')p.wR=mkW(k);else equipPiece(p,k,ARM[k].slot);
       log(_T`${nm(p)} drafts ${kind==='w'?W[k].n:ARM[k].n}.`)}}

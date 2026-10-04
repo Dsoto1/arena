@@ -86,7 +86,7 @@ async function chStep(player,fromR,fromC){
     if(o==='merc1'||o==='merc2'){const v=o==='merc1'?1:2;player.mv+=v;log(_T`Speed of Mercury: +${v} movement.`)}
     else if(o==='cf1'||o==='cf2'){const v=o==='cf1'?1:2;cfWhy(_T('breaking pots'));player.cf+=v;log(_T`The crowd roars: +${v} CF.`)}
     else if(o==='curse'){
-      let pay;if(player.cpu)pay=player.cf>=6;else pay=player.cf>=3&&await modal(_T('Curse Tablet'),'<p>Pay 3 CF, or roll a d6 and deal that much damage to both your horse and your wheel.</p>',[{label:_T('Pay 3 CF'),value:1,primary:1},{label:_T('Roll the d6'),value:0}]);
+      let pay;if(player.cpu)pay=player.cf>=6;else pay=player.cf>=3&&await modal(_T('Curse Tablet'),`<p>${_T`Pay 3 CF, or roll a d6 and deal that much damage to both your horse and your wheel.`}</p>`,[{label:_T('Pay 3 CF'),value:1,primary:1},{label:_T('Roll the d6'),value:0}]);
       if(pay){player.cf-=3;log(_T`${nm(player)} pays 3 CF to lift the Curse Tablet.`)}
       else{const d=d6();log(_T`Curse Tablet: ${nm(player)} rolls ${d}.`,'bad');chHitPart(player,'wheel',d);chHitPart(player,'horse',d)}
     }
@@ -109,7 +109,7 @@ async function chAttack(player,source,target){
   const locs=LOCS.filter(l=>q.hp[l]>0);
   let tgt;
   if(player.cpu)tgt=parts.includes('horse')?'horse':parts.includes('wheel')?'wheel':locs.sort((a,b)=>(q.hp[a]+q.ap[a])-(q.hp[b]+q.ap[b]))[0];
-  else tgt=await modal(_T`Attack ${q.name}`,'<p>In a chariot race the attacker chooses the target: the wheel, the horse, or any body location.</p>',[...parts.map(x=>({label:x==='wheel'?_T`${q.ch.wheel.name||_T('Wheel')} (${q.ch.wheel.hp} HP)`:_T`${q.ch.horse.name||_T('Horse')} (${q.ch.horse.sides[q.ch.horse.face].hp-q.ch.horse.dmg} HP)`,card:x==='wheel'?'h:'+(q.ch.wheel.art||'wheel8'):'h:'+(q.ch.horse.sides[q.ch.horse.face].art||'saxoA'),value:x})),...locs.map(l=>({label:LOCN[l],sub:_T`AP ${q.ap[l]} · HP ${q.hp[l]}`,value:l}))]);
+  else tgt=await modal(_T`Attack ${q.name}`,`<p>${_T`In a chariot race the attacker chooses the target: the wheel, the horse, or any body location.`}</p>`,[...parts.map(x=>({label:x==='wheel'?_T`${q.ch.wheel.name||_T('Wheel')} (${q.ch.wheel.hp} HP)`:_T`${q.ch.horse.name||_T('Horse')} (${q.ch.horse.sides[q.ch.horse.face].hp-q.ch.horse.dmg} HP)`,card:x==='wheel'?'h:'+(q.ch.wheel.art||'wheel8'):'h:'+(q.ch.horse.sides[q.ch.horse.face].art||'saxoA'),value:x})),...locs.map(l=>({label:LOCN[l],sub:_T`AP ${q.ap[l]} · HP ${q.hp[l]}`,value:l}))]);
   const hits=rollHits(2),h=cnt(hits),dmg=h*pw+(h?(hasCestus(player,source.arm)?1:0):0);
   const pre=_T`${nm(player)} attacks ${nm(q)} with ${w.n} ${diceHtml(hits)} = ${dmg}`;
   if(tgt==='wheel'||tgt==='horse'){log(`${pre} → ${tgt}`);chHitPart(q,tgt,dmg)}
@@ -134,7 +134,7 @@ async function chariotDraft(){
     for(const p of S.players){
       let k;
       if(p.cpu)k=avail.sort((a,b)=>itemValue(kind,b)-itemValue(kind,a))[0];
-      else{const i=await modal(_T`Draft · ${p.name} · ${title}`,'<p>Pick one.</p>',avail.map((x,i)=>({label:kind==='w'?W[x].n:ARM[x].n,sub:kind==='w'?wStats(mkW(x)):armorDesc(x),value:i})));k=avail[i??0]}
+      else{const i=await modal(_T`Draft · ${p.name} · ${title}`,`<p>${_T`Pick one.`}</p>`,avail.map((x,i)=>({label:kind==='w'?W[x].n:ARM[x].n,sub:kind==='w'?wStats(mkW(x)):armorDesc(x),value:i})));k=avail[i??0]}
       avail.splice(avail.indexOf(k),1);
       if(kind==='w')p.wR=mkW(k);else equipPiece(p,k,ARM[k].slot);
       log(_T`${nm(p)} drafts ${kind==='w'?W[k].n:ARM[k].n}.`);

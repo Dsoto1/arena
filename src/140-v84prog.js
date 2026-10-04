@@ -154,7 +154,7 @@ function pg84All(){const w=typeof W_==='function'?W_():null;if(!w||!w.mgrs)retur
     return `<g class="pg84mk${mine?' mine':''}" transform="translate(${x+34} ${y+30})"><circle r="21" fill="${mine?'#f3e6c8':'#cfc6b4'}" stroke="${mine?'#a3241c':'#6b6358'}" stroke-width="4"/><text y="8" text-anchor="middle" font-size="22">🖌</text><title>🖌 ${esc(L.n)}\n${tip}</title></g>`}).join('');
   const i=h.lastIndexOf('</svg>');return i<0?h:h.slice(0,i)+`<g class="pg84mks">${mk}</g>`+h.slice(i)}catch(e){console.error(e);return h}}}
 {const base=cityTileHTML;cityTileHTML=function(){const h=base.apply(this,arguments);try{const F=hubFocus();const L=LOCATIONS[F];const all=pg84All().filter(o=>o.P.cities.includes(F));
-  const mark='<div class="sect">🏛 The city today</div>';if(!all.length||!L||!h.includes(mark))return h;
+  const mark=`<div class="sect">${_T`🏛 The city today`}</div>`;if(!all.length||!L||!h.includes(mark))return h;
   const line=`<p class="rc-sub pg84city">${_T`🖌 On the walls: ${all.map(({m,P})=>`<b>${m.isPlayer?'your':esc(m.ludus)}</b> ${pg84Dead(P)?_T('memorial for'):_T('notices for')} ${esc(P.gname)}`).join(' · ')}`}</p>`;
   return h.replace(mark,line+mark)}catch(e){console.error(e);return h}}}
 {const st=document.createElement('style');st.textContent=`

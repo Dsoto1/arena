@@ -52,7 +52,7 @@ function recFit(){const t=document.getElementById('recTable');if(!t)return;const
   const v=Math.max(floor,want)+'px';if(t.style.maxHeight!==v)t.style.maxHeight=v}
 /* the header shows the training hours beside the recruiting hours */
 {const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(!w||w.dead||!me())return h;
-  h=h.replace(/(Recruiting hours [^<]*<\/span>)/,`$1<span class="badge ${thLeft(w)?'thrs':''}" title="Spend them in the Training Yard">Training hours ${thLeft(w)}/${thMax()}</span>`)}catch(e){}return h}}
+  h=h.replace(/(Recruiting hours [^<]*<\/span>)/,`$1<span class="badge ${thLeft(w)?'thrs':''}" title="${_T`Spend them in the Training Yard`}">${_T`Training hours ${thLeft(w)}/${thMax()}`}</span>`)}catch(e){}return h}}
 
 /* ---------- the plan: clicks ---------- */
 document.addEventListener('click',e=>{const b=e.target.closest('[data-tp]');if(!b||b.disabled)return;e.preventDefault();const w=W_(),m=me();if(!w||!m)return;const P=thPlan(w);
@@ -97,13 +97,13 @@ function thPlanHTML(){const w=W_(),m=me();const P=thPlan(w);const ros=rosterOf(m
   return `<div class="card2"><div class="sect" style="margin-top:0">${_T`⏳ Training hours`} <span class="rc-sub">${_T`${left} of ${mx} left · spent when the week ends`}</span></div>
     <div class="thmeter"><i style="width:${Math.round((mx-left)/Math.max(1,mx)*100)}%"></i></div>
     <div class="throw">${_T`🧑‍🏫 <b>Doctore</b> ${ctr('doc',P.doc,left>0&&P.doc<TH_DOC,P.doc>0)}`}<span class="rc-sub">${_T`each hour sharpens this week's regime (max ${TH_DOC})`}</span></div>
-    ${rows||'<p class="rc-sub">No fighters in the yard.</p>'}
+    ${rows||`<p class="rc-sub">${_T`No fighters in the yard.`}</p>`}
     <p class="rc-sub" style="margin:4px 0">${_T`🏃 Speed · 💪 Strength · 📜 Tactics (Intelligence) · 🎭 Crowd work (Charisma, fame) · 🩹 Rehab (2 h = a week sooner) · max ${TH_FIGHTER} h a fighter`}</p>
     ${ros.filter(g=>!g.inj).length>1?`<div class="throw"><select class="tin" id="thPa" style="width:auto">${opts}</select> & <select class="tin" id="thPb" style="width:auto">${ros.filter(g=>!g.inj).map((g,i)=>`<option value="${g.id}" ${i===1?'selected':''}>${esc(g.name)}</option>`).join('')}</select>
       <button class="btn tksm" type="button" data-tp="pair|bond" ${left<2?'disabled':''}>🤝 Bond · 2 h</button><button class="btn tksm" type="button" data-tp="pair|spar" ${left<2?'disabled':''}>⚔ Spar · 2 h</button></div>`:''}
     ${pairs}${(w.lastPlan||[]).length?`<div class="rc-sub" style="margin-top:6px">${_T`Last week: ${w.lastPlan.slice(0,4).map(x=>x).join(' · ')}`}</div>`:''}</div>`}
 {const base=practiceHTML;practiceHTML=function(){const h=base.apply(this,arguments);try{
-  const mark='<div class="sect" style="margin-top:14px">⚔ Train with other teams</div>';const i=h.indexOf(mark);if(i<0)return h;
+  const mark=`<div class="sect" style="margin-top:14px">${_T`⚔ Train with other teams`}</div>`;const i=h.indexOf(mark);if(i<0)return h;
   let yard=h.slice(0,i),arena=h.slice(i+mark.length);
   const j=yard.indexOf('<div class="roomtiles">');const banner=j>0?yard.slice(0,j):'';if(j>0)yard=yard.slice(j);
   return `${banner}<div class="yardtop">${thPlanHTML()}<div class="card2"><div class="sect" style="margin-top:0">${_T`⚔ Train with other teams`}</div>${arena}</div></div>${yard}`}catch(e){console.error(e);return h}}}

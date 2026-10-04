@@ -46,7 +46,7 @@ const MTUT_STEPS=[
   // match night
   {spot:'[data-mg="tab"][data-id="night"]',say:_T`The heart of it: <b>⚔️ Match Week</b>.`,tab:'night'},
   {spot:'[data-mg="city"]',spotOnly:1,say:_T`Each week's games are in one city — and in that week you can walk its <b>city square</b>: shops, the tavern, the auction block, the crowd. Explore it in your own career (after paying the road, away from home). Not in this lesson.`,next:1},
-  {spot:'#mgrPane .bout',spotOnly:1,say:`Three bouts: <b>undercard</b>, <b>feature</b>, <b>main event</b>. Every fighter you enter earns an appearance fee; the winner's house takes the <b>purse</b>. They are fought in order.`,next:1},
+  {spot:'#mgrPane .bout',spotOnly:1,say:_T`Three bouts: <b>undercard</b>, <b>feature</b>, <b>main event</b>. Every fighter you enter earns an appearance fee; the winner's house takes the <b>purse</b>. They are fought in order.`,next:1},
   {spot:mtUp('#ent0','.bslip'),say:()=>_T`Pick <b>${mtNm('A')}</b> in the Undercard's list and press <b>Enter your fighter</b>.`,until:()=>mtIn(0,'A')},
   {spot:mtUp('#mgrPane [data-mg="watch"][data-id="0"]','.acts'),say:()=>_T`Now watch ${mtNm('A')} fight — <b>👁 Watch it live</b> from your box, or <b>🎟 Spectate</b> from a seat in the stands.`,until:()=>!!(S&&S.mgrCtx&&!S.over&&!mtMgrShown()),allow:['[data-mg="watch"][data-id="0"]','[data-mg="spect"][data-id="0"]']},
   {arena:1,spot:'#btnSimEnd',say:_T`The bout is live on the sand (close the briefing first — it tells you the event's rules). You could watch it to the end; for the lesson, press <b>⏭ Sim to end</b> to resolve it now.`,until:()=>{const b=mtBout(0);return !!(b&&b.done)||!!(S&&S.over)}},
@@ -57,7 +57,7 @@ const MTUT_STEPS=[
   {spot:()=>document.querySelector('#mgrPane [data-mg="sim"][data-id="1"]'),say:_T`Slip in hand. The card runs in order — press <b>⚡ Simulate</b> on the Feature bout to fight it now. (You could also watch it or fight it yourself.)`,until:()=>{const b=mtBout(1);return !!(b&&b.done)&&!MGR.busy}},
   {spot:mtUp('#ent2','.bslip'),say:()=>_T`The <b>Main event</b> — the big purse. Pick <b>${mtNm('B')}</b> and press <b>Enter your fighter</b>.`,until:()=>mtIn(2,'B')},
   {spot:'[data-mg="simall"]',say:()=>_T`Now <b>⚡ Simulate Match Week</b> — the main event is fought in a moment, with ${mtNm('B')} in it. (In your own career you can also <b>watch it live</b> or <b>fight it yourself</b> — take your fighter's reins on the sand. For the lesson, we simulate.)`,until:()=>{const w=mtW();return w&&w.night.bouts.every(b=>b.done)&&!MGR.busy}},
-  {spot:'#nightRes',spotOnly:1,say:`<b>The results.</b> Each fighter's place, the <b>Crowd Favor</b> they earned and the <b>Fate</b> it bought (under 17 CF: condemned; 17-19: the Thumb; 20-49: back to the ludus; 50+: the rudis), your purses and fees, the crowd — and your betting slip.`,next:1},
+  {spot:'#nightRes',spotOnly:1,say:_T`<b>The results.</b> Each fighter's place, the <b>Crowd Favor</b> they earned and the <b>Fate</b> it bought (under 17 CF: condemned; 17-19: the Thumb; 20-49: back to the ludus; 50+: the rudis), your purses and fees, the crowd — and your betting slip.`,next:1},
   {spot:'#pendbox',say:_T`Another verdict from the main event — settle it the same way before the week can end.`,until:()=>!(mtW().pend||[]).length&&!MGR.busy,allow:['[data-mg="pthumb"]','[data-mg="pblood"]','[data-mg="prudis"]']},
   // the league
   {spot:'[data-mg="tab"][data-id="league"]',say:_T`<b>📊 League</b> — the table. A win is 3 points, a runner-up finish 1; the top four go to the Superbus at season's end.`,tab:'league'},
@@ -81,13 +81,13 @@ function mtCoach(){if(HEADLESS)return;let el=document.getElementById('mtutCoach'
   if(!MTUT.on||!mtW()){if(el)el.remove();document.querySelectorAll('.tutspot').forEach(x=>x.classList.remove('tutspot'));return}
   if(!el){el=document.createElement('div');el.id='mtutCoach';el.className='tutcoach mtut';document.body.appendChild(el);
     el.addEventListener('click',e=>{const b=e.target.closest('[data-mt]');if(!b)return;const a=b.dataset.mt;if(a==='next')mtNext();else if(a==='finish')mtDone();else if(a==='leave')mtutLeave();else if(a==='hide'){MTUT.hidden=1;el.dataset.h='';mtCoach()}else if(a==='unhide'){MTUT.hidden=0;el.dataset.h='';mtCoach()}})}
-  if(MTUT.hidden){const h='<button class="btn tksm tutpill" type="button" data-mt="unhide">🎓 Show the coach</button>';if(el.dataset.h!==h){el.dataset.h=h;el.innerHTML=h;el.classList.add('mini')}return}
+  if(MTUT.hidden){const h=`<button class="btn tksm tutpill" type="button" data-mt="unhide">${_T`🎓 Show the coach`}</button>`;if(el.dataset.h!==h){el.dataset.h=h;el.innerHTML=h;el.classList.add('mini')}return}
   el.classList.remove('mini');
   const st=MTUT_STEPS[MTUT.step];if(!st)return;
   // light the part in question (re-applied as the window redraws)
   const tgt=mtEl(st.spot);document.querySelectorAll('.tutspot').forEach(x=>{if(x!==tgt)x.classList.remove('tutspot')});if(tgt&&!tgt.classList.contains('tutspot')){tgt.classList.add('tutspot');if(MTUT.spotted!==MTUT.step){MTUT.spotted=MTUT.step;try{tgt.scrollIntoView({block:'nearest',behavior:'smooth'})}catch(e){}}}
   const h=`<img src="${typeof flavFaceURL==='function'?flavFaceURL(st.last?'cheer':'calm'):''}" alt=""><div><div class="tutstep">${_T`Learn to play · Manager mode · ${MTUT.step+1} of ${MTUT_STEPS.length}`}</div><div>${mtSay(st)}</div>
-    <div class="acts" style="margin-top:6px">${st.finish?`<button class="btn primary tksm" type="button" data-mt="finish">${_T`✔ Finish this lesson`}</button>`:st.next?`<button class="btn primary tksm" type="button" data-mt="next">${_T`Next ▶`}</button>`:''}${st.last?'':'<button class="btn tksm" type="button" data-mt="hide">Hide the coach</button><button class="btn tksm" type="button" data-mt="leave">✖ Leave the lesson</button>'}</div></div>`;
+    <div class="acts" style="margin-top:6px">${st.finish?`<button class="btn primary tksm" type="button" data-mt="finish">${_T`✔ Finish this lesson`}</button>`:st.next?`<button class="btn primary tksm" type="button" data-mt="next">${_T`Next ▶`}</button>`:''}${st.last?'':`<button class="btn tksm" type="button" data-mt="hide">${_T`Hide the coach`}</button><button class="btn tksm" type="button" data-mt="leave">${_T`✖ Leave the lesson`}</button>`}</div></div>`;
   if(el.dataset.h!==h){el.dataset.h=h;el.innerHTML=h}}
 /* v0.46: the Manager window counts as shown only while the modal is up (its body can linger hidden in the DOM) */
 function mtMgrShown(){const e=document.getElementById('mgrBody');const m=document.getElementById('modal');return !!e&&!!m&&!m.hidden}
@@ -129,7 +129,7 @@ async function startManagerTutorial(){
 function mtCleanup(){MTUT.on=false;const el=document.getElementById('mtutCoach');if(el)el.remove();document.querySelectorAll('.tutspot').forEach(x=>x.classList.remove('tutspot'));
   if(MGR.world&&MGR.world.tutorial){MGR.world=null;if(typeof ACTIVE!=='undefined'&&ACTIVE.world&&ACTIVE.world.tutorial){ACTIVE.world=null;ACTIVE.cid=null}}}
 async function mtutLeave(){const ok=await new Promise(r=>{if(typeof modalBusy==='function'&&modalBusy()&&!$('#mgrBody')&&!(S&&S.mgrCtx)){r(true);return}
-    const cont=()=>modal(_T('Leave the lesson?'),'<p>The sandbox league is discarded and you return to the main menu. You can take the lesson again from the menu or Rules &amp; strategy → 🎓 Lessons.</p>',[{label:_T('Leave the lesson'),value:1,primary:1},{label:_T('Stay'),value:0}],{close:0}).then(r);
+    const cont=()=>modal(_T('Leave the lesson?'),`<p>${_T`The sandbox league is discarded and you return to the main menu. You can take the lesson again from the menu or Rules &amp; strategy → 🎓 Lessons.`}</p>`,[{label:_T('Leave the lesson'),value:1,primary:1},{label:_T('Stay'),value:0}],{close:0}).then(r);
     if($('#mgrBody')&&CUR_MODAL){MTUT.reopen=1;CUR_MODAL.done('mtleave');setTimeout(cont,120)}else cont()});
   if(!ok){MTUT.reopen=0;if(!$('#mgrBody')&&!(S&&S.mgrCtx&&!S.over)){openManager();setTimeout(mtCoach,400)}return}
   MTUT.reopen=0;if(S&&S.mgrCtx&&!S.over)S.over=true;mtCleanup();if(!$('#modal').hidden&&typeof modalDismiss==='function')modalDismiss();const go=()=>{if(typeof menuShow==='function')menuShow()};if(typeof fadeTo==='function')fadeTo(go);else go()}

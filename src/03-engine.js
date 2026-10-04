@@ -480,13 +480,13 @@ async function distributeAP(player, n, why) {
 async function apUp(player, n) {
   const locs = LOCS.filter(l => player.hp[l] > 0 && player.ap[l] > 0 && player.ap[l] < 7);
   if (!locs.length) {
-    if (!player.cpu) await modal(_T('No armored location'), '<p>AP upgrades only apply to a location that already has armor.</p>', [{
+    if (!player.cpu) await modal(_T('No armored location'), `<p>${_T`AP upgrades only apply to a location that already has armor.`}</p>`, [{
       label: 'OK',
       value: 1
     }]);
     return false;
   }
-  const loc = player.cpu ? locs.sort((a, b) => player.ap[a] - player.ap[b] || HEAL_ORDER.indexOf(a) - HEAL_ORDER.indexOf(b))[0] : await modal(_T`AP Upgrade (+${n})`, '<p>Choose one armored location. A location can never exceed 7 AP.</p>', locs.map(l => ({
+  const loc = player.cpu ? locs.sort((a, b) => player.ap[a] - player.ap[b] || HEAL_ORDER.indexOf(a) - HEAL_ORDER.indexOf(b))[0] : await modal(_T`AP Upgrade (+${n})`, `<p>${_T`Choose one armored location. A location can never exceed 7 AP.`}</p>`, locs.map(l => ({
     label: LOCN[l],
     sub: _T`AP ${player.ap[l]} → ${Math.min(7, player.ap[l] + n)}`,
     value: l
@@ -1319,7 +1319,7 @@ async function marketRoll(player, kind, lv, {
   // returns key
   let slot;
   if (player.mchoice && !free) {
-    slot = player.cpu ? [1, 2, 3].sort((a, b) => itemValue(kind, S.market[kind][lv].slots[b - 1]) - itemValue(kind, S.market[kind][lv].slots[a - 1]))[0] : await modal(_T('Choose'), '<p>Pick the slot you want.</p>', [1, 2, 3, 4].map(s => ({
+    slot = player.cpu ? [1, 2, 3].sort((a, b) => itemValue(kind, S.market[kind][lv].slots[b - 1]) - itemValue(kind, S.market[kind][lv].slots[a - 1]))[0] : await modal(_T('Choose'), `<p>${_T`Pick the slot you want.`}</p>`, [1, 2, 3, 4].map(s => ({
       label: _T`Slot ${s}: ${kName(kind, marketPeek(kind, lv, s))}`,
       value: s,
       card: kind === 'w' && s <= 3 && S.market.w[lv].slots[s - 1] ? 'w:' + S.market.w[lv].slots[s - 1] : null
@@ -1456,7 +1456,7 @@ async function chooseMarket(player, kind, lv) {
     return;
   }
   let k;
-  if (player.cpu) k = pool.sort((a, b) => itemValue(kind, b) - itemValue(kind, a))[0];else k = await modal(_T`Level ${lv} ${kind === 'w' ? _T('weapon') : _T('armor')}`, '<p>Choose any remaining piece.</p>', pool.map(x => ({
+  if (player.cpu) k = pool.sort((a, b) => itemValue(kind, b) - itemValue(kind, a))[0];else k = await modal(_T`Level ${lv} ${kind === 'w' ? _T('weapon') : _T('armor')}`, `<p>${_T`Choose any remaining piece.`}</p>`, pool.map(x => ({
     label: kind === 'w' ? W[x].n : ARM[x].n,
     sub: kind === 'w' ? wStats(mkW(x)) : armorDesc(x),
     value: x,

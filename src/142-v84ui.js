@@ -84,16 +84,16 @@ function setGeneral84(h){
   return h+`<div class="mbtns rst84"><button type="button" class="btn" data-rst84="1">${_T`↺ Restore all defaults<small>settings and theme · saves stay</small>`}</button></div>`}
 function setThemes84(h,base){
   h=h.replace(/<label class="slider"><span>Text &amp; UI size<\/span>[\s\S]*?<\/label>|<label class="slider"><span>Text & UI size<\/span>[\s\S]*?<\/label>/,'');
-  h=h.replace(/Stands, pillars, pots, spikes, the chest and toppled rubble\. Everything here \(colors AND sliders\) is captured when you save a profile below\./,'Stands, pillars, pots, spike caps and toppled rubble. Everything here (colors and sliders) is kept when you save a look below.');
+  h=h.replace(/Stands, pillars, pots, spikes, the chest and toppled rubble\. Everything here \(colors AND sliders\) is captured when you save a profile below\./,_T('Stands, pillars, pots, spike caps and toppled rubble. Everything here (colors and sliders) is kept when you save a look below.'));
   let p='';try{p=String(base('profiles')||'').replace(SET84_TABRE,'')}catch(e){}
-  p=p.replace(/^\s*<p>Save the current colors[\s\S]*?<\/p>/,'<p class="hint" style="margin:0 0 6px">Keep the colors, sliders and options as a named look and switch back any time.</p>').replace('placeholder="Profile name"','placeholder="Look name"').replace('No saved profiles yet.','No saved looks yet.').replace(/class="hint"(?! data-keep)/g,'class="hint" data-keep="1"');
+  p=p.replace(/^\s*<p>Save the current colors[\s\S]*?<\/p>/,`<p class="hint" style="margin:0 0 6px">${_T`Keep the colors, sliders and options as a named look and switch back any time.`}</p>`).replace('placeholder="Profile name"',_T('placeholder="Look name"')).replace('No saved profiles yet.',_T('No saved looks yet.')).replace(/class="hint"(?! data-keep)/g,'class="hint" data-keep="1"');
   return h+`<h4 id="look84">${_T`💾 Save this look`}</h4><div class="look84">${p}</div>`}
 function setTokens84(h){return h.replace(/<h4 style="margin:12px 0 4px">🛡 Armor<\/h4><p class="rc-sub"[^>]*>[\s\S]*?<\/p>/,'').replace(/<button type="button" class="tokrow[^"]*" data-sarmor="[^"]*">[\s\S]*?<\/button>/g,'')}
 {const base=settingsHTML;settingsHTML=function(tab){if(tab==='profiles')tab='themes';tab=tab||'general';
   if(tab==='saves'&&!SET84.full)return setTabs84('saves')+`<div class="sv84"><p>${_T`Matches, careers, campaigns and backups live in the 💾 Saves window.`}</p><div class="mbtns"><button type="button" class="btn primary" data-sv84="hub">${_T`💾 Open Saves`}</button></div></div>`;
   let h=base.call(this,tab);if(typeof h!=='string')return h;
   try{h=h.replace(SET84_TABRE,setTabs84(tab));
-    h=h.replace(/<p class="hint"(?! data-keep)/g,'<p class="hint" data-keep="1"'); /* a loose paragraph hint stays a line: as a tooltip it hung on the whole #setBody (52-v50 quietHints) */
+    h=h.replace(/<p class="hint"(?! data-keep)/g,_T('<p class="hint" data-keep="1"')); /* a loose paragraph hint stays a line: as a tooltip it hung on the whole #setBody (52-v50 quietHints) */
     if(tab==='general')h=setGeneral84(h);if(tab==='themes')h=setThemes84(h,t=>base.call(this,t));if(tab==='tokens')h=setTokens84(h)}catch(e){console.error(e)}
   return h}}
 {const base=openSettings;openSettings=function(tab){if(tab==='profiles')tab='themes';SET84.full=!!SET84.armed&&tab==='saves';SET84.armed=false;return base.call(this,tab)}}

@@ -116,7 +116,7 @@ function dealBout85(n,g){if(!n||!g)return -1;const o=effOvr(g);let best=-1,bd=1e
         if(out){bo.ents[bo.ents.indexOf(out.id)]=g.id;if(typeof voidBets==='function')voidBets(bo,out.id);t.deal.bi=bi;
           if(typeof tnews==='function')tnews(_T`⚔ <b>${esc(g.name)}</b> is entered in the ${esc(TIERS[bo.tier].n)}, as the deal asks.`);saveWorld()}}}}}catch(e){console.error(e)}return r}}
 {const base=travelCardHTML;travelCardHTML=function(){let h=base.apply(this,arguments);try{const w=W_(),n=w.night,t=travelState(w);const o=t&&t.offer;if(o&&typeof h==='string'){const g=gById(o.gid);const bi=dealBout85(n,g);const bo=n.bouts[bi];
-    if(bo)h=h.replace('Enter them in any bout tonight and the trip is theirs.',`They want them in the <b>${esc(TIERS[bo.tier].n)}</b> — accept and they are entered at once.`)}}catch(e){}return h}}
+    if(bo)h=h.replace('Enter them in any bout tonight and the trip is theirs.',_T`They want them in the <b>${esc(TIERS[bo.tier].n)}</b> — accept and they are entered at once.`)}}catch(e){}return h}}
 
 /* 5 · Your ludus banner wears the house flag */
 {const base=roomScene73;roomScene73=function(k){let h=base.apply(this,arguments);if(k!=='ludus'||typeof h!=='string')return h;try{
@@ -131,7 +131,7 @@ function dealBout85(n,g){if(!n||!g)return -1;const o=effOvr(g);let best=-1,bd=1e
 {const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const w=W_();if(typeof roadLocked76==='function'&&roadLocked76(w))for(const it of I){if(it.ic==='⚕'&&!it.done){it.done=true;it.txt=it.txt.replace(/ (is|are) hurt$/,' $1 hurt')+_T(' — assess the wounds now; treatment opens after the games');it.btn=''}}}catch(e){}return I}}
 {const base=infirmNeed73;infirmNeed73=function(){try{if(typeof roadLocked76==='function'&&roadLocked76(W_()))return 0}catch(e){}return base.apply(this,arguments)}}
 if(typeof medicus84==='function'){const base=medicus84;medicus84=function(w){try{if(typeof roadLocked76==='function'&&roadLocked76(w))return null}catch(e){}return base.apply(this,arguments)}}
-if(typeof infirmaryHTML==='function'){const base=infirmaryHTML;infirmaryHTML=function(){let h=base.apply(this,arguments);try{if(typeof h==='string'&&roadLocked76(W_()))h=h.replace('The Infirmary is shut until the week ends — what you booked before leaving still runs.','The Infirmary is shut until the week ends — look over the wounds now; treatment opens next week. What you booked before leaving still runs.')}catch(e){}return h}}
+if(typeof infirmaryHTML==='function'){const base=infirmaryHTML;infirmaryHTML=function(){let h=base.apply(this,arguments);try{if(typeof h==='string'&&roadLocked76(W_()))h=h.replace('The Infirmary is shut until the week ends — what you booked before leaving still runs.',_T('The Infirmary is shut until the week ends — look over the wounds now; treatment opens next week. What you booked before leaving still runs.'))}catch(e){}return h}}
 
 /* 7 · prices as "Cost: N coin" */
 if(typeof ROAD76!=='undefined')for(const E of ROAD76)for(const c of [E.a,E.z])if(c&&typeof c[1]==='string')c[1]=c[1].replace(/^−(\d+) coin/,'Cost: $1 coin');

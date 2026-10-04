@@ -38,7 +38,7 @@ function sicaBribes(w){if(!w||w.dead||!w.night)return;const sm=sicaMgr(w);if(!sm
   const others=b.ents.map(gById).filter(g=>g&&!isSicaG(g));const mine=others.find(g=>g.contract&&g.contract.mgr===pm.id);
   if(mine&&Math.random()<SICA.bribeYou){const amt=10+Math.round(effOvr(mine)/4);w.sicaBribe={wk:w.week,gid:mine.id,amt,state:'offer'};
     sendLetter(w,{key:'sica-bribe-'+w.season+'-'+w.week,kind:'offer',from:_T('Sica'),seal:'🗡',title:_T`A quiet word about ${esc(mine.name)}`,until:w.week,
-      body:`<p>Sica's man leans close: <b>${amt} coin</b> if <b>${esc(mine.name)}</b> does not win this week's ${esc(TIERS[b.tier]?TIERS[b.tier].n:'bout')}. Paid after the bout — and only if the CPU fights for them; take the reins yourself and the deal is off.</p><p class="rc-sub">${_T`If it gets out: −${SICA.fameHit} fame and your fighters lose heart.`}</p>
+      body:`<p>${_T`Sica's man leans close: <b>${amt} coin</b> if <b>${esc(mine.name)}</b> does not win this week's ${esc(TIERS[b.tier]?TIERS[b.tier].n:'bout')}. Paid after the bout — and only if the CPU fights for them; take the reins yourself and the deal is off.`}</p><p class="rc-sub">${_T`If it gets out: −${SICA.fameHit} fame and your fighters lose heart.`}</p>
        <div class="acts"><button class="btn" type="button" data-sicabribe="yes">${_T`Take the coin`}</button><button class="btn" type="button" data-sicabribe="no">${_T`Send him away`}</button></div>`});return}
   const t=others.filter(g=>g.contract&&mgrById(g.contract.mgr)&&!mgrById(g.contract.mgr).isPlayer&&(mgrById(g.contract.mgr).p.honor||50)<70);
   if(t.length&&Math.random()<SICA.bribeAI){const g=pickOne(t);g.thrown=w.season+':'+w.week;

@@ -1,0 +1,1062 @@
+[
+ {
+  "k": "{0} on",
+  "w": "52-v50.js:146"
+ },
+ {
+  "k": "The empire's calendar: each week Flavius's games play in one city. Follow the schedule to fight where the empire is watching — or play anywhere; the empire won't mind.",
+  "w": "52-v50.js:152"
+ },
+ {
+  "k": "Follow",
+  "w": "52-v50.js:152"
+ },
+ {
+  "k": "<span>City</span>",
+  "w": "52-v50.js:153"
+ },
+ {
+  "k": "<span data-tip=\"Each city favours some classes and hinders others — applied once, before the event.\">Class modifiers <span class=\"qi\">ⓘ</span></span>",
+  "w": "52-v50.js:154"
+ },
+ {
+  "k": "Spend your coin: 2+ market buys won 28% of events; never buying, 13%.",
+  "w": "53-guide50.js:2"
+ },
+ {
+  "k": "Simulated on v{0}: {1} all-CPU events. Hover any chart or term for the detail; open a section below to read it.",
+  "w": "53-guide50.js:43"
+ },
+ {
+  "k": "Trophies ⓘ",
+  "w": "54-v51.js:90"
+ },
+ {
+  "k": "<span>Trophies ⓘ</span>",
+  "w": "54-v51.js:91"
+ },
+ {
+  "k": "<b>Arena keys · {0}</b><br>Each key opens the chest (a Level 4 weapon) or a tunnel to another tunnel tile. A used key is gone.{1}",
+  "w": "54-v51.js:92"
+ },
+ {
+  "k": "<span>Keys ⓘ</span>",
+  "w": "54-v51.js:92"
+ },
+ {
+  "k": "Over budget: trim the loadout or tick Sandbox.",
+  "w": "57-classes.js:107"
+ },
+ {
+  "k": "None yet. Save one above.",
+  "w": "57-classes.js:120"
+ },
+ {
+  "k": "🏠 <b>Your home city</b>",
+  "w": "58-looks.js:105"
+ },
+ {
+  "k": "⭐ An invitational still runs this week — settle it first.",
+  "w": "59-bye.js:40"
+ },
+ {
+  "k": "🌿 Bye week",
+  "w": "59-bye.js:42"
+ },
+ {
+  "k": "None yet — save one above, or copy a system class.",
+  "w": "61-studio53.js:95"
+ },
+ {
+  "k": "System classes · {0}",
+  "w": "61-studio53.js:95"
+ },
+ {
+  "k": "None yet — save one above, or copy a printed class.",
+  "w": "64-v54.js:87"
+ },
+ {
+  "k": "🔒 System classes · the printed {0}",
+  "w": "64-v54.js:87"
+ },
+ {
+  "k": "hover for the printed card · copy one to make it yours",
+  "w": "64-v54.js:87"
+ },
+ {
+  "k": "🏟 The arena · $1",
+  "w": "64-v54.js:107"
+ },
+ {
+  "k": "printed or your Custom Event",
+  "w": "64-v54.js:107"
+ },
+ {
+  "k": "🏆 The trophy",
+  "w": "64-v54.js:107"
+ },
+ {
+  "k": "printed or yours",
+  "w": "64-v54.js:107"
+ },
+ {
+  "k": "Design the <b>invitationals</b> that arrive in Manager mode. Each is a shell: pick the <b>arena</b> (a printed event or one of your Custom Events) and the <b>trophy</b>, then the field, the purse and how often it comes. New ones start off the rolls. The system invitationals sit at the bottom: locked, copy one to make it yours. {0}",
+  "w": "64-v54.js:109"
+ },
+ {
+  "k": "💾 Save invitational",
+  "w": "64-v54.js:110"
+ },
+ {
+  "k": "Your invitationals",
+  "w": "64-v54.js:110"
+ },
+ {
+  "k": "The system invitationals",
+  "w": "64-v54.js:110"
+ },
+ {
+  "k": "No beasts of your own yet — make one under Fighters → 🐾 Beasts, or add a myth starter.",
+  "w": "64-v54.js:120"
+ },
+ {
+  "k": "No cohorts yet — make them under Fighters → 🤝 Cohorts.",
+  "w": "64-v54.js:123"
+ },
+ {
+  "k": "{0} unread letter{1}",
+  "w": "69-v56.js:79"
+ },
+ {
+  "k": "The lender of last resort: only to a house in the red, 12% a week added to the debt. Pay the weekly minimum by hand; three short weeks and a spear finds your best fighter.",
+  "w": "69-v56.js:97"
+ },
+ {
+  "k": "<b>Read the chips</b> on each fighter panel: a gold chip is a perk earned; a glowing one is a top band (96+).",
+  "w": "69-v56.js:108"
+ },
+ {
+  "k": "<b>Push a fighter over a line</b>: the to-do list flags anyone a few points short of a band; a personal trainer or brutal drills that week can earn the perk before the next Match Week.",
+  "w": "69-v56.js:112"
+ },
+ {
+  "k": "You start with {0} coin, no fame and {1}.",
+  "w": "70-v57.js:29"
+ },
+ {
+  "k": "start Unknown — choose Easy, Normal or Hard",
+  "w": "70-v57.js:31"
+ },
+ {
+  "k": "💰 Wagers · {0}",
+  "w": "70-v57.js:58"
+ },
+ {
+  "k": "<b>Heal</b>: send the hurt to the Infirmary; a week without the sand lets wounds close.",
+  "w": "70-v57.js:66"
+ },
+ {
+  "k": "<b>Drill</b>: set the Training Yard; no Match Week means no wear on top of the work.",
+  "w": "70-v57.js:66"
+ },
+ {
+  "k": "<b>Shop</b>: Vulso's cart and the market are in town; kit your starters for the weeks ahead.",
+  "w": "70-v57.js:66"
+ },
+ {
+  "k": "↩ Call back · {0}c",
+  "w": "70-v57.js:72"
+ },
+ {
+  "k": "See the prototype",
+  "w": "71-v58.js:49"
+ },
+ {
+  "k": "— the hand-built board this game was distilled from.",
+  "w": "71-v58.js:49"
+ },
+ {
+  "k": "Chariot draft — a snake draft: every racer drafts a chariot card, head armor, chest armor and a level 1-2 weapon; wheel and horse tokens are dealt at random.",
+  "w": "76-chariot59.js:14"
+ },
+ {
+  "k": "Pick your chariot card.",
+  "w": "76-chariot59.js:22"
+ },
+ {
+  "k": "Spend them in the Training Yard",
+  "w": "81-v63.js:55"
+ },
+ {
+  "k": "Training hours {0}/{1}",
+  "w": "81-v63.js:55"
+ },
+ {
+  "k": "<b>{0} CF</b> · missio — no Fate in this event",
+  "w": "84-v64.js:54"
+ },
+ {
+  "k": "Fatigue {0}: bouts and hard work raise it; rest clears it; above 50 a fighter may be worn down",
+  "w": "85-v65.js:42"
+ },
+ {
+  "k": "<th title=\"✓ fills a roster gap and is affordable · ~ one of the two · ✗ neither\">Fit</th>",
+  "w": "87-v67.js:74"
+ },
+ {
+  "k": "class=\"btn roadsend inrow",
+  "w": "87-v67.js:154"
+ },
+ {
+  "k": ">$1<small>win the twelve arenas in order</small><",
+  "w": "87-v67.js:154"
+ },
+ {
+  "k": ">$1<small>opens the next stage</small><",
+  "w": "87-v67.js:154"
+ },
+ {
+  "k": "<b>You are about to skip:</b>{0}",
+  "w": "88-v68.js:42"
+ },
+ {
+  "k": "Choose a printed piece under <b>Start from</b> to begin from its rulebook stats.",
+  "w": "91-v69.js:52"
+ },
+ {
+  "k": "Unticked: the piece covers one arm or leg — the one it is equipped to",
+  "w": "91-v69.js:53"
+ },
+ {
+  "k": "Sits on: <b>{0}</b>{1}. Drag it on the avatar; the wheel scales it.",
+  "w": "91-v69.js:84"
+ },
+ {
+  "k": "🎯 fit the printed set",
+  "w": "92-v70.js:19"
+ },
+ {
+  "k": "Summa Rudis<br><b>{0}</b>",
+  "w": "93-v71.js:23"
+ },
+ {
+  "k": "<img id=\"festSRimg\"",
+  "w": "93-v71.js:30"
+ },
+ {
+  "k": "· {0} the Grand Games, Cassian presiding: purses ×1.6",
+  "w": "93-v71.js:33"
+ },
+ {
+  "k": "<svg class=\"setart\"",
+  "w": "94-v72.js:15"
+ },
+ {
+  "k": "Fit this printed piece on the avatar — applies for everyone",
+  "w": "94-v72.js:16"
+ },
+ {
+  "k": "🎯 Fit",
+  "w": "94-v72.js:16"
+ },
+ {
+  "k": "Nothing forged yet — save a piece above, or copy a printed one.",
+  "w": "94-v72.js:17"
+ },
+ {
+  "k": "The sculpted set",
+  "w": "94-v72.js:23"
+ },
+ {
+  "k": "Your armor",
+  "w": "94-v72.js:23"
+ },
+ {
+  "k": "Copy a printed piece from the system set below — or choose one under <b>Start from</b> — to begin from its rulebook stats.",
+  "w": "94-v72.js:25"
+ },
+ {
+  "k": "✓ Done",
+  "w": "94-v72.js:27"
+ },
+ {
+  "k": "The forge is cold. Nothing yet — save a weapon above, or copy a printed one.",
+  "w": "94-v72.js:47"
+ },
+ {
+  "k": "⚕ Infirmary",
+  "w": "95-v73.js:77"
+ },
+ {
+  "k": "Scout them to see their ratings and personality.",
+  "w": "95-v73.js:88"
+ },
+ {
+  "k": "The Summa Rudis",
+  "w": "95-v73.js:107"
+ },
+ {
+  "k": "<b>{0}</b><span>point{1} to spend</span>",
+  "w": "95-v73.js:165"
+ },
+ {
+  "k": "not made",
+  "w": "96-armlv.js:37"
+ },
+ {
+  "k": "no armor here",
+  "w": "98-avatar73.js:28"
+ },
+ {
+  "k": "Starting armor of the {0}",
+  "w": "98-avatar73.js:46"
+ },
+ {
+  "k": "The class's armor on the body",
+  "w": "98-avatar73.js:48"
+ },
+ {
+  "k": "Sica's man leans close: <b>{0} coin</b> if <b>{1}</b> does not win this week's {2}. Paid after the bout — and only if the CPU fights for them; take the reins yourself and the deal is off.",
+  "w": "100-sica73.js:41"
+ },
+ {
+  "k": "while class abilities are on",
+  "w": "103-v74.js:44"
+ },
+ {
+  "k": "Event card",
+  "w": "106-v75.js:99"
+ },
+ {
+  "k": "Pick the slot you want — no die.",
+  "w": "106-v75.js:181"
+ },
+ {
+  "k": "Take the weapon or one armor piece.",
+  "w": "106-v75.js:196"
+ },
+ {
+  "k": "No presets yet.",
+  "w": "106-v75.js:301"
+ },
+ {
+  "k": "No Manager careers yet.",
+  "w": "108-v76.js:56"
+ },
+ {
+  "k": "No missio under way. Start one from Play now → Missio.",
+  "w": "108-v76.js:59"
+ },
+ {
+  "k": "No tournament under way. Start one from Play now → Tournament.",
+  "w": "108-v76.js:60"
+ },
+ {
+  "k": "⋯ More",
+  "w": "108-v76.js:119"
+ },
+ {
+  "k": "🌿 Sit this week out<small>once a season · +{0} h · −{1} fame</small>",
+  "w": "108-v76.js:232"
+ },
+ {
+  "k": "🔒 The Training Yard and the Infirmary are shut until the week ends.",
+  "w": "108-v76.js:233"
+ },
+ {
+  "k": "<span>🛏</span><small>Empty bed</small>",
+  "w": "108-v76.js:255"
+ },
+ {
+  "k": "class=\"plantile off\" disabled data-bedneed76=\"1\"",
+  "w": "108-v76.js:261"
+ },
+ {
+  "k": "$1 disabled title=\"Needs a bed in the Infirmary first\">",
+  "w": "108-v76.js:262"
+ },
+ {
+  "k": "You fight it on the board. Kill it: the kill's coin and <b>+{0}</b> to a rating you pick. Pulled out: −{1} fame. Wounds are real; nobody dies. {2} rotations.",
+  "w": "108-v76.js:397"
+ },
+ {
+  "k": "Exhibition vs $1: $2",
+  "w": "108-v76.js:436"
+ },
+ {
+  "k": "🛣 On the road: {0}",
+  "w": "108-v76.js:620"
+ },
+ {
+  "k": "$1pick its level · AP 1 point each above the first · bonus AP 2 · stackable 1",
+  "w": "109-v761.js:56"
+ },
+ {
+  "k": "title=\"The printed set — shown as examples\">🔒 Example",
+  "w": "109-v761.js:58"
+ },
+ {
+  "k": "Nothing forged yet — sculpt your own above.",
+  "w": "109-v761.js:59"
+ },
+ {
+  "k": "$1examples · the printed pieces",
+  "w": "109-v761.js:59"
+ },
+ {
+  "k": "$1 <span class=\"rc-sub\">examples · make your own above</span>",
+  "w": "109-v761.js:60"
+ },
+ {
+  "k": "Gain 1 stone each turn; +10 CF to the final score if they win any event. Weakness: pelted with 1 stone (1 damage) each turn in phase 1.",
+  "w": "109-v761.js:68"
+ },
+ {
+  "k": "its card · Level 4 · a chest prize — on the rolls it joins the Arena Chest’s draw",
+  "w": "109-v761.js:81"
+ },
+ {
+  "k": "$1🗝 in the Arena Chest",
+  "w": "109-v761.js:82"
+ },
+ {
+  "k": "Only the printed game — every class, beast, weapon and event from the box, none of your creations.",
+  "w": "110-v77.js:62"
+ },
+ {
+  "k": "Online (preview)",
+  "w": "112-online.js:21"
+ },
+ {
+  "k": "<small>The highest rank there is.</small>",
+  "w": "112-online.js:183"
+ },
+ {
+  "k": "No games hosted. Create one.",
+  "w": "112-online.js:210"
+ },
+ {
+  "k": "Nothing live right now.",
+  "w": "112-online.js:226"
+ },
+ {
+  "k": "No game is selling tickets yet. A host sets a price when making the game.",
+  "w": "112-online.js:227"
+ },
+ {
+  "k": "No one yet worthy of the Hall.",
+  "w": "112-online.js:241"
+ },
+ {
+  "k": "⚔ Make a new gladiator",
+  "w": "112-online.js:242"
+ },
+ {
+  "k": "Back to the mock",
+  "w": "114-onlnet.js:65"
+ },
+ {
+  "k": "Say ave to the other lanistas.",
+  "w": "116-onl79.js:108"
+ },
+ {
+  "k": "Entering the Online arena…",
+  "w": "116-onl79.js:193"
+ },
+ {
+  "k": "Say ave to the room.",
+  "w": "118-onl80.js:203"
+ },
+ {
+  "k": "No rooms open. Open one.",
+  "w": "118-onl80.js:250"
+ },
+ {
+  "k": "The Forum is quiet. Say ave.",
+  "w": "118-onl80.js:261"
+ },
+ {
+  "k": "Nobody else is here right now.",
+  "w": "118-onl80.js:328"
+ },
+ {
+  "k": "Choose a Declare-type arena card. The card leaves the arena deck.",
+  "w": "122-v81play.js:82"
+ },
+ {
+  "k": "<span class=\"badge\" title=\"Waiting for the others to confirm the result\">⏳ Confirming</span>",
+  "w": "124-v81onl.js:121"
+ },
+ {
+  "k": "<b>The bout is over.</b> Your result was sent — leaving changes nothing for {0}: pay, CF and the Fate come from the result.",
+  "w": "124-v81onl.js:124"
+ },
+ {
+  "k": "You simply leave.",
+  "w": "124-v81onl.js:125"
+ },
+ {
+  "k": "Online server box",
+  "w": "124-v81onl.js:177"
+ },
+ {
+  "k": "Signing in shares your Google name and e-mail with the arena. Other players see only your gladiator’s name.",
+  "w": "124-v81onl.js:180"
+ },
+ {
+  "k": ">🏛 Domus<",
+  "w": "127-v82onl.js:235"
+ },
+ {
+  "k": "set in 🏛 Domus",
+  "w": "127-v82onl.js:236"
+ },
+ {
+  "k": "Ticket: free",
+  "w": "127-v82onl.js:249"
+ },
+ {
+  "k": "A free seat in the stands until the horns",
+  "w": "127-v82onl.js:252"
+ },
+ {
+  "k": "🎟 Free",
+  "w": "127-v82onl.js:252"
+ },
+ {
+  "k": "<small>Next: {0} at {1} Glory · now {2}</small>",
+  "w": "127-v82onl.js:262"
+ },
+ {
+  "k": "<small>{0} Glory</small>",
+  "w": "127-v82onl.js:262"
+ },
+ {
+  "k": "→ the storeroom shelf",
+  "w": "127-v82onl.js:295"
+ },
+ {
+  "k": "Nothing here yet — the Armory sells to your gladiators.",
+  "w": "127-v82onl.js:303"
+ },
+ {
+  "k": "Surviving Ranked bouts pays a purse by rank; Glory (CF, bouts survived, wins) raises the rank; buy gear between bouts.",
+  "w": "127-v82onl.js:417"
+ },
+ {
+  "k": "Your turn in the stands",
+  "w": "128-v82stands.js:101"
+ },
+ {
+  "k": "No weapons or armor on the token.",
+  "w": "128-v82stands.js:227"
+ },
+ {
+  "k": "sculpted — every lanista sees it, whatever their token style · no weapons or armor",
+  "w": "128-v82stands.js:227"
+ },
+ {
+  "k": ">Gladiatrix<",
+  "w": "128-v82stands.js:296"
+ },
+ {
+  "k": ">Gladiator<",
+  "w": "128-v82stands.js:296"
+ },
+ {
+  "k": "↺ Rulebook",
+  "w": "129-v82beasts.js:194"
+ },
+ {
+  "k": "Put your own beasts in this set (🐾 Beasts above) to deal them a slot.",
+  "w": "129-v82beasts.js:196"
+ },
+ {
+  "k": "Crowd Favor cannot be gained right now.",
+  "w": "133-v83onl.js:42"
+ },
+ {
+  "k": "<aside class=\"rb82 rb83\"",
+  "w": "137-v83onlui.js:136"
+ },
+ {
+  "k": "<span data-onl83=\"myprof\" class=\"rb82-tok",
+  "w": "137-v83onlui.js:136"
+ },
+ {
+  "k": "<small>Purses</small>",
+  "w": "137-v83onlui.js:159"
+ },
+ {
+  "k": "<b>{0} {1}</b><small>Treasury</small>",
+  "w": "137-v83onlui.js:159"
+ },
+ {
+  "k": "→ the shelf",
+  "w": "137-v83onlui.js:172"
+ },
+ {
+  "k": "Opening the stalls…",
+  "w": "137-v83onlui.js:226"
+ },
+ {
+  "k": "Nothing used for sale — the fallen’s gear comes here, with its history.",
+  "w": "137-v83onlui.js:226"
+ },
+ {
+  "k": "✕ Hold",
+  "w": "137-v83onlui.js:307"
+ },
+ {
+  "k": "⏳ The horns are coming…",
+  "w": "137-v83onlui.js:310"
+ },
+ {
+  "k": "No living gladiators.",
+  "w": "137-v83onlui.js:316"
+ },
+ {
+  "k": "No matches yet.",
+  "w": "137-v83onlui.js:317"
+ },
+ {
+  "k": "Reading the bookmakers’ tablets…",
+  "w": "137-v83onlui.js:341"
+ },
+ {
+  "k": "No open pots — wager on a room in the Lobby Browser.",
+  "w": "137-v83onlui.js:346"
+ },
+ {
+  "k": "Flavius Rule Arena",
+  "w": "139-v84onl.js:145"
+ },
+ {
+  "k": "Allow desktop notices",
+  "w": "139-v84onl.js:153"
+ },
+ {
+  "k": "<div class=\"nw83 holo84",
+  "w": "139-v84onl.js:245"
+ },
+ {
+  "k": "Your-turn alerts",
+  "w": "139-v84onl.js:266"
+ },
+ {
+  "k": "The auctioneer unrolls his lists…",
+  "w": "139-v84onl.js:281"
+ },
+ {
+  "k": "Only Flavius sells: named pieces of the fallen, back from his chest, with every owner they had. Veteranus and above bid; your coin waits in escrow and comes back the moment you are outbid. One win a house a week; the winning coin goes to Flavius.",
+  "w": "139-v84onl.js:293"
+ },
+ {
+  "k": "🔨 Your house won a lot this week — it is in the Storeroom.",
+  "w": "139-v84onl.js:294"
+ },
+ {
+  "k": "No lots this week — Flavius’s chest holds no fallen named pieces yet.",
+  "w": "139-v84onl.js:295"
+ },
+ {
+  "k": "This downloaded copy keeps its own saves — Restore a backup from the site to carry careers over.",
+  "w": "138-v84.js:162"
+ },
+ {
+  "k": "Stands, pillars, pots, spike caps and toppled rubble. Everything here (colors and sliders) is kept when you save a look below.",
+  "w": "142-v84ui.js:87"
+ },
+ {
+  "k": "Keep the colors, sliders and options as a named look and switch back any time.",
+  "w": "142-v84ui.js:89"
+ },
+ {
+  "k": "placeholder=\"Look name\"",
+  "w": "142-v84ui.js:89"
+ },
+ {
+  "k": "No saved looks yet.",
+  "w": "142-v84ui.js:89"
+ },
+ {
+  "k": "<p class=\"hint\" data-keep=\"1\"",
+  "w": "142-v84ui.js:96"
+ },
+ {
+  "k": "Faith{0}",
+  "w": "141-v85faith.js:232"
+ },
+ {
+  "k": "$1 title=\"Show only: $3\" aria-label=\"$3\">$2<",
+  "w": "144-v85rec.js:78"
+ },
+ {
+  "k": "<th><span class=\"l85\">Your interest</span><span class=\"s85\">Int.</span></th>",
+  "w": "144-v85rec.js:82"
+ },
+ {
+  "k": "<span>📊 <b>Ratings:</b> <i>scout to see</i></span>",
+  "w": "144-v85rec.js:94"
+ },
+ {
+  "k": "⏳ <b>{0} h</b> of the lanista's time left this week",
+  "w": "144-v85rec.js:106"
+ },
+ {
+  "k": "They want them in the <b>{0}</b> — accept and they are entered at once.",
+  "w": "145-v85fix.js:119"
+ },
+ {
+  "k": "The Infirmary is shut until the week ends — look over the wounds now; treatment opens next week. What you booked before leaving still runs.",
+  "w": "145-v85fix.js:134"
+ },
+ {
+  "k": "Party",
+  "w": "146-v85land.js:69"
+ },
+ {
+  "k": "Every theme",
+  "w": "147-v85music.js:19"
+ },
+ {
+  "k": "<b>Festivals</b> (p.42) chain three events: Carmina Fescennina, a Chariot Race with no PvP (finishing order sets the next turn order), then a Classic Elimination. Coin and CF carry across; the highest CF at the end is crowned champion (+5 CF).",
+  "w": "08-setup.js:119"
+ },
+ {
+  "k": "No active missios yet.",
+  "w": "08-setup.js:133"
+ },
+ {
+  "k": "No saved gladiators yet. Save one from the results screen after an event.",
+  "w": "08-setup.js:134"
+ },
+ {
+  "k": "<b>One word, one meaning:</b> the <b>editor</b> is the one who gives (pays for) the games — the rulebook's term. Flavius is the empire's great editor; win in a city and its own editor takes the box. A house's financial <b>backer</b> is money behind a ludus, not the games' host.",
+  "w": "08-setup.js:249"
+ },
+ {
+  "k": "<b>Blessings</b><span>One face-down bag: 12 pots, one per pillar; spawned offerings come from the same bag.</span>",
+  "w": "08-setup.js:249"
+ },
+ {
+  "k": "New in v0.40: a grouped left rail for Manager mode and the Creator Studio in full screen (Ludus · Arena · World · Lanista; Overview · Fighters · Gear · Arena · Tools).",
+  "w": "08-setup.js:261"
+ },
+ {
+  "k": "New in v0.32: blood, severed limbs and the clean-up crew; sculpting on the gear benches with the art in the fighter's hand; \"the editor\" named properly everywhere; flags became banners; the city square roomier, textured and speed-controlled with the gate flow into Match Week; Safari audio unlocked; Settings reorganized (Themes tab, Voices &amp; bubbles); attendance scales with the card.",
+  "w": "08-setup.js:269"
+ },
+ {
+  "k": "New in v0.23: <b>Board tokens</b> — Standees, sculpted <b>Figures</b> or the original Cylinders (Settings), true-to-scale standees, and a <b>🗿 Token creator</b> in the Creator Studio for every class, beast and creation · every event you play moves the empire's calendar one week · New event opens on Roma · Classic Democritus, with the options spanning the bottom, and the top bar follows your pick · Imperium joins the main bar; the Fates table lives inside Standings · named beasts read “Archimedes (Human)” · <b>Manager mode</b>: Roster &amp; Recruiting, the ledger and the Fallen under the training yard, the league rules on the Lanista page, a full <b>📈 Exchange</b> tab, a Match Week results sheet after “Simulate every remaining bout”, “Walk the sand” for this week's arena, and an Acta Diurna with top-ten tables and an Overheard column of real crowd chatter and imperial satire.",
+  "w": "08-setup.js:278"
+ },
+ {
+  "k": "New in v0.20: the empire keeps a <b>calendar</b> — a Roman date on every event, and a 12-week <b>season schedule</b> (one arena a week, classics by far the commonest, rare specials with fatter purses, Cassian's Grand Games in week XII) that Manager mode locks into and New event opens on (play off-schedule if you like); the top bar reads where, when, and the round in one breath; <b>every city names its own beasts</b> (Capua's bears are Tifata and Sannio, its champion Spartacus…) — with per-beast ledgers in the Menagerie, custom beasts' ledgers, and a 🐾 beast tab in the name generator; manager mode: <b>bribe the levy</b> (or let them march), a <b>bookmaker's cut</b> of every wager laid on your rostered fighters, 🔭 <b>arena scouting</b> ahead of match night (+1 AP, +1 coin at the gates), Promote and Schooling moved to Your ludus, and a Lanista tab that fits on one screen; <b>Imperium</b>: the empire's 15 weightiest events up top, then a city card with the stands, local news and mood, the pens, the top-5 local heroes, who lives there and what they are doing right now (attendees only during a live event); spectators wear <b>two-part togas</b> (tunic in their home city's wool, mantle in their fighter's colors); a CF ledger on the player board (hover CF ⓘ); Flavius keeps clear of the sand with the stands off; big windows hold their size across tabs; and Infamis &amp; Hall is now <b>the Annals</b>.",
+  "w": "08-setup.js:282"
+ },
+ {
+  "k": "New in v0.19: <b>🐾 Menagerie</b> — Beasts &amp; cards grown into a full window with a Bestiary: lore, stats and all-time ledgers (slain, gladiators eaten, tamed) for every beast; <b>Imperium reworked</b> — fans now travel real roads and sea lanes (⛵ dashed) instead of crow-flight, the radar sweep is gone, weather reads bolder, a ⚔️ <b>war-map layer</b> shows who presses whom (severity-3 wars CLOSE that arena and the levy may conscript soldiers — survive the war for a hero's return, +rating, +fame, fans across the empire), 🌋 <b>Vesuvius</b> stirs near Pompeii, and the focused city gets its own framed tile; Ludus gladiators wear <b>star ratings</b> everywhere; Manager mode gains a 🏜 <b>Sandbox</b> (lethality, blood-money prices, injuries, training gains, rookie influx — all sliders), a season-ending <b>festival finale</b> in Roma (leader picks the festival, top four stables draft champions, Cassian presides), 🏺 <b>Archives</b> (every Acta of the season re-readable, leather-bound season recaps, also shelved in the Annals), 📯 <b>promotion</b> (feast a city, sponsor games, hire criers — fans land on the Imperium map), 🤝 <b>bout-fixing</b> (guaranteed win, real risk: caught twice in a career and Flavius seizes the ludus; even unseen, bought palms weigh on the barracks), an ⚕ <b>Infirmary</b> (the wound picks its cure — rest, Medicus, or the surgeon's knife; festering wounds kill, send fighters fleeing, or scar them; bathhouse days and the priests of Asclepius for the rich; badly-hurt arena survivors are now carried to the Ludus infirmary automatically and must be treated within four events), tab icons throughout, ★ <b>Favorites</b> (the Board, renamed and explained), a sharper <b>Your scouts</b> column (▲ value / ▼ trap against the bookmaker), hoverable disabled buttons that say what they need, an on-screen 📍 location chip for every event, a hoverable <b>coin ledger</b> on the player board, and smarter CPU tunnels (escape AND travel) and pillar-toppling (weaponless looters bring the pillar down).",
+  "w": "08-setup.js:283"
+ },
+ {
+  "k": "New in v0.18: <b>Manager mode now plays by the printed Fate table</b> — every fighter in every league bout, win or lose: under 17 CF condemned, 17-19 the <b>Thumb of Flavius</b>, 20-49 the Ludus Flavius, 50+ the <b>rudis</b> — with <b>blood money</b> (pay the editor to buy back a condemned fighter) and your own thumbs, blood money and rudis choices waiting on Match Week; results show finishing order and each fighter's Fate by name; <b>the Thumb of Flavius is now a ritual</b> — you roll the d6 yourself (4-6 spared) and, if it goes down, the d12, with Flavius reacting at every roll; a <b>missio</b> means what the rulebook says — a five-event campaign — everywhere; <b>The Stands became 🌍 Imperium</b>: a map with fans streaming in (colored by whom they cheer), a weather \"doppler\", and world events (politics, war, economy, famine, earthquakes, plague, trade) that move attendance and moods, plus who of note is in attendance; spectators wear <b>robes</b> (color them in the creator), can be <b>bought tickets</b> (seated now, or guaranteed next time) — and you can ticket your fighters' families for loyalty; off-duty league fighters sometimes watch from the stands; rare <b>famous visitors</b> from Roman history (toggle in Settings); a 🏋 <b>Practice</b> tab for exhibitions against rival stables (nobody dies — the doctors pull them; the stands fill with gladiators who only watch and talk); the Acta Diurna previews <b>next week</b> (forecast, world news, the card, purses, bad blood); cards always show beside every manager list; gladiatrices (♀, mostly Amazonia) join the league; the Ludus's <b>active roster</b> (now 8) stands apart from the rolls; and American spelling throughout (\"doctore\" is now the Latin <i>doctor</i>).",
+  "w": "08-setup.js:284"
+ },
+ {
+  "k": "New in v0.17: spectators default to <b>🎲 Random — the empire decides</b>: the city's appetite, hometown regulars, every fan, kin and patron following today's fighters, the billing and the omen fill the stands (the log says why), and manager live-watches use it too; the header wears icons, the ⚙️ settings cog sits alone at the far right, and <b>Standings pulses in the leader's color</b> (flashing when the lead changes); visual sliders (board brightness, text size, highlights) now stay where you leave them, even across arena tints; manager results now say <b>eliminated · spared</b> (missio — back to the ludus) vs <b>✝ killed</b> (gone for good); the recruiting <b>Board</b> opens cards in its own side panel (and a Scout-button lockup is fixed); and your own fighters get a full card with <b>retention</b> actions — meals, a private word, bonuses, raises, main-event promises, a personal doctor — all feeding a loyalty meter that rivals must beat to poach them.",
+  "w": "08-setup.js:285"
+ },
+ {
+  "k": "New in v0.16: <b>five festivals</b> to choose from, each with its own between-events gift (Ludi Apollinare, Saturnalia, Asclepieia, Vulcanalia, Fors Fortuna); <b>The Stands is now a full window</b> — the spectator world's hub, with empire-wide fandom counts, home cities (regulars pack their own city's stands first), family ties and a pool grown to ~160 regulars; manager mode gains a <b>career chronicle</b> on every fighter (wins, signings, poaches, class changes, deaths — with team, arena and date), a <b>perk tree</b> for the lanista (points earned each week, spent the next, on the same traits recruits grade), <b>training regimes</b> (light/standard/brutal — cheaper is safer, brutal bruises) plus a per-fighter personal doctor, <b>gems and the overhyped</b> hidden in the recruit pool (scout twice or run a <b>trial bout</b> on your own sand to find out), recruit cards for your own signed fighters (with ★ pinning everywhere), win-rate now sways recruit interest, bout injuries, freedom purchases and thematic deaths at season's end, a tiny weekly chance anyone simply dies (bookies, fevers, roof tiles), and real age variance — the old are not automatically good, and the good do not always last.",
+  "w": "08-setup.js:286"
+ },
+ {
+  "k": "New in v0.15: league fighters now carry <b>ages</b> (the young arrive as slaves and soldiers, the graying re-badge as Veteranus, and past 35 they start hanging up the sword), generated <b>faces</b>, a debut date, and mid-career <b>class changes</b> the criers report; \"granted missio\" is now explained where it happens (the editor's mercy — spared, keeping the bout's CF); a weekly <b>training yard</b> budget drills your whole stable, with a report in the Acta Diurna and the occasional training injury (Medicus clears it); your ludus keeps a private <b>ledger</b> of everything that touched it; festival gladiators now <b>choose their boon</b> (laurels, purse, elixir, armor fitting, or Flavius' notice); spectators can be created as <b>kin of a gladiator</b> — family colors in the stands, grief when they fall; the Ludus grid sinks the fallen and retired to the last tiles with a ⇄ tile-swap system; and the Hints toggle now lives on the arena itself.",
+  "w": "08-setup.js:287"
+ },
+ {
+  "k": "New in v0.14: <b>seeded dice</b> — set a Dice seed in Options and the whole event replays identically (the seed is stamped on the results banner, so any legendary match can be re-fought roll for roll); every event now opens with the pompa — a proper procession, roll call and (with hints on) a primer on the mode; CPU speed always starts on Slow; ending a manager week now prints the <b>Acta Diurna</b> — a week-end gazette with a generated lead story, the league's top fives and the obituaries; the League table lists each stable's top 3 rivals with a separate \"toward you\" gauge; Manager mode stretches out on big screens; and the spectator creator's face preview updates properly with a 🎲 randomizer to match.",
+  "w": "08-setup.js:288"
+ },
+ {
+  "k": "New in v0.13: retirement is real now — one confirm and the record is deleted from the game forever, though about one in four dodges Flavius's ledger and turns up in the cheap seats as a spectator, story intact; a spectator gets exactly ONE offer of the sword and some refuse it (ask the sausage guy — he also declines); buy a spectator's cheers (5 coin from your lanista) for any gladiator in play or on your roster; and a certain pair of anonymous crowd voices now narrate disasters in the stands log.",
+  "w": "08-setup.js:289"
+ },
+ {
+  "k": "New in v0.12: The Stands drawer above the arena (T / B keys) — beast tracker and cards in play, the arena's own chronicle (last spectator speared and by whom, concessions, brawls, commonest omen), and a full spectator roster with an inspector: personal lore, bans, standing a round, and signing a regular to your ludus as a raw recruit; troublemakers slip in (two at most); a Spectator creator in the Studio; per-location crowd temperaments layered on your sliders; you roll the Thumb of Flavius d6 yourself in the results window; theme colors for stands, pillars, pots, spikes, chest and rubble (all captured in saved profiles); distinct preset previews; a Recruiting board (★) in Manager mode; live-watched bouts sharpen scouting; the chariot card, horse and wheel tokens and the Lyre of Orpheus shown as real equipment.",
+  "w": "08-setup.js:290"
+ },
+ {
+  "k": "New in v0.11: sharper CPUs (shield discipline, danger-aware pathing, no more losing track of a walled-in beast); the strategy guide rebuilt on 300 fresh simulations, with sections on the newer rules and manager recruiting; a deeper recruiting portal (gifts, main-event pledges, grade tooltips that say how to raise them); fight your entered fighter yourself on match night; morale and a living Rivalry system in the League tab; the code under the hood now reads like a guided tour.",
+  "w": "08-setup.js:291"
+ },
+ {
+  "k": "New in v0.10: section cheers scale with attendance (a big house cheers louder, not richer) and attendance is recorded everywhere; per-event high scores; spectator contribution shown in results; crowd personality sliders; per-location arena palettes; lock/unlock on saved creations with an unlock log; gladiatrix option in the creator; force-retire in the Ludus; no coin-camping in the Gauntlet (12 stingy spectators at most, and the editor's lash); abandoning a live event now has mortal consequences.",
+  "w": "08-setup.js:292"
+ },
+ {
+  "k": "New in v0.9: the printed player-board avatar with your equipped armor tokens worn on the body; armor art cut out with transparent backgrounds; the printed square tunnel tokens on the board; chariot cards, horse and wheel tokens and the Naumachia water tokens as printed, with hover popups.",
+  "w": "08-setup.js:293"
+ },
+ {
+  "k": "New in v0.8: shields absorb by choice; freedom (the rudis) for 50+ CF winners, memorialized among the Liberti; a persistent crowd of regulars with memories, faces and allegiance colors; match-day omens swaying attendance, purses and hometown fighters; Flavius himself reacting above the A-1 corner; a deeper Creator Studio (named skin tones, ability values, beast templates); career leaderboard and one-click lanistae at the bookmaker's table.",
+  "w": "08-setup.js:294"
+ },
+ {
+  "k": "New in v0.6–0.7: spectator tastes, tempers and moods with emotes (up to 48 in the stands, one section per class color); the bookmaker's wagers, banked in your active lanista's treasury; the Creator Studio (custom characters, beasts and events, name generator); Manager mode with bankruptcy, weekly repairs and generated rivals; the roguelike Ludus (saved gladiators update automatically after every event they fight in — the fallen are struck for good).",
+  "w": "08-setup.js:295"
+ },
+ {
+  "k": "🧭 <b>The full-screen split.</b> Manager mode and the Creator Studio no longer squeeze every tab into one row. In full screen they sit in a grouped <b>left rail</b>: Manager as <b>Ludus</b> (your ludus, roster, recruiting, favorites, infirmary, practice), <b>Arena</b> (Match Week, wagers), <b>World</b> (news, league, Imperium, trophies, season) and <b>Lanista</b>, with ⏭ End the week under the rail; the Studio as <b>Overview</b>, <b>Fighters</b> (characters, beasts, tokens), <b>Gear</b> (weapons &amp; armor, trophies, banners), <b>Arena</b> (events, editors, spectators) and <b>Tools</b>. The chosen tab fills the rest of the screen. In a small window the familiar row of tabs returns. Match Week and the live bout are unchanged.",
+  "w": "08-setup.js:301"
+ },
+ {
+  "k": "Set up a new event, or pick up a saved match where you left it.",
+  "w": "08-setup.js:377"
+ },
+ {
+  "k": "Only Manager careers live here — Play now matches have their own saves.",
+  "w": "08-setup.js:387"
+ },
+ {
+  "k": "This Match Week bout is still on the sand. Manager mode needs its result before the week can move on.",
+  "w": "08-setup.js:416"
+ },
+ {
+  "k": "arena · v0.85",
+  "w": "01-head.html"
+ },
+ {
+  "k": "Slow",
+  "w": "01-head.html"
+ },
+ {
+  "k": "Fast",
+  "w": "01-head.html"
+ },
+ {
+  "k": "📋 Event Details",
+  "w": "01-head.html"
+ },
+ {
+  "k": "🛡️ Ludus",
+  "w": "01-head.html"
+ },
+ {
+  "k": "💼 Manager",
+  "w": "01-head.html"
+ },
+ {
+  "k": "🎟 Buy a ticket",
+  "w": "01-head.html"
+ },
+ {
+  "k": "On",
+  "w": "01-head.html"
+ },
+ {
+  "k": "⏭ Sim to end",
+  "w": "01-head.html"
+ },
+ {
+  "k": "Stands: on",
+  "w": "01-head.html"
+ },
+ {
+  "k": "See-through: auto",
+  "w": "01-head.html"
+ },
+ {
+  "k": "Newest first. Turn headers in gold, big moments highlighted.",
+  "w": "01-head.html"
+ },
+ {
+  "k": "The Gladiatorial Survival Sandbox",
+  "w": "01-head.html"
+ },
+ {
+  "k": "[ MAGNVS EDITION ]",
+  "w": "01-head.html"
+ },
+ {
+  "k": "🎓 Learn to Play (Classic)",
+  "w": "01-head.html"
+ },
+ {
+  "k": "a guided bout, Flavius at your side",
+  "w": "01-head.html"
+ },
+ {
+  "k": "💼 Learn to Play Manager Mode",
+  "w": "01-head.html"
+ },
+ {
+  "k": "run one guided week of a ludus",
+  "w": "01-head.html"
+ },
+ {
+  "k": "a new event · load or manage saved matches",
+  "w": "01-head.html"
+ },
+ {
+  "k": "continue, load or start a career",
+  "w": "01-head.html"
+ },
+ {
+  "k": "characters, beasts, events, gear, banners",
+  "w": "01-head.html"
+ },
+ {
+  "k": "the Infamis, the Hall, the Liberti, the archives",
+  "w": "01-head.html"
+ },
+ {
+  "k": "📜 Rules &amp; strategy",
+  "w": "01-head.html"
+ },
+ {
+  "k": "The 🏛 button on the top bar brings this menu back",
+  "w": "01-head.html"
+ },
+ {
+  "k": "© 2026 Flavius Rule · Author:",
+  "w": "01-head.html"
+ },
+ {
+  "k": "D.Soto",
+  "w": "01-head.html"
+ },
+ {
+  "k": "FlaviusRule.com (opens in a new tab)",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "CPU speed",
+  "w": "01-head.html [aria-label]"
+ },
+ {
+  "k": "Pause CPU turns",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "The event briefing: rounds, what is not allowed in each, how to win and who fights",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Menagerie: the live beast tracker, cards in play, the deck and the bestiary with its all-time ledgers (B)",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Standings: the race for Crowd Favor. The dot wears the current leader's color.",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Wagers: the betting table and your active wallet",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Rules in this build, the strategy guide and the rulebook",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Imperium: the empire and its stands — map of fans, weather and world events, the arena chronicle and the full spectator roster (T)",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "The Annals: the Infamis, the Hall of Flavius, the Liberti, event records and the Ludus Archives",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Creator Studio: characters, beasts, events, spectators, names",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Ludus Flavius: your saved gladiators",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Back to your Manager-mode career",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "New event, sound and settings",
+  "w": "01-head.html [aria-label]"
+ },
+ {
+  "k": "Set up a new event",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Save this match exactly as it stands (on your move) — three slots, plus an automatic save every rotation",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Save match",
+  "w": "01-head.html [aria-label]"
+ },
+ {
+  "k": "Mute / unmute all sound (M)",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Main menu",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "More: new event, sound, settings",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Isometric arena board",
+  "w": "01-head.html [aria-label]"
+ },
+ {
+  "k": "Hints and strategy popups",
+  "w": "01-head.html [aria-label]"
+ },
+ {
+  "k": "Show or hide the stadium seating around the arena (S)",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Make pillars and figures see-through (X)",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Hints on / off (H)",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Hints on or off",
+  "w": "01-head.html [aria-label]"
+ },
+ {
+  "k": "Arena tools",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Close panel",
+  "w": "01-head.html [aria-label]"
+ },
+ {
+  "k": "Game actions",
+  "w": "01-head.html [aria-label]"
+ },
+ {
+  "k": "Collapse or expand the arena log",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Show the latest log lines on the arena",
+  "w": "01-head.html [title]"
+ },
+ {
+  "k": "Minimise this window to look at the board",
+  "w": "01-head.html [aria-label]"
+ },
+ {
+  "k": "Look at the board (this choice waits for you)",
+  "w": "01-head.html [title]"
+ }
+]

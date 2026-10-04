@@ -22,5 +22,5 @@ for(const f of FILES){const fp=path.join(ROOT,'src',f);const src=fs.readFileSync
     ts.forEachChild(node,v)})(sf);
   if(MODE==='write'&&edits.length){let out=src;for(const e of edits.sort((a,b)=>b.at-a.at))out=out.slice(0,e.at)+e.ins+out.slice(e.at);fs.writeFileSync(fp,out)}}
 const arr=[...items.values()];
-if(MODE==='write'){fs.writeFileSync(path.join(__dirname,'src','part-26.json'),JSON.stringify(arr,null,1))}
+if(MODE==='write'&&arr.length){fs.writeFileSync(path.join(__dirname,'src','part-26.json'),JSON.stringify(arr,null,1))}
 console.log(n,'sites',arr.length,'keys');if(MODE==='list')console.log(arr.map(a=>a.k).join(' | '));

@@ -50,7 +50,7 @@ document.addEventListener('click',e=>{
 function bestiaryHTML(){const box=document.createElement('div');box.innerHTML=menagerieHTML();const g=box.querySelector('.setup-grid');const right=g&&g.children[1];return right?right.innerHTML:box.innerHTML}
 openMenagerie=async function(){if(typeof modalBusy==='function'&&modalBusy())return;await loadBestiary();
   await modal(_T('📖 Bestiary · the beasts and their ledgers'),`<div id="menagBody">${bestiaryHTML()}</div>`,[{label:_T('Close'),value:0}],{wide:1})};
-{const base=showRules;showRules=function(){const r=base.apply(this,arguments);setTimeout(()=>{try{const t=document.querySelector('#mBody [data-rul="learn"]');if(t&&!document.querySelector('#mBody [data-bestiary]'))t.insertAdjacentHTML('afterend','<button type="button" data-bestiary>📖 Bestiary</button>')}catch(e){}},60);return r}}
+{const base=showRules;showRules=function(){const r=base.apply(this,arguments);setTimeout(()=>{try{const t=document.querySelector('#mBody [data-rul="learn"]');if(t&&!document.querySelector('#mBody [data-bestiary]'))t.insertAdjacentHTML('afterend',`<button type="button" data-bestiary>${_T`📖 Bestiary`}</button>`)}catch(e){}},60);return r}}
 (()=>{const st=document.createElement('style');st.textContent=`
 .sidetabs{display:flex;gap:0;position:sticky;top:0;z-index:5;background:var(--panel,#1f1711)}
 .sidetabs button{flex:1;padding:7px 6px;font-size:13px}

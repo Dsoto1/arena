@@ -74,7 +74,7 @@ function banner73(k){const B=BANNERS73[k];if(!B)return '';return `<div class="ro
   if(/<div class="roomhd (infirm|yard)">/.test(h))h=h.replace(/(<div class="roomhd (infirm|yard)">[\s\S]*?<div class="roomttl">[\s\S]*?<\/div>)/,`$1${bannerStat73(k)}`);
   else if(BANNERS73[k])h=h.replace('<div class="railmain">',m0=>m0+banner73(k));
   /* the infirmary's " · N" in its label becomes the oval */
-  h=h.replace(/⚕ Infirmary · \d+/,'⚕ Infirmary')}catch(e){console.error(e)}return h}}
+  h=h.replace(/⚕ Infirmary · \d+/,_T('⚕ Infirmary'))}catch(e){console.error(e)}return h}}
 /* the rail ovals (kept live by the sweep, like the hour chips of v0.65) */
 setInterval(()=>{try{if(typeof W_!=='function'||!W_()||W_().dead)return;const w=W_();
   const vals={ludus:[ludusTodo73(),n=>`📋 ${n}`,n=>_T`${n} task${n===1?'':'s'} left this week`],recruit:[w.hours||0,n=>`${n} h`,n=>_T`${n} of the lanista's hours left`],practice:[thLeft(w),n=>`${n} h`,n=>_T`${n} training hours left`],infirm:[infirmNeed73(),n=>`⚕ ${n}`,n=>_T`${n} fighter${n===1?'':'s'} need care`]};
@@ -85,7 +85,7 @@ setInterval(()=>{try{if(typeof W_!=='function'||!W_()||W_().dead)return;const w=
 /* ---------- scouting: ratings + personality on the free agent's card ---------- */
 function persTags73(g){if(g.report&&g.report.tags)return g.report.tags;try{const st=styleOf({cpu:true,pers:g.pers,diff:'normal',cls:CLASSES[g.cls]?g.cls:'soldier',stats:{},trophies:[],coin:0,cf:0});return PERS_KEYS.map(([k,l])=>[l,st[k]]).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0])}catch(e){return []}}
 {const base=detailHTML;detailHTML=function(g){let h=base.apply(this,arguments);try{if(!g||g.contract||!h.includes('class="rsteps"'))return h;
-  const tags=g.scout?persTags73(g):[];const add=(typeof ratingsHTML==='function'?ratingsHTML(g):'')+(g.scout?`<div class="sect">${_T`Personality`}</div><div class="ptags">${tags.map(t=>`<span class="badge gold">${esc(t)}</span>`).join(' ')||'<span class="rc-sub">—</span>'}</div>`:'<p class="rc-sub" style="margin:4px 0 0">Scout them to see their ratings and personality.</p>');
+  const tags=g.scout?persTags73(g):[];const add=(typeof ratingsHTML==='function'?ratingsHTML(g):'')+(g.scout?`<div class="sect">${_T`Personality`}</div><div class="ptags">${tags.map(t=>`<span class="badge gold">${esc(t)}</span>`).join(' ')||'<span class="rc-sub">—</span>'}</div>`:`<p class="rc-sub" style="margin:4px 0 0">${_T`Scout them to see their ratings and personality.`}</p>`);
   const i=h.indexOf('<div class="rpane">');if(i>=0)h=h.slice(0,i)+`<div class="scoutsee">${add}</div>`+h.slice(i)}catch(e){console.error(e)}return h}}
 
 (()=>{const st=document.createElement('style');st.textContent=`
@@ -104,7 +104,7 @@ function persTags73(g){if(g.report&&g.report.tags)return g.report.tags;try{const
    Flavius's box; hovering it (or a tap) opens the event's Summa Rudis card and the medallion. ---------- */
 let SR_OPEN=false;
 function srBtnAt(x,y,d){const cv=document.getElementById('cv');if(!cv)return;const wrap=cv.parentElement;let b=document.getElementById('srInfo');
-  if(!b){b=document.createElement('button');b.id='srInfo';b.type='button';b.className='srseal';b.setAttribute('aria-label','The Summa Rudis');b.innerHTML='<span>SR</span>';
+  if(!b){b=document.createElement('button');b.id='srInfo';b.type='button';b.className='srseal';b.setAttribute('aria-label',_T('The Summa Rudis'));b.innerHTML='<span>SR</span>';
     const show=()=>srPopShow(b);b.addEventListener('mouseenter',show);b.addEventListener('focus',show);b.addEventListener('mouseleave',()=>{if(!SR_OPEN)srPopHide()});b.addEventListener('blur',()=>{if(!SR_OPEN)srPopHide()});
     b.addEventListener('click',e=>{e.stopPropagation();SR_OPEN=!SR_OPEN;b.classList.toggle('on',SR_OPEN);if(SR_OPEN)srPopShow(b);else srPopHide()});wrap.appendChild(b)}
   const k=cv.clientWidth/cv.width;b.style.left=(cv.offsetLeft+x*k-11)+'px';b.style.top=(cv.offsetTop+y*k-9)+'px';b.hidden=false;b._t=Date.now()}
@@ -162,7 +162,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-ckskip]');
 
 /* ---------- (v0.74) the swap: banners count in the perk-point box; the perk points use the banner's pill ---------- */
 {const base=schoolingCardHTML;schoolingCardHTML=function(){let h=base.apply(this,arguments);try{const P=me().perkPts||0;
-  h=h.replace(/<div class="ptbox[^"]*"([^>]*)>\d+<\/div>/,`<div class="ptpill ${P?'on':''}"$1><b>${P}</b><span>point${P===1?'':'s'} to spend</span></div>`)}catch(e){}return h}}
+  h=h.replace(/<div class="ptbox[^"]*"([^>]*)>\d+<\/div>/,`<div class="ptpill ${P?'on':''}"$1>${_T`<b>${P}</b><span>point${P===1?'':'s'} to spend</span>`}</div>`)}catch(e){}return h}}
 (()=>{const st=document.createElement('style');st.textContent=`
 .roomstat.rs2{padding:6px 10px;border-radius:12px;gap:3px;min-width:0}.roomstat.rs2 .ptbox{min-width:52px;height:48px;font-size:22px;padding:0 8px}
 .ptpill{display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:5px 14px;border:1px solid var(--line2);border-radius:999px;background:rgba(20,14,10,.78)}
