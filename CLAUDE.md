@@ -681,8 +681,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
   8 printed classes move to the live template (104-cards74 classCard74) so rule changes update their cards. Art NOT drawn yet (optional,
-  his call; checked 2026-10-04): Chest Armor (chestarm81) + Reinforced Arm Armor (rarmarm81) — hidden data until they have art; Floor Spikes
-  medallion. The Iron Spaulder IS the Manica (his word, 2026-10-04) — same piece, same art, no separate art needed. Thracian Helm + Ornate Chest are DONE (his art).
+  his call; checked 2026-10-04): Chest Armor (chestarm81) + Reinforced Arm Armor (rarmarm81) — hidden data until they have art. Floor Spikes
+  medallion DONE (v0.83, 134-v83spikes; recipe tools/art/spikes83/make.py from his Spiders/Water/Key medallions). The Iron Spaulder IS the Manica (his word, 2026-10-04) — same piece, same art, no separate art needed. Thracian Helm + Ornate Chest are DONE (his art).
 - **v0.81 art (his, intake in tools/art/armor81/, not wired yet):** higher-resolution art for 8 existing pieces (Reinforced Chest Armor,
   Steel Helm, Flavius' Greaves, Iron Spaulder/Manica shoulder, Flavius' Bracers, Leather Greaves, Helm of Flavius, Hoplomachus Helm) + the NEW
   Thracian Helm (his TTS list: L2 · head · 4 AP) — decided: the HERO starts with it (instead of the Steel Gated Helm, also L2 4 AP).

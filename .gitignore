@@ -9,3 +9,4 @@ tools/reg/
 .claude/
 mm35_frozen.png
 ar_*.png
+tools/art/spikes83/scene_mask.npy
