@@ -33851,7 +33851,7 @@ function nc82Front(sp){const pk=nc82Printed(sp);
     <b class="sv s1">${T.states?T.states[0][1]:T.ap}</b><b class="sv s2">${T.rng||1}</b>${T.scan?'':'<i class="noeye"></i>'}<b class="sv s3">${T.states?T.states[0][3]:T.mv}</b><b class="sv s4">${T.hp}</b></div>`}
 /* the INFO side */
 function nc82Back(sp){const T=sp.T;const st=T.states&&T.states.length===3?T.states:null;
-  const rows=st?st.map((s,i)=>({hp:s[0],a:s[1],r:s[2],m:s[3]})):[{hp:T.hp,a:T.ap,r:T.rng||1,m:T.mv}];
+  const rows=st?st.map((s,i)=>({hp:i===0?T.hp:Math.max(0,st[i-1][0]-1),a:s[1],r:s[2],m:s[3]})):[{hp:T.hp,a:T.ap,r:T.rng||1,m:T.mv}]; /* the circle = the HP the state STARTS at, as printed (Tholo 20/14/5) */
   const Y=st?[32.15,38.7,45.6]:[32.15];
   const rr=rows.map((x,i)=>`<b class="v va" style="top:${Y[i]}%">${x.a}</b><b class="v vr" style="top:${Y[i]}%">${x.r}</b><b class="v vm" style="top:${Y[i]}%">${x.m}</b><b class="v vh" style="top:${Y[i]}%">${x.hp}</b>`).join('');
   const kind=typeof npcKind==='function'?npcKind(sp.t):T.n;
@@ -34075,6 +34075,13 @@ function spearAfter82(p,s){const n=seatPrice82();log(`Flavius scowls and refunds
 .flref82 .ico{width:16px;height:16px}
 @keyframes flref82{0%{opacity:0;transform:translate(-50%,0)}12%{opacity:1}100%{opacity:0;transform:translate(-50%,-46px)}}
 body.calm .flref82{animation:none;opacity:1}`;document.head.appendChild(st)}
+/* his note: the printed beasts' INFO side already exists — it is their arena-deck card (Tholo, Commodus, Leo, Leaena, Zora);
+   their card flips to that printed card; the template back stays for every other beast */
+const NC82_BACKCARD={tholo:'spawnTholo',commodus:'spawnCommodus',leo:'spawnLeo',leaena:'spawnLeaena',zora:'zora'};
+{const base=nc82Back;nc82Back=function(sp){const pk=sp&&nc82Printed(sp);const k=pk&&NC82_BACKCARD[pk];
+  if(k&&CARDS[k]&&typeof cardHTML==='function')return `<div class="nc82pback">${cardHTML('c:'+k,'xl')}</div>`;return base.apply(this,arguments)}}
+{const st=document.createElement('style');st.textContent=`.nc82pback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a120c;border-radius:6px;overflow:hidden}
+.nc82pback .cimg{width:100%!important;border-radius:6px}`;document.head.appendChild(st)}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

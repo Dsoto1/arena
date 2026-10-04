@@ -10,10 +10,10 @@ const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const shots=proces
 /* 1. Tholo's card: his front, the info side with his numbers */
 o.th=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);try{menuHide()}catch(e){}nc82Open('tholo','Tholo','Tholo');await new Promise(r=>setTimeout(r,200));const p=document.getElementById('nc82pop');
   const v=c=>[...p.querySelectorAll('.back .'+c)].map(x=>+x.textContent);
-  return {front:!!p.querySelector('.face.f img[src*="npccard82_tholo"]'),back:!!p.querySelector('.back img[src*="npcback82_3"]'),ttl:(p.querySelector('.back .ttl')||{}).textContent,
+  return {front:!!p.querySelector('.face.f img[src*="npccard82_tholo"]'),back:!!p.querySelector('.face.b .nc82pback .cimg'),tpl:(()=>{const d=document.createElement('div');d.innerHTML=nc82Back({...nc82Spec('tholo','Tholo','Tholo'),t:'cn_x'});const q=c=>[...d.querySelectorAll('.'+c)].map(x=>+x.textContent);return {hp:q('vh'),a:q('va'),r:q('vr'),m:q('vm'),rules:(d.querySelector('.rules')||{}).textContent||''}})(),ttl:(p.querySelector('.back .ttl')||{}).textContent,
     hp:v('vh'),a:v('va'),r:v('vr'),m:v('vm'),rules:(p.querySelector('.back .rules')||{}).textContent||''}});
-ok(o.th.front&&o.th.back&&o.th.ttl==='Tholo','tholo card sides');ok(JSON.stringify(o.th.hp)==='[15,6,0]'&&JSON.stringify(o.th.a)==='[4,5,3]'&&JSON.stringify(o.th.r)==='[1,1,1]'&&JSON.stringify(o.th.m)==='[2,3,1]','tholo rows '+JSON.stringify(o.th));
-ok(/arena center/.test(o.th.rules)&&/12 coin/.test(o.th.rules),'tholo rules text');
+ok(o.th.front&&o.th.back,'tholo card sides (printed arena card on the back)');o.th={...o.th,...o.th.tpl};ok(JSON.stringify(o.th.hp)==='[20,14,5]'&&JSON.stringify(o.th.a)==='[4,5,3]'&&JSON.stringify(o.th.r)==='[1,1,1]'&&JSON.stringify(o.th.m)==='[2,3,1]','tholo rows '+JSON.stringify(o.th));
+ok(/12 coin/.test(o.th.rules),'template back rules text');
 await pg.evaluate(()=>{const f=document.querySelector('#nc82pop .nc82flip');f.dataset.touched='1';f.classList.remove('flipped')});await pg.waitForTimeout(900);await shot('beast_tholo_front.png','#nc82pop .nc82flip');
 await pg.evaluate(()=>document.querySelector('#nc82pop .nc82flip').classList.add('flipped'));await pg.waitForTimeout(900);await shot('beast_tholo_back.png','#nc82pop .nc82flip');
 /* 2. a snake: generated front (no eye, its numbers), one-state info side */
