@@ -23,7 +23,7 @@
        The ward's lock note says you can look at the wounds now and treat them next week.
    7 · Prices read "Cost: N coin" instead of "−N coin": the road events (ROAD76 choices) and the temple
        offerings ("8c · …" → "Cost: 8 coin · …").
-   8 · The bout tracker's fought mark = two rudes (wooden swords: oak blade, rounded tip, dark grip) crossed into an X, tips up.
+   8 · The bout tracker's fought mark = two crossed swords, tips up: Friday rudes (wooden), Saturday iron gladii, Sunday golden gladii.
    9 · The Acta Diurna loses "Start your next week →" (leaving the tab already dismisses it; Your ludus keeps it).
   10 · Rail ovals wear their room's colour: Infirmary medic white with dark red figures, Recruiting the banner's
        green, Training Yard light grey, Your ludus — the letters oval on parchment and the tasks oval light blue
@@ -58,17 +58,26 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 @media (max-width:760px){.travelcard.road85{grid-template-columns:1fr}.road85side{border-left:0;padding-left:0;flex-direction:row;flex-wrap:wrap}.road85t{flex:1 1 200px}}`;document.head.appendChild(st)}
 
 /* 3 · the bout tracker on the Match Week banner */
-const BT85_X=(()=>{const rud=(x1,y1,x2,y2)=>{const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L,gx=x1+ux*9,gy=y1+uy*9,px=-uy,py=ux;
-    return `<path d="M${gx} ${gy}L${x2} ${y2}" stroke="#5a3a1c" stroke-width="5.2" stroke-linecap="round"/><path d="M${gx} ${gy}L${x2} ${y2}" stroke="#b07a42" stroke-width="3.8" stroke-linecap="round"/><path d="M${gx+px*.6} ${gy+py*.6}L${x2+px*.6-ux*2} ${y2+py*.6-uy*2}" stroke="#d9a868" stroke-width="1" stroke-linecap="round" opacity=".8"/>`+
-    `<path d="M${gx-px*4.5} ${gy-py*4.5}L${gx+px*4.5} ${gy+py*4.5}" stroke="#4a2e16" stroke-width="2.6" stroke-linecap="round"/><path d="M${x1} ${y1}L${gx} ${gy}" stroke="#3a2412" stroke-width="2.6" stroke-linecap="round"/><circle cx="${x1-ux*1.2}" cy="${y1-uy*1.2}" r="2.1" fill="#6b4524"/>`};
-  return `<svg class="bt85x" viewBox="0 0 40 40" aria-hidden="true">${rud(8,35,31,6)}${rud(32,35,9,6)}</svg>`})();
+/* the fought mark per day: Friday two rudes (oak), Saturday two iron gladii, Sunday two golden gladii — crossed, tips up */
+const BT85_MAT=[{blade:'#b07a42',edge:'#5a3a1c',hi:'#d9a868',grip:'#3a2412',guard:'#4a2e16',pom:'#6b4524',rud:1},
+  {blade:'#b9c2ca',edge:'#4f575e',hi:'#eef2f5',grip:'#4a2e16',guard:'#7a6a50',pom:'#9a8a6a'},
+  {blade:'#e8c04a',edge:'#7a5a12',hi:'#fff1b0',grip:'#5a1e14',guard:'#c99a2a',pom:'#e8c04a'}];
+function bt85X(i){const M=BT85_MAT[Math.max(0,Math.min(2,i))];
+  const sw=(x1,y1,x2,y2)=>{const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L,gx=x1+ux*9,gy=y1+uy*9,px=-uy,py=ux;
+    const blade=M.rud?`<path d="M${gx} ${gy}L${x2} ${y2}" stroke="${M.edge}" stroke-width="5.2" stroke-linecap="round"/><path d="M${gx} ${gy}L${x2} ${y2}" stroke="${M.blade}" stroke-width="3.8" stroke-linecap="round"/>`
+      :(()=>{const w=2.3,bx=x2-ux*6,by=y2-uy*6;const pts=[[gx+px*w*.8,gy+py*w*.8],[bx+px*w,by+py*w],[x2,y2],[bx-px*w,by-py*w],[gx-px*w*.8,gy-py*w*.8]].map(q=>q[0].toFixed(1)+' '+q[1].toFixed(1)).join('L');
+        return `<path d="M${pts}Z" fill="${M.blade}" stroke="${M.edge}" stroke-width=".8" stroke-linejoin="round"/>`})();
+    return blade+`<path d="M${gx+px*.6} ${gy+py*.6}L${x2+px*.6-ux*3} ${y2+py*.6-uy*3}" stroke="${M.hi}" stroke-width="${M.rud?1:.7}" stroke-linecap="round" opacity=".85"/>`+
+      `<path d="M${gx-px*4.5} ${gy-py*4.5}L${gx+px*4.5} ${gy+py*4.5}" stroke="${M.guard}" stroke-width="2.6" stroke-linecap="round"/><path d="M${x1} ${y1}L${gx} ${gy}" stroke="${M.grip}" stroke-width="2.6" stroke-linecap="round"/><circle cx="${x1-ux*1.2}" cy="${y1-uy*1.2}" r="2.1" fill="${M.pom}"/>`};
+  return `<svg class="bt85x" viewBox="0 0 40 40" aria-hidden="true">${sw(8,35,31,6)}${sw(32,35,9,6)}</svg>`}
+const BT85_X=bt85X(0);
 const BT85_DAY={under:'Fri',feature:'Sat',main:'Sun'};
 function boutTrack85(){const w=W_(),m=me();const n=w&&w.night;if(!n||n.bye||!n.bouts||!n.bouts.length)return '';
   const mine=new Set(rosterOf(m).map(g=>g.id));const nextI=n.bouts.findIndex(b=>!b.done);
   const box=(b,i)=>{const T=TIERS[b.tier]||{n:b.tier};const me1=b.ents.find(id=>mine.has(id));const g=me1&&gById(me1);
     let st=b.done?'done':i===nextI?'next':'later';let res='';
     if(b.done&&g){const r=b.res||{};const won=r.winner===g.id||(r.wid===g.id)||(Array.isArray(r.winners)&&r.winners.includes(g.id));res=g.alive===false?'🪦':won?'🏆':'✓'}
-    return `<button type="button" class="bt85 ${st}" data-bt85="${i}" title="${esc(T.n)}${g?` · ${esc(g.name)}`:''}${b.done?' · fought':i===nextI?' · up next':''}"><span class="bt85d">${BT85_DAY[b.tier]||''}</span><b>${esc((T.n||'').replace(' bout','').replace(' event',''))}</b><span class="bt85m">${g?'●':''}${res?' '+res:''}</span>${b.done?BT85_X:''}</button>`};
+    return `<button type="button" class="bt85 ${st}" data-bt85="${i}" title="${esc(T.n)}${g?` · ${esc(g.name)}`:''}${b.done?' · fought':i===nextI?' · up next':''}"><span class="bt85d">${BT85_DAY[b.tier]||''}</span><b>${esc((T.n||'').replace(' bout','').replace(' event',''))}</b><span class="bt85m">${g?'●':''}${res?' '+res:''}</span>${b.done?bt85X(i):''}</button>`};
   return `<div class="roomstat bt85w">${n.bouts.map((b,i)=>box(b,i)).join('<span class="bt85a">➜</span>')}</div>`}
 {const base=bannerStat73;bannerStat73=function(k){if(k==='night'){try{const h=boutTrack85();if(h){const s=tabStat73(k);return h.replace('</div>',(s?`<span class="bt85n">${s[0]} ${esc(s[1])}</span>`:'')+'</div>')}}catch(e){console.error(e)}}return base.apply(this,arguments)}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-bt85]');if(!b)return;e.stopPropagation();const i=+b.dataset.bt85;const c=document.querySelectorAll('#mgrBody .card2.bout')[i];if(c)c.scrollIntoView({behavior:typeof reduceMotion==='function'&&reduceMotion()?'auto':'smooth',block:'start'})},true);

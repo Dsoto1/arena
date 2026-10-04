@@ -1,34 +1,50 @@
 
 /* =====================================================================
-   CREATOR STUDIO: custom characters (rulebook p.60-63), custom beasts and custom events (p.64-67).
+   15-CUSTOM · THE CREATOR STUDIO (core)
+   =====================================================================
+   Custom characters (rulebook p.60-63), custom beasts and custom events (p.64-67).
    Everything made here is marked ✦ custom and is never eligible for the Infamis, the Hall of Flavius or missios.
+   - CUSTOM holds the loaded creations; registerCustoms() turns them into CLASSES cc_*, NPCT cn_*, EVENTS ce_*.
+   - portraitSVG(): the generated portrait bust used everywhere (Ludus, Manager, custom characters).
+   - Engine hooks for custom events: customBoard / customStart / checkEndCustom.
+   - The Studio window: studioHTML() (tabs and lists), the character / beast / token designers, the Event
+     Designer (edBoardHTML / edRulesHTML / edRosterHTML), unique names (nameGuard), and wireStudio()
+     (every click and input). Later designers (gear, banners, trophies, classes…) hook into wireStudio.
    ===================================================================== */
 const CUSTOM={chars:[],npcs:[],events:[],tokens:[],loaded:false};
 // [name, rulebook description (at value 1), points per value level, effect-per-level shown in the dropdown]
 const ABILITIES={none:['None','No class ability.',0,'no ability'],dmg:['Iron Fist','+1 damage to every successful attack in round 1 (Soldier).',3,'+1 damage per hit in round 1'],coin:['Patron\'s Purse','+1 coin each turn, phase 3 (Royalty).',3,'+1 coin each turn'],cf:['Crowd Darling','+1 CF each turn, phase 3 (Hero).',4,'+1 CF each turn'],mv:['Fleet-footed','+1 movement each turn (Slave).',4,'+1 movement each turn'],vet:['Lanista','+1 coin or +1 CF each turn, your choice (Veteranus).',3,'+1 coin OR +1 CF each turn, your choice'],stone:['Stone Gatherer','Gathers 1 stone each turn for a Stone Sling (Damnatio).',2,'+1 sling stone each turn'],zora:['Eagle Handler','Declare Zora the golden eagle once per event (Venatore).',4,'+1 Zora release per event']};
-const abilDesc=(k,val=1)=>{const A=ABILITIES[k||'none'];if(k==='none'||!A)return A?A[1]:'';return A[3].replace('+1',`+${val}`)+(val>1?` (value ${val})`:'')};
+/* abilDesc — the dropdown text of an ability at a value ("+2 coin each turn (value 2)"). */
+const abilDesc=(abilKey,val=1)=>{const A=ABILITIES[abilKey||'none'];if(abilKey==='none'||!A)return A?A[1]:'';return A[3].replace('+1',`+${val}`)+(val>1?` (value ${val})`:'')};
+/* CHAR_BUDGET — loadout point budget of a custom character (the printed classes cost 14–24). TWEAK: the 22. */
 const CHAR_BUDGET=22;
+/* SKINS — portrait skin tones (names in SKIN_NAMES); also used for spectators and Ludus faces. */
 const SKINS=['#f6dcc0','#f1c9a5','#e8bd93','#e0ac7e','#d29b6e','#c68e5f','#b97f52','#a86b43','#96603b','#7d4b2c','#6b3f24','#5a341e','#4a2a18'];
 const SKIN_NAMES=['Alpine fair','Gallic fair','Latin light','Latin olive','Etruscan tan','Iberian bronze','Illyrian bronze','Numidian brown','Syrian brown','Egyptian deep','Kushite deep','Nubian dark','Aethiopian dark'];
+/* HAIRS — portrait hair colors (names in HAIR_NAMES). */
 const HAIRS=['#1f1510','#2e2019','#4a2c17','#7a4a22','#9a6a30','#b07a3a','#d8c28a','#e8dca8','#8a8a8a','#d8d8d8','#a3281f','#7a3a5a','#2f4f8a','#3a6a3a','#e07a2a','#f2f0e6'];
 const HAIR_NAMES=['Raven black','Umbrian dark','Dark brown','Chestnut','Tawny','Auburn','Gallic blond','Germanic flaxen','Iron gray','Silver','Tyrrhenian red','Dyed madder','Woad blue','Druid green','Henna orange','Chalk white'];
+/* HELMS — portrait headgear [key, label]. */
 const HELMS=[['none','Bare head'],['galea','Galea'],['crested','Crested galea'],['murmillo','Murmillo grill'],['hood','Retiarius hood'],['laurel','Laurel wreath'],['horned','Horned helm'],['circlet','Bronze circlet'],['band','Leather band'],['knot','Suebian knot'],['thraex','Thraex griffin crest'],['provocator','Provocator visor'],['pileus','Pileus (freedman cap)'],['diadem','Royal diadem'],['pelt','Wolf pelt (signifer)'],['veil','Priestly veil']];
+/* BGS — portrait backdrop colors (names in BG_NAMES). */
 const BGS=['#2a1f17','#1d2a33','#2f1b1b','#1f2a1c','#2a2233','#33291a','#403020','#1a2a3a','#332a20','#26331f','#3a1840','#2e2e2e','#3d2230','#4a3a12'];
 const BG_NAMES=['Umber','Night harbor','Wine dark','Moss','Plum dusk','Sand','Amphora','Aegean','Colonnade','Laurel grove','Imperial purple','Vesuvian ash','Carthage dusk','Saffron'];
+/* HAIRSTYLES — portrait hairstyles [key, label]; BEARDS, MARKS, EYES and GARBS below work the same way. */
 const HAIRSTYLES=[['','Short (default)'],['long','Long'],['crop','Cropped'],['curly','Curly'],['braid','Braided'],['crest','Mohawk crest'],['bald','Shaven']];
 const BEARDS=[['','None'],['full','Full beard'],['goatee','Goatee'],['stache','Moustache'],['stubble','Stubble'],['forked','Forked (Gallic)']];
 const MARKS=[['','None'],['scar','Scar'],['paint','War paint'],['scarX','Crossed scars'],['brand','Slave brand'],['tattoo','Thracian tattoos'],['woad','Woad face paint'],['patch','Eyepatch'],['blind','Milky eye']];
 const EYES=[['#1a120c','Dark'],['#5a3a1e','Brown'],['#3a6a4a','Green'],['#3a5a8a','Blue'],['#8a7a3a','Amber'],['#7a7a7a','Gray']];
 const GARBS=[['','Tunic & baldric'],['manica','Manica arm guard'],['fur','Fur mantle'],['toga','Toga praetexta'],['bare','Bare-chested'],['scale','Scale shoulder'],['chain','Chain mail']];
+/* ITEM_OPTS — starting items a custom character may carry: offering tokens, a key, or arena cards (c:<card>). */
 const ITEM_OPTS=[['','None'],['ap3','AP Upgrade token (3 AP)'],['ap2','AP Upgrade token (2 AP)'],['elix4','Health Elixir token (4 HP)'],['elix2','Health Elixir token (2 HP)'],['merc1','Speed of Mercury (+1 MV)'],['key','Arena Key'],['c:ward','Ward of the Evil Eye (card)'],['c:rete','Rete (card)'],['c:lure','Meat Lure (card)'],['c:tame','Tame (card)'],['c:focus','Focus! (card)'],['c:minerva',"Minerva's Push (card)"],['c:hercules1','Herculean Vigor +1 (card)'],['c:forge2','Forge of Vulcan +2 (card)'],['c:omnia1','Omnia Mutantur (card)']];
 
 /* ---------- portraits: a small generated bust instead of a class card ---------- */
-function portraitSVG(pt={},color='#c0433a'){
-  const skin=pt.skin||SKINS[1],hair=pt.hair||HAIRS[1],bg=pt.bg||BGS[0],acc=color,helm=pt.helm||'none';
+function portraitSVG(portrait={},color='#c0433a'){
+  const skin=portrait.skin||SKINS[1],hair=portrait.hair||HAIRS[1],bg=portrait.bg||BGS[0],acc=color,helm=portrait.helm||'none';
   const dk=h=>shade(h,-0.35),mt='#a9b2ba',mtd='#5d656d';
   const fk=String(bg).startsWith('flag:')&&typeof flagURIk==='function'?flagURIk(String(bg).slice(5)):null;
   let s=`<svg viewBox="0 0 100 140" aria-hidden="true"><rect width="100" height="140" fill="${fk?'#1a120c':bg}"/>${fk?`<image href="${fk}" x="-60" y="0" width="220" height="140" preserveAspectRatio="xMidYMid slice" opacity=".85"/><rect width="100" height="140" fill="rgba(10,6,4,.18)"/>`:''}<circle cx="50" cy="62" r="46" fill="${acc}" opacity=".16"/>`;
-  if(pt.fem){ // gladiatrix: narrower shoulders, a strophium chest-band, softer jaw
+  if(portrait.fem){ // gladiatrix: narrower shoulders, a strophium chest-band, softer jaw
     s+=`<path d="M12 140C14 112 29 101 50 101S86 112 88 140Z" fill="${dk(acc)}"/><path d="M24 140C26 118 36 108 50 108S74 118 76 140Z" fill="${acc}"/>`;
     s+=`<path d="M29 111C36 103 64 103 71 111L71 124C60 131 40 131 29 124Z" fill="${dk(acc)}" stroke="${shade(dk(acc),-0.25)}" stroke-width="1.2"/>`;
     s+=`<path d="M40 121C44 125 48 125 50 122C52 125 56 125 60 121" fill="none" stroke="${shade(dk(acc),-0.35)}" stroke-width="1.6"/><circle cx="50" cy="102.5" r="2.2" fill="#e8c86a"/>`;
@@ -37,43 +53,43 @@ function portraitSVG(pt={},color='#c0433a'){
     s+=`<path d="M6 140C8 110 26 99 50 99S92 110 94 140Z" fill="${dk(acc)}"/><path d="M20 140C22 117 34 107 50 107S78 117 80 140Z" fill="${acc}"/><path d="M28 110L62 140" stroke="#5a3a1e" stroke-width="5"/>`;
     s+=`<rect x="41" y="78" width="18" height="26" rx="6" fill="${skin}"/><ellipse cx="28" cy="62" rx="5" ry="8" fill="${skin}"/><ellipse cx="72" cy="62" rx="5" ry="8" fill="${skin}"/><ellipse cx="50" cy="58" rx="22" ry="27" fill="${skin}"/>`;
   }
-  const hs=pt.hs||(pt.long?'long':'');const bareHead=helm==='none'||helm==='laurel'||helm==='diadem';
+  const hs=portrait.hs||(portrait.long?'long':'');const bareHead=helm==='none'||helm==='laurel'||helm==='diadem';
   // garb over the shoulders
-  if(pt.garb==='manica')s+=`<path d="M8 140C9 124 14 114 24 108L30 140Z" fill="${mt}" stroke="${mtd}"/><path d="M11 128h16M13 120h13M17 113h9" stroke="${mtd}" stroke-width="1.4"/>`;
-  if(pt.garb==='fur')s+=`<path d="M8 124C18 102 36 100 50 104S82 102 92 124C80 116 66 114 50 116S20 116 8 124Z" fill="#7a5a3a" stroke="#4a3420"/><path d="M14 120l4 6M24 114l3 7M76 114l-3 7M86 120l-4 6" stroke="#4a3420" stroke-width="1.5"/>`;
-  if(pt.garb==='toga')s+=`<path d="M20 140C22 117 34 107 50 107L70 140Z" fill="#efe6d2"/><path d="M50 107L72 140" stroke="#8a1c1c" stroke-width="5"/>`;
-  if(pt.garb==='bare')s+=`<path d="M20 140C22 117 34 107 50 107S78 117 80 140Z" fill="${skin}"/><path d="M36 124Q43 128 50 124Q57 128 64 124" fill="none" stroke="${dk(skin)}" stroke-width="1.2"/><path d="M50 112v20" stroke="${dk(skin)}" stroke-width="1"/>`;
-  if(pt.garb==='scale')s+=`<path d="M64 108C76 110 86 118 90 132L70 132Z" fill="#b8963a" stroke="#6b4d17"/>${[0,1,2].map(r=>[0,1,2].map(c2=>`<path d="M${68+c2*6+r*2} ${114+r*6}q3 4 6 0" fill="none" stroke="#6b4d17" stroke-width="1"/>`).join('')).join('')}`;
-  if(pt.garb==='chain')s+=`<path d="M20 140C22 117 34 107 50 107S78 117 80 140Z" fill="#8f979e"/><path d="M22 124h56M24 118h52M22 130h56M21 136h58" stroke="#5d656d" stroke-width="1" stroke-dasharray="2 2"/>`;
-  if(pt.ear&&!['hood','veil','murmillo','provocator'].includes(helm))s+=`<circle cx="${pt.fem?30:28}" cy="${pt.fem?71:72}" r="2.4" fill="none" stroke="#e8c86a" stroke-width="1.4"/>`;
+  if(portrait.garb==='manica')s+=`<path d="M8 140C9 124 14 114 24 108L30 140Z" fill="${mt}" stroke="${mtd}"/><path d="M11 128h16M13 120h13M17 113h9" stroke="${mtd}" stroke-width="1.4"/>`;
+  if(portrait.garb==='fur')s+=`<path d="M8 124C18 102 36 100 50 104S82 102 92 124C80 116 66 114 50 116S20 116 8 124Z" fill="#7a5a3a" stroke="#4a3420"/><path d="M14 120l4 6M24 114l3 7M76 114l-3 7M86 120l-4 6" stroke="#4a3420" stroke-width="1.5"/>`;
+  if(portrait.garb==='toga')s+=`<path d="M20 140C22 117 34 107 50 107L70 140Z" fill="#efe6d2"/><path d="M50 107L72 140" stroke="#8a1c1c" stroke-width="5"/>`;
+  if(portrait.garb==='bare')s+=`<path d="M20 140C22 117 34 107 50 107S78 117 80 140Z" fill="${skin}"/><path d="M36 124Q43 128 50 124Q57 128 64 124" fill="none" stroke="${dk(skin)}" stroke-width="1.2"/><path d="M50 112v20" stroke="${dk(skin)}" stroke-width="1"/>`;
+  if(portrait.garb==='scale')s+=`<path d="M64 108C76 110 86 118 90 132L70 132Z" fill="#b8963a" stroke="#6b4d17"/>${[0,1,2].map(r=>[0,1,2].map(c2=>`<path d="M${68+c2*6+r*2} ${114+r*6}q3 4 6 0" fill="none" stroke="#6b4d17" stroke-width="1"/>`).join('')).join('')}`;
+  if(portrait.garb==='chain')s+=`<path d="M20 140C22 117 34 107 50 107S78 117 80 140Z" fill="#8f979e"/><path d="M22 124h56M24 118h52M22 130h56M21 136h58" stroke="#5d656d" stroke-width="1" stroke-dasharray="2 2"/>`;
+  if(portrait.ear&&!['hood','veil','murmillo','provocator'].includes(helm))s+=`<circle cx="${portrait.fem?30:28}" cy="${portrait.fem?71:72}" r="2.4" fill="none" stroke="#e8c86a" stroke-width="1.4"/>`;
   if(bareHead&&hs==='bald')s+=`<path d="M30 46Q50 30 70 46" fill="none" stroke="${shade(skin,0.12)}" stroke-width="3" opacity=".6"/>`;
   else if(bareHead&&hs==='crop')s+=`<path d="M28 52C28 34 72 34 72 52C66 44 34 44 28 52Z" fill="${hair}" opacity=".75"/>`;
   else if(bareHead&&hs==='curly')s+=`<g fill="${hair}">${[28,34,40,46,52,58,64,70].map((x,i)=>`<circle cx="${x+1}" cy="${46-Math.sin(i/7*Math.PI)*12}" r="6.5"/>`).join('')}<circle cx="27" cy="54" r="5"/><circle cx="73" cy="54" r="5"/></g>`;
   else if(bareHead&&hs==='braid')s+=`<path d="M28 54C27 30 73 30 72 54C67 41 33 41 28 54Z" fill="${hair}"/><path d="M71 52q8 12 2 22q8 10 0 22" fill="none" stroke="${hair}" stroke-width="6" stroke-linecap="round"/><path d="M71 60l6 2M72 72l6 2M73 84l6 2" stroke="${dk(hair)}" stroke-width="1.4"/>`;
   else if(bareHead&&hs==='crest')s+=`<path d="M44 20C46 14 54 14 56 20L57 46H43Z" fill="${hair}"/><path d="M30 50C32 42 36 40 40 40M70 50C68 42 64 40 60 40" stroke="${hair}" stroke-width="2" opacity=".5"/>`;
-  else if(helm==='none'||helm==='laurel'||helm==='diadem')s+=(hs==='long'||pt.fem)?`<path d="M26 60C22 26 78 26 74 60C74 44 64 36 50 36S26 44 26 60Z M26 58C24 76 28 88 32 92L30 60Z M74 58C76 76 72 88 68 92L70 60Z" fill="${hair}"/>`:`<path d="M28 54C27 30 73 30 72 54C67 41 33 41 28 54Z" fill="${hair}"/>`;
+  else if(helm==='none'||helm==='laurel'||helm==='diadem')s+=(hs==='long'||portrait.fem)?`<path d="M26 60C22 26 78 26 74 60C74 44 64 36 50 36S26 44 26 60Z M26 58C24 76 28 88 32 92L30 60Z M74 58C76 76 72 88 68 92L70 60Z" fill="${hair}"/>`:`<path d="M28 54C27 30 73 30 72 54C67 41 33 41 28 54Z" fill="${hair}"/>`;
   // v0.25: hair shows under and behind headgear (long hair past the cheek guards, sideburns, a braid, curls at the nape)
-  if(!bareHead&&!['hood','veil','pelt'].includes(helm)&&hs!=='bald'){const lng=hs==='long'||(pt.fem&&!['crop','curly','braid','crest'].includes(hs));
+  if(!bareHead&&!['hood','veil','pelt'].includes(helm)&&hs!=='bald'){const lng=hs==='long'||(portrait.fem&&!['crop','curly','braid','crest'].includes(hs));
     if(lng)s+=`<path d="M26 64C24 82 27 94 33 99L37 72Z M74 64C76 82 73 94 67 99L63 72Z" fill="${hair}"/>`;
     else if(hs==='braid')s+=`<path d="M72 66q8 12 2 22q8 10 0 22" fill="none" stroke="${hair}" stroke-width="6" stroke-linecap="round"/><path d="M73 74l6 2M74 86l6 2M75 98l6 2" stroke="${dk(hair)}" stroke-width="1.4"/>`;
     else if(hs==='curly')s+=`<g fill="${hair}"><circle cx="28" cy="66" r="5"/><circle cx="72" cy="66" r="5"/><circle cx="30" cy="74" r="4"/><circle cx="70" cy="74" r="4"/></g>`;
     else if(hs==='crest')s+=`<path d="M44 ${helm==='murmillo'?14:20}C46 8 54 8 56 ${helm==='murmillo'?14:20}Z" fill="${hair}"/>`;
     else s+=`<path d="M29.5 58v9M70.5 58v9" stroke="${hair}" stroke-width="3" stroke-linecap="round"/>`}
-  const eye=pt.eyes||'#1a120c';s+=`<ellipse cx="41" cy="58" rx="3" ry="2.2" fill="${eye}"/><ellipse cx="59" cy="58" rx="3" ry="2.2" fill="${pt.mark==='blind'?'#d8dcd8':eye}"/>${pt.fem?'<path d="M37 55l-3 -2M45 55l3 -2M55 55l-3 -2M63 55l3 -2" stroke="#1a120c" stroke-width="1.2" stroke-linecap="round"/>':''}<path d="M35 52L46 53M54 53L65 52" stroke="${helm==='none'||helm==='laurel'?hair:'#2a1a10'}" stroke-width="2.4" stroke-linecap="round"/>`;
-  s+=`<path d="M50 60L47 70L52 70" fill="none" stroke="${dk(skin)}" stroke-width="1.5"/><path d="M44 77Q50 ${pt.smile?82:78} 56 77" fill="none" stroke="${pt.fem?'#a34a52':'#6a3a2a'}" stroke-width="${pt.fem?2.4:1.8}"/>`;
-  const bsel=pt.bs&&pt.bs!=='none'?pt.bs:(pt.beard?'full':'');if(bsel&&(pt.bs||!pt.fem)){const bs=bsel==='full'?'':bsel;
+  const eye=portrait.eyes||'#1a120c';s+=`<ellipse cx="41" cy="58" rx="3" ry="2.2" fill="${eye}"/><ellipse cx="59" cy="58" rx="3" ry="2.2" fill="${portrait.mark==='blind'?'#d8dcd8':eye}"/>${portrait.fem?'<path d="M37 55l-3 -2M45 55l3 -2M55 55l-3 -2M63 55l3 -2" stroke="#1a120c" stroke-width="1.2" stroke-linecap="round"/>':''}<path d="M35 52L46 53M54 53L65 52" stroke="${helm==='none'||helm==='laurel'?hair:'#2a1a10'}" stroke-width="2.4" stroke-linecap="round"/>`;
+  s+=`<path d="M50 60L47 70L52 70" fill="none" stroke="${dk(skin)}" stroke-width="1.5"/><path d="M44 77Q50 ${portrait.smile?82:78} 56 77" fill="none" stroke="${portrait.fem?'#a34a52':'#6a3a2a'}" stroke-width="${portrait.fem?2.4:1.8}"/>`;
+  const bsel=portrait.bs&&portrait.bs!=='none'?portrait.bs:(portrait.beard?'full':'');if(bsel&&(portrait.bs||!portrait.fem)){const bs=bsel==='full'?'':bsel;
     if(bs==='goatee')s+=`<path d="M44 80C44 90 56 90 56 80C54 84 46 84 44 80Z" fill="${hair}"/><path d="M42 75Q50 72 58 75" fill="none" stroke="${hair}" stroke-width="2.4"/>`;
     else if(bs==='stache')s+=`<path d="M40 76Q50 70 60 76Q56 73 50 74Q44 73 40 76Z" fill="${hair}" stroke="${hair}" stroke-width="1.6"/>`;
     else if(bs==='stubble')s+=`<path d="M31 64C32 86 44 91 50 91S68 86 69 64C66 78 60 84 50 84S34 78 31 64Z" fill="${hair}" opacity=".35"/>`;
     else if(bs==='forked')s+=`<path d="M29 62C30 84 40 88 44 100L50 92L56 100C60 88 70 84 71 62C68 77 60 83 50 83S32 77 29 62Z" fill="${hair}"/>`;
     else s+=`<path d="M29 62C30 88 44 93 50 93S70 88 71 62C68 77 60 83 50 83S32 77 29 62Z" fill="${hair}"/>`}
-  if(pt.mark==='scarX')s+=`<path d="M56 48L68 68M68 50L57 66" stroke="#a3281f" stroke-width="2"/>`;
-  if(pt.mark==='brand')s+=`<path d="M60 66h6v6h-6z M63 66v6" fill="none" stroke="#7a2a1a" stroke-width="1.6"/>`;
-  if(pt.mark==='tattoo')s+=`<path d="M33 66q4 -6 8 0q4 6 8 0M36 72q3 -4 6 0" fill="none" stroke="#2f4f6a" stroke-width="1.5"/>`;
-  if(pt.mark==='woad')s+=`<path d="M30 50Q50 44 70 50L70 66Q50 60 30 66Z" fill="#2f4f8a" opacity=".55"/>`;
-  if(pt.mark==='patch')s+=`<ellipse cx="59" cy="58" rx="5" ry="4.2" fill="#1a120c"/><path d="M28 50L72 64" stroke="#1a120c" stroke-width="1.6"/>`;
-  if(pt.paint||pt.mark==='paint')s+=`<path d="M33 63h10M57 63h10" stroke="${acc}" stroke-width="3.2" stroke-linecap="round"/>`;
-  if(pt.scar||pt.mark==='scar')s+=`<path d="M58 47L66 70" stroke="#a3281f" stroke-width="2.2"/>`;
+  if(portrait.mark==='scarX')s+=`<path d="M56 48L68 68M68 50L57 66" stroke="#a3281f" stroke-width="2"/>`;
+  if(portrait.mark==='brand')s+=`<path d="M60 66h6v6h-6z M63 66v6" fill="none" stroke="#7a2a1a" stroke-width="1.6"/>`;
+  if(portrait.mark==='tattoo')s+=`<path d="M33 66q4 -6 8 0q4 6 8 0M36 72q3 -4 6 0" fill="none" stroke="#2f4f6a" stroke-width="1.5"/>`;
+  if(portrait.mark==='woad')s+=`<path d="M30 50Q50 44 70 50L70 66Q50 60 30 66Z" fill="#2f4f8a" opacity=".55"/>`;
+  if(portrait.mark==='patch')s+=`<ellipse cx="59" cy="58" rx="5" ry="4.2" fill="#1a120c"/><path d="M28 50L72 64" stroke="#1a120c" stroke-width="1.6"/>`;
+  if(portrait.paint||portrait.mark==='paint')s+=`<path d="M33 63h10M57 63h10" stroke="${acc}" stroke-width="3.2" stroke-linecap="round"/>`;
+  if(portrait.scar||portrait.mark==='scar')s+=`<path d="M58 47L66 70" stroke="#a3281f" stroke-width="2.2"/>`;
   const galea=`<path d="M25 58C25 24 75 24 75 58L70 59C68 40 32 40 30 59Z" fill="${mt}" stroke="${mtd}" stroke-width="1.2"/><path d="M27 57L29 78L38 76L36 57Z M73 57L71 78L62 76L64 57Z" fill="#949da6" stroke="${mtd}"/>`;
   if(helm==='galea')s+=galea;
   if(helm==='crested')s+=`<path d="M30 34C36 4 64 4 70 34C62 22 38 22 30 34Z" fill="${acc}" stroke="${dk(acc)}"/>`+galea;
@@ -92,17 +108,23 @@ function portraitSVG(pt={},color='#c0433a'){
   if(helm==='laurel')s+=`<path d="M26 46Q50 30 74 46" fill="none" stroke="#5f8a3a" stroke-width="3"/>${[30,38,46,54,62,70].map((x,i)=>`<ellipse cx="${x}" cy="${44-Math.sin(i/5*Math.PI)*6}" rx="4" ry="2.4" fill="#7fae4a" transform="rotate(${i<3?-30:30} ${x} ${44-Math.sin(i/5*Math.PI)*6})"/>`).join('')}`;
   return s+'</svg>';
 }
+/* PORTRAIT_SIZES — portrait pixel sizes [w, h] by size name. */
 const PORTRAIT_SIZES={xs:[26,36],sm:[54,76],md:[110,154],lg:[170,238],xl:[250,350]};
-function portraitHTML(c,size='md'){const [w,h]=PORTRAIT_SIZES[size]||PORTRAIT_SIZES.md;return `<span class="portrait" style="width:${w}px;height:${h}px" role="img" aria-label="${esc(c.name||'Custom gladiator')}">${portraitSVG(c.portrait,c.color)}</span>`}
+/* portraitHTML — a portrait <span> at a size, for anything with {name, portrait, color}. */
+function portraitHTML(who,size='md'){const [w,h]=PORTRAIT_SIZES[size]||PORTRAIT_SIZES.md;return `<span class="portrait" style="width:${w}px;height:${h}px" role="img" aria-label="${esc(who.name||'Custom gladiator')}">${portraitSVG(who.portrait,who.color)}</span>`}
+/* classArt — a class's art: a custom character's portrait, else the printed class card. */
 function classArt(cls,size='md'){const C=CLASSES[cls];if(C&&C.custom){const c=CUSTOM.chars.find(x=>'cc_'+x.id===cls)||{name:C.hero,portrait:C.portrait,color:C.color};return portraitHTML(c,size)}return cardHTML('k:'+cls,size)}
-function lockBtn(x){
-  const L=x.lockLog||[];const lastUn=[...L].reverse().find(e=>e.a==='unlocked');const lastLk=[...L].reverse().find(e=>e.a==='locked');
-  const tip=`${x.locked?'LOCKED':'Unlocked'} — click to ${x.locked?'unlock':'lock'} against edits and deletion.\nCreated ${x.created||'?'}${x.updated?` · last edited ${x.updated}`:''}${lastLk?`\nLast locked ${lastLk.at}`:''}${lastUn?`\nLast unlocked ${lastUn.at} — so people know the truth.`:'\nNever unlocked.'}`;
-  return `<button class="btn" type="button" data-st="lock" data-id="${x.id}" title="${esc(tip)}" aria-label="${x.locked?'Unlock':'Lock'}" style="padding:4px 9px;${x.locked?'border-color:var(--gold)':''}">${x.locked?'🔒':'🔓'}</button>`;
+/* lockBtn — the 🔒/🔓 button of a creation, with its lock history in the tooltip. */
+function lockBtn(item){
+  const L=item.lockLog||[];const lastUn=[...L].reverse().find(e=>e.a==='unlocked');const lastLk=[...L].reverse().find(e=>e.a==='locked');
+  const tip=`${item.locked?'LOCKED':'Unlocked'} — click to ${item.locked?'unlock':'lock'} against edits and deletion.\nCreated ${item.created||'?'}${item.updated?` · last edited ${item.updated}`:''}${lastLk?`\nLast locked ${lastLk.at}`:''}${lastUn?`\nLast unlocked ${lastUn.at} — so people know the truth.`:'\nNever unlocked.'}`;
+  return `<button class="btn" type="button" data-st="lock" data-id="${item.id}" title="${esc(tip)}" aria-label="${item.locked?'Unlock':'Lock'}" style="padding:4px 9px;${item.locked?'border-color:var(--gold)':''}">${item.locked?'🔒':'🔓'}</button>`;
 }
-const customTag=c=>c&&c.sandbox?'<span class="cbadge sbx" title="Sandbox build: made in the Creator Studio outside the loadout budget — not eligible for the Infamis, the Hall of Flavius or missios">✦✦ sandbox</span>':'<span class="cbadge" title="Made in the Creator Studio: not eligible for the Infamis, the Hall of Flavius or missios">✦ custom</span>';
+/* customTag — the ✦ custom (or ✦✦ sandbox) badge. */
+const customTag=item=>item&&item.sandbox?'<span class="cbadge sbx" title="Sandbox build: made in the Creator Studio outside the loadout budget — not eligible for the Infamis, the Hall of Flavius or missios">✦✦ sandbox</span>':'<span class="cbadge" title="Made in the Creator Studio: not eligible for the Infamis, the Hall of Flavius or missios">✦ custom</span>';
 
 /* ---------- characters ---------- */
+/* blankChar — a fresh random custom character (name, city, look, a gladius and basic armor). Wrapped by 57-classes. */
 function blankChar(){
   const fem=Math.random()<.35;
   const name=genName({female:fem}),city=pickOne(HOME_CITIES());
@@ -111,68 +133,80 @@ function blankChar(){
     coin:3,keys:1,items:['',''],pers:{...PERS_PRESETS.balanced.v},portrait:{skin:pickOne(SKINS),hair:pickOne(HAIRS),helm:pickOne(HELMS)[0],fem,beard:!fem&&Math.random()<.4,long:fem?Math.random()<.7:Math.random()<.25,scar:Math.random()<.3,paint:false,bg:sysBG()},
     backstory:'',sandbox:false,events:[],trophies:0,rr:0,ff:false,status:'active'};
 }
-function charFromClass(c,k){
-  const C=CLASSES[k];const A={head:null,chest:null,belt:false,rarm:{upper:null,lower:null,wraps:false,cestus:false},larm:{upper:null,lower:null,wraps:false,cestus:false},legU:null,legUp:false,legL:null,legLp:false};
+/* charFromClass — fills a custom character's loadout, coin, keys, ability, weakness, items, personality and color from a printed class. */
+function charFromClass(character,clsKey){
+  const C=CLASSES[clsKey];const A={head:null,chest:null,belt:false,rarm:{upper:null,lower:null,wraps:false,cestus:false},larm:{upper:null,lower:null,wraps:false,cestus:false},legU:null,legUp:false,legL:null,legLp:false};
   for(const [key,loc] of C.armor){const a=ARM[key];
     if(a.slot==='head')A.head=key;else if(a.slot==='chest'){if(a.stack)A.belt=true;else A.chest=key}
     else if(a.slot==='arm'){const s=A[loc];if(a.pt==='upper')s.upper=key;else if(a.pt==='hand')s.cestus=true;else if(a.stack)s.wraps=true;else s.lower=key}
     else{if(a.pt==='upper'){if(a.stack)A.legUp=true;else A.legU=key}else{if(a.stack)A.legLp=true;else A.legL=key}}}
-  Object.assign(c,{arm:A,R:C.R||null,L:C.L||null,coin:C.coin,keys:C.keys,abil:C.abil||'none',weak:CLASS_WEAK[k]||'none',items:[...C.items.slice(0,2),'',''].slice(0,2),pers:{...(PERS_PRESETS[CLASS_PERS[k]]||PERS_PRESETS.balanced).v},color:C.color});
-  return c;
+  Object.assign(character,{arm:A,R:C.R||null,L:C.L||null,coin:C.coin,keys:C.keys,abil:C.abil||'none',weak:CLASS_WEAK[clsKey]||'none',items:[...C.items.slice(0,2),'',''].slice(0,2),pers:{...(PERS_PRESETS[CLASS_PERS[clsKey]]||PERS_PRESETS.balanced).v},color:C.color});
+  return character;
 }
-function charArmor(c){
-  const A=c.arm||{},out=[];
+/* charArmor — a custom character's armor as [piece key, location] pairs (legs on both sides). */
+function charArmor(character){
+  const A=character.arm||{},out=[];
   if(A.head)out.push([A.head,'head']);if(A.chest)out.push([A.chest,'chest']);if(A.belt)out.push(['balteus','chest']);
   for(const s of ['rarm','larm']){const a=A[s]||{};if(a.upper)out.push([a.upper,s]);if(a.lower)out.push([a.lower,s]);if(a.wraps)out.push(['wraps',s]);if(a.cestus)out.push(['cestus',s])}
   for(const s of ['rleg','lleg']){if(A.legU)out.push([A.legU,s]);if(A.legUp)out.push(['legwrapsU',s]);if(A.legL)out.push([A.legL,s]);if(A.legLp)out.push(['legwraps',s])}
   return out;
 }
-function charCost(c){
-  const wc=k=>k&&W[k]?({1:2,2:4,3:7,4:10}[W[k].lv]||2):0;let v=wc(c.R)+wc(c.L);
-  const seen=new Set();for(const [k,l] of charArmor(c)){const a=ARM[k];const key=a.pair?k+'|'+a.slot:k+'|'+l;if(seen.has(key))continue;seen.add(key);v+=a.flav?6:({1:1,2:3,3:5}[a.lv]||1)}
-  v+=Math.ceil((c.coin||0)/2)+(c.keys||0)+(c.items||[]).filter(Boolean).length*2+ABILITIES[c.abil||'none'][2]*(c.abil&&c.abil!=='none'?(c.abilVal||1):1)-WEAKNESSES[c.weak||'none'][2];
+/* charCost — a custom character's point cost: weapons and armor by level, coin, keys, items, ability × value, minus the weakness. TWEAK: the level prices {1:2,2:4,3:7,4:10} and {1:1,2:3,3:5}. */
+function charCost(character){
+  const wc=k=>k&&W[k]?({1:2,2:4,3:7,4:10}[W[k].lv]||2):0;let v=wc(character.R)+wc(character.L);
+  const seen=new Set();for(const [k,l] of charArmor(character)){const a=ARM[k];const key=a.pair?k+'|'+a.slot:k+'|'+l;if(seen.has(key))continue;seen.add(key);v+=a.flav?6:({1:1,2:3,3:5}[a.lv]||1)}
+  v+=Math.ceil((character.coin||0)/2)+(character.keys||0)+(character.items||[]).filter(Boolean).length*2+ABILITIES[character.abil||'none'][2]*(character.abil&&character.abil!=='none'?(character.abilVal||1):1)-WEAKNESSES[character.weak||'none'][2];
   return v;
 }
-function charClass(c){
-  const it=(c.items||[]).filter(Boolean);
-  return {name:c.name,sub:c.nickname||'Custom gladiator',hero:c.name,city:c.city,img:null,color:c.color,baseColor:c.color,armor:charArmor(c),R:c.R||null,L:c.L&&c.L!==c.R?c.L:c.L||null,
-    coin:c.coin||0,keys:(c.keys||0)+it.filter(x=>x==='key').length,items:it.filter(x=>x!=='key'),abil:c.abil==='none'?null:c.abil,abilVal:c.abilVal||1,weak:c.weak||'none',
-    ab:`Ability: ${c.abilText?esc(c.abilText)+' — ':''}${c.abil&&c.abil!=='none'?abilDesc(c.abil,c.abilVal||1)+'. ':''}${ABILITIES[c.abil||'none'][1]}${c.weak&&c.weak!=='none'?' Weakness: '+WEAKNESSES[c.weak][1]:''}`,pers:c.pers,portrait:c.portrait,custom:true,cid:c.id};
+/* charClass — the CLASSES entry a custom character plays as (registered as cc_<id>). Wrapped by 57-classes and 67-studio55. */
+function charClass(character){
+  const it=(character.items||[]).filter(Boolean);
+  return {name:character.name,sub:character.nickname||'Custom gladiator',hero:character.name,city:character.city,img:null,color:character.color,baseColor:character.color,armor:charArmor(character),R:character.R||null,L:character.L&&character.L!==character.R?character.L:character.L||null,
+    coin:character.coin||0,keys:(character.keys||0)+it.filter(x=>x==='key').length,items:it.filter(x=>x!=='key'),abil:character.abil==='none'?null:character.abil,abilVal:character.abilVal||1,weak:character.weak||'none',
+    ab:`Ability: ${character.abilText?esc(character.abilText)+' — ':''}${character.abil&&character.abil!=='none'?abilDesc(character.abil,character.abilVal||1)+'. ':''}${ABILITIES[character.abil||'none'][1]}${character.weak&&character.weak!=='none'?' Weakness: '+WEAKNESSES[character.weak][1]:''}`,pers:character.pers,portrait:character.portrait,custom:true,cid:character.id};
 }
 /* ---------- beasts ---------- */
-function applyNpcBase(n,k){
-  const T=NPCT[k];if(!T)return;
-  Object.assign(n,{kind:T.n,glyph:T.g,color:T.col,hp:T.hp,ap:T.ap,rng:T.rng||1,mv:T.mv,coin:T.coin,cf:T.cf,fly:!!T.fly,tameable:!!T.tameable,states:!!T.states,beh:T.scan?'hunt':T.huntCF?'cf':'zone'});
+/* applyNpcBase — copies a printed beast type's stats and look onto a custom beast draft (the name stays). */
+function applyNpcBase(npc,npcKey){
+  const T=NPCT[npcKey];if(!T)return;
+  Object.assign(npc,{kind:T.n,glyph:T.g,color:T.col,hp:T.hp,ap:T.ap,rng:T.rng||1,mv:T.mv,coin:T.coin,cf:T.cf,fly:!!T.fly,tameable:!!T.tameable,states:!!T.states,beh:T.scan?'hunt':T.huntCF?'cf':'zone'});
 }
+/* blankNpc — a fresh custom beast (a crocodile by default). */
 function blankNpc(){return {id:null,name:genBeastName(),kind:'Crocodile',kindKey:'crocodile',glyph:'K',color:'#5f8a3a',hp:10,ap:3,rng:1,mv:2,coin:8,cf:5,beh:'zone',fly:false,tameable:true,states:true}}
-function npcType(n){
-  const hp=clamp(+n.hp||1,1,60),ap=clamp(+n.ap||1,1,9),rng=clamp(+n.rng||1,1,5),mv=clamp(+n.mv||1,0,7);
-  return {n:n.kind||n.name,g:String(n.glyph||n.name[0]||'?').slice(0,1).toUpperCase(),mv,ap,hp,rng,coin:+n.coin||0,cf:+n.cf||0,col:n.color||'#8a8a8a',tameable:n.tameable?1:0,fly:n.fly?1:0,scan:n.beh==='hunt'?1:0,huntCF:n.beh==='cf'?1:0,
-    states:n.states?[[Math.ceil(hp*0.5),ap,rng,mv,'Initial'],[Math.ceil(hp*0.2),ap+1,rng,Math.min(7,mv+1),'Raged'],[0,Math.max(1,ap-1),1,1,'Fazed']]:null,custom:true,cid:n.id};
+/* npcType — the NPCT entry for a custom beast (cn_<id>): stats clamped to their limits, behavior flags, and Initial / Raged / Fazed states at 50% / 20% HP. TWEAK: the clamps and the state thresholds. */
+function npcType(npc){
+  const hp=clamp(+npc.hp||1,1,60),ap=clamp(+npc.ap||1,1,9),rng=clamp(+npc.rng||1,1,5),mv=clamp(+npc.mv||1,0,7);
+  return {n:npc.kind||npc.name,g:String(npc.glyph||npc.name[0]||'?').slice(0,1).toUpperCase(),mv,ap,hp,rng,coin:+npc.coin||0,cf:+npc.cf||0,col:npc.color||'#8a8a8a',tameable:npc.tameable?1:0,fly:npc.fly?1:0,scan:npc.beh==='hunt'?1:0,huntCF:npc.beh==='cf'?1:0,
+    states:npc.states?[[Math.ceil(hp*0.5),ap,rng,mv,'Initial'],[Math.ceil(hp*0.2),ap+1,rng,Math.min(7,mv+1),'Raged'],[0,Math.max(1,ap-1),1,1,'Fazed']]:null,custom:true,cid:npc.id};
 }
 /* ---------- events ---------- */
 const END_CONDS=[['alive1','Last gladiator (or team) standing'],['alive2','Two gladiators remain'],['npc4|elim1','Four beasts slain or one gladiator falls'],['elim1','The first gladiator falls'],['npc','N beasts slain this round'],['rot','N turn rotations this round'],['cf','A gladiator reaches N Crowd Favor'],['beasts','Every beast slain or tamed'],['survive','Survive N rotations (everyone standing wins)']];
+/* SPAWN_NPCS — beasts the Event Designer can place besides the base six: [name, type, usual tile]. */
 const SPAWN_NPCS=[['Leo','lion',[6,3]],['Leaena','lion',[6,9]],['Tholo','tholo',[6,6]],['Commodus','commodus',[3,6]],['Zora','zora',[9,6]]];
+/* classicLayout — the printed arena as an Event Designer layout (pillars with random pots, tunnels, chest, base beasts, start tiles). */
 function classicLayout(){
   return {pillars:PILLARS.map(([r,c])=>({r,c,pot:'?'})),tunnels:TUNNELS.map(x=>[...x]),spikes:[],chest:[6,6],chestW:[...CHEST_W],
     npcs:BASE_NPCS.map(b=>({key:b.name,t:b.t,name:b.name,r:b.home[0],c:b.home[1],beh:'zone'})),items:[],starts:STARTS.map(x=>[...x])};
 }
+/* blankEvent — a fresh custom event: three classic rounds, deck, Mandata, market, truces, all printed classes, the classic layout. */
 function blankEvent(){
   return {id:null,name:'The '+pickOne(NAMEBANK.title)+' of '+pickOne(NAMEBANK.place),notes:'',min:2,max:4,mode:'ffa',loc:6,
     rounds:[{n:'Bestiarii',zone:1,pve:1,pvp:0,cf:1,ca:1,end:'npc4|elim1',endN:4,reward:{coin:2,cf:2,cards:0}},{n:'Royale',zone:2,pve:1,pvp:1,cf:1,ca:1,end:'alive2',endN:2,reward:{coin:2,cf:2,cards:0}},{n:'Duel',zone:3,pve:1,pvp:1,cf:0,ca:0,end:'alive1',endN:1,reward:{}}],
     win:15,limits:{rot:0,min:0},deck:true,mandata:true,market:true,truce:true,priceMul:100,loadout:'class',draftPicks:3,start:{coin:0,cf:0,keys:0,hp:0,ap:0},
     classes:[...BASE_CLS],allowCustom:true,npcHp:100,npcDmg:0,spect:0,optOffers:true,chariotOffers:0,eaglePot:true,deckSpawns:{Leo:true,Leaena:true,Tholo:true,Commodus:true,Zora:true},layout:classicLayout()};
 }
-function eventDef(e){
-  const rounds=e.rounds.map((r,i)=>({n:r.n||`Round ${i+1}`,zone:+r.zone||1,pve:r.pve?1:0,pvp:r.pvp?1:0,cf:r.cf?1:0,ca:r.ca?1:0,end:r.end,endN:+r.endN||0,reward:{...(r.reward||{})}}));
-  rounds[rounds.length-1].reward.win=+e.win||15;
-  const noCards=[];const map={Leo:'spawnLeo',Leaena:'spawnLeaena',Tholo:'spawnTholo',Commodus:'spawnCommodus',Zora:'zora'};for(const [k,v] of Object.entries(map))if(!(e.deckSpawns||{})[k])noCards.push(v);
-  return {custom:true,cid:e.id,img:null,n:e.name||'Custom event',short:e.name||'Custom event',tag:'Custom',loc:+e.loc||6,min:clamp(+e.min||1,1,8),max:clamp(+e.max||4,+e.min||1,8),
-    deck:e.deck?1:0,mandata:e.mandata?1:0,teams:e.mode==='teams'?1:0,coop:e.mode==='coop'?1:0,noTruce:e.truce?0:1,noMarket:!e.market,
-    draft:e.loadout==='draft'?{all:clamp(+e.draftPicks||3,1,8)}:null,loadout:e.loadout,classes:[...(e.classes||BASE_CLS),...(e.allowCustom?CUSTOM.chars.filter(c=>typeof onRollsR!=='function'||onRollsR(c)).map(c=>'cc_'+c.id):[])],
-    blurb:esc(e.notes||'A custom event from the Creator Studio.'),rounds,layout:e.layout,start:e.start||{},npcHp:+e.npcHp||100,npcDmg:+e.npcDmg||0,priceMul:(+e.priceMul||100)/100,
-    spect:+e.spect||0,limits:e.limits||{},chariotOffers:+e.chariotOffers||0,optOffers:e.optOffers!==false,eaglePot:e.eaglePot!==false,noCards,src:e};
+/* eventDef — the EVENTS entry a custom event plays as (ce_<id>): rounds, flags, draft, allowed classes, board layout, start bonuses, beast scaling and the spawn cards it removes. */
+function eventDef(design){
+  const rounds=design.rounds.map((r,i)=>({n:r.n||`Round ${i+1}`,zone:+r.zone||1,pve:r.pve?1:0,pvp:r.pvp?1:0,cf:r.cf?1:0,ca:r.ca?1:0,end:r.end,endN:+r.endN||0,reward:{...(r.reward||{})}}));
+  rounds[rounds.length-1].reward.win=+design.win||15;
+  const noCards=[];const map={Leo:'spawnLeo',Leaena:'spawnLeaena',Tholo:'spawnTholo',Commodus:'spawnCommodus',Zora:'zora'};for(const [k,v] of Object.entries(map))if(!(design.deckSpawns||{})[k])noCards.push(v);
+  return {custom:true,cid:design.id,img:null,n:design.name||'Custom event',short:design.name||'Custom event',tag:'Custom',loc:+design.loc||6,min:clamp(+design.min||1,1,8),max:clamp(+design.max||4,+design.min||1,8),
+    deck:design.deck?1:0,mandata:design.mandata?1:0,teams:design.mode==='teams'?1:0,coop:design.mode==='coop'?1:0,noTruce:design.truce?0:1,noMarket:!design.market,
+    draft:design.loadout==='draft'?{all:clamp(+design.draftPicks||3,1,8)}:null,loadout:design.loadout,classes:[...(design.classes||BASE_CLS),...(design.allowCustom?CUSTOM.chars.filter(c=>typeof onRollsR!=='function'||onRollsR(c)).map(c=>'cc_'+c.id):[])],
+    blurb:esc(design.notes||'A custom event from the Creator Studio.'),rounds,layout:design.layout,start:design.start||{},npcHp:+design.npcHp||100,npcDmg:+design.npcDmg||0,priceMul:(+design.priceMul||100)/100,
+    spect:+design.spect||0,limits:design.limits||{},chariotOffers:+design.chariotOffers||0,optOffers:design.optOffers!==false,eaglePot:design.eaglePot!==false,noCards,src:design};
 }
+/* loadCustoms — loads every Creator Studio collection into CUSTOM (and trophies, sponsors, gear, banners) and registers them. Wrapped by many later modules. */
 async function loadCustoms(){
   const [ch,np,ev]=await Promise.all([Store.list('customChars'),Store.list('customNpcs'),Store.list('customEvents')]);
   CUSTOM.chars=ch.sort((a,b)=>String(a.name).localeCompare(b.name));CUSTOM.npcs=np.sort((a,b)=>String(a.name).localeCompare(b.name));CUSTOM.events=ev.sort((a,b)=>String(a.name).localeCompare(b.name));
@@ -191,15 +225,18 @@ function registerCustoms(){
 }
 
 /* ---------- engine hooks for custom events ---------- */
-function customSeatStarts(cfg,ev){const st=(ev.layout&&ev.layout.starts)||[];cfg.seats.forEach((s,i)=>{if(st[i])s.start=[...st[i]]})}
-function zoneAround(t,r,c,name){
+/* customSeatStarts — gives each seat the custom layout's start tile. */
+function customSeatStarts(config,evDef){const st=(evDef.layout&&evDef.layout.starts)||[];config.seats.forEach((s,i)=>{if(st[i])s.start=[...st[i]]})}
+/* zoneAround — the zone a placed beast guards: its printed zone at its printed home, else a square around it (radius 1 for bears, 2 otherwise). */
+function zoneAround(beastType,r,c,name){
   const b=BASE_NPCS.find(x=>x.name===name&&x.home[0]===r&&x.home[1]===c);if(b)return [...b.zone];
-  const rad=t==='bear'?1:2;return [Math.max(0,r-rad),Math.min(N-1,r+rad),Math.max(0,c-rad),Math.min(N-1,c+rad)];
+  const rad=beastType==='bear'?1:2;return [Math.max(0,r-rad),Math.min(N-1,r+rad),Math.max(0,c-rad),Math.min(N-1,c+rad)];
 }
-function customBoard(cfg,ev){
-  const L=ev.layout||classicLayout();
-  S.npcHpMul=(ev.npcHp||100)/100;S.npcDmg=ev.npcDmg||0;S.priceMul=ev.priceMul||1;S.limits=ev.limits||{};S.rotStart=1;S.killStart=0;S.elimStart=0;
-  if(ev.chariotOffers){for(let i=0;i<ev.chariotOffers;i++)S.bag.push(pickOne(Object.keys(CH_OFFERS)));shuffle(S.bag)}
+/* customBoard — builds a custom event's board from its layout: tunnels, spikes, chest, pillars with pots (and a Golden Eagle), beasts, floor items; moves beasts off start tiles. */
+function customBoard(config,evDef){
+  const L=evDef.layout||classicLayout();
+  S.npcHpMul=(evDef.npcHp||100)/100;S.npcDmg=evDef.npcDmg||0;S.priceMul=evDef.priceMul||1;S.limits=evDef.limits||{};S.rotStart=1;S.killStart=0;S.elimStart=0;
+  if(evDef.chariotOffers){for(let i=0;i<evDef.chariotOffers;i++)S.bag.push(pickOne(Object.keys(CH_OFFERS)));shuffle(S.bag)}
   S.tunnels=(L.tunnels||[]).map(([r,c])=>({r,c}));
   S.spikes=(L.spikes||[]).map(([r,c])=>({r,c}));
   S.chest=L.chest?{r:L.chest[0],c:L.chest[1],weapons:shuffle([...(L.chestW&&L.chestW.length?L.chestW:CHEST_W)]),held:null}:null;
@@ -207,7 +244,7 @@ function customBoard(cfg,ev){
   const draw=()=>{if(!S.bag.length)S.bag=buildBag(S.opts);return S.bag.pop()};
   (L.pillars||[]).forEach((p,i)=>{if(p.pot)S.pillars[i].pots.push(p.pot==='?'?draw():p.pot)});
   const rand=(L.pillars||[]).map((p,i)=>p.pot==='?'?i:-1).filter(i=>i>=0);
-  if(ev.eaglePot&&cfg.opts.eaglePot!==false&&rand.length&&!S.pillars.some(p=>p.pots.includes('eagle'))){const i=pickOne(rand);S.pillars[i].pots[0]='eagle'}
+  if(evDef.eaglePot&&config.opts.eaglePot!==false&&rand.length&&!S.pillars.some(p=>p.pots.includes('eagle'))){const i=pickOne(rand);S.pillars[i].pots[0]='eagle'}
   S.npcs=(L.npcs||[]).filter(n=>NPCT[n.t]).map(n=>{const T=NPCT[n.t];const beh=n.beh||(T.scan?'hunt':T.huntCF?'cf':'zone');
     return mkNPC(n.t,n.name,n.r,n.c,{home:beh==='zone'?[n.r,n.c]:null,zone:beh==='zone'?zoneAround(n.t,n.r,n.c,n.name):null,base:beh==='zone'&&!T.custom&&['snake','wolf','bear'].includes(n.t),scan:beh==='hunt'&&!T.scan?1:0})});
   for(const it of L.items||[]){
@@ -221,41 +258,44 @@ function customBoard(cfg,ev){
   // a beast standing on a start tile moves aside
   for(const p of S.players){const n=S.npcs.find(n=>n.r===p.r&&n.c===p.c);if(n){const [r,c]=freeGrid();n.r=r;n.c=c;if(n.home)n.home=[r,c]}}
 }
-async function customStart(ev){
-  const st=ev.start||{};const bits=[];
+/* customStart — applies a custom event's start bonuses (coin, CF, keys, HP, AP) and logs the closed market and time limits. */
+async function customStart(evDef){
+  const st=evDef.start||{};const bits=[];
   for(const p of S.players){if(st.coin)p.coin+=+st.coin;if(st.cf)p.cf+=+st.cf;if(st.keys)p.keys+=+st.keys}
   if(st.coin)bits.push(`+${st.coin} coin`);if(st.cf)bits.push(`+${st.cf} CF`);if(st.keys)bits.push(`+${st.keys} Arena Key${st.keys>1?'s':''}`);
   if(bits.length)log(`Event rules: every gladiator starts with ${bits.join(', ')}.`);
   for(const p of S.players){if(st.hp)await distributeHP(p,+st.hp,`the event's +${st.hp} HP`);if(st.ap)await distributeAP(p,+st.ap,`the event's +${st.ap} AP`)}
-  if(ev.noMarket)log('The market is closed for this event.');
-  if(ev.limits&&(ev.limits.rot||ev.limits.min))log(`Time limit: ${[ev.limits.rot?ev.limits.rot+' turn rotations':'',ev.limits.min?ev.limits.min+' minutes':''].filter(Boolean).join(' or ')}. When it runs out, the highest Crowd Favor still standing wins.`,'big');
+  if(evDef.noMarket)log('The market is closed for this event.');
+  if(evDef.limits&&(evDef.limits.rot||evDef.limits.min))log(`Time limit: ${[evDef.limits.rot?evDef.limits.rot+' turn rotations':'',evDef.limits.min?evDef.limits.min+' minutes':''].filter(Boolean).join(' or ')}. When it runs out, the highest Crowd Favor still standing wins.`,'big');
 }
-function checkEndCustom(ev,rd,act,set,win){
-  const last=S.ri>=ev.rounds.length-1;
-  const topCF=()=>{const t=[...act].sort((a,b)=>b.cf-a.cf)[0];return !t?[]:(ev.teams||ev.coop)?act.filter(p=>p.team===t.team):[t]};
+/* checkEndCustom — round end check for custom events: time limit, last standing, then the round's end condition (alive1/2, beasts, eliminations, rotations, CF, survive). Wrapped by 108-v76 and 141-v85faith. */
+function checkEndCustom(evDef,roundDef,alive,set,win){
+  const last=S.ri>=evDef.rounds.length-1;
+  const topCF=()=>{const t=[...alive].sort((a,b)=>b.cf-a.cf)[0];return !t?[]:(evDef.teams||evDef.coop)?alive.filter(p=>p.team===t.team):[t]};
   const done=(why,ws)=>last?win(ws||topCF(),why+(ws?'':'; the highest Crowd Favor wins')):set({next:1,reason:why.charAt(0).toLowerCase()+why.slice(1)});
-  if(!act.length)return win([],'No gladiator survives.');
-  if(ev.limits&&ev.limits.rot&&S.rotation>ev.limits.rot)return win(topCF(),`${ev.limits.rot} turn rotations have passed; the highest Crowd Favor wins`);
-  const teams=[...new Set(act.map(p=>p.team))];
-  if(S.players.length>1&&!ev.coop&&teams.length<=1&&rd.end!=='survive')return win(act,ev.teams?'Last team standing.':'Last gladiator standing.');
-  const N=+rd.endN||0,rots=S.rotation-(S.rotStart||1),kills=S.npcKills-(S.killStart||0),elims=S.elims-(S.elimStart||0);
-  switch(rd.end){
-    case 'alive1':if(S.players.length===1&&S.npcs.length&&S.npcs.every(n=>!n.alive||n.tamedBy!=null))win(act,'Every beast is slain.');break;
-    case 'alive2':if(act.length<=2&&S.players.length>2)done('Two gladiators remain',last?act:null);break;
+  if(!alive.length)return win([],'No gladiator survives.');
+  if(evDef.limits&&evDef.limits.rot&&S.rotation>evDef.limits.rot)return win(topCF(),`${evDef.limits.rot} turn rotations have passed; the highest Crowd Favor wins`);
+  const teams=[...new Set(alive.map(p=>p.team))];
+  if(S.players.length>1&&!evDef.coop&&teams.length<=1&&roundDef.end!=='survive')return win(alive,evDef.teams?'Last team standing.':'Last gladiator standing.');
+  const N=+roundDef.endN||0,rots=S.rotation-(S.rotStart||1),kills=S.npcKills-(S.killStart||0),elims=S.elims-(S.elimStart||0);
+  switch(roundDef.end){
+    case 'alive1':if(S.players.length===1&&S.npcs.length&&S.npcs.every(n=>!n.alive||n.tamedBy!=null))win(alive,'Every beast is slain.');break;
+    case 'alive2':if(alive.length<=2&&S.players.length>2)done('Two gladiators remain',last?alive:null);break;
     case 'npc4|elim1':if(kills>=4||elims>=1)done(elims>=1?'A gladiator has fallen':'Four beasts are slain');break;
     case 'elim1':if(elims>=1)done('The first gladiator has fallen');break;
     case 'npc':if(kills>=Math.max(1,N))done(`${N} beasts are slain`);break;
     case 'rot':if(rots>=Math.max(1,N))done(`${N} turn rotations have passed`);break;
-    case 'cf':{const p=act.filter(q=>q.cf>=Math.max(1,N)).sort((a,b)=>b.cf-a.cf)[0];if(p)done(`${p.name} reached ${N} Crowd Favor`,(ev.teams||ev.coop)?act.filter(q=>q.team===p.team):[p]);break}
-    case 'beasts':if(S.npcs.length&&S.npcs.every(n=>!n.alive||n.tamedBy!=null))done('Every beast is slain or tamed',act);break;
-    case 'survive':if(rots>=Math.max(1,N))done(`The gladiators survived ${N} rotations`,act);break;
+    case 'cf':{const p=alive.filter(q=>q.cf>=Math.max(1,N)).sort((a,b)=>b.cf-a.cf)[0];if(p)done(`${p.name} reached ${N} Crowd Favor`,(evDef.teams||evDef.coop)?alive.filter(q=>q.team===p.team):[p]);break}
+    case 'beasts':if(S.npcs.length&&S.npcs.every(n=>!n.alive||n.tamedBy!=null))done('Every beast is slain or tamed',alive);break;
+    case 'survive':if(rots>=Math.max(1,N))done(`The gladiators survived ${N} rotations`,alive);break;
   }
 }
 // a custom character's sheet records every event (the paper sheet's Event / CF | Coin rows, trophies, RR, Flavius Fidelis)
 /* v0.21: a creation is a DESIGN until you add it to the rolls. Only characters on the rolls can be
    seated in New event or join Manager-mode careers — and a death is final: the character is struck
    from the rolls (status 'fallen'), exactly like a Ludus gladiator. Freedom retires them too. */
-const onRolls=c=>!!c&&c.rolls!==false&&(!c.status||c.status==='active');
+const onRolls=character=>!!character&&character.rolls!==false&&(!character.status||character.status==='active');
+/* logCustomChars — writes each custom character's result onto their sheet (events, trophies, RR, Flavius Fidelis); a death strikes them from the rolls. */
 async function logCustomChars(rows){
   for(const x of rows){const C=CLASSES[x.p.cls];if(!C||!C.custom)continue;const c=CUSTOM.chars.find(z=>z.id===C.cid);if(!c)continue;
     const ev=EV(),L=LOCATIONS[S.locIdx];
@@ -266,23 +306,34 @@ async function logCustomChars(rows){
 }
 
 /* ================= STUDIO UI ================= */
+/* blankSpec — a fresh custom spectator draft. */
 const blankSpec=()=>({id:null,name:genName({female:Math.random()<.45}),taste:pickOne(Object.keys(typeof SPECT_TASTES!=='undefined'?SPECT_TASTES:{cf:1})),temper:'fickle',trouble:0,kin:null,look:{skin:'#e0ac7e',hair:'#4a2c17',fem:false,beard:false,long:false}});
 let ST={tab:'chars',view:'list',draft:null,sub:'board',tool:'pillar',opt:{},names:[],spd:null};
-const setPath=(o,path,v)=>{if(path==='portrait.bs'&&o.portrait){o.portrait.beard=false}if(path==='portrait.hs'&&o.portrait){o.portrait.long=false}if(path==='portrait.mark'&&o.portrait){o.portrait.scar=false;o.portrait.paint=false}const ks=path.split('.');let t=o;for(let i=0;i<ks.length-1;i++){if(t[ks[i]]==null)t[ks[i]]=/^\d+$/.test(ks[i+1])?[]:{};t=t[ks[i]]}t[ks[ks.length-1]]=v};
-const getPath=(o,path)=>path.split('.').reduce((t,k)=>t==null?t:t[k],o);
+/* setPath — sets obj[a.b.c] = value, creating objects/arrays on the way (portrait fields clear their legacy flags). */
+const setPath=(obj,path,value)=>{if(path==='portrait.bs'&&obj.portrait){obj.portrait.beard=false}if(path==='portrait.hs'&&obj.portrait){obj.portrait.long=false}if(path==='portrait.mark'&&obj.portrait){obj.portrait.scar=false;obj.portrait.paint=false}const ks=path.split('.');let t=obj;for(let i=0;i<ks.length-1;i++){if(t[ks[i]]==null)t[ks[i]]=/^\d+$/.test(ks[i+1])?[]:{};t=t[ks[i]]}t[ks[ks.length-1]]=value};
+/* getPath — reads obj[a.b.c] (undefined-safe). */
+const getPath=(obj,path)=>path.split('.').reduce((t,k)=>t==null?t:t[k],obj);
+/* fSel — a <select data-f="path"> with [value, label] options. */
 const fSel=(path,opts,val,attrs='')=>`<select class="tin" data-f="${path}" ${attrs}>${opts.map(([v,l])=>`<option value="${esc(v??'')}" ${String(val??'')===String(v??'')?'selected':''}>${esc(l)}</option>`).join('')}</select>`;
+/* fNum — a range slider bound to data-f="path" with its value shown. */
 const fNum=(path,val,min,max,step=1)=>`<span class="slider" style="grid-template-columns:1fr 38px"><input type="range" data-f="${path}" data-num="1" min="${min}" max="${max}" step="${step}" value="${val??0}"><output>${val??0}</output></span>`;
+/* fChk — a checkbox bound to data-f="path". */
 const fChk=(path,val,label)=>`<label class="chk"><input type="checkbox" data-f="${path}" ${val?'checked':''}> ${label}</label>`;
+/* fTxt — a text input bound to data-f="path". */
 const fTxt=(path,val,attrs='')=>`<input type="text" class="tin" data-f="${path}" value="${esc(val??'')}" ${attrs}>`;
 /* ---------- v0.23 TOKEN CREATOR: sculpt the board piece for any class, beast or creation ---------- */
+/* tokTargets — [value, label] of everything the Token creator can sculpt: classes, beasts, custom characters and beasts, library tokens. */
 function tokTargets(){const T=[];for(const k of BASE_CLS)T.push(['cls:'+k,'Class · '+CLASSES[k].name]);for(const k of ['snake','wolf','bear','lion','tholo','commodus','zora'])T.push(['npc:'+k,'Beast · '+NPCT[k].n]);
   for(const c of CUSTOM.chars)T.push(['cc:'+c.id,'✦ Character · '+c.name]);for(const n of CUSTOM.npcs)T.push(['cn:'+n.id,'✦ Beast · '+n.name]);for(const t of CUSTOM.tokens)T.push(['lib:'+t.id,'📚 Library · '+t.name]);return T}
-function tokLoad(tg){const [k,id]=tg.split(':');if(k==='cls')return JSON.parse(JSON.stringify(TOKEN_OVR[id]||TOKEN_DEF[id]));if(k==='npc')return JSON.parse(JSON.stringify(TOKEN_OVR['npc_'+id]||TOKEN_DEF[id]));
+/* tokLoad — a copy of the token spec for a Token creator target (cls:/npc:/lib:/cc:/cn:). */
+function tokLoad(target){const [k,id]=target.split(':');if(k==='cls')return JSON.parse(JSON.stringify(TOKEN_OVR[id]||TOKEN_DEF[id]));if(k==='npc')return JSON.parse(JSON.stringify(TOKEN_OVR['npc_'+id]||TOKEN_DEF[id]));
   if(k==='lib'){const t=CUSTOM.tokens.find(x=>x.id===id);return JSON.parse(JSON.stringify(t?t.spec:TOKEN_DEF.soldier))}
   if(k==='cc'){const c=CUSTOM.chars.find(x=>x.id===id);const lt=c&&c.tokenRef&&CUSTOM.tokens.find(x=>x.id===c.tokenRef);return JSON.parse(JSON.stringify(lt?lt.spec:c&&c.token||autoTokenForChar(c||{})))}const n=CUSTOM.npcs.find(x=>x.id===id);return JSON.parse(JSON.stringify(n&&n.token||autoTokenForNpc(n||{})))}
-function tokRandom(sp){const r=a=>a[Math.floor(Math.random()*a.length)][0];const col=()=>'#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0');
-  if(sp.kind==='beast')return {...sp,body:sp.body,c1:col(),c2:col(),tail:r(T_TAILS),mane:Math.random()<.3,horns:Math.random()<.3,wings:Math.random()<.2,spikes:Math.random()<.25,eyes:col()};
-  return {...sp,body:r(T_BODIES),helm:r(T_HELMS),shield:r(T_SHIELDS),weapon:r(T_WEAPONS),c1:col(),c2:pickOne(['#d6ab4c','#c9d0d6','#e8dcc0','#8a1c1c','#1d2a55']),skin:pickOne(TOKEN_SKINS),cape:Math.random()<.4,stance:Math.random()<.2?'hunched':'',hair:Math.random()<.35?'long':''}}
+/* tokRandom — a token spec with random parts and colors (cosmetic, Math.random). */
+function tokRandom(spec){const r=a=>a[Math.floor(Math.random()*a.length)][0];const col=()=>'#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0');
+  if(spec.kind==='beast')return {...spec,body:spec.body,c1:col(),c2:col(),tail:r(T_TAILS),mane:Math.random()<.3,horns:Math.random()<.3,wings:Math.random()<.2,spikes:Math.random()<.25,eyes:col()};
+  return {...spec,body:r(T_BODIES),helm:r(T_HELMS),shield:r(T_SHIELDS),weapon:r(T_WEAPONS),c1:col(),c2:pickOne(['#d6ab4c','#c9d0d6','#e8dcc0','#8a1c1c','#1d2a55']),skin:pickOne(TOKEN_SKINS),cape:Math.random()<.4,stance:Math.random()<.2?'hunched':'',hair:Math.random()<.35?'long':''}}
+/* tokenStudioHTML — the Token creator tab: target picker, live figure, part controls, sculpt bench, battle states, library assignment and the lineup. */
 function tokenStudioHTML(){const tg=ST.tokT||'cls:soldier';if(!ST.tokS||ST.tokSFor!==tg){ST.tokS=tokLoad(tg);ST.tokSFor=tg}const sp=ST.tokS;
   const sel=(f,opts)=>`<select class="tin" data-tkf="${f}">${opts.map(([v,l])=>{const lk=achLocked(f,v);const A=lk&&ACHIEVEMENTS.find(x=>x.k===lk);return `<option value="${v}" ${String(sp[f]||'')===v?'selected':''} ${lk?'disabled':''}>${lk?'🔒 ':''}${l}${lk?` — earn “${A?A.n:lk}”`:''}</option>`}).join('')}</select>`;
   const col=(f,def)=>`<input type="color" data-tkf="${f}" value="${/^#[0-9a-f]{6}$/i.test(sp[f]||'')?sp[f]:def}" style="width:44px;height:28px;border:0;background:none;padding:0">`;
@@ -313,7 +364,9 @@ function tokenStudioHTML(){const tg=ST.tokT||'cls:soldier';if(!ST.tokS||ST.tokSF
      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end">${(ST.tokT==='npc:tholo'||ST.tokS&&ST.tokS.weapon==='greatclub'&&ST.tokS.eyeT==='cyclops'?[['whole',{}],['slain — headless',{},1]]:[['whole',{}],['−1 arm',{rarm:1}],['−1 leg',{rleg:1}],['−arm & leg',{larm:1,rleg:1}],['legless',{rleg:1,lleg:1}],['the last stand',{rleg:1,lleg:1,larm:1}]]).map(([l,sv,hd])=>`<span style="text-align:center">${figureHTML({...ST.tokS,sev:sv,headless:!!hd},64)}<br><span class="rc-sub" style="font-size:10px">${l}</span></span>`).join('')}</div>
      ${libAssign}<div class="mbtns">${k==='cls'||k==='npc'?`<span class="cbadge sys" title="System figures are locked so the defaults are always there">🔒 System figure</span><button class="btn primary" type="button" data-st="toklibnew" title="System figures are locked — your changes are saved as a copy in the token library">⧉ Save as a copy (library token)</button>`:`<button class="btn primary" type="button" data-st="toksave">💾 Save token</button><button class="btn" type="button" data-st="toklibnew">📚 Save as a new library token</button>`}<button class="btn" type="button" data-st="tokrand">🎲 Randomize</button><button class="btn" type="button" data-st="tokreset">↺ ${k==='cc'?'From portrait':k==='cn'?'From the beast':'Default'}</button>${k==='cn'||k==='npc'?`<button class="btn" type="button" data-st="tokkind">⇄ ${human?'Make it a beast':'Make it a humanoid'}</button>`:''}</div>
      <h4>The lineup</h4><div class="toklineup">${BASE_CLS.map(c=>`<button type="button" class="tokthumb ${tg==='cls:'+c?'on':''}" data-st="tokpick" data-v="cls:${c}" title="${CLASSES[c].name}">${figureHTML(tokenForCls(c),64)}<small>${CLASSES[c].name}</small></button>`).join('')}${['snake','wolf','bear','lion','tholo','commodus','zora'].map(t=>`<button type="button" class="tokthumb ${tg==='npc:'+t?'on':''}" data-st="tokpick" data-v="npc:${t}" title="${NPCT[t].n}">${figureHTML(tokenForNPC({t}),64)}<small>${NPCT[t].n}</small></button>`).join('')}${CUSTOM.chars.map(c=>`<button type="button" class="tokthumb ${tg==='cc:'+c.id?'on':''}" data-st="tokpick" data-v="cc:${c.id}">${figureHTML(tokenOfChar(c),64)}<small>✦ ${esc(c.name)}</small></button>`).join('')}${CUSTOM.npcs.map(n=>`<button type="button" class="tokthumb ${tg==='cn:'+n.id?'on':''}" data-st="tokpick" data-v="cn:${n.id}">${figureHTML(tokenOfNpc(n),64)}<small>✦ ${esc(n.name)}</small></button>`).join('')}${CUSTOM.tokens.map(t=>`<button type="button" class="tokthumb ${tg==='lib:'+t.id?'on':''}" data-st="tokpick" data-v="lib:${t.id}">${figureHTML(t.spec,64)}<small>📚 ${esc(t.name)}</small></button>`).join('')}</div></div></div>`}
+/* stReady — resets the Studio tab: creation tabs open a blank draft, the others their list. */
 function stReady(fresh){if(['chars','npcs','events'].includes(ST.tab)){ST.draft=ST.tab==='chars'?blankChar():ST.tab==='npcs'?blankNpc():blankEvent();ST.view='edit'}else{ST.view='list';ST.draft=null}}
+/* studioHTML — the Creator Studio body for the current tab (rail + the tab's designer or list, the All creations table, spectators, names). */
 function studioHTML(){
   const tabs=railTabs([['all','📋 All creations'],['classes','🎭 Classes'],['chars','🛡 Characters'],['lanistas','🎩 Lanistas'],['npcs','🐾 Beasts'],['cohorts','🤝 Cohorts'],['events','🎪 Event Designer'],['tourneys','🏆 Tournament Designer'],['spect','👥 Spectators'],['tokens','🗿 Tokens'],['gear:w','⚔ Weapons'],['gear:a','🛡 Armor'],['flags','🚩 Banners'],['trophies','🏆 Trophies'],['sponsors','🎭 Editors'],['specials','⭐ Invitationals'],['rosters','📚 Roster sets'],['names','🎲 Names']],ST_GROUPS,ST.tab==='gear'?'gear:'+(ST.gearSub||'w'):ST.tab,k=>`data-st="tab" data-v="${k}"`,'tabs sttabs');
   /* v0.21: like the Spectators tab, every creation tab opens READY TO CREATE, with your saved creations listed beneath */
@@ -383,8 +436,11 @@ function studioHTML(){
     <div class="mbtns" style="margin:0 0 10px"><button class="btn primary" type="button" data-st="new">New event</button></div>
     ${CUSTOM.events.length?`<div class="list2">${CUSTOM.events.map(e=>{const d=EVENTS['ce_'+e.id]||eventDef(e);return `<div class="lrow" style="--pc:var(--gold)"><div class="t"><b>${esc(e.name)}</b> ${customTag()}<small>${d.min===d.max?d.min:d.min+'–'+d.max} players · ${{ffa:'free-for-all',teams:'teams',coop:'co-op vs beasts'}[e.mode]} · ${e.rounds.length} round${e.rounds.length>1?'s':''} · ${e.layout.pillars.length} pillars · ${e.layout.npcs.length} beasts</small><small>${d.rounds.map((r,i)=>`R${i+1} ${esc(r.n)}: ${(END_CONDS.find(x=>x[0]===r.end)||['',''])[1].replace(/\bN\b/,r.endN)}`).join(' · ')}</small></div><div class="a"><button class="btn" type="button" data-st="play" data-id="${e.id}">Play</button>${lockBtn(e)}<button class="btn" type="button" data-st="edit" data-id="${e.id}" ${e.locked?'disabled title="Locked: unlock first"':''}>Edit</button><button class="btn" type="button" data-st="dup" data-id="${e.id}">Copy</button><button class="btn" type="button" data-st="del" data-id="${e.id}" ${e.locked?'disabled title="Locked: unlock first"':''}>Delete</button></div></div>`}).join('')}</div>`:'<p style="color:var(--muted)">No custom events yet.</p>'}`;
 }
+/* weaponOpts — weapon [key, label] options up to a level (custom loadout weapons included). */
 function weaponOpts(maxLv=3,none='None'){return [['',none],...Object.entries(W).filter(([k,w])=>w.lv>=1&&w.lv<=maxLv&&!w.limb&&(!w.custom||w.cwLoadout)).sort((a,b)=>a[1].lv-b[1].lv||a[1].n.localeCompare(b[1].n)).map(([k,w])=>[k,`${w.custom?'✦ ':''}L${w.lv} · ${w.n} (${w.shield&&!w.p?'shield':'P'+w.p+' R'+w.r})${w.custom?' · custom':''}`])]}
+/* armorOpts — armor [key, label] options that pass a filter. */
 function armorOpts(filter){return [['','None'],...Object.entries(ARM).filter(([k,a])=>filter(a)).sort((a,b)=>a[1].lv-b[1].lv||a[1].ap-b[1].ap).map(([k,a])=>[k,`L${a.lv} · ${a.n} · ${a.ap} AP${a.bonus?' +'+Object.values(a.bonus).join('/'):''}`])]}
+/* charEditorHTML — the character designer: portrait controls, board token, sheet, name/city/color, personality, backstory. Wrapped by several later modules. */
 function charEditorHTML(){
   const c=ST.draft;const cost=charCost(c);const over=cost>CHAR_BUDGET&&!c.sandbox;
   const A=c.arm;
@@ -419,6 +475,7 @@ function charEditorHTML(){
     <div class="mbtns"><button class="btn primary" type="button" data-st="save">Save character</button><button class="btn" type="button" data-st="cancel">↺ Start a fresh one</button></div>
    </div></div>`;
 }
+/* npcEditorHTML — the beast designer: preview, token, base beast, kind, stats, rewards, behavior and flags. */
 function npcEditorHTML(){
   const n=ST.draft;const T=npcType(n);
   return `<div class="setup-grid" style="grid-template-columns:minmax(0,200px) minmax(0,1fr)"><div style="text-align:center"><div id="stNpcPrev" style="width:120px;height:120px;border-radius:50%;margin:10px auto;display:grid;place-items:center;background:${T.col};color:#fff6e6;font:700 58px var(--display);box-shadow:0 8px 20px rgba(0,0,0,.5)">${esc(T.g)}</div>
@@ -437,10 +494,12 @@ function npcEditorHTML(){
 }
 /* ----- event designer ----- */
 const ED_TOOLS=[['pillar','Pillar (P)'],['pot','Blessings pot'],['spike','Spike (S)'],['tunnel','Tunnel (T)'],['chest','Chest (C)'],['eagle','Golden Eagle (GE)'],['start','Start tile'],['npc','Beast'],['offer','Offering'],['key','Arena Key'],['weapon','Weapon'],['armor','Armor'],['coin','Coin pile'],['erase','Eraser']];
+/* edNpcChoices — [value, label] beasts for the Event Designer's Beast tool (base, spawnable and custom). */
 function edNpcChoices(){
   const L=ST.draft.layout;const opts=[...BASE_NPCS.map(b=>[b.name,`${b.name} (${NPCT[b.t].n})`]),...SPAWN_NPCS.map(([n,t])=>[n,`${n} (${NPCT[t].n})`]),...CUSTOM.npcs.map(n=>['cn:'+n.id,`${n.name} (${n.kind||'custom'}) ✦`])];
   return opts;
 }
+/* edCell — one Event Designer board cell button with its icon, marker and tooltip. */
 function edCell(r,c){
   const L=ST.draft.layout;const pl=L.pillars.find(p=>p.r===r&&p.c===c);let cls='edcell',ic='',sub='',title=[tl(r,c)];
   if(pl){cls+=' pl';ic='🏛';title.push('pillar'+(pl.pot?` with a pot (${pl.pot==='?'?'random blessing':OFFER[pl.pot].n})`:''));if(pl.pot)sub=pl.pot==='?'?'🏺':'🏺'}
@@ -452,6 +511,7 @@ function edCell(r,c){
   const its=L.items.filter(x=>x.r===r&&x.c===c);if(its.length){if(!ic)ic=its[0].kind==='offer'&&its[0].key==='eagle'?'🦅':its[0].kind==='offer'?'✚':its[0].kind==='key'?'🔑':its[0].kind==='weapon'?'🗡':its[0].kind==='armor'?'🛡':'¢';if(its.length>1&&!sub)sub='×'+its.length;title.push(its.map(x=>x.kind==='offer'?OFFER[x.key].n+(x.key==='eagle'?'':' ('+OFFER[x.key].s+')'):x.kind==='key'?'Arena Key':x.kind==='weapon'?W[x.key].n:x.kind==='armor'?ARM[x.key].n:x.key+' coin').join(', '))}
   return `<button type="button" class="${cls}" style="${sty}" data-cell="${r},${c}" title="${esc(title.join(' · '))}"><span class="ic">${ic}</span>${sub?`<span class="sub">${sub}</span>`:''}</button>`;
 }
+/* edBoardHTML — the Event Designer board tab: 13×13 grid, tool palette and options, counts, Blessings pots and layout presets. */
 function edBoardHTML(){
   const L=ST.draft.layout;const pots=L.pillars.filter(p=>p.pot).length;
   const cells=[];for(let r=0;r<N;r++)for(let c=0;c<N;c++)cells.push(edCell(r,c));
@@ -476,13 +536,14 @@ function edBoardHTML(){
       ${fChk('eaglePot',ST.draft.eaglePot,'Guarantee a Golden Eagle among the random pots')}</div>
      <div class="mbtns"><button type="button" class="btn" data-st="classic">Classic arena layout</button><button type="button" class="btn" data-st="clearboard">Clear the board</button><button type="button" class="btn" data-st="randboard">🎲 Random arena</button></div></div></div>`;
 }
+/* edRulesHTML — the Event Designer rounds & rules tab: name, mode, players, location, rounds, time limits, arena rules, beast scaling, start bonuses, notes. */
 function edRulesHTML(){
   const e=ST.draft;
-  const round=(r,i)=>`<div class="card2"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-family:var(--display);color:var(--gold2)">Round ${i+1}</b>${e.rounds.length>1?`<button type="button" class="btn" data-st="rmround" data-i="${i}" style="padding:2px 8px">Remove</button>`:''}</div>
-    <div class="formgrid" style="margin-top:6px"><label>Name${fTxt(`rounds.${i}.n`,r.n,'maxlength="24"')}</label><label>Zone${fSel(`rounds.${i}.zone`,[[1,'Zone 1 · whole arena 13×13'],[2,'Zone 2 · 9×9'],[3,'Zone 3 · 5×5']],r.zone)}</label>
-     <label>End condition${fSel(`rounds.${i}.end`,END_CONDS,r.end)}</label>${['npc','rot','cf','survive'].includes(r.end)?`<label>N = ${fNum(`rounds.${i}.endN`,r.endN||4,1,r.end==='cf'?60:30)}</label>`:''}</div>
-    <div class="chkgrid" style="margin-top:6px">${fChk(`rounds.${i}.pve`,r.pve,'PVE')}${fChk(`rounds.${i}.pvp`,r.pvp,'PVP')}${fChk(`rounds.${i}.cf`,r.cf,'CF (crowd favor can be spent)')}${fChk(`rounds.${i}.ca`,r.ca,'CA (class abilities)')}</div>
-    ${i<e.rounds.length-1?`<div class="formgrid" style="margin-top:6px"><label>Survivors get coin ${fNum(`rounds.${i}.reward.coin`,(r.reward||{}).coin||0,0,10)}</label><label>…and CF ${fNum(`rounds.${i}.reward.cf`,(r.reward||{}).cf||0,0,10)}</label><label>…and arena cards ${fNum(`rounds.${i}.reward.cards`,(r.reward||{}).cards||0,0,4)}</label></div>`:''}</div>`;
+  const round=(roundDef,i)=>`<div class="card2"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-family:var(--display);color:var(--gold2)">Round ${i+1}</b>${e.rounds.length>1?`<button type="button" class="btn" data-st="rmround" data-i="${i}" style="padding:2px 8px">Remove</button>`:''}</div>
+    <div class="formgrid" style="margin-top:6px"><label>Name${fTxt(`rounds.${i}.n`,roundDef.n,'maxlength="24"')}</label><label>Zone${fSel(`rounds.${i}.zone`,[[1,'Zone 1 · whole arena 13×13'],[2,'Zone 2 · 9×9'],[3,'Zone 3 · 5×5']],roundDef.zone)}</label>
+     <label>End condition${fSel(`rounds.${i}.end`,END_CONDS,roundDef.end)}</label>${['npc','rot','cf','survive'].includes(roundDef.end)?`<label>N = ${fNum(`rounds.${i}.endN`,roundDef.endN||4,1,roundDef.end==='cf'?60:30)}</label>`:''}</div>
+    <div class="chkgrid" style="margin-top:6px">${fChk(`rounds.${i}.pve`,roundDef.pve,'PVE')}${fChk(`rounds.${i}.pvp`,roundDef.pvp,'PVP')}${fChk(`rounds.${i}.cf`,roundDef.cf,'CF (crowd favor can be spent)')}${fChk(`rounds.${i}.ca`,roundDef.ca,'CA (class abilities)')}</div>
+    ${i<e.rounds.length-1?`<div class="formgrid" style="margin-top:6px"><label>Survivors get coin ${fNum(`rounds.${i}.reward.coin`,(roundDef.reward||{}).coin||0,0,10)}</label><label>…and CF ${fNum(`rounds.${i}.reward.cf`,(roundDef.reward||{}).cf||0,0,10)}</label><label>…and arena cards ${fNum(`rounds.${i}.reward.cards`,(roundDef.reward||{}).cards||0,0,4)}</label></div>`:''}</div>`;
   return `<div class="formgrid"><label>Event name${fTxt('name',e.name,'maxlength="40"')}</label>
     <label>Mode${fSel('mode',[['ffa','Free-for-all'],['teams','Teams (set in setup)'],['coop','Co-op: everyone vs the beasts']],e.mode)}</label>
     <label>Players, fewest ${fNum('min',e.min,1,8)}</label><label>Players, most ${fNum('max',e.max,1,8)}</label>
@@ -495,6 +556,7 @@ function edRulesHTML(){
    <h4>Starting bonuses for every gladiator</h4><div class="formgrid"><label>Coin ${fNum('start.coin',e.start.coin||0,0,20)}</label><label>Crowd Favor ${fNum('start.cf',e.start.cf||0,0,20)}</label><label>Arena Keys ${fNum('start.keys',e.start.keys||0,0,4)}</label><label>Extra HP to place ${fNum('start.hp',e.start.hp||0,0,8)}</label><label>Extra AP to place ${fNum('start.ap',e.start.ap||0,0,8)}</label></div>
    <h4>Notes</h4><textarea class="tin" data-f="notes" maxlength="600" placeholder="Story, special rules, what the crowd expects…">${esc(e.notes||'')}</textarea>`;
 }
+/* edRosterHTML — the Event Designer classes & NPCs tab: allowed classes, starting gear, beasts on the board, deck spawn cards. */
 function edRosterHTML(){
   const e=ST.draft;const L=e.layout;const has=name=>L.npcs.some(n=>n.name===name);
   return `<h4>Classes &amp; starting gear (select allowed classes)</h4><div class="chkgrid">${BASE_CLS.map(k=>`<label class="chk"><input type="checkbox" data-cls="${k}" ${e.classes.includes(k)?'checked':''}> ${CLASSES[k].name}</label>`).join('')}${fChk('allowCustom',e.allowCustom,'Custom characters ✦')}</div>
@@ -503,6 +565,7 @@ function edRosterHTML(){
    <div class="chkgrid">${[...BASE_NPCS.map(b=>b.name),...SPAWN_NPCS.map(x=>x[0])].map(nm=>`<label class="chk"><input type="checkbox" data-npcsel="${nm}" ${has(nm)?'checked':''}> ${nm}</label>`).join('')}${CUSTOM.npcs.map(n=>`<label class="chk"><input type="checkbox" data-npcsel="cn:${n.id}" ${L.npcs.some(x=>x.t==='cn_'+n.id)?'checked':''}> ${esc(n.name)} ✦</label>`).join('')}</div>
    ${e.deck?`<h4>Arena deck spawn cards</h4><div class="chkgrid">${Object.keys(e.deckSpawns).map(k=>fChk('deckSpawns.'+k,e.deckSpawns[k],`${k} card stays in the deck`)).join('')}</div>`:''}`;
 }
+/* eventEditorHTML — the Event Designer: sub-tabs (board / rules / roster), trophy and editor, errors, save buttons. */
 function eventEditorHTML(){
   const e=ST.draft;const errs=eventErrors(e);
   const sub=`<div class="seg" role="tablist" style="margin-bottom:10px">${[['board','Board layout'],['rules','Rounds & rules'],['roster','Classes & NPCs']].map(([k,l])=>`<button type="button" data-st="sub" data-v="${k}" class="${ST.sub===k?'on':''}">${l}</button>`).join('')}</div>`;
@@ -510,16 +573,18 @@ function eventEditorHTML(){
    ${errs.length?`<p style="color:var(--blood2);margin-top:8px">${errs.map(esc).join(' ')}</p>`:''}
    <div class="mbtns"><button class="btn primary" type="button" data-st="save" ${errs.length?'disabled':''}>Save event</button><button class="btn" type="button" data-st="saveplay" ${errs.length?'disabled':''}>Save and play</button><button class="btn" type="button" data-st="cancel">↺ Start a fresh one</button></div>`;
 }
-function eventErrors(e){
-  const out=[];const L=e.layout;
-  if(!String(e.name||'').trim())out.push('Name the event.');
+/* eventErrors — what still blocks saving a custom event (name, ≤12 pillars, player counts, start tiles, classes, co-op end conditions). */
+function eventErrors(design){
+  const out=[];const L=design.layout;
+  if(!String(design.name||'').trim())out.push('Name the event.');
   if(L.pillars.length>12)out.push('At most 12 pillars.');
-  if(+e.min>+e.max)out.push('The fewest players cannot exceed the most.');
-  {const n=L.starts.filter(Boolean).length;if(!n)out.push('Place at least one start tile — an event needs somewhere for a gladiator to stand.');else if(n<+e.max)out.push(`Place ${e.max} start tiles (one per player) with the Start tile tool — ${n} placed.`)}
-  if(!e.classes.length&&!(e.allowCustom&&CUSTOM.chars.length))out.push('Allow at least one class.');
-  if(e.mode==='coop'&&e.rounds.some(r=>r.end==='alive1'||r.end==='alive2'))out.push('Co-op events need a beast, rotation or CF end condition.');
+  if(+design.min>+design.max)out.push('The fewest players cannot exceed the most.');
+  {const n=L.starts.filter(Boolean).length;if(!n)out.push('Place at least one start tile — an event needs somewhere for a gladiator to stand.');else if(n<+design.max)out.push(`Place ${design.max} start tiles (one per player) with the Start tile tool — ${n} placed.`)}
+  if(!design.classes.length&&!(design.allowCustom&&CUSTOM.chars.length))out.push('Allow at least one class.');
+  if(design.mode==='coop'&&design.rounds.some(r=>r.end==='alive1'||r.end==='alive2'))out.push('Co-op events need a beast, rotation or CF end condition.');
   return out;
 }
+/* edApplyCell — applies the current Event Designer tool to tile r,c (toggle pillars/pots/spikes/tunnels/chest/eagle, place starts, beasts and items, erase). */
 function edApplyCell(r,c){
   const e=ST.draft,L=e.layout,t=ST.tool,o=ST.opt;const at=([a,b])=>a===r&&b===c;
   const pl=L.pillars.find(p=>p.r===r&&p.c===c);
@@ -542,6 +607,7 @@ function edApplyCell(r,c){
   if(t==='coin'&&!pl)L.items.push({kind:'coin',key:+(o.coin||5),r,c});
   if(t==='erase'){L.pillars=L.pillars.filter(p=>p!==pl);L.spikes=L.spikes.filter(x=>!at(x));L.tunnels=L.tunnels.filter(x=>!at(x));if(L.chest&&at(L.chest))L.chest=null;clearUnits();L.items=L.items.filter(x=>!(x.r===r&&x.c===c))}
 }
+/* randomArena — a random layout mirrored in four quadrants (pillars, tunnels, maybe spikes, 2–6 base beasts, maybe Leo). NOTE: uses rnd()/shuffle, the seeded dice, from UI code. */
 function randomArena(){
   const L={pillars:[],tunnels:[],spikes:[],chest:[6,6],chestW:[...CHEST_W],npcs:[],items:[],starts:STARTS.map(x=>[...x])};
   const free=(r,c)=>!(r===6&&c===6)&&!L.starts.some(s=>s[0]===r&&s[1]===c)&&!L.pillars.some(p=>p.r===r&&p.c===c)&&!L.tunnels.some(t=>t[0]===r&&t[1]===c);
@@ -560,9 +626,13 @@ function randomArena(){
 const NAME_KINDS={chars:['character',()=>CUSTOM.chars],npcs:['beast',()=>CUSTOM.npcs],events:['event',()=>CUSTOM.events],weapons:['weapon',()=>CUSTOM.weapons],
   armor:['armor piece',()=>CUSTOM.armor],flags:['banner',()=>CUSTOM.flags],trophies:['trophy',()=>CUSTOM.trophies],sponsors:['editor',()=>CUSTOM.sponsors],
   tokens:['token',()=>CUSTOM.tokens],spect:['spectator',()=>(typeof CROWD_CACHE!=='undefined'?CROWD_CACHE.filter(r=>r.custom):[])]};
-const nKey9=s=>String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
+/* nKey9 — a name normalized for uniqueness checks (trimmed, lower case, single spaces). */
+const nKey9=name=>String(name||'').trim().toLowerCase().replace(/\s+/g,' ');
+/* nameClash — another creation of the same kind with this name, if any. */
 function nameClash(kind,name,id){const K=NAME_KINDS[kind];if(!K||!nKey9(name))return null;return (K[1]()||[]).find(x=>x&&x.id!==id&&nKey9(x.name)===nKey9(name))||null}
+/* ROMN9 — numerals tried for a free "Name II…XII". */
 const ROMN9=['II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+/* nameSuggest — the first free "Name II…XII" for a clashing name. */
 function nameSuggest(kind,name,id){const base=String(name).trim().replace(/\s+(II|III|IV|V|VI|VII|VIII|IX|X|XI|XII)$/,'');for(const rn of ROMN9){const n=base+' '+rn;if(!nameClash(kind,n,id))return n}return base+' '+Date.now().toString(36).slice(-3)}
 // returns true when the name is free; otherwise fills in the suggestion (obj.name + any matching input) and warns
 function nameGuard(kind,obj,inputSel){const c=nameClash(kind,obj.name,obj.id);if(!c)return true;const sug=nameSuggest(kind,obj.name,obj.id);
@@ -576,6 +646,7 @@ async function nameDedupeOnce(){try{if(localStorage.getItem('flavius_nameDedupe3
     for(const x of L){if(!x||!x.name)continue;const kk=nKey9(x.name);if(!seen[kk]){seen[kk]=1;continue}const old=x.name;x.name=nameSuggest(k,x.name,x.id);renamed.push(`${old} → ${x.name}`);await Store.put(col,x.id,x).catch(()=>{})}}
   try{localStorage.setItem('flavius_nameDedupe36','1')}catch(e){}
   if(renamed.length&&typeof mToast==='function')mToast(`✎ Names are unique now. Renamed ${renamed.length} duplicate${renamed.length===1?'':'s'}: ${esc(renamed.slice(0,4).join(' · '))}${renamed.length>4?' …':''}`)}
+/* stSaveDraft — saves the character / beast / event draft (id, dates, unique name) to its collection and registers it. Wrapped by several later modules. */
 function stSaveDraft(){
   const d=ST.draft;const col=ST.tab==='chars'?'customChars':ST.tab==='npcs'?'customNpcs':'customEvents';
   if(!d.id)d.id=`${ST.tab[0]}${Date.now().toString(36)}${rnd(1296).toString(36)}`;
@@ -587,6 +658,7 @@ function stSaveDraft(){
   registerCustoms();
   return Store.put(col,d.id,JSON.parse(JSON.stringify(d))).then(()=>d);
 }
+/* openStudio — opens the Creator Studio (loads every collection first); "play:" results open New event with the creation. */
 async function openStudio(tab){
   if(modalBusy())return;
   await loadCustoms();await loadLudus().catch(()=>{});await nameDedupeOnce();
@@ -600,6 +672,7 @@ async function openStudio(tab){
     if(kind==='ch'){const k='cc_'+id;const s=CFG.seats[0];const clash=CFG.seats.find(o=>o!==s&&o.cls===k);if(clash)clash.cls=s.cls;Object.assign(s,{cls:k,cpu:false,name:CLASSES[k].hero,saved:null});CFG.mode='event';if(EVENTS[CFG.ev].classes&&!EVENTS[CFG.ev].custom)CFG.ev='democritus';openSetup()}
   }
 }
+/* wireStudio — wires every click, input and change in the Creator Studio window (all designers route through here or their own handlers). */
 function wireStudio(done){
 
   const box=$('#mBody');const root=()=>$('#studio');
@@ -704,7 +777,7 @@ function wireStudio(done){
     if(a==='fillpots'){const Ls=d.layout.pillars;if(!Ls.length){mToast('🏛 No pillars yet — the Blessings sit on pillars.');return}const keys=shuffle(Object.keys(OFFER).filter(k=>k!=='key'&&k!=='eagle'));Ls.forEach((p,i)=>{p.pot=keys[i%keys.length]});
       mToast(`✚ ${Ls.length} different blessings placed — tune each one in the list.`);redraw();return}
   };
-  const read=t=>t.type==='checkbox'?t.checked:t.dataset.num||t.type==='range'||t.type==='number'?+t.value:t.value===''&&t.tagName==='SELECT'?null:t.value;
+  const read=input=>input.type==='checkbox'?input.checked:input.dataset.num||input.type==='range'||input.type==='number'?+input.value:input.value===''&&input.tagName==='SELECT'?null:input.value;
   box.oninput=e=>{const t=e.target;
     if(t.dataset&&t.dataset.trf!=null&&typeof trophyStudioInput==='function'){trophyStudioInput(t);return}
     if(t.dataset&&t.dataset.scbl){scbInput(t);return}
@@ -754,4 +827,5 @@ function wireStudio(done){
       redraw()}
   };
 }
+/* the top-bar Studio button. */
 $('#btnStudio').onclick=()=>openStudio();

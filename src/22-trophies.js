@@ -16,21 +16,29 @@ const TR_METALS={gold:['#fff4c2','#e6b93a','#9a6a14'],silver:['#ffffff','#c9ccd3
   /* v0.36: materials, not just metals — woods and stones for the humbler (or odder) prizes */
   electrum:['#fffbe0','#e8d88a','#8f8440'],copper:['#ffd2b8','#c8683e','#6a2d14'],oak:['#d8b27a','#9a6a36','#4e3014'],olive:['#d9c79a','#8f7a48','#4a3c1c'],cedar:['#e6a57a','#a8583a','#5a2a18'],
   ebony:['#6a5a52','#2e2420','#0e0a08'],ivory:['#fffdf2','#ece2c6','#a89c7a'],porphyry:['#c78aa0','#7a2e4a','#3a0f20'],lapis:['#9ab8ff','#2f4ea8','#10204e'],jade:['#c8f0d0','#4f9a6a','#1e4a2e'],terracotta:['#f2b48a','#c0663a','#6a2e16']};
+/* TR_MAT_LBL — labels of the trophy materials. */
 const TR_MAT_LBL={gold:'Gold',silver:'Silver',bronze:'Bronze',iron:'Iron',electrum:'Electrum',copper:'Copper',rose:'Rose gold',obsidian:'Obsidian',marble:'Marble',porphyry:'Imperial porphyry',lapis:'Lapis lazuli',jade:'Jade',ivory:'Ivory',terracotta:'Terracotta',oak:'Oak',olive:'Olive wood',cedar:'Cedar of Lebanon',ebony:'Ebony'};
+/* TR_MAT_GROUPS — materials grouped (metals, stones, woods) for the designer. */
 const TR_MAT_GROUPS=[['Metals',['gold','silver','bronze','iron','electrum','copper','rose']],['Stones',['marble','obsidian','porphyry','lapis','jade','ivory','terracotta']],['Woods',['oak','olive','cedar','ebony']]];
+/* TR_BASES — trophy base colors [light, dark] by base material. */
 const TR_BASES={wood:['#6b4527','#3a2414'],marble:['#e9e5da','#aaa292'],obsidian:['#3a3645','#121017'],gold:['#e6b93a','#8a5c10'],porphyry:['#7a2e4a','#3a0f20'],bronze:['#c27a3a','#6e3b14'],travertine:['#e8dcc0','#b4a47e'],cedar:['#a8583a','#5a2a18'],lapis:['#2f4ea8','#10204e'],none:null};
+/* TR_BASE_LBL — base options [key, label]. */
 const TR_BASE_LBL=[['wood','Walnut'],['cedar','Cedar'],['marble','Marble'],['travertine','Travertine'],['porphyry','Porphyry'],['lapis','Lapis'],['obsidian','Obsidian'],['bronze','Bronze plinth'],['gold','Gilded'],['none','No base']];
+/* TR_SHAPES — trophy shapes [key, label]. */
 const TR_SHAPES=[['cup','Loving cup'],['bowl','The great bowl (Stanley style)'],['shield','Parade shield'],['laurel','Laurel wreath'],['eagle','Eagle on a column'],['helm','Champion’s galea'],
   ['belt','Championship belt'],['obelisk','Obelisk'],['rudis','The rudis (wooden sword)'],['trident','Trident'],['urn','Amphora'],['sandal','A sandal'],['sponge','A sponge on a stick']];
+/* TR_TOPPERS — trophy toppers [key, label]. */
 const TR_TOPPERS=[['','None'],['eagle','Eagle'],['laurel','Laurel'],['star','Star'],['flame','Flame'],['figure','Gladiator'],['crown','Mural crown'],['trident','Little trident'],['sun','Sol Invictus'],['moon','Crescent moon'],['owl','Minerva\u2019s owl']];
+/* TR_UID — counter for unique SVG gradient ids. */
 let TR_UID=0;
-function trophySVG(t,w=90){
-  t=t||{};const M=TR_METALS[t.metal]||TR_METALS.gold;const B=TR_BASES[t.base===undefined?'wood':t.base];const u='tr'+(++TR_UID);
-  const g=`url(#${u}m)`,gd=M[2],gem=t.gem||'#c0433a';
+/* trophySVG — draws a trophy spec as SVG at a size: shape (or sculpted layers), material gradients, base, topper, gem and inscription. */
+function trophySVG(trophy,size=90){
+  trophy=trophy||{};const M=TR_METALS[trophy.metal]||TR_METALS.gold;const B=TR_BASES[trophy.base===undefined?'wood':trophy.base];const u='tr'+(++TR_UID);
+  const g=`url(#${u}m)`,gd=M[2],gem=trophy.gem||'#c0433a';
   const defs=`<defs><linearGradient id="${u}m" x1="0" x2="1"><stop offset="0" stop-color="${M[2]}"/><stop offset=".35" stop-color="${M[0]}"/><stop offset=".6" stop-color="${M[1]}"/><stop offset="1" stop-color="${M[2]}"/></linearGradient>
     ${B?`<linearGradient id="${u}b" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${B[0]}"/><stop offset="1" stop-color="${B[1]}"/></linearGradient>`:''}</defs>`;
   const S=`stroke="${gd}" stroke-width="1.2"`;let body='';
-  switch(t.shape||'cup'){
+  switch(trophy.shape||'cup'){
     case 'bowl':body=`<path d="M22 24Q50 38 78 24L74 32Q50 44 26 32Z" fill="${g}" ${S}/><rect x="36" y="38" width="28" height="16" fill="${g}" ${S}/><rect x="32" y="54" width="36" height="18" fill="${g}" ${S}/><rect x="28" y="72" width="44" height="26" fill="${g}" ${S}/>
       ${[58,62,66,76,82,88,94].map(y=>`<line x1="${y<72?33:29}" x2="${y<72?67:71}" y1="${y}" y2="${y}" stroke="${gd}" stroke-width=".5" opacity=".6"/>`).join('')}<circle cx="50" cy="46" r="3" fill="${gem}"/>`;break;
     case 'shield':body=`<rect x="46" y="76" width="8" height="24" fill="${g}" ${S}/><circle cx="50" cy="48" r="30" fill="${g}" ${S}/><circle cx="50" cy="48" r="24" fill="none" stroke="${gd}" stroke-width="1.4"/><circle cx="50" cy="48" r="7" fill="${gem}" stroke="${gd}"/>${[0,60,120,180,240,300].map(a=>`<circle cx="${50+Math.cos(a*Math.PI/180)*27}" cy="${48+Math.sin(a*Math.PI/180)*27}" r="1.6" fill="${gd}"/>`).join('')}`;break;
@@ -47,25 +55,26 @@ function trophySVG(t,w=90){
     case 'sponge':body=`<rect x="48" y="40" width="4" height="60" fill="#6b4527"/><path d="M36 22Q34 8 50 10Q68 8 64 24Q70 36 54 40Q38 42 36 30Z" fill="${g}" ${S}/>${[[44,18],[54,16],[58,28],[46,30],[52,24]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.8" fill="${gd}" opacity=".6"/>`).join('')}`;break;
     default: /* cup */ body=`<path d="M30 22L70 22Q72 58 50 66Q28 58 30 22Z" fill="${g}" ${S}/><path d="M30 28Q14 28 18 44Q22 56 36 56" fill="none" stroke="${gd}" stroke-width="4"/><path d="M30 28Q14 28 18 44Q22 56 36 56" fill="none" stroke="${M[1]}" stroke-width="2"/><path d="M70 28Q86 28 82 44Q78 56 64 56" fill="none" stroke="${gd}" stroke-width="4"/><path d="M70 28Q86 28 82 44Q78 56 64 56" fill="none" stroke="${M[1]}" stroke-width="2"/><rect x="46" y="66" width="8" height="20" fill="${g}" ${S}/><ellipse cx="50" cy="90" rx="16" ry="5" fill="${g}" ${S}/><circle cx="50" cy="40" r="4" fill="${gem}" stroke="${gd}"/>`;
   }
-  const topY={cup:22,bowl:24,shield:18,laurel:18,eagle:26,helm:10,belt:54,obelisk:14,rudis:8,trident:8,urn:22,sandal:22,sponge:10}[t.shape||'cup']||20;
+  const topY={cup:22,bowl:24,shield:18,laurel:18,eagle:26,helm:10,belt:54,obelisk:14,rudis:8,trident:8,urn:22,sandal:22,sponge:10}[trophy.shape||'cup']||20;
   let top='';const ty=topY-4;
-  if(t.topper==='star')top=`<path d="M50 ${ty-12}L53 ${ty-4}L61 ${ty-4}L55 ${ty+1}L57 ${ty+9}L50 ${ty+4}L43 ${ty+9}L45 ${ty+1}L39 ${ty-4}L47 ${ty-4}Z" fill="${g}" ${S}/>`;
-  else if(t.topper==='flame')top=`<path d="M50 ${ty-14}Q58 ${ty-4} 54 ${ty+2}Q52 ${ty-4} 50 ${ty-2}Q48 ${ty+4} 46 ${ty}Q42 ${ty-6} 50 ${ty-14}Z" fill="#ff8a3a" stroke="#c0431a"/>`;
-  else if(t.topper==='eagle')top=`<path d="M50 ${ty+2}L40 ${ty-6}L32 ${ty-4}L40 ${ty}L50 ${ty+4}L60 ${ty}L68 ${ty-4}L60 ${ty-6}Z" fill="${g}" ${S}/><circle cx="50" cy="${ty-5}" r="3" fill="${g}" ${S}/>`;
-  else if(t.topper==='laurel')top=Array.from({length:5},(_,i)=>`<ellipse cx="${42+i*4}" cy="${ty-2-Math.abs(2-i)*-1}" rx="3.2" ry="1.6" transform="rotate(${-40+i*20} ${42+i*4} ${ty-2})" fill="${g}" ${S}/>`).join('');
-  else if(t.topper==='figure')top=`<circle cx="50" cy="${ty-12}" r="3" fill="${g}" ${S}/><path d="M46 ${ty-8}L54 ${ty-8}L55 ${ty+2}L52 ${ty+2}L50 ${ty-2}L48 ${ty+2}L45 ${ty+2}Z" fill="${g}" ${S}/><path d="M54 ${ty-6}L62 ${ty-14}" stroke="${gd}" stroke-width="1.6"/>`;
-  else if(t.topper==='crown')top=`<path d="M38 ${ty+2}L38 ${ty-8}L42 ${ty-4}L46 ${ty-10}L50 ${ty-4}L54 ${ty-10}L58 ${ty-4}L62 ${ty-8}L62 ${ty+2}Z" fill="${g}" ${S}/><circle cx="50" cy="${ty-2}" r="1.8" fill="${gem}"/>`;
-  else if(t.topper==='trident')top=`<path d="M49 ${ty+2}L49 ${ty-8}L45 ${ty-8}L45 ${ty-14}L47 ${ty-14}L47 ${ty-10}L49 ${ty-10}L49 ${ty-16}L51 ${ty-16}L51 ${ty-10}L53 ${ty-10}L53 ${ty-14}L55 ${ty-14}L55 ${ty-8}L51 ${ty-8}L51 ${ty+2}Z" fill="${g}" ${S}/>`;
-  else if(t.topper==='sun')top=`<circle cx="50" cy="${ty-6}" r="5" fill="${g}" ${S}/>${Array.from({length:8},(_,i)=>{const a=i*Math.PI/4;return `<line x1="${50+Math.cos(a)*7}" y1="${ty-6+Math.sin(a)*7}" x2="${50+Math.cos(a)*10}" y2="${ty-6+Math.sin(a)*10}" stroke="${gd}" stroke-width="1.4"/>`}).join('')}`;
-  else if(t.topper==='moon')top=`<path d="M54 ${ty-14}A8 8 0 1 0 54 ${ty+2}A6 6 0 1 1 54 ${ty-14}Z" fill="${g}" ${S}/>`;
-  else if(t.topper==='owl')top=`<ellipse cx="50" cy="${ty-5}" rx="5.5" ry="7" fill="${g}" ${S}/><circle cx="48" cy="${ty-8}" r="1.6" fill="${gem}"/><circle cx="52" cy="${ty-8}" r="1.6" fill="${gem}"/><path d="M46 ${ty-12}L47 ${ty-15}L49 ${ty-12}M51 ${ty-12}L53 ${ty-15}L54 ${ty-12}" fill="none" stroke="${gd}"/>`;
-  const ins=String(t.ins||t.name||'').slice(0,14);
+  if(trophy.topper==='star')top=`<path d="M50 ${ty-12}L53 ${ty-4}L61 ${ty-4}L55 ${ty+1}L57 ${ty+9}L50 ${ty+4}L43 ${ty+9}L45 ${ty+1}L39 ${ty-4}L47 ${ty-4}Z" fill="${g}" ${S}/>`;
+  else if(trophy.topper==='flame')top=`<path d="M50 ${ty-14}Q58 ${ty-4} 54 ${ty+2}Q52 ${ty-4} 50 ${ty-2}Q48 ${ty+4} 46 ${ty}Q42 ${ty-6} 50 ${ty-14}Z" fill="#ff8a3a" stroke="#c0431a"/>`;
+  else if(trophy.topper==='eagle')top=`<path d="M50 ${ty+2}L40 ${ty-6}L32 ${ty-4}L40 ${ty}L50 ${ty+4}L60 ${ty}L68 ${ty-4}L60 ${ty-6}Z" fill="${g}" ${S}/><circle cx="50" cy="${ty-5}" r="3" fill="${g}" ${S}/>`;
+  else if(trophy.topper==='laurel')top=Array.from({length:5},(_,i)=>`<ellipse cx="${42+i*4}" cy="${ty-2-Math.abs(2-i)*-1}" rx="3.2" ry="1.6" transform="rotate(${-40+i*20} ${42+i*4} ${ty-2})" fill="${g}" ${S}/>`).join('');
+  else if(trophy.topper==='figure')top=`<circle cx="50" cy="${ty-12}" r="3" fill="${g}" ${S}/><path d="M46 ${ty-8}L54 ${ty-8}L55 ${ty+2}L52 ${ty+2}L50 ${ty-2}L48 ${ty+2}L45 ${ty+2}Z" fill="${g}" ${S}/><path d="M54 ${ty-6}L62 ${ty-14}" stroke="${gd}" stroke-width="1.6"/>`;
+  else if(trophy.topper==='crown')top=`<path d="M38 ${ty+2}L38 ${ty-8}L42 ${ty-4}L46 ${ty-10}L50 ${ty-4}L54 ${ty-10}L58 ${ty-4}L62 ${ty-8}L62 ${ty+2}Z" fill="${g}" ${S}/><circle cx="50" cy="${ty-2}" r="1.8" fill="${gem}"/>`;
+  else if(trophy.topper==='trident')top=`<path d="M49 ${ty+2}L49 ${ty-8}L45 ${ty-8}L45 ${ty-14}L47 ${ty-14}L47 ${ty-10}L49 ${ty-10}L49 ${ty-16}L51 ${ty-16}L51 ${ty-10}L53 ${ty-10}L53 ${ty-14}L55 ${ty-14}L55 ${ty-8}L51 ${ty-8}L51 ${ty+2}Z" fill="${g}" ${S}/>`;
+  else if(trophy.topper==='sun')top=`<circle cx="50" cy="${ty-6}" r="5" fill="${g}" ${S}/>${Array.from({length:8},(_,i)=>{const a=i*Math.PI/4;return `<line x1="${50+Math.cos(a)*7}" y1="${ty-6+Math.sin(a)*7}" x2="${50+Math.cos(a)*10}" y2="${ty-6+Math.sin(a)*10}" stroke="${gd}" stroke-width="1.4"/>`}).join('')}`;
+  else if(trophy.topper==='moon')top=`<path d="M54 ${ty-14}A8 8 0 1 0 54 ${ty+2}A6 6 0 1 1 54 ${ty-14}Z" fill="${g}" ${S}/>`;
+  else if(trophy.topper==='owl')top=`<ellipse cx="50" cy="${ty-5}" rx="5.5" ry="7" fill="${g}" ${S}/><circle cx="48" cy="${ty-8}" r="1.6" fill="${gem}"/><circle cx="52" cy="${ty-8}" r="1.6" fill="${gem}"/><path d="M46 ${ty-12}L47 ${ty-15}L49 ${ty-12}M51 ${ty-12}L53 ${ty-15}L54 ${ty-12}" fill="none" stroke="${gd}"/>`;
+  const ins=String(trophy.ins||trophy.name||'').slice(0,14);
   const base=B?`<rect x="22" y="100" width="56" height="8" rx="1" fill="url(#${u}b)"/><rect x="18" y="108" width="64" height="22" rx="2" fill="url(#${u}b)"/><rect x="30" y="113" width="40" height="11" rx="1" fill="${g}" stroke="${gd}" stroke-width=".6"/><text x="50" y="121" text-anchor="middle" font-size="5.6" font-family="Georgia,serif" fill="#2a1a08">${esc(ins)}</text>`:'';
-  const sc=typeof scbLayersSVG==='function'?scbLayersSVG(t):(t.layers||[]).map(L=>typeof shapeSVG==='function'?shapeSVG(L):'').join(''); // v0.36: sculpted details, drawn over the casting
-  return `<svg class="trsvg" viewBox="0 0 100 134" width="${w}" height="${Math.round(w*1.34)}" role="img" aria-label="${esc(t.name||'Trophy')}">${defs}${base}${body}${top}${sc}</svg>`;
+  const sc=typeof scbLayersSVG==='function'?scbLayersSVG(trophy):(trophy.layers||[]).map(L=>typeof shapeSVG==='function'?shapeSVG(L):'').join(''); // v0.36: sculpted details, drawn over the casting
+  return `<svg class="trsvg" viewBox="0 0 100 134" width="${size}" height="${Math.round(size*1.34)}" role="img" aria-label="${esc(trophy.name||'Trophy')}">${defs}${base}${body}${top}${sc}</svg>`;
 }
 
 /* ---------------- the silverware ---------------- */
+/* TROPHY_LIB — the built-in silverware: the season's Flavian Awards, the invitationals' trophies and the Superbus. TWEAK: rewards. */
 const TROPHY_LIB=[
   {id:'flavian_cup',name:'The Flavian Cup',desc:'Lanista of the Season — top of the league table.',shape:'bowl',metal:'gold',base:'marble',topper:'eagle',gem:'#7a1f1f',ins:'LANISTA',rewards:{coin:100,fame:6},cat:'season'},
   {id:'palm_roma',name:'The Superbus Cup',desc:'Champion of the Flavius Superbus — the great final of the season in Roma.',shape:'bowl',metal:'gold',base:'obsidian',topper:'figure',gem:'#2e6a3a',ins:'SUPERBUS',rewards:{coin:60,fame:5,cf:4},cat:'season'},
@@ -86,39 +95,47 @@ const TROPHY_LIB=[
   {id:'colossus',name:'The Colossus Crown',desc:'Champion of the Colossus Invitational — sixteen of the empire’s best, one crown.',shape:'eagle',metal:'gold',base:'obsidian',topper:'laurel',gem:'#c0433a',ins:'COLOSSUS',rewards:{coin:0,fame:12,cf:5},cat:'special'},
   {id:'trident',name:'The Golden Trident',desc:'Won the Golden Trident Challenge at Pompeii against three invited champions.',shape:'trident',metal:'gold',base:'marble',topper:'',gem:'#3a7fd0',ins:'POMPEII',rewards:{coin:0,fame:9,cf:4},cat:'special'},
   {id:'lion_leptis',name:'The Lion of Leptis',desc:'Took the Leptis Magna Cup: two heats, then a duel in the African sun.',shape:'obelisk',metal:'bronze',base:'marble',topper:'star',gem:'#d6ab4c',ins:'LEPTIS',rewards:{coin:0,fame:7,cf:3},cat:'special'}];
+/* trophyDef — a trophy definition by id (built-in or custom). */
 const trophyDef=id=>TROPHY_LIB.find(t=>t.id===id)||((typeof CUSTOM!=='undefined'&&CUSTOM.trophies)||[]).find(t=>t.id===id)||null;
+/* allTrophyDefs — every trophy definition (built-in + custom). */
 const allTrophyDefs=()=>[...TROPHY_LIB,...((typeof CUSTOM!=='undefined'&&CUSTOM.trophies)||[])];
+/* loadTrophies — loads the custom trophies (Store customTrophies). */
 async function loadTrophies(){try{CUSTOM.trophies=(await Store.list('customTrophies')).sort((a,b)=>String(a.name).localeCompare(b.name))}catch(e){CUSTOM.trophies=CUSTOM.trophies||[]}}
+/* loads the custom trophies shortly after start. */
 setTimeout(()=>{if(typeof CUSTOM!=='undefined')loadTrophies()},700);
-const rewardText=r=>{r=r||{};const p=[];if(r.coin)p.push(`${ICO.coin} ${r.coin} coin`);if(r.cf)p.push(`${ICO.wheat} ${r.cf} CF`);if(r.fame)p.push(`★ ${r.fame} fame`);return p.join(' · ')||'glory alone'};
+/* rewardText — a trophy's rewards in words ("50 coin · 3 fame"). */
+const rewardText=rewards=>{rewards=rewards||{};const p=[];if(rewards.coin)p.push(`${ICO.coin} ${rewards.coin} coin`);if(rewards.cf)p.push(`${ICO.wheat} ${rewards.cf} CF`);if(rewards.fame)p.push(`★ ${rewards.fame} fame`);return p.join(' · ')||'glory alone'};
 
 /* ---------------- earning & the glass case (Manager mode) ---------------- */
+/* CASE_SLOTS — display slots in the Manager trophy case (three shelves). TWEAK. */
 const CASE_SLOTS=12;
-function earnTrophy(w,tid,o={}){
-  const d=trophyDef(tid);if(!d)return null;w.trophies=w.trophies||[];w.case=w.case||Array(CASE_SLOTS).fill(null);
+/* earnTrophy — a house wins a trophy: a new piece or one more on the stacked piece, set into the case, rewards paid. */
+function earnTrophy(world,tid,opts={}){
+  const d=trophyDef(tid);if(!d)return null;world.trophies=world.trophies||[];world.case=world.case||Array(CASE_SLOTS).fill(null);
   /* v0.45: the same trophy won again stacks on ONE piece of silver — a count on the plaque and a line in its history */
-  const g0=o.gid?gById(o.gid):null;const hEntry={season:w.season,week:w.week,who:o.who||null,gid:o.gid||null,gname:g0?g0.name:null,why:o.why||d.desc};
-  trMerge(w);let e=w.trophies.find(t=>t.tid===tid);
-  if(e){e.count=(e.count||1)+1;(e.hist=e.hist||[]).push(hEntry);e.season=w.season;e.week=w.week;e.who=o.who||e.who;e.why=o.why||e.why}
+  const g0=opts.gid?gById(opts.gid):null;const hEntry={season:world.season,week:world.week,who:opts.who||null,gid:opts.gid||null,gname:g0?g0.name:null,why:opts.why||d.desc};
+  trMerge(world);let e=world.trophies.find(t=>t.tid===tid);
+  if(e){e.count=(e.count||1)+1;(e.hist=e.hist||[]).push(hEntry);e.season=world.season;e.week=world.week;e.who=opts.who||e.who;e.why=opts.why||e.why}
   else{e={id:'e'+Date.now().toString(36)+Math.floor(Math.random()*1e4),tid,name:d.name,spec:{shape:d.shape,metal:d.metal,base:d.base,topper:d.topper,gem:d.gem,ins:d.ins,name:d.name},
-    season:w.season,week:w.week,why:o.why||d.desc,who:o.who||null,cat:d.cat||'custom',count:1,hist:[hEntry]};
-  w.trophies.push(e);const free=w.case.indexOf(null);if(free>=0)w.case[free]=e.id}
+    season:world.season,week:world.week,why:opts.why||d.desc,who:opts.who||null,cat:d.cat||'custom',count:1,hist:[hEntry]};
+  world.trophies.push(e);const free=world.case.indexOf(null);if(free>=0)world.case[free]=e.id}
   // the rewards: coin and fame to the house, CF banked on the fighter for their next bout
   const m=me(),r=d.rewards||{};if(m){if(r.coin)m.coin+=r.coin;if(r.fame)m.fame=clamp((m.fame||0)+r.fame,0,100)}
-  if(r.cf&&o.gid){const g=gById(o.gid);if(g)g.cfBank=(g.cfBank||0)+r.cf}
-  if(o.gid){const g=gById(o.gid);if(g){(g.trophies2=g.trophies2||[]).push(d.name);ghist(g,`won ${d.name}`)}}
-  tnews(`🏆 <b>${esc(d.name)}</b> comes home to the trophy room${o.who?` — ${esc(o.who)}`:''}. ${rewardText(r)}.`,'big');
+  if(r.cf&&opts.gid){const g=gById(opts.gid);if(g)g.cfBank=(g.cfBank||0)+r.cf}
+  if(opts.gid){const g=gById(opts.gid);if(g){(g.trophies2=g.trophies2||[]).push(d.name);ghist(g,`won ${d.name}`)}}
+  tnews(`🏆 <b>${esc(d.name)}</b> comes home to the trophy room${opts.who?` — ${esc(opts.who)}`:''}. ${rewardText(r)}.`,'big');
   return e}
 /* v0.41: the season's two great prizes — and any custom trophy given a gilded frame — glow gold wherever they stand */
-const trGilt=t=>!!(t&&(t.gilded||t.id==='palm_roma'||t.id==='flavian_cup'||/^(The Superbus Cup|The Flavian Cup)$/.test(t.name||'')));
+const trGilt=trophy=>!!(trophy&&(trophy.gilded||trophy.id==='palm_roma'||trophy.id==='flavian_cup'||/^(The Superbus Cup|The Flavian Cup)$/.test(trophy.name||'')));
 /* fold older careers' duplicate pieces into one stacked piece each (count + history) */
-function trMerge(w){w.trophies=w.trophies||[];w.case=w.case||Array(CASE_SLOTS).fill(null);const keep={};const out=[];let changed=false;
-  for(const t of w.trophies){const h=t.hist||[{season:t.season,week:t.week,who:t.who||null,gid:null,gname:null,why:t.why}];
+function trMerge(world){world.trophies=world.trophies||[];world.case=world.case||Array(CASE_SLOTS).fill(null);const keep={};const out=[];let changed=false;
+  for(const t of world.trophies){const h=t.hist||[{season:t.season,week:t.week,who:t.who||null,gid:null,gname:null,why:t.why}];
     const k=t.tid||('n:'+t.name);if(!keep[k]){t.hist=h;t.count=t.count||h.length||1;keep[k]=t;out.push(t);continue}
     const K=keep[k];K.count=(K.count||1)+(t.count||1);K.hist=[...(K.hist||[]),...h].sort((a,b)=>(a.season-b.season)||((a.week||0)-(b.week||0)));
     const last=K.hist[K.hist.length-1];K.season=last.season;K.week=last.week;K.who=last.who||K.who;changed=true;
-    w.case=w.case.map(id=>id===t.id?(w.case.includes(K.id)?null:K.id):id)}
-  if(changed)w.trophies=out;return w}
+    world.case=world.case.map(id=>id===t.id?(world.case.includes(K.id)?null:K.id):id)}
+  if(changed)world.trophies=out;return world}
+/* trophyRoomHTML — the Manager trophy room: the glass case and the full list. */
 function trophyRoomHTML(){
   const w=W_();w.trophies=w.trophies||[];w.case=w.case||Array(CASE_SLOTS).fill(null);trMerge(w);
   const byId=Object.fromEntries(w.trophies.map(t=>[t.id,t]));const sel=MGR.tsel;
@@ -140,16 +157,17 @@ function trophyRoomHTML(){
     ${vault.length&&!(sel&&sel.slot!=null)?`<div class="card2" style="margin-top:10px"><div class="sect" style="margin-top:0">📦 The storeroom <span class="rc-sub">${vault.length} not on display — pick a shelf spot to put one up</span></div><div class="tvault">${vault.map(t=>`<span class="tvi">${trophySVG(t.spec,46)}<span>${esc(t.name)}${(t.count||1)>1?' ×'+t.count:''}<i>S${t.season}${t.who?' · '+esc(t.who):''}</i></span></span>`).join('')}</div></div>`:''}</div>`}
 
 /* ---------------- season tallies & the Flavian Awards ---------------- */
-function ssTally(g,r,w,won){if(!g)return;if(!g.ss||g.ss.s!==w.season)g.ss={s:w.season,ev:0,w:0,kp:0,kn:0,dmg:0,taken:0,best:0,worst:null};const s=g.ss;
-  if(s.o0==null)s.o0=g.ovr;s.ev++;if(won)s.w++;if(r.alive!==false&&!r.dead)s.surv=(s.surv||0)+1;s.kp+=r.kp||0;s.kn+=r.kn||0;s.dmg+=r.dmg||0;s.taken+=r.taken||0;s.best=Math.max(s.best,r.f||0);s.worst=s.worst==null?(r.f||0):Math.min(s.worst,r.f||0)}
-function seasonAwards(w,season=w.season){
-  const pm=me();const G=w.glads.filter(g=>g.ss&&g.ss.s===season&&g.ss.ev>0);const out=[];
+function ssTally(glad,row,world,won){if(!glad)return;if(!glad.ss||glad.ss.s!==world.season)glad.ss={s:world.season,ev:0,w:0,kp:0,kn:0,dmg:0,taken:0,best:0,worst:null};const s=glad.ss;
+  if(s.o0==null)s.o0=glad.ovr;s.ev++;if(won)s.w++;if(row.alive!==false&&!row.dead)s.surv=(s.surv||0)+1;s.kp+=row.kp||0;s.kn+=row.kn||0;s.dmg+=row.dmg||0;s.taken+=row.taken||0;s.best=Math.max(s.best,row.f||0);s.worst=s.worst==null?(row.f||0):Math.min(s.worst,row.f||0)}
+/* seasonAwards — the season's Flavian Awards: each award to the best fighter / house by its tally. */
+function seasonAwards(world,season=world.season){
+  const pm=me();const G=world.glads.filter(g=>g.ss&&g.ss.s===season&&g.ss.ev>0);const out=[];
   const ludusOf=g=>{const m=g.contract?mgrById(g.contract.mgr):null;return m};
   const top=(arr,key,filter=()=>true,dir=1)=>arr.filter(filter).sort((a,b)=>dir*(key(b)-key(a))||(b.fame||0)-(a.fame||0))[0]||null;
   const add=(tid,g,m,stat)=>{const d=trophyDef(tid);if(!d)return;const mm=m||(g&&ludusOf(g));out.push({tid,name:d.name,cat:d.cat,desc:d.desc,gid:g?g.id:null,gname:g?g.name:null,mid:mm?mm.id:null,mname:mm?mm.name:null,ludus:mm?mm.ludus:(g?'free agent':null),mine:!!(mm&&mm.isPlayer),stat})};
   // lanista of the season: the most fame (the old "Lanista of the season" line, now with a cup)
-  {const m=leagueSort(w.mgrs,season)[0];if(m){const P=msp(m,season);add('flavian_cup',null,m,`${P.pts} points · ${P.w}-${P.b-P.w}`)}}
-  if(w.finale&&w.finale.season===season&&w.finale.champ){const g=w.glads.find(x=>x.name===w.finale.champ);add('palm_roma',g||null,g?ludusOf(g):null,`the Flavius Superbus · ${w.finale.f} CF`)}
+  {const m=leagueSort(world.mgrs,season)[0];if(m){const P=msp(m,season);add('flavian_cup',null,m,`${P.pts} points · ${P.w}-${P.b-P.w}`)}}
+  if(world.finale&&world.finale.season===season&&world.finale.champ){const g=world.glads.find(x=>x.name===world.finale.champ);add('palm_roma',g||null,g?ludusOf(g):null,`the Flavius Superbus · ${world.finale.f} CF`)}
   {const g=top(G,x=>x.ss.w*100+x.ss.best);if(g&&g.ss.w)add('aureus',g,null,`${g.ss.w} win${g.ss.w===1?'':'s'} in ${g.ss.ev}`)}
   {const g=top(G,x=>x.ss.w*100+x.ss.best,x=>x.debut&&x.debut.s===season);if(g)add('tiro',g,null,`${g.ss.w}-${g.ss.ev-g.ss.w} in their first season`)}
   {const g=top(G,x=>x.ss.kp);if(g&&g.ss.kp)add('iron_thumb',g,null,`${g.ss.kp} gladiators beaten`)}
@@ -163,14 +181,15 @@ function seasonAwards(w,season=w.season){
   {const g=top(G,x=>x.ss.taken);if(g&&g.ss.taken)add('sponge',g,null,`${g.ss.taken} damage taken — and still here`)}
   {const g=top(G,x=>x.ss.ev,x=>x.ss.w===0);if(g&&g.ss.ev>=2)add('sandal',g,null,`0 wins in ${g.ss.ev} bouts`)}
   {const g=top(G,x=>-(x.ss.worst??99));if(g)add('giggle',g,null,`${g.ss.worst} CF — a personal worst`)}
-  {const s0=(w.ssStart&&w.ssStart.s===season&&w.ssStart.bet)||{};const m=[...w.mgrs].sort((a,b)=>((a.betNet||0)-(s0[a.id]||0))-((b.betNet||0)-(s0[b.id]||0)))[0];const d=m?(m.betNet||0)-(s0[m.id]||0):0;if(m&&d<0)add('purse',null,m,`${d} coin at the betting windows`)}
+  {const s0=(world.ssStart&&world.ssStart.s===season&&world.ssStart.bet)||{};const m=[...world.mgrs].sort((a,b)=>((a.betNet||0)-(s0[a.id]||0))-((b.betNet||0)-(s0[b.id]||0)))[0];const d=m?(m.betNet||0)-(s0[m.id]||0):0;if(m&&d<0)add('purse',null,m,`${d} coin at the betting windows`)}
   {const g=top(G,x=>x.ss.ev);if(g&&g.ss.ev>=4)add('iron_sandal',g,null,`${g.ss.ev} bouts`)}
   // the player's silverware goes into the case (the rewards ride with it)
-  for(const a of out)if(a.mine&&!(a.tid==='palm_roma'&&w.finale&&w.finale.cupGiven)){const e=earnTrophy(w,a.tid,{why:`${a.desc} (${a.stat})`,who:a.gname||a.mname,gid:a.gid});if(e)a.eid=e.id}
-  w.awardShow={season,awards:out,seen:false};MGR.awI=0;
+  for(const a of out)if(a.mine&&!(a.tid==='palm_roma'&&world.finale&&world.finale.cupGiven)){const e=earnTrophy(world,a.tid,{why:`${a.desc} (${a.stat})`,who:a.gname||a.mname,gid:a.gid});if(e)a.eid=e.id}
+  world.awardShow={season,awards:out,seen:false};MGR.awI=0;
   mnews(`🎭 <b>The Flavian Awards of season ${season}</b>: ${out.filter(a=>a.cat==='season').map(a=>`${esc(a.name)} to ${esc(a.gname||a.mname)}`).join('; ')}.`,'big');
-  (w.awardHist=w.awardHist||[]).push({season,awards:out.map(a=>({name:a.name,cat:a.cat,who:a.gname||a.mname,ludus:a.ludus,mine:a.mine,stat:a.stat}))});if(w.awardHist.length>12)w.awardHist.shift();
+  (world.awardHist=world.awardHist||[]).push({season,awards:out.map(a=>({name:a.name,cat:a.cat,who:a.gname||a.mname,ludus:a.ludus,mine:a.mine,stat:a.stat}))});if(world.awardHist.length>12)world.awardHist.shift();
 }
+/* awardShowHTML — the award show: the season's envelopes opened one by one. */
 function awardShowHTML(){
   const w=W_();const A=w.awardShow;if(!A)return '<p>No awards tonight.</p>';const n=A.awards.length;const I=clamp(MGR.awI??0,0,n);
   const card=(a,i)=>{const d=trophyDef(a.tid)||{};const open=i<I;const g=a.gid?gById(a.gid):null;const m=a.mid?mgrById(a.mid):null;
@@ -186,6 +205,7 @@ function awardShowHTML(){
       <button class="btn ${I>=n?'primary':''}" type="button" data-mg="aw_done">📰 On to the season recap</button></div></div>`}
 
 /* ---------------- special events: the invitationals ---------------- */
+/* SPECIALS — the invitational special events: name, city, stages (event, size, heats), slots, purse, fees, fame, trophy, difficulty stars. TWEAK: purses and fame. */
 const SPECIALS={
   colossus:{n:'The Colossus Invitational',icon:'🏛',loc:6,kind:'bracket',stages:[{ev:'democritus',size:4,heats:4},{ev:'cassian',size:4,heats:1}],slots:2,opp:[68,86],stars:5,purse:600,appear:15,fame:12,trophy:'colossus',
     blurb:'Sixteen of the empire’s best under the Flavian amphitheater. Four heats of four; each heat’s winner goes through to a Cassian final.',rules:['4 heats of 4 → a final of 4','opponents rated 68–86','the Fate table applies, as in any event','Golden Eagle in the Blessings bag']},
@@ -196,43 +216,48 @@ const SPECIALS={
 // v0.28 THE FLAVIUS SUPERBUS — the season's great final: the top four stables, one fighter each, in Roma
 function finaleDef(fd){const FK=FEST_KINDS[fd.kind]||FEST_KINDS.ludi;return {n:'The Flavius Superbus',icon:'🏛',loc:6,kind:'single',stages:[{ev:'cassian',size:4,heats:1}],slots:1,opp:[0,0],stars:5,purse:250,appear:25,fame:10,trophy:'palm_roma',finale:true,season:fd.season,fest:fd.kind,
   blurb:`The great final of season ${fd.season}: the top four stables of the league send their best to Roma. Flavius himself presides; the ${FK.n} gift rides in with every entrant.`,rules:['by invitation only: the top 4 of the league table, one fighter each','a Classic Elimination with Cassian as summa rudis',`${FK.n}: ${FK.boon}`,'the Fate table applies, as in any event']}}
+/* specDef — a special's definition by id (an invitational, the Superbus finale, or a custom event with a trophy). */
 function specDef(sid){if(sid==='finale'){const w=W_();return w&&w.special&&w.special.D&&w.special.D.finale?w.special.D:null}if(SPECIALS[sid]){const D={...SPECIALS[sid]};if(D.loc==null)D.loc=Math.max(1,LOCATIONS.findIndex(L=>L&&L.n===D.locName));return D}
   if(String(sid).startsWith('ce:')){const k=sid.slice(3);const E=EVENTS[k];if(!E)return null;const size=clamp(4,E.min,E.max);
     return {n:E.n,icon:'✦',loc:E.loc||6,kind:'single',stages:[{ev:k,size,heats:1}],slots:1,opp:[62,84],stars:4,purse:320,appear:12,fame:8,trophy:E.trophy,custom:true,fates:!E.nofates,blurb:`Your own event, ${E.n}, staged as an invitational — its trophy goes to the winner.`,rules:[`a single bout of ${size}`,'opponents rated 62–84','your event’s own rules','the Fate table applies, as in any event']}}
   return null}
-const starsHTML=n=>`<span class="stars" title="Difficulty ${n} of 5">${'★'.repeat(n)}${'☆'.repeat(5-n)}</span>`;
-const absSW=(w,abs)=>{const s=w.season+Math.floor((abs-1)/12)-Math.floor((w.week-1)/12);return {season:s,wk:((abs-1)%12)+1}};
-const absDate=(w,abs)=>{const {season,wk}=absSW(w,abs);return empireDate(season,wk).short};
-function specWeekStart(w){
+/* starsHTML — difficulty as ★★★☆☆. */
+const starsHTML=stars=>`<span class="stars" title="Difficulty ${stars} of 5">${'★'.repeat(stars)}${'☆'.repeat(5-stars)}</span>`;
+/* absSW — absolute week → {season, wk} relative to the world's season. */
+const absSW=(world,abs)=>{const s=world.season+Math.floor((abs-1)/12)-Math.floor((world.week-1)/12);return {season:s,wk:((abs-1)%12)+1}};
+/* absDate — absolute week → its empire date. */
+const absDate=(world,abs)=>{const {season,wk}=absSW(world,abs);return empireDate(season,wk).short};
+/* specWeekStart — start of each Manager week: invitations go out, the Superbus is announced, the season ledger opens. */
+function specWeekStart(world){
   const pm=me();if(!pm)return;
   // the season's opening ledger: fame and betting as the season began (for the awards)
-  if(!w.ssStart||w.ssStart.s!==w.season)w.ssStart={s:w.season,bet:Object.fromEntries(w.mgrs.map(m=>[m.id,m.betNet||0])),fame:Object.fromEntries(w.mgrs.map(m=>[m.id,m.fame||0]))};
-  w.invites=w.invites||[];
-  for(const iv of w.invites){if(iv.status==='open'&&iv.wk<=w.week){iv.status='expired';tnews(`The invitation to <b>${esc(iv.n)}</b> lapsed unanswered.`)}}
+  if(!world.ssStart||world.ssStart.s!==world.season)world.ssStart={s:world.season,bet:Object.fromEntries(world.mgrs.map(m=>[m.id,m.betNet||0])),fame:Object.fromEntries(world.mgrs.map(m=>[m.id,m.fame||0]))};
+  world.invites=world.invites||[];
+  for(const iv of world.invites){if(iv.status==='open'&&iv.wk<=world.week){iv.status='expired';tnews(`The invitation to <b>${esc(iv.n)}</b> lapsed unanswered.`)}}
   // the Flavius Superbus opens the week after the regular season ends
-  if(w.finaleDue&&!w.special){const fd=w.finaleDue;delete w.finaleDue;const D=finaleDef(fd);
+  if(world.finaleDue&&!world.special){const fd=world.finaleDue;delete world.finaleDue;const D=finaleDef(fd);
     const ents=fd.top4.map(id=>{const m=mgrById(id);const g=m&&rosterOf(m).filter(x=>!x.inj).sort((a,b)=>effOvr(b)-effOvr(a))[0];return g?{gid:g.id,mine:!!m.isPlayer,mid:m.id}:null}).filter(Boolean);
     while(ents.length<4){const g=genGlad({ovr:72+rnd(12)});g.inv=true;ents.push({opp:g})}
-    w.special={iid:'finale'+fd.season,sid:'finale',D,stage:0,rounds:[[{ents,res:null}]].map(r=>r),champ:null,done:false,log:[]};w.special.rounds=[[{ents,res:null}]];
+    world.special={iid:'finale'+fd.season,sid:'finale',D,stage:0,rounds:[[{ents,res:null}]].map(r=>r),champ:null,done:false,log:[]};world.special.rounds=[[{ents,res:null}]];
     mnews(`🏛 <b>The Flavius Superbus</b> opens in Roma — ${ents.map(e=>esc((specEnt(e)||{}).name||'?')).join(', ')}. The league waits on the final.`,'big')}
   // an accepted invitation falls due: the league pauses for it
-  for(const iv of w.invites)if(iv.status==='accepted'&&iv.wk===w.week&&w.special){iv.wk++;tnews(`<b>${esc(iv.n)}</b> is pushed back a week — the league has another event on.`)}
-  const due=w.invites.find(iv=>iv.status==='accepted'&&iv.wk===w.week);
-  if(due&&!w.special){let D=specDef(due.sid);const mine=(due.ents||[]).map(gById).filter(g=>g&&g.alive&&g.contract&&g.contract.mgr===pm.id&&!g.inj);
+  for(const iv of world.invites)if(iv.status==='accepted'&&iv.wk===world.week&&world.special){iv.wk++;tnews(`<b>${esc(iv.n)}</b> is pushed back a week — the league has another event on.`)}
+  const due=world.invites.find(iv=>iv.status==='accepted'&&iv.wk===world.week);
+  if(due&&!world.special){let D=specDef(due.sid);const mine=(due.ents||[]).map(gById).filter(g=>g&&g.alive&&g.contract&&g.contract.mgr===pm.id&&!g.inj);
     if(!D||!mine.length){due.status='forfeit';pm.fame=clamp((pm.fame||0)-3,0,100);tnews(`Nobody fit to send to <b>${esc(due.n)}</b> — the host is insulted (−3 fame).`,'bad')}
-    else{due.status='playing';if(due.exhib){D={...D,n:due.n,fates:false,purse:Math.round(D.purse*0.67),fame:Math.max(3,D.fame-3),rules:[...D.rules.filter(r=>!/Fate table applies/.test(r)),'an EXHIBITION: the host pays the editor — no Fates, purse a third smaller']}}w.special=specBuild(D,due,mine);mnews(`⭐ <b>${esc(D.n)}</b> opens at ${esc(LOCATIONS[D.loc].n)} — the league's week waits on the invitational.`,'big')}}
+    else{due.status='playing';if(due.exhib){D={...D,n:due.n,fates:false,purse:Math.round(D.purse*0.67),fame:Math.max(3,D.fame-3),rules:[...D.rules.filter(r=>!/Fate table applies/.test(r)),'an EXHIBITION: the host pays the editor — no Fates, purse a third smaller']}}world.special=specBuild(D,due,mine);mnews(`⭐ <b>${esc(D.n)}</b> opens at ${esc(LOCATIONS[D.loc].n)} — the league's week waits on the invitational.`,'big')}}
   // new invitations arrive at the gate
-  const live=w.invites.filter(iv=>['open','accepted'].includes(iv.status)).length;
+  const live=world.invites.filter(iv=>['open','accepted'].includes(iv.status)).length;
   if(live<2&&Math.random()<0.3&&rosterOf(pm).length){
-    let wk=w.week+3+rnd(3);if(wk%12===0)wk++;if(!w.invites.some(iv=>iv.wk===wk&&['open','accepted'].includes(iv.status))){
+    let wk=world.week+3+rnd(3);if(wk%12===0)wk++;if(!world.invites.some(iv=>iv.wk===wk&&['open','accepted'].includes(iv.status))){
       const pool=Object.keys(SPECIALS);const ce=((typeof CUSTOM!=='undefined'&&CUSTOM.events)||[]).filter(e=>e.trophy&&EVENTS['ce_'+e.id]).map(e=>'ce:ce_'+e.id);
       const sid=typeof specPickSid==='function'?specPickSid():ce.length&&Math.random()<0.4?pickOne(ce):pickOne(pool);const D=specDef(sid);if(D){
         const exhib=Math.random()<0.4; // v0.30: some hosts pay the editor off — a FATE-FREE exhibition edition, for a smaller purse
-        const iv={id:'iv'+Date.now().toString(36),sid,n:exhib?D.n+' (exhibition)':D.n,exhib,wk,status:'open',ents:[],sent:w.week};w.invites.push(iv);
-        tnews(`📨 <b>An invitation:</b> ${esc(iv.n)} at ${esc(LOCATIONS[D.loc].n)}, ${absDate(w,wk)} (week ${absSW(w,wk).wk}). ${starsHTML(D.stars)}${exhib?' 🕊 <b>Exhibition edition</b>: the host pays the editor — no Fates, and a third off the purse.':''} Open it on Your ludus.`,'big')}}}
+        const iv={id:'iv'+Date.now().toString(36),sid,n:exhib?D.n+' (exhibition)':D.n,exhib,wk,status:'open',ents:[],sent:world.week};world.invites.push(iv);
+        tnews(`📨 <b>An invitation:</b> ${esc(iv.n)} at ${esc(LOCATIONS[D.loc].n)}, ${absDate(world,wk)} (week ${absSW(world,wk).wk}). ${starsHTML(D.stars)}${exhib?' 🕊 <b>Exhibition edition</b>: the host pays the editor — no Fates, and a third off the purse.':''} Open it on Your ludus.`,'big')}}}
   // early billing: a fighter committed weeks ago tops this week's poster
-  const cm=(w.commits||{})[w.week];if(cm){delete w.commits[w.week];const g=gById(cm.gid);
-    if(g&&g.alive&&!g.inj&&g.contract&&g.contract.mgr===pm.id){const n=w.night;const o=effOvr(g);
+  const cm=(world.commits||{})[world.week];if(cm){delete world.commits[world.week];const g=gById(cm.gid);
+    if(g&&g.alive&&!g.inj&&g.contract&&g.contract.mgr===pm.id){const n=world.night;const o=effOvr(g);
       const already=n.bouts.find(b=>b.ents.includes(g.id));
       const b=already||[...n.bouts].reverse().find(b=>{const T=TIERS[b.tier];return o>=T.lo-6&&o<=T.hi+6&&b.ents.some(id=>{const q=gById(id);return q&&!q.contract})});
       if(b){if(!already){const out=b.ents.map(gById).filter(x=>x&&!x.contract).sort((x,y)=>effOvr(x)-effOvr(y))[0];b.ents[b.ents.indexOf(out.id)]=g.id}
@@ -241,44 +266,50 @@ function specWeekStart(w){
       else tnews(`📌 ${esc(g.name)} was billed for this week, but no bout on the card fits their rating — the billing lapses (no penalty).`)}
     else tnews(`📌 This week's early billing lapsed — ${g?esc(g.name)+' is not fit to fight':'the fighter is gone'} (no penalty).`)}
 }
-function specAfterApply(b,wins,byId){const w=W_();const pm=me();
-  for(const gid of b.ents){const g=gById(gid);const r=byId[gid];if(g&&r)ssTally(g,r,w,wins.has(gid));if(g)g.cfBank=0}
-  if(b.billed&&wins.has(b.billed)){const bonus=Math.round(b.purse*0.15);pm.coin+=bonus;tnews(`📌 The billing pays: ${esc((gById(b.billed)||{}).name||'')} won as advertised — +${bonus} coin poster bonus.`)}}
+/* specAfterApply — after a league bout: the season tallies used by the awards. */
+function specAfterApply(bout,wins,byId){const w=W_();const pm=me();
+  for(const gid of bout.ents){const g=gById(gid);const r=byId[gid];if(g&&r)ssTally(g,r,w,wins.has(gid));if(g)g.cfBank=0}
+  if(bout.billed&&wins.has(bout.billed)){const bonus=Math.round(bout.purse*0.15);pm.coin+=bonus;tnews(`📌 The billing pays: ${esc((gById(bout.billed)||{}).name||'')} won as advertised — +${bonus} coin poster bonus.`)}}
 // the bracket: entrants chunked into heats; each heat's winner goes through
-function specBuild(D,iv,mine){
-  const w=W_();const total=D.stages[0].size*D.stages[0].heats;const ents=mine.slice(0,D.slots).map(g=>({gid:g.id,mine:true}));
+/* specBuild — builds an invitational bracket: your fighters, the league's stars, invited outsiders, chunked into heats. */
+function specBuild(def,invite,mine){
+  const w=W_();const total=def.stages[0].size*def.stages[0].heats;const ents=mine.slice(0,def.slots).map(g=>({gid:g.id,mine:true}));
   // the field: a few stars of the league's other stables, the rest invited outsiders
-  const stars=w.glads.filter(g=>g.alive&&!g.inj&&g.contract&&!mgrById(g.contract.mgr).isPlayer&&effOvr(g)>=D.opp[0]).sort((a,b)=>effOvr(b)-effOvr(a)).slice(0,Math.floor((total-ents.length)/2));
+  const stars=w.glads.filter(g=>g.alive&&!g.inj&&g.contract&&!mgrById(g.contract.mgr).isPlayer&&effOvr(g)>=def.opp[0]).sort((a,b)=>effOvr(b)-effOvr(a)).slice(0,Math.floor((total-ents.length)/2));
   for(const g of stars)ents.push({gid:g.id});
-  while(ents.length<total){const g=genGlad({ovr:D.opp[0]+rnd(D.opp[1]-D.opp[0]+1)});g.inv=true;ents.push({opp:g})}
+  while(ents.length<total){const g=genGlad({ovr:def.opp[0]+rnd(def.opp[1]-def.opp[0]+1)});g.inv=true;ents.push({opp:g})}
   // your fighters never meet in the first round
-  const heats=Array.from({length:D.stages[0].heats},()=>[]);const mineE=ents.filter(e=>e.mine),rest=shuffle(ents.filter(e=>!e.mine));
-  mineE.forEach((e,i)=>heats[i%heats.length].push(e));for(const e of rest){const h=heats.filter(x=>x.length<D.stages[0].size).sort((a,b)=>a.length-b.length)[0];h.push(e)}
-  return {iid:iv.id,sid:iv.sid,D,stage:0,rounds:[heats.map(h=>({ents:h,res:null}))],champ:null,done:false,log:[]}}
-const specEnt=e=>e.gid?gById(e.gid):e.opp;
-function specHeatCfg(T,s,h,watch,human){const hh=T.rounds[s][h];const st=T.D.stages[s];
+  const heats=Array.from({length:def.stages[0].heats},()=>[]);const mineE=ents.filter(e=>e.mine),rest=shuffle(ents.filter(e=>!e.mine));
+  mineE.forEach((e,i)=>heats[i%heats.length].push(e));for(const e of rest){const h=heats.filter(x=>x.length<def.stages[0].size).sort((a,b)=>a.length-b.length)[0];h.push(e)}
+  return {iid:invite.id,sid:invite.sid,D:def,stage:0,rounds:[heats.map(h=>({ents:h,res:null}))],champ:null,done:false,log:[]}}
+/* specEnt — a bracket entrant's fighter (a league fighter or an invited outsider). */
+const specEnt=entrant=>entrant.gid?gById(entrant.gid):entrant.opp;
+/* specHeatCfg — the startEvent config of one heat of a special (the Superbus applies its festival gift). */
+function specHeatCfg(bracket,stageIdx,heatIdx,watch,human){const hh=bracket.rounds[stageIdx][heatIdx];const st=bracket.D.stages[stageIdx];
   const seats=hh.ents.map(e=>{const g=specEnt(e);const m=g&&g.contract?mgrById(g.contract.mgr):null;const seat=seatFor(g,m?m.color:null,human&&e.mine&&e.gid===human);
-    const E=EVENTS[st.ev]||{};if(E.classes&&!E.classes.includes(seat.cls))seat.cls=E.classes[0];if(T.D.finale){seat.cfStart=0;seat.coinStart=0;(FEST_KINDS[T.D.fest]||FEST_KINDS.ludi).ap(seat)}return seat});
-  return {ev:st.ev,loc:T.D.loc,seats,opts:{mods:true,mandata:!!T.D.custom,optOffers:true,eaglePot:true,spect:watch?'auto':0},mgrTier:'main'}}
-function specRecord(T,s,h,res){const hh=T.rounds[s][h];if(hh.res)return;
+    const E=EVENTS[st.ev]||{};if(E.classes&&!E.classes.includes(seat.cls))seat.cls=E.classes[0];if(bracket.D.finale){seat.cfStart=0;seat.coinStart=0;(FEST_KINDS[bracket.D.fest]||FEST_KINDS.ludi).ap(seat)}return seat});
+  return {ev:st.ev,loc:bracket.D.loc,seats,opts:{mods:true,mandata:!!bracket.D.custom,optOffers:true,eaglePot:true,spect:watch?'auto':0},mgrTier:'main'}}
+/* specRecord — records a heat's result and moves the winner on (next stage, or the champion). */
+function specRecord(bracket,stageIdx,heatIdx,res){const hh=bracket.rounds[stageIdx][heatIdx];if(hh.res)return;
   const rows=res.rows.map((r,i)=>({i,f:r.f,won:res.winners.includes(r.id),kp:r.kp,kn:r.kn,dmg:r.dmg,taken:r.taken}));
   let wi=rows.find(r=>r.won);if(!wi)wi=[...rows].sort((a,b)=>b.f-a.f)[0];
   hh.res={win:wi.i,rows,turns:res.turns};const w=W_(),pm=me();
   // your fighters: appearance money, a line on their record, and the sand's lessons
   hh.ents.forEach((e,i)=>{if(!e.gid)return;const g=gById(e.gid);if(!g)return;const r=rows[i];const won=i===wi.i;
     g.rec.ev++;if(won)g.rec.w++;g.rec.kp+=r.kp||0;g.rec.kn+=r.kn||0;g.rec.dmg=(g.rec.dmg||0)+(r.dmg||0);g.rec.taken=(g.rec.taken||0)+(r.taken||0);g.rec.best=Math.max(g.rec.best||0,r.f||0);ssTally(g,r,w,won);
-    if(e.mine){pm.coin+=T.D.appear;g.morale=clamp(g.morale+(won?8:-4),0,100);if(won)g.fame=clamp((g.fame||0)+3,0,100)}});
+    if(e.mine){pm.coin+=bracket.D.appear;g.morale=clamp(g.morale+(won?8:-4),0,100);if(won)g.fame=clamp((g.fame||0)+3,0,100)}});
   // v0.29: the Fate table applies on invitation sand too (unless the event is set Fate-free)
-  if(T.D.fates!==false&&typeof leagueFate==='function')hh.ents.forEach((e,i)=>{if(!e.gid)return;const g=gById(e.gid);if(!g||!g.alive)return;const r=res.rows[i]||{};const m=g.contract?mgrById(g.contract.mgr):null;
-    try{const v=leagueFate(g,{f:r.f,fate:r.fate,human:r.human},m,null,-1,{live:false});rows[i].vd=v.vd;rows[i].fname=v.fname;if(v.line)T.log.push(v.line)}catch(err){console.error(err)}});
-  {const aliveOk=e=>{const g=specEnt(e);return g&&g.alive!==false};if(!aliveOk(hh.ents[wi.i])){const alt=rows.filter(r=>aliveOk(hh.ents[r.i])).sort((a,b)=>b.f-a.f)[0];if(alt){T.log.push(`${esc((specEnt(hh.ents[wi.i])||{}).name||'The winner')} cannot go on — ${esc((specEnt(hh.ents[alt.i])||{}).name||'?')} advances in their place`);wi=alt;hh.res.win=alt.i}}}
-  const wg=specEnt(hh.ents[wi.i]);T.log.push(`${T.rounds.length>1&&s===T.D.stages.length-1?'Final':`Round ${s+1} heat ${h+1}`}: ${wg?wg.name:'?'} (${wi.f} CF)`);
-  if(T.rounds[s].every(x=>x.res)){ // next round, or the crown
-    const winners=T.rounds[s].map(x=>x.ents[x.res.win]);
-    if(s+1<T.D.stages.length){const st=T.D.stages[s+1];const heats=Array.from({length:st.heats},()=>[]);winners.forEach((e,i)=>heats[i%st.heats].push(e));T.rounds.push(heats.map(h2=>({ents:h2,res:null})));T.stage=s+1}
-    else{T.champ=winners[0];specCrown(T)}}}
-function specCrown(T){const w=W_(),pm=me();const e=T.champ;const g=specEnt(e);const D=T.D;const iv=(w.invites||[]).find(x=>x.id===T.iid);
-  if(D.finale){const hh=T.rounds[0][0];const wr=hh.res&&hh.res.rows[hh.res.win];const m=g&&g.contract?mgrById(g.contract.mgr):null;
+  if(bracket.D.fates!==false&&typeof leagueFate==='function')hh.ents.forEach((e,i)=>{if(!e.gid)return;const g=gById(e.gid);if(!g||!g.alive)return;const r=res.rows[i]||{};const m=g.contract?mgrById(g.contract.mgr):null;
+    try{const v=leagueFate(g,{f:r.f,fate:r.fate,human:r.human},m,null,-1,{live:false});rows[i].vd=v.vd;rows[i].fname=v.fname;if(v.line)bracket.log.push(v.line)}catch(err){console.error(err)}});
+  {const aliveOk=e=>{const g=specEnt(e);return g&&g.alive!==false};if(!aliveOk(hh.ents[wi.i])){const alt=rows.filter(r=>aliveOk(hh.ents[r.i])).sort((a,b)=>b.f-a.f)[0];if(alt){bracket.log.push(`${esc((specEnt(hh.ents[wi.i])||{}).name||'The winner')} cannot go on — ${esc((specEnt(hh.ents[alt.i])||{}).name||'?')} advances in their place`);wi=alt;hh.res.win=alt.i}}}
+  const wg=specEnt(hh.ents[wi.i]);bracket.log.push(`${bracket.rounds.length>1&&stageIdx===bracket.D.stages.length-1?'Final':`Round ${stageIdx+1} heat ${heatIdx+1}`}: ${wg?wg.name:'?'} (${wi.f} CF)`);
+  if(bracket.rounds[stageIdx].every(x=>x.res)){ // next round, or the crown
+    const winners=bracket.rounds[stageIdx].map(x=>x.ents[x.res.win]);
+    if(stageIdx+1<bracket.D.stages.length){const st=bracket.D.stages[stageIdx+1];const heats=Array.from({length:st.heats},()=>[]);winners.forEach((e,i)=>heats[i%st.heats].push(e));bracket.rounds.push(heats.map(h2=>({ents:h2,res:null})));bracket.stage=stageIdx+1}
+    else{bracket.champ=winners[0];specCrown(bracket)}}}
+/* specCrown — the special's champion: purse, fame, the trophy, the news. */
+function specCrown(bracket){const w=W_(),pm=me();const e=bracket.champ;const g=specEnt(e);const D=bracket.D;const iv=(w.invites||[]).find(x=>x.id===bracket.iid);
+  if(D.finale){const hh=bracket.rounds[0][0];const wr=hh.res&&hh.res.rows[hh.res.win];const m=g&&g.contract?mgrById(g.contract.mgr):null;
     w.finale={season:D.season,kind:'the Flavius Superbus',names:hh.ents.map(x=>(specEnt(x)||{}).name),champ:g?g.name:null,champLudus:m?m.ludus:null,f:wr?wr.f:0,turns:hh.res?hh.res.turns:0,cupGiven:!!e.mine};
     if(g){g.fame=clamp((g.fame||0)+20,0,100);ghist(g,`won the Flavius Superbus of season ${D.season} in Roma (${w.finale.f} CF)`)}
     if(m&&!m.isPlayer){m.fame=clamp(m.fame+10,0,100);m.coin+=D.purse}
@@ -290,13 +321,18 @@ function specCrown(T){const w=W_(),pm=me();const e=T.champ;const g=specEnt(e);co
   else if(!D.finale){const m=g&&g.contract?mgrById(g.contract.mgr):null;mnews(`⭐ <b>${esc(g?g.name:'?')}</b>${m?` of ${esc(m.ludus)}`:' (an invited outsider)'} wins <b>${esc(D.n)}</b>.`,'big');if(m&&!m.isPlayer){m.coin+=D.purse;m.fame=clamp(m.fame+Math.round(D.fame/2),0,100)}}
   if(iv)iv.status=e.mine?'won':'lost';
   if(D.finale&&typeof seasonAwards==='function')try{seasonAwards(w,D.season)}catch(err){console.error(err)}}
+/* specRunNext — simulates the next heat of the running special. */
 async function specRunNext(){const w=W_();const T=w.special;if(!T||T.champ)return false;const s=T.stage;const h=T.rounds[s].findIndex(x=>!x.res);if(h<0)return false;
   const res=await simEvent(specHeatCfg(T,s,h,false));if(res&&!res.error)specRecord(T,s,h,res);else{T.rounds[s][h].res={win:0,rows:[],turns:0};T.log.push('a heat was called off')}return true}
+/* specAutoRun — simulates every remaining heat and closes the special. */
 async function specAutoRun(){let g=0;while(W_().special&&!W_().special.champ&&g++<30)await specRunNext();const T=W_().special;if(T&&T.champ){T.done=true;(W_().specialLog=W_().specialLog||[]).push({n:T.D.n,season:T.D.season||W_().season,champ:(specEnt(T.champ)||{}).name,mine:!!T.champ.mine});W_().special=null}}
-function specWatch(h,fight){const w=W_();const T=w.special;if(!T)return;const s=T.stage;const hh=T.rounds[s][h];if(!hh||hh.res)return;
-  const human=fight?(hh.ents.find(e=>e.mine)||{}).gid:null;saveWorld(true);modalDismiss();const cfg=specHeatCfg(T,s,h,true,human);cfg.specCtx={cid:w.id,iid:T.iid,stage:s,heat:h,nofates:T.D.fates===false};S&&(S.over=true);startEvent(cfg)}
+/* specWatch — plays a heat of the special live (fight = you control your fighter). */
+function specWatch(heatIdx,fight){const w=W_();const T=w.special;if(!T)return;const s=T.stage;const hh=T.rounds[s][heatIdx];if(!hh||hh.res)return;
+  const human=fight?(hh.ents.find(e=>e.mine)||{}).gid:null;saveWorld(true);modalDismiss();const cfg=specHeatCfg(T,s,heatIdx,true,human);cfg.specCtx={cid:w.id,iid:T.iid,stage:s,heat:heatIdx,nofates:T.D.fates===false};S&&(S.over=true);startEvent(cfg)}
+/* specAfterWatch — after a watched heat: records it in the career. */
 async function specAfterWatch(res,ctx){if(!MGR.world||MGR.world.id!==ctx.cid){const d=await Store.getDoc('mgrCareers',ctx.cid);if(!d)return;MGR.world=mgrMigrate(JSON.parse(d.world))}
   const w=W_();const T=w.special;if(!T||T.iid!==ctx.iid||T.stage!==ctx.stage)return;specRecord(T,ctx.stage,ctx.heat,res);saveWorld(true)}
+/* specialHTML — the running special on Match Week: the bracket, heats, watch / fight / simulate. */
 function specialHTML(){const w=W_();const T=w.special;const D=T.D;const pm=me();const L=LOCATIONS[D.loc];
   const nm=e=>{const g=specEnt(e);if(!g)return '?';const m=g.contract?mgrById(g.contract.mgr):null;return `<span class="${e.mine?'bmine':''}">${esc(g.name)}</span> <span class="rc-sub">${m?esc(m.ludus):'invited'} · rated ${effOvr(g)}</span>`};
   const col=(rd,s)=>`<div class="bcol"><div class="bcolhd">${s===D.stages.length-1&&D.stages.length>1?'The final':D.stages.length===1?'The bout':`Round ${s+1}`} <span class="rc-sub">${esc((EVENTS[D.stages[s].ev]||{}).n||'')}</span></div>${rd.map((hh,h)=>{
@@ -313,7 +349,8 @@ function specialHTML(){const w=W_();const T=w.special;const D=T.D;const pm=me();
     :`<div class="acts"><button class="btn" type="button" data-mg="sp_all">⏩ Sim everything left</button></div>`}
     <p class="rc-sub" style="margin:6px 0 0">The regular card waits until this is settled. ${D.fates===false?'This event is Fate-free: nobody dies, nobody is freed.':'The <b>Fate table applies</b> after every heat, as in any bout — thumbs, blood money and the rudis wait for you below.'}</p></div>`}
 
-function finalePickHTML(hh){const pm=me();const e=hh.ents.find(x=>x.mine);const ros=rosterOf(pm).filter(g=>!g.inj).sort((a,b)=>effOvr(b)-effOvr(a));
+/* finalePickHTML — the Superbus: pick which of your fighters goes to Roma. */
+function finalePickHTML(heat){const pm=me();const e=heat.ents.find(x=>x.mine);const ros=rosterOf(pm).filter(g=>!g.inj).sort((a,b)=>effOvr(b)-effOvr(a));
   return `<div class="acts" style="margin-top:4px"><span class="rc-sub" style="align-self:center">Your champion:</span><select class="tin" id="spPick" style="max-width:240px">${ros.map(g=>`<option value="${g.id}" ${e&&e.gid===g.id?'selected':''}>${esc(g.name)} · ${effOvr(g)}</option>`).join('')}</select><button class="btn tksm" type="button" data-mg="sp_pick">Send them</button></div>`}
 /* ---------------- invitations on Your ludus, and the Season sidebar ---------------- */
 function invitesHTML(compact){const w=W_(),pm=me();const L0=(w.invites||[]).filter(iv=>['open','accepted'].includes(iv.status)).sort((a,b)=>a.wk-b.wk);if(!L0.length&&!(w.special&&!w.special.done))return '';
@@ -328,7 +365,7 @@ function invitesHTML(compact){const w=W_(),pm=me();const L0=(w.invites||[]).filt
   const live=w.special&&!w.special.done?`<div class="invrow live"><div class="invline"><span style="font-size:20px">⭐</span><div class="invt"><b>${esc(w.special.D.n)}</b> <span class="rc-sub">is on this week — the league's card waits</span></div><button class="btn primary tksm" type="button" data-mg="tab" data-id="night">Go to it ▸</button></div></div>`:'';
   return `<div class="card2 invbox"><div class="sect" style="margin-top:0">⭐ Special events <span class="rc-sub">invitations arrive 3–5 weeks ahead</span></div>${live}${L0.map(one).join('')}</div>`}
 // the second fighter must be a different one: picking a name greys it out in the other slot
-function ivUniq(sel){const id=sel.dataset.iv;const all=[...document.querySelectorAll(`select[data-iv="${id}"]`)];const chosen=all.map(x=>x.value);all.forEach((x,i)=>[...x.options].forEach(o=>{o.disabled=!!o.value&&chosen.some((c,j)=>j!==i&&c===o.value)}))}
+function ivUniq(select){const id=select.dataset.iv;const all=[...document.querySelectorAll(`select[data-iv="${id}"]`)];const chosen=all.map(x=>x.value);all.forEach((x,i)=>[...x.options].forEach(o=>{o.disabled=!!o.value&&chosen.some((c,j)=>j!==i&&c===o.value)}))}
 // v0.28 THE SEASON, IN ONE PLACE: the empire's schedule, your early billing on each row, the invitationals and the Superbus
 function seasonTabHTML(){const w=W_(),pm=me();w.commits=w.commits||{};const ros=rosterOf(pm).sort((a,b)=>effOvr(b)-effOvr(a));
   const wk0=((w.week-1)%12)+1;const base=w.week-wk0; // absolute week of this season's week 0
@@ -352,6 +389,7 @@ function seasonTabHTML(){const w=W_(),pm=me();w.commits=w.commits||{};const ros=
     <div>${invitesHTML(true)||'<div class="card2"><div class="sect" style="margin-top:0">⭐ Special events</div><p class="rc-sub" style="margin:0">No invitations right now. Hosts send them 3–5 weeks ahead; they arrive on Your ludus.</p></div>'}
       ${(w.specialLog||[]).length?`<div class="card2" style="margin-top:10px"><div class="sect" style="margin-top:0">Past invitationals &amp; finals</div>${w.specialLog.slice(-10).reverse().map(x=>`<div class="${x.mine?'up':''}">S${x.season} · ${esc(x.n)} — ${esc(x.champ||'?')}${x.mine?' 🏆':''}</div>`).join('')}</div>`:''}
       <div class="card2" style="margin-top:10px"><div class="sect" style="margin-top:0">🏛 The Flavius Superbus</div><p class="rc-sub" style="margin:0">The season's great final — Flavius's own games. When week 12 ends, the top four of the league table (points: a win 3, a runner-up finish 1) each send one fighter to Roma; the league pauses while you watch it live or play it out, and then the Flavian Awards are handed out.${sb.length?` Past champions: ${sb.slice(-4).map(x=>`S${x.season} ${esc(x.champ||'?')}`).join(' · ')}.`:''}</p></div></div></div>`}
+/* commitsHTML — early billing: fighters committed to a future week's card. */
 function commitsHTML(){const w=W_(),pm=me();w.commits=w.commits||{};const ros=rosterOf(pm).sort((a,b)=>effOvr(b)-effOvr(a));const rows=[];
   for(let abs=w.week+1;abs<=w.week+8;abs++){const {season,wk}=absSW(w,abs);const fx=fixtureFor(season,wk);const c=w.commits[abs];const open=abs-w.week>=3;const iv=(w.invites||[]).find(x=>x.wk===abs&&['open','accepted'].includes(x.status));
     rows.push(`<tr class="${c?'me':''}"><td class="n">${wk}${season!==w.season?` <span class="rc-sub">S${season}</span>`:''}</td><td class="rc-sub">${esc(empireDate(season,wk).short)}</td><td>${esc(LOCATIONS[fx.loc].n)} · ${esc((EVENTS[fx.ev]||{}).short||(EVENTS[fx.ev]||{}).n||'')}${iv?` <span class="badge gold" title="An invitational pauses this week first">⭐ ${esc(iv.n)}</span>`:''}</td>
@@ -361,35 +399,39 @@ function commitsHTML(){const w=W_(),pm=me();w.commits=w.commits||{};const ros=ro
     <table class="tally compact"><tr><th>Wk</th><th>Date</th><th>Fixture</th><th>Billed</th></tr>${rows.join('')}</table></div>`}
 
 /* ---------------- Manager hooks: clicks ---------------- */
-async function trophyMgrClick(a,id,b,ctx){const w=W_(),pm=me();if(!w||!pm)return false;const {redraw,say,done}=ctx;
-  if(a==='tslot'){const i=+id;MGR.tsel=MGR.tsel&&MGR.tsel.slot===i?null:{slot:i};redraw();return true}
-  if(a==='tput'){const i=MGR.tsel&&MGR.tsel.slot;if(i==null)return true;w.case=w.case||Array(CASE_SLOTS).fill(null);const k=w.case.indexOf(id);if(k>=0)w.case[k]=null;w.case[i]=id;saveWorld();redraw();return true}
-  if(a==='tdown'){w.case[+id]=null;saveWorld();redraw();return true}
-  if(a==='aw_next'){MGR.awI=(MGR.awI||0)+1;if(typeof sfx==='function')sfx(MGR.awI>=(w.awardShow||{awards:[]}).awards.length?'fanfare':'cheer');redraw();return true}
-  if(a==='aw_all'){MGR.awI=99;if(typeof sfx==='function')sfx('fanfare');redraw();return true}
-  if(a==='aw_done'){if(w.awardShow)w.awardShow.seen=true;MGR.awI=0;saveWorld();MGR.tab='paper';redraw();return true}
-  if(a==='iv_accept'){const iv=w.invites.find(x=>x.id===id);const D=iv&&specDef(iv.sid);if(!iv||!D)return true;
+async function trophyMgrClick(action,id,btn,ctx){const w=W_(),pm=me();if(!w||!pm)return false;const {redraw,say,done}=ctx;
+  if(action==='tslot'){const i=+id;MGR.tsel=MGR.tsel&&MGR.tsel.slot===i?null:{slot:i};redraw();return true}
+  if(action==='tput'){const i=MGR.tsel&&MGR.tsel.slot;if(i==null)return true;w.case=w.case||Array(CASE_SLOTS).fill(null);const k=w.case.indexOf(id);if(k>=0)w.case[k]=null;w.case[i]=id;saveWorld();redraw();return true}
+  if(action==='tdown'){w.case[+id]=null;saveWorld();redraw();return true}
+  if(action==='aw_next'){MGR.awI=(MGR.awI||0)+1;if(typeof sfx==='function')sfx(MGR.awI>=(w.awardShow||{awards:[]}).awards.length?'fanfare':'cheer');redraw();return true}
+  if(action==='aw_all'){MGR.awI=99;if(typeof sfx==='function')sfx('fanfare');redraw();return true}
+  if(action==='aw_done'){if(w.awardShow)w.awardShow.seen=true;MGR.awI=0;saveWorld();MGR.tab='paper';redraw();return true}
+  if(action==='iv_accept'){const iv=w.invites.find(x=>x.id===id);const D=iv&&specDef(iv.sid);if(!iv||!D)return true;
     const ids=[...new Set(Array.from({length:D.slots},(_,k)=>{const s=document.getElementById(`ivs_${id}_${k}`);return s?s.value:''}).filter(Boolean))];
     if(!ids.length){say('Choose at least one fighter to send.');return true}MGR.ivOpen=null;iv.ents=ids;iv.status='accepted';saveWorld();say(`✓ Accepted: ${esc(D.n)} — ${ids.map(x=>esc(gById(x).name)).join(' & ')} will travel to ${esc(LOCATIONS[D.loc].n)}.`);return true}
-  if(a==='iv_open'){MGR.ivOpen=MGR.ivOpen===id?null:id;redraw();return true}
-  if(a==='iv_decline'){const iv=w.invites.find(x=>x.id===id);if(iv){iv.status='declined';saveWorld();say(`Declined with thanks: ${esc(iv.n)}.`)}return true}
-  if(a==='iv_withdraw'){const iv=w.invites.find(x=>x.id===id);if(iv){iv.status='declined';pm.fame=clamp((pm.fame||0)-2,0,100);saveWorld();say(`Withdrawn from ${esc(iv.n)} — the host will remember (−2 fame).`)}return true}
-  if(a==='cm_set'){const abs=+id;const s=document.getElementById('cm_'+abs);const gid=s&&s.value;if(!gid){say('Pick a fighter to bill.');return true}if(abs-w.week<3){say('The billing window has closed for that week.');return true}
+  if(action==='iv_open'){MGR.ivOpen=MGR.ivOpen===id?null:id;redraw();return true}
+  if(action==='iv_decline'){const iv=w.invites.find(x=>x.id===id);if(iv){iv.status='declined';saveWorld();say(`Declined with thanks: ${esc(iv.n)}.`)}return true}
+  if(action==='iv_withdraw'){const iv=w.invites.find(x=>x.id===id);if(iv){iv.status='declined';pm.fame=clamp((pm.fame||0)-2,0,100);saveWorld();say(`Withdrawn from ${esc(iv.n)} — the host will remember (−2 fame).`)}return true}
+  if(action==='cm_set'){const abs=+id;const s=document.getElementById('cm_'+abs);const gid=s&&s.value;if(!gid){say('Pick a fighter to bill.');return true}if(abs-w.week<3){say('The billing window has closed for that week.');return true}
     w.commits=w.commits||{};{const prev=Object.entries(w.commits).find(([k,c])=>c&&c.gid===gid&&+k>=w.week&&+k!==abs);if(prev){say(`📌 ${esc(gById(gid).name)} is already billed for week ${absSW(w,+prev[0]).wk}. One billing per fighter — undo that one first.`);return true}} /* v0.57: one upcoming billing per fighter */w.commits[abs]={gid,ahead:abs-w.week,at:w.week};saveWorld();say(`📌 ${esc(gById(gid).name)} is billed for week ${absSW(w,abs).wk} — ${abs-w.week} weeks ahead.`);return true}
-  if(a==='cm_undo'){const abs=+id;if(abs-w.week<3){say('Too late — the posters are printed.');return true}delete w.commits[abs];saveWorld();redraw();return true}
-  if(a==='sp_run'){MGR.busy=true;try{await specRunNext()}finally{MGR.busy=false}saveWorld();redraw();return true}
-  if(a==='sp_all'){MGR.busy=true;try{let g=0;while(w.special&&!w.special.champ&&g++<30)await specRunNext()}finally{MGR.busy=false}saveWorld();redraw();return true}
-  if(a==='sp_watch'){done('spwatch:'+id);return true}
-  if(a==='sp_spect'){SPECT.pending=true;done('spwatch:'+id);return true}
-  if(a==='sp_fight'){done('spfight:'+id);return true}
-  if(a==='sp_close'){const T=w.special;if(T&&T.champ){(w.specialLog=w.specialLog||[]).push({n:T.D.n,season:T.D.finale?T.D.season:w.season,champ:(specEnt(T.champ)||{}).name,mine:!!T.champ.mine});w.special=null;saveWorld();MGR.tab=w.awardShow&&!w.awardShow.seen?'awards':'night';MGR.awI=0;redraw()}return true}
-  if(a==='sp_pick'){const T=w.special;const hh=T&&T.rounds[T.stage][0];const sel=document.getElementById('spPick');if(hh&&!hh.res&&sel&&sel.value){const e=hh.ents.find(x=>x.mine);if(e){e.gid=sel.value;saveWorld();say(`${esc(gById(sel.value).name)} will fight for ${esc(pm.ludus)} in the Superbus.`)}}return true}
+  if(action==='cm_undo'){const abs=+id;if(abs-w.week<3){say('Too late — the posters are printed.');return true}delete w.commits[abs];saveWorld();redraw();return true}
+  if(action==='sp_run'){MGR.busy=true;try{await specRunNext()}finally{MGR.busy=false}saveWorld();redraw();return true}
+  if(action==='sp_all'){MGR.busy=true;try{let g=0;while(w.special&&!w.special.champ&&g++<30)await specRunNext()}finally{MGR.busy=false}saveWorld();redraw();return true}
+  if(action==='sp_watch'){done('spwatch:'+id);return true}
+  if(action==='sp_spect'){SPECT.pending=true;done('spwatch:'+id);return true}
+  if(action==='sp_fight'){done('spfight:'+id);return true}
+  if(action==='sp_close'){const T=w.special;if(T&&T.champ){(w.specialLog=w.specialLog||[]).push({n:T.D.n,season:T.D.finale?T.D.season:w.season,champ:(specEnt(T.champ)||{}).name,mine:!!T.champ.mine});w.special=null;saveWorld();MGR.tab=w.awardShow&&!w.awardShow.seen?'awards':'night';MGR.awI=0;redraw()}return true}
+  if(action==='sp_pick'){const T=w.special;const hh=T&&T.rounds[T.stage][0];const sel=document.getElementById('spPick');if(hh&&!hh.res&&sel&&sel.value){const e=hh.ents.find(x=>x.mine);if(e){e.gid=sel.value;saveWorld();say(`${esc(gById(sel.value).name)} will fight for ${esc(pm.ludus)} in the Superbus.`)}}return true}
   return false}
 
 /* ---------------- Tournaments outside Manager mode (New event → Tournament) ---------------- */
+/* TOURN — the Play Now tournament in progress (localStorage flavius_tourn). */
 let TOURN=null;try{TOURN=JSON.parse(localStorage.getItem('flavius_tourn')||'null')}catch(e){TOURN=null}
+/* tournSave — saves the Play Now tournament. */
 const tournSave=()=>{try{localStorage.setItem('flavius_tourn',JSON.stringify(TOURN))}catch(e){}};
+/* tournChoices — the tournaments you can play: the invitationals and custom events with trophies. */
 function tournChoices(){const o=Object.keys(SPECIALS).map(k=>[k,specDef(k)]);for(const e of ((typeof CUSTOM!=='undefined'&&CUSTOM.events)||[]))if(e.trophy&&EVENTS['ce_'+e.id])o.push(['ce:ce_'+e.id,specDef('ce:ce_'+e.id)]);return o.filter(x=>x[1])}
+/* tournSetupHTML — New event → Tournament setup. Replaced by 46-tourney. */
 function tournSetupHTML(tabs){CFG.tSid=CFG.tSid||'leptis';const ch=tournChoices();const D=specDef(CFG.tSid)||ch[0][1];const td=trophyDef(D.trophy);const L=LOCATIONS[D.loc];
   const s=CFG.seats[0];const cls=BASE_CLS;
   return tabs+`<div class="setup-grid"><div>
@@ -402,6 +444,7 @@ function tournSetupHTML(tabs){CFG.tSid=CFG.tSid||'leptis';const ch=tournChoices(
     <h4>Your gladiator</h4><div class="seats">${seatRows(null,1,cls)}</div>
     <p id="setupErr" style="color:var(--blood2);margin-top:8px"></p>
     <div class="mbtns"><button class="btn primary" type="button" id="goBtn">Enter the tournament</button><button class="btn" type="button" id="rulesBtn2">Rules in this build</button></div></div></div>`}
+/* tournStart — starts a Play Now tournament with your gladiator. Replaced by 46-tourney. */
 function tournStart(seat){const D=specDef(CFG.tSid);if(!D)return;const total=D.stages[0].size*D.stages[0].heats;
   const me0={seat:{...seat,cpu:false},name:seat.name||CLASSES[seat.cls].hero||'You',human:true};const ents=[me0];
   const used=new Set([seat.cls]);
@@ -410,17 +453,22 @@ function tournStart(seat){const D=specDef(CFG.tSid);if(!D)return;const total=D.s
   ents.forEach(e=>{if(!e.human)e.name=e.seat.name});
   const heats=Array.from({length:D.stages[0].heats},()=>[]);heats[0].push(ents[0]);for(const e of shuffle(ents.slice(1))){const h=heats.filter(x=>x.length<D.stages[0].size).sort((a,b)=>a.length-b.length)[0];h.push(e)}
   TOURN={sid:CFG.tSid,D,stage:0,rounds:[heats.map(h=>({ents:h,res:null}))],champ:null,done:false,out:false,started:new Date().toISOString().slice(0,10)};tournSave();openTourn()}
-function tournCfg(s,h,live){const T=TOURN,hh=T.rounds[s][h],st=T.D.stages[s];const E=EVENTS[st.ev]||{};
+/* tournCfg — the startEvent config of a tournament heat. Replaced by 46-tourney. */
+function tournCfg(stageIdx,heatIdx,live){const T=TOURN,hh=T.rounds[stageIdx][heatIdx],st=T.D.stages[stageIdx];const E=EVENTS[st.ev]||{};
   return {ev:st.ev,loc:T.D.loc,seats:hh.ents.map(e=>{const x={...e.seat};if(E.classes&&!E.classes.includes(x.cls))x.cls=E.classes[0];if(!live)x.cpu=true;return x}),opts:{mods:true,mandata:!!T.D.custom,optOffers:true,eaglePot:true,spect:live?'auto':0}}}
-function tournRecord(s,h,res){const T=TOURN,hh=T.rounds[s][h];if(hh.res)return;const rows=res.rows.map((r,i)=>({i,f:r.f,won:res.winners.includes(r.id)}));let wi=rows.find(r=>r.won);if(!wi)wi=[...rows].sort((a,b)=>b.f-a.f)[0];
+/* tournRecord — records a tournament heat and moves the winner on. */
+function tournRecord(stageIdx,heatIdx,res){const T=TOURN,hh=T.rounds[stageIdx][heatIdx];if(hh.res)return;const rows=res.rows.map((r,i)=>({i,f:r.f,won:res.winners.includes(r.id)}));let wi=rows.find(r=>r.won);if(!wi)wi=[...rows].sort((a,b)=>b.f-a.f)[0];
   hh.res={win:wi.i,rows,turns:res.turns};if(hh.ents.some(e=>e.human)&&!hh.ents[wi.i].human)T.out=true;
-  if(T.rounds[s].every(x=>x.res)){const winners=T.rounds[s].map(x=>x.ents[x.res.win]);
-    if(s+1<T.D.stages.length){const st=T.D.stages[s+1];const hs=Array.from({length:st.heats},()=>[]);winners.forEach((e,i)=>hs[i%st.heats].push(e));T.rounds.push(hs.map(x=>({ents:x,res:null})));T.stage=s+1}
+  if(T.rounds[stageIdx].every(x=>x.res)){const winners=T.rounds[stageIdx].map(x=>x.ents[x.res.win]);
+    if(stageIdx+1<T.D.stages.length){const st=T.D.stages[stageIdx+1];const hs=Array.from({length:st.heats},()=>[]);winners.forEach((e,i)=>hs[i%st.heats].push(e));T.rounds.push(hs.map(x=>({ents:x,res:null})));T.stage=stageIdx+1}
     else{T.champ=winners[0];T.done=true;if(T.champ.human)hallTrophy(T.D.trophy,{who:T.champ.name,why:`Won ${T.D.n}`,cls:T.champ.seat.cls,saved:T.champ.seat.saved}).catch(()=>{})}}
   tournSave()}
+/* tournAfter — after a played heat: records it. */
 async function tournAfter(res,ctx){if(!TOURN)return;tournRecord(ctx.stage,ctx.heat,res)}
+/* tournSimRest — simulates the remaining heats (stopping at yours). Replaced by 46-tourney. */
 async function tournSimRest(stopAtHuman=true){let g=0;while(TOURN&&!TOURN.champ&&g++<40){const s=TOURN.stage;const h=TOURN.rounds[s].findIndex(x=>!x.res);if(h<0)break;
   if(stopAtHuman&&!TOURN.out&&TOURN.rounds[s][h].ents.some(e=>e.human))break;const res=await simEvent(tournCfg(s,h,false));if(res&&!res.error)tournRecord(s,h,res);else{TOURN.rounds[s][h].res={win:0,rows:[],turns:0}}}}
+/* openTourn — the tournament bracket window. */
 async function openTourn(){if(!TOURN)return;if(typeof modalBusy==='function'&&modalBusy())return;
   await tournSimRest(true);const T=TOURN;const D=T.D;const td=trophyDef(D.trophy);
   const s=T.stage;const h=T.rounds[s]?T.rounds[s].findIndex(x=>!x.res):-1;const mineNext=h>=0&&!T.out&&T.rounds[s][h].ents.some(e=>e.human);
@@ -435,11 +483,12 @@ async function openTourn(){if(!TOURN)return;if(typeof modalBusy==='function'&&mo
   if(v==='rest'){await tournSimRest(false);openTourn();return}
   if(T.champ){TOURN=null;tournSave()}}
 // trophies won outside Manager mode stand in the Annals
-async function hallTrophy(tid,o={}){const d=trophyDef(tid);if(!d)return;const e={tid,name:d.name,spec:{shape:d.shape,metal:d.metal,base:d.base,topper:d.topper,gem:d.gem,ins:d.ins,name:d.name},who:o.who||'',why:o.why||d.desc,date:new Date().toISOString().slice(0,10),rewards:d.rewards||{}};
+async function hallTrophy(tid,opts={}){const d=trophyDef(tid);if(!d)return;const e={tid,name:d.name,spec:{shape:d.shape,metal:d.metal,base:d.base,topper:d.topper,gem:d.gem,ins:d.ins,name:d.name},who:opts.who||'',why:opts.why||d.desc,date:new Date().toISOString().slice(0,10),rewards:d.rewards||{}};
   await Store.put('hallTrophies','h'+Date.now().toString(36),e);
   // rewards ride home with a Ludus gladiator: coin into their purse, CF into what they carry
-  if(o.saved){const rec=LUDUS_CACHE.find(g=>g.id===o.saved)||await Store.getDoc('gladiators',o.saved).catch(()=>null);if(rec){const r=d.rewards||{};rec.coin=(rec.coin||0)+(r.coin||0);rec.carry=Math.min(25,(rec.carry||0)+(r.cf||0));await Store.put('gladiators',rec.id,rec).catch(()=>{});await loadLudus().catch(()=>{})}}
-  if(typeof mToast==='function')mToast(`🏆 <b>${esc(d.name)}</b> goes into the Annals' trophy case — ${esc(o.who||'')}`);if(typeof sfx==='function')sfx('fanfare')}
+  if(opts.saved){const rec=LUDUS_CACHE.find(g=>g.id===opts.saved)||await Store.getDoc('gladiators',opts.saved).catch(()=>null);if(rec){const r=d.rewards||{};rec.coin=(rec.coin||0)+(r.coin||0);rec.carry=Math.min(25,(rec.carry||0)+(r.cf||0));await Store.put('gladiators',rec.id,rec).catch(()=>{});await loadLudus().catch(()=>{})}}
+  if(typeof mToast==='function')mToast(`🏆 <b>${esc(d.name)}</b> goes into the Annals' trophy case — ${esc(opts.who||'')}`);if(typeof sfx==='function')sfx('fanfare')}
+/* hallTrophiesHTML — the Annals' trophy case. */
 async function hallTrophiesHTML(){const L0=(await Store.list('hallTrophies').catch(()=>[])).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
   /* v0.45: the same trophy won twice stands ONCE, with a count and its history (who won it, when) */
   const G={};const L=[];for(const t of L0){const k=t.tid||t.name;if(!G[k]){G[k]={...t,count:0,hist:[]};L.push(G[k])}G[k].count++;G[k].hist.push({who:t.who,date:t.date,why:t.why})}
@@ -450,7 +499,9 @@ async function hallTrophiesHTML(){const L0=(await Store.list('hallTrophies').cat
     <details open style="margin-top:10px"><summary class="rc-sub" style="cursor:pointer">The built-in silverware (${TROPHY_LIB.length}) — what the league and the invitationals award</summary><div class="trlist">${TROPHY_LIB.map(x=>`<div class="trli${trGilt(x)?' gilt':''}">${trophySVG(x,46)}<div><b>${esc(x.name)}</b><div class="rc-sub">${esc(x.desc)}</div><div class="rc-sub">${rewardText(x.rewards)}</div></div></div>`).join('')}</div></details>`} // v0.36: the same folded list the Creator Studio shows
 
 /* ---------------- Creator Studio → Trophies ---------------- */
+/* blankTrophy — a fresh custom trophy draft. */
 function blankTrophy(){return {id:'ct'+Date.now().toString(36),name:'',desc:'',shape:'none',layers:[],baked:[],metal:'gold',base:'wood',topper:'',gem:'#c0433a',ins:'',rewards:{coin:50,cf:0,fame:3},cat:'custom'}}
+/* trophyStudioHTML — Creator Studio → Trophies: the designer and your trophies. */
 function trophyStudioHTML(){ST.trd=ST.trd||blankTrophy();const t=ST.trd;const L=(CUSTOM.trophies||[]);
   const sel=(f,opts,v)=>`<select data-trf="${f}">${opts.map(([k,l])=>`<option value="${esc(k)}" ${String(v)===String(k)?'selected':''}>${esc(l)}</option>`).join('')}</select>`;
   const used=id=>(CUSTOM.events||[]).filter(e=>e.trophy===id).map(e=>e.name);
@@ -468,7 +519,8 @@ function trophyStudioHTML(){ST.trd=ST.trd||blankTrophy();const t=ST.trd;const L=
    <h4>Your trophies · ${L.length}</h4>${L.length?`<div class="trlist">${L.map(x=>`<div class="trli ${ST.trd&&ST.trd.id===x.id?'on':''}${trGilt(x)?' gilt':''}">${trophySVG(x,54)}<div><b>${esc(x.name)}</b><div class="rc-sub">${esc(x.desc||'')}</div><div class="rc-sub">${rewardText(x.rewards)}${used(x.id).length?` · on: ${used(x.id).map(esc).join(', ')}`:' · not attached to an event yet'}</div>
      ${crActs('t',x)}</div></div>`).join('')}</div>`:'<p class="rc-sub">None yet — the built-in silverware (season awards and the three invitationals) is always available too.</p>'}
    <details open style="margin-top:8px"><summary class="rc-sub" style="cursor:pointer">The built-in silverware (${TROPHY_LIB.length})</summary><div class="trlist">${TROPHY_LIB.map(x=>`<div class="trli${trGilt(x)?' gilt':''}">${trophySVG(x,46)}<div><b>${esc(x.name)}</b><div class="rc-sub">${esc(x.desc)}</div><div class="rc-sub">${rewardText(x.rewards)}</div>${typeof sysActs==='function'?sysActs(`data-trsys="${x.id}"`,{rolls:false}):''}</div></div>`).join('')}</div></details>`}
-async function trophyStudioClick(b,redraw){const a=b.dataset.trs,id=b.dataset.id;
+/* trophyStudioClick — the trophy designer's buttons (save, copy, delete, lock…). */
+async function trophyStudioClick(btn,redraw){const a=btn.dataset.trs,id=btn.dataset.id;
   if(a==='new'){ST.trd=blankTrophy();redraw();return}
   if(a==='rand'){const t=blankTrophy();t.shape=pickOne(TR_SHAPES)[0];t.metal=pickOne(Object.keys(TR_METALS));t.base=pickOne(TR_BASE_LBL.filter(x=>x[0]!=='none'))[0];t.topper=pickOne(TR_TOPPERS)[0];t.gem='#'+Math.floor(Math.random()*0xffffff).toString(16).padStart(6,'0');t.name='The '+pickOne(['Cup','Crown','Laurel','Shield','Eagle','Horn','Palm'])+' of '+pickOne(LOCATIONS.filter(Boolean)).n;t.ins=t.name.split(' ').pop().toUpperCase().slice(0,14);ST.trd=t;redraw();return}
   if(a==='edit'){const t=(CUSTOM.trophies||[]).find(x=>x.id===id);if(t)ST.trd=JSON.parse(JSON.stringify(t));redraw();return}
@@ -476,6 +528,8 @@ async function trophyStudioClick(b,redraw){const a=b.dataset.trs,id=b.dataset.id
   if(a==='save'){const t=ST.trd;if(!String(t.name).trim())t.name='The '+pickOne(['Cup','Crown','Laurel'])+' of '+pickOne(LOCATIONS.filter(Boolean)).n;t.cat='custom';t.custom=true;if(!nameGuard('trophies',t,'[data-trf="name"]'))return;
     CUSTOM.trophies=[...(CUSTOM.trophies||[]).filter(x=>x.id!==t.id),JSON.parse(JSON.stringify(t))].sort((x,y)=>String(x.name).localeCompare(y.name));await Store.put('customTrophies',t.id,t).catch(()=>{});
     if(typeof mToast==='function')mToast(`🏆 Saved <b>${esc(t.name)}</b> — attach it to an event in the Event Designer`);redraw();return}}
-function trophyStudioInput(t){const d=ST.trd;if(!d)return;const f=t.dataset.trf;if(f==='gilded'){d.gilded=t.checked?1:0;return}if(f.startsWith('r.'))d.rewards[f.slice(2)]=Math.max(0,+t.value||0);else d[f]=t.value;
+/* trophyStudioInput — the trophy designer's fields. */
+function trophyStudioInput(input){const d=ST.trd;if(!d)return;const f=input.dataset.trf;if(f==='gilded'){d.gilded=input.checked?1:0;return}if(f.startsWith('r.'))d.rewards[f.slice(2)]=Math.max(0,+input.value||0);else d[f]=input.value;
   const pv=document.getElementById('trPrev');if(pv)pv.innerHTML=`${trophySVG({...d,name:d.name||'Trophy'},170)}<div class="rc-sub" style="text-align:center">${esc(d.name||'Unnamed trophy')}</div>`}
+/* trophyOptions — [id, label] options for picking a trophy for an event. */
 function trophyOptions(){return [['','No trophy'],...allTrophyDefs().filter(t=>t.offered!==false).map(t=>[t.id,`${t.custom?'✦ ':''}${t.name}`])]}

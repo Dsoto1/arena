@@ -6,7 +6,9 @@
    active-roster dropdowns), options, spectators and the crowd-personality sliders.
    clean() turns a seat row into an engine seat (generated CPU names happen here).
    Also: showRules() (the tabbed Rules & strategy window), the abandon-event guard on
-   New event, and the boot sequence at the bottom of the file.
+   New event, the main menu (menuShow/mmLaunch/playNowMenu/managerMenu/menuAsk) with its
+   group-photo show (mmLoop/mmPlan/mmShow2/mmOverlay), and the boot sequence at the bottom
+   of the file. build.sh keeps this file LAST.
    ===================================================================== */
 /* ================= SETUP: LOCATIONS MAP & EVENTS ================= */
 let CFG={loc:6,ev:'democritus',n:4,seats:[
@@ -15,7 +17,9 @@ let CFG={loc:6,ev:'democritus',n:4,seats:[
   opts:{mods:false,mandata:false,optOffers:false,eaglePot:false,carmina:false,spect:'auto'}, // 'auto' = the empire decides attendance
   mode:'event',festKind:'ludi',festSR:'democritus',chPvp:true,mCls:'hero',mName:''};
 let MISSIO_CACHE=[];
+/* PALETTE — the eight seat colors, in seat order. TWEAK: the hex colors. */
 const PALETTE=['#c0433a','#4f7fc4','#4f9a57','#d4b13c','#cfc6b4','#dc7a34','#8a5cc0','#9a8f84'];
+/* MAPW / MAPH — pixel size of the rulebook locations map (assets/map.jpg); city x/y in LOCATIONS are fractions of it. */
 const MAPW=900,MAPH=909;
 // the rulebook's own locations map (p.21) is the underlay; numbered markers sit on its city dots
 function mapSVG(){
@@ -23,77 +27,90 @@ function mapSVG(){
     return `<g class="city" tabindex="0" role="button" aria-label="${n} ${L.n}${on?' (selected)':''}" data-loc="${n}"><title>${n} · ${L.n} · ${EVENTS[L.ev].n}</title>${on?`<circle cx="${x}" cy="${y}" r="32" fill="none" stroke="#f0cf7d" stroke-width="3.5" opacity=".9"/>`:''}<circle cx="${x}" cy="${y}" r="${on?24:20}" fill="${on?'#a3281f':'#2a1d13'}" fill-opacity="${on?1:.88}" stroke="${on?'#f0cf7d':'#d6ab4c'}" stroke-width="3"/><text x="${x}" y="${y+1}" fill="#f5e8cc" font-size="${on?20:17}" font-weight="700" font-family="IBM Plex Mono, monospace" text-anchor="middle" dominant-baseline="middle" pointer-events="none">${n}</text></g>`}).join('');
   return `<svg viewBox="0 0 ${MAPW} ${MAPH}" role="group" aria-label="Arena locations map"><image href="${typeof assetURL==='function'?assetURL('map.jpg'):'assets/map.jpg'}" width="${MAPW}" height="${MAPH}"/>${cities}</svg>`;
 }
+/* eventOptions — <option> list for the Event dropdown: printed events first, then Creator Studio events in their own group. */
 function eventOptions(){const o=([k,e])=>`<option value="${k}" ${CFG.ev===k?'selected':''}>${e.custom?'✦ ':''}${esc(e.n)} (${e.min===e.max?e.min:e.min+'–'+e.max} players)</option>`;const base=Object.entries(EVENTS).filter(([,e])=>!e.custom),cust=CUSTOM.events.map(x=>['ce_'+x.id,EVENTS['ce_'+x.id]]).filter(([,e])=>e);return base.map(o).join('')+(cust.length?`<optgroup label="✦ Custom events (Creator Studio)">${cust.map(o).join('')}</optgroup>`:'')}
 /* v0.21: seats list classes only; each class plays under its default name — or under the name you last gave it, which sticks */
 let CLS_NAMES={};try{CLS_NAMES=JSON.parse(localStorage.getItem('flavius_clsnames')||'{}')||{}}catch(e){}
-const clsSavedName=k=>CLASSES[k]&&CLASSES[k].custom?'':(CLS_NAMES[k]||'');
-function saveClsName(k,v){if(!CLASSES[k]||CLASSES[k].custom)return;if(v)CLS_NAMES[k]=v;else delete CLS_NAMES[k];try{localStorage.setItem('flavius_clsnames',JSON.stringify(CLS_NAMES))}catch(e){}}
-function classOptions(cls,sel){const o=k=>`<option value="${k}" ${k===sel?'selected':''}>${CLASSES[k].custom?'✦ '+esc(CLASSES[k].name)+' · custom':CLASSES[k].name}</option>`;const b=cls.filter(k=>!CLASSES[k].custom),c=cls.filter(k=>CLASSES[k].custom&&CUSTOM.chars.some(x=>'cc_'+x.id===k));return b.map(o).join('')+(c.length?`<optgroup label="✦ Custom characters">${c.map(o).join('')}</optgroup>`:'')}
-function roundsChips(ev){return ev.rounds.map((r,i)=>`<span class="chip">R${i+1} ${esc(r.n)} · Z${r.zone} · ${r.pvp?'PvP':'no PvP'}${r.cf?'':' · no CF'}${r.ca?'':' · no CA'}${ev.custom?' · '+(END_CONDS.find(x=>x[0]===r.end)||['',''])[1].replace(/\bN\b/,r.endN):''}</span>`).join('')}
-function allowedClasses(ev){let c=[...BASE_CLS,...CUSTOM.chars.filter(typeof onRollsR==='function'?onRollsR:onRolls).map(x=>'cc_'+x.id).filter(k=>CLASSES[k])];if(ev.classes)c=ev.classes.filter(k=>CLASSES[k]);if(ev.noVenatore)c=c.filter(x=>x!=='venatore');return c.length?c:[...BASE_CLS]}
-function teamOptions(ev,i){
-  if(ev.teams==='jugg')return ['J','T'];
-  if(ev.teams)return ['A','B','C','D'];
+/* clsSavedName — the name the player last gave a printed class (custom classes keep their own name). */
+const clsSavedName=clsKey=>CLASSES[clsKey]&&CLASSES[clsKey].custom?'':(CLS_NAMES[clsKey]||'');
+/* saveClsName — remembers (or forgets, when blank) the name typed for a printed class, in localStorage flavius_clsnames. */
+function saveClsName(clsKey,name){if(!CLASSES[clsKey]||CLASSES[clsKey].custom)return;if(name)CLS_NAMES[clsKey]=name;else delete CLS_NAMES[clsKey];try{localStorage.setItem('flavius_clsnames',JSON.stringify(CLS_NAMES))}catch(e){}}
+/* classOptions — <option> list of the given class keys: printed classes, then custom characters in their own group. */
+function classOptions(cls,selected){const o=k=>`<option value="${k}" ${k===selected?'selected':''}>${CLASSES[k].custom?'✦ '+esc(CLASSES[k].name)+' · custom':CLASSES[k].name}</option>`;const b=cls.filter(k=>!CLASSES[k].custom),c=cls.filter(k=>CLASSES[k].custom&&CUSTOM.chars.some(x=>'cc_'+x.id===k));return b.map(o).join('')+(c.length?`<optgroup label="✦ Custom characters">${c.map(o).join('')}</optgroup>`:'')}
+/* roundsChips — one chip per round of an event: zone, PvP / CF / ability flags and, for custom events, the end condition. */
+function roundsChips(evDef){return evDef.rounds.map((r,i)=>`<span class="chip">R${i+1} ${esc(r.n)} · Z${r.zone} · ${r.pvp?'PvP':'no PvP'}${r.cf?'':' · no CF'}${r.ca?'':' · no CA'}${evDef.custom?' · '+(END_CONDS.find(x=>x[0]===r.end)||['',''])[1].replace(/\bN\b/,r.endN):''}</span>`).join('')}
+/* allowedClasses — class keys a seat may pick for this event (printed + rolled custom characters, narrowed by the event); never empty. */
+function allowedClasses(evDef){let c=[...BASE_CLS,...CUSTOM.chars.filter(typeof onRollsR==='function'?onRollsR:onRolls).map(x=>'cc_'+x.id).filter(k=>CLASSES[k])];if(evDef.classes)c=evDef.classes.filter(k=>CLASSES[k]);if(evDef.noVenatore)c=c.filter(x=>x!=='venatore');return c.length?c:[...BASE_CLS]}
+/* teamOptions — team letters a seat may pick in a team event (J/T for the Juggernaut), or null when the event has no teams. */
+function teamOptions(evDef,i){
+  if(evDef.teams==='jugg')return ['J','T'];
+  if(evDef.teams)return ['A','B','C','D'];
   return null;
 }
-function seatRows(ev,n,cls){
+/* seatRows — HTML for the seat rows (class, You/CPU, mind, personality, Ludus gladiator, name, team) — pads CFG.seats to 8 and fixes classes the event does not allow. */
+function seatRows(evDef,seatCount,cls){
   while(CFG.seats.length<8)CFG.seats.push({cls:BASE_CLS.find(c=>!CFG.seats.some(s=>s.cls===c))||'soldier',cpu:true,diff:'normal',team:CFG.seats.length%2?'B':'A'});
-  return CFG.seats.slice(0,n).map((s,i)=>{
-    if(!cls.includes(s.cls))s.cls=cls.find(c=>!CFG.seats.slice(0,n).some(o=>o!==s&&o.cls===c))||cls[0];
-    const tops=ev?teamOptions(ev,i):null;
-    return `<div class="seat" style="--pc:${CLASSES[s.cls].color}"><span class="cn">${clsPieceHTML(s.cls,34)}Seat ${i+1}</span>
-      <div class="row"><select id="cls${i}" aria-label="Class for seat ${i+1}">${classOptions(cls,s.cls)}</select>
-      <select id="cpu${i}" aria-label="Controller for seat ${i+1}"><option value="0" ${!s.cpu?'selected':''}>You</option><option value="1" ${s.cpu?'selected':''}>CPU</option></select>
-      ${s.cpu?`<select id="dif${i}" aria-label="CPU mind for seat ${i+1}" title="How sharply the computer plays this gladiator (sets their Intelligence)">${typeof AI_TIERS!=='undefined'?AI_TIERS.map((T,ti)=>`<option value="${T.k}" ${aiTierKey(s.diff||'normal')===ti?'selected':''}>🧠 ${T.n}</option>`).join(''):['easy','normal','hard'].map(d=>`<option value="${d}" ${s.diff===d?'selected':''}>${d[0].toUpperCase()+d.slice(1)}</option>`).join('')}</select>
-        <select id="pre${i}" aria-label="CPU personality for seat ${i+1}"><option value="class" ${!s.preset||s.preset==='class'?'selected':''}>Personality: class default</option><option value="random" ${s.preset==='random'?'selected':''}>Random</option>${Object.entries(PERS_PRESETS).map(([k,v])=>`<option value="${k}" ${s.preset===k?'selected':''}>${v.n}</option>`).join('')}<option value="custom" ${s.preset==='custom'?'selected':''}>Custom…</option></select>
-        <button class="btn" type="button" data-tune="${i}" aria-expanded="${!!s.tune}" style="padding:4px 8px">${s.tune?'Hide':'Tune'}</button>
-        ${LUDUS_CACHE.some(g=>g.roster&&gladActive(g))?`<select id="lcp${i}" aria-label="Field an active-roster Ludus gladiator in CPU seat ${i+1}"><option value="">Generated rival</option>${LUDUS_CACHE.filter(g=>g.roster&&gladActive(g)&&cls.includes(g.cls)).map(g=>`<option value="${g.id}" ${s.saved===g.id?'selected':''}>Ludus rival: ${esc(g.name)} (${CLASSES[g.cls].name}${g.cpu?' · CPU':''})</option>`).join('')}</select>`:''}`:`<input id="nam${i}" type="text" maxlength="24" placeholder="${esc(CLASSES[s.cls].hero)} (default name)" title="The name you give a class is remembered and used every time you pick it" value="${esc(s.name||clsSavedName(s.cls)||'')}" aria-label="Gladiator name for seat ${i+1}" style="background:var(--ink);color:var(--bone);border:1px solid var(--line2);border-radius:3px;padding:5px 6px;font-size:14px;width:11em">${diceBtn('#nam'+i)}
-        ${LUDUS_CACHE.some(g=>g.roster&&gladActive(g))?`<select id="sav${i}" aria-label="Summon an active-roster gladiator for seat ${i+1}"><option value="">New gladiator</option>${LUDUS_CACHE.filter(g=>g.roster&&gladActive(g)).map(g=>`<option value="${g.id}" ${s.saved===g.id?'selected':''}>Ludus: ${esc(g.name)} (${CLASSES[g.cls].name}, returns with ${g.carry} CF)</option>`).join('')}</select>`:''} <span style="font-size:11px;color:var(--dim);align-self:center" title="Only the Ludus screen's active roster (up to 10) is listed here">(active roster)</span>`}
-      ${tops?`<select id="team${i}" aria-label="Team for seat ${i+1}">${tops.map(t=>`<option value="${t}" ${s.team===t?'selected':''}>${t==='J'?'Juggernaut':t==='T'?'Team':'Team '+t}</option>`).join('')}</select>`:''}</div>
-      <span class="ab"><span data-card="k:${s.cls}" style="text-decoration:underline dotted;cursor:help">${CLASSES[s.cls].name} card</span> · ${ev&&ev.draft?'Drafted event: class sets name and color only.':CLASSES[s.cls].ab}${i>=4?' Starts on a '+(i<6?'snake':'wolf')+' home tile.':''}${s.saved&&!s.cpu?` <b style="color:var(--gold2)">Summoned from the Ludus.</b>`:''}${s.cpu?` <span style="color:var(--dim)">· ${{easy:'Easy: loose aim, rarely shops or plays cards.',normal:'Normal: solid play with the odd slip.',hard:'Hard: sharpest play (dodges, focus, market, beast hunting).'}[s.diff||'normal']}</span>`:''}${CFG.seats.slice(0,n).filter(o=>o.cls===s.cls).length>1?' <i>Shares a class: gets its own color and a numbered name in the arena.</i>':''}</span>
-      ${s.cpu&&s.tune?`<div class="perswrap">${PERS_KEYS.map(([k,l,d])=>`<label class="slider" title="${d}"><span>${l}</span><input type="range" min="1" max="100" value="${seatPers(s)[k]}" data-pk="${k}" data-seat="${i}" aria-label="${l} priority for seat ${i+1}"><output>${seatPers(s)[k]}</output></label>`).join('')}<span style="font-size:11px;color:var(--dim)">1-100 priorities. Moving a slider switches this seat to Custom.</span></div>`:''}</div>`}).join('');
+  return CFG.seats.slice(0,seatCount).map((seat,i)=>{
+    if(!cls.includes(seat.cls))seat.cls=cls.find(c=>!CFG.seats.slice(0,seatCount).some(o=>o!==seat&&o.cls===c))||cls[0];
+    const tops=evDef?teamOptions(evDef,i):null;
+    return `<div class="seat" style="--pc:${CLASSES[seat.cls].color}"><span class="cn">${clsPieceHTML(seat.cls,34)}Seat ${i+1}</span>
+      <div class="row"><select id="cls${i}" aria-label="Class for seat ${i+1}">${classOptions(cls,seat.cls)}</select>
+      <select id="cpu${i}" aria-label="Controller for seat ${i+1}"><option value="0" ${!seat.cpu?'selected':''}>You</option><option value="1" ${seat.cpu?'selected':''}>CPU</option></select>
+      ${seat.cpu?`<select id="dif${i}" aria-label="CPU mind for seat ${i+1}" title="How sharply the computer plays this gladiator (sets their Intelligence)">${typeof AI_TIERS!=='undefined'?AI_TIERS.map((T,ti)=>`<option value="${T.k}" ${aiTierKey(seat.diff||'normal')===ti?'selected':''}>🧠 ${T.n}</option>`).join(''):['easy','normal','hard'].map(d=>`<option value="${d}" ${seat.diff===d?'selected':''}>${d[0].toUpperCase()+d.slice(1)}</option>`).join('')}</select>
+        <select id="pre${i}" aria-label="CPU personality for seat ${i+1}"><option value="class" ${!seat.preset||seat.preset==='class'?'selected':''}>Personality: class default</option><option value="random" ${seat.preset==='random'?'selected':''}>Random</option>${Object.entries(PERS_PRESETS).map(([k,v])=>`<option value="${k}" ${seat.preset===k?'selected':''}>${v.n}</option>`).join('')}<option value="custom" ${seat.preset==='custom'?'selected':''}>Custom…</option></select>
+        <button class="btn" type="button" data-tune="${i}" aria-expanded="${!!seat.tune}" style="padding:4px 8px">${seat.tune?'Hide':'Tune'}</button>
+        ${LUDUS_CACHE.some(g=>g.roster&&gladActive(g))?`<select id="lcp${i}" aria-label="Field an active-roster Ludus gladiator in CPU seat ${i+1}"><option value="">Generated rival</option>${LUDUS_CACHE.filter(g=>g.roster&&gladActive(g)&&cls.includes(g.cls)).map(g=>`<option value="${g.id}" ${seat.saved===g.id?'selected':''}>Ludus rival: ${esc(g.name)} (${CLASSES[g.cls].name}${g.cpu?' · CPU':''})</option>`).join('')}</select>`:''}`:`<input id="nam${i}" type="text" maxlength="24" placeholder="${esc(CLASSES[seat.cls].hero)} (default name)" title="The name you give a class is remembered and used every time you pick it" value="${esc(seat.name||clsSavedName(seat.cls)||'')}" aria-label="Gladiator name for seat ${i+1}" style="background:var(--ink);color:var(--bone);border:1px solid var(--line2);border-radius:3px;padding:5px 6px;font-size:14px;width:11em">${diceBtn('#nam'+i)}
+        ${LUDUS_CACHE.some(g=>g.roster&&gladActive(g))?`<select id="sav${i}" aria-label="Summon an active-roster gladiator for seat ${i+1}"><option value="">New gladiator</option>${LUDUS_CACHE.filter(g=>g.roster&&gladActive(g)).map(g=>`<option value="${g.id}" ${seat.saved===g.id?'selected':''}>Ludus: ${esc(g.name)} (${CLASSES[g.cls].name}, returns with ${g.carry} CF)</option>`).join('')}</select>`:''} <span style="font-size:11px;color:var(--dim);align-self:center" title="Only the Ludus screen's active roster (up to 10) is listed here">(active roster)</span>`}
+      ${tops?`<select id="team${i}" aria-label="Team for seat ${i+1}">${tops.map(t=>`<option value="${t}" ${seat.team===t?'selected':''}>${t==='J'?'Juggernaut':t==='T'?'Team':'Team '+t}</option>`).join('')}</select>`:''}</div>
+      <span class="ab"><span data-card="k:${seat.cls}" style="text-decoration:underline dotted;cursor:help">${CLASSES[seat.cls].name} card</span> · ${evDef&&evDef.draft?'Drafted event: class sets name and color only.':CLASSES[seat.cls].ab}${i>=4?' Starts on a '+(i<6?'snake':'wolf')+' home tile.':''}${seat.saved&&!seat.cpu?` <b style="color:var(--gold2)">Summoned from the Ludus.</b>`:''}${seat.cpu?` <span style="color:var(--dim)">· ${{easy:'Easy: loose aim, rarely shops or plays cards.',normal:'Normal: solid play with the odd slip.',hard:'Hard: sharpest play (dodges, focus, market, beast hunting).'}[seat.diff||'normal']}</span>`:''}${CFG.seats.slice(0,seatCount).filter(o=>o.cls===seat.cls).length>1?' <i>Shares a class: gets its own color and a numbered name in the arena.</i>':''}</span>
+      ${seat.cpu&&seat.tune?`<div class="perswrap">${PERS_KEYS.map(([k,l,d])=>`<label class="slider" title="${d}"><span>${l}</span><input type="range" min="1" max="100" value="${seatPers(seat)[k]}" data-pk="${k}" data-seat="${i}" aria-label="${l} priority for seat ${i+1}"><output>${seatPers(seat)[k]}</output></label>`).join('')}<span style="font-size:11px;color:var(--dim)">1-100 priorities. Moving a slider switches this seat to Custom.</span></div>`:''}</div>`}).join('');
 }
-function seatPers(s){if(s.preset==='custom'&&s.pers)return s.pers;const b=PERS_PRESETS[s.preset]||PERS_PRESETS[CLASS_PERS[s.cls]]||PERS_PRESETS.balanced;return {...b.v}}
-function finalPers(s){
-  if(!s.cpu)return undefined;
-  if(s.preset==='custom'&&s.pers)return {...s.pers};
-  if(s.preset==='random'){const o={};for(const [k] of PERS_KEYS)o[k]=1+rnd(100);return o}
-  if(s.preset&&PERS_PRESETS[s.preset]){const o={};for(const [k] of PERS_KEYS)o[k]=clamp(PERS_PRESETS[s.preset].v[k]+rnd(21)-10,1,100);return o}
-  return rollPersonality(s.cls);
+/* seatPers — the personality sliders shown for a seat: its custom values, else its preset, else its class default. */
+function seatPers(seat){if(seat.preset==='custom'&&seat.pers)return seat.pers;const b=PERS_PRESETS[seat.preset]||PERS_PRESETS[CLASS_PERS[seat.cls]]||PERS_PRESETS.balanced;return {...b.v}}
+/* finalPers — the personality a CPU seat takes into the event: custom as set, random rolls, or a preset jittered by ±10. TWEAK: the ±10 jitter (rnd(21)-10). */
+function finalPers(seat){
+  if(!seat.cpu)return undefined;
+  if(seat.preset==='custom'&&seat.pers)return {...seat.pers};
+  if(seat.preset==='random'){const o={};for(const [k] of PERS_KEYS)o[k]=1+rnd(100);return o}
+  if(seat.preset&&PERS_PRESETS[seat.preset]){const o={};for(const [k] of PERS_KEYS)o[k]=clamp(PERS_PRESETS[seat.preset].v[k]+rnd(21)-10,1,100);return o}
+  return rollPersonality(seat.cls);
 }
 // which options can apply to an event (the rest are shown grayed out with the reason)
-function optApplies(ev){
-  const k=ev?ev.kind:null;
+function optApplies(evDef){
+  const k=evDef?evDef.kind:null;
   return {
-    mods:ev&&(ev.draft||k==='orpheus'||k==='eagle')?'Drafted and capture events ignore class modifiers':null,
-    mandata:ev&&!ev.mandata?'Only classic events deal Mandata Flavi':null,
+    mods:evDef&&(evDef.draft||k==='orpheus'||k==='eagle')?'Drafted and capture events ignore class modifiers':null,
+    mandata:evDef&&!evDef.mandata?'Only classic events deal Mandata Flavi':null,
     carmina:null,
     optOffers:k==='chariot'?'Chariot Racing uses its own offerings (Speed of Mercury, Crowd Favor, Curse Tablets)':k==='naumachia'?'No Blessings pots in the flooded arena':null,
     eaglePot:k==='chariot'||k==='naumachia'?'No Blessings pots in this event':k==='eagle'?'The Golden Eagle is already the objective of this event':null,
   };
 }
+/* optBox — one option checkbox; grayed and disabled with the reason when it cannot apply to the event. */
 function optBox(id,key,on,label,why){return `<label ${why?`style="opacity:.45" title="${esc(why)}"`:''}><input type="checkbox" id="${id}" ${on&&!why?'checked':''} ${why?'disabled':''}> ${label}${why?` <span style="font-size:12px;color:var(--dim)">(${esc(why)})</span>`:''}</label>`}
-function optionsHTML(ev,L){
-  const o=CFG.opts;const na=optApplies(ev);
+/* optionsHTML — the Options block: class modifiers, Mandata, Carmina, optional offerings, Golden Eagle, chariot PvP, dice seed, spectators, crowd personality and play-as-spectator. */
+function optionsHTML(evDef,location){
+  const o=CFG.opts;const na=optApplies(evDef);
   return `<h4>Options</h4><div class="opts">
-     ${L?optBox('oMods','mods',o.mods,`Apply ${L.n}'s class modifiers`,na.mods):''}
+     ${location?optBox('oMods','mods',o.mods,`Apply ${location.n}'s class modifiers`,na.mods):''}
      ${optBox('oMandata','mandata',o.mandata,'Mandata Flavi secret objectives',na.mandata)}
      ${optBox('oCarmina','carmina',o.carmina,'Carmina Fescennina before the event',na.carmina)}
      ${optBox('oOpt','optOffers',o.optOffers,'Shuffle the optional offerings into the Blessings bag (Crowd Favor, Speed of Mercury, Curse Tablet)',na.optOffers)}
      ${optBox('oEagle','eaglePot',o.eaglePot,'Include the Golden Eagle as one of the 12 Blessings',na.eaglePot)}
-     ${ev&&ev.kind==='chariot'?`<label><input type="checkbox" id="oChPvp" ${CFG.chPvp?'checked':''}> Allow PvP attacks during the race</label>`:''}
+     ${evDef&&evDef.kind==='chariot'?`<label><input type="checkbox" id="oChPvp" ${CFG.chPvp?'checked':''}> Allow PvP attacks during the race</label>`:''}
      <label title="Leave blank for fresh dice. Enter a seed from a past event's results screen to replay its exact rolls.">Dice seed <input type="text" id="oSeed" value="${CFG.seed||''}" placeholder="random" style="width:8em"></label>
-     <label class="spectopt" style="grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px">Spectators <select id="oSpectMode" ${ev&&ev.noSpect?'disabled':''}><option value="auto" ${o.spect==='auto'?'selected':''}>🎲 Random — the empire decides</option><option value="set" ${o.spect!=='auto'?'selected':''}>Set a number</option></select>${o.spect!=='auto'?` <input type="number" id="oSpect" min="0" max="96" value="${o.spect}" style="width:5em" ${ev&&ev.noSpect?'disabled':''}>`:''} ${ev&&ev.noSpect?'<span class="rc-sub" style="flex:1 1 280px">none allowed in this event</span>':ev&&ev.passiveSpect?'<span class="rc-sub" style="flex:1 1 280px">this crowd only watches: cheers, jeers and words — no stones, gifts or spears</span> ':o.spect==='auto'?'<span class="rc-sub" style="flex:1 1 280px">city appetite, hometown regulars, fans of today\u2019s fighters, billing and omen fill the stands · up to 96, each ≈1,000 Romans</span>':'<span class="rc-sub" style="flex:1 1 280px">0–96 named regulars, each ≈1,000 Romans with their own tastes, moods and CF (rulebook p.35)</span>'}</label>
-     ${ev&&!ev.noSpect?`<details style="grid-column:1/-1"><summary style="cursor:pointer;font-size:13.5px">Crowd personality <span style="color:var(--dim)">(interactivity ${CROWD.act}% · saved in this browser)</span></summary>
+     <label class="spectopt" style="grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px">Spectators <select id="oSpectMode" ${evDef&&evDef.noSpect?'disabled':''}><option value="auto" ${o.spect==='auto'?'selected':''}>🎲 Random — the empire decides</option><option value="set" ${o.spect!=='auto'?'selected':''}>Set a number</option></select>${o.spect!=='auto'?` <input type="number" id="oSpect" min="0" max="96" value="${o.spect}" style="width:5em" ${evDef&&evDef.noSpect?'disabled':''}>`:''} ${evDef&&evDef.noSpect?'<span class="rc-sub" style="flex:1 1 280px">none allowed in this event</span>':evDef&&evDef.passiveSpect?'<span class="rc-sub" style="flex:1 1 280px">this crowd only watches: cheers, jeers and words — no stones, gifts or spears</span> ':o.spect==='auto'?'<span class="rc-sub" style="flex:1 1 280px">city appetite, hometown regulars, fans of today\u2019s fighters, billing and omen fill the stands · up to 96, each ≈1,000 Romans</span>':'<span class="rc-sub" style="flex:1 1 280px">0–96 named regulars, each ≈1,000 Romans with their own tastes, moods and CF (rulebook p.35)</span>'}</label>
+     ${evDef&&!evDef.noSpect?`<details style="grid-column:1/-1"><summary style="cursor:pointer;font-size:13.5px">Crowd personality <span style="color:var(--dim)">(interactivity ${CROWD.act}% · saved in this browser)</span></summary>
        <div style="display:grid;gap:6px;padding:8px 2px 2px">
         <label class="slider" title="Scales how often spectators throw stones and offerings, change sections, chant for Tholo and emote."><span style="min-width:110px">Interactivity</span><input type="range" min="10" max="200" step="5" value="${CROWD.act}" data-crowd="act"><output>${CROWD.act}%</output></label>
         ${Object.entries(SPECT_TEMPERS).map(([k,[l,d]])=>`<label class="slider" title="${esc(d)}"><span style="min-width:110px">${l}</span><input type="range" min="0" max="200" step="5" value="${CROWD.t[k]??100}" data-crowd="${k}"><output>${CROWD.t[k]??100}%</output></label>`).join('')}
         <p class="hint" style="margin:0">Trait weights shape the tempers of <b>new faces</b> joining the crowd; your regulars keep the tempers you already know them by. 100% everywhere is the printed game.</p>
         ${typeof LOC_CROWD!=='undefined'&&LOC_CROWD[CFG.loc]?`<p class="hint" style="margin:0"><b>Local flavor at ${esc((LOCATIONS[CFG.loc]||{}).n||'this arena')}</b>: ${esc(LOC_CROWD[CFG.loc].n)} — interactivity ×${(LOC_CROWD[CFG.loc].act||100)}%${Object.entries(LOC_CROWD[CFG.loc].t||{}).map(([k,v])=>`, ${SPECT_TEMPERS[k]?SPECT_TEMPERS[k][0].toLowerCase():k} ×${v}%`).join('')}. Layered on top of your sliders.</p>`:''}
        </div></details>`:''}
-     ${ev&&!ev.noSpect&&!ev.passive&&ev.kind!=='chariot'&&ev.kind!=='naumachia'?`<label class="spectme" ${CFG.seats.slice(0,CFG.n).some(s=>!s.cpu)?'style="opacity:.45" title="Only non-players can spectate"':''}><input type="checkbox" id="oSpectMe" ${CFG.spectHuman&&!CFG.seats.slice(0,CFG.n).some(s=>!s.cpu)?'checked':''} ${CFG.seats.slice(0,CFG.n).some(s=>!s.cpu)?'disabled':''}> 🎟 <b>Play as a spectator</b> (all seats CPU): earn CF each rotation, throw stones or offerings, change sections and chant for Tholo</label>`:''}
+     ${evDef&&!evDef.noSpect&&!evDef.passive&&evDef.kind!=='chariot'&&evDef.kind!=='naumachia'?`<label class="spectme" ${CFG.seats.slice(0,CFG.n).some(s=>!s.cpu)?'style="opacity:.45" title="Only non-players can spectate"':''}><input type="checkbox" id="oSpectMe" ${CFG.spectHuman&&!CFG.seats.slice(0,CFG.n).some(s=>!s.cpu)?'checked':''} ${CFG.seats.slice(0,CFG.n).some(s=>!s.cpu)?'disabled':''}> 🎟 <b>Play as a spectator</b> (all seats CPU): earn CF each rotation, throw stones or offerings, change sections and chant for Tholo</label>`:''}
     </div><p style="font-size:13px;color:var(--muted);margin-top:6px">Every Blessings token goes into one face-down bag (${36+(o.optOffers?13:0)} tokens). Twelve are drawn, one pot per pillar; nobody knows what's inside until a pot breaks. Offerings spawned later by cards, spectators or events are drawn from the same bag. Events with an arena deck use the full 70 cards (12 more are set aside for round 2 in classic events), with Flavius Rule placed at the bottom.</p>`;
 }
+/* setupBody — the whole New event window for the current CFG.mode: Single event (map, event, seats, options), Festival, Missio or Tournament. */
 function setupBody(){
   const tabs=`<div class="seg" role="tablist" style="margin-bottom:12px">${[['event','Single event'],['festival','Festival'],['missio','Missio'],['tourn','🏆 Tournament']].map(([k,l])=>`<button type="button" data-mode="${k}" class="${CFG.mode===k?'on':''}">${l}</button>`).join('')}</div>`;
   if(CFG.mode==='festival'){
@@ -113,8 +130,8 @@ function setupBody(){
     const M=MISSIOS[CFG.mCls];
     return tabs+`<div class="setup-grid"><div>
       <div class="evdesc"><b>Missios</b> (p.56-57) are five-event campaigns for one character. Finish each event with a win or at least 20 CF to advance. Half your CF (up to 25) carries over, coin goes to the Royal Reserve, and severed limbs persist.</div>
-      <h4>Continue a missio</h4>${act.length?`<div class="items">${act.map(m=>{const st=MISSIOS[m.cls].path[m.step];return `<div class="item"><span><b>${esc(m.name)}</b> · ${CLASSES[m.cls].name} · step ${m.step+1}/5<em>Next: ${st.fest?'Festival '+festName(st.fest)+', ':''}${EVENTS[st.ev].n} at ${LOCATIONS[st.loc].n} · RR ${m.rr} · carrying ${m.cfCarry} CF</em></span><button class="btn primary" type="button" data-cont="${m.id}">Continue</button></div>`}).join('')}</div>`:'<p style="color:var(--muted)">No active missios yet.</p>'}
-      <h4>Start from the Ludus</h4>${LUDUS_CACHE.filter(g=>gladActive(g)&&!g.cpu).length?`<div class="items missioroll" style="max-height:360px;overflow-y:auto">${LUDUS_CACHE.filter(g=>gladActive(g)&&!g.cpu).sort((a,b)=>(MISSIOS[b.cls]?1:0)-(MISSIOS[a.cls]?1:0)).map(g=>{if(!MISSIOS[g.cls])return `<div class="item" style="opacity:.5"><span><span class="mfacetok">${gladFace(g,'xs')}</span><span><b>${esc(g.name)}</b> · ${esc((CLASSES[g.cls]||{}).name||'custom')}<em>missios use the printed classes</em></span></span></div>`;const c=missioCredit(g);const act=MISSIO_CACHE.find(m=>m.gladId===g.id&&m.status==='active');return `<div class="item"><span><span class="mfacetok">${gladFace(g,'xs')}${typeof figureHTML==='function'&&typeof tokenForCls==='function'?figureHTML(tokenForCls(g.cls),40):''}</span><span><b>${esc(g.name)}</b> · ${CLASSES[g.cls].name}<em>${act?`missio in progress · step ${act.step+1}/5`:`${c?`${c} step${c>1?'s':''} already earned from past events · `:''}starts at step ${c+1}/5 with ${g.carry||0} CF`}</em></span></span><button class="btn" type="button" data-lmissio="${g.id}">${act?'Continue':'Start'}</button></div>`}).join('')}</div>`:'<p style="color:var(--muted)">No saved gladiators yet. Save one from the results screen after an event.</p>'}
+      <h4>Continue a missio</h4>${act.length?`<div class="items">${act.map(missio=>{const st=MISSIOS[missio.cls].path[missio.step];return `<div class="item"><span><b>${esc(missio.name)}</b> · ${CLASSES[missio.cls].name} · step ${missio.step+1}/5<em>Next: ${st.fest?'Festival '+festName(st.fest)+', ':''}${EVENTS[st.ev].n} at ${LOCATIONS[st.loc].n} · RR ${missio.rr} · carrying ${missio.cfCarry} CF</em></span><button class="btn primary" type="button" data-cont="${missio.id}">Continue</button></div>`}).join('')}</div>`:'<p style="color:var(--muted)">No active missios yet.</p>'}
+      <h4>Start from the Ludus</h4>${LUDUS_CACHE.filter(glad=>gladActive(glad)&&!glad.cpu).length?`<div class="items missioroll" style="max-height:360px;overflow-y:auto">${LUDUS_CACHE.filter(glad=>gladActive(glad)&&!glad.cpu).sort((a,b)=>(MISSIOS[b.cls]?1:0)-(MISSIOS[a.cls]?1:0)).map(glad=>{if(!MISSIOS[glad.cls])return `<div class="item" style="opacity:.5"><span><span class="mfacetok">${gladFace(glad,'xs')}</span><span><b>${esc(glad.name)}</b> · ${esc((CLASSES[glad.cls]||{}).name||'custom')}<em>missios use the printed classes</em></span></span></div>`;const c=missioCredit(glad);const act=MISSIO_CACHE.find(m=>m.gladId===glad.id&&m.status==='active');return `<div class="item"><span><span class="mfacetok">${gladFace(glad,'xs')}${typeof figureHTML==='function'&&typeof tokenForCls==='function'?figureHTML(tokenForCls(glad.cls),40):''}</span><span><b>${esc(glad.name)}</b> · ${CLASSES[glad.cls].name}<em>${act?`missio in progress · step ${act.step+1}/5`:`${c?`${c} step${c>1?'s':''} already earned from past events · `:''}starts at step ${c+1}/5 with ${glad.carry||0} CF`}</em></span></span><button class="btn" type="button" data-lmissio="${glad.id}">${act?'Continue':'Start'}</button></div>`}).join('')}</div>`:'<p style="color:var(--muted)">No saved gladiators yet. Save one from the results screen after an event.</p>'}
      </div><div>
       <h4>Start a new missio</h4>
       <div class="opts"><label>Class <select id="mCls">${BASE_CLS.map(k=>`<option value="${k}" ${CFG.mCls===k?'selected':''}>${CLASSES[k].name} · ${CLASSES[k].sub}</option>`).join('')}</select></label>
@@ -144,7 +161,8 @@ function setupBody(){
     <div class="mbtns"><button class="btn primary" type="button" id="goBtn">Sound the horns</button><button class="btn" type="button" id="rulesBtn2">Rules in this build</button></div>`;
 }
 // v0.27: an event's home city — its own EVENTS.loc, else the city whose games it is
-function evDefaultLoc(ev){const E=EVENTS[ev];if(!E)return null;if(E.loc&&LOCATIONS[E.loc])return E.loc;const i=LOCATIONS.findIndex(L=>L&&L.ev===ev);return i>0?i:null}
+function evDefaultLoc(eventKey){const E=EVENTS[eventKey];if(!E)return null;if(E.loc&&LOCATIONS[E.loc])return E.loc;const i=LOCATIONS.findIndex(L=>L&&L.ev===eventKey);return i>0?i:null}
+/* openSetup — opens the New event window, wires its clicks/inputs into CFG, then starts the chosen event, festival, missio or tournament. fresh = reset to Roma · Classic Democritus. */
 async function openSetup(fresh){
   if(fresh){CFG.mode='event';CFG.loc=6;CFG.ev='democritus';CFG.n=4;CFG.touched=1} // v0.22: a fresh New event always opens on Roma · Classic Democritus (the week's fixture is one click away)
   MISSIO_CACHE=await Store.list('missios');await loadLudus().catch(()=>{});await Promise.all([loadCustoms(),loadCrowd().catch(()=>{})]).then(x=>x[0]).catch(()=>{});
@@ -153,7 +171,7 @@ async function openSetup(fresh){
   modal('Choose the arena, event and gladiators',setupBody(),[],{wide:1,full:1,close:'closed',onOpen:done=>{
     const box=$('#mBody');
     const redraw=()=>{box.innerHTML=setupBody();try{render()}catch(e){}};
-    const setLoc=n=>{CFG.loc=n;const L=LOCATIONS[n];if(L.ev&&!(EVENTS[CFG.ev]&&EVENTS[CFG.ev].custom))CFG.ev=L.ev;redraw()};
+    const setLoc=locIndex=>{CFG.loc=locIndex;const L=LOCATIONS[locIndex];if(L.ev&&!(EVENTS[CFG.ev]&&EVENTS[CFG.ev].custom))CFG.ev=L.ev;redraw()};
     box.onclick=e=>{
       const mt=e.target.closest('[data-mode]');if(mt){CFG.mode=mt.dataset.mode;redraw();return}
       const tr=e.target.closest('[data-tourn]');if(tr){if(tr.dataset.tourn==='resume'){done('tournresume');return}if(tr.dataset.tourn==='abandon'){TOURN=null;tournSave();redraw();return}}
@@ -167,7 +185,7 @@ async function openSetup(fresh){
       if(e.target.closest('#rulesBtn2')){done('rules');return}
       const tu=e.target.closest('[data-tune]');if(tu){const st=CFG.seats[+tu.dataset.tune];st.tune=!st.tune;redraw();return}
       if(e.target.closest('#goBtn')){
-        const err=m=>{const el=$('#setupErr');if(el){el.textContent=m;el.scrollIntoView({block:'center',behavior:'smooth'});el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')}if(typeof mToast==='function')mToast('⚠ '+esc(m))}; // v0.41: never a silent button
+        const err=msg=>{const el=$('#setupErr');if(el){el.textContent=msg;el.scrollIntoView({block:'center',behavior:'smooth'});el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')}if(typeof mToast==='function')mToast('⚠ '+esc(msg))}; // v0.41: never a silent button
         if(CFG.mode==='missio'){done('missio');return}
         if(CFG.mode==='tourn'){done('tourn');return}
         const ev=CFG.mode==='festival'?EVENTS.democritus:EVENTS[CFG.ev];const seats=CFG.seats.slice(0,CFG.mode==='festival'?4:CFG.n);
@@ -204,17 +222,17 @@ async function openSetup(fresh){
       if(/^sav\d$/.test(id)){const st=CFG.seats[i];const g=LUDUS_CACHE.find(x=>x.id===t.value);if(g){const clash=CFG.seats.find((o,j)=>j!==i&&o.cls===g.cls);if(clash)clash.cls=st.cls;Object.assign(st,{cls:g.cls,name:g.name,saved:g.id})}else{st.saved=null}redraw()}
       if(/^team\d$/.test(id))CFG.seats[i].team=t.value;
     };
-  }}).then(async v=>{window.SETUP_OPEN=false;try{render()}catch(e){}
+  }}).then(async choice=>{window.SETUP_OPEN=false;try{render()}catch(e){}
     $('#mBody').onclick=null;$('#mBody').onchange=null;$('#mBody').onkeydown=null;$('#mBody').oninput=null;
-    if(v==='closed'){if(!S||S.phase==='setup'||S.over)log('Setup closed. Press <b>New event</b> when you are ready.');return}
-    if(v==='rules'){showRules().then(openSetup);return}
-    if(v&&v.missio){const rec=MISSIO_CACHE.find(m=>m.id===v.missio);if(rec)startMissio(rec);return}
-    if(v&&v.lmissio){const g=LUDUS_CACHE.find(x=>x.id===v.lmissio);if(g){const ex=MISSIO_CACHE.find(m=>m.gladId===g.id&&m.status==='active');startMissio(ex||await missioFromLudus(g))}return}
-    if(v==='tournresume'){openTourn();return}
-    if(v==='tourn'){const s0=CFG.seats[0];const g=s0.saved?LUDUS_CACHE.find(x=>x.id===s0.saved):null;tournStart({cls:s0.cls,cpu:false,name:g?g.name:(s0.name||undefined),saved:g?g.id:undefined,cfStart:g?g.carry:undefined,severed:g?g.severed:undefined});return}
-    if(v==='missio'){const rec=newMissio(CFG.mCls,CFG.mName||CLASSES[CFG.mCls].hero);await Store.put('missios',rec.id,rec);startMissio(rec);return}
-    if(v!=='go')return;
-    const clean=s=>{const g=s.saved?LUDUS_CACHE.find(x=>x.id===s.saved):null;return {...s,name:g?g.name:(s.name||(s.cpu?genName():undefined)),pers:s.preset==='custom'?finalPers(s):undefined,preset:s.preset, /* v0.46: rolled inside the event, from its seed */saved:g?g.id:undefined,cfStart:g?g.carry:undefined,severed:g?g.severed:undefined,tune:undefined}};
+    if(choice==='closed'){if(!S||S.phase==='setup'||S.over)log('Setup closed. Press <b>New event</b> when you are ready.');return}
+    if(choice==='rules'){showRules().then(openSetup);return}
+    if(choice&&choice.missio){const rec=MISSIO_CACHE.find(m=>m.id===choice.missio);if(rec)startMissio(rec);return}
+    if(choice&&choice.lmissio){const g=LUDUS_CACHE.find(x=>x.id===choice.lmissio);if(g){const ex=MISSIO_CACHE.find(m=>m.gladId===g.id&&m.status==='active');startMissio(ex||await missioFromLudus(g))}return}
+    if(choice==='tournresume'){openTourn();return}
+    if(choice==='tourn'){const s0=CFG.seats[0];const g=s0.saved?LUDUS_CACHE.find(x=>x.id===s0.saved):null;tournStart({cls:s0.cls,cpu:false,name:g?g.name:(s0.name||undefined),saved:g?g.id:undefined,cfStart:g?g.carry:undefined,severed:g?g.severed:undefined});return}
+    if(choice==='missio'){const rec=newMissio(CFG.mCls,CFG.mName||CLASSES[CFG.mCls].hero);await Store.put('missios',rec.id,rec);startMissio(rec);return}
+    if(choice!=='go')return;
+    const clean=seat=>{const g=seat.saved?LUDUS_CACHE.find(x=>x.id===seat.saved):null;return {...seat,name:g?g.name:(seat.name||(seat.cpu?genName():undefined)),pers:seat.preset==='custom'?finalPers(seat):undefined,preset:seat.preset, /* v0.46: rolled inside the event, from its seed */saved:g?g.id:undefined,cfStart:g?g.carry:undefined,severed:g?g.severed:undefined,tune:undefined}};
     if(CFG.mode==='festival'){startFestival(CFG.festKind,CFG.festSR,CFG.seats.slice(0,4).map(s=>({...clean(s),team:undefined})),{...CFG.opts});return}
     const ev=EVENTS[CFG.ev];
     const seats=CFG.seats.slice(0,CFG.n).map(s=>({...clean(s),team:ev.coop?'A':ev.teams?s.team:undefined}));
@@ -225,6 +243,7 @@ async function openSetup(fresh){
     startEvent({road,ev:CFG.ev,loc:CFG.loc,seats,opts:{...CFG.opts,...(spMe&&!(CFG.opts.spect==='auto'||CFG.opts.spect>0)?{spect:'auto'}:{})},chPvp:CFG.chPvp,seed:CFG.seed||undefined,spectHuman:!!CFG.spectHuman&&!seats.some(s=>!s.cpu)});
   });
 }
+/* showRules — the Rules & strategy window with its tabs (rules at a glance, what's new, version history, guides, lessons). */
 function showRules(tab='build'){
   const buildHTML=`<div class="rules">
   <div class="rsplit"><div><h4>📜 From the original Magnus Edition of Flavius Rule</h4><p class="rc-sub" style="margin:0 0 6px"><b>One word, one meaning:</b> the <b>editor</b> is the one who gives (pays for) the games — the rulebook's term. Flavius is the empire's great editor; win in a city and its own editor takes the box. A house's financial <b>backer</b> is money behind a ludus, not the games' host.</p><p class="rc-sub" style="margin:0 0 6px">Played as printed — page references are to the Magnus Edition rulebook. The same game is on the table as the <b>print &amp; play</b> edition and as the <b>Tabletop Simulator mod</b>.</p><div class="rtiles"><div class="rtile"><span class="rti">🏟</span><div><b>The arena</b><span>Board from p.9: 12 pillars, 4 tunnels, the chest, spikes and 6 base beasts with their zones.</span></div></div><div class="rtile"><span class="rti">⚔</span><div><b>Turns & combat</b><span>Phases, movement, pushing & toppling, tunnels, focus rolls, throws, looting, trading and truces. PvP 2 hit dice, PvE 4, NPCs 2; shields absorb by choice.</span></div></div><div class="rtile"><span class="rti">🛡</span><div><b>Armor & weapons</b><span>Every armor piece (to 7 AP) and all 40 weapon cards, the market, and the level 4 treasures.</span></div></div><div class="rtile"><span class="rti">🐾</span><div><b>Beasts</b><span>Base and spawned NPCs with Initial / Raged / Fazed states, Commodus, Tholo, the lions, Zora, taming and lures.</span></div></div><div class="rtile"><span class="rti">🏺</span><div><b>Blessings</b><span>One face-down bag: 12 pots, one per pillar; spawned offerings come from the same bag.</span></div></div><div class="rtile"><span class="rti">⚖</span><div><b>Summa rudis & Fates</b><span>Per-round PvE/PvP/CF/ability flags, rewards, the zone, and your Fate from final CF.</span></div></div><div class="rtile"><span class="rti">🗺</span><div><b>Locations</b><span>The 12-city map, d6/d12 rolls and class modifiers.</span></div></div><div class="rtile"><span class="rti">🎪</span><div><b>Special events</b><span>Chariot racing, Naumachia, festivals, Carmina Fescennina, missios, events for 5–8 gladiators.</span></div></div><div class="rtile"><span class="rti">👥</span><div><b>Spectators</b><span>8 sections, section cheers, stones, offerings and the Tholo chant (p.34-35).</span></div></div><div class="rtile"><span class="rti">🂠</span><div><b>Every card</b><span>The 70-card arena deck, round-2 cards, Mandata Flavi, Carmina, class and event cards, the Fates.</span></div></div><div class="rtile"><span class="rti">🏛</span><div><b>Infamis & Hall</b><span>The monthly high-score table and the Hall of Flavius.</span></div></div></div></div>
@@ -295,15 +314,16 @@ function showRules(tab='build'){
     <div id="rulTab-build" ${tab==='build'?'':'hidden'}>${buildHTML}</div><div id="rulTab-new" ${tab==='new'?'':'hidden'}>${typeof whatsNewHTML==='function'?whatsNewHTML():newHTML}</div><div id="rulTab-hist" ${tab==='hist'?'':'hidden'}>${typeof historyHTML==='function'?historyHTML():histHTML}</div><div id="rulTab-guide" ${tab==='guide'?'':'hidden'}>${typeof playGuideHTML==='function'?playGuideHTML():''}</div><div id="rulTab-mguide" ${tab==='mguide'?'':'hidden'}>${typeof mgrGuideHTML==='function'?mgrGuideHTML():''}</div><div id="rulTab-learn" ${tab==='learn'?'':'hidden'}>${typeof lessonsHTML==='function'?lessonsHTML():''}</div>`;
   return modal('Rules & strategy',body,[{label:'Close',value:'x'}],{wide:1,full:1,onOpen:()=>{const mb=$('#mBody');mb.addEventListener('click',e=>{const t=e.target.closest('[data-rul]');if(!t)return;mb.querySelectorAll('[data-rul]').forEach(b=>b.classList.toggle('on',b===t));['build','new','hist','guide','mguide','learn'].forEach(k=>{const el=$('#rulTab-'+k);if(el)el.hidden=t.dataset.rul!==k})});mb.addEventListener('click',e=>{const l=e.target.closest('[data-lesson]');if(!l)return;const c=CUR_MODAL;if(c)c.done('x');setTimeout(()=>{if(l.dataset.lesson==='manager')startManagerTutorial();else startTutorial()},120)})}});
 }
+/* the top-bar Rules button. */
 $('#btnRules').onclick=()=>{if(modalBusy())return;showRules()};
 /* v0.45: walking away from a live event is always a conscious choice — New event and the 🏛 menu both ask.
    From the menu you may also save the match to a slot (when it is your move) and come back to it later. */
 async function abandonAsk(ctx){
-  const summoned=S.players.filter(p=>p.saved&&p.alive&&!p.retired);
+  const summoned=S.players.filter(player=>player.saved&&player.alive&&!player.retired);
   const bets=(S.bets||[]).reduce((a,b)=>a+b.stake,0);
   const canSave=ctx==='menu'&&typeof matchSaveOK==='function'&&matchSaveOK();
   const v=await modal(ctx==='menu'?'Leave the arena?':'Abandon this event?',`<p>${ctx==='menu'?'An event is still on the sand. Before the main menu, decide what happens to it:':'The event on the sand has not resolved. Walking away now has consequences:'}</p><ul style="margin:6px 0 8px 18px;display:grid;gap:4px">
-      ${summoned.length?`<li><b>${summoned.map(p=>esc(p.name)).join(', ')}</b> ${summoned.length>1?'were':'was'} summoned from the Ludus. Deserting the arena is death in the crowd's eyes: ${summoned.length>1?'their records':'the record'} will be <b>struck from the rolls for good</b>.</li>`:''}
+      ${summoned.length?`<li><b>${summoned.map(player=>esc(player.name)).join(', ')}</b> ${summoned.length>1?'were':'was'} summoned from the Ludus. Deserting the arena is death in the crowd's eyes: ${summoned.length>1?'their records':'the record'} will be <b>struck from the rolls for good</b>.</li>`:''}
       ${bets?`<li>Your open wagers — <b>${bets} coin</b> staked — are forfeit to the bookmaker.</li>`:''}
       <li>Abandoning awards no Fates; nothing reaches the Ludus, the Infamis or the records.</li>
       ${ctx==='menu'?`<li>${canSave?'<b>💾 Save &amp; leave</b> keeps the match exactly as it stands — every token, wound and coin — in a save slot you can load from <b>Load game</b>.':'<i>Saving the match is possible on your own move (action phase, nothing waiting).</i>'}</li>`:''}</ul>`,
@@ -314,7 +334,9 @@ async function abandonAsk(ctx){
   if(summoned.length)log(`${summoned.map(nm).join(', ')} deserted the arena: struck from the Ludus rolls.`,'bad');
   if(bets)log(`The bookmaker pockets your ${bets} coin in abandoned wagers with a smile.`,'bad');
   return 'abandon'}
+/* eventLive — true while an event is on the sand (started and not over). */
 function eventLive(){return !!(S&&!S.over&&S.phase!=='setup')}
+/* New event: asks before abandoning a live event, stops it, then opens the New event window. */
 $('#btnNew').onclick=async()=>{if(modalBusy())return;
   if(S&&!S.over&&S.phase!=='setup'&&S.turnNo>0){
     if(await abandonAsk('new')!=='abandon')return;
@@ -323,6 +345,7 @@ $('#btnNew').onclick=async()=>{if(modalBusy())return;
   if(S){S.over=true;for(let i=0;i<60&&S.busy;i++)await new Promise(r=>setTimeout(r,100))}
   try{if(typeof cleanFinishNow==='function')cleanFinishNow()}catch(e){} // v0.33: opening the new-event screen jumps the post-show straight to its reset
   openSetup(true);setTimeout(()=>{if(typeof transitUncover==='function')transitUncover()},260)};
+/* the speed buttons: set SPEED and light the chosen one. */
 document.querySelectorAll('[data-speed]').forEach(b=>b.onclick=()=>{SPEED=b.dataset.speed;document.querySelectorAll('[data-speed]').forEach(x=>x.classList.toggle('on',x===b));renderTurnInd()});
 
 /* ================= v0.33-34 THE MAIN MENU =================
@@ -331,10 +354,12 @@ document.querySelectorAll('[data-speed]').forEach(b=>b.onclick=()=>{SPEED=b.data
    Settings open OVER the menu; the big modes open FULL-SCREEN and close back to the menu — unless
    they launched you into a live event, in which case the arena has you. */
 const MM={raf:0,t0:0,fromMenu:false,launchedAt:0};
+/* menuShow — shows the main menu and replays its group-photo show from the start. */
 function menuShow(){const m=$('#mainMenu');if(!m)return;m.hidden=false;MM.fromMenu=false;try{lessonsMenuVis()}catch(e){}
   MM.t0=performance.now();MM.spl=0;MM.plan=mmPlan();if(MM.raf){cancelAnimationFrame(MM.raf);MM.raf=0}MM.raf=requestAnimationFrame(mmLoop); // v0.35: the photo plays ONCE per visit, then holds still
   try{if(typeof audTick==='function')audTick()}catch(e){} // Roma's theme plays at the door (Settings → Audio → Music between events)
 }
+/* menuHide — hides the main menu and stops its animation. */
 function menuHide(){const m=$('#mainMenu');if(m)m.hidden=true;if(MM.raf){cancelAnimationFrame(MM.raf);MM.raf=0}}
 /* v0.35: a mode launched from the menu brings you back to the menu only when its LAST window has closed
    and nothing else claimed the screen — no event started since, no city square open. */
@@ -352,8 +377,10 @@ async function playNowMenu(){if(modalBusy())return;const any=MSAVE_SLOTS.some(k=
   const v=await modal('⚔️ Play now','<p class="rc-sub" style="margin:0">Set up a new event, or pick up a saved match where you left it.</p>',[{label:'⚔️ New event',sub:'choose the arena, the event and the gladiators',value:'new',primary:1},{label:'📂 Load game',sub:any?'continue a saved Play now match':'no saved matches yet',value:'load',disabled:!any},{label:'🗂 Manage saves',sub:'rename, download or delete your match saves',value:'manage'},{label:'Back',value:null}],{close:null,wide:false});
   if(v==='new'){mmLaunch(()=>openSetup(true),'Play now');return}
   if(v==='load'||v==='manage')matchSavesWindow(v)}
+/* matchSavesWindow — the Play now saves window (load or manage); Back returns to the Play now menu. */
 async function matchSavesWindow(mode){const v=await modal(mode==='load'?'📂 Load a Play now match':'🗂 Play now saves',`<div id="msWin" data-mode="${mode}">${matchSavesHTML(mode)}</div>`,[{label:'Back',value:'back'}],{wide:true,close:'back'});
   if(v==='back')playNowMenu()}
+/* managerMenu — Manager mode's door: straight in when there is no career, else Continue / Load / Manage / New career. */
 async function managerMenu(){if(modalBusy())return;let L=[];try{L=(await Store.list('mgrCareers')).filter(c=>!c.dead).sort((a,b)=>String(b.updated).localeCompare(String(a.updated)))}catch(e){}
   if(!L.length){mmLaunch(()=>openManager(),'Manager mode');return}
   const last=L[0];
@@ -361,6 +388,7 @@ async function managerMenu(){if(modalBusy())return;let L=[];try{L=(await Store.l
   if(!v)return;
   if(v==='cont'){MGR.pendingLoad=last.id;mmLaunch(()=>openManager(),'Manager mode');return}
   MGR.view=v==='load'?'load':v==='manage'?'manage':null;MGR.world=null;mmLaunch(()=>openManager(),'Manager mode')}
+/* mmAfterClose — when a window opened from the menu closes, brings the menu back — unless another window, a city square or a new event took the screen. */
 function mmAfterClose(){
   if(!MM.fromMenu)return;
   if(Date.now()-(MM.launchedAt||0)<600)return; // a window closed in the launch's own wake — not the user leaving
@@ -368,6 +396,7 @@ function mmAfterClose(){
   if(typeof CITY!=='undefined'&&CITY.open){transitUncover();return}
   if(S&&!S.over&&(S.startedAt||0)>=MM.launchedAt){MM.fromMenu=false;transitUncover();return} // an event began: the arena has you now
   menuShow();setTimeout(transitUncover,60)}
+/* main menu buttons (Rules, Settings, lessons, Play now, Manager, Studio, Annals) and the top bar 🏛 button. */
 {const mm=$('#mainMenu');if(mm)mm.addEventListener('click',e=>{
   const b=e.target.closest('[data-mm]');if(!b)return;const a=b.dataset.mm;
   if(a==='rules'){if(!modalBusy())showRules();return}        // full screen, over the menu
@@ -441,6 +470,7 @@ function mmLoop(){
   mmOverlay(c2,t,W9,H9);
   if(t<MM.plan.tEnd)MM.raf=requestAnimationFrame(mmLoop); // frozen once the show is over, until the menu is reopened
 }
+/* mmFig — draws one standee (class or beast token) with its shadow on the menu canvas, at base point x,y and height h. */
 function mmFig(c2,cls,x,y,h,rot,alpha,npc){
   const im=typeof tokenImg==='function'&&typeof tokenForCls==='function'?tokenImg(npc?tokenForNPC({t:cls}):tokenForCls(cls)):null;
   c2.save();c2.globalAlpha=alpha;
@@ -454,6 +484,7 @@ function mmFig(c2,cls,x,y,h,rot,alpha,npc){
    another snake slithers through to the back row, and Tholo reaches out of the shadows. With the sand
    empty, Commodus strides in and raises his sword while the stands shower laurels and flowers at his feet.
    Now and then (about one visit in three) a gladiator comes back, and they fight in a cloud of dust. */
+/* mmPlan — rolls this visit's show (Math.random — cosmetic): which figure each beast takes and when, the 30 thrown laurels/flowers, and whether the duel happens. TWEAK: the hunt t0 times, the 0.35 duel chance, tEnd 27/34 s. */
 function mmPlan(){const R=Math.random;const sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
   const back=sh([0,1,2,3]),front=sh([4,5,6]);
   const hunts=[{k:'zora',how:'eagle',v:back[0],t0:11.0},{k:'bear',how:'bear',v:back[1],t0:12.3},{k:'wolf',how:'front',v:front[0],t0:13.6,side:-1},{k:'wolf',how:'front',v:front[1],t0:14.4,side:1},
@@ -461,15 +492,16 @@ function mmPlan(){const R=Math.random;const sh=a=>{a=[...a];for(let i=a.length-1
   const tosses=Array.from({length:30},(_,i)=>({t0:22.4+i*0.13+R()*0.2,sx:R()<.5?-30-R()*80:1270+R()*80,sy:30+R()*120,dx:(R()-.5)*170,dy:(R()-.2)*16,kind:R()<.5?'laurel':'flower',col:['#e04a6a','#f2d04a','#f0f0e8','#b04ac8','#e8803a'][Math.floor(R()*5)],rot:R()*6}));
   const duel=R()<0.35;const land=Math.max(...tosses.map(q=>q.t0))+1.3; // v0.43: the scene ends only after the last laurel has landed
   return {hunts,tosses,duel,rival:Math.floor(R()*7),tEnd:Math.max(duel?34:27,land)}}
-function mmShow2(c2,t,figs,spots,W9,H9){
-  const P=MM.plan;const ease=x=>x<0?0:x>1?1:x*x*(3-2*x);const out=[];if(t<10.8)return out;
+/* mmShow2 — the second act of the menu show: the beasts carry off the gladiators, then Commodus enters (and maybe a last duel). Returns extra figures to draw. TWEAK: the hunt start times live in mmPlan. */
+function mmShow2(c2,time,figs,spots,W9,H9){
+  const P=MM.plan;const ease=x=>x<0?0:x>1?1:x*x*(3-2*x);const out=[];if(time<10.8)return out;
   const byI=i=>figs.find(f=>f.i===i);
-  for(const H of P.hunts){const f=byI(H.v);if(!f)continue;if(t<H.t0){continue}
-    const a=ease((t-H.t0)/1.1),d=ease((t-H.t0-1.2)/1.7);const bh=f.h*(H.low?0.8:H.k==='bear'?1.4:H.k==='lion'?1.15:H.k==='tholo'?1.25:1.0);
+  for(const H of P.hunts){const f=byI(H.v);if(!f)continue;if(time<H.t0){continue}
+    const a=ease((time-H.t0)/1.1),d=ease((time-H.t0-1.2)/1.7);const bh=f.h*(H.low?0.8:H.k==='bear'?1.4:H.k==='lion'?1.15:H.k==='tholo'?1.25:1.0);
     let bx,by,ba=1,brot=0;
     if(H.how==='eagle'){const fy0=f.y;const tx=f.x,ty=fy0-f.h*0.98;bx=f.x+300+(tx-f.x-300)*a;by=-120+(ty+120)*a;
-      if(d>0){bx+=-380*d;by+=-(ty+f.h*0.1+60)*d;f.x=bx+4;f.y=by+f.h*0.98;f.rot=0.25*Math.sin(t*4)*d}
-      const ex=bx,ey=by,es=f.h*0.5;out.push({x:ex,y:fy0+1,h:0,alpha:1,draw:()=>mmEagle(c2,ex,ey,es,t)});
+      if(d>0){bx+=-380*d;by+=-(ty+f.h*0.1+60)*d;f.x=bx+4;f.y=by+f.h*0.98;f.rot=0.25*Math.sin(time*4)*d}
+      const ex=bx,ey=by,es=f.h*0.5;out.push({x:ex,y:fy0+1,h:0,alpha:1,draw:()=>mmEagle(c2,ex,ey,es,time)});
       if(d>=1)f.alpha=0;else f.captured=1;continue}
     else if(H.how==='bear'){const tx=f.x+34,ty=f.y-18;bx=tx;by=H9*0.3+(ty-H9*0.3)*a;ba=a;
       if(d>0){by-=H9*0.34*d;f.y-=H9*0.34*d;f.x+=12*d;f.rot=-0.5*d;f.alpha=1-d;ba=1-d}}
@@ -483,45 +515,47 @@ function mmShow2(c2,t,figs,spots,W9,H9){
     if(d>0){const sp=spots[H.v];c2.save();c2.globalAlpha=0.35;c2.fillStyle='#6d130b';c2.beginPath();c2.ellipse(sp.x,sp.y+4,16,5,0,0,Math.PI*2);c2.fill();c2.restore()}
     out.push({k9:H.k,npc:1,x:bx,y:H.how==='eagle'?by+f.h*0.5:by,h:bh,rot:brot,alpha:ba,draw:()=>mmFig(c2,H.k,bx,by,bh,brot,ba,1)})}
   // Tholo's darkness
-  const th=P.hunts.find(h=>h.how==='shadow');if(th&&t>th.t0-0.6&&t<th.t0+3.6){const f=spots[th.v];const k=Math.min(1,(t-th.t0+0.6)/0.8)*(t>th.t0+2.6?Math.max(0,1-(t-th.t0-2.6)):1);
+  const th=P.hunts.find(h=>h.how==='shadow');if(th&&time>th.t0-0.6&&time<th.t0+3.6){const f=spots[th.v];const k=Math.min(1,(time-th.t0+0.6)/0.8)*(time>th.t0+2.6?Math.max(0,1-(time-th.t0-2.6)):1);
     const g=c2.createRadialGradient(f.x-50,f.y-f.h*0.4,10,f.x-50,f.y-f.h*0.4,f.h*1.1);g.addColorStop(0,`rgba(5,3,8,${0.75*k})`);g.addColorStop(1,'rgba(5,3,8,0)');c2.fillStyle=g;c2.fillRect(0,0,W9,H9)}
   // Commodus
-  if(t>=20.2){const cx=W9/2,cy=H9*0.86,ch=H9*0.7;const w=ease((t-20.2)/2);const x=cx,y=H9*0.5+(cy-H9*0.5)*w,h=ch*(0.7+0.3*w);
-    const duelT=P.duel?t-27:-1;const dead=P.duel&&duelT>=3.2;
-    if(!dead){const bob=w<1?Math.abs(Math.sin(t*9))*4:0;
-      out.push({x,y:y-bob,h,alpha:1,draw:()=>{const r=ease((t-22.1)/0.5);const up=r>=0.5&&!(P.duel&&duelT>0);
+  if(time>=20.2){const cx=W9/2,cy=H9*0.86,ch=H9*0.7;const w=ease((time-20.2)/2);const x=cx,y=H9*0.5+(cy-H9*0.5)*w,h=ch*(0.7+0.3*w);
+    const duelT=P.duel?time-27:-1;const dead=P.duel&&duelT>=3.2;
+    if(!dead){const bob=w<1?Math.abs(Math.sin(time*9))*4:0;
+      out.push({x,y:y-bob,h,alpha:1,draw:()=>{const r=ease((time-22.1)/0.5);const up=r>=0.5&&!(P.duel&&duelT>0);
         const im=tokenImg(up?{...tokenForNPC({t:'commodus'}),raise:1}:tokenForNPC({t:'commodus'}));const yb=y-bob;
         c2.save();c2.fillStyle='rgba(0,0,0,.3)';c2.beginPath();c2.ellipse(x,yb,h*0.2,h*0.07,0,0,Math.PI*2);c2.fill();if(im){const w=h*100/170;c2.drawImage(im,x-w/2,yb-h*(157/170),w,h)}c2.restore();
-        if(up&&r>=1){const w=h*100/170;const tx=x+(83-50)/100*w,ty=yb-h*(157/170)+(24/170)*h;const gl=(Math.sin(t*3)+1)/2;const fade=Math.max(0,Math.min(1,(24.1-t)/0.5)); /* v0.54: the gleam appears at 22.6s and is gone 1.5s later (fading over the last 0.5s) */ if(fade<=0)return;
-          c2.save();c2.globalAlpha=(0.5+0.5*gl)*fade;c2.fillStyle='#fff6c8';c2.translate(tx,ty);c2.rotate(t);c2.beginPath();for(let k=0;k<8;k++){const rr=k%2?3:12;c2.lineTo(Math.cos(k*Math.PI/4)*rr,Math.sin(k*Math.PI/4)*rr)}c2.fill();c2.restore()}}})}
+        if(up&&r>=1){const w=h*100/170;const tx=x+(83-50)/100*w,ty=yb-h*(157/170)+(24/170)*h;const gl=(Math.sin(time*3)+1)/2;const fade=Math.max(0,Math.min(1,(24.1-time)/0.5)); /* v0.54: the gleam appears at 22.6s and is gone 1.5s later (fading over the last 0.5s) */ if(fade<=0)return;
+          c2.save();c2.globalAlpha=(0.5+0.5*gl)*fade;c2.fillStyle='#fff6c8';c2.translate(tx,ty);c2.rotate(time);c2.beginPath();for(let k=0;k<8;k++){const rr=k%2?3:12;c2.lineTo(Math.cos(k*Math.PI/4)*rr,Math.sin(k*Math.PI/4)*rr)}c2.fill();c2.restore()}}})}
     else{const k=ease((duelT-3.2)/0.6);// his corpse, and the kneeling victor
       out.push({x,y:y-1,h,alpha:1,draw:()=>{c2.save();c2.globalAlpha=0.6;c2.fillStyle='#6d130b';c2.beginPath();c2.ellipse(x+h*0.3,y+2,h*0.42,h*0.07,0,0,Math.PI*2);c2.fill();c2.restore();mmFig(c2,'commodus',x-h*0.25,y,h,Math.PI/2*0.97,1,1)}})}
     // the challenger
     if(P.duel&&duelT>0){const pool=figs.filter(f=>f.k9!=='damnatio');const rv=pool[P.rival%pool.length];const rk=rv?rv.k9:'soldier';
       const wi=ease(duelT/1.2);const gx=-120+(x-110+120)*wi,gy=y+4;
-      if(!dead)out.push({x:gx,y:gy,h:h*0.93,alpha:1,draw:()=>mmFig(c2,rk,gx+(duelT>1.2&&duelT<3.2?Math.sin(t*23)*6:0),gy,h*0.93,duelT>1.2&&duelT<3.2?Math.sin(t*17)*0.12:0,1)});
+      if(!dead)out.push({x:gx,y:gy,h:h*0.93,alpha:1,draw:()=>mmFig(c2,rk,gx+(duelT>1.2&&duelT<3.2?Math.sin(time*23)*6:0),gy,h*0.93,duelT>1.2&&duelT<3.2?Math.sin(time*17)*0.12:0,1)});
       else out.push({x:x-h*0.9,y:y+2,h:h*0.8,alpha:1,draw:()=>mmFig(c2,rk,x-h*0.95,y+6,h*0.78,0.18,1)})}}
   return out}
-function mmEagle(c2,x,y,s,t){const fl=Math.sin(t*14);c2.save();c2.translate(x,y);
+/* mmEagle — draws the eagle (wings flapping with time) at x,y, scaled by size. */
+function mmEagle(c2,x,y,size,time){const fl=Math.sin(time*14);c2.save();c2.translate(x,y);
   c2.fillStyle='#6a4520';c2.strokeStyle='#3a240f';c2.lineWidth=1;
-  for(const sd of [-1,1]){c2.beginPath();c2.moveTo(sd*s*0.08,-s*0.05);c2.quadraticCurveTo(sd*s*0.5,-s*(0.35+0.3*fl),sd*s*0.95,-s*(0.1+0.45*fl));c2.lineTo(sd*s*0.7,s*0.02);c2.lineTo(sd*s*0.5,-s*0.02);c2.lineTo(sd*s*0.3,s*0.06);c2.closePath();c2.fill();c2.stroke()}
-  c2.fillStyle='#5a3a1a';c2.beginPath();c2.ellipse(0,0,s*0.13,s*0.24,0,0,Math.PI*2);c2.fill();
-  c2.fillStyle='#7a5128';c2.beginPath();c2.moveTo(-s*0.1,s*0.18);c2.lineTo(s*0.1,s*0.18);c2.lineTo(0,s*0.36);c2.closePath();c2.fill();
-  c2.fillStyle='#f3efe4';c2.beginPath();c2.arc(0,-s*0.26,s*0.1,0,Math.PI*2);c2.fill();
-  c2.fillStyle='#e0b020';c2.beginPath();c2.moveTo(s*0.06,-s*0.27);c2.lineTo(s*0.17,-s*0.23);c2.lineTo(s*0.06,-s*0.2);c2.closePath();c2.fill();
-  c2.fillStyle='#d9a826';for(const sd of [-1,1]){c2.fillRect(sd*s*0.07-1.5,s*0.18,3,s*0.12)}
+  for(const sd of [-1,1]){c2.beginPath();c2.moveTo(sd*size*0.08,-size*0.05);c2.quadraticCurveTo(sd*size*0.5,-size*(0.35+0.3*fl),sd*size*0.95,-size*(0.1+0.45*fl));c2.lineTo(sd*size*0.7,size*0.02);c2.lineTo(sd*size*0.5,-size*0.02);c2.lineTo(sd*size*0.3,size*0.06);c2.closePath();c2.fill();c2.stroke()}
+  c2.fillStyle='#5a3a1a';c2.beginPath();c2.ellipse(0,0,size*0.13,size*0.24,0,0,Math.PI*2);c2.fill();
+  c2.fillStyle='#7a5128';c2.beginPath();c2.moveTo(-size*0.1,size*0.18);c2.lineTo(size*0.1,size*0.18);c2.lineTo(0,size*0.36);c2.closePath();c2.fill();
+  c2.fillStyle='#f3efe4';c2.beginPath();c2.arc(0,-size*0.26,size*0.1,0,Math.PI*2);c2.fill();
+  c2.fillStyle='#e0b020';c2.beginPath();c2.moveTo(size*0.06,-size*0.27);c2.lineTo(size*0.17,-size*0.23);c2.lineTo(size*0.06,-size*0.2);c2.closePath();c2.fill();
+  c2.fillStyle='#d9a826';for(const sd of [-1,1]){c2.fillRect(sd*size*0.07-1.5,size*0.18,3,size*0.12)}
   c2.restore()}
-function mmOverlay(c2,t,W9,H9){const P=MM.plan;if(!P||t<22)return;const cx=W9/2,cy=H9*0.86;const ease=x=>x<0?0:x>1?1:x*x*(3-2*x);
+/* mmOverlay — laurels and flowers thrown at Commodus, and the dust cloud of the duel, drawn over the figures. */
+function mmOverlay(c2,time,W9,H9){const P=MM.plan;if(!P||time<22)return;const cx=W9/2,cy=H9*0.86;const ease=x=>x<0?0:x>1?1:x*x*(3-2*x);
   // laurels and flowers from the stands, arcing down to the emperor's feet
-  for(const q of P.tosses){if(t<q.t0)continue;const k=Math.min(1,(t-q.t0)/1.1);const ex=cx+q.dx,ey=cy+q.dy;
-    const x=q.sx+(ex-q.sx)*k,y=q.sy+(ey-q.sy)*k-Math.sin(k*Math.PI)*90;c2.save();c2.translate(x,y);c2.rotate(q.rot+(k<1?t*5:0));
+  for(const q of P.tosses){if(time<q.t0)continue;const k=Math.min(1,(time-q.t0)/1.1);const ex=cx+q.dx,ey=cy+q.dy;
+    const x=q.sx+(ex-q.sx)*k,y=q.sy+(ey-q.sy)*k-Math.sin(k*Math.PI)*90;c2.save();c2.translate(x,y);c2.rotate(q.rot+(k<1?time*5:0));
     if(q.kind==='laurel'){c2.fillStyle='#4f8a3a';for(let i=0;i<4;i++){c2.beginPath();c2.ellipse(i*5-8,(i%2?3:-3),5,2.2,(i%2?0.5:-0.5),0,Math.PI*2);c2.fill()}}
     else{c2.fillStyle=q.col;for(let i=0;i<5;i++){c2.beginPath();c2.ellipse(Math.cos(i*1.256)*3.4,Math.sin(i*1.256)*3.4,2.8,2.8,0,0,Math.PI*2);c2.fill()}c2.fillStyle='#f5d65a';c2.beginPath();c2.arc(0,0,1.8,0,Math.PI*2);c2.fill()}
     c2.restore()}
   // the dust cloud of the duel
-  if(P.duel){const dt=t-27;if(dt>1.1&&dt<4){const k=dt<1.6?ease((dt-1.1)/0.5):dt>3.3?1-ease((dt-3.3)/0.7):1;const bx=cx-60,by=cy-H9*0.28;
-    for(let i=0;i<26;i++){const a=i*2.39+t*(i%2?1.3:-1.1);const r=40+((i*37)%70)+Math.sin(t*4+i)*8;c2.save();c2.globalAlpha=0.55*k;c2.fillStyle=i%3?'#b89a6c':'#9c7f55';c2.beginPath();c2.arc(bx+Math.cos(a)*r*1.3,by+Math.sin(a)*r*0.6+40,26+(i%4)*8,0,Math.PI*2);c2.fill();c2.restore()}
-    if(dt>1.3&&dt<3.3&&Math.sin(t*11)>0.6){c2.save();c2.fillStyle='#fff3c0';c2.globalAlpha=0.8;c2.beginPath();c2.arc(bx+Math.sin(t*7)*50,by+Math.cos(t*5)*20,4,0,Math.PI*2);c2.fill();c2.restore()}}}}
+  if(P.duel){const dt=time-27;if(dt>1.1&&dt<4){const k=dt<1.6?ease((dt-1.1)/0.5):dt>3.3?1-ease((dt-3.3)/0.7):1;const bx=cx-60,by=cy-H9*0.28;
+    for(let i=0;i<26;i++){const a=i*2.39+time*(i%2?1.3:-1.1);const r=40+((i*37)%70)+Math.sin(time*4+i)*8;c2.save();c2.globalAlpha=0.55*k;c2.fillStyle=i%3?'#b89a6c':'#9c7f55';c2.beginPath();c2.arc(bx+Math.cos(a)*r*1.3,by+Math.sin(a)*r*0.6+40,26+(i%4)*8,0,Math.PI*2);c2.fill();c2.restore()}
+    if(dt>1.3&&dt<3.3&&Math.sin(time*11)>0.6){c2.save();c2.fillStyle='#fff3c0';c2.globalAlpha=0.8;c2.beginPath();c2.arc(bx+Math.sin(time*7)*50,by+Math.cos(time*5)*20,4,0,Math.PI*2);c2.fill();c2.restore()}}}}
 
 // board preview behind the setup dialog (or behind the main menu)
 newState({ev:'democritus',loc:6,seats:CFG.seats.slice(0,4),opts:CFG.opts});

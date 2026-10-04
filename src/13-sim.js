@@ -12,7 +12,9 @@
    The real engine plays whole events with no drawing and no waiting. Used for Ludus scouting reports,
    Manager match nights ("simulate instantly") and bookmaker lines. */
 let SIM_BUSY=false;
+/* liveEventRunning — true while a real (not simulated) event is on the sand. */
 function liveEventRunning(){return !!(S&&!S.over&&S.phase!=='setup'&&!S.sim)}
+/* simEvent — plays one event off-screen to its end and resolves with S.lastResult; the live game (S, uid, RNG, HEADLESS…) is saved and restored around it. TWEAK: maxTurns 700, timeoutMs 20000. */
 async function simEvent(cfg,{maxTurns=700,timeoutMs=20000}={}){
   // v0.26: let the last simulated event's async tail unwind before this one takes the dice (back-to-back sims stay exactly replayable)
   for(let i=0;i<3;i++)await new Promise(r=>setTimeout(r,0));

@@ -14,7 +14,9 @@
    • imperiumHTML(): the hub — a map with toggleable layers (fans streaming in, weather, world
      events), an empire pulse, the focused arena's day, and the old Stands panels below.
    ===================================================================== */
-const hashStr=s=>{let h=2166136261;for(const ch of String(s))h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0;return h};
+/* hashStr — FNV-1a hash of a string (32-bit) — seeds the world's own PRNGs, never the dice. */
+const hashStr=text=>{let h=2166136261;for(const ch of String(text))h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0;return h};
+/* worldKey — the key the empire is generated from: the Manager league week during a Manager bout, else the empire calendar week. */
 function worldKey(){
   const w=typeof mgrWorldAny==='function'?mgrWorldAny():null;
   if(S&&S.mgrCtx&&w)return `m:${w.id}:${w.season}:${w.week}`;
@@ -22,6 +24,7 @@ function worldKey(){
   if(typeof calNow==='function'){const c=calNow();return `e:${c.season}:${c.week}`}
   return 'e:1:1';
 }
+/* WORLD_TYPES — world event types: icon, color and [headline, attendance change, mood change] stories. TWEAK: the effects. */
 const WORLD_TYPES={
   politics:{i:'🏛️',c:'#c9a0dc',ev:[['Senate feud spills into the streets',-.05,-8],['An election year: candidates buy the games',.25,8],['A new governor wants to be loved',.18,6],['Proscription lists posted in the forum',-.2,-12]]},
   military:{i:'⚔️',c:'#d24a3a',ev:[['The legions march north',-.18,-4],['Veterans return from the frontier',.15,10],['Barbarian raid on the border towns',-.25,-10],['A triumph through the city gates',.3,14]]},
@@ -32,28 +35,35 @@ const WORLD_TYPES={
   trade:{i:'⛵',c:'#5fc7c0',ev:[['Spice caravans reach the city',.1,6],['Pirates close the sea lanes',-.12,-6],['A new road opens to the provinces',.12,5]]},
 };
 WORLD_TYPES.volcano={i:'🌋',c:'#ff5a2a',ev:[['Vesuvius grumbles; ash on the wind',-.3,-10],['VESUVIUS ERUPTS',-.6,-22]]};
+/* WAR_TRIBES — enemies a war can bring. */
 const WAR_TRIBES=['the Marcomanni','the Quadi','Numidian raiders','the Garamantes','Ligurian hill clans','Illyrian pirates'];
+/* WAR_LEGIONS — Roman forces that hold the line. */
 const WAR_LEGIONS=['Legio II Augusta','Legio X Fretensis','Legio III Gallica','the city garrison','Legio VI Victrix'];
+/* WORLD_CACHE — world events cached by key. */
 const WORLD_CACHE={};
 /* v0.26 THE WORLD EVOLVES: stories are no longer re-rolled each week. Every week (a "tick" on the empire's
    calendar) a few new stories break; each lives 1-5 weeks, building to its peak severity and then easing.
    Everything is deterministic from the key's base + week index, so every screen and every career sees the same
    history without storing it. A war drifts along its front; a plague lingers; a feud blows over. */
+/* WORLD_LIFE — how many weeks each type of story lives [min, max]. TWEAK. */
 const WORLD_LIFE={politics:[1,3],military:[2,5],economy:[1,3],famine:[3,5],geo:[1,3],plague:[2,4],trade:[1,3]};
+/* worldTick — splits a world key into its base and absolute week index T. */
 function worldTick(key){const m=/^(.*):(\d+):(\d+)$/.exec(String(key));if(!m)return {base:String(key),T:0};
   const season=+m[2],wk=((+m[3]-1)%12)+1;return {base:m[1],T:(season-1)*12+wk}}
-function worldBorn(base,T){ // the stories that break in week T
-  const R=mulberry32(hashStr('born:'+base+':'+T));const r=()=>R.next();const pick=a=>a[Math.floor(r()*a.length)];
+/* worldBorn — the stories that break in week T (2–4, plus a 12% chance Vesuvius stirs), from a PRNG seeded by base + T. TWEAK: the 0.12. */
+function worldBorn(base,tick){ // the stories that break in week T
+  const R=mulberry32(hashStr('born:'+base+':'+tick));const r=()=>R.next();const pick=a=>a[Math.floor(r()*a.length)];
   const locs=LOCATIONS.map((L,i)=>[L,i]).filter(([L])=>L);const types=Object.keys(WORLD_TYPES).filter(t=>t!=='volcano');
   const n=2+Math.floor(r()*3);const out=[];
   for(let k=0;k<n;k++){const t=pick(types);const T2=WORLD_TYPES[t];const ev=pick(T2.ev);const [L,li]=pick(locs);
     const [lo,hi]=WORLD_LIFE[t]||[1,3];const dur=lo+Math.floor(r()*(hi-lo+1));const peak=1+Math.floor(r()*3);
-    const e={id:T+'.'+k,born:T,dur,peak,t,i:T2.i,c:T2.c,n:ev[0],att0:ev[1],mood0:ev[2],li,city:L.n,x:L.x,y:L.y};
+    const e={id:tick+'.'+k,born:tick,dur,peak,t,i:T2.i,c:T2.c,n:ev[0],att0:ev[1],mood0:ev[2],li,city:L.n,x:L.x,y:L.y};
     if(t==='military')e.war={foe:pick(WAR_TRIBES),rome:pick(WAR_LEGIONS),ang0:Math.floor(r()*628)/100,drift:(r()-.5)*.8};
     out.push(e)}
   if(r()<0.12){const li=LOCATIONS.findIndex(L2=>L2&&L2.n==='Pompeii');const L2=LOCATIONS[li];const big=r()<0.3;const ev=WORLD_TYPES.volcano.ev[big?1:0];
-    out.push({id:T+'.v',born:T,dur:big?3:2,peak:big?3:2,t:'volcano',i:'🌋',c:'#ff5a2a',n:ev[0],att0:ev[1],mood0:ev[2],li,city:L2.n,x:L2.x+0.024,y:L2.y+0.004,volc:1})}
+    out.push({id:tick+'.v',born:tick,dur:big?3:2,peak:big?3:2,t:'volcano',i:'🌋',c:'#ff5a2a',n:ev[0],att0:ev[1],mood0:ev[2],li,city:L2.n,x:L2.x+0.024,y:L2.y+0.004,volc:1})}
   return out}
+/* worldEvents — every story alive this week (born in the last 5 weeks), with its severity arc, attendance and mood effect and reach; wars drift along their front. */
 function worldEvents(key=worldKey()){
   if(WORLD_CACHE[key])return WORLD_CACHE[key];
   const {base,T}=worldTick(key);const out=[];
@@ -67,24 +77,29 @@ function worldEvents(key=worldKey()){
     out.push(e)}
   return (WORLD_CACHE[key]=out);
 }
-function worldImpact(li,key=worldKey()){
-  const L=LOCATIONS[li];if(!L)return {att:0,mood:0,list:[]};
+/* worldImpact — what this week's stories do to one arena: attendance (±0.6) and mood (±25), full strength in the host city, half within reach; severity-3 war/quake/plague/eruption closes the arena. */
+function worldImpact(locIdx,key=worldKey()){
+  const L=LOCATIONS[locIdx];if(!L)return {att:0,mood:0,list:[]};
   let att=0,mood=0;const list=[];
-  for(const e of worldEvents(key)){const d=Math.hypot(e.x-L.x,e.y-L.y);const k=e.li===li?1:d<e.reach?0.5:0;if(!k)continue;
+  for(const e of worldEvents(key)){const d=Math.hypot(e.x-L.x,e.y-L.y);const k=e.li===locIdx?1:d<e.reach?0.5:0;if(!k)continue;
     att+=e.att*k;mood+=e.mood*k;list.push({...e,k})}
-  const closed=list.find(e=>e.li===li&&e.sev>=3&&['military','geo','plague','volcano'].includes(e.t))||null;
+  const closed=list.find(e=>e.li===locIdx&&e.sev>=3&&['military','geo','plague','volcano'].includes(e.t))||null;
   return {att:clamp(att,-.6,.6),mood:clamp(Math.round(mood),-25,25),list,closed};
 }
+/* WX_DESC — weather descriptions for the map tooltips. */
 const WX_DESC={storm:'Thunderstorm — lightning and hard rain; crowds thin and augurs get busy.',rain:'Rain — wet sand and damp benches; the regulars still come.',heat:'Heatwave — scorching sun; the awnings (vela) go up and tempers run short.',fog:'Sea fog — a grey blanket off the water; the far stands can barely see the sand.',wind:'Hard wind — dust and snapping awnings; arrows and nets fly strangely.'};
+/* WEATHER_T — weather types: name and two colors. */
 const WEATHER_T={storm:{n:'Thunderstorm',c:'#e04a3a',c2:'#f0cf7d'},rain:{n:'Rain',c:'#3a7fd0',c2:'#6fd07a'},heat:{n:'Heatwave',c:'#f0843a',c2:'#f0cf7d'},fog:{n:'Sea fog',c:'#b8c0c8',c2:'#e8ecef'},wind:{n:'Hard wind',c:'#8fc3ea',c2:'#e8ecef'}};
 /* v0.26 SEASONAL WEATHER THAT MOVES: each week of the calendar is a month of the Roman year. Fronts form with the
    season's weather (summer heat, autumn storms, winter fog and wind, spring rain), live 2-3 weeks and drift east
    on the prevailing wind, so next week's sky is this week's sky, moved on. */
 const WX_SEASON=[ // Jan..Dec: weights for storm, rain, heat, fog, wind
   [3,3,0,4,4],[3,4,0,3,4],[2,5,0,2,3],[2,5,1,1,2],[1,3,3,1,1],[1,1,6,0,1],[2,0,8,0,1],[2,0,7,0,1],[4,2,3,1,2],[5,4,0,2,3],[4,4,0,4,3],[3,3,0,5,4]];
-function wxBorn(base,T){const R=mulberry32(hashStr('wx:'+base+':'+T));const r=()=>R.next();const types=['storm','rain','heat','fog','wind'];
-  const W=WX_SEASON[((T-1)%12+12)%12];const tot=W.reduce((a,b)=>a+b,0);const pickT=()=>{let x=r()*tot;for(let i=0;i<5;i++)if((x-=W[i])<0)return types[i];return 'rain'};
-  return Array.from({length:2+Math.floor(r()*2)},()=>({t:pickT(),x:0.04+r()*0.7,y:0.08+r()*0.84,r:0.06+r()*0.09,vx:0.05+r()*0.09,vy:(r()-.5)*0.06,dur:2+Math.floor(r()*2),born:T}))}
+/* wxBorn — the weather fronts that form in week T, weighted by the month (WX_SEASON). */
+function wxBorn(base,tick){const R=mulberry32(hashStr('wx:'+base+':'+tick));const r=()=>R.next();const types=['storm','rain','heat','fog','wind'];
+  const W=WX_SEASON[((tick-1)%12+12)%12];const tot=W.reduce((a,b)=>a+b,0);const pickT=()=>{let x=r()*tot;for(let i=0;i<5;i++)if((x-=W[i])<0)return types[i];return 'rain'};
+  return Array.from({length:2+Math.floor(r()*2)},()=>({t:pickT(),x:0.04+r()*0.7,y:0.08+r()*0.84,r:0.06+r()*0.09,vx:0.05+r()*0.09,vy:(r()-.5)*0.06,dur:2+Math.floor(r()*2),born:tick}))}
+/* weatherCells — weather fronts alive this week, drifted east by their age; today's rain/heat omen sits over the live arena. */
 function weatherCells(key=worldKey()){
   const {base,T}=worldTick(key);const cells=[];
   for(let b=T-2;b<=T;b++)for(const c of wxBorn(base,b)){const age=T-c.born;if(age>=c.dur)continue;const x=c.x+c.vx*age,y=c.y+c.vy*age;
@@ -93,23 +108,30 @@ function weatherCells(key=worldKey()){
   if(S&&S.omen&&LOCATIONS[S.locIdx]&&(S.omen.k==='rain'||S.omen.k==='heat')){const L=LOCATIONS[S.locIdx];cells.push({t:S.omen.k,x:L.x,y:L.y,r:0.1,here:1})}
   return cells;
 }
-function weatherAt(li,key){const L=LOCATIONS[li];if(!L)return null;let best=null,bd=9;for(const c of weatherCells(key)){const d=Math.hypot(c.x-L.x,c.y-L.y);if(d<c.r*1.2&&d<bd){bd=d;best=c}}return best}
+/* weatherAt — the weather front over an arena this week, if any. */
+function weatherAt(locIdx,key){const L=LOCATIONS[locIdx];if(!L)return null;let best=null,bd=9;for(const c of weatherCells(key)){const d=Math.hypot(c.x-L.x,c.y-L.y);if(d<c.r*1.2&&d<bd){bd=d;best=c}}return best}
 
 /* ---------------- the Imperium window ---------------- */
+/* HUB — the Imperium window state: map layers, focused city, view. */
 const HUB={layers:{fans:1,weather:1,events:1,war:1},focus:null,view:'city'};
+/* hubFocus — the city the Imperium window focuses (the chosen one, the live event's, or New event's). */
 const hubFocus=()=>HUB.focus??(S&&S.locIdx!=null?S.locIdx:(typeof CFG!=='undefined'&&CFG.loc)||6);
-function gladColorByName(n){
-  const k=String(n||'').toLowerCase();
+/* gladColorByName — a gladiator's color by name (live seats, the Ludus, the league), gold when unknown. */
+function gladColorByName(name){
+  const k=String(name||'').toLowerCase();
   if(S&&S.players){const p=S.players.find(p=>p.name.toLowerCase()===k);if(p)return p.color}
   const L=(typeof LUDUS_CACHE!=='undefined'?LUDUS_CACHE:[]).find(g=>String(g.name).toLowerCase()===k);if(L&&CLASSES[L.cls])return CLASSES[L.cls].color;
   const w=typeof mgrWorldAny==='function'?mgrWorldAny():null;const g=w&&w.glads.find(g=>String(g.name).toLowerCase()===k);if(g&&CLASSES[g.cls])return CLASSES[g.cls].color;
   return '#d6ab4c';
 }
+/* MAP_PX — map fraction (0–1) → map pixels, kept inside the edges. */
 const MAP_PX=(x,y)=>[clamp(x,0.02,0.98)*MAPW,clamp(y,0.02,0.98)*MAPH];
 /* ---- travel routes: fans follow the ROADS and the SEA LANES, not crow-flight ----
    A small graph over the twelve cities plus named sea waypoints; Dijkstra picks each journey.
    Land legs draw solid (the roads), sea legs dashed with a boat at mid-crossing. */
+/* SEA_NODES — sea waypoints on the map for routes by sail. */
 const SEA_NODES={tyrrhenum:[.565,.42],fretum:[.665,.53],sinusAfr:[.50,.615],ligusticum:[.30,.31],syrticum:[.735,.78]};
+/* ROUTE_EDGES — the road and sea-lane graph between cities: [from, to, land | sea]. */
 const ROUTE_EDGES=[ // [from,to,'land'|'sea']
   ['Verona','Pola','land'],['Verona','Roma','land'],['Roma','Capua','land'],['Capua','Pompeii','land'],
   ['Pompeii','Puteoli','land'],['Puteoli','Roma','land'],['Arles','Nemausus','land'],['Arles','Verona','land'],
@@ -119,7 +141,9 @@ const ROUTE_EDGES=[ // [from,to,'land'|'sea']
   ['tyrrhenum','fretum','sea'],['fretum','Syracusae','sea'],['tyrrhenum','sinusAfr','sea'],
   ['sinusAfr','Uthina','sea'],['sinusAfr','Thysdrus','sea'],['fretum','syrticum','sea'],
   ['syrticum','Leptis Magna','sea'],['Syracusae','syrticum','sea'],['Syracusae','sinusAfr','sea'],['Pola','Verona','land']];
+/* routeNodes — every route node's map position (cities and sea waypoints). */
 function routeNodes(){const nd={};for(const L of LOCATIONS)if(L)nd[L.n]=[L.x,L.y];for(const [k,v] of Object.entries(SEA_NODES))nd[k]=v;return nd}
+/* routePath — the shortest road/sea route between two cities (sea legs a little cheaper) → points, leg kinds. */
 function routePath(fromCity,toCity){
   const nd=routeNodes();if(!nd[fromCity]||!nd[toCity])return null;
   const adj={};const D=(a,b)=>Math.hypot(nd[a][0]-nd[b][0],nd[a][1]-nd[b][1]);
@@ -134,19 +158,21 @@ function routePath(fromCity,toCity){
   pts.unshift(fromCity);
   return {pts:pts.map(k=>nd[k]),kinds,sea:kinds.includes('sea')};
 }
-function routeSVG(fromCity,n,col,who){
+/* routeSVG — SVG of a group of fans traveling from their city to the focused arena (roads solid, sea dashed with a boat). */
+function routeSVG(fromCity,count,col,who){
   const F=hubFocus();const FL=LOCATIONS[F];if(!FL)return '';
   const R=routePath(fromCity,FL.n);if(!R)return '';
   const px=R.pts.map(([x,y])=>MAP_PX(x,y));
   const dpts=px.map((p2,i)=>i?`L${p2[0]} ${p2[1]}`:`M${p2[0]} ${p2[1]}`).join('');
-  const w2=Math.min(9,1.5+n*1.3);
+  const w2=Math.min(9,1.5+count*1.3);
   let segs='';let boat='';
   for(let i=0;i<R.kinds.length;i++){const a=px[i],b=px[i+1];
     segs+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${col}" stroke-width="${w2}" stroke-opacity="${who?.8:.4}" stroke-linecap="round" ${R.kinds[i]==='sea'?'stroke-dasharray="7 9" class="flow"':'class="flowland"'}/>`;
     if(R.kinds[i]==='sea'&&!boat)boat=`<text x="${(a[0]+b[0])/2}" y="${(a[1]+b[1])/2}" font-size="15" text-anchor="middle">⛵</text>`}
   const [sx,sy]=px[0];
-  return `<g><title>${n} from ${esc(fromCity)}${who?` · for ${esc(who)}`:' · no allegiance yet'}${R.sea?' · by road and sail':' · by road'}</title>${segs}${boat}<circle cx="${sx}" cy="${sy}" r="${3+Math.min(6,n)}" fill="${col}" fill-opacity=".85"/></g>`;
+  return `<g><title>${count} from ${esc(fromCity)}${who?` · for ${esc(who)}`:' · no allegiance yet'}${R.sea?' · by road and sail':' · by road'}</title>${segs}${boat}<circle cx="${sx}" cy="${sy}" r="${3+Math.min(6,count)}" fill="${col}" fill-opacity=".85"/></g>`;
 }
+/* imperiumMapSVG — the Imperium map: weather, fans on the roads, world events, the war map and the city markers (closed arenas marked). */
 function imperiumMapSVG(key){
   const F=hubFocus();
   let layers='';
@@ -188,23 +214,29 @@ function imperiumMapSVG(key){
 /* the focused city, as a framed tile worth reading */
 /* ---------- the city, up close (v0.20) ---------- */
 // small news a city talks about on its own: never moves the gate much, but sets the mood at the taverns
+/* small local news a city talks about. */
 const LOCAL_NEWS=[['🍞','The bakers’ guild is feuding with the millers again'],['🐟','The fish market smells of a good catch'],['🎭','A troupe of mimes has been thrown out of two taverns'],['💍','A senator’s daughter is to be married on the games’ eve'],['🐎','Someone’s prize horse got loose in the forum'],['🏛','The magistrates have repaved the arena road'],['🍷','The new vintage is in, and the whole town knows it'],['⚖️','A bookmaker was flogged for short odds'],['🔥','A kitchen fire in the potters’ quarter, nobody hurt'],['🎶','A famous lyre player is in town — the gladiators are jealous'],['🛒','Cloth merchants from the south fill the square'],['🐕','A pack of stray dogs has adopted the ushers'],['📜','Graffiti on the ludus wall names next week’s winner'],['🌾','The harvest came in early; the wine flows'],['🧹','The city fathers ordered the stands scrubbed'],['🪙','A hoard of old coin turned up under a tavern floor']];
-function cityNews(li,key){const R=mulberry32(hashStr('local'+li+key));const n=2+Math.floor(R.next()*3);const out=[];const used=new Set();
+/* cityNews — 2–4 local news lines for a city this week (seeded by city + key). */
+function cityNews(locIdx,key){const R=mulberry32(hashStr('local'+locIdx+key));const n=2+Math.floor(R.next()*3);const out=[];const used=new Set();
   while(out.length<n){const k=Math.floor(R.next()*LOCAL_NEWS.length);if(used.has(k))continue;used.add(k);out.push(LOCAL_NEWS[k])}return out}
-const cityMoodWord=v=>v>=12?'jubilant':v>=5?'cheerful':v>-5?'ordinary — bread, gossip, and the games':v>-12?'sour':'grim';
+/* cityMoodWord — a town mood number in words. */
+const cityMoodWord=mood=>mood>=12?'jubilant':mood>=5?'cheerful':mood>-5?'ordinary — bread, gossip, and the games':mood>-12?'sour':'grim';
 // what a resident is doing right now — from the day's key and their own habits
-function whereabouts(r,key,live){const R=mulberry32(hashStr(r.id+key));const lore=typeof specLore==='function'?specLore(r):{snack:'olives',district:'the forum'};
-  if(live&&S.spect.some(x=>x.rid===r.id&&!x.gone))return `in the stands, ${['on their feet','eating '+lore.snack,'arguing with the usher','shouting themselves hoarse','placing a small bet'][Math.floor(R.next()*5)]}`;
-  if(r.quit)return `staying away — ${r.quit.reason}`;if(r.banned)return 'barred at the gate, loudly';if(r.ticket)return 'clutching a ticket for the next games';
+/* whereabouts — what a resident is doing right now (in the stands, staying away, at the baths…), seeded by their id + key. */
+function whereabouts(reg,key,live){const R=mulberry32(hashStr(reg.id+key));const lore=typeof specLore==='function'?specLore(reg):{snack:'olives',district:'the forum'};
+  if(live&&S.spect.some(x=>x.rid===reg.id&&!x.gone))return `in the stands, ${['on their feet','eating '+lore.snack,'arguing with the usher','shouting themselves hoarse','placing a small bet'][Math.floor(R.next()*5)]}`;
+  if(reg.quit)return `staying away — ${reg.quit.reason}`;if(reg.banned)return 'barred at the gate, loudly';if(reg.ticket)return 'clutching a ticket for the next games';
   return ['haggling in the market','asleep in the baths','at the tavern, betting on tomorrow','queuing for the grain dole','watching the ludus train from the wall','mending nets by the harbor','at the temple, buying an omen','walking the dog around '+lore.district,'eating '+lore.snack+' by the fountain','telling the story of the last games, again'][Math.floor(R.next()*10)]}
-function localHeroes(L){ // top 5 fighters tied to this city: rated best, most beloved
+/* localHeroes — the top 5 fighters tied to a city (rating + fans). */
+function localHeroes(location){ // top 5 fighters tied to this city: rated best, most beloved
   const w=typeof mgrWorldAny==='function'?mgrWorldAny():null;const fans={};for(const r of CROWD_CACHE){for(const n of [r.fanOf,r.patronFav,r.kin&&r.kin.name])if(n)fans[String(n).toLowerCase()]=(fans[String(n).toLowerCase()]||0)+1}
   const pool=[];
-  if(w)for(const g of w.glads.filter(g=>g.alive&&g.city===L.n))pool.push({name:g.name,cls:g.cls,rating:effOvr(g),stars:starsOf(pubOvr(g)),src:g.contract&&w.mgrs.find(m=>m.id===g.contract.mgr)?w.mgrs.find(m=>m.id===g.contract.mgr).ludus:'free sword'});
-  for(const g of (typeof LUDUS_CACHE!=='undefined'?LUDUS_CACHE:[]).filter(g=>gladActive(g)&&(g.history||[]).some(h=>h.loc===L.n)))if(!pool.some(x=>x.name===g.name))pool.push({name:g.name,cls:g.cls,rating:typeof ludusOvr==='function'?ludusOvr(g):50,stars:starsOf(typeof ludusOvr==='function'?ludusOvr(g):50),src:'Ludus Flavius'});
+  if(w)for(const g of w.glads.filter(g=>g.alive&&g.city===location.n))pool.push({name:g.name,cls:g.cls,rating:effOvr(g),stars:starsOf(pubOvr(g)),src:g.contract&&w.mgrs.find(m=>m.id===g.contract.mgr)?w.mgrs.find(m=>m.id===g.contract.mgr).ludus:'free sword'});
+  for(const g of (typeof LUDUS_CACHE!=='undefined'?LUDUS_CACHE:[]).filter(g=>gladActive(g)&&(g.history||[]).some(h=>h.loc===location.n)))if(!pool.some(x=>x.name===g.name))pool.push({name:g.name,cls:g.cls,rating:typeof ludusOvr==='function'?ludusOvr(g):50,stars:starsOf(typeof ludusOvr==='function'?ludusOvr(g):50),src:'Ludus Flavius'});
   for(const x of pool)x.fans=fans[x.name.toLowerCase()]||0;
   return pool.sort((a,b)=>(b.rating+b.fans*4)-(a.rating+a.fans*4)).slice(0,5);
 }
+/* cityTileHTML — the focused city's tile: weather, the city square button, the city today, its arena chronicle, pens, crowd, heroes and residents. */
 function cityTileHTML(key){
   const F=hubFocus();const L=LOCATIONS[F];if(!L)return '';
   const imp=worldImpact(F,key);const wx=weatherAt(F,key);const A=typeof arenaOf==='function'?arenaOf(F):null;
@@ -231,6 +263,7 @@ function cityTileHTML(key){
     <div class="sect">🏠 Who lives here · what they are up to</div>${residents.length?`<div style="font-size:12px;display:grid;gap:2px;max-height:150px;overflow:auto">${residents.slice(0,20).map(r=>`<div class="sprow" data-spid="${esc(r.id)}" style="padding:2px 0">${specFaceSVG(r.look)}<span><b>${esc(r.name)}</b> <span class="rc-sub">— ${esc(whereabouts(r,key,live))}</span></span></div>`).join('')}</div>`:'<p class="rc-sub" style="margin:0">Nobody named lives here yet — hold games and the neighborhood forms.</p>'}
   </div>`;
 }
+/* imperiumHTML — the Imperium window: empire strip, layered map, top world stories, family ties, and the city tile or the spectator roster. */
 function imperiumHTML(){
   const key=worldKey();const F=hubFocus();const evs=[...worldEvents(key)].sort((a,b)=>(b.sev*10+Math.abs(b.att)*100+Math.abs(b.mood))-(a.sev*10+Math.abs(a.att)*100+Math.abs(a.mood))).slice(0,10);
   const live=S&&S.locIdx===F&&S.spect&&S.spect.length;
@@ -247,6 +280,7 @@ function imperiumHTML(){
     ${HUB.view==='roster'&&typeof standsRosterViewHTML==='function'?standsRosterViewHTML():cityTileHTML(key)}
    </div></div>`;
 }
+/* Imperium clicks: view tabs, map layers, focus a city. */
 document.addEventListener('click',e=>{
   const hv=e.target.closest('[data-hubview]');if(hv){HUB.view=hv.dataset.hubview;const b=$('#standsHubBody');if(b)b.innerHTML=imperiumHTML();return}
   const lay=e.target.closest('[data-hublayer]');if(lay){HUB.layers[lay.dataset.hublayer]=HUB.layers[lay.dataset.hublayer]?0:1;const b=$('#standsHubBody');if(b)b.innerHTML=imperiumHTML();return}

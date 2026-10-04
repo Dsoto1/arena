@@ -1,12 +1,24 @@
 
 /* =====================================================================
+   16-CROWD · THE STANDS
+   =====================================================================
    THE CROWD (rulebook p.34-35): stadium seating, spectators with their own tastes and moods,
    the spectator abilities, and the bookmaker's wagers.
+   - SECTIONS / seatSpectators / crowdStart: who sits where, favorites, the omen, famous visitors.
+   - crowdReact (every event in the arena moves moods), sectionCheer (CF per Resolve), spears,
+     stones, offerings, the Tholo chant (spectatorsAct) and the human spectator's turn.
+   - Wagers: betStrength → winProbs → oddsTable, the Wagers window, self-bets, settleWagers.
+   - The regulars persist (CROWD_CACHE, Store 'crowd'): memories, grudges, quitting (updateCrowdAfterEvent).
+   - Flavius in his box (flavFace / flaviusMood / flaviusReact / the curtain), the arena chronicle,
+     the Menagerie + Bestiary, the Imperium stands window and the spectator roster.
    ===================================================================== */
 let STANDS=true;try{STANDS=localStorage.getItem('flavius_stands')!=='off'}catch(e){}
-function setStands(v){STANDS=v;try{localStorage.setItem('flavius_stands',v?'on':'off')}catch(e){}const b=$('#btnStands');if(b)b.textContent='Stands: '+(v?'on':'off');draw();renderBubbles()}
+/* setStands — shows or hides the stands around the board (localStorage flavius_stands) and redraws. */
+function setStands(on){STANDS=on;try{localStorage.setItem('flavius_stands',on?'on':'off')}catch(e){}const b=$('#btnStands');if(b)b.textContent='Stands: '+(on?'on':'off');draw();renderBubbles()}
+/* the old Stands on/off button. */
 $('#btnStands').onclick=()=>setStands(!STANDS);
 $('#btnStands').textContent='Stands: '+(STANDS?'on':'off');
+/* S toggles the stands (not while typing or with a window open). */
 window.addEventListener('keydown',e=>{if((e.key==='s'||e.key==='S')&&!e.ctrlKey&&!e.metaKey&&!['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName)&&$('#modal').hidden)setStands(!STANDS)});
 
 /* ---- the seating chart: 8 sections around the board, 2 per quadrant; each section stands for one gladiator ----
@@ -19,16 +31,21 @@ const SECTIONS=[
   {edge:'bottom',half:1,q:4,col:'#c0433a',cn:'red',n:'South-east stand'},{edge:'bottom',half:0,q:3,col:'#55504a',cn:'dark gray',n:'South-west stand'},
   {edge:'left',half:1,q:3,col:'#d4b13c',cn:'yellow',n:'West stand (lower)'},{edge:'left',half:0,q:2,col:'#8a5cc0',cn:'purple',n:'West stand (upper)'},
 ];
+/* SEAT_SEC — seat index → the section that cheers for it (each seat sits nearest one colored stand). */
 const SEAT_SEC=[3,5,7,1,0,4,6,2]; // player seat i sits closest to this section (starts: L12, L1, A1, A12, top, bottom, left, right)
-const secOf=p=>p?SEAT_SEC[p.id%8]:null;
-const secPlayer=si=>S&&S.players.find(p=>SEAT_SEC[p.id%8]===si)||null;
-const secColor=si=>SECTIONS[si].col; // fixed seat colors from the chart: exactly one of each, never a player's color
+/* secOf — the section index that belongs to a player (by seat). */
+const secOf=player=>player?SEAT_SEC[player.id%8]:null;
+/* secPlayer — the player whose section this is, if any. */
+const secPlayer=secIdx=>S&&S.players.find(p=>SEAT_SEC[p.id%8]===secIdx)||null;
+/* secColor — a section's fixed seating-chart color. */
+const secColor=secIdx=>SECTIONS[secIdx].col; // fixed seat colors from the chart: exactly one of each, never a player's color
 const SPECT_MAX=96; // v0.25: the stands hold up to 96 named regulars — each one stands for about a thousand Romans
 /* ---- the stands log: everything the spectators do, in its own feed ---- */
 /* v0.25 THE REAL HOUSE: every named regular in the seats stands for roughly a thousand spectators.
    The exact figure varies by arena (Roma's bowl is vast, a provincial ring is not) and by the day. */
 const ARENA_CAP={Roma:1.3,Capua:1.15,Puteoli:1.05,Verona:1.05,Pompeii:0.9,Syracusae:1.0,Arles:0.95,Nemausus:0.95,Thysdrus:1.1,'Leptis Magna':0.9,Uthina:0.8,Pola:0.9};
-function houseCount(n,seed,li){if(!n)return 0;const L=LOCATIONS[li!=null?li:(S?S.locIdx:6)];const cap=(ARENA_CAP[L?L.n:'Roma']||1)*(typeof drawMul==='function'?drawMul():1);let h=((seed||1)*2654435761>>>0)%100000;const extra=(h%900)+(n*37)%100;return Math.round(n*1000*cap*(0.93+((h>>7)%15)/100))+extra}
+/* houseCount — the real head count behind N named regulars: ×1000, scaled by the arena's size (ARENA_CAP) and the draw, with a seeded wobble. Replaced by 106-v75 (n × 1000). */
+function houseCount(regulars,seed,locIdx){if(!regulars)return 0;const L=LOCATIONS[locIdx!=null?locIdx:(S?S.locIdx:6)];const cap=(ARENA_CAP[L?L.n:'Roma']||1)*(typeof drawMul==='function'?drawMul():1);let h=((seed||1)*2654435761>>>0)%100000;const extra=(h%900)+(regulars*37)%100;return Math.round(regulars*1000*cap*(0.93+((h>>7)%15)/100))+extra}
 /* v0.32 THE DRAW: who is on the card decides who is in the tiers. Star ratings, famous fighters and
    famous houses swell attendance up to double; a card of unknowns plays to a thinner house. */
 function drawMul(){if(!S||!S.players)return 1;let d=0;
@@ -39,10 +56,13 @@ function drawMul(){if(!S||!S.players)return 1;let d=0;
    if(S.specCtx||S.tourn)d+=0.5; // an invitational or a tournament is an occasion in itself
   }catch(e){}
   return clamp(0.85+d/Math.max(1,S.players.length)*1.6,0.8,2.2)}
-const houseK=v=>v>=1000?(v/1000).toFixed(v>=10000?0:1).replace(/\.0$/,'')+'K':String(v);
-function houseHTML(n,seed,li){const full=houseCount(n,seed,li);return `<span class="house" title="${n} named regular${n===1?'':'s'} in the seats — each stands for about a thousand Romans: ${full.toLocaleString()} spectators today">${houseK(full)}</span>`}
+/* houseK — a head count as "13K". */
+const houseK=count=>count>=1000?(count/1000).toFixed(count>=10000?0:1).replace(/\.0$/,'')+'K':String(count);
+/* houseHTML — the attendance chip ("13K") with its tooltip. Replaced by 106-v75. */
+function houseHTML(regulars,seed,locIdx){const full=houseCount(regulars,seed,locIdx);return `<span class="house" title="${regulars} named regular${regulars===1?'':'s'} in the seats — each stands for about a thousand Romans: ${full.toLocaleString()} spectators today">${houseK(full)}</span>`}
 // v0.27: how many named regulars across the empire follow this gladiator (fan, patron's favorite or kin) — each ≈1,000 Romans
 function fansFor(name){if(!name||typeof CROWD_CACHE==='undefined')return 0;const n=String(name).toLowerCase();return CROWD_CACHE.filter(r=>!r.banned&&[r.fanOf,r.patronFav,r.kin&&r.kin.name].some(x=>x&&String(x).toLowerCase()===n)).length}
+/* slog — adds a line to the stands log (S.spectLog, last 90); quoted shouts are also kept for the Acta's Overheard column (localStorage flavius_overheard). */
 function slog(html,cls=''){if(!S)return;(S.spectLog=S.spectLog||[]).push({r:S.rotation||0,html,cls});if(!S.sim&&!HEADLESS){const m2=/<b>([^<]+)<\/b>[^“]*“([^”]{8,140})”/.exec(html);if(m2){try{const B=JSON.parse(localStorage.getItem('flavius_overheard')||'[]');B.push({who:m2[1],q:m2[2],at:LOCATIONS[S.locIdx]?LOCATIONS[S.locIdx].n:'the arena'});localStorage.setItem('flavius_overheard',JSON.stringify(B.slice(-40)))}catch(e){}}}if(S.spectLog.length>90)S.spectLog.splice(0,S.spectLog.length-90)}
 
 /* ---- the day's omen: weather and city news sway attendance, moods and hometown fighters ---- */
@@ -58,9 +78,13 @@ const OMENS=[
   {k:'hero',n:'Local hero day',w:7,att:0.15,mood:4,local:1,d:'The city honors its own.'},
   {k:'omen',n:'An eagle flew widdershins at dawn',w:5,att:-0.1,mood:-6,local:-1,d:'The augurs frown; the city is uneasy.'},
 ];
+/* OMEN_ICON — omen key → icon. */
 const OMEN_ICON={clear:'☀️',heat:'🔥',rain:'🌧',festival:'🎉',triumph:'🏆',plague:'☠️',dole:'🍞',taxes:'💸',hero:'🦸',omen:'🦅'};
-const omenBadge=o=>o?`<span class="omenico ${o.mood>0?'good':o.mood<0?'bad':''}" title="${esc(o.n)} — ${esc(o.d)} (${o.mood>0?'a good omen':o.mood<0?'an ill omen':'a neutral sky'})">${OMEN_ICON[o.k]||'✦'}</span>`:'—';
+/* omenBadge — an omen's icon with its tooltip. */
+const omenBadge=omen=>omen?`<span class="omenico ${omen.mood>0?'good':omen.mood<0?'bad':''}" title="${esc(omen.n)} — ${esc(omen.d)} (${omen.mood>0?'a good omen':omen.mood<0?'an ill omen':'a neutral sky'})">${OMEN_ICON[omen.k]||'✦'}</span>`:'—';
+/* rollOmen — rolls the day's omen by weight (seeded dice). */
 function rollOmen(){const t=OMENS.reduce((a,o)=>a+o.w,0);let r=rand()*t;for(const o of OMENS)if((r-=o.w)<0)return o;return OMENS[0]}
+/* omenStart — announces the omen once at the start; local omens give a hometown fighter +2 CF or cost them 1 CF. */
 function omenStart(){
   const om=S&&S.omen;if(!om||S.omenDone)return;S.omenDone=1;const L=LOCATIONS[S.locIdx];
   if(om.k!=='clear')log(`<b>${om.n}.</b> ${om.d||''}${om.att?` Attendance ${om.att>0?'swells':'thins'}.`:''}`,'big');
@@ -71,6 +95,7 @@ function omenStart(){
 
 /* ---- the regulars: a persistent crowd pool (RCT-style). The same fans come back, remember ~5 events, and can quit. ---- */
 let CROWD_CACHE=[];
+/* loadCrowd — loads the regulars into CROWD_CACHE (older ones get a home city). */
 async function loadCrowd(){CROWD_CACHE=await Store.list('crowd').catch(()=>[]);
   for(const r of CROWD_CACHE)if(!r.city){r.city=pickOne(LOCATIONS.filter(Boolean)).n} // older regulars get a home city
   return CROWD_CACHE}
@@ -79,11 +104,17 @@ async function loadCrowd(){CROWD_CACHE=await Store.list('crowd').catch(()=>[]);
    t: weights for each temper when NEW faces join the crowd — your regulars keep the tempers you know them by. */
 let CROWD={act:100,t:{hothead:100,generous:100,fickle:100,loyal:100,bloodthirsty:100,miser:100}};
 try{const c0=JSON.parse(localStorage.getItem('flavius_crowd')||'null');if(c0)CROWD={act:clamp(+c0.act||100,10,200),t:{...CROWD.t,...(c0.t||{})}}}catch(e){}
+/* saveCrowdCfg — saves the crowd personality sliders (localStorage flavius_crowd). */
 const saveCrowdCfg=()=>{try{localStorage.setItem('flavius_crowd',JSON.stringify(CROWD))}catch(e){}};
+/* crowdA — how active the stands are: your Interactivity slider × the arena's local crowd, 0.1–2.5. */
 const crowdA=()=>{const lc=typeof locCrowd==='function'?locCrowd():null;return clamp((CROWD.act||100)/100*((lc&&lc.act||100)/100),0.1,2.5)};
+/* pickTemper — a temper for a new face, weighted by your temper sliders and the local crowd (seeded dice). */
 function pickTemper(){const ks=Object.keys(SPECT_TEMPERS);const lc=typeof locCrowd==='function'?locCrowd():null;const w=ks.map(k=>Math.max(0,(+CROWD.t[k]||0)*((lc&&lc.t&&lc.t[k]||100)/100)));const tot=w.reduce((x,y)=>x+y,0);if(!tot)return pickOne(ks);let r=rand()*tot;for(let i=0;i<ks.length;i++)if((r-=w[i])<0)return ks[i];return ks[ks.length-1]}
+/* OFFER_VAL — coin value of each offering, for the "worth ~N coin" line on result cards. TWEAK: the values. */
 const OFFER_VAL={elix2:4,elix4:8,ap2:4,ap3:6,ma1:4,ma2:8,ma3:12,mw1:4,mw2:8,mw3:12,merc1:3,merc2:5,cf1:1,cf2:2,eagle:15,key:6,spiders:0,curse:0};
+/* SPECT_TRADES — trades that make new spectator names ("Aelia the potter"). */
 const SPECT_TRADES=['the baker','the tanner','the fish-seller','the scribe','the potter','the midwife','the mule-driver','the wine merchant','the stonecutter','the weaver','the barber','the moneylender','the cook','the sailor','the dyer','the perfumer','the widow','the schoolmaster','the flute-girl','the olive presser'];
+/* specIdentity — a brand-new spectator: name, taste, temper, look, maybe a troublemaker (12%). Uses the seeded dice. TWEAK: the .12 troublemaker share. */
 function specIdentity(taken){
   let name=null,f=rand()<.45;
   const old=SPECT_NAMES.filter(n=>!taken.has(n));
@@ -102,31 +133,36 @@ const ROBES=['#7a2230','#4b2a5a','#c9b27a','#3f5a3a','#2f4a6b','#a86a2a','#e8dcc
 const ROBE_NAMES=['madder red','Tyrian purple','undyed wool','weld green','woad blue','saffron','bleached white','walnut brown','rust','sea-teal'];
 // buy a regular a ticket: seated NOW if an event is on (bumping a neutral stranger), else guaranteed next time.
 // `why` (optional) is shown in the stands log — e.g. a lanista treating a fighter's family.
-async function buyTicket(r,why,free=false){
+async function buyTicket(reg,why,free=false){
   if(!free){const m=typeof activeMgr==='function'?await activeMgr():null;
     if(!m||m.coin<2){if(S)log('A ticket costs 2 coin from an active lanista\u2019s treasury — '+(m?'yours is too light':'set one in Manager mode or at the Wagers table')+'.','bad');return false}
     const pr=await getPurse();await setPurse({...pr,coin:pr.coin-2})}
-  if(S&&!S.over&&S.spect&&S.spect.length&&!S.spect.some(x=>x.rid===r.id&&!x.gone)){
+  if(S&&!S.over&&S.spect&&S.spect.length&&!S.spect.some(x=>x.rid===reg.id&&!x.gone)){
     const out=[...S.spect].filter(x=>!x.human&&!x.gone&&x.fav==null&&!x.vip).sort(()=>rand()-.5)[0]||S.spect.find(x=>!x.human&&!x.gone&&!x.vip);
-    if(out){Object.assign(out,{rid:r.id,name:r.name,taste:r.taste,temper:r.temper,look:r.look,mem:(r.mem||[]).slice(-5),visits:r.visits||0,mood:15,fav:null,favCls:null,bet:null});
-      const kin=r.kin&&S.players.find(p=>p.name.toLowerCase()===String(r.kin.name).toLowerCase());if(kin){out.fav=kin.id;out.favCls=kin.cls}
-      slog(`<b>${esc(r.name)}</b> arrives with a ticket${why?' '+why:''} — an usher moves a stranger to the cheap seats.`,'big');render();return true}}
-  r.ticket=1;Store.put('crowd',r.id,r).catch(()=>{});if(S)log(`A ticket for <b>${esc(r.name)}</b>${why?' '+why:''}: guaranteed a seat at the next event.`);return true;
+    if(out){Object.assign(out,{rid:reg.id,name:reg.name,taste:reg.taste,temper:reg.temper,look:reg.look,mem:(reg.mem||[]).slice(-5),visits:reg.visits||0,mood:15,fav:null,favCls:null,bet:null});
+      const kin=reg.kin&&S.players.find(p=>p.name.toLowerCase()===String(reg.kin.name).toLowerCase());if(kin){out.fav=kin.id;out.favCls=kin.cls}
+      slog(`<b>${esc(reg.name)}</b> arrives with a ticket${why?' '+why:''} — an usher moves a stranger to the cheap seats.`,'big');render();return true}}
+  reg.ticket=1;Store.put('crowd',reg.id,reg).catch(()=>{});if(S)log(`A ticket for <b>${esc(reg.name)}</b>${why?' '+why:''}: guaranteed a seat at the next event.`);return true;
 }
 /* two-part togas (v0.20): the TUNIC underneath is dyed the way their home city dyes wool; the MANTLE over it
    is their allegiance (a fighter's colors) or, when they back nobody, the robe they chose. */
 const CITY_TUNIC={Roma:'#efe3cc',Capua:'#e6d2a8',Pompeii:'#b8926a',Verona:'#e8dcc0',Arles:'#d9c9a3',Syracusae:'#e9d7b0',Thysdrus:'#cdb08a',Nemausus:'#e0d4b8',Puteoli:'#d8c39a','Leptis Magna':'#c9a67a',Uthina:'#d4b48c',Pola:'#e4d6bf'};
-const tunicOf=(l,city)=>(l&&l.tunic)||CITY_TUNIC[city]||'#e8dcc0';
-const robeOf=l=>(l&&l.robe)||ROBES[Math.abs([...String((l&&l.skin||'')+(l&&l.hair||''))].reduce((a,c)=>a*31+c.charCodeAt(0)|0,7))%ROBES.length];
+/* tunicOf — a spectator's tunic color: their own, else their home city's wool. */
+const tunicOf=(look,city)=>(look&&look.tunic)||CITY_TUNIC[city]||'#e8dcc0';
+/* robeOf — a spectator's robe color: their own, else one picked from their look. */
+const robeOf=look=>(look&&look.robe)||ROBES[Math.abs([...String((look&&look.skin||'')+(look&&look.hair||''))].reduce((a,c)=>a*31+c.charCodeAt(0)|0,7))%ROBES.length];
 /* v0.21: spectators can wear hats */
+/* SPEC_HATS — spectator hat shapes (SVG) by key. */
 const SPEC_HATS={pileus:'<path d="M5 9.5C5 3 19 3 19 9.5Z" fill="#d9ccb0" stroke="#8a7a5a" stroke-width=".5"/>',straw:'<ellipse cx="12" cy="7.4" rx="10" ry="2.2" fill="#d8b86a" stroke="#8a6a2a" stroke-width=".5"/><path d="M7.5 7C7.5 3 16.5 3 16.5 7Z" fill="#e0c47a"/>',hood:'<path d="M3.8 16C2.8 3.5 21.2 3.5 20.2 16C19.4 9 16 6.4 12 6.4S4.6 9 3.8 16Z" fill="#5a4a3a"/>',wreath:'<path d="M5.2 8.6Q12 3.4 18.8 8.6" fill="none" stroke="#6f9a3a" stroke-width="1.6" stroke-dasharray="1.4 .8"/>',veil:'<path d="M4.2 17C3 3.5 21 3.5 19.8 17C19 8.5 16 6 12 6S5 8.5 4.2 17Z" fill="#efe6d2" opacity=".95"/>',helm:'<path d="M4.8 10.5C4.8 2.6 19.2 2.6 19.2 10.5L17.4 10.6C17 6.4 7 6.4 6.6 10.6Z" fill="#a9b2ba" stroke="#5d656d" stroke-width=".5"/>',turban:'<path d="M4.6 9.6C4.2 3 19.8 3 19.4 9.6C17 7.6 7 7.6 4.6 9.6Z" fill="#e8e0cc" stroke="#a89a7a" stroke-width=".5"/><circle cx="12" cy="5.6" r="1" fill="#3a6ad0"/>'};
+/* specFaceSVG — a spectator's small face-and-shoulders SVG (tunic, mantle, hair, beard, hat). */
 function specFaceSVG(look,mantle,city){const l=look||{};const h=l.hair||'#4a2c17';const tun=tunicOf(l,city||l.city);const man=mantle||robeOf(l);return `<svg class="sface" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 24c1-5 5-6.5 12-6.5S23 19 24 24Z" fill="${tun}" stroke="rgba(0,0,0,.3)" stroke-width=".5"/><path d="M3.2 19.2L12 24L20.8 19.2L18.4 18.2L12 21.4L5.6 18.2Z" fill="${man}" stroke="rgba(0,0,0,.35)" stroke-width=".4"/><circle cx="12" cy="11.5" r="7.4" fill="${l.skin||'#e6cfa8'}"/><path d="M4.6 11a7.4 7.4 0 0 1 14.8 0c-2-4.6-12.8-4.6-14.8 0Z" fill="${h}"/>${l.long||l.fem?`<path d="M5 11.5v5M19 11.5v5" stroke="${h}" stroke-width="2.8" stroke-linecap="round"/>`:''}${l.beard&&!l.fem?`<path d="M6.8 14.8c1.4 3.2 9 3.2 10.4 0-1.9 1.5-8.5 1.5-10.4 0Z" fill="${h}" stroke="${h}" stroke-width="1.5"/>`:''}<circle cx="9.5" cy="11.2" r="0.9" fill="#1a120c"/><circle cx="14.5" cy="11.2" r="0.9" fill="#1a120c"/>${SPEC_HATS[l.hat]||""}</svg>`}
 // the color a spectator wears: their favorite's color, or their favored class, or undyed wool
 const allegCol=sp=>sp.fav!=null&&S.players[sp.fav]?S.players[sp.fav].color:sp.favCls&&CLASSES[sp.favCls]?CLASSES[sp.favCls].color:'#8f8474';
-function quadOf(u){for(const [q,z] of Object.entries(QUADS))if(inRect(z,u))return +q;return 0}
+/* quadOf — the board quadrant (1–4) a unit stands in, 0 for the center lines. */
+function quadOf(unit){for(const [q,z] of Object.entries(QUADS))if(inRect(z,unit))return +q;return 0}
 // band of each section in board coordinates (r,c) — outside the rim, past the row/column labels
-function secQuad(si,d0=1.35,d1=2.75){
-  const s=SECTIONS[si];const a=s.half?6.6:0.25,b=s.half?12.75:6.4;
+function secQuad(secIdx,d0=1.35,d1=2.75){
+  const s=SECTIONS[secIdx];const a=s.half?6.6:0.25,b=s.half?12.75:6.4;
   switch(s.edge){
     case 'top':return [[-d0,a],[-d0,b],[-d1,b],[-d1,a]];
     case 'bottom':return [[N-1+d0,a],[N-1+d0,b],[N-1+d1,b],[N-1+d1,a]];
@@ -134,13 +170,15 @@ function secQuad(si,d0=1.35,d1=2.75){
     default:return [[a,N-1+d0],[b,N-1+d0],[b,N-1+d1],[a,N-1+d1]];
   }
 }
+/* pt — grid r,c → screen point on the tile's ground (iso y plus half a tile). */
 const pt=(r,c)=>{const {x,y}=iso(r,c);return {x,y:y+TH/2}};
 // seat positions for spectators inside a section: 4 benches × 6 seats (24 a section, 192 in the house)
-function seatPos(si,k){
-  const s=SECTIONS[si];const row=k%4,col=Math.floor(k/4)%6;const d=1.55+row*0.38;const along=(s.half?7:0.9)+col*0.95+(row%2?0.45:0);
+function seatPos(secIdx,seatNo){
+  const s=SECTIONS[secIdx];const row=seatNo%4,col=Math.floor(seatNo/4)%6;const d=1.55+row*0.38;const along=(s.half?7:0.9)+col*0.95+(row%2?0.45:0);
   const [r,c]=s.edge==='top'?[-d,along]:s.edge==='bottom'?[N-1+d,along]:s.edge==='left'?[along,-d]:[along,N-1+d];
   return pt(r,c);
 }
+/* drawStands — draws the tiered stands in all 8 sections with their color markers and ambient crowd, then every seated spectator. Wrapped by 55-anim and 127-v82onl. */
 function drawStands(){
   const shadeHex=(h,f)=>shade(h,f);
   for(let si=0;si<8;si++){
@@ -172,8 +210,11 @@ function drawStands(){
   // (emotes are drawn last in draw(), above the board, so the front rows never vanish under the sand)
   // v0.35: the superfans' banners are painted in draw(), AFTER the board, so the sand never hides them
 }
-const moodCol=m=>m>=40?'#8fe07a':m>=10?'#cde07a':m>-15?'#b39d80':m>-45?'#f0a25a':'#ff5a44';
-const moodEmo=m=>m>=60?'🤩':m>=30?'😄':m>=10?'🙂':m>-15?'😐':m>-45?'😠':'😡';
+/* moodCol — ring color for a spectator's mood (green happy → red furious). */
+const moodCol=mood=>mood>=40?'#8fe07a':mood>=10?'#cde07a':mood>-15?'#b39d80':mood>-45?'#f0a25a':'#ff5a44';
+/* moodEmo — emoji for a spectator's mood. */
+const moodEmo=mood=>mood>=60?'🤩':mood>=30?'😄':mood>=10?'🙂':mood>-15?'😐':mood>-45?'😠':'😡';
+/* drawEmotes — draws the spectators' emotes and shout bubbles (drawn last, over the board). */
 function drawEmotes(){
   if(!S||!S.emotes||!S.emotes.length)return;const now=performance.now();const life=SPEED==='fast'?1400:SPEED==='slow'?4200:2600;
   S.emotes=S.emotes.filter(e=>now-e.t0<life);
@@ -183,6 +224,7 @@ function drawEmotes(){
     if(e.text){ctx.font=`600 ${Math.round(TW*0.2)}px Alegreya Sans, sans-serif`;const w=ctx.measureText(e.text).width+10;ctx.fillStyle='rgba(245,234,210,.95)';ctx.fillRect(sp._x-w/2,y-TW*0.52,w,TW*0.26);ctx.fillStyle='#241910';ctx.fillText(e.text,sp._x,y-TW*0.39)}
     ctx.restore()}
 }
+/* emote — a spectator shows an emoji (and maybe a shout) for a moment; one shout at a time. Respects the emote / shout settings. */
 function emote(sp,emo,text=''){if(typeof SETTINGS!=='undefined'){if(SETTINGS.emotesSpect===false)return;if(SETTINGS.shoutsSpect===false)text=''}
 
   if(HEADLESS||!S||!STANDS)return;S.emotes=S.emotes||[];S.emotes=S.emotes.filter(e=>e.sid!==sp.id);if(text)for(const e of S.emotes)e.text=''; // one shout at a time
@@ -191,7 +233,9 @@ function emote(sp,emo,text=''){if(typeof SETTINGS!=='undefined'){if(SETTINGS.emo
 
 /* ---- who the spectators are ---- */
 const SPECT_TASTES={aggression:['Brawlers','loves a gladiator who goes for the throat'],hunt:['Beast hunters','loves trophies from the beasts'],cf:['Showmen','loves pots, spectacle and crowd-pleasers'],coin:['High rollers','loves rich gladiators and big market buys'],survival:['Survivors','loves the patient, careful fighter'],loyalty:['Honor','loves loyal allies and fair trades'],underdog:['Underdogs','always cheers for whoever is losing']};
+/* SPECT_TEMPERS — spectator tempers: [name, how it behaves]. */
 const SPECT_TEMPERS={hothead:['Hot-headed','throws stones quickly when angry'],generous:['Generous','showers a favorite with offerings'],fickle:['Fickle','switches favorites and sections easily'],loyal:['Loyal','sticks with one gladiator to the end'],bloodthirsty:['Bloodthirsty','happy at any bloodshed, bored without it'],miser:['Tight-fisted','hoards CF for the big moments']};
+/* SPECT_NAMES — the old named regulars a new face may still be. */
 const SPECT_NAMES=['Old Marcus the baker','Flavia of the fish stalls','Gaius the tanner','Vibia and her sister','Big Sextus','The widow Cornelia','Lucius the drunk','Little Titus','Aelia the midwife','Brother Quintus','Decimus One-Eye','Livia the gossip','Rufus the butcher','Servius the scribe','Tertia the weaver','Publius the potter'];
 // two anonymous voices in the crowd who narrate disasters like a certain beloved dubbed game show.
 const DUO=[
@@ -204,13 +248,15 @@ const DUO=[
   ['A textbook maneuver','Wrong textbook, though'],
   ['The crowd is on its feet','Mostly to see better, let\u2019s be honest'],
 ];
+/* duoSay — now and then (30%) the sausage seller and his customer narrate a disaster. */
 const duoSay=tag=>{if(Math.random()>.3)return;const [a2,b2]=upick(DUO);slog(`\u201c${a2}${tag?', '+tag:''}!\u201d shouts a man selling sausages. \u201c${b2},\u201d agrees his customer.`)};
+/* SHOUTS — shout lines by feeling. */
 const SHOUTS={happy:['Ave!','Yes!','Magnificent!','Again!'],fav:['My coin is on you!','That\'s my gladiator!','Io! Io!'],angry:['Coward!','Boo!','Kill him!','Rubbish!'],sad:['No…','Get up!','Not like this'],blood:['More blood!','Iugula!','Finish it!'],bored:['Wake up!','Fight!','Tholo! Tholo!']};
 /* ---- EMPIRE TURNOUT (v0.17): 'Random — the empire decides' ----
    Instead of a fixed number, the stands fill the way the world would fill them: the city's appetite
    for games (LOC_CROWD), the regulars who live there, every fan/kin/patron who follows someone on
    today's card, the billing (manager main events, festival finals) — and then the omen on top. */
-function empireTurnout(cfg){
+function empireTurnout(config){
   const why=[];const L=LOCATIONS[S.locIdx];const here=L?L.n:'';const LC=LOC_CROWD[S.locIdx]||{act:100};
   let n=6+rnd(9);n=Math.round(n*LC.act/100);why.push(`${here||'the city'}'s own appetite (${n}K)`);
   const home=CROWD_CACHE.filter(r=>r.city===here&&!r.quit&&!r.banned&&!r.recruited).length;
@@ -218,22 +264,23 @@ function empireTurnout(cfg){
   const names=new Set(S.players.map(p=>String(p.name).toLowerCase()));
   const follow=CROWD_CACHE.filter(r=>!r.banned&&!r.recruited&&[r.fanOf,r.patronFav,r.kin&&r.kin.name].some(x=>x&&names.has(String(x).toLowerCase()))).length;
   if(follow){const f=Math.min(14,Math.round(follow*1.3));n+=f;why.push(`+${f}K following today's fighters`)}
-  const saved=cfg.seats?cfg.seats.filter(x=>x.saved).length:0;if(saved){n+=saved*2;why.push(`+${saved*2}K for returning Ludus names`)}
+  const saved=config.seats?config.seats.filter(x=>x.saved).length:0;if(saved){n+=saved*2;why.push(`+${saved*2}K for returning Ludus names`)}
   {const dm=typeof drawMul==='function'?drawMul():1;if(dm>1.1){const ex=Math.round(n*(dm-1)*0.7);if(ex){n+=ex;why.push(`+${ex}K for the draw — famous names on the card`)}}} // v0.32
-  if(cfg.mgrTier){const t={main:12,mid:5}[cfg.mgrTier]||0;if(t){n+=t;why.push(`+${t}K for the ${cfg.mgrTier==='main'?'main event':'billing'}`)}}
-  if(cfg.fest&&cfg.fest.stage>=2){n+=8;why.push('+8 festival crowds')}
+  if(config.mgrTier){const t={main:12,mid:5}[config.mgrTier]||0;if(t){n+=t;why.push(`+${t}K for the ${config.mgrTier==='main'?'main event':'billing'}`)}}
+  if(config.fest&&config.fest.stage>=2){n+=8;why.push('+8 festival crowds')}
   {const wi=typeof worldImpact==='function'?worldImpact(S.locIdx):null;if(wi&&wi.att){const d=Math.round(n*wi.att);n+=d;why.push(`${d>=0?'+':''}${d}K from world events (${wi.list.map(e=>e.n.toLowerCase()).join('; ')})`)}}
   n+=Math.round((rand()-.5)*6); // and the plain chance of a Roman afternoon
   S.turnoutWhy=why;return clamp(n,3,SPECT_MAX);
 }
-function seatSpectators(n,cfg){
+/* seatSpectators — fills S.spect for a new event: regulars first (home city, favorites and ticket holders before others, ≤2 troublemakers), new faces for the rest; the omen sways the count; the Gauntlet seats at most 12. TWEAK: the 0.75 regulars share. */
+function seatSpectators(count,config){
   S.spect=[];S.emotes=[];S.spectLog=[];S.attendance=0;
   const om=S.omen||(S.omen=rollOmen());
-  if(n==='exhib')return seatGladiatorStands(cfg);
-  if(n==='auto')n=empireTurnout(cfg||{});else S.turnoutWhy=null;
-  n=Math.min(SPECT_MAX,Math.max(0,Math.round((n||0)*(1+(om.att||0))))); // the omen sways attendance
-  if(S.evKey==='gauntlet')n=Math.min(n,12); // a solo gauntlet never draws more than 12 — and they are a mean dozen
-  if(!n)return;
+  if(count==='exhib')return seatGladiatorStands(config);
+  if(count==='auto')count=empireTurnout(config||{});else S.turnoutWhy=null;
+  count=Math.min(SPECT_MAX,Math.max(0,Math.round((count||0)*(1+(om.att||0))))); // the omen sways attendance
+  if(S.evKey==='gauntlet')count=Math.min(count,12); // a solo gauntlet never draws more than 12 — and they are a mean dozen
+  if(!count)return;
   const taken=new Set(CROWD_CACHE.map(r=>r.name));
   const gauntlet=S.evKey==='gauntlet';
   // the regulars come back first (unless they quit); new faces fill the rest of the benches
@@ -242,26 +289,27 @@ function seatSpectators(n,cfg){
   {const here=LOCATIONS[S.locIdx]?LOCATIONS[S.locIdx].n:'';pool=pool.filter(r=>!r.city||r.city===here||rand()<.45);
    const fights=r=>r.favG&&S.players.some(p=>p.name===r.favG)?3:0; // v0.41: a regular follows their favorite to any arena
    pool.sort((a,b)=>((b.ticket?2:0)+(b.city===here?1:0)+fights(b))-((a.ticket?2:0)+(a.city===here?1:0)+fights(a)))}
-  for(const r of pool.slice(0,Math.round(n*0.75)))if(r.ticket){delete r.ticket;r.ticketed=1;Store.put('crowd',r.id,r).catch(()=>{})} // ticket holders are guaranteed their seats
+  for(const r of pool.slice(0,Math.round(count*0.75)))if(r.ticket){delete r.ticket;r.ticketed=1;Store.put('crowd',r.id,r).catch(()=>{})} // ticket holders are guaranteed their seats
   {let trb=0;pool=pool.filter(r=>!r.trouble||++trb<=2)} // the ushers let a FEW troublemakers through — it keeps things lively
-  const ids=pool.slice(0,Math.round(n*0.75));
-  while(ids.length<n)ids.push(specIdentity(taken));
+  const ids=pool.slice(0,Math.round(count*0.75));
+  while(ids.length<count)ids.push(specIdentity(taken));
   let seatedTrouble=0;
-  for(let i=0;i<n;i++){const r=ids[i];
+  for(let i=0;i<count;i++){const r=ids[i];
     const trouble=r.trouble&&++seatedTrouble<=2?1:0; // the ushers admit at most two known troublemakers a day
     let temper=r.temper;if(gauntlet&&rand()<.55)temper=pickOne(['fickle','miser','miser','fickle','hothead']); // fickle and stingy for the solo show
     S.spect.push({id:i,rid:r.id,name:r.name,taste:r.taste,temper:temper,look:r.look||{skin:pickOne(SKINS),hair:pickOne(HAIRS),beard:false,long:false},
       mem:(r.mem||[]).slice(-5),visits:r.visits||0,grudgeName:r.grudgeName||null,isNew:!!r.isNew,
       trouble,cf:0,sec:SEAT_SEC[i%8],fav:null,favCls:null,mood:clamp(rnd(21)-10+(om.mood||0)+(r.treat?15:0),-60,60),grudge:null,bet:null,human:false,gone:false,log:[]});if(r.treat)delete r.treat;}
-  if(cfg&&cfg.spectHuman&&S.spect.length){const me=S.spect[0];me.human=true;me.name='You';me.rid='you';me.fav=undefined;me.favG=null;me.bet=null;me.trueFan=0}
+  if(config&&config.spectHuman&&S.spect.length){const me=S.spect[0];me.human=true;me.name='You';me.rid='you';me.fav=undefined;me.favG=null;me.bet=null;me.trueFan=0}
   seatOffDuty();
   S.attendance=S.spect.length;
 }
 /* ---- the league in the stands (v0.18) ---- */
 const mgrWorldAny=()=>(typeof MGR!=='undefined'&&MGR.world)||(typeof ACTIVE!=='undefined'&&ACTIVE.world)||null;
-function leagueFighterSpect(g,i,w){const m=g.contract&&w.mgrs.find(x=>x.id===g.contract.mgr);
-  return {id:i,rid:'gx'+g.id,name:g.name,taste:pickOne(['aggression','cf','hunt','survival']),temper:'fickle',look:typeof gLook==='function'?gLook(g):{},mem:[],visits:0,
-    trouble:0,cf:0,sec:SEAT_SEC[i%8],fav:null,favCls:null,mood:rnd(21)-10,grudge:null,bet:null,human:false,gone:false,log:[],glad:{ludus:m?m.ludus:'a free sword',cls:g.cls}}}
+/* leagueFighterSpect — a Manager-league gladiator seated as a spectator (they only watch and talk). */
+function leagueFighterSpect(glad,idx,world){const m=glad.contract&&world.mgrs.find(x=>x.id===glad.contract.mgr);
+  return {id:idx,rid:'gx'+glad.id,name:glad.name,taste:pickOne(['aggression','cf','hunt','survival']),temper:'fickle',look:typeof gLook==='function'?gLook(glad):{},mem:[],visits:0,
+    trouble:0,cf:0,sec:SEAT_SEC[idx%8],fav:null,favCls:null,mood:rnd(21)-10,grudge:null,bet:null,human:false,gone:false,log:[],glad:{ludus:m?m.ludus:'a free sword',cls:glad.cls}}}
 // now and then, off-duty fighters from the Manager-mode league turn up to watch — scouting, heckling, or just resting a sore arm
 function seatOffDuty(){
   const w=mgrWorldAny();if(!w||!w.glads||!S.spect.length||S.exhib||rand()>=.3)return;
@@ -272,22 +320,25 @@ function seatOffDuty(){
     slog(`<b>${esc(g.name)}</b> (${esc(sp.glad.ludus)}), off duty, takes a seat — ${pickOne(['scouting the competition','resting a bruised arm','here to heckle an old rival','sizing up next week\u2019s opponents'])}.`,'big')}
 }
 // exhibition stands: no paying public — just fighters from around the empire, watching and talking
-function seatGladiatorStands(cfg){
+function seatGladiatorStands(config){
   const w=mgrWorldAny();const inEvent=new Set(S.players.map(p=>String(p.name).toLowerCase()));
   const pool=w?shuffle(w.glads.filter(g=>g.alive&&!inEvent.has(String(g.name).toLowerCase()))).slice(0,10+rnd(8)):[];
   pool.forEach((g,i)=>S.spect.push(leagueFighterSpect(g,i,w)));
   S.attendance=S.spect.length;S.turnoutWhy=null;
 }
+/* PASSIVE_TALK — what the watching-only crowd of a race or sea-fight says (% = the gladiator). */
 const PASSIVE_TALK={good:['Go on, %!','% has the legs for it!','Look at % fly!','That is my coin on %, and it is SAFE.','% — the gods love that one today.','Faster, %! FASTER!'],bad:['% is going backwards!','My grandmother steers better than %.','Sink, %, sink!','Who taught % to hold the reins?','% is done. Done!','I want my two sestertii back from %.']};
+/* EXHIB_TALK — what fighters in the stands say at an exhibition. */
 const EXHIB_TALK={good:['Clean footwork. Somebody taught that one properly.','That is how you use a shield. Take notes.','I would not want to draw that one on a bad day.','Quick hands. Very quick.','The doctors will not need to call THAT one.'],
   bad:['My grandmother parries better.','Too slow on the left. Every time.','If that was a real bout, we would be singing dirges.','They telegraph every swing like a town crier.','Somebody is wasting their lanista\u2019s coin.']};
 
 // how strongly a gladiator shows each style: personality (or class) blended with what they have actually done
-function styleOf(p){
-  const base=p.cpu?pers(p):(CLASSES[p.cls].pers||(PERS_PRESETS[CLASS_PERS[p.cls]]||PERS_PRESETS.balanced).v);const st=p.stats||{};
-  const beh={aggression:Math.min(100,(st.kill_player||0)*30+(st.pvpHits||0)*8),hunt:Math.min(100,p.trophies.filter(t=>t.pk!=='player').length*25),cf:Math.min(100,(st.pots||0)*18+p.cf*1.5),coin:Math.min(100,p.coin*4+(st.buy||0)*12),survival:Math.min(100,(st.tunnel||0)*20+(st.dodge||0)*20),loyalty:Math.min(100,(st.gifts||0)*25+(st.truce||0)*20+(st.trade||0)*15)};
+function styleOf(player){
+  const base=player.cpu?pers(player):(CLASSES[player.cls].pers||(PERS_PRESETS[CLASS_PERS[player.cls]]||PERS_PRESETS.balanced).v);const st=player.stats||{};
+  const beh={aggression:Math.min(100,(st.kill_player||0)*30+(st.pvpHits||0)*8),hunt:Math.min(100,player.trophies.filter(t=>t.pk!=='player').length*25),cf:Math.min(100,(st.pots||0)*18+player.cf*1.5),coin:Math.min(100,player.coin*4+(st.buy||0)*12),survival:Math.min(100,(st.tunnel||0)*20+(st.dodge||0)*20),loyalty:Math.min(100,(st.gifts||0)*25+(st.truce||0)*20+(st.trade||0)*15)};
   const o={};for(const [k] of PERS_KEYS)o[k]=Math.round((base[k]||50)*0.65+beh[k]*0.35);return o;
 }
+/* pickFavorite — the gladiator a spectator would back: the one whose style best fits their taste (underdog fans pick the weakest). */
 function pickFavorite(sp){
   const act=activePlayers();if(!act.length)return null;
   if(sp.taste==='underdog')return [...act].sort((a,b)=>perfScore(a)-perfScore(b))[0].id;
@@ -296,6 +347,7 @@ function pickFavorite(sp){
 /* ================= FAMOUS VISITORS (v0.18) =================
    Rarely (about one event in twelve) a real historical figure attends. Each nudges the crowd and the
    event a little — never enough to decide it. Toggle: Settings → Famous visitors. */
+/* FAMOUS — famous visitors: name, who they were, crowd mood change, their effect fx(players) → text, and their entrance line. TWEAK: moods and effects. */
 const FAMOUS=[
   {n:'Titus',who:'the emperor who opened the Flavian Amphitheater',mood:15,fx:ps=>{for(const p of ps)p.cf+=2;return 'every gladiator +2 CF from the emperor\u2019s favor'},line:'The imperial box fills. The whole arena rises for Titus.'},
   {n:'Nero',who:'emperor, singer, arsonist (allegedly)',mood:0,fx:ps=>{const p=pickOne(ps);p.cf+=5;for(const s of S.spect)s.mood=clamp(s.mood+rnd(41)-20,-100,100);return `Nero picks a favorite: ${esc(p.name)} +5 CF; the crowd\u2019s mood lurches`},line:'Nero arrives with a lyre and an entourage. Nobody asks him to play. He plays.'},
@@ -307,6 +359,7 @@ const FAMOUS=[
   {n:'Priscus & Verus',who:'the pair whose famous bout ended in a draw — and freedom for both',mood:12,fx:ps=>{for(const p of ps)p.cf+=1;return 'a little honor for everyone (+1 CF each)'},line:'Priscus and Verus sit side by side, as they have since the day neither would fall.'},
   {n:'Pliny the Elder',who:'naturalist, admiral, compulsive note-taker',mood:0,fx:ps=>{for(const p of ps)p.coin+=1;return 'he tips every gladiator a coin for letting him sketch their armor'},line:'Pliny the Elder is sketching the beasts. And the sand. And the ushers.'},
 ];
+/* famousVisit — about one event in twelve a famous visitor attends and applies their effect (dice drawn every time so replays line up). TWEAK: the 1/12. */
 function famousVisit(){
   const roll=rand(),pick=rnd(FAMOUS.length); // drawn every time so seeded replays line up whether or not anyone famous comes
   if(HEADLESS||S.sim||S.exhib||(typeof SETTINGS!=='undefined'&&SETTINGS.famous===false)||roll>=1/12)return;
@@ -317,6 +370,7 @@ function famousVisit(){
   slog(`👑 <b>${esc(F.n)}</b> takes a seat. ${F.line}`,'big');
   try{flaviusMood(F.mood<0?'bored':'smug',3800,.7)}catch(e){}
 }
+/* crowdStart — at the start: the omen, a famous visitor, world news on moods, then every spectator picks a favorite (memory, kin, bought cheers, taste), takes a section and lays an opening 2 CF wager. */
 function crowdStart(){
   omenStart();
   famousVisit();
@@ -357,78 +411,84 @@ function crowdStart(){
   log(`${S.spect.length}K spectators take their seats in the stands: ${fans.length}K arrive as fans, ${neu.length}K still to be won over. Open the crowd panel for every name.`);
   for(const s of S.spect.filter(x=>!x.human))slog(`<b>${esc(s.name)}</b> (${SPECT_TASTES[s.taste][0].toLowerCase()}, ${SPECT_TEMPERS[s.temper][0].toLowerCase()}) sits in ${SECTIONS[s.sec].n}${s.fav!=null?`, backing <b>${esc(S.players[s.fav].name)}</b> with a 2 CF wager`:''}.`);
 }
-function spectMood(sp,d,emo,text){
-  if(sp.gone)return;sp.mood=clamp(Math.round(sp.mood+d),-100,100);
-  if(emo&&(Math.abs(d)>=8?Math.random()<.75*clamp(crowdA(),0.3,1.3):Math.random()<.2*crowdA()))emote(sp,emo,text&&Math.random()<.7?text:'') // most reactions come with words now, not just a face;
+/* spectMood — changes a spectator's mood by delta and maybe shows an emote. */
+function spectMood(sp,delta,emo,text){
+  if(sp.gone)return;sp.mood=clamp(Math.round(sp.mood+delta),-100,100);
+  if(emo&&(Math.abs(delta)>=8?Math.random()<.75*clamp(crowdA(),0.3,1.3):Math.random()<.2*crowdA()))emote(sp,emo,text&&Math.random()<.7?text:'') // most reactions come with words now, not just a face;
 }
 // every reaction the crowd has: some depend on taste and favorite, some are universal
-function crowdReact(kind,c={}){
-  flaviusReact(kind,c); // the sponsor reacts even when the stands are empty
+function crowdReact(kind,info={}){
+  flaviusReact(kind,info); // the sponsor reacts even when the stands are empty
   if(!S||!S.spect||!S.spect.length)return;
   for(const sp of S.spect){if(sp.gone)continue;const fav=sp.fav!=null?S.players[sp.fav]:null;const T=sp.taste;const blood=sp.temper==='bloodthirsty';
     switch(kind){
-      case 'hit':{const {att,def,dmg}=c;if(!dmg)break;
+      case 'hit':{const {att,def,dmg}=info;if(!dmg)break;
         if(def===fav){spectMood(sp,-5*dmg,dmg>=3?'😱':'😠',pickOne(SHOUTS.sad));if(att&&att.cls&&rand()<.6)sp.grudge=att.id}
         else if(att===fav){spectMood(sp,4*dmg,'🎉',pickOne(SHOUTS.fav))}
         else spectMood(sp,blood?2*dmg:dmg*0.5,blood?'🤩':null,blood?pickOne(SHOUTS.blood):'');
         if(att&&att.cls&&T==='aggression'&&att!==fav)spectMood(sp,2,null);break}
-      case 'elim':{const {v,killer}=c;if(sp===S.spect.find(x=>!x.gone))duoSay();
+      case 'elim':{const {v,killer}=info;if(sp===S.spect.find(x=>!x.gone))duoSay();
         if(v===fav){spectMood(sp,-45,'😭',pickOne(SHOUTS.sad));if(killer&&killer.cls)sp.grudge=killer.id;sp.fav=null}
         else if(killer===fav)spectMood(sp,30,'🎉',pickOne(SHOUTS.fav));
         else spectMood(sp,blood?25:12,blood?'🤩':'😮',pickOne(SHOUTS.blood)); // blood is always a show
         if(sp.grudge===v.id)spectMood(sp,20,'😈','Good riddance!');break}
-      case 'pot':spectMood(sp,c.p===fav?10:5+(T==='cf'?4:0),c.p===fav?'👏':'🏺','');break;
+      case 'pot':spectMood(sp,info.p===fav?10:5+(T==='cf'?4:0),info.p===fav?'👏':'🏺','');break;
       case 'topple':spectMood(sp,10,'😮','Timber!');break;
-      case 'beast':spectMood(sp,c.p===fav?14:T==='hunt'?8:5,c.p===fav?'🎉':'👏',T==='hunt'?'What a kill!':'');break;
-      case 'boss':spectMood(sp,blood?20:8,'😱',c.n==='Tholo'?'Tholo! Tholo!':'The Emperor!');break;
-      case 'truce':spectMood(sp,T==='loyalty'?-3:-12,'😠','Cowards!');if(!fav||c.a===fav||c.b===fav){}break; // nobody paid to watch friendship
+      case 'beast':spectMood(sp,info.p===fav?14:T==='hunt'?8:5,info.p===fav?'🎉':'👏',T==='hunt'?'What a kill!':'');break;
+      case 'boss':spectMood(sp,blood?20:8,'😱',info.n==='Tholo'?'Tholo! Tholo!':'The Emperor!');break;
+      case 'truce':spectMood(sp,T==='loyalty'?-3:-12,'😠','Cowards!');if(!fav||info.a===fav||info.b===fav){}break; // nobody paid to watch friendship
       case 'tunnel':spectMood(sp,T==='survival'?4:-5,T==='survival'?'🙂':'🥱',T==='survival'?'':'Come back and fight!');break;
       case 'nohit':spectMood(sp,blood?-10:-5,'🥱',pickOne(SHOUTS.bored));break;
-      case 'mf':spectMood(sp,c.p===fav?10:5,'👏','');break;
-      case 'buy':if(T==='coin')spectMood(sp,c.p===fav?8:3,c.p===fav?'🤑':null,'');break;
+      case 'mf':spectMood(sp,info.p===fav?10:5,'👏','');break;
+      case 'buy':if(T==='coin')spectMood(sp,info.p===fav?8:3,info.p===fav?'🤑':null,'');break;
       case 'gift':if(T==='loyalty')spectMood(sp,6,'🥹','');break;
-      case 'spear':if(c.s===sp)break;spectMood(sp,-35,'😡','Murderer!');sp.grudge=c.p.id;if(fav===c.p&&sp.temper!=='loyal'){sp.fav=null;slog(`<b>${esc(sp.name)}</b> wants nothing more to do with ${esc(c.p.name)}.`,'big')}break;
+      case 'spear':if(info.s===sp)break;spectMood(sp,-35,'😡','Murderer!');sp.grudge=info.p.id;if(fav===info.p&&sp.temper!=='loyal'){sp.fav=null;slog(`<b>${esc(sp.name)}</b> wants nothing more to do with ${esc(info.p.name)}.`,'big')}break;
     }
     // allegiance is earned: a big play wins over neutrals whose taste it suits, and cowardice costs fickle fans
     if(!sp.human&&sp.fav==null&&!sp.gone){
-      const act=c.att||c.killer||c.p;const TASTE_OF={hit:'aggression',elim:'aggression',pot:'cf',beast:'hunt',topple:'cf',mf:'cf',buy:'coin',gift:'loyalty'};
+      const act=info.att||info.killer||info.p;const TASTE_OF={hit:'aggression',elim:'aggression',pot:'cf',beast:'hunt',topple:'cf',mf:'cf',buy:'coin',gift:'loyalty'};
       if(act&&act.cls&&!act.spect&&act.alive&&(TASTE_OF[kind]===T||(T==='underdog'&&(kind==='hit'||kind==='elim')&&perfScore(act)<=Math.min(...activePlayers().map(perfScore))))&&rand()<.45){
         sp.fav=act.id;sp.favCls=act.cls;spectMood(sp,10,'🎉',pickOne(SHOUTS.fav));slog(`<b>${esc(sp.name)}</b> is won over by ${esc(act.name)}${kind==='beast'?"'s kill":kind==='pot'?"'s showmanship":''}.`,'big')}}
-    if(!sp.human&&fav&&(kind==='truce'&&(c.a===fav||c.b===fav)||kind==='tunnel'&&c.p===fav)&&sp.temper!=='loyal'&&rand()<(sp.temper==='fickle'?.4:.15)){
+    if(!sp.human&&fav&&(kind==='truce'&&(info.a===fav||info.b===fav)||kind==='tunnel'&&info.p===fav)&&sp.temper!=='loyal'&&rand()<(sp.temper==='fickle'?.4:.15)){
       sp.fav=null;slog(`<b>${esc(sp.name)}</b> turns their back on ${esc(fav.name)}. Nobody paid to watch ${kind==='truce'?'friendship':'hiding'}.`)}
   }
 }
 // rulebook: every spectator in a gladiator's section is worth 1 CF to that gladiator at the start of their resolve phase
+/* CHEER_CAP — most CF one section cheer can pay per Resolve when more than 8 are seated. TWEAK: the 3. */
 const CHEER_CAP=3;
-function sectionCheer(p){
-  if(!S.spect.length||!p.alive||S.exhib||S.passive)return; // exhibition stands earn nobody CF
-  const si=secOf(p);const k=S.spect.filter(s=>!s.gone&&s.sec===si).length;
+/* sectionCheer — Resolve: the spectators in a player's section cheer them for CF — 1 each up to 8 seated, otherwise a share of 8 (fractions carry over), capped at CHEER_CAP. */
+function sectionCheer(player){
+  if(!S.spect.length||!player.alive||S.exhib||S.passive)return; // exhibition stands earn nobody CF
+  const si=secOf(player);const k=S.spect.filter(s=>!s.gone&&s.sec===si).length;
   if(k&&cfAllowed()){
     // Fate ranges assume the rulebook's dozen-or-fewer crowd. A big house cheers LOUDER, not richer:
     // cheer CF is scaled by 8/attendance once more than 8 are seated, so a 48-crowd event still scores like the printed game.
     // v0.26: exact share-of-house scaling (fractions carry over turn to turn, no forced minimum of 1)
     // and a hard ceiling of 3 CF per resolve, so a stand packed with one gladiator's fans can't mint freedom.
     const raw=S.attendance||S.spect.length,att=Math.max(8,raw); // ≤8 seated = the printed rule exactly (1 CF per fan in the section, no cap)
-    const A=S.cheerAcc||(S.cheerAcc={});A[p.id]=(A[p.id]||0)+k*8/att;let gain=Math.floor(A[p.id]+1e-9);A[p.id]-=gain;
-    if(raw>8&&gain>CHEER_CAP){gain=CHEER_CAP;A[p.id]=0}
-    if(!gain){log(`${k} spectator${k>1?'s':''} in ${SECTIONS[si].n} cheer for ${nm(p)} — a thin share of a crowd of ${att}; the favor builds (${Math.round(A[p.id]*100)}% of a CF).`);return}
-    cfWhy('section cheers');p.cf+=gain;stat(p,'spectCF',gain);
-    log(`${k} spectator${k>1?'s':''} in ${SECTIONS[si].n} cheer for ${nm(p)} (+${gain} CF${gain<k?`, scaled for a crowd of ${att}${gain===CHEER_CAP?', capped':''}`:''}).`);fx(p.r,p.c,`+${gain} CF`,'#f0cf7d')}
+    const A=S.cheerAcc||(S.cheerAcc={});A[player.id]=(A[player.id]||0)+k*8/att;let gain=Math.floor(A[player.id]+1e-9);A[player.id]-=gain;
+    if(raw>8&&gain>CHEER_CAP){gain=CHEER_CAP;A[player.id]=0}
+    if(!gain){log(`${k} spectator${k>1?'s':''} in ${SECTIONS[si].n} cheer for ${nm(player)} — a thin share of a crowd of ${att}; the favor builds (${Math.round(A[player.id]*100)}% of a CF).`);return}
+    cfWhy('section cheers');player.cf+=gain;stat(player,'spectCF',gain);
+    log(`${k} spectator${k>1?'s':''} in ${SECTIONS[si].n} cheer for ${nm(player)} (+${gain} CF${gain<k?`, scaled for a crowd of ${att}${gain===CHEER_CAP?', capped':''}`:''}).`);fx(player.r,player.c,`+${gain} CF`,'#f0cf7d')}
 }
-function spearTargets(p){
+/* spearTargets — spectators a player may spear (3 CF, once per event, only stands facing their quadrant). */
+function spearTargets(player){
   if(S.exhib||S.passive)return []; // nobody spears a colleague at an exhibition
-  if(p.spearUsed||!S.spect.length||!cfAllowed()||p.cf<3)return [];const q=quadOf(p);if(!q)return [];
+  if(player.spearUsed||!S.spect.length||!cfAllowed()||player.cf<3)return [];const q=quadOf(player);if(!q)return [];
   return S.spect.filter(s=>!s.gone&&SECTIONS[s.sec].q===q);
 }
-async function doSpear(p,s){
-  cfWhy('spearing a spectator');p.cf-=3;p.spearUsed=true;const h=rollHits(2);
-  if(cnt(h)){s.gone=true;s.goneBy=p.name;log(`${nm(p)} hurls a spear into ${SECTIONS[s.sec].n} ${diceHtml(h)}: <b>${esc(s.name)}</b> is carried out of the arena!`,'big');slog(`<b>${esc(s.name)}</b> is speared by ${esc(p.name)} and carried out of the arena. The stands will remember.`,'big');duoSay('front row');crowdReact('spear',{p,s});stat(p,'spear')}
-  else{log(`${nm(p)} hurls a spear into ${SECTIONS[s.sec].n} ${diceHtml(h)} and misses ${esc(s.name)}.`);slog(`${esc(p.name)}'s spear misses <b>${esc(s.name)}</b> by a hand's width.`);crowdReact('spear',{p,s:null})}
+/* doSpear — throws the spear: 2 hit dice, any hit carries the spectator out (and the stands remember). */
+async function doSpear(player,spect){
+  cfWhy('spearing a spectator');player.cf-=3;player.spearUsed=true;const h=rollHits(2);
+  if(cnt(h)){spect.gone=true;spect.goneBy=player.name;log(`${nm(player)} hurls a spear into ${SECTIONS[spect.sec].n} ${diceHtml(h)}: <b>${esc(spect.name)}</b> is carried out of the arena!`,'big');slog(`<b>${esc(spect.name)}</b> is speared by ${esc(player.name)} and carried out of the arena. The stands will remember.`,'big');duoSay('front row');crowdReact('spear',{p:player,s:spect});stat(player,'spear')}
+  else{log(`${nm(player)} hurls a spear into ${SECTIONS[spect.sec].n} ${diceHtml(h)} and misses ${esc(spect.name)}.`);slog(`${esc(player.name)}'s spear misses <b>${esc(spect.name)}</b> by a hand's width.`);crowdReact('spear',{p:player,s:null})}
 }
-async function humanSpear(p){
-  const t=spearTargets(p);if(!t.length)return;
-  const i=await modal('Spear a spectator',`<p>3 CF, once per event. Roll 2 hit dice; 1 hit removes the spectator. You can only reach spectators whose section faces your quadrant (Q${quadOf(p)}). Every other spectator will hate you for it.</p>`,t.map((s,i)=>({label:`${s.name}${s.human?' (the human spectator)':''}`,sub:`${SECTIONS[s.sec].n} · ${SPECT_TASTES[s.taste][0]} fan · ${s.cf} CF · ${moodEmo(s.mood)}${s.fav!=null?' · backs '+S.players[s.fav].name:''}`,value:i})).concat([{label:'Cancel',value:null}]));
-  if(i==null)return;await doSpear(p,t[i]);
+/* humanSpear — the human's spear window: pick a spectator in reach. */
+async function humanSpear(player){
+  const t=spearTargets(player);if(!t.length)return;
+  const i=await modal('Spear a spectator',`<p>3 CF, once per event. Roll 2 hit dice; 1 hit removes the spectator. You can only reach spectators whose section faces your quadrant (Q${quadOf(player)}). Every other spectator will hate you for it.</p>`,t.map((s,i)=>({label:`${s.name}${s.human?' (the human spectator)':''}`,sub:`${SECTIONS[s.sec].n} · ${SPECT_TASTES[s.taste][0]} fan · ${s.cf} CF · ${moodEmo(s.mood)}${s.fav!=null?' · backs '+S.players[s.fav].name:''}`,value:i})).concat([{label:'Cancel',value:null}]));
+  if(i==null)return;await doSpear(player,t[i]);
 }
 /* ---- turn rotation upkeep: spectators earn 1 CF, then may spend it (p.35) ---- */
 async function spectatorsAct(){
@@ -485,13 +545,15 @@ async function spectatorsAct(){
       s.cf-=3;log(`${esc(s.name)} pays 3 CF to move from ${SECTIONS[s.sec].n} to ${SECTIONS[to].n}${want===grudge?`, to get closer to ${nm(want)}`:`, to cheer ${nm(want)}`}.`);slog(`<b>${esc(s.name)}</b> moves to ${SECTIONS[to].n} (${want===grudge?'hunting':'following'} ${esc(want.name)}).`);s.sec=to;emote(s,'🚶','');}
   }
 }
-async function spectStone(s,q){
+/* spectStone — a spectator's stone: 1 hit die, 1 damage to a rolled location; a stone that finishes a gladiator collects all their CF. */
+async function spectStone(spect,target){
   S.stonesThrown=(S.stonesThrown||0)+1;
-  const h=rollHits(1);const cfBefore=q.cf;emote(s,'🪨',pickOne(SHOUTS.angry));const who=s.human?'You hurl':`${esc(s.name)} (${SECTIONS[s.sec].n}) hurls`;
-  if(h[0]){await hurt(q,rollLoc(q),1,{type:'env',spect:s},`${who} a stone at ${q.name} ${diceHtml(h)}`);slog(`<b>${esc(s.name)}</b> pays 2 CF and hits ${esc(q.name)} with a stone.`);
-    if(!q.alive){s.cf+=Math.max(0,cfBefore);log(`${s.human?'Your':esc(s.name)+"'s"} stone finishes ${nm(q)}. ${s.human?'You collect':'The spectator collects'} all ${Math.max(0,cfBefore)} of their Crowd Favor.`,'big');slog(`<b>${esc(s.name)}</b>'s stone finishes ${esc(q.name)} — they collect all ${Math.max(0,cfBefore)} of their CF.`,'big')}}
-  else{log(`${who} a stone at ${nm(q)} ${diceHtml(h)} and misses.`);slog(`<b>${esc(s.name)}</b> hurls a stone at ${esc(q.name)} and misses.`)}
+  const h=rollHits(1);const cfBefore=target.cf;emote(spect,'🪨',pickOne(SHOUTS.angry));const who=spect.human?'You hurl':`${esc(spect.name)} (${SECTIONS[spect.sec].n}) hurls`;
+  if(h[0]){await hurt(target,rollLoc(target),1,{type:'env',spect:spect},`${who} a stone at ${target.name} ${diceHtml(h)}`);slog(`<b>${esc(spect.name)}</b> pays 2 CF and hits ${esc(target.name)} with a stone.`);
+    if(!target.alive){spect.cf+=Math.max(0,cfBefore);log(`${spect.human?'Your':esc(spect.name)+"'s"} stone finishes ${nm(target)}. ${spect.human?'You collect':'The spectator collects'} all ${Math.max(0,cfBefore)} of their Crowd Favor.`,'big');slog(`<b>${esc(spect.name)}</b>'s stone finishes ${esc(target.name)} — they collect all ${Math.max(0,cfBefore)} of their CF.`,'big')}}
+  else{log(`${who} a stone at ${nm(target)} ${diceHtml(h)} and misses.`);slog(`<b>${esc(spect.name)}</b> hurls a stone at ${esc(target.name)} and misses.`)}
 }
+/* humanSpectatorTurn — the human spectator's upkeep window: stone, offering, change section, chant for Tholo, or watch. One action per upkeep. */
 async function humanSpectatorTurn(me){
   if(S&&S.snap)return;
   if(me.fav===undefined&&typeof spectChooseFav==='function')await spectChooseFav(me);
@@ -513,6 +575,7 @@ async function humanSpectatorTurn(me){
     if(v==='tholo'){const payers={};for(const s of S.spect)if(!s.gone&&s.cf>=3){const k=SECTIONS[s.sec].q;if(!payers[k]||s.human)payers[k]=s}for(const s of Object.values(payers))s.cf-=3;log('The stands take up your chant: “Tholo! Tholo!”','big');spawnNPC('tholo','Tholo',S.ri<2?[6,6]:null);crowdReact('boss',{n:'Tholo'});render();return}
   }
 }
+/* crowdPanelHTML — the crowd panel: every spectator (face, CF, taste, favorite, grudge, bet) and the stands log, both foldable. */
 function crowdPanelHTML(){
   if(!S||!S.spect||!S.spect.length)return '';
   const rows=S.spect.map(s=>{const f=s.fav!=null?S.players[s.fav]:null;const g=s.grudge!=null?S.players[s.grudge]:null;
@@ -526,26 +589,34 @@ function crowdPanelHTML(){
 }
 /* v0.45 collapsible panels: the stands, the stands log and the arena log (remembered in this browser) */
 let PANEL_COLL={};try{PANEL_COLL=JSON.parse(localStorage.getItem('flavius_coll')||'{}')||{}}catch(e){PANEL_COLL={}}
-function collShut(k){return !!PANEL_COLL[k]}
+/* collShut — whether a foldable panel is shut. */
+function collShut(key){return !!PANEL_COLL[key]}
+/* collApply — applies the fold state to the arena log bar. */
 function collApply(){const lb=document.querySelector('.logbar');if(lb){lb.classList.toggle('coll-shut',!!PANEL_COLL.alog);const h=lb.querySelector('[data-coll="alog"]');if(h)h.classList.toggle('coll-shut',!!PANEL_COLL.alog)}}
-function collToggle(k){PANEL_COLL[k]=!PANEL_COLL[k];try{localStorage.setItem('flavius_coll',JSON.stringify(PANEL_COLL))}catch(e){}collApply();if(k!=='alog'&&S){const cp=$('#crowdPanel');if(cp&&typeof crowdPanelHTML==='function')cp.innerHTML=crowdPanelHTML()}}
+/* collToggle — folds or unfolds a panel (localStorage flavius_coll) and redraws it. */
+function collToggle(key){PANEL_COLL[key]=!PANEL_COLL[key];try{localStorage.setItem('flavius_coll',JSON.stringify(PANEL_COLL))}catch(e){}collApply();if(key!=='alog'&&S){const cp=$('#crowdPanel');if(cp&&typeof crowdPanelHTML==='function')cp.innerHTML=crowdPanelHTML()}}
+/* clicking a foldable header toggles it. */
 document.addEventListener('click',e=>{const h=e.target.closest('.collhd[data-coll]');if(h){collToggle(h.dataset.coll)}});
+/* Enter / Space on a foldable header toggles it. */
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest&&e.target.closest('.collhd[data-coll]')){e.preventDefault();collToggle(e.target.closest('.collhd').dataset.coll)}});
 setTimeout(collApply,0);
 
 /* =====================================================================
    WAGERS: the bookmaker's odds, your purse, gladiators betting on themselves and the crowd's bets.
    ===================================================================== */
+/* HOUSE — the bookmaker's margin on win odds. TWEAK: the 1.12. */
 const HOUSE=1.12;
+/* fmtOdds — odds as "2.5×". */
 const fmtOdds=o=>(Math.round(o*10)/10).toFixed(1)+'×';
 // a quick read of each gladiator's chances from their body, gear, favor and reputation
-function betStrength(p){
-  if(!p.alive||p.exited)return 0;
-  const hp=LOCS.reduce((s,l)=>s+Math.max(0,p.hp[l]),0),ap=LOCS.reduce((s,l)=>s+p.ap[l],0);
-  const w=['R','L'].reduce((s,a)=>s+(armAlive(p,a)?wScore(p['w'+a]):0),0);
-  const lethal=Math.min(p.hp.head+p.ap.head,p.hp.chest+p.ap.chest);
-  return hp*0.9+ap*0.8+w*3.2+lethal*1.2+p.cf*0.25+p.coin*0.15+p.items.length*0.8+(p.diff==='hard'&&p.cpu?4:p.diff==='easy'&&p.cpu?-3:0)+(p.rating?(p.rating-60)*0.25:0);
+function betStrength(player){
+  if(!player.alive||player.exited)return 0;
+  const hp=LOCS.reduce((s,l)=>s+Math.max(0,player.hp[l]),0),ap=LOCS.reduce((s,l)=>s+player.ap[l],0);
+  const w=['R','L'].reduce((s,a)=>s+(armAlive(player,a)?wScore(player['w'+a]):0),0);
+  const lethal=Math.min(player.hp.head+player.ap.head,player.hp.chest+player.ap.chest);
+  return hp*0.9+ap*0.8+w*3.2+lethal*1.2+player.cf*0.25+player.coin*0.15+player.items.length*0.8+(player.diff==='hard'&&player.cpu?4:player.diff==='easy'&&player.cpu?-3:0)+(player.rating?(player.rating-60)*0.25:0);
 }
+/* winProbs — win chances per gladiator or team: a softmax of betStrength (teams by their summed strength). TWEAK: the temperature T = 11. */
 function winProbs(){
   const act=activePlayers();const ev=EV();if(!act.length)return [];
   const groups={};for(const p of act){const k=(ev.teams||ev.coop)?p.team:'p'+p.id;(groups[k]=groups[k]||[]).push(p)}
@@ -553,11 +624,13 @@ function winProbs(){
   const mx=Math.max(...G.map(g=>g.s));const T=11;const ex=G.map(g=>Math.exp((g.s-mx)/T));const z=ex.reduce((a,b)=>a+b,0);
   return G.map((g,i)=>({...g,pr:ex[i]/z}));
 }
+/* oddsTable — the bookmaker's board: each gladiator/team with its chance and odds (1.05–40×), favorites first. */
 function oddsTable(force){
   if(!S||!S.players||(S.phase==='setup'&&!force))return [];
   const ev=EV();
   return winProbs().map(g=>({key:g.k,p:g.ps[0],ps:g.ps,label:(ev.teams||ev.coop)&&g.ps.length>1?`Team ${g.ps[0].team} (${g.ps.map(p=>p.name).join(', ')})`:g.ps[0].name,pr:g.pr,odds:Math.max(1.05,Math.min(40,1/(g.pr*HOUSE)))})).sort((a,b)=>a.odds-b.odds);
 }
+/* wagersOpen — the book is open while 3+ gladiators stand and it is not the last round. */
 const wagersOpen=()=>S&&!S.over&&S.phase!=='setup'&&activePlayers().length>2&&!(S.ri>0&&S.ri>=EV().rounds.length-1);
 /* Since v0.7 there is no separate purse: every wager is bankrolled by a lanista.
    Watching a bout from Manager mode bets that career's treasury; anywhere else, the ACTIVE lanista's (set in Manager mode). */
@@ -567,6 +640,7 @@ async function getPurse(){
   if(!m)return null; // no active lanista: the bookmaker won't take your coin
   return {coin:m.coin,won:m.betWon||0,lost:m.betLost||0,bets:m.betCount||0,history:m.betHistory||[],name:m.name,ludus:m.ludus};
 }
+/* setPurse — writes the purse back to the Manager career that bankrolls it. */
 async function setPurse(v){
   if(S&&S.mgrCtx&&typeof mgrPurseSet==='function')return mgrPurseSet(v);
   if(typeof applyActivePurse==='function')await applyActivePurse(v);
@@ -602,6 +676,7 @@ function wagerHavenHTML(tbl,purse){
 /* v0.46: wagering belongs to Manager mode — a lanista's treasury, a lanista's risk. Outside it the bookmaker is closed
    (a gladiator can still wager their own match coin on themselves, from the action bar). */
 const bookOpen=()=>!!(S&&(S.mgrCtx||S.specCtx)&&!S.over);
+/* openWagers — the Wagers window (Manager bouts only): the Bookie's Haven, win and first-to-fall odds, and your stake. */
 async function openWagers(){if(!bookOpen()&&!(typeof MGR!=='undefined'&&MGR.world&&document.getElementById('mgrBody'))){if(typeof mToast==='function')mToast('💰 Wagers live in Manager mode — a lanista bets from the treasury. (In any bout a gladiator can still wager their own coin on themselves.)');return}
   if(!S||S.phase==='setup'){if(!modalBusy())modal('Wagers','<p>Start an event first. Once the horns sound, the bookmaker posts odds on every gladiator until the final round (or until only two remain).</p>',[{label:'Close',value:1}]);return}
   if(!$('#modal').hidden)return;
@@ -630,29 +705,33 @@ async function openWagers(){if(!bookOpen()&&!(typeof MGR!=='undefined'&&MGR.worl
     log(`You wager ${stake} coin on <b>${esc(label)}</b> at ${fmtOdds(+odds)}.`);render();
   }
 }
+/* the top-bar Wagers button. */
 $('#btnBets').onclick=()=>{if(modalBusy())return;openWagers()};
 // gladiators may also slip coin to the bookmaker on themselves; a win pays into their purse (and their Royal Reserve)
 const selfWagerRound=()=>!!(S&&(S.mgrCtx||S.specCtx||((S.ri||0)===0&&EV().rounds&&EV().rounds.length>=3))); /* v0.47: in Play Now, only in round one of a three-round event */
-const canSelfWager=p=>!p.cpu&&wagersOpen()&&!p.selfBet&&p.coin>=2&&!isChariot()&&selfWagerRound();
-async function humanSelfWager(p){
-  const o=oddsTable().find(x=>x.ps.includes(p));if(!o)return;
-  const opts=[2,4,6,10].filter(v=>v<=p.coin).map(v=>({label:`${v} coin`,sub:`pays ${Math.round(v*o.odds)} if ${EV().teams?'your team wins':'you win'}`,value:v}));
+const canSelfWager=player=>!player.cpu&&wagersOpen()&&!player.selfBet&&player.coin>=2&&!isChariot()&&selfWagerRound();
+/* humanSelfWager — the "Wager on yourself" window: 2/4/6/10 coin at the current odds. */
+async function humanSelfWager(player){
+  const o=oddsTable().find(x=>x.ps.includes(player));if(!o)return;
+  const opts=[2,4,6,10].filter(v=>v<=player.coin).map(v=>({label:`${v} coin`,sub:`pays ${Math.round(v*o.odds)} if ${EV().teams?'your team wins':'you win'}`,value:v}));
   const v=await modal('Wager on yourself',`<p>The bookmaker offers <b>${fmtOdds(o.odds)}</b> on ${esc(o.label)}. Coin you stake leaves your purse now; if you win the event, the payout is added to your coin (and your Royal Reserve). Once per event.</p>`,opts.concat([{label:'Cancel',value:null}]));
-  if(!v)return;placeSelfBet(p,v,o.odds);
+  if(!v)return;placeSelfBet(player,v,o.odds);
 }
-function placeSelfBet(p,stake,odds){p.coin-=stake;coinLog(p,-stake,'wagers');p.selfBet={stake,odds};const bid=HEADLESS?null:betRec({src:'event',ev:S.seed,dayOff:0,min:840+Math.min(400,(S.turnNo||0)*4)+Math.floor(Math.random()*4),city:LOCATIONS[S.locIdx]?LOCATIONS[S.locIdx].n:'',who:p.name,kind:'gladiator',on:`${p.name} (on themselves)`,stake,odds});(S.selfBets=S.selfBets||[]).push({pid:p.id,stake,odds,bid});log(`${nm(p)} slips ${stake} coin to the bookmaker, on ${p.cpu?'themselves':'yourself'} at ${fmtOdds(odds)}.`)}
-function cpuSelfWager(p){
-  if(!p.cpu||p.selfBet||!wagersOpen()||isChariot()||p.coin<6||!selfWagerRound())return;
-  const P=pers(p);const o=oddsTable().find(x=>x.ps.includes(p));if(!o)return;
-  if(o.pr>0.34&&P.coin>55&&rand()<.18){placeSelfBet(p,Math.min(p.coin-2,2+Math.round(P.coin/25)),o.odds);think(p,'My coin is on me.','say')}
+/* placeSelfBet — a gladiator slips coin to the bookmaker on themselves (logged on the exchange). */
+function placeSelfBet(player,stake,odds){player.coin-=stake;coinLog(player,-stake,'wagers');player.selfBet={stake,odds};const bid=HEADLESS?null:betRec({src:'event',ev:S.seed,dayOff:0,min:840+Math.min(400,(S.turnNo||0)*4)+Math.floor(Math.random()*4),city:LOCATIONS[S.locIdx]?LOCATIONS[S.locIdx].n:'',who:player.name,kind:'gladiator',on:`${player.name} (on themselves)`,stake,odds});(S.selfBets=S.selfBets||[]).push({pid:player.id,stake,odds,bid});log(`${nm(player)} slips ${stake} coin to the bookmaker, on ${player.cpu?'themselves':'yourself'} at ${fmtOdds(odds)}.`)}
+/* cpuSelfWager — a coin-loving CPU with a good chance sometimes bets on itself. TWEAK: pr > 0.34, coin taste > 55, 18%. */
+function cpuSelfWager(player){
+  if(!player.cpu||player.selfBet||!wagersOpen()||isChariot()||player.coin<6||!selfWagerRound())return;
+  const P=pers(player);const o=oddsTable().find(x=>x.ps.includes(player));if(!o)return;
+  if(o.pr>0.34&&P.coin>55&&rand()<.18){placeSelfBet(player,Math.min(player.coin-2,2+Math.round(P.coin/25)),o.odds);think(player,'My coin is on me.','say')}
 }
 // settle every wager when the event ends (called from gameOver)
-async function settleWagers(rows,wset){
+async function settleWagers(rows,winnerIds){
   const out=[];
-  for(const b of S.selfBets||[]){const p=S.players[b.pid];const won=wset.has(p.id);const pay=won?Math.round(b.stake*b.odds):0;b.won=won;b.paid=pay;if(pay)p.coin+=pay;betSettle(b.bid,won,pay);out.push(`${esc(p.name)} bet ${b.stake} on ${p.cpu?'themselves':'yourself'}: ${won?`<b style="color:var(--gold2)">won ${pay} coin</b>`:'lost'}`)}
+  for(const b of S.selfBets||[]){const p=S.players[b.pid];const won=winnerIds.has(p.id);const pay=won?Math.round(b.stake*b.odds):0;b.won=won;b.paid=pay;if(pay)p.coin+=pay;betSettle(b.bid,won,pay);out.push(`${esc(p.name)} bet ${b.stake} on ${p.cpu?'themselves':'yourself'}: ${won?`<b style="color:var(--gold2)">won ${pay} coin</b>`:'lost'}`)}
   if(S.bets&&S.bets.length){const purse=await getPurse();let net=0;
     if(purse){for(const b of S.bets){let won=false;
-      if(b.kind==='win'){const ev=EV();won=[...wset].some(id=>{const p=S.players[id];return (ev.teams||ev.coop)?p.team===b.key:'p'+id===b.key})}
+      if(b.kind==='win'){const ev=EV();won=[...winnerIds].some(id=>{const p=S.players[id];return (ev.teams||ev.coop)?p.team===b.key:'p'+id===b.key})}
       if(b.kind==='first')won=(S.elimOrder||[])[0]&&S.elimOrder[0].id===+b.key;
       const P=betPay(b.stake,b.odds);const pay=won?P.net:0;b.won=won;b.paid=pay;b.tax=P.tax||0;purse.coin+=pay;betSettle(b.bid,won,pay);net+=pay-b.stake;purse.bets=(purse.bets||0)+1;if(won)purse.won=(purse.won||0)+pay-b.stake;else purse.lost=(purse.lost||0)+b.stake;
       purse.history=[...(purse.history||[]).slice(-40),{date:new Date().toISOString().slice(0,10),label:b.label,stake:b.stake,odds:b.odds,pay}];
@@ -665,14 +744,14 @@ async function settleWagers(rows,wset){
      const cuts={};for(const [pid,amt] of Object.entries(handle)){const p=S.players[+pid];if(!p||!p.mgrGid)continue;const g=w0.glads.find(x=>x.id===p.mgrGid);const m2=g&&g.contract&&w0.mgrs.find(x=>x.id===g.contract.mgr);if(!m2)continue;
        const cut=Math.max(1,Math.round(amt*0.08));m2.coin+=cut;m2.bookCut=(m2.bookCut||0)+cut;cuts[m2.ludus]=(cuts[m2.ludus]||0)+cut;if(m2.isPlayer&&typeof tnews==='function')tnews(`Bookmaker's cut on ${esc(p.name)}: +${cut} coin (8% of ${amt} wagered).`)}
      if(Object.keys(cuts).length){out.push(`The bookmaker pays the lanistae their cut of the handle: ${Object.entries(cuts).map(([l,c])=>`${esc(l)} +${c}`).join(', ')}.`);if(typeof saveWorld==='function'&&typeof MGR!=='undefined'&&MGR.world===w0)saveWorld()}}}
-  for(const s2 of cb)betSettle(s2.bet.bid,wset.has(s2.bet.pid),Math.round(s2.bet.amt*s2.bet.odds));
-  S.crowdBets={n:cb.length,staked:cb.reduce((a,s)=>a+(s.bet.amt||0),0),winners:cb.filter(s=>wset.has(s.bet.pid)).map(s=>({name:s.name,pay:Math.round(s.bet.amt*s.bet.odds),on:(S.players[s.bet.pid]||{}).name})).sort((a,b)=>b.pay-a.pay),byGlad:S.players.map(p=>({name:p.name,color:p.color,n:cb.filter(s=>s.bet.pid===p.id).length,won:wset.has(p.id)}))};
-  if(cb.length){const w=cb.filter(s=>wset.has(s.bet.pid));out.push(`The crowd: ${w.length?w.map(s=>`${esc(s.name)} collects ${Math.round(s.bet.amt*s.bet.odds)} CF`).join(', '):'no spectator backed the winner'}${cb.length-w.length?`; ${cb.length-w.length} lost their bet`:''}.`)}
+  for(const s2 of cb)betSettle(s2.bet.bid,winnerIds.has(s2.bet.pid),Math.round(s2.bet.amt*s2.bet.odds));
+  S.crowdBets={n:cb.length,staked:cb.reduce((a,s)=>a+(s.bet.amt||0),0),winners:cb.filter(s=>winnerIds.has(s.bet.pid)).map(s=>({name:s.name,pay:Math.round(s.bet.amt*s.bet.odds),on:(S.players[s.bet.pid]||{}).name})).sort((a,b)=>b.pay-a.pay),byGlad:S.players.map(p=>({name:p.name,color:p.color,n:cb.filter(s=>s.bet.pid===p.id).length,won:winnerIds.has(p.id)}))};
+  if(cb.length){const w=cb.filter(s=>winnerIds.has(s.bet.pid));out.push(`The crowd: ${w.length?w.map(s=>`${esc(s.name)} collects ${Math.round(s.bet.amt*s.bet.odds)} CF`).join(', '):'no spectator backed the winner'}${cb.length-w.length?`; ${cb.length-w.length} lost their bet`:''}.`)}
   return out;
 }
 
 /* ---- after the event: the regulars remember (about 5 events' worth), some quit, some swear revenge ---- */
-async function updateCrowdAfterEvent(wset){
+async function updateCrowdAfterEvent(winnerIds){
   if(!S||!S.spect||!S.spect.length)return;
   const d=new Date().toISOString().slice(0,10),ev=EV().short||EV().n;
   const deaths=(S.elimOrder||[]).length;
@@ -688,14 +767,14 @@ async function updateCrowdAfterEvent(wset){
     const fav=sp.fav!=null?S.players[sp.fav]:null;
     if(sp.gone){r.mem.push({d,kind:'speared',who:sp.goneBy||'',note:`speared out of the stands by ${sp.goneBy||'a gladiator'}`});r.grudgeName=sp.goneBy||r.grudgeName}
     if(fav&&!sp.gone)r.fanOf=fav.name; // their allegiance follows them home — counted across the empire
-    if(fav&&wset&&wset.has(fav.id)){r.mem.push({d,kind:'fanwin',who:fav.name,note:`saw ${fav.name} win ${ev}`})}
+    if(fav&&winnerIds&&winnerIds.has(fav.id)){r.mem.push({d,kind:'fanwin',who:fav.name,note:`saw ${fav.name} win ${ev}`})}
     else if(fav&&!fav.alive){r.mem.push({d,kind:'fanfell',who:fav.name,note:`watched ${fav.name} fall`})}
-    if(sp.bet&&wset&&wset.has(sp.bet.pid))r.mem.push({d,kind:'betwon',who:'',note:'collected a winning bet'});
+    if(sp.bet&&winnerIds&&winnerIds.has(sp.bet.pid))r.mem.push({d,kind:'betwon',who:'',note:'collected a winning bet'});
     // family in the sand: kin watch with different eyes
     if(r.kin){const kp=S.players.find(p2=>p2.name.toLowerCase()===String(r.kin.name||'').toLowerCase());
       if(kp&&!kp.alive&&!kp.exited){r.mem.push({d,kind:'grief',who:kp.name,note:`watched their ${r.kin.rel} ${kp.name} die on the sand`});
         if(!r.quit&&!sp.gone){r.quit={reason:`mourning their ${r.kin.rel}`,left:3+rnd(4)};notes.push(`<b>${esc(r.name)}</b> leaves without a word — their ${esc(r.kin.rel)} died on the sand today`)}}
-      else if(kp&&wset&&wset.has(kp.id))r.mem.push({d,kind:'kinwin',who:kp.name,note:`their ${r.kin.rel} ${kp.name} took the palm — drinks were bought`})}
+      else if(kp&&winnerIds&&winnerIds.has(kp.id))r.mem.push({d,kind:'kinwin',who:kp.name,note:`their ${r.kin.rel} ${kp.name} took the palm — drinks were bought`})}
     // a friend was speared: they will be back for revenge
     const fr=speared.find(x=>x!==sp);
     if(fr&&!sp.gone&&rand()<(speared.length?0.35:0)){r.mem.push({d,kind:'revenge',who:fr.goneBy,note:`their friend ${fr.name} was speared by ${fr.goneBy}`});r.grudgeName=fr.goneBy;notes.push(`<b>${esc(r.name)}</b> carries ${esc(fr.name)} out and swears revenge on ${esc(fr.goneBy)}`)}
@@ -725,6 +804,7 @@ async function updateCrowdAfterEvent(wset){
     if(hotAngry.length>=2&&rand()<.4){A.brawls=(A.brawls||0)+1;const [b1,b2]=shuffle(hotAngry);log(`A brawl breaks out in the tiers: <b>${esc(b1.name)}</b> and <b>${esc(b2&&b2.name||'a stranger')}</b> are dragged out by the ushers.`);slog(`<b>${esc(b1.name)}</b> starts a brawl over a spilled cup. The ushers earn their pay.`,'big')}
     Store.put('arena',A.id,A).catch(()=>{})}catch(e){}
 }
+/* loads the crowd at start. */
 loadCrowd().catch(()=>{});
 
 /* =====================================================================
@@ -732,7 +812,9 @@ loadCrowd().catch(()=>{});
    reacts to the action in real time — Starfox wingman meets the Doom guy. Toggle in Settings.
    ===================================================================== */
 const FLAV={mood:'calm',until:0,line:'',lineUntil:0,t:null};
+/* FLAV_PRI — priority of Flavius's moods — a stronger mood is not interrupted by a weaker one. */
 const FLAV_PRI={calm:0,bored:1,pleased:1,smug:2,shock:2,facepalm:2,angry:2,laugh:3,cheer:3,weep:3};
+/* FLAV_LINES — Flavius's lines by mood (a sponsor can bring their own voice). */
 const FLAV_LINES={
   pleased:['Good.','More of that.','Acceptable.','The crowd stirs…'],
   laugh:['HA!','Delightful!','Again! Again!','Ahahaha!'],
@@ -744,6 +826,7 @@ const FLAV_LINES={
   smug:['As I arranged.','Everything in this arena is mine. Including that.','Predictable. Profitable.'],
   weep:['Magnificent bastard…','Even I have a heart. Somewhere.','The sand will remember this one.'],
 };
+/* flaviusMood — sets Flavius's face for a while and maybe a spoken line (chance say). */
 function flaviusMood(mood,dur=2600,say=.4){
   if(HEADLESS||!S||(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false))return;
   const now=performance.now();
@@ -753,10 +836,11 @@ function flaviusMood(mood,dur=2600,say=.4){
   clearTimeout(FLAV.t);FLAV.t=setTimeout(()=>{try{if(!HEADLESS)draw()}catch(e){}},dur+120);
   try{draw()}catch(e){}
 }
-function flaviusReact(kind,c={}){
+/* flaviusReact — how Flavius reacts to each crowd event (hits, eliminations, pots, truces…). Wrapped by 129-v82beasts (a spearing makes him scowl). */
+function flaviusReact(kind,info={}){
   if(HEADLESS)return;
   switch(kind){
-    case 'hit':if((c.dmg||0)>=4)flaviusMood('cheer',3000,.5);else if((c.dmg||0)>0&&Math.random()<.2)flaviusMood('pleased',1700,.12);break;
+    case 'hit':if((info.dmg||0)>=4)flaviusMood('cheer',3000,.5);else if((info.dmg||0)>0&&Math.random()<.2)flaviusMood('pleased',1700,.12);break;
     case 'elim':flaviusMood(Math.random()<.5?'laugh':'cheer',4400,.85);break;
     case 'pot':if(Math.random()<.35)flaviusMood(Math.random()<.3?'smug':'pleased',1900,.18);break;
     case 'topple':flaviusMood('shock',2600,.6);break;
@@ -772,63 +856,65 @@ function flaviusReact(kind,c={}){
 }
 /* Flavius's portrait, drawable onto ANY 2D context (the arena canvas, or an offscreen one for the
    Thumb of Flavius ritual). mood: calm|bored|pleased|smug|shock|facepalm|angry|laugh|cheer|weep */
-function flavFace(c,cx,cy,w,h,mood,label=true,sp=null){
+function flavFace(c2d,cx,cy,w,h,mood,label=true,sp=null){
   sp=sp||(typeof curSponsor==='function'?curSponsor():null)||{}; // v0.28: the sponsor in the box — Flavius by default
-  const E=(x,y,rx,ry)=>{c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2)};
-  c.save();
+  const E=(x,y,rx,ry)=>{c2d.beginPath();c2d.ellipse(x,y,rx,ry,0,0,Math.PI*2)};
+  c2d.save();
   // the box: dark curtain behind a gilt frame
-  c.fillStyle='#1c1410';c.strokeStyle='#c9a458';c.lineWidth=2;
-  c.beginPath();c.rect(cx-w/2,cy-h/2,w,h);c.fill();c.stroke();
-  c.strokeStyle='rgba(201,164,88,.4)';c.lineWidth=1;c.strokeRect(cx-w/2+3,cy-h/2+3,w-6,h-6);
-  const grd=c.createLinearGradient(cx,cy-h/2,cx,cy+h/2);grd.addColorStop(0,sp.bg||'#4a2a52');grd.addColorStop(1,sp.bg2||'#2a1830');
-  c.fillStyle=grd;c.fillRect(cx-w/2+4,cy-h/2+4,w-8,h-8);
-  c.fillStyle='rgba(245,232,204,.75)';c.font=`600 ${Math.max(8,Math.round(TW*0.17))}px IBM Plex Mono, monospace`;c.textAlign='center';c.textBaseline='middle';
-  if(label)c.fillText(String(sp.short||sp.name||'FLAVIUS').toUpperCase().slice(0,14),cx,cy+h/2+TW*0.16);
+  c2d.fillStyle='#1c1410';c2d.strokeStyle='#c9a458';c2d.lineWidth=2;
+  c2d.beginPath();c2d.rect(cx-w/2,cy-h/2,w,h);c2d.fill();c2d.stroke();
+  c2d.strokeStyle='rgba(201,164,88,.4)';c2d.lineWidth=1;c2d.strokeRect(cx-w/2+3,cy-h/2+3,w-6,h-6);
+  const grd=c2d.createLinearGradient(cx,cy-h/2,cx,cy+h/2);grd.addColorStop(0,sp.bg||'#4a2a52');grd.addColorStop(1,sp.bg2||'#2a1830');
+  c2d.fillStyle=grd;c2d.fillRect(cx-w/2+4,cy-h/2+4,w-8,h-8);
+  c2d.fillStyle='rgba(245,232,204,.75)';c2d.font=`600 ${Math.max(8,Math.round(TW*0.17))}px IBM Plex Mono, monospace`;c2d.textAlign='center';c2d.textBaseline='middle';
+  if(label)c2d.fillText(String(sp.short||sp.name||'FLAVIUS').toUpperCase().slice(0,14),cx,cy+h/2+TW*0.16);
   // the man himself (after the seated-with-sword portrait: laurel, dark beard, purple toga)
   const u=h/11;const fy=cy+u*0.9;
-  c.fillStyle=sp.robe||'#5a3566';c.beginPath();c.moveTo(cx-w/2+5,cy+h/2-4);c.quadraticCurveTo(cx-u*3.4,fy+u*1.6,cx,fy+u*2.2);c.quadraticCurveTo(cx+u*3.4,fy+u*1.6,cx+w/2-5,cy+h/2-4);c.closePath();c.fill();
-  c.fillStyle=sp.trim||'#e8dcc0';c.beginPath();c.moveTo(cx-u*1.4,fy+u*2.4);c.quadraticCurveTo(cx,fy+u*1.5,cx+u*1.6,fy+u*2.6);c.lineTo(cx+u*1.2,fy+u*3.2);c.quadraticCurveTo(cx,fy+u*2.4,cx-u*1.4,fy+u*3);c.closePath();c.fill(); // toga fold
+  c2d.fillStyle=sp.robe||'#5a3566';c2d.beginPath();c2d.moveTo(cx-w/2+5,cy+h/2-4);c2d.quadraticCurveTo(cx-u*3.4,fy+u*1.6,cx,fy+u*2.2);c2d.quadraticCurveTo(cx+u*3.4,fy+u*1.6,cx+w/2-5,cy+h/2-4);c2d.closePath();c2d.fill();
+  c2d.fillStyle=sp.trim||'#e8dcc0';c2d.beginPath();c2d.moveTo(cx-u*1.4,fy+u*2.4);c2d.quadraticCurveTo(cx,fy+u*1.5,cx+u*1.6,fy+u*2.6);c2d.lineTo(cx+u*1.2,fy+u*3.2);c2d.quadraticCurveTo(cx,fy+u*2.4,cx-u*1.4,fy+u*3);c2d.closePath();c2d.fill(); // toga fold
   const skin=sp.skin||'#e0ac7e',hair=sp.hair||'#2a1c12';
-  if(sp.long){c.fillStyle=hair;E(cx-u*2.2,fy+u*0.2,u*1.1,u*3);c.fill();E(cx+u*2.2,fy+u*0.2,u*1.1,u*3);c.fill()} // long hair falls behind
-  c.fillStyle=skin;E(cx,fy-u*1.2,u*2.5,u*3);c.fill(); // head
-  c.fillStyle=hair;c.beginPath();c.ellipse(cx,fy-u*3.5,u*2.3,u*1.15,0,Math.PI,0);c.fill(); // hair
-  {const bd=sp.beard===undefined?'full':sp.beard;if(bd&&bd!=='none'){const bs=bd==='long'?1.6:bd==='short'?0.6:1;c.fillStyle=hair;c.beginPath();c.ellipse(cx,fy+u*0.9,u*1.7*(bd==='short'?0.9:1),u*(mood==='laugh'||mood==='cheer'?1.25:1.05)*bs,0,0,Math.PI);c.fill()}} // beard
+  if(sp.long){c2d.fillStyle=hair;E(cx-u*2.2,fy+u*0.2,u*1.1,u*3);c2d.fill();E(cx+u*2.2,fy+u*0.2,u*1.1,u*3);c2d.fill()} // long hair falls behind
+  c2d.fillStyle=skin;E(cx,fy-u*1.2,u*2.5,u*3);c2d.fill(); // head
+  c2d.fillStyle=hair;c2d.beginPath();c2d.ellipse(cx,fy-u*3.5,u*2.3,u*1.15,0,Math.PI,0);c2d.fill(); // hair
+  {const bd=sp.beard===undefined?'full':sp.beard;if(bd&&bd!=='none'){const bs=bd==='long'?1.6:bd==='short'?0.6:1;c2d.fillStyle=hair;c2d.beginPath();c2d.ellipse(cx,fy+u*0.9,u*1.7*(bd==='short'?0.9:1),u*(mood==='laugh'||mood==='cheer'?1.25:1.05)*bs,0,0,Math.PI);c2d.fill()}} // beard
   // laurel wreath
   {const hg=sp.head||'laurel';
-   if(hg==='laurel'||hg==='flowers'){c.strokeStyle=hg==='flowers'?'#4f7a3a':'#5f8a3a';c.lineWidth=Math.max(1.5,u*0.4);c.beginPath();c.arc(cx,fy-u*2.2,u*2.6,Math.PI*1.15,Math.PI*1.85);c.stroke();
-     for(const s of [-1,1]){c.fillStyle=hg==='flowers'?(s<0?'#e07b9a':'#f0cf7d'):'#7fae4a';E(cx+s*u*2.5,fy-u*2.9,u*0.55,u*(hg==='flowers'?0.5:0.3));c.fill();c.fillStyle=hg==='flowers'?'#9aa6ff':'#7fae4a';E(cx+s*u*1.6,fy-u*3.6,u*0.55,u*(hg==='flowers'?0.5:0.3));c.fill()}}
-   else if(hg==='diadem'){c.fillStyle='#e6b93a';c.beginPath();c.ellipse(cx,fy-u*3.1,u*2.3,u*0.45,0,Math.PI,0);c.fill();c.fillRect(cx-u*2.3,fy-u*3.15,u*4.6,u*0.45);c.fillStyle=sp.gem||'#c0433a';E(cx,fy-u*3.25,u*0.35,u*0.35);c.fill()}
-   else if(hg==='hood'){c.fillStyle=sp.robe||'#5a3566';c.beginPath();c.ellipse(cx,fy-u*1.6,u*3.1,u*3.6,0,Math.PI*1.02,Math.PI*1.98);c.lineTo(cx+u*3.1,fy+u*0.8);c.lineTo(cx+u*2.5,fy+u*0.8);c.ellipse(cx,fy-u*1.4,u*2.5,u*3,0,0,Math.PI,true);c.lineTo(cx-u*3.1,fy+u*0.8);c.closePath();c.fill()}
-   else if(hg==='helm'){c.fillStyle='#a9aeb5';c.beginPath();c.ellipse(cx,fy-u*2.6,u*2.6,u*1.7,0,Math.PI,0);c.fill();c.fillStyle=sp.gem||'#c0433a';c.fillRect(cx-u*0.35,fy-u*5.4,u*0.7,u*1.4);c.beginPath();c.ellipse(cx,fy-u*5.2,u*1.6,u*0.6,0,Math.PI,0);c.fill()}
-   else if(hg==='turban'){c.fillStyle=sp.gem||'#e8dcc0';c.beginPath();c.ellipse(cx,fy-u*3.2,u*2.8,u*1.5,0,Math.PI,0);c.fill();c.strokeStyle='rgba(0,0,0,.2)';c.lineWidth=1;for(let i=0;i<3;i++){c.beginPath();c.ellipse(cx,fy-u*3.1+i*u*0.3,u*2.7,u*1.2,0,Math.PI*1.1,Math.PI*1.9);c.stroke()}}}
+   if(hg==='laurel'||hg==='flowers'){c2d.strokeStyle=hg==='flowers'?'#4f7a3a':'#5f8a3a';c2d.lineWidth=Math.max(1.5,u*0.4);c2d.beginPath();c2d.arc(cx,fy-u*2.2,u*2.6,Math.PI*1.15,Math.PI*1.85);c2d.stroke();
+     for(const s of [-1,1]){c2d.fillStyle=hg==='flowers'?(s<0?'#e07b9a':'#f0cf7d'):'#7fae4a';E(cx+s*u*2.5,fy-u*2.9,u*0.55,u*(hg==='flowers'?0.5:0.3));c2d.fill();c2d.fillStyle=hg==='flowers'?'#9aa6ff':'#7fae4a';E(cx+s*u*1.6,fy-u*3.6,u*0.55,u*(hg==='flowers'?0.5:0.3));c2d.fill()}}
+   else if(hg==='diadem'){c2d.fillStyle='#e6b93a';c2d.beginPath();c2d.ellipse(cx,fy-u*3.1,u*2.3,u*0.45,0,Math.PI,0);c2d.fill();c2d.fillRect(cx-u*2.3,fy-u*3.15,u*4.6,u*0.45);c2d.fillStyle=sp.gem||'#c0433a';E(cx,fy-u*3.25,u*0.35,u*0.35);c2d.fill()}
+   else if(hg==='hood'){c2d.fillStyle=sp.robe||'#5a3566';c2d.beginPath();c2d.ellipse(cx,fy-u*1.6,u*3.1,u*3.6,0,Math.PI*1.02,Math.PI*1.98);c2d.lineTo(cx+u*3.1,fy+u*0.8);c2d.lineTo(cx+u*2.5,fy+u*0.8);c2d.ellipse(cx,fy-u*1.4,u*2.5,u*3,0,0,Math.PI,true);c2d.lineTo(cx-u*3.1,fy+u*0.8);c2d.closePath();c2d.fill()}
+   else if(hg==='helm'){c2d.fillStyle='#a9aeb5';c2d.beginPath();c2d.ellipse(cx,fy-u*2.6,u*2.6,u*1.7,0,Math.PI,0);c2d.fill();c2d.fillStyle=sp.gem||'#c0433a';c2d.fillRect(cx-u*0.35,fy-u*5.4,u*0.7,u*1.4);c2d.beginPath();c2d.ellipse(cx,fy-u*5.2,u*1.6,u*0.6,0,Math.PI,0);c2d.fill()}
+   else if(hg==='turban'){c2d.fillStyle=sp.gem||'#e8dcc0';c2d.beginPath();c2d.ellipse(cx,fy-u*3.2,u*2.8,u*1.5,0,Math.PI,0);c2d.fill();c2d.strokeStyle='rgba(0,0,0,.2)';c2d.lineWidth=1;for(let i=0;i<3;i++){c2d.beginPath();c2d.ellipse(cx,fy-u*3.1+i*u*0.3,u*2.7,u*1.2,0,Math.PI*1.1,Math.PI*1.9);c2d.stroke()}}}
   // brows + eyes by mood
-  c.strokeStyle=hair;c.lineWidth=Math.max(1.4,u*0.36);c.lineCap='round';
-  const brow=(s,tilt)=>{c.beginPath();c.moveTo(cx+s*u*1.7,fy-u*1.9+tilt*s*0);c.lineTo(cx+s*u*0.5,fy-u*1.9-tilt*u*0.6);c.stroke()};
-  if(mood==='angry'){brow(-1,-1);brow(1,-1)}else if(mood==='shock'||mood==='cheer'){brow(-1,1);brow(1,1)}else{c.beginPath();c.moveTo(cx-u*1.7,fy-u*2);c.lineTo(cx-u*0.5,fy-u*2.05);c.stroke();c.beginPath();c.moveTo(cx+u*0.5,fy-u*2.05);c.lineTo(cx+u*1.7,fy-u*2);c.stroke()}
-  c.fillStyle='#1a120c';
-  if(mood==='laugh'){c.strokeStyle='#1a120c';c.lineWidth=Math.max(1.3,u*0.32);for(const s of [-1,1]){c.beginPath();c.arc(cx+s*u*1.1,fy-u*1.1,u*0.55,Math.PI*1.1,Math.PI*1.9);c.stroke()}}
-  else if(mood==='shock'){for(const s of [-1,1]){c.strokeStyle='#1a120c';c.lineWidth=1.4;E(cx+s*u*1.1,fy-u*1.1,u*0.6,u*0.7);c.stroke();c.fillStyle='#1a120c';E(cx+s*u*1.1,fy-u*1.1,u*0.25,u*0.3);c.fill()}}
-  else for(const s of [-1,1]){E(cx+s*u*1.1,fy-u*1.15,u*(mood==='cheer'?0.42:0.32),u*(mood==='cheer'?0.5:0.38));c.fill()}
+  c2d.strokeStyle=hair;c2d.lineWidth=Math.max(1.4,u*0.36);c2d.lineCap='round';
+  const brow=(s,tilt)=>{c2d.beginPath();c2d.moveTo(cx+s*u*1.7,fy-u*1.9+tilt*s*0);c2d.lineTo(cx+s*u*0.5,fy-u*1.9-tilt*u*0.6);c2d.stroke()};
+  if(mood==='angry'){brow(-1,-1);brow(1,-1)}else if(mood==='shock'||mood==='cheer'){brow(-1,1);brow(1,1)}else{c2d.beginPath();c2d.moveTo(cx-u*1.7,fy-u*2);c2d.lineTo(cx-u*0.5,fy-u*2.05);c2d.stroke();c2d.beginPath();c2d.moveTo(cx+u*0.5,fy-u*2.05);c2d.lineTo(cx+u*1.7,fy-u*2);c2d.stroke()}
+  c2d.fillStyle='#1a120c';
+  if(mood==='laugh'){c2d.strokeStyle='#1a120c';c2d.lineWidth=Math.max(1.3,u*0.32);for(const s of [-1,1]){c2d.beginPath();c2d.arc(cx+s*u*1.1,fy-u*1.1,u*0.55,Math.PI*1.1,Math.PI*1.9);c2d.stroke()}}
+  else if(mood==='shock'){for(const s of [-1,1]){c2d.strokeStyle='#1a120c';c2d.lineWidth=1.4;E(cx+s*u*1.1,fy-u*1.1,u*0.6,u*0.7);c2d.stroke();c2d.fillStyle='#1a120c';E(cx+s*u*1.1,fy-u*1.1,u*0.25,u*0.3);c2d.fill()}}
+  else for(const s of [-1,1]){E(cx+s*u*1.1,fy-u*1.15,u*(mood==='cheer'?0.42:0.32),u*(mood==='cheer'?0.5:0.38));c2d.fill()}
   // mouth
-  c.strokeStyle='#5a2a1e';c.lineWidth=Math.max(1.5,u*0.4);
-  if(mood==='laugh'||mood==='cheer'){c.fillStyle='#421c14';c.beginPath();c.ellipse(cx,fy+u*0.7,u*(mood==='laugh'?0.95:0.8),u*(mood==='laugh'?0.75:0.5),0,0,Math.PI*2);c.fill()}
-  else if(mood==='pleased'){c.beginPath();c.arc(cx,fy+u*0.4,u*0.9,Math.PI*0.15,Math.PI*0.85);c.stroke()}
-  else if(mood==='angry'){c.beginPath();c.arc(cx,fy+u*1.3,u*0.9,Math.PI*1.15,Math.PI*1.85);c.stroke()}
-  else{c.beginPath();c.moveTo(cx-u*0.7,fy+u*0.7);c.lineTo(cx+u*0.7,fy+u*0.7);c.stroke()}
+  c2d.strokeStyle='#5a2a1e';c2d.lineWidth=Math.max(1.5,u*0.4);
+  if(mood==='laugh'||mood==='cheer'){c2d.fillStyle='#421c14';c2d.beginPath();c2d.ellipse(cx,fy+u*0.7,u*(mood==='laugh'?0.95:0.8),u*(mood==='laugh'?0.75:0.5),0,0,Math.PI*2);c2d.fill()}
+  else if(mood==='pleased'){c2d.beginPath();c2d.arc(cx,fy+u*0.4,u*0.9,Math.PI*0.15,Math.PI*0.85);c2d.stroke()}
+  else if(mood==='angry'){c2d.beginPath();c2d.arc(cx,fy+u*1.3,u*0.9,Math.PI*1.15,Math.PI*1.85);c2d.stroke()}
+  else{c2d.beginPath();c2d.moveTo(cx-u*0.7,fy+u*0.7);c2d.lineTo(cx+u*0.7,fy+u*0.7);c2d.stroke()}
   // bored: heavy lids and a long-suffering mouth handled above; add the drooping head tilt line
-  if(mood==='bored'){c.strokeStyle='#1a120c';c.lineWidth=Math.max(1.3,u*0.3);for(const sd of [-1,1]){c.beginPath();c.moveTo(cx+sd*u*1.7,fy-u*1.35);c.lineTo(cx+sd*u*0.5,fy-u*1.3);c.stroke()}}
-  if(mood==='smug'){c.strokeStyle='#5a2a1e';c.lineWidth=Math.max(1.5,u*0.4);c.beginPath();c.arc(cx-u*0.3,fy+u*0.55,u*0.7,Math.PI*0.05,Math.PI*0.6);c.stroke();c.strokeStyle=hair;c.lineWidth=Math.max(1.4,u*0.36);c.beginPath();c.moveTo(cx+u*0.5,fy-u*2.35);c.lineTo(cx+u*1.7,fy-u*2.1);c.stroke()}
-  if(mood==='weep'){c.strokeStyle='#7fb0d8';c.lineWidth=Math.max(1.2,u*0.3);for(const sd of [-1,1]){c.beginPath();c.moveTo(cx+sd*u*1.1,fy-u*0.7);c.quadraticCurveTo(cx+sd*u*1.2,fy+u*0.3,cx+sd*u*0.9,fy+u*0.9);c.stroke()}}
+  if(mood==='bored'){c2d.strokeStyle='#1a120c';c2d.lineWidth=Math.max(1.3,u*0.3);for(const sd of [-1,1]){c2d.beginPath();c2d.moveTo(cx+sd*u*1.7,fy-u*1.35);c2d.lineTo(cx+sd*u*0.5,fy-u*1.3);c2d.stroke()}}
+  if(mood==='smug'){c2d.strokeStyle='#5a2a1e';c2d.lineWidth=Math.max(1.5,u*0.4);c2d.beginPath();c2d.arc(cx-u*0.3,fy+u*0.55,u*0.7,Math.PI*0.05,Math.PI*0.6);c2d.stroke();c2d.strokeStyle=hair;c2d.lineWidth=Math.max(1.4,u*0.36);c2d.beginPath();c2d.moveTo(cx+u*0.5,fy-u*2.35);c2d.lineTo(cx+u*1.7,fy-u*2.1);c2d.stroke()}
+  if(mood==='weep'){c2d.strokeStyle='#7fb0d8';c2d.lineWidth=Math.max(1.2,u*0.3);for(const sd of [-1,1]){c2d.beginPath();c2d.moveTo(cx+sd*u*1.1,fy-u*0.7);c2d.quadraticCurveTo(cx+sd*u*1.2,fy+u*0.3,cx+sd*u*0.9,fy+u*0.9);c2d.stroke()}}
   // the facepalm: a weary imperial hand
-  if(mood==='facepalm'){c.fillStyle=skin;c.save();c.translate(cx+u*0.9,fy-u*1);c.rotate(-0.5);E(0,0,u*1.5,u*2.1);c.fill();c.restore();c.strokeStyle='rgba(90,42,30,.5)';c.lineWidth=1;for(let i=-1;i<=1;i++){c.beginPath();c.moveTo(cx+u*(0.2+i*0.55),fy-u*2.6);c.lineTo(cx+u*(1.2+i*0.55),fy+u*0.2);c.stroke()}}
+  if(mood==='facepalm'){c2d.fillStyle=skin;c2d.save();c2d.translate(cx+u*0.9,fy-u*1);c2d.rotate(-0.5);E(0,0,u*1.5,u*2.1);c2d.fill();c2d.restore();c2d.strokeStyle='rgba(90,42,30,.5)';c2d.lineWidth=1;for(let i=-1;i<=1;i++){c2d.beginPath();c2d.moveTo(cx+u*(0.2+i*0.55),fy-u*2.6);c2d.lineTo(cx+u*(1.2+i*0.55),fy+u*0.2);c2d.stroke()}}
   // the raised goblet on a cheer
-  if(mood==='cheer'){const ac=sp.acc||'goblet';if(ac==='goblet'){c.fillStyle='#c9a458';c.fillRect(cx+w/2-u*2.4,fy-u*3.4,u*0.5,u*1.6);c.beginPath();c.ellipse(cx+w/2-u*2.15,fy-u*3.6,u*0.9,u*0.5,0,Math.PI,0);c.fill()}
-    else if(ac==='scroll'){c.fillStyle='#e8dcc0';c.fillRect(cx+w/2-u*3,fy-u*4,u*1.4,u*2.4);c.fillStyle='#a88a5a';c.fillRect(cx+w/2-u*3.2,fy-u*4.1,u*1.8,u*0.35);c.fillRect(cx+w/2-u*3.2,fy-u*1.7,u*1.8,u*0.35)}
-    else if(ac==='fan'){c.fillStyle=sp.gem||'#e07b9a';c.beginPath();c.moveTo(cx+w/2-u*2.2,fy-u*1.4);c.arc(cx+w/2-u*2.2,fy-u*1.4,u*2,Math.PI*1.2,Math.PI*1.8);c.closePath();c.fill()}
-    else if(ac==='coins'){c.fillStyle='#e6b93a';for(let i=0;i<4;i++){E(cx+w/2-u*2.2+(i%2)*u*0.6,fy-u*3.2-i*u*0.5,u*0.5,u*0.5);c.fill()}}}
-  c.restore();
+  if(mood==='cheer'){const ac=sp.acc||'goblet';if(ac==='goblet'){c2d.fillStyle='#c9a458';c2d.fillRect(cx+w/2-u*2.4,fy-u*3.4,u*0.5,u*1.6);c2d.beginPath();c2d.ellipse(cx+w/2-u*2.15,fy-u*3.6,u*0.9,u*0.5,0,Math.PI,0);c2d.fill()}
+    else if(ac==='scroll'){c2d.fillStyle='#e8dcc0';c2d.fillRect(cx+w/2-u*3,fy-u*4,u*1.4,u*2.4);c2d.fillStyle='#a88a5a';c2d.fillRect(cx+w/2-u*3.2,fy-u*4.1,u*1.8,u*0.35);c2d.fillRect(cx+w/2-u*3.2,fy-u*1.7,u*1.8,u*0.35)}
+    else if(ac==='fan'){c2d.fillStyle=sp.gem||'#e07b9a';c2d.beginPath();c2d.moveTo(cx+w/2-u*2.2,fy-u*1.4);c2d.arc(cx+w/2-u*2.2,fy-u*1.4,u*2,Math.PI*1.2,Math.PI*1.8);c2d.closePath();c2d.fill()}
+    else if(ac==='coins'){c2d.fillStyle='#e6b93a';for(let i=0;i<4;i++){E(cx+w/2-u*2.2+(i%2)*u*0.6,fy-u*3.2-i*u*0.5,u*0.5,u*0.5);c2d.fill()}}}
+  c2d.restore();
 }
+/* FLAV_IMG — cache of Flavius face images by sponsor and mood. */
 const FLAV_IMG={};
+/* flavFaceURL — a data-URL portrait of Flavius (or a sponsor) in a mood, for HTML windows. */
 function flavFaceURL(mood,sp){ // cached data-URL portraits for HTML dialogs (Flavius himself unless a sponsor is passed)
   sp=sp||(typeof SPONSOR_FLAVIUS!=='undefined'?SPONSOR_FLAVIUS:{});const key=(sp.id||'flavius')+':'+mood+':'+(sp.v||0);if(FLAV_IMG[key])return FLAV_IMG[key];
   try{const cv2=document.createElement('canvas');cv2.width=156;cv2.height=124;const c=cv2.getContext('2d');
@@ -836,6 +922,7 @@ function flavFaceURL(mood,sp){ // cached data-URL portraits for HTML dialogs (Fl
 }
 /* flavK — Flavius's box scale: smaller on phones (v0.82, his ask) so it doesn't crowd the board. TWEAK: the 0.7. */
 function flavK(){return Math.min(innerWidth,innerHeight)<=520?0.7:1}
+/* drawFlavius — draws Flavius's box above the A-1 corner (top-left with the stands off), its curtain and his spoken line. */
 function drawFlavius(){
   if(!S||HEADLESS||(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false))return;
   const now=performance.now();const mood=now<FLAV.until?FLAV.mood:'calm';
@@ -867,20 +954,26 @@ function drawFlavius(){
      bannable, treatable, and — if a lanista holds your wallet — signable as a raw gladiator.
    ===================================================================== */
 let ARENA_CACHE={};
+/* loadArenas — loads every arena's chronicle into ARENA_CACHE. */
 async function loadArenas(){try{const L=await Store.list('arena');ARENA_CACHE={};for(const d of L)ARENA_CACHE[d.li]=d}catch(e){}return ARENA_CACHE}
-function arenaOf(li){return ARENA_CACHE[li]||(ARENA_CACHE[li]={id:'loc'+li,li,events:0,elims:0,conc:0,brawls:0,stones:0,spears:0,spearLast:null,omens:{}})}
+/* arenaOf — the chronicle of an arena location (created empty when new). */
+function arenaOf(locIdx){return ARENA_CACHE[locIdx]||(ARENA_CACHE[locIdx]={id:'loc'+locIdx,li:locIdx,events:0,elims:0,conc:0,brawls:0,stones:0,spears:0,spearLast:null,omens:{}})}
 // deterministic personal lore for a regular, grown from their id: same face, same story, every visit
-function specLore(r){
-  let h=2166136261;for(const ch of String(r.id||r.name))h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0;
+function specLore(reg){
+  let h=2166136261;for(const ch of String(reg.id||reg.name))h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0;
   const nx=()=>(h=(Math.imul(h,1103515245)+12345)>>>0);const pick=a=>a[nx()%a.length];
   return {age:17+nx()%54,district:pick(['the Subura','the docks','the potters’ quarter','the cattle market','the hill villas','the tanneries','outside the walls','the old forum']),
     snack:pick(['salted chickpeas','honeyed wine','fried smelt','stuffed dates','sausage rolls','sour posca','olives by the fistful','flatbread with garum']),
     superstition:pick(['spits twice when Damnatio enters','won’t sit in a Q3 seat','wears the same lucky cap','touches the rail before every bout','never bets on the first blood','counts pillars before sitting']),
     habit:pick(['arrives before the gates open','leaves before the Fates are read','heckles the bookmaker','knows every gladiator’s record','brings the whole family','naps through the undercard'])};
 }
+/* DRAWER — the stands drawer state: open tab and selected regular. */
 const DRAWER={tab:null,sel:null};
+/* openDrawer — opens the arena drawer on a tab. */
 function openDrawer(tab){DRAWER.tab=tab;if(tab!=='stands')DRAWER.sel=null;const d=$('#arenaDrawer');if(!d)return;d.hidden=false;renderDrawer()}
+/* closeDrawer — closes the arena drawer. */
 function closeDrawer(){DRAWER.tab=null;const d=$('#arenaDrawer');if(d)d.hidden=true}
+/* renderDrawer — redraws the drawer and the Imperium stands window if they are open. */
 function renderDrawer(){
   if(HEADLESS)return;
   const hub=$('#standsHubBody');if(hub)hub.innerHTML=standsHubHTML(); // the Stands window refreshes with every crowd action
@@ -896,7 +989,9 @@ function renderDrawer(){
    the arena deck, and a BESTIARY — every beast of the rulebook with its lore and its ledger
    (slain across all your events, gladiators it has eaten), kept in this browser. */
 let BESTIARY={};
+/* loadBestiary — loads the bestiary ledgers (Store hall/bestiary). */
 async function loadBestiary(){try{const d=await Store.getDoc('hall','bestiary');BESTIARY=(d&&d.v)||{}}catch(e){BESTIARY={}}return BESTIARY}
+/* bestiaryTally — after a counted event: adds each beast's kills, gladiators eaten, tamings and wins to the bestiary and to its named ledger per city. */
 function bestiaryTally(){ // called at gameOver: the keepers update the ledgers
   if(!S||S.sim||HEADLESS)return;let dirty=0;
   const city=LOCATIONS[S.locIdx]?LOCATIONS[S.locIdx].n:'Roma';BESTIARY.who=BESTIARY.who||{}; // .who: the ledger of every NAMED beast, per city
@@ -920,6 +1015,7 @@ const BEAST_LORE={
   commodus:'<i>Species: Human.</i> “Master of deception and self-proclaimed Champion Victorious, Commodus, a consummate fabricator, forges a path devoid of allies, shamelessly usurping the title within the realms of Flavius Rule.” <span class="rc-sub">— Cassius Dio, ludus notes</span>',
   zora:'The golden eagle of the games: too fast to hit, too proud to land, happiest carrying off something a gladiator was about to enjoy.',
 };
+/* menagerieHTML — the Menagerie window: the event, beasts on the sand, the deck, cards seen, the city's beasts and the Bestiary with lore and ledgers. */
 function menagerieHTML(){
   const rd=S?RD():null;const seen=S?(S.cardsSeen||[]).slice(-12).reverse():[];
   const custom=(typeof CUSTOM!=='undefined'&&CUSTOM.npcs)||[];
@@ -942,9 +1038,12 @@ function menagerieHTML(){
 }
 /* v0.46: every city's beasts in one scrollable list — the chosen city first, and anything on the sand right now
    pinned at the very top, lit. Each named beast keeps its own ledger: events, kills, gladiators taken, tamings, wins. */
+/* BEAST_ROLES — the named base beasts of a city and their types (each city names its own). */
 const BEAST_ROLES=[['Glykon','snake'],['Arenosus','snake'],['Valencia','wolf'],['Moechus','wolf'],['Ursa','bear'],['Brutum','bear'],['Leo','lion'],['Leaena','lion'],['Commodus','commodus']];
-function beastLedger(W){W=W||{};return `<span class="bst" title="events">🏟 ${W.ev||0}</span><span class="bst" title="slain by gladiators">⚔ ${W.slain||0}</span><span class="bst" title="gladiators it eliminated">☠ ${W.ate||0}</span><span class="bst" title="times tamed">🪢 ${W.tamed||0}</span><span class="bst" title="events it won — no gladiator left standing">🏆 ${W.wins||0}</span>`}
-function cityBeastsHTML(li,opt={}){const who=BESTIARY.who||{};const L0=LOCATIONS[li]||LOCATIONS[6];
+/* beastLedger — a named beast's ledger chips: events, slain, gladiators taken, tamed, wins. */
+function beastLedger(ledger){ledger=ledger||{};return `<span class="bst" title="events">🏟 ${ledger.ev||0}</span><span class="bst" title="slain by gladiators">⚔ ${ledger.slain||0}</span><span class="bst" title="gladiators it eliminated">☠ ${ledger.ate||0}</span><span class="bst" title="times tamed">🪢 ${ledger.tamed||0}</span><span class="bst" title="events it won — no gladiator left standing">🏆 ${ledger.wins||0}</span>`}
+/* cityBeastsHTML — every city's named beasts with their ledgers, the chosen city first and the beasts on the sand pinned on top. */
+function cityBeastsHTML(locIdx,opt={}){const who=BESTIARY.who||{};const L0=LOCATIONS[locIdx]||LOCATIONS[6];
   const tokOf=(nm,t)=>{const rk=BEAST_ROLES.find(r=>r[1]===t&&Object.values(CITY_BEASTS).some(T=>T[r[0]]===nm));return typeof rtokHTML==='function'?(rk?rtokHTML(rk[0].toLowerCase(),34,nm):t==='tholo'?rtokHTML('tholo',34,nm):''):''};
   const row=(nm,t,city,live)=>{const W=who[t==='tholo'?'Tholo':`${nm}@${city}`];const N=NPCT[t]||{col:'#777',g:'?'};return `<div class="brow ${live?'live':''}" style="--pc:${N.col}">${tokOf(nm,t)||`<span class="bglyph" style="background:${N.col}">${N.g}</span>`}<div class="t"><b>${esc(nm)}</b> <span class="rc-sub">${esc(npcKind(t))}${city?' · '+esc(city):''}</span>${live?` <span class="badge gold">${esc(live)}</span>`:''}<div class="bstats">${beastLedger(W)}</div></div></div>`};
   const liveRows=S&&S.phase!=='setup'&&!S.over?(S.npcs||[]).filter(n=>n.alive).map(n=>row(n.name,n.t,n.t==='tholo'?'':L0.n,`on the sand · ${Math.max(0,n.hp)} HP`)).join(''):'';
@@ -954,15 +1053,18 @@ function cityBeastsHTML(li,opt={}){const who=BESTIARY.who||{};const L0=LOCATIONS
   return `<div class="sect" style="margin-top:0">🐾 ${opt.only?`The beasts of ${esc(L0.n)}`:'The beasts of the empire'} <span class="rc-sub">every city names its own — ledger: 🏟 events · ⚔ slain · ☠ gladiators taken · 🪢 tamed · 🏆 wins</span></div>
     ${liveRows?`<div class="blive"><div class="bcityhd">🔥 On the sand now</div>${liveRows}</div>`:''}
     <div class="bscroll" style="max-height:${opt.h||420}px">${blocks}<div class="bcity"><div class="bcityhd">🌑 Every arena</div>${th}</div></div>`}
+/* openMenagerie — opens the Menagerie window. Replaced by 89-stands (Bestiary only). */
 async function openMenagerie(){
   if(typeof modalBusy==='function'&&modalBusy())return;
   await loadBestiary();
   await modal('🐾 Menagerie · beasts, cards & the bestiary',`<div id="menagBody">${menagerieHTML()}</div>`,[{label:'Close',value:0}],{wide:1,xwide:1});
 }
+/* openStandsHub — opens the Imperium window. */
 async function openStandsHub(){
   if(typeof modalBusy==='function'&&modalBusy())return;
   await modal('🌍 Imperium · the empire and its stands',`<div id="standsHubBody">${standsHubHTML()}</div>`,[{label:'Close',value:0}],{wide:1,xwide:1});
 }
+/* standsHubHTML — the Imperium window body. */
 function standsHubHTML(){return imperiumHTML()}
 /* v0.21 Imperium: the empire's numbers and its most beloved, one compact strip above the map */
 function empireStripHTML(){
@@ -973,6 +1075,7 @@ function empireStripHTML(){
   const c=(i,v,l)=>`<span class="estat" title="${l}">${i} <b>${v}</b></span>`;
   return `<div class="empstrip"><span class="eslbl">The empire</span>${c('👥',regs.length+'K','spectators')}${c('🗡',regs.filter(r=>r.exGlad).length,'ex-gladiators in the seats')}${c('👪',regs.filter(r=>r.kin).length,'kin of fighters')}${c('⚠',regs.filter(r=>r.trouble).length,'known troublemakers')}${c('🚫',regs.filter(r=>r.banned).length,'banned')}${c('🏟',sum('events'),'events held everywhere')}${c('✝',sum('elims'),'gladiators fallen')}${c('🍯',sum('conc'),'coin of concessions')}${c('🔱',sum('spears'),'spectators speared')}
     ${top.length?`<span class="eslbl" style="margin-left:auto">❤ Most beloved</span>${top.map(([n,v],i)=>`<span class="estat" title="fans + bought cheers + family (×2)">${['🥇','🥈','🥉'][i]} <b>${esc(n)}</b> ${v}</span>`).join('')}`:''}</div>`}
+/* standsRosterViewHTML — the roster view: where the regulars live, family ties and the searchable roster. */
 function standsRosterViewHTML(){
   const regs=CROWD_CACHE.filter(r=>!r.recruited);const cities={};for(const r of regs)if(r.city)cities[r.city]=(cities[r.city]||0)+1;
   const topCities=Object.entries(cities).sort((a,b)=>b[1]-a[1]).slice(0,6);const maxC=topCities[0]?topCities[0][1]:1;
@@ -980,7 +1083,9 @@ function standsRosterViewHTML(){
   return `${topCities.length?`<div class="sect" style="margin-top:0">🏠 Where the regulars live</div><p class="rc-sub" style="margin:0 0 4px">The home cities of your named regulars. They will travel to any arena, but they fill their <b>home city's</b> stands first — so a city with many regulars draws bigger, louder home crowds (and cheers hardest for fighters born there).</p>${topCities.map(([n,v])=>`<div style="display:grid;grid-template-columns:1fr 120px 24px;gap:8px;align-items:center;font-size:13px"><span>${esc(n)}</span><div class="meter"><i style="width:${Math.round(v/maxC*100)}%"></i></div><span>${v}</span></div>`).join('')}`:''}
     ${familyTiesHTML()}
     ${standsDrawerHTML({noChron:1})}`}
+/* familyTiesHTML — kin in the stands and the gladiators they come to see. */
 function familyTiesHTML(){const kinFolk=CROWD_CACHE.filter(r=>!r.recruited&&r.kin);return kinFolk.length?`<div class="sect">👪 Family ties <span class="rc-sub">kin in the stands, and the gladiators they come to see</span></div><div style="font-size:12.5px;display:grid;gap:2px;max-height:160px;overflow:auto">${kinFolk.slice(0,30).map(r=>`<div>👪 <b>${esc(r.name)}</b> — ${esc(r.kin.rel)} of <b>${esc(r.kin.name)}</b>${r.city?` <span class="rc-sub">· of ${esc(r.city)}</span>`:''}</div>`).join('')}</div>`:''}
+/* standsHubPanelsHTML — the older Stands hub panels: the empire in numbers, the most beloved, home cities, family ties and the drawer. */
 function standsHubPanelsHTML(){ // the old Stands panels: empire fandom, home cities, family ties, arena chronicle, roster
   const regs=CROWD_CACHE.filter(r=>!r.recruited);
   // fandom across the empire: every allegiance a regular carries home
@@ -1015,6 +1120,7 @@ function standsHubPanelsHTML(){ // the old Stands panels: empire fandom, home ci
    <div>${standsDrawerHTML()}</div>
   </div>`;
 }
+/* beastsDrawerHTML — the drawer's Beasts & cards tab: the round, the NPC tracker and the cards seen. */
 function beastsDrawerHTML(){
   if(!S)return '<p class="hint">No event on the sand.</p>';
   const rd=RD();
@@ -1023,6 +1129,7 @@ function beastsDrawerHTML(){
    <div id="npcDrawer">${typeof npcTrackerHTML==='function'?npcTrackerHTML():''}</div>
    ${seen.length?`<div class="sect">Cards seen this event</div><div class="items">${seen.map(c=>`<div class="item"><span>${cardHTML(c.ref,'xs')}<span>${esc(c.n)}<em>${esc(c.by||'')}</em></span></span></div>`).join('')}</div>`:''}`;
 }
+/* standsDrawerHTML — the drawer's Stands tab: this arena's chronicle, the live crowd and the spectator roster with its inspector. */
 function standsDrawerHTML(opt={}){
   const li=opt.li!=null?opt.li:S?S.locIdx:null;const L=li!=null?LOCATIONS[li]:null;const A=li!=null?arenaOf(li):null;
   let chron='';
@@ -1051,33 +1158,35 @@ function standsDrawerHTML(opt={}){
   return (opt.noChron?'':chron)+(live?`<div class="sect">In the stands right now</div>${live}`:'')+roster;
 }
 // v0.28: the roster search — filters as you type; the query survives a redraw
-function spFilter(inp){const q=inp.value.trim().toLowerCase();window.SPQ=q;const box=inp.parentElement;let n=0;box.querySelectorAll('.sprow').forEach(el=>{const hit=!q||(el.dataset.q||'').includes(q);el.hidden=!hit;if(hit)n++});let m=box.querySelector('.spnone');if(!n&&q){if(!m){m=document.createElement('p');m.className='rc-sub spnone';inp.after(m)}m.textContent=`Nobody by that name in the stands — the ushers know ${box.querySelectorAll('.sprow').length}K spectators.`}else if(m)m.remove()}
-function spectInspectorHTML(r){
-  const lore=specLore(r);const mems=(r.mem||[]).slice(-5).reverse();
+function spFilter(input){const q=input.value.trim().toLowerCase();window.SPQ=q;const box=input.parentElement;let n=0;box.querySelectorAll('.sprow').forEach(el=>{const hit=!q||(el.dataset.q||'').includes(q);el.hidden=!hit;if(hit)n++});let m=box.querySelector('.spnone');if(!n&&q){if(!m){m=document.createElement('p');m.className='rc-sub spnone';input.after(m)}m.textContent=`Nobody by that name in the stands — the ushers know ${box.querySelectorAll('.sprow').length}K spectators.`}else if(m)m.remove()}
+/* spectInspectorHTML — one regular's inspector: lore, memories, ban / ticket / treat / sign / buy cheers buttons. */
+function spectInspectorHTML(reg){
+  const lore=specLore(reg);const mems=(reg.mem||[]).slice(-5).reverse();
   return `<div class="card2" style="margin-bottom:8px"><div style="display:flex;gap:10px;align-items:flex-start">
-    <span style="transform:scale(2.2);transform-origin:top left;display:inline-block;width:44px;height:44px">${specFaceSVG(r.look,r.fanOf?gladColorByName(r.fanOf):r.kin?gladColorByName(r.kin.name):null,r.city)}</span>
-    <div style="flex:1"><b style="font:400 17px var(--display);color:var(--gold2)">${esc(r.name)}</b>${r.custom?' <span class="cbadge">✦ custom</span>':''}${r.trouble?' <span class="trb">known troublemaker</span>':''}
+    <span style="transform:scale(2.2);transform-origin:top left;display:inline-block;width:44px;height:44px">${specFaceSVG(reg.look,reg.fanOf?gladColorByName(reg.fanOf):reg.kin?gladColorByName(reg.kin.name):null,reg.city)}</span>
+    <div style="flex:1"><b style="font:400 17px var(--display);color:var(--gold2)">${esc(reg.name)}</b>${reg.custom?' <span class="cbadge">✦ custom</span>':''}${reg.trouble?' <span class="trb">known troublemaker</span>':''}
       <div class="rc-sub">${lore.age} years old · lives by ${lore.district} · always buys ${lore.snack}</div>
-      ${r.kin?`<div class="rc-sub">👪 <b>${esc(r.kin.rel)}</b> of the gladiator <b>${esc(r.kin.name)}</b> — family colors when they fight</div>`:''}
-      ${r.exGlad?'<div class="rc-sub">🗡 an ex-gladiator — the stands are cheaper than the sand</div>':''}
-      <div class="rc-sub">${SPECT_TASTES[r.taste]?`<b>${SPECT_TASTES[r.taste][0]}</b>: ${SPECT_TASTES[r.taste][1]}`:''}</div>
-      <div class="rc-sub">${SPECT_TEMPERS[r.temper]?`<b>${SPECT_TEMPERS[r.temper][0]}</b>: ${SPECT_TEMPERS[r.temper][1]}`:''}</div>
+      ${reg.kin?`<div class="rc-sub">👪 <b>${esc(reg.kin.rel)}</b> of the gladiator <b>${esc(reg.kin.name)}</b> — family colors when they fight</div>`:''}
+      ${reg.exGlad?'<div class="rc-sub">🗡 an ex-gladiator — the stands are cheaper than the sand</div>':''}
+      <div class="rc-sub">${SPECT_TASTES[reg.taste]?`<b>${SPECT_TASTES[reg.taste][0]}</b>: ${SPECT_TASTES[reg.taste][1]}`:''}</div>
+      <div class="rc-sub">${SPECT_TEMPERS[reg.temper]?`<b>${SPECT_TEMPERS[reg.temper][0]}</b>: ${SPECT_TEMPERS[reg.temper][1]}`:''}</div>
       <div class="rc-sub">${lore.superstition} · ${lore.habit}</div></div></div>
     ${mems.length?`<div class="sect">What they remember (fades after ~5 events)</div><div style="font-size:12px;color:var(--muted);display:grid;gap:2px">${mems.map(m=>`<div>· ${esc(m.note||m.kind)}</div>`).join('')}</div>`:''}
-    ${r.banned?`<p class="rc-sub" style="color:var(--blood2)">Banned from the arena${r.banLog?` since ${esc(r.banLog)}`:''}. The ushers know the face.</p>`:''}
-    ${r.quit?`<p class="rc-sub">Currently staying away: ${esc(r.quit.reason)} (${r.quit.left} event${r.quit.left===1?'':'s'} more, unless treated).</p>`:''}
+    ${reg.banned?`<p class="rc-sub" style="color:var(--blood2)">Banned from the arena${reg.banLog?` since ${esc(reg.banLog)}`:''}. The ushers know the face.</p>`:''}
+    ${reg.quit?`<p class="rc-sub">Currently staying away: ${esc(reg.quit.reason)} (${reg.quit.left} event${reg.quit.left===1?'':'s'} more, unless treated).</p>`:''}
     <div class="mbtns" style="margin-top:6px">
-      <button class="btn" type="button" data-spact="ban" data-spid="${esc(r.id)}">${r.banned?'Lift the ban':'Ban from the arena'}<small>${r.banned?'all is forgiven':r.trouble?'the ushers have been asking for this':'they will not be seated again'}</small></button>
-      ${(S&&S.spect&&S.spect.some(x=>x.rid===r.id&&!x.gone))?'<button class="btn" type="button" disabled>🎟 In attendance today<small>already in their seat</small></button>':`<button class="btn" type="button" data-spact="ticket" data-spid="${esc(r.id)}" ${r.banned||r.ticket?'disabled':''}>${r.ticket?'🎟 Ticket bought':'🎟 Buy them a ticket'}<small>${r.ticket?'they will be at the next event':S&&!S.over?'2 coin · seated right now, over someone else':'2 coin · guaranteed a seat at the next event'}</small></button>`}
-      <button class="btn" type="button" data-spact="treat" data-spid="${esc(r.id)}" ${r.banned?'disabled':''}>Stand them a round<small>goodwill: clears any grudge against the games, +mood next visit</small></button>
-      <button class="btn" type="button" data-spact="sign" data-spid="${esc(r.id)}" ${r.banned||r.signAsked||r.recruited?'disabled':''}>${r.recruited?'✔ YES — signed to your ludus':r.signAsked?'✖ NO — they refused':'Offer them the sword'}<small>${r.recruited?'they fight for you now: find them on your Roster':r.signAsked?'refused for good — a Roman is only asked once':r.exGlad?'one ask, ever — they miss the sand, they will likely say yes':'one ask, ever — yes and they join at once; no is final'}</small></button>
+      <button class="btn" type="button" data-spact="ban" data-spid="${esc(reg.id)}">${reg.banned?'Lift the ban':'Ban from the arena'}<small>${reg.banned?'all is forgiven':reg.trouble?'the ushers have been asking for this':'they will not be seated again'}</small></button>
+      ${(S&&S.spect&&S.spect.some(x=>x.rid===reg.id&&!x.gone))?'<button class="btn" type="button" disabled>🎟 In attendance today<small>already in their seat</small></button>':`<button class="btn" type="button" data-spact="ticket" data-spid="${esc(reg.id)}" ${reg.banned||reg.ticket?'disabled':''}>${reg.ticket?'🎟 Ticket bought':'🎟 Buy them a ticket'}<small>${reg.ticket?'they will be at the next event':S&&!S.over?'2 coin · seated right now, over someone else':'2 coin · guaranteed a seat at the next event'}</small></button>`}
+      <button class="btn" type="button" data-spact="treat" data-spid="${esc(reg.id)}" ${reg.banned?'disabled':''}>Stand them a round<small>goodwill: clears any grudge against the games, +mood next visit</small></button>
+      <button class="btn" type="button" data-spact="sign" data-spid="${esc(reg.id)}" ${reg.banned||reg.signAsked||reg.recruited?'disabled':''}>${reg.recruited?'✔ YES — signed to your ludus':reg.signAsked?'✖ NO — they refused':'Offer them the sword'}<small>${reg.recruited?'they fight for you now: find them on your Roster':reg.signAsked?'refused for good — a Roman is only asked once':reg.exGlad?'one ask, ever — they miss the sand, they will likely say yes':'one ask, ever — yes and they join at once; no is final'}</small></button>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px">
         <select class="tin" id="spInfl" style="width:auto;min-width:120px">${(()=>{const opts=[];if(S&&S.players)for(const p2 of S.players.filter(p2=>p2.alive&&!p2.exited))opts.push(p2.name);const w2=(typeof MGR!=='undefined'&&MGR.world)||(typeof ACTIVE!=='undefined'&&ACTIVE.world);if(w2){const pm=w2.mgrs.find(x=>x.id===w2.playerId);for(const g2 of w2.glads.filter(g2=>g2.alive&&g2.contract&&g2.contract.mgr===pm.id))if(!opts.includes(g2.name))opts.push(g2.name)}return opts.map(n2=>`<option>${esc(n2)}</option>`).join('')||'<option value="">— nobody to back —</option>'})()}</select>
-        <button class="btn" type="button" data-spact="infl" data-spid="${esc(r.id)}" ${r.banned?'disabled':''}>Buy their cheers<small>5 coin from your lanista — they back that name wherever it fights</small></button>
+        <button class="btn" type="button" data-spact="infl" data-spid="${esc(reg.id)}" ${reg.banned?'disabled':''}>Buy their cheers<small>5 coin from your lanista — they back that name wherever it fights</small></button>
       </div>
       <button class="btn" type="button" data-spact="close">Close</button></div></div>`;
 }
 // drawer wiring
+/* all drawer and roster clicks: open tabs, select a regular, and the roster actions (ban, ticket, treat, buy cheers, offer the sword) — at most three different dealings with one regular a week. */
 document.addEventListener('click',async e=>{
   if(e.target.closest('#btnDrawB')){openMenagerie();return}
   if(e.target.closest('#btnDrawS')){openStandsHub();return}
@@ -1134,9 +1243,11 @@ document.addEventListener('click',async e=>{
       renderDrawer();return}
   }
 });
+/* B opens the Menagerie, T the Imperium (not while typing or with a window open). */
 window.addEventListener('keydown',e=>{if(['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName)||!$('#modal').hidden)return;
   if(e.key==='b'||e.key==='B'){openMenagerie()}
   if(e.key==='t'||e.key==='T'){openStandsHub()}});
+/* loads the arena chronicles at start. */
 loadArenas().catch(()=>{});
 
 /* ---- the local crowd: every arena's regulars lean a certain way (multipliers on YOUR sliders) ---- */
@@ -1154,6 +1265,7 @@ const LOC_CROWD={
   11:{n:'quiet northerners — hard to stir, harder to lose',act:80,t:{miser:120,loyal:120,hothead:80}},
   12:{n:'dockworkers on payday',act:135,t:{generous:120,hothead:125,fickle:110}},
 };
+/* locCrowd — the local crowd of the live event's arena (multipliers on your sliders). */
 const locCrowd=()=>S&&LOC_CROWD[S.locIdx]||null;
 
 /* ================= v0.41 FAVORITES AND WAGERS =================
@@ -1166,10 +1278,11 @@ function spectFavPool(){const out=[];const w=typeof mgrWorldAny==='function'?mgr
   for(const g of (typeof LUDUS_CACHE!=='undefined'?LUDUS_CACHE:[]))if(!g.fallen)out.push({n:g.name,wt:Math.pow((g.wins||0)*6+(g.events||0)+5,1.2)});
   if(S&&S.players)for(const p of S.players)if(!out.some(o=>o.n===p.name))out.push({n:p.name,wt:8});
   return out}
-function spectFavEnsure(r){if(!r)return;if(!S._favPool)S._favPool=spectFavPool();const pool=S._favPool;if(!pool.length)return;
-  if(r.favG&&pool.some(o=>o.n===r.favG)&&sideRand()>0.04)return; // loyalty: a favorite is rarely dropped while they still fight
-  const tot=pool.reduce((a,o)=>a+o.wt,0);let x=sideRand()*tot;for(const o of pool){x-=o.wt;if(x<=0){r.favG=o.n;break}}
-  try{Store.put('crowd',r.id,r).catch(()=>{})}catch(e){}}
+/* spectFavEnsure — gives a regular a favorite gladiator from the pool by weight (kept 96% of the time while they still fight). Uses the crowd's own seeded stream (sideRand). */
+function spectFavEnsure(reg){if(!reg)return;if(!S._favPool)S._favPool=spectFavPool();const pool=S._favPool;if(!pool.length)return;
+  if(reg.favG&&pool.some(o=>o.n===reg.favG)&&sideRand()>0.04)return; // loyalty: a favorite is rarely dropped while they still fight
+  const tot=pool.reduce((a,o)=>a+o.wt,0);let x=sideRand()*tot;for(const o of pool){x-=o.wt;if(x<=0){reg.favG=o.n;break}}
+  try{Store.put('crowd',reg.id,reg).catch(()=>{})}catch(e){}}
 /* the automatic wager: runs once per spectator as they sit — fans back their favorite, some neutrals chase the odds */
 function spectWagers(){if(!S||!S.spect||S.sim||HEADLESS)return;let tab=[];try{tab=oddsTable(true)}catch(e){}
   for(const sp of S.spect){if(sp.human||sp.bet||sp.gone)continue;
@@ -1181,16 +1294,19 @@ function spectWagers(){if(!S||!S.spect||S.sim||HEADLESS)return;let tab=[];try{ta
    The editor's box has a velvet curtain. It draws closed when the clean-up crew's show ends (and between
    events), and opens slowly as the next event begins — revealing his face, as the horns sound. */
 const CURTAIN={v:1,from:1,to:1,t0:0,dur:2600};
+/* curtainTo — animates the editor's curtain open (0) or closed (1). */
 function curtainTo(to,dur=2600){if(CURTAIN.to===to)return;CURTAIN.from=curtainV();CURTAIN.to=to;CURTAIN.t0=performance.now();CURTAIN.dur=dur;
   const tick=()=>{try{draw()}catch(e){}if(performance.now()-CURTAIN.t0<CURTAIN.dur+60)requestAnimationFrame(tick)};requestAnimationFrame(tick)}
+/* curtainV — how far the curtain is drawn right now (eased). */
 function curtainV(){const k=Math.min(1,(performance.now()-CURTAIN.t0)/CURTAIN.dur);const e=k*k*(3-2*k);return CURTAIN.from+(CURTAIN.to-CURTAIN.from)*e}
-function drawCurtain(c,cx,cy,w,h){const v=curtainV();if(v<=0.01)return;const x0=cx-w/2+4,y0=cy-h/2+4,iw=w-8,ih=h-8;const half=iw/2*v;
-  c.save();c.beginPath();c.rect(x0,y0,iw,ih);c.clip();
-  for(const side of [0,1]){const L=side?x0+iw-half:x0;const g=c.createLinearGradient(L,0,L+half,0);
+/* drawCurtain — draws the velvet curtain over Flavius's box. */
+function drawCurtain(c2d,cx,cy,w,h){const v=curtainV();if(v<=0.01)return;const x0=cx-w/2+4,y0=cy-h/2+4,iw=w-8,ih=h-8;const half=iw/2*v;
+  c2d.save();c2d.beginPath();c2d.rect(x0,y0,iw,ih);c2d.clip();
+  for(const side of [0,1]){const L=side?x0+iw-half:x0;const g=c2d.createLinearGradient(L,0,L+half,0);
     for(let i=0;i<=6;i++){const t=i/6;g.addColorStop(t,i%2?'#5e0f14':'#8e1b22')}
-    c.fillStyle=g;c.fillRect(L,y0,half,ih);
-    c.fillStyle='rgba(0,0,0,.25)';c.fillRect(side?L:L+half-2,y0,2,ih)} // the meeting edge
+    c2d.fillStyle=g;c2d.fillRect(L,y0,half,ih);
+    c2d.fillStyle='rgba(0,0,0,.25)';c2d.fillRect(side?L:L+half-2,y0,2,ih)} // the meeting edge
   // the gold valance and a tie-back tassel
-  c.fillStyle='#c9a458';c.fillRect(x0,y0,iw,Math.max(3,ih*0.08));
-  c.fillStyle='#8a6a2a';for(let i=0;i<8;i++)c.fillRect(x0+i*iw/8,y0+Math.max(3,ih*0.08),iw/16,2);
-  c.restore()}
+  c2d.fillStyle='#c9a458';c2d.fillRect(x0,y0,iw,Math.max(3,ih*0.08));
+  c2d.fillStyle='#8a6a2a';for(let i=0;i<8;i++)c2d.fillRect(x0+i*iw/8,y0+Math.max(3,ih*0.08),iw/16,2);
+  c2d.restore()}
