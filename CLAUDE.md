@@ -860,6 +860,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   SENTENCE (Q10c): the condemned faces an AD BESTIAS bout together with other condemned Christians (fellow believers, his own house's
   and others'); he may survive it; refusing to fight = Ad Flamma. MARTYR (Q11b): a Christian who dies under an edict is remembered as a
   martyr — ✝ on his record + memorial, fellow believers in the ludus gain morale.
+- **SETTINGS TIDY + LANDING FIT (his "all ★", 2026-10-04, v0.84):** remove the lesson-buttons row, one text-size control (Accessibility),
+  colour-blind = the themes (General select applies them), drop dead Chest/Spikes pickers and the one-choice Armor section, Saves tab → button
+  to the 💾 Saves window, Profiles → bottom of Themes ("Save this look"), 🌐 Language row first in General (English only; LANGS list),
+  Performance row (Auto/Full/Light) + backup date/reminder switch, optional confirm before End turn (default off), Restore all defaults;
+  Online notices/Quiet stay in Online. Online landing must fit WITHOUT SCROLLING on desktop (stage not stretched; playlists' first row visible).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 

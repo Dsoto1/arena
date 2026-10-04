@@ -31055,7 +31055,7 @@ div:has(> .tseat){min-width:0}.tseat{display:flex!important;gap:6px;align-items:
      (25+ ranked bouts survived, 500+ lifetime CF, or Commodus slain). Everyone else is erased (damnatio memoriae).
    ===================================================================== */
 const ONLC=(function(){
-  const VER=6; /* v0.83: ranks 8, gear levels, treasury, offerings, gear loss + loot, gifts, named weapons, countdown, trophies, follow, wagers tab.  protocol version: the server refuses clients on another one (v0.80: rooms, quick chat, the Praeco, presence; v0.82: domus, coin, guests, invites, stands turn) */
+  const VER=7; /* v0.84: named armor, seasons + the weekly challenge, reclaim a seat, CPU-won rewards, Flavius's Auction. v0.83: ranks 8, gear levels, treasury, offerings, gear loss + loot, gifts, named weapons, countdown, trophies, follow, wagers tab.  protocol version: the server refuses clients on another one (v0.80: rooms, quick chat, the Praeco, presence; v0.82: domus, coin, guests, invites, stands turn) */
   const CLASSES8=['soldier','royalty','hero','slave','veteranus','amazonia','venatore','damnatio'];
   const EVENTS3=['democritus','egidious','cassian'];
   const EVENTS_TEAM=['familia']; /* team events: 4 seats, Team A (seats 0-1 by default) vs Team B; a party sits on one team */
@@ -31115,7 +31115,8 @@ const ONLC=(function(){
   function buy(ch,item,catalog){const why=canBuy(ch,item,catalog);if(why)throw new Error(why);ch.wallet-=priceOf(catalog[item]);ch.gear=[...(ch.gear||[]),item];return ch}
   /* the result of one match for one gladiator. row = the event's result row for that seat:
      {won, place (1 = best), f (final CF), coin (ignored since v0.82), kills, survives, slew:['commodus',…]} */
-  function applyResult(ch,row,ranked,x){const before=rankFor(ch);const g0=gloryOf(ch);const f=tableFactor(x&&x.humans);const out={died:false,rankUp:null,pay:0,cf:0,hall:false,factor:f,glory:0};
+  function applyResult(ch,row,ranked,x){const before=rankFor(ch);const g0=gloryOf(ch);const cpu=!!(row&&row.cpu);const f=tableFactor(x&&x.humans)*(cpu?CPU_CUT:1);const out={died:false,rankUp:null,pay:0,cf:0,hall:false,factor:f,glory:0,...(cpu?{cpu:true}:{})};
+    /* v0.84: a seat the CPU mostly played (row.cpu) earns CPU_CUT of the coin and the Glory, no gifts, no trophies; the Fate still applies */
     const surv=row.survives!==false;const gain=f*(Math.max(0,row.f|0)+(ranked&&surv?GLORY.survived:0)+(ranked&&surv&&row.won?GLORY.win:0));
     if(ch.rwins==null)ch.rwins=ch.glory==null?(ch.wins|0):0;if(ranked&&row.won)ch.rwins++;ch.glory=Math.round((g0+gain)*100)/100;out.glory=Math.round(gain*10)/10;
     if(!ch.rankK||rankIdx(before.k)>rankIdx(ch.rankK))ch.rankK=before.k;const t83=(x&&x.now)||Date.now();out.gifts=[];out.ranks=[];
@@ -31129,8 +31130,8 @@ const ONLC=(function(){
     if(ranked){ch.survived=(ch.survived||0)+1;ch.streak=(ch.streak||0)+1}if(row.survives!==false)grow(ch,1+(row.won?1:0));
     const after=rankFor(ch);ch.rank=after.k;if(rankIdx(after.k)>rankIdx(ch.rankK))ch.rankK=after.k;if(after.k!==before.k)out.rankUp=after.k;
     /* v0.83 Flavius's gifts: one for every rank reached, one every GIFT_EVERY Ranked bouts survived */
-    for(let i=rankIdx(before.k)+1;i<=rankIdx(after.k);i++){out.ranks.push(RANKS[i].k);const g=giftAdd(ch,'rank:'+RANKS[i].k,t83);if(g)out.gifts.push(g)}
-    if(ranked&&ch.survived>0&&ch.survived%GIFT_EVERY===0){const g=giftAdd(ch,'surv:'+ch.survived,t83);if(g)out.gifts.push(g)}
+    for(let i=rankIdx(before.k)+1;i<=rankIdx(after.k);i++){out.ranks.push(RANKS[i].k);const g=cpu?null:giftAdd(ch,'rank:'+RANKS[i].k,t83);if(g)out.gifts.push(g)}
+    if(!cpu&&ranked&&ch.survived>0&&ch.survived%GIFT_EVERY===0){const g=giftAdd(ch,'surv:'+ch.survived,t83);if(g)out.gifts.push(g)}
     return out}
   /* what a lobby seat needs to field the gladiator on every client */
   /* v0.83: gear = ENGINE keys (printed key, or 'nw_<uid>' for a named weapon) in the order brought; items = the same pieces as the
@@ -31311,7 +31312,7 @@ const ONLC=(function(){
   function gearEquip(ch,item,on){if(!ch.alive)throw new Error('The dead stay as they fell.');const eq=equipOf(ch);const have=(ch.gear||[]).filter(k=>k===item).length,inEq=eq.filter(k=>k===item).length;
     if(!have)throw new Error('That piece is not theirs.');if(on){const why=wearWhy(ch,item);if(why)throw new Error(why)}if(on&&inEq<have)eq.push(item);else if(!on&&inEq){eq.splice(eq.indexOf(item),1)}ch.equip=eq;return ch}
   /* ── v0.82 GUESTS: a connection without sign-in may only look (these requests), for 2 hours from its first connect ── */
-  const GUEST_MS=2*3600e3, GUEST_OK=['hello','auth.guest','lobby.list','match.watch','match.unwatch','match.get','match.snapreq','forum.get','hall.list','world.news','domus.profile','wager.list']; /* v0.83: house pages and the open pots too */;
+  const GUEST_MS=2*3600e3, GUEST_OK=['auction.list','hello','auth.guest','lobby.list','match.watch','match.unwatch','match.get','match.snapreq','forum.get','hall.list','world.news','domus.profile','wager.list']; /* v0.83: house pages and the open pots too */;
   /* ── v0.82 STANDS GROUP TURN: once a rotation every ticket holder picks ONE action in private; the server applies all picks as one
      input. A thrown stone / offering is LOCKED to its tile (r,c on the 13×13 board). ── */
   const STANDS_MS=20000, STANDS_ACTS=['pass','stone','offer','tholo','move','cheer'];
@@ -31356,7 +31357,7 @@ const ONLC=(function(){
     return {seat:r.seat|0,won:!!r.won,place:Math.max(1,Math.min(8,r.place|0||4)),f:Math.max(0,Math.min(400,r.f|0)),coin:Math.max(0,Math.min(200,r.coin|0)),kills:Math.max(0,Math.min(20,r.kills|0)),survives:r.survives!==false,
       slew:Array.isArray(r.slew)?[...new Set(r.slew.filter(x=>x==='commodus'||x==='tholo'))].sort():[],
       brk:Array.isArray(r.brk)?r.brk.filter(k=>typeof k==='string'&&KEY_RE.test(k)).slice(0,16).sort():[],
-      off:Array.isArray(r.off)?r.off.filter(k=>OFFERS83.includes(k)).slice(0,OFF_CARRY).sort():[],ks,kb:['g','b','a','r'].includes(r.kb)?r.kb:'',thumb:!!r.thumb}}
+      off:Array.isArray(r.off)?r.off.filter(k=>OFFERS83.includes(k)).slice(0,OFF_CARRY).sort():[],ks,kb:['g','b','a','r'].includes(r.kb)?r.kb:'',thumb:!!r.thumb,cpu:!!r.cpu}}
   function cleanTable(t){return (Array.isArray(t)?t:[]).slice(0,8).map(cleanRow).sort((a,b)=>a.seat-b.seat)}
   function agree(reports){const ids=Object.keys(reports);if(!ids.length)return {table:null,void:true,minority:[]};
     const key=r=>JSON.stringify(cleanTable(r.table))+'|'+String(r.hash||'');const groups={};for(const a of ids){const k=key(reports[a]);(groups[k]=groups[k]||[]).push(a)}
@@ -31412,14 +31413,14 @@ const ONLC=(function(){
   const rarOf=k=>RARITY.find(r=>r.k===k)||RARITY[0];
   const itemBase=it=>String(it||'').split('#')[0];
   const itemUid=it=>{const s=String(it||'');const i=s.indexOf('#');return i<0?null:s.slice(i+1)};
-  const isNamed=it=>itemBase(it)===NAMED;
-  const engineKey=it=>isNamed(it)?'nw_'+itemUid(it):itemBase(it);
+  const isNamed=it=>{const b=itemBase(it);return b===NAMED||b==='na'}; /* v0.84: 'na#uid' = a named ARMOR piece */
+  const engineKey=it=>isNamed(it)?itemBase(it)+'_'+itemUid(it):itemBase(it);
   const pcOf=(h,it)=>{const u=itemUid(it);return u&&h&&h.pcs&&h.pcs[u]||null};
   const isBroken=(h,it)=>{const p=pcOf(h,it);return !!(p&&p.st==='broken')};
   function newUid(h){const n=(h.pcsN=(h.pcsN|0)+1);return String(h.id||'x').replace(/[^A-Za-z0-9_-]/g,'').slice(-24)+'.'+n.toString(36)}
   /* what a piece is: {item, base, key (engine), named, kind, lv, n, ap, stack, st, hist, rar, w, val} — P = {item, pc} */
   function pieceInfo(P,catalog){if(!P||!P.item)return null;const it=P.item,pc=P.pc||{},base=itemBase(it);
-    if(base===NAMED){const w=pc.w||{};const R=rarOf(pc.rar||w.rar);return {item:it,base,key:engineKey(it),named:true,kind:'w',lv:4,n:w.n||'Named weapon',stack:false,st:pc.st||'whole',hist:pc.hist||[],rar:R.k,w,val:L4_PRICE*R.mult}}
+    if(base===NAMED||base==='na'){const w=pc.w||{};const R=rarOf(pc.rar||w.rar);const A=base==='na';return {item:it,base,key:engineKey(it),named:true,kind:A?'a':'w',lv:4,n:w.n||(A?'Named armor':'Named weapon'),...(A?{ap:w.ap|0}:{}),stack:false,st:pc.st||'whole',hist:pc.hist||[],rar:R.k,w,val:L4_PRICE*R.mult}}
     const c=(catalog||{})[base];if(!c)return null;return {item:it,base,key:base,named:false,kind:c.kind,lv:c.lv,n:c.n,ap:c.ap,stack:!!c.stack,st:pc.st||'whole',hist:pc.hist||[],val:priceOf(c)}}
   const pieceOf=(h,it,catalog)=>pieceInfo({item:it,pc:pcOf(h,it)},catalog);
   const valueOf=I=>I?I.val|0:0;
@@ -31487,7 +31488,8 @@ const ONLC=(function(){
     if(k==='cf')return {k,v:3+Math.floor(rnd()*4)};
     if(k==='off')return {k,key:rnd()<0.75?pick1(rnd,OFFERS83.filter(x=>PRICE_OFF[x]<100)):pick1(rnd,OFFERS83.filter(x=>PRICE_OFF[x]>=100))};
     if(k==='l1'||k==='l23'){const lv=k==='l1'?1:rnd()<0.7?2:3;const ks=keys(lv);if(!ks.length)return {k:'coin',v:20};return {k:'gear',item:pick1(rnd,ks),lv}}
-    return {k:'named',rar:wpick(rnd,RAR_W)}}
+    /* v0.84: the kind is drawn AFTER the rarity (the same randomness rolls the same rarity as v0.83) */
+    const rar=wpick(rnd,RAR_W);return {k:'named',rar,kind:rnd()<NAMED_ARMOR_SHARE?'a':'w'}}
   /* a gift's reward into the gladiator (or, for a named piece below Veteranus, the house shelf D). P = the named piece {item,pc} when k is named. → {to} */
   function applyGift(ch,D,rw,P){if(rw.k==='coin'){ch.wallet=(ch.wallet|0)+(rw.v|0);return {to:'glad'}}
     if(rw.k==='cf'){ch.cfb=Math.min(CFB_MAX,(ch.cfb|0)+(rw.v|0));return {to:'glad'}}
@@ -31531,7 +31533,7 @@ const ONLC=(function(){
     if(R.k==='common')n+=' '+adj(pick1(rnd,COMMON_ADJ));else if(aff.length)n+=' '+adj(AFFIX_ADJ[aff[0]]);
     if(R.k==='epic')n+=' '+pick1(rnd,GODS);if(uq)n=noun+' '+UNIQUES.find(u=>u.k===uq).n;
     Object.assign(w,{n,rar:R.k,aff,...(uq?{uq}:{}),named83:1});return w}
-  function namedPiece(w,h){const uid=newUid(h);return {item:NAMED+'#'+uid,pc:{st:'whole',rar:w.rar,w:{...w,key:'nw_'+uid},hist:[]}}}
+  function namedPiece(w,h){const uid=newUid(h);const pre=w&&w.kind==='a'?'na':NAMED;return {item:pre+'#'+uid,pc:{st:'whole',rar:w.rar,w:{...w,key:pre+'_'+uid},hist:[]}}}
   /* a named def as a client builds it (defensive: numbers clamped, strings cleaned) */
   function cleanNamed(w){if(!w||typeof w!=='object')return null;const n=x=>Math.max(0,Math.min(12,x|0));const o={n:cleanName(w.n)||'Named weapon',base:String(w.base||'').replace(/[^a-z0-9_]/gi,'').slice(0,24),lv:4,
       key:String(w.key||'').replace(/[^A-Za-z0-9_.\-]/g,'').slice(0,64),p:Math.min(6,n(w.p)),r:Math.min(6,n(w.r)),img:Number.isInteger(w.img)?w.img:-1,rar:rarOf(w.rar).k,aff:Array.isArray(w.aff)?w.aff.filter(k=>AFFIX[k]).slice(0,3):[],named83:1};
@@ -31552,7 +31554,7 @@ const ONLC=(function(){
   function trophyAdd(D,k,glad,at){D.trophies=D.trophies||[];const t=D.trophies.find(x=>x.k===k);if(t){if(!TROPHY_REPEAT.includes(k))return false;t.x=(t.x|0)+1;t.at=at;t.glad=glad;return true}
     if(D.trophies.length>=TROPHY_MAX)return false;D.trophies.push({k,n:trophyName(k),at,glad,x:1});return true}
   /* the trophies one settled seat earns its house (ch after applyResult) */
-  function trophiesFrom(ch,row,out,ranked,ev){const k=[];if(!row||!out)return k;const alive=!out.died;
+  function trophiesFrom(ch,row,out,ranked,ev){const k=[];if(!row||!out||row.cpu)return k;const alive=!out.died;
     if(ranked&&row.won&&alive)k.push('first:'+ev);for(const r of out.ranks||[])k.push('rank:'+r);for(const s of row.slew||[])k.push('slew:'+s);
     if(ranked&&alive&&(ch.survived|0)>=10)k.push('surv10');if(ranked&&alive&&(ch.survived|0)>=25)k.push('surv25');if(row.thumb&&alive)k.push('thumb');return k}
   /* one line of the house's recent matches */
@@ -31570,7 +31572,83 @@ const ONLC=(function(){
     const won=bets.filter(b=>winSeats.includes(b.seat));const wsum=won.reduce((a,b)=>a+b.amt,0);if(!wsum)return bets.map(b=>({res:'refund',pay:b.amt|0}));
     const all=bets.reduce((a,b)=>a+b.amt,0)+(x.pot|0);const cut=Math.floor(all*WAGER.cut);return bets.map(b=>winSeats.includes(b.seat)?{res:'won',pay:Math.floor((all-cut)*b.amt/wsum)}:{res:'lost',pay:0})}
   const weekKey=t=>'W'+Math.floor((t||0)/604800000);
-  return {GIFT_HOUSE,OFF_SHELF,giftsOut,giftsIn,offersIn,offerMoveWhy,offerMove,CFB_COIN,applyGiftHouse,TREASURY_CUT,GIFT_EVERY,GIFT_KEEP,COUNTDOWN_MS,LOOT_MS,FOLLOW_MAX,TROPHY_MAX,RECENT_KEEP,INFAMES_MIN,canWearNamed,PRICE_OFF,OFFERS83,OFF_CARRY,OFF_MAX,offersBrought,offerBuyWhy,offerBuy,offerBring,NAMED,L4_PRICE,RARITY,rarOf,itemBase,itemUid,isNamed,engineKey,pcOf,isBroken,newUid,pieceInfo,pieceOf,valueOf,repairCost,usedPrice,wearWhy,takePiece,putPiece,tagPiece,histAdd,breakItem,repairItem,gearAfter,lootBest,giftAdd,giftTake,GIFT_W,RAR_W,CFB_MAX,rollGift,applyGift,AFFIX,UNIQUES,rollNamed,namedPiece,cleanNamed,lineupSig,stopCount,countCheck,countLeft,trophyName,trophyAdd,trophiesFrom,recentRow,recentAdd,domusLink,domusFromHash,oddsOf,betResults,weekKey,PASS,passOK,standsSeatWhy,cleanPatron,gearMoveWhy,gearMove,gearEquip,GLORY,gloryOf,rankByGlory,tableFactor,PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
+  /* ══════════════════════ v0.84 (protocol 7, contract tools/plans/onl84-contract.md) ══════════════════════
+     NAMED ARMOR ('na#uid', engine key 'na_uid'), SEASONS on the Manager's schedule + the weekly challenge, RECLAIM_MS, CPU-won rewards,
+     Flavius's Auction. Every number marked TWEAK is a default Virgilante may change. */
+  const NAMED_ARMOR_SHARE=0.4; /* TWEAK: a named gift / chest roll is armor 40% of the time, a weapon 60% */
+  const CPU_SHARE=0.5, CPU_CUT=0.25; /* TWEAK: a seat the CPU played MORE than half of → 25% coin and Glory, no gifts, no trophies */
+  const RECLAIM_MS=180000; /* TWEAK: a dropped / CPU-abandoned seat may be taken back for 3 minutes (or until the CPU begins its next turn) */
+  const NAMED_A='na';const isNamedA=it=>itemBase(it)===NAMED_A;
+  const ARM_LOCS84=['head','chest','larm','rarm','lleg','rleg'], ARM_SLOTS84=['head','chest','belt','arm','leg'];
+  /* the affixes of named armor (engine hooks in 139-v84onl); caps: a piece ≤ 6 AP (the location still caps at 7) */
+  const AFFIX_A={ap:{n:'+1 AP',fits:a=>(a.ap|0)<6,apply:a=>{a.ap=(a.ap|0)+1}},
+    bonus:{n:'+1 AP to another location',fits:a=>!a.bonus||!Object.keys(a.bonus).length,apply:a=>{a.bonus={[a.slot==='chest'?'head':'chest']:1}}},
+    ward:{n:'the first hit each rotation loses 1 damage',fits:a=>!a.ward,apply:a=>{a.ward=1}},
+    swift:{n:'+1 movement while unhurt',fits:a=>!a.swift,apply:a=>{a.swift=1}}};
+  const AFFIX_A_ADJ={ap:['Solidus','Solida','Solidum'],bonus:['Amplus','Ampla','Amplum'],ward:['Tutus','Tuta','Tutum'],swift:['Velox','Velox','Velox']};
+  /* the unique effects of Legendary armor (each claimed ONCE in the world: WORLD UNIQA#<k>) */
+  const UNIQUES_A=[
+    {k:'regalis',n:'Regis',d:'While worn, +1 CF at the start of each of the wearer’s turns.'},
+    {k:'invicta',n:'Invicti',d:'A hit of 2 or more on the location it guards loses 1 damage.'},
+    {k:'gloriosa',n:'Gloriae',d:'+1 CF when a gladiator’s hit on the wearer is stopped by armor (no HP lost).'},
+    {k:'mercurialis',n:'Mercurii',d:'+1 movement while worn.'},
+    {k:'vindex',n:'Vindicis',d:'+1 damage against the gladiator who last hit the wearer.'},
+    {k:'restituta',n:'Phoenicis',d:'At the start of the wearer’s turns, the location it guards regains 1 AP (up to the pieces’ own AP).'}];
+  const UNIQ_A_KEYS=UNIQUES_A.map(u=>u.k);
+  const NOUN_A={head:['Galea',1],chest:['Lorica',1],belt:['Balteus',0],arm:['Manica',1],leg:['Ocrea',1]};
+  /* rar = rarity key; taken = armor uniques already claimed → the def (no key yet: namedPiece adds it). Bases: printed, never stackable padding */
+  function rollNamedArmor(rnd,catalog,rar,taken){const bases=Object.keys(catalog||{}).filter(k=>catalog[k].kind==='a'&&!catalog[k].stack&&ARM_SLOTS84.includes(catalog[k].slot)).sort();if(!bases.length)return null;
+    const base=pick1(rnd,bases);const c=catalog[base];const a={kind:'a',base,lv:4,slot:c.slot,pt:String(c.pt||''),ap:Math.min(6,c.ap|0),...(c.pair?{pair:1}:{}),...(c.bonus&&Object.keys(c.bonus).length?{bonus:{...c.bonus}}:{})};
+    let R=rarOf(rar);let uq=null;if(R.uq){const pool=UNIQ_A_KEYS.filter(k=>!(taken||[]).includes(k));if(pool.length)uq=pick1(rnd,pool);else R=rarOf('epic')}
+    const aff=[];for(let i=0;i<R.aff;i++){const ok=Object.keys(AFFIX_A).filter(k=>!aff.includes(k)&&AFFIX_A[k].fits(a));if(!ok.length)break;const k=pick1(rnd,ok);AFFIX_A[k].apply(a);aff.push(k)}
+    const [noun,g]=NOUN_A[c.slot]||['Lorica',1];let n=noun;
+    if(R.k==='common')n+=' '+pick1(rnd,COMMON_ADJ)[g];else if(aff.length)n+=' '+AFFIX_A_ADJ[aff[0]][g];
+    if(R.k==='epic')n+=' '+pick1(rnd,GODS);if(uq)n=noun+' '+UNIQUES_A.find(u=>u.k===uq).n;
+    Object.assign(a,{n,rar:R.k,aff,...(uq?{uq}:{}),named84:1});return a}
+  /* a named armor def as a client builds it (defensive: numbers clamped, strings cleaned) */
+  function cleanNamedA(a){if(!a||typeof a!=='object')return null;const key=String(a.key||'').replace(/[^A-Za-z0-9_.\-]/g,'').slice(0,64);if(!/^na_/.test(key))return null;
+    const slot=ARM_SLOTS84.includes(a.slot)?a.slot:null;if(!slot)return null;
+    const o={kind:'a',key,n:cleanName(a.n)||'Named armor',base:String(a.base||'').replace(/[^a-z0-9_]/gi,'').slice(0,24),lv:4,slot,pt:String(a.pt||'').replace(/[^a-z]/gi,'').slice(0,12),ap:Math.max(0,Math.min(7,a.ap|0)),
+      rar:rarOf(a.rar).k,aff:Array.isArray(a.aff)?a.aff.filter(k=>AFFIX_A[k]).slice(0,3):[],named84:1};
+    if(a.pair)o.pair=1;if(a.bonus&&typeof a.bonus==='object'){const b={};for(const [l,v] of Object.entries(a.bonus).slice(0,2))if(ARM_LOCS84.includes(l))b[l]=Math.max(1,Math.min(2,v|0));if(Object.keys(b).length)o.bonus=b}
+    if(a.ward)o.ward=1;if(a.swift)o.swift=1;if(a.uq&&UNIQ_A_KEYS.includes(a.uq))o.uq=a.uq;return o}
+  /* CPU-won rewards: a seat's turn tally {h (human), c (CPU)} → the result row's cpu flag */
+  const cpuRow=t=>!!t&&(t.c|0)>((t.h|0)+(t.c|0))*CPU_SHARE;
+  /* ── SEASONS = the system schedule (19-calendar seasonSchedule + 77-rivalry week 12), on the server clock ── */
+  const WEEK_MS=604800000, SEASON_EPOCH=Math.floor(Date.UTC(2026,9,1)/WEEK_MS)*WEEK_MS; /* Thursday 2026-10-01 00:00 UTC — the same week boundaries as weekKey */
+  const seasonKeyOf=n=>'S'+(Math.floor(n/12)+1)+'W'+(n%12+1);
+  function seasonAt(t){const n=Math.max(0,Math.floor(((t||0)-SEASON_EPOCH)/WEEK_MS));const start=SEASON_EPOCH+n*WEEK_MS;return {season:Math.floor(n/12)+1,wk:n%12+1,n,key:seasonKeyOf(n),start,end:start+WEEK_MS}}
+  const SCHED_W=[['democritus',22],['egidious',16],['cassian',14],['familia',5],['goldenEagle',4],['juggernaut',3],['orpheus',3],['triumviratus',3],['ludus',2],['chariot',2],['naumachia',1],['commodus',2]];
+  const LOC_IDS84=[1,2,3,4,5,6,7,8,9,10,11,12];
+  /* the page's mulberry32 + hashStr, copied (the schedule must match the Manager's) */
+  function mul84(seed){let s=seed>>>0;return ()=>{let t=s=s+0x6D2B79F5>>>0;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
+  const hash84=x=>{let h=2166136261;for(const ch of String(x))h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0;return h};
+  const FX84={};
+  function seasonFixtures(season){if(FX84[season])return FX84[season].map(f=>({...f}));const r=mul84(hash84('sched'+season));const order=LOC_IDS84.slice().sort(()=>r()-.5);
+    const total=SCHED_W.reduce((a,x)=>a+x[1],0);const isCl=ev=>/democritus|egidious|cassian/.test(ev);const fx=[];
+    order.slice(0,12).forEach((loc,i)=>{let ev='democritus';if(i===11)ev='cassian';else{let x=r()*total;for(const [k,w] of SCHED_W){if((x-=w)<0){ev=k;break}}}
+      if(!isCl(ev)&&i>0&&!isCl(fx[i-1].ev))ev='democritus';fx.push({wk:i+1,loc,ev})});
+    if(fx[11]){fx[11].ev='familia';fx[11].rivalry=1}FX84[season]=fx;return fx.map(f=>({...f}))}
+  /* this week's online fixture: an event the online arena cannot hold yet becomes Democritus at the same city (TWEAK) */
+  function onlineFixture(t){const S=seasonAt(t);const f=seasonFixtures(S.season)[S.wk-1];return {...S,ev:EVENTS_ALL.includes(f.ev)?f.ev:'democritus',evRaw:f.ev,loc:f.loc}}
+  /* ── THE WEEKLY CHALLENGE (the week's fixture): win it · survive it Ranked · finish 3 bouts → ONE gift (with a win) a house a week ── */
+  const CH84=[{k:'win',n:1},{k:'surv',n:1},{k:'bouts',n:3}], WEEK_GIFTS84=1; /* TWEAK: at most 1 challenge gift per house per week */
+  function weekState(D,t){const F=seasonAt(t);const X=D&&D.wk84&&D.wk84.key===F.key?{...D.wk84}:{key:F.key,win:0,surv:0,bouts:0,wins:0,gift:0};X.done=!!(X.win>=1&&X.surv>=1&&X.bouts>=3);return X}
+  /* one settled seat of a house (m = {ev, loc, ranked, at}) → D.wk84; returns the week's gift when it was just earned (already put on D) */
+  function weekNote(D,m,ch,row,out){const t=(m&&m.at)||Date.now();const F=onlineFixture(t);const X=weekState(D,t);delete X.done;D.wk84=X;if(!row||row.cpu)return null;
+    X.bouts=(X.bouts|0)+1;const here=!!m&&m.ev===F.ev&&(m.loc|0)===F.loc;if(row.won){X.wins=(X.wins|0)+1;if(here)X.win=1}
+    if(m&&m.ranked&&here&&!(out&&out.died)&&row.survives!==false)X.surv=1;
+    if(X.win&&X.surv&&X.bouts>=3&&X.wins>=1&&(X.gift|0)<WEEK_GIFTS84){const g={id:'week:'+F.key+':'+(D.id||'d'),why:'week:'+F.key,at:t,glad:(ch&&ch.name)||null};const n0=(D.gifts||[]).length;
+      giftsIn(D,[g]);if((D.gifts||[]).length>n0){X.gift=(X.gift|0)+1;return g}}return null}
+  /* ── FLAVIUS'S AUCTION: only Flavius sells (the chest pool); escrow, anti-snipe, one win a house a week ── */
+  const AUC_LOTS=3, AUC_MIN_MS=86400000, AUC_SNIPE_MS=300000, AUC_STEP=0.05, AUC_STEP_MIN=10; /* TWEAK: lots a week, shortest life, snipe guard, raise */
+  const aucMin=val=>Math.ceil((val|0)/2);
+  const aucNextMin=lot=>lot&&lot.bid?Math.max((lot.bid.amt|0)+AUC_STEP_MIN,Math.ceil((lot.bid.amt|0)*(1+AUC_STEP))):aucMin(lot&&lot.val);
+  const aucEnds=t=>Math.max(seasonAt(t).end,t+AUC_MIN_MS);
+  function aucBidWhy(lot,amt,t){if(!lot||lot.done||t>lot.ends)return 'The hammer has fallen on that lot.';const m=aucNextMin(lot);if(!(Number.isInteger(amt)&&amt>=m))return `The next bid is at least ${m} coin.`;return ''}
+  function aucSnipe(lot,t){if(lot.ends-t<AUC_SNIPE_MS)lot.ends=t+AUC_SNIPE_MS;return lot}
+
+  return {NAMED_A,NAMED_ARMOR_SHARE,CPU_SHARE,CPU_CUT,RECLAIM_MS,isNamedA,AFFIX_A,UNIQUES_A,UNIQ_A_KEYS,rollNamedArmor,cleanNamedA,cpuRow,WEEK_MS,SEASON_EPOCH,seasonAt,seasonKeyOf,SCHED_W,seasonFixtures,onlineFixture,CH84,WEEK_GIFTS84,weekState,weekNote,AUC_LOTS,AUC_MIN_MS,AUC_SNIPE_MS,AUC_STEP,AUC_STEP_MIN,aucMin,aucNextMin,aucEnds,aucBidWhy,aucSnipe,GIFT_HOUSE,OFF_SHELF,giftsOut,giftsIn,offersIn,offerMoveWhy,offerMove,CFB_COIN,applyGiftHouse,TREASURY_CUT,GIFT_EVERY,GIFT_KEEP,COUNTDOWN_MS,LOOT_MS,FOLLOW_MAX,TROPHY_MAX,RECENT_KEEP,INFAMES_MIN,canWearNamed,PRICE_OFF,OFFERS83,OFF_CARRY,OFF_MAX,offersBrought,offerBuyWhy,offerBuy,offerBring,NAMED,L4_PRICE,RARITY,rarOf,itemBase,itemUid,isNamed,engineKey,pcOf,isBroken,newUid,pieceInfo,pieceOf,valueOf,repairCost,usedPrice,wearWhy,takePiece,putPiece,tagPiece,histAdd,breakItem,repairItem,gearAfter,lootBest,giftAdd,giftTake,GIFT_W,RAR_W,CFB_MAX,rollGift,applyGift,AFFIX,UNIQUES,rollNamed,namedPiece,cleanNamed,lineupSig,stopCount,countCheck,countLeft,trophyName,trophyAdd,trophiesFrom,recentRow,recentAdd,domusLink,domusFromHash,oddsOf,betResults,weekKey,PASS,passOK,standsSeatWhy,cleanPatron,gearMoveWhy,gearMove,gearEquip,GLORY,gloryOf,rankByGlory,tableFactor,PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
 /* =====================================================================
    112-ONLINE · MULTIPLAYER → ONLINE (phase 1: the landing space, against a mock server)
@@ -31653,7 +31731,7 @@ const MOCK_ROUTES={
     L.status='live';L.seed=(Math.random()*2**31)>>>0;L.started=Date.now();w.matches[L.id]={id:L.id,seed:L.seed,inputs:[],results:{},open:null,watch:{},abandoned:{},abandon:ONLC.abandonRule(L),standsOff:!!L.standsOff};return L},
   'match.abandon':(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');const seat=L.players.findIndex(p=>p.id===me);if(seat<0)throw new Error('Not your match.');
     M.abandoned=M.abandoned||{};if(M.abandoned[me]||M.status==='done')return {done:1};const rule=M.abandon||ONLC.abandonRule(L);M.abandoned[me]=rule;
-    const inp={k:'abandon',seat,rule,from:'server',seq:M.inputs.length};M.inputs.push(inp);mockPush('match.input',{id:d.id,in:inp});let out=null;
+    const inp={k:'abandon',seat,rule,from:'server',seq:M.inputs.length,...(rule==='cpu'&&!L.ranked&&typeof ONLC.RECLAIM_MS==='number'?{until:Date.now()+ONLC.RECLAIM_MS}:{})}; /* v0.84 the reclaim window */M.inputs.push(inp);mockPush('match.input',{id:d.id,in:inp});let out=null;
     if(L.ranked){const ch=w.chars[L.players[seat].char];if(ch&&ch.alive){out=ONLC.applyResult(ch,{won:false,place:L.seats,f:0,coin:0,survives:false},true);out.abandoned=1;M.outs=M.outs||{};M.outs[me]=out;
       if(out.hall)w.hall.unshift({name:ch.name,cls:ch.cls,rank:ch.died.rank,lifeCF:ch.lifeCF,survived:ch.survived,diedAt:Date.now(),why:onlHallWhy(ch)});w.news.unshift(['🌫',`${ch.name} abandoned the sand — Damnatio.`])}}
     const left=L.players.filter(p=>!/^bot/.test(p.id)&&!M.abandoned[p.id]&&!(M.dropped||{})[p.id]);if(!left.length)mockClose(w,L,'empty');return {done:1,out,rule}},
@@ -31685,7 +31763,7 @@ const MOCK_ROUTES={
       for(const a of humans)if(a!==me)mockPush('match.settled',{id:d.id,to:a,void:!!A.void,out:M.outs[a]||null,char:Object.values(w.chars).filter(c=>c.owner===a).sort((x,y)=>y.born-x.born)[0]||null})}
     const mine=Object.values(w.chars).filter(c=>c.owner===me).sort((x,y)=>y.born-x.born)[0]||null;if(M.status==='done')return {char:mine,out:(M.outs||{})[me]||null,void:!!(M.outs&&!Object.keys(M.outs).length&&L.status==='done'&&ONLC.agree(M.reports).void)};return {pending:true}},
   'match.drop':(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');const sq=d.seat|0;const p=sq<L.seats?L.players[sq]:(L.stands||[])[sq-L.seats];if(!p||p.id===me)throw new Error('No one to drop.');
-    M.dropped=M.dropped||{};if(M.dropped[p.id])return {done:1};M.dropped[p.id]=true;const inp={k:'drop',seat:d.seat|0,from:'server',seq:M.inputs.length};M.inputs.push(inp);mockPush('match.input',{id:d.id,in:inp});return {done:1}},
+    M.dropped=M.dropped||{};if(M.dropped[p.id])return {done:1};M.dropped[p.id]=true;const inp={k:'drop',seat:d.seat|0,from:'server',seq:M.inputs.length,...(sq<L.seats&&typeof ONLC.RECLAIM_MS==='number'?{until:Date.now()+ONLC.RECLAIM_MS}:{})}; /* v0.84 the reclaim window */M.inputs.push(inp);mockPush('match.input',{id:d.id,in:inp});return {done:1}},
   'hall.list':(w)=>w.hall.slice(0,60),
   'world.news':(w)=>({news:w.news.slice(0,8),online:Object.keys(w.accounts).length+37,challenges:ONLC.weekChallenges(Date.now())})};
 /* the lanista and their party (the leader picks), as lobby seats */
@@ -31781,7 +31859,7 @@ function onlLobbyHTML(){const me=ONL.acct.id;const rows=ONL.lobbies;const st=L=>
    ${ONL.mkgame?onlCreateGameHTML():''}${ONL.betting?onlBetHTML():''}${onlMyLobbyHTML()}
    <table class="tally onl-lb"><tr><th>Host</th><th>Event</th><th>City</th><th>Seats</th><th>Rank</th><th>Ping</th><th>Status</th><th></th></tr>${rows.map(L=>{const mine=L.players.some(p=>p.id===me)||(L.stands||[]).some(t=>t.id===me);
      return `<tr class="${mine?'mine':''}"><td><b>${esc2(L.host.name)}</b></td><td>${esc2(onlEvName(L.ev))}${L.team?' <span class="badge">👥 2v2</span>':''}</td><td>${esc2(onlCityName(L.loc))}</td><td>${L.players.length}/${L.seats}${(L.stands||[]).length?` <small class="rc-sub">🎟${L.stands.length}</small>`:''}</td><td>${L.ranked?onlRankChip(L.rank):'<span class="rc-sub">Custom · any</span>'}</td><td>${L.ping||'—'} ms</td><td>${st(L)}</td>
-      <td class="acts">${L.status==='waiting'&&!mine?`<button type="button" class="btn tksm primary" data-onl="join" data-v="${L.id}">Join</button>`:''}${L.status==='waiting'?`<button type="button" class="btn tksm" data-onl="bet" data-v="${L.id}" title="Wager from your wallet">🎲${L.pool?' '+L.pool:''}</button>`:''}${L.status==='live'?(L.players.some(p=>p.id===me)&&!(ONL.leftMatch||{})[L.id]?`<button type="button" class="btn tksm primary" data-onl="rejoin" data-v="${L.id}" title="Back to your match">⚔ Rejoin</button>`:`<button type="button" class="btn tksm" data-onl="watch" data-v="${L.id}" title="Watch for free">👁</button>`):''}${L.ticket&&L.status==='waiting'&&!mine?`<button type="button" class="btn tksm" data-onl="ticket" data-v="${L.id}" title="A seat in the stands until the horns: stones, offerings, cheers. The coin goes into the wager pot.">🎟 ${L.ticket}</button>`:''}</td></tr>`}).join('')||'<tr><td colspan="8" class="rc-sub">No games hosted. Create one.</td></tr>'}</table>`}
+      <td class="acts">${L.status==='waiting'&&!mine?`<button type="button" class="btn tksm primary" data-onl="join" data-v="${L.id}">Join</button>`:''}${L.status==='waiting'?`<button type="button" class="btn tksm" data-onl="bet" data-v="${L.id}" title="Wager from your wallet">💰${L.pool?' '+L.pool:''}</button>`:''}${L.status==='live'?(L.players.some(p=>p.id===me)&&!(ONL.leftMatch||{})[L.id]?`<button type="button" class="btn tksm primary" data-onl="rejoin" data-v="${L.id}" title="Back to your match">⚔ Rejoin</button>`:`<button type="button" class="btn tksm" data-onl="watch" data-v="${L.id}" title="Watch for free">👁</button>`):''}${L.ticket&&L.status==='waiting'&&!mine?`<button type="button" class="btn tksm" data-onl="ticket" data-v="${L.id}" title="A seat in the stands until the horns: stones, offerings, cheers. The coin goes into the wager pot.">🎟 ${L.ticket}</button>`:''}</td></tr>`}).join('')||'<tr><td colspan="8" class="rc-sub">No games hosted. Create one.</td></tr>'}</table>`}
 function onlCreateGameHTML(){const g=ONL.mkgame;return `<div class="card2 onl-mk"><b>Host a game</b><div class="formgrid">
    <label>Event<select data-onlg="ev">${ONLC.EVENTS_ALL.map(k=>`<option value="${k}" ${g.ev===k?'selected':''}>${esc2(onlEvName(k))}${ONLC.EVENTS_TEAM.includes(k)?' — teams 2 v 2':''}</option>`).join('')}</select></label>
    <label>City<select data-onlg="loc">${LOCATIONS.map((L,i)=>L?`<option value="${i}" ${+g.loc===i?'selected':''}>${esc2(L.n)}</option>`:'').join('')}</select></label>
@@ -31791,7 +31869,7 @@ function onlCreateGameHTML(){const g=ONL.mkgame;return `<div class="card2 onl-mk
    <div class="acts"><button type="button" class="btn primary" data-onl="host">Host it</button><button type="button" class="btn" data-onl="nogame">Cancel</button></div></div>`}
 function onlBetHTML(){const L=ONL.lobbies.find(x=>x.id===ONL.betting.id);if(!L)return '';const me=ONL.acct.id;const mine=L.players.findIndex(p=>p.id===me);
   const opts=Array.from({length:L.seats},(_,i)=>{const p=L.players[i];return mine>=0&&i!==mine?'':`<option value="${i}">${esc2(p?p.name:'Seat '+(i+1)+' (open)')}</option>`}).join('');
-  return `<div class="card2 onl-mk"><b>🎲 Wager on ${esc2(onlEvName(L.ev))}</b> <span class="rc-sub">pool ${L.pool||0} coin · winners split it, 5% to the host · ${mine>=0?'a fighter may only back themselves':'bets close when the match starts'}</span>
+  return `<div class="card2 onl-mk"><b>💰 Wager on ${esc2(onlEvName(L.ev))}</b> <span class="rc-sub">pool ${L.pool||0} coin · winners split it, 5% to the host · ${mine>=0?'a fighter may only back themselves':'bets close when the match starts'}</span>
    <div class="formgrid"><label>Back<select id="onlBetSeat">${opts}</select></label><label>Stake<input class="tin" id="onlBetAmt" type="number" min="${ONLC.WAGER.min}" max="${Math.min(ONLC.WAGER.max,ONL.char.wallet)}" value="${Math.min(10,ONL.char.wallet)}"></label></div>
    <div class="acts"><button type="button" class="btn primary" data-onl="betgo" data-v="${L.id}">Place the wager</button><button type="button" class="btn" data-onl="nobet">Cancel</button></div></div>`}
 function onlSpectHTML(){const me=ONL.acct.id;const live=ONL.lobbies.filter(L=>L.status==='live'&&!L.players.some(p=>p.id===me));const soon=ONL.lobbies.filter(L=>L.status==='waiting'&&L.ticket&&!L.players.some(p=>p.id===me));
@@ -31846,7 +31924,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl]'
   if(a==='pleave')return onlDo(async()=>{await NET.req('party.leave');ONL.party=null});
   if(a==='bet'){ONL.betting={id:v};ONL.tab='lobby';onlRedraw();return}
   if(a==='nobet'){ONL.betting=null;onlRedraw();return}
-  if(a==='betgo')return onlDo(async()=>{const r=await NET.req('bet.place',{id:v,seat:+($('#onlBetSeat')||{}).value,amt:+($('#onlBetAmt')||{}).value});ONL.char=r.char;ONL.betting=null;ONL.lobbies=await NET.req('lobby.list');if(typeof mToast==='function')mToast('🎲 Wager placed.')});
+  if(a==='betgo')return onlDo(async()=>{const r=await NET.req('bet.place',{id:v,seat:+($('#onlBetSeat')||{}).value,amt:+($('#onlBetAmt')||{}).value});ONL.char=r.char;ONL.betting=null;ONL.lobbies=await NET.req('lobby.list');if(typeof mToast==='function')mToast('💰 Wager placed.')});
   if(a==='mkt'){ONL.mkt=v;onlRedraw();return}
   if(a==='buy')return onlDo(async()=>{ONL.char=await NET.req('char.buy',{char:ONL.char.id,item:v});if(typeof mToast==='function')mToast(`🛒 Bought ${esc2((onlCatalog()[v]||{}).n||v)}.`)})},true);
 document.addEventListener('input',e=>{const t=e.target;if(!t||!t.closest||!t.closest('#onl'))return;
@@ -32740,7 +32818,7 @@ onlLobbyHTML=function(){const me=onlMe80();const rows=ONL.lobbies||[];const st=L
    ${ONL.betting?onlBetHTML():''}${onlRoomTop80()}
    <table class="tally onl-lb"><tr><th>Host</th><th>Event</th><th>City</th><th>Lanistas</th><th>Seated</th><th>Rank</th><th>Status</th><th></th></tr>${rows.map(L=>{const mine=(L.members||[]).some(m=>m.id===me)||L.players.some(p=>p.id===me)||(L.stands||[]).some(t=>t.id===me);const kicked=ONL.kicked80[L.id]&&Date.now()<ONL.kicked80[L.id];
      return `<tr class="${mine?'mine':''}" data-row="${L.id}"><td><b>${esc2(L.host.name)}</b></td><td>${esc2(onlEvName(L.ev))}${L.team?` <span class="badge">👥 ${L.teams||2} teams</span>`:''}</td><td>${esc2(onlCityName(L.loc))}</td><td>${(L.members||L.players).length}/${ONLC.ROOM_MAX}</td><td>${L.players.length}/${L.seats}${(L.stands||[]).length?` <small class="rc-sub">🎟${L.stands.length}</small>`:''}</td><td>${L.ranked?onlRankChip(L.rank):'<span class="rc-sub">Custom · any</span>'}</td><td>${st(L)}</td>
-      <td class="acts">${L.status==='waiting'&&!mine&&!kicked?`<button type="button" class="btn tksm primary" data-onl="join" data-v="${L.id}">${L.players.length<L.seats?'Join':'Join · stand'}</button>`:''}${L.status==='waiting'?`<button type="button" class="btn tksm" data-onl="bet" data-v="${L.id}" title="Wager from your wallet">🎲${L.pool?' '+L.pool:''}</button>`:''}${L.status==='live'?(L.players.some(p=>p.id===me)&&!(ONL.leftMatch||{})[L.id]?`<button type="button" class="btn tksm primary" data-onl="rejoin" data-v="${L.id}" title="Back to your match">⚔ Rejoin</button>`:`<button type="button" class="btn tksm" data-onl="watch" data-v="${L.id}" title="Watch for free">👁</button>`):''}${L.ticket&&L.status==='waiting'&&!mine?`<button type="button" class="btn tksm" data-onl="ticket" data-v="${L.id}" title="A seat in the stands until the horns. The coin goes into the wager pot.">🎟 ${L.ticket}</button>`:''}</td></tr>`}).join('')||'<tr><td colspan="8" class="rc-sub">No rooms open. Open one.</td></tr>'}</table>`};
+      <td class="acts">${L.status==='waiting'&&!mine&&!kicked?`<button type="button" class="btn tksm primary" data-onl="join" data-v="${L.id}">${L.players.length<L.seats?'Join':'Join · stand'}</button>`:''}${L.status==='waiting'?`<button type="button" class="btn tksm" data-onl="bet" data-v="${L.id}" title="Wager from your wallet">💰${L.pool?' '+L.pool:''}</button>`:''}${L.status==='live'?(L.players.some(p=>p.id===me)&&!(ONL.leftMatch||{})[L.id]?`<button type="button" class="btn tksm primary" data-onl="rejoin" data-v="${L.id}" title="Back to your match">⚔ Rejoin</button>`:`<button type="button" class="btn tksm" data-onl="watch" data-v="${L.id}" title="Watch for free">👁</button>`):''}${L.ticket&&L.status==='waiting'&&!mine?`<button type="button" class="btn tksm" data-onl="ticket" data-v="${L.id}" title="A seat in the stands until the horns. The coin goes into the wager pot.">🎟 ${L.ticket}</button>`:''}</td></tr>`}).join('')||'<tr><td colspan="8" class="rc-sub">No rooms open. Open one.</td></tr>'}</table>`};
 
 /* ---------------- the landing row: Orbis Terrarum + the Forum ---------------- */
 function onlCap80(){const H=ONLF.here||{};const n=H.n|0;return `<b>${n}</b> lanista${n===1?'':'s'} online · ${H.fight|0} fighting · ${H.wait|0} waiting`}
@@ -32860,7 +32938,7 @@ window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('
   if(a==='rsay')return onlSayRoom80(v);
   if(a==='fsay')return onlDo(async()=>{const r=await NET.req('forum.say',{q:v});const l=r&&r.line;if(l&&!ONLF.lines.some(x=>x.at===l.at&&x.by===l.by))ONLF.lines.push(l)});
   if(a==='ticket')return onlDo(async()=>{const r=await onlReq80('lobby.ticket',{id:v});ONL.char=r.char;onlToast80(`🎟 A seat in the stands at ${esc2(onlCityName(r.lobby.loc))} — it opens when the horns sound.`)});
-  if(a==='betgo')return onlDo(async()=>{const r=await onlReq80('bet.place',{id:v,seat:+($('#onlBetSeat')||{}).value,amt:+($('#onlBetAmt')||{}).value});ONL.char=r.char;ONL.betting=null;onlToast80('🎲 Wager placed.')})},true);
+  if(a==='betgo')return onlDo(async()=>{const r=await onlReq80('bet.place',{id:v,seat:+($('#onlBetSeat')||{}).value,amt:+($('#onlBetAmt')||{}).value});ONL.char=r.char;ONL.betting=null;onlToast80('💰 Wager placed.')})},true);
 async function onlSayRoom80(q){const id=onlRoomId80();if(!id)return;try{const r=await NET.req('lobby.say',{id,q});const l=r&&r.line;if(l){const c=ONLF.chat[id]=(ONLF.chat[id]||[]);if(!c.some(x=>!x.sys&&x.at===l.at&&x.by===l.by))c.push(l)}onlPatchLog80()}
   catch(e){onlToast80('⚠ '+esc2(e.message))}}
 /* the host's settings: one change → lobby.set → the room comes back */
@@ -34089,8 +34167,8 @@ if(typeof TOKEN_DEF!=='undefined'&&TOKEN_DEF.tholo)Object.assign(TOKEN_DEF.tholo
 #mainMenu .mmbtns{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr));gap:8px;align-items:stretch;max-width:460px;width:100%;margin-inline:auto}
 #mainMenu .mmbtns>*{grid-column:span 12;margin:0!important;min-width:0}
 #mainMenu .mmbtns>[data-mm="continue"]{order:0}
-#mainMenu .mmbtns>[data-mm="play"]{order:1;grid-column:span 6}
-#mainMenu .mmbtns>[data-mm="manager"]{order:2;grid-column:span 6}
+#mainMenu .mmbtns>[data-mm="play"]{order:1;grid-column:span 12}
+#mainMenu .mmbtns>[data-mm="manager"]{order:2;grid-column:span 12}
 #mainMenu .mmbtns>[data-mm="play"],#mainMenu .mmbtns>[data-mm="manager"]{padding:14px 10px;font-size:17px}
 #mainMenu .mmbtns>[data-mm="multi"]{order:3}
 #mainMenu .mmbtns>#mmMulti{order:4}
@@ -34118,7 +34196,10 @@ if(typeof TOKEN_DEF!=='undefined'&&TOKEN_DEF.tholo)Object.assign(TOKEN_DEF.tholo
 #mainMenu .mmbtns>#mmLearn.tut82.on{display:flex!important}
 #mainMenu .mmbtns>#mmLearn.tut82>button{font-size:14px}
 #mainMenu .mmbtns>[data-mm="studio"]{order:5!important}`;document.head.appendChild(st)}
-function mmLabels82(){const b=document.querySelector('#mainMenu [data-mm="rules"]');if(b&&!/^📜 Rules$/.test(b.textContent.trim()))b.innerHTML='📜 Rules';
+/* v0.84 (his asks): Saves wears a floppy disc 💾 (Rules keeps the scroll) and sits before Settings — row = Annals · Rules · Saves · Settings · mute */
+{const st=document.createElement('style');st.textContent='#mainMenu .mmrow>[data-mm="saves"]{order:1}#mainMenu .mmrow>[data-mm="settings"]{order:2}#mainMenu .mmrow>#mmMute{order:3}';document.head.appendChild(st)}
+function mmSaves84(){const s=document.querySelector('#mainMenu [data-mm="saves"]');if(s&&s.firstChild&&s.firstChild.nodeType===3&&!/^💾/.test(s.firstChild.textContent))s.firstChild.textContent='💾 Saves'}
+function mmLabels82(){try{mmSaves84()}catch(e){}const b=document.querySelector('#mainMenu [data-mm="rules"]');if(b&&!/^📜 Rules$/.test(b.textContent.trim()))b.innerHTML='📜 Rules';
   const a=document.querySelector('#mainMenu [data-mm="annals"]');if(a&&!/^🏛️ Annals$/.test(a.textContent.trim()))a.innerHTML='🏛️ Annals'}
 {const base=menuShow;menuShow=function(){const r=base.apply(this,arguments);try{mmLabels82()}catch(e){}return r}}
 setTimeout(()=>{try{mmLabels82()}catch(e){}},500);setTimeout(()=>{try{mmLabels82()}catch(e){}},2500);
@@ -35847,7 +35928,7 @@ function mockToMarket83(w,P,from){const I=ONLC.pieceInfo(P,onlCatalog());if(!I)r
   if(I.named){w.chest83.push({item:P.item,pc:P.pc||null,at:Date.now(),from});return}
   const id='U#'+String(Date.now()).padStart(13,'0')+'#'+Math.floor(Math.random()*1e9).toString(36);w.market83.unshift({id,item:P.item,pc:P.pc||null,base:I.base,n:I.n,kind:I.kind,lv:I.lv,st:I.st,price:ONLC.usedPrice(I),at:Date.now(),from});w.market83=w.market83.slice(0,120)}
 const mockLeaving83=(Ps,h,from,how)=>Ps.map(P=>ONLC.histAdd(ONLC.tagPiece(P,h),{house:from.house||null,glad:from.glad,when:Date.now(),how}));
-const mockLootOut83=X=>({id:X.match,seat:X.seat,until:X.until,dead:X.dead,killer:{seat:X.killer.seat},pieces:X.pieces.map(p=>({item:p.item,n:p.n,kind:p.kind,lv:p.lv,st:p.st,rar:p.rar||null,val:p.val|0,hist:(p.pc&&p.pc.hist)||[]}))});
+const mockLootOut83=X=>({id:X.match,seat:X.seat,until:X.until,dead:X.dead,killer:{seat:X.killer.seat},pieces:X.pieces.map(p=>({item:p.item,n:p.n,kind:p.kind,lv:p.lv,st:p.st,rar:p.rar||null,val:p.val|0,hist:(p.pc&&p.pc.hist)||[],...(p.pc&&p.pc.w?{w:p.pc.w}:{})}))}); /* v0.84: the full def (w) */
 function mockLootResolve83(w,X,i){if(X.done)return null;X.done=true;if(i==null)i=ONLC.lootBest(X.pieces);X.picked=i;const from={house:X.dead.domus||null,glad:X.dead.name};let to='market',got=null,ch=null;
   const kc=w.chars[X.killer.char];
   X.pieces.forEach((p,j)=>{let P={item:p.item,pc:p.pc||null};
@@ -35980,7 +36061,7 @@ function mockAfter83(w,L,M,a,i,row,out,gx){const ch=w.chars[L.players[i].char];i
    PROFILE + ★ FOLLOW • any house name (🏛 chips in rooms, the Forum, invitations, the stage, the rank bar) opens domus.profile: record,
      trophies, living gladiators, recent matches, ★ Follow (domus.follow), 🔗 copy the share link (#domus=<id>; a page opened with that
      hash opens Online on the profile). "★ Followed houses" on the landing (hello.follows) with Invite / Join / Watch.
-   WAGERS • a rail tab "🎲 Wagers" (wager.list): open pots with odds, my last 30 bets, the week's best bettors.
+   WAGERS • a rail tab "💰 Wagers" (wager.list): open pots with odds, my last 30 bets, the week's best bettors.
    HOUSE GIFTS + SHELF OFFERINGS (his call) • gifts belong to the DOMUS (domus.get gifts / hello domus.gifts); the shelf holds offerings
      (domus.get offers) moved with offer.move. MOCK: gift.open from the house, settlements move gifts onto the house and a Ranked death's
      un-brought satchel onto the shelf, offer.move.
@@ -36128,7 +36209,7 @@ onlStoreHTML82=function(){if(!ONL.acct||onlIsGuest82())return '';const cat=onlCa
   const chip=(v,l,n)=>`<button type="button" class="sr82-chip ${sel===v?'on':''}" data-onl82="srsel" data-v="${esc2(v)}">${l} <small>${n}</small></button>`;
   const dest=r=>[...live.filter(c=>c!==r.o).map(c=>{const why=busy.has(c.id)?'in a match':ONLC.gearMoveWhy(r.o,c,r.k,cat);return `<option value="${esc2(c.id)}" ${why?'disabled':''}>→ ${esc2(c.name)}${why?` (${esc2(why.replace(/\.$/,''))})`:''}</option>`}),r.o.house?'':'<option value="house">→ the shelf</option>'].join('');
   const row=r=>{const I=r.I;const lock=!r.o.house&&busy.has(r.o.id);const from=r.o.house?'house':r.o.id;const why=r.o.house?'':ONLC.wearWhy(r.o,r.k);const brk=I.st==='broken';const named=I.named;
-    const art=named?`<div class="sr83-nw" style="--rc:${ONL83.rarCol[I.rar]}">${typeof cardHTML==='function'&&W[I.w.base]?cardHTML('w:'+I.w.base,'sm'):'⚔'}<i class="nw83-tint"></i></div>`:(typeof cardHTML==='function'?cardHTML((I.kind==='w'?'w:':'a:')+I.base,'sm'):'');
+    const art=named?`<div class="sr83-nw" style="--rc:${ONL83.rarCol[I.rar]}">${typeof cardHTML==='function'&&(I.kind==='a'?ARM[I.w.base]:W[I.w.base])?cardHTML((I.kind==='a'?'a:':'w:')+I.w.base,'sm'):(I.kind==='a'?'🛡':'⚔')}<i class="nw83-tint"></i></div>`:(typeof cardHTML==='function'?cardHTML((I.kind==='w'?'w:':'a:')+I.base,'sm'):'');
     return `<div class="sr82-it sr83 ${lock?'lock':''} ${brk?'brk83':''} ${named?'named83':''}" data-sr82="${esc2(r.k)}" ${named?`style="--rc:${ONL83.rarCol[I.rar]}"`:''} ${(I.hist||[]).length?`title="${esc2(histTip83(I.hist))}"`:''}><div class="sr82-art">${art}</div>
       <div class="sr82-b"><b ${named?`style="color:${ONL83.rarCol[I.rar]}"`:''}>${esc2(I.n)}</b><small>${named?`${esc2(ONLC.rarOf(I.rar).n)} · `:''}Level ${I.lv}${I.kind==='a'?` · ${I.ap|0} AP`:''} · ${c83()} ${ONLC.valueOf(I)}</small>
       <small class="sr82-who">${r.o.house?'🗄 on the shelf':`with <b>${esc2(r.o.name)}</b>`}</small>${lock?'<small class="sr82-lk">🔒 In a match</small>':''}${named&&!r.o.house&&!ONLC.canWearNamed(r.o)?'<small class="lk83">🔒 Veteranus+ to bring</small>':''}${brk?'<small class="brk83t">💔 Broken — repair to bring</small>':''}</div>
@@ -36194,7 +36275,7 @@ function onl83Used(ch){if(!ONL83U.used||Date.now()-ONL83U.usedAt>15000){ONL83U.u
 /* ---------------- 6 · the LOOT window ---------------- */
 function onl83LootQ(X){if(!X||!X.id)return;const k=X.id+'#'+X.seat;if(ONL83U.lootSeen[k])return;ONL83U.lootSeen[k]=1;ONL83U.lootQ.push(X);onl83LootNext()}
 function onl83LootNext(){if(document.querySelector('.loot83pop'))return;const X=ONL83U.lootQ.shift();if(!X)return;const left=()=>Math.max(0,Math.ceil((X.until-onlNow82())/1000));
-  const cat=onlCatalog();const Ps=(X.pieces||[]).map(p=>({p,I:p.kind==='w'&&ONLC.isNamed(p.item)?{...p,named:true,w:(p.w||{n:p.n,rar:p.rar}),val:p.val}:(ONLC.pieceInfo({item:p.item,pc:{st:p.st,hist:p.hist}},cat)||p)}));
+  const cat=onlCatalog();const Ps=(X.pieces||[]).map(p=>({p,I:ONLC.isNamed(p.item)?{...p,named:true,w:(p.w||{n:p.n,rar:p.rar,kind:p.kind}),val:p.val}:(ONLC.pieceInfo({item:p.item,pc:{st:p.st,hist:p.hist}},cat)||p)}));
   const best=ONLC.lootBest(X.pieces||[]);
   const bg=onl83Pop('loot83pop',`<h3 class="pop83h">⚔ The spoils of ${esc2(X.dead&&X.dead.name||'the fallen')}</h3>
     <p class="rc-sub" style="margin:0 0 8px">${esc2(X.dead&&X.dead.domus?onlHouse82(X.dead.domus):'')} · take ONE piece; the rest goes to the market. <b class="loot83cd">⏳ <span id="loot83s">${left()}</span> s</b></p>
@@ -36295,22 +36376,22 @@ document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest
 
 /* ---------------- 12 · the WAGERS tab ---------------- */
 function onl83Wagers(){if(!ONL83U.wl||Date.now()-ONL83U.wlAt>10000){ONL83U.wlAt=Date.now();NET.req('wager.list',{}).then(r=>{ONL83U.wl=r;if(ONL.tab==='wagers'&&document.getElementById('onl')&&!onlFocus80())onlRedraw()}).catch(e=>{ONL83U.wl=ONL83U.wl||{open:[],mine:[],top:[],err:e.message}})}
-  const X=ONL83U.wl;if(!X)return '<h3>🎲 Wagers</h3><p class="rc-sub">Reading the bookmakers’ tablets…</p>';
+  const X=ONL83U.wl;if(!X)return '<h3>💰 Wagers</h3><p class="rc-sub">Reading the bookmakers’ tablets…</p>';
   const open=(X.open||[]).map(L=>{const names=Object.fromEntries((L.players||[]).map(p=>[p.seat,p]));
     return `<div class="card2 wg83-pot"><div class="wg83-h">${typeof cardHTML==='function'?`<span class="wg83-ev">${cardHTML('e:'+L.ev,'sm')}</span>`:''}<div><b>${esc2(onlEvName(L.ev))}</b> <small class="rc-sub">${esc2(onlCityName(L.loc))} · ${L.ranked?'⚔ Ranked':'Custom'} · ${L.status==='live'?'🔴 live':'waiting'}</small>
       <div class="wg83-pool">Pool ${c83()} <b>${L.pool|0}</b>${L.pot?` + tickets ${L.pot}`:''}</div></div></div>
       <table class="wg83-t"><tr><th>Seat</th><th>Staked</th><th>Pays</th></tr>${(L.seats||[]).map(s=>{const p=names[s.seat];return `<tr><td>${p?`${esc2(p.name)}${p.domus?` <small class="dom82c">🏛 ${esc2(onlHouse82(p.domus))}</small>`:''}`:`Seat ${s.seat+1}`}</td><td>${s.stake?`${c83()} ${s.stake}`:'—'}</td><td>${s.odds!=null?`<b class="wg83-odds">×${s.odds}</b>`:'—'}</td></tr>`}).join('')}</table>
-      ${L.status==='waiting'&&ONL.char&&!onlIsGuest82()?`<div class="acts"><button type="button" class="btn tksm" data-onl="bet" data-v="${esc2(L.id)}">🎲 Wager</button></div>`:''}</div>`}).join('')||'<p class="rc-sub">No open pots — wager on a room in the Lobby Browser.</p>';
+      ${L.status==='waiting'&&ONL.char&&!onlIsGuest82()?`<div class="acts"><button type="button" class="btn tksm" data-onl="bet" data-v="${esc2(L.id)}">💰 Wager</button></div>`:''}</div>`}).join('')||'<p class="rc-sub">No open pots — wager on a room in the Lobby Browser.</p>';
   const res={open:'⏳ open',won:'🏆 won',lost:'✕ lost',refund:'↺ refunded'};
   const mine=(X.mine||[]).map(b=>`<tr class="wg83-${b.res}"><td>${esc2(date83(b.at))}</td><td>${esc2(onlEvName(b.ev))} <small class="rc-sub">${esc2(onlCityName(b.loc))}</small></td><td>${esc2(b.target||'')}</td><td>${c83()} ${b.amt}</td><td>${res[b.res]||b.res}${b.res==='won'?` <b>+${b.pay}</b>`:''}</td></tr>`).join('');
   const top=(X.top||[]).map((t,i)=>`<tr><td>${['🥇','🥈','🥉'][i]||i+1}</td><td><b>${esc2(t.name)}</b>${t.domus?` <small class="dom82c">🏛 ${esc2(onlHouse82(t.domus))}</small>`:''}</td><td class="${t.net>=0?'pos':'neg'}">${t.net>=0?'+':''}${t.net}</td><td>${c83()} ${t.staked}</td></tr>`).join('');
-  return `<div class="onl-lbtop"><h3>🎲 Wagers</h3><div class="acts"><button type="button" class="btn tksm" data-onl83="wlr">↻</button></div></div>
+  return `<div class="onl-lbtop"><h3>💰 Wagers</h3><div class="acts"><button type="button" class="btn tksm" data-onl83="wlr">↻</button></div></div>
    ${ONL.betting&&typeof onlBetHTML==='function'?onlBetHTML():''}<div class="wg83"><div class="wg83-open"><h4 class="onl-h">Open pots</h4><div class="wg83-pots">${open}</div></div>
     <div class="wg83-side">${onlIsGuest82()?'':`<div class="card2"><b>My bets</b>${mine?`<div class="wg83-scroll"><table class="tally wg83-t">${mine}</table></div>`:'<p class="rc-sub">No bets yet.</p>'}</div>`}
      <div class="card2"><b>This week’s best bettors</b>${top?`<table class="tally wg83-t">${top}</table>`:'<p class="rc-sub">No winners yet this week.</p>'}</div></div></div>`}
-/* the rail: 🎲 Wagers before the Hall; a TEST chip beside test houses' names */
+/* the rail: 💰 Wagers before the Hall; a TEST chip beside test houses' names */
 {const base=onlHTML;onlHTML=function(){const want=ONL.tab==='wagers';if(want)ONL.tab='hall';let h;try{h=base.apply(this,arguments)}finally{if(want)ONL.tab='wagers'}
-  try{if(ONL.acct&&h.includes('class="onl-rail"')&&!ONL.newGlad){const btn=`<button type="button" data-onl="tab" data-v="wagers" class="${want?'on':''}">🎲 Wagers</button>`;
+  try{if(ONL.acct&&h.includes('class="onl-rail"')&&!ONL.newGlad){const btn=`<button type="button" data-onl="tab" data-v="wagers" class="${want?'on':''}">💰 Wagers</button>`;
       h=h.replace(/(<button type="button" data-[a-z0-9]+="tab" data-v="hall")/,btn+'$1');
       if(want){h=h.replace(/(<button type="button" data-[a-z0-9]+="tab" data-v="hall" class=")on(")/,'$1$2');const a=h.indexOf('<main class="onl-main">'),b=h.lastIndexOf('</main>');if(a>=0&&b>a)h=h.slice(0,a+23)+onl83Wagers()+h.slice(b)}}
     if(ONL83U.testDom.size)h=h.replace(/(<small class="dom82c">🏛 )([^<]*)(<\/small>)/g,(m,a,n,c)=>{const raw=n.replace(/^House /,'');return ONL83U.testDom.has(raw)||ONL83U.testDom.has(n)?`${a}${n} <i class="test83">TEST</i>${c}`:m})}catch(e){console.error(e)}return h}}
@@ -36439,6 +36520,530 @@ document.addEventListener('change',e=>{const t=e.target;if(t&&t.dataset&&t.datas
 .wg83-scroll{max-height:340px;overflow:auto}
 @media(max-width:760px){.dom82-rec{grid-template-columns:repeat(4,minmax(0,1fr))}.rb83 .rb82-body{height:auto}.rb83 .rb82-bands{min-width:0}.rb83 .rb82-band{min-width:0;flex:1 1 0;padding:1px;overflow:hidden}.rb83 .rb82-band b{font-size:9px;line-height:1.1;letter-spacing:-.3px;overflow-wrap:anywhere}.rb83 .rb82-band small,.rb83 .rb82-n{font-size:9px;overflow-wrap:anywhere}.rb83{min-width:0;overflow:hidden}.dom82-rec>div{min-width:0}.mb83-halves{grid-template-columns:minmax(0,1fr)}.mb83-items{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin}.mb83{padding:8px}.wg83{grid-template-columns:1fr}.pf83-rec{grid-template-columns:repeat(3,minmax(0,1fr))}
  .nw83{grid-template-columns:84px minmax(0,1fr)}.of83-row{grid-template-columns:1fr}.of83-toks{grid-column:1;grid-row:auto}.gift83.stage{top:8px;right:8px}.cd83-n{font-size:36px;min-width:44px}.pz83-rays{width:320px;height:320px}}`;document.head.appendChild(st)}
+/* =====================================================================
+   139-V84ONL · ONLINE v0.84 (protocol 7, contract tools/plans/onl84-contract.md): the rules every client runs the same way, the MOCK, the screens
+   =====================================================================
+   NAMED ARMOR • 'na#uid' pieces (engine key 'na_uid'): a kit's armor defs register ARM['na_uid'] = the printed base's look + the def's stats
+     (ONLC.cleanNamedA) on every client when seats are built and after a snapshot (p._na84), worn like a bought piece. Engine hooks, all
+     deterministic: hurt (ward, invicta, vindex, gloriosa), mvMax (swift, mercurialis), resetTurn (regalis, restituta).
+   HOLOGRAPHIC CARDS • nw83Card draws armor too; Rare / Epic / Legendary cards get .holo84 (an animated sheen in the rarity colours; still under
+     body.calm and prefers-reduced-motion).
+   SEASONS • hello.season84 = this week's fixture (the Manager schedule, ONLC.onlineFixture) → the landing's "This week" challenge card and the first
+     playlist card "⭐ This week: <event> at <city>"; hello.week84 = the house's progress (win it · survive it Ranked · 3 bouts → one gift a week).
+   YOUR TURN • a hidden / unfocused tab: the title flashes, a horn (the game's mute applies), a desktop notice only if allowed from ⚔🔔 Turn alerts.
+   RECLAIM • drop / abandon inputs with `until` open a window on that seat (p._cpu84). Every client HALTS at the start of that seat's next CPU turn
+     until ONE server input says 'reclaim' (the lanista is back: p.cpu=false, the reclaimer's client becomes that fighter) or 'cpugo' (the CPU
+     plays on). Both are state-neutral marks when they arrive; the swap happens at the halt — the same engine state on every screen.
+     A 🔌 bar offers "Take it back" while the server says it can (hello.reclaim84, match.watch reclaim, my own drop input).
+   CPU-WON REWARDS • p._t84 {h,c} counts each seat's turns at resetTurn; result rows carry cpu (ONLC.cpuRow) → the server cuts the rewards.
+   AUCTION • a rail tab 🔨 Auction (auction.list / auction.bid): lot cards, countdown, the leader, the next minimum, my lead/win, last week.
+   FOLLOW-UPS • TEST chip on in-match names (fighter panel + log), Today's house chips, the loot popup's full named cards.
+   MOCK • every v0.84 route as server/src/routes.js (localStorage flavius_onlclock84 = a clock offset in ms for tests).
+   ===================================================================== */
+const ONL84={rcl:null,want:null,auc:null,aucAt:0,season:null,week:null,flash:0,mineWas:false,title0:'',halt:null};
+const onl84Clock=()=>{try{return +(localStorage.getItem('flavius_onlclock84')||0)||0}catch(e){return 0}};
+const mockT84=()=>Date.now()+onl84Clock();
+
+/* =========================== NAMED ARMOR: the catalog, ARM, the kit =========================== */
+/* the catalog's armor carries slot / pt / pair / bonus (the server rolls named armor from them) */
+{const base=onlCatalog;onlCatalog=function(){const c=base.apply(this,arguments);
+  for(const [k,it] of Object.entries(c))if(it.kind==='a'&&it.slot==null&&ARM[k]){const A=ARM[k];it.slot=A.slot;it.pt=A.pt||'';if(A.pair)it.pair=1;if(A.bonus&&Object.keys(A.bonus).length)it.bonus={...A.bonus}}return c}}
+ONL84.regArmor=function(defs){for(const d0 of defs||[]){const d=ONLC.cleanNamedA(d0);if(!d)continue;const B=ARM[d.base]||{};
+  const A={...B,n:d.n,lv:4,slot:d.slot,pt:d.pt||B.pt,ap:d.ap,named84:1,rar:d.rar,aff:d.aff.slice(),base:d.base};delete A.custom;delete A.stack;delete A.bonus;delete A.ward;delete A.swift;delete A.uq;
+  if(d.bonus)A.bonus={...d.bonus};if(d.ward)A.ward=1;if(d.swift)A.swift=1;if(d.uq)A.uq=d.uq;if(d.pair)A.pair=1;
+  if(ARM[d.key]&&JSON.stringify(ARM[d.key])===JSON.stringify(A))continue;ARM[d.key]=A;try{if(typeof ARM_FIT!=='undefined'&&ARM_FIT[d.base]&&!ARM_FIT[d.key])ARM_FIT[d.key]=ARM_FIT[d.base]}catch(e){}}};
+{const base=onlSeatsFor;onlSeatsFor=function(L){const seats=base.apply(this,arguments);
+  try{(L.players||[]).forEach((p,i)=>{const s=seats[i];if(!s||!s.onl)return;if(p.test)s.onl.test=1;if(s.cpu||/^bot/.test(p.id))return;const k=p.kit||{};
+    const A=(k.named||[]).filter(d=>d&&/^na_/.test(d.key||'')).map(ONLC.cleanNamedA).filter(Boolean);if(A.length){ONL84.regArmor(A);s.onl.namedA=A}})}catch(e){console.error(e)}return seats}}
+{const base=mkPlayer;mkPlayer=function(i,seat){const p=base.apply(this,arguments);
+  try{if(seat&&seat.onl){if(seat.onl.test)p._test84=1;if((seat.onl.namedA||[]).length&&!seat.cpu)p._na84=seat.onl.namedA.map(d=>({...d}))}}catch(e){console.error(e)}return p}}
+const ONL84_LOCS=d=>d.slot==='head'?['head']:d.slot==='chest'||d.slot==='belt'?['chest']:d.slot==='arm'?['rarm','larm']:['rleg','lleg'];
+{const base=giveLoadout;giveLoadout=function(p){const r=base.apply(this,arguments);
+  try{if(p&&p._onlKit&&p.pieces)for(const k of p._onlKit){if(!/^na_/.test(k)||!ARM[k])continue;const d=ARM[k];const locs=ONL84_LOCS(d).filter(l=>p.pieces[l]);
+    if(d.pair){for(const l of locs)equipPiece(p,k,l)}else for(const l of locs)if(equipPiece(p,k,l))break}}catch(e){console.error(e)}return r}}
+{const base=onlmLoad;onlmLoad=function(){const r=base.apply(this,arguments);try{if(S&&S.players)for(const p of S.players)if(p._na84)ONL84.regArmor(p._na84)}catch(e){}return r}}
+/* a lobby kit's pieces (named weapons AND named armor from kit.named) */
+ONL83.kitPieces=function(kit){if(!kit)return [];const cat=onlCatalog();const nm=Object.fromEntries((kit.named||[]).map(d=>[d.key,d]));
+  return (kit.gear||[]).map((k,i)=>{const it=(kit.items||[])[i]||k;if(/^n[wa]_/.test(k)){const d=nm[k];return d?ONLC.pieceInfo({item:it,pc:{st:'whole',rar:d.rar,w:d}},cat):null}return ONLC.pieceInfo({item:it,pc:null},cat)}).filter(Boolean)};
+
+/* ---------------- the engine hooks (named armor while WORN; deterministic) ---------------- */
+function na84On(p,f){if(!p||!p.pieces)return null;for(const l of Object.keys(p.pieces))for(const pc of p.pieces[l]||[]){const A=ARM[pc.key];if(A&&A.named84&&f(A,pc,l))return {A,pc,l}}return null}
+const na84Unhurt=p=>!!p&&!!p.hp&&Object.keys(BASE_HP).every(l=>(p.hp[l]|0)>=BASE_HP[l]);
+{const base=hurt;hurt=async function(victim,location,damage,source,prefix,opts){
+  const pvp=!!(victim&&victim.cls&&victim.pieces);if(!pvp||!(damage>0))return base.apply(this,arguments);
+  const direct=!!(opts&&opts.direct);const att=source&&source.type==='player'&&source.p&&source.p!==victim?source.p:null;let d=damage;
+  try{if(att&&att.lastHitBy===victim.id){const v=na84On(att,A=>A.uq==='vindex');if(v){d++;log(`${nm(att)}'s ${v.A.n} remembers the blow: +1 damage.`)}}
+    if(!direct&&S){const w=na84On(victim,A=>A.ward);const k=S.ri+':'+S.rotation;if(w&&victim._ward84!==k&&d>0){victim._ward84=k;d--;log(`${nm(victim)}'s ${w.A.n} turns 1 damage aside.`)}}
+    if(!direct&&d>=2){const iv=na84On(victim,(A,pc,l)=>A.uq==='invicta'&&l===location);if(iv){d--;log(`${nm(victim)}'s ${iv.A.n} holds: −1 damage.`)}}}catch(e){console.error(e)}
+  const glo=att?na84On(victim,A=>A.uq==='gloriosa'):null;const hp0=victim.hp[location];
+  const r=await base.call(this,victim,location,d,source,prefix,opts);
+  try{if(glo&&d>0&&victim.alive&&victim.hp[location]===hp0&&cfAllowed()){cfWhy('a legendary armor');victim.cf+=1;log(`${nm(victim)}'s ${glo.A.n}: the blow rings off — the crowd roars (+1 CF).`)}}catch(e){}
+  return r}}
+{const base=mvMax;mvMax=function(player){let m=base.apply(this,arguments);
+  try{if(player&&player.cls&&player.pieces){let x=0;if(na84On(player,A=>A.uq==='mercurialis'))x++;if(na84On(player,A=>A.swift)&&na84Unhurt(player))x++;if(x)m=Math.max(0,Math.min(7,m+x))}}catch(e){}return m}}
+{const base=resetTurn;resetTurn=function(player){const r=base.apply(this,arguments);
+  try{if(player&&player.cls&&S&&S.onl){const t=player._t84||(player._t84={h:0,c:0});if(player.cpu)t.c++;else t.h++}
+    if(player&&player.alive&&player.pieces){const g=na84On(player,A=>A.uq==='regalis');if(g&&cfAllowed()){cfWhy('a legendary armor');player.cf+=1;log(`${nm(player)}'s ${g.A.n}: +1 CF.`)}
+      const rs=na84On(player,A=>A.uq==='restituta');if(rs){const l=rs.l;const cap=Math.min(7,(player.pieces[l]||[]).reduce((a,pc)=>a+(pc.ap|0),0));if(player.ap[l]>0&&player.ap[l]<cap){player.ap[l]++;log(`${nm(player)}'s ${rs.A.n} mends: +1 AP.`)}}}}catch(e){console.error(e)}
+  return r}}
+
+/* ---------------- CPU-won rewards + the TEST chip in the match ---------------- */
+{const base=onlRow81;onlRow81=function(G,p){const row=base.apply(this,arguments);try{row.cpu=ONLC.cpuRow(p&&p._t84)}catch(e){}return row}}
+if(typeof seatChipHTML==='function'){const base=seatChipHTML;seatChipHTML=function(p){const h=base.apply(this,arguments);return p&&p._test84?'<i class="test83">TEST</i>'+h:h}}
+{const base=log;log=function(html,cls){try{if(S&&S.onl&&typeof html==='string'&&S.players)for(const p of S.players)if(p._test84&&p.name){const a=`>${p.name}</b>`;if(html.includes(a)&&!html.includes(a+'<i class="test83">'))html=html.split(a).join(a+'<i class="test83">TEST</i>')}}catch(e){}return base.call(this,html,cls)}}
+
+/* =========================== RECLAIM: the halt, the marks, the swap =========================== */
+/* a window opens with the server's drop / abandon input (until); the CPU takes the seat as before */
+{const base=onlmDrop;onlmDrop=function(inp){const was=ONLM.owners[inp.seat]||null;const r=base.apply(this,arguments);
+  try{const p=S.players[inp.seat];if(p&&inp.until&&was){p._cpu84={acct:was,until:inp.until,res:null};if(ONL.acct&&was===ONL.acct.id)ONL84.rcl={id:S.onl.lobby,seat:inp.seat,until:inp.until}}}catch(e){}return r}}
+{const base=onlmAbandonMark;onlmAbandonMark=function(inp){const was=ONLM.owners[inp.seat]||null;const r=base.apply(this,arguments);
+  try{const p=S.players[inp.seat];if(p&&inp.until&&inp.rule==='cpu'&&was&&!p._cpu84){p._cpu84={acct:was,until:inp.until,res:null};if(ONL.acct&&was===ONL.acct.id)ONL84.rcl={id:S.onl.lobby,seat:inp.seat,until:inp.until}}}catch(e){}return r}}
+/* 'reclaim' / 'cpugo' (server only) are marks: always ready, no state change until the halt */
+{const base=onlmReady;onlmReady=function(inp){if(inp&&(inp.k==='reclaim'||inp.k==='cpugo'))return !!S&&!S.over;return base.apply(this,arguments)}}
+{const base=onlmApply;onlmApply=function(inp){if(inp&&(inp.k==='reclaim'||inp.k==='cpugo')){try{onl84Mark(inp)}catch(e){console.error(e)}setTimeout(onlmPump,30);return}return base.apply(this,arguments)}}
+function onl84Mark(inp){if(inp.from!=='server')return;const p=S.players[inp.seat];if(!p||!p._cpu84||p._cpu84.res)return;p._cpu84.res=inp.k==='reclaim'?'human':'cpu';if(inp.acct)p._cpu84.acct=inp.acct;
+  if(ONL84.rcl&&ONL84.rcl.seat===inp.seat&&ONL84.rcl.id===S.onl.lobby&&inp.k==='cpugo'){ONL84.rcl=null;onl84Bar()}
+  if(inp.k==='cpugo')log(`🔌 The CPU fights on in <b>${esc(p.name)}</b>’s seat.`,'thought');
+  const H=ONL84.halt;if(H&&H.seat===inp.seat){ONL84.halt=null;H.res()}}
+/* the swap at the halt: the seat is human again; the reclaimer's own screen becomes that fighter */
+function onl84Swap(p){const i=S.players.indexOf(p);const acct=p._cpu84&&p._cpu84.acct;delete p._cpu84;if(i<0)return;p.cpu=false;ONLM.owners[i]=acct;
+  if(ONLM.left){delete ONLM.left[i]}if(ONLM.leftDone)delete ONLM.leftDone[i];
+  log(`⚔ <b>${esc(p.name)}</b>’s lanista takes the seat back from the CPU.`,'big');
+  if(ONL.acct&&acct===ONL.acct.id){const id=S.onl.lobby;ONLM.me=i;S.onl.watch=false;S.onl.seat=i;const L=(ONL.lobbies||[]).find(x=>x.id===id)||{};
+    ONL.live={id,ranked:!!S.onl.ranked,seat:i,char:((L.players||[])[i]||{}).char||null,seed:L.seed};ONL.entered=ONL.entered||{};ONL.entered[id]=1;ONL.watching=null;
+    if(ONL.leftMatch)delete ONL.leftMatch[id];ONL84.rcl=null;ONL84.want=null;try{if(typeof onlLive80Enter==='function'&&L.players)onlLive80Enter(L)}catch(e){}onl84Bar();
+    if(typeof mToast==='function')mToast('⚔ Your seat is yours again — fight on!')}
+  onlmWaitShow()}
+/* every client stops at the start of a reclaimable seat's next CPU turn until the server decides */
+function onl84Halt(p){const i=S.players.indexOf(p);return new Promise(res=>{ONL84.halt={seat:i,res,at:Date.now()};
+  const ask=()=>{const H=ONL84.halt;if(!H||H.seat!==i||!onlmOn())return;if(ONLM.me>=0&&ONLM.me<onlmFighters()&&!S.onl.watch)NET.req('match.cpuheld',{id:S.onl.lobby,seat:i}).catch(()=>{});H.t=setTimeout(ask,8000)};
+  log(`⏳ <b>${esc(p.name)}</b>’s turn comes round — will the lanista take the seat back?`,'thought');ask();setTimeout(onlmPump,30)})}
+{const base=beginTurn;beginTurn=async function(){try{if(S&&S.onl&&ONLM.on&&!S.over){const p=cur();
+      if(p&&p.alive&&!p.exited&&p.cpu&&p._cpu84){const G=S;if(!p._cpu84.res){await onl84Halt(p);if(G!==S||!S||S.over)return}
+        if(p._cpu84&&p._cpu84.res==='human')onl84Swap(p)}}}catch(e){console.error(e)}
+  return base.apply(this,arguments)}}
+/* what the server says about my own seat */
+function onl84Learn(t,r,d){if(!r||typeof r!=='object')return;
+  if(t==='hello'){if(r.season84)ONL84.season=r.season84;ONL84.week=r.week84||null;const X=r.reclaim84||(r.live&&r.live.reclaim?{id:r.live.id,...r.live.reclaim}:null);if(X)ONL84.rcl={id:X.id,seat:X.seat,until:X.until};else if(ONL84.rcl&&!(S&&S.onl&&S.onl.lobby===ONL84.rcl.id))ONL84.rcl=null;onl84Bar()}
+  if(t==='world.news'&&r.season84)ONL84.season=r.season84;
+  if(t==='match.watch'&&r.reclaim&&d&&d.id){ONL84.rcl={id:d.id,seat:r.reclaim.seat,until:r.reclaim.until};onl84Bar()}}
+{const base=NET.req;NET.req=function(t,d){const p=base.apply(this,arguments);if(p&&typeof p.then==='function'&&(t==='hello'||t==='world.news'||t==='match.watch'))p.then(r=>{try{onl84Learn(t,r,d)}catch(e){}}).catch(()=>{});return p}}
+/* the 🔌 bar: "A CPU holds your seat — ⚔ Take it back · m:ss" */
+function onl84Bar(){let el=document.getElementById('rcl84');const X=ONL84.rcl;const back=X&&S&&S.onl&&S.onl.lobby===X.id&&ONLM.me===X.seat;const left=X?X.until-(Date.now()+((typeof ONL80F!=='undefined'&&ONL80F.skew)||0)):0;
+  if(!X||back||left<=0||!NET.mode){if(el)el.remove();if(X&&left<=0)ONL84.rcl=null;return}
+  if(!el){el=document.createElement('div');el.id='rcl84';el.setAttribute('role','status');document.body.appendChild(el)}
+  const s=Math.ceil(left/1000);const txt=`<span>🔌 A CPU holds your seat${ONL84.want?' — asking Flavius…':''}</span><button type="button" class="btn primary tksm" data-rcl84="go" ${ONL84.want?'disabled':''}>⚔ Take it back · ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}</button><button type="button" class="btn tksm" data-rcl84="x" title="Hide">✕</button>`;
+  if(el.dataset.k!==txt){el.innerHTML=txt;el.dataset.k=txt}}
+setInterval(()=>{try{onl84Bar();const W=ONL84.want;if(W&&!W.sent&&S&&S.onl&&S.onl.lobby===W.id&&ONLM.on&&!ONL.watching){W.sent=1;onl84Ask(W.id)}}catch(e){}},500);
+async function onl84Ask(id){try{await NET.req('match.reclaim',{id});if(typeof mToast==='function')mToast('🔌 Flavius hears you — your seat is yours at its next turn.')}
+  catch(e){ONL84.want=null;if(e&&e.code==='reclaim_late')ONL84.rcl=null;if(typeof mToast==='function')mToast('⚠ '+esc(e.message||'Too late.'));onl84Bar()}}
+async function onl84ReclaimGo(){const X=ONL84.rcl;if(!X||ONL84.want)return;ONL84.want={id:X.id,sent:0};onl84Bar();
+  if(S&&S.onl&&S.onl.lobby===X.id&&ONLM.on&&!S.over){ONL84.want.sent=1;return onl84Ask(X.id)}
+  /* not on that sand yet: watch it first (a CPU holds the seat), then ask */
+  try{let L=(ONL.lobbies||[]).find(x=>x.id===X.id);if(!L){const ls=await NET.req('lobby.list',{});L=(ls||[]).find(x=>x.id===X.id)}
+    if(!L||L.status!=='live'){ONL84.want=null;ONL84.rcl=null;onl84Bar();if(typeof mToast==='function')mToast('⌛ That match is over.');return}
+    if(ONL.leftMatch)delete ONL.leftMatch[X.id];await onlAttach(L,'seat')}catch(e){ONL84.want=null;onl84Bar();if(typeof mToast==='function')mToast('⚠ '+esc(e.message||String(e)))}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-rcl84]');if(!b)return;e.preventDefault();e.stopPropagation();if(b.dataset.rcl84==='x'){const el=document.getElementById('rcl84');if(el)el.remove();ONL84.rcl=null;return}onl84ReclaimGo()},true);
+
+/* =========================== "YOUR TURN" NOTICES (in the browser only) =========================== */
+const onl84AlertsOn=()=>{try{return localStorage.getItem('flavius_onlturn84')!=='off'}catch(e){return true}};
+function onl84Mine(){try{return onlmOn()&&!S.onl.watch&&ONLM.me>=0&&onlmMine()&&(!!CUR_MODAL||(!S.busy&&['choice','action','command'].includes(S.phase)))}catch(e){return false}}
+function onl84Away(){return document.hidden||(typeof document.hasFocus==='function'&&!document.hasFocus())}
+function onl84Alert(){if(!onl84AlertsOn())return;const ev=(S&&S.onl&&typeof EV==='function'&&EV()&&EV().n)||'the arena';const me=S&&S.players&&S.players[ONLM.me];
+  if(!ONL84.flash){ONL84.title0=document.title;let k=0;ONL84.flash=setInterval(()=>{k++;document.title=k%2?`⚔ Your turn — ${ev}`:ONL84.title0},900);document.title=`⚔ Your turn — ${ev}`}
+  try{if(typeof sfx==='function')sfx('horn')}catch(e){}
+  try{if('Notification' in window&&Notification.permission==='granted'){const n=new Notification('⚔ Your turn',{body:`${ev}${me?' — '+me.name+' waits for your word':''}`,tag:'flavius-turn'});n.onclick=()=>{try{window.focus();n.close()}catch(e){}}}}catch(e){}
+  ONL84.alerts=(ONL84.alerts|0)+1}
+function onl84FlashOff(){if(ONL84.flash){clearInterval(ONL84.flash);ONL84.flash=0;document.title=ONL84.title0||document.title.replace(/^⚔ Your turn — .*/,'Flavius Rule Arena')}}
+ONL84.turnTick=function(){const mine=onl84Mine();if(mine&&!ONL84.mineWas&&onl84Away())onl84Alert();if(!mine||!onl84Away())onl84FlashOff();ONL84.mineWas=mine};
+setInterval(()=>{try{ONL84.turnTick()}catch(e){}},700);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)onl84FlashOff()});window.addEventListener('focus',onl84FlashOff);
+function onl84AlertsPop(){const on=onl84AlertsOn();const N='Notification' in window;const perm=N?Notification.permission:'unsupported';
+  const bg=onl83Pop('al84pop',`<h3 class="pop83h">⚔🔔 Turn alerts</h3><p class="rc-sub">When it is your decision in an online match and this tab is hidden or in the background.</p>
+    <label class="chk"><input type="checkbox" data-al84="on" ${on?'checked':''}> Flash the tab title + a horn <small class="rc-sub">(the game’s mute applies)</small></label>
+    <p>Desktop notice: <b>${perm==='granted'?'allowed':perm==='denied'?'blocked by the browser':perm==='unsupported'?'not in this browser':'not asked yet'}</b></p>
+    <div class="acts">${N&&perm==='default'?'<button type="button" class="btn primary" data-al84="ask">Allow desktop notices</button>':''}<button type="button" class="btn" data-al84="x">Close</button></div>`);
+  bg.addEventListener('click',async e=>{const b=e.target.closest('[data-al84]');if(!b)return;const a=b.dataset.al84;
+    if(a==='on'){try{localStorage.setItem('flavius_onlturn84',b.checked?'on':'off')}catch(err){}return}
+    if(a==='ask'){try{await Notification.requestPermission()}catch(err){}bg.remove();onl84AlertsPop();return}if(a==='x')bg.remove()})}
+
+/* =========================== THE MOCK (as server/src/routes.js v0.84) =========================== */
+/* named armor from a gift: the mock's gift.open rolls a named weapon; with kind 'a' the roll is armor */
+{const base=MOCK_ROUTES['gift.open'];MOCK_ROUTES['gift.open']=(w,d,me)=>{const rg=ONLC.rollGift,rn=ONLC.rollNamed;let kind='w';
+  ONLC.rollGift=function(){const r=rg.apply(this,arguments);if(r&&r.k==='named')kind=r.kind||'w';return r};
+  ONLC.rollNamed=function(rnd,cat,rar,taken){return kind==='a'?ONLC.rollNamedArmor(rnd,cat,rar,taken):rn.apply(this,arguments)};
+  try{return base(w,d,me)}finally{ONLC.rollGift=rg;ONLC.rollNamed=rn}}}
+/* reclaim: the server's lock between 'reclaim' and 'cpugo' */
+const mockRclWin84=(w,L,M,acct)=>{const seat=L.players.findIndex(p=>p.id===acct);if(seat<0||!M||M.status==='done'||L.status!=='live')return null;const dr=(M.dropped||{})[acct],ab=(M.abandoned||{})[acct];
+  if(!dr&&ab!=='cpu')return null;if(ab&&L.ranked)return null;const at=(M.dropAt84||{})[acct];if(!at)return null;return {seat,at,until:at+ONLC.RECLAIM_MS,lock:seat+'#'+at}};
+const mockRclOpen84=(M,W)=>!!W&&W.until>Date.now()&&!(M.rclx84||{})[W.lock];
+function mockRclMark84(w,L,M,acct,seat,until){M.dropAt84={...(M.dropAt84||{}),[acct]:until-ONLC.RECLAIM_MS};const A=w.accounts[acct];if(A)A.rcl84={id:L.id,seat,until}}
+{const base=MOCK_ROUTES['match.drop'];MOCK_ROUTES['match.drop']=(w,d,me)=>{const r=base(w,d,me);try{const L=w.lobbies[d.id],M=w.matches[d.id];const inp=M.inputs[M.inputs.length-1];
+  if(inp&&inp.k==='drop'&&inp.until){const p=L.players[inp.seat];if(p)mockRclMark84(w,L,M,p.id,inp.seat,inp.until)}}catch(e){}return r}}
+{const base=MOCK_ROUTES['match.abandon'];MOCK_ROUTES['match.abandon']=(w,d,me)=>{const r=base(w,d,me);try{const L=w.lobbies[d.id],M=w.matches[d.id];const inp=(M.inputs||[]).filter(x=>x.k==='abandon'&&x.seat===L.players.findIndex(p=>p.id===me)).pop();
+  if(inp&&inp.until)mockRclMark84(w,L,M,me,inp.seat,inp.until)}catch(e){}return r}}
+{const base=MOCK_ROUTES['match.watch'];MOCK_ROUTES['match.watch']=(w,d,me)=>{const r=base(w,d,me);const L=w.lobbies[d.id],M=w.matches[d.id];
+  r.abandoned=Object.keys(M.abandoned||{}).filter(a=>M.abandoned[a]);r.dropped=Object.keys(M.dropped||{}).filter(a=>M.dropped[a]);const W=mockRclWin84(w,L,M,me);if(mockRclOpen84(M,W))r.reclaim={seat:W.seat,until:W.until};return r}}
+{const base=MOCK_ROUTES['match.input'];MOCK_ROUTES['match.input']=(w,d,me)=>{if(d&&d.in&&['reclaim','cpugo','void','drop','abandon'].includes(d.in.k))throw new Error('That seat is not yours.');return base(w,d,me)}}
+Object.assign(MOCK_ROUTES,{
+  'match.reclaim':(w,d,me)=>{const L=w.lobbies[d.id],M=w.matches[d.id];if(!L||!M)throw onlErr82('That match is over.','reclaim_no');const W=mockRclWin84(w,L,M,me);if(!W)throw onlErr82('There is no seat of yours to take back.','reclaim_no');
+    if(Date.now()>W.until)throw onlErr82('Too late — the CPU has fought on in your seat. You may watch.','reclaim_late',{until:W.until});const ch=w.chars[L.players[W.seat].char];if(!ch||!ch.alive)throw onlErr82('Your gladiator is gone.','reclaim_no');
+    M.rclx84=M.rclx84||{};if(M.rclx84[W.lock])throw onlErr82('Too late — the CPU has begun your next turn. You may watch.','reclaim_late',{until:W.until});M.rclx84[W.lock]='reclaim';
+    if(M.dropped)delete M.dropped[me];if(M.abandoned)delete M.abandoned[me];if(M.dropAt84)delete M.dropAt84[me];const A=w.accounts[me];if(A)A.rcl84=null;
+    const inp={k:'reclaim',seat:W.seat,acct:me,from:'server',seq:M.inputs.length};M.inputs.push(inp);mockPush('match.input',{id:d.id,in:inp});return {seq:inp.seq,seat:W.seat}},
+  'match.cpuheld':(w,d,me)=>{const L=w.lobbies[d.id],M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');const seat=d.seat|0;const p=L.players[seat];if(!p||p.id===me)throw new Error('No one to name.');
+    const W=mockRclWin84(w,L,M,p.id);if(!W)return {held:false};M.rclx84=M.rclx84||{};if(M.rclx84[W.lock])return {held:false};M.rclx84[W.lock]='cpugo';const A=w.accounts[p.id];if(A)A.rcl84=null;
+    const inp={k:'cpugo',seat,from:'server',seq:M.inputs.length};M.inputs.push(inp);mockPush('match.input',{id:d.id,in:inp});return {held:true,seq:inp.seq}}});
+
+/* the weekly challenge at settlement (never for an abandon), the Today house names */
+{const base=mockAfter83;mockAfter83=function(w,L,M,a,i,row,out,gx){const r=base.apply(this,arguments);
+  try{const ch=w.chars[L.players[i].char];const D=ch&&mockDomus82(w,ch.domus);if(D&&!(out&&out.abandoned))ONLC.weekNote(D,{id:L.id,ev:L.ev,loc:L.loc,at:mockT84(),ranked:!!L.ranked},ch,row,out)}catch(e){console.error(e)}return r}}
+function mockDn84(w){const D=w.days80||{};for(const X of Object.values(D))for(const k of ['wins','fallen'])for(const e of (X&&X[k])||[])if(e&&e.dom&&!e.dn){const H=mockDomus82(w,e.dom);if(H)e.dn=H.name}}
+for(const t of ['match.result','match.abandon']){const base=MOCK_ROUTES[t];MOCK_ROUTES[t]=(w,d,me)=>{const r=base(w,d,me);try{mockDn84(w)}catch(e){}return r}}
+
+/* 🔨 the auction (w.auc84[key] = {lots:[…]}; w.aucwin84[key][dom] = lot id) */
+const mockAucOut84=(X,me)=>{const I=ONLC.pieceInfo({item:X.item,pc:X.pc},onlCatalog())||{};return {id:X.id,item:X.item,kind:I.kind||'w',n:I.n||'',rar:I.rar||null,lv:I.lv||4,ap:I.ap,val:X.val|0,min:X.min|0,next:ONLC.aucNextMin(X),opens:X.opens,ends:X.ends,
+  bid:X.bid?{name:X.bid.name,dname:X.bid.dname||null,amt:X.bid.amt|0,at:X.bid.at,...(me&&X.bid.acct===me?{mine:true}:{})}:null,bids:(X.bids||[]).map(b=>({name:b.name,dname:b.dname||null,amt:b.amt|0,at:b.at})),
+  hist:(X.pc&&X.pc.hist)||[],w:(X.pc&&X.pc.w)||null,done:!!X.done,won:X.won?{name:X.won.name,dname:X.won.dname||null,amt:X.won.amt|0,to:X.won.to||null}:null,mine:!!(me&&X.bid&&X.bid.acct===me)}};
+function mockAucDraw84(w,t){const S=ONLC.seasonAt(t);w.auc84=w.auc84||{};if(w.auc84[S.key])return;const A=w.auc84[S.key]={lots:[]};w.chest83=w.chest83||[];const ends=ONLC.aucEnds(t);
+  while(A.lots.length<ONLC.AUC_LOTS&&w.chest83.length){const x=w.chest83.shift();const I=ONLC.pieceInfo({item:x.item,pc:x.pc},onlCatalog());if(!I||!I.named)continue;const n=A.lots.length+1;
+    A.lots.push({id:S.key+'#'+n,key:S.key,n,item:x.item,pc:x.pc||null,val:ONLC.valueOf(I),min:ONLC.aucMin(ONLC.valueOf(I)),opens:t,ends,bid:null,bids:[],done:false,won:null,from:x.from||null})}}
+function mockAucSettle84(w,X,t){if(X.done||t<=X.ends)return;X.done=true;const b=X.bid;let P={item:X.item,pc:X.pc||null};w.chest83=w.chest83||[];
+  if(!b){w.chest83.push({item:P.item,pc:P.pc,at:t,from:X.from||null});return}P=ONLC.histAdd(P,{house:b.dname||null,glad:b.name,when:t,how:'auction'});let to='house';const c=w.chars[b.char];
+  if(c&&c.alive&&ONLC.canWearNamed(c)){ONLC.putPiece(c,P,true);to='glad'}else{const D=mockDomus82(w,b.dom);if(D)ONLC.putPiece(D,P,false);else{w.chest83.push({item:P.item,pc:P.pc,at:t});to='chest'}}
+  X.pc=P.pc;X.won={name:b.name,dname:b.dname||null,amt:b.amt|0,acct:b.acct,dom:b.dom,to};w.aucwin84=w.aucwin84||{};(w.aucwin84[X.key]=w.aucwin84[X.key]||{})[b.dom]=X.id;
+  const I=ONLC.pieceInfo(P,onlCatalog())||{};mockTo([b.acct],'auction.won',{lot:X.id,n:I.n,amt:b.amt|0,to,char:to==='glad'?c:null});w.news.unshift(['🔨',`${b.name} won ${I.n||'a named piece'} at Flavius’s auction.`])}
+function mockAucSweep84(w){const t=mockT84();mockAucDraw84(w,t);for(const A of Object.values(w.auc84||{}))for(const X of A.lots||[])mockAucSettle84(w,X,t)}
+function mockAucWhy84(w,A,D,ch,key){if(!D)return 'Name your house first.';if(D.test||(A&&A.dtest))return 'Test houses may not bid.';if(!ch||ONLC.rankIdx(ONLC.rankFor(ch).k)<ONLC.rankIdx('veteranus'))return 'Flavius sells to Veteranus and above.';
+  if(((w.aucwin84||{})[key]||{})[D.id])return 'Your house already won a lot this week.';return ''}
+Object.assign(MOCK_ROUTES,{
+  'auction.list':(w,d,me)=>{mockAucSweep84(w);const t=mockT84();const S=ONLC.seasonAt(t);const prevK=S.n>0?ONLC.seasonKeyOf(S.n-1):null;const cur=((w.auc84||{})[S.key]||{}).lots||[];const past=prevK?(((w.auc84||{})[prevK]||{}).lots||[]):[];
+    const lots=cur.concat(past.filter(x=>!x.done)).map(x=>mockAucOut84(x,me));const mine={lead:null,won:null,why:''};
+    if(me&&!mockIsGuest82(me)){const A=w.accounts[me];const D=mockDomus82(w,A&&A.domus);const ch=onlMockChar(w,me);mine.why=mockAucWhy84(w,A,D,ch,S.key);mine.lead=(lots.find(l=>l.mine&&!l.done)||{}).id||null;mine.won=D?(((w.aucwin84||{})[S.key]||{})[D.id]||null):null}else mine.why='Sign in to bid.';
+    return {week:{key:S.key,season:S.season,wk:S.wk,ends:S.end},lots,past:past.filter(x=>x.done).map(x=>mockAucOut84(x,me)),mine,now:t}},
+  'auction.bid':(w,d,me)=>{mockAucSweep84(w);const A=w.accounts[me];const D=mockDomus82(w,A&&A.domus);if(!D)throw onlErr82('Name your house first.','need_domus');if(D.test||A.dtest)throw onlErr82('Test houses may not bid at Flavius’s auction.','testHouse');
+    const m=/^(S\d+W\d+)#(\d+)$/.exec(String(d.lot||''));if(!m)throw onlErr82('No such lot.','auc_closed');const key=m[1];const X=(((w.auc84||{})[key]||{}).lots||[]).find(x=>x.id===d.lot);const t=mockT84();const amt=d.amt|0;
+    if(!X||X.done||t>X.ends)throw onlErr82('The hammer has fallen on that lot.','auc_closed');const ch=onlMockChar(w,me);if(!ch||ONLC.rankIdx(ONLC.rankFor(ch).k)<ONLC.rankIdx('veteranus'))throw onlErr82('Flavius sells to Veteranus and above.','auc_rank');
+    if(((w.aucwin84||{})[key]||{})[D.id])throw onlErr82('Your house already won a lot this week.','auc_won');
+    const lead=w.auc84[key].lots.find(L=>!L.done&&L.bid&&L.bid.dom===D.id&&L.id!==X.id);if(lead)throw onlErr82('Your house already leads another lot — one win a house a week.','auc_lead',{lot:lead.id});
+    if(X.bid&&X.bid.dom===D.id)throw onlErr82('Your house leads this lot already.','auc_lead',{lot:X.id});const why=ONLC.aucBidWhy(X,amt,t);if(why)throw onlErr82(why,'auc_low',{min:ONLC.aucNextMin(X)});
+    if((ch.wallet|0)<amt)throw onlErr82(`${ch.name}’s purse holds less than ${amt} coin.`,'no_coin',{cost:amt});ch.wallet-=amt;const prev=X.bid;
+    X.bid={acct:me,char:ch.id,dom:D.id,dname:D.name,name:ch.name,amt,at:t};X.bids=[...(X.bids||[]),{name:ch.name,dname:D.name,amt,at:t,dom:D.id}].slice(-12);ONLC.aucSnipe(X,t);
+    if(prev){const c=w.chars[prev.char];let to='house';if(c&&c.alive){c.wallet=(c.wallet|0)+(prev.amt|0);to='glad'}else{const PD=mockDomus82(w,prev.dom);if(PD)PD.treasury=(PD.treasury|0)+(prev.amt|0)}mockTo([prev.acct],'auction.outbid',{lot:X.id,amt:prev.amt|0,to,char:to==='glad'?c:null})}
+    return {lot:mockAucOut84(X,me),char:ch}}});
+/* hello: this week's fixture + the house's challenge + an open reclaim window; the sweeps */
+{const base=MOCK_ROUTES['hello'];MOCK_ROUTES['hello']=(w,d,me)=>{try{mockAucSweep84(w)}catch(e){}const o=base(w,d,me);const t=mockT84();o.season84=ONLC.onlineFixture(t);
+  if(me&&!mockIsGuest82(me)&&o.me){const A=w.accounts[me];const D=mockDomus82(w,A&&A.domus);if(D)o.week84=ONLC.weekState(D,t);
+    const X=A&&A.rcl84;if(X&&X.until>Date.now()){const L=w.lobbies[X.id],M=w.matches[X.id];const W=L&&M&&mockRclWin84(w,L,M,me);if(mockRclOpen84(M,W)){o.reclaim84={id:X.id,seat:W.seat,until:W.until,ev:L.ev,loc:L.loc,ranked:!!L.ranked};if(o.live&&o.live.id===X.id)o.live.reclaim={seat:W.seat,until:W.until}}}}
+  return o}}
+{const base=MOCK_ROUTES['market.list'];MOCK_ROUTES['market.list']=(w,d,me)=>{try{mockAucSweep84(w)}catch(e){}return base(w,d,me)}}
+{const base=MOCK_ROUTES['world.news'];MOCK_ROUTES['world.news']=(w,d,me)=>({...base(w,d,me),season84:ONLC.onlineFixture(mockT84())})}
+{const base=mockReq;mockReq=async function(t,d){const me=mockMe();if(me&&mockIsGuest82(me)&&t==='auction.bid')throw onlErr82('Sign in to bid.','guest');return base.apply(this,arguments)}}
+
+/* =========================== THE SCREENS =========================== */
+/* ---------------- named cards: armor too; the holographic sheen ---------------- */
+const SLOT84={head:'Head',chest:'Chest',belt:'Belt',arm:'Arm',leg:'Leg'};
+const LOCN84={head:'head',chest:'chest',larm:'left arm',rarm:'right arm',lleg:'left leg',rleg:'right leg'};
+function na84Card(I,o){o=o||{};const a=I.w||{};const R=ONLC.rarOf(I.rar||a.rar);const col=ONL83.rarCol[R.k];const U=a.uq?ONLC.UNIQUES_A.find(u=>u.k===a.uq):null;const base=a.base||'';const B=(typeof ARM!=='undefined'&&ARM[base])||{};
+  const art=typeof cardHTML==='function'&&B.n?cardHTML('a:'+base,'sm'):'🛡';const brk=I.st==='broken';const holo=R.k!=='common';
+  const aff=(a.aff||[]).map(k=>k==='bonus'&&a.bonus?`+1 AP to the ${Object.keys(a.bonus).map(l=>LOCN84[l]||l).join(', ')}`:(ONLC.AFFIX_A[k]||{}).n||k);
+  return `<div class="nw83 na84 ${holo?'holo84':''} r-${R.k} ${brk?'brk83':''} ${o.sm?'sm':''}" style="--rc:${col}" title="${esc2(a.n||I.n)} · ${R.n}">
+    <div class="nw83-art">${art}<i class="nw83-tint"></i><span class="nw83-gem">${R.n}</span></div>
+    <div class="nw83-b"><b class="nw83-n">${esc2(a.n||I.n)}</b><small class="nw83-base">${esc2(B.n||base)} · ${SLOT84[a.slot]||'Armor'}${a.pair?' (pair)':''} · <b>${a.ap|0} AP</b></small>
+     ${aff.length?`<div class="nw83-aff">${aff.map(x=>`<span>✦ ${esc2(x)}</span>`).join('')}</div>`:''}
+     ${U?`<p class="nw83-uq"><b>${esc2(U.n)}</b> — ${esc2(U.d)}</p>`:''}
+     <small class="nw83-val">${brk?'💔 Broken · ':''}Value ${c83()} <b>${ONLC.valueOf(I)}</b></small>${o.hist?onl83Hist(I.hist):''}</div></div>`}
+{const base=nw83Card;nw83Card=function(I,o){if(I&&(I.kind==='a'||(I.w&&I.w.kind==='a')||ONLC.isNamedA(I.item)))return na84Card({...I,kind:'a'},o);
+  const h=base.apply(this,arguments);const R=ONLC.rarOf((I&&(I.rar||(I.w&&I.w.rar)))||'common');return R.k==='common'?h:h.replace('<div class="nw83 ','<div class="nw83 holo84 ')}}
+/* the owner history knows the auction */
+{const base=onl83Hist;onl83Hist=function(h){if(!(h||[]).some(x=>x&&x.how==='auction'))return base.apply(this,arguments);
+  return `<div class="hist83">${h.slice(-4).map(x=>`<small>${x.how==='auction'?'🔨 won at Flavius’s auction by':x.how==='taken'?'⚔ taken from':'🪦 fell with'} <b>${esc2(x.glad||'?')}</b>${x.house?` · ${esc2(onlHouse82(x.house))}`:''} · ${esc2(date83(x.when))}</small>`).join('')}</div>`}}
+
+/* ---------------- the landing: this week's challenge + the weekly playlist card; turn alerts beside Quiet ---------------- */
+const onl84Fx=()=>ONL84.season||ONLC.onlineFixture(Date.now());
+function onl84Left(end){const ms=Math.max(0,end-Date.now());const d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4);return d?`${d}d ${h}h`:h?`${h}h ${m}m`:`${m}m`}
+function onl84WeekCard(){const F=onl84Fx();const X=ONL84.week||{};const ev=esc2(onlEvName(F.ev)),city=esc2(onlCityName(F.loc));const raw=F.evRaw&&F.evRaw!==F.ev?((typeof EVENTS!=='undefined'&&EVENTS[F.evRaw]&&EVENTS[F.evRaw].n)||F.evRaw):null;
+  const rows=[['win',`Win ${ev} at ${city}`,X.win?1:0,1],['surv',`Survive ${ev} at ${city} in a Ranked bout`,X.surv?1:0,1],['bouts','Finish 3 bouts',Math.min(3,X.bouts|0),3]];
+  const all=rows.every(r=>r[2]>=r[3]);
+  return `<div class="card2 wk84" id="wk84"><div class="wk84-h"><b>⭐ This week: ${ev} at ${city}</b><small class="rc-sub">Season ${F.season} · week ${F.wk} of 12 · ends in ${onl84Left(F.end)}${raw?` · the schedule names ${esc2(raw)}`:''}</small></div>
+    ${rows.map(([k,t,v,n])=>`<div class="wk84-c ${v>=n?'ok':''}" data-wk84="${k}"><span>${v>=n?'☑':'◻'}</span><span>${t}</span>${n>1?`<small>${v}/${n}</small>`:''}</div>`).join('')}
+    <div class="wk84-g ${X.gift?'got':all?'':'wait'}">${X.gift?'🎁 Flavius’s gift for the week is in your house.':all?'🎁 All done — a gift comes with your next win.':'🎁 All three (with a win) earn ONE Flavius gift a week.'}</div></div>`}
+function onl84PlCard(){const F=onl84Fx();const ok=!!ONL.char&&!onlIsGuest82();
+  return `<div class="onl-pl pl81 pl84" data-pl81="week84"><div class="onl-plart">${typeof cardHTML==='function'?cardHTML('e:'+F.ev,'sm'):''}<span class="pl84-star">⭐</span></div><div class="onl-plb"><b>This week: ${esc2(onlEvName(F.ev))}</b><span class="badge gold">at ${esc2(onlCityName(F.loc))}</span><small>The weekly challenge · season ${F.season}, week ${F.wk}</small>
+    <div class="acts">${ok?`<button type="button" class="btn primary tksm" data-onl84="wk" data-v="1">⚔ Ranked</button><button type="button" class="btn tksm" data-onl84="wk" data-v="0">Custom</button>`:'<small class="rc-sub">Raise a gladiator to play</small>'}</div></div></div>`}
+{const base=onlPlayHTML;onlPlayHTML=function(){let h=base.apply(this,arguments);try{
+    const wk=onl84WeekCard();const re=/<div class="card2 wk83"><b>⚡ This week<\/b>(?:<div class="onl-ch">[\s\S]*?<\/div>)*<\/div>/;
+    if(re.test(h))h=h.replace(re,wk);else h=h.replace(/<div class="a81-week card2">[\s\S]*?<\/div>(\s*<div class="a81-forum">)/,`<div class="a81-week">${wk}</div>$1`);
+    h=h.replace('<div class="onl-pls onl-pls81">','<div class="onl-pls onl-pls81">'+onl84PlCard());
+    h=h.replace(/(<button type="button" class="btn tksm[^"]*" data-onl="quiet"[^>]*>[^<]*<\/button>)/,`$1<button type="button" class="btn tksm" data-onl84="alerts" title="Your-turn alerts">⚔🔔</button>`);
+    h=onl84TodayChips(h)}catch(e){console.error(e)}return h}}
+/* the weekly playlist: a waiting room of this week's event at this week's city with a free seat, else a new one there */
+async function onl84WeekGo(ranked){const F=onl84Fx();const R=ONL.char?ONLC.rankFor(ONL.char).k:'tiro';
+  const L=(ONL.lobbies||[]).find(x=>x.status==='waiting'&&x.ev===F.ev&&(x.loc|0)===F.loc&&!!x.ranked===ranked&&!x.inf&&(x.players||[]).length<(x.seats|0)&&(!ranked||x.rank===R));
+  if(L){await onlReq80('lobby.join',{id:L.id});onlToast80(`⭐ You joined this week’s ${esc2(onlEvName(F.ev))} at ${esc2(onlCityName(F.loc))}.`)}
+  else{await onlReq80('lobby.create',{ev:F.ev,loc:F.loc,ranked});onlToast80(`⭐ A room for this week’s challenge: ${esc2(onlEvName(F.ev))} at ${esc2(onlCityName(F.loc))}.`)}
+  if(ONL.tab!=='lobby')ONL.tab='play';onlRedraw()}
+/* Today: the house chip beside each name (opens the profile) */
+function onl84TodayChips(h){const T=typeof ONL80F!=='undefined'?ONL80F.today:null;if(!T)return h;for(const e of [...(T.wins||[]),...(T.fallen||[])]){if(!e||!e.dom||!e.dn)continue;const a=`<b>${esc2(e.name)}</b>`;
+    const chip=`<button type="button" class="dom84c" data-onl83="prof" data-v="${esc2(e.dom)}" title="Open the house">🏛 ${esc2(onlHouse82(e.dn))}</button>`;const i=h.indexOf(a);if(i>=0&&h.slice(i+a.length,i+a.length+80).indexOf('dom84c')<0)h=h.slice(0,i+a.length)+chip+h.slice(i+a.length)}return h}
+{const base=onlTodayHTML80;onlTodayHTML80=function(){const h=base.apply(this,arguments);try{return onl84TodayChips(h)}catch(e){return h}}}
+
+/* ---------------- 🔨 the AUCTION tab ---------------- */
+function onl84Auction(){if(!ONL84.auc||Date.now()-ONL84.aucAt>10000){ONL84.aucAt=Date.now();NET.req('auction.list',{}).then(r=>{ONL84.auc=r;ONL84.aucSkew=(r.now||Date.now())-Date.now();if(ONL.tab==='auction'&&document.getElementById('onl')&&!onlFocus80())onlRedraw()}).catch(e=>{ONL84.auc=ONL84.auc||{lots:[],past:[],mine:{},err:e.message}})}
+  const X=ONL84.auc;if(!X)return '<h3>🔨 Flavius’s Auction</h3><p class="rc-sub">The auctioneer unrolls his lists…</p>';const M=X.mine||{};const now=Date.now()+(ONL84.aucSkew||0);
+  const lot=(L,past)=>{const I={item:L.item,named:true,kind:L.kind,rar:L.rar,w:L.w||{n:L.n,rar:L.rar},val:L.val,st:'whole',hist:L.hist||[]};const left=L.ends-now;
+    const lead=L.bid?`<div class="au84-lead ${L.bid.mine?'me':''}">🏛 <b>${esc2(L.bid.name)}</b>${L.bid.dname?` · ${esc2(onlHouse82(L.bid.dname))}`:''} leads with ${c83()} <b>${L.bid.amt}</b></div>`:`<div class="au84-lead none">No bid yet · opens at ${c83()} <b>${L.min}</b></div>`;
+    const can=!past&&!L.done&&!M.why&&!L.mine&&(!M.lead||M.lead===L.id)&&!M.won;
+    return `<div class="card2 au84-lot ${L.mine?'mine':''} ${past?'past':''}" data-au84="${esc2(L.id)}">${nw83Card(I,{sm:1,hist:1})}
+      ${past?`<div class="au84-lead">${L.won?`🔨 Sold to <b>${esc2(L.won.name)}</b>${L.won.dname?` · ${esc2(onlHouse82(L.won.dname))}`:''} for ${c83()} <b>${L.won.amt}</b>`:'Unsold — back to Flavius’s chest'}</div>`
+      :`${lead}<div class="au84-cd" data-ends="${L.ends}">⏳ <span>${onl84Left(L.ends-(ONL84.aucSkew||0))}</span>${left<ONLC.AUC_SNIPE_MS?' <b class="au84-snipe">a late bid adds 5 minutes</b>':''}</div>
+       <div class="au84-bid">${can?`<input class="tin" type="number" min="${L.next}" step="1" value="${L.next}" data-au84amt="${esc2(L.id)}" aria-label="Your bid"><button type="button" class="btn primary tksm" data-onl84="bid" data-v="${esc2(L.id)}">🔨 Bid</button><small class="rc-sub">at least ${L.next}</small>`
+        :L.mine?'<small class="au84-me">★ Your house leads — the coin waits in escrow.</small>':`<small class="rc-sub">${esc2(M.why||(M.won?'Your house won a lot this week.':M.lead?'Your house leads another lot — one win a week.':''))}</small>`}</div>`}
+      ${(L.bids||[]).length?`<details class="au84-bids"><summary>${L.bids.length} bid${L.bids.length===1?'':'s'}</summary>${L.bids.slice().reverse().map(b=>`<small>${c83()} ${b.amt} · ${esc2(b.name)}${b.dname?` (${esc2(onlHouse82(b.dname))})`:''}</small>`).join('')}</details>`:''}</div>`};
+  const wk=X.week||{};
+  return `<div class="onl-lbtop"><h3>🔨 Flavius’s Auction <span class="rc-sub">season ${wk.season||'—'}, week ${wk.wk||'—'}</span></h3><div class="acts"><button type="button" class="btn tksm" data-onl84="aur">↻</button></div></div>
+   <p class="rc-sub au84-intro">Only Flavius sells: named pieces of the fallen, back from his chest, with every owner they had. Veteranus and above bid; your coin waits in escrow and comes back the moment you are outbid. One win a house a week; the winning coin goes to Flavius.</p>
+   ${M.won?'<div class="card2 au84-won">🔨 Your house won a lot this week — it is in the Storeroom.</div>':''}
+   <div class="au84-grid">${(X.lots||[]).map(L=>lot(L,false)).join('')||'<p class="rc-sub">No lots this week — Flavius’s chest holds no fallen named pieces yet.</p>'}</div>
+   ${(X.past||[]).length?`<h4 class="onl-h">Last week</h4><div class="au84-grid past">${X.past.map(L=>lot(L,true)).join('')}</div>`:''}`}
+setInterval(()=>{try{for(const el of document.querySelectorAll('.au84-cd[data-ends]')){const s=el.querySelector('span');const t=onl84Left(+el.dataset.ends-(ONL84.aucSkew||0));if(s&&s.textContent!==t)s.textContent=t}}catch(e){}},1000);
+{const base=onlHTML;onlHTML=function(){const want=ONL.tab==='auction';if(want)ONL.tab='hall';let h;try{h=base.apply(this,arguments)}finally{if(want)ONL.tab='auction'}
+  try{if(ONL.acct&&h.includes('class="onl-rail"')&&!ONL.newGlad){const btn=`<button type="button" data-onl="tab" data-v="auction" class="${want?'on':''}">🔨 Auction</button>`;
+      if(/<button type="button" data-[a-z0-9]+="tab" data-v="wagers"/.test(h))h=h.replace(/(<button type="button" data-[a-z0-9]+="tab" data-v="wagers")/,btn+'$1');else h=h.replace(/(<button type="button" data-[a-z0-9]+="tab" data-v="hall")/,btn+'$1');
+      if(want){h=h.replace(/(<button type="button" data-[a-z0-9]+="tab" data-v="hall" class=")on(")/,'$1$2');const a=h.indexOf('<main class="onl-main">'),b=h.lastIndexOf('</main>');if(a>=0&&b>a)h=h.slice(0,a+23)+onl84Auction()+h.slice(b)}}}catch(e){console.error(e)}return h}}
+NET.on('auction.outbid',d=>{ONL84.aucAt=0;if(d&&d.char)onl83Put(d.char);onlToast80(`🔨 Outbid at Flavius’s auction — ${c83()} ${d&&d.amt|0} back ${d&&d.to==='house'?'in the treasury':'in the purse'}.`);if(ONL.tab==='auction'&&document.getElementById('onl'))onlRedraw()});
+NET.on('auction.won',d=>{ONL84.aucAt=0;if(d&&d.char)onl83Put(d.char);onlToast80(`🔨 Sold to your house: <b>${esc2((d&&d.n)||'the lot')}</b> for ${c83()} ${d&&d.amt|0}.`);ONL82.dgAt=0});
+
+/* ---------------- the controls ---------------- */
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-onl84]');if(!b||!b.closest('#onl,.onl80pop'))return;e.preventDefault();e.stopPropagation();const a=b.dataset.onl84,v=b.dataset.v;
+  if(a==='wk')return onlDo(()=>onl84WeekGo(v==='1'));
+  if(a==='alerts')return onl84AlertsPop();
+  if(a==='aur'){ONL84.aucAt=0;onlRedraw();return}
+  if(a==='bid'){const inp=document.querySelector(`[data-au84amt="${CSS.escape(v)}"]`);const amt=Math.floor(+((inp&&inp.value)||0));
+    return onlDo(async()=>{try{const r=await NET.req('auction.bid',{lot:v,amt});if(r.char)onl83Put(r.char);ONL84.aucAt=0;onlToast80(`🔨 Your bid of ${c83()} ${amt} leads — the coin waits in escrow.`)}
+      catch(err){if(err&&err.code==='auc_low'){ONL84.aucAt=0;onlToast80('🔨 '+esc2(err.message));onlRedraw();return}throw err}})}},true);
+/* the result toast: the CPU played most of it */
+{const base=onlSettled;onlSettled=function(res){const r=base.apply(this,arguments);try{const o=res&&res.out;if(o&&o.cpu&&!res.void)setTimeout(()=>onlToast80('🤖 The CPU fought most of that bout in your seat — Flavius pays a quarter, and no gifts.'),6200);ONL82.dgAt=0}catch(e){}return r}}
+
+{const st=document.createElement('style');st.textContent=`
+.nw83.holo84{position:relative;isolation:isolate}
+.nw83.holo84::before{content:"";position:absolute;inset:-2px;border-radius:12px;padding:2px;pointer-events:none;z-index:2;
+  background:conic-gradient(from var(--h84,0deg),var(--rc),#fff7e0 8%,var(--rc) 16%,#7fe3ff 26%,var(--rc) 36%,#ff9ad5 48%,var(--rc) 60%,#fff2b0 72%,var(--rc) 86%,var(--rc));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);animation:holo84spin 5s linear infinite;opacity:.9}
+.nw83.holo84::after{content:"";position:absolute;inset:0;border-radius:10px;pointer-events:none;z-index:1;mix-blend-mode:screen;
+  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.14) 42%,color-mix(in srgb,var(--rc) 35%,transparent) 48%,rgba(160,240,255,.12) 54%,transparent 66%) 0 0/250% 100%;animation:holo84sheen 3.6s ease-in-out infinite}
+.nw83.holo84.r-rare::before{opacity:.45;animation-duration:9s;background:conic-gradient(from var(--h84,0deg),var(--rc),#dff1ff 20%,var(--rc) 40%,var(--rc))}
+.nw83.holo84.r-rare::after{animation-duration:7s;opacity:.6}
+.nw83.holo84.r-epic::before{animation-duration:5s}
+.nw83.holo84.r-legendary::before{animation-duration:3.2s;opacity:1}
+.nw83.holo84.r-legendary::after{animation-duration:2.6s}
+@property --h84{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes holo84spin{to{--h84:360deg}}
+@keyframes holo84sheen{0%{background-position:120% 0}60%,100%{background-position:-60% 0}}
+body.calm .nw83.holo84::before,body.calm .nw83.holo84::after{animation:none}
+@media (prefers-reduced-motion:reduce){.nw83.holo84::before,.nw83.holo84::after{animation:none}}
+.wk84{display:grid;gap:5px;border-color:#c9a14a;background:linear-gradient(180deg,rgba(201,161,74,.14),rgba(255,255,255,.02))}
+.wk84-h{display:grid;gap:1px}.wk84-h b{font:700 15px Georgia,serif;color:var(--gold,#e8c96a)}
+.wk84-c{display:grid;grid-template-columns:20px 1fr auto;gap:4px;align-items:center;font-size:13px}.wk84-c.ok{color:#bfe3a3}.wk84-c small{color:var(--muted)}
+.wk84-g{font-size:12px;color:#d9c08a;border-top:1px dashed rgba(201,161,74,.4);padding-top:4px}.wk84-g.got{color:#c9a6ff}
+.onl-pl.pl84{border-color:#e0a530;background:linear-gradient(180deg,rgba(224,165,48,.22),rgba(255,255,255,.03));box-shadow:0 0 18px -6px #e0a530}
+.pl84 .onl-plart{position:relative}.pl84-star{position:absolute;top:2px;left:4px;font-size:20px;filter:drop-shadow(0 1px 3px #000)}
+.dom84c{font:600 11px system-ui,sans-serif;color:#e8d6a8;background:rgba(0,0,0,.3);border:1px solid rgba(232,201,106,.4);border-radius:6px;padding:0 5px;margin-left:5px;cursor:pointer}
+.dom84c:hover{border-color:var(--gold,#e8c96a)}
+#rcl84{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:9500;display:flex;gap:8px;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(20,14,8,.95);border:1px solid #e0a530;color:#f3e6c4;box-shadow:0 6px 24px rgba(0,0,0,.6);max-width:calc(100vw - 32px);flex-wrap:wrap;justify-content:center}
+.au84-intro{max-width:760px}.au84-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;align-items:start}
+.au84-lot{display:grid;gap:6px}.au84-lot.mine{border-color:#e0a530}.au84-lot.past{opacity:.85}
+.au84-lead{font-size:13px}.au84-lead.none{color:var(--muted)}.au84-lead.me b{color:var(--gold,#e8c96a)}
+.au84-cd{font:600 12px var(--mono,monospace);color:#d9c08a}.au84-snipe{color:#ffb38a;font-weight:600}
+.au84-bid{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.au84-bid input{width:110px}.au84-me{color:var(--gold,#e8c96a)}
+.au84-bids small{display:block;color:var(--muted)}.au84-won{border-color:#c9a6ff}
+@media (max-width:600px){.au84-grid{grid-template-columns:1fr}#rcl84{bottom:70px}}`;document.head.appendChild(st)}
+/* =====================================================================
+   140-V84PROG · v0.84 — PROGRAMMATA: painted notices on the city walls (Virgilante, approved 2026-10-04)
+   =====================================================================
+   1. THE ACTION — Your ludus → 📯 Promote gets a 4th button, 🖌 Paint the programmata (promoteCardHTML wrapper).
+      It opens an inline setup in the panel (never a modal): up to 3 cities (the 12 arenas; cities hosting the
+      season's fixtures inside the chosen weeks come first and say which week), 2–4 weeks, a featured fighter.
+      Cost: PROG84.perCity (8) coin a city a week, the first week paid at once, + PROG84.hours (1) recruiting hour.
+      One campaign at a time (m.prog84); ✕ Cancel any time (ask76 popup; the week paid is not refunded).
+      State: m.prog84 = {cities:[li],from,until,gid,gname,cost,paid,def:{wk:mgrId},fame,fans,gate,gl:[],memorial}.
+      UI state only: MGR.pg84 = {open,cities,weeks,gid}.
+   2. EACH WEEK (endWeek wrapper, after the base, only when the week really advanced; seeded by hashStr from the
+      career id + week — never the dice RNG): the week resolves — fame +1 (+2 with Showmanship ≥ 70), the featured
+      fighter +1 fame and new regulars in those cities turn his fans (CROWD_CACHE r.fanOf, like 🍞 Feast a city);
+      then the next week is paid (can't pay → it lapses, a letter from the clerk) and may be defaced.
+      GATE (applyBout wrapper): a bout of a campaigning house in one of its cities pays +20% (PROG84.gate) of the
+      appearance fee and of the lanista's purse cut on a win.
+   3. RIVALS — DEFACED: when a week is paid, a rival house may whitewash the notices (chance PROG84.defBase + the
+      bitterest grudge (m.rivalry / m.rivals[me]) × defPer, ≤ defMax; the first, fresh week is safe). That week
+      brings nothing; a Consilium letter names the house. PROG84.force='deface' forces the next roll (tests).
+      AI houses with Showmanship ≥ 65 sometimes paint their own (PROG84.aiP a week, 2–3 weeks, their next host cities,
+      their star): fame +1 a week, fans, the gate bonus; a news line; shown on the city tile and the map.
+   4. MEMORIAL — the featured fighter dies mid-campaign → P.memorial = that week: the wall turns to a memorial
+      (D·M lettering, dark paint), fame keeps coming, no more fans.
+   5. LOOK — .pg84wall: plaster (CSS gradients) over a stone plinth (assets/stone_wall.webp), Pompeian red lettering
+      in Marcellus SC, a weeks bar (paid / done / defaced), cost a week, Cancel. The Imperium map marks campaign
+      cities with a 🖌 disc (imperiumMapSVG wrapper; yours red, rivals' grey, tooltip); the city tile names them.
+   ===================================================================== */
+const PROG84={perCity:8,hours:1,gate:0.2,fame:1,showAt:70,fanP:0.3,aiFanP:0.15,defBase:0.06,defPer:1/250,defMax:0.35,aiShow:65,aiP:0.12,maxCities:3,weeks:[2,3,4],force:null};
+const pg84R=(w,k)=>mulberry32(hashStr('prog84:'+((w&&w.id)||'')+':'+k));
+const pg84On=(P,wk)=>!!P&&wk>=P.from&&wk<=P.until;
+const pg84City=li=>LOCATIONS[li]?LOCATIONS[li].n:'?';
+const pg84Names=c=>(c||[]).map(pg84City).join(', ');
+function pg84Season(w,aw){return w.season+Math.floor((wkOf(w.week)-1+(aw-w.week))/12)}
+/* the fixture of an absolute week: this week's real night (closures move it), else the shared schedule */
+function pg84Fx(w,aw){
+  const bye=typeof BYE_WKS!=='undefined'&&BYE_WKS.includes(wkOf(aw));
+  if(aw===w.week&&w.night){const mb=(w.night.bouts||[])[2];return {loc:w.night.loc,ev:mb?mb.ev:'',bye:!!w.night.bye||bye}}
+  const f=typeof fixtureFor==='function'?fixtureFor(pg84Season(w,aw),aw):null;return f?{loc:f.loc,ev:f.ev,bye}:null}
+function pg84Dead(P){const g=P&&gById(P.gid);return !!P&&(!!P.memorial||(g&&g.alive===false))}
+function pg84MemCheck(w,m,P){if(!P||P.memorial)return;const g=gById(P.gid);if(!g||g.alive!==false)return;P.memorial=w.week;
+  if(m.isPlayer){tnews(`🖌 The programmata for ${esc(P.gname)} become a memorial.`);mnews(`✝ In ${esc(pg84Names(P.cities))} the painted notices for <b>${esc(P.gname)}</b> of ${esc(m.ludus)} now honour the dead.`)}}
+/* regulars of those cities who turn fans of the featured fighter */
+function pg84Fans(w,P,wk,p){const g=gById(P.gid);if(!g||g.alive===false)return 0;g.fame=clamp((g.fame||0)+1,0,100);let n=0;
+  if(typeof CROWD_CACHE!=='undefined'){const R=pg84R(w,'fans'+P.gid+':'+wk);const names=new Set(P.cities.map(pg84City));
+    for(const r of CROWD_CACHE)if(names.has(r.city)&&!r.banned&&!r.recruited&&r.fanOf!==g.name&&R.next()<p){r.fanOf=g.name;n++}}
+  P.fans=(P.fans||0)+n;return n}
+function pg84Bitter(w,m,m2){return Math.max(m2.rivalry||0,(m2.rivals&&m2.rivals[m.id])||0)}
+/* a rival whitewashes the notices for week wk (decided when the week is paid) */
+function pg84DefRoll(w,m,P,wk){const cands=w.mgrs.filter(m2=>!m2.isPlayer&&!m2.dead);if(!cands.length)return null;
+  const R=pg84R(w,'def'+wk);let bit=0;for(const m2 of cands)bit=Math.max(bit,pg84Bitter(w,m,m2));
+  const p=Math.min(PROG84.defMax,PROG84.defBase+bit*PROG84.defPer);const roll=R.next();const force=PROG84.force==='deface';if(force)PROG84.force=null;
+  if(!force&&roll>=p)return null;
+  const wt=m2=>1+Math.pow(pg84Bitter(w,m,m2),2)/50;let x=R.next()*cands.reduce((a,m2)=>a+wt(m2),0),who=cands[0];for(const m2 of cands){if((x-=wt(m2))<0){who=m2;break}}
+  P.def[wk]=who.id;const b=pg84Bitter(w,m,who);
+  sendLetter(w,{key:'pg84def-'+wk,kind:'letter',from:'the Consilium',adv:'consilium',seal:'🖌',title:'Our notices were painted over',until:wk+2,
+    body:`<p>Men of <b>${esc(who.ludus)}</b>${b>=35?' — '+rivalTier(b).toLowerCase()+' rivals —':''} whitewashed our programmata in ${esc(pg84Names(P.cities))} overnight. This week they bring us nothing.</p>`});
+  tnews(`🖌 ${esc(who.ludus)} painted over your notices: no gain this week.`,'bad');return who}
+/* ---- start / cancel ---- */
+function pg84Start(cities,weeks,gid){const w=W_(),m=me();if(!w||!m||m.prog84)return false;cities=[...new Set(cities)].filter(li=>LOCATIONS[li]).slice(0,PROG84.maxCities);
+  const cost=PROG84.perCity*cities.length;const g=gById(gid);
+  if(!cities.length||!PROG84.weeks.includes(+weeks)||!g||g.alive===false||w.hours<PROG84.hours||m.coin<cost)return false;
+  w.hours-=PROG84.hours;m.coin-=cost;
+  m.prog84={cities,from:w.week,until:w.week+(+weeks)-1,gid,gname:g.name,cost,paid:w.week,def:{},fame:0,fans:0,gate:0,gl:[],memorial:0};
+  tnews(`🖌 Programmata for ${esc(g.name)} in ${esc(pg84Names(cities))}: ${weeks} weeks, ${cost} coin a week.`);mlog(m,`painted programmata for ${g.name} in ${pg84Names(cities)}`);
+  return true}
+function pg84Cancel(){const w=W_(),m=me();const P=m&&m.prog84;if(!P)return false;tnews(`🖌 The programmata in ${esc(pg84Names(P.cities))} were called off.`);delete m.prog84;return true}
+/* ---- the week (endWeek wrapper) ---- */
+function pg84Week(w,wk){const m=me();const P=m&&m.prog84;
+  if(P&&pg84On(P,wk)){pg84MemCheck(w,m,P);
+    if(P.def[wk]){/* defaced: nothing this week */}
+    else{const f=PROG84.fame+((m.p&&m.p.show||0)>=PROG84.showAt?1:0);m.fame=clamp(m.fame+f,0,100);P.fame+=f;
+      const n=P.memorial?0:pg84Fans(w,P,wk,PROG84.fanP);
+      tnews(P.memorial?`✝ The memorial notices for ${esc(P.gname)}: fame +${f}.`:`🖌 Programmata: fame +${f}, ${esc(P.gname)} +1 fame${n?`, ${n}K new fans`:''}.`)}
+    if(wk>=P.until){tnews(`🖌 The programmata in ${esc(pg84Names(P.cities))} fade: fame +${P.fame}, ${P.fans}K fans, +${P.gate} gate.`);delete m.prog84}
+    else if(m.coin<P.cost){sendLetter(w,{key:'pg84lapse-'+wk,kind:'letter',from:'your clerk',adv:'clerk',seal:'🖌',title:'The painters stopped',until:wk+2,
+        body:`<p>We could not pay the painters their ${P.cost} coin for the week. The notices in ${esc(pg84Names(P.cities))} are gone.</p>`});tnews('🖌 The programmata lapsed: no coin for the painters.','bad');delete m.prog84}
+    else{m.coin-=P.cost;P.paid=wk+1;tnews(`🖌 Programmata: ${P.cost} coin for the painters.`);pg84DefRoll(w,m,P,wk+1)}}
+  else if(P&&wk>P.until)delete m.prog84;
+  /* the other houses */
+  for(const m2 of w.mgrs){if(m2.isPlayer||m2.dead)continue;const Q=m2.prog84;
+    if(Q){pg84MemCheck(w,m2,Q);if(pg84On(Q,wk)){m2.fame=clamp((m2.fame||0)+1,0,100);Q.fame+=1;if(!Q.memorial)pg84Fans(w,Q,wk,PROG84.aiFanP)}
+      if(wk>=Q.until)delete m2.prog84;else if((m2.coin||0)>=Q.cost){m2.coin-=Q.cost;Q.paid=wk+1}else delete m2.prog84;continue}
+    if(w.tutorial||m2.sica||((m2.p&&m2.p.show)||0)<PROG84.aiShow)continue;
+    const R=pg84R(w,'ai'+m2.id+':'+(wk+1));const force=PROG84.force==='ai';if(!force&&R.next()>=PROG84.aiP)continue;
+    const weeks=2+Math.floor(R.next()*2);const cities=[];for(let k=1;k<=weeks;k++){const fx=pg84Fx(w,wk+k);if(fx&&!fx.bye&&LOCATIONS[fx.loc]&&!cities.includes(fx.loc))cities.push(fx.loc)}
+    cities.splice(1+Math.floor(R.next()*2));const star=rosterOf(m2).filter(g=>g.alive!==false).sort((x,y)=>effOvr(y)-effOvr(x))[0];
+    const cost=PROG84.perCity*cities.length;if(!cities.length||!star||(m2.coin||0)<cost)continue;if(force)PROG84.force=null;
+    m2.coin-=cost;m2.prog84={cities,from:wk+1,until:wk+weeks,gid:star.id,gname:star.name,cost,paid:wk+1,def:{},fame:0,fans:0,gate:0,memorial:0};
+    mnews(`🖌 <b>${esc(m2.ludus)}</b> paints programmata for ${esc(star.name)} on the walls of ${esc(pg84Names(cities))}.`);mlog(m2,`painted programmata in ${pg84Names(cities)}`)}
+}
+{const base=endWeek;endWeek=async function(){const w0=W_();const wk=w0&&w0.week;const r=await base.apply(this,arguments);
+  try{const w=W_();if(w&&w===w0&&!w.dead&&wk!=null&&w.week!==wk){pg84Week(w,wk);saveWorld()}}catch(e){console.error(e)}return r}}
+/* ---- the gate (applyBout wrapper) ---- */
+function pg84Gate(w,b){const li=w.night.loc,wk=w.week;
+  for(const gid of b.ents){const g=gById(gid);const M=g&&g.contract&&mgrById(g.contract.mgr);const Q=M&&M.prog84;
+    if(!Q||!pg84On(Q,wk)||Q.def[wk]||!Q.cities.includes(li))continue;
+    const row=(b.res.rows||[]).find(x=>x.gid===gid);const base=(b.fee||0)+(row&&row.won?Math.round((b.purse||0)*(0.5+((M.p&&M.p.greed)||0)/300)):0);
+    const add=Math.max(1,Math.round(base*PROG84.gate));M.coin+=add;Q.gate=(Q.gate||0)+add;
+    if(M.isPlayer){(Q.gl=Q.gl||[]).push({wk,tier:b.tier,gid,n:add});tnews(`🖌 Your notices in ${esc(pg84City(li))} filled seats: +${add} coin (${esc(g.name)}).`)}}}
+{const base=applyBout;applyBout=function(bi,res,opt){const w=W_();const b=w&&w.night&&w.night.bouts[bi];const was=b&&b.done;const r=base.apply(this,arguments);
+  try{if(b&&!was&&b.done&&b.res)pg84Gate(w,b);for(const m of w.mgrs)if(m.prog84)pg84MemCheck(w,m,m.prog84)}catch(e){console.error(e)}return r}}
+/* ---- the Promote panel ---- */
+function pg84UI(){const m=me();MGR.pg84=MGR.pg84||{open:false,cities:[],weeks:3,gid:null};const U=MGR.pg84;
+  const ros=rosterOf(m).filter(g=>g.alive!==false);if(!U.gid||!ros.some(g=>g.id===U.gid))U.gid=(ros.sort((x,y)=>effOvr(y)-effOvr(x))[0]||{}).id||null;return U}
+function pg84BtnHTML(){const w=W_(),m=me();const P=m.prog84;
+  if(P)return `<button class="btn" type="button" data-pg84="none" data-dis="One campaign at a time — cancel the one on the walls first.">🖌 Paint the programmata<small>on the walls now · ${P.until-w.week+1} week${P.until-w.week?'s':''} left</small></button>`;
+  const U=pg84UI();
+  return `<button class="btn${U.open?' on':''}" type="button" data-pg84="open" ${dis([!rosterOf(m).some(g=>g.alive!==false),'You need a fighter to feature.'],needHrs(w,PROG84.hours))}>🖌 Paint the programmata<small>${PROG84.hours} h · ${PROG84.perCity} coin a city a week · 2–4 weeks: fame, gate and fans where you fight</small></button>`}
+function pg84SetupHTML(){const w=W_(),m=me();const U=pg84UI();const n=U.weeks;
+  const fx={};for(let k=0;k<n;k++){const f=pg84Fx(w,w.week+k);if(f&&!f.bye&&LOCATIONS[f.loc])(fx[f.loc]=fx[f.loc]||[]).push(wkOf(w.week+k))}
+  const lis=LOCATIONS.map((L,i)=>L?i:null).filter(i=>i!=null);
+  lis.sort((a,b)=>((fx[a]?fx[a][0]:99)-(fx[b]?fx[b][0]:99))||pg84City(a).localeCompare(pg84City(b)));
+  const rivals=w.mgrs.filter(m2=>!m2.isPlayer&&m2.prog84&&pg84On(m2.prog84,w.week));
+  const cost=PROG84.perCity*U.cities.length;const ros=rosterOf(m).filter(g=>g.alive!==false).sort((x,y)=>effOvr(y)-effOvr(x));
+  return `<div class="pg84set"><div class="pg84h"><b>🖌 Paint the programmata</b><button class="btn tksm" type="button" data-pg84="close" title="Close">✕</button></div>
+    <div class="pg84lab">Cities <span class="rc-sub">up to ${PROG84.maxCities} · ⚔ = your league fights there</span></div>
+    <div class="pg84cities">${lis.map(li=>{const on=U.cities.includes(li);const full=!on&&U.cities.length>=PROG84.maxCities;const rv=rivals.filter(m2=>m2.prog84.cities.includes(li));
+      return `<button type="button" class="pg84c${on?' on':''}${fx[li]?' fx':''}" data-pg84="city" data-v="${li}" ${full?`data-dis="Three cities at most."`:''}><b>${esc(pg84City(li))}</b>${fx[li]?`<span>⚔ wk ${fx[li].join(', ')}</span>`:''}${rv.length?`<span class="pg84rv" title="Already on the walls">🖌 ${rv.map(m2=>esc(m2.ludus)).join(', ')}</span>`:''}</button>`}).join('')}</div>
+    <div class="pg84row"><span class="pg84lab">Weeks</span><span class="seg">${PROG84.weeks.map(k=>`<button type="button" class="${k===n?'on':''}" data-pg84="wk" data-v="${k}">${k}</button>`).join('')}</span>
+      <span class="pg84lab">Featured</span><select id="pg84g">${ros.map(g=>`<option value="${esc(g.id)}" ${g.id===U.gid?'selected':''}>${esc(g.name)}</option>`).join('')}</select></div>
+    <p class="rc-sub" style="margin:4px 0">Each week: fame +${PROG84.fame} (+${PROG84.fame+1} with Showmanship ${PROG84.showAt}+), +${Math.round(PROG84.gate*100)}% fees and purses at your bouts there, new fans for your fighter. Rivals may paint over them.</p>
+    <div class="acts"><button class="btn primary" type="button" data-pg84="go" ${dis([!U.cities.length,'Pick at least one city.'],[!U.gid,'Pick a fighter to feature.'],needHrs(w,PROG84.hours),needCoin(m,cost))}>🖌 Paint · ${cost} coin a week<small>${U.cities.length?`${cost*n} over ${n} weeks · first week now`:'pick a city'}</small></button></div></div>`}
+function pg84WallHTML(){const w=W_(),m=me();const P=m.prog84;if(!P)return '';const g=gById(P.gid);const dead=pg84Dead(P);const up=s=>esc(String(s||'').toUpperCase());
+  const weeks=[];for(let k=P.from;k<=P.until;k++){const st=P.def[k]?'def':k<w.week?'done':k===w.week?'now':'next';const who=P.def[k]&&mgrById(P.def[k]);
+    weeks.push(`<i class="pg84w ${st}" title="Week ${wkOf(k)}${st==='def'?` — painted over by ${esc(who?who.ludus:'a rival')}`:st==='now'?' — this week (paid)':st==='done'?' — done':' — to come'}">${st==='def'?'✗':''}</i>`)}
+  const left=P.until-w.week+1;
+  const cityTx=P.cities.map(pg84City).map(up).join(' · ');
+  const lines=dead?`<div class="pg84l1">D · M</div><div class="pg84l2">${up(P.gname)}</div><div class="pg84l3">FELL FOR THE FAMILIA OF ${up(m.ludus)}</div><div class="pg84l4">${cityTx} · REMEMBER HIM</div>`
+    :`<div class="pg84l1">THE FAMILIA GLADIATORIA OF</div><div class="pg84l2">${up(m.ludus)}</div><div class="pg84l3">${up(P.gname)} FIGHTS AT</div><div class="pg84l4">${cityTx} · FELICITER</div>`;
+  return `<div class="pg84wall${dead?' mem':''}" id="pg84wall"><div class="pg84plaster">${lines}</div>
+    <div class="pg84foot"><div class="pg84bar" title="${left} week${left===1?'':'s'} left">${weeks.join('')}</div>
+      <span>${dead?'✝ Memorial':'🖌 On the walls'} · ${left} week${left===1?'':'s'} left · ${P.cost} coin a week</span>
+      <span class="rc-sub">fame +${P.fame}${dead?'':` · ${P.fans}K fans`} · gate +${P.gate}</span>
+      <button class="btn tksm" type="button" data-pg84="cancel">✕ Cancel</button></div></div>`}
+function pg84PanelHTML(){const m=me();if(m.prog84)return pg84WallHTML();return MGR.pg84&&MGR.pg84.open?pg84SetupHTML():''}
+{const base=promoteCardHTML;promoteCardHTML=function(){const h=base.apply(this,arguments);try{const i=h.lastIndexOf('</div></div>');if(i<0)return h;
+  return h.slice(0,i)+pg84BtnHTML()+'</div>'+pg84PanelHTML()+'</div>'+h.slice(i+12)}catch(e){console.error(e);return h}}}
+document.addEventListener('click',async e=>{const t=e.target.closest&&e.target.closest('[data-pg84]');if(!t||!t.closest('#mgrBody'))return;if(t.hasAttribute('data-dis')||t.disabled)return;
+  e.stopPropagation();e.preventDefault();const a=t.dataset.pg84,v=t.dataset.v;const U=pg84UI();const re=()=>{if(typeof MGR_REDRAW==='function')MGR_REDRAW()};
+  if(a==='open'){U.open=!U.open;re();return}
+  if(a==='close'){U.open=false;re();return}
+  if(a==='city'){const li=+v;U.cities=U.cities.includes(li)?U.cities.filter(x=>x!==li):U.cities.length<PROG84.maxCities?[...U.cities,li]:U.cities;re();return}
+  if(a==='wk'){U.weeks=+v;re();return}
+  if(a==='go'){if(pg84Start(U.cities,U.weeks,U.gid)){U.open=false;U.cities=[];saveWorld();re();mToast(`🖌 The painters are at work in ${esc(pg84Names(me().prog84.cities))}.`)}return}
+  if(a==='cancel'){const P=me().prog84;if(!P)return;const ok=await ask76('🖌 Cancel the programmata?',`The notices in <b>${esc(pg84Names(P.cities))}</b> come down. This week's ${P.cost} coin is not refunded.`,'Cancel them','Keep');
+    if(ok&&pg84Cancel()){saveWorld();re()}return}},true);
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='pg84g'){pg84UI().gid=e.target.value}});
+/* ---- the Imperium map + the city tile ---- */
+function pg84All(){const w=typeof W_==='function'?W_():null;if(!w||!w.mgrs)return [];return w.mgrs.filter(m=>m.prog84&&pg84On(m.prog84,w.week)&&!m.dead).map(m=>({m,P:m.prog84}))}
+{const base=imperiumMapSVG;imperiumMapSVG=function(){const h=base.apply(this,arguments);try{const all=pg84All();if(!all.length)return h;const w=W_();const by={};
+  for(const {m,P} of all)for(const li of P.cities)(by[li]=by[li]||[]).push({m,P});
+  const mk=Object.entries(by).map(([li,arr])=>{const L=LOCATIONS[li];if(!L)return '';const [x,y]=MAP_PX(L.x,L.y);const mine=arr.some(o=>o.m.isPlayer);
+    const tip=arr.map(({m,P})=>`${m.isPlayer?'Your':esc(m.ludus)+'’s'} ${pg84Dead(P)?'memorial notices for':'programmata for'} ${esc(P.gname)} · ${P.until-w.week+1} wk left${P.def[w.week]?' (painted over)':''}`).join('\n');
+    return `<g class="pg84mk${mine?' mine':''}" transform="translate(${x+34} ${y+30})"><circle r="21" fill="${mine?'#f3e6c8':'#cfc6b4'}" stroke="${mine?'#a3241c':'#6b6358'}" stroke-width="4"/><text y="8" text-anchor="middle" font-size="22">🖌</text><title>🖌 ${esc(L.n)}\n${tip}</title></g>`}).join('');
+  const i=h.lastIndexOf('</svg>');return i<0?h:h.slice(0,i)+`<g class="pg84mks">${mk}</g>`+h.slice(i)}catch(e){console.error(e);return h}}}
+{const base=cityTileHTML;cityTileHTML=function(){const h=base.apply(this,arguments);try{const F=hubFocus();const L=LOCATIONS[F];const all=pg84All().filter(o=>o.P.cities.includes(F));
+  const mark='<div class="sect">🏛 The city today</div>';if(!all.length||!L||!h.includes(mark))return h;
+  const line=`<p class="rc-sub pg84city">🖌 On the walls: ${all.map(({m,P})=>`<b>${m.isPlayer?'your':esc(m.ludus)}</b> ${pg84Dead(P)?'memorial for':'notices for'} ${esc(P.gname)}`).join(' · ')}</p>`;
+  return h.replace(mark,line+mark)}catch(e){console.error(e);return h}}}
+{const st=document.createElement('style');st.textContent=`
+.pg84set{margin-top:8px;padding:8px 10px;border:1px solid var(--line,#5a4a36);border-radius:8px;background:rgba(0,0,0,.18)}
+.pg84h{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.pg84lab{font-size:12.5px;color:var(--gold2,#e6c77a);margin-right:6px}
+.pg84cities{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:5px;margin:4px 0 8px}
+.pg84c{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:5px 7px;border-radius:6px;border:1px solid #5a4a36;background:#211912;color:inherit;font:inherit;font-size:12.5px;cursor:pointer;text-align:left}
+.pg84c span{font-size:11px;opacity:.8}.pg84c.fx{border-color:#9a7a3c}.pg84c.fx span{color:#e6c77a;opacity:1}
+.pg84c.on{background:#5c1a14;border-color:#e0574a;box-shadow:0 0 0 1px #e0574a inset}.pg84c .pg84rv{color:#c9bca6}
+.pg84row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0}.pg84row select{max-width:200px}
+.pg84wall{margin-top:8px;border-radius:6px;overflow:hidden;border:1px solid #6e5a40;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.pg84plaster{position:relative;padding:14px 12px 16px;text-align:center;font-family:'Marcellus SC',Georgia,serif;color:#a3241c;
+  background:radial-gradient(ellipse at 20% 30%,rgba(255,255,255,.35),transparent 55%),radial-gradient(ellipse at 80% 70%,rgba(120,90,50,.18),transparent 60%),
+  repeating-linear-gradient(97deg,rgba(0,0,0,.025) 0 2px,transparent 2px 7px),repeating-linear-gradient(8deg,rgba(255,255,255,.04) 0 3px,transparent 3px 11px),linear-gradient(180deg,#efe2c4,#e2cfa6 70%,#d6c094);
+  border-bottom:10px solid transparent;border-image:url(${typeof assetURL==='function'?assetURL('stone_wall.webp'):'assets/stone_wall.webp'}) 30 round}
+.pg84plaster::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 12% 80%,rgba(90,60,30,.18) 0 6px,transparent 7px),radial-gradient(circle at 88% 18%,rgba(90,60,30,.14) 0 4px,transparent 5px),radial-gradient(circle at 63% 90%,rgba(90,60,30,.12) 0 9px,transparent 10px)}
+.pg84plaster div{text-shadow:0 0 1px rgba(163,36,28,.55),1px 1px 0 rgba(120,20,10,.12);line-height:1.15;word-break:break-word}
+.pg84l1{font-size:12px;letter-spacing:.18em}.pg84l2{font-size:24px;letter-spacing:.08em;margin:2px 0}.pg84l3{font-size:15px;letter-spacing:.1em}.pg84l4{font-size:13px;letter-spacing:.14em;margin-top:3px}
+.pg84wall.mem .pg84plaster{color:#2a2420;filter:saturate(.55);background:linear-gradient(180deg,#ddd3bf,#c9bda4)}
+.pg84wall.mem .pg84plaster div{text-shadow:0 0 1px rgba(30,25,20,.6)}
+.pg84foot{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:6px 10px;background:#1c1510;font-size:12.5px}
+.pg84foot .btn{margin-left:auto}
+.pg84bar{display:flex;gap:3px;flex:0 0 auto}.pg84w{display:inline-block;width:22px;height:9px;border-radius:2px;background:#3a2e22;font-style:normal;font-size:9px;line-height:9px;text-align:center;color:#fff}
+.pg84w.done{background:#8a2a20}.pg84w.now{background:#d24a3a;box-shadow:0 0 0 1px #f0cf7d}.pg84w.def{background:#6b6358}
+.pg84wall.mem .pg84w.done,.pg84wall.mem .pg84w.now{background:#7a7064}
+.pg84city{margin:2px 0 4px}
+@media (max-width:600px){.pg84l2{font-size:19px}.pg84cities{grid-template-columns:repeat(2,1fr)}}
+`;document.head.appendChild(st)}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
