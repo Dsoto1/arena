@@ -203,7 +203,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   const liveOrLast=async acct=>(await liveChar(acct))||(await store.byIndex('OWNER#'+acct))[0]||null;
 
   /* ── the Forum: FORUM | L#<ts13>#<acct4>, the last 30 shown; pushes counted per UTC day (FMETER) ── */
-  async function forumLines(){const d0=Math.floor(now()/864e5)*864e5;return (await store.query('FORUM','L#',{limit:FORUM_KEEP,desc:true})).reverse().map(strip).filter(l=>(l.at||0)>=d0)} /* v0.85: the Forum starts fresh each UTC day (TTL deletion is lazy) */
+  async function forumLines(){const t=now(),d0=Math.min(Math.floor(t/864e5)*864e5,t-18e5);return (await store.query('FORUM','L#',{limit:FORUM_KEEP,desc:true})).reverse().map(strip).filter(l=>(l.at||0)>=d0)} /* v0.85: the Forum starts fresh each UTC day; lines from the last 30 min linger past midnight (TTL deletion is lazy) */
   async function forumPut(line){const at=now();line={...line,at};await store.put('FORUM','L#'+ts13(at)+'#'+String(line.by||'x').slice(-4),{...line,...(line.row?{row:tinyRow(line.row)}:{}),ttl:ttl(1)});return line}
   /* the daily meter: true while pushes may go out (the lines are stored either way) */
   async function meterOK(n){if(!n)return false;const day=new Date(now()).toISOString().slice(0,10);return (await store.counter('WORLD','FMETER#'+day,'n',n))<C.RATE.meterDay}

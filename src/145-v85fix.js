@@ -39,6 +39,10 @@
        the pick is remembered in localStorage flavius_pl85; tabs switch locally, no redraw) · Familia · Ludi Infames.
        The original cards stay inside (hidden ones display:none), so every button keeps its handler. Phones keep
        the sideways scroll.
+  14 · ONLINE landing: the Forum keeps lines from the last 30 minutes past midnight (12 · grace); the stage's Orbis map
+       zooms in on YOUR time zone (×2.2 around it; the 🔍 large view still shows the whole world), your own place is a
+       light-blue dot (also on the large map); the gladiator figure leaves the landing (the Domus shows your
+       gladiators); the "N lanistas online · … 🔍" line moves to the stage's bottom right.
    ===================================================================== */
 const FIX85={offering:0};
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mg="offer"]');if(!b)return;FIX85.offering++;setTimeout(()=>{FIX85.offering=Math.max(0,FIX85.offering-1)},0)},true);
@@ -153,9 +157,9 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   try{col.innerHTML=detailHTML(g)}catch(err){console.error(err);if(typeof MGR_REDRAW==='function')MGR_REDRAW()}},true);
 
 /* 12 · the Forum starts fresh each UTC day */
-const day0_85=()=>Math.floor(Date.now()/864e5)*864e5;
+const day0_85=()=>{const t=Date.now();return Math.min(Math.floor(t/864e5)*864e5,t-18e5)} /* lines from the last 30 min linger past midnight */;
 if(typeof onlFeedHTML80==='function'){const base=onlFeedHTML80;onlFeedHTML80=function(){const d0=day0_85();try{if(typeof ONLF!=='undefined'){if(Array.isArray(ONLF.lines))ONLF.lines=ONLF.lines.filter(l=>!l.at||l.at>=d0);if(Array.isArray(ONLF.local))ONLF.local=ONLF.local.filter(l=>!l.at||l.at>=d0)}}catch(e){}return base.apply(this,arguments)}}
-if(typeof MOCK_ROUTES!=='undefined'){const today=a=>Array.isArray(a)?a.filter(l=>!l.at||l.at>=Math.floor((typeof mockNow==='function'?mockNow():Date.now())/864e5)*864e5):a;
+if(typeof MOCK_ROUTES!=='undefined'){const today=a=>Array.isArray(a)?a.filter(l=>{const t=typeof mockNow==='function'?mockNow():Date.now();return !l.at||l.at>=Math.min(Math.floor(t/864e5)*864e5,t-18e5)}):a;
   for(const k of ['forum.get','hello']){const base=MOCK_ROUTES[k];if(typeof base!=='function')continue;MOCK_ROUTES[k]=function(){const r=base.apply(this,arguments);const fix=o=>{if(k==='forum.get')return today(o);if(o&&Array.isArray(o.forum))o.forum=today(o.forum);return o};return r&&typeof r.then==='function'?r.then(fix):fix(r)}}}
 
 /* 13 · the playlist row: This week | Classic (tabbed) | Familia | Ludi Infames */
@@ -186,3 +190,16 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 #onl .pl85body{flex:1;display:flex;width:100%}#onl .pl85body>.onl-pl{flex:1;width:100%;max-width:none!important;border-top-left-radius:0;border-top-right-radius:0;margin:0}
 #onl .pl85c.pl85off{display:none!important}
 @media (max-width:760px){#onl .onl-pls81.pl85row{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory}#onl .pl85row>*{flex:0 0 min(82%,300px);scroll-snap-align:start}#onl .pl85row .pl85div{display:none}}`;document.head.appendChild(st)}
+
+/* 14 · the landing: the map zooms in on you, your own blue dot, no figure, the online line bottom right */
+function myTz85(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC'}catch(e){return 'UTC'}}
+function myXY85(){try{const xy=typeof onlTzXY==='function'&&onlTzXY(myTz85());return xy||null}catch(e){return null}}
+if(typeof onlDots80==='function'){const base=onlDots80;onlDots80=function(k){let h=base.apply(this,arguments);try{const xy=myXY85();if(xy)h+=`<i class="omap-me85" style="left:${(xy[0]*100).toFixed(2)}%;top:${(xy[1]*100).toFixed(2)}%" title="You are here"></i>`}catch(e){}return h}}
+if(typeof onlStageMap81==='function'){const base=onlStageMap81;onlStageMap81=function(){let h=base.apply(this,arguments);try{const xy=myXY85()||(typeof onlTzXY==='function'&&onlTzXY('Europe/Rome'))||[.53,.27];if(xy)h=h.replace('<div class="omap-in"></div>',`<div class="smap85z" style="transform-origin:${(xy[0]*100).toFixed(1)}% ${(xy[1]*100).toFixed(1)}%;transform:translate(${((.66-xy[0])*100).toFixed(1)}%,${((.42-xy[1])*100).toFixed(1)}%) scale(2.2)"><div class="omap-in"></div>`).replace(/(<div class="omap-dots"[\s\S]*?<\/div>)<\/div>$/,'$1</div></div>')}catch(e){}return h}}
+{const st=document.createElement('style');st.textContent=`
+.smap81{overflow:hidden}.smap85z{position:absolute;inset:0;transform:scale(2.2)}
+.omap-me85{position:absolute;width:12px;height:12px;border-radius:50%;transform:translate(-50%,-50%);background:#7fd3ff;box-shadow:0 0 0 2px rgba(10,30,50,.85),0 0 14px 4px rgba(127,211,255,.75);z-index:3;pointer-events:none}
+.smap85z .omap-me85{width:7px;height:7px;background:#9fe0ff;box-shadow:0 0 0 1px rgba(10,30,50,.9),0 0 8px 3px rgba(127,211,255,.9);animation:me85 2.4s ease-in-out infinite}@keyframes me85{0%,100%{opacity:.85}50%{opacity:1}}body.calm .omap-me85{animation:none}
+#onl .onl-stage81 .onl-fig79{display:none!important}
+#onl .onl-stage81 .scap81{position:absolute!important;right:14px;bottom:12px;margin:0;z-index:2;background:rgba(18,12,7,.72);padding:3px 8px;border-radius:8px}
+@media (max-width:760px){#onl .onl-stage81 .scap81{position:static!important;align-self:center}}`;document.head.appendChild(st)}
