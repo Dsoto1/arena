@@ -2,47 +2,91 @@
  "gladius": {
   "kind": "w",
   "lv": 1,
-  "n": "Gladius"
+  "n": "Gladius",
+  "p": 1,
+  "r": 1,
+  "img": 0
  },
  "mace": {
   "kind": "w",
   "lv": 1,
-  "n": "Mace"
+  "n": "Mace",
+  "p": 1,
+  "r": 1,
+  "img": 1
  },
  "sica": {
   "kind": "w",
   "lv": 1,
-  "n": "Sica"
+  "n": "Sica",
+  "p": 1,
+  "r": 1,
+  "img": 2
  },
  "hasta": {
   "kind": "w",
   "lv": 1,
-  "n": "Hasta"
+  "n": "Hasta",
+  "p": 1,
+  "r": 2,
+  "img": 3,
+  "throw": {
+   "p": 2,
+   "r": 4,
+   "n": 1
+  }
  },
  "stones": {
   "kind": "w",
   "lv": 1,
-  "n": "Stones"
+  "n": "Stones",
+  "p": 1,
+  "r": 2,
+  "ammo": 3,
+  "img": 4
  },
  "thracian": {
   "kind": "w",
   "lv": 1,
-  "n": "Thracian Shield"
+  "n": "Thracian Shield",
+  "p": 0,
+  "r": 0,
+  "shield": 1,
+  "absorb": 1,
+  "uses": 3,
+  "img": 5
  },
  "knives": {
   "kind": "w",
   "lv": 1,
-  "n": "Knives"
+  "n": "Knives",
+  "p": 1,
+  "r": 3,
+  "ammo": 4,
+  "img": 6
  },
  "trident": {
   "kind": "w",
   "lv": 1,
-  "n": "Trident"
+  "n": "Trident",
+  "p": 1,
+  "r": 2,
+  "img": 7,
+  "throw": {
+   "p": 2,
+   "r": 4,
+   "n": 1
+  }
  },
  "rudis": {
   "kind": "w",
   "lv": 1,
-  "n": "Rudis"
+  "n": "Rudis",
+  "p": 1,
+  "r": 1,
+  "cfw": 1,
+  "atkUses": 6,
+  "img": 8
  },
  "galea": {
   "kind": "a",
@@ -110,37 +154,70 @@
  "axe": {
   "kind": "w",
   "lv": 2,
-  "n": "Axe"
+  "n": "Axe",
+  "p": 2,
+  "r": 1,
+  "img": 11,
+  "throw": {
+   "p": 2,
+   "r": 3,
+   "n": 1
+  }
  },
  "falcata": {
   "kind": "w",
   "lv": 2,
-  "n": "Falcata"
+  "n": "Falcata",
+  "p": 2,
+  "r": 1,
+  "img": 12
  },
  "bow": {
   "kind": "w",
   "lv": 2,
-  "n": "Parthian Bow"
+  "n": "Parthian Bow",
+  "p": 1,
+  "r": 5,
+  "ammo": 5,
+  "img": 13
  },
  "pugio": {
   "kind": "w",
   "lv": 2,
-  "n": "Royal Dagger"
+  "n": "Royal Dagger",
+  "p": 2,
+  "r": 1,
+  "img": 14
  },
  "scissor": {
   "kind": "w",
   "lv": 2,
-  "n": "Scissor"
+  "n": "Scissor",
+  "p": 1,
+  "r": 1,
+  "cfw": 1,
+  "img": 15
  },
  "scutum": {
   "kind": "w",
   "lv": 2,
-  "n": "Scutum Shield"
+  "n": "Scutum Shield",
+  "p": 0,
+  "r": 0,
+  "shield": 1,
+  "absorb": 2,
+  "uses": 4,
+  "img": 16
  },
  "sling": {
   "kind": "w",
   "lv": 2,
-  "n": "Stone Sling"
+  "n": "Stone Sling",
+  "p": 1,
+  "r": 5,
+  "ammo": 4,
+  "stones": 1,
+  "img": 17
  },
  "cassis": {
   "kind": "a",
@@ -236,32 +313,61 @@
  "arcu": {
   "kind": "w",
   "lv": 3,
-  "n": "Arcuballista"
+  "n": "Arcuballista",
+  "p": 2,
+  "r": 5,
+  "ammo": 6,
+  "img": 18
  },
  "charun": {
   "kind": "w",
   "lv": 3,
-  "n": "Charun"
+  "n": "Charun",
+  "p": 4,
+  "r": 2,
+  "img": 19
  },
  "flavgl": {
   "kind": "w",
   "lv": 3,
-  "n": "Gladius of Flavius"
+  "n": "Gladius of Flavius",
+  "p": 4,
+  "r": 1,
+  "img": 20
  },
  "jade": {
   "kind": "w",
   "lv": 3,
-  "n": "Jade Spear"
+  "n": "Jade Spear",
+  "p": 3,
+  "r": 2,
+  "img": 21,
+  "throw": {
+   "p": 4,
+   "r": 4,
+   "n": 3
+  }
  },
  "flail": {
   "kind": "w",
   "lv": 3,
-  "n": "Tri-Ball Flail"
+  "n": "Tri-Ball Flail",
+  "p": 4,
+  "r": 2,
+  "img": 22
  },
  "pilum": {
   "kind": "w",
   "lv": 3,
-  "n": "Weighted Pilum"
+  "n": "Weighted Pilum",
+  "p": 2,
+  "r": 2,
+  "img": 23,
+  "throw": {
+   "p": 3,
+   "r": 4,
+   "n": 6
+  }
  },
  "flavhelm": {
   "kind": "a",

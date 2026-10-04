@@ -4,7 +4,7 @@ const assert=require('assert');const path=require('path');const crypto=require('
 const {makeRoutes}=require('../src/routes.js');const store=require('../src/store.js');const catalog=require('../src/catalog.json');const C=require('../src/onlcore.js');const {verify}=require('../src/jwt.js');
 (async()=>{
   const db=store.memory();const pushed=[];let t=1700000000000;
-  const route=makeRoutes({store:db,push:async(a,ty,d)=>pushed.push([a,ty,d]),catalog,now:()=>(t+=1000),dev:true});
+  const route=makeRoutes({store:db,push:async(a,ty,d)=>pushed.push([a,ty,d]),catalog,now:()=>(t+=1000),dev:true,countdown:0});
   const A={acct:'dev-a'},B={acct:'dev-b'};
   /* v0.82: every lanista founds a house before any gladiator */
   const sign=async(ctx,name)=>{await route('auth.signin',{name},ctx);await route('domus.create',{name:'Domus '+name},ctx)};
@@ -48,7 +48,7 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   const ra=await route('match.result',{id:L.id,table,hash:'h1'},A);assert.ok(ra.pending,'waits for the other report');
   const rb=await route('match.result',{id:L.id,table,hash:'h1'},B);
   assert.ok(!rb.void);assert.ok(!rb.out.died);assert.strictEqual(rb.char.survived,1);assert.strictEqual(rb.char.streak,1);assert.strictEqual(rb.char.stats.spd+rb.char.stats.str+rb.char.stats.int+rb.char.stats.lck+rb.char.stats.cha,275+2,'+1 survived, +1 won');
-  assert.strictEqual(rb.char.wallet,30+6+10,'v0.82: the Tiro award ×1.5 for the win, ×0.5 at two lanistas (no coin carried out) + the pool back');
+  assert.strictEqual(rb.char.wallet,30+5+10,'v0.82: the Tiro award ×1.5 for the win, ×0.5 at two lanistas (no coin carried out) + the pool back; v0.83: 1 of the 6 to the house treasury');
   assert.ok(pushed.some(([a,ty,d])=>a==='dev-a'&&ty==='match.settled'&&d.out&&d.out.died),'A hears the verdict');
   assert.ok(!(await db.get('CHAR#'+ca.id,'CHAR')).alive,'A is dead');assert.strictEqual((await route('hall.list',{},A)).length,0,'a fallen Tiro is forgotten');
   assert.strictEqual((await db.get('LOBBY#'+L.id,'LOBBY')).status,'done');
@@ -123,7 +123,7 @@ async function v80(){
   const {makeHandler}=require('../src/index.js');
   let T=1800000000000;const db=store.memory();const sent=[];const live=new Set();
   const send=async(conn,msg)=>{if(!live.has(conn))return true;sent.push({conn,msg});return false};
-  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0});
+  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0,countdown:0});
   let nc=0,rid=0;
   const connect=async name=>{const conn='c'+(++nc);live.add(conn);const r=await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER)}});assert.strictEqual(r.statusCode,200);return conn};
   const disconnect=async conn=>{live.delete(conn);await h({requestContext:{routeKey:'$disconnect',connectionId:conn}})};
@@ -276,7 +276,7 @@ async function v80b(){
   const {makeHandler}=require('../src/index.js');
   let T=1800000000000;const db=store.memory();const sent=[];const live=new Set();
   const send=async(conn,msg)=>{if(!live.has(conn))return true;sent.push({conn,msg});return false};
-  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0});
+  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0,countdown:0});
   let nc=0,rid=0;const mark=()=>sent.length;
   const connect=async name=>{const conn='k'+(++nc);live.add(conn);await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER)}});return conn};
   async function client(name,o={}){const cl={name,acct:'dev-'+name};cl.conn=await connect(name);
@@ -318,7 +318,7 @@ async function v80b(){
   for(const x of [ann,bob,cat,dan])assert.strictEqual((await getC(x.ch.id)).bouts,x===bob?41:x===cat?8:1,'one result each: '+x.name);
   assert.ok(!(await ann.req('hello',{all:1})).live,'free again');
   let td=(await dan.req('hello',{all:1})).today;assert.strictEqual(td.day,'today');assert.strictEqual(td.wins[0].name,'Ann Gladius');assert.strictEqual(td.wins[0].cf,34);assert.strictEqual(td.wins[0].ev,'democritus');assert.strictEqual(td.wins[0].rank,'tiro');
-  assert.strictEqual(td.upsets.length,1);assert.deepStrictEqual([td.upsets[0].w.name,td.upsets[0].l.name,td.upsets[0].l.rank,td.upsets[0].gap],['Ann Gladius','Bob Gladius','primus',3]);assert.deepStrictEqual(td.fallen,[]);
+  assert.strictEqual(td.upsets.length,1);assert.deepStrictEqual([td.upsets[0].w.name,td.upsets[0].l.name,td.upsets[0].l.rank,td.upsets[0].gap],['Ann Gladius','Bob Gladius','primus',4]);assert.deepStrictEqual(td.fallen,[]);
   /* Ranked: a death by the Fate, then an abandoned Ranked gladiator (Damnatio) — the best rank first */
   const eve=await client('eve'),fay=await client('fay'),gus=await client('gus');
   let R=await eve.req('lobby.create',{ranked:true,ev:'cassian',cry:false});await fay.req('lobby.join',{id:R.id});await gus.req('lobby.join',{id:R.id});R=await eve.req('lobby.start',{id:R.id});
@@ -339,7 +339,7 @@ async function v80b(){
   T+=86400e3;td=(await dan.req('hello',{all:1})).today;assert.strictEqual(td.day,'today');assert.deepStrictEqual([td.wins.length,td.fallen.length,td.upsets.length],[0,0,0]);
   /* Find me a fight: two presses whose new rooms the (eventually consistent) room index cannot show yet still meet in one room */
   {const db2=store.memory();const lag={...db2,byIndex:async g=>g==='LOBBIES'?[]:db2.byIndex(g)};const sent2=[];const live2=new Set();
-    const h2=makeHandler({db:lag,send:async(conn,msg)=>{if(!live2.has(conn))return true;sent2.push({conn,msg});return false},dev:true,verifyCfg:{},now:()=>T,hereMs:0});let r2=0;
+    const h2=makeHandler({db:lag,send:async(conn,msg)=>{if(!live2.has(conn))return true;sent2.push({conn,msg});return false},dev:true,verifyCfg:{},now:()=>T,hereMs:0,countdown:0});let r2=0;
     const cl2=async name=>{const conn='q'+name;live2.add(conn);await h2({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER)}});
       const req=async(t,d)=>{T+=10;const id=++r2;await h2({requestContext:{routeKey:'$default',connectionId:conn},body:JSON.stringify({t,id,d})});const m=sent2.find(x=>x.conn===conn&&x.msg.re===id);if(!m.msg.ok)throw new Error(m.msg.err);return m.msg.d};
       await req('auth.signin',{name});await req('domus.create',{name:'Domus '+name});await req('char.create',{name:name+' Gladius',cls:'hero'});return req};
@@ -358,7 +358,7 @@ async function v82(){
   const {makeHandler}=require('../src/index.js');
   let T=1900000000000;const db=store.memory();const sent=[];const live=new Set();
   const send=async(conn,msg)=>{if(!live.has(conn))return true;sent.push({conn,msg});return false};
-  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0});
+  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0,countdown:0});
   let nc=0,rid=0;const mark=()=>sent.length;
   const ask=async(conn,t,d)=>{T+=10;const id=++rid;await h({requestContext:{routeKey:'$default',connectionId:conn},body:JSON.stringify({t,id,d})});const m=sent.find(x=>x.conn===conn&&x.msg.re===id);if(!m)throw new Error('no reply to '+t);
     if(!m.msg.ok){const e=new Error(m.msg.err);e.code=m.msg.code;e.reply=m.msg;throw e}return m.msg.d};
@@ -371,7 +371,7 @@ async function v82(){
   const getC=id=>db.get('CHAR#'+id,'CHAR');const setC=async(id,f)=>{const c=await getC(id);Object.assign(c,f);await db.put('CHAR#'+id,'CHAR',c)};
   const getD=id=>db.get('DOMUS#'+id,'DOMUS');
   /* old protocol: refused */
-  {const r=await h({requestContext:{routeKey:'$connect',connectionId:'old'},queryStringParameters:{dev:'x',ver:'4'}});assert.strictEqual(r.statusCode,426,'protocol 4 clients reload');assert.strictEqual(C.VER,5)}
+  {const r=await h({requestContext:{routeKey:'$connect',connectionId:'old'},queryStringParameters:{dev:'x',ver:'4'}});assert.strictEqual(r.statusCode,426,'protocol 4 clients reload');assert.ok(C.VER>=5)}
 
   /* ── 1. DOMUS ── */
   const lan=await client('lan',{domus:false,glad:false});let hl=await lan.req('hello',{all:1});assert.strictEqual(hl.needDomus,true);assert.strictEqual(hl.domus,null);
@@ -410,7 +410,7 @@ async function v82(){
   const actL=(await lan.req('hello',{all:1})).active;await setC(actL,{streak:3,wallet:5});const w0=(await getC(nan.ch.id)).wallet;
   const rt=RR.players.map((p,i)=>({seat:i,won:p.id===lan.acct,place:p.id===lan.acct?1:2,f:p.id===lan.acct?30:7,coin:60,survives:true}));
   for(const x of [lan,nan])await x.req('match.result',{id:RR.id,table:rt,hash:'d'});
-  assert.strictEqual((await getC(actL)).wallet,5+Math.round(8*1.5*1.3*0.5),'Tiro win with a streak of 3, two lanistas: 8 ×1.5 ×1.3 ×0.5 (carried coin is never paid)');assert.strictEqual((await getC(nan.ch.id)).wallet,w0+4,'Tiro survivor, two lanistas: 8 ×0.5');
+  const aw=Math.round(8*1.5*1.3*0.5);assert.strictEqual((await getC(actL)).wallet,5+aw-Math.round(aw*0.2),'Tiro win with a streak of 3, two lanistas: 8 ×1.5 ×1.3 ×0.5 (carried coin is never paid); v0.83: 20% to the treasury');assert.strictEqual((await getC(nan.ch.id)).wallet,w0+3,'Tiro survivor, two lanistas: 8 ×0.5, one to the treasury');
   assert.strictEqual((await getC(nan.ch.id)).glory,(7+12)*0.5,'Glory at the table factor: (7 CF + 12 survived) ×0.5');assert.strictEqual((await getC(actL)).glory,(30+12+8)*0.5,'a win adds 8');
   const hd=(await lan.req('domus.get',{})).domus;assert.deepStrictEqual([hd.bouts,hd.wins,hd.survived,hd.fallen,hd.lifeCF],[1,1,1,0,30],'the house record');
   /* Custom pays no coin */
@@ -420,7 +420,7 @@ async function v82(){
 
   /* ── 2. the award table (ONLC) ── */
   const mk=(rank,o)=>({...C.newChar({name:'Tester',cls:'hero'},'x','t',0),rank,...o});
-  const pay=(rank,row,ranked,o)=>C.applyResult(mk(rank,o),{place:1,f:10,coin:99,survives:true,...row},ranked).pay;
+  const pay=(rank,row,ranked,o)=>C.applyResult(mk(rank,o),{place:1,f:10,coin:99,survives:true,...row},ranked).award; /* v0.83: award = the gladiator's pay + the treasury's cut */
   assert.deepStrictEqual(['tiro','gregarius','veteranus','primus','summa'].map(r=>C.awardOf(r,false,0)),[8,12,18,25,35]);
   assert.strictEqual(pay('tiro',{won:false},true),8);assert.strictEqual(pay('tiro',{won:true},true),12,'+50% for a win');
   assert.strictEqual(pay('gregarius',{won:true},true,{survived:6,lifeCF:90,streak:3}),Math.round(12*1.5*1.3),'the streak is kept');
@@ -428,10 +428,10 @@ async function v82(){
   assert.strictEqual(pay('primus',{won:true},false,{survived:35,lifeCF:650}),0,'Custom pays nothing');assert.strictEqual(pay('tiro',{won:false,survives:false},true),0,'the dead are not paid');
   assert.ok(!('PURSE' in C),'the old purse table is gone');
   /* ── 2b. GLORY, no demotion, the table-size factor, living counts by rank ── */
-  assert.deepStrictEqual(C.RANKS.map(r=>r.glory),[0,180,550,1150,2100]);assert.deepStrictEqual([2,3,4,5].map(C.tableFactor),[0.5,0.75,1,1]);
+  assert.deepStrictEqual(C.RANKS.map(r=>r.glory),[0,90,180,550,1150,2100,3500,5500]);assert.deepStrictEqual([2,3,4,5].map(C.tableFactor),[0.5,0.75,1,1]);
   const gl=C.newChar({name:'Glory Seeker',cls:'hero'},'x','gs',0);assert.strictEqual(C.gloryOf(gl),0);assert.strictEqual(C.rankFor(gl).k,'tiro');
-  let go=C.applyResult(gl,{won:true,place:1,f:40,survives:true},true,{humans:3});assert.strictEqual(go.pay,Math.round(12*0.75),'Tiro win at three lanistas');assert.strictEqual(gl.glory,(40+12+8)*0.75);assert.strictEqual(go.glory,45);
-  gl.glory=179.5;go=C.applyResult(gl,{won:false,place:2,f:0,survives:true},false,{humans:4});assert.strictEqual(gl.glory,179.5,'Custom with no CF adds nothing');assert.strictEqual(C.rankFor(gl).k,'tiro');
+  let go=C.applyResult(gl,{won:true,place:1,f:40,survives:true},true,{humans:3});assert.strictEqual(go.award,Math.round(12*0.75),'Tiro win at three lanistas');assert.strictEqual(gl.glory,(40+12+8)*0.75);assert.strictEqual(go.glory,45);
+  gl.glory=179.5;go=C.applyResult(gl,{won:false,place:2,f:0,survives:true},false,{humans:4});assert.strictEqual(gl.glory,179.5,'Custom with no CF adds nothing');assert.strictEqual(C.rankFor(gl).k,'novicius');
   go=C.applyResult(gl,{won:false,place:2,f:1,survives:true},false,{humans:2});assert.strictEqual(gl.glory,180);assert.strictEqual(go.rankUp,'gregarius');assert.strictEqual(gl.rankK,'gregarius');
   gl.glory=50;assert.strictEqual(C.rankFor(gl).k,'gregarius','never demoted');assert.strictEqual(C.rankProgress(gl),0);
   const og=C.newChar({name:'Old Timer',cls:'hero'},'x','ot',0);delete og.glory;delete og.rwins;delete og.rankK;Object.assign(og,{survived:20,lifeCF:300,wins:5,rank:'veteranus'});
@@ -453,7 +453,7 @@ async function v82(){
   mv=await nan.req('domus.move',{item:'galea',from:n2.id,to:'house'});assert.deepStrictEqual(mv.to.gear,['galea']);assert.deepStrictEqual((await nan.req('domus.get',{})).gear,['galea'],'the house keeps it');
   mv=await nan.req('domus.move',{item:'galea',from:'house',to:nan.ch.id});assert.ok(mv.to.gear.includes('galea'));
   const nD=(await nan.req('domus.get',{})).domus;const DD=await getD(nD.id);DD.gear=['cassis'];await db.put('DOMUS#'+nD.id,'DOMUS',DD);
-  await rejects(nan.req('domus.move',{item:'cassis',from:'house',to:n2.id}),null,/up to level 1/);await rejects(nan.req('domus.move',{item:'galea',from:n2.id,to:'house'}),null,/not there/);
+  mv=await nan.req('domus.move',{item:'cassis',from:'house',to:n2.id});assert.ok(mv.to.gear.includes('cassis'),'v0.83: any rank carries (and brings) printed pieces of every level');await rejects(nan.req('domus.move',{item:'galea',from:n2.id,to:'house'}),null,/not there/);
   let eqc=await nan.req('domus.equip',{char:nan.ch.id,item:'galea',on:false});assert.ok(!C.equipOf(eqc).includes('galea')&&eqc.gear.includes('galea'),'untick: stays home');
   eqc=await nan.req('domus.equip',{char:nan.ch.id,item:'galea',on:true});assert.ok(C.equipOf(eqc).includes('galea'),'tick: brought');
   const actN=(await nan.req('hello',{all:1})).active;const SR=await nan.req('lobby.create',{ev:'democritus',cry:false});
