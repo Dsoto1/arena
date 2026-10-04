@@ -851,6 +851,12 @@ share copy — the site download play/flavius-rule-arena.zip.)
   featured fighter gains fans/crowd favour; rivals deface notices (chance to lose a week, likelier from bitter rivals) and run their own;
   a featured fighter's death turns the notices into a memorial (fame, no more fans). Painted-wall card (red letters) + Imperium map marks.
   Also decided (same message): a house gift's CF bonus with no living gladiator → 8 coin a point into the treasury (as built in v0.83).
+- **FAITH (his answers 2026-10-04, v0.85 — wait for his go; open: Q10 sentence, Q11 martyr, confirm 5a+b+c):** every fighter is PAGAN or
+  CHRISTIAN (no other cults); Christians are rolled at creation only (~1 in 10, no conversions); faith is OPEN on the record; pagan temple
+  offerings give Christians no boost; perk = morale bonds between believers in the ludus; risks = some cities' crowds jeer (less crowd
+  favour), a governor's EDICT (sporadic city persecutions: a Christian may be condemned — hide him (sit out), bribe, or let him face it;
+  the sentence uses the printed Damnatio Fates Ad Flamma / Ad Bestias), a rival house may DENOUNCE him (rivalries trigger the edict);
+  Manager + a faith field on Studio characters (Play Now); never online; memorial wall mark = ✝ for Christians, D · M for pagans.
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
