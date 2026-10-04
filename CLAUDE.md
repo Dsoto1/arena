@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.84**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.85**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -65,7 +65,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Module ordering matters: a wrapper only sees wrappers installed before it.
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
   `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
-  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`, `126-v82fix`, `127-v82onl`, `128-v82stands`, `129-v82beasts`, `130-v82vis`, `131-v83council`, `132-v83arrows`, `134-v83spikes`, `135-v83chest`, `136-v83sand`, `133-v83onl`, `137-v83onlui`, `139-v84onl`, `138-v84`, `140-v84prog`, `142-v84ui`, `143-v84roster` (build order as listed).
+  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`, `126-v82fix`, `127-v82onl`, `128-v82stands`, `129-v82beasts`, `130-v82vis`, `131-v83council`, `132-v83arrows`, `134-v83spikes`, `135-v83chest`, `136-v83sand`, `133-v83onl`, `137-v83onlui`, `139-v84onl`, `138-v84`, `140-v84prog`, `142-v84ui`, `143-v84roster`, `141-v85faith`, `144-v85rec`, `145-v85fix`, `146-v85land`, `147-v85music` (build order as listed).
   Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
 
 ### Core globals (engine)
@@ -560,6 +560,15 @@ One global script; files are concatenated in order. Later "version modules" patc
   confirm, Restore all defaults; Spikes picker KEPT — the 3D caps use THEME.spike) + Online landing fits without scrolling (≥1300×900).
   `143-v84roster` — depth chart = barracks wall (plaques, empty columns as posts). Menu: Manager under Play Now, 💾 Saves before Settings;
   online wagers wear 💰. Tests `tv84`, `tv84p`, `tv84u`, `tv84r`, `tonl84`.
+- **v0.85 (141, 144-147 + server, no protocol bump):** `141-v85faith` — FAITH (`FAITH85`: ~10% Christian by id hash, ✝ chip, no temple
+  boost, believers' morale bond, jeering cities, edicts/denunciations → Hide/Bribe/Face/Refuse, hidden EVENTS.bestias85 bout with other condemned,
+  Ad Flamma, martyrs, Studio faith field, `faithMark85`). `144-v85rec` — recruiting tidy (plan line, wall of tablets with 📌 + one-line next steps +
+  topic tags + ★ advised, one-line list, 🆕 this week only, local card swaps, "the lanista's hours"). `145-v85fix` — his v0.84 notes: free agent
+  preview no longer favorites (offerVerdict), Match Week walks in the Road box, banner BOUT TRACKER (`bt85X` rudes/iron/golden gladii), road deals
+  enter the fighter (`dealBout85`), ludus banner flag, road wounds don't nag, "Cost: N coin", no Start-next-week on the Acta, rail ovals by room +
+  Match Week bouts-left, card steps swap locally, Forum day reset + 30-min grace, playlist row, stage map zoomed on you (`myXY85`, light-blue dot),
+  no landing figure, online count bottom right. `146-v85land` — Online landing II (see §8). `147-v85music` — the five-letter music word, CONTRABANDUS
+  (AUD_THEMES.Online, AUD_FN.contra) while Online is open. Readability pass 08–25 merged. Tests `tv85f`, `tv85r`, `tv85x`, `tv85m`, `tv85l`.
 - **Guide data:** `SIM50` in 53-guide50 is regenerated by `node tools/simguide.js flavius-arena.html 600` (SIMVER env);
   it includes `perk` (wins by rating perk), charted by 69-v56.
 - **Music:** procedural Web Audio (21-audio, 45-music, 16 themes; unlocked by winning in cities). Play Now plays a
@@ -716,6 +725,9 @@ share copy — the site download play/flavius-rule-arena.zip.)
   council letters; blood/dust/rubble; one tab per save; backup nudges; translate-safe; Settings tidy; landing fits; Roster as the barracks wall.
   (Published as artifact Version 98; server zip flavius-server-11, protocol 7 — deploy FIRST; game zip flavius-site-update-v0.84.)
   Release run: 151/151; the 16 tests written since v0.81 were missing from runreg's DEFAULT list — added (13 pass, tv81o/tonl84/tv82o flaky).
+
+- **v0.85** faith (edicts, ad bestias, martyrs); recruiting as a wall of tablets; Match Week bout tracker + walks in the Road box; online landing II
+  (playlists grid, biggest winner/loser, Party button, 8 PM New York day); Contrabandus; many fixes from his v0.84 notes. (Server zip flavius-server-12.)
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
