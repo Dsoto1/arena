@@ -727,7 +727,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
   Release run: 151/151; the 16 tests written since v0.81 were missing from runreg's DEFAULT list — added (13 pass, tv81o/tonl84/tv82o flaky).
 
 - **v0.85** faith (edicts, ad bestias, martyrs); recruiting as a wall of tablets; Match Week bout tracker + walks in the Road box; online landing II
-  (playlists grid, biggest winner/loser, Party button, 8 PM New York day); Ave Arena (his Online theme); many fixes from his v0.84 notes. (Server zip flavius-server-12.)
+  (playlists grid, biggest winner/loser, Party button, 8 PM New York day); Ave Arena (his Online theme); many fixes from his v0.84 notes. (Published as artifact Version 99; server zip flavius-server-12, no protocol bump —
+  deploy it FIRST; game zip flavius-site-update-v0.85.) Release run: 169/172 + tv64/tv82o/tlive flaky (passed alone).
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
