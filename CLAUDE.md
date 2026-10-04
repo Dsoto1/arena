@@ -888,10 +888,17 @@ share copy — the site download play/flavius-rule-arena.zip.)
   empty lanes = narrow posts, names fit); free-agent list rows on ONE line; 🆕 only for this week's arrivals; detail card before scouting
   = one "Ratings: scout to see" line; hours shown in banner + rail only; the advisor's pick = ★ on the right button (no separate box);
   filters in one toolbar optional; PHONES: recruit cards/tablets must not skew or squash (check 390 portrait + landscape).
+  Board card buttons: next step on ONE line (label · cost), ⋯ a small square icon. HOURS (his pick 1): the weekly pool is "The lanista's
+  hours" — shown on Recruiting AND Promote (Feast/criers/programmata draw on it), costs unchanged.
 - **ROADMAP (his picks 2026-10-04):** v0.84 = release now (he tests it and sends notes); v0.85 = faith batch (branch ready) + recruiting
   tidy + readability pass + his v0.84 notes — START RIGHT AFTER v0.84 IS PUBLISHED; v0.86 = BUILT-IN SPANISH (one string table, GAME_TERMS
   stay English, live Language switch + first-run prompt for Spanish browsers, hover/long-press panels on English-art cards/tokens,
   a test walking the screens in Spanish for leftover English + overflow); then one language per release.
+- **RECRUITING II (his yes 2026-10-04, v0.87):** (1) decision deadline + the rival house's counter-bid in the last week (Recruiter letter:
+  match / outbid on another want / walk away); (2) each fighter has 1–2 WANTS (coin, arena time, fame, rudis path, home city, a friend in
+  the house) revealed by scouting — pitches on a want gain big, the button previews the gain; (3) progressive scouting: ratings as ranges
+  that narrow (ask around < watch train < scout / trial = exact); (5) the weekly plan becomes a real planner (assign hours by priority,
+  resolves at the week's end with a report letter; direct clicks still work).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 

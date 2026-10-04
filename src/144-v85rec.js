@@ -36,11 +36,6 @@
 const isNew85=g=>{const w=W_();return !!(w&&g&&g.debut&&g.debut.wk===w.week&&w.week>1)};
 {const base=gTags;gTags=function(g){let h=base.apply(this,arguments);try{h=h.replace(/<span class="badge good" title="Arrived in the league this week or last">🆕 new<\/span>/,'');
   if(isNew85(g))h+='<span class="badge good new85" title="Arrived in the league this week">🆕 new</span>'}catch(e){}return h}}
-/* fix: recReady (87) and the live offer meter only PROBE offerVerdict, but the 70-v57 wrapper records g.court and pins the fighter
-   to the board — so merely opening a free agent's card put them on your board with a fake "you offered" chip. Probes leave no trace. */
-function probe85(g,fn){const keep=g?{favd:g.favd,court:g.court}:null;try{return fn()}finally{if(keep){g.favd=keep.favd;if(keep.court===undefined)delete g.court;else g.court=keep.court}}}
-{const base=recReady;recReady=function(g){return probe85(g,()=>base.apply(this,arguments))}}
-{const base=ofMeterUpdate;ofMeterUpdate=function(){const g=typeof gById==='function'&&MGR.sel?gById(MGR.sel):null;return probe85(g,()=>base.apply(this,arguments))}}
 /* the name on a tablet: the full name; when it is long and has a "nickname", the nickname + family name */
 function recName85(g){const n=String(g.name||'');if(n.length<=20)return n;const q=n.match(/"([^"]+)"/);if(!q)return n;const rest=n.replace(/\s*"[^"]+"\s*/,' ').trim().split(/\s+/);return `"${q[1]}" ${rest[rest.length-1]||''}`.trim()}
 /* the pitch topic as a bordered tag (the log's .phtag look), one tone per motive */
