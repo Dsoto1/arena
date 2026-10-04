@@ -516,13 +516,18 @@ One global script; files are concatenated in order. Later "version modules" patc
   once their beast is on the sand (`UNIQUE_CARD82`, `uniqueOut82`; fixes Tholo drawn twice), hunched sculpted figures ×1.062 (Hero height),
   Tholo's sculpted token from his card (laurel, grey hair/beard, cape), main menu: Play Now + Manager one row, 🎓 Tutorials button folds
   #mmLearn (`data-mm82="tut"`), slim row Annals/Rules/Settings/Saves/mute (`mmLabels82`); Domus showcase on stone_wall, main card on
-  parchment. `127-v82onl` — DOMUS (house name required before a gladiator, record incl. Purses, 4 slots, Storeroom move/equip locked in a
+  parchment; Glory bar measured to the bottom of the gladiator cards (`rb82Fit`); round-rule chip row hidden (`#turnInd .tprules`, rules
+  only in the ⓘ); BLESSING_TABLE.spiders 6→2; Open Arena Chest glimmers gold (`[data-act="chest"]`); the chest's Level 4 card flips
+  LANDSCAPE (back turned on its side) with his sharper back `weapon_back4b.webp` (107 `WBACK75` lv 4); `flavK()` (16-crowd) = Flavius's box
+  ×0.7 on phones (box, capFit, turnIndFit, SR medallion, spear float); phones sideways: actions drawer SHUT in your Action phase (⚔
+  `.glow82`), shuts on picking an action (capture click) or tapping the sand, Choice still opens it (`plActFix82`). `127-v82onl` — DOMUS (house name required before a gladiator, record incl. Purses, 4 slots, Storeroom move/equip locked in a
   match), GLORY rank bar (lifeCF + 12×survived + 8×wins; living counts per rank from the server), table factor (2 humans pay less),
   guests watch read-only, invites `lobby.accept`, prices by AP, PATRON (set at founding, ✎ fold on the Domus `details.pat82d`), free
   tickets, daily guest pass + house Fame, `match.speared` refund. `128-v82stands` — online stands GROUP TURN (`#st82Pop` private popups,
   `stands.result` input), spear refund, sculpted online tokens (`p._onlSc`), random starting class in the creator. `129-v82beasts` —
   beast cards (`nc82*`; printed beasts flip to their arena-deck card `NC82_BACKCARD`, custom ones get a generated 1- or 3-state back
-  whose HP counts down), spawn show `beastShow82`, custom beasts in the deck (`spawn_cn_<id>`, unique tick `unique82`, grid dice),
+  whose HP counts down; his STATS SIDES for all five printed beasts `assets/npcback82p_<key>.webp` via `NC82_BACKART`,
+  sources in tools/art/npcbacks82/), spawn show `beastShow82`, custom beasts in the deck (`spawn_cn_<id>`, unique tick `unique82`, grid dice),
   deck slots Tholo + 3 (`SLOT82_DEF`, roster set row `rosterSlots82`, Event Designer `ed82*`), spear = Flavius scowls + "−N 🪙" float +
   the spearer draws a Mandati Flavi (`mfDeck82`, none if the deck is empty). `130-v82vis` — pillar shadows under the base
   (`pillarShadow82`), iron/bronze spikes (`drawSpikeTile` in 07-ui, `SPIKE82`), pieces face their attack target (minis' `_face`).
@@ -561,6 +566,8 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Visual checks: write a short Playwright script, screenshot, and look at it.
 
 ## 6. Release workflow
+(tools/release.sh also takes the play.html advert shot → share/arena_shot.webp → the game zip's play/arena_shot.webp, and always builds the
+share copy — the site download play/flavius-rule-arena.zip.)
 1. Bump the badge in `src/01-head.html` (`arena · vX.YY`) — this sets `GAME_VER`.
 2. Add a `MILESTONES` entry at the top of `src/34-notes.js` (`hi` = new features, `fx` = fixes/changes; keep it short).
 3. Add a `SAVE_MIGRATIONS` entry if world data changed shape.
@@ -665,7 +672,11 @@ One global script; files are concatenated in order. Later "version modules" patc
 - **v0.82** Domus (house, record, Storeroom, patron), Glory rank bar with living counts, smaller pay at 2-human tables, guests may watch,
   free tickets + guest pass, stands group turn online, spear refunds + Flavius's scowl + a Mandate for the spearer, beast cards with
   their backs, custom beasts in the arena deck (Tholo + 3 slots, unique tick), sculpted online tokens, Tholo's new token, Hero height,
-  tidier main menu, pillar shadows, iron spikes, pieces face their target. (Server zip flavius-server-9, protocol 5 — full stack deploy FIRST.)
+  tidier main menu, pillar shadows, iron spikes, pieces face their target. his beast stats sides, sharper Level 4 back,
+  landscape chest card + gold chest button, 2 spiders, smaller Flavius on phones, phones sideways keep the board clear on your move; release
+  makes the play.html advert shot. (Published as artifact Version 95; server zip flavius-server-9, protocol 5 — full stack deploy FIRST;
+  game zip flavius-site-update-v0.82 carries the v0.81 art too + play/arena_shot.webp; site zip v0.82 points play.html at it.)
+  Release run: 150/151 + tv64 flaky (passed alone); late fixes covered by tv66/tv71/tv82b/tv53/tv75.
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
@@ -753,8 +764,6 @@ One global script; files are concatenated in order. Later "version modules" patc
   gladiator can carry into a match in their inventory and bring back out if they survive/win; (2) the online market shows weapons and
   armor on his market board art (boardHTML75 / assets/market_board.webp) — one side of the board for weapons, the other for armor. A row of OFFERINGS runs above both sides
   (his layout). CONFIRMED for v0.83 ("8 sure").
-- **Beast backs (his, 2026-10-04):** he has SHARPER beast-card backs (pasted in chat only) — waiting for them as files; then
-  swap `NC82_BACKCARD` (arena-sheet cards) for assets/npcback82p_<key>.webp.
 - **v0.83 plan (his answers 2026-10-04; build after v0.82 ships, wait for his go on the batch):** GEAR LEVELS: 1–3 = printed system
   gear, 4 = named chest gear (Common/Rare/Epic/Legendary from the Arena Chest + Flavius's Gifts); NO rank gate on buying (prices gate);
   the first 3 ranks (Tiro, Novicius, Gregarius) may only WEAR printed gear — named pieces wait in the Storeroom until Veteranus.
