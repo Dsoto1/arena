@@ -297,6 +297,6 @@ const NC82_BACKCARD={tholo:'spawnTholo',commodus:'spawnCommodus',leo:'spawnLeo',
   if(pk&&NC82_BACKART.includes(pk))return `<div class="nc82pback"><img class="nc82bimg" src="${assetURL('npcback82p_'+pk+'.webp')}" alt="${esc(sp.name||pk)} — stats side" draggable="false"></div>`;
   if(k&&CARDS[k]&&typeof cardHTML==='function')return `<div class="nc82pback">${cardHTML('c:'+k,'xl')}</div>`;return base.apply(this,arguments)}}
 /* his stats sides (tools/art/npcbacks82/, cropped to the card frame → assets/npcback82p_<key>.webp); the rest still flip to the arena-deck card */
-const NC82_BACKART=['tholo','commodus'];
+const NC82_BACKART=['tholo','commodus','leo','leaena','zora'];
 {const st=document.createElement('style');st.textContent=`.nc82pback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a120c;border-radius:6px;overflow:hidden}
 .nc82pback .cimg{width:100%!important;border-radius:6px}.nc82pback .nc82bimg{width:100%;height:100%;object-fit:contain;border-radius:6px}`;document.head.appendChild(st)}
