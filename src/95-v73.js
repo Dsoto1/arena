@@ -21,7 +21,7 @@ function rosterTodo73(){const w=W_(),m=me();if(!w||!m)return null;const exp=rost
 /* tab → [number, label, extra html] or null */
 function tabStat73(k){const w=W_();if(!w||w.dead)return null;
   if(k==='ludus'){const n=ludusTodo73();return n?[n,n===1?'task left':'tasks left']:null}
-  if(k==='recruit'){const h=w.hours||0,mx=hoursMax();return [h+' h',`of ${mx} left this week`,hoursPips73(h,mx,'#7fae5f')]}
+  if(k==='recruit'){const h=w.hours||0,mx=hoursMax();return [h+' h',`of ${mx} · the lanista's hours`,hoursPips73(h,mx,'#7fae5f')]}
   if(k==='practice'){const h=thLeft(w),mx=thMax();return h?[h+' h',`training hours of ${mx} left`,hoursPips73(h,mx,'#d9a441')]:null}
   if(k==='infirm'){const n=infirmNeed73();return n?[n,n===1?'needs care':'need care']:null}
   if(k==='night')return nightTodo73();
@@ -77,7 +77,7 @@ function banner73(k){const B=BANNERS73[k];if(!B)return '';return `<div class="ro
   h=h.replace(/⚕ Infirmary · \d+/,'⚕ Infirmary')}catch(e){console.error(e)}return h}}
 /* the rail ovals (kept live by the sweep, like the hour chips of v0.65) */
 setInterval(()=>{try{if(typeof W_!=='function'||!W_()||W_().dead)return;const w=W_();
-  const vals={ludus:[ludusTodo73(),n=>`📋 ${n}`,n=>`${n} task${n===1?'':'s'} left this week`],recruit:[w.hours||0,n=>`${n} h`,n=>`${n} recruiting hours left`],practice:[thLeft(w),n=>`${n} h`,n=>`${n} training hours left`],infirm:[infirmNeed73(),n=>`⚕ ${n}`,n=>`${n} fighter${n===1?'':'s'} need care`]};
+  const vals={ludus:[ludusTodo73(),n=>`📋 ${n}`,n=>`${n} task${n===1?'':'s'} left this week`],recruit:[w.hours||0,n=>`${n} h`,n=>`${n} of the lanista's hours left`],practice:[thLeft(w),n=>`${n} h`,n=>`${n} training hours left`],infirm:[infirmNeed73(),n=>`⚕ ${n}`,n=>`${n} fighter${n===1?'':'s'} need care`]};
   for(const [k,[v,t,tt]] of Object.entries(vals)){const b=document.querySelector(`.mtabs [data-mg="tab"][data-id="${k}"]`);if(!b)continue;
     const old=b.querySelector('.hrchip');if(old)old.remove();let c=b.querySelector('.mcount.c73');
     if(!c){c=document.createElement('span');c.className='mcount c73';b.appendChild(c)}const txt=v?t(v):'';if(c.textContent!==txt){c.textContent=txt;c.title=v?tt(v):''}c.hidden=!v}}catch(e){}},500);

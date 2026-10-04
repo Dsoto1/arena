@@ -577,7 +577,7 @@ function guideHTML(){
    <li><b>Play for Legacy.</b> There is no forced ending: cups and Superbus crowns are worth the most, and retirement at a high tier is the closest thing to "beating" Manager mode.</li></ul>
   <h4>The table and the week (v0.29)</h4><ul>
    <li><b>Points win seasons, fame wins recruits.</b> A win is 3, a runner-up finish 1. The top four go to the Superbus. Feature and main-event wins count the same as undercard wins, so entering every bout you can win matters more than chasing one big purse.</li>
-   <li><b>Work left to right, then End the week.</b> Ludus → Roster → Recruiting → … → Match Week. End the week pays wages and moves the empire; you can't undo it, so spend your recruiting hours first.</li>
+   <li><b>Work left to right, then End the week.</b> Ludus → Roster → Recruiting → … → Match Week. End the week pays wages and moves the empire; you can't undo it, so spend the lanista's hours first.</li>
    <li><b>Invitations are deadly now.</b> A heat winner rarely falls to the Fates (the winner's bonus lifts their score), but the rest of the field plays for its life. Send fighters you can afford to lose — or pick events marked Fate-free.</li></ul>
   <h4>Money, facilities and the market (v0.28)</h4><ul>
    <li><b>Money talks.</b> A recruit's interest counts the wage you put on the table: every coin over their ask adds interest (1.5× the ask ≈ +45), and a big enough offer buys past the fame they would normally demand. A humble ludus can sign a blue-chip fighter — if it pays like a palace. Stars (4★/5★) ask 25%/50% more to begin with.</li>

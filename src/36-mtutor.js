@@ -20,7 +20,7 @@ const mtRivalId=()=>{const w=mtW();if(!w)return '';const r=w.mgrs.filter(m=>!m.i
    with guard rails: only what the step asks for can be clicked (dialogs it opens are fine), so a lesson can
    never turn into a real career by accident. */
 const MTUT_STEPS=[
-  {spot:'.mhead',say:`Welcome, <b>lanista</b>. This is a sandbox league made for this lesson — nothing is saved. Up top: your <b>treasury</b> (we lent you plenty), <b>fame</b>, ludus grade, record and the week's <b>recruiting hours</b>.`,next:1},
+  {spot:'.mhead',say:`Welcome, <b>lanista</b>. This is a sandbox league made for this lesson — nothing is saved. Up top: your <b>treasury</b> (we lent you plenty), <b>fame</b>, ludus grade, record and the week's <b>lanista's hours</b>.`,next:1},
   {spot:'.mtabs',say:`The <b>tabs</b> run your ludus — your house, the arena, the wider world, and you. Work them left to right each week; the coach will walk you through them.`,next:1},
   // the roster and a fighter's card
   {spot:'[data-mg="tab"][data-id="roster"]',say:`Open <b>🛡 Roster</b> — the fighters under contract to your house.`,tab:'roster'},
