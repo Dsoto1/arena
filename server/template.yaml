@@ -42,6 +42,11 @@ Parameters:
     Type: Number
     Default: 10
     Description: E-mail when the forecast passes this; when real spend reaches it, the arena closes itself until the 1st.
+  Testers:
+    Type: String
+    Default: ''
+    NoEcho: true
+    Description: 'Comma-separated Google e-mails of online testers (admin.grant on their own house only; their houses become TEST houses, Custom only). Empty = nobody.'
   DevNames:
     Type: String
     AllowedValues: ['false', 'true']
@@ -187,6 +192,7 @@ Resources:
           POOL_ID: !Ref UserPool
           CLIENT_ID: !Ref UserPoolClient
           DEV_NAMES: !Ref DevNames
+          TESTERS: !Ref Testers
   FnLogs:
     Type: AWS::Logs::LogGroup
     Properties:

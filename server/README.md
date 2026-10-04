@@ -38,6 +38,14 @@ The game page talks to it; the shared rules (`src/onlcore.js`) are the same file
 
 Updating later: run the same `sh deploy.sh you@example.com` (with the GOOGLE_ variables) after replacing `src/`.
 
+## Online testers (v0.83)
+`TESTERS='first@gmail.com,second@gmail.com' GOOGLE_ID=… GOOGLE_SECRET=… sh deploy.sh you@example.com` — the Google e-mails that may use
+**admin.grant** (coin, gifts, gear, offerings, Glory) on their OWN house and active gladiator. The list is a stack parameter (NoEcho) → the
+Lambda's `TESTERS` environment variable; it is never in the page or the repo, and only a yes/no rides on a connection. Left out of a later
+deploy, the stack keeps the list; `TESTERS=none` clears it. Changing it is a template parameter → a full stack deploy. A house that ever got
+a grant is a **TEST house** for good: Custom only (code `testHouse`), never in Today, the rank counts, the wagers' top list or Victor of the
+Day; its gladiators wear a TEST chip. Every grant is logged in the table (PK `ADMIN`, SK `log`).
+
 ## A test stack (optional)
 `STACK=flavius-arena-test AUTH_PREFIX=flaviusrule-arena-test DEV=true sh deploy.sh you@example.com`
 lets anyone sign in with a typed name — use it only for testing, then `aws cloudformation delete-stack --stack-name flavius-arena-test`.

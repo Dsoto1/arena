@@ -12,12 +12,16 @@
    Refusals may carry a code: throw fail(code,msg,extra) → the reply {ok:false, err, code, ...extra}.
    v0.82 STANDS FOR THE POOR: free seats (L.free, lobby.set {free}), 🎟 lobby.pass (Flavius's guest pass: one a UTC day a house, DOMUS PASS#<day>),
    +1 house fame for a pass sat through (settleMatch), stands entries carry {domus, patron}, domus.patron {look}; rankCounts seeded once by a scan.
+   v0.83 tester grants: admin.grant (ctx.tester from the deploy's TESTERS e-mails; test houses: D.test / ACCT dtest / ch.test, Custom only).
    v0.83 (protocol 6, contract tools/plans/onl83-contract.md): 8 ranks (rankCounts re-seeded once: 'seeded6'), no rank gate on buying, the house
    TREASURY (20% of every award; domus.buy, repairs), armory OFFERINGS (offer.buy / offer.bring), RANKED GEAR LOSS (broken pieces, gear.repair;
    the dead's brought gear: LOOT#<match> for a human killer — loot.offer push, loot.pick, the most valuable after LOOT_MS — the rest to the
    used MARKET (market.list / market.buy) or, named, the CHEST pool), FLAVIUS'S GIFTS (gift.open; named weapons rolled here, Legendary uniques
    claimed once: WORLD UNIQ#<k>), the START COUNTDOWN (lobby.start → startAt, again with go:1 at the horns; lobby.hold), TROPHIES + recent
-   matches on the DOMUS, domus.profile, ★ domus.follow (hello.follows), the WAGERS tab (wager.list; BETS#<acct>, WAGERWK#<week>), Ludi Infames (inf). */
+   matches on the DOMUS, domus.profile, ★ domus.follow (hello.follows), the WAGERS tab (wager.list; BETS#<acct>, WAGERWK#<week>), Ludi Infames (inf).
+   His call (after the server half): GIFTS + freebies belong to the DOMUS — settlements move a gladiator's new gifts onto the house (D.gifts),
+   gift.open opens a house gift for the ACTIVE gladiator (into the house with none); a Ranked death puts the un-brought satchel on the shelf
+   (D.offers); offer.move moves an offering between the shelf and a satchel. */
 'use strict';
 const C=require('./onlcore.js');
 const DAY=86400;
@@ -26,7 +30,7 @@ const FORUM_KEEP=30;
 /* a refusal the client can act on: err = the player-facing text, code = a stable key, extra fields ride along in the reply */
 function fail(code,msg,extra){const e=new Error(msg);e.code=code;if(extra)e.extra=extra;return e}
 /* v0.82: requests an account without a house may not make (needDomus) */
-const NEED_DOMUS=new Set(['offer.buy','offer.bring','gear.repair','domus.buy','gift.open','loot.pick','market.buy','domus.follow','char.create','char.buy','char.edit','char.active','lobby.create','lobby.join','lobby.accept','lobby.quick','lobby.sit','lobby.ticket','lobby.invite','lobby.call','lobby.again','lobby.say','bet.place','party.create','party.join','forum.say','domus.move','domus.equip','lobby.pass','domus.patron']);
+const NEED_DOMUS=new Set(['offer.move','offer.buy','offer.bring','gear.repair','domus.buy','gift.open','loot.pick','market.buy','domus.follow','char.create','char.buy','char.edit','char.active','lobby.create','lobby.join','lobby.accept','lobby.quick','lobby.sit','lobby.ticket','lobby.invite','lobby.call','lobby.again','lobby.say','bet.place','party.create','party.join','forum.say','domus.move','domus.equip','lobby.pass','domus.patron']);
 /* what a guest is told when a request needs a sign-in */
 const GUEST_WHY={'forum.say':'speak in the Forum','bet.place':'wager','lobby.ticket':'buy a ticket','char.create':'raise gladiators','domus.create':'found a house','lobby.pass':'take a seat in the stands'};
 function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=>Math.random(),dev=false,hereMs=0,countdown=C.COUNTDOWN_MS}){
@@ -100,7 +104,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   const domusResult=async(ch,row,out,ranked)=>domusAfter(ch,row,out,ranked,null,null);
   /* v0.83 one edit of the house after a settled seat: the record, the treasury's cut, the dead's un-brought pieces onto the shelf, trophies, recent matches */
   async function domusAfter(ch,row,out,ranked,m,gx){try{if(ch&&ch.domus)await editDomus(ch.domus,D=>{C.domusNote(D,row,out,ranked);D.treasury=(D.treasury|0)+((out&&out.cut)|0);
-      for(const P of (gx&&gx.left)||[])C.putPiece(D,P,false);for(const k of C.trophiesFrom(ch,row,out,ranked,m&&m.ev))C.trophyAdd(D,k,ch.name,now());if(m)C.recentAdd(D,C.recentRow(m,ch,row,out))})}catch(e){}}
+      for(const P of (gx&&gx.left)||[])C.putPiece(D,P,false);if(gx&&gx.gifts&&gx.gifts.length)C.giftsIn(D,gx.gifts);if(gx&&gx.offLeft&&gx.offLeft.length)C.offersIn(D,gx.offLeft);for(const k of C.trophiesFrom(ch,row,out,ranked,m&&m.ev))C.trophyAdd(D,k,ch.name,now());if(m)C.recentAdd(D,C.recentRow(m,ch,row,out))})}catch(e){}}
   /* ── v0.83 where the dead's brought gear goes: the used MARKET (MARKET U#<ts13>#<r>, printed pieces) or the CHEST pool (CHEST P#<uid>, named) ── */
   async function toMarket(P,from){const I=C.pieceInfo(P,catalog);if(!I)return;
     if(I.named){await store.put('CHEST','P#'+C.itemUid(P.item),{item:P.item,pc:P.pc||null,at:now(),from,taken:0});return}
@@ -183,7 +187,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     for(const m of ids){const A=m===acct?a:await acctOf(m);if(!A)continue;
       if(await stillFighting(A))throw new Error(m===acct?'Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.':'Someone in your party is still in a match.');
       if(!A.domus)throw fail('need_domus',m===acct?'Name your house first.':'Someone in your party has no house yet.');
-      const ch=await liveChar(m,A);g.push({id:m,name:nameOf(A,ch),domus:A.dname||undefined,char:ch&&ch.id,rank:ch?C.rankFor(ch).k:'tiro',kit:C.kitOf(ch),party:P?P.id:undefined,strikes:A.strikes||0})}
+      const ch=await liveChar(m,A);g.push({id:m,name:nameOf(A,ch),domus:A.dname||undefined,char:ch&&ch.id,rank:ch?C.rankFor(ch).k:'tiro',kit:C.kitOf(ch),party:P?P.id:undefined,strikes:A.strikes||0,...(A.dtest?{test:1}:{})})}
     const list=await lobbies();
     for(const L of list)if(L.status==='waiting'&&L.id!==o.except&&g.some(w=>inRoom(L,w.id)))throw new Error(g.length>1?'Someone in your party is already in a room.':'You are already in a room.');
     return {g,list}}
@@ -214,12 +218,12 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     if(!A.void)for(const a of M.players){if((M.abandoned||{})[a])continue;const pl=L.players.find(p=>p.id===a);const row=A.table.find(r=>r.seat===M.seats[a]);if(!pl||!row)continue;let out=null,before='tiro';
       let gx=null;const ch=await editChar(pl.char,c=>{if(!c.alive)return false;before=C.rankFor(c).k;out=C.applyResult(c,row,!!L.ranked,{humans:(M.players||[]).length,now:now()});gx=C.gearAfter(c,pl.kit,row,!!L.ranked);
         out.broken=gx.broken;out.offBack=gx.offBack});if(!ch||!out)continue;M.outs[a]=out;dseats.push({acct:a,ch,before,row,out,gx,seat:M.seats[a]});
-      if(out.died)await countRank(before,-1);else if(out.rankUp){await countRank(before,-1);await countRank(out.rankUp,1)}
+      if(out.died)await countRank(before,-1,ch);else if(out.rankUp){await countRank(before,-1,ch);await countRank(out.rankUp,1,ch)}
       await domusAfter(ch,row,out,!!L.ranked,{id,ev:L.ev,loc:L.loc,at:now(),ranked:!!L.ranked},gx);
       if(out.died){const e={name:ch.name,cls:ch.cls,rank:ch.died.rank,lifeCF:ch.lifeCF,survived:ch.survived,diedAt:now(),why:out.hall?C.hallWhy(ch):''};
         if(out.hall){const H=await world('HALL');H.list=[e,...H.list].slice(0,200);await store.put('WORLD','HALL',H)}await news(out.hall?['🪦',`${ch.name} fell. The Hall of the Fallen keeps the name.`]:['🌫',`${ch.name} fell and is forgotten.`])}
       if(out.rankUp)await news(['⚔',`${ch.name} is now ${C.RANKS[C.rankIdx(out.rankUp)].n}.`])}
-    if(dseats.length)await dayEdit(D=>C.dayFromMatch(D,{id,ev:L.ev,loc:L.loc,at:now(),ranked:!!L.ranked,seats:dseats}));
+    const dpub=dseats.filter(s=>!s.ch.test);if(dpub.length)await dayEdit(D=>C.dayFromMatch(D,{id,ev:L.ev,loc:L.loc,at:now(),ranked:!!L.ranked,seats:dpub}));
     /* v0.83 the dead's brought gear: a living human killer picks one (LOOT), the rest — or all of it — goes to the market */
     for(const s of dseats)if(s.out.died&&s.gx){const ks=s.row.ks;const ka=s.row.kb==='g'&&ks>=0?M.players.find(x=>M.seats[x]===ks&&x!==s.acct):null;const kd=ka&&dseats.find(z=>z.acct===ka);
       const killer=ka&&kd&&!kd.out.died&&!(M.abandoned||{})[ka]?{acct:ka,char:kd.ch.id,seat:ks}:null;try{await deadGear(id,s.seat,s.ch,s.acct,s.gx,killer)}catch(e){}}
@@ -261,14 +265,14 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       out.push(L)}catch(e){out.push(L)}}return out}
   const world=async k=>(await store.get('WORLD',k))||{list:[]};
   /* v0.82 living gladiators by rank, every house: WORLD COUNTS {tiro:n,…} kept by atomic counters (creation +1, rank-up −1/+1, death −1) — never a scan */
-  async function countRank(k,by){try{if(k)await store.counter('WORLD','COUNTS',k,by)}catch(e){}}
+  async function countRank(k,by,ch){try{if(k&&!(ch&&ch.test))await store.counter('WORLD','COUNTS',k,by)}catch(e){}}
   async function rankCounts(){let X=await store.get('WORLD','COUNTS');if(!X||X.seeded==null||X.seeded6==null)X=await (seeding||(seeding=seedCounts().finally(()=>{seeding=null})));
     const o={};for(const R of C.RANKS)o[R.k]=Math.max(0,(X||{})[R.k]|0);return o}
   /* gladiators made before the counters existed: ONE scan of the living, written only while the item has no 'seeded' mark (a conditional put —
      the first seeding wins, later ones read it); the counters carry on from there */
   let seeding=null;
   async function seedCounts(){try{const o={seeded:now(),seeded6:now()};for(const R of C.RANKS)o[R.k]=0;
-      for(const c of await store.scan('CHAR#','CHAR'))if(c&&c.alive){const k=C.rankFor(c).k;o[k]=(o[k]|0)+1}
+      for(const c of await store.scan('CHAR#','CHAR'))if(c&&c.alive&&!c.test){const k=C.rankFor(c).k;o[k]=(o[k]|0)+1}
       /* v0.83: 'seeded6' — the 8 ranks are counted once more from a scan (Novicius, Rudiarius, Invictus) */
       if(await store.putUnless('WORLD','COUNTS',o,'seeded6'))return o}catch(e){}return (await store.get('WORLD','COUNTS'))||{}}
   const news=async line=>{const N=await world('NEWS');N.list=[line,...N.list].slice(0,12);await store.put('WORLD','NEWS',N)};
@@ -321,7 +325,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
         while(out.lobbies.length>1&&JSON.stringify(out).length>115000)out.lobbies.pop();return out}
       const A=await acctOf(ctx.acct);const me=strip(A);const out={ver:C.VER,mode:'aws',me,now:now()};
       /* v0.82 the house: needDomus until it is named (an old account keeps its gladiators — they join the house when it is founded) */
-      if(me){out.needDomus=!me.domus;out.domus=C.domusRow(await domusGet(me.domus))}
+      if(me){out.needDomus=!me.domus;out.domus=C.domusRow(await domusGet(me.domus));if(ctx.tester)out.tester=true}
       if(d.all&&me){const chars=await store.byIndex('OWNER#'+ctx.acct);out.chars=chars.map(strip);const f=flagOf(me);
       const live=chars.filter(c=>c.alive);const ch=live.find(c=>c.id===me.active)||live[live.length-1]||null;out.active=ch?ch.id:null;
       /* the presence entry: gladiator, rank and time zone (written only when it changed) */
@@ -345,7 +349,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     /* ── v0.82 DOMUS ── */
     'domus.get':async(d,ctx)=>{const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);const old=[];for(const x of (A&&A.domusOld)||[]){const o=await domusGet(x);if(o)old.push(C.domusRow(o))}
       const list=await lobbies();const mine=(await store.byIndex('OWNER#'+ctx.acct)).filter(c=>c.alive);
-      return {domus:C.domusRow(D),needDomus:!D,glads:await domusGlads(D),archived:old,gear:(D&&D.gear)||[],pcs:(D&&D.pcs)||{},trophies:(D&&D.trophies)||[],recent:(D&&D.recent)||[],busy:mine.filter(c=>charBusy(c.id,list)).map(c=>c.id)}},
+      return {domus:C.domusRow(D),needDomus:!D,glads:await domusGlads(D),archived:old,gear:(D&&D.gear)||[],pcs:(D&&D.pcs)||{},trophies:(D&&D.trophies)||[],recent:(D&&D.recent)||[],gifts:(D&&D.gifts)||[],offers:(D&&D.offers)||[],busy:mine.filter(c=>charBusy(c.id,list)).map(c=>c.id)}},
     /* v0.82 🗄 the storeroom: move one piece between the house's gladiators and the house itself ('house'); tick a piece to bring */
     'domus.move':async(d,ctx)=>{const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);if(!D)throw fail('need_domus','Name your house first.');const item=String(d.item||'');const list=await lobbies();
       const side=async x=>{if(x==='house')return {house:true};const ch=await charById(x);if(!ch||ch.owner!==ctx.acct||ch.domus!==D.id)throw new Error('Not of your house.');if(charBusy(ch.id,list))throw fail('in_match',`${ch.name} is in a match — the storeroom waits.`);return {ch}};
@@ -380,8 +384,8 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       await store.set('ACCT#'+ctx.acct,'PROFILE',{dname:name});hereC=null;return {domus:C.domusRow(X)}},
     'char.mine':async(d,ctx)=>(await store.byIndex('OWNER#'+ctx.acct)).map(strip),
     'char.create':async(d,ctx)=>{const live=(await store.byIndex('OWNER#'+ctx.acct)).filter(c=>c.alive);if(live.length>=C.GLAD_MAX)throw new Error(`Up to ${C.GLAD_MAX} living gladiators.`);const ch=C.newChar(d,ctx.acct,id('g'),now());
-      const A=await acctOf(ctx.acct);ch.domus=A&&A.domus||null;if(A&&!live.some(c=>c.id===A.active))await store.set('ACCT#'+A.id,'PROFILE',{active:ch.id});await putChar(ch);
-      await editDomus(ch.domus,D=>{D.glads=(D.glads|0)+1});await countRank(C.rankFor(ch).k,1);return strip(ch)},
+      const A=await acctOf(ctx.acct);ch.domus=A&&A.domus||null;if(A&&A.dtest)ch.test=true;if(A&&!live.some(c=>c.id===A.active))await store.set('ACCT#'+A.id,'PROFILE',{active:ch.id});await putChar(ch);
+      await editDomus(ch.domus,D=>{D.glads=(D.glads|0)+1});await countRank(C.rankFor(ch).k,1,ch);return strip(ch)},
     'char.active':async(d,ctx)=>{const ch=await charById(d.char);if(!ch||ch.owner!==ctx.acct||!ch.alive)throw new Error('Not yours.');if(await busyIn(ctx.acct))throw new Error('Finish or leave your game first.');
       await store.set('ACCT#'+ctx.acct,'PROFILE',{active:ch.id});return strip(ch)},
     'char.edit':async(d,ctx)=>{const ch=await charById(d.char);if(!ch||ch.owner!==ctx.acct)throw new Error('Not yours.');if(await busyIn(ctx.acct))throw new Error('Finish or leave your game first.');
@@ -615,7 +619,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       if(!B.item.abandoned)await store.put('MATCH#'+d.id,'META',{...B.item,abandoned:{[ctx.acct]:rule}});else await store.setIn('MATCH#'+d.id,'META','abandoned',ctx.acct,rule);
       await toMatch(B.item,'match.input',{id:d.id,in:inp});let out=null;
       if(L.ranked){const pl=L.players.find(p=>p.id===ctx.acct);let before='tiro',gx=null;const ch=pl&&await editChar(pl.char,c=>{if(!c.alive)return false;before=C.rankFor(c).k;out=C.applyResult(c,{won:false,place:L.seats,f:0,coin:0,survives:false},true,{now:now()});out.abandoned=1;gx=C.gearAfter(c,pl.kit,{survives:false},true)});
-        if(ch&&out){if(out.died)await countRank(before,-1);await fallen(ch,out);await domusAfter(ch,{won:false},out,true,{id:d.id,ev:L.ev,loc:L.loc,at:now(),ranked:true},gx);try{await deadGear(d.id,seat,ch,ctx.acct,gx,null)}catch(e){}await store.setIn('MATCH#'+d.id,'META','outs',ctx.acct,out);await dayEdit(D=>C.dayFell(D,{id:d.id,acct:ctx.acct,ev:L.ev,loc:L.loc,at:now(),ch,before,hall:out.hall}))}}
+        if(ch&&out){if(out.died)await countRank(before,-1,ch);await fallen(ch,out);await domusAfter(ch,{won:false},out,true,{id:d.id,ev:L.ev,loc:L.loc,at:now(),ranked:true},gx);try{await deadGear(d.id,seat,ch,ctx.acct,gx,null)}catch(e){}await store.setIn('MATCH#'+d.id,'META','outs',ctx.acct,out);if(!ch.test)await dayEdit(D=>C.dayFell(D,{id:d.id,acct:ctx.acct,ev:L.ev,loc:L.loc,at:now(),ch,before,hall:out.hall}))}}
       const M2=await meta(d.id);const left=(M2.players||[]).filter(a=>!(M2.abandoned||{})[a]&&!(M2.dropped||{})[a]);
       if(!left.length)await closeMatch(d.id,'empty');else if(left.every(a=>(M2.reports||{})[a]))await settleMatch(d.id,M2,ctx.acct);
       const A=await acctOf(ctx.acct);if(A&&A.match===d.id)await store.set('ACCT#'+A.id,'PROFILE',{match:null});return {done:1,out,rule}},
@@ -638,21 +642,42 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     'domus.buy':async(d,ctx)=>{const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);if(!D)throw fail('need_domus','Name your house first.');const it=catalog[d.item];if(!it)throw new Error('No such piece.');
       const p=C.priceOf(it);const X=await editDomus(D.id,Y=>{if((Y.treasury|0)<p)return false;Y.treasury-=p;Y.gear=[...(Y.gear||[]),d.item]});if(!X)throw fail('no_coin',`The treasury needs ${p} coin.`,{cost:p});
       return {domus:C.domusRow(X),gear:X.gear||[],pcs:X.pcs||{}}},
-    /* 🎁 open one of Flavius's gifts (the server rolls); a named piece below Veteranus waits on the house shelf */
-    'gift.open':async(d,ctx)=>{const ch=await ownChar(ctx.acct,d.char);if(!(ch.gifts||[]).some(g=>g.id===d.gift))throw new Error('No such gift.');
-      if(charBusy(ch.id,await lobbies()))throw fail('in_match',`${ch.name} is in a match — open it afterwards.`);
-      const rw=C.rollGift(rnd,catalog,C.rankFor(ch).k);let pool=null,def=null,claim=null;
+    /* 🎁 open one of Flavius's gifts (the server rolls). His call: gifts belong to the HOUSE (D.gifts) and are opened for the ACTIVE gladiator
+       (coin / CF bonus / offering / gear to him; a named piece below Veteranus waits on the shelf) — with no living gladiator into the house
+       (C.applyGiftHouse). A gift still on a gladiator (before the move) opens as before, for him. */
+    'gift.open':async(d,ctx)=>{const A=await acctOf(ctx.acct);const D0=await domusGet(A&&A.domus);const list=await lobbies();
+      let old=null;if(d.char){const c0=await charById(d.char);if(c0&&c0.owner===ctx.acct&&c0.alive&&(c0.gifts||[]).some(g=>g.id===d.gift))old=c0}
+      if(!old&&!(D0&&(D0.gifts||[]).some(g=>g.id===d.gift)))throw new Error('No such gift.');
+      const ch=old||await liveChar(ctx.acct,A);if(ch&&charBusy(ch.id,list))throw fail('in_match',`${ch.name} is in a match — open it afterwards.`);
+      const rw=C.rollGift(rnd,catalog,ch?C.rankFor(ch).k:'tiro');let pool=null,def=null,claim=null;
       if(rw.k==='named'){const P0=(await store.query('CHEST','P#',{limit:20})).filter(x=>!x.taken);
         if(P0.length&&rnd()<0.5){const x=P0[Math.min(P0.length-1,Math.floor(rnd()*P0.length))];if(await store.flip('CHEST',x.SK,'taken',0,1)){pool={item:x.item,pc:x.pc};await store.del('CHEST',x.SK)}}
         if(!pool){const taken=(await store.query('WORLD','UNIQ#')).map(x=>x.k);def=C.rollNamed(rnd,catalog,rw.rar,taken);
           if(def&&def.uq){if(await store.putNew('WORLD','UNIQ#'+def.uq,{k:def.uq,at:now()}))claim=def.uq;else def=C.rollNamed(rnd,catalog,'epic',[])}}
         if(!pool&&!def){rw.k='coin';rw.v=50}}
-      let P=null,res=null;const c=await editChar(ch.id,x=>{if(!x.alive||!(x.gifts||[]).some(g=>g.id===d.gift))return false;C.giftTake(x,d.gift);
+      const undo=async()=>{if(claim)await store.del('WORLD','UNIQ#'+claim);if(pool)await store.put('CHEST','P#'+C.itemUid(pool.item),{item:pool.item,pc:pool.pc,at:now(),taken:0})};
+      /* the gift leaves the house first (versioned: opened once) */
+      if(!old&&!(await editDomus(D0.id,Y=>{if(!(Y.gifts||[]).some(g=>g.id===d.gift))return false;C.giftTake(Y,d.gift)}))){await undo();throw new Error('No such gift.')}
+      let P=null,res=null,c=null;
+      if(ch)c=await editChar(ch.id,x=>{if(!x.alive)return false;if(old){if(!(x.gifts||[]).some(g=>g.id===d.gift))return false;C.giftTake(x,d.gift)}
         P=rw.k==='named'?(pool||C.namedPiece(def,x)):null;if(P&&!C.canWearNamed(x)){res={to:'house'};return}res=C.applyGift(x,null,rw,P)});
-      if(!c){if(claim)await store.del('WORLD','UNIQ#'+claim);if(pool)await store.put('CHEST','P#'+C.itemUid(pool.item),{item:pool.item,pc:pool.pc,at:now(),taken:0});throw new Error('No such gift.')}
-      let D2=null;if(res.to==='house'){const A=await acctOf(ctx.acct);D2=await editDomus(c.domus||(A&&A.domus),Y=>{C.putPiece(Y,P,false)})}
-      const piece=P?C.pieceInfo(P,catalog):rw.k==='gear'?C.pieceOf(c,rw.item,catalog):null;
-      return {reward:{...rw,...(piece?{piece}:{})},to:res.to,char:strip(c),...(D2?{domus:C.domusRow(D2),gear:D2.gear||[],pcs:D2.pcs||{}}:{})}},
+      if(old&&!c){await undo();throw new Error('No such gift.')}
+      let D2=null;const hid=(c&&c.domus)||(D0&&D0.id);
+      if(!c||res.to==='house')D2=await editDomus(hid,Y=>{if(rw.k==='named'&&!P)P=pool||C.namedPiece(def,Y);res=c?(C.putPiece(Y,P,false),{to:'house'}):C.applyGiftHouse(Y,rw,P)});
+      const piece=P?C.pieceInfo(P,catalog):rw.k==='gear'?(c?C.pieceOf(c,rw.item,catalog):C.pieceInfo({item:rw.item,pc:null},catalog)):null;
+      return {reward:{...rw,...(piece?{piece}:{}),...(res&&res.coin?{coin:res.coin}:{}),...(res&&res.sold?{sold:true}:{})},to:res?res.to:'house',char:c?strip(c):null,
+        ...(D2||D0?{domus:C.domusRow(D2||await domusGet(hid)),gear:(D2||{}).gear||undefined,pcs:(D2||{}).pcs||undefined,gifts:((D2||await domusGet(hid))||{}).gifts||[]}:{})}},
+    /* 🧪 one offering between the house shelf and a gladiator's satchel (from/to: 'house' | <gladiator id>) */
+    'offer.move':async(d,ctx)=>{const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);if(!D)throw fail('need_domus','Name your house first.');const k=String(d.key||'');const list=await lobbies();
+      const side=async x=>{if(x==='house')return null;const ch=await ownChar(ctx.acct,x);if(ch.domus!==D.id)throw new Error('Not of your house.');if(charBusy(ch.id,list))throw fail('in_match',`${ch.name} is in a match — the satchel waits.`);return ch};
+      if(d.from===d.to)throw new Error('Pick where it goes.');const sc=await side(d.from),dc=await side(d.to);
+      const S0=sc||D,D1=dc||D;const why=C.offerMoveWhy(S0,D1,k);if(why)throw new Error(why);
+      /* take first, then give (a failed give puts it back) */
+      const took=sc?await editChar(sc.id,x=>{if(!(x.offers||[]).includes(k))return false;C.offerMove(x,{offers:[]},k)}):await editDomus(D.id,Y=>{if(!(Y.offers||[]).includes(k))return false;C.offerMove(Y,{offers:[],cls:1},k)});
+      if(!took)throw new Error('That offering is not there.');
+      const put=dc?await editChar(dc.id,x=>{if((x.offers||[]).length>=C.OFF_MAX)return false;x.offers=[...(x.offers||[]),k]}):await editDomus(D.id,Y=>{if((Y.offers||[]).length>=C.OFF_SHELF)return false;Y.offers=[...(Y.offers||[]),k]});
+      if(!put){if(sc)await editChar(sc.id,x=>{x.offers=[...(x.offers||[]),k]});else await editDomus(D.id,Y=>{Y.offers=[...(Y.offers||[]),k]});throw new Error(dc?`Up to ${C.OFF_MAX} offerings in the satchel.`:'The shelf is full.')}
+      const D2=await domusGet(D.id);const out=x=>x?strip(x):{house:true,offers:D2.offers||[]};return {from:out(sc&&await charById(sc.id)),to:out(dc&&await charById(dc.id)),domus:C.domusRow(D2)}},
     /* ⚔ the killer's pick from the fallen's brought gear (LOOT_MS after the settlement; then the most valuable is taken for him) */
     'loot.list':async(d,ctx)=>{await lootSweep();return (await lootMine(ctx.acct)).map(lootOut)},
     'loot.pick':async(d,ctx)=>{const X=await store.get('LOOT#'+d.id,'S#'+rk(d.seat|0));if(!X||!X.killer||X.killer.acct!==ctx.acct)throw new Error('Nothing to take.');
@@ -679,8 +704,32 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       const open=(await lobbies()).filter(L=>(L.status==='waiting'||L.status==='live')&&!!L.flag===f&&((L.bets||[]).length||(L.pot|0))).slice(0,30).map(L=>({id:L.id,ev:L.ev,loc:L.loc,status:L.status,ranked:!!L.ranked,seats:L.seats,
         players:(L.players||[]).map((p,i)=>({seat:i,name:p.name,domus:p.domus||null,cls:p.kit&&p.kit.cls||null})),...C.oddsOf(L)}));
       const mine=ctx.acct?(await store.query('BETS#'+ctx.acct,'B#',{limit:30,desc:true})).map(x=>{const y=strip(x);y.id=x.SK;return y}):[];const wk=C.weekKey(now());
-      const top=(await store.query('WAGERWK#'+wk,'A#')).sort((a,b)=>(b.net|0)-(a.net|0)).slice(0,10).map(x=>({name:x.name||'A lanista',domus:x.domus||null,dom:x.dom||null,net:x.net|0,won:x.won|0,staked:x.staked|0}));
+      const tops=[];for(const x of (await store.query('WAGERWK#'+wk,'A#')).sort((a,b)=>(b.net|0)-(a.net|0))){if(tops.length>=10)break;const XD=x.dom?await domusGet(x.dom):null;if(!(XD&&XD.test))tops.push(x)}const top=tops.map(x=>({name:x.name||'A lanista',domus:x.domus||null,dom:x.dom||null,net:x.net|0,won:x.won|0,staked:x.staked|0}));
       return {open,mine,top,week:wk}},
+    /* 🧪 ONLINE TESTER GRANTS (his call): only accounts whose sign-in e-mail is in the deploy's TESTERS list (ctx.tester, set on $connect —
+       no e-mail is ever stored or sent), only to THEIR OWN house / active gladiator. Every grant is logged (ADMIN#log). A house that ever
+       received a grant is a TEST house for good (D.test, ACCT dtest, its gladiators ch.test): Custom only, never in Today, the rank counts,
+       the wagers' top list or Victor of the Day. */
+    'admin.grant':async(d,ctx)=>{if(!ctx.tester)throw fail('notTester','Only testers may do that.');const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);if(!D)throw fail('need_domus','Name your house first.');
+      const ch=await liveChar(ctx.acct,A);if(ch&&charBusy(ch.id,await lobbies()))throw fail('in_match',`${ch.name} is in a match — grant afterwards.`);
+      const coin=Math.max(0,Math.min(100000,d.coin|0)),gifts=Math.max(0,Math.min(10,d.gift|0)),glory=Math.max(0,Math.min(10000,+d.glory||0));
+      const gear=(Array.isArray(d.gear)?d.gear:[]).map(String).filter(k=>catalog[k]).slice(0,10),offs=(Array.isArray(d.offering)?d.offering:[]).map(String).filter(k=>C.OFFERS83.includes(k)).slice(0,10);
+      if(!coin&&!gifts&&!glory&&!gear.length&&!offs.length)throw new Error('Nothing to grant.');
+      const what={coin,gift:gifts,glory,gear,offering:offs};const t=now();
+      /* the house first: flagged for good, the gifts, gear/offerings that the gladiator cannot carry */
+      const live=(await store.byIndex('OWNER#'+ctx.acct)).filter(c=>c.alive&&c.domus===D.id);
+      if(!D.test)for(const c of live)await countRank(C.rankFor(c).k,-1);
+      let c2=null;const shelf={gear:[],offs:[]};
+      if(ch)c2=await editChar(ch.id,x=>{shelf.gear=[];shelf.offs=[];x.test=true;x.wallet=(x.wallet|0)+coin;if(glory){x.glory=Math.round(((C.gloryOf(x)||0)+glory)*100)/100;const R=C.rankFor(x);x.rank=R.k;if(C.rankIdx(R.k)>C.rankIdx(x.rankK||'tiro'))x.rankK=R.k}
+        for(const k of gear){if(!catalog[k].stack&&(x.gear||[]).some(g=>C.itemBase(g)===k))shelf.gear.push(k);else C.putPiece(x,{item:k,pc:null},true)}
+        for(const k of offs){if((x.offers||[]).length>=C.OFF_MAX)shelf.offs.push(k);else x.offers=[...(x.offers||[]),k]}});
+      if(!c2){shelf.gear=gear;shelf.offs=offs}
+      for(const c of live)if(!c2||c.id!==c2.id)await editChar(c.id,x=>{x.test=true});
+      const X=await editDomus(D.id,Y=>{Y.test=true;if(!c2)Y.treasury=(Y.treasury|0)+coin;for(let i=0;i<gifts;i++)C.giftsIn(Y,[{id:'test:'+t.toString(36)+':'+i,why:'test',at:t,glad:c2?c2.name:null}]);
+        for(const k of shelf.gear)C.putPiece(Y,{item:k,pc:null},false);if(shelf.offs.length)C.offersIn(Y,shelf.offs)});
+      await store.set('ACCT#'+ctx.acct,'PROFILE',{dtest:true});
+      const LG=(await store.get('ADMIN','log'))||{list:[]};LG.list=[{at:t,acct:ctx.acct,domus:D.id,glad:c2?c2.id:null,what},...(LG.list||[])].slice(0,500);await store.put('ADMIN','log',LG);
+      return {domus:C.domusRow(X),char:c2?strip(c2):null,gifts:(X&&X.gifts)||[],gear:(X&&X.gear)||[],pcs:(X&&X.pcs)||{},offers:(X&&X.offers)||[]}},
     'hall.list':async()=>(await world('HALL')).list.slice(0,60),
     'world.news':async()=>({news:(await world('NEWS')).list.slice(0,8),online:(await here()).length,guests:(await guestsHere()).length,challenges:C.weekChallenges(now()),today:await today(),rankCounts:await rankCounts()}),
     /* ── v0.82 STANDS GROUP TURN. MATCH#<id> STW#<rot6> = the window {rot,open,at,holders}; STP#<rot6>#<acct> = one private pick.
@@ -725,7 +774,12 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     if(!ctx.acct&&t!=='hello'&&t!=='auth.guest')throw new Error('Sign in first.');
     /* v0.82 no house, no gladiators, rooms, buys or words */
     if(NEED_DOMUS.has(t)){const A=await acctOf(ctx.acct);if(A&&!A.domus)throw fail('need_domus','Name your house first — every lanista needs a Domus.')}
+    /* 🧪 test houses play Custom only (the caller and their party) */
+    if(TEST_GATE.has(t)&&d){let ranked=false;if(t==='lobby.create'||t==='lobby.quick')ranked=!!d.ranked;else{const id=t==='lobby.again'?(d.id||d.lobbyId):d.id;const L=id?await store.get('LOBBY#'+id,'LOBBY'):null;ranked=!!(L&&L.ranked)}
+      if(ranked){const A=await acctOf(ctx.acct);let test=!!(A&&A.dtest);if(!test&&A&&A.party){const P=await store.get('PARTY#'+A.party,'PARTY');for(const m of (P&&P.members)||[]){const B=await acctOf(m);if(B&&B.dtest)test=true}}
+        if(test)throw fail('testHouse','Test houses play Custom only.')}}
     return f(d||{},ctx)}}
+const TEST_GATE=new Set(['lobby.create','lobby.quick','lobby.join','lobby.accept','lobby.sit','lobby.again']);
 /* a player reconnects mid-match: their new connection goes into the match record */
 async function reconnect(store,acct,conn){const A=await store.get('ACCT#'+acct,'PROFILE');if(A&&A.match){await store.setIn('MATCH#'+A.match,'META','conns',acct,conn);await store.setIn('MATCH#'+A.match,'META','away',acct,0)}}
 async function away(store,acct,t){const A=await store.get('ACCT#'+acct,'PROFILE');if(A&&A.match)await store.setIn('MATCH#'+A.match,'META','away',acct,t)}
