@@ -102,7 +102,7 @@ const MOCK_ROUTES={
     M.reports=M.reports||{};if(!M.reports[me])M.reports[me]={table:ONLC.cleanTable(d.table),hash:String(d.hash||'')};M.dropped=M.dropped||{};
     M.abandoned=M.abandoned||{};if(M.status!=='done'&&humans.filter(a=>!M.dropped[a]&&!M.abandoned[a]).every(a=>M.reports[a])){const A=ONLC.agree(M.reports);M.status='done';M.outs=M.outs||{};
       for(const a of A.minority){const P=w.accounts[a];if(P)P.strikes=(P.strikes||0)+1}
-      if(!A.void)L.players.forEach((p,i)=>{if(!humans.includes(p.id)||M.abandoned[p.id])return;const ch=w.chars[p.char];if(ch&&!ch.alive)return;const row=A.table.find(r=>r.seat===i);if(!ch||!row)return;const out=ONLC.applyResult(ch,row,!!L.ranked);M.outs[p.id]=out;
+      if(!A.void)L.players.forEach((p,i)=>{if(!humans.includes(p.id)||M.abandoned[p.id])return;const ch=w.chars[p.char];if(ch&&!ch.alive)return;const row=A.table.find(r=>r.seat===i);if(!ch||!row)return;const out=ONLC.applyResult(ch,row,!!L.ranked,{humans:humans.length});M.outs[p.id]=out;
         if(out.died){const e={name:ch.name,cls:ch.cls,rank:ch.died.rank,lifeCF:ch.lifeCF,survived:ch.survived,diedAt:Date.now(),why:out.hall?onlHallWhy(ch):''};if(out.hall)w.hall.unshift(e);
           w.news.unshift(out.hall?['🪦',`${ch.name} fell. The Hall of the Fallen keeps the name.`]:['🌫',`${ch.name} fell and is forgotten.`])}
         if(out.rankUp)w.news.unshift(['⚔',`${ch.name} is now ${ONLC.RANKS[ONLC.rankIdx(out.rankUp)].n}.`])});

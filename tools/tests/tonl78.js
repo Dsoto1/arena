@@ -6,7 +6,7 @@ const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1')});
 const errs=[];const P={};for(const n of ['A','B','C','D']){P[n]=await ctx.newPage();P[n].on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]))}
 await P.A.goto(URL0);await P.A.evaluate(()=>localStorage.removeItem('flavius_onlmock'));for(const n of ['B','C','D'])await P[n].goto(URL0);await P.A.waitForTimeout(2500);
-const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls})},[name,cls]);
+const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls})},[name,cls]);
 await setup(P.A,'Alpha','hero');await setup(P.B,'Beta','soldier');await setup(P.C,'Gamma','slave');await setup(P.D,'Delta','amazonia');
 /* C needs coin for the ticket (the mock world is shared localStorage) */
 await P.C.evaluate(()=>{const w=mockLoad();w.chars[ONL.char.id].wallet=30;mockSave(w)});

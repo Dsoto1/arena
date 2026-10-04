@@ -11,7 +11,7 @@ await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()
 const errs=[];const A=await ctx.newPage(),B=await ctx.newPage(),C=await ctx.newPage();const P={A,B,C};
 for(const [n,p] of Object.entries(P))p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));
 await A.goto(URL0);await A.evaluate(()=>localStorage.removeItem('flavius_onlmock'));await B.goto(URL0);await C.goto(URL0);await A.waitForTimeout(2500);
-const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls});
+const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls});
   /* this browser's creations: a level 4 chest weapon and a market weapon, everything on the rolls */
   const cw1={...blankCW(),id:'t80c',name:'Test Chest Blade',chest:1,rolls:{market:true,loadout:true}};const cw2={...blankCW(),id:'t80m',name:'Test Market Blade',rolls:{market:true}};
   CUSTOM.weapons=(CUSTOM.weapons||[]).filter(x=>!/^t80/.test(x.id)).concat([cw1,cw2]);CFG.roster='rolls';rosterUse(rosterById('rolls'));try{hintsMaster(true,true)}catch(e){setHints(true)}

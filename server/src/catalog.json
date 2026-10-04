@@ -48,37 +48,64 @@
   "kind": "a",
   "lv": 1,
   "n": "Iron Helm",
-  "stack": false
+  "stack": false,
+  "ap": 2
  },
  "pectorale": {
   "kind": "a",
   "lv": 1,
   "n": "Bronze Chest Armor",
-  "stack": false
+  "stack": false,
+  "ap": 3
  },
  "balteus": {
   "kind": "a",
   "lv": 1,
   "n": "Leather Gladiator Belt II",
-  "stack": true
+  "stack": true,
+  "ap": 2
  },
  "wraps": {
   "kind": "a",
   "lv": 1,
   "n": "Padded Arm Armor",
-  "stack": true
+  "stack": true,
+  "ap": 2
  },
  "legwrapsU": {
   "kind": "a",
   "lv": 1,
   "n": "Leather Tasset Armor",
-  "stack": true
+  "stack": true,
+  "ap": 2
  },
  "legwraps": {
   "kind": "a",
   "lv": 1,
   "n": "Padded Leg Armor",
-  "stack": true
+  "stack": true,
+  "ap": 2
+ },
+ "steelhelm": {
+  "kind": "a",
+  "lv": 1,
+  "n": "Steel Helm",
+  "stack": false,
+  "ap": 2
+ },
+ "balteus1": {
+  "kind": "a",
+  "lv": 1,
+  "n": "Leather Gladiator Belt I",
+  "stack": true,
+  "ap": 2
+ },
+ "lgreaves": {
+  "kind": "a",
+  "lv": 1,
+  "n": "Leather Greaves",
+  "stack": false,
+  "ap": 3
  },
  "axe": {
   "kind": "w",
@@ -119,61 +146,92 @@
   "kind": "a",
   "lv": 2,
   "n": "Horned Helm",
-  "stack": false
+  "stack": false,
+  "ap": 3
  },
  "crista": {
   "kind": "a",
   "lv": 2,
   "n": "Hoplomachus Helm",
-  "stack": false
+  "stack": false,
+  "ap": 3
  },
  "murmillo": {
   "kind": "a",
   "lv": 2,
   "n": "Steel Gated Helm",
-  "stack": false
+  "stack": false,
+  "ap": 4
  },
  "lorica": {
   "kind": "a",
   "lv": 2,
   "n": "Scaled Chest Armor",
-  "stack": false
+  "stack": false,
+  "ap": 4
  },
  "manica": {
   "kind": "a",
   "lv": 2,
   "n": "Galerus",
-  "stack": false
+  "stack": false,
+  "ap": 3
  },
- "spaulder": {
+ "provmanica": {
   "kind": "a",
   "lv": 2,
   "n": "Manica",
-  "stack": false
+  "stack": false,
+  "ap": 3
  },
  "cestus": {
   "kind": "a",
   "lv": 2,
   "n": "Cestus",
-  "stack": false
+  "stack": false,
+  "ap": 2
  },
  "femoralia": {
   "kind": "a",
   "lv": 2,
   "n": "Iron Tasset Armor",
-  "stack": false
+  "stack": false,
+  "ap": 3
  },
  "ocrea": {
   "kind": "a",
   "lv": 2,
   "n": "Greaves",
-  "stack": false
+  "stack": false,
+  "ap": 4
  },
  "greaves": {
   "kind": "a",
   "lv": 2,
   "n": "Flavius' Greaves",
-  "stack": false
+  "stack": false,
+  "ap": 3
+ },
+ "centurion": {
+  "kind": "a",
+  "lv": 2,
+  "n": "Centurian Helm",
+  "stack": false,
+  "ap": 3
+ },
+ "ornate": {
+  "kind": "a",
+  "lv": 2,
+  "n": "Ornate Chest Armor",
+  "stack": false,
+  "ap": 4
+ },
+ "thrachelm": {
+  "kind": "a",
+  "lv": 2,
+  "n": "Thracian Helm",
+  "stack": false,
+  "ap": 4
  },
  "arcu": {
   "kind": "w",
@@ -209,54 +267,63 @@
   "kind": "a",
   "lv": 3,
   "n": "Helm of Flavius",
-  "stack": false
+  "stack": false,
+  "ap": 5
  },
  "helm5": {
   "kind": "a",
   "lv": 3,
   "n": "Steel Dome Helm",
-  "stack": false
+  "stack": false,
+  "ap": 5
  },
  "musculata": {
   "kind": "a",
   "lv": 3,
   "n": "Forged Chest Armor",
-  "stack": false
+  "stack": false,
+  "ap": 5
  },
  "amazon": {
   "kind": "a",
   "lv": 3,
   "n": "Plated Chest Armor",
-  "stack": false
+  "stack": false,
+  "ap": 5
  },
  "thorax": {
   "kind": "a",
   "lv": 3,
   "n": "Reinforced Chest Armor",
-  "stack": false
+  "stack": false,
+  "ap": 7
  },
  "galerus": {
   "kind": "a",
   "lv": 3,
   "n": "Lorica Segmentata",
-  "stack": false
+  "stack": false,
+  "ap": 4
  },
  "bracers": {
   "kind": "a",
   "lv": 3,
   "n": "Flavius' Bracers",
-  "stack": false
+  "stack": false,
+  "ap": 3
  },
  "thighplate": {
   "kind": "a",
   "lv": 3,
   "n": "Tasset Armor",
-  "stack": false
+  "stack": false,
+  "ap": 4
  },
  "cnemis": {
   "kind": "a",
   "lv": 3,
   "n": "Steel Greaves",
-  "stack": false
+  "stack": false,
+  "ap": 5
  }
 }
