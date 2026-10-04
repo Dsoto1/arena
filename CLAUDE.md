@@ -888,6 +888,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
   empty lanes = narrow posts, names fit); free-agent list rows on ONE line; 🆕 only for this week's arrivals; detail card before scouting
   = one "Ratings: scout to see" line; hours shown in banner + rail only; the advisor's pick = ★ on the right button (no separate box);
   filters in one toolbar optional; PHONES: recruit cards/tablets must not skew or squash (check 390 portrait + landscape).
+  Board card buttons: next step on ONE line (label · cost), ⋯ a small square icon. HOURS (his pick 1): the weekly pool is "The lanista's
+  hours" — shown on Recruiting AND Promote (Feast/criers/programmata draw on it), costs unchanged.
 - **ROADMAP (his picks 2026-10-04):** v0.84 = release now (he tests it and sends notes); v0.85 = faith batch (branch ready) + recruiting
   tidy + readability pass + his v0.84 notes — START RIGHT AFTER v0.84 IS PUBLISHED; v0.86 = BUILT-IN SPANISH (one string table, GAME_TERMS
   stay English, live Language switch + first-run prompt for Spanish browsers, hover/long-press panels on English-art cards/tokens,
