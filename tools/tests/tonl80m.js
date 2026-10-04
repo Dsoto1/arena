@@ -1,7 +1,7 @@
 /* online v0.80 (Virgilante's asks): a Ranked match, B reloads → the main menu shows "⚔ Back to your match" + "🚪 Abandon"; the abandon
    popup shows the gladiator at stake (face + token, record, ratings, the gear brought, Damnatio); Stay keeps it; ⚔ Back to your match
    puts B on the sand again; B abandons from the arena bar (the popup also shows the bout so far) → dies by Damnatio, the record clears;
-   A wins → ☀ Today in the arena on the Online landing names the victor (with CF) and the fallen (Damnatio).
+   A wins → the Online landing's showcases name the biggest winner (with CF) and the biggest loser (Damnatio).
    SHOT=<dir> saves screenshots (menu, popup, landing). */
 const http=require('http'),fs=require('fs'),path=require('path');
 const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.resolve(process.argv[2])),page=path.basename(process.argv[2]);const SHOT=process.env.SHOT||'';
@@ -46,7 +46,7 @@ await A.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);S.players[0].cf=34;setTi
 await A.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done('close')});await A.waitForTimeout(1500);
 const recA=await A.evaluate(()=>!!localStorage.getItem('flavius_onlmatch80'));
 await A.evaluate(()=>{onlExit()});await A.waitForTimeout(2500);
-const today=await A.evaluate(()=>{const t=document.getElementById('onlToday80');if(t)t.scrollIntoView();return t?{txt:t.textContent.replace(/\s+/g,' '),faces:t.querySelectorAll('.portrait').length}:null});
+const today=await A.evaluate(()=>{const t=document.getElementById('v85show') /* v0.85: the landing's showcases (146-v85land) */;if(t)t.scrollIntoView();return t?{txt:t.textContent.replace(/\s+/g,' '),faces:t.querySelectorAll('.portrait').length}:null});
 await A.waitForTimeout(400);if(SHOT)await A.screenshot({path:path.join(SHOT,'m80_today.png')});
 console.log(JSON.stringify({rec0,menu,pop,stayed,back,pop2:pop2.slice(0,200),gone,recA,today}));
 const miss=[];if(!rec0||rec0.name!=='Beta the Bold'||!(rec0.gear||[]).includes('gladius'))miss.push('live record on entering');
@@ -55,5 +55,5 @@ if(!pop||!pop.face||!pop.tok||pop.stats!==5||!/Damnatio/.test(pop.txt)||!/Gladiu
 if(!stayed)miss.push('Stay keeps the match');if(!back||!back.on||back.me!==1)miss.push('Back to your match');
 if(!/On the sand now/.test(pop2)||!/Damnatio/.test(pop2))miss.push('arena popup');if(gone.alive!==false||gone.rec||!gone.left)miss.push('abandon → Damnatio, record cleared');
 if(recA)miss.push('record cleared at the end');
-if(!today||!/Alpha the Bold/.test(today.txt)||!/with \d+ CF/.test(today.txt)||!/Beta the Bold/.test(today.txt)||!/Damnatio/.test(today.txt)||today.faces<2)miss.push('Today in the arena');
+if(!today||!/Alpha the Bold/.test(today.txt)||!/\d+\s*CF/.test(today.txt)||!/Beta the Bold/.test(today.txt)||!/Damnatio/.test(today.txt)||today.faces<2)miss.push('Today in the arena');
 console.log('MISS',miss);console.log('ERRS',errs);await b.close();srv.close();process.exit(miss.length||errs.length?1:0)})();

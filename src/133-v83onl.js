@@ -130,7 +130,7 @@ function mockFollows83(w,fs){return (fs||[]).map(f=>{const D=mockDomus82(w,f.id)
   const R=mockRoomOf80(w,A.id);return R?{id:f.id,name:f.name,st:'room',room:R.id,glad:mockName80(w,A.id)}:{id:f.id,name:f.name,st:'free',acct:A.id,glad:mockName80(w,A.id)}})}
 function mockBetsMark83(w,bets,res){for(let i=0;i<(bets||[]).length;i++){const b=bets[i],r=res[i];if(!b||!r||!b.bk)continue;const h=((w.bets83||{})[b.by]||[]).find(x=>x.id===b.bk);if(h){h.res=r.res;h.pay=r.pay|0}
     if(r.res!=='refund'){const wk=ONLC.weekKey(Date.now());w.wk83=w.wk83||{};const T=(w.wk83[wk]=w.wk83[wk]||{});const x=(T[b.by]=T[b.by]||{net:0,won:0,staked:0});x.net+=(r.pay|0)-(b.amt|0);x.won+=r.pay|0}}}
-function mockVday83(w){const y=ONLC.dayKey(Date.now()-864e5);w.vday83=w.vday83||{};if(w.vday83[y])return;w.vday83[y]=1;const Y=(w.days80||{})[y];const v=Y&&(Y.wins||[])[0];const D=v&&mockDomus82(w,v.dom);if(D)ONLC.trophyAdd(D,'vday',v.name,Date.now())}
+function mockVday83(w){const y=ONLC.dayPrevKey(Date.now());w.vday83=w.vday83||{};if(w.vday83[y])return;w.vday83[y]=1;const Y=(w.days80||{})[y];const v=Y&&(Y.wins||[])[0];const D=v&&mockDomus82(w,v.dom);if(D)ONLC.trophyAdd(D,'vday',v.name,Date.now())}
 
 Object.assign(MOCK_ROUTES,{
   'offer.buy':(w,d,me)=>{const ch=mockOwn83(w,me,d.char);ONLC.offerBuy(ch,String(d.key||''));return ch},

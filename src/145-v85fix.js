@@ -31,7 +31,7 @@
        with the number of bouts still to fight in gold.
   11 · The free agent card's steps (1 Scout · 2 Court · 3 Offer) swap only the card column — no MGR_REDRAW,
        so the rail is never rebuilt (clicking them again and again made the left rail flicker, like ⋯ did).
-  12 · ONLINE: the Forum starts fresh every UTC day — the server returns only today's lines (server/src/routes.js
+  12 · ONLINE: the Forum starts fresh every online day (since 146-v85land: the day turns at 20:00 New York time, ONLC.dayStart; was the UTC day) — the server returns only today's lines (server/src/routes.js
        forumLines), the mock does the same, and the page drops older lines it still holds (a tab left open
        over midnight).
   13 · ONLINE playlists: ONE row of four that never wraps — ⭐ This week (its own border, set apart by a divider:
@@ -157,9 +157,9 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   try{col.innerHTML=detailHTML(g)}catch(err){console.error(err);if(typeof MGR_REDRAW==='function')MGR_REDRAW()}},true);
 
 /* 12 · the Forum starts fresh each UTC day */
-const day0_85=()=>{const t=Date.now();return Math.min(Math.floor(t/864e5)*864e5,t-18e5)} /* lines from the last 30 min linger past midnight */;
+const day0_85=()=>ONLC.forumSince(Date.now()) /* the online day (20:00 New York, 146-v85land); lines from the last 30 min linger past the turn */;
 if(typeof onlFeedHTML80==='function'){const base=onlFeedHTML80;onlFeedHTML80=function(){const d0=day0_85();try{if(typeof ONLF!=='undefined'){if(Array.isArray(ONLF.lines))ONLF.lines=ONLF.lines.filter(l=>!l.at||l.at>=d0);if(Array.isArray(ONLF.local))ONLF.local=ONLF.local.filter(l=>!l.at||l.at>=d0)}}catch(e){}return base.apply(this,arguments)}}
-if(typeof MOCK_ROUTES!=='undefined'){const today=a=>Array.isArray(a)?a.filter(l=>{const t=typeof mockNow==='function'?mockNow():Date.now();return !l.at||l.at>=Math.min(Math.floor(t/864e5)*864e5,t-18e5)}):a;
+if(typeof MOCK_ROUTES!=='undefined'){const today=a=>Array.isArray(a)?a.filter(l=>{const t=typeof mockNow==='function'?mockNow():Date.now();return !l.at||l.at>=ONLC.forumSince(t)}):a;
   for(const k of ['forum.get','hello']){const base=MOCK_ROUTES[k];if(typeof base!=='function')continue;MOCK_ROUTES[k]=function(){const r=base.apply(this,arguments);const fix=o=>{if(k==='forum.get')return today(o);if(o&&Array.isArray(o.forum))o.forum=today(o.forum);return o};return r&&typeof r.then==='function'?r.then(fix):fix(r)}}}
 
 /* 13 · the playlist row: This week | Classic (tabbed) | Familia | Ludi Infames */

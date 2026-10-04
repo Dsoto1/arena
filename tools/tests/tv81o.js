@@ -59,10 +59,10 @@ const aBack=await A.evaluate(id=>{const w=mockLoad();const M=w.matches[id]||{};c
   return {status:M.status,lobby:Lb.status,reps:Object.keys(M.reports||{}).length,hashes:Object.values(M.reports||{}).map(r=>r.hash),void:!!A2.void,outs:Object.keys(M.outs||{}).length,stored:Object.keys(localStorage).some(k=>/^flavius_onlreport81/.test(k))}},L.id);
 /* A's landing: the stage map, the Today ribbon, the Forum in the side column, CF with the wheat */
 await A.evaluate(async()=>{window.T81=[];const mt=mToast;mToast=function(m){T81.push(String(m));return mt.apply(this,arguments)};if(CUR_MODAL)CUR_MODAL.done(null);menuHide();onlineOpen('play')});await wait(2500);
-const land=await A.evaluate(()=>{const o=document.getElementById('onl');const t=document.getElementById('onlToday80');
+const land=await A.evaluate(()=>{const o=document.getElementById('onl');const t=document.getElementById('v85show') /* v0.85: the Today ribbon became the two showcases (146-v85land) */;
   return {map:!!o.querySelector('.onl-stage #onlStageMap81 .omap-in'),dots:o.querySelectorAll('#onlStageMap81 .omap-dot').length,oval:!!o.querySelector('.omap'),row80:!!document.getElementById('onlRow80'),
     forum:!!o.querySelector('.a81-forum #onlFeed80'),news:o.querySelectorAll('#onlFeed80 .news81').length,empire:/The empire/.test(o.textContent),cap:(document.getElementById('omapCap')||{}).textContent||'',
-    online:(o.textContent.match(/lanistas? · \d+ guests?/g)||[]).length,today:t?{ribbon:t.classList.contains('td81'),txt:t.textContent.replace(/\s+/g,' '),wheat:!!t.querySelector('svg.ico')}:null,
+    online:(o.textContent.match(/lanistas? · \d+ guests?/g)||[]).length,today:t?{ribbon:!document.getElementById('onlToday80'),txt:t.textContent.replace(/\s+/g,' '),wheat:!!t.querySelector('svg.ico')}:null,
     stageWheat:!!o.querySelector('.onl-pstats svg.ico'),star:/⭐\s*\d+\s*(lifetime )?CF|CF\s*⭐/.test(o.textContent),tones:[...o.querySelectorAll('.onl-pl.pl81')].map(e=>getComputedStyle(e).borderTopColor)}});
 if(SHOT)await A.screenshot({path:path.join(SHOT,'onl_landing.png')});
 await A.evaluate(()=>{const s=document.querySelector('#onlStageMap81');if(s)s.click()});await wait(400);const big=await A.evaluate(()=>{const o=document.querySelector('.omapbig');if(o)o.remove();return !!o});
@@ -91,7 +91,7 @@ const ctx2=await b.newContext({viewport:{width:390,height:844}});await ctx2.rout
 await P.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name:'Delta'});await NET.req('domus.create',{name:'Domus Delta'});ONL.char=await NET.req('char.create',{name:'Delta the Bold',cls:'venatore'});onlineOpen('play')});await P.waitForTimeout(2500);
 const ph=await P.evaluate(async()=>{const r=document.querySelector('.onl-pls81');const sg=document.querySelector('.onl-stage');const o={flex:r&&getComputedStyle(r).display,over:r?r.scrollWidth>r.clientWidth+10:false,cols:sg?getComputedStyle(sg).gridTemplateColumns.split(' ').length:0,hscroll:document.documentElement.scrollWidth>innerWidth+2};
   r.scrollIntoView();r.dispatchEvent(new WheelEvent('wheel',{deltaY:240,bubbles:true,cancelable:true}));await new Promise(q=>setTimeout(q,200));o.left=r.scrollLeft;
-  const pos=s=>{const e=document.querySelector(s);return e?e.getBoundingClientRect().top:-1};o.order=[pos('.a81-stage'),pos('.a81-today'),pos('.a81-pls'),pos('.a81-forum')];return o});
+  const pos=s=>{const e=document.querySelector(s);return e?e.getBoundingClientRect().top:-1};o.order=[pos('.a81-stage'),pos('.a81-pls'),pos('#v85show'),pos('.a81-forum')];return o});
 if(SHOT){await P.evaluate(()=>{const b=document.getElementById('mBody');if(b)b.scrollTop=0});await P.screenshot({path:path.join(SHOT,'onl_phone.png')})}
 console.log(JSON.stringify({sign0:{box:sign0.box,who:/Other players see only your gladiator/.test(sign0.txt)},word,same,atEnd,aEnd,bOnl,bAb:{...bAb,txt:bAb.txt.slice(0,160)},aBack,land,big,wheat,hall,inv0,inv1,dead1,inv2,dead2,ph}));
 const miss=[];
@@ -105,11 +105,11 @@ if(bOnl.after.on||bOnl.after.watching||bOnl.after.banner||bOnl.after.inMatch)mis
 if(!bAb.r.over||!bAb.alive||bAb.abandoned||!/The bout is over/.test(bAb.txt)||/dies and is struck/.test(bAb.txt))miss.push('abandon after the bout: no Damnatio');
 if(aBack.status!=='done'||aBack.reps!==2||aBack.void||!aBack.outs||aBack.stored||aBack.hashes.some(h=>h!==aEnd.hashAt))miss.push('saved report resent after reload → settled');
 if(!land.map||!land.dots||land.oval||land.row80||!land.forum||!land.news||land.empire||land.online!==1)miss.push('landing: stage map, Forum with news, one online count');
-if(!land.today||!land.today.ribbon||!/Alpha the Bold/.test(land.today.txt)||!land.today.wheat)miss.push('Today ribbon');
+if(!land.today||!land.today.ribbon||!/Alpha the Bold/.test(land.today.txt)||!land.today.wheat)miss.push('Today showcases (no ribbon)');
 if(!land.stageWheat||land.star)miss.push('wheat on the stage');if(land.tones.length<4||new Set(land.tones).size!==land.tones.length)miss.push('playlist border tones');if(!big)miss.push('map click opens the large view');
 if(!wheat)miss.push('result toast wheat');if(!hall)miss.push('Hall wheat');
 if(inv0)miss.push('invite to a missing room popped up');if(!inv1||!dead1.toast||dead1.joined||dead1.pop)miss.push('closed room → message');
 if(!inv2||!dead2||!dead2.watch||!/That room closed before you got there/.test(dead2.txt))miss.push('started room → message + Watch');
 if(ph.flex!=='flex'||!ph.over||!(ph.left>0)||ph.cols!==1||ph.hscroll)miss.push('phone: one-column stage, sideways playlists');
-if(!(ph.order[0]<ph.order[1]&&ph.order[1]<ph.order[2]&&ph.order[2]<ph.order[3]))miss.push('phone order stage → Today → Playlists → Forum');
+if(!(ph.order[0]<ph.order[1]&&ph.order[1]<ph.order[2]&&ph.order[2]<ph.order[3]))miss.push('phone order stage → Playlists → Showcases → Forum');
 console.log('MISS',miss);console.log('ERRS',errs);await b.close();srv.close();process.exit(miss.length||errs.length?1:0)})();

@@ -158,7 +158,7 @@ function mockLive80(w,me){for(const L of Object.values(w.lobbies||{})){if(L.stat
   for(const x of g)if(mockLive80(w,x.id))throw new Error(x.id===me?'Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.':'Someone in your party is still in a match.');return g}}
 {const base=MOCK_ROUTES['lobby.ticket'];MOCK_ROUTES['lobby.ticket']=(w,d,me)=>{if(mockLive80(w,me))throw new Error('Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.');return base(w,d,me)}}
 function mockToday80(w){const D=w.days80||{};const t=Date.now();const k=ONLC.dayKey(t);if(ONLC.dayHas(D[k]))return ONLC.dayOut(D[k],'today');
-  const y=D[ONLC.dayKey(t-864e5)];return ONLC.dayHas(y)?ONLC.dayOut(y,'yesterday'):ONLC.dayOut(D[k],'today')}
+  const y=D[ONLC.dayPrevKey(t)];return ONLC.dayHas(y)?ONLC.dayOut(y,'yesterday'):ONLC.dayOut(D[k],'today')}
 function mockDay80(w,fn){w.days80=w.days80||{};const k=ONLC.dayKey(Date.now());w.days80[k]=fn(w.days80[k]||{})||w.days80[k];const old=ONLC.dayKey(Date.now()-2*864e5);
   for(const x of Object.keys(w.days80))if(x<old)delete w.days80[x]}
 {const base=MOCK_ROUTES['hello'];MOCK_ROUTES['hello']=(w,d,me)=>{const o=base(w,d,me);o.now=Date.now();if(d.all&&o.me){const lv=mockLive80(w,me);if(lv)o.live=lv;o.today=mockToday80(w)}return o}}
@@ -167,10 +167,10 @@ function mockDay80(w,fn){w.days80=w.days80||{};const k=ONLC.dayKey(Date.now());w
   if(L&&M&&was!=='done')for(const p of L.players){const ch=w.chars[p.char];if(ch&&!/^bot/.test(p.id))before[p.id]=ONLC.rankFor(ch).k}
   const r=base(w,d,me);
   try{if(L&&M&&M.status==='done'&&was!=='done'){const A=ONLC.agree(M.reports||{});if(!A.void){
-    const seats=L.players.map((p,i)=>{if(/^bot/.test(p.id)||(M.abandoned||{})[p.id])return null;const ch=w.chars[p.char];const row=(A.table||[]).find(x=>x.seat===i);return ch&&row?{acct:p.id,ch,before:before[p.id]||'tiro',row,out:(M.outs||{})[p.id]}:null}).filter(Boolean);
+    const seats=L.players.map((p,i)=>{if(/^bot/.test(p.id)||(M.abandoned||{})[p.id])return null;const ch=w.chars[p.char];const row=(A.table||[]).find(x=>x.seat===i);return ch&&row?{acct:p.id,ch,before:before[p.id]||'tiro',row,out:(M.outs||{})[p.id],kit:p.kit,seat:i}:null}).filter(Boolean);
     if(seats.length)mockDay80(w,D=>ONLC.dayFromMatch(D,{id:L.id,ev:L.ev,loc:L.loc,at:Date.now(),ranked:!!L.ranked,seats}))}}}catch(e){console.error(e)}return r}}
 {const base=MOCK_ROUTES['match.abandon'];MOCK_ROUTES['match.abandon']=(w,d,me)=>{const L=w.lobbies[d.id];const p=L&&L.players.find(x=>x.id===me);const ch=p&&w.chars[p.char];const before=ch?ONLC.rankFor(ch).k:'tiro';
-  const r=base(w,d,me);try{if(r&&r.out&&r.out.died&&ch)mockDay80(w,D=>ONLC.dayFell(D,{id:d.id,acct:me,ev:L.ev,loc:L.loc,at:Date.now(),ch,before,hall:r.out.hall}))}catch(e){}return r}}
+  const r=base(w,d,me);try{if(r&&r.out&&r.out.died&&ch)mockDay80(w,D=>ONLC.dayFell(D,{id:d.id,acct:me,ev:L.ev,loc:L.loc,at:Date.now(),ch,before,hall:r.out.hall,kit:p.kit}))}catch(e){}return r}}
 {const base=MOCK_ROUTES['match.odd'];MOCK_ROUTES['match.odd']=(w,d,me)=>{const r=base(w,d,me);try{const L=w.lobbies[d.id];const M=w.matches[d.id];const seat=d.seat|0;
   const acct=seat<L.seats?(L.players[seat]||{}).id:((L.stands||[])[seat-L.seats]||{}).id;const n=mockLiveHumans(L,M).length;const v=((mockOdd80()[d.id]||{}).votes||{})[acct]||[];
   if(acct&&n>=3&&v.length>=Math.floor(n/2)+1)mockPush('match.youodd',{id:d.id,seat,voters:v.slice(),to:acct})}catch(e){}return r}}
