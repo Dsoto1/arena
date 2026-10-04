@@ -26,7 +26,7 @@ const drive=async p=>{const r=await p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on||onl
   if(r[0]==='sel')await p.click(r[1],{timeout:2000}).catch(()=>{});if(r[0]==='xy')await p.mouse.click(r[1][0],r[1][1]);return r[2]};
 const run=async ms=>{const t0=Date.now();while(Date.now()-t0<ms){await drive(A);await drive(B);await A.waitForTimeout(250);if(await A.evaluate(()=>!S||S.over))break}};
 await run(25000);
-const seen=await B.evaluate(()=>({tok:!!(S.players[0]._onlTok&&S.players[0]._onlTok.helm==='crested'),art:pArt(S.players[0]).includes('portrait'),bar:document.body.classList.contains('onlarena'),newHidden:getComputedStyle(document.getElementById('btnNew')).display==='none',leave:(document.getElementById('btnOnlLeave')||{}).textContent}));
+const seen=await B.evaluate(()=>({tok:!!(S.players[0]._onlSc||(S.players[0]._onlTok&&S.players[0]._onlTok.helm==='crested')) /* v0.82: online tokens are sculpted, no helmets */,art:pArt(S.players[0]).includes('portrait'),bar:document.body.classList.contains('onlarena'),newHidden:getComputedStyle(document.getElementById('btnNew')).display==='none',leave:(document.getElementById('btnOnlLeave')||{}).textContent}));
 /* B reloads the page and rejoins from a snapshot */
 await B.reload();await B.waitForTimeout(2500);const back=await B.evaluate(async id=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();await onlRefresh();const L=ONL.lobbies.find(x=>x.id===id);await onlAttach(L,'seat');return true},L.id);
 await B.waitForTimeout(6000);const rj=await B.evaluate(()=>({on:ONLM.on,me:ONLM.me,watch:!!(S&&S.onl&&S.onl.watch)}));
