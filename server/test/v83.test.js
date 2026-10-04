@@ -7,7 +7,7 @@ function seeded(seed){let s=seed>>>0;return ()=>{s=(s*1664525+1013904223)>>>0;re
 
 /* ── 1. the shared rules (ONLC) ── */
 function rules(){
-  assert.strictEqual(C.VER,6);
+  assert.ok(C.VER>=6);
   assert.deepStrictEqual(C.RANKS.map(r=>r.k),['tiro','novicius','gregarius','veteranus','primus','summa','rudiarius','invictus']);
   assert.deepStrictEqual(C.RANKS.map(r=>r.glory),[0,90,180,550,1150,2100,3500,5500]);
   assert.deepStrictEqual(C.RANKS.map(r=>C.awardOf(r.k,false,0)),[8,10,12,18,25,35,45,60]);assert.strictEqual(C.awardOf('invictus',true,10),Math.round(60*1.5*2));

@@ -93,63 +93,85 @@
   "lv": 1,
   "n": "Iron Helm",
   "stack": false,
-  "ap": 2
+  "ap": 2,
+  "slot": "head",
+  "pt": "helm"
  },
  "pectorale": {
   "kind": "a",
   "lv": 1,
   "n": "Bronze Chest Armor",
   "stack": false,
-  "ap": 3
+  "ap": 3,
+  "slot": "chest",
+  "pt": "chest"
  },
  "balteus": {
   "kind": "a",
   "lv": 1,
   "n": "Leather Gladiator Belt II",
   "stack": true,
-  "ap": 2
+  "ap": 2,
+  "slot": "chest",
+  "pt": "chest"
  },
  "wraps": {
   "kind": "a",
   "lv": 1,
   "n": "Padded Arm Armor",
   "stack": true,
-  "ap": 2
+  "ap": 2,
+  "slot": "arm",
+  "pt": "lower",
+  "pair": 1
  },
  "legwrapsU": {
   "kind": "a",
   "lv": 1,
   "n": "Leather Tasset Armor",
   "stack": true,
-  "ap": 2
+  "ap": 2,
+  "slot": "leg",
+  "pt": "upper",
+  "pair": 1
  },
  "legwraps": {
   "kind": "a",
   "lv": 1,
   "n": "Padded Leg Armor",
   "stack": true,
-  "ap": 2
+  "ap": 2,
+  "slot": "leg",
+  "pt": "lower",
+  "pair": 1
  },
  "steelhelm": {
   "kind": "a",
   "lv": 1,
   "n": "Steel Helm",
   "stack": false,
-  "ap": 2
+  "ap": 2,
+  "slot": "head",
+  "pt": "helm"
  },
  "balteus1": {
   "kind": "a",
   "lv": 1,
   "n": "Leather Gladiator Belt I",
   "stack": true,
-  "ap": 2
+  "ap": 2,
+  "slot": "chest",
+  "pt": "chest"
  },
  "lgreaves": {
   "kind": "a",
   "lv": 1,
   "n": "Leather Greaves",
   "stack": false,
-  "ap": 3
+  "ap": 3,
+  "slot": "leg",
+  "pt": "lower",
+  "pair": 1
  },
  "axe": {
   "kind": "w",
@@ -224,91 +246,129 @@
   "lv": 2,
   "n": "Horned Helm",
   "stack": false,
-  "ap": 3
+  "ap": 3,
+  "slot": "head",
+  "pt": "helm"
  },
  "crista": {
   "kind": "a",
   "lv": 2,
   "n": "Hoplomachus Helm",
   "stack": false,
-  "ap": 3
+  "ap": 3,
+  "slot": "head",
+  "pt": "helm",
+  "bonus": {
+   "chest": 1
+  }
  },
  "murmillo": {
   "kind": "a",
   "lv": 2,
   "n": "Steel Gated Helm",
   "stack": false,
-  "ap": 4
+  "ap": 4,
+  "slot": "head",
+  "pt": "helm"
  },
  "lorica": {
   "kind": "a",
   "lv": 2,
   "n": "Scaled Chest Armor",
   "stack": false,
-  "ap": 4
+  "ap": 4,
+  "slot": "chest",
+  "pt": "chest"
  },
  "manica": {
   "kind": "a",
   "lv": 2,
   "n": "Galerus",
   "stack": false,
-  "ap": 3
+  "ap": 3,
+  "slot": "arm",
+  "pt": "upper",
+  "bonus": {
+   "head": 1
+  }
  },
  "provmanica": {
   "kind": "a",
   "lv": 2,
   "n": "Manica",
   "stack": false,
-  "ap": 3
+  "ap": 3,
+  "slot": "arm",
+  "pt": "upper",
+  "bonus": {
+   "chest": 2
+  }
  },
  "cestus": {
   "kind": "a",
   "lv": 2,
   "n": "Cestus",
   "stack": false,
-  "ap": 2
+  "ap": 2,
+  "slot": "arm",
+  "pt": "hand"
  },
  "femoralia": {
   "kind": "a",
   "lv": 2,
   "n": "Iron Tasset Armor",
   "stack": false,
-  "ap": 3
+  "ap": 3,
+  "slot": "leg",
+  "pt": "upper",
+  "pair": 1
  },
  "ocrea": {
   "kind": "a",
   "lv": 2,
   "n": "Greaves",
   "stack": false,
-  "ap": 4
+  "ap": 4,
+  "slot": "leg",
+  "pt": "lower",
+  "pair": 1
  },
  "greaves": {
   "kind": "a",
   "lv": 2,
   "n": "Flavius' Greaves",
   "stack": false,
-  "ap": 3
+  "ap": 3,
+  "slot": "leg",
+  "pt": "lower",
+  "pair": 1
  },
  "centurion": {
   "kind": "a",
   "lv": 2,
   "n": "Centurian Helm",
   "stack": false,
-  "ap": 3
+  "ap": 3,
+  "slot": "head",
+  "pt": "helm"
  },
  "ornate": {
   "kind": "a",
   "lv": 2,
   "n": "Ornate Chest Armor",
   "stack": false,
-  "ap": 4
+  "ap": 4,
+  "slot": "chest",
+  "pt": "chest"
  },
  "thrachelm": {
   "kind": "a",
   "lv": 2,
   "n": "Thracian Helm",
   "stack": false,
-  "ap": 4
+  "ap": 4,
+  "slot": "head",
+  "pt": "helm"
  },
  "arcu": {
   "kind": "w",
@@ -374,62 +434,90 @@
   "lv": 3,
   "n": "Helm of Flavius",
   "stack": false,
-  "ap": 5
+  "ap": 5,
+  "slot": "head",
+  "pt": "helm"
  },
  "helm5": {
   "kind": "a",
   "lv": 3,
   "n": "Steel Dome Helm",
   "stack": false,
-  "ap": 5
+  "ap": 5,
+  "slot": "head",
+  "pt": "helm"
  },
  "musculata": {
   "kind": "a",
   "lv": 3,
   "n": "Forged Chest Armor",
   "stack": false,
-  "ap": 5
+  "ap": 5,
+  "slot": "chest",
+  "pt": "chest"
  },
  "amazon": {
   "kind": "a",
   "lv": 3,
   "n": "Plated Chest Armor",
   "stack": false,
-  "ap": 5
+  "ap": 5,
+  "slot": "chest",
+  "pt": "chest"
  },
  "thorax": {
   "kind": "a",
   "lv": 3,
   "n": "Reinforced Chest Armor",
   "stack": false,
-  "ap": 7
+  "ap": 7,
+  "slot": "chest",
+  "pt": "chest",
+  "bonus": {
+   "rarm": 4,
+   "larm": 4
+  }
  },
  "galerus": {
   "kind": "a",
   "lv": 3,
   "n": "Lorica Segmentata",
   "stack": false,
-  "ap": 4
+  "ap": 4,
+  "slot": "arm",
+  "pt": "upper",
+  "bonus": {
+   "head": 1
+  }
  },
  "bracers": {
   "kind": "a",
   "lv": 3,
   "n": "Flavius' Bracers",
   "stack": false,
-  "ap": 3
+  "ap": 3,
+  "slot": "arm",
+  "pt": "lower",
+  "pair": 1
  },
  "thighplate": {
   "kind": "a",
   "lv": 3,
   "n": "Tasset Armor",
   "stack": false,
-  "ap": 4
+  "ap": 4,
+  "slot": "leg",
+  "pt": "upper",
+  "pair": 1
  },
  "cnemis": {
   "kind": "a",
   "lv": 3,
   "n": "Steel Greaves",
   "stack": false,
-  "ap": 5
+  "ap": 5,
+  "slot": "leg",
+  "pt": "lower",
+  "pair": 1
  }
 }

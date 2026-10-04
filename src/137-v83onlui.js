@@ -171,7 +171,7 @@ onlStoreHTML82=function(){if(!ONL.acct||onlIsGuest82())return '';const cat=onlCa
   const chip=(v,l,n)=>`<button type="button" class="sr82-chip ${sel===v?'on':''}" data-onl82="srsel" data-v="${esc2(v)}">${l} <small>${n}</small></button>`;
   const dest=r=>[...live.filter(c=>c!==r.o).map(c=>{const why=busy.has(c.id)?'in a match':ONLC.gearMoveWhy(r.o,c,r.k,cat);return `<option value="${esc2(c.id)}" ${why?'disabled':''}>→ ${esc2(c.name)}${why?` (${esc2(why.replace(/\.$/,''))})`:''}</option>`}),r.o.house?'':'<option value="house">→ the shelf</option>'].join('');
   const row=r=>{const I=r.I;const lock=!r.o.house&&busy.has(r.o.id);const from=r.o.house?'house':r.o.id;const why=r.o.house?'':ONLC.wearWhy(r.o,r.k);const brk=I.st==='broken';const named=I.named;
-    const art=named?`<div class="sr83-nw" style="--rc:${ONL83.rarCol[I.rar]}">${typeof cardHTML==='function'&&W[I.w.base]?cardHTML('w:'+I.w.base,'sm'):'⚔'}<i class="nw83-tint"></i></div>`:(typeof cardHTML==='function'?cardHTML((I.kind==='w'?'w:':'a:')+I.base,'sm'):'');
+    const art=named?`<div class="sr83-nw" style="--rc:${ONL83.rarCol[I.rar]}">${typeof cardHTML==='function'&&(I.kind==='a'?ARM[I.w.base]:W[I.w.base])?cardHTML((I.kind==='a'?'a:':'w:')+I.w.base,'sm'):(I.kind==='a'?'🛡':'⚔')}<i class="nw83-tint"></i></div>`:(typeof cardHTML==='function'?cardHTML((I.kind==='w'?'w:':'a:')+I.base,'sm'):'');
     return `<div class="sr82-it sr83 ${lock?'lock':''} ${brk?'brk83':''} ${named?'named83':''}" data-sr82="${esc2(r.k)}" ${named?`style="--rc:${ONL83.rarCol[I.rar]}"`:''} ${(I.hist||[]).length?`title="${esc2(histTip83(I.hist))}"`:''}><div class="sr82-art">${art}</div>
       <div class="sr82-b"><b ${named?`style="color:${ONL83.rarCol[I.rar]}"`:''}>${esc2(I.n)}</b><small>${named?`${esc2(ONLC.rarOf(I.rar).n)} · `:''}Level ${I.lv}${I.kind==='a'?` · ${I.ap|0} AP`:''} · ${c83()} ${ONLC.valueOf(I)}</small>
       <small class="sr82-who">${r.o.house?'🗄 on the shelf':`with <b>${esc2(r.o.name)}</b>`}</small>${lock?'<small class="sr82-lk">🔒 In a match</small>':''}${named&&!r.o.house&&!ONLC.canWearNamed(r.o)?'<small class="lk83">🔒 Veteranus+ to bring</small>':''}${brk?'<small class="brk83t">💔 Broken — repair to bring</small>':''}</div>
@@ -237,7 +237,7 @@ function onl83Used(ch){if(!ONL83U.used||Date.now()-ONL83U.usedAt>15000){ONL83U.u
 /* ---------------- 6 · the LOOT window ---------------- */
 function onl83LootQ(X){if(!X||!X.id)return;const k=X.id+'#'+X.seat;if(ONL83U.lootSeen[k])return;ONL83U.lootSeen[k]=1;ONL83U.lootQ.push(X);onl83LootNext()}
 function onl83LootNext(){if(document.querySelector('.loot83pop'))return;const X=ONL83U.lootQ.shift();if(!X)return;const left=()=>Math.max(0,Math.ceil((X.until-onlNow82())/1000));
-  const cat=onlCatalog();const Ps=(X.pieces||[]).map(p=>({p,I:p.kind==='w'&&ONLC.isNamed(p.item)?{...p,named:true,w:(p.w||{n:p.n,rar:p.rar}),val:p.val}:(ONLC.pieceInfo({item:p.item,pc:{st:p.st,hist:p.hist}},cat)||p)}));
+  const cat=onlCatalog();const Ps=(X.pieces||[]).map(p=>({p,I:ONLC.isNamed(p.item)?{...p,named:true,w:(p.w||{n:p.n,rar:p.rar,kind:p.kind}),val:p.val}:(ONLC.pieceInfo({item:p.item,pc:{st:p.st,hist:p.hist}},cat)||p)}));
   const best=ONLC.lootBest(X.pieces||[]);
   const bg=onl83Pop('loot83pop',`<h3 class="pop83h">⚔ The spoils of ${esc2(X.dead&&X.dead.name||'the fallen')}</h3>
     <p class="rc-sub" style="margin:0 0 8px">${esc2(X.dead&&X.dead.domus?onlHouse82(X.dead.domus):'')} · take ONE piece; the rest goes to the market. <b class="loot83cd">⏳ <span id="loot83s">${left()}</span> s</b></p>

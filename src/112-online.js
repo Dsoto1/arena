@@ -79,7 +79,7 @@ const MOCK_ROUTES={
     L.status='live';L.seed=(Math.random()*2**31)>>>0;L.started=Date.now();w.matches[L.id]={id:L.id,seed:L.seed,inputs:[],results:{},open:null,watch:{},abandoned:{},abandon:ONLC.abandonRule(L),standsOff:!!L.standsOff};return L},
   'match.abandon':(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');const seat=L.players.findIndex(p=>p.id===me);if(seat<0)throw new Error('Not your match.');
     M.abandoned=M.abandoned||{};if(M.abandoned[me]||M.status==='done')return {done:1};const rule=M.abandon||ONLC.abandonRule(L);M.abandoned[me]=rule;
-    const inp={k:'abandon',seat,rule,from:'server',seq:M.inputs.length};M.inputs.push(inp);mockPush('match.input',{id:d.id,in:inp});let out=null;
+    const inp={k:'abandon',seat,rule,from:'server',seq:M.inputs.length,...(rule==='cpu'&&!L.ranked&&typeof ONLC.RECLAIM_MS==='number'?{until:Date.now()+ONLC.RECLAIM_MS}:{})}; /* v0.84 the reclaim window */M.inputs.push(inp);mockPush('match.input',{id:d.id,in:inp});let out=null;
     if(L.ranked){const ch=w.chars[L.players[seat].char];if(ch&&ch.alive){out=ONLC.applyResult(ch,{won:false,place:L.seats,f:0,coin:0,survives:false},true);out.abandoned=1;M.outs=M.outs||{};M.outs[me]=out;
       if(out.hall)w.hall.unshift({name:ch.name,cls:ch.cls,rank:ch.died.rank,lifeCF:ch.lifeCF,survived:ch.survived,diedAt:Date.now(),why:onlHallWhy(ch)});w.news.unshift(['🌫',`${ch.name} abandoned the sand — Damnatio.`])}}
     const left=L.players.filter(p=>!/^bot/.test(p.id)&&!M.abandoned[p.id]&&!(M.dropped||{})[p.id]);if(!left.length)mockClose(w,L,'empty');return {done:1,out,rule}},
@@ -111,7 +111,7 @@ const MOCK_ROUTES={
       for(const a of humans)if(a!==me)mockPush('match.settled',{id:d.id,to:a,void:!!A.void,out:M.outs[a]||null,char:Object.values(w.chars).filter(c=>c.owner===a).sort((x,y)=>y.born-x.born)[0]||null})}
     const mine=Object.values(w.chars).filter(c=>c.owner===me).sort((x,y)=>y.born-x.born)[0]||null;if(M.status==='done')return {char:mine,out:(M.outs||{})[me]||null,void:!!(M.outs&&!Object.keys(M.outs).length&&L.status==='done'&&ONLC.agree(M.reports).void)};return {pending:true}},
   'match.drop':(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];if(!L||!M)throw new Error('No such match.');const sq=d.seat|0;const p=sq<L.seats?L.players[sq]:(L.stands||[])[sq-L.seats];if(!p||p.id===me)throw new Error('No one to drop.');
-    M.dropped=M.dropped||{};if(M.dropped[p.id])return {done:1};M.dropped[p.id]=true;const inp={k:'drop',seat:d.seat|0,from:'server',seq:M.inputs.length};M.inputs.push(inp);mockPush('match.input',{id:d.id,in:inp});return {done:1}},
+    M.dropped=M.dropped||{};if(M.dropped[p.id])return {done:1};M.dropped[p.id]=true;const inp={k:'drop',seat:d.seat|0,from:'server',seq:M.inputs.length,...(sq<L.seats&&typeof ONLC.RECLAIM_MS==='number'?{until:Date.now()+ONLC.RECLAIM_MS}:{})}; /* v0.84 the reclaim window */M.inputs.push(inp);mockPush('match.input',{id:d.id,in:inp});return {done:1}},
   'hall.list':(w)=>w.hall.slice(0,60),
   'world.news':(w)=>({news:w.news.slice(0,8),online:Object.keys(w.accounts).length+37,challenges:ONLC.weekChallenges(Date.now())})};
 /* the lanista and their party (the leader picks), as lobby seats */

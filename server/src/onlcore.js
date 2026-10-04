@@ -37,7 +37,7 @@
      (25+ ranked bouts survived, 500+ lifetime CF, or Commodus slain). Everyone else is erased (damnatio memoriae).
    ===================================================================== */
 const ONLC=(function(){
-  const VER=6; /* v0.83: ranks 8, gear levels, treasury, offerings, gear loss + loot, gifts, named weapons, countdown, trophies, follow, wagers tab.  protocol version: the server refuses clients on another one (v0.80: rooms, quick chat, the Praeco, presence; v0.82: domus, coin, guests, invites, stands turn) */
+  const VER=7; /* v0.84: named armor, seasons + the weekly challenge, reclaim a seat, CPU-won rewards, Flavius's Auction. v0.83: ranks 8, gear levels, treasury, offerings, gear loss + loot, gifts, named weapons, countdown, trophies, follow, wagers tab.  protocol version: the server refuses clients on another one (v0.80: rooms, quick chat, the Praeco, presence; v0.82: domus, coin, guests, invites, stands turn) */
   const CLASSES8=['soldier','royalty','hero','slave','veteranus','amazonia','venatore','damnatio'];
   const EVENTS3=['democritus','egidious','cassian'];
   const EVENTS_TEAM=['familia']; /* team events: 4 seats, Team A (seats 0-1 by default) vs Team B; a party sits on one team */
@@ -97,7 +97,8 @@ const ONLC=(function(){
   function buy(ch,item,catalog){const why=canBuy(ch,item,catalog);if(why)throw new Error(why);ch.wallet-=priceOf(catalog[item]);ch.gear=[...(ch.gear||[]),item];return ch}
   /* the result of one match for one gladiator. row = the event's result row for that seat:
      {won, place (1 = best), f (final CF), coin (ignored since v0.82), kills, survives, slew:['commodus',…]} */
-  function applyResult(ch,row,ranked,x){const before=rankFor(ch);const g0=gloryOf(ch);const f=tableFactor(x&&x.humans);const out={died:false,rankUp:null,pay:0,cf:0,hall:false,factor:f,glory:0};
+  function applyResult(ch,row,ranked,x){const before=rankFor(ch);const g0=gloryOf(ch);const cpu=!!(row&&row.cpu);const f=tableFactor(x&&x.humans)*(cpu?CPU_CUT:1);const out={died:false,rankUp:null,pay:0,cf:0,hall:false,factor:f,glory:0,...(cpu?{cpu:true}:{})};
+    /* v0.84: a seat the CPU mostly played (row.cpu) earns CPU_CUT of the coin and the Glory, no gifts, no trophies; the Fate still applies */
     const surv=row.survives!==false;const gain=f*(Math.max(0,row.f|0)+(ranked&&surv?GLORY.survived:0)+(ranked&&surv&&row.won?GLORY.win:0));
     if(ch.rwins==null)ch.rwins=ch.glory==null?(ch.wins|0):0;if(ranked&&row.won)ch.rwins++;ch.glory=Math.round((g0+gain)*100)/100;out.glory=Math.round(gain*10)/10;
     if(!ch.rankK||rankIdx(before.k)>rankIdx(ch.rankK))ch.rankK=before.k;const t83=(x&&x.now)||Date.now();out.gifts=[];out.ranks=[];
@@ -111,8 +112,8 @@ const ONLC=(function(){
     if(ranked){ch.survived=(ch.survived||0)+1;ch.streak=(ch.streak||0)+1}if(row.survives!==false)grow(ch,1+(row.won?1:0));
     const after=rankFor(ch);ch.rank=after.k;if(rankIdx(after.k)>rankIdx(ch.rankK))ch.rankK=after.k;if(after.k!==before.k)out.rankUp=after.k;
     /* v0.83 Flavius's gifts: one for every rank reached, one every GIFT_EVERY Ranked bouts survived */
-    for(let i=rankIdx(before.k)+1;i<=rankIdx(after.k);i++){out.ranks.push(RANKS[i].k);const g=giftAdd(ch,'rank:'+RANKS[i].k,t83);if(g)out.gifts.push(g)}
-    if(ranked&&ch.survived>0&&ch.survived%GIFT_EVERY===0){const g=giftAdd(ch,'surv:'+ch.survived,t83);if(g)out.gifts.push(g)}
+    for(let i=rankIdx(before.k)+1;i<=rankIdx(after.k);i++){out.ranks.push(RANKS[i].k);const g=cpu?null:giftAdd(ch,'rank:'+RANKS[i].k,t83);if(g)out.gifts.push(g)}
+    if(!cpu&&ranked&&ch.survived>0&&ch.survived%GIFT_EVERY===0){const g=giftAdd(ch,'surv:'+ch.survived,t83);if(g)out.gifts.push(g)}
     return out}
   /* what a lobby seat needs to field the gladiator on every client */
   /* v0.83: gear = ENGINE keys (printed key, or 'nw_<uid>' for a named weapon) in the order brought; items = the same pieces as the
@@ -293,7 +294,7 @@ const ONLC=(function(){
   function gearEquip(ch,item,on){if(!ch.alive)throw new Error('The dead stay as they fell.');const eq=equipOf(ch);const have=(ch.gear||[]).filter(k=>k===item).length,inEq=eq.filter(k=>k===item).length;
     if(!have)throw new Error('That piece is not theirs.');if(on){const why=wearWhy(ch,item);if(why)throw new Error(why)}if(on&&inEq<have)eq.push(item);else if(!on&&inEq){eq.splice(eq.indexOf(item),1)}ch.equip=eq;return ch}
   /* ── v0.82 GUESTS: a connection without sign-in may only look (these requests), for 2 hours from its first connect ── */
-  const GUEST_MS=2*3600e3, GUEST_OK=['hello','auth.guest','lobby.list','match.watch','match.unwatch','match.get','match.snapreq','forum.get','hall.list','world.news','domus.profile','wager.list']; /* v0.83: house pages and the open pots too */;
+  const GUEST_MS=2*3600e3, GUEST_OK=['auction.list','hello','auth.guest','lobby.list','match.watch','match.unwatch','match.get','match.snapreq','forum.get','hall.list','world.news','domus.profile','wager.list']; /* v0.83: house pages and the open pots too */;
   /* ── v0.82 STANDS GROUP TURN: once a rotation every ticket holder picks ONE action in private; the server applies all picks as one
      input. A thrown stone / offering is LOCKED to its tile (r,c on the 13×13 board). ── */
   const STANDS_MS=20000, STANDS_ACTS=['pass','stone','offer','tholo','move','cheer'];
@@ -338,7 +339,7 @@ const ONLC=(function(){
     return {seat:r.seat|0,won:!!r.won,place:Math.max(1,Math.min(8,r.place|0||4)),f:Math.max(0,Math.min(400,r.f|0)),coin:Math.max(0,Math.min(200,r.coin|0)),kills:Math.max(0,Math.min(20,r.kills|0)),survives:r.survives!==false,
       slew:Array.isArray(r.slew)?[...new Set(r.slew.filter(x=>x==='commodus'||x==='tholo'))].sort():[],
       brk:Array.isArray(r.brk)?r.brk.filter(k=>typeof k==='string'&&KEY_RE.test(k)).slice(0,16).sort():[],
-      off:Array.isArray(r.off)?r.off.filter(k=>OFFERS83.includes(k)).slice(0,OFF_CARRY).sort():[],ks,kb:['g','b','a','r'].includes(r.kb)?r.kb:'',thumb:!!r.thumb}}
+      off:Array.isArray(r.off)?r.off.filter(k=>OFFERS83.includes(k)).slice(0,OFF_CARRY).sort():[],ks,kb:['g','b','a','r'].includes(r.kb)?r.kb:'',thumb:!!r.thumb,cpu:!!r.cpu}}
   function cleanTable(t){return (Array.isArray(t)?t:[]).slice(0,8).map(cleanRow).sort((a,b)=>a.seat-b.seat)}
   function agree(reports){const ids=Object.keys(reports);if(!ids.length)return {table:null,void:true,minority:[]};
     const key=r=>JSON.stringify(cleanTable(r.table))+'|'+String(r.hash||'');const groups={};for(const a of ids){const k=key(reports[a]);(groups[k]=groups[k]||[]).push(a)}
@@ -394,14 +395,14 @@ const ONLC=(function(){
   const rarOf=k=>RARITY.find(r=>r.k===k)||RARITY[0];
   const itemBase=it=>String(it||'').split('#')[0];
   const itemUid=it=>{const s=String(it||'');const i=s.indexOf('#');return i<0?null:s.slice(i+1)};
-  const isNamed=it=>itemBase(it)===NAMED;
-  const engineKey=it=>isNamed(it)?'nw_'+itemUid(it):itemBase(it);
+  const isNamed=it=>{const b=itemBase(it);return b===NAMED||b==='na'}; /* v0.84: 'na#uid' = a named ARMOR piece */
+  const engineKey=it=>isNamed(it)?itemBase(it)+'_'+itemUid(it):itemBase(it);
   const pcOf=(h,it)=>{const u=itemUid(it);return u&&h&&h.pcs&&h.pcs[u]||null};
   const isBroken=(h,it)=>{const p=pcOf(h,it);return !!(p&&p.st==='broken')};
   function newUid(h){const n=(h.pcsN=(h.pcsN|0)+1);return String(h.id||'x').replace(/[^A-Za-z0-9_-]/g,'').slice(-24)+'.'+n.toString(36)}
   /* what a piece is: {item, base, key (engine), named, kind, lv, n, ap, stack, st, hist, rar, w, val} — P = {item, pc} */
   function pieceInfo(P,catalog){if(!P||!P.item)return null;const it=P.item,pc=P.pc||{},base=itemBase(it);
-    if(base===NAMED){const w=pc.w||{};const R=rarOf(pc.rar||w.rar);return {item:it,base,key:engineKey(it),named:true,kind:'w',lv:4,n:w.n||'Named weapon',stack:false,st:pc.st||'whole',hist:pc.hist||[],rar:R.k,w,val:L4_PRICE*R.mult}}
+    if(base===NAMED||base==='na'){const w=pc.w||{};const R=rarOf(pc.rar||w.rar);const A=base==='na';return {item:it,base,key:engineKey(it),named:true,kind:A?'a':'w',lv:4,n:w.n||(A?'Named armor':'Named weapon'),...(A?{ap:w.ap|0}:{}),stack:false,st:pc.st||'whole',hist:pc.hist||[],rar:R.k,w,val:L4_PRICE*R.mult}}
     const c=(catalog||{})[base];if(!c)return null;return {item:it,base,key:base,named:false,kind:c.kind,lv:c.lv,n:c.n,ap:c.ap,stack:!!c.stack,st:pc.st||'whole',hist:pc.hist||[],val:priceOf(c)}}
   const pieceOf=(h,it,catalog)=>pieceInfo({item:it,pc:pcOf(h,it)},catalog);
   const valueOf=I=>I?I.val|0:0;
@@ -469,7 +470,8 @@ const ONLC=(function(){
     if(k==='cf')return {k,v:3+Math.floor(rnd()*4)};
     if(k==='off')return {k,key:rnd()<0.75?pick1(rnd,OFFERS83.filter(x=>PRICE_OFF[x]<100)):pick1(rnd,OFFERS83.filter(x=>PRICE_OFF[x]>=100))};
     if(k==='l1'||k==='l23'){const lv=k==='l1'?1:rnd()<0.7?2:3;const ks=keys(lv);if(!ks.length)return {k:'coin',v:20};return {k:'gear',item:pick1(rnd,ks),lv}}
-    return {k:'named',rar:wpick(rnd,RAR_W)}}
+    /* v0.84: the kind is drawn AFTER the rarity (the same randomness rolls the same rarity as v0.83) */
+    const rar=wpick(rnd,RAR_W);return {k:'named',rar,kind:rnd()<NAMED_ARMOR_SHARE?'a':'w'}}
   /* a gift's reward into the gladiator (or, for a named piece below Veteranus, the house shelf D). P = the named piece {item,pc} when k is named. → {to} */
   function applyGift(ch,D,rw,P){if(rw.k==='coin'){ch.wallet=(ch.wallet|0)+(rw.v|0);return {to:'glad'}}
     if(rw.k==='cf'){ch.cfb=Math.min(CFB_MAX,(ch.cfb|0)+(rw.v|0));return {to:'glad'}}
@@ -513,7 +515,7 @@ const ONLC=(function(){
     if(R.k==='common')n+=' '+adj(pick1(rnd,COMMON_ADJ));else if(aff.length)n+=' '+adj(AFFIX_ADJ[aff[0]]);
     if(R.k==='epic')n+=' '+pick1(rnd,GODS);if(uq)n=noun+' '+UNIQUES.find(u=>u.k===uq).n;
     Object.assign(w,{n,rar:R.k,aff,...(uq?{uq}:{}),named83:1});return w}
-  function namedPiece(w,h){const uid=newUid(h);return {item:NAMED+'#'+uid,pc:{st:'whole',rar:w.rar,w:{...w,key:'nw_'+uid},hist:[]}}}
+  function namedPiece(w,h){const uid=newUid(h);const pre=w&&w.kind==='a'?'na':NAMED;return {item:pre+'#'+uid,pc:{st:'whole',rar:w.rar,w:{...w,key:pre+'_'+uid},hist:[]}}}
   /* a named def as a client builds it (defensive: numbers clamped, strings cleaned) */
   function cleanNamed(w){if(!w||typeof w!=='object')return null;const n=x=>Math.max(0,Math.min(12,x|0));const o={n:cleanName(w.n)||'Named weapon',base:String(w.base||'').replace(/[^a-z0-9_]/gi,'').slice(0,24),lv:4,
       key:String(w.key||'').replace(/[^A-Za-z0-9_.\-]/g,'').slice(0,64),p:Math.min(6,n(w.p)),r:Math.min(6,n(w.r)),img:Number.isInteger(w.img)?w.img:-1,rar:rarOf(w.rar).k,aff:Array.isArray(w.aff)?w.aff.filter(k=>AFFIX[k]).slice(0,3):[],named83:1};
@@ -534,7 +536,7 @@ const ONLC=(function(){
   function trophyAdd(D,k,glad,at){D.trophies=D.trophies||[];const t=D.trophies.find(x=>x.k===k);if(t){if(!TROPHY_REPEAT.includes(k))return false;t.x=(t.x|0)+1;t.at=at;t.glad=glad;return true}
     if(D.trophies.length>=TROPHY_MAX)return false;D.trophies.push({k,n:trophyName(k),at,glad,x:1});return true}
   /* the trophies one settled seat earns its house (ch after applyResult) */
-  function trophiesFrom(ch,row,out,ranked,ev){const k=[];if(!row||!out)return k;const alive=!out.died;
+  function trophiesFrom(ch,row,out,ranked,ev){const k=[];if(!row||!out||row.cpu)return k;const alive=!out.died;
     if(ranked&&row.won&&alive)k.push('first:'+ev);for(const r of out.ranks||[])k.push('rank:'+r);for(const s of row.slew||[])k.push('slew:'+s);
     if(ranked&&alive&&(ch.survived|0)>=10)k.push('surv10');if(ranked&&alive&&(ch.survived|0)>=25)k.push('surv25');if(row.thumb&&alive)k.push('thumb');return k}
   /* one line of the house's recent matches */
@@ -552,5 +554,81 @@ const ONLC=(function(){
     const won=bets.filter(b=>winSeats.includes(b.seat));const wsum=won.reduce((a,b)=>a+b.amt,0);if(!wsum)return bets.map(b=>({res:'refund',pay:b.amt|0}));
     const all=bets.reduce((a,b)=>a+b.amt,0)+(x.pot|0);const cut=Math.floor(all*WAGER.cut);return bets.map(b=>winSeats.includes(b.seat)?{res:'won',pay:Math.floor((all-cut)*b.amt/wsum)}:{res:'lost',pay:0})}
   const weekKey=t=>'W'+Math.floor((t||0)/604800000);
-  return {GIFT_HOUSE,OFF_SHELF,giftsOut,giftsIn,offersIn,offerMoveWhy,offerMove,CFB_COIN,applyGiftHouse,TREASURY_CUT,GIFT_EVERY,GIFT_KEEP,COUNTDOWN_MS,LOOT_MS,FOLLOW_MAX,TROPHY_MAX,RECENT_KEEP,INFAMES_MIN,canWearNamed,PRICE_OFF,OFFERS83,OFF_CARRY,OFF_MAX,offersBrought,offerBuyWhy,offerBuy,offerBring,NAMED,L4_PRICE,RARITY,rarOf,itemBase,itemUid,isNamed,engineKey,pcOf,isBroken,newUid,pieceInfo,pieceOf,valueOf,repairCost,usedPrice,wearWhy,takePiece,putPiece,tagPiece,histAdd,breakItem,repairItem,gearAfter,lootBest,giftAdd,giftTake,GIFT_W,RAR_W,CFB_MAX,rollGift,applyGift,AFFIX,UNIQUES,rollNamed,namedPiece,cleanNamed,lineupSig,stopCount,countCheck,countLeft,trophyName,trophyAdd,trophiesFrom,recentRow,recentAdd,domusLink,domusFromHash,oddsOf,betResults,weekKey,PASS,passOK,standsSeatWhy,cleanPatron,gearMoveWhy,gearMove,gearEquip,GLORY,gloryOf,rankByGlory,tableFactor,PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
+  /* ══════════════════════ v0.84 (protocol 7, contract tools/plans/onl84-contract.md) ══════════════════════
+     NAMED ARMOR ('na#uid', engine key 'na_uid'), SEASONS on the Manager's schedule + the weekly challenge, RECLAIM_MS, CPU-won rewards,
+     Flavius's Auction. Every number marked TWEAK is a default Virgilante may change. */
+  const NAMED_ARMOR_SHARE=0.4; /* TWEAK: a named gift / chest roll is armor 40% of the time, a weapon 60% */
+  const CPU_SHARE=0.5, CPU_CUT=0.25; /* TWEAK: a seat the CPU played MORE than half of → 25% coin and Glory, no gifts, no trophies */
+  const RECLAIM_MS=180000; /* TWEAK: a dropped / CPU-abandoned seat may be taken back for 3 minutes (or until the CPU begins its next turn) */
+  const NAMED_A='na';const isNamedA=it=>itemBase(it)===NAMED_A;
+  const ARM_LOCS84=['head','chest','larm','rarm','lleg','rleg'], ARM_SLOTS84=['head','chest','belt','arm','leg'];
+  /* the affixes of named armor (engine hooks in 139-v84onl); caps: a piece ≤ 6 AP (the location still caps at 7) */
+  const AFFIX_A={ap:{n:'+1 AP',fits:a=>(a.ap|0)<6,apply:a=>{a.ap=(a.ap|0)+1}},
+    bonus:{n:'+1 AP to another location',fits:a=>!a.bonus||!Object.keys(a.bonus).length,apply:a=>{a.bonus={[a.slot==='chest'?'head':'chest']:1}}},
+    ward:{n:'the first hit each rotation loses 1 damage',fits:a=>!a.ward,apply:a=>{a.ward=1}},
+    swift:{n:'+1 movement while unhurt',fits:a=>!a.swift,apply:a=>{a.swift=1}}};
+  const AFFIX_A_ADJ={ap:['Solidus','Solida','Solidum'],bonus:['Amplus','Ampla','Amplum'],ward:['Tutus','Tuta','Tutum'],swift:['Velox','Velox','Velox']};
+  /* the unique effects of Legendary armor (each claimed ONCE in the world: WORLD UNIQA#<k>) */
+  const UNIQUES_A=[
+    {k:'regalis',n:'Regis',d:'While worn, +1 CF at the start of each of the wearer’s turns.'},
+    {k:'invicta',n:'Invicti',d:'A hit of 2 or more on the location it guards loses 1 damage.'},
+    {k:'gloriosa',n:'Gloriae',d:'+1 CF when a gladiator’s hit on the wearer is stopped by armor (no HP lost).'},
+    {k:'mercurialis',n:'Mercurii',d:'+1 movement while worn.'},
+    {k:'vindex',n:'Vindicis',d:'+1 damage against the gladiator who last hit the wearer.'},
+    {k:'restituta',n:'Phoenicis',d:'At the start of the wearer’s turns, the location it guards regains 1 AP (up to the pieces’ own AP).'}];
+  const UNIQ_A_KEYS=UNIQUES_A.map(u=>u.k);
+  const NOUN_A={head:['Galea',1],chest:['Lorica',1],belt:['Balteus',0],arm:['Manica',1],leg:['Ocrea',1]};
+  /* rar = rarity key; taken = armor uniques already claimed → the def (no key yet: namedPiece adds it). Bases: printed, never stackable padding */
+  function rollNamedArmor(rnd,catalog,rar,taken){const bases=Object.keys(catalog||{}).filter(k=>catalog[k].kind==='a'&&!catalog[k].stack&&ARM_SLOTS84.includes(catalog[k].slot)).sort();if(!bases.length)return null;
+    const base=pick1(rnd,bases);const c=catalog[base];const a={kind:'a',base,lv:4,slot:c.slot,pt:String(c.pt||''),ap:Math.min(6,c.ap|0),...(c.pair?{pair:1}:{}),...(c.bonus&&Object.keys(c.bonus).length?{bonus:{...c.bonus}}:{})};
+    let R=rarOf(rar);let uq=null;if(R.uq){const pool=UNIQ_A_KEYS.filter(k=>!(taken||[]).includes(k));if(pool.length)uq=pick1(rnd,pool);else R=rarOf('epic')}
+    const aff=[];for(let i=0;i<R.aff;i++){const ok=Object.keys(AFFIX_A).filter(k=>!aff.includes(k)&&AFFIX_A[k].fits(a));if(!ok.length)break;const k=pick1(rnd,ok);AFFIX_A[k].apply(a);aff.push(k)}
+    const [noun,g]=NOUN_A[c.slot]||['Lorica',1];let n=noun;
+    if(R.k==='common')n+=' '+pick1(rnd,COMMON_ADJ)[g];else if(aff.length)n+=' '+AFFIX_A_ADJ[aff[0]][g];
+    if(R.k==='epic')n+=' '+pick1(rnd,GODS);if(uq)n=noun+' '+UNIQUES_A.find(u=>u.k===uq).n;
+    Object.assign(a,{n,rar:R.k,aff,...(uq?{uq}:{}),named84:1});return a}
+  /* a named armor def as a client builds it (defensive: numbers clamped, strings cleaned) */
+  function cleanNamedA(a){if(!a||typeof a!=='object')return null;const key=String(a.key||'').replace(/[^A-Za-z0-9_.\-]/g,'').slice(0,64);if(!/^na_/.test(key))return null;
+    const slot=ARM_SLOTS84.includes(a.slot)?a.slot:null;if(!slot)return null;
+    const o={kind:'a',key,n:cleanName(a.n)||'Named armor',base:String(a.base||'').replace(/[^a-z0-9_]/gi,'').slice(0,24),lv:4,slot,pt:String(a.pt||'').replace(/[^a-z]/gi,'').slice(0,12),ap:Math.max(0,Math.min(7,a.ap|0)),
+      rar:rarOf(a.rar).k,aff:Array.isArray(a.aff)?a.aff.filter(k=>AFFIX_A[k]).slice(0,3):[],named84:1};
+    if(a.pair)o.pair=1;if(a.bonus&&typeof a.bonus==='object'){const b={};for(const [l,v] of Object.entries(a.bonus).slice(0,2))if(ARM_LOCS84.includes(l))b[l]=Math.max(1,Math.min(2,v|0));if(Object.keys(b).length)o.bonus=b}
+    if(a.ward)o.ward=1;if(a.swift)o.swift=1;if(a.uq&&UNIQ_A_KEYS.includes(a.uq))o.uq=a.uq;return o}
+  /* CPU-won rewards: a seat's turn tally {h (human), c (CPU)} → the result row's cpu flag */
+  const cpuRow=t=>!!t&&(t.c|0)>((t.h|0)+(t.c|0))*CPU_SHARE;
+  /* ── SEASONS = the system schedule (19-calendar seasonSchedule + 77-rivalry week 12), on the server clock ── */
+  const WEEK_MS=604800000, SEASON_EPOCH=Math.floor(Date.UTC(2026,9,1)/WEEK_MS)*WEEK_MS; /* Thursday 2026-10-01 00:00 UTC — the same week boundaries as weekKey */
+  const seasonKeyOf=n=>'S'+(Math.floor(n/12)+1)+'W'+(n%12+1);
+  function seasonAt(t){const n=Math.max(0,Math.floor(((t||0)-SEASON_EPOCH)/WEEK_MS));const start=SEASON_EPOCH+n*WEEK_MS;return {season:Math.floor(n/12)+1,wk:n%12+1,n,key:seasonKeyOf(n),start,end:start+WEEK_MS}}
+  const SCHED_W=[['democritus',22],['egidious',16],['cassian',14],['familia',5],['goldenEagle',4],['juggernaut',3],['orpheus',3],['triumviratus',3],['ludus',2],['chariot',2],['naumachia',1],['commodus',2]];
+  const LOC_IDS84=[1,2,3,4,5,6,7,8,9,10,11,12];
+  /* the page's mulberry32 + hashStr, copied (the schedule must match the Manager's) */
+  function mul84(seed){let s=seed>>>0;return ()=>{let t=s=s+0x6D2B79F5>>>0;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
+  const hash84=x=>{let h=2166136261;for(const ch of String(x))h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0;return h};
+  const FX84={};
+  function seasonFixtures(season){if(FX84[season])return FX84[season].map(f=>({...f}));const r=mul84(hash84('sched'+season));const order=LOC_IDS84.slice().sort(()=>r()-.5);
+    const total=SCHED_W.reduce((a,x)=>a+x[1],0);const isCl=ev=>/democritus|egidious|cassian/.test(ev);const fx=[];
+    order.slice(0,12).forEach((loc,i)=>{let ev='democritus';if(i===11)ev='cassian';else{let x=r()*total;for(const [k,w] of SCHED_W){if((x-=w)<0){ev=k;break}}}
+      if(!isCl(ev)&&i>0&&!isCl(fx[i-1].ev))ev='democritus';fx.push({wk:i+1,loc,ev})});
+    if(fx[11]){fx[11].ev='familia';fx[11].rivalry=1}FX84[season]=fx;return fx.map(f=>({...f}))}
+  /* this week's online fixture: an event the online arena cannot hold yet becomes Democritus at the same city (TWEAK) */
+  function onlineFixture(t){const S=seasonAt(t);const f=seasonFixtures(S.season)[S.wk-1];return {...S,ev:EVENTS_ALL.includes(f.ev)?f.ev:'democritus',evRaw:f.ev,loc:f.loc}}
+  /* ── THE WEEKLY CHALLENGE (the week's fixture): win it · survive it Ranked · finish 3 bouts → ONE gift (with a win) a house a week ── */
+  const CH84=[{k:'win',n:1},{k:'surv',n:1},{k:'bouts',n:3}], WEEK_GIFTS84=1; /* TWEAK: at most 1 challenge gift per house per week */
+  function weekState(D,t){const F=seasonAt(t);const X=D&&D.wk84&&D.wk84.key===F.key?{...D.wk84}:{key:F.key,win:0,surv:0,bouts:0,wins:0,gift:0};X.done=!!(X.win>=1&&X.surv>=1&&X.bouts>=3);return X}
+  /* one settled seat of a house (m = {ev, loc, ranked, at}) → D.wk84; returns the week's gift when it was just earned (already put on D) */
+  function weekNote(D,m,ch,row,out){const t=(m&&m.at)||Date.now();const F=onlineFixture(t);const X=weekState(D,t);delete X.done;D.wk84=X;if(!row||row.cpu)return null;
+    X.bouts=(X.bouts|0)+1;const here=!!m&&m.ev===F.ev&&(m.loc|0)===F.loc;if(row.won){X.wins=(X.wins|0)+1;if(here)X.win=1}
+    if(m&&m.ranked&&here&&!(out&&out.died)&&row.survives!==false)X.surv=1;
+    if(X.win&&X.surv&&X.bouts>=3&&X.wins>=1&&(X.gift|0)<WEEK_GIFTS84){const g={id:'week:'+F.key+':'+(D.id||'d'),why:'week:'+F.key,at:t,glad:(ch&&ch.name)||null};const n0=(D.gifts||[]).length;
+      giftsIn(D,[g]);if((D.gifts||[]).length>n0){X.gift=(X.gift|0)+1;return g}}return null}
+  /* ── FLAVIUS'S AUCTION: only Flavius sells (the chest pool); escrow, anti-snipe, one win a house a week ── */
+  const AUC_LOTS=3, AUC_MIN_MS=86400000, AUC_SNIPE_MS=300000, AUC_STEP=0.05, AUC_STEP_MIN=10; /* TWEAK: lots a week, shortest life, snipe guard, raise */
+  const aucMin=val=>Math.ceil((val|0)/2);
+  const aucNextMin=lot=>lot&&lot.bid?Math.max((lot.bid.amt|0)+AUC_STEP_MIN,Math.ceil((lot.bid.amt|0)*(1+AUC_STEP))):aucMin(lot&&lot.val);
+  const aucEnds=t=>Math.max(seasonAt(t).end,t+AUC_MIN_MS);
+  function aucBidWhy(lot,amt,t){if(!lot||lot.done||t>lot.ends)return 'The hammer has fallen on that lot.';const m=aucNextMin(lot);if(!(Number.isInteger(amt)&&amt>=m))return `The next bid is at least ${m} coin.`;return ''}
+  function aucSnipe(lot,t){if(lot.ends-t<AUC_SNIPE_MS)lot.ends=t+AUC_SNIPE_MS;return lot}
+
+  return {NAMED_A,NAMED_ARMOR_SHARE,CPU_SHARE,CPU_CUT,RECLAIM_MS,isNamedA,AFFIX_A,UNIQUES_A,UNIQ_A_KEYS,rollNamedArmor,cleanNamedA,cpuRow,WEEK_MS,SEASON_EPOCH,seasonAt,seasonKeyOf,SCHED_W,seasonFixtures,onlineFixture,CH84,WEEK_GIFTS84,weekState,weekNote,AUC_LOTS,AUC_MIN_MS,AUC_SNIPE_MS,AUC_STEP,AUC_STEP_MIN,aucMin,aucNextMin,aucEnds,aucBidWhy,aucSnipe,GIFT_HOUSE,OFF_SHELF,giftsOut,giftsIn,offersIn,offerMoveWhy,offerMove,CFB_COIN,applyGiftHouse,TREASURY_CUT,GIFT_EVERY,GIFT_KEEP,COUNTDOWN_MS,LOOT_MS,FOLLOW_MAX,TROPHY_MAX,RECENT_KEEP,INFAMES_MIN,canWearNamed,PRICE_OFF,OFFERS83,OFF_CARRY,OFF_MAX,offersBrought,offerBuyWhy,offerBuy,offerBring,NAMED,L4_PRICE,RARITY,rarOf,itemBase,itemUid,isNamed,engineKey,pcOf,isBroken,newUid,pieceInfo,pieceOf,valueOf,repairCost,usedPrice,wearWhy,takePiece,putPiece,tagPiece,histAdd,breakItem,repairItem,gearAfter,lootBest,giftAdd,giftTake,GIFT_W,RAR_W,CFB_MAX,rollGift,applyGift,AFFIX,UNIQUES,rollNamed,namedPiece,cleanNamed,lineupSig,stopCount,countCheck,countLeft,trophyName,trophyAdd,trophiesFrom,recentRow,recentAdd,domusLink,domusFromHash,oddsOf,betResults,weekKey,PASS,passOK,standsSeatWhy,cleanPatron,gearMoveWhy,gearMove,gearEquip,GLORY,gloryOf,rankByGlory,tableFactor,PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
