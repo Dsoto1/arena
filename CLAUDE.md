@@ -727,6 +727,10 @@ One global script; files are concatenated in order. Later "version modules" patc
   beasts (Manager careers on that set follow it); an untouched set = the rulebook. Custom events: the Event Designer deck section shows
   the same 1+3 slots (Tholo removable) — replaces the deckSpawns ticks; beasts PLACED at the start don't use a slot (a unique placed
   beast's card leaves the deck, 126-v82fix). Zora is not a beast slot. Online: printed beasts only, never custom.
+- **Online market ideas (his, 2026-10-04, for the gear batch v0.83 — questions pending):** (1) the Armory sells OFFERINGS (tokens) a
+  gladiator can carry into a match in their inventory and bring back out if they survive/win; (2) the online market shows weapons and
+  armor on his market board art (boardHTML75 / assets/market_board.webp) — one side of the board for weapons, the other for armor.
+- Hero mini: his TTS sculpt is crouched → v0.82 grows the figure ×1.4 over the same base (tools/art/minis/grow_hero.py; MINI_A/MINI8 in 126).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
