@@ -9,3 +9,5 @@ attack · range · movement · HP (heart), and a black circle per row on a linke
 SPAWN SHOW (his ask): when a beast is drawn from the arena deck (or enters by chant/trigger), the drawn arena card shows as now,
 then the beast's card appears ART side up, turns over (3D flip) to the INFO side, holds, then shrinks into the Field tab's beast
 row; clicking the beast later shows its card with the same flip.
+DECIDED: the black circles = the HP at which that state starts (Tholo 15 / 6 / 0). Custom beasts have 1 OR 3 behaviour states only
+(the beast designer offers exactly those two); a 1-state card = one row, no linked track (cut from this template unless he sends one).
