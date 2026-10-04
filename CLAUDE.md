@@ -695,7 +695,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
 - **v0.83** Online treasures (8 ranks, treasury, offerings, broken gear + repair + loot, house gifts, named weapons, Ludi Infames,
   countdown, trophies, profiles + follow, Wagers, tester grants); Manager council with faces; sticking arrows/bolts (turning on minis,
   Tholo eye-bolt); 3D spike caps, his chest in 3D, 3D pots, sand grain + scars; padding stacks per point; sharp weapon backs.
-  (Server zip flavius-server-10, protocol 6 + Testers parameter — FULL stack deploy FIRST.)
+  (Published as artifact Version 97; server zip flavius-server-10, protocol 6 + Testers parameter — FULL stack deploy FIRST;
+  game zip flavius-site-update-v0.83.) Release run: 148/151 + tv64/tv60/tv59 flaky (passed alone).
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
