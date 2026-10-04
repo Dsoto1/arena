@@ -211,7 +211,7 @@ try{if(localStorage.getItem('flavius_hints54')!=='1'){localStorage.setItem('flav
 try{if(!localStorage.getItem('flavius_roster32'))localStorage.setItem('flavius_roster32','1')}catch(e){}
 /* music: Play Now plays a random unlocked theme (or the Custom Event's own); Manager mode keeps the city themes */
 {const baseWant=audWant;audWant=function(){try{if(!AUD.manual&&audLive()&&S&&!S.mgrCtx&&!S.specCtx&&!S.tourn&&!audFinalOn()&&!audSuperbusOn()){
-    if(!S.musicPick){const all=[...AUD_TRACKS,...(typeof AUD_EXTRA!=='undefined'?AUD_EXTRA:[])].map(x=>x[0]).filter(musicUnlocked);const want=EV()&&EV().music;S.musicPick=want&&musicUnlocked(want)?want:all[Math.floor(Math.random()*all.length)]||'Roma'}
+    if(!S.musicPick){const all=[...AUD_TRACKS,...(typeof AUD_EXTRA!=='undefined'?AUD_EXTRA:[])].map(x=>x[0]).filter(k=>k!=='Online'&&musicUnlocked(k));const want=EV()&&EV().music;S.musicPick=want&&musicUnlocked(want)?want:all[Math.floor(Math.random()*all.length)]||'Roma'}
     return S.musicPick}}catch(e){}return baseWant.apply(this,arguments)}}
 /* cohorts: a fresh cohort starts empty (its preview card no longer shows members the pickers can't show) */
 {const basePB=pairBlank;pairBlank=function(){const P=basePB();P.members=['',''];return P}}
