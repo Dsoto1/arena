@@ -33780,9 +33780,9 @@ function uniqueOut82(key){const k=UNIQUE_CARD82[key];if(!k||!S)return;let n=0;
   return base.apply(this,arguments)}}
 /* an event that starts with a unique beast on the sand: clean the deck once it is built */
 {const base=beginTurn;beginTurn=async function(){try{if(S&&!S._uq82&&S.deck){S._uq82=1;for(const k of Object.keys(UNIQUE_CARD82))if(bossSpent(k))uniqueOut82(k)}}catch(e){}return base.apply(this,arguments)}}
-/* the Hero's mini is crouched (his TTS sculpt), so he stood a head shorter than everyone else: the figure is enlarged ×1.4 over
-   the same base (tools/art/minis/grow_hero.py re-cut assets/mini_hero.webp + minis8_hero.webp); new anchors below */
-MINI_A.hero=[57.2,99.9,25.4];MINI8.hero=[150,154,74.8,134.1];
+/* the Hero's SCULPTED token (20-tokens figureSVG, stance 'hunched' — he leans in to attack) stood 8 units shorter than the others:
+   a hunched gladiator is drawn 6% larger so the top of his head meets everyone else's (Tholo keeps his own scale) */
+{const base=figureSVG;figureSVG=function(sp,opts){if(sp&&sp.stance==='hunched'&&sp.kind!=='beast'&&!((sp.scale||1)>1.1))sp={...sp,scale:(sp.scale||1)*1.062};return base.call(this,sp,opts)}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
