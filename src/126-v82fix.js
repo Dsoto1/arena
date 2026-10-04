@@ -100,3 +100,18 @@ body.calm [data-act="chest"]::after{animation:none;display:none}body.calm [data-
 .chest75-card{width:300px!important;aspect-ratio:600/416!important}
 .chest75-back{right:auto!important;bottom:auto!important;left:50%!important;top:50%!important;width:208px;height:300px;transform:translate(-50%,-50%) rotate(90deg)}
 .chest75-front .cimg{width:100%!important;transform:translate(-50%,-50%)!important}`;document.head.appendChild(st)}
+/* phones sideways: the actions drawer never sits over your move. In your ACTION phase it stays shut (the orange tiles show at once;
+   ⚔ glows gold and opens it); picking an action or tapping the sand shuts it again; the CHOICE phase still opens it (you need its two buttons). */
+function plActMine82(){return !!(S&&!S.over&&typeof humanTurn==='function'&&humanTurn())}
+function plActFix82(){const B=document.body;if(!B.classList.contains('phoneL')||typeof PL==='undefined')return;
+  const act=plActMine82()&&S.phase==='action';
+  if(act&&B.classList.contains('pl-act')&&PL.actUser!==true){B.classList.remove('pl-act');try{plSync()}catch(e){}}
+  const b=document.querySelector('#plDock [data-pl="act"]');if(b)b.classList.toggle('glow82',act&&!B.classList.contains('pl-act'))}
+setInterval(plActFix82,120);
+new MutationObserver(()=>plActFix82()).observe(document.body,{attributes:true,attributeFilter:['class']});
+document.addEventListener('click',e=>{const B=document.body;if(!B.classList.contains('phoneL')||typeof PL==='undefined')return;
+  if(e.target.closest&&e.target.closest('#actions [data-act]')&&S&&S.phase==='action'){setTimeout(()=>{B.classList.remove('pl-act');PL.actUser=null;try{plSync()}catch(err){}},0)}},true);
+document.addEventListener('pointerdown',e=>{const B=document.body;if(!B.classList.contains('phoneL')||typeof PL==='undefined')return;
+  if(e.target&&e.target.id==='cv'&&B.classList.contains('pl-act')&&S&&S.phase==='action'){B.classList.remove('pl-act');PL.actUser=null;try{plSync()}catch(err){}}},true);
+{const st=document.createElement('style');st.textContent=`#plDock button.glow82{border-color:#e8c96a;color:#ffe9a8;background:rgba(90,66,20,.92);box-shadow:0 0 0 2px rgba(232,201,106,.55),0 0 14px rgba(240,190,70,.7);animation:chestGlow82 1.8s ease-in-out infinite}
+body.calm #plDock button.glow82{animation:none}`;document.head.appendChild(st)}

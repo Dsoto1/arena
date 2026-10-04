@@ -21,10 +21,16 @@ const {chromium}=require('playwright');(async()=>{const b=await chromium.launch(
    await new Promise(r=>setTimeout(r,1500));for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,120))}SPEED='snap';
    for(let i=0;i<60&&!(humanTurn()&&S.phase==='action');i++){await new Promise(r=>setTimeout(r,250));if(CUR_MODAL)CUR_MODAL.done(null)}await new Promise(r=>setTimeout(r,700));
    const B=document.body;const r={cls:B.className,dock:!!document.querySelector('#plDock [data-pl="act"]'),fill:cv.getBoundingClientRect().height>=innerHeight-20,act:B.classList.contains('pl-act'),zoom:!!S.zoomIn};
+   r.choiceOpen=S.phase!=='choice'||B.classList.contains('pl-act');if(S.phase==='choice'){takeChoice(cur(),'coin');for(let i=0;i<20&&S.phase!=='action';i++)await new Promise(x=>setTimeout(x,150));await new Promise(x=>setTimeout(x,400))}
+   r.act=B.classList.contains('pl-act');r.ph2=S.phase;
+   r.glow=!!document.querySelector('#plDock [data-pl="act"].glow82');
+   document.querySelector('#plDock [data-pl="act"]').click();await new Promise(x=>setTimeout(x,400));r.open=B.classList.contains('pl-act');
+   const ab=[...document.querySelectorAll('#actions [data-act]')].find(x=>!x.disabled&&/^(m:|atk|mv|move)/.test(x.dataset.act))||[...document.querySelectorAll('#actions [data-act]')].find(x=>!x.disabled&&x.dataset.act!=='end');
+   r.ab=ab&&ab.dataset.act;if(ab)ab.click();await new Promise(x=>setTimeout(x,400));r.shut=!B.classList.contains('pl-act');
    const p=cur();const c1=iso(p.r,p.c);r.centred=Math.abs(c1.x-cv.clientWidth/2)<cv.clientWidth*0.2;
    document.querySelector('#plDock [data-pl="side"]').click();await new Promise(x=>setTimeout(x,300));r.side=B.classList.contains('pl-side')&&getComputedStyle(document.querySelector('aside.side')).transform==='none';
    CAM.z=2.2;draw();r.tw=TW;CAM.z=null;draw();r.tw0=TW;return r});
- ok(/phoneL/.test(o.ph.cls)&&o.ph.dock&&o.ph.fill,'landscape: arena fills, dock');ok(o.ph.act&&o.ph.zoom&&o.ph.centred,'your move: actions in, camera on you');
+ ok(/phoneL/.test(o.ph.cls)&&o.ph.dock&&o.ph.fill,'landscape: arena fills, dock');ok(o.ph.choiceOpen,'choice: the drawer opens with its two buttons');ok(!o.ph.act&&o.ph.glow&&o.ph.zoom&&o.ph.centred,'your move: board clear (actions shut, ⚔ glows), camera on you');ok(o.ph.open&&o.ph.shut,'⚔ opens the actions; picking one shuts them (v0.82)');
  ok(o.ph.side,'side drawer');ok(o.ph.tw>o.ph.tw0,'pinch zoom level');await ctx.close()}
 {const ctx=await b.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());
  await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
