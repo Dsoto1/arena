@@ -6,14 +6,14 @@ await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
-  const r={key2:RTOK_NAMES.includes('key2')&&rtokHTML('key2',30).includes('rtok'),coin:ICO.coin.includes('coin.webp'),spell:!document.documentElement.innerHTML.includes('Mandati Flavi')&&itemInfo({kind:'mf',idx:0}).n.startsWith('Mandata Flavi')};
+  const r={key2:RTOK_NAMES.includes('key2')&&rtokHTML('key2',30).includes('rtok'),coin:ICO.coin.includes('coin.webp'),spell:!document.documentElement.innerHTML.split('Mandati Flavi (Mandate from Flavius)').join('').includes('Mandati Flavi')&&itemInfo({kind:'mf',idx:0}).n.startsWith('Mandata Flavi')};
   startEvent({ev:'democritus',loc:6,seats:[{cls:'soldier',cpu:false},{cls:'hero',cpu:true},{cls:'slave',cpu:true},{cls:'venatore',cpu:true}],opts:{spect:'auto',mandata:true}});
   await W8(2800);r.brief=!!document.querySelector('#mBody .brsr img[src*="sr_democritus"]');for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(200)}await W8(800);
   r.round=document.querySelector('#status .roundmk b')&&document.querySelector('#status .roundmk b').textContent===String(S.ri+1);r.srchip=!!document.querySelector('#status img.srmed');
   r.coinUI=!!document.querySelector('#board img.coinimg');r.mfback=boardHTML(S.players[1],false).includes('mandata_back');
   if(!S.spectLog.length)slog('test line','');await W8(400);r.pin=!!document.querySelector('#log > #slogPin:first-child');log('a new log line');r.pinTop=document.getElementById('log').firstChild.id==='slogPin';
   sideTab('fighter');document.getElementById('slogPin').click();await W8(200);r.pinGo=SIDE.tab==='stands';sideTab('fighter');
-  const sp=S.spect.find(s=>!s.bet&&!s.gone);sp.bet={pid:1,amt:2,odds:2};S.players[2].selfBet={stake:3,odds:2};await W8(500);
+  const sp=S.spect.find(s=>!s.bet&&!s.gone)||(()=>{const x=S.spect.find(s=>!s.gone);if(x)x.bet=null;return x})();sp.bet={pid:1,amt:2,odds:2};S.players[2].selfBet={stake:3,odds:2};await W8(500);
   r.bub=[...document.querySelectorAll('#wbubs .wbub')].map(e=>e.textContent);return r});
 o.b=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));S.over=true;if(CUR_MODAL)CUR_MODAL.done(null);await W8(400);
   openSetup();await W8(900);const t=document.querySelector('[data-mode="festival"],[data-st="festival"],[data-tab="festival"]');if(t){t.click();await W8(600)}
