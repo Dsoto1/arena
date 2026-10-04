@@ -23,6 +23,12 @@
        The ward's lock note says you can look at the wounds now and treat them next week.
    7 · Prices read "Cost: N coin" instead of "−N coin": the road events (ROAD76 choices) and the temple
        offerings ("8c · …" → "Cost: 8 coin · …").
+   8 · The bout tracker's fought mark = two swords crossed into an X, tips up (replaces the slash).
+   9 · The Acta Diurna loses "Start your next week →" (leaving the tab already dismisses it; Your ludus keeps it).
+  10 · Rail ovals wear their room's colour: Infirmary medic white with dark red figures, Recruiting the banner's
+       green, Training Yard light grey, Your ludus — the letters oval on parchment and the tasks oval light blue
+       (the weekly checklist box and the ludus banner's count box match it), and Match Week gets a purple oval
+       with the number of bouts still to fight in gold.
    ===================================================================== */
 const FIX85={offering:0};
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mg="offer"]');if(!b)return;FIX85.offering++;setTimeout(()=>{FIX85.offering=Math.max(0,FIX85.offering-1)},0)},true);
@@ -50,13 +56,14 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 @media (max-width:760px){.travelcard.road85{grid-template-columns:1fr}.road85side{border-left:0;padding-left:0;flex-direction:row;flex-wrap:wrap}.road85t{flex:1 1 200px}}`;document.head.appendChild(st)}
 
 /* 3 · the bout tracker on the Match Week banner */
+const BT85_X=`<svg class="bt85x" viewBox="0 0 40 40" aria-hidden="true"><g stroke-linecap="round"><path d="M9 33L31 7" stroke="#e7ecf1" stroke-width="2.6"/><path d="M31 33L9 7" stroke="#e7ecf1" stroke-width="2.6"/><path d="M9 33L31 7" stroke="#7d868f" stroke-width=".8"/><path d="M31 33L9 7" stroke="#7d868f" stroke-width=".8"/><path d="M8 27l8 6M24 33l8-6" stroke="#b08a3e" stroke-width="2.6"/><circle cx="6.5" cy="35.5" r="2" fill="#b08a3e"/><circle cx="33.5" cy="35.5" r="2" fill="#b08a3e"/></g></svg>`;
 const BT85_DAY={under:'Fri',feature:'Sat',main:'Sun'};
 function boutTrack85(){const w=W_(),m=me();const n=w&&w.night;if(!n||n.bye||!n.bouts||!n.bouts.length)return '';
   const mine=new Set(rosterOf(m).map(g=>g.id));const nextI=n.bouts.findIndex(b=>!b.done);
   const box=(b,i)=>{const T=TIERS[b.tier]||{n:b.tier};const me1=b.ents.find(id=>mine.has(id));const g=me1&&gById(me1);
     let st=b.done?'done':i===nextI?'next':'later';let res='';
     if(b.done&&g){const r=b.res||{};const won=r.winner===g.id||(r.wid===g.id)||(Array.isArray(r.winners)&&r.winners.includes(g.id));res=g.alive===false?'🪦':won?'🏆':'✓'}
-    return `<button type="button" class="bt85 ${st}" data-bt85="${i}" title="${esc(T.n)}${g?` · ${esc(g.name)}`:''}${b.done?' · fought':i===nextI?' · up next':''}"><span class="bt85d">${BT85_DAY[b.tier]||''}</span><b>${esc((T.n||'').replace(' bout','').replace(' event',''))}</b><span class="bt85m">${g?'●':''}${res?' '+res:''}</span>${b.done?'<i class="bt85x"></i>':''}</button>`};
+    return `<button type="button" class="bt85 ${st}" data-bt85="${i}" title="${esc(T.n)}${g?` · ${esc(g.name)}`:''}${b.done?' · fought':i===nextI?' · up next':''}"><span class="bt85d">${BT85_DAY[b.tier]||''}</span><b>${esc((T.n||'').replace(' bout','').replace(' event',''))}</b><span class="bt85m">${g?'●':''}${res?' '+res:''}</span>${b.done?BT85_X:''}</button>`};
   return `<div class="roomstat bt85w">${n.bouts.map((b,i)=>box(b,i)).join('<span class="bt85a">➜</span>')}</div>`}
 {const base=bannerStat73;bannerStat73=function(k){if(k==='night'){try{const h=boutTrack85();if(h){const s=tabStat73(k);return h.replace('</div>',(s?`<span class="bt85n">${s[0]} ${esc(s[1])}</span>`:'')+'</div>')}}catch(e){console.error(e)}}return base.apply(this,arguments)}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-bt85]');if(!b)return;e.stopPropagation();const i=+b.dataset.bt85;const c=document.querySelectorAll('#mgrBody .card2.bout')[i];if(c)c.scrollIntoView({behavior:typeof reduceMotion==='function'&&reduceMotion()?'auto':'smooth',block:'start'})},true);
@@ -67,8 +74,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 .bt85 b{font-size:12.5px;color:inherit}.bt85d{font:600 9.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;opacity:.8}.bt85m{font-size:11px;min-height:13px;color:#f0cf7d}
 .bt85.next{border-color:#f0cf7d;color:#fff3d6;box-shadow:0 0 0 1px #f0cf7d inset,0 0 12px rgba(240,207,125,.35);background:linear-gradient(180deg,#4a3714,#2a1e0c)}
 .bt85.later{opacity:.55}.bt85.done{color:#a8987a;border-color:rgba(160,140,110,.35)}
-.bt85x{position:absolute;left:-6%;right:-6%;top:50%;height:3px;transform:rotate(-24deg);background:linear-gradient(90deg,transparent,#d8dde3 12%,#9aa4ad 70%,#5e666e 88%,transparent);box-shadow:0 0 3px rgba(0,0,0,.6);pointer-events:none}
-.bt85x::after{content:'';position:absolute;right:8%;top:-3px;width:6px;height:9px;background:#8a6a2a;border-radius:2px}
+.roomstat.bt85w .bt85 svg.bt85x{position:absolute!important;left:50%!important;top:50%!important;width:40px!important;height:40px!important;margin:0!important;transform:translate(-50%,-50%)!important;filter:drop-shadow(0 1px 2px rgba(0,0,0,.8));pointer-events:none;opacity:.92}
 .bt85a{color:#d6ab4c;font-size:14px;opacity:.85}.bt85n{flex-basis:100%;text-align:right;font-size:11.5px;color:#e8d6ae}
 @media (max-width:600px){.roomstat.bt85w{max-width:none}.bt85{min-width:60px;padding:3px 5px}}`;document.head.appendChild(st)}
 
@@ -101,3 +107,19 @@ if(typeof infirmaryHTML==='function'){const base=infirmaryHTML;infirmaryHTML=fun
 /* 7 · prices as "Cost: N coin" */
 if(typeof ROAD76!=='undefined')for(const E of ROAD76)for(const c of [E.a,E.z])if(c&&typeof c[1]==='string')c[1]=c[1].replace(/^−(\d+) coin/,'Cost: $1 coin');
 if(typeof templeHTML76==='function'){const base=templeHTML76;templeHTML76=function(){let h=base.apply(this,arguments);try{if(typeof h==='string')h=h.replace(/<small>(\d+)c · /g,'<small>Cost: $1 coin · ')}catch(e){}return h}}
+
+/* 9 · no "Start your next week" on the gazette */
+{const st=document.createElement('style');st.textContent='.paper .pnextwk{display:none!important}';document.head.appendChild(st)}
+/* 10 · rail ovals in their rooms' colours + Match Week's bouts left */
+setInterval(()=>{try{if(typeof W_!=='function'||!W_()||W_().dead)return;const w=W_(),n=w.night;const b=document.querySelector('.mtabs [data-mg="tab"][data-id="night"]');if(!b)return;
+  const left=n&&!n.bye&&n.bouts?n.bouts.filter(x=>!x.done).length:0;let c=b.querySelector('.mcount.c85n');if(!c){c=document.createElement('span');c.className='mcount c85n';b.appendChild(c)}
+  const t=left?String(left):'';if(c.textContent!==t){c.textContent=t;c.title=left?`${left} bout${left===1?'':'s'} still to fight this week`:''}c.hidden=!left}catch(e){}},500);
+{const st=document.createElement('style');st.textContent=`
+.mtabs [data-id="infirm"] .mcount.c73{background:#f6f3ec;color:#8e1b12;box-shadow:inset 0 0 0 1px #c9b9b4}
+.mtabs [data-id="recruit"] .mcount.c73{background:#7fae5f;color:#0f2208}
+.mtabs [data-id="practice"] .mcount.c73{background:#cfd3d8;color:#1e2226}
+.mtabs [data-id="ludus"] .mcount.c73{background:#bcd9f2;color:#0e2c45}
+.mtabs [data-id="ludus"] .mcount:not(.c73){background:#e9dcbf url(${typeof assetURL==='function'?assetURL('parchment.webp'):'assets/parchment.webp'}) center/cover;color:#3a2414;box-shadow:inset 0 0 0 1px #b39d74}
+.mtabs [data-id="night"] .mcount.c85n{float:right;margin-left:6px;background:#5b3a8e;color:#f0cf7d;box-shadow:inset 0 0 0 1px #8a6ac0}
+.wkcheck{border-color:#9cc3e6!important;box-shadow:inset 0 0 0 1px rgba(156,195,230,.35)}
+.b73-ludus .roomstat.rs2 .ptbox.on{background:radial-gradient(circle at 40% 35%,#eef6ff,#9cc3e6 60%,#3f6f99)!important;box-shadow:0 0 12px rgba(156,195,230,.5)!important;color:#0e2c45}`;document.head.appendChild(st)}
