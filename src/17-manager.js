@@ -1,12 +1,25 @@
 
 /* =====================================================================
+   17-MANAGER · MANAGER MODE (core)
+   =====================================================================
    MANAGER MODE: run a ludus as a lanista. Recruit (interest, pitches, visits, offers), scout with sparring
    bouts simulated in the Ludus, enter fighters on match nights, bet on bouts, poach from rival stables.
    Every bout is a real Flavius Rule event, played by the engine off-screen or live on the board.
+   - The world: MGR.world (W_()), me() the player's lanista, gById/mgrById, saveWorld (Store mgrCareers);
+     the ACTIVE career's treasury bankrolls wagers everywhere (activeMgr / applyActivePurse).
+   - Fighters: genGlad, effOvr, askWage, boostFor/seatFor (a fighter as an engine seat); interest and motives.
+   - The week: makeNight (3 bouts) → boutCfg / runBoutSim / watchBout → applyBout (+ leagueFate, the printed
+     Fate table) → endWeek. cpuLeagueWeek runs the rival houses.
+   - UI: openManager / hubHTML and the tabs (Your ludus, Match Week, Recruiting, Infirmary, Practice, League,
+     News + the Acta Diurna, Lanista); wireManager handles every [data-mg] action.
+   Later modules (47-mgr47 onward) wrap most of these; check them before changing behavior here.
    ===================================================================== */
 const MGR={careers:[],world:null,tab:'ludus',sel:null,filter:'free',sort:'stars',busy:false,msg:''};
+/* MGR_KEYS — lanista personality traits: [key, name, what it does]. */
 const MGR_KEYS=[['ambition','Ambition','Chases stars and titles, spends big'],['cunning','Cunning','Better scouting, poaching and betting'],['honor','Honor','Keeps promises; fighters trust them; poaching costs them'],['greed','Greed','Takes a bigger cut of every purse; fighters resent it'],['show','Showmanship','Draws crowds and fame; showmen love them'],['discipline','Discipline','Trains fighters harder: faster improvement'],['risk','Risk','Bolder bets and entries']];
+/* MGR_PRESETS — personality presets for a new lanista: key → [name, traits]. TWEAK: the trait values. */
 const MGR_PRESETS={balanced:['Balanced',{ambition:50,cunning:50,honor:50,greed:50,show:50,discipline:50,risk:50}],honorable:['The Honorable',{ambition:45,cunning:30,honor:92,greed:20,show:40,discipline:70,risk:30}],schemer:['The Schemer',{ambition:65,cunning:92,honor:15,greed:60,show:45,discipline:40,risk:65}],showman:['The Showman',{ambition:60,cunning:45,honor:50,greed:40,show:92,discipline:35,risk:55}],drill:['The Drillmaster',{ambition:50,cunning:45,honor:70,greed:35,show:30,discipline:95,risk:25}],gambler:['The Gambler',{ambition:55,cunning:65,honor:40,greed:50,show:55,discipline:30,risk:95}],miser:['The Miser',{ambition:35,cunning:60,honor:45,greed:92,show:30,discipline:55,risk:20}],butcher:['The Butcher',{ambition:70,cunning:40,honor:20,greed:55,show:85,discipline:50,risk:75}],patrician:['The Patrician',{ambition:85,cunning:50,honor:60,greed:65,show:55,discipline:45,risk:35}],scholar:['The Scholar',{ambition:45,cunning:75,honor:65,greed:30,show:30,discipline:85,risk:25}],zealot:['The Zealot',{ambition:60,cunning:25,honor:90,greed:15,show:75,discipline:70,risk:55}],merchant:['The Merchant',{ambition:55,cunning:80,honor:40,greed:85,show:45,discipline:40,risk:45}]};
+/* MGR_PRE — the league's preset houses: lanista, ludus, city, color, fame, coin, traits, bio, roster size n and rating band tier. TWEAK: fame/coin/tier to make rivals stronger or weaker. */
 const MGR_PRE=[
   {key:'crispus',name:'Aulus Vettius Crispus',ludus:'Ludus Crispinus',city:'Capua',color:'#c0433a',fame:62,coin:320,p:{ambition:80,cunning:60,honor:35,greed:70,show:60,discipline:50,risk:55},bio:'Old Capuan money. Buys stars, works them hard and pays late.',n:5,tier:[68,86]},
   {key:'severa',name:'Domitia Severa',ludus:'Ludus Severianus',city:'Roma',color:'#8a5cc0',fame:56,coin:260,p:{ambition:60,cunning:40,honor:88,greed:30,show:45,discipline:88,risk:30},bio:'A drillmaster with a spotless name. Her fighters would die for her, and sometimes do.',n:4,tier:[64,82]},
@@ -32,8 +45,11 @@ const MOT_ADVICE={
   home:'Raise it: nothing — it is geography. Recruit fighters whose home city lies near yours, or accept the discount.',
   playing:'Raise it: keep the stable lean. Past five fighters, each extra one costs a little arena time in a recruit\'s eyes — how much is set by the Arena-time pressure slider (Sandbox).',
 };
+/* MOTIVES — what a fighter can want from a ludus: [label, meaning]. */
 const MOTIVES={coin:['Coin','wants to be paid well'],glory:['Glory','wants a winning, famous ludus'],honor:['Honor','wants a lanista who keeps their word'],spectacle:['Spectacle','wants big crowds and showmanship'],training:['Training','wants to get better'],home:['Home','wants to fight close to home'],playing:['Arena time','wants to fight every week']};
+/* CITY_XY — map positions of non-arena cities (for the Home motive's distance). */
 const CITY_XY={Carthago:[.44,.70],Alexandria:[1.25,1.05],Corinth:[1.12,.62],Gades:[-.25,.82],Massilia:[.33,.2],Ostia:[.61,.27],Tarentum:[.86,.4],Neapolis:[.71,.32],Brundisium:[.92,.37],Antiochia:[1.55,.8],Cyrene:[1.05,1.02],Londinium:[.05,-.8],Lugdunum:[.26,.03],Emerita:[-.3,.52]};
+/* TIERS — the three bouts of a match night: undercard / feature / main event — event, purse, appearance fee, rating band lo–hi, fame gain. TWEAK: purses and fees. */
 const TIERS={under:{n:'Undercard',ev:'egidious',purse:30,fee:4,lo:0,hi:62,fame:2},feature:{n:'Feature bout',ev:'democritus',purse:70,fee:8,lo:56,hi:77,fame:4},main:{n:'Main event',ev:'cassian',purse:160,fee:15,lo:70,hi:99,fame:8}};
 const HYGEIA=20; // Blessings of Hygeia: regrow a severed limb — the ONLY cure for a lost limb
 const ASCLEPIUS=25; // temple incubation: heals any wound at once (not limbs), paid outside the weekly allowance
@@ -41,34 +57,53 @@ const MEDICUS=10; // the ludus physician: a Health Elixir regimen that restores 
 const REPAIR_CAP=50; // the weekly INFIRMARY ALLOWANCE: Medicus + surgeon + Hygeia may spend at most this much treasury coin a week
 const BANKRUPT_WEEKS=3; // a treasury in the red for this many consecutive week-ends collapses the ludus — and so does ending a season in debt
 const STAR_FAME=[0,0,5,18,36,56]; // a 3-star fighter will not consider a ludus with less than 18 fame
-const mgrTier=f=>f>=80?'Legendary':f>=55?'Imperial':f>=30?'Regional':f>=10?'Local':'Unknown';
-const starsOf=o=>o>=82?5:o>=73?4:o>=64?3:o>=55?2:1;
-const starHTML=n=>`<span class="stars" aria-label="${n} stars">${'★'.repeat(n)}<span class="off">${'★'.repeat(5-n)}</span></span>`;
+/* mgrTier — a lanista's reputation label from fame (Unknown → Legendary). */
+const mgrTier=fame=>fame>=80?'Legendary':fame>=55?'Imperial':fame>=30?'Regional':fame>=10?'Local':'Unknown';
+/* starsOf — a rating as 1–5 stars. TWEAK: the 55/64/73/82 cut-offs. */
+const starsOf=ovr=>ovr>=82?5:ovr>=73?4:ovr>=64?3:ovr>=55?2:1;
+/* starHTML — n of 5 stars as HTML. */
+const starHTML=stars=>`<span class="stars" aria-label="${stars} stars">${'★'.repeat(stars)}<span class="off">${'★'.repeat(5-stars)}</span></span>`;
 // v0.21: fame reads at a glance, like skill — up to five laurel wreaths (fighters and whole stables)
-const fameN=f=>f>=80?5:f>=60?4:f>=40?3:f>=20?2:f>=6?1:0;
-const fameHTML=f=>`<span class="fame" title="Fame ${f||0}/100 — how widely the empire knows this name">${ICO.laurel.repeat(fameN(f||0))}<span class="off">${ICO.laurel.repeat(5-fameN(f||0))}</span></span>`;
-const gradeOf=v=>v>=80?'A':v>=65?'B':v>=50?'C':v>=35?'D':'F';
-const gradeHTML=v=>`<span class="grade ${gradeOf(v)}">${gradeOf(v)}</span>`;
+const fameN=fame=>fame>=80?5:fame>=60?4:fame>=40?3:fame>=20?2:fame>=6?1:0;
+/* fameHTML — fame as up to five laurel wreaths. */
+const fameHTML=fame=>`<span class="fame" title="Fame ${fame||0}/100 — how widely the empire knows this name">${ICO.laurel.repeat(fameN(fame||0))}<span class="off">${ICO.laurel.repeat(5-fameN(fame||0))}</span></span>`;
+/* gradeOf — a 0–100 score as a letter grade A–F. */
+const gradeOf=score=>score>=80?'A':score>=65?'B':score>=50?'C':score>=35?'D':'F';
+/* gradeHTML — the letter grade chip. */
+const gradeHTML=score=>`<span class="grade ${gradeOf(score)}">${gradeOf(score)}</span>`;
+/* W_ — the open Manager world (MGR.world). */
 const W_=()=>MGR.world;
+/* me — the player's own lanista in the open world. */
 const me=()=>W_()&&W_().mgrs.find(m=>m.id===W_().playerId);
+/* mgrById — a lanista of the open world by id. */
 const mgrById=id=>W_().mgrs.find(m=>m.id===id);
+/* gById — a fighter of the open world by id. */
 const gById=id=>W_().glads.find(g=>g.id===id);
-const effOvr=g=>clamp(Math.round(g.ovr-6*(g.severed||[]).length-(g.inj?g.inj.pen||0:0)+(typeof statOvr==='function'?statOvr(g):0)),25,99); /* v0.55: rating growth lifts the overall */ // injuries dent the rating until healed
-const rosterOf=m=>W_().glads.filter(g=>g.alive&&g.contract&&g.contract.mgr===m.id);
+/* effOvr — a fighter's effective rating: base −6 per severed limb − injury penalty + rating-growth bonus, 25–99. */
+const effOvr=glad=>clamp(Math.round(glad.ovr-6*(glad.severed||[]).length-(glad.inj?glad.inj.pen||0:0)+(typeof statOvr==='function'?statOvr(glad):0)),25,99); /* v0.55: rating growth lifts the overall */ // injuries dent the rating until healed
+/* rosterOf — a lanista's living, signed fighters. */
+const rosterOf=mgr=>W_().glads.filter(g=>g.alive&&g.contract&&g.contract.mgr===mgr.id);
+/* freeAgents — living fighters with no contract (auction lots excluded). */
 const freeAgents=()=>W_().glads.filter(g=>g.alive&&!g.contract&&!g.auction); // auction-block lots sell only at the block
+/* cityXY — map position of a city (arena cities from LOCATIONS, others from CITY_XY). */
 function cityXY(c){const L=LOCATIONS.find(x=>x&&x.n===c);return L?[L.x,L.y]:CITY_XY[c]||[.5,.5]}
+/* mnews — adds a league news line (last 90). */
 function mnews(text,cls=''){const w=W_();w.news.unshift({wk:w.week,s:w.season,text,cls});w.news=w.news.slice(0,90)}
 // the ludus ledger: a private log of everything that touched YOUR stable (signings, poaches, deaths, injuries)
 function tnews(text,cls=''){const w=W_();if(!w)return;(w.tlog=w.tlog||[]).unshift({wk:w.week,s:w.season,text,cls});w.tlog=w.tlog.slice(0,50)}
 // every fighter's career chronicle: the moments a life on the sand is remembered by
-function ghist(g,txt){const w=W_();if(!w||!g)return;(g.hist=g.hist||[]).unshift({s:w.season,wk:w.week,txt});g.hist=g.hist.slice(0,24)}
+function ghist(glad,txt){const w=W_();if(!w||!glad)return;(glad.hist=glad.hist||[]).unshift({s:w.season,wk:w.week,txt});glad.hist=glad.hist.slice(0,24)}
 let mgrSaveT=null;
+/* saveWorld — saves the open career to Store mgrCareers (debounced 400 ms unless now); the lesson's sandbox league is never saved. */
 function saveWorld(now=false){const w=W_();if(!w||w.tutorial)return; /* v0.44: the lesson's sandbox league is never saved */w.updated=new Date().toISOString().slice(0,16).replace('T',' ');if(ACTIVE.cid===w.id)ACTIVE.world=w;const doit=()=>{const m=me();return Store.put('mgrCareers',w.id,{name:m.name,ludus:m.ludus,week:w.week,season:w.season,custom:!!m.custom,dead:!!w.dead,fame:m.fame,coin:m.coin,wins:m.wins,bouts:m.bouts,betNet:m.betNet||0,deaths:m.deaths||0,updated:w.updated,world:JSON.stringify(w)}).catch(()=>{})};clearTimeout(mgrSaveT);if(now)return doit();mgrSaveT=setTimeout(doit,400)}
 
 /* ---------- the ACTIVE lanista: the career whose treasury bankrolls wagers everywhere ---------- */
 const ACTIVE={cid:null,world:null};
+/* activeCid — the id of the ACTIVE career (the one whose treasury bankrolls wagers), from Store wallet/active. */
 async function activeCid(){const a=await Store.getDoc('wallet','active').catch(()=>null);return a&&a.cid||null}
+/* setActiveCareer — makes a career the active wallet. */
 async function setActiveCareer(cid){await Store.put('wallet','active',{cid}).catch(()=>{});MGR.activeCid=cid;if(ACTIVE.cid!==cid){ACTIVE.cid=null;ACTIVE.world=null}}
+/* activeMgrWorld — the active career's world (the open one, a cached copy, or loaded and migrated). */
 async function activeMgrWorld(){
   const cid=await activeCid();if(!cid)return null;
   if(MGR.world&&MGR.world.id===cid)return MGR.world;
@@ -76,8 +111,11 @@ async function activeMgrWorld(){
   const d=await Store.getDoc('mgrCareers',cid).catch(()=>null);if(!d||!d.world)return null;
   ACTIVE.cid=cid;ACTIVE.world=mgrMigrate(JSON.parse(d.world));return ACTIVE.world;
 }
-const worldMe=w=>w&&w.mgrs.find(m=>m.id===w.playerId)||null;
+/* worldMe — the player's lanista in a given world. */
+const worldMe=world=>world&&world.mgrs.find(m=>m.id===world.playerId)||null;
+/* activeMgr — the active career's lanista (null when none or the house is dead). */
 async function activeMgr(){const w=await activeMgrWorld();const m=worldMe(w);return m&&!(w&&w.dead)?m:null}
+/* applyActivePurse — writes a wager purse settled outside Manager mode into the active career's treasury and saves it. */
 async function applyActivePurse(v){ // a wager settled outside the manager UI writes straight into the active career's treasury
   const w=await activeMgrWorld();const m=worldMe(w);if(!m)return;
   const d=v.coin-m.coin;m.coin=v.coin;if(!v.noBet)m.betNet=(m.betNet||0)+d;m.betWon=v.won||0;m.betLost=v.lost||0;m.betCount=v.bets||0;m.betHistory=(v.history||[]).slice(-40);
@@ -87,6 +125,7 @@ async function applyActivePurse(v){ // a wager settled outside the manager UI wr
 }
 
 /* ---------- fighters ---------- */
+/* motivesFor — a fighter's three motives with weights 0.5 / 0.3 / 0.2, from their personality (home and arena time rolled). */
 function motivesFor(pers){
   const w={coin:pers.coin,glory:pers.aggression,honor:pers.loyalty,spectacle:pers.cf,training:pers.survival,home:35+rnd(40),playing:30+rnd(50)};
   const ks=Object.keys(w).sort((a,b)=>w[b]+Math.random()*30-(w[a]+Math.random()*30)).slice(0,3);return [[ks[0],0.5],[ks[1],0.3],[ks[2],0.2]];
@@ -98,103 +137,125 @@ function ageClass(age){
   if(age>=40)return pickOne(['veteranus','veteranus','veteranus','veteranus','veteranus','hero']);
   return pickOne(['veteranus','veteranus','veteranus','hero','soldier','royalty']);
 }
-function genGlad(o={}){
-  const age=o.age??(o.rookie?16+rnd(6):Math.random()<.16?36+Math.floor(Math.random()*Math.random()*45):19+rnd(17)); // 16-21 rookies; 19-35 mostly — and v0.22: the odd grizzled sand-hand of 36 to 80, who fights as a Veteranus
+/* genGlad — a generated league fighter: age, gender, class by age, personality, rating and potential, record, fame, motives, hidden gem / bust (opts can fix any of it). TWEAK: the age spread, the .10/.05 gem and .08 bust chances. */
+function genGlad(opts={}){
+  const age=opts.age??(opts.rookie?16+rnd(6):Math.random()<.16?36+Math.floor(Math.random()*Math.random()*45):19+rnd(17)); // 16-21 rookies; 19-35 mostly — and v0.22: the odd grizzled sand-hand of 36 to 80, who fights as a Veteranus
   // gender: roughly one fighter in five is a gladiatrix, and most gladiatrices train as Amazonia
-  let fem=o.fem??(o.cls==='amazonia'||Math.random()<.2);
-  const cls=o.cls||(fem&&Math.random()<.6?'amazonia':ageClass(age));if(cls==='amazonia')fem=true;
+  let fem=opts.fem??(opts.cls==='amazonia'||Math.random()<.2);
+  const cls=opts.cls||(fem&&Math.random()<.6?'amazonia':ageClass(age));if(cls==='amazonia')fem=true;
   const pers=rollPersonality(cls);
-  let ovr=o.ovr??Math.round(clamp(42+Math.random()*22+Math.random()*Math.random()*30,38,92));
-  if(o.ovr==null&&age<21)ovr=clamp(ovr-8,36,68); // the young start low — but the old are NOT automatically good; some just lasted
-  let pot=clamp(ovr+Math.round(Math.random()*(o.rookie||age<23?26:age>=32?6:12)),ovr,97);
+  let ovr=opts.ovr??Math.round(clamp(42+Math.random()*22+Math.random()*Math.random()*30,38,92));
+  if(opts.ovr==null&&age<21)ovr=clamp(ovr-8,36,68); // the young start low — but the old are NOT automatically good; some just lasted
+  let pot=clamp(ovr+Math.round(Math.random()*(opts.rookie||age<23?26:age>=32?6:12)),ovr,97);
   // events come with AGE, not skill: an old journeyman has a long mediocre record; wins come from skill × luck
-  const ev=o.rookie?0:rnd(Math.max(1,Math.round((age-16)*1.1)));
+  const ev=opts.rookie?0:rnd(Math.max(1,Math.round((age-16)*1.1)));
   const w=Math.round(ev*clamp(((ovr-40)/90)*(0.4+Math.random()*0.9),0.02,0.75));
   // gems and the overhyped (CFB-style): hidden until scouted twice or taken to a trial bout
-  const gem=Math.random()<(o.rookie?.10:.05),bust=!gem&&Math.random()<.08;
+  const gem=Math.random()<(opts.rookie?.10:.05),bust=!gem&&Math.random()<.08;
   if(gem)pot=clamp(pot+8+rnd(10),ovr+6,99);if(bust)pot=clamp(ovr+rnd(3),ovr,99);
   const id='g'+Date.now().toString(36)+rnd(46656).toString(36);
-  return {id,name:o.name||genName({female:fem}),fem,cls,src:o.src||'gen',srcId:o.srcId||null,city:o.city||pickOne(HOME_CITIES()),pers,ovr,pot,age,gem:gem?1:0,bust:bust?1:0,look:null,debut:null,pubNoise:Math.round((Math.random()-.5)*2*Math.max(3,12-ev))+(gem?-3:0)+(bust?5:0),
-    fame:clamp(Math.round((ovr-40)*1.3+w*3+rnd(8)),0,100),rec:{ev,w,surv:Math.round(ev*0.6),kp:rnd(w+1),kn:rnd(ev+1)},morale:60+rnd(25),contract:null,motives:motivesFor(pers),interest:{},scout:0,report:null,severed:[],unsigned:0,visits:{},alive:true,rookie:!!o.rookie};
+  return {id,name:opts.name||genName({female:fem}),fem,cls,src:opts.src||'gen',srcId:opts.srcId||null,city:opts.city||pickOne(HOME_CITIES()),pers,ovr,pot,age,gem:gem?1:0,bust:bust?1:0,look:null,debut:null,pubNoise:Math.round((Math.random()-.5)*2*Math.max(3,12-ev))+(gem?-3:0)+(bust?5:0),
+    fame:clamp(Math.round((ovr-40)*1.3+w*3+rnd(8)),0,100),rec:{ev,w,surv:Math.round(ev*0.6),kp:rnd(w+1),kn:rnd(ev+1)},morale:60+rnd(25),contract:null,motives:motivesFor(pers),interest:{},scout:0,report:null,severed:[],unsigned:0,visits:{},alive:true,rookie:!!opts.rookie};
 }
 // every league fighter has a face (deterministic from their id, like arena saves); amazonia are gladiatrices
-function gLook(g){if(!g.look){g.look=gladPortrait(g.id||g.name,g.cls)}if(g.fem){g.look.fem=true;g.look.beard=false}
-  const fk=typeof CITY_FLAG!=='undefined'&&g.city?CITY_FLAG[g.city]:null; // v0.22: league portraits fly their home city's banner
-  if(fk&&(typeof SETTINGS==='undefined'||SETTINGS.banners!==false))return {...g.look,bg:'flag:'+fk};return g.look}
-const gSex=g=>g.fem?'<span title="Female — a gladiatrix" style="color:#e07b9a">♀</span>':'<span title="Male" style="color:#7fa6c9">♂</span>';
-const gAge=g=>g.age||24;
-function gladFromLudus(L){
-  const ovr=clamp(Math.round(50+(L.wins||0)*4+(L.events||0)*1.5+(L.kP||0)*2+(L.kN||0)+(L.cf||0)/6),45,92);
-  const g=genGlad({cls:CLASSES[L.cls]?L.cls:'soldier',ovr,name:L.name,src:'ludus',srcId:L.id});
-  if(L.pers)g.pers={...L.pers};g.rec={ev:L.events||0,w:L.wins||0,surv:L.events||0,kp:L.kP||0,kn:L.kN||0};g.severed=[...(L.severed||[])];g.cpuSaved=!!L.cpu;g.fame=clamp(Math.round(ovr*0.7+(L.wins||0)*5),0,100);g.pubNoise=Math.round((Math.random()-.5)*6);
-  g.age=clamp(21+Math.round((L.events||0)*0.8),19,36);if(L.portrait)g.look={...L.portrait};g.fem=!!(L.portrait&&L.portrait.fem)||g.cls==='amazonia'; // arena veterans arrive with their arena face and the years to match
+function gLook(glad){if(!glad.look){glad.look=gladPortrait(glad.id||glad.name,glad.cls)}if(glad.fem){glad.look.fem=true;glad.look.beard=false}
+  const fk=typeof CITY_FLAG!=='undefined'&&glad.city?CITY_FLAG[glad.city]:null; // v0.22: league portraits fly their home city's banner
+  if(fk&&(typeof SETTINGS==='undefined'||SETTINGS.banners!==false))return {...glad.look,bg:'flag:'+fk};return glad.look}
+/* gSex — ♀ / ♂ marker. */
+const gSex=glad=>glad.fem?'<span title="Female — a gladiatrix" style="color:#e07b9a">♀</span>':'<span title="Male" style="color:#7fa6c9">♂</span>';
+/* gAge — a fighter's age (24 when unknown). */
+const gAge=glad=>glad.age||24;
+/* gladFromLudus — a Ludus Flavius record joins the league as a fighter (rating from their record, their face, severed limbs). */
+function gladFromLudus(rec){
+  const ovr=clamp(Math.round(50+(rec.wins||0)*4+(rec.events||0)*1.5+(rec.kP||0)*2+(rec.kN||0)+(rec.cf||0)/6),45,92);
+  const g=genGlad({cls:CLASSES[rec.cls]?rec.cls:'soldier',ovr,name:rec.name,src:'ludus',srcId:rec.id});
+  if(rec.pers)g.pers={...rec.pers};g.rec={ev:rec.events||0,w:rec.wins||0,surv:rec.events||0,kp:rec.kP||0,kn:rec.kN||0};g.severed=[...(rec.severed||[])];g.cpuSaved=!!rec.cpu;g.fame=clamp(Math.round(ovr*0.7+(rec.wins||0)*5),0,100);g.pubNoise=Math.round((Math.random()-.5)*6);
+  g.age=clamp(21+Math.round((rec.events||0)*0.8),19,36);if(rec.portrait)g.look={...rec.portrait};g.fem=!!(rec.portrait&&rec.portrait.fem)||g.cls==='amazonia'; // arena veterans arrive with their arena face and the years to match
   return g;
 }
-function gladFromCustom(c){
-  const ovr=clamp(Math.round(48+charCost(c)*1.3),45,84);const g=genGlad({cls:'cc_'+c.id,ovr,name:c.name,src:'custom',srcId:c.id,city:c.city});
-  g.pers={...c.pers};g.motives=motivesFor(g.pers);g.rec={ev:(c.events||[]).length,w:(c.events||[]).filter(e=>e.won).length,surv:(c.events||[]).length,kp:0,kn:0};return g;
+/* gladFromCustom — a Creator Studio character joins the league (rating from their point cost). */
+function gladFromCustom(character){
+  const ovr=clamp(Math.round(48+charCost(character)*1.3),45,84);const g=genGlad({cls:'cc_'+character.id,ovr,name:character.name,src:'custom',srcId:character.id,city:character.city});
+  g.pers={...character.pers};g.motives=motivesFor(g.pers);g.rec={ev:(character.events||[]).length,w:(character.events||[]).filter(e=>e.won).length,surv:(character.events||[]).length,kp:0,kn:0};return g;
 }
-const pubOvr=g=>clamp(effOvr(g)+Math.round(g.pubNoise||0),30,99);
+/* pubOvr — the public rating: the true one plus the fighter's public noise. */
+const pubOvr=glad=>clamp(effOvr(glad)+Math.round(glad.pubNoise||0),30,99);
 // what your scouts believe: exact once scouted twice, a narrow range after one scouting, the public rating otherwise
-function estOvr(g){const s=g.scout||0;if(s>=2||(g.contract&&g.contract.mgr===W_().playerId))return {v:effOvr(g),txt:String(effOvr(g))};if(s===1){const lo=effOvr(g)-3,hi=effOvr(g)+3;return {v:effOvr(g),txt:`${lo}–${hi}`}}return {v:pubOvr(g),txt:`~${pubOvr(g)}`}}
+function estOvr(glad){const s=glad.scout||0;if(s>=2||(glad.contract&&glad.contract.mgr===W_().playerId))return {v:effOvr(glad),txt:String(effOvr(glad))};if(s===1){const lo=effOvr(glad)-3,hi=effOvr(glad)+3;return {v:effOvr(glad),txt:`${lo}–${hi}`}}return {v:pubOvr(glad),txt:`~${pubOvr(glad)}`}}
 // v0.28: stars know their worth — a 4★ asks a quarter more, a 5★ half again (the blue-chip premium)
 const STAR_PREM=[1,1,1,1.08,1.25,1.5];
-const askWage=g=>Math.max(3,Math.round((3+(effOvr(g)-40)*0.55+g.fame*0.05)*STAR_PREM[starsOf(effOvr(g))]*(typeof WAGE_MUL!=='undefined'?WAGE_MUL:1))); // v0.68: WAGE_MUL (87-v67) scales every ask
+/* askWage — the weekly wage a fighter asks: rating, fame and the star premium (× WAGE_MUL). TWEAK: the 3 + 0.55 per point over 40. */
+const askWage=glad=>Math.max(3,Math.round((3+(effOvr(glad)-40)*0.55+glad.fame*0.05)*STAR_PREM[starsOf(effOvr(glad))]*(typeof WAGE_MUL!=='undefined'?WAGE_MUL:1))); // v0.68: WAGE_MUL (87-v67) scales every ask
 /* v0.28 MONEY TALKS (the NIL rule): what you actually PUT ON THE TABLE outweighs everything else.
    Every coin a week over their ask adds interest; pay enough and even the fame gate opens —
    a humble ludus CAN land a blue-chip fighter, if it pays like a palace. */
-const coinPull=(g,eff)=>{const ask=askWage(g);return clamp(Math.round((eff/ask-1)*90),0,70)};
-const fameBypassX=(g,m)=>1.35+Math.max(0,reqFame(g)-(m.fame||0))/45; // multiple of the ask that buys past the fame gate
+const coinPull=(glad,offer)=>{const ask=askWage(glad);return clamp(Math.round((offer/ask-1)*90),0,70)};
+/* fameBypassX — how many times the ask a lanista below the fame gate must pay to sign this fighter anyway. */
+const fameBypassX=(glad,mgr)=>1.35+Math.max(0,reqFame(glad)-(mgr.fame||0))/45; // multiple of the ask that buys past the fame gate
 /* v0.22 MORALE ON THE SAND: spirits change how a fighter walks out. 80+ = high spirits (+1 AP, +1 CF, bolder);
    35-79 = steady; under 35 = low (−1 AP, more cautious); under 20 = broken (fights a tier worse). */
-const moraleTier=m=>m>=80?'high':m>=35?'steady':m>=20?'low':'broken';
+const moraleTier=morale=>morale>=80?'high':morale>=35?'steady':morale>=20?'low':'broken';
 const MORALE_TXT={high:'High spirits: +1 AP and +1 CF when the bout begins, and a bolder fighter',steady:'Steady: no effect on the sand',low:'Low spirits: −1 AP when the bout begins, and a more cautious fighter',broken:'Broken: −1 AP and they fight a whole tier worse (their skill deserts them)'};
-function boostFor(g){const o=effOvr(g);const mt=moraleTier(g.morale??60);const tiers=['easy','normal','hard'];let di=o>=80?2:o>=60?1:0;if(mt==='broken')di=Math.max(0,di-1);
-  return {diff:tiers[di],ap:clamp(Math.round((o-62)/6)+(mt==='high'?1:mt==='low'||mt==='broken'?-1:0),0,5),coin:clamp(Math.round((o-70)/5),0,4),cf:(mt==='high'?1:0)+(g.cfBank||0),mt}}
-function seatFor(g,mgrColor,human=false){const b=boostFor(g);/* v0.30: the city-shop kit rides in */const w9=W_();if(g.kit&&g.kit.length&&w9&&g.kitWk===w9.week){b.festItems=[...(b.festItems||[]),...g.kit]}
-  const w0=W_();if(w0&&w0.night&&w0.night.scouted&&g.contract&&mgrById(g.contract.mgr)&&mgrById(g.contract.mgr).isPlayer){b.coin+=1;b.ap+=1} /* scouted the arena: your fighters arrive knowing the ground (+1 AP, +1 coin) */ const cls=CLASSES[g.cls]?g.cls:'soldier';const pers0={...g.pers};if(b.mt==='high'){pers0.aggression=clamp((pers0.aggression||50)+10,1,100);pers0.survival=clamp((pers0.survival||50)-8,1,100)}else if(b.mt==='low'||b.mt==='broken'){pers0.survival=clamp((pers0.survival||50)+12,1,100);pers0.aggression=clamp((pers0.aggression||50)-10,1,100)}
-  const fm=g.contract?mgrById(g.contract.mgr):null;const arm=fm&&typeof facLvl==='function'?facLvl(fm,'armory'):0;if(arm)b.ap=Math.min(6,b.ap+arm);
-  return {cls,cpu:!human,diff:b.diff,name:g.name,city:g.city||null,pers:pers0,rating:effOvr(g),mgrGid:g.id,mgrColor,boost:{ap:b.ap,coin:b.coin,cf:b.cf},festItems:b.festItems||undefined,severed:[...(g.severed||[])]}}
+/* boostFor — what a fighter brings onto the sand from rating and morale: CPU difficulty, extra AP, coin and CF. TWEAK: the (ovr−62)/6 AP and (ovr−70)/5 coin steps. */
+function boostFor(glad){const o=effOvr(glad);const mt=moraleTier(glad.morale??60);const tiers=['easy','normal','hard'];let di=o>=80?2:o>=60?1:0;if(mt==='broken')di=Math.max(0,di-1);
+  return {diff:tiers[di],ap:clamp(Math.round((o-62)/6)+(mt==='high'?1:mt==='low'||mt==='broken'?-1:0),0,5),coin:clamp(Math.round((o-70)/5),0,4),cf:(mt==='high'?1:0)+(glad.cfBank||0),mt}}
+/* seatFor — an engine seat for a league fighter: class, mind, personality nudged by morale, rating, boosts (armory, scouted arena, city kit) and severed limbs. */
+function seatFor(glad,mgrColor,human=false){const b=boostFor(glad);/* v0.30: the city-shop kit rides in */const w9=W_();if(glad.kit&&glad.kit.length&&w9&&glad.kitWk===w9.week){b.festItems=[...(b.festItems||[]),...glad.kit]}
+  const w0=W_();if(w0&&w0.night&&w0.night.scouted&&glad.contract&&mgrById(glad.contract.mgr)&&mgrById(glad.contract.mgr).isPlayer){b.coin+=1;b.ap+=1} /* scouted the arena: your fighters arrive knowing the ground (+1 AP, +1 coin) */ const cls=CLASSES[glad.cls]?glad.cls:'soldier';const pers0={...glad.pers};if(b.mt==='high'){pers0.aggression=clamp((pers0.aggression||50)+10,1,100);pers0.survival=clamp((pers0.survival||50)-8,1,100)}else if(b.mt==='low'||b.mt==='broken'){pers0.survival=clamp((pers0.survival||50)+12,1,100);pers0.aggression=clamp((pers0.aggression||50)-10,1,100)}
+  const fm=glad.contract?mgrById(glad.contract.mgr):null;const arm=fm&&typeof facLvl==='function'?facLvl(fm,'armory'):0;if(arm)b.ap=Math.min(6,b.ap+arm);
+  return {cls,cpu:!human,diff:b.diff,name:glad.name,city:glad.city||null,pers:pers0,rating:effOvr(glad),mgrGid:glad.id,mgrColor,boost:{ap:b.ap,coin:b.coin,cf:b.cf},festItems:b.festItems||undefined,severed:[...(glad.severed||[])]}}
 
 /* ---------- how fighters see a lanista ---------- */
-function winPct(m){return m.bouts?m.wins/m.bouts:0.25}
-function mgrScore(m,mot,g){
-  const P=m.p;
+/* winPct — a lanista's win rate (0.25 before any bouts). */
+function winPct(mgr){return mgr.bouts?mgr.wins/mgr.bouts:0.25}
+/* mgrScore — how a fighter grades a ludus on one motive, 0–100 (coin, glory, honor, spectacle, training, home, arena time). TWEAK: the weights in each case. */
+function mgrScore(mgr,mot,glad){
+  const P=mgr.p;
   switch(mot){
-    case 'coin':return clamp(18+Math.min(55,m.coin/7)+P.ambition*0.25-P.greed*0.35+clamp((m.betNet||0)/25,-5,10),0,100);
-    case 'glory':return clamp(m.fame*0.85+winPct(m)*40,0,100);
-    case 'honor':return clamp(P.honor-(m.poached||0)*9-(m.broken||0)*6+(m.kept||0)*3,0,100);
-    case 'spectacle':return clamp(P.show*0.62+m.fame*0.4+(typeof facLvl==='function'?facLvl(m,'stands')*6:0),0,100);
-    case 'training':return clamp(P.discipline*0.85+(m.improved||0)*1.5+(typeof facLvl==='function'?facLvl(m,'yard')*8:0)+Math.min(20,(m.dev||0)/4),0,100); // v0.29: recruits notice a house that invests in its fighters
-    case 'home':{if(!g)return 50;const [a,b]=cityXY(m.city),[c,d]=cityXY(g.city);return clamp(Math.round(100-Math.hypot(a-c,b-d)*110),0,100)}
-    case 'playing':{const w2=W_();const n=w2?rosterOf(m).length:3;return clamp(100-Math.max(0,n-5)*8*(w2?RL(w2,'arena'):0.6),0,100)} // arena time: the first three places are free; the Sandbox slider sets how hard a big stable weighs
+    case 'coin':return clamp(18+Math.min(55,mgr.coin/7)+P.ambition*0.25-P.greed*0.35+clamp((mgr.betNet||0)/25,-5,10),0,100);
+    case 'glory':return clamp(mgr.fame*0.85+winPct(mgr)*40,0,100);
+    case 'honor':return clamp(P.honor-(mgr.poached||0)*9-(mgr.broken||0)*6+(mgr.kept||0)*3,0,100);
+    case 'spectacle':return clamp(P.show*0.62+mgr.fame*0.4+(typeof facLvl==='function'?facLvl(mgr,'stands')*6:0),0,100);
+    case 'training':return clamp(P.discipline*0.85+(mgr.improved||0)*1.5+(typeof facLvl==='function'?facLvl(mgr,'yard')*8:0)+Math.min(20,(mgr.dev||0)/4),0,100); // v0.29: recruits notice a house that invests in its fighters
+    case 'home':{if(!glad)return 50;const [a,b]=cityXY(mgr.city),[c,d]=cityXY(glad.city);return clamp(Math.round(100-Math.hypot(a-c,b-d)*110),0,100)}
+    case 'playing':{const w2=W_();const n=w2?rosterOf(mgr).length:3;return clamp(100-Math.max(0,n-5)*8*(w2?RL(w2,'arena'):0.6),0,100)} // arena time: the first three places are free; the Sandbox slider sets how hard a big stable weighs
   }
   return 50;
 }
-const reqFame=g=>STAR_FAME[starsOf(effOvr(g))];
-function baseInterest(m,g){let v=0;for(const [k,w] of g.motives)v+=w*mgrScore(m,k,g);v=v*0.55;
-  if(m.bouts>=4)v+=(m.wins/m.bouts-0.4)*22; // the ludus record talks: fighters want to sign with proven winners
-  if(typeof facSum==='function')v+=facSum(m)*1.2; // v0.28: the ludus grade — recruits tour the facilities
-  if(g&&m.city&&g.city===m.city)v+=8; // v0.36: a fighter from your ludus's own city leans your way
-  if(m.fame<reqFame(g))v=Math.min(v,22);return Math.round(v)}
-const interestOf=(g,m)=>g.interest[m.id]??(g.interest[m.id]=baseInterest(m,g));
-function capInterest(g,m,v){return m.fame<reqFame(g)?Math.min(v,35):clamp(v,0,100)}
-function suitors(g){return W_().mgrs.map(m=>({m,v:interestOf(g,m)})).sort((a,b)=>b.v-a.v)}
-function loyaltyOf(g){if(!g.contract)return 0;const m=mgrById(g.contract.mgr);return clamp(Math.round(35+m.p.honor*0.3+g.morale*0.35-m.p.greed*0.15+(g.loyB||0)),10,95)} // loyB: bonds earned by your retention actions
-function stageOf(g){const s=suitors(g);const mine=interestOf(g,me());const rank=s.findIndex(x=>x.m===me())+1;
-  if(g.contract&&g.contract.mgr===me().id)return 'Signed with you';if(me().fame<reqFame(g))return `Won't consider you: wants a ${mgrTier(reqFame(g))} ludus (fame ${reqFame(g)}+)`;
-  if(g.contract)return `Signed with ${mgrById(g.contract.mgr).name} · loyalty ${g.scout?loyaltyOf(g):'?'}`;
+/* reqFame — the fame a lanista needs before this fighter will listen (by stars). */
+const reqFame=glad=>STAR_FAME[starsOf(effOvr(glad))];
+/* baseInterest — a fighter's interest in a ludus: their three motives weighed by its grades, plus record, facilities and home city; capped at 22 below the fame gate. */
+function baseInterest(mgr,glad){let v=0;for(const [k,w] of glad.motives)v+=w*mgrScore(mgr,k,glad);v=v*0.55;
+  if(mgr.bouts>=4)v+=(mgr.wins/mgr.bouts-0.4)*22; // the ludus record talks: fighters want to sign with proven winners
+  if(typeof facSum==='function')v+=facSum(mgr)*1.2; // v0.28: the ludus grade — recruits tour the facilities
+  if(glad&&mgr.city&&glad.city===mgr.city)v+=8; // v0.36: a fighter from your ludus's own city leans your way
+  if(mgr.fame<reqFame(glad))v=Math.min(v,22);return Math.round(v)}
+/* interestOf — a fighter's (cached) interest in a lanista. */
+const interestOf=(glad,mgr)=>glad.interest[mgr.id]??(glad.interest[mgr.id]=baseInterest(mgr,glad));
+/* capInterest — clamps interest to 0–100 (35 below the fame gate). */
+function capInterest(glad,mgr,v){return mgr.fame<reqFame(glad)?Math.min(v,35):clamp(v,0,100)}
+/* suitors — every lanista ranked by this fighter's interest. */
+function suitors(glad){return W_().mgrs.map(m=>({m,v:interestOf(glad,m)})).sort((a,b)=>b.v-a.v)}
+/* loyaltyOf — a signed fighter's loyalty to their lanista: honor, morale, greed and bonds (loyB). TWEAK: the weights. */
+function loyaltyOf(glad){if(!glad.contract)return 0;const m=mgrById(glad.contract.mgr);return clamp(Math.round(35+m.p.honor*0.3+glad.morale*0.35-m.p.greed*0.15+(glad.loyB||0)),10,95)} // loyB: bonds earned by your retention actions
+/* stageOf — where a fighter stands with you, in words (signed, won't consider you, leaning your way, top 3…). */
+function stageOf(glad){const s=suitors(glad);const mine=interestOf(glad,me());const rank=s.findIndex(x=>x.m===me())+1;
+  if(glad.contract&&glad.contract.mgr===me().id)return 'Signed with you';if(me().fame<reqFame(glad))return `Won't consider you: wants a ${mgrTier(reqFame(glad))} ludus (fame ${reqFame(glad)}+)`;
+  if(glad.contract)return `Signed with ${mgrById(glad.contract.mgr).name} · loyalty ${glad.scout?loyaltyOf(glad):'?'}`;
   if(rank===1&&mine>=55)return 'Leaning your way';if(rank<=3&&mine>=35)return `Top 3 (#${rank})`;if(mine>=20)return 'Listening';return 'Barely aware of you';}
 
 /* ---------- a new world ---------- */
 // old saves: give everyone an age/debut, convert the old numeric training budget to a regime
 const RULES_DEF={death:80,blood:100,inj:100,gain:100,rookies:100,rand:100,arena:60,rookmercy:50}; /* v0.21: a gentler default league — 20% baseline clemency, rookies (≤3 bouts) spared half the time */
-const RL=(w,k)=>((w.rules||RULES_DEF)[k]??100)/100;
-function mgrMigrate(w){if(!w||!w.glads)return w;
-  w.rules={...RULES_DEF,...(w.rules||{})};if(!w.festPick)w.festPick='ludi';
-  for(const g of w.glads){if(!g.age)g.age=clamp(18+rnd(17)+Math.round(((g.rec&&g.rec.ev)||0)/4),17,38);if(!g.debut)g.debut={s:1,wk:1};if(g.fem==null)g.fem=g.cls==='amazonia'||!!(g.look&&g.look.fem)}
-  if(typeof w.train==='number')w.train=w.train<=0?'off':w.train<=10?'light':w.train<=22?'std':'hard';
-  return w}
+/* RL — a world's sandbox rule as a multiplier (100 = 1.0). */
+const RL=(world,k)=>((world.rules||RULES_DEF)[k]??100)/100;
+/* mgrMigrate — upgrades an older saved world in place (rules, ages, debuts, training regime). */
+function mgrMigrate(world){if(!world||!world.glads)return world;
+  world.rules={...RULES_DEF,...(world.rules||{})};if(!world.festPick)world.festPick='ludi';
+  for(const g of world.glads){if(!g.age)g.age=clamp(18+rnd(17)+Math.round(((g.rec&&g.rec.ev)||0)/4),17,38);if(!g.debut)g.debut={s:1,wk:1};if(g.fem==null)g.fem=g.cls==='amazonia'||!!(g.look&&g.look.fem)}
+  if(typeof world.train==='number')world.train=world.train<=0?'off':world.train<=10?'light':world.train<=22?'std':'hard';
+  return world}
+/* newWorld — creates a new career world: the preset houses (yours custom or taken over), old rivalries, the fighter pool (generated, Ludus Flavius, custom characters), rival rosters, a mid-season join, then the first match night. TWEAK: the 58 generated fighters. */
 function newWorld(choice){
   const w={id:'c'+Date.now().toString(36),v:1,tutorial:!!choice.tutorial,rules:{...RULES_DEF,...(choice.rules||{})},spectOK:choice.spectOK!==false,festPick:choice.festPick||'ludi',created:new Date().toISOString().slice(0,10),...(()=>{const c=typeof calNow==='function'?calNow():{season:1,week:1};return {week:c.week,season:c.season,startWk:c.week,startSeason:c.season}})(), /* v0.22: a new career joins the empire's calendar where it stands */playerId:null,mgrs:[],glads:[],news:[],night:null,grave:[],hours:0};
   MGR.world=w;
@@ -232,6 +293,7 @@ function newWorld(choice){
   if(!choice.tutorial)activeCid().then(c=>{if(!c)setActiveCareer(w.id)}).catch(()=>{}); // the first career becomes the active wallet
   return w;
 }
+/* hoursMax — recruiting hours a week: 8 + ambition/25. */
 const hoursMax=()=>8+Math.round(me().p.ambition/25);
 // a lanista in one click, so a wager never has to wait: random gambler, 40 coin, immediately the active wallet
 async function quickLanista(){
@@ -246,6 +308,7 @@ async function quickLanista(){
 }
 
 /* ---------- match nights ---------- */
+/* makeNight — builds the week's match night from the season fixture: arena (moved if the city is closed), omen and world news on purses, the levy, then rival houses enter fighters (fewest appearances first) and fillNight completes the cards. Wrapped by 59-bye and 63-empire53. */
 function makeNight(){
   {const w0=W_(),m0=me();if(w0&&m0)w0.weekStart={coin:m0.coin,fame:m0.fame,wins:m0.wins,bouts:m0.bouts}}
   const w=W_();const grand=false; // v0.28: week 12 is simply the last week of the regular season — the finale is the Flavius Superbus, by invitation
@@ -286,9 +349,9 @@ function makeNight(){
   /* v0.43 A FAIR SEASON: houses no longer queue in a fixed order. Those with the fewest appearances this season
      choose first (ties shuffled), each house enters ONE fighter per night on the first pass, and only seats still
      open afterwards go to a house's second fighter — so every stable fights and builds a record. */
-  const apps=m=>((m.apps||{})[w.season]||0);
+  const apps=mgr=>((mgr.apps||{})[w.season]||0);
   const houses=w.mgrs.filter(m=>!m.isPlayer&&!m.dead).map(m=>({m,k:apps(m)+Math.random()*0.9})).sort((a,b)=>a.k-b.k).map(x=>x.m);
-  const enter=(m,b,g)=>{b.ents.push(g.id);used.add(g.id);m.apps=m.apps||{};m.apps[w.season]=(m.apps[w.season]||0)+1};
+  const enter=(mgr,b,glad)=>{b.ents.push(glad.id);used.add(glad.id);mgr.apps=mgr.apps||{};mgr.apps[w.season]=(mgr.apps[w.season]||0)+1};
   for(const pass of [1,2])for(const m of houses){if(pass===2&&Math.random()<0.5)continue;const ros=rosterOf(m).filter(g=>g.morale>15&&!g.inj&&!used.has(g.id)).sort((a,b)=>effOvr(b)-effOvr(a));
     for(const b of [...bouts].reverse()){if(b.ents.some(id=>{const g=gById(id);return g&&g.contract&&g.contract.mgr===m.id}))continue; // never two of one house in one bout
       const T=TIERS[b.tier];const g=ros.find(g=>!used.has(g.id)&&(!g.starChild||(typeof starChildFights==='function'&&starChildFights(g,b,w)))&&effOvr(g)>=T.lo-4&&effOvr(g)<=T.hi+2);if(g&&b.ents.length<boutSize(b)-1&&Math.random()<0.62+m.p.risk/250){enter(m,b,g);break}}}
@@ -296,7 +359,9 @@ function makeNight(){
   fillNight();
   if(typeof specWeekStart==='function')try{specWeekStart(w)}catch(e){console.error(e)}
 }
-const boutSize=b=>{const E=EVENTS[b.ev];if(!E)return 4;return clamp(4,E.min,E.max)}; // specials seat what their rules allow (3 for Triumviratus, 6 for Naumachia…)
+/* boutSize — how many fighters a bout seats (4, or what a special's rules allow). */
+const boutSize=bout=>{const E=EVENTS[bout.ev];if(!E)return 4;return clamp(4,E.min,E.max)}; // specials seat what their rules allow (3 for Triumviratus, 6 for Naumachia…)
+/* fillNight — fills empty bout places with free agents in the band, then the nearest-rated, then new fighters. */
 function fillNight(){
   const w=W_(),n=w.night;const used=new Set(n.bouts.flatMap(b=>b.ents));
   for(const b of n.bouts){const T=TIERS[b.tier];const need=boutSize(b);
@@ -311,10 +376,10 @@ function fillNight(){
 /* A bout result, in plain words. In the league, being ELIMINATED (beaten on the sand) is not death:
    the editor grants missio and the fighter returns to their ludus. Only a thumb-down (Fate 10 CF or
    less, one in three) — or the world outside the arena — actually kills a fighter. */
-function boutFate(r){ // a bout result in the game's own words: the Fate each fighter met
-  const fn=r.fname?` <span class="rc-sub">${esc(r.fname)}</span>`:'';
-  const W=r.won?'<b style="color:var(--gold2)">🏆 won</b> · ':'';
-  switch(r.vd){
+function boutFate(row){ // a bout result in the game's own words: the Fate each fighter met
+  const fn=row.fname?` <span class="rc-sub">${esc(row.fname)}</span>`:'';
+  const W=row.won?'<b style="color:var(--gold2)">🏆 won</b> · ':'';
+  switch(row.vd){
     case 'ludus':return W+`<span title="20-49 CF: Survival — back to the Ludus Flavius">🛡 survived</span>`;
     case 'spared':return W+`<span style="color:var(--gold2)" title="17-19 CF: the d6 showed 4-6 — the thumb went up">👍 thumb up — spared</span>`;
     case 'clemency':return W+`<span style="color:#e0a060" title="Condemned by the Fate table, but the editor waved it away (sandbox clemency)">🕊 condemned · clemency</span>${fn}`;
@@ -327,59 +392,68 @@ function boutFate(r){ // a bout result in the game's own words: the Fate each fi
     case 'p-rudis':return W+'<b style="color:var(--gold2)">⏳ the rudis — your call</b>';
   }
   // no verdict recorded (older saves): judge by the printed table, never call a sub-20 fighter a survivor
-  const g=gById(r.gid);const W2=r.won?'<b style="color:var(--gold2)">🏆 won</b> · ':'';
+  const g=gById(row.gid);const W2=row.won?'<b style="color:var(--gold2)">🏆 won</b> · ':'';
   if(g&&!g.alive)return W2+'<b style="color:var(--blood2)">✝ killed</b>';
-  const F=fateRow(r.f||0);return W2+(F.g==='Survival'||F.g==='Freedom'?'🛡 survived':`<span title="Condemned by the Fate table (${esc(F.g)} · ${esc(F.n)}); this bout predates verdict records">⚖ ${esc(F.n)}</span>`);
+  const F=fateRow(row.f||0);return W2+(F.g==='Survival'||F.g==='Freedom'?'🛡 survived':`<span title="Condemned by the Fate table (${esc(F.g)} · ${esc(F.n)}); this bout predates verdict records">⚖ ${esc(F.n)}</span>`);
 }
-function boutProbs(b,mode){ // mode 'book' uses public ratings, 'mine' your scouts' estimates
-  const gs=b.ents.map(gById);const r=gs.map(g=>mode==='book'?pubOvr(g):estOvr(g).v);
+/* boutProbs — win chances in a bout from ratings (public for the book, your scouts' for yours). TWEAK: the 6.5 softness. */
+function boutProbs(bout,mode){ // mode 'book' uses public ratings, 'mine' your scouts' estimates
+  const gs=bout.ents.map(gById);const r=gs.map(g=>mode==='book'?pubOvr(g):estOvr(g).v);
   const mx=Math.max(...r);const ex=r.map(v=>Math.exp((v-mx)/6.5));const z=ex.reduce((a,c)=>a+c,0);return ex.map(e=>e/z);
 }
-const boutOdds=b=>boutProbs(b,'book').map(p=>Math.max(1.1,Math.min(25,Math.round(10/(p*HOUSE))/10)));
-const rigCost=b=>Math.round(b.purse*0.6+15);
+/* boutOdds — the bookmaker's odds for each fighter in a bout (1.1–25×). */
+const boutOdds=bout=>boutProbs(bout,'book').map(p=>Math.max(1.1,Math.min(25,Math.round(10/(p*HOUSE))/10)));
+/* rigCost — what fixing a bout costs: 60% of the purse + 15. */
+const rigCost=bout=>Math.round(bout.purse*0.6+15);
 /* voidBets — v0.67: a fighter taken off a card (your entry replaced them, a withdrawal, the Gambit) voids every wager on them:
    the stake returns to the treasury and the slip reads "void" in the betting log */
-function voidBets(b,gid){if(!b||!b.bets||!gid)return 0;const m=me();let back=0;
-  b.bets=b.bets.filter(bt=>{if(bt.gid!==gid)return true;back+=bt.stake;m.coin+=bt.stake;
+function voidBets(bout,gid){if(!bout||!bout.bets||!gid)return 0;const m=me();let back=0;
+  bout.bets=bout.bets.filter(bt=>{if(bt.gid!==gid)return true;back+=bt.stake;m.coin+=bt.stake;
     try{const r=betlogLoad().find(x=>x.id===bt.bid);if(r){r.status='void';r.pay=bt.stake;r.settled=new Date().toISOString();betlogSave()}}catch(e){}return false});
   if(back)setTimeout(()=>{try{mToast(`↩ Your ${back}-coin wager on ${esc((gById(gid)||{}).name||'that fighter')} is void — they are off the card. Stake returned.`)}catch(e){}},60);return back}
-function boutRiggable(b){const m=me();if(b.done||b.rig||(b.bets||[]).length)return false; // v0.29: no fixing a bout you have money on
-  const mine=b.ents.some(id=>{const g=gById(id);return g&&g.contract&&g.contract.mgr===m.id});
-  const theirs=b.ents.some(id=>{const g=gById(id);return g&&g.contract&&g.contract.mgr!==m.id});
+/* boutRiggable — a bout can be fixed only with your fighter AND a rival's on the card, and no wager of yours on it. */
+function boutRiggable(bout){const m=me();if(bout.done||bout.rig||(bout.bets||[]).length)return false; // v0.29: no fixing a bout you have money on
+  const mine=bout.ents.some(id=>{const g=gById(id);return g&&g.contract&&g.contract.mgr===m.id});
+  const theirs=bout.ents.some(id=>{const g=gById(id);return g&&g.contract&&g.contract.mgr!==m.id});
   return mine&&theirs}
 /* v0.22: fight cards name the sides — teams, the Juggernaut, co-op allies */
-function boutSide(b,i){const E=EVENTS[b.ev]||{};if(E.coop)return {k:'A',n:'Allies',col:'#9bd070'};if(E.teams==='jugg')return i===0?{k:'J',n:'Juggernaut',col:'#ff6a55'}:{k:'T',n:'The team',col:'#6fb0e6'};if(E.teams)return i%2?{k:'B',n:'Team B',col:'#6fb0e6'}:{k:'A',n:'Team A',col:'#e0a33a'};return null}
-function boutSidesHTML(b){const E=EVENTS[b.ev]||{};if(!E.teams&&!E.coop)return '';const nm=id=>{const g=gById(id);return g?esc(g.name):'?'};
-  if(E.coop)return `<p class="sides">🤝 <b>Co-op:</b> ${b.ents.map(nm).join(', ')} fight together against the beasts.</p>`;
-  if(E.teams==='jugg')return `<p class="sides"><span class="sidetag" style="--sc:#ff6a55">👑 Juggernaut</span> <b>${nm(b.ents[0])}</b> — drafts 7 picks — <i>versus</i> <span class="sidetag" style="--sc:#6fb0e6">The team</span> ${b.ents.slice(1).map(nm).join(', ')}</p>`;
-  const A=b.ents.filter((_,i)=>i%2===0),B=b.ents.filter((_,i)=>i%2===1);
+function boutSide(bout,i){const E=EVENTS[bout.ev]||{};if(E.coop)return {k:'A',n:'Allies',col:'#9bd070'};if(E.teams==='jugg')return i===0?{k:'J',n:'Juggernaut',col:'#ff6a55'}:{k:'T',n:'The team',col:'#6fb0e6'};if(E.teams)return i%2?{k:'B',n:'Team B',col:'#6fb0e6'}:{k:'A',n:'Team A',col:'#e0a33a'};return null}
+/* boutSidesHTML — the sides line of a team / Juggernaut / co-op bout. */
+function boutSidesHTML(bout){const E=EVENTS[bout.ev]||{};if(!E.teams&&!E.coop)return '';const nm=id=>{const g=gById(id);return g?esc(g.name):'?'};
+  if(E.coop)return `<p class="sides">🤝 <b>Co-op:</b> ${bout.ents.map(nm).join(', ')} fight together against the beasts.</p>`;
+  if(E.teams==='jugg')return `<p class="sides"><span class="sidetag" style="--sc:#ff6a55">👑 Juggernaut</span> <b>${nm(bout.ents[0])}</b> — drafts 7 picks — <i>versus</i> <span class="sidetag" style="--sc:#6fb0e6">The team</span> ${bout.ents.slice(1).map(nm).join(', ')}</p>`;
+  const A=bout.ents.filter((_,i)=>i%2===0),B=bout.ents.filter((_,i)=>i%2===1);
   return `<p class="sides"><span class="sidetag" style="--sc:#e0a33a">Team A</span> ${A.map(nm).join(' & ')} <i>versus</i> <span class="sidetag" style="--sc:#6fb0e6">Team B</span> ${B.map(nm).join(' & ')}</p>`}
 /* v0.34: the lanista himself, as a fighter — an old hand, mediocre-average next to the active
    gladiators (rating ~44-60, nudged by fame). Created only when the Gambit is actually taken. */
-function lanistaGlad(w,m){
-  let g=w.glads.find(x=>x.lanista&&x.contract&&x.contract.mgr===m.id&&x.alive);
+/* lanistaGlad — the lanista as a fighter (the Debtor's Gambit): an old Veteranus rated ~44–60. */
+function lanistaGlad(world,mgr){
+  let g=world.glads.find(x=>x.lanista&&x.contract&&x.contract.mgr===mgr.id&&x.alive);
   if(g)return g;
-  g=genGlad({cls:'veteranus',age:42+rnd(12),fem:false,ovr:clamp(44+Math.round(m.fame/10)+rnd(8),44,60)});
-  g.name=m.name;g.city=m.city;g.lanista=1;g.pot=g.ovr;g.gem=false;g.bust=false;g.inj=null;
-  g.contract={mgr:m.id,wage:0,weeks:99,bonus:0};g.morale=55;g.scout=3;g.debut={s:w.season,wk:w.week};
-  w.glads.push(g);return g}
-function boutCfg(b,watch,fightGid=null){ // fightGid: hand that fighter's reins to the human player for a live bout
-  const w=W_();const E=EVENTS[b.ev]||EVENTS.democritus;
-  const seats=b.ents.map((id,i)=>{const g=gById(id);const m=g.contract?mgrById(g.contract.mgr):null;const st=seatFor(g,m?m.color:null,id===fightGid);
+  g=genGlad({cls:'veteranus',age:42+rnd(12),fem:false,ovr:clamp(44+Math.round(mgr.fame/10)+rnd(8),44,60)});
+  g.name=mgr.name;g.city=mgr.city;g.lanista=1;g.pot=g.ovr;g.gem=false;g.bust=false;g.inj=null;
+  g.contract={mgr:mgr.id,wage:0,weeks:99,bonus:0};g.morale=55;g.scout=3;g.debut={s:world.season,wk:world.week};
+  world.glads.push(g);return g}
+/* boutCfg — the startEvent config of a match-night bout (seats, teams, the Gambit truce, options, mgrCtx); fightGid hands one fighter to the human. */
+function boutCfg(bout,watch,fightGid=null){ // fightGid: hand that fighter's reins to the human player for a live bout
+  const w=W_();const E=EVENTS[bout.ev]||EVENTS.democritus;
+  const seats=bout.ents.map((id,i)=>{const g=gById(id);const m=g.contract?mgrById(g.contract.mgr):null;const st=seatFor(g,m?m.color:null,id===fightGid);
     if(E.classes&&!E.classes.includes(st.cls))st.cls=E.classes[i%E.classes.length]; // a special with fixed classes re-badges for the night
     if(E.coop)st.team='A';else if(E.teams==='jugg')st.team=i===0?'J':'T';else if(E.teams)st.team=i%2?'B':'A';
     return st});
   // no two fighters of one class share a color; duplicates are fine in the engine
   // the Debtor's Gambit: the lanista and his chosen fighter enter under one banner — a truce, until the end
-  const ts=(()=>{const ud=w.underdog;if(ud&&ud.fighting&&ud.ally&&b.ents.includes(ud.gid)&&b.ents.includes(ud.ally))return [b.ents.indexOf(ud.gid),b.ents.indexOf(ud.ally)];return null})();
-  return {ev:b.ev,loc:w.night.loc,seats,truceSeats:ts,opts:{mods:true,mandata:true,optOffers:true,eaglePot:true,spect:watch?'auto':0},mgrTier:b.tier,omen:w.night.omen||null,mgrWorldId:w.id,mgrCtx:{cid:w.id,week:w.week,bout:w.night.bouts.indexOf(b),name:me().name}};
+  const ts=(()=>{const ud=w.underdog;if(ud&&ud.fighting&&ud.ally&&bout.ents.includes(ud.gid)&&bout.ents.includes(ud.ally))return [bout.ents.indexOf(ud.gid),bout.ents.indexOf(ud.ally)];return null})();
+  return {ev:bout.ev,loc:w.night.loc,seats,truceSeats:ts,opts:{mods:true,mandata:true,optOffers:true,eaglePot:true,spect:watch?'auto':0},mgrTier:bout.tier,omen:w.night.omen||null,mgrWorldId:w.id,mgrCtx:{cid:w.id,week:w.week,bout:w.night.bouts.indexOf(bout),name:me().name}};
 }
-async function runBoutSim(bi){
-  const w=W_(),b=w.night.bouts[bi];if(b.done)return;
-  const res=await simEvent(boutCfg(b,false));if(res&&!res.error)applyBout(bi,res);else{mnews(`The ${TIERS[b.tier].n} was called off (${esc(res&&res.error||'no result')}).`,'bad');b.done=true}
+/* runBoutSim — simulates a bout off-screen and applies the result. */
+async function runBoutSim(boutIdx){
+  const w=W_(),b=w.night.bouts[boutIdx];if(b.done)return;
+  const res=await simEvent(boutCfg(b,false));if(res&&!res.error)applyBout(boutIdx,res);else{mnews(`The ${TIERS[b.tier].n} was called off (${esc(res&&res.error||'no result')}).`,'bad');b.done=true}
 }
-function watchBout(bi,fight=false){
-  const w=W_(),b=w.night.bouts[bi];if(b.done)return;
+/* watchBout — plays a bout live on the board (fight = you control your fighter). */
+function watchBout(boutIdx,fight=false){
+  const w=W_(),b=w.night.bouts[boutIdx];if(b.done)return;
   // fight=true: you don't watch your fighter — you ARE your fighter, live on the board
   let fightGid=null;
   if(fight){const meId=me().id;
@@ -388,6 +462,7 @@ function watchBout(bi,fight=false){
   saveWorld(true);modalDismiss();
   const cfg=boutCfg(b,true,fightGid);S&&(S.over=true);startEvent(cfg);
 }
+/* mgrAfterWatch — after a watched bout: everyone in it gets scouted, good free agents go on your board, then the result is applied. */
 async function mgrAfterWatch(res,ctx){
   if(!MGR.world||MGR.world.id!==ctx.cid){const d=await Store.getDoc('mgrCareers',ctx.cid);if(!d)return;MGR.world=mgrMigrate(JSON.parse(d.world))}
   const w=W_();if(w.week!==ctx.week||!w.night)return;const b=w.night.bouts[ctx.bout];if(!b||b.done)return;
@@ -399,8 +474,9 @@ async function mgrAfterWatch(res,ctx){
   // live wagers placed from the Wagers window were already paid out of (and into) the treasury
   applyBout(ctx.bout,res,{live:true});saveWorld(true);
 }
-function applyBout(bi,res,opt={}){
-  const w=W_(),b=w.night.bouts[bi],T=TIERS[b.tier];if(b.done)return;b.done=true;const verdict={};
+/* applyBout — applies a bout result to the league: records, purses and fees, fame, morale, injuries, the Fate table for every fighter, the Debtor's Gambit, rivalries, pledges, bets, rival lanistae's bets, a fixed bout's risk, and the news line. Wrapped by many later modules. */
+function applyBout(boutIdx,res,opt={}){
+  const w=W_(),b=w.night.bouts[boutIdx],T=TIERS[b.tier];if(b.done)return;b.done=true;const verdict={};
   const byId=Object.fromEntries(res.rows.map(r=>[r.mgrId,r]));const wins=new Set(res.winners.map(i=>res.rows.find(r=>r.id===i)).filter(Boolean).map(r=>r.mgrId));
   const lines=[];
   if(b.rig&&gById(b.rig)&&gById(b.rig).alive!==false){ // the fix is in: whatever the sand said, the judges saw otherwise
@@ -418,10 +494,10 @@ function applyBout(bi,res,opt={}){
     if(!g.inj&&(r.dmg||0)>=8&&Math.random()<.15*RL(w,'inj')){g.inj={until:w.week+1+rnd(2),label:pickOne(['a torn shoulder','a deep thigh cut','cracked ribs','a rattled skull','a mangled hand']),pen:2+rnd(4)};
       lines.push(`${esc(g.name)} leaves the sand hurt (${g.inj.label})`);if(m&&m.isPlayer)tnews(`${esc(g.name)} came back from the bout with ${g.inj.label} — benched until it heals or the Medicus clears it.`,'bad')}
     // ---- THE FATE TABLE (p.54-55), exactly as printed — every fighter, win or lose ----
-    g.lastCF=r.f;const v=g.lanista?{}:leagueFate(g,r,m,b,bi,opt);verdict[gid]=v;if(v.line)lines.push(v.line); // the editor holds the lanista's fate himself (below)
+    g.lastCF=r.f;const v=g.lanista?{}:leagueFate(g,r,m,b,boutIdx,opt);verdict[gid]=v;if(v.line)lines.push(v.line); // the editor holds the lanista's fate himself (below)
   }
   // ---- v0.34 THE DEBTOR'S GAMBIT resolves ----
-  if(w.underdog&&w.underdog.fighting&&bi===w.underdog.bout){const ud=w.underdog;const gL=gById(ud.gid);const rL=byId[ud.gid];const pm=me();
+  if(w.underdog&&w.underdog.fighting&&boutIdx===w.underdog.bout){const ud=w.underdog;const gL=gById(ud.gid);const rL=byId[ud.gid];const pm=me();
     w.underdog=null;w.underdogUsed=1;
     if(gL){gL.contract=null;gL.alive=false;gL.retired=true} // win or fall, the lanista hangs up the sword
     if(rL&&!rL.alive){ // fell on the sand: the career ends here, with an epitaph
@@ -479,6 +555,7 @@ function applyBout(bi,res,opt={}){
   mnews(`Week ${wkOf(w.week)} · ${boutDay(b.tier)}'s ${TIERS[b.tier].n} at ${LOCATIONS[w.night.loc].n}: ${wn.length?wn.map(g=>`<b>${esc(g.name)}</b>`).join(' & ')+' wins':'no victor'}. ${lines.slice(1).join('; ')}`,wn.some(g=>g.contract&&g.contract.mgr===me().id)?'big':'');
   saveWorld();
 }
+/* endWeek — ends the week: wages, injuries, training, morale, contracts, deaths of old age and the world, interest drift, pledges, feuds, careers turning, new faces, the loan and bankruptcy, season end and the Superbus, then the next match night. Returns false until every bout and verdict is settled. Wrapped by many later modules. */
 async function endWeek(){
   const w=W_();const pm=me();
   for(const b of w.night.bouts)if(!b.done)return false;
@@ -691,16 +768,19 @@ const SCATTER=['sold to the silver mines to settle the debts','taken as a bodygu
 /* v0.30 LEGACY & RETIREMENT: manager mode has no forced ending — you play for the LEGACY of the house
    and retire when the story feels finished. The house then enters the Annals with a grade and an epitaph. */
 const LEGACY_TIERS=[[0,'Unwritten','F'],[40,'A footnote','D'],[90,'A respected house','C'],[160,'A name in the taverns','B'],[260,'A great house','A'],[400,'A dynasty','A+'],[600,'Legend of the sand','S']];
-function legacyOf(w,pm){const T=(w.trophies||[]);const cups=T.filter(t=>t.tid==='flavian_cup').length,superb=T.filter(t=>t.tid==='palm_roma').length;
-  const parts=[['Seasons completed',Math.max(0,(w.season-(w.startSeason||1)))*8],['Bouts won',pm.wins*2],['Flavian Cups',cups*40],['Superbus crowns',superb*35],
+/* legacyOf — a house's legacy: points from seasons, wins, cups, the Superbus, silverware, fame, facilities, freed champions, gems, debts and broken pledges → score, tier and grade. TWEAK: the points per item. */
+function legacyOf(world,pm){const T=(world.trophies||[]);const cups=T.filter(t=>t.tid==='flavian_cup').length,superb=T.filter(t=>t.tid==='palm_roma').length;
+  const parts=[['Seasons completed',Math.max(0,(world.season-(world.startSeason||1)))*8],['Bouts won',pm.wins*2],['Flavian Cups',cups*40],['Superbus crowns',superb*35],
     ['Other silverware',(T.length-cups-superb)*8],['Peak fame',Math.round((pm.fameBest||pm.fame)/2)],['Facilities built',typeof facSum==='function'?facSum(pm)*3:0],
-    ['Champions freed with the rudis',(w.rudisFreed||0)*10],['Hidden gems found',(w.gemsFound||0)*8],['Debts honored',(w.loanDone||0)*5],['Pledges broken',-(pm.broken||0)*4]];
+    ['Champions freed with the rudis',(world.rudisFreed||0)*10],['Hidden gems found',(world.gemsFound||0)*8],['Debts honored',(world.loanDone||0)*5],['Pledges broken',-(pm.broken||0)*4]];
   const score=Math.max(0,Math.round(parts.reduce((a,[,v])=>a+v,0)));
   let tier=LEGACY_TIERS[0];for(const t of LEGACY_TIERS)if(score>=t[0])tier=t;
   return {score,parts,tier:tier[1],grade:tier[2],next:LEGACY_TIERS.find(t=>t[0]>score)||null}}
+/* legacy milestones: [name, description, test(world)]. */
 const LEGACY_GOALS=[['First blood','Win a bout',w=>me().wins>=1],['A full barracks','Five fighters under contract',w=>rosterOf(me()).length>=5],['Known in the forum','Reach 40 fame',w=>me().fame>=40],
   ['A house with walls','Ludus grade B or better',w=>typeof facSum==='function'&&facSum(me())>=5],['Silverware','Win any trophy',w=>(w.trophies||[]).length>=1],['Top of the table','Win the Flavian Cup',w=>(w.trophies||[]).some(t=>t.tid==='flavian_cup')],
   ['The Superbus','Win the season finale',w=>(w.trophies||[]).some(t=>t.tid==='palm_roma')],['The long game','Complete three seasons',w=>w.season-(w.startSeason||1)>=3],['A dynasty','Legacy 260+',w=>legacyOf(w,me()).score>=260]];
+/* legacyCardHTML — the legacy card in Your ludus: score, tier, ledger, milestones, Retire with honors / Shut down. */
 function legacyCardHTML(){const w=W_(),m=me();const L9=legacyOf(w,m);
   return `<div class="card2" style="margin-top:8px"><div class="schoolhd"><div class="sect" style="margin:0">🏛 The legacy of ${esc(m.ludus)}</div><div class="gradebox" style="--gc:${gradeCol(L9.grade.replace('+',''))}" title="${L9.score} legacy — ${esc(L9.tier)}">${L9.grade}</div></div>
     <p class="rc-sub" style="margin:0 0 6px"><b>${L9.score} legacy</b> · ${esc(L9.tier)}${L9.next?` · ${L9.next[0]-L9.score} to “${esc(L9.next[1])}”`:' · the highest tier there is'}. Manager mode has no forced ending — the legacy IS the long game. Retire when the story is told, and the house enters the Annals.</p>
@@ -709,17 +789,19 @@ function legacyCardHTML(){const w=W_(),m=me();const L9=legacyOf(w,m);
     <div class="acts" style="margin-top:8px">${L9.score>=160?`<button class="btn" type="button" data-mg="retire">🏺 Retire with honors<small>close the house at its peak — it enters the Annals for good</small></button>`
       :`<button class="btn" type="button" disabled title="Honors are for houses the taverns talk about: legacy 160 ('A name in the taverns', grade B) or better. ${esc(m.ludus)} stands at ${L9.score}.">🏺 Retire with honors<small>🔒 needs legacy 160+ (grade B) — yours is ${L9.score}</small></button>`}
      <button class="btn" type="button" data-mg="shutdown" style="border-color:#7a2a2a">🚪 Shut down the ludus<small>always your right — the fighters are turned out, no honors, no annal</small></button></div></div>`}
-function collapseLudus(w,pm,why){
-  const ros=rosterOf(pm);w.scatter=[];const keep=[];
+/* collapseLudus — the house falls: good fighters walk into free agency (and the next career's pool), the rest are scattered; the career is marked dead. */
+function collapseLudus(world,pm,why){
+  const ros=rosterOf(pm);world.scatter=[];const keep=[];
   for(const g of ros){g.contract=null;
-    if(effOvr(g)>=55||Math.random()<.25){ghist(g,`walked free when ${esc(pm.ludus)} collapsed — into free agency`);keep.push(g);w.scatter.push({name:g.name,ovr:effOvr(g),to:'free agency — rival stables are already asking'})}
-    else{const why2=pickOne(SCATTER);ghist(g,`${why2} when ${esc(pm.ludus)} collapsed`);g.alive=false;g.retired=true;w.scatter.push({name:g.name,ovr:effOvr(g),to:why2})}}
+    if(effOvr(g)>=55||Math.random()<.25){ghist(g,`walked free when ${esc(pm.ludus)} collapsed — into free agency`);keep.push(g);world.scatter.push({name:g.name,ovr:effOvr(g),to:'free agency — rival stables are already asking'})}
+    else{const why2=pickOne(SCATTER);ghist(g,`${why2} when ${esc(pm.ludus)} collapsed`);g.alive=false;g.retired=true;world.scatter.push({name:g.name,ovr:effOvr(g),to:why2})}}
   // survivors carry into the next career's pool
   Store.put('hall','scattered',{id:'scattered',list:keep.map(g=>({...g,contract:null,interest:{},scout:0,favd:false,pledge:null}))}).catch(()=>{});
-  w.dead={why,week:w.week,season:w.season,fame:pm.fame,record:`${pm.wins}-${Math.max(0,pm.bouts-pm.wins)}`,coin:pm.coin};
+  world.dead={why,week:world.week,season:world.season,fame:pm.fame,record:`${pm.wins}-${Math.max(0,pm.bouts-pm.wins)}`,coin:pm.coin};
   mnews(`<b>${esc(pm.ludus)} collapses.</b> The creditors seize the sand, the fighters walk free, and ${esc(pm.name)}'s name is struck from the lanistae's rolls (${esc(why)}).`,'bad');
   saveWorld(true);
 }
+/* cpuLeagueWeek — rival houses act each week: court and sign free agents, poach unhappy fighters (cunning ones), release extras. */
 function cpuLeagueWeek(){
   const w=W_();
   for(const m of w.mgrs){if(m.isPlayer)continue;const ros=rosterOf(m);const want=2+Math.round(m.p.ambition/28);
@@ -745,72 +827,79 @@ function cpuLeagueWeek(){
    League addition, BLOOD MONEY: a lanista may pay the editor to buy back a condemned fighter's life.
    Your fighters' thumbs, blood money and rudis choices wait for YOU on Match Week (the week cannot
    end until they are settled). CPU stables decide by greed, honor and the fighter's value. */
-function bloodPrice(g,F){return Math.max(5,Math.round(((F.g==='Damnatio'?30:F.g==='Fatal Charades'?22:18)+effOvr(g)*0.35+(g.fame||0)*0.2)*RL(W_(),'blood')))}
+function bloodPrice(glad,fate){return Math.max(5,Math.round(((fate.g==='Damnatio'?30:fate.g==='Fatal Charades'?22:18)+effOvr(glad)*0.35+(glad.fame||0)*0.2)*RL(W_(),'blood')))}
 // what an obituary needs beyond the name: rating, last Crowd Favor, fame, and who in the crowd mourns them
-function graveExtra(g){const kin=typeof kinOf==='function'?kinOf(g).map(r=>`${r.name} (${r.kin.rel})`):[];return {ovr:effOvr(g),f:g.lastCF??null,fame:g.fame||0,kin,fem:!!g.fem}}
-function killFighter(g,m,F,where){const w=W_();
-  ghist(g,`died at ${where}: ${F.g} · ${F.n}`);g.alive=false;if(m)g.contract=null;
-  w.grave.unshift({...graveExtra(g),name:g.name,cls:g.cls,age:gAge(g),wk:w.week,s:w.season,fate:`${F.g} · ${F.n}`,mgr:m?m.name:null,rec:{...g.rec}});w.grave=w.grave.slice(0,40);
-  if(m){m.deaths++;m.fame=clamp(m.fame-2,0,100);if(m.isPlayer)tnews(`${esc(g.name)} died on the sand — ${F.g} · ${F.n} — aged ${gAge(g)}.`,'bad')}}
+function graveExtra(glad){const kin=typeof kinOf==='function'?kinOf(glad).map(r=>`${r.name} (${r.kin.rel})`):[];return {ovr:effOvr(glad),f:glad.lastCF??null,fame:glad.fame||0,kin,fem:!!glad.fem}}
+/* killFighter — a fighter dies: history, the grave list, the lanista's deaths and fame. */
+function killFighter(glad,mgr,fate,where){const w=W_();
+  ghist(glad,`died at ${where}: ${fate.g} · ${fate.n}`);glad.alive=false;if(mgr)glad.contract=null;
+  w.grave.unshift({...graveExtra(glad),name:glad.name,cls:glad.cls,age:gAge(glad),wk:w.week,s:w.season,fate:`${fate.g} · ${fate.n}`,mgr:mgr?mgr.name:null,rec:{...glad.rec}});w.grave=w.grave.slice(0,40);
+  if(mgr){mgr.deaths++;mgr.fame=clamp(mgr.fame-2,0,100);if(mgr.isPlayer)tnews(`${esc(glad.name)} died on the sand — ${fate.g} · ${fate.n} — aged ${gAge(glad)}.`,'bad')}}
 /* v0.24: every league freedom is written among the Liberti in the Annals */
-function libertyEntry(g,m,where,how){if(typeof libertiAdd!=='function')return;const w=W_();const R=g.rec||{};libertiAdd({career:{events:R.ev||0,wins:R.w||0,kP:R.kp||0,kN:R.kn||0,dmg:R.dmg||0,taken:R.taken||0,cfSum:R.cfSum||0,best:R.best||g.lastCF||0,coin:R.coin||0,house:R.house||0,arenas:(R.arenas||[]).length,fame:g.fame||0,fans:typeof fansFor==='function'?fansFor(g.name):0,age:typeof gAge==='function'?gAge(g):null,ludus:m?m.ludus:null,seasons:Math.max(1,(w.season-((g.debut&&g.debut.s)||w.season))+1)},name:g.name,cls:CLASSES[g.cls]?g.cls:'soldier',clsName:CLASSES[g.cls]?CLASSES[g.cls].name:g.cls,cf:g.lastCF||50,event:`the league${m?' · '+m.ludus:''}`,loc:where,date:new Date().toISOString().slice(0,10),kP:g.rec?g.rec.kp:0,kN:g.rec?g.rec.kn:0,wins:g.rec?g.rec.w:0,events:g.rec?g.rec.ev:0,coin:0,portrait:gLook(g),league:how,mine:!!(m&&m.isPlayer)}).catch(()=>{})}
-function freeFighter(g,m,where){if(m&&m.isPlayer){const w9=W_();w9.rudisFreed=(w9.rudisFreed||0)+1}ghist(g,`took the rudis at ${where} — freedom`);g.alive=false;g.freed2=true;if(m)g.contract=null;libertyEntry(g,m,where,'took the rudis in the league');
-  mnews(`<b>${esc(g.name)}</b> takes the <b>rudis</b> at ${where}: 50+ Crowd Favor buys a lifetime's freedom. The crowd stands.`,'big');
-  if(m&&m.isPlayer)tnews(`${esc(g.name)} took the rudis and walked free.`)}
-function buyBack(g,m,F,price){m.coin-=price;g.boughtBack=(g.boughtBack||0)+1;g.rec.surv++;g.morale=clamp(g.morale-4,0,100);g.loyB=clamp((g.loyB||0)+8,0,25);
-  ghist(g,`condemned (${F.g} · ${F.n}) — bought back by ${esc(m.ludus)} for ${price} coin`);
-  if(m.isPlayer)tnews(`Paid the editor ${price} coin for ${esc(g.name)}'s life (${F.n}). They will not forget it.`)}
-function leagueFate(g,r,m,b,bi,opt){
-  const w=W_();const where=LOCATIONS[w.night.loc].n;const f=r.f;let F=fateRow(f);const mine=m&&m.isPlayer;
+function libertyEntry(glad,mgr,where,how){if(typeof libertiAdd!=='function')return;const w=W_();const R=glad.rec||{};libertiAdd({career:{events:R.ev||0,wins:R.w||0,kP:R.kp||0,kN:R.kn||0,dmg:R.dmg||0,taken:R.taken||0,cfSum:R.cfSum||0,best:R.best||glad.lastCF||0,coin:R.coin||0,house:R.house||0,arenas:(R.arenas||[]).length,fame:glad.fame||0,fans:typeof fansFor==='function'?fansFor(glad.name):0,age:typeof gAge==='function'?gAge(glad):null,ludus:mgr?mgr.ludus:null,seasons:Math.max(1,(w.season-((glad.debut&&glad.debut.s)||w.season))+1)},name:glad.name,cls:CLASSES[glad.cls]?glad.cls:'soldier',clsName:CLASSES[glad.cls]?CLASSES[glad.cls].name:glad.cls,cf:glad.lastCF||50,event:`the league${mgr?' · '+mgr.ludus:''}`,loc:where,date:new Date().toISOString().slice(0,10),kP:glad.rec?glad.rec.kp:0,kN:glad.rec?glad.rec.kn:0,wins:glad.rec?glad.rec.w:0,events:glad.rec?glad.rec.ev:0,coin:0,portrait:gLook(glad),league:how,mine:!!(mgr&&mgr.isPlayer)}).catch(()=>{})}
+/* freeFighter — a fighter takes the rudis and leaves the league (written among the Liberti). */
+function freeFighter(glad,mgr,where){if(mgr&&mgr.isPlayer){const w9=W_();w9.rudisFreed=(w9.rudisFreed||0)+1}ghist(glad,`took the rudis at ${where} — freedom`);glad.alive=false;glad.freed2=true;if(mgr)glad.contract=null;libertyEntry(glad,mgr,where,'took the rudis in the league');
+  mnews(`<b>${esc(glad.name)}</b> takes the <b>rudis</b> at ${where}: 50+ Crowd Favor buys a lifetime's freedom. The crowd stands.`,'big');
+  if(mgr&&mgr.isPlayer)tnews(`${esc(glad.name)} took the rudis and walked free.`)}
+/* buyBack — the lanista pays blood money for a condemned fighter's life (+loyalty, −morale). */
+function buyBack(glad,mgr,fate,price){mgr.coin-=price;glad.boughtBack=(glad.boughtBack||0)+1;glad.rec.surv++;glad.morale=clamp(glad.morale-4,0,100);glad.loyB=clamp((glad.loyB||0)+8,0,25);
+  ghist(glad,`condemned (${fate.g} · ${fate.n}) — bought back by ${esc(mgr.ludus)} for ${price} coin`);
+  if(mgr.isPlayer)tnews(`Paid the editor ${price} coin for ${esc(glad.name)}'s life (${fate.n}). They will not forget it.`)}
+/* leagueFate — the printed Fate table for one league fighter after a bout: survive, the rudis (if ready), the Thumb, condemned; your fighters' decisions wait on Match Week; rookies and the sandbox may show clemency; CPU houses may pay blood money. */
+function leagueFate(glad,row,mgr,bout,boutIdx,opt){
+  const w=W_();const where=LOCATIONS[w.night.loc].n;const f=row.f;let F=fateRow(f);const mine=mgr&&mgr.isPlayer;
   // v0.37: a thumbs-down on a truce goes straight to the condemned path, whatever the CF
-  const td=/^Thumbs down · /.test(r.fate||'');if(td){const nm9=String(r.fate).split(' · ')[1];F=FATES.find(x=>x.n===nm9)||FATES[0]}
+  const td=/^Thumbs down · /.test(row.fate||'');if(td){const nm9=String(row.fate).split(' · ')[1];F=FATES.find(x=>x.n===nm9)||FATES[0]}
   // 20-49: Survival — the Ludus Flavius
-  if(F.g==='Survival'){g.rec.surv++;return {vd:'ludus',fname:'Ludus Flavius'}}
+  if(F.g==='Survival'){glad.rec.surv++;return {vd:'ludus',fname:'Ludus Flavius'}}
   // 50+: the Rudis
-  if(F.g==='Freedom'&&!rudisReady(g)){g.rec.surv++;ghist(g,`earned the rudis at ${where} (${f} CF) — but not the record to claim it yet`);
-    return {vd:'ludus',fname:'Rudis · not yet',line:`${esc(g.name)} earns the rudis (${f} CF) — but freedom needs a record: ${g.rec.ev}/${RUDIS_MIN.ev} events and ${g.rec.w}/${RUDIS_MIN.w} wins. Back to the ludus.`}}
-  if(F.g==='Freedom'){g.rec.surv++;
-    if(mine){(w.pend=w.pend||[]).push({t:'rudis',gid:g.id,bi,f});return {vd:'p-rudis',fname:'Rudis',line:`${esc(g.name)} earns the <b>rudis</b> (${f} CF) — your decision awaits`}}
-    const takes=!g.sotonium&&(gAge(g)>=28||Math.random()<.35);if(takes){freeFighter(g,m,where);return {vd:'freed',fname:'Rudis',line:`${esc(g.name)} takes the rudis and walks free`}}
-    ghist(g,`earned the rudis at ${where} (${f} CF) — and chose to fight on`);return {vd:'rudis-stay',fname:'Rudis',line:`${esc(g.name)} earns the rudis — and chooses to fight on`}}
+  if(F.g==='Freedom'&&!rudisReady(glad)){glad.rec.surv++;ghist(glad,`earned the rudis at ${where} (${f} CF) — but not the record to claim it yet`);
+    return {vd:'ludus',fname:'Rudis · not yet',line:`${esc(glad.name)} earns the rudis (${f} CF) — but freedom needs a record: ${glad.rec.ev}/${RUDIS_MIN.ev} events and ${glad.rec.w}/${RUDIS_MIN.w} wins. Back to the ludus.`}}
+  if(F.g==='Freedom'){glad.rec.surv++;
+    if(mine){(w.pend=w.pend||[]).push({t:'rudis',gid:glad.id,bi:boutIdx,f});return {vd:'p-rudis',fname:'Rudis',line:`${esc(glad.name)} earns the <b>rudis</b> (${f} CF) — your decision awaits`}}
+    const takes=!glad.sotonium&&(gAge(glad)>=28||Math.random()<.35);if(takes){freeFighter(glad,mgr,where);return {vd:'freed',fname:'Rudis',line:`${esc(glad.name)} takes the rudis and walks free`}}
+    ghist(glad,`earned the rudis at ${where} (${f} CF) — and chose to fight on`);return {vd:'rudis-stay',fname:'Rudis',line:`${esc(glad.name)} earns the rudis — and chooses to fight on`}}
   // 17-19: Judgement — the Thumb of Flavius
   let cond=F,d6=null,d12=null;
   if(F.n==='Thumb of Flavius'){
-    if(mine&&!(opt.live&&r.human)){(w.pend=w.pend||[]).push({t:'thumb',gid:g.id,bi,f});return {vd:'p-thumb',fname:'Thumb of Flavius',line:`${esc(g.name)} faces the <b>Thumb of Flavius</b> (${f} CF) — you roll the die on Match Week`}}
-    if(/spared/.test(r.fate||'')){g.rec.surv++;return {vd:'spared',fname:'Thumb of Flavius · spared',line:`${esc(g.name)} faces the thumb (${f} CF) — it goes up. Spared.`}}
-    const nm2=String(r.fate||'').split(' · ')[1];cond=FATES.find(x=>x.n===nm2)||FATES[0];
+    if(mine&&!(opt.live&&row.human)){(w.pend=w.pend||[]).push({t:'thumb',gid:glad.id,bi:boutIdx,f});return {vd:'p-thumb',fname:'Thumb of Flavius',line:`${esc(glad.name)} faces the <b>Thumb of Flavius</b> (${f} CF) — you roll the die on Match Week`}}
+    if(/spared/.test(row.fate||'')){glad.rec.surv++;return {vd:'spared',fname:'Thumb of Flavius · spared',line:`${esc(glad.name)} faces the thumb (${f} CF) — it goes up. Spared.`}}
+    const nm2=String(row.fate||'').split(' · ')[1];cond=FATES.find(x=>x.n===nm2)||FATES[0];
   }
-  if(g.sotonium){g.rec.surv++;ghist(g,`condemned (${cond.n}) — the crowd would not allow it: clemency, as always`);return {vd:'clemency',fname:`${cond.g} · ${cond.n}`,line:`${esc(g.name)} is condemned (${f} CF) — and the whole arena rises for <b>${esc(g.name)}</b>. The editor has no choice. Clemency.`}}
-  if(g.rec.ev<=3&&Math.random()*100<((w.rules||RULES_DEF).rookmercy||0)){g.rec.surv++;ghist(g,`condemned as a rookie (${cond.n}) — the editor spared the green one`);return {vd:'clemency',fname:`${cond.g} · ${cond.n}`,line:`${esc(g.name)} is condemned, but the editor spares a rookie`}}
+  if(glad.sotonium){glad.rec.surv++;ghist(glad,`condemned (${cond.n}) — the crowd would not allow it: clemency, as always`);return {vd:'clemency',fname:`${cond.g} · ${cond.n}`,line:`${esc(glad.name)} is condemned (${f} CF) — and the whole arena rises for <b>${esc(glad.name)}</b>. The editor has no choice. Clemency.`}}
+  if(glad.rec.ev<=3&&Math.random()*100<((w.rules||RULES_DEF).rookmercy||0)){glad.rec.surv++;ghist(glad,`condemned as a rookie (${cond.n}) — the editor spared the green one`);return {vd:'clemency',fname:`${cond.g} · ${cond.n}`,line:`${esc(glad.name)} is condemned, but the editor spares a rookie`}}
   // 0-16 (or a thumb gone down): condemned — unless someone pays the editor, or the sandbox shows clemency
-  if(Math.random()>=RL(w,'death')){g.rec.surv++;ghist(g,`condemned (${cond.n}) — the editor showed clemency`);
-    return {vd:'clemency',fname:`${cond.g} · ${cond.n}`,line:`${esc(g.name)} is condemned (${cond.n}, ${f} CF) — but the editor waves it away. Clemency.`}}
-  const price=bloodPrice(g,cond);
-  if(mine){(w.pend=w.pend||[]).push({t:'blood',gid:g.id,bi,f,fi:FATES.indexOf(cond),price});return {vd:'p-blood',fname:`${cond.g} · ${cond.n}`,line:`${esc(g.name)} is <b>condemned</b> — ${cond.n} (${f} CF). Blood money: ${price} coin, your decision`}}
-  if(m&&m.coin>=price+40&&(effOvr(g)>=58||(g.fame||0)>=35)&&Math.random()<.3+(100-m.p.greed)/250+m.p.honor/400){buyBack(g,m,cond,price);
-    return {vd:'bought',fname:`${cond.g} · ${cond.n}`,line:`${esc(g.name)} is condemned (${cond.n}) — ${esc(m.ludus)} pays ${price} coin in blood money`}}
-  killFighter(g,m,cond,where);return {vd:'killed',fname:`${cond.g} · ${cond.n}`,line:`<b>${esc(g.name)} dies</b> — ${cond.g} · ${cond.n} (${f} CF)`};
+  if(Math.random()>=RL(w,'death')){glad.rec.surv++;ghist(glad,`condemned (${cond.n}) — the editor showed clemency`);
+    return {vd:'clemency',fname:`${cond.g} · ${cond.n}`,line:`${esc(glad.name)} is condemned (${cond.n}, ${f} CF) — but the editor waves it away. Clemency.`}}
+  const price=bloodPrice(glad,cond);
+  if(mine){(w.pend=w.pend||[]).push({t:'blood',gid:glad.id,bi:boutIdx,f,fi:FATES.indexOf(cond),price});return {vd:'p-blood',fname:`${cond.g} · ${cond.n}`,line:`${esc(glad.name)} is <b>condemned</b> — ${cond.n} (${f} CF). Blood money: ${price} coin, your decision`}}
+  if(mgr&&mgr.coin>=price+40&&(effOvr(glad)>=58||(glad.fame||0)>=35)&&Math.random()<.3+(100-mgr.p.greed)/250+mgr.p.honor/400){buyBack(glad,mgr,cond,price);
+    return {vd:'bought',fname:`${cond.g} · ${cond.n}`,line:`${esc(glad.name)} is condemned (${cond.n}) — ${esc(mgr.ludus)} pays ${price} coin in blood money`}}
+  killFighter(glad,mgr,cond,where);return {vd:'killed',fname:`${cond.g} · ${cond.n}`,line:`<b>${esc(glad.name)} dies</b> — ${cond.g} · ${cond.n} (${f} CF)`};
 }
 // settle one of YOUR pending verdicts; returns a message
 /* v0.46: the rudis is for veterans — a fighter must have fought RUDIS_MIN.ev events and won RUDIS_MIN.w before the
    Freedom Fate can free them. Until then a rich one may ask to BUY their freedom from you with their own purse. */
 const RUDIS_MIN={ev:12,w:4};
-const rudisReady=g=>!!g&&(g.rec.ev>=RUDIS_MIN.ev&&g.rec.w>=RUDIS_MIN.w);
-const freedomPrice=g=>Math.round(60+effOvr(g)*1.5+(g.fame||0));
-function settlePending(pi,choice,extra){
-  const w=W_(),m=me();const P=(w.pend||[])[pi];if(!P)return '';const g=gById(P.gid);if(!g){w.pend.splice(pi,1);return ''}
+/* rudisReady — whether a fighter has the record to claim the rudis (RUDIS_MIN). */
+const rudisReady=glad=>!!glad&&(glad.rec.ev>=RUDIS_MIN.ev&&glad.rec.w>=RUDIS_MIN.w);
+/* freedomPrice — what a fighter pays to buy their freedom from you. */
+const freedomPrice=glad=>Math.round(60+effOvr(glad)*1.5+(glad.fame||0));
+/* settlePending — settles one of YOUR pending verdicts (thumb, blood money, levy, a freedom request, the rudis) and returns the message. */
+function settlePending(pendIdx,choice,extra){
+  const w=W_(),m=me();const P=(w.pend||[])[pendIdx];if(!P)return '';const g=gById(P.gid);if(!g){w.pend.splice(pendIdx,1);return ''}
   const where=LOCATIONS[w.night.loc].n;const b=w.night.bouts[P.bi];const row=b&&b.res&&b.res.rows.find(x=>x.gid===g.id);
   const setRow=(vd,fname)=>{if(row){row.vd=vd;if(fname)row.fname=fname}};
-  w.pend.splice(pi,1);
+  w.pend.splice(pendIdx,1);
   if(P.t==='thumb'){ // the ritual already ran in the UI; extra={d6,d12}
     if(extra.d6>=4){g.rec.surv++;ghist(g,`faced the Thumb of Flavius at ${where} — the d6 showed ${extra.d6}: spared`);setRow('spared','Thumb of Flavius · spared');tnews(`${esc(g.name)} faced the thumb and rolled ${extra.d6}: spared.`);return `The thumb goes up for ${esc(g.name)}.`}
-    const F=fateRow(extra.d12);const price=bloodPrice(g,F);w.pend.splice(pi,0,{t:'blood',gid:g.id,bi:P.bi,f:P.f,fi:FATES.indexOf(F),price,thumb:1});setRow('p-blood',`${F.g} · ${F.n}`);
+    const F=fateRow(extra.d12);const price=bloodPrice(g,F);w.pend.splice(pendIdx,0,{t:'blood',gid:g.id,bi:P.bi,f:P.f,fi:FATES.indexOf(F),price,thumb:1});setRow('p-blood',`${F.g} · ${F.n}`);
     return `The thumb goes down (${extra.d6}); the d12 names ${F.n}. You may still pay the editor ${price} coin.`}
   if(P.t==='blood'){const F=FATES[P.fi]||FATES[0];
-    if(choice==='pay'){if(m.coin<P.price){w.pend.splice(pi,0,P);return 'Not enough coin for the editor.'}buyBack(g,m,F,P.price);setRow('bought',`${F.g} · ${F.n}`);return `${P.price} coin changes hands. ${esc(g.name)} lives — and owes you a life.`}
+    if(choice==='pay'){if(m.coin<P.price){w.pend.splice(pendIdx,0,P);return 'Not enough coin for the editor.'}buyBack(g,m,F,P.price);setRow('bought',`${F.g} · ${F.n}`);return `${P.price} coin changes hands. ${esc(g.name)} lives — and owes you a life.`}
     killFighter(g,m,F,where);setRow('killed',`${F.g} · ${F.n}`);return `The sentence stands. ${esc(g.name)} is gone: ${F.n}.`}
   if(P.t==='levy'){
-    if(choice==='bribe'){if(m.coin<P.price){w.pend.splice(pi,0,P);return 'Not enough coin for the officer.'}
+    if(choice==='bribe'){if(m.coin<P.price){w.pend.splice(pendIdx,0,P);return 'Not enough coin for the officer.'}
       if(Math.random()<.15){m.coin-=P.price;m.fame=clamp(m.fame-3,0,100);ghist(g,`the levy took them despite a bribe — ${P.war.rome} against ${P.war.foe}`);g.inj={until:P.until,label:`serving with ${P.war.rome} against ${P.war.foe}`,pen:0,war:P.war};tnews(`The officer pocketed ${P.price} coin and took ${esc(g.name)} anyway. Fame −3.`,'bad');return `The officer takes your ${P.price} coin, thanks you — and marches ${esc(g.name)} off regardless. Word gets around (fame −3).`}
       m.coin-=P.price;m.p.honor=clamp(m.p.honor-1,1,95);ghist(g,`spared the levy — ${esc(m.ludus)} paid the officer ${P.price} coin`);g.loyB=clamp((g.loyB||0)+4,0,25);tnews(`Bribed the levy officer ${P.price} coin to keep ${esc(g.name)}.`);return `${P.price} coin and ${esc(g.name)}'s name comes off the list. They know who paid (+4 loyalty).`}
     ghist(g,`called up: marched with ${P.war.rome} against ${P.war.foe}`);g.inj={until:P.until,label:`serving with ${P.war.rome} against ${P.war.foe}`,pen:0,war:P.war};m.p.honor=clamp(m.p.honor+1,1,95);
@@ -826,6 +915,7 @@ function settlePending(pi,choice,extra){
     g.morale=clamp(g.morale-10,0,100);freeFighter(g,m,where);setRow('freed','Rudis');return `${esc(g.name)} hears you out, thanks you, and walks free anyway.`}
   return '';
 }
+/* pendingHTML — Match Week's list of your pending verdicts with their buttons. */
 function pendingHTML(){
   const w=W_(),m=me();const P=w.pend||[];if(!P.length)return '';
   return `<div class="card2" id="pendbox" style="border-color:var(--gold);margin-bottom:10px"><div class="sect" style="margin-top:0">⚖ Verdicts awaiting you — the week cannot end until they are settled</div>
@@ -840,6 +930,7 @@ function pendingHTML(){
 }
 // v0.16 training regimes: cost per week for the whole stable; gain = +1 rating chance per fighter; inj = injury chance
 const TRAIN_REGIMES={off:{n:'No drills',c:0,gain:0,inj:0},light:{n:'Light drills',c:6,gain:.10,inj:.005},std:{n:'Standard drills',c:15,gain:.22,inj:.03},hard:{n:'Brutal drills',c:30,gain:.38,inj:.10}};
+/* PTRAIN_COST — a personal trainer for one fighter, per week. TWEAK: the 8. */
 const PTRAIN_COST=8; // a personal trainer (doctore) for one fighter, for one week (re-hired week by week)
 /* Every injury names the care it answers to (item: certain injuries need certain hands):
    rest    — heals on its own schedule; a bathhouse day shortens it
@@ -848,90 +939,111 @@ const PTRAIN_COST=8; // a personal trainer (doctore) for one fighter, for one we
 const INJ_REQ={'a sprained ankle':'rest','a wrenched knee at the palus':'rest','a sparring bruise that will not quit':'rest',
  'a pulled shoulder':'medicus','a torn shoulder':'medicus','a deep thigh cut':'medicus','a mangled hand':'medicus','fell on their own sword (shallow, but the barracks will not let it go)':'medicus',
  'a cracked rib':'surgeon','cracked ribs':'surgeon','a rattled skull':'surgeon'};
-const injReq=inj=>inj.war?'war':(inj.req||INJ_REQ[inj.label]||'medicus');
+/* injReq — what care an injury needs: rest, medicus, surgeon (or war). */
+const injReq=injury=>injury.war?'war':(injury.req||INJ_REQ[injury.label]||'medicus');
+/* SURGEON — the surgeon's fee. TWEAK: the 18. */
 const SURGEON=18; // the surgeon's knife, from the weekly repair budget
-const injLoc=l=>/shoulder|hand|sword/.test(l)?'rarm':/thigh|knee|ankle/.test(l)?'rleg':/rib/.test(l)?'chest':/skull/.test(l)?'head':'chest';
+/* injLoc — the body location an injury label hurts (for the infirmary avatar). */
+const injLoc=label=>/shoulder|hand|sword/.test(label)?'rarm':/thigh|knee|ankle/.test(label)?'rleg':/rib/.test(label)?'chest':/skull/.test(label)?'head':'chest';
 /* Rivalry: 0-100 heat each CPU lanista holds toward YOUR house. Poaching, outbidding and beating their
    fighters raises it; time cools it. Hot rivals poach your fighters first, bet against your entries and talk. */
-const rivalTier=v=>(v||0)>=60?'Blood feud':(v||0)>=35?'Bitter':(v||0)>=15?'Wary':'Cordial';
-function bumpRival(m,d,why){
-  if(!m||m.isPlayer)return;const before=m.rivalry||0;m.rivalry=clamp(Math.round(before+d),0,100);
-  const A=rivalTier(before),B=rivalTier(m.rivalry);
-  if(A!==B&&d>0)mnews(`<b>${esc(m.name)}</b> now counts ${esc(me().ludus)} a ${B==='Blood feud'?'BLOOD ENEMY':B.toLowerCase()+' rival'}${why?` — ${why}`:''}.`,B==='Blood feud'?'bad':'');
+/* rivalTier — a rivalry heat as a word (Cordial / Wary / Bitter / Blood feud). */
+const rivalTier=heat=>(heat||0)>=60?'Blood feud':(heat||0)>=35?'Bitter':(heat||0)>=15?'Wary':'Cordial';
+/* bumpRival — raises (or cools) a rival lanista's heat toward your house and announces a new tier. */
+function bumpRival(mgr,heat,why){
+  if(!mgr||mgr.isPlayer)return;const before=mgr.rivalry||0;mgr.rivalry=clamp(Math.round(before+heat),0,100);
+  const A=rivalTier(before),B=rivalTier(mgr.rivalry);
+  if(A!==B&&heat>0)mnews(`<b>${esc(mgr.name)}</b> now counts ${esc(me().ludus)} a ${B==='Blood feud'?'BLOOD ENEMY':B.toLowerCase()+' rival'}${why?` — ${why}`:''}.`,B==='Blood feud'?'bad':'');
 }
-const buyout=g=>g.contract?Math.round(g.contract.wage*Math.max(2,g.contract.weeks)*1.4+effOvr(g)*0.8):0;
+/* buyout — the buyout fee to poach a signed fighter: wage × weeks left × 1.4 + rating. */
+const buyout=glad=>glad.contract?Math.round(glad.contract.wage*Math.max(2,glad.contract.weeks)*1.4+effOvr(glad)*0.8):0;
 
 /* ---------- recruiting actions (hours) ---------- */
-async function scoutGlad(g,onProg){
-  const w=W_();const pool=w.glads.filter(x=>x.alive&&x!==g&&Math.abs(effOvr(x)-effOvr(g))<=12);
-  const cfgs=Array.from({length:6},()=>()=>{const opp=shuffle([...pool]).slice(0,3);while(opp.length<3)opp.push(genGlad({ovr:effOvr(g)}));
-    return {ev:'democritus',loc:3,seats:[seatFor(g),...opp.map(o=>seatFor(o))],opts:{mods:false,mandata:true,optOffers:true,eaglePot:true,spect:0}}});
+/* scoutGlad — scouts a fighter with 6 simulated sparring bouts against similar fighters: win/survive rates, CF, damage, style tags. */
+async function scoutGlad(glad,onProg){
+  const w=W_();const pool=w.glads.filter(x=>x.alive&&x!==glad&&Math.abs(effOvr(x)-effOvr(glad))<=12);
+  const cfgs=Array.from({length:6},()=>()=>{const opp=shuffle([...pool]).slice(0,3);while(opp.length<3)opp.push(genGlad({ovr:effOvr(glad)}));
+    return {ev:'democritus',loc:3,seats:[seatFor(glad),...opp.map(o=>seatFor(o))],opts:{mods:false,mandata:true,optOffers:true,eaglePot:true,spect:0}}});
   const rs=(await simBatch(cfgs,onProg)).filter(r=>r&&!r.error);
-  const mine=rs.map(r=>r.rows.find(x=>x.mgrId===g.id)).filter(Boolean);const n=mine.length||1;
+  const mine=rs.map(r=>r.rows.find(x=>x.mgrId===glad.id)).filter(Boolean);const n=mine.length||1;
   const avg=k=>Math.round(mine.reduce((s,x)=>s+(x[k]||0),0)/n*10)/10;
   const rep={n:mine.length,win:mine.filter(x=>x.won).length,surv:mine.filter(x=>x.survives).length,cf:avg('f'),dmg:avg('dmg'),taken:avg('taken'),pots:avg('pots'),kn:avg('kn'),kp:avg('kp'),turns:Math.round(mine.reduce((s,x,i)=>s+(x.elimTurn||rs[i].turns),0)/n),wk:w.week};
-  const st=styleOf({cpu:true,pers:g.pers,diff:'normal',cls:CLASSES[g.cls]?g.cls:'soldier',stats:{},trophies:[],coin:0,cf:0});
+  const st=styleOf({cpu:true,pers:glad.pers,diff:'normal',cls:CLASSES[glad.cls]?glad.cls:'soldier',stats:{},trophies:[],coin:0,cf:0});
   rep.tags=PERS_KEYS.map(([k,l])=>[l,st[k]]).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0]);
-  g.report=rep;g.scout=Math.min(3,(g.scout||0)+(g.scout>=1?2:2));
+  glad.report=rep;glad.scout=Math.min(3,(glad.scout||0)+(glad.scout>=1?2:2));
   return rep;
 }
-function pitch(g,mot){
-  const m=me();const sc=mgrScore(m,mot,g);const wgt=(g.motives.find(x=>x[0]===mot)||[0,0])[1];
+/* pitch — pitches a fighter on one motive: interest moves by how well you grade on it. */
+function pitch(glad,mot){
+  const m=me();const sc=mgrScore(m,mot,glad);const wgt=(glad.motives.find(x=>x[0]===mot)||[0,0])[1];
   let d=Math.round(4+wgt*28*(sc/100)+rnd(5)-2);if(!wgt)d=Math.round(1+rnd(3));if(wgt&&sc<35)d=-Math.round(3+rnd(4));
-  const before=interestOf(g,m);g.interest[m.id]=capInterest(g,m,before+d);return g.interest[m.id]-before;
+  const before=interestOf(glad,m);glad.interest[m.id]=capInterest(glad,m,before+d);return glad.interest[m.id]-before;
 }
-function visitCost(g){return 8+starsOf(pubOvr(g))*6}
-const giftCost=g=>4+starsOf(pubOvr(g))*3;
+/* visitCost — cost of a feast for a fighter (by stars). */
+function visitCost(glad){return 8+starsOf(pubOvr(glad))*6}
+/* giftCost — cost of a gift for a fighter (by stars). */
+const giftCost=glad=>4+starsOf(pubOvr(glad))*3;
 // a gift lands hardest on coin-hungry fighters; even the proud take the wine
-function doGiftFighter(g){const m=me();const w=W_();m.coin-=giftCost(g);(g.giftWk=g.giftWk||{})[m.id]=w.week;
-  const coinW=(g.motives.find(x=>x[0]==='coin')||[0,0])[1];
-  const d=Math.round(4+coinW*16+rnd(4));const b=interestOf(g,m);g.interest[m.id]=capInterest(g,m,b+d);return g.interest[m.id]-b}
-function doVisit(g){const m=me();const w=W_();if(g.visits[m.id]&&w.week-g.visits[m.id]<3)return null;m.coin-=visitCost(g);g.visits[m.id]=w.week;const sp=(g.motives.find(x=>x[0]==='spectacle')||[0,0])[1]+(g.motives.find(x=>x[0]==='coin')||[0,0])[1];const d=Math.round(10+sp*14+m.p.show/12+rnd(5));const b=interestOf(g,m);g.interest[m.id]=capInterest(g,m,b+d);return g.interest[m.id]-b}
-function offerVerdict(g,wage,weeks,bonus,pledge=false){
-  const m=me();const ask=askWage(g);const eff=wage+bonus/Math.max(1,weeks);const pull=coinPull(g,eff);
-  const iv=interestOf(g,m)+(pledge?12:0)+pull; // a pledged main event sweetens the table — and so, far more, does coin
-  const s=suitors(g);const top=s[0];
-  const need=starsOf(effOvr(g))<=2?40:52;
-  if(m.fame<reqFame(g)&&eff<ask*fameBypassX(g,m))return {ok:false,why:`${g.name} won't sign with an ${mgrTier(m.fame)} ludus (fame ${reqFame(g)}+ expected) — unless the money is extraordinary: about ${Math.ceil(ask*fameBypassX(g,m))} coin a week would do it.`};
-  if(iv<need)return {ok:false,why:`${g.name} is not interested enough yet (${iv}/${need}, of which ${pull} is your money). Raise the wage — every coin over ${ask} a week counts most — or pitch, visit and scout next week.`};
-  if(top.m!==m&&top.v>iv+4)return {ok:false,why:`${g.name} is leaning toward ${top.m.ludus} (${top.v} interest vs your ${iv} with the money). Outbid them: a bigger wage or bonus moves this fastest.`};
+function doGiftFighter(glad){const m=me();const w=W_();m.coin-=giftCost(glad);(glad.giftWk=glad.giftWk||{})[m.id]=w.week;
+  const coinW=(glad.motives.find(x=>x[0]==='coin')||[0,0])[1];
+  const d=Math.round(4+coinW*16+rnd(4));const b=interestOf(glad,m);glad.interest[m.id]=capInterest(glad,m,b+d);return glad.interest[m.id]-b}
+/* doVisit — hosts a feast for a fighter (once every 3 weeks): a big interest swing. */
+function doVisit(glad){const m=me();const w=W_();if(glad.visits[m.id]&&w.week-glad.visits[m.id]<3)return null;m.coin-=visitCost(glad);glad.visits[m.id]=w.week;const sp=(glad.motives.find(x=>x[0]==='spectacle')||[0,0])[1]+(glad.motives.find(x=>x[0]==='coin')||[0,0])[1];const d=Math.round(10+sp*14+m.p.show/12+rnd(5));const b=interestOf(glad,m);glad.interest[m.id]=capInterest(glad,m,b+d);return glad.interest[m.id]-b}
+/* offerVerdict — whether a fighter accepts your offer (wage, weeks, bonus, pledge) and why not — no side effects. */
+function offerVerdict(glad,wage,weeks,bonus,pledge=false){
+  const m=me();const ask=askWage(glad);const eff=wage+bonus/Math.max(1,weeks);const pull=coinPull(glad,eff);
+  const iv=interestOf(glad,m)+(pledge?12:0)+pull; // a pledged main event sweetens the table — and so, far more, does coin
+  const s=suitors(glad);const top=s[0];
+  const need=starsOf(effOvr(glad))<=2?40:52;
+  if(m.fame<reqFame(glad)&&eff<ask*fameBypassX(glad,m))return {ok:false,why:`${glad.name} won't sign with an ${mgrTier(m.fame)} ludus (fame ${reqFame(glad)}+ expected) — unless the money is extraordinary: about ${Math.ceil(ask*fameBypassX(glad,m))} coin a week would do it.`};
+  if(iv<need)return {ok:false,why:`${glad.name} is not interested enough yet (${iv}/${need}, of which ${pull} is your money). Raise the wage — every coin over ${ask} a week counts most — or pitch, visit and scout next week.`};
+  if(top.m!==m&&top.v>iv+4)return {ok:false,why:`${glad.name} is leaning toward ${top.m.ludus} (${top.v} interest vs your ${iv} with the money). Outbid them: a bigger wage or bonus moves this fastest.`};
   const accept=ask*(1.22-Math.min(iv,110)/220)*(1-.04*(typeof facLvl==='function'?facLvl(m,'barracks'):0)); // good barracks: they sign for less
-  if(eff<accept)return {ok:false,why:`${g.name} wants about ${Math.ceil(accept)} coin a week${bonus?' (bonus included)':''}.`};
+  if(eff<accept)return {ok:false,why:`${glad.name} wants about ${Math.ceil(accept)} coin a week${bonus?' (bonus included)':''}.`};
   if(m.coin<bonus+wage)return {ok:false,why:'Your treasury cannot cover the bonus and the first week.'};
   return {ok:true,pull};
 }
-function signGlad(g,wage,weeks,bonus,pledge=false){const m=me();m.coin-=bonus;g.contract={mgr:m.id,wage,weeks,since:W_().week};if(pledge)g.pledge={mgr:m.id,due:W_().week+2};g.unsigned=0;g.morale=clamp(60+Math.round((wage-askWage(g))*2),30,95);g.scout=Math.max(g.scout||0,2);ghist(g,`signed with ${esc(m.ludus)} (${wage}/wk)`);mnews(`<b>${esc(g.name)} signs with ${esc(m.ludus)}</b>: ${wage} coin a week for ${weeks} weeks${bonus?`, ${bonus} coin bonus`:''}.`,'big');for(const o of W_().mgrs)if(o!==m){if(interestOf(g,o)>=55)bumpRival(o,8,`outbid for ${esc(g.name)}`);g.interest[o.id]=Math.round(interestOf(g,o)*0.6)}}
-function poachVerdict(g,wage){
-  const m=me();const pull=coinPull(g,wage);const iv=interestOf(g,m)+pull;const loy=loyaltyOf(g);const fee=buyout(g);
-  if(g.noPoach)return {ok:false,why:`${g.name} fights for ${g.fem?'her':'his'} father's house — no purse on earth will move ${g.fem?'her':'him'}.`};
-  {const fr=mgrById(g.contract.mgr);if(fr&&fr.pact&&fr.pact>=W_().week)return {ok:false,why:`You have a non-poaching pact with ${fr.ludus} until week ${wkOf(fr.pact)}.`}}
-  if(m.fame<reqFame(g)&&wage<askWage(g)*fameBypassX(g,m))return {ok:false,why:`${g.name} won't consider an ${mgrTier(m.fame)} ludus — unless you pay about ${Math.ceil(askWage(g)*fameBypassX(g,m))} a week.`};
-  if(iv<=loy)return {ok:false,why:`${g.name}'s loyalty to ${mgrById(g.contract.mgr).ludus} (${loy}) is higher than their interest in you (${iv}, ${pull} of it your money). Pay more, or pitch and visit first; unhappy fighters are easier.`};
-  if(wage<askWage(g))return {ok:false,why:`They would want at least ${askWage(g)} coin a week.`};
+/* signGlad — signs a fighter to your ludus. */
+function signGlad(glad,wage,weeks,bonus,pledge=false){const m=me();m.coin-=bonus;glad.contract={mgr:m.id,wage,weeks,since:W_().week};if(pledge)glad.pledge={mgr:m.id,due:W_().week+2};glad.unsigned=0;glad.morale=clamp(60+Math.round((wage-askWage(glad))*2),30,95);glad.scout=Math.max(glad.scout||0,2);ghist(glad,`signed with ${esc(m.ludus)} (${wage}/wk)`);mnews(`<b>${esc(glad.name)} signs with ${esc(m.ludus)}</b>: ${wage} coin a week for ${weeks} weeks${bonus?`, ${bonus} coin bonus`:''}.`,'big');for(const o of W_().mgrs)if(o!==m){if(interestOf(glad,o)>=55)bumpRival(o,8,`outbid for ${esc(glad.name)}`);glad.interest[o.id]=Math.round(interestOf(glad,o)*0.6)}}
+/* poachVerdict — whether a signed fighter would leave their house for you, and the buyout. */
+function poachVerdict(glad,wage){
+  const m=me();const pull=coinPull(glad,wage);const iv=interestOf(glad,m)+pull;const loy=loyaltyOf(glad);const fee=buyout(glad);
+  if(glad.noPoach)return {ok:false,why:`${glad.name} fights for ${glad.fem?'her':'his'} father's house — no purse on earth will move ${glad.fem?'her':'him'}.`};
+  {const fr=mgrById(glad.contract.mgr);if(fr&&fr.pact&&fr.pact>=W_().week)return {ok:false,why:`You have a non-poaching pact with ${fr.ludus} until week ${wkOf(fr.pact)}.`}}
+  if(m.fame<reqFame(glad)&&wage<askWage(glad)*fameBypassX(glad,m))return {ok:false,why:`${glad.name} won't consider an ${mgrTier(m.fame)} ludus — unless you pay about ${Math.ceil(askWage(glad)*fameBypassX(glad,m))} a week.`};
+  if(iv<=loy)return {ok:false,why:`${glad.name}'s loyalty to ${mgrById(glad.contract.mgr).ludus} (${loy}) is higher than their interest in you (${iv}, ${pull} of it your money). Pay more, or pitch and visit first; unhappy fighters are easier.`};
+  if(wage<askWage(glad))return {ok:false,why:`They would want at least ${askWage(glad)} coin a week.`};
   if(m.coin<fee+wage)return {ok:false,why:`The buyout is ${fee} coin; your treasury cannot cover it.`};
   return {ok:true,fee};
 }
-function doPoach(g,wage,weeks){
-  const m=me(),from=mgrById(g.contract.mgr);const fee=buyout(g);m.coin-=fee;from.coin+=fee;m.poached=(m.poached||0)+1;from.poachedByMe=(from.poachedByMe||0)+1;if(typeof mlog==='function')mlog(from,`lost ${g.name} to ${m.ludus}'s poaching`);
-  ghist(g,`poached from ${esc(from.ludus)} by ${esc(m.ludus)}`);g.contract={mgr:m.id,wage,weeks,since:W_().week};g.morale=70;g.scout=Math.max(g.scout||0,2);
-  mnews(`<b>You poach ${esc(g.name)}</b> from ${esc(from.ludus)} for a ${fee}-coin buyout. ${m.p.honor>=60?'Honorable fighters will remember it.':''}`,'big');
-  tnews(`Poached ${esc(g.name)} from ${esc(from.ludus)} (${fee} coin buyout).`);
+/* doPoach — poaches a fighter: pays the buyout, angers the house, honor-minded fighters cool on you. */
+function doPoach(glad,wage,weeks){
+  const m=me(),from=mgrById(glad.contract.mgr);const fee=buyout(glad);m.coin-=fee;from.coin+=fee;m.poached=(m.poached||0)+1;from.poachedByMe=(from.poachedByMe||0)+1;if(typeof mlog==='function')mlog(from,`lost ${glad.name} to ${m.ludus}'s poaching`);
+  ghist(glad,`poached from ${esc(from.ludus)} by ${esc(m.ludus)}`);glad.contract={mgr:m.id,wage,weeks,since:W_().week};glad.morale=70;glad.scout=Math.max(glad.scout||0,2);
+  mnews(`<b>You poach ${esc(glad.name)}</b> from ${esc(from.ludus)} for a ${fee}-coin buyout. ${m.p.honor>=60?'Honorable fighters will remember it.':''}`,'big');
+  tnews(`Poached ${esc(glad.name)} from ${esc(from.ludus)} (${fee} coin buyout).`);
   // rivals and honor-minded fighters take note
-  from.grudge=(from.grudge||0)+1;bumpRival(from,25,`you poached ${esc(g.name)}`);for(const x of W_().glads)if(x.alive&&x.motives.some(t=>t[0]==='honor'))x.interest[m.id]=Math.max(0,interestOf(x,m)-4);
+  from.grudge=(from.grudge||0)+1;bumpRival(from,25,`you poached ${esc(glad.name)}`);for(const x of W_().glads)if(x.alive&&x.motives.some(t=>t[0]==='honor'))x.interest[m.id]=Math.max(0,interestOf(x,m)-4);
 }
 
 /* ---------- wallet hooks for live wagers during a watched bout ---------- */
+/* mgrPurse — the open career's treasury as a wager purse. */
 function mgrPurse(){const m=me();return m?{coin:m.coin,won:m.betWon||0,lost:m.betLost||0,bets:m.betCount||0,history:m.betHistory||[],name:m.name,ludus:m.ludus}:{coin:0,name:'the lanista'}}
+/* mgrPurseSet — writes a wager purse back into the open career's treasury. */
 function mgrPurseSet(v){const m=me();if(!m)return;const d=v.coin-m.coin;m.coin=v.coin;if(!v.noBet)m.betNet=(m.betNet||0)+d;m.betWon=v.won||0;m.betLost=v.lost||0;m.betCount=v.bets||0;m.betHistory=(v.history||[]).slice(-40);saveWorld()}
 
 /* ================= UI ================= */
-function mgrPortrait(m,size='sm'){return portraitHTML({name:m.name,portrait:m.portrait||{helm:'laurel'},color:m.color},size)}
+/* mgrPortrait — a lanista's portrait. */
+function mgrPortrait(mgr,size='sm'){return portraitHTML({name:mgr.name,portrait:mgr.portrait||{helm:'laurel'},color:mgr.color},size)}
 // v0.15: league fighters wear their own generated faces (like the Ludus tiles), not class card art
-function gArt(g,size='xs'){
-  if(CLASSES[g.cls]&&CLASSES[g.cls].custom)return classArt(g.cls,size);
-  const c=CLASSES[g.cls];return portraitHTML({name:g.name,portrait:gLook(g),color:c?c.color:'#a3281f'},size);
+/* gArt — a league fighter's portrait with their token. */
+function gArt(glad,size='xs'){
+  if(CLASSES[glad.cls]&&CLASSES[glad.cls].custom)return classArt(glad.cls,size);
+  const c=CLASSES[glad.cls];return portraitHTML({name:glad.name,portrait:gLook(glad),color:c?c.color:'#a3281f'},size);
 }
-function gTags(g){return `${g.inj&&!g.inj.war?`<span class="badge bad" title="In the infirmary: ${esc(g.inj.label)} — needs ${injReq(g.inj)==='rest'?'rest':injReq(g.inj)==='medicus'?'the Medicus':'the surgeon'}. Cannot be entered until cleared.">⚕ hurt</span>`:''}${g.inj&&g.inj.war?'<span class="badge bad" title="Away with the legions">⚔️ at war</span>':''}${(g.severed||[]).length?`<span class="badge bad" title="Severed: ${g.severed.map(l=>LOCN[l]).join(', ')} — the Blessings of Hygeia regrow them">🦴 ${g.severed.length}</span>`:''}${g.src==='custom'||isCustomCls(g.cls)?customTag():''}${g.src==='ludus'?`<span class="badge gold" title="From the Ludus Flavius">Ludus${g.cpuSaved?' · CPU':''}</span>`:''}${(()=>{const w=W_();return w&&g.debut&&(w.season-g.debut.s)*12+(w.week-g.debut.wk)<=1&&!(g.debut.s===1&&g.debut.wk===1&&w.season===1&&w.week>2)?'<span class="badge good" title="Arrived in the league this week or last">🆕 new</span>':''})()}${g.rookie&&g.rec.ev<3?'<span class="badge" title="Fewer than 3 bouts on the sand">rookie</span>':''}${g.rec.ev>=15?'<span class="badge gold" title="15+ bouts survived on the sand">veteran</span>':''}`}
+/* gTags — a fighter's status badges (hurt, at war, rookie, gem…). */
+function gTags(glad){return `${glad.inj&&!glad.inj.war?`<span class="badge bad" title="In the infirmary: ${esc(glad.inj.label)} — needs ${injReq(glad.inj)==='rest'?'rest':injReq(glad.inj)==='medicus'?'the Medicus':'the surgeon'}. Cannot be entered until cleared.">⚕ hurt</span>`:''}${glad.inj&&glad.inj.war?'<span class="badge bad" title="Away with the legions">⚔️ at war</span>':''}${(glad.severed||[]).length?`<span class="badge bad" title="Severed: ${glad.severed.map(l=>LOCN[l]).join(', ')} — the Blessings of Hygeia regrow them">🦴 ${glad.severed.length}</span>`:''}${glad.src==='custom'||isCustomCls(glad.cls)?customTag():''}${glad.src==='ludus'?`<span class="badge gold" title="From the Ludus Flavius">Ludus${glad.cpuSaved?' · CPU':''}</span>`:''}${(()=>{const w=W_();return w&&glad.debut&&(w.season-glad.debut.s)*12+(w.week-glad.debut.wk)<=1&&!(glad.debut.s===1&&glad.debut.wk===1&&w.season===1&&w.week>2)?'<span class="badge good" title="Arrived in the league this week or last">🆕 new</span>':''})()}${glad.rookie&&glad.rec.ev<3?'<span class="badge" title="Fewer than 3 bouts on the sand">rookie</span>':''}${glad.rec.ev>=15?'<span class="badge gold" title="15+ bouts survived on the sand">veteran</span>':''}`}
+/* openManager — opens Manager mode (career picker or the open career) full screen and wires it. */
 async function openManager(tab){
   if(modalBusy())return;
   if(liveEventRunning()){const ow=typeof arenaOwner==='function'?arenaOwner():null;
@@ -957,7 +1069,9 @@ async function openManager(tab){
 }
 /* v0.43: with a career loaded the close button saves and quits; on the career picker it simply goes back to the menu */
 function mgrCloseLabel(){const x=$('#mClose');if(!x)return;x.classList.add('saveq');if(MGR.world&&MGR.world.tutorial){x.textContent='✖ Leave the lesson';x.title='Leave the Manager lesson (nothing is saved)'}else if(MGR.world&&!MGR.world.dead){x.textContent='💾 Save & quit';x.title='Save this career and go back to the main menu'}else{x.textContent='🏛 Back to Main Menu';x.title='Back to the main menu'}}
+/* mgrHTML — the Manager window body: start screen, the hub, or the fallen house. */
 function mgrHTML(){return MGR.world?(MGR.world.dead?deadHTML():hubHTML()):startHTML()}
+/* deadHTML — the screen of a fallen house. */
 function deadHTML(){
   const w=W_(),m=me(),d=w.dead;
   return `<div style="text-align:center;padding:18px 8px">${mgrPortrait(m,'md')}
@@ -967,13 +1081,17 @@ function deadHTML(){
     <div class="badges" style="justify-content:center"><span class="badge">Final fame ${d.fame} · ${mgrTier(d.fame)}</span><span class="badge">Record ${d.record}</span><span class="badge bad">Treasury ${d.coin} coin</span><span class="badge">Betting ${(m.betNet||0)>=0?'+':''}${m.betNet||0}</span><span class="badge">Deaths ${m.deaths||0}</span></div>
     <div class="mbtns" style="justify-content:center;margin-top:14px"><button class="btn primary" type="button" data-mg="quit">Leave the ruin<small>the career stays in your list as a monument</small></button><button class="btn" type="button" data-mg="delcareer" data-id="${w.id}">Delete this career</button></div></div>`;
 }
+/* RULE_LIST9 — the sandbox house rules: [key, name, description]. */
 const RULE_LIST9=[['death','Lethality','How often a condemned Fate actually kills. Below 100%, the editor shows clemency the rest of the time.'],['blood','Blood money prices','What the editor charges to buy back a condemned fighter.'],['inj','Injuries','Bout and training injury rates.'],['gain','Training gains','How fast drills improve ratings.'],['rookies','Rookie influx','How quickly the league refills with new blood.'],['rand','Deaths beyond the sand','Fevers, bookies, roof tiles.'],['arena','Arena-time pressure','How much a big roster puts off recruits who want to fight every week (0% = roster size never matters).'],['rookmercy','Rookie mercy','Chance the editor spares a condemned fighter with fewer than 3 bouts — lets young talent survive long enough to grow.']];
+/* NEWMGR — the new-career form state. */
 let NEWMGR=null;
+/* RULESBLK9 — the sandbox house-rules block on the new-career form. */
 const RULESBLK9=c=>`<details class="card2" style="margin-top:8px" ${Object.keys(c.rules||{}).length?'open':''}><summary><b>🏜 House rules (sandbox)</b> <span class="rc-sub">optional — set them NOW or play the printed game; they are baked in for the whole career once the ludus opens</span></summary>
       <div class="presets" style="margin-top:6px">${[['easy','🌿 Easy','A forgiving sand: clemency common, cheap buybacks, fewer fevers, fast training.'],['std','🏛 Standard','The printed game, as the founding rules read.'],['hard','🔥 Hard','The iron league: the editor rarely blinks, buybacks gouge, training crawls, fate is cruel.']].map(([k,n,d])=>`<button type="button" class="preset ${c.rulePre===k?'on':''}" data-mg="nmrulepre" data-id="${k}" title="${d}">${n}${c.rulePre===k?' ✓':''}</button>`).join('')}</div>
       <div style="margin-top:6px">${RULE_LIST9.map(([k,l,d])=>`<div class="slider" title="${d}"><span>${l}</span><input type="range" min="0" max="200" step="10" value="${(c.rules||{})[k]??RULES_DEF[k]??100}" data-nmrule="${k}"><output>${(c.rules||{})[k]??RULES_DEF[k]??100}%</output></div>`).join('')}
       <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-top:6px">🎪 Your festival, should you lead the league at season's end:<select class="tin" data-nmfest="1" style="width:auto">${Object.entries(FEST_KINDS).map(([k,F])=>`<option value="${k}" ${(c.festPick||'ludi')===k?'selected':''}>${F.n}</option>`).join('')}</select></label>
       <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin-top:6px"><input type="checkbox" data-nmspect="1" ${c.spectOK!==false?'checked':''}> 🎟 Let me spectate: buy a ticket to watch any bout, special or the Superbus from the stands (helping my own fighters from there costs fame)</label></div></details>`;
+/* startHTML — the Manager start screen: your careers, found a house or take one over. */
 function startHTML(){
   if(MGR.view==='create'){const c=NEWMGR;return `<h4>${c.takeKey?`Make ${esc(MGR_PRE.find(t=>t.key===c.takeKey).ludus)} yours <span class="rc-sub">rename the house, its lanista and its colors — the fighters, coin, fame and old feuds come with it</span>`:c.sale?`✍ Found your new house <span class="rc-sub">the old one is sold — the sale closes when this one opens, in the same league</span>`:`Create your lanista ${customTag()}`}</h4><div class="setup-grid" style="grid-template-columns:minmax(0,220px) minmax(0,1fr)"><div id="nmPortrait" style="text-align:center">${portraitHTML({name:c.name,portrait:c.portrait,color:c.color},'lg')}<div class="mbtns"><button class="btn" type="button" data-mg="nmlook">🎲 Random look</button></div></div><div>
     <div class="formgrid"><label>Name<span style="display:flex;gap:4px"><input class="tin" id="nmName" data-nm="name" value="${esc(c.name)}" maxlength="28">${diceBtn('#nmName')}</span></label><label>Ludus name<input class="tin" data-nm="ludus" value="${esc(c.ludus)}" maxlength="32"></label><label title="Where your ludus stands. Fighters from this city lean your way (+8 interest) and scout at half price; its square sells to you at a quarter off; walking your own sand costs half.">🏠 Home city — where your ludus stands<select class="tin" data-nm="city" ${c.takeKey?'disabled title="A house you take over keeps its home city"':''}>${LANISTA_CITIES().map(x=>`<option ${x===c.city?'selected':''}>${esc(x)}</option>`).join('')}</select></label><label>Color<input type="color" class="tin" data-nm="color" value="${c.color}" style="height:34px;padding:2px"></label></div>
@@ -993,6 +1111,7 @@ function startHTML(){
     ${MGR.careers.length>1||MGR.careers.some(c=>c.dead)?`<h4>Career leaderboard</h4><div style="overflow-x:auto"><table class="tally"><tr><th>#</th><th>Lanista</th><th>Status</th><th>Fame</th><th>Record</th><th>Treasury</th><th>Betting</th><th>Deaths</th></tr>${[...MGR.careers].sort((a,b)=>(b.fame||0)-(a.fame||0)||(b.wins||0)-(a.wins||0)).map((c,i)=>`<tr><td class="n">${i+1}</td><td><b>${esc(c.name)}</b><br><span class="rc-sub">${esc(c.ludus)}</span></td><td>${c.dead?`<span style="color:var(--blood2)">✝ collapsed</span><br><span class="rc-sub">S${c.season} W${c.week}</span>`:`S${c.season} W${c.week}${MGR.activeCid===c.id?' · ★':''}`}</td><td class="n">${c.fame??'—'}${c.fame!=null?` <span class="rc-sub">${mgrTier(c.fame)}</span>`:''}</td><td class="n">${c.wins!=null?`${c.wins}-${Math.max(0,(c.bouts||0)-(c.wins||0))}`:'—'}</td><td class="n">${c.coin??'—'}</td><td class="n">${c.betNet!=null?((c.betNet>=0?'+':'')+c.betNet):'—'}</td><td class="n">${c.deaths??'—'}</td></tr>`).join('')}</table><p class="hint">Ranked by fame, then wins. Collapsed ludi stay on the board as monuments — that is the point of a monument.</p></div>`:''}
     <h4>Saved careers</h4><p class="rc-sub" style="margin:0 0 6px">One career is your <b>active wallet</b>: its treasury bankrolls every wager you place outside Manager mode (the Wagers window, watching any event).</p>${MGR.careers.length?`<div class="list2">${MGR.careers.map(c=>`<div class="lrow"><div class="t"><b>${esc(c.name)}</b> ${c.custom?customTag():''}${c.dead?'<span class="badge bad">✝ collapsed</span>':''}${MGR.activeCid===c.id?'<span class="badge gold" title="This treasury bankrolls your wagers everywhere">★ active wallet</span>':''}<small>${esc(c.ludus)} · season ${c.season}, week ${wkOf(c.week)}${c.wins!=null?` · record <b>${c.wins}-${Math.max(0,(c.bouts||0)-(c.wins||0))}</b>`:''}${c.coin!=null?` · treasury <b>${c.coin}</b>`:''} · saved ${esc(c.updated||'')}</small></div><div class="a"><button class="btn primary" type="button" data-mg="load" data-id="${c.id}">${c.dead?'Visit the ruin':'Continue'}</button>${!c.dead&&MGR.activeCid!==c.id?`<button class="btn" type="button" data-mg="setactive" data-id="${c.id}">Use for wagers</button>`:''}<button class="btn" type="button" data-mg="delcareer" data-id="${c.id}">Delete</button></div></div>`).join('')}</div>`:'<p style="color:var(--muted)">No careers yet.</p>'}`;
 }
+/* hubHTML — the Manager hub: rail, header and the current tab. */
 function hubHTML(){
   const w=W_(),m=me();const ros=rosterOf(m);const rec=`${m.wins}-${Math.max(0,m.bouts-m.wins)}`;
   const hurtN=rosterOf(m).filter(g=>g.inj||(g.severed||[]).length).length;
@@ -1025,10 +1144,12 @@ function ludusTodos(){const w=W_(),m=me(),n=w.night;const ros=rosterOf(m);const 
 /* v0.24 THE EMPIRE MOVES ON WITHOUT YOU: a career behind the empire's calendar gets a letter from the capital —
    let the doctores run the ludus through the missing weeks (auto-simulated, sensible verdicts), or keep a private calendar */
 function calLag(){const w=W_();if(typeof calNow!=='function')return 0;const c=calNow();const wk12=((w.week-1)%12)+1;return ((c.season-1)*12+c.week)-((w.season-1)*12+wk12)}
+/* lagBannerHTML — the letter from the capital when the career is behind the empire's calendar (catch up or keep your own calendar). */
 function lagBannerHTML(){const w=W_();const lag=calLag();if(lag<=0||w.ownCal)return '';const c=calNow();
   return `<div class="card2 lagbox"><b>📜 A letter from the capital</b> <span class="rc-sub">sealed ${esc(empireDate(c.season,c.week).short)}</span>
     <p style="margin:4px 0">While you were away the empire lived <b>${lag} week${lag===1?'':'s'}</b> without you — games were fought, purses paid, rivals grew fat. Your ludus still keeps ${esc(empireDate(w.season,((w.week-1)%12)+1).short)}.</p>
     <div class="acts"><button class="btn primary" type="button" data-mg="catchup">⏩ Let the doctores run the ludus<small>simulate ${Math.min(lag,12)} week${Math.min(lag,12)===1?'':'s'}: bouts, verdicts (blood money for your best, the thumb for the rest, the rudis refused), wages and training</small></button><button class="btn" type="button" data-mg="owncal">Keep our own calendar<small>this career lives on its own dates; the empire won't wait</small></button></div></div>`}
+/* catchUpWeeks — lets the doctores simulate the weeks a career is behind the empire (up to 12). */
 async function catchUpWeeks(){const w=W_(),m=me();let n=Math.min(12,calLag());const log0=[];const coin0=m.coin,fame0=m.fame,wins0=m.wins;
   for(let k=0;k<n;k++){if(w.special&&!w.special.done&&typeof specAutoRun==='function')await specAutoRun();for(let i=0;i<w.night.bouts.length;i++)if(!w.night.bouts[i].done)await runBoutSim(i);
     let guard=0;while((w.pend||[]).length&&guard++<30){const P=w.pend[0];const g=gById(P.gid);
@@ -1036,6 +1157,7 @@ async function catchUpWeeks(){const w=W_(),m=me();let n=Math.min(12,calLag());co
       else if(P.t==='blood')settlePending(0,g&&effOvr(g)>=58&&m.coin>=P.price+20?'pay':'let');else settlePending(0,'stay')}
     const ok=await endWeek();if(!ok)break;log0.push(w.lastPaper&&w.lastPaper.lead?w.lastPaper.lead.h:'')}
   saveWorld(true);return {weeks:log0.length,coin:m.coin-coin0,fame:m.fame-fame0,wins:m.wins-wins0,heads:log0}}
+/* weekReviewHTML — last week in review and this week's to-dos. */
 function weekReviewHTML(){const w=W_(),m=me();const R=w.review;const T=ludusTodos();const dt=empireDate(w.season,((w.week-1)%12)+1);
   const sgn=v=>v>0?`+${v}`:`${v}`;
   const rev=R?`<div class="revbox"><div class="sect" style="margin-top:0">📅 Week ${RN(((R.wk-1)%12)+1)} in review <span class="rc-sub">season ${RN(R.season)}</span></div>
@@ -1088,10 +1210,12 @@ function consiliumHTML(){const w=W_(),m=me(),n=w.night;const ros=rosterOf(m);con
   const row=(ic,who,t,b)=>`<div class="cons"><span class="ci">${ic}</span><div><b>${who}</b><div>${t}</div></div>${b||''}</div>`;
   return `<div class="card2 consil"><div class="sect" style="margin-top:0">🧭 The Consilium <span class="rc-sub">your advisors' counsel this week</span></div>
     ${row(ICO.coin,'The Quaestor',q,m.coin<0||runway<3?go('night','Match Week'):'')}${row('🏋','The Doctore',d,hurt.length?go('infirm','Infirmary'):go('roster','Roster'))}${row('🔭','The Scout',sc,go('recruit','Recruiting'))}${row('🦅','The Augur',au,go('sched','Season'))}</div>`}
+/* rosterBlockHTML — your roster as cards. */
 function rosterBlockHTML(){const m=me(),w=W_();const ros=rosterOf(m).sort((a,b)=>effOvr(b)-effOvr(a));
   if(!(MGR.lsel&&ros.some(g=>g.id===MGR.lsel))&&ros.length)MGR.lsel=ros[0].id;const wk=ros.reduce((s,g)=>s+g.contract.wage,0);const left=Math.max(0,repCap()-(w.repair||0));
   return `   ${ros.length?`<div class="mgrid wide"><div style="overflow-x:auto"><table class="tally"><tr><th></th><th>Fighter</th><th title="What a rating does on the sand: it sets how well the fighter plays (below 60 like an Easy CPU with loose, noisy decisions; 60-79 Normal; 80+ Hard, near-perfect choices), the armor fitted before the bout (+1 AP per 6 points above 62, up to +5) and coin in the purse (+1 per 5 points above 70, up to +4). Morale shifts it: high morale adds 1 AP and a CF, low morale takes an AP, broken morale drops a skill tier. Injuries and severed limbs lower the rating itself." style="cursor:help">Rating ⓘ</th><th>Record</th><th>Morale</th><th>Contract</th></tr>${ros.map(g=>`<tr class="${MGR.lsel===g.id?'me':''}" data-mg="lsel" data-id="${g.id}" style="cursor:pointer"><td>${gArt(g,'xs')}</td><td><b>${esc(g.name)}</b> ${gTags(g)}<br><span class="rc-sub">${gSex(g)} ${CLASSES[g.cls]?CLASSES[g.cls].name:'?'} · ${gAge(g)} yrs · ${esc(g.city)} · fame ${g.fame} · first sand S${g.debut?g.debut.s:1} W${g.debut?g.debut.wk:1}</span></td><td>${starHTML(starsOf(effOvr(g)))}<br>${fameHTML(g.fame)}<br><span class="odds">${effOvr(g)}</span> <span class="rc-sub">pot ${g.pot}</span></td><td class="n">${g.rec.w}W / ${g.rec.ev} · ⚔${g.rec.kp} 🐾${g.rec.kn}</td><td title="${MORALE_TXT[moraleTier(g.morale)]} · loyalty ${loyaltyOf(g)} (what a rival must beat to poach them; high loyalty renews contracts)"><div class="meter"><i style="width:${g.morale}%"></i></div><span class="rc-sub">${g.morale} · ${moraleTier(g.morale)}</span></td><td>${g.contract.wage}/wk · ${g.contract.weeks>0?g.contract.weeks+' wk left':'<b style="color:var(--blood2)">expired</b>'}</td>
      </tr>`).join('')}</table><p class="rc-sub" style="margin:6px 0 0">Wages ${wk} coin a week, paid when the week ends · physicians' weekly cap: ${left}/${repCap()} coin of work left · click a fighter to open their card.</p></div><div>${detailHTML(ros.find(g=>g.id===MGR.lsel)||ros[0])}</div></div>`:'<p style="color:var(--muted)">No fighters yet. Go recruiting.</p>'}`}
+/* RULES_BOX — "How the league works" fold-out. */
 const RULES_BOX=()=>`<details class="card2 rulesbox" style="margin-top:10px"><summary><b>📖 How the league works</b> <span class="rc-sub">fates, blood money, the infirmary, money</span></summary>
      <p style="margin:8px 0 0">League rules follow the <b>Fate table</b> (rulebook p.54-55) for every fighter in every bout, win or lose: under 17 CF they are <b>condemned</b> (Damnatio or a Fatal Charade), 17-19 CF they face the <b>Thumb of Flavius</b> (d6: 4-6 spared, else a d12 picks the death), 20-49 CF they <b>survive</b> to the Ludus Flavius, and 50+ CF earns the <b>rudis</b> — freedom, if they want it. A lanista may pay the editor <b>blood money</b> to buy back a condemned fighter; your own verdicts wait for you on Match Week. Severed limbs persist (−6 rating each) until the priests of Hygeia regrow them; a fighter with two severed limbs retires at the end of the week; the old hang up the sword on their own past 35..</p>
      <p style="margin:6px 0 0"><b>How the grades are reckoned.</b> Coin grades your treasury, generosity and betting; Glory your fame and win rate; Honor your personality minus every poach and broken contract; Spectacle your showmanship and fame; Training your discipline and how many fighters you have improved; Arena time how crowded your stable is. Home depends on each fighter's city.</p>
@@ -1102,9 +1226,11 @@ const RULES_BOX=()=>`<details class="card2 rulesbox" style="margin-top:10px"><su
    otherwise Sica's syndicate (bookmakers, and worse). 8% a week, ~15% collected weekly; pay it off early on the
    lender's team page (a house) or right here (the syndicate). Debts you cannot service cost fame. */
 // what a lender will risk on you: fame is collateral, wins are proof — three rungs from it
-function loanSizes(m){const cap=clamp(Math.round(60+(m.fame||0)*4+(m.wins||0)*8),80,800);return [Math.round(cap*0.3/10)*10,Math.round(cap*0.6/10)*10,Math.round(cap/10)*10].filter((v,i,a)=>a.indexOf(v)===i)}
+function loanSizes(mgr){const cap=clamp(Math.round(60+(mgr.fame||0)*4+(mgr.wins||0)*8),80,800);return [Math.round(cap*0.3/10)*10,Math.round(cap*0.6/10)*10,Math.round(cap/10)*10].filter((v,i,a)=>a.indexOf(v)===i)}
+/* loanLender — who offers a loan: a friendly house, else the syndicate. Replaced by 66-mgr55. */
 function loanLender(){const w=W_(),pm=me();const friendly=typeof opinionOf==='function'?w.mgrs.filter(m=>!m.isPlayer&&opinionOf(m).v>=60).sort((a,b)=>opinionOf(b).v-opinionOf(a).v)[0]:null;
   return friendly?{mgr:friendly.id,name:friendly.ludus,kind:'house'}:{mgr:null,name:"Sica's syndicate",kind:'synd'}}
+/* loanCardHTML — the loan offer / loan status card. Replaced by 66-mgr55. */
 function loanCardHTML(){const w=W_(),m=me();
   if(w.loan&&w.loan.amt>0)return `<div class="card2 loanbox"><div class="sect" style="margin-top:0">💸 Your debt to ${esc(w.loan.name)}</div>
     <p class="rc-sub" style="margin:0 0 6px"><b>${w.loan.amt} coin owed</b> · 8% interest a week · they collect ~15% each week's end. ${w.loan.kind==='synd'?'The syndicate\u2019s men are polite. So far.':`Pay early on ${esc(w.loan.name)}\u2019s team page, or here.`}</p>
@@ -1116,6 +1242,7 @@ function loanCardHTML(){const w=W_(),m=me();
     <span class="rc-sub">8% interest a week; about 15% of the balance is collected every week's end. Fall behind and your name suffers.</span></p>
     <p class="rc-sub" style="margin:0 0 4px">They lend against what they can seize: your fame and your record set the ceiling.</p>
     <div class="acts">${sizes.map(a=>`<button class="btn" type="button" data-mg="loan" data-id="${a}">Borrow ${a}</button>`).join('')}<button class="btn" type="button" data-mg="loanno">Refuse — a lanista pays his own way</button></div></div>`}
+/* ludusTabHTML — the Your ludus tab. Wrapped by many later modules. */
 function ludusTabHTML(){
   const m=me(),w=W_();const ros=rosterOf(m).sort((a,b)=>effOvr(b)-effOvr(a));
   if(!(MGR.lsel&&ros.some(g=>g.id===MGR.lsel))&&ros.length)MGR.lsel=ros[0].id; // the selected fighter's card always shows beside the roster
@@ -1133,13 +1260,16 @@ function ludusTabHTML(){
 function weekReady(){const w=W_();if(!w||!w.night)return {ok:false,why:'No week in progress.'};if(w.special&&!w.special.done)return {ok:false,why:`${w.special.D.n} is on — settle it on Match Week first.`};
   if(!w.night.bouts.every(b=>b.done))return {ok:false,why:'Match Week is not finished — fight, watch or simulate every bout first.'};
   if((w.pend||[]).length)return {ok:false,why:'Verdicts are waiting on Match Week — thumbs, blood money, the rudis or the levy.'};return {ok:true}}
+/* weekLoopBtns — the weekly loop buttons (back to Your ludus, End the week). */
 function weekLoopBtns(){const r=weekReady();return `<div class="acts wkloop"><button class="btn" type="button" data-mg="tab" data-id="ludus">🏛 Back to Your ludus<small>finish the week's other work</small></button><button class="btn primary" type="button" data-mg="endask" ${r.ok?'':dis([true,r.why])}>⏭ End the week<small>${r.ok?'wages, training, the Acta — and the empire moves on':esc(r.why)}</small></button></div>`}
+/* endConfirmHTML — the End the week confirmation: wages, drills and anything left undone. */
 function endConfirmHTML(){const w=W_(),m=me();const wages=rosterOf(m).reduce((a,g)=>a+g.contract.wage+(g.ptrain?PTRAIN_COST:0),0);const R2=TRAIN_REGIMES[w.train]||TRAIN_REGIMES.off;const cost=wages+(R2.c||0);
   const nx=absSW(w,w.week+1);const dt=empireDate(nx.season,nx.wk);
   return `<div class="endconfirm"><div class="card2"><h4 style="margin-top:0">⏭ End week ${((w.week-1)%12)+1} of season ${w.season}?</h4>
     <ul class="rc-sub" style="margin:0 0 8px 16px;padding:0"><li>Wages${R2.c?' and drills':''} are paid: about <b>${cost}</b> coin (treasury ${m.coin} → ~${m.coin-cost}).</li><li>Training resolves, injuries heal or fester, contracts tick down, rivals recruit, build and poach.</li><li>The Acta Diurna prints this week's results${w.week%12===0?' — and the <b>season recap</b>; the Flavius Superbus opens next':''}.</li><li>The empire's calendar moves to <b>${esc(dt.short)}</b>, week ${nx.wk}${nx.season!==w.season?` of season ${nx.season}`:''}.</li></ul>
     ${w.hours>0?`<p class="rc-sub" style="margin:0 0 6px">⏳ You still have <b>${w.hours}</b> recruiting hour${w.hours===1?'':'s'} — they do not carry over.</p>`:''}${(m.perkPts||0)>0?`<p class="rc-sub" style="margin:0 0 6px">🎓 <b>${m.perkPts}</b> perk point${m.perkPts===1?'':'s'} unspent (they keep).</p>`:''}
     <div class="acts"><button class="btn primary" type="button" data-mg="endweek">Confirm — end the week</button><button class="btn" type="button" data-mg="endcancel">Not yet</button></div></div></div>`}
+/* nightResultsHTML — the match night result sheet once every bout is decided. */
 function nightResultsHTML(){const w=W_(),n=w.night,m=me();if(!n||!n.bouts.every(b=>b.done))return '';
   const tot={purse:0,mine:0,bets:0};
   const card=b=>{const T=TIERS[b.tier];const E=EVENTS[b.ev]||{};const R=b.res;if(!R)return `<div class="nres"><b>${T.n}</b> — called off.</div>`;
@@ -1152,6 +1282,7 @@ function nightResultsHTML(){const w=W_(),n=w.night,m=me();if(!n||!n.bouts.every(
       <table class="tally compact">${rows}</table>${bets?`<div class="betslips"><span class="rc-sub">💰 Your wagers</span>${bets}<span class="betnet ${bnet>=0?'up':'dn'}">${bnet>=0?'+':'−'}${Math.abs(bnet)} coin</span></div>`:''}</div>`};
   const html=n.bouts.map(card).join('');
   return `<details class="card2 nightres" open id="nightRes"><summary><b>🏁 Match Week results · ${esc(LOCATIONS[n.loc].n)}</b> <span class="rc-sub">${tot.purse} coin in purses${tot.bets?` · your betting ${tot.bets>0?'+':''}${tot.bets}`:''} — settle any verdicts, then end the week</span></summary>${html}${weekLoopBtns()}</details>`}
+/* nightHTML — the Match Week tab: the three bouts, entries, odds, bets, fixing, watch / fight / simulate. Wrapped by several later modules. */
 function nightHTML(){
   const w=W_(),n=w.night,m=me();const L=LOCATIONS[n.loc];
   const mine=rosterOf(m);const entered=new Set(n.bouts.flatMap(b=>b.ents));
@@ -1197,11 +1328,12 @@ function nightHTML(){
    ${allDone?'':'<div class="mbtns"><button class="btn simall" type="button" data-mg="simall">⚡ Simulate Match Week<small>quick-sims every remaining bout in order, then shows the night\u2019s results</small></button></div>'}`;
 }
 // v0.29: recruit search — filters the whole pool (not just the first 60), keeping the cursor in the box
-function recSearch(inp){MGR.rq=inp.value;clearTimeout(recSearch.t);recSearch.t=setTimeout(()=>{if(typeof MGR_REDRAW==='function'){MGR_REDRAW();const n=document.getElementById('recQ');if(n){n.focus();try{n.setSelectionRange(n.value.length,n.value.length)}catch(e){}}}},220)}
+function recSearch(input){MGR.rq=input.value;clearTimeout(recSearch.t);recSearch.t=setTimeout(()=>{if(typeof MGR_REDRAW==='function'){MGR_REDRAW();const n=document.getElementById('recQ');if(n){n.focus();try{n.setSelectionRange(n.value.length,n.value.length)}catch(e){}}}},220)}
+/* recruitHTML — the Recruiting tab: search, sort and the free-agent list. */
 function recruitHTML(){
   const w=W_(),m=me();
   let list=MGR.filter==='free'?freeAgents():MGR.filter==='signed'?w.glads.filter(g=>g.alive&&g.contract&&g.contract.mgr!==m.id):MGR.filter==='mine'?rosterOf(m):w.glads.filter(g=>g.alive&&(!g.contract||g.contract.mgr!==m.id)&&interestOf(g,m)>=35);
-  const key={stars:g=>-estOvr(g).v,interest:g=>-interestOf(g,m),ask:g=>askWage(g),fame:g=>-g.fame}[MGR.sort]||(g=>-estOvr(g).v);
+  const key={stars:glad=>-estOvr(glad).v,interest:glad=>-interestOf(glad,m),ask:glad=>askWage(glad),fame:glad=>-glad.fame}[MGR.sort]||(g=>-estOvr(g).v);
   if(MGR.rq){const q=MGR.rq.toLowerCase();list=list.filter(g=>[g.name,CLASSES[g.cls]?CLASSES[g.cls].name:g.cls,g.city,g.contract&&mgrById(g.contract.mgr)?mgrById(g.contract.mgr).ludus:''].filter(Boolean).join(' ').toLowerCase().includes(q))}
   list=[...list].sort((a,b)=>key(a)-key(b)).slice(0,60);
   if(!(MGR.sel&&list.some(g=>g.id===MGR.sel))&&list.length)MGR.sel=list[0].id; // a card is always showing: click any row to switch
@@ -1212,28 +1344,31 @@ function recruitHTML(){
     ${list.map(g=>{const iv=interestOf(g,m);const s=suitors(g);const rank=s.findIndex(x=>x.m===m)+1;return `<tr class="${MGR.sel===g.id?'me':''}" data-mg="sel" data-id="${g.id}" style="cursor:pointer"><td><button class="btn" type="button" data-mg="fav" data-id="${g.id}" title="${g.favd?'Remove from':'Pin to'} your recruiting board" style="padding:1px 6px;border:none;background:none;font-size:15px;color:${g.favd?'var(--gold2)':'var(--dim)'}">${g.favd?'★':'☆'}</button>${gArt(g,'xs')} <b>${esc(g.name)}</b> ${gTags(g)}<br><span class="rc-sub">${gSex(g)} ${CLASSES[g.cls]?CLASSES[g.cls].name:'?'} · ${gAge(g)} yrs · ${esc(g.city)}${g.contract?` · <span style="color:${mgrById(g.contract.mgr).color}">${esc(mgrById(g.contract.mgr).ludus)}</span>`:''}</span></td><td>${starHTML(starsOf(estOvr(g).v))}<br><span class="odds">${estOvr(g).txt}</span></td><td class="rc-sub">${g.scout||MGR.filter==='mine'?g.motives.map(([k])=>MOTIVES[k][0]).join(', '):'? (scout)'}</td>${MGR.filter==='mine'?`<td style="min-width:110px"><div class="meter gold"><i style="width:${loyaltyOf(g)}%"></i></div><span class="rc-sub">loyalty ${loyaltyOf(g)} · morale ${g.morale}</span></td><td class="n">${g.contract.wage}</td>`:`<td style="min-width:110px"><div class="meter"><i style="width:${iv}%"></i></div><span class="rc-sub">${iv} · #${rank}${me().fame<reqFame(g)?' · 🔒':''}</span></td><td class="n">${askWage(g)}</td>`}</tr>`}).join('')||'<tr><td colspan="5" style="color:var(--muted)">Nobody here right now.</td></tr>'}</table></div></div>
     <div>${sel?detailHTML(sel):`<div class="card2"><p style="margin:0">Pick a fighter to see their recruiting card: what they want, how they grade you, their top suitors, and the actions you can spend hours on.</p>${typeof hint==='function'?hint('recruit'):''}</div>`}</div></div>`;
 }
-function detailHTML(g){
-  const w=W_(),m=me();const iv=interestOf(g,m);const s=suitors(g).slice(0,4);const signed=g.contract&&g.contract.mgr!==m.id;const mine=g.contract&&g.contract.mgr===m.id;const rep=g.report;
+/* detailHTML — a recruit's card: scouting, motives, interest and the recruiting actions. Wrapped by several later modules. */
+function detailHTML(glad){
+  const w=W_(),m=me();const iv=interestOf(glad,m);const s=suitors(glad).slice(0,4);const signed=glad.contract&&glad.contract.mgr!==m.id;const mine=glad.contract&&glad.contract.mgr===m.id;const rep=glad.report;
   const hrs=w.hours;
-  return `<div class="card2"><div style="display:flex;gap:10px;align-items:flex-start">${gArt(g,'sm')}<div style="flex:1"><div style="font:400 19px var(--display);color:var(--gold2)"><button class="btn" type="button" data-mg="fav" data-id="${g.id}" title="${g.favd?'Remove from':'Pin to'} your recruiting board" style="padding:1px 6px;border:none;background:none;font-size:17px;color:${g.favd?'var(--gold2)':'var(--dim)'}">${g.favd?'★':'☆'}</button>${esc(g.name)} ${typeof famFlagChip==='function'?famFlagChip(g,16):''}</div><div class="rc-sub">${gSex(g)} ${CLASSES[g.cls]?CLASSES[g.cls].name:'?'} · ${gAge(g)} years old · from ${esc(g.city)} · fame ${g.fame} · ${g.rec.w} wins in ${g.rec.ev} events · first sand S${g.debut?g.debut.s:1} W${g.debut?g.debut.wk:1}${g.inj?` · <b style="color:var(--blood2)">🩹 ${esc(g.inj.label)}</b>`:''}</div><div>${starHTML(starsOf(estOvr(g).v))} <span class="odds">${estOvr(g).txt}</span> ${fameHTML(g.fame)}${g.scout>=2?` · potential ${g.pot}${g.gem?' <span class="badge gold" title="A gem: your scouts swear the ceiling is far above the public rating">💎 gem</span>':''}${g.bust?' <span class="badge bad" title="Overhyped: the public rating flatters them — the ceiling is close">🫧 overhyped</span>':''}`:''} ${gTags(g)}</div></div></div>
-    ${(g.hist||[]).length?`<div class="sect">Career chronicle</div><div class="news" style="max-height:120px;font-size:12px">${g.hist.slice(0,10).map(h=>`<div><span class="rc-sub">S${h.s} W${h.wk} · </span>${h.txt}</div>`).join('')}</div>`:''}
-    ${mine?stableCardHTML(g)+'</div>':`
-    <div class="sect">${esc(stageOf(g))}</div><div class="meter gold"><i style="width:${iv}%"></i></div>
+  return `<div class="card2"><div style="display:flex;gap:10px;align-items:flex-start">${gArt(glad,'sm')}<div style="flex:1"><div style="font:400 19px var(--display);color:var(--gold2)"><button class="btn" type="button" data-mg="fav" data-id="${glad.id}" title="${glad.favd?'Remove from':'Pin to'} your recruiting board" style="padding:1px 6px;border:none;background:none;font-size:17px;color:${glad.favd?'var(--gold2)':'var(--dim)'}">${glad.favd?'★':'☆'}</button>${esc(glad.name)} ${typeof famFlagChip==='function'?famFlagChip(glad,16):''}</div><div class="rc-sub">${gSex(glad)} ${CLASSES[glad.cls]?CLASSES[glad.cls].name:'?'} · ${gAge(glad)} years old · from ${esc(glad.city)} · fame ${glad.fame} · ${glad.rec.w} wins in ${glad.rec.ev} events · first sand S${glad.debut?glad.debut.s:1} W${glad.debut?glad.debut.wk:1}${glad.inj?` · <b style="color:var(--blood2)">🩹 ${esc(glad.inj.label)}</b>`:''}</div><div>${starHTML(starsOf(estOvr(glad).v))} <span class="odds">${estOvr(glad).txt}</span> ${fameHTML(glad.fame)}${glad.scout>=2?` · potential ${glad.pot}${glad.gem?' <span class="badge gold" title="A gem: your scouts swear the ceiling is far above the public rating">💎 gem</span>':''}${glad.bust?' <span class="badge bad" title="Overhyped: the public rating flatters them — the ceiling is close">🫧 overhyped</span>':''}`:''} ${gTags(glad)}</div></div></div>
+    ${(glad.hist||[]).length?`<div class="sect">Career chronicle</div><div class="news" style="max-height:120px;font-size:12px">${glad.hist.slice(0,10).map(h=>`<div><span class="rc-sub">S${h.s} W${h.wk} · </span>${h.txt}</div>`).join('')}</div>`:''}
+    ${mine?stableCardHTML(glad)+'</div>':`
+    <div class="sect">${esc(stageOf(glad))}</div><div class="meter gold"><i style="width:${iv}%"></i></div>
     <div class="sect">Top suitors</div>${s.map(x=>`<div style="display:grid;grid-template-columns:1fr 90px 26px;gap:6px;align-items:center;font-size:12.5px"><span style="color:${x.m.color}">${esc(x.m.ludus)}${x.m.isPlayer?' (you)':''}</span><div class="meter"><i style="width:${x.v}%"></i></div><span class="n">${x.v}</span></div>`).join('')}
-    <div class="sect">What they want · how they grade you <span class="rc-sub">(hover a grade for how to raise it)</span></div>${g.scout?g.motives.map(([k,wt])=>`<div style="display:flex;gap:8px;align-items:center;font-size:13px;margin:2px 0" title="${esc(MOT_ADVICE[k]||'')}">${gradeHTML(mgrScore(m,k,g))}<b>${MOTIVES[k][0]}</b><span class="rc-sub">${Math.round(wt*100)}% · ${MOTIVES[k][1]}</span></div>`).join(''):'<p class="rc-sub" style="margin:0">Unknown until you scout them.</p>'}
+    <div class="sect">What they want · how they grade you <span class="rc-sub">(hover a grade for how to raise it)</span></div>${glad.scout?glad.motives.map(([k,wt])=>`<div style="display:flex;gap:8px;align-items:center;font-size:13px;margin:2px 0" title="${esc(MOT_ADVICE[k]||'')}">${gradeHTML(mgrScore(m,k,glad))}<b>${MOTIVES[k][0]}</b><span class="rc-sub">${Math.round(wt*100)}% · ${MOTIVES[k][1]}</span></div>`).join(''):'<p class="rc-sub" style="margin:0">Unknown until you scout them.</p>'}
     ${rep?`<div class="sect">Scouting report · ${rep.n} sparring bouts in the Ludus (week ${rep.wk})</div><div class="rc-stats"><span><b>${rep.win}/${rep.n}</b>wins</span><span><b>${rep.surv}/${rep.n}</b>survived</span><span><b>${rep.cf}</b>avg CF</span><span><b>${rep.dmg}</b>dmg dealt</span><span><b>${rep.taken}</b>dmg taken</span><span><b>${rep.pots}</b>pots</span><span><b>${rep.kn}</b>beasts</span></div><p class="rc-sub" style="margin:4px 0 0">Style: ${rep.tags.join(', ')}. ${rep.win/rep.n>=.4?'Wins more than their share.':rep.surv/rep.n<.4?'Dies too often to trust in a big bout.':'Solid, unspectacular.'}</p>`:''}
     <div id="mgProg"></div>
     <div class="sect">Recruiting · ${hrs} hour${hrs===1?'':'s'} left this week</div>
-    <div class="acts"><button class="btn" type="button" data-mg="scout" data-id="${g.id}" ${MGR.busy?'disabled':dis(recGate(g,'scout'),needHrs(w,3),needCoin(m,scoutCost(g)))}>Scout<small>3 h · ${scoutCost(g)} coin · 6 sparring bouts</small></button><button class="btn" type="button" data-mg="visit" data-id="${g.id}" ${dis(recGate(g,'visit'),[g.visits[m.id]&&w.week-g.visits[m.id]<3,'They feasted with you recently — every 3 weeks.'],needHrs(w,4),needCoin(m,visitCost(g)))}>Host a feast<small>4 h · ${visitCost(g)} coin · every 3 weeks</small></button><button class="btn" type="button" data-mg="gift2" data-id="${g.id}" ${dis(recGate(g,'gift'),[g.giftWk&&g.giftWk[m.id]&&w.week-g.giftWk[m.id]<2,'A gift landed too recently — every 2 weeks.'],needHrs(w,2),needCoin(m,giftCost(g)))}>Send a gift<small>2 h · ${giftCost(g)} coin · every 2 weeks</small></button>${!g.contract?`<button class="btn" type="button" data-mg="trial" data-id="${g.id}" ${MGR.busy?'disabled':dis(recGate(g,'trial'),needHrs(w,3),needCoin(m,4))}>Trial bout<small>3 h · 4 coin · they fight beside your best — trust + a full scout</small></button>`:''}</div>
-    <div class="sect">Pitch (1 h) <span class="rc-sub">· one pitch per recruit a week · <b>${pitchesLeft()}</b> of ${PITCH_MAX} pitches left this week</span></div><div class="acts">${Object.entries(MOTIVES).map(([k,[l]])=>`<button class="btn" type="button" data-mg="pitch" data-id="${g.id}|${k}" ${hrs<1?'disabled':dis(recGate(g,'pitch'),[pitchesLeft()<=0,`All ${PITCH_MAX} of this week's pitches are spent — spread your recruiting across the week's prospects.`])} style="flex:1 1 30%">${gradeHTML(mgrScore(m,k,g))} ${l}</button>`).join('')}</div>
-    ${signed?`<div class="sect">Poach from ${esc(mgrById(g.contract.mgr).ludus)}</div><p class="rc-sub" style="margin:0 0 6px">Buyout ${buyout(g)} coin to their lanista · their loyalty ${g.scout?loyaltyOf(g):'? (scout first)'} · morale ${g.scout?g.morale:'?'}</p><div class="bslip"><label>Wage <input type="number" class="tin" id="ofWage" value="${Math.ceil(askWage(g)*1.1)}" min="1" style="width:5em"></label><label>Weeks <select class="tin" id="ofWeeks" style="width:auto"><option>4</option><option selected>8</option><option>12</option></select></label><button class="btn primary" type="button" data-mg="poach" data-id="${g.id}" ${hrs<2?'disabled':dis(recGate(g,'offer'))}>Poach<small>2 h</small></button></div>`
-    :`<div class="sect">Offer a contract (1 h)</div><div class="bslip"><label>Wage <input type="number" class="tin" id="ofWage" value="${askWage(g)}" min="1" style="width:5em"></label><label>Weeks <select class="tin" id="ofWeeks" style="width:auto"><option>4</option><option selected>8</option><option>12</option></select></label><label>Bonus <input type="number" class="tin" id="ofBonus" value="0" min="0" style="width:5em"></label><button class="btn primary" type="button" data-mg="offer" data-id="${g.id}" ${hrs<1?'disabled':dis(recGate(g,'offer'))}>Offer</button></div>
+    <div class="acts"><button class="btn" type="button" data-mg="scout" data-id="${glad.id}" ${MGR.busy?'disabled':dis(recGate(glad,'scout'),needHrs(w,3),needCoin(m,scoutCost(glad)))}>Scout<small>3 h · ${scoutCost(glad)} coin · 6 sparring bouts</small></button><button class="btn" type="button" data-mg="visit" data-id="${glad.id}" ${dis(recGate(glad,'visit'),[glad.visits[m.id]&&w.week-glad.visits[m.id]<3,'They feasted with you recently — every 3 weeks.'],needHrs(w,4),needCoin(m,visitCost(glad)))}>Host a feast<small>4 h · ${visitCost(glad)} coin · every 3 weeks</small></button><button class="btn" type="button" data-mg="gift2" data-id="${glad.id}" ${dis(recGate(glad,'gift'),[glad.giftWk&&glad.giftWk[m.id]&&w.week-glad.giftWk[m.id]<2,'A gift landed too recently — every 2 weeks.'],needHrs(w,2),needCoin(m,giftCost(glad)))}>Send a gift<small>2 h · ${giftCost(glad)} coin · every 2 weeks</small></button>${!glad.contract?`<button class="btn" type="button" data-mg="trial" data-id="${glad.id}" ${MGR.busy?'disabled':dis(recGate(glad,'trial'),needHrs(w,3),needCoin(m,4))}>Trial bout<small>3 h · 4 coin · they fight beside your best — trust + a full scout</small></button>`:''}</div>
+    <div class="sect">Pitch (1 h) <span class="rc-sub">· one pitch per recruit a week · <b>${pitchesLeft()}</b> of ${PITCH_MAX} pitches left this week</span></div><div class="acts">${Object.entries(MOTIVES).map(([k,[l]])=>`<button class="btn" type="button" data-mg="pitch" data-id="${glad.id}|${k}" ${hrs<1?'disabled':dis(recGate(glad,'pitch'),[pitchesLeft()<=0,`All ${PITCH_MAX} of this week's pitches are spent — spread your recruiting across the week's prospects.`])} style="flex:1 1 30%">${gradeHTML(mgrScore(m,k,glad))} ${l}</button>`).join('')}</div>
+    ${signed?`<div class="sect">Poach from ${esc(mgrById(glad.contract.mgr).ludus)}</div><p class="rc-sub" style="margin:0 0 6px">Buyout ${buyout(glad)} coin to their lanista · their loyalty ${glad.scout?loyaltyOf(glad):'? (scout first)'} · morale ${glad.scout?glad.morale:'?'}</p><div class="bslip"><label>Wage <input type="number" class="tin" id="ofWage" value="${Math.ceil(askWage(glad)*1.1)}" min="1" style="width:5em"></label><label>Weeks <select class="tin" id="ofWeeks" style="width:auto"><option>4</option><option selected>8</option><option>12</option></select></label><button class="btn primary" type="button" data-mg="poach" data-id="${glad.id}" ${hrs<2?'disabled':dis(recGate(glad,'offer'))}>Poach<small>2 h</small></button></div>`
+    :`<div class="sect">Offer a contract (1 h)</div><div class="bslip"><label>Wage <input type="number" class="tin" id="ofWage" value="${askWage(glad)}" min="1" style="width:5em"></label><label>Weeks <select class="tin" id="ofWeeks" style="width:auto"><option>4</option><option selected>8</option><option>12</option></select></label><label>Bonus <input type="number" class="tin" id="ofBonus" value="0" min="0" style="width:5em"></label><button class="btn primary" type="button" data-mg="offer" data-id="${glad.id}" ${hrs<1?'disabled':dis(recGate(glad,'offer'))}>Offer</button></div>
     <label style="display:flex;gap:6px;align-items:center;font-size:13px;margin-top:6px"><input type="checkbox" id="ofPledge"> <span><b>Pledge them the main event</b> within 2 weeks of signing — worth +12 interest now; break it and your Honor pays for years.</span></label>
-    <p class="rc-sub" style="margin:4px 0 0">Asks about <b>${askWage(g)}</b> coin a week${STAR_PREM[starsOf(effOvr(g))]>1?` (a ${starsOf(effOvr(g))}★ premium)`:''}. A signing bonus counts toward the weekly wage (spread over the weeks). <b>💰 Money talks:</b> every coin over the ask adds interest — 1.25× the ask ≈ +22, 1.5× ≈ +45${m.fame<reqFame(g)?`; about <b>${Math.ceil(askWage(g)*fameBypassX(g,m))}</b> a week buys past their fame demand`:''}. One offer per recruit a week.</p>`}
+    <p class="rc-sub" style="margin:4px 0 0">Asks about <b>${askWage(glad)}</b> coin a week${STAR_PREM[starsOf(effOvr(glad))]>1?` (a ${starsOf(effOvr(glad))}★ premium)`:''}. A signing bonus counts toward the weekly wage (spread over the weeks). <b>💰 Money talks:</b> every coin over the ask adds interest — 1.25× the ask ≈ +22, 1.5× ≈ +45${m.fame<reqFame(glad)?`; about <b>${Math.ceil(askWage(glad)*fameBypassX(glad,m))}</b> a week buys past their fame demand`:''}. One offer per recruit a week.</p>`}
   </div>`}`;
 }
+/* walkFee — cost of walking this week's arena (half in your home city). */
 const walkFee=()=>{const w9=W_(),m9=me();return w9&&m9&&w9.night&&LOCATIONS[w9.night.loc]&&LOCATIONS[w9.night.loc].n===m9.city?3:6}; // v0.36: walking your own home sand costs half
-const scoutCost=g=>{const c=2+starsOf(pubOvr(g))*2;const m9=typeof me==='function'?me():null;return m9&&m9.city&&g.city===m9.city?Math.ceil(c/2):c}; // v0.36: home-city fighters scout at half price
+/* scoutCost — scouting hours for a fighter (by stars, half for your home city). */
+const scoutCost=glad=>{const c=2+starsOf(pubOvr(glad))*2;const m9=typeof me==='function'?me():null;return m9&&m9.city&&glad.city===m9.city?Math.ceil(c/2):c}; // v0.36: home-city fighters scout at half price
 /* v0.17 — the card for a fighter already in YOUR stable: same layout as a recruit card, but the
    actions are a lanista's retention work. Every action raises morale and/or loyalty (g.loyB), and
    loyalty is exactly what a rival must beat to poach them. */
@@ -1243,7 +1378,9 @@ const scoutCost=g=>{const c=2+starsOf(pubOvr(g))*2;const m9=typeof me==='functio
    and the bout is eventually CALLED. No paying public: the stands fill with fighters from around the
    league, who can only watch and talk. Rewards: their fighters fully scouted, a training chance for
    yours (better if they last), a perk point, and warmer relations with that lanista. */
+/* EXHIB_COST / EXHIB_HOURS — what an exhibition costs: coin and recruiting hours. TWEAK: 5 and 3. */
 const EXHIB_COST=5,EXHIB_HOURS=3;
+/* exhibSetup — picks the exhibition field: your fighter, two of the rival's closest-rated, sparring partners to make four. */
 function exhibSetup(myGid,oppId){
   const w=W_(),m=me();const g=gById(myGid);const opp=mgrById(oppId);if(!g||!opp)return null;
   const theirs=rosterOf(opp).filter(x=>!x.inj).sort((a,b)=>Math.abs(effOvr(a)-effOvr(g))-Math.abs(effOvr(b)-effOvr(g))).slice(0,2);
@@ -1252,13 +1389,15 @@ function exhibSetup(myGid,oppId){
   while(1+theirs.length+partners.length<4){const x=genGlad({ovr:effOvr(g)});x.debut={s:w.season,wk:w.week};w.glads.push(x);partners.push(x)}
   return {g,opp,theirs,partners};
 }
-function exhibCfg(X,live,fight){
+/* exhibCfg — the startEvent config of an exhibition (no Fates, stands of fighters only). */
+function exhibCfg(match,live,fight){
   const m=me();
-  const seats=[seatFor(X.g,m.color,!!fight),...X.theirs.map(x=>seatFor(x,X.opp.color)),...X.partners.map(x=>seatFor(x,null))];
+  const seats=[seatFor(match.g,m.color,!!fight),...match.theirs.map(x=>seatFor(x,match.opp.color)),...match.partners.map(x=>seatFor(x,null))];
   const home=LOCATIONS.findIndex(L=>L&&L.n===m.city);
   return {ev:'democritus',loc:home>0?home:3,seats,opts:{mods:false,mandata:true,optOffers:true,eaglePot:true,spect:live?'exhib':0},omen:OMENS[0],
-    exhibCtx:{cid:W_().id,week:W_().week,my:X.g.id,opp:X.opp.id,theirs:X.theirs.map(x=>x.id)}};
+    exhibCtx:{cid:W_().id,week:W_().week,my:match.g.id,opp:match.opp.id,theirs:match.theirs.map(x=>x.id)}};
 }
+/* exhibApply — applies an exhibition: their fighters fully scouted, a training chance for yours, a perk point, cooler rivalry. */
 function exhibApply(res,ctx){
   const w=W_(),m=me();const g=gById(ctx.my);const opp=mgrById(ctx.opp);if(!g||!opp)return '';
   const row=res.rows.find(r=>r.mgrId===g.id)||{};const lasted=row.alive||row.won;
@@ -1272,25 +1411,28 @@ function exhibApply(res,ctx){
   const txt=`Exhibition with ${esc(opp.ludus)}: ${esc(g.name)} ${row.won?'is the last one standing':lasted?'is still standing when it is called':'is pulled by the doctors'} (${row.f||0} CF). Their fighters are fully scouted; relations warm (rivalry −4); +1 perk point.${lines.length?' '+lines.join('; ')+'.':''}`;
   (w.exlog=w.exlog||[]).unshift({s:w.season,wk:w.week,txt});w.exlog=w.exlog.slice(0,12);tnews(txt);return txt;
 }
+/* mgrAfterExhib — after a watched exhibition: loads the career if needed and applies it. */
 async function mgrAfterExhib(res,ctx){
   if(!MGR.world||MGR.world.id!==ctx.cid){const d=await Store.getDoc('mgrCareers',ctx.cid);if(!d)return;MGR.world=mgrMigrate(JSON.parse(d.world))}
   exhibApply(res,ctx);saveWorld(true);
 }
-function recapHTML(R){
-  return `<div class="paper"><div class="pmast"><div class="ptitle">ACTA DIURNA</div><div class="psub">SEASON ${R.season} · THE RECAP EDITION · ${esc(R.ludus)} · kept in the Ludus Archives</div></div>
+/* recapHTML — a season recap edition of the Acta Diurna (Archives). */
+function recapHTML(recap){
+  return `<div class="paper"><div class="pmast"><div class="ptitle">ACTA DIURNA</div><div class="psub">SEASON ${recap.season} · THE RECAP EDITION · ${esc(recap.ludus)} · kept in the Ludus Archives</div></div>
    <div class="pcols"><div>
-    <div class="phead">${R.finale&&R.finale.champ?`${esc(R.finale.champ).toUpperCase()} TAKES THE ${esc(R.finale.kind).toUpperCase()}`:`SEASON ${R.season} PASSES INTO THE ARCHIVES`}</div>
-    <div class="pbody">${R.finale?`Roma filled for the season's ${esc(R.finale.kind)} finale — the top four stables drafting ${R.finale.names.map(esc).join(', ')}, Cassian presiding as summa rudis. ${R.finale.champ?`<b>${esc(R.finale.champ)}</b>${R.finale.champLudus?` of ${esc(R.finale.champLudus)}`:''} took the palm with ${R.finale.f} Crowd Favor after ${R.finale.turns} turns.`:'No champion was crowned; the sand keeps its own counsel.'}`:'No finale was fought; the season closed with ledgers instead of laurels.'} The season's crown: <b>${esc(R.champLanista.name)}</b> of ${esc(R.champLanista.ludus)} (fame ${R.champLanista.fame})${R.champLanista.you?' — <b>yours</b>':''}.</div>
-    <div class="psec"><div class="ph">YOUR SEASON · ${esc(R.ludus)}</div>
-      <div class="prow">Record <b>${R.you.rec}</b> · fame ${R.you.fame} · treasury ${R.you.coin} · betting ${R.you.betNet>=0?'+':''}${R.you.betNet}</div>
-      <div class="prow">Pledges kept ${R.you.kept} · broken ${R.you.broken} · fighters lost ${R.you.deaths}${R.you.rigCaught?` · <b>caught fixing: ${R.you.rigCaught}</b>`:''}</div></div>
+    <div class="phead">${recap.finale&&recap.finale.champ?`${esc(recap.finale.champ).toUpperCase()} TAKES THE ${esc(recap.finale.kind).toUpperCase()}`:`SEASON ${recap.season} PASSES INTO THE ARCHIVES`}</div>
+    <div class="pbody">${recap.finale?`Roma filled for the season's ${esc(recap.finale.kind)} finale — the top four stables drafting ${recap.finale.names.map(esc).join(', ')}, Cassian presiding as summa rudis. ${recap.finale.champ?`<b>${esc(recap.finale.champ)}</b>${recap.finale.champLudus?` of ${esc(recap.finale.champLudus)}`:''} took the palm with ${recap.finale.f} Crowd Favor after ${recap.finale.turns} turns.`:'No champion was crowned; the sand keeps its own counsel.'}`:'No finale was fought; the season closed with ledgers instead of laurels.'} The season's crown: <b>${esc(recap.champLanista.name)}</b> of ${esc(recap.champLanista.ludus)} (fame ${recap.champLanista.fame})${recap.champLanista.you?' — <b>yours</b>':''}.</div>
+    <div class="psec"><div class="ph">YOUR SEASON · ${esc(recap.ludus)}</div>
+      <div class="prow">Record <b>${recap.you.rec}</b> · fame ${recap.you.fame} · treasury ${recap.you.coin} · betting ${recap.you.betNet>=0?'+':''}${recap.you.betNet}</div>
+      <div class="prow">Pledges kept ${recap.you.kept} · broken ${recap.you.broken} · fighters lost ${recap.you.deaths}${recap.you.rigCaught?` · <b>caught fixing: ${recap.you.rigCaught}</b>`:''}</div></div>
    </div><div>
-    ${R.standings?`<div class="psec" style="margin-top:0"><div class="ph">FINAL LEAGUE TABLE</div>${R.standings.map((m,i)=>`<div class="prow">${ROMAN[i+1]||i+1}. <b>${esc(m.ludus)}</b>${m.me?' <span class="pme">(yours)</span>':''} <span class="rc-sub">${m.pts} pts · ${m.rec}</span></div>`).join('')}</div>`:''}
-    <div class="psec"><div class="ph">THE SAND'S FINEST, AS THE SEASON CLOSED</div>${R.best.map((b,i)=>`<div class="prow">${ROMAN[i+1]}. <b>${esc(b.n)}</b> ${b.ovr} · ${esc(b.ludus)}</div>`).join('')}</div>
-    <div class="psec"><div class="ph">THE SEASON'S DEAD · ${R.graves}</div>${R.obits.map(t=>`<div class="prow">✝ ${esc(t)}</div>`).join('')||'<div class="prow rc-sub">The sand went hungry. Remarkable.</div>'}</div>
+    ${recap.standings?`<div class="psec" style="margin-top:0"><div class="ph">FINAL LEAGUE TABLE</div>${recap.standings.map((m,i)=>`<div class="prow">${ROMAN[i+1]||i+1}. <b>${esc(m.ludus)}</b>${m.me?' <span class="pme">(yours)</span>':''} <span class="rc-sub">${m.pts} pts · ${m.rec}</span></div>`).join('')}</div>`:''}
+    <div class="psec"><div class="ph">THE SAND'S FINEST, AS THE SEASON CLOSED</div>${recap.best.map((b,i)=>`<div class="prow">${ROMAN[i+1]}. <b>${esc(b.n)}</b> ${b.ovr} · ${esc(b.ludus)}</div>`).join('')}</div>
+    <div class="psec"><div class="ph">THE SEASON'S DEAD · ${recap.graves}</div>${recap.obits.map(t=>`<div class="prow">✝ ${esc(t)}</div>`).join('')||'<div class="prow rc-sub">The sand went hungry. Remarkable.</div>'}</div>
    </div></div>
-   <div class="pfoot">Bound in leather and shelved in the Ludus Archives, ${esc(R.date)}.</div></div>`;
+   <div class="pfoot">Bound in leather and shelved in the Ludus Archives, ${esc(recap.date)}.</div></div>`;
 }
+/* archiveHTML — the Ludus Archives: this season's papers and every season recap. */
 function archiveHTML(){
   const w=W_();const paps=w.papers||[];const arcs=(w.archives||[]).slice().reverse();
   if(MGR.arcSel!=null&&arcs[MGR.arcSel])return `<button class="btn" type="button" data-mg="arcback">← Back to the Archives</button><div style="margin-top:8px">${recapHTML(arcs[MGR.arcSel])}</div>`;
@@ -1303,34 +1445,37 @@ function archiveHTML(){
    A full house of healing: the Medicus's regimens, the surgeon's knife, the bathhouse, the priests
    of Hygeia for lost limbs and of Asclepius for everything at once. The player-board avatar shows
    each fighter's wounds. Surgeon-grade wounds FESTER if ignored — three weeks and the story ends. */
-function mgAvatar(g){
-  const p={id:'inf'+String(g.id).slice(-5),name:g.name,hp:{...BASE_HP},ap:{},pieces:{}};
+/* mgAvatar — the infirmary avatar of a fighter: severed limbs gone, the injured location low. */
+function mgAvatar(glad){
+  const p={id:'inf'+String(glad.id).slice(-5),name:glad.name,hp:{...BASE_HP},ap:{},pieces:{}};
   for(const l of LOCS){p.ap[l]=0;p.pieces[l]=[]}
-  for(const l of g.severed||[])p.hp[l]=0;
-  if(g.inj&&!g.inj.war){const l=injLoc(g.inj.label);if(p.hp[l]>0)p.hp[l]=Math.max(1,Math.round(BASE_HP[l]*0.35))}
+  for(const l of glad.severed||[])p.hp[l]=0;
+  if(glad.inj&&!glad.inj.war){const l=injLoc(glad.inj.label);if(p.hp[l]>0)p.hp[l]=Math.max(1,Math.round(BASE_HP[l]*0.35))}
   return `<span class="infav">${avatarSVG(p)}</span>`;
 }
 // the care a hurt fighter can receive — shared by the Infirmary tab and the fighter's card in Your ludus
 // v0.28: what a fighter costs you, line by line — all of it paid every week, when the week ends
-function wageBreakHTML(g){const c=g.contract;const r=c.raises||0;const base=c.base??(c.wage-2*r);const ask=askWage(g);const tr=g.ptrain?PTRAIN_COST:0;const tot=c.wage+tr;const wl=Math.max(0,c.weeks);
+/* wageBreakHTML — what a fighter costs you each week, line by line. */
+function wageBreakHTML(glad){const c=glad.contract;const r=c.raises||0;const base=c.base??(c.wage-2*r);const ask=askWage(glad);const tr=glad.ptrain?PTRAIN_COST:0;const tot=c.wage+tr;const wl=Math.max(0,c.weeks);
   return `<div class="wagebox"><div class="wbrow"><span>Signed wage</span><b>${base}</b></div>${r?`<div class="wbrow"><span>Raises ×${r} (+2 each)</span><b>+${2*r}</b></div>`:''}${tr?`<div class="wbrow"><span>Personal trainer (this week)</span><b>+${tr}</b></div>`:''}
     <div class="wbrow tot"><span>${tr?'Costs you this week':'Costs you each week'}</span><b>${ICO.coin} ${tot}</b></div>
     <div class="rc-sub">Paid <b>every week</b>, when you end the week, straight from the treasury. ${wl} week${wl===1?'':'s'} left ≈ ${c.wage*wl} coin still owed. Their asking price today: ${ask}/wk${c.wage<ask?` — <b style="color:var(--blood2)">underpaid by ${ask-c.wage}</b> (morale slips each week)`:c.wage>ask?' — paid above their ask (morale holds up)':''}.</div></div>`}
-function careHTML(g){
-  const w=W_(),m=me();const left=Math.max(0,repCap()-(w.repair||0));const req=g.inj?injReq(g.inj):null;
-  if(!g.inj&&!(g.severed||[]).length)return '';
-  return `${g.inj?`<small>${g.inj.war?`⚔️ ${esc(g.inj.label)} — no medicine reaches a war`:`🩹 <b>${esc(g.inj.label)}</b> (−${g.inj.pen} rating) · needs <b>${req==='rest'?'rest (or a bathhouse day)':req==='medicus'?'the Medicus':'THE SURGEON'}</b>${g.inj.neglect?` · <b style="color:var(--blood2)">festering ${g.inj.neglect}/3</b>`:''}`}</small>`:''}
-    ${(g.severed||[]).length?`<small>🦴 severed: ${g.severed.map(l=>LOCN[l]).join(', ')} — only the priests of Hygeia regrow flesh (${HYGEIA} coin a limb)</small>`:''}
+/* careHTML — the care options for a hurt fighter (Medicus, surgeon, Hygeia, Asclepius, rest). */
+function careHTML(glad){
+  const w=W_(),m=me();const left=Math.max(0,repCap()-(w.repair||0));const req=glad.inj?injReq(glad.inj):null;
+  if(!glad.inj&&!(glad.severed||[]).length)return '';
+  return `${glad.inj?`<small>${glad.inj.war?`⚔️ ${esc(glad.inj.label)} — no medicine reaches a war`:`🩹 <b>${esc(glad.inj.label)}</b> (−${glad.inj.pen} rating) · needs <b>${req==='rest'?'rest (or a bathhouse day)':req==='medicus'?'the Medicus':'THE SURGEON'}</b>${glad.inj.neglect?` · <b style="color:var(--blood2)">festering ${glad.inj.neglect}/3</b>`:''}`}</small>`:''}
+    ${(glad.severed||[]).length?`<small>🦴 severed: ${glad.severed.map(l=>LOCN[l]).join(', ')} — only the priests of Hygeia regrow flesh (${HYGEIA} coin a limb)</small>`:''}
     <div class="acts" style="margin-top:6px">
-      ${g.inj&&!g.inj.war&&req!=='surgeon'?`<button class="btn primary" type="button" data-mg="medic" data-id="${g.id}" ${dis([g.medWk===w.week,'Already seen the Medicus this week.'],[left<MEDICUS,`Your physicians have done their ${repCap()} coin of work this week — the cap resets when the week ends. The bathhouse and Asclepius still work.`],needCoin(m,MEDICUS))}>⚕ Medicus<small>${MEDICUS} coin · counts toward the weekly cap · clears it · +12 morale</small></button>`:''}
-      ${g.inj&&!g.inj.war&&req==='surgeon'?`<button class="btn primary" type="button" data-mg="surgeon" data-id="${g.id}" ${dis([left<SURGEON,`Your physicians have done their ${repCap()} coin of work this week — the cap resets when the week ends.`],needCoin(m,SURGEON))}>🔪 The surgeon<small>${SURGEON} coin · counts toward the weekly cap · the only physician cure · 1-in-10 mishap costs a week</small></button>`:''}
-      ${g.inj&&!g.inj.war?`<button class="btn" type="button" data-mg="bath" data-id="${g.id}" ${dis([g.bathWk===w.week,'They have already been steamed, scraped and oiled this week.'],needCoin(m,5))}>🛁 Bathhouse day<small>5 coin · heals a week faster · +4 morale</small></button>`:''}
-      ${g.inj&&!g.inj.war?`<button class="btn" type="button" data-mg="asclepius" data-id="${g.id}" ${dis(needCoin(m,ASCLEPIUS))}>⚡ Temple of Asclepius<small>${ASCLEPIUS} coin · outside help (no cap) · heals any wound at once · +8 morale</small></button>`:''}
-      ${(g.severed||[]).length?`<button class="btn" type="button" data-mg="heal" data-id="${g.id}" ${dis([left<HYGEIA,`Your physicians have done their ${repCap()} coin of work this week — the cap resets when the week ends.`],needCoin(m,HYGEIA))}>🌿 Blessings of Hygeia<small>${HYGEIA} coin a limb · counts toward the weekly cap · regrows lost limbs</small></button>`:''}
+      ${glad.inj&&!glad.inj.war&&req!=='surgeon'?`<button class="btn primary" type="button" data-mg="medic" data-id="${glad.id}" ${dis([glad.medWk===w.week,'Already seen the Medicus this week.'],[left<MEDICUS,`Your physicians have done their ${repCap()} coin of work this week — the cap resets when the week ends. The bathhouse and Asclepius still work.`],needCoin(m,MEDICUS))}>⚕ Medicus<small>${MEDICUS} coin · counts toward the weekly cap · clears it · +12 morale</small></button>`:''}
+      ${glad.inj&&!glad.inj.war&&req==='surgeon'?`<button class="btn primary" type="button" data-mg="surgeon" data-id="${glad.id}" ${dis([left<SURGEON,`Your physicians have done their ${repCap()} coin of work this week — the cap resets when the week ends.`],needCoin(m,SURGEON))}>🔪 The surgeon<small>${SURGEON} coin · counts toward the weekly cap · the only physician cure · 1-in-10 mishap costs a week</small></button>`:''}
+      ${glad.inj&&!glad.inj.war?`<button class="btn" type="button" data-mg="bath" data-id="${glad.id}" ${dis([glad.bathWk===w.week,'They have already been steamed, scraped and oiled this week.'],needCoin(m,5))}>🛁 Bathhouse day<small>5 coin · heals a week faster · +4 morale</small></button>`:''}
+      ${glad.inj&&!glad.inj.war?`<button class="btn" type="button" data-mg="asclepius" data-id="${glad.id}" ${dis(needCoin(m,ASCLEPIUS))}>⚡ Temple of Asclepius<small>${ASCLEPIUS} coin · outside help (no cap) · heals any wound at once · +8 morale</small></button>`:''}
+      ${(glad.severed||[]).length?`<button class="btn" type="button" data-mg="heal" data-id="${glad.id}" ${dis([left<HYGEIA,`Your physicians have done their ${repCap()} coin of work this week — the cap resets when the week ends.`],needCoin(m,HYGEIA))}>🌿 Blessings of Hygeia<small>${HYGEIA} coin a limb · counts toward the weekly cap · regrows lost limbs</small></button>`:''}
     </div>${careGuideHTML(req)}`;
 }
 // v0.28: which cure, and why — the physicians' weekly cap explained in plain words
-function careGuideHTML(req){const w=W_();const left=Math.max(0,repCap()-(w.repair||0));const hl=k=>req===k?' class="hl"':'';
+function careGuideHTML(need){const w=W_();const left=Math.max(0,repCap()-(w.repair||0));const hl=k=>need===k?' class="hl"':'';
   return `<details class="careguide"><summary>Which cure should I use? <span class="rc-sub">· your physicians can still do <b>${left}</b> of ${repCap()} coin of work this week</span></summary>
     <p class="rc-sub" style="margin:4px 0">Your ludus <b>physicians</b> (the Medicus, the surgeon, the priests of Hygeia who call on you) can only do so much work a week: <b>${repCap()} coin</b> of treatment in total. That is a <b>cap on their time</b>, not extra money — every cure is still paid from your treasury. The <b>bathhouse</b> and the <b>temple of Asclepius</b> are outside help, so they do not count toward the cap.</p>
     <table class="tally compact"><tr><th>Cure</th><th>Cost</th><th>Cap?</th><th>What it does</th><th>Use it when</th></tr>
@@ -1340,6 +1485,7 @@ function careGuideHTML(req){const w=W_();const left=Math.max(0,repCap()-(w.repai
      <tr${hl('surgeon')}><td>🔪 Surgeon</td><td>${SURGEON}</td><td>yes</td><td>The only physician cure for a <b>festering</b> wound · 1 in 10 goes wrong (a week lost)</td><td>it festers — waiting kills (3 strikes)</td></tr>
      <tr><td>⚡ Asclepius</td><td>${ASCLEPIUS}</td><td>no</td><td>Heals <b>any</b> wound at once, no mishap · +8 morale</td><td>the cap is spent, a star must fight tonight, or you won't risk the surgeon's knife — it costs 2.5× the Medicus</td></tr>
      <tr><td>🌿 Hygeia</td><td>${HYGEIA}/limb</td><td>yes</td><td>The <b>only</b> way to regrow a severed limb</td><td>a lost limb costs 6 rating until it grows back</td></tr></table></details>`}
+/* infirmaryHTML — the Infirmary tab. */
 function infirmaryHTML(){
   const w=W_(),m=me();const left=Math.max(0,repCap()-(w.repair||0));
   const hurt=rosterOf(m).filter(g=>g.inj||(g.severed||[]).length);
@@ -1347,8 +1493,10 @@ function infirmaryHTML(){
   ${hurt.length?`<div class="list2" style="grid-template-columns:repeat(auto-fill,minmax(340px,1fr))">${hurt.map(g=>`<div class="lrow" style="--pc:${g.inj&&g.inj.neglect?'var(--blood2)':'var(--gold)'}">${mgAvatar(g)}<div class="t"><b>${esc(g.name)}</b> ${gSex(g)} <span class="rc-sub">${effOvr(g)} · morale ${g.morale}</span>${careHTML(g)}</div></div>`).join('')}</div>`
    :'<p class="rc-sub">The steam room sits empty; the surgeon sharpens his knives on nothing. May it stay that way.</p>'}`;
 }
+/* trainYardCardHTML — the training regime picker. */
 function trainYardCardHTML(){const w=W_();return `<div class="card2"><div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><b>🏋 Training yard</b><div class="seg">${Object.entries(TRAIN_REGIMES).map(([k,R])=>`<button type="button" data-mg="regime" data-id="${k}" class="${(w.train||'off')===k?'on':''}" title="${R.c?`${R.c} coin/week · ${Math.round(R.gain*100)}% +1-rating odds per fighter · ${Math.round(R.inj*100)}% injury risk`:'no team drills this week'}">${R.n}${R.c?` · ${R.c}c`:''}</button>`).join('')}</div></div>
     <span class="rc-sub">Resolved when the week ends; the report prints in the Acta Diurna. Lighter drills are cheap and safe; brutal drills bring the big gains — and the injuries (benched and rating-docked until the Medicus or a week of rest). Your Discipline sweetens every regime, and ill omens make any yard slicker. Add a <b>personal trainer (doctore)</b> (⚒ ${PTRAIN_COST}c, on each fighter\u2019s card) for focused work on one fighter — the best odds of all, a small extra risk.</span></div>`}
+/* practiceHTML — the Practice (exhibitions) tab. */
 function practiceHTML(){
   const w=W_(),m=me();const mine=rosterOf(m).filter(g=>!g.inj);const opps=w.mgrs.filter(x=>!x.isPlayer&&rosterOf(x).length);
   const ready=mine.filter(g=>g.exWk!==w.week);
@@ -1364,47 +1512,58 @@ function practiceHTML(){
    what would enable them; clicking one says it out loud instead of doing nothing. */
 /* v0.28 RECRUITING DISCIPLINE: one of each recruiting action per recruit per week, three pitches a week in all.
    Spamming one prospect no longer works — spread the hours, and let COIN do the heavy lifting (see offerVerdict). */
+/* PITCH_MAX — pitches a week in all. TWEAK: the 3. */
 const PITCH_MAX=3;
+/* pitchesLeft — pitches left this week. */
 const pitchesLeft=()=>{const w=W_();return PITCH_MAX-(w.pitchN&&w.pitchN.wk===w.week?w.pitchN.n:0)};
+/* REC_VERB — past-tense verbs of the recruiting actions. */
 const REC_VERB={scout:'scouted',trial:'held a trial for',visit:'feasted',gift:'sent a gift to',pitch:'pitched',offer:'made an offer to'};
-function recGate(g,k){const w=W_(),m=me();const r=g.recW&&g.recW[m.id];return [!!(r&&r.wk===w.week&&r.a[k]),`You already ${REC_VERB[k]} ${g.name} this week — one of each recruiting action per recruit, per week.`]}
-function recMark(g,k){const w=W_(),m=me();g.recW=g.recW||{};const r=g.recW[m.id];if(!r||r.wk!==w.week)g.recW[m.id]={wk:w.week,a:{}};g.recW[m.id].a[k]=1}
+/* recGate — [blocked?, why] — one of each recruiting action per recruit per week. */
+function recGate(glad,action){const w=W_(),m=me();const r=glad.recW&&glad.recW[m.id];return [!!(r&&r.wk===w.week&&r.a[action]),`You already ${REC_VERB[action]} ${glad.name} this week — one of each recruiting action per recruit, per week.`]}
+/* recMark — marks a recruiting action as done this week. */
+function recMark(glad,action){const w=W_(),m=me();glad.recW=glad.recW||{};const r=glad.recW[m.id];if(!r||r.wk!==w.week)glad.recW[m.id]={wk:w.week,a:{}};glad.recW[m.id].a[action]=1}
+/* dis — data-dis/title attributes from the first failing [bad, why] check (cost-gated buttons explain themselves). */
 function dis(...checks){for(const [bad,why] of checks)if(bad)return `data-dis="${esc(why)}" title="${esc(why)}"`;return ''}
-const needCoin=(m,c)=>[m.coin<c,`Needs ${c} coin — your treasury holds ${m.coin}. Win purses, bet well, or wait for wages to turn.`];
-const needHrs=(w,h)=>[w.hours<h,`Needs ${h} recruiting hour${h===1?'':'s'} — ${w.hours} left. Hours refill when the week ends.`];
-const kinOf=g=>(typeof CROWD_CACHE!=='undefined'?CROWD_CACHE:[]).filter(r=>r.kin&&String(r.kin.name).toLowerCase()===String(g.name).toLowerCase());
-function stableCardHTML(g){
-  const w=W_(),m=me();const hrs=w.hours;const loy=loyaltyOf(g);
-  const rivals=suitors(g).filter(x=>x.m!==m).slice(0,3);const threat=rivals.find(x=>x.v>loy);
-  const left=Math.max(0,repCap()-(w.repair||0));const bonus=giftCost(g);
-  const cool=(k,n)=>g[k]!=null&&w.week-g[k]<n;
-  return `<div class="sect">In your stable</div>${typeof purseLine==='function'?purseLine(g):''}
-    <div style="display:grid;grid-template-columns:90px 1fr 34px;gap:6px;align-items:center;font-size:13px"><span>Morale</span><div class="meter"><i style="width:${g.morale}%"></i></div><span class="n">${g.morale}</span>
+/* needCoin — [too poor?, why] check for dis(). */
+const needCoin=(mgr,cost)=>[mgr.coin<cost,`Needs ${cost} coin — your treasury holds ${mgr.coin}. Win purses, bet well, or wait for wages to turn.`];
+/* needHrs — [too few hours?, why] check for dis(). */
+const needHrs=(world,hours)=>[world.hours<hours,`Needs ${hours} recruiting hour${hours===1?'':'s'} — ${world.hours} left. Hours refill when the week ends.`];
+/* kinOf — the regulars in the stands who are this fighter's kin. */
+const kinOf=glad=>(typeof CROWD_CACHE!=='undefined'?CROWD_CACHE:[]).filter(r=>r.kin&&String(r.kin.name).toLowerCase()===String(glad.name).toLowerCase());
+/* stableCardHTML — the card of a fighter in YOUR stable: record, contract, morale, care and retention actions. */
+function stableCardHTML(glad){
+  const w=W_(),m=me();const hrs=w.hours;const loy=loyaltyOf(glad);
+  const rivals=suitors(glad).filter(x=>x.m!==m).slice(0,3);const threat=rivals.find(x=>x.v>loy);
+  const left=Math.max(0,repCap()-(w.repair||0));const bonus=giftCost(glad);
+  const cool=(k,n)=>glad[k]!=null&&w.week-glad[k]<n;
+  return `<div class="sect">In your stable</div>${typeof purseLine==='function'?purseLine(glad):''}
+    <div style="display:grid;grid-template-columns:90px 1fr 34px;gap:6px;align-items:center;font-size:13px"><span>Morale</span><div class="meter"><i style="width:${glad.morale}%"></i></div><span class="n">${glad.morale}</span>
       <span title="What a rival's interest must exceed to poach them">Loyalty</span><div class="meter gold"><i style="width:${loy}%"></i></div><span class="n">${loy}</span></div>
-    ${wageBreakHTML(g)}<p class="rc-sub" style="margin:4px 0 0">${Math.max(0,g.contract.weeks)} week${g.contract.weeks===1?'':'s'} left on the contract${g.pledge?` · <b>promised the main event</b> by week ${wkOf(g.pledge.due)}`:''}${g.inj?` · <b style="color:var(--blood2)">🩹 ${esc(g.inj.label)}</b>`:''}${(g.severed||[]).length?` · severed: ${g.severed.map(l=>LOCN[l]).join(', ')}`:''}</p>
-    ${g.inj||(g.severed||[]).length?`<div class="card2 carebox"><div class="sect" style="margin-top:0">⚕ Needs care</div>${careHTML(g)}</div>`:''}
+    ${wageBreakHTML(glad)}<p class="rc-sub" style="margin:4px 0 0">${Math.max(0,glad.contract.weeks)} week${glad.contract.weeks===1?'':'s'} left on the contract${glad.pledge?` · <b>promised the main event</b> by week ${wkOf(glad.pledge.due)}`:''}${glad.inj?` · <b style="color:var(--blood2)">🩹 ${esc(glad.inj.label)}</b>`:''}${(glad.severed||[]).length?` · severed: ${glad.severed.map(l=>LOCN[l]).join(', ')}`:''}</p>
+    ${glad.inj||(glad.severed||[]).length?`<div class="card2 carebox"><div class="sect" style="margin-top:0">⚕ Needs care</div>${careHTML(glad)}</div>`:''}
     <div class="sect">Keeping them · ${hrs} hour${hrs===1?'':'s'} left this week</div>
     <div class="acts">
-      <button class="btn" type="button" data-mg="meal" data-id="${g.id}" ${dis([cool('mealWk',1),'Already shared a meal this week — once a week keeps it special.'],needHrs(w,1),needCoin(m,3))}>🍷 Share a meal<small>1 h · 3 coin · weekly · +6 morale, +2 loyalty</small></button>
-      <button class="btn" type="button" data-mg="word" data-id="${g.id}" ${dis([cool('wordWk',1),'You already talked this week — pressing them twice reads as nerves.'],needHrs(w,1))}>🗣 A private word<small>1 h · weekly · hear what troubles them · +3 morale</small></button>
-      <button class="btn" type="button" data-mg="kintix" data-id="${g.id}" ${dis([cool('kinWk',1),'The family already has tickets this week.'],needCoin(m,4))}>🎟 Tickets for the family<small>4 coin · weekly · kin seated at the next event · +5 morale, +3 loyalty</small></button>
-      <button class="btn" type="button" data-mg="bonus" data-id="${g.id}" ${dis([cool('bonusWk',2),'A bonus lands every 2 weeks at most — coin loses meaning faster than wine.'],needCoin(m,bonus))}>💰 Pay a bonus<small>${bonus} coin · every 2 weeks · +8 morale, +4 loyalty</small></button>
-      <button class="btn" type="button" data-mg="raise" data-id="${g.id}" ${dis(needHrs(w,1))}>📈 Raise their wage<small>1 h · +2 coin a week for good · +10 morale, +6 loyalty</small></button>
-      ${!g.pledge?`<button class="btn" type="button" data-mg="promise" data-id="${g.id}" ${dis(needHrs(w,1))}>🏟 Promise the main event<small>1 h · within 2 weeks · +8 morale now — break it and Honor pays</small></button>`:''}
-      <button class="btn ${g.ptrain?'on':''}" type="button" data-mg="ptrain" data-id="${g.id}">⚒ Personal trainer (doctore)${g.ptrain?' ✓':''}<small>${PTRAIN_COST} coin · this week only (hire again next week) · a doctore drills them alone — best odds to raise their rating</small></button>
-      ${g.morale<80&&!g.inj?`<button class="btn" type="button" data-mg="medic" data-id="${g.id}" ${dis([g.medWk===w.week,'Already seen the Medicus this week.'],[left<MEDICUS,`The weekly repair budget is spent (${repCap()} coin a week) — it refills when the week ends.`])}>⚕ Medicus<small>${MEDICUS} coin · +12 morale · clears injuries</small></button>`:''}
-      <button class="btn" type="button" data-mg="extend" data-id="${g.id}">📜 Extend contract<small>+8 weeks</small></button>
-      <button class="btn" type="button" data-mg="release" data-id="${g.id}">Release</button>
+      <button class="btn" type="button" data-mg="meal" data-id="${glad.id}" ${dis([cool('mealWk',1),'Already shared a meal this week — once a week keeps it special.'],needHrs(w,1),needCoin(m,3))}>🍷 Share a meal<small>1 h · 3 coin · weekly · +6 morale, +2 loyalty</small></button>
+      <button class="btn" type="button" data-mg="word" data-id="${glad.id}" ${dis([cool('wordWk',1),'You already talked this week — pressing them twice reads as nerves.'],needHrs(w,1))}>🗣 A private word<small>1 h · weekly · hear what troubles them · +3 morale</small></button>
+      <button class="btn" type="button" data-mg="kintix" data-id="${glad.id}" ${dis([cool('kinWk',1),'The family already has tickets this week.'],needCoin(m,4))}>🎟 Tickets for the family<small>4 coin · weekly · kin seated at the next event · +5 morale, +3 loyalty</small></button>
+      <button class="btn" type="button" data-mg="bonus" data-id="${glad.id}" ${dis([cool('bonusWk',2),'A bonus lands every 2 weeks at most — coin loses meaning faster than wine.'],needCoin(m,bonus))}>💰 Pay a bonus<small>${bonus} coin · every 2 weeks · +8 morale, +4 loyalty</small></button>
+      <button class="btn" type="button" data-mg="raise" data-id="${glad.id}" ${dis(needHrs(w,1))}>📈 Raise their wage<small>1 h · +2 coin a week for good · +10 morale, +6 loyalty</small></button>
+      ${!glad.pledge?`<button class="btn" type="button" data-mg="promise" data-id="${glad.id}" ${dis(needHrs(w,1))}>🏟 Promise the main event<small>1 h · within 2 weeks · +8 morale now — break it and Honor pays</small></button>`:''}
+      <button class="btn ${glad.ptrain?'on':''}" type="button" data-mg="ptrain" data-id="${glad.id}">⚒ Personal trainer (doctore)${glad.ptrain?' ✓':''}<small>${PTRAIN_COST} coin · this week only (hire again next week) · a doctore drills them alone — best odds to raise their rating</small></button>
+      ${glad.morale<80&&!glad.inj?`<button class="btn" type="button" data-mg="medic" data-id="${glad.id}" ${dis([glad.medWk===w.week,'Already seen the Medicus this week.'],[left<MEDICUS,`The weekly repair budget is spent (${repCap()} coin a week) — it refills when the week ends.`])}>⚕ Medicus<small>${MEDICUS} coin · +12 morale · clears injuries</small></button>`:''}
+      <button class="btn" type="button" data-mg="extend" data-id="${glad.id}">📜 Extend contract<small>+8 weeks</small></button>
+      <button class="btn" type="button" data-mg="release" data-id="${glad.id}">Release</button>
     </div>
     <div class="sect">Rival lanistae circling</div>${rivals.map(x=>`<div style="display:grid;grid-template-columns:1fr 90px 26px;gap:6px;align-items:center;font-size:12.5px"><span style="color:${x.m.color}">${esc(x.m.ludus)}${x.v>loy?' <b style="color:var(--blood2)">⚠ could poach</b>':''}</span><div class="meter"><i style="width:${x.v}%"></i></div><span class="n">${x.v}</span></div>`).join('')}
     <p class="rc-sub" style="margin:2px 0 0">${threat?`${esc(threat.m.ludus)} wants them more than they are bound to you — shore up their loyalty before a rival makes an offer.`:'Nobody\u2019s interest beats their loyalty right now. Keep it that way.'}</p>
-    <div class="sect">How they grade you <span class="rc-sub">(hover a grade for how to raise it)</span></div>${g.motives.map(([k,wt])=>`<div style="display:flex;gap:8px;align-items:center;font-size:13px;margin:2px 0" title="${esc(MOT_ADVICE[k]||'')}">${gradeHTML(mgrScore(m,k,g))}<b>${MOTIVES[k][0]}</b><span class="rc-sub">${Math.round(wt*100)}% · ${MOTIVES[k][1]}</span></div>`).join('')}
-    ${g.report?`<div class="sect">Last scouting report (week ${g.report.wk})</div><div class="rc-stats"><span><b>${g.report.win}/${g.report.n}</b>wins</span><span><b>${g.report.surv}/${g.report.n}</b>survived</span><span><b>${g.report.cf}</b>avg CF</span><span><b>${g.report.dmg}</b>dmg dealt</span></div>`:''}
-    ${g.lastWord?`<p class="rc-sub" style="margin:6px 0 0"><i>“${esc(g.lastWord)}”</i></p>`:''}
-    ${kinOf(g).length?`<p class="rc-sub" style="margin:6px 0 0">👪 Family in the crowd: ${kinOf(g).map(r=>`<b>${esc(r.name)}</b> (${esc(r.kin.rel)}${r.ticket?' · 🎟 ticketed':''})`).join(', ')}</p>`:''}`;
+    <div class="sect">How they grade you <span class="rc-sub">(hover a grade for how to raise it)</span></div>${glad.motives.map(([k,wt])=>`<div style="display:flex;gap:8px;align-items:center;font-size:13px;margin:2px 0" title="${esc(MOT_ADVICE[k]||'')}">${gradeHTML(mgrScore(m,k,glad))}<b>${MOTIVES[k][0]}</b><span class="rc-sub">${Math.round(wt*100)}% · ${MOTIVES[k][1]}</span></div>`).join('')}
+    ${glad.report?`<div class="sect">Last scouting report (week ${glad.report.wk})</div><div class="rc-stats"><span><b>${glad.report.win}/${glad.report.n}</b>wins</span><span><b>${glad.report.surv}/${glad.report.n}</b>survived</span><span><b>${glad.report.cf}</b>avg CF</span><span><b>${glad.report.dmg}</b>dmg dealt</span></div>`:''}
+    ${glad.lastWord?`<p class="rc-sub" style="margin:6px 0 0"><i>“${esc(glad.lastWord)}”</i></p>`:''}
+    ${kinOf(glad).length?`<p class="rc-sub" style="margin:6px 0 0">👪 Family in the crowd: ${kinOf(glad).map(r=>`<b>${esc(r.name)}</b> (${esc(r.kin.rel)}${r.ticket?' · 🎟 ticketed':''})`).join(', ')}</p>`:''}`;
 }
 /* The recruiting board: the shortlist a real lanista keeps chalked on the wall.
    Star fighters from the Recruiting tab (or let a live-watched bout impress you); act on them from here. */
+/* boardHTML2 — the Favorites recruiting board. */
 function boardHTML2(){
   const w=W_(),m=me();const favs=w.glads.filter(g=>g.alive&&g.favd);
   if(!favs.length)return `<p style="color:var(--muted)">Nothing chalked up. Star (☆) fighters in the Recruiting tab — or watch a bout live and let someone impress you — and they appear here with everything you need to land them.</p>`;
@@ -1420,14 +1579,15 @@ function boardHTML2(){
       <div class="a">${!g.scout?`<button class="btn" type="button" data-mg="scout" data-id="${g.id}" ${hrs<3||m.coin<scoutCost(g)?'disabled':''}>Scout</button>`:''}<button class="btn" type="button" data-mg="gift2" data-id="${g.id}" ${dis([g.giftWk&&g.giftWk[m.id]&&w.week-g.giftWk[m.id]<2,'A gift landed too recently — every 2 weeks.'],needHrs(w,2),needCoin(m,giftCost(g)))}>Gift</button><button class="btn" type="button" data-mg="fav" data-id="${g.id}">Unpin ★</button></div></div>`}).join('')}</div></div>
    <div>${detailHTML(sel)}</div></div>`;
 }
+/* leagueHTML — the League tab: table, rivals, stables. */
 function leagueHTML(){
   const ms=leagueSort(W_().mgrs);
-  const morale=m=>{const r=rosterOf(m);return r.length?Math.round(r.reduce((a,g)=>a+g.morale,0)/r.length):null};
+  const morale=mgr=>{const r=rosterOf(mgr);return r.length?Math.round(r.reduce((a,g)=>a+g.morale,0)/r.length):null};
   const meId=me().id;
-  const rivalsOf=m=>{ // top 3 stables this lanista is feuding with (their grudge toward you rides in with the rest)
-    const heat={...(m.rivals||{})};
-    if(!m.isPlayer&&(m.rivalry||0)>(heat[meId]||0))heat[meId]=m.rivalry||0;
-    return Object.entries(heat).filter(([id2,v])=>v>=15&&id2!==m.id&&mgrById(id2)).sort((a,b)=>b[1]-a[1]).slice(0,3)
+  const rivalsOf=mgr=>{ // top 3 stables this lanista is feuding with (their grudge toward you rides in with the rest)
+    const heat={...(mgr.rivals||{})};
+    if(!mgr.isPlayer&&(mgr.rivalry||0)>(heat[meId]||0))heat[meId]=mgr.rivalry||0;
+    return Object.entries(heat).filter(([id2,v])=>v>=15&&id2!==mgr.id&&mgrById(id2)).sort((a,b)=>b[1]-a[1]).slice(0,3)
       .map(([id2,v])=>{const r2=mgrById(id2);return `<span style="white-space:nowrap"><span style="color:${r2.color}">■</span> ${esc(r2.ludus)} <span class="rc-sub" ${v>=35?'style="color:var(--blood2)"':''}>${rivalTier(v)}</span></span>`}).join('<br>')||'<span class="rc-sub">—</span>'};
   return `<div style="overflow-x:auto"><table class="tally"><tr><th>#</th><th>Lanista</th><th title="League points this season: a win 3, a runner-up finish 1">Pts</th><th title="This season's bouts: won-lost">Season</th><th title="Average rating of the house's five best fighters">Roster</th><th>Fame</th><th>Treasury</th><th>Morale</th><th>Rivals</th><th title="How this lanista feels about YOUR ludus">Toward you</th><th>Fighters</th><th title="All-time record">Record</th><th>Bets</th><th>Personality</th></tr>${ms.map((m,mi)=>{const mo=morale(m);const rv=m.rivalry||0;const sp=msp(m);
     return `<tr class="${m.isPlayer?'me':''} lrowlink" data-mg="team" data-id="${m.id}" title="Open ${esc(m.ludus)}'s team screen"><td class="n">${mi+1}${mi<4?' <span title="Superbus place">🏛</span>':''}</td><td>${typeof flagChip==='function'?flagChip(m,16):`<span style="color:${m.color}">■</span>`} <span style="color:${m.color}">■</span> <b>${esc(m.name)}</b> ${m.custom?customTag():''}<br><span class="rc-sub">${esc(m.ludus)} · ${esc(m.city)}</span></td><td class="n"><b style="font-size:16px;color:var(--gold2)">${sp.pts}</b></td><td class="n">${sp.w}-${sp.b-sp.w}</td><td class="n">${rosterRating(m)||'—'}</td><td class="n">${fameHTML(m.fame)}<br>${m.fame} <span class="rc-sub">${mgrTier(m.fame)}</span></td><td class="n">${m.coin}</td>
@@ -1438,6 +1598,7 @@ function leagueHTML(){
   <p class="hint"><b>The table:</b> a win is 3 points and a runner-up finish is 1 (this season). Ties go to the better win rate, then fame. The <b>top four</b> (🏛) are invited to the Flavius Superbus when week 12 ends. <b>Fame</b> is reputation: it opens recruits' doors and draws crowds. Click a stable for its team screen.</p>
   <p class="hint">Rivalry heats up when you poach a stable, outbid a suitor, or your fighter beats (or kills) theirs — and cools with quiet weeks. Bitter rivals poach YOUR fighters first and bet against your entries.</p></div>`;
 }
+/* newsHTML — the News tab. */
 function newsHTML(){
   return `<div class="acts" style="margin-bottom:8px">${W_().lastPaper?`<button class="btn" type="button" data-mg="paper">📜 Re-read the latest Acta Diurna<small>the week-end gazette</small></button>`:''}</div><div class="news" style="max-height:60vh">${W_().news.map(n=>`<div class="${n.cls||''}"><span class="rc-sub">S${n.s} W${n.wk} · </span>${n.text}</div>`).join('')}</div><div class="card2" style="margin-top:10px"><div class="sect" style="margin-top:0">🏺 The Ludus Archives <span class="rc-sub">every back issue of the Acta and every season recap, bound in leather</span></div>${archiveHTML()}</div>`}
 
@@ -1445,38 +1606,40 @@ function newsHTML(){
    When a week ends, the criers publish a newspaper: one generated lead story
    picked from the week's most dramatic facts, the league's top fives, the
    obituaries, and whatever else sells for two sestertii. */
+/* ROMAN — Roman numerals 1–12. */
 const ROMAN=['','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
 /* v0.22 OVERHEARD: real crowd chatter from the week's events, plus the empire's own absurdities (a satirical gazette, circa MM) */
-function overheardLines(w,wkNews,deaths,empire,mainWin){ // v0.24: quotes from the empire's people — real crowd lines first
+function overheardLines(world,wkNews,deaths,empire,mainWin){ // v0.24: quotes from the empire's people — real crowd lines first
   const out=[];let buf=[];try{buf=JSON.parse(localStorage.getItem('flavius_overheard')||'[]')}catch(e){}
   const fresh=buf.slice(-14);for(let i=0;i<3&&fresh.length;i++){const q=fresh.splice(Math.floor(Math.random()*fresh.length),1)[0];out.push(`“${esc(q.q)}” — ${esc(q.who)}, in the stands at ${esc(q.at)}`)}
-  const G=w.glads.filter(g=>g.alive);const g1=pickOne(G);const E=pickOne(empire.length?empire:[{n:'a quiet week',city:'Roma'}]);const city=pickOne(LOCATIONS.filter(Boolean)).n;
+  const G=world.glads.filter(g=>g.alive);const g1=pickOne(G);const E=pickOne(empire.length?empire:[{n:'a quiet week',city:'Roma'}]);const city=pickOne(LOCATIONS.filter(Boolean)).n;
   const who=['a fishmonger','a senator\u2019s cook','a retired centurion','a veiled matron','two sailors, arguing','a baker of the Aventine','a bookmaker\u2019s runner','an augur, off duty','a very old gladiator','a boy selling figs'];
   const pool=[`“I told my wife ${g1?g1.name:'that one'} would win. She said I should get a job. We are both right.”`,`“${esc(E.n)} in ${esc(E.city)}? Good. Maybe now they'll fix the aqueduct.”`,`“The sausages at ${esc(city)} are a crime. I would know. I sell them.”`,`“Tholo winked at me. I think. It only has the one eye, so it's hard to tell.”`,`“Back in my day we fought lions with our bare hands. Then the lions won, mostly.”`,`“My cousin's neighbor's ludus is the best in the empire. I have never been.”`,`“I bet on the underdog every week. The underdog owes me a house.”`,`“The editor looked right at me when the thumb went down. I left early.”`];
   while(out.length<4&&pool.length){const k=Math.floor(Math.random()*pool.length);out.push(`${pool.splice(k,1)[0]} — ${pickOne(who)}`)}
   return out}
 /* v0.24 THE DARWINIUS AWARDS: the week's most spectacular exits, and the empire's own absurdities */
-function darwiniusLines(w,night,deaths,empire){const out=[];
+function darwiniusLines(world,night,deaths,empire){const out=[];
   for(const b of (night?night.bouts:[]))if(b.res)for(const r of b.res.rows){if(!r.elimTurn)continue;const g=gById(r.gid);const nm2=g?g.name:r.name||'a gladiator';
     const by=r.elimBy||'';const BEASTN=new Set([...Object.values(NPCT).map(T=>T.n),...Object.values(CITY_BEASTS).flatMap(T=>Object.entries(T).filter(([k])=>k!=='champ').map(([,v])=>v)),'Tholo','Zora']);const beast=BEASTN.has(by)||/^(Tholo|Commodus)$/.test(by);
     out.push(beast?`<b>${esc(nm2)}</b> tried to make friends with ${esc(by)} on turn ${r.elimTurn}. ${esc(by)} declined, loudly.`:by?`<b>${esc(nm2)}</b> walked into ${esc(by)}'s swing on turn ${r.elimTurn} with the confidence of someone who had read half the rulebook.`:`<b>${esc(nm2)}</b> was out on turn ${r.elimTurn}, beaten mostly by their own footwork.`)}
   for(const d of deaths.slice(0,3))out.push(`<b>${esc(d.name)}</b> met <i>${esc(d.fate||'the thumb')}</i>. The crowd rated the exit ${1+Math.floor(Math.random()*4)}/5 for style${d.ovr!=null?`, which is more than they ever gave the fighting (${d.ovr})`:''}.`);
-  const E=pickOne(empire.length?empire:[{n:'nothing much',city:'Roma'}]);const M=pickOne(w.mgrs);const city=pickOne(LOCATIONS.filter(Boolean)).n;
+  const E=pickOne(empire.length?empire:[{n:'nothing much',city:'Roma'}]);const M=pickOne(world.mgrs);const city=pickOne(LOCATIONS.filter(Boolean)).n;
   const sat=[`Area Man Who Bet His Goats On A 25× Longshot Now Has No Goats, Great Story`,`${esc(M.ludus)} Announces Bold New Strategy Of “Not Dying,” Early Results Mixed`,`Man Who Shouted “Ad Bestias!” At The Wrong Moment Now Lives With Bestias`,`${esc(E.city)} Responds To ${esc(E.n)} With Calm, Measured Rioting`,`Commodus Impersonator Arrested For Being Too Convincing`,`Senator Attends Games “Purely For The Architecture”`,`${esc(city)} Sausage Vendor Unveils Bold New Sausage That Is Also, Somehow, A Sausage`,`Snake Handler Insists Glykon “Just Wants A Hug,” Is Being Hugged`];
   while(out.length<5&&sat.length){const k=Math.floor(Math.random()*sat.length);out.push(`<b>${sat.splice(k,1)[0]}</b>`)}
   return out.slice(0,6)}
-function composeWeekPaper(w,night=w.night,season=w.season){
-  const pm=me();const wk=night?night.week:w.week;const loc=LOCATIONS[night?night.loc:6]||LOCATIONS[6];
-  const wkNews=w.news.filter(n=>n.wk===wk);
-  const deaths=w.grave.filter(g=>g.wk===wk);
+/* composeWeekPaper — writes the week's Acta Diurna: lead story, top fives, obituaries, Overheard, Darwinius awards, next week. */
+function composeWeekPaper(world,night=world.night,season=world.season){
+  const pm=me();const wk=night?night.week:world.week;const loc=LOCATIONS[night?night.loc:6]||LOCATIONS[6];
+  const wkNews=world.news.filter(n=>n.wk===wk);
+  const deaths=world.grave.filter(g=>g.wk===wk);
   const mainB=(night?night.bouts:[]).find(b=>b.tier==='main'&&b.done&&b.res);
   const mainWin=mainB&&mainB.res.winners.length?gById(mainB.res.winners[0]):null;
   const mainRow=mainB&&mainWin?mainB.res.rows.find(r=>r.gid===mainWin.id):null;
-  const ludusOf=g=>g&&g.contract&&mgrById(g.contract.mgr)?mgrById(g.contract.mgr).ludus:'no ludus';
+  const ludusOf=glad=>glad&&glad.contract&&mgrById(glad.contract.mgr)?mgrById(glad.contract.mgr).ludus:'no ludus';
   // ---- pick the lead story BY THE NUMBERS (v0.21): the week's biggest win, death or empire event leads ----
   const cands=[];let lead=null;
-  if(wk%12===0){const top=leagueSort(w.mgrs,season)[0];
-    cands.push({sc:1e9,h:`${top.ludus.toUpperCase()} RULES SEASON ${ROMAN[((w.season-1)%12)+1]||w.season}`,
+  if(wk%12===0){const top=leagueSort(world.mgrs,season)[0];
+    cands.push({sc:1e9,h:`${top.ludus.toUpperCase()} RULES SEASON ${ROMAN[((world.season-1)%12)+1]||world.season}`,
       body:`The season closes and one name is on every tongue: <b>${esc(top.name)}</b> of ${esc(top.ludus)}, fame ${top.fame} (${mgrTier(top.fame)}), record ${top.wins}–${Math.max(0,top.bouts-top.wins)}. ${top.isPlayer?'Yes, reader — it is the ludus you have been following in these pages.':upick(['The wine in their barracks is said to flow until dawn.','Their rivals call it luck. Their fighters call it wages paid on time.','The editor is reportedly “pleased, within reason.”'])} A new season begins next week, and every reputation is again for rent.`,gids:[]})}
   for(const bt of (night?night.bouts:[])){if(!bt.done||!bt.res||!bt.res.winners.length)continue;const g=gById(bt.res.winners[0]);if(!g)continue;const row=bt.res.rows.find(r=>r.gid===g.id);const T=TIERS[bt.tier];
     cands.push({sc:bt.purse+(row?row.f*2:0)+(bt.tier==='main'?25:0),kind:'win',gids:[g.id],
@@ -1485,7 +1648,7 @@ function composeWeekPaper(w,night=w.night,season=w.season){
   deaths.forEach((d,k)=>cands.push({sc:(d.fame||0)*2.2+(d.ovr||45)+(k?0:10),kind:'death',gids:[],
     h:`${d.name.toUpperCase()} FALLS AT ${loc.n.toUpperCase()}`,
     body:`The sand keeps what it is given. <b>${esc(d.name)}</b>, ${CLASSES[d.cls]?CLASSES[d.cls].name:d.cls}${d.mgr?` of ${esc(d.mgr)}'s stable`:', a free sword'}${d.ovr!=null?`, rated ${d.ovr}`:''}${d.fame?` and famous (${d.fame})`:''}, died this week — ${esc(d.fate||'the crowd turned its thumb')}. The record they leave: ${d.rec.ev} event${d.rec.ev===1?'':'s'}, ${d.rec.w} win${d.rec.w===1?'':'s'}, ${d.rec.kp} kill${d.rec.kp===1?'':'s'}. ${upick(['The concession stands fell quiet for nearly a minute.','A spectator was heard to say the thumb was “decided before the fight began.”','The Liberti say the same thing they always say: it could have been freedom instead.'])}${deaths.length>1?` <i>(${deaths.length-1} other fighter${deaths.length===2?'':'s'} also died this week — see the obituaries.)</i>`:''}`}));
-  const empire=(typeof worldEvents==='function'?worldEvents(`m:${w.id}:${season}:${wk}`):[]).slice().sort((a,b)=>(b.sev*30+Math.abs(b.mood)*2+Math.abs(b.att)*100)-(a.sev*30+Math.abs(a.mood)*2+Math.abs(a.att)*100));
+  const empire=(typeof worldEvents==='function'?worldEvents(`m:${world.id}:${season}:${wk}`):[]).slice().sort((a,b)=>(b.sev*30+Math.abs(b.mood)*2+Math.abs(b.att)*100)-(a.sev*30+Math.abs(a.mood)*2+Math.abs(a.att)*100));
   if(empire[0]){const e=empire[0];cands.push({sc:e.sev*30+Math.abs(e.mood)*2+Math.abs(e.att)*100,kind:'empire',gids:[],
     h:`${e.i} ${e.n.toUpperCase()} AT ${e.city.toUpperCase()}`,
     body:`The empire outshouts the arena this week: <b>${esc(e.n)}</b> at ${esc(e.city)}${e.war?` — ${esc(e.war.rome)} against ${esc(e.war.foe)}`:''}. ${e.att>0?`Attendance at nearby arenas rises (+${Math.round(e.att*100)}%)`:e.att<0?`Nearby gates thin (${Math.round(e.att*100)}%)`:'The gates hold steady'} and the crowds are ${e.mood>=5?'in a giving mood':e.mood<=-5?'sour and hungry for blood':'restless'}. ${upick(['The criers have not slept.','Wagers on the sand are down; wagers on the news are up.','The editor dispatched two runners. One came back.'])}`})}
@@ -1497,8 +1660,8 @@ function composeWeekPaper(w,night=w.night,season=w.season){
   const wins=(night?night.bouts:[]).filter(b=>b.done&&b.res);
   const numbers={purses:wins.reduce((t,b)=>t+b.purse,0),bouts:wins.length,deaths:deaths.length,crowd:night&&night.crowd?night.crowd:null,topCF:Math.max(0,...wins.flatMap(b=>b.res.rows.map(r=>r.f||0))),empire:empire.length};
   // ---- the top fives ----
-  const top5m=leagueSort(w.mgrs,season).slice(0,10);
-  const top5g=w.glads.filter(g=>g.alive&&g.contract).sort((a,b)=>effOvr(b)-effOvr(a)).slice(0,10);
+  const top5m=leagueSort(world.mgrs,season).slice(0,10);
+  const top5g=world.glads.filter(g=>g.alive&&g.contract).sort((a,b)=>effOvr(b)-effOvr(a)).slice(0,10);
   const top5f=freeAgents().sort((a,b)=>effOvr(b)-effOvr(a)).slice(0,5);
   const briefs=wkNews.filter(n=>n.text!==lead.body&&!/^Week \d/.test(n.text.replace(/<[^>]*>/g,''))).slice(0,4);
   return {wk,season,locN:loc.n,grand:!!(night&&night.grand),omen:night&&night.omen&&night.omen.n?night.omen.n:null,
@@ -1507,13 +1670,13 @@ function composeWeekPaper(w,night=w.night,season=w.season){
     best:top5g.map(g=>({gid:g.id,name:g.name,stars:starsOf(pubOvr(g)),ovr:pubOvr(g),ludus:ludusOf(g),me:!!(g.contract&&g.contract.mgr===pm.id)})),
     agents:top5f.map(g=>({gid:g.id,name:g.name,stars:starsOf(pubOvr(g)),ovr:pubOvr(g),wage:askWage(g),city:g.city})),
     obits:deaths.map(d=>`<b>${esc(d.name)}</b>, ${CLASSES[d.cls]?CLASSES[d.cls].name:d.cls}${d.age?`, aged ${d.age}`:''}${d.mgr?` · ${esc(d.mgr)}'s stable`:' · a free sword'}<br><span class="rc-sub">${d.ovr!=null?`rated ${d.ovr} ${'★'.repeat(starsOf(d.ovr))}`:''}${d.f!=null?` · ${d.f} CF in their last bout`:''}${d.fame?` · fame ${d.fame}`:''} · ${d.rec.ev} bouts, ${d.rec.w} wins, ${d.rec.kp} kills · <i>${esc(d.fate||'')}</i>${d.kin&&d.kin.length?`<br>Survived by ${d.kin.map(esc).join(', ')}, who watched from the stands.`:''}</span>`),
-    next:paperPreview(w),
-    training:(w.lastTraining||[]).map(t=>`<b>${esc(t.n)}</b>: ${t.txt}`),trainLudus:pm.ludus,
-    quote:overheardLines(w,wkNews,deaths,empire,mainWin).join('<br>'),darwin:darwiniusLines(w,night,deaths,empire)};
+    next:paperPreview(world),
+    training:(world.lastTraining||[]).map(t=>`<b>${esc(t.n)}</b>: ${t.txt}`),trainLudus:pm.ludus,
+    quote:overheardLines(world,wkNews,deaths,empire,mainWin).join('<br>'),darwin:darwiniusLines(world,night,deaths,empire)};
 }
 // NEXT WEEK, for the back page: where, what weather, what the empire is doing, the card and the purses
-function paperPreview(w){const n=w.night;if(!n)return null;const L=LOCATIONS[n.loc];const pm=me();
-  const hot=w.mgrs.filter(m=>!m.isPlayer&&(m.rivalry||0)>=35).sort((a,b)=>b.rivalry-a.rivalry).slice(0,2);
+function paperPreview(world){const n=world.night;if(!n)return null;const L=LOCATIONS[n.loc];const pm=me();
+  const hot=world.mgrs.filter(m=>!m.isPlayer&&(m.rivalry||0)>=35).sort((a,b)=>b.rivalry-a.rivalry).slice(0,2);
   return {wk:n.week,where:L?L.n:'',grand:!!n.grand,omen:n.omen&&n.omen.k!=='clear'?n.omen.n:null,wx:n.wx||null,world:n.world||[],
     bouts:n.bouts.map(b=>({t:TIERS[b.tier].n,ev:EVENTS[b.ev].n,purse:b.purse,names:b.ents.map(gById).filter(Boolean).map(g=>`${g.name}${g.contract&&g.contract.mgr===pm.id?' (yours)':''}`)})),
     rivals:hot.map(m=>`${m.ludus} — ${rivalTier(m.rivalry)}`)}}
@@ -1521,6 +1684,7 @@ function paperPreview(w){const n=w.night;if(!n)return null;const L=LOCATIONS[n.l
 function papName(name,gid){if(gid==null)return `<b>${esc(name)}</b>`;const g=gById(gid);
   if(!g||!g.alive){const why=!g?'gone from the league':g.freed2?'freed — took the rudis':(W_().grave.find(x=>x.name===g.name)?'fallen':'retired');return `<b class="pgone" title="${why}"><s>${esc(name)}</s></b> <span class="rc-sub">(${why.split(' —')[0]})</span>`}
   return `${gArt(g,'xs')}<button class="btn pfav" type="button" data-mg="fav" data-id="${g.id}" title="${g.favd?'Remove from':'Pin to'} your recruiting board (Favorites)">${g.favd?'★':'☆'}</button><b>${esc(name)}</b>`}
+/* paperHTML — the Acta Diurna as a newspaper page. */
 function paperHTML(){
   const P=W_().lastPaper;if(!P)return '<p class="rc-sub">No edition has been printed yet. End a week first.</p>';
   const N=P.numbers;const lg=P.lead&&P.lead.gids&&P.lead.gids[0]?gById(P.lead.gids[0]):null;
@@ -1558,16 +1722,19 @@ function paperHTML(){
 
   </div>`;
 }
+/* promoteCardHTML — the Promote the ludus card. */
 function promoteCardHTML(){const m=me(),w=W_();return `<div class="card2" style="margin-top:8px"><div class="sect" style="margin-top:0">📯 Promote the ludus <span class="rc-sub">fans won this way appear on the Imperium map</span></div>
      <div class="acts">
       <button class="btn" type="button" data-mg="feast2" ${dis([(m.feastWk===w.week),'You already fed a city this week.'],needHrs(w,2),needCoin(m,10))}>🍞 Feast a city<small>2 h · 10 coin · a random city eats in your name: its regulars turn fans of your best fighter, +1 fame</small></button>
       <button class="btn" type="button" data-mg="sponsor2" ${dis([(m.sponWk===w.week),'One sponsorship a week — even Rome has limits.'],needCoin(m,18))}>🏟 Sponsor the games<small>18 coin · your name over the arena: +2 fame, rivals seethe a little</small></button>
       <button class="btn" type="button" data-mg="criers2" ${dis([(m.crierWk===w.week),'The criers are still hoarse from last time.'],needHrs(w,1),needCoin(m,6))}>📢 Hire the criers<small>1 h · 6 coin · every free agent hears your name: +2 interest across the market</small></button>
      </div></div>`}
+/* schoolingCardHTML — the lanista's Schooling (perk points) card. */
 function schoolingCardHTML(){const m=me(),w=W_();const P=m.perkPts||0;return `<div class="card2 schoolcard${P?' haspts':''}" id="schoolCard" style="margin-top:8px"><div class="schoolhd"><div class="sect" style="margin:0">🎓 The lanista's schooling · points to spend</div><div class="ptbox${P?' on':''}" title="${P} perk point${P===1?'':'s'} ready to spend">${P}</div></div>
      <p class="rc-sub" style="margin:0 0 6px">Each week teaches: <b>+1</b> for the week itself, <b>+1</b> per bout your fighters win, <b>+1</b> per kept pledge, <b>+1</b> when training improves two or more. Points earned this week (<b>${m.perkPend||0}</b> so far) unlock <b>next</b> week. Available now: <b style="color:var(--gold2)">${m.perkPts||0}</b>${m.perkLast?` · last week earned ${m.perkLast}`:''}</p>
      <div class="acts">${MGR_KEYS.map(([k,l,d])=>`<button class="btn" type="button" data-mg="perk" data-id="${k}" ${(m.perkPts||0)<1||m.p[k]>=95?'disabled':''} title="${d}" style="flex:1 1 30%">${l} ${m.p[k]}${m.p[k]<95?' → '+Math.min(95,m.p[k]+2):' (max)'}<small>1 pt · +2</small></button>`).join('')}</div>
      <p class="rc-sub" style="margin:6px 0 0">These are the same traits recruits grade you on — Discipline sharpens training, Honor mends old poaches, Showmanship sells the crowd — so every point spent shifts real interest.</p></div>`}
+/* meHTML — the Lanista tab. */
 function meHTML(){
   const m=me(),w=W_();
   /* v0.36: three real columns, top-aligned and balanced — who you are | what your house is worth | how fighters see you */
@@ -1585,10 +1752,12 @@ function meHTML(){
   const col=h=>`<div class="lancol">${h}</div>`;
   return `<div class="lan3">${col(persona+record)}${col((typeof legacyCardHTML==='function'?legacyCardHTML():'')+sandbox+wallet)}${col(grades+raising)}</div>${RULES_BOX()}`;
 }
+/* mToast — a toast message that floats over the window for 4 s. */
 function mToast(html){
   let t=document.getElementById('mToast');if(!t){t=document.createElement('div');t.id='mToast';t.setAttribute('role','status');t.setAttribute('aria-live','polite');document.body.appendChild(t)}
   t.innerHTML=html;t.classList.remove('show');void t.offsetWidth;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),4200);
 }
+/* wireManager — wires every click, input and change in the Manager window (all [data-mg] actions). */
 function wireManager(done){
   const box=$('#mBody');const redraw=()=>{const sc=box.scrollTop;$('#mgrBody').innerHTML=mgrHTML();box.scrollTop=sc;mgrCloseLabel()};window.MGR_REDRAW=redraw;
   // feedback you cannot miss: the note stays at the top, AND a toast floats over the window where you are looking
@@ -1798,7 +1967,9 @@ function wireManager(done){
     if(a==='paper'){MGR.tab='paper';redraw();$('#mBody').scrollTop=0;return}
   };
 }
+/* the top-bar Manager button. */
 $('#btnManager').onclick=()=>openManager();
+/* stake ± buttons on Match Week bet boxes. */
 document.addEventListener('click',e=>{const b=e.target.closest('[data-stk]');if(!b)return;const [bi,d]=b.dataset.stk.split('|');const i=document.getElementById('mgStake'+bi);if(!i)return;const mx=+i.max||999;i.value=clamp((+i.value||0)+(+d),1,mx)});
 /* v0.45: ☆ on a fighter's card in a Match Week bout (fighting or spectating) puts them on your ★ Favorites board */
 document.addEventListener('click',e=>{const f=e.target.closest('[data-favg]');if(!f)return;e.preventDefault();e.stopPropagation();const g=gById(f.dataset.favg);if(!g)return;g.favd=!g.favd;saveWorld();
