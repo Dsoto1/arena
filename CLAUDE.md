@@ -846,6 +846,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   escrow, refunded the moment you're outbid; a bid in the last 5 min extends 5 min (no sniping); ONE win per house per week; minimum
   bid = half the piece's value; the winning coin leaves the game (sink). Player listings: NOT now — only revisit if the economy looks
   healthy, and then with a cooldown on fresh pieces, a floor price and Flavius' cut.
+- **PROGRAMMATA (his yes 2026-10-04, v0.84):** Manager → Your ludus → 📯 Promote gets a 4th action 🖌 Paint the programmata — painted
+  wall notices for 2–4 weeks (you choose) in up to 3 chosen cities, paid weekly: fame trickle, more gate money at your bouts there, a
+  featured fighter gains fans/crowd favour; rivals deface notices (chance to lose a week, likelier from bitter rivals) and run their own;
+  a featured fighter's death turns the notices into a memorial (fame, no more fans). Painted-wall card (red letters) + Imperium map marks.
+  Also decided (same message): a house gift's CF bonus with no living gladiator → 8 coin a point into the treasury (as built in v0.83).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
