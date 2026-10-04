@@ -109,7 +109,7 @@ document.addEventListener('input',e=>{const t=e.target;if(typeof ST==='undefined
   h=h.replace(/^<p>[\s\S]*?<\/p>/,`<p>Design the <b>invitationals</b> that arrive in Manager mode. Each is a shell: pick the <b>arena</b> (a printed event or one of your Custom Events) and the <b>trophy</b>, then the field, the purse and how often it comes. New ones start off the rolls. The system invitationals sit at the bottom: locked, copy one to make it yours. ${customTag()}</p>`)
     .replace('💾 Save special event','💾 Save invitational').replace(/Your special events/,'Your invitationals').replace(/The system special events/,'The system invitationals').replace(/special event/g,'invitational').replace(/Special event/g,'Invitational')}catch(e){console.error(e)}return h}}
 
-/* ============ D. THE EVENT DESIGNER: BEASTS & COHORTS, REAL PIECES, ARENA MUSIC ============ */
+/* ============ D. THE EVENT DESIGNER: BEASTS & COHORTS, REAL PIECES, ARENA Music ============ */
 /* One “🐾 Beasts & cohorts” picker with four shelves — the stock beasts, your beasts, the myth starters
    and the cohorts — each shown as its real token. “Add” places a beast on the board (a myth starter is
    first saved as one of your beasts); a cohort joins the event. */

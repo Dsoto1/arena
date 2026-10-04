@@ -1,5 +1,5 @@
 /* =====================================================================
-   45-MUSIC · BRIDGES, AND FOUR NEW THEMES (v0.47)
+   45-Music · BRIDGES, AND FOUR NEW THEMES (v0.47)
    =====================================================================
    Every song now has a FORM instead of one 8-bar loop played over and over:
        A  → A′ (the melody answered, an octave or a third away, busier drums)

@@ -20868,7 +20868,7 @@ function clsPieceHTML(cls,height=40,cssCls='stnd'){const st=tokenStyle();if(st==
 /* npcPieceHTML — a beast's board piece for HTML in the chosen token style. */
 function npcPieceHTML(npc,height=40,cssCls='stnd'){const st=tokenStyle();const T=NPCT[npc.t]||{};const sk=standeeKeyNPC(npc);if(st==='standee'&&sk&&!T.custom)return standeeHTML(sk,height,cssCls);if(st==='figure'||(T.custom&&st!=='cylinder'))return figureHTML(tokenForNPC(npc),height);return ''}
 /* =====================================================================
-   21-AUDIO · v0.24 PROCEDURAL MUSIC AND SOUND EFFECTS (Web Audio, no files)
+   21-AUDIO · v0.24 PROCEDURAL Music AND SOUND EFFECTS (Web Audio, no files)
    ---------------------------------------------------------------------
    Every arena gets its own theme, generated live from a small recipe:
    a key and a mode, a tempo, a chord loop, a pulsing low-string ostinato
@@ -21896,7 +21896,7 @@ function cheatRegister(key,run,label){CHEATS[key]={run,label:label||''}}
 /* word of power: unlocks every city editor and the Editor creator. */
 cheatRegister('h891493828',()=>{if(DEV_KEY())return '🔑 The developer\u2019s key is already turned. Re-lock it in Settings → Editors.';try{localStorage.setItem('flavius_devEditor','1')}catch(err){}return '🔑 <b>Unlocked.</b> The Editor creator and every city editor are yours — Creator Studio → 🎭 Editors.'},'The developer\u2019s key');
 /* word of power: unlocks every music theme. */
-cheatRegister('h2501629703',()=>{try{localStorage.setItem('flavius_musica','1')}catch(e){}try{if(typeof audListRefresh==='function'){const el=document.getElementById('audTracks');if(el)el.innerHTML=audListHTML()}}catch(e){}return '🎶 <b>MUSICA.</b> All sixteen themes are yours — the twelve cities and the four others. Settings → Audio.'},'All sixteen themes');
+cheatRegister('h2501629703',()=>{try{localStorage.setItem('flavius_musica','1')}catch(e){}try{if(typeof audListRefresh==='function'){const el=document.getElementById('audTracks');if(el)el.innerHTML=audListHTML()}}catch(e){}return '🎶 All sixteen themes are yours — the twelve cities and the four others. Settings → Audio.'},'All sixteen themes');
 /* word of power: +50 coin to the open (or active) lanista. */
 cheatRegister('h3429076038',()=>{const w=typeof ACTIVE!=='undefined'&&ACTIVE.world||typeof MGR!=='undefined'&&MGR.world;if(typeof MGR!=='undefined'&&MGR.world&&typeof me==='function'&&me()){me().coin+=50;try{saveWorld(true)}catch(e){}return `💰 <b>LUDUS.</b> +50 coin in ${esc(me().ludus)}'s treasury.`}
   if(typeof applyActivePurse==='function'&&typeof getPurse==='function'){getPurse().then(p=>{if(!p){if(typeof mToast==='function')mToast('No lanista holds the wallet yet — open Manager mode first.');return}p.coin+=50;p.noBet=true;return setPurse(p)}).catch(()=>{});return '💰 <b>LUDUS.</b> +50 coin in the active wallet\u2019s treasury.'}
@@ -24610,7 +24610,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-trsys]');i
   const y=JSON.parse(JSON.stringify(x));y.id='t'+Date.now().toString(36);y.name=x.name+' (copy)';y.custom=true;y.locked=false;if(nameClash('trophies',y.name))y.name=nameSuggest('trophies',y.name);ST.trd=y;studioRedraw();
   const box=$('#mBody');if(box)box.scrollTop=0;if(typeof mToast==='function')mToast(`⧉ <b>${esc(y.name)}</b> is on the bench — save it to keep it.`)},true);
 /* =====================================================================
-   45-MUSIC · BRIDGES, AND FOUR NEW THEMES (v0.47)
+   45-Music · BRIDGES, AND FOUR NEW THEMES (v0.47)
    =====================================================================
    Every song now has a FORM instead of one 8-bar loop played over and over:
        A  → A′ (the melody answered, an octave or a third away, busier drums)
@@ -25548,7 +25548,7 @@ function mgrGuideHTML(){const ref=guideParts().mgr;return `<div class="guide">
     </ul></li></ul>
  ${ref?`<details class="gref"><summary>More detail</summary>${ref}</details>`:''}</div>`}
 /* =====================================================================
-   51-V49 · MUSIC THAT HITS, A SEEK BAR, AND THE OTHER THEMES WHERE THEY BELONG
+   51-V49 · Music THAT HITS, A SEEK BAR, AND THE OTHER THEMES WHERE THEY BELONG
    =====================================================================
    • Every city theme keeps its melody, mode and chords and gains a beat: seven cities go trap (808 glides, clap
      on three, rolling hats), five go EDM (four on the floor, offbeat hats, a chip arpeggio). Midi-chip meets
@@ -27082,7 +27082,7 @@ document.addEventListener('input',e=>{const t=e.target;if(typeof ST==='undefined
   h=h.replace(/^<p>[\s\S]*?<\/p>/,`<p>Design the <b>invitationals</b> that arrive in Manager mode. Each is a shell: pick the <b>arena</b> (a printed event or one of your Custom Events) and the <b>trophy</b>, then the field, the purse and how often it comes. New ones start off the rolls. The system invitationals sit at the bottom: locked, copy one to make it yours. ${customTag()}</p>`)
     .replace('💾 Save special event','💾 Save invitational').replace(/Your special events/,'Your invitationals').replace(/The system special events/,'The system invitationals').replace(/special event/g,'invitational').replace(/Special event/g,'Invitational')}catch(e){console.error(e)}return h}}
 
-/* ============ D. THE EVENT DESIGNER: BEASTS & COHORTS, REAL PIECES, ARENA MUSIC ============ */
+/* ============ D. THE EVENT DESIGNER: BEASTS & COHORTS, REAL PIECES, ARENA Music ============ */
 /* One “🐾 Beasts & cohorts” picker with four shelves — the stock beasts, your beasts, the myth starters
    and the cohorts — each shown as its real token. “Add” places a beast on the board (a myth starter is
    first saved as one of your beasts); a cohort joins the event. */
@@ -38953,6 +38953,49 @@ if(typeof onlStageMap81==='function'){const base=onlStageMap81;onlStageMap81=fun
 #onl .onl-stage81 .onl-fig79{display:none!important}
 #onl .onl-stage81 .scap81{position:absolute!important;right:14px;bottom:12px;margin:0;z-index:2;background:rgba(18,12,7,.72);padding:3px 8px;border-radius:8px}
 @media (max-width:760px){#onl .onl-stage81 .scap81{position:static!important;align-self:center}}`;document.head.appendChild(st)}
+/* =====================================================================
+   147-v85music · v0.85 — a word for ALL the music, and a theme for Online
+   =====================================================================
+   1 · The music word of power is now five letters long (built from char codes — never in plain text): it unlocks
+       every theme the game has (the twelve cities, the other themes and Online's). The old longer word is retired.
+   2 · CONTRABANDUS — the Online theme (menus, rooms, the lobby; not during a bout): a smuggler's swagger over a
+       trap beat. An original heroic brass line (big leaps up, a scrambling run down, a climb and a proud cadence,
+       dotted pushes) in D major, 144 bpm half-time: 808 glides, hat rolls, a half-time clap, brass stabs on the
+       downbeats; the bridge drops to the relative minor with strings and a snare build. Heard → listed in
+       Settings → Audio under the other themes (AUD_WHERE: "open Online to hear it").
+   ===================================================================== */
+/* 1 · the word */
+try{if(typeof CHEATS!=='undefined')delete CHEATS['h2501629703']}catch(e){}
+if(typeof cheatRegister==='function'&&typeof cheatKey==='function'){const WM=String.fromCharCode(77,85,83,73,67);
+  cheatRegister(cheatKey(WM),()=>{try{localStorage.setItem('flavius_musica','1')}catch(e){}try{const el=document.getElementById('audTracks');if(el&&typeof audListHTML==='function')el.innerHTML=audListHTML()}catch(e){}
+    return '🎶 Every theme is yours — the twelve cities, the others and Online’s. Settings → Audio.'},'Every theme')}
+try{if(typeof CHEAT_SHOW!=='undefined'){const i=CHEAT_SHOW.findIndex(r=>/themes in Settings/.test(r[1]));const row=[[84,92,90,80,74],'🎶 Every theme in Settings → Audio — the twelve cities, the other themes and Online’s'];if(i>=0)CHEAT_SHOW[i]=row;else CHEAT_SHOW.push(row)}}catch(e){}
+
+/* 2 · CONTRABANDUS */
+AUD_THEMES['Online']={root:50,mode:'ionian',bpm:144,prog:[0,0,3,4,0,5,3,4],bridge:[5,5,3,3,1,1,4,4],lead:'brass',fn:'contra',nm:'Contrabandus',sub:'the Online menus and rooms'};
+AUD_EXTRA.push(['Online','Contrabandus']);AUD_WHERE.Online='open Online to hear it';
+AUD_FN.contra=function(th,t,step,inten){const spb=60/th.bpm/2;const S9=audSect(step);const {bar,st}=S9;const B=S9.kind==='B';const chord=B?th.brProg[bar]:th.prog[bar];const d=AUD.music;const root=audMtof(th.deg(chord,-2));
+  if(!B){
+    /* brass stabs on the downbeat, a pickup stab before the phrase turns */
+    if(st===0)for(const k of [0,2,4])audNote(d,t,audMtof(th.deg(chord+k,0)),spb*1.2,'sawtooth',0.022,{lp:2200,lpTo:900,a:0.01,r:0.12,verb:1});
+    if(st===7&&bar%2===1)for(const k of [0,2,4])audNote(d,t,audMtof(th.deg(th.prog[(bar+1)%8]+k,0)),spb*0.5,'sawtooth',0.018,{lp:2000,a:0.005,r:0.06});
+    /* the 808: root on 1, a push on the and-of-2, a glide up into the next bar */
+    if(st===0)aud808(t,root,spb*2.6,0.36);if(st===3)aud808(t,root,spb*1.2,0.24);if(st===6&&bar%2===1)aud808(t,root*1.12,spb*1.6,0.26,root*1.5);
+    /* half-time clap, hats with rolls */
+    if(st===4)audClap(t);audHat(t,0.12);if(st%2===1)audHat(t+spb/2,0.08);
+    if(bar%4===3&&st>=5)for(const k of [1,2,3])audHat(t+spb*k/4,0.07);if(bar%2===0&&st===7)audHat(t,0.08,true);
+    /* the hero's line — original: leap up, scramble down, climb, proud cadence (dotted pushes) */
+    const PH=[[0,null,null,4,null,null,7,null],[8,null,7,6,null,4,null,null],[3,null,null,5,null,7,null,8],[9,null,8,null,7,null,4,null]];
+    const p=PH[bar%4][st];if(p!=null){const up=S9.kind==='A2'?1:0;audLeadNote('brass',d,t,audMtof(th.deg(p,1+up)),spb,st===0||st===6);
+      if(S9.kind==='A2')audNote(d,t,audMtof(th.deg(p+2,1)),spb*0.9,'sawtooth',0.018,{lp:1600,a:0.02,r:0.1})}
+  }else{
+    /* the bridge: relative-minor strings, a lone flute, a snare build into the return */
+    if(st===0)for(const k of [0,2,4])audNote(d,t,audMtof(th.deg(chord+k)),spb*8,'triangle',0.03,{a:0.4,r:0.7,lp:1100,verb:1});
+    const m=th.brMel[bar][st];if(m!=null)audNote(d,t,audMtof(th.deg(m,1)),spb*2.2,'sine',0.055,{a:0.07,r:0.3,vib:1,verb:1,lp:1500});
+    if(st===0&&bar%2===0)aud808(t,root,spb*6,0.2);if(st===4)audClap(t);
+    if(bar>=5&&st%2===0)audNoise(d,t,0.06,0.05+0.025*(bar-5),{f:2100});if(bar>=6)audNoise(d,t+spb/2,0.05,0.07+0.03*(bar-6),{f:2400});if(bar===7&&st===0)audRiser(t,spb*8,0.13)}};
+/* play it while the Online window is open and no bout is on */
+{const base=audWant;audWant=function(){const w=base.apply(this,arguments);try{if(!AUD.manual&&!audLive()&&audVis('onl')&&!audVis('mgrBody')&&!audVis('hallBody')){audMarkHeard('Online');return 'Online'}}catch(e){}return w}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

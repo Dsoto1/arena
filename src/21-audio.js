@@ -1,5 +1,5 @@
 /* =====================================================================
-   21-AUDIO · v0.24 PROCEDURAL MUSIC AND SOUND EFFECTS (Web Audio, no files)
+   21-AUDIO · v0.24 PROCEDURAL Music AND SOUND EFFECTS (Web Audio, no files)
    ---------------------------------------------------------------------
    Every arena gets its own theme, generated live from a small recipe:
    a key and a mode, a tempo, a chord loop, a pulsing low-string ostinato

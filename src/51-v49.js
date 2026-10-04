@@ -1,5 +1,5 @@
 /* =====================================================================
-   51-V49 · MUSIC THAT HITS, A SEEK BAR, AND THE OTHER THEMES WHERE THEY BELONG
+   51-V49 · Music THAT HITS, A SEEK BAR, AND THE OTHER THEMES WHERE THEY BELONG
    =====================================================================
    • Every city theme keeps its melody, mode and chords and gains a beat: seven cities go trap (808 glides, clap
      on three, rolling hats), five go EDM (four on the floor, offbeat hats, a chip arpeggio). Midi-chip meets
