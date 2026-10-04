@@ -319,11 +319,11 @@ $('#btnRules').onclick=()=>{if(modalBusy())return;showRules()};
 /* v0.45: walking away from a live event is always a conscious choice — New event and the 🏛 menu both ask.
    From the menu you may also save the match to a slot (when it is your move) and come back to it later. */
 async function abandonAsk(ctx){
-  const summoned=S.players.filter(p=>p.saved&&p.alive&&!p.retired);
+  const summoned=S.players.filter(player=>player.saved&&player.alive&&!player.retired);
   const bets=(S.bets||[]).reduce((a,b)=>a+b.stake,0);
   const canSave=ctx==='menu'&&typeof matchSaveOK==='function'&&matchSaveOK();
   const v=await modal(ctx==='menu'?'Leave the arena?':'Abandon this event?',`<p>${ctx==='menu'?'An event is still on the sand. Before the main menu, decide what happens to it:':'The event on the sand has not resolved. Walking away now has consequences:'}</p><ul style="margin:6px 0 8px 18px;display:grid;gap:4px">
-      ${summoned.length?`<li><b>${summoned.map(p=>esc(p.name)).join(', ')}</b> ${summoned.length>1?'were':'was'} summoned from the Ludus. Deserting the arena is death in the crowd's eyes: ${summoned.length>1?'their records':'the record'} will be <b>struck from the rolls for good</b>.</li>`:''}
+      ${summoned.length?`<li><b>${summoned.map(player=>esc(player.name)).join(', ')}</b> ${summoned.length>1?'were':'was'} summoned from the Ludus. Deserting the arena is death in the crowd's eyes: ${summoned.length>1?'their records':'the record'} will be <b>struck from the rolls for good</b>.</li>`:''}
       ${bets?`<li>Your open wagers — <b>${bets} coin</b> staked — are forfeit to the bookmaker.</li>`:''}
       <li>Abandoning awards no Fates; nothing reaches the Ludus, the Infamis or the records.</li>
       ${ctx==='menu'?`<li>${canSave?'<b>💾 Save &amp; leave</b> keeps the match exactly as it stands — every token, wound and coin — in a save slot you can load from <b>Load game</b>.':'<i>Saving the match is possible on your own move (action phase, nothing waiting).</i>'}</li>`:''}</ul>`,
