@@ -267,7 +267,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl]'
   if(a==='enter'){const L=ONL.lobbies.find(x=>x.id===v);if(L)onlEnter(L);return}
   if(a==='watch'){const L=ONL.lobbies.find(x=>x.id===v);if(!L||L.status!=='live'){if(typeof mToast==='function')mToast('👁 Watching opens when the horns sound.');return}return onlDo(()=>onlWatch(L))}
   if(a==='ticket')return onlDo(async()=>{const r=await NET.req('lobby.ticket',{id:v});ONL.char=r.char;ONL.lobbies=await NET.req('lobby.list');if(typeof mToast==='function')mToast(`🎟 A seat in the stands at ${esc2(onlCityName(r.lobby.loc))} — it opens when the horns sound.`)});
-  if(a==='pinvite')return onlDo(async()=>{ONL.party=await NET.req('party.create');try{navigator.clipboard&&navigator.clipboard.writeText(ONL.party.code)}catch(e){}if(typeof mToast==='function')mToast(`👥 Your party code: <b>${esc2(ONL.party.code)}</b> — send it to a friend.`)});
+  if(a==='pinvite')return onlDo(async()=>{ONL.party=await NET.req('party.create');try{navigator.clipboard&&navigator.clipboard.writeText(ONL.party.code).catch(()=>{})}catch(e){}if(typeof mToast==='function')mToast(`👥 Your party code: <b>${esc2(ONL.party.code)}</b> — send it to a friend.`)});
   if(a==='pjoin')return onlDo(async()=>{ONL.party=await NET.req('party.join',{code:($('#onlPCode')||{}).value});if(typeof mToast==='function')mToast('👥 You joined the party.')});
   if(a==='pleave')return onlDo(async()=>{await NET.req('party.leave');ONL.party=null});
   if(a==='bet'){ONL.betting={id:v};ONL.tab='lobby';onlRedraw();return}

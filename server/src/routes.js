@@ -203,7 +203,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   const liveOrLast=async acct=>(await liveChar(acct))||(await store.byIndex('OWNER#'+acct))[0]||null;
 
   /* ── the Forum: FORUM | L#<ts13>#<acct4>, the last 30 shown; pushes counted per UTC day (FMETER) ── */
-  async function forumLines(){const t=now(),d0=Math.min(Math.floor(t/864e5)*864e5,t-18e5);return (await store.query('FORUM','L#',{limit:FORUM_KEEP,desc:true})).reverse().map(strip).filter(l=>(l.at||0)>=d0)} /* v0.85: the Forum starts fresh each UTC day; lines from the last 30 min linger past midnight (TTL deletion is lazy) */
+  async function forumLines(){const d0=C.forumSince(now());return (await store.query('FORUM','L#',{limit:FORUM_KEEP,desc:true})).reverse().map(strip).filter(l=>(l.at||0)>=d0)} /* v0.85: the Forum starts fresh each online day (20:00 New York, C.dayStart); lines from the last 30 min linger past the turn (TTL deletion is lazy) */
   async function forumPut(line){const at=now();line={...line,at};await store.put('FORUM','L#'+ts13(at)+'#'+String(line.by||'x').slice(-4),{...line,...(line.row?{row:tinyRow(line.row)}:{}),ttl:ttl(1)});return line}
   /* the daily meter: true while pushes may go out (the lines are stored either way) */
   async function meterOK(n){if(!n)return false;const day=new Date(now()).toISOString().slice(0,10);return (await store.counter('WORLD','FMETER#'+day,'n',n))<C.RATE.meterDay}
@@ -282,17 +282,17 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       /* v0.83: 'seeded6' — the 8 ranks are counted once more from a scan (Novicius, Rudiarius, Invictus) */
       if(await store.putUnless('WORLD','COUNTS',o,'seeded6'))return o}catch(e){}return (await store.get('WORLD','COUNTS'))||{}}
   const news=async line=>{const N=await world('NEWS');N.list=[line,...N.list].slice(0,12);await store.put('WORLD','NEWS',N)};
-  /* ☀ Today in the arena (WORLD DAY#<utc day>): versioned edits, never allowed to break a settlement */
+  /* ☀ Today in the arena (WORLD DAY#<online day> — the day turns at 20:00 New York, C.dayKey): versioned edits, never allowed to break a settlement */
   let dayC=null,dayAt=0;
   async function dayEdit(fn){try{const k='DAY#'+C.dayKey(now());for(let i=0;i<6;i++){const X=(await store.get('WORLD',k))||{};const D=fn(X)||X;
       if((await store.putRev('WORLD',k,{...D,ttl:ttl(3)}))!==false){dayC=null;return}}}catch(e){}}
   /* today's record, or yesterday's while today's is still empty */
   /* v0.83 Victor of the Day: yesterday's best win (most CF in one match) gives its house a trophy, once (WORLD VDAY#<day>) */
   let vdDone=null;
-  async function vdayAward(t){const y=C.dayKey(t-86400e3);if(vdDone===y)return;vdDone=y;try{if(!(await store.putNew('WORLD','VDAY#'+y,{at:t,ttl:ttl(3)})))return;
+  async function vdayAward(t){const y=C.dayPrevKey(t);if(vdDone===y)return;vdDone=y;try{if(!(await store.putNew('WORLD','VDAY#'+y,{at:t,ttl:ttl(3)})))return;
       const Y=await store.get('WORLD','DAY#'+y);const w=Y&&(Y.wins||[])[0];if(w&&w.dom)await editDomus(w.dom,D=>{C.trophyAdd(D,'vday',w.name,t)})}catch(e){}}
   async function today(){const t=now();await vdayAward(t);if(hereMs&&dayC&&t-dayAt<hereMs)return dayC;const D=await store.get('WORLD','DAY#'+C.dayKey(t));
-    let out=C.dayOut(D,'today');if(!C.dayHas(D)){const Y=await store.get('WORLD','DAY#'+C.dayKey(t-86400e3));if(C.dayHas(Y))out=C.dayOut(Y,'yesterday')}dayC=await dnFill(out);dayAt=t;return dayC}
+    let out=C.dayOut(D,'today');if(!C.dayHas(D)){const Y=await store.get('WORLD','DAY#'+C.dayPrevKey(t));if(C.dayHas(Y))out=C.dayOut(Y,'yesterday')}dayC=await dnFill(out);dayAt=t;return dayC}
   /* a lobby list for one lanista: their strike flag only; liteRow for every room but their own (full) */
   const listFor=(list,acct,f)=>{const mine=L=>inRoom(L,acct)||inStands(L,acct);const rows=list.filter(L=>!!L.flag===f);
     const out=rows.filter(mine).map(room).concat(rows.filter(L=>!mine(L)).slice(0,60).map(lite));
@@ -626,7 +626,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       if(!B.item.abandoned)await store.put('MATCH#'+d.id,'META',{...B.item,abandoned:{[ctx.acct]:rule}});else await store.setIn('MATCH#'+d.id,'META','abandoned',ctx.acct,rule);
       await toMatch(B.item,'match.input',{id:d.id,in:inp});let out=null;
       if(L.ranked){const pl=L.players.find(p=>p.id===ctx.acct);let before='tiro',gx=null;const ch=pl&&await editChar(pl.char,c=>{if(!c.alive)return false;before=C.rankFor(c).k;out=C.applyResult(c,{won:false,place:L.seats,f:0,coin:0,survives:false},true,{now:now()});out.abandoned=1;gx=C.gearAfter(c,pl.kit,{survives:false},true)});
-        if(ch&&out){if(out.died)await countRank(before,-1,ch);await fallen(ch,out);await domusAfter(ch,{won:false},out,true,{id:d.id,ev:L.ev,loc:L.loc,at:now(),ranked:true},gx);try{await deadGear(d.id,seat,ch,ctx.acct,gx,null)}catch(e){}await store.setIn('MATCH#'+d.id,'META','outs',ctx.acct,out);if(!ch.test)await dayEdit(D=>C.dayFell(D,{id:d.id,acct:ctx.acct,ev:L.ev,loc:L.loc,at:now(),ch,before,hall:out.hall}))}}
+        if(ch&&out){if(out.died)await countRank(before,-1,ch);await fallen(ch,out);await domusAfter(ch,{won:false},out,true,{id:d.id,ev:L.ev,loc:L.loc,at:now(),ranked:true},gx);try{await deadGear(d.id,seat,ch,ctx.acct,gx,null)}catch(e){}await store.setIn('MATCH#'+d.id,'META','outs',ctx.acct,out);if(!ch.test)await dayEdit(D=>C.dayFell(D,{id:d.id,acct:ctx.acct,ev:L.ev,loc:L.loc,at:now(),ch,before,hall:out.hall,gx}))}}
       const M2=await meta(d.id);const left=(M2.players||[]).filter(a=>!(M2.abandoned||{})[a]&&!(M2.dropped||{})[a]);
       if(!left.length)await closeMatch(d.id,'empty');else if(left.every(a=>(M2.reports||{})[a]))await settleMatch(d.id,M2,ctx.acct);
       const A=await acctOf(ctx.acct);if(A&&A.match===d.id)await store.set('ACCT#'+A.id,'PROFILE',{match:null});return {done:1,out,rule}},

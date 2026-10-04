@@ -2,8 +2,8 @@
    ONE text size (slider; the theme scale and Large text gone, an old theme scale migrates), ONE colour-blind select that applies its theme
    (and the Themes presets move it), no chest pickers / Armor section, Saves → the Saves window (and back to the shelf through Backups),
    "Save this look" in Themes, Restore all defaults (asks first, saves stay), Confirm before End turn (asks with moves left, not without);
-   and THE ONLINE LANDING ON ONE SCREEN — the first row of playlist cards inside the window at 1300×900, 1440×900 and 1920×1080, the
-   victor's house chip once, phones still one column. SHOT=<dir> saves u84u_*.png. */
+   and THE ONLINE LANDING ON ONE SCREEN — (v0.85) all four playlist cards and both showcases inside the window at 1300×900, 1440×900 and
+   1920×1080, the victor's house chip once, phones still one column. SHOT=<dir> saves u84u_*.png. */
 const http=require('http'),fs=require('fs'),path=require('path');const SHOT=process.env.SHOT||'';
 const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.resolve(process.argv[2])),page=path.basename(process.argv[2]);
 const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.url.split('?')[0]));if(!f.startsWith(root)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end()}const ext=path.extname(f);r.writeHead(200,{'content-type':{'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'}[ext]||'application/octet-stream'});fs.createReadStream(f).pipe(r)});
@@ -137,10 +137,11 @@ await p.evaluate(()=>{SETTINGS.confirmEnd=false;applySettings();if(S)S.over=true
     ONL80F.today={day:'today',wins:[e,{...e,cf:20},{...e,cf:18},{...e,cf:12}],fallen:[{...e,name:'Aemilii the Bold',how:'damnatio',dom:'x',dn:'Aemilii'}],upsets:[]};onlRedraw()});
   await W8(p,700);
   for(const [w,h] of [[1300,900],[1440,900],[1920,1080]]){await p.setViewportSize({width:w,height:h});await W8(p,600);
-    const m=await p.evaluate(()=>{const box=document.getElementById('mBody').getBoundingClientRect();const cards=[...document.querySelectorAll('#onl .onl-pls81>.onl-pl')];if(!cards.length)return null;const t0=cards[0].getBoundingClientRect().top;
-      const row=cards.filter(c=>Math.abs(c.getBoundingClientRect().top-t0)<4);const bottom=Math.max(...row.map(c=>c.getBoundingClientRect().bottom));
-      return {n:row.length,bottom:Math.round(bottom),box:Math.round(box.bottom),top:Math.round(t0),sc:document.getElementById('mBody').scrollTop,feed:getComputedStyle(document.getElementById('onlFeed80')).overflowY,chips:document.querySelectorAll('#onlToday80 .td81-c.win .dom84c').length}});
-    o['land'+w]=m;ok(m&&m.n>=3&&m.bottom<=m.box&&m.sc===0,`the first row of playlists is in view at ${w}×${h} `+JSON.stringify(m));ok(m&&m.chips===1,`the victor's house chip once at ${w}`);ok(m&&m.feed==='auto','the Forum feed scrolls inside');
+    /* v0.85 (146-v85land): the playlists are a 2×2 grid beside the two showcases — all four cards and both showcases in view */
+    const m=await p.evaluate(()=>{const box=document.getElementById('mBody').getBoundingClientRect();const cards=[...document.querySelectorAll('#onl .onl-pls81>*:not(.pl85div)'),...document.querySelectorAll('#v85show .v85sc')].filter(c=>c.offsetParent!==null);if(!cards.length)return null;
+      const bottom=Math.max(...cards.map(c=>c.getBoundingClientRect().bottom));
+      return {n:cards.length,bottom:Math.round(bottom),box:Math.round(box.bottom),sc:document.getElementById('mBody').scrollTop,feed:getComputedStyle(document.getElementById('onlFeed80')).overflowY,chips:document.querySelectorAll('#v85show .v85sc.win .dom84c').length}});
+    o['land'+w]=m;ok(m&&m.n===6&&m.bottom<=m.box&&m.sc===0,`all four playlists + both showcases in view at ${w}×${h} `+JSON.stringify(m));ok(m&&m.chips===1,`the victor's house chip once at ${w}`);ok(m&&m.feed==='auto','the Forum feed scrolls inside');
     await shot(p,'landing_'+w)}
   o.dd=await p.evaluate(()=>{const c='<button type="button" class="dom84c" data-onl83="prof" data-v="d1" title="Open the house">🏛 House Vettii</button>';return (onl84TodayChips('<b>X</b>'+c+c+c+c).match(/dom84c/g)||[]).length});
   ok(o.dd===1,'repeated house chips collapse to one ('+o.dd+')');
