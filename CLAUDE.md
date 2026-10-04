@@ -899,6 +899,7 @@ share copy — the site download play/flavius-rule-arena.zip.)
   the house) revealed by scouting — pitches on a want gain big, the button previews the gain; (3) progressive scouting: ratings as ranges
   that narrow (ask around < watch train < scout / trial = exact); (5) the weekly plan becomes a real planner (assign hours by priority,
   resolves at the week's end with a report letter; direct clicks still work).
+- **v0.85 server change:** the Forum starts fresh each UTC day (routes.js forumLines filters by today) — v0.85 ships a server zip (no protocol bump).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
