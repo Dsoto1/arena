@@ -664,7 +664,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   EVERY spearing (offline + online, CPU crowd too) = a refund: Flavius "refunds" the seat — a small "−N 🪙" floats off his box with
   the scowl (N = the room's ticket price online, a nominal seat price offline/CPU spectators: that refund goes into the ether; only a
   real ticket holder gets coin back). And the SPEARER draws an EXTRA Mandata Flavi card (on top of those held) — an angry emperor's
-  demand; log line names it as Flavius's decree. Online: the draw is in the lockstep stream (same card on every screen).
+  demand; log line: "… a Mandati Flavi (Mandate from Flavius)" (his wording for this line; the cards stay "Mandata Flavi"). Online: the draw is in the lockstep stream (same card on every screen).
   ONLINE PRICES (v0.82, with the coin rework; ONLC PRICE is shared with the server): weapons L1 60 / L2 250 / L3 750; armor by AP
   15 / 55 / 150 coin per AP at L1/L2/L3 (Greaves L2 4 AP = 220, Forged Chest L3 5 AP = 750); owned gear and wallets untouched.
   COIN (online): no pay-out for carried coin — flat survival award by rank (Tiro 8 / Gregarius 12 / Veteranus 18 / Primus 25 / Summa 35,
