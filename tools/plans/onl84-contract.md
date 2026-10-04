@@ -47,6 +47,13 @@ New refusal codes:
 - **Loot** (`loot.offer` pieces) and the market/loot/profile cards now carry **`w`** = the full def of a named piece (weapon or armor) — the popup shows
   the whole card (§8).
 
+- **Equip points (follow-up):** a kit never brings two armor pieces that cannot be worn together — one per equip point (`pt`) and layer
+  (stackable padding vs hard) per location; head/chest (belts too) one location, arm/leg one side each, a pair both sides (the rule of 03-engine
+  `armorConflict`). `ONLC.armFit(holder, items, catalog)`; `ONLC.equipOf` keeps the first of a clashing pair (so nothing comes out "broken" for
+  being unworn); `ONLC.gearEquip(on)` (domus.equip, server + mock) unticks whatever shares the new piece's point; `char.edit {equip}` keeps the
+  first; My Gladiators' Bring ticks untick the clashing box at once. The server passes its catalog with `ONLC.setCatalog`; the page uses `onlCatalog()`.
+- Ward / Invicta apply to every source; ONE log line per hit, only when damage was actually turned aside.
+
 ## 2. HOLOGRAPHIC SHIMMER (client only)
 Named cards (`nw83Card`, now also drawing armor) get **`holo84`** for Rare / Epic / Legendary: an animated sheen in the rarity colours over the border
 (Rare: a faint slow sheen; Epic: violet conic shimmer; Legendary: gold-amber conic shimmer + glint). `body.calm` (Settings → reduce motion) and

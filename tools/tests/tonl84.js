@@ -30,6 +30,11 @@ ok(gift.k==='named'&&gift.kind==='a'&&gift.it&&gift.w&&gift.w.named84,'a gift ro
 if(gift.it)await A.evaluate(async([it,id])=>{await NET.req('domus.move',{item:it,from:id,to:'house'})},[gift.it,sa.ch]);
 const nk=await world(A,(w,cid)=>{const ch=w.chars[cid];const cat=onlCatalog();let d=null;for(let s=1;s<4000&&!d;s++){let x=s;const rnd=()=>{x=(x*1664525+1013904223)>>>0;return x/4294967296};const a=ONLC.rollNamedArmor(rnd,cat,'legendary',[]);if(a.uq==='mercurialis'&&a.slot==='head')d=a}
   const P=ONLC.namedPiece(d,ch);ONLC.putPiece(ch,P,true);return P.pc.w.key},sa.ch);
+/* ── equip points (the mock = the server's rule): ticking the named helm leaves the printed one home ── */
+const epm=await A.evaluate(async()=>{const c0=(await NET.req('char.mine',{})).find(c=>c.alive);await NET.req('char.buy',{char:c0.id,item:'galea'});const c=(await NET.req('char.mine',{})).find(x=>x.alive);
+  const hel=c.gear.find(x=>/^na#/.test(x)&&(c.pcs[ONLC.itemUid(x)].w||{}).slot==='head');const before=ONLC.equipOf(c).filter(x=>x==='galea'||x===hel).length;
+  const r=await NET.req('domus.equip',{char:c.id,item:hel,on:true});const after=ONLC.equipOf(r);return {before,named:after.includes(hel),galea:after.includes('galea')}});
+ok(epm.before===1&&epm.named&&!epm.galea,'two helms are never brought together; ticking one unticks the other '+JSON.stringify(epm));
 /* ── 2 · the card: holographic (Legendary armor), still under calm ── */
 const holo=await A.evaluate(()=>{const ch=(mockLoad().chars[ONL.char.id]);const it=ch.gear.find(x=>/^na#/.test(x));const I=ONL83.piece(ch,it);const h=nw83Card(I,{hist:1});
   const bg=onl83Pop('pv84',`<h3 class="pop83h">A Legendary named armor</h3>${h}<div class="acts"><button class="btn" onclick="this.closest('.pv84').remove()">Close</button></div>`);const el=bg.querySelector('.nw83');
