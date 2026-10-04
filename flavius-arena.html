@@ -32181,7 +32181,19 @@ const ONLC=(function(){
      (Damnatio too) best rank first, upsets = a lower rank beating a higher one. Each entry keeps the face/token (look), the event and the
      outcome; the record stays under DAY_MAX bytes (faces leave from the tail first). ── */
   const DAY_KEEP={wins:5,fallen:5,upsets:4},DAY_MAX=14000;
-  function dayKey(t){return new Date(t).toISOString().slice(0,10)}
+  /* v0.85 THE ONLINE DAY turns at 20:00 New York time (America/New_York, DST-aware by the US rule: EDT from the second Sunday of March
+     02:00 EST = 07:00 UTC to the first Sunday of November 02:00 EDT = 06:00 UTC) — Today (WORLD DAY#), the Forum reset, the guest pass and
+     the Victor of the Day all follow it. nyBehind(t) = hours New York is behind UTC at t; dayStart(t) = the last 20:00 New York at or before t
+     (00:00 UTC in summer, 01:00 UTC in winter); dayKey(t) = the UTC date of that start ('yyyy-mm-dd' — the New York date the online day
+     mostly covers; in summer it equals the old UTC-day key, so old DAY# items still read); dayPrevKey(t) = the online day before. No libraries. */
+  function nyBehind(t){const y=new Date(t).getUTCFullYear();const sun=(m,n)=>{const d=new Date(Date.UTC(y,m,1)).getUTCDay();return 1+((7-d)%7)+7*(n-1)};
+    const a=Date.UTC(y,2,sun(2,2),7),b=Date.UTC(y,10,sun(10,1),6);return t>=a&&t<b?4:5}
+  function dayStart(t){t=+t||0;const L=new Date(t-nyBehind(t)*36e5);const d=L.getUTCDate()-(L.getUTCHours()<20?1:0);
+    const base=Date.UTC(L.getUTCFullYear(),L.getUTCMonth(),d,20);const s=base+4*36e5;return nyBehind(s)===4?s:base+5*36e5}
+  function dayKey(t){return new Date(dayStart(t)).toISOString().slice(0,10)}
+  const dayPrevKey=t=>dayKey(dayStart(t)-1);
+  /* the Forum's day: lines since the day turned, and those of the last 30 minutes linger past the turn */
+  const FORUM_GRACE=18e5;const forumSince=t=>Math.min(dayStart(t),(+t||0)-FORUM_GRACE);
   function dayWho(ch,rank){return {name:ch.name,cls:ch.cls,rank:rank||rankFor(ch).k,look:cleanLook(ch.look),bouts:ch.bouts|0,wins:ch.wins|0,survived:ch.survived|0,lifeCF:ch.lifeCF|0,...(ch.domus?{dom:ch.domus}:{})}}
   function dayLite(ch,rank){const L=cleanLook(ch.look);return {name:ch.name,cls:ch.cls,rank:rank||rankFor(ch).k,look:L.token?{token:L.token,color:L.color}:{}}}
   const DAY_SORT={wins:(a,b)=>b.cf-a.cf||a.at-b.at,fallen:(a,b)=>rankIdx(b.rank)-rankIdx(a.rank)||(b.lifeCF|0)-(a.lifeCF|0)||a.at-b.at,
@@ -32190,14 +32202,24 @@ const ONLC=(function(){
   function daySlim(D){const faces=[];for(let i=DAY_KEEP.wins;i>=0;i--)for(const k of ['upsets','fallen','wins']){const e=(D[k]||[])[i];if(e)faces.push(...(k==='upsets'?[e.l,e.w]:[e]))}
     for(const cut of ['portrait','look'])for(const f of faces){if(JSON.stringify(D).length<=DAY_MAX)return D;if(f&&f.look){if(cut==='portrait')delete f.look.portrait;else f.look={}}}return D}
   /* a settled match: m = {id,ev,loc,at,ranked,void,seats:[{acct,ch (after the result),before (rank key at the horns),row,out}]} (abandoned seats left out) */
+  /* v0.85 the showcases: a win keeps the coin earned (the award, house cut included); a fall keeps what died with him — the value of
+     the pieces he brought (gx.carried from gearAfter, else the kit's items, else what he would bring — equipOf0 — read before they leave) and his purse,
+     plus who or what killed him (kb: g gladiator · b beast · a arena · r rules; kn = the killing gladiator's name) */
+  function dayLost(s){const ch=s.ch||{};const cat=catNow();let ps=s.gx&&Array.isArray(s.gx.carried)?s.gx.carried:null;
+    if(!ps)ps=((s.kit&&s.kit.items)||equipOf0(ch)).map(it=>({item:it,pc:pcOf(ch,it)}));
+    let g=0;for(const P of ps)try{g+=valueOf(pieceInfo(P,cat))}catch(e){}return {gear:Math.max(0,g|0),purse:Math.max(0,ch.wallet|0)}}
   function dayFromMatch(D,m){D=D||{};if(m.void)return D;const hs=(m.seats||[]).filter(s=>s&&s.ch&&s.row);const base={at:m.at,ev:m.ev,loc:m.loc,ranked:!!m.ranked};
-    for(const s of hs){if(s.row.won&&(s.row.f|0)>0)dayNote(D,'wins',{key:m.id+'#'+s.acct,...base,...dayWho(s.ch,s.before),cf:s.row.f|0});
-      if(s.out&&s.out.died)dayNote(D,'fallen',{key:m.id+'#'+s.acct,...base,...dayWho(s.ch,s.before),how:'fate',hall:!!s.out.hall,cf:s.row.f|0})}
+    for(const s of hs){if(s.row.won&&(s.row.f|0)>0)dayNote(D,'wins',{key:m.id+'#'+s.acct,...base,...dayWho(s.ch,s.before),cf:s.row.f|0,coin:Math.max(0,(s.out&&(s.out.award!=null?s.out.award:s.out.pay))|0)});
+      if(s.out&&s.out.died){const kb=['g','b','a','r'].includes(s.row.kb)?s.row.kb:'';const k=kb==='g'?hs.find(z=>z!==s&&z.seat!=null&&z.seat===s.row.ks):null;
+        dayNote(D,'fallen',{key:m.id+'#'+s.acct,...base,...dayWho(s.ch,s.before),how:'fate',hall:!!s.out.hall,cf:s.row.f|0,...dayLost(s),...(kb?{kb}:{}),...(k&&k.ch?{kn:String(k.ch.name||'').slice(0,40)}:{})})}}
     for(const w of hs.filter(s=>s.row.won)){const l=hs.filter(s=>!s.row.won&&rankIdx(s.before)>rankIdx(w.before)).sort((a,b)=>rankIdx(b.before)-rankIdx(a.before))[0];
       if(l)dayNote(D,'upsets',{key:m.id+'#'+w.acct,...base,gap:rankIdx(l.before)-rankIdx(w.before),w:dayLite(w.ch,w.before),l:{...dayLite(l.ch,l.before),fell:!!(l.out&&l.out.died)}})}
     return daySlim(D)}
   /* a Ranked gladiator abandoned the sand: Damnatio */
-  function dayFell(D,m){return daySlim(dayNote(D||{},'fallen',{key:m.id+'#'+m.acct,at:m.at,ev:m.ev,loc:m.loc,ranked:true,...dayWho(m.ch,m.before),how:m.how||'damnatio',hall:!!m.hall,cf:0}))}
+  function dayFell(D,m){return daySlim(dayNote(D||{},'fallen',{key:m.id+'#'+m.acct,at:m.at,ev:m.ev,loc:m.loc,ranked:true,...dayWho(m.ch,m.before),how:m.how||'damnatio',hall:!!m.hall,cf:0,...dayLost(m)}))}
+  /* the landing's showcases (v0.85): the biggest winner = the most CF in one match (wins[0]); the biggest loser = the best-ranked
+     gladiator who fell in Ranked (fallen[0]) — both already sorted that way (DAY_SORT), so every screen picks the same two */
+  const dayBest=T=>({winner:((T&&T.wins)||[])[0]||null,loser:((T&&T.fallen)||[]).find(e=>e&&e.ranked!==false)||null});
   const dayHas=D=>!!D&&['wins','fallen','upsets'].some(k=>(D[k]||[]).length);
   function dayOut(D,day){D=D||{};return {day,wins:D.wins||[],fallen:D.fallen||[],upsets:D.upsets||[]}}
   /* weekly challenges rotate with the week of the year */
@@ -32471,7 +32493,7 @@ const ONLC=(function(){
   function aucBidWhy(lot,amt,t){if(!lot||lot.done||t>lot.ends)return 'The hammer has fallen on that lot.';const m=aucNextMin(lot);if(!(Number.isInteger(amt)&&amt>=m))return `The next bid is at least ${m} coin.`;return ''}
   function aucSnipe(lot,t){if(lot.ends-t<AUC_SNIPE_MS)lot.ends=t+AUC_SNIPE_MS;return lot}
 
-  return {setCatalog,armOf,armFit,equipOf0,NAMED_A,NAMED_ARMOR_SHARE,CPU_SHARE,CPU_CUT,RECLAIM_MS,isNamedA,AFFIX_A,UNIQUES_A,UNIQ_A_KEYS,rollNamedArmor,cleanNamedA,cpuRow,WEEK_MS,SEASON_EPOCH,seasonAt,seasonKeyOf,SCHED_W,seasonFixtures,onlineFixture,CH84,WEEK_GIFTS84,weekState,weekNote,AUC_LOTS,AUC_MIN_MS,AUC_SNIPE_MS,AUC_STEP,AUC_STEP_MIN,aucMin,aucNextMin,aucEnds,aucBidWhy,aucSnipe,GIFT_HOUSE,OFF_SHELF,giftsOut,giftsIn,offersIn,offerMoveWhy,offerMove,CFB_COIN,applyGiftHouse,TREASURY_CUT,GIFT_EVERY,GIFT_KEEP,COUNTDOWN_MS,LOOT_MS,FOLLOW_MAX,TROPHY_MAX,RECENT_KEEP,INFAMES_MIN,canWearNamed,PRICE_OFF,OFFERS83,OFF_CARRY,OFF_MAX,offersBrought,offerBuyWhy,offerBuy,offerBring,NAMED,L4_PRICE,RARITY,rarOf,itemBase,itemUid,isNamed,engineKey,pcOf,isBroken,newUid,pieceInfo,pieceOf,valueOf,repairCost,usedPrice,wearWhy,takePiece,putPiece,tagPiece,histAdd,breakItem,repairItem,gearAfter,lootBest,giftAdd,giftTake,GIFT_W,RAR_W,CFB_MAX,rollGift,applyGift,AFFIX,UNIQUES,rollNamed,namedPiece,cleanNamed,lineupSig,stopCount,countCheck,countLeft,trophyName,trophyAdd,trophiesFrom,recentRow,recentAdd,domusLink,domusFromHash,oddsOf,betResults,weekKey,PASS,passOK,standsSeatWhy,cleanPatron,gearMoveWhy,gearMove,gearEquip,GLORY,gloryOf,rankByGlory,tableFactor,PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
+  return {setCatalog,armOf,armFit,equipOf0,NAMED_A,NAMED_ARMOR_SHARE,CPU_SHARE,CPU_CUT,RECLAIM_MS,isNamedA,AFFIX_A,UNIQUES_A,UNIQ_A_KEYS,rollNamedArmor,cleanNamedA,cpuRow,WEEK_MS,SEASON_EPOCH,seasonAt,seasonKeyOf,SCHED_W,seasonFixtures,onlineFixture,CH84,WEEK_GIFTS84,weekState,weekNote,AUC_LOTS,AUC_MIN_MS,AUC_SNIPE_MS,AUC_STEP,AUC_STEP_MIN,aucMin,aucNextMin,aucEnds,aucBidWhy,aucSnipe,GIFT_HOUSE,OFF_SHELF,giftsOut,giftsIn,offersIn,offerMoveWhy,offerMove,CFB_COIN,applyGiftHouse,TREASURY_CUT,GIFT_EVERY,GIFT_KEEP,COUNTDOWN_MS,LOOT_MS,FOLLOW_MAX,TROPHY_MAX,RECENT_KEEP,INFAMES_MIN,canWearNamed,PRICE_OFF,OFFERS83,OFF_CARRY,OFF_MAX,offersBrought,offerBuyWhy,offerBuy,offerBring,NAMED,L4_PRICE,RARITY,rarOf,itemBase,itemUid,isNamed,engineKey,pcOf,isBroken,newUid,pieceInfo,pieceOf,valueOf,repairCost,usedPrice,wearWhy,takePiece,putPiece,tagPiece,histAdd,breakItem,repairItem,gearAfter,lootBest,giftAdd,giftTake,GIFT_W,RAR_W,CFB_MAX,rollGift,applyGift,AFFIX,UNIQUES,rollNamed,namedPiece,cleanNamed,lineupSig,stopCount,countCheck,countLeft,trophyName,trophyAdd,trophiesFrom,recentRow,recentAdd,domusLink,domusFromHash,oddsOf,betResults,weekKey,PASS,passOK,standsSeatWhy,cleanPatron,gearMoveWhy,gearMove,gearEquip,GLORY,gloryOf,rankByGlory,tableFactor,PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nyBehind,dayStart,dayPrevKey,FORUM_GRACE,forumSince,dayLost,dayBest,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
 /* =====================================================================
    112-ONLINE · MULTIPLAYER → ONLINE (phase 1: the landing space, against a mock server)
@@ -32742,7 +32764,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl]'
   if(a==='enter'){const L=ONL.lobbies.find(x=>x.id===v);if(L)onlEnter(L);return}
   if(a==='watch'){const L=ONL.lobbies.find(x=>x.id===v);if(!L||L.status!=='live'){if(typeof mToast==='function')mToast('👁 Watching opens when the horns sound.');return}return onlDo(()=>onlWatch(L))}
   if(a==='ticket')return onlDo(async()=>{const r=await NET.req('lobby.ticket',{id:v});ONL.char=r.char;ONL.lobbies=await NET.req('lobby.list');if(typeof mToast==='function')mToast(`🎟 A seat in the stands at ${esc2(onlCityName(r.lobby.loc))} — it opens when the horns sound.`)});
-  if(a==='pinvite')return onlDo(async()=>{ONL.party=await NET.req('party.create');try{navigator.clipboard&&navigator.clipboard.writeText(ONL.party.code)}catch(e){}if(typeof mToast==='function')mToast(`👥 Your party code: <b>${esc2(ONL.party.code)}</b> — send it to a friend.`)});
+  if(a==='pinvite')return onlDo(async()=>{ONL.party=await NET.req('party.create');try{navigator.clipboard&&navigator.clipboard.writeText(ONL.party.code).catch(()=>{})}catch(e){}if(typeof mToast==='function')mToast(`👥 Your party code: <b>${esc2(ONL.party.code)}</b> — send it to a friend.`)});
   if(a==='pjoin')return onlDo(async()=>{ONL.party=await NET.req('party.join',{code:($('#onlPCode')||{}).value});if(typeof mToast==='function')mToast('👥 You joined the party.')});
   if(a==='pleave')return onlDo(async()=>{await NET.req('party.leave');ONL.party=null});
   if(a==='bet'){ONL.betting={id:v};ONL.tab='lobby';onlRedraw();return}
@@ -34237,7 +34259,7 @@ function mockLive80(w,me){for(const L of Object.values(w.lobbies||{})){if(L.stat
   for(const x of g)if(mockLive80(w,x.id))throw new Error(x.id===me?'Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.':'Someone in your party is still in a match.');return g}}
 {const base=MOCK_ROUTES['lobby.ticket'];MOCK_ROUTES['lobby.ticket']=(w,d,me)=>{if(mockLive80(w,me))throw new Error('Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.');return base(w,d,me)}}
 function mockToday80(w){const D=w.days80||{};const t=Date.now();const k=ONLC.dayKey(t);if(ONLC.dayHas(D[k]))return ONLC.dayOut(D[k],'today');
-  const y=D[ONLC.dayKey(t-864e5)];return ONLC.dayHas(y)?ONLC.dayOut(y,'yesterday'):ONLC.dayOut(D[k],'today')}
+  const y=D[ONLC.dayPrevKey(t)];return ONLC.dayHas(y)?ONLC.dayOut(y,'yesterday'):ONLC.dayOut(D[k],'today')}
 function mockDay80(w,fn){w.days80=w.days80||{};const k=ONLC.dayKey(Date.now());w.days80[k]=fn(w.days80[k]||{})||w.days80[k];const old=ONLC.dayKey(Date.now()-2*864e5);
   for(const x of Object.keys(w.days80))if(x<old)delete w.days80[x]}
 {const base=MOCK_ROUTES['hello'];MOCK_ROUTES['hello']=(w,d,me)=>{const o=base(w,d,me);o.now=Date.now();if(d.all&&o.me){const lv=mockLive80(w,me);if(lv)o.live=lv;o.today=mockToday80(w)}return o}}
@@ -34246,10 +34268,10 @@ function mockDay80(w,fn){w.days80=w.days80||{};const k=ONLC.dayKey(Date.now());w
   if(L&&M&&was!=='done')for(const p of L.players){const ch=w.chars[p.char];if(ch&&!/^bot/.test(p.id))before[p.id]=ONLC.rankFor(ch).k}
   const r=base(w,d,me);
   try{if(L&&M&&M.status==='done'&&was!=='done'){const A=ONLC.agree(M.reports||{});if(!A.void){
-    const seats=L.players.map((p,i)=>{if(/^bot/.test(p.id)||(M.abandoned||{})[p.id])return null;const ch=w.chars[p.char];const row=(A.table||[]).find(x=>x.seat===i);return ch&&row?{acct:p.id,ch,before:before[p.id]||'tiro',row,out:(M.outs||{})[p.id]}:null}).filter(Boolean);
+    const seats=L.players.map((p,i)=>{if(/^bot/.test(p.id)||(M.abandoned||{})[p.id])return null;const ch=w.chars[p.char];const row=(A.table||[]).find(x=>x.seat===i);return ch&&row?{acct:p.id,ch,before:before[p.id]||'tiro',row,out:(M.outs||{})[p.id],kit:p.kit,seat:i}:null}).filter(Boolean);
     if(seats.length)mockDay80(w,D=>ONLC.dayFromMatch(D,{id:L.id,ev:L.ev,loc:L.loc,at:Date.now(),ranked:!!L.ranked,seats}))}}}catch(e){console.error(e)}return r}}
 {const base=MOCK_ROUTES['match.abandon'];MOCK_ROUTES['match.abandon']=(w,d,me)=>{const L=w.lobbies[d.id];const p=L&&L.players.find(x=>x.id===me);const ch=p&&w.chars[p.char];const before=ch?ONLC.rankFor(ch).k:'tiro';
-  const r=base(w,d,me);try{if(r&&r.out&&r.out.died&&ch)mockDay80(w,D=>ONLC.dayFell(D,{id:d.id,acct:me,ev:L.ev,loc:L.loc,at:Date.now(),ch,before,hall:r.out.hall}))}catch(e){}return r}}
+  const r=base(w,d,me);try{if(r&&r.out&&r.out.died&&ch)mockDay80(w,D=>ONLC.dayFell(D,{id:d.id,acct:me,ev:L.ev,loc:L.loc,at:Date.now(),ch,before,hall:r.out.hall,kit:p.kit}))}catch(e){}return r}}
 {const base=MOCK_ROUTES['match.odd'];MOCK_ROUTES['match.odd']=(w,d,me)=>{const r=base(w,d,me);try{const L=w.lobbies[d.id];const M=w.matches[d.id];const seat=d.seat|0;
   const acct=seat<L.seats?(L.players[seat]||{}).id:((L.stands||[])[seat-L.seats]||{}).id;const n=mockLiveHumans(L,M).length;const v=((mockOdd80()[d.id]||{}).votes||{})[acct]||[];
   if(acct&&n>=3&&v.length>=Math.floor(n/2)+1)mockPush('match.youodd',{id:d.id,seat,voters:v.slice(),to:acct})}catch(e){}return r}}
@@ -36767,7 +36789,7 @@ function mockFollows83(w,fs){return (fs||[]).map(f=>{const D=mockDomus82(w,f.id)
   const R=mockRoomOf80(w,A.id);return R?{id:f.id,name:f.name,st:'room',room:R.id,glad:mockName80(w,A.id)}:{id:f.id,name:f.name,st:'free',acct:A.id,glad:mockName80(w,A.id)}})}
 function mockBetsMark83(w,bets,res){for(let i=0;i<(bets||[]).length;i++){const b=bets[i],r=res[i];if(!b||!r||!b.bk)continue;const h=((w.bets83||{})[b.by]||[]).find(x=>x.id===b.bk);if(h){h.res=r.res;h.pay=r.pay|0}
     if(r.res!=='refund'){const wk=ONLC.weekKey(Date.now());w.wk83=w.wk83||{};const T=(w.wk83[wk]=w.wk83[wk]||{});const x=(T[b.by]=T[b.by]||{net:0,won:0,staked:0});x.net+=(r.pay|0)-(b.amt|0);x.won+=r.pay|0}}}
-function mockVday83(w){const y=ONLC.dayKey(Date.now()-864e5);w.vday83=w.vday83||{};if(w.vday83[y])return;w.vday83[y]=1;const Y=(w.days80||{})[y];const v=Y&&(Y.wins||[])[0];const D=v&&mockDomus82(w,v.dom);if(D)ONLC.trophyAdd(D,'vday',v.name,Date.now())}
+function mockVday83(w){const y=ONLC.dayPrevKey(Date.now());w.vday83=w.vday83||{};if(w.vday83[y])return;w.vday83[y]=1;const Y=(w.days80||{})[y];const v=Y&&(Y.wins||[])[0];const D=v&&mockDomus82(w,v.dom);if(D)ONLC.trophyAdd(D,'vday',v.name,Date.now())}
 
 Object.assign(MOCK_ROUTES,{
   'offer.buy':(w,d,me)=>{const ch=mockOwn83(w,me,d.char);ONLC.offerBuy(ch,String(d.key||''));return ch},
@@ -38782,7 +38804,7 @@ const reduceMotion85=()=>{try{return typeof reduceMotion==='function'&&reduceMot
        with the number of bouts still to fight in gold.
   11 · The free agent card's steps (1 Scout · 2 Court · 3 Offer) swap only the card column — no MGR_REDRAW,
        so the rail is never rebuilt (clicking them again and again made the left rail flicker, like ⋯ did).
-  12 · ONLINE: the Forum starts fresh every UTC day — the server returns only today's lines (server/src/routes.js
+  12 · ONLINE: the Forum starts fresh every online day (since 146-v85land: the day turns at 20:00 New York time, ONLC.dayStart; was the UTC day) — the server returns only today's lines (server/src/routes.js
        forumLines), the mock does the same, and the page drops older lines it still holds (a tab left open
        over midnight).
   13 · ONLINE playlists: ONE row of four that never wraps — ⭐ This week (its own border, set apart by a divider:
@@ -38911,9 +38933,9 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   try{col.innerHTML=detailHTML(g)}catch(err){console.error(err);if(typeof MGR_REDRAW==='function')MGR_REDRAW()}},true);
 
 /* 12 · the Forum starts fresh each UTC day */
-const day0_85=()=>{const t=Date.now();return Math.min(Math.floor(t/864e5)*864e5,t-18e5)} /* lines from the last 30 min linger past midnight */;
+const day0_85=()=>ONLC.forumSince(Date.now()) /* the online day (20:00 New York, 146-v85land); lines from the last 30 min linger past the turn */;
 if(typeof onlFeedHTML80==='function'){const base=onlFeedHTML80;onlFeedHTML80=function(){const d0=day0_85();try{if(typeof ONLF!=='undefined'){if(Array.isArray(ONLF.lines))ONLF.lines=ONLF.lines.filter(l=>!l.at||l.at>=d0);if(Array.isArray(ONLF.local))ONLF.local=ONLF.local.filter(l=>!l.at||l.at>=d0)}}catch(e){}return base.apply(this,arguments)}}
-if(typeof MOCK_ROUTES!=='undefined'){const today=a=>Array.isArray(a)?a.filter(l=>{const t=typeof mockNow==='function'?mockNow():Date.now();return !l.at||l.at>=Math.min(Math.floor(t/864e5)*864e5,t-18e5)}):a;
+if(typeof MOCK_ROUTES!=='undefined'){const today=a=>Array.isArray(a)?a.filter(l=>{const t=typeof mockNow==='function'?mockNow():Date.now();return !l.at||l.at>=ONLC.forumSince(t)}):a;
   for(const k of ['forum.get','hello']){const base=MOCK_ROUTES[k];if(typeof base!=='function')continue;MOCK_ROUTES[k]=function(){const r=base.apply(this,arguments);const fix=o=>{if(k==='forum.get')return today(o);if(o&&Array.isArray(o.forum))o.forum=today(o.forum);return o};return r&&typeof r.then==='function'?r.then(fix):fix(r)}}}
 
 /* 13 · the playlist row: This week | Classic (tabbed) | Familia | Ludi Infames */
@@ -38967,6 +38989,182 @@ document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.c
   if(!ok)return;for(const g of R){try{await Store.del('gladiators',g.id)}catch(err){}}LUDUS_CACHE=LUDUS_CACHE.filter(g=>g.status!=='retired');
   const box=document.getElementById('ludusBody');if(box&&typeof ludusHTML==='function')box.innerHTML=await ludusHTML();if(typeof mToast==='function')mToast(`🧹 ${R.length} retired gladiator${R.length===1?'':'s'} cleared.`)},true);
 {const st=document.createElement('style');st.textContent='.ret85{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:8px;padding:6px 10px}';document.head.appendChild(st)}
+/* =====================================================================
+   146-v85land · ONLINE LANDING II (his "all ★", v0.85)
+   =====================================================================
+   1 · LAYOUT: the Today ribbon (#onlToday80 strip + its "+ more") leaves the landing. Under the stage | This week + Forum, the bottom
+       is ONE block (.a85-bot) of two columns on desktop: LEFT the playlists in a 2×2 grid (⭐ This week keeps its double border ·
+       ⚔ Classic with the Democritus / Egidious / Cassian tabs of 145 part 13 · Familia · Ludi Infames); RIGHT two SHOWCASES stacked, one beside
+       each playlist row (#v85show; face left, the story right):
+         🏆 BIGGEST WINNER of the day — the most CF in one match (Today's wins[0]): face + token, name, house chip (opens the house's
+            profile), rank, event + city, CF earned (wheat) and coin earned (the award, house cut included);
+         🪦 BIGGEST LOSER of the day — the best-ranked gladiator who fell in Ranked (fallen[0]: Fate, Damnatio, or slain): face, name,
+            house, rank, CF, how he fell and what he lost — the value of the gear he brought (ONLC.valueOf) + his purse.
+       ONLC.dayBest(today) picks both (the day record is already sorted that way), so every screen shows the same two. Each box has
+       "See today's list ›" → the readable popup (onlTodayPop81, the old "+ more" list). Empty states: "No victor yet today — the sand
+       waits." / "No one fell today — the sand waits." (yesterday's record while today's is empty, as before). A new hello patches
+       the boxes in place (onlToday80Patch wrapper). Tablets: the playlists over the showcases; phones: one column (the playlists keep
+       their sideways scroll), the page scrolls.
+   2 · DATA (111-onlcore + server + mock, no protocol change): day entries carry `coin` (wins), `gear` + `purse` (+ `kb`/`kn`: what or
+       who killed him) for the fallen (ONLC.dayLost); old entries without them still show (the numbers are left out).
+   3 · THE ONLINE DAY turns at 20:00 New York time (ONLC.dayStart/dayKey/dayPrevKey, DST by the US rule): Today's WORLD DAY#, the
+       Forum reset (ONLC.forumSince, 30-min grace), the guest pass and the Victor of the Day. Summer keys equal the old UTC-day keys.
+   4 · 👥 PARTY: the code box and "Join a party" leave the stage; a 👥 Party button sits after the Invite slots and opens a small
+       anchored panel (V85.party; it survives redraws of the Play tab, closes on another tab): in a party → your code (📋 Copy), the members, Leave; else → "Share your
+       code" (makes the party, shows the code) and "Join with a code" (input + Join). The same routes and handlers as before
+       (data-onl pinvite / pjoin / pleave → party.create / join / leave); an Invite slot also opens the panel. Esc, ✕ or a click
+       elsewhere closes it. A redraw keeps what was typed in the code box.
+   ===================================================================== */
+const V85={party:false};
+const v85Coin=()=>typeof ICO!=='undefined'&&ICO.coin?ICO.coin:'🪙';
+
+/* ---------------- 1 · the showcases ---------------- */
+function v85Where(e){return `${esc2(onlEvName(e.ev))} <span class="v85at">at</span> ${esc2(onlCityName(e.loc))}`}
+function v85House(e){return e&&e.dom&&e.dn?`<button type="button" class="dom84c v85hc" data-onl83="prof" data-v="${esc2(e.dom)}" title="Open the house">🏛 ${esc2(onlHouse82(e.dn))}</button>`:''}
+function v85Fig(e,k){return `<div class="v85sc-fig">${onl80Face(e,'md')}<span class="v85sc-tok">${e.cls?onlFig(e.cls,e.look,64):''}</span></div>`}
+function v85FellHow(e){if(e.how==='damnatio')return 'Abandoned the sand — <b>Damnatio</b>';if(e.kb==='g'&&e.kn)return `Slain by <b>${esc2(e.kn)}</b>`;
+  if(e.kb==='b')return 'Slain by a beast';return 'Taken by the Fate'}
+function v85ShowHTML(){const T=typeof ONL80F!=='undefined'?ONL80F.today:null;const yd=!!(T&&T.day==='yesterday');const B=ONLC.dayBest(T);const day=yd?'yesterday':'today';
+  const W=onlW81(),C=v85Coin();const list=`<button type="button" class="v85list" data-v85="list" title="The day's lists">See ${day}'s list ›</button>`;
+  const head=(ic,t,sub)=>`<div class="v85sc-h" title="${sub}"><span><b>${ic} ${t}</b><small>${sub}</small></span>${list}</div>`;
+  const w=B.winner,l=B.loser;
+  const hw=head('🏆','Biggest winner',`most CF in one bout ${day}`),hl=head('🪦','Biggest loser',`best-ranked fallen ${day}`);
+  const win=w?`<div class="v85sc win" data-v85who="win">${v85Fig(w)}<div class="v85sc-i">${hw}
+      <div class="v85sc-n"><b>${esc2(w.name)}</b>${v85House(w)}</div><div class="v85sc-r">${onlRankChip(w.rank||'tiro')} <span>${esc2((CLASSES[w.cls]||{}).name||'')}</span></div>
+      <div class="v85sc-ev">Won ${v85Where(w)}${w.ranked===false?' · Custom':''}</div>
+      <div class="v85sc-num"><span title="Crowd Favor earned in that bout">${W}<b>${w.cf|0}</b> CF</span><span title="Coin earned in that bout">${C}<b>${w.coin|0}</b> coin</span></div></div></div>`
+    :`<div class="v85sc win none" data-v85who="win"><div class="v85sc-i">${hw}<div class="v85sc-empty">No victor yet ${day} — the sand waits.</div></div></div>`;
+  const lost=l&&(l.gear!=null||l.purse!=null)?`<div class="v85sc-lost"><small>Lost</small><span title="The value of the gear he brought">${C}<b>${l.gear|0}</b> in gear</span><span title="His purse">${C}<b>${l.purse|0}</b> purse</span></div>`:'';
+  const loss=l?`<div class="v85sc fall" data-v85who="fall">${v85Fig(l)}<div class="v85sc-i">${hl}
+      <div class="v85sc-n"><b>${esc2(l.name)}</b>${v85House(l)}</div><div class="v85sc-r">${onlRankChip(l.rank||'tiro')} <span>${esc2((CLASSES[l.cls]||{}).name||'')}</span><span>${W}<b>${l.cf|0}</b> CF</span></div>
+      <div class="v85sc-ev">${v85FellHow(l)} · ${v85Where(l)}</div>${lost}</div></div>`
+    :`<div class="v85sc fall none" data-v85who="fall"><div class="v85sc-i">${hl}<div class="v85sc-empty">No one fell ${day} — the sand waits.</div></div></div>`;
+  return `<div class="v85show" id="v85show">${win}${loss}</div>`}
+/* the landing: no ribbon; the playlists and the showcases share the bottom */
+{const base=onlPlayHTML;onlPlayHTML=function(){const h=base.apply(this,arguments);try{if(typeof h!=='string'||h.indexOf('onl-play81')<0)return h;
+  const T=document.createElement('template');T.innerHTML=h;const g=T.content.querySelector('.onl-play81');const pls=g&&g.querySelector(':scope>.a81-pls');if(!g||!pls)return h;
+  const td=g.querySelector(':scope>.a81-today');if(td)td.remove();g.classList.add('v85');
+  const bot=document.createElement('div');bot.className='a85-bot';pls.replaceWith(bot);bot.appendChild(pls);
+  const sh=document.createElement('div');sh.className='a85-show';sh.innerHTML=`<h3 class="onl-h">The day in the arena <span class="rc-sub" title="The online day turns at 8 PM New York time">turns at 8 PM New York</span></h3>${v85ShowHTML()}`;bot.appendChild(sh);
+  return T.innerHTML}catch(e){console.error(e);return h}}}
+/* a new hello: the showcases follow */
+{const base=onlToday80Patch;onlToday80Patch=function(){const r=base.apply(this,arguments);try{const el=document.getElementById('v85show');if(el){const h=v85ShowHTML();if(el.outerHTML!==h)el.outerHTML=h}}catch(e){console.error(e)}return r}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-v85]');if(!b)return;e.preventDefault();e.stopPropagation();if(b.dataset.v85==='list')onlTodayPop81()},true);
+
+/* ---------------- 4 · 👥 the Party panel ---------------- */
+{const base=onlPartyHTML;onlPartyHTML=function(){const h=base.apply(this,arguments);try{if(typeof h!=='string'||h.indexOf('onl-pbox')<0)return h;
+  const T=document.createElement('template');T.innerHTML=h;const box=T.content.querySelector('.onl-pbox');const row=T.content.querySelector('.onl-party');if(!box||!row)return h;box.remove();
+  const P=ONL.party;const n=P?P.members.length:0;
+  const btn=document.createElement('button');btn.type='button';btn.className='onl-slot v85pbtn'+(V85.party?' on':'');btn.dataset.v85p='open';btn.title='Your party: share a code or join one';btn.setAttribute('aria-expanded',V85.party?'true':'false');
+  btn.innerHTML=`<span class="v85pi">👥</span><small>Party${P?` · ${n}`:''}</small>`;const wr=document.createElement('div');wr.className='v85pw';wr.appendChild(btn);row.appendChild(wr);
+  if(V85.party){const pp=document.createElement('div');pp.className='v85pp';pp.setAttribute('role','dialog');pp.setAttribute('aria-label','Party');pp.innerHTML=v85PartyPanel();wr.appendChild(pp)}
+  return T.innerHTML}catch(e){console.error(e);return h}}}
+function v85PartyPanel(){const P=ONL.party;const me=ONL.acct&&ONL.acct.id;const x=`<button type="button" class="v85px" data-v85p="close" title="Close" aria-label="Close">✕</button>`;
+  if(P){const lead=P.leader===me;const names=P.members.map(m=>`<li>${m===me?'<b>You</b>':esc2((P.names||{})[m]||'Lanista')}${P.leader===m?' <small>· leader</small>':''}</li>`).join('');
+    return `${x}<div class="v85pp-h">👥 Your party</div><div class="v85pp-code"><span>Code</span><b class="onl-code" id="v85code">${esc2(P.code)}</b><button type="button" class="btn tksm" data-v85p="copy">📋 Copy</button></div>
+      <ul class="v85pp-m">${names}</ul><small class="rc-sub">${lead?'You pick the game — your party sits with you (one team in team events).':'Your leader picks the game.'}</small>
+      <div class="acts"><button type="button" class="btn tksm" data-onl="pleave">Leave the party</button></div>`}
+  return `${x}<div class="v85pp-h">👥 Party</div><div class="v85pp-s"><b>Share your code</b><small class="rc-sub">Friends who enter it sit with you; in team events you fight on one side.</small>
+      <button type="button" class="btn primary tksm" data-onl="pinvite">👥 Make my party code</button></div>
+    <div class="v85pp-s"><b>Join with a code</b><div class="v85pp-j"><input class="tin" id="onlPCode" maxlength="6" placeholder="CODE" autocomplete="off" spellcheck="false"><button type="button" class="btn tksm" data-onl="pjoin">Join</button></div></div>`}
+/* open/close in place (no redraw: a click that closes the panel still reaches the button it landed on) */
+function v85PartySet(on){V85.party=!!on;const wr=document.querySelector('#onl .v85pw');if(!wr)return;for(const p of document.querySelectorAll('#onl .v85pp'))p.remove();
+  const b=wr.querySelector('.v85pbtn');if(b){b.classList.toggle('on',V85.party);b.setAttribute('aria-expanded',V85.party?'true':'false')}
+  if(V85.party){const pp=document.createElement('div');pp.className='v85pp';pp.setAttribute('role','dialog');pp.setAttribute('aria-label','Party');pp.innerHTML=v85PartyPanel();wr.appendChild(pp)}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-v85p]');if(!b)return;e.preventDefault();e.stopPropagation();const a=b.dataset.v85p;
+  if(a==='open'){v85PartySet(!V85.party);if(V85.party)setTimeout(()=>{const i=document.getElementById('onlPCode');if(i&&!ONL.party)try{i.focus()}catch(err){}},0);return}
+  if(a==='close'){v85PartySet(false);return}
+  if(a==='copy'){const c=ONL.party&&ONL.party.code;if(!c)return;try{navigator.clipboard&&navigator.clipboard.writeText(c).catch(()=>{})}catch(err){}if(typeof mToast==='function')mToast(`📋 Party code <b>${esc2(c)}</b> copied — send it to a friend.`)}},true);
+/* an Invite slot makes the party (112) and shows its code here */
+window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-onl="pinvite"]');if(!b||!ONL.char)return;V85.party=true},true);
+/* a click elsewhere or Esc closes it */
+document.addEventListener('pointerdown',e=>{if(!V85.party)return;const t=e.target;if(!t||!t.closest||t.closest('.v85pp,.v85pbtn'))return;if(document.querySelector('#onl .v85pp'))v85PartySet(false)},true);
+window.addEventListener('keydown',e=>{if(e.key==='Escape'&&V85.party&&document.querySelector('#onl .v85pp')){e.preventDefault();e.stopImmediatePropagation();v85PartySet(false)}},true); /* before the window's own Esc (which would close Online) */
+/* Enter in the code box joins */
+document.addEventListener('keydown',e=>{if(e.key!=='Enter'||!e.target||e.target.id!=='onlPCode')return;const j=document.querySelector('#onl .v85pp [data-onl="pjoin"]');if(j){e.preventDefault();j.click()}});
+/* a redraw keeps what was typed into the code box (and its focus) */
+{const base=onlRedraw;onlRedraw=function(){const i=document.getElementById('onlPCode');const v=i?i.value:null;const f=i&&document.activeElement===i;const r=base.apply(this,arguments);
+  try{const j=document.getElementById('onlPCode');if(j&&v!=null&&!j.value){j.value=v;if(f){j.focus();try{j.setSelectionRange(v.length,v.length)}catch(err){}}}
+    if(V85.party&&document.getElementById('onl')&&!document.querySelector('#onl .v85pw'))V85.party=false /* another tab: the panel does not wait there */}catch(e){}return r}}
+
+{const st=document.createElement('style');st.textContent=`
+/* the bottom block */
+#onl .onl-play81.v85 .a85-bot{grid-area:pls;min-width:0;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px 16px;align-items:stretch}
+#onl .a85-bot>.a81-pls,#onl .a85-bot>.a85-show{grid-area:auto;min-width:0;display:flex;flex-direction:column}
+#onl .a85-show .onl-h{margin:2px 0 6px}
+#onl .a85-bot .onl-pls81.pl85row{flex:1}
+@media(min-width:761px){
+ #onl .onl-play81.v85{grid-template-areas:"stage week" "stage forum" "pls pls";grid-template-rows:auto 1fr auto}
+ #onl .a85-bot .onl-pls81.pl85row{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-rows:1fr;gap:10px}
+ #onl .a85-bot .pl85row .pl85div{display:none}
+ #onl .onl-play81.v85 .a81-forum{min-height:150px}
+ #onl .onl-play81.v85 .onl-stage81:not(.ng81){padding-bottom:46px}
+ #onl .a85-bot .pl85cl .pl85body>.onl-pl{height:100%;box-sizing:border-box}
+}
+@media(min-width:761px) and (max-width:1099px){
+ #onl .onl-play81.v85{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"stage stage" "week forum" "pls pls";grid-template-rows:none}
+ #onl .onl-play81.v85 .a85-bot{grid-template-columns:minmax(0,1fr)}
+}
+/* the showcases */
+#onl .v85show{flex:1;display:grid;grid-template-columns:minmax(0,1fr);grid-auto-rows:1fr;gap:10px;min-height:0}
+#onl .v85sc{position:relative;display:flex;gap:14px;align-items:center;padding:8px 12px 8px 10px;border:2px solid #c9a24f;border-radius:12px;min-width:0;
+  background:radial-gradient(ellipse 30% 90% at 9% 50%,rgba(240,207,125,.2),transparent 70%),linear-gradient(90deg,rgba(201,162,79,.14),rgba(24,17,11,.92) 60%);box-shadow:0 0 18px -8px rgba(240,207,125,.6)}
+#onl .v85sc.fall{border-color:#8a3a2a;background:radial-gradient(ellipse 30% 90% at 9% 50%,rgba(160,70,50,.22),transparent 70%),linear-gradient(90deg,rgba(122,58,42,.18),rgba(20,14,12,.94) 60%);box-shadow:0 0 18px -8px rgba(160,60,40,.6)}
+#onl .v85sc-fig{position:relative;width:58px;flex:none;margin-right:12px}
+#onl .v85sc-fig .portrait{width:58px!important;height:78px!important;border-radius:8px;overflow:hidden;border:1px solid #8a6a32;display:block;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+#onl .v85sc.fall .v85sc-fig .portrait{filter:grayscale(.6) sepia(.25);border-color:#6a3a2a}
+#onl .v85sc-tok{position:absolute;right:-22px;bottom:-8px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.7))}#onl .v85sc-tok img,#onl .v85sc-tok svg{max-height:44px;max-width:44px}
+#onl .v85sc-i{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+#onl .v85sc-h{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+#onl .v85sc-h>span{display:flex;align-items:baseline;gap:6px;min-width:0;overflow:hidden}#onl .v85sc-h b{font:700 14px Georgia,serif;color:#f0cf7d;white-space:nowrap}#onl .v85sc.fall .v85sc-h b{color:#e3a08a}
+#onl .v85sc-h small{font:500 11px system-ui,sans-serif;color:#bfae88;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#onl .v85list{all:unset;flex:none;cursor:pointer;font:600 11.5px system-ui,sans-serif;color:#e8d6a8;padding:2px 8px;border:1px solid rgba(232,201,106,.45);border-radius:999px;white-space:nowrap}#onl .v85list:hover,#onl .v85list:focus-visible{border-color:#f0cf7d;color:#fff}
+#onl .v85sc-n{display:flex;align-items:center;gap:6px;min-width:0}#onl .v85sc-n>b{font:700 18px Georgia,serif;color:var(--bone,#f1e6cf);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;line-height:1.2}
+#onl .v85sc-n .dom84c{margin:0;flex:0 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#onl .v85sc-r{display:flex;gap:4px 8px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:#d8c8a2}#onl .v85sc-r b{color:#f3d58a}
+#onl .v85sc-ev{font-size:12.5px;line-height:1.3;color:#eadbb8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#onl .v85sc-ev b{color:#f3d58a}.v85at{color:#a8987a}
+#onl .v85sc-num,#onl .v85sc-lost{display:flex;gap:4px 14px;align-items:baseline;flex-wrap:wrap;font-size:13px;color:#eadbb8}
+#onl .v85sc-num b,#onl .v85sc-lost b{font:700 17px Georgia,serif;color:#ffe08a;margin:0 3px}#onl .v85sc-num img,#onl .v85sc-lost img,#onl .v85sc-r img{height:15px;width:auto;vertical-align:-2px}
+#onl .v85sc-lost small{font-size:10.5px;color:#c99a8a;text-transform:uppercase;letter-spacing:.08em}#onl .v85sc-lost b{color:#f0b49a}
+#onl .v85sc.none{border-style:dashed;box-shadow:none;opacity:.88}
+#onl .v85sc-empty{flex:1;display:flex;align-items:center;justify-content:center;font:italic 15px Georgia,serif;color:var(--muted,#a8987a);padding:10px 6px;min-height:50px}
+/* big screens: two TALL showcases side by side (the face on top) */
+@media(min-width:1600px) and (min-height:1000px){
+ #onl .v85show{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-auto-rows:auto}
+ #onl .v85sc{flex-direction:column;align-items:center;text-align:center;gap:8px;padding:12px 14px 46px;
+   background:radial-gradient(ellipse 70% 40% at 50% 26%,rgba(240,207,125,.2),transparent 70%),linear-gradient(180deg,rgba(201,162,79,.14),rgba(24,17,11,.92) 65%)}
+ #onl .v85sc.fall{background:radial-gradient(ellipse 70% 40% at 50% 26%,rgba(160,70,50,.22),transparent 70%),linear-gradient(180deg,rgba(122,58,42,.18),rgba(20,14,12,.94) 65%)}
+ #onl .v85sc-fig{order:-1;width:78px;margin:0}#onl .v85sc-fig .portrait{width:78px!important;height:104px!important}#onl .v85sc-tok{right:-34px}#onl .v85sc-tok img,#onl .v85sc-tok svg{max-height:60px;max-width:60px}
+ #onl .v85sc-i{align-items:center;width:100%;gap:5px}#onl .v85sc-h{justify-content:center}#onl .v85sc-h>span{flex-direction:column;align-items:center;gap:0}#onl .v85sc-h b{font-size:16px}
+ #onl .v85sc .v85list{position:absolute;left:50%;bottom:12px;transform:translateX(-50%)}
+ #onl .v85sc-n{flex-direction:column;gap:3px}#onl .v85sc-n>b{font-size:21px;max-width:100%}#onl .v85sc-r,#onl .v85sc-num,#onl .v85sc-lost{justify-content:center}
+ #onl .v85sc-ev{white-space:normal}#onl .v85sc-lost small{flex-basis:100%}
+ #onl .v85sc-empty{min-height:150px;font-size:16px}#onl .v85sc.none .v85sc-i{flex:1}
+}
+@media(max-width:1399px){#onl .v85sc-h small{display:none}}
+/* the Party button + panel */
+#onl .v85pw{position:relative;display:flex;flex:none}
+#onl .onl-slot.v85pbtn{border-style:solid;border-color:#8a6a32;background:rgba(214,171,76,.12);color:#f0cf7d;cursor:pointer}
+#onl .onl-slot.v85pbtn .v85pi{font-size:22px;line-height:1}#onl .onl-slot.v85pbtn.on,#onl .onl-slot.v85pbtn:hover{border-color:#f0cf7d;box-shadow:0 0 10px rgba(240,207,125,.35)}
+#onl .onl-stage81:has(.v85pp){overflow:visible}#onl .onl-stage81 .onl-party:has(.v85pp){z-index:30}#onl .a81-stage:has(.v85pp){position:relative;z-index:40}
+#onl .v85pp{position:absolute;left:0;top:calc(100% + 8px);z-index:20;width:300px;max-width:calc(100vw - 32px);box-sizing:border-box;padding:12px 14px;border:1px solid #b08a3a;border-radius:12px;
+  background:linear-gradient(180deg,#2a1f12,#17110a);box-shadow:0 12px 30px rgba(0,0,0,.7);display:flex;flex-direction:column;gap:8px;text-align:left;color:#eadbb8}
+#onl .v85pp-h{font:700 16px Georgia,serif;color:#f0cf7d;padding-right:24px}
+#onl .v85px{all:unset;position:absolute;right:8px;top:6px;cursor:pointer;font-size:15px;color:#bfae88;padding:2px 6px;border-radius:6px}#onl .v85px:hover{color:#fff;background:rgba(255,255,255,.08)}
+#onl .v85pp-s{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border:1px solid rgba(214,171,76,.25);border-radius:9px;background:rgba(0,0,0,.2)}
+#onl .v85pp-s .btn{align-self:flex-start}
+#onl .v85pp-j{display:flex;gap:6px}#onl .v85pp-j input{width:110px;text-transform:uppercase;letter-spacing:.12em;height:30px;box-sizing:border-box}
+#onl .v85pp-code{display:flex;align-items:center;gap:8px}#onl .v85pp-code .onl-code{font:700 22px var(--mono,monospace);letter-spacing:.14em;color:#ffe08a}
+#onl .v85pp-m{margin:0;padding-left:18px;font-size:13px}#onl .v85pp-m small{color:#bfae88}
+#onl .v85pp .acts{margin:0}
+/* phones: one column */
+@media(max-width:760px){
+ #onl .onl-play81.v85{grid-template-areas:"stage" "pls" "forum" "week"}
+ #onl .onl-play81.v85 .a85-bot{grid-template-columns:minmax(0,1fr)}
+ #onl .v85pw{position:static}#onl .onl-stage81 .onl-party:has(.v85pp){position:relative}#onl .v85pp{left:0;right:0;width:auto;max-width:none;margin:0 auto}
+ #onl .v85sc-ev{white-space:normal}
+}
+@media(max-width:420px){#onl .v85sc-h>span small{display:none}#onl .v85sc{gap:8px}}`;document.head.appendChild(st)}
 /* =====================================================================
    147-v85music · v0.85 — a word for ALL the music, and a theme for Online
    =====================================================================
