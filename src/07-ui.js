@@ -1757,23 +1757,7 @@ function draw() {
   }
   {
     const sh9 = S.clean && S.clean.spikeH < 1 ? Math.max(0, S.clean.spikeH) : 1; // v0.33: the winches lower the spikes during the post-show
-    for (const s of S.spikes) {
-      tilePath(s.r, s.c, TW * 0.08);
-      ctx.fillStyle = THEME.spike || '#6d6862';
-      ctx.fill();
-      const m = center(s.r, s.c);
-      ctx.fillStyle = shade(THEME.spike || '#6d6862', 0.55);
-      if (sh9 > 0.03) for (const [dx, dy] of [[-.14, 0], [.14, 0], [0, -.07], [0, .07]]) {
-        const x = m.x + dx * TW,
-          y = m.y + dy * TW;
-        ctx.beginPath();
-        ctx.moveTo(x - TW * 0.05, y + 2);
-        ctx.lineTo(x, y - TW * 0.18 * sh9);
-        ctx.lineTo(x + TW * 0.05, y + 2);
-        ctx.closePath();
-        ctx.fill();
-      }
-    }
+    for (const s of S.spikes) drawSpikeTile(s, sh9);
   }
   // rubble where pillars were toppled
   for (const rb of S.rubble || []) for (const [k, sz] of [[0, 1], [1, .75], [2, .5]]) {
@@ -2061,6 +2045,24 @@ function drawWheel(x, y, col) {
     ctx.moveTo(x - Math.cos(a) * TW * 0.3, y - Math.sin(a) * TW * 0.15);
     ctx.lineTo(x + Math.cos(a) * TW * 0.3, y + Math.sin(a) * TW * 0.15);
     ctx.stroke();
+  }
+}
+/* drawSpikeTile — one floor-spike tile: the plate, then four tips raised by sh (1 = up, 0 = sunk during the post-show). v0.82: 130-v82vis repaints it. */
+function drawSpikeTile(s, sh9) {
+  tilePath(s.r, s.c, TW * 0.08);
+  ctx.fillStyle = THEME.spike || '#6d6862';
+  ctx.fill();
+  const m = center(s.r, s.c);
+  ctx.fillStyle = shade(THEME.spike || '#6d6862', 0.55);
+  if (sh9 > 0.03) for (const [dx, dy] of [[-.14, 0], [.14, 0], [0, -.07], [0, .07]]) {
+    const x = m.x + dx * TW,
+      y = m.y + dy * TW;
+    ctx.beginPath();
+    ctx.moveTo(x - TW * 0.05, y + 2);
+    ctx.lineTo(x, y - TW * 0.18 * sh9);
+    ctx.lineTo(x + TW * 0.05, y + 2);
+    ctx.closePath();
+    ctx.fill();
   }
 }
 /* drawPillar — draws a pillar (base, fluted shaft, cap) with one amphora per Blessings pot stacked on top, and an xN label for 2+ pots.
