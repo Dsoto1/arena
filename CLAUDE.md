@@ -715,7 +715,8 @@ One global script; files are concatenated in order. Later "version modules" patc
   their own private popup at the same time (nobody else sees the choices), one action each per window; a thrown stone/offering is LOCKED to
   its tile and still fires — whoever stands there when it lands is hit / receives it.
 - **Custom beast spawn cards (agreed 2026-10-04, v0.82):** every Studio beast gets an arena spawn card (printed-card frame + token/
-  portrait + name; still open: 1 auto card vs his template, 2 a "Unique" tick per beast — my picks 1a/2a); a drawn custom beast
+  portrait + name; still open: 1 auto card vs his template — my pick auto); beast designer checkbox "☐ Unique — enters an event at most once",
+  UNTICKED by default (ticked = like Tholo: once per event, card leaves the deck when placed/entered; unticked = like wolves: many); a drawn custom beast
   enters by the GRID DICE like Leo/Leaena. ANY arena deck holds at most 4 beast spawn cards = THOLO FIXED + 3 SLOTS (Tholo stays for
   the chant; only where the rulebook removes him — Orpheus, Juggernaut — all slots are free). Standard events: slots default to Leo,
   Leaena, Commodus; a ROSTER SET has an "Arena deck beasts" row (Tholo fixed + 3 slots) whose author may swap any slot for one of their
