@@ -514,7 +514,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   Videos only, Play page Online card + What's new.
 - **v0.82 (126-130 + server, protocol VER 5, contract tools/plans/onl82-contract.md):** `126-v82fix` — unique spawn cards leave the deck
   once their beast is on the sand (`UNIQUE_CARD82`, `uniqueOut82`; fixes Tholo drawn twice), hunched sculpted figures ×1.062 (Hero height),
-  Tholo's sculpted token from his card (laurel, grey hair/beard, cape), main menu: Play Now + Manager one row, 🎓 Tutorials button folds
+  Tholo's sculpted token from his card (laurel, grey hair/beard, cape), main menu: Play Now + Manager one row (v0.84: stacked, Manager under Play Now — his pick), 🎓 Tutorials button folds
   #mmLearn (`data-mm82="tut"`), slim row Annals/Rules/Settings/Saves/mute (`mmLabels82`); Domus showcase on stone_wall, main card on
   parchment; Glory bar measured to the bottom of the gladiator cards (`rb82Fit`); round-rule chip row hidden (`#turnInd .tprules`, rules
   only in the ⓘ); BLESSING_TABLE.spiders 6→2; Open Arena Chest glimmers gold (`[data-act="chest"]`); the chest's Level 4 card flips

@@ -31,8 +31,8 @@ if(typeof TOKEN_DEF!=='undefined'&&TOKEN_DEF.tholo)Object.assign(TOKEN_DEF.tholo
 #mainMenu .mmbtns{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr));gap:8px;align-items:stretch;max-width:460px;width:100%;margin-inline:auto}
 #mainMenu .mmbtns>*{grid-column:span 12;margin:0!important;min-width:0}
 #mainMenu .mmbtns>[data-mm="continue"]{order:0}
-#mainMenu .mmbtns>[data-mm="play"]{order:1;grid-column:span 6}
-#mainMenu .mmbtns>[data-mm="manager"]{order:2;grid-column:span 6}
+#mainMenu .mmbtns>[data-mm="play"]{order:1;grid-column:span 12}
+#mainMenu .mmbtns>[data-mm="manager"]{order:2;grid-column:span 12}
 #mainMenu .mmbtns>[data-mm="play"],#mainMenu .mmbtns>[data-mm="manager"]{padding:14px 10px;font-size:17px}
 #mainMenu .mmbtns>[data-mm="multi"]{order:3}
 #mainMenu .mmbtns>#mmMulti{order:4}
