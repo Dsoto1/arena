@@ -85,11 +85,13 @@ function busy85(g){const w=W_();const x=caseOf85(w,g);return !!x&&['open','hid',
 /* take a fighter off this week's card — a free agent fills the seat (the withdraw path, without the editor's count) */
 function pull85(w,gid){if(!w.night)return;for(const b of w.night.bouts){if(b.done)continue;const i=b.ents.indexOf(gid);if(i<0)continue;const T=TIERS[b.tier]||{lo:50,hi:70};const used=new Set(w.night.bouts.flatMap(x=>x.ents));
   const rep=freeAgents().find(q=>!used.has(q.id)&&!q.inj&&!busy85(q)&&effOvr(q)>=T.lo-3&&effOvr(q)<=T.hi+3)||genGlad({ovr:T.lo+5});if(!rep.debut)rep.debut={s:w.season,wk:w.week};if(!gById(rep.id))w.glads.push(rep);b.ents[i]=rep.id;voidBets(b,gid)}}
-function edictLetter85(w,E,c){const g=gById(c.gid);if(!g)return;const R=E.den?mgrById(E.den):null;const city=cityN85(E.city);
-  sendLetter(w,{key:'fa85-'+E.id+'-'+g.id,kind:'letter',from:'the Consilium',adv:'consilium',seal:'✝',until:w.week,
+function edictLetter85(w,E,cs){const gs=cs.map(c=>gById(c.gid)).filter(Boolean);if(!gs.length)return;const R=E.den?mgrById(E.den):null;const city=cityN85(E.city);const g=gs[0];
+  const nl=gs.map(x=>`<b>${esc(x.name)}</b>`);const names=nl.length>1?nl.slice(0,-1).join(', ')+' and '+nl[nl.length-1]:nl[0];const one=gs.length===1;
+  sendLetter(w,{key:'fa85-'+E.id,kind:'letter',from:'the Consilium',adv:'consilium',seal:'✝',until:w.week,
     title:R?`${R.ludus} denounces ${g.name}`:`The governor of ${city} issues an edict`,
-    body:`<p>${R?`Men of <b>${esc(R.ludus)}</b> have named <b>${esc(g.name)}</b> to the magistrates as a Christian. The governor of <b>${esc(city)}</b> orders ${hm85(g)} brought in.`:`The governor of <b>${esc(city)}</b> orders that those who will not sacrifice to the gods be brought before him. <b>${esc(g.name)}</b> of our house is named.`}</p>
-      <p class="rc-sub">Decide this week. Hidden, ${he85(g)} sits the week out. A bribe may strike the name. Facing it means the beasts, beside the other condemned — ${he85(g)} may live. Refusing to fight means the fire.</p><div class="fa85box" data-fa85box="${E.id}|${g.id}"></div>`})}
+    body:`<p>${R?`Men of <b>${esc(R.ludus)}</b> have named ${names} to the magistrates as a Christian. The governor of <b>${esc(city)}</b> orders ${hm85(g)} brought in.`:`The governor of <b>${esc(city)}</b> orders that those who will not sacrifice to the gods be brought before him. ${names} of our house ${one?'is':'are'} named.`}</p>
+      <p class="rc-sub">Decide this week. Hidden, a fighter sits the week out. A bribe may strike a name. Facing it means the beasts, beside the other condemned — a fighter may live. Refusing to fight means the fire.</p>
+      ${gs.map(x=>`<div class="fa85lrow">${one?'':`<b>${esc(x.name)}</b>`}<div class="fa85box" data-fa85box="${E.id}|${x.id}"></div></div>`).join('')}`})}
 function caseButtons85(E,c){const g=gById(c.gid);const m=me();if(!g)return '';const cost=bribeCost85(g);const b=(a,l,s,dis)=>`<button class="btn tksm" type="button" data-fa85="${a}|${E.id}|${g.id}" ${dis?`disabled title="${esc(dis)}"`:''}>${l}<small>${s}</small></button>`;
   if(c.st!=='open')return `<p class="rc-sub fa85done">${caseLine85(E,c)}</p>`;
   return `<div class="acts fa85acts">${b('hide','🌙 Hide '+hm85(g),'sits out this week',c.bribeFail?'The magistrate knows where to look':'')}${b('bribe',`💰 Bribe · ${cost} coin`,`${Math.round((FAITH85.bribeP-(E.den?0.15:0))*100)}% · the coin is gone either way`,c.bribeFail?'Already tried':m&&m.coin<cost?'Not enough coin':'')}${b('face','🦁 Face the beasts','with the other condemned')}${b('refuse',`🔥 ${he85(g,1)} will not fight`,`Ad Flamma — ${he85(g)} dies`)}</div>`}
@@ -99,13 +101,13 @@ function newEdict85(w,city,den,only){const S5=fa85State(w);const E={id:'e85_'+w.
   const R=fa85R(w,'cases'+E.id);const add=(g,st)=>{const m=g.contract?mgrById(g.contract.mgr):null;E.cases.push({gid:g.id,n:g.name,mgr:m?m.id:null,st:st||'open'})};
   if(only)for(const g of only)add(g);
   else{const host=w.night?w.night.loc:null;
-    for(const g of w.glads.filter(g=>g.alive&&isChr85(g)&&!g.inj&&!g.lanista)){if(E.cases.length>=FAITH85.maxCases)break;const hc=LOCATIONS.findIndex(L=>L&&L.n===g.city);
+    for(const g of w.glads.filter(g=>g.alive&&isChr85(g)&&!g.inj&&!g.lanista&&!caseOf85(w,g))){if(E.cases.length>=FAITH85.maxCases)break;const hc=LOCATIONS.findIndex(L=>L&&L.n===g.city);
       let p=host===city?FAITH85.risk.host:near85(host,city)?FAITH85.risk.near:0;if(hc===city)p=Math.max(p,FAITH85.risk.home);if(!g.contract)p*=FAITH85.risk.free;if(p&&R.next()<p)add(g)}}
   S5.edicts.unshift(E);S5.edicts=S5.edicts.slice(0,16);S5.ss[w.season]=(S5.ss[w.season]||0)+1;
   const me0=me();const mine=E.cases.filter(c=>c.mgr===me0.id);const names=E.cases.map(c=>esc(c.n));
   mnews(den?`✝ ${esc(mgrById(den).ludus)} denounces <b>${names.join(', ')}</b> as a Christian. The governor of ${esc(cityN85(city))} has the fighter brought in.`
     :`✝ The governor of ${esc(cityN85(city))} issues an edict against the Christians.${names.length?` Named: ${names.join(', ')}.`:' No fighter of the league is named.'}`,mine.length?'bad':'');
-  for(const c of mine){edictLetter85(w,E,c);tnews(`✝ ${esc(c.n)} is named in the edict of ${esc(cityN85(city))} — decide on Match Week.`,'bad')}
+  if(mine.length)edictLetter85(w,E,mine);for(const c of mine){tnews(`✝ ${esc(c.n)} is named in the edict of ${esc(cityN85(city))} — decide on Match Week.`,'bad')}
   aiCases85(w,E);return E}
 /* rival houses and free agents decide at once */
 function aiCases85(w,E){const me0=me();for(const c of E.cases){if(c.st!=='open'||c.mgr===me0.id)continue;const g=gById(c.gid);const m=c.mgr?mgrById(c.mgr):null;const R=fa85R(w,'ai'+E.id+c.gid);const x=R.next();
@@ -156,7 +158,9 @@ function bestiasApply85(w,E,rows){if(E.done)return null;E.done=1;const city=city
   if(mine.length)sendLetter(w,{key:'fa85res-'+E.id,kind:'report',from:'the Consilium',adv:'consilium',seal:'✝',until:w.week+2,title:`After the edict of ${city}`,body:`<ul>${mine.map(c=>`<li>${caseLine85(E,c)}</li>`).join('')}</ul>`});
   return out}
 async function bestiasSim85(w,E){if(E.done)return null;const faced=E.cases.some(c=>c.st==='face');let rows=[];
-  if(faced){const res=await simEvent(bestiasCfg85(w,E,null)).catch(e=>({error:String(e)}));rows=res&&res.rows?res.rows:[]}
+  if(faced){let res=null;for(let k=0;k<2&&!(res&&res.rows);k++)res=await simEvent(bestiasCfg85(w,E,null),{timeoutMs:60000}).catch(e=>({error:String(e)}));
+    /* a simulation that could not finish never kills anyone: the editor calls the beasts back */
+    rows=res&&res.rows?res.rows:E.cases.filter(c=>c.st==='face').map(c=>({mgrId:c.gid,alive:true,kn:0,severed:[]}))}
   return bestiasApply85(w,E,rows)}
 /* live: you are your condemned fighter, like the beast pen */
 {const base=newState;newState=function(config){const r=base.apply(this,arguments);try{if(S&&config&&config.bestias85)S.bestias85={...config.bestias85}}catch(e){}return r}}
@@ -164,6 +168,9 @@ async function bestiasSim85(w,E){if(E.done)return null;const faced=E.cases.some(
 {const base=checkEndCustom;checkEndCustom=function(ev,rd,act,set,win){if(S&&S.bestias85&&act.length){if(S.npcs.length&&S.npcs.every(n=>!n.alive||n.tamedBy!=null))return win(act,'Every beast is slain — the survivors are pardoned.');
   if(S.rotation>FAITH85.rot)return win(act,'The editor calls the beasts back — the survivors are pardoned.')}return base.apply(this,arguments)}}
 {const base=matchSaveOK;matchSaveOK=function(){return S&&S.bestias85?false:base.apply(this,arguments)}}
+/* the condemned fight together: no trades or truces (truces are already off by noTruce + no PvP; the Trade button is hidden) */
+{const base=openTrade;openTrade=async function(){if(S&&S.bestias85)return;return base.apply(this,arguments)}}
+{const base=render;render=function(){const r=base.apply(this,arguments);try{if(S&&S.bestias85)for(const b of document.querySelectorAll('[data-act="trade"]'))b.remove()}catch(e){}return r}}
 function bestiasLive85(eid){const w=W_(),m=me();const E=curEdicts85(w).find(x=>x.id===eid);if(!E||E.done)return;const g=E.cases.map(c=>c.mgr===m.id&&c.st==='face'?gById(c.gid):null).find(Boolean);if(!g)return;
   const cfg=bestiasCfg85(w,E,g.id);tnews(`🦁 ${esc(g.name)} walks out to the beasts at ${esc(cityN85(E.city))}.`);saveWorld(true);if(typeof MM!=='undefined')MM.fromMenu=false;
   if(CUR_MODAL)CUR_MODAL.done('bestias85');else modalDismiss();S&&(S.over=true);startEvent(cfg)}
@@ -216,8 +223,10 @@ function edictCard85(){const w=W_(),m=me();if(!w||!m||!w.night)return '';const o
 function fillBoxes85(){const w=W_();if(!w)return;for(const el of document.querySelectorAll('[data-fa85box]')){const [eid,gid]=el.dataset.fa85box.split('|');const E=(fa85State(w).edicts||[]).find(x=>x.id===eid);const c=E&&E.cases.find(x=>x.gid===gid);
   const h=E&&c?caseButtons85(E,c):'';if(el._h!==h){el._h=h;el.innerHTML=h}}}
 setInterval(()=>{try{if(MGR&&MGR.world)fillBoxes85()}catch(e){}},400);
-{const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const w=W_(),m=me();for(const E of curEdicts85(w))for(const c of E.cases)if(c.mgr===m.id&&(c.st==='open'||(c.st==='face'&&!E.done)))
-  if(!I.some(x=>x.fa85===c.gid))I.unshift({fa85:c.gid,done:false,ic:'✝',txt:c.st==='open'?`<b>${esc(c.n)}</b> is named in the edict`:`<b>${esc(c.n)}</b> waits for the beasts`,btn:`<button class="btn tksm" type="button" data-mg="tab" data-id="night">Decide</button>`})}catch(e){console.error(e)}return I}}
+{const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const w=W_(),m=me();for(const E of curEdicts85(w)){
+  const open=E.cases.filter(c=>c.mgr===m.id&&c.st==='open'),wait=E.done?[]:E.cases.filter(c=>c.mgr===m.id&&c.st==='face');if(!open.length&&!wait.length)continue;
+  const nm=L=>L.map(c=>`<b>${esc(c.n)}</b>`).join(', ');const txt=[open.length?`${nm(open)} ${open.length===1?'is':'are'} named in the edict of ${esc(cityN85(E.city))}`:'',wait.length?`${nm(wait)} ${wait.length===1?'waits':'wait'} for the beasts`:''].filter(Boolean).join(' · ');
+  I.unshift({fa85:E.id,done:false,ic:'✝',txt,btn:`<button class="btn tksm" type="button" data-mg="tab" data-id="night">Decide</button>`})}}catch(e){console.error(e)}return I}}
 /* ---------- 10. the Studio ---------- */
 {const base=charEditorHTML;charEditorHTML=function(){const h=base.apply(this,arguments);try{const c=ST.draft;if(!c)return h;
   return h.replace('<label>Home city',`<label>Faith${fSel('faith',[['','Pagan'],['christian','✝ Christian']],c.faith==='christian'?'christian':'')}</label><label>Home city`)}catch(e){return h}}}
@@ -226,6 +235,6 @@ setInterval(()=>{try{if(MGR&&MGR.world)fillBoxes85()}catch(e){}},400);
 .fa85{display:inline-block;font:700 12px/1 Georgia,serif;color:#f1e3b8;background:#3a2a1a;border:1px solid #b8913f;border-radius:4px;padding:2px 4px;margin:0 3px 0 0;vertical-align:middle;cursor:default}
 .fa85.m{border-color:#9c3a2a;background:#2a1612;color:#f0d7c2}
 .fa85card{margin:8px 0;border-color:#8a6a3a}.fa85row{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;margin:6px 0}
-.fa85acts{margin-top:4px}.fa85bst{margin-top:6px;padding-top:6px;border-top:1px dashed #8a6a3a77}.fa85t{margin-top:6px}
+.fa85acts{margin-top:4px}.fa85lrow{margin:6px 0}.fa85bst{margin-top:6px;padding-top:6px;border-top:1px dashed #8a6a3a77}.fa85t{margin-top:6px}
 .fa85fate{display:flex;gap:12px;align-items:flex-start}.fa85fate p{margin:4px 0 0}.fa85note{max-width:min(560px,92vw)}
 @media (max-width:600px){.fa85fate{flex-direction:column;align-items:center}}`;document.head.appendChild(st)})();

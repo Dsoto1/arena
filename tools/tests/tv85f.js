@@ -30,9 +30,9 @@ const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   /* 5. the edict letter */
   FAITH85.risk.host=1;FAITH85.maxCases=40;
   const bo=w.night.bouts[0];bo.ents[0]=A.id;
-  const E1=newEdict85(w,w.night.loc);r.case=!!E1.cases.find(c=>c.gid===A.id&&c.st==='open');r.letter=(w.letters||[]).some(l=>l.key==='fa85-'+E1.id+'-'+A.id&&/edict/.test(l.title));
+  const E1=newEdict85(w,w.night.loc);r.case=!!E1.cases.find(c=>c.gid===A.id&&c.st==='open');r.letter=(w.letters||[]).some(l=>l.key==='fa85-'+E1.id&&/edict/.test(l.title));
   for(const c of E1.cases)if(c.mgr===m.id&&![A.id,B2.id,C2.id,D2.id,E2.id].includes(c.gid))c.st='bribed';
-  MGR.tab='ludus';MGR.mailOpen='L:fa85-'+E1.id+'-'+A.id;MGR_REDRAW();await W8(900);
+  MGR.tab='ludus';MGR.mailOpen='L:fa85-'+E1.id;MGR_REDRAW();await W8(900);
   const box=document.querySelector(`[data-fa85box="${E1.id}|${A.id}"]`);r.letterBtns=!!box&&['hide','bribe','face','refuse'].every(a=>box.querySelector(`[data-fa85^="${a}|"]`));
   r.eid=E1.id;r.A=A.id;r.B=B2.id;r.C=C2.id;r.D=D2.id;r.E=E2.id;return r});
 await shot('fa85_letter','details.mail[open]');
@@ -41,8 +41,9 @@ await pg.waitForTimeout(300);await shot('fa85_record');
 const o2=await pg.evaluate(async({eid,A,B,C,D})=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const r={};const E=curEdicts85(w).find(x=>x.id===eid);
   MGR.tab='night';MGR_REDRAW();await W8(500);r.card=!!document.querySelector('#mgrBody .fa85card [data-fa85^="hide|"]');
   /* Hide → pulled from his bout, not enterable */
-  document.querySelector(`#mgrBody [data-fa85="hide|${eid}|${A}"]`).click();await W8(400);
-  r.hid=E.cases.find(c=>c.gid===A).st==='hid'&&!w.night.bouts.some(b=>b.ents.includes(A))&&!!gById(A).hide85!==undefined;
+  const hb=document.querySelector(`#mgrBody [data-fa85="hide|${eid}|${A}"]`);r.hb=!!hb&&!hb.disabled;if(hb)hb.click();for(let i=0;i<20&&E.cases.find(c=>c.gid===A).st!=='hid';i++)await W8(250);
+  r.hidSt=E.cases.find(c=>c.gid===A).st;r.inBout=w.night.bouts.filter(b=>b.ents.includes(A)).map(b=>b.tier+':'+b.done);r.sameW=w===W_();
+  r.hid=r.hidSt==='hid'&&!r.inBout.length;
   r.noEnter=!document.querySelector(`#mgrBody option[value="${A}"]:not([disabled])`);
   /* Face → ad bestias, simulated to the end, with the other condemned */
   const rv=w.mgrs.find(x=>!x.isPlayer&&!x.dead);const rg=rosterOf(rv)[0];rg.faith='christian';E.cases.push({gid:rg.id,n:rg.name,mgr:rv.id,st:'face'});
@@ -51,7 +52,7 @@ const o2=await pg.evaluate(async({eid,A,B,C,D})=>{const W8=ms=>new Promise(r=>se
   r.faced=E.cases.find(c=>c.gid===B).st==='face';MGR_REDRAW();await W8(300);r.bstBtns=!!document.querySelector(`#mgrBody [data-fa85="sim|${eid}|${B}"]`)&&!!document.querySelector(`#mgrBody [data-fa85="live|${eid}|${B}"]`);
   let cap=null;const s0=simEvent;simEvent=async function(cfg){const res=await s0.apply(this,arguments);cap={seats:cfg.seats.length,cpu:cfg.seats.filter(s=>s.cpu).length,others:cfg.seats.filter(s=>!s.mgrGid||!(gById(s.mgrGid).contract&&gById(s.mgrGid).contract.mgr===m.id)).length,res};return res};
   /* C and D stay open: one refuses, one is left for the week's end */
-  document.querySelector(`#mgrBody [data-fa85="sim|${eid}|${B}"]`).click();for(let i=0;i<80&&!E.done;i++)await W8(250);simEvent=s0;
+  document.querySelector(`#mgrBody [data-fa85="sim|${eid}|${B}"]`).click();for(let i=0;i<300&&!E.done;i++)await W8(250);simEvent=s0;
   r.simmed=!!cap&&cap.seats>=4&&cap.others>=1&&cap.res.rows.length===cap.seats&&!!cap.res&&Array.isArray(cap.res.rows)&&!!cap.res.reason;r.reason=cap&&cap.res&&cap.res.reason;r.seats=cap&&cap.seats;
   const cb=E.cases.find(c=>c.gid===B),cr=E.cases.find(c=>c.gid===rg.id);r.outcome=E.done&&['free','martyr'].includes(cb.st)&&['free','martyr'].includes(cr.st)&&(cb.st==='free')===(gById(B).alive!==false);
   r.bst=cb.st;r.rst=cr.st;const pop=document.querySelector('.fa85note');r.pop=!!pop;if(pop)pop.querySelector('[data-note85]').click();
@@ -61,7 +62,7 @@ Object.assign(o,o2);
 const o3=await pg.evaluate(async({eid,C,D,E:E5,A})=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const r={};
   /* a fresh edict for C (the first was carried out) */
   const E=newEdict85(w,w.night.loc,null,[gById(C),gById(D)]);const believers=rosterOf(m).filter(g=>isChr85(g)&&g.id!==C);const mo=Object.fromEntries(believers.map(g=>[g.id,g.morale=40]));
-  MGR.tab='night';MGR_REDRAW();await W8(400);document.querySelector(`#mgrBody [data-fa85="refuse|${E.id}|${C}"]`).click();await W8(300);
+  MGR.tab='night';MGR_REDRAW();await W8(400);r.group=weekChecklist().filter(x=>x.fa85===E.id).length===1&&document.querySelectorAll(`#mgrBody [data-fa85e="${E.id}"] .fa85row`).length===2&&document.querySelectorAll(`#mgrBody [data-fa85e="${E.id}"]`).length===1;document.querySelector(`#mgrBody [data-fa85="refuse|${E.id}|${C}"]`).click();await W8(300);
   const y=document.querySelector('.ask76bg [data-ask76="1"]');r.ask=!!y;if(y)y.click();await W8(500);
   const g=gById(C);r.dead=g.alive===false&&!!g.martyr85&&g.martyr85.how==='Ad Flamma';r.grave=/Martyr/.test(w.grave[0].fate)&&/Ad Flamma/.test(w.grave[0].fate)&&w.grave[0].name===g.name;
   r.note=!!document.querySelector('.fa85note .fa85fate')&&/Ad Flamma/.test(document.querySelector('.fa85note').textContent);
@@ -81,7 +82,7 @@ const o4=await pg.evaluate(async({D})=>{const W8=ms=>new Promise(r=>setTimeout(r
   const E=curEdicts85(w).find(x=>x.cases.some(c=>c.gid===D));const wk=w.week;FAITH85.edictP=0;
   const rv=w.mgrs.find(x=>!x.isPlayer&&!x.dead);rv.rivalry=90;FAITH85.force='denounce';
   await endWeek();await W8(500);const w2=W_();r.adv=w2.week===wk+1;const cD=E.cases.find(c=>c.gid===D);r.taken=E.done&&['free','martyr'].includes(cD.st);
-  const den=(fa85State(w2).edicts||[]).find(x=>x.s===w2.season&&x.wk===w2.week&&x.den);r.den=!!den&&den.den===rv.id&&(w2.letters||[]).some(l=>l.key.startsWith('fa85-'+den.id)&&l.title.includes(rv.ludus)&&/denounces/.test(l.title));
+  const den=(fa85State(w2).edicts||[]).find(x=>x.s===w2.season&&x.wk===w2.week&&x.den);r.den=!!den&&den.den===rv.id&&(w2.letters||[]).some(l=>l.key==='fa85-'+den.id&&l.title.includes(rv.ludus)&&/denounces/.test(l.title));
   r.denCase=!!den&&den.cases.length===1&&den.cases[0].mgr===m.id&&den.cases[0].st==='open';
   /* the live board for the screenshot: you play the denounced fighter */
   if(den){den.cases[0].st='face';bestiasLive85(den.id);await W8(2500);r.live=!!(S&&S.bestias85&&S.players.length>=4&&S.npcs.length===4&&S.players.some(p=>!p.cpu))}
@@ -89,6 +90,7 @@ const o4=await pg.evaluate(async({D})=>{const W8=ms=>new Promise(r=>setTimeout(r
 Object.assign(o,o4);
 await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));for(let i=0;i<12;i++){await W8(400);const m=document.querySelector('#modal');if(CUR_MODAL&&m){const bs=[...m.querySelectorAll('button.primary,button.btn.primary')];if(bs.length)bs[bs.length-1].click()}}});
 await pg.waitForTimeout(1200);await shot('fa85_bestias');
+o.noTrade=await pg.evaluate(()=>!!(S&&S.bestias85)&&!document.querySelector('[data-act="trade"]')&&!!document.querySelector('[data-act]'));
 o.liveEnd=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(!(S&&S.bestias85))return false;const eid=S.bestias85.eid;gameOver([], 'test end');for(let i=0;i<20&&!CUR_MODAL;i++)await W8(200);
   const w=W_();const E=(fa85State(w).edicts||[]).find(x=>x.id===eid);const okk=!!E&&E.done&&!!CUR_MODAL;if(CUR_MODAL)CUR_MODAL.done('back');await W8(800);return okk});
 /* the Studio: Faith field, saved, chip; joins a career with it; the board chip */
@@ -107,6 +109,6 @@ ok(o.rate>0.07&&o.rate<0.13&&o.det&&o.all&&o.old,'faith ~1 in 10, deterministic,
 ok(o.tag&&o.det2&&o.chipDom,'✝ chip on lists and the record');ok(o.temple&&o.temple2&&o.templeTxt,'no temple boost for Christians');ok(o.bond,'morale bond + letter');
 ok(o.case&&o.letter&&o.letterBtns&&o.card,'edict letter + Match Week card with Hide/Bribe/Face/Refuse');ok(o.hid&&o.noEnter,'Hide pulls him from his bout');
 ok(o.faced&&o.bstBtns&&o.simmed&&o.outcome,'Face → ad bestias runs to the end with other condemned');ok(o.ask&&o.dead&&o.grave&&o.note&&o.mourn&&o.mtag&&o.mark,'refuse → Ad Flamma + martyr');
-ok(o.fallenDom,'martyr on the fallen list');ok(o.adv&&o.taken,'undecided case taken at the week end');ok(o.den&&o.denCase,'denounce letter names the house');ok(o.live&&o.liveEnd,'live bestias bout');
+ok(o.fallenDom,'martyr on the fallen list');ok(o.adv&&o.taken,'undecided case taken at the week end');ok(o.den&&o.denCase,'denounce letter names the house');ok(o.live&&o.liveEnd,'live bestias bout');ok(o.noTrade,'no trade or truce among the condemned');ok(o.group,'one checklist item + one card per edict, a row per fighter');
 ok(o.field&&o.draft&&o.saved&&o.stored&&o.glad&&o.pf&&o.listChip,'Studio faith field + chip');
 console.log(JSON.stringify(o));console.log('MISS',JSON.stringify(miss));console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();
