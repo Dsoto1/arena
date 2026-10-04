@@ -52,3 +52,28 @@ function sandPat83(){if(SAND83_PAT)return SAND83_PAT;const c=document.createElem
     if(SAND83.shade){const m=center(r,c);const g=ctx.createLinearGradient(m.x,m.y-TH/2,m.x,m.y+TH/2);g.addColorStop(0,'rgba(255,245,220,1)');g.addColorStop(.45,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(60,36,14,1)');
       ctx.globalAlpha=SAND83.shade;ctx.fillStyle=g;ctx.fillRect(m.x-TW/2,m.y-TH/2,TW,TH)}
     ctx.restore();tilePath(r,c)}catch(e){}}}
+/* ---- 3. scars in the sand (his idea): about one tile in eight carries a faint mark — claw marks, an arrow or spear divot
+   (sometimes with a broken shaft stub), a blade gash or a scuff. Chosen per tile and per arena from a hash (cosmetic only,
+   never the dice), laid flat on the tile in the board's perspective. SCAR83 = how many and how strong. ---- */
+const SCAR83={share:0.13,alpha:0.32}; /* TWEAK: share of tiles with a mark; their opacity */
+function scar83(r,c){const loc=(S&&(S.loc!=null?S.loc:S.locKey))||0;const h=spikeHash83(r+17*((typeof loc==='number'?loc:String(loc).length)+3),c,7);
+  if(h>SCAR83.share)return null;const k=spikeHash83(r,c,11);return {kind:k<0.32?'claw':k<0.6?'divot':k<0.82?'gash':'scuff',a:spikeHash83(r,c,13)*Math.PI*2,
+    dx:(spikeHash83(r,c,17)-0.5)*0.36,dy:(spikeHash83(r,c,19)-0.5)*0.36,s:0.75+spikeHash83(r,c,23)*0.5,stub:spikeHash83(r,c,29)<0.45}}
+function drawScar83(r,c){const sc=scar83(r,c);if(!sc||!SCAR83.alpha)return;const m=center(r,c);
+  ctx.save();tilePath(r,c);ctx.clip();ctx.translate(m.x+sc.dx*TW,m.y+sc.dy*TH);ctx.scale(1,0.5);ctx.rotate(sc.a);const u=TW*0.14*sc.s;ctx.globalAlpha=SCAR83.alpha;ctx.lineCap='round';
+  const dark='rgba(70,44,20,1)',lite='rgba(255,244,214,1)';
+  if(sc.kind==='claw'){for(let i=-1;i<=1;i++){ctx.strokeStyle=dark;ctx.lineWidth=Math.max(1,TW*0.016);ctx.beginPath();ctx.moveTo(-u*1.3,i*u*0.42);ctx.quadraticCurveTo(0,i*u*0.42-u*0.35,u*1.3,i*u*0.5);ctx.stroke();
+      ctx.strokeStyle=lite;ctx.lineWidth=Math.max(0.6,TW*0.007);ctx.beginPath();ctx.moveTo(-u*1.2,i*u*0.42+u*0.12);ctx.quadraticCurveTo(0,i*u*0.42-u*0.22,u*1.2,i*u*0.5+u*0.12);ctx.stroke()}}
+  else if(sc.kind==='divot'){ctx.fillStyle=lite;ctx.beginPath();ctx.ellipse(u*0.08,u*0.1,u*0.62,u*0.5,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=dark;ctx.beginPath();ctx.ellipse(0,0,u*0.48,u*0.38,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(30,18,8,1)';ctx.beginPath();ctx.ellipse(-u*0.06,-u*0.04,u*0.18,u*0.14,0,0,Math.PI*2);ctx.fill();
+    for(let i=0;i<5;i++){const a=i*1.3+sc.a;ctx.fillStyle=dark;ctx.beginPath();ctx.ellipse(Math.cos(a)*u*0.85,Math.sin(a)*u*0.7,u*0.07,u*0.05,0,0,Math.PI*2);ctx.fill()}
+    if(sc.stub){ctx.restore();ctx.save();ctx.globalAlpha=Math.min(1,SCAR83.alpha*2.2);const x=m.x+sc.dx*TW,y=m.y+sc.dy*TH;   /* a broken shaft, upright */
+      ctx.strokeStyle='#6b4a28';ctx.lineWidth=Math.max(1.2,TW*0.022);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+TW*0.03,y-TW*0.11);ctx.stroke();
+      ctx.strokeStyle='#a07a4a';ctx.lineWidth=Math.max(0.6,TW*0.008);ctx.beginPath();ctx.moveTo(x+TW*0.026,y-TW*0.1);ctx.lineTo(x+TW*0.042,y-TW*0.125);ctx.lineTo(x+TW*0.02,y-TW*0.118);ctx.stroke()}}
+  else if(sc.kind==='gash'){ctx.strokeStyle=dark;ctx.lineWidth=Math.max(1.2,TW*0.022);ctx.beginPath();ctx.moveTo(-u*1.5,0);ctx.lineTo(u*1.5,u*0.1);ctx.stroke();
+    ctx.strokeStyle=lite;ctx.lineWidth=Math.max(0.6,TW*0.008);ctx.beginPath();ctx.moveTo(-u*1.4,u*0.16);ctx.lineTo(u*1.4,u*0.26);ctx.stroke()}
+  else{ctx.fillStyle=dark;for(let i=0;i<7;i++){const x=(spikeHash83(r,c,31+i)-0.5)*u*2.4,y=(spikeHash83(r,c,41+i)-0.5)*u*1.2;ctx.globalAlpha=SCAR83.alpha*0.6;ctx.beginPath();ctx.ellipse(x,y,u*0.32,u*0.1,0.3,0,Math.PI*2);ctx.fill()}}
+  ctx.restore()}
+{const base=drawShipTile;drawShipTile=function(r,c){base.apply(this,arguments);
+  try{if(typeof isNaum==='function'&&isNaum()&&!(S.drained||S.drainLine!=null&&r+c<=S.drainLine))return;drawScar83(r,c);tilePath(r,c)}catch(e){}}}
