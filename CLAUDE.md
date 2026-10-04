@@ -784,6 +784,10 @@ share copy — the site download play/flavius-rule-arena.zip.)
   online use the CHEST TOKEN ROUND (rtokHTML('chest')) — glowing PURPLE with a count badge when the player has unopened gifts.
   BOARD LOOK (v0.83, his asks): 3D spike caps (134), his chest in 3D (135), 3D clay pots + a subtle sand grain/shade on the tiles
   (136-v83sand: drawPot replaced, drawShipTile wrapper paints SAND83 on non-water tiles).
+  v0.83 SERVER BUILT (133-v83onl + server, protocol 6, contract tools/plans/onl83-contract.md). His calls on its open points: BROKEN = any
+  brought piece not held at the bout's end; FREEBIES (Flavius's Gifts, free tickets/guest passes, etc.) belong to the DOMUS, not a gladiator —
+  they survive his death (offerings carried INTO a match are lost with him; unbrought ones stay on the house shelf); NAMED pieces = weapons only
+  for now; a dead gladiator's unlooted named piece goes BACK TO FLAVIUS'S CHEST (with its owner history).
   MANAGER COUNCIL (his answers 2026-10-04, for v0.83): six advisors with a face + Roman name — Consilium (strategy), Recruiter (★ pick),
   Doctore (yard), Medicus (ward), Clerk (money letters), Barracks master; faces from the spectator/patron face maker, rolled ONCE per career
   from its seed (fixed, no re-roll; old careers get theirs on first load, saved once); they never leave (the poachable house medicus stays a
