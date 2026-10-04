@@ -125,7 +125,7 @@ function pg84WallHTML(){const w=W_(),m=me();const P=m.prog84;if(!P)return '';con
     weeks.push(`<i class="pg84w ${st}" title="Week ${wkOf(k)}${st==='def'?` — painted over by ${esc(who?who.ludus:'a rival')}`:st==='now'?' — this week (paid)':st==='done'?' — done':' — to come'}">${st==='def'?'✗':''}</i>`)}
   const left=P.until-w.week+1;
   const cityTx=P.cities.map(pg84City).map(up).join(' · ');
-  const lines=dead?`<div class="pg84l1">D · M</div><div class="pg84l2">${up(P.gname)}</div><div class="pg84l3">FELL FOR THE FAMILIA OF ${up(m.ludus)}</div><div class="pg84l4">${cityTx} · REMEMBER HIM</div>`
+  const lines=dead?`<div class="pg84l1">${typeof faithMark85==='function'?faithMark85(gById(P.gid)):'D · M'}</div><div class="pg84l2">${up(P.gname)}</div><div class="pg84l3">FELL FOR THE FAMILIA OF ${up(m.ludus)}</div><div class="pg84l4">${cityTx} · REMEMBER HIM</div>`
     :`<div class="pg84l1">THE FAMILIA GLADIATORIA OF</div><div class="pg84l2">${up(m.ludus)}</div><div class="pg84l3">${up(P.gname)} FIGHTS AT</div><div class="pg84l4">${cityTx} · FELICITER</div>`;
   return `<div class="pg84wall${dead?' mem':''}" id="pg84wall"><div class="pg84plaster">${lines}</div>
     <div class="pg84foot"><div class="pg84bar" title="${left} week${left===1?'':'s'} left">${weeks.join('')}</div>
