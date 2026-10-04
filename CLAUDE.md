@@ -735,6 +735,13 @@ One global script; files are concatenated in order. Later "version modules" patc
   gladiator can carry into a match in their inventory and bring back out if they survive/win; (2) the online market shows weapons and
   armor on his market board art (boardHTML75 / assets/market_board.webp) — one side of the board for weapons, the other for armor. A row of OFFERINGS runs above both sides
   (his layout).
+- **His list 2026-10-04 (asked, waiting for answers + go):** 1 more online ranks (proposed 8: Tiro 0, Novicius 90, Gregarius 180,
+  Veteranus 550, Primus 1150, Summa 2100, Rudiarius 3500, Invictus 5500) + a longer bar; 2 Domus trophy room (server-awarded rare/
+  special-event trophies); 3 Domus profile page (click a house name) + ★ friends + share link; 4 stone wall texture instead of the
+  parchment behind the Domus showcase (asked OK?); 5 online Wagers tab (open bets, history, weekly leaderboard; one query route);
+  6 STICKING ARROWS + BOLTS (tip buried, fletching out, slight angle/position variation, fan out up to 3 per location +N; bolts shorter/
+  thicker and able to hit locations; also on BEASTS in random spots, or the head when Focus-targeted there; removal: end of event vs
+  also on heal — asked). FIXES going into v0.82: pillar shadows too large, floor spikes' jarring blue, tokens face their attack target.
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
