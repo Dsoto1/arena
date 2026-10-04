@@ -45,7 +45,7 @@ const dm=await A.evaluate(()=>{const o=document.getElementById('onl');return {ra
 ok(/🏛 Domus/.test(dm.rail)&&dm.slots===4&&dm.empty===0,'Domus tab: 4 gladiator slots');ok(/Fame/.test(dm.rec)&&/Lifetime CF/.test(dm.rec)&&dm.lock,'house record + locked name');
 ok(dm.bar===5&&/Summa/.test(dm.bandTop)&&dm.toks===4&&dm.barRight,'rank bar on the right, Summa at the top, four tokens');ok(dm.counts.length===5&&dm.counts.some(t=>/[1-9]\d* living/.test(t)),'living counts by rank');
 ok(dm.aulus==='gregarius'&&dm.brutus==='veteranus','Glory ranks, never demoted');ok(dm.pat,'patron look');
-await A.selectOption('select[data-pat82="skin"]',{index:3}).catch(()=>{});await A.waitForTimeout(200);ok(await A.evaluate(()=>!!localStorage.getItem('flavius_patron82.'+ONL.acct.id)),'patron draft kept while editing');
+await A.evaluate(()=>{const d=document.querySelector('details.pat82d');if(d)d.open=true});await A.selectOption('select[data-pat82="skin"]',{index:3}).catch(()=>{});await A.waitForTimeout(200);ok(await A.evaluate(()=>!!localStorage.getItem('flavius_patron82.'+ONL.acct.id)),'patron draft kept while editing');
 await A.waitForTimeout(1200);const pat=await A.evaluate(async()=>({srv:(await NET.req('domus.get',{})).domus.patron,draft:localStorage.getItem('flavius_patron82.'+ONL.acct.id),skin:document.querySelector('select[data-pat82="skin"]').value}));
 ok(pat.srv&&pat.srv.skin===pat.skin&&!pat.draft,'patron look saved on the house (domus.patron), the draft cleared');
 await A.evaluate(()=>{const e=document.querySelector('.rb82');if(e)e.scrollIntoView()});await shot(A,'domus');

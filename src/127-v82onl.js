@@ -227,7 +227,7 @@ function onlFoundHTML82(full){const live=(ONL.chars||[]).length;
   const card=`<div class="card2 dom82-found"><div class="dom82-crest">🏛</div><div class="dom82-fb"><h2>Found your house</h2>
     <p>Every lanista online keeps a <b>Domus</b>. Its name stands beside your gladiators’ names — in rooms, invitations and the Forum.${live?` Your ${live} gladiator${live===1?'':'s'} join${live===1?'s':''} it with their record.`:''}</p>
     <div class="dom82-row"><input class="tin" id="dom82Name" maxlength="${ONLC.DOMUS_MAX}" placeholder="e.g. Vettii" value="${esc2(ONL82.draft||'')}"><button type="button" class="btn" data-onl82="dice" title="A Roman house name">🎲</button><button type="button" class="btn primary" data-onl82="found">🏛 Found the house</button></div>
-    <small class="rc-sub">${ONLC.DOMUS_MIN}–${ONLC.DOMUS_MAX} letters · no two houses share a name · it can change only until your first gladiator.</small>${ONL82.ferr?`<p class="onl-err">${esc2(ONL82.ferr)}</p>`:''}</div></div>`;
+    <small class="rc-sub">${ONLC.DOMUS_MIN}–${ONLC.DOMUS_MAX} letters · no two houses share a name · it can change only until your first gladiator.</small><div class="pat82found">${onlPatronHTML82()}</div>${ONL82.ferr?`<p class="onl-err">${esc2(ONL82.ferr)}</p>`:''}</div></div>`;
   let h=full.replace(/data-onl="([\w-]+)"/g,(m,a)=>a==='signout'||a==='google'?m:`data-d82="${a}" aria-disabled="true" title="Found your house first"`);
   const a=h.indexOf('<main class="onl-main">');const b=h.lastIndexOf('</main>');if(a<0||b<0)return card+h;
   return h.slice(0,a)+'<main class="onl-main">'+card+'<div class="dom82-grey" aria-disabled="true" title="Found your house first">'+h.slice(a+23,b)+'</div>'+h.slice(b)}
@@ -274,12 +274,12 @@ function onlRankBar82(){const R=ONLC.RANKS;const rc=ONL82.rc||{};const live=(ONL
   const toks=pl.map(({c,p,dx})=>`<span class="rb82-tok ${act&&c.id===act.id?'act':''}" style="--p:${p.toFixed(1)};--dx:${dx}px" title="${esc2(c.name)} · ${Math.round(ONLC.gloryOf(c))} Glory">${onlFig(c.cls,c.look,34)}<i>${Math.round(ONLC.gloryOf(c))}</i></span>`).join('');
   return `<aside class="rb82" aria-label="Ranks by Glory"><div class="rb82-h">Glory</div><div class="rb82-body"><div class="rb82-bands">${bands}</div><div class="rb82-tube"><i style="--p:${fill.toFixed(1)}"></i>${toks}</div></div></aside>`}
 function onlDomusHTML82(){onlDomusLoad82();const D=ONL.domus||{};const G=ONL82.dg||{};const glads=Math.max(D.glads|0,G.glads|0,(ONL.chars||[]).length);const locked=glads>0;const W=onlW81();
-  const rec=[['Bouts',D.bouts|0],['Won',D.wins|0],['Survived',D.survived|0],['Fallen',D.fallen|0],['Lifetime CF',`${W} ${D.lifeCF|0}`],['Fame',`✦ ${D.fame|0}`]];
+  const rec=[['Bouts',D.bouts|0],['Won',D.wins|0],['Survived',D.survived|0],['Fallen',D.fallen|0],['Lifetime CF',`${W} ${D.lifeCF|0}`],['Fame',`✦ ${D.fame|0}`],['Purses',`${typeof ICO!=='undefined'&&ICO.coin?ICO.coin:'🪙'} ${(ONL.chars||[]).filter(c=>c.alive).reduce((t,c)=>t+((ONL.char&&c.id===ONL.char.id?ONL.char:c).wallet|0),0)}`]];
   const since=D.founded?new Date(D.founded).toLocaleDateString():'';
   return `<div class="dom82"><div class="dom82-head"><div class="dom82-crest">🏛</div><div class="dom82-ttl"><h3>${esc2(onlHouse82(D.name||''))}</h3><small class="rc-sub">${since?`founded ${esc2(since)} · `:''}${glads} gladiator${glads===1?'':'s'} raised</small></div></div>
    <div class="dom82-rec">${rec.map(([k,v])=>`<div><b>${v}</b><small>${k}</small></div>`).join('')}</div>
    ${locked?`<p class="rc-sub dom82-lock">🔒 A house with gladiators keeps its name.</p>`:`<div class="dom82-row"><input class="tin" id="dom82Ren" maxlength="${ONLC.DOMUS_MAX}" value="${esc2(D.name||'')}"><button type="button" class="btn" data-onl82="drename">✎ Rename</button><button type="button" class="btn" data-onl82="dnew" title="The old house is archived with its record">🏛 Found a new house</button></div><small class="rc-sub">Only until your first gladiator.</small>`}
-   ${ONL82.ferr&&ONL.tab==='char'?`<p class="onl-err">${esc2(ONL82.ferr)}</p>`:''}${onlPatronHTML82()}</div>`}
+   ${ONL82.ferr&&ONL.tab==='char'?`<p class="onl-err">${esc2(ONL82.ferr)}</p>`:''}${`<details class="pat82d" ${ONL82.patOpen?'open':''}><summary>✎ Patron <small class="rc-sub">your seat in the stands</small></summary>${onlPatronHTML82()}</details>`}</div>`}
 {const base=onlCharHTML;onlCharHTML=function(){let g=base.apply(this,arguments).replace('🛡 My Gladiators','⚔ Gladiators');
   for(const c of ONL.chars||[])g=g.replace(`<b>${esc2(c.name)}</b><small>`,`<b>${esc2(c.name)}</b><small class="gl82">✦ ${Math.round(ONLC.gloryOf(c))} Glory</small><small>`);
   return `<div class="dom82-wrap"><div class="dom82-main">${onlDomusHTML82()}${g}${onlStoreHTML82()}</div>${onlRankBar82()}</div>`}}
@@ -397,7 +397,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   if(a==='dice'){const i=document.getElementById('dom82Name');const n=GENS82[Math.floor(Math.random()*GENS82.length)];if(i){i.value=n;ONL82.draft=n}return}
   if(a==='found'||a==='dnew'||a==='drename'){const i=document.getElementById(a==='found'?'dom82Name':'dom82Ren');const name=(i&&i.value||'').trim();ONL82.draft=name;
     const why=ONLC.domusWhy(name);if(why){ONL82.ferr=why;onlRedraw();return}
-    return onlDo(async()=>{ONL82.ferr='';try{const r=await NET.req(a==='drename'?'domus.rename':'domus.create',{name});ONL.domus=r.domus;ONL.needDomus=false;ONL82.dgAt=0;ONL82.draft='';
+    return onlDo(async()=>{ONL82.ferr='';try{const r=await NET.req(a==='drename'?'domus.rename':'domus.create',{name});ONL.domus=r.domus;ONL.needDomus=false;ONL82.dgAt=0;ONL82.draft='';if(a==='found'){const dr=onlPatronDraft82(ONL.acct.id);if(dr)onlPatronPut82(dr)}
         await onlRefresh();const live=(ONL.chars||[]).filter(c=>c.alive).length;if(a==='found'&&!live){ONL.newGlad=true;ONL.creating=null}
         onlToast80(a==='drename'?`✎ Your house is now <b>${esc2(onlHouse82(r.domus.name))}</b>.`:`🏛 <b>${esc2(onlHouse82(r.domus.name))}</b> is founded${r.joined?` — ${r.joined} gladiator${r.joined===1?'':'s'} joined with their record`:live?'':' — now your first gladiator'}.`)}
       catch(err){ONL82.ferr=err.message;throw err}})}
@@ -428,7 +428,7 @@ window.addEventListener('change',e=>{const t=e.target;if(!t||!t.matches||!t.matc
 .dom82-wrap{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:16px;align-items:start}.dom82-main{min-width:0}
 .dom82{display:grid;gap:8px;padding:12px 14px;margin:0 0 14px;border:1px solid #6b5636;border-radius:12px;background:linear-gradient(#2a2017,#1c150e)}
 .dom82-head{display:flex;gap:12px;align-items:center}.dom82-head .dom82-crest{font-size:36px}.dom82-ttl h3{margin:0;font:700 24px Georgia,serif;color:var(--gold,#e8c96a)}
-.dom82-rec{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}.dom82-rec>div{display:grid;justify-items:center;padding:6px 4px;border:1px solid #4a3a26;border-radius:8px;text-align:center}
+.dom82-rec{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.dom82-rec>div{display:grid;justify-items:center;padding:6px 4px;border:1px solid #4a3a26;border-radius:8px;text-align:center}
 .dom82-rec b{font-size:17px;color:#fff}.dom82-rec b img,.dom82-rec b svg{height:15px;vertical-align:-2px}.dom82-rec small{font-size:11px;color:var(--muted)}.dom82-lock{margin:0}
 .gl82{color:#e9c46a!important}
 .pat82{display:flex;gap:14px;align-items:flex-start;padding-top:8px;border-top:1px solid rgba(255,255,255,.07)}.pat82-prev{display:grid;justify-items:center;gap:2px;flex:none;width:84px}
@@ -452,3 +452,5 @@ window.addEventListener('change',e=>{const t=e.target;if(!t||!t.matches||!t.matc
  .rb82-body{grid-template-columns:none;grid-template-rows:auto 46px;height:auto}.rb82-bands{flex-direction:row-reverse}.rb82-band{border-bottom:0;border-right:1px dashed rgba(255,255,255,.1);text-align:center;padding:2px}
  .rb82-tube>i{bottom:5px;top:5px;left:5px;height:auto;width:calc((100% - 10px) * var(--p) / 100);right:auto;background:linear-gradient(90deg,#8a3a1c,#e8a040 70%,#f3d58a)}
  .rb82-tok{left:calc(var(--p) * 1%);bottom:calc(50% - var(--dx,0px) * .6);transform:translate(-50%,50%)}.dom82-rec{grid-template-columns:repeat(3,minmax(0,1fr))}.pat82{flex-wrap:wrap}.pass82{flex-wrap:wrap}}`;document.head.appendChild(st)}
+
+document.addEventListener('toggle',e=>{if(e.target&&e.target.classList&&e.target.classList.contains('pat82d'))ONL82.patOpen=e.target.open},true);
