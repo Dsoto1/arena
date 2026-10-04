@@ -38,21 +38,21 @@ function saveClsName(clsKey,name){if(!CLASSES[clsKey]||CLASSES[clsKey].custom)re
 /* classOptions — <option> list of the given class keys: printed classes, then custom characters in their own group. */
 function classOptions(cls,selected){const o=k=>`<option value="${k}" ${k===selected?'selected':''}>${CLASSES[k].custom?'✦ '+esc(CLASSES[k].name)+' · custom':CLASSES[k].name}</option>`;const b=cls.filter(k=>!CLASSES[k].custom),c=cls.filter(k=>CLASSES[k].custom&&CUSTOM.chars.some(x=>'cc_'+x.id===k));return b.map(o).join('')+(c.length?`<optgroup label="✦ Custom characters">${c.map(o).join('')}</optgroup>`:'')}
 /* roundsChips — one chip per round of an event: zone, PvP / CF / ability flags and, for custom events, the end condition. */
-function roundsChips(eventDef){return eventDef.rounds.map((r,i)=>`<span class="chip">R${i+1} ${esc(r.n)} · Z${r.zone} · ${r.pvp?'PvP':'no PvP'}${r.cf?'':' · no CF'}${r.ca?'':' · no CA'}${eventDef.custom?' · '+(END_CONDS.find(x=>x[0]===r.end)||['',''])[1].replace(/\bN\b/,r.endN):''}</span>`).join('')}
+function roundsChips(evDef){return evDef.rounds.map((r,i)=>`<span class="chip">R${i+1} ${esc(r.n)} · Z${r.zone} · ${r.pvp?'PvP':'no PvP'}${r.cf?'':' · no CF'}${r.ca?'':' · no CA'}${evDef.custom?' · '+(END_CONDS.find(x=>x[0]===r.end)||['',''])[1].replace(/\bN\b/,r.endN):''}</span>`).join('')}
 /* allowedClasses — class keys a seat may pick for this event (printed + rolled custom characters, narrowed by the event); never empty. */
-function allowedClasses(eventDef){let c=[...BASE_CLS,...CUSTOM.chars.filter(typeof onRollsR==='function'?onRollsR:onRolls).map(x=>'cc_'+x.id).filter(k=>CLASSES[k])];if(eventDef.classes)c=eventDef.classes.filter(k=>CLASSES[k]);if(eventDef.noVenatore)c=c.filter(x=>x!=='venatore');return c.length?c:[...BASE_CLS]}
+function allowedClasses(evDef){let c=[...BASE_CLS,...CUSTOM.chars.filter(typeof onRollsR==='function'?onRollsR:onRolls).map(x=>'cc_'+x.id).filter(k=>CLASSES[k])];if(evDef.classes)c=evDef.classes.filter(k=>CLASSES[k]);if(evDef.noVenatore)c=c.filter(x=>x!=='venatore');return c.length?c:[...BASE_CLS]}
 /* teamOptions — team letters a seat may pick in a team event (J/T for the Juggernaut), or null when the event has no teams. */
-function teamOptions(eventDef,i){
-  if(eventDef.teams==='jugg')return ['J','T'];
-  if(eventDef.teams)return ['A','B','C','D'];
+function teamOptions(evDef,i){
+  if(evDef.teams==='jugg')return ['J','T'];
+  if(evDef.teams)return ['A','B','C','D'];
   return null;
 }
 /* seatRows — HTML for the seat rows (class, You/CPU, mind, personality, Ludus gladiator, name, team) — pads CFG.seats to 8 and fixes classes the event does not allow. */
-function seatRows(eventDef,seatCount,cls){
+function seatRows(evDef,seatCount,cls){
   while(CFG.seats.length<8)CFG.seats.push({cls:BASE_CLS.find(c=>!CFG.seats.some(s=>s.cls===c))||'soldier',cpu:true,diff:'normal',team:CFG.seats.length%2?'B':'A'});
   return CFG.seats.slice(0,seatCount).map((seat,i)=>{
     if(!cls.includes(seat.cls))seat.cls=cls.find(c=>!CFG.seats.slice(0,seatCount).some(o=>o!==seat&&o.cls===c))||cls[0];
-    const tops=eventDef?teamOptions(eventDef,i):null;
+    const tops=evDef?teamOptions(evDef,i):null;
     return `<div class="seat" style="--pc:${CLASSES[seat.cls].color}"><span class="cn">${clsPieceHTML(seat.cls,34)}Seat ${i+1}</span>
       <div class="row"><select id="cls${i}" aria-label="Class for seat ${i+1}">${classOptions(cls,seat.cls)}</select>
       <select id="cpu${i}" aria-label="Controller for seat ${i+1}"><option value="0" ${!seat.cpu?'selected':''}>You</option><option value="1" ${seat.cpu?'selected':''}>CPU</option></select>
@@ -62,7 +62,7 @@ function seatRows(eventDef,seatCount,cls){
         ${LUDUS_CACHE.some(g=>g.roster&&gladActive(g))?`<select id="lcp${i}" aria-label="Field an active-roster Ludus gladiator in CPU seat ${i+1}"><option value="">Generated rival</option>${LUDUS_CACHE.filter(g=>g.roster&&gladActive(g)&&cls.includes(g.cls)).map(g=>`<option value="${g.id}" ${seat.saved===g.id?'selected':''}>Ludus rival: ${esc(g.name)} (${CLASSES[g.cls].name}${g.cpu?' · CPU':''})</option>`).join('')}</select>`:''}`:`<input id="nam${i}" type="text" maxlength="24" placeholder="${esc(CLASSES[seat.cls].hero)} (default name)" title="The name you give a class is remembered and used every time you pick it" value="${esc(seat.name||clsSavedName(seat.cls)||'')}" aria-label="Gladiator name for seat ${i+1}" style="background:var(--ink);color:var(--bone);border:1px solid var(--line2);border-radius:3px;padding:5px 6px;font-size:14px;width:11em">${diceBtn('#nam'+i)}
         ${LUDUS_CACHE.some(g=>g.roster&&gladActive(g))?`<select id="sav${i}" aria-label="Summon an active-roster gladiator for seat ${i+1}"><option value="">New gladiator</option>${LUDUS_CACHE.filter(g=>g.roster&&gladActive(g)).map(g=>`<option value="${g.id}" ${seat.saved===g.id?'selected':''}>Ludus: ${esc(g.name)} (${CLASSES[g.cls].name}, returns with ${g.carry} CF)</option>`).join('')}</select>`:''} <span style="font-size:11px;color:var(--dim);align-self:center" title="Only the Ludus screen's active roster (up to 10) is listed here">(active roster)</span>`}
       ${tops?`<select id="team${i}" aria-label="Team for seat ${i+1}">${tops.map(t=>`<option value="${t}" ${seat.team===t?'selected':''}>${t==='J'?'Juggernaut':t==='T'?'Team':'Team '+t}</option>`).join('')}</select>`:''}</div>
-      <span class="ab"><span data-card="k:${seat.cls}" style="text-decoration:underline dotted;cursor:help">${CLASSES[seat.cls].name} card</span> · ${eventDef&&eventDef.draft?'Drafted event: class sets name and color only.':CLASSES[seat.cls].ab}${i>=4?' Starts on a '+(i<6?'snake':'wolf')+' home tile.':''}${seat.saved&&!seat.cpu?` <b style="color:var(--gold2)">Summoned from the Ludus.</b>`:''}${seat.cpu?` <span style="color:var(--dim)">· ${{easy:'Easy: loose aim, rarely shops or plays cards.',normal:'Normal: solid play with the odd slip.',hard:'Hard: sharpest play (dodges, focus, market, beast hunting).'}[seat.diff||'normal']}</span>`:''}${CFG.seats.slice(0,seatCount).filter(o=>o.cls===seat.cls).length>1?' <i>Shares a class: gets its own color and a numbered name in the arena.</i>':''}</span>
+      <span class="ab"><span data-card="k:${seat.cls}" style="text-decoration:underline dotted;cursor:help">${CLASSES[seat.cls].name} card</span> · ${evDef&&evDef.draft?'Drafted event: class sets name and color only.':CLASSES[seat.cls].ab}${i>=4?' Starts on a '+(i<6?'snake':'wolf')+' home tile.':''}${seat.saved&&!seat.cpu?` <b style="color:var(--gold2)">Summoned from the Ludus.</b>`:''}${seat.cpu?` <span style="color:var(--dim)">· ${{easy:'Easy: loose aim, rarely shops or plays cards.',normal:'Normal: solid play with the odd slip.',hard:'Hard: sharpest play (dodges, focus, market, beast hunting).'}[seat.diff||'normal']}</span>`:''}${CFG.seats.slice(0,seatCount).filter(o=>o.cls===seat.cls).length>1?' <i>Shares a class: gets its own color and a numbered name in the arena.</i>':''}</span>
       ${seat.cpu&&seat.tune?`<div class="perswrap">${PERS_KEYS.map(([k,l,d])=>`<label class="slider" title="${d}"><span>${l}</span><input type="range" min="1" max="100" value="${seatPers(seat)[k]}" data-pk="${k}" data-seat="${i}" aria-label="${l} priority for seat ${i+1}"><output>${seatPers(seat)[k]}</output></label>`).join('')}<span style="font-size:11px;color:var(--dim)">1-100 priorities. Moving a slider switches this seat to Custom.</span></div>`:''}</div>`}).join('');
 }
 /* seatPers — the personality sliders shown for a seat: its custom values, else its preset, else its class default. */
@@ -76,11 +76,11 @@ function finalPers(seat){
   return rollPersonality(seat.cls);
 }
 // which options can apply to an event (the rest are shown grayed out with the reason)
-function optApplies(eventDef){
-  const k=eventDef?eventDef.kind:null;
+function optApplies(evDef){
+  const k=evDef?evDef.kind:null;
   return {
-    mods:eventDef&&(eventDef.draft||k==='orpheus'||k==='eagle')?'Drafted and capture events ignore class modifiers':null,
-    mandata:eventDef&&!eventDef.mandata?'Only classic events deal Mandata Flavi':null,
+    mods:evDef&&(evDef.draft||k==='orpheus'||k==='eagle')?'Drafted and capture events ignore class modifiers':null,
+    mandata:evDef&&!evDef.mandata?'Only classic events deal Mandata Flavi':null,
     carmina:null,
     optOffers:k==='chariot'?'Chariot Racing uses its own offerings (Speed of Mercury, Crowd Favor, Curse Tablets)':k==='naumachia'?'No Blessings pots in the flooded arena':null,
     eaglePot:k==='chariot'||k==='naumachia'?'No Blessings pots in this event':k==='eagle'?'The Golden Eagle is already the objective of this event':null,
@@ -89,25 +89,25 @@ function optApplies(eventDef){
 /* optBox — one option checkbox; grayed and disabled with the reason when it cannot apply to the event. */
 function optBox(id,key,on,label,why){return `<label ${why?`style="opacity:.45" title="${esc(why)}"`:''}><input type="checkbox" id="${id}" ${on&&!why?'checked':''} ${why?'disabled':''}> ${label}${why?` <span style="font-size:12px;color:var(--dim)">(${esc(why)})</span>`:''}</label>`}
 /* optionsHTML — the Options block: class modifiers, Mandata, Carmina, optional offerings, Golden Eagle, chariot PvP, dice seed, spectators, crowd personality and play-as-spectator. */
-function optionsHTML(eventDef,location){
-  const o=CFG.opts;const na=optApplies(eventDef);
+function optionsHTML(evDef,location){
+  const o=CFG.opts;const na=optApplies(evDef);
   return `<h4>Options</h4><div class="opts">
      ${location?optBox('oMods','mods',o.mods,`Apply ${location.n}'s class modifiers`,na.mods):''}
      ${optBox('oMandata','mandata',o.mandata,'Mandata Flavi secret objectives',na.mandata)}
      ${optBox('oCarmina','carmina',o.carmina,'Carmina Fescennina before the event',na.carmina)}
      ${optBox('oOpt','optOffers',o.optOffers,'Shuffle the optional offerings into the Blessings bag (Crowd Favor, Speed of Mercury, Curse Tablet)',na.optOffers)}
      ${optBox('oEagle','eaglePot',o.eaglePot,'Include the Golden Eagle as one of the 12 Blessings',na.eaglePot)}
-     ${eventDef&&eventDef.kind==='chariot'?`<label><input type="checkbox" id="oChPvp" ${CFG.chPvp?'checked':''}> Allow PvP attacks during the race</label>`:''}
+     ${evDef&&evDef.kind==='chariot'?`<label><input type="checkbox" id="oChPvp" ${CFG.chPvp?'checked':''}> Allow PvP attacks during the race</label>`:''}
      <label title="Leave blank for fresh dice. Enter a seed from a past event's results screen to replay its exact rolls.">Dice seed <input type="text" id="oSeed" value="${CFG.seed||''}" placeholder="random" style="width:8em"></label>
-     <label class="spectopt" style="grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px">Spectators <select id="oSpectMode" ${eventDef&&eventDef.noSpect?'disabled':''}><option value="auto" ${o.spect==='auto'?'selected':''}>🎲 Random — the empire decides</option><option value="set" ${o.spect!=='auto'?'selected':''}>Set a number</option></select>${o.spect!=='auto'?` <input type="number" id="oSpect" min="0" max="96" value="${o.spect}" style="width:5em" ${eventDef&&eventDef.noSpect?'disabled':''}>`:''} ${eventDef&&eventDef.noSpect?'<span class="rc-sub" style="flex:1 1 280px">none allowed in this event</span>':eventDef&&eventDef.passiveSpect?'<span class="rc-sub" style="flex:1 1 280px">this crowd only watches: cheers, jeers and words — no stones, gifts or spears</span> ':o.spect==='auto'?'<span class="rc-sub" style="flex:1 1 280px">city appetite, hometown regulars, fans of today\u2019s fighters, billing and omen fill the stands · up to 96, each ≈1,000 Romans</span>':'<span class="rc-sub" style="flex:1 1 280px">0–96 named regulars, each ≈1,000 Romans with their own tastes, moods and CF (rulebook p.35)</span>'}</label>
-     ${eventDef&&!eventDef.noSpect?`<details style="grid-column:1/-1"><summary style="cursor:pointer;font-size:13.5px">Crowd personality <span style="color:var(--dim)">(interactivity ${CROWD.act}% · saved in this browser)</span></summary>
+     <label class="spectopt" style="grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px">Spectators <select id="oSpectMode" ${evDef&&evDef.noSpect?'disabled':''}><option value="auto" ${o.spect==='auto'?'selected':''}>🎲 Random — the empire decides</option><option value="set" ${o.spect!=='auto'?'selected':''}>Set a number</option></select>${o.spect!=='auto'?` <input type="number" id="oSpect" min="0" max="96" value="${o.spect}" style="width:5em" ${evDef&&evDef.noSpect?'disabled':''}>`:''} ${evDef&&evDef.noSpect?'<span class="rc-sub" style="flex:1 1 280px">none allowed in this event</span>':evDef&&evDef.passiveSpect?'<span class="rc-sub" style="flex:1 1 280px">this crowd only watches: cheers, jeers and words — no stones, gifts or spears</span> ':o.spect==='auto'?'<span class="rc-sub" style="flex:1 1 280px">city appetite, hometown regulars, fans of today\u2019s fighters, billing and omen fill the stands · up to 96, each ≈1,000 Romans</span>':'<span class="rc-sub" style="flex:1 1 280px">0–96 named regulars, each ≈1,000 Romans with their own tastes, moods and CF (rulebook p.35)</span>'}</label>
+     ${evDef&&!evDef.noSpect?`<details style="grid-column:1/-1"><summary style="cursor:pointer;font-size:13.5px">Crowd personality <span style="color:var(--dim)">(interactivity ${CROWD.act}% · saved in this browser)</span></summary>
        <div style="display:grid;gap:6px;padding:8px 2px 2px">
         <label class="slider" title="Scales how often spectators throw stones and offerings, change sections, chant for Tholo and emote."><span style="min-width:110px">Interactivity</span><input type="range" min="10" max="200" step="5" value="${CROWD.act}" data-crowd="act"><output>${CROWD.act}%</output></label>
         ${Object.entries(SPECT_TEMPERS).map(([k,[l,d]])=>`<label class="slider" title="${esc(d)}"><span style="min-width:110px">${l}</span><input type="range" min="0" max="200" step="5" value="${CROWD.t[k]??100}" data-crowd="${k}"><output>${CROWD.t[k]??100}%</output></label>`).join('')}
         <p class="hint" style="margin:0">Trait weights shape the tempers of <b>new faces</b> joining the crowd; your regulars keep the tempers you already know them by. 100% everywhere is the printed game.</p>
         ${typeof LOC_CROWD!=='undefined'&&LOC_CROWD[CFG.loc]?`<p class="hint" style="margin:0"><b>Local flavor at ${esc((LOCATIONS[CFG.loc]||{}).n||'this arena')}</b>: ${esc(LOC_CROWD[CFG.loc].n)} — interactivity ×${(LOC_CROWD[CFG.loc].act||100)}%${Object.entries(LOC_CROWD[CFG.loc].t||{}).map(([k,v])=>`, ${SPECT_TEMPERS[k]?SPECT_TEMPERS[k][0].toLowerCase():k} ×${v}%`).join('')}. Layered on top of your sliders.</p>`:''}
        </div></details>`:''}
-     ${eventDef&&!eventDef.noSpect&&!eventDef.passive&&eventDef.kind!=='chariot'&&eventDef.kind!=='naumachia'?`<label class="spectme" ${CFG.seats.slice(0,CFG.n).some(s=>!s.cpu)?'style="opacity:.45" title="Only non-players can spectate"':''}><input type="checkbox" id="oSpectMe" ${CFG.spectHuman&&!CFG.seats.slice(0,CFG.n).some(s=>!s.cpu)?'checked':''} ${CFG.seats.slice(0,CFG.n).some(s=>!s.cpu)?'disabled':''}> 🎟 <b>Play as a spectator</b> (all seats CPU): earn CF each rotation, throw stones or offerings, change sections and chant for Tholo</label>`:''}
+     ${evDef&&!evDef.noSpect&&!evDef.passive&&evDef.kind!=='chariot'&&evDef.kind!=='naumachia'?`<label class="spectme" ${CFG.seats.slice(0,CFG.n).some(s=>!s.cpu)?'style="opacity:.45" title="Only non-players can spectate"':''}><input type="checkbox" id="oSpectMe" ${CFG.spectHuman&&!CFG.seats.slice(0,CFG.n).some(s=>!s.cpu)?'checked':''} ${CFG.seats.slice(0,CFG.n).some(s=>!s.cpu)?'disabled':''}> 🎟 <b>Play as a spectator</b> (all seats CPU): earn CF each rotation, throw stones or offerings, change sections and chant for Tholo</label>`:''}
     </div><p style="font-size:13px;color:var(--muted);margin-top:6px">Every Blessings token goes into one face-down bag (${36+(o.optOffers?13:0)} tokens). Twelve are drawn, one pot per pillar; nobody knows what's inside until a pot breaks. Offerings spawned later by cards, spectators or events are drawn from the same bag. Events with an arena deck use the full 70 cards (12 more are set aside for round 2 in classic events), with Flavius Rule placed at the bottom.</p>`;
 }
 /* setupBody — the whole New event window for the current CFG.mode: Single event (map, event, seats, options), Festival, Missio or Tournament. */

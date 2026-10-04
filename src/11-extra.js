@@ -229,21 +229,21 @@ function renderTurnInd(){
 /* ================= NPC TRACKER ================= */
 const SPAWNABLE=[['Leo','lion'],['Leaena','lion'],['Commodus','commodus'],['Tholo','tholo'],['Zora','zora']];
 /* howToSpawn — how a beast that is not on the sand can still enter this event (its deck card, the event's own rule, a chant…). */
-function howToSpawn(name,npcType){
+function howToSpawn(name,beastType){
   const ev=EV(),k=S.evKey;
-  if(npcType==='zora'){const v=S.players.find(player=>player.abil==='zora'&&player.alive);return `${v?v.name+' can declare him once per event. ':''}${ev.deck&&S.deck.includes('zora')?'The Zora arena card also releases him for whoever draws it.':'No Zora card remains in the deck.'}`}
-  if(k==='gauntlet'){if(npcType==='lion')return 'Released when both snakes are slain.';if(npcType==='commodus')return S.noCommodus?'Removed from this Gauntlet.':'Enters when both wolves are slain.';if(npcType==='tholo')return 'Unleashed when both bears are slain.'}
-  if(k==='orpheus'&&npcType==='lion')return 'Both lions are released after the first capture.';
-  if(k==='commodus'&&npcType==='commodus')return 'Enters at the start of round 2 with 20 HP.';
-  if(ev.noBoss&&(npcType==='tholo'||npcType==='commodus'))return 'Not used in this event.';
-  if(ev.noTholo&&npcType==='tholo')return 'Not used in this event.';
+  if(beastType==='zora'){const v=S.players.find(player=>player.abil==='zora'&&player.alive);return `${v?v.name+' can declare him once per event. ':''}${ev.deck&&S.deck.includes('zora')?'The Zora arena card also releases him for whoever draws it.':'No Zora card remains in the deck.'}`}
+  if(k==='gauntlet'){if(beastType==='lion')return 'Released when both snakes are slain.';if(beastType==='commodus')return S.noCommodus?'Removed from this Gauntlet.':'Enters when both wolves are slain.';if(beastType==='tholo')return 'Unleashed when both bears are slain.'}
+  if(k==='orpheus'&&beastType==='lion')return 'Both lions are released after the first capture.';
+  if(k==='commodus'&&beastType==='commodus')return 'Enters at the start of round 2 with 20 HP.';
+  if(ev.noBoss&&(beastType==='tholo'||beastType==='commodus'))return 'Not used in this event.';
+  if(ev.noTholo&&beastType==='tholo')return 'Not used in this event.';
   const card={Leo:'spawnLeo',Leaena:'spawnLeaena',Commodus:'spawnCommodus',Tholo:'spawnTholo'}[name];
   let s='';
   if(ev.deck&&card){const i=S.deck.indexOf(card);s+=i>=0?`Enters when the ${name} arena card is drawn (${S.deck.length} cards left in the deck).`:'Its arena card has already been drawn or removed.'}
   else s+='Not in this event\'s arena deck.';
-  if(npcType==='tholo'&&S.spect.length)s+=' Spectators in all four quadrants can also chant for Tholo.';
-  if(npcType==='tholo')s+=' In rounds 1-2 Tholo spawns on the center tile and grabs the chest.';
-  if(npcType==='commodus')s+=' On entry every gladiator takes 2 damage; no CF can be spent while he lives.';
+  if(beastType==='tholo'&&S.spect.length)s+=' Spectators in all four quadrants can also chant for Tholo.';
+  if(beastType==='tholo')s+=' In rounds 1-2 Tholo spawns on the center tile and grabs the chest.';
+  if(beastType==='commodus')s+=' On entry every gladiator takes 2 damage; no CF can be spent while he lives.';
   return s;
 }
 /* npcTrackerHTML — the Beasts & active cards panel: every beast with HP bar, state and aggro, the spawnable ones not in play (and how they enter), and the active arena cards. */
