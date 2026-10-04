@@ -735,13 +735,17 @@ One global script; files are concatenated in order. Later "version modules" patc
   gladiator can carry into a match in their inventory and bring back out if they survive/win; (2) the online market shows weapons and
   armor on his market board art (boardHTML75 / assets/market_board.webp) — one side of the board for weapons, the other for armor. A row of OFFERINGS runs above both sides
   (his layout).
-- **His list 2026-10-04 (asked, waiting for answers + go):** 1 more online ranks (proposed 8: Tiro 0, Novicius 90, Gregarius 180,
-  Veteranus 550, Primus 1150, Summa 2100, Rudiarius 3500, Invictus 5500) + a longer bar; 2 Domus trophy room (server-awarded rare/
-  special-event trophies); 3 Domus profile page (click a house name) + ★ friends + share link; 4 stone wall texture instead of the
-  parchment behind the Domus showcase (asked OK?); 5 online Wagers tab (open bets, history, weekly leaderboard; one query route);
-  6 STICKING ARROWS + BOLTS (tip buried, fletching out, slight angle/position variation, fan out up to 3 per location +N; bolts shorter/
-  thicker and able to hit locations; also on BEASTS in random spots, or the head when Focus-targeted there; removal: end of event vs
-  also on heal — asked). FIXES going into v0.82: pillar shadows too large, floor spikes' jarring blue, tokens face their attack target.
+- **v0.83 plan (his answers 2026-10-04; build after v0.82 ships, wait for his go on the batch):** GEAR LEVELS: 1–3 = printed system
+  gear, 4 = named chest gear (Common/Rare/Epic/Legendary from the Arena Chest + Flavius's Gifts); NO rank gate on buying (prices gate);
+  the first 3 ranks (Tiro, Novicius, Gregarius) may only WEAR printed gear — named pieces wait in the Storeroom until Veteranus.
+  8 RANKS by Glory: Tiro 0 · Novicius 90 · Gregarius 180 · Veteranus 550 · Primus Palus 1150 · Summa Rudis 2100 · Rudiarius 3500 ·
+  Invictus 5500 (longer rank bar). Domus TROPHY ROOM (server-awarded rare/special-event trophies). Domus PROFILE PAGE (click any house
+  name) + ★ FRIENDS (landing list: online, Invite, Watch) + 🔗 share link. Online WAGERS TAB (open bets/pot/odds, history, weekly top
+  bettors). STICKING ARROWS + BOLTS: tip buried, fletching out, slight variation, up to 3 per location + "+N"; bolts shorter/thicker;
+  shooters may target ANY location where possible; on beasts in random spots or the head when Focus-targeted; they stay until the END
+  OF THE EVENT; a SEVERED limb takes its arrows with it. THOLO HOUSE RULE (his): a bolt to Tholo's targeted head kills him outright
+  with any damage. Plus: house treasury (20% cut), market board with an offerings row, offerings carried in/out, gear economy, Gifts,
+  countdown. v0.82 got: stone wall behind the Domus showcase (his pick).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 

@@ -65,6 +65,6 @@ function mmLabels82(){const b=document.querySelector('#mainMenu [data-mm="rules"
 {const base=menuShow;menuShow=function(){const r=base.apply(this,arguments);try{mmLabels82()}catch(e){}return r}}
 setTimeout(()=>{try{mmLabels82()}catch(e){}},500);setTimeout(()=>{try{mmLabels82()}catch(e){}},2500);
 /* Online Domus: the gladiator showcase sits on his parchment (dark cards on light parchment, framed in gold) */
-{const st=document.createElement('style');st.textContent=`#onl .onl-gslots{background:url(${typeof assetURL==='function'?assetURL('parchment.webp'):'assets/parchment.webp'}) center/cover;padding:14px;border-radius:10px;border:1px solid var(--gold,#d6ab4c);box-shadow:inset 0 0 40px rgba(60,40,20,.55),0 4px 18px rgba(0,0,0,.45)}
+{const st=document.createElement('style');st.textContent=`#onl .onl-gslots{background:url(${typeof assetURL==='function'?assetURL('stone_wall.webp'):'assets/stone_wall.webp'}) center/cover;padding:14px;border-radius:10px;border:1px solid var(--gold,#d6ab4c);box-shadow:inset 0 0 40px rgba(60,40,20,.55),0 4px 18px rgba(0,0,0,.45)}
 #onl .onl-gslots>*{background:linear-gradient(180deg,#2c2016,#1d150e)!important;box-shadow:0 4px 12px rgba(40,25,10,.55)}
 #onl .onl-gslot.empty{background:rgba(30,20,12,.55);border-color:rgba(60,40,20,.6);color:#f0e2c4}`;document.head.appendChild(st)}
