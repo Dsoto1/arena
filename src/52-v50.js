@@ -153,7 +153,7 @@ document.addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList
   h=h.replace(/<span>City <span class="rc-sub" style="font-size:12px">· or click a city on the map<\/span><\/span>/,'<span>City</span>');
   h=h.replace(/Class modifiers \(applied once, before the event\):/,'<span data-tip="Each city favours some classes and hinders others — applied once, before the event.">Class modifiers <span class="qi">ⓘ</span></span>');
   }catch(e){console.error(e)}return h}}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-calgo]');if(!b)return;const c=calNow();const f=[...document.querySelectorAll('#mBody button')].find(x=>/Follow the schedule/.test(x.textContent));if(f){f.click();return}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-calgo]');if(!b)return;const c=calNow();const f=[...document.querySelectorAll('#mBody button')].find(x=>/Follow the schedule/.test(x.dataset.en84||x.textContent));if(f){f.click();return}
   CFG.loc=c.fx.loc;CFG.ev=c.fx.ev;const box=document.getElementById('mBody');if(box){box.innerHTML=setupBody();try{render()}catch(err){}}},true);
 
 /* ---------- Your ludus: the welcome is for the first week; after that it is one click away ---------- */

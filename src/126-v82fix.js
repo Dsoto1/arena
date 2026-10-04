@@ -63,8 +63,8 @@ if(typeof TOKEN_DEF!=='undefined'&&TOKEN_DEF.tholo)Object.assign(TOKEN_DEF.tholo
 /* v0.84 (his asks): Saves wears a floppy disc 💾 (Rules keeps the scroll) and sits before Settings — row = Annals · Rules · Saves · Settings · mute */
 {const st=document.createElement('style');st.textContent='#mainMenu .mmrow>[data-mm="saves"]{order:1}#mainMenu .mmrow>[data-mm="settings"]{order:2}#mainMenu .mmrow>#mmMute{order:3}';document.head.appendChild(st)}
 function mmSaves84(){const s=document.querySelector('#mainMenu [data-mm="saves"]');if(s&&s.firstChild&&s.firstChild.nodeType===3&&!/^💾/.test(s.firstChild.textContent))s.firstChild.textContent='💾 Saves'}
-function mmLabels82(){try{mmSaves84()}catch(e){}const b=document.querySelector('#mainMenu [data-mm="rules"]');if(b&&!/^📜 Rules$/.test(b.textContent.trim()))b.innerHTML='📜 Rules';
-  const a=document.querySelector('#mainMenu [data-mm="annals"]');if(a&&!/^🏛️ Annals$/.test(a.textContent.trim()))a.innerHTML='🏛️ Annals'}
+function mmLabels82(){try{mmSaves84()}catch(e){}const b=document.querySelector('#mainMenu [data-mm="rules"]');if(b&&!/^📜 Rules$/.test((b.dataset.en84||b.textContent).trim()))b.innerHTML='📜 Rules';
+  const a=document.querySelector('#mainMenu [data-mm="annals"]');if(a&&!/^🏛️ Annals$/.test((a.dataset.en84||a.textContent).trim()))a.innerHTML='🏛️ Annals'}
 {const base=menuShow;menuShow=function(){const r=base.apply(this,arguments);try{mmLabels82()}catch(e){}return r}}
 setTimeout(()=>{try{mmLabels82()}catch(e){}},500);setTimeout(()=>{try{mmLabels82()}catch(e){}},2500);
 /* Online Domus: the gladiator showcase sits on his parchment (dark cards on light parchment, framed in gold) */

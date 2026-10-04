@@ -151,7 +151,7 @@ function sfx(kind){const a=audSet();if(HEADLESS||!a.on||!a.sfx)return;if(!audIni
       const blast=(t0,f,dur,v)=>{audNote(d,t0,f*0.985,dur,'sawtooth',v,{lp:900,lpTo:1700,a:0.05,r:0.12,vib:1,verb:1});audNote(d,t0,f/2,dur,'square',v*0.45,{lp:600,a:0.06,r:0.12,verb:1});audNote(d,t0,f*2,dur*0.9,'sawtooth',v*0.18,{lp:2400,a:0.08,r:0.1});audNoise(d,t0,0.09,0.06,{f:500,q:0.7})};
       blast(t,196,0.62,0.16);blast(t+0.78,196,0.2,0.14);blast(t+1.02,262,0.75,0.17);break}}}
 /* any "Sound the horns" button, wherever it is, sounds them */
-document.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&/Sound the horns/i.test(b.textContent||''))setTimeout(()=>{try{sfx('horn')}catch(err){}},30)},true);
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&(b.id==='goBtn'||b.id==='cityBell'||/Sound the horns/i.test(b.dataset.en84||b.textContent||'')))setTimeout(()=>{try{sfx('horn')}catch(err){}},30)},true);
 
 /* v0.25: the speaker button on the main bar mutes everything (same switch as Settings → Audio → Sound) */
 function audMuteUI(){const b=document.getElementById('btnMute');if(!b)return;const on=audSet().on;b.textContent=on?'🔊':'🔇';b.classList.toggle('muted',!on);b.title=on?'Mute all sound (M)':'Sound is muted — click to unmute (M)'}
