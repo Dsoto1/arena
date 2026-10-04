@@ -933,6 +933,23 @@ share copy — the site download play/flavius-rule-arena.zip.)
   house, event) and 🪦 Biggest loser (the best-ranked gladiator who fell in Ranked that day: rank, CF, what he lost — gear value + purse);
   each with "See today's list" (the readable popup); the Today strip and "+ more" go. The online DAY turns at 8 PM New York time (DST-aware)
   for Today AND the Forum reset (30-min grace kept). "👥 Party" button beside the Invite slots opens a small panel (your code / enter a code).
+- **v0.87 = HIS v0.86 NOTES (2026-10-04; wait for his GO):** FIXES — Orbis: only the 🔍 enlarges (no click-anywhere zoom); Ave Arena bass
+  softer; online market: no market-board art behind it (keep the layout); Storeroom: no "Buy for the shelf", buying only in Armory & Market,
+  Move to shelf actually lands on a visible shelf; try-on: Flavius' Bracers show real art (no ? placeholder cards), in a V tilted inward;
+  red flash on the right location — either-arm pieces (Lorica) flash both arms and can be equipped on either (flipped); Fame tooltip loses
+  the "drifts to 35" internal note (sweep other hidden-mechanic explanations too); unspent perk points = checklist task, drop the extra
+  top-right count; infirmary: injured fighter could not be put on the bed (bug) + Hygeia's Blessing → small card on the banner; city
+  center: the kit list follows the selected fighter, kits bought for a fighter who doesn't fight that week are REFUNDED (today lost at
+  week's end, 17-manager ~656); Manager mail panel half width.
+  HIS PICKS: DOMUS REDESIGN = showcase + 4 (the active gladiator's avatar wearing his gear, 2 dotted weapon slots to its left as horizontal
+  cards, purse/record beside; 4 slot cards to switch the active one; "+ New gladiator" popup only when a slot is free; Storeroom ·
+  Offerings shelf · Trophies as tabs under the stage; purse = his, treasury = the house's, labelled clearly; no buying in the Domus).
+  LANISTA HOURS REMOVED (recruiting/promote actions cost coin, limited per fighter per week, each says what it gained) — this replaces
+  Recruiting II item (5) "weekly planner of hours". SCHOOLING → a lanista PERK TREE on the Lanista tab (perks say plainly what they do;
+  task when points are unspent; one count). LEGEND OF THE SAND = career milestones (Manager e.g. top rating band + 25 wins + a Grand
+  Games title; Online e.g. Invictus + 25 Ranked survived): gold laurel frame on cards/tokens, Annals line, rivals fear them.
+  TOOLING: tools/legendsim.js — one cheap recruit through Manager seasons → how long to the top, where it stalls, death rate.
+  ANSWERED: Domus purse = the gladiator's own coin (lost at death); treasury = the house's 20% cut (outlives deaths, buys for anyone).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
