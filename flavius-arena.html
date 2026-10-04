@@ -33787,6 +33787,30 @@ function uniqueOut82(key){const k=UNIQUE_CARD82[key];if(!k||!S)return;let n=0;
    cloth drape over his shoulders and hips, warm bronzed skin, his wooden club (owner's ask, from his card back) */
 if(typeof TOKEN_DEF!=='undefined'&&TOKEN_DEF.tholo)Object.assign(TOKEN_DEF.tholo,{hair:'long',hairC:'#d6d2c8',beard:'full',helm:'laurel',skin:'#cf8a5c',
   c1:'#9aa596',c2:'#6f5a3a',cape:true,neck:'none',legs:'wraps',base:'#2e2a24',scale:1.32});
+/* the main menu, leaner (his ask: "not scare them off"): Play Now and Manager Mode share the first row, Multiplayer below,
+   then the two lessons beside the Creator Studio, then one slim row: Annals · Rules · Settings · Saves · sound.
+   CSS only (grid order) — every button keeps its own element and handler */
+{const st=document.createElement('style');st.textContent=`
+#mainMenu .mmbtns{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr));gap:8px;align-items:stretch;max-width:460px;width:100%;margin-inline:auto}
+#mainMenu .mmbtns>*{grid-column:span 12;margin:0!important;min-width:0}
+#mainMenu .mmbtns>[data-mm="continue"]{order:0}
+#mainMenu .mmbtns>[data-mm="play"]{order:1;grid-column:span 6}
+#mainMenu .mmbtns>[data-mm="manager"]{order:2;grid-column:span 6}
+#mainMenu .mmbtns>[data-mm="play"],#mainMenu .mmbtns>[data-mm="manager"]{padding:14px 10px;font-size:17px}
+#mainMenu .mmbtns>[data-mm="multi"]{order:3}
+#mainMenu .mmbtns>#mmMulti{order:4}
+#mainMenu .mmbtns>#mmLearn{order:5;grid-column:span 7;display:flex;gap:6px}
+#mainMenu .mmbtns>#mmLearn>button{flex:1 1 0;min-width:0;font-size:13px;padding:6px}
+#mainMenu .mmbtns>#mmLearn small,#mainMenu .mmbtns>[data-mm="studio"] small,#mainMenu .mmbtns>[data-mm="annals"] small,#mainMenu .mmbtns>[data-mm="rules"] small,#mainMenu .mmbtns>.mmrow small,#mainMenu .mmbtns>[data-mm="multi"] small{display:none}
+#mainMenu .mmbtns>[data-mm="studio"]{order:6;grid-column:span 5}
+#mainMenu .mmbtns>[data-mm="annals"]{order:7;grid-column:span 3;font-size:13px;padding:6px 4px;white-space:nowrap}
+#mainMenu .mmbtns>[data-mm="rules"]{order:8;grid-column:span 3;font-size:13px;padding:6px 4px;white-space:nowrap}
+#mainMenu .mmbtns>.mmrow{order:9;grid-column:span 6;display:flex;gap:6px}
+#mainMenu .mmbtns>.mmrow>button{flex:1 1 0;font-size:13px;padding:6px 4px;white-space:nowrap}
+#mainMenu .mmbtns>.mmrow>#mmMute{flex:0 0 44px}
+#mainMenu .mmbtns>*:not([data-mm="play"]):not([data-mm="manager"]):not([data-mm="continue"]){opacity:.92}
+@media (max-width:520px){#mainMenu .mmbtns>[data-mm="annals"],#mainMenu .mmbtns>[data-mm="rules"]{grid-column:span 6}#mainMenu .mmbtns>.mmrow{grid-column:span 12}#mainMenu .mmbtns>#mmLearn,#mainMenu .mmbtns>[data-mm="studio"]{grid-column:span 12}}`;document.head.appendChild(st)}
+{const b=document.querySelector('#mainMenu [data-mm="rules"]');if(b)b.innerHTML='📜 Rules';const a=document.querySelector('#mainMenu [data-mm="annals"]');if(a&&a.firstChild&&a.firstChild.nodeType===3)a.firstChild.textContent='🏛️ Annals'}
 /* =====================================================================
    129-v82beasts · v0.82 beast cards, custom beast spawn cards, deck beast slots, the spear scowl
    =====================================================================
