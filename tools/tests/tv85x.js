@@ -23,6 +23,12 @@ const q=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms)
   const bx=[...document.querySelectorAll('.bt85')].map(x=>x.className.replace('bt85 ',''));const slash=!!document.querySelector('.bt85.done .bt85x');
   return {txt:/They want them in the/.test(txt),bi,fits:!!T&&o>=T.lo-6&&o<=T.hi+6,bx,slash,walk:!!document.querySelector('.travelcard.road85 .road85side [data-mg="scoutarena"],.travelcard.road85 .road85side [data-mg="city"]')}});
 ok(q.txt,'the road offer names its bout');ok(q.bi>=0&&q.fits,'the deal enters the fighter in a bout that suits him');ok(q.bx.join()==='done,next,later'&&q.slash,'bout tracker: done slashed, next lit');ok(q.walk,'the walks sit in the Road box');console.log(JSON.stringify(q));
+const z=await pg.evaluate(async()=>{const w=W_(),m=me();const t=w.night.travel;t.paid=true;t.cost=t.cost||11;t.gone=true;const g=rosterOf(m)[0];g.inj={until:w.week+2,label:'a deep thigh cut',pen:3};g.medWk=null;g.bathWk=null;
+  const it=weekChecklist().find(x=>x.ic==='⚕');const need=infirmNeed73();const lt=typeof medicus84==='function'?medicus84(w):null;
+  const road=ROAD76.every(E=>!/^−\d/.test(E.a[1]));MGR.tab='night';MGR_REDRAW();await new Promise(x=>setTimeout(x,300));const tem=/Cost: \d+ coin · /.test((document.querySelector('.tmp76')||{}).innerHTML||'');
+  MGR.tab='ludus';MGR_REDRAW();await new Promise(x=>setTimeout(x,300));const flag=!!document.querySelector('.banner73 svg image, .room73 svg image, svg image[href^="data:"]');
+  return {done:!!it&&it.done&&/treatment opens after the games/.test(it.txt),need,lt,road,tem,flag}});
+ok(z.done&&z.need===0&&!z.lt,'a wound taken on the road waits for next week without nagging');ok(z.road&&z.tem,'prices read Cost: N coin');console.log(JSON.stringify(z));
 ok(r.n>=3,'free agents listed');ok(r.after.every(x=>!x.fav&&!x.court),'clicking a free agent does not favorite him');ok(!r.meter.fav&&!r.meter.court,'the offer meter does not favorite');
 ok(!r.offered||(r.real.fav&&r.real.court),'a real offer still records the court line');
 console.log(JSON.stringify(r));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();
