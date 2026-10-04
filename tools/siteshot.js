@@ -14,7 +14,7 @@ const t0=Date.now();let turns=0;
 while(Date.now()-t0<60000){const st=await pg.evaluate(()=>({t:S.turnNo|0,ph:S.phase,busy:S.busy,modal:!!CUR_MODAL,over:!!S.over}));
   if(st.over)break;if(st.modal)await pg.evaluate(()=>{const b=document.querySelector('#mBtns button');b&&b.click()});
   if(st.t>=7&&st.ph==='action'&&!st.modal)break;await pg.waitForTimeout(250)}
-await pg.evaluate(()=>{SPEED='slow';for(const id of ['cardShow','bubbles','wbubs'])document.getElementById(id)&&(document.getElementById(id).innerHTML='')});
+await pg.evaluate(()=>{SPEED='pause';for(const id of ['cardShow','bubbles','wbubs'])document.getElementById(id)&&(document.getElementById(id).innerHTML='')});
 for(let i=0;i<30;i++){if(await pg.evaluate(()=>!FX.length&&!FXL.length&&!CUR_MODAL))break;await pg.waitForTimeout(200)}
 await pg.evaluate(()=>{FX.length=0;FXL.length=0;draw()});await pg.waitForTimeout(300);
 await pg.screenshot({path:process.argv[3]||'arena_shot.png'});
