@@ -714,10 +714,14 @@ One global script; files are concatenated in order. Later "version modules" patc
   on spikes → it falls INTO the spikes (pick it up = take the spike damage). SPECTATOR GROUP TURN (online only): every ticket holder gets
   their own private popup at the same time (nobody else sees the choices), one action each per window; a thrown stone/offering is LOCKED to
   its tile and still fires — whoever stands there when it lands is hit / receives it.
-- **Custom beast spawn cards (asked 2026-10-04, v0.82; open: 1 card look, 2 unique tick, 3 deck section/copies, 5 which events —
-  my picks 1a/2a/3a/5a):** each Studio beast gets an arena spawn card (printed-card frame + token/portrait + name); Q4 DECIDED: a drawn
-  custom beast enters by the GRID DICE like Leo/Leaena. Custom events already place Studio beasts (15-custom layout 'cn:') and have
-  deckSpawns ticks for the printed Leo/Leaena/Tholo/Commodus/Zora only. 126-v82fix pulls a unique beast's card once it is in.
+- **Custom beast spawn cards (agreed 2026-10-04, v0.82):** every Studio beast gets an arena spawn card (printed-card frame + token/
+  portrait + name; still open: 1 auto card vs his template, 2 a "Unique" tick per beast — my picks 1a/2a); a drawn custom beast
+  enters by the GRID DICE like Leo/Leaena. ANY arena deck holds at most 4 beast spawn cards = THOLO FIXED + 3 SLOTS (Tholo stays for
+  the chant; only where the rulebook removes him — Orpheus, Juggernaut — all slots are free). Standard events: slots default to Leo,
+  Leaena, Commodus; a ROSTER SET has an "Arena deck beasts" row (Tholo fixed + 3 slots) whose author may swap any slot for one of their
+  beasts (Manager careers on that set follow it); an untouched set = the rulebook. Custom events: the Event Designer deck section shows
+  the same 1+3 slots (Tholo removable) — replaces the deckSpawns ticks; beasts PLACED at the start don't use a slot (a unique placed
+  beast's card leaves the deck, 126-v82fix). Zora is not a beast slot. Online: printed beasts only, never custom.
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
