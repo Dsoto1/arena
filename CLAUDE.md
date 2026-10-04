@@ -788,6 +788,9 @@ share copy — the site download play/flavius-rule-arena.zip.)
   brought piece not held at the bout's end; FREEBIES (Flavius's Gifts, free tickets/guest passes, etc.) belong to the DOMUS, not a gladiator —
   they survive his death (offerings carried INTO a match are lost with him; unbrought ones stay on the house shelf); NAMED pieces = weapons only
   for now; a dead gladiator's unlooted named piece goes BACK TO FLAVIUS'S CHEST (with its owner history).
+  TESTER GRANTS (his pick, v0.83): server-side only — deploy-time TESTERS (Google e-mails, never in the page/repo) → `admin.grant` to
+  the tester's own house; every grant logged; a granted house is permanently D.test: Custom only, never in Today/rank counts/wager tops,
+  "TEST" chip. Client "🧪 Tester" panel only when hello says tester:true. No word of power.
   MANAGER COUNCIL (his answers 2026-10-04, for v0.83): six advisors with a face + Roman name — Consilium (strategy), Recruiter (★ pick),
   Doctore (yard), Medicus (ward), Clerk (money letters), Barracks master; faces from the spectator/patron face maker, rolled ONCE per career
   from its seed (fixed, no re-roll; old careers get theirs on first load, saved once); they never leave (the poachable house medicus stays a
