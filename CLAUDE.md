@@ -923,7 +923,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
   His call (2026-10-04): NAMES STAY ENGLISH like the class names — weapons, armor, beasts, offerings, cards (the translated
   panel gives the rules text, the name stays as printed).
 - **LANGUAGES (his pick 2026-10-05): one per release alongside the features** — Italian v0.87, Portuguese (BR) v0.88, French v0.89, German v0.90,
-  Japanese after (needs a fallback font + wrapping). Names/GAME_TERMS stay English in every language. Tooling per language: tools/i18n/<lang>/part-NN.json + GUIDE-<lang>.md.
+  Japanese v0.91, Chinese SIMPLIFIED v0.92 (his pick; shares the CJK work: system-font fallback stack incl. canvas, no small-caps/
+  letter-spacing/uppercase for CJK, space-splitting spots fixed). Names/GAME_TERMS stay English in every language. Tooling per language: tools/i18n/<lang>/part-NN.json + GUIDE-<lang>.md.
 - **RECRUITING II (his yes 2026-10-04, v0.87):** (1) decision deadline + the rival house's counter-bid in the last week (Recruiter letter:
   match / outbid on another want / walk away); (2) each fighter has 1–2 WANTS (coin, arena time, fame, rudis path, home city, a friend in
   the house) revealed by scouting — pitches on a want gain big, the button previews the gain; (3) progressive scouting: ratings as ranges
