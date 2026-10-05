@@ -106,7 +106,12 @@ def lefthand():
   # one skin: re-tone the whole hand by brightness onto his skin ramp (the shadowed fingers took the robe's red); ink lines stay
   L=cv2.cvtColor(c,cv2.COLOR_BGR2GRAY).astype(np.float32);ramp=np.array([(14,10,12)]+SKIN,np.float32);stops=np.array([20,70,110,160,215],np.float32)
   t=np.clip(np.interp(L,stops,np.arange(5)),0,4);i0=np.floor(t).astype(int);i1=np.minimum(i0+1,4);fr=(t-i0)[...,None]
-  rc=ramp[i0]*(1-fr)+ramp[i1]*fr;lift=np.clip((L-0)/1,0,1)[...,None];c=np.where((m>0)[...,None],rc,c).astype(np.uint8)
+  rc=ramp[i0]*(1-fr)+ramp[i1]*fr;c=np.where((m>0)[...,None],rc,c).astype(np.uint8)
+  # his ink between the fingers (traced on the card's hand: thumb | index | middle | ring | little) and a black outline round the hand
+  for g in ([(150,220),(160,255),(172,295),(190,345),(200,380)],[(225,240),(227,285),(225,325),(220,365)],
+            [(260,240),(265,285),(265,335)],[(290,235),(300,275),(305,315)]):
+    cv2.polylines(c,[np.array(g,np.int32)],False,(14,10,12),6,cv2.LINE_AA)
+  ring=cv2.dilate(m,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)));c[(ring>0)&(m==0)]=(14,10,12);m=ring
   c=cv2.flip(c,0);m=cv2.flip(m,0);ys,xs=np.nonzero(m);sel=ys>np.percentile(ys,95)
   return c,m,(float(xs[sel].mean()),float(ys[sel].mean()))
 def forearm():

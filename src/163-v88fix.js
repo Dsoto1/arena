@@ -17,7 +17,7 @@ openCrowd=async function(player){
       it('dc',`<span class="cf88coin">${ICO.coin}</span>`,_T`Discard ${coinAmt87(10)} for ${cfAmt87(2)}`,coinAmt87(10),!cfOK||player.coin<10,lock),
       it('sp',tok('spectator'),_T('Spear a spectator'),_T`${cfAmt87(3)} · once per event`,!spear,spear?'':_T('nobody in reach'))];
     const v=await modal(_T('Crowd Favor'),`<p>${_T`Crowd Favor is spent in Phase 3. If it ever drops below zero, you are eliminated. You have <b>${cfAmt87(player.cf)}</b> and <b>${coinAmt87(player.coin)}</b>.`}</p><div class="pickgrid cf88g" id="pickgrid"></div>`,
-      [{label:_T('Close'),value:'close'}],{grid,wide:1});
+      [{label:_T('Close'),value:'close'}],{grid,wide:1,onOpen:()=>{const b=document.getElementById('mboxEl');if(b)b.classList.remove('tall')}});   /* v0.89: a wide window, but only as tall as its choices (no fixed big-window height) */
     if(v==='close'||!v)break;
     if(v==='sp'){await humanSpear(player);render();break}
     if(v==='mk'){player.cf-=3;player.market=true;log(_T`${nm(player)} spends ${cfAmt87(3)} to unlock the market.`)}
