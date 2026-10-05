@@ -60,6 +60,8 @@ function calleeName(call){const e=call.expression;if(ts.isIdentifier(e))return e
 function calleeObj(call){const e=call.expression;if(ts.isPropertyAccessExpression(e)&&ts.isPropertyAccessExpression(e.expression))return e.expression.name.text;if(ts.isPropertyAccessExpression(e)&&ts.isIdentifier(e.expression))return e.expression.text;return ''}
 /* is this literal node in a place where it is data, not display text? */
 function skipCtx(node){
+  /* a line marked  i18n:skip  (in a comment) is code that uses the text as a key — never wrap it (v0.87) */
+  try{const sf=node.getSourceFile();const ln=sf.getLineAndCharacterOfPosition(node.getStart()).line;const L=sf.text.split('\n')[ln]||'';if(/i18n:skip/.test(L))return true}catch(e){}
   let p=node.parent,child=node;
   /* climb through parentheses / conditional branches / || && ?? / commas — they keep the same role */
   while(p&&(ts.isParenthesizedExpression(p)||(ts.isConditionalExpression(p)&&child!==p.condition)||(ts.isBinaryExpression(p)&&[ts.SyntaxKind.BarBarToken,ts.SyntaxKind.AmpersandAmpersandToken,ts.SyntaxKind.QuestionQuestionToken].includes(p.operatorToken.kind))))

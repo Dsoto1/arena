@@ -25,7 +25,7 @@ function npcStats87(t,key,name){const sp=nc82Spec(t,key,name),T=sp.T;const st=T.
   return `<div class="ns87">${tok?`<div class="ns87tok">${tok}</div>`:`<div class="ns87tok g" style="background:${esc(T.col||'#777')}">${esc(T.g||'?')}</div>`}
     <div class="ns87info"><b class="ns87nm">${esc(sp.name)}</b><div class="ns87kd">${_T`${kind&&kind!=='Unknown'?esc(kind)+' · ':''}${T.hp} HP`}</div>${tbl}
     <div class="ns87rules">${nc82Rules(sp).slice(0,-1).map(x=>`<p>${esc(x)}</p>`).join('')}
-    <p class="ns87rw">${_T`Slain:`} <span class="ns87i">${ICO.coin}<b>${T.coin||0}</b></span> <span class="ns87i">${ICO.wheat}<b>${T.cf||0}</b> CF</span></p></div></div></div>`}
+    <p class="ns87rw">${_T`Slain:`} <span class="ns87i">${ICO.coin}<b>${T.coin||0}</b></span> <span class="ns87i">${_T`${ICO.wheat}<b>${T.cf||0}</b> CF`}</span></p></div></div></div>`}
 {const base=nc82Open;nc82Open=function(t,key,name){if(HEADLESS||!NPCT[t]||!npcBase87(t))return base.apply(this,arguments);
   let pop=document.getElementById('nc82pop');if(pop)pop.remove();pop=document.createElement('div');pop.id='nc82pop';
   pop.innerHTML=`<div class="nc82popin">${npcStats87(t,key,name)}<div class="rc-sub">${_T`Esc to close`}</div></div>`;

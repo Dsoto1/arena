@@ -6,16 +6,18 @@
      written to $REPORT (default: no file) — the release keeps them under a ceiling
    D switching back: Settings → English reloads in English; the select lists English + Español
    E English untouched: a page without flavius_lang has LANG 'en', no dictionary, and _T is identity. */
+/* v0.87: WALK_LANG=it|pt|fr|de runs only the B/C walk in that language (tv87l runs all four) */
+const WL=process.env.WALK_LANG||'es';
 const path=require('path'),fs=require('fs');const REPORT=process.env.REPORT||'';const SHOT=process.env.SHOT||'';
 const {chromium}=require('playwright');(async()=>{const URL0='file://'+path.resolve(process.argv[2]);
 const T0=Date.now();const LG=(...a)=>{if(process.env.DBG)console.error('['+((Date.now()-T0)/1000|0)+'s]',...a)};const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const out={};
-const mk=async(locale,init)=>{const ctx=await b.newContext({viewport:{width:1300,height:900},locale});await ctx.route(/fonts\./,r=>r.abort());
-  await ctx.addInitScript(init||(()=>{}));await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});return ctx};
+const mk=async(locale,init,arg)=>{const ctx=await b.newContext({viewport:{width:1300,height:900},locale});await ctx.route(/fonts\./,r=>r.abort());
+  await ctx.addInitScript(init||(()=>{}),arg);await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});return ctx};
 const open=async(ctx,n)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);await p.waitForTimeout(2400);return p};
-const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,`v86_${n}.png`)})};
+const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,`v86_${WL}_${n}.png`)})};
 
 LG('── A');/* ── A · first run on a Spanish browser ── */
-{const ctx=await mk('es-MX');const p=await open(ctx,'A');
+if(WL==='es'){const ctx=await mk('es-MX');const p=await open(ctx,'A');
   out.aAsk=await p.waitForSelector('#lang86ask',{timeout:8000}).then(()=>true).catch(()=>false);
   out.aLang0=await p.evaluate(()=>LANG);
   if(out.aAsk){await Promise.all([p.waitForNavigation({timeout:10000}).catch(()=>null),p.click('#lang86ask [data-lang86yes]')]);await p.waitForTimeout(2400)}
@@ -24,27 +26,32 @@ LG('── A');/* ── A · first run on a Spanish browser ── */
   const c2=await mk('es-ES');const p2=await open(c2,'A2');await p2.waitForTimeout(1200);
   await p2.click('#lang86ask [data-lang86no]').catch(()=>{});await p2.waitForTimeout(400);await p2.reload();await p2.waitForTimeout(3000);
   out.aNo=await p2.evaluate(()=>({LANG,ask:!!document.getElementById('lang86ask')}));await c2.close()}
-ok(out.aAsk&&out.aLang0==='en','A: Spanish browser asked once on the main menu');
+if(WL==='es'){ok(out.aAsk&&out.aLang0==='en','A: Spanish browser asked once on the main menu');
 ok(out.aLang1.LANG==='es'&&out.aLang1.html==='es'&&out.aLang1.dict,'A: Sí → reloads in Spanish '+JSON.stringify(out.aLang1));
-ok(out.aNo.LANG==='en'&&!out.aNo.ask,'A: Keep English → English, not asked again '+JSON.stringify(out.aNo));
+ok(out.aNo.LANG==='en'&&!out.aNo.ask,'A: Keep English → English, not asked again '+JSON.stringify(out.aNo))}
 
 LG('── B/C');/* ── B/C · the Spanish walk ── */
-const ctx=await mk('en-US',()=>{if(!sessionStorage.getItem('t86')){sessionStorage.setItem('t86','1');localStorage.setItem('flavius_lang','es')}localStorage.setItem('flavius_online77','1')});
+const ctx=await mk('en-US',WL=>{if(!sessionStorage.getItem('t86')){sessionStorage.setItem('t86','1');localStorage.setItem('flavius_lang',WL)}localStorage.setItem('flavius_online77','1')},WL);
 const P=await open(ctx,'B');
 /* English-looking text in what is visible right now */
-const sweep=async(where)=>P.evaluate(where=>{
+const sweep=async(where)=>P.evaluate(([where,WL])=>{
   const EN=new Set('the and your you of to with for is are a an his her their this that it on in at by from or not be will can has have was were when who what which each every one more no all only than then there they them out up into over after before'.split(' '));
-  const ES=new Set('el la los las de del y tu tus su sus con para por es son un una al en que se no más o le lo a cada todo todos hay'.split(' '));
+  const STOP={es:'el la los las de del y tu tus su sus con para por es son un una al en que se no más o le lo a cada todo todos hay',
+    it:'il lo la i gli le di del della e tu tuo tua suo sua con per è sono un una al in che si non più o a ogni tutto tutti c\'è',
+    pt:'o a os as de do da e seu sua com para por é são um uma ao em que se não mais ou cada todo todos há você',
+    fr:'le la les de du des et ton ta tes son sa ses avec pour par est sont un une au en que se ne pas plus ou à chaque tout tous il y',
+    de:'der die das den dem des und dein deine sein seine mit für von ist sind ein eine im in dass sich nicht mehr oder zu jeder alle es'};
+  const ES=new Set(STOP[WL].split(' '));
   const names=new Set(GAME_TERMS);
   const vis=el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&getComputedStyle(el).visibility!=='hidden'};
   const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);const left=new Map();let n,tot=0;
   while((n=w.nextNode())){const p=n.parentElement;if(!p||/^(SCRIPT|STYLE|TEXTAREA|OPTION|TITLE)$/.test(p.tagName)||p.closest('[translate="no"],svg,#log'))continue;
     const t=n.data.replace(/\s+/g,' ').trim();if(t.length<8||!/[a-z]{3}/.test(t))continue;if(!vis(p))continue;tot++;
-    const ws=t.toLowerCase().match(/[a-záéíóúñü']+/g)||[];const en=ws.filter(x=>EN.has(x)).length,es=ws.filter(x=>ES.has(x)).length;
+    const ws=t.toLowerCase().match(/[a-záéíóúñüàèìòùâêîôûçãõäöß']+/g)||[];const en=ws.filter(x=>EN.has(x)).length,es=ws.filter(x=>ES.has(x)).length;
     if(en>=2&&en>es)left.set(t.slice(0,90),(left.get(t.slice(0,90))||0)+1)}
   /* overflow: text cut inside buttons / chips / tabs */
   const cut=[...document.querySelectorAll('button,.btn,.chip,.badge,.tabs button,.mtabs button,[data-tab],.ptpill')].filter(el=>vis(el)&&getComputedStyle(el).overflow!=='visible'&&(el.scrollWidth>el.clientWidth+2)).slice(0,30).map(el=>el.textContent.replace(/\s+/g,' ').trim().slice(0,40));
-  return {where,tot,left:[...left.keys()],cut}},where);
+  return {where,tot,left:[...left.keys()],cut}},[where,WL]);
 const C={left:[],cut:[],tot:0};const add=r=>{C.tot+=r.tot;for(const x of r.left)C.left.push(r.where+' | '+x);for(const x of r.cut)C.cut.push(r.where+' | '+x)};
 const closeAll=async()=>{for(let i=0;i<6;i++){const m=await P.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);if(!m)break;await P.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)});await P.waitForTimeout(350)}};
 out.b={};
@@ -85,11 +92,11 @@ out.missN=await P.evaluate(()=>LANG_MISS.size);out.missTop=await P.evaluate(()=>
 const leftU=[...new Set(C.left)],cutU=[...new Set(C.cut)];
 out.c={texts:C.tot,left:leftU.length,cut:cutU.length};
 if(REPORT)fs.writeFileSync(REPORT,JSON.stringify({out,left:leftU,cut:cutU,miss:out.missTop},null,1));
-ok(out.b.menu.LANG==='es'&&out.b.menu.html==='es','B: <html lang="es"> '+JSON.stringify(out.b.menu).slice(0,120));
-ok(!/Play Now|Manager mode|Settings/.test(out.b.menu.txt)||/Jugar|Ajustes/.test(out.b.menu.txt),'B: the main menu reads Spanish');
+ok(out.b.menu.LANG===WL&&out.b.menu.html===WL,'B: <html lang="'+WL+'"> '+JSON.stringify(out.b.menu).slice(0,120));
+ok(!/Manager mode|Settings/.test(out.b.menu.txt),'B: the main menu reads '+WL+' '+out.b.menu.txt.slice(0,120));
 ok(out.b.play&&out.b.turn&&out.b.moved,'B: Play Now → the horns → a turn played in Spanish');
 ok(out.b.log&&out.b.log.n>0,'B: the log runs');
-ok(out.b.set&&out.b.sel&&out.b.sel.v==='es'&&out.b.sel.opts.join()==='en,es','B: Settings language select '+JSON.stringify(out.b.sel));
+ok(out.b.set&&out.b.sel&&out.b.sel.v===WL&&out.b.sel.opts.join()==='en,es,it,pt,fr,de','B: Settings language select '+JSON.stringify(out.b.sel));
 ok(out.b.rules&&out.b.mgr&&out.b.studio&&out.b.onl,'B: Rules, Manager, Studio, Online open in Spanish');
 ok(out.b.names.n===0||out.b.names.eng,'B: game terms stay English');
 const LEFT_MAX=+(process.env.LEFT_MAX||60),CUT_MAX=+(process.env.CUT_MAX||25);
@@ -97,17 +104,19 @@ ok(leftU.length<=LEFT_MAX,`C: leftover English lines ${leftU.length} ≤ ${LEFT_
 ok(cutU.length<=CUT_MAX,`C: cut-off texts ${cutU.length} ≤ ${CUT_MAX}: `+cutU.slice(0,8).join(' ‖ '));
 
 LG('── D');/* ── D · back to English ── */
+if(WL==='es'){
 await P.evaluate(()=>{menuHide();openSettings()});await P.waitForTimeout(900);
 await Promise.all([P.waitForNavigation({timeout:10000}).catch(()=>null),P.selectOption('select[data-lang84]','en')]);await P.waitForTimeout(2600);
 out.d=await P.evaluate(()=>({LANG,dict:!!LANG_DICT,html:document.documentElement.lang}));
 ok(out.d.LANG==='en'&&!out.d.dict&&out.d.html==='en','D: English again after the switch '+JSON.stringify(out.d));
+}
 await ctx.close();
 
 LG('── E');/* ── E · English untouched ── */
-{const c=await mk('en-US');const p=await open(c,'E');
+if(WL==='es'){const c=await mk('en-US');const p=await open(c,'E');
   out.e=await p.evaluate(()=>{const x=5,y='Leo';return {LANG,dict:!!LANG_DICT,id:_T`Your gladiator ${y} has ${x} coin.`==='Your gladiator Leo has 5 coin.'&&_T('Attack')==='Attack',ask:!!document.getElementById('lang86ask')}});
   await c.close()}
-ok(out.e.LANG==='en'&&!out.e.dict&&out.e.id&&!out.e.ask,'E: English untouched '+JSON.stringify(out.e));
+if(WL==='es')ok(out.e.LANG==='en'&&!out.e.dict&&out.e.id&&!out.e.ask,'E: English untouched '+JSON.stringify(out.e));
 
 console.log(JSON.stringify({c:out.c,missN:out.missN,b:{turn:out.b.turn,log:out.b.log&&out.b.log.sample}}).slice(0,1500));
 console.log('ERRS',JSON.stringify(errs.slice(0,10)));console.log('MISS',JSON.stringify(miss));

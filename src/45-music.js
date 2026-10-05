@@ -20,7 +20,7 @@ Object.assign(AUD_THEMES,{
   'Annals':{root:50,mode:'ionian',bpm:66,prog:[0,3,4,0,5,3,1,4],lead:'brass',fn:'regal',nm:'Fasti Consulares',sub:_T('while the Annals are open')},
   'Superbus':{root:50,mode:'aeolian',bpm:124,prog:[0,5,2,6,0,5,3,4],lead:'brass',fn:'anthem',nm:'Palma Superba',sub:_T('the Flavius Superbus')},
   'Special':{root:52,mode:'mixolydian',bpm:112,prog:[0,6,3,0,0,6,4,4],lead:'reed',fn:'festive',nm:'Ludi Extraordinarii',sub:_T('special events and Play Now tournaments')}});
-const AUD_EXTRA=[_T('Manager'),_T('Annals'),_T('Superbus'),_T('Special')].map(k=>[k,AUD_THEMES[k].nm]);
+const AUD_EXTRA=/* i18n:skip — theme keys */['Manager','Annals','Superbus','Special'].map(k=>[k,AUD_THEMES[k].nm]);
 const AUD_BRIDGES=[[3,4,5,4,3,4,6,6],[5,3,6,4,5,3,4,4],[2,5,3,6,2,5,4,4],[3,1,4,6,3,1,4,4],[5,6,3,4,5,6,1,4]];
 /* the form: which section a step falls in, and how far into it */
 const audSect=step=>{const s=Math.floor(step/64)%4;return {s,kind:s===2?'B':s===1?'A2':'A',bar:Math.floor(step/8)%8,st:step%8,last:(step%64)>=56}};

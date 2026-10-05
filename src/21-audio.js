@@ -113,7 +113,7 @@ function audWant(){ // which track should be playing right now
 function audSwitch(name,fast){AUD.switching=true;audFadeTo(0,fast?0.5:1.4);
   setTimeout(()=>{if(!AUD.ctx)return;AUD.theme=audTheme(name);AUD.loc=name;AUD.step=AUD.seek||0;AUD.seek=0;AUD.next=AUD.ctx.currentTime+0.1;AUD.switching=false;
     if(name==='Finale'){audFadeTo(1,0.3);audBossSting(AUD.ctx.currentTime+0.05);AUD.next=AUD.ctx.currentTime+3.5}else if(AUD.playing)audFadeTo(1,2.2);audListRefresh()},fast?520:1450)}
-/* audTick — starts or keeps the music going: the scheduler runs every 60 ms, follows audWant(), moves the playlist on and stops when muted or not wanted. */
+/* audTick — starts or keeps the music going: the scheduler runs every 100 ms (1 s lookahead), follows audWant(), moves the playlist on and stops when muted or not wanted. */
 function audTick(){const a=audSet();if(HEADLESS||!AUD.ctx||!a.on||!a.music||AUD.paused){audStop();return}
   const live=audLive();if(!live&&!a.menu&&!AUD.manual){audStop();return}
   const want=audWant();
@@ -127,8 +127,11 @@ function audTick(){const a=audSet();if(HEADLESS||!AUD.ctx||!a.on||!a.music||AUD.
       // the playlist moves on when a track has run its course (never during an event's own theme)
       if(!live2&&AUD.step>=TRACK_STEPS){let nx=AUD_TRACKS.findIndex(x=>x[0]===AUD.loc);for(let k=0;k<AUD_TRACKS.length;k++){nx=(nx+1)%AUD_TRACKS.length;if(musicUnlocked(AUD_TRACKS[nx][0]))break}AUD.pl=nx;if(AUD.manual)AUD.manual=AUD_TRACKS[AUD.pl][0];audSwitch(audWant());return}
       const inten=live2?Math.min(2,S.ri||0)+(typeof activePlayers==='function'&&activePlayers().length<=2?1:0):0;const spb=60/AUD.theme.bpm/2;
-      if(AUD.next<AUD.ctx.currentTime-0.05)AUD.next=AUD.ctx.currentTime+0.05; /* v0.51: a throttled background tab never replays its backlog in a burst */
-      while(AUD.next<AUD.ctx.currentTime+0.25){audStep(AUD.theme,AUD.next,AUD.step,Math.min(2,inten));AUD.step++;AUD.next+=spb}},60);
+      /* v0.51: a throttled background tab never replays its backlog in a burst. v0.87 (choppy on Mac Safari): skip ahead only when the
+         tab was hidden or the timer fell more than half a second behind; notes are scheduled 1 s ahead (was 0.25 s) on a 100 ms timer,
+         so a busy frame on the main thread no longer opens gaps in the music */
+      if(AUD.next<AUD.ctx.currentTime-(document.hidden?0.05:0.5))AUD.next=AUD.ctx.currentTime+0.05;
+      while(AUD.next<AUD.ctx.currentTime+1.0){audStep(AUD.theme,AUD.next,AUD.step,Math.min(2,inten));AUD.step++;AUD.next+=spb}},100);
   audListRefresh()}
 /* audStop — fades the music out and stops the scheduler. */
 function audStop(){const was=AUD.playing;AUD.playing=false;if(was)audFadeTo(0,1.1);

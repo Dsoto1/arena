@@ -1,11 +1,11 @@
-/* 148-v86lang — v0.86 Spanish, the parts around the dictionary (00-lang / 00-lang-es):
+/* 148-v86lang — v0.86 languages, the parts around the dictionary (00-lang + assets/lang_<l>.js; v0.87: es, it, pt, fr, de):
    • <html lang> follows LANG; Settings → General → 🌐 Language lists English + Español (LANGS84 gets the entries of LANGS86).
      Picking one stores localStorage flavius_lang and reloads — during a live match it asks: reload now (the match is lost)
      or "next time" (applies the next time the game opens).
    • First run on a Spanish browser (navigator.languages es*, no flavius_lang yet): a small card on the main menu —
      "¿Jugar en español?" Sí / Keep English — asked once (localStorage flavius_langask86).
    • Text that never went through _T: the static markup of 01-head (one pass at load + after the menu builds),
-     the online server's messages (NET.req errors → TXP, matched against LANG_SRVPAT_ES), quick-chat phrases (ONLC.QC_TEXT,
+     the online server's messages (NET.req errors → TXP, matched against LANG_SRVPAT), quick-chat phrases (ONLC.QC_TEXT,
      the client's copy — codes travel, each screen shows its own language).
    • Game terms and names stay English (they are simply kept by the dictionary). */
 {
@@ -19,7 +19,7 @@ let TXP_RE86=null;
 function TXP(msg){
   if(!LANG_DICT||typeof msg!=='string'||!msg)return msg;
   const ex=TX(msg);if(ex!==msg)return ex;
-  if(!TXP_RE86){TXP_RE86=[];try{for(const k of (typeof LANG_SRVPAT_ES!=='undefined'?LANG_SRVPAT_ES:[])){
+  if(!TXP_RE86){TXP_RE86=[];try{for(const k of LANG_SRVPAT){
     const parts=k.split(/\{\d+\}/);const idx=(k.match(/\{(\d+)\}/g)||[]).map(x=>+x.slice(1,-1));
     TXP_RE86.push({re:new RegExp('^'+parts.map(p=>p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('([\\s\\S]+?)')+'$'),idx,k})}}catch(e){}}
   const t=msg.trim();
@@ -44,6 +44,14 @@ function langStatic86(root){
     if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
     setTimeout(go,1200);setTimeout(go,4000)}
 }
+/* the few words the switch itself needs, each in its own language (shown before that language's dictionary is loaded) */
+const LANG_UI87={
+  en:{name:'English',live:'The language changes when the game reloads. The match in play is lost if you reload now.',now:'Reload now',later:'Next time'},
+  es:{name:'Español',live:'El idioma cambia al recargar el juego. Tu combate en curso se perderá si recargas ahora.',now:'Recargar ahora',later:'La próxima vez',ask:'¿Jugar en español?',change:'Puedes cambiarlo en Ajustes.',yes:'Sí, en español'},
+  it:{name:'Italiano',live:'La lingua cambia quando il gioco si ricarica. Se ricarichi ora, la partita in corso andrà persa.',now:'Ricarica ora',later:'La prossima volta',ask:'Giocare in italiano?',change:'Puoi cambiarla nelle Impostazioni.',yes:'Sì, in italiano'},
+  pt:{name:'Português (Brasil)',live:'O idioma muda quando o jogo recarrega. A partida em andamento será perdida se você recarregar agora.',now:'Recarregar agora',later:'Da próxima vez',ask:'Jogar em português?',change:'Você pode mudar isso nas Configurações.',yes:'Sim, em português'},
+  fr:{name:'Français',live:'La langue change au rechargement du jeu. Le combat en cours sera perdu si tu recharges maintenant.',now:'Recharger maintenant',later:'La prochaine fois',ask:'Jouer en français ?',change:'Tu peux le changer dans les Réglages.',yes:'Oui, en français'},
+  de:{name:'Deutsch',live:'Die Sprache wechselt, wenn das Spiel neu lädt. Das laufende Match geht verloren, wenn du jetzt neu lädst.',now:'Jetzt neu laden',later:'Beim nächsten Mal',ask:'Auf Deutsch spielen?',change:'Du kannst das in den Einstellungen ändern.',yes:'Ja, auf Deutsch'}};
 /* switching: store, then reload (asks during a live match) */
 function langLive86(){try{return typeof eventLive==='function'&&eventLive()&&!HEADLESS}catch(e){return false}}
 function langSet86(k){
@@ -53,28 +61,28 @@ function langSet86(k){
   if(k===LANG)return;
   const reload=()=>{try{location.reload()}catch(e){}};
   if(!langLive86()){reload();return}
-  const es=k==='es';
+  const U=LANG_UI87[k]||LANG_UI87.en;
   const box=document.createElement('div');box.className='lang86pop';
-  box.innerHTML=`<div class="lang86card"><b>🌐 ${es?'Español':'English'}</b>
-    <p>${es?'El idioma cambia al recargar el juego. Tu combate en curso se perderá si recargas ahora.':'The language changes when the game reloads. The match in play is lost if you reload now.'}</p>
-    <div class="lang86btns"><button class="btn primary" data-lang86go="1">${es?'Recargar ahora':'Reload now'}</button>
-    <button class="btn" data-lang86later="1">${es?'La próxima vez':'Next time'}</button></div></div>`;
+  box.innerHTML=`<div class="lang86card"><b>🌐 ${U.name}</b>
+    <p>${U.live}</p>
+    <div class="lang86btns"><button class="btn primary" data-lang86go="1">${U.now}</button>
+    <button class="btn" data-lang86later="1">${U.later}</button></div></div>`;
   document.body.appendChild(box);
   box.addEventListener('click',ev=>{const t=ev.target.closest('button');if(!t)return;if(t.dataset.lang86go)reload();box.remove()})}
 document.addEventListener('change',ev=>{const t=ev.target;if(!t||!t.dataset||!t.dataset.lang84)return;ev.stopImmediatePropagation();langSet86(t.value)},true);
-/* first run on a Spanish browser */
+/* first run on a browser in one of the game's languages: asked once, in that language (v0.87: es, it, pt, fr, de) */
 function langAsk86(){
   try{if(localStorage.getItem('flavius_lang')||localStorage.getItem('flavius_langask86'))return}catch(e){return}
-  const langs=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']).map(x=>String(x).toLowerCase());
-  if(!langs.length||!/^es\b/.test(langs[0])&&!(langs.some(x=>/^es\b/.test(x))&&!/^en\b/.test(langs[0])))return;
+  const langs=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']).map(x=>String(x).toLowerCase().slice(0,2));
+  if(!langs.length||langs[0]==='en')return;const k=langs.find(x=>x!=='en'&&LANG_UI87[x]);if(!k||langs.indexOf('en')>=0&&langs.indexOf('en')<langs.indexOf(k))return;
   if(document.getElementById('lang86ask'))return;
   const mm=document.getElementById('mainMenu');if(!mm||mm.hidden||getComputedStyle(mm).display==='none')return;
-  const c=document.createElement('div');c.id='lang86ask';
-  c.innerHTML=`<b>🌐 ¿Jugar en español?</b><span>Puedes cambiarlo en Ajustes.</span><div><button class="btn primary" data-lang86yes="1">Sí, en español</button><button class="btn" data-lang86no="1">Keep English</button></div>`;
+  const U=LANG_UI87[k];const c=document.createElement('div');c.id='lang86ask';
+  c.innerHTML=`<b>🌐 ${U.ask}</b><span>${U.change}</span><div><button class="btn primary" data-lang86yes="${k}">${U.yes}</button><button class="btn" data-lang86no="1">Keep English</button></div>`;
   document.body.appendChild(c);
   c.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;
     try{localStorage.setItem('flavius_langask86','1')}catch(e){}
-    c.remove();if(b.dataset.lang86yes)langSet86('es')})}
+    c.remove();if(b.dataset.lang86yes)langSet86(b.dataset.lang86yes)})}
 {
   let n=0;const iv=setInterval(()=>{n++;try{langAsk86()}catch(e){}if(n>40||document.getElementById('lang86ask'))clearInterval(iv)},700);
   const css=document.createElement('style');css.textContent=`

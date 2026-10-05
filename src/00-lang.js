@@ -3,14 +3,19 @@
        _T('Plain text')   _T`Text with ${x} inside`   `<div>${_T`Run of text`}</div>`
    • English (the default) = identity: _T returns exactly what the template literal would have made.
    • Another language: the key is the English text with each ${…} as {0},{1}… (trimmed; edge whitespace kept),
-     looked up in LANG_DICT (00-lang-es.js); {n} in the translation takes the n-th value. A miss = English.
+     looked up in LANG_DICT (assets/lang_<l>.js, only the picked language is loaded); {n} in the translation takes the n-th value. A miss = English.
    • The language is chosen before the page runs (localStorage flavius_lang); switching reloads the page
      (data built at load — card text, round names — is translated once, at load).
    • Game terms (GAME_TERMS, 138-v84) and every name (weapons, armor, beasts, offerings, cards, classes,
      events, people) stay English in every language — the dictionary simply keeps them. */
-const LANGS86=[{k:'en',n:'English'},{k:'es',n:'Español'}];
-const LANG=(()=>{try{const l=localStorage.getItem('flavius_lang');return LANGS86.some(L=>L.k===l)?l:'en'}catch(e){return 'en'}})();
-let LANG_DICT=null;                 /* set by 00-lang-es.js when LANG==='es' */
+/* every language is named in its own language (v0.87) */
+const LANGS86=[{k:'en',n:'English'},{k:'es',n:'Español'},{k:'it',n:'Italiano'},{k:'pt',n:'Português (Brasil)'},{k:'fr',n:'Français'},{k:'de',n:'Deutsch'}];
+/* the dictionary arrives as window.LANG_PACK (assets/lang_<l>.js, loaded by 01-head before this script); if it did not load
+   (offline, file missing) the game simply runs in English */
+const LANG_PACK0=(typeof window!=='undefined'&&window.LANG_PACK)||null;
+const LANG=(()=>{try{const l=localStorage.getItem('flavius_lang');return LANGS86.some(L=>L.k===l)&&l!=='en'&&LANG_PACK0&&LANG_PACK0.l===l?l:'en'}catch(e){return 'en'}})();
+let LANG_DICT=LANG!=='en'?LANG_PACK0.d:null;
+const LANG_SRVPAT=LANG!=='en'&&Array.isArray(LANG_PACK0.s)?LANG_PACK0.s:[];
 const LANG_MISS=new Map();          /* key → count of misses (the Spanish walk test reads it) */
 function langKey86(s){let k=s[0];for(let i=1;i<s.length;i++)k+='{'+(i-1)+'}'+s[i];return k}
 function langLook86(key,vals,quiet){
