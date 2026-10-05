@@ -1023,6 +1023,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
   NAUMACHIA (one shared static view), lessons/tutorials. FLAVIUS'S BOX stays FIXED AT THE TOP OF THE SCREEN in every event (today it
   hangs over the A-1 corner — move it off the corner for all events, rotated or not). Turn with the view: stands quadrants, minis' yaw,
   stuck arrows, pillars/pots/chest/spikes, start marks, the hover/tile lines. Screenshot every event rotated before shipping.
+- **v0.89 ANSWERS (2026-10-05):** LOOT WINDOW → the market-board style (pieces with their own art, enlarge + "fits you / replaces X",
+  untakeable dimmed, same layout for Manage). HOT SEAT "since your last turn" window opens ONLY when something happened.
 - **CJK SCHEDULE (his call 2026-10-05): JAPANESE v0.89, CHINESE SIMPLIFIED v0.90 (moved up; es/it/pt/fr/de are done).**
 - **LANGUAGES (his pick 2026-10-05): one per release alongside the features** — Italian v0.87, Portuguese (BR) v0.88, French v0.89, German v0.90,
   Japanese v0.91, Chinese SIMPLIFIED v0.92 (his pick; shares the CJK work: system-font fallback stack incl. canvas, no small-caps/
