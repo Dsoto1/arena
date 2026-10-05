@@ -159,7 +159,7 @@ def mood(m):
     im=warp(im,[B(MC_L,-10,-22,16),B(MC_R,10,-24,16),B(C(410,375),0,-12,22),B(C(386,372),0,-10,18),B(C(412,368),0,-9,12),B(C(391,363),0,-5,7),B(C(410,362),0,-5,7)])
     return flush(im,(80,110,200),.10)
   if m=='smug':
-    im=warp(im,[B(MC_R,12,-24,16),B(C(408,380),0,-10,16),B(MC_L,0,4,10),B(BROW_R,0,-26,26),B(BROW_NI,6,10,16)])
+    im=warp(im,[B(MC_R,12,-24,16),B(C(408,380),0,-10,16),B(MC_L,0,4,10),B(C(411,349),0,-14,9),B(EYE_R,0,3,7),B(BROW_NI,6,10,16)])
     return rot(lids(im,.45),-5,(W/2,H*.75))
   if m=='bored':
     im=lids(warp(im,[B(MC_L,0,8,12),B(MC_R,0,10,12),B(BROW_R,0,8,22),B(BROW_N,0,6,18)]),.9,near=True);return rot(im,12,(W/2,H*.75))
