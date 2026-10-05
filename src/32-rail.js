@@ -6,11 +6,15 @@
    tab fills the rest of the screen. In a normal window (or on a narrow screen) the same markup falls back
    to the familiar row of tabs. Match Week and the live bout are unchanged.
    ===================================================================== */
+/* MGR_GROUPS — Manager mode's rail: [section header, tab keys]. */
 const MGR_GROUPS=[[_T('🏛 Ludus'),['ludus','roster','recruit','board','infirm','practice']],[_T('⚔️ Arena'),['night','exch']],[_T('🌍 World'),['news','league','imp','trophy','sched']],[_T('👤 Lanista'),['me']]];
+/* ST_GROUPS — the Creator Studio's rail: [section header, tab keys]. */
 const ST_GROUPS=[[_T('📋 Overview'),['all']],[_T('🛡 Fighters'),['classes','chars','lanistas','npcs','cohorts','tokens']],[_T('⚔ Gear'),['gear:w','gear:a','trophies','flags']],[_T('🏟 Arena'),['events','tourneys','specials','sponsors','spect']],[_T('🎲 Tools'),['rosters','names']]];
 /* tabs: [[key,label,title?]], attr(k) → the button's data attributes */
+/* railTabs — the grouped rail of tab buttons (tabs not in any group go under "More"); the same markup is a row of tabs in a normal window. */
 function railTabs(tabs,groups,cur,attr,cls){const by=Object.fromEntries(tabs.map(t=>[t[0],t]));const used=new Set();
-  const btn=t=>{used.add(t[0]);return `<button type="button" ${attr(t[0])} class="${cur===t[0]?'on':''}"${t[2]?` title="${esc(t[2])}"`:''}>${t[1]}</button>`};
+  /* btn — one tab button (marked as used, highlighted when current). */
+  const btn=tab=>{used.add(tab[0]);return `<button type="button" ${attr(tab[0])} class="${cur===tab[0]?'on':''}"${tab[2]?` title="${esc(tab[2])}"`:''}>${tab[1]}</button>`};
   let h=groups.map(([g,ks])=>{const bs=ks.filter(k=>by[k]).map(k=>btn(by[k])).join('');return bs?`<div class="railgrp"><div class="railhd">${g}</div>${bs}</div>`:''}).join('');
   const rest=tabs.filter(t=>!used.has(t[0]));if(rest.length)h+=`<div class="railgrp"><div class="railhd">${_T`More`}</div>${rest.map(btn).join('')}</div>`;
   return `<div class="${cls} rail" role="tablist">${h}</div>`}
@@ -21,6 +25,7 @@ function railTabs(tabs,groups,cur,attr,cls){const by=Object.fromEntries(tabs.map
   if(w===null||w===undefined){e.preventDefault();if(typeof modal==='function'&&!(typeof modalBusy==='function'&&modalBusy()))modal(_T('Open the site'),`<p style="font:16px var(--mono)"><a href="${url}" target="_blank" rel="noopener">${url}</a></p>`,[{label:_T('Copy the address'),value:'copy',primary:1},{label:_T('Close'),value:null}],{close:null}).then(v=>{if(v==='copy'){try{navigator.clipboard.writeText(url);if(typeof mToast==='function')mToast(_T('Copied: ')+url)}catch(err){}}})}
   else e.preventDefault()})}
 /* Space pauses the CPU (and resumes at the pace you had) — unless a Step is waiting, or you are typing */
+/* SPACE_PREV — the CPU speed to resume at when Space unpauses. */
 let SPACE_PREV='normal';
 document.addEventListener('keydown',e=>{if(e.code!=='Space'||e.repeat)return;const t=document.activeElement;if(t&&(['INPUT','TEXTAREA','SELECT','BUTTON'].includes(t.tagName)||t.isContentEditable))return;
   if(typeof STEP!=='undefined'&&STEP.res)return; // Step mode: Space means Next
@@ -30,13 +35,19 @@ document.addEventListener('keydown',e=>{if(e.code!=='Space'||e.repeat)return;con
 /* ---------------- v0.41 SMOOTH PASSAGES between the big modes ----------------
    transitCover(): an instant black cover (nothing behind flashes); transitUncover(): it fades away.
    transitRun(fn): fade to black, run fn, and fade back in once the next screen has painted. */
+/* TRANSIT — the black cover element between big modes (made on first use). */
 let TRANSIT=null;
+/* transitEl — the transit cover (with the turning Blessing token and the mode's name), created once. */
 function transitEl(){if(!TRANSIT){TRANSIT=document.createElement('div');TRANSIT.className='transit';
     /* v0.45: the dark between screens is never empty — a Blessing token turns slowly, and the mode being opened is named */
     TRANSIT.innerHTML=`<div class="tspin" aria-hidden="true"><i style="background-image:url('${typeof assetURL==='function'?assetURL('blessing.png'):'assets/blessing.png'}')"></i></div><div class="tlbl" role="status"></div>`;document.body.appendChild(TRANSIT)}return TRANSIT}
-function transitLabel(t){const el=transitEl().querySelector('.tlbl');if(el)el.textContent=t||''}
+/* transitLabel — names the mode being opened on the cover. */
+function transitLabel(text){const el=transitEl().querySelector('.tlbl');if(el)el.textContent=text||''}
+/* transitCover — covers the screen instantly; it uncovers by itself after hold ms. TWEAK: 1800. */
 function transitCover(hold=1800){if(HEADLESS)return;const t=transitEl();transitLabel('');t.classList.add('instant','on');void t.offsetWidth;t.classList.remove('instant');clearTimeout(t._t);t._t=setTimeout(transitUncover,hold)}
+/* transitUncover — fades the cover away. */
 function transitUncover(){if(!TRANSIT)return;clearTimeout(TRANSIT._t);TRANSIT.classList.remove('on')}
+/* transitRun — fades to black, runs fn, and fades back once the next screen is up (a window, the menu, an event or a city), at most 1.6 s later. TWEAK: 230 ms fade, 650 ms minimum with a label. */
 function transitRun(fn,label){if(HEADLESS){return fn()}const t=transitEl();transitLabel(label||'');t.classList.add('on');clearTimeout(t._t);const minT=label?650:0;
   setTimeout(()=>{let r;try{r=fn()}catch(e){console.error(e)}
     const t0=Date.now();const tick=()=>{const ready=!$('#modal').hidden||!document.getElementById('mainMenu').hidden||(S&&!S.over&&S.phase!=='setup')||(typeof CITY!=='undefined'&&CITY.open);
