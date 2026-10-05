@@ -1228,7 +1228,9 @@ function langLook86(key,vals,quiet){
   const m=/^(\s*)([\s\S]*?)(\s*)$/.exec(key);const core=m[2];
   const tr=LANG_DICT[core];
   if(tr==null){if(core&&!quiet)LANG_MISS.set(core,(LANG_MISS.get(core)||0)+1);return null}
-  const out=vals.length?tr.replace(/\{(\d+)\}/g,(x,n)=>{n=+n;return n<vals.length?String(vals[n]):x}):tr;
+  /* {n} = the value; {n|one|many} = a plural form picked by value n: '' / 1 / '1' (English singular) → one, else → many */
+  const out=vals.length?tr.replace(/\{(\d+)(?:\|([^|{}]*)\|([^{}]*))?\}/g,(x,n,one,many)=>{n=+n;if(n>=vals.length)return x;
+    if(one==null)return String(vals[n]);const v=vals[n];return (v===''||v===1||v==='1'||v==null)?one:many}):tr;
   return m[1]+out+m[3]}
 function _T(s,...v){
   if(typeof s==='string'){if(!LANG_DICT)return s;const r=langLook86(s,[]);return r==null?s:r}
