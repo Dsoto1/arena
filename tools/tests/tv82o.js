@@ -41,20 +41,20 @@ ok(/^domus_locked\|/.test(await err(A,o=>NET.req('domus.rename',o),{name:'Nova'}
 /* glory: Brutus is a veteran by Glory, Aulus was Gregarius before v0.82 (never demoted) */
 await A.evaluate(async()=>{const w=mockLoad();const cs=Object.values(w.chars).filter(c=>c.owner===ONL.acct.id);const by=n=>cs.find(c=>c.name===n);
   Object.assign(by('Brutus'),{glory:700});Object.assign(by('Aulus'),{glory:40,rank:'gregarius',rankK:'gregarius'});mockSave(w);ONL.newGlad=false;await onlRefresh();ONL.tab='char';onlRedraw()});await A.waitForFunction(()=>document.querySelectorAll('#onl .rb82-tok').length>=4&&!!document.querySelector('#onl .pat82 svg'),null,{timeout:20000}).catch(()=>{});await A.waitForTimeout(300);
-const dm=await A.evaluate(()=>{const o=document.getElementById('onl');return {rail:[...o.querySelectorAll('.onl-rail button')].map(b=>b.textContent).join('|'),slots:o.querySelectorAll('.onl-gslot').length,empty:o.querySelectorAll('.onl-gslot.empty').length,
-  rec:o.querySelector('.dom82-rec')?.textContent||'',lock:!!o.querySelector('.dom82-lock'),bar:o.querySelectorAll('.rb82-band').length,toks:o.querySelectorAll('.rb82-tok').length,counts:[...o.querySelectorAll('.rb82-n')].map(x=>x.textContent),
+const dm=await A.evaluate(()=>{const o=document.getElementById('onl');/* v0.89: the rebuilt Domus (175) */return {rail:[...o.querySelectorAll('.onl-rail button')].map(b=>b.textContent).join('|'),slots:o.querySelectorAll('.gc89-row .gc89:not(.up)').length,empty:o.querySelectorAll('.gc89-row .gc89.empty:not(.up)').length,
+  rec:o.querySelector('.db89-rec')?.textContent||'',lock:!o.querySelector('#dom82Ren'),bar:o.querySelectorAll('.rb82-band').length,toks:o.querySelectorAll('.rb82-tok').length,counts:[...o.querySelectorAll('.rb82-n')].map(x=>x.textContent),
   bandTop:o.querySelector('.rb82-band b')?.textContent||'',pat:!!o.querySelector('.pat82 svg'),aulus:ONLC.rankFor(ONL.chars.find(c=>c.name==='Aulus')).k,brutus:ONLC.rankFor(ONL.chars.find(c=>c.name==='Brutus')).k,
   barRight:(()=>{const a=o.querySelector('.rb82').getBoundingClientRect(),m=o.querySelector('.dom82-main').getBoundingClientRect();return a.left>m.left})()}});
 ok(/🏛 Domus/.test(dm.rail)&&dm.slots===4&&dm.empty===0,'Domus tab: 4 gladiator slots');ok(/Fame/.test(dm.rec)&&/Lifetime CF/.test(dm.rec)&&dm.lock,'house record + locked name');
 ok(dm.bar===8&&/Invictus/.test(dm.bandTop)&&dm.toks===4&&dm.barRight,'rank bar on the right, the top rank at the top, four tokens (v0.83: 8 ranks)');ok(dm.counts.length===8&&dm.counts.some(t=>/[1-9]\d* living/.test(t)),'living counts by rank');
 ok(dm.aulus==='gregarius'&&dm.brutus==='veteranus','Glory ranks, never demoted');ok(dm.pat,'patron look');
 /* the draft is read the moment the edit stores it (the save clears it 600 ms later — under load the test could read after that) */
-await A.evaluate(()=>{const d=document.querySelector('details.pat82d');if(d)d.open=true;window.__pat82d=null;const b0=onlPatronPut82;onlPatronPut82=function(p){const r=b0.apply(this,arguments);if(p&&window.__pat82d==null)window.__pat82d=localStorage.getItem('flavius_patron82.'+ONL.acct.id);return r}});await A.selectOption('select[data-pat82="skin"]',{index:3}).catch(()=>{});await A.waitForFunction(()=>window.__pat82d!=null,null,{timeout:10000}).catch(()=>{});ok(await A.evaluate(()=>!!window.__pat82d),'patron draft kept while editing');
+await A.evaluate(()=>{const d=document.querySelector('#onl [data-fd89="pat"]')||document.querySelector('details.pat82d');if(d)d.open=true;window.__pat82d=null;const b0=onlPatronPut82;onlPatronPut82=function(p){const r=b0.apply(this,arguments);if(p&&window.__pat82d==null)window.__pat82d=localStorage.getItem('flavius_patron82.'+ONL.acct.id);return r}});await A.selectOption('select[data-pat82="skin"]',{index:3}).catch(()=>{});await A.waitForFunction(()=>window.__pat82d!=null,null,{timeout:10000}).catch(()=>{});ok(await A.evaluate(()=>!!window.__pat82d),'patron draft kept while editing');
 await A.waitForFunction(()=>!localStorage.getItem('flavius_patron82.'+ONL.acct.id),null,{timeout:20000}).catch(()=>{});await A.waitForTimeout(300);const pat=await A.evaluate(async()=>({srv:(await NET.req('domus.get',{})).domus.patron,draft:localStorage.getItem('flavius_patron82.'+ONL.acct.id),skin:document.querySelector('select[data-pat82="skin"]').value}));
 ok(pat.srv&&pat.srv.skin===pat.skin&&!pat.draft,'patron look saved on the house (domus.patron), the draft cleared');
 await A.evaluate(()=>{const e=document.querySelector('.rb82');if(e)e.scrollIntoView()});await shot(A,'domus');
 /* phones: the bar is a strip above the slots */
-await A.setViewportSize({width:420,height:860});await A.waitForTimeout(400);const ph=await A.evaluate(()=>{const a=document.querySelector('.rb82').getBoundingClientRect(),s=document.querySelector('.onl-gslots').getBoundingClientRect();return a.bottom<=s.top+2&&a.width>a.height});
+await A.setViewportSize({width:420,height:860});await A.waitForTimeout(400);const ph=await A.evaluate(()=>{const a=document.querySelector('.rb82').getBoundingClientRect(),s=(document.querySelector('#onl .gc89-row')||document.querySelector('.onl-gslots')).getBoundingClientRect();return a.bottom<=s.top+2&&a.width>a.height});
 ok(ph,'phone: the rank bar is a strip above the slots');await A.evaluate(()=>{document.querySelector('.rb82').scrollIntoView()});await shot(A,'domus_phone');await A.setViewportSize({width:1300,height:900});
 /* ── 3. prices by AP + the confirmation ── */
 await A.evaluate(async()=>{const w=mockLoad();const c=w.chars[ONL.char.id];c.wallet=100;mockSave(w);await onlRefresh();ONL.tab='armory';ONL.mkt='a';onlRedraw()});await A.waitForTimeout(300);
@@ -63,22 +63,25 @@ const pr=await A.evaluate(()=>{const t=document.querySelector('#onl .mb83-it[dat
 ok(pr.ocrea===220&&/2 AP/.test(pr.txt)&&/ 30/.test(pr.txt)&&pr.w1===60,'prices by AP and level');
 await A.click('#onl [data-onl82="buy"][data-v="galea"]');await A.waitForFunction(()=>/100 → 70/.test(document.querySelector('.ask76bg')?.textContent||''),null,{timeout:10000}).catch(()=>{});const cf=await A.evaluate(()=>document.querySelector('.ask76bg')?.textContent||'');await shot(A,'buy');
 await A.click('.ask76bg [data-ask76="1"]');await A.waitForFunction(()=>ONL.char&&ONL.char.wallet===70,null,{timeout:20000}).catch(()=>{});const wal=await A.evaluate(()=>ONL.char.wallet);ok(/30 coin/.test(cf)&&/100 → 70/.test(cf)&&wal===70,'buy confirmation with the price');
-/* ── 3b. the Storeroom: move, tick, shelf ── */
-await A.evaluate(()=>{ONL.tab='char';onlRedraw()});await A.waitForFunction(()=>!!document.querySelector('#sr82 .sr82-it'),null,{timeout:20000}).catch(()=>{});await A.waitForTimeout(300);
+/* ── 3b. the Domus (v0.89, 175): what a gladiator wears; off → the shelf; onto another gladiator from the bar ── */
+await A.evaluate(()=>{ONL.tab='char';onlRedraw()});await A.waitForFunction(()=>!!document.querySelector('#onl .sc89 [data-d89off^="galea"]'),null,{timeout:20000}).catch(()=>{});await A.waitForTimeout(300);
 const ids=await A.evaluate(()=>Object.fromEntries(ONL.chars.map(c=>[c.name,c.id])));
-const sr0=await A.evaluate(()=>{const o=document.getElementById('sr82');return o?{rows:o.querySelectorAll('.sr82-it').length,txt:o.textContent}:null});
-ok(sr0&&sr0.rows===1&&/Iron Helm/.test(sr0.txt)&&/with Alpha the Bold/.test(sr0.txt),'Storeroom lists the house’s gear and who has it');
-await A.selectOption(`#sr82 select[data-sr83mv="${ids['Alpha the Bold']}|galea"]`,ids['Aulus']);await A.waitForFunction(()=>/with Aulus/.test((document.getElementById('sr82')||{}).textContent||'')&&!!document.querySelector('#sr82 input[data-sr82eq]'),null,{timeout:20000}).catch(()=>{});await A.waitForTimeout(300);
-const sr1=await A.evaluate(id=>{const w=mockLoad();return {aulus:w.chars[id].gear,txt:document.getElementById('sr82').textContent}},ids['Aulus']);ok(sr1.aulus.includes('galea')&&/with Aulus/.test(sr1.txt),'move between gladiators');
-await A.click(`#sr82 input[data-sr82eq="${ids['Aulus']}|galea"]`);await A.waitForFunction(id=>!ONLC.equipOf(mockLoad().chars[id]).includes('galea'),ids['Aulus'],{timeout:20000}).catch(()=>{});await A.waitForTimeout(400);
-ok(await A.evaluate(id=>!ONLC.equipOf(mockLoad().chars[id]).includes('galea'),ids['Aulus']),'untick: left at home');await shot(A,'storeroom');
-await A.selectOption(`#sr82 select[data-sr83mv="${ids['Aulus']}|galea"]`,'house');await A.waitForFunction(()=>/on the shelf/.test((document.getElementById('sr82')||{}).textContent||'')&&(ONL82.dg.gear||[]).includes('galea'),null,{timeout:20000}).catch(()=>{});
-ok(await A.evaluate(()=>/on the shelf/.test(document.getElementById('sr82').textContent)&&(ONL82.dg.gear||[]).includes('galea')),'onto the house shelf');
+const sr0=await A.evaluate(()=>{const o=document.querySelector('#onl .sc89');return o?{worn:!!o.querySelector('[data-d89off^="galea"]'),txt:o.textContent}:null});
+ok(sr0&&sr0.worn&&/Iron Helm/.test(sr0.txt)&&/Alpha the Bold/.test(sr0.txt),'the showcase shows what the active gladiator wears');
+await A.click('#onl .sc89 [data-d89off^="galea"]');await A.waitForFunction(()=>!ONL.busy&&(ONL82.dg.gear||[]).some(g=>/^galea/.test(g)),null,{timeout:20000}).catch(()=>{});await A.waitForTimeout(300);
+ok(await A.evaluate(id=>(ONL82.dg.gear||[]).some(g=>/^galea/.test(g))&&!mockLoad().chars[id].gear.some(g=>/^galea/.test(g)),ids['Alpha the Bold']),'onto the house shelf');await shot(A,'storeroom');
+await A.evaluate(async id=>{await NET.req('char.active',{char:id});await onlRefresh();onlRedraw()},ids['Aulus']);await A.waitForTimeout(300);
+await A.evaluate(()=>{const i=(V89D.bar||[]).findIndex(x=>/^galea/.test(x.it));const t=document.querySelector(`#onl [data-p89="${i}"]`);if(t)t.click()});await A.waitForFunction(id=>ONLC.equipOf(mockLoad().chars[id]).some(g=>/^galea/.test(g)),ids['Aulus'],{timeout:20000}).catch(()=>{});
+ok(await A.evaluate(id=>ONLC.equipOf(mockLoad().chars[id]).some(g=>/^galea/.test(g)),ids['Aulus']),'move between gladiators (worn by Aulus)');
+await A.evaluate(()=>{const it=ONLC.equipOf(ONL.char).find(g=>/^galea/.test(g));const b=document.querySelector(`#onl .sc89 [data-d89off="${it}"]`);if(b)b.click()});await A.waitForFunction(id=>!ONLC.equipOf(mockLoad().chars[id]).some(g=>/^galea/.test(g)),ids['Aulus'],{timeout:20000}).catch(()=>{});await A.waitForTimeout(400);
+ok(await A.evaluate(id=>!ONLC.equipOf(mockLoad().chars[id]).some(g=>/^galea/.test(g)),ids['Aulus']),'taken off: left at home');
+await A.evaluate(async id=>{await NET.req('char.active',{char:id});await onlRefresh();onlRedraw()},ids['Alpha the Bold']);await A.waitForTimeout(300);
 /* ── 4. a Ranked bout with two lanistas: half the award; the room note ── */
 const R1=await A.evaluate(async()=>{const L=await NET.req('lobby.create',{ev:'democritus',loc:6,ranked:true,cry:false});return L.id});
 await sync(A,B);await B.evaluate(async id=>{await NET.req('lobby.join',{id})},R1);await B.evaluate(()=>NET.req('ping'));await sync(B,A);await A.evaluate(async()=>{ONL.lobbies=await NET.req('lobby.list');ONL.tab='play';onlRedraw()});await A.waitForTimeout(300);
 await A.evaluate(()=>{ONL.tab='char';onlRedraw()});await A.waitForTimeout(400);
-const lk=await A.evaluate(()=>[...document.querySelectorAll('#sr82 .sr82-chip')].map(b=>b.textContent).join('|'));ok(/🔒 Alpha the Bold/.test(lk),'a seated gladiator is locked in the Storeroom');
+const lk=await A.evaluate(()=>[...document.querySelectorAll('#onl .gc89')].filter(b=>b.querySelector('.lk89t')).map(b=>b.textContent).join('|'));ok(/Alpha the Bold/.test(lk),'a seated gladiator is locked in the Domus');
+ok(/^in_match\|/.test(await err(A,o=>NET.req('domus.dress',o),{char:ids['Alpha the Bold'],equip:[]})),'server-side lock for dressing (in a match)');
 ok(/^in_match\|/.test(await err(A,o=>NET.req('domus.equip',o),{char:ids['Alpha the Bold'],item:'galea',on:true})),'server-side lock (in a match)');
 await A.evaluate(()=>{ONL.tab='play';onlRedraw()});await A.waitForTimeout(300);
 const note=await A.evaluate(()=>document.querySelector('#onlRoom80 .tbl82')?.textContent||'');ok(/2 lanistas: half rewards · seat 4 for the full purse/.test(note),'room: table-size note');await shot(A,'room');
@@ -150,7 +153,7 @@ ok(await A.evaluate(()=>/Patron of House Aemilii/.test((document.getElementById(
 const tb=await A.evaluate(id=>{const w=mockLoad();const L=w.lobbies[id];return L.players.map((p,i)=>({seat:i,won:i===0,place:i?2:1,f:i?3:9,coin:0,survives:true}))},R4);
 await sync(A,F);for(const p of [A,F]){await p.evaluate(async([id,t])=>{await NET.req('match.result',{id,table:t,hash:'z'})},[R4,tb]);await sync(p,p===A?F:B)}
 const fame=await B.evaluate(async()=>(await NET.req('domus.get',{})).domus.fame);ok(fame===1,'sitting through the match on the pass: +1 Fame');
-const frec=await B.evaluate(async()=>{await onlRefresh();ONL82.dgAt=0;ONL.tab='char';onlRedraw();for(let i=0;i<200&&!/✦ 1/.test(document.querySelector('#onl .dom82-rec')?.textContent||'');i++)await new Promise(r=>setTimeout(r,100));return document.querySelector('#onl .dom82-rec')?.textContent||''});
+const frec=await B.evaluate(async()=>{await onlRefresh();ONL82.dgAt=0;ONL.tab='char';onlRedraw();for(let i=0;i<200&&!/✦ 1/.test(document.querySelector('#onl .db89-rec')?.textContent||'');i++)await new Promise(r=>setTimeout(r,100));return document.querySelector('#onl .db89-rec')?.textContent||''});
 ok(/Fame/.test(frec)&&/✦ 1/.test(frec),'the Domus record shows the Fame');
 console.log(JSON.stringify({f1,f2,g4,dm,pr,note,rA,gl,hereA,iv1:{has:iv1.has,pop:iv1.pop.slice(0,80)},lj,ps:ps.slice(0,120),tk,ft,sp,fame}));
 console.log('MISS',miss);console.log('ERRS',errs);await b.close();srv.close();process.exit(miss.length||errs.length?1:0)})();

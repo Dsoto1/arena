@@ -682,7 +682,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       /* take first, then give (a failed give puts it back) */
       const took=sc?await editChar(sc.id,x=>{if(!(x.offers||[]).includes(k))return false;C.offerMove(x,{offers:[]},k)}):await editDomus(D.id,Y=>{if(!(Y.offers||[]).includes(k))return false;C.offerMove(Y,{offers:[],cls:1},k)});
       if(!took)throw new Error('That offering is not there.');
-      const put=dc?await editChar(dc.id,x=>{if((x.offers||[]).length>=C.OFF_MAX)return false;x.offers=[...(x.offers||[]),k]}):await editDomus(D.id,Y=>{if((Y.offers||[]).length>=C.OFF_SHELF)return false;Y.offers=[...(Y.offers||[]),k]});
+      const put=dc?await editChar(dc.id,x=>{if((x.offers||[]).length>=C.OFF_MAX)return false;x.offers=[...(x.offers||[]),k]}):await editDomus(D.id,Y=>{if((Y.offers||[]).length>=(C.shelfMax?C.shelfMax(Y):C.OFF_SHELF))return false; /* v0.89: the shelf upgrade */Y.offers=[...(Y.offers||[]),k]});
       if(!put){if(sc)await editChar(sc.id,x=>{x.offers=[...(x.offers||[]),k]});else await editDomus(D.id,Y=>{Y.offers=[...(Y.offers||[]),k]});throw new Error(dc?`Up to ${C.OFF_MAX} offerings in the satchel.`:'The shelf is full.')}
       const D2=await domusGet(D.id);const out=x=>x?strip(x):{house:true,offers:D2.offers||[]};return {from:out(sc&&await charById(sc.id)),to:out(dc&&await charById(dc.id)),domus:C.domusRow(D2)}},
     /* ⚔ the killer's pick from the fallen's brought gear (LOOT_MS after the settlement; then the most valuable is taken for him) */
@@ -869,6 +869,107 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   {const base=R['market.list'];R['market.list']=async(d,ctx)=>{await aucSweep();return base(d,ctx)}}
   {const base=R['world.news'];R['world.news']=async(d,ctx)=>({...(await base(d,ctx)),season84:C.onlineFixture(now())})}
 
+  /* ══════════ v0.89 THE DOMUS REBUILD (part H — contract tools/plans/onl89-domus.md) ══════════
+     New routes: char.class · domus.dress · gear.home · char.kits · char.kitapply · domus.upgrade · domus.look. Wrapped: char.create (the house's
+     gladMax), domus.get (+ memo), domus.buy / gear.repair (the treasury LEDGER; gifts and shelf sales: ONLC.applyGiftHouse / offersIn), admin.grant (REPLACED: coin → the treasury, gear and
+     offerings → the house shelf), domusAfter (the cut by gladiator + the MEMORIAL on a death), aucRefund (a refund into the treasury).
+     Everything here is additive; the only edited line outside this block is offer.move's shelf cap (C.shelfMax). */
+  for(const t of ['char.class','domus.dress','gear.home','char.kits','char.kitapply','domus.upgrade','domus.look'])NEED_DOMUS.add(t);
+  const ledger89=async(did,k,amt,ch)=>{if(!did||!amt)return null;try{return await editDomus(did,D=>{C.ledAdd(D,k,amt,ch,now())})}catch(e){return null}};
+  const myHouse89=async acct=>{const A=await acctOf(acct);const D=await domusGet(A&&A.domus);if(!D)throw fail('need_domus','Name your house first.');return {A,D}};
+  const shelfOut89=D=>({house:true,gear:(D&&D.gear)||[],pcs:(D&&D.pcs)||{},offers:(D&&D.offers)||[]});
+  /* the cut by gladiator and the memorial (one more edit of the house after domusAfter's) */
+  {const base=domusAfter;domusAfter=async function(ch,row,out,ranked,m,gx){await base.apply(this,arguments);
+    try{if(!ch||!ch.domus||!out||!(out.cut||out.died))return;let kn=null;
+      if(out.died&&row&&row.kb==='g'&&(row.ks|0)>=0&&m&&m.id){const L=await store.get('LOBBY#'+m.id,'LOBBY');const p=L&&(L.players||[])[row.ks|0];kn=p&&p.char!==ch.id?p.name:null}
+      await editDomus(ch.domus,D=>{if(out.cut)C.ledAdd(D,'cut',out.cut,ch,now());if(out.died)C.memoAdd(D,C.memoEntry(ch,m,C.memoBy(row,out,kn),now()))})}catch(e){}}}
+  /* an outbid leader who has fallen since: his coin goes into the treasury — a ledger refund */
+  {const base=aucRefund;aucRefund=async function(b,lot){let toT=false;try{if(b&&(b.amt|0)){const c=b.char?await charById(b.char):null;toT=!(c&&c.alive)}}catch(e){}
+    await base.apply(this,arguments);if(toT&&b&&b.dom)await ledger89(b.dom,'refund',b.amt|0,null)}}
+  /* a gladiator wears what the Domus gives him; the pieces he no longer wears go onto the shelf */
+  async function dress89(acct,D,ch,equip,take){const list=await lobbies();if(!ch||!ch.alive)throw new Error('Not yours.');
+    if(charBusy(ch.id,list))throw fail('in_match',`${ch.name} is in a match — the storeroom waits.`);
+    const T0=[];const srcs={};
+    for(const t of (Array.isArray(take)?take:[]).slice(0,8)){const item=String((t&&t.item)||''),from=String((t&&t.from)||'');if(!item||from===ch.id)continue;let I=null;
+      if(from==='house'){if(!(D.gear||[]).includes(item))throw new Error('That piece is not there.');I=C.pieceOf(D,item,catalog)}
+      else{const sc=await charById(from);if(!sc||sc.owner!==acct||sc.domus!==D.id||!sc.alive)throw new Error('Not of your house.');if(charBusy(sc.id,list))throw fail('in_match',`${sc.name} is in a match — the storeroom waits.`);
+        if(!(sc.gear||[]).includes(item))throw new Error('That piece is not there.');I=C.pieceOf(sc,item,catalog);srcs[sc.id]=1}
+      const why=C.takeWhy(ch,I);if(why)throw new Error(why);T0.push({item,from})}
+    /* take them out first (versioned), then dress him; a failure puts everything back */
+    const got=[];const back=async()=>{for(const g of got){if(g.from==='house')await editDomus(D.id,Y=>{C.putPiece(Y,g.P,false)});else await editChar(g.from,c=>{C.putPiece(c,g.P,false)})}};
+    for(const t of T0){let P=null;const ok=t.from==='house'?await editDomus(D.id,Y=>{P=C.takePiece(Y,t.item);if(!P)return false}):await editChar(t.from,c=>{if(!c.alive||!(c.gear||[]).includes(t.item))return false;P=C.takePiece(c,t.item)});
+      if(!ok||!P){await back();throw new Error('That piece moved a moment ago — try again.')}got.push({from:t.from,P})}
+    let off=[];const c=await editChar(ch.id,x=>{if(!x.alive||x.owner!==acct)return false;off=C.dressApply(x,equip,got.map(g=>g.P),catalog).off});
+    if(!c){await back();throw new Error('Your gladiator changed a moment ago — try again.')}
+    let D2=D;if(off.length)D2=(await editDomus(D.id,Y=>{for(const P of off)C.putPiece(Y,P,false)}))||D;else D2=await domusGet(D.id);
+    const from=[];for(const id of Object.keys(srcs)){const s=await charById(id);if(s)from.push(strip(s))}
+    return {char:strip(c),domus:C.domusRow(D2),gear:D2.gear||[],pcs:D2.pcs||{},from}}
+  /* a loadout's pieces, found again: held → worn, on the shelf → taken back, elsewhere → skipped (with why) */
+  async function kitPlan89(acct,D,ch,K){const equip=[],take=[],skipped=[];const mine=(ch.gear||[]).slice(),shelf=(D.gear||[]).slice();
+    const others=(await store.byIndex('OWNER#'+acct)).filter(c=>c.alive&&c.id!==ch.id&&c.domus===D.id);
+    const nm=it=>((C.pieceOf(ch,it,catalog)||C.pieceOf(D,it,catalog)||{}).n)||((catalog[C.itemBase(it)]||{}).n)||C.itemBase(it);
+    const use=(h,it,src)=>{const I=C.pieceOf(h,it,catalog);if(!I)return 'gone';if(I.st==='broken')return 'broken';if(I.named&&!C.canWearNamed(ch))return 'veteranus';
+      if(src==='mine'){mine.splice(mine.indexOf(it),1);equip.push(it)}else{shelf.splice(shelf.indexOf(it),1);take.push({item:it,from:'house'});equip.push(it)}return ''};
+    for(const it of K.items||[]){let why='';
+      if(mine.includes(it))why=use(ch,it,'mine');else if(shelf.includes(it))why=use(D,it,'house');
+      else{const o=others.find(c=>(c.gear||[]).includes(it));if(o)why='with:'+o.name;
+        else if(!C.isNamed(it)){const b=C.itemBase(it);const m2=mine.find(x=>C.itemBase(x)===b),s2=shelf.find(x=>C.itemBase(x)===b);why=m2?use(ch,m2,'mine'):s2?use(D,s2,'house'):'gone'}else why='gone'}
+      if(why)skipped.push({item:it,n:nm(it),why})}
+    return {equip,take,skipped}}
+  Object.assign(R,{
+    /* 🔄 a new class: 100 coin from the house treasury, never while in a room or a match; his gear stays his */
+    'char.class':async(d,ctx)=>{const {A,D}=await myHouse89(ctx.acct);const ch=await ownChar(ctx.acct,d.char);if(ch.domus!==D.id)throw new Error('Not of your house.');
+      if(await busyIn(ctx.acct)||await stillFighting(A))throw fail('in_match','Finish or leave your game first.');const cls=String(d.cls||'');
+      const why=C.classWhy(ch,cls,D);if(why)throw (/treasury/.test(why)?fail('no_coin',why,{cost:C.CLASS_FEE89}):new Error(why));
+      const X=await editDomus(D.id,Y=>{if((Y.treasury|0)<C.CLASS_FEE89)return false;Y.treasury-=C.CLASS_FEE89;C.ledAdd(Y,'class',C.CLASS_FEE89,ch,now())});if(!X)throw fail('no_coin',`The treasury needs ${C.CLASS_FEE89} coin.`,{cost:C.CLASS_FEE89});
+      const c=await editChar(ch.id,x=>{if(!x.alive)return false;x.cls=cls});
+      if(!c){const Y=await editDomus(D.id,Z=>{Z.treasury=(Z.treasury|0)+C.CLASS_FEE89;if(Z.led89&&Z.led89.out)Z.led89.out.class=Math.max(0,(Z.led89.out.class|0)-C.CLASS_FEE89)});throw new Error('Try again.')}
+      return {char:strip(c),domus:C.domusRow(await domusGet(D.id))}},
+    /* 🛡 dress a gladiator from the Domus (a click or a drag): the pieces to take, the list he wears */
+    'domus.dress':async(d,ctx)=>{const {D}=await myHouse89(ctx.acct);const ch=await ownChar(ctx.acct,d.char);if(ch.domus!==D.id)throw new Error('Not of your house.');
+      return await dress89(ctx.acct,D,ch,d.equip,d.take)},
+    /* 🔒 keep a piece home: never brought into a Ranked match */
+    'gear.home':async(d,ctx)=>{const {D}=await myHouse89(ctx.acct);const item=String(d.item||'');const on=d.on!==false;let id=null;
+      if(d.holder==='house'){const X=await editDomus(D.id,Y=>{if(!(Y.gear||[]).includes(item))return false;id=C.homeSet(Y,item,on)});if(!X)throw new Error('That piece is not there.');return {item:id,holder:shelfOut89(X)}}
+      const ch=await ownChar(ctx.acct,d.holder);if(ch.domus!==D.id)throw new Error('Not of your house.');if(charBusy(ch.id,await lobbies()))throw fail('in_match',`${ch.name} is in a match — the storeroom waits.`);
+      const c=await editChar(ch.id,x=>{if(!(x.gear||[]).includes(item))return false;id=C.homeSet(x,item,on)});if(!c)throw new Error('That piece is not there.');return {item:id,holder:strip(c)}},
+    /* 💾 his saved loadouts (≤3, only pieces he holds) */
+    'char.kits':async(d,ctx)=>{const ch=await ownChar(ctx.acct,d.char);const c=await editChar(ch.id,x=>{x.kits89=C.cleanKits(x,d.kits)});return {char:strip(c)}},
+    /* ▶ wear a saved loadout (pieces that moved, broke or were lost are skipped, each with why) */
+    'char.kitapply':async(d,ctx)=>{const {D}=await myHouse89(ctx.acct);const ch=await ownChar(ctx.acct,d.char);if(ch.domus!==D.id)throw new Error('Not of your house.');
+      const K=(ch.kits89||[])[d.i|0];if(!K)throw new Error('No such loadout.');const P=await kitPlan89(ctx.acct,D,ch,K);const r=await dress89(ctx.acct,D,ch,P.equip,P.take);
+      return {...r,skipped:P.skipped,kit:K.n}},
+    /* 🏗 treasury upgrades: a 5th gladiator slot, a bigger offerings shelf (once each) */
+    'domus.upgrade':async(d,ctx)=>{const {D}=await myHouse89(ctx.acct);const k=String(d.k||'');const why=C.upgWhy(D,k);if(why)throw (/treasury/.test(why)?fail('no_coin',why,{cost:(C.UPG89[k]||{}).cost}):new Error(why));
+      let err=null;const X=await editDomus(D.id,Y=>{err=C.upgWhy(Y,k);if(err)return false;C.upgBuy(Y,k,now())});if(!X)throw new Error(err||'Try again.');return {domus:C.domusRow(X)}},
+    /* 🎨 the house colours + crest (a printed banner device) */
+    'domus.look':async(d,ctx)=>{const {D}=await myHouse89(ctx.acct);const L=C.cleanLook89(d);const X=await editDomus(D.id,Y=>{Y.look89=L});if(!X)throw new Error('Try again.');return {domus:C.domusRow(X)}}});
+  /* the house's gladiator cap (4, or 5 with the upgrade) */
+  R['char.create']=async(d,ctx)=>{const live=(await store.byIndex('OWNER#'+ctx.acct)).filter(c=>c.alive);const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);const max=C.gladMax(D);
+    if(live.length>=max)throw new Error(`Up to ${max} living gladiators.`);const ch=C.newChar(d,ctx.acct,id('g'),now());
+    ch.domus=A&&A.domus||null;if(A&&A.dtest)ch.test=true;if(A&&!live.some(c=>c.id===A.active))await store.set('ACCT#'+A.id,'PROFILE',{active:ch.id});await putChar(ch);
+    await editDomus(ch.domus,X=>{X.glads=(X.glads|0)+1});await countRank(C.rankFor(ch).k,1,ch);return strip(ch)};
+  {const base=R['domus.get'];R['domus.get']=async(d,ctx)=>{const o=await base(d,ctx);try{const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);o.memo=(D&&D.memo89)||[]}catch(e){o.memo=[]}return o}}
+  /* the ledger: the treasury buying for the shelf, a repair the treasury paid (a house gift opened into the treasury: C.applyGiftHouse) */
+  {const base=R['domus.buy'];R['domus.buy']=async(d,ctx)=>{const r=await base(d,ctx);try{const X=await ledger89(r.domus&&r.domus.id,'gear',C.priceOf(catalog[d.item]),null);if(X)r.domus=C.domusRow(X)}catch(e){}return r}}
+  {const base=R['gear.repair'];R['gear.repair']=async(d,ctx)=>{const r=await base(d,ctx);try{const byT=d.pay==='treasury'||(d.pay==null&&d.holder==='house');
+      if(byT){const X=await ledger89(r.domus&&r.domus.id,'repair',r.cost|0,null);if(X)r.domus=C.domusRow(X)}}catch(e){}return r}}
+  /* 🧪 tester grants (his fix C): coin → the house TREASURY, gear → the house shelf (unequipped), offerings → the shelf; gifts → the house;
+     Glory → the active gladiator. Same caps, same log, same TEST-house flags as v0.83. */
+  R['admin.grant']=async(d,ctx)=>{if(!ctx.tester)throw fail('notTester','Only testers may do that.');const {A,D}=await myHouse89(ctx.acct);
+    const ch=await liveChar(ctx.acct,A);if(ch&&charBusy(ch.id,await lobbies()))throw fail('in_match',`${ch.name} is in a match — grant afterwards.`);
+    const coin=Math.max(0,Math.min(100000,d.coin|0)),gifts=Math.max(0,Math.min(10,d.gift|0)),glory=Math.max(0,Math.min(10000,+d.glory||0));
+    const gear=(Array.isArray(d.gear)?d.gear:[]).map(String).filter(k=>catalog[k]).slice(0,10),offs=(Array.isArray(d.offering)?d.offering:[]).map(String).filter(k=>C.OFFERS83.includes(k)).slice(0,10);
+    if(!coin&&!gifts&&!glory&&!gear.length&&!offs.length)throw new Error('Nothing to grant.');const what={coin,gift:gifts,glory,gear,offering:offs};const t=now();
+    const live=(await store.byIndex('OWNER#'+ctx.acct)).filter(c=>c.alive&&c.domus===D.id);if(!D.test)for(const c of live)await countRank(C.rankFor(c).k,-1);
+    let c2=null;if(ch)c2=await editChar(ch.id,x=>{x.test=true;if(glory){x.glory=Math.round(((C.gloryOf(x)||0)+glory)*100)/100;const Rk=C.rankFor(x);x.rank=Rk.k;if(C.rankIdx(Rk.k)>C.rankIdx(x.rankK||'tiro'))x.rankK=Rk.k}});
+    for(const c of live)if(!c2||c.id!==c2.id)await editChar(c.id,x=>{x.test=true});
+    const X=await editDomus(D.id,Y=>{Y.test=true;if(coin){Y.treasury=(Y.treasury|0)+coin;C.ledAdd(Y,'grant',coin,null,t)}
+      for(let i=0;i<gifts;i++)C.giftsIn(Y,[{id:'test:'+t.toString(36)+':'+i,why:'test',at:t,glad:c2?c2.name:null}]);for(const k of gear)C.putPiece(Y,{item:k,pc:null},false);if(offs.length)C.offersIn(Y,offs)});
+    await store.set('ACCT#'+ctx.acct,'PROFILE',{dtest:true});
+    const LG=(await store.get('ADMIN','log'))||{list:[]};LG.list=[{at:t,acct:ctx.acct,domus:D.id,glad:c2?c2.id:null,what},...(LG.list||[])].slice(0,500);await store.put('ADMIN','log',LG);
+    return {domus:C.domusRow(X),char:c2?strip(c2):null,gifts:(X&&X.gifts)||[],gear:(X&&X.gear)||[],pcs:(X&&X.pcs)||{},offers:(X&&X.offers)||[]}};
+  /* ══════════ end of v0.89 THE DOMUS REBUILD ══════════ */
   return async function route(t,d,ctx){const f=R[t];if(!f)throw new Error('Unknown request: '+t);
     /* v0.82 guests look, never act — for 2 hours from their first connect */
     if(!ctx.acct&&ctx.guest){if(now()-(ctx.guest.first||0)>C.GUEST_MS)throw fail('guest_expired','Your two hours as a guest are up — sign in to keep watching.');

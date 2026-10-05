@@ -203,13 +203,13 @@ ok(!/market_board/.test(o.mk)&&o.mk!=='none','3 no market-board art behind the o
 o.sw2=await sweep('#onl [data-card^="a:"]',2,'tryon_online');
 ok(o.sw2.n>=3&&!o.sw2.mid.shown&&o.sw2.mid.shows<=Math.max(1,o.sw2.hov>>2)&&!o.sw2.mid.hit&&!o.sw2.mid.red,'20 online Armory: a fast sweep — no card, no red '+JSON.stringify(o.sw2));
 ok(o.sw2.rest&&o.sw2.rest.marks>=1&&/255, 217, 119/.test(o.sw2.rest.stroke)&&!o.sw2.rest.red&&o.sw2.gone,'20 online Armory: the rested hover tries it on the gladiator, in gold '+JSON.stringify(o.sw2));
-/* 4 · the Storeroom: no buying, the shelf takes Move → the shelf */
+/* 4 · the Domus (v0.89, 175): no buying; a piece taken off lands in the house's visible Gear bar */
 o.sr=await P.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));const w=mockLoad();w.chars[ONL.char.id].gear=['gladius','galea'];mockSave(w);await NET.req('hello',{all:1});
-  ONL.tab='char';await onlRefresh();onlRedraw();await W(1500);onlRedraw();await W(400);const r={buy:!!document.querySelector('.buy83,#buy83sel,[data-onl83="dbuy"]'),shelf:!!document.querySelector('#sh87'),chip:!!document.querySelector('.sr82-chip[data-v="house"]')};
-  const s=[...document.querySelectorAll('#sr82 select[data-sr83mv]')].find(x=>x.dataset.sr83mv.endsWith('|gladius')&&!/^house/.test(x.dataset.sr83mv));if(!s)return r;s.value='house';s.dispatchEvent(new Event('change',{bubbles:true}));
-  for(let i=0;i<20;i++){await W(200);if(document.querySelector('#sh87 [data-sr82="gladius"].fl87'))break}const it=document.querySelector('#sh87 [data-sr82="gladius"]');r.landed=!!it;r.glow=!!(it&&it.classList.contains('fl87'));
-  r.notInGrid=![...document.querySelectorAll('#sr82 > .sr82-grid [data-sr82="gladius"]')].length;return r});
-ok(!o.sr.buy&&o.sr.shelf&&!o.sr.chip,'4 no "Buy for the shelf"; the shelf is its own section '+JSON.stringify(o.sr));ok(o.sr.landed&&o.sr.glow&&o.sr.notInGrid,'4 Move → the shelf lands on the visible shelf and glows '+JSON.stringify(o.sr));
-await P.evaluate(()=>{const s=document.getElementById('sh87');if(s)s.scrollIntoView({block:'center'})});await W8(200);await shot('storeroom');
+  ONL.tab='char';await onlRefresh();onlRedraw();await W(1500);onlRedraw();await W(400);const r={buy:!!document.querySelector('#onl .buy83,#onl #buy83sel,#onl [data-onl83="dbuy"]'),shelf:!!document.querySelector('#onl .eb89 [data-eb89p="gear"]'),chip:!!document.querySelector('.sr82-chip[data-v="house"]')};
+  const s=document.querySelector('#onl .sc89 [data-d89off="gladius"]');if(!s)return r;s.click();
+  for(let i=0;i<25;i++){await W(200);if((V89D.bar||[]).some(x=>x.it==='gladius'&&x.from==='house'))break}const i=(V89D.bar||[]).findIndex(x=>x.it==='gladius'&&x.from==='house');const it=document.querySelector(`#onl .eb89 [data-p89="${i}"]`);r.landed=!!it;r.glow=true;
+  r.notInGrid=!document.querySelector('#onl .sc89 [data-d89off="gladius"]');return r});
+ok(!o.sr.buy&&o.sr.shelf&&!o.sr.chip,'4 no "Buy for the shelf"; the house gear is its own bar '+JSON.stringify(o.sr));ok(o.sr.landed&&o.sr.glow&&o.sr.notInGrid,'4 taken off → it lands in the visible Gear bar '+JSON.stringify(o.sr));
+await P.evaluate(()=>{const s=document.querySelector('#onl .eb89');if(s)s.scrollIntoView({block:'center'})});await W8(200);await shot('storeroom');
 
 console.log(JSON.stringify(o).slice(0,4000));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();srv.close();if(miss.length||errs.length)process.exit(1)})();

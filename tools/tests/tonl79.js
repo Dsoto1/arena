@@ -12,7 +12,8 @@ const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_M
 const sync=async(from,to,ms=15000)=>{const t0=Date.now();while(Date.now()-t0<ms){const v=await from.evaluate(()=>localStorage.getItem('flavius_onlmock'));if(await to.evaluate(v=>localStorage.getItem('flavius_onlmock')===v,v))return true;await to.waitForTimeout(100)}return false};
 const seenBy=async(p,fn,arg,ms=30000)=>{const t0=Date.now();while(Date.now()-t0<ms){if(await p.evaluate(fn,arg).catch(()=>false))return true;await p.waitForTimeout(150)}return false};
 await setup(A,'Alpha','hero');await sync(A,B);await setup(B,'Beta','soldier');await sync(B,A);
-const look=await A.evaluate(async()=>{const c=await NET.req('char.edit',{char:ONL.char.id,look:{portrait:{skin:'#c68e5f',helm:'galea'},color:'#2255aa',token:{c1:'#2255aa',helm:'crested',shield:'scutum'}}});ONL.char=c;return c.look});
+/* v0.89: a look is set when the gladiator is raised (char.edit refuses a new one) — the test gives him one in the mock world */
+const look=await A.evaluate(async()=>{const w=mockLoad();w.chars[ONL.char.id].look=ONLC.cleanLook({portrait:{skin:'#c68e5f',helm:'galea'},color:'#2255aa',token:{c1:'#2255aa',helm:'crested',shield:'scutum',sc:1}});mockSave(w);const c=(await NET.req('char.mine')).find(x=>x.id===ONL.char.id);ONL.char=c;return c.look});
 const L=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:false,abandon:'fate'}));
 const solo=await A.evaluate(async id=>{try{await NET.req('lobby.start',{id});return 'started'}catch(e){return e.message}},L.id);
 await sync(A,B);for(let k=0;k<8;k++){await B.evaluate(async id=>{try{await NET.req('lobby.join',{id})}catch(e){}},L.id);if(await seenBy(A,id=>ONLC.humansOf(mockLoad().lobbies[id]||{}).length>=2,L.id,5000))break}

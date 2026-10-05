@@ -15,9 +15,12 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   const Z={acct:'dev-z'};await sign(Z,'Zeta');const z1=await route('char.create',{name:'Zeta One',cls:'hero'},Z);const z2=await route('char.create',{name:'Zeta Two',cls:'slave'},Z);await route('char.create',{name:'Zeta Three',cls:'soldier'},Z);await route('char.create',{name:'Zeta Four',cls:'veteranus'},Z);
   await assert.rejects(route('char.create',{name:'Zeta Five',cls:'hero'},Z),/Up to 4/,'v0.82: four gladiators a house');assert.strictEqual((await route('hello',{all:1},Z)).active,z1.id,'the first gladiator is active');
   await route('char.active',{char:z2.id},Z);assert.strictEqual((await route('hello',{all:1},Z)).active,z2.id);
-  const z2e=await route('char.edit',{char:z2.id,cls:'amazonia',name:'Zeta Swift',look:{portrait:{skin:'#c58c5c',helm:'galea<script>'},color:'#123456',token:{c1:'#ff0000'}}},Z);
-  assert.strictEqual(z2e.cls,'amazonia');assert.strictEqual(z2e.name,'Zeta Swift');assert.strictEqual(z2e.look.portrait.helm,'galeascript','looks are cleaned');assert.deepStrictEqual(z2e.stats,C.START_STATS,'ratings stay');
-  await assert.rejects(route('char.edit',{char:z2.id,cls:'dragon'},Z),/eight printed/);
+  /* v0.89: the class changes only in the Domus (char.class, 100 coin from the treasury); a look may still be set once on a gladiator from before the sculpted tokens */
+  await assert.rejects(route('char.edit',{char:z2.id,cls:'amazonia'},Z),/Change class in the Domus/);
+  const z2e=await route('char.edit',{char:z2.id,cls:'slave',name:'Zeta Swift',look:{portrait:{skin:'#c58c5c',helm:'galea<script>'},color:'#123456',token:{c1:'#ff0000',sc:1}}},Z);
+  await assert.rejects(route('char.edit',{char:z2.id,look:{color:'#654321',token:{c1:'#00ff00',sc:1}}},Z),/look is set/,'v0.89: then the look is locked');
+  assert.strictEqual(z2e.cls,'slave');assert.strictEqual(z2e.name,'Zeta Swift');assert.strictEqual(z2e.look.portrait.helm,'galeascript','looks are cleaned');assert.deepStrictEqual(z2e.stats,C.START_STATS,'ratings stay');
+  await assert.rejects(route('char.edit',{char:z2.id,cls:'dragon'},Z),/Change class in the Domus/);
   const ZL=await route('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:false},Z);await assert.rejects(route('char.edit',{char:z2.id,name:'Busy'},Z),/Finish or leave/);
   await assert.rejects(route('lobby.start',{id:ZL.id},Z),/at least 2/,'no online match with one human');
   await assert.rejects(route('lobby.chat',{id:ZL.id,text:'Ave'},Z),/Quick chat only/,'v0.80: no free text online');
