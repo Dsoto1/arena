@@ -760,4 +760,104 @@ const ONLC=(function(){
   {const base=C.applyGiftHouse;C.applyGiftHouse=function(D,rw,P){const t0=(D&&D.treasury)|0;const r=base.apply(this,arguments);try{if(D&&rw&&(rw.k==='coin'||rw.k==='cf')){const d=(D.treasury|0)-t0;if(d>0)ledAdd(D,'gift',d)}}catch(e){}return r}}
   Object.assign(C,{CLASS_FEE89,UPG89,CREST89,MEMO_MAX89,KITS_MAX89,KIT_ITEMS89,DRESS_W89,LED_IN89,LED_OUT89,gladMax,shelfMax,upgWhy,upgBuy,ledAdd,ledgerOf,cleanLook89,
     memoBy,memoEntry,memoAdd,isHome,homeSet,kitStrip,classWhy,dressApply,takeWhy,cleanKits})})(ONLC);
+/* ══════════════════════ v0.89 J — ARMOR AFFIXES II + THE NAMED-ARMOR CURVE (contract tools/plans/onl89-affix.md) ══════════════════════
+   Kept apart from the IIFE above (it only EXTENDS ONLC; the page and the server both load it). His call (2026-10-05): armor bonuses are
+   PERMANENT only (no offerings for them) and properly rare.
+   • eight new armor affixes on C.AFFIX_A (engine hooks in 177-v89affix): lapid (stones from the stands → 0 here), spin (a melee hit here
+     costs the attacker 1 HP), venat (−1 from beasts here), miss (−1 from thrown/shot weapons here), firm (floor spikes → 0 on this leg),
+     integ (never comes back Broken — gearAfter), fid (a killer cannot loot it: it goes home — gearAfter), fort (+1 on the Thumb of Flavius d6,
+     Legendary only, FORT_LEG89 of them).
+   • rollNamedArmor is replaced: affixes are drawn by weight (AFF_W89; Lapidarius twice as likely on a helm) instead of evenly;
+     rollGift is replaced with the same draws in the same order (weapons roll exactly as before) + a named ARMOR piece re-rolls its tier on
+     RAR_A89 (Common 60 / Rare 28 / Epic 10 / Legendary 2). The chest pool and the auction re-use pieces already rolled: no new rolls there.
+   • affixOdds89 / giftOdds89 = the exact odds from these tables (the ⓘ odds card, tools/affixsim.js and the tests read them). */
+(function(C){
+  const A=C.AFFIX_A;
+  const SL=(...s)=>a=>s.includes(a.slot);
+  const mk=(k,n,f)=>({n,fits:a=>!a[k]&&(!f||f(a)),apply:a=>{a[k]=1}});
+  Object.assign(A,{
+    venat:mk('venat','−1 damage from beasts here'),
+    miss:mk('miss','−1 damage from thrown and shot weapons here',SL('head','chest','belt','arm')),
+    firm:mk('firm','floor spikes deal 0 to this leg',SL('leg')),
+    spin:mk('spin','a melee hit here costs the attacker 1 HP',SL('chest','belt','arm')),
+    lapid:mk('lapid','stones from the stands deal 0 here'),
+    integ:mk('integ','never comes back Broken'),
+    fid:mk('fid','cannot be looted: if the wearer falls it goes home'),
+    fort:{n:'+1 on the wearer’s Thumb of Flavius roll',fits:()=>false,apply:a=>{a.fort=1}}}); /* Legendary only, drawn apart (FORT_LEG89) */
+  const NEW89=['venat','miss','firm','spin','lapid','integ','fid','fort'];
+  /* TWEAK: the curve. Weights per affix draw (only the affixes that fit the piece are in the draw); Lapidarius ×LAPID_HELM89 on a helm */
+  const AFF_W89={ap:30,bonus:30,ward:10,swift:10,venat:10,miss:10,firm:10,spin:4,lapid:5,integ:4,fid:4}; /* lapid 5 → ≈1 in 12 Rare-or-better pieces (tools/affixsim.js) */
+  const LAPID_HELM89=2, FORT_LEG89=0.25;
+  const RAR_A89=[['common',60],['rare',28],['epic',10],['legendary',2]];
+  const GIFT_L2_89=0.7, GIFT_CHEAP89=0.75, GIFT_COIN89=[2,5], GIFT_CF89=[3,6];
+  const AFF_ADJ89={ap:['Solidus','Solida','Solidum'],bonus:['Amplus','Ampla','Amplum'],ward:['Tutus','Tuta','Tutum'],swift:['Velox','Velox','Velox'],
+    venat:['Venatorius','Venatoria','Venatorium'],miss:['Missilis','Missilis','Missile'],firm:['Firmus','Firma','Firmum'],spin:['Spinosus','Spinosa','Spinosum'],
+    lapid:['Lapidarius','Lapidaria','Lapidarium'],integ:['Integer','Integra','Integrum'],fid:['Fidelis','Fidelis','Fidele'],fort:['Fortunae','Fortunae','Fortunae']};
+  /* the Latin name of each armor affix (cards and the odds card): the masculine form */
+  const AFF_LAT89=Object.fromEntries(Object.entries(AFF_ADJ89).map(([k,v])=>[k,v[0]]));
+  const NOUN_A89={head:['Galea',1],chest:['Lorica',1],belt:['Balteus',0],arm:['Manica',1],leg:['Ocrea',1]};
+  const COMMON_ADJ89=[['Fidus','Fida','Fidum'],['Ferreus','Ferrea','Ferreum'],['Vetus','Vetus','Vetus']];
+  const GODS89=['Martis','Iovis','Neptuni','Dianae','Herculis','Plutonis','Victoriae','Fortunae'];
+  const SLOTS89=['head','chest','belt','arm','leg'];
+  const wp=(rnd,tab)=>{const t=tab.reduce((a,x)=>a+x[1],0);let v=rnd()*t;for(const x of tab){if((v-=x[1])<0)return x[0]}return tab[tab.length-1][0]};
+  const p1=(rnd,arr)=>arr[Math.min(arr.length-1,Math.floor(rnd()*arr.length))];
+  const affW=(k,a)=>(AFF_W89[k]||0)*(k==='lapid'&&a.slot==='head'?LAPID_HELM89:1);
+  const affTab=(a,aff)=>Object.keys(AFF_W89).filter(k=>!aff.includes(k)&&A[k]&&A[k].fits(a)).map(k=>[k,affW(k,a)]).filter(x=>x[1]>0);
+  const basesA=catalog=>Object.keys(catalog||{}).filter(k=>catalog[k].kind==='a'&&!catalog[k].stack&&SLOTS89.includes(catalog[k].slot)).sort();
+  const baseA=(catalog,b)=>{const c=catalog[b];return {kind:'a',base:b,lv:4,slot:c.slot,pt:String(c.pt||''),ap:Math.min(6,c.ap|0),...(c.pair?{pair:1}:{}),...(c.bonus&&Object.keys(c.bonus).length?{bonus:{...c.bonus}}:{})}};
+  /* rar = rarity key; taken = armor uniques already claimed → the def (no key yet: namedPiece adds it). The same draws as v0.84 up to the affixes. */
+  function rollNamedArmor(rnd,catalog,rar,taken){const bases=basesA(catalog);if(!bases.length)return null;
+    const b=p1(rnd,bases);const a=baseA(catalog,b);
+    let R=C.rarOf(rar);let uq=null;if(R.uq){const pool=C.UNIQ_A_KEYS.filter(k=>!(taken||[]).includes(k));if(pool.length)uq=p1(rnd,pool);else R=C.rarOf('epic')}
+    let n=R.aff;const fort=!!R.uq&&n>0&&rnd()<FORT_LEG89;if(fort)n--;
+    const aff=[];for(let i=0;i<n;i++){const tab=affTab(a,aff);if(!tab.length)break;const k=wp(rnd,tab);A[k].apply(a);aff.push(k)}
+    if(fort){A.fort.apply(a);aff.push('fort')}
+    const [noun,g]=NOUN_A89[a.slot]||['Lorica',1];let nm=noun;
+    if(R.k==='common')nm+=' '+p1(rnd,COMMON_ADJ89)[g];else if(aff.length)nm+=' '+AFF_ADJ89[aff[0]][g];
+    if(R.k==='epic')nm+=' '+p1(rnd,GODS89);if(uq)nm=noun+' '+C.UNIQUES_A.find(u=>u.k===uq).n;
+    Object.assign(a,{n:nm,rar:R.k,aff,...(uq?{uq}:{}),named84:1});return a}
+  /* Flavius's gift: the v0.83/84 draws in the same order (coin · CF bonus · offering · gear · named); a named ARMOR piece then re-rolls its tier on RAR_A89 */
+  function rollGift(rnd,catalog,rank){const k=wp(rnd,C.GIFT_W);const keys=lv=>Object.keys(catalog||{}).filter(x=>catalog[x].lv===lv).sort();
+    if(k==='coin')return {k,v:Math.round((C.AWARD[rank]||C.AWARD.tiro)*(GIFT_COIN89[0]+rnd()*(GIFT_COIN89[1]-GIFT_COIN89[0])))};
+    if(k==='cf')return {k,v:GIFT_CF89[0]+Math.floor(rnd()*(GIFT_CF89[1]-GIFT_CF89[0]+1))};
+    if(k==='off')return {k,key:rnd()<GIFT_CHEAP89?p1(rnd,C.OFFERS83.filter(x=>C.PRICE_OFF[x]<100)):p1(rnd,C.OFFERS83.filter(x=>C.PRICE_OFF[x]>=100))};
+    if(k==='l1'||k==='l23'){const lv=k==='l1'?1:rnd()<GIFT_L2_89?2:3;const ks=keys(lv);if(!ks.length)return {k:'coin',v:20};return {k:'gear',item:p1(rnd,ks),lv}}
+    let rar=wp(rnd,C.RAR_W);const kind=rnd()<C.NAMED_ARMOR_SHARE?'a':'w';if(kind==='a')rar=wp(rnd,RAR_A89);return {k:'named',rar,kind}}
+  /* a named armor def as a client builds it: the v0.84 clean + the v0.89 flags */
+  const cleanA0=C.cleanNamedA;
+  function cleanNamedA(a){const o=cleanA0(a);if(!o)return o;for(const k of NEW89)if(a[k])o[k]=1;return o}
+  /* after a match: an Integer piece never breaks; a Fidelis piece of a Ranked dead goes HOME (out.left → the house Storeroom) instead of loot/market */
+  const gearAfter0=C.gearAfter;
+  function gearAfter(ch,kit,row,ranked){const w=it=>{const p=C.pcOf(ch,it);return (p&&p.w)||{}};
+    if(ranked&&row&&row.survives!==false&&Array.isArray(row.brk)&&row.brk.length&&kit){const items=kit.items||[],gear=kit.gear||[];const brk=row.brk.slice();
+      items.forEach((it,j)=>{if(w(it).integ){const i=brk.indexOf(gear[j]);if(i>=0)brk.splice(i,1)}});row={...row,brk}}
+    const out=gearAfter0.call(this,ch,kit,row,ranked);
+    if(out&&out.carried&&out.carried.length){const keep=[];for(const P of out.carried){if(P&&P.pc&&P.pc.w&&P.pc.w.fid){out.left.push(C.histAdd(P,{house:null,glad:(ch&&ch.name)||null,when:Date.now(),how:'home'}));(out.home89=out.home89||[]).push(P.item)}else keep.push(P)}out.carried=keep}
+    return out}
+  /* ── exact odds from the tables (no sampling) ── */
+  const clone=o=>JSON.parse(JSON.stringify(o));
+  function enumAff(a,left,aff,p,rec){const tab=left>0?affTab(a,aff):[];if(!tab.length){for(const k of aff)rec[k]=(rec[k]||0)+p;return}
+    const t=tab.reduce((s,x)=>s+x[1],0);for(const [k,wt] of tab){const b=clone(a);A[k].apply(b);enumAff(b,left-1,[...aff,k],p*wt/t,rec)}}
+  function enumAffW(w,left,aff,p,rec){const ok=left>0?Object.keys(C.AFFIX).filter(k=>!aff.includes(k)&&C.AFFIX[k].fits(w)):[];if(!ok.length){for(const k of aff)rec[k]=(rec[k]||0)+p;return}
+    for(const k of ok){const b=clone(w);C.AFFIX[k].apply(b);enumAffW(b,left-1,[...aff,k],p/ok.length,rec)}}
+  function oddsTier(catalog,bases,R){const rec={};for(const b of bases){const a=baseA(catalog,b);const P=1/bases.length;
+      if(R.uq&&R.aff>0){enumAff(a,R.aff-1,['fort'],P*FORT_LEG89,rec);enumAff(a,R.aff,[],P*(1-FORT_LEG89),rec)}else enumAff(a,R.aff,[],P,rec)}return rec}
+  /* kind 'a' | 'w' → {tiers:[[key,weight]...], aff:{rare:{k:p},epic,legendary} (p = the chance a piece of that tier carries it); armor also slot shares + helm Lapidarius */
+  function affixOdds89(catalog,kind){const out={tiers:(kind==='a'?RAR_A89:C.RAR_W).map(x=>x.slice()),aff:{},slot:{},n:{}};
+    for(const r of ['common','rare','epic','legendary'])out.n[r]=C.rarOf(r).aff;
+    if(kind==='a'){const bases=basesA(catalog);out.slotAff={};
+      for(const r of ['rare','epic','legendary'])out.aff[r]=oddsTier(catalog,bases,C.rarOf(r));
+      for(const s of SLOTS89){const bs=bases.filter(b=>catalog[b].slot===s);out.slot[s]=bs.length/(bases.length||1);out.slotAff[s]={};
+        for(const r of ['rare','epic','legendary'])out.slotAff[s][r]=bs.length?oddsTier(catalog,bs,C.rarOf(r)):{}}
+      out.helmLapid=Object.fromEntries(['rare','epic','legendary'].map(r=>[r,out.slotAff.head[r].lapid||0]))}
+    else{const bases=Object.keys(catalog||{}).filter(k=>catalog[k].kind==='w'&&catalog[k].p!=null).sort();for(const r of ['rare','epic','legendary']){const rec={};
+        for(const b of bases){const w={...clone(catalog[b]),base:b,lv:4};enumAffW(w,C.rarOf(r).aff,[],1/bases.length,rec)}out.aff[r]=rec}}
+    return out}
+  /* what one gift opening gives — every chance from the tables above */
+  function giftOdds89(){const t=C.GIFT_W.reduce((a,x)=>a+x[1],0);const P=k=>(C.GIFT_W.find(x=>x[0]===k)||[0,0])[1]/t;
+    const cheap=C.OFFERS83.filter(x=>C.PRICE_OFF[x]<100),dear=C.OFFERS83.filter(x=>C.PRICE_OFF[x]>=100);
+    return {kinds:C.GIFT_W.map(([k])=>[k,P(k)]),coin:GIFT_COIN89.slice(),cf:GIFT_CF89.slice(),off:{cheap:[GIFT_CHEAP89,cheap],dear:[1-GIFT_CHEAP89,dear]},l23:{2:GIFT_L2_89,3:1-GIFT_L2_89},
+      armorShare:C.NAMED_ARMOR_SHARE,namedA:P('named')*C.NAMED_ARMOR_SHARE,namedW:P('named')*(1-C.NAMED_ARMOR_SHARE),fort:FORT_LEG89}}
+  Object.assign(C,{rollNamedArmor,rollGift,cleanNamedA,gearAfter,affixOdds89,giftOdds89,AFF_W89,LAPID_HELM89,FORT_LEG89,RAR_A89,AFF_ADJ89,AFF_LAT89,NEW_AFF89:NEW89,
+    GIFT_L2_89,GIFT_CHEAP89,GIFT_COIN89,GIFT_CF89})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

@@ -102,7 +102,7 @@ async function routes(){
 
   /* ── named armor from a gift; the loot window carries the full def ── */
   await setC(ann.ch.id,{glory:600});await db.put('DOMUS#'+ann.domus.id,'DOMUS',{...(await getD(ann.domus.id)),gifts:[{id:'ga',why:'surv:5',at:T}]});
-  Q.push(0.995,0.995,0.1);const go=await ann.req('gift.open',{gift:'ga'});assert.strictEqual(go.reward.k,'named');assert.strictEqual(go.reward.piece.kind,'a');assert.strictEqual(go.to,'glad');
+  Q.push(0.995,0.995,0.1,0.995);/* v0.89 J: a named armor piece re-rolls its tier (RAR_A89) */const go=await ann.req('gift.open',{gift:'ga'});assert.strictEqual(go.reward.k,'named');assert.strictEqual(go.reward.piece.kind,'a');assert.strictEqual(go.to,'glad');
   const ai=go.char.gear.find(g=>/^na#/.test(g));const ad=go.char.pcs[C.itemUid(ai)].w;assert.ok(ad.named84&&ad.uq&&C.UNIQ_A_KEYS.includes(ad.uq));assert.ok(await db.get('WORLD','UNIQA#'+ad.uq),'the armor unique is claimed');
   assert.ok(C.equipOf(go.char).includes(ai),'a Veteranus brings it');
   await setC(bob.ch.id,{glory:600,wallet:0});const lv=await bout(ann,bob,{ev:'democritus',loc:6,ranked:true,live:true});const kit=lv.L.players[lv.sa].kit;assert.ok(kit.named.some(d=>d.kind==='a'&&d.key===ad.key),'the kit carries the armor def');
