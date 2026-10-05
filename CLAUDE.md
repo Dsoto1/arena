@@ -949,6 +949,9 @@ share copy — the site download play/flavius-rule-arena.zip.)
   top-right count; infirmary: injured fighter could not be put on the bed (bug) + Hygeia's Blessing → small card on the banner; city
   center: the kit list follows the selected fighter, kits bought for a fighter who doesn't fight that week are REFUNDED (today lost at
   week's end, 17-manager ~656); Manager mail panel half width.
+  WIN REWARDS (his picks 2026-10-05, v0.87 150-v87mgr): bigger riskier purses (upset/stronger field up to ×2, streak +25%/win cap ×2);
+  winners grow faster (bigger rating gain, morale, loyalty — a winner renews); fame/fans/sponsors (faster fame, fans → crowd CF, patron offer
+  after a 3-win streak). Not picked: 'Flavius remembers' (Fate favor).
   GLADIATOR STATUS NAME (his pick 2026-10-05): "IMMORTALIS" (not "Legend of the Sand" — that is the top house LEGACY_TIERS tier; Invictus
   = top online rank). legendsim (tools/legendsim.js): a lone fighter rarely survives 2 seasons (Fate blood prices, road-locked infirmary,
   money, contract renewal) — balance levers offered, his answer pending.
