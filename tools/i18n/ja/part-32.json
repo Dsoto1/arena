@@ -41,7 +41,7 @@
  "<small>Purse</small><b>{0}</b><i>{1}’s own coin — lost at death</i>": "<small>賞金</small><b>{0}</b><i>{1}自身のコイン — 死ねば失われる</i>",
  "<small>Treasury</small><b>{0}</b><i>the house’s cut — outlives every gladiator, pays for anyone</i>": "<small>金庫</small><b>{0}</b><i>家の取り分 — どの剣闘士より長く残り、誰のためにも払える</i>",
  "Buying happens in 🛒 Armory &amp; Market.": "購入は 🛒 Armory と市場 で行います。",
- "disabled title=\"In a game — switch when it is over\"": "disabled title=\"In a game — switch when it is over\"",
+ "disabled title=\"In a game — switch when it is over\"": "disabled title=\"ゲーム中 — 終わってから切り替え\"",
  "Make active": "アクティブにする",
  "<span class=\"sl88-plus\">＋</span><b>New gladiator</b><small>starts as a Tiro</small>": "<span class=\"sl88-plus\">＋</span><b>新しい剣闘士</b><small>Tiro から開始</small>",
  "✎ Name, class, look &amp; gear to bring <small class=\"rc-sub\">{0}</small>": "✎ 名前、クラス、見た目、持ち込む装備 <small class=\"rc-sub\">{0}</small>",

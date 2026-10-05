@@ -92,7 +92,7 @@
  "🔒 The Training Yard and the Infirmary are shut until the week ends.": "🔒 訓練場と医務室は週が終わるまで閉まっています。",
  "<span>🛏</span><small>Empty bed</small>": "<span>🛏</span><small>空きベッド</small>",
  "class=\"plantile off\" disabled data-bedneed76=\"1\"": "class=\"plantile off\" disabled data-bedneed76=\"1\"",
- "$1 disabled title=\"Needs a bed in the Infirmary first\">": "$1 disabled title=\"Needs a bed in the Infirmary first\">",
+ "$1 disabled title=\"Needs a bed in the Infirmary first\">": "$1 disabled title=\"まず医務室のベッドが必要\">",
  "You fight it on the board. Kill it: the kill's coin and <b>+{0}</b> to a rating you pick. Pulled out: −{1} fame. Wounds are real; nobody dies. {2} rotations.": "盤上で戦います。倒せば：その獲物のコインと、選んだ能力値に<b>+{0}</b>。引き下げられると：名声 −{1}。傷は本物、誰も死にません。{2}巡。",
  "Exhibition vs $1: $2": "$1とのエキシビション：$2",
  "🛣 On the road: {0}": "🛣 遠征中：{0}",
