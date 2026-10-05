@@ -20,8 +20,9 @@ o.dr=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));i
     const t=document.getElementById('mTitle').textContent;
     if(/^Draft/.test(t)){const g=document.getElementById('pickgrid');const p=S.players[0];
       const btns=[...g.querySelectorAll('button')];
-      x.cols=x.cols||getComputedStyle(g).gridTemplateColumns.split(' ').length;x.n=Math.max(x.n||0,btns.length);x.pool=x.pool||!!document.querySelector('#mBody details.pool81');
-      x.belt1=x.belt1||/Belt I(?!I)/.test(document.getElementById('mBody').textContent);
+      /* v0.88: the draft is on the market board (155): the offers lit, the whole pool spread across the slots */
+      x.cols=x.cols||(document.querySelector('#mBody .mk88 .mboard75')?2:0);x.n=Math.max(x.n||0,btns.length);x.pool=x.pool||document.querySelectorAll('#mBody .mk88 .sp88').length===12;
+      x.belt1=x.belt1||!!document.querySelector('#mBody .mk88 [data-k88="a:balteus1"]');
       const names=btns.map(b=>(b.childNodes[b.childNodes.length-2]||b).textContent||b.textContent);
       const full=armsAttached(p).every(a=>p['w'+a]);
       for(const b of btns){const txt=b.textContent;
@@ -38,7 +39,7 @@ o.dr=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));i
   x.leak=[];for(const p of S.players)for(const l of Object.keys(p.pieces))for(const pc of p.pieces[l])if(ARM[pc.key]&&!ARM[pc.key].stack&&flat.includes(pc.key))x.leak.push(pc.key);
   x.ended=[...document.querySelectorAll('#log li')].some(li=>/draft ends early/.test(li.textContent));
   return x});
-ok(o.dr.cols===2,'2 per row');ok(o.dr.n>0&&o.dr.n<=8,'only offers');ok(o.dr.pool,'rest of pool folded');ok(o.dr.belt1,'Belt I in the pool');
+ok(o.dr.cols===2,'2 per row (v0.88: the board)');ok(o.dr.n>0&&o.dr.n<=8,'only offers');ok(o.dr.pool,'rest of pool on the board');ok(o.dr.belt1,'Belt I in the pool');
 ok(!o.dr.bad.length,'filtered offers');ok(!o.dr.leak.length,'drafted gear left the market');ok(o.dr.picks.length>=1,'human picked');
 /* 3. Juggernaut declare cards */
 o.jg=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(80)}
