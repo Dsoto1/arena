@@ -22,7 +22,7 @@ const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   /* 3 · the plan: Bathhouse, then it runs again next week without a tap */
   const bt=q(`.wd76cot [data-plan87="bath"]`);r.bathTile=!!bt;const c0=m.coin;if(bt)bt.click();await W8(400);
   r.plan=A.inj&&A.inj.plan87==='bath'&&A.bathWk===w.week&&m.coin===c0-5&&!!q('.wd76cot .plantile.pick87[data-plan87="bath"]');
-  A.inj.until=w.week+4;const u0=A.inj.until,wk0=w.week;for(const bo of w.night.bouts)bo.done=true;w.pend=[];await endWeek();await W8(800);for(let i=0;i<6&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(200)}
+  A.inj.until=w.week+4;const u0=A.inj.until,wk0=w.week;for(const bo of w.night.bouts)bo.done=true;w.pend=[];await endWeek();await W8(800);
   const w2=W_();r.newWeek=w2.week===wk0+1;r.again=A.bathWk===w2.week&&!!A.inj&&A.inj.plan87==='bath'&&A.inj.until<u0&&inBed76(A);
   /* Rest is pickable in bed */
   await go();const rt=q(`.wd76cot [data-plan87="rest"]`);if(rt)rt.click();await W8(300);r.rest=A.inj&&A.inj.plan87==='rest';
@@ -30,6 +30,14 @@ const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   B.inj={until:w2.week+2,label:'a deep thigh cut',pen:2};await go();
   r.full=!!q(`.wd76bench [data-bed76="${B.id}"][disabled]`)&&!!q('.full87 [data-mg="build"][data-id="valet"]');
   m.fac=m.fac||{};m.fac.valet=1;await go();r.more=bedsOf76(m)===2&&!!q(`.wd76bench [data-bed76="${B.id}"]:not([disabled])`)&&!q('.full87');
+  /* 5 · three limbs lost: one week at home to regrow one, else he retires */
+  delete A.inj;delete B.inj;w2.beds76=[];const C=ros[3],D=ros[4];C.severed=['rarm','larm','rleg'];D.severed=['rarm','lleg','rleg'];
+  const wkEnd=async()=>{const w=W_();for(const bo of w.night.bouts)bo.done=true;w.pend=[];await endWeek();await W8(700)};
+  await wkEnd();const w3=W_();r.dbg=JSON.stringify({wk:w3.week,C:[C.alive,!!C.contract,C.maim87,C.severed],D:[D.alive,D.maim87]});r.reprieve=C.alive!==false&&D.alive!==false&&!!C.contract&&C.maim87&&C.maim87.wk===w3.week&&D.maim87&&D.maim87.wk===w3.week;
+  await go();r.maimLine=!!q('.wd76bench .maim87')&&weekChecklist().some(x=>x.ic==='🦿'&&!x.done)&&leaveList76(w3).some(x=>/🦿/.test(x));
+  q(`.wd76bench [data-bed76="${C.id}"]`).click();await W8(400);const hb=q(`.wd76cot [data-mg="heal"][data-id="${C.id}"]`);r.hyBtn=!!hb&&!hb.disabled;if(hb)hb.click();await W8(400);
+  r.regrown=C.severed.length<3;if(!r.regrown)r.dbg2=JSON.stringify({bed:inBed76(C),msg:MGR.msg,rep:W_().repair,busy:MGR.busy,cap:repCap(),coin:m.coin,hb:hb&&hb.outerHTML.slice(0,200)});
+  await wkEnd();r.kept=C.alive!==false&&!!C.contract&&!C.maim87;r.retired=D.alive===false&&D.retired===true;if(!r.kept)r.dbg3=JSON.stringify({wk:W_().week,a:C.alive,c:!!C.contract,m:C.maim87,s:C.severed,inj:C.inj});
   return r});
 for(const [k,v] of Object.entries(o))ok(v,k);
 await pg.setViewportSize({width:390,height:844});await pg.waitForTimeout(500);

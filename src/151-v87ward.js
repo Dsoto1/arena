@@ -13,6 +13,13 @@
      light wounds only, a serious wound mends at half pace without the Medicus, surgeon or Hygeia).
    • All beds taken and someone on the bench → "Beds full — build another" with the Valetudinarium's Build button.
    • Hygeia's Blessing card is left alone (infirmaryHTML keeps whatever 108 picks).
+   • ONE CHANCE AT HOME (his pick, 2026-10-05): a fighter of YOUR house who has lost a third limb no longer retires at the
+     week's end straight away (17-manager endWeek: severed ≥3 → retired). The first week's end only sets the deadline
+     g.maim87 = next week (his week at home: before the house leaves for the road the Infirmary is open — a bed + Hygeia,
+     normal coin and bed rules); if he still has 3+ lost limbs at that week's end he retires as before. The base sees at
+     most two limbs while it runs, so nothing else in endWeek changes. Ward cards, the gladiator's care card, the weekly
+     checklist and the before-you-leave list say "Three limbs lost — regrow one this week or he retires".
+     CPU houses are unchanged (they already pay Hygeia when rich, else the maimed retire).
    ===================================================================== */
 /* bedOK87 — may this fighter lie in a bed: wounded (not at war) or missing a limb */
 const bedOK87=g=>!!(g&&((g.inj&&!g.inj.war)||(g.severed||[]).length));
@@ -89,3 +96,24 @@ wardHTML76=function(){const w=W_(),m=me();const ros=rosterOf(m);const beds=bedsC
 .full87{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0;border-color:#c98a2e}
 .bp87l{display:grid;gap:6px;margin:8px 0 10px;max-height:50vh;overflow:auto}.bp87{display:grid;text-align:left;gap:2px}.bp87 small{color:var(--muted)}
 @media (max-width:600px){.wd76beds{grid-template-columns:1fr}.wd76pt{grid-template-columns:auto minmax(0,1fr)}}`;document.head.appendChild(st)})();
+/* ---------- one chance at home for a fighter with three lost limbs ---------- */
+const maimed87=g=>!!(g&&g.alive!==false&&(g.severed||[]).length>=3&&!g.sotonium);
+/* maimDue87 — the week whose end retires him (next week until the first week's end has set it) */
+const maimDue87=(g,w)=>g.maim87&&g.maim87.wk!=null?g.maim87.wk:w.week+1;
+function maimLine87(g){const w=W_();if(!w||!maimed87(g))return '';const due=maimDue87(g,w);
+  return due<=w.week?_T`⚠ Three limbs lost — regrow one this week or he retires`:_T`⚠ Three limbs lost — regrow one by next week's end or he retires`}
+{const base=endWeek;endWeek=async function(){const w=W_();const m=w&&me();const hold=[];
+  try{if(w&&m&&!w.dead&&!w.tutorial)for(const g of rosterOf(m)){if(!(g.severed||[]).length)continue;
+    if(!maimed87(g)){delete g.maim87;continue}
+    if(maimDue87(g,w)>w.week){hold.push([g,g.severed]);g.severed=g.severed.slice(0,2)}}}catch(e){console.error(e)}
+  let r;try{r=await base.apply(this,arguments)}finally{
+    for(const [g,sv] of hold){g.severed=sv;
+      if(r!==false&&g.alive!==false&&!g.maim87&&maimed87(g)){g.maim87={wk:W_().week};tnews(_T`🦿 <b>${esc(g.name)}</b> has lost three limbs — regrow one this week (a bed + Hygeia) or he retires.`,'bad')}}}
+  try{if(r!==false&&hold.length){for(const [g] of hold)if(!maimed87(g))delete g.maim87;saveWorld()}}catch(e){}
+  return r}}
+{const base=wardPatient76;wardPatient76=function(g){const P=base.apply(this,arguments);try{const t=maimLine87(g);if(t)P.info+=`<div class="wd76w maim87">${t}</div>`}catch(e){}return P}}
+{const base=careHTML;careHTML=function(g){const h=base.apply(this,arguments);try{const t=maimLine87(g);if(t)return `<div class="maim87 card2">${t}</div>`+h}catch(e){}return h}}
+{const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{for(const g of rosterOf(me()).filter(maimed87))
+  I.unshift({done:false,ic:'🦿',txt:`<b>${esc(g.name)}</b>: ${maimLine87(g).replace(/^⚠ /,'')}`,btn:`<button class="btn tksm" type="button" data-mg="tab" data-id="infirm">${_T`Infirmary`}</button>`})}catch(e){console.error(e)}return I}}
+{const base=leaveList76;leaveList76=function(w){const L=base.apply(this,arguments);try{for(const g of rosterOf(me()).filter(maimed87))L.unshift(_T`🦿 <b>${esc(g.name)}</b>: three limbs lost — regrow one before you leave or he retires`)}catch(e){}return L}}
+(()=>{const st=document.createElement('style');st.textContent=`.maim87{color:#e07a6a;font-weight:600}div.maim87.card2{border-color:var(--blood2);margin-bottom:6px}`;document.head.appendChild(st)})();
