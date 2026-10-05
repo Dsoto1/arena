@@ -668,7 +668,7 @@ function cityToYard89(){closeCity(()=>{if(typeof MGR==='undefined')return;MGR.ta
 {const base=citySelect;citySelect=function(sel){if(sel&&sel.kind==='bldg'){if(sel.key==='temple'){CITY.sel=sel;return cityTemplePanel89()}if(sel.key==='train'){CITY.sel=sel;return cityTrainPanel89()}
     if(GOODS89[sel.key]){CITY.sel=sel;const [h,t]=GOODS89[sel.key];return cityPanel(`<div class="sect" style="margin-top:0">${h}</div><div class="card2"><p style="margin:0">${t}</p><p class="rc-sub" style="margin:6px 0 0">${_T`The arms market and the armorer sell kit for your fighters.`}</p></div>`)}}
   return base.apply(this,arguments)}}
-document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#cityPanel [data-cw89],#cityPanel [data-god89]');if(!b||b.disabled)return;e.preventDefault();e.stopPropagation();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#cityPanel [data-cw89],#cityPanel [data-god89],#citySide [data-cw89],#citySide [data-god89]');if(!b||b.disabled)return;e.preventDefault();e.stopPropagation();
   if(b.dataset.cw89){if(b.dataset.cw89==='yard')return cityToYard89();const n=CITY.npcs.find(x=>x.id===b.dataset.cw89);if(n)citySelect(n);return}
   const k=b.dataset.god89;const w=W_(),m=me();if(!w||!m||!TEMPLE76[k])return;const c=templeCost76(k);if(!w.night||w.night.god76||m.coin<c)return;
   m.coin-=c;w.night.god76=k;tnews(_T`🏛 An offering to ${TEMPLE76[k][1]} (${coinAmt87(c)}): ${TEMPLE76[k][2]}.`);saveWorld();log2city(_T`${TEMPLE76[k][0]} ${TEMPLE76[k][1]} accepts your offering.`);cityTemplePanel89()},true);
