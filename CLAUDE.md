@@ -1001,6 +1001,10 @@ share copy — the site download play/flavius-rule-arena.zip.)
   turn shows a gold sliver of the logo top-left — mask the corners. SPONSORS (city editors + Studio-made): keep their own looks (parts) but
   DRAW THEM WITH MORE DETAIL (card-style outlines + shading, nose, cheekbones, better beard/hair, the bigger mood changes) — update the
   sponsor creator (24-sponsors) if it needs new parts.
+  NEW 11th MOOD 'really' (his Picard "what was THAT?" picture, 2026-10-05): brow up, mouth mid-sentence, open palm held out — his LEFT
+  hand from the card (draped on the chair arm) flipped upside down = palm up (make.py palm_up). For Flavius AND every sponsor (drawn
+  version too). Use it for: truces, a hit that misses / no attack (nohit), running into a tunnel, gifts to rivals, sparing; add it to
+  FLAV_PRI/FLAV_LINES (lines like "Really?", "What was THAT?", "I paid for this?") and the sponsor preview row.
 - **CJK SCHEDULE (his call 2026-10-05): JAPANESE v0.89, CHINESE SIMPLIFIED v0.90 (moved up; es/it/pt/fr/de are done).**
 - **LANGUAGES (his pick 2026-10-05): one per release alongside the features** — Italian v0.87, Portuguese (BR) v0.88, French v0.89, German v0.90,
   Japanese v0.91, Chinese SIMPLIFIED v0.92 (his pick; shares the CJK work: system-font fallback stack incl. canvas, no small-caps/

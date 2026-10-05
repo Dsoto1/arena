@@ -66,6 +66,16 @@ def hand(img,rotd=None,at=None,flip=False):
   hw=cv2.warpAffine(hs,R,(W,H),flags=cv2.INTER_CUBIC);mw=cv2.warpAffine(m,R,(W,H)).astype(np.float32)/255
   mw=cv2.GaussianBlur(mw,(0,0),1.2)[...,None]
   return (img*(1-mw)+hw*mw).astype(np.uint8)
+def palm_up(img,at=(70,300),sc=1.25,deg=-12):
+  # his LEFT hand draped over the chair arm, turned upside down = an open, palm-up "what was THAT?" hand (after Picard's)
+  c=cv2.resize(src[540:620,540:620],None,fx=5,fy=5,interpolation=cv2.INTER_CUBIC);hsv=cv2.cvtColor(c,cv2.COLOR_BGR2HSV)
+  m=((hsv[...,0]>=12)&(hsv[...,0]<32)&(hsv[...,2]>60)).astype(np.uint8)*255;m[:,:95]=0
+  m=cv2.morphologyEx(m,cv2.MORPH_CLOSE,np.ones((15,15),np.uint8));n,l,st,_=cv2.connectedComponentsWithStats(m);bb=1+np.argmax(st[1:,4])
+  m=((l==bb)*255).astype(np.uint8);m=cv2.dilate(m,np.ones((5,5),np.uint8))
+  c=cv2.flip(c,0);m=cv2.flip(m,0);f=sc*K/5
+  M=cv2.getRotationMatrix2D((0,0),deg,f);M[0,2]+=PAD*K+at[0];M[1,2]+=PAD*K+at[1]
+  hw=cv2.warpAffine(c,M,(W,H),flags=cv2.INTER_CUBIC);mw=cv2.warpAffine(m,M,(W,H)).astype(np.float32)/255
+  mw=cv2.GaussianBlur(mw,(0,0),1.3)[...,None];return (img*(1-mw)+hw*mw).astype(np.uint8)
 def hand_old(img):
   # a weary hand over the eyes, palm in, fingers to the brow — cel-shaded like the card
   im=img.copy();ov=im.copy()
@@ -120,9 +130,12 @@ def mood(m):
   if m=='weep':
     im=warp(im,[B(BROW_RI,0,-12,14),B(BROW_NI,0,-12,14),B(BROW_R,0,4,16),B(MC_L,-2,8,12),B(MC_R,2,8,12)])
     return tears(flush(im,(90,90,200),.12))
+  if m=='really':
+    im=warp(im,[B(BROW_R,0,-24,24),B(BROW_RI,0,-10,14),B(BROW_NI,4,8,14),B(MC_L,-4,4,12),B(MC_R,6,-2,12),B(JAW,0,12,50)])
+    im=mouth_open(im,24,15,dy=4);im=rot(im,-5,(W/2,H*.75));return palm_up(im,at=(-60,700),sc=1.4,deg=90)
   if m=='facepalm':
     im=lids(warp(im,[B(MC_L,0,6,10),B(MC_R,0,6,10)]),.95);return hand(rot(im,8,(W/2,H*.9)))
-MOODS=['calm','pleased','smug','cheer','laugh','shock','angry','bored','weep','facepalm']
+MOODS=['calm','pleased','smug','cheer','laugh','shock','angry','bored','weep','facepalm','really']
 out=os.path.join(HERE,'out');os.makedirs(out,exist_ok=True)
 tiles=[]
 for m in MOODS:
@@ -130,5 +143,6 @@ for m in MOODS:
   cv2.imwrite(os.path.join(out,f'flavmood_{m}.png'),sm)
   t=cv2.resize(im,(340,int(340*h0/w0)),interpolation=cv2.INTER_AREA);t=cv2.copyMakeBorder(t,4,30,4,4,cv2.BORDER_CONSTANT,value=(40,30,25))
   cv2.putText(t,m,(10,t.shape[0]-9),cv2.FONT_HERSHEY_SIMPLEX,.7,(170,220,240),2,cv2.LINE_AA);tiles.append(t)
-rows=[np.hstack(tiles[i:i+5]) for i in (0,5)]
+tiles+=[np.zeros_like(tiles[0])]*(-len(tiles)%4)
+rows=[np.hstack(tiles[i:i+4]) for i in range(0,len(tiles),4)]
 cv2.imwrite(sys.argv[1] if len(sys.argv)>1 else os.path.join(out,'moods.png'),np.vstack(rows))
