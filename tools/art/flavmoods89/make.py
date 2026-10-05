@@ -245,7 +245,7 @@ def mood(m):
     hc=cv2.resize(hc,None,fx=sx,fy=1.0);hm=cv2.resize(hm,None,fx=sx,fy=1.0);hw=(hw[0]*sx,hw[1])
     hc=cv2.flip(hc,1);hm=cv2.flip(hm,1);hw=(hc.shape[1]-1-hw[0],hw[1])
     fc=cv2.flip(fc,1);fm=cv2.flip(fm,1);fw=(fc.shape[1]-1-fw[0],fw[1])
-    wx,wy=ex+120-PAD*K,ey+130-PAD*K
+    wx,wy=ex+70-PAD*K,ey+130-PAD*K
     im=place(im,fc,fm,fw,(wx,wy-8),105,1.15);return place(im,hc,hm,hw,(wx,wy),30,.75*K/4)
 MOODS=['calm','pleased','smug','cheer','laugh','shock','angry','bored','weep','facepalm','really']
 out=os.path.join(HERE,'out');os.makedirs(out,exist_ok=True)
