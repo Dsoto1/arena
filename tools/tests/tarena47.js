@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1500,height:950}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());
 const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(3000);
 const o={};
 await pg.evaluate(()=>{menuHide&&menuHide();const seats=[{cls:'slave',cpu:false,name:'Me'},{cls:'soldier',cpu:true,name:'B'},{cls:'royalty',cpu:true,name:'C'},{cls:'venatore',cpu:true,name:'D'}];startEvent({ev:'democritus',loc:6,seats,opts:{...CFG.opts,spect:'auto'}})});
 await pg.waitForTimeout(3500);await pg.evaluate(()=>{while(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:1)});await pg.waitForTimeout(400);
