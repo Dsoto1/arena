@@ -963,7 +963,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
   patient (avatar + wound mark, treatment, fit week, Take out); the plan runs until healed; one line says what a bed gives vs the bench;
   'Beds full — build another' when full.
   FORUM (his call 2026-10-05): drop the landing Forum (phrase chips + chat feed) — quick chat stays in rooms/matches; server forum routes
-  stay unused; proposed: keep a one-line 📰 news ticker (calls/victor, clickable) — awaiting his answer.
+  stay unused; IN ITS PLACE (his idea): "📜 Acta of the day" — the last 8 online match results, newest first (time · event at city —
+  🏆 winner (house) CF · ✝ if anyone fell), click → today's list; empty → yesterday's; may add a small `recent` list to the DAY record.
   ANSWERED: Domus purse = the gladiator's own coin (lost at death); treasury = the house's 20% cut (outlives deaths, buys for anyone).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
