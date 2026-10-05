@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1440,height:1000}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});
 const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2500);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 await pg.evaluate(()=>{showRules()});await pg.waitForTimeout(600);await pg.click('[data-rul="guide"]');await pg.waitForTimeout(700);
 const o=await pg.evaluate(()=>({figs:document.querySelectorAll('#rulTab-guide .gvfig').length,secs:document.querySelectorAll('#rulTab-guide .gsec').length,gl:document.querySelectorAll('#rulTab-guide .gl').length}));
 await pg.screenshot({path:'shot_guide50.png'});

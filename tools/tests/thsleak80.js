@@ -4,7 +4,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1400,height:950}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});
 const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2500);const o={};
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});const o={};
 await pg.click('#mainMenu [data-mm="multi"]');await pg.waitForTimeout(300);await pg.click('#mainMenu [data-mm="hotseat"]');await pg.waitForTimeout(2500);
 const ins=await pg.$$('[data-hsn]');await ins[0].fill('Ann');await ins[1].fill('Bo');
 /* close the setup without starting: Hot seat mode is still on (CFG.hotseat) — then a non-table event starts (as a lesson / bout would) */

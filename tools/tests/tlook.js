@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1440,height:1000}});
 const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 await pg.evaluate(()=>{menuHide();if(CUR_MODAL)CUR_MODAL.done(null);
  const helms=['plumed','hoplo','secutor','phrygian','turban','kerchief','flowers','goldwreath','lion'];const hs=['bun','ponytail','topknot','wild','twinbraid'];const bs=['braided','chin','mutton','longbeard'];const mk=['freckles','mole','kohl','tears','cheek','bruise'];const gb=['lorica','cape','leopard','robe','pteruges'];const nk=['torque','bulla','chain','pearls','fang','collar'];const ear=['hoop','pearl','double'];const fc=['nosering','goldtooth','brow'];
  const list=[];for(const h of helms)list.push({helm:h});for(const x of hs)list.push({hs:x});for(const x of bs)list.push({bs:x});for(const x of mk)list.push({mark:x});for(const x of gb)list.push({garb:x});for(const x of nk)list.push({neck:x});for(const x of ear)list.push({ear:x});for(const x of fc)list.push({face:x});

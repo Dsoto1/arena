@@ -13,7 +13,7 @@ const {chromium}=require('playwright');(async()=>{const URL0='file://'+path.reso
 const T0=Date.now();const LG=(...a)=>{if(process.env.DBG)console.error('['+((Date.now()-T0)/1000|0)+'s]',...a)};const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const out={};
 const mk=async(locale,init,arg)=>{const ctx=await b.newContext({viewport:{width:1300,height:900},locale});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(init||(()=>{}),arg);await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});return ctx};
-const open=async(ctx,n)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);await p.waitForTimeout(2400);return p};
+const open=async(ctx,n)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});return p};
 const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,`v86_${WL}_${n}.png`)})};
 
 LG('── A');/* ── A · first run on a Spanish browser ── */

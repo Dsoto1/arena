@@ -1,7 +1,7 @@
 /* v0.79 main menu: the version badge shows what is new; C opens the words of power (menu only); Multiplayer = two buttons */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:1300,height:900}});await ctx.route(/fonts\./,r=>r.abort());
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-const errs=[];const p=await ctx.newPage();p.on('pageerror',e=>errs.push(e.message));await p.goto('file://'+require('path').resolve(process.argv[2]));await p.waitForTimeout(2500);
+const errs=[];const p=await ctx.newPage();p.on('pageerror',e=>errs.push(e.message));await p.goto('file://'+require('path').resolve(process.argv[2]));await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)});await p.waitForTimeout(300);
 await p.click('#mainMenu .mmver');await p.waitForTimeout(600);const notes=await p.evaluate(()=>({t:(document.querySelector('#mTitle')||{}).textContent||'',card:!!document.querySelector('#modal .mstone')}));
 await p.evaluate(()=>CUR_MODAL&&CUR_MODAL.done(null));await p.waitForTimeout(500);

@@ -2,7 +2,7 @@ const {chromium}=require('playwright');(async()=>{const b=await chromium.launch(
 const ctx=await b.newContext({viewport:{width:1400,height:950}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});
 const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());
 const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n').slice(1,3).join(' ')));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1500);await pg.mouse.click(5,5);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});await pg.mouse.click(5,5);
 await pg.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)});await pg.waitForTimeout(300);
 const o={};o.headless=await pg.evaluate(()=>HEADLESS);
 o.groove=await pg.evaluate(()=>{audUnlock();let n=0;for(const c of ['Roma','Capua','Manager','Finale']){const th=audTheme(c);for(let s=0;s<256;s+=3){audStep(th,AUD.ctx.currentTime+1+s*0.01,s,1);n++}}return {n,bpm:AUD_THEMES.Capua.bpm,roma:AUD_THEMES.Roma.bpm}});

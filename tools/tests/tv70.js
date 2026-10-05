@@ -4,7 +4,7 @@
    studio avatars sit lower; older saved fits are ignored */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:1000}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.removeItem('flavius_armfit_on')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
   const r={baked:ARM_FIT.galea.w===35&&ARM_FIT.thorax.w===107&& /* v0.81: round-3 fits (123-v81art) */ARM_FIT.provmanica.at===ARM_FIT.spaulder.at,data:ARM.provmanica.pt==='upper'&&ARM.legwrapsU.n==='Leather Tasset Armor' /* v0.74: the Manica sits on the upper arm, his names */,

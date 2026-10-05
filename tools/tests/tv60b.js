@@ -1,6 +1,6 @@
 /* v0.60 (2): the Tame card shows the Lyre face; tamed beasts carry no aggro and draw no instant counter (a wild one aggros the owner; a tamed one waits for its owner); a CF offering from a toppled pillar lands 3 tiles out and pays on pickup; truce offers name the class; truced tokens are marked */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1300,height:900}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1800);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.r=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();SPEED='fast';
   startEvent({ev:'democritus',loc:6,seats:[{cls:'venatore'},{cls:'hero',cpu:true},{cls:'soldier',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}});

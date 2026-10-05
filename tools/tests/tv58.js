@@ -1,6 +1,6 @@
 /* v0.58: Naumachia ships are 3x5 with the deck art; the hull bar shows HP and the pillar names the ship; D.Soto opens the prototype; weapon cards come from the scans */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:1000}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));const miss=[];pg.on('requestfailed',r=>{if(/assets\//.test(r.url()))miss.push(r.url().slice(-30))});
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1800);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};
 o.proto=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);const a=document.querySelector('.mmfoot [data-proto]');if(!a)return 'nolink';a.click();await new Promise(r=>setTimeout(r,600));const box=document.getElementById('protoBox');
   const imgs=[...box.querySelectorAll('img')];const ok=imgs.every(i=>i.complete&&i.naturalWidth>0);box.querySelector('[data-protox]').click();return {open:!!box,n:imgs.length,ok,closed:box.hidden,guide:playGuideHTML().includes('data-proto')}});

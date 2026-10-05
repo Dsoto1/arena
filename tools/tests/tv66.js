@@ -3,7 +3,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 {const pg=await b.newPage({viewport:{width:1300,height:900}});await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
  await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
- await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
+ await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
  await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();startTutorial();await new Promise(r=>setTimeout(r,2500));for(let i=0;i<6&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,200))}});
  await pg.waitForTimeout(800);
  o.tut=await pg.evaluate(async()=>{const r={on:tutLive(),tour:tutTourNow(),lock:document.body.classList.contains('tutlock')};
@@ -16,7 +16,7 @@ const {chromium}=require('playwright');(async()=>{const b=await chromium.launch(
  ok(o.tut.handsOn&&o.tut.actionsOK&&o.tut.rulesStillBlocked,'hands-on: play surfaces only');await pg.close()}
 {const ctx=await b.newContext({viewport:{width:844,height:390},isMobile:true,hasTouch:true});const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message));
  await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
- await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
+ await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
  o.ph=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();startEvent({ev:'democritus',loc:6,seats:[{cls:'venatore'},{cls:'hero',cpu:true},{cls:'soldier',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}});
    await new Promise(r=>setTimeout(r,1500));for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,120))}SPEED='snap';
    for(let i=0;i<60&&!(humanTurn()&&S.phase==='action');i++){await new Promise(r=>setTimeout(r,250));if(CUR_MODAL)CUR_MODAL.done(null)}await new Promise(r=>setTimeout(r,700));
@@ -34,7 +34,7 @@ const {chromium}=require('playwright');(async()=>{const b=await chromium.launch(
  ok(o.ph.side,'side drawer');ok(o.ph.tw>o.ph.tw0,'pinch zoom level');await ctx.close()}
 {const ctx=await b.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());
  await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
- await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
+ await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
  o.port=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();startEvent({ev:'democritus',loc:6,seats:[{cls:'venatore'},{cls:'hero',cpu:true}],opts:{spect:0}});await new Promise(r=>setTimeout(r,1500));for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,120))}await new Promise(r=>setTimeout(r,700));const el=document.getElementById('plRot');
    return {cls:document.body.className,hint:el?getComputedStyle(el).display:'none'}});
  ok(/phoneP2/.test(o.port.cls)&&o.port.hint==='none','portrait sheet replaces the hint (v0.73)');await ctx.close()}

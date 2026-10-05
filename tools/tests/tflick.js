@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1400,height:950}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});
 const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1500);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 // watch: log state every 50ms
 await pg.evaluate(()=>{window.__st=[];setInterval(()=>{const s=(!document.getElementById('mainMenu').hidden?'M':'-')+(!document.getElementById('modal').hidden?'W':'-')+(CUR_MODAL?'C':'-');const L=window.__st;if(!L.length||L.at(-1)[1]!==s)L.push([Date.now(),s])},50)});
 const modes=['play','manager','studio','annals','rules','settings','load'];const seq=[];let bad=[];

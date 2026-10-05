@@ -1,6 +1,6 @@
 /* v0.57: start marks fade, no beasts after the clean-up, results stay up on Save, starting difficulty, word-houses can be taken over, save cards, unread-only mail, courting on the shortlist, LOANED tags, wagers count, travel first, end-week buttons, the bye letter, one billing per fighter, recalling a loan */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:1000}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1800);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};
 o.arena=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();SPEED='fast';SPEEDMUL.fast=0;
   startEvent({ev:'democritus',loc:6,seats:[{cls:'slave',cpu:true},{cls:'hero',cpu:true},{cls:'soldier',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}});

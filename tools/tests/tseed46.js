@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1400,height:900}});
 const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1500);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const run=async(opts)=>{await pg.evaluate((o)=>{if(CUR_MODAL)CUR_MODAL.done(null);SPEED='fast';
   const seats=[{cls:'slave',cpu:true,diff:'normal',name:'A'},{cls:'soldier',cpu:true,diff:'normal',name:'B'},{cls:'royalty',cpu:true,diff:'hard',name:'C'},{cls:'hero',cpu:true,diff:'easy',name:'D'}];
   startEvent({ev:'democritus',loc:6,seats,opts:{...CFG.opts,spect:o.spect},seed:o.seed})},opts);

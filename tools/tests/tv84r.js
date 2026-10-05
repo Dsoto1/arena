@@ -3,7 +3,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const setup=async pg=>{await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
   await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-  await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
+  await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
   return pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await W8(800);
     newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_(),pm=me();for(const g of ownRoster(pm))g.contract=null;
     window.T84=[];for(let i=0;i<8;i++){const g=genGlad({ovr:45+i*3});g.contract={mgr:pm.id,wage:5,weeks:8,since:1};g.bench=false;g.inj=null;w.glads.push(g);T84.push(g)}

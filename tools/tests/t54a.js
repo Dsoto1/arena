@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1440,height:1000}});
 const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2500);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 await pg.evaluate(async()=>{menuHide();if(CUR_MODAL)CUR_MODAL.done(null);await loadCustoms();openStudio('classes')});await pg.waitForTimeout(1200);
 await pg.evaluate(()=>{document.querySelector('.stlist').scrollIntoView()});await pg.waitForTimeout(300);await pg.screenshot({path:'s54a.png'});
 await pg.evaluate(()=>{document.querySelector('[data-clsa="copybase"][data-v="soldier"]').click()});await pg.waitForTimeout(600);await pg.evaluate(()=>{$('#mBody').scrollTop=0});await pg.screenshot({path:'s54b.png'});

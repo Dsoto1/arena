@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1440,height:1000}});
 const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};
 o.conv=await pg.evaluate(async()=>{menuHide();if(CUR_MODAL)CUR_MODAL.done(null);const c=blankChar();delete c.classRef;c.id='oldc1';c.name='Oldus Maximus';c.R='trident';c.L=null;c.abil='coin';c.coin=5;await Store.put('customChars','oldc1',JSON.parse(JSON.stringify(c)));
   await loadCustoms();const cc=CUSTOM.chars.find(x=>x.id==='oldc1');const k=CUSTOM.classes.find(x=>'ccl:'+x.id===cc.classRef);return {ref:cc.classRef,kname:k&&k.name,kR:k&&k.R,kcoin:k&&k.coin,CL:CLASSES['cc_oldc1'].R,abil:CLASSES['cc_oldc1'].abil}});

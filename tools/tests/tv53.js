@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1440,height:950}});
 const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);const fails=[];const ok=(c,m)=>{if(!c)fails.push(m)};
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});const fails=[];const ok=(c,m)=>{if(!c)fails.push(m)};
 await pg.evaluate(()=>{menuHide();if(CUR_MODAL)CUR_MODAL.done(null);SETTINGS.briefing=false;POPPED.add('firstTurn');SPEED='fast';
   const seats=[{cls:'slave',cpu:true,diff:'easy',name:'A'},{cls:'soldier',cpu:false,name:'Me'},{cls:'amazonia',cpu:true,diff:'easy',name:'C'}].map(s=>({...s,pers:finalPers(s)}));
   startEvent({ev:'democritus',loc:6,seats,opts:{...CFG.opts,spect:'auto'}});});

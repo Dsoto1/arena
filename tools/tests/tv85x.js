@@ -2,7 +2,7 @@
    a road deal enters the chosen fighter in the bout that suits him; the Match Week banner's bout tracker (done slashed, next lit) */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:1000}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(String(e)));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const r=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await W8(800);
   newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const m=me();MGR.tab='recruit';MGR_REDRAW();await W8(500);

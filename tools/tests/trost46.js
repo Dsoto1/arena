@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1400,height:900}});const pg=await ctx.newPage();await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
 const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1500);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};
 o.setup=await pg.evaluate(()=>!!document.querySelector('[data-roster="cfg"]'));
 o.w=await pg.evaluate(async()=>{await loadCustoms();const c=blankChar();c.id='zz1';c.name='Rostered Guy';c.rolls=true;c.status='active';c.created='x';CUSTOM.chars.push(c);registerCustoms();

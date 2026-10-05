@@ -1,7 +1,7 @@
 /* v0.60: the Road from the gladiator's record (custom characters too; Walk stage on the walker's record), the Hall's Road box without the dropdown, and the Annals loop (the second trip from the main menu opens the Annals) */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1300,height:900}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2500);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 /* each step keeps its old pause, then polls for the screen it needs (the regression runs 3 tests at once: timers stretch) */
 const until=async(fn,ms=20000)=>{const t0=Date.now();let v;while(Date.now()-t0<ms){v=await fn().catch(()=>false);if(v)return v;await pg.waitForTimeout(200)}return v};

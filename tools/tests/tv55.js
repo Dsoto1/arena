@@ -1,6 +1,6 @@
 /* v0.55: ratings (Play Now + Manager growth), letters, the syndicate loan and spear, home games, grades, the rail fold, pay-to-join placement */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:1000}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1800);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};
 /* Play Now: every seat walks out rated; the printed abilities moved to the ratings */
 o.play=await pg.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();SPEED='fast';SPEEDMUL.fast=0;

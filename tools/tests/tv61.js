@@ -1,7 +1,7 @@
 /* v0.61: the screen manager — openers register intents that settle to 0; menu ⇄ Annals ⇄ gladiators ⇄ Manager never show the main menu or a bare arena between windows; closing out returns to the menu */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1300,height:900}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2500);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.wrapped=await pg.evaluate(()=>SCREEN_OPENERS.filter(n=>{try{return typeof eval(n)==='function'}catch(e){return false}}).length);ok(o.wrapped>=9,'openers');
 await pg.evaluate(async()=>{const g={id:'gscr1',name:'Screenus',cls:'hero',status:'active',roster:true,events:1,wins:1,carry:0,hp:{},portrait:{}};await Store.put('gladiators',g.id,g);await loadLudus();

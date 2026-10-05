@@ -11,7 +11,7 @@ await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'
 const errs=[];const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const o={};
 const mk=async(init,vw)=>{const ctx=await b.newContext({viewport:vw||{width:1300,height:900}});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(init||(()=>{}));await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-  const p=await ctx.newPage();p.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);await p.waitForTimeout(2300);return {ctx,p}};
+  const p=await ctx.newPage();p.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});return {ctx,p}};
 const W8=(p,ms)=>p.waitForTimeout(ms);
 const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,`u84u_${n}.png`)})};
 

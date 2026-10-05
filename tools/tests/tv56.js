@@ -1,6 +1,6 @@
 /* v0.56: the mailbox in Your ludus (offers, invitations, letters, reports; actions inside; past mail; unread count), Match Week's quiet line, ratings in the glossary, guides, to-do list and arena hints */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:1000}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1800);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};
 await pg.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();newWorld({type:'pre',key:MGR_PRE[0].key});const w=W_(),pm=me();
   const g=freeAgents()[0];w.payJoin={gid:g.id,pay:6,until:w.week+1};

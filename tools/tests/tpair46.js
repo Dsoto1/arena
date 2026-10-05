@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1400,height:900}});const pg=await ctx.newPage();await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
 const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1500);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};
 // 1: pairStart via cfg.pairs in a classic event (Androcles: slave + lion, handler)
 await pg.evaluate(()=>{const seats=[{cls:'slave',cpu:true,diff:'normal',name:'A'},{cls:'soldier',cpu:true,diff:'normal',name:'B'},{cls:'royalty',cpu:true,diff:'normal',name:'C'},{cls:'hero',cpu:true,diff:'normal',name:'D'}];

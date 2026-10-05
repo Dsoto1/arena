@@ -2,7 +2,7 @@
    Names pin/use, Spectators groups, Editors progress bar, Invitational steps, tournament 🎮 You toggle, one-line intros */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:1000}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 await pg.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openStudio('all')});await pg.waitForTimeout(1500);
 const r={};const q=(s,a)=>pg.evaluate(s,a);
 r.first=await q(()=>document.querySelectorAll('#studio .st77f').length>=10);

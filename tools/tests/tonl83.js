@@ -11,7 +11,7 @@ await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()
   window.P83=[];const iv=setInterval(()=>{if(typeof NET!=='undefined'&&NET.on){for(const t of ['loot.offer','loot.done','lobby.update'])NET.on(t,d=>P83.push({t,d}));clearInterval(iv)}},20)});
 const errs=[];const pg=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);return p};
 const A=await pg('A');await A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match)/.test(k))localStorage.removeItem(k)});await A.reload();
-const B=await pg('B'),C=await pg('C');await A.waitForTimeout(2500);
+const B=await pg('B'),C=await pg('C');for(const P of [A,B,C])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};
 const err=async(p,fn,arg)=>p.evaluate(async([fn,arg])=>{try{await (0,eval)('('+fn+')')(arg);return 'ok'}catch(e){return (e.code||'')+'|'+e.message}},[fn.toString(),arg]);
 const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});ONL.domus=(await NET.req('domus.create',{name:'Domus '+name})).domus;

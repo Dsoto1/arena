@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1440,height:1000}});
 const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 await pg.evaluate(async()=>{menuHide();if(CUR_MODAL)CUR_MODAL.done(null);await loadCustoms();openStudio('chars')});await pg.waitForTimeout(1200);
 await pg.evaluate(()=>{const s=document.querySelector('[data-f="classRef"]');s.value='ccp:murmillo';s.dispatchEvent(new Event('change',{bubbles:true}))});await pg.waitForTimeout(500);
 await pg.screenshot({path:'s53a.png',clip:{x:540,y:40,width:880,height:260}});

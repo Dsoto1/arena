@@ -4,7 +4,7 @@
    under the arena stays put across hovers and turn changes (1300x800, not full screen) */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1300,height:800}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const shots=process.env.SHOTS||'';
 /* 1. the market lists after the reset */
 o.mk=await pg.evaluate(()=>{const n=(lv,k)=>MARKET_A[lv].filter(x=>x===k).length;return {b1:n(1,'balteus1'),b2:n(1,'balteus'),sh:n(1,'steelhelm'),lg:n(1,'lgreaves'),ce:n(2,'centurion'),or:n(2,'ornate'),b1base:MARKET_A0[1].includes('balteus1')}});

@@ -4,7 +4,7 @@
    bribe, poach, never in the Superbus), recruiting plan/compare/signing card, 3D mini facings, phone portrait sheet */
 const {chromium,devices}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:950}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await W8(800);
   newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_();const r={};MGR.tab='ludus';MGR_REDRAW();await W8(800);
@@ -35,7 +35,7 @@ o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));co
   SETTINGS.tokenStyle='standee';SETTINGS.mini3d=true;applySettings();const q={r:5,c:5};miniFace(q,'hero');q.c=6;r.face=miniFace(q,'hero')===1;q.r=6;r.face2=miniFace(q,'hero')===7;
   SETTINGS.mini3d=false;SETTINGS.tokenStyle='figure';applySettings();return r});
 const ctx=await b.newContext({...devices['iPhone 13']});const ph=await ctx.newPage();await ph.route(/fonts\./,r=>r.abort());await ph.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await ph.goto('file://'+process.argv[2]);await ph.waitForTimeout(2200);
+await ph.goto('file://'+process.argv[2]);await ph.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 o.p=await ph.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
   startEvent({ev:'democritus',loc:6,seats:[{cls:'soldier',cpu:false},{cls:'hero',cpu:true},{cls:'royalty',cpu:true},{cls:'venatore',cpu:true}],opts:{}});
   await W8(2800);for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(200)}await W8(800);const r={pp:document.body.classList.contains('phoneP2'),tabs:!!document.querySelector('#ppTabs [data-pp="side"]')};

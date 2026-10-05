@@ -2,7 +2,7 @@
    bench, the empty bed offers the bench, the occupied bed shows the patient + Take out, the chosen plan repeats every week, beds full */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1300,height:900}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const SEED=+(process.env.SEED87||87);
 const o=await pg.evaluate(async(SEED)=>{let sd=SEED>>>0;Math.random=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296}; /* the world's own dice are seeded so a stray death or walk-out never decides the test */

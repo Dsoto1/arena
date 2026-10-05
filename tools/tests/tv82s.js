@@ -9,7 +9,7 @@ await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
 const errs=[];const P={};for(const n of ['A','B','C','D']){P[n]=await ctx.newPage();P[n].on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]))}
 const shots=process.env.SHOTS||'';
-await P.A.goto(URL0);await P.A.evaluate(()=>localStorage.removeItem('flavius_onlmock'));for(const n of ['B','C','D'])await P[n].goto(URL0);await P.A.waitForTimeout(2500);
+await P.A.goto(URL0);await P.A.evaluate(()=>localStorage.removeItem('flavius_onlmock'));for(const n of ['B','C','D'])await P[n].goto(URL0);for(const n of ['A','B','C','D'])await P[n].waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 /* A's gladiator wears a sculpted token with a marker shape (#12ab34) */
 const setup=async(p,name,cls,look)=>p.evaluate(async([name,cls,look])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls,look:look||undefined});
   /* every applied stands result: the stands and the arena right after it */

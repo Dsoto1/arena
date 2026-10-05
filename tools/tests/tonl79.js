@@ -5,7 +5,7 @@ const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.r
 const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.url.split('?')[0]));if(!f.startsWith(root)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end()}const ext=path.extname(f);r.writeHead(200,{'content-type':{'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'}[ext]||'application/octet-stream'});fs.createReadStream(f).pipe(r)});await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:1300,height:900}});await ctx.route(/fonts\./,r=>r.abort());
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
 const errs=[];const A=await ctx.newPage(),B=await ctx.newPage();for(const [n,p] of [['A',A],['B',B]])p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));
-await A.goto(URL0);await A.evaluate(()=>localStorage.removeItem('flavius_onlmock'));await B.goto(URL0);await A.waitForTimeout(2500);
+await A.goto(URL0);await A.evaluate(()=>localStorage.removeItem('flavius_onlmock'));await B.goto(URL0);for(const P of [A,B])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls})},[name,cls]);
 /* the mock world is one localStorage item: before another window writes, it must have the last write (a stale copy would overwrite it);
    waits poll for what they need (the regression runs 3 tests at once: timers stretch) */
@@ -35,7 +35,7 @@ const applied=async()=>{const ins=await A.evaluate(async()=>(await NET.req('matc
 await run(25000);
 const seen=await B.evaluate(()=>({tok:!!(S.players[0]._onlSc||(S.players[0]._onlTok&&S.players[0]._onlTok.helm==='crested')) /* v0.82: online tokens are sculpted, no helmets */,art:pArt(S.players[0]).includes('portrait'),bar:document.body.classList.contains('onlarena'),newHidden:getComputedStyle(document.getElementById('btnNew')).display==='none',leave:(document.getElementById('btnOnlLeave')||{}).textContent}));
 /* B reloads the page and rejoins from a snapshot */
-await B.reload();await B.waitForTimeout(2500);const back=await B.evaluate(async id=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();await onlRefresh();const L=ONL.lobbies.find(x=>x.id===id);await onlAttach(L,'seat');return true},L.id);
+await B.reload();await B.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});const back=await B.evaluate(async id=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();await onlRefresh();const L=ONL.lobbies.find(x=>x.id===id);await onlAttach(L,'seat');return true},L.id);
 await seenBy(B,()=>ONLM.on&&ONLM.me===1&&!ONLM.resyncing,null,40000);await B.waitForTimeout(1000);const rj=await B.evaluate(()=>({on:ONLM.on,me:ONLM.me,watch:!!(S&&S.onl&&S.onl.watch)}));
 const hB0=await B.evaluate(()=>Object.keys(ONLM.hlog).length);
 hB0s=await B.evaluate(()=>ONLM.next-1);

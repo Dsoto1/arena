@@ -11,7 +11,7 @@ await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
 const errs=[];const pg=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);return p};
 const A=await pg('A');await A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester)/.test(k))localStorage.removeItem(k)});await A.reload();
-const B=await pg('B'),C=await pg('C');await A.waitForTimeout(2500);
+const B=await pg('B'),C=await pg('C');for(const P of [A,B,C])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};
 const shot=async(p,n,w)=>{if(!SHOT)return;for(const vw of w===390?[390]:[1300,390]){await p.setViewportSize({width:vw,height:vw===390?844:900});await p.waitForTimeout(350);await p.screenshot({path:path.join(SHOT,`u83_${n}_${vw}.png`)})}await p.setViewportSize({width:1300,height:900});await p.waitForTimeout(200)};
 const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});ONL.domus=(await NET.req('domus.create',{name:name})).domus;
@@ -49,7 +49,7 @@ await world(A,w=>{w.market83=[{id:'U#0000000000001#a',item:'cassis#x.1',pc:{st:'
 await A.evaluate(()=>{ONL.tab='armory';ONL83U.mkt='board';onlRedraw()});await A.waitForTimeout(400);
 const mb=await A.evaluate(()=>({of:document.querySelectorAll('#onl .mb83-offs .mb83-of').length,w:document.querySelectorAll('#onl .mb83-half.w .mb83-row').length,a:document.querySelectorAll('#onl .mb83-half.a .mb83-row').length,above:(()=>{const o=document.querySelector('#onl .mb83-offs'),h=document.querySelector('#onl .mb83-halves');return !!o&&!!h&&o.getBoundingClientRect().bottom<=h.getBoundingClientRect().top+1})()}));
 ok(mb.of===8&&mb.w===3&&mb.a===3&&mb.above,'the market board: 8 offerings above weapons | armor by level ('+JSON.stringify(mb)+')');await shot(A,'market');
-await A.click('#onl .mb83-of[data-v="elix2"]');await A.waitForTimeout(300);await A.click('.ask76bg .btn.primary');await A.waitForTimeout(700);
+await A.click('#onl .mb83-of[data-v="elix2"]');await A.waitForTimeout(300);await A.click('.ask76bg .btn.primary');await A.waitForFunction(()=>(ONL.char.offers||[]).includes('elix2'),null,{timeout:10700}).catch(()=>{});
 ok(await A.evaluate(()=>(ONL.char.offers||[]).includes('elix2')),'an offering bought into the satchel');
 await A.click('#onl [data-onl83="mkt"][data-v="used"]');await A.waitForTimeout(900);
 const us=await A.evaluate(()=>({n:document.querySelectorAll('#onl .us83-it').length,brk:!!document.querySelector('#onl .us83-it.brk83 .brk83t'),hist:/Old Marcus/.test((document.querySelector('#onl .us83-it')||{}).textContent||'')}));

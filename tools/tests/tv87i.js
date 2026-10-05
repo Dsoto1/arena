@@ -16,7 +16,7 @@ const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,'i87_'+n
 const leak=p=>p.evaluate(()=>{const t=document.body.innerText;const bad=[];if(/amt87|ic87[cw]|wi87|sr87/.test(t))bad.push('text:'+t.slice(Math.max(0,t.search(/amt87|ic87|wi87|sr87/)-60),t.search(/amt87|ic87|wi87|sr87/)+40));
   for(const el of document.querySelectorAll('[title],[aria-label],[alt],[placeholder]'))for(const a of ['title','aria-label','alt','placeholder']){const v=el.getAttribute(a);if(v&&/amt87|ic87|wi87/.test(v))bad.push(a+':'+v.slice(0,80))}
   for(const el of document.querySelectorAll('option'))if(/amt87|ic87|wi87/.test(el.textContent))bad.push('option:'+el.textContent.slice(0,60));return bad});
-const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));await pg.goto(URL0);await pg.waitForTimeout(2200);
+const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));await pg.goto(URL0);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 
 /* ── 1 · a Play Now match ── */
 o.def=await pg.evaluate(()=>({coin:typeof coinAmt87,cf:typeof cfAmt87,wi:typeof wIco87,css:!!document.getElementById('icons87'),
@@ -65,7 +65,7 @@ for(const t of ['roster','recruit','board','infirm','practice','night','exch','n
 
 /* ── 3 · Online (mock): the Armory ── */
 const P=await ctx.newPage();P.on('pageerror',e=>errs.push('onl:'+e.message+' '+(e.stack||'').split('\n')[1]));await P.goto(URL0);
-await P.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester)/.test(k))localStorage.removeItem(k)});await P.reload();await P.waitForTimeout(2300);
+await P.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester)/.test(k))localStorage.removeItem(k)});await P.reload();await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 o.onl=await P.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name:'Icons'});ONL.domus=(await NET.req('domus.create',{name:'Icons'})).domus;
   ONL.char=await NET.req('char.create',{name:'Icons the Bold',cls:'hero'});onlineOpen('armory');await W8(1000);ONL.tab='armory';await onlRefresh();onlRedraw();await W8(600);
   const el=document.getElementById('onl');return {coin:el?el.querySelectorAll('.ic87c,.coinimg').length:0,txt:el?el.innerText.replace(/\s+/g,' ').slice(0,120):''}});

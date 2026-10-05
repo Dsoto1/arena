@@ -93,7 +93,8 @@ const BUILD = (() => {
   return { bounds, fn, fname, shape, names, all: new Set(fn.values()) };
 })();
 const fileAt = off => { for (const [a, b, f] of BUILD.bounds) if (off >= a && off < b) return f; return null; };
-const depsOf = t => [...GLOBAL, `tools/tests/${t}.js`];
+/* a t12 shard (t12a/b/c) is a 2-line stub that runs tools/tests/t12.js with its share of the events */
+const depsOf = t => [...GLOBAL, `tools/tests/${t}.js`, ...(/^t12[a-z]$/.test(t) ? ['tools/tests/t12.js'] : [])];
 const HASH = {}; const h = f => HASH[f] || (HASH[f] = hash(f));
 for (const t of ALL) depsOf(t).forEach(h); /* hash now, so edits made during the run don't leak into its records */
 
@@ -119,28 +120,47 @@ function plan(full) {
   return { P, idle: idle.filter(t => !rot.includes(t)) };
 }
 
-/* per-test kill limit: 400 s, or 1.6x the test's recorded time + 60 s when it is slower; t12 at least 900 s (~430-510 s alone, more under load) */
-function limitFor(t) { const k = (st.tests[t] || {}).time || 0; return Math.max(t === 't12' ? 900 : 400, Math.round(k * 1.6 + 60)); }
+/* per-test kill limit: 400 s, or 1.6x the test's recorded time + 60 s when it is slower. The whole t12 (asked by name only;
+   the suite runs its shards t12a/b/c, ~1/3 each) at least 1500 s — it needs ~900 s alone, more under load */
+function limitFor(t) { const k = (st.tests[t] || {}).time || 0; return Math.max(t === 't12' ? 1500 : 400, Math.round(k * 1.6 + 60)); }
 
-/* run a list of tests, J at a time, slowest first; coverage on unless cov === false */
-function runAll(list, cov = true) {
+/* SHARED BROWSERS: one Chromium per worker slot (chromium.launchServer), handed to each test via REGWS — regcov.js turns the
+   test's chromium.launch() into a connect, so a test no longer pays for its own browser start. A slot's browser is replaced
+   when it died or after SLOT_MAX tests (keeps memory flat). Re-runs of failures ("alone") launch their own browser, so a
+   test that only fails in a shared browser shows up as FLAKY, never hidden. REGSHARE=0 turns sharing off. */
+const SLOT_MAX = 25, SHARE = process.env.REGSHARE !== '0';
+const slots = [];
+async function slotWS(i) {
+  if (!SHARE) return null;
+  const s = slots[i] || (slots[i] = { srv: null, n: 0 });
+  const dead = s.srv && s.srv.process().exitCode !== null;
+  if (s.srv && (dead || s.n >= SLOT_MAX)) { const old = s.srv; s.srv = null; try { await old.close(); } catch (e) {} }
+  if (!s.srv) { try { s.srv = await require('playwright').chromium.launchServer(); s.n = 0; } catch (e) { return null; } }
+  s.n++; return s.srv.wsEndpoint();
+}
+async function slotsClose() { for (const s of slots) if (s && s.srv) { try { await s.srv.close(); } catch (e) {} s.srv = null; } }
+
+/* run a list of tests, J at a time, slowest first; coverage on unless cov === false; shared slot browsers unless share === false */
+function runAll(list, cov = true, share = true) {
   fs.mkdirSync(RD, { recursive: true });
   const q = [...list].sort((a, b) => ((st.tests[b] || {}).time || 9999) - ((st.tests[a] || {}).time || 9999));
-  const res = {};
+  const res = {}, free = Array.from({ length: J }, (_, i) => i);
   return new Promise(done => {
     let live = 0;
-    const next = () => {
+    const next = async () => {
       if (!q.length && !live) return done(res);
       while (live < J && q.length) {
-        const t = q.shift(); live++;
+        const t = q.shift(), slot = free.shift(); live++;
+        const ws = share ? await slotWS(slot) : null;
         const t0 = Date.now(), cf = path.join(RD, t + '.cov.json'); try { fs.unlinkSync(cf); } catch (e) {}
-        const env = { ...process.env, ...(cov ? { REGCOV: cf } : {}) };
+        const env = { ...process.env, ...(cov ? { REGCOV: cf } : {}), ...(ws ? { REGWS: ws } : {}) };
+        if (!ws) delete env.REGWS;
         const pr = spawn('node', ['-r', path.join(__dirname, 'regcov.js'), path.join(TD, t + '.js'), PAGE], { cwd: TD, env });
         let out = '';
         pr.stdout.on('data', d => out += d); pr.stderr.on('data', d => out += d);
         const kill = setTimeout(() => pr.kill('SIGKILL'), limitFor(t) * 1000);
         pr.on('close', code => {
-          clearTimeout(kill); live--;
+          clearTimeout(kill); live--; free.push(slot);
           const errs = /ERRS \[\s*\S/.test(out) && !/ERRS \[\]/.test(out);
           res[t] = { out, code: code == null ? 124 : code, pass: code === 0 && !errs, time: Math.round((Date.now() - t0) / 1000), cov: readJ(cf, null) };
           next();
@@ -179,7 +199,7 @@ function record(t, r, run) {
   const failed = Object.keys(res).filter(t => !res[t].pass), report = [];
   const flakyNow = [], real = [];
   if (failed.length) {
-    const again = await runAll(failed, false);
+    const again = await runAll(failed, false, false); /* alone = own browser */
     for (const t of failed) {
       if (again[t].pass) { flakyNow.push(t); (st.tests[t] = st.tests[t] || { streak: 0, runs: 0, fails: 0, flaky: [] }).flaky = [...(st.tests[t].flaky || []), run].slice(-5); }
       else real.push(t);
@@ -209,5 +229,6 @@ function record(t, r, run) {
   { const used = new Set(Object.values(st.tests).map(x => x.sh)); for (const k of Object.keys(st.shapeSets || {})) if (!used.has(k)) delete st.shapeSets[k]; }
   fs.writeFileSync(STATE, JSON.stringify(st, null, 1)); fs.writeFileSync(MAP, JSON.stringify(MAPJ));
   console.log(report.join('\n')); console.log(txt.split('\n').slice(-3).join('\n'));
+  await slotsClose();
   process.exit(real.length || Object.values(extra).some(r => !r.pass) ? 1 : 0);
 })();

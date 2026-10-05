@@ -3,7 +3,7 @@
    accessibility (reduce motion, colour-blind palette + token letters, text size), the CPU caption names the mind */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:950}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.m=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await new Promise(r=>setTimeout(r,700));newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;
   const w=W_(),m=me();const ros=rosterOf(m);const g=ros[0],h=ros[1];g.inj={until:w.week+3,label:'test',pen:2};const until0=g.inj.until;w.beds76=[g.id]; /* v0.76: a 3-week wound is serious — in a bed it mends at the normal pace */

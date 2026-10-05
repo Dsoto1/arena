@@ -1,7 +1,7 @@
 /* v0.76 follow-up: deleting a custom creation always asks first (DEL76) — cancel keeps it, confirm deletes it, incl. the old two-click buttons */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:950}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const r=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();const r={};
   const k=blankClass();k.id='kdel1';k.name='Deletable Class';await Store.put('customClasses','kdel1',k);
   const c=blankChar?blankChar():{};c.id='cdel1';c.name='Deletable Hero';await Store.put('customChars','cdel1',c);await loadCustoms();if(!(CUSTOM.classes||[]).some(x=>x.id==='kdel1'))(CUSTOM.classes=CUSTOM.classes||[]).push(k);

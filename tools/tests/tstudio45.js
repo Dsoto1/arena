@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1500,height:1000}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});const pg=await ctx.newPage();await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
 const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1500);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 await pg.click('[data-mm="studio"]');await pg.waitForTimeout(1800);
 await pg.click('[data-st="tab"][data-v="chars"]');await pg.waitForTimeout(600);
 const o={};o.chars=await pg.evaluate(()=>({top:!!document.querySelector('.chartop [data-st="new"]'),rand:!!document.querySelector('.chartop [data-st="random"]'),saveplay:!!document.querySelector('[data-st="saveplay"]'),budget:!!document.querySelector('.budgetcard'),flags:document.querySelectorAll('.bgflag').length,listNew:document.querySelectorAll('[data-st="new"]').length}));

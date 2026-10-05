@@ -3,7 +3,7 @@
    "Mandata" spelling, the round marker in the status bar, the stands line pinned in the arena log, live wager bubbles */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:950}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
   const r={key2:RTOK_NAMES.includes('key2')&&rtokHTML('key2',30).includes('rtok'),coin:ICO.coin.includes('coin.webp'),spell:!(()=>{const c=document.body.cloneNode(true);c.querySelectorAll('script').forEach(x=>x.remove());return c.innerHTML})().split('Mandati Flavi (Mandate from Flavius)').join('').includes('Mandati Flavi')&&itemInfo({kind:'mf',idx:0}).n.startsWith('Mandata Flavi')};

@@ -4,7 +4,7 @@
    a rival's denunciation, the Studio Faith field + chip. Screenshots go to $SHOTS when set. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:1000}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const SH=process.env.SHOTS;const shot=async(n,el)=>{if(!SH)return;try{if(el){const h=await pg.$(el);if(h){await h.screenshot({path:SH+'/'+n+'.png'});return}}await pg.screenshot({path:SH+'/'+n+'.png'})}catch(e){}};
 const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(800);

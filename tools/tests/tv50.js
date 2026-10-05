@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1440,height:950}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});
 const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2500);const o={};
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});const o={};
 o.menuTips=await pg.evaluate(()=>[...document.querySelectorAll('#mainMenu .mmbtns [data-mm]')].slice(0,4).map(b=>b.textContent.trim()+'|'+(b.dataset.tip||'').slice(0,20)));
 await pg.hover('#mainMenu [data-mm="play"]');await pg.waitForTimeout(600);o.menuTT=await pg.evaluate(()=>(document.querySelector('.tt')||{}).textContent||null);
 await pg.mouse.move(5,5);await pg.waitForTimeout(500);

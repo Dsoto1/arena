@@ -7,7 +7,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:1400,height:900}});await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});try{localStorage.setItem('flavius_firstrun','shown')}catch(e){}});
 const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2500);const o={};const W=ms=>pg.waitForTimeout(ms);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});const o={};const W=ms=>pg.waitForTimeout(ms);
 const owner=()=>pg.evaluate(async()=>{const cols=['hall','infamis','gladiators','arena','hallTrophies','missios'];const out={};for(const c of cols){const L=await Store.list(c).catch(()=>[]);out[c]=JSON.stringify(L).length+':'+L.length}
   try{const c=calNow();out.cal=c.season+'/'+c.week}catch(e){}return out});
 o.own0=await owner();o.hints0=await pg.evaluate(()=>HINTS);

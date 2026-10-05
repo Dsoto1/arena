@@ -14,6 +14,6 @@ res[ev+'_btnVisible']=await pg.evaluate(()=>!document.querySelector('#btnSimEnd'
 await pg.evaluate(()=>{simToEnd(true)});
 for(let i=0;i<120;i++){const o=await pg.evaluate(()=>S.over);if(o)break;await pg.evaluate(()=>{const m=document.querySelector('#modal');if(m&&!m.hidden){const b=document.querySelector('#mBtns button');if(b)b.click()}});await pg.waitForTimeout(500)}
 res[ev+'_over']=await pg.evaluate(()=>({o:S.over,ph:S.phase,b:S.busy,rot:S.rotation,cur:cur().name,cpu:S.players.map(p=>p.cpu),alive:S.players.map(p=>p.alive),modal:!document.querySelector('#modal').hidden,mt:document.querySelector('#modal h2,#modal .mtitle')?.textContent}));
-await pg.reload();await pg.waitForTimeout(1500);
+await pg.reload();await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 }
 console.log(JSON.stringify(res));console.log(errs.slice(0,5));await b.close();})();

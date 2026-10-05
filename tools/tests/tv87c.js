@@ -2,7 +2,7 @@
    weapons and armor; hovering a class card shows the printed figure side and the rules side together. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1300,height:900}});await pg.route(/fonts\.g/,r=>r.abort());
 const errs=[];pg.on('pageerror',e=>errs.push(e.message));await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2400);const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const r=await pg.evaluate(()=>['soldier','royalty','hero','slave','veteranus','amazonia','venatore','damnatio'].map(k=>{const d=document.createElement('div');d.innerHTML=classBack87(k,240);const c=d.querySelector('.cb87');
   return {k,ok:!!c&&c.querySelector('.ttl b').textContent===CLASSES[k].name&&!!c.querySelector('img.bg[src*="clsback87"]')&&c.querySelectorAll('.body li').length>=2&&/\S/.test(c.querySelector('.ab').textContent)}}));
 ok(r.every(x=>x.ok),'every class rules side '+JSON.stringify(r.filter(x=>!x.ok)));

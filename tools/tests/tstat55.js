@@ -1,6 +1,6 @@
 /* v0.55 Studio: rating sliders share a 375 pool; a saved character walks out with its ratings; classes pick allies, not stat abilities */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:1000}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2500);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 await pg.evaluate(async()=>{menuHide();if(CUR_MODAL)CUR_MODAL.done(null);await loadCustoms();openStudio('chars')});await pg.waitForTimeout(1200);
 const o={};
 o.sliders=await pg.evaluate(()=>document.querySelectorAll('[data-stat]').length);

@@ -14,7 +14,7 @@ const run=async(mode)=>{const vp=mode==='p'?{width:390,height:844}:{width:844,he
   const ctx=await b.newContext({viewport:vp,screen:vp,isMobile:true,hasTouch:true,deviceScaleFactor:2});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
   const P=await ctx.newPage();P.on('pageerror',e=>errs.push(mode+':'+e.message+' '+(e.stack||'').split('\n')[1]));
-  await P.goto(URL0);await P.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester)/.test(k))localStorage.removeItem(k)});await P.reload();await P.waitForTimeout(2500);
+  await P.goto(URL0);await P.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester)/.test(k))localStorage.removeItem(k)});await P.reload();await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
   const W=ms=>P.waitForTimeout(ms);const shot=async n=>{if(SHOT)await P.screenshot({path:path.join(SHOT,`p88_${mode}_${n}.png`)})};
   /* the page and the window body never scroll sideways; the named buttons are on screen-able and >= 36 px */
   const check=async(name,sels=[])=>{const r=await P.evaluate(sels=>{const de=document.documentElement,mb=document.getElementById('mBody'),mo=document.getElementById('modal');
@@ -97,7 +97,7 @@ await run('p');await run('l');
 /* the Light board on a sharp 390-px phone (DPR 3), Auto */
 {const vp={width:390,height:844};const ctx=await b.newContext({viewport:vp,screen:vp,isMobile:true,hasTouch:true,deviceScaleFactor:3});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});const P=await ctx.newPage();P.on('pageerror',e=>errs.push('lite:'+e.message));
-  await P.goto(URL0);await P.waitForTimeout(2200);
+  await P.goto(URL0);await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
   const L=await P.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);try{menuHide()}catch(e){}SETTINGS.lite84='auto';
     startEvent({ev:'democritus',loc:6,seats:[{cls:'hero',cpu:false},{cls:'soldier',cpu:true},{cls:'slave',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}});
     for(let i=0;i<30;i++){if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await new Promise(r=>setTimeout(r,100))}SPEED='pause';return {lite:lite84On(),dpr:devicePixelRatio}});
@@ -105,7 +105,7 @@ await run('p');await run('l');
 /* desktop keeps its look: windows are not full-screen, no lite board at DPR 1 */
 {const ctx=await b.newContext({viewport:{width:1400,height:900}});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});const P=await ctx.newPage();P.on('pageerror',e=>errs.push('desk:'+e.message));
-  await P.goto(URL0);await P.waitForTimeout(2200);
+  await P.goto(URL0);await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
   const D=await P.evaluate(async()=>{openSettings('general');await new Promise(r=>setTimeout(r,600));const r=document.querySelector('#modal .mbox').getBoundingClientRect();const c=document.querySelector('#mBody input[type=checkbox]');
     return {w:Math.round(r.width),cb:c?Math.round(c.getBoundingClientRect().width):0,lite:lite84On()}});
   ok(D.w<1400&&D.cb<20&&!D.lite,'desktop unchanged '+JSON.stringify(D));await ctx.close()}

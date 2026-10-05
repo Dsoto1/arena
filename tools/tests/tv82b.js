@@ -5,7 +5,7 @@
    SHOTS=dir saves beast_*.png screenshots. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1300,height:860}});await pg.route(/fonts\.g/,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
+await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const shots=process.env.SHOTS||'';const shot=async(n,sel)=>{if(!shots)return;try{if(sel){const e=await pg.$(sel);if(e){await e.screenshot({path:shots+'/'+n});return}}await pg.screenshot({path:shots+'/'+n})}catch(e){}};
 /* 1. Tholo's card: his front, the info side with his numbers */
 o.th=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);try{menuHide()}catch(e){}nc82Open('tholo','Tholo','Tholo');await new Promise(r=>setTimeout(r,200));const p=document.getElementById('nc82pop');
