@@ -114,9 +114,7 @@ document.addEventListener('click',e=>{const pop=document.getElementById('nc82pop
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const p=document.getElementById('nc82pop');if(p){p.remove();e.stopPropagation()}}},true);
 function nc82Bestiary(nmx){if(nmx==='Tholo')return ['tholo',_T('Tholo')];
   for(const [k,t] of (typeof BEAST_ROLES!=='undefined'?BEAST_ROLES:[]))for(const c of Object.keys(CITY_BEASTS))if(CITY_BEASTS[c][k]===nmx)return [t,k];return null}
-{const base=npcTrackerHTML;npcTrackerHTML=function(){let h=base.apply(this,arguments);try{if(!S)return h;let i=0;const N=S.npcs.length;
-    const spawn=(isChariot()||isNaum())?[]:SPAWNABLE.filter(([nmx])=>!S.npcs.some(n=>n.name===nmx));
-    h=h.replace(/<div class="npcrow/g,m=>{const k=i++;if(k<N)return `<div data-nc82="${S.npcs[k].id}" class="npcrow`;const s=spawn[k-N];return s?`<div data-nc82k="${s[1]}|${s[0]}" class="npcrow`:m})}catch(e){console.error(e)}return h}}
+/* v0.87: npcTrackerHTML (11-extra) now writes data-nc82 / data-nc82k on each row itself — numbering rows here went wrong once a slain beast moved to the bottom. */
 {const base=onTile;onTile=function(r,c){try{if(S&&!S.over&&typeof HL!=='undefined'&&!HL.get(r*N+c)){const n=(S.npcs||[]).find(x=>x.alive&&x.r===r&&x.c===c);if(n)nc82Open(n.t,n.key,n.name)}}catch(e){}return base.apply(this,arguments)}}
 
 /* ---------------- C · custom beasts: unique, 1 or 3 states, their card, their spawn card ---------------- */
