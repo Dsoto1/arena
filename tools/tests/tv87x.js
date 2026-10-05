@@ -5,7 +5,8 @@
    follow the fighter, unused kits refunded at the week's end · 12 stale letters dropped, "To the ward" opens the Infirmary · 13 the
    Acta of the day replaces the Forum box (data from ONLC.dayFromMatch / dayFell) · 14 🧠 wears its mind's hue on the Play Now seat
    chips (also after a tap) · 15 no mute button on the main menu · 16 a fallen fighter watches, never throws (offline seat/wagers/upkeep;
-   online ONLC.standsHolders + sitGroup) · 17 results open on the players, wagers in their own tab · 18 the event pop-up loses This week + Season schedule · 19 the hints in one Settings box. SHOT=<dir> saves v87x_*.png. */
+   online ONLC.standsHolders + sitGroup) · 17 results open on the players, wagers in their own tab · 18 the event pop-up loses This week + Season schedule · 19 the hints in one Settings box · 20 hovering armor: no red hit flash, a
+   calm gold mark after a ~120 ms rest (offline modal + online Armory). SHOT=<dir> saves v87x_*.png. */
 const http=require('http'),fs=require('fs'),path=require('path');const SHOT=process.env.SHOT||'';
 const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.resolve(process.argv[2])),page=path.basename(process.argv[2]);
 const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.url.split('?')[0]));if(!f.startsWith(root)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end()}const ext=path.extname(f);r.writeHead(200,{'content-type':{'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'}[ext]||'application/octet-stream'});fs.createReadStream(f).pipe(r)});
@@ -27,8 +28,9 @@ o.hb=await P.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));con
   const subs=['hintDock','rulePops','turnHints','ruleHints','turnRecap'].map(k=>document.querySelector(`#setBody input[data-set="${k}"]`));
   const r={box:!!box,master:!!(box&&m&&box.contains(m)),subs:subs.filter(i=>i&&box&&box.contains(i)).length,sr:subs[0]?subs[0].closest('.hint87s'):null};
   r.offPE=r.sr?getComputedStyle(subs[0].closest('label')).pointerEvents:'';r.offCls=r.sr?r.sr.classList.contains('hintsoff'):null;
-  m.click();await W(300);const sr2=document.querySelector('#setBody .hint87s');r.onCls=sr2?sr2.classList.contains('hintsoff'):null;r.onPE=sr2?getComputedStyle(sr2.querySelector('label')).pointerEvents:'';r.on=!!SETTINGS.hints;
-  document.querySelector('#setBody input[data-set="hints"]').click();await W(300);r.sr=!!r.sr;if(CUR_MODAL)CUR_MODAL.done(null);await W(200);return r});
+  m.click();await W(300);const sr2=document.querySelector('#setBody .hint87s');r.onCls=sr2?sr2.classList.contains('hintsoff'):null;r.onPE=sr2?getComputedStyle(sr2.querySelector('label')).pointerEvents:'';r.on=!!SETTINGS.hints;const hb=document.getElementById('hint87');if(hb)hb.scrollIntoView({block:'center'});await W(150);
+  r.sr=!!r.sr;return r});
+await shot('settings');await P.evaluate(async()=>{document.querySelector('#setBody input[data-set="hints"]').click();await new Promise(r=>setTimeout(r,300));if(CUR_MODAL)CUR_MODAL.done(null)});await W8(200);
 ok(o.hb.box&&o.hb.master&&o.hb.subs===5,'19 the hints master + its five switches share one box '+JSON.stringify(o.hb));
 ok(o.hb.offCls===true&&o.hb.offPE==='none'&&o.hb.on&&o.hb.onCls===false&&o.hb.onPE!=='none','19 the five are greyed + not clickable while the master is off '+JSON.stringify(o.hb));
 
@@ -51,6 +53,20 @@ o.tBr=await tryOn('bracers');await shot('tryon_bracers');o.tGa=await tryOn('gale
 ok(o.tBr&&o.tBr.v===2&&/arm81_bracers/.test(o.tBr.src)&&!o.tBr.q&&o.tBr.marks==='larm,rarm'&&!o.tBr.hit,'5 bracers: two real-art pieces in a V, both arms marked '+JSON.stringify(o.tBr));
 ok(o.tGa&&o.tGa.marks==='larm,rarm'&&o.tGa.either&&o.tGa.v===0&&o.tGa.art===1&&o.tGa.in,'5 Lorica Segmentata: both arms marked + "either arm" '+JSON.stringify(o.tGa));
 ok(o.tHe&&o.tHe.marks==='head'&&!o.tHe.either,'5 a helm marks the head only '+JSON.stringify(o.tHe));
+/* ── 20 · a fast sweep across the tiles: no card, no red hit flash; a rested hover shows the calm gold mark ── */
+const sweep=async(sel,n,nm)=>{await P.mouse.move(5,5);await W8(250);await P.evaluate(()=>{const t=document.getElementById('tryOn');if(t)t.hidden=true;window._red87=0;window._hit87=0;
+    if(!window._mo87){window._mo87=new MutationObserver(()=>{const t=document.getElementById('tryOn');if(!t||t.hidden)return;if(t.querySelector('.avhit'))window._hit87++;if(t.querySelector('[fill="#ff4a3a"]'))window._red87++});window._mo87.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']})}});
+  const boxes=await P.$$eval(sel,els=>els.slice(0,8).map(e=>{e.scrollIntoView({block:'nearest'});const r=e.getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2]}));
+  for(let k=0;k<n;k++)for(const [x,y] of boxes){await P.mouse.move(x,y,{steps:2});await W8(25)}
+  const mid=await P.evaluate(()=>{const t=document.getElementById('tryOn');return {shown:!!(t&&!t.hidden),hit:window._hit87,red:window._red87,
+    av:Object.entries(AVHIT).filter(([k,v])=>/^tryon/.test(k)&&v.t&&performance.now()-v.t<1500).length}});
+  await P.mouse.move(boxes[0][0],boxes[0][1]);await W8(80);const early=await P.evaluate(()=>{const t=document.getElementById('tryOn');return !!(t&&!t.hidden)});await W8(300);
+  const rest=await P.evaluate(()=>{const t=document.getElementById('tryOn');if(!t||t.hidden)return null;const m=[...t.querySelectorAll('path.to87')];const cs=m[0]?getComputedStyle(m[0]):null;
+    return {marks:m.length,stroke:cs?cs.stroke:'',fill:cs?cs.fill:'',hit:t.querySelectorAll('.avhit').length,red:t.querySelectorAll('[fill="#ff4a3a"]').length+(m.some(x=>/255, 74, 58/.test(getComputedStyle(x).fill))?1:0)}});
+  if(nm)await shot(nm);await P.mouse.move(5,5);await W8(200);const gone=await P.evaluate(()=>{const t=document.getElementById('tryOn');return !t||t.hidden});return {mid,early,rest,gone,n:boxes.length}};
+o.sw=await sweep('#modal [data-card^="a:"]',3,'tryon_rest');
+ok(o.sw.n>=3&&!o.sw.mid.shown&&!o.sw.mid.hit&&!o.sw.mid.red&&!o.sw.mid.av,'20 a fast sweep across the tiles shows no card and no red hit flash '+JSON.stringify(o.sw));
+ok(!o.sw.early&&o.sw.rest&&o.sw.rest.marks>=1&&/255, 217, 119/.test(o.sw.rest.stroke)&&!o.sw.rest.hit&&!o.sw.rest.red&&o.sw.gone,'20 a rested hover (~120 ms) shows the gold mark; leaving hides it '+JSON.stringify(o.sw));
 /* the engine lets you pick either arm for a single arm piece (and mirrors it on the left) */
 o.side=await P.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W(200);const p=S.players.find(x=>!x.cpu);for(const l of ['rarm','larm']){p.pieces[l]=[];p.ap[l]=0}
   const pr=gainArmorPiece(p,'galerus');await W(400);const opts=[...document.querySelectorAll('#modal button')].map(b=>b.textContent);if(CUR_MODAL)CUR_MODAL.done('larm');await pr;
@@ -173,6 +189,9 @@ ok(/Hostus/.test(o.land.mock)&&/44 CF/.test(o.land.mock),'13 the mock day reache
 /* 3 · the market without the board art */
 o.mk=await P.evaluate(async()=>{ONL.tab='armory';onlRedraw();await new Promise(r=>setTimeout(r,500));const m=document.querySelector('#onl .mb83');return m?getComputedStyle(m).backgroundImage:'none'});
 ok(!/market_board/.test(o.mk)&&o.mk!=='none','3 no market-board art behind the online market '+o.mk.slice(0,80));await shot('armory');
+o.sw2=await sweep('#onl [data-card^="a:"]',2,'tryon_online');
+ok(o.sw2.n>=3&&!o.sw2.mid.shown&&!o.sw2.mid.hit&&!o.sw2.mid.red,'20 online Armory: a fast sweep — no card, no red '+JSON.stringify(o.sw2));
+ok(o.sw2.rest&&o.sw2.rest.marks>=1&&/255, 217, 119/.test(o.sw2.rest.stroke)&&!o.sw2.rest.red&&o.sw2.gone,'20 online Armory: the rested hover tries it on the gladiator, in gold '+JSON.stringify(o.sw2));
 /* 4 · the Storeroom: no buying, the shelf takes Move → the shelf */
 o.sr=await P.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));const w=mockLoad();w.chars[ONL.char.id].gear=['gladius','galea'];mockSave(w);await NET.req('hello',{all:1});
   ONL.tab='char';await onlRefresh();onlRedraw();await W(1500);onlRedraw();await W(400);const r={buy:!!document.querySelector('.buy83,#buy83sel,[data-onl83="dbuy"]'),shelf:!!document.querySelector('#sh87'),chip:!!document.querySelector('.sr82-chip[data-v="house"]')};
