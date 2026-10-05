@@ -765,6 +765,13 @@ share copy — the site download play/flavius-rule-arena.zip.)
   no game download). From now on every game zip carries play/assets/ in full (s3 sync uploads only new/changed files); keep it ≤30 MB
   to send (else split: art zip + game zip).
 
+- **v0.87** four more languages (it, pt-BR, fr, de; each its own file, loaded only when picked), plural forms, class card rules side on his
+  template, the lanista's hours gone + perk tree + standing orders + Fit for the best few + win rewards, infirmary beds + one chance at
+  home, his 20 v0.86 notes (Acta of the day, fallen fighters only watch, wagers tab, gold try-on marks…), coin/wheat + weapon icons everywhere,
+  beasts in the Field tab, smoother Safari music, steadier tests. (Published as artifact Version 101; server zip flavius-server-13, no protocol
+  bump — deploy it FIRST; site zip flavius-site-update-v0.87 = page + ALL assets incl. lang_*.js; flavius-download-v0.87 = page + the standalone
+  play/flavius-rule-arena.zip.) Release run: 179/180, tv84 failed (random free agents made the ★ pick win) → test fixed, 5/5.
+
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
   8 printed classes move to the live template (104-cards74 classCard74) so rule changes update their cards. Art NOT drawn yet (optional,
