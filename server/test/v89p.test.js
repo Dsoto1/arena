@@ -31,7 +31,7 @@ async function routes(){
   const rejects=async(p,code,re)=>{let e=null;try{await p}catch(x){e=x}assert.ok(e,'expected a refusal: '+(code||re));if(code)assert.strictEqual(e.code,code,e.message);if(re)assert.match(e.message,re);return e};
   const connect=async name=>{const conn='w'+(++nc);live.add(conn);const r=await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER)}});assert.strictEqual(r.statusCode,200);return conn};
   async function client(name,o={}){const cl={name,acct:'dev-'+name};cl.conn=await connect(name);cl.req=(t,d)=>ask(cl.conn,t,d);
-    await cl.req('auth.signin',{name:'Real '+name+' Person'});if(o.house!==false){cl.domus=(await cl.req('domus.create',{name:'Domus '+name})).domus;cl.ch=await cl.req('char.create',{name:name[0].toUpperCase()+name.slice(1)+' Gladius',cls:'hero'})}return cl}
+    await cl.req('auth.signin',{name:'Real '+name+' Person',google:1});if(o.house!==false){cl.domus=(await cl.req('domus.create',{name:'Domus '+name})).domus;cl.ch=await cl.req('char.create',{name:name[0].toUpperCase()+name.slice(1)+' Gladius',cls:'hero'})}return cl}
   const ann=await client('ann'),bob=await client('bob'),carl=await client('carl'),dan=await client('dan');
 
   /* the first hello: no lanista name yet, an FID made once, the sign-in name gone */
@@ -92,6 +92,9 @@ async function routes(){
   assert.ok(!(await db.get('DNAME#domus dan','DNAME')));assert.ok(!(await db.get('FID#'+fidD.slice(4),'FID')));
   await rejects(bob.req('fid.find',{fid:fidD}),'no_fid');H=await bob.req('hello',{all:1});assert.ok(!H.follows.some(f=>f.id===dan.domus.id),'a deleted house drops off the follow list');
   const eve=await client('eve');await eve.req('lanista.name',{name:'Danus Felix'});
+  /* the dev sign-in box doubles as the lanista name when it is free */
+  const fay={conn:await connect('fay')};fay.req=(t,d)=>ask(fay.conn,t,d);const fa=await fay.req('auth.signin',{name:'Faustus Rex'});assert.strictEqual(fa.lname,'Faustus Rex');assert.ok(!(await fay.req('hello',{all:1})).needLname);
+  const gil={conn:await connect('gil')};gil.req=(t,d)=>ask(gil.conn,t,d);await gil.req('auth.signin',{name:'faustus rex'});assert.ok((await gil.req('hello',{all:1})).needLname,'taken → the step');
   /* a busy lanista cannot delete */
   await rejects(ann.req('acct.delete',{confirm:'Domus ann'}),'in_match');
   console.log('server v0.89 L (name step + unique + rename clock + formerly + release, sign-in name gone, roster names, privacy: Here now/Orbis/invites, FID: find/follow/invite/rate, visit public only, delete): all checks passed')}

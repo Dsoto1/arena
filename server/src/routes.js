@@ -1051,6 +1051,9 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   /* the public profile names the lanista (and the former name for 14 days) and the FID */
   {const base=R['domus.profile'];R['domus.profile']=async(d,ctx)=>{const o=await base(d,ctx);try{const D=o&&o.domus&&await domusGet(o.domus.id);const O=D&&await acctOf(D.owner);if(O){o.lan=C.lanOut(O,now());o.fid=C.fidShow(O.fid);
       if(o.now&&o.now.st!=='off'&&C.privOf89(O).hide)o.now={id:D.id,name:D.name,st:'off'}}}catch(e){}return o}}
+  /* dev stacks / local tests: the sign-in box IS the lanista name (when it is a valid, free one) — {google:1} keeps the real path (the name step) */
+  {const base=R['auth.signin'];R['auth.signin']=async(d,ctx)=>{const a=await base(d,ctx);if(d&&!d.google&&a&&!C.lnameWhy(d.name)){const name=C.lnameClean(d.name);
+      if(await claimL89(name,a.id)){await store.set('ACCT#'+a.id,'PROFILE',{lname:name,name});a.lname=name;a.name=name}}return a}}
   /* ══════════ end of v0.89 L ══════════ */
   return async function route(t,d,ctx){const f=R[t];if(!f)throw new Error('Unknown request: '+t);
     /* v0.82 guests look, never act — for 2 hours from their first connect */
