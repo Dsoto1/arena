@@ -1018,8 +1018,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
   event, CFG.seats get distinct random printed classes (Math.random) — only while the seats still hold what was dealt (a hand change, preset
   or custom character stops it for the session).
 - **MY CORNER AT THE BOTTOM (his picks 2026-10-05, v0.89):** display-only rotation (rules, tile names A-1… and the log unchanged; draw +
-  click input turned) so the human's start corner is at the bottom. ON for a single human player (setting "Board view: My corner at the
-  bottom", default on) and ONLINE (each player their own corner; watchers standard view). FIXED (no rotation): hot seat, CHARIOT RACING and
+  click input turned) so the human's start corner is at the bottom. ALWAYS ON (no setting — his call: at a real table everyone sits
+  at their own side) for a single human player and ONLINE (each player their own corner; watchers standard view). FIXED (no rotation): hot seat, CHARIOT RACING and
   NAUMACHIA (one shared static view), lessons/tutorials. FLAVIUS'S BOX stays FIXED AT THE TOP OF THE SCREEN in every event (today it
   hangs over the A-1 corner — move it off the corner for all events, rotated or not). Turn with the view: stands quadrants, minis' yaw,
   stuck arrows, pillars/pots/chest/spikes, start marks, the hover/tile lines. Screenshot every event rotated before shipping.
