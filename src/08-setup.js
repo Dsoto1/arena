@@ -369,7 +369,7 @@ function mmLaunch(fn,label){if(Date.now()-(MM.launchedAt||0)<700)return; // v0.4
   transitRun(()=>{menuHide();try{const r=fn();if(r&&r.catch)r.catch(fail)}catch(e){fail(e)}},_T`Loading ${label||''}…`)
   // watchdog: if nothing took the screen, bring the menu back instead of leaving a blank arena
   const t0=MM.launchedAt;setTimeout(()=>{if(MM.launchedAt!==t0)return;const m=$('#mainMenu');if(!m||!m.hidden)return;
-    if(!$('#modal').hidden||!$('#mReturn').hidden||CUR_MODAL)return;if(typeof CITY!=='undefined'&&CITY.open)return;if(S&&!S.over&&S.phase!=='setup')return;if(Date.now()-(MM.goAt||0)<15000)return;
+    if(!$('#modal').hidden||!$('#mReturn').hidden||CUR_MODAL)return;if(typeof CITY!=='undefined'&&CITY.open)return;if(S&&!S.over&&S.phase!=='setup')return;if(Date.now()-(MM.goAt||0)<15000)return;if(typeof START89!=='undefined'&&START89>0)return;
     MM.fromMenu=false;menuShow()},3000)}
 /* v0.46: each mode owns its saves — Play now: a new event, load a Play now save, or manage those saves;
    Manager mode: continue the last career, load a career, or manage the careers */

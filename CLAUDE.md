@@ -1025,6 +1025,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   stuck arrows, pillars/pots/chest/spikes, start marks, the hover/tile lines. Screenshot every event rotated before shipping.
 - **v0.89 ANSWERS (2026-10-05):** LOOT WINDOW → the market-board style (pieces with their own art, enlarge + "fits you / replaces X",
   untakeable dimmed, same layout for Manage). HOT SEAT "since your last turn" window opens ONLY when something happened.
+- **His calls (2026-10-05):** NO new online events until the Classics play properly online (no real players yet; ONL_EVENTS_OK88 stays
+  empty). legendsim: LEAVE IT HARD — a Manager must diversify; one fighter carrying a house is meant to die by volume.
+- **166-v89fix (built):** boot-window close → main menu (not the background arena); startEvent in progress (START89) counts as live for
+  screenSettle + the 08-setup / 72-v59 launch watchdogs (fixes the Naumachia draft dropping to the main menu while CPUs pick — any event
+  whose start-up windows outlast 15 s); Play Now 🧠 mind chip changes the seat without redrawing the setup (flicker). Test tv89f.
 - **CJK SCHEDULE (his call 2026-10-05): JAPANESE v0.89, CHINESE SIMPLIFIED v0.90 (moved up; es/it/pt/fr/de are done).**
 - **LANGUAGES (his pick 2026-10-05): one per release alongside the features** — Italian v0.87, Portuguese (BR) v0.88, French v0.89, German v0.90,
   Japanese v0.91, Chinese SIMPLIFIED v0.92 (his pick; shares the CJK work: system-font fallback stack incl. canvas, no small-caps/
