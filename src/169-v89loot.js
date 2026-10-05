@@ -46,7 +46,7 @@ function loot89HTML(p,rows,{intro='',mode}={}){const groups=new Map();
   const piece=r=>{const lit=r.mi>=0;const name=r.o.t==='c'?_T`${r.o.pl.coin} coin`:r.o.label;const lab=esc(String(r.o.label||'').replace(/<[^>]+>/g,''));
     return lit?`<button type="button" class="lt89p lit" data-lt89="${r.n}" data-mi="${r.mi}" aria-label="${lab}">${loot89Art(r.o)}<span class="lt89n">${name}</span></button>`
       :`<span class="lt89p dim" data-lt89="${r.n}" tabindex="0" aria-label="${lab}" aria-disabled="true">${loot89Art(r.o)}<span class="lt89n">${name}</span></span>`};
-  return `<div class="lt89">${intro}${hands}<div class="lt89table">${[...groups.values()].map(g=>`<section class="lt89g"><h5${g.col?` style="--pc:${g.col}"`:''}>${g.h}<small>${g.list.length}</small></h5><div class="lt89row">${g.list.map(piece).join('')}</div></section>`).join('')}</div><div class="mk88info lt89info"></div></div>`}
+  return `<div class="lt89">${intro}${hands}<div class="lt89table">${[...groups.values()].map(g=>`<section class="lt89g"><h5${g.col?_T` style="--pc:${g.col}"`:''}>${g.h}<small>${g.list.length}</small></h5><div class="lt89row">${g.list.map(piece).join('')}</div></section>`).join('')}</div><div class="mk88info lt89info"></div></div>`}
 /* loot89Info — the market's info panel for weapons/armor, then the piece's own state and why it is dimmed */
 function loot89Info(p,r){if(!r)return `<div class="mk88inf empty">${_T('Point at a piece to see it.')}</div>`;const P=loot89Piece(r.o);
   let h='';if(P.ref&&(P.kind==='w'||P.kind==='a')&&typeof mk88Info==='function')h=mk88Info(p,P.ref);
