@@ -1032,6 +1032,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   (tools/art/medallions/blessing.png = rtok 'blessing': pot + "2 COIN · 1 CF"), so the offering stays hidden; when one is knocked off/taken it
   flips to its OFFERING face (the BLESSING_TABLE key's medallion: elix2/elix4/ap2/ap3/ma1-3/mw1-3/spiders) and lands/drops like the pots do.
   Rules, dice and log unchanged (works offline, hot seat, online; a per-viewer setting).
+- **v0.90 QUEUED (his notes 2026-10-05): PLAY NOW SETUP TIDY** — (1) the Options section moves up into the empty space under the event
+  card in the "What · the event" panel (his yellow box); the spectator options stay below; (2) remove the "Rules in this build" button;
+  (3) "Sound the horns" → "Begin Event", moved into the top bar (the free space right of Follow); (4) ⚡ Quick start → "Random event"
+  (today Quick start = THIS WEEK's fixture + you as a random class; his question "same right?" — answered: not quite, ask whether Random
+  event should pick a random event+city or keep this week's); (5) remove ★ Presets.
 - **His calls (2026-10-05):** NO new online events until the Classics play properly online (no real players yet; ONL_EVENTS_OK88 stays
   empty). legendsim: LEAVE IT HARD — a Manager must diversify; one fighter carrying a house is meant to die by volume.
 - **166-v89fix (built):** boot-window close → main menu (not the background arena); startEvent in progress (START89) counts as live for
