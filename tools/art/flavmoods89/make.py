@@ -179,6 +179,19 @@ def facepalm2(im,deg=10):
   R=cv2.getRotationMatrix2D(piv,deg,1.0);ex,ey=(R@np.array([*C(401,357),1.0]))
   sc=2.3;M=cv2.getRotationMatrix2D((0,0),-6,sc);px,py=cv2.transform(np.array([[[110,80]]],np.float32),M)[0,0]
   M[0,2]+=ex-px;M[1,2]+=ey-py;return fp_paint(im,M)
+def open_hand(img,at=(0,0),sc=1.0,deg=0):
+  """'really': his reference photo of an open palm-up hand (ref/really_hand.png), MIRRORED (forearm from the right, palm offered
+  to the left), redrawn in the card's style: posterised onto his skin ramp, inked edges and outline. at = fingertip-side centre."""
+  r=cv2.imread(os.path.join(HERE,'ref','really_hand.png'));r=cv2.flip(r,1)
+  g=cv2.cvtColor(r,cv2.COLOR_BGR2GRAY);m=((g<238)|(cv2.cvtColor(r,cv2.COLOR_BGR2HSV)[...,1]>28)).astype(np.uint8)*255
+  m=cv2.morphologyEx(m,cv2.MORPH_OPEN,np.ones((5,5),np.uint8));m=cv2.morphologyEx(m,cv2.MORPH_CLOSE,np.ones((9,9),np.uint8))
+  n,l,st,_=cv2.connectedComponentsWithStats(m);m=((l==1+np.argmax(st[1:,4]))*255).astype(np.uint8)
+  L=cv2.GaussianBlur(g,(0,0),1.6).astype(np.float32);L=(L-L[m>0].min())/(np.ptp(L[m>0])+1e-6)*255
+  ramp=np.array(SKIN,np.float32);lv=np.clip((L/255*4).astype(int),0,3);c=ramp[lv].astype(np.uint8)
+  e=cv2.Canny(cv2.GaussianBlur(g,(0,0),2.4),18,48);e=cv2.dilate(e,np.ones((2,2),np.uint8))
+  c[(e>0)&(m>0)]=INK;ring=cv2.dilate(m,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(7,7)));c[(ring>0)&(m==0)]=INK;m=ring
+  f=sc*K/4*1.3;ys,xs=np.nonzero(m);piv=(float(xs.min()+ (xs.max()-xs.min())*0.18),float(ys.min()+(ys.max()-ys.min())*0.45))
+  return place(img,c,m,piv,at,deg,f)
 def hand_old(img):
   # a weary hand over the eyes, palm in, fingers to the brow — cel-shaded like the card
   im=img.copy();ov=im.copy()
@@ -206,6 +219,7 @@ def flush(img,col,amt):
   lum=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY).astype(np.float32)/255;m=m*np.clip((lum[...,None]-.12)*3,0,1)
   return (img*(1-m)+np.array(col,np.float32)*m).astype(np.uint8)
 B=lambda p,dx,dy,s:(p,dx,dy,s)
+RH_AT,RH_SC,RH_DEG=(100,500),0.85,-15
 HAND_ROT=-111
 def mood(m):
   im=base.copy()
@@ -235,7 +249,7 @@ def mood(m):
     return tears(flush(im,(90,90,200),.12))
   if m=='really':
     im=warp(im,[B(BROW_R,0,-24,24),B(BROW_RI,0,-10,14),B(BROW_NI,4,8,14),B(MC_L,-4,4,12),B(MC_R,6,-2,12),B(JAW,0,12,50)])
-    im=mouth_open(im,24,15,dy=4);im=rot(im,-5,(W/2,H*.75));return palm_up(im,at=(-60,700),sc=1.4,deg=90)
+    im=mouth_open(im,24,15,dy=4);im=rot(im,-5,(W/2,H*.75));return open_hand(im,at=RH_AT,sc=RH_SC,deg=RH_DEG)
   if m=='facepalm':
     # his pick (2026-10-05): after the statue facepalm — head bowed 25° into his hand, the hand (his own from the card, mirrored,
     # narrowed to wrap the cheek) cupping the right side of his face, fingers sloping over the brow; forearm from below (mirrored)
