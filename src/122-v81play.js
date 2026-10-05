@@ -46,8 +46,8 @@ runDraft=async function(){
   for(const lv of [1,2,3]){for(const k of MARKET_W[lv])pool.push({id:uidD++,kind:'w',k,lv});for(const k of MARKET_A[lv])pool.push({id:uidD++,kind:'a',k,lv})}
   const picks=player=>ev.draft.all||(player.team==='J'?ev.draft.jugg:ev.draft.team);
   const maxRounds=Math.max(...S.players.map(picks));
-  const OFFER=8;
-  log(_T`Snake draft: ${S.players.map(player=>_T`${player.name} ${picks(player)} picks`).join(', ')}. Each pick offers a random ${OFFER} of the remaining level 1-3 weapons and armor that still fit the gladiator.`,'hd');
+  /* v0.89 (179-v89market, his rule): every pick offers ALL the remaining level 1-3 gear that still fits the drafter */
+  log(_T`Snake draft: ${S.players.map(player=>_T`${player.name} ${picks(player)} picks`).join(', ')}. Each pick may take any remaining level 1-3 weapon or armor that still fits the gladiator.`,'hd');
   const done=new Set();let order=S.players.map(player=>player.id);
   for(let rd=0;rd<maxRounds;rd++){
     for(const id of order){if(S!==S0||S.over)return; /* v0.88: a new event started while this draft waited (a CPU peek) — stop */
@@ -56,7 +56,7 @@ runDraft=async function(){
       const left=pool.filter(x=>!x.by&&x.lv<=maxLv(p));if(!left.length)continue;
       const fit=left.filter(x=>draftFits81(p,x));
       if(!fit.length){done.add(p.id);log(_T`${nm(p)}'s draft ends early: both hands are full and every spot is covered.`);continue}
-      const offered=new Set(shuffle([...fit]).slice(0,OFFER).map(x=>x.id));
+      const offered=new Set(fit.map(x=>x.id));
       const avail=fit.filter(x=>offered.has(x.id));
       let pick;
       if(p.cpu)pick=cpuDraftPick(p,avail);
@@ -67,7 +67,7 @@ runDraft=async function(){
         const chip=x=>{if(x.by){const q=S.players[x.by-1];return `<span class="pc81 tk81" style="border-color:${q.color}" title="${_T`taken by ${esc(q.name)}`}">${esc(itemName81(x))}<i>${esc(q.name)}</i></span>`}
           const why=x.lv>maxLv(p)?_T('above your draft level'):!draftFits81(p,x)?_T('no free spot'):_T('not offered this pick');
           return `<span class="pc81" title="${why}">${_T`${esc(itemName81(x))}<i>LV${x.lv}</i>`}</span>`};
-        const idx=await modal(_T`Draft · ${p.name} · pick ${rd+1} of ${picks(p)}`,`<p>${_T`Choose one weapon or armor from the <b style="color:var(--gold2)">${avail.length} offered</b> this pick. Weapons go to a free hand; armor equips straight away.`}</p><div class="pickgrid two81" id="pickgrid"></div><details class="pool81"><summary>${_T`Rest of the pool · ${rest.length}`}</summary><div class="pool81b">${rest.map(chip).join('')}</div></details>`,[],{wide:1,grid});
+        const idx=await modal(_T`Draft · ${p.name} · pick ${rd+1} of ${picks(p)}`,`<p>${_T`Take any lit piece — <b style="color:var(--gold2)">${avail.length}</b> fit you. Weapons go to a free hand; armor equips straight away.`}</p><div class="pickgrid two81" id="pickgrid"></div><details class="pool81"><summary>${_T`Rest of the pool · ${rest.length}`}</summary><div class="pool81b">${rest.map(chip).join('')}</div></details>`,[],{wide:1,grid});
         pick=avail.find(x=>x.id===idx)||avail[0]}
       pick.by=p.id+1;
       log(_T`${nm(p)} drafts <b>${itemName81(pick)}</b>.`);

@@ -366,7 +366,7 @@ async function cpuUseItems(player) {
     }
   }
 }
-/* cpuMarket — decides whether to pay 3 CF to open the market, then buys up to 3 weapons or armor (highest affordable level first) while keeping a coin reserve. Plays % Off and Choose cards if held.
+/* cpuMarket — decides whether to pay 3 CF to open the market, then buys up to 3 weapons or armor (highest affordable level first) while keeping a coin reserve. Plays % Off if held. v0.89: every purchase picks the best piece of the level's row (179-v89market).
    TWEAK: reserve (coin slider/12, /24 on Hard), weapon wanted when the weakest weapon score < 3.5 (4.5 Hard), armor wanted at survival > 55 (40 Hard) with a location under 2 AP,
    "rich" at 12+ coin, minimum CF (4, or 3 on Hard), and showmen (cf > 80) skipping half the time to save CF for freedom. */
 async function cpuMarket(player) {
@@ -391,12 +391,7 @@ async function cpuMarket(player) {
     player.discount = 2;
     log(_T`${nm(player)} declares % Off.`);
   }
-  const mc = player.items.find(i => i.kind === 'card' && i.key === 'mchoice');
-  if (mc && player.diff !== 'easy') {
-    player.items = player.items.filter(x => x !== mc);
-    player.mchoice = true;
-    log(_T`${nm(player)} declares Choose.`);
-  }
+  /* v0.89: Choose is no longer a market card — it is a free weapon (179-v89market; cpuUseItems plays it) */
   for (let guard = 0; guard < 3; guard++) {
     const weak = Math.min(...armsAttached(player).map(a => wScore(player['w' + a])));
     let kind = 'w',
@@ -418,7 +413,7 @@ async function cpuMarket(player) {
       p: player
     });
     log(_T`${nm(player)} buys at level ${lv}.`);
-    const got = typeof marketBuy75 === 'function' ? await marketBuy75(player, lv, { pref: kind }) : { kind, key: await marketRoll(player, kind, lv) }; /* v0.75: one roll, either side (rulebook p.25) */
+    const got = typeof marketBuy75 === 'function' ? await marketBuy75(player, lv, { pref: kind }) : { kind, key: await marketRoll(player, kind, lv) }; /* v0.89: the best piece of the row, either side */
     if (got.kind === 'w' && got.key) await gainWeapon(player, got.key);else if (got.key) await gainArmorPiece(player, got.key);
     think(player, pickOne(QUOTES.market), 'think');
     render();
