@@ -30,3 +30,8 @@ if(typeof tryOn87Now==='function'){const base=tryOn87Now;tryOn87Now=function(el)
 @keyframes onlplay89{0%,100%{box-shadow:0 0 0 1px rgba(0,0,0,.5) inset,0 3px 10px rgba(0,0,0,.45)}50%{box-shadow:0 0 0 1px rgba(0,0,0,.5) inset,0 0 16px rgba(232,180,90,.55)}}
 body.calm #onl .onl-rail button[data-v="play"]{animation:none}
 @media(max-width:760px){#onl .onl-rail button[data-v="play"]{margin-bottom:0;font-size:16px;padding:9px 16px}}`;document.head.appendChild(st)}
+/* 5 · "✖ Leave the Online arena" from the Online window landed on the empty background arena (his report): when the Online
+   window closes without starting a match, no live event, no other window and no city → the main menu. */
+{const base=onlineOpen;onlineOpen=async function(){const r=await base.apply(this,arguments);
+  setTimeout(()=>{try{const live=typeof eventLive==='function'&&eventLive();const city=typeof CITY!=='undefined'&&CITY.open;
+    if(!live&&!city&&!CUR_MODAL&&!document.getElementById('onl')&&!(S&&S.onl&&!S.over)&&typeof menuShow==='function')menuShow()}catch(e){console.error(e)}},450);return r}}
