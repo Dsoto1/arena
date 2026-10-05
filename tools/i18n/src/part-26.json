@@ -376,8 +376,8 @@
  },
  {
   "k": "done",
-  "w": "108-v76.js:478",
-  "ctx": "_T`📜 Study the card<small>${X.study?'done':_T('1 h · scout this week · a little Intelligence')}</small>`"
+  "w": "151-v87ward.js:75",
+  "ctx": "_T`🛁 Rubdown<small>${rub?'done':`1 h · ${f} → ${Math.max(0,f-10)}`}</small>`"
  },
  {
   "k": "bond",
@@ -430,8 +430,8 @@
   "ctx": "_T`${hurt.map(g=>esc(g.name)).join(', ')} ${hurt.length===1?'is':_T('are')} hurt and cannot fight until treated.`"
  },
  {
-  "k": "done",
-  "w": "151-v87ward.js:75",
-  "ctx": "_T`🛁 Rubdown<small>${rub?'done':`1 h · ${f} → ${Math.max(0,f-10)}`}</small>`"
+  "k": "A rival",
+  "w": "157-v88mgr.js:79",
+  "ctx": "_T`${R?R.ludus:'A rival'} backs down`"
  }
 ]

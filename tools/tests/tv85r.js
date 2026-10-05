@@ -32,7 +32,7 @@ o.d=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   r.planNoHrs=!!sm&&!/\d+\s*h\b|hour/i.test(sm.textContent);sm.click();await W8(300);r.planOpen=pl.open&&localStorage.getItem('flavius_recplan85')==='1'&&pl.querySelectorAll('.rplan').length===8;
   MGR_REDRAW();await W8(300);r.planKept=document.querySelector('details.rp85').open;document.querySelector('details.rp85 summary').click();await W8(200);r.planShut=localStorage.getItem('flavius_recplan85')==='0';
   /* the detail card before scouting: one ratings line; the advisor's ★ on the button, no box */
-  const a=T85[0];r.oneLine=!!document.querySelector('.scoutsee.rat85')&&/Ratings:\s*scout to see/.test(document.querySelector('.scoutsee.rat85').textContent)&&!document.querySelector('.rsteps')?.closest('.card2').querySelector('.ratgrid');
+  const a=T85[0];/* v0.88 (157): before scouting the card shows rough ranges (±12) in the same box, not one line */r.oneLine=!!document.querySelector('.scoutsee.rat85')&&/scout to see/.test(document.querySelector('.scoutsee.rat85').textContent)&&document.querySelectorAll('.scoutsee.rat85 [data-rng88]').length===5;
   const ab=document.querySelector('.rsteps')?.closest('.card2').querySelector('.btn.adv74');r.advBtn=!!ab&&!!ab.querySelector('.star85')&&/Advisor suggests/.test(ab.title)&&!!ab.dataset.adv85;r.noBox=!document.querySelector('.advise74');
   r.boardStar=!!document.querySelector('.pcard .pst85 .adv85b[title*="Advisor suggests"]')&&!!document.querySelector(`.pcard .pin85[data-mg="fav"][data-id="${a.id}"][title*="On your board"]`)&&!document.querySelector('.pcard .advwrap');r.more=!!document.querySelector(`.pcard .pmo85[data-mg="sel"][data-id="${a.id}"]`);
   /* the list: one line a row */
@@ -55,7 +55,7 @@ const sx=(p,n)=>p.screenshot({path:'/tmp/tv85r_'+n+'.png'});await sx(pg,'watch8'
 ok(o.d.boardH<300,'8 watchers: board under 300px');ok(o.d.cards===8&&o.d.cols===4,'four lanes, eight tablets');
 ok(o.d.posts.length===3&&o.d.posts.every(x=>x<=40),'empty lanes are narrow posts');ok(o.d.postTxt.some(t=>/Courting · 0/.test(t)),'post names its lane');
 ok(o.d.cardH.every(h=>h>=66&&h<=80),'tablets ~72px');ok(o.d.plan&&o.d.planNoHrs,'plan on one folded line, no hours');ok(o.d.planOpen&&o.d.planKept&&o.d.planShut,'plan unfolds and remembers');
-ok(o.d.oneLine,'one ratings line before scouting');ok(o.d.advBtn&&o.d.noBox,'advisor ★ on the button, no box');ok(o.d.boardStar&&o.d.more,'★ advised on the button, 📌 board pin, ⋯');
+ok(o.d.oneLine,'rough rating ranges before scouting');ok(o.d.advBtn&&o.d.noBox,'advisor ★ on the button, no box');ok(o.d.boardStar&&o.d.more,'★ advised on the button, 📌 board pin, ⋯');
 ok(o.d.rows.length>=10&&o.d.rows.every(h=>h<=44),'list rows on one line (≤44px)');ok(o.d.rowOdds,'rank text on hover');ok(o.d.toolbar===1,'one toolbar row');
 ok(o.d.sel,'tablet click selects the card');ok(o.d.noPin,'opening a card does not pin');ok(o.d.stamp&&o.d.scouted,'the next-step button scouts');ok(o.d.ratAfter,'ratings after scouting');
 ok(o.d.newYes&&o.d.newNo&&o.d.oldNo&&o.d.noLastWk&&o.d.lastWkNo,'🆕 only this week');
