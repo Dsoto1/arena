@@ -1016,7 +1016,13 @@ share copy — the site download play/flavius-rule-arena.zip.)
   lobby.get ping from every open room screen, so rooms clean up even when nobody browses; rooms with a gone host never show in lists.
 - **PLAY NOW SEATS DEALT AT RANDOM (his ask 2026-10-05, BUILT for v0.89: 165-v89seats, test tv89s):** at page load and each fresh New
   event, CFG.seats get distinct random printed classes (Math.random) — only while the seats still hold what was dealt (a hand change, preset
-  or custom character stops it for the session). OPEN (asked): rotate the board so the human's corner is at the bottom.
+  or custom character stops it for the session).
+- **MY CORNER AT THE BOTTOM (his picks 2026-10-05, v0.89):** display-only rotation (rules, tile names A-1… and the log unchanged; draw +
+  click input turned) so the human's start corner is at the bottom. ON for a single human player (setting "Board view: My corner at the
+  bottom", default on) and ONLINE (each player their own corner; watchers standard view). FIXED (no rotation): hot seat, CHARIOT RACING and
+  NAUMACHIA (one shared static view), lessons/tutorials. FLAVIUS'S BOX stays FIXED AT THE TOP OF THE SCREEN in every event (today it
+  hangs over the A-1 corner — move it off the corner for all events, rotated or not). Turn with the view: stands quadrants, minis' yaw,
+  stuck arrows, pillars/pots/chest/spikes, start marks, the hover/tile lines. Screenshot every event rotated before shipping.
 - **CJK SCHEDULE (his call 2026-10-05): JAPANESE v0.89, CHINESE SIMPLIFIED v0.90 (moved up; es/it/pt/fr/de are done).**
 - **LANGUAGES (his pick 2026-10-05): one per release alongside the features** — Italian v0.87, Portuguese (BR) v0.88, French v0.89, German v0.90,
   Japanese v0.91, Chinese SIMPLIFIED v0.92 (his pick; shares the CJK work: system-font fallback stack incl. canvas, no small-caps/
