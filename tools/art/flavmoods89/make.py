@@ -98,8 +98,8 @@ def lefthand():
   m=((hsv[...,0]>=12)&(hsv[...,0]<32)&(hsv[...,2]>60)).astype(np.uint8)*255;m[:,:115]=0
   m=cv2.morphologyEx(m,cv2.MORPH_CLOSE,np.ones((15,15),np.uint8));n,l,st,_=cv2.connectedComponentsWithStats(m);bb=1+np.argmax(st[1:,4])
   m=((l==bb)*255).astype(np.uint8);m=cv2.dilate(m,np.ones((5,5),np.uint8))
-  c=cv2.flip(c,0);m=cv2.flip(m,0);ys,xs=np.nonzero(m);wy=ys.max();wx=int(xs[ys>wy-25].mean())
-  return c,m,(wx,wy)
+  c=cv2.flip(c,0);m=cv2.flip(m,0);ys,xs=np.nonzero(m);sel=ys>np.percentile(ys,95)
+  return c,m,(float(xs[sel].mean()),float(ys[sel].mean()))
 def forearm():
   """his right forearm without the fist; returns (img, mask, wrist point)"""
   hs=src[440:590,196:330].copy();hs=cv2.resize(hs,None,fx=K,fy=K,interpolation=cv2.INTER_LANCZOS4)
@@ -110,7 +110,8 @@ def forearm():
   hsv=cv2.cvtColor(hs,cv2.COLOR_BGR2HSV);sk=((hsv[...,0]>=12)&(hsv[...,0]<32)&(hsv[...,2]>70)).astype(np.uint8)*255
   sk=cv2.morphologyEx(sk,cv2.MORPH_CLOSE,np.ones((13,13),np.uint8));m=cv2.bitwise_and(m,cv2.dilate(sk,np.ones((7,7),np.uint8)))
   n,lab,st,_=cv2.connectedComponentsWithStats(m);m=((lab==1+np.argmax(st[1:,cv2.CC_STAT_AREA]))*255).astype(np.uint8)
-  return hs,m,((246-196)*K,(540-440)*K)
+  ys,xs=np.nonzero(m);pr=xs*.72-ys*.70   # along the forearm (wrist → elbow); the wrist = the low end
+  sel=pr<np.percentile(pr,4);return hs,m,(float(xs[sel].mean()),float(ys[sel].mean()))
 def hand_old(img):
   # a weary hand over the eyes, palm in, fingers to the brow — cel-shaded like the card
   im=img.copy();ov=im.copy()
@@ -171,7 +172,7 @@ def mood(m):
   if m=='facepalm':
     im=lids(warp(im,[B(MC_L,0,6,10),B(MC_R,0,6,10)]),.95);im=rot(im,8,(W/2,H*.9))
     # head in hand: his right forearm comes up from below, his left hand (back to us) over the eyes
-    fc,fm,fw=forearm();hc,hm,hw=lefthand();im=place(im,fc,fm,fw,(300,360),-145,1.0);return place(im,hc,hm,hw,(300,360),10,.82*K/5)
+    fc,fm,fw=forearm();hc,hm,hw=lefthand();im=place(im,fc,fm,fw,(300,352),-144,.8);return place(im,hc,hm,hw,(300,360),2,.82*K/5)
 MOODS=['calm','pleased','smug','cheer','laugh','shock','angry','bored','weep','facepalm','really']
 out=os.path.join(HERE,'out');os.makedirs(out,exist_ok=True)
 tiles=[]
