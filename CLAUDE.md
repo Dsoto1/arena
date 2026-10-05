@@ -1026,6 +1026,9 @@ share copy — the site download play/flavius-rule-arena.zip.)
 - **v0.88 ANSWERS (his picks 2026-10-05):** IMMORTALIS (Manager) = rating 82+ AND 15 career wins AND one invitational or Superbus title;
   (Online) = Invictus rank + 25 Ranked bouts survived. Win purses: combined cap ×3 (upset × streak; was up to ×4). Recruiting II: the rival
   house counter-bids in the 3rd week a free agent is courted (match / outbid with one of his wants / walk away).
+- **PLAYLIST CYCLE (his ask 2026-10-05, v0.88 161-v88pl):** the Online landing's Familia box slowly cycles (9 s, cross-fade, dots, pauses on
+  hover) through every event he has TESTED AND APPROVED for online. To approve one: add its key to `ONL_EVENTS_OK88` (161) AND to the shared
+  online events in 111-onlcore (EVENTS_ALL / EVENTS_TEAM, EV_SEATS) + redeploy the server. Approved events get no card of their own.
 - **ONE MARKET WINDOW (his idea 2026-10-05, v0.88 first item):** the market board (boardHTML75) serves every market moment: BUY (as today),
   PICK (cards/tokens "choose a Level 2 armor / Level 1 weapon", drafts: only eligible pieces lit, rest dimmed; hover/tap enlarges a piece:
   armor = location on a small figure + AP + bonus location, weapons = damage, range, icons, bonuses in one line; "fits you / replaces X" tag),
