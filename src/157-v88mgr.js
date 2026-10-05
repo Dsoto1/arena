@@ -162,7 +162,8 @@ function rng88(g,k,v,r){if(!r)return [v,v];const f=(hashStr('rng88:'+g.id+':'+k)
 
 /* (1) the courtship clock */
 function court88Sync(w){let m=null;try{m=me()}catch(e){}if(!w||!m||w.tutorial)return;
-  for(const g of w.glads||[]){if(!g||g.alive===false||g.contract||!g.favd)continue;if(!g.court88||g.court88.mid!==m.id)g.court88={mid:m.id,wk:w.week}}}
+  for(const g of w.glads||[]){if(g&&g.court88&&!g.favd&&!g.contract&&!g.court88.bid)delete g.court88; /* unpinned before the bid: the clock stops */
+    if(!g||g.alive===false||g.contract||!g.favd)continue;if(!g.court88||g.court88.mid!==m.id)g.court88={mid:m.id,wk:w.week}}}
 function court88Left(g,w){const c=g&&g.court88;if(!c||g.contract)return null;if(c.bid)return c.bid.ans?null:0;return Math.max(0,c.wk+REC88.bidWeek-w.week)}
 function court88Chip(g,w){const n=court88Left(g,w);if(n==null)return '';
   return n<=0?`<span class="cd88 now" title="${_T`A rival house has made a bid — see your mail; unanswered, it wins when the week ends`}">${_T`⚖ Rival bid — answer by the week's end`}</span>`
@@ -226,7 +227,7 @@ function court88Tiny(g,w){const n=court88Left(g,w);if(n==null)return '';return n
 (()=>{const st=document.createElement('style');st.textContent=`
 .imm88m{box-shadow:0 0 0 2px #d4af37,0 0 0 4px #1a1206,0 0 0 5px #f0d27a,0 0 10px rgba(240,200,90,.35)!important;border-color:#d4af37!important}
 div.imm88m,.dcard.imm88m{position:relative}
-.imm88lf{position:absolute;top:-5px;font-style:normal;font-size:17px;line-height:1;color:#f0d27a;text-shadow:0 0 3px #000,0 1px 0 #6a4a10;z-index:3;pointer-events:none}
+.imm88lf{position:absolute;top:3px;font-style:normal;font-size:17px;line-height:1;color:#f0d27a;text-shadow:0 0 3px #000,0 1px 0 #6a4a10;z-index:3;pointer-events:none}
 .imm88lf.l{left:12px;transform:rotate(-25deg)}.imm88lf.r{right:12px;transform:scaleX(-1) rotate(-25deg)}
 tr.imm88m>td{background:linear-gradient(90deg,rgba(212,175,55,.16),rgba(212,175,55,.04))}tr.imm88m{box-shadow:none!important;outline:2px double #d4af37;outline-offset:-2px}
 .imm88lt{font-style:normal;color:#f0d27a;margin-right:4px;text-shadow:0 0 3px #000}
