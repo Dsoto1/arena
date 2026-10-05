@@ -119,14 +119,14 @@ o.m=await P.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));cons
   newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_(),m=me();
   /* 6 */ r.fame=GLOSS.fame.d;r.thr=GLOSS.thriving.d;const gd=mgrGuideHTML();r.guide35=/toward 35/.test(gd);r.guide16=/What 16 seasons/.test(gd);r.guideFame=/Fame opens doors/.test(gd);
   /* 7 */ m.perkPts=2;r.task=weekChecklist().find(x=>x.ic==='🎓');MGR.tab='ludus';MGR.run='school';MGR_REDRAW();await W(600);r.taskBtn=!!document.querySelector('#mgrBody [data-mg="toschool"]');
-  const pill=document.querySelector('#mgrBody .schoolcard .ptpill');r.pill=pill?getComputedStyle(pill).display:'gone';r.tile=!!document.querySelector('#mgrBody .rtile2 .ptbox.on');
+  const pill=document.querySelector('#mgrBody .schoolcard .ptpill');r.pill=pill?getComputedStyle(pill).display:'gone';r.tile=/\b2\b/.test(perkTree87().replace(/<[^>]+>/g,' ')); /* v0.87 Manager: the perk tree holds the one count (the tile's box went with it) */
   /* 8 */ const mb=document.getElementById('mailBox'),par=mb&&mb.parentElement;r.mail=mb&&par?+(mb.getBoundingClientRect().width/par.getBoundingClientRect().width).toFixed(2):0;
   /* 9 */ MGR.tab='practice';MGR_REDRAW();await W(500);const pb=document.querySelector('#mgrBody .roomstat.rs2 .ptbox.on');r.yard=pb?getComputedStyle(pb).backgroundImage:'';
   /* 10 */ const g=rosterOf(m)[0];g.inj={label:'Cut arm',wk:2};MGR.tab='infirm';MGR_REDRAW();await W(600);const hy=document.querySelector('#mgrBody .roomhd .hyg87');const rs=document.querySelector('#mgrBody .roomhd .roomstat');
   r.hyg={on:!!hy,btn:!!(hy&&hy.querySelector('[data-m48="hygeia"]')),old:!!document.querySelector('#mgrBody .hygcard'),apart:!!(hy&&rs)&&(hy.getBoundingClientRect().right<=rs.getBoundingClientRect().left+1)};
   return r});
 ok(!/35/.test(o.m.fame)&&!/\d/.test(o.m.thr),'6 glossary: no Fame drift, no Thriving numbers '+o.m.fame+' | '+o.m.thr);ok(!o.m.guide35&&!o.m.guide16&&o.m.guideFame,'6 the Manager guide: no drift line, no 16-season notes');
-ok(o.m.task&&!o.m.task.done&&/2/.test(o.m.task.txt)&&o.m.taskBtn,'7 unspent perk points = a checklist task with Spend');ok(o.m.pill==='none'||o.m.pill==='gone','7 no extra points pill on the Schooling card');ok(o.m.tile,'7 the Schooling tile keeps its count');
+ok(o.m.task&&!o.m.task.done&&/2/.test(o.m.task.txt)&&o.m.taskBtn,'7 unspent perk points = a checklist task with Spend');ok(o.m.pill==='none'||o.m.pill==='gone','7 no extra points pill on the Schooling card');ok(o.m.tile,'7 the perk tree shows the points');
 ok(o.m.mail>0.4&&o.m.mail<0.6,'8 Mail is half the width ('+o.m.mail+')');ok(/207, 211, 216/.test(o.m.yard),'9 yard hours box light grey '+o.m.yard.slice(0,90));
 ok(o.m.hyg.on&&o.m.hyg.btn&&!o.m.hyg.old&&o.m.hyg.apart,'10 Hygeia on the banner, beside the care count '+JSON.stringify(o.m.hyg));await shot('infirmary');
 /* 11 · the city kits */

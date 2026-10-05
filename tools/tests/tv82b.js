@@ -16,11 +16,11 @@ ok(o.th.front&&o.th.back,'tholo card sides (printed arena card on the back)');o.
 ok(/12 coin/.test(o.th.rules),'template back rules text');
 await pg.evaluate(()=>{const f=document.querySelector('#nc82pop .nc82flip');f.dataset.touched='1';f.classList.remove('flipped')});await pg.waitForTimeout(900);await shot('beast_tholo_front.png','#nc82pop .nc82flip');
 await pg.evaluate(()=>document.querySelector('#nc82pop .nc82flip').classList.add('flipped'));await pg.waitForTimeout(900);await shot('beast_tholo_back.png','#nc82pop .nc82flip');
-/* 2. a snake: generated front (no eye, its numbers), one-state info side */
-o.sn=await pg.evaluate(async()=>{document.getElementById('nc82pop').remove();nc82Open('snake','Glykon','Glykon');const p=document.getElementById('nc82pop');p.querySelector('.nc82flip').dataset.touched='1';
-  return {gen:!!p.querySelector('.nc82c.gen img.mini[src*="mini_glykon"]'),noeye:!!p.querySelector('.noeye'),sv:[...p.querySelectorAll('.gen .sv')].map(x=>+x.textContent),one:!!p.querySelector('img[src*="npcback82_1"]'),rows:p.querySelectorAll('.back .vh').length,nm:p.querySelector('.gen .nm').textContent}});
-ok(o.sn.gen&&o.sn.noeye&&JSON.stringify(o.sn.sv)==='[1,1,1,3]'&&o.sn.one&&o.sn.rows===1&&o.sn.nm==='GLYKON','snake card '+JSON.stringify(o.sn));
-await pg.waitForTimeout(300);await shot('beast_snake_front.png','#nc82pop .nc82flip');
+/* 2. a snake (v0.87, his call): starting beasts have no card — their token on the left, stats on the right */
+o.sn=await pg.evaluate(async()=>{document.getElementById('nc82pop').remove();nc82Open('snake','Glykon','Glykon');const p=document.getElementById('nc82pop');
+  return {tok:!!p.querySelector('.ns87 .ns87tok .rtok'),noCard:!p.querySelector('.nc82c'),nm:(p.querySelector('.ns87nm')||{}).textContent,cells:[...p.querySelectorAll('.ns87t td')].map(x=>x.textContent)}});
+ok(o.sn.tok&&o.sn.noCard&&o.sn.nm==='Glykon'&&o.sn.cells.join()==='1,1,1','snake popup '+JSON.stringify(o.sn));
+await pg.waitForTimeout(300);await shot('beast_snake_front.png','#nc82pop .ns87');
 /* 3. custom beasts: a unique 3-state one and a plain 1-state one */
 o.cu=await pg.evaluate(async()=>{document.getElementById('nc82pop').remove();
   const a=Object.assign(blankNpc(),{id:'t82a',name:'Hippogriff',kind:'Hippogriff',kindKey:null,hp:14,ap:3,rng:1,mv:3,beh:'hunt',states:true,unique82:true,st82:[[10,3,1,3],[5,5,1,4],[0,2,1,1]]});
