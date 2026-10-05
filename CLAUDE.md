@@ -954,7 +954,7 @@ share copy — the site download play/flavius-rule-arena.zip.)
 - **LANGUAGES UPDATE (his call 2026-10-05, "why wait"):** Italian DONE (29 parts); Portuguese/French/German translating NOW (agents);
   plural forms {n|one|many} in 00-lang + check.js; v0.87 = each language as its own file loaded only when picked (standalone inlines all).
   The card he sent (tools/art/cardtpl87) = THE CLASS CARD TEMPLATE (name in the banner, figure + rules on the parchment).
-- **CJK SCHEDULE (his call 2026-10-05): Japanese v0.91, Chinese Simplified v0.92 at the latest — pull either forward into any release with room (es/it/pt/fr/de are done).**
+- **CJK SCHEDULE (his call 2026-10-05): JAPANESE v0.89, CHINESE SIMPLIFIED v0.90 (moved up; es/it/pt/fr/de are done).**
 - **LANGUAGES (his pick 2026-10-05): one per release alongside the features** — Italian v0.87, Portuguese (BR) v0.88, French v0.89, German v0.90,
   Japanese v0.91, Chinese SIMPLIFIED v0.92 (his pick; shares the CJK work: system-font fallback stack incl. canvas, no small-caps/
   letter-spacing/uppercase for CJK, space-splitting spots fixed). Names/GAME_TERMS stay English in every language. Tooling per language: tools/i18n/<lang>/part-NN.json + GUIDE-<lang>.md.
