@@ -6,7 +6,7 @@
      written to $REPORT (default: no file) — the release keeps them under a ceiling
    D switching back: Settings → English reloads in English; the select lists English + Español
    E English untouched: a page without flavius_lang has LANG 'en', no dictionary, and _T is identity. */
-/* v0.87: WALK_LANG=it|pt|fr|de runs only the B/C walk in that language (tv87l runs all four) */
+/* v0.87: WALK_LANG=it|pt|fr|de (v0.89: |ja) runs only the B/C walk in that language (tv87l runs all four) */
 const WL=process.env.WALK_LANG||'es';
 const path=require('path'),fs=require('fs');const REPORT=process.env.REPORT||'';const SHOT=process.env.SHOT||'';
 const {chromium}=require('playwright');(async()=>{const URL0='file://'+path.resolve(process.argv[2]);
@@ -40,7 +40,8 @@ const sweep=async(where)=>P.evaluate(([where,WL])=>{
     it:'il lo la i gli le di del della e tu tuo tua suo sua con per è sono un una al in che si non più o a ogni tutto tutti c\'è',
     pt:'o a os as de do da e seu sua com para por é são um uma ao em que se não mais ou cada todo todos há você',
     fr:'le la les de du des et ton ta tes son sa ses avec pour par est sont un une au en que se ne pas plus ou à chaque tout tous il y',
-    de:'der die das den dem des und dein deine sein seine mit für von ist sind ein eine im in dass sich nicht mehr oder zu jeder alle es'};
+    de:'der die das den dem des und dein deine sein seine mit für von ist sind ein eine im in dass sich nicht mehr oder zu jeder alle es',
+    ja:'',zh:''}; /* CJK: a line with English stop words and no CJK character counts as leftover English */
   const ES=new Set(STOP[WL].split(' '));
   const names=new Set(GAME_TERMS);
   const vis=el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&getComputedStyle(el).visibility!=='hidden'};
@@ -48,7 +49,7 @@ const sweep=async(where)=>P.evaluate(([where,WL])=>{
   while((n=w.nextNode())){const p=n.parentElement;if(!p||/^(SCRIPT|STYLE|TEXTAREA|OPTION|TITLE)$/.test(p.tagName)||p.closest('[translate="no"],svg,#log'))continue;
     const t=n.data.replace(/\s+/g,' ').trim();if(t.length<8||!/[a-z]{3}/.test(t))continue;if(!vis(p))continue;tot++;
     const ws=t.toLowerCase().match(/[a-záéíóúñüàèìòùâêîôûçãõäöß']+/g)||[];const en=ws.filter(x=>EN.has(x)).length,es=ws.filter(x=>ES.has(x)).length;
-    if(en>=2&&en>es)left.set(t.slice(0,90),(left.get(t.slice(0,90))||0)+1)}
+    if(en>=2&&en>es&&!(/^(ja|zh)$/.test(WL)&&/[\u3040-\u30ff\u4e00-\u9fff]/.test(t)))left.set(t.slice(0,90),(left.get(t.slice(0,90))||0)+1)}
   /* overflow: text cut inside buttons / chips / tabs */
   const cut=[...document.querySelectorAll('button,.btn,.chip,.badge,.tabs button,.mtabs button,[data-tab],.ptpill')].filter(el=>vis(el)&&getComputedStyle(el).overflow!=='visible'&&(el.scrollWidth>el.clientWidth+2)).slice(0,30).map(el=>el.textContent.replace(/\s+/g,' ').trim().slice(0,40));
   return {where,tot,left:[...left.keys()],cut}},[where,WL]);
@@ -96,7 +97,7 @@ ok(out.b.menu.LANG===WL&&out.b.menu.html===WL,'B: <html lang="'+WL+'"> '+JSON.st
 ok(!/Manager mode|Settings/.test(out.b.menu.txt),'B: the main menu reads '+WL+' '+out.b.menu.txt.slice(0,120));
 ok(out.b.play&&out.b.turn&&out.b.moved,'B: Play Now → the horns → a turn played in Spanish');
 ok(out.b.log&&out.b.log.n>0,'B: the log runs');
-ok(out.b.set&&out.b.sel&&out.b.sel.v===WL&&out.b.sel.opts.join()==='en,es,it,pt,fr,de','B: Settings language select '+JSON.stringify(out.b.sel));
+ok(out.b.set&&out.b.sel&&out.b.sel.v===WL&&out.b.sel.opts.join()==='en,es,it,pt,fr,de,ja','B: Settings language select '+JSON.stringify(out.b.sel));
 ok(out.b.rules&&out.b.mgr&&out.b.studio&&out.b.onl,'B: Rules, Manager, Studio, Online open in Spanish');
 ok(out.b.names.n===0||out.b.names.eng,'B: game terms stay English');
 const LEFT_MAX=+(process.env.LEFT_MAX||60),CUT_MAX=+(process.env.CUT_MAX||25);
