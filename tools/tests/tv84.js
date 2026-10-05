@@ -21,9 +21,15 @@ out.a=await A.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));i
   /* nothing to say: no coin → no ✓ fit, no affordable bargain */
   const coin0=m.coin;m.coin=0;r.quiet=recruiter84(w)===null;m.coin=99999;
   /* a bargain: one free agent asking far below his peers */
-  const fa=freeAgents().filter(g=>!g.inj);const g=fa.sort((x,y)=>effOvr(y)-effOvr(x))[Math.floor(fa.length/2)];const have=new Set(rosterOf(m).map(x=>x.cls));
-  g.cls=Object.keys(CLASSES).find(k=>!have.has(k)&&BASE_CLS.includes(k))||g.cls;g.fame=0;for(const x of fa)if(x!==g&&Math.abs(effOvr(x)-effOvr(g))<=4)x.fame=400;
-  const k1=recruiter84(w);const L1=(w.letters||[]).find(l=>l.key===k1);r.bargain=!!L1&&/^A bargain: /.test(L1.title)&&L1.adv==='recruiter'&&/asks <b>\d+<\/b> a week\. Fighters of that level ask about <b>\d+<\/b>/.test(L1.body);const bn=L1?L1.title.replace('A bargain: ',''):g.name;
+  /* v0.87: with random free agents the middle one may lack two peers of his level (no bargain → the ★ pick writes instead):
+     try candidates from the middle outwards until the set-up really holds a bargain */
+  const fa=freeAgents().filter(g=>!g.inj).sort((x,y)=>effOvr(y)-effOvr(x));const have=new Set(rosterOf(m).map(x=>x.cls));const mid=Math.floor(fa.length/2);
+  const order=fa.map((x,i)=>[x,Math.abs(i-mid)]).sort((a,b)=>a[1]-b[1]).map(x=>x[0]);const fame0=new Map(fa.map(x=>[x,x.fame]));const cls0=new Map(fa.map(x=>[x,x.cls]));
+  let g=order[0],k1=null,L1=null;
+  for(const cand of order.slice(0,12)){for(const x of fa){x.fame=fame0.get(x);x.cls=cls0.get(x)}g=cand;
+    g.cls=Object.keys(CLASSES).find(k=>!have.has(k)&&BASE_CLS.includes(k))||g.cls;g.fame=0;for(const x of fa)if(x!==g&&Math.abs(effOvr(x)-effOvr(g))<=4)x.fame=400;
+    k1=recruiter84(w);L1=(w.letters||[]).find(l=>l.key===k1);if(L1&&/^A bargain: /.test(L1.title))break;
+    if(k1)w.letters=w.letters.filter(l=>l.key!==k1);w.rec84={}}r.bargain=!!L1&&/^A bargain: /.test(L1.title)&&L1.adv==='recruiter'&&/asks <b>\d+<\/b> a week\. Fighters of that level ask about <b>\d+<\/b>/.test(L1.body);const bn=L1?L1.title.replace('A bargain: ',''):g.name;
   r.once=recruiter84(w)===null;
   w.week++;const k2=recruiter84(w);const L2=k2&&(w.letters||[]).find(l=>l.key===k2);r.next=!L2||!L2.title.includes(bn);w.week--;
   if(k2)w.letters=w.letters.filter(l=>l.key!==k2);
