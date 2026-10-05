@@ -40259,6 +40259,434 @@ function wIco87(k){return `<i class=wi87${k} aria-hidden=true></i>`}
 .sr87{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 ${Object.keys(W).map(k=>`.wi87${k}{background-image:url("${W[k]}")}`).join('\n')}`;
   document.head.appendChild(st)}catch(e){console.error(e)}})();
+/* 155-v88market — v0.88 ONE MARKET WINDOW (his idea + picks, 2026-10-05): his market board (106-v75 boardHTML75) serves every market moment.
+   • ROLL: when you buy (or an item rolls a level), the board opens on that level's row: a d4 with Roman numerals spins while a lit slot hops
+     across the row like a prize wheel and stops on the seeded result (the die is rolled BEFORE the show — the animation is cosmetic,
+     Math.random only; a tap skips it). An empty slot slides to the closest filled one, left or right. Then only what you may take is lit,
+     the rest dimmed; click a lit piece to take it, or Re-roll.
+   • PICK: Market Choice (pick a slot), "choose a Level N weapon/armor" (chooseMarket) and the GEAR DRAFT use the board too — only the
+     eligible pieces lit. Weapons still face down in the deck sit in a strip under the board. The draft lays every level's remaining gear
+     across the slots (mk88SpreadHTML).
+   • THE INFO PANEL under the board: hover (or the first tap on a touch screen) a piece → his art on the left, a clean panel beside it:
+     location / AP / bonus for armor, damage / range / icons for weapons, and "fits you / replaces X" for the one buying.
+   • CPU buys, rolls and draft picks show as a short PEEK over the arena (the board snapshot, the slot lit, the piece flying off) on Slow
+     and Normal; Fast, sims and headless runs skip it. A tap skips it.
+   Online: the windows' values still go through modal (113 records them); the board's pieces carry the hidden buttons' data-mi. */
+const MK88={ctx:null,pick:null,draft:0,fly:null,ptr:''};
+const ROMAN88=['I','II','III','IV'];
+function mk88PeekOn(){return !HEADLESS&&!!S&&!S.sim&&!S.simmed&&SPEED!=='fast'&&!(typeof document!=='undefined'&&document.hidden)}
+const mk88Ms=()=>SPEED==='normal'?1100:1800;
+/* the level a weapon sits at in the market lists */
+function mk88WLv(k){for(const lv of [1,2,3])if((MARKET_W[lv]||[]).includes(k))return lv;return (W[k]&&W[k].lv)||''}
+
+/* ---------- the info panel ---------- */
+function mk88Fit(player,kind,key){if(!player||!key)return '';
+  try{if(kind==='w'){const arms=armsAttached(player);if(!arms.length)return `<span class="no">${_T('No arm left to hold it')}</span>`;
+      const free=arms.filter(a=>!player['w'+a]);if(free.length)return `<span class="ok">${_T`✓ Fits your ${free[0]==='R'?_T('right'):_T('left')} hand`}</span>`;
+      const worst=[...arms].sort((a,b)=>wScore(player['w'+a])-wScore(player['w'+b]))[0];return `<span class="sw">${_T`Both hands full — replaces ${esc(player['w'+worst].n)}`}</span>`}
+    const d=ARM[key];if(!d)return '';const locs=sideLocs(d).filter(l=>player.hp[l]>0);if(!locs.length)return `<span class="no">${_T`Nowhere to wear it`}</span>`;
+    const free=locs.filter(l=>!armorConflict(player,l,key));
+    if(free.length)return `<span class="ok">${_T`✓ Fits your ${free.map(l=>LOCN[l]).join(' + ')}`}</span>`;
+    const c=armorConflict(player,locs[0],key);return `<span class="sw">${_T`Replaces ${esc(c.n)} (${LOCN[locs[0]]})`}</span>`}catch(e){return ''}}
+function mk88Info(player,ref){if(!ref)return `<div class="mk88inf empty">${_T('Point at a piece to see it.')}</div>`;
+  if(ref.startsWith('back:'))return `<div class="mk88inf"><span class="mk88art"><span class="cimg md wide mb-back75" style="background-image:url('${WBACK75(+ref.slice(5))}');background-size:100% 100%"></span></span>
+    <div class="mk88txt"><b>${_T`A face-down weapon`}</b><div class="lv">${_T`Level ${ref.slice(5)} · slot 4`}</div><p>${_T('Flip it and take it — nobody knows what it is.')}</p></div></div>`;
+  const kind=ref[0],key=ref.slice(2);
+  if(kind==='w'&&W[key]){const w=mkW(key);
+    return `<div class="mk88inf"><span class="mk88art">${cardHTML('w:'+key,'md')}</span><div class="mk88txt"><b>${esc(W[key].n)}</b><div class="lv">${_T`Weapon · level ${mk88WLv(key)}`}</div>
+      <div class="wc88">${typeof weaponChips==='function'?weaponChips(w):''}</div><p class="st">${wStats(w)}</p><p class="fit">${mk88Fit(player,'w',key)}</p></div></div>`}
+  if(kind==='a'&&ARM[key]){const d=ARM[key];const where=sideLocs(d).map(l=>LOCN[l]).join(d.pair?' + ':_T(' or '));
+    const rows=[[_T('Location'),`${esc(where)}${typeof PT_NAME!=='undefined'&&PT_NAME[d.pt]&&PT_NAME[d.pt]!==d.slot?` · ${esc(PT_NAME[d.pt])}`:''}${d.pair?_T(' (pair)'):''}`],[_T('Armor'),_T`<b>${d.ap} AP</b>${d.stack?_T(' · stackable'):''}`]];
+    if(d.bonus)rows.push([_T('Bonus'),Object.entries(d.bonus).map(([l,v])=>_T`+${v} AP ${esc(LOCN[l])}`).join(', ')]);
+    if(d.greaves)rows.push([_T('Extra'),_T('+1 movement')]);if(d.cestus)rows.push([_T('Extra'),_T('+1 damage')]);
+    return `<div class="mk88inf"><span class="mk88art">${cardHTML('a:'+key,'md')}</span><div class="mk88txt"><b>${esc(d.n)}</b><div class="lv">${_T`Armor · level ${d.lv}`}</div>
+      <table>${rows.map(([a,b])=>`<tr><th>${a}</th><td>${b}</td></tr>`).join('')}</table><p class="fit">${mk88Fit(player,'a',key)}</p></div></div>`}
+  return ''}
+
+/* ---------- the board in a window ---------- */
+/* mk88Tag — names every cell of a board (built by boardHTML75: for levels 3,2,1 four weapon cells then four armor cells) and every piece */
+function mk88Tag(root){[...root.querySelectorAll('.mboard75 > .mb-cell')].forEach((c,i)=>{c.dataset.lv=[3,2,1][i>>3];c.dataset.side=(i&7)<4?'w':'a';c.dataset.s=(i&3)+1;
+  c.querySelectorAll('.mb-w,.mb-a').forEach(p=>{if(p.dataset.card)p.dataset.k88=p.dataset.card});c.querySelectorAll('.mb-back').forEach(p=>p.dataset.k88='back:'+c.dataset.lv)})}
+const mk88Cell=(root,lv,side,s)=>root.querySelector(`.mb-cell[data-lv="${lv}"][data-side="${side}"][data-s="${s}"]`);
+function mk88Wrap(board,extra=''){return `<div class="mk88">${board}${extra}<div class="mk88info"></div></div>`}
+/* mk88Wire — hover/first-tap shows a piece, lit pieces carry their button's data-mi; skip() ends a running show */
+function mk88Wire(root,player,{skip}={}){const info=root.querySelector('.mk88info');let sel=null;
+  const show=el=>{sel=el;root.querySelectorAll('.sel88').forEach(x=>x.classList.remove('sel88'));if(el){el.classList.add('sel88');info.innerHTML=mk88Info(player,el.dataset.k88)}};
+  info.innerHTML=mk88Info(player,null);
+  root.addEventListener('pointerover',e=>{const el=e.target.closest('[data-k88]');if(el&&root.contains(el))show(el)});
+  root.addEventListener('pointerdown',e=>{MK88.ptr=e.pointerType||''});
+  root.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-mi]')){e.preventDefault();e.target.click()}});
+  root.addEventListener('focusin',e=>{const el=e.target.closest('[data-k88]');if(el)show(el)});
+  root.addEventListener('click',e=>{if(skip&&skip()){e.stopPropagation();return}
+    const el=e.target.closest('[data-mi]');if(!el)return;const p=el.closest('[data-k88]')||el.querySelector('[data-k88]');
+    if(MK88.ptr==='touch'&&p&&p!==sel){show(p);e.stopPropagation()}});
+  return {show}}
+/* mk88Lit — lights the elements and gives each its window button */
+function mk88Lit(root,pairs){root.querySelector('.mboard75').classList.add('mk88sel');
+  for(const [el,mi] of pairs){if(!el||mi<0)continue;el.classList.add('lit');el.dataset.mi=mi;el.tabIndex=0;el.setAttribute('role','button')}}
+
+/* ---------- the roll show ---------- */
+function mk88Die(root,lv){const y=MB75.rows[lv];const d=document.createElement('div');d.className='mk88die';d.style.top=(y[0]+(y[1]-y[0])*0.5)+'%';d.innerHTML='<b>I</b>';
+  root.querySelector('.mboard75').appendChild(d);return d}
+function mk88Roll(root,lv,slot,sides,onEnd){const die=mk88Die(root,lv);let stop=false,i=0,last=0;
+  const n=8+Math.floor(Math.random()*4);const path=[];for(let k=0;k<n-1;k++){let s;do s=1+Math.floor(Math.random()*4);while(s===path[k-1]);path.push(s)}
+  if(path[path.length-1]===slot)path.pop();path.push(slot);
+  const hop=s=>{root.querySelectorAll('.mb-cell.hop').forEach(c=>c.classList.remove('hop'));for(const sd of sides){const c=mk88Cell(root,lv,sd,s);if(c)c.classList.add('hop')}die.querySelector('b').textContent=ROMAN88[s-1]};
+  const end=()=>{if(stop)return;stop=true;hop(slot);die.classList.add('done');
+    /* an empty slot: the light slides to the closest filled one */
+    setTimeout(()=>{try{const m=S.market;for(const sd of sides){const has=sd==='w'?x=>wHas75(m.w[lv],x):x=>aHas75(m.a[lv],x);const near=nearest75(has,slot);
+      if(near.length&&!near.includes(slot)){const c0=mk88Cell(root,lv,sd,slot);if(c0)c0.classList.remove('hop');for(const s of near){const c=mk88Cell(root,lv,sd,s);if(c)c.classList.add('hop','slid')}}}}catch(e){}onEnd()},reduceMotionOn()?0:260)};
+  const step=()=>{if(stop)return;if(i>=path.length){end();return}hop(path[i]);const t=60+Math.pow(i/path.length,2)*260;i++;last=setTimeout(step,t)};
+  if(reduceMotionOn())end();else step();
+  return {skip:()=>{if(stop)return false;clearTimeout(last);end();return true},running:()=>!stop}}
+function reduceMotionOn(){try{return typeof reduceMotion==='function'&&reduceMotion()}catch(e){return false}}
+
+/* ---------- the windows ---------- */
+/* mk88RollWin — the "Market die" / "Market · slot N" windows: the show, then the slot's pieces lit */
+function mk88RollWin(base,c,title,body,buttons,opt,mode){c.seen=true;const lv=c.lv,slot=c.slot,sides=c.sides;const opts=slotOpts75(lv,slot,sides);
+  const B=buttons.map(b=>/^t\d+$/.test(String(b.value))||(mode==='take'&&typeof b.value==='number')?{...b,style:'display:none'}:b);
+  const html=mk88Wrap(boardHTML75(c.player))+body;
+  return base(title,html,B,{...opt,wide:1,onOpen:done=>{try{const root=document.querySelector('#mBody .mk88');mk88Tag(root);root.querySelector('.mboard75').classList.add('row'+lv);let roll=null;
+    const W_=mk88Wire(root,c.player,{skip:()=>roll&&roll.running()&&roll.skip()});
+    roll=mk88Roll(root,lv,slot,sides,()=>{const used=new Set();const pairs=[];
+      opts.forEach((o,i)=>{const val=mode==='take'?i:'t'+i;const mi=buttons.findIndex(b=>b.value===val);const cell=mk88Cell(root,lv,o.kind,o.s);if(!cell)return;
+        const el=[...cell.querySelectorAll(o.kind==='w'?'.mb-w,.mb-back':'.mb-a')].find(x=>!used.has(x)&&(o.kind==='w'||x.dataset.card==='a:'+o.key));if(el){used.add(el);pairs.push([el,mi])}});
+      mk88Lit(root,pairs);if(pairs[0])W_.show(pairs[0][0])})}catch(e){console.error(e)}if(opt&&opt.onOpen)opt.onOpen(done)}})}
+/* Market Choice: pick a slot on the board */
+function mk88ChoiceWin(base,c,title,body,buttons,opt){c.seen=true;const lv=c.lv;
+  const B=buttons.map(b=>typeof b.value==='number'?{...b,style:'display:none'}:b);
+  return base(title,mk88Wrap(boardHTML75(c.player))+`<p>${_T`Click a slot of the level ${lv} row — no die.`}</p>`,B,{...opt,wide:1,onOpen:done=>{try{const root=document.querySelector('#mBody .mk88');mk88Tag(root);mk88Wire(root,c.player);
+    const pairs=[];for(const sd of c.sides)for(let s=1;s<=4;s++){const mi=buttons.findIndex(b=>b.value===s);pairs.push([mk88Cell(root,lv,sd,s),mi])}mk88Lit(root,pairs);root.querySelector('.mboard75').classList.add('cells88')}catch(e){console.error(e)}if(opt&&opt.onOpen)opt.onOpen(done)}})}
+/* chooseMarket: any remaining piece of a kind at a level */
+function mk88PickWin(base,P,title,body,buttons,opt){const {player,kind,lv}=P;const Wm=S.market.w[lv];
+  const deck=kind==='w'?Wm.deck.filter(k=>!(wOpen75(Wm)&&k===Wm.up4)):[];
+  const strip=deck.length?`<div class="mk88strip"><span>${_T`From the face-down pile`}</span>${deck.map(k=>`<span class="mb-w s88" data-card="w:${k}" data-k88="w:${k}" style="${cardStyle('w:'+k)}"></span>`).join('')}</div>`:'';
+  const B=buttons.map(b=>({...b,style:'display:none'}));
+  return base(title,mk88Wrap(boardHTML75(player),strip)+body,B,{...opt,wide:1,onOpen:done=>{try{const root=document.querySelector('#mBody .mk88');mk88Tag(root);const W_=mk88Wire(root,player);
+    const pairs=[];root.querySelectorAll(`.mb-cell[data-lv="${lv}"][data-side="${kind}"] [data-k88^="${kind}:"], .mk88strip [data-k88]`).forEach(el=>{const k=el.dataset.k88.slice(2);pairs.push([el,buttons.findIndex(b=>b.value===k)])});
+    mk88Lit(root,pairs);const f=pairs.find(p=>p[1]>=0);if(f)W_.show(f[0])}catch(e){console.error(e)}if(opt&&opt.onOpen)opt.onOpen(done)}})}
+/* the draft: every level's remaining gear spread across the slots; the offered pieces lit */
+function mk88SpreadHTML(){const m=S.market;const cell=(x,y,inner,cls)=>`<div class="mb-cell ${cls}" style="left:${x[0]}%;width:${x[1]-x[0]}%;top:${y[0]}%;height:${y[1]-y[0]}%;--ch:${(y[1]-y[0]).toFixed(1)}">${inner}</div>`;let h='';
+  for(const lv of [3,2,1]){const y=MB75.rows[lv];const ws=[...m.w[lv].slots.filter(Boolean),...m.w[lv].deck];const cols=[[],[],[],[]];ws.forEach((k,i)=>cols[i%4].push(k));
+    for(let s=0;s<4;s++){const n=cols[s].length;h+=cell(MB75.w[s],y,cols[s].map((k,i)=>`<span class="mb-w" data-card="w:${k}" data-k88="w:${k}" style="${cardStyle('w:'+k)};--i:${i};--n:${n}"></span>`).join(''),'w sp88')}
+    for(let s=0;s<4;s++){const p=m.a[lv].piles[s]||[];h+=cell(MB75.a[s],y,`<div class="mb-pile n${Math.min(p.length,6)}">${p.map(k=>`<span class="mb-a" data-card="a:${k}" data-k88="a:${k}" style="${cardStyle('a:'+k)}"></span>`).join('')}</div>`,'a')}}
+  return `<div class="mboard75"><img src="${assetURL('market_board.webp')}" alt="${_T`The market board`}">${h}</div>`}
+function mk88DraftWin(base,player,title,body,buttons,opt){const grid=opt.grid;const all=[...buttons,...grid];
+  /* the window's own paragraph stays; the old two-per-row grid stays in the page (hidden) for its data-mi buttons */
+  const p0=(body.match(/^<p>[\s\S]*?<\/p>/)||[''])[0];
+  return base(title,mk88Wrap(mk88SpreadHTML(),`<div class="mk88strip x88" hidden><span>${_T('Also offered')}</span></div>`)+p0+`<div id="pickgrid" hidden style="display:none"></div>`,buttons,{...opt,wide:1,onOpen:done=>{try{const root=document.querySelector('#mBody .mk88');const W_=mk88Wire(root,player);
+    const used=new Set();const pairs=[];const extra=root.querySelector('.x88');
+    grid.forEach((g,i)=>{const ref=g.card;if(!ref)return;const el=[...root.querySelectorAll(`.mboard75 [data-k88="${ref}"]`)].find(x=>!used.has(x));
+      if(el){used.add(el);pairs.push([el,buttons.length+i])}else{extra.hidden=false;extra.insertAdjacentHTML('beforeend',`<span class="${ref[0]==='w'?'mb-w s88':'mb-a s88a'}" data-card="${ref}" data-k88="${ref}" style="${cardStyle(ref)}"></span>`);pairs.push([extra.lastElementChild,buttons.length+i])}});
+    mk88Lit(root,pairs);if(pairs[0])W_.show(pairs[0][0])}catch(e){console.error(e)}if(opt&&opt.onOpen)opt.onOpen(done)}})}
+
+{const base=modal;modal=function(title,body,buttons,opt={}){
+  if(HEADLESS||typeof document==='undefined'||!S||!S.market)return base.apply(this,arguments);
+  try{const t=String(title||''),c=MK88.ctx;opt=opt||{};
+    if(c&&c.player&&!c.player.cpu){
+      if(t===_T('Market Choice'))return mk88ChoiceWin(base,c,title,body,buttons,opt);
+      if(c.slot&&t===_T`Market die · ${c.slot}`)return mk88RollWin(base,c,title,body,buttons,opt,'roll');
+      if(c.slot&&t===_T`Market · slot ${c.slot}`)return mk88RollWin(base,c,title,body,buttons,opt,'take')}
+    const P=MK88.pick;if(P&&!P.player.cpu&&t===_T`Level ${P.lv} ${P.kind==='w'?_T('weapon'):_T('armor')}`)return mk88PickWin(base,P,title,body,buttons,opt);
+    if(MK88.draft&&opt.grid&&opt.grid.length&&opt.grid.every(g=>/^[wa]:/.test(g.card||''))){const p=MK88.draftP||(S.players||[]).find(x=>!x.cpu);return mk88DraftWin(base,p,title,body,buttons,opt)}
+  }catch(e){console.error(e)}
+  return base.apply(this,arguments)}}
+
+/* ---------- context: who is buying, which level, which slot ---------- */
+{const base=slotOpts75;slotOpts75=function(lv,slot,sides){const c=MK88.ctx;if(c&&c.lv===lv){c.slot=slot;if(c.wantPeek)c.snap=boardHTML75(c.player)}return base.apply(this,arguments)}}
+{const base=marketBuy75;marketBuy75=async function(player,lv,opt={}){if(HEADLESS)return base.apply(this,arguments);
+  const prev=MK88.ctx;const c=MK88.ctx={player,lv,sides:opt&&opt.only?[opt.only]:['w','a'],seen:false,slot:null,snap:null,mchoice:!!(player.mchoice&&!(opt&&opt.free))};
+  c.wantPeek=player.cpu?mk88PeekOn():!!S;
+  try{const r=await base.apply(this,arguments);
+    if(r&&r.key&&!c.seen&&c.snap&&(player.cpu?mk88PeekOn():true))await mk88Peek({html:c.snap,lv,slot:c.mchoice?null:c.slot,ref:(r.kind==='w'?'w:':'a:')+r.key,side:r.kind,
+      who:nm(player),what:r.kind==='w'?W[r.key].n:ARM[r.key].n});
+    return r}finally{MK88.ctx=prev}}}
+{const base=chooseMarket;chooseMarket=async function(player,kind,lv){const prev=MK88.pick;MK88.pick={player,kind,lv};try{return await base.apply(this,arguments)}finally{MK88.pick=prev}}}
+{const base=runDraft;runDraft=async function(){MK88.draft++;try{return await base.apply(this,arguments)}finally{MK88.draft--;MK88.fly=null}}}
+/* a CPU's draft pick: snapshot the spread with the pick, then it flies off when the gladiator takes it */
+{const base=draftPull81;draftPull81=function(x){try{const p=x&&x.by?S.players[x.by-1]:null;if(MK88.draft&&p&&p.cpu&&mk88PeekOn())MK88.fly={html:mk88SpreadHTML(),ref:(x.kind==='w'?'w:':'a:')+x.k,who:nm(p),what:x.kind==='w'?W[x.k].n:ARM[x.k].n,draft:1};}catch(e){}return base.apply(this,arguments)}}
+{const base=draftFits81;draftFits81=function(p){if(MK88.draft)MK88.draftP=p;return base.apply(this,arguments)}}
+{const g=async(key)=>{const f=MK88.fly;if(f&&f.ref.slice(2)===key){MK88.fly=null;await mk88Peek(f)}};
+  const bw=gainWeapon;gainWeapon=async function(player,key){try{await g(key)}catch(e){}return bw.apply(this,arguments)};
+  const ba=gainArmorPiece;gainArmorPiece=async function(player,key){try{await g(key)}catch(e){}return ba.apply(this,arguments)}}
+
+/* ---------- the peek over the arena ---------- */
+function mk88Peek(f){return new Promise(res=>{try{let el=document.getElementById('mk88peek');if(el)el.remove();el=document.createElement('div');el.id='mk88peek';
+  el.innerHTML=`<div class="pk88h">${f.draft?_T`${f.who} drafts <b>${esc(f.what)}</b>`:f.slot?_T`${f.who} rolls <b class="rn88">${ROMAN88[f.slot-1]}</b> at level ${f.lv} → <b>${esc(f.what)}</b>`:_T`${f.who} takes <b>${esc(f.what)}</b> at level ${f.lv}`}</div><div class="mk88">${f.html}</div>`;
+  document.body.appendChild(el);const root=el.querySelector('.mk88');mk88Tag(root);const B=root.querySelector('.mboard75');B.classList.add('mk88sel');
+  if(f.lv)B.classList.add('row'+f.lv);
+  /* the taken piece: in the level row (the rolled slot's side first), else anywhere */
+  const scope=f.lv?`.mb-cell[data-lv="${f.lv}"]`:'.mb-cell';
+  let piece=null;if(f.slot&&f.side){const cs=[...root.querySelectorAll(`${scope}[data-side="${f.side}"]`)].sort((a,b)=>Math.abs(a.dataset.s-f.slot)-Math.abs(b.dataset.s-f.slot));
+    for(const c of cs){piece=c.querySelector(`[data-k88="${f.ref}"]`)||(f.side==='w'&&+c.dataset.s===4?c.querySelector('[data-k88^="back:"]'):null);if(piece)break}}
+  if(!piece)piece=root.querySelector(`${scope} [data-k88="${f.ref}"]`)||root.querySelector(`[data-k88="${f.ref}"]`);
+  if(piece){piece.classList.add('lit');const cell=piece.closest('.mb-cell');if(cell)cell.classList.add('hop')}
+  const ms=mk88Ms();let t1=0,t2=0;const fin=()=>{clearTimeout(t1);clearTimeout(t2);el.classList.add('out');setTimeout(()=>{el.remove();res()},reduceMotionOn()?0:220)};
+  t1=setTimeout(()=>{if(piece)piece.classList.add('fly88')},Math.round(ms*0.55));t2=setTimeout(fin,ms);el.addEventListener('click',fin,{once:true})}catch(e){console.error(e);res()}})}
+
+{const css=document.createElement('style');css.textContent=`
+.mk88{position:relative}
+.mk88 .mboard75{user-select:none;width:min(100%,calc((100vh - 400px) * 1.5456));margin:0 auto}
+#mk88peek .mk88 .mboard75{width:100%}
+.mk88 .mk88sel .mb-w,.mk88 .mk88sel .mb-a,.mk88 .mk88sel .mb-back{transition:opacity .2s,filter .2s,transform .2s}
+.mk88 .mk88sel .mb-w:not(.lit),.mk88 .mk88sel .mb-a:not(.lit),.mk88 .mk88sel .mb-back:not(.lit){opacity:.5;filter:grayscale(.7) brightness(.75)}
+.mk88 .lit{cursor:pointer;outline:none}
+.mk88 .mb-a.lit{filter:drop-shadow(0 0 5px #ffd76a) drop-shadow(0 0 2px #ffd76a)!important}
+.mk88 .mb-w.lit,.mk88 .mb-back.lit{box-shadow:0 0 0 2px #ffd76a,0 0 14px 3px rgba(255,215,106,.75)}
+.mk88 .sel88.mb-a{transform:scale(1.12)}.mk88 .mb-cell.w .sel88.mb-w{z-index:4;box-shadow:0 0 0 3px #fff3c4,0 0 18px 5px rgba(255,215,106,.9)}
+.mk88 .mb-cell.lit{cursor:pointer;border-radius:6px;box-shadow:inset 0 0 0 2px rgba(255,215,106,.55)}
+.mk88 .cells88 .mb-cell.lit:hover{box-shadow:inset 0 0 0 3px #ffd76a,0 0 16px rgba(255,215,106,.6);background:rgba(255,215,106,.12)}
+.mk88 .cells88 .mb-w,.mk88 .cells88 .mb-a,.mk88 .cells88 .mb-back{opacity:1!important;filter:none!important}
+.mk88 .mb-cell.hop{border-radius:6px;box-shadow:inset 0 0 0 3px #ffd76a,0 0 22px 6px rgba(255,200,80,.55);background:rgba(255,215,106,.16);transition:box-shadow .08s,background .08s}
+.mk88 .mb-cell.slid{transition:box-shadow .25s,background .25s}
+.mk88die{position:absolute;left:50%;width:6.2%;aspect-ratio:1/0.9;transform:translate(-50%,-50%);z-index:6;display:grid;place-items:end center;padding-bottom:8%;
+  clip-path:polygon(50% 0,100% 100%,0 100%);background:linear-gradient(160deg,#fff1c2,#d8a63e 55%,#8a5a1c);filter:drop-shadow(0 4px 6px rgba(0,0,0,.6));animation:die88 .18s linear infinite}
+.mk88die b{font:700 clamp(12px,2.2cqw,26px)/1 "Marcellus SC",Georgia,serif;color:#3a2210}
+.mk88die.done{animation:none;transform:translate(-50%,-50%) scale(1.15);transition:transform .2s}
+@keyframes die88{0%{transform:translate(-50%,-50%) rotate(-14deg)}50%{transform:translate(-50%,-56%) rotate(14deg)}100%{transform:translate(-50%,-50%) rotate(-14deg)}}
+.mk88 .sp88 .mb-w{left:calc(50% + (var(--i) - (var(--n) - 1) / 2) * 26%)!important;width:calc(var(--ch) * 0.78cqh)!important}
+.mk88 .sp88 .mb-w:hover,.mk88 .sp88 .mb-w.sel88{z-index:5}
+.mk88strip{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;padding:6px 8px;border:1px dashed rgba(255,215,106,.4);border-radius:8px}
+.mk88strip>span:first-child{font-size:12px;color:var(--muted);margin-right:4px}
+.mk88strip .s88{display:block;width:84px;aspect-ratio:600/416;background-repeat:no-repeat;border-radius:4px;position:relative}
+.mk88strip .s88a{display:block;width:52px;aspect-ratio:1;background-repeat:no-repeat}
+.mk88info{margin-top:8px;min-height:132px}
+.mk88inf{display:flex;gap:14px;align-items:flex-start;background:rgba(0,0,0,.28);border:1px solid rgba(184,150,62,.45);border-radius:10px;padding:10px 12px}
+.mk88inf.empty{color:var(--muted);font-size:13px;align-items:center;min-height:110px;justify-content:center}
+.mk88art{flex:none;display:grid;place-items:center;width:150px}.mk88art .cimg{max-width:150px}.mk88art .cimg.wide{width:150px}
+.mk88txt{min-width:0;flex:1;font-size:13.5px}.mk88txt>b{font:400 19px var(--display);color:var(--gold2)}.mk88txt .lv{color:var(--muted);font-size:12px;margin:1px 0 6px}
+.mk88txt table{border-collapse:collapse}.mk88txt th{color:var(--muted);font-weight:500;text-align:left;padding:1px 10px 1px 0;vertical-align:top}.mk88txt td{padding:1px 0}
+.mk88txt p{margin:5px 0 0}.mk88txt .fit .ok{color:#8fd18a}.mk88txt .fit .sw{color:#f0c060}.mk88txt .fit .no{color:#e07a6a}
+.mk88txt .wc88{display:flex;flex-wrap:wrap;gap:4px}
+#mk88peek{position:fixed;left:50%;top:70px;transform:translateX(-50%);width:min(560px,92vw);z-index:9000;background:linear-gradient(#2a1f17,#1c140f);border:1px solid var(--gold);border-radius:12px;
+  padding:8px 10px 10px;box-shadow:0 14px 40px rgba(0,0,0,.6);animation:pk88in .2s ease-out;cursor:pointer}
+#mk88peek.out{opacity:0;transform:translate(-50%,-8px);transition:opacity .2s,transform .2s}
+#mk88peek .pk88h{font-size:14px;color:var(--bone);margin:0 2px 6px}#mk88peek .rn88{font-family:"Marcellus SC",Georgia,serif;color:#ffd76a}
+@keyframes pk88in{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}}
+.mk88 .fly88{transition:transform .55s cubic-bezier(.4,0,.8,.4),opacity .55s!important;opacity:0!important;transform:translate(-50%,-160%) rotate(-90deg) scale(1.2)!important}
+.mk88 .mb-back.fly88{transform:translateY(-120%)!important}
+.mk88 .mb-a.fly88{transform:translateY(-140%) scale(1.3)!important}
+@media (max-width:600px){.mk88inf{flex-direction:column;align-items:center;text-align:center}.mk88txt table{margin:0 auto}.mk88art{width:120px}.mk88die b{font-size:14px}}
+body.calm .mk88die{animation:none}`;document.head.appendChild(css)}
+/* =====================================================================
+   156-v88domus · v0.88 THE ONLINE DOMUS REDESIGN + IMMORTALIS (his picks, 2026-10-05)
+   =====================================================================
+   SHOWCASE + 4 • 🏛 Domus (ONL.tab 'char') is rebuilt from the screens the older modules draw (onlCharHTML chain: 116 editor,
+     127 house card + rank bar, 128 sculpt bench, 137 Bring ticks / Storeroom / offerings / trophies, 149 shelf #sh87):
+     – the house card stays on top (name, record, treasury, gifts chest, patron, tester);
+     – THE STAGE `.st88`: the ACTIVE gladiator's player-board avatar (avatarFor73 + avatarSVG, 98-avatar73) wearing the armor he
+       brings (ONLC.equipOf; named armor by its base art), TWO weapon slots to its LEFT as horizontal weapon cards `.wp88`
+       (cardHTML 'w:'+key; the class's recruit weapons first, bought ones fill/replace like 112's giveLoadout; empty = dotted),
+       and beside it name, class, rank, Glory, the record (bouts, wins, Ranked survived, lifetime CF) and the money:
+       Purse `.mon88.purse` (his own coin — lost if he falls) and Treasury `.mon88.tre` (the house's 20% cut — outlives every
+       gladiator, pays for anyone);
+     – THE SLOTS `.sl88` (also .onl-gslots): 4 cards (ONLC.GLAD_MAX), a living one makes that gladiator active (data-onl="gact",
+       116's char.active route; locked while one is in a game), an empty one = "+ New gladiator" (data-onl="gnew") → the creator
+       opens as a POPUP over the Domus (`.cr88pop`, inside #onl so its own handlers work) — only while a slot is free;
+     – ✎ the old editor (name, class, look, token, gear to bring) folds under the slots (`details#ged88`, always the active one);
+     – TABS `.tb88` [data-tb88] store · offs · tro → panels `.tp88[data-tp88]`: 🗄 Storeroom (#sr82 with 149's #sh87 shelf),
+       🧪 Offerings shelf (137's .of83-box moved out of #sr82), 🏆 Trophies (137's .tr83 moved out of the house card).
+       The tab is remembered (V88D.tab + localStorage flavius_domtab88). Nothing in the Domus buys (buying = Armory & Market):
+       any buy control that would land in it is stripped.
+   IMMORTALIS • the top gladiator status (his name, 2026-10-05). Online: onlImmortalis88(ch) = alive, Invictus rank (ONLC.rankFor,
+     never demoted) AND 25+ Ranked bouts survived (ch.survived counts only Ranked). Shown as `.imm88` — a gold double frame with
+     laurel sprigs at the top corners (generic; the Manager reuses the class) — on the slot card, the stage and the profile line
+     (onl83Profile's gladiator rows), plus the chip `.imm88c` "🌿 Immortalis" (stage, slot card, profile, the landing stage name).
+   PHONES (≤600 px): stage = avatar beside the facts, the two weapon cards in a row under them; the slot row scrolls sideways;
+     then the editor fold and the tabs.
+   ===================================================================== */
+const V88D={tab:(()=>{try{return localStorage.getItem('flavius_domtab88')||'store'}catch(e){return 'store'}})(),edOpen:false};
+const IMM88_SURV=25;
+function onlImmortalis88(ch){try{if(!ch||ch.alive===false)return false;return ONLC.rankFor(ch).k==='invictus'&&(ch.survived|0)>=IMM88_SURV}catch(e){return false}}
+const imm88Chip=()=>`<span class="imm88c" title="${_T`Invictus with ${IMM88_SURV}+ Ranked bouts survived`}">${_T`🌿 Immortalis`}</span>`;
+
+/* ---------------- the stage: what he wears and holds ---------------- */
+function dom88Base(I){return I?(I.named?(I.w||{}).base:I.base)||'':''}
+function dom88Armor(ch){const list=[];for(const k of ONLC.equipOf(ch)){let I=null;try{I=ONL83.piece(ch,k)}catch(e){}const b=dom88Base(I)||k;const A=ARM[b];if(!A||(I&&I.kind==='w'))continue;
+    const L=A.slot==='head'?['head']:A.slot==='chest'||A.slot==='belt'?['chest']:A.slot==='arm'?(A.pair?['rarm','larm']:['rarm']):A.slot==='leg'?(A.pair?['rleg','lleg']:['rleg']):[];for(const l of L)list.push([b,l])}
+  return list}
+function dom88Hands(ch){const CK=CLASSES[ch.cls]||{};let R=CK.R&&W[CK.R]?{k:CK.R,kit:true}:null,L=CK.L&&W[CK.L]?{k:CK.L,kit:true}:null;
+  for(const k of ONLC.equipOf(ch)){let I=null;try{I=ONL83.piece(ch,k)}catch(e){}if(!I||I.kind!=='w')continue;const b=dom88Base(I);if(!W[b])continue;const x={k:b,I};
+    if(!R)R=x;else if(!L&&!(W[R.k]||{}).both)L=x;else R=x}
+  return [R,L]}
+function dom88Weapon(x,side){const lbl=side==='R'?_T('Right hand'):_T('Left hand');
+  if(!x)return `<div class="wp88 empty"><div class="wp88-card"><span>${_T`Empty hand`}</span></div><small>${lbl}</small></div>`;
+  const I=x.I;const named=I&&I.named;const R=named?ONLC.rarOf(I.rar):null;const col=named&&ONL83.rarCol?ONL83.rarCol[R.k]:'';
+  const nm=named?(I.w&&I.w.n)||I.n:(W[x.k]||{}).n||x.k;
+  const sty=col?`style="--rc:${col}"`:''; /* i18n:skip */
+  return `<div class="wp88 ${named?'named':''}" ${sty} title="${esc2(nm)}"><div class="wp88-card">${typeof cardHTML==='function'?cardHTML('w:'+x.k,'md'):''}</div>
+    <small>${lbl} · <b>${esc2(nm)}</b>${x.kit?_T(' <i>recruit kit</i>'):named?` <i>${esc2(R.n)}</i>`:''}</small></div>`}
+function dom88Stage(ch){if(!ch)return `<div class="st88 none"><p class="rc-sub">${_T`No gladiator yet — choose an empty slot below to raise one.`}</p></div>`;
+  let av='';try{av=avatarSVG(avatarFor73(dom88Armor(ch),'dom88_'+ch.id))}catch(e){console.error(e)}
+  const [R,L]=dom88Hands(ch);const imm=onlImmortalis88(ch);const Rk=ONLC.rankFor(ch);const N=ONLC.nextRank(ch);const g=Math.round(ONLC.gloryOf(ch));const T=(ONL.domus||{}).treasury|0;
+  const rec=[[_T('Bouts'),ch.bouts|0],[_T('Wins'),ch.wins|0],[_T('Survived'),ch.survived|0],[_T('Lifetime CF'),cfAmt87(ch.lifeCF|0)],[_T('Glory'),`✦ ${g}`]];
+  return `<div class="st88 ${imm?'imm88':''}" data-st88="${esc2(ch.id)}">
+    <div class="st88-wp">${dom88Weapon(R,'R')}${dom88Weapon(L,'L')}</div>
+    <div class="av88" title="${_T`What ${esc2(ch.name)} wears into the next match`}">${av}</div>
+    <div class="st88-info"><div class="st88-n">${esc2(ch.name)}</div>${imm?imm88Chip():''}
+      <div class="st88-sub">${esc2((CLASSES[ch.cls]||{}).name||'')} · ${onlRankChip(Rk.k)}</div>
+      <small class="rc-sub">${N?_T`Next: ${esc2(N.n)} at ${N.glory} Glory`:_T('The highest rank')}${Rk.k==='invictus'&&!imm?_T` · Immortalis at ${IMM88_SURV} Ranked bouts survived (${ch.survived|0})`:''}</small>
+      <div class="st88-rec">${rec.map(([k,v])=>`<div><b>${v}</b><small>${k}</small></div>`).join('')}</div>
+      <div class="st88-mon"><div class="mon88 purse">${_T`<small>Purse</small><b>${coinAmt87(ch.wallet|0)}</b><i>${esc2(ch.name)}’s own coin — lost at death</i>`}</div>
+        <div class="mon88 tre">${_T`<small>Treasury</small><b>${coinAmt87(T)}</b><i>the house’s cut — outlives every gladiator, pays for anyone</i>`}</div></div>
+      <small class="rc-sub st88-shop">${_T`Buying happens in 🛒 Armory &amp; Market.`}</small></div></div>`}
+
+/* ---------------- the 4 slot cards ---------------- */
+function dom88Slots(live,busy){const act=ONL.char&&ONL.char.id;const coin=c=>coinAmt87(c.wallet|0);
+  const card=c=>{const on=c.id===act;const imm=onlImmortalis88(c);const cl=on?'act on':''; /* i18n:skip */
+    return `<button type="button" class="onl-gslot sl88c ${cl} ${imm?'imm88':''}" data-onl="${on?'gpick':'gact'}" data-v="${esc2(c.id)}" ${!on&&busy?_T`disabled title="In a game — switch when it is over"`:''}>
+      ${onlFig(c.cls,c.look,72)}<b>${esc2(c.name)}</b>${imm?imm88Chip():''}<small>${esc2((CLASSES[c.cls]||{}).name||'')} · ${onlRankChip(ONLC.rankFor(c).k)}</small><small>✦ ${Math.round(ONLC.gloryOf(c))} · ${coin(c)}</small>
+      ${on?_T('<span class="badge gold">⚔ Active</span>'):`<span class="sl88-go">${_T`Make active`}</span>`}</button>`};
+  const empty=Array.from({length:Math.max(0,ONLC.GLAD_MAX-live.length)},()=>`<button type="button" class="onl-gslot sl88c empty" data-onl="gnew">${_T`<span class="sl88-plus">＋</span><b>New gladiator</b><small>starts as a Tiro</small>`}</button>`).join('');
+  return `<div class="onl-gslots sl88" role="list">${live.map(card).join('')}${empty}</div>`}
+
+/* ---------------- the Domus, rebuilt ---------------- */
+{const base=onlCharHTML;onlCharHTML=function(){const live=(typeof onl83Live==='function'?onl83Live():(ONL.chars||[]).filter(c=>c.alive));
+  if(ONL.char&&live.some(c=>c.id===ONL.char.id)&&ONL.gsel!==ONL.char.id){ONL.gsel=ONL.char.id;ONL.ged=null}
+  const h=base.apply(this,arguments);try{if(typeof h!=='string'||!h.includes('dom82-wrap'))return h;
+    const T=document.createElement('template');T.innerHTML=h;const R=T.content;const main=R.querySelector('.dom82-main');if(!main)return h;
+    const house=main.querySelector(':scope > .dom82');const tro=house&&house.querySelector('.tr83');if(tro)tro.remove();
+    const sr=main.querySelector('#sr82');const offs=sr&&sr.querySelector('.of83-box');if(offs)offs.remove();
+    /* buying never happens here */
+    R.querySelectorAll('.buy83,[data-onl83="dbuy"],[data-onl82="buy"],[data-onl83="obuy"],[data-onl83="ubuy"]').forEach(e=>e.remove());
+    const ged=main.querySelector('.onl-ged');const busyP=main.querySelector('.onl-busy');
+    /* the fallen line (116: a .sect "The fallen" + its .rc-sub) */
+    const fallen=[];for(const s of main.querySelectorAll(':scope > .sect'))if(s.nextElementSibling&&s.nextElementSibling.classList.contains('rc-sub')){fallen.push(s,s.nextElementSibling)}
+    const busy=typeof onlBusy==='function'?onlBusy():null;const ch=ONL.char&&live.find(c=>c.id===ONL.char.id)?ONL.char:null;
+    const tab=['store','offs','tro'].includes(V88D.tab)?V88D.tab:'store';
+    const tb=(k,l)=>`<button type="button" role="tab" data-tb88="${k}" class="${tab===k?'on':''}" aria-selected="${tab===k}">${l}</button>`;
+    const out=document.createElement('div');
+    out.innerHTML=`${dom88Stage(ch)}${dom88Slots(live,busy)}<div class="fl88"></div>
+      ${ged&&ch?`<details class="ged88" id="ged88" ${V88D.edOpen?'open':''}><summary>${_T`✎ Name, class, look &amp; gear to bring <small class="rc-sub">${esc2(ch.name)}</small>`}</summary><div class="ged88-in"></div></details>`:''}
+      <div class="tb88" role="tablist">${tb('store',_T('🗄 Storeroom'))}${tb('offs',_T('🧪 Offerings shelf'))}${tb('tro',_T('🏆 Trophies'))}</div>
+      <div class="tp88" data-tp88="store" ${tab==='store'?'':'hidden'}></div><div class="tp88" data-tp88="offs" ${tab==='offs'?'':'hidden'}></div><div class="tp88" data-tp88="tro" ${tab==='tro'?'':'hidden'}></div>`;
+    const put=(sel,el)=>{const t=out.querySelector(sel);if(t&&el)t.appendChild(el)};
+    if(busyP)out.querySelector('.fl88').appendChild(busyP);for(const f of fallen)out.querySelector('.fl88').appendChild(f);
+    put('.ged88-in',ged);put('[data-tp88="store"]',sr);
+    put('[data-tp88="offs"]',offs||Object.assign(document.createElement('p'),{className:'rc-sub',textContent:_T('No offerings yet — the Armory sells them.')}));
+    put('[data-tp88="tro"]',tro||Object.assign(document.createElement('p'),{className:'rc-sub',textContent:_T('No trophies yet.')}));
+    /* everything after the house card is replaced by the new layout */
+    for(const el of [...main.children])if(el!==house)el.remove();
+    while(out.firstChild)main.appendChild(out.firstChild);
+    main.classList.add('dom88');return T.innerHTML}catch(e){console.error(e);return h}}}
+
+/* tabs + the editor fold: no redraw, just show/hide */
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-tb88]');if(!b)return;const k=b.dataset.tb88;V88D.tab=k;try{localStorage.setItem('flavius_domtab88',k)}catch(err){}
+  const box=b.closest('.dom82-main')||document;for(const x of box.querySelectorAll('[data-tb88]')){x.classList.toggle('on',x===b);x.setAttribute('aria-selected',String(x===b))}
+  for(const p of box.querySelectorAll('.tp88'))p.hidden=p.dataset.tp88!==k},true);
+document.addEventListener('toggle',e=>{const t=e.target;if(t&&t.id==='ged88')V88D.edOpen=t.open},true);
+
+/* "+ New gladiator" from the Domus: the creator as a popup over it, only while a slot is free */
+{const base=onlHTML;onlHTML=function(){if(!(ONL.acct&&ONL.newGlad&&ONL.tab==='char'&&!ONL.needDomus&&!(typeof onlIsGuest82==='function'&&onlIsGuest82())))return base.apply(this,arguments);
+  const live=(ONL.chars||[]).filter(c=>c.alive).length;if(live>=ONLC.GLAD_MAX){ONL.newGlad=false;ONL.creating=null;return base.apply(this,arguments)}
+  ONL.newGlad=false;let h,c='';try{h=base.apply(this,arguments)}finally{ONL.newGlad=true}
+  try{c=onlCreatorHTML()}catch(e){console.error(e)}
+  return h+`<div class="cr88pop" role="dialog" aria-modal="true" aria-label="${_T`New gladiator`}"><div class="cr88box"><div class="cr88-h"><b>${_T`＋ A new gladiator for ${esc2(onlHouse82(onlMyDomus82()||''))}`}</b><button type="button" class="btn tksm" data-onl="nonew">${_T`✕ Back to the Domus`}</button></div>${c}</div></div>`}}
+/* a click on the dim backdrop closes the popup */
+document.addEventListener('click',e=>{const t=e.target;if(t&&t.classList&&t.classList.contains('cr88pop')){ONL.newGlad=false;ONL.creating=null;if(typeof onlRedraw==='function')onlRedraw()}});
+
+/* ---------------- IMMORTALIS elsewhere: the landing stage name, the profile line ---------------- */
+{const base=onlStageHTML;onlStageHTML=function(ch){let h=base.apply(this,arguments);try{if(ch&&onlImmortalis88(ch))h=h.replace(/(<div class="onl-pname)([^"]*)("[^>]*>[^<]*<\/div>)/,`$1$2 imm88n$3${imm88Chip()}`)}catch(e){}return h}}
+if(typeof ONL83!=='undefined'&&typeof ONL83.profile==='function'){const base=ONL83.profile;ONL83.profile=async function(){const r=await base.apply(this,arguments);V88D.prof=r;return r}}
+if(typeof onl83Profile==='function'){const base=onl83Profile;onl83Profile=async function(){V88D.prof=null;const r=await base.apply(this,arguments);try{const P=V88D.prof;const pop=document.querySelector('.pf83pop');
+    if(P&&pop){const rows=[...pop.querySelectorAll('.pf83-g')];(P.glads||[]).forEach((g,i)=>{const el=rows[i];if(!el)return;
+      if(onlImmortalis88({alive:true,rankK:g.rank,rank:g.rank,glory:g.glory,survived:g.survived})){el.classList.add('imm88');const b=el.querySelector('b');if(b)b.insertAdjacentHTML('afterend',imm88Chip())}})}}catch(e){console.error(e)}return r}}
+
+/* ---------------- the look ---------------- */
+{const st=document.createElement('style');st.id='dom88css';st.textContent=`
+.imm88{position:relative;border:3px double #e2b64c!important;box-shadow:0 0 0 1px #5e4417,0 0 16px rgba(232,190,90,.38),inset 0 0 12px rgba(232,190,90,.12)!important}
+.imm88::before,.imm88::after{content:'❦';position:absolute;top:-13px;font:18px/1 Georgia,serif;color:#e8c25a;text-shadow:0 1px 2px #000;pointer-events:none;z-index:2}
+.imm88::before{left:6px;transform:scaleX(-1) rotate(-20deg)}.imm88::after{right:6px;transform:rotate(-20deg)}
+.imm88c{display:inline-block;margin:2px 0;padding:1px 8px;border-radius:999px;font:700 11px Georgia,serif;letter-spacing:.06em;text-transform:uppercase;color:#2a1c06;background:linear-gradient(#f6dc8c,#c99a32);box-shadow:0 0 0 1px #7a5a1c;white-space:nowrap}
+.dom88 .st88{display:grid;grid-template-columns:minmax(150px,200px) minmax(150px,220px) minmax(0,1fr);gap:14px;align-items:center;margin:12px 0;padding:14px;border:1px solid #6b5636;border-radius:14px;
+  background:radial-gradient(ellipse at 45% 30%,rgba(232,201,106,.13),transparent 60%),linear-gradient(#241a10,#15100a)}
+.dom88 .st88.none{display:block;text-align:center;padding:24px}
+.st88-wp{display:grid;gap:10px}
+.wp88{display:grid;gap:3px;justify-items:center;text-align:center}.wp88 small{font-size:11.5px;color:var(--muted);line-height:1.25}.wp88 small b{color:#eadbb8}.wp88 small i{color:#c9ad6a;font-style:normal}
+.wp88-card{width:100%;aspect-ratio:600/416;border-radius:8px;overflow:hidden;display:grid;place-items:center;background:rgba(0,0,0,.25);box-shadow:0 4px 12px rgba(0,0,0,.45)}
+.wp88-card>.cimg,.wp88-card>*{width:100%!important;height:100%!important;max-width:none!important;margin:0!important}
+.wp88.named .wp88-card{box-shadow:0 0 0 2px var(--rc),0 4px 12px rgba(0,0,0,.45)}
+.wp88.empty .wp88-card{border:2px dashed #7a6440;background:rgba(255,255,255,.02);box-shadow:none;color:var(--muted);font-size:12px}.wp88.empty .wp88-card>span{width:auto!important;height:auto!important}
+.av88{display:grid;place-items:center;min-height:240px}.av88 svg{width:100%;max-width:200px;height:auto;max-height:330px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.55))}
+.st88-info{min-width:0;display:grid;gap:4px;align-content:start}.st88-n{font:700 24px Georgia,serif;color:var(--gold,#e8c96a);line-height:1.1;overflow-wrap:anywhere}
+.st88-sub{font-size:13px;color:#eadbb8}.st88-info>.imm88c{justify-self:start}
+.st88-rec{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:4px}.st88-rec>div{display:grid;justify-items:center;padding:6px 2px;border:1px solid #4a3a24;border-radius:8px;background:rgba(0,0,0,.2)}
+.st88-rec b{font:700 15px Georgia,serif;color:#eadbb8;white-space:nowrap}.st88-rec small{font-size:10.5px;color:var(--muted);text-align:center}
+.st88-mon{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}.mon88{display:grid;gap:1px;padding:7px 10px;border-radius:9px;border:1px solid #6b5636;background:rgba(0,0,0,.22)}
+.mon88 small{font:700 11px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#cbb88f}.mon88 b{font:700 20px Georgia,serif;color:#f3d58a}.mon88 i{font-style:normal;font-size:11px;color:var(--muted);line-height:1.25}
+.mon88.tre{border-color:#a8873e;background:rgba(232,201,106,.07)}.st88-shop{margin-top:2px}
+.dom88 .sl88{display:grid;grid-template-columns:repeat(${ONLC.GLAD_MAX},minmax(0,1fr));gap:12px;margin:6px 0 12px;padding-top:12px}
+.sl88c{position:relative;align-content:start;min-height:170px}.sl88c.act{border-color:var(--gold,#e8c96a);background:rgba(232,201,106,.09)}.sl88c:disabled{opacity:.6;cursor:not-allowed}
+.sl88c:not(.act):not(.empty):not(:disabled):hover{border-color:#a8873e;transform:translateY(-1px)}.sl88-go{font-size:11px;color:#c9ad6a}.sl88-plus{font-size:30px;line-height:1}
+.sl88c.empty{align-content:center}
+.ged88{margin:4px 0 12px;border:1px solid #4a3a24;border-radius:10px;padding:6px 10px;background:rgba(255,255,255,.02)}.ged88>summary{cursor:pointer;font:700 14px Georgia,serif;color:#eadbb8;padding:4px 0}
+.ged88-in{margin-top:8px}
+.tb88{display:flex;gap:4px;border-bottom:1px solid #6b5636;margin:8px 0 10px;overflow-x:auto}.tb88 button{all:unset;cursor:pointer;padding:8px 14px;border:1px solid transparent;border-bottom:0;border-radius:9px 9px 0 0;font:700 14px Georgia,serif;color:var(--muted);white-space:nowrap}
+.tb88 button.on{color:var(--gold,#e8c96a);border-color:#6b5636;background:linear-gradient(#2a1f13,#1a130c);margin-bottom:-1px}.tb88 button:focus-visible{outline:2px solid var(--gold,#e8c96a)}
+.tp88[hidden]{display:none!important}.tp88 .of83-box,.tp88 .tr83{margin-top:0}
+.imm88n{color:#f3d58a!important}
+.cr88pop{position:fixed;inset:0;z-index:60;background:rgba(8,5,2,.72);display:grid;place-items:center;padding:16px}
+.cr88box{width:min(980px,100%);max-height:calc(100vh - 32px);overflow:auto;border:1px solid #a8873e;border-radius:14px;background:linear-gradient(#241a10,#15100a);padding:12px 14px;box-shadow:0 20px 50px rgba(0,0,0,.7)}
+.cr88-h{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px;font:700 16px Georgia,serif;color:var(--gold,#e8c96a)}
+@media(max-width:900px){.dom88 .st88{grid-template-columns:minmax(120px,170px) minmax(0,1fr);grid-template-areas:"av info" "wp wp"}.dom88 .av88{grid-area:av}.dom88 .st88-info{grid-area:info}.dom88 .st88-wp{grid-area:wp;grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.dom88 .st88{padding:10px;gap:10px;grid-template-columns:110px minmax(0,1fr)}.av88{min-height:0}.av88 svg{max-height:230px}.st88-n{font-size:19px}
+  .st88-rec{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.st88-rec b{font-size:13px}.st88-mon{grid-template-columns:1fr;gap:6px}.mon88{padding:5px 8px}.mon88 b{font-size:17px}
+  .dom88 .sl88{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;padding-bottom:6px;-webkit-overflow-scrolling:touch}.dom88 .sl88c{flex:0 0 140px;scroll-snap-align:start;min-height:160px}
+  .tb88 button{padding:7px 10px;font-size:13px}.cr88pop{padding:0}.cr88box{max-height:100vh;border-radius:0}}`;document.head.appendChild(st)}
+/* 159-v88set — v0.88 settings pass (agreed after his "we should organize these together", 2026-10-05):
+   • GENERAL is grouped: Gameplay (CPU speed, Animations, Confirm before End turn, Follow camera, Event briefing, Context menus) ·
+     Hints & help (the master switch and its parts) · On the board (floating numbers, card reveals, log on the arena, screen shake,
+     see-through) · then Accessibility, Visuals, Voices & bubbles as before. Rows are moved, not rebuilt — their handlers stay.
+   • NEW: Animations Full / Quick / Off (SETTINGS.anim88): Quick halves projectile flights and the market roll show; Off = no flying
+     projectiles, corpse crews or roll show (animOn wrapper). Follow camera (SETTINGS.cam88, default on): when zoomed in, the view
+     eases toward the gladiator whose turn it is (86 camFocus); off = it stays where you put it.
+   • AUDIO: the music and effects volume sliders get a full-width track; the theme list shows the themes you have first and folds the
+     locked ones ("🔒 N locked — win an event in their city"); audListRefresh maps rows by city, so the fold never mixes up the rows. */
+const ANIM88=()=>SETTINGS.anim88||'full';
+{const base=animOn;animOn=function(){return base.apply(this,arguments)&&ANIM88()!=='off'}}
+{const base=projectile;projectile=function(kind,from,to,o){if(ANIM88()==='quick'&&o&&o.dur)o={...o,dur:Math.round(o.dur*0.5)};return base.call(this,kind,from,to,o)}}
+{const base=camFocus;camFocus=function(){if(SETTINGS.cam88===false)return null;return base.apply(this,arguments)}}
+/* the market roll show follows the setting too */
+{const base=mk88Roll;mk88Roll=function(root,lv,slot,sides,onEnd){if(ANIM88()==='off'){const r=base.apply(this,arguments);r.skip();return r}return base.apply(this,arguments)}}
+
+{const base=settingsHTML;settingsHTML=function(tab){const h=base.apply(this,arguments);if(typeof h!=='string')return h;
+  try{if(!tab||tab==='general')return set88General(h);if(tab==='audio')return h.replace(/class="setrow slider"(?=>[\s\S]{0,80}?data-audv|[^>]*>(?:(?!<\/label>)[\s\S])*?data-audv)/g,_T('class="setrow slider aud88"'))}catch(e){console.error(e)}return h}}
+function set88General(h){const T=document.createElement('template');T.innerHTML=h;const g=T.content.querySelector('.setgrid');if(!g)return h;
+  const rows=[...g.children];const by=sel=>rows.find(r=>r.matches(sel)||r.querySelector(sel));
+  const row=sel=>{const r=by(sel);return r&&r.matches('.setrow')?r:null};
+  const anim=ANIM88(),seg=(k,l)=>`<button type="button" data-anim88="${k}" class="${anim===k?'on':''}">${l}</button>`;
+  const mk=html=>{const t=document.createElement('template');t.innerHTML=html.trim();return t.content.firstElementChild};
+  const animRow=mk(`<div class="setrow"><span>${_T`<b>Animations</b>`}<br><span class="hint" style="margin:0">${_T`Flying stones and spears, the clean-up crew, the market die. Quick halves them.`}</span></span><div class="seg">${seg('full',_T('Full'))}${seg('quick',_T('Quick'))}${seg('off',_T('Off'))}</div></div>`);
+  const camRow=mk(`<label class="setrow"><input type="checkbox" data-set="cam88" ${SETTINGS.cam88!==false?'checked':''}><span>${_T`<b>Follow camera</b>`}<br><span class="hint" style="margin:0">${_T`When zoomed in, the view follows whoever's turn it is.`}</span></span></label>`);
+  const head=t=>mk(`<h4 style="grid-column:1/-1;margin:6px 0 0">${t}</h4>`);
+  const groups=[[_T('Gameplay'),[row('[data-sspeed]'),animRow,row('[data-set="confirmEnd"]'),camRow,row('[data-set="briefing"]'),row('[data-set="ctxMenu"]')]],
+    [_T('Hints & help'),[row('.hint87')||row('[data-set="hints"]')]],
+    [_T('On the board'),[row('[data-set="fx"]'),row('[data-set="reveals"]'),row('[data-set="capFeed"]'),row('[data-set="shake"]'),row('[data-sxray]')]]];
+  const lang=row('.lang84');const anchor=lang?lang.nextSibling:g.firstChild;
+  for(const [t,list] of groups){const L=list.filter(Boolean);if(!L.length)continue;g.insertBefore(head(t),anchor);for(const r of L)g.insertBefore(r,anchor)}
+  return T.innerHTML}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-anim88]');if(!b)return;SETTINGS.anim88=b.dataset.anim88;applySettings();
+  b.parentElement.querySelectorAll('[data-anim88]').forEach(x=>x.classList.toggle('on',x===b))});
+
+/* the theme list: yours first, the locked ones folded */
+{const base=audListHTML;audListHTML=function(){const h=base.apply(this,arguments);try{const T=document.createElement('template');T.innerHTML=h;const list=T.content.querySelector('.tracklist');if(!list)return h;
+  const locked=[...list.querySelectorAll(':scope > .trackrow.locked')];if(!locked.length)return h;
+  const d=document.createElement('details');d.className='lk88';d.innerHTML=`<summary>${_T`🔒 ${locked.length} locked — win an event in their city to hear each`}</summary>`;
+  for(const r of locked)d.appendChild(r);list.appendChild(d);return T.innerHTML}catch(e){return h}}}
+audListRefresh=function(){const el=document.getElementById('audTracks');if(!el)return;const ALL=[...AUD_TRACKS,...(typeof AUD_EXTRA!=='undefined'?AUD_EXTRA:[])];
+  const rows=el.querySelectorAll('.trackrow');if(rows.length!==ALL.length){const open=!!el.querySelector('details.lk88[open]');el.innerHTML=audListHTML();if(open){const d=el.querySelector('details.lk88');if(d)d.open=true}return}
+  rows.forEach(row=>{const b=row.querySelector('[data-trk="play"],[data-trk="pause"]');if(!b)return;const city=b.dataset.city;const on=AUD.loc===city&&AUD.playing;const paused=AUD.loc===city&&AUD.paused;
+    row.classList.toggle('on',on);const want=on?'pause':'play';if(b.dataset.trk!==want){b.dataset.trk=want;b.textContent=on?'❚❚':'▶';b.title=on?_T('Pause'):_T('Play')}
+    const st=row.querySelector('.trst');if(st){const t=on?_T('♪ now playing'):paused?_T('paused'):'';if(st.textContent!==t)st.textContent=t}})};
+
+{const css=document.createElement('style');css.textContent=`
+.setgrid .setrow.slider.aud88{grid-column:span 2;display:flex;align-items:center;gap:12px}
+.setgrid .setrow.slider.aud88>span{flex:none;min-width:110px}
+.setgrid .setrow.slider.aud88 input[type=range]{flex:1;min-width:120px;width:auto}
+.setgrid .setrow.slider.aud88 output{flex:none;width:34px;text-align:right;font:600 12px var(--mono,monospace)}
+details.lk88{margin-top:6px}details.lk88>summary{cursor:pointer;color:var(--muted);font-size:13px;padding:6px 4px}
+details.lk88 .trackrow{opacity:.8}
+@media (max-width:600px){.setgrid .setrow.slider.aud88{grid-column:1/-1}}`;document.head.appendChild(css)}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
