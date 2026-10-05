@@ -1055,6 +1055,29 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   {const base=R['auth.signin'];R['auth.signin']=async(d,ctx)=>{const a=await base(d,ctx);if(d&&!d.google&&a&&!C.lnameWhy(d.name)){const name=C.lnameClean(d.name);
       if(await claimL89(name,a.id)){await store.set('ACCT#'+a.id,'PROFILE',{lname:name,name});a.lname=name;a.name=name}}return a}}
   /* ══════════ end of v0.89 L ══════════ */
+  /* ══════════ v0.89 N · FLAVIUS'S VAULT: the week's auction filled up to AUC_LOTS (shared rules: C.vaultLot89 in 111-onlcore) ══════════
+     No edits to the lines above: aucDraw (a function binding) is re-pointed here, so every sweep (hello / auction.list / market.list) fills.
+     AUCTION#<week> VAULT89 {at, n} = the week's fill, made ONCE (putNew). A week the chest left short is filled at once by the instance that drew
+     it (META.at === t), or by anyone once the draw is VAULT_GRACE89 old (weeks drawn before this server, a draw cut short). A vault Legendary
+     claims its unique in WORLD UNIQ# / UNIQA# like a gift; a lost claim re-rolls the same lot at Epic. Lots look like any other (lot.vault89 +
+     pc.vault89 + vault89 on each history line); bids, escrow, one win a week, the sink and the settlement are the v0.84 code. */
+  const VAULT_GRACE89=60e3;
+  async function vaultFill89(t){const S=C.seasonAt(t);const pk=aucPK(S.key);const M=await store.get(pk,'META');if(!M)return 0;
+    const lots=await store.query(pk,'L#');if(lots.length>=C.AUC_LOTS)return 0;if(M.at!==t&&t-(M.at||0)<VAULT_GRACE89)return 0;
+    if(await store.get(pk,'VAULT89'))return 0;if(!(await store.putNew(pk,'VAULT89',{at:t,ttl:ttl(90)})))return 0;
+    const ends=C.aucEnds(t);let n=lots.reduce((a,x)=>Math.max(a,x.n|0),0),made=0;
+    while(lots.length+made<C.AUC_LOTS){n++;const tW=(await store.query('WORLD','UNIQ#')).map(x=>x.k),tA=(await store.query('WORLD','UNIQA#')).map(x=>x.k);
+      let P=C.vaultLot89(S.key,n,catalog,tW,tA,{at:S.start});
+      if(P&&P.pc.w.uq){const U=(P.kind==='a'?'UNIQA#':'UNIQ#')+P.pc.w.uq;if(!(await store.putNew('WORLD',U,{k:P.pc.w.uq,at:now(),vault89:1})))P=C.vaultLot89(S.key,n,catalog,tW,tA,{at:S.start,cap:'epic'})}
+      const I=P&&C.pieceInfo(P,catalog);if(!I)break;const val=C.valueOf(I);
+      await store.put(pk,'L#'+rk(n),{id:S.key+'#'+n,key:S.key,n,item:P.item,pc:P.pc,val,min:C.aucMin(val),opens:t,ends,bid:null,bids:[],done:false,won:null,from:{vault89:1},vault89:1,ttl:ttl(90)});made++}
+    await store.set(pk,'VAULT89',{n:made});return made}
+  {const base=aucDraw;aucDraw=async function(t){await base.apply(this,arguments);try{await vaultFill89(t)}catch(e){}}}
+  /* an unsold vault lot goes back to the VAULT, not the chest (vault pieces never leak into gifts or next week's chest draw); its unique is free again */
+  {const base=aucSettle;aucSettle=async function(key,n){const r=await base.apply(this,arguments);try{if(r&&r.to==='chest'){const X=await store.get(aucPK(key),'L#'+rk(n));
+      if(X&&X.vault89&&!X.bid){await store.del('CHEST','P#'+C.itemUid(X.item));const uq=X.pc&&X.pc.w&&X.pc.w.uq;
+        if(uq){const U=(C.isNamedA(X.item)?'UNIQA#':'UNIQ#')+uq;const Y=await store.get('WORLD',U);if(Y&&Y.vault89)await store.del('WORLD',U)}r.to='vault'}}}catch(e){}return r}}
+  /* ══════════ end of v0.89 N ══════════ */
   return async function route(t,d,ctx){const f=R[t];if(!f)throw new Error('Unknown request: '+t);
     /* v0.82 guests look, never act — for 2 hours from their first connect */
     if(!ctx.acct&&ctx.guest){if(now()-(ctx.guest.first||0)>C.GUEST_MS)throw fail('guest_expired','Your two hours as a guest are up — sign in to keep watching.');
