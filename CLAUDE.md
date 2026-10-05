@@ -991,7 +991,16 @@ share copy — the site download play/flavius-rule-arena.zip.)
   His pick: the square grows to ~18×18 (faster walking). Buildings are DETAILED structures, not the old boxes (columns, pediments,
   roof-tile rows, porticoes, awnings with stripes/scalloped edges, shading, windows/doors, steps) — step 1 = Roma screenshots for his ok.
   LIGHT: one sun (upper left), lit/shaded faces, soft cast shadows, contact shading, figure shadows; baked once per city. His rule: Match
-  Week's 2ND BOUT IS THE NIGHT MATCH — the square shows dusk + torches/lamps before it; daylight otherwise. (Asked: the arena look at night too?)
+  Week's 2ND BOUT IS THE NIGHT MATCH — the square shows dusk + torches/lamps before it; daylight otherwise. NIGHT ARENA mock shown (torches on the stands' edge, moonlit
+  sand, moon + stars) — HIS CALL 2026-10-05: NIGHT IS ON THE BACK BURNER (not in v0.89).
+- **FLAVIUS'S MOOD FACES (his picks 2026-10-05, v0.89):** Flavius in the box = HIS PAINTED FACE from the Mandata Flavi card back
+  (tools/art/medallions/mandata_back.webp 822x1122): tools/art/flavmoods89/make.py crops the bust (card 300-540 x 266-466 with a 30 px pad)
+  and makes the 10 moods (calm pleased smug cheer laugh shock angry bored weep facepalm) by warping brows/lids/mouth, painted open mouths,
+  tears, a red flush; facepalm + cheer use HIS painted arm/fist cut from the same card. Pleased/smug/bored pushed harder so they read at box
+  size (his pick). Wire: flavFace (16-crowd) draws the image for Flavius (SPONSOR_FLAVIUS / no sponsor); flavFaceURL too. Known nit: bored's
+  turn shows a gold sliver of the logo top-left — mask the corners. SPONSORS (city editors + Studio-made): keep their own looks (parts) but
+  DRAW THEM WITH MORE DETAIL (card-style outlines + shading, nose, cheekbones, better beard/hair, the bigger mood changes) — update the
+  sponsor creator (24-sponsors) if it needs new parts.
 - **CJK SCHEDULE (his call 2026-10-05): JAPANESE v0.89, CHINESE SIMPLIFIED v0.90 (moved up; es/it/pt/fr/de are done).**
 - **LANGUAGES (his pick 2026-10-05): one per release alongside the features** — Italian v0.87, Portuguese (BR) v0.88, French v0.89, German v0.90,
   Japanese v0.91, Chinese SIMPLIFIED v0.92 (his pick; shares the CJK work: system-font fallback stack incl. canvas, no small-caps/
