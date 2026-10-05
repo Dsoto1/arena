@@ -535,7 +535,7 @@
  "Sign-in failed.": "Falha ao entrar.",
  "🌐 Server set.": "🌐 Servidor definido.",
  "⚠ Paste the JSON from the deploy (ws, auth, client).": "⚠ Cole o JSON da implantação (ws, auth, client).",
- "Online server: {0}": "Servidor online: {0}",
+ "Online server: {0}": "Servidor Online: {0}",
  "mock (preview)": "simulado (prévia)",
  "Paste the JSON printed by the deploy (or leave empty for the mock server).": "Cole o JSON impresso pela implantação (ou deixe vazio para o servidor simulado).",
  "Use this server": "Usar este servidor",
