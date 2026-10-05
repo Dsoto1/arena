@@ -235,7 +235,7 @@ function mfDeck82(){if(!S)return [];if(Array.isArray(S.mfDeck82))return S.mfDeck
 function seatPrice82(){const o=S&&S.onl;const v=o?+(o.ticket||o.price||o.tix||0):0;return v>0?v:SEAT_PRICE82}
 function flavPos82(){const cv=typeof ctx!=='undefined'&&ctx&&ctx.canvas;if(!cv||!FLAV.m82)return null;const r=cv.getBoundingClientRect();const k=r.width/cv.width;const p=FLAV.m82;return {x:r.left+p.x*k,y:r.top+p.y*k}}
 {const base=drawFlavius;drawFlavius=function(){try{if(!HEADLESS&&S&&typeof ctx!=='undefined'){const a=iso(0,0);const w=TW*1.55*flavK(),h=TW*1.2*flavK();
-    const cx=STANDS?a.x:Math.max(w/2+8,a.x-TW*5.2),cy=STANDS?Math.max(h/2+6,a.y-TW*2.62-h/2):h/2+8;const M=ctx.getTransform();FLAV.m82={x:M.a*cx+M.c*(cy-h/2)+M.e,y:M.b*cx+M.d*(cy-h/2)+M.f}}}catch(e){}
+    const {cx,cy}=flavXY89();const M=ctx.getTransform();FLAV.m82={x:M.a*cx+M.c*(cy-h/2)+M.e,y:M.b*cx+M.d*(cy-h/2)+M.f}}}catch(e){}
   return base.apply(this,arguments)}}
 function refundFloat82(n){if(HEADLESS||!S||S.sim)return;const p=flavPos82();const el=document.createElement('div');el.className='flref82';el.innerHTML=`−${n} ${ICO.coin}`;
   if(p){el.style.left=p.x+'px';el.style.top=p.y+'px'}else{el.style.left='80px';el.style.top='90px'}document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}

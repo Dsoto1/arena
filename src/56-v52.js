@@ -38,7 +38,7 @@ setTimeout(ctSync,150);
 /* ---------- the caption never covers Flavius ---------- */
 function capFit(){const el=document.getElementById('caption'),cv=document.getElementById('cv');if(!el||!cv||!cv.width||typeof iso!=='function')return;
   const a=iso(0,0);const w=TW*1.55*flavK();const on=!(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false);
-  const left=on?(STANDS?a.x:Math.max(w/2+8,a.x-TW*5.2))-w/2:cv.clientWidth;
+  const left=on?flavXY89().cx-w/2:cv.clientWidth;
   if(cv.clientWidth<560){el.style.setProperty('top','auto','important');el.style.setProperty('bottom','8px','important');el.style.removeProperty('left');el.style.setProperty('--capmax',Math.round(cv.clientWidth*0.72)+'px');return}
   el.style.removeProperty('top');el.style.removeProperty('bottom');
   if(on&&!STANDS&&left<170){const right=left+w;el.style.setProperty('left',Math.round(right+10)+'px','important');el.style.setProperty('--capmax',Math.max(150,cv.clientWidth*0.5-right)+'px');return}

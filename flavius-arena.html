@@ -10474,6 +10474,17 @@ function iso(r, c) {
     y: OY + (c + r) * TH / 2
   };
 }
+/* isoFix — iso without the v0.89 view turn (168-v89rotate): the board rim, the zone ropes, Flavius's box. */
+function isoFix(r, c) {
+  return {
+    x: OX + (c - r) * TW / 2,
+    y: OY + (c + r) * TH / 2
+  };
+}
+/* dep89 — draw depth of a tile (back to front); 168-v89rotate turns it with the view. */
+function dep89(r, c) {
+  return r + c;
+}
 /* tilePath — traces a tile's diamond outline onto ctx without filling or stroking it; inset shrinks the diamond. */
 function tilePath(r, c, inset = 0) {
   const {
@@ -11821,10 +11832,10 @@ function draw() {
   ctx.clearRect(0, 0, Wd, Hd);
   if (!S) return;
   computeHL();
-  const tA = iso(0, 0),
-    tB = iso(0, N),
-    tC = iso(N, N),
-    tD = iso(N, 0);
+  const tA = isoFix(0, 0),
+    tB = isoFix(0, N),
+    tC = isoFix(N, N),
+    tD = isoFix(N, 0); /* v0.89: the rim is square — never turned (168-v89rotate) */
   ctx.beginPath();
   ctx.moveTo(tA.x, tA.y - 10);
   ctx.lineTo(tB.x + 16, tB.y);
@@ -11957,10 +11968,10 @@ function draw() {
     ctx.stroke();
   }
   if (RD().zone > 1 && !S.zoneFull) {
-    const a = iso(za, za),
-      b = iso(za, zb + 1),
-      c2 = iso(zb + 1, zb + 1),
-      d = iso(zb + 1, za);
+    const a = isoFix(za, za),
+      b = isoFix(za, zb + 1),
+      c2 = isoFix(zb + 1, zb + 1),
+      d = isoFix(zb + 1, za); /* v0.89: the zone ropes are centred — never turned */
     ctx.beginPath();
     ctx.moveTo(a.x, a.y);
     ctx.lineTo(b.x, b.y);
@@ -12233,7 +12244,7 @@ function draw() {
     const m = center(r, c);
     const b = spriteBox(kind, m.x, m.y);
     for (const f of focus) {
-      if (f.r + f.c >= r + c) continue;
+      if (dep89(f.r, f.c) >= dep89(r, c)) continue;
       const fm = center(f.r, f.c);
       if (fm.x > b.x0 && fm.x < b.x1 && fm.y > b.y0 && fm.y < b.y1) return kind === 'pillar' ? 0.28 : 0.45;
     }
@@ -12241,7 +12252,7 @@ function draw() {
   };
   const objs = [];
   for (const pl of S.pillars) objs.push({
-    d: pl.r + pl.c,
+    d: pl.d89 != null ? pl.d89 : dep89(pl.r, pl.c),
     f: () => {
       ctx.globalAlpha = alphaFor('pillar', pl.r, pl.c);
       drawPillar(pl);
@@ -12249,7 +12260,7 @@ function draw() {
     }
   });
   if (!DRAW_EMPTY) for (const n of S.npcs) if (n.alive && !n.out) objs.push({
-    d: n.r + n.c + .1,
+    d: dep89(n.r, n.c) + .1,
     f: () => {
       ctx.globalAlpha = alphaFor('npc', n.r, n.c);
       drawNPC(n);
@@ -12257,7 +12268,7 @@ function draw() {
     }
   });
   if (!DRAW_EMPTY) for (const p of S.players) if (p.alive && !p.exited) objs.push({
-    d: p.r + p.c + .2,
+    d: dep89(p.r, p.c) + .2,
     f: () => {
       if (p.underground) {
         drawUnderground(p);
@@ -17877,13 +17888,13 @@ function flavFaceURL(mood,sp){ // cached data-URL portraits for HTML dialogs (Fl
 }
 /* flavK — Flavius's box scale: smaller on phones (v0.82, his ask) so it doesn't crowd the board. TWEAK: the 0.7. */
 function flavK(){return Math.min(innerWidth,innerHeight)<=520?0.7:1}
-/* drawFlavius — draws Flavius's box above the A-1 corner (top-left with the stands off), its curtain and his spoken line. */
+/* drawFlavius — draws Flavius's box at the top centre of the arena (v0.89: flavXY89 in 168-v89rotate), its curtain and his spoken line. */
 function drawFlavius(){
   if(!S||HEADLESS||(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false))return;
   const now=performance.now();const mood=now<FLAV.until?FLAV.mood:'calm';
   const a=iso(0,0);const w=TW*1.55*flavK(),h=TW*1.2*flavK();
-  // stands on: the box floats above the A-1 corner. Stands off: there is no room up there, so Flavius watches from the top-left, clear of every tile
-  const cx=STANDS?a.x:Math.max(w/2+8,a.x-TW*5.2),cy=STANDS?Math.max(h/2+6,a.y-TW*2.62-h/2):h/2+8;
+  /* v0.89: always the top centre of the canvas, whichever way the board is turned */
+  const {cx,cy}=flavXY89();
   flavFace(ctx,cx,cy,w,h,mood,true);
   drawCurtain(ctx,cx,cy,w,h);
   ctx.save();
@@ -26516,7 +26527,7 @@ setTimeout(ctSync,150);
 /* ---------- the caption never covers Flavius ---------- */
 function capFit(){const el=document.getElementById('caption'),cv=document.getElementById('cv');if(!el||!cv||!cv.width||typeof iso!=='function')return;
   const a=iso(0,0);const w=TW*1.55*flavK();const on=!(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false);
-  const left=on?(STANDS?a.x:Math.max(w/2+8,a.x-TW*5.2))-w/2:cv.clientWidth;
+  const left=on?flavXY89().cx-w/2:cv.clientWidth;
   if(cv.clientWidth<560){el.style.setProperty('top','auto','important');el.style.setProperty('bottom','8px','important');el.style.removeProperty('left');el.style.setProperty('--capmax',Math.round(cv.clientWidth*0.72)+'px');return}
   el.style.removeProperty('top');el.style.removeProperty('bottom');
   if(on&&!STANDS&&left<170){const right=left+w;el.style.setProperty('left',Math.round(right+10)+'px','important');el.style.setProperty('--capmax',Math.max(150,cv.clientWidth*0.5-right)+'px');return}
@@ -26918,8 +26929,8 @@ renderTurnInd=function(){if(HEADLESS)return;const box=$('#turnInd');if(!box)retu
   turnIndFit()};
 /* keep the indicator clear of Flavius's box, like the caption on the left */
 function turnIndFit(){const box=$('#turnInd'),canvas=$('#cv');if(!box||!canvas||typeof iso!=='function')return;
-  const top=iso(0,0),boxW=TW*1.55*flavK();const flavOn=!(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false)&&STANDS;
-  const flavRight=flavOn?top.x+boxW/2:0;const room=canvas.clientWidth-flavRight-22;
+  const top=iso(0,0),boxW=TW*1.55*flavK();const flavOn=!(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false);
+  const flavRight=flavOn?flavXY89().cx+boxW/2:0;const room=canvas.clientWidth-flavRight-22;
   box.style.maxWidth=Math.max(120,room)+'px'}
 
 /* ---------- arena tools: the same ‹ drawer handle as the top bar; zoom any time ---------- */
@@ -29710,7 +29721,7 @@ ICO.coin=`<img class="ico coinimg" src="${assetURL('coin.webp')}" alt="coin">`;
 /* summa rudis beside Flavius (canvas) */
 const SR_IMG={};const srImage=k=>{if(SR_IMG[k])return SR_IMG[k].complete&&SR_IMG[k].naturalWidth?SR_IMG[k]:null;const im=new Image();im.onload=()=>{try{draw()}catch(e){}};im.src=assetURL('sr_'+k+'.webp');SR_IMG[k]=im;return null};
 {const base=drawFlavius;drawFlavius=function(){const r=base.apply(this,arguments);try{if(!S||HEADLESS||S.phase==='setup'||(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false))return r;const k=srKey(EV());if(!k)return r;const im=srImage(k);if(!im)return r;
-  const a=iso(0,0);const w=TW*1.55*flavK(),h=TW*1.2*flavK();const cx=STANDS?a.x:Math.max(w/2+8,a.x-TW*5.2),cy=STANDS?Math.max(h/2+6,a.y-TW*2.62-h/2):h/2+8;const d=h*0.78;
+  const a=iso(0,0);const w=TW*1.55*flavK(),h=TW*1.2*flavK();const {cx,cy}=flavXY89();const d=h*0.78;
   if(typeof srBtnAt==='function')srBtnAt(cx+w/2,cy-h/2,d) /* v0.74: never drawn on the sand — a seal at the box's corner opens it */}catch(e){}return r}}
 /* the briefing and the status bar */
 {const base=briefingHTML;briefingHTML=function(){let h=base.apply(this,arguments);try{const k=srKey(EV());if(k)h=h.replace('<div class="brname">',`<div class="brsr">${srImgHTML(k,58)}<span class="rc-sub">${_T`Summa Rudis<br><b>${esc(EV().sr)}</b>`}</span></div><div class="brname">`)}catch(e){}return h}}
@@ -36651,7 +36662,7 @@ function mfDeck82(){if(!S)return [];if(Array.isArray(S.mfDeck82))return S.mfDeck
 function seatPrice82(){const o=S&&S.onl;const v=o?+(o.ticket||o.price||o.tix||0):0;return v>0?v:SEAT_PRICE82}
 function flavPos82(){const cv=typeof ctx!=='undefined'&&ctx&&ctx.canvas;if(!cv||!FLAV.m82)return null;const r=cv.getBoundingClientRect();const k=r.width/cv.width;const p=FLAV.m82;return {x:r.left+p.x*k,y:r.top+p.y*k}}
 {const base=drawFlavius;drawFlavius=function(){try{if(!HEADLESS&&S&&typeof ctx!=='undefined'){const a=iso(0,0);const w=TW*1.55*flavK(),h=TW*1.2*flavK();
-    const cx=STANDS?a.x:Math.max(w/2+8,a.x-TW*5.2),cy=STANDS?Math.max(h/2+6,a.y-TW*2.62-h/2):h/2+8;const M=ctx.getTransform();FLAV.m82={x:M.a*cx+M.c*(cy-h/2)+M.e,y:M.b*cx+M.d*(cy-h/2)+M.f}}}catch(e){}
+    const {cx,cy}=flavXY89();const M=ctx.getTransform();FLAV.m82={x:M.a*cx+M.c*(cy-h/2)+M.e,y:M.b*cx+M.d*(cy-h/2)+M.f}}}catch(e){}
   return base.apply(this,arguments)}}
 function refundFloat82(n){if(HEADLESS||!S||S.sim)return;const p=flavPos82();const el=document.createElement('div');el.className='flref82';el.innerHTML=`−${n} ${ICO.coin}`;
   if(p){el.style.left=p.x+'px';el.style.top=p.y+'px'}else{el.style.left='80px';el.style.top='90px'}document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
@@ -36947,7 +36958,7 @@ const TOK83={head:[0,0.9],chest:[0,0.66],rarm:[-0.15,0.58],larm:[0.15,0.58],rleg
 function drawStuckOn83(q,m,top,isNpc,sink){const L=stuckOf83(q);if(!L.length)return;const H=Math.max(TW*0.4,m.y-top);
   const groups=isNpc?['body','head']:LOCS;
   /* v0.83: on the 3D minis the arrows turn with the figure's facing (MINI_YAW); the body's sides swap when it turns round */
-  let yk=1;try{if(!isNpc&&tokenStyle()==='standee'&&q._face!=null&&typeof MINI_YAW!=='undefined'){const c=Math.cos((MINI_YAW[q._face]||0)*Math.PI/180);yk=(Math.abs(c)<0.25?Math.sign(c||1)*0.25:c)*1.5}}catch(e){}
+  let yk=1;try{if(!isNpc&&tokenStyle()==='standee'&&q._face!=null&&typeof MINI_YAW!=='undefined'){const c=Math.cos((MINI_YAW[typeof face89==='function'?face89(q._face):q._face]||0)*Math.PI/180);yk=(Math.abs(c)<0.25?Math.sign(c||1)*0.25:c)*1.5}}catch(e){}
   for(const l of groups){if(!isNpc&&(q.hp[l]||0)<=0)continue;const xs=L.filter(x=>x.l===l);if(!xs.length)continue;
     if(sink&&!isNpc&&(l==='rleg'||l==='lleg'))continue;
     let lastX=0,lastY=0;
@@ -44640,6 +44651,75 @@ function vault89HistLine(x){const house=`${esc2(onlHouse82(x.house||''))}${x.lan
 {const st=document.createElement('style');st.textContent=`
 .vlt89{display:inline-block;margin:0 0 6px;padding:2px 8px;border-radius:999px;background:#2a1f12;color:#e8c96a;border:1px solid #8a6d3b;font:600 12px/1.4 system-ui,sans-serif}
 .vlt89h small{display:block}.vlt89l{opacity:.8;font-style:normal}`;document.head.appendChild(st)}
+/* =====================================================================
+   168-V89ROTATE · v0.89 — my corner at the bottom (Virgilante)
+   =====================================================================
+   A DISPLAY-ONLY turn of the board in 90° steps so the human's starting corner sits at the bottom of the
+   screen, as at a real table where everyone sits at their own side. Rules, positions, tile names (A-1…),
+   the log, saves and the online hash never see it — only drawing and the click/hover input turn.
+   - ROT89.k = quarter turns (0-3), decided at every draw() from stable facts (rot89Want): the one human's
+     start tile (p.start) offline, the own seat (S.onl.seat) online. So it never spins when turns change.
+   - ON: one human at the table (Play Now, Manager bouts, missios, tournaments…) and online fighters.
+     OFF: hot seat (S.hotseat, or 2+ humans outside a Manager bout), Chariot Racing, Naumachia, lessons
+     (S.tutorial / tutShow / TUT.on / the Manager lesson league), online watchers and ticket holders,
+     sims and all-CPU tables.
+   - How: iso(r,c) (07-ui) projects the TURNED tile index (rot89 about the board centre (N-1)/2), so
+     center/tilePath/pt (16-crowd stands) and every sprite follow. isoFix = the unturned projection for the
+     square rim + centred zone ropes and Flavius. dep89 = draw depth (sort order) in the turned view.
+     pick (screen → tile) turns back. camFocus returns the turned tile. Minis' facing index turns by 2 cells
+     per quarter (miniFace; face89 for 132's stuck arrows). The beast pen fence (108) is redrawn in view.
+   - Flavius's box: flavXY89 = always the top centre of the canvas (16-crowd, 56, 60, 93, 129 call it). */
+const ROT89={k:0};
+/* rot89 — tile index (r,c) turned k quarter turns about the board centre (fractional values allowed). */
+function rot89(r,c,k){const M=N-1;switch(((k%4)+4)%4){case 1:return [c,M-r];case 2:return [M-r,M-c];case 3:return [M-c,r];default:return [r,c]}}
+/* rot89Want — how many quarter turns put the viewer's own corner at the bottom (0 = the standard view). */
+function rot89Want(){try{
+  if(!S||HEADLESS||!S.players||!S.players.length)return 0;
+  if(S.sim||S.snap)return 0;
+  if(typeof isChariot==='function'&&isChariot())return 0;
+  if(typeof isNaum==='function'&&isNaum())return 0;
+  if(S.tutorial||S.tutShow||(typeof TUT!=='undefined'&&TUT&&TUT.on))return 0;
+  if(S.mgrCtx&&typeof MGR!=='undefined'&&MGR.world&&MGR.world.tutorial)return 0;
+  if(S.hotseat)return 0;
+  let p=null;
+  if(S.onl){const s=S.onl.seat;if(typeof s!=='number'||s<0||s>=S.players.length)return 0;p=S.players[s]}
+  else{const hum=S.players.filter(q=>q&&!q.cpu);if(!hum.length)return 0;if(hum.length>1&&!S.mgrCtx)return 0;p=hum[0]}
+  if(!p)return 0;const st=p.start&&p.start.length===2?p.start:[p.r,p.c];if(st[0]==null||st[1]==null)return 0;
+  let best=0,bs=-1e9;for(let k=0;k<4;k++){const [a,b]=rot89(st[0],st[1],k);const sc=(a+b)*100-Math.abs(a-b);if(sc>bs+1e-9){bs=sc;best=k}}
+  return best}catch(e){return 0}}
+/* rot89Now — refreshes ROT89.k (draw and pick call it). */
+function rot89Now(){ROT89.k=rot89Want();return ROT89.k}
+/* iso: the turned view */
+{const base=iso;iso=function(r,c){if(ROT89.k){const v=rot89(r,c,ROT89.k);return base(v[0],v[1])}return base(r,c)}}
+/* dep89: depth in the turned view (07-ui sorts pieces by it) */
+dep89=function(r,c){if(!ROT89.k)return r+c;const v=rot89(r,c,ROT89.k);return v[0]+v[1]};
+/* draw: decide the turn first */
+{const base=draw;draw=function(){rot89Now();return base.apply(this,arguments)}}
+/* pick: the clicked/hovered view tile back to the real tile */
+{const base=pick;pick=function(e){const t=base.apply(this,arguments);if(!t||!ROT89.k)return t;const v=rot89(t.r,t.c,4-ROT89.k);return {r:v[0],c:v[1]}}}
+/* the follow camera centres on the turned tile */
+if(typeof camFocus==='function'){const base=camFocus;camFocus=function(){const f=base.apply(this,arguments);if(!f||!ROT89.k)return f;const v=rot89(f.r,f.c,ROT89.k);return {...f,r:v[0],c:v[1]}}}
+/* face89 — a mini's facing index (grid frame, 102/130) as seen in the turned view: −90° (2 cells) per quarter turn */
+function face89(i){if(i==null||!ROT89.k)return i;return (((i-2*ROT89.k)%8)+8)%8}
+/* a piece that has not stepped or turned yet keeps its screen default (gladiators toward the camera, long bases three-quarter) */
+const FACE89_D=new WeakMap();
+if(typeof miniFace==='function'){const base=miniFace;miniFace=function(p){const fresh=p&&p._fr==null;const i=base.apply(this,arguments);if(!p||typeof p!=='object')return face89(i);
+  if(fresh)FACE89_D.set(p,[p.r,p.c,i]);const d=FACE89_D.get(p);if(d){if(d[0]===p.r&&d[1]===p.c&&d[2]===i)return i;FACE89_D.delete(p)}return face89(i)}}
+/* the beast pen (108-v76): fence spans drawn from their turned grid points, sorted in the view */
+/* gpt89 — a GRID POINT (tile corner) turned about N/2 (iso's turn is about the tile centres) */
+const gpt89=(r,c,k)=>{const v=rot89(r-0.5,c-0.5,k);return [v[0]+0.5,v[1]+0.5]};
+if(typeof penPieces76==='function'){const base=penPieces76;penPieces76=function(){const out=base.apply(this,arguments);const k=ROT89.k;if(!k)return out;
+  const [a,b]=PEN76.box;const cs=[gpt89(a,a,k),gpt89(b+1,b+1,k)];const lo=Math.min(cs[0][0],cs[1][0]);
+  for(const o of out)if(o.f76){const [i0,j0,i1,j1]=o.f76;const A=gpt89(i0,j0,k),B=gpt89(i1,j1,k);o.v89=[A[0],A[1],B[0],B[1]];
+    const line=A[0]===B[0]?A[0]:A[1];const front=line>lo;o.d89=(A[0]+B[0]+A[1]+B[1])/2-(front?0.9:1);o.lo89=lo}
+  return out}}
+if(typeof penFence76==='function'&&typeof drawPillar==='function'){const base=drawPillar;drawPillar=function(pl){if(pl&&pl.f76&&pl.v89&&ROT89.k){
+    const k=ROT89.k,b0=PEN76.box[0];ROT89.k=0;PEN76.box[0]=pl.lo89;try{return penFence76(pl.v89)}finally{ROT89.k=k;PEN76.box[0]=b0}}
+  return base.apply(this,arguments)}}
+/* flavXY89 — Flavius's box: the top centre of the arena canvas in every event, turned or not */
+function flavXY89(){const k=typeof flavK==='function'?flavK():1;const w=TW*1.55*k,h=TW*1.2*k;
+  const wrap=typeof cv!=='undefined'&&cv&&cv.parentElement;const Wd=wrap&&wrap.clientWidth?wrap.clientWidth:(typeof cv!=='undefined'&&cv?cv.clientWidth:0)||OX*2;
+  const a=isoFix(0,0);const cy=STANDS?Math.max(h/2+6,a.y-TW*2.62-h/2):h/2+6;return {cx:Wd/2,cy,w,h}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
