@@ -8447,7 +8447,7 @@ async function movePlayer(player, path) {
       S.chest.c = c;
     }
     if (isChariot()) {
-      if (player.ch.mounted) {
+      if (player.ch && player.ch.mounted) { // v0.89: a piece without chariot state (no ch) walks
         player.ch.cr = r;
         player.ch.cc = c;
         await chStep(player, or, oc);
