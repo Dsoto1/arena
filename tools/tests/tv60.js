@@ -26,7 +26,7 @@ o.after=await pg.evaluate(async()=>{const R=await roadLoad();return {gid:R&&R.gi
 ok(o.after.gid==='gcust1'&&o.after.step===0&&o.after.inHall&&o.after.walk,'committed');
 await pg.click('#hallBody [data-tab="ludus"]');await until(()=>vis('[data-glad="gcust1"]'));await pg.click('[data-glad="gcust1"]');await until(()=>vis('#gDetail [data-road="go"]'));
 o.walkCard=await pg.evaluate(()=>!!document.querySelector('#gDetail [data-road="go"]'));ok(o.walkCard,'walk on the record');
-await pg.click('#gDetail [data-road="go"]');await until(()=>pg.evaluate(()=>!!window.SETUP_OPEN&&!document.getElementById('modal').hidden&&!!(CFG.road&&CFG.road.gid==='gcust1')),30000);await pg.waitForTimeout(500);
+await pg.click('#gDetail [data-road="go"]');await until(()=>pg.evaluate(()=>!!window.SETUP_OPEN&&!document.getElementById('modal').hidden&&!!(CFG.road&&CFG.road.gid==='gcust1')&&document.getElementById('mainMenu').hidden),30000);await pg.waitForTimeout(500);
 o.setup=await pg.evaluate(()=>({open:!!window.SETUP_OPEN&&!document.getElementById('modal').hidden,road:!!(CFG.road&&CFG.road.gid==='gcust1'),menu:!document.getElementById('mainMenu').hidden}));
 ok(o.setup.open&&o.setup.road&&!o.setup.menu,'walk → setup');
 await pg.evaluate(async()=>{await Store.put('hall','road',{gid:'old',name:'Oldus',cls:'hero',step:0,history:[],over:'fell',fell:{step:0,loc:'Arles'}})});

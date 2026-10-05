@@ -14,7 +14,10 @@ o.pick=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
   await until(()=>{const x=document.querySelector('.missioroll');return x&&x.querySelectorAll('.item').length>=3});
   const box=document.querySelector('.missioroll');return {box:!!box,scroll:box?getComputedStyle(box).overflowY:'',n:box?box.querySelectorAll('.item').length:0,grey:box?[...box.querySelectorAll('.item')].filter(i=>/printed classes/.test(i.textContent)).length:0}});
 ok(o.pick.box&&o.pick.scroll==='auto'&&o.pick.n>=3&&o.pick.grey>=1,'missio picker');
-const run=async mode=>pg.evaluate(async(mode)=>{if(CUR_MODAL)CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,300));menuHide();
+/* the missio's dice come from a fixed seed (SEED64): an unseeded race can crash the hero now and then, and this checks a survivor */
+const SEED=+(process.env.SEED64||64);
+const run=async mode=>pg.evaluate(async([mode,seed])=>{if(CUR_MODAL)CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,300));menuHide();
+  RNG=mulberry32(seed);if(!window.__se64){window.__se64=1;const se=startEvent;startEvent=function(c){if(c&&c.seed==null)c.seed=window.__seed64;return se.apply(this,arguments)}}window.__seed64=seed;
   const rec=await missioFromLudus(LUDUS_CACHE.find(x=>x.id==='g64a'));await Store.put('missios',rec.id,rec);startMissio(rec);
   /* the opening windows (briefing, chariot draft) are answered until the board shows the chariot card */
   {const t0=Date.now();let n=0;while(Date.now()-t0<45000){if(CUR_MODAL&&n<30){CUR_MODAL.done(null);n++}else if(!CUR_MODAL&&document.querySelector('#board .chcomp .chtk.horse')&&Date.now()-t0>2500)break;await new Promise(r=>setTimeout(r,150))}}SPEED='snap';
@@ -24,7 +27,7 @@ const run=async mode=>pg.evaluate(async(mode)=>{if(CUR_MODAL)CUR_MODAL.done(null
   else{S.players[0].cpu=true;S.players[0].diff='normal';if(cur()===S.players[0]){S.busy=false;S.pending=null;advanceTurn()}}
   for(let i=0;i<300&&!(S.over&&document.querySelector('#mBody .missiohd'));i++){await new Promise(r2=>setTimeout(r2,1000));if(CUR_MODAL&&!S.over)CUR_MODAL.done(null)}
   r.hd=(document.querySelector('#mBody .missiohd')||{}).textContent||'';r.g=(await Store.getDoc('gladiators','g64a')||{}).status;r.m=(await Store.getDoc('missios',rec.id)||{}).status;
-  r.fate=(S.result&&S.result.rows&&S.result.rows[0]||{}).fate;if(CUR_MODAL)CUR_MODAL.done(null);S.over=true;return r},mode);
+  r.fate=(S.result&&S.result.rows&&S.result.rows[0]||{}).fate;r.seed=S.seed;if(CUR_MODAL)CUR_MODAL.done(null);S.over=true;window.__seed64=null;return r},[mode,SEED]);
 o.race=await run('race');
 ok(!o.race.sim&&o.race.refused,'no sim in a missio');ok(o.race.comp&&o.race.tok,'chariot tokens');
 ok(/Step 1 of 5 complete|Missio failed/.test(o.race.hd)&&o.race.fate==='','no-CF: no Fate, survive passes');ok(o.race.g==='active','survivor stays on the rolls');

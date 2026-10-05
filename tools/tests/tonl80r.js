@@ -53,7 +53,7 @@ await run(9000);
 const gen0={A:await A.evaluate(()=>ONLM.gen),B:await B.evaluate(()=>ONLM.gen),C:await C.evaluate(()=>ONLM.gen)};let tampered=null;
 {const t0=Date.now();while(Date.now()-t0<180000&&!tampered){await drive(A);await drive(B);
   tampered=await C.evaluate(()=>{if(!onlmOn()||!onlmMine()||S.busy||CUR_MODAL||ONLM.pend||!['choice','action'].includes(S.phase))return null;const h0=onlHash();S.players[0].coin+=7;return {h0,h1:onlHash(),next:ONLM.next,turn:S.turnNo}});
-  if(tampered)break;await A.waitForTimeout(150);if(await A.evaluate(()=>!S||S.over))break}}
+  if(tampered)break;/* Gamma's own window (a Focus roll, a draft…) is answered, else the move never comes and the others drop the idle seat */await C.evaluate(()=>!!(CUR_MODAL&&onlmOn()&&(onlmMine()||ONLM.info>0)))&&await drive(C);await A.waitForTimeout(150);if(await A.evaluate(()=>!S||S.over))break}}
 const oddDone=async()=>{const a=await A.evaluate(()=>ONL80R.oddSkips);const c=await C.evaluate(g=>ONLM.gen!==g,gen0.C);return a>0&&c};
 await run(120000,[C,A,B],oddDone);
 const after=async p=>p.evaluate(()=>({resyncs:ONLM.resyncs,gen:ONLM.gen,odd:{...ONLM.odd},oddSkips:ONL80R.oddSkips,votes:ONL80R.votes,last:ONL80R.last||null,next:ONLM.next,coin0:S.players[0].coin,req:{...window.__req}}));
