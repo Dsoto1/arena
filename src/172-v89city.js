@@ -575,7 +575,7 @@ cityDraw=function(){const c2=CITY.c2;if(!c2||!CITY.TW)return;const W=CITY.W||CIT
       const tok=n.kind==='beast'?n.tok:n.kind==='glad'?(typeof tokenForCls==='function'&&n.g?tokenForCls(CLASSES[n.g.cls]?n.g.cls:'soldier'):null)
         :n.kind==='soldier'?(n.empire?TOKEN_DEF.soldier:{...TOKEN_DEF.soldier,c1:CITY.guardC||'#3a4a5a',c2:CITY.guardC2||'#c9ccd3',cape:true})
         :typeof specFig==='function'?(n.fig=n.fig||specFig(n.look,{sash:n.kind==='auct',basket:n.kind==='filler'&&(n.id.charCodeAt(1)%5===0),amphora:n.kind==='filler'&&(n.id.charCodeAt(1)%5===1)})):null;
-      const svg=tok&&typeof figureSVG==='function'?figureSVG(tok,{}):null;const im=svg?cityImg('fg'+(n.g?n.g.id:n.id),svg):null;
+      const svg=tok&&typeof figureSVG==='function'?cityFig89(tok):null;const im=svg?cityImg('fg'+(n.g?n.g.id:n.id),svg):null;
       figShadow89(c2,p.x,p.y,T,1);
       if(CITY.hover===n||n.reg&&n.reg.kin){c2.strokeStyle=CITY.hover===n?'#f0cf7d':'rgba(240,207,125,.45)';c2.lineWidth=2;c2.beginPath();c2.ellipse(p.x,p.y,T*0.32,T*0.13,0,0,Math.PI*2);c2.stroke()}
       if(im)c2.drawImage(im,p.x-T*0.36,p.y-T*1.18,T*0.72,T*1.22);else drawTownsfolk(c2,p.x,p.y,T,n.look||{},{});
@@ -584,7 +584,7 @@ cityDraw=function(){const c2=CITY.c2;if(!c2||!CITY.TW)return;const W=CITY.W||CIT
   {const P=CITY.player;const [r,c]=glide89(P,now,STEP89*1.05/spd);items.push({r0:r-0.3,r1:r+0.3,c0:c-0.3,c1:c+0.3,draw:()=>{const p=P89(r,c,0);
     const tok=P.fig=P.fig||(typeof specFig==='function'?{...specFig(P.look,{body:'robe',scale:1}),c2:'#e6b93a'}:null);
     figShadow89(c2,p.x,p.y,T,1.05);c2.strokeStyle='#f0cf7d';c2.lineWidth=2;c2.beginPath();c2.ellipse(p.x,p.y,T*0.34,T*0.14,0,0,Math.PI*2);c2.stroke();
-    const svg=tok?figureSVG(tok,{}):null;const im=svg?cityImg('me',svg):null;
+    const svg=tok?cityFig89(tok):null;const im=svg?cityImg('me',svg):null;
     if(im)c2.drawImage(im,p.x-T*0.37,p.y-T*1.22,T*0.74,T*1.26);else drawTownsfolk(c2,p.x,p.y,T*1.06,P.look,{ring:'#f0cf7d'});P._x=p.x;P._y=p.y}})}
   for(const it of sort89(items))it.draw();
   c2.drawImage(K.fg,0,0,W,H);
@@ -608,9 +608,9 @@ cityDraw=function(){const c2=CITY.c2;if(!c2||!CITY.TW)return;const W=CITY.W||CIT
     c2.fillStyle='rgba(20,14,8,.85)';c2.beginPath();c2.roundRect(W/2-wd/2,10,wd,Math.max(22,T*0.44),5);c2.fill();c2.fillStyle='#e8dcc0';c2.fillText(CITY.toast.t,W/2,10+Math.max(22,T*0.44)/2)}};
 /* live touches: the sparring pair, altar smoke, bath steam, the fountain's jets */
 function yardLive89(c2,B,now){const T=CITY.TW;const fig=(cls,r,c,ph)=>{const lunge=Math.max(0,Math.sin(now/260+ph))*0.22;const p=P89(r,c+(ph?-lunge:lunge),0);figShadow89(c2,p.x,p.y,T,0.9);
-    const tok=typeof tokenForCls==='function'?tokenForCls(cls):null;const svg=tok&&typeof figureSVG==='function'?figureSVG(tok,{}):null;const im=svg?cityImg('yd'+cls,svg):null;if(im){c2.save();if(ph){c2.translate(p.x*2,0);c2.scale(-1,1)}c2.drawImage(im,p.x-T*0.33,p.y-T*1.1,T*0.66,T*1.12);c2.restore()}};
+    const tok=typeof tokenForCls==='function'?tokenForCls(cls):null;const svg=tok&&typeof figureSVG==='function'?cityFig89(tok):null;const im=svg?cityImg('yd'+cls,svg):null;if(im){c2.save();if(ph){c2.translate(p.x*2,0);c2.scale(-1,1)}c2.drawImage(im,p.x-T*0.33,p.y-T*1.1,T*0.66,T*1.12);c2.restore()}};
   fig('hero',6.6,14.6,0);fig('soldier',6.6,15.9,Math.PI);
-  {const p=P89(7.9,14.0,0);figShadow89(c2,p.x,p.y,T,0.9);const tok=typeof specFig==='function'?specFig({skin:'#c68e5f',hair:'#2a1c12',robe:'#6a3a22',beard:true},{}):null;const svg=tok&&typeof figureSVG==='function'?figureSVG(tok,{}):null;const im=svg?cityImg('yddoc',svg):null;
+  {const p=P89(7.9,14.0,0);figShadow89(c2,p.x,p.y,T,0.9);const tok=typeof specFig==='function'?specFig({skin:'#c68e5f',hair:'#2a1c12',robe:'#6a3a22',beard:true},{}):null;const svg=tok&&typeof figureSVG==='function'?cityFig89(tok):null;const im=svg?cityImg('yddoc',svg):null;
    if(im)c2.drawImage(im,p.x-T*0.33,p.y-T*1.1,T*0.66,T*1.12);
    c2.strokeStyle='#4a3018';c2.lineWidth=1.2;c2.beginPath();c2.moveTo(p.x+T*0.2,p.y-T*0.5);c2.quadraticCurveTo(p.x+T*0.45,p.y-T*0.8+Math.sin(now/300)*T*0.1,p.x+T*0.6,p.y-T*0.4);c2.stroke()}}
 function templeLive89(c2,B,now){const T=CITY.TW;const p=P89(B.r0,B.c0,0.52);p.y+=T*0.28;
@@ -674,3 +674,9 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   m.coin-=c;w.night.god76=k;tnews(_T`🏛 An offering to ${TEMPLE76[k][1]} (${coinAmt87(c)}): ${TEMPLE76[k][2]}.`);saveWorld();log2city(_T`${TEMPLE76[k][0]} ${TEMPLE76[k][1]} accepts your offering.`);cityTemplePanel89()},true);
 /* phones sideways: a one-line bar and no hint row, so the square gets the height */
 (()=>{const st=document.createElement('style');st.textContent=`@media (max-height:500px){#cityOv .citybar{padding:3px 8px;gap:8px;font-size:14px;white-space:nowrap;overflow:hidden}#cityOv .citybar b{overflow:hidden;text-overflow:ellipsis;min-width:0}#cityOv #cityLand,#cityOv .cityhint,#cityOv .flagchip{display:none}#cityOv #cityNext{display:none}#cityOv .citybar .btn{padding:2px 8px}}`;document.head.appendChild(st)})();
+
+/* v0.89 (his notes): city figures wear the lit sculpted look (176 sc3dSVG); the exit says "Back to Match Week" in every city
+   during a Manager week (the square may be in another city than your home) — it opens the Match Week tab. */
+function cityFig89(tok){const s=figureSVG(tok,{});try{return typeof sc3dSVG==='function'&&typeof SC3D!=='undefined'&&SC3D.on?sc3dSVG(s,'s3c'):s}catch(e){return s}}
+CITY_EXIT_LBL.night=_T('⏎ Back to Match Week');
+{const base=cityExitKind;cityExitKind=function(){const k=base.apply(this,arguments);return k==='ludus'?'night':k}}
