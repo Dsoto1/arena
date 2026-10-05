@@ -933,6 +933,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
   house, event) and 🪦 Biggest loser (the best-ranked gladiator who fell in Ranked that day: rank, CF, what he lost — gear value + purse);
   each with "See today's list" (the readable popup); the Today strip and "+ more" go. The online DAY turns at 8 PM New York time (DST-aware)
   for Today AND the Forum reset (30-min grace kept). "👥 Party" button beside the Invite slots opens a small panel (your code / enter a code).
+- **SPLIT (his ok):** v0.87 = ALL the fixes below + Manager (hours removed, perk tree, yard standing orders, beds, Fit, stale mail,
+  tools/legendsim.js); v0.88 = Domus redesign (+ storeroom/shelf) + Legend of the Sand (Manager + Online) + Recruiting II (1–3).
 - **v0.87 = HIS v0.86 NOTES (2026-10-04; wait for his GO):** FIXES — Orbis: only the 🔍 enlarges (no click-anywhere zoom); Ave Arena bass
   softer; online market: no market-board art behind it (keep the layout); Storeroom: no "Buy for the shelf", buying only in Armory & Market,
   Move to shelf actually lands on a visible shelf; try-on: Flavius' Bracers show real art (no ? placeholder cards), in a V tilted inward;
