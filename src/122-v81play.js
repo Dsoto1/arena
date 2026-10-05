@@ -139,10 +139,10 @@ const deskFit81=()=>!document.body.classList.contains('phoneL')&&!document.body.
   try{const wrap=cv.parentElement;const top=Math.max(0,Math.round(wrap.getBoundingClientRect().top+scrollY));
     const dock=document.getElementById('actions');const dh=dock&&dock.offsetParent?dock.offsetHeight:0;
     const key=innerWidth+'x'+innerHeight+'|'+top+'|'+(typeof STANDS!=='undefined'?STANDS:'');
-    if(key!==FIT81.key){FIT81.key=key;FIT81.dock=0}
+    if(key!==FIT81.key){FIT81.key=key;FIT81.dock=0;FIT81.hv=0}
     /* the tallest dock this window has seen (a fixed floor for the Action phase's button rows): grows rarely, never shrinks */
     const want=Math.max(170,dh);if(want>FIT81.dock+4)FIT81.dock=want;
-    const hv=document.getElementById('hover');const hh=hv&&hv.offsetParent?hv.offsetHeight:0;
+    const hv=document.getElementById('hover');const hh0=hv&&hv.offsetParent?hv.offsetHeight:0;const hh=FIT81.hv=Math.max(FIT81.hv||0,hh0); /* v0.88: the hover line comes and goes on CPU turns — keep its tallest height so the arena never jumps */
     const tk=document.getElementById('crowdTick');const th=tk&&!tk.hidden&&tk.offsetParent?tk.offsetHeight+6:0;
     const res=Math.max(200,Math.min(innerHeight*0.62,top+FIT81.dock+hh+th+24));
     FIT81.res=res;

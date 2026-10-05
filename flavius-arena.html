@@ -13028,7 +13028,7 @@ function render() {
     a = `<div class="acts">
       ${btn('m-move', _T('Move'), p.focusRoll ? _T('locked — Focus spends your movement') : _T`${p.mv} movement · diagonal 2`, m === 'move' && !p.focusRoll, !p.focusRoll)}
       <div class="atkgrp ${p.focusRoll ? 'focused' : ''}">${RD().pvp && p.mv > 0 && srcs.length ? `<button class="btn focbtn ${p.focusRoll ? 'on' : ''}" type="button" data-act="focus" ${S.busy || !focusTargets && !p.focusRoll ? 'disabled' : ''} title="${_T`Spend ALL your remaining movement: the location die is rolled three times and you pick where your next attack on a gladiator lands`}">${_T`🎯 Focus roll: ${p.focusRoll ? '<b>ON</b>' : _T('off')}<small>${p.focusRoll ? _T('your next attack picks 1 of 3 rolled locations') : _T`costs your ${p.mv} movement · pick 1 of 3 locations`}</small>`}</button>` : ''}${atkBtns || btn('none', _T('Attack'), _T('no attacks left'), false, false)}</div>
-      ${btn('m-push', _T('Push'), '2 movement', m === 'push', pushTargets(p).length > 0)}
+      ${_T`${btn('m-push', _T('Push'), '2 movement', m === 'push', pushTargets(p).length > 0)}
       ${btn('m-topple', _T('Topple pillar'), '3 movement', m === 'topple', toppleTargets(p).length > 0)}
       ${!weak(p, 'noTunnel') ? btn('m-tunnel', _T('Tunnel'), _T('1 Arena Key · ends turn'), m === 'tunnel', ex.length > 0) : ''}
       ${canOpenChest(p) ? btn('chest', _T('Open Arena Chest'), _T('1 Arena Key'), false) : ''}
@@ -13036,13 +13036,12 @@ function render() {
       ${p.carrying ? btn('chestdown', _T('Drop chest'), 'free', false) : ''}
       ${loot.length ? btn('loot', _T('Loot'), p.looted ? _T('thrown weapons only') : _T('1 item per turn'), false) : ''}
       ${EV().noMarket ? '' : btn('market', _T('Market'), p.market ? 'unlocked' : cfAllowed() ? _T`${cfAmt87(3)} to unlock` : _T('CF locked'), false)}
-      ${btn('crowd', _T('Crowd Favor'), cfAllowed() ? _T`${cfAmt87(p.cf)} to spend` : _T('locked this round'), false, cfAllowed())}
+      ${btn('crowd', _T('Crowd Favor'), cfAllowed() ? _T`${cfAmt87(p.cf)} to spend` : spearTargets(p).length ? _T('only the spear this round') : _T('locked this round'), false, cfAllowed() || spearTargets(p).length > 0)} /* v0.88: Spear a spectator lives in this menu */
       ${tradePartners(p).length ? btn('trade', _T('Trade or truce'), _T('within 4 tiles'), false) : ''}
-      ${spearTargets(p).length ? btn('spear', _T('Spear a spectator'), _T`${cfAmt87(3)} · once per event`, false) : ''}
       ${canSelfWager(p) ? btn('selfbet', _T('Wager on yourself'), _T('coin at today\'s odds'), false) : ''}
       ${p.abil === 'zora' && caAllowed() && (p.zoraUsed || 0) < (p.abilVal || 1) && !p.noEagle ? btn('zora', _T('Release Zora'), (p.abilVal || 1) > 1 ? _T`${(p.abilVal || 1) - (p.zoraUsed || 0)} release${(p.abilVal || 1) - (p.zoraUsed || 0) === 1 ? '' : 's'} left` : _T('once per event'), false) : ''}
       ${canExit(p) ? btn('exit', _T('Exit the arena'), _T('ends your event here'), false) : ''}
-      ${isNaum() && p.onDoor != null ? btn('leavedoor', _T('Leave the door'), _T('swim from here'), false) : ''}
+      ${isNaum() && p.onDoor != null ? btn('leavedoor', _T('Leave the door'), _T('swim from here'), false) : ''}`}
       <button class="btn primary ${turnSpent(p, srcs, loot, ex) ? 'heartbeat' : ''}" type="button" data-act="end" ${S.busy ? 'disabled' : ''}>${_T`End turn<small>${turnSpent(p, srcs, loot, ex) ? _T('nothing left to do this turn') : _T('Phase 4')}</small>`}</button>
     </div>
     <p class="hint">${{
@@ -34817,10 +34816,10 @@ const deskFit81=()=>!document.body.classList.contains('phoneL')&&!document.body.
   try{const wrap=cv.parentElement;const top=Math.max(0,Math.round(wrap.getBoundingClientRect().top+scrollY));
     const dock=document.getElementById('actions');const dh=dock&&dock.offsetParent?dock.offsetHeight:0;
     const key=innerWidth+'x'+innerHeight+'|'+top+'|'+(typeof STANDS!=='undefined'?STANDS:'');
-    if(key!==FIT81.key){FIT81.key=key;FIT81.dock=0}
+    if(key!==FIT81.key){FIT81.key=key;FIT81.dock=0;FIT81.hv=0}
     /* the tallest dock this window has seen (a fixed floor for the Action phase's button rows): grows rarely, never shrinks */
     const want=Math.max(170,dh);if(want>FIT81.dock+4)FIT81.dock=want;
-    const hv=document.getElementById('hover');const hh=hv&&hv.offsetParent?hv.offsetHeight:0;
+    const hv=document.getElementById('hover');const hh0=hv&&hv.offsetParent?hv.offsetHeight:0;const hh=FIT81.hv=Math.max(FIT81.hv||0,hh0); /* v0.88: the hover line comes and goes on CPU turns — keep its tallest height so the arena never jumps */
     const tk=document.getElementById('crowdTick');const th=tk&&!tk.hidden&&tk.offsetParent?tk.offsetHeight+6:0;
     const res=Math.max(200,Math.min(innerHeight*0.62,top+FIT81.dock+hh+th+24));
     FIT81.res=res;
@@ -41438,12 +41437,12 @@ function gear88Opts(p){try{return lootOptions(p).filter(o=>o.t==='w'||o.t==='a'|
 function gear88Ok(p){return !!(S&&!S.over&&!S.onl&&p&&!p.cpu&&p.alive!==false&&!p.out&&!p.underground&&cur()!==p&&!ATK88.has(p)&&S.phase!=='setup')}
 function gear88Bar(p){if(!gear88Ok(p))return '';const n=gear88Opts(p).length;const arms=armsAttached(p);const canSwap=arms.length===2&&(p.wR||p.wL);
   if(!n&&!canSwap)return '';
-  return `<div class="gb88" data-pid="${p.id}"><span class="gb88h">${_T`🎒 Between turns`}</span>${canSwap?`<button type="button" class="btn tksm" data-gear88="swap">${_T`⇄ Swap hands`}</button>`:''}${n?`<button type="button" class="btn tksm primary" data-gear88="take">${_T`Take from the ground · ${n}`}</button>`:''}</div>`}
+  return `<div class="gb88" data-pid="${p.id}"><span class="gb88h">${_T`🎒 Manage`}</span>${canSwap?`<button type="button" class="btn tksm" data-gear88="swap">${_T`⇄ Swap hands`}</button>`:''}${n?`<button type="button" class="btn tksm primary" data-gear88="take">${_T`Take from the ground · ${n}`}</button>`:''}</div>`}
 {const base=boardHTML;boardHTML=function(player){let h=base.apply(this,arguments);try{const bar=gear88Bar(player);if(bar){const T=document.createElement('template');T.innerHTML=h;const w=T.content.querySelector('.warms');if(w){w.insertAdjacentHTML('afterend',bar);h=T.innerHTML}}}catch(e){console.error(e)}return h}}
 function gear88Swap(p){if(!gear88Ok(p))return;const r=p.wR,l=p.wL;p.wR=l||null;p.wL=r||null;if(p.armUses){const u=p.armUses.R;p.armUses.R=p.armUses.L;p.armUses.L=u}
   log(_T`${nm(p)} swaps hands: ${p.wR?esc(p.wR.n):_T('nothing')} is now primary, ${p.wL?esc(p.wL.n):_T('nothing')} secondary.`);render()}
 async function gear88Take(p){for(;;){if(!gear88Ok(p))break;const opts=gear88Opts(p);if(!opts.length)break;
-    const i=await modal(_T('🎒 Between turns'),`<p>${_T`Not your turn and nobody is attacking you: take anything lying here. Weapons go to a free hand (or swap one out); armor goes on a free spot.`}</p>`,
+    const i=await modal(_T('🎒 Manage your gear'),`<p>${_T`Not your turn and nobody is attacking you: take anything lying here. Weapons go to a free hand (or swap one out); armor goes on a free spot.`}</p>`,
       opts.map((o,j)=>{const w=o.t==='w'?o.pl.weapons[o.i]:o.t==='fw'?o.floor.w:null;const a=o.t==='a'?o.pl.armor[o.i]:null;return {label:o.label,sub:o.sub,value:j,card:w&&w.key?'w:'+w.key:a&&a.key?'a:'+a.key:null}}).concat([{label:_T('Done'),value:null}]),{close:null});
     if(i==null||!gear88Ok(p))break;const was=p.looted;try{await doLoot(p,opts[i])}finally{p.looted=was}render()}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-gear88]');if(!b)return;e.preventDefault();e.stopPropagation();
@@ -41458,6 +41457,59 @@ async function gear88Cpu(){if(!S||S.over||S.onl)return;const c=cur();
 {const css=document.createElement('style');css.textContent=`
 .gb88{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:6px 0 2px;padding:6px 8px;border:1px dashed rgba(232,196,106,.45);border-radius:8px;background:rgba(232,196,106,.06)}
 .gb88h{font-size:12px;color:var(--muted);margin-right:2px}`;document.head.appendChild(css)}
+/* 163-v88fix — v0.88 his notes (2026-10-05):
+   • CROWD FAVOR window with pictures: each buy shows what you get — the arena deck's card back (x:3), the Arena Key / Health Elixir /
+     AP Upgrade token rounds (40-rtok), the market board, his coin — and 🗡 SPEAR A SPECTATOR now lives here (it left the action bar:
+     not a main feature). While Crowd Favor is locked the window still opens for the spear alone.
+   • Floor spikes fit inside the tile they rise from (drawSpikeTile drawn a little smaller, centred on the tile). */
+openCrowd=async function(player){
+  for(;;){const cfOK=cfAllowed();const spear=typeof spearTargets==='function'&&spearTargets(player).length>0;if(!cfOK&&!spear)return;
+    const lock=cfOK?'':_T('locked this round');
+    const pic=h=>`<span class="cf88p">${h}</span>`;const tok=k=>typeof rtokHTML==='function'?rtokHTML(k,46):'';
+    const it=(v,img,name,cost,dis,note)=>({value:v,disabled:dis,label:`${pic(img)}<span class="cf88t"><b>${name}</b><small>${note||cost}</small></span>`});
+    const grid=[
+      it('card',cardHTML('x:3','xs'),_T('Arena card'),cfAmt87(5),!cfOK||player.cf<5||!canDraw(),lock),
+      it('key',tok('key'),_T('Arena Key'),cfAmt87(5),!cfOK||player.cf<5,lock),
+      it('el',tok('elix4'),_T('Health Elixir token (+4 HP)'),cfAmt87(8),!cfOK||player.cf<8,lock),
+      it('ap',tok('ap3'),_T('AP Upgrade token (+3 AP)'),cfAmt87(8),!cfOK||player.cf<8,lock),
+      it('mk',`<img src="${assetURL('market_board.webp')}" alt="" class="cf88mb">`,_T('Unlock market for this turn'),cfAmt87(3),!cfOK||player.cf<3||player.market||!!EV().noMarket,lock||(player.market?_T('already open'):'')),
+      it('dc',`<span class="cf88coin">${ICO.coin}</span>`,_T`Discard ${coinAmt87(10)} for ${cfAmt87(2)}`,coinAmt87(10),!cfOK||player.coin<10,lock),
+      it('sp',tok('spectator'),_T('Spear a spectator'),_T`${cfAmt87(3)} · once per event`,!spear,spear?'':_T('nobody in reach'))];
+    const v=await modal(_T('Crowd Favor'),`<p>${_T`Crowd Favor is spent in Phase 3. If it ever drops below zero, you are eliminated. You have <b>${cfAmt87(player.cf)}</b> and <b>${coinAmt87(player.coin)}</b>.`}</p><div class="pickgrid cf88g" id="pickgrid"></div>`,
+      [{label:_T('Close'),value:'close'}],{grid,wide:1});
+    if(v==='close'||!v)break;
+    if(v==='sp'){await humanSpear(player);render();break}
+    if(v==='mk'){player.cf-=3;player.market=true;log(_T`${nm(player)} spends ${cfAmt87(3)} to unlock the market.`)}
+    if(v==='key'){player.cf-=5;player.keys++;log(_T`${nm(player)} buys an Arena Key.`)}
+    if(v==='card'){player.cf-=5;await drawArena(player)}
+    if(v==='el'){player.cf-=8;player.items.push(mkOffer('elix4'));log(_T`${nm(player)} buys a Health Elixir token.`)}
+    if(v==='ap'){player.cf-=8;player.items.push(mkOffer('ap3'));log(_T`${nm(player)} buys an AP Upgrade token.`)}
+    if(v==='dc'){player.coin-=10;coinLog(player,-10,_T('thrown to the crowd'));player.cf+=2;log(_T`${nm(player)} throws ${coinAmt87(10)} to the crowd (${cfAmt87('+2')}).`)}
+    render();if(S.over||!player.alive)break}};
+{const css=document.createElement('style');css.textContent=`
+.pickgrid.cf88g{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));max-height:none;overflow:visible;gap:8px}
+.pickgrid.cf88g .btn{display:flex;align-items:center;gap:12px;text-align:left;justify-content:flex-start;min-height:72px;padding:8px 12px}
+.cf88p{flex:none;width:56px;height:60px;display:grid;place-items:center}.cf88p .cimg.xs{height:58px;width:auto}
+.cf88p .rtok{width:48px!important;height:48px!important}.cf88mb{width:56px;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.cf88coin .ico,.cf88coin img{width:40px;height:40px}
+.cf88t{display:flex;flex-direction:column;gap:2px;min-width:0}.cf88t b{font-weight:600}.cf88t small{opacity:.85}
+.pickgrid.cf88g .btn:disabled .cf88p{filter:grayscale(.8);opacity:.55}`;document.head.appendChild(css)}
+/* the spike caps sat a little wide of their tile: drawn at 82% around the tile centre (the 3D spikes still rise above it) */
+const SPIKE88=0.82; /* TWEAK: spike cap size against the tile */
+{const base=drawSpikeTile;drawSpikeTile=function(s){if(!s||typeof ctx==='undefined'||typeof center!=='function')return base.apply(this,arguments);
+  const m=center(s.r,s.c);ctx.save();try{ctx.translate(m.x,m.y);ctx.scale(SPIKE88,SPIKE88);ctx.translate(-m.x,-m.y);return base.apply(this,arguments)}finally{ctx.restore()}}}
+/* the arena changed size on CPU turns: the top bar sometimes grew a line (54 → 67 px: a longer status chip wrapping), the arena's top
+   moved, and the fit (122 FIT81, keyed on that top) shrank the board. The bar now keeps the tallest height it has had in this window
+   (reset on resize), so the board stays put; the fit's hover line also keeps its tallest height (122 edit). */
+const BAR88={h:0,w:0};
+function bar88Hold(){try{const bar=document.querySelector('.bar');if(!bar||!bar.offsetParent)return;if(innerWidth!==BAR88.w){BAR88.w=innerWidth;BAR88.h=0;bar.style.minHeight=''}
+  const h=Math.round(bar.getBoundingClientRect().height);if(h>BAR88.h){BAR88.h=h;bar.style.minHeight=h+'px';if(typeof FIT81!=='undefined')FIT81.key=''}}catch(e){}}
+{const base=fitReserve;fitReserve=function(){bar88Hold();return base.apply(this,arguments)}}
+if(typeof ResizeObserver!=='undefined')new ResizeObserver(()=>bar88Hold()).observe(document.querySelector('.bar')||document.body);
+/* the avatar flickered on CPU turns: every render rebuilt the whole fighter board (a tooltip's text changing is enough), so the avatar's
+   images loaded again. When the new avatar is the same as the one on screen, the one on screen stays. */
+{const base=render;render=function(){const old=document.querySelector('#board .avatar');const r=base.apply(this,arguments);
+  try{const nu=document.querySelector('#board .avatar');if(nu&&nu!==old){const h=nu.outerHTML;if(old&&old._h88===h)nu.replaceWith(old);else nu._h88=h}}catch(e){}return r}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

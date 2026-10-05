@@ -12,12 +12,12 @@ function gear88Opts(p){try{return lootOptions(p).filter(o=>o.t==='w'||o.t==='a'|
 function gear88Ok(p){return !!(S&&!S.over&&!S.onl&&p&&!p.cpu&&p.alive!==false&&!p.out&&!p.underground&&cur()!==p&&!ATK88.has(p)&&S.phase!=='setup')}
 function gear88Bar(p){if(!gear88Ok(p))return '';const n=gear88Opts(p).length;const arms=armsAttached(p);const canSwap=arms.length===2&&(p.wR||p.wL);
   if(!n&&!canSwap)return '';
-  return `<div class="gb88" data-pid="${p.id}"><span class="gb88h">${_T`🎒 Between turns`}</span>${canSwap?`<button type="button" class="btn tksm" data-gear88="swap">${_T`⇄ Swap hands`}</button>`:''}${n?`<button type="button" class="btn tksm primary" data-gear88="take">${_T`Take from the ground · ${n}`}</button>`:''}</div>`}
+  return `<div class="gb88" data-pid="${p.id}"><span class="gb88h">${_T`🎒 Manage`}</span>${canSwap?`<button type="button" class="btn tksm" data-gear88="swap">${_T`⇄ Swap hands`}</button>`:''}${n?`<button type="button" class="btn tksm primary" data-gear88="take">${_T`Take from the ground · ${n}`}</button>`:''}</div>`}
 {const base=boardHTML;boardHTML=function(player){let h=base.apply(this,arguments);try{const bar=gear88Bar(player);if(bar){const T=document.createElement('template');T.innerHTML=h;const w=T.content.querySelector('.warms');if(w){w.insertAdjacentHTML('afterend',bar);h=T.innerHTML}}}catch(e){console.error(e)}return h}}
 function gear88Swap(p){if(!gear88Ok(p))return;const r=p.wR,l=p.wL;p.wR=l||null;p.wL=r||null;if(p.armUses){const u=p.armUses.R;p.armUses.R=p.armUses.L;p.armUses.L=u}
   log(_T`${nm(p)} swaps hands: ${p.wR?esc(p.wR.n):_T('nothing')} is now primary, ${p.wL?esc(p.wL.n):_T('nothing')} secondary.`);render()}
 async function gear88Take(p){for(;;){if(!gear88Ok(p))break;const opts=gear88Opts(p);if(!opts.length)break;
-    const i=await modal(_T('🎒 Between turns'),`<p>${_T`Not your turn and nobody is attacking you: take anything lying here. Weapons go to a free hand (or swap one out); armor goes on a free spot.`}</p>`,
+    const i=await modal(_T('🎒 Manage your gear'),`<p>${_T`Not your turn and nobody is attacking you: take anything lying here. Weapons go to a free hand (or swap one out); armor goes on a free spot.`}</p>`,
       opts.map((o,j)=>{const w=o.t==='w'?o.pl.weapons[o.i]:o.t==='fw'?o.floor.w:null;const a=o.t==='a'?o.pl.armor[o.i]:null;return {label:o.label,sub:o.sub,value:j,card:w&&w.key?'w:'+w.key:a&&a.key?'a:'+a.key:null}}).concat([{label:_T('Done'),value:null}]),{close:null});
     if(i==null||!gear88Ok(p))break;const was=p.looted;try{await doLoot(p,opts[i])}finally{p.looted=was}render()}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-gear88]');if(!b)return;e.preventDefault();e.stopPropagation();

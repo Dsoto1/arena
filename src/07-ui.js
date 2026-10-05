@@ -2747,7 +2747,7 @@ function render() {
     a = `<div class="acts">
       ${btn('m-move', _T('Move'), p.focusRoll ? _T('locked — Focus spends your movement') : _T`${p.mv} movement · diagonal 2`, m === 'move' && !p.focusRoll, !p.focusRoll)}
       <div class="atkgrp ${p.focusRoll ? 'focused' : ''}">${RD().pvp && p.mv > 0 && srcs.length ? `<button class="btn focbtn ${p.focusRoll ? 'on' : ''}" type="button" data-act="focus" ${S.busy || !focusTargets && !p.focusRoll ? 'disabled' : ''} title="${_T`Spend ALL your remaining movement: the location die is rolled three times and you pick where your next attack on a gladiator lands`}">${_T`🎯 Focus roll: ${p.focusRoll ? '<b>ON</b>' : _T('off')}<small>${p.focusRoll ? _T('your next attack picks 1 of 3 rolled locations') : _T`costs your ${p.mv} movement · pick 1 of 3 locations`}</small>`}</button>` : ''}${atkBtns || btn('none', _T('Attack'), _T('no attacks left'), false, false)}</div>
-      ${btn('m-push', _T('Push'), '2 movement', m === 'push', pushTargets(p).length > 0)}
+      ${_T`${btn('m-push', _T('Push'), '2 movement', m === 'push', pushTargets(p).length > 0)}
       ${btn('m-topple', _T('Topple pillar'), '3 movement', m === 'topple', toppleTargets(p).length > 0)}
       ${!weak(p, 'noTunnel') ? btn('m-tunnel', _T('Tunnel'), _T('1 Arena Key · ends turn'), m === 'tunnel', ex.length > 0) : ''}
       ${canOpenChest(p) ? btn('chest', _T('Open Arena Chest'), _T('1 Arena Key'), false) : ''}
@@ -2755,13 +2755,12 @@ function render() {
       ${p.carrying ? btn('chestdown', _T('Drop chest'), 'free', false) : ''}
       ${loot.length ? btn('loot', _T('Loot'), p.looted ? _T('thrown weapons only') : _T('1 item per turn'), false) : ''}
       ${EV().noMarket ? '' : btn('market', _T('Market'), p.market ? 'unlocked' : cfAllowed() ? _T`${cfAmt87(3)} to unlock` : _T('CF locked'), false)}
-      ${btn('crowd', _T('Crowd Favor'), cfAllowed() ? _T`${cfAmt87(p.cf)} to spend` : _T('locked this round'), false, cfAllowed())}
+      ${btn('crowd', _T('Crowd Favor'), cfAllowed() ? _T`${cfAmt87(p.cf)} to spend` : spearTargets(p).length ? _T('only the spear this round') : _T('locked this round'), false, cfAllowed() || spearTargets(p).length > 0)} /* v0.88: Spear a spectator lives in this menu */
       ${tradePartners(p).length ? btn('trade', _T('Trade or truce'), _T('within 4 tiles'), false) : ''}
-      ${spearTargets(p).length ? btn('spear', _T('Spear a spectator'), _T`${cfAmt87(3)} · once per event`, false) : ''}
       ${canSelfWager(p) ? btn('selfbet', _T('Wager on yourself'), _T('coin at today\'s odds'), false) : ''}
       ${p.abil === 'zora' && caAllowed() && (p.zoraUsed || 0) < (p.abilVal || 1) && !p.noEagle ? btn('zora', _T('Release Zora'), (p.abilVal || 1) > 1 ? _T`${(p.abilVal || 1) - (p.zoraUsed || 0)} release${(p.abilVal || 1) - (p.zoraUsed || 0) === 1 ? '' : 's'} left` : _T('once per event'), false) : ''}
       ${canExit(p) ? btn('exit', _T('Exit the arena'), _T('ends your event here'), false) : ''}
-      ${isNaum() && p.onDoor != null ? btn('leavedoor', _T('Leave the door'), _T('swim from here'), false) : ''}
+      ${isNaum() && p.onDoor != null ? btn('leavedoor', _T('Leave the door'), _T('swim from here'), false) : ''}`}
       <button class="btn primary ${turnSpent(p, srcs, loot, ex) ? 'heartbeat' : ''}" type="button" data-act="end" ${S.busy ? 'disabled' : ''}>${_T`End turn<small>${turnSpent(p, srcs, loot, ex) ? _T('nothing left to do this turn') : _T('Phase 4')}</small>`}</button>
     </div>
     <p class="hint">${{
