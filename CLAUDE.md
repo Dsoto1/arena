@@ -990,6 +990,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
   Module 25-city.js is the base (CITY_BLDG, CITY_DRESS, cityIso).
   His pick: the square grows to ~18×18 (faster walking). Buildings are DETAILED structures, not the old boxes (columns, pediments,
   roof-tile rows, porticoes, awnings with stripes/scalloped edges, shading, windows/doors, steps) — step 1 = Roma screenshots for his ok.
+  LIGHT: one sun (upper left), lit/shaded faces, soft cast shadows, contact shading, figure shadows; baked once per city. His rule: Match
+  Week's 2ND BOUT IS THE NIGHT MATCH — the square shows dusk + torches/lamps before it; daylight otherwise. (Asked: the arena look at night too?)
 - **CJK SCHEDULE (his call 2026-10-05): JAPANESE v0.89, CHINESE SIMPLIFIED v0.90 (moved up; es/it/pt/fr/de are done).**
 - **LANGUAGES (his pick 2026-10-05): one per release alongside the features** — Italian v0.87, Portuguese (BR) v0.88, French v0.89, German v0.90,
   Japanese v0.91, Chinese SIMPLIFIED v0.92 (his pick; shares the CJK work: system-font fallback stack incl. canvas, no small-caps/
