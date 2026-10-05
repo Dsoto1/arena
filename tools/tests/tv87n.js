@@ -1,6 +1,6 @@
 /* v0.87 beasts in the Field tab: clicking a row opens THAT beast (also after one is slain and moves to the bottom);
    a beast drawn from the arena deck keeps its card in the top row while it lives (gone when slain);
-   the generated card back of a starting beast wears its token round top-left. SHOTS=dir saves npc87_*.png. */
+   a starting beast opens on its stats side only, with its token round top-left. SHOTS=dir saves npc87_*.png. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:900}});await pg.route(/fonts\.g/,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
@@ -11,7 +11,8 @@ const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   /* slay the first beast: it moves to the Slain list at the bottom */
   const first=S.npcs.find(n=>n.alive);first.alive=false;first.hp=0;
   /* Leo from the arena deck */
-  await resolveDrawn(S.players[0],'spawnLeo');await W8(500);
+  const shut=async t=>{for(let i=0;i<t/100;i++){if(CUR_MODAL)CUR_MODAL.done(null);document.querySelectorAll('#bs82pop,.bs82').forEach(x=>x.remove());await W8(100)}};
+  await shut(600);S.phase='action';const pr=resolveDrawn(S.players[0],'spawnLeo');await Promise.race([pr,shut(4000)]);await shut(300);
   const leo=S.npcs.find(n=>n.name==='Leo');r.leo=!!leo;r.card=leo&&leo.card87;
   try{SIDE.tab='field'}catch(e){}render();try{sideApply()}catch(e){}await W8(200);
   const P=document.getElementById('npcPanel');
@@ -21,18 +22,17 @@ const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   const rows=[...P.querySelectorAll('.npcrow[data-nc82]')];const pick=rows[1]||rows[0];const want=S.npcs.find(x=>String(x.id)===pick.dataset.nc82);
   pick.click();await W8(300);const pop=document.getElementById('nc82pop');r.pop=!!pop;r.popName=pop?pop.textContent.toUpperCase().includes(want.name.toUpperCase()):false;if(pop)pop.remove();
   r.top=!!P.querySelector('.actcards .ac87[data-nc82="'+(leo&&leo.id)+'"]');
-  const ac=P.querySelector('.actcards .ac87');if(ac){ac.click();await W8(300);const p2=document.getElementById('nc82pop');r.acPop=!!p2&&p2.textContent.toUpperCase().includes('LEO');if(p2)p2.remove()}
+  const ac=P.querySelector('.actcards .ac87');if(ac){ac.click();await W8(300);const p2=document.getElementById('nc82pop');r.acPop=!!p2&&!!p2.querySelector('img[src*="npccard82_leo"]');if(p2)p2.remove()}
   /* back of a starting beast: token round */
   const st=S.npcs.find(n=>n.alive&&n.name!=='Leo');nc82Open(st.t,st.key,st.name);await W8(300);const p3=document.getElementById('nc82pop');
-  r.tok=!!(p3&&p3.querySelector('.nc82c.back .tok87 .rtok'));r.leoTok=(()=>{const d=document.createElement('div');d.innerHTML=nc82Back(nc82Spec('lion','Leo','Leo'));return !!d.querySelector('.tok87')})();
-  if(p3)p3.querySelector('.nc82flip').classList.add('flipped');
+  r.tok=!!(p3&&p3.querySelector('.nc87stats .nc82c.back .tok87 .rtok'));r.noFront=!!p3&&!p3.querySelector('.nc82flip,.nc82c.gen');r.leoTok=(()=>{const d=document.createElement('div');d.innerHTML=nc82Back(nc82Spec('lion','Leo','Leo'));return !!d.querySelector('.tok87')})();
   return r});
 ok(o.leo&&o.card==='spawnLeo','Leo marked with his card '+JSON.stringify(o));
 ok(o.rows.length&&o.rows.every(Boolean),'every row names its beast '+JSON.stringify(o.rows));
 ok(o.pop&&o.popName,'clicked row opens that beast');
 ok(o.top&&o.acPop,'Leo card in the top row, opens Leo');
-ok(o.tok,'token round on a starting beast back');
-if(shots){await pg.waitForTimeout(900);const e=await pg.$('#nc82pop .nc82flip');if(e)await e.screenshot({path:shots+'/npc87_back.png'});
+ok(o.tok&&o.noFront,'starting beast opens on its stats side with its token, no front');
+if(shots){await pg.waitForTimeout(900);const e=await pg.$('#nc82pop .nc87stats');if(e)await e.screenshot({path:shots+'/npc87_back.png'});
   await pg.evaluate(()=>{const p=document.getElementById('nc82pop');if(p)p.remove()});const f=await pg.$('#npcPanel');if(f)await f.screenshot({path:shots+'/npc87_field.png'})}
 /* Leo slain → his card leaves the top row */
 const gone=await pg.evaluate(async()=>{const leo=S.npcs.find(n=>n.name==='Leo');leo.alive=false;leo.hp=0;render();await new Promise(r=>setTimeout(r,200));return !document.querySelector('#npcPanel .ac87')});
