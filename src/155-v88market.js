@@ -150,7 +150,7 @@ function mk88DraftWin(base,player,title,body,buttons,opt){const grid=opt.grid;co
   const ba=gainArmorPiece;gainArmorPiece=async function(player,key){try{await g(key)}catch(e){}return ba.apply(this,arguments)}}
 
 /* ---------- the peek over the arena ---------- */
-function mk88Peek(f){return new Promise(res=>{try{let el=document.getElementById('mk88peek');if(el)el.remove();el=document.createElement('div');el.id='mk88peek';
+function mk88Peek(f){const S0=S;return new Promise(res=>{try{if(!S0||S0.over){res();return}let el=document.getElementById('mk88peek');if(el)el.remove();el=document.createElement('div');el.id='mk88peek';
   el.innerHTML=`<div class="pk88h">${f.draft?_T`${f.who} drafts <b>${esc(f.what)}</b>`:f.slot?_T`${f.who} rolls <b class="rn88">${ROMAN88[f.slot-1]}</b> at level ${f.lv} → <b>${esc(f.what)}</b>`:_T`${f.who} takes <b>${esc(f.what)}</b> at level ${f.lv}`}</div><div class="mk88">${f.html}</div>`;
   document.body.appendChild(el);const root=el.querySelector('.mk88');mk88Tag(root);const B=root.querySelector('.mboard75');B.classList.add('mk88sel');
   if(f.lv)B.classList.add('row'+f.lv);

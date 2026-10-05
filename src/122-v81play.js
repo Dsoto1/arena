@@ -41,7 +41,7 @@ function draftFits81(p,x){
 function draftPull81(x){try{if(!S||!S.market)return;if(typeof mktFix75==='function')mktFix75();if(x.kind==='w')marketPull(x.k);else marketPullArmor(x.k)}catch(e){console.error(e)}}
 const itemName81=x=>x.kind==='w'?W[x.k].n:ARM[x.k].n;
 runDraft=async function(){
-  const ev=EVENTS[S.evKey];const pool=[];let uidD=0;
+  const S0=S;const ev=EVENTS[S.evKey];const pool=[];let uidD=0;
   const maxLv=player=>ev.teams==='jugg'&&player.team!=='J'?2:3;
   for(const lv of [1,2,3]){for(const k of MARKET_W[lv])pool.push({id:uidD++,kind:'w',k,lv});for(const k of MARKET_A[lv])pool.push({id:uidD++,kind:'a',k,lv})}
   const picks=player=>ev.draft.all||(player.team==='J'?ev.draft.jugg:ev.draft.team);
@@ -50,7 +50,8 @@ runDraft=async function(){
   log(_T`Snake draft: ${S.players.map(player=>_T`${player.name} ${picks(player)} picks`).join(', ')}. Each pick offers a random ${OFFER} of the remaining level 1-3 weapons and armor that still fit the gladiator.`,'hd');
   const done=new Set();let order=S.players.map(player=>player.id);
   for(let rd=0;rd<maxRounds;rd++){
-    for(const id of order){const p=S.players[id];
+    for(const id of order){if(S!==S0)return; /* v0.88: a new event started while this draft waited (a CPU peek) — stop */
+      const p=S.players[id];
       if(rd>=picks(p)||done.has(p.id))continue;
       const left=pool.filter(x=>!x.by&&x.lv<=maxLv(p));if(!left.length)continue;
       const fit=left.filter(x=>draftFits81(p,x));
