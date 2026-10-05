@@ -39,7 +39,7 @@ function fail(code,msg,extra){const e=new Error(msg);e.code=code;if(extra)e.extr
 const NEED_DOMUS=new Set(['auction.bid','offer.move','offer.buy','offer.bring','gear.repair','domus.buy','gift.open','loot.pick','market.buy','domus.follow','char.create','char.buy','char.edit','char.active','lobby.create','lobby.join','lobby.accept','lobby.quick','lobby.sit','lobby.ticket','lobby.invite','lobby.call','lobby.again','lobby.say','bet.place','party.create','party.join','forum.say','domus.move','domus.equip','lobby.pass','domus.patron']);
 /* what a guest is told when a request needs a sign-in */
 const GUEST_WHY={'forum.say':'speak in the Forum','bet.place':'wager','lobby.ticket':'buy a ticket','char.create':'raise gladiators','domus.create':'found a house','lobby.pass':'take a seat in the stands'};
-function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=>Math.random(),dev=false,hereMs=0,countdown=C.COUNTDOWN_MS}){
+function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=>Math.random(),dev=false,hereMs=0,countdown=C.COUNTDOWN_MS,roomGrace=C.ROOM_GRACE}){
   const ttl=days=>Math.floor(now()/1000)+days*DAY;if(C.setCatalog)C.setCatalog(catalog); /* v0.84: equip points (C.equipOf / gearEquip) read the catalog */
   const acctOf=async id=>id?await store.get('ACCT#'+id,'PROFILE'):null;
   /* the account's ACTIVE gladiator (v0.79: up to 3 living, one active) — the one that fights, bets and buys tickets */
@@ -262,13 +262,30 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     const M=await store.get('MATCH#'+id,'META');if(M&&M.status==='live'&&(await store.flip('MATCH#'+id,'META','status','live','done'))){await store.set('MATCH#'+id,'META',{doneAt:now(),closed:why})}
     await payAll(pay);for(const p of L.players)if(!/^bot/.test(p.id)){const P=await acctOf(p.id);if(P&&P.match===id)await store.set('ACCT#'+p.id,'PROFILE',{match:null})}
     await toRoom(L,{closed:why})}
-  /* tidy the list: a waiting game whose host left 5+ minutes ago, a waiting game older than 3 hours, a live match with no human left
-     (all abandoned or dropped) or nobody connected for 10 minutes */
-  async function prune(list){const t=now();const out=[];const H=await hereMap();for(const L of list){try{
-      if(L.status==='waiting'){const on=H.get(L.host.id);const Hs=on?null:await acctOf(L.host.id);if(t-(L.created||0)>3*3600e3||(Hs&&!Hs.conn&&Hs.offAt&&t-Hs.offAt>5*60e3)){await closeMatch(L.id,'host gone');continue}}
+  /* v0.89 ROOMS WHEN LANISTAS GO: a member whose socket is gone (marked L.off by presence(), or found without a connection) is taken out
+     after roomGrace with the room's own roomLeave — any member; the host's room passes to the longest-waiting lanista; nobody left → closed,
+     wagers and tickets back. who = the account; why reaches them ('away'). Returns the room as written (or null). */
+  async function dropMember(id,who,why){let was=[],closed=false,pay=null;const L=await editLobby(id,X=>{if(X.status!=='waiting'||!C.memberOf(X,who))return false;was=roomIds(X);pay=null;
+      const r=C.roomLeave(X,who,now());closed=r.closed;if(closed)pay=refundsOf(X)});if(!L)return null;
+    await payAll(pay);await deliver(was,'lobby.update',{id:L.id,lobby:room(L),...(closed?{closed:'empty'}:{})},{except:who});await deliver([who],'lobby.update',{id:L.id,lobby:room(L),gone89:why||'away'});
+    await sweepInvites(L);hereC=null;return L}
+  /* one waiting room: marks cleared for those back, the gone taken out; the room as it stands now (null when it closed) */
+  async function pruneRoom(L,H){const t=now();const offAt={};const back=[];
+    for(const m of L.members||[]){if(/^bot/.test(m.id))continue;const marked=!!(L.off||{})[m.id];if(!marked&&H.get(m.id))continue;
+      const A=await acctOf(m.id);if(A&&A.conn){if(marked)back.push(m.id)}else if(A&&A.offAt)offAt[m.id]=A.offAt}
+    if(back.length){const X=await editLobby(L.id,Y=>{let ch=false;for(const a of back)ch=C.roomOffClear(Y,a)||ch;return ch?undefined:false});if(X){L=X;await toRoom(L)}}
+    for(const a of C.roomGoneIds(L,t,roomGrace,offAt)){const X=await dropMember(L.id,a,'away');if(X)L=X;if(L.status!=='waiting')return null}
+    return L}
+  /* tidy the list: a waiting game older than 3 hours, a waiting room's lanistas gone past their grace (v0.89; the host's room passes on),
+     a live match with no human left (all abandoned or dropped) or nobody connected for 10 minutes */
+  async function prune(list){const t=now();const out=[];const H=await hereMap();for(let L of list){try{
+      if(L.status==='waiting'){if(t-(L.created||0)>3*3600e3){await closeMatch(L.id,'old');continue}L.members=L.members||[];L.players=L.players||[];L=await pruneRoom(L,H);if(!L)continue}
       if(L.status==='live'){const M=await store.get('MATCH#'+L.id,'META');if(M&&M.status==='live'){const left=(M.players||[]).filter(a=>!(M.abandoned||{})[a]&&!(M.dropped||{})[a]);
         const awayAll=left.length&&left.every(a=>(M.away||{})[a]&&t-M.away[a]>10*60e3);if(!left.length||awayAll){await closeMatch(L.id,'empty');continue}}}
       out.push(L)}catch(e){out.push(L)}}return out}
+  /* v0.89 a socket opened (on) or closed: mark / clear the lanista in every waiting room they are in, and tell the room */
+  async function presence(acct,on,t){if(!acct)return;try{for(const L0 of await lobbies()){if(L0.status!=='waiting'||!C.memberOf({members:L0.members||[]},acct))continue;
+      const X=await editLobby(L0.id,Y=>(on?C.roomOffClear(Y,acct):C.roomOffMark(Y,acct,t||now()))?undefined:false);if(X)await toRoom(X,null,{except:acct})}}catch(e){}}
   const world=async k=>(await store.get('WORLD',k))||{list:[]};
   /* v0.82 living gladiators by rank, every house: WORLD COUNTS {tiro:n,…} kept by atomic counters (creation +1, rank-up −1/+1, death −1) — never a scan */
   async function countRank(k,by,ch){try{if(k&&!(ch&&ch.test))await store.counter('WORLD','COUNTS',k,by)}catch(e){}}
@@ -294,7 +311,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   async function today(){const t=now();await vdayAward(t);if(hereMs&&dayC&&t-dayAt<hereMs)return dayC;const D=await store.get('WORLD','DAY#'+C.dayKey(t));
     let out=C.dayOut(D,'today');if(!C.dayHas(D)){const Y=await store.get('WORLD','DAY#'+C.dayPrevKey(t));if(C.dayHas(Y))out=C.dayOut(Y,'yesterday')}dayC=await dnFill(out);dayAt=t;return dayC}
   /* a lobby list for one lanista: their strike flag only; liteRow for every room but their own (full) */
-  const listFor=(list,acct,f)=>{const mine=L=>inRoom(L,acct)||inStands(L,acct);const rows=list.filter(L=>!!L.flag===f);
+  const listFor=(list,acct,f)=>{const mine=L=>inRoom(L,acct)||inStands(L,acct);const rows=list.filter(L=>!!L.flag===f&&(mine(L)||!C.roomHostAway(L)));
     const out=rows.filter(mine).map(room).concat(rows.filter(L=>!mine(L)).slice(0,60).map(lite));
     while(out.length>1&&JSON.stringify(out).length>90000)out.pop();return out};
 
@@ -397,6 +414,11 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     'char.edit':async(d,ctx)=>{const ch=await charById(d.char);if(!ch||ch.owner!==ctx.acct)throw new Error('Not yours.');if(await busyIn(ctx.acct))throw new Error('Finish or leave your game first.');
       C.editChar(ch,d,catalog);await putChar(ch);return strip(ch)},
     'char.buy':async(d,ctx)=>{const ch=await store.get('CHAR#'+d.char,'CHAR');if(!ch||ch.owner!==ctx.acct)throw new Error('Not yours.');C.buy(ch,d.item,catalog);if(Array.isArray(ch.equip))ch.equip.push(d.item);await putChar(ch);return strip(ch)}, /* putChar is versioned: two buys at once cannot both spend one purse */
+    /* v0.89 an open room screen asks every 30 s: the room is tidied first (prune), so rooms clean up even when nobody browses */
+    'lobby.get':async(d,ctx)=>{const L0=d&&d.id?await store.get('LOBBY#'+d.id,'LOBBY'):null;if(!L0||L0.status==='done')return {gone:'closed',now:now()};L0.members=L0.members||[];L0.players=L0.players||[];
+      let L=(await prune([L0]))[0]||null;if(!L)return {gone:'closed',now:now()};
+      if(L.status==='waiting'&&(L.off||{})[ctx.acct]){const X=await editLobby(L.id,Y=>C.roomOffClear(Y,ctx.acct)?undefined:false);if(X){L=X;await toRoom(L,null,{except:ctx.acct})}}
+      return inRoom(L,ctx.acct)||inStands(L,ctx.acct)?{lobby:room(L),now:now()}:{lobby:lite(L),gone:'left',now:now()}},
     'lobby.list':async(d,ctx)=>{const me=await acctOf(ctx.acct);const f=flagOf(me);return listFor(await prune((await lobbies()).filter(L=>!!L.flag===f)),ctx.acct,f)},
     /* v0.80: no free text online — phrases only (lobby.say) */
     'lobby.chat':async()=>{throw new Error('Quick chat only.')},
@@ -869,7 +891,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   {const base=R['market.list'];R['market.list']=async(d,ctx)=>{await aucSweep();return base(d,ctx)}}
   {const base=R['world.news'];R['world.news']=async(d,ctx)=>({...(await base(d,ctx)),season84:C.onlineFixture(now())})}
 
-  return async function route(t,d,ctx){const f=R[t];if(!f)throw new Error('Unknown request: '+t);
+  const route=async function(t,d,ctx){const f=R[t];if(!f)throw new Error('Unknown request: '+t);
     /* v0.82 guests look, never act — for 2 hours from their first connect */
     if(!ctx.acct&&ctx.guest){if(now()-(ctx.guest.first||0)>C.GUEST_MS)throw fail('guest_expired','Your two hours as a guest are up — sign in to keep watching.');
       if(!C.GUEST_OK.includes(t))throw fail('guest',`Sign in to ${GUEST_WHY[t]||'play'}.`);return f(d||{},ctx)}
@@ -880,7 +902,9 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     if(TEST_GATE.has(t)&&d){let ranked=false;if(t==='lobby.create'||t==='lobby.quick')ranked=!!d.ranked;else{const id=t==='lobby.again'?(d.id||d.lobbyId):d.id;const L=id?await store.get('LOBBY#'+id,'LOBBY'):null;ranked=!!(L&&L.ranked)}
       if(ranked){const A=await acctOf(ctx.acct);let test=!!(A&&A.dtest);if(!test&&A&&A.party){const P=await store.get('PARTY#'+A.party,'PARTY');for(const m of (P&&P.members)||[]){const B=await acctOf(m);if(B&&B.dtest)test=true}}
         if(test)throw fail('testHouse','Test houses play Custom only.')}}
-    return f(d||{},ctx)}}
+    return f(d||{},ctx)};
+  /* v0.89 the handler tells the rooms when a socket opens or closes (index.js $connect / $disconnect / a gone push) */
+  route.presence=presence;route.prune=async()=>prune(await lobbies());return route}
 const TEST_GATE=new Set(['lobby.create','lobby.quick','lobby.join','lobby.accept','lobby.sit','lobby.again']);
 /* a player reconnects mid-match: their new connection goes into the match record */
 async function reconnect(store,acct,conn){const A=await store.get('ACCT#'+acct,'PROFILE');if(A&&A.match){await store.setIn('MATCH#'+A.match,'META','conns',acct,conn);await store.setIn('MATCH#'+A.match,'META','away',acct,0)}}

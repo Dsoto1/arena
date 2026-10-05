@@ -5,7 +5,7 @@
    • People: a "🎒 Between turns" bar under the weapons on their fighter board (gear88Ok). The window pauses the CPU turn like any window.
    • CPUs: when another gladiator's turn begins, a CPU standing on loot picks up weapons for a free hand and armor for a free equip point
      (no swaps, no prompts — deterministic, no dice).
-   • Online: not yet (the lockstep needs its own input; his pick: offline + hot seat first, online in v0.89). */
+   • Online: v0.89 171-v89onl — off-turn orders in the lockstep, carried out at that gladiator's next turn; CPU pickups online too. */
 const ATK88=new Set();
 {const base=doAttack;doAttack=async function(player,source,target){const t=target;if(t)ATK88.add(t);try{return await base.apply(this,arguments)}finally{if(t)ATK88.delete(t)}}}
 function gear88Opts(p){try{return lootOptions(p).filter(o=>o.t==='w'||o.t==='a'||o.t==='fw')}catch(e){return []}}
