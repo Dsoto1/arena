@@ -10975,7 +10975,7 @@ const LANG_ES={
 "💾 Saved to slot {0}":"💾 Guardado en el hueco {0}",
 "💾 Saved — {0}":"💾 Guardado — {0}",
 "💾 Saved “{0}”":"💾 Guardado «{0}»",
-"💾 Saves":"💾 Partidas guardadas",
+"💾 Saves":"💾 Partidas",
 "💾 The match resumes from “{0}” — {1}.":"💾 El combate se reanuda desde “{0}” — {1}.",
 "📂 Load a Manager career":"📂 Cargar una carrera de Manager",
 "📂 Load a Play now match":"📂 Cargar un combate de Jugar ya",
