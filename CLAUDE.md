@@ -957,6 +957,9 @@ share copy — the site download play/flavius-rule-arena.zip.)
   the yard opens on a compact squad table (one row per fighter: ratings, fatigue, routine chip, last week's gain), only rows that need
   him are highlighted (hurt, worn out, a band reached), bulk "apply to selected".
   Training Yard banner hours box = the same colours as its rail oval (light gray, v0.85 145 rail ovals) — one look per room.
+  INFIRMARY BEDS STAY (his yes): fix the bed bug; 🛏 Put in bed on each bench card + the empty bed offers the bench; the bed shows the
+  patient (avatar + wound mark, treatment, fit week, Take out); the plan runs until healed; one line says what a bed gives vs the bench;
+  'Beds full — build another' when full.
   ANSWERED: Domus purse = the gladiator's own coin (lost at death); treasury = the house's 20% cut (outlives deaths, buys for anyone).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
