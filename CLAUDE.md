@@ -982,6 +982,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
   (line ~130) → lookahead ~1 s, interval ~100 ms, skip only when the tab was hidden; verify with CPU throttling + a live match.
   v0.88 ADDS: HOT SEAT batch (tools/plans/hotseat-next.md) + PHONE PASS (after the Domus redesign). READABILITY PASS: a slice of files
   every release from now on. LOGIN DOMAIN: he runs `bash flavius.sh login` twice, 15 min apart (not yet done as of 2026-10-05).
+  I18N SOURCE FIXES (v0.87): 128-v82stands `v('hurl','hurls')` verbs reach the log untranslated (wrap them); 10-meta ~591 ' lies';
+  02-data ~2365 'Any remaining level ' pieces; 04-rules 's feet'/'at '; 141-v85faith is/are/waits values — all need _T or reworded keys.
   I18N PLURALS (v0.87): ~40 keys glue an English plural 's'/'' as a value ({1}); Italian can't build plurals that way → add a
   dictionary form {n:singular|plural} (picked by whether value n is '' / '1' vs anything else) in 00-lang langLook86, then revise those keys in it/es.
   CLASS CARD BACK (his art 2026-10-05, tools/art/cardtpl87/blank_card.webp 822x1122): the RULES side of the class card (title banner +
