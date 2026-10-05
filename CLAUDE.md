@@ -1036,6 +1036,10 @@ share copy — the site download play/flavius-rule-arena.zip.)
   card in the "What · the event" panel (his yellow box); the spectator options stay below; (2) remove the "Rules in this build" button;
   (3) "Sound the horns" → "Begin Event", moved into the top bar (the free space right of Follow); (4) ⚡ Quick start → "🎲 Random event": a RANDOM event + RANDOM
   city each time (his pick a), you as a random class vs CPUs (Math.random — UI, never the dice RNG); (5) remove ★ Presets.
+- **v0.90 QUEUED (his yes 2026-10-05): HOT-SEAT TURNING BOARD** — a setting (Settings → On the board, OFF by default): with 2+ humans
+  on one screen, the board turns to the active human's corner at the start of each human's turn (short eased spin; Reduce motion / Off
+  animations = an instant cut), using the v0.89 display rotation (168). CPU turns keep the last human's view. Never in Chariot,
+  Naumachia or lessons. Display only (rules, tile names, log unchanged).
 - **His calls (2026-10-05):** NO new online events until the Classics play properly online (no real players yet; ONL_EVENTS_OK88 stays
   empty). legendsim: LEAVE IT HARD — a Manager must diversify; one fighter carrying a house is meant to die by volume.
 - **166-v89fix (built):** boot-window close → main menu (not the background arena); startEvent in progress (START89) counts as live for
