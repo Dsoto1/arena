@@ -1,0 +1,662 @@
+[
+ {
+  "k": "{0}\n      {1}\n      {2}\n      {3}\n      {4}\n      {5}\n      {6}\n      {7}\n      {8}\n      {9}\n      {10}\n      {11}\n      {12}\n      {13}",
+  "w": "07-ui.js:2750"
+ },
+ {
+  "k": "only the spear this round",
+  "w": "07-ui.js:2758"
+ },
+ {
+  "k": "Primary",
+  "w": "54-v51.js:86"
+ },
+ {
+  "k": "Secondary",
+  "w": "54-v51.js:86"
+ },
+ {
+  "k": "No arm left to hold it",
+  "w": "155-v88market.js:23"
+ },
+ {
+  "k": "✓ Fits your {0} hand",
+  "w": "155-v88market.js:24"
+ },
+ {
+  "k": "Both hands full — replaces {0}",
+  "w": "155-v88market.js:25"
+ },
+ {
+  "k": "Nowhere to wear it",
+  "w": "155-v88market.js:26"
+ },
+ {
+  "k": "✓ Fits your {0}",
+  "w": "155-v88market.js:28"
+ },
+ {
+  "k": "Replaces {0} ({1})",
+  "w": "155-v88market.js:29"
+ },
+ {
+  "k": "Point at a piece to see it.",
+  "w": "155-v88market.js:30"
+ },
+ {
+  "k": "A face-down weapon",
+  "w": "155-v88market.js:32"
+ },
+ {
+  "k": "Level {0} · slot 4",
+  "w": "155-v88market.js:32"
+ },
+ {
+  "k": "Flip it and take it — nobody knows what it is.",
+  "w": "155-v88market.js:32"
+ },
+ {
+  "k": "Weapon · level {0}",
+  "w": "155-v88market.js:35"
+ },
+ {
+  "k": "or",
+  "w": "155-v88market.js:37"
+ },
+ {
+  "k": "Location",
+  "w": "155-v88market.js:38"
+ },
+ {
+  "k": "(pair)",
+  "w": "155-v88market.js:38"
+ },
+ {
+  "k": "<b>{0} AP</b>{1}",
+  "w": "155-v88market.js:38"
+ },
+ {
+  "k": "· stackable",
+  "w": "155-v88market.js:38"
+ },
+ {
+  "k": "+{0} AP {1}",
+  "w": "155-v88market.js:39"
+ },
+ {
+  "k": "Extra",
+  "w": "155-v88market.js:40"
+ },
+ {
+  "k": "+1 movement",
+  "w": "155-v88market.js:40"
+ },
+ {
+  "k": "+1 damage",
+  "w": "155-v88market.js:40"
+ },
+ {
+  "k": "Armor · level {0}",
+  "w": "155-v88market.js:41"
+ },
+ {
+  "k": "Click a slot of the level {0} row — no die.",
+  "w": "155-v88market.js:97"
+ },
+ {
+  "k": "From the face-down pile",
+  "w": "155-v88market.js:102"
+ },
+ {
+  "k": "Also offered",
+  "w": "155-v88market.js:116"
+ },
+ {
+  "k": "{0} drafts <b>{1}</b>",
+  "w": "155-v88market.js:154"
+ },
+ {
+  "k": "{0} rolls <b class=\"rn88\">{1}</b> at level {2} → <b>{3}</b>",
+  "w": "155-v88market.js:154"
+ },
+ {
+  "k": "{0} takes <b>{1}</b> at level {2}",
+  "w": "155-v88market.js:154"
+ },
+ {
+  "k": "Invictus with {0}+ Ranked bouts survived",
+  "w": "156-v88domus.js:31"
+ },
+ {
+  "k": "🌿 Immortalis",
+  "w": "156-v88domus.js:31"
+ },
+ {
+  "k": "<i>recruit kit</i>",
+  "w": "156-v88domus.js:48"
+ },
+ {
+  "k": "No gladiator yet — choose an empty slot below to raise one.",
+  "w": "156-v88domus.js:49"
+ },
+ {
+  "k": "What {0} wears into the next match",
+  "w": "156-v88domus.js:55"
+ },
+ {
+  "k": "Next: {0} at {1} Glory",
+  "w": "156-v88domus.js:58"
+ },
+ {
+  "k": "The highest rank",
+  "w": "156-v88domus.js:58"
+ },
+ {
+  "k": "· Immortalis at {0} Ranked bouts survived ({1})",
+  "w": "156-v88domus.js:58"
+ },
+ {
+  "k": "<small>Purse</small><b>{0}</b><i>{1}’s own coin — lost at death</i>",
+  "w": "156-v88domus.js:60"
+ },
+ {
+  "k": "<small>Treasury</small><b>{0}</b><i>the house’s cut — outlives every gladiator, pays for anyone</i>",
+  "w": "156-v88domus.js:61"
+ },
+ {
+  "k": "Buying happens in 🛒 Armory &amp; Market.",
+  "w": "156-v88domus.js:62"
+ },
+ {
+  "k": "disabled title=\"In a game — switch when it is over\"",
+  "w": "156-v88domus.js:67"
+ },
+ {
+  "k": "Make active",
+  "w": "156-v88domus.js:69"
+ },
+ {
+  "k": "<span class=\"sl88-plus\">＋</span><b>New gladiator</b><small>starts as a Tiro</small>",
+  "w": "156-v88domus.js:70"
+ },
+ {
+  "k": "✎ Name, class, look &amp; gear to bring <small class=\"rc-sub\">{0}</small>",
+  "w": "156-v88domus.js:90"
+ },
+ {
+  "k": "🧪 Offerings shelf",
+  "w": "156-v88domus.js:91"
+ },
+ {
+  "k": "No offerings yet — the Armory sells them.",
+  "w": "156-v88domus.js:96"
+ },
+ {
+  "k": "＋ A new gladiator for {0}",
+  "w": "156-v88domus.js:114"
+ },
+ {
+  "k": "✕ Back to the Domus",
+  "w": "156-v88domus.js:114"
+ },
+ {
+  "k": "Living gladiators at this rank, every house — yours included (a test house is left out of everyone else's count)",
+  "w": "156-v88domus.js:173"
+ },
+ {
+  "k": "became <b>Immortalis</b> — a legend of the sand",
+  "w": "157-v88mgr.js:61"
+ },
+ {
+  "k": "❦ <b>{0}</b>{1} is <b>Immortalis</b> — {2} wins, a title, a name the crowds will not forget.",
+  "w": "157-v88mgr.js:63"
+ },
+ {
+  "k": "{0} is Immortalis",
+  "w": "157-v88mgr.js:64"
+ },
+ {
+  "k": "<b>{0}</b> has done what few ever do: {1} wins, a title, and a rating of {2}. The crowds name them <b>Immortalis</b>.",
+  "w": "157-v88mgr.js:65"
+ },
+ {
+  "k": "The gold laurel is theirs from now on. Rival houses think twice before they challenge you, and whoever faces them on the sand fights a little afraid.",
+  "w": "157-v88mgr.js:65"
+ },
+ {
+  "k": "{0} backs down",
+  "w": "157-v88mgr.js:79"
+ },
+ {
+  "k": "A rival",
+  "w": "157-v88mgr.js:79"
+ },
+ {
+  "k": "“We had a challenge written. Then someone reminded us who sleeps in your barracks. Not while <b>{0}</b> stands.”",
+  "w": "157-v88mgr.js:80"
+ },
+ {
+  "k": "❦ {0} will not challenge you while {1} stands.",
+  "w": "157-v88mgr.js:81"
+ },
+ {
+  "k": "A rival house",
+  "w": "157-v88mgr.js:81"
+ },
+ {
+  "k": "Immortalis since season {0}, week {1}: rating {2}+, {3}+ wins and a title",
+  "w": "157-v88mgr.js:85"
+ },
+ {
+  "k": "❦ Immortalis",
+  "w": "157-v88mgr.js:85"
+ },
+ {
+  "k": "Facing an Immortalis: −{0} morale before the bout",
+  "w": "157-v88mgr.js:99"
+ },
+ {
+  "k": "😨 fears {0}",
+  "w": "157-v88mgr.js:99"
+ },
+ {
+  "k": "Rudis path",
+  "w": "157-v88mgr.js:113"
+ },
+ {
+  "k": "A friend in the house",
+  "w": "157-v88mgr.js:113"
+ },
+ {
+  "k": "offer {0}+/wk",
+  "w": "157-v88mgr.js:129"
+ },
+ {
+  "k": "pledge the main event",
+  "w": "157-v88mgr.js:129"
+ },
+ {
+  "k": "house fame {0}+",
+  "w": "157-v88mgr.js:129"
+ },
+ {
+  "k": "promise the rudis path",
+  "w": "157-v88mgr.js:129"
+ },
+ {
+  "k": "a house in {0}",
+  "w": "157-v88mgr.js:129"
+ },
+ {
+  "k": "someone from their city or class in your house",
+  "w": "157-v88mgr.js:129"
+ },
+ {
+  "k": "🎯 Wants:",
+  "w": "157-v88mgr.js:142"
+ },
+ {
+  "k": "was promised the rudis path by {0}",
+  "w": "157-v88mgr.js:146"
+ },
+ {
+  "k": "🎯 You spoke to {0}'s wish ({1}): interest +{2}.",
+  "w": "157-v88mgr.js:152"
+ },
+ {
+  "k": "🎯 {0}: interest +{1}.",
+  "w": "157-v88mgr.js:152"
+ },
+ {
+  "k": "rough ranges · scout to see",
+  "w": "157-v88mgr.js:160"
+ },
+ {
+  "k": "rumoured ranges · watch them train",
+  "w": "157-v88mgr.js:160"
+ },
+ {
+  "k": "close ranges · scout for the exact",
+  "w": "157-v88mgr.js:160"
+ },
+ {
+  "k": "A rival house has made a bid — see your mail; unanswered, it wins when the week ends",
+  "w": "157-v88mgr.js:169"
+ },
+ {
+  "k": "⚖ Rival bid — answer by the week's end",
+  "w": "157-v88mgr.js:169"
+ },
+ {
+  "k": "A rival house counter-bids in the 3rd week you court a fighter",
+  "w": "157-v88mgr.js:170"
+ },
+ {
+  "k": "⏳ Rival bid in 1 week",
+  "w": "157-v88mgr.js:170"
+ },
+ {
+  "k": "⏳ Rival bid in {0} weeks",
+  "w": "157-v88mgr.js:170"
+ },
+ {
+  "k": "{0} bids for {1}",
+  "w": "157-v88mgr.js:174"
+ },
+ {
+  "k": "Your treasury cannot cover the first week.",
+  "w": "157-v88mgr.js:177"
+ },
+ {
+  "k": "“<b>{0}</b> has put <b>{1}</b> a week on the table for <b>{2}</b>. Answer by the week's end, or the fighter is theirs.”",
+  "w": "157-v88mgr.js:180"
+ },
+ {
+  "k": "We don't know what this one wants yet — scout first and we could outbid them on it.",
+  "w": "157-v88mgr.js:181"
+ },
+ {
+  "k": "⚖ Match · {0}/wk",
+  "w": "157-v88mgr.js:182"
+ },
+ {
+  "k": "🎯 Outbid: {0} {1} · {2}/wk",
+  "w": "157-v88mgr.js:182"
+ },
+ {
+  "k": "🚶 Walk away",
+  "w": "157-v88mgr.js:182"
+ },
+ {
+  "k": "signed {0}, outbidding you",
+  "w": "157-v88mgr.js:185"
+ },
+ {
+  "k": "{0} signs <b>{1}</b> ({2}/wk) — your courtship came to nothing.",
+  "w": "157-v88mgr.js:186"
+ },
+ {
+  "k": "🚶 {0} signs with {1}.",
+  "w": "157-v88mgr.js:186"
+ },
+ {
+  "k": "✍ {0} signs with you ({1}/wk){2}.",
+  "w": "157-v88mgr.js:191"
+ },
+ {
+  "k": "— you answered a wish: {0}",
+  "w": "157-v88mgr.js:191"
+ },
+ {
+  "k": "⚖ bid!",
+  "w": "157-v88mgr.js:209"
+ },
+ {
+  "k": "wk",
+  "w": "157-v88mgr.js:210"
+ },
+ {
+  "k": "Your house answers this now",
+  "w": "157-v88mgr.js:216"
+ },
+ {
+  "k": "2 wishes",
+  "w": "157-v88mgr.js:217"
+ },
+ {
+  "k": "a wish",
+  "w": "157-v88mgr.js:217"
+ },
+ {
+  "k": "— watch them train or scout to learn",
+  "w": "157-v88mgr.js:217"
+ },
+ {
+  "k": "🎯 Wants",
+  "w": "157-v88mgr.js:219"
+ },
+ {
+  "k": "Once a recruit a week",
+  "w": "157-v88mgr.js:222"
+ },
+ {
+  "k": "🎯 Speak to it: {0} {1}<small>free · +{2} interest</small>",
+  "w": "157-v88mgr.js:222"
+ },
+ {
+  "k": "🗡 Promise the rudis path (+{0})",
+  "w": "157-v88mgr.js:224"
+ },
+ {
+  "k": "<b>{0}</b> ({1}): {2}{3} · {4} · {5} (wallet {6}) · Road {7}/12{8}",
+  "w": "158-v88hs.js:91"
+ },
+ {
+  "k": "lives",
+  "w": "158-v88hs.js:91"
+ },
+ {
+  "k": "✝ fell",
+  "w": "158-v88hs.js:91"
+ },
+ {
+  "k": "<b>🪑 Hot seat — the players' books</b>{0}<br>{1}",
+  "w": "158-v88hs.js:92"
+ },
+ {
+  "k": "· simmed: no honours",
+  "w": "158-v88hs.js:92"
+ },
+ {
+  "k": "🪑 <b>{0}’s move</b><span>{1}</span>",
+  "w": "158-v88hs.js:110"
+ },
+ {
+  "k": "🤖 <b>{0}</b><span>CPU</span>",
+  "w": "158-v88hs.js:110"
+ },
+ {
+  "k": "🪑 {0} — your turn",
+  "w": "158-v88hs.js:123"
+ },
+ {
+  "k": "{0} · since your last turn",
+  "w": "158-v88hs.js:123"
+ },
+ {
+  "k": "Hold to peek — only you",
+  "w": "158-v88hs.js:131"
+ },
+ {
+  "k": "Hold to peek at your Mandata Flavi",
+  "w": "158-v88hs.js:131"
+ },
+ {
+  "k": "🎮 Who takes {0}?",
+  "w": "158-v88hs.js:153"
+ },
+ {
+  "k": "Pick the player who plays this gladiator from now on. Their wallet pays for it and the result goes in their book.",
+  "w": "158-v88hs.js:153"
+ },
+ {
+  "k": "🎮 {0} takes the reins of {1}{2}.",
+  "w": "158-v88hs.js:158"
+ },
+ {
+  "k": "🪑 {0} — ⏭ To the end?",
+  "w": "158-v88hs.js:163"
+ },
+ {
+  "k": "The whole table must agree: every gladiator goes to the CPU and the event resolves at once. It still counts in everyone's book, without honours.",
+  "w": "158-v88hs.js:163"
+ },
+ {
+  "k": "Agree",
+  "w": "158-v88hs.js:164"
+ },
+ {
+  "k": "🪑 {0} wants to play on — no simming.",
+  "w": "158-v88hs.js:165"
+ },
+ {
+  "k": "⚔ {0} will not accept the thumb.",
+  "w": "158-v88hs.js:174"
+ },
+ {
+  "k": "Untick to keep the gladiator's own name beside yours",
+  "w": "158-v88hs.js:186"
+ },
+ {
+  "k": "fight under my own name",
+  "w": "158-v88hs.js:186"
+ },
+ {
+  "k": "Name every player — seat {0} has no name (or make it a CPU).",
+  "w": "158-v88hs.js:192"
+ },
+ {
+  "k": "Each player needs their own name — “{0}” sits at two seats.",
+  "w": "158-v88hs.js:193"
+ },
+ {
+  "k": "Seat at least one player.",
+  "w": "158-v88hs.js:194"
+ },
+ {
+  "k": "this player",
+  "w": "158-v88hs.js:201"
+ },
+ {
+  "k": "Their book, wallet and honours are gone for good — this cannot be undone.",
+  "w": "158-v88hs.js:201"
+ },
+ {
+  "k": "Survives — into the player’s book.",
+  "w": "158-v88hs.js:205"
+ },
+ {
+  "k": "Survives with 50+ CF — into the player’s book.",
+  "w": "158-v88hs.js:205"
+ },
+ {
+  "k": "🪑 {0} · {1}",
+  "w": "158-v88hs.js:212"
+ },
+ {
+  "k": "· {0} to move",
+  "w": "158-v88hs.js:212"
+ },
+ {
+  "k": "🪑 <b>Hot-seat table</b>",
+  "w": "158-v88hs.js:221"
+ },
+ {
+  "k": "▶ Resume the table",
+  "w": "158-v88hs.js:223"
+ },
+ {
+  "k": "class=\"setrow slider aud88\"",
+  "w": "159-v88set.js:18"
+ },
+ {
+  "k": "<b>Animations</b>",
+  "w": "159-v88set.js:24"
+ },
+ {
+  "k": "Flying stones and spears, the clean-up crew, the market die. Quick halves them.",
+  "w": "159-v88set.js:24"
+ },
+ {
+  "k": "Quick",
+  "w": "159-v88set.js:24"
+ },
+ {
+  "k": "<b>Follow camera</b>",
+  "w": "159-v88set.js:25"
+ },
+ {
+  "k": "When zoomed in, the view follows whoever's turn it is.",
+  "w": "159-v88set.js:25"
+ },
+ {
+  "k": "Gameplay",
+  "w": "159-v88set.js:27"
+ },
+ {
+  "k": "Hints & help",
+  "w": "159-v88set.js:28"
+ },
+ {
+  "k": "On the board",
+  "w": "159-v88set.js:29"
+ },
+ {
+  "k": "🔒 {0} locked — win an event in their city to hear each",
+  "w": "159-v88set.js:39"
+ },
+ {
+  "k": "👥 Teams · 4–8 seats",
+  "w": "161-v88pl.js:11"
+ },
+ {
+  "k": "👥 Teams · {0}–{1} seats",
+  "w": "161-v88pl.js:11"
+ },
+ {
+  "k": "{0} seats",
+  "w": "161-v88pl.js:11"
+ },
+ {
+  "k": "<b>{0}</b><span class=\"badge gold\">{1}</span><small>{2} open · {3} ranked</small>",
+  "w": "161-v88pl.js:12"
+ },
+ {
+  "k": "🎒 Manage",
+  "w": "162-v88gear.js:15"
+ },
+ {
+  "k": "⇄ Swap hands",
+  "w": "162-v88gear.js:15"
+ },
+ {
+  "k": "Take from the ground · {0}",
+  "w": "162-v88gear.js:15"
+ },
+ {
+  "k": "{0} swaps hands: {1} is now primary, {2} secondary.",
+  "w": "162-v88gear.js:18"
+ },
+ {
+  "k": "nothing",
+  "w": "162-v88gear.js:18"
+ },
+ {
+  "k": "🎒 Manage your gear",
+  "w": "162-v88gear.js:20"
+ },
+ {
+  "k": "Not your turn and nobody is attacking you: take anything lying here. Weapons go to a free hand (or swap one out); armor goes on a free spot.",
+  "w": "162-v88gear.js:20"
+ },
+ {
+  "k": "Done",
+  "w": "162-v88gear.js:21"
+ },
+ {
+  "k": "already open",
+  "w": "163-v88fix.js:16"
+ },
+ {
+  "k": "nobody in reach",
+  "w": "163-v88fix.js:18"
+ },
+ {
+  "k": "{0} gives you",
+  "w": "163-v88fix.js:65"
+ },
+ {
+  "k": "for your",
+  "w": "163-v88fix.js:65"
+ }
+]

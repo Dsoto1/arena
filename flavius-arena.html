@@ -13037,7 +13037,7 @@ function render() {
       ${p.carrying ? btn('chestdown', _T('Drop chest'), 'free', false) : ''}
       ${loot.length ? btn('loot', _T('Loot'), p.looted ? _T('thrown weapons only') : _T('1 item per turn'), false) : ''}
       ${EV().noMarket ? '' : btn('market', _T('Market'), p.market ? 'unlocked' : cfAllowed() ? _T`${cfAmt87(3)} to unlock` : _T('CF locked'), false)}
-      ${btn('crowd', _T('Crowd Favor'), cfAllowed() ? _T`${cfAmt87(p.cf)} to spend` : spearTargets(p).length ? _T('only the spear this round') : _T('locked this round'), false, cfAllowed() || spearTargets(p).length > 0)} /* v0.88: Spear a spectator lives in this menu */
+      ${btn('crowd', _T('Crowd Favor'), cfAllowed() ? _T`${cfAmt87(p.cf)} to spend` : spearTargets(p).length ? _T('only the spear this round') : _T('locked this round'), false, cfAllowed() || spearTargets(p).length > 0)}
       ${tradePartners(p).length ? btn('trade', _T('Trade or truce'), _T('within 4 tiles'), false) : ''}
       ${canSelfWager(p) ? btn('selfbet', _T('Wager on yourself'), _T('coin at today\'s odds'), false) : ''}
       ${p.abil === 'zora' && caAllowed() && (p.zoraUsed || 0) < (p.abilVal || 1) && !p.noEagle ? btn('zora', _T('Release Zora'), (p.abilVal || 1) > 1 ? _T`${(p.abilVal || 1) - (p.zoraUsed || 0)} release${(p.abilVal || 1) - (p.zoraUsed || 0) === 1 ? '' : 's'} left` : _T('once per event'), false) : ''}
