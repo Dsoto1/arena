@@ -26,7 +26,7 @@ function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),h
         const G=await db.get('GUEST#'+gid,'GUEST');const t=now();const first=G&&G.first||t;if(t-first>C.GUEST_MS)return {statusCode:403,body:'Your two hours as a guest are up — sign in to keep watching.'};
         await db.put('GUEST#'+gid,'GUEST',{id:gid,first,conn,tz:(G&&G.tz)||'',GSI1PK:'GON',GSI1SK:t,ttl:Math.floor(first/1000)+86400});
         await db.put('CONN#'+conn,'CONN',{guest:gid,first,ttl:Math.floor(t/1000)+86400});return {statusCode:200}}
-      let sub,name,tester=false;try{if(dev&&q.dev){sub='dev-'+String(q.dev).replace(/[^a-z0-9_-]/gi,'').slice(0,40);name=null;tester=!!q.email&&TESTERS.has(String(q.email).toLowerCase())}else{const b=await verifyFn(q.token,verifyCfg);sub=b.sub;name=b.name||b.given_name||String(b.email||'').split('@')[0];tester=!!b.email&&TESTERS.size>0&&(b.identities||[]).some(i=>i&&i.providerName==='Google')&&TESTERS.has(String(b.email).toLowerCase())}}
+      let sub,name,tester=false;try{if(dev&&q.dev){sub='dev-'+String(q.dev).replace(/[^a-z0-9_-]/gi,'').slice(0,40);name=null;tester=!!q.email&&TESTERS.has(String(q.email).toLowerCase())}else{const b=await verifyFn(q.token,verifyCfg);sub=b.sub;name='Lanista'; /* v0.89 L: the sign-in (Google) name is never kept */tester=!!b.email&&TESTERS.size>0&&(b.identities||[]).some(i=>i&&i.providerName==='Google')&&TESTERS.has(String(b.email).toLowerCase())}}
       catch(e){return {statusCode:401,body:'Sign in again.'}}
       const a=(await db.get('ACCT#'+sub,'PROFILE'))||(name||!dev?{id:sub,name:C.cleanName(name||'Lanista')||'Lanista',since:now()}:null);
       if(a){a.conn=conn;a.GSI1PK='ON';a.GSI1SK=now();await db.put('ACCT#'+sub,'PROFILE',a);await reconnect(db,sub,conn)}
