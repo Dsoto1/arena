@@ -968,6 +968,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   FORUM (his call 2026-10-05): drop the landing Forum (phrase chips + chat feed) — quick chat stays in rooms/matches; server forum routes
   stay unused; IN ITS PLACE (his idea): "📜 Acta of the day" — the last 8 online match results, newest first (time · event at city —
   🏆 winner (house) CF · ✝ if anyone fell), click → today's list; empty → yesterday's; may add a small `recent` list to the DAY record.
+  ALSO v0.87 (his adds 2026-10-05): FLAKY TESTS made reliable (tv64, tv82o, tlive, tv84p — fix the waits, never skip); CHOPPY MUSIC on
+  Mac Safari (main menu + during a match): 21-audio audTick schedules only 0.25 s ahead every 60 ms and skips the backlog when late
+  (line ~130) → lookahead ~1 s, interval ~100 ms, skip only when the tab was hidden; verify with CPU throttling + a live match.
+  v0.88 ADDS: HOT SEAT batch (tools/plans/hotseat-next.md) + PHONE PASS (after the Domus redesign). READABILITY PASS: a slice of files
+  every release from now on. LOGIN DOMAIN: he runs `bash flavius.sh login` twice, 15 min apart (not yet done as of 2026-10-05).
   ANSWERED: Domus purse = the gladiator's own coin (lost at death); treasury = the house's 20% cut (outlives deaths, buys for anyone).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
