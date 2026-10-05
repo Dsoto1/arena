@@ -620,6 +620,8 @@ One global script; files are concatenated in order. Later "version modules" patc
   `--dry` prints the plan; `--full` runs everything (and refreshes the maps). State is committed: tools/regstate.json,
   tools/regmap.json — commit them with the release. A batch that wraps core functions still selects nearly everything;
   that is correct, not a bug.
+- **ONE FULL RUN AT A TIME (v0.88):** agents never run the full suite or `smartreg` without names — only the tests they touch
+  (`node tools/smartreg.js <names>`). The full suite runs once, by the lead, at release. (v0.88: three agents' full runs + the release on 4 cores = load 60, everything 3–5× slower and flaky.)
 - **Releases always run the full suite** (tools/release.sh does it). Old runner: `(nohup sh tools/runreg.sh >/dev/null 2>&1 &)`
   then watch `tools/reg.txt` for `ALLDONE` (~11 min: 3 tests at once, `-j N`).
   Pass = every block ends `exit=0` and prints `ERRS []`. Run a subset: `node tools/smartreg.js tv53 tpia`. (v0.76: 138 tests.)
