@@ -949,6 +949,13 @@ share copy — the site download play/flavius-rule-arena.zip.)
   task when points are unspent; one count). LEGEND OF THE SAND = career milestones (Manager e.g. top rating band + 25 wins + a Grand
   Games title; Online e.g. Invictus + 25 Ranked survived): gold laurel frame on cards/tokens, Annals line, rivals fear them.
   TOOLING: tools/legendsim.js — one cheap recruit through Manager seasons → how long to the top, where it stalls, death rate.
+  MORE (same day): STALE MAIL — letters about a fighter who is sold/traded/released/dead, or whose action can no longer be taken, are
+  removed (e.g. "needs healing" after you sold her); a letter whose button does nothing must not exist. The infirmary letter's "to the ward"
+  link does nothing (bug). RECRUITING FIT (his pick): ✓ only for the BEST FEW — how much the fighter improves YOUR roster (missing class,
+  beats your weakest, lifts your average) AND affordable; ~ decent, ✗ poor; "thin roster" no longer makes everyone ✓ (87-v67 recFit).
+  TRAINING YARD (his pick): STANDING ORDERS — each fighter has a weekly routine (drill focus / care / rest) that repeats until changed;
+  the yard opens on a compact squad table (one row per fighter: ratings, fatigue, routine chip, last week's gain), only rows that need
+  him are highlighted (hurt, worn out, a band reached), bulk "apply to selected".
   ANSWERED: Domus purse = the gladiator's own coin (lost at death); treasury = the house's 20% cut (outlives deaths, buys for anyone).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
