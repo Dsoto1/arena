@@ -1144,7 +1144,7 @@ function standsDrawerHTML(opt={}){
       <span class="stat">${_T`<b>${A.brawls||0}</b>brawls in the tiers`}</span>
       <span class="stat" title="${_T`The omen seen most often over this arena — hover the icon`}">${_T`<b>${(()=>{const top=Object.entries(A.omens||{}).sort((a,b)=>b[1]-a[1])[0];return top?omenBadge(OMENS.find(o=>o.k===top[0])):'—'})()}</b>most frequent omen`}</span>
     </div>
-    <p class="rc-sub" style="margin:2px 0 8px">${A.spearLast?_T`Last spectator speared here: <b>${esc(A.spearLast.name)}</b>, by ${esc(A.spearLast.by)} (${esc(A.spearLast.date)} — ${days===0?_T('today'):days+' day'+(days===1?'':'s')+_T(' without a spearing')}). The ushers are proud of the streak.`:_T('No spectator has ever been speared in this arena. The front rows sit easy.')}${S&&S.omen?_T` · Today: <b>${esc(S.omen.n)}</b>.`:''}</p>`;
+    <p class="rc-sub" style="margin:2px 0 8px">${A.spearLast?_T`Last spectator speared here: <b>${esc(A.spearLast.name)}</b>, by ${esc(A.spearLast.by)} (${esc(A.spearLast.date)} — ${days===0?_T('today'):days===1?_T('1 day without a spearing'):_T`${days} days without a spearing`}). The ushers are proud of the streak.`:_T('No spectator has ever been speared in this arena. The front rows sit easy.')}${S&&S.omen?_T` · Today: <b>${esc(S.omen.n)}</b>.`:''}</p>`;
   }
   const live=S&&!S.over&&S.phase!=='setup'&&S.spect&&S.spect.length?($('#crowdPanel')&&!$('#crowdPanel').hidden?$('#crowdPanel').innerHTML:crowdPanelHTML()):''; // v0.32: between events the stands stand empty
   // the roster of every living regular in the system

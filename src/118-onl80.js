@@ -403,7 +403,7 @@ function onlSayPop80(){let p=document.getElementById('onlSay80');if(p){p.remove(
   p.style.left=Math.max(8,Math.min(innerWidth-260,r.left))+'px';p.style.top=(r.bottom+6)+'px';document.body.appendChild(p)}
 async function onlMatchSay80(q){try{await NET.req('match.say',{id:S.onl.lobby,q});onlBubble80(S.onl.seat,q);return true}catch(err){onlToast80('⚠ '+esc2(err.message));return false}}
 async function onlAgain80(){const id=S&&S.onl&&S.onl.lobby;if(!id)return;
-  try{const r=await NET.req('lobby.again',{id});onlUpsert80(r.lobby);const n=(r.invited||[]).length;onlToast80(_T`⚔ A new room — ${n?n+' lanista'+(n===1?'':'s')+' invited':_T('the others are elsewhere')}.`);ONL.tab='play';onlExit();return r}
+  try{const r=await NET.req('lobby.again',{id});onlUpsert80(r.lobby);const n=(r.invited||[]).length;onlToast80(_T`⚔ A new room — ${n?(n===1?_T('1 lanista invited'):_T`${n} lanistas invited`):_T('the others are elsewhere')}.`);ONL.tab='play';onlExit();return r}
   catch(err){onlToast80('⚠ '+esc2(err.message));return null}}
 document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
   if(t.closest('#btnOnlSay80')){e.preventDefault();e.stopPropagation();ONLM.uiAt=Date.now();onlSayPop80();return}

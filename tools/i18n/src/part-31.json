@@ -1,0 +1,102 @@
+[
+ {
+  "k": "Any remaining level {0} weapon.",
+  "w": "02-data.js:2369"
+ },
+ {
+  "k": "{0} drops the Arena Chest at {1}'s feet.",
+  "w": "04-rules.js:1354"
+ },
+ {
+  "k": "{0} drops the Arena Chest on {1}.",
+  "w": "04-rules.js:1354"
+ },
+ {
+  "k": "<b>1 event record lies empty.</b>",
+  "w": "10-meta.js:591"
+ },
+ {
+  "k": "<b>{0} event records lie empty.</b>",
+  "w": "10-meta.js:591"
+ },
+ {
+  "k": "1 day without a spearing",
+  "w": "16-crowd.js:1147"
+ },
+ {
+  "k": "{0} days without a spearing",
+  "w": "16-crowd.js:1147"
+ },
+ {
+  "k": "1 lanista invited",
+  "w": "118-onl80.js:406"
+ },
+ {
+  "k": "{0} lanistas invited",
+  "w": "118-onl80.js:406"
+ },
+ {
+  "k": "cannot",
+  "w": "128-v82stands.js:120"
+ },
+ {
+  "k": "hurl",
+  "w": "128-v82stands.js:122"
+ },
+ {
+  "k": "hurls",
+  "w": "128-v82stands.js:122"
+ },
+ {
+  "k": "throw",
+  "w": "128-v82stands.js:124"
+ },
+ {
+  "k": "throws",
+  "w": "128-v82stands.js:124"
+ },
+ {
+  "k": "move",
+  "w": "128-v82stands.js:128"
+ },
+ {
+  "k": "moves",
+  "w": "128-v82stands.js:128"
+ },
+ {
+  "k": "cheer",
+  "w": "128-v82stands.js:129"
+ },
+ {
+  "k": "cheers",
+  "w": "128-v82stands.js:129"
+ },
+ {
+  "k": "{0} is named in the edict of {1}",
+  "w": "141-v85faith.js:228"
+ },
+ {
+  "k": "{0} are named in the edict of {1}",
+  "w": "141-v85faith.js:228"
+ },
+ {
+  "k": "{0} waits for the beasts",
+  "w": "141-v85faith.js:228"
+ },
+ {
+  "k": "{0} wait for the beasts",
+  "w": "141-v85faith.js:228"
+ },
+ {
+  "k": "Slain:",
+  "w": "152-v87npc.js:28"
+ },
+ {
+  "k": "Esc to close",
+  "w": "152-v87npc.js:31"
+ },
+ {
+  "k": "<b>{0}</b> <span>{1} · {2} AP</span>",
+  "w": "153-v87card.js:12"
+ }
+]

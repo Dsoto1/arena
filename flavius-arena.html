@@ -1235,9 +1235,9 @@ function langLook86(key,vals,quiet){
   const m=/^(\s*)([\s\S]*?)(\s*)$/.exec(key);const core=m[2];
   const tr=LANG_DICT[core];
   if(tr==null){if(core&&!quiet)LANG_MISS.set(core,(LANG_MISS.get(core)||0)+1);return null}
-  /* {n} = the value; {n|one|many} = a plural form picked by value n: '' / 1 / '1' (English singular) → one, else → many */
+  /* {n} = the value; {n|one|many} = a plural form picked by value n: '' / 1 / '1' / 'y' / 'is' / 'was' / 'has' (English singular) → one, else → many */
   const out=vals.length?tr.replace(/\{(\d+)(?:\|([^|{}]*)\|([^{}]*))?\}/g,(x,n,one,many)=>{n=+n;if(n>=vals.length)return x;
-    if(one==null)return String(vals[n]);const v=vals[n];return (v===''||v===1||v==='1'||v==null)?one:many}):tr;
+    if(one==null)return String(vals[n]);const v=vals[n];return (v===''||v===1||v==='1'||v==null||v==='y'||v==='is'||v==='was'||v==='has')?one:many}):tr;
   return m[1]+out+m[3]}
 function _T(s,...v){
   if(typeof s==='string'){if(!LANG_DICT)return s;const r=langLook86(s,[]);return r==null?s:r}
@@ -18100,7 +18100,7 @@ function standsDrawerHTML(opt={}){
       <span class="stat">${_T`<b>${A.brawls||0}</b>brawls in the tiers`}</span>
       <span class="stat" title="${_T`The omen seen most often over this arena — hover the icon`}">${_T`<b>${(()=>{const top=Object.entries(A.omens||{}).sort((a,b)=>b[1]-a[1])[0];return top?omenBadge(OMENS.find(o=>o.k===top[0])):'—'})()}</b>most frequent omen`}</span>
     </div>
-    <p class="rc-sub" style="margin:2px 0 8px">${A.spearLast?_T`Last spectator speared here: <b>${esc(A.spearLast.name)}</b>, by ${esc(A.spearLast.by)} (${esc(A.spearLast.date)} — ${days===0?_T('today'):days+' day'+(days===1?'':'s')+_T(' without a spearing')}). The ushers are proud of the streak.`:_T('No spectator has ever been speared in this arena. The front rows sit easy.')}${S&&S.omen?_T` · Today: <b>${esc(S.omen.n)}</b>.`:''}</p>`;
+    <p class="rc-sub" style="margin:2px 0 8px">${A.spearLast?_T`Last spectator speared here: <b>${esc(A.spearLast.name)}</b>, by ${esc(A.spearLast.by)} (${esc(A.spearLast.date)} — ${days===0?_T('today'):days===1?_T('1 day without a spearing'):_T`${days} days without a spearing`}). The ushers are proud of the streak.`:_T('No spectator has ever been speared in this arena. The front rows sit easy.')}${S&&S.omen?_T` · Today: <b>${esc(S.omen.n)}</b>.`:''}</p>`;
   }
   const live=S&&!S.over&&S.phase!=='setup'&&S.spect&&S.spect.length?($('#crowdPanel')&&!$('#crowdPanel').hidden?$('#crowdPanel').innerHTML:crowdPanelHTML()):''; // v0.32: between events the stands stand empty
   // the roster of every living regular in the system
@@ -33860,7 +33860,7 @@ function onlSayPop80(){let p=document.getElementById('onlSay80');if(p){p.remove(
   p.style.left=Math.max(8,Math.min(innerWidth-260,r.left))+'px';p.style.top=(r.bottom+6)+'px';document.body.appendChild(p)}
 async function onlMatchSay80(q){try{await NET.req('match.say',{id:S.onl.lobby,q});onlBubble80(S.onl.seat,q);return true}catch(err){onlToast80('⚠ '+esc2(err.message));return false}}
 async function onlAgain80(){const id=S&&S.onl&&S.onl.lobby;if(!id)return;
-  try{const r=await NET.req('lobby.again',{id});onlUpsert80(r.lobby);const n=(r.invited||[]).length;onlToast80(_T`⚔ A new room — ${n?n+' lanista'+(n===1?'':'s')+' invited':_T('the others are elsewhere')}.`);ONL.tab='play';onlExit();return r}
+  try{const r=await NET.req('lobby.again',{id});onlUpsert80(r.lobby);const n=(r.invited||[]).length;onlToast80(_T`⚔ A new room — ${n?(n===1?_T('1 lanista invited'):_T`${n} lanistas invited`):_T('the others are elsewhere')}.`);ONL.tab='play';onlExit();return r}
   catch(err){onlToast80('⚠ '+esc2(err.message));return null}}
 document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
   if(t.closest('#btnOnlSay80')){e.preventDefault();e.stopPropagation();ONLM.uiAt=Date.now();onlSayPop80();return}
