@@ -25,6 +25,12 @@ Check it with `node tools/i18n/check.js tools/i18n/it/part-NN.json` (must report
   Weapon/armor/beast/card names stay English even inside a Spanish sentence: "Equipas el Gladius", "Leo ataca".
 - Keys that are not human text (a CSS class list, an id, a file name, code, a lone symbol) → the value is the key unchanged.
 
+## Plurals glued at runtime
+Many keys add an English plural ending as a value: `{0} room{1}`, `{2} week{3}` (the value is "s" or ""), `entr{1}` ("y"/"ies").
+Use the plural form **`{n|singular|plural}`**: it shows the first text when value n is the English singular ("" or 1) and the second otherwise.
+Example: `{0} room{1}` → Italian `{0} stanz{1|a|e}`, Spanish `{0} sala{1|| s}`… (write whole endings or whole words: `{1|sala|salas}`).
+Every placeholder of the key must still appear at least once (a `{n|…|…}` counts).
+
 ## Fragments
 Some keys are pieces glued together at runtime ("{0} pays", ", backing <b>{0}</b>", "— they are marked fallen in the Ludus").
 Translate them so they still read correctly in place; keep the same leading/trailing spaces and punctuation shape.

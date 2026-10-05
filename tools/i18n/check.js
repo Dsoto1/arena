@@ -11,7 +11,7 @@ for(const f of process.argv.slice(2)){
   for(const k of src){
     if(!(k in out)){errs.push('MISSING '+JSON.stringify(k).slice(0,90));continue}
     const v=out[k];if(typeof v!=='string'){errs.push('NOT A STRING '+k.slice(0,60));continue}
-    const ph=s=>(s.match(/\{\d+\}/g)||[]).sort().join();
+    const ph=s=>[...new Set((s.match(/\{\d+(?:\|[^|{}]*\|[^{}]*)?\}/g)||[]).map(x=>x.replace(/\|.*\}$/,'}')))].sort().join(); /* {n|one|many} counts as {n}; a value may be used several times */
     if(ph(k)!==ph(v))errs.push('PLACEHOLDERS '+JSON.stringify(k).slice(0,70)+' → '+JSON.stringify(v).slice(0,70));
     const tg=s=>(s.match(/<[^>]+>/g)||[]).sort().join('|');
     if(tg(k)!==tg(v))errs.push('TAGS '+JSON.stringify(k).slice(0,70)+' → '+JSON.stringify(v).slice(0,70));
