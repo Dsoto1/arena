@@ -1024,7 +1024,9 @@ share copy — the site download play/flavius-rule-arena.zip.)
   hangs over the A-1 corner — move it off the corner for all events, rotated or not). Turn with the view: stands quadrants, minis' yaw,
   stuck arrows, pillars/pots/chest/spikes, start marks, the hover/tile lines. Screenshot every event rotated before shipping.
 - **v0.89 ANSWERS (2026-10-05):** LOOT WINDOW → the market-board style (pieces with their own art, enlarge + "fits you / replaces X",
-  untakeable dimmed, same layout for Manage). HOT SEAT "since your last turn" window opens ONLY when something happened.
+  untakeable dimmed, same layout for Manage). HOT SEAT "since your last turn" window opens ONLY when something happened. HOT SEAT 🚪 Abandon and 💾 Save & leave ASK THE TABLE first (each
+  human confirms, like ⏭ To the end). 'really' mood hand = his reference photo tools/art/flavmoods89/ref/really_hand.png, mirrored + re-inked.
+  HIS GO for v0.89 comes once he confirms the mood set.
 - **His calls (2026-10-05):** NO new online events until the Classics play properly online (no real players yet; ONL_EVENTS_OK88 stays
   empty). legendsim: LEAVE IT HARD — a Manager must diversify; one fighter carrying a house is meant to die by volume.
 - **166-v89fix (built):** boot-window close → main menu (not the background arena); startEvent in progress (START89) counts as live for
