@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.86**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.87**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -65,7 +65,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Module ordering matters: a wrapper only sees wrappers installed before it.
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
   `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
-  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`, `126-v82fix`, `127-v82onl`, `128-v82stands`, `129-v82beasts`, `130-v82vis`, `131-v83council`, `132-v83arrows`, `134-v83spikes`, `135-v83chest`, `136-v83sand`, `133-v83onl`, `137-v83onlui`, `139-v84onl`, `138-v84`, `140-v84prog`, `142-v84ui`, `143-v84roster`, `141-v85faith`, `144-v85rec`, `145-v85fix`, `146-v85land`, `147-v85music`, `148-v86lang` (build order as listed; `00-lang` + `00-lang-es` run FIRST, before 02-data).
+  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`, `126-v82fix`, `127-v82onl`, `128-v82stands`, `129-v82beasts`, `130-v82vis`, `131-v83council`, `132-v83arrows`, `134-v83spikes`, `135-v83chest`, `136-v83sand`, `133-v83onl`, `137-v83onlui`, `139-v84onl`, `138-v84`, `140-v84prog`, `142-v84ui`, `143-v84roster`, `141-v85faith`, `144-v85rec`, `145-v85fix`, `146-v85land`, `147-v85music`, `148-v86lang`, `149-v87fix`, `150-v87mgr`, `151-v87ward`, `152-v87npc`, `153-v87card` (build order as listed; `00-lang` runs FIRST, before 02-data; the language file assets/lang_<l>.js is loaded by 01-head before the script).
   Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
 
 ### Core globals (engine)
@@ -579,6 +579,24 @@ One global script; files are concatenated in order. Later "version modules" patc
   Skipped files: 111-onlcore (shared with the server; its texts = tools/i18n/srvkeys.js → part-25, matched on arrival by `TXP`),
   14-names, 13-sim, 148. Names + GAME_TERMS stay English (tools/i18n/names.json). Static 01-head text: `langStatic86` + `TX`.
   Test `tv86` (first-run ask, Spanish walk with leftover-English/overflow ceilings LEFT_MAX/CUT_MAX, switch back, English untouched).
+- **v0.87 (149-153 + server, no protocol bump):** `149-v87fix` — his v0.86 notes 1–20 (header lists them: Orbis 🔍 only, softer
+  Ave Arena bass, plain online market panel, Storeroom shelf #sh87 + no buying in the Domus, try-on real art/V bracers/either-side marks,
+  hidden-mechanic tooltips gone, perk task, half-width mail, yard hours grey, Hygeia banner card, city kits follow the fighter + refunds
+  (g.kitPaid87), stale mail dropped (L.g87), 📜 Acta of the day (DAY# `acta` list, ONLC.dayFromMatch), 🧠 hues, no menu mute, fallen
+  fighters only watch (ONLC.standsHolders / FELL_WATCH, server too), results open on players + 💰 Wagers tab, event pop-up without schedule,
+  Hints box #hint87, try-on gold marks after a 120 ms rest, never the hit flash). `150-v87mgr` — lanista's hours gone (w.hours accessor,
+  HRS87, SAVE_MIGRATIONS '0.87'), perk tree PERK87 (m.perks87), standing orders g.ord87/ROUT87 + squad table yard87HTML, Fit fit87Score
+  (✓ for the best 3 affordable), win rewards WIN87 (upset ≤×2 × streak +25%/win ≤×2, growth/morale/bond, fame, fans → crowd CF, patron
+  letter after a 3-win streak). `151-v87ward` — beds for any wounded (bedOK87), bed picker, plans repeat (inj.plan87), Beds full → build,
+  ONE CHANCE AT HOME (g.maim87: a 3rd lost limb waits a week for Hygeia). `152-v87npc` — deck-drawn beast's card in the Field top row while
+  it lives (n.card87), starting beasts = token + stats popup (npcStats87), rows carry their own data-nc82 (11-extra). `153-v87card` —
+  classBack87: the class card RULES side on his template (assets/clsback87.webp), beside the printed card on hover.
+  LANGUAGES: es, it, pt (Brasil), fr, de — tools/i18n/<l>/part-NN.json → `node tools/i18n/mkdict.js` → assets/lang_<l>.js
+  (window.LANG_PACK {l,d,s}); 01-head `<script data-lang87>` document.writes only the picked one (standalone: from ASSET_DATA, mkshare puts
+  the data block before it); no pack → English. LANG_UI87 (148) = the switch/ask words per language; first-run ask in any of them.
+  Plural form {n|one|many} (one = '' / 1 / y / is / was / has); tools/i18n/plurals.js lists runtime-plural keys; `// i18n:skip` on a line
+  stops wrap.js (text used as a key — the music theme keys crashed fr/de). Tests: tv87x tv87m tv87w tv87n tv87c tv87l (WALK_LANG walk of
+  tv86 in it/pt/fr/de). Music: 1 s lookahead on a 100 ms timer (Safari).
 - **Guide data:** `SIM50` in 53-guide50 is regenerated by `node tools/simguide.js flavius-arena.html 600` (SIMVER env);
   it includes `perk` (wins by rating perk), charted by 69-v56.
 - **Music:** procedural Web Audio (21-audio, 45-music, 16 themes; unlocked by winning in cities). Play Now plays a
