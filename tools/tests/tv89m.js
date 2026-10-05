@@ -13,10 +13,12 @@ const o=await p.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));
   S.npcs.push({id:'cmX',t:'commodus',n:'Commodus',alive:true,hp:15,r:0,c:0});
   r.after=(await peek()).find(x=>/Unlock market/.test(x.t));pl.market=true;r.buy=(await peek()).filter(x=>/Buy at level/.test(x.t));
   /* free pick: no d4 (rnd not called), Market Choice kept */
-  pl.mchoice=false;pl.cpu=true;const k=await marketRoll(pl,'w',1);const rolls=[...document.querySelectorAll('#log li')].slice(0,6).filter(l=>/market die/.test(l.textContent)).length;pl.cpu=false;r.free={k,rolls,mch:pl.mchoice,log:[...document.querySelectorAll('#log li')].slice(0,8).map(l=>l.textContent).join(' | ')};
+  pl.mchoice=false;pl.cpu=true;S.npcs=S.npcs.filter(n=>n.id!=='cmX');const k=await marketRoll(pl,'w',1);const rolls=[...document.querySelectorAll('#log li')].slice(0,6).filter(l=>/market die/.test(l.textContent)).length;pl.cpu=false;r.free={k,rolls,mch:pl.mchoice,log:[...document.querySelectorAll('#log li')].slice(0,8).map(l=>l.textContent).join(' | ')};
+  const cnt=k=>S.deck.filter(x=>x===k).length+((S.round2||[]).filter(x=>x===k).length);r.deck={rete:cnt('rete'),ward:cnt('ward'),lyre:cnt('lyre'),lure:cnt('lure'),n:S.deck.length,end:S.deck[0]};
   return r});
 ok(o.before&&!o.before.dis,'unlock enabled before Commodus '+JSON.stringify(o.before));
 ok(o.after&&o.after.dis&&/Commodus/.test(o.after.t),'unlock disabled + says Commodus '+JSON.stringify(o.after));
 ok(o.buy.length===3&&o.buy.every(x=>!x.dis),'a market already unlocked stays open for coin');
-ok(o.free.k&&o.free.rolls===0&&o.free.mch===false&&/chooses outright/.test(o.free.log)&&!/Market Choice/.test(o.free.log),'free pick chosen outright, no d4 '+JSON.stringify(o.free));
+ok(o.free.k&&o.free.rolls===0&&o.free.mch===false&&/chooses outright/.test(o.free.log)&&!/Market Choice/.test(o.free.log),'free pick chosen outright, no d4, even without Commodus '+JSON.stringify(o.free));
+ok(o.deck.rete===1&&o.deck.ward===1&&o.deck.lyre===2&&o.deck.lure===1&&o.deck.end==='endgame','the Slave\'s Rete and the Hero\'s Ward come out of the deck '+JSON.stringify(o.deck));
 console.log(JSON.stringify(o).slice(0,600));console.log('ERRS',JSON.stringify(errs));console.log('MISS',JSON.stringify(miss));await b.close();process.exit(errs.length||miss.length?1:0)})();
