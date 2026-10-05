@@ -32980,6 +32980,49 @@ const ONLC=(function(){
   if(Array.isArray(C.GUEST_OK))for(const t of ['fid.find','domus.visit'])if(!C.GUEST_OK.includes(t))C.GUEST_OK.push(t);
   Object.assign(C,{LNAME_MIN89,LNAME_MAX89,RENAME_MS89,LOLD_MS89,FIND_MAX89,INV89,FID_ABC89,FID_LEN89,lnameWhy,lnameKey,lnameClean,renameAt,renameWhy,lanOut,
     cleanPriv89:cleanPriv,privOf89:privOf,invWhy89:invWhy,fidMake,fidClean,fidShow,domusPub89:domusPub,visitChar89:visitChar})})(ONLC);
+/* ══════════ v0.89 N · FLAVIUS'S VAULT (his ask 2026-10-05: "pre-populate the auction house") ══════════
+   With few players nobody's named gear has gone back to the chest, so the weekly auction stood empty. When the week's draw finds fewer than
+   AUC_LOTS chest pieces, the rest come from FLAVIUS'S VAULT: named pieces rolled with the SAME tables as gifts (rollNamed / rollNamedArmor,
+   NAMED_ARMOR_SHARE for the kind) on a vault tier curve VAULT_RAR89 (Rare 60 / Epic 32 / Legendary 8). Seeded by the week key + lot number
+   (vaultLot89), so every server instance draws the same lots; a Legendary unique already claimed in the world is never minted (the roller skips
+   claimed ones, the server re-rolls Epic when its claim loses a race: o.cap). Each piece carries 1–3 lines of OWNER HISTORY (the usual hist
+   format + vault89:1, loc, ranked, wk, lan) of gladiators of five old houses run by fictional lanistas (VAULT_HOUSES89) — those lanista names
+   AND house names are RESERVED (vaultReserved89: domusWhy + lnameWhy refuse them for real players). pc.vault89 marks the piece; the bidding,
+   escrow, one win a house a week, the coin sink and Veteranus+ are unchanged; a won vault piece is an ordinary named piece of the winner. */
+(function(C){
+  const VAULT_RAR89=[['rare',60],['epic',32],['legendary',8]]; /* TWEAK: the vault's tier curve (gifts: RAR_W / RAR_A89) */
+  const VAULT_HIST89=[[1,45],[2,35],[3,20]]; /* TWEAK: how many past owners a vault piece names */
+  const VAULT_HOUSES89=[{lan:'Virgilante',house:'Aquila Aurea'},{lan:'Zora350',house:'Leaena Rubra'},{lan:'SrgtSlaughta',house:'Lanius'},{lan:'Duckio',house:'Anas Ferox'},{lan:'Sotonius',house:'Sotonius'}];
+  const PRAE89=['Marcus','Gaius','Lucius','Titus','Quintus','Decimus','Aulus','Sextus','Gnaeus','Publius','Servius','Tiberius','Spurius','Numerius','Manius','Appius'];
+  const COG89=['Crixus','Varro','Celadus','Flamma','Priscus','Verus','Spiculus','Tetraites','Carpophorus','Hermes','Oenomaus','Gannicus','Rufus','Niger','Felix','Corvus','Severus','Tigris','Ursus','Lupus','Ferox','Audax','Pugnax','Callidus'];
+  /* the page's mulberry32 + an FNV hash (the same on page and server) */
+  const mul=seed=>{let s=seed>>>0;return ()=>{let t=s=s+0x6D2B79F5>>>0;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}};
+  const hsh=x=>{let h=2166136261;for(const ch of String(x))h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0;return h};
+  const wp=(rnd,tab)=>{const t=tab.reduce((a,x)=>a+x[1],0);let v=rnd()*t;for(const x of tab){if((v-=x[1])<0)return x[0]}return tab[tab.length-1][0]};
+  const p1=(rnd,arr)=>arr[Math.min(arr.length-1,Math.floor(rnd()*arr.length))];
+  /* reserved: the five lanistas and their houses (letters and digits only, any case, with or without "House": "Zora 350", "house sotonius") */
+  const rkey=s=>String(s||'').toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
+  const RES89=new Set(VAULT_HOUSES89.flatMap(H=>[rkey(H.lan),rkey(H.house)]));
+  const vaultReserved89=s=>{const k=rkey(s);return !!k&&(RES89.has(k)||RES89.has(k.replace(/^(house|domus|ludus|familia|gens)/,'')))};
+  const RES_MSG89='That name belongs to an old house of the arena.';
+  {const base=C.domusWhy;C.domusWhy=function(s){const w=base.apply(this,arguments);return w||(vaultReserved89(s)?RES_MSG89:'')}}
+  if(C.lnameWhy){const base=C.lnameWhy;C.lnameWhy=function(s){const w=base.apply(this,arguments);return w||(vaultReserved89(s)?RES_MSG89:'')}}
+  const capRar=(r,cap)=>{const o=['common','rare','epic','legendary'];return cap&&o.indexOf(r)>o.indexOf(cap)?cap:r};
+  /* the owner history: 1–3 gladiators of the old houses, oldest first; an earlier owner fell to the next one ('taken'), the last fell ('fell') */
+  function vaultHist89(rnd,t0){const n=wp(rnd,VAULT_HIST89);const hs=VAULT_HOUSES89.slice();const out=[];let when=t0-(30+Math.floor(rnd()*30))*86400e3*n;
+    for(let i=0;i<n;i++){const H=hs.splice(Math.floor(rnd()*hs.length)%hs.length,1)[0];when+=(5+Math.floor(rnd()*20))*86400e3;
+      out.push({house:H.house,lan:H.lan,glad:p1(rnd,PRAE89)+' '+p1(rnd,COG89),when,how:i<n-1?'taken':'fell',loc:1+Math.floor(rnd()*12),ranked:rnd()<0.75,wk:1+Math.floor(rnd()*12),vault89:1})}
+    return out}
+  /* the vault's lot n of week `key` → {item, pc, rar, kind}. takenW / takenA = weapon / armor uniques already claimed; o.cap = the highest tier allowed
+     (the server passes 'epic' when its unique claim lost a race); o.at = the week's start (history dates end before it). Same arguments → same piece. */
+  function vaultLot89(key,n,catalog,takenW,takenA,o){o=o||{};const rnd=mul(hsh('vault89#'+key+'#'+n));
+    const kind=rnd()<C.NAMED_ARMOR_SHARE?'a':'w';const rar=capRar(wp(rnd,VAULT_RAR89),o.cap);
+    const def=kind==='a'?C.rollNamedArmor(rnd,catalog,rar,takenA||[]):C.rollNamed(rnd,catalog,rar,takenW||[]);if(!def)return null;
+    const uid='v89-'+String(key).replace(/[^A-Za-z0-9]/g,'')+'-'+(n|0);const pre=kind==='a'?C.NAMED_A:C.NAMED;
+    const t0=o.at!=null?o.at:C.seasonAt(Date.now()).start;
+    return {item:pre+'#'+uid,pc:{st:'whole',rar:def.rar,w:{...def,key:pre+'_'+uid},hist:vaultHist89(rnd,t0),vault89:1},rar:def.rar,kind}}
+  const isVault89=P=>!!(P&&P.pc&&(P.pc.vault89||(P.pc.hist||[]).some(h=>h&&h.vault89)));
+  Object.assign(C,{VAULT_RAR89,VAULT_HIST89,VAULT_HOUSES89,vaultReserved89,vaultLot89,vaultHist89,isVault89})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
 /* =====================================================================
    112-ONLINE · MULTIPLAYER → ONLINE (phase 1: the landing space, against a mock server)
@@ -44457,6 +44500,53 @@ document.addEventListener('change',e=>{const s=e.target;if(!s||s.id!=='cityKitWh
   #cityOv #cityLand,#cityOv #cityNext,#cityOv #cityCoin,#cityOv #cityClock,#cityOv .citybar .flagchip{display:none!important}#cityOv .citybar .btn{padding:2px 8px;font-size:13px}}
 @media (max-width:900px) and (max-height:500px){#cityOv .citymain2{flex-direction:row}#cityOv .cityside.cbar89{width:300px;height:auto;border-top:0;border-left:2px solid #8a6a32}
   .cbar89r{display:none}.cbar89visit{max-height:40%}}`;document.head.appendChild(st)})();
+/* =====================================================================
+   182-V89VAULT · v0.89 part N (Virgilante 2026-10-05): FLAVIUS'S VAULT — the weekly auction is never empty.
+   The shared rules are in 111-onlcore ("v0.89 N": VAULT_RAR89, VAULT_HOUSES89, vaultLot89, vaultReserved89 — domusWhy / lnameWhy refuse
+   the five old houses and their lanistas); the server fill is the "v0.89 N" block of server/src/routes.js. This module:
+   • THE MOCK — mockAucDraw84 wrapped: a week the chest leaves short is filled from the vault (same seeded lots as the server; armor uniques
+     kept in w.uniqA89, weapon uniques in w.uniq83), once a week (A.vault89).
+   • SCREENS — vault lots wear "🏛 From Flavius’s vault"; their owner history reads "Worn by Marcus Crixus of House Sotonius (Sotonius) · fell at
+     Capua, Ranked, week 3" (onl83Hist wrapped; other history lines as before); the ⓘ odds card says in one line that short weeks are filled
+     from the vault, with the vault's tier split.
+   Test: tools/tests/tonl89n.js · server: server/test/v89n.test.js
+   ===================================================================== */
+
+/* ---------------- THE MOCK (as server/src/routes.js v0.89 N) ---------------- */
+{const base=mockAucDraw84;mockAucDraw84=function(w,t){const r=base.apply(this,arguments);try{const S=ONLC.seasonAt(t);const A=(w.auc84||{})[S.key];
+    if(A&&!A.vault89&&(A.lots||[]).length<ONLC.AUC_LOTS){A.vault89=1;const cat=onlCatalog();const ends=ONLC.aucEnds(t);w.uniq83=w.uniq83||[];w.uniqA89=w.uniqA89||[];
+      let n=A.lots.reduce((a,x)=>Math.max(a,x.n|0),0);while(A.lots.length<ONLC.AUC_LOTS){n++;let P=ONLC.vaultLot89(S.key,n,cat,w.uniq83,w.uniqA89,{at:S.start});
+        if(P&&P.pc.w.uq){const U=P.kind==='a'?w.uniqA89:w.uniq83;if(U.includes(P.pc.w.uq))P=ONLC.vaultLot89(S.key,n,cat,w.uniq83,w.uniqA89,{at:S.start,cap:'epic'});else U.push(P.pc.w.uq)}
+        const I=P&&ONLC.pieceInfo(P,cat);if(!I)break;const val=ONLC.valueOf(I);
+        A.lots.push({id:S.key+'#'+n,key:S.key,n,item:P.item,pc:P.pc,val,min:ONLC.aucMin(val),opens:t,ends,bid:null,bids:[],done:false,won:null,from:{vault89:1},vault89:1})}}}catch(e){console.error(e)}return r}}
+
+/* an unsold vault lot goes back to the vault (never the chest pool); its unique is free again */
+{const base=mockAucSettle84;mockAucSettle84=function(w,X,t){const was=X.done;const r=base.apply(this,arguments);try{if(!was&&X.done&&X.vault89&&!X.bid){
+    w.chest83=(w.chest83||[]).filter(x=>x.item!==X.item);const uq=X.pc&&X.pc.w&&X.pc.w.uq;if(uq){const k=ONLC.isNamedA(X.item)?'uniqA89':'uniq83';w[k]=(w[k]||[]).filter(u=>u!==uq)}}}catch(e){console.error(e)}return r}}
+
+/* ---------------- SCREENS ---------------- */
+const vault89Of=L=>!!L&&(L.vault89||(L.hist||[]).some(h=>h&&h.vault89));
+/* one history line of a vault piece (the old houses: house name + its lanista) */
+function vault89HistLine(x){const house=`${esc2(onlHouse82(x.house||''))}${x.lan?` <i class="vlt89l">(${esc2(x.lan)})</i>`:''}`;
+  const where=`${esc2(onlCityName(x.loc|0))}, ${x.ranked?_T('Ranked'):_T('Custom')}, ${_T`week ${x.wk|0}`}`;
+  return x.how==='taken'?_T`⚔ Worn by <b>${esc2(x.glad||'?')}</b> of ${house} · slain at ${where} — taken by his killer`
+    :_T`🪦 Worn by <b>${esc2(x.glad||'?')}</b> of ${house} · fell at ${where}`}
+{const base=onl83Hist;onl83Hist=function(h){if(!(h||[]).some(x=>x&&x.vault89))return base.apply(this,arguments);
+  return `<div class="hist83 vlt89h">${h.slice(-4).map(x=>x&&x.vault89?`<small>${vault89HistLine(x)}</small>`
+    :`<small>${x.how==='auction'?_T('🔨 won at Flavius’s auction by'):x.how==='taken'?_T('⚔ taken from'):_T('🪦 fell with')} <b>${esc2(x.glad||'?')}</b>${x.house?` · ${esc2(onlHouse82(x.house))}`:''} · ${esc2(date83(x.when))}</small>`).join('')}</div>`}}
+/* the lot card: "From Flavius's vault" */
+{const base=onl84Auction;onl84Auction=function(){let h=base.apply(this,arguments);try{const X=ONL84.auc;if(!X)return h;
+    for(const L of [...(X.lots||[]),...(X.past||[])]){if(!vault89Of(L))continue;const a=`data-au84="${esc2(L.id)}">`;const i=h.indexOf(a);
+      if(i>=0){h=h.slice(0,i+a.length)+`<div class="vlt89" title="${_T`An old piece from the vault, with every owner it had`}">${_T`🏛 From Flavius’s vault`}</div>`+h.slice(i+a.length);
+        if(L.done&&!L.won){const u=_T('Unsold — back to Flavius’s chest');const j=h.indexOf(u,i);if(j>=0)h=h.slice(0,j)+_T('Unsold — back to Flavius’s vault')+h.slice(j+u.length)}}}}catch(e){console.error(e)}return h}}
+/* the ⓘ odds card: one line on the vault */
+{const base=odds89HTML;odds89HTML=function(){const h=base.apply(this,arguments);try{const RN={rare:_T('Rare'),epic:_T('Epic'),legendary:_T('Legendary')};const t=ONLC.VAULT_RAR89.reduce((a,x)=>a+x[1],0);
+    const split=ONLC.VAULT_RAR89.map(([k,v])=>`${RN[k]||k} ${Math.round(v/t*100)}%`).join(' · ');
+    const line=`<p class="rc-sub" data-o89="vault">${_T`🏛 A week with too few fallen pieces is filled from Flavius’s vault: ${split}.`}</p>`;
+    const j=h.lastIndexOf('</div>');return j>=0?h.slice(0,j)+line+h.slice(j):h+line}catch(e){return h}}}
+{const st=document.createElement('style');st.textContent=`
+.vlt89{display:inline-block;margin:0 0 6px;padding:2px 8px;border-radius:999px;background:#2a1f12;color:#e8c96a;border:1px solid #8a6d3b;font:600 12px/1.4 system-ui,sans-serif}
+.vlt89h small{display:block}.vlt89l{opacity:.8;font-style:normal}`;document.head.appendChild(st)}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
