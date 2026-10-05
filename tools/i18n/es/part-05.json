@@ -295,7 +295,7 @@
 "Save current": "Guardar actual",
 "Apply": "Aplicar",
 "Delete": "Eliminar",
-"{0} career{1} · {2} Ludus gladiators · {3} custom characters · {4} regulars": "{0} carrera{1} · {2} gladiadores del Ludus · {3} personajes personalizados · {4} habituales",
+"{0} career{1} · {2} Ludus gladiators · {3} custom characters · {4} regulars": "{0} {1|carrera|carreras} · {2} gladiadores del Ludus · {3} personajes personalizados · {4} habituales",
 "Save": "Guardar",
 "Load": "Cargar",
 "Replace this save with the game as it stands right now": "Reemplaza esta partida con el juego tal como está ahora",

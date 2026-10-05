@@ -9,7 +9,7 @@ function classBack87(k,w){const C=CLASSES[k];if(!C)return '';w=w||250;
   const wp=['R','L'].map(h=>C[h]&&W[C[h]]?W[C[h]]:null).filter(Boolean);
   const arm=(C.armor||[]).filter(([a])=>ARM[a]);const seen=new Map();
   for(const [a,loc] of arm){const key=a;const e=seen.get(key)||{a,locs:[]};e.locs.push(loc);seen.set(key,e)}
-  const armRows=[...seen.values()].map(({a,locs})=>{const A=ARM[a];return `<li><b>${esc(A.n)}</b> <span>${locs.map(l=>esc(LOCN[l]||l)).join(' · ')} · ${A.ap|0} AP</span></li>`}).join('');
+  const armRows=[...seen.values()].map(({a,locs})=>{const A=ARM[a];return `<li>${_T`<b>${esc(A.n)}</b> <span>${locs.map(l=>esc(LOCN[l]||l)).join(' · ')} · ${A.ap|0} AP</span>`}</li>`}).join('');
   const items=(C.items||[]).map(i=>typeof offerTokHTML==='function'?offerTokHTML(i,22):esc(i)).join('');
   const coin=typeof ICO!=='undefined'&&ICO.coin?ICO.coin:'🪙';
   /* a pale class colour (Veteranus) is darkened for the banner so the name stays readable on the parchment */

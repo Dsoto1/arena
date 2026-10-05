@@ -373,7 +373,7 @@
  "Survive every round. The event is won when <b>{0}</b>{1}. Crowd Favor decides your Fate at the end.": "Sobreviva a todas as rodadas. O evento é vencido quando <b>{0}</b>{1}. O Crowd Favor decide seu Fate no fim.",
  "— worth <b>{0} CF</b>": "— vale <b>{0} CF</b>",
  "· Missio": "· Missio",
- "📍 {0} · ⚔ {1} gladiator{2}{3}{4}{5}": "📍 {0} · ⚔ {1} gladiador{2|| es}{3}{4}{5}",
+ "📍 {0} · ⚔ {1} gladiator{2}{3}{4}{5}": "📍 {0} · ⚔ {1} {2|gladiador|gladiadores}{3}{4}{5}",
  "in {0} {1}": "em {0} {1}",
  "as one side": "como um só lado",
  "· 🏟 {0}K spectators in the stands": "· 🏟 {0}K espectadores na arquibancada",

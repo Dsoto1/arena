@@ -466,7 +466,7 @@
  "An attack": "Un ataque",
  "Absorb {0} damage": "Absorber {0} de daño",
  "this use BREAKS the shield": "este uso ROMPE el escudo",
- "{0} use{1} left after": "quedan {0} uso{1} después",
+ "{0} use{1} left after": "{1|queda|quedan} {0} {1|uso|usos} después",
  "Save the shield": "Guardar el escudo",
  "take the full hit on armor and flesh": "recibe el golpe completo en armadura y carne",
  "{0} absorbs {1}": "{0} absorbe {1}",

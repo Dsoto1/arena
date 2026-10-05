@@ -200,7 +200,7 @@
  "⏭ End the week": "⏭ Fin de la semaine",
  "🛡 Your roster": "🛡 Ton effectif",
  "click a fighter to open their card · re-sign, heal, train and bond from the card": "clique sur un combattant pour ouvrir sa carte · renouvelle, soigne, entraîne et crée des liens depuis la carte",
- "<b>{0} verdict{1}</b> wait for you — thumbs, blood money or the rudis.": "<b>{0} {1|verdict|verdicts}</b> t'attendent — pouces, prix du sang ou rudis.",
+ "<b>{0} verdict{1}</b> wait for you — thumbs, blood money or the rudis.": "<b>{0} {1|verdict|verdicts}</b> {1|t'attend|t'attendent} — pouces, prix du sang ou rudis.",
  "Match Week": "Semaine des jeux",
  "Your treasury is <b>{0}</b>. Win purses, bet well or trim wages before the creditors come.": "Ton trésor est de <b>{0}</b>. Gagne des bourses, parie bien ou réduis les salaires avant l'arrivée des créanciers.",
  "Roster": "Effectif",

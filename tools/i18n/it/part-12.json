@@ -46,7 +46,7 @@
  "Send them": "Mandali",
  "— optional 2nd fighter —": "— 2º combattente facoltativo —",
  "— choose a fighter —": "— scegli un combattente —",
- "📍 {0} · {1} (in {2} wk{3})": "📍 {0} · {1} (tra {2} sett.{3})",
+ "📍 {0} · {1} (in {2} wk{3})": "📍 {0} · {1} (tra {2} {3|settimana|settimane})",
  "· win {0} coin{1}": "· vinci {0} monete{1}",
  "The host will remember (−2 fame)": "L'ospitante se ne ricorderà (−2 fama)",
  "Withdraw": "Ritirati",

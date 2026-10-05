@@ -225,7 +225,7 @@ function fillBoxes85(){const w=W_();if(!w)return;for(const el of document.queryS
 setInterval(()=>{try{if(MGR&&MGR.world)fillBoxes85()}catch(e){}},400);
 {const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const w=W_(),m=me();for(const E of curEdicts85(w)){
   const open=E.cases.filter(c=>c.mgr===m.id&&c.st==='open'),wait=E.done?[]:E.cases.filter(c=>c.mgr===m.id&&c.st==='face');if(!open.length&&!wait.length)continue;
-  const nm=L=>L.map(c=>`<b>${esc(c.n)}</b>`).join(', ');const txt=[open.length?_T`${nm(open)} ${open.length===1?_T('is'):_T('are')} named in the edict of ${esc(cityN85(E.city))}`:'',wait.length?_T`${nm(wait)} ${wait.length===1?_T('waits'):_T('wait')} for the beasts`:''].filter(Boolean).join(' · ');
+  const nm=L=>L.map(c=>`<b>${esc(c.n)}</b>`).join(', ');const txt=[open.length?(open.length===1?_T`${nm(open)} is named in the edict of ${esc(cityN85(E.city))}`:_T`${nm(open)} are named in the edict of ${esc(cityN85(E.city))}`):'',wait.length?(wait.length===1?_T`${nm(wait)} waits for the beasts`:_T`${nm(wait)} wait for the beasts`):''].filter(Boolean).join(' · ');
   I.unshift({fa85:E.id,done:false,ic:'✝',txt,btn:`<button class="btn tksm" type="button" data-mg="tab" data-id="night">${_T`Decide`}</button>`})}}catch(e){console.error(e)}return I}}
 /* ---------- 10. the Studio ---------- */
 {const base=charEditorHTML;charEditorHTML=function(){const h=base.apply(this,arguments);try{const c=ST.draft;if(!c)return h;

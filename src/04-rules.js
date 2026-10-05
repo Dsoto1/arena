@@ -1351,7 +1351,7 @@ async function zoraDrop(npc, player) {
     S.chest.held = null;
     S.chest.r = toOwner ? player.r : npc.r;
     S.chest.c = toOwner ? player.c : npc.c;
-    log(_T`${nm(npc)} drops the Arena Chest ${toOwner ? 'at ' + player.name + _T("'s feet") : 'on ' + tl(npc.r, npc.c)}.`);
+    log(toOwner ? _T`${nm(npc)} drops the Arena Chest at ${player.name}'s feet.` : _T`${nm(npc)} drops the Arena Chest on ${tl(npc.r, npc.c)}.`);
     return;
   }
   if (toOwner) {

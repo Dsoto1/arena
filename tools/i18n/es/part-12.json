@@ -46,7 +46,7 @@
 "Send them": "Enviarlos",
 "— optional 2nd fighter —": "— 2.º luchador opcional —",
 "— choose a fighter —": "— elige un luchador —",
-"📍 {0} · {1} (in {2} wk{3})": "📍 {0} · {1} (en {2} sem{3})",
+"📍 {0} · {1} (in {2} wk{3})": "📍 {0} · {1} (en {2} {3|semana|semanas})",
 "· win {0} coin{1}": "· gana {0} monedas{1}",
 "The host will remember (−2 fame)": "El anfitrión lo recordará (−2 fama)",
 "Withdraw": "Retirar",

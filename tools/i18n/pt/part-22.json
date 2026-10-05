@@ -158,7 +158,7 @@
  "<b>This week’s best bettors</b>{0}": "<b>Melhores apostadores da semana</b>{0}",
  "{0}{1} <i class=\"test83\">TEST</i>{2}": "{0}{1} <i class=\"test83\">TESTE</i>{2}",
  "💰 Award {0} − the lanista’s cut {1} (to the treasury) = <b>{2} coin</b>": "💰 Prêmio {0} − a parte do lanista {1} (para o tesouro) = <b>{2} moedas</b>",
- "💔 {0} piece{1} came back broken — 🔧 repair in the Storeroom": "💔 {0} peça{1||s} voltou{1||ram} quebrada{1||s} — 🔧 conserte no Depósito",
+ "💔 {0} piece{1} came back broken — 🔧 repair in the Storeroom": "💔 {0} peça{1||s} {1|voltou|voltaram} quebrada{1||s} — 🔧 conserte no Depósito",
  "🧪 {0} offering{1} back in the satchel": "🧪 {0} oferenda{1||s} de volta na bolsa",
  "🎁 Flavius sends {0} to the house": "🎁 Flavius manda {0} para a casa",
  "🧪 Buy this offering?": "🧪 Comprar esta oferenda?",

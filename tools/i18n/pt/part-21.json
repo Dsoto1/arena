@@ -166,7 +166,7 @@
  "Open the map": "Abrir o mapa",
  "Ranked": "Ranked",
  "⚔ Take a seat": "⚔ Ocupar um lugar",
- "📯 <b>{0}</b> opened {1} — {2} seat{3} free{4}": "📯 <b>{0}</b> abriu {1} — {2} lugar{3|| es} livre{3||s}{4}",
+ "📯 <b>{0}</b> opened {1} — {2} seat{3} free{4}": "📯 <b>{0}</b> abriu {1} — {2} {3|lugar livre|lugares livres}{4}",
  "📣 <b>{0}</b> calls for {1} more · {2}{3}": "📣 <b>{0}</b> chama mais {1} · {2}{3}",
  "✉ <b>{0}</b> invited you · {1}{2}": "✉ <b>{0}</b> convidou você · {1}{2}",
  "⚖ {0} at {1} — void, no result": "⚖ {0} em {1} — anulada, sem resultado",

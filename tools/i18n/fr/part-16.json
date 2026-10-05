@@ -288,7 +288,7 @@
  "· {0} seats filled from your ludus": "· {0} places remplies par ton ludus",
  "Champion takes {0}": "Le champion remporte {0}",
  "the glory": "la gloire",
- "🎮 You fight the {0} seat{1} ticked in the designer.": "🎮 Tu combats sur la/les {0} place{1||s} cochée{1||s} dans le concepteur.",
+ "🎮 You fight the {0} seat{1} ticked in the designer.": "🎮 Tu combats sur {0} {1|place cochée|places cochées} dans le concepteur.",
  "— invited (the ludus of Flavius lends one) —": "— invité (le ludus de Flavius en prête un) —",
  "You control this gladiator in their heats": "Tu contrôles ce gladiateur dans ses manches",
  "Design a <b>tournament</b> for Play Now → New event → 🏆 Tournament. Pick the bracket size, then fill the first-round seats from <b>Your Play Now Gladiators</b> (Main Menu → Annals). Seats you leave open get invited gladiators — lent for this tournament only, never saved. Tick 🎮 on the seats you fight yourself; the rest are played by the computer. {0}": "Crée un <b>tournoi</b> pour Jouer → Nouvel événement → 🏆 Tournoi. Choisis la taille du tableau, puis remplis les places du premier tour avec <b>Tes gladiateurs Jouer</b> (Menu principal → Annals). Les places laissées libres reçoivent des gladiateurs invités — prêtés pour ce tournoi seulement, jamais sauvegardés. Coche 🎮 sur les places que tu combats toi-même ; les autres sont jouées par l'ordinateur. {0}",

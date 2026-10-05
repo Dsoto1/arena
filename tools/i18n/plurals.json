@@ -1,0 +1,961 @@
+[
+ {
+  "k": "{0} shatters a Blessings pot on {1}: +2 coin{2}.{3}",
+  "idx": [
+   3
+  ],
+  "w": "03-engine.js:659"
+ },
+ {
+  "k": "{0} use{1} left after",
+  "idx": [
+   1
+  ],
+  "w": "03-engine.js:729"
+ },
+ {
+  "k": "absorb {0} · {1} use{2} left · no attack",
+  "idx": [
+   2
+  ],
+  "w": "03-engine.js:1434"
+ },
+ {
+  "k": "· {0} use{1} left",
+  "idx": [
+   1
+  ],
+  "w": "03-engine.js:1439"
+ },
+ {
+  "k": "The {0} lands on {1} ({2} throw{3} left).",
+  "idx": [
+   3
+  ],
+  "w": "04-rules.js:353"
+ },
+ {
+  "k": "{0} grows impatient and waves {1} through to the Duel Finale ({2} capture{3}).",
+  "idx": [
+   3
+  ],
+  "w": "05-flow.js:829"
+ },
+ {
+  "k": "Pillar with {0} Blessings pot{1} (contents hidden)",
+  "idx": [
+   1
+  ],
+  "w": "07-ui.js:2361"
+ },
+ {
+  "k": "{0} · {1} target{2}",
+  "idx": [
+   2
+  ],
+  "w": "07-ui.js:2742"
+ },
+ {
+  "k": "{0} release{1} left",
+  "idx": [
+   1
+  ],
+  "w": "07-ui.js:2762"
+ },
+ {
+  "k": "Grace: {0} turn{1} left to reach the zone.",
+  "idx": [
+   1
+  ],
+  "w": "07-ui.js:2773"
+ },
+ {
+  "k": "{0} card{1} face-down in the level {2} deck",
+  "idx": [
+   1
+  ],
+  "w": "07-ui.js:3205"
+ },
+ {
+  "k": "📍 {0} · ⚔ {1} gladiator{2}{3}{4}{5}",
+  "idx": [
+   2
+  ],
+  "w": "07-ui.js:3528"
+ },
+ {
+  "k": "📍 {0} <span>·</span> ⚔ {1} gladiator{2}",
+  "idx": [
+   2
+  ],
+  "w": "07-ui.js:3577"
+ },
+ {
+  "k": "{0}starts at step {1}/5 with {2} CF",
+  "idx": [
+   0
+  ],
+  "w": "08-setup.js:134"
+ },
+ {
+  "k": "{0} saved career{1}",
+  "idx": [
+   1
+  ],
+  "w": "08-setup.js:387"
+ },
+ {
+  "k": "🏟 The stands ({0} attended): <b>+{1} CF</b> in section cheers{2}{3}.",
+  "idx": [
+   2
+  ],
+  "w": "10-meta.js:169"
+ },
+ {
+  "k": "📜 Career{0}",
+  "idx": [
+   0
+  ],
+  "w": "10-meta.js:458"
+ },
+ {
+  "k": "The <b>top 20</b> Fate scores of <b>{0}</b>, ordered by final Crowd Favor. The board resets at the start of every month ({1} day{2} left); each month's best is kept below as its champion. RR is the Royal Reserve; FF marks Flavius Fidelis (a revealed Mandata Flavi). Custom characters and custom events are not eligible.{3}",
+  "idx": [
+   2
+  ],
+  "w": "10-meta.js:622"
+ },
+ {
+  "k": "{0} · {1} season{2} · {3} · fame {4} · {5} trophies · {6}",
+  "idx": [
+   2
+  ],
+  "w": "10-meta.js:645"
+ },
+ {
+  "k": "{0} · {1} arena{2} won",
+  "idx": [
+   2
+  ],
+  "w": "10-meta.js:652"
+ },
+ {
+  "k": "{0} training hour{1} left · outside the 4 h per fighter",
+  "idx": [
+   1
+  ],
+  "w": "105-mgr74.js:20"
+ },
+ {
+  "k": "📜 Your doctores study the card: {0} opponent{1} read like a scroll.",
+  "idx": [
+   1
+  ],
+  "w": "105-mgr74.js:28"
+ },
+ {
+  "k": "care beyond wounds · {0} training hour{1} left",
+  "idx": [
+   1
+  ],
+  "w": "105-mgr74.js:43"
+ },
+ {
+  "k": "<b>{0}</b> at <b>{1}</b> · {2} gladiator{3} · You: <b>{4}</b>",
+  "idx": [
+   3
+  ],
+  "w": "106-v75.js:279"
+ },
+ {
+  "k": "The printed game plus every creation on the rolls{0}.",
+  "idx": [
+   0
+  ],
+  "w": "108-v76.js:96"
+ },
+ {
+  "k": "⏳ <b>{0}</b> training hour{1} unspent",
+  "idx": [
+   1
+  ],
+  "w": "108-v76.js:195"
+ },
+ {
+  "k": "You are outside the zone{0}. Ending here costs 2 CF.",
+  "idx": [
+   0
+  ],
+  "w": "11-extra.js:189"
+ },
+ {
+  "k": "Nearest Blessings pot: the pillar at {0}, {1} tile{2} from reach.",
+  "idx": [
+   2
+  ],
+  "w": "11-extra.js:203"
+ },
+ {
+  "k": "You hold {0} item{1} you can use this turn: {2}.",
+  "idx": [
+   1
+  ],
+  "w": "11-extra.js:206"
+ },
+ {
+  "k": "{0} turn{1} left",
+  "idx": [
+   1
+  ],
+  "w": "11-extra.js:267"
+ },
+ {
+  "k": "{0} resolve phase{1} left",
+  "idx": [
+   1
+  ],
+  "w": "11-extra.js:268"
+ },
+ {
+  "k": "{0} lanista{1} · {2}/{3} seated",
+  "idx": [
+   1
+  ],
+  "w": "116-onl79.js:113"
+ },
+ {
+  "k": "{0} room{1}",
+  "idx": [
+   1
+  ],
+  "w": "118-onl80.js:246"
+ },
+ {
+  "k": "<b>{0}</b> lanista{1} online · {2} fighting · {3} waiting",
+  "idx": [
+   1
+  ],
+  "w": "118-onl80.js:253"
+ },
+ {
+  "k": "📯 <b>{0}</b> opened {1} — {2} seat{3} free{4}",
+  "idx": [
+   3
+  ],
+  "w": "118-onl80.js:264"
+ },
+ {
+  "k": "📣 The crier calls — {0} call{1} left.",
+  "idx": [
+   1
+  ],
+  "w": "118-onl80.js:364"
+ },
+ {
+  "k": "⚔ A new room — {0}.",
+  "idx": [
+   0
+  ],
+  "w": "118-onl80.js:406"
+ },
+ {
+  "k": "{0} career{1} · {2} Ludus gladiators · {3} custom characters · {4} regulars",
+  "idx": [
+   1
+  ],
+  "w": "12-settings.js:245"
+ },
+ {
+  "k": "<b>Ranked — Damnatio.</b> {0} dies and is struck from your roster for good, with {1} {2} and {3} piece{4} of gear{5}. This cannot be undone.{6}",
+  "idx": [
+   4
+  ],
+  "w": "121-onl80fix.js:237"
+ },
+ {
+  "k": "<b>{0}</b> lanista{1} · <b>{2}</b> guest{3} · {4} fighting · {5} waiting",
+  "idx": [
+   1,
+   3
+  ],
+  "w": "127-v82onl.js:219"
+ },
+ {
+  "k": "Every lanista online keeps a <b>Domus</b>. Its name stands beside your gladiators’ names — in rooms, invitations and the Forum.{0}",
+  "idx": [
+   0
+  ],
+  "w": "127-v82onl.js:228"
+ },
+ {
+  "k": "<small class=\"rc-sub\">{0}{1} gladiator{2} raised</small>",
+  "idx": [
+   2
+  ],
+  "w": "127-v82onl.js:279"
+ },
+ {
+  "k": "{0} piece{1} · tick to bring · move between your gladiators",
+  "idx": [
+   1
+  ],
+  "w": "127-v82onl.js:301"
+ },
+ {
+  "k": "🏛 <b>{0}</b> is founded{1}.",
+  "idx": [
+   1
+  ],
+  "w": "127-v82onl.js:402"
+ },
+ {
+  "k": "{0} piece{1} · tick to bring · move between your gladiators",
+  "idx": [
+   1
+  ],
+  "w": "137-v83onlui.js:190"
+ },
+ {
+  "k": "💔 {0} piece{1} came back broken — 🔧 repair in the Storeroom",
+  "idx": [
+   1
+  ],
+  "w": "137-v83onlui.js:366"
+ },
+ {
+  "k": "🧪 {0} offering{1} back in the satchel",
+  "idx": [
+   1
+  ],
+  "w": "137-v83onlui.js:367"
+ },
+ {
+  "k": "{0}'s {1} turn{2} {3} damage aside.",
+  "idx": [
+   2
+  ],
+  "w": "139-v84onl.js:65"
+ },
+ {
+  "k": "{0} bid{1}",
+  "idx": [
+   1
+  ],
+  "w": "139-v84onl.js:290"
+ },
+ {
+  "k": "🖌 Paint the programmata<small>on the walls now · {0} week{1} left</small>",
+  "idx": [
+   1
+  ],
+  "w": "140-v84prog.js:106"
+ },
+ {
+  "k": "{0} week{1} left",
+  "idx": [
+   1
+  ],
+  "w": "140-v84prog.js:131"
+ },
+ {
+  "k": "<span>{0} · {1} week{2} left · {3} coin a week</span>",
+  "idx": [
+   2
+  ],
+  "w": "140-v84prog.js:132"
+ },
+ {
+  "k": "✝ The crowd of {0} jeers Christians: {1} start{2} {3} CF down.",
+  "idx": [
+   2
+  ],
+  "w": "141-v85faith.js:217"
+ },
+ {
+  "k": "{0} bout{1} still to fight this week",
+  "idx": [
+   1
+  ],
+  "w": "145-v85fix.js:145"
+ },
+ {
+  "k": "<span>🧹 <b>{0}</b> retired gladiator{1} from older versions — they can't fight, be summoned or go on a missio.</span>",
+  "idx": [
+   1
+  ],
+  "w": "145-v85fix.js:212"
+ },
+ {
+  "k": "Delete {0} retired gladiator{1} from Ludus Flavius for good?",
+  "idx": [
+   1
+  ],
+  "w": "145-v85fix.js:215"
+ },
+ {
+  "k": "🧹 {0} retired gladiator{1} cleared.",
+  "idx": [
+   1
+  ],
+  "w": "145-v85fix.js:217"
+ },
+ {
+  "k": "+{0} Arena Key{1}",
+  "idx": [
+   1
+  ],
+  "w": "15-custom.js:265"
+ },
+ {
+  "k": "{0}{1} players · {2} round{3}",
+  "idx": [
+   3
+  ],
+  "w": "15-custom.js:395"
+ },
+ {
+  "k": "<b>{0}</b> {1}<small>{2} players · {3} · {4} round{5} · {6} pillars · {7} beasts</small><small>{8}</small>",
+  "idx": [
+   5
+  ],
+  "w": "15-custom.js:437"
+ },
+ {
+  "k": "✎ Names are unique now. Renamed {0} duplicate{1}: {2}{3}",
+  "idx": [
+   1
+  ],
+  "w": "15-custom.js:648"
+ },
+ {
+  "k": "🎲 {0} blessing{1} shuffled across the pillars — each one different — tune any of them below.",
+  "idx": [
+   1
+  ],
+  "w": "15-custom.js:776"
+ },
+ {
+  "k": "{0} named regular{1} in the seats — each stands for about a thousand Romans: {2} spectators today",
+  "idx": [
+   1
+  ],
+  "w": "16-crowd.js:62"
+ },
+ {
+  "k": "<b>{0}</b>, a regular of {1} event{2}, is back to cheer {3} again.",
+  "idx": [
+   2
+  ],
+  "w": "16-crowd.js:389"
+ },
+ {
+  "k": "{0} spectator{1} in {2} cheer for {3} — a thin share of a crowd of {4}; the favor builds ({5}% of a CF).",
+  "idx": [
+   1
+  ],
+  "w": "16-crowd.js:471"
+ },
+ {
+  "k": "{0} spectator{1} in {2} cheer for {3} (+{4} CF{5}).",
+  "idx": [
+   1
+  ],
+  "w": "16-crowd.js:473"
+ },
+ {
+  "k": "<b>{0}</b> {1} back{2} {3} now.",
+  "idx": [
+   2
+  ],
+  "w": "16-crowd.js:512"
+ },
+ {
+  "k": "<b>{0}</b>{1}{2}\n      <small>{3}</small>\n      <small>HP {4} · ATK {5} · MV {6} · worth {7} coin, {8} CF{9}</small>\n      <small><b>The ledger:</b> {10} slain in your events · {11} gladiator{12} eaten · {13}</small>",
+  "idx": [
+   12
+  ],
+  "w": "16-crowd.js:1023"
+ },
+ {
+  "k": "{0} card{1} remain{2}; Flavius Rule waits at the bottom. {3}",
+  "idx": [
+   1,
+   2
+  ],
+  "w": "16-crowd.js:1030"
+ },
+ {
+  "k": "<small>{0}</small><small>HP {1} · ATK {2} · MV {3}</small><small><b>The ledger:</b> {4} slain · {5} gladiator{6} eaten · {7} tamed</small>",
+  "idx": [
+   6
+  ],
+  "w": "16-crowd.js:1036"
+ },
+ {
+  "k": "Last spectator speared here: <b>{0}</b>, by {1} ({2} — {3}). The ushers are proud of the streak.",
+  "idx": [
+   3
+  ],
+  "w": "16-crowd.js:1147"
+ },
+ {
+  "k": "{0} fan · {1} · {2} visit{3}",
+  "idx": [
+   3
+  ],
+  "w": "16-crowd.js:1156"
+ },
+ {
+  "k": "Currently staying away: {0} ({1} event{2} more, unless treated).",
+  "idx": [
+   2
+  ],
+  "w": "16-crowd.js:1176"
+ },
+ {
+  "k": "📅 You join season {0} at week {1}: the league is already {2} week{3} old, and the old stables carry their records into your first match night.",
+  "idx": [
+   3
+  ],
+  "w": "17-manager.js:291"
+ },
+ {
+  "k": "<b>{0}</b>, {1}, hangs up the sword after {2} event{3} and {4} win{5}. The barracks drink to an old sand-hand.",
+  "idx": [
+   3,
+   5
+  ],
+  "w": "17-manager.js:663"
+ },
+ {
+  "k": "<b>Your treasury is {0} coin.</b> {1} week{2} in the red before the creditors close the ludus. Win purses, bet well or release your dearest wages.",
+  "idx": [
+   2
+  ],
+  "w": "17-manager.js:703"
+ },
+ {
+  "k": "{0} march against {1} at {2}. Soldiers of the sand serve {3} week{4}; many do not return — those who do come home heroes.",
+  "idx": [
+   4
+  ],
+  "w": "17-manager.js:924"
+ },
+ {
+  "k": "{0} fighter{1}",
+  "idx": [
+   1
+  ],
+  "w": "17-manager.js:1120"
+ },
+ {
+  "k": "<b>{0} verdict{1}</b> wait for you — thumbs, blood money or the rudis.",
+  "idx": [
+   1
+  ],
+  "w": "17-manager.js:1128"
+ },
+ {
+  "k": "Contract{0} ending soon: {1}.",
+  "idx": [
+   0
+  ],
+  "w": "17-manager.js:1137"
+ },
+ {
+  "k": "Only {0} fighter{1} signed — a deeper roster covers injuries and the fate table.",
+  "idx": [
+   1
+  ],
+  "w": "17-manager.js:1140"
+ },
+ {
+  "k": "You have <b>{0} perk point{1}</b> to spend in the lanista's schooling — every point raises a trait recruits grade you on.",
+  "idx": [
+   1
+  ],
+  "w": "17-manager.js:1141"
+ },
+ {
+  "k": "While you were away the empire lived <b>{0} week{1}</b> without you — games were fought, purses paid, rivals grew fat. Your ludus still keeps {2}.",
+  "idx": [
+   1
+  ],
+  "w": "17-manager.js:1150"
+ },
+ {
+  "k": "⏩ Let the doctores run the ludus<small>simulate {0} week{1}: bouts, verdicts (blood money for your best, the thumb for the rest, the rudis refused), wages and training</small>",
+  "idx": [
+   1
+  ],
+  "w": "17-manager.js:1151"
+ },
+ {
+  "k": "Wages of <b>{0}/wk</b> leave <b>{1} week{2}</b> of coin. Enter fighters on Match Week — every entry earns the appearance fee.",
+  "idx": [
+   2
+  ],
+  "w": "17-manager.js:1200"
+ },
+ {
+  "k": "<b style=\"color:var(--blood2)\">☠ Your treasury is {0} coin</b> — {1} week-end{2} in the red before the creditors close the ludus.",
+  "idx": [
+   2
+  ],
+  "w": "17-manager.js:1251"
+ },
+ {
+  "k": "Show {0} older entr{1}",
+  "idx": [
+   1
+  ],
+  "w": "17-manager.js:1252"
+ },
+ {
+  "k": "🎓 <b>{0}</b> perk point{1} unspent (they keep).",
+  "idx": [
+   1
+  ],
+  "w": "17-manager.js:1270"
+ },
+ {
+  "k": "Paid <b>every week</b>, when you end the week, straight from the treasury. {0} week{1} left ≈ {2} coin still owed. Their asking price today: {3}/wk{4}.",
+  "idx": [
+   1
+  ],
+  "w": "17-manager.js:1462"
+ },
+ {
+  "k": "{0} week{1} left on the contract{2}{3}{4}",
+  "idx": [
+   1
+  ],
+  "w": "17-manager.js:1542"
+ },
+ {
+  "k": "The sand keeps what it is given. <b>{0}</b>, {1}{2}{3}{4}, died this week — {5}. The record they leave: {6} event{7}, {8} win{9}, {10} kill{11}. {12}{13}",
+  "idx": [
+   7,
+   9,
+   11,
+   13
+  ],
+  "w": "17-manager.js:1650"
+ },
+ {
+  "k": "{0} perk point{1} ready to spend",
+  "idx": [
+   1
+  ],
+  "w": "17-manager.js:1733"
+ },
+ {
+  "k": "⏩ Your doctores ran the ludus for <b>{0} week{1}</b>: {2} win{3}, treasury {4}{5}, fame {6}{7}. The Acta Diurna has every week on the Archives shelf.",
+  "idx": [
+   1,
+   3
+  ],
+  "w": "17-manager.js:1835"
+ },
+ {
+  "k": "{0} win{1} in {2}",
+  "idx": [
+   1
+  ],
+  "w": "22-trophies.js:171"
+ },
+ {
+  "k": "📍 {0} · {1} (in {2} wk{3})",
+  "idx": [
+   3
+  ],
+  "w": "22-trophies.js:360"
+ },
+ {
+  "k": "League table: <b style=\"color:var(--gold2)\">#{0}</b> of {1} · {2} pts<br>{3}",
+  "idx": [
+   3
+  ],
+  "w": "22-trophies.js:386"
+ },
+ {
+  "k": "📜 <b>Tonight:</b> {0} — {1} bout{2} to fight",
+  "idx": [
+   2
+  ],
+  "w": "25-city.js:119"
+ },
+ {
+  "k": "📜 <b>Next games here:</b> {0} · {1} ({2} week{3} off)",
+  "idx": [
+   3
+  ],
+  "w": "25-city.js:123"
+ },
+ {
+  "k": "{0} is home. You have seen them in the tiers{1}.",
+  "idx": [
+   1
+  ],
+  "w": "25-city.js:384"
+ },
+ {
+  "k": "{0} is in reach{1}. Gladiator trophies are worth 10 CF.",
+  "idx": [
+   1
+  ],
+  "w": "29-guide.js:31"
+ },
+ {
+  "k": "· {0} week{1} to mend on their own",
+  "idx": [
+   1
+  ],
+  "w": "42-rooms.js:26"
+ },
+ {
+  "k": "🎮 You fight the {0} seat{1} ticked in the designer.",
+  "idx": [
+   1
+  ],
+  "w": "46-tourney.js:109"
+ },
+ {
+  "k": "{0} heat{1} of 4 · each heat in its own city",
+  "idx": [
+   1
+  ],
+  "w": "46-tourney.js:133"
+ },
+ {
+  "k": "Your active roster has {0} gladiator{1} — the other seats will be invited.",
+  "idx": [
+   1
+  ],
+  "w": "46-tourney.js:134"
+ },
+ {
+  "k": "· the trophy case · {0} piece{1}",
+  "idx": [
+   1
+  ],
+  "w": "47-mgr47.js:26"
+ },
+ {
+  "k": "<span><b>{0}–{1}</b>all-time W–L</span><span><b>{2}%</b>win rate</span><span><b>{3}</b>season{4} done</span>",
+  "idx": [
+   4
+  ],
+  "w": "47-mgr47.js:58"
+ },
+ {
+  "k": "🛡 {0} fighter{1} already under contract",
+  "idx": [
+   1
+  ],
+  "w": "50-v48.js:90"
+ },
+ {
+  "k": "Range {0}: reaches {1} tile{2}{3}.",
+  "idx": [
+   2
+  ],
+  "w": "54-v51.js:77"
+ },
+ {
+  "k": "{0} shot{1} left.",
+  "idx": [
+   1
+  ],
+  "w": "54-v51.js:78"
+ },
+ {
+  "k": "{0} moves {1} tile{2}, {3} → {4} ({5} movement{6}).",
+  "idx": [
+   2
+  ],
+  "w": "54-v51.js:115"
+ },
+ {
+  "k": "used by {0} character{1} — they update when you save",
+  "idx": [
+   1
+  ],
+  "w": "57-classes.js:119"
+ },
+ {
+  "k": "✓ Saved the class <b>{0}</b>{1}",
+  "idx": [
+   1
+  ],
+  "w": "57-classes.js:139"
+ },
+ {
+  "k": "🛒 <b>Vulso’s cart</b> is at your gate{0} (top of any tab).",
+  "idx": [
+   0
+  ],
+  "w": "59-bye.js:34"
+ },
+ {
+  "k": "<small>{0}</small><small>{1} · {2} coin · {3} key{4}{5}</small>",
+  "idx": [
+   4
+  ],
+  "w": "64-v54.js:86"
+ },
+ {
+  "k": "💸 Loan: +{0} interest · {1} owed to {2} · this week's minimum <b>{3}</b>{4}.",
+  "idx": [
+   4
+  ],
+  "w": "66-mgr55.js:105"
+ },
+ {
+  "k": "<b>{0} coin owed</b> · {1}% interest a week, added to the debt · nobody takes it from your treasury: you pay by hand.\n    {2}{3}",
+  "idx": [
+   3
+  ],
+  "w": "66-mgr55.js:116"
+ },
+ {
+  "k": "{0} unread letter{1}",
+  "idx": [
+   1
+  ],
+  "w": "69-v56.js:79"
+ },
+ {
+  "k": "Contract{0} ending soon",
+  "idx": [
+   0
+  ],
+  "w": "69-v56.js:87"
+ },
+ {
+  "k": "{0}. Re-sign from the fighter's card on the Roster tab before they walk.",
+  "idx": [
+   0
+  ],
+  "w": "69-v56.js:87"
+ },
+ {
+  "k": "🛡 {0} raw recruit{1} under contract",
+  "idx": [
+   1
+  ],
+  "w": "70-v57.js:21"
+ },
+ {
+  "k": "{0}<small style=\"display:block;font-size:11px;color:var(--muted)\">{1}c · {2} fighter{3}</small>",
+  "idx": [
+   3
+  ],
+  "w": "70-v57.js:22"
+ },
+ {
+  "k": "On loan from {0} to {1} · {2} coin a week · {3} week{4} left{5}",
+  "idx": [
+   4
+  ],
+  "w": "70-v57.js:56"
+ },
+ {
+  "k": "You have {0} fit fighter{1}. Sign or heal one this week, or the house loses {2} fame and the editor fills your places.",
+  "idx": [
+   1
+  ],
+  "w": "77-rivalry.js:31"
+ },
+ {
+  "k": "Needs {0} training hour{1} — {2} left. Hours refill when the week ends.",
+  "idx": [
+   1
+  ],
+  "w": "81-v63.js:24"
+ },
+ {
+  "k": "Training hours: {0} session{1} — {2}{3}",
+  "idx": [
+   1
+  ],
+  "w": "81-v63.js:82"
+ },
+ {
+  "k": "<b>{0} verdict{1}</b> wait for you",
+  "idx": [
+   1
+  ],
+  "w": "88-v68.js:17"
+ },
+ {
+  "k": "<b>{0}</b> training hour{1} unspent",
+  "idx": [
+   1
+  ],
+  "w": "88-v68.js:23"
+ },
+ {
+  "k": "{0} of {1} bout{2} carry your fighters",
+  "idx": [
+   2
+  ],
+  "w": "88-v68.js:25"
+ },
+ {
+  "k": "Short-handed — {0} recruit{1} on your board",
+  "idx": [
+   1
+  ],
+  "w": "88-v68.js:27"
+ },
+ {
+  "k": "Short-handed — only {0} fighter{1}. Put a recruit on your board.",
+  "idx": [
+   1
+  ],
+  "w": "88-v68.js:27"
+ },
+ {
+  "k": "{0} arena card{1} left",
+  "idx": [
+   1
+  ],
+  "w": "89-stands.js:23"
+ },
+ {
+  "k": "{0} task{1} left this week",
+  "idx": [
+   1
+  ],
+  "w": "95-v73.js:80"
+ },
+ {
+  "k": "{0} fighter{1} need care",
+  "idx": [
+   1
+  ],
+  "w": "95-v73.js:80"
+ },
+ {
+  "k": "<b>🧹 {0} gladiator{1} the ludus recruited on its own</b>",
+  "idx": [
+   1
+  ],
+  "w": "95-v73.js:126"
+ },
+ {
+  "k": "<b>{0}</b><span>point{1} to spend</span>",
+  "idx": [
+   1
+  ],
+  "w": "95-v73.js:165"
+ },
+ {
+  "k": "{0} point{1} left",
+  "idx": [
+   1
+  ],
+  "w": "96-armlv.js:37"
+ }
+]

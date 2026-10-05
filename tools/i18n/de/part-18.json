@@ -253,7 +253,7 @@
  "your doctores": "deine Doctores",
  "How the fighters grew this week": "Wie die Kämpfer diese Woche gewachsen sind",
  "your clerk": "dein Schreiber",
- "Contract{0} ending soon": "{0|Vertrag|Verträge} enden bald",
+ "Contract{0} ending soon": "{0|Vertrag endet|Verträge enden} bald",
  "{0}. Re-sign from the fighter's card on the Roster tab before they walk.": "{0}. Verlängere über die Karte des Kämpfers im Reiter Kader, bevor sie gehen.",
  "<b>{0}</b> ({1} week{2} left)": "<b>{0}</b> (noch {1} {2|Woche|Wochen})",
  "Five numbers from 50 to 99 every gladiator carries: [[spd|Speed]], [[str|Strength]], [[int|Intelligence]], [[lck|Luck]] and [[cha|Charisma]]. Crossing 76 (and higher bands) earns a perk. Perks pay only in rounds that allow class abilities, and they stack.": "Fünf Zahlen von 50 bis 99 trägt jeder Gladiator: [[spd|Tempo]], [[str|Kraft]], [[int|Intelligenz]], [[lck|Glück]] und [[cha|Charisma]]. Wer 76 (und höhere Stufen) überschreitet, bekommt einen Vorteil. Vorteile zahlen nur in Runden, die Klassenfähigkeiten erlauben, und sie stapeln sich.",

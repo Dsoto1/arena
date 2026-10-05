@@ -1,7 +1,7 @@
 {
 "{0} · season {1}, week {2} · saved {3}": "{0} · temporada {1}, semana {2} · guardada {3}",
 "📂 Load a career": "📂 Cargar una carrera",
-"{0} saved career{1}": "Guardadas: {0} carrera{1}",
+"{0} saved career{1}": "{0} {1|carrera guardada|carreras guardadas}",
 "download or delete careers": "descarga o borra carreras",
 "✚ New career": "✚ Nueva carrera",
 "found a house or take one over": "funda una casa o toma una",

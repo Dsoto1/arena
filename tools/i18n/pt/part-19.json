@@ -126,7 +126,7 @@
  "· {0} at {1}": "· {0} a {1}",
  "Someone has to be the Juggernaut — choose Juggernaut on another seat to hand the role over.": "Alguém tem de ser o Juggernaut — escolha Juggernaut em outro lugar para passar o papel.",
  "🏟 Your share of the gate: +{0} coin (fame {1}).": "🏟 Sua parte da bilheteria: +{0} moedas (fama {1}).",
- "<b>{0} verdict{1}</b> wait for you": "<b>{0} {1|veredito|veredictos}</b> à sua espera",
+ "<b>{0} verdict{1}</b> wait for you": "<b>{0} {1|veredito|vereditos}</b> à sua espera",
  "Settle": "Resolver",
  "{0} {1} hurt": "{0} {1} com ferimentos",
  "No untreated wounds": "Nenhuma ferida sem tratamento",

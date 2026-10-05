@@ -1,7 +1,7 @@
 {
  "{0} · season {1}, week {2} · saved {3}": "{0} · stagione {1}, settimana {2} · salvata {3}",
  "📂 Load a career": "📂 Carica una carriera",
- "{0} saved career{1}": "{0} carriera{1} salvata",
+ "{0} saved career{1}": "{0} {1|carriera salvata|carriere salvate}",
  "download or delete careers": "scarica o elimina carriere",
  "✚ New career": "✚ Nuova carriera",
  "found a house or take one over": "fonda una casa o rilevane una",
