@@ -22,7 +22,8 @@ Against the awards (Tiro 8 … Summa 35 … Invictus 60 a survived Ranked bout, 
 2 Summa bouts' awards; the 5th slot is a long-term sink (≈ 40 Summa bouts of treasury cut).
 
 ## 2. Look locked · class from the treasury (his item A)
-- `char.edit {char, name?, equip?, look?, cls?}` — **look**: refused unless it equals the stored look ("A gladiator's look is set when he is raised.");
+- `char.edit {char, name?, equip?, look?, cls?}` — **look**: refused unless it equals the stored look ("A gladiator's look is set when he is raised.")
+  — the one exception is 128's one-time v0.82 conversion (a stored look WITHOUT a sculpted token `token.sc` → a look WITH one);
   **cls**: refused unless unchanged ("Change class in the Domus — 100 coin from the treasury."). Name + equip as before. (`ONLC.editChar` wrapped.)
 - **`char.class {char, cls}`** → `{char, domus}`. Refused while the lanista is in a waiting room or a live match (`in_match`), with a living
   gladiator still fighting (`stillFighting`), same class, not one of the 8 printed, or the treasury short (`no_coin {cost}`). His gear stays his;
