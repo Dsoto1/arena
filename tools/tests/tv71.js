@@ -6,7 +6,7 @@ await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2000);
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
-  const r={key2:RTOK_NAMES.includes('key2')&&rtokHTML('key2',30).includes('rtok'),coin:ICO.coin.includes('coin.webp'),spell:!document.documentElement.innerHTML.split('Mandati Flavi (Mandate from Flavius)').join('').includes('Mandati Flavi')&&itemInfo({kind:'mf',idx:0}).n.startsWith('Mandata Flavi')};
+  const r={key2:RTOK_NAMES.includes('key2')&&rtokHTML('key2',30).includes('rtok'),coin:ICO.coin.includes('coin.webp'),spell:!(()=>{const c=document.body.cloneNode(true);c.querySelectorAll('script').forEach(x=>x.remove());return c.innerHTML})().split('Mandati Flavi (Mandate from Flavius)').join('').includes('Mandati Flavi')&&itemInfo({kind:'mf',idx:0}).n.startsWith('Mandata Flavi')};
   startEvent({ev:'democritus',loc:6,seats:[{cls:'soldier',cpu:false},{cls:'hero',cpu:true},{cls:'slave',cpu:true},{cls:'venatore',cpu:true}],opts:{spect:'auto',mandata:true}});
   await W8(2800);r.brief=!!document.querySelector('#mBody .brsr img[src*="sr_democritus"]');for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(200)}await W8(800);
   r.round=document.querySelector('#status .roundmk b')&&document.querySelector('#status .roundmk b').textContent===String(S.ri+1);r.srchip=!!document.querySelector('#status img.srmed');
