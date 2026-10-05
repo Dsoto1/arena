@@ -7533,7 +7533,7 @@ async function startEvent(config) {
   }
   if (ev.draft) await runDraft();
   if (ev.kind === 'chariot') await chariotDraft();
-  if (G !== S) return;
+  if (G !== S || S.over) return; // v0.89: an event called off during its draft stops here
   if (config.opts.carmina || S.fest && S.fest.stage === 1) await runCarmina();
   if (G !== S) return;
   // class modifiers (p.40)
@@ -34730,7 +34730,7 @@ runDraft=async function(){
   log(_T`Snake draft: ${S.players.map(player=>_T`${player.name} ${picks(player)} picks`).join(', ')}. Each pick offers a random ${OFFER} of the remaining level 1-3 weapons and armor that still fit the gladiator.`,'hd');
   const done=new Set();let order=S.players.map(player=>player.id);
   for(let rd=0;rd<maxRounds;rd++){
-    for(const id of order){if(S!==S0)return; /* v0.88: a new event started while this draft waited (a CPU peek) — stop */
+    for(const id of order){if(S!==S0||S.over)return; /* v0.88: a new event started while this draft waited (a CPU peek) — stop */
       const p=S.players[id];
       if(rd>=picks(p)||done.has(p.id))continue;
       const left=pool.filter(x=>!x.by&&x.lv<=maxLv(p));if(!left.length)continue;
@@ -34873,7 +34873,7 @@ const ART81={thorax:{f:'arm81_thorax.webp',cell:12,w:669,h:574},steelhelm:{f:'ar
   bracers:{f:'arm81_bracers.webp',cell:33,w:123,h:260},lgreaves:{f:'arm81_lgreaves.webp',cell:32,w:142,h:475},
   flavhelm:{f:'arm81_flavhelm.webp',cell:5,w:353,h:395},crista:{f:'arm81_crista.webp',cell:2,w:367,h:467},
   thrachelm:{f:'arm81_thracian.webp',cell:45,w:374,h:497}};
-const THUMB81={37:'armthumb81_legwrapsU.webp',24:'armthumb81_greaves.webp',39:'armthumb81_femoralia.webp',40:'armthumb81_ocrea.webp',41:'armthumb81_thighplate.webp'};
+const THUMB81={31:'armthumb81_lgreaves.webp',37:'armthumb81_legwrapsU.webp',24:'armthumb81_greaves.webp',39:'armthumb81_femoralia.webp',40:'armthumb81_ocrea.webp',41:'armthumb81_thighplate.webp'};
 /* ---------- new pieces ---------- */
 ARM_CROP[45]=[0,0,374,497]; /* the Thracian Helm has no sheet cell: its own file, this box only gives the aspect */
 ARM.thrachelm={n:'Thracian Helm',lv:2,slot:'head',pt:'helm',ap:4,img:45};
@@ -41733,6 +41733,7 @@ window.addEventListener('click',e=>{const mb=e.target.closest&&e.target.closest(
   const i=+mb.dataset.mind76;const s=document.getElementById('dif'+i);if(!s||!CFG.seats[i])return;e.stopImmediatePropagation();e.preventDefault();
   s.selectedIndex=(s.selectedIndex+1)%s.options.length;CFG.seats[i].diff=s.value;
   if(typeof brain87Sweep==='function')brain87Sweep(mb.parentElement);else mb.textContent=s.options[s.selectedIndex].textContent},true);
+{const base=modal;modal=function(){const pk=document.getElementById('mk88peek');if(pk){try{pk.click()}catch(e){}}return base.apply(this,arguments)}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

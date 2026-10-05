@@ -24,3 +24,4 @@ window.addEventListener('click',e=>{const mb=e.target.closest&&e.target.closest(
   const i=+mb.dataset.mind76;const s=document.getElementById('dif'+i);if(!s||!CFG.seats[i])return;e.stopImmediatePropagation();e.preventDefault();
   s.selectedIndex=(s.selectedIndex+1)%s.options.length;CFG.seats[i].diff=s.value;
   if(typeof brain87Sweep==='function')brain87Sweep(mb.parentElement);else mb.textContent=s.options[s.selectedIndex].textContent},true);
+{const base=modal;modal=function(){const pk=document.getElementById('mk88peek');if(pk){try{pk.click()}catch(e){}}return base.apply(this,arguments)}}

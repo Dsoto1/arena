@@ -31,7 +31,7 @@ const ART81={thorax:{f:'arm81_thorax.webp',cell:12,w:669,h:574},steelhelm:{f:'ar
   bracers:{f:'arm81_bracers.webp',cell:33,w:123,h:260},lgreaves:{f:'arm81_lgreaves.webp',cell:32,w:142,h:475},
   flavhelm:{f:'arm81_flavhelm.webp',cell:5,w:353,h:395},crista:{f:'arm81_crista.webp',cell:2,w:367,h:467},
   thrachelm:{f:'arm81_thracian.webp',cell:45,w:374,h:497}};
-const THUMB81={37:'armthumb81_legwrapsU.webp',24:'armthumb81_greaves.webp',39:'armthumb81_femoralia.webp',40:'armthumb81_ocrea.webp',41:'armthumb81_thighplate.webp'};
+const THUMB81={31:'armthumb81_lgreaves.webp',37:'armthumb81_legwrapsU.webp',24:'armthumb81_greaves.webp',39:'armthumb81_femoralia.webp',40:'armthumb81_ocrea.webp',41:'armthumb81_thighplate.webp'};
 /* ---------- new pieces ---------- */
 ARM_CROP[45]=[0,0,374,497]; /* the Thracian Helm has no sheet cell: its own file, this box only gives the aspect */
 ARM.thrachelm={n:'Thracian Helm',lv:2,slot:'head',pt:'helm',ap:4,img:45};

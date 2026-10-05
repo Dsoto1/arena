@@ -477,7 +477,7 @@ async function startEvent(config) {
   }
   if (ev.draft) await runDraft();
   if (ev.kind === 'chariot') await chariotDraft();
-  if (G !== S) return;
+  if (G !== S || S.over) return; // v0.89: an event called off during its draft stops here
   if (config.opts.carmina || S.fest && S.fest.stage === 1) await runCarmina();
   if (G !== S) return;
   // class modifiers (p.40)

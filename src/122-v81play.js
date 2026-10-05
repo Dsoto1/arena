@@ -50,7 +50,7 @@ runDraft=async function(){
   log(_T`Snake draft: ${S.players.map(player=>_T`${player.name} ${picks(player)} picks`).join(', ')}. Each pick offers a random ${OFFER} of the remaining level 1-3 weapons and armor that still fit the gladiator.`,'hd');
   const done=new Set();let order=S.players.map(player=>player.id);
   for(let rd=0;rd<maxRounds;rd++){
-    for(const id of order){if(S!==S0)return; /* v0.88: a new event started while this draft waited (a CPU peek) — stop */
+    for(const id of order){if(S!==S0||S.over)return; /* v0.88: a new event started while this draft waited (a CPU peek) — stop */
       const p=S.players[id];
       if(rd>=picks(p)||done.has(p.id))continue;
       const left=pool.filter(x=>!x.by&&x.lv<=maxLv(p));if(!left.length)continue;
