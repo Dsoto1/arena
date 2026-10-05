@@ -3,9 +3,9 @@ const {chromium}=require('playwright');(async()=>{const b=await chromium.launch(
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
-await pg.click('#mainMenu [data-proto]');await pg.waitForTimeout(500);
+await pg.click('#mainMenu [data-proto]');await pg.waitForFunction(()=>!!document.querySelector('#protoBox h2')&&document.querySelectorAll('#protoBox .crl a').length>0,null,{timeout:30000}).catch(()=>{});await pg.waitForTimeout(200);
 o.cred=await pg.evaluate(()=>({h:document.querySelector('#protoBox h2').textContent,links:document.querySelectorAll('#protoBox .crl a').length,qr:!!document.querySelector('#protoBox .crqr')}));
-await pg.click('[data-crtab="proto"]');await pg.waitForTimeout(300);o.protoN=await pg.evaluate(()=>document.querySelectorAll('#protoBox figure').length);
+await pg.click('[data-crtab="proto"]');await pg.waitForFunction(()=>document.querySelectorAll('#protoBox figure').length>0,null,{timeout:30000}).catch(()=>{});await pg.waitForTimeout(200);o.protoN=await pg.evaluate(()=>document.querySelectorAll('#protoBox figure').length);
 await pg.evaluate(()=>{document.getElementById('protoBox').hidden=true});
 ok(o.cred.h==='Credits'&&o.cred.links>=6&&o.cred.qr,'credits');ok(o.protoN===5,'proto tab');
 /* v0.87: the menu's mute button is gone (Settings → Audio, the M key and the arena's own control remain) */
@@ -13,9 +13,10 @@ o.mute=await pg.evaluate(()=>{const m=document.getElementById('mmMute');const a=
 ok(o.mute.gone&&o.mute.toggled&&o.mute.back&&!o.mute.chip,'mute');
 o.arena=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
   startEvent({ev:'democritus',loc:6,seats:[{cls:'venatore'},{cls:'hero',cpu:true},{cls:'soldier',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}});
-  await new Promise(r=>setTimeout(r,1200));for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,80))}
+  /* poll, never a fixed wait (the regression runs 3 tests at once: timers stretch) */
+  {const t0=Date.now();let n=0;while(Date.now()-t0<30000){if(CUR_MODAL&&n<10){CUR_MODAL.done(null);n++}else if(!CUR_MODAL&&S.phase&&S.phase!=='setup'&&Date.now()-t0>1200)break;await new Promise(r=>setTimeout(r,80))}}
   const z=spawnZora(S.players[0]);const zm=!!(typeof STANDEE_SRC!=='undefined'&&STANDEE_SRC.zoraMini)&&typeof drawZoraMini==='function';
-  cardShow('c:wealth3',cur(),'🂠 Drawn');const old=document.getElementById('cardShow').firstElementChild;const c0=old?1:0;S.busy=false;S.pending=null;const tn=S.turnNo;advanceTurn();for(let i=0;i<60&&S.turnNo===tn;i++)await new Promise(r=>setTimeout(r,50));await new Promise(r=>setTimeout(r,250));
+  cardShow('c:wealth3',cur(),'🂠 Drawn');const old=document.getElementById('cardShow').firstElementChild;const c0=old?1:0;S.busy=false;S.pending=null;const tn=S.turnNo;advanceTurn();for(let i=0;i<600&&S.turnNo===tn;i++)await new Promise(r=>setTimeout(r,50));await new Promise(r=>setTimeout(r,250));
   return {zora:!!z,zm,c0,c1:old&&old.isConnected?1:0}});
 ok(o.arena.zora&&o.arena.zm,'zora mini');ok(o.arena.c0>=1&&o.arena.c1===0,'turn sweep');
 o.naum=await pg.evaluate(async()=>{S&&(S.over=true);startEvent({ev:'naumachia',loc:6,seats:['soldier','hero','slave','royalty','venatore','amazonia'].map((c,i)=>({cls:c,cpu:true,team:'T'+(i%3)})),opts:{spect:0}});
@@ -25,7 +26,7 @@ o.naum=await pg.evaluate(async()=>{S&&(S.over=true);startEvent({ev:'naumachia',l
   return {tiles:S.ships.map(s=>s.tiles.size),wt:S.waterTok.map(t=>t.r+','+t.c).includes('0,7'),starts:S.players.every(q=>nTerr(q.start[0],q.start[1])==='ship'),corner,board,boxes:S.ships.every(s=>s.box&&s.board)}});
 ok(o.naum.tiles.every(n=>n===11)&&o.naum.wt&&o.naum.starts&&o.naum.corner===0&&o.naum.board===3&&o.naum.boxes,'naumachia');
 o.ch=await pg.evaluate(async()=>{S&&(S.over=true);startEvent({ev:'chariot',loc:7,seats:['soldier','hero','slave','royalty'].map(c=>({cls:c,cpu:true})),opts:{spect:0}});
-  await new Promise(r=>setTimeout(r,2500));for(let i=0;i<20&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,100))}
+  {const t0=Date.now();let n=0;while(Date.now()-t0<45000){if(CUR_MODAL&&n<20){CUR_MODAL.done(null);n++}else if(!CUR_MODAL&&S.players.every(p=>p.ch&&p.ch.art)&&Date.now()-t0>2500)break;await new Promise(r=>setTimeout(r,100))}}
   const arts=S.players.map(p=>p.ch&&p.ch.art);const q=S.players[1];const had=!!q.ch.wheel;chHitPart(q,'wheel',99);
   return {uniq:new Set(arts).size===arts.length,named:S.players.every(p=>p.ch&&CH_CARDS59.some(c=>c[1]===p.ch.name)),drop:had?CH_DROPS.length>0:true,img:typeof chTok==='function'}});
 ok(o.ch.uniq&&o.ch.named&&o.ch.drop&&o.ch.img,'chariot');

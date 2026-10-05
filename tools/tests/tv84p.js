@@ -46,8 +46,9 @@ Object.assign(o,await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeo
 await shot('pg84_running','#mgrPane .runpanel');
 Object.assign(o,await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const P=m.prog84;const r={};
   const g=gById(P.gid);g.alive=false;MGR_REDRAW();await W8(300);
-  const wall=document.querySelector('#mgrPane #pg84wall');r.memView=!!wall&&wall.classList.contains('mem')&&/D · M/.test(wall.textContent);
+  const wall=document.querySelector('#mgrPane #pg84wall');/* v0.85: the mark follows the fighter's faith (✝ for a Christian, ~1 in 10 by id) */const mark=typeof faithMark85==='function'?faithMark85(g):'D · M';r.mark=mark;r.memView=!!wall&&wall.classList.contains('mem')&&wall.textContent.includes(mark);
   window.__pg84mem=wall?wall.outerHTML:'';
+  /* the rival's whitewash roll for this week is random (world id); the memorial week is checked unpainted */delete P.def[w.week];
   const f0=P.fame;const fans0=P.fans;for(const b2 of w.night.bouts)b2.done=true;w.pend=[];await endWeek();await W8(300);
   r.mem=P.memorial>0&&P.fame>f0&&P.fans===fans0&&(w.news||[]).some(x=>/honour the dead/.test(x.text));
   r.over=!m.prog84;g.alive=true;

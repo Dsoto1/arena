@@ -11,7 +11,7 @@ await A.goto(URL0);await B.goto(URL0);await A.waitForTimeout(2500);
 const setup=async(p,name)=>{await p.evaluate(async(name)=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();await netPick();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls:name==='Alpha'?'hero':'soldier'})},name)};
 await setup(A,'Alpha');await setup(B,'Beta');
 const L=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:false}));
-await A.waitForTimeout(300);await B.evaluate(async(id)=>await NET.req('lobby.join',{id}),L.id);
+await B.evaluate(async(id)=>await NET.req('lobby.join',{id}),L.id);
 const L2=await A.evaluate(async(id)=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},L.id);
 await B.evaluate(async(L)=>{onlEnter(L)},L2);
 /* the auto-driver: on my own idle move, click like a person would */
@@ -23,10 +23,15 @@ const drive=async p=>{const r=await p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on||onl
     try{computeHL()}catch(e){}const ks=[...HL.keys()];if(ks.length&&S._drv%4!==0){const k=ks[(S.turnNo*7+S._drv*3)%ks.length];const r0=Math.floor(k/N),c0=k%N;const cv=document.querySelector('canvas');const rc=cv.getBoundingClientRect();const pt=center(r0,c0);
       return ['xy',[rc.left+pt.x*rc.width/cv.width,rc.top+pt.y*rc.height/cv.height],(S.mode||'')+'@'+r0+','+c0]}
     S._drv=0;if(document.querySelector('[data-act="end"]'))return ['sel','[data-act="end"]','end']}return ['','','idle:'+S.phase]});
-  if(r[0]==='sel')await p.click(r[1],{timeout:2000}).catch(()=>{});if(r[0]==='xy')await p.mouse.click(r[1][0],r[1][1]);return r[2]};
+  /* force: the suggested End turn beats (heartbeat), so it is never 'stable' for Playwright — under load it never got clicked */if(r[0]==='sel')await p.click(r[1],{timeout:2000,force:true}).catch(()=>{});if(r[0]==='xy')await p.mouse.click(r[1][0],r[1][1]);return r[2]};
+/* play until enough inputs are on the server (not a fixed 60 s: under load the same play takes longer), then let both windows apply
+   everything sent before reading the hashes */
 const t0=Date.now();let log=[];
-while(Date.now()-t0<60000){const a=await drive(A),bb=await drive(B);if(a!=='wait'||bb!=='wait')log.push(a+'|'+bb);await A.waitForTimeout(250);
-  const st=await A.evaluate(()=>S&&S.over);if(st)break}
+while(Date.now()-t0<240000){const a=await drive(A),bb=await drive(B);if(a!=='wait'||bb!=='wait')log.push(a+'|'+bb);await A.waitForTimeout(250);
+  const st=await A.evaluate(()=>({over:S&&S.over,n:ONLM.next}));if(st.over||(st.n>16&&Date.now()-t0>20000))break}
+const applied=async()=>{const ins=await A.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from===ONL.acct.id]));const ha=await A.evaluate(()=>ONLM.hlog),hb=await B.evaluate(()=>ONLM.hlog);
+  return ins.every(([seq,fromA])=>(fromA?hb:ha)['s'+seq])};
+for(let t1=Date.now();Date.now()-t1<45000&&!(await applied());)await A.waitForTimeout(300);
 const sa=await A.evaluate(()=>({next:ONLM.next,turn:S.turnNo,rot:S.rotation,h:onlHash(),over:S.over,resync:ONLM.resyncing}));
 await B.waitForTimeout(1500);const sb=await B.evaluate(()=>({q:ONLM.q.map(x=>x.seq+x.k+(x.a||'')),pend:!!ONLM.pend,phase:S.phase,busy:S.busy,modal:CUR_MODAL?(document.querySelector('#mTitle')||{}).textContent:null,cur:cur().name,owner:onlmOwner(),info:ONLM.info,next:ONLM.next,turn:S.turnNo,rot:S.rotation,h:onlHash(),over:S.over,resync:ONLM.resyncing,me:ONLM.me}));
 const ha=await A.evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs}));const hb=await B.evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs}));
