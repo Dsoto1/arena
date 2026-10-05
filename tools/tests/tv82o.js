@@ -81,7 +81,7 @@ const note=await A.evaluate(()=>document.querySelector('#onlRoom80 .tbl82')?.tex
 const st=await A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlPre82(L);const t=L.players.map((p,i)=>({seat:i,won:i===0,place:i?2:1,f:i?5:20,coin:40,survives:true}));ONL82._t=t;return t},R1);
 await B.evaluate(async([id,t])=>{await NET.req('match.result',{id,table:t,hash:'h'})},[R1,st]);
 const rA=await A.evaluate(async id=>{const r=await NET.req('match.result',{id,table:ONL82._t,hash:'h'});T82.length=0;onlSettled(r);await new Promise(x=>setTimeout(x,2700));return {pay:r.out&&r.out.pay,award:r.out&&r.out.award,f:r.out&&r.out.factor,toast:T82.join(' ')}},R1);
-ok(rA.award===Math.round(12*0.5)&&rA.pay===rA.award-Math.round(rA.award*0.2)&&rA.f===0.5&&new RegExp('\\+'+rA.pay+' coin').test(rA.toast)&&/win \+50%/.test(rA.toast)&&/×½ table/.test(rA.toast),'award × table shown');
+ok(rA.award===Math.round(12*0.5)&&rA.pay===rA.award-Math.round(rA.award*0.2)&&rA.f===0.5&&new RegExp('\\+'+rA.pay+' coin').test(rA.toast.replace(/<[^>]+>/g,''))&&/win \+50%/.test(rA.toast)&&/×½ table/.test(rA.toast),'award × table shown');
 const cu=await A.evaluate(async()=>{ONL82.pre={ranked:false};T82.length=0;onlSettled({char:ONL.char,out:{pay:0,cf:9,glory:4.5,factor:0.5}});await new Promise(x=>setTimeout(x,2700));return T82.join(' ')});ok(/Custom bout — no purse/.test(cu)&&!/carried/.test(cu),'Custom: no purse');
 const hd=await A.evaluate(async()=>(await NET.req('domus.get',{})).domus);ok(hd.bouts===1&&hd.wins===1&&hd.survived===1&&hd.lifeCF===20,'the house record follows the result');
 /* ── 5. the guest ── */

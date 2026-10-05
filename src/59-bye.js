@@ -22,7 +22,7 @@ function byeSetup(w){const n=w.night;if(!n||n.bye)return;const m=me();
 {const _mn=makeNight;makeNight=function(){const r=_mn.apply(this,arguments);try{const w=W_();if(w&&!w.tutorial&&isByeWk(w.week))byeSetup(w)}catch(e){console.error(e)}return r}}
 {const _ew=endWeek;endWeek=async function(){const w=W_();const bye=!!(w&&w.night&&w.night.bye);let pre=null;
   if(bye){try{pre={};for(const m of w.mgrs){const wages=rosterOf(m).reduce((a,g)=>a+(g.contract?g.contract.wage:0),0);const back=Math.round(wages/2);m.coin+=back;pre[m.id]=back;for(const g of rosterOf(m))g.lastBout=w.week}
-      const mine=pre[me().id]||0;if(mine&&typeof tnews==='function')tnews(_T`🏛 The Senate pays half your wages for the bye week: +${mine} coin.`)}catch(e){console.error(e)}}
+      const mine=pre[me().id]||0;if(mine&&typeof tnews==='function')tnews(_T`🏛 The Senate pays half your wages for the bye week: ${coinAmt87('+'+(mine))}.`)}catch(e){console.error(e)}}
   const r=await _ew.apply(this,arguments);
   if(r===false&&bye&&pre){for(const m of w.mgrs)m.coin-=pre[m.id]||0;return r}
   if(bye){try{let up=0;for(const m of w.mgrs)for(const g of rosterOf(m)){if(g.ovr<g.pot&&Math.random()<(m.isPlayer?.5:.4)){g.ovr++;if(m.isPlayer)up++}}if(up&&typeof tnews==='function')tnews(_T`🏋 The bye-week camp paid off: ${up} of your fighters gained +1 rating.`)}catch(e){console.error(e)}}

@@ -26,14 +26,14 @@ async function buyTicket(){
   const price=(S.mgrCtx||S.specCtx)?ticketPrice():0;
   const inMgr=!!((S.mgrCtx||S.specCtx)&&typeof me==='function'&&me());
   let purse=inMgr?{coin:me().coin,name:me().name,ludus:me().ludus}:{coin:999,name:'You',ludus:'you',free:1}; /* v0.46: outside Manager mode a seat is free — no treasury, no wagers */
-  if(purse.coin<price){await modal(_T`🎟 A ticket · ${price} coin`,`<p>${_T`A seat for <b>${esc(ticketLabel())}</b> costs <b>${price} coin</b>, but <b>${esc(purse.ludus||purse.name)}</b>'s treasury holds ${purse.coin}.`}</p>`,[{label:_T('Close'),value:null}],{close:null});return}
-  const sec=await seatMapPick(price?_T`🎟 Choose your seat · ${price} coin`:_T('🎟 Choose your seat'),price?_T`A seat for <b>${esc(ticketLabel())}</b> costs <b>${price} coin</b> from <b>${esc(purse.ludus||purse.name)}</b>'s treasury (${purse.coin} coin). Click a stand.`:_T('Pick any stand — the seat is yours. Click a stand.'),{note:inMgr?_T('⚖ Helping your own fighter from the stands costs your house 1 fame each time (at most 3 a bout).'):''});
+  if(purse.coin<price){await modal(_T`🎟 A ticket · ${coinAmt87(price)}`,`<p>${_T`A seat for <b>${esc(ticketLabel())}</b> costs <b>${coinAmt87(price)}</b>, but <b>${esc(purse.ludus||purse.name)}</b>'s treasury holds ${purse.coin}.`}</p>`,[{label:_T('Close'),value:null}],{close:null});return}
+  const sec=await seatMapPick(price?_T`🎟 Choose your seat · ${coinAmt87(price)}`:_T('🎟 Choose your seat'),price?_T`A seat for <b>${esc(ticketLabel())}</b> costs <b>${coinAmt87(price)}</b> from <b>${esc(purse.ludus||purse.name)}</b>'s treasury (${coinAmt87(purse.coin)}). Click a stand.`:_T('Pick any stand — the seat is yours. Click a stand.'),{note:inMgr?_T('⚖ Helping your own fighter from the stands costs your house 1 fame each time (at most 3 a bout).'):''});
   if(sec==null||!ticketOK())return;
   if(inMgr){const m=me();m.coin-=price;if(typeof tnews==='function')tnews(_T`Bought a ${price}-coin ticket for ${esc(ticketLabel())} and sat in ${SECTIONS[sec].n}.`);saveWorld()}
   /* free seat outside Manager mode */
   const me9={id:S.spect.length?Math.max(...S.spect.map(s=>s.id))+1:0,rid:'you',name:'You',taste:'cf',temper:'loyal',look:{skin:SKINS[0],hair:HAIRS[0],beard:false,long:false},mem:[],visits:0,grudgeName:null,isNew:false,trouble:0,cf:0,sec,fav:null,favCls:null,mood:20,grudge:null,bet:null,human:true,gone:false,log:[],ticket:price};
   S.spect.push(me9);S.attendance=(S.attendance||0)+1;
-  log(_T`🎟 ${price?_T`You buy a ticket (${price} coin) and take`:_T('You take')} a seat in <b>${SECTIONS[sec].n}</b>. From the next rotation, the stands are yours to use.`,'big');
+  log(_T`🎟 ${price?_T`You buy a ticket (${coinAmt87(price)}) and take`:_T('You take')} a seat in <b>${SECTIONS[sec].n}</b>. From the next rotation, the stands are yours to use.`,'big');
   if(typeof slog==='function')slog(_T`<b>You</b> take a seat in ${SECTIONS[sec].n}.`);
   if(typeof sfx==='function')sfx('coin');render();me9.fav=undefined;await spectChooseFav(me9);render()}
 /* who in this bout fights for your house? */
@@ -50,7 +50,7 @@ function spectHelpCheck(kind,q){
   if(typeof tnews==='function')tnews(_T`Seen helping your own fighter from the stands: −1 fame.`,'bad')}
 /* the button, and the Spectate entries in Manager mode */
 function spectUI(){if(HEADLESS)return;const tb=document.getElementById('btnTicket');if(!tb)return;const ok=ticketOK();tb.hidden=!ok;
-  if(ok){const paid=S.mgrCtx||S.specCtx;tb.innerHTML=paid?_T`🎟 Buy a ticket <small>${ticketPrice()} coin</small>`:_T('🎟 Take a seat');tb.title=paid?_T('Take a seat in the stands as a spectator — paid from the active wallet'):_T('Take a seat in the stands and interact with the event as a spectator')}
+  if(ok){const paid=S.mgrCtx||S.specCtx;tb.innerHTML=paid?_T`🎟 Buy a ticket <small>${coinAmt87(ticketPrice())}</small>`:_T('🎟 Take a seat');tb.title=paid?_T('Take a seat in the stands as a spectator — paid from the active wallet'):_T('Take a seat in the stands and interact with the event as a spectator')}
   if(SPECT.pending&&S&&!S.over&&S.phase!=='setup'&&S.turnNo>=1&&!modalBusy()){SPECT.pending=false;setTimeout(()=>buyTicket(),400)}}
 document.addEventListener('click',e=>{if(e.target.closest('#btnTicket'))buyTicket()});
 /* v0.41: who do you cheer for? You can't stone them, and the crowd sees your colors */

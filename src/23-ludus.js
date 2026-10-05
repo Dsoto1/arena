@@ -35,7 +35,7 @@ function facilitiesHTML(){const w=W_(),m=me();m.fac=m.fac||{};const built=m.facW
   return `<div class="card2 faccard"><div class="schoolhd"><div><div class="sect" style="margin:0">${_T`🏗 Facilities`}</div><span class="rc-sub">${_T`Permanent. Recruits grade your house on them — together they set your <b>Ludus grade</b>. One project a week.`}</span></div><div class="gradebox" style="--gc:${gradeCol(ludusGrade(m))}" title="${_T`Ludus grade — from ${facSum(m)} of ${Object.keys(FAC).length*3} facility levels`}">${ludusGrade(m)}</div></div>
     <div class="faclist">${Object.entries(FAC).map(([k,F])=>{const l=facLvl(m,k);const cost=FAC_COST[l];
       return `<div class="facrow"><span class="faci">${F.i}</span><div class="fact"><b>${F.n}</b> <span class="facpips">${[0,1,2].map(i=>`<i class="${i<l?'on':''}"></i>`).join('')}</span><div class="rc-sub">${l?F.fx(l):F.d}</div>${l<3?`<div class="rc-sub">${_T`Next: ${F.fx(l+1)}`}</div>`:''}</div>
-        ${l<3?`<button class="btn tksm" type="button" data-mg="build" data-id="${k}" ${dis([built,_T('Your builders are already busy this week.')],needCoin(m,cost))}>${_T`Build ${['I','II','III'][l]}<small>${cost} coin</small>`}</button>`:'<span class="badge gold">complete</span>'}</div>`}).join('')}</div></div>`}
+        ${l<3?`<button class="btn tksm" type="button" data-mg="build" data-id="${k}" ${dis([built,_T('Your builders are already busy this week.')],needCoin(m,cost))}>${_T`Build ${['I','II','III'][l]}<small>${coinAmt87(cost)}</small>`}</button>`:'<span class="badge gold">complete</span>'}</div>`}).join('')}</div></div>`}
 /* facBuild — builds the next level of a facility if the lanista can afford it. */
 function facBuild(mgr,facKey,quiet){const l=facLvl(mgr,facKey);if(l>=3)return false;const cost=FAC_COST[l];if(mgr.coin<cost)return false;mgr.coin-=cost;mgr.fac=mgr.fac||{};mgr.fac[facKey]=l+1;mgr.facWk=W_().week;
   const F=FAC[facKey];mlog(mgr,_T`🏗 built the ${F.n} ${['I','II','III'][l]} (${cost} coin) — ${F.fx(l+1)}`);
@@ -44,7 +44,7 @@ function facBuild(mgr,facKey,quiet){const l=facLvl(mgr,facKey);if(l>=3)return fa
 /* facWeek — weekly facility effects for every house: barracks morale, practice-stand ticket coin. */
 function facWeek(){const w=W_();for(const m of w.mgrs){const b=facLvl(m,'barracks'),st=facLvl(m,'stands');
   if(b)for(const g of rosterOf(m))g.morale=clamp(g.morale+b,0,100);
-  if(st){m.coin+=st*10;if(m.isPlayer)tnews(_T`🏟 The practice stands took ${st*10} coin in tickets this week.`)}}}
+  if(st){m.coin+=st*10;if(m.isPlayer)tnews(_T`🏟 The practice stands took ${coinAmt87(st*10)} in tickets this week.`)}}}
 
 /* ---------------- rival lanistae at work: every act goes in their ledger ---------------- */
 function mlog(mgr,txt){if(!mgr)return;const w=W_();(mgr.log=mgr.log||[]).unshift({s:w.season,wk:w.week,txt});mgr.log=mgr.log.slice(0,40)}
@@ -99,10 +99,10 @@ function teamHTML(){const w=W_(),pm=me();const m=mgrById(MGR.teamId);if(!m)retur
   const form=g=>(g.recent||[]).slice(-5).map(x=>`<span class="fchip ${x.won?'w':x.place===2?'p':''}" title="${_T`S${x.s} W${x.wk} · ${esc(x.t)} · ${esc(x.ev)} at ${esc(x.loc)} · ${x.won?_T('won'):x.place?'#'+x.place:_T('fought')} · ${x.f} CF`}">${x.won?'W':x.place||'·'}</span>`).join('')||'<span class="rc-sub">—</span>';
   const row=g=>{const sc=g.scout;return `<tr><td><button class="btn" type="button" data-mg="fav" data-id="${g.id}" title="${_T`${g.favd?_T('Remove from'):_T('Pin to')} your Favorites`}" style="padding:1px 4px;border:none;background:none;font-size:15px;color:${g.favd?'var(--gold2)':'var(--dim)'}">${g.favd?'★':'☆'}</button></td><td>${gArt(g,'xs')}</td><td><b>${esc(g.name)}</b> <span class="rc-sub">${CLASSES[g.cls]?CLASSES[g.cls].name:''} · ${gAge(g)}</span></td><td class="n">${sc?effOvr(g):'~'+pubOvr(g)} <span class="stars">${'★'.repeat(starsOf(pubOvr(g)))}</span></td><td class="n">${g.rec.w}-${Math.max(0,g.rec.ev-g.rec.w)}</td><td class="nowrap">${form(g)}</td><td class="n">${sc?g.morale:'?'}</td><td class="n rc-sub">${sc?_T`${g.contract.wage}/wk · ${Math.max(0,g.contract.weeks)} wk`:'?'}</td></tr>`};
   const acts=[
-    ['gift',_T('🎁 Send gifts'),'25 coin · +12 opinion',needCoin(pm,25)],
+    ['gift',_T('🎁 Send gifts'),`${coinAmt87(25)} · +12 opinion`,needCoin(pm,25)],
     ['practice',_T('🏋 Propose a practice'),_T('an exhibition against their fighters (Practice tab)'),[op.v<25,_T`${m.name} will not spar with a house they despise (opinion ${op.v}, needs 25).`]],
     ['trade',_T('🔁 Propose a trade'),_T('one of yours for one of theirs, coin to sweeten'),[op.v<20,_T`${m.name} will not trade with you (opinion ${op.v}, needs 20).`]],
-    ['pact',_T('🤝 Non-poaching pact'),_T('30 coin · 8 weeks: neither house poaches the other'),[op.v<55,_T`A pact needs trust (opinion ${op.v}, needs 55).`],needCoin(pm,30)],
+    ['pact',_T('🤝 Non-poaching pact'),_T`${coinAmt87(30)} · 8 weeks: neither house poaches the other`,[op.v<55,_T`A pact needs trust (opinion ${op.v}, needs 55).`],needCoin(pm,30)],
     ['gossip',_T('🕵 Ask for gossip'),_T('they talk about one of their fighters (scouted)'),[op.v<40,_T`They do not gossip with strangers (opinion ${op.v}, needs 40).`]],
     ['insult',_T('🗡 Insult them publicly'),_T('+2 fame (the crowd loves a feud) · −15 opinion, +15 rivalry'),[false,'']]];
   const tr=MGR.trade&&MGR.trade.mid===m.id?MGR.trade:null;
@@ -126,7 +126,7 @@ function teamHTML(){const w=W_(),pm=me();const m=mgrById(MGR.teamId);if(!m)retur
       <div class="sect">${_T`Send an envoy`} <span class="rc-sub">${envoyUsed?_T('· your envoy has already called this week'):_T('· one envoy per house a week')}</span></div>
       <div class="commsacts">${acts.map(([k,l,sub,...chk])=>`<button class="btn" type="button" data-mg="envoy" data-id="${m.id}|${k}" ${envoyUsed&&k!=='practice'?dis([true,_T('Your envoy has already called on this house this week.')]):dis(...chk.filter(Boolean))}>${l}<small>${sub}</small></button>`).join('')}</div>
       ${tr?tradeHTML(m,tr):''}
-      ${w.loan&&w.loan.mgr===m.id&&w.loan.amt>0?`<div class="tradebox"><div class="sect" style="margin-top:0">${_T`💸 Your debt to this house`}</div><p class="rc-sub" style="margin:0 0 4px">${_T`<b>${w.loan.amt} coin owed</b> · 8% a week. Paying early warms them to you.`}</p><div class="acts"><button class="btn tksm" type="button" data-mg="loanpay" ${pm.coin<Math.min(w.loan.amt,50)?'disabled':''}>${_T`Pay 50`}</button><button class="btn primary tksm" type="button" data-mg="loanpayall" ${pm.coin<w.loan.amt?'disabled':''}>${_T`Pay all · ${w.loan.amt}`}</button></div></div>`:''}
+      ${w.loan&&w.loan.mgr===m.id&&w.loan.amt>0?`<div class="tradebox"><div class="sect" style="margin-top:0">${_T`💸 Your debt to this house`}</div><p class="rc-sub" style="margin:0 0 4px">${_T`<b>${coinAmt87(w.loan.amt)} owed</b> · 8% a week. Paying early warms them to you.`}</p><div class="acts"><button class="btn tksm" type="button" data-mg="loanpay" ${pm.coin<Math.min(w.loan.amt,50)?'disabled':''}>${_T`Pay 50`}</button><button class="btn primary tksm" type="button" data-mg="loanpayall" ${pm.coin<w.loan.amt?'disabled':''}>${_T`Pay all · ${w.loan.amt}`}</button></div></div>`:''}
       ${m.pact&&m.pact>=w.week?`<p class="rc-sub" style="margin:6px 0 0">${_T`🤝 Non-poaching pact until week ${wkOf(m.pact)}.`}</p>`:''}</div>
     <div class="card2" style="margin-top:10px"><div class="sect" style="margin-top:0">${_T`📜 Their ledger`} <span class="rc-sub">${_T`what this house has been doing`}</span></div><div class="news" style="max-height:220px">${(m.log||[]).length?m.log.map(x=>`<div><span class="rc-sub">S${x.s} W${x.wk} · </span>${esc(x.txt)}</div>`).join(''):`<div class="rc-sub">${_T`Nothing on record yet — the ledger fills as the weeks go by.`}</div>`}</div></div>
    </div></div>`}
@@ -143,7 +143,7 @@ function tradeHTML(mgr,trade){const pm=me();const mine=rosterOf(pm).sort((a,b)=>
     <div class="acts">${mgr.envoyWk===W_().week?`<span class="rc-sub" style="align-self:center">${_T`Your envoy has already called on ${esc(mgr.ludus)} this week — try again next week.`}</span><button class="btn" type="button" data-mg="tradex">${_T`Close`}</button>`:`<button class="btn primary" type="button" data-mg="tradego" data-id="${mgr.id}">${_T`Send the proposal`}</button><button class="btn" type="button" data-mg="tradex">${_T`Cancel`}</button>`}</div></div>`}
 /* ludusClick — the facilities / team screen / correspondence actions (build, envoys, gifts, pacts, trades, insults). */
 async function ludusClick(action,id,btn,ctx){const w=W_(),pm=me();if(!w||!pm)return false;const {redraw,say}=ctx;
-  if(action==='build'){if(pm.facWk===w.week){say(_T('Your builders are already busy this week.'));return true}const l=facLvl(pm,id);if(l>=3)return true;if(pm.coin<FAC_COST[l]){say(_T`The ${FAC[id].n} ${['I','II','III'][l]} costs ${FAC_COST[l]} coin.`);return true}
+  if(action==='build'){if(pm.facWk===w.week){say(_T('Your builders are already busy this week.'));return true}const l=facLvl(pm,id);if(l>=3)return true;if(pm.coin<FAC_COST[l]){say(_T`The ${FAC[id].n} ${['I','II','III'][l]} costs ${coinAmt87(FAC_COST[l])}.`);return true}
     facBuild(pm,id);tnews(_T`🏗 Built the ${FAC[id].n} ${['I','II','III'][l]} — ${FAC[id].fx(l+1)}. Ludus grade ${ludusGrade(pm)}.`,'big');saveWorld();say(_T`🏗 The ${FAC[id].n} ${['I','II','III'][l]} is built. Ludus grade <b>${ludusGrade(pm)}</b>.`);return true}
   if(action==='run'){MGR.run=id;redraw();return true}
   if(action==='team'){MGR.teamId=id;MGR.tab=id===pm.id?'me':'team';MGR.trade=null;redraw();return true}
@@ -166,7 +166,7 @@ async function ludusClick(action,id,btn,ctx){const w=W_(),pm=me();if(!w||!pm)ret
     if(give<need){const gap=Math.ceil((need-give)*6);MGR.trade.msg=_T`“Not enough.” — ${esc(m.name)}. ${gap<=pm.coin?_T`About ${gap} more coin might change their mind — next week.`:_T('They want a better fighter.')}`;mlog(m,_T`turned down a trade offer from ${pm.ludus}`);saveWorld();say(_T`✉ ${esc(m.ludus)} turns down your trade.`);redraw();return true}
     pm.coin-=coin;m.coin+=coin;gm.contract.mgr=m.id;gt.contract.mgr=pm.id;gt.scout=3;gt.morale=clamp(gt.morale+4,0,100);m.relB=(m.relB||0)+6;
     ghist(gm,_T`traded from ${pm.ludus} to ${m.ludus}`);ghist(gt,_T`traded from ${m.ludus} to ${pm.ludus}`);mlog(m,_T`traded ${gt.name} to ${pm.ludus} for ${gm.name}${coin?_T` and ${coin} coin`:''}`);
-    mnews(`🔁 <b>Trade:</b> ${esc(gt.name)} goes to ${esc(pm.ludus)}; ${esc(gm.name)} goes to ${esc(m.ludus)}${coin?_T` (plus ${coin} coin)`:''}.`,'big');tnews(_T`🔁 Traded ${esc(gm.name)}${coin?_T` + ${coin} coin`:''} to ${esc(m.ludus)} for ${esc(gt.name)}.`,'big');
+    mnews(`🔁 <b>Trade:</b> ${esc(gt.name)} goes to ${esc(pm.ludus)}; ${esc(gm.name)} goes to ${esc(m.ludus)}${coin?_T` (plus ${coinAmt87(coin)})`:''}.`,'big');tnews(_T`🔁 Traded ${esc(gm.name)}${coin?_T` + ${coinAmt87(coin)}`:''} to ${esc(m.ludus)} for ${esc(gt.name)}.`,'big');
     MGR.trade=null;saveWorld();say(_T`🔁 Done — ${esc(gt.name)} joins ${esc(pm.ludus)}.`);return true}
   return false}
 

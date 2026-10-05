@@ -60,7 +60,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   if(!walk&&!cityRow)return h;
   const side=document.createElement('div');side.className='road85side';
   if(walk&&walk!==road&&!walk.contains(road)){const tip=walk.querySelector('b[data-tip]');const t=document.createElement('div');t.className='road85t';
-    t.innerHTML=`<div class="road85h">${tip?tip.outerHTML:_T('🗺 Walk the sand')}<span class="rc-sub">${_T`fighters on the card: <b>+1 AP, +1 coin</b>`}</span></div>`;t.appendChild(walkBtn);walk.remove();side.appendChild(t)}
+    t.innerHTML=`<div class="road85h">${tip?tip.outerHTML:_T('🗺 Walk the sand')}<span class="rc-sub">${_T`fighters on the card: <b>+1 AP, ${coinAmt87('+1')}</b>`}</span></div>`;t.appendChild(walkBtn);walk.remove();side.appendChild(t)}
   if(cityRow){const t=document.createElement('div');t.className='road85t';t.appendChild(cityBtn);cityRow.remove();side.appendChild(t)}
   const left=document.createElement('div');left.className='road85main';while(road.firstChild)left.appendChild(road.firstChild);
   road.classList.add('road85');road.appendChild(left);road.appendChild(side);return T.innerHTML}catch(e){console.error(e);return h}}}
@@ -134,8 +134,8 @@ if(typeof medicus84==='function'){const base=medicus84;medicus84=function(w){try
 if(typeof infirmaryHTML==='function'){const base=infirmaryHTML;infirmaryHTML=function(){let h=base.apply(this,arguments);try{if(typeof h==='string'&&roadLocked76(W_()))h=h.replace('The Infirmary is shut until the week ends — what you booked before leaving still runs.',_T('The Infirmary is shut until the week ends — look over the wounds now; treatment opens next week. What you booked before leaving still runs.'))}catch(e){}return h}}
 
 /* 7 · prices as "Cost: N coin" */
-if(typeof ROAD76!=='undefined')for(const E of ROAD76)for(const c of [E.a,E.z])if(c&&typeof c[1]==='string')c[1]=c[1].replace(/^−(\d+) coin/,'Cost: $1 coin');
-if(typeof templeHTML76==='function'){const base=templeHTML76;templeHTML76=function(){let h=base.apply(this,arguments);try{if(typeof h==='string')h=h.replace(/<small>(\d+)c · /g,'<small>Cost: $1 coin · ')}catch(e){}return h}}
+if(typeof ROAD76!=='undefined')for(const E of ROAD76)for(const c of [E.a,E.z])if(c&&typeof c[1]==='string')c[1]=c[1].replace(/^<span class=amt87>−/,_T('Cost:')+' <span class=amt87>');
+if(typeof templeHTML76==='function'){const base=templeHTML76;templeHTML76=function(){let h=base.apply(this,arguments);try{if(typeof h==='string')h=h.replace(/<small>(<span class=amt87>)/g,'<small>'+_T('Cost:')+' $1')}catch(e){}return h}}
 
 /* 9 · no "Start your next week" on the gazette */
 {const st=document.createElement('style');st.textContent='.paper .pnextwk{display:none!important}';document.head.appendChild(st)}

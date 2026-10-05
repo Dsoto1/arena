@@ -4,7 +4,7 @@
    • Damnatio keeps the stones the crowd misses him with (+1 in the sling, up to 6).
    ===================================================================== */
 {const _ss=spectStone;spectStone=async function(s,q){const before=q?hpSumOf(q):0;const r=await _ss(s,q);
-  try{if(q&&q.alive&&q.abil==='stone'&&hpSumOf(q)>=before){const w=['R','L'].map(a=>q['w'+a]).find(w=>w&&w.stones);if(w&&w.ammoLeft<6){w.ammoLeft++;log(_T`${nm(q)} picks up the stone (${w.ammoLeft} in the sling).`)}}}catch(e){}
+  try{if(q&&q.alive&&q.abil==='stone'&&hpSumOf(q)>=before){const w=['R','L'].map(a=>q['w'+a]).find(w=>w&&w.stones);if(w&&w.ammoLeft<6){w.ammoLeft++;log(wIco87('ammo')+_T`${nm(q)} picks up the stone (${w.ammoLeft} in the sling).`)}}}catch(e){}
   return r}}
 
 /* ---------- grid coordinates in the log: tokens placed on the sand name their tiles ---------- */
@@ -56,8 +56,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&(
 /* ---------- the passage between screens: a health bar that fills, and a line to read ---------- */
 const RULE_LINES=[_T('When a weapon runs out of throws, discard it from play.'),_T('Thrown weapons cannot be picked up in the same turn.'),_T('Ammo cards can only refill a weapon to its original ammo.'),
   _T('Lose the head or the chest and you are out of the event.'),_T('A hit strips armor before it reaches health.'),_T('Crowd Favor of 20 or more saves you to the Ludus Flavius.'),_T('50 Crowd Favor wins your freedom.'),
-  _T('Every 3 trophies held by the winner add 5 CF.'),_T('Hidden Mandata Flavi cost 5 CF each at the end.'),_T('No CF can be spent while Commodus is in the arena.'),_T('Beasts you attack will hunt you: that is aggro.'),
-  _T('Spectators may throw a stone for 2 CF.'),_T('Arena keys open the chest or a tunnel.'),_T('The zone shrinks each round: two turns of grace to get inside.')];
+  _T`Every 3 trophies held by the winner add ${cfAmt87(5)}.`,_T`Hidden Mandata Flavi cost ${cfAmt87(5)} each at the end.`,_T('No CF can be spent while Commodus is in the arena.'),_T('Beasts you attack will hunt you: that is aggro.'),
+  _T`Spectators may throw a stone for ${cfAmt87(2)}.`,_T('Arena keys open the chest or a tunnel.'),_T('The zone shrinks each round: two turns of grace to get inside.')];
 function transitQuote(){const pool=[];try{for(const k in CARDS){const q=CARDS[k].q;if(q&&!pool.includes('“'+q+'”'))pool.push('“'+q+'”')}}catch(e){}
   for(const l of RULE_LINES)pool.push('📜 '+l);
   try{for(const k in GLOSS){const d=String(GLOSS[k].d||'').replace(/\[\[[^|\]]*\|([^\]]*)\]\]/g,'$1').replace(/\[\[([^\]]*)\]\]/g,'$1');const s=d.split(/(?<=\.)\s/)[0];if(s&&s.length<120)pool.push('💡 '+GLOSS[k].t+': '+s)}}catch(e){}
@@ -100,5 +100,5 @@ setTimeout(()=>{try{if(!$('#mainMenu').hidden)firstRunPrompt()}catch(e){}},2200)
 /* …and the stones a gladiator slings at him and misses */
 {const _da=doAttack;doAttack=async function(p,src,t,opt){const q=t&&t.ref;const isStone=src&&src.w&&(src.w.key==='stones'||src.w.key==='sling'||src.w.stones);const before=q&&isStone&&q.abil==='stone'?hpSumOf(q):null;
   const r=await _da(p,src,t,opt);
-  try{if(before!=null&&q.alive&&hpSumOf(q)>=before){const w=['R','L'].map(a=>q['w'+a]).find(w=>w&&w.stones);if(w&&w.ammoLeft<6){w.ammoLeft++;log(_T`${nm(q)} picks up the missed stone (${w.ammoLeft} in the sling).`)}}}catch(e){}
+  try{if(before!=null&&q.alive&&hpSumOf(q)>=before){const w=['R','L'].map(a=>q['w'+a]).find(w=>w&&w.stones);if(w&&w.ammoLeft<6){w.ammoLeft++;log(wIco87('ammo')+_T`${nm(q)} picks up the missed stone (${w.ammoLeft} in the sling).`)}}}catch(e){}
   return r}}

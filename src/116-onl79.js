@@ -33,7 +33,7 @@ function onlDraft(ch){if(ONL.ged&&ONL.ged.id===ch.id)return ONL.ged;const L=ch.l
 function onlSel(path,opts,val,attr){return `<select class="tin" ${attr}="${path}">${opts.map(([v,l])=>`<option value="${esc2(v??'')}" ${String(val??'')===String(v??'')?'selected':''}>${esc2(l)}</option>`).join('')}</select>`}
 onlCharHTML=function(){const live=ONL.chars.filter(c=>c.alive).sort((a,b)=>a.born-b.born);const dead=ONL.chars.filter(c=>!c.alive);
   const sel=live.find(c=>c.id===ONL.gsel)||ONL.char||live[0];if(!sel)return '';ONL.gsel=sel.id;const D=onlDraft(sel);const busy=onlBusy();const cat=onlCatalog();const p=D.look.portrait;
-  const slot=c=>{const act=c.id===(ONL.char&&ONL.char.id);return `<button type="button" class="onl-gslot ${c.id===sel.id?'on':''}" data-onl="gpick" data-v="${c.id}">${_T`${onlFig(c.cls,c.look,96)}<b>${esc2(c.name)}</b><small>${esc2((CLASSES[c.cls]||{}).name||'')} · ${onlRankChip(ONLC.rankFor(c).k)}</small><small>${typeof ICO!=='undefined'&&ICO.coin?ICO.coin:'🪙'} ${c.wallet} · ⭐ ${c.lifeCF} CF</small>${act?_T('<span class="badge gold">⚔ Active</span>'):''}`}</button>`};
+  const slot=c=>{const act=c.id===(ONL.char&&ONL.char.id);return `<button type="button" class="onl-gslot ${c.id===sel.id?'on':''}" data-onl="gpick" data-v="${c.id}">${_T`${onlFig(c.cls,c.look,96)}<b>${esc2(c.name)}</b><small>${esc2((CLASSES[c.cls]||{}).name||'')} · ${onlRankChip(ONLC.rankFor(c).k)}</small><small>${typeof ICO!=='undefined'&&ICO.coin?ICO.coin:'🪙'} ${c.wallet} · ${cfAmt87(c.lifeCF)}</small>${act?_T('<span class="badge gold">⚔ Active</span>'):''}`}</button>`};
   const empty=Array.from({length:Math.max(0,ONLC.GLAD_MAX-live.length)},()=>`<button type="button" class="onl-gslot empty" data-onl="gnew">${_T`＋<b>New gladiator</b><small>starts as a Tiro</small>`}</button>`).join('');
   const P=(path,label,opts,val)=>`<label>${label}${onlSel(path,opts,val,'data-onlgp')}</label>`;
   const T=(f,label,opts)=>`<label>${label}${onlSel(f,opts,(D.look.token||{})[f]||(onlTokenOf(D.cls,{token:{x:1}})||{})[f]||'','data-onlgt')}</label>`;
@@ -112,7 +112,7 @@ onlMyLobbyHTML=function(){const me=ONL.acct&&ONL.acct.id;const L=onlMyLobby();if
   return `<div class="card2 onl-mine onl-room"><div class="onl-rhead">${_T`<b>${fan?_T('🎟 Your seat in the stands'):_T('⚔ Your game')}</b> · ${esc2(onlEvName(L.ev))} at ${esc2(onlCityName(L.loc))} · ${L.ranked?_T('⚔ Ranked'):_T('Custom')}${L.team?_T(' · 👥 Team A vs Team B'):''}`}
      <span class="rc-sub">${L.status==='waiting'?_T`${humans.length} lanista${humans.length===1?'':'s'} · ${L.players.length}/${L.seats} seated`:_T('🔴 Live')}</span></div>
    <div class="onl-rbody"><div><div class="onl-rseats">${Array.from({length:L.seats},(_,i)=>seat(i)).join('')}</div>
-     ${(L.stands||[]).length?`<div class="rc-sub">${_T`🎟 In the stands: ${L.stands.map(t=>esc2(t.name)).join(', ')} · pot ${L.pot||0} coin`}</div>`:''}
+     ${(L.stands||[]).length?`<div class="rc-sub">${_T`🎟 In the stands: ${L.stands.map(t=>esc2(t.name)).join(', ')} · pot ${coinAmt87(L.pot||0)}`}</div>`:''}
      ${host&&why&&L.status==='waiting'?`<p class="onl-busy">⏳ ${esc2(why)}</p>`:''}${settings}
      <div class="acts">${acts}${L.status==='waiting'?`<button type="button" class="btn" data-onl="leave" data-v="${L.id}">${fan?_T('Give back the ticket'):host?_T('Close the game'):_T('Leave')}</button>`:''}</div></div>${chat}</div></div>`};
 document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl]');if(!b)return;const a=b.dataset.onl,v=b.dataset.v;

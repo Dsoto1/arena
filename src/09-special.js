@@ -84,10 +84,10 @@ async function chStep(player,fromR,fromC){
     if(ch.horse){ch.horse.face^=1;ch.horse.dmg=0;const f=ch.horse.sides[ch.horse.face];log(_T`${ch.horse.name||_T('The horse')}'s token flips: ${f.hp} HP, +${f.mv} movement.`)}
     const o=drawChOffer();
     if(o==='merc1'||o==='merc2'){const v=o==='merc1'?1:2;player.mv+=v;log(_T`Speed of Mercury: +${v} movement.`)}
-    else if(o==='cf1'||o==='cf2'){const v=o==='cf1'?1:2;cfWhy(_T('breaking pots'));player.cf+=v;log(_T`The crowd roars: +${v} CF.`)}
+    else if(o==='cf1'||o==='cf2'){const v=o==='cf1'?1:2;cfWhy(_T('breaking pots'));player.cf+=v;log(_T`The crowd roars: ${cfAmt87('+'+(v))}.`)}
     else if(o==='curse'){
-      let pay;if(player.cpu)pay=player.cf>=6;else pay=player.cf>=3&&await modal(_T('Curse Tablet'),`<p>${_T`Pay 3 CF, or roll a d6 and deal that much damage to both your horse and your wheel.`}</p>`,[{label:_T('Pay 3 CF'),value:1,primary:1},{label:_T('Roll the d6'),value:0}]);
-      if(pay){player.cf-=3;log(_T`${nm(player)} pays 3 CF to lift the Curse Tablet.`)}
+      let pay;if(player.cpu)pay=player.cf>=6;else pay=player.cf>=3&&await modal(_T('Curse Tablet'),`<p>${_T`Pay ${cfAmt87(3)}, or roll a d6 and deal that much damage to both your horse and your wheel.`}</p>`,[{label:_T`Pay ${cfAmt87(3)}`,value:1,primary:1},{label:_T('Roll the d6'),value:0}]);
+      if(pay){player.cf-=3;log(_T`${nm(player)} pays ${cfAmt87(3)} to lift the Curse Tablet.`)}
       else{const d=d6();log(_T`Curse Tablet: ${nm(player)} rolls ${d}.`,'bad');chHitPart(player,'wheel',d);chHitPart(player,'horse',d)}
     }
     player.mv+=2;log(_T`${nm(player)} gains a free step beyond the gate.`);
@@ -111,7 +111,7 @@ async function chAttack(player,source,target){
   if(player.cpu)tgt=parts.includes('horse')?'horse':parts.includes('wheel')?'wheel':locs.sort((a,b)=>(q.hp[a]+q.ap[a])-(q.hp[b]+q.ap[b]))[0];
   else tgt=await modal(_T`Attack ${q.name}`,`<p>${_T`In a chariot race the attacker chooses the target: the wheel, the horse, or any body location.`}</p>`,[...parts.map(x=>({label:x==='wheel'?_T`${q.ch.wheel.name||_T('Wheel')} (${q.ch.wheel.hp} HP)`:_T`${q.ch.horse.name||_T('Horse')} (${q.ch.horse.sides[q.ch.horse.face].hp-q.ch.horse.dmg} HP)`,card:x==='wheel'?'h:'+(q.ch.wheel.art||'wheel8'):'h:'+(q.ch.horse.sides[q.ch.horse.face].art||'saxoA'),value:x})),...locs.map(l=>({label:LOCN[l],sub:_T`AP ${q.ap[l]} · HP ${q.hp[l]}`,value:l}))]);
   const hits=rollHits(2),h=cnt(hits),dmg=h*pw+(h?(hasCestus(player,source.arm)?1:0):0);
-  const pre=_T`${nm(player)} attacks ${nm(q)} with ${w.n} ${diceHtml(hits)} = ${dmg}`;
+  const pre=_T`${nm(player)} attacks ${nm(q)} with ${w.n} ${diceHtml(hits)} = ${wIco87('dmg')+dmg}`;
   if(tgt==='wheel'||tgt==='horse'){log(`${pre} → ${tgt}`);chHitPart(q,tgt,dmg)}
   else await hurt(q,tgt,dmg,{type:'player',p:player},pre);
   checkEnd();
@@ -141,7 +141,7 @@ async function chariotDraft(){
     }
   }
   for(const p of S.players){p.wL=mkW('chariotCard');if(p.ch)p.wL.gart='g:'+p.ch.art;p.keys=2;p.cf+=3} // the printed chariot card sits in the secondary slot
-  log(_T('Each racer receives an Arena Key token (2 keys) and 3 CF. The chariot card fills the secondary weapon slot.'));
+  log(_T`Each racer receives an Arena Key token (2 keys) and ${cfAmt87(3)}. The chariot card fills the secondary weapon slot.`);
 }
 /* chRaceOrder — turn order for the next round: mounted racers from last to first place, then those on foot by CF. */
 function chRaceOrder(){

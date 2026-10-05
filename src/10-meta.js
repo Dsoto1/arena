@@ -127,11 +127,11 @@ function tumbleDie(el,final,sides,ms=950){return new Promise(res=>{
     el.textContent=face(1+Math.floor(Math.random()*sides));setTimeout(tick,60+t/12)};tick()})}
 // run the whole ritual inside a container element; resolves {spared,d6,d12}
 async function thumbRitual(box,{name,f,d6,d12,d12Fate}){
-  box.innerHTML=thumbStageHTML({mood:'calm',msg:_T`<b>${esc(name)}</b> ends on <b>${f} CF</b>. The roar dies to a murmur; every eye climbs to the editor's box. ${esc(edName())} raises a hand…`,die:'🎲',dieLbl:'the d6',btn:_T('🎲 Roll the d6'),btnAttr:'data-tr-go="1"'});
+  box.innerHTML=thumbStageHTML({mood:'calm',msg:_T`<b>${esc(name)}</b> ends on <b>${cfAmt87(f)}</b>. The roar dies to a murmur; every eye climbs to the editor's box. ${esc(edName())} raises a hand…`,die:'🎲',dieLbl:'the d6',btn:_T('🎲 Roll the d6'),btnAttr:'data-tr-go="1"'});
   await new Promise(r=>{box.querySelector('[data-tr-go]').onclick=r});
   box.innerHTML=thumbStageHTML({mood:'shock',msg:_T('The die leaves his hand…'),die:'⚀',dieLbl:'the d6'});
   await tumbleDie(box.querySelector('.die-big'),d6,6);
-  if(d6>=4){box.innerHTML=thumbStageHTML({mood:'cheer',msg:_T`<b>${d6}</b> — the thumb goes <b>UP</b>. The crowd erupts: <b>${esc(name)}</b> is spared, raised to 20 CF and sent to the Ludus Flavius.`,die:D6F[d6-1],dieLbl:_T('spared (4-6)'),fate:_T('👍 Spared · Ludus Flavius')});
+  if(d6>=4){box.innerHTML=thumbStageHTML({mood:'cheer',msg:_T`<b>${d6}</b> — the thumb goes <b>UP</b>. The crowd erupts: <b>${esc(name)}</b> is spared, raised to ${cfAmt87(20)} and sent to the Ludus Flavius.`,die:D6F[d6-1],dieLbl:_T('spared (4-6)'),fate:_T('👍 Spared · Ludus Flavius')});
     try{flaviusMood('cheer',4200,.9)}catch(e){}return {spared:true,d6}}
   box.innerHTML=thumbStageHTML({mood:'smug',msg:_T`<b>${d6}</b> — the thumb turns <b>DOWN</b>. Flavius smiles thinly and calls for the d12: it will choose how ${esc(name)} leaves this world.`,die:D6F[d6-1],dieLbl:_T('condemned (1-3)'),btn:_T('🎲 Roll the d12'),btnAttr:'data-tr-go="2"'});
   await new Promise(r=>{box.querySelector('[data-tr-go]').onclick=r});
@@ -150,7 +150,7 @@ function resultCard(row,place,interim){
   if(row.thumbHide&&!row.thumbShown){ // the die has not been cast: hide the verdict behind the button
     return `<div class="rcard" style="--pc:${p.color}">
       <div class="rc-top"><span class="rc-place">${place}</span>${pArt(p,'sm')}<div><div class="rc-name">${esc(p.name)}</div><div class="rc-sub">${_T`${C.name} · You`}</div>${status}</div></div>
-      <div class="rc-fate"><div><div class="rc-fname">${_T`🖑 Thumb of Flavius`}</div><p style="margin:6px 0">${_T`${row.f} CF — one short of certainty. The arena falls silent; every eye turns to the editor's box. Flavius weighs your ${row.won?_T('victory'):_T('showing')}… and reaches for the die.`}</p>
+      <div class="rc-fate"><div><div class="rc-fname">${_T`🖑 Thumb of Flavius`}</div><p style="margin:6px 0">${_T`${cfAmt87(row.f)} — one short of certainty. The arena falls silent; every eye turns to the editor's box. Flavius weighs your ${row.won?_T('victory'):_T('showing')}… and reaches for the die.`}</p>
       <button class="btn primary" type="button" data-thumb="${p.id}" style="border-color:var(--gold)">${_T`🎲 Face the thumb — roll the d6<small>4-6 spares you to the Ludus; 1-3 hands your fate to the d12</small>`}</button></div></div>
     </div>`;
   }
@@ -160,13 +160,13 @@ function resultCard(row,place,interim){
   const feel=p.cpu&&p.rel?Object.entries(p.rel).filter(([,v])=>Math.abs(v)>=25).map(([id,v])=>_T`${relState(v)[2]} ${relState(v)[1]} toward ${esc(S.players[id].name)}`).join(' · '):'';
   const survives=!interim&&aliveInUniverse(row);
   const free50=!interim&&row.won&&row.f>=50&&survives&&!p.mgrGid&&!p.cpu&&!isCustomCls(p.cls);
-  const saveBit=survives?(row.savedDone?`<button class="btn" type="button" disabled>${_T`✓ ${esc(p.name)}'s Ludus record ${p.saved?_T('updated'):_T('saved')}<small>${p.saved?_T('automatic for summoned gladiators'):_T('one save per event')}</small>`}</button>`:`<button class="btn" type="button" data-save="${p.id}">${_T`Save ${esc(p.name)} in the Ludus<small>returns with ${Math.min(25,Math.floor(row.f/2))} CF${p.cpu?_T(' · CPU record: rival or bet-on gladiator, no missios'):''}</small>`}</button>`):'';
+  const saveBit=survives?(row.savedDone?`<button class="btn" type="button" disabled>${_T`✓ ${esc(p.name)}'s Ludus record ${p.saved?_T('updated'):_T('saved')}<small>${p.saved?_T('automatic for summoned gladiators'):_T('one save per event')}</small>`}</button>`:`<button class="btn" type="button" data-save="${p.id}">${_T`Save ${esc(p.name)} in the Ludus<small>returns with ${cfAmt87(Math.min(25,Math.floor(row.f/2)))}${p.cpu?_T(' · CPU record: rival or bet-on gladiator, no missios'):''}</small>`}</button>`):'';
   const freeBit=free50?`<button class="btn" type="button" data-free="${p.id}" style="border-color:var(--gold)">${_T`🗡 Claim freedom · the rudis<small>leaves the sands forever, memorialized among the Liberti</small>`}</button>`:'';
   return `<div class="rcard" style="--pc:${p.color}">
     <div class="rc-top"><span class="rc-place">${place}</span>${pArt(p,'sm')}<div><div class="rc-name">${esc(p.name)}</div><div class="rc-sub">${C.name} · ${p.cpu?'CPU '+cpuMind(p):_T('You')}</div>${status}</div></div>
-    <div class="rc-fate">${interim?`<div>${S.exhib?_T`<b>${row.f} CF</b> · exhibition: ${p.alive?_T('still standing when the bout was called'):_T('pulled from the sand by the doctors — no Fate is drawn')}`:_T`<b>${row.f} CF</b> carried into the next event`}</div>`:`${fi!=null?cardHTML('f:'+fi,'md'):''}<div><div class="rc-fname">${esc(row.fate[0])}</div><table class="fmath">${fb.lines.map(([a,v])=>`<tr><td>${esc(a)}</td><td class="n">${v}</td></tr>`).join('')}<tr class="tot"><td>${_T`Final Fate score`}</td><td class="n">${row.f}</td></tr></table>${/Thumb/.test(row.fate[0])?`<div class="rc-sub">${esc(row.fate[1])}</div>`:''}${p.mgrGid?'':`<div class="rc-sub">${survives?(row.f>=50?_T('Free, or back for glory: can be saved in the Ludus.'):_T('Survives to the Ludus Flavius: can be saved.')):p.retired?_T('Retired: this character is gone.'):_T('Does not survive. Any saved record or missio for this character ends.')}</div>`}</div>`}</div>
+    <div class="rc-fate">${interim?`<div>${S.exhib?_T`<b>${cfAmt87(row.f)}</b> · exhibition: ${p.alive?_T('still standing when the bout was called'):_T('pulled from the sand by the doctors — no Fate is drawn')}`:_T`<b>${cfAmt87(row.f)}</b> carried into the next event`}</div>`:`${fi!=null?cardHTML('f:'+fi,'md'):''}<div><div class="rc-fname">${esc(row.fate[0])}</div><table class="fmath">${fb.lines.map(([a,v])=>`<tr><td>${esc(a)}</td><td class="n">${cfAmt87(v)}</td></tr>`).join('')}<tr class="tot"><td>${_T`Final Fate score`}</td><td class="n">${cfAmt87(row.f)}</td></tr></table>${/Thumb/.test(row.fate[0])?`<div class="rc-sub">${esc(row.fate[1])}</div>`:''}${p.mgrGid?'':`<div class="rc-sub">${survives?(row.f>=50?_T('Free, or back for glory: can be saved in the Ludus.'):_T('Survives to the Ludus Flavius: can be saved.')):p.retired?_T('Retired: this character is gone.'):_T('Does not survive. Any saved record or missio for this character ends.')}</div>`}</div>`}</div>
     <details class="rc-more"><summary>${_T`Event stats`}</summary><div class="rc-stats">${stats.map(([a,v])=>`<span><b>${v}</b>${a}</span>`).join('')}</div></details>
-    ${(st.spectCF||st.spectOffers)?`<div class="rc-sub">${_T`🏟 The stands (${houseHTML(S.attendance||0,S.seed,S.locIdx)} attended): <b>+${st.spectCF||0} CF</b> in section cheers${st.spectOffers?_T` · <b>${st.spectOffers}</b> offering${st.spectOffers>1?'s':''} thrown, worth ~<b>${st.spectVal||0} coin</b>`:''}${(S.attendance||0)>8?_T(' · cheers scaled for the big house'):''}.`}</div>`:''}
+    ${(st.spectCF||st.spectOffers)?`<div class="rc-sub">${_T`🏟 The stands (${houseHTML(S.attendance||0,S.seed,S.locIdx)} attended): <b>${cfAmt87('+'+(st.spectCF||0))}</b> in section cheers${st.spectOffers?_T` · <b>${st.spectOffers}</b> offering${st.spectOffers>1?'s':''} thrown, worth ~<b>${coinAmt87(st.spectVal||0)}</b>`:''}${(S.attendance||0)>8?_T(' · cheers scaled for the big house'):''}.`}</div>`:''}
     ${pr}${feel?`<div class="rc-sub">${feel}</div>`:''}
     ${p.mgrGid&&S.exhib?`<div class="rc-sub">${_T`Exhibition: no Fate — back to their ludus either way.`}</div>`:p.mgrGid?`<div class="rc-sub">${_T`Manager mode fighter: this Fate applies in the league too${survives?'.':_T(' — unless their lanista pays the editor blood money (settled on Match Week).')}`}</div>`:survives&&isCustomCls(p.cls)?`<div class="rc-sub"><span class="cbadge">✦ custom</span> ${_T`Result logged on ${esc(p.name)}'s character sheet (Creator Studio).`}</div>`:row.freedDone?`<div class="rc-sub"><span class="badge gold">${_T`🗡 Freed`}</span> ${_T`${esc(p.name)} takes the rudis and leaves the sands forever — memorialized among the <b>Liberti</b> (the Annals).`}</div>`:saveBit+freeBit}
   </div>`;
@@ -212,7 +212,7 @@ async function gameOver(winners,reason){
   if(!interim)await updateCrowdAfterEvent(wset).catch(()=>{}); // the regulars remember
   try{if(typeof bestiaryTally==='function'&&!interim)bestiaryTally()}catch(e){} // the keepers update the bestiary's ledgers
   let extra='';
-  if(S.fest&&S.fest.stage===2){const top=[...rows].sort((a,b)=>b.f-a.f)[0];top.f+=5;top.champ=true;top.fate=fateFor(top.f);extra=`<p>${_T`<b>${esc(top.p.name)}</b> is crowned festival champion (+5 CF).`}</p>`}
+  if(S.fest&&S.fest.stage===2){const top=[...rows].sort((a,b)=>b.f-a.f)[0];top.f+=5;top.champ=true;top.fate=fateFor(top.f);extra=`<p>${_T`<b>${esc(top.p.name)}</b> is crowned festival champion (${cfAmt87('+5')}).`}</p>`}
   log(winners.length?`${winners.map(nm).join(' & ')} ${winners.length>1?'win':'wins'} ${ev.n}! ${reason}`:reason,'big');
   if(!interim){recordEvent(rows).catch(()=>{});logCustomChars(rows).catch(()=>{})}
   // THE GATE OF LIFE (v0.19): a human-run gladiator who survives but leaves badly hurt — severed
@@ -225,13 +225,13 @@ async function gameOver(winners,reason){
     x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);
     if(rec){rec.status='infirmary';rec.infirm={wait:0,need:sev.length?_T('the Blessings of Hygeia'):_T('a Medicus regimen'),cost:(sev.length?HYGEIA*sev.length:0)+MEDICUS};
       await Store.put('gladiators',rec.id||p.saved,rec).catch(()=>{});await loadLudus();
-      log(_T`${nm(p)} is carried through the Gate of Life to the <b>Ludus infirmary</b> — saved, but they need ${rec.infirm.need} (${rec.infirm.cost} coin) before they can fight again. Left untended too long, wounds write their own endings.`,'big')}}
+      log(_T`${nm(p)} is carried through the Gate of Life to the <b>Ludus infirmary</b> — saved, but they need ${rec.infirm.need} (${coinAmt87(rec.infirm.cost)}) before they can fight again. Left untended too long, wounds write their own endings.`,'big')}}
   let mres=null;if(S.missio&&!interim)mres=await advanceMissio(rows);
   // roguelike Ludus: summoned gladiators update automatically at the end of every event they fight in.
   // Survive and the record grows; fall short and the record is struck for good. The sand keeps what it takes.
   if(!interim)for(const x of rows){const p=x.p;if(!p.saved)continue;
     if(x.thumbHide||x.savedDone)continue; /* v0.80: the Gate of Life already wrote this record */ // deferred until they roll the die in the results window
-    if(aliveInUniverse(x)){x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);if(rec)log(_T`${nm(p)}'s Ludus record updates automatically: ${rec.cf} CF, returns with ${rec.carry}.`)}
+    if(aliveInUniverse(x)){x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);if(rec)log(_T`${nm(p)}'s Ludus record updates automatically: ${cfAmt87(rec.cf)}, returns with ${rec.carry}.`)}
     else if(!(S.missio&&(!p.cpu||(typeof missioHero==='function'&&p===missioHero())))){await markFallen(p,x).catch(()=>{});log(_T`${nm(p)} did not survive; their Ludus record is struck from the rolls for good.`,'bad')}}
   if(G!==S)return;
   await loadLudus().catch(()=>{});
@@ -243,7 +243,7 @@ async function gameOver(winners,reason){
     <div class="rtabs seg" role="tablist"><button type="button" data-rtab="res" class="on">${_T`Results &amp; Fates`}</button><button type="button" data-rtab="graph">${_T`Performance graph`}</button><button type="button" data-rtab="fates">${_T`⚖️ The Fates table`}</button></div>
     ${wagers.length?(typeof wagerPanelHTML==='function'?wagerPanelHTML(wagers):`<div class="card2" style="margin-bottom:10px"><div class="sect" style="margin-top:0">${_T`Wagers`}</div>${wagers.map(w=>`<div style="font-size:13.5px">${w}</div>`).join('')}</div>`):''}
     <div id="rtab-res"><div class="rgrid">${ranked.map((x,i)=>resultCard(x,ord[i]||'',interim)).join('')}</div>
-    <p class="hint">${_T`Final Fate score = Crowd Favor held, −5 per Mandata Flavi still hidden; winners add the event reward, 5 CF per 3 trophies, 2 CF per Flavius item, 15 for a held Golden Eagle and 10 for a Damnatio win. Gladiators slain by beasts already lost 5 CF when they fell.`}</p></div>
+    <p class="hint">${_T`Final Fate score = Crowd Favor held, −5 per Mandata Flavi still hidden; winners add the event reward, ${cfAmt87(5)} per 3 trophies, ${cfAmt87(2)} per Flavius item, 15 for a held Golden Eagle and 10 for a Damnatio win. Gladiators slain by beasts already lost ${cfAmt87(5)} when they fell.`}</p></div>
     <div id="rtab-graph" hidden><div id="perfWrap">${perfTabs('s')+perfChartHTML('s')}</div></div><div id="rtab-fates" hidden>${fatesHTML()}</div>`;
   const btns=[];
   if(interim&&S.fest)btns.push({label:_T('Continue the festival'),sub:_T('Classic Elimination'),value:'fest',primary:1});
@@ -269,15 +269,15 @@ async function gameOver(winners,reason){
           thumbRitual(fz,{name:x.p.name,f:x.f,d6:d6v,d12:x.fate.d12||1,d12Fate:x.fate.sub}).then(()=>{const b3=document.createElement('button');b3.className='btn';b3.type='button';b3.textContent=_T('Continue');b3.onclick=()=>done('thumb:'+x.p.id);fz.querySelector('.tr-body').appendChild(b3);setTimeout(()=>{if(b3.isConnected)done('thumb:'+x.p.id)},4500)})}
         else done('thumb:'+th.dataset.thumb)}})}});
     if(v==='export'){await exportLog();continue}
-    if(v==='saveall'){for(const x of rows){if(!aliveInUniverse(x)||x.savedDone||x.thumbHide||x.p.mgrGid)continue;x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);if(rec)log(_T`${nm(x.p)} is saved in the Ludus Flavius with ${rec.cf} CF (returns with ${rec.carry}).`,'big')}
+    if(v==='saveall'){for(const x of rows){if(!aliveInUniverse(x)||x.savedDone||x.thumbHide||x.p.mgrGid)continue;x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);if(rec)log(_T`${nm(x.p)} is saved in the Ludus Flavius with ${cfAmt87(rec.cf)} (returns with ${rec.carry}).`,'big')}
       saveAllBtn.disabled=true;saveAllBtn.label=_T('✓ All survivors saved');saveAllBtn.sub=_T('see them in the Ludus Flavius');continue}
-    if(typeof v==='string'&&v.startsWith('save:')){const x=rows.find(r=>r.p.id===+v.slice(5));if(x&&!x.savedDone){x.savedDone=true;const rec=await saveGladiator(x);log(_T`${nm(x.p)} is saved in the Ludus Flavius with ${rec.cf} CF (returns with ${rec.carry}).`,'big')}continue}
+    if(typeof v==='string'&&v.startsWith('save:')){const x=rows.find(r=>r.p.id===+v.slice(5));if(x&&!x.savedDone){x.savedDone=true;const rec=await saveGladiator(x);log(_T`${nm(x.p)} is saved in the Ludus Flavius with ${cfAmt87(rec.cf)} (returns with ${rec.carry}).`,'big')}continue}
     if(typeof v==='string'&&v.startsWith('thumb:')){const x=rows.find(r=>r.p.id===+v.slice(6));
       if(x&&x.thumbHide&&!x.thumbShown){x.thumbShown=true;
         log(_T`The die leaves ${edName()}’s hand… <b>${esc(x.fate[1])}</b>`,'big');
         flaviusMood&&flaviusMood(/spared/.test(x.fate[0])?'cheer':'laugh',4200,.9);
         // now the deferred roguelike consequence lands
-        if(x.p.saved){if(aliveInUniverse(x)){x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);if(rec)log(_T`${nm(x.p)}'s Ludus record updates automatically: ${rec.cf} CF, returns with ${rec.carry}.`)}
+        if(x.p.saved){if(aliveInUniverse(x)){x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);if(rec)log(_T`${nm(x.p)}'s Ludus record updates automatically: ${cfAmt87(rec.cf)}, returns with ${rec.carry}.`)}
           else if(!(S.missio&&(!x.p.cpu||(typeof missioHero==='function'&&x.p===missioHero())))){await markFallen(x.p,x).catch(()=>{});log(_T`${nm(x.p)} did not survive the thumb; their Ludus record is struck from the rolls for good.`,'bad')}}}
       continue}
     if(typeof v==='string'&&v.startsWith('free:')){const x=rows.find(r=>r.p.id===+v.slice(5));if(x&&!x.freedDone){x.freedDone=true;x.savedDone=true;await claimFreedom(x).catch(e=>console.error(e));log(_T`${nm(x.p)} takes the <b>rudis</b> and walks free, to a standing crowd. Their name joins the Liberti.`,'big')}continue}
@@ -347,7 +347,7 @@ async function infirmaryTick(){
         CROWD_CACHE.push(r);Store.put('crowd',r.id,r).catch(()=>{})}
       log(_T`🏥 <b>${esc(g.name)}</b> limps out of the infirmary in the night, wounds and all — gone from the rolls. The ushers say someone very like them now heckles from the cheap seats.`,'bad')}
     else{g.status='active';g.cf=Math.max(0,(g.cf||0)-3);g.carry=Math.min(25,Math.floor((g.cf||0)/2));delete g.infirm;await Store.put('gladiators',g.id,{...g}).catch(()=>{});
-      log(_T`🏥 <b>${esc(g.name)}</b> grits their teeth and walks out of the infirmary HEALED by sheer spite — back on the rolls (−3 CF for the limp).`)}}
+      log(_T`🏥 <b>${esc(g.name)}</b> grits their teeth and walks out of the infirmary HEALED by sheer spite — back on the rolls (${cfAmt87('−3')} for the limp).`)}}
   await loadLudus().catch(()=>{});
 }
 /* recordEvent — after a counted event: the latest-playthrough card, Infamis rows for winners, per-event high scores, Hall of Flavius progress, then sponsors, the Road and achievements. Custom events only update the latest card. */
@@ -460,7 +460,7 @@ function libertiCareerHTML(entry){const c=entry.career||{events:entry.events||1,
     <div class="rc-stats">${T(fans?'≈'+k(fans*1000):'—',_T('👥 Fans'),_T('Named regulars across the empire who still follow them — each stands for about a thousand Romans'))}${T(fame,_T('★ Fame'),_T('Renown across the empire, 0–100'))}${c.dmg!=null?T(c.dmg,_T('🗡 Damage dealt')):''}${c.taken!=null?T(c.taken,_T('🩸 Damage taken')):''}
       ${T(c.best||entry.cf,_T('Best Fate CF'))}${c.cfSum!=null&&!c.legacy?T(c.cfSum,_T('Career Fate CF'),_T('Every Fate score of every event, added up')):''}${T(c.coin||0,_T('Coin'))}${c.house?T(k(c.house),_T('🏟 Watched by'),_T('Everyone who ever watched them fight')):''}${c.arenas?T(c.arenas,_T('Arenas')):''}</div>
     ${c.history&&c.history.length>1?`<div class="lc-road" title="${_T`Their last events, oldest first`}">${c.history.map(h=>`<span class="${h.won?'w':''}" title="${_T`${esc(h.ev)} · ${esc(h.loc)} · ${h.cf} CF`}">${h.won?'🏆':'·'}${h.cf}</span>`).join('')}</div>`:''}
-    <div class="rc-sub" style="margin-top:4px">${_T`Took the rudis with <b>${entry.cf} CF</b> after ${esc(entry.event)}${entry.loc?' at '+esc(entry.loc):''}${entry.missio?_T(' · missio fulfilled'):''}.`}</div></div>`}
+    <div class="rc-sub" style="margin-top:4px">${_T`Took the rudis with <b>${cfAmt87(entry.cf)}</b> after ${esc(entry.event)}${entry.loc?' at '+esc(entry.loc):''}${entry.missio?_T(' · missio fulfilled'):''}.`}</div></div>`}
 /* libertiAdd — adds a freed gladiator to the Liberti (newest first, 80 kept) and grants the freedom achievement for your own. */
 async function libertiAdd(entry){const h=(await Store.getDoc('hall','liberti').catch(()=>null))||{list:[]};if(h.list.some(x=>x.name===entry.name&&x.date===entry.date))return;h.list.unshift(entry);h.list=h.list.slice(0,80);await Store.put('hall','liberti',h);
   try{const A=await achLoad();if(entry.mine)await achGrant(A,'freed');await Store.put('hall','ach',A)}catch(e){}}
@@ -549,12 +549,12 @@ async function advanceMissio(rows){
     rec.rr+=p.coin;rec.cfCarry=Math.min(25,Math.floor(x.f/2));rec.severed=['rarm','larm','rleg','lleg'].filter(l=>p.hp[l]<=0);rec.step++;
     if(rec.step>=5){const req=MISSIOS[rec.cls].req||{};const ok=(!req.rr||rec.rr>=req.rr)&&(!req.trophies||rec.trophies>=req.trophies);
       rec.status=ok?'complete':'incomplete';
-      msg=ok?_T`<b>Missio complete!</b> ${rec.name} claims the Missio Spoils: a Rudis, a Laurel Crown, ${rec.rr} coin from the Royal Reserve, freedom, and a hearty “Gratulationes”.`:_T`${rec.name} finished all five events but missed the missio requirement (${req.rr?_T`${rec.rr}/${req.rr} coin in RR`:''}${req.trophies?_T`${rec.trophies}/${req.trophies} trophies`:''}).`}
-    else msg=_T`${rec.name} advances to step ${rec.step+1} of their missio, carrying ${rec.cfCarry} CF. Royal Reserve: ${rec.rr} coin.${rec.severed.length?_T` Severed limbs persist: ${rec.severed.map(l=>LOCN[l]).join(', ')}.`:''}`;
+      msg=ok?_T`<b>Missio complete!</b> ${rec.name} claims the Missio Spoils: a Rudis, a Laurel Crown, ${coinAmt87(rec.rr)} from the Royal Reserve, freedom, and a hearty “Gratulationes”.`:_T`${rec.name} finished all five events but missed the missio requirement (${req.rr?_T`${rec.rr}/${req.rr} coin in RR`:''}${req.trophies?_T`${rec.trophies}/${req.trophies} trophies`:''}).`}
+    else msg=_T`${rec.name} advances to step ${rec.step+1} of their missio, carrying ${cfAmt87(rec.cfCarry)}. Royal Reserve: ${coinAmt87(rec.rr)}.${rec.severed.length?_T` Severed limbs persist: ${rec.severed.map(l=>LOCN[l]).join(', ')}.`:''}`;
   } else {
     const dead=p.retired||!(x.f>=20||spared);
     if(dead){await Store.del('missios',rec.id);if(rec.gladId)await Store.del('gladiators',rec.gladId);return {rec,next:false,msg:_T`${rec.name} did not survive. The missio and the character are struck from the rolls.`}}
-    rec.status='ended';msg=_T`${rec.name}'s missio ends here (this step had to be won). ${rec.name} survives with ${x.f} CF and can still be saved in the Ludus. The Royal Reserve is forfeit.`}
+    rec.status='ended';msg=_T`${rec.name}'s missio ends here (this step had to be won). ${rec.name} survives with ${cfAmt87(x.f)} and can still be saved in the Ludus. The Royal Reserve is forfeit.`}
   await Store.put('missios',rec.id,rec);
   if(rec.gladId&&pass){const g=LUDUS_CACHE.find(x=>x.id===rec.gladId);if(g){p.saved=g.id;await saveGladiator(x);x.savedDone=true}}
   return {rec,next:rec.status==='active',msg};
@@ -575,7 +575,7 @@ function fatesHTML(){
     return done+`<h4>${_T`The Fates (p.54-55)`}</h4><table class="tally"><tr><th>CF</th><th></th><th>${_T`Fate`}</th><th></th></tr>${FATES.map(f=>`<tr><td class="n" style="white-space:nowrap">${f.hi>999?f.lo+'+':f.lo===f.hi?f.lo:f.lo+'–'+f.hi}</td><td>${cardHTML('f:'+f.img,'sm')}</td><td><b>${f.g} · ${f.n}</b><br><span style="color:var(--muted);font-size:13px">${f.t}</span></td><td>${who(f)}</td></tr>`).join('')}</table>`}
   const live=S&&S.players&&S.phase!=='setup'?S.players.map(player=>{const fall=finalCF(player,false),win=finalCF(player,true);return {p:player,fall,win,rf:fateRow(fall),rw:fateRow(win)}}):[];
   const who=f=>live.filter(x=>x.rf===f).map(x=>`<span class="badge" style="border-color:${x.p.color}">${x.p.name}</span>`).join(' ')+live.filter(x=>x.rw===f&&x.rw!==x.rf).map(x=>`<span class="badge gold" title="${_T`if they win`}">${_T`${x.p.name} (if win)`}</span>`).join(' ');
-  return `${live.length?`<h4>${_T`Where each gladiator stands right now`}</h4><table class="tally"><tr><th>${_T`Gladiator`}</th><th>${_T`CF now`}</th><th>${_T`If they fall`}</th><th>${_T`If they win`}</th></tr>${live.map(x=>`<tr><td>${nm(x.p)}</td><td class="n">${x.p.cf}</td><td>${_T`${x.fall} CF · <b>${x.rf.n}</b>`}</td><td>${_T`${x.win} CF · <b>${x.rw.n}</b>`}</td></tr>`).join('')}</table><p style="margin-top:6px">${_T`“If they fall” subtracts 5 CF per unrevealed Mandata Flavi. “If they win” adds the event reward, 5 CF per 3 trophies and 2 CF per Flavius item.`}</p>`:''}
+  return `${live.length?`<h4>${_T`Where each gladiator stands right now`}</h4><table class="tally"><tr><th>${_T`Gladiator`}</th><th>${_T`CF now`}</th><th>${_T`If they fall`}</th><th>${_T`If they win`}</th></tr>${live.map(x=>`<tr><td>${nm(x.p)}</td><td class="n">${x.p.cf}</td><td>${_T`${cfAmt87(x.fall)} · <b>${x.rf.n}</b>`}</td><td>${_T`${cfAmt87(x.win)} · <b>${x.rw.n}</b>`}</td></tr>`).join('')}</table><p style="margin-top:6px">${_T`“If they fall” subtracts ${cfAmt87(5)} per unrevealed Mandata Flavi. “If they win” adds the event reward, ${cfAmt87(5)} per 3 trophies and ${cfAmt87(2)} per Flavius item.`}</p>`:''}
   <h4>${_T`The Fates (p.54-55)`}</h4><table class="tally"><tr><th>CF</th><th></th><th>${_T`Fate`}</th><th></th></tr>${FATES.map(f=>`<tr><td class="n" style="white-space:nowrap">${f.hi>999?f.lo+'+':f.lo===f.hi?f.lo:f.lo+'–'+f.hi}</td><td>${cardHTML('f:'+f.img,'sm')}</td><td><b>${f.g} · ${f.n}</b><br><span style="color:var(--muted);font-size:13px">${f.t}</span></td><td>${who(f)}</td></tr>`).join('')}</table>`;
 }
 if($('#btnFates'))$('#btnFates').onclick=()=>{if(modalBusy())return;modal(_T('Fate'),fatesHTML(),[{label:_T('Close'),value:1}],{wide:1})};
@@ -603,7 +603,7 @@ async function hallHTML(tab){
     const h=(await Store.getDoc('hall','liberti'))||{list:[]};
     return tabs+`<p>${_T`The <b>Liberti</b>: gladiators who won an event with <b>50+ Crowd Favor</b> and took the <b>rudis</b> — the wooden sword of freedom — instead of returning to the Ludus. They have left the sands, and the game, forever. Only their glory remains.`}</p>
     ${h.list.length?`<div class="rgrid">${h.list.map(r=>{const col=CLASSES[r.cls]?CLASSES[r.cls].color:'#c9a458';
-      return `<div class="rcard" style="--pc:${col}"><div class="rc-top">${r.portrait?portraitHTML({name:r.name,portrait:r.portrait,color:col},'sm'):CLASSES[r.cls]?figureHTML(tokenForCls(r.cls),76):''}<div><div class="rc-name">${esc(r.name)}</div><div class="rc-sub">${_T`${esc(r.clsName||'')} · freed ${esc(r.date)}${r.missio?_T(' · missio fulfilled'):''}`}</div><span class="badge gold">${_T`🗡 Rudis · ${r.cf} CF`}</span></div></div>
+      return `<div class="rcard" style="--pc:${col}"><div class="rc-top">${r.portrait?portraitHTML({name:r.name,portrait:r.portrait,color:col},'sm'):CLASSES[r.cls]?figureHTML(tokenForCls(r.cls),76):''}<div><div class="rc-name">${esc(r.name)}</div><div class="rc-sub">${_T`${esc(r.clsName||'')} · freed ${esc(r.date)}${r.missio?_T(' · missio fulfilled'):''}`}</div><span class="badge gold">${_T`🗡 Rudis · ${cfAmt87(r.cf)}`}</span></div></div>
       <div class="rc-sub">${_T`${r.league?esc(r.league):_T`Won ${esc(r.event)} at ${esc(r.loc)}`} — and walked out of the arena to a standing crowd, the wooden sword in hand.`}</div>
       ${libertiCareerHTML(r)}</div>`}).join('')}</div>`:`<p style="color:var(--muted)">${_T`No one has claimed the wooden sword yet. Win an event with 50+ CF and choose freedom over the Ludus.`}</p>`}`;
   }
@@ -621,9 +621,9 @@ async function hallHTML(tab){
       <p class="hint" style="margin-bottom:0">${_T`Shown whether they won or fell. The Fate score is what the Infamis ranks: the CF a gladiator held at the end, plus the winner's bonuses — which is why a winner's board card (held CF) reads lower than this.`}</p></div>`:'')+
       `<p>${_T`The <b>top 20</b> Fate scores of <b>${monthName(mo)}</b>, ordered by final Crowd Favor. The board resets at the start of every month (${Math.ceil(days/864e5)} day${Math.ceil(days/864e5)===1?'':'s'} left); each month's best is kept below as its champion. RR is the Royal Reserve; FF marks Flavius Fidelis (a revealed Mandata Flavi). Custom characters and custom events are not eligible.${Store.db?_T(' Records are shared with everyone who opens this page.'):_T(' Records are kept in this browser.')}`}</p>
       <div style="overflow-x:auto"><table class="tally"><tr><th>#</th><th>${_T`Character`}</th><th>Event / Location</th><th>${_T`Class`}</th><th>RR</th><th>FF</th><th>${_T`Final CF`}</th><th>🏟</th><th>${_T`Notes`}</th></tr>
-      ${rows.map((r,i)=>`<tr><td class="n">${i+1}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.event)} / ${esc(r.loc)}</td><td>${clsN(r)}</td><td class="n">${r.rr??''}</td><td>${r.ff?'✓':''}</td><td class="n" title="${r.held!=null?_T`held ${r.held} CF at the end`:''}">${_T`${r.cf} CF${r.held!=null&&r.held!==r.cf?`<br><span class="rc-sub">${_T`held ${r.held}`}</span>`:''}`}</td><td class="n">${r.att!=null?r.att+'K':'—'}</td><td style="color:var(--muted);font-size:13px">${esc(r.notes||'')} · ${esc(r.date||'')}</td></tr>`).join('')||`<tr><td colspan="9" style="color:var(--muted)">${_T`No winners recorded yet in ${monthName(mo)}.`}</td></tr>`}
-      ${ex.map(r=>`<tr style="opacity:.6;font-style:italic"><td></td><td>${r.name}</td><td>${r.event} / ${r.loc}</td><td>${CLASSES[r.cls].name}</td><td></td><td>${r.ff?'✓':''}</td><td class="n">${_T`${r.cf} CF`}</td><td></td><td>${_T`${r.notes} (rulebook example)`}</td></tr>`).join('')}</table></div>
-      ${Object.keys(past.months||{}).length?`<h4>${_T`Past monthly champions`}</h4><table class="tally"><tr><th>${_T`Month`}</th><th>${_T`Champion`}</th><th>${_T`Class`}</th><th>${_T`Event`}</th><th>${_T`Final CF`}</th></tr>${Object.entries(past.months).sort((a,b)=>b[0].localeCompare(a[0])).map(([m,r])=>`<tr><td>${m==='earlier'?_T('Earlier'):monthName(m)}</td><td><b>${esc(r.name)}</b>${r.cpu?' · CPU':''}</td><td>${clsN(r)}</td><td>${esc(r.event||'')} / ${esc(r.loc||'')}</td><td class="n">${_T`${r.cf} CF`}</td></tr>`).join('')}</table>`:''}`;
+      ${rows.map((r,i)=>`<tr><td class="n">${i+1}</td><td><b>${esc(r.name)}</b></td><td>${esc(r.event)} / ${esc(r.loc)}</td><td>${clsN(r)}</td><td class="n">${r.rr??''}</td><td>${r.ff?'✓':''}</td><td class="n" title="${r.held!=null?_T`held ${r.held} CF at the end`:''}">${_T`${cfAmt87(r.cf)}${r.held!=null&&r.held!==r.cf?`<br><span class="rc-sub">${_T`held ${r.held}`}</span>`:''}`}</td><td class="n">${r.att!=null?r.att+'K':'—'}</td><td style="color:var(--muted);font-size:13px">${esc(r.notes||'')} · ${esc(r.date||'')}</td></tr>`).join('')||`<tr><td colspan="9" style="color:var(--muted)">${_T`No winners recorded yet in ${monthName(mo)}.`}</td></tr>`}
+      ${ex.map(r=>`<tr style="opacity:.6;font-style:italic"><td></td><td>${r.name}</td><td>${r.event} / ${r.loc}</td><td>${CLASSES[r.cls].name}</td><td></td><td>${r.ff?'✓':''}</td><td class="n">${cfAmt87(r.cf)}</td><td></td><td>${_T`${r.notes} (rulebook example)`}</td></tr>`).join('')}</table></div>
+      ${Object.keys(past.months||{}).length?`<h4>${_T`Past monthly champions`}</h4><table class="tally"><tr><th>${_T`Month`}</th><th>${_T`Champion`}</th><th>${_T`Class`}</th><th>${_T`Event`}</th><th>${_T`Final CF`}</th></tr>${Object.entries(past.months).sort((a,b)=>b[0].localeCompare(a[0])).map(([m,r])=>`<tr><td>${m==='earlier'?_T('Earlier'):monthName(m)}</td><td><b>${esc(r.name)}</b>${r.cpu?' · CPU':''}</td><td>${clsN(r)}</td><td>${esc(r.event||'')} / ${esc(r.loc||'')}</td><td class="n">${cfAmt87(r.cf)}</td></tr>`).join('')}</table>`:''}`;
   }
   if(tab==='hall'){
     const hall=(await Store.getDoc('hall','progress'))||{locs:[],killed:[],chars:{},classicWin:false};
@@ -689,7 +689,7 @@ async function missioFromLudus(glad){
 async function seedRun(btn){if(window._seeding)return;window._seeding=1;const box=document.getElementById('seedProg');if(!box){window._seeding=0;return}
   box.innerHTML=`<div class="seedhd">${_T`<b>📜 The scribes are at work</b>`} <span class="rc-sub" id="seedCount"></span></div><div class="seedbar"><i id="seedFill"></i></div><div class="seedcity" id="seedCity">${_T`Opening the archive…`}</div><div class="seedrec" id="seedRec"></div>`;
   const cb=(done,total,k,rec)=>{const f=document.getElementById('seedFill');if(f)f.style.width=Math.round(done/total*100)+'%';const c=document.getElementById('seedCount');if(c)c.textContent=`${done} / ${total}`;
-    if(rec){const r=document.getElementById('seedRec');if(r){const el=document.createElement('div');el.className='seedhit';el.innerHTML=_T`🏆 <b>${esc(EVENTS[k].n)}</b> — ${esc(rec.name)} (${esc(rec.clsName||'')}), <b>${rec.cf} CF</b> at ${esc(rec.loc||'')}`;r.prepend(el);setTimeout(()=>el.classList.add('out'),2600);setTimeout(()=>el.remove(),3400)}}};
+    if(rec){const r=document.getElementById('seedRec');if(r){const el=document.createElement('div');el.className='seedhit';el.innerHTML=_T`🏆 <b>${esc(EVENTS[k].n)}</b> — ${esc(rec.name)} (${esc(rec.clsName||'')}), <b>${cfAmt87(rec.cf)}</b> at ${esc(rec.loc||'')}`;r.prepend(el);setTimeout(()=>el.classList.add('out'),2600);setTimeout(()=>el.remove(),3400)}}};
   cb.start=(k,done,total)=>{const E=EVENTS[k];const L=LOCATIONS[E.loc||6];const el=document.getElementById('seedCity');if(el)el.innerHTML=`${pickOne([_T('Copying the scrolls of'),_T('Unrolling the ledgers of'),_T('Reading the tallies of'),_T('Dusting off the records of')])} <b>${esc(L?L.n:_T('Roma'))}</b> — ${esc(E.n)}`;const c=document.getElementById('seedCount');if(c)c.textContent=`${done} / ${total}`};
   try{await seedEventRecords(cb)}finally{window._seeding=0}
   const el=document.getElementById('seedCity');if(el)el.innerHTML=_T('✔ Every scroll is copied.');setTimeout(()=>{if($('#hallBody'))openHall('events')},1400)}

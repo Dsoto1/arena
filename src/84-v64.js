@@ -36,22 +36,22 @@ advanceMissio=async function(rows){
     rec.rr+=p.coin;rec.cfCarry=Math.min(25,Math.floor(x.f/2));rec.severed=['rarm','larm','rleg','lleg'].filter(l=>p.hp[l]<=0&&((rec.severed||[]).includes(l)||!(p.modLoss||[]).includes(l)));rec.step++;
     if(rec.step>=5){const req=MISSIOS[rec.cls].req||{};const ok=(!req.rr||rec.rr>=req.rr)&&(!req.trophies||rec.trophies>=req.trophies);
       rec.status=ok?'complete':'incomplete';
-      msg=ok?head(_T('Missio complete'),'ok')+_T`${esc(rec.name)} claims the Missio Spoils: a Rudis, a Laurel Crown, ${rec.rr} coin from the Royal Reserve, freedom, and a hearty “Gratulationes”.`
+      msg=ok?head(_T('Missio complete'),'ok')+_T`${esc(rec.name)} claims the Missio Spoils: a Rudis, a Laurel Crown, ${coinAmt87(rec.rr)} from the Royal Reserve, freedom, and a hearty “Gratulationes”.`
         :head(_T('Missio incomplete'),'bad')+_T`${esc(rec.name)} finished all five events but missed the requirement (${req.rr?_T`${rec.rr}/${req.rr} coin in RR`:''}${req.trophies?_T`${rec.trophies}/${req.trophies} trophies`:''}).`}
-    else msg=head(_T`Step ${rec.step} of 5 complete`,'ok')+_T`${esc(rec.name)} moves on to step ${rec.step+1}, carrying ${rec.cfCarry} CF. Royal Reserve: ${rec.rr} coin.${rec.severed.length?_T` Severed limbs persist: ${rec.severed.map(l=>LOCN[l]).join(', ')}.`:''}`;
+    else msg=head(_T`Step ${rec.step} of 5 complete`,'ok')+_T`${esc(rec.name)} moves on to step ${rec.step+1}, carrying ${cfAmt87(rec.cfCarry)}. Royal Reserve: ${coinAmt87(rec.rr)}.${rec.severed.length?_T` Severed limbs persist: ${rec.severed.map(l=>LOCN[l]).join(', ')}.`:''}`;
   } else if(dead){
     rec.status='fallen';rec.rr=0;
     if(rec.gladId&&p.saved){try{await markFallen(p,x)}catch(e){console.error(e)}}
     msg=head(_T('Missio failed'),'bad')+_T`${esc(rec.name)} ${fell?_T('was eliminated'):_T('did not survive the Fates')} at step ${rec.step+1} of 5. Their story ends here${rec.gladId?_T(' — they are marked fallen in the Ludus'):''}, and the Royal Reserve is lost.`;
   } else {
-    rec.status='failed';const why=st.win?_T('this step had to be won'):noCF?_T('they did not make it to the end'):_T`${x.f} CF — 20 were needed, or a win`;
+    rec.status='failed';const why=st.win?_T('this step had to be won'):noCF?_T('they did not make it to the end'):_T`${cfAmt87(x.f)} — 20 were needed, or a win`;
     msg=head(_T('Missio failed'),'bad')+_T`${esc(rec.name)} survives, but the missio ends at step ${rec.step+1} of 5 (${why}). The Royal Reserve is forfeit; ${esc(rec.name)} returns to the rolls.`}
   await Store.put('missios',rec.id,rec);
   if(rec.gladId&&pass){const g=LUDUS_CACHE.find(y=>y.id===rec.gladId);if(g){p.saved=g.id;await saveGladiator(x);x.savedDone=true}}
   return {rec,next:rec.status==='active',msg}};
 {const st=document.createElement('style');st.textContent=`.missiohd{font:400 22px var(--display);margin:4px 0 6px}.missiohd.bad b{color:var(--blood2)}.missiohd.ok b{color:var(--gold2)}`;document.head.appendChild(st)}
 /* the result card of a missio character with no Fate (a no-CF event) */
-{const base=resultCard;resultCard=function(x,place,interim){if(!interim&&x&&!x.fate){const h=base.call(this,x,place,true);return h.replace(/<b>[^<]*<\/b> carried into the next event/,_T`<b>${x.f} CF</b> · missio — no Fate in this event`)}return base.apply(this,arguments)}}
+{const base=resultCard;resultCard=function(x,place,interim){if(!interim&&x&&!x.fate){const h=base.call(this,x,place,true);return h.replace(/<b>[^<]*<\/b> carried into the next event/,_T`<b>${cfAmt87(x.f)}</b> · missio — no Fate in this event`)}return base.apply(this,arguments)}}
 /* ---------- chariots: the racer rides on their chariot token; the spares on the sand are the printed tokens ---------- */
 /* chTokFlat — a round token lying on the sand: the sheet cell drawn squashed to the iso floor */
 function chTokFlat(art,x,y,w){const im=typeof chTokImg==='function'?chTokImg():null;const i=CHTOK_IDX[art];if(!im||i==null)return false;const cw=im.naturalWidth/5,h=w*0.56;

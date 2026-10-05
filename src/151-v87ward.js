@@ -33,7 +33,7 @@ const BED_RULE87=()=>_T`🛏 A bed: full-pace healing, the physicians' cures (Me
 /* planRun87 — the week's turn of a bed patient's plan (same costs and effects as tapping the tile) */
 function planRun87(g,w,m){const i=g.inj;if(!i||i.war||!inBed76(g))return '';const p=planOf87(g);const left=Math.max(0,repCap()-(w.repair||0));const req=injReq(i);
   if(p==='bath'){if(g.bathWk===w.week||m.coin<5)return '';m.coin-=5;g.bathWk=w.week;i.until=Math.max(w.week,(i.until||w.week)-1);g.morale=clamp(g.morale+4,0,100);
-    if(i.until<=w.week&&req!=='surgeon'){delete g.inj;return _T`🛁 ${esc(g.name)}: a bathhouse day — healed.`}return _T`🛁 ${esc(g.name)}: a bathhouse day (5 coin), fit ${wkName(fitWeekOf(g))}.`}
+    if(i.until<=w.week&&req!=='surgeon'){delete g.inj;return _T`🛁 ${esc(g.name)}: a bathhouse day — healed.`}return _T`🛁 ${esc(g.name)}: a bathhouse day (${coinAmt87(5)}), fit ${wkName(fitWeekOf(g))}.`}
   if(p==='medic'){if(req==='surgeon'||g.medWk===w.week||left<MEDICUS||m.coin<MEDICUS)return '';m.coin-=MEDICUS;w.repair=(w.repair||0)+MEDICUS;g.medWk=w.week;g.morale=clamp(g.morale+12,0,100);delete g.inj;return _T`⚕ ${esc(g.name)}: the Medicus clears the wound.`}
   if(p==='surgeon'){if(req!=='surgeon'||left<SURGEON||m.coin<SURGEON)return '';m.coin-=SURGEON;w.repair=(w.repair||0)+SURGEON;
     if(Math.random()<.1){i.until=w.week+2;i.neglect=0;return _T`🔪 ${esc(g.name)}: the surgeon's knife slips — another week.`}delete g.inj;g.morale=clamp(g.morale+6,0,100);return _T`🔪 ${esc(g.name)}: the surgeon closes the wound.`}
@@ -72,7 +72,7 @@ wardHTML76=function(){const w=W_(),m=me();const ros=rosterOf(m);const beds=bedsC
     return `<div class="wd76cot ${i&&i.neglect?'bad':''}"><div class="wd76ct">${_T`🛏 Bed ${n}`}<button class="btn tksm" type="button" data-unbed76="${g.id}">${_T`Take out`}</button></div>
       <div class="wd76pt"><div class="wd76av">${P.av}</div><div>${P.info}${tr}</div></div>${i&&!i.war?bedTiles87(g):''}${hy}${done(P.done)}</div>`};
   const full=!free&&bench0.length;const vl=facLvl(m,'valet');const built=m.facWk===w.week;
-  const build=vl<3?`<button class="btn tksm" type="button" data-mg="build" data-id="valet" ${dis([built,_T`Your builders are already busy this week.`],needCoin(m,FAC_COST[vl]))}>${_T`🏗 Build Valetudinarium ${['I','II','III'][vl]}<small>${FAC_COST[vl]} coin · +1 bed</small>`}</button>`:`<span class="rc-sub">${_T`The Valetudinarium is complete.`}</span>`;
+  const build=vl<3?`<button class="btn tksm" type="button" data-mg="build" data-id="valet" ${dis([built,_T`Your builders are already busy this week.`],needCoin(m,FAC_COST[vl]))}>${_T`🏗 Build Valetudinarium ${['I','II','III'][vl]}<small>${coinAmt87(FAC_COST[vl])} · +1 bed</small>`}</button>`:`<span class="rc-sub">${_T`The Valetudinarium is complete.`}</span>`;
   const bench=hurt.map(g=>{const war=g.inj&&g.inj.war;const ser=!war&&serious76(g);const P=wardPatient76(g,w,m);
     const put=bedOK87(g)?`<div class="wd76w bed87">${ser?`<span class="wd76bad">${_T`🛏 Needs a bed — half-pace mending until then`}</span> `:''}<button class="btn tksm ${free?'primary':''}" type="button" data-bed76="${g.id}" ${free?'':_T`disabled title="Beds full — build another"`}>${_T`🛏 Put in bed`}</button></div>`:'';
     return `<div class="wd76bn ${ser?'ser':''}"><div class="wd76av sm">${P.av}</div><div class="wd76bi">${war?`<b>${esc(g.name)}</b> <span class="rc-sub">${_T`⚔ ${esc(g.inj.label)} · back ${wkName(g.inj.until)}`}</span>`:P.info}
@@ -84,7 +84,7 @@ wardHTML76=function(){const w=W_(),m=me();const ros=rosterOf(m);const beds=bedsC
       <button class="yd76b ${r?'on':''}" type="button" data-rest="${g.id}" title="${_T`No drills this week; fatigue −${FAT_REST} at the week's end`}">🛏 ${r?_T('Resting'):_T('Rest week')}<small>${r?_T('tap to cancel'):_T`no drills · → ${Math.max(0,f-FAT_REST)}`}</small></button></div>`}).join('');
   const wait=hurt.filter(g=>serious76(g)&&!(g.inj&&g.inj.war)).length;
   const top=`<div class="card2 wd76top">${_T`${typeof medicHTML76==='function'?medicHTML76():''}<span>🛏 <b>${beds.length} / ${N}</b> beds${wait?_T` · <b class="wd76bad">${wait} waiting</b>`:''}</span>`}
-    <span title="${_T`What your Medicus, surgeon and Hygeia's priests can still do this week; the bathhouse and Asclepius are outside help`}">${_T`🧑‍⚕️ Physicians <b>${left}</b> / ${cap} coin left ⓘ`}</span>
+    <span title="${_T`What your Medicus, surgeon and Hygeia's priests can still do this week; the bathhouse and Asclepius are outside help`}">${_T`🧑‍⚕️ Physicians <b>${left}</b> / ${coinAmt87(cap)} left ⓘ`}</span>
     <span class="rc-sub">${_T`🏗 Valetudinarium ${vl}/3 · more beds and budget`}</span></div>`;
   return `${top}<div class="sect">${_T`🛏 The ward`}</div><div class="rule87 rc-sub">${BED_RULE87()}</div><div class="wd76beds">${Array.from({length:N},(_,i)=>cot(beds[i],i+1)).join('')}</div>
     ${bench?`<div class="sect">${_T`🪑 The bench`} <span class="rc-sub">${_T`light wounds only · serious ones mend at half pace`}</span></div>${full?`<div class="card2 full87">${_T`<b>🛏 Beds full — build another</b> ${build}`}</div>`:''}<div class="wd76bench">${bench}</div>`:''}

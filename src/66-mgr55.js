@@ -64,7 +64,7 @@ function growthDigest(w){const sg=w.sgain||{};const parts=[];
   try{const w=W_();if(r!==false&&w&&w===w0&&!w.dead&&!w.tutorial){weeklyGrowth(w);growthDigest(w);saveWorld()}}catch(e){console.error(e)}return r}}
 /* ratingsHTML — the five ratings for a fighter card: exact for your fighters and anyone scouted twice, a range after one scouting, hidden before. */
 function ratingsHTML(g){const st=gStats(g);if(!st)return '';const w=W_(),pm=me();const mine=g.contract&&g.contract.mgr===pm.id;const sc=mine?3:(g.scout||0);
-  const b=statBonuses(st);const perkOf={spd:b.mv?_T`+${b.mv} movement`:'',str:b.dmg?_T`+${b.dmg} damage`:'',lck:b.coin?_T`+${b.coin} coin a turn`:'',cha:b.cf?_T`+${b.cf} CF a turn`:'',int:b.tierName?_T`${b.tierName} mind`:_T`plays ${b.diff==='hard'?_T('Hard'):b.diff==='normal'?_T('Normal'):_T('Easy')}`};
+  const b=statBonuses(st);const perkOf={spd:b.mv?_T`+${b.mv} movement`:'',str:b.dmg?_T`+${b.dmg} damage`:'',lck:b.coin?_T`${coinAmt87('+'+(b.coin))} a turn`:'',cha:b.cf?_T`${cfAmt87('+'+(b.cf))} a turn`:'',int:b.tierName?_T`${b.tierName} mind`:_T`plays ${b.diff==='hard'?_T('Hard'):b.diff==='normal'?_T('Normal'):_T('Easy')}`};
   const rows=STATS.map(([k,n,ic])=>{const v=st[k];const pct=Math.round((v-STAT_MIN)/(STAT_MAX-STAT_MIN)*100);const nb=nextBand(k,v);const xp=Math.round(((g.sxp||{})[k]||0)*100);
     const val=sc>=2?`${v}`:sc===1?`${Math.max(STAT_MIN,v-4)}–${Math.min(STAT_MAX,v+4)}`:'?';
     return `<span>${ic} ${n}</span><div class="meter${v>=96?' gold':''}" title="${sc>=2&&nb?_T`${nb-v} to the next band (${nb})`:''}"><i style="width:${sc?pct:0}%"></i></div><span class="n">${val}</span><span class="rc-sub">${sc>=2?(k==='int'||perkOf[k]?perkOf[k]:'—')+(mine&&v<STAT_MAX?_T` · ${xp}% to ${v+1}`:''):''}</span>`}).join('');
@@ -105,7 +105,7 @@ function loanWeek(w,pm){const L=w.loan;if(!L||L.amt<=0)return;const due=L.due||0
   tnews(_T`💸 Loan: +${inte} interest · ${L.amt} owed to ${esc(L.name)} · this week's minimum <b>${L.due}</b>${L.missed?_T` · <b>${L.missed} week${L.missed>1?'s':''} short</b>`:''}.`,L.missed?'bad':'');
   if(L.kind!=='synd'){if(L.missed){pm.fame=clamp(pm.fame-1,0,100);const lm=L.mgr&&mgrById(L.mgr);if(lm)lm.relB=(lm.relB||0)-2}return}
   if(L.missed===SYND.strikes-1)sendLetter(w,{key:'synd-warn',from:_T("Sica's syndicate"),seal:'🗡',title:_T('A friendly reminder'),until:w.week+1,
-    body:`<p>${_T`Two weeks now, and the minimum unpaid. Sica is a patient man. Patience is not the same as forgiveness.`}</p><p>${_T`<b>Pay at least ${L.due} coin this week</b>, or the next time one of your fighters steps onto the sand, someone in the stands will settle the account for us.`}</p>`});
+    body:`<p>${_T`Two weeks now, and the minimum unpaid. Sica is a patient man. Patience is not the same as forgiveness.`}</p><p>${_T`<b>Pay at least ${coinAmt87(L.due)} this week</b>, or the next time one of your fighters steps onto the sand, someone in the stands will settle the account for us.`}</p>`});
   if(L.missed>=SYND.strikes){w.syndSpear={wk:w.week,done:false};L.missed=0;
     sendLetter(w,{key:'synd-spear',from:_T("Sica's syndicate"),seal:'🗡',title:_T('The account will be settled'),until:w.week+2,
       body:`<p>${_T`Three weeks. We did write.`}</p><p>${_T`The next event or practice your house enters, a friend of ours will be in the stands. Your best fighter will not see the end of it.`} <span class="rc-sub">${_T`(At rotation ${SYND.spearRot}, a spear from the crowd eliminates your highest-rated entrant.)`}</span></p>`});
@@ -113,7 +113,7 @@ function loanWeek(w,pm){const L=w.loan;if(!L||L.amt<=0)return;const due=L.due||0
 loanCardHTML=function(){const w=W_(),m=me();const L=w.loan;
   if(L&&L.amt>0){const due=L.due||0,paid=L.paid||0;const left=Math.max(0,due-paid);
     return `<div class="card2 loanbox"><div class="sect" style="margin-top:0">${_T`💸 Your debt to ${esc(L.name)}`}</div>
-    <p class="rc-sub" style="margin:0 0 6px">${_T`<b>${L.amt} coin owed</b> · ${Math.round(loanRate(L)*100)}% interest a week, added to the debt · nobody takes it from your treasury: you pay by hand.
+    <p class="rc-sub" style="margin:0 0 6px">${_T`<b>${coinAmt87(L.amt)} owed</b> · ${Math.round(loanRate(L)*100)}% interest a week, added to the debt · nobody takes it from your treasury: you pay by hand.
     ${due?_T` This week's minimum: <b>${due}</b>${paid?_T` (paid ${paid}${left?_T`, ${left} to go`:' ✓'})`:''}.`:_T(' No minimum due yet this week.')}${L.missed?_T` <b style="color:var(--blood2)">${L.missed} week${L.missed>1?'s':''} short${L.kind==='synd'?_T` — ${SYND.strikes} and the syndicate collects in blood`:''}.</b>`:''}`}</p>
     <div class="acts">${left?`<button class="btn primary" type="button" data-mg="loanmin" ${dis(needCoin(m,left))}>${_T`Pay the minimum · ${left}`}</button>`:''}<button class="btn" type="button" data-mg="loanpay" ${dis(needCoin(m,Math.min(L.amt,50)))}>${_T`Pay 50 now`}</button><button class="btn" type="button" data-mg="loanpayall" ${dis(needCoin(m,L.amt))}>${_T`⚖ Pay it all off · ${L.amt}`}</button></div></div>`}
   if(!w.loanAsk||m.coin>=0)return '';
@@ -124,7 +124,7 @@ loanCardHTML=function(){const w=W_(),m=me();const L=w.loan;
 /* pay exactly the minimum (the other buttons are the original handlers) */
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mg="loanmin"]');if(!b)return;e.stopPropagation();const w=W_(),m=me();const L=w&&w.loan;if(!L)return;
   const pay=Math.min(L.amt,Math.max(0,(L.due||0)-(L.paid||0)),Math.max(0,m.coin));if(pay<=0)return;m.coin-=pay;L.amt-=pay;L.paid=(L.paid||0)+pay;
-  if(L.amt<=0){tnews(_T`💸 <b>Debt cleared</b> — ${esc(L.name)} drinks to your health.`,'big');w.loanDone=(w.loanDone||0)+1;w.loan=null}else tnews(_T`💸 Paid the week's minimum to ${esc(L.name)}: ${pay} coin.`);
+  if(L.amt<=0){tnews(_T`💸 <b>Debt cleared</b> — ${esc(L.name)} drinks to your health.`,'big');w.loanDone=(w.loanDone||0)+1;w.loan=null}else tnews(_T`💸 Paid the week's minimum to ${esc(L.name)}: ${coinAmt87(pay)}.`);
   saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
 /* the spear: the next event or practice config with your fighter in it carries it */
 function spearCfg(cfg){const w=W_();if(!cfg||!w||!w.syndSpear||w.syndSpear.done)return cfg;const pm=me();
@@ -143,8 +143,8 @@ function spearCfg(cfg){const w=W_();if(!cfg||!w||!w.syndSpear||w.syndSpear.done)
 function friendGift(w,pm){if(pm.coin>=20||typeof opinionOf!=='function'||w.week-(w.giftWk||-99)<4||Math.random()>.5)return;
   const f=w.mgrs.filter(m=>!m.isPlayer&&opinionOf(m).v>=60).sort((a,b)=>opinionOf(b).v-opinionOf(a).v)[0];if(!f)return;
   const amt=5+Math.floor(Math.random()*11);if(f.coin<amt+20)return;f.coin-=amt;pm.coin+=amt;w.giftWk=w.week;
-  sendLetter(w,{key:'gift-'+w.week,from:f.ludus,seal:'🎁',title:_T('A small purse, between friends'),body:`<p>${_T`${esc(f.name)} heard times are hard at ${esc(pm.ludus)}. Enclosed: <b>${amt} coin</b>. No interest, no terms — only remember who stood by you.`}</p>`});
-  tnews(_T`🎁 ${esc(f.ludus)} sends ${amt} coin, between friends.`)}
+  sendLetter(w,{key:'gift-'+w.week,from:f.ludus,seal:'🎁',title:_T('A small purse, between friends'),body:`<p>${_T`${esc(f.name)} heard times are hard at ${esc(pm.ludus)}. Enclosed: <b>${coinAmt87(amt)}</b>. No interest, no terms — only remember who stood by you.`}</p>`});
+  tnews(_T`🎁 ${esc(f.ludus)} sends ${coinAmt87(amt)}, between friends.`)}
 /* =====================================================================
    4. HOME GAMES — any game in your lanista's home city: 'Home' on the schedule, +2 CF and friendly stands
    ===================================================================== */
@@ -152,7 +152,7 @@ function homeCfg(cfg){try{const L=LOCATIONS[cfg.loc];if(!L)return cfg;for(const 
 {const base=empireTurnout;empireTurnout=function(cfg){let n=base.apply(this,arguments);const hh=[...new Set((cfg&&cfg.seats||[]).map(s=>s.homeHouse).filter(Boolean))];
   if(hh.length){n=clamp(n+4,3,SPECT_MAX);(S.turnoutWhy=S.turnoutWhy||[]).push(_T`+4K home spectators backing ${hh.join(' & ')}`)}return n}}
 {const base=seasonTabHTML;seasonTabHTML=function(){let h=base.apply(this,arguments);try{const pm=me();if(pm&&pm.city)h=h.split(`<td>📍 ${esc(pm.city)}</td>`).join(`<td>${_T`<b class="hometag">🏠 Home</b> · ${esc(pm.city)}`}</td>`)}catch(e){}return h}}
-{const base=nightHTML;nightHTML=function(){let h=base.apply(this,arguments);try{const w=W_(),pm=me();const L=w&&w.night&&LOCATIONS[w.night.loc];if(L&&pm&&L.n===pm.city&&!w.night.bye)h=`<div class="card2 homegame">${_T`<b class="hometag">🏠 Home games this week</b>`} <span class="rc-sub">${_T`${esc(L.n)} is your city: your fighters start with +2 CF and your regulars fill the stands.`}</span></div>`+h}catch(e){}return h}}
+{const base=nightHTML;nightHTML=function(){let h=base.apply(this,arguments);try{const w=W_(),pm=me();const L=w&&w.night&&LOCATIONS[w.night.loc];if(L&&pm&&L.n===pm.city&&!w.night.bye)h=`<div class="card2 homegame">${_T`<b class="hometag">🏠 Home games this week</b>`} <span class="rc-sub">${_T`${esc(L.n)} is your city: your fighters start with ${cfAmt87('+2')} and your regulars fill the stands.`}</span></div>`+h}catch(e){}return h}}
 /* =====================================================================
    5. GRADES — one medal ladder: A gold (and it shines), B silver, C bronze, D iron, F blood
    ===================================================================== */

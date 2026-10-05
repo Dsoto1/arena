@@ -148,7 +148,7 @@ o.k2=await P.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));con
   B.kit=['mw1','mw3'];B.kitWk=w.week;B.kitPaid87=[6,15];for(const b of w.night.bouts){b.done=true;b.res=b.res||{att:0,winners:[],rows:[],turns:1,lines:[],reason:''}}w.pend=[];
   const tn=typeof tnews==='function'?tnews:null;const lines=[];tnews=function(t){lines.push(String(t));return tn&&tn.apply(this,arguments)};let c0,c1;
   const be=endWeek;let mid=null;const coinWrap=()=>me().coin;c0=coinWrap();await endWeek();tnews=tn;await W(200);
-  const L=lines.find(l=>/Kits refunded/.test(l))||'';return {line:L,name:esc(B.name),has21:/21 coin/.test(L)}});
+  const L=lines.find(l=>/Kits refunded/.test(l))||'';return {line:L,name:esc(B.name),has21:/21 coin/.test(L.replace(/<[^>]+>/g,""))}});
 ok(o.k2.line&&o.k2.has21&&o.k2.line.includes(o.k2.name),'11 an unused kit is refunded in full with a news line '+JSON.stringify(o.k2));
 /* 12 · stale mail + the ward link */
 o.ml=await P.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const r={};const ros=rosterOf(m);const g=ros[0],h=ros[1];

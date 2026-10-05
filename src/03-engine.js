@@ -622,7 +622,7 @@ async function revealOffering(player, off, land) {
       log(_T`The crowd cheers, but ${nm(player)} gains no CF from Blessings.`);
     } else {
       player.cf += v;
-      log(_T`${nm(player)} gains ${v} CF from the crowd.`);
+      log(_T`${nm(player)} gains ${cfAmt87(v)} from the crowd.`);
     }
     return;
   }
@@ -656,7 +656,7 @@ async function breakPot(pillar, player, land, all = false) {
     crowdReact && crowdReact('pot', {
       p: player
     });
-    log(_T`${nm(player)} shatters a Blessings pot on ${tl(pillar.r, pillar.c)}: +2 coin${cfGain ? ', +1 CF' : ''}.${pillar.pots.length ? _T` ${pillar.pots.length} more pot${pillar.pots.length > 1 ? 's' : ''} still chained above.` : ''}`);
+    log(_T`${nm(player)} shatters a Blessings pot on ${tl(pillar.r, pillar.c)}: ${coinAmt87('+2')}${cfGain ? `, ${cfAmt87('+1')}` : ''}.${pillar.pots.length ? _T` ${pillar.pots.length} more pot${pillar.pots.length > 1 ? 's' : ''} still chained above.` : ''}`);
     await revealOffering(player, off, land);
     if (!player.alive) break;
   }
@@ -725,8 +725,8 @@ async function hurt(victim, location, damage, source, prefix, {
       let use;
       if (victim.cpu) use = victim.diff === 'hard' ? ab >= 2 || victim.ap[location] + victim.hp[location] - rem <= 1 || w.usesLeft >= 3 : rand() < (victim.diff === 'easy' ? .8 : .95); // hard lanistae save uses on chip damage when they can afford to
       else use = await modal(_T`Raise the ${w.n}?`, `<p>${_T`${esc(prefix || _T('An attack'))} brings <b>${rem} damage</b> at your ${LOCN[location].toLowerCase()}. The ${w.n} can absorb <b>${ab}</b> of it; the rest falls on armor, then flesh.`}</p>${typeof hint === 'function' ? hint('shield') : ''}`, [{
-        label: _T`Absorb ${ab} damage`,
-        sub: `${w.usesLeft - 1 === 0 ? _T('this use BREAKS the shield') : _T`${w.usesLeft - 1} use${w.usesLeft - 1 === 1 ? '' : 's'} left after`}`,
+        label: wIco87('abs') + _T`Absorb ${ab} damage`,
+        sub: `${wIco87('use')}${w.usesLeft - 1 === 0 ? _T('this use BREAKS the shield') : _T`${w.usesLeft - 1} use${w.usesLeft - 1 === 1 ? '' : 's'} left after`}`,
         value: 1,
         primary: 1,
         card: 'w:' + w.key
@@ -738,11 +738,11 @@ async function hurt(victim, location, damage, source, prefix, {
       if (use) {
         rem -= ab;
         w.usesLeft--;
-        parts.push(_T`${w.n} absorbs ${ab}`);
+        parts.push(wIco87('abs') + _T`${w.n} absorbs ${ab}`);
         fx(victim.r, victim.c, _T`blocked ${ab}`, '#9fd3ff');
         if (w.usesLeft <= 0) {
           victim['w' + sh.a] = null;
-          parts.push(_T`${w.n} breaks`);
+          parts.push(wIco87('use') + _T`${w.n} breaks`);
         }
       } else if (!victim.cpu) parts.push(_T`keeps the ${w.n} lowered`);
     }
@@ -958,13 +958,13 @@ function eliminate(victim, source) {
     }
     think(source.p, pickOne(QUOTES.kill), 'win');
     if (!source.p.cpu) (S.killedClasses || (S.killedClasses = new Set())).add(victim.cls);
-    log(_T`${nm(victim)} is eliminated by ${nm(source.p)} (+10 CF, trophy).`, 'big');
+    log(_T`${nm(victim)} is eliminated by ${nm(source.p)} (${cfAmt87('+10')}, trophy).`, 'big');
   } else if (source.type === 'npc') {
     if (source.n.tamedBy != null && S.players[source.n.tamedBy] && S.players[source.n.tamedBy] !== victim) {
       const o = S.players[source.n.tamedBy];
       addTrophy(o, victim.name, _T('Gladiator (by ') + source.n.name + ')', 0, 10, 'player');
       stat(o, 'kill_player');
-      log(_T`${nm(victim)} is slain by ${nm(source.n)}, tamed by ${nm(o)} (+10 CF, trophy).`, 'big');
+      log(_T`${nm(victim)} is slain by ${nm(source.n)}, tamed by ${nm(o)} (${cfAmt87('+10')}, trophy).`, 'big');
     } else {
       cfWhy(_T('slain by a beast'));
       victim.cf -= 5;
@@ -972,7 +972,7 @@ function eliminate(victim, source) {
         source.n.hoard += pl.coin;
         pl.coin = 0;
       }
-      log(_T`${nm(victim)} is slain by ${nm(source.n)} (−5 CF).`, 'big');
+      log(_T`${nm(victim)} is slain by ${nm(source.n)} (${cfAmt87('−5')}).`, 'big');
     }
   } else log(_T`${nm(victim)} is eliminated.`, 'big');
   if (S.exhib) log(_T`${nm(victim)} is <b>pulled from the sand</b> — exhibition rules: the doctors call it before anyone dies.`, 'thought');
@@ -1034,7 +1034,7 @@ function hurtNPC(npc, damage, player, prefix, weapon = null, byNpc = null) {
       stat(player, 'kill_' + npc.t);
       if (npc.tamedBy != null && npc.tamedBy !== player.id) stat(player, 'kill_tamed');
       if (weapon && weapon.limb) stat(player, 'kill_limb');
-      log(_T`${prefix} → ${nm(npc)} falls! ${nm(player)} earns ${T.coin + npc.hoard} coin, ${T.cf} CF and a trophy.`, 'big');
+      log(_T`${prefix} → ${nm(npc)} falls! ${nm(player)} earns ${coinAmt87(T.coin + npc.hoard)}, ${cfAmt87(T.cf)} and a trophy.`, 'big');
     } else log(_T`${prefix} → ${nm(npc)} falls.`, 'big');
     if (player && player.cls && npc.aggro != null && npc.aggro !== player.id) {
       const saved = S.players[npc.aggro];
@@ -1359,19 +1359,19 @@ async function marketRoll(player, kind, lv, {
     }
     if (free || player.coin < 2) return marketTake(kind, lv, slot);
     let reroll = false;
-    if (player.cpu) reroll = player.diff === 'hard' && itemValue(kind, peek === 'face-down' ? null : S.market[kind][lv].slots[slot - 1]) < lv * 2 && player.coin >= 2 && rand() < .5;else reroll = await modal(_T('Market die'), `<p>${_T`The die shows <b>${slot}</b>: ${kName(kind, peek)}. Take it, or re-roll for 2 coin (you have ${player.coin}).`}</p>`, [{
+    if (player.cpu) reroll = player.diff === 'hard' && itemValue(kind, peek === 'face-down' ? null : S.market[kind][lv].slots[slot - 1]) < lv * 2 && player.coin >= 2 && rand() < .5;else reroll = await modal(_T('Market die'), `<p>${_T`The die shows <b>${slot}</b>: ${kName(kind, peek)}. Take it, or re-roll for ${coinAmt87(2)} (you have ${player.coin}).`}</p>`, [{
       label: _T('Take it'),
       value: 0,
       primary: 1
     }, {
       label: 'Re-roll',
-      sub: '2 coin',
+      sub: coinAmt87(2),
       value: 1
     }]);
     if (!reroll) return marketTake(kind, lv, slot);
     player.coin -= 2;
     coinLog(player, -2, 'market re-rolls');
-    log(_T`${nm(player)} pays 2 coin to re-roll.`);
+    log(_T`${nm(player)} pays ${coinAmt87(2)} to re-roll.`);
   }
 }
 /* itemValue — CPU worth of a market item: unknown 2.5, weapons by wScore, armor = AP +1 bonus +1.5 pair +2 greaves +1 cestus. TWEAK: these weights. */

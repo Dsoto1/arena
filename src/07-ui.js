@@ -156,7 +156,7 @@ function onTile(r, c) {
     u.netted = true;
     if (u.cls) bumpRel(u, p, -10, 'netted');
     p.items = p.items.filter(x => x.id !== S.reteItem);
-    log(_T`${nm(p)} throws the Rete over ${nm(u)}. It loses its movement next turn.`);
+    log(wIco87('thr') + _T`${nm(p)} throws the Rete over ${nm(u)}. It loses its movement next turn.`);
     S.mode = 'move';
   });
 }
@@ -2716,7 +2716,7 @@ function render() {
     const n = S.cmd.n,
       zo = n.t === 'zora' ? zoraPickOptions(n) : [];
     a = `<p class="hint">${_T`Command <b>${n.name}</b>: click an orange tile to move${S.cmd.moved ? ' (moved)' : ''}${n.carry ? `. Carrying ${n.carry.label}: half movement, no attacks` : _T(', or a red ring to attack')}${n.t === 'zora' ? '. Zora flies over everything and can land on pillars' : ''}.`}</p><div class="acts">${zo.map((o, i) => `<button class="btn" type="button" data-act="zpick" data-i="${i}">${_T`Pick up ${o.label}<small>halves his movement</small>`}</button>`).join('')}${n.carry ? `<button class="btn" type="button" data-act="zdrop">${cheb(n, S.cmd.p) <= 1 ? _T('Deliver to ') + S.cmd.p.name : _T('Drop here')}<small>${n.carry.label}</small></button>` : ''}<button class="btn primary" type="button" data-act="cmddone">${_T`Done commanding`}</button></div>`;
-  } else if (p.cpu) a = `<p class="hint">${_T`${p.name} (CPU, ${typeof AI_TIERS !== 'undefined' && p.tier != null ? AI_TIERS[p.tier].n : p.diff}) is taking their turn…`}</p>`;else if (ph === 'resolve') a = `<p class="hint">${_T`The arena reacts to you. NPCs are moving…`}</p>`;else if (ph === 'choice') a = `<div class="acts"><button class="btn primary" type="button" data-act="coin" ${S.busy ? 'disabled' : ''}>${_T`Take 2 coin<small>safe</small>`}</button><button class="btn" type="button" data-act="card" ${S.busy || !canDraw() ? 'disabled' : ''}>${_T`Draw arena card<small>${canDraw() ? S.deck.length + _T(' left · high risk') : _T('no arena deck in this event')}</small>`}</button></div>`;else if (ph === 'action' && isChariot()) {
+  } else if (p.cpu) a = `<p class="hint">${_T`${p.name} (CPU, ${typeof AI_TIERS !== 'undefined' && p.tier != null ? AI_TIERS[p.tier].n : p.diff}) is taking their turn…`}</p>`;else if (ph === 'resolve') a = `<p class="hint">${_T`The arena reacts to you. NPCs are moving…`}</p>`;else if (ph === 'choice') a = `<div class="acts"><button class="btn primary" type="button" data-act="coin" ${S.busy ? 'disabled' : ''}>${_T`Take ${coinAmt87(2)}<small>safe</small>`}</button><button class="btn" type="button" data-act="card" ${S.busy || !canDraw() ? 'disabled' : ''}>${_T`Draw arena card<small>${canDraw() ? S.deck.length + _T(' left · high risk') : _T('no arena deck in this event')}</small>`}</button></div>`;else if (ph === 'action' && isChariot()) {
     const srcs = attackSources(p).filter(s => !s.thr);
     const m = S.mode;
     const ch = p.ch;
@@ -2754,10 +2754,10 @@ function render() {
       ${S.chest && onChestTile(p) && !p.carrying && armsAttached(p).length === 2 ? btn('chestup', _T('Pick up chest'), _T('−1 movement while held'), false) : ''}
       ${p.carrying ? btn('chestdown', _T('Drop chest'), 'free', false) : ''}
       ${loot.length ? btn('loot', _T('Loot'), p.looted ? _T('thrown weapons only') : _T('1 item per turn'), false) : ''}
-      ${EV().noMarket ? '' : btn('market', _T('Market'), p.market ? 'unlocked' : cfAllowed() ? _T('3 CF to unlock') : _T('CF locked'), false)}
-      ${btn('crowd', _T('Crowd Favor'), cfAllowed() ? _T`${p.cf} CF to spend` : _T('locked this round'), false, cfAllowed())}
+      ${EV().noMarket ? '' : btn('market', _T('Market'), p.market ? 'unlocked' : cfAllowed() ? _T`${cfAmt87(3)} to unlock` : _T('CF locked'), false)}
+      ${btn('crowd', _T('Crowd Favor'), cfAllowed() ? _T`${cfAmt87(p.cf)} to spend` : _T('locked this round'), false, cfAllowed())}
       ${tradePartners(p).length ? btn('trade', _T('Trade or truce'), _T('within 4 tiles'), false) : ''}
-      ${spearTargets(p).length ? btn('spear', _T('Spear a spectator'), _T('3 CF · once per event'), false) : ''}
+      ${spearTargets(p).length ? btn('spear', _T('Spear a spectator'), _T`${cfAmt87(3)} · once per event`, false) : ''}
       ${canSelfWager(p) ? btn('selfbet', _T('Wager on yourself'), _T('coin at today\'s odds'), false) : ''}
       ${p.abil === 'zora' && caAllowed() && (p.zoraUsed || 0) < (p.abilVal || 1) && !p.noEagle ? btn('zora', _T('Release Zora'), (p.abilVal || 1) > 1 ? _T`${(p.abilVal || 1) - (p.zoraUsed || 0)} release${(p.abilVal || 1) - (p.zoraUsed || 0) === 1 ? '' : 's'} left` : _T('once per event'), false) : ''}
       ${canExit(p) ? btn('exit', _T('Exit the arena'), _T('ends your event here'), false) : ''}
@@ -2951,7 +2951,7 @@ function showTrophies(player) {
 function trophyHTML(player) {
   /* tbl — one titled trophy table, or "None yet". */
   const tbl = (list, title) => `<h4>${title} · ${list.length}</h4>` + (list.length ? `<table class="tally"><tr><th>${_T`Trophy`}</th><th>${_T`Type`}</th><th>${_T`Round`}</th><th>${_T`Coin`}</th><th>CF</th></tr>${list.map(target => `<tr><td>${target.name}</td><td>${target.kind}</td><td class="n">${target.round}</td><td class="n">${target.coin}</td><td class="n">${target.cf}</td></tr>`).join('')}<tr><td>${_T`<b>Total</b>`}</td><td></td><td></td><td class="n"><b>${list.reduce((s, target) => s + target.coin, 0)}</b></td><td class="n"><b>${list.reduce((s, target) => s + target.cf, 0)}</b></td></tr></table>` : `<p>${_T`None yet.`}</p>`);
-  return `<p>${_T`Every 3 trophies held by a winner add 5 CF at the end. ${player.trophies.length} in total.`}</p>${tbl(player.trophies.filter(target => target.pk === 'player'), _T('Gladiators eliminated (players &amp; CPUs)'))}${tbl(player.trophies.filter(target => target.pk !== 'player'), _T('Beasts eliminated (NPCs)'))}`;
+  return `<p>${_T`Every 3 trophies held by a winner add ${cfAmt87(5)} at the end. ${player.trophies.length} in total.`}</p>${tbl(player.trophies.filter(target => target.pk === 'player'), _T('Gladiators eliminated (players &amp; CPUs)'))}${tbl(player.trophies.filter(target => target.pk !== 'player'), _T('Beasts eliminated (NPCs)'))}`;
 }
 
 /* ================= MODALS ================= */
@@ -3203,12 +3203,12 @@ async function openMarket(player) {
       const M = m[kind][lv];
       const slots = M.slots.map((k, i) => `<span class="slotwrap"><span class="slotn">${i + 1}</span>${k ? cardHTML((kind === 'w' ? 'w:' : 'a:') + k, 'sm') : '<span class="cardback mtEmpty">✕</span>'}</span>`).join('');
       const fd = `<span class="slotwrap"><span class="slotn">4</span><span class="cardback" title="${_T`${M.deck.length} card${M.deck.length === 1 ? '' : 's'} face-down in the level ${lv} deck`}">🏛<small>×${M.deck.length}</small></span></span>`;
-      return `<div class="shelf"><div class="shelf-hd">${_T`<b>LEVEL ${RM[lv - 1]}</b>`}<span class="shelf-price">${_T`${purchaseCost(player, lv) + vet} coin`}</span></div><div class="shelf-slots">${slots}${fd}</div></div>`;
+      return `<div class="shelf"><div class="shelf-hd">${_T`<b>LEVEL ${RM[lv - 1]}</b>`}<span class="shelf-price">${coinAmt87(purchaseCost(player, lv) + vet)}</span></div><div class="shelf-slots">${slots}${fd}</div></div>`;
     };
-    const notes = [vetOn ? _T`⚖ Old debts: +1 ${vetCF ? 'CF' : _T('coin')} per purchase` : '', player.discount ? _T`％ Discount: −${player.discount} coin this turn` : '', player.mchoice ? _T('☝ Choose: pick your slot, no die') : ''].filter(Boolean);
+    const notes = [vetOn ? _T`⚖ Old debts: +1 ${vetCF ? 'CF' : _T('coin')} per purchase` : '', player.discount ? _T`％ Discount: ${coinAmt87('−'+(player.discount))} this turn` : '', player.mchoice ? _T('☝ Choose: pick your slot, no die') : ''].filter(Boolean);
     const body = `<div class="stall">
       <div class="stall-awn"></div>
-      <div class="stall-sign">${_T`<span>⚖ MERCATVS FLAVII ⚖</span>`}<span class="rc-sub">${_T`the market die (1-4) picks the slot · re-roll 2 coin`}</span></div>
+      <div class="stall-sign">${_T`<span>⚖ MERCATVS FLAVII ⚖</span>`}<span class="rc-sub">${_T`the market die (1-4) picks the slot · re-roll ${coinAmt87(2)}`}</span></div>
       <div class="stall-body">
         <div><div class="shelfcol-hd">${_T`🗡 The weapon racks`}</div>${[3, 2, 1].map(lv => shelf('w', lv)).join('')}</div>
         <div><div class="shelfcol-hd">${_T`🛡 The armor shelves`}</div>${[3, 2, 1].map(lv => shelf('a', lv)).join('')}</div>
@@ -3218,26 +3218,26 @@ async function openMarket(player) {
       hair: '#8a7a60',
       beard: true,
       robe: '#7a5a2a'
-    }) : '👤'} <b>${esc(sutler)}</b> eyes your purse</span>`}<span class="stall-purse">${_T`💰 <b>${player.coin}</b> coin · 🌾 <b>${player.cf}</b> CF${player.market ? _T(' · <b style="color:var(--gold2)">stall open</b>') : ''}`}</span></div>
+    }) : '👤'} <b>${esc(sutler)}</b> eyes your purse</span>`}<span class="stall-purse">${_T`<b>${coinAmt87(player.coin)}</b> · <b>${cfAmt87(player.cf)}</b>${player.market ? _T(' · <b style="color:var(--gold2)">stall open</b>') : ''}`}</span></div>
       ${player.market ? '' : `<div class="stall-lock"><div><div style="font-size:30px">🔒</div>${_T`<b>The shutters are up.</b>`}<br><span class="rc-sub">${_T`3 Crowd Favor opens the stall for this turn — then buy as often as your coin allows.`}</span></div></div>`}
     </div>${notes.length ? `<p class="rc-sub" style="margin:6px 0 0">${notes.join(' · ')}</p>` : ''}${hint('market')}`;
     const btns = [];
     if (!player.market) btns.push({
       label: _T('Unlock market'),
-      sub: cfAllowed() ? '3 CF' : _T('Crowd Favor is locked'),
+      sub: cfAllowed() ? cfAmt87(3) : _T('Crowd Favor is locked'),
       value: 'unlock',
       disabled: player.cf < 3 || !cfAllowed(),
       primary: 1
     });else {
       for (const lv of [1, 2, 3]) btns.push({
         label: _T`Weapon LV ${lv}`,
-        sub: _T`${purchaseCost(player, lv) + vet} coin${vetCF ? ' + 1 CF' : ''}`,
+        sub: _T`${coinAmt87(purchaseCost(player, lv) + vet)}${vetCF ? ` + ${cfAmt87(1)}` : ''}`,
         value: 'w' + lv,
         disabled: player.coin < purchaseCost(player, lv) + vet || vetCF && player.cf < 1
       });
       for (const lv of [1, 2, 3]) btns.push({
         label: _T`Armor LV ${lv}`,
-        sub: _T`${purchaseCost(player, lv) + vet} coin${vetCF ? ' + 1 CF' : ''}`,
+        sub: _T`${coinAmt87(purchaseCost(player, lv) + vet)}${vetCF ? ` + ${cfAmt87(1)}` : ''}`,
         value: 'a' + lv,
         disabled: player.coin < purchaseCost(player, lv) + vet || vetCF && player.cf < 1
       });
@@ -3262,7 +3262,7 @@ async function openMarket(player) {
     if (v === 'unlock') {
       player.cf -= 3;
       player.market = true;
-      log(_T`${nm(player)} spends 3 CF to unlock the market.`);
+      log(_T`${nm(player)} spends ${cfAmt87(3)} to unlock the market.`);
       continue;
     }
     const kind = v[0],
@@ -3288,44 +3288,44 @@ async function openCrowd(player) {
     if (!cfAllowed()) return;
     const opts = [{
       label: _T('Unlock market for this turn'),
-      sub: '3 CF',
+      sub: cfAmt87(3),
       value: 'mk',
       disabled: player.cf < 3 || player.market || !!EV().noMarket
     }, {
       label: _T('Arena Key'),
-      sub: '5 CF',
+      sub: cfAmt87(5),
       value: 'key',
       disabled: player.cf < 5
     }, {
       label: _T('Arena card'),
-      sub: '5 CF',
+      sub: cfAmt87(5),
       value: 'card',
       disabled: player.cf < 5 || !canDraw()
     }, {
       label: _T('Health Elixir token (+4 HP)'),
-      sub: '8 CF',
+      sub: cfAmt87(8),
       value: 'el',
       disabled: player.cf < 8
     }, {
       label: _T('AP Upgrade token (+3 AP)'),
-      sub: '8 CF',
+      sub: cfAmt87(8),
       value: 'ap',
       disabled: player.cf < 8
     }, {
-      label: _T('Discard 10 coin for 2 CF'),
-      sub: '10 coin',
+      label: _T`Discard ${coinAmt87(10)} for ${cfAmt87(2)}`,
+      sub: coinAmt87(10),
       value: 'dc',
       disabled: player.coin < 10
     }, {
       label: _T('Close'),
       value: 'close'
     }];
-    const v = await modal(_T('Crowd Favor'), `<p>${_T`Crowd Favor is spent in Phase 3. If it ever drops below zero, you are eliminated. You have <b>${player.cf} CF</b> and <b>${player.coin} coin</b>.`}</p>`, opts);
+    const v = await modal(_T('Crowd Favor'), `<p>${_T`Crowd Favor is spent in Phase 3. If it ever drops below zero, you are eliminated. You have <b>${cfAmt87(player.cf)}</b> and <b>${coinAmt87(player.coin)}</b>.`}</p>`, opts);
     if (v === 'close' || !v) break;
     if (v === 'mk') {
       player.cf -= 3;
       player.market = true;
-      log(_T`${nm(player)} spends 3 CF to unlock the market.`);
+      log(_T`${nm(player)} spends ${cfAmt87(3)} to unlock the market.`);
     }
     if (v === 'key') {
       player.cf -= 5;
@@ -3350,7 +3350,7 @@ async function openCrowd(player) {
       player.coin -= 10;
       coinLog(player, -10, _T('thrown to the crowd'));
       player.cf += 2;
-      log(_T`${nm(player)} throws 10 coin to the crowd (+2 CF).`);
+      log(_T`${nm(player)} throws ${coinAmt87(10)} to the crowd (${cfAmt87('+2')}).`);
     }
     render();
     if (S.over || !player.alive) break;
@@ -3518,11 +3518,11 @@ function briefingHTML() {
     const zs = ZONES[roundDef.zone] ? ZONES[roundDef.zone][1] - ZONES[roundDef.zone][0] + 1 : 13;
     const chips = Object.keys(RULE_INFO).map(k => `<span class="rchip ${rr[k] ? 'yes' : 'no'}" title="${esc(rr[k] ? RULE_INFO[k][2] : RULE_INFO[k][3])}">${rr[k] ? '' : '🚫 '}${RULE_INFO[k][0]} ${RULE_INFO[k][1]}</span>`).join('');
     const rw = roundDef.reward || {};
-    const rwTxt = [rw.win ? _T`the winner takes ${rw.win} CF` : '', rw.coin ? _T`+${rw.coin} coin` : '', rw.cf ? _T`+${rw.cf} CF` : '', rw.cards ? _T`${rw.cards} cards` : ''].filter(Boolean).join(' · ');
-    return `<div class="brround ${on ? 'on' : ''} ${i < S.ri ? 'done' : ''}"><div class="brhd">${_T`<b>Round ${i + 1} · ${esc(roundDef.n)}</b>${on ? '<em>now</em>' : i < S.ri ? '<em>done</em>' : ''}`}<span class="rc-sub">${_T`${zs}×${zs} zone`}</span></div><div class="brchips">${chips}</div><div class="brend">${_T`Ends when <b>${esc(END_TXT[roundDef.end] || roundDef.end)}</b>${rwTxt ? ` <span class="rc-sub">· ${esc(rwTxt)}</span>` : ''}`}</div></div>`;
+    const rwTxt = [rw.win ? _T`the winner takes ${cfAmt87(rw.win)}` : '', rw.coin ? coinAmt87('+'+(rw.coin)) : '', rw.cf ? cfAmt87('+'+(rw.cf)) : '', rw.cards ? _T`${rw.cards} cards` : ''].filter(Boolean).join(' · ');
+    return `<div class="brround ${on ? 'on' : ''} ${i < S.ri ? 'done' : ''}"><div class="brhd">${_T`<b>Round ${i + 1} · ${esc(roundDef.n)}</b>${on ? '<em>now</em>' : i < S.ri ? '<em>done</em>' : ''}`}<span class="rc-sub">${_T`${zs}×${zs} zone`}</span></div><div class="brchips">${chips}</div><div class="brend">${_T`Ends when <b>${esc(END_TXT[roundDef.end] || roundDef.end)}</b>${rwTxt ? ` <span class="rc-sub">· ${rwTxt}</span>` : ''}`}</div></div>`;
   }).join('');
   const last = ev.rounds[ev.rounds.length - 1];
-  const how = ev.teams || ev.coop ? _T`Be the side still standing when <b>${esc(END_TXT[last.end] || last.end)}</b>.` : _T`Survive every round. The event is won when <b>${esc(END_TXT[last.end] || last.end)}</b>${last.reward && last.reward.win ? _T` — worth <b>${last.reward.win} CF</b>` : ''}. Crowd Favor decides your Fate at the end.`;
+  const how = ev.teams || ev.coop ? _T`Be the side still standing when <b>${esc(END_TXT[last.end] || last.end)}</b>.` : _T`Survive every round. The event is won when <b>${esc(END_TXT[last.end] || last.end)}</b>${last.reward && last.reward.win ? _T` — worth <b>${cfAmt87(last.reward.win)}</b>` : ''}. Crowd Favor decides your Fate at the end.`;
   const glads = S.players.map(player => `<span class="brglad ${player.alive ? '' : 'out'}" style="--pc:${player.color}"><b>${esc(player.name)}</b> ${esc(CLASSES[player.cls] ? CLASSES[player.cls].name : '')}${teams ? _T(' · Team ') + esc(String(player.team)) : ''} · ${player.cpu ? 'CPU' : S.hotseat ? '🎮 player' : 'you'}${player.alive ? '' : player.exited ? ' · exited' : ' · ✝'}</span>`).join('');
   return `<div class="brief"><div class="brtop">${cardHTML('e:' + S.evKey, 'md') || ''}<div><div class="ei-tag">${esc(ev.tag || ev.short || '')}${S.fest ? ' · ' + esc(festName(S.fest.kind)) : ''}${S.missio ? _T(' · Missio') : ''}</div>
     <div class="brname">${esc(ev.n)}</div><div class="rc-sub">${_T`📍 ${esc(L ? L.n : '')} · ⚔ ${n} gladiator${n === 1 ? '' : 's'}${teams ? _T` in ${teams} ${ev.coop ? _T('as one side') : _T('teams')}` : ''}${S.spect && S.spect.length ? _T` · 🏟 ${S.spect.filter(x => !x.gone).length}K spectators in the stands` : ''}${ev.sr ? _T` · Summa rudis: ${esc(ev.sr)}` : ''}`}</div>

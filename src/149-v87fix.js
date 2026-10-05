@@ -163,7 +163,7 @@ if(typeof cityKitDrop==='function'){const base=cityKitDrop;cityKitDrop=function(
   const w0=W_();const r=await base.apply(this,arguments);
   try{const w=W_(),m=me();if(r!==false&&w===w0&&m&&due.length){let tot=0;for(const d of due){m.coin+=d.amt;tot+=d.amt}
       for(const g of w.glads)if(g.kitPaid87&&!g.kit)delete g.kitPaid87;
-      if(typeof tnews==='function')tnews(_T`↩ Kits refunded: ${due.map(d=>_T`${esc(d.name)} (${d.amt} coin)`).join(', ')} did not fight — the smith pays back ${tot} coin.`);saveWorld()}
+      if(typeof tnews==='function')tnews(_T`↩ Kits refunded: ${due.map(d=>_T`${esc(d.name)} (${coinAmt87(d.amt)})`).join(', ')} did not fight — the smith pays back ${coinAmt87(tot)}.`);saveWorld()}
     else if(w)for(const g of w.glads)if(g.kitPaid87&&!g.kit)delete g.kitPaid87}catch(e){console.error(e)}return r}}
 
 /* ---------------- 12 · stale mail ---------------- */
@@ -186,7 +186,7 @@ window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('
 
 /* ---------------- 13 · the Acta of the day replaces the Forum ---------------- */
 function acta87Time(at){try{return new Date(at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}catch(e){return ''}}
-function acta87Line(e){const W=e.w;const who=W?_T`🏆 <b>${esc2(W.name)}</b>${W.dn?` <span class="ac87h">(${esc2(typeof onlHouse82==='function'?onlHouse82(W.dn):W.dn)})</span>`:''}${(e.wn|0)>1?` +${(e.wn|0)-1}`:''} <b>${e.cf|0}</b> CF`:_T('no victor');
+function acta87Line(e){const W=e.w;const who=W?_T`🏆 <b>${esc2(W.name)}</b>${W.dn?` <span class="ac87h">(${esc2(typeof onlHouse82==='function'?onlHouse82(W.dn):W.dn)})</span>`:''}${(e.wn|0)>1?` +${(e.wn|0)-1}`:''} <b>${cfAmt87(e.cf|0)}</b>`:_T('no victor');
   return `<button type="button" class="ac87" data-v85="list" title="${_T`See the day's lists`}"><span class="ac87t">${acta87Time(e.at)}</span><span class="ac87e">${_T`${esc2(onlEvName(e.ev))} at ${esc2(onlCityName(e.loc))}`}</span><span class="ac87w">— ${who}${(e.fell|0)>0?` <span class="ac87f" title="${_T`Fell in that bout`}">✝ ${e.fell|0}</span>`:''}</span></button>`}
 function acta87Body(){const T=typeof ONL80F!=='undefined'?ONL80F.today:null;const L=((T&&T.acta)||[]).filter(e=>e&&!e.pre).slice(0,8);const yd=!!(T&&T.day==='yesterday');
   return `<div class="ac87-sub rc-sub">${yd?_T('yesterday’s last results · the day turns at 8 PM New York'):_T('the last bouts settled today, newest first')}</div>

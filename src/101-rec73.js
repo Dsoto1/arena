@@ -31,7 +31,7 @@ document.addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList
 function signCard73(g){const old=document.getElementById('signCard');if(old)old.remove();const st=gStats(g);const c=g.contract||{};const m=me();
   const d=document.createElement('div');d.id='signCard';d.className='signcard';
   d.innerHTML=`<div class="sgbox"><div class="sghd">${_T`✍ Signed`}</div><div class="sgface">${mgAvatar(g)}</div><div class="sgname">${esc(g.name)}</div><div class="rc-sub">${_T`${esc(CLASSES[g.cls]?CLASSES[g.cls].name:'')} · ${g.age||'?'} yrs · rating ${effOvr(g)}`}</div>
-    <div class="sgterms">${_T`<span><b>${c.wage}</b>coin a week</span><span><b>${c.weeks}</b>weeks</span>${g.pledge?_T('<span><b>★</b>main event</span>'):''}`}</div>
+    <div class="sgterms">${_T`<span><b>${coinAmt87(c.wage)}</b> a week</span><span><b>${c.weeks}</b>weeks</span>${g.pledge?_T('<span><b>★</b>main event</span>'):''}`}</div>
     <div class="sgstats">${STATS.map(([k,n])=>`<span title="${n}"><b>${st[k]}</b>${n.slice(0,3)}</span>`).join('')}</div>
     <div class="rc-sub" style="margin-top:6px">${_T`Fights for`} <b style="color:${m.color}">${esc(m.ludus)}</b></div><button class="btn primary" type="button" data-sgclose>${_T`Welcome to the ludus`}</button></div>`;
   document.body.appendChild(d);d.addEventListener('click',e=>{if(e.target===d||e.target.closest('[data-sgclose]'))d.remove()})}

@@ -65,13 +65,13 @@ const na84Unhurt=p=>!!p&&!!p.hp&&Object.keys(BASE_HP).every(l=>(p.hp[l]|0)>=BASE
     if(cut.length)log(_T`${nm(victim)}'s ${cut.join(' and ')} turn${cut.length>1?'':'s'} ${cut.length} damage aside.`)}catch(e){console.error(e)}
   const glo=att?na84On(victim,A=>A.uq==='gloriosa'):null;const hp0=victim.hp[location];
   const r=await base.call(this,victim,location,d,source,prefix,opts);
-  try{if(glo&&d>0&&victim.alive&&victim.hp[location]===hp0&&cfAllowed()){cfWhy(_T('a legendary armor'));victim.cf+=1;log(_T`${nm(victim)}'s ${glo.A.n}: the blow rings off — the crowd roars (+1 CF).`)}}catch(e){}
+  try{if(glo&&d>0&&victim.alive&&victim.hp[location]===hp0&&cfAllowed()){cfWhy(_T('a legendary armor'));victim.cf+=1;log(_T`${nm(victim)}'s ${glo.A.n}: the blow rings off — the crowd roars (${cfAmt87('+1')}).`)}}catch(e){}
   return r}}
 {const base=mvMax;mvMax=function(player){let m=base.apply(this,arguments);
   try{if(player&&player.cls&&player.pieces){let x=0;if(na84On(player,A=>A.uq==='mercurialis'))x++;if(na84On(player,A=>A.swift)&&na84Unhurt(player))x++;if(x)m=Math.max(0,Math.min(7,m+x))}}catch(e){}return m}}
 {const base=resetTurn;resetTurn=function(player){const r=base.apply(this,arguments);
   try{if(player&&player.cls&&S&&S.onl){const t=player._t84||(player._t84={h:0,c:0});if(player.cpu)t.c++;else t.h++}
-    if(player&&player.alive&&player.pieces){const g=na84On(player,A=>A.uq==='regalis');if(g&&cfAllowed()){cfWhy(_T('a legendary armor'));player.cf+=1;log(_T`${nm(player)}'s ${g.A.n}: +1 CF.`)}
+    if(player&&player.alive&&player.pieces){const g=na84On(player,A=>A.uq==='regalis');if(g&&cfAllowed()){cfWhy(_T('a legendary armor'));player.cf+=1;log(_T`${nm(player)}'s ${g.A.n}: ${cfAmt87('+1')}.`)}
       const rs=na84On(player,A=>A.uq==='restituta');if(rs){const l=rs.l;const cap=Math.min(7,(player.pieces[l]||[]).reduce((a,pc)=>a+(pc.ap|0),0));if(player.ap[l]>0&&player.ap[l]<cap){player.ap[l]++;log(_T`${nm(player)}'s ${rs.A.n} mends: +1 AP.`)}}}}catch(e){console.error(e)}
   return r}}
 

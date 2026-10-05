@@ -65,8 +65,8 @@ function statMvB(p){return p&&p.st&&S&&caAllowed()?band2(p.st.spd):0}
 /* statTurn — phase 3 upkeep, called inside takeChoice's class-ability block: Speed movement, Luck coin, Charisma CF. */
 function statTurn(p){if(!p||!p.st)return;const b=statBonuses(p.st);const bits=[];
   if(b.mv&&!p.netted){p.mv=Math.min(7,p.mv+b.mv);bits.push(_T`+${b.mv} movement (Speed)`)}
-  if(b.coin){p.coin+=b.coin;coinLog(p,b.coin,_T('Luck'));bits.push(_T`+${b.coin} coin (Luck)`)}
-  if(b.cf){cfWhy(_T('Charisma'));p.cf+=b.cf;bits.push(_T`+${b.cf} CF (Charisma)`)}
+  if(b.coin){p.coin+=b.coin;coinLog(p,b.coin,_T('Luck'));bits.push(_T`${coinAmt87('+'+(b.coin))} (Luck)`)}
+  if(b.cf){cfWhy(_T('Charisma'));p.cf+=b.cf;bits.push(_T`${cfAmt87('+'+(b.cf))} (Charisma)`)}
   if(bits.length&&(b.coin||b.cf))log(`${nm(p)}: ${bits.join(' · ')}.`)}
 /* statChips — the five ratings as compact chips; perk bands glow. opt.small for tight panels. */
 function statChips(st,opt={}){if(!st)return '';const b=statBonuses(st);

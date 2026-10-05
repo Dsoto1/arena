@@ -208,7 +208,7 @@ function onl83Repair(from,item){const H=onl83Holder(from);const I=H&&ONL83.piece
     <div class="rep83-pay">${pays.map(p=>`<button type="button" class="btn ${p.have>=cost?'primary':''}" data-rep83="${esc2(p.v)}" ${p.have<cost?'disabled':''}>${p.l} <small>${c83()} ${p.have}</small></button>`).join('')}</div>
     <div class="acts"><button type="button" class="btn" data-rep83="x">${_T`Not now`}</button></div>`);
   bg.addEventListener('click',e=>{const b=e.target.closest('[data-rep83]');if(!b)return;const v=b.dataset.rep83;bg.remove();if(v==='x')return;
-    onlDo(async()=>{const r=await NET.req('gear.repair',{holder:from,item,pay:v});if(r.holder&&r.holder.cls)onl83Put(r.holder);if(r.payer)onl83Put(r.payer);ONL82.dgAt=0;onlToast80(_T`🔧 ${esc2(I.n)} is whole again (${r.cost} coin).`)})})}
+    onlDo(async()=>{const r=await NET.req('gear.repair',{holder:from,item,pay:v});if(r.holder&&r.holder.cls)onl83Put(r.holder);if(r.payer)onl83Put(r.payer);ONL82.dgAt=0;onlToast80(_T`🔧 ${esc2(I.n)} is whole again (${coinAmt87(r.cost)}).`)})})}
 
 /* ---------------- 4 · the MARKET BOARD (offerings row, weapons | armor by level) + the USED market ---------------- */
 function onl83Board(ch){const cat=onlCatalog();const lv=[3,2,1];const coin=c83();
@@ -225,7 +225,7 @@ function onl83Board(ch){const cat=onlCatalog();const lv=[3,2,1];const coin=c83()
 function onl83Used(ch){if(!ONL83U.used||Date.now()-ONL83U.usedAt>15000){ONL83U.usedAt=Date.now();NET.req('market.list',{}).then(r=>{ONL83U.used=r.used||[];if(ONL.tab==='armory'&&ONL83U.mkt==='used'&&!onlFocus80())onlRedraw()}).catch(()=>{})}
   const U=ONL83U.used;if(!U)return `<p class="rc-sub">${_T`Opening the stalls…`}</p>`;if(!U.length)return `<p class="rc-sub">${_T`Nothing used for sale — the fallen’s gear comes here, with its history.`}</p>`;const cat=onlCatalog();
   return `<div class="us83">${U.map(x=>{const I=ONLC.pieceInfo({item:x.item,pc:{st:x.st,hist:x.hist}},cat)||{n:x.n,lv:x.lv,kind:x.kind,base:x.base,st:x.st,hist:x.hist,val:x.price};
-    const own=(ch.gear||[]).some(g=>ONLC.itemBase(g)===x.base)&&!(cat[x.base]||{}).stack;const no=own?_T('Already yours.'):(ch.wallet|0)<x.price?_T`Costs ${x.price} coin.`:'';
+    const own=(ch.gear||[]).some(g=>ONLC.itemBase(g)===x.base)&&!(cat[x.base]||{}).stack;const no=own?_T('Already yours.'):(ch.wallet|0)<x.price?_T`Costs ${coinAmt87(x.price)}.`:'';
     return `<div class="us83-it ${x.st==='broken'?'brk83':''}">${onl83PieceCard({...I,st:x.st,hist:x.hist})}<div class="us83-f">${x.st==='broken'?_T`<small class="brk83t">💔 Broken · ⅔ price · repair ${ONLC.repairCost(I)}</small>`:''}
       <small class="us83-from">${x.from?_T`from <b>${esc2(x.from.glad||'?')}</b>${x.from.house?' · '+esc2(onlHouse82(x.from.house)):''}`:''}</small>${onl83Hist(x.hist)}
       <button type="button" class="btn tksm ${no?'':'primary'}" data-onl83="ubuy" data-v="${esc2(x.id)}" ${no?_T`disabled title="${esc2(no)}"`:''}>${_T`Buy · ${c83()} ${x.price}`}</button></div></div>`}).join('')}</div>`}
@@ -300,7 +300,7 @@ function onl83Stakes(L){const S83=ONL83.stakes(L);
   return `<div class="cd83-line">${S83.map(s=>{const p=L.players[s.seat]||{};const k=p.kit||{};const human=!/^bot/.test(p.id||'');
     return `<div class="cd83-s ${human?'':'cpu'}">${k.cls?onlFig(k.cls,k.look,46):''}<div class="cd83-sb"><b>${esc2(p.name||'CPU')}</b><small>${p.rank?onlRankChip(p.rank):''}${s.domus?` ${esc2(onlHouse82(s.domus))}`:''}</small>
       <div class="cd83-gear">${s.pieces.map(I=>`<span class="cd83-pc ${I.named?'nw':''}" ${I.named?_T`style="--rc:${ONL83.rarCol[I.rar]}"`:''} title="${esc2(I.n)} · ${ONLC.valueOf(I)}">${esc2(I.n)}</span>`).join('')||_T('<small class="rc-sub">recruit kit</small>')}
-      ${(s.offer||[]).map(o=>`<span class="cd83-of" title="${esc2(OFF83N(o))}">${offTok83(o,18)}</span>`).join('')}${s.cfb?`<span class="cd83-pc">${_T`+${s.cfb} CF`}</span>`:''}</div>
+      ${(s.offer||[]).map(o=>`<span class="cd83-of" title="${esc2(OFF83N(o))}">${offTok83(o,18)}</span>`).join('')}${s.cfb?`<span class="cd83-pc">${cfAmt87('+'+(s.cfb))}</span>`:''}</div>
       <small class="cd83-val">${L.ranked?_T('At stake'):_T('Brought')}: ${c83()} ${s.value}</small></div></div>`}).join('')}${Array.from({length:cpu},()=>`<div class="cd83-s cpu"><span class="onl-rq">🤖</span><div class="cd83-sb">${_T`<b>CPU</b><small class="rc-sub">fills the open seat</small>`}</div></div>`).join('')}</div>`}
 {const base=onlRoomHTML80;onlRoomHTML80=function(L,grey){let h=base.apply(this,arguments);try{if(!L||L.status!=='waiting'||grey)return h;const host=L.host&&L.host.id===onlMe80();
     const left=L.startAt!=null?ONL83.countLeft(L):null;let box='';
@@ -314,7 +314,7 @@ setInterval(()=>{try{const el=document.getElementById('cd83');if(!el)return;cons
 async function onl83Profile(x){if(!x)return;let r;try{r=await ONL83.profile(x)}catch(e){if(e&&e.code==='no_domus'&&typeof x==='string'&&/^House /i.test(x))return onl83Profile(x.replace(/^House /i,''));onlToast80('🏛 '+esc2(e.message||_T('No such house.')));return}
   const D=r.domus||{};const nowS={off:_T('⚫ Away'),free:_T('🟢 In the arena'),room:_T('🟡 In a room'),fight:_T('🔴 Fighting now')}[(r.now||{}).st]||'';const rec=[[_T('Bouts'),D.bouts|0],[_T('Won'),D.wins|0],[_T('Survived'),D.survived|0],[_T('Fallen'),D.fallen|0],[_T('Lifetime CF'),D.lifeCF|0],[_T('Fame'),D.fame|0]];
   const glads=(r.glads||[]).map(g=>`<div class="pf83-g">${_T`${onlFig(g.cls,{token:(g.look||{}).token,color:(g.look||{}).color},70)}<b>${esc2(g.name)}</b><small>${onlRankChip(g.rank)}</small><small>✦ ${g.glory} Glory · ${g.survived} survived · ${g.wins} won</small>`}</div>`).join('')||`<p class="rc-sub">${_T`No living gladiators.`}</p>`;
-  const recent=(D.recent||[]).map(m=>`<div class="pf83-m ${m.died?'died':m.won?'won':''}">${_T`<b>${m.died?'🪦':m.won?'🏆':'⚔'} ${esc2(m.glad)}</b><small>${esc2(onlEvName(m.ev))} · ${esc2(onlCityName(m.loc))} · ${m.ranked?_T('Ranked'):_T('Custom')} · ${m.cf} CF${m.place?` · #${m.place}`:''} · ${esc2(date83(m.at))}</small>`}</div>`).join('')||`<p class="rc-sub">${_T`No matches yet.`}</p>`;
+  const recent=(D.recent||[]).map(m=>`<div class="pf83-m ${m.died?'died':m.won?'won':''}">${_T`<b>${m.died?'🪦':m.won?'🏆':'⚔'} ${esc2(m.glad)}</b><small>${esc2(onlEvName(m.ev))} · ${esc2(onlCityName(m.loc))} · ${m.ranked?_T('Ranked'):_T('Custom')} · ${cfAmt87(m.cf)}${m.place?` · #${m.place}`:''} · ${esc2(date83(m.at))}</small>`}</div>`).join('')||`<p class="rc-sub">${_T`No matches yet.`}</p>`;
   const bg=onl83Pop('pf83pop',`<div class="pf83"><div class="pf83-head"><div class="dom82-crest">🏛</div><div class="pf83-t"><h3>${esc2(onlHouse82(D.name))}${D.test?' <i class="test83">TEST</i>':''}</h3>${_T`<small class="rc-sub">${D.founded?'founded '+esc2(date83(D.founded))+' · ':''}best rank ${esc2(rk83(r.rank).n)} · ${esc2(nowS)}${D.archived?' · archived':''}</small>`}</div>
       <div class="pf83-act">${r.mine||onlIsGuest82()||!ONL.acct?'':`<button type="button" class="btn ${r.following?'':'primary'}" data-pf83="follow" data-v="${esc2(D.id)}" data-on="${r.following?0:1}">${r.following?_T('★ Following'):_T('☆ Follow')}</button>`}<button type="button" class="btn" data-pf83="share" data-v="${esc2(D.id)}">${_T`🔗 Share`}</button>${(r.now||{}).st==='fight'&&r.now.match?`<button type="button" class="btn" data-pf83="watch" data-v="${esc2(r.now.match)}">${_T`👁 Watch`}</button>`:''}</div></div>
     <div class="dom82-rec pf83-rec">${rec.map(([k,v])=>`<div><b>${v}</b><small>${k}</small></div>`).join('')}</div>
@@ -362,7 +362,7 @@ if(typeof GUEST_ACTS82!=='undefined')GUEST_ACTS82.add('tab');
 
 /* ---------------- 3 · the result: award − the lanista's cut = pay; broken pieces, offerings back, gifts ---------------- */
 {const base=onlSettled;onlSettled=function(res){const r=base.apply(this,arguments);try{const o=res&&res.out;if(!o||res.void)return r;const bits=[];
-    if(!o.died&&(o.award|0)>0)bits.push(_T`💰 Award ${o.award} − the lanista’s cut ${o.cut|0} (to the treasury) = <b>${o.pay} coin</b>`);
+    if(!o.died&&(o.award|0)>0)bits.push(_T`💰 Award ${o.award} − the lanista’s cut ${o.cut|0} (to the treasury) = <b>${coinAmt87(o.pay)}</b>`);
     if((o.broken||[]).length)bits.push(_T`💔 ${o.broken.length} piece${o.broken.length===1?'':'s'} came back broken — 🔧 repair in the Storeroom`);
     if((o.offBack||[]).length)bits.push(_T`🧪 ${o.offBack.length} offering${o.offBack.length===1?'':'s'} back in the satchel`);
     if((o.gifts||[]).length)bits.push(_T`🎁 Flavius sends ${o.gifts.length===1?_T('a gift'):o.gifts.length+' gifts'} to the house`);
@@ -378,13 +378,13 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   if(a==='repair'){const [from,item]=v.split('|');return onl83Repair(from,item)}
   if(a==='hold'){const L=onlMyLobby();if(L)NET.req('lobby.hold',{id:L.id}).then(R=>{ONL83U.stop[L.id]=Date.now();if(R&&R.id)onlUpsert80(R);onlRedraw()}).catch(err=>onlToast80('⚠ '+esc2(err.message)));return}
   if(a==='obuy'){const ch=ONL.char;if(!ch)return;const pr=ONLC.PRICE_OFF[v];
-    return ask76(_T('🧪 Buy this offering?'),`<div style="display:flex;gap:12px;align-items:center">${offTok83(v,64)}<p style="margin:0">${_T`<b>${esc2(OFF83N(v))}</b> for <b>${pr} coin</b> into ${esc2(ch.name)}’s satchel.<br><small class="rc-sub">Up to ${ONLC.OFF_CARRY} go into a match; the unused come back.</small>`}</p></div>`,_T`Buy · ${pr}`,_T('Not now'))
+    return ask76(_T('🧪 Buy this offering?'),`<div style="display:flex;gap:12px;align-items:center">${offTok83(v,64)}<p style="margin:0">${_T`<b>${esc2(OFF83N(v))}</b> for <b>${coinAmt87(pr)}</b> into ${esc2(ch.name)}’s satchel.<br><small class="rc-sub">Up to ${ONLC.OFF_CARRY} go into a match; the unused come back.</small>`}</p></div>`,_T`Buy · ${pr}`,_T('Not now'))
       .then(ok=>{if(ok)onlDo(async()=>{const c=await NET.req('offer.buy',{char:ch.id,key:v});onl83Put(c);ONL.char=c;onlToast80(_T`🧪 ${esc2(OFF83N(v))} is in the satchel.`)})})}
   if(a==='ubuy'){const ch=ONL.char;const x=(ONL83U.used||[]).find(y=>y.id===v);if(!ch||!x)return;
-    return ask76(_T('🏺 Buy it used?'),`<p style="margin:0">${_T`Buy <b>${esc2(x.n)}</b>${x.st==='broken'?' (<b>broken</b>)':''} for <b>${x.price} coin</b>?`}</p>${x.from?`<p class="rc-sub" style="margin:6px 0 0">${_T`Once ${esc2(x.from.glad||'someone')}’s.`}</p>`:''}`,_T`Buy · ${x.price}`,_T('Not now'))
+    return ask76(_T('🏺 Buy it used?'),`<p style="margin:0">${_T`Buy <b>${esc2(x.n)}</b>${x.st==='broken'?' (<b>broken</b>)':''} for <b>${coinAmt87(x.price)}</b>?`}</p>${x.from?`<p class="rc-sub" style="margin:6px 0 0">${_T`Once ${esc2(x.from.glad||'someone')}’s.`}</p>`:''}`,_T`Buy · ${x.price}`,_T('Not now'))
       .then(ok=>{if(ok)onlDo(async()=>{try{const r=await NET.req('market.buy',{char:ch.id,id:v});onl83Put(r.char);ONL.char=r.char;onlToast80(_T`🏺 ${esc2(x.n)} is ${esc2(ch.name)}’s now.`)}finally{ONL83U.usedAt=0;ONL83U.used=null}})})}
   if(a==='dbuy'){const s=document.getElementById('buy83sel');const k=s&&s.value;const it=onlCatalog()[k];if(!it)return;const p=ONLC.priceOf(it);
-    return ask76(_T('🏛 Buy for the shelf?'),`<p style="margin:0">${_T`<b>${esc2(it.n)}</b> (level ${it.lv}) for <b>${p} coin</b> from the treasury (${(ONL.domus||{}).treasury|0}).`}</p>`,_T`Buy · ${p}`,_T('Not now'))
+    return ask76(_T('🏛 Buy for the shelf?'),`<p style="margin:0">${_T`<b>${esc2(it.n)}</b> (level ${it.lv}) for <b>${coinAmt87(p)}</b> from the treasury (${(ONL.domus||{}).treasury|0}).`}</p>`,_T`Buy · ${p}`,_T('Not now'))
       .then(ok=>{if(ok)onlDo(async()=>{await NET.req('domus.buy',{item:k});ONL82.dgAt=0;onlToast80(_T`🏛 ${esc2(it.n)} is on the shelf.`)})})}
   if(a==='finv'){const L=onlMyLobby();if(!L)return;return onlDo(async()=>{await NET.req('lobby.invite',{id:L.id,to:v});onlToast80(_T('✉ Invitation sent.'))})}
   if(a==='infq'){const ev=ONL83U.infEv;return onlDo(async()=>{const r=await onlReq80('lobby.quick',{ev,ranked:v==='1',inf:1});onlToast80(r.made?_T`✦ A new Ludi Infames room — ${esc2(onlEvName(ev))}.`:_T`✦ You joined ${esc2(r.lobby.host.name)}’s Ludi Infames room.`)})}

@@ -33,12 +33,12 @@ function piaKeyFor(id){if(hasPrintedPia(id))return 'pia_'+id;const key='pia_cc_'
   const id=C.cls;const L=piaLabel(id);cardShow('c:'+k,player,_T('🂠 Drawn'));log(_T`${nm(player)} reveals <b>${C.n}</b>: ${C.d}`);
   const tgt=activePlayers().find(q=>piaIdentity(q)===id);
   if(!tgt){log(_T`No ${esc(L.name)} is in the arena. The Piaculum is discarded.`);return}
-  if(tgt===player){let tot=0;for(const q of activePlayers())if(q!==player){const v=Math.min(2,q.coin);q.coin-=v;coinLog(q,-v,'cards');tot+=v}player.coin+=tot;coinLog(player,tot,'cards');log(_T`Everyone pays the ${esc(L.name)}: ${nm(player)} collects ${tot} coin.`)}
-  else{const v=Math.min(2,player.coin);player.coin-=v;coinLog(player,-v,'cards');tgt.coin+=v;coinLog(tgt,v,'cards');log(_T`${nm(player)} pays ${nm(tgt)} ${v} coin.`)}}}
+  if(tgt===player){let tot=0;for(const q of activePlayers())if(q!==player){const v=Math.min(2,q.coin);q.coin-=v;coinLog(q,-v,'cards');tot+=v}player.coin+=tot;coinLog(player,tot,'cards');log(_T`Everyone pays the ${esc(L.name)}: ${nm(player)} collects ${coinAmt87(tot)}.`)}
+  else{const v=Math.min(2,player.coin);player.coin-=v;coinLog(player,-v,'cards');tgt.coin+=v;coinLog(tgt,v,'cards');log(_T`${nm(player)} pays ${nm(tgt)} ${coinAmt87(v)}.`)}}}
 /* the drawn card: the printed Piaculum art, with the first line re-lettered — the class name in its colour.
    Built as layered HTML over the printed card (no canvas), so it works from any origin. */
 {const baseCard=cardHTML;cardHTML=function(ref,size='md',extra=''){if(ref&&String(ref).startsWith('c:pia_cc_')){const C=CARDS[ref.slice(2)];const L=piaLabel(C?C.cls:'');
-    return `<span class="cimg ${size} piagen" style="${cardStyle('c:pia_royalty')}" role="img" aria-label="${_T`Piaculum · ${esc(L.name)}`}" data-card="${ref}" ${extra}><span class="piamask" style="font-size:${Math.min(7.3,7.3*21/(14+String(L.name).length)).toFixed(2)}cqw">${_T`Give`} <b style="color:${esc(L.color)}">${esc(L.name)}</b> [2 coin]</span></span>`}
+    return `<span class="cimg ${size} piagen" style="${cardStyle('c:pia_royalty')}" role="img" aria-label="${_T`Piaculum · ${esc(L.name)}`}" data-card="${ref}" ${extra}><span class="piamask" style="font-size:${Math.min(7.3,7.3*21/(14+String(L.name).length)).toFixed(2)}cqw">${_T`Give`} <b style="color:${esc(L.color)}">${esc(L.name)}</b> [${coinAmt87(2)}]</span></span>`}
   return baseCard.apply(this,arguments)}}
 function piaArtImage(){return null} /* kept for callers; the card is layered HTML now */
 /* ================ B. THE CLASS DESIGNER: THE PRINTED CLASSES ARE THE DEFAULTS ================ */
@@ -81,9 +81,9 @@ function classThumbHTML(k,tokenHTML=''){const W2=(k.R&&W[k.R]?W[k.R].n:'fists')+
   /* the lists: your classes as thumbnails, the printed classes as the system defaults */
   const used=id=>(CUSTOM.chars||[]).filter(c=>c.classRef==='ccl:'+id);
   const mine=(CUSTOM.classes||[]).map(c=>{const u=used(c.id);const tok=u[0]&&typeof figureHTML==='function'?figureHTML(tokenOfChar(u[0]),54):'';
-    return `<div class="lrow" style="--pc:${esc(c.color||'#c9a44a')}">${classThumbHTML(c,tok)}<div class="t">${_T`<b>${esc(c.name)}</b> ${c.sandbox?customTag({sandbox:1}):''}<small>${c.abil&&c.abil!=='none'?esc(ABILITIES[c.abil][0]):_T('no ability')} · ${c.coin||0} coin${+c.cf?_T` · ${c.cf} CF`:''} · used by ${u.length?u.map(x=>esc(x.name)).join(', '):_T('no one yet')}</small>`}</div>${crActs('cl',c)}</div>`}).join('');
+    return `<div class="lrow" style="--pc:${esc(c.color||'#c9a44a')}">${classThumbHTML(c,tok)}<div class="t">${_T`<b>${esc(c.name)}</b> ${c.sandbox?customTag({sandbox:1}):''}<small>${c.abil&&c.abil!=='none'?esc(ABILITIES[c.abil][0]):_T('no ability')} · ${coinAmt87(c.coin||0)}${+c.cf?_T` · ${cfAmt87(c.cf)}`:''} · used by ${u.length?u.map(x=>esc(x.name)).join(', '):_T('no one yet')}</small>`}</div>${crActs('cl',c)}</div>`}).join('');
   const printed=PRINTED_KEYS().map(key=>{const P=printedClass(key);const tok=typeof clsPieceHTML==='function'?clsPieceHTML(key,54):'';const items=(CLASSES[key].items||[]).map(i=>{const o=CLS_ITEM_OPTS.find(z=>z[0]===i);return o?o[1]:i}).join(', ');
-    return `<div class="lrow" style="--pc:${P.color}" data-card="k:${key}">${classThumbHTML(P,tok)}<div class="t"><b>${esc(P.name)}</b> <span class="rc-sub">${esc(CLASSES[key].sub||'')}</span>${_T`<small>${esc(String(CLASSES[key].ab||'').replace(/^Ability:\s*/,''))}</small><small>${[P.R,P.L].filter(Boolean).map(w=>W[w].n).join(' & ')} · ${P.coin} coin · ${P.keys} key${P.keys===1?'':'s'}${items?' · '+esc(items):''}</small>`}</div>${sysActs(`data-clsa="copybase" data-v="${key}"`)}</div>`}).join('');
+    return `<div class="lrow" style="--pc:${P.color}" data-card="k:${key}">${classThumbHTML(P,tok)}<div class="t"><b>${esc(P.name)}</b> <span class="rc-sub">${esc(CLASSES[key].sub||'')}</span>${_T`<small>${esc(String(CLASSES[key].ab||'').replace(/^Ability:\s*/,''))}</small><small>${[P.R,P.L].filter(Boolean).map(w=>W[w].n).join(' & ')} · ${coinAmt87(P.coin)} · ${P.keys} key${P.keys===1?'':'s'}${items?' · '+esc(items):''}</small>`}</div>${sysActs(`data-clsa="copybase" data-v="${key}"`)}</div>`}).join('');
   h=h.replace(/<div class="stlist"><h4>Your classes[\s\S]*$/,`<div class="stlist"><h4>${_T`Your classes · ${(CUSTOM.classes||[]).length}`}</h4>${mine?`<div class="list2 onecol">${mine}</div>`:`<p class="hint">${_T`None yet — save one above, or copy a printed class.`}</p>`}<h4>${_T`🔒 System classes · the printed ${PRINTED_KEYS().length}`} <span class="rc-sub">${_T`hover for the printed card · copy one to make it yours`}</span></h4><div class="list2 onecol">${printed}</div></div>`)}catch(e){console.error(e)}return h}}
 function classNameTaken(name,exceptId){const n=String(name||'').trim().toLowerCase();if(!n)return false;return PRINTED_KEYS().some(k=>CLASSES[k].name.toLowerCase()===n)||(CUSTOM.classes||[]).some(c=>c.id!==exceptId&&String(c.name).toLowerCase()===n)}
 {const baseClick=classStudioClick;classStudioClick=async function(b,redraw){const a=b.dataset.clsa;
@@ -159,7 +159,7 @@ document.addEventListener('change',e=>{const t=e.target;if(!t.dataset||!t.datase
 /* a fighter who survives (or wins) a weekly bout banks the coin they finished with */
 {const baseApply=applyBout;applyBout=function(bi,res,opt){const w=W_();const b=w&&w.night&&w.night.bouts[bi];const was=b?b.done:true;const r=baseApply.apply(this,arguments);
   try{if(b&&!was&&res&&res.rows)for(const row of res.rows){const g=gById(row.mgrId);if(!g||g.lanista||row.alive===false||!(row.coin>0))continue;g.purse=(g.purse||0)+row.coin;g.rec.banked=(g.rec.banked||0)+row.coin;
-      const m=g.contract?mgrById(g.contract.mgr):null;if(m&&m.isPlayer)ghist(g,_T`banked ${row.coin} coin from the ${TIERS[b.tier].n}`)}}catch(e){console.error(e)}return r}}
+      const m=g.contract?mgrById(g.contract.mgr):null;if(m&&m.isPlayer)ghist(g,_T`banked ${coinAmt87(row.coin)} from the ${TIERS[b.tier].n}`)}}catch(e){console.error(e)}return r}}
 /* hungry free agents pay a small house to take them; fame-hungry fighters ask to be entered */
 const PAYJOIN={maxFame:35,ovr:[44,64],weeksUnsigned:3,chance:0.35,wage:1,weeks:6}; /* TWEAK */
 const FIGHT_REQ={idleWeeks:2,moraleUp:4,moraleDown:6}; /* TWEAK */
@@ -167,7 +167,7 @@ const fameHungry=g=>!!(g.motives&&g.motives[0]&&['glory','playing','spectacle'].
 function payJoinOffer(w,pm){if(w.payJoin&&w.payJoin.until>=w.week)return;w.payJoin=null;if((pm.fame||0)>PAYJOIN.maxFame||isByeWk(w.week))return;if(Math.random()>PAYJOIN.chance)return;
   const pool=freeAgents().filter(g=>!g.inj&&!g.noPayJoin&&g.unsigned>=PAYJOIN.weeksUnsigned&&effOvr(g)>=PAYJOIN.ovr[0]&&effOvr(g)<=PAYJOIN.ovr[1]);if(!pool.length)return;
   const g=pickOne(pool);const pay=3+Math.floor((PAYJOIN.ovr[1]-effOvr(g))/3)+rnd(5);w.payJoin={gid:g.id,pay,until:w.week+1};
-  tnews(_T`${ICO.coin} <b>${esc(g.name)}</b> has gone ${g.unsigned} weeks without a house and offers to <b>pay you ${pay} coin</b> to join — they want a name. Answer it at the top of any tab.`,'big')}
+  tnews(_T`${ICO.coin} <b>${esc(g.name)}</b> has gone ${g.unsigned} weeks without a house and offers to <b>pay you ${coinAmt87(pay)}</b> to join — they want a name. Answer it at the top of any tab.`,'big')}
 function fightRequests(w,pm){for(const g of rosterOf(pm)){const req=g.wantFight;if(req&&req.week<w.week){ /* last week's ask: was it honoured? */
       if(req.bye){}else if(g.lastBout===req.week){g.morale=clamp(g.morale+FIGHT_REQ.moraleUp,0,100);ghist(g,_T('got the fight they asked for'))}else{g.morale=clamp(g.morale-FIGHT_REQ.moraleDown,0,100);tnews(_T`😠 ${esc(g.name)} asked to fight and sat out again (−${FIGHT_REQ.moraleDown} morale).`,'bad')}
       delete g.wantFight}}
@@ -178,13 +178,13 @@ function fightRequests(w,pm){for(const g of rosterOf(pm)){const req=g.wantFight;
 /* the cards at the top of every Manager tab */
 {const baseTop=buyOfferHTML;buyOfferHTML=function(){let h=baseTop();try{const w=W_(),pm=me();if(!w||!pm)return h;
   const o=w.payJoin&&w.payJoin.until>=w.week?w.payJoin:null;const g=o&&gById(o.gid);
-  if(g&&!g.contract)h+=`<div class="card2 payjoin"><div style="display:flex;gap:10px;align-items:center">${gArt(g,'sm')}<div style="flex:1">${_T`<b>${ICO.coin} ${esc(g.name)} will pay to join ${esc(pm.ludus)}</b>`}<p style="margin:4px 0">${_T`“No house will look at me. Take me on and I’ll pay you <b>${o.pay} coin</b> — give me the sand and I’ll give you a name.”`} <span class="rc-sub">${_T`${CLASSES[g.cls]?CLASSES[g.cls].name:''} · rated ~${pubOvr(g)} · ${PAYJOIN.weeks} weeks at ${PAYJOIN.wage}/wk`}</span></p>
-    <div class="acts"><button class="btn primary" type="button" data-v54="payjoin-yes">${_T`✍ Take them on<small>+${o.pay} coin</small>`}</button><button class="btn" type="button" data-v54="payjoin-no">${_T`✋ No thanks`}</button></div></div></div></div>`;
+  if(g&&!g.contract)h+=`<div class="card2 payjoin"><div style="display:flex;gap:10px;align-items:center">${gArt(g,'sm')}<div style="flex:1">${_T`<b>${ICO.coin} ${esc(g.name)} will pay to join ${esc(pm.ludus)}</b>`}<p style="margin:4px 0">${_T`“No house will look at me. Take me on and I’ll pay you <b>${coinAmt87(o.pay)}</b> — give me the sand and I’ll give you a name.”`} <span class="rc-sub">${_T`${CLASSES[g.cls]?CLASSES[g.cls].name:''} · rated ~${pubOvr(g)} · ${PAYJOIN.weeks} weeks at ${PAYJOIN.wage}/wk`}</span></p>
+    <div class="acts"><button class="btn primary" type="button" data-v54="payjoin-yes">${_T`✍ Take them on<small>${coinAmt87('+'+(o.pay))}</small>`}</button><button class="btn" type="button" data-v54="payjoin-no">${_T`✋ No thanks`}</button></div></div></div></div>`;
   const reqs=rosterOf(pm).filter(x=>x.wantFight&&x.wantFight.week===w.week);
   if(reqs.length&&!(w.night&&w.night.bye))h+=`<div class="card2 fightreq">${_T`<b>🗣 Asking for a fight this week:</b> ${reqs.map(x=>esc(x.name)).join(', ')}`} <span class="rc-sub">${_T`enter them on Match Week (+${FIGHT_REQ.moraleUp} morale) or they sulk (−${FIGHT_REQ.moraleDown})`}</span> <button class="btn tksm" type="button" data-mg="tab" data-id="night">${_T`⚔️ Match Week`}</button></div>`}catch(e){console.error(e)}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-v54]');if(!b)return;const w=W_(),pm=me();if(!w||!pm)return;const a=b.dataset.v54;
   if(a==='payjoin-yes'&&w.payJoin){const g=gById(w.payJoin.gid);if(g&&!g.contract){g.contract={mgr:pm.id,wage:PAYJOIN.wage,weeks:PAYJOIN.weeks,since:w.week};g.unsigned=0;g.morale=clamp((g.morale||60)+10,0,100);pm.coin+=w.payJoin.pay;
-    ghist(g,_T`paid ${w.payJoin.pay} coin to join ${esc(pm.ludus)}`);tnews(_T`✍ ${esc(g.name)} joins ${esc(pm.ludus)} and pays ${w.payJoin.pay} coin for the chance.`)}w.payJoin=null;saveWorld()}
+    ghist(g,_T`paid ${coinAmt87(w.payJoin.pay)} to join ${esc(pm.ludus)}`);tnews(_T`✍ ${esc(g.name)} joins ${esc(pm.ludus)} and pays ${coinAmt87(w.payJoin.pay)} for the chance.`)}w.payJoin=null;saveWorld()}
   if(a==='payjoin-no'&&w.payJoin){const g=gById(w.payJoin.gid);if(g)g.noPayJoin=true;w.payJoin=null;saveWorld()}
   if(typeof MGR_REDRAW==='function')MGR_REDRAW()});
 /* a new career opens with “How a week works” open (collapse it any time); a taken-over house too */

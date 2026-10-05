@@ -73,7 +73,7 @@ function wagerPanelHTML(lines){const B=(S.bets||[]).filter(b=>b.won!=null);const
   const crowd=C&&C.n?`<div class="wsec"><div class="whd">${_T`👥 The crowd`} <span class="rc-sub">${_T`· in Crowd Favor`}</span></div>
     <div class="wtiles">${tile(C.n,_T('slips laid'))}${tile(C.staked,_T('CF staked'))}${tile(C.winners.length,_T('backed the winner'),'good')}${tile(C.n-C.winners.length,_T('lost their bet'),'bad')}${tile(C.winners.reduce((a,x)=>a+x.pay,0),_T('CF paid out'))}</div>
 
-    ${C.winners.length?`<details class="wmore"><summary>${_T`Who collected (${C.winners.length})`}</summary><div class="wlist scroll">${C.winners.map(x=>`<div class="wrowl w"><span>${esc(x.name)}</span><span class="rc-sub">${_T`on ${esc(x.on||'')}`}</span>${_T`<b>+${x.pay} CF</b>`}</div>`).join('')}</div></details>`:''}</div>`:'';
+    ${C.winners.length?`<details class="wmore"><summary>${_T`Who collected (${C.winners.length})`}</summary><div class="wlist scroll">${C.winners.map(x=>`<div class="wrowl w"><span>${esc(x.name)}</span><span class="rc-sub">${_T`on ${esc(x.on||'')}`}</span>${_T`<b>${cfAmt87('+'+(x.pay))}</b>`}</div>`).join('')}</div></details>`:''}</div>`:'';
   const other=lines.filter(l=>/bookmaker/i.test(l));
   return `<div class="card2 wagerpanel"><div class="sect" style="margin-top:0">${_T`🎲 Wagers`}</div>${mine}${self}${crowd}${other.map(l=>`<div class="rc-sub" style="margin-top:4px">${l}</div>`).join('')}</div>`}
 
