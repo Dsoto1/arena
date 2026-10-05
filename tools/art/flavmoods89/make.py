@@ -101,6 +101,12 @@ def lefthand():
   # lift the curled fingers out of the chair's shadow a little (they sit against his hair in the facepalm)
   hsv=cv2.cvtColor(c,cv2.COLOR_BGR2HSV).astype(np.float32);v=hsv[...,2];dark=(v>40)&(v<150)&(m>0)
   hsv[...,2]=np.where(dark,np.minimum(255,v*1.35+12),v);hsv[...,1]=np.where(dark,hsv[...,1]*.85,hsv[...,1]);c=cv2.cvtColor(hsv.astype(np.uint8),cv2.COLOR_HSV2BGR)
+  # the dark background seen between his fingers becomes the shadowed fingers behind (no holes in the hand)
+  hv=cv2.cvtColor(c,cv2.COLOR_BGR2HSV)[...,2];hole=(hv<60)&(m>0);c[hole]=SKIN[0]
+  # one skin: re-tone the whole hand by brightness onto his skin ramp (the shadowed fingers took the robe's red); ink lines stay
+  L=cv2.cvtColor(c,cv2.COLOR_BGR2GRAY).astype(np.float32);ramp=np.array([(14,10,12)]+SKIN,np.float32);stops=np.array([20,70,110,160,215],np.float32)
+  t=np.clip(np.interp(L,stops,np.arange(5)),0,4);i0=np.floor(t).astype(int);i1=np.minimum(i0+1,4);fr=(t-i0)[...,None]
+  rc=ramp[i0]*(1-fr)+ramp[i1]*fr;lift=np.clip((L-0)/1,0,1)[...,None];c=np.where((m>0)[...,None],rc,c).astype(np.uint8)
   c=cv2.flip(c,0);m=cv2.flip(m,0);ys,xs=np.nonzero(m);sel=ys>np.percentile(ys,95)
   return c,m,(float(xs[sel].mean()),float(ys[sel].mean()))
 def forearm():
@@ -115,6 +121,59 @@ def forearm():
   n,lab,st,_=cv2.connectedComponentsWithStats(m);m=((lab==1+np.argmax(st[1:,cv2.CC_STAT_AREA]))*255).astype(np.uint8)
   ys,xs=np.nonzero(m);pr=xs*.72-ys*.70   # along the forearm (wrist → elbow); the wrist = the low end
   sel=pr<np.percentile(pr,4);return hs,m,(float(xs[sel].mean()),float(ys[sel].mean()))
+# ---- facepalm, painted in the card's style. POSE ONLY from his reference (the Picard facepalm he sent): the shapes below are traced
+#      in that picture's coordinates (203x191), then filled with the card's own skin and cloak tones, cel-shaded, and inked.
+SKIN=[(24,59,99),(51,109,158),(94,160,214),(142,208,243)]   # shadow → highlight, sampled from his forearm on the card
+CLOAK=[(16,18,52),(24,30,88),(34,50,128),(60,90,175)]
+FP={'sleeve':[(98,126),(122,134),(142,138),(166,128),(196,146),(206,196),(88,196),(96,158)],
+    'wrist':[(106,112),(134,108),(141,140),(109,141)],
+    'hand':[(80,57),(92,51),(106,53),(124,61),(140,67),(150,75),(148,92),(138,106),(136,126),(110,130),(96,113),(85,100),(78,86),(75,71)],
+    'lit':[(80,57),(92,51),(106,53),(124,61),(140,67),(146,74),(120,70),(96,62),(80,64)],
+    'shade':[(148,92),(138,106),(136,126),(118,128),(128,104),(140,86)],
+    'gaps':[[(79,67),(100,70),(124,76)],[(77,79),(98,82),(120,88)],[(80,91),(98,95),(114,100)]],
+    'folds':[[(120,150),(140,170),(150,196)],[(165,140),(175,165),(185,196)],[(104,160),(112,180)]]}
+FPH={'arm':[(114,122),(142,122),(160,206),(106,206)],
+     'back':[(104,62),(122,58),(140,66),(148,84),(144,104),(136,124),(120,130),(108,118),(102,98),(100,80)],
+     'fingers':[([(103,100),(90,101),(79,106)],9),([(101,88),(85,87),(71,92)],11),([(102,76),(84,73),(68,76)],12),([(106,64),(90,58),(74,58)],11)],
+     'thumb':([(138,106),(147,92),(149,78)],12),
+     'cloak':[(98,172),(118,160),(146,152),(176,150),(200,162),(212,206),(94,206)],
+     'folds':[[(122,166),(128,186),(126,206)],[(150,158),(160,182),(166,206)],[(180,156),(192,180),(198,206)]]}
+def fp_part(im,mask,base,light,dark,ink,d,hatch=0):
+  """one cel-shaded piece in his style: flat base, a lit band on the upper-left edge, a shadow band on the lower-right, a black outline"""
+  mask=(cv2.GaussianBlur(mask,(0,0),max(1,d/3))>110).astype(np.uint8)*255   # round the corners like a brush would
+  m=mask>0;sh=lambda dx,dy:np.roll(np.roll(m,dy,0),dx,1)
+  out=cv2.dilate(mask,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(ink*2+1,ink*2+1)))>0
+  im[out&~m]=INK;im[m]=base
+  im[m&~sh(d,d)]=light;dk=m&~sh(-d,-d);im[dk]=dark
+  if hatch:   # his fine hatching in the shadows
+    hl=np.zeros(m.shape,np.uint8)
+    for k in range(-H,W,hatch):cv2.line(hl,(k,0),(k+H,H),255,1,cv2.LINE_AA)
+    im[(hl>0)&dk]=INK
+  return im
+def fp_paint(img,M):
+  T=lambda pts:cv2.transform(np.array(pts,np.float32).reshape(-1,1,2),M).reshape(-1,2)
+  sc=float(np.hypot(M[0,0],M[0,1]));im=img.copy();ink=max(3,int(sc*1.0));d=max(4,int(sc*3))
+  def cap(pts,w):
+    m=np.zeros((H,W),np.uint8);cv2.polylines(m,[T(pts).astype(np.int32)],False,255,int(w*sc),cv2.LINE_AA)
+    for q in T([pts[0],pts[-1]]):cv2.circle(m,(int(q[0]),int(q[1])),int(w*sc/2),255,-1,cv2.LINE_AA)
+    return m
+  def poly(pts):
+    m=np.zeros((H,W),np.uint8);cv2.fillPoly(m,[T(pts).astype(np.int32)],255,cv2.LINE_AA);return m
+  im=fp_part(im,poly(FPH['arm']),SKIN[2],SKIN[3],SKIN[1],ink,d,hatch=int(sc*3))
+  im=fp_part(im,poly(FPH['cloak']),CLOAK[2],CLOAK[3],CLOAK[1],ink,d)
+  for f in FPH['folds']:cv2.polylines(im,[T(f).astype(np.int32)],False,CLOAK[0],max(2,ink-1),cv2.LINE_AA)
+  pts,w=FPH['thumb'];im=fp_part(im,cap(pts,w),SKIN[2],SKIN[3],SKIN[1],ink,d)
+  im=fp_part(im,poly(FPH['back']),SKIN[2],SKIN[3],SKIN[1],ink,d,hatch=int(sc*3))
+  for pts,w in FPH['fingers']:im=fp_part(im,cap(pts,w),SKIN[2],SKIN[3],SKIN[1],ink,max(3,d-2))
+  for l in [[(110,68),(114,73)],[(106,80),(110,85)],[(104,92),(108,96)],[(118,106),(128,98),(136,88)],[(120,116),(132,110)]]:
+    cv2.polylines(im,[T(l).astype(np.int32)],False,SKIN[0],max(2,ink-1),cv2.LINE_AA)
+  return im
+def facepalm2(im,deg=10):
+  """head bowed into the hand: turn the head forward, then paint the arm + hand over the brow and eyes"""
+  piv=(W*.55,H*.88);im=rot(im,deg,piv)
+  R=cv2.getRotationMatrix2D(piv,deg,1.0);ex,ey=(R@np.array([*C(401,357),1.0]))
+  sc=2.3;M=cv2.getRotationMatrix2D((0,0),-6,sc);px,py=cv2.transform(np.array([[[110,80]]],np.float32),M)[0,0]
+  M[0,2]+=ex-px;M[1,2]+=ey-py;return fp_paint(im,M)
 def hand_old(img):
   # a weary hand over the eyes, palm in, fingers to the brow — cel-shaded like the card
   im=img.copy();ov=im.copy()
@@ -173,11 +232,14 @@ def mood(m):
     im=warp(im,[B(BROW_R,0,-24,24),B(BROW_RI,0,-10,14),B(BROW_NI,4,8,14),B(MC_L,-4,4,12),B(MC_R,6,-2,12),B(JAW,0,12,50)])
     im=mouth_open(im,24,15,dy=4);im=rot(im,-5,(W/2,H*.75));return palm_up(im,at=(-60,700),sc=1.4,deg=90)
   if m=='facepalm':
-    im=lids(warp(im,[B(MC_L,0,6,10),B(MC_R,0,6,10)]),.95);im=rot(im,8,(W/2,H*.9))
-    # head in hand: his right forearm comes up from below, his left hand (back to us) over the eyes
-    fc,fm,fw=forearm();hc,hm,hw=lefthand();sx=1.25   # a stouter forearm, a smaller and broader hand: in proportion to his head
+    # his pick (2026-10-05): the Picard facepalm (POSE ONLY) — head bowed 10°, the back of his own hand from the card over brow and eyes,
+    # fingers up-left across the forehead, his forearm rising from below; the hand re-toned onto his skin ramp
+    im=lids(warp(im,[B(MC_L,0,6,10),B(MC_R,0,6,10)]),.95)
+    piv=(W*.55,H*.88);im=rot(im,10,piv);R=cv2.getRotationMatrix2D(piv,10,1.0);ex,ey=(R@np.array([*C(401,357),1.0]))
+    hc,hm,hw=lefthand();fc,fm,fw=forearm();sx=1.2
     hc=cv2.resize(hc,None,fx=sx,fy=1.0);hm=cv2.resize(hm,None,fx=sx,fy=1.0);hw=(hw[0]*sx,hw[1])
-    im=place(im,fc,fm,fw,(300,348),-144,1.15);return place(im,hc,hm,hw,(300,360),2,.72*K/5)
+    wx,wy=ex+40-PAD*K,ey+150-PAD*K
+    im=place(im,fc,fm,fw,(wx,wy-8),-110,1.15);return place(im,hc,hm,hw,(wx,wy),36,.70*K/4)
 MOODS=['calm','pleased','smug','cheer','laugh','shock','angry','bored','weep','facepalm','really']
 out=os.path.join(HERE,'out');os.makedirs(out,exist_ok=True)
 tiles=[]
