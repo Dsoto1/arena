@@ -3431,7 +3431,7 @@ async function openTrade(player) {
     return;
   }
   const gi = await modal(_T('You give…'), '', mine.map((x, i) => ({
-    label: x.label,
+    label: trade88Label(x, player),
     value: i
   })).concat([{
     label: _T('Cancel'),
@@ -3439,7 +3439,7 @@ async function openTrade(player) {
   }]));
   if (gi == null) return;
   const ti = await modal(_T('…and ask for'), `<p>${_T`${q.name} holds:`}</p>`, theirs.map((x, i) => ({
-    label: x.label,
+    label: trade88Label(x, q),
     value: i
   })).concat([{
     label: _T('Cancel'),
@@ -3449,6 +3449,7 @@ async function openTrade(player) {
   const give = mine[gi],
     get = theirs[ti];
   let ok;
+  TRADE88 = { give, get, from: player, to: q }; /* v0.88: the offer window shows both sides (163-v88fix) */
   if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await hsAsk(q, () => modal(_T`${q.name}: trade offer`, `<p>${_T`${player.name} offers ${give.label} for your ${get.label}. Accept?`}</p>`, [{
     label: _T('Accept'),
     value: 1,

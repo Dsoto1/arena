@@ -469,6 +469,7 @@ async function cpuDiplomacy(player) {
   const give = mine.filter(x => x.val >= get.val * 0.9).sort((a, b) => a.val - b.val)[0];
   if (!give) return;
   let ok;
+  TRADE88 = { give, get, from: player, to: q }; /* v0.88: the offer window shows both sides (163-v88fix) */
   if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await hsAsk(q, () => modal(_T`${player.name} proposes a trade`, `<p>${_T`${player.name} offers <b>${give.label}</b> for your <b>${get.label}</b>.`}</p>`, [{
     label: _T('Accept trade'),
     value: 1,

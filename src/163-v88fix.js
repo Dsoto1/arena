@@ -51,3 +51,32 @@ if(typeof ResizeObserver!=='undefined')new ResizeObserver(()=>bar88Hold()).obser
    images loaded again. When the new avatar is the same as the one on screen, the one on screen stays. */
 {const base=render;render=function(){const old=document.querySelector('#board .avatar');const r=base.apply(this,arguments);
   try{const nu=document.querySelector('#board .avatar');if(nu&&nu!==old){const h=nu.outerHTML;if(old&&old._h88===h)nu.replaceWith(old);else nu._h88=h}}catch(e){}return r}}
+/* TRADES you can see: an offer window shows what they give and what they want, side by side with the cards / tokens / weapons / coin;
+   "You give…" / "…and ask for" list them with pictures too. (06-ai + 07-ui set TRADE88 just before asking.) */
+let TRADE88=null;
+function trade88Pic(x,owner){try{
+  if(x.t==='coin')return `<span class="tr88coin">${ICO.coin}<b>${x.v}</b></span>`;
+  if(x.t==='key')return typeof rtokHTML==='function'?rtokHTML('key',64):'🗝';
+  if(x.t==='w'){const w=owner&&owner['w'+x.a];return w&&w.key&&cardRef('w:'+w.key)?cardHTML('w:'+w.key,'sm'):'⚔'}
+  if(x.t==='item'&&x.it){const it=x.it;if(it.kind==='card'&&CARDS[it.key])return cardHTML('c:'+it.key,'sm');
+    if(it.kind==='offer'&&typeof rtokHTML==='function'){const h=rtokHTML(it.key,64);if(h)return h}}}catch(e){}return ''}
+function trade88Label(x,owner){const p=trade88Pic(x,owner);return p?`<span class="tr88l"><span class="tr88p">${p}</span><span>${x.label}</span></span>`:x.label}
+function trade88Body(T){const side=(who,x,owner,cap)=>`<div class="tr88s"><div class="tr88h">${cap}</div><div class="tr88pic">${trade88Pic(x,owner)}</div><b>${x.label}</b></div>`;
+  return `<div class="tr88">${side(T.from,T.give,T.from,_T`${esc(T.from.name)} gives you`)}<div class="tr88x">⇄</div>${side(T.to,T.get,T.to,_T`for your`)}</div>`}
+{const base=modal;modal=function(title,body,buttons,opt){const T=TRADE88;
+  if(T&&!HEADLESS){const t=String(title||'');if(t===_T`${T.from.name} proposes a trade`||t===_T`${T.to.name}: trade offer`){TRADE88=null;try{body=trade88Body(T)+body}catch(e){}return base.call(this,title,body,buttons,opt)}}
+  return base.apply(this,arguments)}}
+/* the closed market: the whole board dims under the lock (the weapon cards sat above the old veil), and the board fits the window */
+{const css=document.createElement('style');css.textContent=`
+.tr88{display:flex;align-items:stretch;justify-content:center;gap:14px;margin:4px 0 10px;flex-wrap:wrap}
+.tr88s{flex:1;min-width:150px;max-width:240px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px;border:1px solid rgba(184,150,62,.45);border-radius:10px;background:rgba(0,0,0,.25);text-align:center}
+.tr88h{font-size:12px;color:var(--muted)}.tr88pic{min-height:96px;display:grid;place-items:center}.tr88pic .cimg.sm{zoom:1.3}.tr88pic .rtok{width:84px!important;height:84px!important}
+.tr88x{align-self:center;font-size:26px;color:var(--gold2)}
+.tr88coin{display:inline-flex;align-items:center;gap:6px}.tr88coin .ico,.tr88coin img{width:48px;height:48px}.tr88coin b{font-size:26px;color:var(--gold2)}
+.tr88l{display:inline-flex;align-items:center;gap:10px;text-align:left}.tr88p{flex:none;display:grid;place-items:center;width:52px}.tr88p .rtok{width:44px!important;height:44px!important}.tr88p .tr88coin .ico,.tr88p .tr88coin img{width:24px;height:24px}.tr88p .tr88coin b{font-size:14px}
+.mkt75 .mboard75{width:min(100%,calc((100vh - 330px) * 1.5456));margin:0 auto}
+.mkt75-lock{z-index:20;background:rgba(10,6,4,.68);backdrop-filter:grayscale(.7)}`;document.head.appendChild(css)}
+/* zoomed in, the follow camera redraws every frame while it eases: those in-between frames skip the sand grain and edge shade
+   (the frame where the camera settles draws them again), so zooming and panning stay smooth */
+{const base=drawShipTile;drawShipTile=function(){const moving=typeof CAM!=='undefined'&&CAM&&CAM.raf;if(!moving||typeof SAND83==='undefined')return base.apply(this,arguments);
+  const g=SAND83.grain,s=SAND83.shade;SAND83.grain=0;SAND83.shade=0;try{return base.apply(this,arguments)}finally{SAND83.grain=g;SAND83.shade=s}}}
