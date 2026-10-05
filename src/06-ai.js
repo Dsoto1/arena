@@ -448,14 +448,14 @@ async function cpuDiplomacy(player) {
     wantTrade = mfWant && MANDATA[mfWant.idx].n === 'The Trade';
   if (!wantTrade && (wantTruce || strength(q) > strength(player) * 0.9 || P.loyalty > 75 && rand() < .5 || relOf(player, q) >= 25)) {
     let ok;
-    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await modal(_T`${player.name} offers a truce`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} (CPU) proposes a truce. Neither of you will be targeted by the other, but there is no penalty for breaking it. Only one gladiator can win.`}</p>${hint('truce')}`, [{
+    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await hsAsk(q, () => modal(_T`${player.name} offers a truce`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} (CPU) proposes a truce. Neither of you will be targeted by the other, but there is no penalty for breaking it. Only one gladiator can win.`}</p>${hint('truce')}`, [{
       label: _T('Accept truce'),
       value: 1,
       primary: 1
     }, {
       label: _T('Refuse'),
       value: 0
-    }]);
+    }]));
     if (ok) {
       makeTruce(player, q);
       think(player, pickOne(QUOTES.truce), 'think');
@@ -469,14 +469,14 @@ async function cpuDiplomacy(player) {
   const give = mine.filter(x => x.val >= get.val * 0.9).sort((a, b) => a.val - b.val)[0];
   if (!give) return;
   let ok;
-  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await modal(_T`${player.name} proposes a trade`, `<p>${_T`${player.name} offers <b>${give.label}</b> for your <b>${get.label}</b>.`}</p>`, [{
+  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await hsAsk(q, () => modal(_T`${player.name} proposes a trade`, `<p>${_T`${player.name} offers <b>${give.label}</b> for your <b>${get.label}</b>.`}</p>`, [{
     label: _T('Accept trade'),
     value: 1,
     primary: 1
   }, {
     label: _T('Refuse'),
     value: 0
-  }]);
+  }]));
   if (ok) {
     doTrade(player, q, give, get);
   } else log(_T`${nm(q)} refuses ${nm(player)}'s trade.`);

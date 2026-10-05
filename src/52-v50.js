@@ -41,7 +41,7 @@ function hsAwayHTML(p,a){const b=hsSnap(p);const d=(k,lab,ico,good)=>{const v=b[
   const name=String(p.name);const L=(S.logLines||[]).slice(a.log).filter(l=>l.cls!=='hd'&&l.text&&l.text.includes(name)).slice(-6);
   return `<div class="away">${chips?`<div class="awaychips">${chips}</div>`:`<p class="rc-sub" style="margin:0 0 6px">${_T`Nothing touched you.`}</p>`}${L.length?`<ul class="awaylog">${L.map(l=>`<li>${esc(l.text)}</li>`).join('')}</ul>`:''}</div>`}
 {const _bt=beginTurn;beginTurn=async function(){try{const p=cur();turnTint(p);
-  if(S&&S.hotseat&&!S.over&&!HEADLESS&&!S.sim){S.hsSnaps=S.hsSnaps||{};const prev=S.hsPrevP;if(prev&&prev!==p&&!prev.cpu)S.hsSnaps[prev.id]=hsSnap(prev);S.hsPrevP=p;
+  if(S&&S.hotseat&&!S.over&&!HEADLESS&&!S.sim&&typeof HS88==='undefined'){S.hsSnaps=S.hsSnaps||{};const prev=S.hsPrevP;if(prev&&prev!==p&&!prev.cpu)S.hsSnaps[prev.id]=hsSnap(prev);S.hsPrevP=p;
     const a=S.hsSnaps[p.id];if(p&&!p.cpu&&a&&S.hotseat.players.length>=2){const P=(typeof HS_PROFILES!=='undefined'&&HS_PROFILES.find(x=>x.id===p.pid))||null;
       await modal(_T`🎮 ${esc(P?P.name:p.name)} — your turn`,`<p class="rc-sub" style="margin:0 0 6px">${_T`Since your last turn`}</p>${hsAwayHTML(p,a)}`,[{label:_T('Start my turn'),value:1,primary:1}],{close:1})}}}catch(e){console.error(e)}
   return _bt.apply(this,arguments)}}

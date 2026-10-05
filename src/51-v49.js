@@ -150,10 +150,10 @@ async function hsLoad(){try{HS_PROFILES=JSON.parse(localStorage.getItem('flavius
 function hsPersist(){try{localStorage.setItem('flavius_hs',JSON.stringify(HS_PROFILES))}catch(e){}}
 const hsSave=p=>{const i=HS_PROFILES.findIndex(q=>q.id===p.id);if(i<0)HS_PROFILES.push(p);else HS_PROFILES[i]=p;hsPersist();return Promise.resolve()};
 function hsFind(name){const n=String(name||'').trim().toLowerCase();return HS_PROFILES.find(p=>p.name.toLowerCase()===n)||null}
-function hsEnsure(name,color){let p=hsFind(name);if(p)return p;p={id:'hp'+Date.now().toString(36)+rnd(1296).toString(36),name:String(name).trim().slice(0,20),color:color||PALETTE[HS_PROFILES.length%PALETTE.length],created:new Date().toISOString().slice(0,10),
+function hsEnsure(name,color){let p=hsFind(name);if(p)return p;p={id:'hp'+Date.now().toString(36)+Math.floor(Math.random()*1296).toString(36),name:String(name).trim().slice(0,20),color:color||PALETTE[HS_PROFILES.length%PALETTE.length],created:new Date().toISOString().slice(0,10),
   events:0,wins:0,cfTotal:0,cfBest:0,ludus:0,freed:0,deaths:0,coin:50,won:0,lost:0,bets:0,history:[],honors:{},classWins:[],locs:[],road:0};HS_PROFILES.push(p);hsSave(p);return p}
 const hsLive=()=>!!(typeof S!=='undefined'&&S&&S.hotseat&&!S.over&&!S.mgrCtx);
-const hsActive=()=>{if(!hsLive())return null;const id=S.hsActive||(S.hotseat.players[0]||{}).pid;return HS_PROFILES.find(p=>p.id===id)||null};
+const hsActive=()=>{if(typeof hsPidNow==='function'){const o=hsPidNow();if(o!==undefined)return o?HS_PROFILES.find(p=>p.id===o)||null:null}if(!hsLive())return null;const id=S.hsActive||(S.hotseat.players[0]||{}).pid;return HS_PROFILES.find(p=>p.id===id)||null};
 
 /* ---------- the main menu: Multiplayer and its three modes ---------- */
 function mmMultiInstall(){const box=document.querySelector('#mainMenu .mmbtns');if(!box||box.querySelector('[data-mm="multi"]'))return;const play=box.querySelector('[data-mm="play"]');if(!play)return;
@@ -189,12 +189,12 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-hsde
 
 /* ---------- the event ---------- */
 {const _se=startEvent;startEvent=function(cfg){try{if(CFG.hotseat&&cfg&&cfg.seats&&!cfg.hotseat&&!cfg.mgr&&!cfg.tourn){const used=new Set();const players=[];
-  cfg.seats.forEach((s,i)=>{if(s.cpu)return;let nm=(s.hsName||'').trim()||_T`Player ${i+1}`;while(used.has(nm.toLowerCase()))nm+='′';used.add(nm.toLowerCase());const P=hsEnsure(nm);if(!s.saved)s.name=P.name;players.push({seat:i,pid:P.id,name:P.name})});
+  cfg.seats.forEach((s,i)=>{if(s.cpu)return;let nm=(s.hsName||'').trim()||_T`Player ${i+1}`;while(used.has(nm.toLowerCase()))nm+='′';used.add(nm.toLowerCase());const P=hsEnsure(nm);if(s.hsOwn)s.name=P.name; /* v0.88: the gladiator keeps its own name unless the player fights under theirs */players.push({seat:i,pid:P.id,name:P.name})});
   if(players.length)cfg.hotseat={players}}}catch(e){console.error(e)}return _se(cfg)}}
 {const _ns=newState;newState=function(cfg){const r=_ns(cfg);try{if(cfg&&cfg.hotseat){S.hotseat=cfg.hotseat;for(const h of cfg.hotseat.players){const p=S.players.find(x=>x.id===h.seat);if(p)p.pid=h.pid}S.hsActive=cfg.hotseat.players[0]&&cfg.hotseat.players[0].pid}}catch(e){console.error(e)}return r}}
 function hsTurnBanner(p){if(HEADLESS||!p)return;const P=HS_PROFILES.find(x=>x.id===p.pid);let el=document.getElementById('hsTurn');if(!el){el=document.createElement('div');el.id='hsTurn';el.className='hsturn';document.body.appendChild(el)}
   el.style.setProperty('--pc',p.color||'#f0cf7d');el.innerHTML=_T`🎮 <b>${esc(P?P.name:p.name)}</b>’s turn <span>${esc(p.name!==(P&&P.name)?p.name+' · ':'')}${esc(CLASSES[p.cls]?CLASSES[p.cls].name:'')}</span>`;el.classList.remove('show');void el.offsetWidth;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2200)}
-{const _bt=beginTurn;beginTurn=async function(){try{if(S&&S.hotseat&&!S.over){const p=cur();if(p&&!p.cpu&&p.pid){S.hsActive=p.pid;if(S.hotseat.players.length>=2)hsTurnBanner(p)}}}catch(e){}return _bt.apply(this,arguments)}}
+{const _bt=beginTurn;beginTurn=async function(){try{if(S&&S.hotseat&&!S.over){const p=cur();if(p&&!p.cpu&&p.pid){S.hsActive=p.pid;if(S.hotseat.players.length>=2&&typeof HS88==='undefined')hsTurnBanner(p)}}}catch(e){}return _bt.apply(this,arguments)}}
 /* the wallet of the player at the table */
 {const _gp=getPurse;getPurse=async function(){const P=hsActive();if(P)return {coin:P.coin,won:P.won||0,lost:P.lost||0,bets:P.bets||0,history:P.history||[],name:P.name,ludus:_T('Hot seat')};return _gp()}}
 {const _spp=setPurse;setPurse=async function(v){const P=hsActive();if(P){P.coin=v.coin;P.won=v.won||0;P.lost=v.lost||0;P.bets=v.bets||0;P.history=(v.history||[]).slice(-40);hsSave(P);return}return _spp(v)}}

@@ -53,7 +53,7 @@ function locationScore(q,loc,damage=0){const cost=q.hp[loc]+q.ap[loc];const othe
 function bestLocation(q,locs,damage){return [...locs].sort((a,b)=>locationScore(q,a,damage)-locationScore(q,b,damage))[0]}
 const LOC_TIP={larm:_T('Sever both arms and they are out. One severed arm drops its weapon and costs them 1 attack (2 attacks max per turn).'),rarm:_T('Sever both arms and they are out. One severed arm drops its weapon and costs them 1 attack (2 attacks max per turn).'),
   rleg:_T('A severed leg only slows them (less movement). It never puts them out.'),lleg:_T('A severed leg only slows them (less movement). It never puts them out.'),head:_T('Lose the head and they are out.'),chest:_T('Lose the chest and they are out.')};
-const showStrategy=()=>typeof SETTINGS!=='undefined'&&SETTINGS.hints!==false&&SETTINGS.hintDock!==false;
+const showStrategy=()=>typeof SETTINGS!=='undefined'&&SETTINGS.hints!==false&&SETTINGS.hintDock!==false&&!(typeof S!=='undefined'&&S&&S.hotseat&&!S.over); /* v0.88: no hints at a hot-seat table */
 const FOCUS_SETTLE_MS=[650,1050,1450]; /* TWEAK: when each die stops spinning */
 chooseLocation=async function(p,q,how,damage=0){
   const alive=LOCS.filter(l=>q.hp[l]>0);
@@ -81,6 +81,6 @@ chooseLocation=async function(p,q,how,damage=0){
 let RESPONDER=null; /* the gladiator whose response window is open (not the one whose turn it is) */
 {const baseDefend=defend;defend=async function(v){const prev=RESPONDER;if(v&&v.cls&&!v.cpu&&v!==cur())RESPONDER=v;try{return await baseDefend.apply(this,arguments)}finally{RESPONDER=prev}}}
 {const baseAsk=askCard;askCard=async function(p){const prev=RESPONDER;if(p&&p.cls&&!p.cpu&&p!==cur())RESPONDER=p;try{return await baseAsk.apply(this,arguments)}finally{RESPONDER=prev}}}
-{const baseModal=modal;modal=function(title,body,buttons,opt){if(RESPONDER&&S&&(S.hotseat||S.players.filter(q=>!q.cpu).length>1)&&typeof title==='string'){
-    title=`🪑 ${RESPONDER.name} — ${title}`;if(typeof body==='string')body=`<p class="hsresp" style="border-left:4px solid ${RESPONDER.color};padding-left:8px">${_T`<b>${esc(RESPONDER.name)}</b>, this one is yours to answer — pass the device.`}</p>`+body.replace(/your (Head|Chest|Left Arm|Right Arm|Right Leg|Left Leg)/,`${esc(RESPONDER.name)}’s $1`)}
+{const baseModal=modal;modal=function(title,body,buttons,opt){if(RESPONDER&&S&&!S.onl&&(S.hotseat||S.players.filter(q=>!q.cpu).length>1)&&typeof title==='string'){const who=typeof hsWho==='function'?hsWho(RESPONDER):RESPONDER.name; /* v0.88: never online; the player's own name */
+    title=`🪑 ${who} — ${title}`;if(typeof body==='string')body=`<p class="hsresp" style="border-left:4px solid ${RESPONDER.color};padding-left:8px">${_T`<b>${esc(who)}</b>, this one is yours to answer — pass the device.`}</p>`+body.replace(/your (Head|Chest|Left Arm|Right Arm|Right Leg|Left Leg)/,`${esc(RESPONDER.name)}’s $1`)}
   return baseModal.call(this,title,body,buttons,opt)}}
