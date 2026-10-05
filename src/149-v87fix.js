@@ -197,6 +197,10 @@ onlForum81=function(){const q=typeof onlQuiet80==='function'&&onlQuiet80();
 if(typeof onlToday80Patch==='function'){const base=onlToday80Patch;onlToday80Patch=function(){const r=base.apply(this,arguments);try{const el=document.getElementById('acta87');if(el){const h=acta87Body();if(el.innerHTML!==h)el.innerHTML=h}}catch(e){console.error(e)}return r}}
 if(typeof mockDn84==='function'){const base=mockDn84;mockDn84=function(w){const r=base.apply(this,arguments);try{for(const X of Object.values(w.days80||{}))for(const e of (X&&X.acta)||[]){const W=e&&e.w;if(W&&W.dom&&!W.dn){const H=mockDomus82(w,W.dom);if(H)W.dn=H.name}}}catch(e){}return r}}
 
+/* the mock keeps test houses out of the Acta as well (137's cleaner covers wins/fallen/upsets; the server never sends test seats) */
+if(typeof mockDayClean83==='function'){const base=mockDayClean83;mockDayClean83=function(w){const r=base.apply(this,arguments);try{const tn=new Set(Object.values(w.chars||{}).filter(c=>c.test).map(c=>c.name));
+  const bad=e=>!!(e&&e.w)&&((e.w.dom&&mockTestDom83(w,e.w.dom))||(!e.w.dom&&tn.has(e.w.name)));for(const X of Object.values(w.days80||{}))if(X&&Array.isArray(X.acta))X.acta=X.acta.filter(e=>!bad(e))}catch(e){}return r}}
+
 /* ---------------- 14 · every 🧠 wears its mind's hue ---------------- */
 const BRAIN87=/🧠/;
 function brain87Tier(txt){const s=String(txt||'');let best=-1;if(typeof AI_TIERS==='undefined')return -1;AI_TIERS.forEach((T,i)=>{if(new RegExp('^\\s*'+T.n+'\\b').test(s))best=i});return best}

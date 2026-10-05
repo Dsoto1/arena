@@ -32,7 +32,7 @@ o.gen=await p.evaluate(()=>{const box=document.getElementById('setBody');const g
     lessons:!!box.querySelector('[data-lessonsmenu]'),ts:box.querySelectorAll('[data-ts84]').length,tsOld:box.querySelectorAll('[data-tscale]').length,cvdSel:!!box.querySelector('select[data-cvd84]'),cvdBox:!!box.querySelector('[data-set="cvd"]'),
     ce:!!box.querySelector('[data-set="confirmEnd"]')&&!SETTINGS.confirmEnd,rst:!!box.querySelector('[data-rst84]'),lite:!!(vi&&vi.nextElementSibling&&vi.nextElementSibling.querySelector('[data-lite84]'))}});
 ok(JSON.stringify(o.gen.tabs)===JSON.stringify(['general','themes','tokens','sponsors','audio','saves']),'tabs without Profiles '+JSON.stringify(o.gen.tabs));
-ok(/lang84/.test(o.gen.first||'')&&o.gen.lang.join()==='en'&&/Translate works on this game; game terms stay English/.test(o.gen.langTxt),'🌐 Language row first (English only)');
+ok(/lang84/.test(o.gen.first||'')&&o.gen.lang[0]==='en'&&o.gen.lang.includes('es')&&/* v0.86: Spanish joined *//Translate works on this game; game terms stay English/.test(o.gen.langTxt),'🌐 Language row first (English, then the built-in languages) '+JSON.stringify(o.gen.lang));
 ok(!o.gen.lessons,'no lesson-buttons row');ok(o.gen.ts===1&&o.gen.tsOld===0,'one text-size control (a slider)');ok(o.gen.cvdSel&&!o.gen.cvdBox,'colour-blind is a select');
 ok(o.gen.ce,'Confirm before End turn (off by default)');ok(o.gen.rst,'Restore all defaults');ok(o.gen.lite,'Light board stays under Visuals');
 await shot(p,'set_general');

@@ -61,7 +61,9 @@ const sweep=async(sel,n,nm)=>{await P.mouse.move(5,5);await W8(250);await P.eval
   for(let k=0;k<n;k++)for(const [x,y] of boxes){await P.mouse.move(x,y,{steps:2});await W8(25)}
   await P.mouse.move(5,5);await W8(30);const mid=await P.evaluate(()=>{const t=document.getElementById('tryOn');return {shown:!!(t&&!t.hidden),shows:window._shows87,hit:window._hit87,red:window._red87,
     av:Object.entries(AVHIT).filter(([k,v])=>/^tryon/.test(k)&&v.t&&performance.now()-v.t<1500).length}});
-  await P.mouse.move(boxes[0][0],boxes[0][1]);await W8(80);const early=await P.evaluate(()=>{const t=document.getElementById('tryOn');return !!(t&&!t.hidden)});await W8(300);
+  await P.evaluate(()=>{window._tsh87=0;window._tov87=0;document.addEventListener('mouseover',e=>{if(e.target.closest&&e.target.closest('[data-card^="a:"]')&&!window._tov87)window._tov87=performance.now()},true);
+    const mo=new MutationObserver(()=>{const t=document.getElementById('tryOn');if(t&&!t.hidden&&!window._tsh87){window._tsh87=performance.now();mo.disconnect()}});mo.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']})});
+  await P.mouse.move(boxes[0][0],boxes[0][1]);await W8(400);const early=await P.evaluate(()=>{const d=window._tsh87-window._tov87;return !(window._tsh87&&window._tov87&&d>=100)?Math.round(d)||'none':false});
   const rest=await P.evaluate(()=>{const t=document.getElementById('tryOn');if(!t||t.hidden)return null;const m=[...t.querySelectorAll('path.to87')];const cs=m[0]?getComputedStyle(m[0]):null;
     return {marks:m.length,stroke:cs?cs.stroke:'',fill:cs?cs.fill:'',hit:t.querySelectorAll('.avhit').length,red:t.querySelectorAll('[fill="#ff4a3a"]').length+(m.some(x=>/255, 74, 58/.test(getComputedStyle(x).fill))?1:0)}});
   if(nm)await shot(nm);await P.mouse.move(5,5);await W8(200);const gone=await P.evaluate(()=>{const t=document.getElementById('tryOn');return !t||t.hidden});return {mid,early,rest,gone,n:boxes.length,hov:boxes.length*n}};
