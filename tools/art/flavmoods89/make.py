@@ -93,11 +93,14 @@ def place(img,c,m,piv,at,deg,f):
   hw=cv2.warpAffine(c,M,(W,H),flags=cv2.INTER_CUBIC);mw=cv2.warpAffine(m,M,(W,H)).astype(np.float32)/255
   mw=cv2.GaussianBlur(mw,(0,0),1.3)[...,None];return (img*(1-mw)+hw*mw).astype(np.uint8)
 def lefthand():
-  """his draped left hand, upside down: back of the hand to us, fingers up; returns (img, mask, wrist point)"""
-  c=cv2.resize(src[536:620,536:620],None,fx=5,fy=5,interpolation=cv2.INTER_CUBIC);hsv=cv2.cvtColor(c,cv2.COLOR_BGR2HSV)
-  m=((hsv[...,0]>=12)&(hsv[...,0]<32)&(hsv[...,2]>60)).astype(np.uint8)*255;m[:,:115]=0
-  m=cv2.morphologyEx(m,cv2.MORPH_CLOSE,np.ones((15,15),np.uint8));n,l,st,_=cv2.connectedComponentsWithStats(m);bb=1+np.argmax(st[1:,4])
-  m=((l==bb)*255).astype(np.uint8);m=cv2.dilate(m,np.ones((5,5),np.uint8))
+  """his draped left hand, upside down: back of the hand to us, fingers up; returns (img, mask, wrist point).
+  Outlined by hand (5x of card 536-620): colour keys lose the ring and middle fingers, which sit in shadow."""
+  c=cv2.resize(src[536:620,536:620],None,fx=5,fy=5,interpolation=cv2.INTER_CUBIC)
+  P=np.array([(120,112),(130,102),(170,102),(212,138),(250,178),(292,208),(326,238),(332,262),(320,292),(306,332),(298,388),(258,408),(228,398),(216,352),(190,334),(166,362),(128,364),(124,300),(122,240)],np.int32)
+  m=np.zeros(c.shape[:2],np.uint8);cv2.fillPoly(m,[P],255,cv2.LINE_AA)
+  # lift the curled fingers out of the chair's shadow a little (they sit against his hair in the facepalm)
+  hsv=cv2.cvtColor(c,cv2.COLOR_BGR2HSV).astype(np.float32);v=hsv[...,2];dark=(v>40)&(v<150)&(m>0)
+  hsv[...,2]=np.where(dark,np.minimum(255,v*1.35+12),v);hsv[...,1]=np.where(dark,hsv[...,1]*.85,hsv[...,1]);c=cv2.cvtColor(hsv.astype(np.uint8),cv2.COLOR_HSV2BGR)
   c=cv2.flip(c,0);m=cv2.flip(m,0);ys,xs=np.nonzero(m);sel=ys>np.percentile(ys,95)
   return c,m,(float(xs[sel].mean()),float(ys[sel].mean()))
 def forearm():
