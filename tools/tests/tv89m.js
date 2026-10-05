@@ -1,4 +1,4 @@
-/* v0.89 178-v89mkt: while Commodus is in the arena the market's Unlock / Buy buttons are disabled and say why; a free pick
+/* v0.89 178-v89mkt: while Commodus is in the arena Unlock is disabled (no CF) and says why, an unlocked market stays open; a free pick
    ("a level N weapon / armor") is chosen outright — no d4 — and does not use up Market Choice. */
 const {chromium}=require('playwright');const path=require('path');(async()=>{const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};
 const p=await b.newPage({viewport:{width:1300,height:900}});await p.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
@@ -17,6 +17,6 @@ const o=await p.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));
   return r});
 ok(o.before&&!o.before.dis,'unlock enabled before Commodus '+JSON.stringify(o.before));
 ok(o.after&&o.after.dis&&/Commodus/.test(o.after.t),'unlock disabled + says Commodus '+JSON.stringify(o.after));
-ok(o.buy.length===3&&o.buy.every(x=>x.dis),'buys disabled while he is in');
+ok(o.buy.length===3&&o.buy.every(x=>!x.dis),'a market already unlocked stays open for coin');
 ok(o.free.k&&o.free.rolls===0&&o.free.mch===false&&/chooses outright/.test(o.free.log)&&!/Market Choice/.test(o.free.log),'free pick chosen outright, no d4 '+JSON.stringify(o.free));
 console.log(JSON.stringify(o).slice(0,600));console.log('ERRS',JSON.stringify(errs));console.log('MISS',JSON.stringify(miss));await b.close();process.exit(errs.length||miss.length?1:0)})();
