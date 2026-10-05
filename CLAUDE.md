@@ -743,6 +743,9 @@ share copy — the site download play/flavius-rule-arena.zip.)
 - **v0.86** the game in Spanish (neutral Latin-American, tú): ~11.5k strings, Settings → Language, first-run ask on Spanish browsers,
   online phrases/server messages per player; English untouched. (Published as artifact Version 100; no server change; game zip
   flavius-site-update-v0.86.) Release run: 169/173 + tonl80r/t12/tv82o/tv84p flaky (passed alone).
+  The site was missing the v0.81 arm81_*/armthumb81_* art (empty armory tiles online) → flavius-art-v0.86.zip (page + ALL of assets/, ~21 MB,
+  no game download). From now on every game zip carries play/assets/ in full (s3 sync uploads only new/changed files); keep it ≤30 MB
+  to send (else split: art zip + game zip).
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
