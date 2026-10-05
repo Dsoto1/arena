@@ -678,4 +678,85 @@ const ONLC=(function(){
   function aucSnipe(lot,t){if(lot.ends-t<AUC_SNIPE_MS)lot.ends=t+AUC_SNIPE_MS;return lot}
 
   return {standsHolders,FELL_WATCH,setCatalog,armOf,armFit,equipOf0,NAMED_A,NAMED_ARMOR_SHARE,CPU_SHARE,CPU_CUT,RECLAIM_MS,isNamedA,AFFIX_A,UNIQUES_A,UNIQ_A_KEYS,rollNamedArmor,cleanNamedA,cpuRow,WEEK_MS,SEASON_EPOCH,seasonAt,seasonKeyOf,SCHED_W,seasonFixtures,onlineFixture,CH84,WEEK_GIFTS84,weekState,weekNote,AUC_LOTS,AUC_MIN_MS,AUC_SNIPE_MS,AUC_STEP,AUC_STEP_MIN,aucMin,aucNextMin,aucEnds,aucBidWhy,aucSnipe,GIFT_HOUSE,OFF_SHELF,giftsOut,giftsIn,offersIn,offerMoveWhy,offerMove,CFB_COIN,applyGiftHouse,TREASURY_CUT,GIFT_EVERY,GIFT_KEEP,COUNTDOWN_MS,LOOT_MS,FOLLOW_MAX,TROPHY_MAX,RECENT_KEEP,INFAMES_MIN,canWearNamed,PRICE_OFF,OFFERS83,OFF_CARRY,OFF_MAX,offersBrought,offerBuyWhy,offerBuy,offerBring,NAMED,L4_PRICE,RARITY,rarOf,itemBase,itemUid,isNamed,engineKey,pcOf,isBroken,newUid,pieceInfo,pieceOf,valueOf,repairCost,usedPrice,wearWhy,takePiece,putPiece,tagPiece,histAdd,breakItem,repairItem,gearAfter,lootBest,giftAdd,giftTake,GIFT_W,RAR_W,CFB_MAX,rollGift,applyGift,AFFIX,UNIQUES,rollNamed,namedPiece,cleanNamed,lineupSig,stopCount,countCheck,countLeft,trophyName,trophyAdd,trophiesFrom,recentRow,recentAdd,domusLink,domusFromHash,oddsOf,betResults,weekKey,PASS,passOK,standsSeatWhy,cleanPatron,gearMoveWhy,gearMove,gearEquip,GLORY,gloryOf,rankByGlory,tableFactor,PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nyBehind,dayStart,dayPrevKey,FORUM_GRACE,forumSince,dayLost,dayBest,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
+/* ══════════════════════ v0.89 THE DOMUS REBUILD (part H — contract tools/plans/onl89-domus.md) ══════════════════════
+   Kept apart from the IIFE above (it only EXTENDS ONLC; the page and the server both load it). His asks (2026-10-05):
+   • the look is set at creation (editChar refuses a changed look; the one-time v0.82 sculpted-token conversion still passes), the CLASS changes
+     only through char.class for CLASS_FEE89 coin from the house treasury;
+   • the Domus dresses a gladiator (dressApply: what he wears; everything else he holds goes to the house shelf);
+   • KEEP HOME: a piece flagged pcs[uid].home is listed in kit.home and left out of every Ranked kit (kitStrip in roomJoin / seatGroup / startRoom);
+   • saved loadouts (cleanKits), the treasury LEDGER by totals (ledAdd / ledgerOf), the MEMORIAL wall (memoEntry / memoAdd), house colours + crest
+     (cleanLook89, CREST89 = the printed banner devices), treasury UPGRADES (UPG89: a 5th gladiator slot, a bigger offerings shelf). */
+(function(C){
+  const CLASS_FEE89=100; /* TWEAK: a class change, from the treasury */
+  const UPG89={slot5:{cost:1500},shelf:{cost:400,add:4}}; /* TWEAK: once each, from the treasury */
+  const CREST89=['eagle','horse','mount','tri','olive','croc','tower','goat','sun','lion','wave','moon','wolf','owl','trident','laurel','boar','ship','thunder','column'];
+  const MEMO_MAX89=60, KITS_MAX89=3, KIT_ITEMS89=16, DRESS_W89=2, LED_BY89=40;
+  const LED_IN89=['cut','gift','sale','refund','grant'], LED_OUT89=['gear','repair','class','upg'];
+  const upgOf=D=>(D&&D.upg89)||{};
+  const gladMax=D=>C.GLAD_MAX+(upgOf(D).slot5?1:0);
+  const shelfMax=D=>C.OFF_SHELF+(upgOf(D).shelf?UPG89.shelf.add:0);
+  function upgWhy(D,k){const U=UPG89[k];if(!U)return 'No such upgrade.';if(upgOf(D)[k])return 'Already built.';if(((D&&D.treasury)|0)<U.cost)return `The treasury needs ${U.cost} coin.`;return ''}
+  function upgBuy(D,k,t){const why=upgWhy(D,k);if(why)throw new Error(why);const U=UPG89[k];D.treasury=(D.treasury|0)-U.cost;D.upg89={...upgOf(D),[k]:t||1};ledAdd(D,'upg',U.cost,null,t);return D}
+  /* ── the ledger: totals only (in / out by source, the cut by gladiator) ── */
+  function ledAdd(D,k,amt,ch,t){amt=Math.round(+amt||0);if(!D||!amt)return D;const L=D.led89||(D.led89={since:t||Date.now(),in:{},out:{},by:{}});L.in=L.in||{};L.out=L.out||{};L.by=L.by||{};
+    if(LED_OUT89.includes(k))L.out[k]=(L.out[k]|0)+Math.abs(amt);else if(LED_IN89.includes(k))L.in[k]=(L.in[k]|0)+amt;else return D;
+    if(k==='cut'&&ch&&ch.id){const b=L.by[ch.id]||(L.by[ch.id]={n:'',v:0});b.n=String(ch.name||b.n||'').slice(0,24);b.v=(b.v|0)+amt;
+      const ks=Object.keys(L.by);if(ks.length>LED_BY89){ks.sort((a,b2)=>(L.by[a].v|0)-(L.by[b2].v|0));for(const x of ks.slice(0,ks.length-LED_BY89))if(x!==ch.id)delete L.by[x]}}
+    return D}
+  function ledgerOf(D){const L=D&&D.led89;if(!L)return null;const sum=o=>Object.values(o||{}).reduce((a,v)=>a+(v|0),0);
+    return {since:L.since||0,in:{...(L.in||{})},out:{...(L.out||{})},by:Object.entries(L.by||{}).map(([id,x])=>({id,n:x.n||'',v:x.v|0})).sort((a,b)=>b.v-a.v),tin:sum(L.in),tout:sum(L.out)}}
+  /* ── colours + crest: two plain colours and one printed banner device ── */
+  const HEX=/^#[0-9a-fA-F]{6}$/;
+  function cleanLook89(x){if(!x||typeof x!=='object')throw new Error('Pick the colours and the crest.');if(!HEX.test(String(x.c1||''))||!HEX.test(String(x.c2||'')))throw new Error('Pick two colours.');
+    if(!CREST89.includes(x.crest))throw new Error('Pick one of the printed crests.');return {c1:String(x.c1).toLowerCase(),c2:String(x.c2).toLowerCase(),crest:x.crest}}
+  /* ── the memorial wall: every fallen gladiator of the house (the Hall of the Fallen keeps only the great) ── */
+  function memoBy(row,out,killer){if(out&&out.abandoned)return {k:'abandon'};const kb=row&&row.kb;
+    if(kb==='g')return killer?{k:'g',n:String(killer).slice(0,24)}:{k:'g'};if(kb==='b'||kb==='a'||kb==='r')return {k:kb};return {k:'fate'}}
+  function memoEntry(ch,m,by,t){return {id:ch.id,name:ch.name,cls:ch.cls,rank:(ch.died&&ch.died.rank)||C.rankFor(ch).k,fa:ch.faith==='christian'||ch.faith==='c'?'c':'p',
+    ev:(m&&m.ev)||null,loc:((m&&m.loc)|0)||null,at:(m&&m.at)||t||Date.now(),by:by||{k:'fate'},bouts:ch.bouts|0,survived:ch.survived|0,lifeCF:ch.lifeCF|0}}
+  function memoAdd(D,e){if(!D||!e)return D;D.memo89=[e,...(D.memo89||[]).filter(x=>x.id!==e.id)].slice(0,MEMO_MAX89);return D}
+  /* ── keep home: the flag lives on the piece (a plain id is tagged first, so it can carry it) ── */
+  const isHome=(h,it)=>{const p=C.pcOf(h,it);return !!(p&&p.home)};
+  function homeSet(h,it,on){if(!(h.gear||[]).includes(it))throw new Error('That piece is not there.');let id=it;
+    if(!C.itemUid(it)){if(!on)return it;const wasEq=Array.isArray(h.equip)&&h.equip.includes(it);const T=C.tagPiece(C.takePiece(h,it),h);C.putPiece(h,T,wasEq);id=T.item}
+    const u=C.itemUid(id);const pc={...(C.pcOf(h,id)||{st:'whole'})};if(on)pc.home=1;else delete pc.home;h.pcs={...(h.pcs||{}),[u]:pc};return id}
+  /* the kit lists its kept-home pieces; a Ranked room strips them (the gladiator fights without them) */
+  {const base=C.kitOf;C.kitOf=function(ch){const k=base.apply(this,arguments);if(!k||!ch)return k;const home=(k.items||[]).filter(it=>isHome(ch,it));if(home.length)k.home=home;return k}}
+  function kitStrip(kit){if(!kit||!Array.isArray(kit.home)||!kit.home.length)return kit;const left=kit.home.slice();const gear=[],items=[];const gone=new Set();
+    (kit.items||[]).forEach((it,i)=>{const j=left.indexOf(it);if(j>=0){left.splice(j,1);gone.add((kit.gear||[])[i]);return}items.push(it);gear.push((kit.gear||[])[i])});
+    const y={...kit,gear,items,named:(kit.named||[]).filter(d=>!gone.has(d.key)),homeLeft:kit.home.length};delete y.home;return y}
+  const stripRoom=L=>{if(!L||!L.ranked)return L;for(const p of L.players||[])if(p&&p.kit)p.kit=kitStrip(p.kit);for(const m of L.members||[])if(m&&m.kit)m.kit=kitStrip(m.kit);return L};
+  for(const f of ['roomJoin','seatGroup']){const base=C[f];C[f]=function(L){const r=base.apply(this,arguments);try{stripRoom(L)}catch(e){}return r}}
+  {const base=C.startRoom;C.startRoom=function(L){try{stripRoom(L)}catch(e){}return base.apply(this,arguments)}}
+  /* ── the look is set at creation; the class changes only through char.class ── */
+  const stable=o=>o&&typeof o==='object'?(Array.isArray(o)?'['+o.map(stable).join(',')+']':'{'+Object.keys(o).sort().map(k=>JSON.stringify(k)+':'+stable(o[k])).join(',')+'}'):JSON.stringify(o);
+  {const base=C.editChar;C.editChar=function(ch,d,catalog){d={...(d||{})};
+    if(d.look!=null){const was=C.cleanLook(ch.look),now=C.cleanLook(d.look);const legacy=!(was.token&&was.token.sc); /* the one-time v0.82 sculpted-token conversion */
+      if(stable(was)!==stable(now)&&!legacy)throw new Error('A gladiator’s look is set when he is raised.');if(!legacy)delete d.look}
+    if(d.cls!=null&&d.cls!==ch.cls)throw new Error(`Change class in the Domus — ${CLASS_FEE89} coin from the treasury.`);delete d.cls;return base.call(this,ch,d,catalog)}}
+  function classWhy(ch,cls,D){if(!ch||!ch.alive)return 'The dead stay as they fell.';if(!C.CLASSES8.includes(cls))return 'Pick one of the eight printed classes.';if(cls===ch.cls)return 'That is already his class.';
+    if(((D&&D.treasury)|0)<CLASS_FEE89)return `The treasury needs ${CLASS_FEE89} coin.`;return ''}
+  /* ── dressing a gladiator: inc = pieces taken from the shelf / another gladiator ({item, pc}); equip = what he should wear, in order.
+     → {eq, off}: off = the pieces he no longer wears (they go to the house shelf). ── */
+  function dressApply(ch,equip,inc,catalog){for(const P of inc||[])C.putPiece(ch,P,false);const held=(ch.gear||[]).slice();const left=held.slice();const eq=[];const bases=new Set();let nw=0;
+    for(const it of (Array.isArray(equip)?equip:[]).slice(0,30).map(String)){const i=left.indexOf(it);if(i<0)continue;if(C.wearWhy(ch,it))continue;const I=C.pieceOf(ch,it,catalog);if(!I)continue;
+      if(!I.stack&&!I.named){if(bases.has(I.base))continue;bases.add(I.base)}if(I.kind==='w'){if(nw>=DRESS_W89)continue;nw++}left.splice(i,1);eq.push(it)}
+    const ok=C.armFit(ch,eq,catalog);const fin=eq.filter((x,i)=>ok[i]);const rest=held.slice();for(const it of fin){const i=rest.indexOf(it);if(i>=0)rest.splice(i,1)}
+    const off=[];for(const it of rest){const T=C.takePiece(ch,it);if(T)off.push(T)}ch.equip=fin.slice();return {eq:fin,off}}
+  /* why a piece cannot be taken onto this gladiator ('' when it can) */
+  function takeWhy(ch,I){if(!ch||!ch.alive)return 'The dead carry nothing.';if(!I)return 'No such piece.';if(I.named&&!C.canWearNamed(ch))return 'Named pieces wait in the Storeroom until Veteranus.';return ''}
+  /* ── saved loadouts: ≤KITS_MAX89 named lists of the pieces he holds ── */
+  function cleanKits(ch,kits){if(!Array.isArray(kits))throw new Error('Pick the loadouts.');if(kits.length>KITS_MAX89)throw new Error(`Up to ${KITS_MAX89} loadouts.`);const held=ch.gear||[];
+    return kits.map(k=>{const n=C.cleanName(k&&k.n).slice(0,20);if(!n)throw new Error('Name the loadout.');if(C.nameBad(n))throw new Error('Pick another name.');
+      const left=held.slice();const items=[];for(const it of (Array.isArray(k.items)?k.items:[]).slice(0,KIT_ITEMS89).map(String)){const i=left.indexOf(it);if(i>=0){left.splice(i,1);items.push(it)}}return {n,items}})}
+  /* ── the domus row carries the new fields ── */
+  {const base=C.domusRow;C.domusRow=function(D){const r=base.apply(this,arguments);if(!r)return r;r.gmax=gladMax(D);r.smax=shelfMax(D);if(D.upg89)r.upg89={...D.upg89};if(D.look89)r.look89={...D.look89};const L=ledgerOf(D);if(L)r.led89=L;return r}}
+  /* the house shelf's cap follows the upgrade (a gladiator's satchel keeps OFF_MAX); offerings sold for a full shelf go into the ledger */
+  {const base=C.offerMoveWhy;C.offerMoveWhy=function(src,dst,k){if(src&&dst&&src!==dst&&!dst.cls){if(!(src.offers||[]).includes(k))return 'That offering is not there.';if((dst.offers||[]).length>=shelfMax(dst))return 'The shelf is full.';return ''}return base.apply(this,arguments)}}
+  {const base=C.offersIn;C.offersIn=function(D,keys){if(!D)return base.apply(this,arguments);const cap=shelfMax(D);D.offers=D.offers||[];let sold=0;
+    for(const k of keys||[]){if(!C.OFFERS83.includes(k))continue;if(D.offers.length>=cap){sold+=Math.round(C.PRICE_OFF[k]/2);continue}D.offers=[...D.offers,k]}
+    if(sold){D.treasury=(D.treasury|0)+sold;ledAdd(D,'sale',sold)}return D}}
+  {const base=C.applyGiftHouse;C.applyGiftHouse=function(D,rw,P){const t0=(D&&D.treasury)|0;const r=base.apply(this,arguments);try{if(D&&rw&&(rw.k==='coin'||rw.k==='cf')){const d=(D.treasury|0)-t0;if(d>0)ledAdd(D,'gift',d)}}catch(e){}return r}}
+  Object.assign(C,{CLASS_FEE89,UPG89,CREST89,MEMO_MAX89,KITS_MAX89,KIT_ITEMS89,DRESS_W89,LED_IN89,LED_OUT89,gladMax,shelfMax,upgWhy,upgBuy,ledAdd,ledgerOf,cleanLook89,
+    memoBy,memoEntry,memoAdd,isHome,homeSet,kitStrip,classWhy,dressApply,takeWhy,cleanKits})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

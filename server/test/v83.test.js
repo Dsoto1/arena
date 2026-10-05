@@ -208,7 +208,9 @@ async function routes(){
   const tess=await client('tess',{email:'tess@example.COM'});assert.strictEqual((await tess.req('hello',{all:1})).tester,true,'a tester by e-mail (case-insensitive)');
   const rc0=(await tess.req('hello',{all:1})).rankCounts.tiro;
   const gr=await tess.req('admin.grant',{coin:500,gift:2,gear:['galea','nope'],offering:['elix4','curse'],glory:100});
-  assert.strictEqual(gr.char.wallet,500);assert.ok(gr.char.gear.includes('galea'));assert.deepStrictEqual(gr.char.offers,['elix4']);assert.strictEqual(C.rankFor(gr.char).k,'novicius');assert.strictEqual(gr.gifts.length,2);
+  /* v0.89 (his fix): coin → the house treasury, gear → the shelf (unequipped), offerings → the shelf; Glory still → the active gladiator */
+  assert.strictEqual(gr.char.wallet,0);assert.strictEqual(gr.domus.treasury,500);assert.ok(!gr.char.gear.includes('galea')&&gr.gear.includes('galea'));assert.deepStrictEqual(gr.char.offers||[],[]);assert.deepStrictEqual(gr.offers,['elix4']);
+  assert.strictEqual(C.rankFor(gr.char).k,'novicius');assert.strictEqual(gr.gifts.length,2);
   assert.ok((await getD(tess.domus.id)).test,'the house is a TEST house for good');assert.ok(gr.domus.test);assert.strictEqual((await tess.req('hello',{all:1})).rankCounts.tiro,rc0-1,'out of the rank counts');
   assert.strictEqual((await db.get('ADMIN','log')).list[0].acct,tess.acct,'every grant is logged');
   await rejects(tess.req('lobby.create',{ev:'democritus',ranked:true,cry:false}),'testHouse');await rejects(tess.req('lobby.quick',{ev:'democritus',ranked:1}),'testHouse');
