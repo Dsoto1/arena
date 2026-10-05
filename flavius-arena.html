@@ -41001,7 +41001,7 @@ function want88PitchGain(g,m,k){return want88Fits(g,m,k,null)?WANT88.pitch:WANT8
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-want88]');if(!b||b.disabled)return;e.preventDefault();e.stopPropagation();
   const w=W_(),m=me();const [k,id]=b.dataset.want88.split('|');const g=gById(id);if(!w||!m||!g||g.contract||!wants88Known(g).includes(k))return;const wk=wkKey74();if(g.wantWk88===wk)return;
   g.wantWk88=wk;const before=interestOf(g,m);g.interest[m.id]=capInterest(g,m,before+want88PitchGain(g,m,k));const got=g.interest[m.id]-before;
-  tnews(_T`🎯 You spoke to ${esc(g.name)}'s wish (${want88Def(k)[2].toLowerCase()}): interest +${got}.`);MGR.msg=_T`🎯 ${g.name}: interest +${got}.`;saveWorld();MGR_REDRAW()},true);
+  tnews(_T`🎯 You spoke to ${esc(g.name)}'s wish (${want88Def(k)[2].replace(/^./,ch=>typeof LANG!=='undefined'&&LANG==='de'?ch:ch.toLowerCase()) /* German nouns keep their capital */}): interest +${got}.`);MGR.msg=_T`🎯 ${g.name}: interest +${got}.`;saveWorld();MGR_REDRAW()},true);
 
 /* (3) progressive scouting: ranges that narrow */
 function rng88Level(g){let m=null;try{m=me()}catch(e){}if(m&&g.contract&&g.contract.mgr===m.id)return 0;const sc=g.scout||0;if(sc>=2)return 0;if(g.watch74)return 4;if(sc>=1||g.rumor74)return 8;return 12}
@@ -41040,7 +41040,7 @@ function court88ToRival(w,g,why){const c=g.court88,bid=c&&c.bid;const R=bid&&mgr
 function court88Sign(w,g,wage,opt){const m=me();const bid=g.court88&&g.court88.bid;if(g.contract||!bid||bid.ans||(m.coin||0)<wage)return false;
   signGlad(g,wage,REC88.weeks,0,!!opt.pledge);bid.ans=opt.why;if(opt.rudis){g.rudis88={mid:m.id,s:w.season,wk:w.week};ghist(g,_T`was promised the rudis path by ${esc(m.ludus)}`)}
   if(opt.want)g.wantMet88=opt.want;const L=(w.letters||[]).find(x=>x.key==='rb88_'+g.id);if(L){L.read=true;L.done88=1}
-  tnews(_T`✍ ${esc(g.name)} signs with you (${wage}/wk)${opt.want?_T` — you answered a wish: ${want88Def(opt.want)[2].toLowerCase()}`:''}.`,'big');return true}
+  tnews(_T`✍ ${esc(g.name)} signs with you (${wage}/wk)${opt.want?_T` — you answered a wish: ${want88Def(opt.want)[2].replace(/^./,ch=>typeof LANG!=='undefined'&&LANG==='de'?ch:ch.toLowerCase()) /* German nouns keep their capital */}`:''}.`,'big');return true}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-rb88]');if(!b||b.disabled)return;e.preventDefault();e.stopPropagation();
   const w=W_(),m=me();if(!w||!m)return;const [a,id]=b.dataset.rb88.split('|');const g=gById(id);const bid=g&&g.court88&&g.court88.bid;if(!g||!bid||bid.ans||g.contract)return;
   if(a==='match')court88Sign(w,g,bid.wage,{why:'match'});
