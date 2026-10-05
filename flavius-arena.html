@@ -40633,6 +40633,15 @@ if(typeof onl83Profile==='function'){const base=onl83Profile;onl83Profile=async 
   .st88-rec{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.st88-rec b{font-size:13px}.st88-mon{grid-template-columns:1fr;gap:6px}.mon88{padding:5px 8px}.mon88 b{font-size:17px}
   .dom88 .sl88{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;padding-bottom:6px;-webkit-overflow-scrolling:touch}.dom88 .sl88c{flex:0 0 140px;scroll-snap-align:start;min-height:160px}
   .tb88 button{padding:7px 10px;font-size:13px}.cr88pop{padding:0}.cr88box{max-height:100vh;border-radius:0}}`;document.head.appendChild(st)}
+/* v0.88 fix (his note): a TESTER house's gladiators are left out of the world's living counts (server: test houses never count), so his
+   own Aper Red-Beard at Gregarius read "0 living". On that house's own screen the bar now adds its own living gladiators to their ranks
+   (the world counts stay as they are; the band's tip says so). */
+{const base=onlRankBar82;onlRankBar82=function(){const rc0=ONL82.rc;let mine=null;
+  try{const test=!!(ONL.domus&&ONL.domus.test)||(ONL.chars||[]).some(c=>c&&c.test);
+    if(test){mine={};for(const c of (ONL.chars||[]))if(c&&c.alive){const k=ONLC.rankFor(c).k;mine[k]=(mine[k]|0)+1}
+      const rc={...(rc0||{})};for(const k in mine)rc[k]=(rc[k]|0)+mine[k];ONL82.rc=rc}}catch(e){}
+  try{let h=base.apply(this,arguments);if(mine)h=h.replace(/<span class="rb82-n" title="[^"]*">/g,`<span class="rb82-n" title="${_T`Living gladiators at this rank, every house — yours included (a test house is left out of everyone else's count)`}">`);return h}
+  finally{ONL82.rc=rc0}}}
 /* =====================================================================
    157-V88MGR · v0.88 — Manager: Immortalis, the purse cap, Recruiting II (Virgilante's v0.88 answers, 2026-10-05)
    =====================================================================
