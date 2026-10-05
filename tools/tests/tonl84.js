@@ -112,7 +112,7 @@ const cpu=await fight({ev:'democritus',loc:6,ranked:true,cpuA:true});ok(cpu[0]&&
 await A.evaluate(async()=>{onlineOpen('play');await new Promise(r=>setTimeout(r,900));ONL.tab='play';await onlRefresh();onlRedraw()});await A.waitForTimeout(700);
 const land=await A.evaluate(()=>{const c=document.querySelector('#onl #wk84');const pl=document.querySelector('#onl [data-pl81="week84"]');const pls=document.querySelector('#onl .onl-pls81');
   return {card:c?c.textContent.replace(/\s+/g,' ').trim().slice(0,200):'',ok:c?c.querySelectorAll('.wk84-c.ok').length:0,pl:!!pl,first:!!pls&&pls.firstElementChild===pl,plTxt:pl?pl.textContent.replace(/\s+/g,' ').slice(0,90):'',al:!!document.querySelector('#onl [data-onl84="alerts"]')}});
-ok(/This week: .+ at /.test(land.card)&&land.ok===3,'the landing’s challenge card (3 ticks) '+JSON.stringify(land));ok(land.pl&&land.first&&/This week:/.test(land.plTxt),'the weekly playlist card leads the playlists');ok(land.al,'⚔🔔 turn alerts beside Quiet');
+ok(/This week: .+ at /.test(land.card)&&land.ok===3,'the landing’s challenge card (3 ticks) '+JSON.stringify(land));ok(land.pl&&land.first&&/This week:/.test(land.plTxt),'the weekly playlist card leads the playlists');ok(!land.al,'v0.89: no ⚔🔔 turn-alert button (174-v89onlui; defaults apply)');
 await shot(A,'landing');await A.evaluate(()=>{const x=document.querySelector('#onl .a81-pls');if(x)x.scrollIntoView()});await shot(A,'playlists',1300);
 
 /* ── 9 · FLAVIUS'S AUCTION ── */
