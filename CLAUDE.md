@@ -1014,6 +1014,9 @@ share copy — the site download play/flavius-rule-arena.zip.)
   removes that lanista via roomLeave — ANY member, not only the host; (3) host gone → PASS HOST to the longest-waiting lanista still
   there (takes a seat); nobody left → close + refund tickets/wagers; (4) enforcement: prune runs on hello/lobby.list AND on a 30 s
   lobby.get ping from every open room screen, so rooms clean up even when nobody browses; rooms with a gone host never show in lists.
+- **PLAY NOW SEATS DEALT AT RANDOM (his ask 2026-10-05, BUILT for v0.89: 165-v89seats, test tv89s):** at page load and each fresh New
+  event, CFG.seats get distinct random printed classes (Math.random) — only while the seats still hold what was dealt (a hand change, preset
+  or custom character stops it for the session). OPEN (asked): rotate the board so the human's corner is at the bottom.
 - **CJK SCHEDULE (his call 2026-10-05): JAPANESE v0.89, CHINESE SIMPLIFIED v0.90 (moved up; es/it/pt/fr/de are done).**
 - **LANGUAGES (his pick 2026-10-05): one per release alongside the features** — Italian v0.87, Portuguese (BR) v0.88, French v0.89, German v0.90,
   Japanese v0.91, Chinese SIMPLIFIED v0.92 (his pick; shares the CJK work: system-font fallback stack incl. canvas, no small-caps/
