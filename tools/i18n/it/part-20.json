@@ -535,7 +535,7 @@
  "Sign-in failed.": "Accesso non riuscito.",
  "🌐 Server set.": "🌐 Server impostato.",
  "⚠ Paste the JSON from the deploy (ws, auth, client).": "⚠ Incolla il JSON del deploy (ws, auth, client).",
- "Online server: {0}": "Server online: {0}",
+ "Online server: {0}": "Server Online: {0}",
  "mock (preview)": "simulato (anteprima)",
  "Paste the JSON printed by the deploy (or leave empty for the mock server).": "Incolla il JSON stampato dal deploy (o lascia vuoto per il server simulato).",
  "Use this server": "Usa questo server",
