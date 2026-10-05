@@ -1005,6 +1005,15 @@ share copy — the site download play/flavius-rule-arena.zip.)
   hand from the card (draped on the chair arm) flipped upside down = palm up (make.py palm_up). For Flavius AND every sponsor (drawn
   version too). Use it for: truces, a hit that misses / no attack (nohit), running into a tunnel, gifts to rivals, sparing; add it to
   FLAV_PRI/FLAV_LINES (lines like "Really?", "What was THAT?", "I paid for this?") and the sponsor preview row.
+- **ROOMS WHEN THE HOST/LANISTAS GO (his ask 2026-10-05, v0.89 fix + server zip):** TODAY: Leave works (roomLeave passes host
+  to the earliest joiner, empty → closed + refunds), but closing the Online window / tab only drops the socket (netIdleClose) — no
+  lobby.leave is sent; the server then only closes a WAITING room whose HOST has been offline 5 min (or the room is 3 h old), lazily
+  in `prune` (runs on someone's hello/lobby.list), and it closes the whole room even when others are in it; other members who drop
+  stay seated as ghosts. HIS PICKS: (1) closing Online / the tab while in a waiting room sends lobby.leave at once (onlClose +
+  pagehide, best effort); (2) a DROPPED socket gets a 60 s grace (room shows "host reconnecting…" / the seat dims), then the server
+  removes that lanista via roomLeave — ANY member, not only the host; (3) host gone → PASS HOST to the longest-waiting lanista still
+  there (takes a seat); nobody left → close + refund tickets/wagers; (4) enforcement: prune runs on hello/lobby.list AND on a 30 s
+  lobby.get ping from every open room screen, so rooms clean up even when nobody browses; rooms with a gone host never show in lists.
 - **CJK SCHEDULE (his call 2026-10-05): JAPANESE v0.89, CHINESE SIMPLIFIED v0.90 (moved up; es/it/pt/fr/de are done).**
 - **LANGUAGES (his pick 2026-10-05): one per release alongside the features** — Italian v0.87, Portuguese (BR) v0.88, French v0.89, German v0.90,
   Japanese v0.91, Chinese SIMPLIFIED v0.92 (his pick; shares the CJK work: system-font fallback stack incl. canvas, no small-caps/
