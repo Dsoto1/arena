@@ -68,7 +68,7 @@ o.r=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   MGR.sel=c.id;MGR.recFor=c.id;MGR.recStep=3;MGR_REDRAW();await W8(700);const sl=document.getElementById('ofWage');if(sl){sl.value=Math.min(+sl.max,Math.ceil(ask*1.2));ofMeterUpdate()}
   r.meterWant=!!document.querySelector('#ofMeter .want88m .want88c');
   /* the counter-bid: courted from this week, the letter opens week 3 */
-  const k=fa[4];k.favd=true;k.scout=2;MGR.tab='recruit';MGR_REDRAW();await W8(300);r.courted=!!(k.court88&&k.court88.wk===w.week);
+  const k=fa.slice(4).find(x=>x!==c&&x!==s&&x!==u)||fa[5];k.favd=true;k.scout=2;MGR.tab='recruit';MGR_REDRAW();await W8(300);r.courted=!!(k.court88&&k.court88.wk===w.week);
   r.tablet=!!document.querySelector(`.pcard.pt85[data-id="${k.id}"] .cd88`);if(!r.tablet||!r.courted)r.tdbg={c88:k.court88,wk:w.week,pc:!!document.querySelector(`.pcard.pt85[data-id="${k.id}"]`),same:[k===s,k===c,k===u],con:!!k.contract,ps:((document.querySelector(`.pcard.pt85[data-id="${k.id}"]`)||{}).innerHTML||'').replace(/<span class="portrait[\s\S]*?<\/svg><\/span>/,'P'),ph:pipelineHTML().slice(0,300)};
   window.K88=k;window.S88=s;window.C88=c;return r});
 ok(o.r.wantsN,'1–2 wants per free agent, stable');
@@ -87,7 +87,7 @@ o.r2=await pg.evaluate(()=>{const w=W_();return {wk:w.week-K88.court88.wk,bid:!!
 o.w2=await endWk();
 o.r3=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const w=W_(),m=me();const r={};r.wk=w.week-K88.court88.wk;
   for(const g of [K88,S88,C88])if(g.court88&&!g.court88.bid&&(!g.contract||g.contract.mgr!==m.id)){g.contract=null;court88Bid(w,g)} /* an AI house may have signed one during the weeks */
-  const gs=[K88,S88,C88].filter(g=>g.court88&&g.court88.bid&&g.court88.bid.mid&&!g.court88.bid.ans&&!g.contract);r.bids=gs.length;
+  const gs=[...new Set([K88,S88,C88])].filter(g=>g.court88&&g.court88.bid&&g.court88.bid.mid&&!g.court88.bid.ans&&!g.contract);r.bids=gs.length;
   r.letters=gs.map(g=>{const L=(w.letters||[]).find(x=>x.key==='rb88_'+g.id);return !!(L&&L.adv==='recruiter'&&/data-rb88="match\|/.test(L.body)&&/data-rb88="walk\|/.test(L.body))});
   /* render the letter's buttons and click them, one per fighter */
   const host=document.createElement('div');document.body.appendChild(host);const click=async(g,a)=>{const L=(w.letters||[]).find(x=>x.key==='rb88_'+g.id);host.innerHTML=L?L.body:court88Body(w,g,mgrById(g.court88.bid.mid));const bt=[...host.querySelectorAll('[data-rb88]')].find(x=>x.dataset.rb88.split('|')[0].startsWith(a));if(!bt)return 'nobtn';bt.disabled=false;bt.click();await W8(200);return 'ok'};
