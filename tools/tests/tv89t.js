@@ -10,7 +10,7 @@ const o=await pg.evaluate(async()=>{const r={};const L=(t,x,y,w,h,c,rr=0)=>({t,x
   const plain=figureSVG(spec),lit=sc3dSVG(plain);
   r.plainNoFilter=!/filter=/.test(plain);
   r.litFilter=(lit.match(/filter="url\(#s3f\)"/g)||[]).length>=5&&/<filter id="s3f"/.test(lit)&&/<filter id="s3fo"/.test(lit)&&/filter="url\(#s3fo\)"/.test(lit);
-  r.litBase=/id="s3s"/.test(lit)&&/A31 7 0 0 0 81 163/.test(lit)&&!/cx="50" cy="160" rx="31"/.test(lit);
+  r.litBase=/id="s3s"/.test(lit)&&/A31 7 0 0 0 81 167/.test(lit)&&!/cx="50" cy="160" rx="31"/.test(lit);
   r.maskKept=/<mask id="scm[^"]*"[^>]*><rect[^>]*fill="#fff"\/>/.test(lit)&&!/<mask[^>]*>[^]*?filter=[^]*?<\/mask>/.test(lit.replace(/<\/mask>[^]*$/,'</mask>'));
   r.rotLitOutside=/<g filter="url\(#s3f\)"><g transform="translate\(50 100\) rotate\(30\)"/.test(lit);
   r.validXML=!new DOMParser().parseFromString(lit,'image/svg+xml').querySelector('parsererror');
