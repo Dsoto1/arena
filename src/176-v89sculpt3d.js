@@ -137,3 +137,8 @@ const TOKEN_IMG3={};
 {const base=tokenImg;tokenImg=function(spec){if(!SC3D.on||HEADLESS||!spec)return base.apply(this,arguments);const key=JSON.stringify(spec);let im=TOKEN_IMG3[key];
   if(!im){im=new Image();im.onload=()=>{try{draw()}catch(e){}};im.src='data:image/svg+xml,'+encodeURIComponent(sc3dSVG(figureSVG(spec),'s3i'));TOKEN_IMG3[key]=im}
   return im.complete&&im.naturalWidth?im:null}}
+
+/* lit89 — any figureSVG output, lit, with ids of its own (card art, avatar badges, beast cards: his rule — every place a
+   character token shows wears the look). Falls back to the plain SVG when the look is off or HEADLESS. */
+let SC3D_LN=0;
+function lit89(svg){try{return SC3D.on&&!HEADLESS&&typeof svg==='string'?sc3dSVG(svg,'s3l'+(++SC3D_LN).toString(36)):svg}catch(e){return svg}}

@@ -38,7 +38,7 @@ function classCard74(k,ch){k=k||{};const x=esc;const col=k.color||'#b0271c';cons
   const nm=String(k.name||_T('Class')).toUpperCase();const ns=nm.length>10?Math.max(20,34-(nm.length-10)*1.6):34;
   const av=typeof avatarFor73==='function'?avatarSVG(avatarFor73(A,'cc74'+String(k.id||k.name||'x').replace(/\W/g,''))).replace(/<text[^>]*>[^<]*<\/text>/g,'').replace(/ data-av(tip|loc)="[^"]*"/g,'').replace(/ class="avzone"/g,''):'';
   const snap=av?svgToG74(av,326,166,210,440):'';
-  const tok=ch&&typeof figureSVG==='function'&&typeof tokenOfChar==='function'?svgToG74(figureSVG(tokenOfChar(ch)),432,612,100,160):'';
+  const tok=ch&&typeof figureSVG==='function'&&typeof tokenOfChar==='function'?svgToG74(lit89(figureSVG(tokenOfChar(ch))),432,612,100,160):'';
   const city=String(k.city||'').toUpperCase().slice(0,14);
   return `<svg viewBox="0 0 554 800" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${_T`${x(k.name||_T('Class'))} class card`}">
    <defs><linearGradient id="cc74p${x(String(k.id||'x'))}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ece1c8"/><stop offset=".62" stop-color="#e6d9bd"/><stop offset=".8" stop-color="#d9cbb0"/><stop offset="1" stop-color="#e3d6bc"/></linearGradient></defs>

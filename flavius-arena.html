@@ -27026,8 +27026,8 @@ classCardSVG=function(k,ch){k=k||{};const x=esc;const A=charArmor({arm:k.arm||{}
   const title=String(k.name||_T('Class')).toUpperCase();const ts=title.length>12?Math.max(11,19-(title.length-12)*0.9):19;const col=k.color||'#b0271c';
   /* v0.54: the figure is the character's board token; a printed class shows its own token; otherwise a marked placeholder */
   const figure=!k.sysKey&&typeof classSnap73==='function'?classSnap73(k,ch) /* v0.73: the class wearing its armor */
-    :ch&&typeof figureSVG==='function'&&typeof tokenOfChar==='function'?nestSVG(figureSVG(tokenOfChar(ch)),176,78,112,190)
-    :k.sysKey&&typeof figureSVG==='function'&&typeof tokenForCls==='function'?nestSVG(figureSVG(tokenForCls(k.sysKey)),176,78,112,190)
+    :ch&&typeof figureSVG==='function'&&typeof tokenOfChar==='function'?nestSVG(lit89(figureSVG(tokenOfChar(ch))),176,78,112,190)
+    :k.sysKey&&typeof figureSVG==='function'&&typeof tokenForCls==='function'?nestSVG(lit89(figureSVG(tokenForCls(k.sysKey))),176,78,112,190)
     :`<rect x="184" y="92" width="96" height="180" rx="10" fill="none" stroke="${col}" stroke-width="1.5" stroke-dasharray="5 4" opacity=".7"/><text x="232" y="170" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#6a5a44">${_T`The token of`}</text><text x="232" y="184" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#6a5a44">${_T`the character`}</text><text x="232" y="198" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#6a5a44">${_T`who takes`}</text><text x="232" y="212" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#6a5a44">${_T`this class`}</text>`;
   const face=ch&&ch.portrait?`<clipPath id="ccp${k.id||'x'}"><rect x="13" y="13" width="30" height="44" rx="4"/></clipPath><g clip-path="url(#ccp${k.id||'x'})">${nestSVG(portraitSVG(ch.portrait,col),13,13,30,44)}</g><rect x="13" y="13" width="30" height="44" rx="4" fill="none" stroke="#3a2a1a"/>`:`<circle cx="24" cy="35" r="7" fill="${col}" stroke="#3a2a1a"/>`;
   return `<svg viewBox="0 0 300 324" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${_T`${x(k.name||_T('Class'))} class card`}"><rect width="300" height="324" rx="10" fill="${shade(col,-0.55)}"/><rect x="5" y="5" width="290" height="314" rx="7" fill="#efe3c6" stroke="${col}" stroke-width="2"/>
@@ -30277,7 +30277,7 @@ document.addEventListener('mouseover',e=>{const c=e.target.closest&&e.target.clo
 function classSnap73(k,ch){const A=typeof charArmor==='function'?charArmor({arm:k.arm||{}}):[];
   const av=avatarSVG(avatarFor73(A,'cc'+String(k.id||k.name||'x').replace(/\W/g,''))).replace(/<text[^>]*>[^<]*<\/text>/g,'').replace(/ data-avtip="[^"]*"/g,'').replace(/ data-avloc="[^"]*"/g,'').replace(/ class="avzone"/g,'');
   let s=nestSVG(av,176,72,112,236);
-  if(ch&&typeof figureSVG==='function'&&typeof tokenOfChar==='function')s+=nestSVG(figureSVG(tokenOfChar(ch)),246,236,44,76);return s}
+  if(ch&&typeof figureSVG==='function'&&typeof tokenOfChar==='function')s+=nestSVG(lit89(figureSVG(tokenOfChar(ch))),246,236,44,76);return s}
 /* =====================================================================
    99-PHONE73 · v0.73 — phones in portrait, and the big windows on phones (Virgilante)
    =====================================================================
@@ -30576,7 +30576,7 @@ function classCard74(k,ch){k=k||{};const x=esc;const col=k.color||'#b0271c';cons
   const nm=String(k.name||_T('Class')).toUpperCase();const ns=nm.length>10?Math.max(20,34-(nm.length-10)*1.6):34;
   const av=typeof avatarFor73==='function'?avatarSVG(avatarFor73(A,'cc74'+String(k.id||k.name||'x').replace(/\W/g,''))).replace(/<text[^>]*>[^<]*<\/text>/g,'').replace(/ data-av(tip|loc)="[^"]*"/g,'').replace(/ class="avzone"/g,''):'';
   const snap=av?svgToG74(av,326,166,210,440):'';
-  const tok=ch&&typeof figureSVG==='function'&&typeof tokenOfChar==='function'?svgToG74(figureSVG(tokenOfChar(ch)),432,612,100,160):'';
+  const tok=ch&&typeof figureSVG==='function'&&typeof tokenOfChar==='function'?svgToG74(lit89(figureSVG(tokenOfChar(ch))),432,612,100,160):'';
   const city=String(k.city||'').toUpperCase().slice(0,14);
   return `<svg viewBox="0 0 554 800" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${_T`${x(k.name||_T('Class'))} class card`}">
    <defs><linearGradient id="cc74p${x(String(k.id||'x'))}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ece1c8"/><stop offset=".62" stop-color="#e6d9bd"/><stop offset=".8" stop-color="#d9cbb0"/><stop offset="1" stop-color="#e3d6bc"/></linearGradient></defs>
@@ -36397,7 +36397,7 @@ function nc82Rules(sp){const T=sp.T,t=sp.t;const out=[];
 function nc82Front(sp){const pk=nc82Printed(sp);
   if(pk)return `<div class="nc82c" role="img" aria-label="${_T`${esc(sp.name)} — beast card`}"><img class="bg" src="${assetURL('npccard82_'+pk+'.webp')}" alt="" draggable="false"></div>`;
   const T=sp.T;let art='';
-  if(sp.rec&&typeof figureSVG==='function'&&typeof tokenOfNpc==='function'){try{art=`<div class="fig">${figureSVG(tokenOfNpc(sp.rec),{w:'100%',h:'100%'})}</div>`}catch(e){art=''}}
+  if(sp.rec&&typeof figureSVG==='function'&&typeof tokenOfNpc==='function'){try{art=`<div class="fig">${lit89(figureSVG(tokenOfNpc(sp.rec),{w:'100%',h:'100%'}))}</div>`}catch(e){art=''}}
   if(!art){const m=nc82Mini(sp);const med=nc82Med(sp);
     art=med||m?`${med}${m?`<img class="mini${med?' withmed':''}" src="${assetURL('mini_'+m+'.webp')}" alt="" draggable="false">`:''}`:`<div class="glyph" style="background:${esc(T.col||'#777')}">${esc(T.g||'?')}</div>`}
   const nmU=String(sp.name||'').toUpperCase();const fs=Math.min(9,9*10/Math.max(6,nmU.length)).toFixed(2);
@@ -43785,6 +43785,11 @@ const TOKEN_IMG3={};
 {const base=tokenImg;tokenImg=function(spec){if(!SC3D.on||HEADLESS||!spec)return base.apply(this,arguments);const key=JSON.stringify(spec);let im=TOKEN_IMG3[key];
   if(!im){im=new Image();im.onload=()=>{try{draw()}catch(e){}};im.src='data:image/svg+xml,'+encodeURIComponent(sc3dSVG(figureSVG(spec),'s3i'));TOKEN_IMG3[key]=im}
   return im.complete&&im.naturalWidth?im:null}}
+
+/* lit89 — any figureSVG output, lit, with ids of its own (card art, avatar badges, beast cards: his rule — every place a
+   character token shows wears the look). Falls back to the plain SVG when the look is off or HEADLESS. */
+let SC3D_LN=0;
+function lit89(svg){try{return SC3D.on&&!HEADLESS&&typeof svg==='string'?sc3dSVG(svg,'s3l'+(++SC3D_LN).toString(36)):svg}catch(e){return svg}}
 /* =====================================================================
    177-V89AFFIX · v0.89 part J (Virgilante 2026-10-05): ONLINE ARMOR BONUSES (permanent only) + the Ranked stone rule + the odds card.
    Rules + rolls live in 111-onlcore ("v0.89 J" block): eight new armor affixes, the weighted draw, the named-armor tiers

@@ -57,7 +57,7 @@ function nc82Rules(sp){const T=sp.T,t=sp.t;const out=[];
 function nc82Front(sp){const pk=nc82Printed(sp);
   if(pk)return `<div class="nc82c" role="img" aria-label="${_T`${esc(sp.name)} — beast card`}"><img class="bg" src="${assetURL('npccard82_'+pk+'.webp')}" alt="" draggable="false"></div>`;
   const T=sp.T;let art='';
-  if(sp.rec&&typeof figureSVG==='function'&&typeof tokenOfNpc==='function'){try{art=`<div class="fig">${figureSVG(tokenOfNpc(sp.rec),{w:'100%',h:'100%'})}</div>`}catch(e){art=''}}
+  if(sp.rec&&typeof figureSVG==='function'&&typeof tokenOfNpc==='function'){try{art=`<div class="fig">${lit89(figureSVG(tokenOfNpc(sp.rec),{w:'100%',h:'100%'}))}</div>`}catch(e){art=''}}
   if(!art){const m=nc82Mini(sp);const med=nc82Med(sp);
     art=med||m?`${med}${m?`<img class="mini${med?' withmed':''}" src="${assetURL('mini_'+m+'.webp')}" alt="" draggable="false">`:''}`:`<div class="glyph" style="background:${esc(T.col||'#777')}">${esc(T.g||'?')}</div>`}
   const nmU=String(sp.name||'').toUpperCase();const fs=Math.min(9,9*10/Math.max(6,nmU.length)).toFixed(2);

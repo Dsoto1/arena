@@ -63,4 +63,4 @@ document.addEventListener('mouseover',e=>{const c=e.target.closest&&e.target.clo
 function classSnap73(k,ch){const A=typeof charArmor==='function'?charArmor({arm:k.arm||{}}):[];
   const av=avatarSVG(avatarFor73(A,'cc'+String(k.id||k.name||'x').replace(/\W/g,''))).replace(/<text[^>]*>[^<]*<\/text>/g,'').replace(/ data-avtip="[^"]*"/g,'').replace(/ data-avloc="[^"]*"/g,'').replace(/ class="avzone"/g,'');
   let s=nestSVG(av,176,72,112,236);
-  if(ch&&typeof figureSVG==='function'&&typeof tokenOfChar==='function')s+=nestSVG(figureSVG(tokenOfChar(ch)),246,236,44,76);return s}
+  if(ch&&typeof figureSVG==='function'&&typeof tokenOfChar==='function')s+=nestSVG(lit89(figureSVG(tokenOfChar(ch))),246,236,44,76);return s}
