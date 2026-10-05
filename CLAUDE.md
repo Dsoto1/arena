@@ -1023,6 +1023,9 @@ share copy — the site download play/flavius-rule-arena.zip.)
   (CF) — offline and online, panels, popups, results, letters, log; wherever a weapon stat or weapon action is named, use his weapon icons
   (WICO75: dmg, rng, thr = throw, abs = absorb, ammo, use, both, soul, cf) — e.g. log lines for absorbing and throwing carry the abs/thr icon.
   Changed _T keys → re-run newkeys and retranslate those keys in every language. Do it AFTER the 149/150/151 merges (touches many files).
+- **v0.88 ANSWERS (his picks 2026-10-05):** IMMORTALIS (Manager) = rating 82+ AND 15 career wins AND one invitational or Superbus title;
+  (Online) = Invictus rank + 25 Ranked bouts survived. Win purses: combined cap ×3 (upset × streak; was up to ×4). Recruiting II: the rival
+  house counter-bids in the 3rd week a free agent is courted (match / outbid with one of his wants / walk away).
 - **ONE MARKET WINDOW (his idea 2026-10-05, v0.88 first item):** the market board (boardHTML75) serves every market moment: BUY (as today),
   PICK (cards/tokens "choose a Level 2 armor / Level 1 weapon", drafts: only eligible pieces lit, rest dimmed; hover/tap enlarges a piece:
   armor = location on a small figure + AP + bonus location, weapons = damage, range, icons, bonuses in one line; "fits you / replaces X" tag),
