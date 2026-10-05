@@ -172,7 +172,9 @@ def mood(m):
   if m=='facepalm':
     im=lids(warp(im,[B(MC_L,0,6,10),B(MC_R,0,6,10)]),.95);im=rot(im,8,(W/2,H*.9))
     # head in hand: his right forearm comes up from below, his left hand (back to us) over the eyes
-    fc,fm,fw=forearm();hc,hm,hw=lefthand();im=place(im,fc,fm,fw,(300,352),-144,.8);return place(im,hc,hm,hw,(300,360),2,.82*K/5)
+    fc,fm,fw=forearm();hc,hm,hw=lefthand();sx=1.25   # a stouter forearm, a smaller and broader hand: in proportion to his head
+    hc=cv2.resize(hc,None,fx=sx,fy=1.0);hm=cv2.resize(hm,None,fx=sx,fy=1.0);hw=(hw[0]*sx,hw[1])
+    im=place(im,fc,fm,fw,(300,348),-144,1.15);return place(im,hc,hm,hw,(300,360),2,.72*K/5)
 MOODS=['calm','pleased','smug','cheer','laugh','shock','angry','bored','weep','facepalm','really']
 out=os.path.join(HERE,'out');os.makedirs(out,exist_ok=True)
 tiles=[]
