@@ -101,6 +101,6 @@ for(const [vw,vh,n] of [[390,844,'p390'],[844,390,'l844']]){const pp=await b.new
   await pp.evaluate(()=>document.getElementById('recTable').scrollIntoView({block:'start'}));await pp.waitForTimeout(200);await sx(pp,n+'_list');
   ok(g.docW<=g.vw&&g.bodyX<=1&&g.mgX<=1&&g.det<=1,n+': no sideways scroll');
   ok(g.tabs.length===7&&g.tabs.every(t=>t.h>=66&&t.h<=80&&t.w>=150&&t.w/t.h>=2&&t.w/t.h<=6),n+': tablets keep their shape '+g.tabs.map(t=>t.w+'x'+t.h).join(' '));
-  ok(g.btns.length===7&&g.btns.every(x=>x.one&&x.h<=28),n+': next-step buttons on one line');
+  ok(g.btns.length===7&&g.btns.every(x=>x.one&&x.h<=40),n+': next-step buttons on one line (36 px tap height on phones, v0.88)');
   ok(g.rows.length&&g.rows.every(h=>h<=44),n+': list rows one line');ok(!g.names.length,n+': names fit')}
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();

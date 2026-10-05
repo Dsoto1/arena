@@ -182,5 +182,5 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-ckskip]');
 (()=>{const tip=document.getElementById('tip');if(!tip)return;let anchor=null;
   document.addEventListener('mouseover',e=>{anchor=e.target.closest&&e.target.closest('[data-card],[data-glad],[data-tokz]')},true);
   const hide=()=>{if(!tip.hidden)tip.hidden=true};
-  setInterval(()=>{if(tip.hidden)return;if(!anchor||!anchor.isConnected||!anchor.matches(':hover'))hide()},350);
+  setInterval(()=>{if(tip.hidden)return;if(!anchor||!anchor.isConnected||(!anchor.matches(':hover')&&!(typeof TIP_TOUCH88!=='undefined'&&TIP_TOUCH88.el===anchor)))hide()},350);
   document.addEventListener('mouseleave',hide);window.addEventListener('blur',hide)})();
