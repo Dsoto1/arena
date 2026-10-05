@@ -990,6 +990,10 @@ share copy — the site download play/flavius-rule-arena.zip.)
   parchment + column) → drawn live for the 8 printed + custom classes: name in the banner (class colour), ability/weakness/coin/keys/CF/
   loadout from the data, translated rules (name stays English). Figure side = his cls_<key>.webp (printed) / live figure (custom). v0.87.
   ANSWERED: Domus purse = the gladiator's own coin (lost at death); treasury = the house's 20% cut (outlives deaths, buys for anyone).
+- **ICONS SWEEP (his rule 2026-10-05, v0.87):** ANY coin or CF amount shown as a reward/cost/gain uses ICO.coin (gold coin) and ICO.wheat
+  (CF) — offline and online, panels, popups, results, letters, log; wherever a weapon stat or weapon action is named, use his weapon icons
+  (WICO75: dmg, rng, thr = throw, abs = absorb, ammo, use, both, soul, cf) — e.g. log lines for absorbing and throwing carry the abs/thr icon.
+  Changed _T keys → re-run newkeys and retranslate those keys in every language. Do it AFTER the 149/150/151 merges (touches many files).
 - **ONE MARKET WINDOW (his idea 2026-10-05, v0.88 first item):** the market board (boardHTML75) serves every market moment: BUY (as today),
   PICK (cards/tokens "choose a Level 2 armor / Level 1 weapon", drafts: only eligible pieces lit, rest dimmed; hover/tap enlarges a piece:
   armor = location on a small figure + AP + bonus location, weapons = damage, range, icons, bonuses in one line; "fits you / replaces X" tag),
