@@ -194,6 +194,17 @@ function iso(r, c) {
     y: OY + (c + r) * TH / 2
   };
 }
+/* isoFix — iso without the v0.89 view turn (168-v89rotate): the board rim, the zone ropes, Flavius's box. */
+function isoFix(r, c) {
+  return {
+    x: OX + (c - r) * TW / 2,
+    y: OY + (c + r) * TH / 2
+  };
+}
+/* dep89 — draw depth of a tile (back to front); 168-v89rotate turns it with the view. */
+function dep89(r, c) {
+  return r + c;
+}
 /* tilePath — traces a tile's diamond outline onto ctx without filling or stroking it; inset shrinks the diamond. */
 function tilePath(r, c, inset = 0) {
   const {
@@ -1541,10 +1552,10 @@ function draw() {
   ctx.clearRect(0, 0, Wd, Hd);
   if (!S) return;
   computeHL();
-  const tA = iso(0, 0),
-    tB = iso(0, N),
-    tC = iso(N, N),
-    tD = iso(N, 0);
+  const tA = isoFix(0, 0),
+    tB = isoFix(0, N),
+    tC = isoFix(N, N),
+    tD = isoFix(N, 0); /* v0.89: the rim is square — never turned (168-v89rotate) */
   ctx.beginPath();
   ctx.moveTo(tA.x, tA.y - 10);
   ctx.lineTo(tB.x + 16, tB.y);
@@ -1677,10 +1688,10 @@ function draw() {
     ctx.stroke();
   }
   if (RD().zone > 1 && !S.zoneFull) {
-    const a = iso(za, za),
-      b = iso(za, zb + 1),
-      c2 = iso(zb + 1, zb + 1),
-      d = iso(zb + 1, za);
+    const a = isoFix(za, za),
+      b = isoFix(za, zb + 1),
+      c2 = isoFix(zb + 1, zb + 1),
+      d = isoFix(zb + 1, za); /* v0.89: the zone ropes are centred — never turned */
     ctx.beginPath();
     ctx.moveTo(a.x, a.y);
     ctx.lineTo(b.x, b.y);
@@ -1953,7 +1964,7 @@ function draw() {
     const m = center(r, c);
     const b = spriteBox(kind, m.x, m.y);
     for (const f of focus) {
-      if (f.r + f.c >= r + c) continue;
+      if (dep89(f.r, f.c) >= dep89(r, c)) continue;
       const fm = center(f.r, f.c);
       if (fm.x > b.x0 && fm.x < b.x1 && fm.y > b.y0 && fm.y < b.y1) return kind === 'pillar' ? 0.28 : 0.45;
     }
@@ -1961,7 +1972,7 @@ function draw() {
   };
   const objs = [];
   for (const pl of S.pillars) objs.push({
-    d: pl.r + pl.c,
+    d: pl.d89 != null ? pl.d89 : dep89(pl.r, pl.c),
     f: () => {
       ctx.globalAlpha = alphaFor('pillar', pl.r, pl.c);
       drawPillar(pl);
@@ -1969,7 +1980,7 @@ function draw() {
     }
   });
   if (!DRAW_EMPTY) for (const n of S.npcs) if (n.alive && !n.out) objs.push({
-    d: n.r + n.c + .1,
+    d: dep89(n.r, n.c) + .1,
     f: () => {
       ctx.globalAlpha = alphaFor('npc', n.r, n.c);
       drawNPC(n);
@@ -1977,7 +1988,7 @@ function draw() {
     }
   });
   if (!DRAW_EMPTY) for (const p of S.players) if (p.alive && !p.exited) objs.push({
-    d: p.r + p.c + .2,
+    d: dep89(p.r, p.c) + .2,
     f: () => {
       if (p.underground) {
         drawUnderground(p);

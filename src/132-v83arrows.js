@@ -97,7 +97,7 @@ const TOK83={head:[0,0.9],chest:[0,0.66],rarm:[-0.15,0.58],larm:[0.15,0.58],rleg
 function drawStuckOn83(q,m,top,isNpc,sink){const L=stuckOf83(q);if(!L.length)return;const H=Math.max(TW*0.4,m.y-top);
   const groups=isNpc?['body','head']:LOCS;
   /* v0.83: on the 3D minis the arrows turn with the figure's facing (MINI_YAW); the body's sides swap when it turns round */
-  let yk=1;try{if(!isNpc&&tokenStyle()==='standee'&&q._face!=null&&typeof MINI_YAW!=='undefined'){const c=Math.cos((MINI_YAW[q._face]||0)*Math.PI/180);yk=(Math.abs(c)<0.25?Math.sign(c||1)*0.25:c)*1.5}}catch(e){}
+  let yk=1;try{if(!isNpc&&tokenStyle()==='standee'&&q._face!=null&&typeof MINI_YAW!=='undefined'){const c=Math.cos((MINI_YAW[typeof face89==='function'?face89(q._face):q._face]||0)*Math.PI/180);yk=(Math.abs(c)<0.25?Math.sign(c||1)*0.25:c)*1.5}}catch(e){}
   for(const l of groups){if(!isNpc&&(q.hp[l]||0)<=0)continue;const xs=L.filter(x=>x.l===l);if(!xs.length)continue;
     if(sink&&!isNpc&&(l==='rleg'||l==='lleg'))continue;
     let lastX=0,lastY=0;
