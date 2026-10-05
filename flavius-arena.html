@@ -50954,7 +50954,8 @@ function langAsk86(){
   20 · Hovering armor (Online Armory & Market, Domus Storeroom, the offline market, draft offers, loot) never flashes the hit red: the try-on is
        re-drawn by tryOn87Now — its AVHIT entries are cleared before and after the avatar is drawn (no .avhit), and the place the piece goes
        (both sides for an either-side piece) wears a calm GOLD outline + glow (.to87). The card opens only after the pointer rests ~120 ms on a
-       tile (TRY87; leaving cancels it), so sweeping across the tiles shows nothing. Online / in the Domus the piece is tried on the active
+       tile (TRY87; each hover change cancels the pending card and wipes the shown one; the timer draws only if the same piece key is still
+       under the pointer — the ghost and its marks are always one piece), so sweeping across the tiles shows nothing. Online / in the Domus the piece is tried on the active
        gladiator in the pieces he brings (tryOn87Body), not on a leftover event's mover. Real hits in a match keep their red flash.
   15 · The main menu's 🔊 mute button (#mmMute, 72-v59) is gone; muting stays in Settings → Audio, the M key and the arena's control.
    ===================================================================== */
@@ -51023,10 +51024,12 @@ function tryOn87Now(el){const k=(el.dataset.card||'').slice(2);const A=ARM[k];co
       if(!A.pair&&(A.slot==='arm'||A.slot==='leg'))st.insertAdjacentHTML('beforeend',`<small class="to87e">${A.slot==='arm'?_T('Either arm — you choose which'):_T('Either leg — you choose which')}</small>`)}
     const bb=box.getBoundingClientRect();if(bb.bottom>window.innerHeight-6)box.style.top=Math.max(6,window.innerHeight-6-bb.height)+'px'}catch(e){console.error(e)}}
 /* only after the pointer rests ~120 ms on a card; leaving cancels it (98's own mouseover listener calls tryOnShow on every move) */
-const TRY87={t:0,el:null,ms:120};
-tryOnShow=function(el){if(!el||TRY87.el===el)return;clearTimeout(TRY87.t);TRY87.el=el;
-  TRY87.t=setTimeout(()=>{TRY87.t=0;if(TRY87.el!==el||!el.isConnected)return;let hov=true;try{hov=el.matches(':hover')}catch(e){}if(!hov){TRY87.el=null;return}tryOn87Now(el)},TRY87.ms)};
-document.addEventListener('mouseover',e=>{const c=e.target.closest&&e.target.closest('#modal [data-card^="a:"]');if(c)return;if(TRY87.t||TRY87.el){clearTimeout(TRY87.t);TRY87.t=0;TRY87.el=null}});
+/* every hover change cancels the pending card and wipes the old one first; the timer draws only the piece still under the pointer */
+const TRY87={t:0,el:null,k:'',ms:120};
+const tryOn87Wipe=()=>{const b=document.getElementById('tryOn');if(b&&!b.hidden){b.hidden=true;b.innerHTML=''}};
+tryOnShow=function(el){if(!el)return;const k=el.dataset.card||'';if(TRY87.el===el&&TRY87.k===k)return;clearTimeout(TRY87.t);TRY87.t=0;tryOn87Wipe();TRY87.el=el;TRY87.k=k;
+  TRY87.t=setTimeout(()=>{TRY87.t=0;if(TRY87.el!==el||TRY87.k!==(el.dataset.card||'')||!el.isConnected)return;let hov=true;try{hov=el.matches(':hover')}catch(e){}if(!hov){TRY87.el=null;return}tryOn87Now(el)},TRY87.ms)};
+document.addEventListener('mouseover',e=>{const c=e.target.closest&&e.target.closest('#modal [data-card^="a:"]');if(c)return;if(TRY87.t||TRY87.el){clearTimeout(TRY87.t);TRY87.t=0;TRY87.el=null;TRY87.k=''}});
 
 /* ---------------- 6 · no hidden mechanics in the player's text ---------------- */
 try{if(GLOSS.fame)GLOSS.fame.d=_T('How known your house is. It opens doors to recruits and draws bigger crowds. Keep winning to hold it.');
