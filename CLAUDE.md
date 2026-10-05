@@ -996,7 +996,7 @@ share copy — the site download play/flavius-rule-arena.zip.)
 - **FLAVIUS'S MOOD FACES (his picks 2026-10-05, v0.89):** Flavius in the box = HIS PAINTED FACE from the Mandata Flavi card back
   (tools/art/medallions/mandata_back.webp 822x1122): tools/art/flavmoods89/make.py crops the bust (card 300-540 x 266-466 with a 30 px pad)
   and makes the 10 moods (calm pleased smug cheer laugh shock angry bored weep facepalm) by warping brows/lids/mouth, painted open mouths,
-  tears, a red flush; cheer uses HIS painted arm/fist; facepalm = the Picard facepalm (pose only, his pick): head bowed 10°, his own hand (re-toned to his skin ramp) over brow + eyes, forearm from below. Pleased/smug/bored pushed harder so they read at box
+  tears, a red flush; cheer uses HIS painted arm/fist; facepalm = after the statue facepalm (his pick): head bowed 25° into his own hand (mirrored, narrowed, finger ink lines) cupping the right side of his face, fingers over the brow; head yaw tried and rejected. Pleased/smug/bored pushed harder so they read at box
   size (his pick). Wire: flavFace (16-crowd) draws the image for Flavius (SPONSOR_FLAVIUS / no sponsor); flavFaceURL too. Known nit: bored's
   turn shows a gold sliver of the logo top-left — mask the corners. SPONSORS (city editors + Studio-made): keep their own looks (parts) but
   DRAW THEM WITH MORE DETAIL (card-style outlines + shading, nose, cheekbones, better beard/hair, the bigger mood changes) — update the

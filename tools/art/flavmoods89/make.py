@@ -237,14 +237,16 @@ def mood(m):
     im=warp(im,[B(BROW_R,0,-24,24),B(BROW_RI,0,-10,14),B(BROW_NI,4,8,14),B(MC_L,-4,4,12),B(MC_R,6,-2,12),B(JAW,0,12,50)])
     im=mouth_open(im,24,15,dy=4);im=rot(im,-5,(W/2,H*.75));return palm_up(im,at=(-60,700),sc=1.4,deg=90)
   if m=='facepalm':
-    # his pick (2026-10-05): the Picard facepalm (POSE ONLY) — head bowed 10°, the back of his own hand from the card over brow and eyes,
-    # fingers up-left across the forehead, his forearm rising from below; the hand re-toned onto his skin ramp
+    # his pick (2026-10-05): after the statue facepalm — head bowed 25° into his hand, the hand (his own from the card, mirrored,
+    # narrowed to wrap the cheek) cupping the right side of his face, fingers sloping over the brow; forearm from below (mirrored)
     im=lids(warp(im,[B(MC_L,0,6,10),B(MC_R,0,6,10)]),.95)
-    piv=(W*.55,H*.88);im=rot(im,10,piv);R=cv2.getRotationMatrix2D(piv,10,1.0);ex,ey=(R@np.array([*C(401,357),1.0]))
-    hc,hm,hw=lefthand();fc,fm,fw=forearm();sx=1.2
+    piv=(W*.6,H*.9);im=rot(im,25,piv);R=cv2.getRotationMatrix2D(piv,25,1.0);ex,ey=(R@np.array([*C(398,370),1.0]))
+    hc,hm,hw=lefthand();fc,fm,fw=forearm();sx=.8
     hc=cv2.resize(hc,None,fx=sx,fy=1.0);hm=cv2.resize(hm,None,fx=sx,fy=1.0);hw=(hw[0]*sx,hw[1])
-    wx,wy=ex+40-PAD*K,ey+150-PAD*K
-    im=place(im,fc,fm,fw,(wx,wy-8),-110,1.15);return place(im,hc,hm,hw,(wx,wy),36,.70*K/4)
+    hc=cv2.flip(hc,1);hm=cv2.flip(hm,1);hw=(hc.shape[1]-1-hw[0],hw[1])
+    fc=cv2.flip(fc,1);fm=cv2.flip(fm,1);fw=(fc.shape[1]-1-fw[0],fw[1])
+    wx,wy=ex+120-PAD*K,ey+150-PAD*K
+    im=place(im,fc,fm,fw,(wx,wy-8),105,1.15);return place(im,hc,hm,hw,(wx,wy),30,.75*K/4)
 MOODS=['calm','pleased','smug','cheer','laugh','shock','angry','bored','weep','facepalm','really']
 out=os.path.join(HERE,'out');os.makedirs(out,exist_ok=True)
 tiles=[]
