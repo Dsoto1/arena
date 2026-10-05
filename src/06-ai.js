@@ -907,6 +907,7 @@ async function cpuAct(player) {
   await cpuHelpAllies(player);
   await flushMF();
   render();
+  const seen89 = new Set([player.r * N + player.c]); // v0.89 (his note): tiles stood on this turn — never step back onto one
   for (let guard = 0; guard < 18; guard++) {
     if (G !== S || !player.alive || player.exited || S.over) return;
     await flushMF();
@@ -1078,7 +1079,9 @@ async function cpuAct(player) {
       c = k % N,
       cost = r !== player.r && c !== player.c ? 2 : 1;
     if (cost > player.mv) break;
+    if (seen89.has(k)) break; // v0.89: going back and forth to spend movement — the CPU just ends its move instead
     await movePlayer(player, [k]);
+    seen89.add(player.r * N + player.c);
     await checkEagleScore(player);
     render();
   }
