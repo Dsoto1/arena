@@ -973,6 +973,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
   (line ~130) → lookahead ~1 s, interval ~100 ms, skip only when the tab was hidden; verify with CPU throttling + a live match.
   v0.88 ADDS: HOT SEAT batch (tools/plans/hotseat-next.md) + PHONE PASS (after the Domus redesign). READABILITY PASS: a slice of files
   every release from now on. LOGIN DOMAIN: he runs `bash flavius.sh login` twice, 15 min apart (not yet done as of 2026-10-05).
+  I18N PLURALS (v0.87): ~40 keys glue an English plural 's'/'' as a value ({1}); Italian can't build plurals that way → add a
+  dictionary form {n:singular|plural} (picked by whether value n is '' / '1' vs anything else) in 00-lang langLook86, then revise those keys in it/es.
   ANSWERED: Domus purse = the gladiator's own coin (lost at death); treasury = the house's 20% cut (outlives deaths, buys for anyone).
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
