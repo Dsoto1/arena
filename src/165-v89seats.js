@@ -13,5 +13,5 @@ function seats89Deal(){try{
   const pool=BASE_CLS.slice();let bag=[];
   SEATS89.dealt=CFG.seats.map(s=>{if(!bag.length)bag=pool.slice().sort(()=>Math.random()-.5);const c=bag.pop();if(s)s.cls=c;return c});
 }catch(e){console.error(e)}}
-seats89Deal();
+setTimeout(seats89Deal,0); /* after 08-setup has made CFG */
 {const base=openSetup;openSetup=async function(fresh){if(fresh)seats89Deal();return base.apply(this,arguments)}}
