@@ -161,10 +161,10 @@ const mockLive82=(L,M)=>L.players.filter(p=>!/^bot/.test(p.id)&&!(M.dropped||{})
 Object.assign(MOCK_ROUTES,{
   'match.stands.open':(w,d,me)=>{const L=w.lobbies[d.id],M=w.matches[d.id];if(!L||!M)throw new Error(_T('No such match.'));if(L.host.id!==me)throw new Error(_T('Only the host opens the stands.'));
     if(L.status!=='live'||M.status==='done')throw new Error(_T('The match is not live.'));if(L.standsOff)throw st82Fail('no_stands',_T('This game has no stands.'));const rot=d.rot|0;if(rot<0)throw new Error(_T('Which rotation?'));
-    const holders=(L.stands||[]).map(t=>t.id).filter(a=>!(M.dropped||{})[a]&&!(M.abandoned||{})[a]);if(!holders.length)throw st82Fail('no_stands',_T('Nobody holds a ticket.'));
+    const holders=ONLC.standsHolders({stands:L.stands,players:L.players,dropped:M.dropped,abandoned:M.abandoned}); /* v0.87: never a fighter */if(!holders.length)throw st82Fail('no_stands',_T('Nobody holds a ticket.'));
     M.stw=M.stw||{};if(M.stw[rot])throw st82Fail('stands_twice',_T('The stands already chose this rotation.'));const at=mockNow();M.stw[rot]={open:true,at,holders,picks:{}};const until=at+ONLC.STANDS_MS;
     for(const a of holders)mockTo([a],'stands.window',{id:d.id,rot,until,seat:mockSeat(L,a)});return {rot,until,holders:holders.map(a=>mockSeat(L,a))}},
-  'match.stands.pick':(w,d,me)=>{const L=w.lobbies[d.id],M=w.matches[d.id];if(!L||!M)throw new Error(_T('No such match.'));const rot=d.rot|0;const W=(M.stw||{})[rot];
+  'match.stands.pick':(w,d,me)=>{const L=w.lobbies[d.id],M=w.matches[d.id];if(!L||!M)throw new Error(_T('No such match.'));if((L.players||[]).some(p=>p.id===me))throw new Error(_T(ONLC.FELL_WATCH));const rot=d.rot|0;const W=(M.stw||{})[rot];
     if(!W||!W.open)throw st82Fail('stands_closed',_T('The stands have chosen — wait for the next rotation.'));if(!W.holders.includes(me))throw new Error(_T('Only ticket holders choose from the stands.'));
     const why=ONLC.standsPickOK(d.pick);if(why)throw new Error(why);if(W.picks[me])throw st82Fail('stands_twice',_T('You already chose this rotation.'));
     W.picks[me]={seat:mockSeat(L,me),pick:ONLC.cleanPick(d.pick)};const closed=Object.keys(W.picks).length>=W.holders.length?mockStands82Close(w,d.id,M,L,rot):null;

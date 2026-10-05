@@ -18,7 +18,7 @@ for(const p of [A,B,C])await p.evaluate(()=>{if(!onlTzLL('Europe/Rome'))Object.a
 for(const p of [A,B,C]){p.evaluate(()=>{onlineOpen('play')}).catch(()=>{})}await wait(1500);
 const click=async(p,sel)=>{await p.waitForSelector(sel,{timeout:5000});await p.click(sel);await p.waitForTimeout(450)};
 const room=p=>p.evaluate(()=>{const L=onlMyLobby();return L?{id:L.id,ev:L.ev,seats:L.seats,host:L.host.name,players:L.players.map(x=>[x.name,x.team||'',!!x.ready]),members:(L.members||[]).map(m=>m.name),status:L.status,teams:L.teams}:null});
-const landing=await A.evaluate(()=>({row:!!document.querySelector('#onl #onlStageMap81 .omap-in'),dots:document.querySelectorAll('#onlStageMap81 .omap-dot').length,cap:(document.getElementById('omapCap')||{}).textContent||'',chips:[...document.querySelectorAll('#onlForum81 .ofor-chips button')].map(b=>b.textContent)}));
+const landing=await A.evaluate(()=>({row:!!document.querySelector('#onl #onlStageMap81 .omap-in'),dots:document.querySelectorAll('#onlStageMap81 .omap-dot').length,cap:(document.getElementById('omapCap')||{}).textContent||'',chips:[...document.querySelectorAll('#onlForum81 .ofor-chips button')].map(b=>b.textContent),acta:!!document.querySelector('#onl #acta87'),mapBtn:!!document.querySelector('#onl #onlStageMap81[data-onl]')}));
 if(SHOT)await A.screenshot({path:SHOT+'/landing.png',fullPage:false});
 /* the big map: a centred view, never a modal() */
 await click(A,'#onl .scap81 [data-onl="omap"]');const big=await A.evaluate(()=>({on:!!document.querySelector('.omapbig .frame'),dots:document.querySelectorAll('.omapbig .omap-dot').length}));if(SHOT)await A.screenshot({path:SHOT+'/mapbig.png'});
@@ -45,7 +45,8 @@ await click(A,'#onl [data-onl="rsay"][data-v="ave"]');await wait(3200);await cli
 const logB=await B.evaluate(()=>[...document.querySelectorAll('#r80Log > div')].map(d=>d.textContent));const lists1=await B.evaluate(()=>window.__lists);
 const readyA=(await room(B)).players.find(x=>/Alpha/.test(x[0]));
 /* the Forum: C (free, Online open) says Ave; the 📣 call reaches C as a banner */
-await click(C,'#onl [data-onl="tab"][data-v="play"]');await click(C,'#onl [data-onl="fsay"][data-v="ave"]');await wait(500);
+/* v0.87: the Forum box left the landing; its route stays — the phrase still reaches the others' feed */
+await click(C,'#onl [data-onl="tab"][data-v="play"]');await C.evaluate(()=>NET.req('forum.say',{q:'ave'}));await wait(500);
 const forumA=await A.evaluate(()=>ONLF.lines.filter(l=>l.k==='say').map(l=>l.name+':'+l.q));
 await A.evaluate(id=>{const w=mockLoad();w.lobbies[id].cry=[Date.now()-130000];delete w.lobbies[id].kicked;mockSave(w)},rA.id);await C.evaluate(id=>{delete ONL.kicked80[id]},rA.id);
 await click(B,'#onl [data-onl="rcall"]');await wait(600);const ban=await C.evaluate(()=>{const b=document.getElementById('onlCry80');return b&&!b.hidden?b.textContent:''});
@@ -95,7 +96,7 @@ const muted={list:await C.evaluate(id=>(mockLoad().accounts[ONL.acct.id].mutes||
 const out={landing,big,rA,rB,twins,rC,fam,hostB:hostB&&hostB.host,afterKick,blocked,logB,lists:[lists0,lists1],readyA,forumA,ban,callLine,who,pop1,pop2,rC2,grey,inMatch,backA,bub,res,againBtn,again,pop3,muted};
 console.log(JSON.stringify(out));
 const miss=[];
-if(!landing.row||!landing.dots||!/lanistas? · \d+ guests?/.test(landing.cap)||landing.chips.length!==6)miss.push('landing: stage map + Forum (v0.81)');if(!big.on||!big.dots)miss.push('big map');
+if(!landing.row||!landing.dots||!/lanistas? · \d+ guests?/.test(landing.cap)||landing.chips.length!==0||!landing.acta||landing.mapBtn)miss.push('landing: stage map (only 🔍 opens it) + the Acta of the day in place of the Forum box (v0.87)');if(!big.on||!big.dots)miss.push('big map');
 if(!rA||rA.ev!=='democritus'||rA.seats!==4)miss.push('＋ Custom room');if(!rB||rB.id!==rA.id||twins!==1)miss.push('playlist joins, no twin');if(!rC||rC.id!==rA.id||rC.players.length!==3)miss.push('join from the browser');
 if(!fam||fam.ev!=='familia'||fam.seats!==6||fam.teams!==3||!(fam.players.find(x=>/Gamma/.test(x[0]))||[])[1]==='B')miss.push('Familia 6 seats + teams');
 if(!/Beta/.test(hostB&&hostB.host||''))miss.push('give host');if(afterKick.c||afterKick.b.members.some(n=>/Gamma/.test(n)))miss.push('remove');if(!/removed you/.test(blocked))miss.push('removed lanista blocked');

@@ -32,7 +32,7 @@ o.gen=await p.evaluate(()=>{const box=document.getElementById('setBody');const g
     lessons:!!box.querySelector('[data-lessonsmenu]'),ts:box.querySelectorAll('[data-ts84]').length,tsOld:box.querySelectorAll('[data-tscale]').length,cvdSel:!!box.querySelector('select[data-cvd84]'),cvdBox:!!box.querySelector('[data-set="cvd"]'),
     ce:!!box.querySelector('[data-set="confirmEnd"]')&&!SETTINGS.confirmEnd,rst:!!box.querySelector('[data-rst84]'),lite:!!(vi&&vi.nextElementSibling&&vi.nextElementSibling.querySelector('[data-lite84]'))}});
 ok(JSON.stringify(o.gen.tabs)===JSON.stringify(['general','themes','tokens','sponsors','audio','saves']),'tabs without Profiles '+JSON.stringify(o.gen.tabs));
-ok(/lang84/.test(o.gen.first||'')&&o.gen.lang.join()==='en,es,it,pt,fr,de'&&/Translate works on this game; game terms stay English/.test(o.gen.langTxt),'🌐 Language row first (English + Español)');
+ok(/lang84/.test(o.gen.first||'')&&o.gen.lang[0]==='en'&&o.gen.lang.includes('es')&&/* v0.86: Spanish joined *//Translate works on this game; game terms stay English/.test(o.gen.langTxt),'🌐 Language row first (English, then the built-in languages) '+JSON.stringify(o.gen.lang));
 ok(!o.gen.lessons,'no lesson-buttons row');ok(o.gen.ts===1&&o.gen.tsOld===0,'one text-size control (a slider)');ok(o.gen.cvdSel&&!o.gen.cvdBox,'colour-blind is a select');
 ok(o.gen.ce,'Confirm before End turn (off by default)');ok(o.gen.rst,'Restore all defaults');ok(o.gen.lite,'Light board stays under Visuals');
 await shot(p,'set_general');
@@ -140,8 +140,8 @@ await p.evaluate(()=>{SETTINGS.confirmEnd=false;applySettings();if(S)S.over=true
     /* v0.85 (146-v85land): the playlists are a 2×2 grid beside the two showcases — all four cards and both showcases in view */
     const m=await p.evaluate(()=>{const box=document.getElementById('mBody').getBoundingClientRect();const cards=[...document.querySelectorAll('#onl .onl-pls81>*:not(.pl85div)'),...document.querySelectorAll('#v85show .v85sc')].filter(c=>c.offsetParent!==null);if(!cards.length)return null;
       const bottom=Math.max(...cards.map(c=>c.getBoundingClientRect().bottom));
-      return {n:cards.length,bottom:Math.round(bottom),box:Math.round(box.bottom),sc:document.getElementById('mBody').scrollTop,feed:getComputedStyle(document.getElementById('onlFeed80')).overflowY,chips:document.querySelectorAll('#v85show .v85sc.win .dom84c').length}});
-    o['land'+w]=m;ok(m&&m.n===6&&m.bottom<=m.box&&m.sc===0,`all four playlists + both showcases in view at ${w}×${h} `+JSON.stringify(m));ok(m&&m.chips===1,`the victor's house chip once at ${w}`);ok(m&&m.feed==='auto','the Forum feed scrolls inside');
+      return {n:cards.length,bottom:Math.round(bottom),box:Math.round(box.bottom),sc:document.getElementById('mBody').scrollTop,feed:getComputedStyle(document.getElementById('acta87')).overflowY /* v0.87: the Acta of the day replaced the Forum feed */,chips:document.querySelectorAll('#v85show .v85sc.win .dom84c').length}});
+    o['land'+w]=m;ok(m&&m.n===6&&m.bottom<=m.box&&m.sc===0,`all four playlists + both showcases in view at ${w}×${h} `+JSON.stringify(m));ok(m&&m.chips===1,`the victor's house chip once at ${w}`);ok(m&&m.feed==='auto','the Acta of the day scrolls inside');
     await shot(p,'landing_'+w)}
   o.dd=await p.evaluate(()=>{const c='<button type="button" class="dom84c" data-onl83="prof" data-v="d1" title="Open the house">🏛 House Vettii</button>';return (onl84TodayChips('<b>X</b>'+c+c+c+c).match(/dom84c/g)||[]).length});
   ok(o.dd===1,'repeated house chips collapse to one ('+o.dd+')');

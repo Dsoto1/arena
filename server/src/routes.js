@@ -745,12 +745,12 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
        and ONE server input {k:'stands.result',rot,picks:[{seat,pick}],missed:[seat…]} joins the match's ordered inputs. ── */
     'match.stands.open':async(d,ctx)=>{const M=await meta(d.id);if(M.host!==ctx.acct)throw new Error('Only the host opens the stands.');if(M.status!=='live')throw new Error('The match is not live.');
       if(M.standsOff)throw fail('no_stands','This game has no stands.');const rot=d.rot|0;if(rot<0)throw new Error('Which rotation?');
-      const holders=(M.specs||[]).filter(a=>!(M.dropped||{})[a]&&!(M.abandoned||{})[a]);if(!holders.length)throw fail('no_stands','Nobody holds a ticket.');
+      const holders=C.standsHolders(M);if(!holders.length)throw fail('no_stands','Nobody holds a ticket.');
       const at=now();if(!(await store.putNew('MATCH#'+d.id,'STW#'+rk(rot),{rot,open:true,at,holders,ttl:ttl(2)})))throw fail('stands_twice','The stands already chose this rotation.');
       const until=at+C.STANDS_MS;for(const a of holders)await toMatch({conns:{[a]:(M.conns||{})[a]||null}},'stands.window',{id:d.id,rot,until,seat:(M.seats||{})[a]});
       return {rot,until,holders:holders.map(a=>(M.seats||{})[a])}},
     'match.stands.pick':async(d,ctx)=>{const M=await meta(d.id);const rot=d.rot|0;const W=await store.get('MATCH#'+d.id,'STW#'+rk(rot));
-      if(!W||!W.open)throw fail('stands_closed','The stands have chosen — wait for the next rotation.');if(!(W.holders||[]).includes(ctx.acct))throw new Error('Only ticket holders choose from the stands.');
+      if(!W||!W.open)throw fail('stands_closed','The stands have chosen — wait for the next rotation.');if((M.players||[]).includes(ctx.acct))throw new Error(C.FELL_WATCH);if(!(W.holders||[]).includes(ctx.acct))throw new Error('Only ticket holders choose from the stands.');
       const why=C.standsPickOK(d.pick);if(why)throw new Error(why);const pick=C.cleanPick(d.pick);
       if(!(await store.putNew('MATCH#'+d.id,'STP#'+rk(rot)+'#'+ctx.acct,{acct:ctx.acct,seat:(M.seats||{})[ctx.acct],pick,at:now(),ttl:ttl(2)})))throw fail('stands_twice','You already chose this rotation.');
       const n=(await store.query('MATCH#'+d.id,'STP#'+rk(rot)+'#')).length;let closed=null;if(n>=W.holders.length)closed=await closeStands(d.id,M,rot);
@@ -816,7 +816,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     if(await store.get('AUCWIN#'+key,'D#'+D.id))return 'Your house already won a lot this week.';return ''}
   /* ☀ Today: the house names beside the gladiators (one read per house, cached with the day) */
   async function dnFill(out){const names={};const fill=async e=>{if(!e||!e.dom||e.dn)return;if(!(e.dom in names)){const D=await domusGet(e.dom).catch(()=>null);names[e.dom]=D?D.name:null}if(names[e.dom])e.dn=names[e.dom]};
-    try{for(const k of ['wins','fallen'])for(const e of out[k]||[])await fill(e)}catch(e){}return out}
+    try{for(const k of ['wins','fallen'])for(const e of out[k]||[])await fill(e);for(const e of out.acta||[])await fill(e&&e.w)}catch(e){}return out}
   Object.assign(R,{
     /* 🔌 take back a seat a CPU took (within the window): one server input that every client applies at the next settled human decision */
     'match.reclaim':async(d,ctx)=>{const M=await meta(d.id);const W=reclaimWin(M,ctx.acct);if(!W)throw fail('reclaim_no','There is no seat of yours to take back.');

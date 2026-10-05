@@ -8,8 +8,9 @@ o.cred=await pg.evaluate(()=>({h:document.querySelector('#protoBox h2').textCont
 await pg.click('[data-crtab="proto"]');await pg.waitForTimeout(300);o.protoN=await pg.evaluate(()=>document.querySelectorAll('#protoBox figure').length);
 await pg.evaluate(()=>{document.getElementById('protoBox').hidden=true});
 ok(o.cred.h==='Credits'&&o.cred.links>=6&&o.cred.qr,'credits');ok(o.protoN===5,'proto tab');
-o.mute=await pg.evaluate(()=>{const m=document.getElementById('mmMute');const a=audSet().on;m.click();const b2=audSet().on;m.click();return {exists:!!m,toggled:a!==b2,back:audSet().on===a,chip:!!document.getElementById('audChip')}});
-ok(o.mute.exists&&o.mute.toggled&&o.mute.back&&!o.mute.chip,'mute');
+/* v0.87: the menu's mute button is gone (Settings → Audio, the M key and the arena's own control remain) */
+o.mute=await pg.evaluate(()=>{const m=document.getElementById('mmMute');const a=audSet().on;audToggleMute();const b2=audSet().on;audToggleMute();return {gone:!m,toggled:a!==b2,back:audSet().on===a,chip:!!document.getElementById('audChip')}});
+ok(o.mute.gone&&o.mute.toggled&&o.mute.back&&!o.mute.chip,'mute');
 o.arena=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
   startEvent({ev:'democritus',loc:6,seats:[{cls:'venatore'},{cls:'hero',cpu:true},{cls:'soldier',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}});
   await new Promise(r=>setTimeout(r,1200));for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,80))}

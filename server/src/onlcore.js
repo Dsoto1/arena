@@ -181,6 +181,7 @@ const ONLC=(function(){
     return Object.keys(n).sort((a,b)=>n[a]-n[b]||a.localeCompare(b))[0]}
   /* sit members down together (a party on one team); '' or the reason (L untouched) */
   function sitGroup(L,ids,now){const ms=ids.map(id=>memberOf(L,id)).filter(m=>m&&seatOf(L,m.id)<0);if(!ms.length)return '';if(L.status!=='waiting')return 'Already under way.';
+    if(ms.some(m=>(L.stands||[]).some(t=>t.id===m.id)))return 'A ticket holder watches from the stands — fighters take the sand.'; /* v0.87: never both */
     if(L.players.length+ms.length>L.seats)return ms.length>1?`No ${ms.length} free seats together.`:'Every seat is taken.';
     const team=L.team?leanTeam(L):null;
     for(const m of ms)L.players.push({id:m.id,name:m.name,char:m.char||null,rank:m.rank||'tiro',kit:m.kit||null,ready:false,sat:now||Date.now(),...(team?{team}:{}),...(m.party?{party:m.party}:{}),...(m.domus?{domus:m.domus}:{})});countCheck(L);return ''}
@@ -308,6 +309,11 @@ const ONLC=(function(){
   function standsSeatWhy(L,who){if(L.standsOff||(!(L.ticket>0)&&!L.free))return 'This game sells no tickets.';if(L.status!=='waiting')return 'Tickets are sold until the horns.';
     if(L.players.some(p=>p.id===who))return 'Fighters take the sand, not the stands.';if((L.stands||[]).some(s=>s.id===who))return 'You already hold a ticket.';
     if((L.stands||[]).length>=STANDS_MAX)return 'The stands are sold out.';return ''}
+  /* v0.87 the stands act only for ticket holders who are not fighters of this match (a fallen fighter may watch, never throw):
+     M = the match meta {specs:[acct], players:[acct], dropped, abandoned} (or a lobby: stands [{id}], players [{id}]) */
+  const FELL_WATCH='You fell in this match — you can watch, not throw.';
+  function standsHolders(M){const fx=new Set((M.players||[]).map(p=>typeof p==='string'?p:p&&p.id));const sp=(M.specs||(M.stands||[]).map(t=>t.id)||[]);
+    return sp.filter(a=>a&&!fx.has(a)&&!(M.dropped||{})[a]&&!(M.abandoned||{})[a])}
   function ticketOK(L,who,wallet){const why=standsSeatWhy(L,who);if(why)return why;if((wallet|0)<(L.ticket|0))return `A ticket costs ${L.ticket} coin.`;return ''}
   /* 🎟 Flavius's guest pass: once a UTC day for each house (lastDay = the house's last pass day), only while the active gladiator's wallet
      is under PASS.wallet, a free seat in a waiting room that sells seats (any price, or free) and has room in the stands */
@@ -352,7 +358,7 @@ const ONLC=(function(){
   /* ── v0.80 Today in the arena: one record a UTC day (WORLD DAY#yyyy-mm-dd) — wins = the most CF in one match, fallen = Ranked deaths
      (Damnatio too) best rank first, upsets = a lower rank beating a higher one. Each entry keeps the face/token (look), the event and the
      outcome; the record stays under DAY_MAX bytes (faces leave from the tail first). ── */
-  const DAY_KEEP={wins:5,fallen:5,upsets:4},DAY_MAX=14000;
+  const DAY_KEEP={wins:5,fallen:5,upsets:4},DAY_MAX=14000;const ACTA_KEEP=10;
   /* v0.85 THE ONLINE DAY turns at 20:00 New York time (America/New_York, DST-aware by the US rule: EDT from the second Sunday of March
      02:00 EST = 07:00 UTC to the first Sunday of November 02:00 EDT = 06:00 UTC) — Today (WORLD DAY#), the Forum reset, the guest pass and
      the Victor of the Day all follow it. nyBehind(t) = hours New York is behind UTC at t; dayStart(t) = the last 20:00 New York at or before t
@@ -386,14 +392,20 @@ const ONLC=(function(){
         dayNote(D,'fallen',{key:m.id+'#'+s.acct,...base,...dayWho(s.ch,s.before),how:'fate',hall:!!s.out.hall,cf:s.row.f|0,...dayLost(s),...(kb?{kb}:{}),...(k&&k.ch?{kn:String(k.ch.name||'').slice(0,40)}:{})})}}
     for(const w of hs.filter(s=>s.row.won)){const l=hs.filter(s=>!s.row.won&&rankIdx(s.before)>rankIdx(w.before)).sort((a,b)=>rankIdx(b.before)-rankIdx(a.before))[0];
       if(l)dayNote(D,'upsets',{key:m.id+'#'+w.acct,...base,gap:rankIdx(l.before)-rankIdx(w.before),w:dayLite(w.ch,w.before),l:{...dayLite(l.ch,l.before),fell:!!(l.out&&l.out.died)}})}
+    /* v0.87 the Acta of the day: one line per settled match, newest first (the top winner, how many fell) */
+    {const win=hs.filter(s=>s.row.won).sort((a,b)=>(b.row.f|0)-(a.row.f|0));const W=win[0];const prev=(D.acta||[]).find(x=>x.id===m.id);
+      actaPut(D,{id:m.id,...base,cf:W?W.row.f|0:0,wn:win.length,fell:hs.filter(s=>s.out&&s.out.died).length+(prev&&prev.pre?prev.fell|0:0),
+        w:W?{name:String(W.ch.name||'').slice(0,40),cls:W.ch.cls,...(W.ch.domus?{dom:W.ch.domus}:{})}:null})}
     return daySlim(D)}
+  function actaPut(D,e){D.acta=[e,...(D.acta||[]).filter(x=>x.id!==e.id)].sort((a,b)=>(b.at|0)-(a.at|0)).slice(0,ACTA_KEEP);return D}
   /* a Ranked gladiator abandoned the sand: Damnatio */
-  function dayFell(D,m){return daySlim(dayNote(D||{},'fallen',{key:m.id+'#'+m.acct,at:m.at,ev:m.ev,loc:m.loc,ranked:true,...dayWho(m.ch,m.before),how:m.how||'damnatio',hall:!!m.hall,cf:0,...dayLost(m)}))}
+  function dayFell(D,m){D=D||{};const pa=(D.acta||[]).find(x=>x.id===m.id);if(pa)pa.fell=(pa.fell|0)+1;else actaPut(D,{id:m.id,at:m.at,ev:m.ev,loc:m.loc,ranked:true,cf:0,wn:0,fell:1,w:null,pre:1});
+    return daySlim(dayNote(D,'fallen',{key:m.id+'#'+m.acct,at:m.at,ev:m.ev,loc:m.loc,ranked:true,...dayWho(m.ch,m.before),how:m.how||'damnatio',hall:!!m.hall,cf:0,...dayLost(m)}))}
   /* the landing's showcases (v0.85): the biggest winner = the most CF in one match (wins[0]); the biggest loser = the best-ranked
      gladiator who fell in Ranked (fallen[0]) — both already sorted that way (DAY_SORT), so every screen picks the same two */
   const dayBest=T=>({winner:((T&&T.wins)||[])[0]||null,loser:((T&&T.fallen)||[]).find(e=>e&&e.ranked!==false)||null});
-  const dayHas=D=>!!D&&['wins','fallen','upsets'].some(k=>(D[k]||[]).length);
-  function dayOut(D,day){D=D||{};return {day,wins:D.wins||[],fallen:D.fallen||[],upsets:D.upsets||[]}}
+  const dayHas=D=>!!D&&['wins','fallen','upsets','acta'].some(k=>(D[k]||[]).length);
+  function dayOut(D,day){D=D||{};return {day,wins:D.wins||[],fallen:D.fallen||[],upsets:D.upsets||[],acta:D.acta||[]}}
   /* weekly challenges rotate with the week of the year */
   const CHALLENGES=[['Survive 3 ranked bouts',3,'survived'],['Earn 60 CF in one bout',60,'cf1'],['Win a bout at Capua',1,'win:3'],['Slay 5 beasts',5,'beasts'],['Finish 5 bouts',5,'bouts'],['Win with 20+ coin left',1,'rich']];
   function weekChallenges(t){const wk=Math.floor((t||0)/604800000);const out=[];for(let i=0;i<3;i++)out.push(CHALLENGES[(wk+i*2)%CHALLENGES.length]);return out}
@@ -665,5 +677,5 @@ const ONLC=(function(){
   function aucBidWhy(lot,amt,t){if(!lot||lot.done||t>lot.ends)return 'The hammer has fallen on that lot.';const m=aucNextMin(lot);if(!(Number.isInteger(amt)&&amt>=m))return `The next bid is at least ${m} coin.`;return ''}
   function aucSnipe(lot,t){if(lot.ends-t<AUC_SNIPE_MS)lot.ends=t+AUC_SNIPE_MS;return lot}
 
-  return {setCatalog,armOf,armFit,equipOf0,NAMED_A,NAMED_ARMOR_SHARE,CPU_SHARE,CPU_CUT,RECLAIM_MS,isNamedA,AFFIX_A,UNIQUES_A,UNIQ_A_KEYS,rollNamedArmor,cleanNamedA,cpuRow,WEEK_MS,SEASON_EPOCH,seasonAt,seasonKeyOf,SCHED_W,seasonFixtures,onlineFixture,CH84,WEEK_GIFTS84,weekState,weekNote,AUC_LOTS,AUC_MIN_MS,AUC_SNIPE_MS,AUC_STEP,AUC_STEP_MIN,aucMin,aucNextMin,aucEnds,aucBidWhy,aucSnipe,GIFT_HOUSE,OFF_SHELF,giftsOut,giftsIn,offersIn,offerMoveWhy,offerMove,CFB_COIN,applyGiftHouse,TREASURY_CUT,GIFT_EVERY,GIFT_KEEP,COUNTDOWN_MS,LOOT_MS,FOLLOW_MAX,TROPHY_MAX,RECENT_KEEP,INFAMES_MIN,canWearNamed,PRICE_OFF,OFFERS83,OFF_CARRY,OFF_MAX,offersBrought,offerBuyWhy,offerBuy,offerBring,NAMED,L4_PRICE,RARITY,rarOf,itemBase,itemUid,isNamed,engineKey,pcOf,isBroken,newUid,pieceInfo,pieceOf,valueOf,repairCost,usedPrice,wearWhy,takePiece,putPiece,tagPiece,histAdd,breakItem,repairItem,gearAfter,lootBest,giftAdd,giftTake,GIFT_W,RAR_W,CFB_MAX,rollGift,applyGift,AFFIX,UNIQUES,rollNamed,namedPiece,cleanNamed,lineupSig,stopCount,countCheck,countLeft,trophyName,trophyAdd,trophiesFrom,recentRow,recentAdd,domusLink,domusFromHash,oddsOf,betResults,weekKey,PASS,passOK,standsSeatWhy,cleanPatron,gearMoveWhy,gearMove,gearEquip,GLORY,gloryOf,rankByGlory,tableFactor,PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nyBehind,dayStart,dayPrevKey,FORUM_GRACE,forumSince,dayLost,dayBest,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
+  return {standsHolders,FELL_WATCH,setCatalog,armOf,armFit,equipOf0,NAMED_A,NAMED_ARMOR_SHARE,CPU_SHARE,CPU_CUT,RECLAIM_MS,isNamedA,AFFIX_A,UNIQUES_A,UNIQ_A_KEYS,rollNamedArmor,cleanNamedA,cpuRow,WEEK_MS,SEASON_EPOCH,seasonAt,seasonKeyOf,SCHED_W,seasonFixtures,onlineFixture,CH84,WEEK_GIFTS84,weekState,weekNote,AUC_LOTS,AUC_MIN_MS,AUC_SNIPE_MS,AUC_STEP,AUC_STEP_MIN,aucMin,aucNextMin,aucEnds,aucBidWhy,aucSnipe,GIFT_HOUSE,OFF_SHELF,giftsOut,giftsIn,offersIn,offerMoveWhy,offerMove,CFB_COIN,applyGiftHouse,TREASURY_CUT,GIFT_EVERY,GIFT_KEEP,COUNTDOWN_MS,LOOT_MS,FOLLOW_MAX,TROPHY_MAX,RECENT_KEEP,INFAMES_MIN,canWearNamed,PRICE_OFF,OFFERS83,OFF_CARRY,OFF_MAX,offersBrought,offerBuyWhy,offerBuy,offerBring,NAMED,L4_PRICE,RARITY,rarOf,itemBase,itemUid,isNamed,engineKey,pcOf,isBroken,newUid,pieceInfo,pieceOf,valueOf,repairCost,usedPrice,wearWhy,takePiece,putPiece,tagPiece,histAdd,breakItem,repairItem,gearAfter,lootBest,giftAdd,giftTake,GIFT_W,RAR_W,CFB_MAX,rollGift,applyGift,AFFIX,UNIQUES,rollNamed,namedPiece,cleanNamed,lineupSig,stopCount,countCheck,countLeft,trophyName,trophyAdd,trophiesFrom,recentRow,recentAdd,domusLink,domusFromHash,oddsOf,betResults,weekKey,PASS,passOK,standsSeatWhy,cleanPatron,gearMoveWhy,gearMove,gearEquip,GLORY,gloryOf,rankByGlory,tableFactor,PRICE_AP,priceOf,AWARD,WIN_BONUS,awardOf,DOMUS_MIN,DOMUS_MAX,domusWhy,domusKey,newDomus,domusNote,domusFromChars,domusRow,GUEST_MS,GUEST_OK,STANDS_MS,STANDS_ACTS,standsPickOK,cleanPick,DAY_KEEP,DAY_MAX,dayKey,dayWho,dayLite,dayNote,daySlim,dayFromMatch,dayFell,dayHas,dayOut,nyBehind,dayStart,dayPrevKey,FORUM_GRACE,forumSince,dayLost,dayBest,nameBad,ROOM_MAX,KICK_MS,TEAM_KEYS,EV_SEATS,seatRange,clampSeats,memberOf,seatOf,teamKeys,roomJoin,sitGroup,roomSit,roomStand,roomLeave,roomGiveHost,roomKick,roomSet,roomTeam,strengthOf,autoBalance,quickPick,startRoom,liteRow,QC,QC_TEXT,phraseOK,RATE,cleanTz,hereSummary,GLAD_MAX,MIN_HUMANS,CHAT_KEEP,CHAT_LEN,equipOf,cleanLook,editChar,cleanChat,abandonRule,humansOf,canStart,EVENTS_TEAM,EVENTS_ALL,STANDS_MAX,PARTY_MAX,seatGroup,ticketOK,seatTeams,partyCode,VER,CLASSES8,EVENTS3,RANKS,START_STATS,grow,STAT_KEYS,STAT_POOL,STAT_MIN,STAT_MAX,PRICE,rankIdx,rankFor,nextRank,rankProgress,cleanName,statsOK,newChar,kitOf,canBuy,buy,applyResult,hallWorthy,hallWhy,newLobby,canJoin,weekChallenges,WAGER,betOK,settle,STRIKES_OUT,AWAY_MS,cleanRow,cleanTable,agree}})();
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

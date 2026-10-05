@@ -499,7 +499,7 @@ async function v82(){
   m0=mark();const op=await sa.req('match.stands.open',{id:SL.id,rot:1});assert.deepStrictEqual(op.holders,[4,5]);assert.strictEqual(op.until,T+C.STANDS_MS);
   assert.deepStrictEqual(sc.got('stands.window',m0).map(w=>[w.rot,w.seat,w.until]),[[1,4,op.until]]);assert.deepStrictEqual(sd.got('stands.window',m0).map(w=>[w.rot,w.seat]),[[1,5]]);
   assert.strictEqual(sa.got('stands.window',m0).length+sb.got('stands.window',m0).length,0,'only ticket holders get the window');
-  await rejects(sa.req('match.stands.open',{id:SL.id,rot:1}),'stands_twice');await rejects(sb.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'pass'}}),null,/Only ticket holders/);
+  await rejects(sa.req('match.stands.open',{id:SL.id,rot:1}),'stands_twice');await rejects(sb.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'pass'}}),null,/Only ticket holders|you can watch, not throw/);
   await rejects(sc.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'stone'}}),null,/Throw at a tile/);await rejects(sc.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'fireball'}}),null,/No such action/);
   m0=mark();let pk=await sc.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'stone',r:3,c:4,junk:{x:1}}});assert.ok(pk.ok&&!pk.closed);
   assert.ok(!sent.slice(m0).some(x=>x.msg.push),'a pick is private: nothing is pushed');await rejects(sc.req('match.stands.pick',{id:SL.id,rot:1,pick:{a:'pass'}}),'stands_twice');

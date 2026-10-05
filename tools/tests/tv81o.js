@@ -61,11 +61,13 @@ const aBack=await A.evaluate(id=>{const w=mockLoad();const M=w.matches[id]||{};c
 await A.evaluate(async()=>{window.T81=[];const mt=mToast;mToast=function(m){T81.push(String(m));return mt.apply(this,arguments)};if(CUR_MODAL)CUR_MODAL.done(null);menuHide();onlineOpen('play')});await wait(2500);
 const land=await A.evaluate(()=>{const o=document.getElementById('onl');const t=document.getElementById('v85show') /* v0.85: the Today ribbon became the two showcases (146-v85land) */;
   return {map:!!o.querySelector('.onl-stage #onlStageMap81 .omap-in'),dots:o.querySelectorAll('#onlStageMap81 .omap-dot').length,oval:!!o.querySelector('.omap'),row80:!!document.getElementById('onlRow80'),
-    forum:!!o.querySelector('.a81-forum #onlFeed80'),news:o.querySelectorAll('#onlFeed80 .news81').length,empire:/The empire/.test(o.textContent),cap:(document.getElementById('omapCap')||{}).textContent||'',
+    forum:!!o.querySelector('.a81-forum #acta87')&&!o.querySelector('#onlFeed80') /* v0.87: the Acta of the day replaced the Forum box */,news:1,empire:/The empire/.test(o.textContent),cap:(document.getElementById('omapCap')||{}).textContent||'',
     online:(o.textContent.match(/lanistas? · \d+ guests?/g)||[]).length,today:t?{ribbon:!document.getElementById('onlToday80'),txt:t.textContent.replace(/\s+/g,' '),wheat:!!t.querySelector('svg.ico')}:null,
     stageWheat:!!o.querySelector('.onl-pstats svg.ico'),star:/⭐\s*\d+\s*(lifetime )?CF|CF\s*⭐/.test(o.textContent),tones:[...o.querySelectorAll('.onl-pl.pl81')].map(e=>getComputedStyle(e).borderTopColor)}});
 if(SHOT)await A.screenshot({path:path.join(SHOT,'onl_landing.png')});
-await A.evaluate(()=>{const s=document.querySelector('#onlStageMap81');if(s)s.click()});await wait(400);const big=await A.evaluate(()=>{const o=document.querySelector('.omapbig');if(o)o.remove();return !!o});
+/* v0.87: a click on the map does nothing; only the 🔍 opens the large view */
+await A.evaluate(()=>{const s=document.querySelector('#onlStageMap81');if(s)s.click()});await wait(400);const big0=await A.evaluate(()=>{const o=document.querySelector('.omapbig');if(o)o.remove();return !!o});
+await A.evaluate(()=>{const s=document.querySelector('#onl .scap81 [data-onl="omap"]');if(s)s.click()});await wait(400);const big=!big0&&await A.evaluate(()=>{const o=document.querySelector('.omapbig');if(o)o.remove();return !!o});
 const wheat=await A.evaluate(()=>{onlSettled({char:ONL.char,out:{pay:12,cf:9}});return new Promise(r=>setTimeout(()=>r(T81.some(t=>/<svg class="ico"/.test(t)&&/lifetime CF/.test(t))&&!T81.some(t=>/⭐\s*\d+\s*(lifetime )?CF|CF\s*⭐/.test(t)) /* v0.84: the week card's ⭐ is not a CF star */),2800))});
 const hall=await A.evaluate(async()=>{ONL.hall=[{name:'Old Crixus',cls:'veteranus',rank:'veteranus',lifeCF:320,survived:20,why:'Veteranus'}];ONL.hallAt=Date.now();const h=onlHallHTML();return /<svg class="ico"[\s\S]*320 CF/.test(h)});
 /* invites: a room that does not exist never pops up */
@@ -104,9 +106,9 @@ if(bOnl.banner||bOnl.off||bOnl.rec||bOnl.live)miss.push('no banner / live record
 if(bOnl.after.on||bOnl.after.watching||bOnl.after.banner||bOnl.after.inMatch)miss.push('an over match is never re-entered');
 if(!bAb.r.over||!bAb.alive||bAb.abandoned||!/The bout is over/.test(bAb.txt)||/dies and is struck/.test(bAb.txt))miss.push('abandon after the bout: no Damnatio');
 if(aBack.status!=='done'||aBack.reps!==2||aBack.void||!aBack.outs||aBack.stored||aBack.hashes.some(h=>h!==aEnd.hashAt))miss.push('saved report resent after reload → settled');
-if(!land.map||!land.dots||land.oval||land.row80||!land.forum||!land.news||land.empire||land.online!==1)miss.push('landing: stage map, Forum with news, one online count');
+if(!land.map||!land.dots||land.oval||land.row80||!land.forum||!land.news||land.empire||land.online!==1)miss.push('landing: stage map, the Acta in the side column, one online count');
 if(!land.today||!land.today.ribbon||!/Alpha the Bold/.test(land.today.txt)||!land.today.wheat)miss.push('Today showcases (no ribbon)');
-if(!land.stageWheat||land.star)miss.push('wheat on the stage');if(land.tones.length<4||new Set(land.tones).size!==land.tones.length)miss.push('playlist border tones');if(!big)miss.push('map click opens the large view');
+if(!land.stageWheat||land.star)miss.push('wheat on the stage');if(land.tones.length<4||new Set(land.tones).size!==land.tones.length)miss.push('playlist border tones');if(!big)miss.push('only the 🔍 opens the large view');
 if(!wheat)miss.push('result toast wheat');if(!hall)miss.push('Hall wheat');
 if(inv0)miss.push('invite to a missing room popped up');if(!inv1||!dead1.toast||dead1.joined||dead1.pop)miss.push('closed room → message');
 if(!inv2||!dead2||!dead2.watch||!/That room closed before you got there/.test(dead2.txt))miss.push('started room → message + Watch');
