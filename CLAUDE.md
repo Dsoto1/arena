@@ -647,6 +647,12 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Visual checks: write a short Playwright script, screenshot, and look at it.
 
 ## 6. Release workflow
+**HIS DEPLOY IS ALWAYS THE SAME (v0.88):** release.sh step 6 writes share/deploy/flavius-site-update-vX.zip (play/ page + version.json +
+advert shot + ALL assets + flavius.sh) and flavius-download-vX.zip (play/flavius-rule-arena.zip). Send those (+ flavius-server-N.zip when the
+server changed). He: CloudShell → Actions → Upload file (all zips) → `bash flavius.sh release` → y. The script updates itself from the game zip,
+runs server → game → download → site → privacy, clears CloudFront (incl. /play/assets/*), files used zips in ~/flavius-done and prints status.
+NEVER give him console click-through steps for a release again — fix flavius.sh / release.sh instead. Each zip must stay ≤30 MiB (step 6 warns).
+
 (tools/release.sh also takes the play.html advert shot → share/arena_shot.webp → the game zip's play/arena_shot.webp, and always builds the
 share copy — the site download play/flavius-rule-arena.zip.)
 1. Bump the badge in `src/01-head.html` (`arena · vX.YY`) — this sets `GAME_VER`.

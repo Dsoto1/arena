@@ -45,4 +45,11 @@ SM=$(cd /tmp/sharetest39 && node "t$V.js" 2>&1 | tail -1); echo "$SM"
 echo "$SM" | grep -q "missing 0 \[\]" || { echo "share smoke test failed"; exit 1; }
 rm -f "share/flavius-rule-arena-v$V.zip"; (cd share && zip -q -9 "flavius-rule-arena-v$V.zip" "flavius-rule-arena-v$V.html")
 ls -la "share/flavius-rule-arena-v$V.zip"
-printf '\nREADY v%s — next: publish (read the live artifact first), update CLAUDE.md, commit, send the zip.\n' "$V"
+step "6 site zips (what he uploads to CloudShell: bash flavius.sh release)"
+OUT=share/deploy; mkdir -p "$OUT"; T=$(mktemp -d); mkdir -p "$T/a/play" "$T/b/play"
+cp flavius-arena.html "$T/a/play/index.html"; cp version.json share/arena_shot.webp "$T/a/play/"; cp -r assets "$T/a/play/assets"; cp tools/deploy/flavius.sh "$T/a/flavius.sh"
+cp "share/flavius-rule-arena-v$V.zip" "$T/b/play/flavius-rule-arena.zip"
+rm -f "$OUT"/flavius-site-update-v*.zip "$OUT"/flavius-download-v*.zip
+(cd "$T/a" && zip -q -r "$OLDPWD/$OUT/flavius-site-update-v$V.zip" play flavius.sh); (cd "$T/b" && zip -q -r "$OLDPWD/$OUT/flavius-download-v$V.zip" play); rm -rf "$T"
+for z in "$OUT"/flavius-*-v$V.zip; do s=$(stat -c %s "$z"); printf '  %s  %s MiB%s\n' "$z" "$(echo "scale=1;$s/1048576" | bc)" "$([ "$s" -gt 31457280 ] && echo '  ← over 30 MiB: too big to send in one file')"; done
+printf '\nREADY v%s — next: publish (read the live artifact first), update CLAUDE.md, commit, send share/deploy/*.zip (+ the server zip when there is one).\n' "$V"

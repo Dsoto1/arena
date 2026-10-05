@@ -4,6 +4,8 @@
 #   bash flavius.sh release                                 EVERYTHING in the right order, from the files uploaded here:
 #                                                           server zip → game zip → site zip → privacy.html (each only if present) → status
 #   bash flavius.sh game   flavius-site-update-v0.80.zip   the game: play/assets (if any) → play/index.html → play/version.json
+#   bash flavius.sh download flavius-download-v0.88.zip    the standalone download: play/flavius-rule-arena.zip
+#   (release finds every zip above by its name, updates this script from the game zip, and files used zips in ~/flavius-done)
 #   bash flavius.sh site   flavius-site-v0.78.zip          the whole website (never touches play/ or FlaviusSiteMedia/)
 #   bash flavius.sh page   privacy.html                    one file at the site root (or: page file.css some/folder/file.css)
 #   bash flavius.sh server flavius-server-8.zip            the online server (asks for the Google client secret, hidden)
@@ -56,9 +58,15 @@ cmd_game(){ need_zip "${1:-}"; local d; d=$(unpack "$1"); local p="$d/play"
   [ -f "$p/arena_shot.webp" ] && put "$p/arena_shot.webp" "play/arena_shot.webp"   # the advert shot on play.html, retaken every release
   put "$p/version.json" "play/version.json"
   [ -f "$p/online.json" ] && printf '   (play/online.json in the zip was NOT uploaded — use: bash flavius.sh online …)\n'
-  clear_cdn "/play/" "/play/index.html" "/play/version.json" "/play/flavius-rule-arena.zip" "/play/arena_shot.webp"
+  local cl=("/play/" "/play/index.html" "/play/version.json" "/play/flavius-rule-arena.zip" "/play/arena_shot.webp")
+  [ -d "$p/assets" ] && cl+=("/play/assets/*")   # art that kept its name (arena.jpg, lang_*.js, card backs) must not be served from the old cache
+  clear_cdn "${cl[@]}"
   [ "${DRY:-}" = 1 ] || { local live; live=$(curl -s "$SITE/play/version.json?x=$RANDOM" | sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p'); [ "$live" = "$v" ] && ok "live: v$live" || printf '   live version reads "%s" — give it a minute and run: bash flavius.sh status\n' "$live"; }
   rm -rf "$d"; }
+
+cmd_download(){ need_zip "${1:-}"; local d; d=$(unpack "$1"); local f="$d/play/flavius-rule-arena.zip"
+  [ -f "$f" ] || die "That zip has no play/flavius-rule-arena.zip — is it the download zip?"
+  say "The download (standalone game)"; put "$f" "play/flavius-rule-arena.zip"; clear_cdn "/play/flavius-rule-arena.zip"; rm -rf "$d"; }
 
 cmd_site(){ need_zip "${1:-}"; local d; d=$(unpack "$1"); [ -f "$d/index.html" ] || die "That zip has no index.html at its top — is it the full site zip?"
   say "Website (adds and replaces only; play/ and FlaviusSiteMedia/ are left alone)"
@@ -159,20 +167,29 @@ cmd_status(){ set +e +o pipefail; say "What is live   (green = fine · yellow = 
 
 # one command per release: the newest server zip, game zip, site zip and privacy.html found here, in the safe order
 cmd_release(){ local here; here=$(pwd)
-  local srv gam sit pri; srv=$(ls -t "$here"/flavius-server-*.zip 2>/dev/null | head -1 || true); gam=$(ls -t "$here"/flavius-site-update-*.zip 2>/dev/null | head -1 || true)
+  local srv gam dl sit pri; srv=$(ls -t "$here"/flavius-server-*.zip 2>/dev/null | head -1 || true); gam=$(ls -t "$here"/flavius-site-update-*.zip 2>/dev/null | head -1 || true)
+  dl=$(ls -t "$here"/flavius-download-*.zip 2>/dev/null | head -1 || true)
+  # the game zip carries the newest flavius.sh: when it differs from this one, swap it in and run again (so the steps never change)
+  if [ -n "$gam" ] && [ -z "${FLAVIUS_UPDATED:-}" ] && unzip -l "$gam" flavius.sh >/dev/null 2>&1; then
+    local t; t=$(mktemp); unzip -p "$gam" flavius.sh > "$t"
+    if ! cmp -s "$t" "$0"; then cp "$t" "$0"; rm -f "$t"; ok "flavius.sh updated from the game zip — continuing with the new one"; FLAVIUS_UPDATED=1 exec bash "$0" release; fi; rm -f "$t"; fi
   sit=$(ls -t "$here"/flavius-site-v*.zip 2>/dev/null | head -1 || true)
   pri=""; [ -f "$here/privacy.html" ] && pri="$here/privacy.html"
   [ -n "$srv$gam$sit$pri" ] || die "Nothing to release here. Upload the server zip, the game zip, the site zip and/or privacy.html first (Actions → Upload file)."
-  say "Release plan"; echo "  1 server : ${srv:-(none uploaded — skipped)}"; echo "  2 game   : ${gam:-(none uploaded — skipped)}"; echo "  3 site   : ${sit:-(none uploaded — skipped)}"; echo "  4 page   : ${pri:-(none uploaded — skipped)}"
+  say "Release plan"; echo "  1 server   : ${srv:-(none uploaded — skipped)}"; echo "  2 game     : ${gam:-(none uploaded — skipped)}"; echo "  3 download : ${dl:-(none uploaded — skipped)}"; echo "  4 site     : ${sit:-(none uploaded — skipped)}"; echo "  5 page     : ${pri:-(none uploaded — skipped)}"
   if [ "${DRY:-}" != 1 ]; then read -r -p "Go? [y/N] " ok; case "$ok" in y|Y|yes) ;; *) die "Stopped — nothing changed.";; esac; fi
   [ -n "$srv" ] && { cmd_server "$srv"; cd "$here"; }
   [ -n "$gam" ] && { cmd_game "$gam"; cd "$here"; }
+  [ -n "$dl" ] && { cmd_download "$dl"; cd "$here"; }
   [ -n "$sit" ] && { cmd_site "$sit"; cd "$here"; }
   [ -n "$pri" ] && { cmd_page "$pri"; cd "$here"; }
+  # file the zips that went out, so the next release only sees new ones (kept in ~/flavius-done, the last 3 releases)
+  if [ "${DRY:-}" != 1 ]; then mkdir -p "$HOME/flavius-done"; for f in $srv $gam $dl $sit; do [ -n "$f" ] && mv -f "$f" "$HOME/flavius-done/"; done
+    ls -t "$HOME"/flavius-done/*.zip 2>/dev/null | tail -n +13 | xargs -r rm -f; fi
   cmd_status; }
 
 CMD="${1:-}"; shift || true
 case "$CMD" in
-  release) cmd_release;; game) cmd_game "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; server) cmd_server "$@";; status) cmd_status;;
+  release) cmd_release;; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; server) cmd_server "$@";; status) cmd_status;;
   *) sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//';;
 esac
