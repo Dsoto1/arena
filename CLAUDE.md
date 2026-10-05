@@ -981,6 +981,13 @@ share copy — the site download play/flavius-rule-arena.zip.)
 - **LANGUAGES UPDATE (his call 2026-10-05, "why wait"):** Italian DONE (29 parts); Portuguese/French/German translating NOW (agents);
   plural forms {n|one|many} in 00-lang + check.js; v0.87 = each language as its own file loaded only when picked (standalone inlines all).
   The card he sent (tools/art/cardtpl87) = THE CLASS CARD TEMPLATE (name in the banner, figure + rules on the parchment).
+- **v0.89 CITY CENTER REIMAGINED (his picks 2026-10-05; reference picture tools/art/city89/reference_forum.jpg = STYLE REFERENCE ONLY, never
+  shipped):** HYBRID — a painted panorama behind (terracotta city, hills, sky, the Colosseum; per-city variants: harbour, Vesuvius, desert…)
+  + the walkable isometric forum redrawn in that palette (cobblestones, terracotta roofs, temple fronts with columns, striped awnings, fountain
+  with statue, carts/animals in the crowd). Landmarks: TEMPLE → god offerings (TEMPLE76 / blessings); MARKET STALLS → the shops (arms, armor,
+  city kits, offerings) + the auction on the forum steps; TRAINING GROUND beside the arena → watch/spar/exhibitions (Training Yard links).
+  No triumphal arch (leaving stays a button). Keep walking, the living crowd, the sidebar (Kin/Stands/Roster/Menagerie), the arena gate + horns.
+  Module 25-city.js is the base (CITY_BLDG, CITY_DRESS, cityIso).
 - **CJK SCHEDULE (his call 2026-10-05): JAPANESE v0.89, CHINESE SIMPLIFIED v0.90 (moved up; es/it/pt/fr/de are done).**
 - **LANGUAGES (his pick 2026-10-05): one per release alongside the features** — Italian v0.87, Portuguese (BR) v0.88, French v0.89, German v0.90,
   Japanese v0.91, Chinese SIMPLIFIED v0.92 (his pick; shares the CJK work: system-font fallback stack incl. canvas, no small-caps/
