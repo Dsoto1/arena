@@ -122,7 +122,7 @@
  "You host": "Du leitest",
  "{0} sat down": "{0} hat sich gesetzt",
  "{0} stood up": "{0} ist aufgestanden",
- "{0} {1} ready": "{0} {1} bereit",
+ "{0} {1} ready": "{0}: bereit{1||}",
  "{0} → Team {1}": "{0} → Team {1}",
  "The game is now {0} · {1} seats": "Das Spiel ist jetzt {0} · {1} Plätze",
  "The games move to {0}": "Die Spiele ziehen nach {0}",
