@@ -211,7 +211,7 @@ async function hsAfterEvent(rows){await hsLoad();const lines=[];
     if(x.won)give('first');if(f>=20&&p.alive)give('ludus');if(f>=50)give('fifty');
     const killed=t=>S.npcs.some(n=>n.t===t&&!n.alive&&n.killedBy===p.name);if(killed('tholo'))give('tholo');if(killed('commodus'))give('commodus');
     if(BASE_CLS.every(c=>P.classWins.includes(c)))give('eightwins');if(P.locs.length>=12)give('twelve');if(P.events>=25)give('veteran');if(P.road>=12)give('road');if(P.coin>=300)give('rich');
-    await hsSave(P);lines.push(_T`<b>${esc(P.name)}</b>: ${x.won?'🏆 win · ':''}${f} CF · +${coin} coin (wallet ${P.coin}) · Road ${P.road}/12${got.length?` · 🏅 ${got.map(esc).join(', ')}`:''}`)}
+    await hsSave(P);lines.push(_T`<b>${esc(P.name)}</b>: ${x.won?'🏆 win · ':''}${f} CF · ${coinAmt87('+'+(coin))} (wallet ${coinAmt87(P.coin)}) · Road ${P.road}/12${got.length?` · 🏅 ${got.map(esc).join(', ')}`:''}`)}
   if(lines.length){log(`<div class="tiphint">${_T`<b>🪑 Hot seat — the players' books</b><br>${lines.join('<br>')}`}</div>`,'big');if(typeof mToast==='function')mToast(_T('🪑 Every player’s profile is updated — see the log.'))}}
 setTimeout(()=>{if(!HEADLESS)hsLoad()},1200);
 /* v0.54: clicking anywhere outside the Multiplayer tray closes it */

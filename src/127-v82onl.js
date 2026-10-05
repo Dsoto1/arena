@@ -340,7 +340,7 @@ document.addEventListener('change',e=>{const t=e.target;if(t&&t.dataset&&t.datas
   return `<div class="onl-lbtop"><h3>${_T`🛒 Armory &amp; Market`}</h3><div class="rc-sub">${_T`Wallet ${coin} <b>${ch.wallet}</b> · ${esc2(R.n)} buys up to level ${R.mkt} · weapons ${ONLC.PRICE[1]} / ${ONLC.PRICE[2]} / ${ONLC.PRICE[3]} · armor ${ONLC.PRICE_AP[1]} / ${ONLC.PRICE_AP[2]} / ${ONLC.PRICE_AP[3]} a point of AP`}</div></div>
    <div class="seg" style="margin-bottom:8px"><button type="button" data-onl="mkt" data-v="w" class="${f==='w'?'on':''}">${_T`⚔ Weapons`}</button><button type="button" data-onl="mkt" data-v="a" class="${f==='a'?'on':''}">${_T`🛡 Armor`}</button></div>
    <div class="onl-mkgrid">${items.map(([k,it])=>{const why=ONLC.canBuy(ch,k,cat);const own=(ch.gear||[]).includes(k);const art=typeof cardHTML==='function'?cardHTML((it.kind==='w'?'w:':'a:')+k,'sm'):'';const pr=ONLC.priceOf(it);
-     return `<div class="onl-it ${why&&!own?'no':''} ${own?'own':''}" data-it82="${k}">${_T`${art}<b>${esc2(it.n)}</b><small>Level ${it.lv}${it.kind==='a'?_T` · ${it.ap|0} AP`:''} · <b class="pr82">${pr} coin</b></small>${own&&!it.stack?_T('<span class="badge gold">Yours</span>'):`<button type="button" class="btn tksm ${why?'':'primary'}" data-onl82="buy" data-v="${k}" ${why?_T`disabled title="${esc2(why)}"`:''}>${_T`Buy · ${pr}`}</button>`}`}</div>`}).join('')}</div>`}}
+     return `<div class="onl-it ${why&&!own?'no':''} ${own?'own':''}" data-it82="${k}">${_T`${art}<b>${esc2(it.n)}</b><small>Level ${it.lv}${it.kind==='a'?_T` · ${it.ap|0} AP`:''} · <b class="pr82">${coinAmt87(pr)}</b></small>${own&&!it.stack?_T('<span class="badge gold">Yours</span>'):`<button type="button" class="btn tksm ${why?'':'primary'}" data-onl82="buy" data-v="${k}" ${why?_T`disabled title="${esc2(why)}"`:''}>${_T`Buy · ${pr}`}</button>`}`}</div>`}).join('')}</div>`}}
 
 /* ---------------- the result: the flat award ---------------- */
 onlSettled=function(res){if(res.char)ONL.char=res.char.alive?res.char:null;const o=res.out;const P=ONL82.pre||{};let msg;const W=onlW81();
@@ -350,7 +350,7 @@ onlSettled=function(res){if(res.char)ONL.char=res.char.alive?res.char:null;const
   else{const up=o.rankUp?_T` · ⚔ now <b>${esc2(onlRank(o.rankUp).n)}</b>`:'';const gl=o.glory!=null?_T` · ✦ +${o.glory} Glory`:'';const f=o.factor!=null?o.factor:1;const tb=f<1?_T` · ${f===0.5?_T('half'):'¾'} for a small table`:'';
     if(P.ranked===false||(!o.pay&&P.ranked!==true))msg=_T`⚖ Custom bout — no purse · ${W} +${o.cf} lifetime CF${gl}${tb}${up}`;
     else{const rk=P.rank||'tiro';const st=P.streak|0;const aw=o.award!=null?o.award:o.pay;const won=aw===Math.round(ONLC.awardOf(rk,true,st)*f)&&aw!==Math.round(ONLC.awardOf(rk,false,st)*f); /* v0.83: the award before the house's cut */
-      msg=_T`💰 +${o.pay} coin <small>(${esc2(onlRank(rk).n)} ${ONLC.AWARD[rk]}${won?' · win +50%':''}${st?_T` · ${st} in a row +${Math.min(100,st*10)}%`:''}${f<1?_T` · ${f===0.5?'×½':'×¾'} table`:''})</small> · ${W} +${o.cf} lifetime CF${gl}${up}`}}
+      msg=_T`${coinAmt87('+'+(o.pay))} <small>(${esc2(onlRank(rk).n)} ${ONLC.AWARD[rk]}${won?' · win +50%':''}${st?_T` · ${st} in a row +${Math.min(100,st*10)}%`:''}${f<1?_T` · ${f===0.5?'×½':'×¾'} table`:''})</small> · ${W} +${o.cf} lifetime CF${gl}${up}`}}
   setTimeout(()=>onlToast80(msg),2500)};
 /* the rank and streak at the horns, for the award line */
 function onlPre82(L){try{const me=ONL.acct&&ONL.acct.id;const p=L&&(L.players||[]).find(x=>x.id===me);const ch=(ONL.chars||[]).find(c=>p&&c.id===p.char)||ONL.char;
@@ -382,7 +382,7 @@ function onlPassRoom82(){if(onlIsGuest82()||!ONL.char||ONL.needDomus||(ONL.char.
   const me=onlMe80();const mine=onlMyLobby();if(mine)return null;
   return (ONL.lobbies||[]).find(L=>L.status==='waiting'&&!L.standsOff&&(L.ticket>0||L.free)&&(L.stands||[]).length<ONLC.STANDS_MAX&&!L.players.some(p=>p.id===me)&&!(L.members||[]).some(m=>m.id===me))||null}
 function onlPassHTML82(){const L=onlPassRoom82();if(!L)return '';
-  return `<div class="card2 pass82" id="pass82"><div class="pass82-t">🎟</div><div>${_T`<b>Flavius's guest pass</b>`}<div>${_T`A free seat in the stands at <b>${esc2(onlEvName(L.ev))}</b> · ${esc2(onlCityName(L.loc))}`} <span class="rc-sub">${_T`(${esc2(L.host.name)}’s room${L.free?'':_T` · ${L.ticket|0} coin for others`})`}</span></div>
+  return `<div class="card2 pass82" id="pass82"><div class="pass82-t">🎟</div><div>${_T`<b>Flavius's guest pass</b>`}<div>${_T`A free seat in the stands at <b>${esc2(onlEvName(L.ev))}</b> · ${esc2(onlCityName(L.loc))}`} <span class="rc-sub">${_T`(${esc2(L.host.name)}’s room${L.free?'':_T` · ${coinAmt87(L.ticket|0)} for others`})`}</span></div>
     ${_T`<small class="rc-sub">Once a day while your purse is thin. Sit through the bout: +${PASS82.fame} Fame for ${esc2(onlHouse82(onlMyDomus82()||_T('your house')))}.</small>`}</div><button type="button" class="btn primary" data-onl82="pass" data-v="${esc2(L.id)}">${_T`🎟 Take the seat`}</button></div>`}
 {const base=onlPlayHTML;onlPlayHTML=function(){const h=base.apply(this,arguments);const p=onlPassHTML82();if(!p)return h;const i=h.indexOf('<div class="onl-play');return i<0?p+h:h.slice(0,i)+p+h.slice(i)}}
 
@@ -403,8 +403,8 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
       catch(err){ONL82.ferr=err.message;throw err}})}
   if(a==='prand'||a==='pdef'){if(!ONL.acct)return;if(a==='pdef')onlPatronPut82(null);else{const r=onlPatronDef82(ONL.acct.id+Math.random(),onlMyDomus82()+Math.random());onlPatronPut82(r)}onlRedraw();return}
   if(a==='buy'){const cat=onlCatalog();const it=cat[v];const ch=ONL.char;if(!it||!ch)return;const pr=ONLC.priceOf(it);
-    return ask76(_T('🛒 Buy this piece?'),`<p style="margin:0">${_T`Buy <b>${esc2(it.n)}</b> (level ${it.lv}${it.kind==='a'?_T` · ${it.ap|0} AP`:''}) for <b>${pr} coin</b>?`}</p><p class="rc-sub" style="margin:6px 0 0">${_T`Wallet ${ch.wallet} → ${ch.wallet-pr}.`}</p>`,_T`Buy · ${pr}`,_T('Not now'))
-      .then(ok=>{if(ok)onlDo(async()=>{ONL.char=await NET.req('char.buy',{char:ch.id,item:v});onlCharPut82(ONL.char);onlToast80(_T`🛒 Bought ${esc2(it.n)} for ${pr} coin.`)})})}
+    return ask76(_T('🛒 Buy this piece?'),`<p style="margin:0">${_T`Buy <b>${esc2(it.n)}</b> (level ${it.lv}${it.kind==='a'?_T` · ${it.ap|0} AP`:''}) for <b>${coinAmt87(pr)}</b>?`}</p><p class="rc-sub" style="margin:6px 0 0">${_T`Wallet ${coinAmt87(`${ch.wallet} → ${ch.wallet-pr}`)}.`}</p>`,_T`Buy · ${pr}`,_T('Not now'))
+      .then(ok=>{if(ok)onlDo(async()=>{ONL.char=await NET.req('char.buy',{char:ch.id,item:v});onlCharPut82(ONL.char);onlToast80(_T`🛒 Bought ${esc2(it.n)} for ${coinAmt87(pr)}.`)})})}
   if(a==='pass')return onlDo(async()=>{const r=await NET.req('lobby.pass',{id:v});if(r.lobby)onlUpsert80(r.lobby);if(r.char)ONL.char=r.char;if(r.domus)ONL.domus=r.domus;
     onlToast80(_T`🎟 Flavius's guest pass — a free seat at ${esc2(onlCityName(r.lobby.loc))}. Sit through the bout for +${PASS82.fame} Fame.`)})},true);
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target&&e.target.id==='dom82Name'){e.preventDefault();const b=document.querySelector('[data-onl82="found"]');if(b)b.click()}},true);

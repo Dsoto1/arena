@@ -92,17 +92,17 @@ function st82Popup(d){st82PopClose();const s=(S.spect||[]).find(x=>x.onlIdx===d.
   const q=SECTIONS[s.sec].q;const act=activePlayers();const inQ=act.filter(p=>!p.underground&&quadOf(p)===q);
   const tholoOK=!bossSpent(_T('Tholo'))&&!EV().noBoss&&!EV().noTholo&&!isChariot()&&!isNaum();
   const btn=(pick,label,sub,dis)=>`<button type="button" class="st82b" data-st82='${esc(JSON.stringify(pick))}' ${dis?'disabled':''}><b>${label}</b>${sub?`<small>${sub}</small>`:''}</button>`;
-  const rows=[...inQ.filter(p=>p.id!==s.fav).map(p=>btn({a:'stone',r:p.r,c:p.c},_T`🪨 Stone at ${esc(p.name)}`,_T`2 CF · lands on ${tl(p.r,p.c)} — whoever stands there then is hit`,s.cf<2)),
-    ...inQ.map(p=>btn({a:'offer',r:p.r,c:p.c},_T`🎁 Offering to ${esc(p.name)}`,_T`8 CF · falls on ${tl(p.r,p.c)} — whoever stands there gets it`,s.cf<8)),
-    tholoOK?btn({a:'tholo'},_T('📣 Chant “Tholo!”'),_T('3 CF · every quadrant must join (other ticket holders, or the crowd)'),s.cf<3):'',
+  const rows=[...inQ.filter(p=>p.id!==s.fav).map(p=>btn({a:'stone',r:p.r,c:p.c},_T`🪨 Stone at ${esc(p.name)}`,_T`${cfAmt87(2)} · lands on ${tl(p.r,p.c)} — whoever stands there then is hit`,s.cf<2)),
+    ...inQ.map(p=>btn({a:'offer',r:p.r,c:p.c},_T`🎁 Offering to ${esc(p.name)}`,_T`${cfAmt87(8)} · falls on ${tl(p.r,p.c)} — whoever stands there gets it`,s.cf<8)),
+    tholoOK?btn({a:'tholo'},_T('📣 Chant “Tholo!”'),_T`${cfAmt87(3)} · every quadrant must join (other ticket holders, or the crowd)`,s.cf<3):'',
     ...act.map(p=>btn({a:'cheer',v:p.id},_T`👏 Cheer for ${esc(p.name)}`,'free',false)),
     btn({a:'pass'},_T('👁 Watch this rotation'),'',false)].filter(Boolean).join('');
   const secs=SECTIONS.map((x,i)=>i).filter(i=>i!==s.sec).map(i=>`<option value="${i}">${esc(SECTIONS[i].n)} (Q${SECTIONS[i].q})</option>`).join('');
   const o=document.createElement('div');o.id='st82Pop';o.setAttribute('role','dialog');o.setAttribute('aria-label',_T('Your turn in the stands'));
   o.innerHTML=`<div class="st82hd">${_T`🎟 Your turn in the stands`} <span class="st82t" id="st82T">20s</span></div>
-    <div class="st82sub">${_T`${esc(s.name)} · <b>${s.cf} CF</b> · ${esc(SECTIONS[s.sec].n)} (Q${q}) · one action · only you see this`}</div>
+    <div class="st82sub">${_T`${esc(s.name)} · <b>${cfAmt87(s.cf)}</b> · ${esc(SECTIONS[s.sec].n)} (Q${q}) · one action · only you see this`}</div>
     <div class="st82list">${rows}</div>
-    <div class="st82mv"><select class="tin" id="st82Sec" ${s.cf<3?'disabled':''}>${secs}</select><button type="button" class="btn tksm" id="st82Move" ${s.cf<3?'disabled':''}>${_T`🚶 Change section · 3 CF`}</button></div>
+    <div class="st82mv"><select class="tin" id="st82Sec" ${s.cf<3?'disabled':''}>${secs}</select><button type="button" class="btn tksm" id="st82Move" ${s.cf<3?'disabled':''}>${_T`🚶 Change section · ${cfAmt87(3)}`}</button></div>
     <div class="st82msg rc-sub">${inQ.length?_T('Stones and offerings are locked to the tile you pick.'):_T`No gladiator stands in Q${q} — cheer, chant or move.`}</div>`;
   document.body.appendChild(o);const bw=document.getElementById('st82Wait');if(bw)bw.hidden=true;
   o.addEventListener('click',e=>{const b=e.target.closest('[data-st82]');if(b&&!b.disabled){st82Pick(d,JSON.parse(b.dataset.st82));return}
@@ -117,14 +117,14 @@ async function st82Apply(inp){const picks=(inp.picks||[]).slice().sort((a,b)=>a.
   for(const {seat,pick} of picks){if(!S||S.over)return;const s=(S.spect||[]).find(x=>x.onlIdx===seat);if(!s||s.gone||!s.human||!pick)continue;
     const me=seat===ONLM.me;const who=me?_T('You'):`<b>${esc(s.name)}</b>`;const v=(a,b)=>me?a:b; /* v0.87: the verb pair is translated too (you hurl / he hurls), so the line reads in every language */const prev=ONLM.specName;ONLM.specName=me?null:s.name;
     try{const a=pick.a;const r=pick.r|0,c=pick.c|0;
-      if(a==='stone'){if(s.cf<2){log(_T`${who} ${v(_T('cannot'),_T('cannot'))} afford a stone (2 CF).`);continue}s.cf-=2;const q=playerAt(r,c);
+      if(a==='stone'){if(s.cf<2){log(_T`${who} ${v(_T('cannot'),_T('cannot'))} afford a stone (${cfAmt87(2)}).`);continue}s.cf-=2;const q=playerAt(r,c);
         if(q&&!q.underground)await spectStone(s,q);
         else{S.stonesThrown=(S.stonesThrown||0)+1;emote(s,'🪨','');const n=npcAt(r,c);log(_T`${who} ${v(_T('hurl'),_T('hurls'))} a stone at ${tl(r,c)} — ${n?_T`it bounces off ${nm(n)}`:_T('it lands on empty sand')}.`);slog(_T`<b>${esc(s.name)}</b>'s stone lands on ${n?_T('a beast'):_T('empty sand')} at ${tl(r,c)}.`)}}
-      else if(a==='offer'){if(s.cf<8){log(_T`${who} cannot afford an offering (8 CF).`);continue}s.cf-=8;const off=drawOffer();const O=OFFER[off]||{n:off,s:''};const q=playerAt(r,c);emote(s,'🎁','');
-        if(q&&!q.underground){q.items.push(mkOffer(off));stat(q,'spectOffers');stat(q,'spectVal',OFFER_VAL[off]||4);log(_T`${who} ${v(_T('throw'),_T('throws'))} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s}) — ${nm(q)} catches it.`);slog(_T`<b>${esc(s.name)}</b> pays 8 CF: an offering lands at ${esc(q.name)}'s feet — ${O.n}.`,'big')}
+      else if(a==='offer'){if(s.cf<8){log(_T`${who} cannot afford an offering (${cfAmt87(8)}).`);continue}s.cf-=8;const off=drawOffer();const O=OFFER[off]||{n:off,s:''};const q=playerAt(r,c);emote(s,'🎁','');
+        if(q&&!q.underground){q.items.push(mkOffer(off));stat(q,'spectOffers');stat(q,'spectVal',OFFER_VAL[off]||4);log(_T`${who} ${v(_T('throw'),_T('throws'))} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s}) — ${nm(q)} catches it.`);slog(_T`<b>${esc(s.name)}</b> pays ${cfAmt87(8)}: an offering lands at ${esc(q.name)}'s feet — ${O.n}.`,'big')}
         else if(inB(r,c)){placeFloor('offer',off,r,c);const n=npcAt(r,c);log(_T`${who} ${v(_T('throw'),_T('throws'))} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s})${n?_T` — it lies under ${nm(n)}`:typeof spikeAt==='function'&&spikeAt(r,c)?_T(' — it falls into the spikes'):_T(' — it lies on the sand')}.`);slog(_T`<b>${esc(s.name)}</b>'s offering lands on ${tl(r,c)}.`)}
         try{fx(r,c,'✦','#f0cf7d',{big:1})}catch(e){}}
-      else if(a==='move'){const to=pick.sec|0;if(to<0||to>=SECTIONS.length||to===s.sec)continue;if(s.cf<3){log(_T`${who} cannot afford to change section (3 CF).`);continue}
+      else if(a==='move'){const to=pick.sec|0;if(to<0||to>=SECTIONS.length||to===s.sec)continue;if(s.cf<3){log(_T`${who} cannot afford to change section (${cfAmt87(3)}).`);continue}
         s.cf-=3;log(_T`${who} ${v(_T('move'),_T('moves'))} from ${SECTIONS[s.sec].n} to ${SECTIONS[to].n}.`);s.sec=to;emote(s,'🚶','')}
       else if(a==='cheer'){const p=S.players[pick.v|0];if(!p||!p.alive||p.exited)continue;s.fav=p.id;s.favCls=p.cls;emote(s,'📣','');log(_T`${who} ${v(_T('cheer'),_T('cheers'))} for ${nm(p)}.`);slog(_T`<b>${esc(s.name)}</b> cheers for ${esc(p.name)}.`)}
       else if(a==='tholo')chant.push(s)}
@@ -133,19 +133,19 @@ async function st82Apply(inp){const picks=(inp.picks||[]).slice().sort((a,b)=>a.
 function st82Tholo(chant){const names=chant.map(s=>s.onlIdx===ONLM.me?'you':esc(s.name)).join(', ');
   if(bossSpent(_T('Tholo'))||EV().noBoss||EV().noTholo||isChariot()||isNaum()){log(_T`The chant for Tholo (${names}) goes unanswered — he does not come to this event.`);return}
   const pay={};for(const s of chant)if(s.cf>=3){const q=SECTIONS[s.sec].q;if(!pay[q])pay[q]=s}
-  if(!Object.keys(pay).length){log(_T`The chant for Tholo (${names}) needs 3 CF a voice.`);return}
+  if(!Object.keys(pay).length){log(_T`The chant for Tholo (${names}) needs ${cfAmt87(3)} a voice.`);return}
   for(const s of S.spect)if(!s.gone&&!s.human&&s.cf>=3){const q=SECTIONS[s.sec].q;if(!pay[q]||(!pay[q].human&&s.cf>pay[q].cf))pay[q]=s}
   if(Object.keys(pay).length<4){log(_T`The chant for Tholo (${names}) dies out — not every quadrant joins in.`);return}
   const ps=Object.values(pay);for(const s of ps){s.cf-=3;emote(s,'📣',_T('Tholo!'))}
-  log(_T`Spectators in every quadrant (${ps.map(s=>s.onlIdx===ONLM.me?'you':esc(s.name)).join(', ')}) pay 3 CF each and chant “Tholo! Tholo!”`,'big');
-  slog(_T`<b>${ps.map(s=>esc(s.name)).join(', ')}</b> pay 3 CF each and chant for Tholo.`,'big');spawnNPC('tholo',_T('Tholo'),S.ri<2?[6,6]:null);crowdReact('boss',{n:'Tholo'})}
+  log(_T`Spectators in every quadrant (${ps.map(s=>s.onlIdx===ONLM.me?'you':esc(s.name)).join(', ')}) pay ${cfAmt87(3)} each and chant “Tholo! Tholo!”`,'big');
+  slog(_T`<b>${ps.map(s=>esc(s.name)).join(', ')}</b> pay ${cfAmt87(3)} each and chant for Tholo.`,'big');spawnNPC('tholo',_T('Tholo'),S.ri<2?[6,6]:null);crowdReact('boss',{n:'Tholo'})}
 
 /* =========================== THE SPEAR REFUND =========================== */
 function st82Ticket(){const L=(ONL.lobbies||[]).find(x=>S&&S.onl&&x.id===S.onl.lobby);return (S.onl&&S.onl.ticket)||(L&&L.ticket)||0}
 {const base=doSpear;doSpear=async function(p,s){const was=!!(s&&s.gone);const r=await base.apply(this,arguments);
   try{if(s&&!was&&s.gone&&s.onlIdx!=null&&s.ticket&&S&&S.onl)st82Refund(s)}catch(e){console.error(e)}return r}}
 function st82Refund(s){log(_T('Flavius refunds the ticket — he hates to see his spectators speared.'),'big');s.refund82=1;
-  if(s.onlIdx===ONLM.me&&typeof mToast==='function'){const n=st82Ticket();mToast(_T`🎟 Speared! Flavius refunds your ticket${n?_T` (${n} coin)`:''}. Your wager stands — keep watching.`)}
+  if(s.onlIdx===ONLM.me&&typeof mToast==='function'){const n=st82Ticket();mToast(_T`🎟 Speared! Flavius refunds your ticket${n?_T` (${coinAmt87(n)})`:''}. Your wager stands — keep watching.`)}
   if(st82Fighter())NET.req('match.speared',{id:S.onl.lobby,seat:s.onlIdx}).catch(()=>{})}
 NET.on('stands.refund',d=>{try{if(!d||!ONL.acct)return;if(ONL.char&&d.amt)ONL.char.wallet=(ONL.char.wallet|0)+(d.amt|0);STD82.refunded=(STD82.refunded|0)+(d.amt|0)}catch(e){}});
 /* the ticket price rides with the match (the room row may be gone by the time someone is speared) */

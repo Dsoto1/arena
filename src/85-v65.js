@@ -92,10 +92,10 @@ function onCard(g){const w=W_();return !!(w.night&&w.night.bouts&&w.night.bouts.
 function planTiles(g){const w=W_(),m=me();if(!g.inj||g.inj.war)return '';const req=injReq(g.inj);const left=Math.max(0,repCap()-(w.repair||0));const fw=fitWeekOf(g);
   const t=(act,ic,n,cost,fit,ok,why,extra='')=>`<button type="button" class="plantile ${ok?'':'off'}" ${act&&ok?`data-mg="${act}" data-id="${g.id}"`:'disabled'} title="${esc(why||'')}"><span class="pi">${ic}</span><b>${n}</b><span class="pc">${cost}</span><span class="pf">${_T`fit ${fit}`}</span>${extra}</button>`;
   const T=[t(null,'🛏',_T('Rest'),'free',wkName(fw),true,_T('Heals on its own — no action needed'),req==='surgeon'?_T('<span class="pw">festers without the surgeon</span>'):'')];
-  if(req==='surgeon')T.push(t('surgeon','🔪',_T('Surgeon'),_T`${SURGEON} coin`,_T('this week'),left>=SURGEON&&m.coin>=SURGEON,_T('The only cure for a festering wound'),_T('<span class="pw">1 in 10 slips: +1 week</span>')));
-  else T.push(t('medic','⚕',_T('Medicus'),_T`${MEDICUS} coin`,_T('this week'),g.medWk!==w.week&&left>=MEDICUS&&m.coin>=MEDICUS,_T('Clears it; counts toward the physicians’ weekly budget')));
-  T.push(t('bath','🛁',_T('Bathhouse'),'5 coin',wkName(Math.max(w.week,fw-1)),g.bathWk!==w.week&&m.coin>=5,_T('A week faster, +4 morale')));
-  T.push(t('asclepius','⚡',_T('Asclepius'),_T`${ASCLEPIUS} coin`,_T('this week'),m.coin>=ASCLEPIUS,_T('Outside help, no cap')));
+  if(req==='surgeon')T.push(t('surgeon','🔪',_T('Surgeon'),coinAmt87(SURGEON),_T('this week'),left>=SURGEON&&m.coin>=SURGEON,_T('The only cure for a festering wound'),_T('<span class="pw">1 in 10 slips: +1 week</span>')));
+  else T.push(t('medic','⚕',_T('Medicus'),coinAmt87(MEDICUS),_T('this week'),g.medWk!==w.week&&left>=MEDICUS&&m.coin>=MEDICUS,_T('Clears it; counts toward the physicians’ weekly budget')));
+  T.push(t('bath','🛁',_T('Bathhouse'),coinAmt87(5),wkName(Math.max(w.week,fw-1)),g.bathWk!==w.week&&m.coin>=5,_T('A week faster, +4 morale')));
+  T.push(t('asclepius','⚡',_T('Asclepius'),coinAmt87(ASCLEPIUS),_T('this week'),m.coin>=ASCLEPIUS,_T('Outside help, no cap')));
   const span=Math.max(1,fw-w.week);const warn=onCard(g)&&fw>w.week;
   return `<div class="plantiles">${T.join('')}</div><div class="rtimeline" title="${_T`Weeks until fit`}">${Array.from({length:Math.min(6,span+1)},(_,i)=>`<span class="${i<span?'hurtwk':'fitwk'}">${i===0?'now':wkOf(w.week+i)}</span>`).join('')}</div>${warn?`<div class="pw">${_T`⚠ On this week's card — not fit to fight unless treated`}</div>`:''}`}
 {const base=careHTML;careHTML=function(g){const h=base.apply(this,arguments);try{if(!g||!g.inj||g.inj.war)return h;

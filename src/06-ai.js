@@ -351,7 +351,7 @@ async function cpuUseItems(player) {
         if (u) {
           u.netted = true;
           player.items = player.items.filter(x => x !== it);
-          log(_T`${nm(player)} throws the Rete over ${nm(u)}.`);
+          log(wIco87('thr') + _T`${nm(player)} throws the Rete over ${nm(u)}.`);
           if (u.cls) bumpRel(u, player, -10, 'netted');
           cardShow('c:rete', player);
         }
@@ -385,7 +385,7 @@ async function cpuMarket(player) {
   if (!sharp && P.cf > 80 && player.cf >= 17 && player.cf < 50 && rand() < .5) return; // showmen hoard CF for freedom
   player.cf -= 3;
   player.market = true;
-  log(_T`${nm(player)} spends 3 CF to unlock the market.`);
+  log(_T`${nm(player)} spends ${cfAmt87(3)} to unlock the market.`);
   if (disc) {
     player.items = player.items.filter(x => x !== disc);
     player.discount = 2;
@@ -517,7 +517,7 @@ async function cpuHelpAllies(player) {
       gift = {
         t: 'coin',
         v: 3,
-        label: '3 coin',
+        label: coinAmt87(3),
         val: 3
       };
       why = _T('to keep them in the fight');

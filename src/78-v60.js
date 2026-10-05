@@ -61,7 +61,7 @@ if(CARDS.tame&&CARDS.lyre){CARDS.tame.img=CARDS.lyre.img;CARDS.tame.q=CARDS.tame
   return base.apply(this,arguments)}}
 {const base=pickupAt;pickupAt=async function(r,c){try{const p=playerAt(r,c);if(p){for(const f of S.floor.filter(f=>f.r===r&&f.c===c&&f.kind==='offer'&&(f.key==='cf1'||f.key==='cf2'))){
     S.floor=S.floor.filter(x=>x!==f);const v=f.key==='cf1'?1:2;if(weak(p,'noBlessCF'))log(_T`${nm(p)} picks up a Crowd Favor offering, but gains no CF from Blessings.`);
-    else{cfWhy(_T('breaking pots'));p.cf+=v;fx(r,c,_T`+${v} CF`,'#f0cf7d');log(_T`${nm(p)} picks up a Crowd Favor offering: +${v} CF.`)}}}}catch(e){console.error(e)}
+    else{cfWhy(_T('breaking pots'));p.cf+=v;fx(r,c,_T`+${v} CF`,'#f0cf7d');log(_T`${nm(p)} picks up a Crowd Favor offering: ${cfAmt87('+'+(v))}.`)}}}}catch(e){console.error(e)}
   return base.apply(this,arguments)}}
 /* ---------- TRUCES YOU CAN SEE ----------
    The offer names the gladiator with their class, in its colour; and on the sand, everyone you hold a truce with wears a

@@ -86,7 +86,7 @@ onlSettled=function(res){if(res.char)ONL.char=res.char.alive?res.char:null;const
   if(res.void)msg=_T('⚖ The lanistas did not agree on the result — the match is void: no pay, no deaths.');
   else if(!o)msg=_T('⚖ The match is settled.');
   else msg=o.died?(o.hall?_T`🪦 <b>${esc2(res.char.name)}</b> is dead. The Hall of the Fallen keeps the name.`:_T`🌫 <b>${esc2(res.char.name)}</b> is dead — and forgotten.`)
-    :_T`💰 +${o.pay} coin · ${onlW81()} +${o.cf} lifetime CF${o.rankUp?_T` · ⚔ now <b>${esc2(onlRank(o.rankUp).n)}</b>`:''}`;
+    :_T`${coinAmt87('+'+(o.pay))} · ${onlW81()} +${o.cf} lifetime CF${o.rankUp?_T` · ⚔ now <b>${esc2(onlRank(o.rankUp).n)}</b>`:''}`;
   setTimeout(()=>onlToast80(msg),2500)};
 /* resend: on hello, when the socket comes back, once after a reload; an invitation's room is read before joining */
 ONL81.invRooms=new Set();NET.on('lobby.invite',d=>{if(d&&d.row&&d.row.id)ONL81.invRooms.add(d.row.id)});
@@ -211,7 +211,7 @@ onlTodayHTML80=function(){const T=ONL80F.today;const yd=T&&T.day==='yesterday';c
   if(!WN.length&&!F.length&&!U.length)return `<div class="td81 quiet" id="onlToday80">${_T`The sand waits.`}</div>`;
   const where=e=>_T`${esc2(onlEvName(e.ev))} at ${esc2(onlCityName(e.loc))}`;
   const card=(e,k,h,line)=>`<div class="td81-c ${k}"><span class="td81-art">${onl80Face(e,'sm')}<span class="td81-tok">${onlFig(e.cls,e.look,40)}</span></span><span class="td81-t"><small>${h}</small><b>${esc2(e.name)}</b><span>${line}</span></span></div>`;
-  const w=WN[0];const c1=w?card(w,'win',_T`🏆 Victor ${yd?_T('yesterday'):_T('of the day')}`,_T`Won ${where(w)} with ${onlW81()}<b>${w.cf|0} CF</b>`):`<div class="td81-c win none">${_T`<small>🏆 No victor yet</small>`}</div>`;
+  const w=WN[0];const c1=w?card(w,'win',_T`🏆 Victor ${yd?_T('yesterday'):_T('of the day')}`,_T`Won ${where(w)} with ${onlW81()}<b>${cfAmt87(w.cf|0)}</b>`):`<div class="td81-c win none">${_T`<small>🏆 No victor yet</small>`}</div>`;
   let c2;const f=F[0];if(f)c2=card(f,'fall',_T`🪦 Fallen ${yd?_T('yesterday'):_T('today')}`,f.how==='damnatio'?_T`Abandoned ${where(f)} — <b>Damnatio</b>`:_T`Fell to the Fate in ${where(f)}`);
   else if(U.length){const u=U[0];c2=card({...u.l},'fall',_T('⚔ Humbled'),_T`by <b>${esc2(u.w.name)}</b> in ${where(u)}`)}else c2=`<div class="td81-c fall none">${_T`<small>🪦 No one fell ${yd?_T('yesterday'):_T('today')}</small>`}</div>`;
   const more=Math.max(0,WN.length-1)+Math.max(0,F.length-(f?1:0))+Math.max(0,U.length-(f?0:1));

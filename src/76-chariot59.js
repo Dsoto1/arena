@@ -27,7 +27,7 @@ chariotDraft=async function(){
       if(kind==='w')p.wR=mkW(k);else equipPiece(p,k,ARM[k].slot);
       log(_T`${nm(p)} drafts ${kind==='w'?W[k].n:ARM[k].n}.`)}}
   for(const p of S.players){p.wL=mkW('chariotCard');if(p.ch)p.wL.gart='g:'+p.ch.art;p.keys=2;p.cf+=3}
-  log(_T('Each racer receives an Arena Key token (2 keys) and 3 CF. The chariot card fills the secondary weapon slot.'));
+  log(_T`Each racer receives an Arena Key token (2 keys) and ${cfAmt87(3)}. The chariot card fills the secondary weapon slot.`);
 };
 /* the gate step: base chStep gives +2 movement; the rulebook gives one free tile (adjacent or diagonal) */
 {const base=chStep;chStep=async function(p,or,oc){const ch=p&&p.ch;const mv0=p?p.mv:0;const flip0=ch&&ch.horse?ch.horse.face:null;

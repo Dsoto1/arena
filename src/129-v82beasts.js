@@ -239,7 +239,7 @@ function flavPos82(){const cv=typeof ctx!=='undefined'&&ctx&&ctx.canvas;if(!cv||
   return base.apply(this,arguments)}}
 function refundFloat82(n){if(HEADLESS||!S||S.sim)return;const p=flavPos82();const el=document.createElement('div');el.className='flref82';el.innerHTML=`−${n} ${ICO.coin}`;
   if(p){el.style.left=p.x+'px';el.style.top=p.y+'px'}else{el.style.left='80px';el.style.top='90px'}document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
-function spearAfter82(p,s){const n=seatPrice82();log(_T`Flavius scowls and refunds ${esc(s.name)}'s seat (−${n} coin).`);
+function spearAfter82(p,s){const n=seatPrice82();log(_T`Flavius scowls and refunds ${esc(s.name)}'s seat (${coinAmt87('−'+(n))}).`);
   try{refundFloat82(n)}catch(e){}
   const D=mfDeck82();if(!D.length)return;const idx=D.pop();p.items.push({id:uid++,kind:'mf',idx});
   log(_T`${nm(p)} draws a Mandati Flavi (Mandate from Flavius).`,'big');try{if(!HEADLESS)render()}catch(e){}}

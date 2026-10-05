@@ -20,15 +20,15 @@ function turnSuggest(p){
   if(S.phase==='choice'){
     const safe=!hurtBad(p)&&p.cf>=4;
     if(canDraw()&&safe)return {act:'card',text:_T`Draw an arena card — you are healthy and have Crowd Favor to spare, so a card's swing is worth the risk.`};
-    return {act:'coin',text:hurtBad(p)?_T`Take the 2 coin — you are hurt, and a bad card could finish you.`:_T`Take the safe 2 coin: it buys armor and weapons at the market.`}}
+    return {act:'coin',text:hurtBad(p)?_T`Take the ${coinAmt87(2)} — you are hurt, and a bad card could finish you.`:_T`Take the safe ${coinAmt87(2)}: it buys armor and weapons at the market.`}}
   if(S.phase!=='action'||isChariot()||isNaum())return S.phase==='action'?{act:'end',text:_T('Make your moves, then end your turn.')}:null;
   const srcs=attackSources(p);let best=null;
   for(const s of srcs){const pw=srcPow(s)+(p.hercules||0);
     for(const t of targetsFor(p,s)){let sc=0,why='';
-      if(t.kind==='npc'){const n=t.ref;const T=NPCT[n.t];if(n.hp<=pw*2){sc=90+T.cf;why=_T`${n.name} is down to ${n.hp} HP — a hit or two finishes it: ${T.cf} CF, ${T.coin+n.hoard} coin and a trophy.`}
+      if(t.kind==='npc'){const n=t.ref;const T=NPCT[n.t];if(n.hp<=pw*2){sc=90+T.cf;why=_T`${n.name} is down to ${n.hp} HP — a hit or two finishes it: ${cfAmt87(T.cf)}, ${coinAmt87(T.coin+n.hoard)} and a trophy.`}
         else if(n.aggro===p.id){sc=55;why=_T`${n.name} is hunting you anyway — hurt it while it is in reach.`}else{sc=25;why=_T`${n.name} is in reach, but attacking makes it hunt you.`}}
-      else if(t.kind==='pot'){sc=pw>=2?60:30;why=pw>=2?_T`A Blessings pot is in reach. With power ${pw} you can break it (it needs 2 damage): 2 coin, 1 CF and a hidden offering.`:_T`A Blessings pot is in reach — at power ${pw} you need both hit dice to land.`}
-      else if(t.kind==='player'){const q=t.ref;const weak=LOCS.filter(l=>q.hp[l]>0&&q.hp[l]+q.ap[l]<=pw).length;sc=40+weak*8+(q.cf>p.cf?5:0);why=_T`${q.name} is in reach${weak?_T` with ${weak} location${weak>1?'s':''} one strong hit from falling`:''}. Gladiator trophies are worth 10 CF.`}
+      else if(t.kind==='pot'){sc=pw>=2?60:30;why=pw>=2?_T`A Blessings pot is in reach. With power ${pw} you can break it (it needs 2 damage): ${coinAmt87(2)}, ${cfAmt87(1)} and a hidden offering.`:_T`A Blessings pot is in reach — at power ${pw} you need both hit dice to land.`}
+      else if(t.kind==='player'){const q=t.ref;const weak=LOCS.filter(l=>q.hp[l]>0&&q.hp[l]+q.ap[l]<=pw).length;sc=40+weak*8+(q.cf>p.cf?5:0);why=_T`${q.name} is in reach${weak?_T` with ${weak} location${weak>1?'s':''} one strong hit from falling`:''}. Gladiator trophies are worth ${cfAmt87(10)}.`}
       if(!best||sc>best.sc)best={sc,s,t,why}}}
   if(best&&best.sc>=40){const id='m-atk'+best.s.arm+(best.s.thr?'T':'');return {act:id,mode:id.slice(2),tile:{r:best.t.r,c:best.t.c},text:_T`${best.s.thr?_T('Throw'):_T('Attack')} with your ${best.s.w.n}: ${best.why}`}}
   {const it=guideItemSug(p);if(it&&(!best||best.sc<55))return it} // v0.44: what is in your hand counts too
@@ -40,7 +40,7 @@ function turnSuggest(p){
   if(p.mv>0){const R=reach(p);
     // outside the zone: get back in
     if(RD().zone>1&&!inZone(p.r,p.c)){let tgt=null;for(const [k,c] of R.tiles)if(c<=p.mv&&inZone(Math.floor(k/N),k%N)&&(!tgt||c<tgt.c))tgt={k,c};
-      if(tgt)return {act:'m-move',mode:'move',tile:{r:Math.floor(tgt.k/N),c:tgt.k%N},text:_T('You are outside the zone — get back in before your turn ends, or it costs 2 CF.')}}
+      if(tgt)return {act:'m-move',mode:'move',tile:{r:Math.floor(tgt.k/N),c:tgt.k%N},text:_T`You are outside the zone — get back in before your turn ends, or it costs ${cfAmt87(2)}.`}}
     // walk to the nearest pot
     const pls=S.pillars.filter(x=>x.pots.length).sort((a,b)=>cheb(p,a)-cheb(p,b));
     if(pls.length&&cheb(p,pls[0])>1){let tgt=null;for(const [k,c] of R.tiles){if(c>p.mv)continue;const r=Math.floor(k/N),cc=k%N;const d=Math.max(Math.abs(r-pls[0].r),Math.abs(cc-pls[0].c));const sc=(d===1?0:d*10)+c;if(!tgt||sc<tgt.sc)tgt={r,c:cc,sc,adj:d===1}}
@@ -199,19 +199,19 @@ const TUT_STEPS=[
   {id:'t_rules',spot:'#btnRules',say:_T`<b>📜 Rules.</b> The rules at a glance, the strategy guide, the full rulebook — and these lessons, any time.`,next:1,tour:1},
   {id:'t_menu',spot:'#btnMenu',say:_T`<b>🏛 The main menu.</b> During a lesson it asks before you leave. (New events, Manager mode and Settings wait until the lesson is done.)`,next:1,tour:1},
   {id:'hello',info:1,say:_T`That is the arena. I am <b>Flavius</b>, editor of these games. Every turn has four phases: <b>1 Resolve</b> (the arena reacts), <b>2 Choice</b>, <b>3 Action</b>, <b>4 End</b>. I will light the button to press; I only step in to talk when something big happens.`,next:1},
-  {id:'choice',say:_T`<b>Choice:</b> take the safe <b>2 coin</b>.`,act:'coin',until:()=>S.phase==='action'},
+  {id:'choice',say:_T`<b>Choice:</b> take the safe <b>${coinAmt87(2)}</b>.`,act:'coin',until:()=>S.phase==='action'},
   {id:'move',say:_T`<b>Move</b> to the gold tile beside the pillar — its <b>Blessings pot</b> holds coin, Crowd Favor and a hidden offering.`,sug:p=>tutGo(p,TUT.potTile),until:p=>p.r===TUT.potTile[0]&&p.c===TUT.potTile[1]},
   {id:'attack',say:_T`<b>Attack the pot</b> — press your attack, then the gold ring. It needs 2 damage to break (strike again if it holds).`,sug:p=>tutAtkSug(p,t=>t.kind==='pot'),until:p=>(p.stats.pots||0)>0,fallback:'end'},
   {id:'hand',say:_T`The pot gave you an offering — it waits in <b>your hand</b> on your board. Press its gold <b>Use</b>.`,sug:p=>guideItemSug(p),until:p=>!p.items.some(x=>itemPlayable(p,x)),next:1,skipLbl:_T('Keep it for later ▶')},
   {id:'tunnelinfo',info:1,say:_T`<b>Tunnels.</b> Beside you is a tunnel mouth. One <b>Arena Key</b> takes you under the sand: you surface at another tunnel <b>next turn</b>, and every beast forgets you. Your rival is across the arena — let us get closer.`,next:1},
   {id:'tunnel',say:_T`Press <b>Tunnel</b>, then the gold tunnel nearest your rival. (It ends your turn.)`,sug:p=>tutTunnelSug(p),until:p=>p.underground||cur()!==p},
   {id:'watch',say:_T`You are under the sand. Watch your rival go after the wolf…`,until:p=>humanTurn()&&cur()===p&&!p.underground,enter:()=>tutRivalHunt()},
-  {id:'choice2',say:_T`You surface — and something stirs by the pillar beside you. <b>Take 2 coin</b> first.`,act:'coin',until:()=>S.phase==='action',enter:()=>tutSpawnSnake()},
+  {id:'choice2',say:_T`You surface — and something stirs by the pillar beside you. <b>Take ${coinAmt87(2)}</b> first.`,act:'coin',until:()=>S.phase==='action',enter:()=>tutSpawnSnake()},
   {id:'snake',say:()=>_T`<b>${esc(TUT.snakeName||_T('The snake'))}</b> lurks by the pillar beside you. <b>Attack it</b> — slay it for Crowd Favor, coin and a trophy.`,sug:p=>tutAtkSug(p,t=>t.kind==='npc'&&t.ref.id===TUT.snakeId)||tutGo(p,[9,3]),until:()=>!tutSnake()||!tutSnake().alive||S.ri>0},
   {id:'endsnake',say:_T`Well struck. <b>End your turn</b>.`,act:'end',until:p=>S.ri>0||cur()!==p},
   {id:'wait2',say:_T`Two beasts are down — round two is coming…`,sug:p=>S.phase==='choice'?{act:'coin'}:null,until:p=>S.ri>0&&humanTurn()&&cur()===p},
   {id:'round2',info:1,say:()=>_T`<b>${esc(RD().n)}.</b> Two beasts are down, and with only two gladiators left the games go straight to the fight: the <b>zone has shrunk to ${ZONES[RD().zone][1]-ZONES[RD().zone][0]+1}×${ZONES[RD().zone][1]-ZONES[RD().zone][0]+1}</b> (outside it you bleed Crowd Favor) and gladiators may now fight each other. The handlers have driven you both together. You also drew <b>arena cards</b> for surviving round one — they are in your hand.`,next:1,enter:()=>tutRound2()},
-  {id:'choice3',say:_T`<b>Take 2 coin</b> — then we fight.`,act:'coin',until:()=>S.phase==='action'||S.phase!=='choice'},
+  {id:'choice3',say:_T`<b>Take ${coinAmt87(2)}</b> — then we fight.`,act:'coin',until:()=>S.phase==='action'||S.phase!=='choice'},
   {id:'card',say:_T`Play <b>Herculean Vigor</b> from your hand: +2 damage if your next attack lands. Declare it <i>before</i> you attack.`,sug:p=>tutCardSug(p,'hercules2'),until:p=>(p.hercules||0)>0||!p.items.some(x=>x.key==='hercules2')},
   {id:'focus',say:_T`Now <b>🎯 Focus roll</b>: it spends your movement, but you choose where the blow lands from three rolled locations.`,sug:p=>!p.focusRoll&&tutAtkSug(p,t=>t.kind==='player')?{act:'focus',text:''}:null, /* v0.46: only when a blow can follow this turn — otherwise End turn */until:p=>p.focusRoll||p.mv<=0},
   {id:'strike',say:()=>_T`<b>Attack ${esc(tutRival()?tutRival().name:_T('your rival'))}</b> — then pick the <b>💡 gold</b> location: the quickest way to put them down.`,sug:p=>tutAtkSug(p,t=>t.kind==='player'),until:p=>p.attacks>0||S.over},

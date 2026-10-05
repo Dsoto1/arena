@@ -87,5 +87,5 @@ if(typeof CHEAT_SHOW!=='undefined'){CHEAT_SHOW.push([[74,79,72,89,75],_T('🏛 T
 /* the famous visitors — only while their house is in the system */
 if(typeof FAMOUS!=='undefined')for(const k of Object.keys(FAMILY_HOUSES)){const V=FAMILY_HOUSES[k].visitor;
   FAMOUS.push({n:V.n,who:V.who,mood:9,gate:()=>houseOn(k),
-    fx:ps=>{const a=ps.filter(p=>p.cls===V.cls);for(const p of a)p.cf+=3;if(!a.length){const p=[...ps].sort((x,y)=>y.cf-x.cf)[0];if(p)p.coin+=2;return p?_T`he tips ${esc(p.name)} 2 coin anyway`:_T('he claps politely')}return _T`he roars for every ${CLASSES[V.cls]?CLASSES[V.cls].name:_T('fighter')}, as he does for his child (+3 CF each)`},
+    fx:ps=>{const a=ps.filter(p=>p.cls===V.cls);for(const p of a)p.cf+=3;if(!a.length){const p=[...ps].sort((x,y)=>y.cf-x.cf)[0];if(p)p.coin+=2;return p?_T`he tips ${esc(p.name)} ${coinAmt87(2)} anyway`:_T('he claps politely')}return _T`he roars for every ${CLASSES[V.cls]?CLASSES[V.cls].name:_T('fighter')}, as he does for his child (${cfAmt87('+3')} each)`},
     line:V.line})}

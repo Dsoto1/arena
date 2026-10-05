@@ -228,7 +228,7 @@ async function doAttack(player, source, target, {
   }
   const n = S.endgame ? 4 : target.kind === 'npc' ? 4 : 2;
   let hits = rollHits(n);
-  const verb = w.punch ? 'punches' : source.thr ? _T`throws the ${w.n}` : _T`attacks with ${w.n}`;
+  const verb = w.punch ? 'punches' : source.thr ? wIco87('thr') + _T`throws the ${w.n}` : _T`attacks with ${w.n}`;
   const tgtName = target.kind === 'pot' ? _T`the pot on ${tl(target.r, target.c)}` : target.kind === 'ship' ? target.ref.name : target.ref.name;
   if (hits.some(x => !x)) {
     const miss = hits.filter(x => !x).length;
@@ -257,7 +257,7 @@ async function doAttack(player, source, target, {
     c: target.c
   } : target.ref, source.w.punch ? '#e6d3b0' : '#ff6a55');
   if (dmg <= 0) fx(target.r, target.c, 'miss', '#b8b0a4');
-  const pre = _T`${nm(player)} ${verb} at ${tgtName} ${diceHtml(hits)} ${h}×${pw}${bonus() ? '+' + bonus() : ''} = ${dmg}`;
+  const pre = _T`${nm(player)} ${verb} at ${tgtName} ${diceHtml(hits)} ${h}×${pw}${bonus() ? '+' + bonus() : ''} = ${wIco87('dmg') + dmg}`;
   if (dmg > 0 && typeof hitFlash === 'function' && (target.kind === 'pot' || target.kind === 'ship')) hitFlash(target.r, target.c, target.kind === 'pot' ? 'pot' : 'pillar'); /* v0.46 */
   if (dmg >= 8) stat(player, 'bighit');
   stat(player, 'dmgDealt', 0);
@@ -307,7 +307,7 @@ async function doAttack(player, source, target, {
         punch: !!w.punch,
         cestus: hasCestus(player, source.arm),
         w
-      }, `${nm(player)} ${verb} ${diceHtml(hits)} = ${dmg}`);
+      }, `${nm(player)} ${verb} ${diceHtml(hits)} = ${wIco87('dmg')}${dmg}`);
     }
     bumpRel(q, player, -(5 + Math.max(0, dmg) * 1.5), 'attacked');
     q.lastHitBy = player.id;
@@ -316,21 +316,21 @@ async function doAttack(player, source, target, {
     w.atkLeft--;
     if (w.atkLeft <= 0) {
       player['w' + source.arm] = null;
-      log(_T`The ${w.n} falls apart after its last use.`);
+      log(wIco87('use') + _T`The ${w.n} falls apart after its last use.`);
     }
   }
   if (w.shield && w.p > 0 && player['w' + source.arm] === w) {
     w.usesLeft--;
     if (w.usesLeft <= 0) {
       player['w' + source.arm] = null;
-      log(_T`The ${w.n} is worn out.`);
+      log(wIco87('use') + _T`The ${w.n} is worn out.`);
     }
   }
   if (h > 0 && w.soul && player.alive) await distributeHP(player, h * w.soul, _T`${w.n}'s soul steal`);
   if (h > 0 && w.cfw) {
     cfWhy('crowd-pleasing weapons');
     player.cf += h * w.cfw;
-    log(_T`${nm(player)} gains ${h * w.cfw} CF from the crowd (${w.n}).`);
+    log(_T`${nm(player)} gains ${cfAmt87(h * w.cfw)} from the crowd (${w.n}).`);
   }
   if (source.thr && player['w' + source.arm] === w) {
     player['w' + source.arm] = null;
@@ -350,8 +350,8 @@ async function doAttack(player, source, target, {
         thrown: S.turnNo,
         owner: player.id
       });
-      log(_T`The ${w.n} lands on ${tl(r, c)} (${w.throwsLeft} throw${w.throwsLeft > 1 ? 's' : ''} left).`);
-    } else log(_T`The ${w.n} is spent.`);
+      log(wIco87('thr') + _T`The ${w.n} lands on ${tl(r, c)} (${w.throwsLeft} throw${w.throwsLeft > 1 ? 's' : ''} left).`);
+    } else log(wIco87('thr') + _T`The ${w.n} is spent.`);
   }
   checkMandata(player);
   checkEnd();
@@ -852,14 +852,14 @@ async function resolveDrawn(player, k) {
       }
       player.coin += tot;
       coinLog(player, tot, 'cards');
-      log(_T`Everyone pays the ${CLASSES[C.cls].name}: ${nm(player)} collects ${tot} coin.`);
+      log(_T`Everyone pays the ${CLASSES[C.cls].name}: ${nm(player)} collects ${coinAmt87(tot)}.`);
     } else {
       const v = Math.min(2, player.coin);
       player.coin -= v;
       coinLog(player, -v, 'cards');
       tgt.coin += v;
       coinLog(tgt, v, 'cards');
-      log(_T`${nm(player)} pays ${nm(tgt)} ${v} coin.`);
+      log(_T`${nm(player)} pays ${nm(tgt)} ${coinAmt87(v)}.`);
     }
     return;
   }
@@ -878,7 +878,7 @@ async function resolveDrawn(player, k) {
         const v = k === 'wealth3' ? 3 : 5;
         player.coin += v;
         coinLog(player, v, 'cards');
-        log(_T`${nm(player)} draws <b>Wealth of Saturn</b>: +${v} coin.`);
+        log(_T`${nm(player)} draws <b>Wealth of Saturn</b>: ${coinAmt87('+'+(v))}.`);
         return;
       }
     case 'wpnR':
@@ -915,7 +915,7 @@ async function resolveDrawn(player, k) {
         reveal();
         if (!n || !n.alive || n.tamedBy != null) {
           player.cf += 2;
-          log(_T`${beastName(C.bear)} is gone or tamed: ${nm(player)} gains 2 CF instead.`);
+          log(_T`${beastName(C.bear)} is gone or tamed: ${nm(player)} gains ${cfAmt87(2)} instead.`);
         } else {
           n.aggro = null;
           setAggro(n, player, 'card');
@@ -932,7 +932,7 @@ async function resolveDrawn(player, k) {
         const v = Math.min(4, player.coin);
         player.coin -= v;
         coinLog(player, -v, 'cards');
-        log(_T`${nm(player)} draws <b>Flavius Telonium</b> and pays ${v} coin in tax.`, 'bad');
+        log(_T`${nm(player)} draws <b>Flavius Telonium</b> and pays ${coinAmt87(v)} in tax.`, 'bad');
         return;
       }
     case 'fortuna':
@@ -1076,7 +1076,7 @@ async function useItem(player, it) {
         return false;
       }
       player.cf += 5;
-      log(_T`${nm(player)} trades the Golden Eagle to the crowd for 5 CF. It respawns atop a pillar.`);
+      log(_T`${nm(player)} trades the Golden Eagle to the crowd for ${cfAmt87(5)}. It respawns atop a pillar.`);
       const pl = pickOne(S.pillars);
       if (pl) pl.pots.push('eagle');
     } else return false;
@@ -1222,7 +1222,7 @@ async function useItem(player, it) {
         if (!mode) return false;
         if (mode === 'refill') {
           for (const w of need) w.ammoLeft = w.ammo;
-          log(_T`${nm(player)} replenishes ${need.map(weapon => weapon.n).join(' and ')}.`);
+          log(wIco87('ammo') + _T`${nm(player)} replenishes ${need.map(weapon => weapon.n).join(' and ')}.`);
           break;
         }
         let pick;
@@ -1240,7 +1240,7 @@ async function useItem(player, it) {
         const m = S.market.w[pick.lv];
         const si = m.slots.indexOf(pick.x);
         if (si >= 0) m.slots[si] = m.deck.pop() || null;else m.deck.splice(m.deck.indexOf(pick.x), 1);
-        log(_T`${nm(player)} exchanges two Ammo cards for the ${W[pick.x].n}.`);
+        log(wIco87('ammo') + _T`${nm(player)} exchanges two Ammo cards for the ${W[pick.x].n}.`);
         await gainWeapon(player, pick.x);
         break;
       }

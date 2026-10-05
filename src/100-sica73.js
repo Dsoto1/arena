@@ -38,7 +38,7 @@ function sicaBribes(w){if(!w||w.dead||!w.night)return;const sm=sicaMgr(w);if(!sm
   const others=b.ents.map(gById).filter(g=>g&&!isSicaG(g));const mine=others.find(g=>g.contract&&g.contract.mgr===pm.id);
   if(mine&&Math.random()<SICA.bribeYou){const amt=10+Math.round(effOvr(mine)/4);w.sicaBribe={wk:w.week,gid:mine.id,amt,state:'offer'};
     sendLetter(w,{key:'sica-bribe-'+w.season+'-'+w.week,kind:'offer',from:_T('Sica'),seal:'🗡',title:_T`A quiet word about ${esc(mine.name)}`,until:w.week,
-      body:`<p>${_T`Sica's man leans close: <b>${amt} coin</b> if <b>${esc(mine.name)}</b> does not win this week's ${esc(TIERS[b.tier]?TIERS[b.tier].n:'bout')}. Paid after the bout — and only if the CPU fights for them; take the reins yourself and the deal is off.`}</p><p class="rc-sub">${_T`If it gets out: −${SICA.fameHit} fame and your fighters lose heart.`}</p>
+      body:`<p>${_T`Sica's man leans close: <b>${coinAmt87(amt)}</b> if <b>${esc(mine.name)}</b> does not win this week's ${esc(TIERS[b.tier]?TIERS[b.tier].n:'bout')}. Paid after the bout — and only if the CPU fights for them; take the reins yourself and the deal is off.`}</p><p class="rc-sub">${_T`If it gets out: −${SICA.fameHit} fame and your fighters lose heart.`}</p>
        <div class="acts"><button class="btn" type="button" data-sicabribe="yes">${_T`Take the coin`}</button><button class="btn" type="button" data-sicabribe="no">${_T`Send him away`}</button></div>`});return}
   const t=others.filter(g=>g.contract&&mgrById(g.contract.mgr)&&!mgrById(g.contract.mgr).isPlayer&&(mgrById(g.contract.mgr).p.honor||50)<70);
   if(t.length&&Math.random()<SICA.bribeAI){const g=pickOne(t);g.thrown=w.season+':'+w.week;
@@ -55,7 +55,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-sicabribe]
     const row=res&&res.rows.find(x=>x.mgrId===B.gid);const won=!!(row&&res.winners.includes(row.id));
     if(B.off){tnews(_T`🗡 You fought ${esc(g.name)} yourself — Sica's deal is off.`);return r}
     if(won){tnews(_T`🗡 ${esc(g.name)} won anyway. Sica's men are not pleased.`,'big');const sm=sicaMgr(w);if(sm){sm.rivals[pm.id]=Math.min(90,(sm.rivals[pm.id]||0)+20)}return r}
-    pm.coin+=B.amt;tnews(_T`🗡 Sica pays: <b>+${B.amt} coin</b> for ${esc(g.name)}'s quiet afternoon.`);
+    pm.coin+=B.amt;tnews(_T`🗡 Sica pays: <b>${coinAmt87('+'+(B.amt))}</b> for ${esc(g.name)}'s quiet afternoon.`);
     if(Math.random()<SICA.caught){pm.fame=Math.max(0,(pm.fame||0)-SICA.fameHit);for(const x of rosterOf(pm))x.morale=Math.max(0,(x.morale||50)-SICA.moraleHit);
       tnews(_T`📯 <b>It gets out.</b> The crowd hisses at ${esc(pm.ludus)} — −${SICA.fameHit} fame; your fighters are ashamed (−${SICA.moraleHit} morale).`,'big')}}catch(e){console.error(e)}return r}}
 /* poaching: an unhappy fighter takes Sica's cash */

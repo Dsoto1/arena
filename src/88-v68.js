@@ -33,8 +33,8 @@ function checklistHTML(){const I=weekChecklist();const todo=I.filter(x=>!x.done)
 {const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_(),m=me();if(!w||w.dead||!m||MGR.view)return h;
   /* the ledger strip in the header */
   const M=weekMoney();const tone=M.net>=0?'good':M.runway<=2?'bad':M.runway<=5?'warn':'';
-  const led=`<span class="badge ledger ${tone}" title="${_T`This week: wages and drills ${M.wages} · gate share +${M.gate} · appearance fees +${M.fees} (fighters entered) — purses and bets on top`}">${_T`${M.net>=0?'▲':'▼'} ${M.net>=0?'+':''}${M.net}/wk${M.net<0?` · ${M.runway===Infinity?'':M.runway+_T(' wk runway')}`:''}${!M.fees&&w.night&&w.night.bouts.some(b=>!b.done)?_T(' · before fees'):''}`}</span>`;
-  h=h.replace(/(<span class="badge [^"]*">Treasury [^<]*<\/span>)/,`$1${led}`);
+  const led=`<span class="badge ledger ${tone}" title="${_T`This week: wages and drills ${M.wages} · gate share +${M.gate} · appearance fees +${M.fees} (fighters entered) — purses and bets on top`}">${_T`${M.net>=0?'▲':'▼'} ${coinAmt87((M.net>=0?'+':'')+M.net)}/wk${M.net<0?` · ${M.runway===Infinity?'':M.runway+_T(' wk runway')}`:''}${!M.fees&&w.night&&w.night.bouts.some(b=>!b.done)?_T(' · before fees'):''}`}</span>`;
+  h=h.replace(/(<span class="badge [^"]*">Treasury (?:<span class=amt87>[\s\S]*?<\/span><\/span>|[^<]*)<\/span>)/,`$1${led}`); /* v0.87: the amount wears the coin (154-v87icons) */
   /* the checklist replaces the to-do box */
   if(MGR.tab==='ludus'){const i=h.indexOf('<div class="todobox">');if(i>=0){const c=cutDiv(h,i);if(c)h=c[1].slice(0,i)+checklistHTML()+c[1].slice(i)}}}catch(e){console.error(e)}return h}}
 /* end the week: what you are about to skip */

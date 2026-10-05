@@ -40,7 +40,7 @@ ONL83.regNamed=function(defs){for(const d0 of defs||[]){const d=ONLC.cleanNamed(
 /* ---------------- offerings brought: cf1/cf2 are played from the hand (the printed ones resolve on reveal) ---------------- */
 {const base=useItem;useItem=async function(player,it){if(it&&it.kind==='offer'&&(it.key==='cf1'||it.key==='cf2')){
     if(!cfAllowed()){if(!player.cpu)await modal(_T('Crowd Favor is locked'),`<p>${_T`Crowd Favor cannot be gained right now.`}</p>`,[{label:'OK',value:1}]);return false}
-    const v=it.key==='cf1'?1:2;cfWhy('offerings');player.cf+=v;log(_T`${nm(player)} offers to the crowd: <b>+${v} CF</b>.`);player.items=player.items.filter(x=>x!==it);return true}
+    const v=it.key==='cf1'?1:2;cfWhy('offerings');player.cf+=v;log(_T`${nm(player)} offers to the crowd: <b>${cfAmt87('+'+(v))}</b>.`);player.items=player.items.filter(x=>x!==it);return true}
   return base.apply(this,arguments)}}
 
 /* ---------------- the uniques and the armor-piercing affix (deterministic engine hooks) ---------------- */
@@ -56,15 +56,15 @@ const onl83HP=p=>p&&p.hp?Object.values(p.hp).reduce((a,v)=>a+Math.max(0,v|0),0):
     if(victim.alive&&victim.hp[location]>0)await base.call(this,victim,location,d1,source,_T`${prefix||''} — the ${w.n} pierces`,{...(opts||{}),noShield:true,direct:true})}
   else r=await base.call(this,victim,location,damage,source,prefix,opts);
   try{if(w&&att&&pvp&&damage>0&&victim!==att){
-    if(w.uq==='gloria'&&cfAllowed()){cfWhy(_T('a legendary weapon'));att.cf+=2;log(_T`${nm(att)}'s ${w.n}: the crowd roars (+2 CF).`)}
-    if(w.uq==='fortuna'){att.coin+=2;if(typeof coinLog==='function')coinLog(att,2,_T('a legendary weapon'));log(_T`${nm(att)}'s ${w.n}: +2 coin.`)}
+    if(w.uq==='gloria'&&cfAllowed()){cfWhy(_T('a legendary weapon'));att.cf+=2;log(_T`${nm(att)}'s ${w.n}: the crowd roars (${cfAmt87('+2')}).`)}
+    if(w.uq==='fortuna'){att.coin+=2;if(typeof coinLog==='function')coinLog(att,2,_T('a legendary weapon'));log(_T`${nm(att)}'s ${w.n}: ${coinAmt87('+2')}.`)}
     if(w.uq==='sanguis'&&att.alive&&onl83HP(victim)<hp0)await distributeHP(att,1,_T`${w.n}'s blood-price`);
-    if(w.uq==='messor'&&location!=='head'&&location!=='chest'&&limb0>0&&victim.hp[location]<=0&&cfAllowed()){cfWhy(_T('a legendary weapon'));att.cf+=3;log(_T`${nm(att)}'s ${w.n} reaps a limb (+3 CF).`)}}}catch(e){console.error(e)}
+    if(w.uq==='messor'&&location!=='head'&&location!=='chest'&&limb0>0&&victim.hp[location]<=0&&cfAllowed()){cfWhy(_T('a legendary weapon'));att.cf+=3;log(_T`${nm(att)}'s ${w.n} reaps a limb (${cfAmt87('+3')}).`)}}}catch(e){console.error(e)}
   return r}}
 {const base=hurtNPC;hurtNPC=function(npc,damage,player,prefix,weapon,byNpc){const w=weapon&&weapon.named83?weapon:null;if(w&&w.uq==='ferox'&&damage>0)damage++;
   const was=!!(npc&&npc.alive);const r=base.call(this,npc,damage,player,prefix,weapon,byNpc);
-  try{if(w&&w.uq==='venator'&&was&&npc&&!npc.alive&&player&&player.cls&&cfAllowed()){cfWhy(_T('a legendary weapon'));player.cf+=3;log(_T`${nm(player)}'s ${w.n}: the hunt pleases the crowd (+3 CF).`)}}catch(e){}return r}}
-{const base=resetTurn;resetTurn=function(player){const r=base.apply(this,arguments);try{if(player&&player.alive&&onl83Held(player,'regius')&&cfAllowed()){cfWhy(_T('a legendary weapon'));player.cf+=1;log(_T`${nm(player)}'s royal weapon: +1 CF.`)}}catch(e){}return r}}
+  try{if(w&&w.uq==='venator'&&was&&npc&&!npc.alive&&player&&player.cls&&cfAllowed()){cfWhy(_T('a legendary weapon'));player.cf+=3;log(_T`${nm(player)}'s ${w.n}: the hunt pleases the crowd (${cfAmt87('+3')}).`)}}catch(e){}return r}}
+{const base=resetTurn;resetTurn=function(player){const r=base.apply(this,arguments);try{if(player&&player.alive&&onl83Held(player,'regius')&&cfAllowed()){cfWhy(_T('a legendary weapon'));player.cf+=1;log(_T`${nm(player)}'s royal weapon: ${cfAmt87('+1')}.`)}}catch(e){}return r}}
 
 /* ---------------- result rows: who put a seat out, what broke, what came back ---------------- */
 {const base=eliminate;eliminate=function(victim,source){const was=!!(victim&&victim.alive);const r=base.apply(this,arguments);

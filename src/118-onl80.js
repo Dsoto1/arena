@@ -264,7 +264,7 @@ function onlFeedHTML80(){const me=onlMe80();const L=[...(ONLF.lines||[]),...ONLF
     if(l.k==='open')return `<div class="pr">${_T`📯 <b>${who}</b> opened ${onlRowTxt80(r)} — ${l.need|0} seat${l.need===1?'':'s'} free${take}`}</div>`;
     if(l.k==='call')return `<div class="pr">${_T`📣 <b>${who}</b> calls for ${l.need|0} more · ${onlRowTxt80(r)}${take}`}</div>`;
     if(l.k==='inv')return `<div class="pr">${_T`✉ <b>${esc2(l.from||_T('A lanista'))}</b> invited you · ${onlRowTxt80(r)}${take}`}</div>`;
-    if(l.k==='res')return l.void?`<div class="res">${_T`⚖ ${esc2(onlEvName(l.ev))} at ${esc2(onlCityName(l.loc))} — void, no result`}</div>`:`<div class="res">${_T`🏆 ${esc2((l.win||[]).join(' & ')||_T('Nobody'))} won ${esc2(onlEvName(l.ev))} at ${esc2(onlCityName(l.loc))}${l.cf?_T` — ${l.cf|0} CF`:''}`}</div>`;
+    if(l.k==='res')return l.void?`<div class="res">${_T`⚖ ${esc2(onlEvName(l.ev))} at ${esc2(onlCityName(l.loc))} — void, no result`}</div>`:`<div class="res">${_T`🏆 ${esc2((l.win||[]).join(' & ')||_T('Nobody'))} won ${esc2(onlEvName(l.ev))} at ${esc2(onlCityName(l.loc))}${l.cf?_T` — ${cfAmt87(l.cf|0)}`:''}`}</div>`;
     return ''}).join('')}
 function onlLandingHTML80(){const q=onlQuiet80();
   return `<div class="ow-row" id="onlRow80"><div class="ow-col ow-map">${onlOrbisHTML80()}</div>

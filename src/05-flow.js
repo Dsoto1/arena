@@ -439,12 +439,12 @@ async function startEvent(config) {
     if (s.cfStart) {
       cfWhy(_T('carried in'));
       p.cf += s.cfStart;
-      log(_T`${nm(p)} carries ${s.cfStart} CF into this event.`);
+      log(_T`${nm(p)} carries ${cfAmt87(s.cfStart)} into this event.`);
     }
     if (s.homeHouse) {
       cfWhy(_T('home crowd'));
       p.cf += 2;
-      log(_T`${nm(p)} fights at home for ${esc(s.homeHouse)}: the stands roar (+2 CF).`);
+      log(_T`${nm(p)} fights at home for ${esc(s.homeHouse)}: the stands roar (${cfAmt87('+2')}).`);
     }
     if (s.coinStart) {
       p.coin += s.coinStart;
@@ -573,10 +573,10 @@ async function applyMod(player, m) {
   if (t === 'hp') await distributeHP(player, v, _T`the ${LOCATIONS[S.locIdx].n} modifier`);else if (t === 'ap') await distributeAP(player, v, _T`the ${LOCATIONS[S.locIdx].n} modifier (+${v} AP)`);else if (t === 'cf') {
     cfWhy(_T('location modifier'));
     player.cf += v;
-    log(_T`${nm(player)} starts with +${v} CF (${LOCATIONS[S.locIdx].n}).`);
+    log(_T`${nm(player)} starts with ${cfAmt87('+'+(v))} (${LOCATIONS[S.locIdx].n}).`);
   } else if (t === 'coin') {
     player.coin = Math.max(0, player.coin + v);
-    log(_T`${nm(player)} loses ${-v} coin (${LOCATIONS[S.locIdx].n}).`);
+    log(_T`${nm(player)} loses ${coinAmt87(-v)} (${LOCATIONS[S.locIdx].n}).`);
   } else if (t === 'dmg') await hurt(player, rollLoc(player), v, {
     type: 'env'
   }, _T`${LOCATIONS[S.locIdx].n} modifier`, {
@@ -903,7 +903,7 @@ async function nextRound(why) {
       cfWhy(_T('round rewards'));
       p.cf += rw.cf || 0;
     }
-    log(_T`Survivors receive ${rw.coin || 0} coin and ${rw.cf || 0} CF.`);
+    log(_T`Survivors receive ${coinAmt87(rw.coin || 0)} and ${cfAmt87(rw.cf || 0)}.`);
   }
   if (rw.cards) {
     for (const p of act) for (let i = 0; i < rw.cards && S.round2.length; i++) p.items.push(mkCard(S.round2.pop()));
@@ -1173,7 +1173,7 @@ async function takeChoice(player, which) {
   } else if (which === 'coin' || !canDraw()) {
     player.coin += 2;
     coinLog(player, 2, _T('Phase 2 choices'));
-    log(_T`Phase 2 · Choice: ${nm(player)} takes 2 coin.`);
+    log(_T`Phase 2 · Choice: ${nm(player)} takes ${coinAmt87(2)}.`);
   } else {
     log(_T`Phase 2 · Choice: ${nm(player)} draws an arena card.`);
     await drawArena(player);
@@ -1193,7 +1193,7 @@ async function takeChoice(player, which) {
   }
   if (swimming(player) && player.mv > 1) {
     player.mv--;
-    log(_T`${nm(player)} is swimming: −1 movement and −1 weapon range.`);
+    log(wIco87('rng') + _T`${nm(player)} is swimming: −1 movement and −1 weapon range.`);
   }
   if (player.netted) log(_T`${nm(player)} is tangled in a net and cannot move this turn.`);
   if (caAllowed()) {
@@ -1201,22 +1201,22 @@ async function takeChoice(player, which) {
     if (player.abil === 'coin') {
       player.coin += av;
       coinLog(player, av, _T('class ability'));
-      log(_T`${nm(player)} collects ${av} coin (class ability).`);
+      log(_T`${nm(player)} collects ${coinAmt87(av)} (class ability).`);
     }
     if (player.abil === 'cf') {
       cfWhy(_T('class ability'));
       player.cf += av;
-      log(_T`${nm(player)} earns ${av} CF (class ability).`);
+      log(_T`${nm(player)} earns ${cfAmt87(av)} (class ability).`);
     }
     if (player.abil === 'vet') {
       if (player.vetPref === 'cf') {
         cfWhy(_T('class ability'));
         player.cf += av;
-        log(_T`${nm(player)} takes ${av} CF (Lanista).`);
+        log(_T`${nm(player)} takes ${cfAmt87(av)} (Lanista).`);
       } else {
         player.coin += av;
         coinLog(player, av, _T('class ability'));
-        log(_T`${nm(player)} takes ${av} coin (Lanista).`);
+        log(_T`${nm(player)} takes ${coinAmt87(av)} (Lanista).`);
       }
     }
     if (player.abil === 'mv' && !player.netted) player.mv = Math.min(7, player.mv + av);
@@ -1225,7 +1225,7 @@ async function takeChoice(player, which) {
       const w = ['R', 'L'].map(a => player['w' + a]).find(weapon => weapon && weapon.stones);
       if (w) {
         w.ammoLeft = Math.min(6, w.ammoLeft + av);
-        log(_T`${nm(player)} gathers ${av > 1 ? av + ' stones' : _T('a stone')} (${w.ammoLeft} in the sling).`);
+        log(wIco87('ammo') + _T`${nm(player)} gathers ${av > 1 ? av + ' stones' : _T('a stone')} (${w.ammoLeft} in the sling).`);
       }
     }
   }
@@ -1243,7 +1243,7 @@ async function endTurn() {
     if (RD().zone > 1 && p.grace <= 0 && !inZone(p.r, p.c) && !p.underground) {
       cfWhy(_T('outside the zone'));
       p.cf -= 2;
-      log(_T`${nm(p)} ends outside the zone: −2 CF (now ${p.cf}).`, 'bad');
+      log(_T`${nm(p)} ends outside the zone: ${cfAmt87('−2')} (now ${p.cf}).`, 'bad');
       if (p.cf < 0) {
         log(_T`${nm(p)}'s crowd favor turns negative.`, 'bad');
         eliminate(p, {
@@ -1618,7 +1618,7 @@ function lootOptions(player) {
     if (pl.coin) out.push({
       pl,
       t: 'c',
-      label: _T`${pl.coin} coin`,
+      label: coinAmt87(pl.coin),
       sub: _T`all of ${pl.name}'s coin`,
       val: pl.coin * 0.6
     });
@@ -1665,7 +1665,7 @@ async function doLoot(player, o) {
   if (o.t === 'c') {
     player.coin += pl.coin;
     coinLog(player, pl.coin, _T('looting the fallen'));
-    log(_T`${nm(player)} loots ${pl.coin} coin from ${pl.name}.`);
+    log(_T`${nm(player)} loots ${coinAmt87(pl.coin)} from ${pl.name}.`);
     pl.coin = 0;
   }
   if (o.t === 'i') {
@@ -1682,7 +1682,7 @@ function tradeables(player) {
   if (player.coin > 0) for (const v of [1, 3, 5, 10]) if (player.coin >= v) out.push({
     t: 'coin',
     v,
-    label: _T`${v} coin`,
+    label: coinAmt87(v),
     val: v
   });
   if (player.keys > 0) out.push({
@@ -1963,7 +1963,7 @@ function recordHist() {
 /* ================= RETIRE ================= */
 /* retirePlayer — after confirming, retires the gladiator: CF set to 0 and eliminated. */
 async function retirePlayer(player) {
-  const ok = await modal(_T`Retire ${player.name}?`, `<p>${_T`Retiring walks your gladiator out of the arena for good. Their Fate is set to <b>0 CF (Ad Memoriae)</b>, they are eliminated from this event, and ${player.saved ? _T('their saved record in the Ludus') : _T('any saved record or missio for them')} is removed.`}</p>`, [{
+  const ok = await modal(_T`Retire ${player.name}?`, `<p>${_T`Retiring walks your gladiator out of the arena for good. Their Fate is set to <b>${cfAmt87(0)} (Ad Memoriae)</b>, they are eliminated from this event, and ${player.saved ? _T('their saved record in the Ludus') : _T('any saved record or missio for them')} is removed.`}</p>`, [{
     label: _T('Retire from the event'),
     value: 1,
     primary: 1
@@ -1974,7 +1974,7 @@ async function retirePlayer(player) {
   if (!ok) return;
   player.retired = true;
   player.cf = 0;
-  log(_T`${nm(player)} lays down their weapons and retires from the event. Fate: 0 CF.`, 'big');
+  log(_T`${nm(player)} lays down their weapons and retires from the event. Fate: ${cfAmt87(0)}.`, 'big');
   eliminate(player, {
     type: 'retire'
   });

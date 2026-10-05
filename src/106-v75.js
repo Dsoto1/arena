@@ -187,10 +187,10 @@ async function marketBuy75(player,lv,opt={}){mktFix75();const W=S.market.w[lv],A
     if(opt.free||player.coin<2||!opts.length)break;
     let re=false;
     if(player.cpu){const b=cpuPick(opts);re=player.diff==='hard'&&aVal75(b.kind,b.key)<lv*2&&rand()<.5}
-    else{const v=await modal(_T`Market die · ${slot}`,`<p>${_T`The die shows <b>${slot}</b>. Take one of these, or pay 2 coin to roll again${slot===4&&wOpen75(W)?_T(' (the flipped weapon stays face up in slot 4)'):''}.`}</p>`,
-      [...opts.map((o,i)=>({label:optLabel75(o),sub:optSub75(o),value:'t'+i,card:o.key?(o.kind==='w'?'w:':'a:')+o.key:null})),{label:'Re-roll',sub:'2 coin',value:'re'}]);
+    else{const v=await modal(_T`Market die · ${slot}`,`<p>${_T`The die shows <b>${slot}</b>. Take one of these, or pay ${coinAmt87(2)} to roll again${slot===4&&wOpen75(W)?_T(' (the flipped weapon stays face up in slot 4)'):''}.`}</p>`,
+      [...opts.map((o,i)=>({label:optLabel75(o),sub:optSub75(o),value:'t'+i,card:o.key?(o.kind==='w'?'w:':'a:')+o.key:null})),{label:'Re-roll',sub:coinAmt87(2),value:'re'}]);
       if(v&&v[0]==='t'){const o=opts[+v.slice(1)];return {kind:o.kind,key:o.kind==='w'?wTake75(W,o.s):aTake75(A,o.s,o.key)}}re=v==='re'}
-    if(!re)break;player.coin-=2;coinLog(player,-2,'market re-rolls');log(_T`${nm(player)} pays 2 coin to re-roll.`)}
+    if(!re)break;player.coin-=2;coinLog(player,-2,'market re-rolls');log(_T`${nm(player)} pays ${coinAmt87(2)} to re-roll.`)}
   if(!opts.length)return {kind:null,key:null};
   let o;if(opts.length===1||player.cpu)o=player.cpu?cpuPick(opts):opts[0];
   else{const v=await modal(_T`Market · slot ${slot}`,`<p>${_T`Take the weapon or one armor piece.`}</p>`,opts.map((x,i)=>({label:optLabel75(x),sub:optSub75(x),value:i,card:x.key?(x.kind==='w'?'w:':'a:')+x.key:null})));o=opts[v!=null?v:0]}
@@ -214,20 +214,20 @@ function boardHTML75(player){const m=S.market;const cell=(x,y,inner,cls='')=>`<d
   return `<div class="mboard75"><img src="${assetURL('market_board.webp')}" alt="${_T`The market board`}">${h}</div>`}
 openMarket=async function(player){mktFix75();const vetOn=weak(player,'tax');if(vetOn&&player.cpu)player.taxPref=player.cf>player.coin?'cf':'coin';
   for(;;){const vetCF=vetOn&&player.taxPref==='cf'?1:0,vet=vetOn&&!vetCF?1:0;
-    const notes=[vetOn?_T`⚖ Old debts: +1 ${vetCF?'CF':_T('coin')} per purchase`:'',player.discount?_T`％ Discount: −${player.discount} coin this turn`:'',player.mchoice?_T('☝ Market Choice: pick your slot, no die'):''].filter(Boolean);
+    const notes=[vetOn?_T`⚖ Old debts: +1 ${vetCF?'CF':_T('coin')} per purchase`:'',player.discount?_T`％ Discount: ${coinAmt87('−'+(player.discount))} this turn`:'',player.mchoice?_T('☝ Market Choice: pick your slot, no die'):''].filter(Boolean);
     const body=`<div class="mkt75">${boardHTML75(player)}
-      <div class="mkt75-foot">${_T`<span>Pay for a level, roll the market die, then take that slot's <b>weapon</b> or <b>one armor piece</b> · re-roll 2 coin</span>`}<span class="stall-purse">${_T`${ICO&&ICO.coin?ICO.coin:'🪙'} <b>${player.coin}</b> coin · 🌾 <b>${player.cf}</b> CF${player.market?' · <b style="color:var(--gold2)">open</b>':''}`}</span></div>
+      <div class="mkt75-foot">${_T`<span>Pay for a level, roll the market die, then take that slot's <b>weapon</b> or <b>one armor piece</b> · re-roll ${coinAmt87(2)}</span>`}<span class="stall-purse">${_T`<b>${coinAmt87(player.coin)}</b> · <b>${cfAmt87(player.cf)}</b>${player.market?' · <b style="color:var(--gold2)">open</b>':''}`}</span></div>
       ${player.market?'':`<div class="mkt75-lock"><div><div style="font-size:30px">🔒</div>${_T`<b>The market is closed.</b>`}<br><span class="rc-sub">${_T`3 Crowd Favor opens it for this turn — then buy as often as your coin allows.`}</span></div></div>`}</div>${notes.length?`<p class="rc-sub" style="margin:6px 0 0">${notes.join(' · ')}</p>`:''}${typeof hint==='function'?hint('market'):''}`;
     const btns=[];
-    if(!player.market)btns.push({label:_T('Unlock market'),sub:cfAllowed()?'3 CF':_T('Crowd Favor is locked'),value:'unlock',disabled:player.cf<3||!cfAllowed(),primary:1});
+    if(!player.market)btns.push({label:_T('Unlock market'),sub:cfAllowed()?cfAmt87(3):_T('Crowd Favor is locked'),value:'unlock',disabled:player.cf<3||!cfAllowed(),primary:1});
     else for(const lv of [1,2,3]){const left=[1,2,3,4].some(s=>wHas75(S.market.w[lv],s)||aHas75(S.market.a[lv],s));
-      btns.push({label:_T`Buy at level ${lv}`,sub:_T`${purchaseCost(player,lv)+vet} coin${vetCF?' + 1 CF':''}${left?'':' · empty'}`,value:'b'+lv,disabled:!left||player.coin<purchaseCost(player,lv)+vet||vetCF&&player.cf<1})}
+      btns.push({label:_T`Buy at level ${lv}`,sub:_T`${coinAmt87(purchaseCost(player,lv)+vet)}${vetCF?` + ${cfAmt87(1)}`:''}${left?'':' · empty'}`,value:'b'+lv,disabled:!left||player.coin<purchaseCost(player,lv)+vet||vetCF&&player.cf<1})}
     if(player.market&&vetOn)btns.push({label:vetCF?_T('⚖ Pay old debts in coin'):_T('⚖ Pay old debts in CF'),sub:_T('Veteranus: +1 per purchase'),value:'taxswap'});
     btns.push({label:_T('Close market'),value:'close'});
     const v=await modal(_T('Market of Flavius'),body,btns,{wide:1});
     if(v==='close'||!v)break;
     if(v==='taxswap'){player.taxPref=vetCF?'coin':'cf';continue}
-    if(v==='unlock'){player.cf-=3;player.market=true;log(_T`${nm(player)} spends 3 CF to unlock the market.`);continue}
+    if(v==='unlock'){player.cf-=3;player.market=true;log(_T`${nm(player)} spends ${cfAmt87(3)} to unlock the market.`);continue}
     const lv=+v[1];player.coin-=purchaseCost(player,lv)+vet;if(vetCF)player.cf-=1;coinLog(player,-(purchaseCost(player,lv)+vet),_T('market purchases'));stat(player,'buy');crowdReact('buy',{p:player});
     log(_T`${nm(player)} buys at level ${lv}.`);
     const got=await marketBuy75(player,lv);if(got.kind==='w'&&got.key)await gainWeapon(player,got.key);else if(got.key)await gainArmorPiece(player,got.key);
@@ -251,7 +251,7 @@ openMarket=async function(player){mktFix75();const vetOn=weak(player,'tax');if(v
 /* ---------- Play Now: the mockup's layout over the existing controls ---------- */
 const PN75={er:null};
 function pnLoadRecs75(){try{Store.getDoc('hall','eventRecords').then(er=>{PN75.er=er||{};const el=document.querySelector('#mBody .pn-rec');if(el)el.outerHTML=pnRecHTML75(CFG.ev)}).catch(()=>{})}catch(e){}}
-function pnRecHTML75(k){const r=PN75.er&&PN75.er[k];return `<div class="pn-rec">${r?_T`🏆 Record: <b>${r.cf} CF</b> · ${esc(r.name)}${r.clsName?` (${esc(r.clsName)})`:''}${r.won?' · won':''}`:_T('🏆 No record yet — set one')}</div>`}
+function pnRecHTML75(k){const r=PN75.er&&PN75.er[k];return `<div class="pn-rec">${r?_T`🏆 Record: <b>${cfAmt87(r.cf)}</b> · ${esc(r.name)}${r.clsName?` (${esc(r.clsName)})`:''}${r.won?' · won':''}`:_T('🏆 No record yet — set one')}</div>`}
 function pnBadge75(ev){const t=ev.min===ev.max?`${ev.min}`:`${ev.min}–${ev.max}`;return `<div class="pn-badge" title="${_T`${t} gladiators`}"><img src="${assetURL('badge_players.webp')}" alt=""><b>${t} ${ev.max===1?'PLAYER':'PLAYERS'}</b></div>`}
 function pnPresets75(){try{return JSON.parse(localStorage.getItem('flavius_pnpresets')||'[]')||[]}catch(e){return []}}
 function pnPresetsSave75(L){try{localStorage.setItem('flavius_pnpresets',JSON.stringify(L.slice(0,8)))}catch(e){}}

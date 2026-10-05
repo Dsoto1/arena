@@ -102,7 +102,7 @@ Object.assign(GLOSS,{
 /* the guides: a Ratings section in both, and the Classes tips read the ratings */
 const RATINGS_GUIDE=`<h4>${_T`Ratings: Speed, Strength, Intelligence, Luck, Charisma`}</h4><ul>
   <li>${_T`<b>Every gladiator has five ratings</b> from 50 to 99. Classes set the loadout; the ratings set the perks. A Slave tends to be fast and a Soldier strong, but not every one is.`}</li>
-  <li>${_T`<b>Speed</b>: +1 movement at 76, +2 at 96. <b>Strength</b>: +1 damage per hit at 76, +2 at 87, +3 at 96. <b>Luck</b>: +1 coin a turn at 76, +2 at 96. <b>Charisma</b>: +1 CF a turn at 76, +2 at 96. They stack.`}</li>
+  <li>${_T`<b>Speed</b>: +1 movement at 76, +2 at 96. <b>Strength</b>: +1 damage per hit at 76, +2 at 87, +3 at 96. <b>Luck</b>: ${coinAmt87('+1')} a turn at 76, +2 at 96. <b>Charisma</b>: ${cfAmt87('+1')} a turn at 76, +2 at 96. They stack.`}</li>
   <li>${_T`<b>When they pay</b>: only in rounds that allow class abilities. In a Classic event that is round 1, so a strong gladiator should hit early and hard.`}</li>
   <li>${_T`<b>Intelligence</b> sets a CPU's mind — Novice below 65, Apprentice 65, Fighter 76, Veteran 86, Master 96. It never adds gear or coin.`}</li>
   <li>${_T`<b>Read the chips</b> on each fighter panel: a gold chip is a perk earned; a glowing one is a top band (96+).`}</li></ul>`;

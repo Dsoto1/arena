@@ -16,7 +16,7 @@ function gDream(g){if(!g)return 'family';if(g.dream)return g.dream;
   const h=Math.abs(hashStr('dream'+(g.id||g.name)))%100;
   g.dream=(effOvr(g)>=72&&h<45)||h<14?'ludus':h<60?'family':'wealth';return g.dream}
 function purseLine(g){if(!g||!g.contract)return '';const d=DREAMS[gDream(g)];
-  return `<div class="rc-sub" style="margin:2px 0" title="${_T`The fighter's own purse — a tenth of every purse they win for the house and a fifth of their wage, saved.`}">${_T`👛 Own purse <b>${g.purse||0}</b> coin · saving ${d[0]} ${esc(g.dream==='family'?_T`for the family back in ${g.city||_T('their city')}`:d[1])}${g.buyRefused?_T(' · <span style="color:var(--blood2)">you refused their offer for the house</span>'):''}`}</div>`}
+  return `<div class="rc-sub" style="margin:2px 0" title="${_T`The fighter's own purse — a tenth of every purse they win for the house and a fifth of their wage, saved.`}">${_T`👛 Own purse <b>${coinAmt87(g.purse||0)}</b> · saving ${d[0]} ${esc(g.dream==='family'?_T`for the family back in ${g.city||_T('their city')}`:d[1])}${g.buyRefused?_T(' · <span style="color:var(--blood2)">you refused their offer for the house</span>'):''}`}</div>`}
 // the weekly tick: savings, the rare buyout offer, and the walk-out of a refused dreamer
 function purseWeek(w,pm){
   for(const g of w.glads)if(g.alive&&g.contract&&!g.lanista){g.purse=(g.purse||0)+Math.max(1,Math.round((g.contract.wage||0)*0.2));gDream(g)}
@@ -29,16 +29,16 @@ function purseWeek(w,pm){
   /* v0.46: a fighter rich enough to buy their freedom before earning the rudis asks their lanista (once every 8 weeks) */
   for(const x of w.mgrs){if(x.dead)continue;for(const g of rosterOf(x)){if(g.lanista||g.starChild||rudisReady(g)||(g.purse||0)<freedomPrice(g)||w.week-(g.freeAsked??-99)<8)continue;
     const price=freedomPrice(g);g.freeAsked=w.week;
-    if(x.isPlayer){(w.pend=w.pend||[]).push({t:'buyfree',gid:g.id,price,f:0});tnews(_T`👛 <b>${esc(g.name)}</b> asks to buy their freedom for ${price} coin — decide on Match Week.`,'big')}
-    else if(Math.random()<.5){g.purse-=price;x.coin+=price;ghist(g,_T`bought their freedom from ${x.ludus} for ${price} coin`);g.alive=false;g.freed2=true;g.contract=null;try{libertyEntry(g,x,_T('the Gate of Life'),_T('bought their freedom'))}catch(e){}mnews(_T`👛 <b>${esc(g.name)}</b> buys their freedom from ${esc(x.ludus)} for ${price} coin.`)}
+    if(x.isPlayer){(w.pend=w.pend||[]).push({t:'buyfree',gid:g.id,price,f:0});tnews(_T`👛 <b>${esc(g.name)}</b> asks to buy their freedom for ${coinAmt87(price)} — decide on Match Week.`,'big')}
+    else if(Math.random()<.5){g.purse-=price;x.coin+=price;ghist(g,_T`bought their freedom from ${x.ludus} for ${coinAmt87(price)}`);g.alive=false;g.freed2=true;g.contract=null;try{libertyEntry(g,x,_T('the Gate of Life'),_T('bought their freedom'))}catch(e){}mnews(_T`👛 <b>${esc(g.name)}</b> buys their freedom from ${esc(x.ludus)} for ${coinAmt87(price)}.`)}
     break}}
 }
 function buyPrice(w,pm,g){return Math.round((g.purse||0)*1.4+g.fame*3+(typeof facSum==='function'?facSum(pm)*15:0)+rosterOf(pm).length*10+Math.max(0,pm.coin)*0.5)}
 function buyOfferHTML(){const w=W_();const o=w&&w.buyOffer;if(!o)return '';const g=gById(o.gid);if(!g)return '';const pm=me();
   return `<div class="card2" style="border-color:var(--gold);margin-bottom:10px"><div style="display:flex;gap:10px;align-items:center">${gArt(g,'sm')}<div>${_T`<b>🏛 ${esc(g.name)} offers to buy ${esc(pm.ludus)}</b>`}
-    <p style="margin:4px 0">${_T`“I have fought for this house, bled for it, saved every coin it paid me. Sell it to me, lanista. I will keep the name, keep the fighters — and pay you <b>${o.price} coin</b>.”`}</p>
-    <p class="rc-sub" style="margin:0">${_T`Accept: ${esc(g.name)} becomes the house's lanista (a rival from now on, roster and all), and <b>${o.price} coin founds your new ludus</b> in this same league${w.loan?_T` (less the ${w.loan.amt} still owed to ${esc(w.loan.name)})`:''} — you go straight to creating it. Refuse: ${esc(g.name)}'s morale drops, and they may walk out to found a house of their own — against you.`}</p></div></div>
-    <div class="acts" style="margin-top:8px"><button class="btn primary" type="button" data-mg="buyaccept">${_T`✍ Sell the house<small>${o.price} coin · found a new ludus</small>`}</button><button class="btn" type="button" data-mg="buyreject">${_T`✋ Refuse<small>the house is not for sale</small>`}</button></div></div>`}
+    <p style="margin:4px 0">${_T`“I have fought for this house, bled for it, saved every coin it paid me. Sell it to me, lanista. I will keep the name, keep the fighters — and pay you <b>${coinAmt87(o.price)}</b>.”`}</p>
+    <p class="rc-sub" style="margin:0">${_T`Accept: ${esc(g.name)} becomes the house's lanista (a rival from now on, roster and all), and <b>${coinAmt87(o.price)} founds your new ludus</b> in this same league${w.loan?_T` (less the ${w.loan.amt} still owed to ${esc(w.loan.name)})`:''} — you go straight to creating it. Refuse: ${esc(g.name)}'s morale drops, and they may walk out to found a house of their own — against you.`}</p></div></div>
+    <div class="acts" style="margin-top:8px"><button class="btn primary" type="button" data-mg="buyaccept">${_T`✍ Sell the house<small>${coinAmt87(o.price)} · found a new ludus</small>`}</button><button class="btn" type="button" data-mg="buyreject">${_T`✋ Refuse<small>the house is not for sale</small>`}</button></div></div>`}
 // refused: the dreamer walks out and founds a rival house
 function defectFound(w,pm,g){
   const fam=String(g.name).split(/\s+/).pop().replace(/["“”]/g,'');
@@ -59,7 +59,7 @@ function saleComplete(w,c){const pm=me();const o=w.buyOffer;const g=gById(o.gid)
   // the house changes hands
   pm.isPlayer=false;pm.name=g.name;pm.portrait={...gLook(g),helm:'none'};pm.bio=_T`Fought for ${old.ludus}, then bought it from ${old.name}.`;pm.fame=Math.max(pm.fame,g.fame);
   pm.rivals=pm.rivals||{};pm.rivalry=6;g.contract=null;g.lanista=1;g.alive=false;g.retired=true;
-  ghist(g,_T`bought ${esc(old.ludus)} from ${esc(old.name)} for ${o.price} coin — lanista now`);
+  ghist(g,_T`bought ${esc(old.ludus)} from ${esc(old.name)} for ${coinAmt87(o.price)} — lanista now`);
   const debt=w.loan?w.loan.amt:0;const coin=Math.max(20,o.price-debt);w.loan=null;w.buyOffer=null;
   // you, again: a new house in the same league
   const id='m_p'+Date.now().toString(36);
@@ -70,5 +70,5 @@ function saleComplete(w,c){const pm=me();const o=w.buyOffer;const g=gById(o.gid)
   const r=genGlad({ovr:44+rnd(7),rookie:true});r.name=genName();r.contract={mgr:id,wage:askWage(r),weeks:8,since:w.week};r.scout=2;w.glads.push(r);
   for(const x of w.glads)if(x.interest)delete x.interest[id];
   w.hours=hoursMax();
-  mnews(_T`✍ <b>${esc(old.ludus)} is sold</b> to ${esc(g.name)} for ${o.price} coin${debt?_T` (${debt} went to clear the debt)`:''}. ${esc(c.name)} opens <b>${esc(c.ludus)}</b> in ${esc(c.city)} with ${coin} coin and one raw recruit.`,'big');
+  mnews(_T`✍ <b>${esc(old.ludus)} is sold</b> to ${esc(g.name)} for ${coinAmt87(o.price)}${debt?_T` (${debt} went to clear the debt)`:''}. ${esc(c.name)} opens <b>${esc(c.ludus)}</b> in ${esc(c.city)} with ${coinAmt87(coin)} and one raw recruit.`,'big');
   return true}

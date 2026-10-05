@@ -233,12 +233,12 @@ function onlStakeHTML80(o){const c=o.char||{};const nm=esc2(c.name||_T('Your gla
   const wpn=brought.filter(k=>W[k]),arm=brought.filter(k=>!W[k]);const all=(c.gear||[]).length;const home=Math.max(0,all-brought.length);const lost=(c.bouts|0)-(c.wins|0);
   const st=(typeof STATS!=='undefined'?STATS:[]).map(([k,n,ic])=>`<span class="stk80-st" title="${esc2(n)}">${ic} <b>${(c.stats||{})[k]|0}</b><i>${esc2(n)}</i></span>`).join('');
   const coin=typeof ICO!=='undefined'&&ICO.coin?ICO.coin:'🪙';
-  const now=o.now?`<div class="stk80-now">${_T`On the sand now: ⭐ ${o.now.cf|0} CF · ${coin} ${o.now.coin|0}`}</div>`:'';
+  const now=o.now?`<div class="stk80-now">${_T`On the sand now: ${cfAmt87(o.now.cf|0)} · ${coin} ${o.now.coin|0}`}</div>`:'';
   const stake=o.ranked?`<div class="stk80-warn">${_T`<b>Ranked — Damnatio.</b> ${nm} dies and is struck from your roster for good, with ${coin} ${c.wallet|0} and ${all} piece${all===1?'':'s'} of gear${home?_T` (${home} left at home)`:''}. This cannot be undone.${o.dropped?_T('<br>A CPU is fighting for them now — let it, and they may still survive.'):''}`}</div>`
     :`<div class="stk80-ok">${_T`${o.rule==='fate'?_T`${nm} is out of this bout.`:_T('A CPU takes your seat and fights on.')} Nothing is lost — the bout does not count for ${nm}.`}</div>`;
   return `<div class="stk80"><div class="stk80-art">${onl80Face(c,'md')}<span class="stk80-tok">${c.cls?onlFig(c.cls,c.look,84):''}</span></div>
     <div class="stk80-info"><div class="stk80-name">${nm}</div><div class="stk80-sub">${esc2((CLASSES[c.cls]||{}).name||'')} · ${onlRankChip(c.rank||'tiro')}</div>
-      <div class="stk80-rec">${_T`<span>⚔ <b>${c.wins|0}</b> won · <b>${Math.max(0,lost)}</b> lost</span><span>🛡 ${c.survived|0} survived</span><span>⭐ ${c.lifeCF|0} CF</span><span>${coin} ${c.wallet|0}</span>`}</div>
+      <div class="stk80-rec">${_T`<span>⚔ <b>${c.wins|0}</b> won · <b>${Math.max(0,lost)}</b> lost</span><span>🛡 ${c.survived|0} survived</span><span>${cfAmt87(c.lifeCF|0)}</span><span>${coin} ${c.wallet|0}</span>`}</div>
       <div class="stk80-stats">${st}</div></div></div>${now}
    <div class="stk80-gear">${_T`<b>Brought into this match</b>${wpn.length?`<div>🗡 ${wpn.map(k=>esc2(onlGearName80(k))).join(' · ')}</div>`:''}${arm.length?`<div>🛡 ${arm.map(k=>esc2(onlGearName80(k))).join(' · ')}</div>`:''}${brought.length?'':'<div class="rc-sub">Only the class kit.</div>'}`}</div>
    ${stake}<p class="rc-sub" style="margin:6px 0 0">${_T`You may come back to watch, but not to fight.`}</p>`}
@@ -269,7 +269,7 @@ function onlTodayHTML80(){const T=ONL80F.today;if(!T)return '';const yd=T.day===
     <div class="td80-info"><div class="td80-name">${esc2(e.name)}</div><div class="td80-sub">${onlRankChip(e.rank)} ${cls(e)}</div><div class="td80-out">${line}</div>
     <small>${e.bouts!=null?_T`${e.bouts|0} bouts · ${e.wins|0} won · `:''}${e.ranked?_T('Ranked'):_T('Custom')} · ${ago(e.at)}</small></div></div>`;
   const row=(e,txt)=>`<div class="td80-row"><span class="td80-mini">${onlFig(e.cls,e.look,34)}</span><span>${txt}</span></div>`;
-  const b1=WN.length?show(WN[0],_T`🏆 Won ${where(WN[0])} with <b>${WN[0].cf|0} CF</b>`,'win')+WN.slice(1,4).map(e=>row(e,_T`<b>${esc2(e.name)}</b> · ${e.cf|0} CF · ${where(e)}`)).join('')
+  const b1=WN.length?show(WN[0],_T`🏆 Won ${where(WN[0])} with <b>${cfAmt87(WN[0].cf|0)}</b>`,'win')+WN.slice(1,4).map(e=>row(e,_T`<b>${esc2(e.name)}</b> · ${cfAmt87(e.cf|0)} · ${where(e)}`)).join('')
     :`<div class="td80-empty">${_T`No victor yet ${yd?_T('yesterday'):_T('today')} — the sand waits.`}</div>`;
   const fell=e=>e.how==='damnatio'?_T`🌫 Abandoned ${where(e)} — <b>Damnatio</b>`:_T`🪦 Fell to the Fate in ${where(e)}${e.hall?_T(' — the Hall keeps the name'):''}`;
   const upTxt=u=>_T`⚔ <b>${esc2(u.w.name)}</b> ${onlRankChip(u.w.rank)} humbled <b>${esc2(u.l.name)}</b> ${onlRankChip(u.l.rank)} · ${where(u)}`;
