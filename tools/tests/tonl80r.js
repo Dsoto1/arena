@@ -21,7 +21,8 @@ const pre={A:await setup(A,'Alpha','hero'),B:await setup(B,'Beta','soldier'),C:a
 const join=async(p,id)=>{for(let k=0;k<8;k++){const ok=await p.evaluate(async id=>{try{await NET.req('lobby.join',{id})}catch(e){}await new Promise(r=>setTimeout(r,300));
   return (await NET.req('lobby.list')).some(L=>L.id===id&&L.players.some(x=>x.id===ONL.acct.id))},id);if(ok)return true;await p.waitForTimeout(400)}return false};
 const L=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:false,abandon:'cpu'}));
-await join(B,L.id);await join(C,L.id);
+const sees=async(p,id,n)=>{for(let t0=Date.now();Date.now()-t0<20000;){if(await p.evaluate(([id,n])=>ONLC.humansOf(mockLoad().lobbies[id]||{}).length>=n,[id,n]))return true;await p.waitForTimeout(150)}return false};
+await join(B,L.id);await join(C,L.id);await sees(A,L.id,3);
 const L2=await A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},L.id);
 await B.evaluate(L=>onlEnter(L),L2);await C.evaluate(L=>onlEnter(L),L2);
 const drive=async p=>{const r=await p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on||onlmMine()||ONLM.info>0)){const t=(document.querySelector('#mTitle')||{}).textContent||'';const pb=document.querySelector('#modal .mbtns .primary')?'#modal .mbtns .primary':document.querySelector('#modal .mbtns button')?'#modal .mbtns button':null;return pb?['sel',pb,'modal:'+t.slice(0,24)]:['','','modal?']}
@@ -35,7 +36,7 @@ const drive=async p=>{const r=await p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on||onl
   if(r[0]==='sel')await p.click(r[1],{timeout:2000}).catch(()=>{});if(r[0]==='xy')await p.mouse.click(r[1][0],r[1][1]);return r[2]};
 const fast=p=>p.evaluate(()=>{try{setSpeedUI('fast')}catch(e){}});
 /* everyone on the sand (the host's opening windows are answered by the driver) */
-const waitIn=async(ps,id)=>{const t0=Date.now();while(Date.now()-t0<40000){const ok=await Promise.all(ps.map(p=>p.evaluate(id=>!!(ONLM.on&&S&&S.onl&&S.onl.lobby===id),id)));if(ok.every(Boolean))return true;for(const p of ps)await drive(p);await A.waitForTimeout(250)}return false};
+const waitIn=async(ps,id)=>{const t0=Date.now();while(Date.now()-t0<90000){const ok=await Promise.all(ps.map(p=>p.evaluate(id=>!!(ONLM.on&&S&&S.onl&&S.onl.lobby===id),id)));if(ok.every(Boolean))return true;for(const p of ps)await drive(p);await A.waitForTimeout(250)}return false};
 const waitOn=()=>waitIn([A,B,C],L.id);
 await waitOn();for(const p of [A,B,C])await fast(p);
 /* printed gear only, on the host and on the clients; Flavius presides; Custom keeps the hints */
@@ -50,14 +51,16 @@ const run=async(ms,who=[A,B,C],until)=>{const t0=Date.now();while(Date.now()-t0<
 await run(9000);
 /* tamper Gamma's arena on Gamma's own move: the next input it sends is out of step with Alpha and Beta */
 const gen0={A:await A.evaluate(()=>ONLM.gen),B:await B.evaluate(()=>ONLM.gen),C:await C.evaluate(()=>ONLM.gen)};let tampered=null;
-{const t0=Date.now();while(Date.now()-t0<60000&&!tampered){await drive(A);await drive(B);
+{const t0=Date.now();while(Date.now()-t0<180000&&!tampered){await drive(A);await drive(B);
   tampered=await C.evaluate(()=>{if(!onlmOn()||!onlmMine()||S.busy||CUR_MODAL||ONLM.pend||!['choice','action'].includes(S.phase))return null;const h0=onlHash();S.players[0].coin+=7;return {h0,h1:onlHash(),next:ONLM.next,turn:S.turnNo}});
   if(tampered)break;await A.waitForTimeout(150);if(await A.evaluate(()=>!S||S.over))break}}
 const oddDone=async()=>{const a=await A.evaluate(()=>ONL80R.oddSkips);const c=await C.evaluate(g=>ONLM.gen!==g,gen0.C);return a>0&&c};
-await run(40000,[C,A,B],oddDone);
+await run(120000,[C,A,B],oddDone);
 const after=async p=>p.evaluate(()=>({resyncs:ONLM.resyncs,gen:ONLM.gen,odd:{...ONLM.odd},oddSkips:ONL80R.oddSkips,votes:ONL80R.votes,last:ONL80R.last||null,next:ONLM.next,coin0:S.players[0].coin,req:{...window.__req}}));
 const r1={A:await after(A),B:await after(B),C:await after(C)};
-await run(40000,[A,B,C],async()=>(await A.evaluate(()=>ONLM.next))>=r1.A.next+8);
+await run(120000,[A,B,C],async()=>(await A.evaluate(()=>ONLM.next))>=r1.A.next+8);
+/* all three have applied every input before the hashes are compared (the regression runs 3 tests at once) */
+const level=async ps=>{for(let t1=Date.now();Date.now()-t1<30000;){const ns=await Promise.all(ps.map(p=>p.evaluate(()=>ONLM.next)));if(ns.every(n=>n===ns[0]))break;await A.waitForTimeout(250)}};await level([A,B,C]);
 /* in step again: every seq after Gamma's reload hashes the same on all three */
 const hl={};for(const [n,p] of Object.entries(P))hl[n]=await p.evaluate(()=>ONLM.hlog);
 let same=0,diff=0;const from=r1.C.next;for(let s=from;s<from+400;s++){const hs=['A','B','C'].map(n=>hl[n]['s'+s]).filter(Boolean);if(hs.length<3)continue;if(hs.every(h=>h===hs[0]))same++;else diff++}
@@ -69,7 +72,7 @@ const KEYS=['hall','infamis','crowd','arena','gladiators','betlog','match_auto',
 const lsSnap=p=>p.evaluate(K=>{const o={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(K.some(x=>k==='flavius_'+x||k.startsWith('flavius_'+x)))o[k]=localStorage.getItem(k)}return o},KEYS);
 const ls0=await lsSnap(A);
 for(const p of [A,B,C])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);setTimeout(()=>gameOver([S.players[0]],'The editor calls the bout.'),10)});
-await A.waitForTimeout(3500);
+await A.waitForFunction(()=>!document.getElementById('modal').hidden&&document.querySelectorAll('#mBtns button').length>0,null,{timeout:30000}).catch(()=>{});await A.waitForTimeout(1000);
 const res=await A.evaluate(()=>({modal:!document.getElementById('modal').hidden,save:document.querySelectorAll('#modal [data-save],#modal [data-free]').length,btns:[...document.querySelectorAll('#mBtns button')].map(b=>b.textContent.trim().slice(0,22)),skips:{...ONL80R.skips},blocked:ONL80R.blocked}));
 const ls1=await lsSnap(A);const lsDiff=Object.keys({...ls0,...ls1}).filter(k=>ls0[k]!==ls1[k]);
 /* back to Online: this browser's roster and creations come back */
@@ -78,7 +81,7 @@ const back=await A.evaluate(()=>({chest:CHEST_W.includes('cw_t80c'),market:Objec
 /* Ranked, two lanistas: no hints / strategy / Focus suggestion; a desync resyncs the old way (no vote) */
 for(const p of [A,B])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide()});
 const R=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'egidious',loc:3,seats:4,ranked:true}));
-await A.waitForTimeout(1500);await join(B,R.id);
+await A.waitForTimeout(1500);await join(B,R.id);await sees(A,R.id,2);
 const R2=await A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},R.id);await B.evaluate(L=>onlEnter(L),R2);
 await waitIn([A,B],R.id);
 for(const p of [A,B])await fast(p);
@@ -86,11 +89,11 @@ const rk=async p=>p.evaluate(()=>{const r={hints:HINTS,set:SETTINGS.hints,strat:
 const ranked={A:await rk(A),B:await rk(B)};
 const q0={A:await A.evaluate(()=>({hashq:window.__req['match.hashq']||0,votes:ONL80R.votes})),B:await B.evaluate(()=>({hashq:window.__req['match.hashq']||0,votes:ONL80R.votes}))};
 await run(6000,[A,B]);
-let tamp2=null;{const t0=Date.now();while(Date.now()-t0<60000&&!tamp2){await drive(B);
+let tamp2=null;{const t0=Date.now();while(Date.now()-t0<180000&&!tamp2){await drive(B);
   tamp2=await B.evaluate(()=>{if(!onlmOn()||onlmMine()||S.busy||CUR_MODAL||ONLM.pend||onlmActor()!==0||!['choice','action'].includes(S.phase))return null;S.players[1].coin+=5;return {next:ONLM.next}});
   if(tamp2)break;await drive(A);await A.waitForTimeout(150);if(await A.evaluate(()=>!S||S.over))break}}
-await run(25000,[A,B],async()=>(await B.evaluate(()=>ONLM.resyncs))>0&&(await B.evaluate(()=>!ONLM.resyncing)));
-await run(8000,[A,B]);
+await run(90000,[A,B],async()=>(await B.evaluate(()=>ONLM.resyncs))>0&&(await B.evaluate(()=>!ONLM.resyncing)));
+{const f=(tamp2&&tamp2.next||0)+1;const t2=Date.now();await run(90000,[A,B],async()=>Date.now()-t2>=8000&&(await A.evaluate(f=>ONLM.next-f,f))>=3)}await level([A,B]);
 const two={A:await A.evaluate(()=>({resyncs:ONLM.resyncs,votes:ONL80R.votes,hashq:window.__req['match.hashq']||0})),B:await B.evaluate(()=>({resyncs:ONLM.resyncs,votes:ONL80R.votes,hashq:window.__req['match.hashq']||0,coin1:S.players[1].coin}))};
 const hA=await A.evaluate(()=>ONLM.hlog),hB=await B.evaluate(()=>ONLM.hlog);let same2=0,diff2=0;const f2=(tamp2&&tamp2.next||0)+1;for(let s=f2;s<f2+400;s++){const a=hA['s'+s],c=hB['s'+s];if(!a||!c)continue;if(a===c)same2++;else diff2++}
 for(const p of [A,B])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done('close');onlExit()});await A.waitForTimeout(1200);

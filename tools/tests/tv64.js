@@ -8,17 +8,21 @@ const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.pick=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
   CLASSES.cc_t64={...CLASSES.hero,name:'Test Class',custom:true};
   for(const [id,cls] of [['g64a','damnatio'],['g64b','hero'],['g64c','cc_t64']])await Store.put('gladiators',id,{id,name:'T'+id,cls,status:'active',roster:true,events:0,wins:0,carry:0,hp:{},portrait:{}});
-  await loadLudus();openSetup();await new Promise(r=>setTimeout(r,900));const t=document.querySelector('[data-tab="missio"],[data-st="missio"],[data-mode="missio"]');t&&t.click();await new Promise(r=>setTimeout(r,700));
+  await loadLudus();openSetup();
+  /* poll (the regression runs 3 tests at once: timers stretch) */const until=async(f,ms=30000)=>{const t0=Date.now();while(Date.now()-t0<ms&&!f())await new Promise(r=>setTimeout(r,100))};
+  const sel='[data-tab="missio"],[data-st="missio"],[data-mode="missio"]';await until(()=>document.querySelector(sel));await new Promise(r=>setTimeout(r,300));const t=document.querySelector(sel);t&&t.click();
+  await until(()=>{const x=document.querySelector('.missioroll');return x&&x.querySelectorAll('.item').length>=3});
   const box=document.querySelector('.missioroll');return {box:!!box,scroll:box?getComputedStyle(box).overflowY:'',n:box?box.querySelectorAll('.item').length:0,grey:box?[...box.querySelectorAll('.item')].filter(i=>/printed classes/.test(i.textContent)).length:0}});
 ok(o.pick.box&&o.pick.scroll==='auto'&&o.pick.n>=3&&o.pick.grey>=1,'missio picker');
 const run=async mode=>pg.evaluate(async(mode)=>{if(CUR_MODAL)CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,300));menuHide();
   const rec=await missioFromLudus(LUDUS_CACHE.find(x=>x.id==='g64a'));await Store.put('missios',rec.id,rec);startMissio(rec);
-  await new Promise(r=>setTimeout(r,2500));for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,150))}SPEED='snap';
+  /* the opening windows (briefing, chariot draft) are answered until the board shows the chariot card */
+  {const t0=Date.now();let n=0;while(Date.now()-t0<45000){if(CUR_MODAL&&n<30){CUR_MODAL.done(null);n++}else if(!CUR_MODAL&&document.querySelector('#board .chcomp .chtk.horse')&&Date.now()-t0>2500)break;await new Promise(r=>setTimeout(r,150))}}SPEED='snap';
   const r={sim:!document.getElementById('btnSimEnd').hidden};await simToEnd(true);r.refused=!S.over&&!S.players[0].cpu;
   r.comp=!!document.querySelector('#board .chcomp .chtk.horse')&&!!document.querySelector('#board .chcomp .chtk.wheel');r.tok=typeof chRideTok==='function'&&S.floor.some(f=>f.kind==='wheel'&&f.part&&f.part.art);
   if(mode==='kill'){eliminate(S.players[0],{type:'player',ref:S.players[1]});checkEnd();settle();render()}
   else{S.players[0].cpu=true;S.players[0].diff='normal';if(cur()===S.players[0]){S.busy=false;S.pending=null;advanceTurn()}}
-  for(let i=0;i<90&&!(S.over&&document.querySelector('#mBody .missiohd'));i++){await new Promise(r2=>setTimeout(r2,1000));if(CUR_MODAL&&!S.over)CUR_MODAL.done(null)}
+  for(let i=0;i<300&&!(S.over&&document.querySelector('#mBody .missiohd'));i++){await new Promise(r2=>setTimeout(r2,1000));if(CUR_MODAL&&!S.over)CUR_MODAL.done(null)}
   r.hd=(document.querySelector('#mBody .missiohd')||{}).textContent||'';r.g=(await Store.getDoc('gladiators','g64a')||{}).status;r.m=(await Store.getDoc('missios',rec.id)||{}).status;
   r.fate=(S.result&&S.result.rows&&S.result.rows[0]||{}).fate;if(CUR_MODAL)CUR_MODAL.done(null);S.over=true;return r},mode);
 o.race=await run('race');

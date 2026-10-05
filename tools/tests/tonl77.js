@@ -7,10 +7,15 @@ await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()
 const errs=[];const A=await ctx.newPage(),B=await ctx.newPage();for(const [n,p] of [['A',A],['B',B]])p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));
 await A.goto(URL0);await A.evaluate(()=>localStorage.removeItem('flavius_onlmock'));await B.goto(URL0);await A.waitForTimeout(2500);
 const setup=async(p,name)=>{await p.evaluate(async(name)=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls:name==='Alpha'?'hero':'soldier'})},name)};
-await setup(A,'Alpha');await setup(B,'Beta');
+/* the mock world is one localStorage item: before another window writes, it must have the last write (a stale copy would overwrite it) */
+const sync=async(from,to,ms=15000)=>{const t0=Date.now();while(Date.now()-t0<ms){const v=await from.evaluate(()=>localStorage.getItem('flavius_onlmock'));if(await to.evaluate(v=>localStorage.getItem('flavius_onlmock')===v,v))return true;await to.waitForTimeout(100)}return false};
+await setup(A,'Alpha');await sync(A,B);await setup(B,'Beta');await sync(B,A);
 const L=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:false}));
-await A.waitForTimeout(300);await B.evaluate(async(id)=>await NET.req('lobby.join',{id}),L.id);
-const L2=await A.evaluate(async(id)=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},L.id);
+/* the mock world lives in one localStorage item shared by the windows: a write reaches the other window a moment later (longer under load) —
+   B joins once it sees the room, and A starts once it sees B seated (a lost join is joined again) */
+const seen=async(p,fn,arg,ms=30000)=>{const t0=Date.now();while(Date.now()-t0<ms){if(await p.evaluate(fn,arg).catch(()=>false))return true;await p.waitForTimeout(150)}return false};
+for(let k=0;k<8;k++){await seen(B,id=>!!mockLoad().lobbies[id],L.id);await B.evaluate(async(id)=>{try{await NET.req('lobby.join',{id})}catch(e){}},L.id);if(await seen(A,id=>ONLC.humansOf(mockLoad().lobbies[id]||{}).length>=2,L.id,5000))break}
+await sync(B,A);const L2=await A.evaluate(async(id)=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},L.id);await sync(A,B);
 await B.evaluate(async(L)=>{onlEnter(L)},L2);
 /* the auto-driver: on my own idle move, click like a person would */
 const drive=async p=>{const r=await p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on||onlmMine()||ONLM.info>0)){const t=(document.querySelector('#mTitle')||{}).textContent||'';const pb=document.querySelector('#modal .mbtns .primary')?'#modal .mbtns .primary':document.querySelector('#modal .mbtns button')?'#modal .mbtns button':null;return pb?['sel',pb,'modal:'+t.slice(0,24)]:['','','modal?']}
@@ -22,9 +27,14 @@ const drive=async p=>{const r=await p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on||onl
       return ['xy',[rc.left+pt.x*rc.width/cv.width,rc.top+pt.y*rc.height/cv.height],(S.mode||'')+'@'+r0+','+c0]}
     S._drv=0;if(document.querySelector('[data-act="end"]'))return ['sel','[data-act="end"]','end']}return ['','','idle:'+S.phase]});
   if(r[0]==='sel')await p.click(r[1],{timeout:2000}).catch(()=>{});if(r[0]==='xy')await p.mouse.click(r[1][0],r[1][1]);return r[2]};
+/* play until enough inputs are on the server (not a fixed 60 s: under load the same play takes longer), then let both windows apply
+   everything sent before reading the hashes */
 const t0=Date.now();let log=[];
-while(Date.now()-t0<60000){const a=await drive(A),bb=await drive(B);if(a!=='wait'||bb!=='wait')log.push(a+'|'+bb);await A.waitForTimeout(250);
-  const st=await A.evaluate(()=>S&&S.over);if(st)break}
+while(Date.now()-t0<240000){const a=await drive(A),bb=await drive(B);if(a!=='wait'||bb!=='wait')log.push(a+'|'+bb);await A.waitForTimeout(250);
+  const st=await A.evaluate(()=>({over:S&&S.over,n:ONLM.next}));if(st.over||(st.n>16&&Date.now()-t0>20000))break}
+const applied=async()=>{const ins=await A.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from===ONL.acct.id]));const ha=await A.evaluate(()=>ONLM.hlog),hb=await B.evaluate(()=>ONLM.hlog);
+  return ins.every(([seq,fromA])=>(fromA?hb:ha)['s'+seq])};
+for(let t1=Date.now();Date.now()-t1<45000&&!(await applied());)await A.waitForTimeout(300);
 const sa=await A.evaluate(()=>({next:ONLM.next,turn:S.turnNo,rot:S.rotation,h:onlHash(),over:S.over,resync:ONLM.resyncing}));
 await B.waitForTimeout(1500);const sb=await B.evaluate(()=>({q:ONLM.q.map(x=>x.seq+x.k+(x.a||'')),pend:!!ONLM.pend,phase:S.phase,busy:S.busy,modal:CUR_MODAL?(document.querySelector('#mTitle')||{}).textContent:null,cur:cur().name,owner:onlmOwner(),info:ONLM.info,next:ONLM.next,turn:S.turnNo,rot:S.rotation,h:onlHash(),over:S.over,resync:ONLM.resyncing,me:ONLM.me}));
 const ha=await A.evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs}));const hb=await B.evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs}));

@@ -119,8 +119,8 @@ function plan(full) {
   return { P, idle: idle.filter(t => !rot.includes(t)) };
 }
 
-/* per-test kill limit: 400 s, or 1.6x the test's recorded time + 60 s when it is slower (t12 needs ~430 s alone) */
-function limitFor(t) { const k = (st.tests[t] || {}).time || 0; return Math.max(400, Math.round(k * 1.6 + 60)); }
+/* per-test kill limit: 400 s, or 1.6x the test's recorded time + 60 s when it is slower; t12 at least 900 s (~430-510 s alone, more under load) */
+function limitFor(t) { const k = (st.tests[t] || {}).time || 0; return Math.max(t === 't12' ? 900 : 400, Math.round(k * 1.6 + 60)); }
 
 /* run a list of tests, J at a time, slowest first; coverage on unless cov === false */
 function runAll(list, cov = true) {

@@ -18,7 +18,8 @@ for(const n of ['A','B','C']){const ctx=await b.newContext({viewport:{width:1300
 const {A,B,C}=P;const wait=ms=>A.waitForTimeout(ms);
 for(const p of [A,B,C])await p.goto(URL0);await wait(2500);
 /* poll until fn (in the page) is truthy */
-const until=async(p,fn,arg,ms=10000)=>{const t0=Date.now();let v;while(Date.now()-t0<ms){try{v=await p.evaluate(fn,arg)}catch(e){v=null}if(v)return v;await p.waitForTimeout(200)}return v};
+/* (the regression runs 3 tests at once: every wait polls for its condition with room to spare) */
+const until=async(p,fn,arg,ms=20000)=>{const t0=Date.now();let v;while(Date.now()-t0<ms){try{v=await p.evaluate(fn,arg)}catch(e){v=null}if(v)return v;await p.waitForTimeout(200)}return v};
 const click=async(p,sel,ms=8000)=>{try{await p.waitForSelector(sel,{timeout:ms});await p.click(sel);await p.waitForTimeout(400);return true}catch(e){notes.push('no '+sel);return false}};
 const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();await netPick();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls});return NET.mode},[name,cls]);
 const modes=[];for(const [p,n,c] of [[A,'Alpha','hero'],[B,'Beta','soldier'],[C,'Gamma','slave']])modes.push(await setup(p,n,c));
@@ -31,7 +32,7 @@ const room=p=>p.evaluate(()=>{const L=onlMyLobby();return L?{id:L.id,ev:L.ev,ran
 await click(A,'#onl [data-onl="tab"][data-v="lobby"]');await click(A,'#onl [data-onl="mkroom"][data-v="0"]');
 const rA=await until(A,()=>{const L=onlMyLobby();return L&&L.status==='waiting'?{id:L.id,ev:L.ev,ranked:!!L.ranked,seats:L.seats}:null});
 /* C (free, Online open on Play) hears the Praeco's 'open' line, with the room's row */
-const openC=await until(C,id=>ONLF.lines.some(l=>l.k==='open'&&l.row&&l.row.id===id),rA&&rA.id,6000);
+const openC=await until(C,id=>ONLF.lines.some(l=>l.k==='open'&&l.row&&l.row.id===id),rA&&rA.id,20000);
 const banC=await C.evaluate(()=>{const b=document.getElementById('onlCry80');return b&&!b.hidden?b.textContent:''});
 await C.click('#onlCry80 [data-onl="cryx"]').catch(()=>{});
 /* B: the Classic Custom playlist → lobby.quick → A's room (no twin) */
@@ -41,9 +42,9 @@ const waitingRooms=await A.evaluate(async()=>(await NET.req('lobby.list')).filte
 const aSeesB=await until(A,()=>{const L=onlMyLobby();return L&&L.players.some(p=>/Beta/.test(p.name))?L.players.map(p=>p.name):null});
 /* room phrases: A says Ave → B's log; B wishes luck (3 s later than its own last phrase) → A's log; the log comes back from lobby.chatlog */
 await click(A,'#onl [data-onl="rsay"][data-v="ave"]');
-const logB=await until(B,()=>{const t=[...document.querySelectorAll('#r80Log > div')].map(d=>d.textContent);return t.some(x=>/Ave!/.test(x))?t:null},null,6000);
+const logB=await until(B,()=>{const t=[...document.querySelectorAll('#r80Log > div')].map(d=>d.textContent);return t.some(x=>/Ave!/.test(x))?t:null},null,20000);
 await click(B,'#onl [data-onl="rsay"][data-v="luck"]');
-const logA=await until(A,()=>{const t=[...document.querySelectorAll('#r80Log > div')].map(d=>d.textContent);return t.some(x=>/Good luck/.test(x))?t:null},null,6000);
+const logA=await until(A,()=>{const t=[...document.querySelectorAll('#r80Log > div')].map(d=>d.textContent);return t.some(x=>/Good luck/.test(x))?t:null},null,20000);
 const chatlog=await B.evaluate(async id=>(await NET.req('lobby.chatlog',{id})).map(l=>l.name+':'+l.q),rA&&rA.id);
 const freeText=await A.evaluate(async id=>{try{await NET.req('lobby.chat',{id,text:'hello'});return 'sent'}catch(e){return e.message}},rA&&rA.id);
 /* A sounds the horns (▶ Start); B walks in on the push */
@@ -61,16 +62,19 @@ const drive=async p=>{let r;try{r=await p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on|
       return ['xy',[rc.left+pt.x*rc.width/cv.width,rc.top+pt.y*rc.height/cv.height],(S.mode||'')+'@'+r0+','+c0]}
     S._drv=0;if(document.querySelector('[data-act="end"]'))return ['sel','[data-act="end"]','end']}return ['','','idle:'+S.phase]})}catch(e){return 'gone'}
   if(r[0]==='sel')await p.click(r[1],{timeout:2000}).catch(()=>{});if(r[0]==='xy')await p.mouse.click(r[1][0],r[1][1]).catch(()=>{});return r[2]};
-const run=async ms=>{const t0=Date.now();while(Date.now()-t0<ms){await drive(A);await drive(B);await wait(250);if(await A.evaluate(()=>!S||S.over).catch(()=>true))break}};
-for(let t0=Date.now();Date.now()-t0<25000;){const st=await Promise.all([A,B].map(p=>p.evaluate(()=>!!(S&&S.onl&&ONLM.on&&ONLM.me>=0)).catch(()=>false)));inA=inA||st[0];inB=inB||st[1];if(inA&&inB)break;await drive(A);await drive(B);await wait(250)}
+const run=async(ms,stop)=>{const t0=Date.now();while(Date.now()-t0<ms){await drive(A);await drive(B);await wait(250);if(await A.evaluate(()=>!S||S.over).catch(()=>true))break;if(stop&&await stop(Date.now()-t0))break}};
+for(let t0=Date.now();Date.now()-t0<120000;){const st=await Promise.all([A,B].map(p=>p.evaluate(()=>!!(S&&S.onl&&ONLM.on&&ONLM.me>=0)).catch(()=>false)));inA=inA||st[0];inB=inB||st[1];if(inA&&inB)break;await drive(A);await drive(B);await wait(250)}
 seats=await Promise.all([A,B].map(p=>p.evaluate(()=>S&&S.onl?{me:ONLM.me,lobby:S.onl.lobby,n:S.players.length,watch:!!S.onl.watch}:null)));
-await run(30000);
+/* play until enough inputs are on the server (not a fixed 30 s: under load the same play takes longer) */
+await run(180000,async el=>el>=10000&&(await A.evaluate(()=>ONLM.next).catch(()=>0))>14);
 /* a 💬 match phrase from A → a bubble over A's gladiator on B's screen */
 await B.evaluate(()=>{window.__bub=[];new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.classList&&n.classList.contains('qbub80'))window.__bub.push(n.textContent+'@'+n.dataset.seat)}).observe(document.body,{childList:true,subtree:true})});
-const sayBtn=await until(A,()=>!!document.getElementById('btnOnlSay80'),null,4000);
+const sayBtn=await until(A,()=>!!document.getElementById('btnOnlSay80'),null,20000);
 await A.evaluate(()=>{ONLM.uiAt=Date.now()});await A.click('#btnOnlSay80').catch(()=>{});await wait(300);await A.click('#onlSay80 [data-msay="struck"]').catch(()=>{});
-const bub=await until(B,()=>window.__bub.length?window.__bub:null,null,5000);
+const bub=await until(B,()=>window.__bub.length?window.__bub:null,null,20000);
 await run(10000);
+/* every input sent is applied on both screens before the hashes are read */
+for(let t1=Date.now();Date.now()-t1<45000;){const ins=await A.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from===ONL.acct.id]));const ha=await A.evaluate(()=>ONLM.hlog),hb=await B.evaluate(()=>ONLM.hlog);if(ins.every(([q,fa])=>(fa?hb:ha)['s'+q]))break;await wait(300)}
 /* lockstep: A's own sends are the inputs B applied in order, and vice versa (pre-input hashes) */
 const ha=await A.evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs,last:ONLM.lastResync||null}));const hb=await B.evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs,last:ONLM.lastResync||null}));
 const ins=await A.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from===ONL.acct.id,x.h||x.pre,x.k]));
@@ -87,15 +91,15 @@ await wait(10000);
 const sockets=await Promise.all([A,B].map(p=>p.evaluate(()=>!!(NETWS.ws&&NETWS.ws.readyState===1))));
 await A.evaluate(()=>{window.__bub2=[];new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.classList&&n.classList.contains('qbub80'))window.__bub2.push(n.textContent)}).observe(document.body,{childList:true,subtree:true})});
 await B.evaluate(()=>{ONLM.uiAt=Date.now()});await B.click('#btnOnlSay80').catch(()=>{});await wait(300);await B.click('#onlSay80 [data-msay="well"]').catch(()=>{});
-const bubAfter=await until(A,()=>window.__bub2.length?window.__bub2:null,null,5000);
+const bubAfter=await until(A,()=>window.__bub2.length?window.__bub2:null,null,20000);
 /* ⚔ Again (B, a fighter): a new room like the last, A invited — A sees the invitation once back in Online */
-const againBtn=await until(B,()=>!!document.getElementById('btnOnlAgain80'),null,6000);
+const againBtn=await until(B,()=>!!document.getElementById('btnOnlAgain80'),null,20000);
 await B.evaluate(()=>{ONLM.uiAt=Date.now();const b=document.getElementById('btnOnlAgain80');if(b)b.click()});
-const again=await until(B,old=>{const L=onlMyLobby();return L&&L.id!==old&&L.status==='waiting'?{id:L.id,ev:L.ev,ranked:!!L.ranked,seats:L.seats,host:L.host.name}:null},rA&&rA.id,8000);
+const again=await until(B,old=>{const L=onlMyLobby();return L&&L.id!==old&&L.status==='waiting'?{id:L.id,ev:L.ev,ranked:!!L.ranked,seats:L.seats,host:L.host.name}:null},rA&&rA.id,20000);
 await A.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);try{onlExit()}catch(e){}}).catch(()=>{});
-const pop=await until(A,()=>{const p=document.querySelector('.inv80bg');return p?p.textContent:''},null,8000);
+const pop=await until(A,()=>{const p=document.querySelector('.inv80bg');return p?p.textContent:''},null,20000);
 await A.click('.inv80bg [data-onl="ijoin"]').catch(()=>{});
-const joined=await until(A,id=>{const L=onlMyLobby();return L&&L.id===id?L.players.map(p=>p.name):null},again&&again.id,6000);
+const joined=await until(A,id=>{const L=onlMyLobby();return L&&L.id===id?L.players.map(p=>p.name):null},again&&again.id,20000);
 const mode=await A.evaluate(()=>NET.mode);
 const out={modes,mode,hello,rA,openC:!!openC,banC,rB,waitingRooms,aSeesB,logB,logA,chatlog,freeText,startBtn,inA:!!inA,inB:!!inB,seats,inputs:ins.length,same,diff,resync:[ha.r,hb.r,ha.last,hb.last],sayBtn:!!sayBtn,bub,resC,sockets,bubAfter,againBtn:!!againBtn,again,pop,joined,notes};
 console.log(JSON.stringify(out));
