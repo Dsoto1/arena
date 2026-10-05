@@ -41542,6 +41542,15 @@ function trade88Body(T){const side=(who,x,owner,cap)=>`<div class="tr88s"><div c
    (the frame where the camera settles draws them again), so zooming and panning stay smooth */
 {const base=drawShipTile;drawShipTile=function(){const moving=typeof CAM!=='undefined'&&CAM&&CAM.raf;if(!moving||typeof SAND83==='undefined')return base.apply(this,arguments);
   const g=SAND83.grain,s=SAND83.shade;SAND83.grain=0;SAND83.shade=0;try{return base.apply(this,arguments)}finally{SAND83.grain=g;SAND83.shade=s}}}
+/* RESULT CARDS (his layout, v0.88): the Fate card on the left, the Fate's name + the CF sums + Final Fate score on the right — same
+   font sizes, the card as tall as the sums, both centred; a narrow card (phones, three-across tables) stacks them again. */
+{const css=document.createElement('style');css.textContent=`
+.rcard{container-type:inline-size}
+.rcard .rc-fate:has(>.cimg){flex-direction:row;align-items:center;gap:22px}
+.rcard .rc-fate>.cimg{flex:none;align-self:center;width:clamp(120px,32%,200px)!important;height:auto!important}
+.rcard .rc-fate>.cimg+div{flex:1;min-width:0}
+.rcard .rc-fate:has(>.cimg) .rc-fname{text-align:left}
+@container (max-width:440px){.rcard .rc-fate:has(>.cimg){flex-direction:column;align-items:stretch}.rcard .rc-fate>.cimg{width:min(150px,50%)!important}.rcard .rc-fate:has(>.cimg) .rc-fname{text-align:center}}`;document.head.appendChild(css)}
 /* =====================================================================
    160-v88phone · v0.88 THE PHONE PASS (every v0.82–v0.88 screen at 390×844 portrait and 844×390 landscape)
    =====================================================================
