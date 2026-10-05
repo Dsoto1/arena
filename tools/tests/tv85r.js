@@ -42,7 +42,7 @@ o.d=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   const c=T85[3];const tn=document.querySelector(`.pcard[data-id="${c.id}"] .pn85`);tn.click();await W8(400);r.sel=MGR.sel===c.id&&!!document.querySelector(`.pcard.me[data-id="${c.id}"]`)&&document.querySelector('.rsteps').closest('.card2').textContent.includes(c.name);
   /* the stamp scouts: hours drop by 3, the tablet moves on, the card shows ratings */
   const h0=w.hours;const sb=document.querySelector(`.pcard [data-mg="scout"][data-id="${a.id}"]`);r.stamp=!!sb&&sb.classList.contains('pst85');if(sb)sb.click();for(let i=0;i<120&&!a.scout;i++)await W8(250);await W8(400);
-  r.scouted=!!a.scout&&w.hours===h0-3&&recStage(a,m)!=='watch';MGR.sel=a.id;MGR.recStep=1;MGR_REDRAW();await W8(300);r.ratAfter=!!document.querySelector('.scoutsee .ratgrid')&&!document.querySelector('.scoutsee.rat85');
+  r.scouted=!!a.scout&&recStage(a,m)!=='watch'; /* v0.87: no lanista's hours */MGR.sel=a.id;MGR.recStep=1;MGR_REDRAW();await W8(300);r.ratAfter=!!document.querySelector('.scoutsee .ratgrid')&&!document.querySelector('.scoutsee.rat85');
   /* opening a free agent's card does not pin them (recReady / the meter only probe offerVerdict) */
   const u=T85.find(g=>!g.favd&&!g.court);MGR.sel=u.id;MGR_REDRAW();await W8(200);MGR.recStep=3;MGR_REDRAW();await W8(800);r.noPin=!u.favd&&!u.court&&!!document.getElementById('ofMeter');MGR.recStep=null;
   /* 🆕 only for this week's arrivals */
@@ -57,7 +57,7 @@ ok(o.d.posts.length===3&&o.d.posts.every(x=>x<=40),'empty lanes are narrow posts
 ok(o.d.cardH.every(h=>h>=66&&h<=80),'tablets ~72px');ok(o.d.plan&&o.d.planNoHrs,'plan on one folded line, no hours');ok(o.d.planOpen&&o.d.planKept&&o.d.planShut,'plan unfolds and remembers');
 ok(o.d.oneLine,'one ratings line before scouting');ok(o.d.advBtn&&o.d.noBox,'advisor ★ on the button, no box');ok(o.d.boardStar&&o.d.more,'★ advised on the button, 📌 board pin, ⋯');
 ok(o.d.rows.length>=10&&o.d.rows.every(h=>h<=44),'list rows on one line (≤44px)');ok(o.d.rowOdds,'rank text on hover');ok(o.d.toolbar===1,'one toolbar row');
-ok(o.d.sel,'tablet click selects the card');ok(o.d.noPin,'opening a card does not pin');ok(o.d.stamp&&o.d.scouted,'the next-step button scouts (hours −3)');ok(o.d.ratAfter,'ratings after scouting');
+ok(o.d.sel,'tablet click selects the card');ok(o.d.noPin,'opening a card does not pin');ok(o.d.stamp&&o.d.scouted,'the next-step button scouts');ok(o.d.ratAfter,'ratings after scouting');
 ok(o.d.newYes&&o.d.newNo&&o.d.oldNo&&o.d.noLastWk&&o.d.lastWkNo,'🆕 only this week');
 /* ---------- desktop: a mixed board ---------- */
 const pm=await b.newPage({viewport:{width:1400,height:1000}});await setup(pm,'mix');
@@ -74,7 +74,7 @@ o.k=await pm.evaluate(new Function('geo',`return (async()=>{const W8=ms=>new Pro
   w.pitchN=null;MGR.sel=T85[T85.length-4].id;MGR_REDRAW();await W8(200);MGR.recStep=1;MGR_REDRAW();await W8(200);const wantTag=!!document.querySelector('.rsteps').closest('.card2').querySelector('.want .mt85');MGR.recStep=2;MGR_REDRAW();await W8(300);const card=document.querySelector('.rsteps').closest('.card2');
   r.cardTag=!!card.querySelector('[data-mg="pitch"] .mt85')&&wantTag;MGR.recStep=null;
   /* the gift, then ⋯ ten times: no redraw, the rail is the same node */
-  w.pitchN={wk:w.week,n:PITCH_MAX};MGR_REDRAW();await W8(300);const gb=document.querySelector('.pcard .pst85[data-mg="gift2"]');r.gift=!!gb;const gid=gb&&gb.dataset.id;const h0=w.hours;if(gb)gb.click();await W8(500);r.gave=w.hours===h0-2;if(CUR_MODAL)CUR_MODAL.done(null);await W8(500);
+  w.pitchN={wk:w.week,n:PITCH_MAX};MGR_REDRAW();await W8(300);const gb=document.querySelector('.pcard .pst85[data-mg="gift2"]');r.gift=!!gb;const gid=gb&&gb.dataset.id;const h0=w.hours;if(gb)gb.click();await W8(500);r.gave=!!(gById(gid).giftWk&&gById(gid).giftWk[me().id]===w.week); /* v0.87: no hours; the gift landed */if(CUR_MODAL)CUR_MODAL.done(null);await W8(500);
   let n=0;const bM=mgrHTML;mgrHTML=function(){n++;return bM.apply(this,arguments)};const bR=window.MGR_REDRAW;let nr=0;window.MGR_REDRAW=function(){nr++;return bR.apply(this,arguments)};
   const rail=document.querySelector('.mtabs');const mb=document.getElementById('mgrBody').firstElementChild;
   for(let i=0;i<10;i++){const d=document.querySelector('.pcard .pmo85[data-id="'+gid+'"]');if(d)d.click();await W8(60)}
@@ -84,16 +84,16 @@ o.k=await pm.evaluate(new Function('geo',`return (async()=>{const W8=ms=>new Pro
   mgrHTML=bM;window.MGR_REDRAW=bR;
   /* the lanista's hours: banner, rail tooltip, the needs-hours reasons, the Promote panel */
   await W8(700);const ban=(document.querySelector('.roomhd.b73-recruit .roomstat')||{}).textContent||'';const chip=(document.querySelector('.mtabs [data-id="recruit"] .mcount.c73')||{}).title||'';
-  r.banner=/lanista's hours/.test(ban)&&/lanista's hours/.test(chip);
-  w.hours=0;MGR_REDRAW();await W8(300);const H=document.getElementById('mgrBody').innerHTML;r.needs=/of the lanista&#39;s hours|of the lanista's hours/.test(H)&&!/recruiting hour/i.test(H);
+  r.banner=!/lanista's hours/.test(ban); /* v0.87: the lanista's hours are gone */
+  w.hours=0;MGR_REDRAW();await W8(300);const H=document.getElementById('mgrBody').innerHTML;r.needs=!/lanista's hours/.test(document.getElementById('mgrBody').innerText)&&!/recruiting hour/i.test(H);
   w.hours=5;MGR.tab='ludus';MGR.run='promote';MGR_REDRAW();await W8(400);const pl=document.querySelector('.prom85');
-  r.promote=!!pl&&/⏳ 5 h of the lanista's time left this week/.test(pl.textContent)&&!!pl.nextElementSibling&&!!pl.nextElementSibling.querySelector('[data-mg="criers2"]');
+  r.promote=!pl&&!!document.querySelector('.runpanel [data-mg="criers2"]'); /* v0.87: no hours line on Promote */
   r.noOld=!/recruiting hour/i.test(document.getElementById('mgrBody').innerHTML);MGR.tab='recruit';MGR_REDRAW();await W8(300);return r})()`),geo.toString());
 const kinds=new Set([...o.k.a,...o.k.b,...o.k.c].map(x=>x.k));
 ok(['scout','pitch','visit','gift2','sel:offer'].every(k=>kinds.has(k)),'every next-step kind shows: '+[...kinds].join(','));
 ok([...o.k.a,...o.k.b,...o.k.c].every(x=>x.one&&x.h<=28),'next-step buttons on one line');ok(o.k.tag&&o.k.cardTag,'pitch topic as a tag (board + card)');
 ok(o.k.gift&&o.k.gave,'gift from the tablet');ok(o.k.flick.n===0&&o.k.flick.nr===0&&o.k.flick.rail&&o.k.flick.body&&o.k.flick.sel&&o.k.flick.me,'⋯ ×10: no redraw, the rail stays put');
-ok(o.k.switch,'⋯ on another tablet switches the card locally');ok(o.k.banner&&o.k.needs&&o.k.noOld,"the lanista's hours wording");ok(o.k.promote,'Promote panel shows the hours');
+ok(o.k.switch,'⋯ on another tablet switches the card locally');ok(o.k.banner&&o.k.needs&&o.k.noOld,"no lanista's hours anywhere (v0.87)");ok(o.k.promote,'Promote panel without hours (v0.87)');
 /* ---------- phones: 390 portrait, 844x390 landscape ---------- */
 for(const [vw,vh,n] of [[390,844,'p390'],[844,390,'l844']]){const pp=await b.newPage({viewport:{width:vw,height:vh}});await setup(pp,'mix');
   const g=await pp.evaluate(new Function('const geo='+geo.toString()+';return geo()'));o[n]=g;

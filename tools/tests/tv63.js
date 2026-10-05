@@ -7,9 +7,9 @@ await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.m=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await new Promise(r=>setTimeout(r,700));newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;
   const w=W_(),m=me();const ros=rosterOf(m);const g=ros[0],h=ros[1];g.inj={until:w.week+3,label:'test',pen:2};const until0=g.inj.until;w.beds76=[g.id]; /* v0.76: a 3-week wound is serious — in a bed it mends at the normal pace */
-  MGR.tab='practice';MGR_REDRAW();await new Promise(r=>setTimeout(r,900));
+  MGR.tab='practice';MGR.yd87='all';MGR_REDRAW(); /* v0.87: the yard opens on the squad table; All cards shows the cards */await new Promise(r=>setTimeout(r,900));
   const cls=k=>(document.querySelector(`.mtabs [data-mg="tab"][data-id="${k}"]`)||{}).className||'';
-  const rail={rec:/recpend/.test(cls('recruit')),inf:/infpend/.test(cls('infirm')),tr:/trpend/.test(cls('practice'))};
+  const rail={rec:!/recpend/.test(cls('recruit')) /* v0.87: no lanista's hours, no recruiting border */,inf:/infpend/.test(cls('infirm')),tr:/trpend/.test(cls('practice'))};
   const nightCss=getComputedStyle(document.querySelector('.mtabs [data-id="night"]')).backgroundImage;
   const layout=!!document.querySelector('.yd76top [data-tp="doc|1"]')&&!!document.querySelector('.yd76c [data-yb76^="exh:"]'); /* v0.76: the yard is fighter cards; the exhibition opens on a card */
   const head=!/Training hours 10\/10/.test(document.querySelector('.mhead').textContent); /* v0.73: hours left the header for the tab banners */

@@ -5,7 +5,7 @@ await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(2200);
 const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.y=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await new Promise(r=>setTimeout(r,700));newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;
-  const w=W_();const ros=rosterOf(me());const g=ros[1],hurt=ros[0];hurt.inj={until:w.week+3,label:'a torn shoulder',pen:3};MGR.tab='practice';MGR_REDRAW();await new Promise(r=>setTimeout(r,900));
+  const w=W_();const ros=rosterOf(me());const g=ros[1],hurt=ros[0];hurt.inj={until:w.week+3,label:'a torn shoulder',pen:3};MGR.tab='practice';MGR.yd87='all';MGR_REDRAW();await new Promise(r=>setTimeout(r,900));
   const body=document.getElementById('mgrBody').innerHTML;const order=body.indexOf('yd76regs')>0&&body.indexOf('yd76regs')<body.indexOf('yd76bank'); /* v0.76: regime first, then the hours bank */
   document.querySelector(`[data-tp="g|${g.id}|spd|1"]`).click();await new Promise(r=>setTimeout(r,200));document.querySelector(`[data-tp="g|${g.id}|spd|1"]`).click();await new Promise(r=>setTimeout(r,200));
   const two=(thPlan(w).g[g.id]||{}).spd===2;const prev=/→ \d/.test(document.querySelector(`[data-tp="g|${g.id}|spd|1"]`).textContent);
