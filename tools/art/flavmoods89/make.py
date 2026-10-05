@@ -8,6 +8,7 @@ PAD=30
 X0,Y0,X1,Y1=330-PAD,296-PAD,510+PAD,436+PAD   # bust crop in card pixels (+PAD so turns never smear the edge)
 K=4
 base=cv2.resize(src[Y0:Y1,X0:X1],None,fx=K,fy=K,interpolation=cv2.INTER_LANCZOS4)
+base[:max(0,(300-Y0)*K)]=0   # never the logo above his head
 H,W=base.shape[:2]
 yy,xx=np.mgrid[0:H,0:W].astype(np.float32)
 P=lambda x,y:((x-X0+ (0))*1.0,(y-Y0)*1.0)
@@ -37,23 +38,18 @@ def stroke(img,pts,col,th):
   im=img.copy();cv2.polylines(im,[np.array(pts,np.int32)],False,col,th,cv2.LINE_AA);return im
 def tears(img):
   im=img.copy()
-  for (ex,ey),s in ((EYE_R,1),(EYE_N,-1)):
+  for (ex,ey),s in ((EYE_R,1),):
     pts=np.array([(ex-4,ey+10),(ex-1,ey+34),(ex-6,ey+58),(ex-3,ey+80)],np.int32)
     ov=im.copy();cv2.polylines(ov,[pts],False,(210,190,160),7,cv2.LINE_AA);im=cv2.addWeighted(ov,.55,im,.45,0)
     cv2.polylines(im,[pts+[2,0]],False,(255,248,235),2,cv2.LINE_AA)
     cv2.ellipse(im,(int(ex-3),int(ey+86)),(5,7),0,0,360,(230,215,190),-1,cv2.LINE_AA);cv2.circle(im,(int(ex-1),int(ey+84)),2,(255,255,255),-1,cv2.LINE_AA)
   return im
 def lids(img,frac=.55,near=False):
-  im=img.copy()
-  sx,sy=map(int,C(409,374));skin=tuple(int(v) for v in base[sy-6:sy+6,sx-6:sx+6].reshape(-1,3).mean(0))
-  shade=tuple(int(v*.78) for v in skin)
-  for (ex,ey),rw,rh in ((EYE_R,34,22),)[:]+(((EYE_N,16,12),) if near else ()):
-    ov=np.zeros((H,W),np.uint8);cv2.ellipse(ov,(int(ex),int(ey-rh*.2)),(rw,int(rh*(.2+frac))),0,180,360,255,-1,cv2.LINE_AA)
-    lid=np.full_like(im,skin);lid[int(ey-rh*.2-rh*(.2+frac)*.35):]=shade
-    m=(cv2.GaussianBlur(ov,(0,0),1.5).astype(np.float32)/255)[...,None];im=(im*(1-m)+lid*m).astype(np.uint8)
-    cv2.ellipse(im,(int(ex),int(ey-rh*.2)),(rw,int(rh*.35)),0,10,170,INK,4,cv2.LINE_AA)
-  return im
-def hand(img,rotd=None,at=None,flip=False):
+  # heavy lids by moving his own painted brow/upper lid down onto the eye (no painted patches)
+  bl=[B(C(412,358),0,26*frac,15),B(C(406,357),0,20*frac,12),B(C(419,359),0,20*frac,12),B(C(412,369),0,-8*frac,10)]
+  if near:bl+=[B(C(391,354),0,14*frac,10)]
+  return warp(img,bl)
+def hand(img,rotd=None,at=None,flip=False,nofist=False):
   hs=src[492:590,196:296].copy();hs=cv2.resize(hs,None,fx=K,fy=K,interpolation=cv2.INTER_LANCZOS4)
   g=cv2.cvtColor(hs,cv2.COLOR_BGR2GRAY);m=(g>34).astype(np.uint8)*255
   m=cv2.morphologyEx(m,cv2.MORPH_OPEN,np.ones((5,5),np.uint8));n,lab,st,_=cv2.connectedComponentsWithStats(m)
@@ -61,6 +57,8 @@ def hand(img,rotd=None,at=None,flip=False):
   # keep the hand + forearm only (drop the robe at the right edge)
   m[:, int((286-196)*K):]=0
   hc=((225-196)*K,(562-492)*K)
+  if nofist:   # forearm only, pivot at the wrist
+    m[int((540-492)*K):,:]=0;m[:,:int((236-196)*K)]=0;hc=((246-196)*K,(540-492)*K)
   R=cv2.getRotationMatrix2D(hc,HAND_ROT if rotd is None else rotd,1.0);ex,ey=at or (EYE_R[0]-30,EYE_R[1]+4)
   R[0,2]+=ex-hc[0];R[1,2]+=ey-hc[1]
   hw=cv2.warpAffine(hs,R,(W,H),flags=cv2.INTER_CUBIC);mw=cv2.warpAffine(m,R,(W,H)).astype(np.float32)/255
@@ -75,6 +73,19 @@ def palm_up(img,at=(70,300),sc=1.25,deg=-12):
   c=cv2.flip(c,0);m=cv2.flip(m,0);f=sc*K/5
   M=cv2.getRotationMatrix2D((0,0),deg,f);M[0,2]+=PAD*K+at[0];M[1,2]+=PAD*K+at[1]
   hw=cv2.warpAffine(c,M,(W,H),flags=cv2.INTER_CUBIC);mw=cv2.warpAffine(m,M,(W,H)).astype(np.float32)/255
+  mw=cv2.GaussianBlur(mw,(0,0),1.3)[...,None];return (img*(1-mw)+hw*mw).astype(np.uint8)
+def drape(img,at=(0,0),sc=1.0,deg=0,clip=True):
+  # his LEFT hand draped over the chair arm, mirrored, laid over his brow: the weary emperor's face-in-hand
+  c=cv2.resize(src[536:620,536:620],None,fx=5,fy=5,interpolation=cv2.INTER_CUBIC);hsv=cv2.cvtColor(c,cv2.COLOR_BGR2HSV)
+  m=((hsv[...,0]>=12)&(hsv[...,0]<32)&(hsv[...,2]>60)).astype(np.uint8)*255;m[:,:115]=0
+  m=cv2.morphologyEx(m,cv2.MORPH_CLOSE,np.ones((15,15),np.uint8));n,l,st,_=cv2.connectedComponentsWithStats(m);bb=1+np.argmax(st[1:,4])
+  m=((l==bb)*255).astype(np.uint8);m=cv2.dilate(m,np.ones((5,5),np.uint8))
+  c=cv2.flip(c,1);m=cv2.flip(m,1);f=sc*K/5
+  M=cv2.getRotationMatrix2D((c.shape[1]/2,c.shape[0]/2),deg,f);M[0,2]+=PAD*K+at[0]-c.shape[1]/2;M[1,2]+=PAD*K+at[1]-c.shape[0]/2
+  hw=cv2.warpAffine(c,M,(W,H),flags=cv2.INTER_CUBIC);mw=cv2.warpAffine(m,M,(W,H)).astype(np.float32)/255
+  if clip:   # the arm comes from his far side: the hand ends where his head ends (the wrist goes round behind it)
+    hm=(cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)>22).astype(np.uint8);hm=cv2.morphologyEx(hm,cv2.MORPH_CLOSE,np.ones((25,25),np.uint8));hm=cv2.erode(hm,np.ones((9,9),np.uint8))
+    mw=mw*cv2.GaussianBlur(hm.astype(np.float32),(0,0),3)
   mw=cv2.GaussianBlur(mw,(0,0),1.3)[...,None];return (img*(1-mw)+hw*mw).astype(np.uint8)
 def hand_old(img):
   # a weary hand over the eyes, palm in, fingers to the brow — cel-shaded like the card
@@ -134,7 +145,7 @@ def mood(m):
     im=warp(im,[B(BROW_R,0,-24,24),B(BROW_RI,0,-10,14),B(BROW_NI,4,8,14),B(MC_L,-4,4,12),B(MC_R,6,-2,12),B(JAW,0,12,50)])
     im=mouth_open(im,24,15,dy=4);im=rot(im,-5,(W/2,H*.75));return palm_up(im,at=(-60,700),sc=1.4,deg=90)
   if m=='facepalm':
-    im=lids(warp(im,[B(MC_L,0,6,10),B(MC_R,0,6,10)]),.95);return hand(rot(im,8,(W/2,H*.9)))
+    im=lids(warp(im,[B(MC_L,0,6,10),B(MC_R,0,6,10)]),.95);return drape(rot(im,8,(W/2,H*.9)),at=(330,185),sc=1.15,deg=-55)
 MOODS=['calm','pleased','smug','cheer','laugh','shock','angry','bored','weep','facepalm','really']
 out=os.path.join(HERE,'out');os.makedirs(out,exist_ok=True)
 tiles=[]
