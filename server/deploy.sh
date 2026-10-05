@@ -26,11 +26,14 @@ ACCT=$(aws sts get-caller-identity --query Account --output text)
 BUCKET="flavius-arena-code-$ACCT-$REGION"
 # a first deploy that failed leaves the stack in ROLLBACK_COMPLETE, which cannot be updated: clear it first
 ST=$(aws cloudformation describe-stacks --region "$REGION" --stack-name "$STACK" --query "Stacks[0].StackStatus" --output text 2>/dev/null || true)
-if [ "$ST" = "ROLLBACK_COMPLETE" ]; then echo "Clearing the failed first attempt…"; aws cloudformation delete-stack --region "$REGION" --stack-name "$STACK"; aws cloudformation wait stack-delete-complete --region "$REGION" --stack-name "$STACK"; fi
+if [ "$ST" = "ROLLBACK_COMPLETE" ]; then echo "Clearing the failed first attempt…"; aws cloudformation delete-stack --region "$REGION" --stack-name "$STACK"; aws cloudformation wait stack-delete-complete --region "$REGION" --stack-name "$STACK"; ST=""; fi
 aws s3api head-bucket --bucket "$BUCKET" 2>/dev/null || aws s3 mb "s3://$BUCKET" --region "$REGION"
 aws cloudformation package --region "$REGION" --template-file template.yaml --s3-bucket "$BUCKET" --output-template-file packaged.yaml
+# the Google secret: only sent when given; otherwise an existing stack keeps the one it already holds (CloudFormation keeps a
+# parameter that is not overridden), so updates need no secret. A first deploy (no stack yet) still needs it.
+GSEC=""; if [ -n "$GOOGLE_SECRET" ]; then GSEC="GoogleClientSecret=$GOOGLE_SECRET"; elif [ -z "$ST" ] || [ "$ST" = "None" ]; then GSEC="GoogleClientSecret=none"; fi
 aws cloudformation deploy --region "$REGION" --template-file packaged.yaml --stack-name "$STACK" --capabilities CAPABILITY_IAM \
-  --parameter-overrides AlertEmail="$EMAIL" MonthlyBudgetUSD="${BUDGET:-10}" GoogleClientId="${GOOGLE_ID:-none}" GoogleClientSecret="${GOOGLE_SECRET:-none}" \
+  --parameter-overrides AlertEmail="$EMAIL" MonthlyBudgetUSD="${BUDGET:-10}" GoogleClientId="${GOOGLE_ID:-none}" $GSEC \
     AuthDomainPrefix="${AUTH_PREFIX:-flaviusrule-arena}" DevNames="${DEV:-false}" CustomAuthDomain="$AUTH_DOMAIN" HostedZoneId="$ZONE" CustomAuthStage="$AUTH_STAGE" $TP
 aws cloudformation describe-stacks --region "$REGION" --stack-name "$STACK" --query "Stacks[0].Outputs" --output table
 if [ "$AUTH_DOMAIN" != none ] && [ "$AUTH_STAGE" = cert ]; then echo "Certificate for $AUTH_DOMAIN is made. In 15 minutes, run the same deploy again with AUTH_STAGE=live to add the sign-in address."; fi

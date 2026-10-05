@@ -85,9 +85,10 @@ cmd_server(){ need_zip "${1:-}"; local email=""
   [ -f "$CONF" ] && . "$CONF"; email="${ALERT_EMAIL:-}"
   if [ -z "$email" ]; then read -r -p "Budget alert e-mail (asked once, kept in ~/.flavius.conf): " email; email=$(printf '%s' "$email" | tr -d '\r\n\t '); printf 'ALERT_EMAIL=%q\n' "$email" > "$CONF"; fi
   say "Server: $1"; cd "$HOME"; run unzip -oq "$1"; [ "${DRY:-}" = 1 ] || [ -f "$HOME/server/deploy.sh" ] || die "The zip did not contain server/deploy.sh"
-  printf 'Paste the Google client SECRET (nothing shows), then Enter: '; local sec; read -r -s sec; echo; sec=$(printf '%s' "$sec" | tr -d '\r\n\t ')
-  [ ${#sec} -ge 20 ] || die "That secret is ${#sec} characters — expected about 35. Run again."
-  ok "secret read (${#sec} characters)"
+  # the Google secret stays in the server once set: only asked when you want to change it (NEW_SECRET=1 bash flavius.sh …)
+  local sec=""; if [ "${NEW_SECRET:-}" = 1 ]; then printf 'Paste the NEW Google client SECRET (nothing shows), then Enter: '; read -r -s sec; echo; sec=$(printf '%s' "$sec" | tr -d '\r\n\t ')
+    [ ${#sec} -ge 20 ] || die "That secret is ${#sec} characters — expected about 35. Run again."; ok "new secret read (${#sec} characters)"
+  else ok "Google secret: keeping the one the server already has (NEW_SECRET=1 to change it)"; fi
   [ "${DRY:-}" = 1 ] || cd "$HOME/server"; AUTH_DOMAIN="${AUTH_DOMAIN:-${LOGIN_DOMAIN:-none}}" AUTH_STAGE="${AUTH_STAGE:-${LOGIN_STAGE:-cert}}" GOOGLE_ID="$GOOGLE_ID" GOOGLE_SECRET="$sec" run sh deploy.sh "$email"
   unset sec; [ "${DRY:-}" = 1 ] || cmd_status; }
 
