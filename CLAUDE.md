@@ -990,6 +990,12 @@ share copy — the site download play/flavius-rule-arena.zip.)
   parchment + column) → drawn live for the 8 printed + custom classes: name in the banner (class colour), ability/weakness/coin/keys/CF/
   loadout from the data, translated rules (name stays English). Figure side = his cls_<key>.webp (printed) / live figure (custom). v0.87.
   ANSWERED: Domus purse = the gladiator's own coin (lost at death); treasury = the house's 20% cut (outlives deaths, buys for anyone).
+- **ONE MARKET WINDOW (his idea 2026-10-05, v0.88 first item):** the market board (boardHTML75) serves every market moment: BUY (as today),
+  PICK (cards/tokens "choose a Level 2 armor / Level 1 weapon", drafts: only eligible pieces lit, rest dimmed; hover/tap enlarges a piece:
+  armor = location on a small figure + AP + bonus location, weapons = damage, range, icons, bonuses in one line; "fits you / replaces X" tag),
+  ROLL (random slot of a level: d4 with Roman numerals spins, the lit slot hops like a prize wheel and stops; result from the seeded dice
+  first, animation cosmetic; tap skips). His picks: v0.88; drafts on the board too (CPU picks fly off); CPU buys/rolls shown by Speed
+  (short peek on slow/normal, skipped on fast); an empty slot falls to the closest one left or right (to confirm); enlarged card = open.
 - Floor Spikes has no medallion yet.
 - Armor/avatar ideas still open: bonus-AP links, severed-limb drop.
 
