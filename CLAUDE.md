@@ -949,6 +949,9 @@ share copy — the site download play/flavius-rule-arena.zip.)
   top-right count; infirmary: injured fighter could not be put on the bed (bug) + Hygeia's Blessing → small card on the banner; city
   center: the kit list follows the selected fighter, kits bought for a fighter who doesn't fight that week are REFUNDED (today lost at
   week's end, 17-manager ~656); Manager mail panel half width.
+  GLADIATOR STATUS NAME (his pick 2026-10-05): "IMMORTALIS" (not "Legend of the Sand" — that is the top house LEGACY_TIERS tier; Invictus
+  = top online rank). legendsim (tools/legendsim.js): a lone fighter rarely survives 2 seasons (Fate blood prices, road-locked infirmary,
+  money, contract renewal) — balance levers offered, his answer pending.
   HIS PICKS: DOMUS REDESIGN = showcase + 4 (the active gladiator's avatar wearing his gear, 2 dotted weapon slots to its left as horizontal
   cards, purse/record beside; 4 slot cards to switch the active one; "+ New gladiator" popup only when a slot is free; Storeroom ·
   Offerings shelf · Trophies as tabs under the stage; purse = his, treasury = the house's, labelled clearly; no buying in the Domus).
