@@ -20,6 +20,22 @@
   "w": "10-meta.js:591"
  },
  {
+  "k": "1 day without a spearing",
+  "w": "16-crowd.js:1147"
+ },
+ {
+  "k": "{0} days without a spearing",
+  "w": "16-crowd.js:1147"
+ },
+ {
+  "k": "1 lanista invited",
+  "w": "118-onl80.js:406"
+ },
+ {
+  "k": "{0} lanistas invited",
+  "w": "118-onl80.js:406"
+ },
+ {
   "k": "cannot",
   "w": "128-v82stands.js:120"
  },
