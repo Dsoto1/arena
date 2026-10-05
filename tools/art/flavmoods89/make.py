@@ -87,6 +87,29 @@ def drape(img,at=(0,0),sc=1.0,deg=0,clip=True):
     hm=(cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)>22).astype(np.uint8);hm=cv2.morphologyEx(hm,cv2.MORPH_CLOSE,np.ones((25,25),np.uint8));hm=cv2.erode(hm,np.ones((9,9),np.uint8))
     mw=mw*cv2.GaussianBlur(hm.astype(np.float32),(0,0),3)
   mw=cv2.GaussianBlur(mw,(0,0),1.3)[...,None];return (img*(1-mw)+hw*mw).astype(np.uint8)
+def place(img,c,m,piv,at,deg,f):
+  piv=(float(piv[0]),float(piv[1]));M=cv2.getRotationMatrix2D(piv,deg,f);M[0,2]+=PAD*K+at[0]-piv[0];M[1,2]+=PAD*K+at[1]-piv[1]
+  hw=cv2.warpAffine(c,M,(W,H),flags=cv2.INTER_CUBIC);mw=cv2.warpAffine(m,M,(W,H)).astype(np.float32)/255
+  mw=cv2.GaussianBlur(mw,(0,0),1.3)[...,None];return (img*(1-mw)+hw*mw).astype(np.uint8)
+def lefthand():
+  """his draped left hand, upside down: back of the hand to us, fingers up; returns (img, mask, wrist point)"""
+  c=cv2.resize(src[536:620,536:620],None,fx=5,fy=5,interpolation=cv2.INTER_CUBIC);hsv=cv2.cvtColor(c,cv2.COLOR_BGR2HSV)
+  m=((hsv[...,0]>=12)&(hsv[...,0]<32)&(hsv[...,2]>60)).astype(np.uint8)*255;m[:,:115]=0
+  m=cv2.morphologyEx(m,cv2.MORPH_CLOSE,np.ones((15,15),np.uint8));n,l,st,_=cv2.connectedComponentsWithStats(m);bb=1+np.argmax(st[1:,4])
+  m=((l==bb)*255).astype(np.uint8);m=cv2.dilate(m,np.ones((5,5),np.uint8))
+  c=cv2.flip(c,0);m=cv2.flip(m,0);ys,xs=np.nonzero(m);wy=ys.max();wx=int(xs[ys>wy-25].mean())
+  return c,m,(wx,wy)
+def forearm():
+  """his right forearm without the fist; returns (img, mask, wrist point)"""
+  hs=src[440:590,196:330].copy();hs=cv2.resize(hs,None,fx=K,fy=K,interpolation=cv2.INTER_LANCZOS4)
+  g=cv2.cvtColor(hs,cv2.COLOR_BGR2GRAY);m=(g>34).astype(np.uint8)*255
+  m=cv2.morphologyEx(m,cv2.MORPH_OPEN,np.ones((5,5),np.uint8));n,lab,st,_=cv2.connectedComponentsWithStats(m)
+  big=1+np.argmax(st[1:,cv2.CC_STAT_AREA]);m=((lab==big)*255).astype(np.uint8)
+  m[int((540-440)*K):,:]=0;m[:,:int((236-196)*K)]=0;m[:,int((286-196)*K):]=0
+  hsv=cv2.cvtColor(hs,cv2.COLOR_BGR2HSV);sk=((hsv[...,0]>=12)&(hsv[...,0]<32)&(hsv[...,2]>70)).astype(np.uint8)*255
+  sk=cv2.morphologyEx(sk,cv2.MORPH_CLOSE,np.ones((13,13),np.uint8));m=cv2.bitwise_and(m,cv2.dilate(sk,np.ones((7,7),np.uint8)))
+  n,lab,st,_=cv2.connectedComponentsWithStats(m);m=((lab==1+np.argmax(st[1:,cv2.CC_STAT_AREA]))*255).astype(np.uint8)
+  return hs,m,((246-196)*K,(540-440)*K)
 def hand_old(img):
   # a weary hand over the eyes, palm in, fingers to the brow — cel-shaded like the card
   im=img.copy();ov=im.copy()
@@ -145,7 +168,9 @@ def mood(m):
     im=warp(im,[B(BROW_R,0,-24,24),B(BROW_RI,0,-10,14),B(BROW_NI,4,8,14),B(MC_L,-4,4,12),B(MC_R,6,-2,12),B(JAW,0,12,50)])
     im=mouth_open(im,24,15,dy=4);im=rot(im,-5,(W/2,H*.75));return palm_up(im,at=(-60,700),sc=1.4,deg=90)
   if m=='facepalm':
-    im=lids(warp(im,[B(MC_L,0,6,10),B(MC_R,0,6,10)]),.95);return drape(rot(im,8,(W/2,H*.9)),at=(330,185),sc=1.15,deg=-55)
+    im=lids(warp(im,[B(MC_L,0,6,10),B(MC_R,0,6,10)]),.95);im=rot(im,8,(W/2,H*.9))
+    # head in hand: his right forearm comes up from below, his left hand (back to us) over the eyes
+    fc,fm,fw=forearm();hc,hm,hw=lefthand();im=place(im,fc,fm,fw,(300,360),-145,1.0);return place(im,hc,hm,hw,(300,360),10,.82*K/5)
 MOODS=['calm','pleased','smug','cheer','laugh','shock','angry','bored','weep','facepalm','really']
 out=os.path.join(HERE,'out');os.makedirs(out,exist_ok=True)
 tiles=[]
