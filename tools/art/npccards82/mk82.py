@@ -16,7 +16,7 @@ def save(im, name):
     im = im.crop(BOX).resize((WOUT, round(WOUT * (BOX[3] - BOX[1]) / (BOX[2] - BOX[0]))), Image.LANCZOS)
     im.save(os.path.join(OUT, name), 'WEBP', quality=85, method=6)
     print(name, im.size)
-for k in ['tholo', 'commodus', 'leo', 'leaena', 'zora']:
+for k in ['tholo', 'commodus', 'leo', 'leaena', 'zora']:  # v0.89: sources = his sharper cards (tools/art/cards89), fronts written at 720 px by hand
     save(Image.open(os.path.join(HERE, k + '.jpg')).convert('RGB'), f'npccard82_{k}.webp')
 back = Image.open(os.path.join(HERE, 'back_template_3states.webp')).convert('RGB')
 save(back, 'npcback82_3.webp')
