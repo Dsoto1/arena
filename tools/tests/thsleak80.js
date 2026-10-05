@@ -16,8 +16,10 @@ o.leak=await pg.evaluate(()=>({name:S.players[0].name,hot:!!S.hotseat,profiles:H
 await pg.evaluate(async()=>{for(let i=0;i<5&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,200))}S.over=true;menuShow()});await pg.waitForTimeout(400);o.afterMenu=await pg.evaluate(()=>!!CFG.hotseat);
 /* a real hot-seat start still names the players */
 await pg.evaluate(async()=>{for(let i=0;i<5&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,200))}hotSeatOpen()});await pg.waitForTimeout(2500);
-const ins2=await pg.$$('[data-hsn]');await ins2[0].fill('Ann');await ins2[1].fill('Bo');await pg.click('#goBtn');await pg.waitForTimeout(4000);
-o.table=await pg.evaluate(()=>({hot:!!S.hotseat,names:S.players.filter(p=>!p.cpu).map(p=>p.name)}));
+const ins2=await pg.$$('[data-hsn]');await ins2[0].fill('Ann');await ins2[1].fill('Bo');
+/* v0.88: every player seat needs a name — the other two seats go to the CPU */
+await pg.evaluate(()=>{for(const i of [2,3]){const s=document.getElementById('cpu'+i);s.value='1';s.dispatchEvent(new Event('change',{bubbles:true}))}});await pg.waitForTimeout(300);await pg.click('#goBtn');await pg.waitForTimeout(4000);
+o.table=await pg.evaluate(()=>({hot:!!S.hotseat,names:S.players.filter(p=>!p.cpu).map(p=>p.pid&&typeof hsProf==='function'&&hsProf(p.pid)?hsProf(p.pid).name:p.name)})); /* v0.88: gladiators keep their names; the players sit beside them */
 /* the Gate of Life: a badly hurt human survivor → one infirmary record with an id, written once */
 o.gate=await pg.evaluate(async()=>{await Store.del&&Promise.resolve();S.hotseat=null;const p=S.players.find(x=>!x.cpu);p.hp.rarm=0;p.pid=undefined;p.cf=35;
   const before=(await Store.list('gladiators')).length;gameOver([p],'test');for(let i=0;i<60;i++){await new Promise(r=>setTimeout(r,200));if(CUR_MODAL)CUR_MODAL.done(null)}

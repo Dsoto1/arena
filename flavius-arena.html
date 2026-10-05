@@ -9579,14 +9579,14 @@ async function cpuDiplomacy(player) {
     wantTrade = mfWant && MANDATA[mfWant.idx].n === 'The Trade';
   if (!wantTrade && (wantTruce || strength(q) > strength(player) * 0.9 || P.loyalty > 75 && rand() < .5 || relOf(player, q) >= 25)) {
     let ok;
-    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await modal(_T`${player.name} offers a truce`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} (CPU) proposes a truce. Neither of you will be targeted by the other, but there is no penalty for breaking it. Only one gladiator can win.`}</p>${hint('truce')}`, [{
+    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await hsAsk(q, () => modal(_T`${player.name} offers a truce`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} (CPU) proposes a truce. Neither of you will be targeted by the other, but there is no penalty for breaking it. Only one gladiator can win.`}</p>${hint('truce')}`, [{
       label: _T('Accept truce'),
       value: 1,
       primary: 1
     }, {
       label: _T('Refuse'),
       value: 0
-    }]);
+    }]));
     if (ok) {
       makeTruce(player, q);
       think(player, pickOne(QUOTES.truce), 'think');
@@ -9600,14 +9600,14 @@ async function cpuDiplomacy(player) {
   const give = mine.filter(x => x.val >= get.val * 0.9).sort((a, b) => a.val - b.val)[0];
   if (!give) return;
   let ok;
-  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await modal(_T`${player.name} proposes a trade`, `<p>${_T`${player.name} offers <b>${give.label}</b> for your <b>${get.label}</b>.`}</p>`, [{
+  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await hsAsk(q, () => modal(_T`${player.name} proposes a trade`, `<p>${_T`${player.name} offers <b>${give.label}</b> for your <b>${get.label}</b>.`}</p>`, [{
     label: _T('Accept trade'),
     value: 1,
     primary: 1
   }, {
     label: _T('Refuse'),
     value: 0
-  }]);
+  }]));
   if (ok) {
     doTrade(player, q, give, get);
   } else log(_T`${nm(q)} refuses ${nm(player)}'s trade.`);
@@ -12839,7 +12839,7 @@ function boardHTML(player, interactive) {
     badges.push(`<span class="badge gold">${_T`Lap ${ch.laps}/3`}</span>`, `<span class="badge ${ch.wheel ? 'good' : 'bad'}">${_T`Wheel ${ch.wheel ? ch.wheel.hp + ' HP' : _T('missing (−2 MV)')}`}</span>`, `<span class="badge ${ch.horse ? 'good' : 'bad'}">${ch.horse ? _T`Horse ${ch.horse.sides[ch.horse.face].hp - ch.horse.dmg} HP · +${ch.horse.sides[ch.horse.face].mv} MV` : _T('Horse missing')}</span>`);
   }
   const isCur = S.players[S.cur] === player && S.phase === 'action';
-  return `<div class="pb-head" style="--pc:${player.color}">${clsPieceHTML(player.cls, 58, _T('stnd phead')) || '<span class="sw"></span>'}<div><div class="pname">${player.name}</div><div class="pcls">${CLASSES[player.cls].name} · ${CLASSES[player.cls].sub}${player.drafted ? ' (drafted)' : ''} · ${player.cpu ? 'CPU ' + cpuMind(player) : _T('You')} · ${player.exited ? 'exited' : player.alive ? tl(player.r, player.c) : 'fallen'}</div>${typeof seatChipHTML === 'function' ? seatChipHTML(player) : ''}</div></div>
+  return `<div class="pb-head" style="--pc:${player.color}">${clsPieceHTML(player.cls, 58, _T('stnd phead')) || '<span class="sw"></span>'}<div><div class="pname">${player.name}</div><div class="pcls">${CLASSES[player.cls].name} · ${CLASSES[player.cls].sub}${player.drafted ? ' (drafted)' : ''} · ${player.cpu ? 'CPU ' + cpuMind(player) : typeof hsYou === 'function' ? hsYou(player) : _T('You')} · ${player.exited ? 'exited' : player.alive ? tl(player.r, player.c) : 'fallen'}</div>${typeof seatChipHTML === 'function' ? seatChipHTML(player) : ''}</div></div>
    <div class="econ"><div class="stat" title="${player.coinLog ? Object.entries(player.coinLog).map(([k2, v2]) => `${v2 > 0 ? '+' : ''}${v2} ${k2}`).join(String.fromCharCode(10)) : _T('No coin has moved yet.')}">${_T`<span>Coin ⓘ</span><b>${ICO.coin} ${player.coin}</b>`}</div><div class="stat" title="${player.cfLog && Object.keys(player.cfLog).length ? Object.entries(player.cfLog).sort((x, y) => Math.abs(y[1]) - Math.abs(x[1])).map(([k2, v2]) => `${v2 > 0 ? '+' : ''}${v2} ${k2}`).join(String.fromCharCode(10)) : _T('No Crowd Favor has moved yet.')}">${(() => {
     const rr = S.over && S.result ? S.result.rows.find(x => x.id === player.id) : null;
     return rr ? `<span title="${_T`The final Fate score — the same number the results show`}">${_T`Fate ⓘ`}</span><b>${ICO.wheat} ${rr.f}</b>` : `<span>CF ⓘ</span><b>${ICO.wheat} ${player.cf}</b>`;
@@ -12874,7 +12874,7 @@ function boardHTML(player, interactive) {
     length: 7
   }, (_, i) => `<i class="${isCur ? i < player.mv ? 'f' : '' : i < mvMax(player) ? '' : 'cap'}"></i>`).join('')}</div>
    ${player.items.length ? `<div class="sect">${_T`Hand, offerings & objectives`}</div><div class="items">${player.items.map(it => {
-    const hidden = it.kind === 'mf' && player.cpu && !S.over;
+    const hidden = it.kind === 'mf' && (player.cpu || typeof hsSecret === 'function' && hsSecret(player)) && !S.over;
     const I = hidden ? {
       n: 'Mandata Flavi',
       t: _T('Secret objective'),
@@ -12981,7 +12981,7 @@ function render() {
     if (bb) bb.hidden = !(S.mgrCtx || S.specCtx);
   }
   $('#roster').innerHTML = S.players.map(other => `<button type="button" class="rc ${other === p && !S.over || S.over && S.boardPid === other.id ? 'cur' : ''} ${other.alive ? '' : 'dead'}" style="--pc:${other.color}" data-act="inspect" data-pid="${other.id}">
-    <div class="top">${(S.mgrCtx || S.specCtx) && other.mgrGid && typeof gById === 'function' && gById(other.mgrGid) ? `<span class="favstar ${gById(other.mgrGid).favd ? 'on' : ''}" role="button" tabindex="0" data-favg="${other.mgrGid}" title="${gById(other.mgrGid).favd ? _T('On your ★ Favorites board — click to remove') : _T('Add to your ★ Favorites board (Manager mode)')}">${gById(other.mgrGid).favd ? '★' : '☆'}</span>` : ''}<span class="nm">${other.name}</span><span class="tag">${CLASSES[other.cls].name}${EV().teams || EV().coop ? _T(' · Team ') + other.team : ''} · ${other.cpu ? 'CPU ' + cpuMind(other) : _T('You')}</span></div>
+    <div class="top">${(S.mgrCtx || S.specCtx) && other.mgrGid && typeof gById === 'function' && gById(other.mgrGid) ? `<span class="favstar ${gById(other.mgrGid).favd ? 'on' : ''}" role="button" tabindex="0" data-favg="${other.mgrGid}" title="${gById(other.mgrGid).favd ? _T('On your ★ Favorites board — click to remove') : _T('Add to your ★ Favorites board (Manager mode)')}">${gById(other.mgrGid).favd ? '★' : '☆'}</span>` : ''}<span class="nm">${other.name}</span><span class="tag">${CLASSES[other.cls].name}${EV().teams || EV().coop ? _T(' · Team ') + other.team : ''} · ${other.cpu ? 'CPU ' + cpuMind(other) : typeof hsYou === 'function' ? hsYou(other) : _T('You')}</span></div>
     <div class="mini">${[['head', 'chest'], ['rarm', 'larm'], ['rleg', 'lleg']].flat().map(l => {
     const v = other.hp[l];
     return `<div class="mloc"><span class="lab">${sideBadge(l)}${LOCS_SHORT[l]}</span><div class="mbars">${v <= 0 ? `<span class="sevd">${sevLabel(l).toLowerCase()}</span>` : seg7(v, 'h', v <= 2) + seg7(other.ap[l], 'a')}</div></div>`;
@@ -13674,14 +13674,14 @@ async function openTrade(player) {
       return;
     }
     let ok;
-    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await modal(_T`${q.name}: truce offer`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} proposes a truce. Accept?`}</p>`, [{
+    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await hsAsk(q, () => modal(_T`${q.name}: truce offer`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} proposes a truce. Accept?`}</p>`, [{
       label: _T('Accept'),
       value: 1,
       primary: 1
     }, {
       label: _T('Refuse'),
       value: 0
-    }]);
+    }]));
     if (ok) {
       makeTruce(player, q);
     } else log(_T`${nm(q)} refuses the truce.`);
@@ -13731,14 +13731,14 @@ async function openTrade(player) {
   const give = mine[gi],
     get = theirs[ti];
   let ok;
-  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await modal(_T`${q.name}: trade offer`, `<p>${_T`${player.name} offers ${give.label} for your ${get.label}. Accept?`}</p>`, [{
+  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await hsAsk(q, () => modal(_T`${q.name}: trade offer`, `<p>${_T`${player.name} offers ${give.label} for your ${get.label}. Accept?`}</p>`, [{
     label: _T('Accept'),
     value: 1,
     primary: 1
   }, {
     label: _T('Refuse'),
     value: 0
-  }]);
+  }]));
   if (ok) {
     doTrade(player, q, give, get);
   } else log(_T`${nm(q)} refuses the trade.`);
@@ -13804,7 +13804,7 @@ function briefingHTML() {
   }).join('');
   const last = ev.rounds[ev.rounds.length - 1];
   const how = ev.teams || ev.coop ? _T`Be the side still standing when <b>${esc(END_TXT[last.end] || last.end)}</b>.` : _T`Survive every round. The event is won when <b>${esc(END_TXT[last.end] || last.end)}</b>${last.reward && last.reward.win ? _T` — worth <b>${cfAmt87(last.reward.win)}</b>` : ''}. Crowd Favor decides your Fate at the end.`;
-  const glads = S.players.map(player => `<span class="brglad ${player.alive ? '' : 'out'}" style="--pc:${player.color}"><b>${esc(player.name)}</b> ${esc(CLASSES[player.cls] ? CLASSES[player.cls].name : '')}${teams ? _T(' · Team ') + esc(String(player.team)) : ''} · ${player.cpu ? 'CPU' : S.hotseat ? '🎮 player' : 'you'}${player.alive ? '' : player.exited ? ' · exited' : ' · ✝'}</span>`).join('');
+  const glads = S.players.map(player => `<span class="brglad ${player.alive ? '' : 'out'}" style="--pc:${player.color}"><b>${esc(player.name)}</b> ${esc(CLASSES[player.cls] ? CLASSES[player.cls].name : '')}${teams ? _T(' · Team ') + esc(String(player.team)) : ''} · ${player.cpu ? 'CPU' : S.hotseat ? '🎮 ' + (typeof hsYou === 'function' ? hsYou(player) : _T('player')) : 'you'}${player.alive ? '' : player.exited ? ' · exited' : ' · ✝'}</span>`).join('');
   return `<div class="brief"><div class="brtop">${cardHTML('e:' + S.evKey, 'md') || ''}<div><div class="ei-tag">${esc(ev.tag || ev.short || '')}${S.fest ? ' · ' + esc(festName(S.fest.kind)) : ''}${S.missio ? _T(' · Missio') : ''}</div>
     <div class="brname">${esc(ev.n)}</div><div class="rc-sub">${_T`📍 ${esc(L ? L.n : '')} · ⚔ ${n} gladiator${n === 1 ? '' : 's'}${teams ? _T` in ${teams} ${ev.coop ? _T('as one side') : _T('teams')}` : ''}${S.spect && S.spect.length ? _T` · 🏟 ${S.spect.filter(x => !x.gone).length}K spectators in the stands` : ''}${ev.sr ? _T` · Summa rudis: ${esc(ev.sr)}` : ''}`}</div>
     ${ev.blurb ? `<p style="margin:6px 0 0">${esc(ev.blurb)}</p>` : ''}<div class="brhow">${_T`🏆 <b>How to win.</b> ${how}`}</div></div></div>
@@ -14357,7 +14357,7 @@ function resultCard(row,place,interim){
   const fi=fateIdxOf(row.fate);
   if(row.thumbHide&&!row.thumbShown){ // the die has not been cast: hide the verdict behind the button
     return `<div class="rcard" style="--pc:${p.color}">
-      <div class="rc-top"><span class="rc-place">${place}</span>${pArt(p,'sm')}<div><div class="rc-name">${esc(p.name)}</div><div class="rc-sub">${_T`${C.name} · You`}</div>${status}</div></div>
+      <div class="rc-top"><span class="rc-place">${place}</span>${pArt(p,'sm')}<div><div class="rc-name">${esc(p.name)}</div><div class="rc-sub">${C.name} · ${typeof hsYou==='function'?hsYou(p):_T('You')}</div>${status}</div></div>
       <div class="rc-fate"><div><div class="rc-fname">${_T`🖑 Thumb of Flavius`}</div><p style="margin:6px 0">${_T`${cfAmt87(row.f)} — one short of certainty. The arena falls silent; every eye turns to the editor's box. Flavius weighs your ${row.won?_T('victory'):_T('showing')}… and reaches for the die.`}</p>
       <button class="btn primary" type="button" data-thumb="${p.id}" style="border-color:var(--gold)">${_T`🎲 Face the thumb — roll the d6<small>4-6 spares you to the Ludus; 1-3 hands your fate to the d12</small>`}</button></div></div>
     </div>`;
@@ -14366,12 +14366,12 @@ function resultCard(row,place,interim){
   const stats=[[_T('⚔ Gladiators'),p.trophies.filter(t=>t.pk==='player').length],[_T('🐾 Beasts'),p.trophies.filter(t=>t.pk!=='player').length],[_T('Pots'),st.pots||0],[_T('Damage dealt'),st.dmgDealt||0],[_T('Cards'),st.cardsDrawn||0],[_T('Buys'),st.buy||0],[_T('Coin'),p.coin]];
   const pr=p.cpu&&p.pers?`<div class="rc-sub">${_T`<b>CPU priorities</b> ${PERS_KEYS.map(([k,l])=>`${l} ${p.pers[k]}`).join(' · ')}`}</div>`:'';
   const feel=p.cpu&&p.rel?Object.entries(p.rel).filter(([,v])=>Math.abs(v)>=25).map(([id,v])=>_T`${relState(v)[2]} ${relState(v)[1]} toward ${esc(S.players[id].name)}`).join(' · '):'';
-  const survives=!interim&&aliveInUniverse(row);
-  const free50=!interim&&row.won&&row.f>=50&&survives&&!p.mgrGid&&!p.cpu&&!isCustomCls(p.cls);
-  const saveBit=survives?(row.savedDone?`<button class="btn" type="button" disabled>${_T`✓ ${esc(p.name)}'s Ludus record ${p.saved?_T('updated'):_T('saved')}<small>${p.saved?_T('automatic for summoned gladiators'):_T('one save per event')}</small>`}</button>`:`<button class="btn" type="button" data-save="${p.id}">${_T`Save ${esc(p.name)} in the Ludus<small>returns with ${cfAmt87(Math.min(25,Math.floor(row.f/2)))}${p.cpu?_T(' · CPU record: rival or bet-on gladiator, no missios'):''}</small>`}</button>`):'';
+  const survives=!interim&&aliveInUniverse(row);const table=typeof hsTable==='function'&&hsTable(); /* v0.88: a hot-seat table stays out of the Ludus Flavius */
+  const free50=!interim&&!table&&row.won&&row.f>=50&&survives&&!p.mgrGid&&!p.cpu&&!isCustomCls(p.cls);
+  const saveBit=survives&&!table?(row.savedDone?`<button class="btn" type="button" disabled>${_T`✓ ${esc(p.name)}'s Ludus record ${p.saved?_T('updated'):_T('saved')}<small>${p.saved?_T('automatic for summoned gladiators'):_T('one save per event')}</small>`}</button>`:`<button class="btn" type="button" data-save="${p.id}">${_T`Save ${esc(p.name)} in the Ludus<small>returns with ${cfAmt87(Math.min(25,Math.floor(row.f/2)))}${p.cpu?_T(' · CPU record: rival or bet-on gladiator, no missios'):''}</small>`}</button>`):'';
   const freeBit=free50?`<button class="btn" type="button" data-free="${p.id}" style="border-color:var(--gold)">${_T`🗡 Claim freedom · the rudis<small>leaves the sands forever, memorialized among the Liberti</small>`}</button>`:'';
   return `<div class="rcard" style="--pc:${p.color}">
-    <div class="rc-top"><span class="rc-place">${place}</span>${pArt(p,'sm')}<div><div class="rc-name">${esc(p.name)}</div><div class="rc-sub">${C.name} · ${p.cpu?'CPU '+cpuMind(p):_T('You')}</div>${status}</div></div>
+    <div class="rc-top"><span class="rc-place">${place}</span>${pArt(p,'sm')}<div><div class="rc-name">${esc(p.name)}</div><div class="rc-sub">${C.name} · ${p.cpu?'CPU '+cpuMind(p):typeof hsYou==='function'?hsYou(p):_T('You')}</div>${status}</div></div>
     <div class="rc-fate">${interim?`<div>${S.exhib?_T`<b>${cfAmt87(row.f)}</b> · exhibition: ${p.alive?_T('still standing when the bout was called'):_T('pulled from the sand by the doctors — no Fate is drawn')}`:_T`<b>${cfAmt87(row.f)}</b> carried into the next event`}</div>`:`${fi!=null?cardHTML('f:'+fi,'md'):''}<div><div class="rc-fname">${esc(row.fate[0])}</div><table class="fmath">${fb.lines.map(([a,v])=>`<tr><td>${esc(a)}</td><td class="n">${cfAmt87(v)}</td></tr>`).join('')}<tr class="tot"><td>${_T`Final Fate score`}</td><td class="n">${cfAmt87(row.f)}</td></tr></table>${/Thumb/.test(row.fate[0])?`<div class="rc-sub">${esc(row.fate[1])}</div>`:''}${p.mgrGid?'':`<div class="rc-sub">${survives?(row.f>=50?_T('Free, or back for glory: can be saved in the Ludus.'):_T('Survives to the Ludus Flavius: can be saved.')):p.retired?_T('Retired: this character is gone.'):_T('Does not survive. Any saved record or missio for this character ends.')}</div>`}</div>`}</div>
     <details class="rc-more"><summary>${_T`Event stats`}</summary><div class="rc-stats">${stats.map(([a,v])=>`<span><b>${v}</b>${a}</span>`).join('')}</div></details>
     ${(st.spectCF||st.spectOffers)?`<div class="rc-sub">${_T`🏟 The stands (${houseHTML(S.attendance||0,S.seed,S.locIdx)} attended): <b>${cfAmt87('+'+(st.spectCF||0))}</b> in section cheers${st.spectOffers?_T` · <b>${st.spectOffers}</b> offering${st.spectOffers>1?'s':''} thrown, worth ~<b>${coinAmt87(st.spectVal||0)}</b>`:''}${(S.attendance||0)>8?_T(' · cheers scaled for the big house'):''}.`}</div>`:''}
@@ -14461,7 +14461,7 @@ async function gameOver(winners,reason){
   if(S.tourn)btns.unshift({label:_T('Back to the bracket'),sub:_T('the tournament goes on'),value:'tourn',primary:1});
   // v0.35: a Match Week bout watched live goes back to MATCH NIGHT — the next bout, your entries, your sims wait there
   /* v0.54: one button saves every survivor who may go to the Ludus Flavius */
-  const saveAllOK=()=>!interim&&!S.mgrCtx&&!S.tutorial&&rows.filter(x=>aliveInUniverse(x)&&!x.savedDone&&!x.thumbHide&&!x.p.mgrGid).length>0;
+  const saveAllOK=()=>!interim&&!S.mgrCtx&&!S.tutorial&&!(typeof hsTable==='function'&&hsTable())&&rows.filter(x=>aliveInUniverse(x)&&!x.savedDone&&!x.thumbHide&&!x.p.mgrGid).length>0;
   const saveAllBtn={label:_T('🏛 Save all to the Ludus Flavius'),sub:_T('every survivor not yet saved'),value:'saveall'};
   if(S.mgrCtx)btns.push({label:_T('⏎ Return to Match Week'),sub:_T('the next bout is waiting — enter, fight, watch or simulate it'),value:'mgrnight',primary:1},{label:_T('Watch the crew reset the arena'),sub:_T('Match Week fades back in when they finish'),value:'close'},{label:_T('Export log'),value:'export'});
   else if(S.tutorial)btns.push({label:S.cleanDone?_T('🧹 The show is over'):_T('🧹 Watch the clean-up show'),sub:S.cleanDone?_T('the crew has swept the sand'):_T('the crew resets the arena — then the main menu'),value:'close',disabled:!!S.cleanDone,primary:!S.cleanDone},{label:_T('🏛 Back to the main menu'),value:'menu',primary:!!S.cleanDone}); /* v0.46: a lesson ends simply */
@@ -18134,9 +18134,9 @@ function spectInspectorHTML(reg){
       <button class="btn" type="button" data-spact="ban" data-spid="${esc(reg.id)}">${reg.banned?_T('Lift the ban'):_T('Ban from the arena')}<small>${reg.banned?_T('all is forgiven'):reg.trouble?_T('the ushers have been asking for this'):_T('they will not be seated again')}</small></button>
       ${(S&&S.spect&&S.spect.some(x=>x.rid===reg.id&&!x.gone))?`<button class="btn" type="button" disabled>${_T`🎟 In attendance today<small>already in their seat</small>`}</button>`:`<button class="btn" type="button" data-spact="ticket" data-spid="${esc(reg.id)}" ${reg.banned||reg.ticket?'disabled':''}>${reg.ticket?_T('🎟 Ticket bought'):_T('🎟 Buy them a ticket')}<small>${reg.ticket?_T('they will be at the next event'):S&&!S.over?_T`${coinAmt87(2)} · seated right now, over someone else`:_T`${coinAmt87(2)} · guaranteed a seat at the next event`}</small></button>`}
       <button class="btn" type="button" data-spact="treat" data-spid="${esc(reg.id)}" ${reg.banned?'disabled':''}>${_T`Stand them a round<small>goodwill: clears any grudge against the games, +mood next visit</small>`}</button>
-      <button class="btn" type="button" data-spact="sign" data-spid="${esc(reg.id)}" ${reg.banned||reg.signAsked||reg.recruited?'disabled':''}>${reg.recruited?_T('✔ YES — signed to your ludus'):reg.signAsked?_T('✖ NO — they refused'):_T('Offer them the sword')}<small>${reg.recruited?_T('they fight for you now: find them on your Roster'):reg.signAsked?_T('refused for good — a Roman is only asked once'):reg.exGlad?_T('one ask, ever — they miss the sand, they will likely say yes'):_T('one ask, ever — yes and they join at once; no is final')}</small></button>
+      ${typeof hsTable==='function'&&hsTable()?'':`<button class="btn" type="button" data-spact="sign" data-spid="${esc(reg.id)}" ${reg.banned||reg.signAsked||reg.recruited?'disabled':''}>${reg.recruited?_T('✔ YES — signed to your ludus'):reg.signAsked?_T('✖ NO — they refused'):_T('Offer them the sword')}<small>${reg.recruited?_T('they fight for you now: find them on your Roster'):reg.signAsked?_T('refused for good — a Roman is only asked once'):reg.exGlad?_T('one ask, ever — they miss the sand, they will likely say yes'):_T('one ask, ever — yes and they join at once; no is final')}</small></button>`}
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px">
-        <select class="tin" id="spInfl" style="width:auto;min-width:120px">${(()=>{const opts=[];if(S&&S.players)for(const p2 of S.players.filter(p2=>p2.alive&&!p2.exited))opts.push(p2.name);const w2=(typeof MGR!=='undefined'&&MGR.world)||(typeof ACTIVE!=='undefined'&&ACTIVE.world);if(w2){const pm=w2.mgrs.find(x=>x.id===w2.playerId);for(const g2 of w2.glads.filter(g2=>g2.alive&&g2.contract&&g2.contract.mgr===pm.id))if(!opts.includes(g2.name))opts.push(g2.name)}return opts.map(n2=>`<option>${esc(n2)}</option>`).join('')||`<option value="">${_T`— nobody to back —`}</option>`})()}</select>
+        <select class="tin" id="spInfl" style="width:auto;min-width:120px">${(()=>{const opts=[];if(S&&S.players)for(const p2 of (typeof hsOrder88==='function'?hsOrder88(S.players):S.players).filter(p2=>p2.alive&&!p2.exited))opts.push(p2.name);const w2=(typeof MGR!=='undefined'&&MGR.world)||(typeof ACTIVE!=='undefined'&&ACTIVE.world);if(w2){const pm=w2.mgrs.find(x=>x.id===w2.playerId);for(const g2 of w2.glads.filter(g2=>g2.alive&&g2.contract&&g2.contract.mgr===pm.id))if(!opts.includes(g2.name))opts.push(g2.name)}return opts.map(n2=>`<option>${esc(n2)}</option>`).join('')||`<option value="">${_T`— nobody to back —`}</option>`})()}</select>
         <button class="btn" type="button" data-spact="infl" data-spid="${esc(reg.id)}" ${reg.banned?'disabled':''}>${_T`Buy their cheers<small>${coinAmt87(5)} from your lanista — they back that name wherever it fights</small>`}</button>
       </div>
       <button class="btn" type="button" data-spact="close">${_T`Close`}</button></div></div>`;
@@ -18186,10 +18186,10 @@ document.addEventListener('click',async e=>{
       if(!m){r.signAsked=0;if(typeof mToast==='function')mToast(_T('Signing a spectator needs an active lanista — set one in Manager mode.'));if(S)log(_T('Signing a spectator needs an active lanista — set one in Manager mode (or at the Wagers table).'),'bad');renderDrawer();return}
       // they get exactly one offer — and some of them laugh
       const refuse=r.exGlad?0.05:r.trouble?0.12:r.temper==='loyal'?0.5:0.35;
-      if(rand()<refuse){Store.put('crowd',r.id,r).catch(()=>{});if(typeof mToast==='function')mToast(_T`✖ <b>NO.</b> <b>${esc(r.name)}</b> looks at the practice sword, then at their snack — and keeps the snack. That answer is final.`);
+      if(Math.random()<refuse){Store.put('crowd',r.id,r).catch(()=>{});if(typeof mToast==='function')mToast(_T`✖ <b>NO.</b> <b>${esc(r.name)}</b> looks at the practice sword, then at their snack — and keeps the snack. That answer is final.`);
         if(S)log(_T`<b>${esc(r.name)}</b> looks at the practice sword, looks at their ${specLore(r).snack}, and chooses the snack. ${pickOne([_T('\u201cI\u2019ve SEEN what happens down there,\u201d they explain, gesturing at the sand.'),_T('\u201cMy mother didn\u2019t raise a trophy,\u201d they say, not unkindly.'),_T('They laugh so hard the row behind joins in without knowing why.'),_T('\u201cAsk the sausage guy,\u201d they say. The sausage guy also declines.')])}`,'bad');
         renderDrawer();return}
-      const w=await activeMgrWorld();
+      const w=await activeMgrWorld();if(!w){r.signAsked=0;if(typeof mToast==='function')mToast(_T('Signing a spectator needs an active lanista — set one in Manager mode.'));renderDrawer();return}
       const g=genGlad({rookie:true,ovr:38+rnd(8),name:r.name});g.city=pickOne(HOME_CITIES());g.scout=2;
       g.contract={mgr:m.id,wage:askWage(g),weeks:8,since:w.week};w.glads.push(g);
       r.recruited=1;Store.put('crowd',r.id,r).catch(()=>{});
@@ -25742,10 +25742,10 @@ async function hsLoad(){try{HS_PROFILES=JSON.parse(localStorage.getItem('flavius
 function hsPersist(){try{localStorage.setItem('flavius_hs',JSON.stringify(HS_PROFILES))}catch(e){}}
 const hsSave=p=>{const i=HS_PROFILES.findIndex(q=>q.id===p.id);if(i<0)HS_PROFILES.push(p);else HS_PROFILES[i]=p;hsPersist();return Promise.resolve()};
 function hsFind(name){const n=String(name||'').trim().toLowerCase();return HS_PROFILES.find(p=>p.name.toLowerCase()===n)||null}
-function hsEnsure(name,color){let p=hsFind(name);if(p)return p;p={id:'hp'+Date.now().toString(36)+rnd(1296).toString(36),name:String(name).trim().slice(0,20),color:color||PALETTE[HS_PROFILES.length%PALETTE.length],created:new Date().toISOString().slice(0,10),
+function hsEnsure(name,color){let p=hsFind(name);if(p)return p;p={id:'hp'+Date.now().toString(36)+Math.floor(Math.random()*1296).toString(36),name:String(name).trim().slice(0,20),color:color||PALETTE[HS_PROFILES.length%PALETTE.length],created:new Date().toISOString().slice(0,10),
   events:0,wins:0,cfTotal:0,cfBest:0,ludus:0,freed:0,deaths:0,coin:50,won:0,lost:0,bets:0,history:[],honors:{},classWins:[],locs:[],road:0};HS_PROFILES.push(p);hsSave(p);return p}
 const hsLive=()=>!!(typeof S!=='undefined'&&S&&S.hotseat&&!S.over&&!S.mgrCtx);
-const hsActive=()=>{if(!hsLive())return null;const id=S.hsActive||(S.hotseat.players[0]||{}).pid;return HS_PROFILES.find(p=>p.id===id)||null};
+const hsActive=()=>{if(typeof hsPidNow==='function'){const o=hsPidNow();if(o!==undefined)return o?HS_PROFILES.find(p=>p.id===o)||null:null}if(!hsLive())return null;const id=S.hsActive||(S.hotseat.players[0]||{}).pid;return HS_PROFILES.find(p=>p.id===id)||null};
 
 /* ---------- the main menu: Multiplayer and its three modes ---------- */
 function mmMultiInstall(){const box=document.querySelector('#mainMenu .mmbtns');if(!box||box.querySelector('[data-mm="multi"]'))return;const play=box.querySelector('[data-mm="play"]');if(!play)return;
@@ -25781,12 +25781,12 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-hsde
 
 /* ---------- the event ---------- */
 {const _se=startEvent;startEvent=function(cfg){try{if(CFG.hotseat&&cfg&&cfg.seats&&!cfg.hotseat&&!cfg.mgr&&!cfg.tourn){const used=new Set();const players=[];
-  cfg.seats.forEach((s,i)=>{if(s.cpu)return;let nm=(s.hsName||'').trim()||_T`Player ${i+1}`;while(used.has(nm.toLowerCase()))nm+='′';used.add(nm.toLowerCase());const P=hsEnsure(nm);if(!s.saved)s.name=P.name;players.push({seat:i,pid:P.id,name:P.name})});
+  cfg.seats.forEach((s,i)=>{if(s.cpu)return;let nm=(s.hsName||'').trim()||_T`Player ${i+1}`;while(used.has(nm.toLowerCase()))nm+='′';used.add(nm.toLowerCase());const P=hsEnsure(nm);if(s.hsOwn)s.name=P.name; /* v0.88: the gladiator keeps its own name unless the player fights under theirs */players.push({seat:i,pid:P.id,name:P.name})});
   if(players.length)cfg.hotseat={players}}}catch(e){console.error(e)}return _se(cfg)}}
 {const _ns=newState;newState=function(cfg){const r=_ns(cfg);try{if(cfg&&cfg.hotseat){S.hotseat=cfg.hotseat;for(const h of cfg.hotseat.players){const p=S.players.find(x=>x.id===h.seat);if(p)p.pid=h.pid}S.hsActive=cfg.hotseat.players[0]&&cfg.hotseat.players[0].pid}}catch(e){console.error(e)}return r}}
 function hsTurnBanner(p){if(HEADLESS||!p)return;const P=HS_PROFILES.find(x=>x.id===p.pid);let el=document.getElementById('hsTurn');if(!el){el=document.createElement('div');el.id='hsTurn';el.className='hsturn';document.body.appendChild(el)}
   el.style.setProperty('--pc',p.color||'#f0cf7d');el.innerHTML=_T`🎮 <b>${esc(P?P.name:p.name)}</b>’s turn <span>${esc(p.name!==(P&&P.name)?p.name+' · ':'')}${esc(CLASSES[p.cls]?CLASSES[p.cls].name:'')}</span>`;el.classList.remove('show');void el.offsetWidth;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2200)}
-{const _bt=beginTurn;beginTurn=async function(){try{if(S&&S.hotseat&&!S.over){const p=cur();if(p&&!p.cpu&&p.pid){S.hsActive=p.pid;if(S.hotseat.players.length>=2)hsTurnBanner(p)}}}catch(e){}return _bt.apply(this,arguments)}}
+{const _bt=beginTurn;beginTurn=async function(){try{if(S&&S.hotseat&&!S.over){const p=cur();if(p&&!p.cpu&&p.pid){S.hsActive=p.pid;if(S.hotseat.players.length>=2&&typeof HS88==='undefined')hsTurnBanner(p)}}}catch(e){}return _bt.apply(this,arguments)}}
 /* the wallet of the player at the table */
 {const _gp=getPurse;getPurse=async function(){const P=hsActive();if(P)return {coin:P.coin,won:P.won||0,lost:P.lost||0,bets:P.bets||0,history:P.history||[],name:P.name,ludus:_T('Hot seat')};return _gp()}}
 {const _spp=setPurse;setPurse=async function(v){const P=hsActive();if(P){P.coin=v.coin;P.won=v.won||0;P.lost=v.lost||0;P.bets=v.bets||0;P.history=(v.history||[]).slice(-40);hsSave(P);return}return _spp(v)}}
@@ -25853,7 +25853,7 @@ function hsAwayHTML(p,a){const b=hsSnap(p);const d=(k,lab,ico,good)=>{const v=b[
   const name=String(p.name);const L=(S.logLines||[]).slice(a.log).filter(l=>l.cls!=='hd'&&l.text&&l.text.includes(name)).slice(-6);
   return `<div class="away">${chips?`<div class="awaychips">${chips}</div>`:`<p class="rc-sub" style="margin:0 0 6px">${_T`Nothing touched you.`}</p>`}${L.length?`<ul class="awaylog">${L.map(l=>`<li>${esc(l.text)}</li>`).join('')}</ul>`:''}</div>`}
 {const _bt=beginTurn;beginTurn=async function(){try{const p=cur();turnTint(p);
-  if(S&&S.hotseat&&!S.over&&!HEADLESS&&!S.sim){S.hsSnaps=S.hsSnaps||{};const prev=S.hsPrevP;if(prev&&prev!==p&&!prev.cpu)S.hsSnaps[prev.id]=hsSnap(prev);S.hsPrevP=p;
+  if(S&&S.hotseat&&!S.over&&!HEADLESS&&!S.sim&&typeof HS88==='undefined'){S.hsSnaps=S.hsSnaps||{};const prev=S.hsPrevP;if(prev&&prev!==p&&!prev.cpu)S.hsSnaps[prev.id]=hsSnap(prev);S.hsPrevP=p;
     const a=S.hsSnaps[p.id];if(p&&!p.cpu&&a&&S.hotseat.players.length>=2){const P=(typeof HS_PROFILES!=='undefined'&&HS_PROFILES.find(x=>x.id===p.pid))||null;
       await modal(_T`🎮 ${esc(P?P.name:p.name)} — your turn`,`<p class="rc-sub" style="margin:0 0 6px">${_T`Since your last turn`}</p>${hsAwayHTML(p,a)}`,[{label:_T('Start my turn'),value:1,primary:1}],{close:1})}}}catch(e){console.error(e)}
   return _bt.apply(this,arguments)}}
@@ -26959,7 +26959,7 @@ function locationScore(q,loc,damage=0){const cost=q.hp[loc]+q.ap[loc];const othe
 function bestLocation(q,locs,damage){return [...locs].sort((a,b)=>locationScore(q,a,damage)-locationScore(q,b,damage))[0]}
 const LOC_TIP={larm:_T('Sever both arms and they are out. One severed arm drops its weapon and costs them 1 attack (2 attacks max per turn).'),rarm:_T('Sever both arms and they are out. One severed arm drops its weapon and costs them 1 attack (2 attacks max per turn).'),
   rleg:_T('A severed leg only slows them (less movement). It never puts them out.'),lleg:_T('A severed leg only slows them (less movement). It never puts them out.'),head:_T('Lose the head and they are out.'),chest:_T('Lose the chest and they are out.')};
-const showStrategy=()=>typeof SETTINGS!=='undefined'&&SETTINGS.hints!==false&&SETTINGS.hintDock!==false;
+const showStrategy=()=>typeof SETTINGS!=='undefined'&&SETTINGS.hints!==false&&SETTINGS.hintDock!==false&&!(typeof S!=='undefined'&&S&&S.hotseat&&!S.over); /* v0.88: no hints at a hot-seat table */
 const FOCUS_SETTLE_MS=[650,1050,1450]; /* TWEAK: when each die stops spinning */
 chooseLocation=async function(p,q,how,damage=0){
   const alive=LOCS.filter(l=>q.hp[l]>0);
@@ -26987,8 +26987,8 @@ chooseLocation=async function(p,q,how,damage=0){
 let RESPONDER=null; /* the gladiator whose response window is open (not the one whose turn it is) */
 {const baseDefend=defend;defend=async function(v){const prev=RESPONDER;if(v&&v.cls&&!v.cpu&&v!==cur())RESPONDER=v;try{return await baseDefend.apply(this,arguments)}finally{RESPONDER=prev}}}
 {const baseAsk=askCard;askCard=async function(p){const prev=RESPONDER;if(p&&p.cls&&!p.cpu&&p!==cur())RESPONDER=p;try{return await baseAsk.apply(this,arguments)}finally{RESPONDER=prev}}}
-{const baseModal=modal;modal=function(title,body,buttons,opt){if(RESPONDER&&S&&(S.hotseat||S.players.filter(q=>!q.cpu).length>1)&&typeof title==='string'){
-    title=`🪑 ${RESPONDER.name} — ${title}`;if(typeof body==='string')body=`<p class="hsresp" style="border-left:4px solid ${RESPONDER.color};padding-left:8px">${_T`<b>${esc(RESPONDER.name)}</b>, this one is yours to answer — pass the device.`}</p>`+body.replace(/your (Head|Chest|Left Arm|Right Arm|Right Leg|Left Leg)/,`${esc(RESPONDER.name)}’s $1`)}
+{const baseModal=modal;modal=function(title,body,buttons,opt){if(RESPONDER&&S&&!S.onl&&(S.hotseat||S.players.filter(q=>!q.cpu).length>1)&&typeof title==='string'){const who=typeof hsWho==='function'?hsWho(RESPONDER):RESPONDER.name; /* v0.88: never online; the player's own name */
+    title=`🪑 ${who} — ${title}`;if(typeof body==='string')body=`<p class="hsresp" style="border-left:4px solid ${RESPONDER.color};padding-left:8px">${_T`<b>${esc(who)}</b>, this one is yours to answer — pass the device.`}</p>`+body.replace(/your (Head|Chest|Left Arm|Right Arm|Right Leg|Left Leg)/,`${esc(RESPONDER.name)}’s $1`)}
   return baseModal.call(this,title,body,buttons,opt)}}
 /* =====================================================================
    63-EMPIRE53 · THE EMPIRE DECIDES WHERE THE GAMES ARE (v0.53)
@@ -40259,6 +40259,248 @@ function wIco87(k){return `<i class=wi87${k} aria-hidden=true></i>`}
 .sr87{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 ${Object.keys(W).map(k=>`.wi87${k}{background-image:url("${W[k]}")}`).join('\n')}`;
   document.head.appendChild(st)}catch(e){console.error(e)}})();
+/* =====================================================================
+   158-V88HS · THE HOT-SEAT TABLE, PROPERLY (v0.88 — the agreed batch, tools/plans/hotseat-next.md)
+   =====================================================================
+   His decisions: NO curtain — the Mandata Flavi of every player show the card back (your own too, with a 👁 hold-to-peek);
+   the whose-move pill stays up all turn; table games stay out of the owner's records — only the players' books move.
+   FIXES
+   • Players' books (hsAfterEvent replaced): deaths, "Into the Ludus" and Freedom follow the Fate (aliveInUniverse), not
+     who was standing at the horns; every row with a player counts — a seat handed to the CPU and ⏭ To the end included;
+     a simmed event counts events and wins but grants no honours and no Road step.
+   • Mandata Flavi: hidden for every human at the table (07-ui hsSecret); your own board carries a 👁 hold-to-peek.
+   • Offer them the sword: hidden at the table, Math.random for the refusal (16-crowd edits), no crash without a world.
+   • Taken-over CPU: 🎮 Take control asks which player takes the seat; the seat joins that player's book and wallet.
+   • Hints stay off at the table: showStrategy (62 edit), applySettings / setHints and loaded saves.
+   • Names: the horns wait until every player seat is named, each name once (case does not matter); profile ids from
+     Math.random; the gladiator-name box no longer rewrites Play Now's remembered class name.
+   • "Your turn" window: counts LIVING humans, never twice for the same player, opens after the new player's board and
+     wallet are live; the last player is kept as an id (S.hsPrevId), never a live object.
+   • Wallets: owner-only actions (the Ludus infirmary, Manager windows) bill the owner; 'Buy their cheers' names the player
+     whose turn it is first (16-crowd edit); bets carry the player and settle into their wallet after the horns.
+   • Labels: every human shows their player's name, not 'You' (07-ui / 10-meta edits); truce rings fall back to the last
+     human who moved.
+   • Online defend windows lose the couch line (62 edit: never with S.onl).
+   • Profile delete: the centred ask-first popup naming the profile.
+   • Phones: End turn stays on screen (sticky at the bottom of the actions drawer); the turn chip keeps the name.
+   TABLE BASICS (proposal items)
+   2  the whose-move pill (#hsPill88) in the player's colour, all turn, on every layout.
+   4  own names: the gladiator keeps its name, the player shows beside it; per seat "fight under my own name" (s.hsOwn).
+   5  CPU truce/trade offers and offers between players open as "🪑 Livia — …" (hsAsk around the reply windows, 06/07 edits).
+   6  Flavius's truce decree asks each bound player by name; one "Fight on" breaks the truces.
+   7  seat rules: hand only your own gladiator to the CPU, on your turn; Take control asks who; ⏭ To the end asks the table.
+   11 resume: the table autosaves to its own 🪑 slot (flavius_match_table) naming the players and who is to move;
+      Hot seat → ▶ Resume the table; a loaded table is back in hot-seat mode (CFG.hotseat, hints off, Replay).
+   12 the table stays out of the owner's records: no Ludus saves / Gate of Life, no summoning Ludus gladiators, no Hall,
+      Annals, Infamis, crowd memory, unlocks, sponsors, bestiary ledgers, calendar or bet log.
+   ===================================================================== */
+const HS88=1;
+/* ---------- helpers ---------- */
+function hsTable(){return !!(typeof S!=='undefined'&&S&&S.hotseat)}
+function hsProf(pid){return pid&&typeof HS_PROFILES!=='undefined'?HS_PROFILES.find(x=>x.id===pid)||null:null}
+/* hsWho — the player at the table behind a gladiator (their gladiator's name elsewhere) */
+function hsWho(p){if(!p)return '';const P=hsTable()&&!p.cpu&&p.pid?hsProf(p.pid):null;return P?P.name:p.name}
+/* hsYou — what a human's label reads: 'You' alone at a game, the player's name at a table */
+function hsYou(p){if(hsTable()&&p&&p.pid){const P=hsProf(p.pid);if(P)return esc(P.name)}return _T('You')}
+/* hsSecret — a human's Mandata Flavi stay face down at the table (the 👁 peek is on their own board) */
+function hsSecret(p){return hsTable()&&!S.over&&!!p&&!p.cpu}
+const hsLiveHumans=()=>S.players.filter(q=>!q.cpu&&q.pid&&q.alive&&!q.exited);
+/* hsOrder88 — the acting player's gladiators first (the cheers picker) */
+function hsOrder88(L){if(!hsTable()||!S.hsActive)return L;return [...L.filter(p=>p.pid===S.hsActive&&!p.cpu),...L.filter(p=>!(p.pid===S.hsActive&&!p.cpu))]}
+/* whose purse: owner's (a Ludus / Manager window was just clicked), a settling player's, or the table default */
+let HS_PURSE_PID=null,HS_OWNER_T=0;
+function hsPidNow(){if(!hsTable())return undefined;if(Date.now()-HS_OWNER_T<5000)return null;if(HS_PURSE_PID)return HS_PURSE_PID;return undefined}
+window.addEventListener('click',e=>{try{if(hsTable()&&e.target.closest&&e.target.closest('#ludusBody,#mgrBody,[data-ginfirm]'))HS_OWNER_T=Date.now()}catch(err){}},true);
+/* hsAsk — a reply window addressed to the human who answers it (the 62 RESPONDER wrapper names them) */
+async function hsAsk(q,f){if(!hsTable()||!q||q.cpu||typeof RESPONDER==='undefined')return f();const prev=RESPONDER;RESPONDER=q;try{return await f()}finally{RESPONDER=prev}}
+
+/* ---------- the records: a table settles only into the players' books ---------- */
+const HS_OVER={at:0,inOver:false};
+/* hsRec — the table is live, or its results are settling (gameOver running, or the 20 s after it) */
+function hsRec(){if(!hsTable())return false;if(!S.over)return true;const t=Date.now()-HS_OVER.at;return t<20000||(HS_OVER.inOver&&t<600000)}
+{const base=gameOver;gameOver=async function(){const on=hsTable()&&!S.overShown;if(on){HS_OVER.at=Date.now();HS_OVER.inOver=true;try{hsTagBets(S.hsActive)}catch(e){}}try{return await base.apply(this,arguments)}finally{if(on)HS_OVER.inOver=false}}}
+for(const [nm,val] of [['achievementsAfterEvent',undefined],['updateCrowdAfterEvent',undefined],['bestiaryTally',undefined],['saveGladiator',null],['markFallen',undefined],
+  ['claimFreedom',undefined],['hallTrophy',undefined],['rivalTrophy',undefined],['sponsorAfterEvent',undefined],['roadAfterEvent',undefined],['infirmaryTick',undefined],
+  ['achGrant',false],['betRec',null],['betSettle',undefined],['advanceMissio',null]]){
+  try{const base=eval(nm);if(typeof base!=='function')continue;const sync=['bestiaryTally','betRec','betSettle'].includes(nm); /* the rest are awaited or .catch()ed (earlier wrappers hide their async) */
+    const w=function(){if(hsRec())return sync?val:Promise.resolve(val);return base.apply(this,arguments)};
+    eval(`${nm}=w`)}catch(e){}}
+/* the empire's calendar holds still for a table */
+{const base=careerHoldsClock;careerHoldsClock=async function(){if(hsRec())return true;return base.apply(this,arguments)}}
+/* recordEvent: the Annals, Infamis, Hall and unlocks stay the owner's — only the books */
+{const base=recordEvent;recordEvent=async function(rows){if(hsTable()){if(!S.sim)await hsAfterEvent(rows);return}return base.apply(this,arguments)}}
+/* belt and braces: the owner's collections are not written while a table's results settle */
+const HS88_BLOCK=new Set(['hall','infamis','hallTrophies','gladiators','missios','crowd','arena']);
+{const put=Store.put,del=Store.del;
+  Store.put=function(col){if(HS88_BLOCK.has(col)&&hsTable()&&S.over&&hsRec())return Promise.resolve(false);return put.apply(this,arguments)};
+  Store.del=function(col){if(HS88_BLOCK.has(col)&&hsTable()&&S.over&&hsRec())return Promise.resolve();return del.apply(this,arguments)}}
+
+/* ---------- the players' books follow the Fate ---------- */
+hsAfterEvent=async function(rows){await hsLoad();const lines=[];const simmed=!!S.simmed;
+  for(const x of rows){const p=x.p;if(!p||!p.pid)continue;const P=hsProf(p.pid);if(!P)continue;const got=[];
+    const lives=x.fate&&typeof aliveInUniverse==='function'?aliveInUniverse(x):!!(p.alive&&!p.retired);
+    P.events++;if(x.won)P.wins++;const f=Math.round(x.f||0);P.cfTotal+=f;P.cfBest=Math.max(P.cfBest,f);
+    if(!lives)P.deaths++;if(f>=20&&lives)P.ludus++;if(f>=50&&lives)P.freed++;
+    const coin=Math.max(0,Math.round(p.coin||0))+(x.won?25:0);P.coin+=coin;
+    const give=k=>{if(!P.honors[k]){P.honors[k]=new Date().toISOString().slice(0,10);got.push(HS_HONORS.find(h=>h[0]===k)[1])}};
+    if(!simmed){
+      if(x.won){if(BASE_CLS.includes(p.cls)&&!P.classWins.includes(p.cls))P.classWins.push(p.cls);if(!P.locs.includes(S.locIdx))P.locs.push(S.locIdx);if(HALL_ORDER[P.road]===S.locIdx)P.road++}
+      if(x.won)give('first');if(f>=20&&lives)give('ludus');if(f>=50&&lives)give('fifty');
+      const killed=t=>S.npcs.some(n=>n.t===t&&!n.alive&&n.killedBy===p.name);if(killed('tholo'))give('tholo');if(killed('commodus'))give('commodus');
+      if(BASE_CLS.every(c=>P.classWins.includes(c)))give('eightwins');if(P.locs.length>=12)give('twelve');if(P.events>=25)give('veteran');if(P.road>=12)give('road');if(P.coin>=300)give('rich')}
+    await hsSave(P);
+    lines.push(_T`<b>${esc(P.name)}</b> (${esc(p.name)}): ${x.won?'🏆 win · ':''}${cfAmt87(f)} · ${lives?_T('lives'):_T('✝ fell')} · ${coinAmt87('+'+coin)} (wallet ${coinAmt87(P.coin)}) · Road ${P.road}/12${got.length?` · 🏅 ${got.map(esc).join(', ')}`:''}`)}
+  if(lines.length){log(`<div class="tiphint">${_T`<b>🪑 Hot seat — the players' books</b>${simmed?_T(' · simmed: no honours'):''}<br>${lines.join('<br>')}`}</div>`,'big');if(typeof mToast==='function')mToast(_T('🪑 Every player’s profile is updated — see the log.'))}};
+
+/* ---------- wagers carry the player and settle into their wallet ---------- */
+function hsTagBets(pid){if(!hsTable()||!pid)return;for(const b of S.bets||[])if(!b.hsPid)b.hsPid=pid}
+{const base=settleWagers;settleWagers=async function(rows,wset){if(!hsTable()||!(S.bets||[]).length)return base.apply(this,arguments);
+  const groups=new Map();for(const b of S.bets){const k=b.hsPid||S.hsActive||'';if(!groups.has(k))groups.set(k,[]);groups.get(k).push(b)}
+  const all=S.bets,sb=S.selfBets,sp=S.spect;let out=[];let first=true;
+  try{for(const [pid,list] of groups){HS_PURSE_PID=pid||null;S.bets=list;if(!first){S.selfBets=[];S.spect=[]}
+      const r=await base.call(this,rows,wset);out=out.concat(r||[]);first=false}}
+  finally{HS_PURSE_PID=null;S.bets=all;S.selfBets=sb;S.spect=sp}
+  return out}}
+
+/* ---------- 2 · the whose-move pill ---------- */
+function hsPillUpdate(){if(HEADLESS)return;let el=document.getElementById('hsPill88');
+  const on=hsTable()&&!S.over&&S.phase!=='setup'&&!!cur();if(!on){if(el)el.hidden=true;return}
+  const w=document.querySelector('.canvas-wrap');if(!w)return;
+  if(!el||el.parentElement!==w){if(el)el.remove();el=document.createElement('div');el.id='hsPill88';el.className='hspill88';el.setAttribute('role','status');w.appendChild(el)}
+  const p=cur();const P=!p.cpu&&p.pid?hsProf(p.pid):null;
+  const html=P?_T`🪑 <b>${esc(P.name)}’s move</b><span>${esc(p.name)}</span>`:_T`🤖 <b>${esc(p.name)}</b><span>CPU</span>`;
+  if(el._h!==html){el.innerHTML=html;el._h=html}el.style.setProperty('--pc',p.color||'#f0cf7d');el.classList.toggle('cpu',!P);el.hidden=false}
+{const base=render;render=function(){const r=base.apply(this,arguments);try{hsPillUpdate()}catch(e){}return r}}
+
+/* ---------- the turn: the new player first, then (when someone else moved) what happened while they were away ---------- */
+{const base=beginTurn;beginTurn=async function(){try{if(S&&S.hotseat&&!S.over){const p=cur();hsTagBets(S.hsActive);
+    if(p&&!p.cpu&&p.pid){S.hsActive=p.pid;S.boardPid=null}
+    delete S.hsPrevP; /* an older save kept a live object here */
+    if(p&&!HEADLESS&&!S.sim&&!S.snap){S.hsSnaps=S.hsSnaps||{};const prev=S.hsPrevId!=null?S.players[S.hsPrevId]:null;
+      if(prev&&prev!==p&&!prev.cpu)S.hsSnaps[prev.id]=hsSnap(prev);S.hsPrevId=p.id;
+      const a=S.hsSnaps[p.id];
+      if(!p.cpu&&p.pid&&a&&hsLiveHumans().length>=2&&S.hsLastPid!==p.pid){S.hsLastPid=p.pid;try{render()}catch(e){}
+        const P=hsProf(p.pid);
+        await modal(_T`🪑 ${esc(P?P.name:p.name)} — your turn`,`<p class="rc-sub" style="margin:0 0 6px">${_T`${esc(p.name)} · since your last turn`}</p>${hsAwayHTML(p,a)}`,[{label:_T('Start my turn'),value:1,primary:1}],{close:1})}
+      else if(!p.cpu&&p.pid)S.hsLastPid=p.pid}
+    hsPillUpdate()}}catch(e){console.error(e)}
+  return base.apply(this,arguments)}}
+
+/* ---------- Mandata Flavi: 👁 hold to peek at your own ---------- */
+{const base=boardHTML;boardHTML=function(player,interactive){let h=base.apply(this,arguments);
+  try{if(hsSecret(player)&&player===cur()){const mf=(player.items||[]).filter(it=>it.kind==='mf');let i=0;
+      h=h.replace(/(<div class="item mf">[\s\S]*?<\/em><\/span><\/span>)/g,(m0)=>{const it=mf[i++];if(!it)return m0;return m0+`<button type="button" class="mfpeek88" data-mfpeek="${it.id}" title="${_T`Hold to peek — only you`}" aria-label="${_T`Hold to peek at your Mandata Flavi`}">👁</button>`})}}catch(e){console.error(e)}
+  return h}}
+function hsPeek(b,on){let el=document.getElementById('mfPeek88');
+  if(!on){if(el)el.hidden=true;return}
+  const p=cur();if(!p||!hsSecret(p))return;const it=(p.items||[]).find(x=>String(x.id)===String(b.dataset.mfpeek));if(!it)return;
+  if(!el){el=document.createElement('div');el.id='mfPeek88';el.className='mfpeek88pop card2';document.body.appendChild(el)}
+  const I=itemInfo(it);el.innerHTML=`${cardHTML('m:'+it.idx,'md')}<div><b>${esc(I.n)}</b><div class="rc-sub">${I.t||''}${I.d?' · '+I.d:''}</div></div>`;el.hidden=false;
+  const r=b.getBoundingClientRect();const W=Math.min(320,innerWidth-16);el.style.width=W+'px';el.style.left=Math.max(8,Math.min(innerWidth-W-8,r.left-W/2))+'px';
+  el.style.top='0px';const H=el.offsetHeight;el.style.top=Math.max(8,r.top-H-8<8?r.bottom+8:r.top-H-8)+'px'}
+document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest('[data-mfpeek]');if(!b)return;e.preventDefault();e.stopPropagation();hsPeek(b,true)},true);
+for(const ev of ['pointerup','pointercancel','blur'])window.addEventListener(ev,()=>hsPeek(null,false),true);
+document.addEventListener('pointerout',e=>{if(e.target.closest&&e.target.closest('[data-mfpeek]'))hsPeek(null,false)},true);
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-mfpeek]')){e.preventDefault();e.stopPropagation()}},true);
+document.addEventListener('keydown',e=>{const b=e.target.closest&&e.target.closest('[data-mfpeek]');if(b&&(e.key===' '||e.key==='Enter')){e.preventDefault();hsPeek(b,true)}},true);
+document.addEventListener('keyup',e=>{if(e.target.closest&&e.target.closest('[data-mfpeek]'))hsPeek(null,false)},true);
+
+/* ---------- 7 · seat rules ---------- */
+{const base=seatCanToggle;seatCanToggle=function(p){const r=base.apply(this,arguments);if(!r||!hsTable())return r;if(p.cpu)return true;
+  return p===cur()&&!(typeof RESPONDER!=='undefined'&&RESPONDER)}}
+{const base=seatToggle;seatToggle=async function(p){if(!hsTable()||!p||!p.cpu||!seatCanToggle(p))return base.apply(this,arguments);
+  if(typeof modalBusy==='function'&&modalBusy())return;
+  const ids=[...new Set([p.pid,...S.hotseat.players.map(h=>h.pid)].filter(Boolean))];const profs=ids.map(hsProf).filter(Boolean);if(!profs.length)return;
+  const pid=await modal(_T`🎮 Who takes ${esc(p.name)}?`,`<p>${_T`Pick the player who plays this gladiator from now on. Their wallet pays for it and the result goes in their book.`}</p>`,
+    [...profs.map((P,i)=>({label:`🪑 ${esc(P.name)}`,value:P.id,primary:P.id===p.pid||(!p.pid&&i===0)})),{label:_T('Cancel'),value:null}],{close:null});
+  if(!pid||!p.cpu||S.over)return;const P=hsProf(pid);
+  p.pid=pid;const h=S.hotseat.players.find(x=>x.seat===p.id);if(h){h.pid=pid;h.name=P.name}else S.hotseat.players.push({seat:p.id,pid,name:P.name});
+  p.cpu=false;p.simmed=false;if(cur()===p)S.hsActive=pid;
+  log(_T`🎮 ${esc(P.name)} takes the reins of ${nm(p)}${cur()===p&&S.busy?_T(' — from their next turn'):''}.`,'big');render()}}
+{const base=simToEnd;simToEnd=async function(){if(!hsTable()||!S||S.over||HEADLESS)return base.apply(this,arguments);
+  if(typeof modalBusy==='function'&&modalBusy())return;const G=S;
+  const pids=[...new Set(hsLiveHumans().map(q=>q.pid))];
+  for(const pid of pids){const P=hsProf(pid);if(!P)continue;
+    const v=await modal(_T`🪑 ${esc(P.name)} — ⏭ To the end?`,`<p>${_T`The whole table must agree: every gladiator goes to the CPU and the event resolves at once. It still counts in everyone's book, without honours.`}</p>`,
+      [{label:_T('Agree'),value:1,primary:1},{label:_T('Keep playing'),value:0}],{close:0});
+    if(G!==S||S.over)return;if(!v){log(_T`🪑 ${esc(P.name)} wants to play on — no simming.`,'thought');return}}
+  return base.call(this,true)}}
+
+/* ---------- 6 · Flavius's truce decree asks each bound player ---------- */
+{const base=modal;modal=function(title,body,buttons,opt){
+  if(hsTable()&&!S.over&&Array.isArray(buttons)&&buttons.some(b=>b&&b.value==='fight')&&buttons.some(b=>b&&b.value==='thumb')&&typeof RESPONDER!=='undefined'&&!RESPONDER){
+    const self=this;return (async()=>{const seen=new Set();
+      for(const q of hsLiveHumans()){if(seen.has(q.pid))continue;seen.add(q.pid);const prev=RESPONDER;RESPONDER=q;let v;
+        try{v=await base.call(self,title,body,buttons,opt)}finally{RESPONDER=prev}
+        if(v!=='thumb'){log(_T`⚔ ${esc(hsWho(q))} will not accept the thumb.`,'big');return 'fight'}}
+      return seen.size?'thumb':base.call(self,title,body,buttons,opt)})()}
+  return base.apply(this,arguments)}}
+
+/* ---------- hints stay off at the table ---------- */
+{const base=applySettings;applySettings=function(){const r=base.apply(this,arguments);try{if(hsTable()&&!S.over){if(HS_HINTS_SAVE==null)HS_HINTS_SAVE=HINTS;else HS_HINTS_SAVE=!!SETTINGS.hints;HINTS=false}}catch(e){}return r}}
+{const base=setHints;setHints=function(on){const r=base.apply(this,arguments);try{if(hsTable()&&!S.over){HS_HINTS_SAVE=!!on;HINTS=false}}catch(e){}return r}}
+
+/* ---------- names: one per player, the box for the gladiator, no junk profiles ---------- */
+{const base=seatRows;seatRows=function(ev,n,cls){let h=base.apply(this,arguments);if(!CFG.hotseat||!window.HS_IN_SETUP)return h;
+  try{h=h.replace(/<select id="(sav|lcp)\d"[\s\S]*?<\/select>/g,'').replace(/ ?<span style="font-size:11px;color:var\(--dim\);align-self:center"[^>]*>[^<]*<\/span>/g,'');
+    const parts=h.split('<label class="hsname">');h=parts[0]+parts.slice(1).map(seg=>{const m=seg.match(/data-hsn="(\d+)"/);const i=m?+m[1]:-1;const s=CFG.seats[i];
+      return '<label class="hsname">'+seg.replace(/(<span class="rc-sub">[^<]*<\/span><\/label>)/,`$1<label class="hsown88" title="${_T`Untick to keep the gladiator's own name beside yours`}"><input type="checkbox" data-hsown="${i}" ${s&&s.hsOwn?'checked':''}> ${_T`fight under my own name`}</label>`)}).join('')}catch(e){console.error(e)}
+  return h}}
+document.addEventListener('change',e=>{const t=e.target.closest&&e.target.closest('[data-hsown]');if(!t)return;const s=CFG.seats[+t.dataset.hsown];if(s)s.hsOwn=t.checked},true);
+document.addEventListener('input',e=>{const t=e.target;if(!CFG.hotseat||!t||!/^nam\d$/.test(t.id||''))return;e.stopPropagation();const s=CFG.seats[+t.id.slice(3)];if(s)s.name=t.value.trim()},true);
+/* hsSeatErr — why the horns cannot sound yet ('' when every player seat has its own name) */
+function hsSeatErr(){if(!CFG.hotseat||CFG.mode!=='event')return '';const E=EVENTS[CFG.ev];const n=E?CFG.n:4;const seen=new Set();
+  for(let i=0;i<n;i++){const s=CFG.seats[i];if(!s||s.cpu)continue;const nmx=String(s.hsName||'').trim();if(!nmx)return _T`Name every player — seat ${i+1} has no name (or make it a CPU).`;
+    const k=nmx.toLowerCase();if(seen.has(k))return _T`Each player needs their own name — “${esc(nmx)}” sits at two seats.`;seen.add(k)}
+  if(!seen.size)return _T('Seat at least one player.');return ''}
+window.addEventListener('click',e=>{if(!CFG.hotseat)return;const b=e.target.closest&&e.target.closest('#goBtn');if(!b||!document.querySelector('#modal .hsbanner'))return;
+  const m=hsSeatErr();if(m){e.preventDefault();e.stopPropagation();const el=document.getElementById('setupErr');if(el){el.innerHTML=m;el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');el.scrollIntoView({block:'center'})}if(typeof mToast==='function')mToast('⚠ '+m);return}
+  for(const s of CFG.seats)if(s){s.saved=null}},true);
+
+/* ---------- profile delete: the centred ask-first popup ---------- */
+window.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('[data-hsdel]');if(!b)return;e.preventDefault();e.stopPropagation();
+  const id=b.dataset.hsdel;const P=hsProf(id);const ok=await ask76(_T`🗑 Delete ${esc(P?P.name:_T('this player'))}?`,_T('Their book, wallet and honours are gone for good — this cannot be undone.'),_T('Delete'),_T('Keep it'));if(!ok)return;
+  HS_PROFILES=HS_PROFILES.filter(p=>p.id!==id);hsPersist();const box=document.querySelector('.hsbanner');if(box)box.outerHTML=hsBoardHTML()},true);
+
+/* the results: survivors go into their player's book, not the Ludus Flavius */
+{const base=resultCard;resultCard=function(){let h=base.apply(this,arguments);try{if(hsTable()&&typeof h==='string')h=h.split(_T('Survives to the Ludus Flavius: can be saved.')).join(_T('Survives — into the player’s book.')).split(_T('Free, or back for glory: can be saved in the Ludus.')).join(_T('Survives with 50+ CF — into the player’s book.'))}catch(e){}return h}}
+/* ---------- truce rings: the last human who moved watches during CPU turns ---------- */
+{const base=truceViewer;truceViewer=function(){const r=base.apply(this,arguments);if(r||!hsTable()||!S.hsActive)return r;return S.players.find(p=>p.pid===S.hsActive&&!p.cpu&&p.alive)||null}}
+
+/* ---------- 11 · resume the table ---------- */
+const HS_SLOT='table';
+{const base=matchSnapshot;matchSnapshot=function(name){const snap=base.apply(this,arguments);try{if(hsTable()){const names=[...new Set(S.hotseat.players.map(h=>(hsProf(h.pid)||h).name))];const p=cur();const who=p&&!p.cpu?hsWho(p):'';
+    if(!name)snap.name=_T`🪑 ${names.join(', ')} · ${EV().short||EV().n}`;snap.summary=snap.summary+(who?_T` · ${who} to move`:'');snap.hs=1}}catch(e){}return snap}}
+{const base=matchAutosave;matchAutosave=function(){if(!hsTable())return base.apply(this,arguments);if(!matchSaveOK()||S._autoRot===S.rotation)return;S._autoRot=S.rotation;matchSlotPut(HS_SLOT,matchSnapshot(null))}}
+function hsResumeSnap(){const sv=matchSlotGet(HS_SLOT);return sv&&sv.game==='flavius-match'?sv:null}
+function hsAfterLoad(){if(!hsTable()||S.over)return;CFG.hotseat=true;CFG.mode='event';if(HS_HINTS_SAVE==null)HS_HINTS_SAVE=HINTS;HINTS=false;delete S.hsPrevP;
+  try{if(S.hsCfg&&typeof LAST_CFG!=='undefined')LAST_CFG=JSON.parse(JSON.stringify(S.hsCfg))}catch(e){}
+  try{hsLoad().then(()=>{try{render()}catch(e){}})}catch(e){}}
+{const base=matchLoad;matchLoad=function(){const r=base.apply(this,arguments);try{hsAfterLoad()}catch(e){}try{Promise.resolve(r).then(()=>hsAfterLoad()).catch(()=>{})}catch(e){}return r}}
+{const base=newState;newState=function(cfg){const r=base.apply(this,arguments);try{if(cfg&&cfg.hotseat&&S){S.hsCfg=JSON.parse(JSON.stringify(cfg))}}catch(e){}return r}}
+{const base=matchSavesHTML;matchSavesHTML=function(mode){let h=base.apply(this,arguments);try{const sv=hsResumeSnap();if(!sv||mode==='save')return h;
+  const row=`<div class="item"><span>${_T`🪑 <b>Hot-seat table</b>`}<em>${esc(sv.name)} · ${esc(new Date(sv.at).toLocaleString())} · ${esc(sv.summary||'')}</em></span><span style="display:flex;gap:4px">${mode!=='manage'?`<button class="btn primary" type="button" data-mload="${HS_SLOT}">${_T`▶ Load`}</button>`:''}${mode!=='load'?`<button class="btn" type="button" data-mdel="${HS_SLOT}">🗑</button>`:''}</span></div>`;
+  h=h.replace('<div class="list">','<div class="list">'+row)}catch(e){}return h}}
+{const base=hsBoardHTML;hsBoardHTML=function(){let h=base.apply(this,arguments);try{const sv=hsResumeSnap();if(sv)h=h.replace(/(<div class="sect" style="margin-top:0">[\s\S]*?<\/div>)/,`$1<div class="hsres88"><button type="button" class="btn primary" data-hsresume="1">${_T`▶ Resume the table`}<small>${esc(sv.summary||sv.name)}</small></button></div>`)}catch(e){}return h}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-hsresume]');if(!b)return;e.stopPropagation();const c=CUR_MODAL;if(c)c.done('closed');setTimeout(()=>matchLoad(HS_SLOT),150)},true);
+
+/* ---------- look ---------- */
+(()=>{const st=document.createElement('style');st.textContent=`
+.hspill88{position:absolute;left:10px;top:10px;z-index:6;display:flex;align-items:baseline;gap:8px;max-width:calc(100% - 20px);padding:5px 14px;border-radius:999px;
+  background:color-mix(in srgb,var(--pc,#f0cf7d) 32%,rgba(20,14,10,.92));border:2px solid var(--pc,#f0cf7d);color:#fff;font:600 17px var(--display);white-space:nowrap;
+  pointer-events:none;box-shadow:0 2px 12px rgba(0,0,0,.5)}
+.hspill88[hidden]{display:none}.hspill88 b{flex-shrink:0}.hspill88 span{font:12px var(--mono);opacity:.85;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.hspill88.cpu{opacity:.8;font-size:14px}
+body.phoneL .hspill88,body.phoneP .hspill88{font-size:14px;padding:3px 10px;top:6px;left:6px;max-width:38%}
+body.phoneP .hspill88{top:auto;bottom:8px;left:50%;transform:translateX(-50%);max-width:70%}
+body.phoneL #turnInd .tiname,body.phoneP2 #turnInd .tiname,body.phoneP #turnInd .tiname{flex-shrink:0;overflow:visible;max-width:none}
+body.phoneL #actions [data-act="end"],body.phoneP2 #actions [data-act="end"],body.phoneP #actions [data-act="end"]{position:sticky;bottom:0;z-index:3;box-shadow:0 -6px 14px rgba(0,0,0,.55)}
+.mfpeek88{margin-left:auto;padding:2px 8px;border-radius:6px;border:1px solid var(--line2,#5a4630);background:var(--ink,#1a120c);color:var(--bone,#efe3cc);cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;font-size:16px}
+.mfpeek88:active{background:var(--gold,#d6ab4c);color:#000}
+.mfpeek88pop{position:fixed;z-index:4000;display:flex;gap:10px;align-items:flex-start;padding:10px;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.mfpeek88pop[hidden]{display:none}.mfpeek88pop .rc-sub{margin-top:4px}
+.hsown88{display:inline-flex;gap:4px;align-items:center;font-size:12px;color:var(--muted,#b9a98c);margin-left:6px}
+.hsres88{margin:4px 0 8px}`;document.head.appendChild(st)})();
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

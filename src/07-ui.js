@@ -2558,7 +2558,7 @@ function boardHTML(player, interactive) {
     badges.push(`<span class="badge gold">${_T`Lap ${ch.laps}/3`}</span>`, `<span class="badge ${ch.wheel ? 'good' : 'bad'}">${_T`Wheel ${ch.wheel ? ch.wheel.hp + ' HP' : _T('missing (−2 MV)')}`}</span>`, `<span class="badge ${ch.horse ? 'good' : 'bad'}">${ch.horse ? _T`Horse ${ch.horse.sides[ch.horse.face].hp - ch.horse.dmg} HP · +${ch.horse.sides[ch.horse.face].mv} MV` : _T('Horse missing')}</span>`);
   }
   const isCur = S.players[S.cur] === player && S.phase === 'action';
-  return `<div class="pb-head" style="--pc:${player.color}">${clsPieceHTML(player.cls, 58, _T('stnd phead')) || '<span class="sw"></span>'}<div><div class="pname">${player.name}</div><div class="pcls">${CLASSES[player.cls].name} · ${CLASSES[player.cls].sub}${player.drafted ? ' (drafted)' : ''} · ${player.cpu ? 'CPU ' + cpuMind(player) : _T('You')} · ${player.exited ? 'exited' : player.alive ? tl(player.r, player.c) : 'fallen'}</div>${typeof seatChipHTML === 'function' ? seatChipHTML(player) : ''}</div></div>
+  return `<div class="pb-head" style="--pc:${player.color}">${clsPieceHTML(player.cls, 58, _T('stnd phead')) || '<span class="sw"></span>'}<div><div class="pname">${player.name}</div><div class="pcls">${CLASSES[player.cls].name} · ${CLASSES[player.cls].sub}${player.drafted ? ' (drafted)' : ''} · ${player.cpu ? 'CPU ' + cpuMind(player) : typeof hsYou === 'function' ? hsYou(player) : _T('You')} · ${player.exited ? 'exited' : player.alive ? tl(player.r, player.c) : 'fallen'}</div>${typeof seatChipHTML === 'function' ? seatChipHTML(player) : ''}</div></div>
    <div class="econ"><div class="stat" title="${player.coinLog ? Object.entries(player.coinLog).map(([k2, v2]) => `${v2 > 0 ? '+' : ''}${v2} ${k2}`).join(String.fromCharCode(10)) : _T('No coin has moved yet.')}">${_T`<span>Coin ⓘ</span><b>${ICO.coin} ${player.coin}</b>`}</div><div class="stat" title="${player.cfLog && Object.keys(player.cfLog).length ? Object.entries(player.cfLog).sort((x, y) => Math.abs(y[1]) - Math.abs(x[1])).map(([k2, v2]) => `${v2 > 0 ? '+' : ''}${v2} ${k2}`).join(String.fromCharCode(10)) : _T('No Crowd Favor has moved yet.')}">${(() => {
     const rr = S.over && S.result ? S.result.rows.find(x => x.id === player.id) : null;
     return rr ? `<span title="${_T`The final Fate score — the same number the results show`}">${_T`Fate ⓘ`}</span><b>${ICO.wheat} ${rr.f}</b>` : `<span>CF ⓘ</span><b>${ICO.wheat} ${player.cf}</b>`;
@@ -2593,7 +2593,7 @@ function boardHTML(player, interactive) {
     length: 7
   }, (_, i) => `<i class="${isCur ? i < player.mv ? 'f' : '' : i < mvMax(player) ? '' : 'cap'}"></i>`).join('')}</div>
    ${player.items.length ? `<div class="sect">${_T`Hand, offerings & objectives`}</div><div class="items">${player.items.map(it => {
-    const hidden = it.kind === 'mf' && player.cpu && !S.over;
+    const hidden = it.kind === 'mf' && (player.cpu || typeof hsSecret === 'function' && hsSecret(player)) && !S.over;
     const I = hidden ? {
       n: 'Mandata Flavi',
       t: _T('Secret objective'),
@@ -2700,7 +2700,7 @@ function render() {
     if (bb) bb.hidden = !(S.mgrCtx || S.specCtx);
   }
   $('#roster').innerHTML = S.players.map(other => `<button type="button" class="rc ${other === p && !S.over || S.over && S.boardPid === other.id ? 'cur' : ''} ${other.alive ? '' : 'dead'}" style="--pc:${other.color}" data-act="inspect" data-pid="${other.id}">
-    <div class="top">${(S.mgrCtx || S.specCtx) && other.mgrGid && typeof gById === 'function' && gById(other.mgrGid) ? `<span class="favstar ${gById(other.mgrGid).favd ? 'on' : ''}" role="button" tabindex="0" data-favg="${other.mgrGid}" title="${gById(other.mgrGid).favd ? _T('On your ★ Favorites board — click to remove') : _T('Add to your ★ Favorites board (Manager mode)')}">${gById(other.mgrGid).favd ? '★' : '☆'}</span>` : ''}<span class="nm">${other.name}</span><span class="tag">${CLASSES[other.cls].name}${EV().teams || EV().coop ? _T(' · Team ') + other.team : ''} · ${other.cpu ? 'CPU ' + cpuMind(other) : _T('You')}</span></div>
+    <div class="top">${(S.mgrCtx || S.specCtx) && other.mgrGid && typeof gById === 'function' && gById(other.mgrGid) ? `<span class="favstar ${gById(other.mgrGid).favd ? 'on' : ''}" role="button" tabindex="0" data-favg="${other.mgrGid}" title="${gById(other.mgrGid).favd ? _T('On your ★ Favorites board — click to remove') : _T('Add to your ★ Favorites board (Manager mode)')}">${gById(other.mgrGid).favd ? '★' : '☆'}</span>` : ''}<span class="nm">${other.name}</span><span class="tag">${CLASSES[other.cls].name}${EV().teams || EV().coop ? _T(' · Team ') + other.team : ''} · ${other.cpu ? 'CPU ' + cpuMind(other) : typeof hsYou === 'function' ? hsYou(other) : _T('You')}</span></div>
     <div class="mini">${[['head', 'chest'], ['rarm', 'larm'], ['rleg', 'lleg']].flat().map(l => {
     const v = other.hp[l];
     return `<div class="mloc"><span class="lab">${sideBadge(l)}${LOCS_SHORT[l]}</span><div class="mbars">${v <= 0 ? `<span class="sevd">${sevLabel(l).toLowerCase()}</span>` : seg7(v, 'h', v <= 2) + seg7(other.ap[l], 'a')}</div></div>`;
@@ -3393,14 +3393,14 @@ async function openTrade(player) {
       return;
     }
     let ok;
-    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await modal(_T`${q.name}: truce offer`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} proposes a truce. Accept?`}</p>`, [{
+    if (q.cpu) ok = cpuAcceptsTruce(q, player);else ok = await hsAsk(q, () => modal(_T`${q.name}: truce offer`, `<p>${_T`${typeof truceWho==='function'?truceWho(player):player.name} proposes a truce. Accept?`}</p>`, [{
       label: _T('Accept'),
       value: 1,
       primary: 1
     }, {
       label: _T('Refuse'),
       value: 0
-    }]);
+    }]));
     if (ok) {
       makeTruce(player, q);
     } else log(_T`${nm(q)} refuses the truce.`);
@@ -3450,14 +3450,14 @@ async function openTrade(player) {
   const give = mine[gi],
     get = theirs[ti];
   let ok;
-  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await modal(_T`${q.name}: trade offer`, `<p>${_T`${player.name} offers ${give.label} for your ${get.label}. Accept?`}</p>`, [{
+  if (q.cpu) ok = cpuAcceptsTrade(q, give, get);else ok = await hsAsk(q, () => modal(_T`${q.name}: trade offer`, `<p>${_T`${player.name} offers ${give.label} for your ${get.label}. Accept?`}</p>`, [{
     label: _T('Accept'),
     value: 1,
     primary: 1
   }, {
     label: _T('Refuse'),
     value: 0
-  }]);
+  }]));
   if (ok) {
     doTrade(player, q, give, get);
   } else log(_T`${nm(q)} refuses the trade.`);
@@ -3523,7 +3523,7 @@ function briefingHTML() {
   }).join('');
   const last = ev.rounds[ev.rounds.length - 1];
   const how = ev.teams || ev.coop ? _T`Be the side still standing when <b>${esc(END_TXT[last.end] || last.end)}</b>.` : _T`Survive every round. The event is won when <b>${esc(END_TXT[last.end] || last.end)}</b>${last.reward && last.reward.win ? _T` — worth <b>${cfAmt87(last.reward.win)}</b>` : ''}. Crowd Favor decides your Fate at the end.`;
-  const glads = S.players.map(player => `<span class="brglad ${player.alive ? '' : 'out'}" style="--pc:${player.color}"><b>${esc(player.name)}</b> ${esc(CLASSES[player.cls] ? CLASSES[player.cls].name : '')}${teams ? _T(' · Team ') + esc(String(player.team)) : ''} · ${player.cpu ? 'CPU' : S.hotseat ? '🎮 player' : 'you'}${player.alive ? '' : player.exited ? ' · exited' : ' · ✝'}</span>`).join('');
+  const glads = S.players.map(player => `<span class="brglad ${player.alive ? '' : 'out'}" style="--pc:${player.color}"><b>${esc(player.name)}</b> ${esc(CLASSES[player.cls] ? CLASSES[player.cls].name : '')}${teams ? _T(' · Team ') + esc(String(player.team)) : ''} · ${player.cpu ? 'CPU' : S.hotseat ? '🎮 ' + (typeof hsYou === 'function' ? hsYou(player) : _T('player')) : 'you'}${player.alive ? '' : player.exited ? ' · exited' : ' · ✝'}</span>`).join('');
   return `<div class="brief"><div class="brtop">${cardHTML('e:' + S.evKey, 'md') || ''}<div><div class="ei-tag">${esc(ev.tag || ev.short || '')}${S.fest ? ' · ' + esc(festName(S.fest.kind)) : ''}${S.missio ? _T(' · Missio') : ''}</div>
     <div class="brname">${esc(ev.n)}</div><div class="rc-sub">${_T`📍 ${esc(L ? L.n : '')} · ⚔ ${n} gladiator${n === 1 ? '' : 's'}${teams ? _T` in ${teams} ${ev.coop ? _T('as one side') : _T('teams')}` : ''}${S.spect && S.spect.length ? _T` · 🏟 ${S.spect.filter(x => !x.gone).length}K spectators in the stands` : ''}${ev.sr ? _T` · Summa rudis: ${esc(ev.sr)}` : ''}`}</div>
     ${ev.blurb ? `<p style="margin:6px 0 0">${esc(ev.blurb)}</p>` : ''}<div class="brhow">${_T`🏆 <b>How to win.</b> ${how}`}</div></div></div>
