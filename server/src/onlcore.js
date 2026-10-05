@@ -860,4 +860,42 @@ const ONLC=(function(){
       armorShare:C.NAMED_ARMOR_SHARE,namedA:P('named')*C.NAMED_ARMOR_SHARE,namedW:P('named')*(1-C.NAMED_ARMOR_SHARE),fort:FORT_LEG89}}
   Object.assign(C,{rollNamedArmor,rollGift,cleanNamedA,gearAfter,affixOdds89,giftOdds89,AFF_W89,LAPID_HELM89,FORT_LEG89,RAR_A89,AFF_ADJ89,AFF_LAT89,NEW_AFF89:NEW89,
     GIFT_L2_89,GIFT_CHEAP89,GIFT_COIN89,GIFT_CF89})})(ONLC);
+/* ══════════ v0.89 L · THE LANISTA (contract tools/plans/onl89-profile.md) ══════════
+   The lanista's own NAME (never the sign-in name): 3–24 letters, word-filtered, unique case-insensitively (server LNAME#<key>);
+   a rename once every RENAME_MS89 (A.nameAt), the old name kept as "formerly X" and held for its owner LOLD_MS89, then released.
+   PRIVACY: {hide} = not in Here now / the Orbis glow (still counted in the totals), {inv} = who may invite: all | follow | none.
+   FID (Flavius ID): a permanent 6-letter code per account, shown FID-XXXXXX (no look-alike letters). Lookups by FID (fid.find,
+   domus.visit, follow / invite by FID) are rate-limited (FIND_MAX89 a minute). domus.visit = a house's PUBLIC face (no treasury,
+   purses, shelf, offerings or loadouts). */
+(function(C){
+  const LNAME_MIN89=3,LNAME_MAX89=24,RENAME_MS89=30*86400e3,LOLD_MS89=14*86400e3,FIND_MAX89=20,INV89=['all','follow','none'];
+  const FID_ABC89='23456789ABCDEFGHJKMNPQRSTUVWXYZ',FID_LEN89=6;
+  const lnameClean=s=>String(s||'').replace(/[<>&"'`\\]/g,'').replace(/\s+/g,' ').trim();
+  function lnameWhy(s){const n=lnameClean(s);if(n.length<LNAME_MIN89||n.length>LNAME_MAX89)return `Lanista name: ${LNAME_MIN89}–${LNAME_MAX89} letters.`;
+    if(!/^[\p{L}][\p{L} .\-]*$/u.test(n))return 'Letters only, please.';if(C.nameBad(n))return 'Pick another name.';return ''}
+  const lnameKey=s=>lnameClean(s).toLowerCase();
+  /* when the next rename is allowed (0 = now) */
+  const renameAt=A=>A&&A.nameAt&&A.lname?A.nameAt+RENAME_MS89:0;
+  function renameWhy(A,now){const t=renameAt(A);return t>now?`One rename every 30 days — next on ${new Date(t).toISOString().slice(0,10)}.`:''}
+  /* how others see the lanista: the name and, for 14 days after a rename, the former one */
+  function lanOut(A,now){if(!A||!A.lname)return null;const o={n:A.lname};if(A.lold&&A.lold.until>now)o.old=A.lold.n;return o}
+  function cleanPriv(p,old){const o={hide:!!(old&&old.hide),inv:INV89.includes(old&&old.inv)?old.inv:'all'};if(p&&p.hide!=null)o.hide=!!p.hide;if(p&&INV89.includes(p.inv))o.inv=p.inv;return o}
+  const privOf=A=>cleanPriv(null,A&&A.priv89);
+  /* may `by` ({domus}) invite T? '' or the reason */
+  function invWhy(T,by){const p=privOf(T);if(p.inv==='none')return 'They take no invitations.';
+    if(p.inv==='follow'&&!((T&&T.follows)||[]).some(f=>by&&f.id===by.domus))return 'They take invitations only from houses they follow.';return ''}
+  function fidMake(rnd){let s='';for(let i=0;i<FID_LEN89;i++)s+=FID_ABC89[Math.floor((rnd||Math.random)()*FID_ABC89.length)%FID_ABC89.length];return s}
+  /* "FID-ab3 xyz", "ab3xyz" → "AB3XYZ"; '' when it cannot be one */
+  function fidClean(s){let x=String(s||'').toUpperCase().replace(/[\s\-_.]/g,'');if(x.length===FID_LEN89+3&&x.startsWith('FID'))x=x.slice(3);
+    return x.length===FID_LEN89&&[...x].every(c=>FID_ABC89.includes(c))?x:''}
+  const fidShow=c=>c?'FID-'+c:'';
+  /* a house's public face: the record, colours, trophies — never the treasury, gifts, offerings, passes or the ledger */
+  function domusPub(D){const r=C.domusRow(D);if(!r)return r;for(const k of ['treasury','gifts','offers','passDay','led89','upg89','smax','patron'])delete r[k];return r}
+  /* a gladiator as a visitor sees him: what he WEARS, his rank and record — never his purse, satchel, loadouts or kept-home flags */
+  function visitChar(ch){const eq=C.equipOf(ch);const pcs={};for(const it of eq){const u=C.itemUid(it);const P=u&&(ch.pcs||{})[u];if(P){const y={...P};delete y.home;pcs[u]=y}}
+    return {id:ch.id,name:ch.name,cls:ch.cls,look:C.cleanLook(ch.look),alive:true,born:ch.born||0,rank:C.rankFor(ch).k,rankK:ch.rankK||null,glory:Math.round(C.gloryOf(ch)),
+      bouts:ch.bouts|0,wins:ch.wins|0,survived:ch.survived|0,lifeCF:ch.lifeCF|0,gear:eq.slice(),equip:eq.slice(),pcs,...(ch.test?{test:true}:{})}}
+  if(Array.isArray(C.GUEST_OK))for(const t of ['fid.find','domus.visit'])if(!C.GUEST_OK.includes(t))C.GUEST_OK.push(t);
+  Object.assign(C,{LNAME_MIN89,LNAME_MAX89,RENAME_MS89,LOLD_MS89,FIND_MAX89,INV89,FID_ABC89,FID_LEN89,lnameWhy,lnameKey,lnameClean,renameAt,renameWhy,lanOut,
+    cleanPriv89:cleanPriv,privOf89:privOf,invWhy89:invWhy,fidMake,fidClean,fidShow,domusPub89:domusPub,visitChar89:visitChar})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

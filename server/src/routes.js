@@ -970,6 +970,91 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     const LG=(await store.get('ADMIN','log'))||{list:[]};LG.list=[{at:t,acct:ctx.acct,domus:D.id,glad:c2?c2.id:null,what},...(LG.list||[])].slice(0,500);await store.put('ADMIN','log',LG);
     return {domus:C.domusRow(X),char:c2?strip(c2):null,gifts:(X&&X.gifts)||[],gear:(X&&X.gear)||[],pcs:(X&&X.pcs)||{},offers:(X&&X.offers)||[]}};
   /* ══════════ end of v0.89 THE DOMUS REBUILD ══════════ */
+  /* ══════════ v0.89 L · THE LANISTA: name, privacy, FID, the house visit, delete my account (contract tools/plans/onl89-profile.md) ══════════
+     ACCT PROFILE + lname, nameAt, lold {n, until}, priv89 {hide, inv}, fid, fq89 {h, n} (lookups a minute); `name` is never the sign-in name
+     (index.js stores 'Lanista'; hello rewrites an old Google name to the lanista name).
+     LNAME#<lower name> LNAME {acct, name, until?}: a lanista name, claimed once (putNew); `until` = a former name held for its owner until then.
+     FID#<code> FID {acct}: the permanent Flavius ID (made once, lazily on hello). GUEST#<gid> GUEST + fq89 (a guest's lookups).
+     No edits to the lines above: fitFor / inviteOne are function bindings re-pointed here (privacy), the rest are new routes or wrappers. */
+  const lanC89=new Map();
+  async function lanOf89(acct){if(!acct)return null;const c=lanC89.get(acct);if(c&&now()-c.at<60e3)return c.v;const A=await acctOf(acct);if(A)await fidOf89(A);const v=A?{n:A.lname||null,fid:A.fid||null,old:(C.lanOut(A,now())||{}).old||null,priv:C.privOf89(A),domus:A.domus||null,follows:A.follows||[]}:null;lanC89.set(acct,{at:now(),v});return v}
+  async function fidOf89(A){if(!A)return null;if(A.fid)return A.fid;for(let i=0;i<12;i++){const c=C.fidMake(rnd);if(await store.putNew('FID#'+c,'FID',{acct:A.id})){await store.set('ACCT#'+A.id,'PROFILE',{fid:c});A.fid=c;return c}}return null}
+  /* ≤ FIND_MAX89 lookups a minute, per account (or guest) */
+  async function look89(ctx){const m=Math.floor(now()/60e3);let ok;if(ctx.acct)ok=await store.quota('ACCT#'+ctx.acct,'PROFILE','fq89',m,C.FIND_MAX89);else if(ctx.guest)ok=await store.quota('GUEST#'+ctx.guest.id,'GUEST','fq89',m,C.FIND_MAX89);else ok=false;
+    if(!ok)throw fail('slow','Too many lookups — wait a minute.')}
+  async function byFid89(s){const c=C.fidClean(s);if(!c)return null;const X=await store.get('FID#'+c,'FID');const A=X&&await acctOf(X.acct);return A?{A,code:c}:null}
+  /* a house from {id | name | fid} */
+  async function houseOf89(d){if(d.fid!=null||(d.id==null&&d.name&&C.fidClean(d.name))){const F=await byFid89(d.fid!=null?d.fid:d.name);const D=F&&F.A.domus?await domusGet(F.A.domus):null;if(!D)throw fail('no_fid','No house with that FID.');return D}
+    let id=d.id?String(d.id):null;if(!id&&d.name){const X=await store.get('DNAME#'+C.domusKey(d.name),'DNAME');id=X&&X.domus}const D=await domusGet(id);if(!D)throw fail('no_domus','No such house.');return D}
+  async function claimL89(name,acct){const k=C.lnameKey(name);const X=await store.get('LNAME#'+k,'LNAME');
+    if(X&&X.acct!==acct&&!(X.until&&X.until<=now()))return false;
+    if(X){await store.put('LNAME#'+k,'LNAME',{acct,name});return true}
+    if(await store.putNew('LNAME#'+k,'LNAME',{acct,name}))return true;const Y=await store.get('LNAME#'+k,'LNAME');return !!Y&&Y.acct===acct}
+  async function dropL89(name,acct){if(!name)return;const k=C.lnameKey(name);const X=await store.get('LNAME#'+k,'LNAME');if(X&&X.acct===acct)await store.del('LNAME#'+k,'LNAME')}
+  /* privacy: invitations (lobby.invite, lobby.again) and the Praeco's calls (lobby.call, the 'open' line) skip those who said no */
+  {const base=inviteOne;inviteOne=async function(L,me,meName,to,o){const T=await acctOf(to);if(T){const B=await acctOf(me);const why=C.invWhy89(T,{domus:B&&B.domus});if(why)return why}return base.apply(this,arguments)}}
+  {const base=fitFor;fitFor=async function(L,by){const B=await acctOf(by);return (await base(L,by)).filter(A=>!C.invWhy89(A,{domus:B&&B.domus}))}}
+  Object.assign(R,{
+    /* ✎ the lanista name: the first naming, or a rename (once every 30 days; the old one stays "formerly" for 14 days, held for you) */
+    'lanista.name':async(d,ctx)=>{const A=await acctOf(ctx.acct);if(!A)throw new Error('Sign in first.');const why=C.lnameWhy(d.name);if(why)throw fail('lname',why);
+      const name=C.lnameClean(d.name);const same=A.lname&&C.lnameKey(A.lname)===C.lnameKey(name);if(same&&A.lname===name)return {lan:await lanMe89(A)};
+      if(A.lname&&!same){const w=C.renameWhy(A,now());if(w)throw fail('too_soon',w,{next:C.renameAt(A)})}
+      if(!(await claimL89(name,ctx.acct)))throw fail('name_taken','Another lanista has that name.');
+      const P={lname:name,name};if(A.lname&&!same){P.nameAt=now();P.lold={n:A.lname,until:now()+C.LOLD_MS89};await store.put('LNAME#'+C.lnameKey(A.lname),'LNAME',{acct:ctx.acct,name:A.lname,until:now()+C.LOLD_MS89})}
+      else if(!A.lname)P.nameAt=now();
+      await store.set('ACCT#'+ctx.acct,'PROFILE',P);lanC89.delete(ctx.acct);hereC=null;return {lan:await lanMe89({...A,...P})}},
+    /* lanista names (+ FID) of up to 16 accounts — the room roster shows them beside the gladiators */
+    'lanista.names':async d=>{const out={};for(const id of (Array.isArray(d.ids)?d.ids:[]).map(String).slice(0,16)){if(/^bot/.test(id))continue;const v=await lanOf89(id);if(v&&v.n)out[id]={n:v.n,fid:C.fidShow(v.fid),...(v.old?{old:v.old}:{})}}return out},
+    /* 🔒 privacy: {hide} Here now + the Orbis glow, {inv} who may invite me */
+    'acct.priv':async(d,ctx)=>{const A=await acctOf(ctx.acct);if(!A)throw new Error('Sign in first.');const p=C.cleanPriv89(d,A.priv89);const P={priv89:p};
+      if(p.hide&&A.here&&A.here.tz)P.here={...A.here,tz:''};await store.set('ACCT#'+ctx.acct,'PROFILE',P);lanC89.delete(ctx.acct);hereC=null;return {priv:p}},
+    /* 🔍 a house by FID (rate-limited; guests too) */
+    'fid.find':async(d,ctx)=>{await look89(ctx);const F=await byFid89(d.fid);const D=F&&F.A.domus?await domusGet(F.A.domus):null;if(!D)throw fail('no_fid','No house with that FID.');
+      return {fid:C.fidShow(F.code),domus:C.domusPub89(D),lan:C.lanOut(F.A,now())}},
+    /* 🏛 a read-only visit: the house's public face, its living gladiators as they are dressed, the memorial — never purses, the treasury or the shelf */
+    'domus.visit':async(d,ctx)=>{await look89(ctx);const D=await houseOf89(d||{});const O=await acctOf(D.owner);
+      const glads=(await store.byIndex('OWNER#'+D.owner)).filter(c=>c.domus===D.id&&c.alive).sort((a,b)=>(a.born||0)-(b.born||0)).map(C.visitChar89);
+      const me=ctx.acct?await acctOf(ctx.acct):null;const [st]=await followsOut([{id:D.id,name:D.name}]);
+      const inv=me&&O&&me.id!==O.id?C.invWhy89(O,{domus:me.domus}):'';
+      return {domus:{...C.domusPub89(D),archived:!!D.archived,trophies:D.trophies||[],recent:D.recent||[]},glads,active:O&&glads.some(c=>c.id===O.active)?O.active:(glads[glads.length-1]||{}).id||null,
+        memo:D.memo89||[],fallen:(await store.byIndex('OWNER#'+D.owner)).filter(c=>c.domus===D.id&&!c.alive).slice(0,60).map(c=>({id:c.id,name:c.name,cls:c.cls,rank:(c.died&&c.died.rank)||C.rankFor(c).k,at:(c.died&&c.died.at)||0})),
+        lan:C.lanOut(O,now()),fid:O?C.fidShow(await fidOf89(O)):'',following:!!(me&&(me.follows||[]).some(f=>f.id===D.id)),mine:!!(me&&me.domus===D.id),
+        now:st&&st.st!=='off'&&O&&C.privOf89(O).hide?{id:D.id,name:D.name,st:'off'}:st,acct:st&&st.st==='free'&&!inv?st.acct:null,inv}},
+    /* 🗑 delete my account: confirm = the house name (or, without a house, the lanista name). Gladiators, house, shelf, follows, kits, bets,
+       names and the FID go; past Today / Acta lines keep the gladiators' names but lose the link to the house. */
+    'acct.delete':async(d,ctx)=>{const A=await acctOf(ctx.acct);if(!A)throw new Error('Sign in first.');const D=await domusGet(A.domus);
+      const want=D?D.name:(A.lname||'');if(!want||String(d.confirm||'').trim().toLowerCase()!==want.toLowerCase())throw fail('confirm',D?'Type your house name to confirm.':'Type your lanista name to confirm.');
+      if(await busyIn(ctx.acct)||await stillFighting(A))throw fail('in_match','Leave your room or finish your match first.');
+      if(A.party)try{await R['party.leave']({},ctx)}catch(e){}
+      for(const c of await store.byIndex('OWNER#'+ctx.acct)){if(c.alive)await countRank(C.rankFor(c).k,-1,c);await store.del('CHAR#'+c.id,'CHAR')}
+      for(const id of [A.domus,...(A.domusOld||[])].filter(Boolean)){const X=await domusGet(id);if(!X)continue;await releaseName(X);await store.del('DOMUS#'+id,'DOMUS')}
+      await dropL89(A.lname,ctx.acct);if(A.lold)await dropL89(A.lold.n,ctx.acct);if(A.fid)await store.del('FID#'+A.fid,'FID');
+      for(const pk of ['BETS#'+ctx.acct,'INVITE#'+ctx.acct])for(const x of await store.query(pk,''))await store.del(pk,x.SK);
+      try{await store.del('WAGERWK#'+C.weekKey(now()),'A#'+ctx.acct)}catch(e){}
+      /* Today / the Acta: the lines stay (history) without the house link */
+      if(A.domus)for(const k of [C.dayKey(now()),C.dayPrevKey?C.dayPrevKey(now()):null].filter(Boolean)){try{const Y=await store.get('WORLD','DAY#'+k);if(!Y)continue;let ch=false;
+        const scrub=e=>{if(e&&typeof e==='object'){if(e.dom===A.domus){delete e.dom;ch=true}for(const v of Object.values(e))if(v&&typeof v==='object')scrub(v)}};scrub(Y);if(ch)await store.put('WORLD','DAY#'+k,strip(Y))}catch(e){}}
+      await store.del('ACCT#'+ctx.acct,'PROFILE');lanC89.delete(ctx.acct);hereC=null;return {deleted:true}}});
+  async function lanMe89(A){return {name:A.lname||null,need:!A.lname,fid:C.fidShow(A.fid),next:C.renameAt(A),old:C.lanOut(A,now())&&C.lanOut(A,now()).old||null,priv:C.privOf89(A)}}
+  /* hello: the FID (made once), the old sign-in name rewritten, hidden lanistas glow nowhere on the map, followed houses carry the lanista name */
+  {const base=R['hello'];R['hello']=async(d,ctx)=>{d=d||{};let A=ctx.acct?await acctOf(ctx.acct):null;
+    if(A){await fidOf89(A);const nm=A.lname||'Lanista';if(A.name!==nm){await store.set('ACCT#'+A.id,'PROFILE',{name:nm});A.name=nm}if(C.privOf89(A).hide&&d.tz!=null)d={...d,tz:''}}
+    const o=await base(d,ctx);if(!A||!o)return o;o.lan89=await lanMe89(A);o.needLname=!A.lname;if(o.me)o.me={...o.me,name:A.name};
+    if(Array.isArray(o.follows)){const out=[];for(const f of o.follows){const X=await domusGet(f.id);if(!X)continue;const v=await lanOf89(X.owner);const y={...f,...(v&&v.n?{lan:v.n}:{})};
+        out.push(v&&v.priv.hide&&y.st!=='off'?{id:y.id,name:y.name,st:'off',...(y.lan?{lan:y.lan}:{})}:y)}o.follows=out}return o}}
+  /* Here now: hidden lanistas get no pill (the totals still count them) */
+  {const base=R['who.list'];R['who.list']=async(d,ctx)=>{const rows=await base(d,ctx);const me=await acctOf(ctx.acct);const out=[];
+    for(const r of rows){const v=await lanOf89(r.id);if(v&&v.priv.hide)continue;out.push({...r,...(v&&v.n?{lan:v.n}:{}),...(v&&C.invWhy89(v,{domus:me&&me.domus})?{noinv:1}:{})})}return out}}
+  /* ★ follow by FID; ✉ invite by FID (same rules, same privacy) */
+  {const base=R['domus.follow'];R['domus.follow']=async(d,ctx)=>{if(d&&d.fid!=null){await look89(ctx);const F=await byFid89(d.fid);if(!F||!F.A.domus)throw fail('no_fid','No house with that FID.');d={...d,id:F.A.domus}}return base(d,ctx)}}
+  {const base=R['lobby.invite'];R['lobby.invite']=async(d,ctx)=>{if(d&&(d.fid!=null||C.fidClean(d.to)&&!(await acctOf(String(d.to))))){await look89(ctx);const F=await byFid89(d.fid!=null?d.fid:d.to);if(!F)throw fail('no_fid','No lanista with that FID.');d={...d,to:F.A.id}}return base(d,ctx)}}
+  /* the public profile names the lanista (and the former name for 14 days) and the FID */
+  {const base=R['domus.profile'];R['domus.profile']=async(d,ctx)=>{const o=await base(d,ctx);try{const D=o&&o.domus&&await domusGet(o.domus.id);const O=D&&await acctOf(D.owner);if(O){o.lan=C.lanOut(O,now());o.fid=C.fidShow(O.fid);
+      if(o.now&&o.now.st!=='off'&&C.privOf89(O).hide)o.now={id:D.id,name:D.name,st:'off'}}}catch(e){}return o}}
+  /* dev stacks / local tests: the sign-in box IS the lanista name (when it is a valid, free one) — {google:1} keeps the real path (the name step) */
+  {const base=R['auth.signin'];R['auth.signin']=async(d,ctx)=>{const a=await base(d,ctx);if(d&&!d.google&&a&&!C.lnameWhy(d.name)){const name=C.lnameClean(d.name);
+      if(await claimL89(name,a.id)){await store.set('ACCT#'+a.id,'PROFILE',{lname:name,name});a.lname=name;a.name=name}}return a}}
+  /* ══════════ end of v0.89 L ══════════ */
   return async function route(t,d,ctx){const f=R[t];if(!f)throw new Error('Unknown request: '+t);
     /* v0.82 guests look, never act — for 2 hours from their first connect */
     if(!ctx.acct&&ctx.guest){if(now()-(ctx.guest.first||0)>C.GUEST_MS)throw fail('guest_expired','Your two hours as a guest are up — sign in to keep watching.');
