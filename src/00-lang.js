@@ -9,7 +9,7 @@
    • Game terms (GAME_TERMS, 138-v84) and every name (weapons, armor, beasts, offerings, cards, classes,
      events, people) stay English in every language — the dictionary simply keeps them. */
 /* every language is named in its own language (v0.87) */
-const LANGS86=[{k:'en',n:'English'},{k:'es',n:'Español'},{k:'it',n:'Italiano'},{k:'pt',n:'Português (Brasil)'},{k:'fr',n:'Français'},{k:'de',n:'Deutsch'}];
+const LANGS86=[{k:'en',n:'English'},{k:'es',n:'Español'},{k:'it',n:'Italiano'},{k:'pt',n:'Português (Brasil)'},{k:'fr',n:'Français'},{k:'de',n:'Deutsch'},{k:'ja',n:'日本語'}];
 /* the dictionary arrives as window.LANG_PACK (assets/lang_<l>.js, loaded by 01-head before this script); if it did not load
    (offline, file missing) the game simply runs in English */
 const LANG_PACK0=(typeof window!=='undefined'&&window.LANG_PACK)||null;
