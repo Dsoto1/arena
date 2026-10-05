@@ -28,7 +28,7 @@ function npcStats87(t,key,name){const sp=nc82Spec(t,key,name),T=sp.T;const st=T.
     <p class="ns87rw">${_T`Slain:`} <span class="ns87i">${ICO.coin}<b>${T.coin||0}</b></span> <span class="ns87i">${_T`${ICO.wheat}<b>${T.cf||0}</b> CF`}</span></p></div></div></div>`}
 {const base=nc82Open;nc82Open=function(t,key,name){if(HEADLESS||!NPCT[t]||!npcBase87(t))return base.apply(this,arguments);
   let pop=document.getElementById('nc82pop');if(pop)pop.remove();pop=document.createElement('div');pop.id='nc82pop';
-  pop.innerHTML=`<div class="nc82popin">${npcStats87(t,key,name)}<div class="rc-sub">${_T`Esc to close`}</div></div>`;
+  pop.innerHTML=`<div class="nc82popin">${npcStats87(t,key,name)}<div class="rc-sub">${(typeof ph88==='function'&&matchMedia('(pointer:coarse)').matches)?_T('Tap to close'):_T`Esc to close`}</div></div>`;
   document.body.appendChild(pop)}}
 {const css=document.createElement('style');css.textContent=`
 .ns87{display:flex;gap:18px;align-items:center;background:linear-gradient(#2a1f17,#1c140f);border:1px solid var(--gold);border-radius:10px;padding:16px 18px;max-width:min(520px,92vw);box-shadow:0 14px 40px rgba(0,0,0,.6)}
