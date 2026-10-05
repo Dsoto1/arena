@@ -83,12 +83,12 @@ const run=async(mode)=>{const vp=mode==='p'?{width:390,height:844}:{width:844,he
     const rl=await P.evaluate(()=>{const r=document.querySelector('#onl .onl-rail');return r?Math.round(r.getBoundingClientRect().height):0});ok(rl>0&&rl<=64,`${mode} online ${n}: the rail is one slim row (${rl} px)`);
     await check('onl_'+n,['#mClose','#onl .onl-rail [data-onl="tab"][data-v="play"]',...sels])};
   await onl('play','landing',[]);await close();
-  await onl('char','domus',['#onl .sl88 .onl-gslot']);
-  const sl=await P.evaluate(()=>{const row=document.querySelector('#onl .sl88');if(!row)return null;const cs=[...row.querySelectorAll('.onl-gslot')];const st=getComputedStyle(row).overflowX;
+  await onl('char','domus',['#onl .gc89-row .gc89']);
+  const sl=await P.evaluate(()=>{const row=document.querySelector('#onl .gc89-row');if(!row)return null;const cs=[...row.querySelectorAll('.gc89')];const st=getComputedStyle(row).overflowX;
     return {n:cs.length,ox:st,scroll:row.scrollWidth>row.clientWidth+1,fits:cs.every(c=>c.getBoundingClientRect().right<=row.getBoundingClientRect().right+1)}});
   ok(sl&&sl.n===4&&(mode==='p'?/auto|scroll/.test(sl.ox)&&sl.scroll:(sl.scroll||sl.fits)),mode+' Domus: the four slots scroll sideways '+JSON.stringify(sl));
-  if(sl&&sl.scroll){const moved=await P.evaluate(()=>{const row=document.querySelector('#onl .sl88');row.scrollLeft=200;return row.scrollLeft>0});ok(moved,mode+' Domus: the slot row really scrolls')}
-  await P.evaluate(()=>{const e=document.querySelector('#onl .st88');if(e)e.scrollIntoView()});await W(200);await shot('onl_domus_stage');await close();
+  if(sl&&sl.scroll){const moved=await P.evaluate(()=>{const row=document.querySelector('#onl .gc89-row');row.scrollLeft=200;return row.scrollLeft>0});ok(moved,mode+' Domus: the slot row really scrolls')}
+  await P.evaluate(()=>{const e=document.querySelector('#onl .sc89');if(e)e.scrollIntoView()});await W(200);await shot('onl_domus_stage');await close();
   await onl('armory','armory',[]);await close();
   await onl('lobby','lobby',['#onl [data-onl="mkroom"][data-v="0"]']);
   await P.evaluate(()=>{const b=document.querySelector('#onl [data-onl="mkroom"][data-v="0"]');if(b)b.click()});await W(2500);await check('onl_room',['#mClose']);await close();

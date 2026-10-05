@@ -30,14 +30,17 @@ await world(A,(w,[cid,did])=>{const ch=w.chars[cid];ch.wallet=900;const D=w.domu
 /* ── 1 + 3 + 10 · the Domus: 8 ranks with living counts, treasury, trophies, gifts chest ── */
 await open(A,'char');
 const dm=await A.evaluate(()=>({bands:document.querySelectorAll('#onl .rb83 .rb82-band').length,living:[...document.querySelectorAll('#onl .rb83 .rb82-n')].every(x=>/living/.test(x.textContent)),top:(document.querySelector('#onl .rb83 .rb82-band b')||{}).textContent||'',
-  tre:(document.querySelector('#onl .tre83')||{}).textContent||'',tro:document.querySelectorAll('#onl .tr83-t').length,gift:(document.querySelector('#onl .gift83.dom.on .gift83n')||{}).textContent||''}));
+  tre:(document.querySelector('#onl .db89-tre')||document.querySelector('#onl .tre83')||{}).textContent||'',gift:(document.querySelector('#onl .gift83.dom.on .gift83n')||{}).textContent||''}));
+/* v0.89 (175): the trophies open from 🏆 at the top of the Domus */
+await A.click('#onl [data-d89="tro"]');await A.waitForTimeout(300);dm.tro=await A.evaluate(()=>document.querySelectorAll('.tr89pop .tr83-t').length);await A.evaluate(()=>{const p=document.querySelector('.tr89pop');if(p)p.remove()});
 ok(dm.bands===8&&dm.living&&/Invictus/.test(dm.top),'rank bar: 8 ranks, Invictus on top, living counts ('+JSON.stringify(dm)+')');ok(/321/.test(dm.tre),'the treasury on the Domus record');ok(dm.tro===4,'the trophy shelf');ok(dm.gift==='2','the gift chest glows with its count');
 /* ── 2 · gear levels: the named piece is locked for a Tiro; 5 · the broken helm has 🔧 Repair ── */
-const gl=await A.evaluate(()=>{const nw=document.querySelector('#onl .sr83.named83');const ck=nw&&nw.querySelector('input[data-sr82eq]');const geq=[...document.querySelectorAll('#onl input[data-onlgeq]')];
-  return {nw:!!nw,lock:!!nw&&/Veteranus\+/.test(nw.textContent),dis:!!ck&&ck.disabled,geqDis:geq.some(i=>i.disabled&&/Veteranus/.test(i.closest('label').textContent)),rep:(document.querySelector('#onl .rep83')||{}).textContent||'',brk:!!document.querySelector('#onl .sr83.brk83')}});
-ok(gl.nw&&gl.lock&&gl.dis&&gl.geqDis,'a named piece: 🔒 Veteranus+, no Bring (Storeroom + My Gladiators) '+JSON.stringify(gl));ok(gl.brk&&new RegExp('Repair · '+await A.evaluate(()=>ONLC.repairCost(ONLC.pieceInfo({item:'galea'},onlCatalog())))).test(gl.rep),'broken helm: 🔧 Repair · cost ('+gl.rep+')');
-await A.evaluate(()=>{const s=document.querySelector('#sr82');if(s)s.scrollIntoView()});await shot(A,'domus_store');await A.evaluate(()=>{document.querySelector('#mBody')&&(document.querySelector('#mBody').scrollTop=0)});await shot(A,'domus');
-await A.click('#onl .rep83');await A.waitForTimeout(300);await shot(A,'repair',390);await A.click('.rep83pop [data-rep83="treasury"]');await A.waitForTimeout(800);
+/* v0.89 (175): the equipment bar — the named piece dimmed with the reason, the broken helm cracked with 🔨 + its price (one click: the treasury pays) */
+const gl=await A.evaluate(()=>{const nw=document.querySelector('#onl .eb89 .pt89.nm89');const brk=document.querySelector('#onl .eb89 .pt89.brk89');
+  return {nw:!!nw,lock:!!nw&&nw.classList.contains('no89')&&/Veteranus/.test(nw.textContent),rep:brk?(brk.querySelector('[data-d89rep]')||{}).textContent||'':'',brk:!!brk}});
+ok(gl.nw&&gl.lock,'a named piece: dimmed, waits until Veteranus '+JSON.stringify(gl));ok(gl.brk&&new RegExp('🔨 '+await A.evaluate(()=>ONLC.repairCost(ONLC.pieceInfo({item:'galea'},onlCatalog())))).test(gl.rep),'broken helm: 🔨 + cost ('+gl.rep+')');
+await A.evaluate(()=>{const s=document.querySelector('#onl .eb89');if(s)s.scrollIntoView()});await shot(A,'domus_store');await A.evaluate(()=>{document.querySelector('#mBody')&&(document.querySelector('#mBody').scrollTop=0)});await shot(A,'domus');
+await A.click('#onl .eb89 .pt89.brk89 [data-d89rep]');await A.waitForFunction(()=>!ONL.busy,null,{timeout:10000}).catch(()=>{});await A.waitForTimeout(800);
 const rp=await A.evaluate(()=>({brk:ONLC.isBroken(ONL.char,ONL.char.gear.find(g=>/^galea/.test(g))),t:ONL.domus.treasury}));ok(!rp.brk&&rp.t===321-10,'repaired from the treasury ('+JSON.stringify(rp)+')');
 /* ── 7 · the gift reveal: a Legendary named weapon ── */
 await A.evaluate(()=>{window._r=Math.random;Math.random=()=>0.995});await A.click('#onl .gift83.dom');await A.waitForTimeout(2300);await A.evaluate(()=>{Math.random=window._r});
@@ -109,7 +112,7 @@ const nt=await B.evaluate(async()=>{try{await NET.req('admin.grant',{coin:10});r
 await B.evaluate(()=>localStorage.setItem('flavius_onltester83','1'));await open(B,'char');ok(await B.evaluate(()=>!!document.querySelector('#onl .tst83')),'the 🧪 Tester panel for a tester');
 const rc0=await B.evaluate(async()=>(await NET.req('hello',{all:1})).rankCounts);
 await B.evaluate(()=>{document.querySelector('#onl .tst83').open=true;document.getElementById('tst83coin').value='250';document.getElementById('tst83gift').value='1'});await B.click('#onl [data-onl83="grant"]');await B.waitForTimeout(1200);
-const tg=await B.evaluate(async()=>{const h=await NET.req('hello',{all:1});let r='';try{await NET.req('lobby.create',{ev:'democritus',ranked:true,cry:false})}catch(e){r=e.code}return {test:!!h.domus.test,rc:h.rankCounts,refused:r,chip:!!document.querySelector('#onl .dom82-ttl .test83'),wallet:ONL.char.wallet}});
+const tg=await B.evaluate(async()=>{const h=await NET.req('hello',{all:1});let r='';try{await NET.req('lobby.create',{ev:'democritus',ranked:true,cry:false})}catch(e){r=e.code}return {test:!!h.domus.test,rc:h.rankCounts,refused:r,chip:!!document.querySelector('#onl .db89-ttl .test83,#onl .dom82-ttl .test83'),wallet:ONL.char.wallet}});
 ok(tg.test&&tg.chip&&tg.refused==='testHouse','granted: a TEST house, Custom only '+JSON.stringify({t:tg.test,c:tg.chip,r:tg.refused}));
 const sum=o=>Object.values(o||{}).reduce((a,v)=>a+(v|0),0);ok(sum(tg.rc)===sum(rc0)-1,'out of the rank counts');
 await B.evaluate(()=>localStorage.removeItem('flavius_onltester83'));

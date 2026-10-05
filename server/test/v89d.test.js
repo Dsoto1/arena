@@ -12,6 +12,7 @@ function rules(){C.setCatalog(catalog);
   assert.throws(()=>C.editChar(g,{cls:'slave'}),/Change class in the Domus/);assert.throws(()=>C.editChar(g,{look:{token:{sc:1,c1:'#00aa00'}}}),/look is set/);
   C.editChar(g,{name:'Rule Bender',look:{token:{c1:'#aa0000',sc:1}},cls:'hero'});assert.strictEqual(g.name,'Rule Bender','the same look and class pass; the name changes');
   const old=C.newChar({name:'Old Token',cls:'hero',look:{color:'#112233'}},'o','ot',0);C.editChar(old,{look:{color:'#112233',token:{sc:1}}});assert.ok(old.look.token.sc,'the one-time sculpted conversion passes');
+  assert.throws(()=>C.editChar(C.newChar({name:'Old Token',cls:'hero',look:{color:'#112233'}},'o','o2',0),{look:{color:'#445566'}}),/look is set/,'an old look without the conversion stays');
   assert.match(C.classWhy(g,'hero',{treasury:500}),/already/);assert.match(C.classWhy(g,'dragon',{treasury:500}),/eight printed/);assert.match(C.classWhy(g,'slave',{treasury:99}),/100 coin/);assert.strictEqual(C.classWhy(g,'slave',{treasury:100}),'');
   /* dressing: the incoming pieces, what he wears (≤2 bought weapons, one per point), the rest to the shelf */
   const d=C.newChar({name:'Dress Up',cls:'hero'},'o','du',0);d.gear=['gladius','galea','ocrea'];
@@ -30,6 +31,7 @@ function rules(){C.setCatalog(catalog);
   const D={id:'D1',treasury:0};C.ledAdd(D,'cut',12,{id:'g1',name:'One'},5);C.ledAdd(D,'cut',8,{id:'g1',name:'One'});C.ledAdd(D,'cut',3,{id:'g2',name:'Two'});C.ledAdd(D,'grant',100);C.ledAdd(D,'class',100);C.ledAdd(D,'nope',5);
   const L=C.ledgerOf(D);assert.deepStrictEqual([L.in.cut,L.in.grant,L.out.class,L.tin,L.tout,L.since],[23,100,100,123,100,5]);assert.deepStrictEqual(L.by.map(x=>[x.id,x.v]),[['g1',20],['g2',3]]);
   const so={id:'D2',treasury:0,offers:[]};C.offersIn(so,Array(32).fill('elix2'));assert.strictEqual(so.offers.length,30);assert.strictEqual(so.treasury,40);assert.strictEqual(C.ledgerOf(so).in.sale,40,'offerings sold for a full shelf');
+  {const GD={treasury:0};C.applyGiftHouse(GD,{k:'coin',v:30});C.applyGiftHouse(GD,{k:'cf',v:2});assert.strictEqual(C.ledgerOf(GD).in.gift,30+2*C.CFB_COIN,'house gifts into the ledger')}
   so.upg89={shelf:1};assert.strictEqual(C.offerMoveWhy({offers:['ap2'],cls:'hero',owner:'o'},so,'ap2'),'','the bigger shelf takes more');
   /* memorial, colours, loadouts */
   const m=C.memoEntry({id:'x',name:'Fallen One',cls:'hero',died:{rank:'gregarius'}},{ev:'cassian',loc:3,at:9},C.memoBy({kb:'g'},{},'Killer Bee'));assert.deepStrictEqual([m.rank,m.ev,m.loc,m.by.k,m.by.n,m.fa],['gregarius','cassian',3,'g','Killer Bee','p']);

@@ -17,7 +17,8 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   await route('char.active',{char:z2.id},Z);assert.strictEqual((await route('hello',{all:1},Z)).active,z2.id);
   /* v0.89: the class changes only in the Domus (char.class, 100 coin from the treasury); a look may still be set once on a gladiator from before the sculpted tokens */
   await assert.rejects(route('char.edit',{char:z2.id,cls:'amazonia'},Z),/Change class in the Domus/);
-  const z2e=await route('char.edit',{char:z2.id,cls:'slave',name:'Zeta Swift',look:{portrait:{skin:'#c58c5c',helm:'galea<script>'},color:'#123456',token:{c1:'#ff0000'}}},Z);
+  const z2e=await route('char.edit',{char:z2.id,cls:'slave',name:'Zeta Swift',look:{portrait:{skin:'#c58c5c',helm:'galea<script>'},color:'#123456',token:{c1:'#ff0000',sc:1}}},Z);
+  await assert.rejects(route('char.edit',{char:z2.id,look:{color:'#654321',token:{c1:'#00ff00',sc:1}}},Z),/look is set/,'v0.89: then the look is locked');
   assert.strictEqual(z2e.cls,'slave');assert.strictEqual(z2e.name,'Zeta Swift');assert.strictEqual(z2e.look.portrait.helm,'galeascript','looks are cleaned');assert.deepStrictEqual(z2e.stats,C.START_STATS,'ratings stay');
   await assert.rejects(route('char.edit',{char:z2.id,cls:'dragon'},Z),/Change class in the Domus/);
   const ZL=await route('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:false},Z);await assert.rejects(route('char.edit',{char:z2.id,name:'Busy'},Z),/Finish or leave/);

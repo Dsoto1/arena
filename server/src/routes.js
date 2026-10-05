@@ -871,7 +871,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
 
   /* ══════════ v0.89 THE DOMUS REBUILD (part H — contract tools/plans/onl89-domus.md) ══════════
      New routes: char.class · domus.dress · gear.home · char.kits · char.kitapply · domus.upgrade · domus.look. Wrapped: char.create (the house's
-     gladMax), domus.get (+ memo), gift.open / domus.buy / gear.repair (the treasury LEDGER), admin.grant (REPLACED: coin → the treasury, gear and
+     gladMax), domus.get (+ memo), domus.buy / gear.repair (the treasury LEDGER; gifts and shelf sales: ONLC.applyGiftHouse / offersIn), admin.grant (REPLACED: coin → the treasury, gear and
      offerings → the house shelf), domusAfter (the cut by gladiator + the MEMORIAL on a death), aucRefund (a refund into the treasury).
      Everything here is additive; the only edited line outside this block is offer.move's shelf cap (C.shelfMax). */
   for(const t of ['char.class','domus.dress','gear.home','char.kits','char.kitapply','domus.upgrade','domus.look'])NEED_DOMUS.add(t);
@@ -950,9 +950,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     ch.domus=A&&A.domus||null;if(A&&A.dtest)ch.test=true;if(A&&!live.some(c=>c.id===A.active))await store.set('ACCT#'+A.id,'PROFILE',{active:ch.id});await putChar(ch);
     await editDomus(ch.domus,X=>{X.glads=(X.glads|0)+1});await countRank(C.rankFor(ch).k,1,ch);return strip(ch)};
   {const base=R['domus.get'];R['domus.get']=async(d,ctx)=>{const o=await base(d,ctx);try{const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);o.memo=(D&&D.memo89)||[]}catch(e){o.memo=[]}return o}}
-  /* the ledger: a house gift opened into the treasury, the treasury buying for the shelf, a repair the treasury paid */
-  {const base=R['gift.open'];R['gift.open']=async(d,ctx)=>{const r=await base(d,ctx);try{if(!r.char&&r.reward&&r.domus){const v=r.reward.k==='coin'?r.reward.v|0:r.reward.k==='cf'?(r.reward.coin|0):0;
-      if(v){const X=await ledger89(r.domus.id,'gift',v,null);if(X)r.domus=C.domusRow(X)}}}catch(e){}return r}}
+  /* the ledger: the treasury buying for the shelf, a repair the treasury paid (a house gift opened into the treasury: C.applyGiftHouse) */
   {const base=R['domus.buy'];R['domus.buy']=async(d,ctx)=>{const r=await base(d,ctx);try{const X=await ledger89(r.domus&&r.domus.id,'gear',C.priceOf(catalog[d.item]),null);if(X)r.domus=C.domusRow(X)}catch(e){}return r}}
   {const base=R['gear.repair'];R['gear.repair']=async(d,ctx)=>{const r=await base(d,ctx);try{const byT=d.pay==='treasury'||(d.pay==null&&d.holder==='house');
       if(byT){const X=await ledger89(r.domus&&r.domus.id,'repair',r.cost|0,null);if(X)r.domus=C.domusRow(X)}}catch(e){}return r}}

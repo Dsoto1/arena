@@ -693,7 +693,8 @@ const ONLC=(function(){
   const MEMO_MAX89=60, KITS_MAX89=3, KIT_ITEMS89=16, DRESS_W89=2, LED_BY89=40;
   const LED_IN89=['cut','gift','sale','refund','grant'], LED_OUT89=['gear','repair','class','upg'];
   const upgOf=D=>(D&&D.upg89)||{};
-  const gladMax=D=>C.GLAD_MAX+(upgOf(D).slot5?1:0);
+  const GMAX0=C.GLAD_MAX; /* the base cap (pages may lend ONLC.GLAD_MAX the house's cap for older screens) */
+  const gladMax=D=>GMAX0+(upgOf(D).slot5?1:0);
   const shelfMax=D=>C.OFF_SHELF+(upgOf(D).shelf?UPG89.shelf.add:0);
   function upgWhy(D,k){const U=UPG89[k];if(!U)return 'No such upgrade.';if(upgOf(D)[k])return 'Already built.';if(((D&&D.treasury)|0)<U.cost)return `The treasury needs ${U.cost} coin.`;return ''}
   function upgBuy(D,k,t){const why=upgWhy(D,k);if(why)throw new Error(why);const U=UPG89[k];D.treasury=(D.treasury|0)-U.cost;D.upg89={...upgOf(D),[k]:t||1};ledAdd(D,'upg',U.cost,null,t);return D}
@@ -731,7 +732,7 @@ const ONLC=(function(){
   /* ── the look is set at creation; the class changes only through char.class ── */
   const stable=o=>o&&typeof o==='object'?(Array.isArray(o)?'['+o.map(stable).join(',')+']':'{'+Object.keys(o).sort().map(k=>JSON.stringify(k)+':'+stable(o[k])).join(',')+'}'):JSON.stringify(o);
   {const base=C.editChar;C.editChar=function(ch,d,catalog){d={...(d||{})};
-    if(d.look!=null){const was=C.cleanLook(ch.look),now=C.cleanLook(d.look);const legacy=!(was.token&&was.token.sc); /* the one-time v0.82 sculpted-token conversion */
+    if(d.look!=null){const was=C.cleanLook(ch.look),now=C.cleanLook(d.look);const legacy=!(was.token&&was.token.sc)&&!!(now.token&&now.token.sc); /* only the one-time v0.82 sculpted-token conversion (an old look → its sculpted token) */
       if(stable(was)!==stable(now)&&!legacy)throw new Error('A gladiator’s look is set when he is raised.');if(!legacy)delete d.look}
     if(d.cls!=null&&d.cls!==ch.cls)throw new Error(`Change class in the Domus — ${CLASS_FEE89} coin from the treasury.`);delete d.cls;return base.call(this,ch,d,catalog)}}
   function classWhy(ch,cls,D){if(!ch||!ch.alive)return 'The dead stay as they fell.';if(!C.CLASSES8.includes(cls))return 'Pick one of the eight printed classes.';if(cls===ch.cls)return 'That is already his class.';
