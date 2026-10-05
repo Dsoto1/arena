@@ -24,7 +24,7 @@ Object.assign(o,await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeo
 await shot('pg84_setup','#mgrPane .runpanel');
 Object.assign(o,await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const c0=m.coin,h0=w.hours;
   document.querySelector('#mgrPane [data-pg84="go"]').click();await W8(300);const P=m.prog84;const r={};
-  r.start=!!P&&P.cities.length===2&&P.cities.includes(w.night.loc)&&P.until===w.week+2&&m.coin===c0-16&&w.hours===h0-1;
+  r.start=!!P&&P.cities.length===2&&P.cities.includes(w.night.loc)&&P.until===w.week+2&&m.coin===c0-16&&w.hours===h0; /* v0.87: the lanista's hours are gone — a campaign costs coin only */
   const wall=document.querySelector('#mgrPane #pg84wall');r.wall=!!wall&&wall.textContent.includes(m.ludus.toUpperCase())&&wall.textContent.includes(P.gname.toUpperCase())&&wall.querySelectorAll('.pg84w').length===3;
   /* the gate: our featured fighter fights the under-card in the host city */
   const g=gById(P.gid);g.inj=null;const bo=w.night.bouts[0];if(!bo.ents.includes(g.id)){for(const b2 of w.night.bouts){const k=b2.ents.indexOf(g.id);if(k>=0)b2.ents.splice(k,1)}bo.ents[0]=g.id}

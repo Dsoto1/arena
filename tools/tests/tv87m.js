@@ -1,7 +1,8 @@
 /* v0.87 Manager systems (150-v87mgr): 1 the lanista's hours are gone (never saved, no displays, actions still limited a week,
    the ticket clock), 2 the lanista perk tree on the Lanista tab (buy, ranks, effects, the ludus tile jumps), 3 Training Yard
    standing orders + the squad table (routine, priority, bulk, row → card, repeats after End the week, attention rows),
-   4 recruiting Fit (✓ only for the best few; a thin roster no longer makes everyone ✓); phone width without sideways scroll */
+   4 recruiting Fit (✓ only for the best few; a thin roster no longer makes everyone ✓), 5 win rewards (purse ×, streaks, growth,
+   fans → CF, patron offer); phone width without sideways scroll */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const setup=async(pg)=>{await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
   await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
@@ -12,12 +13,12 @@ const pg=await b.newPage({viewport:{width:1300,height:900}});await setup(pg);
 /* ---------- 1 · hours ---------- */
 o.h=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const r={};const w=W_(),m=me();
   r.saved=JSON.stringify(w).includes('"hours"');w.hours=0;r.after0=w.hours;w.hours-=5;r.afterSub=w.hours;
-  const fa=freeAgents().sort((a,b)=>effOvr(b)-effOvr(a));const g=fa[0];g.scout=2;g.favd=true;
-  MGR.tab='recruit';MGR.sel=g.id;MGR.recStep=2;MGR_REDRAW();await W8(500);const body=document.getElementById('mgrBody').innerHTML,txt=document.getElementById('mgrBody').innerText;
+  const fa=freeAgents().sort((a,b)=>effOvr(b)-effOvr(a));const g=fa.find(x=>m.fame>=reqFame(x))||fa[0];m.fame=Math.max(m.fame,reqFame(g));g.scout=2;g.favd=true;
+  MGR.tab='recruit';MGR.sel=g.id;MGR.recFor=g.id;MGR.recStep=2;MGR_REDRAW();await W8(500);const body=document.getElementById('mgrBody').innerHTML,txt=document.getElementById('mgrBody').innerText;
   r.lanH=/lanista's hours|lanista’s hours/.test(txt);r.btnH=(body.match(/<small>[^<]*\b\d+ h\b[^<]*<\/small>/g)||[]).slice(0,4);
   r.badge=/Recruiting hours/.test(body);r.stat=tabStat73('recruit');r.done=tabDone73('recruit');
   /* a pitch: free, answers with a result, one per recruit a week */
-  const pb=[...document.querySelectorAll('#mgrBody [data-mg="pitch"]')].find(x=>!x.disabled);r.pitchBtn=!!pb;const coin0=m.coin;pb&&pb.click();await W8(500);
+  const pb=[...document.querySelectorAll(`#mgrBody [data-mg="pitch"][data-id^="${g.id}|"]`)].find(x=>!x.disabled);r.pitchBtn=!!pb;if(!pb)r.pdbg=[...document.querySelectorAll('#mgrBody [data-mg="pitch"]')].map(x=>x.dataset.id.split('|')[0]===g.id?'G':'o'+(x.disabled?(x.title||'dis'):'')).slice(0,6).concat([pitchesLeft(),m.fame,reqFame(g),MGR.recStep,!!g.contract]);const coin0=m.coin;pb&&pb.click();await W8(500);
   r.pitchMsg=MGR.msg||'';r.pitchCoin=m.coin-coin0;r.gate=recGate(g,'pitch')[0];r.clk=w.clk87&&w.clk87.n;
   /* the oval on the Recruiting tab is gone */
   await W8(800);const ov=document.querySelector('.mtabs [data-id="recruit"] .mcount.c73');r.oval=!!(ov&&getComputedStyle(ov).display!=='none'&&!ov.hidden);
@@ -76,11 +77,11 @@ o.y=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   document.querySelector(`.yo87r[data-yo87row="${ros[4]?ros[4].id:ros[1].id}"] .yo87gn`).click();await W8(400);r.one=document.querySelectorAll('.yo87one .yd76c').length;
   document.querySelector('[data-ycard87="all"]')&&document.querySelector('[data-ycard87="all"]').click();await W8(300);r.all=document.querySelectorAll('.yd76grid .yd76c').length;
   /* the week ends: the orders come back by themselves */
-  const wk=w.week;for(const bt of (w.night&&w.night.bouts)||[])bt.done=true;w.pend=[];await endWeek();await W8(300);const w2=W_();
-  r.adv=w2.week!==wk;r.str2=((thPlan(w2).g[ros[1].id])||{}).str;r.bal2=((thPlan(w2).g[ros[2].id])||{}).spd;r.rest2=ros[0].restWk===w2.week;r.gain=!!(ros[1].gain87&&ros[1].gain87.wk===w2.week);
-  MGR.tab='practice';MGR_REDRAW();await W8(400);r.gainTxt=(document.querySelector(`.yo87r[data-yo87row="${ros[1].id}"] .yo87gn`)||{}).textContent||'';
+  ros.forEach(g=>{g.contract.weeks=20;g.morale=90});const wk=w.week;for(const bt of (w.night&&w.night.bouts)||[])bt.done=true;w.pend=[];await endWeek();await W8(300);const w2=W_();
+  r.adv=w2.week!==wk;const hurt=g=>!!g.inj||g.alive===false||!(g.contract&&g.contract.mgr===m.id); /* a week can wound, kill or take a fighter away */const gw=ros.find(g=>!hurt(g))||ros[1];r.str2=hurt(ros[1])?3:((thPlan(w2).g[ros[1].id])||{}).str;r.bal2=hurt(ros[2])?1:((thPlan(w2).g[ros[2].id])||{}).spd;r.rest2=hurt(ros[0])||ros[0].restWk===w2.week;r.hurt2=ros.slice(0,3).map(hurt);if(r.bal2!==1||r.str2!==3)r.dbg2=ros.slice(1,4).map(g=>({p:thPlan(w2).g[g.id],o:g.ord87,rest:g.restWk,wk:w2.week,left:thLeft(w2),max:thMax(),mine:!!(g.contract&&g.contract.mgr===m.id),alive:g.alive}));r.gain=!!(gw.gain87&&gw.gain87.wk===w2.week);
+  MGR.tab='practice';MGR_REDRAW();await W8(400);r.gainTxt=(document.querySelector(`.yo87r[data-yo87row="${gw.id}"] .yo87gn`)||{}).textContent||'';
   /* a routine the hours cannot pay is marked */
-  const P=thPlan(w2);P.doc=TH_DOC;P.spent=thMax();const g5=ros[4]||ros[1];ord87Set(g5,'cha');MGR_REDRAW();await W8(300);r.short=g5.ord87.short;
+  const g5=[ros[4],...ros].find(g=>g&&g.alive!==false&&g.contract&&g.contract.mgr===m.id)||ros[1];g5.inj=null;g5.restWk=null;const tl=window.thLeft;window.thLeft=()=>0;try{ord87Set(g5,'cha')}finally{window.thLeft=tl}MGR_REDRAW();await W8(300);r.short=g5.ord87.short;
   r.shortRow=!!document.querySelector(`.yo87r.need[data-yo87row="${g5.id}"]`);
   return r});
 ok(o.y.rows===o.y.ros&&o.y.cards===0,'the yard opens on the squad table');ok(o.y.need>=1,'the worn-out row asks for attention');
@@ -98,6 +99,42 @@ o.f=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   r.tip=(document.querySelector('#mgrBody .fitchip')||{}).title||'';return r});
 ok(o.f.ticks<=3&&o.f.thinTicks<=3&&o.f.rowTicks<=3,'✓ only for the best few');ok(o.f.thinFA>3,'thin roster: many free agents, still at most three ✓');
 ok(/roster/.test(o.f.why)&&/affordable|steep/.test(o.f.why),'Fit tooltip says why');
+/* ---------- 5 · win rewards ---------- */
+o.r=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const r={};const w=W_(),m=me();m.perks87={};
+  r.mult=[win87Mult(0.25,4,0),win87Mult(0.1,4,0),win87Mult(0.6,4,1),win87Mult(0.25,4,9)].map(x=>[x.up,x.st,x.all]);
+  /* fans → CF */
+  const g=rosterOf(m).find(x=>!x.inj)||rosterOf(m)[0];g.inj=null;g.alive=true;const cf0=boostFor(g).cf;r.crowd=(typeof CROWD_CACHE!=='undefined'?CROWD_CACHE:[]).length;
+  const fr=(CROWD_CACHE||[]).filter(x=>!x.fanOf&&!x.banned).slice(0,3);const keep=fr.map(x=>[x,x.fanOf]);fr.forEach(x=>x.fanOf=g.name);r.fanCF=fr.length>=3?boostFor(g).cf-cf0:1;keep.forEach(([x,v])=>{x.fanOf=v});
+  /* a win on a 2-win streak */
+  const bi=w.night.bouts.findIndex(x=>x.ents.length>=2);const b=w.night.bouts[bi];b.done=false;b.rig=null;b.bets=[];if(!b.ents.includes(g.id))b.ents[0]=g.id;
+  const P=boutProbs(b,'book');const exp=win87Mult(P[b.ents.indexOf(g.id)],b.ents.length,2);const other=gById(b.ents.find(id=>id!==g.id));
+  g.streak87=2;if(other)other.streak87=4;g.pat87=null;const st0=gStats(g);const sum0=st0.spd+st0.str+st0.int+st0.cha+(g.sxp?Object.values(g.sxp).reduce((a,c)=>a+c,0):0);
+  const mor0=g.morale=50,loy0=g.loyB||0,fame0=g.fame||0,hf0=m.fame,fans0=fansFor(g.name);
+  const res={rows:b.ents.map((id,i)=>({id:i,mgrId:id,f:id===g.id?26:10,kp:0,kn:0,dmg:0,alive:true,coin:0,severed:[]})),winners:[b.ents.indexOf(g.id)]};
+  applyBout(bi,res,{});const B=(b.res&&b.res.bonus87||[]).find(x=>x.gid===g.id);
+  r.bonus=B?[B.up,B.st,B.all,B.extra]:null;r.exp=[exp.up,exp.st,exp.all];r.streak=[g.streak87,other?other.streak87:0];
+  const st1=gStats(g);r.grow=(st1.spd+st1.str+st1.int+st1.cha+(g.sxp?Object.values(g.sxp).reduce((a,c)=>a+c,0):0))-sum0;r.mor=g.morale-mor0;r.loy=(g.loyB||0)-loy0;r.fame=g.fame-fame0;r.hfame=m.fame-hf0;r.fans=fansFor(g.name)-fans0;
+  r.news=(w.news||[]).slice(0,12).map(x=>typeof x==='string'?x:(x&&(x.t||x.text||x.html))||'').join(' ');
+  const L=(w.letters||[]).find(x=>x.pt87&&x.pt87.gid===g.id);r.letter=!!L;
+  MGR.tab='ludus';MGR.run=null;MGR.view=null;MGR_REDRAW();await W8(500);
+  const yb=document.querySelector(`#mgrBody [data-pt87^="yes|"]`);r.btn=!!yb;
+  if(yb){const det=yb.closest('details');if(det)det.open=true;yb.click();await W8(400)}r.pat=(w.pat87||[]).length;
+  /* the roster card shows the streak */
+  MGR.tab='roster';MGR.lsel=g.id;MGR_REDRAW();await W8(400);r.card=/wins in a row/.test(document.getElementById('mgrBody').innerText);
+  /* the patron pays at the week's end */
+  for(const bt of w.night.bouts)bt.done=true;w.pend=[];const pay=(w.pat87[0]||{}).pay||0;let got=false;const t0=window.tnews;window.tnews=function(x){if(/pays/.test(x)&&/sponsoring/.test(x))got=true;return t0.apply(this,arguments)};
+  const wk3=w.week;let ret;try{ret=await endWeek()}finally{window.tnews=t0}await W8(300);r.paid=(got&&pay>0)||g.alive===false||!mineP87(g); /* a fighter the week took away is not paid for */if(!r.paid)r.pdbg={ret,wk3,wk:W_().week,same:W_()===w,pat:W_().pat87,alive:g.alive,mine:mineP87(g),pend:(w.pend||[]).length,spec:!!(w.special&&!w.special.done),inj:g.inj&&g.inj.label};
+  /* a stale offer goes when the fighter does */
+  const g2=rosterOf(m).find(x=>x.id!==g.id);if(g2){pat87Offer(W_(),g2,m,0);g2.contract=null;for(const bt of W_().night.bouts)bt.done=true;W_().pend=[];await endWeek();await W8(300);
+    r.stale=!(W_().letters||[]).some(x=>x.pt87&&x.pt87.gid===g2.id)}
+  return r});
+ok(JSON.stringify(o.r.mult)==='[[1,1,1],[2,1,2],[1,1.25,1.25],[1,2,2]]','purse multiplier: upset up to ×2, streak +25% up to ×2 '+JSON.stringify(o.r.mult));
+ok(o.r.fanCF===1,'fans bring CF '+o.r.fanCF);
+ok(o.r.bonus&&o.r.bonus[1]===1.5&&o.r.bonus[2]===o.r.exp[2]&&o.r.bonus[3]>0,'the winner\'s purse grows with the streak/upset '+JSON.stringify([o.r.bonus,o.r.exp]));
+ok(o.r.streak[0]===3&&o.r.streak[1]===0,'streaks count and reset '+o.r.streak);
+ok(o.r.grow>=2&&o.r.mor>=5&&o.r.loy>=3&&o.r.fame>=2&&o.r.hfame>=1,'winners grow, cheer, bond and get famous '+JSON.stringify([o.r.grow,o.r.mor,o.r.loy,o.r.fame,o.r.hfame]));
+ok(!o.r.crowd||o.r.fans>=1,'the city\'s regulars turn fans '+o.r.fans);
+ok(o.r.letter&&o.r.btn&&o.r.pat===1,'a 3-win streak brings a patron offer you can accept');ok(o.r.card,'the streak shows on the roster card');ok(o.r.paid,'the patron pays at the week\'s end');ok(o.r.stale!==false,'a patron offer about a fighter you lost goes');
 /* ---------- phones ---------- */
 const pp=await b.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});await setup(pp);
 o.ph=await pp.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const r={};me().perkPts=3;

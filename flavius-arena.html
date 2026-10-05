@@ -50923,6 +50923,14 @@ function langAsk86(){
    4. RECRUITING FIT. recFit replaced: fit87Score = how much the fighter improves YOUR roster (a class you lack, better than
       your weakest, above your average; hurt counts against); ✓ only for the three best affordable free agents (fit87Rank,
       cached), ~ decent, ✗ poor. A thin roster no longer makes everyone ✓. The tooltip says why.
+   5. WIN REWARDS (all houses unless noted). a) The lanista's cut of a win is multiplied: an upset or a stronger field
+      (the bookmaker's pre-bout chance vs an even one, win87Mult) up to ×2, the fighter's win streak (g.streak87) +25% a
+      win up to ×2 — the extra goes to the house (none for a fixed bout); your news line says why. b) A winner gains more
+      ratings (WIN87.grow), +5 morale, +3 bond (loyB → loyalty) and +4 interest in his house (extends more easily).
+      c) +2 fighter fame and +1 house fame a win; your winner turns up to 2 of the city's regulars into fans (CROWD_CACHE
+      fanOf); fans → +1 CF at 3 fans, +2 at 8 (boostFor); a 3-win streak brings a patron's offer letter once a season
+      ([data-pt87]: +N coin a week for 4 weeks while he fights for you, w.pat87, paid at the week's end; the offer goes
+      when the fighter does). The streak shows on the roster card.
    Test: tv87m.
    ===================================================================== */
 
@@ -51040,7 +51048,7 @@ const br3P87=(g,d)=>{try{if(d==null||d<=0||!pk87('br3'))return d;const m=me();co
   return r}}
 
 /* ---------- 3 · Training Yard standing orders + the squad table ---------- */
-const ROUT87=[['off','—',_T('No routine'),0],['spd','🏃',_T('Speed focus'),3],['str','💪',_T('Strength focus'),3],['int','📜',_T('Tactics focus'),3],['cha','🎭',_T('Crowd focus'),3],['bal','⚖','All-round',4],['care','🗣',_T('Care'),2],['rest','🛏',_T('Rest'),0]];
+const ROUT87=[['off','—',_T('No routine'),0],['spd','🏃',_T('Speed focus'),3],['str','💪',_T('Strength focus'),3],['int','📜',_T('Tactics focus'),3],['cha','🎭',_T('Crowd focus'),3],['bal','⚖',_T('All-round'),4],['care','🗣',_T('Care'),2],['rest','🛏',_T('Rest'),0]];
 const ROUT87_SUB={off:_T('set the week by hand'),spd:_T('3 h Speed drill'),str:_T('3 h Strength drill'),int:_T('3 h Tactics'),cha:_T('3 h Crowd work'),bal:_T('1 h of each drill'),care:_T('morale talk + gear care'),rest:_T('a rest week')};
 const PRIO87=[[1,_T('▲ First')],[2,_T('Normal')],[3,_T('▼ Last')]];
 const rout87=k=>ROUT87.find(x=>x[0]===k)||ROUT87[0];
@@ -51135,9 +51143,68 @@ function fit87Rank(m){const w=W_();const ros=rosterOf(m);const key=[w.season,w.w
   FIT87={key,top:new Set(top.map(x=>x.g.id))};return FIT87}
 {const base=recFit;recFit=function(g,m){if(!g||!m||typeof g!=='object')return null;try{const F=fit87Rank(m);const sc=fit87Score(g,m);const aff=recAfford(g,m);
   const best=!g.contract&&aff&&F.top.has(g.id);const mark=best?'✓':sc.s>=FIT87_SO?'~':'✗';
-  const why=(best?_T('One of the best few for your roster'):mark==='~'?_T('Would help a little'):_T('Does little for your roster'))+(sc.why.length?': '+sc.why.join(', '):'')+` · ${aff?'affordable':_T`ask ${askWage(g)}/wk is steep for your treasury`}`;
+  const why=(best?_T('One of the best few for your roster'):mark==='~'?_T('Would help a little'):_T('Does little for your roster'))+(sc.why.length?': '+sc.why.join(', '):'')+` · ${aff?_T('affordable'):_T`ask ${askWage(g)}/wk is steep for your treasury`}`;
   return {mark,gap:mark==='✗'?'':(sc.why[0]||_T('a useful pair of hands')),aff,why,score:sc.s}}catch(e){console.error(e);return base.apply(this,arguments)}}}
 {const base=recruitHTML;recruitHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/title="✓ fills a roster gap and is affordable · ~ one of the two · ✗ neither"/,`title="${esc(_T('✓ one of the best few for your roster and affordable · ~ would help a little · ✗ does little for your roster'))}"`)}catch(e){}return h}}
+
+/* ---------- 5 · win rewards: bigger, riskier purses; winners grow; fame, fans and patrons ---------- */
+/* TWEAK: the levers */
+const WIN87={upMax:2,stStep:0.25,stMax:2,grow:{str:0.6,spd:0.5,int:0.5,cha:0.4},morale:5,loy:3,int:4,gFame:2,hFame:1,fans:2,fanCF:[[8,2],[3,1]],patStreak:3,patWeeks:4};
+const ico87c=()=>typeof ICO!=='undefined'&&ICO.coin?ICO.coin:'🪙',ico87w=()=>typeof ICO!=='undefined'&&ICO.wheat?ICO.wheat:'🌾';
+const x87=v=>'×'+(Math.round(v*100)/100);
+/* the purse multiplier: an upset or a stronger field (the bookmaker's chance vs an even one) up to ×2, the streak +25% a win up to ×2 */
+function win87Mult(p,n,streak){const up=clamp(Math.round(1/Math.max(0.01,p*n)*20)/20,1,WIN87.upMax);const st=Math.min(WIN87.stMax,1+WIN87.stStep*(streak||0));return {up,st,all:Math.round(up*st*100)/100}}
+/* fans of a fighter → Crowd Favor at the start of every bout */
+const fan87CF=g=>{try{const n=typeof fansFor==='function'?fansFor(g.name):0;for(const [k,v] of WIN87.fanCF)if(n>=k)return v}catch(e){}return 0};
+{const base=boostFor;boostFor=function(g){const b=base.apply(this,arguments);try{if(b&&g){const f=fan87CF(g);if(f)b.cf=(b.cf||0)+f}}catch(e){}return b}}
+/* regulars of the bout's city who turn fans of a winner of yours */
+function fan87Win(g,li){if(typeof CROWD_CACHE==='undefined'||!g)return 0;const city=LOCATIONS[li]?LOCATIONS[li].n:null;let n=0;
+  const pool=CROWD_CACHE.filter(r=>!r.banned&&!r.recruited&&!r.fanOf&&(!city||r.city===city));const pool2=pool.length?pool:CROWD_CACHE.filter(r=>!r.banned&&!r.recruited&&!r.fanOf);
+  for(const r of pool2.sort(()=>Math.random()-0.5).slice(0,WIN87.fans)){r.fanOf=g.name;n++;try{Store.put('crowd',r.id,r).catch(()=>{})}catch(e){}}return n}
+{const base=applyBout;applyBout=function(bi){const w=W_();const b=w&&w.night&&w.night.bouts[bi];let pre=null;
+  try{if(b&&!b.done&&!w.tutorial){const P=boutProbs(b,'book');pre={n:b.ents.length,p:{},st:{},loc:w.night.loc};b.ents.forEach((id,i)=>{const g=gById(id);pre.p[id]=P[i];pre.st[id]=g?(g.streak87||0):0})}}catch(e){pre=null}
+  const r=base.apply(this,arguments);
+  try{if(pre&&b.done&&b.res){const wins=new Set(b.res.winners||[]);const out=[];
+    for(const id of b.ents){const g=gById(id);if(!g)continue;
+      if(!wins.has(id)){g.streak87=0;continue}
+      const s0=pre.st[id]||0;g.streak87=s0+1;if(g.alive===false)continue;const m=g.contract?mgrById(g.contract.mgr):null;
+      /* a: the purse */
+      if(m&&!b.rig){const M=win87Mult(pre.p[id],pre.n,s0);const cut=Math.round(b.purse*(0.5+m.p.greed/300))-Math.max(1,Math.round(b.purse*0.1));const extra=Math.max(0,Math.round(cut*(M.all-1)));
+        if(extra){m.coin+=extra;out.push({gid:id,up:M.up,st:M.st,all:M.all,extra});
+          if(m.isPlayer){const why=[M.up>1?_T`upset ${x87(M.up)}`:'',M.st>1?_T`streak ${x87(M.st)}`:''].filter(Boolean).join(' · ');
+            tnews(_T`💰 <b>${esc(g.name)}</b>'s purse ${x87(M.all)} (${why}): +${extra} ${ico87c()}`,'big')}}}
+      /* b: winners grow faster, stay happier and more loyal */
+      if(typeof gainAll==='function')gainAll(g,WIN87.grow);g.morale=clamp((g.morale||50)+WIN87.morale,0,100);
+      if(m){g.loyB=(g.loyB||0)+WIN87.loy;if(g.interest)g.interest[m.id]=clamp((g.interest[m.id]||0)+WIN87.int,0,100)}
+      /* c: fame comes faster; the city's regulars turn fans */
+      g.fame=clamp((g.fame||0)+WIN87.gFame,0,100);if(m)m.fame=clamp((m.fame||0)+WIN87.hFame,0,100);
+      if(m&&m.isPlayer){const nf=fan87Win(g,pre.loc);if(nf)tnews(_T`👥 ${nf} new fan${nf===1?'':'s'} for <b>${esc(g.name)}</b> (fans bring ${ico87w()} CF to every bout).`);
+        if(g.streak87>=WIN87.patStreak&&g.pat87!==w.season)pat87Offer(w,g,m,pre.loc)}}
+    if(out.length)b.res.bonus87=out}}catch(e){console.error(e)}
+  return r}}
+/* the patron: after a 3-win streak a city's patron offers coin a week for a few weeks */
+function pat87Pay(g,m){return Math.max(6,Math.round(6+(g.fame||0)/8+(m.fame||0)/10))}
+function pat87Offer(w,g,m,li){g.pat87=w.season;const sp=(typeof CITY_SPONSORS!=='undefined'&&(CITY_SPONSORS[li]||Object.values(CITY_SPONSORS)[Math.floor(Math.random()*Object.keys(CITY_SPONSORS).length)]))||{name:'Flavius'};
+  const pay=pat87Pay(g,m);const key='pt87_'+g.id+'_'+w.season;const btn=(a,l)=>`<button class="btn tksm${a==='yes'?' primary':''}" type="button" data-pt87="${a}|${key}">${l}</button>`;
+  sendLetter(w,{key,kind:'offer',from:sp.name,seal:'🏛',title:_T`A patron for ${g.name}`,until:w.week+2,pt87:{gid:g.id,pay,weeks:WIN87.patWeeks,from:sp.name},
+    body:`<p>${_T`“Three wins in a row — <b>${esc(g.name)}</b> is the talk of the baths. Let my name ride on that shield.”`}</p><p>${_T`+${pay} ${ico87c()} a week for ${WIN87.patWeeks} weeks while ${esc(g.name)} fights for you.`}</p><div class="acts">${btn('yes',_T('✓ Accept'))}${btn('no',_T('Decline'))}</div>`});
+  tnews(_T`🏛 <b>${esc(sp.name)}</b> offers to sponsor ${esc(g.name)}: +${pay} ${ico87c()} a week. See your mail.`,'big')}
+const pat87Live=(w,x)=>{const g=x&&x.pt87&&gById(x.pt87.gid);return !!(g&&g.alive!==false&&mineP87(g))};
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-pt87]');if(!b)return;e.preventDefault();e.stopPropagation();const w=W_();if(!w)return;const [a,key]=b.dataset.pt87.split('|');
+  const x=(w.letters||[]).find(l=>l.key===key);if(!x||!x.pt87||x.done87)return;x.done87=1;x.read=true;const g=gById(x.pt87.gid);
+  if(a==='yes'&&pat87Live(w,x)){(w.pat87=(w.pat87||[]).filter(p=>p.gid!==g.id)).push({gid:g.id,from:x.pt87.from,pay:x.pt87.pay,until:w.week+x.pt87.weeks-1});tnews(_T`🏛 ${esc(x.pt87.from)} now sponsors <b>${esc(g.name)}</b>: +${x.pt87.pay} ${ico87c()} a week for ${x.pt87.weeks} weeks.`,'big')}
+  else if(a==='no')tnews(_T`You turned down ${esc(x.pt87.from)}'s offer.`);
+  saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
+/* the week ends: patrons pay; offers about a fighter you no longer have go */
+{const base=endWeek;endWeek=async function(){const w=W_();const wk=w&&w.week;const r=await base.apply(this,arguments);
+  try{const w2=W_();if(w2&&w2===w&&w2.week!==wk&&!w2.dead){const m=me();
+    w2.letters=(w2.letters||[]).filter(x=>!x.pt87||x.done87||pat87Live(w2,x));
+    w2.pat87=(w2.pat87||[]).filter(p=>{const g=gById(p.gid);if(!g||g.alive===false||!mineP87(g))return false;if(wk>p.until)return false;
+      m.coin+=p.pay;tnews(_T`🏛 ${esc(p.from)} pays ${p.pay} ${ico87c()} for sponsoring ${esc(g.name)}${p.until>wk?'':_T(' — the last week')}.`);return p.until>wk});saveWorld()}}catch(e){console.error(e)}
+  return r}}
+/* the streak shows on the roster card */
+{const base=stableCardHTML;stableCardHTML=function(g){let h=base.apply(this,arguments);try{if(g&&(g.streak87||0)>=2){const M=win87Mult(1,1,g.streak87);
+  h=h.replace(/(<div class="sect"[^>]*>[^<]*<\/div>)/,`$1<p class="rc-sub st87" style="margin:0 0 4px">${_T`🔥 ${g.streak87} wins in a row — next win's purse ${x87(M.st)}`}</p>`)}}catch(e){}return h}}
 
 /* ---------- styles ---------- */
 (()=>{const st=document.createElement('style');st.textContent=`
