@@ -33,7 +33,7 @@ const drive=async p=>{const r=await p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on||onl
     try{computeHL()}catch(e){}const ks=[...HL.keys()];if(ks.length&&S._drv%4!==0){const k=ks[(S.turnNo*7+S._drv*3)%ks.length];const r0=Math.floor(k/N),c0=k%N;const cv=document.querySelector('canvas');const rc=cv.getBoundingClientRect();const pt=center(r0,c0);
       return ['xy',[rc.left+pt.x*rc.width/cv.width,rc.top+pt.y*rc.height/cv.height],(S.mode||'')+'@'+r0+','+c0]}
     S._drv=0;if(document.querySelector('[data-act="end"]'))return ['sel','[data-act="end"]','end']}return ['','','idle:'+S.phase]});
-  if(r[0]==='sel')await p.click(r[1],{timeout:2000}).catch(()=>{});if(r[0]==='xy')await p.mouse.click(r[1][0],r[1][1]);return r[2]};
+  /* force: the suggested End turn beats (heartbeat), so it is never 'stable' for Playwright — under load it never got clicked */if(r[0]==='sel')await p.click(r[1],{timeout:2000,force:true}).catch(()=>{});if(r[0]==='xy')await p.mouse.click(r[1][0],r[1][1]);return r[2]};
 const fast=p=>p.evaluate(()=>{try{setSpeedUI('fast')}catch(e){}});
 /* everyone on the sand (the host's opening windows are answered by the driver) */
 const waitIn=async(ps,id)=>{const t0=Date.now();while(Date.now()-t0<90000){const ok=await Promise.all(ps.map(p=>p.evaluate(id=>!!(ONLM.on&&S&&S.onl&&S.onl.lobby===id),id)));if(ok.every(Boolean))return true;for(const p of ps)await drive(p);await A.waitForTimeout(250)}return false};
@@ -55,12 +55,15 @@ const gen0={A:await A.evaluate(()=>ONLM.gen),B:await B.evaluate(()=>ONLM.gen),C:
   tampered=await C.evaluate(()=>{if(!onlmOn()||!onlmMine()||S.busy||CUR_MODAL||ONLM.pend||!['choice','action'].includes(S.phase))return null;const h0=onlHash();S.players[0].coin+=7;return {h0,h1:onlHash(),next:ONLM.next,turn:S.turnNo}});
   if(tampered)break;/* Gamma's own window (a Focus roll, a draft…) is answered, else the move never comes and the others drop the idle seat */await C.evaluate(()=>!!(CUR_MODAL&&onlmOn()&&(onlmMine()||ONLM.info>0)))&&await drive(C);await A.waitForTimeout(150);if(await A.evaluate(()=>!S||S.over))break}}
 const oddDone=async()=>{const a=await A.evaluate(()=>ONL80R.oddSkips);const c=await C.evaluate(g=>ONLM.gen!==g,gen0.C);return a>0&&c};
-await run(120000,[C,A,B],oddDone);
+/* Gamma plays on until its out-of-step input is sent; then only Alpha and Beta play until the majority's arena reached Gamma (a Gamma
+   still clicking while the snapshot is on its way races the resync itself — not what this checks) */
+{const in0=tampered?await C.evaluate(()=>window.__req['match.input']||0):0;await run(60000,[C,A,B],async()=>(await C.evaluate(()=>window.__req['match.input']||0))>in0||await oddDone())}
+await run(120000,[A,B],oddDone);
 const after=async p=>p.evaluate(()=>({resyncs:ONLM.resyncs,gen:ONLM.gen,odd:{...ONLM.odd},oddSkips:ONL80R.oddSkips,votes:ONL80R.votes,last:ONL80R.last||null,next:ONLM.next,coin0:S.players[0].coin,req:{...window.__req}}));
 const r1={A:await after(A),B:await after(B),C:await after(C)};
 await run(120000,[A,B,C],async()=>(await A.evaluate(()=>ONLM.next))>=r1.A.next+8);
 /* all three have applied every input before the hashes are compared (the regression runs 3 tests at once) */
-const level=async ps=>{for(let t1=Date.now();Date.now()-t1<30000;){const ns=await Promise.all(ps.map(p=>p.evaluate(()=>ONLM.next)));if(ns.every(n=>n===ns[0]))break;await A.waitForTimeout(250)}};await level([A,B,C]);
+const level=async ps=>{for(let t1=Date.now();Date.now()-t1<30000;){const ns=await Promise.all(ps.map(p=>p.evaluate(()=>ONLM.next)));if(ns.every(n=>n===ns[0]))break;await A.waitForTimeout(250)}};await level([A,B,C]);const r1b={};for(const [n,p] of Object.entries(P))r1b[n]=await p.evaluate(()=>({over:!!(S&&S.over),next:ONLM.next,turn:S&&S.turnNo,ph:S&&S.phase,busy:S&&S.busy,modal:CUR_MODAL?((document.getElementById('mTitle')||{}).textContent||'?').slice(0,40):null,act:onlmActor(),owner:onlmOwner(),me:ONLM.me,pend:!!ONLM.pend,q:ONLM.q.length,inf:ONLM.inflight,mine:onlmMine(),resyncing:!!ONLM.resyncing,cur:cur()&&cur().name,log:[...document.querySelectorAll('#log > li')].slice(0,3).map(l=>l.textContent.slice(0,80))}));
 /* in step again: every seq after Gamma's reload hashes the same on all three */
 const hl={};for(const [n,p] of Object.entries(P))hl[n]=await p.evaluate(()=>ONLM.hlog);
 let same=0,diff=0;const from=r1.C.next;for(let s=from;s<from+400;s++){const hs=['A','B','C'].map(n=>hl[n]['s'+s]).filter(Boolean);if(hs.length<3)continue;if(hs.every(h=>h===hs[0]))same++;else diff++}
@@ -80,7 +83,10 @@ for(const p of [A,B,C])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done('close'
 const back=await A.evaluate(()=>({chest:CHEST_W.includes('cw_t80c'),market:Object.values(MARKET_W).flat().includes('cw_t80m'),hints:HINTS}));
 /* Ranked, two lanistas: no hints / strategy / Focus suggestion; a desync resyncs the old way (no vote) */
 for(const p of [A,B])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide()});
-const R=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'egidious',loc:3,seats:4,ranked:true}));
+/* the windows are still writing their match ends into the shared mock world: a room lost to such a write is opened again */
+let R=null;for(let k=0;k<5;k++){R=await A.evaluate(async()=>{try{return await NET.req('lobby.create',{ev:'egidious',loc:3,seats:4,ranked:true})}catch(e){return null}});
+  let ok=false,lost=false;for(let t0=Date.now();R&&Date.now()-t0<20000&&!ok&&!lost;){lost=!await A.evaluate(id=>!!mockLoad().lobbies[id],R.id);ok=!lost&&await B.evaluate(id=>!!mockLoad().lobbies[id],R.id);if(!ok&&!lost)await A.waitForTimeout(200)}
+  if(ok||(R&&!lost))break;await A.waitForTimeout(1000)}
 await A.waitForTimeout(1500);await join(B,R.id);await sees(A,R.id,2);
 const R2=await A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},R.id);await B.evaluate(L=>onlEnter(L),R2);
 await waitIn([A,B],R.id);
@@ -98,7 +104,7 @@ const two={A:await A.evaluate(()=>({resyncs:ONLM.resyncs,votes:ONL80R.votes,hash
 const hA=await A.evaluate(()=>ONLM.hlog),hB=await B.evaluate(()=>ONLM.hlog);let same2=0,diff2=0;const f2=(tamp2&&tamp2.next||0)+1;for(let s=f2;s<f2+400;s++){const a=hA['s'+s],c=hB['s'+s];if(!a||!c)continue;if(a===c)same2++;else diff2++}
 for(const p of [A,B])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done('close');onlExit()});await A.waitForTimeout(1200);
 const rkBack={A:await A.evaluate(()=>({hints:HINTS,set:SETTINGS.hints,strat:showStrategy(),chest:CHEST_W.includes('cw_t80c'),rec:onl80Rec()})),B:await B.evaluate(()=>({hints:HINTS,set:SETTINGS.hints,strat:showStrategy()}))};
-console.log(JSON.stringify({pre,gear,pause,tampered,r1,same,diff,hk,strikes,res,lsDiff,back,ranked,q0,tamp2,two,same2,diff2,rkBack}));
+console.log(JSON.stringify({pre,gear,pause,tampered,r1,r1b,same,diff,hk,strikes,res,lsDiff,back,ranked,q0,tamp2,two,same2,diff2,rkBack}));
 const miss=[];
 if(!pre.A.chest||!pre.A.market||!pre.B.chest)miss.push('custom gear set up offline');
 for(const n of ['A','B','C']){const g=gear[n];if(g.chest.length||g.market.length||g.inMatch)miss.push('printed gear only '+n);if(g.sponsor!=='flavius')miss.push('Flavius presides '+n);if(g.regulars)miss.push('no regulars '+n);if(!g.hints)miss.push('Custom keeps hints '+n)}

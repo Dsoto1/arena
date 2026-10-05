@@ -30,8 +30,11 @@ const until=async(p,fn,arg,ms=20000)=>{const t0=Date.now();let v;while(Date.now(
 const L=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:true}));
 await sync(A,B);for(let k=0;k<8;k++){await B.evaluate(async id=>{try{await NET.req('lobby.join',{id})}catch(e){}},L.id);if(await until(A,id=>ONLC.humansOf(mockLoad().lobbies[id]||{}).length>=2,L.id,5000))break}
 const L2=await A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},L.id);await B.evaluate(L=>onlEnter(L),L2);
-const drive=async p=>p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on||onlmMine()||ONLM.info>0)){const b=document.querySelector('#modal .mbtns .primary')||document.querySelector('#modal .mbtns button');if(b)b.click();return}
-  if(!S||S.over||!ONLM.on||!onlmMine()||S.busy)return;if(S.phase==='choice'){const c=document.querySelector('[data-act="coin"]');if(c)c.click();return}if(S.phase==='action'){const e=document.querySelector('[data-act="end"]');if(e)e.click()}}).catch(()=>{});
+/* the driver clicks like a person (trusted clicks): an element.click() on [data-act] is not recorded online (113 records trusted
+   clicks only) but the panel still acts on that screen alone — the two screens drifted apart and never met at the same point */
+const drive=async p=>{const sel=await p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on||onlmMine()||ONLM.info>0)){return document.querySelector('#modal .mbtns .primary')?'#modal .mbtns .primary':document.querySelector('#modal .mbtns button')?'#modal .mbtns button':null}
+  if(!S||S.over||!ONLM.on||!onlmMine()||S.busy)return null;if(S.phase==='choice')return document.querySelector('[data-act="coin"]')?'[data-act="coin"]':null;if(S.phase==='action')return document.querySelector('[data-act="end"]')?'[data-act="end"]':null;return null}).catch(()=>null);
+  if(sel)await p.click(sel,{timeout:2000,force:true}).catch(()=>{})};
 {const t0=Date.now();while(Date.now()-t0<6000){await drive(A);await drive(B);await wait(250)}}
 /* A loses its connection for the report */
 await A.evaluate(()=>{const b0=NET.req;NET.req=function(t,d){if(t==='match.result'&&window.FAIL81)return Promise.reject(new Error('Connection lost.'));return b0.apply(this,arguments)};window.FAIL81=1});
