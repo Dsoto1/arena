@@ -1027,6 +1027,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   untakeable dimmed, same layout for Manage). HOT SEAT "since your last turn" window opens ONLY when something happened. HOT SEAT 🚪 Abandon and 💾 Save & leave ASK THE TABLE first (each
   human confirms, like ⏭ To the end). 'really' mood hand = his reference photo tools/art/flavmoods89/ref/really_hand.png, mirrored + re-inked.
   HIS GO for v0.89 comes once he confirms the mood set.
+- **v0.90 QUEUED (his ok 2026-10-05): BLESSINGS AS TOKEN ROUNDS on the pillars** — Settings → On the board → "Blessings on pillars":
+  Clay pots (3D, today) / Token rounds. Token mode: each pillar's Blessings lie as a small stack of his round tokens on top, BLESSING FACE UP
+  (tools/art/medallions/blessing.png = rtok 'blessing': pot + "2 COIN · 1 CF"), so the offering stays hidden; when one is knocked off/taken it
+  flips to its OFFERING face (the BLESSING_TABLE key's medallion: elix2/elix4/ap2/ap3/ma1-3/mw1-3/spiders) and lands/drops like the pots do.
+  Rules, dice and log unchanged (works offline, hot seat, online; a per-viewer setting).
 - **His calls (2026-10-05):** NO new online events until the Classics play properly online (no real players yet; ONL_EVENTS_OK88 stays
   empty). legendsim: LEAVE IT HARD — a Manager must diversify; one fighter carrying a house is meant to die by volume.
 - **166-v89fix (built):** boot-window close → main menu (not the background arena); startEvent in progress (START89) counts as live for
