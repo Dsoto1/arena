@@ -988,6 +988,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
   city kits, offerings) + the auction on the forum steps; TRAINING GROUND beside the arena → watch/spar/exhibitions (Training Yard links).
   No triumphal arch (leaving stays a button). Keep walking, the living crowd, the sidebar (Kin/Stands/Roster/Menagerie), the arena gate + horns.
   Module 25-city.js is the base (CITY_BLDG, CITY_DRESS, cityIso).
+  His pick: the square grows to ~18×18 (faster walking). Buildings are DETAILED structures, not the old boxes (columns, pediments,
+  roof-tile rows, porticoes, awnings with stripes/scalloped edges, shading, windows/doors, steps) — step 1 = Roma screenshots for his ok.
 - **CJK SCHEDULE (his call 2026-10-05): JAPANESE v0.89, CHINESE SIMPLIFIED v0.90 (moved up; es/it/pt/fr/de are done).**
 - **LANGUAGES (his pick 2026-10-05): one per release alongside the features** — Italian v0.87, Portuguese (BR) v0.88, French v0.89, German v0.90,
   Japanese v0.91, Chinese SIMPLIFIED v0.92 (his pick; shares the CJK work: system-font fallback stack incl. canvas, no small-caps/
