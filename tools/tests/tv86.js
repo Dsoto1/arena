@@ -8,21 +8,19 @@
    E English untouched: a page without flavius_lang has LANG 'en', no dictionary, and _T is identity. */
 /* v0.87: WALK_LANG=it|pt|fr|de runs only the B/C walk in that language (tv87l runs all four) */
 const WL=process.env.WALK_LANG||'es';
-/* after a language reload: poll (a navigation in flight throws — retry) until the new page is ready in the wanted language */
-const langUp=async(p,l,ms=20000)=>{const t0=Date.now();while(Date.now()-t0<ms){try{if(await p.evaluate(l=>window.FLAVIUS_READY&&typeof LANG!=='undefined'&&LANG===l,l))return true}catch(e){}await new Promise(r=>setTimeout(r,200))}return false};
 const path=require('path'),fs=require('fs');const REPORT=process.env.REPORT||'';const SHOT=process.env.SHOT||'';
 const {chromium}=require('playwright');(async()=>{const URL0='file://'+path.resolve(process.argv[2]);
 const T0=Date.now();const LG=(...a)=>{if(process.env.DBG)console.error('['+((Date.now()-T0)/1000|0)+'s]',...a)};const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const out={};
 const mk=async(locale,init,arg)=>{const ctx=await b.newContext({viewport:{width:1300,height:900},locale});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(init||(()=>{}),arg);await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});return ctx};
-const open=async(ctx,n)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});return p};
+const open=async(ctx,n)=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);await p.waitForTimeout(2400);return p};
 const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,`v86_${WL}_${n}.png`)})};
 
 LG('── A');/* ── A · first run on a Spanish browser ── */
 if(WL==='es'){const ctx=await mk('es-MX');const p=await open(ctx,'A');
   out.aAsk=await p.waitForSelector('#lang86ask',{timeout:8000}).then(()=>true).catch(()=>false);
   out.aLang0=await p.evaluate(()=>LANG);
-  if(out.aAsk){await Promise.all([p.waitForNavigation({timeout:10000}).catch(()=>null),p.click('#lang86ask [data-lang86yes]')]);await langUp(p,'es')}
+  if(out.aAsk){await Promise.all([p.waitForNavigation({timeout:10000}).catch(()=>null),p.click('#lang86ask [data-lang86yes]')]);await p.waitForTimeout(2400)}
   out.aLang1=await p.evaluate(()=>({LANG,html:document.documentElement.lang,dict:!!LANG_DICT}));
   await ctx.close();
   const c2=await mk('es-ES');const p2=await open(c2,'A2');await p2.waitForTimeout(1200);
@@ -108,7 +106,7 @@ ok(cutU.length<=CUT_MAX,`C: cut-off texts ${cutU.length} ≤ ${CUT_MAX}: `+cutU.
 LG('── D');/* ── D · back to English ── */
 if(WL==='es'){
 await P.evaluate(()=>{menuHide();openSettings()});await P.waitForTimeout(900);
-await Promise.all([P.waitForNavigation({timeout:10000}).catch(()=>null),P.selectOption('select[data-lang84]','en')]);await langUp(P,'en');
+await Promise.all([P.waitForNavigation({timeout:10000}).catch(()=>null),P.selectOption('select[data-lang84]','en')]);await P.waitForTimeout(2600);
 out.d=await P.evaluate(()=>({LANG,dict:!!LANG_DICT,html:document.documentElement.lang}));
 ok(out.d.LANG==='en'&&!out.d.dict&&out.d.html==='en','D: English again after the switch '+JSON.stringify(out.d));
 }

@@ -1,7 +1,7 @@
 /* smartreg.js — adaptive regression: runs only the tests a change can reach, keeps the rest honest by rotation, and widens
    the run on its own when something breaks. Same output as runreg.sh (tools/reg.txt, one "== test ==" block each, ALLDONE).
 
-   Usage: node tools/smartreg.js [--full] [-j 3] [--x 5] [--sample 0.05] [--dry] [tests...]
+   Usage: node tools/smartreg.js [--full] [-j 4] [--x 5] [--sample 0.05] [--dry] [tests...]
      --full    every test (releases ALWAYS use a full run — CLAUDE.md §6); also records fresh coverage maps
      --dry     print the plan (who runs and why) without running anything
      tests...  run exactly these (still records their results)
@@ -43,7 +43,7 @@ const GLOBAL = ['build.sh', 'src/01-head.html', 'tools/smartreg.js', 'tools/regc
 const arg = process.argv.slice(2);
 const opt = (k, d) => { const i = arg.indexOf(k); if (i < 0) return d; const v = arg[i + 1]; arg.splice(i, 2); return v; };
 const flag = k => { const i = arg.indexOf(k); if (i < 0) return false; arg.splice(i, 1); return true; };
-const J = +opt('-j', 3), X = +opt('--x', 5), SAMPLE = +opt('--sample', 0.05), FULL0 = flag('--full'), DRY = flag('--dry');
+const J = +opt('-j', 4), X = +opt('--x', 5), SAMPLE = +opt('--sample', 0.05), FULL0 = flag('--full'), DRY = flag('--dry');
 const ONLY = arg.filter(a => !a.startsWith('-'));
 const readJ = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
 const st = readJ(STATE, { run: 0, lastFull: 0, tests: {} }), MAPJ = readJ(MAP, { fh: [], t: {} });
@@ -122,7 +122,8 @@ function plan(full) {
 
 /* per-test kill limit: 400 s, or 1.6x the test's recorded time + 60 s when it is slower. The whole t12 (asked by name only;
    the suite runs its shards t12a/b/c, ~1/3 each) at least 1500 s — it needs ~900 s alone, more under load */
-function limitFor(t) { const k = (st.tests[t] || {}).time || 0; return Math.max(t === 't12' ? 1500 : 400, Math.round(k * 1.6 + 60)); }
+/* (times are recorded at the run's own -j; above -j 3 each test runs slower, so the 1.6x margin grows with J/3) */
+function limitFor(t) { const k = (st.tests[t] || {}).time || 0; return Math.max(t === 't12' ? 1500 : 400, Math.round(k * 1.6 * Math.max(1, J / 3) + 60)); }
 
 /* SHARED BROWSERS: one Chromium per worker slot (chromium.launchServer), handed to each test via REGWS — regcov.js turns the
    test's chromium.launch() into a connect, so a test no longer pays for its own browser start. A slot's browser is replaced

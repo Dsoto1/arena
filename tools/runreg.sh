@@ -1,14 +1,14 @@
 #!/bin/sh
 # Full regression: every test gets the built page; pass = "exit=0" and no "ERRS [ ...non-empty ]".
 # Usage: sh tools/runreg.sh [-j N] [test names...]   (results in tools/reg.txt, ends with ALLDONE)
-#   -j N  run N tests at once (default 3; -j 1 = the old one-at-a-time run). Each test has its own browser, so they do
+#   -j N  run N tests at once (default 4; -j 1 = the old one-at-a-time run). Each test has its own browser, so they do
 #         not share storage. Slowest tests start first (timings from the last run in tools/reg/times.txt), and
 #         tools/reg.txt keeps the list order, so it reads exactly like a serial run.
-# Run it in the background:  (nohup sh tools/runreg.sh >/dev/null 2>&1 &)   — ~11 min at -j 3 (was ~90 serial)
+# Run it in the background:  (nohup sh tools/runreg.sh >/dev/null 2>&1 &)   — ~30 min at -j 4 on 4 cores (v0.88: 190 tests, ~110 min serial; tools/smartreg.js --full also shares one browser per worker)
 cd "$(dirname "$0")/tests"
 F=$(cd ../.. && pwd)/flavius-arena.html
 OUT=../reg.txt
-J=3
+J=4
 if [ "$1" = "-j" ]; then J=$2; shift 2; fi
 : > $OUT
 mkdir -p ../reg

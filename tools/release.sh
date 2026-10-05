@@ -30,7 +30,7 @@ ALLOW='FlaviusRule@gmail.com'
 LEAK=$(grep -oE '[A-Za-z0-9._%+-]+@(gmail|yahoo|hotmail|outlook|icloud|proton)\.(com|me)' flavius-arena.html | sort -u | grep -vixF "$ALLOW" | head -1)
 if [ -n "$LEAK" ]; then echo "an e-mail address is in the page: $LEAK"; exit 1; fi
 echo "clean ($(echo $WORDS | wc -w) words checked)"
-step "4 full regression (~12 min)"
+step "4 full regression (~30 min at -j 4)"
 node tools/smartreg.js --full || { echo "regression failed — see tools/reg.txt"; exit 1; }
 step "4b advert shot (play.html)"
 mkdir -p share && node tools/siteshot.js "$PWD/flavius-arena.html" share/arena_shot.png | tail -1
