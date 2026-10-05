@@ -39,7 +39,7 @@ function dom88Hands(ch){const CK=CLASSES[ch.cls]||{};let R=CK.R&&W[CK.R]?{k:CK.R
   for(const k of ONLC.equipOf(ch)){let I=null;try{I=ONL83.piece(ch,k)}catch(e){}if(!I||I.kind!=='w')continue;const b=dom88Base(I);if(!W[b])continue;const x={k:b,I};
     if(!R)R=x;else if(!L&&!(W[R.k]||{}).both)L=x;else R=x}
   return [R,L]}
-function dom88Weapon(x,side){const lbl=side==='R'?_T('Right hand'):_T('Left hand');
+function dom88Weapon(x,side){const lbl=side==='R'?_T('Right hand')+' - '+_T('Primary'):_T('Left hand')+' - '+_T('Secondary'); /* arena cards: right = primary, left = secondary */
   if(!x)return `<div class="wp88 empty"><div class="wp88-card"><span>${_T`Empty hand`}</span></div><small>${lbl}</small></div>`;
   const I=x.I;const named=I&&I.named;const R=named?ONLC.rarOf(I.rar):null;const col=named&&ONL83.rarCol?ONL83.rarCol[R.k]:'';
   const nm=named?(I.w&&I.w.n)||I.n:(W[x.k]||{}).n||x.k;
