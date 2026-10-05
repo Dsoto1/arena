@@ -35738,18 +35738,18 @@ function st82Popup(d){st82PopClose();const s=(S.spect||[]).find(x=>x.onlIdx===d.
 async function st82Apply(inp){const picks=(inp.picks||[]).slice().sort((a,b)=>a.seat-b.seat);const chant=[];
   if(picks.some(x=>x.pick&&x.pick.a!=='pass'))log(_T('🎟 The stands act together.'),'thought');
   for(const {seat,pick} of picks){if(!S||S.over)return;const s=(S.spect||[]).find(x=>x.onlIdx===seat);if(!s||s.gone||!s.human||!pick)continue;
-    const me=seat===ONLM.me;const who=me?_T('You'):`<b>${esc(s.name)}</b>`;const v=(a,b)=>me?a:b; /* v0.87: the verb pair is translated too (you hurl / he hurls), so the line reads in every language */const prev=ONLM.specName;ONLM.specName=me?null:s.name;
+    const me=seat===ONLM.me;const who=me?_T('You'):`<b>${esc(s.name)}</b>`;const v=(a,b)=>me?a:b; /* v0.87: subject + verb are one translated unit ("You hurl" / "<name> hurls"), so every language conjugates them */const prev=ONLM.specName;ONLM.specName=me?null:s.name;
     try{const a=pick.a;const r=pick.r|0,c=pick.c|0;
-      if(a==='stone'){if(s.cf<2){log(_T`${who} ${v(_T('cannot'),_T('cannot'))} afford a stone (${cfAmt87(2)}).`);continue}s.cf-=2;const q=playerAt(r,c);
+      if(a==='stone'){if(s.cf<2){log(_T`${me?_T('You cannot'):_T`${who} cannot`} afford a stone (${cfAmt87(2)}).`);continue}s.cf-=2;const q=playerAt(r,c);
         if(q&&!q.underground)await spectStone(s,q);
-        else{S.stonesThrown=(S.stonesThrown||0)+1;emote(s,'🪨','');const n=npcAt(r,c);log(_T`${who} ${v(_T('hurl'),_T('hurls'))} a stone at ${tl(r,c)} — ${n?_T`it bounces off ${nm(n)}`:_T('it lands on empty sand')}.`);slog(_T`<b>${esc(s.name)}</b>'s stone lands on ${n?_T('a beast'):_T('empty sand')} at ${tl(r,c)}.`)}}
+        else{S.stonesThrown=(S.stonesThrown||0)+1;emote(s,'🪨','');const n=npcAt(r,c);log(_T`${me?_T('You hurl'):_T`${who} hurls`} a stone at ${tl(r,c)} — ${n?_T`it bounces off ${nm(n)}`:_T('it lands on empty sand')}.`);slog(_T`<b>${esc(s.name)}</b>'s stone lands on ${n?_T('a beast'):_T('empty sand')} at ${tl(r,c)}.`)}}
       else if(a==='offer'){if(s.cf<8){log(_T`${who} cannot afford an offering (${cfAmt87(8)}).`);continue}s.cf-=8;const off=drawOffer();const O=OFFER[off]||{n:off,s:''};const q=playerAt(r,c);emote(s,'🎁','');
-        if(q&&!q.underground){q.items.push(mkOffer(off));stat(q,'spectOffers');stat(q,'spectVal',OFFER_VAL[off]||4);log(_T`${who} ${v(_T('throw'),_T('throws'))} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s}) — ${nm(q)} catches it.`);slog(_T`<b>${esc(s.name)}</b> pays ${cfAmt87(8)}: an offering lands at ${esc(q.name)}'s feet — ${O.n}.`,'big')}
-        else if(inB(r,c)){placeFloor('offer',off,r,c);const n=npcAt(r,c);log(_T`${who} ${v(_T('throw'),_T('throws'))} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s})${n?_T` — it lies under ${nm(n)}`:typeof spikeAt==='function'&&spikeAt(r,c)?_T(' — it falls into the spikes'):_T(' — it lies on the sand')}.`);slog(_T`<b>${esc(s.name)}</b>'s offering lands on ${tl(r,c)}.`)}
+        if(q&&!q.underground){q.items.push(mkOffer(off));stat(q,'spectOffers');stat(q,'spectVal',OFFER_VAL[off]||4);log(_T`${me?_T('You throw'):_T`${who} throws`} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s}) — ${nm(q)} catches it.`);slog(_T`<b>${esc(s.name)}</b> pays ${cfAmt87(8)}: an offering lands at ${esc(q.name)}'s feet — ${O.n}.`,'big')}
+        else if(inB(r,c)){placeFloor('offer',off,r,c);const n=npcAt(r,c);log(_T`${me?_T('You throw'):_T`${who} throws`} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s})${n?_T` — it lies under ${nm(n)}`:typeof spikeAt==='function'&&spikeAt(r,c)?_T(' — it falls into the spikes'):_T(' — it lies on the sand')}.`);slog(_T`<b>${esc(s.name)}</b>'s offering lands on ${tl(r,c)}.`)}
         try{fx(r,c,'✦','#f0cf7d',{big:1})}catch(e){}}
       else if(a==='move'){const to=pick.sec|0;if(to<0||to>=SECTIONS.length||to===s.sec)continue;if(s.cf<3){log(_T`${who} cannot afford to change section (${cfAmt87(3)}).`);continue}
-        s.cf-=3;log(_T`${who} ${v(_T('move'),_T('moves'))} from ${SECTIONS[s.sec].n} to ${SECTIONS[to].n}.`);s.sec=to;emote(s,'🚶','')}
-      else if(a==='cheer'){const p=S.players[pick.v|0];if(!p||!p.alive||p.exited)continue;s.fav=p.id;s.favCls=p.cls;emote(s,'📣','');log(_T`${who} ${v(_T('cheer'),_T('cheers'))} for ${nm(p)}.`);slog(_T`<b>${esc(s.name)}</b> cheers for ${esc(p.name)}.`)}
+        s.cf-=3;log(_T`${me?_T('You move'):_T`${who} moves`} from ${SECTIONS[s.sec].n} to ${SECTIONS[to].n}.`);s.sec=to;emote(s,'🚶','')}
+      else if(a==='cheer'){const p=S.players[pick.v|0];if(!p||!p.alive||p.exited)continue;s.fav=p.id;s.favCls=p.cls;emote(s,'📣','');log(_T`${me?_T('You cheer'):_T`${who} cheers`} for ${nm(p)}.`);slog(_T`<b>${esc(s.name)}</b> cheers for ${esc(p.name)}.`)}
       else if(a==='tholo')chant.push(s)}
     finally{ONLM.specName=prev}}
   if(chant.length&&S&&!S.over)st82Tholo(chant)}

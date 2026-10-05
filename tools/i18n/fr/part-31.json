@@ -1,0 +1,17 @@
+{
+ "{0} afford a stone ({1}).": "{0} pas payer une pierre ({1}).",
+ "You cannot": "Tu ne peux",
+ "{0} cannot": "{0} ne peut",
+ "{0} a stone at {1} — {2}.": "{0} une pierre sur {1} — {2}.",
+ "{0} hurls": "{0} lance",
+ "{0} an offering onto {1}: <b>{2}</b> ({3}) — {4} catches it.": "{0} une offrande sur {1} : <b>{2}</b> ({3}) — {4} l'attrape.",
+ "You throw": "Tu lances",
+ "{0} throws": "{0} lance",
+ "{0} an offering onto {1}: <b>{2}</b> ({3}){4}.": "{0} une offrande sur {1} : <b>{2}</b> ({3}){4}.",
+ "{0} from {1} to {2}.": "{0} de {1} à {2}.",
+ "You move": "Tu passes",
+ "{0} moves": "{0} passe",
+ "{0} for {1}.": "{0} {1}.",
+ "You cheer": "Tu acclames",
+ "{0} cheers": "{0} acclame"
+}

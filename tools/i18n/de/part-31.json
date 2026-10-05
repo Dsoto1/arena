@@ -1,0 +1,17 @@
+{
+ "{0} afford a stone ({1}).": "{0} keinen Stein bezahlen ({1}).",
+ "You cannot": "Du kannst",
+ "{0} cannot": "{0} kann",
+ "{0} a stone at {1} — {2}.": "{0} einen Stein auf {1} — {2}.",
+ "{0} hurls": "{0} schleudert",
+ "{0} an offering onto {1}: <b>{2}</b> ({3}) — {4} catches it.": "{0} eine Opfergabe auf {1}: <b>{2}</b> ({3}) — {4} fängt sie.",
+ "You throw": "Du wirfst",
+ "{0} throws": "{0} wirft",
+ "{0} an offering onto {1}: <b>{2}</b> ({3}){4}.": "{0} eine Opfergabe auf {1}: <b>{2}</b> ({3}){4}.",
+ "{0} from {1} to {2}.": "{0} von {1} nach {2}.",
+ "You move": "Du wechselst",
+ "{0} moves": "{0} wechselt",
+ "{0} for {1}.": "{0} {1} zu.",
+ "You cheer": "Du jubelst",
+ "{0} cheers": "{0} jubelt"
+}

@@ -1,0 +1,62 @@
+[
+ {
+  "k": "{0} afford a stone ({1}).",
+  "w": "128-v82stands.js:120"
+ },
+ {
+  "k": "You cannot",
+  "w": "128-v82stands.js:120"
+ },
+ {
+  "k": "{0} cannot",
+  "w": "128-v82stands.js:120"
+ },
+ {
+  "k": "{0} a stone at {1} — {2}.",
+  "w": "128-v82stands.js:122"
+ },
+ {
+  "k": "{0} hurls",
+  "w": "128-v82stands.js:122"
+ },
+ {
+  "k": "{0} an offering onto {1}: <b>{2}</b> ({3}) — {4} catches it.",
+  "w": "128-v82stands.js:124"
+ },
+ {
+  "k": "You throw",
+  "w": "128-v82stands.js:124"
+ },
+ {
+  "k": "{0} throws",
+  "w": "128-v82stands.js:124"
+ },
+ {
+  "k": "{0} an offering onto {1}: <b>{2}</b> ({3}){4}.",
+  "w": "128-v82stands.js:125"
+ },
+ {
+  "k": "{0} from {1} to {2}.",
+  "w": "128-v82stands.js:128"
+ },
+ {
+  "k": "You move",
+  "w": "128-v82stands.js:128"
+ },
+ {
+  "k": "{0} moves",
+  "w": "128-v82stands.js:128"
+ },
+ {
+  "k": "{0} for {1}.",
+  "w": "128-v82stands.js:129"
+ },
+ {
+  "k": "You cheer",
+  "w": "128-v82stands.js:129"
+ },
+ {
+  "k": "{0} cheers",
+  "w": "128-v82stands.js:129"
+ }
+]

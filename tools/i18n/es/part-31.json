@@ -1,0 +1,17 @@
+{
+ "{0} afford a stone ({1}).": "{0} pagar una piedra ({1}).",
+ "You cannot": "No puedes",
+ "{0} cannot": "{0} no puede",
+ "{0} a stone at {1} — {2}.": "{0} una piedra a {1} — {2}.",
+ "{0} hurls": "{0} lanza",
+ "{0} an offering onto {1}: <b>{2}</b> ({3}) — {4} catches it.": "{0} una ofrenda a {1}: <b>{2}</b> ({3}) — {4} la atrapa.",
+ "You throw": "Lanzas",
+ "{0} throws": "{0} lanza",
+ "{0} an offering onto {1}: <b>{2}</b> ({3}){4}.": "{0} una ofrenda a {1}: <b>{2}</b> ({3}){4}.",
+ "{0} from {1} to {2}.": "{0} de {1} a {2}.",
+ "You move": "Te mueves",
+ "{0} moves": "{0} se mueve",
+ "{0} for {1}.": "{0} a {1}.",
+ "You cheer": "Aclamas",
+ "{0} cheers": "{0} aclama"
+}
