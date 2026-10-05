@@ -15,8 +15,9 @@ P=lambda x,y:((x-X0+ (0))*1.0,(y-Y0)*1.0)
 # landmarks in 4x crop coords of the (335,300) crop → shift to this crop
 def C(x,y):return ((x-X0)*K,(y-Y0)*K)
 L=lambda x,y:C(330+x/4,296+y/4)
-EYE_R=C(412,366);EYE_N=C(391,360);BROW_R=C(414,355);BROW_RI=C(404,356);BROW_N=C(388,350);BROW_NI=C(396,353)
-MOUTH=C(396,391);MC_L=C(388,390);MC_R=C(406,388);JAW=C(396,402);CHIN=C(394,404)
+# landmarks from his marks on the card (2026-10-05): eyes (391,360) + (410,359), mouth line (390,390)-(397,387)-(406,390)
+EYE_R=C(410,359);EYE_N=C(391,360);BROW_R=C(411,354);BROW_RI=C(403,354);BROW_N=C(389,355);BROW_NI=C(396,355)
+MOUTH=C(397,390);MC_L=C(390,390);MC_R=C(406,390);JAW=C(397,401);CHIN=C(395,404)
 def warp(img,blobs):
   dx=np.zeros((H,W),np.float32);dy=np.zeros((H,W),np.float32)
   for (cx,cy),ddx,ddy,s in blobs:
@@ -46,8 +47,8 @@ def tears(img):
   return im
 def lids(img,frac=.55,near=False):
   # heavy lids by moving his own painted brow/upper lid down onto the eye (no painted patches)
-  bl=[B(C(412,358),0,26*frac,15),B(C(406,357),0,20*frac,12),B(C(419,359),0,20*frac,12),B(C(412,369),0,-8*frac,10)]
-  if near:bl+=[B(C(391,354),0,14*frac,10)]
+  bl=[B(C(410,355),0,20*frac,10),B(C(404,355),0,15*frac,8),B(C(416,356),0,15*frac,8),B(C(410,363),0,-6*frac,8)]
+  if near:bl+=[B(C(391,357),0,12*frac,8)]
   return warp(img,bl)
 def hand(img,rotd=None,at=None,flip=False,nofist=False):
   hs=src[492:590,196:296].copy();hs=cv2.resize(hs,None,fx=K,fy=K,interpolation=cv2.INTER_LANCZOS4)
@@ -145,16 +146,16 @@ def mood(m):
     im=warp(im,[B(BROW_RI,-6,14,16),B(BROW_NI,8,14,16),B(BROW_R,0,6,24),B(MC_L,-2,8,12),B(MC_R,2,8,12),B(EYE_R,0,4,14)])
     return flush(im,(40,40,200),.28)
   if m=='shock':
-    im=warp(im,[B(BROW_R,0,-18,28),B(BROW_N,0,-16,26),B(L(312,248),0,-8,10),B(L(222,238),0,-6,10),B(JAW,0,22,60)])
+    im=warp(im,[B(BROW_R,0,-18,28),B(BROW_N,0,-16,26),B(C(410,357),0,-8,8),B(C(391,358),0,-6,7),B(JAW,0,22,60)])
     return mouth_open(im,18,22,teeth=False,tongue=False,dy=8)
   if m=='laugh':
-    im=warp(im,[B(L(312,268),0,-8,12),B(L(222,256),0,-6,10),B(MC_L,-6,-8,12),B(MC_R,6,-10,12),B(JAW,0,20,60)])
+    im=warp(im,[B(C(410,362),0,-8,8),B(C(391,363),0,-6,7),B(MC_L,-6,-8,12),B(MC_R,6,-10,12),B(JAW,0,20,60)])
     im=mouth_open(im,32,22,dy=8);return rot(im,-7,(W/2,H*.9))
   if m=='cheer':
     im=warp(im,[B(BROW_R,0,-12,26),B(BROW_N,0,-12,24),B(MC_L,-4,-6,12),B(MC_R,4,-8,12),B(JAW,0,14,60)])
     im=mouth_open(im,26,18,dy=6);return hand(im,rotd=-96,at=(PAD*K+585,PAD*K+150))
   if m=='pleased':
-    im=warp(im,[B(MC_L,-10,-22,16),B(MC_R,10,-24,16),B(C(410,375),0,-12,22),B(C(386,372),0,-10,18),B(C(412,368),0,-9,12),B(C(391,362),0,-6,10)])
+    im=warp(im,[B(MC_L,-10,-22,16),B(MC_R,10,-24,16),B(C(410,375),0,-12,22),B(C(386,372),0,-10,18),B(C(412,368),0,-9,12),B(C(391,363),0,-5,7),B(C(410,362),0,-5,7)])
     return flush(im,(80,110,200),.10)
   if m=='smug':
     im=warp(im,[B(MC_R,12,-24,16),B(C(408,380),0,-10,16),B(MC_L,0,4,10),B(BROW_R,0,-26,26),B(BROW_NI,6,10,16)])
