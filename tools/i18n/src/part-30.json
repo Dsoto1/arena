@@ -4,12 +4,280 @@
   "w": "02-data.js:2369"
  },
  {
+  "k": "{0} gains {1} from the crowd.",
+  "w": "03-engine.js:625"
+ },
+ {
+  "k": "{0} shatters a Blessings pot on {1}: {2}{3}.{4}",
+  "w": "03-engine.js:659"
+ },
+ {
+  "k": "{0} is eliminated by {1} ({2}, trophy).",
+  "w": "03-engine.js:961"
+ },
+ {
+  "k": "{0} is slain by {1}, tamed by {2} ({3}, trophy).",
+  "w": "03-engine.js:967"
+ },
+ {
+  "k": "{0} is slain by {1} ({2}).",
+  "w": "03-engine.js:975"
+ },
+ {
+  "k": "{0} → {1} falls! {2} earns {3}, {4} and a trophy.",
+  "w": "03-engine.js:1037"
+ },
+ {
+  "k": "The die shows <b>{0}</b>: {1}. Take it, or re-roll for {2} (you have {3}).",
+  "w": "03-engine.js:1362"
+ },
+ {
+  "k": "{0} pays {1} to re-roll.",
+  "w": "03-engine.js:1374"
+ },
+ {
+  "k": "{0} gains {1} from the crowd ({2}).",
+  "w": "04-rules.js:333"
+ },
+ {
+  "k": "Everyone pays the {0}: {1} collects {2}.",
+  "w": "04-rules.js:855"
+ },
+ {
+  "k": "{0} pays {1} {2}.",
+  "w": "04-rules.js:862"
+ },
+ {
+  "k": "{0} draws <b>Wealth of Saturn</b>: {1}.",
+  "w": "04-rules.js:881"
+ },
+ {
+  "k": "{0} is gone or tamed: {1} gains {2} instead.",
+  "w": "04-rules.js:918"
+ },
+ {
+  "k": "{0} draws <b>Flavius Telonium</b> and pays {1} in tax.",
+  "w": "04-rules.js:935"
+ },
+ {
+  "k": "{0} trades the Golden Eagle to the crowd for {1}. It respawns atop a pillar.",
+  "w": "04-rules.js:1079"
+ },
+ {
   "k": "{0} drops the Arena Chest at {1}'s feet.",
   "w": "04-rules.js:1354"
  },
  {
   "k": "{0} drops the Arena Chest on {1}.",
   "w": "04-rules.js:1354"
+ },
+ {
+  "k": "{0} carries {1} into this event.",
+  "w": "05-flow.js:442"
+ },
+ {
+  "k": "{0} fights at home for {1}: the stands roar ({2}).",
+  "w": "05-flow.js:447"
+ },
+ {
+  "k": "{0} starts with {1} ({2}).",
+  "w": "05-flow.js:576"
+ },
+ {
+  "k": "{0} loses {1} ({2}).",
+  "w": "05-flow.js:579"
+ },
+ {
+  "k": "Survivors receive {0} and {1}.",
+  "w": "05-flow.js:906"
+ },
+ {
+  "k": "Phase 2 · Choice: {0} takes {1}.",
+  "w": "05-flow.js:1176"
+ },
+ {
+  "k": "{0} collects {1} (class ability).",
+  "w": "05-flow.js:1204"
+ },
+ {
+  "k": "{0} earns {1} (class ability).",
+  "w": "05-flow.js:1209"
+ },
+ {
+  "k": "{0} takes {1} (Lanista).",
+  "w": "05-flow.js:1215"
+ },
+ {
+  "k": "{0} ends outside the zone: {1} (now {2}).",
+  "w": "05-flow.js:1246"
+ },
+ {
+  "k": "Retiring walks your gladiator out of the arena for good. Their Fate is set to <b>{0} (Ad Memoriae)</b>, they are eliminated from this event, and {1} is removed.",
+  "w": "05-flow.js:1966"
+ },
+ {
+  "k": "{0} lays down their weapons and retires from the event. Fate: {1}.",
+  "w": "05-flow.js:1977"
+ },
+ {
+  "k": "{0} spends {1} to unlock the market.",
+  "w": "06-ai.js:388"
+ },
+ {
+  "k": "Take {0}<small>safe</small>",
+  "w": "07-ui.js:2719"
+ },
+ {
+  "k": "{0} to unlock",
+  "w": "07-ui.js:2757"
+ },
+ {
+  "k": "{0} to spend",
+  "w": "07-ui.js:2758"
+ },
+ {
+  "k": "{0} · once per event",
+  "w": "07-ui.js:2760"
+ },
+ {
+  "k": "Every 3 trophies held by a winner add {0} at the end. {1} in total.",
+  "w": "07-ui.js:2954"
+ },
+ {
+  "k": "％ Discount: {0} this turn",
+  "w": "07-ui.js:3208"
+ },
+ {
+  "k": "the market die (1-4) picks the slot · re-roll {0}",
+  "w": "07-ui.js:3211"
+ },
+ {
+  "k": "<b>{0}</b> · <b>{1}</b>{2}",
+  "w": "07-ui.js:3221"
+ },
+ {
+  "k": "{0}{1}",
+  "w": "07-ui.js:3234"
+ },
+ {
+  "k": "Discard {0} for {1}",
+  "w": "07-ui.js:3315"
+ },
+ {
+  "k": "Crowd Favor is spent in Phase 3. If it ever drops below zero, you are eliminated. You have <b>{0}</b> and <b>{1}</b>.",
+  "w": "07-ui.js:3323"
+ },
+ {
+  "k": "{0} throws {1} to the crowd ({2}).",
+  "w": "07-ui.js:3353"
+ },
+ {
+  "k": "the winner takes {0}",
+  "w": "07-ui.js:3521"
+ },
+ {
+  "k": "— worth <b>{0}</b>",
+  "w": "07-ui.js:3525"
+ },
+ {
+  "k": "The crowd roars: {0}.",
+  "w": "09-special.js:87"
+ },
+ {
+  "k": "Pay {0}, or roll a d6 and deal that much damage to both your horse and your wheel.",
+  "w": "09-special.js:89"
+ },
+ {
+  "k": "Pay {0}",
+  "w": "09-special.js:89"
+ },
+ {
+  "k": "{0} pays {1} to lift the Curse Tablet.",
+  "w": "09-special.js:90"
+ },
+ {
+  "k": "Each racer receives an Arena Key token (2 keys) and {0}. The chariot card fills the secondary weapon slot.",
+  "w": "09-special.js:144"
+ },
+ {
+  "k": "<b>{0}</b> ends on <b>{1}</b>. The roar dies to a murmur; every eye climbs to the editor's box. {2} raises a hand…",
+  "w": "10-meta.js:130"
+ },
+ {
+  "k": "<b>{0}</b> — the thumb goes <b>UP</b>. The crowd erupts: <b>{1}</b> is spared, raised to {2} and sent to the Ludus Flavius.",
+  "w": "10-meta.js:134"
+ },
+ {
+  "k": "{0} — one short of certainty. The arena falls silent; every eye turns to the editor's box. Flavius weighs your {1}… and reaches for the die.",
+  "w": "10-meta.js:153"
+ },
+ {
+  "k": "Save {0} in the Ludus<small>returns with {1}{2}</small>",
+  "w": "10-meta.js:163"
+ },
+ {
+  "k": "<b>{0}</b> · exhibition: {1}",
+  "w": "10-meta.js:167"
+ },
+ {
+  "k": "<b>{0}</b> carried into the next event",
+  "w": "10-meta.js:167"
+ },
+ {
+  "k": "🏟 The stands ({0} attended): <b>{1}</b> in section cheers{2}{3}.",
+  "w": "10-meta.js:169"
+ },
+ {
+  "k": "· <b>{0}</b> offering{1} thrown, worth ~<b>{2}</b>",
+  "w": "10-meta.js:169"
+ },
+ {
+  "k": "<b>{0}</b> is crowned festival champion ({1}).",
+  "w": "10-meta.js:215"
+ },
+ {
+  "k": "{0} is carried through the Gate of Life to the <b>Ludus infirmary</b> — saved, but they need {1} ({2}) before they can fight again. Left untended too long, wounds write their own endings.",
+  "w": "10-meta.js:228"
+ },
+ {
+  "k": "{0}'s Ludus record updates automatically: {1}, returns with {2}.",
+  "w": "10-meta.js:234"
+ },
+ {
+  "k": "Final Fate score = Crowd Favor held, −5 per Mandata Flavi still hidden; winners add the event reward, {0} per 3 trophies, {1} per Flavius item, 15 for a held Golden Eagle and 10 for a Damnatio win. Gladiators slain by beasts already lost {2} when they fell.",
+  "w": "10-meta.js:246"
+ },
+ {
+  "k": "{0} is saved in the Ludus Flavius with {1} (returns with {2}).",
+  "w": "10-meta.js:272"
+ },
+ {
+  "k": "🏥 <b>{0}</b> grits their teeth and walks out of the infirmary HEALED by sheer spite — back on the rolls ({1} for the limp).",
+  "w": "10-meta.js:350"
+ },
+ {
+  "k": "Took the rudis with <b>{0}</b> after {1}{2}{3}.",
+  "w": "10-meta.js:463"
+ },
+ {
+  "k": "<b>Missio complete!</b> {0} claims the Missio Spoils: a Rudis, a Laurel Crown, {1} from the Royal Reserve, freedom, and a hearty “Gratulationes”.",
+  "w": "10-meta.js:552"
+ },
+ {
+  "k": "{0} advances to step {1} of their missio, carrying {2}. Royal Reserve: {3}.{4}",
+  "w": "10-meta.js:553"
+ },
+ {
+  "k": "{0}'s missio ends here (this step had to be won). {1} survives with {2} and can still be saved in the Ludus. The Royal Reserve is forfeit.",
+  "w": "10-meta.js:557"
+ },
+ {
+  "k": "{0} · <b>{1}</b>",
+  "w": "10-meta.js:578"
+ },
+ {
+  "k": "“If they fall” subtracts {0} per unrevealed Mandata Flavi. “If they win” adds the event reward, {1} per 3 trophies and {2} per Flavius item.",
+  "w": "10-meta.js:578"
  },
  {
   "k": "<b>1 event record lies empty.</b>",
@@ -20,6 +288,358 @@
   "w": "10-meta.js:591"
  },
  {
+  "k": "🗡 Rudis · {0}",
+  "w": "10-meta.js:606"
+ },
+ {
+  "k": "🏆 <b>{0}</b> — {1} ({2}), <b>{3}</b> at {4}",
+  "w": "10-meta.js:692"
+ },
+ {
+  "k": "Unlocking costs {0}. Level 1/2/3 cost 4/8/12 coin. Re-rolls cost {1}. Choose (arena card) lets you skip the die entirely.",
+  "w": "11-extra.js:148"
+ },
+ {
+  "k": "You have 2 turns of grace to get inside the lit zone. Ending a turn outside costs {0}, and negative CF eliminates you.",
+  "w": "11-extra.js:171"
+ },
+ {
+  "k": "<b>1 Resolve</b>: beasts that are aggro on you, in whose zone you stand, or next to you act. <b>2 Choice</b>: take {0} (safe) or draw an arena card (instant cards resolve at once and can hurt). <b>3 Action</b>: move, up to one attack per arm, push, topple, loot, trade and spend CF. <b>4 End</b>.",
+  "w": "11-extra.js:172"
+ },
+ {
+  "k": "You hold a secret objective from Flavius. Complete it and it is revealed with its reward; still hidden at the end of the event costs {0}. Some are completed by a spoken declaration from the Action panel.",
+  "w": "11-extra.js:173"
+ },
+ {
+  "k": "Ending with 17-19 CF puts your life in the Thumb of Flavius: a d6 of 4+ spares you ({0}, sent to the Ludus Flavius). {1} or more reaches the Ludus, which lets you save your gladiator.",
+  "w": "11-extra.js:174"
+ },
+ {
+  "k": "A Blessings pot is in reach. It needs 2 damage: with power {0} you break it {1}% of the time ({2}, {3} and a hidden offering).",
+  "w": "11-extra.js:188"
+ },
+ {
+  "k": "You are outside the zone{0}. Ending here costs {1}.",
+  "w": "11-extra.js:189"
+ },
+ {
+  "k": "At {0} you sit in the Thumb of Flavius range (17-19). Reaching {1} secures the Ludus Flavius.",
+  "w": "11-extra.js:194"
+ },
+ {
+  "k": "Your weapons are weak and you can afford a level 2 weapon ({0} to unlock + {1}).",
+  "w": "11-extra.js:195"
+ },
+ {
+  "k": "{0} ({1}, {2} HP) is {3} tiles away: an easier trophy worth {4} and {5}. Attacking makes it aggro on you.",
+  "w": "11-extra.js:205"
+ },
+ {
+  "k": "{0} · {1} · {2} · returns with {3}<br>⚔ {4} gladiators · 🐾 {5} beasts · {6}/{7} wins",
+  "w": "11-extra.js:421"
+ },
+ {
+  "k": "{0} · <b>{1}</b> at {2}: {3}, {4}",
+  "w": "11-extra.js:422"
+ },
+ {
+  "k": "{0} last event",
+  "w": "11-extra.js:430"
+ },
+ {
+  "k": "Returns with {0}",
+  "w": "11-extra.js:430"
+ },
+ {
+  "k": "Royal Reserve {0}",
+  "w": "11-extra.js:430"
+ },
+ {
+  "k": "Summon to a new event<small>you control them · returns with {0} and fresh class gear</small>",
+  "w": "11-extra.js:435"
+ },
+ {
+  "k": "{0} · {1} · {2}/{3} won",
+  "w": "11-extra.js:445"
+ },
+ {
+  "k": "<b>{0}</b><small>needs {1} · {2} · untended for {3} of 4 events{4}</small>",
+  "w": "11-extra.js:452"
+ },
+ {
+  "k": "Pay for care<small>{0} · back to the rolls</small>",
+  "w": "11-extra.js:452"
+ },
+ {
+  "k": "Needs {0} from an active lanista<small>{1}</small>",
+  "w": "11-extra.js:485"
+ },
+ {
+  "k": "🏥 {0} is treated ({1}) and discharged — back on the Ludus rolls, fit to fight.",
+  "w": "11-extra.js:489"
+ },
+ {
+  "k": "An event lasted 55 turns on average, and winners finished with about {0} — under the new crowd scaling, big attendance changes the noise, not the number.",
+  "w": "11-extra.js:533"
+ },
+ {
+  "k": "{0} per hit",
+  "w": "11-extra.js:540"
+ },
+ {
+  "k": "Flavius item ({0} if you win)",
+  "w": "11-extra.js:540"
+ },
+ {
+  "k": "<b>Level 1 ({0}):</b> {1}. Knives and Stones reach 2-3 tiles; the Hasta and Tridenti throw for 2. Everything else hits for 1.",
+  "w": "11-extra.js:549"
+ },
+ {
+  "k": "<b>Level 2 ({0}):</b> {1}. The Axe, Falcata and Royal Dagger hit for 2; the Parthian Bow and Stone Sling reach 5 tiles. The Scutum Shield absorbs 2 per hit for 4 hits.",
+  "w": "11-extra.js:550"
+ },
+ {
+  "k": "<b>Level 3 ({0}):</b> the Charun and Tri-Ball Flail (power 4, range 2) are the best buys in the game; the Gladius of Flavius hits as hard at range 1 and counts as a Flavius item.",
+  "w": "11-extra.js:551"
+ },
+ {
+  "k": "Early CF comes from <b>Blessings pots</b> ({0} + {1} + a hidden offering, 2 damage breaks one), <b>beast trophies</b> (snake 3, wolf 4, bear 5, lion 5, Commodus and Tholo 6) and your class ability. A gladiator elimination is worth {2} and a trophy.",
+  "w": "11-extra.js:567"
+ },
+ {
+  "k": "Winners add {0}, {1} per 3 trophies and {2} per Flavius item. Every Mandata Flavi still hidden at the end costs {3}, so work on yours early.",
+  "w": "11-extra.js:568"
+ },
+ {
+  "k": "In the simulations winners averaged <b>{0}</b>; {1}% of all gladiators reached the Ludus Flavius, and gladiators who broke 2+ pots in round 1 won {2}% of events versus {3}% for those who broke none.",
+  "w": "11-extra.js:569"
+ },
+ {
+  "k": "<b>Choice</b>: {0} is safe. Of the arena deck's 33 instant cards, 18 cost you something (armor or weapons falling apart, Lashings, Telonium, Piaculum). Draw when you are healthy or need a spike: Omnia Mutantur, Minerva's Push and Elixirs win fights.",
+  "w": "11-extra.js:574"
+ },
+ {
+  "k": "<b>Big crowds cheer louder, not richer.</b> Up to 8 seated, every fan in your section is {0} (the printed rule). Over 8, your section is worth its share of the house (fans × 8 ÷ attendance), fractions carry turn to turn, and no section pays more than {1} per resolve — so packing the stands with your fans helps, but freedom still has to be won with trophies and the final bout. Attendance is recorded with every result.",
+  "w": "11-extra.js:591"
+ },
+ {
+  "k": "Watch the books: three week-ends in the red (or a season ended in debt) and the creditors close the ludus for good. The weekly repair budget ({0}) covers Hygeia limb regrowth and the Medicus.",
+  "w": "11-extra.js:601"
+ },
+ {
+  "k": "<b>Fates in the league.</b> Every league bout ends the way a board-game event does: each fighter meets the <b>Fate table</b> (p.54-55). Under {0} they are condemned (Damnatio or a Fatal Charade); 17-19 CF, the <b>Thumb of Flavius</b> — you roll the d6 yourself on Match Week (4-6 spares them, 1-3 hands them to a d12 death); 20-49 CF, the <b>Ludus Flavius</b> — they survive; 50+ CF, the <b>rudis</b> — freedom, theirs to take (you can ask them to stay). Any condemned fighter can be bought back with <b>blood money</b> paid to the editor — the price rises with their rating, fame and how grim the sentence. (A <b>missio</b>, in Flavius Rule, is something else entirely: a five-event campaign for one gladiator — see New event → Missio.)",
+  "w": "11-extra.js:604"
+ },
+ {
+  "k": "No armor worth the name and a stone to the head each turn. The Stone Sling reaches 5 tiles; stay far away and win for {0}.",
+  "w": "11-extra.js:610"
+ },
+ {
+  "k": "<b>Morale fights with them.</b> 80+ morale walks out with +1 AP and {0} and a bolder style; under 35 costs 1 AP; under 20 drops them a whole difficulty tier. A shared meal or kin tickets before Match Week is cheap insurance.",
+  "w": "11-extra.js:613"
+ },
+ {
+  "k": "<b>Walk the sand</b> every week you enter someone: 2 hours and {0} buys +1 AP and {1} for each of your fighters on that card — better value than most training.",
+  "w": "11-extra.js:614"
+ },
+ {
+  "k": "<b>Rating fits armor and fills the purse.</b> Before the bout a fighter gets +1 AP for every 6 points above 62 (65 → +1, 74 → +2, 80 → +3, 86+ → +4-5) and {0} for every 5 points above 70 (75 → +1, 90 → +4). A 37 walks out bare with an empty purse; a 65 with one extra AP; an 85 with four AP, three coin and the Hard brain.",
+  "w": "11-extra.js:621"
+ },
+ {
+  "k": "<b>Morale moves it.</b> High morale: +1 AP, {0}. Low: −1 AP. Broken: one tier worse at thinking. Injuries lower the rating itself (−3 to −5), and every severed limb costs 6.",
+  "w": "11-extra.js:623"
+ },
+ {
+  "k": "<b>Walk the square before Match Week.</b> The tavern scouts someone for {0}, the bathhouse is the cheapest morale in the game, and kit from the arms market means your fighter starts armed instead of spending first-turn coin at the arena market.",
+  "w": "11-extra.js:625"
+ },
+ {
+  "k": "<b>The bookmaker has limits.</b> No slip pays more than {0}, and the Emperor takes a tenth of the profit on every winning bet.",
+  "w": "11-extra.js:637"
+ },
+ {
+  "k": "<b>Early billing is a small, safe edge.</b> {0} and +1 fame just for planning; the 15% poster bonus only if they win. Bill a steady fighter for a week whose fixture suits them.",
+  "w": "11-extra.js:642"
+ },
+ {
+  "k": "Achievements unlock token parts and titles; <b>Sand in the Sandals</b> (25 events) adds {0} to every new Manager career — worth earning early.",
+  "w": "11-extra.js:645"
+ },
+ {
+  "k": "<b>{0}</b> {1}<small>{2} · {3} HP · attack {4} · range {5} · move {6}{7}{8}</small><small>{9} · slain: {10}, {11}</small>",
+  "w": "15-custom.js:434"
+ },
+ {
+  "k": "<span>Trophy count: <b>{0}</b></span><span>Royal Reserve (RR): <b>{1}</b></span><span>Flavius Fidelis: <b>{2}</b></span><span>Favorite weapons: <b>{3}</b></span>",
+  "w": "15-custom.js:462"
+ },
+ {
+  "k": "{0} fights before their home city of {1}: the stands roar their name ({2}).",
+  "w": "16-crowd.js:92"
+ },
+ {
+  "k": "The omen hangs over {0}, {1}'s own: the home crowd is silent ({2}).",
+  "w": "16-crowd.js:93"
+ },
+ {
+  "k": "A ticket costs {0} from an active lanista’s treasury —",
+  "w": "16-crowd.js:138"
+ },
+ {
+  "k": "every gladiator {0} from the emperor’s favor",
+  "w": "16-crowd.js:352"
+ },
+ {
+  "k": "he promises {0} an epigram ({1})",
+  "w": "16-crowd.js:356"
+ },
+ {
+  "k": "he nods at the underdog, {0} ({1})",
+  "w": "16-crowd.js:357"
+ },
+ {
+  "k": "Venatores {0} under his eye",
+  "w": "16-crowd.js:358"
+ },
+ {
+  "k": "a little honor for everyone ({0} each)",
+  "w": "16-crowd.js:359"
+ },
+ {
+  "k": ", backing <b>{0}</b> with a {1} wager",
+  "w": "16-crowd.js:412"
+ },
+ {
+  "k": "{0} spectator{1} in {2} cheer for {3} ({4}{5}).",
+  "w": "16-crowd.js:473"
+ },
+ {
+  "k": "{0}, once per event. Roll 2 hit dice; 1 hit removes the spectator. You can only reach spectators whose section faces your quadrant (Q{1}). Every other spectator will hate you for it.",
+  "w": "16-crowd.js:490"
+ },
+ {
+  "k": "{0} · {1} fan · {2} · {3}{4}",
+  "w": "16-crowd.js:490"
+ },
+ {
+  "k": "Spectators in every quadrant ({0}) pay {1} each and chant “Tholo! Tholo!”",
+  "w": "16-crowd.js:526"
+ },
+ {
+  "k": "<b>{0}</b> pay {1} each and chant for Tholo.",
+  "w": "16-crowd.js:526"
+ },
+ {
+  "k": "<b>{0}</b> pays {1} to throw {2} an offering: {3}.",
+  "w": "16-crowd.js:535"
+ },
+ {
+  "k": "{0} pays {1} to move from {2} to {3}{4}.",
+  "w": "16-crowd.js:545"
+ },
+ {
+  "k": "<b>{0}</b> pays {1} and hits {2} with a stone.",
+  "w": "16-crowd.js:552"
+ },
+ {
+  "k": "{0} · 1 hit die, 1 damage to a rolled location{1}",
+  "w": "16-crowd.js:565"
+ },
+ {
+  "k": "· finish them and you take their {0}",
+  "w": "16-crowd.js:565"
+ },
+ {
+  "k": "{0} · a random offering from the Blessings bag",
+  "w": "16-crowd.js:566"
+ },
+ {
+  "k": "{0} · move to another stand",
+  "w": "16-crowd.js:567"
+ },
+ {
+  "k": "every quadrant has a spectator with {0}: each pays 3",
+  "w": "16-crowd.js:568"
+ },
+ {
+  "k": "needs a spectator with {0} in every quadrant",
+  "w": "16-crowd.js:568"
+ },
+ {
+  "k": "Spectator upkeep · you have {0}",
+  "w": "16-crowd.js:570"
+ },
+ {
+  "k": "Spectators earn {0} per turn rotation. A stone that eliminates a gladiator hands you all of their CF.",
+  "w": "16-crowd.js:570"
+ },
+ {
+  "k": "Change section · {0}",
+  "w": "16-crowd.js:574"
+ },
+ {
+  "k": "Pick a new stand. Its gladiator earns {0} from you every turn.",
+  "w": "16-crowd.js:574"
+ },
+ {
+  "k": "· bet {0} on {1}",
+  "w": "16-crowd.js:583"
+ },
+ {
+  "k": "· {0}",
+  "w": "16-crowd.js:653"
+ },
+ {
+  "k": "a random gambler with {0}, ready to bet now — shape them in Manager mode any time",
+  "w": "16-crowd.js:654"
+ },
+ {
+  "k": "<i>Today's handle</i><b>{0}</b><span>+ {1} from the stands · {2} slips</span>",
+  "w": "16-crowd.js:673"
+ },
+ {
+  "k": "Wagers come out of <b>{0}'s treasury</b>{1} — your active manager career banks every win and loss. Odds are fixed when you bet and paid as stake × odds — less <b>the Emperor's tenth</b> (10% of the profit), and no slip may pay more than {2} (long odds take small stakes). The book closes at the final round or when only two gladiators remain.",
+  "w": "16-crowd.js:691"
+ },
+ {
+  "k": "<span>{0}<em>{1} at {2} · pays {3} after the tenth</em></span>",
+  "w": "16-crowd.js:696"
+ },
+ {
+  "k": "{0}: {1} at {2}",
+  "w": "16-crowd.js:697"
+ },
+ {
+  "k": "You wager {0} on <b>{1}</b> at {2}.",
+  "w": "16-crowd.js:705"
+ },
+ {
+  "k": "{0} slips {1} to the bookmaker, on {2} at {3}.",
+  "w": "16-crowd.js:721"
+ },
+ {
+  "k": "<b style=\"color:var(--gold2)\">won {0}</b>",
+  "w": "16-crowd.js:731"
+ },
+ {
+  "k": "Bookmaker's cut on {0}: {1} (8% of {2} wagered).",
+  "w": "16-crowd.js:745"
+ },
+ {
+  "k": "{0} collects {1}",
+  "w": "16-crowd.js:749"
+ },
+ {
+  "k": "<b>{0}</b>{1}{2}\n      <small>{3}</small>\n      <small>HP {4} · ATK {5} · MV {6} · worth {7}, {8}{9}</small>\n      <small><b>The ledger:</b> {10} slain in your events · {11} gladiator{12} eaten · {13}</small>",
+  "w": "16-crowd.js:1023"
+ },
+ {
+  "k": "<b>{0}</b> of concessions",
+  "w": "16-crowd.js:1111"
+ },
+ {
   "k": "1 day without a spearing",
   "w": "16-crowd.js:1147"
  },
@@ -28,12 +648,1328 @@
   "w": "16-crowd.js:1147"
  },
  {
+  "k": "{0} · seated right now, over someone else",
+  "w": "16-crowd.js:1179"
+ },
+ {
+  "k": "{0} · guaranteed a seat at the next event",
+  "w": "16-crowd.js:1179"
+ },
+ {
+  "k": "Buy their cheers<small>{0} from your lanista — they back that name wherever it fights</small>",
+  "w": "16-crowd.js:1184"
+ },
+ {
+  "k": "Buying cheers takes {0} from an active lanista’s treasury.",
+  "w": "16-crowd.js:1217"
+ },
+ {
+  "k": "Buying cheers takes {0} from an active lanista’s treasury — and yours is",
+  "w": "16-crowd.js:1217"
+ },
+ {
+  "k": "<b>{0}</b> plays the odds: {1} on <b>{2}</b>.",
+  "w": "16-crowd.js:1291"
+ },
+ {
+  "k": "{0} opens {1} in {2} with {3} and one raw recruit: {4}. Nobody in the league has heard of you.",
+  "w": "17-manager.js:284"
+ },
+ {
+  "k": "A lanista steps up to the bookmaker's table: <b>{0}</b> of {1}, {2} in hand. Shape them any time in Manager mode.",
+  "w": "17-manager.js:306"
+ },
+ {
+  "k": "⚔️ The levy officer calls at {0} for <b>{1}</b>: {2} march against {3}. He can be persuaded otherwise — for {4}.",
+  "w": "17-manager.js:341"
+ },
+ {
+  "k": "The levy wants {0}. Bribe the officer ({1}) on Match Week, or watch them march.",
+  "w": "17-manager.js:342"
+ },
+ {
+  "k": "<b>{0}</b> impressed from your box seats ({1}{2}) — chalked onto your recruiting board.",
+  "w": "17-manager.js:473"
+ },
+ {
+  "k": "won the {0} at {1}{2} ({3})",
+  "w": "17-manager.js:489"
+ },
+ {
+  "k": "{0} wins for {1} ({2} to the lanista)",
+  "w": "17-manager.js:489"
+ },
+ {
+  "k": "{0} wins {1} on {2} at {3}×.",
+  "w": "17-manager.js:538"
+ },
+ {
+  "k": "<b>SCANDAL:</b> Flavius's clerks unpick the {0}'s ledgers — {1} FIXED the bout. Fame −12, fined {2}.{3}",
+  "w": "17-manager.js:550"
+ },
+ {
+  "k": "CAUGHT fixing the {0}: fame −12, {1} fine. Strike {2} of 2.",
+  "w": "17-manager.js:551"
+ },
+ {
+  "k": "{0}'s {1} is FESTERING — a surgeon (Infirmary tab, {2}) or it ends badly next week.",
+  "w": "17-manager.js:609"
+ },
+ {
+  "k": "<b>Your treasury is {0}.</b> {1} week{2} in the red before the creditors close the ludus. Win purses, bet well or release your dearest wages.",
+  "w": "17-manager.js:703"
+ },
+ {
+  "k": "condemned ({0} · {1}) — bought back by {2} for {3}",
+  "w": "17-manager.js:846"
+ },
+ {
+  "k": "Paid the editor {0} for {1}'s life ({2}). They will not forget it.",
+  "w": "17-manager.js:847"
+ },
+ {
+  "k": "earned the rudis at {0} ({1}) — but not the record to claim it yet",
+  "w": "17-manager.js:856"
+ },
+ {
+  "k": "{0} earns the rudis ({1}) — but freedom needs a record: {2}/{3} events and {4}/{5} wins. Back to the ludus.",
+  "w": "17-manager.js:857"
+ },
+ {
+  "k": "{0} earns the <b>rudis</b> ({1}) — your decision awaits",
+  "w": "17-manager.js:859"
+ },
+ {
+  "k": "earned the rudis at {0} ({1}) — and chose to fight on",
+  "w": "17-manager.js:861"
+ },
+ {
+  "k": "{0} faces the <b>Thumb of Flavius</b> ({1}) — you roll the die on Match Week",
+  "w": "17-manager.js:865"
+ },
+ {
+  "k": "{0} faces the thumb ({1}) — it goes up. Spared.",
+  "w": "17-manager.js:866"
+ },
+ {
+  "k": "{0} is condemned ({1}) — and the whole arena rises for <b>{2}</b>. The editor has no choice. Clemency.",
+  "w": "17-manager.js:869"
+ },
+ {
+  "k": "{0} is condemned ({1}, {2}) — but the editor waves it away. Clemency.",
+  "w": "17-manager.js:873"
+ },
+ {
+  "k": "{0} is <b>condemned</b> — {1} ({2}). Blood money: {3}, your decision",
+  "w": "17-manager.js:875"
+ },
+ {
+  "k": "{0} is condemned ({1}) — {2} pays {3} in blood money",
+  "w": "17-manager.js:877"
+ },
+ {
+  "k": "<b>{0} dies</b> — {1} · {2} ({3})",
+  "w": "17-manager.js:878"
+ },
+ {
+  "k": "The thumb goes down ({0}); the d12 names {1}. You may still pay the editor {2}.",
+  "w": "17-manager.js:897"
+ },
+ {
+  "k": "{0} changes hands. {1} lives — and owes you a life.",
+  "w": "17-manager.js:899"
+ },
+ {
+  "k": "The officer pocketed {0} and took {1} anyway. Fame −3.",
+  "w": "17-manager.js:903"
+ },
+ {
+  "k": "The officer takes your {0}, thanks you — and marches {1} off regardless. Word gets around (fame −3).",
+  "w": "17-manager.js:903"
+ },
+ {
+  "k": "spared the levy — {0} paid the officer {1}",
+  "w": "17-manager.js:904"
+ },
+ {
+  "k": "Bribed the levy officer {0} to keep {1}.",
+  "w": "17-manager.js:904"
+ },
+ {
+  "k": "{0} and {1}'s name comes off the list. They know who paid (+4 loyalty).",
+  "w": "17-manager.js:904"
+ },
+ {
+  "k": "bought their freedom from {0} for {1}",
+  "w": "17-manager.js:908"
+ },
+ {
+  "k": "{0} counts {1} onto your table and walks out free. The treasury is richer; the roster is not.",
+  "w": "17-manager.js:909"
+ },
+ {
+  "k": "💰 Bribe the officer {0}<small>keeps them home · +4 loyalty · −1 Honor · a small chance he takes both</small>",
+  "w": "17-manager.js:924"
+ },
+ {
+  "k": "💰 Pay the editor {0}<small>they live, owe you (+8 loyalty), −4 morale</small>",
+  "w": "17-manager.js:926"
+ },
+ {
+  "k": "{0} has saved <b>{1}</b> of their own and asks to buy their freedom for <b>{2}</b> — before the record the rudis asks for ({3}/{4} events, {5}/{6} wins).",
+  "w": "17-manager.js:927"
+ },
+ {
+  "k": "💰 Take the coin — let them go<small>{0} · +1 Honor</small>",
+  "w": "17-manager.js:927"
+ },
+ {
+  "k": "<b>{0} signs with {1}</b>: {2} a week for {3} weeks{4}.",
+  "w": "17-manager.js:1007"
+ },
+ {
+  "k": "Poached {0} from {1} ({2} buyout).",
+  "w": "17-manager.js:1024"
+ },
+ {
+  "k": "You start with {0}, no fame and one raw recruit. Stars will not even talk to an Unknown ludus: scout cheap fighters, win undercards and bet wisely to build a name.",
+  "w": "17-manager.js:1101"
+ },
+ {
+  "k": "<b>{0}</b><small>{1} · {2} · fame {3} ({4}) · {5} · {6} fighters</small><small style=\"color:var(--bone)\">{7}</small><small>{8}</small>",
+  "w": "17-manager.js:1108"
+ },
+ {
+  "k": "Create a new lanista<small>start Unknown, with {0} and one raw recruit</small>",
+  "w": "17-manager.js:1110"
+ },
+ {
+  "k": "Walk the sand at {0} before the games — your fighters on this week's card arrive with +1 AP and {1}.",
+  "w": "17-manager.js:1133"
+ },
+ {
+  "k": "Invest in <b>{0}</b> ({1} → potential {2}): a personal trainer — a <i>doctore</i> — ({3} a week) gives the best odds of growth.",
+  "w": "17-manager.js:1139"
+ },
+ {
+  "k": "{0} · {1} · {2} · {3}",
+  "w": "17-manager.js:1165"
+ },
+ {
+  "k": "<i>Open slips</i><b>{0}</b><span>{1} at risk</span>",
+  "w": "17-manager.js:1189"
+ },
+ {
+  "k": "<i>Bookmaker's cut</i><b>{0}</b><span>8% of all coin laid on your fighters</span>",
+  "w": "17-manager.js:1189"
+ },
+ {
+  "k": "<i>This week's handle</i><b>{0}</b><span>{1} slips at {2}</span>",
+  "w": "17-manager.js:1189"
+ },
+ {
+  "k": "Wages {0}/wk against {1}: <b>{2}</b> of runway.{3} You can afford to invest.",
+  "w": "17-manager.js:1200"
+ },
+ {
+  "k": "Wages {0} a week, paid when the week ends · physicians' weekly cap: {1}/{2} coin of work left · click a fighter to open their card.",
+  "w": "17-manager.js:1217"
+ },
+ {
+  "k": "League rules follow the <b>Fate table</b> (rulebook p.54-55) for every fighter in every bout, win or lose: under {0} they are <b>condemned</b> (Damnatio or a Fatal Charade), 17-19 CF they face the <b>Thumb of Flavius</b> (d6: 4-6 spared, else a d12 picks the death), 20-49 CF they <b>survive</b> to the Ludus Flavius, and 50+ CF earns the <b>rudis</b> — freedom, if they want it. A lanista may pay the editor <b>blood money</b> to buy back a condemned fighter; your own verdicts wait for you on Match Week. Severed limbs persist (−6 rating each) until the priests of Hygeia regrow them; a fighter with two severed limbs retires at the end of the week; the old hang up the sword on their own past 35..",
+  "w": "17-manager.js:1220"
+ },
+ {
+  "k": "<b>Morale</b> is how a fighter feels this week, and it walks out onto the sand with them: <b>80+</b> high spirits (+1 AP, {0} when the bout begins, fights bolder) · <b>35-79</b> steady · <b>under 35</b> low (−1 AP, fights cautiously) · <b>under 20</b> broken (also fights a whole tier worse). It rises with bouts, fair wages, meals, kin tickets and bonuses, and falls with idle weeks, low pay and a greedy lanista. Very low morale also invites early retirement and poachers.\n     <b>Loyalty</b> is their bond to your ludus (from your Honor, their morale, minus your Greed, plus the bonds you build). It is the number a rival must beat to poach them, it decides who stays when the legions call, and it keeps contracts renewing.",
+  "w": "17-manager.js:1222"
+ },
+ {
+  "k": "<b>Money.</b> Everything is paid from your <b>treasury</b>. The Medicus, the surgeon and Hygeia's priests also count against your physicians' <b>weekly cap</b> (how much work they can do) ({0} a week) — a cap, not a separate purse. Three week-ends in the red, or a season ended in debt, and the creditors close the ludus.",
+  "w": "17-manager.js:1224"
+ },
+ {
+  "k": "<b>{0} owed</b> · 8% interest a week · they collect ~15% each week's end. {1}",
+  "w": "17-manager.js:1236"
+ },
+ {
+  "k": "<b style=\"color:var(--blood2)\">☠ Your treasury is {0}</b> — {1} week-end{2} in the red before the creditors close the ludus.",
+  "w": "17-manager.js:1251"
+ },
+ {
+  "k": "Wages{0} are paid: about <b>{1}</b> (treasury {2} → ~{3}).",
+  "w": "17-manager.js:1269"
+ },
+ {
+  "k": "{0} in purses{1} — settle any verdicts, then end the week",
+  "w": "17-manager.js:1284"
+ },
+ {
+  "k": "· 🗺 sand walked: +1 AP {0}",
+  "w": "17-manager.js:1294"
+ },
+ {
+  "k": "{0}{1} · {2}",
+  "w": "17-manager.js:1301"
+ },
+ {
+  "k": "🤝 Fix the bout<small>{0} under the table · your fighter wins · {1}% chance Flavius finds out{2}</small>",
+  "w": "17-manager.js:1303"
+ },
+ {
+  "k": "🎟 Spectate<small>{0} · a seat in the stands</small>",
+  "w": "17-manager.js:1303"
+ },
+ {
+  "k": "your fighters on the card get <b>+1 AP, {0}</b>",
+  "w": "17-manager.js:1308"
+ },
+ {
+  "k": "Walk {0}<small>2 h · {1}{2}</small>",
+  "w": "17-manager.js:1308"
+ },
+ {
+  "k": "{0} Your fighters take the sand with <b>+1 AP and {1}</b>.",
+  "w": "17-manager.js:1313"
+ },
+ {
+  "k": "<b>💀 The Debtor's Gambit</b> — the treasury reads <b>{0}</b> and the creditors wait at the gate. The editor's offer stands: take the sand <b>yourself</b> in tonight's {1}. Walk off alive and the purse and the spectacle clear your books; fall, and the Annals write your epitaph — <b>death is real, and the career ends on the sand</b>. As a fighter you rate around <b>{2}–{3}</b>: an old hand, not a champion.",
+  "w": "17-manager.js:1322"
+ },
+ {
+  "k": "Scout<small>3 h · {0} · 6 sparring bouts</small>",
+  "w": "17-manager.js:1360"
+ },
+ {
+  "k": "Host a feast<small>4 h · {0} · every 3 weeks</small>",
+  "w": "17-manager.js:1360"
+ },
+ {
+  "k": "Send a gift<small>2 h · {0} · every 2 weeks</small>",
+  "w": "17-manager.js:1360"
+ },
+ {
+  "k": "Trial bout<small>3 h · {0} · they fight beside your best — trust + a full scout</small>",
+  "w": "17-manager.js:1360"
+ },
+ {
+  "k": "Buyout {0} to their lanista · their loyalty {1} · morale {2}",
+  "w": "17-manager.js:1362"
+ },
+ {
+  "k": "Asks about <b>{0}</b> a week{1}. A signing bonus counts toward the weekly wage (spread over the weeks). <b>💰 Money talks:</b> every coin over the ask adds interest — 1.25× the ask ≈ +22, 1.5× ≈ +45{2}. One offer per recruit a week.",
+  "w": "17-manager.js:1365"
+ },
+ {
+  "k": "Exhibition with {0}: {1} {2} ({3}). Their fighters are fully scouted; relations warm (rivalry −4); +1 perk point.{4}",
+  "w": "17-manager.js:1411"
+ },
+ {
+  "k": "Paid <b>every week</b>, when you end the week, straight from the treasury. {0} week{1} left ≈ {2} still owed. Their asking price today: {3}/wk{4}.",
+  "w": "17-manager.js:1462"
+ },
+ {
+  "k": "<small>🦴 severed: {0} — only the priests of Hygeia regrow flesh ({1} a limb)</small>",
+  "w": "17-manager.js:1468"
+ },
+ {
+  "k": "⚕ Medicus<small>{0} · counts toward the weekly cap · clears it · +12 morale</small>",
+  "w": "17-manager.js:1470"
+ },
+ {
+  "k": "🔪 The surgeon<small>{0} · counts toward the weekly cap · the only physician cure · 1-in-10 mishap costs a week</small>",
+  "w": "17-manager.js:1471"
+ },
+ {
+  "k": "🛁 Bathhouse day<small>{0} · heals a week faster · +4 morale</small>",
+  "w": "17-manager.js:1472"
+ },
+ {
+  "k": "⚡ Temple of Asclepius<small>{0} · outside help (no cap) · heals any wound at once · +8 morale</small>",
+  "w": "17-manager.js:1473"
+ },
+ {
+  "k": "🌿 Blessings of Hygeia<small>{0} a limb · counts toward the weekly cap · regrows lost limbs</small>",
+  "w": "17-manager.js:1474"
+ },
+ {
+  "k": "· your physicians can still do <b>{0}</b> of {1} of work this week",
+  "w": "17-manager.js:1479"
+ },
+ {
+  "k": "Your ludus <b>physicians</b> (the Medicus, the surgeon, the priests of Hygeia who call on you) can only do so much work a week: <b>{0}</b> of treatment in total. That is a <b>cap on their time</b>, not extra money — every cure is still paid from your treasury. The <b>bathhouse</b> and the <b>temple of Asclepius</b> are outside help, so they do not count toward the cap.",
+  "w": "17-manager.js:1480"
+ },
+ {
+  "k": "⚕ <b>The infirmary</b> — steam, salves, and men who charge by the scream. <b>Every cure is paid from your treasury.</b> The Medicus, the surgeon and Hygeia's priests also count toward your physicians' <b>weekly cap</b> — they can do at most <b>{0}</b> of treasury a week (<b>{1}</b> left this week); the bathhouse and the temple of Asclepius are outside help and do not count. <b>Care must match the wound</b>: rest heals bruises, the Medicus mends muscle, only the <b>surgeon's knife</b> stops a festering wound, and only <b>Hygeia</b> regrows a lost limb. Ignore a festering wound for three weeks and your fighter dies, flees, or is never quite whole again.",
+  "w": "17-manager.js:1492"
+ },
+ {
+  "k": "Resolved when the week ends; the report prints in the Acta Diurna. Lighter drills are cheap and safe; brutal drills bring the big gains — and the injuries (benched and rating-docked until the Medicus or a week of rest). Your Discipline sweetens every regime, and ill omens make any yard slicker. Add a <b>personal trainer (doctore)</b> (⚒ {0}, on each fighter’s card) for focused work on one fighter — the best odds of all, a small extra risk.",
+  "w": "17-manager.js:1498"
+ },
+ {
+  "k": "🏟 <b>The practice arena.</b> Request an <b>exhibition</b> from a rival stable: your fighter against theirs, sparring partners filling the Classic Elimination's four places. <b>Nobody dies</b> — the doctors pull a fighter before the killing blow and the bout is called. The stands fill with fighters from around the league, who pay a coin from their own purses to watch. You get their fighters fully scouted, a training chance for yours (better if they last), <b>a Match Week edge</b> this week (+1 AP, {0}), the gate money, a perk point, and warmer relations with that lanista. {1} hours and {2} each; once per fighter per week.",
+  "w": "17-manager.js:1504"
+ },
+ {
+  "k": "Request the exhibition<small>{0} h · {1} · resolved instantly</small>",
+  "w": "17-manager.js:1507"
+ },
+ {
+  "k": "🍷 Share a meal<small>1 h · {0} · weekly · +6 morale, +2 loyalty</small>",
+  "w": "17-manager.js:1546"
+ },
+ {
+  "k": "🎟 Tickets for the family<small>{0} · weekly · kin seated at the next event · +5 morale, +3 loyalty</small>",
+  "w": "17-manager.js:1548"
+ },
+ {
+  "k": "💰 Pay a bonus<small>{0} · every 2 weeks · +8 morale, +4 loyalty</small>",
+  "w": "17-manager.js:1549"
+ },
+ {
+  "k": "📈 Raise their wage<small>1 h · {0} a week for good · +10 morale, +6 loyalty</small>",
+  "w": "17-manager.js:1550"
+ },
+ {
+  "k": "⚒ Personal trainer (doctore){0}<small>{1} · this week only (hire again next week) · a doctore drills them alone — best odds to raise their rating</small>",
+  "w": "17-manager.js:1552"
+ },
+ {
+  "k": "⚕ Medicus<small>{0} · +12 morale · clears injuries</small>",
+  "w": "17-manager.js:1553"
+ },
+ {
+  "k": "Before {0} at {1}, <b>{2}</b> ({3}) took the palm in the {4}{5}{6}. The purse of <b>{7}</b> {8}. Fame {9}, rating {10} {11} — {12}",
+  "w": "17-manager.js:1647"
+ },
+ {
+  "k": ", where {0} stands with {1} and a {2}–{3} record",
+  "w": "17-manager.js:1658"
+ },
+ {
+  "k": "· {0} in their last bout",
+  "w": "17-manager.js:1672"
+ },
+ {
+  "k": "<span><b>{0}</b>bouts</span><span><b>{1}</b> in purses</span><span><b>{2}</b>top CF</span><span><b>{3}</b>dead</span><span><b>{4}</b>empire events</span>",
+  "w": "17-manager.js:1699"
+ },
+ {
+  "k": "🍞 Feast a city<small>2 h · {0} · a random city eats in your name: its regulars turn fans of your best fighter, +1 fame</small>",
+  "w": "17-manager.js:1728"
+ },
+ {
+  "k": "🏟 Sponsor the games<small>{0} · your name over the arena: +2 fame, rivals seethe a little</small>",
+  "w": "17-manager.js:1729"
+ },
+ {
+  "k": "📢 Hire the criers<small>1 h · {0} · every free agent hears your name: +2 interest across the market</small>",
+  "w": "17-manager.js:1730"
+ },
+ {
+  "k": "💸 Borrowed {0} from {1} (8%/week, collected weekly).",
+  "w": "17-manager.js:1809"
+ },
+ {
+  "k": "⏩ Your doctores ran the ludus for <b>{0} week{1}</b>: {2} win{3}, treasury {4}, fame {5}{6}. The Acta Diurna has every week on the Archives shelf.",
+  "w": "17-manager.js:1835"
+ },
+ {
+  "k": "{0} changes hands. {1} will remember who paid: loyalty {2}.",
+  "w": "17-manager.js:1876"
+ },
+ {
+  "k": "The repair budget is spent for this week ({0} a week).",
+  "w": "17-manager.js:1908"
+ },
+ {
+  "k": "Paid the priests of Asclepius {0}: {1}'s {2} is healed.",
+  "w": "17-manager.js:1920"
+ },
+ {
+  "k": "The bookmaker takes at most {0} at {1}× — no slip may pay more than {2}.",
+  "w": "17-manager.js:1921"
+ },
+ {
+  "k": "Fixed the {0}: {1} under the table for {2}'s \"win\".",
+  "w": "17-manager.js:1945"
+ },
+ {
+  "k": "Scouted {0} ahead of the games (2 h, {1}): +1 AP, {2} for every fighter you enter.",
+  "w": "17-manager.js:1961"
+ },
+ {
+  "k": "📌 <b>{0}</b> tops the posters for the {1} — billed {2} weeks ahead: {3} appearance, +1 fame, and a 15% purse bonus if they win.",
+  "w": "22-trophies.js:265"
+ },
+ {
+  "k": "📌 The billing pays: {0} won as advertised — {1} poster bonus.",
+  "w": "22-trophies.js:272"
+ },
+ {
+  "k": "{0}: {1} ({2})",
+  "w": "22-trophies.js:305"
+ },
+ {
+  "k": "won the Flavius Superbus of season {0} in Roma ({1})",
+  "w": "22-trophies.js:314"
+ },
+ {
+  "k": "🏆 <b>{0}</b>{1} wins <b>the Flavius Superbus</b> before a roaring Roma ({2}).",
+  "w": "22-trophies.js:317"
+ },
+ {
+  "k": "⭐ <b>{0}</b> of {1} wins <b>{2}</b>! {3}, +{4} fame.",
+  "w": "22-trophies.js:320"
+ },
+ {
+  "k": "📍 {0} · {1} · purse {2} · +{3} fame · {4} a heat for each of yours{5}{6}",
+  "w": "22-trophies.js:345"
+ },
+ {
+  "k": "· win {0}{1}",
+  "w": "22-trophies.js:360"
+ },
+ {
+  "k": "{0} · {1} a heat to appear{2}",
+  "w": "22-trophies.js:363"
+ },
+ {
+  "k": "<b>📌 Early billing</b> — name a fighter for a week at least 3 weeks away. On the night they are entered in the biggest bout that fits their rating: {0} appearance, +1 fame, and a 15% purse bonus if they win. Optional; it lapses harmlessly if they are hurt. Invitationals and the Superbus cannot be billed — they are by invitation.",
+  "w": "22-trophies.js:388"
+ },
+ {
+  "k": "A billed fighter goes on the posters: on the night they are entered in the biggest bout that fits their rating, earn {0} appearance and +1 fame, and a win pays a 15% poster bonus. Entirely optional — you can always enter fighters on Match Week as usual. If they are hurt or gone by then, the billing simply lapses.",
+  "w": "22-trophies.js:398"
+ },
+ {
+  "k": "Build {0}<small>{1}</small>",
+  "w": "23-ludus.js:38"
+ },
+ {
+  "k": "🏟 The practice stands took {0} in tickets this week.",
+  "w": "23-ludus.js:47"
+ },
+ {
+  "k": "{0} · 8 weeks: neither house poaches the other",
+  "w": "23-ludus.js:105"
+ },
+ {
+  "k": "<b>{0} owed</b> · 8% a week. Paying early warms them to you.",
+  "w": "23-ludus.js:129"
+ },
+ {
+  "k": "The {0} {1} costs {2}.",
+  "w": "23-ludus.js:146"
+ },
+ {
+  "k": "(plus {0})",
+  "w": "23-ludus.js:169"
+ },
+ {
+  "k": "+ {0}",
+  "w": "23-ludus.js:169"
+ },
+ {
+  "k": "💰 <b>LUDUS.</b> {0} in {1}'s treasury.",
+  "w": "24-sponsors.js:72"
+ },
+ {
+  "k": "💰 <b>LUDUS.</b> {0} in the active wallet’s treasury.",
+  "w": "24-sponsors.js:73"
+ },
+ {
+  "k": "Buy · {0}<small>signs 6 weeks at 2/wk</small>",
+  "w": "25-city.js:419"
+ },
+ {
+  "k": "bought off the auction block at {0} for {1} ({2})",
+  "w": "25-city.js:423"
+ },
+ {
+  "k": "⚖ Bought {0} off the auction block at {1} ({2}). {3}.",
+  "w": "25-city.js:424"
+ },
+ {
+  "k": "{0} {1} <small>{2} · {3}{4}</small>",
+  "w": "25-city.js:451"
+ },
+ {
+  "k": "Steam the whole stable<small>{0} · weekly · +2 morale each</small>",
+  "w": "25-city.js:454"
+ },
+ {
+  "k": "Stand a round<small>{0} · weekly · +3 morale each, and someone talks</small>",
+  "w": "25-city.js:456"
+ },
+ {
+  "k": "An evening of diplomacy<small>{0} · weekly · a rival house warms to you</small>",
+  "w": "25-city.js:458"
+ },
+ {
+  "k": "Pay the road to {0} first ({1}, on Match Week)",
+  "w": "25-city.js:487"
+ },
+ {
+  "k": "(not a card icon — {0} to a winner holding it)",
+  "w": "26-gear.js:238"
+ },
+ {
+  "k": "👛 Own purse <b>{0}</b> · saving {1} {2}{3}",
+  "w": "28-purses.js:19"
+ },
+ {
+  "k": "👛 <b>{0}</b> asks to buy their freedom for {1} — decide on Match Week.",
+  "w": "28-purses.js:32"
+ },
+ {
+  "k": "👛 <b>{0}</b> buys their freedom from {1} for {2}.",
+  "w": "28-purses.js:33"
+ },
+ {
+  "k": "“I have fought for this house, bled for it, saved every coin it paid me. Sell it to me, lanista. I will keep the name, keep the fighters — and pay you <b>{0}</b>.”",
+  "w": "28-purses.js:39"
+ },
+ {
+  "k": "Accept: {0} becomes the house's lanista (a rival from now on, roster and all), and <b>{1} founds your new ludus</b> in this same league{2} — you go straight to creating it. Refuse: {3}'s morale drops, and they may walk out to found a house of their own — against you.",
+  "w": "28-purses.js:40"
+ },
+ {
+  "k": "✍ Sell the house<small>{0} · found a new ludus</small>",
+  "w": "28-purses.js:41"
+ },
+ {
+  "k": "bought {0} from {1} for {2} — lanista now",
+  "w": "28-purses.js:62"
+ },
+ {
+  "k": "✍ <b>{0} is sold</b> to {1} for {2}{3}. {4} opens <b>{5}</b> in {6} with {7} and one raw recruit.",
+  "w": "28-purses.js:73"
+ },
+ {
+  "k": "Take the {0} — you are hurt, and a bad card could finish you.",
+  "w": "29-guide.js:23"
+ },
+ {
+  "k": "Take the safe {0}: it buys armor and weapons at the market.",
+  "w": "29-guide.js:23"
+ },
+ {
+  "k": "{0} is down to {1} HP — a hit or two finishes it: {2}, {3} and a trophy.",
+  "w": "29-guide.js:28"
+ },
+ {
+  "k": "A Blessings pot is in reach. With power {0} you can break it (it needs 2 damage): {1}, {2} and a hidden offering.",
+  "w": "29-guide.js:30"
+ },
+ {
+  "k": "{0} is in reach{1}. Gladiator trophies are worth {2}.",
+  "w": "29-guide.js:31"
+ },
+ {
+  "k": "You are outside the zone — get back in before your turn ends, or it costs {0}.",
+  "w": "29-guide.js:43"
+ },
+ {
+  "k": "<b>Choice:</b> take the safe <b>{0}</b>.",
+  "w": "29-guide.js:202"
+ },
+ {
+  "k": "You surface — and something stirs by the pillar beside you. <b>Take {0}</b> first.",
+  "w": "29-guide.js:209"
+ },
+ {
+  "k": "<b>Take {0}</b> — then we fight.",
+  "w": "29-guide.js:214"
+ },
+ {
+  "k": "🎟 A ticket · {0}",
+  "w": "30-spectate.js:29"
+ },
+ {
+  "k": "A seat for <b>{0}</b> costs <b>{1}</b>, but <b>{2}</b>'s treasury holds {3}.",
+  "w": "30-spectate.js:29"
+ },
+ {
+  "k": "🎟 Choose your seat · {0}",
+  "w": "30-spectate.js:30"
+ },
+ {
+  "k": "A seat for <b>{0}</b> costs <b>{1}</b> from <b>{2}</b>'s treasury ({3}). Click a stand.",
+  "w": "30-spectate.js:30"
+ },
+ {
+  "k": "You buy a ticket ({0}) and take",
+  "w": "30-spectate.js:36"
+ },
+ {
+  "k": "🎟 Buy a ticket <small>{0}</small>",
+  "w": "30-spectate.js:53"
+ },
+ {
+  "k": "Four more languages, a lanista’s perks and rewarded victories",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Italiano, Português (Brasil), Français and Deutsch — each language loads only when you pick it",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Manager: the lanista’s hours are gone (actions cost coin), a perk tree for the lanista, standing orders in the Training Yard, Fit ✓ only for the best few",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Winning pays: bigger purses for upsets and streaks, faster growth, fans, and a patron after three wins in a row",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Infirmary: any wounded fighter may take a bed, plans repeat, and a third lost limb gives one week at home to regrow it",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Class cards show their rules side on hover; beasts from the arena deck keep their card in the Field tab",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Online: the 📜 Acta of the day replaces the Forum",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Fallen fighters only watch — no stones, offerings or new wagers",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Hovering armor marks where it goes in gold, never a hit flash",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Results open on the players; wagers have their own tab",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Stale letters disappear; “to the ward” opens the Infirmary; unused city kits are refunded",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Smoother music on Safari",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Clicking a beast in the Field tab opens that beast; starting beasts show their token and stats",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "🛣 Your fighters were already booked at {0}: the road cost {1}.",
+  "w": "35-travel.js:19"
+ },
+ {
+  "k": "🛣 Travel to <b>{0}</b> first ({1}) — then you can {2}.",
+  "w": "35-travel.js:26"
+ },
+ {
+  "k": "{0} paid",
+  "w": "35-travel.js:30"
+ },
+ {
+  "k": "💰 Travel · {0}",
+  "w": "35-travel.js:36"
+ },
+ {
+  "k": "🛣 Travelled to {0} from {1}: {2}.",
+  "w": "35-travel.js:40"
+ },
+ {
+  "k": "💢 {0} never fought — {1} takes back its road money twice over: {2}, and a grudge.",
+  "w": "35-travel.js:47"
+ },
+ {
+  "k": "<b>The results.</b> Each fighter's place, the <b>Crowd Favor</b> they earned and the <b>Fate</b> it bought (under {0}: condemned; 17-19: the Thumb; 20-49: back to the ludus; 50+: the rudis), your purses and fees, the crowd — and your betting slip.",
+  "w": "36-mtutor.js:60"
+ },
+ {
+  "k": "he tips {0} {1} anyway",
+  "w": "39-sotonium.js:90"
+ },
+ {
+  "k": "he roars for every {0}, as he does for his child ({1} each)",
+  "w": "39-sotonium.js:90"
+ },
+ {
+  "k": "{0} a week",
+  "w": "42-rooms.js:36"
+ },
+ {
+  "k": "⚒ {0}<small>{1} this week</small>",
+  "w": "42-rooms.js:39"
+ },
+ {
+  "k": "{0} each, week by week",
+  "w": "42-rooms.js:42"
+ },
+ {
+  "k": "<b>{0}</b><small>{1}</small><small>slain: {2}, {3} · {4}</small>",
+  "w": "43-beasts.js:132"
+ },
+ {
+  "k": "🤝 <b>{0}</b>{1}: {2} are on the same sand. The crowd knows the story: {3} each.",
+  "w": "44-studio.js:114"
+ },
+ {
+  "k": "🤝 {0} draws <b>{1}</b> — the crowd loves a story: {2}.",
+  "w": "44-studio.js:116"
+ },
+ {
+  "k": "💰 {0} purse · {1} a fighter · ⭐ +{2} fame{3}",
+  "w": "44-studio.js:202"
+ },
+ {
+  "k": "🏛 <b>The Quaestor’s Ledger</b> for season {0}: {1} — {2}.",
+  "w": "47-mgr47.js:84"
+ },
+ {
+  "k": "🤝 Loan fee: {0} pays {1} for {2}.",
+  "w": "47-mgr47.js:122"
+ },
+ {
+  "k": "🤝 You pay {0} to {1} for {2}.",
+  "w": "47-mgr47.js:122"
+ },
+ {
+  "k": "🤝 {0} goes on loan to {1} — {2} weeks at {3} a week.",
+  "w": "47-mgr47.js:128"
+ },
+ {
+  "k": "🤝 {0} joins you on loan from {1} — {2} weeks at {3} a week (plus their wage).",
+  "w": "47-mgr47.js:129"
+ },
+ {
+  "k": "<b>{0}</b>",
+  "w": "48-arena47.js:76"
+ },
+ {
+  "k": "{0}/wk · {1} wk left{2}",
+  "w": "50-v48.js:26"
+ },
+ {
+  "k": "· 🏋 sparred (+1 AP {0} tonight)",
+  "w": "50-v48.js:30"
+ },
+ {
+  "k": "Buy · {0}<small>6 weeks at 2/wk</small>",
+  "w": "50-v48.js:50"
+ },
+ {
+  "k": "⚱ <b>{0}</b> died on loan under your colours. {1} is owed {2} — taken from your treasury{3}.",
+  "w": "50-v48.js:58"
+ },
+ {
+  "k": "⚱ {0} died on loan at {1} — they pay you {2}.",
+  "w": "50-v48.js:58"
+ },
+ {
+  "k": "\"Word is your barracks stand empty. Take <b>{0}</b> for a while — {1} weeks, {2} a week. Send them home when you have a fighter of your own.\"",
+  "w": "50-v48.js:66"
+ },
+ {
+  "k": "{0} fighters watched: <b>{1}</b> at the gate (from their own purses). {2} carries a Match Week edge this week (+1 AP, {3}).",
+  "w": "50-v48.js:75"
+ },
+ {
+  "k": "🏋 Practice gate: {0} from {1} watching fighters; {2} is sharp for Match Week.",
+  "w": "50-v48.js:76"
+ },
+ {
+  "k": "bought off Vulso's cart for {0} ({1})",
+  "w": "50-v48.js:100"
+ },
+ {
+  "k": "🛒 Bought {0} off Vulso's cart ({1}). {2}.",
+  "w": "50-v48.js:100"
+ },
+ {
+  "k": "<b>Wages are the bill, purses are the income.</b> A fighter rated 60 asks about {0} a week, and an Undercard win pays about 30.",
+  "w": "50-v48.js:132"
+ },
+ {
+  "k": "A house built from nothing opens with {0}: the founding treasury plus the Senate's newcomer grant.",
+  "w": "50-v48.js:138"
+ },
+ {
+  "k": "Small houses (2 fighters or fewer, under {0}) pay half the blood money to save a condemned fighter.",
+  "w": "50-v48.js:141"
+ },
+ {
+  "k": "The fighter who sparred takes <b>+1 AP and {0}</b> into this week's Match Week. Spar the fighter you're about to enter.",
+  "w": "50-v48.js:166"
+ },
+ {
+  "k": "A house that enters every fighter in every bout and pays every blood price loses about {0} a week. Pick your bouts.",
+  "w": "50-v48.js:182"
+ },
+ {
+  "k": "<b>{0}</b>: {1}{2} CF · {3} (wallet {4}) · Road {5}/12{6}",
+  "w": "51-v49.js:214"
+ },
+ {
+  "k": "Pots on the pillars. Break one (2 damage) for {0}, 1 [[cf|CF]] and a hidden offering. Power-2 weapons break them best.",
+  "w": "52-v50.js:69"
+ },
+ {
+  "k": "Ratings: a Luck perk ({0} a turn) won 30% against 24% without, and a Charisma perk ({1} a turn) 30% with {2} on average. A lone +1 movement or +1 damage changes little by itself: spend it early, in the rounds that allow it.",
+  "w": "53-guide50.js:2"
+ },
+ {
+  "k": "Winners add {0} for surviving; most end well past the {1} of freedom.",
+  "w": "53-guide50.js:32"
+ },
+ {
+  "k": "Every 3 trophies held by the winner add {0}.",
+  "w": "56-v52.js:59"
+ },
+ {
+  "k": "Hidden Mandata Flavi cost {0} each at the end.",
+  "w": "56-v52.js:59"
+ },
+ {
+  "k": "Spectators may throw a stone for {0}.",
+  "w": "56-v52.js:60"
+ },
+ {
+  "k": "<b>{0}</b> {1}<small>{2} · {3} · {4} · {5}{6} · used by {7}</small>",
+  "w": "57-classes.js:98"
+ },
+ {
+  "k": "weapons 2/4/7 · armor 1/3/5 · 1 per {0} · 1 per key · 1 per CF · 2 per item · abilities cost, weaknesses refund",
+  "w": "57-classes.js:106"
+ },
+ {
+  "k": "🏛 The Senate pays half your wages for the bye week: {0}.",
+  "w": "59-bye.js:25"
+ },
+ {
+  "k": "<b>{0}</b> {1}<small>{2} · {3} · {4}{5} · used by {6}</small>",
+  "w": "61-studio53.js:92"
+ },
+ {
+  "k": "<b>{0}</b> {1}<small>{2} · {3}{4} · used by {5}</small>",
+  "w": "64-v54.js:84"
+ },
+ {
+  "k": "<small>{0}</small><small>{1} · {2} · {3} key{4}{5}</small>",
+  "w": "64-v54.js:86"
+ },
+ {
+  "k": "banked {0} from the {1}",
+  "w": "64-v54.js:162"
+ },
+ {
+  "k": "{0} <b>{1}</b> has gone {2} weeks without a house and offers to <b>pay you {3}</b> to join — they want a name. Answer it at the top of any tab.",
+  "w": "64-v54.js:170"
+ },
+ {
+  "k": "“No house will look at me. Take me on and I’ll pay you <b>{0}</b> — give me the sand and I’ll give you a name.”",
+  "w": "64-v54.js:181"
+ },
+ {
+  "k": "✍ Take them on<small>{0}</small>",
+  "w": "64-v54.js:182"
+ },
+ {
+  "k": "paid {0} to join {1}",
+  "w": "64-v54.js:187"
+ },
+ {
+  "k": "✍ {0} joins {1} and pays {2} for the chance.",
+  "w": "64-v54.js:187"
+ },
+ {
+  "k": "{0} (Luck)",
+  "w": "65-stats55.js:68"
+ },
+ {
+  "k": "{0} (Charisma)",
+  "w": "65-stats55.js:69"
+ },
+ {
+  "k": "{0} a turn",
+  "w": "66-mgr55.js:67"
+ },
+ {
+  "k": "<b>Pay at least {0} this week</b>, or the next time one of your fighters steps onto the sand, someone in the stands will settle the account for us.",
+  "w": "66-mgr55.js:108"
+ },
+ {
+  "k": "<b>{0} owed</b> · {1}% interest a week, added to the debt · nobody takes it from your treasury: you pay by hand.\n    {2}{3}",
+  "w": "66-mgr55.js:116"
+ },
+ {
+  "k": "💸 Paid the week's minimum to {0}: {1}.",
+  "w": "66-mgr55.js:127"
+ },
+ {
+  "k": "{0} heard times are hard at {1}. Enclosed: <b>{2}</b>. No interest, no terms — only remember who stood by you.",
+  "w": "66-mgr55.js:146"
+ },
+ {
+  "k": "🎁 {0} sends {1}, between friends.",
+  "w": "66-mgr55.js:147"
+ },
+ {
+  "k": "{0} is your city: your fighters start with {1} and your regulars fill the stands.",
+  "w": "66-mgr55.js:155"
+ },
+ {
+  "k": "<b>Speed</b>: +1 movement at 76, +2 at 96. <b>Strength</b>: +1 damage per hit at 76, +2 at 87, +3 at 96. <b>Luck</b>: {0} a turn at 76, +2 at 96. <b>Charisma</b>: {1} a turn at 76, +2 at 96. They stack.",
+  "w": "69-v56.js:105"
+ },
+ {
+  "k": "{0}<small style=\"display:block;font-size:11px;color:var(--muted)\">{1} · {2} fighter{3}</small>",
+  "w": "70-v57.js:22"
+ },
+ {
+  "k": "<b>{0}</b><small>{1} · {2} · fame 22 · {3} · {4} and three fighters</small><small style=\"color:var(--bone)\">{5}</small>",
+  "w": "70-v57.js:25"
+ },
+ {
+  "k": "You start with {0}, no fame and one raw recruit.",
+  "w": "70-v57.js:29"
+ },
+ {
+  "k": "You start with {0}, no fame and {1}.",
+  "w": "70-v57.js:29"
+ },
+ {
+  "k": "start Unknown, with {0} and one raw recruit",
+  "w": "70-v57.js:31"
+ },
+ {
+  "k": "💬 {0}×{1}wk{2}",
+  "w": "70-v57.js:51"
+ },
+ {
+  "k": "· asks {0}",
+  "w": "70-v57.js:51"
+ },
+ {
+  "k": "On loan from {0} to {1} · {2} a week · {3} week{4} left{5}",
+  "w": "70-v57.js:56"
+ },
+ {
+  "k": "↩ Call back · {0}",
+  "w": "70-v57.js:72"
+ },
+ {
+  "k": "called home early from {0} ({1})",
+  "w": "70-v57.js:75"
+ },
+ {
+  "k": "↩ {0} is called home from {1} — {2} paid.",
+  "w": "70-v57.js:75"
+ },
+ {
+  "k": "🎲 Ludus tie ({0}, {1}) — d12: {2}.",
+  "w": "72-v59.js:54"
+ },
+ {
+  "k": "{0} picks up a Crowd Favor offering: {1}.",
+  "w": "78-v60.js:64"
+ },
+ {
+  "k": "{0} claims the Missio Spoils: a Rudis, a Laurel Crown, {1} from the Royal Reserve, freedom, and a hearty “Gratulationes”.",
+  "w": "84-v64.js:39"
+ },
+ {
+  "k": "{0} moves on to step {1}, carrying {2}. Royal Reserve: {3}.{4}",
+  "w": "84-v64.js:41"
+ },
+ {
+  "k": "{0} — 20 were needed, or a win",
+  "w": "84-v64.js:47"
+ },
+ {
+  "k": "<b>{0}</b> · missio — no Fate in this event",
+  "w": "84-v64.js:54"
+ },
+ {
+  "k": "🔍 Scout<small>3 h · {0}</small>",
+  "w": "87-v67.js:55"
+ },
+ {
+  "k": "🍷 Feast<small>4 h · {0}</small>",
+  "w": "87-v67.js:60"
+ },
+ {
+  "k": "🎁 Gift<small>2 h · {0}</small>",
+  "w": "87-v67.js:61"
+ },
+ {
+  "k": "{0}<small>3 h · {1}</small>",
+  "w": "87-v67.js:96"
+ },
+ {
+  "k": "Trial bout<small>3 h · {0} · trust + a full scout</small>",
+  "w": "87-v67.js:96"
+ },
+ {
+  "k": "🍷 Host a feast<small>4 h · {0}</small>",
+  "w": "87-v67.js:101"
+ },
+ {
+  "k": "🎁 Send a gift<small>2 h · {0}</small>",
+  "w": "87-v67.js:101"
+ },
+ {
+  "k": "🏟 Your share of the gate: {0} (fame {1}).",
+  "w": "87-v67.js:166"
+ },
+ {
+  "k": "{0} {1}/wk{2}{3}",
+  "w": "88-v68.js:36"
+ },
+ {
+  "k": "Sica's man leans close: <b>{0}</b> if <b>{1}</b> does not win this week's {2}. Paid after the bout — and only if the CPU fights for them; take the reins yourself and the deal is off.",
+  "w": "100-sica73.js:41"
+ },
+ {
+  "k": "🗡 Sica pays: <b>{0}</b> for {1}'s quiet afternoon.",
+  "w": "100-sica73.js:58"
+ },
+ {
+  "k": "<span><b>{0}</b> a week</span><span><b>{1}</b>weeks</span>{2}",
+  "w": "101-rec73.js:34"
+ },
+ {
+  "k": "The die shows <b>{0}</b>. Take one of these, or pay {1} to roll again{2}.",
+  "w": "106-v75.js:190"
+ },
+ {
+  "k": "<span>Pay for a level, roll the market die, then take that slot's <b>weapon</b> or <b>one armor piece</b> · re-roll {0}</span>",
+  "w": "106-v75.js:219"
+ },
+ {
+  "k": "{0}{1}{2}",
+  "w": "106-v75.js:224"
+ },
+ {
+  "k": "🏆 Record: <b>{0}</b> · {1}{2}{3}",
+  "w": "106-v75.js:254"
+ },
+ {
+  "k": "<b>{0}</b><small>{1} · season {2}, week {3}{4}</small><small>⭐ {5} fame · {6} · {7} wins in {8} · saved {9}</small>",
+  "w": "108-v76.js:56"
+ },
+ {
+  "k": "<b>{0}</b><small>{1} · step {2} of 5 · carrying {3} · Royal Reserve {4}</small>",
+  "w": "108-v76.js:59"
+ },
+ {
+  "k": "🐾 The {0} is down: {1}, +1 beast on the record",
+  "w": "108-v76.js:367"
+ },
+ {
+  "k": "<b>{0}</b><small>HP {1} · attack {2} · move {3}</small><small>fee {4} · kill {5}</small>",
+  "w": "108-v76.js:395"
+ },
+ {
+  "k": "⚔ Into the pen<small>{0} h · {1}{2}</small>",
+  "w": "108-v76.js:400"
+ },
+ {
+  "k": "🐾 {0} walks into the beast pen with a {1} ({2} h, {3}).",
+  "w": "108-v76.js:413"
+ },
+ {
+  "k": "⚒ Own doctore hired ({0})",
+  "w": "108-v76.js:434"
+ },
+ {
+  "k": "{0} · best odds",
+  "w": "108-v76.js:447"
+ },
+ {
+  "k": "{0} h · {1} · vs a rival",
+  "w": "108-v76.js:454"
+ },
+ {
+  "k": "Against a rival stable's fighters; nobody dies. Scouts them, a chance at +1 rating, +1 AP and {0} this Match Week, a perk point, warmer relations.",
+  "w": "108-v76.js:454"
+ },
+ {
+  "k": "⚔ Into the pen<small>{0} h · {1} · you fight it · pulled: −{2} fame</small>",
+  "w": "108-v76.js:464"
+ },
+ {
+  "k": "🌿 Hygeia<small>{0} a limb · regrows {1}</small>",
+  "w": "108-v76.js:534"
+ },
+ {
+  "k": "🧑‍⚕️ Physicians <b>{0}</b> / {1} left ⓘ",
+  "w": "108-v76.js:557"
+ },
+ {
+  "k": "{0} to start each bout this week",
+  "w": "108-v76.js:602"
+ },
+ {
+  "k": "You paid the bandits {0}.",
+  "w": "108-v76.js:608"
+ },
+ {
+  "k": "A wheelwright fixed the axle for {0}.",
+  "w": "108-v76.js:610"
+ },
+ {
+  "k": "🧑‍⚕️ <b>{0}</b> · skill {1} · {2}/wk",
+  "w": "108-v76.js:626"
+ },
+ {
+  "k": "{0} · skill {1}<small>{2} a week · {3}</small>",
+  "w": "108-v76.js:627"
+ },
+ {
+  "k": "🧑‍⚕️ <b>{0}</b> joins your house as medicus (skill {1}, {2} a week).",
+  "w": "108-v76.js:631"
+ },
+ {
+  "k": "📜 Win bonus: {0} takes {1} (+3 morale).",
+  "w": "108-v76.js:642"
+ },
+ {
+  "k": "⚔ Challenge met: {0} beats {1} — the purse twice over ({2}).",
+  "w": "108-v76.js:645"
+ },
+ {
+  "k": "🏛 An offering to {0} ({1}): {2}.",
+  "w": "108-v76.js:658"
+ },
+ {
+  "k": "+5 morale · {0} to them a win",
+  "w": "108-v76.js:665"
+ },
+ {
+  "k": "🌹 The Darling of the Arena fills the seats: {0}.",
+  "w": "108-v76.js:676"
+ },
+ {
+  "k": "The crowds have voted. <b>{0}</b> is their Darling this season: {1} in every bout and {2} a week at the gate. Every rival house now wants them beaten.",
+  "w": "108-v76.js:683"
+ },
+ {
+  "k": "🎟 In the stands: {0} · pot {1}",
+  "w": "112-online.js:203"
+ },
+ {
+  "k": "pool {0} · winners split it, 5% to the host · {1}",
+  "w": "112-online.js:220"
+ },
+ {
+  "k": "👁 {0} watching · 🎟 {1} in the stands · pot {2}",
+  "w": "112-online.js:224"
+ },
+ {
+  "k": "Watch any live game for free, move by move. A ticket, bought before the horns, gives you a seat in the stands: each rotation you earn {0} to throw stones, make offerings, change sections or chant. Ticket coin goes into the wager pot.",
+  "w": "112-online.js:225"
+ },
+ {
+  "k": "{0}<b>{1}</b><small>Level {2} · {3}</small>{4}",
+  "w": "112-online.js:233"
+ },
+ {
+  "k": "{0}<b>{1}</b>{2}<small>{3} · {4} survived</small><small class=\"rc-sub\">{5}</small>",
+  "w": "112-online.js:241"
+ },
+ {
+  "k": "{0} · ⭐ +{1} lifetime CF{2}",
+  "w": "112-online.js:323"
+ },
+ {
+  "k": "{0}<b>{1}</b><small>{2} · {3}</small><small>{4} {5} · {6}</small>{7}",
+  "w": "116-onl79.js:36"
+ },
+ {
+  "k": "— {0}",
+  "w": "118-onl80.js:267"
+ },
+ {
   "k": "1 lanista invited",
   "w": "118-onl80.js:406"
  },
  {
   "k": "{0} lanistas invited",
   "w": "118-onl80.js:406"
+ },
+ {
+  "k": "On the sand now: {0} · {1} {2}",
+  "w": "121-onl80fix.js:236"
+ },
+ {
+  "k": "<span>⚔ <b>{0}</b> won · <b>{1}</b> lost</span><span>🛡 {2} survived</span><span>{3}</span><span>{4} {5}</span>",
+  "w": "121-onl80fix.js:241"
+ },
+ {
+  "k": "🏆 Won {0} with <b>{1}</b>",
+  "w": "121-onl80fix.js:272"
+ },
+ {
+  "k": "<b>{0}</b> · {1} · {2}",
+  "w": "121-onl80fix.js:272"
+ },
+ {
+  "k": "{0} · {1} +{2} lifetime CF{3}",
+  "w": "124-v81onl.js:89"
+ },
+ {
+  "k": "Won {0} with {1}<b>{2}</b>",
+  "w": "124-v81onl.js:214"
+ },
+ {
+  "k": "{0}<b>{1}</b><small>Level {2}{3} · <b class=\"pr82\">{4}</b></small>{5}",
+  "w": "127-v82onl.js:343"
+ },
+ {
+  "k": "{0} <small>({1} {2}{3}{4}{5})</small> · {6} +{7} lifetime CF{8}{9}",
+  "w": "127-v82onl.js:353"
+ },
+ {
+  "k": "· {0} for others",
+  "w": "127-v82onl.js:385"
+ },
+ {
+  "k": "Buy <b>{0}</b> (level {1}{2}) for <b>{3}</b>?",
+  "w": "127-v82onl.js:406"
+ },
+ {
+  "k": "Wallet {0}.",
+  "w": "127-v82onl.js:406"
+ },
+ {
+  "k": "🛒 Bought {0} for {1}.",
+  "w": "127-v82onl.js:407"
+ },
+ {
+  "k": "{0} · lands on {1} — whoever stands there then is hit",
+  "w": "128-v82stands.js:95"
+ },
+ {
+  "k": "{0} · falls on {1} — whoever stands there gets it",
+  "w": "128-v82stands.js:96"
+ },
+ {
+  "k": "{0} · every quadrant must join (other ticket holders, or the crowd)",
+  "w": "128-v82stands.js:97"
+ },
+ {
+  "k": "{0} · <b>{1}</b> · {2} (Q{3}) · one action · only you see this",
+  "w": "128-v82stands.js:103"
+ },
+ {
+  "k": "🚶 Change section · {0}",
+  "w": "128-v82stands.js:105"
+ },
+ {
+  "k": "{0} {1} afford a stone ({2}).",
+  "w": "128-v82stands.js:120"
  },
  {
   "k": "cannot",
@@ -48,12 +1984,24 @@
   "w": "128-v82stands.js:122"
  },
  {
+  "k": "{0} cannot afford an offering ({1}).",
+  "w": "128-v82stands.js:123"
+ },
+ {
   "k": "throw",
   "w": "128-v82stands.js:124"
  },
  {
   "k": "throws",
   "w": "128-v82stands.js:124"
+ },
+ {
+  "k": "<b>{0}</b> pays {1}: an offering lands at {2}'s feet — {3}.",
+  "w": "128-v82stands.js:124"
+ },
+ {
+  "k": "{0} cannot afford to change section ({1}).",
+  "w": "128-v82stands.js:127"
  },
  {
   "k": "move",
@@ -72,6 +2020,126 @@
   "w": "128-v82stands.js:129"
  },
  {
+  "k": "The chant for Tholo ({0}) needs {1} a voice.",
+  "w": "128-v82stands.js:136"
+ },
+ {
+  "k": "({0})",
+  "w": "128-v82stands.js:148"
+ },
+ {
+  "k": "Flavius scowls and refunds {0}'s seat ({1}).",
+  "w": "129-v82beasts.js:242"
+ },
+ {
+  "k": "{0} offers to the crowd: <b>{1}</b>.",
+  "w": "133-v83onl.js:43"
+ },
+ {
+  "k": "{0}'s {1}: the crowd roars ({2}).",
+  "w": "133-v83onl.js:59"
+ },
+ {
+  "k": "{0}'s {1}: {2}.",
+  "w": "133-v83onl.js:60"
+ },
+ {
+  "k": "{0}'s {1} reaps a limb ({2}).",
+  "w": "133-v83onl.js:62"
+ },
+ {
+  "k": "{0}'s {1}: the hunt pleases the crowd ({2}).",
+  "w": "133-v83onl.js:66"
+ },
+ {
+  "k": "{0}'s royal weapon: {1}.",
+  "w": "133-v83onl.js:67"
+ },
+ {
+  "k": "🔧 {0} is whole again ({1}).",
+  "w": "137-v83onlui.js:211"
+ },
+ {
+  "k": "Costs {0}.",
+  "w": "137-v83onlui.js:228"
+ },
+ {
+  "k": "<b>{0} {1}</b><small>{2} · {3} · {4} · {5}{6} · {7}</small>",
+  "w": "137-v83onlui.js:317"
+ },
+ {
+  "k": "💰 Award {0} − the lanista’s cut {1} (to the treasury) = <b>{2}</b>",
+  "w": "137-v83onlui.js:365"
+ },
+ {
+  "k": "<b>{0}</b> for <b>{1}</b> into {2}’s satchel.<br><small class=\"rc-sub\">Up to {3} go into a match; the unused come back.</small>",
+  "w": "137-v83onlui.js:381"
+ },
+ {
+  "k": "Buy <b>{0}</b>{1} for <b>{2}</b>?",
+  "w": "137-v83onlui.js:384"
+ },
+ {
+  "k": "<b>{0}</b> (level {1}) for <b>{2}</b> from the treasury ({3}).",
+  "w": "137-v83onlui.js:387"
+ },
+ {
+  "k": "{0}'s {1}: the blow rings off — the crowd roars ({2}).",
+  "w": "139-v84onl.js:68"
+ },
+ {
+  "k": "🖌 Programmata for {0} in {1}: {2} weeks, {3} a week.",
+  "w": "140-v84prog.js:64"
+ },
+ {
+  "k": "We could not pay the painters their {0} for the week. The notices in {1} are gone.",
+  "w": "140-v84prog.js:76"
+ },
+ {
+  "k": "🖌 Programmata: {0} for the painters.",
+  "w": "140-v84prog.js:77"
+ },
+ {
+  "k": "🖌 Your notices in {0} filled seats: {1} ({2}).",
+  "w": "140-v84prog.js:99"
+ },
+ {
+  "k": "🖌 Paint the programmata<small>{0} h · {1} a city a week · 2–4 weeks: fame, gate and fans where you fight</small>",
+  "w": "140-v84prog.js:108"
+ },
+ {
+  "k": "🖌 Paint · {0} a week<small>{1}</small>",
+  "w": "140-v84prog.js:122"
+ },
+ {
+  "k": "<span>{0} · {1} week{2} left · {3} a week</span>",
+  "w": "140-v84prog.js:132"
+ },
+ {
+  "k": "The notices in <b>{0}</b> come down. This week's {1} is not refunded.",
+  "w": "140-v84prog.js:145"
+ },
+ {
+  "k": "💰 Bribe · {0}",
+  "w": "141-v85faith.js:97"
+ },
+ {
+  "k": "💰 {0} to the magistrate: {1}'s name is struck.",
+  "w": "141-v85faith.js:202"
+ },
+ {
+  "k": "💰 The magistrate kept the {0} — {1}'s name stands.",
+  "w": "141-v85faith.js:202"
+ },
+ {
+  "k": "The magistrate pocketed {0} and the sentence stands. {1} must face the beasts — or refuse.",
+  "w": "141-v85faith.js:203"
+ },
+ {
+  "k": "✝ The crowd of {0} jeers Christians: {1} start{2} {3} down.",
+  "w": "141-v85faith.js:217"
+ },
+ {
   "k": "{0} is named in the edict of {1}",
   "w": "141-v85faith.js:228"
  },
@@ -88,6 +2156,642 @@
   "w": "141-v85faith.js:228"
  },
  {
+  "k": "fighters on the card: <b>+1 AP, {0}</b>",
+  "w": "145-v85fix.js:63"
+ },
+ {
+  "k": "Cost:",
+  "w": "145-v85fix.js:137"
+ },
+ {
+  "k": "🗄 The shelf <small class=\"rc-sub\">{0} piece{1} · the house keeps them when a gladiator falls</small>",
+  "w": "149-v87fix.js:83"
+ },
+ {
+  "k": "Empty — choose “Move… → the shelf” on any piece to put it here.",
+  "w": "149-v87fix.js:84"
+ },
+ {
+  "k": "Either arm — you choose which",
+  "w": "149-v87fix.js:118"
+ },
+ {
+  "k": "Either leg — you choose which",
+  "w": "149-v87fix.js:118"
+ },
+ {
+  "k": "How known your house is. It opens doors to recruits and draws bigger crowds. Keep winning to hold it.",
+  "w": "149-v87fix.js:129"
+ },
+ {
+  "k": "A rich, famous house. It gets no loans, cart, paid road or stipend.",
+  "w": "149-v87fix.js:130"
+ },
+ {
+  "k": "Fame opens doors to recruits and fills the stands. Keep winning to hold it.",
+  "w": "149-v87fix.js:132"
+ },
+ {
+  "k": "<b>{0}</b> perk point{1} to spend",
+  "w": "149-v87fix.js:140"
+ },
+ {
+  "k": "🌿 <b>Hygeia's Blessing</b>",
+  "w": "149-v87fix.js:147"
+ },
+ {
+  "k": "Kits ride in only if this fighter fights this week — otherwise the full price comes back at the week's end.",
+  "w": "149-v87fix.js:151"
+ },
+ {
+  "k": "<b class=\"ok87\">✓ {0} is on this week's card.</b>",
+  "w": "149-v87fix.js:151"
+ },
+ {
+  "k": "<b class=\"no87\">{0} is not on this week's card yet.</b>",
+  "w": "149-v87fix.js:151"
+ },
+ {
+  "k": "↩ Kits refunded: {0} did not fight — the smith pays back {1}.",
+  "w": "149-v87fix.js:166"
+ },
+ {
+  "k": "{0} ({1})",
+  "w": "149-v87fix.js:166"
+ },
+ {
+  "k": "🏆 <b>{0}</b>{1}{2} <b>{3}</b>",
+  "w": "149-v87fix.js:189"
+ },
+ {
+  "k": "See the day's lists",
+  "w": "149-v87fix.js:190"
+ },
+ {
+  "k": "Fell in that bout",
+  "w": "149-v87fix.js:190"
+ },
+ {
+  "k": "yesterday’s last results · the day turns at 8 PM New York",
+  "w": "149-v87fix.js:192"
+ },
+ {
+  "k": "the last bouts settled today, newest first",
+  "w": "149-v87fix.js:192"
+ },
+ {
+  "k": "No bout settled yet today — the sand waits.",
+  "w": "149-v87fix.js:193"
+ },
+ {
+  "k": "📜 Acta of the day",
+  "w": "149-v87fix.js:195"
+ },
+ {
+  "k": "You fell in this match — you can watch, not throw.",
+  "w": "149-v87fix.js:226"
+ },
+ {
+  "k": "Keeping them",
+  "w": "150-v87mgr.js:76"
+ },
+ {
+  "k": "One raise a week",
+  "w": "150-v87mgr.js:76"
+ },
+ {
+  "k": "<b>★ Favorites</b> is your chalkboard: the shortlist you are actively working, ranked by how close each is to signing — pin from Recruiting (☆), or let a live-watched bout impress you and they chalk themselves up. <b>Click</b> any fighter to show their full recruiting card beside the list — scout, gift, pitch, trial bout and offer from right here.",
+  "w": "150-v87mgr.js:78"
+ },
+ {
+  "k": "🌿 <b>Bye week.</b> No bouts anywhere in the league. Vulso’s cart is at your gate and it is market day on your home square.",
+  "w": "150-v87mgr.js:83"
+ },
+ {
+  "k": "<b>Recruit</b>: scout, pitch and sign before the others wake up.",
+  "w": "150-v87mgr.js:86"
+ },
+ {
+  "k": "<b>Work left to right, then End the week.</b> Ludus → Roster → Recruiting → … → Match Week. End the week pays wages and moves the empire; you can't undo it.",
+  "w": "150-v87mgr.js:89"
+ },
+ {
+  "k": "Welcome, <b>lanista</b>. This is a sandbox league made for this lesson — nothing is saved. Up top: your <b>treasury</b> (we lent you plenty), <b>fame</b>, ludus grade and record.",
+  "w": "150-v87mgr.js:90"
+ },
+ {
+  "k": "The card: rating, morale, loyalty, contract. Under <b>Keeping them</b> you spend coin and attention to keep a fighter happy and loyal. Click <b>🍷 Share a meal</b> with {0}.",
+  "w": "150-v87mgr.js:91"
+ },
+ {
+  "k": "{0} already had a raise this week.",
+  "w": "150-v87mgr.js:95"
+ },
+ {
+  "k": "The Broker",
+  "w": "150-v87mgr.js:101"
+ },
+ {
+  "k": "Silver tongue",
+  "w": "150-v87mgr.js:103"
+ },
+ {
+  "k": "Every pitch wins +3 more interest",
+  "w": "150-v87mgr.js:103"
+ },
+ {
+  "k": "Hard bargain",
+  "w": "150-v87mgr.js:104"
+ },
+ {
+  "k": "Recruits sign for 10% less than their ask",
+  "w": "150-v87mgr.js:104"
+ },
+ {
+  "k": "Open table",
+  "w": "150-v87mgr.js:105"
+ },
+ {
+  "k": "Gifts and feasts win 50% more interest",
+  "w": "150-v87mgr.js:105"
+ },
+ {
+  "k": "Crowd pleaser",
+  "w": "150-v87mgr.js:106"
+ },
+ {
+  "k": "+1 fame for every bout your fighters win",
+  "w": "150-v87mgr.js:106"
+ },
+ {
+  "k": "Grand entrance",
+  "w": "150-v87mgr.js:107"
+ },
+ {
+  "k": "Your fighters start every bout with +1 CF",
+  "w": "150-v87mgr.js:107"
+ },
+ {
+  "k": "Packed stands",
+  "w": "150-v87mgr.js:108"
+ },
+ {
+  "k": "+3 coin each time one of your fighters fights a bout",
+  "w": "150-v87mgr.js:108"
+ },
+ {
+  "k": "Drillmaster",
+  "w": "150-v87mgr.js:109"
+ },
+ {
+  "k": "+2 training hours a week",
+  "w": "150-v87mgr.js:109"
+ },
+ {
+  "k": "Camp medicus",
+  "w": "150-v87mgr.js:110"
+ },
+ {
+  "k": "Wounds from bouts heal a week sooner",
+  "w": "150-v87mgr.js:110"
+ },
+ {
+  "k": "Iron lungs",
+  "w": "150-v87mgr.js:111"
+ },
+ {
+  "k": "Bouts tire your fighters 25% less",
+  "w": "150-v87mgr.js:111"
+ },
+ {
+  "k": "Take the rank before it first",
+  "w": "150-v87mgr.js:117"
+ },
+ {
+  "k": "Needs {0} point{1}",
+  "w": "150-v87mgr.js:117"
+ },
+ {
+  "k": "Take it for {0} point{1}",
+  "w": "150-v87mgr.js:117"
+ },
+ {
+  "k": "each rank also +{0} {1}",
+  "w": "150-v87mgr.js:119"
+ },
+ {
+  "k": "🎓 Lanista perks",
+  "w": "150-v87mgr.js:121"
+ },
+ {
+  "k": "Perk points to spend",
+  "w": "150-v87mgr.js:121"
+ },
+ {
+  "k": "{0} point{1}",
+  "w": "150-v87mgr.js:121"
+ },
+ {
+  "k": "Points come each week: +1 for the week, +1 per bout won, +1 per kept pledge, +1 when training lifts two or more. This week so far: <b>{0}</b> (ready next week).",
+  "w": "150-v87mgr.js:122"
+ },
+ {
+  "k": "Or hone a trait recruits grade you on (1 point · +2):",
+  "w": "150-v87mgr.js:124"
+ },
+ {
+  "k": "on the Lanista tab",
+  "w": "150-v87mgr.js:129"
+ },
+ {
+  "k": "🎓 Perk taken: <b>{0}</b> — {1}.",
+  "w": "150-v87mgr.js:136"
+ },
+ {
+  "k": "🎓 <b>{0}</b>: {1}.",
+  "w": "150-v87mgr.js:136"
+ },
+ {
+  "k": "No routine",
+  "w": "150-v87mgr.js:157"
+ },
+ {
+  "k": "Speed focus",
+  "w": "150-v87mgr.js:157"
+ },
+ {
+  "k": "Strength focus",
+  "w": "150-v87mgr.js:157"
+ },
+ {
+  "k": "Tactics focus",
+  "w": "150-v87mgr.js:157"
+ },
+ {
+  "k": "Crowd focus",
+  "w": "150-v87mgr.js:157"
+ },
+ {
+  "k": "All-round",
+  "w": "150-v87mgr.js:157"
+ },
+ {
+  "k": "set the week by hand",
+  "w": "150-v87mgr.js:158"
+ },
+ {
+  "k": "3 h Speed drill",
+  "w": "150-v87mgr.js:158"
+ },
+ {
+  "k": "3 h Strength drill",
+  "w": "150-v87mgr.js:158"
+ },
+ {
+  "k": "3 h Tactics",
+  "w": "150-v87mgr.js:158"
+ },
+ {
+  "k": "3 h Crowd work",
+  "w": "150-v87mgr.js:158"
+ },
+ {
+  "k": "1 h of each drill",
+  "w": "150-v87mgr.js:158"
+ },
+ {
+  "k": "morale talk + gear care",
+  "w": "150-v87mgr.js:158"
+ },
+ {
+  "k": "a rest week",
+  "w": "150-v87mgr.js:158"
+ },
+ {
+  "k": "▲ First",
+  "w": "150-v87mgr.js:159"
+ },
+ {
+  "k": "▼ Last",
+  "w": "150-v87mgr.js:159"
+ },
+ {
+  "k": "📋 Standing orders: {0} fighter{1} set for the week in the Training Yard.",
+  "w": "150-v87mgr.js:184"
+ },
+ {
+  "k": "Spd",
+  "w": "150-v87mgr.js:186"
+ },
+ {
+  "k": "Str",
+  "w": "150-v87mgr.js:186"
+ },
+ {
+  "k": "Int",
+  "w": "150-v87mgr.js:186"
+ },
+ {
+  "k": "Cha",
+  "w": "150-v87mgr.js:186"
+ },
+ {
+  "k": "Hurt — {0}",
+  "w": "150-v87mgr.js:188"
+ },
+ {
+  "k": "Worn out (fatigue {0}) — give a rest",
+  "w": "150-v87mgr.js:189"
+ },
+ {
+  "k": "New band: {0}",
+  "w": "150-v87mgr.js:190"
+ },
+ {
+  "k": "Routine short of {0} h this week",
+  "w": "150-v87mgr.js:191"
+ },
+ {
+  "k": "<span class=\"rc-sub\">no change</span>",
+  "w": "150-v87mgr.js:195"
+ },
+ {
+  "k": "Click for the full card",
+  "w": "150-v87mgr.js:198"
+ },
+ {
+  "k": "Select",
+  "w": "150-v87mgr.js:199"
+ },
+ {
+  "k": "Priority when the hours run short",
+  "w": "150-v87mgr.js:203"
+ },
+ {
+  "k": "📋 The squad · standing orders",
+  "w": "150-v87mgr.js:207"
+ },
+ {
+  "k": "{0} · routines repeat every week until changed",
+  "w": "150-v87mgr.js:207"
+ },
+ {
+  "k": "{0} need{1} you",
+  "w": "150-v87mgr.js:207"
+ },
+ {
+  "k": "<span></span><span>Fighter</span><span>Ratings</span><span>Fatigue</span><span>Routine · priority</span><span>Last week</span>",
+  "w": "150-v87mgr.js:208"
+ },
+ {
+  "k": "Select all",
+  "w": "150-v87mgr.js:210"
+ },
+ {
+  "k": "{0} selected",
+  "w": "150-v87mgr.js:210"
+ },
+ {
+  "k": "Apply to selected",
+  "w": "150-v87mgr.js:212"
+ },
+ {
+  "k": "Hide the cards",
+  "w": "150-v87mgr.js:213"
+ },
+ {
+  "k": "All cards",
+  "w": "150-v87mgr.js:213"
+ },
+ {
+  "k": "← Back to the squad",
+  "w": "150-v87mgr.js:218"
+ },
+ {
+  "k": "{0}: no standing routine — set the week by hand.",
+  "w": "150-v87mgr.js:223"
+ },
+ {
+  "k": "📋 {0}: {1} {2} every week ({3}){4}.",
+  "w": "150-v87mgr.js:223"
+ },
+ {
+  "k": "— {0} h short this week",
+  "w": "150-v87mgr.js:223"
+ },
+ {
+  "k": "📋 {0} {1} for {2} fighter{3}.",
+  "w": "150-v87mgr.js:228"
+ },
+ {
+  "k": "lifts your average ({0})",
+  "w": "150-v87mgr.js:242"
+ },
+ {
+  "k": "hurt right now",
+  "w": "150-v87mgr.js:244"
+ },
+ {
+  "k": "One of the best few for your roster",
+  "w": "150-v87mgr.js:252"
+ },
+ {
+  "k": "Would help a little",
+  "w": "150-v87mgr.js:252"
+ },
+ {
+  "k": "Does little for your roster",
+  "w": "150-v87mgr.js:252"
+ },
+ {
+  "k": "affordable",
+  "w": "150-v87mgr.js:252"
+ },
+ {
+  "k": "a useful pair of hands",
+  "w": "150-v87mgr.js:253"
+ },
+ {
+  "k": "✓ one of the best few for your roster and affordable · ~ would help a little · ✗ does little for your roster",
+  "w": "150-v87mgr.js:254"
+ },
+ {
+  "k": "upset {0}",
+  "w": "150-v87mgr.js:280"
+ },
+ {
+  "k": "streak {0}",
+  "w": "150-v87mgr.js:280"
+ },
+ {
+  "k": "💰 <b>{0}</b>'s purse {1} ({2}): +{3} {4}",
+  "w": "150-v87mgr.js:281"
+ },
+ {
+  "k": "👥 {0} new fan{1} for <b>{2}</b> (fans bring {3} CF to every bout).",
+  "w": "150-v87mgr.js:287"
+ },
+ {
+  "k": "A patron for {0}",
+  "w": "150-v87mgr.js:295"
+ },
+ {
+  "k": "“Three wins in a row — <b>{0}</b> is the talk of the baths. Let my name ride on that shield.”",
+  "w": "150-v87mgr.js:296"
+ },
+ {
+  "k": "+{0} {1} a week for {2} weeks while {3} fights for you.",
+  "w": "150-v87mgr.js:296"
+ },
+ {
+  "k": "✓ Accept",
+  "w": "150-v87mgr.js:296"
+ },
+ {
+  "k": "🏛 <b>{0}</b> offers to sponsor {1}: +{2} {3} a week. See your mail.",
+  "w": "150-v87mgr.js:297"
+ },
+ {
+  "k": "🏛 {0} now sponsors <b>{1}</b>: +{2} {3} a week for {4} weeks.",
+  "w": "150-v87mgr.js:301"
+ },
+ {
+  "k": "You turned down {0}'s offer.",
+  "w": "150-v87mgr.js:302"
+ },
+ {
+  "k": "🏛 {0} pays {1} {2} for sponsoring {3}{4}.",
+  "w": "150-v87mgr.js:309"
+ },
+ {
+  "k": "— the last week",
+  "w": "150-v87mgr.js:309"
+ },
+ {
+  "k": "🔥 {0} wins in a row — next win's purse {1}",
+  "w": "150-v87mgr.js:313"
+ },
+ {
+  "k": "🛏 A bed: full-pace healing, the physicians' cures (Medicus, surgeon, Hygeia) and the chosen treatment repeats every week until healed. 🪑 The bench: light wounds only — a serious wound mends at half pace and no physician touches it.",
+  "w": "151-v87ward.js:32"
+ },
+ {
+  "k": "🛁 {0}: a bathhouse day — healed.",
+  "w": "151-v87ward.js:36"
+ },
+ {
+  "k": "🛁 {0}: a bathhouse day ({1}), fit {2}.",
+  "w": "151-v87ward.js:36"
+ },
+ {
+  "k": "⚕ {0}: the Medicus clears the wound.",
+  "w": "151-v87ward.js:37"
+ },
+ {
+  "k": "🔪 {0}: the surgeon's knife slips — another week.",
+  "w": "151-v87ward.js:39"
+ },
+ {
+  "k": "🔪 {0}: the surgeon closes the wound.",
+  "w": "151-v87ward.js:39"
+ },
+ {
+  "k": "⚡ {0}: healed in the temple of Asclepius.",
+  "w": "151-v87ward.js:40"
+ },
+ {
+  "k": "<b>🛏 Who takes this bed?</b>",
+  "w": "151-v87ward.js:58"
+ },
+ {
+  "k": "lost {0}",
+  "w": "151-v87ward.js:58"
+ },
+ {
+  "k": "🛏 Every bed is taken.",
+  "w": "151-v87ward.js:61"
+ },
+ {
+  "k": "Empty — tap to put someone from the bench here",
+  "w": "151-v87ward.js:67"
+ },
+ {
+  "k": "Empty — nobody is waiting",
+  "w": "151-v87ward.js:68"
+ },
+ {
+  "k": "Treatment: <b>{0} {1}</b>{2} · fit <b>{3}</b>",
+  "w": "151-v87ward.js:70"
+ },
+ {
+  "k": "· repeats every week",
+  "w": "151-v87ward.js:70"
+ },
+ {
+  "k": "Take out",
+  "w": "151-v87ward.js:72"
+ },
+ {
+  "k": "🏗 Build Valetudinarium {0}<small>{1} · +1 bed</small>",
+  "w": "151-v87ward.js:75"
+ },
+ {
+  "k": "The Valetudinarium is complete.",
+  "w": "151-v87ward.js:75"
+ },
+ {
+  "k": "disabled title=\"Beds full — build another\"",
+  "w": "151-v87ward.js:77"
+ },
+ {
+  "k": "🛏 Put in bed",
+  "w": "151-v87ward.js:77"
+ },
+ {
+  "k": "{0}<span>🛏 <b>{1} / {2}</b> beds{3}</span>",
+  "w": "151-v87ward.js:86"
+ },
+ {
+  "k": "light wounds only · serious ones mend at half pace",
+  "w": "151-v87ward.js:90"
+ },
+ {
+  "k": "<b>🛏 Beds full — build another</b> {0}",
+  "w": "151-v87ward.js:90"
+ },
+ {
+  "k": "⚠ Three limbs lost — regrow one this week or she retires",
+  "w": "151-v87ward.js:105"
+ },
+ {
+  "k": "⚠ Three limbs lost — regrow one by next week's end or she retires",
+  "w": "151-v87ward.js:105"
+ },
+ {
+  "k": "⚠ Three limbs lost — regrow one this week or he retires",
+  "w": "151-v87ward.js:106"
+ },
+ {
+  "k": "⚠ Three limbs lost — regrow one by next week's end or he retires",
+  "w": "151-v87ward.js:106"
+ },
+ {
+  "k": "🦿 <b>{0}</b> has lost three limbs — regrow one this week (a bed + Hygeia) or she retires.",
+  "w": "151-v87ward.js:112"
+ },
+ {
+  "k": "🦿 <b>{0}</b> has lost three limbs — regrow one this week (a bed + Hygeia) or he retires.",
+  "w": "151-v87ward.js:112"
+ },
+ {
+  "k": "🦿 <b>{0}</b>: three limbs lost — regrow one before you leave or she retires",
+  "w": "151-v87ward.js:119"
+ },
+ {
+  "k": "🦿 <b>{0}</b>: three limbs lost — regrow one before you leave or he retires",
+  "w": "151-v87ward.js:119"
+ },
+ {
   "k": "Slain:",
   "w": "152-v87npc.js:28"
  },
@@ -98,5 +2802,53 @@
  {
   "k": "<b>{0}</b> <span>{1} · {2} AP</span>",
   "w": "153-v87card.js:12"
+ },
+ {
+  "k": "<b>Festivals</b> (p.42) chain three events: Carmina Fescennina, a Chariot Race with no PvP (finishing order sets the next turn order), then a Classic Elimination. Coin and CF carry across; the highest CF at the end is crowned champion ({0}).",
+  "w": "08-setup.js:119"
+ },
+ {
+  "k": "<b>Missios</b> (p.56-57) are five-event campaigns for one character. Finish each event with a win or at least {0} to advance. Half your CF (up to 25) carries over, coin goes to the Royal Reserve, and severed limbs persist.",
+  "w": "08-setup.js:132"
+ },
+ {
+  "k": "<span><b>{0}</b> · {1} · step {2}/5<em>Next: {3}{4} at {5} · RR {6} · carrying {7}</em></span>",
+  "w": "08-setup.js:133"
+ },
+ {
+  "k": "{0}starts at step {1}/5 with {2}",
+  "w": "08-setup.js:134"
+ },
+ {
+  "k": "New in v0.26: big crowds scale Crowd Favor by exact share of the house (max {0} per cheer over 8 seated), world stories and weather evolve week to week on the empire calendar, a career started mid-season joins a league already under way, a tidier Spectators option.",
+  "w": "08-setup.js:275"
+ },
+ {
+  "k": "New in v0.20: the empire keeps a <b>calendar</b> — a Roman date on every event, and a 12-week <b>season schedule</b> (one arena a week, classics by far the commonest, rare specials with fatter purses, Cassian's Grand Games in week XII) that Manager mode locks into and New event opens on (play off-schedule if you like); the top bar reads where, when, and the round in one breath; <b>every city names its own beasts</b> (Capua's bears are Tifata and Sannio, its champion Spartacus…) — with per-beast ledgers in the Menagerie, custom beasts' ledgers, and a 🐾 beast tab in the name generator; manager mode: <b>bribe the levy</b> (or let them march), a <b>bookmaker's cut</b> of every wager laid on your rostered fighters, 🔭 <b>arena scouting</b> ahead of match night (+1 AP, {0} at the gates), Promote and Schooling moved to Your ludus, and a Lanista tab that fits on one screen; <b>Imperium</b>: the empire's 15 weightiest events up top, then a city card with the stands, local news and mood, the pens, the top-5 local heroes, who lives there and what they are doing right now (attendees only during a live event); spectators wear <b>two-part togas</b> (tunic in their home city's wool, mantle in their fighter's colors); a CF ledger on the player board (hover CF ⓘ); Flavius keeps clear of the sand with the stands off; big windows hold their size across tabs; and Infamis &amp; Hall is now <b>the Annals</b>.",
+  "w": "08-setup.js:282"
+ },
+ {
+  "k": "New in v0.18: <b>Manager mode now plays by the printed Fate table</b> — every fighter in every league bout, win or lose: under {0} condemned, 17-19 the <b>Thumb of Flavius</b>, 20-49 the Ludus Flavius, 50+ the <b>rudis</b> — with <b>blood money</b> (pay the editor to buy back a condemned fighter) and your own thumbs, blood money and rudis choices waiting on Match Week; results show finishing order and each fighter's Fate by name; <b>the Thumb of Flavius is now a ritual</b> — you roll the d6 yourself (4-6 spared) and, if it goes down, the d12, with Flavius reacting at every roll; a <b>missio</b> means what the rulebook says — a five-event campaign — everywhere; <b>The Stands became 🌍 Imperium</b>: a map with fans streaming in (colored by whom they cheer), a weather \"doppler\", and world events (politics, war, economy, famine, earthquakes, plague, trade) that move attendance and moods, plus who of note is in attendance; spectators wear <b>robes</b> (color them in the creator), can be <b>bought tickets</b> (seated now, or guaranteed next time) — and you can ticket your fighters' families for loyalty; off-duty league fighters sometimes watch from the stands; rare <b>famous visitors</b> from Roman history (toggle in Settings); a 🏋 <b>Practice</b> tab for exhibitions against rival stables (nobody dies — the doctors pull them; the stands fill with gladiators who only watch and talk); the Acta Diurna previews <b>next week</b> (forecast, world news, the card, purses, bad blood); cards always show beside every manager list; gladiatrices (♀, mostly Amazonia) join the league; the Ludus's <b>active roster</b> (now 8) stands apart from the rolls; and American spelling throughout (\"doctore\" is now the Latin <i>doctor</i>).",
+  "w": "08-setup.js:284"
+ },
+ {
+  "k": "New in v0.13: retirement is real now — one confirm and the record is deleted from the game forever, though about one in four dodges Flavius's ledger and turns up in the cheap seats as a spectator, story intact; a spectator gets exactly ONE offer of the sword and some refuse it (ask the sausage guy — he also declines); buy a spectator's cheers ({0} from your lanista) for any gladiator in play or on your roster; and a certain pair of anonymous crowd voices now narrate disasters in the stands log.",
+  "w": "08-setup.js:289"
+ },
+ {
+  "k": "🎟 <b>Spectating is back — everywhere.</b> In Play now, with every seat CPU, <b>Play as a spectator</b> seats you in the stands before the horns (the crowd is filled in if you had none). During any match with no fighter of yours standing — none entered, or yours has fallen — <b>🎟 Buy a ticket</b> seats you mid-bout, paid from the active wallet (general admission {0}, not counted as betting). Each rotation you earn {1} and may throw stones or offerings, change sections or join a chant for Tholo.",
+  "w": "08-setup.js:308"
+ },
+ {
+  "k": "Your open wagers — <b>{0}</b> staked — are forfeit to the bookmaker.",
+  "w": "08-setup.js:327"
+ },
+ {
+  "k": "The bookmaker pockets your {0} in abandoned wagers with a smile.",
+  "w": "08-setup.js:335"
+ },
+ {
+  "k": "arena · v0.87",
+  "w": "01-head.html"
  }
 ]
