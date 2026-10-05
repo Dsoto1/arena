@@ -30,7 +30,7 @@ o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   r.full=!!q(`[data-bed76="${ros[0].id}"][disabled]`);
   q('[data-med76="1"]').click();await W8(300);r.medicus=!!w.medicus76&&w.medicus76.skill===2;
   /* F · the yard as fighter cards */
-  const fit=ros.filter(g=>!g.inj);const g=fit[0],h=fit[1],k3=fit[2]||fit[1];MGR.tab='practice';MGR_REDRAW();await W8(400);r.cards=document.querySelectorAll('.yd76c').length===ros.length;
+  const fit=ros.filter(g=>!g.inj);const g=fit[0],h=fit[1],k3=fit[2]||fit[1];MGR.tab='practice';MGR.yd87='all';MGR_REDRAW();await W8(400);r.cards=document.querySelectorAll('.yd76c').length===ros.length;
   const L0=thLeft(w);q(`[data-tp="g|${g.id}|spd|1"]`).click();await W8(200);r.drill=thLeft(w)===L0-1;
   q(`[data-yb76="pen:${g.id}"]`).click();await W8(200);r.penPanel=!!q('[data-pen76="go"]');
   q(`[data-yb76="spar:${g.id}"]`).click();await W8(200);q(`[data-yp76p="${g.id}"]`).value=h.id;q(`[data-yp76="spar|${g.id}"]`).click();await W8(300);r.spar=thPlan(w).pairs.some(p=>p.k==='spar'&&p.a===g.id)&&q(`[data-yb76="pen:${g.id}"]`).disabled;
@@ -43,14 +43,14 @@ o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   w.night.selfBye=false;w.sbye76=null;w.night.travel=null;MGR_REDRAW();await W8(300);q('[data-mg="travelpay"]').click();await W8(500);r.warn=/Before you leave/.test((q('.ask76bg')||{}).textContent||'');
   const rnd=Math.random;Math.random=()=>0.1;q('[data-ask76="1"]').click();await W8(900);Math.random=rnd;r.locked=roadLocked76(w);
   if(q('.ask76bg'))q('[data-ask76="1"]').click();await W8(300);r.road=!!(w.night.travel.road76&&w.night.travel.road76.txt);
-  MGR.tab='practice';MGR_REDRAW();await W8(300);const reg0=w.train;const rb=q('[data-mg="regime"]:not(.on)');if(rb)rb.click();await W8(200);r.lockYard=!!q('.lock76')&&w.train===reg0;
+  MGR.tab='practice';MGR.yd87='all';MGR_REDRAW();await W8(300);const reg0=w.train;const rb=q('[data-mg="regime"]:not(.on)');if(rb)rb.click();await W8(200);r.lockYard=!!q('.lock76')&&w.train===reg0;
   /* D · clauses, rooms, Darling, a rival's letter */
   MGR.tab='roster';MGR_REDRAW();await W8(300);const cb=q('[data-cl76^="winb|"]');const gc=cb&&gById(cb.dataset.cl76.split('|')[1]);if(cb){cb.click();await W8(200)}r.clause=!!(gc&&gc.contract.cl76&&gc.contract.cl76.winb);
   r.rooms=!!FAC.kitchen&&!!FAC.shrine;w.week=7;darlingVote76(w);r.darling=!!w.darling76;
   const R=w.mgrs.find(x=>!x.isPlayer);R.rivalry=40;Math.random=()=>0.2;rivalLetter76(w);Math.random=rnd;const Lt=(w.letters||[]).find(x=>x.rl76);r.letter=!!Lt;return r});
 /* E · the beast pen */
 o.e=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();w.week=1;w.night.travel=null;w.night.selfBye=false;w.night.loc=travelHome(m);w.tplan=null;m.coin=300;const r={};
-  for(const g of rosterOf(m))g.inj=null;MGR.tab='practice';MGR_REDRAW();await W8(300);const g=rosterOf(m)[0];document.querySelector(`[data-yb76="pen:${g.id}"]`).click();await W8(200);
+  for(const g of rosterOf(m))g.inj=null;MGR.tab='practice';MGR.yd87='all';MGR_REDRAW();await W8(300);const g=rosterOf(m)[0];document.querySelector(`[data-yb76="pen:${g.id}"]`).click();await W8(200);
   document.querySelector('[data-pen76b="wolf"]').click();await W8(200);document.querySelector('[data-pen76="go"]').click();await W8(5000);for(let i=0;i<8&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(200)}
   r.pen=!!(S&&S.pen76)&&S.players.length===1&&S.npcs.length===1&&S.npcs[0].t==='wolf'&&!Object.keys(EVENTS).includes('pen76');
   r.walls=[...reach(S.players[0]).tiles.keys()].every(k=>pen76In(Math.floor(k/N),k%N));r.noPillars=!S.pillars.some(p=>pen76In(p.r,p.c));

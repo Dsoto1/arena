@@ -13,7 +13,7 @@ o.r=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));if
   MGR.tab='recruit';MGR.sel=a.id;MGR_REDRAW();await W8(500);
   r.cols=document.querySelectorAll('.pcol').length;r.watch=recStage(a,m);r.cards=document.querySelectorAll('.pcard').length;
   const h0=w.hours;const sb=document.querySelector(`.pcard [data-mg="scout"][data-id="${a.id}"]`);r.nextScout=!!sb;if(sb)sb.click();for(let i=0;i<120&&!a.scout;i++)await W8(250);await W8(300);
-  r.scouted=!!a.scout&&w.hours===h0-3;r.moved=recStage(a,m)!=='watch';
+  r.scouted=!!a.scout; /* v0.87: no lanista's hours to spend */r.moved=recStage(a,m)!=='watch';
   r.fitHead=/>Fit</.test(document.getElementById('mgrBody').innerHTML);r.fit=document.querySelectorAll('.fitchip').length>0;
   const rows0=document.querySelectorAll('#recTable tr[data-mg="sel"]').length;document.querySelector('[data-recf="aff"]').click();await W8(300);
   const rows1=document.querySelectorAll('#recTable tr[data-mg="sel"]').length;r.filter=rows1<=rows0;document.querySelector('[data-recf="aff"]').click();await W8(200);
