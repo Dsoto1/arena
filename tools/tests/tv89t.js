@@ -10,11 +10,11 @@ const o=await pg.evaluate(async()=>{const r={};const L=(t,x,y,w,h,c,rr=0)=>({t,x
   const plain=figureSVG(spec),lit=sc3dSVG(plain);
   r.plainNoFilter=!/filter=/.test(plain);
   r.litFilter=(lit.match(/filter="url\(#s3f\)"/g)||[]).length>=5&&/<filter id="s3f"/.test(lit)&&/<filter id="s3fo"/.test(lit)&&/filter="url\(#s3fo\)"/.test(lit);
-  r.litBase=/id="s3s"/.test(lit)&&/A31 7 0 0 0 81 167/.test(lit)&&!/cx="50" cy="160" rx="31"/.test(lit);
+  r.litBase=/id="s3s"/.test(lit)&&/A31 7 0 0 0 81 163/.test(lit)&&!/cx="50" cy="160" rx="31"/.test(lit);
   r.maskKept=/<mask id="scm[^"]*"[^>]*><rect[^>]*fill="#fff"\/>/.test(lit)&&!/<mask[^>]*>[^]*?filter=[^]*?<\/mask>/.test(lit.replace(/<\/mask>[^]*$/,'</mask>'));
   r.rotLitOutside=/<g filter="url\(#s3f\)"><g transform="translate\(50 100\) rotate\(30\)"/.test(lit);
   r.validXML=!new DOMParser().parseFromString(lit,'image/svg+xml').querySelector('parsererror');
-  r.htmlPlain=!/filter=/.test(figureHTML(spec,60));r.htmlStudio=/s3pf/.test(figureHTML(spec,230,null,{selLayer:-1}));
+  r.htmlPlain=/filter=/.test(figureHTML(spec,60))&&!/filter=/.test(figureHTML(spec,20));r.htmlStudio=/s3pf/.test(figureHTML(spec,230,null,{selLayer:-1}));
   /* the board */
   menuHide();SETTINGS.briefing=false;SETTINGS.tokenStyle='figure';POPPED.add('firstTurn');SPEED='pause';
   const seats=['soldier','hero','amazonia','royalty'].map((c,i)=>({cls:c,cpu:true,diff:'easy',name:'P'+i})).map(s=>({...s,pers:finalPers(s)}));
@@ -26,7 +26,7 @@ const o=await pg.evaluate(async()=>{const r={};const L=(t,x,y,w,h,c,rr=0)=>({t,x
   r.miss=SC3D.miss;const h0=SC3D.hits;draw();draw();r.hits=SC3D.hits-h0;r.cv=SC3D_CV.size;r.calls=calls;
   const c=[...SC3D_CV.values()][0];r.shadow=!!c&&c.width>c._w;
   /* tokenImg (cards, corpses, menus) unchanged: its image is the plain figure */
-  const im=tokenImg(S.players[0]._onlSc);r.tokenImgPlain=!im||!decodeURIComponent(im.src).includes('filter=');
+  const im=tokenImg(S.players[0]._onlSc);r.tokenImgPlain=!im||decodeURIComponent(im.src).includes('filter=');
   /* standees/minis: printed classes never draw a figure */
   SETTINGS.tokenStyle='standee';delete S.players[0]._onlSc;calls=0;const m0=SC3D.miss,h1=SC3D.hits;draw();draw();r.standeeCalls=calls;r.standeeNo3d=SC3D.miss===m0&&SC3D.hits===h1;
   drawFigureTok=bF;SETTINGS.tokenStyle='figure';return r});

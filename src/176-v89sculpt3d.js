@@ -14,7 +14,7 @@
    • FAST: the lit SVG → one Image per spec (SC3D_IMG), then one offscreen canvas per spec + device-pixel size bucket (SC3D_CV,
      shadow baked in, LRU-capped) — one drawImage per token per frame.
    • Board only: drawFigureTok is wrapped (falls back to the original until the lit image has loaded, and when HEADLESS).
-     tokenImg / figureSVG / figureHTML outputs elsewhere (cards, portraits, menus, corpses, city square) are unchanged, except
+     (v0.89 later, his ask: figureHTML + tokenImg everywhere are lit too — see EVERYWHERE below; figureSVG itself stays plain.) Was:
      the two Studio sculpt previews (Token creator #tokPrev, online bench #onlScPrev — figureHTML with extra.selLayer) which
      show the new look. Printed tokens (standees/minis) and cylinders never pass through here.
    • No direct edits to older modules. Cosmetic only: no RNG at all.
@@ -64,8 +64,8 @@ function sc3dBase(base,ring,rw,id){const lit=sc3dMix(base,0.2),mid=sc3dMix(base,
    +`<linearGradient id="${id}b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6e0" stop-opacity=".8"/><stop offset=".42" stop-color="#fff6e0" stop-opacity="0"/><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".6"/></linearGradient>`
    +`<linearGradient id="${id}l" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff2d6" stop-opacity=".5"/><stop offset=".5" stop-color="#fff2d6" stop-opacity=".08"/><stop offset="1" stop-color="#fff2d6" stop-opacity="0"/></linearGradient></defs>`
    /* side band: 157 → 162 (the bottom rim reaches the box's edge at 170) */
-   +`<path d="M19 157L19 167A31 7 0 0 0 81 167L81 157A31 9 0 0 1 19 157Z" fill="url(#${id}s)"/>`
-   +`<path d="M19.4 166.8A30.6 6.8 0 0 0 80.6 166.8" fill="none" stroke="#000" stroke-opacity=".35" stroke-width=".9"/>`
+   +`<path d="M19 157L19 ${SC3D_THICK?167:163}A31 7 0 0 0 81 ${SC3D_THICK?167:163}L81 157A31 9 0 0 1 19 157Z" fill="url(#${id}s)"/>`
+   +`<path d="M19.4 ${SC3D_THICK?166.8:162.8}A30.6 6.8 0 0 0 80.6 ${SC3D_THICK?166.8:162.8}" fill="none" stroke="#000" stroke-opacity=".35" stroke-width=".9"/>`
    +`<path d="M19.6 157.6A30.4 8.6 0 0 0 50 166" fill="none" stroke="url(#${id}l)" stroke-width=".9"/>`
    /* top face + ring, then the bevel */
    +`<ellipse cx="50" cy="157" rx="31" ry="9" fill="url(#${id}t)" stroke="${ring}" stroke-width="${rw}"/>`
@@ -87,9 +87,10 @@ function sc3dSVG(svg,idp='s3'){if(typeof svg!=='string')return svg;try{
 
 /* ---------------- the board: one lit Image per spec, one canvas per spec + pixel size ---------------- */
 const SC3D_IMG=new Map(),SC3D_CV=new Map();
+let SC3D_THICK=false; /* the thick base only where the image is 176 tall (the board); 170-tall views (HTML, tokenImg) keep the 163 band */
 const SC3D_VH=176; /* the board image is 6 units taller than figureSVG's 170 so the thick base's lower rim (to 174) is not clipped */
 /* sc3dImg — the lit figure as an Image (null until loaded; redraws the board when it arrives) */
-function sc3dImg(spec,key){let im=SC3D_IMG.get(key);if(!im){im=new Image();im.onload=()=>{try{draw()}catch(e){}};im.src='data:image/svg+xml,'+encodeURIComponent(sc3dSVG(figureSVG(spec)).replace('viewBox="0 0 100 170" width="100" height="170"','viewBox="0 0 100 '+SC3D_VH+'" width="100" height="'+SC3D_VH+'"'));SC3D_IMG.set(key,im);
+function sc3dImg(spec,key){let im=SC3D_IMG.get(key);if(!im){im=new Image();im.onload=()=>{try{draw()}catch(e){}};let lit;SC3D_THICK=true;try{lit=sc3dSVG(figureSVG(spec))}finally{SC3D_THICK=false}im.src='data:image/svg+xml,'+encodeURIComponent(lit.replace('viewBox="0 0 100 170" width="100" height="170"','viewBox="0 0 100 '+SC3D_VH+'" width="100" height="'+SC3D_VH+'"'));SC3D_IMG.set(key,im);
     if(SC3D_IMG.size>240)SC3D_IMG.delete(SC3D_IMG.keys().next().value)}
   return im.complete&&im.naturalWidth?im:null}
 /* sc3dCanvas — the figure + its sand shadow rendered once at pxH device pixels tall */
@@ -125,6 +126,14 @@ function sc3dCanvas(spec,key,pxH){const ck=key+'|'+pxH;let c=SC3D_CV.get(ck);if(
       ctx.save();if(opt&&opt.filter)ctx.filter=opt.filter;ctx.drawImage(c,x-w/2-c._pad*k,top,c.width*k,c.height*k);ctx.restore();
       const t=top+h*0.12;try{TOP83=t}catch(e){}return t}}catch(e){console.error(e)}
   return base.apply(this,arguments)}}
-/* the Studio's sculpt previews (Token creator, online bench) show the lit figure */
+/* EVERYWHERE (his ask, 2026-10-05): every figureHTML (Studio previews and lists, custom characters, Play Now seats, Ludus,
+   Domus, online creator…) and every tokenImg (city square, corpses, menus — canvas images) show the lit figure. Unique id
+   prefixes per HTML figure (gradients carry the base colour); tiny chips (< 28 px) stay flat (the light would not show). */
+let SC3D_HN=0;
 {const base=figureHTML;figureHTML=function(spec,height,ring,extra){const h=base.apply(this,arguments);
-  if(!SC3D.on||!extra||extra.selLayer==null)return h;try{return h.replace(/<svg[\s\S]*<\/svg>/,s=>sc3dSVG(s,'s3p'))}catch(e){return h}}}
+  if(!SC3D.on||(height||60)<28)return h;if(extra&&extra.selLayer!=null){try{return h.replace(/<svg[\s\S]*<\/svg>/,s=>sc3dSVG(s,'s3p'))}catch(e){return h}}
+  try{const id='s3h'+(++SC3D_HN).toString(36);return h.replace(/<svg[\s\S]*<\/svg>/,s=>sc3dSVG(s,id))}catch(e){return h}}}
+const TOKEN_IMG3={};
+{const base=tokenImg;tokenImg=function(spec){if(!SC3D.on||HEADLESS||!spec)return base.apply(this,arguments);const key=JSON.stringify(spec);let im=TOKEN_IMG3[key];
+  if(!im){im=new Image();im.onload=()=>{try{draw()}catch(e){}};im.src='data:image/svg+xml,'+encodeURIComponent(sc3dSVG(figureSVG(spec),'s3i'));TOKEN_IMG3[key]=im}
+  return im.complete&&im.naturalWidth?im:null}}
