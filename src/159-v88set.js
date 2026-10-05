@@ -21,7 +21,7 @@ function set88General(h){const T=document.createElement('template');T.innerHTML=
   const row=sel=>{const r=by(sel);return r&&r.matches('.setrow')?r:null};
   const anim=ANIM88(),seg=(k,l)=>`<button type="button" data-anim88="${k}" class="${anim===k?'on':''}">${l}</button>`;
   const mk=html=>{const t=document.createElement('template');t.innerHTML=html.trim();return t.content.firstElementChild};
-  const animRow=mk(`<div class="setrow"><span>${_T`<b>Animations</b>`}<br><span class="hint" style="margin:0">${_T`Flying stones and spears, the clean-up crew, the market die. Quick halves them.`}</span></span><div class="seg">${seg('full',_T('Full'))}${seg('quick',_T('Quick'))}${seg('off',_T('Off'))}</div></div>`);
+  const animRow=mk(`<div class="setrow"><span>${_T`<b>Animations</b>`}<br><span class="hint" style="margin:0">${_T`Flying stones and spears, the clean-up crew, the market peeks. Quick halves them.`}</span></span><div class="seg">${seg('full',_T('Full'))}${seg('quick',_T('Quick'))}${seg('off',_T('Off'))}</div></div>`);
   const camRow=mk(`<label class="setrow"><input type="checkbox" data-set="cam88" ${SETTINGS.cam88!==false?'checked':''}><span>${_T`<b>Follow camera</b>`}<br><span class="hint" style="margin:0">${_T`When zoomed in, the view follows whoever's turn it is.`}</span></span></label>`);
   const head=t=>mk(`<h4 style="grid-column:1/-1;margin:6px 0 0">${t}</h4>`);
   const groups=[[_T('Gameplay'),[row('[data-sspeed]'),animRow,row('[data-set="confirmEnd"]'),camRow,row('[data-set="briefing"]'),row('[data-set="ctxMenu"]')]],

@@ -214,9 +214,9 @@ function boardHTML75(player){const m=S.market;const cell=(x,y,inner,cls='')=>`<d
   return `<div class="mboard75"><img src="${assetURL('market_board.webp')}" alt="${_T`The market board`}">${h}</div>`}
 openMarket=async function(player){mktFix75();const vetOn=weak(player,'tax');if(vetOn&&player.cpu)player.taxPref=player.cf>player.coin?'cf':'coin';
   for(;;){const vetCF=vetOn&&player.taxPref==='cf'?1:0,vet=vetOn&&!vetCF?1:0;
-    const notes=[vetOn?_T`⚖ Old debts: +1 ${vetCF?'CF':_T('coin')} per purchase`:'',player.discount?_T`％ Discount: ${coinAmt87('−'+(player.discount))} this turn`:'',player.mchoice?_T('☝ Market Choice: pick your slot, no die'):''].filter(Boolean);
+    const notes=[vetOn?_T`⚖ Old debts: +1 ${vetCF?'CF':_T('coin')} per purchase`:'',player.discount?_T`％ Discount: ${coinAmt87('−'+(player.discount))} this turn`:''].filter(Boolean); /* v0.89: no Market Choice note (179) */
     const body=`<div class="mkt75">${boardHTML75(player)}
-      <div class="mkt75-foot">${_T`<span>Pay for a level, roll the market die, then take that slot's <b>weapon</b> or <b>one armor piece</b> · re-roll ${coinAmt87(2)}</span>`}<span class="stall-purse">${_T`<b>${coinAmt87(player.coin)}</b> · <b>${cfAmt87(player.cf)}</b>${player.market?' · <b style="color:var(--gold2)">open</b>':''}`}</span></div>
+      <div class="mkt75-foot">${_T`<span>Pay for a level, then take any <b>weapon</b> or <b>one armor piece</b> from its row</span>`}<span class="stall-purse">${_T`<b>${coinAmt87(player.coin)}</b> · <b>${cfAmt87(player.cf)}</b>${player.market?' · <b style="color:var(--gold2)">open</b>':''}`}</span></div>
       ${player.market?'':`<div class="mkt75-lock"><div><div style="font-size:30px">🔒</div>${_T`<b>The market is closed.</b>`}<br><span class="rc-sub">${_T`3 Crowd Favor opens it for this turn — then buy as often as your coin allows.`}</span></div></div>`}</div>${notes.length?`<p class="rc-sub" style="margin:6px 0 0">${notes.join(' · ')}</p>`:''}${typeof hint==='function'?hint('market'):''}`;
     const btns=[];
     if(!player.market)btns.push({label:_T('Unlock market'),sub:cfAllowed()?cfAmt87(3):_T('Crowd Favor is locked'),value:'unlock',disabled:player.cf<3||!cfAllowed(),primary:1});

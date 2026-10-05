@@ -11,33 +11,32 @@ await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);try{menuHide()}cat
 /* 1. ROLL: a purchase at level 1 */
 await pg.evaluate(()=>{const p=S.players[0];p.coin=40;window._r88=null;marketBuy75(p,1).then(r=>window._r88=r)});
 await W8(250);
-const roll=await pg.evaluate(()=>({die:!!document.querySelector('#mBody .mk88die'),hop:document.querySelectorAll('#mBody .mb-cell.hop').length,title:document.getElementById('mTitle').textContent}));
-ok(roll.die&&roll.hop>=1,'roll show: die + hopping slot '+JSON.stringify(roll));
-await pg.click('#mBody .mboard75');await W8(500); /* a tap skips the show */
+const roll=await pg.evaluate(()=>({die:!!document.querySelector('#mBody .mk88die'),board:!!document.querySelector('#mBody .mk88 .mboard75'),title:document.getElementById('mTitle').textContent}));
+ok(!roll.die&&roll.board,'v0.89: no die — the board opens on the row '+JSON.stringify(roll));
 const lit=await pg.evaluate(()=>{const L=[...document.querySelectorAll('#mBody .mboard75 .lit')];const lv=L.map(x=>x.closest('.mb-cell').dataset.lv);
-  return {n:L.length,lv1:lv.every(v=>v==='1'),mi:L.every(x=>x.dataset.mi!=null),done:!!document.querySelector('#mBody .mk88die.done'),info:(document.querySelector('#mBody .mk88info')||{}).textContent||'',
+  return {n:L.length,lv1:lv.every(v=>v==='1'),mi:L.every(x=>x.dataset.mi!=null),done:true,info:(document.querySelector('#mBody .mk88info')||{}).textContent||'',
     reroll:[...document.querySelectorAll('#mBtns button')].some(x=>/Re-roll/.test(x.textContent)&&x.offsetParent),hiddenOpts:[...document.querySelectorAll('#mBtns button')].filter(x=>!x.offsetParent).length}});
 ok(lit.n>=1&&lit.lv1&&lit.mi&&lit.done,'lit pieces in the level 1 row '+JSON.stringify(lit));
 ok(/level 1/i.test(lit.info)&&/(Fits|replaces|Replaces|Nowhere|face-down)/.test(lit.info),'info panel shows the piece + fit '+lit.info.slice(0,120));
-ok(lit.reroll&&lit.hiddenOpts>=1,'re-roll button visible, option buttons hidden');
+ok(!lit.reroll&&lit.hiddenOpts>=1,'no re-roll button (v0.89), option buttons hidden');
 if(shots)await pg.screenshot({path:shots+'/mk88_roll.png'});
 /* hover another lit piece → the panel follows */
 await pg.evaluate(()=>{const L=[...document.querySelectorAll('#mBody .mboard75 .lit')];const el=L[L.length-1];el.dispatchEvent(new PointerEvent('pointerover',{bubbles:true}))});
 const pick=await pg.evaluate(async()=>{const el=document.querySelector('#mBody .mboard75 .lit');const ref=el.dataset.k88;el.click();for(let i=0;i<30&&!window._r88;i++)await new Promise(r=>setTimeout(r,100));
   const r=window._r88;const still=r&&r.key?(r.kind==='w'?[...S.market.w[1].slots,...S.market.w[1].deck]:S.market.a[1].piles.flat()).filter(k=>k===r.key).length:-1;return {ref,r,still}});
 ok(pick.r&&pick.r.key&&(pick.ref==='back:1'||pick.ref.slice(2)===pick.r.key),'clicking the lit piece takes it '+JSON.stringify(pick));
-/* 2. Market Choice: click a slot */
-await pg.evaluate(()=>{const p=S.players[0];p.mchoice=true;window._r88=null;marketBuy75(p,2).then(r=>window._r88=r)});await W8(400);
-const mc=await pg.evaluate(async()=>{const cells=[...document.querySelectorAll('#mBody .mb-cell.lit[data-lv="2"]')];const c=cells.find(x=>x.dataset.side==='a'&&x.querySelector('.mb-a'))||cells[0];const n=cells.length;c.click();
-  for(let i=0;i<30;i++){if(window._r88)break;if(CUR_MODAL&&!document.querySelector('#mBody .cells88')){const l=document.querySelector('#mBody .lit');if(l)l.click();else CUR_MODAL.done(0)}await new Promise(r=>setTimeout(r,120))}S.players[0].mchoice=false;return {n,r:window._r88}});
-ok(mc.n===8&&mc.r&&mc.r.key,'Market Choice: 8 lit slots, one click takes '+JSON.stringify(mc));
+/* 2. v0.89: Market Choice is gone (Choose = a free weapon, tv89k) — a level 2 buy lights only that row's pieces */
+await pg.evaluate(()=>{const p=S.players[0];window._r88=null;marketBuy75(p,2).then(r=>window._r88=r)});await W8(400);
+const mc=await pg.evaluate(async()=>{const L=[...document.querySelectorAll('#mBody .mboard75 .lit')];const n=L.length;const lv2=L.every(x=>x.closest('.mb-cell').dataset.lv==='2');(L.find(x=>x.classList.contains('mb-a'))||L[0]).click();
+  for(let i=0;i<30&&!window._r88;i++)await new Promise(r=>setTimeout(r,120));return {n,lv2,r:window._r88}});
+ok(mc.n>=4&&mc.lv2&&mc.r&&mc.r.key,'level 2 row lit, one click takes '+JSON.stringify(mc));
 /* 3. chooseMarket on the board */
 await pg.evaluate(()=>{window._c88=0;chooseMarket(S.players[0],'w',2).then(()=>window._c88=1)});await W8(400);
 const cm=await pg.evaluate(async()=>{const L=[...document.querySelectorAll('#mBody .mk88 .lit')];const strip=document.querySelectorAll('#mBody .mk88strip .lit').length;
   const before=S.market.w[2].slots.filter(Boolean).length+S.market.w[2].deck.length;const tgt=L[0];tgt.click();
   for(let i=0;i<30&&!window._c88;i++){if(CUR_MODAL&&!document.querySelector('#mBody .mk88'))CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:'drop');await new Promise(r=>setTimeout(r,120))}
   const after=S.market.w[2].slots.filter(Boolean).length+S.market.w[2].deck.length;return {n:L.length,strip,before,after}});
-ok(cm.n>=3&&cm.strip>=1&&cm.after===cm.before-1,'chooseMarket: weapons lit incl. the face-down pile, one taken '+JSON.stringify(cm));
+ok(cm.n>=4&&cm.after===cm.before-1,'chooseMarket: weapons lit incl. the pile, one taken '+JSON.stringify(cm));
 /* 4. a CPU purchase peek on Normal */
 await pg.evaluate(()=>{SPEED='normal';window._p88=0;marketBuy75(S.players[1],1).then(()=>window._p88=1)});await W8(500);
 const pk=await pg.evaluate(()=>({peek:!!document.getElementById('mk88peek'),lit:!!document.querySelector('#mk88peek .lit'),h:(document.querySelector('#mk88peek .pk88h')||{}).textContent||''}));

@@ -4,8 +4,8 @@
    • Market window (106 openMarket → modal 'Market of Flavius'): Unlock market says "No CF while Commodus is in the arena".
    • Crowd Favor window (163): the Unlock market tile says the same.
    • FREE PICKS (offerings, cards and rewards that give "a level N weapon / armor" — 03 marketRoll → 106 marketBuy75 with
-     opt.only): ALWAYS chosen outright, no d4 (his rule: the tokens and cards say "choose") — Commodus or not — from that level's side (the Market Choice path:
-     the board's slot pick for humans, the best piece for CPUs). Market Choice itself is not used up by it. (His rule.) */
+     opt.only): ALWAYS chosen outright, no d4 (his rule: the tokens and cards say "choose") — Commodus or not — from that level's side.
+     Since 179-v89market every market take is chosen outright (no die anywhere). */
 /* STARTING CARDS (his rule): a class's starting card — Slave's Rete, Hero's Ward, Venatore's Tame (= the Lyre in the deck), Damnatio's
    Meat Lure, any custom character's — comes OUT of the arena deck while a copy is left; with none left the gladiator still gets it. */
 {const base=giveLoadout;giveLoadout=function(player){const n0=(player&&player.items||[]).length;const r=base.apply(this,arguments);try{
@@ -17,9 +17,5 @@ const mktShut89=()=>{try{return !!(S&&!S.over&&typeof commodusIn==='function'&&c
     if(typeof body==='string'&&mktShut89()&&body.includes('cf88mb'))
       body=body.replace(/(<img[^>]*class="cf88mb"[\s\S]*?)(Unlock market for this turn)/,`$1$2 · ${_T('no CF while Commodus is in the arena')}`)}catch(e){console.error(e)}
   return base.call(this,title,body,btns,opt)}}
-{const base=marketBuy75;marketBuy75=async function(player,lv,opt={}){
-  if(!opt||!opt.only||!player)return base.apply(this,arguments);
-  const had=player.mchoice;player.mchoice=true;
-  log(_T`${nm(player)} chooses outright at level ${lv}.`);
-  const L0=log;log=function(h,...r){if(typeof h==='string'&&h.includes('Market Choice'))h=h.replace('uses Market Choice for slot',_T('picks slot'));return L0.call(this,h,...r)}; /* the borrowed Market Choice path names itself in the log */
-  try{return await base.call(this,player,lv,{...opt,free:false})}finally{player.mchoice=had;log=L0}}}
+/* v0.89 K: the free-pick wrapper that borrowed the Market Choice path is gone — 179-v89market's marketBuy75 lets everyone choose
+   outright from the level's row (free picks keep the line "X chooses outright at level N"). */

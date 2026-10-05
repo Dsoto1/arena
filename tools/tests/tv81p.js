@@ -39,7 +39,7 @@ o.dr=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));i
   x.leak=[];for(const p of S.players)for(const l of Object.keys(p.pieces))for(const pc of p.pieces[l])if(ARM[pc.key]&&!ARM[pc.key].stack&&flat.includes(pc.key))x.leak.push(pc.key);
   x.ended=[...document.querySelectorAll('#log li')].some(li=>/draft ends early/.test(li.textContent));
   return x});
-ok(o.dr.cols===2,'2 per row (v0.88: the board)');ok(o.dr.n>0&&o.dr.n<=8,'only offers');ok(o.dr.pool,'rest of pool on the board');ok(o.dr.belt1,'Belt I in the pool');
+ok(o.dr.cols===2,'2 per row (v0.88: the board)');ok(o.dr.n>0,'every fitting piece offered (v0.89: no random 8)');ok(o.dr.pool,'rest of pool on the board');ok(o.dr.belt1,'Belt I in the pool');
 ok(!o.dr.bad.length,'filtered offers');ok(!o.dr.leak.length,'drafted gear left the market');ok(o.dr.picks.length>=1,'human picked');
 /* 3. Juggernaut declare cards */
 o.jg=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(80)}
