@@ -56,3 +56,5 @@ tmenu3 496/515).
 | tv59 | chTok protoHTML |
 | tver51 | verAsk verLabel |
 | tv30, tv55, tv56, tstat55, tv60b, tv63 | loanLender · npcRatings · loanSizes · allyOpts · truceWho · cvdSet84 |
+
+**Decided 2026-10-05 (Virgilante):** tarena51 REMOVED (it printed but asserted nothing; tanim51 + tv71 run every function it ran). The rest stay for now.
