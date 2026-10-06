@@ -27,11 +27,11 @@ const lud91=()=>typeof S!=='undefined'&&S&&(S.pen76||S.exhib);
 {const base=drawFlavius;drawFlavius=function(){if(lud91())return;return base.apply(this,arguments)}}
 {const base=flaviusMood;flaviusMood=function(){if(lud91())return;return base.apply(this,arguments)}}
 {const base=flaviusReact;flaviusReact=function(){if(lud91())return;return base.apply(this,arguments)}}
-/* • DRY CLAY POTS + A THIN CHAIN (his ask 2026-10-06): the Blessing pots read matte — the glossy upper-left highlight is
+/* • DRY CLAY POTS (his ask 2026-10-06; the chain below was tried and dropped — POT91.chainOn): the Blessing pots read matte — the glossy upper-left highlight is
      knocked back with the pot's own colour, a faint dry-clay speckle over the body — and a thin iron chain wraps the neck
      just under the lip, one end trailing down the back toward the pillar (kept faint: a hint, not a feature). The gold
      Eagle pot keeps its shine. Cosmetic: the speckle comes from the pot's screen position, never the dice. */
-const POT91={chain:'rgba(70,66,62,.6)',chainHi:'rgba(190,186,178,.35)',matte:.55}; /* TWEAK */
+const POT91={chainOn:false /* his call 2026-10-06: no chain */,chain:'rgba(70,66,62,.6)',chainHi:'rgba(190,186,178,.35)',matte:.55}; /* TWEAK */
 {const base=drawPot;drawPot=function(x,y,s,eagle){const r=base.apply(this,arguments);if(eagle||HEADLESS||!(s>6))return r;try{
   const potC=THEME.pot||'#b5582f';ctx.save();
   /* the body + neck silhouette */
@@ -45,7 +45,7 @@ const POT91={chain:'rgba(70,66,62,.6)',chainHi:'rgba(190,186,178,.35)',matte:.55
   const n=Math.min(140,Math.round(s*2.2)),d=Math.max(0.7,s*0.011);for(let i=0;i<n;i++){const px=x+(rn()-0.5)*s*0.9,py=y-rn()*s*0.92;ctx.fillStyle=rn()<0.5?'rgba(255,236,210,.10)':'rgba(40,18,8,.12)';ctx.fillRect(px,py,d,d)}
   ctx.restore();
   /* the chain under the lip: small links round the front of the neck, a tail down the back */
-  if(s>14){ctx.save();const cy=y-s*0.84,rx=s*0.14,ry=s*0.035,k=7;ctx.lineWidth=Math.max(0.7,s*0.018);
+  if(POT91.chainOn&&s>14){ctx.save();const cy=y-s*0.84,rx=s*0.14,ry=s*0.035,k=7;ctx.lineWidth=Math.max(0.7,s*0.018);
     for(let i=0;i<k;i++){const a=Math.PI*(0.08+0.84*i/(k-1));const lx=x+Math.cos(a)*rx,ly=cy+Math.sin(a)*ry;ctx.strokeStyle=POT91.chain;ctx.beginPath();ctx.ellipse(lx,ly,s*0.022,s*0.014,i%2?0.9:-0.3,0,Math.PI*2);ctx.stroke()}
     ctx.strokeStyle=POT91.chainHi;ctx.lineWidth=Math.max(0.5,s*0.01);ctx.beginPath();ctx.ellipse(x,cy-s*0.004,rx,ry,0,0.2*Math.PI,0.6*Math.PI);ctx.stroke();
     /* the tail: from the right of the neck down behind the belly toward the pillar */
