@@ -21,3 +21,9 @@
   return base.apply(this,arguments)}}
 try{if(SETTINGS.tokenStyle==='cylinder'){SETTINGS.tokenStyle='figure';applySettings()}}catch(e){}
 {const base=settingsHTML;settingsHTML=function(){const h=base.apply(this,arguments);return typeof h==='string'?h.replace(/<button type="button" class="tokrow[^"]*" data-tokstyle="cylinder">[\s\S]*?<\/button>/,''):h}}
+/* • NO FLAVIUS AT THE LUDUS (his call 2026-10-06): a beast-pen fight or an exhibition is a private training bout, so the emperor's
+     box (portrait, mood face, sponsor) is not drawn and Flavius never reacts or speaks there. Display only. */
+const lud91=()=>typeof S!=='undefined'&&S&&(S.pen76||S.exhib);
+{const base=drawFlavius;drawFlavius=function(){if(lud91())return;return base.apply(this,arguments)}}
+{const base=flaviusMood;flaviusMood=function(){if(lud91())return;return base.apply(this,arguments)}}
+{const base=flaviusReact;flaviusReact=function(){if(lud91())return;return base.apply(this,arguments)}}
