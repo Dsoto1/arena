@@ -62,7 +62,7 @@ await A.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);await new Promise(r
 /* ── B · board life ── */
 out.b=await A.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
   startEvent({ev:'democritus',loc:6,seats:[{cls:'soldier',cpu:true},{cls:'hero',cpu:true},{cls:'royalty',cpu:true},{cls:'venatore',cpu:true}],opts:{}});
-  await W8(2600);for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(200)}S.over=true;await W8(1200);const r={};
+  await W8(2600);for(const T_=Date.now();Date.now()-T_<15000&&CUR_MODAL;){CUR_MODAL.done(null);await W8(200)}S.over=true;await W8(1200);const r={};
   S.blood=[];S.rotation=5;bloodAt(6,6,'elim');const B=S.blood[0];r.stamp=B.rot84===5;const fa=[];for(let k=0;k<6;k++){S.rotation=5+k;fa.push(+bloodFade84(B).toFixed(3))}S.rotation=5;r.fades=fa;
   r.fall=fa[0]===1&&fa[1]<1&&fa[2]<fa[1]&&fa[3]<fa[2]&&fa[5]>=LIFE84.floor&&fa[5]<0.5;
   const rm=Math.random;let calls=0;Math.random=()=>{calls++;return rm()};const h0=onlHash();bloodFade84(B);bloodCol84('#8a1c14',0.5);Math.random=rm;r.cosmetic=calls===0&&onlHash()===h0;
@@ -90,10 +90,10 @@ await A.waitForTimeout(1200);await shot(A,'dust',dclip);await A.waitForTimeout(2
 /* ── C · one tab per save ── */
 const cid=await A.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));S.over=true;if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(800);
   newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;await saveWorld(true);await W8(900);return W_().id});
-out.c0=false;for(let i=0;i<15&&!out.c0;i++){out.c0=await A.evaluate(id=>TAB84.held.has('career:'+id),cid);if(!out.c0)await A.waitForTimeout(300)}
+out.c0=false;for(const T_=Date.now();Date.now()-T_<22500&&!out.c0;){out.c0=await A.evaluate(id=>TAB84.held.has('career:'+id),cid);if(!out.c0)await A.waitForTimeout(300)}
 const B=await open('B');
 await B.evaluate(async id=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;MGR.pendingLoad=id;openManager()},cid);
-let asked=false;for(let i=0;i<20&&!asked;i++){await B.waitForTimeout(300);asked=await B.evaluate(()=>!!document.querySelector('.ask76bg')&&/another tab/.test(document.querySelector('.ask76bg').textContent))}
+let asked=false;for(const T_=Date.now();Date.now()-T_<30000&&!asked;){await B.waitForTimeout(300);asked=await B.evaluate(()=>!!document.querySelector('.ask76bg')&&/another tab/.test(document.querySelector('.ask76bg').textContent))}
 await shot(B,'second_tab');
 await B.click('.ask76bg [data-ask76="1"]');await B.waitForTimeout(900);
 out.c=await A.evaluate(async()=>{const bar=document.getElementById('tab84');const r={bar:!!bar&&!bar.hidden&&/another tab/.test(bar.textContent),blocked:saveBlocked76()};
@@ -101,7 +101,7 @@ out.c=await A.evaluate(async()=>{const bar=document.getElementById('tab84');cons
 out.cb=await B.evaluate(id=>({held:TAB84.held.has('career:'+id),world:!!W_()&&W_().id===id,free:!saveBlocked76()}),cid);
 /* Cancel: a third page asks for the same career and lets go */
 const C3=await open('C');await C3.evaluate(async id=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;MGR.pendingLoad=id;openManager()},cid);
-asked=false;for(let i=0;i<20&&!asked;i++){await C3.waitForTimeout(300);asked=await C3.evaluate(()=>!!document.querySelector('.ask76bg'))}
+asked=false;for(const T_=Date.now();Date.now()-T_<30000&&!asked;){await C3.waitForTimeout(300);asked=await C3.evaluate(()=>!!document.querySelector('.ask76bg'))}
 await C3.click('.ask76bg [data-ask76="0"]');await C3.waitForTimeout(900);
 out.cc=await C3.evaluate(()=>({world:!!W_(),blocked:saveBlocked76()}));out.cb2=await B.evaluate(()=>({bar:!document.getElementById('tab84'),free:!saveBlocked76()}));
 ok(out.c0,'first tab holds its career');ok(asked,'second tab asks');ok(out.c.bar&&out.c.blocked&&out.c.put,'the first tab shows the notice and stops saving');
@@ -152,13 +152,17 @@ const step=async(n,fn)=>{try{await fn();return true}catch(e){errs.push('T step '
 out.e={};
 out.e.menuTr=await T.evaluate(()=>!!document.querySelector('#mainMenu font')&&/«/.test(document.querySelector('#mainMenu .mmbtns').textContent));
 out.e.play=await step('play',async()=>{await T.click('#mainMenu [data-mm="play"]');await T.waitForTimeout(1200);await T.click('[data-mi="0"]');await T.waitForTimeout(1800);await T.click('#goBtn')});
-let turn=false;for(let i=0;i<50&&!turn;i++){await T.waitForTimeout(500);const st=await T.evaluate(()=>({m:!!CUR_MODAL&&!document.getElementById('modal').hidden,h:typeof humanTurn==='function'&&humanTurn()&&S.phase}));
+let turn=false;for(const T_=Date.now();Date.now()-T_<75000&&!turn;){await T.waitForTimeout(500);const st=await T.evaluate(()=>({m:!!CUR_MODAL&&!document.getElementById('modal').hidden,h:typeof humanTurn==='function'&&humanTurn()&&S.phase}));
   if(st.m)await T.evaluate(()=>{const b=document.querySelector('#mBtns button.primary')||document.querySelector('#mBtns button');if(b)b.click()});else if(st.h==='choice')turn=true}
 out.e.turn=turn;
-if(turn){const t0=await T.evaluate(()=>({who:S.turn,ph:S.phase,n:S.turnNo}));await step('coin',()=>T.click('#actions [data-act="coin"]'));await T.waitForTimeout(1200);
-  for(let i=0;i<10;i++){const m=await T.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);if(!m)break;await T.evaluate(()=>{const b=document.querySelector('#mBtns button');if(b)b.click()});await T.waitForTimeout(400)}
-  const ph=await T.evaluate(()=>S.phase);await step('end',()=>T.click('#actions [data-act="end"]'));await T.waitForTimeout(1500);
-  for(let i=0;i<10;i++){const m=await T.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);if(!m)break;await T.evaluate(()=>{const b=document.querySelector('#mBtns button');if(b)b.click()});await T.waitForTimeout(400)}
+if(turn){const t0=await T.evaluate(()=>({who:S.turn,ph:S.phase,n:S.turnNo}));
+  /* the translator rewrites the DOM all the time and End turn beats: never 'stable' for Playwright — force the real clicks; then wait for the
+     phase/turn to move (answering any window) instead of a fixed pause (3 tests at once stretch every timer) */
+  const answer=async(done,ms=30000)=>{for(const t1=Date.now();Date.now()-t1<ms;){if(await T.evaluate(done,t0))return true;const m=await T.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);
+    if(m)await T.evaluate(()=>{const b=document.querySelector('#mBtns button');if(b)b.click()});await T.waitForTimeout(300)}return false};
+  await step('coin',()=>T.click('#actions [data-act="coin"]',{force:true}));await answer(()=>S.phase!=='choice'&&!S.busy&&!CUR_MODAL);
+  const ph=await T.evaluate(()=>S.phase);await step('end',()=>T.click('#actions [data-act="end"]',{force:true}));await answer(t0=>S.turnNo!==t0.n||S.turn!==t0.who);
+  for(const t1=Date.now();Date.now()-t1<10000;){const m=await T.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);if(!m)break;await T.evaluate(()=>{const b=document.querySelector('#mBtns button');if(b)b.click()});await T.waitForTimeout(400)}
   out.e.ph=ph;out.e.turnMoved=await T.evaluate(t0=>S.turnNo!==t0.n||S.turn!==t0.who,t0);await shot(T,'translated')}
 out.e.terms=await T.evaluate(()=>{const s=[...document.querySelectorAll('.gt84')];return {n:s.length,eng:s.length>0&&s.every(x=>!/«/.test(x.textContent))}});
 out.e.names=await T.evaluate(()=>{const n=document.querySelector('#log b[style*="color"]');return !n||n.getAttribute('translate')==='no'});

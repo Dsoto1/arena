@@ -19,7 +19,9 @@ const join=async(p,id)=>{for(let k=0;k<8;k++){const ok=await p.evaluate(async id
 const until=async(p,fn,arg,ms=20000)=>{for(let t0=Date.now();Date.now()-t0<ms;){if(await p.evaluate(fn,arg))return true;await p.waitForTimeout(150)}return false};
 
 /* ======== 1. rooms when lanistas go ======== */
-{const ctx=await mkCtx({grace:1500,drop:2500,ping:600});const A=await open(ctx,'A',true),B=await open(ctx,'B'),C=await open(ctx,'C');
+/* the reconnecting… mark lives from drop to drop+grace: 1.5 s was shorter than one poll round under load (A sees it through the room
+   ping), and a loaded live window could itself pass the 2.5 s drop — 5 s / 6 s keep the same sequence (marked, then out) */
+{const ctx=await mkCtx({grace:6000,drop:5000,ping:600});const A=await open(ctx,'A',true),B=await open(ctx,'B'),C=await open(ctx,'C');
   const ids={A:await setup(A,'Alpha','hero'),B:await setup(B,'Beta','soldier'),C:await setup(C,'Gamma','amazonia')};
   const L=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:false,cry:false}));
   await join(B,L.id);await join(C,L.id);
@@ -27,17 +29,17 @@ const until=async(p,fn,arg,ms=20000)=>{for(let t0=Date.now();Date.now()-t0<ms;){
   out.members0=await A.evaluate(id=>(mockLoad().lobbies[id].members||[]).length,L.id);
   /* Gamma's window dies without a word (no pagehide leave) */
   await C.evaluate(()=>{ONL89.noLeave=true});await C.close();
-  out.marked=await until(A,([id,c])=>{const R=(ONL.lobbies||[]).find(x=>x.id===id);return !!(R&&R.off&&R.off[c])&&!!document.querySelector('#onlRoom80 .off89 .r89-rc')},[L.id,ids.C],15000);
-  out.cOut=await until(A,([id,c])=>{const R=(ONL.lobbies||[]).find(x=>x.id===id);return !!R&&!(R.members||[]).some(m=>m.id===c)&&!document.querySelector('#onlRoom80 .off89')},[L.id,ids.C],15000);
+  out.marked=await until(A,([id,c])=>{const R=(ONL.lobbies||[]).find(x=>x.id===id);return !!(R&&R.off&&R.off[c])&&!!document.querySelector('#onlRoom80 .off89 .r89-rc')},[L.id,ids.C],40000);
+  out.cOut=await until(A,([id,c])=>{const R=(ONL.lobbies||[]).find(x=>x.id===id);return !!R&&!(R.members||[]).some(m=>m.id===c)&&!document.querySelector('#onlRoom80 .off89')},[L.id,ids.C],40000);
   out.cOutWorld=await A.evaluate(([id,c])=>{const R=mockLoad().lobbies[id];return {status:R.status,members:(R.members||[]).map(m=>m.id),c:(R.members||[]).some(m=>m.id===c),host:R.host.id}},[L.id,ids.C]);
   out.pings=await A.evaluate(()=>window.__req['lobby.get']||0);
   /* the host closes the Online window: lobby.leave at once, the room passes to Beta (seated) */
   await A.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done('close')});
-  out.passed=await until(B,([id,a])=>{const R=(ONL.lobbies||[]).find(x=>x.id===id);return !!R&&R.host.id===ONL.acct.id&&R.players.some(p=>p.id===ONL.acct.id)&&!(R.members||[]).some(m=>m.id===a)},[L.id,ids.A],10000);
+  out.passed=await until(B,([id,a])=>{const R=(ONL.lobbies||[]).find(x=>x.id===id);return !!R&&R.host.id===ONL.acct.id&&R.players.some(p=>p.id===ONL.acct.id)&&!(R.members||[]).some(m=>m.id===a)},[L.id,ids.A],30000);
   out.leaveReq=await A.evaluate(()=>window.__req['lobby.leave']||0);
   out.bHosts=await B.evaluate(()=>!!document.querySelector('#onlRoom80 [data-onl="start"]'));
   /* Beta's tab goes (pagehide): the room empties and closes at once */
-  await B.close({runBeforeUnload:false});await A.waitForTimeout(600);
+  await B.close({runBeforeUnload:false});await until(A,id=>{const R=mockLoad().lobbies[id];return !R||R.status==='done'},L.id,20000);
   out.closed=await A.evaluate(id=>{const R=mockLoad().lobbies[id];return R?R.status:'gone'},L.id);
   if(out.members0!==3)miss.push('three in the room');if(!out.marked)miss.push('reconnecting… shown on the other screen');if(!out.cOut||out.cOutWorld.c)miss.push('the dropped member is out after the grace');
   if(out.cOutWorld.host!==ids.A)miss.push('a member drop keeps the host');if(!(out.pings>0))miss.push('the room screen pings lobby.get');

@@ -47,8 +47,8 @@ const ins=await A.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,f
 let same=0,diff=0;for(const [seq,fromA,h] of ins){const other=fromA?hb.h['s'+seq]:ha.h['s'+seq];if(!other)continue;if(other===h)same++;else diff++}
 /* B abandons (Custom, rule 'fate'): eliminated at B's next turn on A's screen */
 const over0=await A.evaluate(()=>S.over);
-await B.evaluate(()=>{ONLM.uiAt=Date.now()});await B.click('#btnOnlLeave').catch(()=>{});await B.waitForSelector('.ask76bg [data-ask76="1"],#modal .mbtns button:not(.primary)',{timeout:15000}).catch(()=>{});await B.click('.ask76bg [data-ask76="1"]').catch(()=>B.click('#modal .mbtns button:not(.primary)').catch(()=>{}));
-await seenBy(B,()=>!ONLM.on&&!!(ONL.leftMatch||{})[Object.keys(ONL.leftMatch||{})[0]],null,20000);
+await B.evaluate(()=>{ONLM.uiAt=Date.now();const x=document.getElementById('btnOnlLeave');if(x)x.click()});await B.waitForSelector('.ask76bg [data-ask76="1"],#modal .mbtns button:not(.primary)',{timeout:30000}).catch(()=>{});await B.click('.ask76bg [data-ask76="1"]').catch(()=>B.click('#modal .mbtns button:not(.primary)').catch(()=>{}));
+await seenBy(B,()=>!ONLM.on&&!!(ONL.leftMatch||{})[Object.keys(ONL.leftMatch||{})[0]],null,40000);
 const bLeft=await B.evaluate(()=>({on:ONLM.on,left:!!(ONL.leftMatch||{})[Object.keys(ONL.leftMatch||{})[0]]}));
 const t1=Date.now();let bOut=null;while(Date.now()-t1<150000){await drive(A);await A.waitForTimeout(250);bOut=await A.evaluate(()=>({alive:S.players[1].alive,over:S.over,marked:!!(ONLM.left&&ONLM.left[1])}));if(!bOut.alive||bOut.over)break}
 /* the last lanista leaves: the match shuts down */

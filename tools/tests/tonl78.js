@@ -28,12 +28,18 @@ const drive=async(p,stone)=>{const r=await p.evaluate(stone=>{const sp=document.
     try{computeHL()}catch(e){}const ks=[...HL.keys()];if(ks.length&&S._drv%4!==0){const k=ks[(S.turnNo*7+S._drv*3)%ks.length];const r0=Math.floor(k/N),c0=k%N;const cv=document.querySelector('canvas');const rc=cv.getBoundingClientRect();const pt=center(r0,c0);
       return ['xy',[rc.left+pt.x*rc.width/cv.width,rc.top+pt.y*rc.height/cv.height],'tile']}
     S._drv=0;if(document.querySelector('[data-act="end"]'))return ['sel','[data-act="end"]','end']}return ['','','idle']},stone);
-  if(r[0]==='sel')await p.click(r[1],{timeout:2000}).catch(()=>{});if(r[0]==='xy')await p.mouse.click(r[1][0],r[1][1]);return r[2]};
+  if(r[0]==='sel')await p.click(r[1],{timeout:2000,force:true}).catch(()=>{});if(r[0]==='xy')await p.mouse.click(r[1][0],r[1][1]);return r[2]};
 const t0=Date.now();let watching=false;const acts={A:0,B:0,C:0};
-while(Date.now()-t0<(process.env.T78||110000)){for(const n of ['A','B','C']){const v=await drive(P[n],n==='C');if(v!=='wait'&&v!=='off'&&v!=='idle')acts[n]++}
+const enough=async()=>P.A.evaluate(async()=>{const ins=(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs;const c=ins.filter(x=>x.k==='stands.result'&&(x.picks||[]).some(p=>p.seat===4)).length;return ins.length>=16&&c>0}).catch(()=>false);
+let chk=0;
+while(Date.now()-t0<280000){if(Date.now()-t0>=(+process.env.T78||110000)&&Date.now()-chk>3000){chk=Date.now();if(await enough()&&await P.D.evaluate(()=>!!(S&&S.onl&&S.onl.watch)&&Object.keys(ONLM.hlog).filter(k=>/^s\d+$/.test(k)).length>=6).catch(()=>false))break}
+  for(const n of ['A','B','C']){const v=await drive(P[n],n==='C');if(v!=='wait'&&v!=='off'&&v!=='idle')acts[n]++}
   if(!watching&&Date.now()-t0>9000){watching=true;await P.D.evaluate(async id=>{ONL.lobbies=await NET.req('lobby.list');onlWatch(ONL.lobbies.find(x=>x.id===id))},L.id)}
   await P.A.waitForTimeout(250);if(await P.A.evaluate(()=>S&&S.over))break}
-await P.A.waitForTimeout(2500);
+/* every window has applied every input sent so far before the hashes are read (not a fixed 2.5 s) */
+for(const t1=Date.now();Date.now()-t1<60000;){const top=await P.A.evaluate(async()=>{const ins=(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs;return ins.length?ins[ins.length-1].seq:0}).catch(()=>0);
+  const ns=await Promise.all(['A','B','C','D'].map(n=>P[n].evaluate(()=>ONLM.next).catch(()=>0)));if(ns.every(x=>x>top))break;await P.A.waitForTimeout(300)}
+await P.A.waitForTimeout(500);
 const inputs=await P.A.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from,x.h||x.pre,x.k]));
 const H={};for(const n of ['A','B','C','D'])H[n]=await P[n].evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs,me:ONLM.me,acct:ONL.acct.id,on:!!(S&&S.onl),watch:!!(S&&S.onl&&S.onl.watch),next:ONLM.next}));
 let same=0,diff=0,dSame=0,dDiff=0;const diffs=[];for(const [seq,from,h] of inputs){if(!h)continue;/* server inputs (v0.82 stands.result) carry no hash */for(const n of ['A','B','C','D']){if(H[n].acct===from)continue;const o=H[n].h['s'+seq];if(!o)continue;const ok=o===h;if(n==='D'){ok?dSame++:dDiff++}else{ok?same++:(diff++,diffs.push(n+seq))}}}

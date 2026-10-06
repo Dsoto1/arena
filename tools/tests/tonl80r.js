@@ -83,12 +83,16 @@ for(const p of [A,B,C])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done('close'
 const back=await A.evaluate(()=>({chest:CHEST_W.includes('cw_t80c'),market:Object.values(MARKET_W).flat().includes('cw_t80m'),hints:HINTS}));
 /* Ranked, two lanistas: no hints / strategy / Focus suggestion; a desync resyncs the old way (no vote) */
 for(const p of [A,B])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide()});
+/* closing the Online window leaves your waiting room 700 ms later (171-v89onl, by design): a room created inside that window was
+   left and closed at once ('Already under way.' at the start). Wait on the page's own clock until that timer has run — under load
+   the page's timers stretch, so a timer queued after it on the same page is the only sure sign it fired */
+for(const p of [A,B])await p.evaluate(()=>new Promise(r=>setTimeout(()=>setTimeout(r,1500),0)));
 /* the windows are still writing their match ends into the shared mock world: a room lost to such a write is opened again */
 let R=null;for(let k=0;k<5;k++){R=await A.evaluate(async()=>{try{return await NET.req('lobby.create',{ev:'egidious',loc:3,seats:4,ranked:true})}catch(e){return null}});
-  let ok=false,lost=false;for(let t0=Date.now();R&&Date.now()-t0<20000&&!ok&&!lost;){lost=!await A.evaluate(id=>!!mockLoad().lobbies[id],R.id);ok=!lost&&await B.evaluate(id=>!!mockLoad().lobbies[id],R.id);if(!ok&&!lost)await A.waitForTimeout(200)}
+  let ok=false,lost=false;for(let t0=Date.now();R&&Date.now()-t0<20000&&!ok&&!lost;){lost=!await A.evaluate(id=>(mockLoad().lobbies[id]||{}).status==='waiting',R.id);ok=!lost&&await B.evaluate(id=>(mockLoad().lobbies[id]||{}).status==='waiting',R.id);if(!ok&&!lost)await A.waitForTimeout(200)}
   if(ok||(R&&!lost))break;await A.waitForTimeout(1000)}
 await A.waitForTimeout(1500);await join(B,R.id);await sees(A,R.id,2);
-const R2=await A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},R.id);await B.evaluate(L=>onlEnter(L),R2);
+const R2=await A.evaluate(async id=>{try{const L=await NET.req('lobby.start',{id});onlEnter(L);return L}catch(e){const w=mockLoad();const L=w.lobbies[id];return {ERR:e.message,now:Date.now(),L:L&&{status:L.status,closed:L.closed,why:L.why,players:L.players.map(p=>p.id),members:(L.members||[]).map(m=>m.id),off:L.off,host:L.host},seen:Object.fromEntries(Object.values(w.accounts).map(a=>[a.id,a.seen])),M:w.matches[id]&&{status:w.matches[id].status}}}},R.id);if(R2.ERR){console.log('DBG',JSON.stringify(R2));process.exit(1)}await B.evaluate(L=>onlEnter(L),R2);
 await waitIn([A,B],R.id);
 for(const p of [A,B])await fast(p);
 const rk=async p=>p.evaluate(()=>{const r={hints:HINTS,set:SETTINGS.hints,strat:showStrategy(),dock:(document.getElementById('hintDock')||{}).hidden!==false,ranked:!!S.onl.ranked};try{hintsMaster(true,true)}catch(e){}r.forced=HINTS;return r});

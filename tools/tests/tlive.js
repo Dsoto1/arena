@@ -13,7 +13,9 @@ for(let i=0;i<150;i++){const st=await pg.evaluate(()=>({ph:S&&S.phase,modal:!doc
   if(st.modal)await pg.evaluate(()=>{const bs=[...document.querySelectorAll('#mBtns .btn,#mBody .btn')].filter(x=>!x.disabled);const p2=bs.find(x=>x.classList.contains('primary'))||bs[0];if(p2)p2.click()});await pg.waitForTimeout(400)}
 await pg.evaluate(()=>{const m=document.getElementById('modal');if(m)m.hidden=true;const a=S.players.filter(p=>p.alive);for(let i=1;i<a.length;i++)eliminate(a[i],{type:'player',p:a[0]})});
 /* the results window (with its buttons) arrives after the horns and fanfare */
-await pg.waitForTimeout(3000);await until(()=>!document.getElementById('modal').hidden&&[...document.querySelectorAll('#mBtns .btn')].some(x=>/Watch the crew/.test(x.textContent)),60000);
+/* (under load the horns, fanfare and laurels stretch past a minute: wait for the window itself, 3 min at most) */
+await pg.waitForTimeout(3000);if(!await until(()=>!document.getElementById('modal').hidden&&[...document.querySelectorAll('#mBtns .btn')].some(x=>/Watch the crew/.test(x.textContent)),180000))
+  console.log('NO RESULTS WINDOW',JSON.stringify(await pg.evaluate(()=>({modal:!document.getElementById('modal').hidden,title:($('#mTitle')||{}).textContent,btns:[...document.querySelectorAll('#mBtns .btn')].map(x=>x.textContent.slice(0,30)),over:!!(S&&S.over),ph:S&&S.phase,clean:!!(S&&S.clean)}))));
 const res=await pg.evaluate(()=>({title:$('#mTitle').textContent.slice(0,50),btns:[...document.querySelectorAll('#mBtns .btn')].map(x=>x.textContent.slice(0,40))}));
 console.log('RESULTS',JSON.stringify(res));
 if(mode==='now'){await pg.evaluate(()=>{const bb=[...document.querySelectorAll('#mBtns .btn')].find(x=>/Return to Match Week/.test(x.textContent));bb.click()});await pg.waitForTimeout(2500)}

@@ -35,13 +35,13 @@ const L1=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'democritus'
 const t0=Date.now();const L1s=await A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},L1.id);const waited=Date.now()-t0;
 ok(L1s.status==='live'&&waited>=900,'Start waits for the countdown, then the horns ('+waited+' ms)');ok(await A.evaluate(()=>P83.some(x=>x.t==='lobby.update')),'the room heard it');
 await B.evaluate(L=>{onlEnter(L)},L1s);const dismiss=p=>p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on||onlmMine()||ONLM.info>0)){const b=document.querySelector('#modal .mbtns .primary')||document.querySelector('#modal .mbtns button');if(b)b.click()}});
-for(let i=0;i<60&&!(await B.evaluate(()=>!!(ONLM.on&&S&&S.onl&&S.players.some(p=>p._nw83))));i++){await dismiss(A);await dismiss(B);await B.waitForTimeout(500)}await A.waitForTimeout(1500);
+for(const T_=Date.now();Date.now()-T_<78000&&!(await B.evaluate(()=>!!(ONLM.on&&S&&S.onl&&S.players.some(p=>p._nw83))));){await dismiss(A);await dismiss(B);await B.waitForTimeout(500)}await A.waitForTimeout(1500);
 const look=async p=>p.evaluate(k=>{const me=S.players.find(x=>x._nw83);const hand=me?['R','L'].map(a=>me['w'+a]).filter(Boolean).find(w=>w.key===k):null;
   return {w:W[k]?JSON.stringify(W[k]):null,hand:hand?JSON.stringify({p:hand.p,r:hand.r,n:hand.n,uq:hand.uq}):null,items:me?me.items.filter(i=>i.kind==='offer').map(i=>i.key).sort():[],h:onlHash(),turn:S.turnNo,next:ONLM.next}},nwKey);
 const la=await look(A),lb=await look(B);
 ok(la.w&&la.w===lb.w,'the named weapon’s W entry is the same in both windows');ok(la.hand&&la.hand===lb.hand,'in hand on both screens');
 ok(la.items.join()==='cf1,elix2'&&lb.items.join()==='cf1,elix2','the brought offerings are in the hand');
-let same=la.h===lb.h;for(let i=0;i<30&&!same;i++){await A.waitForTimeout(400);const [x,y]=[await look(A),await look(B)];same=x.h===y.h&&x.next===y.next}
+let same=la.h===lb.h;for(const T_=Date.now();Date.now()-T_<39000&&!same;){await A.waitForTimeout(400);const [x,y]=[await look(A),await look(B)];same=x.h===y.h&&x.next===y.next}
 const rs=await Promise.all([A,B].map(p=>p.evaluate(()=>ONLM.resyncs|0)));ok(same&&!rs[0]&&!rs[1],'the same arena on both screens, no resync ('+la.h+' / '+lb.h+')');
 /* the engine fills the result row: the weapon gone from the hand → brk; the cf offering used → off keeps elix2 */
 const row=await A.evaluate(async k=>{const me=S.players.find(x=>x._nw83);const keep={R:me.wR,L:me.wL,items:me.items.slice()};for(const a of ['R','L'])if(me['w'+a]&&me['w'+a].key===k)me['w'+a]=null;

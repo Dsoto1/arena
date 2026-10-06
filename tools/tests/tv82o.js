@@ -17,6 +17,8 @@ const B=await pg('B'),C=await pg('C'),F=await pg('F');for(const P of [A,B,C,F])a
 const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,'onl_'+n+'.png')})};
 const err=async(p,fn,arg)=>p.evaluate(async([fn,arg])=>{try{await (0,eval)('('+fn+')')(arg);return 'ok'}catch(e){return (e.code||'')+'|'+((e.extra||{}).why||'')+'|'+e.message}},[fn.toString(),arg]);
 const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};
+/* pv: poll a read until the state its check needs is there (3 tests at once stretch timers/storage sync); returns the last read */
+const pv=async(p,fn,pred,arg,ms=30000)=>{const t0=Date.now();let v;for(;;){v=await p.evaluate(fn,arg).catch(()=>null);if((v!=null&&pred(v))||Date.now()-t0>ms)return v;await p.waitForTimeout(200)}};
 /* the mock world is one localStorage item shared by the windows: before another window writes (or reads what was just written), it
    must have the last write — a stale copy would overwrite it (the regression runs 3 tests at once: storage sync stretches too) */
 const sync=async(from,...tos)=>{for(const to of tos){const t0=Date.now();while(Date.now()-t0<15000){const v=await from.evaluate(()=>localStorage.getItem('flavius_onlmock'));if(await to.evaluate(v=>localStorage.getItem('flavius_onlmock')===v,v))break;await to.waitForTimeout(100)}}};
@@ -79,12 +81,12 @@ await A.evaluate(async id=>{await NET.req('char.active',{char:id});await onlRefr
 /* ── 4. a Ranked bout with two lanistas: half the award; the room note ── */
 const R1=await A.evaluate(async()=>{const L=await NET.req('lobby.create',{ev:'democritus',loc:6,ranked:true,cry:false});return L.id});
 await sync(A,B);await B.evaluate(async id=>{await NET.req('lobby.join',{id})},R1);await B.evaluate(()=>NET.req('ping'));await sync(B,A);await A.evaluate(async()=>{ONL.lobbies=await NET.req('lobby.list');ONL.tab='play';onlRedraw()});await A.waitForTimeout(300);
-await A.evaluate(()=>{ONL.tab='char';onlRedraw()});await A.waitForTimeout(400);
-const lk=await A.evaluate(()=>[...document.querySelectorAll('#onl .gc89')].filter(b=>b.querySelector('.lk89t')).map(b=>b.textContent).join('|'));ok(/Alpha the Bold/.test(lk),'a seated gladiator is locked in the Domus');
+await A.evaluate(()=>{ONL.tab='char';onlRedraw()});
+const lk=await pv(A,()=>{onlRedraw();return [...document.querySelectorAll('#onl .gc89')].filter(b=>b.querySelector('.lk89t')).map(b=>b.textContent).join('|')},v=>/Alpha the Bold/.test(v));ok(/Alpha the Bold/.test(lk),'a seated gladiator is locked in the Domus');
 ok(/^in_match\|/.test(await err(A,o=>NET.req('domus.dress',o),{char:ids['Alpha the Bold'],equip:[]})),'server-side lock for dressing (in a match)');
 ok(/^in_match\|/.test(await err(A,o=>NET.req('domus.equip',o),{char:ids['Alpha the Bold'],item:'galea',on:true})),'server-side lock (in a match)');
-await A.evaluate(()=>{ONL.tab='play';onlRedraw()});await A.waitForTimeout(300);
-const note=await A.evaluate(()=>document.querySelector('#onlRoom80 .tbl82')?.textContent||'');ok(/2 lanistas: half rewards · seat 4 for the full purse/.test(note),'room: table-size note');await shot(A,'room');
+await A.evaluate(()=>{ONL.tab='play';onlRedraw()});
+const note=await pv(A,()=>document.querySelector('#onlRoom80 .tbl82')?.textContent||'',v=>/2 lanistas: half rewards · seat 4 for the full purse/.test(v));ok(/2 lanistas: half rewards · seat 4 for the full purse/.test(note),'room: table-size note');await shot(A,'room');
 const st=await A.evaluate(async id=>{/* the bout is reported by hand below: A's window must not walk into it on the start push (116 auto-enter) */ONL.entered[id]=1;const L=await NET.req('lobby.start',{id});onlPre82(L);const t=L.players.map((p,i)=>({seat:i,won:i===0,place:i?2:1,f:i?5:20,coin:40,survives:true}));ONL82._t=t;return t},R1);
 await sync(A,B);await B.evaluate(async([id,t])=>{await NET.req('match.result',{id,table:t,hash:'h'})},[R1,st]);await sync(B,A);
 const rA=await A.evaluate(async id=>{const r=await NET.req('match.result',{id,table:ONL82._t,hash:'h'});T82.length=0;onlSettled(r);/* the line comes 2.5 s after the result: poll for it */for(let i=0;i<200&&!T82.some(t=>/lifetime CF/.test(t));i++)await new Promise(x=>setTimeout(x,100));await new Promise(x=>setTimeout(x,200));return {pay:r.out&&r.out.pay,award:r.out&&r.out.award,f:r.out&&r.out.factor,toast:T82.join(' ')}},R1);
@@ -96,7 +98,7 @@ await sync(A,C);await C.evaluate(async()=>{localStorage.removeItem('flavius_onla
 await C.click('#onl [data-onl82="guest"]');await C.waitForFunction(()=>!!document.querySelector('#onl .g82card')&&!!(document.querySelector('#onl #g82left')||{}).textContent,null,{timeout:20000}).catch(()=>{});await C.waitForTimeout(300);
 const gl=await C.evaluate(()=>{const o=document.getElementById('onl');return {g:ONL.acct&&ONL.acct.guest,id:ONL.acct&&ONL.acct.id,tabs:[...o.querySelectorAll('.onl-rail [data-onl="tab"]')].map(b=>b.dataset.v),quick:o.querySelectorAll('[data-onl="quick"]').length,gq:o.querySelectorAll('[data-g82="quick"]').length,card:!!o.querySelector('.g82card'),left:(o.querySelector('#g82left')||{}).textContent||''}});
 ok(gl.g&&/^guest-g[a-z0-9]{8,}/.test(gl.id)&&gl.tabs.join()==='play,lobby,spect,auction,wagers,hall,prof' /* v0.84: guests read the auction too; v0.89: Profile (sign-in note + Find by FID) */&&!gl.quick&&gl.gq>0&&gl.card&&/h|min/.test(gl.left),'guest landing, read-only');await shot(C,'guest');
-await C.click('#onl [data-g82="quick"]',{force:true});await C.waitForTimeout(300);ok(await C.evaluate(()=>T82.some(t=>/Sign in to fight/.test(t))),'a guest control says Sign in to …');
+await C.click('#onl [data-g82="quick"]',{force:true});ok(await pv(C,()=>T82.some(t=>/Sign in to fight/.test(t)),x=>x),'a guest control says Sign in to …');
 ok(/^guest\|\|Sign in to speak in the Forum/.test(await err(C,o=>NET.req('forum.say',o),{q:'ave'})),'server-side refusal for guests');
 ok(Array.isArray(await C.evaluate(()=>NET.req('lobby.list'))),'guests read the lobby list');
 await C.evaluate(()=>NET.req('auth.guest',{tz:'Europe/Rome'}));await sync(C,A);
@@ -108,9 +110,8 @@ await C.evaluate(async()=>{const G=JSON.parse(localStorage.getItem('flavius_onlm
 /* ── 6. invitations die with the room ── */
 const inv=await A.evaluate(async()=>{const L=await NET.req('lobby.create',{ev:'cassian',loc:3,ranked:false,cry:false});ONL.lobbies=await NET.req('lobby.list');return L.id});
 await sync(A,B);await B.evaluate(()=>{onlineOpen('play')});await B.waitForFunction(()=>!!document.querySelector('#onl .onl-main'),null,{timeout:30000}).catch(()=>{});await B.waitForTimeout(500);
-await A.evaluate(async([id,to])=>{await NET.req('lobby.invite',{id,to})},[inv,await B.evaluate(()=>ONL.acct.id)]);await B.waitForTimeout(1500);
-for(let i=0;i<20&&!(await B.evaluate(()=>!!document.querySelector('.inv80bg')));i++)await B.waitForTimeout(300);
-const iv1=await B.evaluate(id=>({has:ONL81.invRooms.has(id),dom:ONL82.dom[Object.keys(ONL82.dom).find(k=>ONL82.dom[k]==='Vettii')]==='Vettii',pop:document.querySelector('.inv80bg')?.textContent||''}),inv);
+await A.evaluate(async([id,to])=>{await NET.req('lobby.invite',{id,to})},[inv,await B.evaluate(()=>ONL.acct.id)]);
+const iv1=await pv(B,id=>({has:ONL81.invRooms.has(id),dom:ONL82.dom[Object.keys(ONL82.dom).find(k=>ONL82.dom[k]==='Vettii')]==='Vettii',pop:document.querySelector('.inv80bg')?.textContent||''}),v=>v.has&&/House Vettii/.test(v.pop),inv);
 ok(iv1.has&&/House Vettii/.test(iv1.pop),'invite arrives with the inviter’s house');await shot(B,'invite');
 await A.evaluate(async id=>{await NET.req('lobby.leave',{id})},inv);await sync(A,B);await B.waitForFunction(id=>!ONL81.invRooms.has(id)&&!document.querySelector('.inv80bg'),inv,{timeout:20000}).catch(()=>{});
 ok(await B.evaluate(id=>!ONL81.invRooms.has(id)&&!document.querySelector('.inv80bg'),inv),'invite.gone removes the invitation');
@@ -120,20 +121,20 @@ const inv2=await A.evaluate(async()=>(await NET.req('lobby.create',{ev:'egidious
 await A.evaluate(async([id,to])=>{const w=mockLoad();const me=w.accounts[ONL.acct.id];for(const k of Object.keys(me))if(/^iv/.test(k))delete me[k];mockSave(w);await NET.req('lobby.invite',{id,to})},[inv2,await B.evaluate(()=>ONL.acct.id)]);await B.waitForTimeout(1200);
 await B.evaluate(()=>{for(const p of document.querySelectorAll('.inv80bg'))p.remove()});
 await A.evaluate(id=>{const w=mockLoad();w.lobbies[id].status='live';w.lobbies[id].started=Date.now();mockSave(w)},inv2);await sync(A,B);
-const lj=await err(B,id=>NET.req('lobby.join',{id}),inv2);await B.waitForTimeout(400);
-ok(/^room_gone\|.*started/.test(lj)&&await B.evaluate(()=>!!document.querySelector('.dead81bg [data-onl81="dwatch"]')),'a started room offers 👁 Watch');
+const lj=await err(B,id=>NET.req('lobby.join',{id}),inv2);
+ok(/^room_gone\|.*started/.test(lj)&&await pv(B,()=>!!document.querySelector('.dead81bg [data-onl81="dwatch"]'),x=>x),'a started room offers 👁 Watch');
 await B.evaluate(()=>{for(const p of document.querySelectorAll('.dead81bg'))p.remove()});
 await sync(B,A);const R3=await A.evaluate(async()=>{const w=mockLoad();const L=Object.values(w.lobbies).find(x=>x.status==='live'&&x.ev==='egidious');L.status='done';mockSave(w);return (await NET.req('lobby.create',{ev:'democritus',loc:4,ranked:false,cry:false})).id});
 await sync(A,B);ok(/^no_invite\|/.test(await err(B,id=>NET.req('lobby.accept',{id}),R3)),'no invitation → no_invite');
 /* ── 7. free tickets + the guest pass ── */
 const R4=await A.evaluate(async()=>{const L=(ONL.lobbies=await NET.req('lobby.list')).find(x=>x.ev==='democritus'&&x.loc===4);await NET.req('lobby.set',{id:L.id,free:1});return L.id});
 const lb=await A.evaluate(async id=>{const r=(await NET.req('lobby.list')).find(x=>x.id===id);return {free:r.free,ticket:r.ticket}},R4);ok(lb.free&&!lb.ticket,'host sets free tickets');
-const fsel=await A.evaluate(async()=>{ONL.lobbies=await NET.req('lobby.list');ONL.tab='play';let v='';for(let i=0;i<40&&v!=='free';i++){onlRedraw();await new Promise(r=>setTimeout(r,300));const s=document.querySelector('#onlRoom80 select[data-onlrs="ticket"]');v=s?s.value:''}return v});ok(fsel==='free','the host’s ticket select reads free');
+const fsel=await A.evaluate(async()=>{ONL.lobbies=await NET.req('lobby.list');ONL.tab='play';let v='';for(const t0=Date.now();Date.now()-t0<30000&&v!=='free';){onlRedraw();await new Promise(r=>setTimeout(r,300));const s=document.querySelector('#onlRoom80 select[data-onlrs="ticket"]');v=s?s.value:''}return v});ok(fsel==='free','the host’s ticket select reads free');
 await sync(A,F);await F.evaluate(async id=>{await NET.req('lobby.join',{id})},R4);await sync(F,B);
 await B.evaluate(async()=>{const w=mockLoad();onlMockChar(w,ONL.acct.id).wallet=30;mockSave(w);await onlRefresh();ONL.tab='play';onlRedraw()});await B.waitForFunction(()=>!document.getElementById('pass82'),null,{timeout:10300}).catch(()=>{});
 ok(await B.evaluate(()=>!document.getElementById('pass82')),'no pass while the purse is full');
-await B.evaluate(async()=>{const w=mockLoad();onlMockChar(w,ONL.acct.id).wallet=8;mockSave(w);await onlRefresh();onlRedraw()});await B.waitForTimeout(300);
-const ps=await B.evaluate(()=>document.getElementById('pass82')?.textContent||'');ok(/guest pass/.test(ps)&&/Democritus|democritus/i.test(ps),'pass card names the room');await shot(B,'pass');
+await B.evaluate(async()=>{const w=mockLoad();onlMockChar(w,ONL.acct.id).wallet=8;mockSave(w);await onlRefresh();onlRedraw()});
+const ps=await pv(B,()=>document.getElementById('pass82')?.textContent||'',v=>/guest pass/.test(v)&&/Democritus|democritus/i.test(v));ok(/guest pass/.test(ps)&&/Democritus|democritus/i.test(ps),'pass card names the room');await shot(B,'pass');
 await B.evaluate(()=>NET.req('domus.patron',{look:{skin:'#8d5524',robe:'#123456',c1:'#112233',c2:'#445566',hat:'pileus'}}));
 await B.click('#pass82 [data-onl82="pass"]');await B.waitForFunction(()=>!document.getElementById('pass82'),null,{timeout:20000}).catch(()=>{});await B.waitForTimeout(300);
 const tk=await B.evaluate(id=>{const w=mockLoad();const L=w.lobbies[id];const t=(L.stands||[]).find(s=>s.id===ONL.acct.id);return {t,wal:ONL.char.wallet,card:!!document.getElementById('pass82')}},R4);
@@ -144,15 +145,15 @@ const C2=await pg('D');await sync(B,C2);await C2.evaluate(async()=>{menuHide();O
 const ft=await C2.evaluate(async id=>{const r=await NET.req('lobby.ticket',{id});return {paid:(r.lobby.stands||[]).find(s=>s.id===ONL.acct.id).paid,wal:r.char.wallet}},R4);ok(ft.paid===0&&ft.wal===0,'free ticket');
 /* ── 8. the horns: patrons in the stands; the pass pays Fame ── */
 await sync(C2,F);await F.evaluate(()=>NET.req('ping'));await sync(F,B);await B.evaluate(()=>NET.req('ping'));await sync(B,A);
-await A.evaluate(async id=>{ONL.lobbies=await NET.req('lobby.list');const L=await NET.req('lobby.start',{id});onlEnter(L)},R4);await A.waitForFunction(()=>typeof S!=='undefined'&&S&&S.onl&&(S.spect||[]).filter(s=>s.ticket).length>=2,null,{timeout:40000}).catch(()=>{});await A.waitForTimeout(500);
-const sp=await A.evaluate(()=>(S.spect||[]).filter(s=>s.ticket).map(s=>({n:s.name,c:!!s.cush82,robe:s.look&&s.look.robe,cu:s.cush82&&s.cush82[0]})));
+await A.evaluate(async id=>{ONL.lobbies=await NET.req('lobby.list');const L=await NET.req('lobby.start',{id});onlEnter(L)},R4);await A.waitForFunction(()=>typeof S!=='undefined'&&S&&S.onl&&(S.spect||[]).filter(s=>s.ticket).length>=2,null,{timeout:60000}).catch(()=>{});
+const sp=await pv(A,()=>(S.spect||[]).filter(s=>s.ticket).map(s=>({n:s.name,c:!!s.cush82,robe:s.look&&s.look.robe,cu:s.cush82&&s.cush82[0]})),v=>v.length===2&&v.every(s=>s.c)&&v.some(s=>s.n==='🎟 Patron of House Aemilii'&&s.robe==='#123456'));
 ok(sp.some(s=>s.n==='🎟 Patron of House Aemilii'&&s.robe==='#123456'&&s.cu==='#112233'),'another screen draws the patron the house chose');
 ok(sp.length===2&&sp.some(s=>s.n==='🎟 Patron of House Aemilii')&&sp.some(s=>s.n==='🎟 Patron of Domus Delta')&&sp.every(s=>s.c),'"🎟 Patron of House …" in the stands with a cushion');
 await A.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);try{sideTab('stands')}catch(e){}});await A.waitForFunction(()=>/Patron of House Aemilii/.test((document.getElementById('standsPane')||document.body).textContent),null,{timeout:10900}).catch(()=>{});
 ok(await A.evaluate(()=>/Patron of House Aemilii/.test((document.getElementById('standsPane')||document.body).textContent)),'the Stands tab names the patron');await shot(A,'stands');
 const tb=await A.evaluate(id=>{const w=mockLoad();const L=w.lobbies[id];return L.players.map((p,i)=>({seat:i,won:i===0,place:i?2:1,f:i?3:9,coin:0,survives:true}))},R4);
 await sync(A,F);for(const p of [A,F]){await p.evaluate(async([id,t])=>{await NET.req('match.result',{id,table:t,hash:'z'})},[R4,tb]);await sync(p,p===A?F:B)}
-const fame=await B.evaluate(async()=>(await NET.req('domus.get',{})).domus.fame);ok(fame===1,'sitting through the match on the pass: +1 Fame');
+const fame=await pv(B,async()=>(await NET.req('domus.get',{})).domus.fame,v=>v===1);ok(fame===1,'sitting through the match on the pass: +1 Fame');
 const frec=await B.evaluate(async()=>{await onlRefresh();ONL82.dgAt=0;ONL.tab='char';onlRedraw();for(let i=0;i<200&&!/✦ 1/.test(document.querySelector('#onl .db89-rec')?.textContent||'');i++)await new Promise(r=>setTimeout(r,100));return document.querySelector('#onl .db89-rec')?.textContent||''});
 ok(/Fame/.test(frec)&&/✦ 1/.test(frec),'the Domus record shows the Fame');
 console.log(JSON.stringify({f1,f2,g4,dm,pr,note,rA,gl,hereA,iv1:{has:iv1.has,pop:iv1.pop.slice(0,80)},lj,ps:ps.slice(0,120),tk,ft,sp,fame}));

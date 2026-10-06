@@ -35,7 +35,7 @@ const odds=await A.evaluate(async()=>{if(!document.getElementById('onl')){online
   const land=document.querySelectorAll('#onl .a81-stage [data-odds89], #onl [data-odds89]').length;
   ONL.tab='char';ONL.newGlad=false;await onlRefresh();onlRedraw();await new Promise(r=>setTimeout(r,400));const dom=document.querySelectorAll('#onl .dom89 [data-odds89], #onl [data-odds89]').length;return {land,dom}});
 ok(odds.land>=1,'ⓘ beside the chest token on the landing '+JSON.stringify(odds));ok(odds.dom>=1,'ⓘ beside the chest token on the Domus '+JSON.stringify(odds));
-if(odds.dom){await A.hover('#onl [data-odds89]');await A.waitForTimeout(250);ok(await A.evaluate(()=>{const f=document.getElementById('odds89f');return !!f&&!f.hidden&&!!f.querySelector('[data-o89="kinds"]')}),'hover shows the odds card');
+if(odds.dom){await A.hover('#onl [data-odds89]');/* the card follows the hover: poll for it (timers stretch under load) */let hv=false;for(const t0=Date.now();Date.now()-t0<20000&&!hv;){hv=await A.evaluate(()=>{const f=document.getElementById('odds89f');return !!f&&!f.hidden&&!!f.querySelector('[data-o89="kinds"]')});if(!hv){await A.waitForTimeout(250);await A.hover('#onl [data-odds89]').catch(()=>{})}}ok(hv,'hover shows the odds card');
   await A.click('#onl [data-odds89]');await A.waitForTimeout(300);await shot(A,'odds');
   const card=await A.evaluate(()=>{const bg=document.querySelector('.odds89pop');if(!bg)return null;const num=el=>[...el.querySelectorAll('.o89n')].map(x=>parseFloat(x.textContent));
     const kinds=num(bg.querySelector('[data-o89="kinds"]'));const tr=[...bg.querySelectorAll('.o89t')][1];const rows=[...tr.querySelectorAll('tr')].slice(1).map(r=>num(r));
