@@ -9,7 +9,7 @@ H,W=A.shape[:2]
 m=(A[:,:,3]>200).astype(np.uint8)*255
 m=cv2.morphologyEx(m,cv2.MORPH_CLOSE,np.ones((5,5),np.uint8))
 cnts,_=cv2.findContours(m,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE);m=np.zeros_like(m);cv2.drawContours(m,cnts,-1,255,-1)
-CX=W/2;NECK=125;WAIST=448
+CX=W/2;NECK=125;WAIST=418
 SH_L=((110,258),(98,138))           # image-left = the body's RIGHT arm: armpit -> shoulder top
 SH_R=((W-110,258),(W-98,138))
 def side(p,a,b):return (b[0]-a[0])*(p[1]-a[1])-(b[1]-a[1])*(p[0]-a[0])

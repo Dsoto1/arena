@@ -162,7 +162,10 @@ function ar91Under(g){if(!night91On())ar91Floor(g);const Pq=pt;const n=N-1;const
   for(const [i,j] of [[0,1],[1,2],[2,3],[3,0]]){if((Ci[i].y+Ci[j].y)/2<mid.y)continue;ar91Stone(g,[Ci[i],Ci[j],Co[j],Co[i]],'rgba(60,45,30,.12)')}
   const Hc=TW*0.16;for(const E of ar91Edges(0.19).filter(E=>!E.far)){let a=E.a,b=E.b;if(a.x>b.x){const t=a;a=b;b=t}const left=E.mx<mid.x;
     /* v0.92 (his arrows): the wall runs on to its corner tower (the tower stands 0.92 k out from the sand corner) */
-    {const kx=TW*(lud?0.4:0.27)*0.92,v={x:b.x-a.x,y:b.y-a.y};if(v.x>0){const t=kx/v.x;if(left)a={x:a.x-v.x*t,y:a.y-v.y*t};else b={x:b.x+v.x*t,y:b.y+v.y*t}}}
+    {const kx=TW*(lud?0.4:0.27)*0.92,v={x:b.x-a.x,y:b.y-a.y};if(v.x>0){const t=kx/v.x;const a0=a,b0=b;if(left)a={x:a.x-v.x*t,y:a.y-v.y*t};else b={x:b.x+v.x*t,y:b.y+v.y*t};
+      /* …and the dark gap between the sand and the wall runs on with it (his arrows, v0.92) */
+      const C0=ar91Ring(0),p=C0[E.ia],q=C0[E.ib];if(q.x!==p.x){const P0=left?a0:b0,y0=p.y+(q.y-p.y)*(P0.x-p.x)/(q.x-p.x),dy=P0.y-y0;
+        if(dy>0){g.fillStyle='#24180f';ar91Path(g,[a,b,{x:b.x,y:b.y-dy},{x:a.x,y:a.y-dy}]);g.fill()}}}}
     ar91Stone(g,[{x:a.x,y:a.y},{x:b.x,y:b.y},{x:b.x,y:b.y+Hc},{x:a.x,y:a.y+Hc}],left?'rgba(255,248,230,.04)':'rgba(40,28,16,.28)');
     if(lud){g.fillStyle=AR91RED;ar91Path(g,[{x:a.x,y:a.y+Hc*0.45},{x:b.x,y:b.y+Hc*0.45},{x:b.x,y:b.y+Hc},{x:a.x,y:a.y+Hc}]);g.fill()}
     const ia={x:a.x+(mid.x-a.x)*0.012,y:a.y+(mid.y-a.y)*0.012},ib={x:b.x+(mid.x-b.x)*0.012,y:b.y+(mid.y-b.y)*0.012};
