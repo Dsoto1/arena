@@ -24001,18 +24001,28 @@ function travelWeekEnd(world){const n=world.night;const t=n&&n.travel;if(!t||!t.
    Each step lights the part in question and waits for the click it asks for. Leave any time; at the end,
    a window offers the main menu, a new career, or the lesson again.
    ===================================================================== */
+/* MTUT — the lesson's state: on, current step, the week it began (w0), the two fighters' ids (A hurt, B healthy), hidden coach, last spotted/entered step. */
 const MTUT={on:false,step:0,w0:0};
+/* mtW — the sandbox world while the lesson's world is open, else null. */
 const mtW=()=>MGR.world&&MGR.world.tutorial?MGR.world:null;
-const mtG=k=>{const id=MTUT[k];return id&&typeof gById==='function'?gById(id):null};
-const mtNm=k=>{const g=mtG(k);return g?esc(g.name):_T('your fighter')};
-const mtBout=i=>{const w=mtW();return w&&w.night&&w.night.bouts[i]};
-const mtIn=(i,k)=>{const b=mtBout(i);return !!(b&&b.ents.includes(MTUT[k]))};
-const mtEl=sel=>typeof sel==='function'?sel():sel?document.querySelector(sel):null;
+/* mtG — the lesson fighter 'A' or 'B' (by MTUT id), or null. */
+const mtG=who=>{const id=MTUT[who];return id&&typeof gById==='function'?gById(id):null};
+/* mtNm — that fighter's name, HTML-escaped ("your fighter" when gone). */
+const mtNm=who=>{const g=mtG(who);return g?esc(g.name):_T('your fighter')};
+/* mtBout — Match Week bout boutIdx (0 undercard, 1 feature, 2 main event) of the sandbox week. */
+const mtBout=boutIdx=>{const w=mtW();return w&&w.night&&w.night.bouts[boutIdx]};
+/* mtIn — is lesson fighter who ('A'/'B') entered in bout boutIdx? */
+const mtIn=(boutIdx,who)=>{const b=mtBout(boutIdx);return !!(b&&b.ents.includes(MTUT[who]))};
+/* mtEl — resolves a step's spot: a function returning an element, or a CSS selector. */
+const mtEl=spot=>typeof spot==='function'?spot():spot?document.querySelector(spot):null;
+/* mtUp — a spot function: the element matching sel, lifted to its closest up ancestor (else its parent). */
 const mtUp=(sel,up)=>()=>{const e=document.querySelector(sel);return e?(up?e.closest(up)||e.parentElement:e.parentElement):null};
+/* mtRivalId — id of the most famous living rival house (the one the lesson visits). */
 const mtRivalId=()=>{const w=mtW();if(!w)return '';const r=w.mgrs.filter(m=>!m.isPlayer&&!m.dead).sort((a,b)=>(b.fame||0)-(a.fame||0))[0];return r?r.id:''};
 /* v0.45 THE DEEP LESSON — one full week, every step checked off by DOING it (the coach moves on by itself),
    with guard rails: only what the step asks for can be clicked (dialogs it opens are fine), so a lesson can
    never turn into a real career by accident. */
+/* MTUT_STEPS — the steps in order. Fields: spot (what to light), say (text or function), next (a Next button), tab (done when that tab is open), until (done when true), enter (runs once on arrival), allow (extra clickable selectors), spotOnly (the spot is only lit, not clickable), arena (step happens on the sand), finish/last (the final step). */
 const MTUT_STEPS=[
   {spot:'.mhead',say:_T`Welcome, <b>lanista</b>. This is a sandbox league made for this lesson — nothing is saved. Up top: your <b>treasury</b> (we lent you plenty), <b>fame</b>, ludus grade, record and the week's <b>lanista's hours</b>.`,next:1},
   {spot:'.mtabs',say:_T`The <b>tabs</b> run your ludus — your house, the arena, the wider world, and you. Work them left to right each week; the coach will walk you through them.`,next:1},
@@ -24064,13 +24074,17 @@ const MTUT_STEPS=[
   {spot:'[data-mg="endask"]',say:_T`Last: <b>⏭ End the week</b>. Wages are paid, the yard trains, rivals scheme — and the empire moves on.`,until:()=>MGR.confirmEnd||(mtW()&&mtW().week>MTUT.w0)},
   {spot:'[data-mg="endweek"]',say:_T`Confirm it.`,until:()=>mtW()&&mtW().week>MTUT.w0},
   {spot:'#mgrPane [data-mg="tab"][data-id="ludus"]',say:_T`The <b>Acta Diurna</b> — the week's gazette: results, deaths, signings, the league's top fives. When you have read it, <b>set the paper down</b> to finish this lesson.`,until:()=>mtW()&&mtW().week>MTUT.w0&&MGR.tab==='ludus',finish:1,last:1}];
-/* the lesson's one staged moment: the first bout ends at the Thumb, so there is always a verdict to settle */
+/* the lesson's one staged moment: the first bout ends at the Thumb, so there is always a verdict to settle
+   mtVerdict — rewrites fighter A's undercard result to 18 CF (the Thumb of Flavius) and queues the verdict; clears war levies. */
 function mtVerdict(){const w=mtW();if(!w)return;w.pend=(w.pend||[]).filter(x=>x.t!=='levy'); /* no wars in the lesson */const g=mtG('A');if(!g)return;if((w.pend||[]).some(x=>x.gid===g.id)||!g.alive)return;
   const b=w.night.bouts[0];const row=b&&b.res&&b.res.rows.find(x=>x.gid===g.id);if(row){row.f=18;row.vd='p-thumb';row.fname=_T('Thumb of Flavius')}
   (w.pend=w.pend||[]).push({t:'thumb',gid:g.id,bi:0,f:18});if(typeof MGR_REDRAW==='function'&&document.getElementById('mgrBody'))try{MGR_REDRAW()}catch(e){}}
-/* the fighter to back in the feature: the lowest odds on the card */
+/* the fighter to back in the feature: the lowest odds on the card
+   mtBetPick — the feature bout's Bet button with the lowest odds (data-id "1|gid|odds"), or null. */
 function mtBetPick(){const bs=[...document.querySelectorAll('#mgrPane [data-mg="bet"][data-id^="1|"]')];if(!bs.length)return null;return bs.sort((a,b)=>(+a.dataset.id.split('|')[2])-(+b.dataset.id.split('|')[2]))[0]}
-const mtSay=st=>typeof st.say==='function'?st.say():st.say;
+/* mtSay — a step's text (calls say when it is a function). */
+const mtSay=step=>typeof step.say==='function'?step.say():step.say;
+/* mtCoach — draws the coach box (Flavius, step counter, text, Next/Finish/Hide/Leave) and lights the step's spot; removes both when the lesson is off. Redraws only when the HTML changed. */
 function mtCoach(){if(HEADLESS)return;let el=document.getElementById('mtutCoach');
   if(!MTUT.on||!mtW()){if(el)el.remove();document.querySelectorAll('.tutspot').forEach(x=>x.classList.remove('tutspot'));return}
   if(!el){el=document.createElement('div');el.id='mtutCoach';el.className='tutcoach mtut';document.body.appendChild(el);
@@ -24085,16 +24099,21 @@ function mtCoach(){if(HEADLESS)return;let el=document.getElementById('mtutCoach'
   if(el.dataset.h!==h){el.dataset.h=h;el.innerHTML=h}}
 /* v0.46: the Manager window counts as shown only while the modal is up (its body can linger hidden in the DOM) */
 function mtMgrShown(){const e=document.getElementById('mgrBody');const m=document.getElementById('modal');return !!e&&!!m&&!m.hidden}
+/* mtNext — moves to the next step (finishes after the last). */
 function mtNext(){MTUT.step++;if(MTUT.step>=MTUT_STEPS.length){mtDone();return}MTUT.entered=-1;mtCoach()}
+/* mtTick — the lesson's heartbeat: drops war levies, runs a step's enter once, advances when its tab is open or its until() holds, else redraws the coach. */
 function mtTick(){if(!MTUT.on)return;if(!mtW()){MTUT.on=false;mtCoach();return}{const w=mtW();if(w.pend&&w.pend.some(x=>x.t==='levy'))w.pend=w.pend.filter(x=>x.t!=='levy')}const st=MTUT_STEPS[MTUT.step];if(!st)return;
   if(st.enter&&MTUT.entered!==MTUT.step){MTUT.entered=MTUT.step;try{st.enter()}catch(e){console.error(e)}}
   if(st.tab&&MGR.tab===st.tab&&mtMgrShown())mtNext();
   else if(st.until&&st.until()){if(st.finish)mtDone();else mtNext()}
   else mtCoach()}
+/* TWEAK: 350 ms between lesson checks. */
 setInterval(()=>{try{mtTick()}catch(e){}},350);
 /* the guard rails: while the lesson runs, only the step's own target (and whatever windows it opens) take clicks */
-function mtAllowed(st,t){if(!st)return true;const el=mtEl(st.spot);if(el&&!st.spotOnly&&el.contains(t))return true;
-  for(const sel of st.allow||[])if(t.closest(sel))return true;return false}
+/* mtAllowed — may this click target go through? Yes inside the step's spot (unless spotOnly) or anything matching its allow list. */
+function mtAllowed(step,target){if(!step)return true;const el=mtEl(step.spot);if(el&&!step.spotOnly&&el.contains(target))return true;
+  for(const sel of step.allow||[])if(target.closest(sel))return true;return false}
+/* capture-phase click guard: windows the step opened, the coach and harmless arena controls pass; the main-menu button asks to leave; any other control not allowed by the step is blocked with a toast. */
 document.addEventListener('click',e=>{if(!MTUT.on||!mtW())return;const t=e.target;if(!t||!t.closest)return;
   if(t.closest('#mtutCoach')||t.closest('#mClose'))return;
   const inMgr=!!t.closest('#mgrBody');
@@ -24104,6 +24123,7 @@ document.addEventListener('click',e=>{if(!MTUT.on||!mtW())return;const t=e.targe
   if(!t.closest('button,a,select,input,textarea,summary,label,[data-mg],[data-ct],[data-act],[role="button"],canvas'))return; // clicks on nothing in particular do nothing anyway
   const st=MTUT_STEPS[MTUT.step];if(mtAllowed(st,t))return;
   e.preventDefault();e.stopPropagation();if(typeof mToast==='function')mToast(_T`🎓 One thing at a time — ${st&&st.next?_T('press <b>Next ▶</b> on the coach'):_T('follow the coach')} (or ✖ Leave the lesson).`)},true);
+/* startManagerTutorial — builds the sandbox league (custom world flagged tutorial): a home week, 900 coin, a perk point, 12 hours, no deaths; fighter A (hurt, needs the Medicus) and fighter B (rating 76); opens the Manager on Your ludus and shows the coach. TWEAK: the coin/hours and both fighters' numbers. */
 async function startManagerTutorial(){
   if(typeof menuHide==='function')menuHide();
   if(typeof liveEventRunning==='function'&&liveEventRunning()&&S){S.over=true}
@@ -24120,13 +24140,16 @@ async function startManagerTutorial(){
   MTUT.A=A.id;MTUT.B=B.id;MGR.lsel=A.id;MGR.run='promote';
   MTUT.on=true;MTUT.step=0;MTUT.w0=w.week;MTUT.hidden=0;MTUT.spotted=-1;MTUT.entered=-1;MGR.tab='ludus';
   openManager();setTimeout(mtCoach,500)}
+/* mtCleanup — ends the lesson: removes the coach and highlights and drops the sandbox world (never saved). */
 function mtCleanup(){MTUT.on=false;const el=document.getElementById('mtutCoach');if(el)el.remove();document.querySelectorAll('.tutspot').forEach(x=>x.classList.remove('tutspot'));
   if(MGR.world&&MGR.world.tutorial){MGR.world=null;if(typeof ACTIVE!=='undefined'&&ACTIVE.world&&ACTIVE.world.tutorial){ACTIVE.world=null;ACTIVE.cid=null}}}
+/* mtutLeave — asks "Leave the lesson?"; Stay reopens the Manager and coach, Leave stops any lesson bout, cleans up and fades to the main menu. */
 async function mtutLeave(){const ok=await new Promise(r=>{if(typeof modalBusy==='function'&&modalBusy()&&!$('#mgrBody')&&!(S&&S.mgrCtx)){r(true);return}
     const cont=()=>modal(_T('Leave the lesson?'),`<p>${_T`The sandbox league is discarded and you return to the main menu. You can take the lesson again from the menu or Rules &amp; strategy → 🎓 Lessons.`}</p>`,[{label:_T('Leave the lesson'),value:1,primary:1},{label:_T('Stay'),value:0}],{close:0}).then(r);
     if($('#mgrBody')&&CUR_MODAL){MTUT.reopen=1;CUR_MODAL.done('mtleave');setTimeout(cont,120)}else cont()});
   if(!ok){MTUT.reopen=0;if(!$('#mgrBody')&&!(S&&S.mgrCtx&&!S.over)){openManager();setTimeout(mtCoach,400)}return}
   MTUT.reopen=0;if(S&&S.mgrCtx&&!S.over)S.over=true;mtCleanup();if(!$('#modal').hidden&&typeof modalDismiss==='function')modalDismiss();const go=()=>{if(typeof menuShow==='function')menuShow()};if(typeof fadeTo==='function')fadeTo(go);else go()}
+/* mtDone — marks the Manager lesson done (localStorage flavius_mtutDone), cleans up and offers: main menu, a new Manager career, or the lesson again. */
 async function mtDone(){if(!MTUT.on&&!mtW())return;try{localStorage.setItem('flavius_mtutDone','1')}catch(e){}
   if(CUR_MODAL&&$('#mgrBody'))CUR_MODAL.done('mtdone');mtCleanup();await new Promise(r=>setTimeout(r,150));
   const v=await modal(_T('🎓 Tutorial completed'),`<div class="rulepop"><img src="${typeof flavFaceURL==='function'?flavFaceURL('cheer'):''}" alt="" style="width:96px;border-radius:8px"><div><p>${_T`<b>You have run a week of a ludus.</b> Recruit, keep, heal, build, enter, watch, bet, settle the verdicts, court your rivals — and climb the table toward the Superbus.`}</p><p class="rc-sub">${_T`Nothing from the lesson was kept.`}</p></div></div>`,
@@ -24137,13 +24160,16 @@ async function mtDone(){if(!MTUT.on&&!mtW())return;try{localStorage.setItem('fla
 
 /* the lessons, in one place: the main menu's split button (hidden once both are done, unless Settings says
    otherwise) and Rules & strategy → 🎓 Lessons */
-const lessonDone=k=>{try{return localStorage.getItem(k==='manager'?'flavius_mtutDone':'flavius_tutDone')==='1'}catch(e){return false}};
+/* lessonDone — has this lesson ('manager' or 'classic') been completed in this browser? */
+const lessonDone=lesson=>{try{return localStorage.getItem(lesson==='manager'?'flavius_mtutDone':'flavius_tutDone')==='1'}catch(e){return false}};
+/* lessonsMenuVis — shows/hides the main menu's two lesson buttons (each goes once its lesson is done, unless Settings keeps them); a lone button spans the row. */
 function lessonsMenuVis(){const el=document.getElementById('mmLearn');if(!el)return;const pref=typeof SETTINGS!=='undefined'?SETTINGS.lessonsMenu:undefined;
   /* v0.46: each lesson's button goes once that lesson is done; a lone button is as wide as the rest of the menu */
   const bc=el.querySelector('[data-mm="learn"]'),bm=el.querySelector('[data-mm="learnmgr"]');
   const showC=pref===true||(pref!==false&&!lessonDone('classic')),showM=pref===true||(pref!==false&&!lessonDone('manager'));
   if(bc)bc.hidden=!showC;if(bm)bm.hidden=!showM;el.hidden=!showC&&!showM;el.classList.toggle('single',showC!==showM)}
-function lessonsHTML(){const card=(k,ic,t,d)=>`<div class="mstone"><div class="mshd"><span class="msic">${ic}</span><div><div class="msv">${lessonDone(k)?'✔ completed':_T('not taken yet')}</div><b>${t}</b></div></div><p style="margin:4px 0 8px">${d}</p><button class="btn primary" type="button" data-lesson="${k}">${lessonDone(k)?_T('Take it again'):_T('Start the lesson')}</button></div>`;
+/* lessonsHTML — Rules & strategy → 🎓 Lessons: a card per lesson (done or not, start/again) and the "lesson buttons on the main menu" switch. */
+function lessonsHTML(){const card=(k,icon,title,desc)=>`<div class="mstone"><div class="mshd"><span class="msic">${icon}</span><div><div class="msv">${lessonDone(k)?'✔ completed':_T('not taken yet')}</div><b>${title}</b></div></div><p style="margin:4px 0 8px">${desc}</p><button class="btn primary" type="button" data-lesson="${k}">${lessonDone(k)?_T('Take it again'):_T('Start the lesson')}</button></div>`;
   return `<div class="lessoncards">${card('classic','🎓',_T('Learn to Play (Classic)'),_T('A tour of the arena screen, then a guided bout against one rival and two beasts: the choice, moving, breaking a Blessings pot, your hand, ending the turn — and the fight to the finish.'))}${card('manager','💼',_T('Learn to Play Manager Mode'),_T('One full guided week of a ludus in a sandbox league: a fighter’s card and keeping them happy, courting a recruit, the infirmary, facilities and schooling, Match Week (watch a bout live, bet, enter the main event), a verdict, a rival house, the Imperium, the season — and the Acta Diurna.'))}</div>
    <label class="setrow" style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" data-lessonsmenu="1" ${(SETTINGS.lessonsMenu===true)||(SETTINGS.lessonsMenu!==false&&!(lessonDone('classic')&&lessonDone('manager')))?'checked':''}><span>${_T`<b>🎓 Lesson buttons on the main menu</b>`} <span class="rc-sub">${_T`they hide once both are done; tick to keep them`}</span></span></label>`}
 /* =====================================================================
@@ -24156,6 +24182,7 @@ function lessonsHTML(){const card=(k,ic,t,d)=>`<div class="mstone"><div class="m
      trophies → offered to events · editors → offered to the cities
    Lock guards against edits and deletion, exactly as it does for characters.
    ===================================================================== */
+/* CR_KINDS — per kind of creation (w weapons, a armor, f flags, t trophies, sp sponsors): list/set (the CUSTOM array), store (Store collection), nm (name-suggestion pool), rolls (where "the rolls" put it), on (is it in the rolls?), toggle (add/remove), edit (open it on the designer bench), after (rebuild hook, gear only). */
 const CR_KINDS={
   w:{list:()=>CUSTOM.weapons||[],set:v=>{CUSTOM.weapons=v},store:'customWeapons',nm:'weapons',rolls:_T('the market & loadouts'),
      on:x=>!!(x.rolls&&(x.rolls.market||x.rolls.loadout)),toggle:x=>{const on=CR_KINDS.w.on(x);x.rolls={...(x.rolls||{}),market:!on,loadout:!on}},
@@ -24169,9 +24196,12 @@ const CR_KINDS={
      on:x=>x.offered!==false,toggle:x=>{x.offered=x.offered===false?true:false},edit:x=>{ST.trd=JSON.parse(JSON.stringify(x))}},
   sp:{list:()=>CUSTOM.sponsors||[],set:v=>{CUSTOM.sponsors=v},store:'customSponsors',nm:'sponsors',rolls:_T('the cities'),
      on:x=>x.offered!==false,toggle:x=>{x.offered=x.offered===false?true:false},edit:x=>{ST.spd2=JSON.parse(JSON.stringify(x))}}};
-function crActs(k,x){const K=CR_KINDS[k];const on=K.on(x);const L=x.locked;
-  return `<div class="acts cracts">${customTag()}<button class="btn tksm ${on?'':'primary'}" type="button" data-cr="rolls" data-k="${k}" data-id="${x.id}" title="${on?_T('Remove from'):_T('Add to')} ${K.rolls}">${on?_T('Remove from the rolls'):_T('📜 Add to the rolls')}</button>${lockBtn(x).replace('data-st="lock"',`data-cr="lock" data-k="${k}"`).replace('class="btn"',_T('class="btn tksm"'))}<button class="btn tksm" type="button" data-cr="edit" data-k="${k}" data-id="${x.id}" ${L?_T('disabled title="Locked: unlock first"'):''}>${_T`Edit`}</button><button class="btn tksm" type="button" data-cr="copy" data-k="${k}" data-id="${x.id}">${_T`Copy`}</button><button class="btn tksm" type="button" data-cr="del" data-k="${k}" data-id="${x.id}" ${L?_T('disabled title="Locked: unlock first"'):''}>${_T`Delete`}</button></div>`}
-async function crClick(b,redraw){const k=b.dataset.k,K=CR_KINDS[k];if(!K)return false;const a=b.dataset.cr,id=b.dataset.id;const x=K.list().find(y=>y.id===id);if(!x)return true;const now=new Date().toISOString().slice(0,10);
+/* crActs — the action row for one creation of kind: 📜 rolls toggle · 🔒 lock · Edit · Copy · Delete (Edit/Delete disabled while locked). */
+function crActs(kind,item){const K=CR_KINDS[kind];const on=K.on(item);const L=item.locked;
+  return `<div class="acts cracts">${customTag()}<button class="btn tksm ${on?'':'primary'}" type="button" data-cr="rolls" data-k="${kind}" data-id="${item.id}" title="${on?_T('Remove from'):_T('Add to')} ${K.rolls}">${on?_T('Remove from the rolls'):_T('📜 Add to the rolls')}</button>${lockBtn(item).replace('data-st="lock"',`data-cr="lock" data-k="${kind}"`).replace('class="btn"',_T('class="btn tksm"'))}<button class="btn tksm" type="button" data-cr="edit" data-k="${kind}" data-id="${item.id}" ${L?_T('disabled title="Locked: unlock first"'):''}>${_T`Edit`}</button><button class="btn tksm" type="button" data-cr="copy" data-k="${kind}" data-id="${item.id}">${_T`Copy`}</button><button class="btn tksm" type="button" data-cr="del" data-k="${kind}" data-id="${item.id}" ${L?_T('disabled title="Locked: unlock first"'):''}>${_T`Delete`}</button></div>`}
+/* crClick — handles a [data-cr] button (rolls/lock/edit/copy/del) for its kind and id, saves to the Store, then redraws. Returns false when the kind is unknown (not ours), true otherwise. Delete of a sponsor also clears its city assignments. */
+async function crClick(btn,redraw){const k=btn.dataset.k,K=CR_KINDS[k];if(!K)return false;const a=btn.dataset.cr,id=btn.dataset.id;const x=K.list().find(y=>y.id===id);if(!x)return true;const now=new Date().toISOString().slice(0,10);
+  /* save — writes one creation to its Store collection (errors ignored). */
   const save=async y=>{await Store.put(K.store,y.id,y).catch(()=>{})};
   if(a==='rolls'){K.toggle(x);await save(x);if(K.after)K.after();if(typeof mToast==='function')mToast(`${K.on(x)?_T('📜 Added to'):_T('Removed from')} ${K.rolls}: <b>${esc(x.name||'')}</b>`)}
   else if(a==='lock'){x.locked=!x.locked;(x.lockLog=x.lockLog||[]).push({a:x.locked?'locked':'unlocked',at:now});await save(x)}
@@ -24185,7 +24215,8 @@ async function crClick(b,redraw){const k=b.dataset.k,K=CR_KINDS[k];if(!K)return 
 /* v0.46: SYSTEM SETS ARE LOCKED. The printed pieces, the class and beast figures, the stock beasts, the
    system special events… show the same action row as your creations, but only Copy works: the copy is
    yours to edit, and the default is always there to come back to. */
-function sysActs(copyAttrs,opt={}){return `<div class="acts cracts sysacts"><span class="cbadge sys" title="${_T`System sets are locked so the defaults are always there — copy one to make it yours`}">${_T`🔒 System`}</span>${opt.rolls===false?'':`<span class="cbadge rolls" title="${_T`Part of the classic game`}">${_T`📜 In the rolls`}</span>`}<button class="btn tksm" type="button" disabled title="${_T`System sets are locked — copy it to edit`}">${_T`Edit`}</button><button class="btn tksm primary" type="button" ${copyAttrs}>${_T`⧉ Copy &amp; edit`}</button></div>`}
+/* sysActs — the locked action row for a system set: 🔒 System badge, "In the rolls" (unless options.rolls===false), a disabled Edit and ⧉ Copy & edit (carrying copyAttrs). */
+function sysActs(copyAttrs,options={}){return `<div class="acts cracts sysacts"><span class="cbadge sys" title="${_T`System sets are locked so the defaults are always there — copy one to make it yours`}">${_T`🔒 System`}</span>${options.rolls===false?'':`<span class="cbadge rolls" title="${_T`Part of the classic game`}">${_T`📜 In the rolls`}</span>`}<button class="btn tksm" type="button" disabled title="${_T`System sets are locked — copy it to edit`}">${_T`Edit`}</button><button class="btn tksm primary" type="button" ${copyAttrs}>${_T`⧉ Copy &amp; edit`}</button></div>`}
 /* =====================================================================
    38-MATCHSAVE · SAVING A MATCH MID-BOUT (v0.45)
    =====================================================================
@@ -24196,9 +24227,13 @@ function sysActs(copyAttrs,opt={}){return `<div class="acts cracts sysacts"><spa
    tournaments and exhibitions are not saved this way (their careers keep their own saves).
    Slots live in this browser (flavius_match_1..3, flavius_match_auto), so a full game save or
    download carries them along. */
+/* MSAVE_SLOTS — the three hand slots and the autosave. */
 const MSAVE_SLOTS=['1','2','3','auto'];
-const MSAVE_KEY=k=>'flavius_match_'+k;
+/* MSAVE_KEY — the localStorage key of a slot (flavius_match_<slot>). */
+const MSAVE_KEY=slot=>'flavius_match_'+slot;
+/* matchSaveOK — can the match be saved now? A live Play now / New event match on a human's own choice/action move, nothing resolving or pending, no window open (never Manager/special bouts, lessons, sims, tournaments, exhibitions). */
 function matchSaveOK(){return !!(S&&!S.over&&!HEADLESS&&(S.phase==='action'||S.phase==='choice')&&!S.busy&&typeof humanTurn==='function'&&humanTurn()&&!S.mgrCtx&&!S.specCtx&&!S.tutorial&&!S.sim&&!S.tourn&&!S.exhib&&!S.pending&&!CUR_MODAL&&$('#modal').hidden)}
+/* matchSnapshot — the whole match as a save object: S as JSON (Sets/Maps tagged __set/__map), the RNG state, uid, the last 400 log lines, the speed, a name (default event · city · rotation) and a one-line summary. */
 function matchSnapshot(name){
   const txt=JSON.stringify(S,(k,v)=>v instanceof Set?{__set:[...v]}:v instanceof Map?{__map:[...v]}:v);
   const lis=[...$('#log').children].slice(0,400).map(li=>li.outerHTML).join('');
@@ -24206,9 +24241,13 @@ function matchSnapshot(name){
   return {game:'flavius-match',v:'0.45',at:new Date().toISOString(),name:name||`${ev.short||ev.n} · ${loc} · rotation ${S.rotation}`,
     summary:_T`${ev.short||ev.n} at ${loc} · round ${S.ri+1}/${ev.rounds.length} · rotation ${S.rotation} · ${S.players.filter(p=>p.alive&&!p.exited).length}/${S.players.length} standing`,
     S:txt,rng:RNG?RNG.s:0,uid,log:lis,speed:SPEED}}
-function matchSlotGet(k){try{const t=localStorage.getItem(MSAVE_KEY(k));return t?JSON.parse(t):null}catch(e){return null}}
-function matchSlotPut(k,snap){try{localStorage.setItem(MSAVE_KEY(k),JSON.stringify(snap));return true}catch(e){return false}}
-function matchSlotDel(k){try{localStorage.removeItem(MSAVE_KEY(k))}catch(e){}}
+/* matchSlotGet — the save in a slot, or null. */
+function matchSlotGet(slot){try{const t=localStorage.getItem(MSAVE_KEY(slot));return t?JSON.parse(t):null}catch(e){return null}}
+/* matchSlotPut — writes a save into a slot; false when the browser refuses (storage full). */
+function matchSlotPut(slot,snap){try{localStorage.setItem(MSAVE_KEY(slot),JSON.stringify(snap));return true}catch(e){return false}}
+/* matchSlotDel — empties a slot. */
+function matchSlotDel(slot){try{localStorage.removeItem(MSAVE_KEY(slot))}catch(e){}}
+/* matchAutosave — writes the autosave slot once per rotation, whenever saving is allowed. */
 function matchAutosave(){if(!matchSaveOK()||S._autoRot===S.rotation)return;S._autoRot=S.rotation;matchSlotPut('auto',matchSnapshot(null))}
 /* the slot picker: fromMenu → leave for the menu once saved */
 async function matchSaveDialog(fromMenu){
@@ -24224,8 +24263,10 @@ async function matchSaveDialog(fromMenu){
   return ok}
 /* the name field lives inside the modal, which is gone once a button is clicked — remember it as it changes */
 document.addEventListener('input',e=>{if(e.target&&e.target.id==='msName')MSAVE_NAME=e.target.value});
+/* MSAVE_NAME — the name typed in the save window (kept as it changes). */
 let MSAVE_NAME=null;
-async function matchLoad(k){const snap=matchSlotGet(k);if(!snap||snap.game!=='flavius-match'){mToastSafe(_T('That slot is empty.'));return false}
+/* matchLoad — loads a slot: stops whatever runs, rebuilds S (Sets/Maps, CF trackers), restores the dice stream, uid, speed, log and city theme, hides the menu and redraws. Returns false for an empty slot. */
+async function matchLoad(slot){const snap=matchSlotGet(slot);if(!snap||snap.game!=='flavius-match'){mToastSafe(_T('That slot is empty.'));return false}
   const fresh=JSON.parse(snap.S,(key,v)=>v&&typeof v==='object'&&!Array.isArray(v)?(v.__set?new Set(v.__set):v.__map?new Map(v.__map):v):v);
   if(S&&!S.over)S.over=true; // whatever was running stops here
   try{if(typeof cleanFinishNow==='function')cleanFinishNow()}catch(e){}
@@ -24242,10 +24283,12 @@ async function matchLoad(k){const snap=matchSlotGet(k);if(!snap||snap.game!=='fl
   log(_T`💾 The match resumes from “${esc(snap.name)}” — ${esc(snap.summary)}.`,'big');
   render();window.scrollTo(0,0);try{if(typeof audTick==='function')audTick()}catch(e){}
   return true}
+/* matchSavesHTML — the match-saves list: mode 'load' (only filled slots, Load), 'manage' (rename/download/delete) or none (both, with a heading). Save here appears while saving is allowed. */
 function matchSavesHTML(mode){const L=MSAVE_SLOTS.map(k=>({k,sv:matchSlotGet(k)})).filter(x=>mode!=='load'||x.sv);
   return `${mode?'':`<h4 class="secth" style="margin-top:0">${_T`⚔ Match saves`} <span class="rc-sub">${_T`Play now / New event, saved mid-bout — three slots and an automatic save each rotation`}</span></h4>`}
   <div class="list">${L.map(({k,sv})=>`<div class="item"><span>${k==='auto'?_T('🔁 <b>Autosave</b>'):_T`💾 <b>Slot ${k}</b>`}<em>${sv?`${esc(sv.name)} · ${esc(new Date(sv.at).toLocaleString())} · ${esc(sv.summary||'')}`:'empty'}</em></span><span style="display:flex;gap:4px">${sv&&mode!=='manage'?`<button class="btn primary" type="button" data-mload="${k}">${_T`▶ Load`}</button>`:''}${sv&&mode!=='load'?`<button class="btn" type="button" data-mren="${k}" title="${_T`Rename`}">✎</button><button class="btn" type="button" data-mdl="${k}" title="${_T`Download this save`}">⬇</button><button class="btn" type="button" data-mdel="${k}">🗑</button>`:''}${k!=='auto'&&matchSaveOK()?`<button class="btn" type="button" data-msave="${k}">${_T`Save here`}</button>`:''}</span></div>`).join('')}</div>
   ${!L.length?`<p class="rc-sub">${_T`No saved matches yet — save one on your move with 💾 Save match in the arena.`}</p>`:''}<p class="rc-sub" style="margin:4px 0 14px">${matchSaveOK()?_T('You are on your move: the match can be saved now.'):_T('Save a match on your own move in the arena (💾 on the canvas toolbar, or when leaving for the main menu).')}</p>`}
+/* clicks on the saves list: ▶ Load, 🗑 delete (second click confirms), ✎ rename in place, ⬇ download as JSON, Save here; and the arena's 💾 button (#btnMSave). */
 document.addEventListener('click',async e=>{
   const ld=e.target.closest('[data-mload]');if(ld){const c=CUR_MODAL;if(c)c.done('x');setTimeout(()=>matchLoad(ld.dataset.mload),150);return}
   const dl=e.target.closest('[data-mdel]');if(dl){if(!dl.dataset.armed){dl.dataset.armed=1;dl.textContent=_T('Confirm delete');return}matchSlotDel(dl.dataset.mdel);const box=dl.closest('.list');if(box)box.parentElement.querySelector('[data-mdel]');dl.closest('.item').querySelector('em').textContent='empty';dl.remove();return}
@@ -24253,9 +24296,11 @@ document.addEventListener('click',async e=>{
   const md=e.target.closest('[data-mdl]');if(md){const sv0=matchSlotGet(md.dataset.mdl);if(sv0&&typeof downloadSnapshot==='function'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(sv0)],{type:'application/json'}));a.download=`flavius-match-${String(sv0.name).replace(/[^\w-]+/g,'-').slice(0,40)}.json`;document.body.appendChild(a);a.click();a.remove()}return}
   const sv=e.target.closest('[data-msave]');if(sv){if(!matchSaveOK())return;const ok=matchSlotPut(sv.dataset.msave,matchSnapshot(null));mToastSafe(ok?_T`💾 Saved to slot ${sv.dataset.msave}`:_T('This browser would not keep the save.'));const em=sv.closest('.item').querySelector('em');if(em&&ok)em.textContent=_T('saved just now');return}
   if(e.target.closest('#btnMSave')){matchSaveDialog(false)}});
+/* matchSaveUI — shows the arena's 💾 button in saveable modes, dims it when saving must wait, and triggers the autosave. */
 function matchSaveUI(){if(HEADLESS)return;const b=document.getElementById('btnMSave');if(!b)return;const show=!!(S&&!S.over&&S.phase!=='setup'&&!S.mgrCtx&&!S.specCtx&&!S.tutorial&&!S.tourn&&!S.exhib);b.hidden=!show;const ok=matchSaveOK();b.classList.toggle('dim',!ok);b.title=ok?_T('Save this match exactly as it stands — three slots, plus an automatic save every rotation'):_T('Saving waits for your own move (a CPU is acting, or a window is open)');
   if(show)setTimeout(matchAutosave,30)}
 /* v0.46: the button's state follows the game even between renders (a CPU finishing, a window closing) */
+/* TWEAK: 600 ms between button checks. */
 setInterval(()=>{try{matchSaveUI()}catch(e){}},600);
 /* =====================================================================
    39-SOTONIUM · THE FAMILY HOUSES (v0.45, reworked v0.46)
@@ -24275,68 +24320,78 @@ setInterval(()=>{try{matchSaveUI()}catch(e){}},600);
    leaves, it ebbs and flows like any other stable. It never closes while its word stands.
    When a word is spoken again: the house disbands in every career as it loads — the child leaves with the
    father, the other fighters become free agents. */
+/* FAMILY_HOUSES — the two family houses: flag (localStorage switch), mgr (the father: name, ludus, city, colour, personality p, portrait parts, bio), child (the star: class, rating ovr/pot, fame, age, history line, out = the retirement news), visitor (the famous spectator entry). */
 const FAMILY_HOUSES={
   sotonium:{flag:'flavius_house_sotonium',mgr:{name:'Richardious Sotonium',ludus:_T('Ludus Sotonium'),city:'Capua',color:'#7a2a8a',
       p:{ambition:62,cunning:48,honor:78,greed:35,show:74,discipline:70,risk:42},portrait:{hair:3,helm:'laurel',beard:true,bg:10},
       bio:_T('Brother of Virgilante Sotonium of Pompeii and father of the Great Zeldinius. A Capuan of the old school: generous with bread, stubborn with his daughter, and never, ever for sale.')},
     child:{name:'The Great Zeldinius Sotonium',cls:'amazonia',fem:true,city:'Roma',ovr:93,pot:98,fame:98,age:24,
       hist:_T('fights for her father’s house, the Ludus Sotonium of Capua'),
-      out:c=>_T`🗡 <b>${c}</b> lays her sword at her father’s feet and <b>takes the rudis</b>. Every arena in the empire stands. Richardious Sotonium weeps openly in the editor’s box.`},
+      out:childName=>_T`🗡 <b>${childName}</b> lays her sword at her father’s feet and <b>takes the rudis</b>. Every arena in the empire stands. Richardious Sotonium weeps openly in the editor’s box.`},
     visitor:{n:'Richardious Sotonium',who:_T('lanista of Capua, brother of Virgilante Sotonium of Pompeii, father of the Great Zeldinius'),cls:'amazonia',line:_T('Richardious Sotonium of Capua takes his usual seat, a purple cloak over one shoulder and a story about his daughter ready for anyone within earshot.')}},
   duckio:{flag:'flavius_house_duckio',mgr:{name:'Gaius Anatinus Duckio',ludus:_T('Ludus Anatinus'),city:'Puteoli',color:'#2f8f7a',
       p:{ambition:70,cunning:55,honor:66,greed:40,show:82,discipline:58,risk:55},portrait:{hair:1,helm:'none',beard:true,bg:7},
       bio:_T('A Puteolan shipowner who made his fortune in the harbour and spends it on the sand. Waddles when he walks, and nobody laughs twice.')},
     child:{name:'Supducus Praeclarus',cls:'hero',fem:false,city:'Puteoli',ovr:92,pot:97,fame:96,age:23,
       hist:_T('fights for his father’s house, the Ludus Anatinus of Puteoli'),
-      out:c=>_T`🗡 <b>${c}</b> sets down his sword before Gaius Anatinus Duckio and <b>takes the rudis</b>. The harbour of Puteoli rings every bell it has.`},
+      out:childName=>_T`🗡 <b>${childName}</b> sets down his sword before Gaius Anatinus Duckio and <b>takes the rudis</b>. The harbour of Puteoli rings every bell it has.`},
     visitor:{n:'Gaius Anatinus Duckio',who:_T('shipowner and lanista of Puteoli, father of Supducus Praeclarus'),cls:'hero',line:_T('Gaius Anatinus Duckio waddles to his seat by the harbour gate, trailed by a clerk and a basket of bread for the birds.')}}};
-const houseOn=k=>{try{return localStorage.getItem(FAMILY_HOUSES[k].flag)==='1'}catch(e){return false}};
-function houseToggle(k){const H=FAMILY_HOUSES[k];const on=!houseOn(k);try{if(on)localStorage.setItem(H.flag,'1');else localStorage.removeItem(H.flag)}catch(e){}
+/* houseOn — is this house's word switched on in this browser? */
+const houseOn=houseKey=>{try{return localStorage.getItem(FAMILY_HOUSES[houseKey].flag)==='1'}catch(e){return false}};
+/* houseToggle — flips the house's switch, syncs the open career at once (not the lesson) and redraws; returns the new state (true = joined). */
+function houseToggle(houseKey){const H=FAMILY_HOUSES[houseKey];const on=!houseOn(houseKey);try{if(on)localStorage.setItem(H.flag,'1');else localStorage.removeItem(H.flag)}catch(e){}
   try{const w=typeof MGR!=='undefined'&&MGR.world;if(w&&!w.tutorial){houseSync(w,true);saveWorld(true);if(typeof MGR_REDRAW==='function'&&document.getElementById('mgrBody'))MGR_REDRAW()}}catch(e){}
   return on}
-const houseMgr=(w,k)=>(w&&w.mgrs||[]).find(m=>m.key===k&&!m.gone);
+/* houseMgr — the house's lanista in this world (not gone), or undefined. */
+const houseMgr=(world,houseKey)=>(world&&world.mgrs||[]).find(m=>m.key===houseKey&&!m.gone);
 /* the season the child's three-season clock starts: now, at a fresh season's kickoff, else the next season */
-const houseKickoff=w=>((((w.week||1)-1)%12)===0?w.season||1:(w.season||1)+1);
-function houseAdd(w,k,joining){const H=FAMILY_HOUSES[k];if(!w||!w.mgrs||houseMgr(w,k))return;
-  const P=H.mgr.portrait;const m={id:'m_'+k,key:k,system:true,family:true,name:H.mgr.name,ludus:H.mgr.ludus,city:H.mgr.city,color:H.mgr.color,p:{...H.mgr.p},
+const houseKickoff=world=>((((world.week||1)-1)%12)===0?world.season||1:(world.season||1)+1);
+/* houseAdd — adds the house: its lanista (fame 22, 180 coin), the star child (contract 999 weeks, never poached, three-season clock from houseKickoff) and three middling free agents (rating 52-66) signed beside the child; joining → league news. TWEAK: fame/coin, the child's record, 52-66, morale 60-85. */
+function houseAdd(world,houseKey,joining){const H=FAMILY_HOUSES[houseKey];if(!world||!world.mgrs||houseMgr(world,houseKey))return;
+  const P=H.mgr.portrait;const m={id:'m_'+houseKey,key:houseKey,system:true,family:true,name:H.mgr.name,ludus:H.mgr.ludus,city:H.mgr.city,color:H.mgr.color,p:{...H.mgr.p},
     fame:22,coin:180,wins:0,bouts:0,deaths:0,betNet:0,poached:0,improved:0,bio:H.mgr.bio,pre:true,rivals:{},rivalry:Math.round(Math.random()*6),
     portrait:{skin:SKINS[2]||SKINS[0],hair:HAIRS[P.hair]||HAIRS[0],helm:P.helm,beard:P.beard,long:false,bg:BGS[P.bg]||BGS[0]}};
-  w.mgrs.push(m);
-  const C=H.child;const start=houseKickoff(w);
+  world.mgrs.push(m);
+  const C=H.child;const start=houseKickoff(world);
   const z=genGlad({cls:C.cls,fem:C.fem,ovr:C.ovr,age:C.age,city:C.city,name:C.name});
-  Object.assign(z,{pot:C.pot,fame:C.fame,gem:0,bust:0,pubNoise:0,sotonium:true,starChild:k,noPoach:true,morale:92,scout:2,childStart:start,sotoRetire:start+3,
-    rec:{ev:34,w:27,surv:34,kp:22,kn:31},contract:{mgr:m.id,wage:askWage(z),weeks:999,since:w.week||1},debut:{s:w.season||1,wk:w.week||1}});
-  w.glads.push(z);ghist(z,C.hist);
+  Object.assign(z,{pot:C.pot,fame:C.fame,gem:0,bust:0,pubNoise:0,sotonium:true,starChild:houseKey,noPoach:true,morale:92,scout:2,childStart:start,sotoRetire:start+3,
+    rec:{ev:34,w:27,surv:34,kp:22,kn:31},contract:{mgr:m.id,wage:askWage(z),weeks:999,since:world.week||1},debut:{s:world.season||1,wk:world.week||1}});
+  world.glads.push(z);ghist(z,C.hist);
   // a modest start: three middling fighters beside the child
-  for(let i=0;i<3;i++){let g=w.glads.filter(g=>!g.contract&&g.alive&&g.src==='gen'&&g.ovr>=52&&g.ovr<=66).sort(()=>Math.random()-.5)[0];
-    if(!g){g=genGlad({ovr:52+rnd(14)});w.glads.push(g)}g.contract={mgr:m.id,wage:askWage(g),weeks:4+rnd(9),since:w.week||0};g.morale=60+rnd(25)}
-  for(const g of w.glads)g.interest=g.interest||{};
+  for(let i=0;i<3;i++){let g=world.glads.filter(g=>!g.contract&&g.alive&&g.src==='gen'&&g.ovr>=52&&g.ovr<=66).sort(()=>Math.random()-.5)[0];
+    if(!g){g=genGlad({ovr:52+rnd(14)});world.glads.push(g)}g.contract={mgr:m.id,wage:askWage(g),weeks:4+rnd(9),since:world.week||0};g.morale=60+rnd(25)}
+  for(const g of world.glads)g.interest=g.interest||{};
   if(joining&&typeof mnews==='function')mnews(_T`🏛 <b>${esc(H.mgr.name)}</b> of ${esc(H.mgr.city)} opens the <b>${esc(H.mgr.ludus)}</b> to the league — with ${C.fem?_T('his daughter'):_T('his son')}, <b>${esc(C.name)}</b>, on the roster (from season ${start}).`,'big')}
 /* the word taken back: the house disbands; the child leaves with the father; the rest become free agents */
-function houseRemove(w,k){const m=houseMgr(w,k);if(!m)return;const H=FAMILY_HOUSES[k];
-  for(const g of w.glads.filter(g=>g.contract&&g.contract.mgr===m.id)){if(g.starChild){g.alive=false;g.retired=true;g.contract=null;ghist(g,_T`left the league with ${H.mgr.name}`)}else{g.contract=null;g.unsigned=0;ghist(g,_T`released when the ${m.ludus} disbanded`)}}
-  for(const g of w.glads.filter(g=>g.starChild===k&&g.alive)){g.alive=false;g.retired=true;g.contract=null}
-  m.dead=true;m.gone=true;w.mgrs=w.mgrs.filter(x=>x!==m);
-  if(n9(w))for(const b of w.night.bouts)if(!b.done)b.ents=b.ents.filter(id=>{const g=gById(id);return g&&g.alive});
+function houseRemove(world,houseKey){const m=houseMgr(world,houseKey);if(!m)return;const H=FAMILY_HOUSES[houseKey];
+  for(const g of world.glads.filter(g=>g.contract&&g.contract.mgr===m.id)){if(g.starChild){g.alive=false;g.retired=true;g.contract=null;ghist(g,_T`left the league with ${H.mgr.name}`)}else{g.contract=null;g.unsigned=0;ghist(g,_T`released when the ${m.ludus} disbanded`)}}
+  for(const g of world.glads.filter(g=>g.starChild===houseKey&&g.alive)){g.alive=false;g.retired=true;g.contract=null}
+  m.dead=true;m.gone=true;world.mgrs=world.mgrs.filter(x=>x!==m);
+  if(n9(world))for(const b of world.night.bouts)if(!b.done)b.ents=b.ents.filter(id=>{const g=gById(id);return g&&g.alive});
   if(typeof mnews==='function')mnews(_T`🏛 The <b>${esc(m.ludus)}</b> closes its gates and leaves the league. Its fighters are free agents now.`,'big');
-  try{if(typeof fillNight==='function'&&w.night)fillNight()}catch(e){}}
-const n9=w=>w&&w.night&&w.night.bouts;
-function houseSync(w,loud){if(!w||!w.mgrs||!w.glads||w.tutorial)return;for(const k of Object.keys(FAMILY_HOUSES)){const has=!!houseMgr(w,k);const on=houseOn(k);
-  if(on&&!has)houseAdd(w,k,true);else if(!on&&has)houseRemove(w,k)}}
-/* does the father send the child out for this main event? more often each season while their clock runs */
-function starChildFights(g,b,w){if(b.tier!=='main')return false;const s=w.season||1;if(s<(g.childStart||1)||s>=(g.sotoRetire||99))return false;
-  const yr=s-(g.childStart||1);return Math.random()<[0.3,0.55,0.8][Math.min(2,yr)]}
-/* season's end: the house climbs while the child fights; three seasons in, the child takes the rudis */
-function sotoSeason(w){for(const k of Object.keys(FAMILY_HOUSES)){const m=houseMgr(w,k);const g=w.glads.find(x=>x.starChild===k&&x.alive);
-    if(m&&g&&(w.season||1)>=(g.childStart||1)&&(w.season||1)<(g.sotoRetire||99)){m.fame=clamp((m.fame||0)+16,0,100);m.coin+=220;
-      const fa=freeAgents().filter(x=>!x.inj).sort((a,b)=>effOvr(b)-effOvr(a))[0];if(fa){fa.contract={mgr:m.id,wage:askWage(fa),weeks:10,since:w.week};fa.unsigned=0;ghist(fa,_T`signed with the rising ${m.ludus}`)}}
-    if(!g||(w.season||1)<(g.sotoRetire||99))continue;
+  try{if(typeof fillNight==='function'&&world.night)fillNight()}catch(e){}}
+/* n9 — the world's Match Week bouts, if any. */
+const n9=world=>world&&world.night&&world.night.bouts;
+/* houseSync — makes the world follow the switches: adds a switched-on house that is missing, removes one switched off (never in the lesson). */
+function houseSync(world,loud){if(!world||!world.mgrs||!world.glads||world.tutorial)return;for(const k of Object.keys(FAMILY_HOUSES)){const has=!!houseMgr(world,k);const on=houseOn(k);
+  if(on&&!has)houseAdd(world,k,true);else if(!on&&has)houseRemove(world,k)}}
+/* does the father send the child out for this main event? more often each season while their clock runs
+   starChildFights — true when the child glad is sent into this main event bout (world's season inside the clock). TWEAK: 30% / 55% / 80% by season of the clock. */
+function starChildFights(glad,bout,world){if(bout.tier!=='main')return false;const s=world.season||1;if(s<(glad.childStart||1)||s>=(glad.sotoRetire||99))return false;
+  const yr=s-(glad.childStart||1);return Math.random()<[0.3,0.55,0.8][Math.min(2,yr)]}
+/* season's end: the house climbs while the child fights; three seasons in, the child takes the rudis
+   sotoSeason — per house: while the child fights, +16 fame, +220 coin and the best healthy free agent signs; at sotoRetire the child is freed (Liberti entry, news) and the house becomes ordinary. TWEAK: 16, 220, the 10-week contract. */
+function sotoSeason(world){for(const k of Object.keys(FAMILY_HOUSES)){const m=houseMgr(world,k);const g=world.glads.find(x=>x.starChild===k&&x.alive);
+    if(m&&g&&(world.season||1)>=(g.childStart||1)&&(world.season||1)<(g.sotoRetire||99)){m.fame=clamp((m.fame||0)+16,0,100);m.coin+=220;
+      const fa=freeAgents().filter(x=>!x.inj).sort((a,b)=>effOvr(b)-effOvr(a))[0];if(fa){fa.contract={mgr:m.id,wage:askWage(fa),weeks:10,since:world.week};fa.unsigned=0;ghist(fa,_T`signed with the rising ${m.ludus}`)}}
+    if(!g||(world.season||1)<(g.sotoRetire||99))continue;
     const m2=g.contract?mgrById(g.contract.mgr):null;ghist(g,_T`took the rudis after three seasons — freedom, with the whole empire on its feet`);
     g.alive=false;g.freed2=true;g.contract=null;try{libertyEntry(g,m2,_T('the Gate of Life'),_T('took the rudis at the height of their fame'))}catch(e){}
     if(m2)m2.family=false; // the house is an ordinary stable now — it ebbs and flows like any other
     if(typeof mnews==='function')mnews(FAMILY_HOUSES[k].child.out(esc(g.name)),'big')}}
 /* every career follows the words: houses join or leave as a career loads */
-{const _mig=mgrMigrate;mgrMigrate=function(w){w=_mig(w);try{houseSync(w)}catch(e){console.error(e)}return w}}
+/* wrap mgrMigrate and newWorld: every loaded or new career follows the switches (a new one saves if a house joined). */
+{const _mig=mgrMigrate;mgrMigrate=function(world){world=_mig(world);try{houseSync(world)}catch(e){console.error(e)}return world}}
 {const _nw=newWorld;newWorld=function(choice){const w=_nw(choice);try{if(!w.tutorial){const n0=w.mgrs.length;houseSync(w);if(w.mgrs.length!==n0)saveWorld(true)}}catch(e){console.error(e)}return w}}
 /* the words at the version badge */
 if(typeof cheatRegister==='function'){const W1=String.fromCharCode(67,72,65,82,68),W2=String.fromCharCode(68,85,67,75,73,79);
@@ -24346,7 +24401,7 @@ if(typeof CHEAT_SHOW!=='undefined'){CHEAT_SHOW.push([[74,79,72,89,75],_T('🏛 T
 /* the famous visitors — only while their house is in the system */
 if(typeof FAMOUS!=='undefined')for(const k of Object.keys(FAMILY_HOUSES)){const V=FAMILY_HOUSES[k].visitor;
   FAMOUS.push({n:V.n,who:V.who,mood:9,gate:()=>houseOn(k),
-    fx:ps=>{const a=ps.filter(p=>p.cls===V.cls);for(const p of a)p.cf+=3;if(!a.length){const p=[...ps].sort((x,y)=>y.cf-x.cf)[0];if(p)p.coin+=2;return p?_T`he tips ${esc(p.name)} ${coinAmt87(2)} anyway`:_T('he claps politely')}return _T`he roars for every ${CLASSES[V.cls]?CLASSES[V.cls].name:_T('fighter')}, as he does for his child (${cfAmt87('+3')} each)`},
+    fx:players=>{const a=players.filter(p=>p.cls===V.cls);for(const p of a)p.cf+=3;if(!a.length){const p=[...players].sort((x,y)=>y.cf-x.cf)[0];if(p)p.coin+=2;return p?_T`he tips ${esc(p.name)} ${coinAmt87(2)} anyway`:_T('he claps politely')}return _T`he roars for every ${CLASSES[V.cls]?CLASSES[V.cls].name:_T('fighter')}, as he does for his child (${cfAmt87('+3')} each)`},
     line:V.line})}
 /* =====================================================================
    40-RTOK · THE ROUND TOKENS (v0.45)
@@ -24358,25 +24413,34 @@ if(typeof FAMOUS!=='undefined')for(const k of Object.keys(FAMILY_HOUSES)){const 
      struck in the same bronze ring),
    • the beasts in the Menagerie tracker, on hover cards and in the beast list,
    • the loading screens between modes: a Blessing token turning slowly in the dark. */
+/* RTOK_NAMES — the sprite's cells in reading order (row by row, RTOK_COLS a row); a token's index = its cell. */
 const RTOK_NAMES=['zora','leaena','chest','brutum','leo','ursa','valencia','spectator','glykon','moechus','arenosus','tholo','boar','commodus','eagle','blessing','key','spike','mw1','mw2','mw3','ma1','ma2','ma3','ap2','ap3','croc','water',
   'elix2','elix4','spiders','cf1','cf2','merc1','merc2','curse','key2']; /* v0.57: the fifth row, cut from Virgilante's offering-token and chariot scans (tools/mkscans.py) */
+/* RTOK_COLS/RTOK_ROWS — the sprite grid of assets/rtok.webp (8 × 5). */
 const RTOK_COLS=8,RTOK_ROWS=5;
+/* rtokHTML — a round token by name as a sized <span> showing its sprite cell ('' for an unknown name); title → tooltip + aria label. TWEAK: default 28 px. */
 function rtokHTML(name,size=28,title=''){const i=RTOK_NAMES.indexOf(name);if(i<0)return '';const c=i%RTOK_COLS,r=Math.floor(i/RTOK_COLS);
   return `<span class="rtok" role="img" aria-label="${esc(title||name)}"${title?` title="${esc(title)}"`:''} style="width:${size}px;height:${size}px;background-image:url('${assetURL('rtok.webp')}');background-size:${RTOK_COLS*100}% ${RTOK_ROWS*100}%;background-position:${(c/(RTOK_COLS-1)*100).toFixed(3)}% ${(r/(RTOK_ROWS-1)*100).toFixed(3)}%"></span>`}
 /* an offering's token: printed art where the sheets have it, otherwise the same ring around the offering's sign */
+/* OFFER_TOK — offering key → its printed token cell. */
 const OFFER_TOK={mw1:'mw1',mw2:'mw2',mw3:'mw3',ma1:'ma1',ma2:'ma2',ma3:'ma3',ap2:'ap2',ap3:'ap3',key:'key',eagle:'eagle',elix2:'elix2',elix4:'elix4',spiders:'spiders',cf1:'cf1',cf2:'cf2',merc1:'merc1',merc2:'merc2',curse:'curse'};
+/* OFFER_SIGN — the sign struck in a plain ring for offerings without a printed token. */
 const OFFER_SIGN={elix2:'🧪',elix4:'🧪',spiders:'🕷',cf1:'👑',cf2:'👑',merc1:'🪽',merc2:'🪽',curse:'💀'};
-function offerTokHTML(k,size=28){const O=typeof OFFER!=='undefined'?OFFER[k]:null;const t=O?`${O.n} · ${O.s}`:k;
-  if(OFFER_TOK[k])return rtokHTML(OFFER_TOK[k],size,t);
-  return `<span class="rtok rtokx" role="img" aria-label="${esc(t)}" title="${esc(t)}" style="width:${size}px;height:${size}px;font-size:${Math.round(size*0.46)}px">${OFFER_SIGN[k]||esc(O&&O.g||'?')}</span>`}
+/* offerTokHTML — an offering's token (printed cell, else a ring with its sign), titled with the offering's name and effect. */
+function offerTokHTML(key,size=28){const O=typeof OFFER!=='undefined'?OFFER[key]:null;const t=O?`${O.n} · ${O.s}`:key;
+  if(OFFER_TOK[key])return rtokHTML(OFFER_TOK[key],size,t);
+  return `<span class="rtok rtokx" role="img" aria-label="${esc(t)}" title="${esc(t)}" style="width:${size}px;height:${size}px;font-size:${Math.round(size*0.46)}px">${OFFER_SIGN[key]||esc(O&&O.g||'?')}</span>`}
 /* a beast's token: by its role on the sheet (the city names change, the tokens do not) */
+/* NPC_TOK — beast type → its token cell(s); paired kinds (snake, wolf, bear, lion) have two tokens. */
 const NPC_TOK={snake:['glykon','arenosus'],wolf:['valencia','moechus'],bear:['ursa','brutum'],lion:['leo','leaena'],commodus:['commodus'],tholo:['tholo'],zora:['zora'],boar:['boar'],croc:['croc'],crocodile:['croc']};
-function npcTokName(n){if(!n)return null;const L=NPC_TOK[n.t];if(!L)return null;if(L.length===1)return L[0];
+/* npcTokName — which token cell a beast wears: its kind's only token, else the one whose role name (or the city's name for it) matches, else alternate by id; null for no token. */
+function npcTokName(npc){if(!npc)return null;const L=NPC_TOK[npc.t];if(!L)return null;if(L.length===1)return L[0];
   // which of the pair: match the base role name, else the city's name for it, else alternate by id
   const roles={glykon:_T('Glykon'),arenosus:_T('Arenosus'),valencia:_T('Valencia'),moechus:_T('Moechus'),ursa:_T('Ursa'),brutum:_T('Brutum'),leo:_T('Leo'),leaena:_T('Leaena')};
-  for(const k of L){const R=roles[k];if(n.name===R||(typeof beastName==='function'&&n.name===beastName(R)))return k}
-  return L[(n.id||0)%2]}
-function npcTokHTML(n,size=28){const k=npcTokName(n);return k?rtokHTML(k,size,n.name):''}
+  for(const k of L){const R=roles[k];if(npc.name===R||(typeof beastName==='function'&&npc.name===beastName(R)))return k}
+  return L[(npc.id||0)%2]}
+/* npcTokHTML — the beast's token as HTML, titled with its name ('' when it has none). */
+function npcTokHTML(npc,size=28){const k=npcTokName(npc);return k?rtokHTML(k,size,npc.name):''}
 /* =====================================================================
    41-DUEL · THE FINAL DUEL CAMERA (v0.46)
    =====================================================================
