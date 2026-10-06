@@ -54,7 +54,7 @@ const crowd=await pg.evaluate(async()=>{const p=S.players[0];S.cur=0;S.phase='ac
   return {cfOK:cfAllowed(),one,six,coin,com}});
 out.crowd=crowd;
 if(crowd.cfOK){if(!crowd.one||!crowd.one.dis)miss.push('CF tile enabled at 1 CF: '+JSON.stringify(crowd.one));if(!crowd.six||crowd.six.dis)miss.push('CF tile disabled at 6 CF: '+JSON.stringify(crowd.six));
-  if(!crowd.coin||crowd.coin.dis)miss.push('CF tile disabled with 12 coin to throw: '+JSON.stringify(crowd.coin))}else miss.push('round 1 has no CF?');
+  if(!crowd.coin||!crowd.coin.dis)miss.push('CF only: 1 CF + 12 coin keeps the tile off: '+JSON.stringify(crowd.coin))}else miss.push('round 1 has no CF?');
 if(!crowd.com||!crowd.com.dis||!/Commodus/.test(crowd.com.sub||''))miss.push('CF tile under Commodus: '+JSON.stringify(crowd.com));
 /* 3. Blessings as token rounds */
 await pg.evaluate(async()=>{SETTINGS.pots90='tokens';const pl=S.pillars[0];if(pl&&pl.pots.length<3)pl.pots.push('ap2','mw1','elix2');draw();await new Promise(r=>setTimeout(r,500));draw()});

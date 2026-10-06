@@ -45517,7 +45517,7 @@ async function huntBeast90(npc,m){const st=npcStats(npc);
 function crowdCan90(p){try{const cfOK=cfAllowed();const spear=typeof spearTargets==='function'&&spearTargets(p).length>0;if(spear)return true;if(!cfOK)return false;
   if(p.cf>=5)return true;
   if(p.cf>=3&&!p.market&&!(EV()&&EV().noMarket))return true;
-  return p.coin>=10}catch(e){return true}}
+  return false /* his call (2026-10-06): CF only — throwing 10 coin for 2 CF no longer lights the tile */}catch(e){return true}}
 {const base=render;render=function(){const r=base.apply(this,arguments);try{
   const b=document.querySelector('#actions [data-act="crowd"]');const p=S&&!S.over&&typeof cur==='function'?cur():null;if(!b||!p)return r;
   const cmd=RD().cf&&typeof commodusIn==='function'&&commodusIn();

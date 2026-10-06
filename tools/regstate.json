@@ -1,5 +1,5 @@
 {
- "run": 155,
+ "run": 156,
  "lastFull": 1791254037274,
  "tests": {
   "tseed4": {
@@ -3715,20 +3715,20 @@
    }
   },
   "tv90b": {
-   "streak": 3,
-   "runs": 3,
+   "streak": 4,
+   "runs": 4,
    "fails": 0,
    "flaky": [],
-   "lastRun": 154,
-   "time": 14,
+   "lastRun": 156,
+   "time": 17,
    "sh": "c459632257",
-   "lastPass": 154,
+   "lastPass": 156,
    "deps": {
     "build.sh": "6eec1fb57708",
     "src/01-head.html": "5a6ad97ec465",
     "tools/smartreg.js": "44d97ee7684f",
     "tools/regcov.js": "1b122005f465",
-    "tools/tests/tv90b.js": "b7920d01cead"
+    "tools/tests/tv90b.js": "92bdb3d2929e"
    }
   }
  },

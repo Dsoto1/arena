@@ -643,8 +643,8 @@ One global script; files are concatenated in order. Later "version modules" patc
   3 home — no hours, n.scouted once a week); League: season stakes (LP90: 120+5 fame / 80 / 50 / 25 / 10 / 10, paid once at week 12 via
   qsClose wrapper, w.lp90), next-prize line on League/Match Week/checklist, rival row → scouting card + ⚔ Challenge (w.chal76); pen fights
   start zoomed (S.zoomIn ×1.8). `186-v90board` HUNT90 (Tholo + lions, not aggro/tamed/lyred: closest living thing every Resolve, gladiator
-  before beast on ties, skip own kind (HUNT90.sameKind), Zora never prey, beast kills via hurtNPC byNpc, Tholo's hoard takes beast coin;
-  tools/huntsim.js), Crowd Favor tile disabled when nothing affordable (crowdCan90; 10 coin throw counts) or Commodus, SETTINGS.pots90
+  before beast on ties, skip own kind (HUNT90.sameKind — his call: lions never hunt each other), Zora never prey, Fresh +1 for every seat (his yes), beast kills via hurtNPC byNpc, Tholo's hoard takes beast coin;
+  tools/huntsim.js), Crowd Favor tile disabled when nothing affordable (crowdCan90; CF only — his call 2026-10-06, the 10-coin throw no longer counts) or Commodus, SETTINGS.pots90
   token-round Blessings (rtok blessing face, flips to the offering), SETTINGS.hsTurn90 hot-seat turning board (ROT89, 650 ms ease).
   `187-v90pn` Play Now: Options under the event card, no Rules-in-this-build / Presets, Begin Event (#goBtn) in the top bar, 🎲 Random
   event (event + city + class, Math.random, rolls only); Version history in tabs of ten (historyHTML replaced), entries v0.52+ trimmed.
