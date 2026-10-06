@@ -578,14 +578,14 @@ cityDraw=function(){const c2=CITY.c2;if(!c2||!CITY.TW)return;const W=CITY.W||CIT
       const svg=tok&&typeof figureSVG==='function'?cityFig89(tok):null;const im=svg?cityImg('fg'+(n.g?n.g.id:n.id),svg):null;
       figShadow89(c2,p.x,p.y,T,1);
       if(CITY.hover===n||n.reg&&n.reg.kin){c2.strokeStyle=CITY.hover===n?'#f0cf7d':'rgba(240,207,125,.45)';c2.lineWidth=2;c2.beginPath();c2.ellipse(p.x,p.y,T*0.32,T*0.13,0,0,Math.PI*2);c2.stroke()}
-      if(im)c2.drawImage(im,p.x-T*0.36,p.y-T*1.18,T*0.72,T*1.22);else drawTownsfolk(c2,p.x,p.y,T,n.look||{},{});
+      if(im)c2.drawImage(im,p.x-T*0.36,p.y-T*1.18,T*0.72,T*1.22);else if(!svg)drawTownsfolk(c2,p.x,p.y,T,n.look||{},{}); /* v0.91: while the lit figure decodes, only its shadow (no old larger stand-in) */
       n._x=p.x;n._y=p.y;if(n.say)say.push([n.say,p])}})}
   for(const a of CITY.anim89||[]){const [r,c]=glide89(a,now,520/spd);items.push({r0:r-0.2,r1:r+0.2,c0:c-0.2,c1:c+0.2,draw:()=>{const p=P89(r,c,0);animal89(c2,a,p.x,p.y,T,now)}})}
   {const P=CITY.player;const [r,c]=glide89(P,now,STEP89*1.05/spd);items.push({r0:r-0.3,r1:r+0.3,c0:c-0.3,c1:c+0.3,draw:()=>{const p=P89(r,c,0);
     const tok=P.fig=P.fig||(typeof specFig==='function'?{...specFig(P.look,{body:'robe',scale:1}),c2:'#e6b93a'}:null);
     figShadow89(c2,p.x,p.y,T,1.05);c2.strokeStyle='#f0cf7d';c2.lineWidth=2;c2.beginPath();c2.ellipse(p.x,p.y,T*0.34,T*0.14,0,0,Math.PI*2);c2.stroke();
     const svg=tok?cityFig89(tok):null;const im=svg?cityImg('me',svg):null;
-    if(im)c2.drawImage(im,p.x-T*0.37,p.y-T*1.22,T*0.74,T*1.26);else drawTownsfolk(c2,p.x,p.y,T*1.06,P.look,{ring:'#f0cf7d'});P._x=p.x;P._y=p.y}})}
+    if(im)c2.drawImage(im,p.x-T*0.37,p.y-T*1.22,T*0.74,T*1.26);else if(!svg)drawTownsfolk(c2,p.x,p.y,T*1.06,P.look,{ring:'#f0cf7d'});P._x=p.x;P._y=p.y}})}
   for(const it of sort89(items))it.draw();
   c2.drawImage(K.fg,0,0,W,H);
   /* labels: plaques over the landmarks, brighter on hover */
