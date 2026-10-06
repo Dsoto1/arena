@@ -185,17 +185,20 @@ function drawStands(){
   for(let si=0;si<8;si++){
     const s=SECTIONS[si];const q=secQuad(si);const P=q.map(([r,c])=>pt(r,c));
     // tiered benches: outer tiers higher (lighter), with a raised back wall
-    for(let t=0;t<3;t++){const d0=1.35+t*0.47,d1=d0+0.47;const Q=secQuad(si,d0,d1).map(([r,c])=>pt(r,c));
+    const tiers=typeof ar91Tiers==='function'?ar91Tiers():3; /* v0.91: grand arenas get a 4th tier (192-v91arena) */
+    for(let t=0;t<tiers;t++){const d0=1.35+t*0.47,d1=d0+0.47;const Q=secQuad(si,d0,d1).map(([r,c])=>pt(r,c));
       ctx.beginPath();Q.forEach((p,i)=>i?ctx.lineTo(p.x,p.y-t*TW*0.08):ctx.moveTo(p.x,p.y-t*TW*0.08));ctx.closePath();
       ctx.fillStyle=t%2?(THEME.standA||'#5b4130'):(THEME.standB||'#6d4f38');ctx.fill();if(typeof standsTex81==='function')standsTex81(t,si);ctx.strokeStyle='rgba(20,12,6,.55)';ctx.lineWidth=1;ctx.stroke()}
     // section color: the rulebook's colored seat marker in the middle of each stand
     const mid=secQuad(si,1.9,1.9);const m1=pt(...mid[0]),m2=pt(...mid[1]);const cx=(m1.x+m2.x)/2,cy=(m1.y+m2.y)/2-TW*0.08;
+    if(typeof ar91On==='function'&&ar91On())continue; /* v0.91: the arena look marks sections with a coloured top bench + tapestries instead (192-v91arena) */
     const col=secColor(si);ctx.fillStyle=col;ctx.globalAlpha=.85;ell(cx,cy,TW*0.24,TW*0.12);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle='#1a120c';ctx.lineWidth=1.2;ctx.stroke();
     ctx.fillStyle='rgba(245,232,204,.55)';ctx.font=`${Math.round(TW*0.2)}px IBM Plex Mono, monospace`;ctx.textAlign='center';ctx.textBaseline='middle';
     const far=secQuad(si,2.95,2.95);const f=pt(...far[s.half?1:0]);ctx.fillText('Q'+s.q,f.x,f.y);
     // an ambient crowd (not spectators in the rules sense) so the stands never look empty
     if(STANDS_DOTS)ctx.fillStyle='rgba(216,199,166,.26)';if(STANDS_DOTS)for(let k=0;k<9;k++){const p=seatPos(si,(k*5+si)%12);ell(p.x+((k*37+si*11)%7-3)*TW*0.04,p.y-TW*0.2-((k*13)%3)*TW*0.03,TW*0.055,TW*0.055);ctx.fill()}
   }
+  if(typeof ar91Deco==='function')ar91Deco(); /* v0.91: section borders + tapestries, under the spectators (192-v91arena) */
   // the spectators (the players of the rule): body in section color, face ringed by mood
   if(!S)return;
   const bySec={};

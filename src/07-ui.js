@@ -1525,11 +1525,12 @@ function draw() {
   // fit the arena (and the stands) to the window so the action dock below it stays in view
   const fitH = SETTINGS.fit === false ? 1e9 : typeof phoneLand === 'function' && phoneLand() ? innerHeight - 8 : Math.max(360, innerHeight - (typeof fitReserve === 'function' ? fitReserve() : 230)); // v0.66: a phone in landscape gives the arena the whole height
   const mob9 = innerWidth <= 700;
-  TW = Math.max(20, Math.floor(Math.min(Wd / (STANDS ? mob9 ? 14.2 : 16.4 : mob9 ? 12.4 : 13.8), fitH / (STANDS ? 10.9 : 9.5)))); /* v0.51: on a phone the arena fills the width; the outer benches may crop */
+  const V91 = typeof ar91View === 'function' ? ar91View(mob9) : null; /* v0.91: the arena look draws the board a little larger and lower (192-v91arena) */
+  TW = Math.max(20, Math.floor(Math.min(Wd / ((STANDS ? mob9 ? 14.2 : 16.4 : mob9 ? 12.4 : 13.8) / (V91 ? V91.kw : 1)), fitH / ((STANDS ? 10.9 : 9.5) / (V91 ? V91.kh : 1))))); /* v0.51: on a phone the arena fills the width; the outer benches may crop */
   TH = TW / 2;
   OX = Wd / 2;
-  OY = TW * (STANDS ? 2.3 : 1.9);
-  const Hd = Math.ceil(OY + N * TH + TW * (STANDS ? 2.1 : 1.1));
+  OY = TW * (STANDS ? 2.3 + (V91 ? V91.dy : 0) : 1.9);
+  const Hd = V91 ? V91.hd(OY, fitH) : Math.ceil(OY + N * TH + TW * (STANDS ? 2.1 : 1.1));
   {
     const z = typeof duelCam === 'function' ? duelCam() : 1;
     if (z > 1.001) {
@@ -1709,13 +1710,15 @@ function draw() {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = '#b39d80';
-  for (let r = 0; r < N; r++) {
-    const m = center(r, -0.9);
-    ctx.fillText(ROWL[r], m.x, m.y);
-  }
-  for (let c = 0; c < N; c++) {
-    const m = center(-0.9, c);
-    ctx.fillText(COLL[c], m.x, m.y);
+  if (!(typeof ar91On === 'function' && ar91On())) { /* v0.91: the arena look hangs the tile names on the walls as banners (192-v91arena) */
+    for (let r = 0; r < N; r++) {
+      const m = center(r, -0.9);
+      ctx.fillText(ROWL[r], m.x, m.y);
+    }
+    for (let c = 0; c < N; c++) {
+      const m = center(-0.9, c);
+      ctx.fillText(COLL[c], m.x, m.y);
+    }
   }
   const stA = typeof startTileAlpha === 'function' ? startTileAlpha() : 1; /* v0.57: the numbered start marks fade once the match begins */
   if (!isChariot() && !isNaum() && stA > 0) STARTS.slice(0, Math.max(4, S.players.length)).forEach(([r, c], i) => {
