@@ -1173,6 +1173,12 @@ share copy — the site download play/flavius-rule-arena.zip.)
   out.gone, toast "🔥 Used up in the bout … buy new in the Armory"); NAMED pieces still come back Broken (repair ⅓ of value). Custom: nothing.
 - **NO FLICKER (v0.91, 198-v91morph):** onlRedraw patches #onl in place with `morph91(root, html)` (kept nodes, details stay open, focused
   inputs untouched, canvases kept) instead of innerHTML. Other full-redraw screens (Manager MGR_REDRAW, Studio) can adopt morph91 the same way.
+- **v0.92 START (his picks 2026-10-06):** (1) PERFORMANCE PASS first — measured idle: ~54 setInterval sweeps (0.1–1 s) keep the page
+  restyling/repainting 25–45% busy while scripts are 1–3%; build ONE heartbeat (sweeps only after a change, ≤4/s), IDLE MODE after 2 min
+  without input (decorative motion off, sweeps 1/s, wake on input), CLEAN RETURN on visibility (one redraw, drop stale FX backlog, audio/net
+  check), a SOAK test (hours compressed: heap, nodes, draw cost). Tools: /tmp/claude-0/idle*.js measured with CDP Performance metrics.
+  (2) PLAY NOW SPECTATORS → a "🎟 The Stands" card beside the 4 seat cards (crowd size, personality fold, Play as a spectator — ticking it
+  turns every seat CPU, visibly). Then kits, one treasury, 2D armor extras.
 - **ONE TREASURY (his picks 2026-10-06, v0.92 — replaces gladiator purses):** no purse, no banking; every survival award 100% to the house
   treasury (the 20% cut goes; the ledger still shows earnings per gladiator); today's purses move into their house treasury once (ledger line).
   Before a match the lanista sends 0–10 coin from the treasury ON TOP of the class's starting coin (3 + 10 = 13 → at most one L3 item); a survivor
