@@ -8,13 +8,16 @@ const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 /* a: the tray, every kind added */
 o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(null);await W8(100)}menuHide();ST.gearSub='a';ST.ca=blankCA();openStudio('gear');await W8(900);
   const d=ST.ca;d.name='Tv92 Spiked Cuirass';d.shape='muscle';const s=document.querySelector('[data-caeq2]');s.value='chest';s.dispatchEvent(new Event('change',{bubbles:true}));await W8(400);
-  const r={tray:!!document.querySelector('#x92Tray'),btns:document.querySelectorAll('[data-x92add]').length};
+  const chest={btns:document.querySelectorAll('[data-x92add]').length,arm:!!document.querySelector('[data-x92add="manica"],[data-x92add="galerus"]')};
+  /* v0.92: neck guard + Manica plates are arm-only — the rest of the test uses an upper-arm piece */
+  {const s2=document.querySelector('[data-caeq2]');s2.value='sho';s2.dispatchEvent(new Event('change',{bubbles:true}));await W8(400)}
+  const r={chest,tray:!!document.querySelector('#x92Tray'),btns:document.querySelectorAll('[data-x92add]').length};
   for(const k of Object.keys(X92_K)){document.querySelector(`[data-x92add="${k}"]`).click();await W8(60)}
   r.n=(ST.ca.x92||[]).length;r.kinds=[...new Set(ST.ca.x92.map(x=>x.k))].length;
   r.drawn=document.querySelectorAll('#x92Prev .x92e').length;r.inPiece=document.querySelectorAll('#caPiece .x92e').length;r.inMock=document.querySelectorAll('#caAv .x92e').length;
   ST.x92sel=1;x92Refresh(true);await W8(100); /* the Manica plates */
   r.x0=ST.ca.x92[1].x;r.y0=ST.ca.x92[1].y;return r});
-ok(o.a.tray,'a tray shown');ok(o.a.btns===11,'a eleven kinds');ok(o.a.n===11&&o.a.kinds===11,'a every kind added');ok(o.a.drawn===11,'a drawn in the tray');ok(o.a.inPiece===11,'a drawn in the piece preview');ok(o.a.inMock===11,'a drawn on the mock-up');
+ok(o.a.chest&&o.a.chest.btns===9&&!o.a.chest.arm,'a chest piece: no arm-only extras '+JSON.stringify(o.a.chest));ok(o.a.tray,'a tray shown');ok(o.a.btns===11,'a eleven kinds');ok(o.a.n===11&&o.a.kinds===11,'a every kind added');ok(o.a.drawn===11,'a drawn in the tray');ok(o.a.inPiece===11,'a drawn in the piece preview');ok(o.a.inMock===11,'a drawn on the mock-up');
 /* b: drag the selected extra on the tray preview */
 await pg.evaluate(()=>{document.querySelector('#x92Prev').scrollIntoView({block:'center'})});await pg.waitForTimeout(200);
 const bb=await pg.evaluate(()=>{const ring=[...document.querySelectorAll('#x92Prev [data-x92i="1"]')][0];const r=ring.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2,pw:document.querySelector('#x92Prev svg').getBoundingClientRect().width}});

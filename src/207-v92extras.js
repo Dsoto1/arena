@@ -18,8 +18,8 @@ const X92_MAX=12;
 const X92_INK='#20160d';
 /* the kinds: label, default colour, default spot in the piece box, default size, styles */
 const X92_K={
-  galerus:{n:_T('Neck guard'),c:'#b8925a',x:50,y:18,s:70},
-  manica:{n:_T('Manica plates'),c:'#a9aeb5',x:50,y:52,s:100},
+  galerus:{n:_T('Neck guard'),c:'#b8925a',x:50,y:18,s:70,at:['sho']},
+  manica:{n:_T('Manica plates'),c:'#a9aeb5',x:50,y:52,s:100,at:['sho','fore']},
   studs:{n:_T('Studs'),c:'#d8c27a',x:50,y:34,s:100},
   spikes:{n:_T('Spikes'),c:'#c9d0d6',x:50,y:26,s:90},
   fur:{n:_T('Fur trim'),c:'#8a6a44',x:50,y:72,s:100},
@@ -107,9 +107,11 @@ function x92CtlHTML(d){const L=d.x92||[];const i=x92Sel();const e=i!=null?x92Cle
     ctl=`<div class="x92sel"><b>${esc(K.n)}</b>${vs}${sl('s',_T('Size'),20,250)}${sl('r',_T('Turn'),-180,180)}${e.v==='flag'?'':`<label class="rc-sub x92col">${_T`Colour`}<input type="color" data-x92f="c" value="${e.c}"></label>`}<button type="button" class="btn tksm" data-x92del="${i}">${_T`✕ Remove`}</button></div>`}
   else ctl=`<div class="rc-sub x92hint">${L.length?_T('Click an extra on the piece or in the list to change it.'):_T('Click an extra above to add it to the piece.')}</div>`;
   return `<div class="x92list">${chips}</div>${ctl}`}
+/* v0.92 (his note): arm-only extras (neck guard, Manica plates) are offered only on an arm piece (upper arm / lower arm) */
+function x92Fits(k,d){const at=X92_K[k]&&X92_K[k].at;return !at||at.includes(d&&d.eq)}
 function x92TrayHTML(d){const n=(d.x92||[]).length;
   return `<div class="x92" id="x92Tray"><div class="sect" style="margin:4px 0">${_T`Extras`} <span class="rc-sub">${_T`cosmetic only · no AP · click to add, drag on the piece to move, the wheel sizes it (Shift turns it)`}</span> <b class="x92n">${n}/${X92_MAX}</b></div>
-    <div class="x92add">${Object.keys(X92_K).map(k=>`<button type="button" class="btn tksm x92addb" data-x92add="${k}" ${n>=X92_MAX?'disabled':''}>${x92AddIcon(k)}<span>${esc(X92_K[k].n)}</span></button>`).join('')}</div>
+    <div class="x92add">${Object.keys(X92_K).filter(k=>x92Fits(k,d)).map(k=>`<button type="button" class="btn tksm x92addb" data-x92add="${k}" ${n>=X92_MAX?'disabled':''}>${x92AddIcon(k)}<span>${esc(X92_K[k].n)}</span></button>`).join('')}</div>
     <div class="x92body"><div class="x92prev scart" id="x92Prev">${x92PrevSVG(d)}</div><div class="x92ctl" id="x92Ctl">${x92CtlHTML(d)}</div></div></div>`}
 {const base=gearAHTML;gearAHTML=function(){let h=base.apply(this,arguments);try{const d=ST.ca;if(!d)return h;if(x92Sel()==null)ST.x92sel=null;
   const t=x92TrayHTML(d);let i=h.indexOf('<div class="calevels"');if(i<0)i=h.indexOf('<div style="grid-column:1/-1" class="rc-sub crnote">');
@@ -118,7 +120,7 @@ function x92TrayHTML(d){const n=(d.x92||[]).length;
 function x92Refresh(ctl){const d=ST.ca;if(!d)return;const pv=document.getElementById('x92Prev');if(pv)pv.innerHTML=x92PrevSVG(d);
   if(ctl){const c=document.getElementById('x92Ctl');if(c)c.innerHTML=x92CtlHTML(d);const n=(d.x92||[]).length;const nb=document.querySelector('#x92Tray .x92n');if(nb)nb.textContent=n+'/'+X92_MAX;document.querySelectorAll('[data-x92add]').forEach(b=>b.disabled=n>=X92_MAX)}
   try{caPrevRefresh()}catch(e){}}
-function x92Add(k){const d=ST.ca;const K=X92_K[k];if(!d||!K)return;d.x92=Array.isArray(d.x92)?d.x92:[];if(d.x92.length>=X92_MAX){mToast(_T`A piece holds up to ${X92_MAX} extras.`);return}
+function x92Add(k){const d=ST.ca;const K=X92_K[k];if(!d||!K||!x92Fits(k,d))return;d.x92=Array.isArray(d.x92)?d.x92:[];if(d.x92.length>=X92_MAX){mToast(_T`A piece holds up to ${X92_MAX} extras.`);return}
   const same=d.x92.filter(x=>x.k===k).length;const e={k,x:K.x+same*6,y:K.y+same*6,s:K.s,r:0,c:K.c};
   if(K.v)e.v=K.v[0][0];
   if(k==='emblem'){const fl=x92Flags()[0];if(fl){e.v='flag';e.f={bg:fl[2].bg,fg:fl[2].fg,txt:fl[2].txt,shape:fl[2].shape};if(fl[0].startsWith('fl:'))e.fid=fl[0].slice(3)}}
