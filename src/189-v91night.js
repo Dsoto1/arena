@@ -142,7 +142,7 @@ function night91Rim(fn,self,args,k){if(!night91On()||(typeof lite84On==='functio
 {const base=drawPlayer;drawPlayer=function(){return night91Rim(base,this,arguments,0.85)}}
 {const base=drawNPC;drawNPC=function(){return night91Rim(base,this,arguments,0.7)}}
 /* the flames flicker: a light redraw only while a night event shows and nothing else is animating the board */
-setInterval(()=>{try{if(HEADLESS||document.hidden||!night91On()||!night91Flick())return;
+setInterval(()=>{try{if(HEADLESS||document.hidden||(typeof PERF92!=='undefined'&&PERF92.idle)||!night91On()||!night91Flick())return;
   const mm=document.getElementById('mainMenu');if(mm&&!mm.hidden)return;if(typeof CITY!=='undefined'&&CITY&&CITY.open)return;
   if(typeof cv==='undefined'||!cv||!cv.offsetParent)return;
   if(typeof fxRAF!=='undefined'&&fxRAF)return;if(typeof ANIM_RAF!=='undefined'&&ANIM_RAF)return;if(typeof LIFE84_RAF!=='undefined'&&LIFE84_RAF)return;

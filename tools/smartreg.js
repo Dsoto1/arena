@@ -53,7 +53,7 @@ const hash = f => { try { return crypto.createHash('sha1').update(fs.readFileSyn
 /* the test list and the src order both come from their one source of truth: runreg.sh's DEFAULT and build.sh */
 const runreg = fs.readFileSync(path.join(__dirname, 'runreg.sh'), 'utf8');
 const ALL = [...new Set(runreg.match(/DEFAULT="([^"]+)"/)[1].trim().split(/\s+/))];
-const ORDER = fs.readFileSync(path.join(ROOT, 'build.sh'), 'utf8').match(/cat (src\/00-lang\.js[^;]+);/)[1].trim().split(/\s+/);
+const ORDER = fs.readFileSync(path.join(ROOT, 'build.sh'), 'utf8').match(/cat (src\/00[-b][^ ]*\.js[^;]+);/)[1].trim().split(/\s+/);
 /* the built script, parsed: every function's text hash by start offset, and each src file's top-level "shape" (its text with
    every function cut out) — the script is "\n" followed by the src files in build order, so offsets map back to files */
 const ts = require('typescript');
