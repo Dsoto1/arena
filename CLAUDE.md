@@ -1146,6 +1146,15 @@ share copy — the site download play/flavius-rule-arena.zip.)
   modelled once, custom from base shapes + EXTRAS (his idea: spikes, fur, studs/rivets, neck guard on the upper arm…). Rendered to the 8
   MINI_YAW facings and cached; pose + parts stored small (online look ≤3 KB). LATER: Event Designer AS THE ARENA VIEW — the board in the
   middle, the avatar/side area = a drag-and-drop palette of everything placeable, the log area = designer tools.
+- **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
+  The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
+  emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
+  token gear. Timing (my call, he left it to me): v0.92 = the 2D designer extras + the 3D body/rig groundwork; v0.93 = the token modeller
+  (poses, printed gear in 3D, extras on 3D); then the Event Designer as the arena view.
+- **ONLINE SERVER VERSION (v0.91, 196-v91srv):** hello.build from server/src/build.json (tools/srvstamp.js, run by release.sh; only re-stamps when
+  the server code hash changes) + SRV_EXPECT91 in the page (generated 195-v91srvexp.js) → chip bottom-left of Online screens (ok / ⚠ older /
+  practice); "Unknown request" → "the server is older than this page". Found 2026-10-06: the live AWS server lacked the v0.89 Domus routes
+  (domus.look) — re-sent as flavius-server-16 (= the v0.89 release tree; he deploys with `bash flavius.sh server flavius-server-16.zip`).
 - **RUBBLE IS WALKABLE (his note 2026-10-06, built in 194):** low stump ring, flat drums, pieces off the tile middle, hover "Rubble — walkable".
 - **v0.90 QUEUED (his yes 2026-10-05): HOT-SEAT TURNING BOARD** — a setting (Settings → On the board, OFF by default): with 2+ humans
   on one screen, the board turns to the active human's corner at the start of each human's turn (short eased spin; Reduce motion / Off

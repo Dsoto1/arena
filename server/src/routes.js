@@ -1100,6 +1100,10 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       if(X&&X.vault89&&!X.bid){await store.del('CHEST','P#'+C.itemUid(X.item));const uq=X.pc&&X.pc.w&&X.pc.w.uq;
         if(uq){const U=(C.isNamedA(X.item)?'UNIQA#':'UNIQ#')+uq;const Y=await store.get('WORLD',U);if(Y&&Y.vault89)await store.del('WORLD',U)}r.to='vault'}}}catch(e){}return r}}
   /* ══════════ end of v0.89 N ══════════ */
+  /* v0.91 THE SERVER'S VERSION (his ask 2026-10-06): hello carries build = server/src/build.json {v, hash} (written by tools/srvstamp.js
+     when the server code changes) — the Online screens show it and warn when the page expects another server. */
+  {let B=null;try{B=require('./build.json')}catch(e){B=null}
+   const base=R['hello'];R['hello']=async(d,ctx)=>{const o=await base(d,ctx);try{if(o&&B)o.build={v:String(B.v||''),hash:String(B.hash||'')}}catch(e){}return o}}
   const route=async function(t,d,ctx){const f=R[t];if(!f)throw new Error('Unknown request: '+t);
     /* v0.82 guests look, never act — for 2 hours from their first connect */
     if(!ctx.acct&&ctx.guest){if(now()-(ctx.guest.first||0)>C.GUEST_MS)throw fail('guest_expired','Your two hours as a guest are up — sign in to keep watching.');
