@@ -548,7 +548,7 @@ async function spectatorsAct(){
 /* spectStone — a spectator's stone: 1 hit die, 1 damage to a rolled location; a stone that finishes a gladiator collects all their CF. */
 async function spectStone(spect,target){
   S.stonesThrown=(S.stonesThrown||0)+1;
-  const h=rollHits(1);const cfBefore=target.cf;emote(spect,'🪨',pickOne(SHOUTS.angry));const who=spect.human?_T('You hurl'):`${esc(spect.name)} (${SECTIONS[spect.sec].n}) hurls`;
+  const h=rollHits(1);const cfBefore=target.cf;emote(spect,'🪨',pickOne(SHOUTS.angry));const who=spect.human?_T('You hurl'):_T`${esc(spect.name)} (${SECTIONS[spect.sec].n}) hurls`;
   if(h[0]){await hurt(target,rollLoc(target),1,{type:'env',spect:spect},_T`${who} a stone at ${target.name} ${diceHtml(h)}`);slog(_T`<b>${esc(spect.name)}</b> pays ${cfAmt87(2)} and hits ${esc(target.name)} with a stone.`);
     if(!target.alive){spect.cf+=Math.max(0,cfBefore);log(_T`${spect.human?_T('Your'):esc(spect.name)+"'s"} stone finishes ${nm(target)}. ${spect.human?_T('You collect'):_T('The spectator collects')} all ${Math.max(0,cfBefore)} of their Crowd Favor.`,'big');slog(_T`<b>${esc(spect.name)}</b>'s stone finishes ${esc(target.name)} — they collect all ${Math.max(0,cfBefore)} of their CF.`,'big')}}
   else{log(_T`${who} a stone at ${nm(target)} ${diceHtml(h)} and misses.`);slog(_T`<b>${esc(spect.name)}</b> hurls a stone at ${esc(target.name)} and misses.`)}

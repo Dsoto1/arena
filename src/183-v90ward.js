@@ -100,7 +100,7 @@ function hp90(g){let bonus={};try{const b=boostFor(g);if(b&&b.hp&&typeof b.hp===
     loc[l]={base,bonus:bn,cur:v};cur+=v}
   return {loc,cur,def,wl}}
 function hpBar90(g){const H=hp90(g);
-  return `<div class="iv90bar iv90hp" title="${_T`Health by location — default head 5, chest 6, limbs 5; care can raise any location to 7`}"><div class="iv90bl"><b>❤ HP</b><span>${H.cur} / ${H.def}</span></div><div class="iv90seg">${HP_ORDER90.map(l=>{const x=H.loc[l];const sev=(g.severed||[]).includes(l);
+  return `<div class="iv90bar iv90hp" title="${_T`Health by location — default head 5, chest 6, limbs 5; care can raise any location to 7`}"><div class="iv90bl">${_T`<b>❤ HP</b><span>${H.cur} / ${H.def}</span>`}</div><div class="iv90seg">${HP_ORDER90.map(l=>{const x=H.loc[l];const sev=(g.severed||[]).includes(l);
     return `<span class="sg90${sev?' sev':''}${l===H.wl?' wd':''}" title="${esc(LOCN[l])} ${x.cur}/${x.base}${x.bonus?` (+${x.bonus})`:''}"><i style="width:${(x.cur-x.bonus)/7*100}%"></i>${x.bonus?`<u style="left:${(x.cur-x.bonus)/7*100}%;width:${x.bonus/7*100}%"></u>`:''}<em style="left:${x.base/7*100}%"></em></span>`}).join('')}</div>
     <div class="iv90lab">${HP_ORDER90.map(l=>`<span>${HP_SHORT90()[l]}</span>`).join('')}</div></div>`}
 function ftBar90(g){const f=gFat(g);const b=fatBand90(f);
