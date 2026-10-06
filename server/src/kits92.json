@@ -1,0 +1,47 @@
+{
+ "soldier": [
+  "centurion",
+  "balteus",
+  "wraps",
+  "legwrapsU"
+ ],
+ "royalty": [
+  "cassis",
+  "ornate",
+  "wraps"
+ ],
+ "hero": [
+  "thrachelm",
+  "provmanica",
+  "wraps",
+  "legwraps"
+ ],
+ "slave": [
+  "galea",
+  "manica",
+  "wraps",
+  "legwraps"
+ ],
+ "veteranus": [
+  "flavhelm",
+  "musculata",
+  "wraps",
+  "legwraps"
+ ],
+ "amazonia": [
+  "amazon",
+  "cestus",
+  "greaves",
+  "legwraps"
+ ],
+ "venatore": [
+  "steelhelm",
+  "balteus1",
+  "wraps",
+  "legwraps"
+ ],
+ "damnatio": [
+  "wraps",
+  "legwraps"
+ ]
+}

@@ -1015,4 +1015,84 @@ const ONLC=(function(){
   const lotKind91=(item)=>C.isNamedA(item)?'a':'w';
   const lotRar91=pc=>(pc&&(pc.rar||(pc.w&&pc.w.rar)))||'common';
   Object.assign(C,{isDamaged91,needsRepair91,damageItem91,dmgStrip91,AUC_MIN_A91,AUC_MIN_W91,uniqLeft91,aucPlan91,lotKind91,lotRar91})})(ONLC);
+/* ══════════ v0.92 ONE TREASURY + ONLINE KITS (his picks 2026-10-06; the page side is 206-v92econ, the server routes.js "v0.92") ══════════
+   • ONE TREASURY: gladiators keep no purse. Every survival award goes WHOLE to the house treasury (applyResult: out.cut = out.award, out.pay 0;
+     the ledger keeps the earnings by gladiator under 'cut'); a purse left over from before (ch.wallet) moves into the treasury (the server's
+     purse sweep, ledger 'purse' — "Purses moved to the treasury"). Every buy, ticket, wager, bid, repair and kit is paid by the treasury.
+   • COIN SENT INTO A MATCH: before the horns a seated lanista sends 0–SEND_MAX92 coin (seat.send92, sendWhy92), on top of the class's starting
+     coin; reserved from the treasury at the horns (seat.sent92, ledger out 'sent'). A survivor brings home his leftover coin up to what was sent
+     (sendBack92 → ledger in 'back'); the dead (and those who abandon) lose it; a void / called-off match gives it all back.
+   • KITS (market.kit): a CLASS KIT (the printed class's armor: classKits92, built from the game's class data — tools/mkserver.js writes
+     server/src/kits92.json), the budget tiers KIT_TIERS92 (Scrap · Recruit · Champion), a RESTOCK of a saved loadout (what a bout used up), each
+     planned by kitPlan92: pieces he holds (or the house shelf holds) are skipped — shelf pieces are moved onto him — and the rest is bought at its
+     own price less KIT_DISC92 × the share of the kit bought. The FREE DAILY KIT (DAILY92, once an online day a house: D.kitDay92; only for points he leaves bare) is ISSUED
+     (pc.iss): worth 0, never sold, never repaired, never looted — lost, used up or dented in a Ranked bout, it simply vanishes. */
+(function(C){
+  const SEND_MAX92=10, KIT_DISC92=0.15; /* TWEAK: coin a lanista may send into a match; the bundle discount for a whole kit */
+  const KIT_TIERS92={scrap:['wraps','legwraps'],recruit:['galea','pectorale','balteus1','wraps','legwraps'],champ:['murmillo','lorica','balteus','provmanica','bracers','femoralia','ocrea']}; /* TWEAK */
+  const KIT_KEYS92=['cls','scrap','recruit','champ'];
+  const DAILY92=['galea','wraps','legwraps']; /* TWEAK: the free daily kit (Issued) */
+  /* the printed classes' armor as kits (a pair piece once) — the shared default; the page builds it from CLASSES (onlKits92), the server reads kits92.json */
+  const CLASS_KITS92={soldier:['centurion','balteus','wraps','legwrapsU'],royalty:['cassis','ornate','wraps'],hero:['thrachelm','provmanica','wraps','legwraps'],slave:['galea','manica','wraps','legwraps'],
+    veteranus:['flavhelm','musculata','wraps','legwraps'],amazonia:['amazon','cestus','greaves','legwraps'],venatore:['steelhelm','balteus1','wraps','legwraps'],damnatio:['wraps','legwraps']};
+  let KITS=null;const setKits92=t=>{KITS=t&&typeof t==='object'?t:null};
+  const classKits92=()=>KITS||(typeof onlKits92==='function'?onlKits92():null)||CLASS_KITS92;
+  /* a class's armor list [[key, loc], …] → the kit (a pair piece listed on both sides counts once) */
+  function kitFromArmor92(armor,catalog){const n={},order=[];for(const [k] of armor||[]){if(!catalog||!catalog[k]||catalog[k].kind!=='a')continue;if(!(k in n))order.push(k);n[k]=(n[k]|0)+1}
+    const out=[];for(const k of order){const c=catalog[k].pair?Math.ceil(n[k]/2):n[k];for(let i=0;i<c;i++)out.push(k)}return out}
+  for(const k of ['purse','wager','back'])if(!C.LED_IN89.includes(k))C.LED_IN89.push(k);
+  for(const k of ['sent','bet','off','auc','kit'])if(!C.LED_OUT89.includes(k))C.LED_OUT89.push(k);
+  /* ── the award goes whole to the house ── */
+  {const base=C.applyResult;C.applyResult=function(ch,row,ranked,x){const w0=ch?ch.wallet|0:0;const out=base.apply(this,arguments);if(ch)ch.wallet=w0;
+    out.cut=out.award|0;out.pay=0;out.earn92=out.award|0;return out}}
+  /* gifts: coin → the house (D) when it is given; otherwise the server's purse sweep moves it */
+  {const base=C.applyGift;C.applyGift=function(ch,D,rw,P){if(D&&rw&&rw.k==='coin'){D.treasury=(D.treasury|0)+(rw.v|0);C.ledAdd(D,'gift',rw.v|0);return {to:'house'}}return base.apply(this,arguments)}}
+  /* the guest pass: for thin TREASURIES now (the number passed in is the treasury) */
+  {const base=C.passOK;C.passOK=function(L,who,T,lastDay,day){const w=base.apply(this,arguments);return /thin purses/.test(w)?`The guest pass is for thin treasuries — under ${C.PASS.wallet} coin.`:w}}
+  {const base=C.betOK;C.betOK=function(){const w=base.apply(this,arguments);return w==='Not enough in the wallet.'?'Not enough in the treasury.':w}}
+  /* ── coin sent into a match ── */
+  function sendWhy92(n,T){if(!Number.isInteger(n)||n<0||n>SEND_MAX92)return `Send 0–${SEND_MAX92} coin.`;if(n>(T|0))return `The treasury holds only ${T|0} coin.`;return ''}
+  /* what a seat brings home: his leftover coin (row.coin) up to what was sent; nothing for the dead or one who abandoned */
+  const sendBack92=(sent,row,out)=>!row||!out||out.died||out.abandoned?0:Math.max(0,Math.min(sent|0,row.coin|0));
+  /* ── ISSUED pieces (the free daily kit): worth nothing, never repaired, never looted ── */
+  const isIssued92=(h,it)=>{const p=C.pcOf(h,it);return !!(p&&p.iss)};
+  for(const f of ['pieceInfo','pieceOf']){const base=C[f];C[f]=function(){const I=base.apply(this,arguments);try{if(I&&!I.named){const pc=f==='pieceInfo'?(arguments[0]&&arguments[0].pc):C.pcOf(arguments[0],arguments[1]);if(pc&&pc.iss){I.iss=1;I.val=0}}}catch(e){}return I}}
+  /* after a bout: an issued piece the dead carried vanishes (no loot, no market); a dented one vanishes too (it cannot be repaired); a used-up one is gone as any printed piece */
+  {const base=C.gearAfter;C.gearAfter=function(ch,kit,row,ranked){const out=base.apply(this,arguments);out.vanish=[];
+    try{if(out.carried&&out.carried.length)out.carried=out.carried.filter(P=>{if(P&&P.pc&&P.pc.iss){out.vanish.push(C.itemBase(P.item));return false}return true});
+      if(Array.isArray(out.dmg)&&out.dmg.length)out.dmg=out.dmg.filter(x=>{if(!isIssued92(ch,x.item))return true;C.takePiece(ch,x.item);out.vanish.push(C.itemBase(x.item));(out.gone=out.gone||[]).push(C.itemBase(x.item));return false})}catch(e){}
+    return out}}
+  /* ── KITS ── */
+  const priceL=(list,catalog)=>(list||[]).reduce((a,k)=>a+(catalog[k]?C.priceOf(catalog[k]):0),0);
+  /* the piece list of a kit: 'cls' (the gladiator's class), a tier key, 'daily' */
+  function kitList92(k,cls){if(k==='cls')return (classKits92()[cls]||[]).slice();if(KIT_TIERS92[k])return KIT_TIERS92[k].slice();if(k==='daily')return DAILY92.slice();return null}
+  /* the plan for list on gladiator ch with the house shelf D: have (held items), take (shelf items to move onto him), buy (bases), and the price:
+     full = the whole kit at catalog prices, part = what is bought, disc = round(part × KIT_DISC92 × part/full), cost = part − disc (o.free: 0) */
+  function kitPlan92(ch,D,list,catalog,o){o=o||{};const ok=(h,it)=>!C.isNamed(it)&&!C.isBroken(h,it)&&!!catalog[C.itemBase(it)];
+    const mine=((ch&&ch.gear)||[]).filter(it=>ok(ch,it)),shelf=((D&&D.gear)||[]).filter(it=>ok(D,it));const have=[],take=[],buy=[];
+    /* o.fill (the free daily kit): only pieces for points he leaves bare — it never pushes off what he wears */
+    const worn=o.fill&&ch?C.equipOf(ch):[];const cover=[];
+    for(const b of list||[]){if(!catalog[b])continue;let i=mine.findIndex(it=>C.itemBase(it)===b);if(i>=0){have.push(mine.splice(i,1)[0]);continue}
+      if(o.fill&&C.armFit(ch,[...worn,...buy,b],catalog).pop()===false){cover.push(b);continue}
+      i=shelf.findIndex(it=>C.itemBase(it)===b);if(i>=0&&!o.fill){take.push(shelf.splice(i,1)[0]);continue}buy.push(b)}
+    const full=priceL((list||[]).filter(b=>catalog[b]),catalog),part=priceL(buy,catalog);const share=full?part/full:0;
+    const disc=o.free?part:Math.round(part*KIT_DISC92*share);return {have,take,buy,cover,full,part,disc,cost:part-disc,share:Math.round(share*100)/100}}
+  /* a saved loadout's printed pieces as a list of bases (named ones cannot be bought again) */
+  const restockList92=K=>((K&&K.items)||[]).filter(it=>!C.isNamed(it)).map(C.itemBase);
+  /* the new pieces of a kit (issued ones get their own id + the mark) */
+  function kitPieces92(h,buy,issued){return (buy||[]).map(b=>issued?{item:b+'#'+C.newUid(h),pc:{st:'whole',iss:1}}:{item:b,pc:null})}
+  /* what he wears after a kit: the kit's pieces first (they win a point), then what he wore before */
+  function kitEquip92(ch,plan,news){const first=[...plan.have,...plan.take,...(news||[]).map(P=>P.item)];const rest=(Array.isArray(ch.equip)?ch.equip:C.equipOf0(ch)).filter(it=>!first.includes(it));return first.concat(rest)}
+  /* a restocked loadout points at the pieces he holds now: a lost id is replaced by a held piece of the same base (pool = the kit's pieces) */
+  function kitRemap92(ch,ki,pool){const K=Array.isArray(ch.kits89)?ch.kits89[ki]:null;if(!K)return ch;const used=new Set();const items=[];
+    for(const it of K.items||[]){if((ch.gear||[]).includes(it)&&!used.has(it)){used.add(it);items.push(it);continue}if(C.isNamed(it))continue;
+      const j=(pool||[]).findIndex(y=>!used.has(y)&&(ch.gear||[]).includes(y)&&C.itemBase(y)===C.itemBase(it));if(j>=0){used.add(pool[j]);items.push(pool[j])}}
+    ch.kits89=ch.kits89.map((x,j)=>j===ki?{...x,items}:x);return ch}
+  /* '' or why this kit cannot be had now (T = the treasury, day = the online day) */
+  function kitWhy92(k,plan,D,T,day){if(k==='daily'){if(D&&D.kitDay92===day)return 'One free kit a day for each house — come back tomorrow.';if(!plan.buy.length)return 'He already has all of it.';return ''}
+    if(!plan.buy.length&&!plan.take.length)return 'He already has all of it.';if(plan.cost>(T|0))return `The treasury needs ${plan.cost} coin.`;return ''}
+  /* the house row carries the daily kit's day; a visitor never sees it */
+  {const base=C.domusRow;C.domusRow=function(D){const r=base.apply(this,arguments);if(r&&D){if(D.kitDay92)r.kitDay92=D.kitDay92;if(D.purse92)r.purse92=D.purse92}return r}}
+  {const base=C.domusPub89;if(base)C.domusPub89=function(D){const r=base.apply(this,arguments);if(r){delete r.kitDay92;delete r.purse92}return r}}
+  Object.assign(C,{SEND_MAX92,KIT_DISC92,KIT_TIERS92,KIT_KEYS92,DAILY92,CLASS_KITS92,setKits92,classKits92,kitFromArmor92,sendWhy92,sendBack92,isIssued92,kitList92,kitPlan92,restockList92,kitPieces92,kitEquip92,kitRemap92,kitWhy92})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

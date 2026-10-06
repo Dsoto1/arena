@@ -76,7 +76,7 @@ async function routes(){
     await cl.req('auth.signin',{name:name.toUpperCase()+' Account'});cl.domus=(await cl.req('domus.create',{name:'Domus '+name})).domus;
     cl.ch=await cl.req('char.create',{name:name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});return cl}
   const getC=id=>db.get('CHAR#'+id,'CHAR');const setC=async(id,f)=>{const c=await getC(id);Object.assign(c,f);await db.put('CHAR#'+id,'CHAR',c)};
-  const getD=id=>db.get('DOMUS#'+id,'DOMUS');
+  const getD=id=>db.get('DOMUS#'+id,'DOMUS');const treC=async x=>((await getD(x.domus.id))||{}).treasury|0; /* v0.92 one treasury */
   {const r=await h({requestContext:{routeKey:'$connect',connectionId:'old'},queryStringParameters:{dev:'x',ver:'6'}});assert.strictEqual(r.statusCode,426,'protocol 6 clients reload')}
   /* a bout between two clients: start, then both report the same table (rows by seat) */
   async function bout(a,b,o){const L0=await a.req('lobby.create',{ev:o.ev,loc:o.loc,ranked:!!o.ranked,cry:false});await b.req('lobby.join',{id:L0.id});const L=await a.req('lobby.start',{id:L0.id});
@@ -148,21 +148,21 @@ async function routes(){
   let al=await eve.req('auction.list',{});assert.strictEqual(al.lots.length,C.AUC_LOTS,'six lots a week (v0.91)');assert.ok(al.lots.every(l=>l.w&&l.hist.length&&l.min===Math.ceil(l.val/2)),'full cards, owner history, half the value');
   assert.strictEqual((await db.query('CHEST','P#')).length,1,'the rest stays in the chest');assert.ok(al.lots[0].ends>=T+C.AUC_MIN_MS-100);
   const [L1,L2,L3]=al.lots;await setC(gus.ch.id,{glory:600});await rejects(dan.req('auction.bid',{lot:L1.id,amt:L1.min}),'auc_rank');await rejects(eve.req('auction.bid',{lot:L1.id,amt:L1.min-1}),'auc_low');
-  let b1=await eve.req('auction.bid',{lot:L1.id,amt:L1.min});assert.strictEqual(b1.char.wallet,20000-L1.min,'escrow');assert.ok(b1.lot.bid.mine);
+  let b1=await eve.req('auction.bid',{lot:L1.id,amt:L1.min});assert.strictEqual(await treC(eve),20000-L1.min,'escrow from the treasury (v0.92: the purse moved in)');assert.ok(b1.lot.bid.mine);
   await rejects(eve.req('auction.bid',{lot:L2.id,amt:L2.min}),'auc_lead');
   await rejects(fay.req('auction.bid',{lot:L1.id,amt:L1.min+1}),'auc_low');m0=mark();const next=C.aucNextMin({bid:{amt:L1.min}});await fay.req('auction.bid',{lot:L1.id,amt:next});
-  assert.strictEqual((await getC(eve.ch.id)).wallet,20000,'the outbid coin is back at once');assert.strictEqual(eve.got('auction.outbid',m0)[0].amt,L1.min);
+  assert.strictEqual(await treC(eve),20000,'the outbid coin is back at once');assert.strictEqual(eve.got('auction.outbid',m0)[0].amt,L1.min);
   b1=await eve.req('auction.bid',{lot:L2.id,amt:L2.min});assert.ok(b1.lot.mine,'free to lead another lot after being outbid');
   /* anti-snipe: Gus outbids Eve in the last minute */
   const X2=await db.get('AUCTION#'+C.seasonAt(T).key,'L#000002');T=X2.ends-60e3;const gb=C.aucNextMin({bid:{amt:L2.min}});const b3=await gus.req('auction.bid',{lot:L2.id,amt:gb});
-  assert.strictEqual(b3.lot.ends,T+C.AUC_SNIPE_MS,'a late bid adds five minutes');assert.strictEqual((await getC(eve.ch.id)).wallet,20000);
+  assert.strictEqual(b3.lot.ends,T+C.AUC_SNIPE_MS,'a late bid adds five minutes');assert.strictEqual(await treC(eve),20000);
   /* the hammer: one sweep settles; each winner gets the piece with a history line, the coin leaves the game; the unsold go back to the chest */
-  T=b3.lot.ends+1000;const w0=[(await getC(fay.ch.id)).wallet,(await getC(gus.ch.id)).wallet];m0=mark();al=await fay.req('auction.list',{});
+  T=b3.lot.ends+1000;const w0=[await treC(fay),await treC(gus)];m0=mark();al=await fay.req('auction.list',{});
   const sold=al.lots.concat(al.past).filter(l=>l.done);const S1=sold.find(l=>l.id===L1.id),S2=sold.find(l=>l.id===L2.id),S3=sold.find(l=>l.id===L3.id);
   assert.ok(S1&&S1.won.name==='Fay Gladius'&&S2&&S2.won.name==='Gus Gladius'&&S3&&!S3.won,'sold to the leaders; the third unsold');
   const G=await getC(gus.ch.id);const got2=G.gear.find(g=>C.itemUid(g)===C.itemUid(L2.item));assert.ok(got2,'the piece is his');assert.strictEqual(C.pcOf(G,got2).hist.slice(-1)[0].how,'auction','owner history');
   assert.strictEqual(C.pcOf(G,got2).hist[0].glad,'Old 2','the old history kept');
-  assert.deepStrictEqual([(await getC(fay.ch.id)).wallet,G.wallet],w0,'the winning coin left the game');assert.strictEqual(fay.got('auction.won',m0).length,1);
+  assert.deepStrictEqual([await treC(fay),await treC(gus)],w0,'the winning coin left the game');assert.strictEqual(fay.got('auction.won',m0).length,1);
   assert.ok((await db.query('CHEST','P#')).some(x=>C.itemUid(x.item)===C.itemUid(L3.item))||(await db.query('AUCTION#'+C.seasonAt(T).key,'L#')).some(x=>C.itemUid(x.item)===C.itemUid(L3.item)),'unsold → back to the chest (or drawn again)');
   /* one win a house a week: Fay may not bid on another lot of that week; Eve may */
   const wk=C.seasonAt(T-2e6).key;await db.put('AUCTION#'+wk,'L#000009',{id:wk+'#9',key:wk,n:9,item:'nw#z.9',pc:mk(9,'rare','w').pc,val:3000,min:1500,opens:T,ends:T+3600e3,bid:null,bids:[],done:false});

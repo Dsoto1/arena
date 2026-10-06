@@ -74,14 +74,15 @@ async function routes(){
   /* Ranked rooms leave it home; Custom brings it */
   let R=await ann.req('lobby.create',{ev:'cassian',ranked:true,cry:false});assert.ok(!R.players[0].kit.items.includes(it)&&R.players[0].kit.items.includes('gladius'),'not in a Ranked kit');await ann.req('lobby.leave',{id:R.id});
   R=await ann.req('lobby.create',{ev:'cassian',cry:false});assert.ok(R.players[0].kit.items.includes(it),'fine in Custom');await ann.req('lobby.leave',{id:R.id});
-  /* repair: the purse pays ceil(value × dmg) */
-  const cost=Math.ceil(C.priceOf(catalog.galea)*0.5);const w0=(await getC(ann.ch.id)).wallet;
-  const rp=await ann.req('gear.repair',{holder:ann.ch.id,item:it});assert.strictEqual(rp.cost,cost);c=await getC(ann.ch.id);assert.strictEqual(c.wallet,w0-cost);assert.strictEqual(C.pcOf(c,it).st,'whole');
+  /* repair: ceil(value × dmg) — v0.92: the treasury pays (the purse moved in) */
+  const trA=async()=>((await db.get('DOMUS#'+ann.domus.id,'DOMUS'))||{}).treasury|0;
+  const cost=Math.ceil(C.priceOf(catalog.galea)*0.5);await ann.req('domus.get',{});const w0=await trA();
+  const rp=await ann.req('gear.repair',{holder:ann.ch.id,item:it});assert.strictEqual(rp.cost,cost);c=await getC(ann.ch.id);assert.strictEqual(await trA(),w0-cost);assert.strictEqual(C.pcOf(c,it).st,'whole');
   await rejects(ann.req('gear.repair',{holder:ann.ch.id,item:it}),null,/whole/);
-  /* the treasury may pay instead (ledger: repair) */
-  C.damageItem91(c,it,0.4);await db.put('CHAR#'+c.id,'CHAR',c);await rejects(ann.req('gear.repair',{holder:ann.ch.id,item:it,pay:'treasury'}),'no_coin');
+  /* an empty treasury cannot (ledger: repair) */
+  C.damageItem91(c,it,0.4);await db.put('CHAR#'+c.id,'CHAR',c);{const D0=await db.get('DOMUS#'+ann.domus.id,'DOMUS');await db.put('DOMUS#'+D0.id,'DOMUS',{...D0,treasury:0})}await rejects(ann.req('gear.repair',{holder:ann.ch.id,item:it,pay:'treasury'}),'no_coin');
   const D=await db.get('DOMUS#'+ann.domus.id,'DOMUS');await db.put('DOMUS#'+D.id,'DOMUS',{...D,treasury:100});
-  const rt=await ann.req('gear.repair',{holder:ann.ch.id,item:it,pay:'treasury'});assert.strictEqual(rt.domus.treasury,100-rt.cost);assert.strictEqual(rt.domus.led89.out.repair,rt.cost);
+  const rt=await ann.req('gear.repair',{holder:ann.ch.id,item:it,pay:'treasury'});assert.strictEqual(rt.domus.treasury,100-rt.cost);assert.strictEqual(rt.domus.led89.out.repair,cost+rt.cost);
   /* keep home: printed refused */
   await rejects(ann.req('gear.home',{holder:ann.ch.id,item:'gladius',on:true}),'home_named');
   /* the auction: six lots with the guarantees, the same on another instance */
