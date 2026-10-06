@@ -45673,7 +45673,12 @@ async function huntBeast90(npc,m){const st=npcStats(npc);
   const coin=((NPCT[m.t]&&NPCT[m.t].coin)||0)+(m.hoard||0);
   hurtNPC(m,dmg,null,_T`${nm(npc)}${st.state&&st.state!=='Initial'?' ('+st.state+')':''} attacks ${diceHtml(hits)} ${h}×${st.ap} = ${dmg}`,null,npc);
   if(!m.alive){HUNT90.kills=(HUNT90.kills||0)+1;
-    if(npc.t==='tholo'&&coin>0){npc.hoard=(npc.hoard||0)+coin;if(m.hoard)m.hoard=0;log(_T`Tholo hoards ${coinAmt87(coin)} from the kill.`)}}}
+    if(npc.t==='tholo'&&coin>0){npc.hoard=(npc.hoard||0)+coin;if(m.hoard)m.hoard=0;log(_T`Tholo hoards ${coinAmt87(coin)} from the kill.`)}}
+  /* v0.91 (his rule, NPC vs NPC): a beast that survives the strike counter-attacks AT ONCE — its own 2 hit dice × its attack power, if the hunter is in its reach */
+  else if(npc.alive){const ms=npcStats(m);if(cheb(npc,m)<=Math.max(1,ms.rng||1)){const ch=rollHits(2);const cd=cnt(ch)*ms.ap;fxLine(m,npc,'#ffa04a');if(!cd)fx(npc.r,npc.c,'miss','#b8b0a4');
+    const coin2=((NPCT[npc.t]&&NPCT[npc.t].coin)||0)+(npc.hoard||0);
+    hurtNPC(npc,cd,null,_T`${nm(m)} counter-attacks ${diceHtml(ch)} ${cnt(ch)}×${ms.ap} = ${cd}`,null,m);
+    if(!npc.alive){HUNT90.kills=(HUNT90.kills||0)+1;if(m.t==='tholo'&&coin2>0){m.hoard=(m.hoard||0)+coin2;if(npc.hoard)npc.hoard=0;log(_T`Tholo hoards ${coinAmt87(coin2)} from the kill.`)}}}}}
 
 /* ---------- 2. the Crowd Favor tile ---------- */
 /* crowdCan90 — can the Crowd Favor window sell this player anything right now? */

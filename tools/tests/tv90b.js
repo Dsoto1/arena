@@ -39,8 +39,13 @@ const hunt=await pg.evaluate(async()=>{const o={};const far=[[0,0],[0,12],[12,0]
   place();th.r=6;th.c=6;th.hoard=0;th.aggro=null;let tries=0,killed=false;
   while(tries<14&&!killed){tries++;const sn=mkNPC('snake','Anguis',6,7,{});sn.hp=1;sn.aggro=null;S.npcs=[th,sn];await huntBeast90(th,sn);killed=!sn.alive}
   o.d={killed,tries,hoard:th.hoard,want:NPCT.snake.coin,killedBy:S.npcs[1]&&S.npcs[1].killedBy};
+  /* e (v0.91): a beast that survives the hunter's strike counter-attacks at once */
+  {place();th.r=6;th.c=6;th.aggro=null;let seen=false;for(let i=0;i<8&&!seen;i++){const wf=mkNPC('wolf','Lupus',6,7,{});wf.hp=99;wf.aggro=null;th.hp=99;th.alive=true;S.npcs=[th,wf];const L0=document.querySelectorAll('#log > li').length;await huntBeast90(th,wf);
+    seen=[...document.querySelectorAll('#log > li')].slice(0,6).some(li=>/counter-attacks/.test(li.textContent))}
+  o.e={counter:seen}}
   S.npcs=keepN;return o});
 out.hunt=hunt;
+if(!hunt.e||!hunt.e.counter)miss.push('e: the hunted beast did not counter-attack at once '+JSON.stringify(hunt.e));
 if(!hunt.a.hunts||!hunt.a.attacks)miss.push('Tholo did not attack the wolf: '+JSON.stringify(hunt.a));
 if(hunt.b.kind!=='player'||hunt.b.who!==hunt.b.want)miss.push('tie did not go to the gladiator: '+JSON.stringify(hunt.b));
 if(hunt.c.on.adj>1)miss.push('lion did not hunt in a non-closest Resolve: '+JSON.stringify(hunt.c));
