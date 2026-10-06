@@ -15,7 +15,7 @@ const NETWS={ws:null,cfg:null,wait:{},seq:0,open:null,tries:0,closedFor:null,
     if(!c&&/^https?:/.test(location.protocol)){try{const r=await fetch('online.json',{cache:'no-store'});if(r.ok)c=await r.json()}catch(e){}}
     this.cfg=c&&c.ws?c:null;return this.cfg},
   async connect(){if(this.ws&&this.ws.readyState<=1)return this.open;const c=await this.config();if(!c)throw new Error(_T('No online server is set.'));
-    let q=`ver=${ONLC.VER}`;if(c.dev){q+=`&dev=${encodeURIComponent(netDevId())}`}else{const tok=await netToken();if(!tok)throw new Error(_T('Sign in first.'));q+=`&token=${encodeURIComponent(tok)}`}
+    let q=`ver=${ONLC.VER}`;if(c.dev){q+=`&dev=${encodeURIComponent(netDevId())}`}else{const tok=await netToken();if(!tok)throw new Error(_T('Sign in first.'));q+=`&token=${encodeURIComponent(tok)}`}q+=`&tab=${encodeURIComponent(NET.conn)}`; /* v0.92: this tab's id — a different tab connecting takes Online over (214) */
     this.open=new Promise((res,rej)=>{const ws=new WebSocket(c.ws+(c.ws.includes('?')?'&':'?')+q);this.ws=ws;let opened=false;
       ws.onopen=()=>{opened=true;this.tries=0;res(ws)};
       ws.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(err){return}if(m.re!=null&&this.wait[m.re]){const w=this.wait[m.re];delete this.wait[m.re];clearTimeout(w.t);m.ok?w.res(m.d):w.rej(new Error(m.err||_T('The server said no.')))}else if(m.push)NET.emit(m.push,m.d)};

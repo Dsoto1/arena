@@ -31,7 +31,10 @@ function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),h
       let sub,name,tester=false;try{if(dev&&q.dev){sub='dev-'+String(q.dev).replace(/[^a-z0-9_-]/gi,'').slice(0,40);name=null;tester=!!q.email&&TESTERS.has(String(q.email).toLowerCase())}else{const b=await verifyFn(q.token,verifyCfg);sub=b.sub;name='Lanista'; /* v0.89 L: the sign-in (Google) name is never kept */tester=!!b.email&&TESTERS.size>0&&(b.identities||[]).some(i=>i&&i.providerName==='Google')&&TESTERS.has(String(b.email).toLowerCase())}}
       catch(e){return {statusCode:401,body:'Sign in again.'}}
       const a=(await db.get('ACCT#'+sub,'PROFILE'))||(name||!dev?{id:sub,name:C.cleanName(name||'Lanista')||'Lanista',since:now()}:null);
-      if(a){a.conn=conn;a.GSI1PK='ON';a.GSI1SK=now();await db.put('ACCT#'+sub,'PROFILE',a);await reconnect(db,sub,conn);await route.presence(sub,true)}
+      if(a){const old=a.conn,oldTab=a.tab;const tab=String(q.tab||'').replace(/[^\w-]/g,'').slice(0,24);a.conn=conn;a.tab=tab||null;a.GSI1PK='ON';a.GSI1SK=now();await db.put('ACCT#'+sub,'PROFILE',a);await reconnect(db,sub,conn);await route.presence(sub,true)
+        /* v0.92 one live Online per account: a DIFFERENT tab connecting takes over — the older tab hears it and covers itself ("Use here").
+           The same tab reconnecting (same tab id) is not a takeover; an old socket already gone just clears quietly. */
+        if(old&&old!==conn&&tab&&oldTab&&oldTab!==tab){try{await pushConn(old,'session.replaced',{at:now()},sub)}catch(e){}}}
       await db.put('CONN#'+conn,'CONN',{acct:sub,...(tester?{tester:true}:{}),ttl:Math.floor(now()/1000)+86400});return {statusCode:200}}
     if(rc.routeKey==='$disconnect'){const c=await db.get('CONN#'+conn,'CONN');await db.del('CONN#'+conn,'CONN');if(c&&c.guest)await db.clearGuest(c.guest,conn);if(c&&c.acct&&await db.clearConn(c.acct,conn,now())){await away(db,c.acct,now());await route.presence(c.acct,false,now())}return {statusCode:200}}
     let m;try{m=JSON.parse(ev.body||'{}')}catch(e){return {statusCode:400}}
