@@ -66,7 +66,7 @@ o.y=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   r.rows=document.querySelectorAll('.yo87r').length;r.ros=ros.length;r.cards=document.querySelectorAll('.yd76grid .yd76c').length;r.need=document.querySelectorAll('.yo87r.need').length;
   const sel=document.querySelector(`[data-yr87="${ros[1].id}"]`);sel.value='str';sel.dispatchEvent(new Event('change',{bubbles:true}));await W8(400);
   r.ord=ros[1].ord87&&ros[1].ord87.r;r.str=((thPlan(w).g[ros[1].id])||{}).str;
-  const pr=document.querySelector(`[data-yp87="${ros[1].id}"]`);pr.value='1';pr.dispatchEvent(new Event('change',{bubbles:true}));await W8(300);r.prio=ros[1].ord87.p;
+  r.prio=document.querySelector('[data-yp87]')?0:1; /* v0.90: the First/Normal/Last priority is gone */
   /* bulk: all-round for two */
   for(const g of [ros[2],ros[3]]){const c=document.querySelector(`[data-yk87="${g.id}"]`);c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}));await W8(250)}
   document.getElementById('yo87bulkR').value='bal';document.querySelector('[data-ya87]').click();await W8(400);

@@ -11,7 +11,7 @@ o.m=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ope
   const cls=k=>(document.querySelector(`.mtabs [data-mg="tab"][data-id="${k}"]`)||{}).className||'';
   const rail={rec:!/recpend/.test(cls('recruit')) /* v0.87: no lanista's hours, no recruiting border */,inf:/infpend/.test(cls('infirm')),tr:/trpend/.test(cls('practice'))};
   const nightCss=getComputedStyle(document.querySelector('.mtabs [data-id="night"]')).backgroundImage;
-  const layout=!!document.querySelector('.yd76top [data-tp="doc|1"]')&&!!document.querySelector('.yd76c [data-yb76^="exh:"]'); /* v0.76: the yard is fighter cards; the exhibition opens on a card */
+  const layout=!!document.querySelector('.yd90doc [data-tp="doc|1"]')&&!!document.querySelector('.yd76c [data-yb76^="exh:"]'); /* v0.76: the yard is fighter cards; the exhibition opens on a card; v0.90: the doctore is a card beside the squad */
   const head=!/Training hours 10\/10/.test(document.querySelector('.mhead').textContent); /* v0.73: hours left the header for the tab banners */
   const P=thPlan(w);P.g[g.id]={rehab:2};P.g[h.id]={str:4};P.doc=2;
   const capped=(()=>{const before=JSON.stringify(P.g[h.id]);const btn=document.querySelector(`[data-tp="g|${h.id}|spd|1"]`);MGR_REDRAW();return before})();
