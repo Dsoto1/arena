@@ -872,7 +872,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
 - **v0.91** the arena rebuilt in stone (banners, towers, drains, blood that trickles, worn sand), night matches, painted sponsors, a sculpted
   crowd, English (Australia) + flags; online: the Donativum, an open printed market, damaged armor + repair, six auction lots, the server
   version on screen, no flicker; elixirs/tokens can be taken back, perk chips on the fighter panel, the chest from Zora, Your ludus tidied.
-  (Server zip + site/download zips — the last zip release; from v0.92 flavius.sh deploys from GitHub.)
+  Also: all 15 Mandata Flavi = his sharp scans (mandati91.webp, tools/art/mandata91/make.py), printed class hover = his card only, the Editor
+  picker (203), beasts counter-attack beasts at once (186), corner towers flat-faced at the sand corners.
+  (Published as artifact Version 105; server zip flavius-server-17 — deploy FIRST (flavius.sh release does); game zip flavius-site-update-v0.91
+  only: the download outgrew 30 MiB, so flavius.sh builds the standalone in CloudShell from the game zip (it carries tools/mkshare.py).
+  The last zip release; from v0.92 flavius.sh deploys from GitHub.) Release run (REGJ=2): 217/222 + 5 re-run green (tests edited mid-run).
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
