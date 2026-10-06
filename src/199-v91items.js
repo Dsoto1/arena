@@ -59,3 +59,7 @@ function armSideArt91(key,l,h){try{const B=typeof armBox==='function'&&armBox(ke
   for(const row of pop.querySelectorAll('.avpc')){const n=(row.querySelector('b')||{}).textContent;const k=Object.keys(ARM).find(x=>ARM[x].n===n);if(!k||!ARM[k].pair&&!ARM[k].stack)continue;
     const art=row.firstElementChild&&row.firstElementChild.tagName!=='SPAN'?row.firstElementChild:null;const h=art&&art.getBoundingClientRect().height||30;const html=armSideArt91(k,l,Math.max(30,Math.round(h)));
     if(art)art.outerHTML=html;else row.insertAdjacentHTML('afterbegin',html)}}catch(e){}return r}}
+/* a dropped/looted arm or leg piece is ONE piece (sets split per side when worn): the loot window draws it alone, as worn on the right side */
+function armSideLoc91(key){const A=ARM[key];if(!A)return null;return A.slot==='arm'?'rarm':A.slot==='leg'?'rleg':null}
+if(typeof loot89Art==='function'){const base=loot89Art;loot89Art=function(o){const h=base.apply(this,arguments);try{const P=loot89Piece(o);const k=P&&P.kind==='a'&&P.obj&&P.obj.key;const l=k&&armSideLoc91(k);
+  if(l&&ARM[k]&&(ARM[k].pair||ARM[k].stack))return `<span class="lt89a side91w"><span data-card="a:${k}">${armSideArt91(k,l,118)}</span></span>`}catch(e){}return h}}
