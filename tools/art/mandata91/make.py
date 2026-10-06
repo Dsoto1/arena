@@ -1,5 +1,5 @@
 """mandati91.webp — the Mandata Flavi sheet (5 cols x 3 rows, MANDATA[].img order) from his card scans tools/art/mandata91/mf<i>.jpg
-(822x1122 with a grey margin; the card is x 50..773, y 39..1082). Cards he has not sent yet come from the old assets/mandati.jpg cell."""
+(822x1122 with a grey margin; the card is x 50..773, y 39..1082). All 15 are his scans (v0.91); a missing file falls back to the old assets/mandati.jpg cell."""
 from PIL import Image
 import os,sys
 here=os.path.dirname(os.path.abspath(__file__));root=os.path.join(here,'..','..','..')
