@@ -22,7 +22,7 @@ const assetURL=f=>(typeof window!=='undefined'&&window.ASSET_DATA&&window.ASSET_
 const SHEETS={
   c:{f:'arena.jpg',cols:10,rows:9,ar:'240/352'},
   w:{f:'weapons.jpg',cols:9,rows:3,ar:'300/208',wide:1},
-  m:{f:'mandati.jpg',cols:5,rows:3,ar:'240/346'},
+  m:{f:'mandati91.webp',cols:5,rows:3,ar:'724/1044'} /* v0.91: his sharper scans (tools/art/mandata91/make.py) */,
   e:{f:'events.jpg',cols:5,rows:3,ar:'240/346'},
   f:{f:'fates.jpg',cols:6,rows:2,ar:'240/346'},
   k:{f:'classes.jpg',cols:4,rows:2,ar:'300/432'},

@@ -1668,7 +1668,7 @@ const isHerc = k => k === 'hercules1' || k === 'hercules2';
 const isForge = k => k === 'forge3' || k === 'forge2';
 
 /* ---- Mandata Flavi (15 secret objectives). Revealed the moment they are completed; unrevealed cards cost 5 CF at the end.
-   declare = completed by a spoken declaration on your turn. img = index in assets/mandati.jpg ---- */
+   declare = completed by a spoken declaration on your turn. img = index in assets/mandati91.webp ---- */
 /* MANDATA fields: n name · d task · r reward text · test(player) auto-completion check (usually a player.stats counter) · declare spoken line that completes it · img · reward(player) async effect. TWEAK: the CF numbers inside reward. */
 const MANDATA = [{
   n: 'Are You Not Entertained?',
