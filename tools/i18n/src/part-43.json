@@ -1,0 +1,114 @@
+[
+ {
+  "k": "Neck guard",
+  "w": "207-v92extras.js:21"
+ },
+ {
+  "k": "Manica plates",
+  "w": "207-v92extras.js:22"
+ },
+ {
+  "k": "Studs",
+  "w": "207-v92extras.js:23"
+ },
+ {
+  "k": "Fur trim",
+  "w": "207-v92extras.js:25"
+ },
+ {
+  "k": "Emblem",
+  "w": "207-v92extras.js:26"
+ },
+ {
+  "k": "Crescent",
+  "w": "207-v92extras.js:26"
+ },
+ {
+  "k": "Damage",
+  "w": "207-v92extras.js:27"
+ },
+ {
+  "k": "Dents",
+  "w": "207-v92extras.js:27"
+ },
+ {
+  "k": "Scratches",
+  "w": "207-v92extras.js:27"
+ },
+ {
+  "k": "Cracks",
+  "w": "207-v92extras.js:27"
+ },
+ {
+  "k": "Wraps",
+  "w": "207-v92extras.js:28"
+ },
+ {
+  "k": "Rope",
+  "w": "207-v92extras.js:28"
+ },
+ {
+  "k": "Cloth",
+  "w": "207-v92extras.js:28"
+ },
+ {
+  "k": "Lacing",
+  "w": "207-v92extras.js:29"
+ },
+ {
+  "k": "Strap and buckle",
+  "w": "207-v92extras.js:29"
+ },
+ {
+  "k": "Trim band",
+  "w": "207-v92extras.js:30"
+ },
+ {
+  "k": "Paint",
+  "w": "207-v92extras.js:31"
+ },
+ {
+  "k": "Wash",
+  "w": "207-v92extras.js:31"
+ },
+ {
+  "k": "Stripe",
+  "w": "207-v92extras.js:31"
+ },
+ {
+  "k": "Band",
+  "w": "207-v92extras.js:31"
+ },
+ {
+  "k": "Your house banner",
+  "w": "207-v92extras.js:99"
+ },
+ {
+  "k": "Style",
+  "w": "207-v92extras.js:106"
+ },
+ {
+  "k": "✕ Remove",
+  "w": "207-v92extras.js:107"
+ },
+ {
+  "k": "Click an extra on the piece or in the list to change it.",
+  "w": "207-v92extras.js:108"
+ },
+ {
+  "k": "Click an extra above to add it to the piece.",
+  "w": "207-v92extras.js:108"
+ },
+ {
+  "k": "Extras",
+  "w": "207-v92extras.js:111"
+ },
+ {
+  "k": "cosmetic only · no AP · click to add, drag on the piece to move, the wheel sizes it (Shift turns it)",
+  "w": "207-v92extras.js:111"
+ },
+ {
+  "k": "A piece holds up to {0} extras.",
+  "w": "207-v92extras.js:121"
+ }
+]
