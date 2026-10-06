@@ -36,8 +36,10 @@
         crowned by bronze fire bowls — at the ludus a small temple (red tiled roof, pediment, columns, red interior,
         lattice gate) instead;
       • faint SOOT on the stone above/behind every fire (towers and the podium's bowls; none at the ludus);
-      • DAY: a blue-to-haze sky with the sun upper left and faint clouds ('destination-over', behind everything) + a dark
-        floor under the sand/stands gap, and the sun's light on the sand (warm upper left, worn tile edges) 'source-atop'.
+      • DAY: a blue-to-haze sky with the sun upper left and faint clouds ('destination-over', behind everything; its own
+        layer keyed on the canvas size only, so zooming never re-bakes it; clouds painted at 1/8 and stretched — a canvas
+        blur filter cost ~0.5 s without a GPU), a dark floor under the sand/stands gap (first thing in the 'under' layer),
+        and the sun's light on the sand (warm upper left, soft shade at the rim, worn tile edges) 'source-atop'.
         NIGHT: the layers are painted BEFORE 189's grade so they take the night colour; 189 then paints its sky/torches.
       • the flames (towers + podium bowls) are drawn live AFTER the grade, flickering with 189's night91F, with a warm
         halo at night.
@@ -118,7 +120,7 @@ function ar91Soot(g,x,y,r){const gr=g.createRadialGradient(x,y-r*0.55,0,x,y-r*0.
   g.save();g.translate(x,y-r*0.55);g.scale(0.7,1);g.translate(-x,-(y-r*0.55));g.fillStyle=gr;g.fillRect(x-r,y-r*1.6,r*2,r*2.1);g.restore()}
 
 /* ---------- layer 'under': the foundation + the near sides (under the benches) ---------- */
-function ar91Under(g){const Pq=pt;const n=N-1;const EX=ar91Ex();const lud=ar91Lud();const lo=-2.95-EX,hi=n+2.95+EX,inn=-0.62,inn2=n+0.62;
+function ar91Under(g){if(!night91On())ar91Floor(g);const Pq=pt;const n=N-1;const EX=ar91Ex();const lud=ar91Lud();const lo=-2.95-EX,hi=n+2.95+EX,inn=-0.62,inn2=n+0.62;
   const O=[Pq(lo,lo),Pq(lo,hi),Pq(hi,hi),Pq(hi,lo)],I=[Pq(inn,inn),Pq(inn,inn2),Pq(inn2,inn2),Pq(inn2,inn)];
   const bi=O.reduce((b,p,i)=>p.y>O[b].y?i:b,0);const cIn=I[bi];const cMid={x:(O[bi].x+cIn.x)/2,y:(O[bi].y+cIn.y)/2};
   const cut=(p,q)=>{const t=(cMid.y-p.y)/(q.y-p.y);return {x:p.x+(q.x-p.x)*t,y:cMid.y}};
@@ -234,7 +236,7 @@ function ar91Podium(g,fires){if(typeof flavXY89!=='function')return;const F=flav
   ar91Stone(g,L,'rgba(255,248,230,.05)',0.7);ar91Stone(g,R,'rgba(40,28,16,.3)',0.7);g.strokeStyle='rgba(40,30,20,.45)';g.lineWidth=1;for(const Q of [L,R]){ar91Path(g,Q);g.stroke()}
   g.fillStyle=ar91Mat().cap;ar91Path(g,[{x:bx-s2*1.04,y:top-1},{x:bx,y:top+s2*0.52},{x:bx+s2*1.04,y:top-1},{x:bx+s2*1.04,y:top+TW*0.05},{x:bx,y:top+s2*0.52+TW*0.06},{x:bx-s2*1.04,y:top+TW*0.05}]);g.fill();g.stroke();
   const hw=w*0.24,hy=top+s2*0.5+TW*0.08,hl=Math.min(by-hy-TW*0.15,h*0.9);if(hl>TW*0.3){g.fillStyle='#4a1d44';ar91Path(g,[{x:bx-hw,y:hy},{x:bx+hw,y:hy},{x:bx+hw,y:hy+hl},{x:bx,y:hy+hl+hw*0.5},{x:bx-hw,y:hy+hl}]);g.fill();
-    g.strokeStyle='#c9a24e';g.lineWidth=Math.max(1.2,TW*0.035);g.stroke();g.fillStyle=AR91GOLD;g.font=`700 ${Math.round(hw*0.9)}px "Marcellus SC", serif`;g.textAlign='center';g.textBaseline='middle';g.fillText('SPQR',bx,hy+hl*0.42)}
+    g.strokeStyle='#c9a24e';g.lineWidth=Math.max(1.2,TW*0.035);g.stroke();if(hw*0.9>=7){g.fillStyle=AR91GOLD;g.font=`700 ${Math.round(hw*0.9)}px "Marcellus SC", serif`;g.textAlign="center";g.textBaseline="middle";g.fillText("SPQR",bx,hy+hl*0.42)}}
   for(const sx of [-1,1]){const cx=bx+sx*(w/2+TW*0.17),cw=TW*0.085,c0=top+TW*0.02,ch=h*0.62;
     ar91Stone(g,[{x:cx-cw,y:c0},{x:cx+cw,y:c0},{x:cx+cw,y:c0-ch},{x:cx-cw,y:c0-ch}],null,0.5);
     const gr=g.createLinearGradient(cx-cw,0,cx+cw,0);gr.addColorStop(0,'rgba(255,250,240,.18)');gr.addColorStop(.5,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(30,20,10,.35)');g.fillStyle=gr;g.fillRect(cx-cw,c0-ch,cw*2,ch);
@@ -291,15 +293,19 @@ function ar91TopPaint(g,out){const lud=ar91Lud();const ring=ar91Ring;const mid=a
   if(lud)ar91Temple(g);else if(!AR91.det&&!(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false))ar91Podium(g,out.fires)}
 
 /* ---------- the day sky + the sun on the sand ---------- */
-function ar91SkyPaint(s,Wd,Hd){const D=night91Dia(0);const lite=typeof lite84On==='function'&&lite84On();
+function ar91SkyPaint(s,Wd,Hd){const lite=typeof lite84On==='function'&&lite84On();const U=Math.max(20,Math.min(Wd/15,Hd/10)); /* the sky never depends on the board (zooming never re-bakes it) */
   const sg=s.createLinearGradient(0,0,0,Hd);sg.addColorStop(0,'#6f9fcf');sg.addColorStop(.45,'#a9c6df');sg.addColorStop(.8,'#e3dccb');sg.addColorStop(1,'#eadcc0');s.fillStyle=sg;s.fillRect(0,0,Wd,Hd);
-  const sx=Math.max(TW*1.3,Math.min(Wd*0.1,D[3].x-TW*0.6)),sy=Math.max(TW*1.0,Math.min(Hd*0.11,D[0].y-TW*1.2)),sr=Math.max(11,TW*0.45);
+  const sx=Math.max(U*1.3,Wd*0.1),sy=Math.max(U*1.0,Hd*0.1),sr=Math.max(11,U*0.45);
   const gl=s.createRadialGradient(sx,sy,sr*0.5,sx,sy,Math.max(Wd,Hd)*0.75);gl.addColorStop(0,'rgba(255,244,214,.75)');gl.addColorStop(.18,'rgba(255,232,186,.32)');gl.addColorStop(.5,'rgba(255,226,180,.08)');gl.addColorStop(1,'rgba(255,226,180,0)');s.fillStyle=gl;s.fillRect(0,0,Wd,Hd);
   s.fillStyle='#fffbea';s.beginPath();s.arc(sx,sy,sr,0,Math.PI*2);s.fill();
-  if(!lite){let q=24681;const rn=()=>{q=(q*1103515245+12345)&0x7fffffff;return q/0x7fffffff};
-    s.save();try{s.filter=`blur(${Math.max(4,TW*0.35).toFixed(1)}px)`}catch(e){}for(let i=0;i<7;i++){const cx=Wd*(0.28+rn()*0.7),cy=Hd*(0.05+rn()*0.22),w=TW*(2.5+rn()*3);s.fillStyle=`rgba(255,255,255,${(0.35+rn()*0.25).toFixed(2)})`;
-      for(let k=0;k<4;k++){s.beginPath();s.ellipse(cx+(k-1.5)*w*0.35,cy+(k%2)*TW*0.15,w*0.38,w*0.13,0,0,Math.PI*2);s.fill()}}s.restore()}
-  const k=1.45+ar91Ex(),d=1.7;const G=[[-k,-k+d],[-k,N+k-d],[-k+d,N+k],[N+k-d,N+k],[N+k,N+k-d],[N+k,-k+d],[N+k-d,-k],[-k+d,-k]].map(([r,c])=>isoFix(r,c));
+  /* faint clouds: painted small and stretched (the stretch is the blur — a canvas blur filter costs ~0.5 s without a GPU) */
+  if(!lite){const K=8,c=document.createElement('canvas');c.width=Math.max(1,Math.ceil(Wd/K));c.height=Math.max(1,Math.ceil(Hd/K));const q2=c.getContext('2d');q2.scale(1/K,1/K);
+    let q=24681;const rn=()=>{q=(q*1103515245+12345)&0x7fffffff;return q/0x7fffffff};
+    for(let i=0;i<7;i++){const cx=Wd*(0.28+rn()*0.7),cy=Hd*(0.05+rn()*0.22),w=U*(2.5+rn()*3);q2.fillStyle='rgba(255,255,255,'+(0.35+rn()*0.25).toFixed(2)+')';
+      for(let k=0;k<4;k++){q2.beginPath();q2.ellipse(cx+(k-1.5)*w*0.35,cy+(k%2)*U*0.15,w*0.38,w*0.13,0,0,Math.PI*2);q2.fill()}}
+    s.save();s.imageSmoothingEnabled=true;try{s.imageSmoothingQuality='high'}catch(e){}s.drawImage(c,0,0,c.width*K,c.height*K);s.restore()}}
+/* ar91Floor — the arena's own dark floor under the gap between the sand and the stands (the sky only shows outside) */
+function ar91Floor(s){const k=1.45+ar91Ex(),d=1.7;const G=[[-k,-k+d],[-k,N+k-d],[-k+d,N+k],[N+k-d,N+k],[N+k,N+k-d],[N+k,-k+d],[N+k-d,-k],[-k+d,-k]].map(([r,c])=>isoFix(r,c));
   s.fillStyle='#24180f';night91Path(s,G);s.fill()}
 function ar91LightPaint(g,Wd,Hd){const D=night91Dia(0);
   g.save();night91Path(g,D);g.clip();const lg=g.createLinearGradient(D[3].x-TW,D[0].y-TW,D[1].x+TW,D[2].y+TW);lg.addColorStop(0,'rgba(255,236,190,.13)');lg.addColorStop(.5,'rgba(255,236,190,0)');lg.addColorStop(1,'rgba(40,26,12,.14)');g.fillStyle=lg;g.fillRect(0,0,Wd,Hd);g.restore();
@@ -343,7 +349,7 @@ function ar91Flames(fires,night){const fl=night&&typeof night91Flick==='function
 /* night91Sand wrapper (07-ui calls it after the tiles): the walls etc., then the day light/sky or the night grade, then the flames */
 {const base=night91Sand;night91Sand=function(Wd,Hd){if(!ar91On())return base.apply(this,arguments);const t0=performance.now();const nt=night91On();let top=null;
   try{top=ar91Layer('top',ar91Key()+'|'+(AR91.det?1:0),(g,out)=>ar91TopPaint(g,out));ar91Blit(top);AR91.fires=top.out.fires;AR91.walls=top.out.walls}catch(e){console.error(e)}
-  if(!nt){try{const L=ar91Layer('light',ar91Key(),g=>ar91LightPaint(g,Wd,Hd));ar91Blit(L,'source-atop');const K=ar91Layer('sky',ar91Key(),g=>ar91SkyPaint(g,Wd,Hd));ar91Blit(K,'destination-over')}catch(e){console.error(e)}}
+  if(!nt){try{const L=ar91Layer('light',ar91Key(),g=>ar91LightPaint(g,Wd,Hd));ar91Blit(L,'source-atop');const K=ar91Layer('sky',[cv.width,cv.height,window.devicePixelRatio||1,typeof lite84On==='function'&&lite84On()?1:0].join('|'),g=>ar91SkyPaint(g,Wd,Hd));ar91Blit(K,'destination-over')}catch(e){console.error(e)}}
   const r=base.apply(this,arguments);
   try{if(top)ar91Flames(top.out.fires,nt)}catch(e){console.error(e)}
   AR91.ms[1]=performance.now()-t0;return r}}
@@ -363,7 +369,7 @@ function ar91Pennant(F,T1){const T0=T1*(typeof flavK==='function'?flavK():1);con
   try{try{ar91Pennant(flavXY89(),TW)}catch(e){}AR91.gold=true;return base.apply(this,arguments)}finally{AR91.gold=false;TW=TW0;TH=TH0}}}
 {const base=flavFace;flavFace=function(c2d,cx,cy,w,h,mood,label=true,sp=null){if(!AR91.gold||c2d!==ctx||!label)return base.apply(this,arguments);
   const r=base.call(this,c2d,cx,cy,w,h,mood,false,sp);try{const s2=sp||(typeof curSponsor==='function'?curSponsor():null)||{};
-    ctx.save();ctx.fillStyle='#e8c66a';ctx.font=`700 ${Math.max(7,Math.round(Math.min(TW*0.17,w*0.15)))}px "Marcellus SC", serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.save();ctx.fillStyle='#e8c66a';ctx.font=`700 ${Math.max(5,Math.round(Math.min(TW*0.17,w*0.15)))}px "Marcellus SC", serif`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(String(s2.short||s2.name||'FLAVIUS').toUpperCase().slice(0,14),cx,cy+h/2+TW*0.16);ctx.restore()}catch(e){}return r}}
 /* the box detaches while zoomed: the podium layer is keyed on it */
 {const base=draw;draw=function(){const r=base.apply(this,arguments);try{const d=ar91On()&&ar91Zoomed();if(d!==AR91.det){AR91.det=d;if(!HEADLESS)base.apply(this,arguments)}}catch(e){}return r}}
