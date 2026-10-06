@@ -1125,6 +1125,12 @@ share copy — the site download play/flavius-rule-arena.zip.)
   creator updated) · (2) steady online tests (condition waits, not fixed times) · (3) readability pass slice · (4) NIGHT MATCH back on — improve
   the feel, lights must NOT block the view · (5) Crowd Favor tile CF-only (built). Dropped from the open list: printed class cards to the live
   template (he has the system cards + the custom template — done as is); login.flaviusrule.com works (his word).
+  HIS PICKS: SPONSORS = the PAINTED look like his Flavius (ink outlines, shading, nose/cheekbones, better hair/beards, all 11 moods incl.
+  'really' with the open palm, big readable changes) for every city editor + Studio sponsor; the sponsor creator gains MORE PARTS (hair,
+  beards, wreaths/headwear, jewelry, skin tones, ages), a MOOD PREVIEW ROW (all 11), BOX COLOURS/FRAME. NIGHT = Manager Match Week's 2nd
+  bout + a Play Now Day/Night option + online rooms (host picks; server roomSet field); look = TORCHES ON THE RIM ONLY (stands' edge and
+  corners, outside the sand), soft warm pools at the sand edges, moonlit blue over the middle, pieces fully readable (rim light), gentle
+  flicker (Reduce motion stops it); the square shows dusk before a night bout.
 - **v0.90 QUEUED (his yes 2026-10-05): HOT-SEAT TURNING BOARD** — a setting (Settings → On the board, OFF by default): with 2+ humans
   on one screen, the board turns to the active human's corner at the start of each human's turn (short eased spin; Reduce motion / Off
   animations = an instant cut), using the v0.89 display rotation (168). CPU turns keep the last human's view. Never in Chariot,
