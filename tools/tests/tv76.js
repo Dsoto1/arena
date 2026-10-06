@@ -25,9 +25,9 @@ o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   const mine=new Set(ros.map(g=>g.id));for(const b of w.night.bouts)b.ents=b.ents.filter(id=>!mine.has(id));
   /* G · the ward and its beds */
   ros[0].inj={until:w.week+1,label:'cracked ribs',pen:3};ros[1].inj={until:w.week+2,label:'a torn shoulder',pen:5};ros[2].inj={until:w.week+1,label:'a sprained ankle',pen:2};
-  r.ser=serious76(ros[0])&&serious76(ros[1])&&!serious76(ros[2]);MGR.tab='infirm';MGR_REDRAW();await W8(400);r.ward=!!q('.wd76beds .wd76cot')&&!!q('.wd76bench')&&!!q('.wd76bath');
-  r.medOff=!q(`[data-mg="medic"][data-id="${ros[1].id}"]`);q(`[data-bed76="${ros[1].id}"]`).click();await W8(300);r.bed=inBed76(ros[1])&&!!q(`.wd76cot [data-mg="medic"][data-id="${ros[1].id}"]`);
-  r.full=!!q(`[data-bed76="${ros[0].id}"][disabled]`);
+  r.ser=serious76(ros[0])&&serious76(ros[1])&&!serious76(ros[2]);MGR.tab='infirm';MGR_REDRAW();await W8(400);r.ward=!!q('.iv90list .iv90row')&&!!q('.iv90beds .bd90')&&!!q('.iv90care .iv90s.ba'); /* v0.90: list · body · care options for the selected fighter */
+  MGR.inf90=ros[1].id;MGR_REDRAW();await W8(300);r.medOff=!q(`[data-mg="medic"][data-id="${ros[1].id}"]`);q(`.iv90care [data-bed76="${ros[1].id}"]`).click();await W8(300);r.bed=inBed76(ros[1])&&!!q(`.iv90care [data-mg="medic"][data-id="${ros[1].id}"]`);
+  MGR.inf90=ros[0].id;MGR_REDRAW();await W8(300);r.full=!!q(`[data-bed76="${ros[0].id}"][disabled]`);
   q('[data-med76="1"]').click();await W8(300);r.medicus=!!w.medicus76&&w.medicus76.skill===2;
   /* F · the yard as fighter cards */
   const fit=ros.filter(g=>!g.inj);const g=fit[0],h=fit[1],k3=fit[2]||fit[1];MGR.tab='practice';MGR.yd87='all';MGR_REDRAW();await W8(400);r.cards=document.querySelectorAll('.yd76c').length===ros.length;
