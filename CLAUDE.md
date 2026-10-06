@@ -1061,6 +1061,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   card in the "What · the event" panel (his yellow box); the spectator options stay below; (2) remove the "Rules in this build" button;
   (3) "Sound the horns" → "Begin Event", moved into the top bar (the free space right of Follow); (4) ⚡ Quick start → "🎲 Random event": a RANDOM event + RANDOM
   city each time (his pick a), you as a random class vs CPUs (Math.random — UI, never the dice RNG); (5) remove ★ Presets.
+- **v0.90 QUEUED (his card + picks 2026-10-06): THOLO AND THE LIONS HUNT THE CLOSEST LIVING THING** — not aggro: at the start of EVERY
+  gladiator's Resolve phase Tholo, Leo and Leaena scan for the closest living thing (gladiators AND other beasts), walk and strike (today: only in
+  the closest gladiator's Resolve, gladiators only; 04-rules npcTrigger 'scan' + closestPlayer). Aggro rules unchanged. Tholo collects the coin of
+  anything he eliminates (players already go into npc.hoard; add beasts' coin rewards) — his killer gets 12 + the hoard. Tie rule: asked.
+  Card checked: HP states Initial 20 / Raged ≤14 / Fazed ≤5 and 4·1·2 / 5·1·3 / 3·1·1 already match NPCT.tholo; round 3 = grid dice (S.ri≥2).
 - **v0.90 QUEUED (his yes 2026-10-05): HOT-SEAT TURNING BOARD** — a setting (Settings → On the board, OFF by default): with 2+ humans
   on one screen, the board turns to the active human's corner at the start of each human's turn (short eased spin; Reduce motion / Off
   animations = an instant cut), using the v0.89 display rotation (168). CPU turns keep the last human's view. Never in Chariot,
