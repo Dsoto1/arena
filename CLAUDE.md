@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.88**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.91**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -65,7 +65,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Module ordering matters: a wrapper only sees wrappers installed before it.
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
   `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
-  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`, `126-v82fix`, `127-v82onl`, `128-v82stands`, `129-v82beasts`, `130-v82vis`, `131-v83council`, `132-v83arrows`, `134-v83spikes`, `135-v83chest`, `136-v83sand`, `133-v83onl`, `137-v83onlui`, `139-v84onl`, `138-v84`, `140-v84prog`, `142-v84ui`, `143-v84roster`, `141-v85faith`, `144-v85rec`, `145-v85fix`, `146-v85land`, `147-v85music`, `148-v86lang`, `149-v87fix`, `150-v87mgr`, `151-v87ward`, `152-v87npc`, `153-v87card`, … `164-ready`, `165-v89seats` … `182-v89vault`, `168-v89rotate` (last before 08-setup) (build order as listed; `00-lang` runs FIRST, before 02-data; the language file assets/lang_<l>.js is loaded by 01-head before the script).
+  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`, `126-v82fix`, `127-v82onl`, `128-v82stands`, `129-v82beasts`, `130-v82vis`, `131-v83council`, `132-v83arrows`, `134-v83spikes`, `135-v83chest`, `136-v83sand`, `133-v83onl`, `137-v83onlui`, `139-v84onl`, `138-v84`, `140-v84prog`, `142-v84ui`, `143-v84roster`, `141-v85faith`, `144-v85rec`, `145-v85fix`, `146-v85land`, `147-v85music`, `148-v86lang`, `149-v87fix`, `150-v87mgr`, `151-v87ward`, `152-v87npc`, `153-v87card`, … `164-ready`, `165-v89seats` … `182-v89vault`, `168-v89rotate`, `183-v90ward` … `187-v90pn`, `188-v91sponsor` … `202-v91ludus` (last before 08-setup) (build order as listed; `00-lang` runs FIRST, before 02-data; the language file assets/lang_<l>.js is loaded by 01-head before the script).
   Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
 
 ### Core globals (engine)
@@ -650,6 +650,19 @@ One global script; files are concatenated in order. Later "version modules" patc
   event (event + city + class, Math.random, rolls only); Version history in tabs of ten (historyHTML replaced), entries v0.52+ trimmed.
   Chinese (zh): GUIDE-zh.md, 36+ parts, LANGS86 简体中文, LANG_UI87.zh (173), CJK font stack already in 173; walk test tv87l includes zh.
   Glue fixed: REC_VERB, stone thrower line, the horns line are whole _T keys.
+- **v0.91 (188-202 + server, no protocol bump):** `188-v91sponsor` painted sponsors (Flavius's look, 11 moods, more parts, mood row,
+  box colours). `189-v91night` night matches (Manager 2nd bout, Play Now Day/Night, room rule; `night91On`, rim torches `night91Spots`,
+  dusk square). `190-v91flags` flags beside languages + English (Australia) (tools/i18n/mkau.js → assets/lang_au.js). `191-v91fix` pen
+  camera, unmirrored greaves (ARM_NOMIRROR91). `192-v91arena` THE ARENA LOOK (stone per arena `ar91Mat`, foundation + stairs, near walls cut
+  down with a thin red edge, far walls with banners + red cap, gully + drains on the FAR edges only, flat-faced corner towers AT the sand
+  corners (his sketch), podium/temple; layers under/deco/top cached by key; test tv91r). `193-v91crowd` sculpted spectators. `194-v91wear`
+  blood trickles to the drains, walkable rubble, sand wear. `195/196` server version chip (tools/srvstamp.js writes server/src/build.json +
+  195-v91srvexp.js). `197-v91econ` ONLINE ECONOMY II (see §8). `198-v91morph` morph91 = in-place patch for online screens (no flicker).
+  `199-v91items` elixirs/tokens cancellable, per-side armor art (armSideArt91). `200-v91panel` fighter panel = earned perk chips (ratings in
+  the title), mind chip only on CPUs, Hand to CPU top right. `201-v91zora` take the chest from your own Zora (adjacent, offline). `202-v91ludus`
+  Your ludus: mail + checklist one row (.lrow91), Acta in the mail header, Week in review = first letter (.rev91), its numbers = banner chips
+  (.lst91) — a final mgrHTML wrapper. Also: 21-audio pump (3 s lookahead while hidden), 90-armfit chest under all pieces, city figures built
+  once + no old stand-in while decoding (172), city clock/save-button writes only on change (25/38). Tests tv91a/c/e/i/l/m/n/r/s/v/w/z.
 - **Guide data:** `SIM50` in 53-guide50 is regenerated by `node tools/simguide.js flavius-arena.html 600` (SIMVER env);
   it includes `perk` (wins by rating perk), charted by 69-v56.
 - **Music:** procedural Web Audio (21-audio, 45-music, 16 themes; unlocked by winning in cities). Play Now plays a
@@ -855,6 +868,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   token-round Blessings, a turning hot-seat board, Play Now tidy + Random event, Version history in tabs, 简体中文.
   (Published as artifact Version 104; no server change; site zip flavius-site-update-v0.90 + flavius-download-v0.90 (29.9 MiB — mkshare
   skips RETIRED weapon_back1-4.webp).) Release run (REGJ=2): 207/209 + tv76 flaky; tv86 fixed (waits for the ask card), rest run by hand.
+
+- **v0.91** the arena rebuilt in stone (banners, towers, drains, blood that trickles, worn sand), night matches, painted sponsors, a sculpted
+  crowd, English (Australia) + flags; online: the Donativum, an open printed market, damaged armor + repair, six auction lots, the server
+  version on screen, no flicker; elixirs/tokens can be taken back, perk chips on the fighter panel, the chest from Zora, Your ludus tidied.
+  (Server zip + site/download zips — the last zip release; from v0.92 flavius.sh deploys from GitHub.)
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the

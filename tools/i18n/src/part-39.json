@@ -1,0 +1,250 @@
+[
+ {
+  "k": "Donativum · {0} unopened",
+  "w": "137-v83onlui.js:148"
+ },
+ {
+  "k": "Flavius sends a Donativum at every new rank and every 5 Ranked bouts survived",
+  "w": "137-v83onlui.js:148"
+ },
+ {
+  "k": "Donativum",
+  "w": "137-v83onlui.js:148"
+ },
+ {
+  "k": "Donativa",
+  "w": "137-v83onlui.js:154"
+ },
+ {
+  "k": "owned ×{0}",
+  "w": "137-v83onlui.js:216"
+ },
+ {
+  "k": "🎁 No Donativum waiting. Flavius sends one at every new rank and every 5 Ranked bouts survived.",
+  "w": "137-v83onlui.js:259"
+ },
+ {
+  "k": "The emperor’s gift: Flavius sends a Donativum at every new rank, every 5 Ranked bouts survived and for the weekly challenge. Everything in it is brand new.",
+  "w": "137-v83onlui.js:261"
+ },
+ {
+  "k": "🔥 Used up in the bout: {0} — buy new in the Armory",
+  "w": "137-v83onlui.js:367"
+ },
+ {
+  "k": "a Donativum",
+  "w": "137-v83onlui.js:369"
+ },
+ {
+  "k": "🎁 This week’s Donativum is in your house.",
+  "w": "139-v84onl.js:258"
+ },
+ {
+  "k": "🎁 All done — a Donativum comes with your next win.",
+  "w": "139-v84onl.js:258"
+ },
+ {
+  "k": "🎁 All three (with a win) earn ONE Donativum a week.",
+  "w": "139-v84onl.js:258"
+ },
+ {
+  "k": "🤖 The CPU fought most of that bout in your seat — Flavius pays a quarter, and no Donativum.",
+  "w": "139-v84onl.js:314"
+ },
+ {
+  "k": "Donativa (Flavius)",
+  "w": "175-v89domus.js:156"
+ },
+ {
+  "k": "Nothing in the house — the Armory sells, Flavius’s Donativa, the fallen leave their gear here.",
+  "w": "175-v89domus.js:221"
+ },
+ {
+  "k": "🎁 What a Donativum holds",
+  "w": "177-v89affix.js:97"
+ },
+ {
+  "k": "Flavius sends one every new rank and every 5 Ranked bouts survived, one for the weekly challenge — always brand new. Each opening rolls once:",
+  "w": "177-v89affix.js:98"
+ },
+ {
+  "k": "🔨 Auction lots are pieces back in Flavius’s chest from fallen gladiators: no new roll — they keep their own tier, affixes and owners.",
+  "w": "177-v89affix.js:105"
+ },
+ {
+  "k": "The odds of a Donativum",
+  "w": "177-v89affix.js:112"
+ },
+ {
+  "k": "Auto (from the class colour)",
+  "w": "192-v91arena.js:410"
+ },
+ {
+  "k": "untitled",
+  "w": "192-v91arena.js:410"
+ },
+ {
+  "k": "The house flag on the stands' tapestry when this character fights",
+  "w": "192-v91arena.js:412"
+ },
+ {
+  "k": "you, in the stands",
+  "w": "193-v91crowd.js:242"
+ },
+ {
+  "k": "a regular · {0} visits",
+  "w": "193-v91crowd.js:242"
+ },
+ {
+  "k": "cheers for {0}",
+  "w": "193-v91crowd.js:243"
+ },
+ {
+  "k": "Rubble — walkable",
+  "w": "194-v91wear.js:214"
+ },
+ {
+  "k": "The online server is older than this page and can't do that yet ({0}). It needs an update.",
+  "w": "196-v91srv.js:11"
+ },
+ {
+  "k": "Server: practice (this browser)",
+  "w": "196-v91srv.js:15"
+ },
+ {
+  "k": "⚠ Server older than v{0} — some actions won't work until it's updated",
+  "w": "196-v91srv.js:17"
+ },
+ {
+  "k": "⚠ Server v{0} · this page needs v{1} — some actions won't work until it's updated",
+  "w": "196-v91srv.js:18"
+ },
+ {
+  "k": "⚠ Server v{0} is missing \"{1}\" — it needs an update",
+  "w": "196-v91srv.js:19"
+ },
+ {
+  "k": "Server v{0}",
+  "w": "196-v91srv.js:20"
+ },
+ {
+  "k": "The online server is up to date with this page.",
+  "w": "196-v91srv.js:24"
+ },
+ {
+  "k": "{0} (−{1}% AP)",
+  "w": "197-v91econ.js:24"
+ },
+ {
+  "k": "🩹 Came home damaged: {0} — 🔨 repair in the Domus before the next Ranked bout",
+  "w": "197-v91econ.js:25"
+ },
+ {
+  "k": "Never taken into Ranked: safe from loss and loot, still worn in Custom.",
+  "w": "197-v91econ.js:28"
+ },
+ {
+  "k": "🩹 Damaged · repair {0}",
+  "w": "197-v91econ.js:29"
+ },
+ {
+  "k": "🔒 Kept home.",
+  "w": "197-v91econ.js:30"
+ },
+ {
+  "k": "🔒 Keep home.",
+  "w": "197-v91econ.js:30"
+ },
+ {
+  "k": "Repair: its value × the AP it lost",
+  "w": "197-v91econ.js:37"
+ },
+ {
+  "k": "🩹 Damaged — never brought into Ranked until repaired",
+  "w": "197-v91econ.js:40"
+ },
+ {
+  "k": "🩹 🔨 {0}",
+  "w": "197-v91econ.js:40"
+ },
+ {
+  "k": "🩹 Damaged (−{0}% AP) — 🔨 {1} to repair; worn in Custom, not in Ranked",
+  "w": "197-v91econ.js:45"
+ },
+ {
+  "k": "Only named pieces stay home — printed gear is never kept out of Ranked.",
+  "w": "197-v91econ.js:55"
+ },
+ {
+  "k": "🔒 Only named pieces stay home.",
+  "w": "197-v91econ.js:57"
+ },
+ {
+  "k": "📜 Owners · {0}",
+  "w": "197-v91econ.js:62"
+ },
+ {
+  "k": "Nothing to heal",
+  "w": "199-v91items.js:27"
+ },
+ {
+  "k": "Every location is already at full health — the elixir stays in your hand.",
+  "w": "199-v91items.js:27"
+ },
+ {
+  "k": "{0}AP {1} → {2}",
+  "w": "199-v91items.js:39"
+ },
+ {
+  "k": "+{0} move",
+  "w": "200-v91panel.js:7"
+ },
+ {
+  "k": "+{0} dmg",
+  "w": "200-v91panel.js:7"
+ },
+ {
+  "k": "+{0} coin/turn",
+  "w": "200-v91panel.js:7"
+ },
+ {
+  "k": "+{0} CF/turn",
+  "w": "200-v91panel.js:7"
+ },
+ {
+  "k": "Ratings: {0}",
+  "w": "200-v91panel.js:13"
+ },
+ {
+  "k": "🦅 Take the chest from Zora",
+  "w": "201-v91zora.js:7"
+ },
+ {
+  "k": "{0} hands the Arena Chest to {1}.",
+  "w": "201-v91zora.js:11"
+ },
+ {
+  "k": "Opening the Arena Chest costs 1 Arena Key.",
+  "w": "201-v91zora.js:16"
+ },
+ {
+  "k": "needs an Arena Key",
+  "w": "201-v91zora.js:16"
+ },
+ {
+  "k": "Welcome to {0}",
+  "w": "202-v91ludus.js:20"
+ },
+ {
+  "k": "Week {0} in review · season {1}",
+  "w": "202-v91ludus.js:20"
+ },
+ {
+  "k": "Letter · from your council",
+  "w": "202-v91ludus.js:21"
+ },
+ {
+  "k": "Report · from your clerk",
+  "w": "202-v91ludus.js:21"
+ }
+]
