@@ -46403,7 +46403,7 @@ try{if(typeof LANG!=='undefined'&&LANG==='au')document.documentElement.lang='en-
 {const base=langAsk86;langAsk86=function(){try{const l0=String((navigator.languages&&navigator.languages[0])||navigator.language||'').toLowerCase();
   if(l0==='en-au'&&!localStorage.getItem('flavius_lang')&&!localStorage.getItem('flavius_langask86')&&!document.getElementById('lang86ask')){
     const mm=document.getElementById('mainMenu');if(!mm||mm.hidden||getComputedStyle(mm).display==='none')return;const U=LANG_UI87.au;
-    const c=document.createElement('div');c.id='lang86ask';c.innerHTML=`<b>🌐 ${U.ask}</b><span>${U.change}</span><div><button class="btn primary" data-lang86yes="au">${U.yes}</button><button class="btn" data-lang86no="1">Keep US spelling</button></div>`;
+    const c=document.createElement('div');c.id='lang86ask';c.innerHTML=`<b>🌐 ${U.ask}</b><span>${U.change}</span><div><button class="btn primary" data-lang86yes="au">${U.yes}</button><button class="btn" data-lang86no="1">${_T`Keep US spelling`}</button></div>`;
     document.body.appendChild(c);c.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;try{localStorage.setItem('flavius_langask86','1')}catch(e){}c.remove();if(b.dataset.lang86yes)langSet86('au')});return}}catch(e){}
   return base.apply(this,arguments)}}
 
