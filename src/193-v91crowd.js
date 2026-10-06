@@ -74,7 +74,7 @@ function regOf91(rid){if(!rid||typeof CROWD_CACHE==='undefined')return null;if(R
 /* the laurel stays rare (lead's tweak): Studio-made regulars and fighters' kin always; otherwise only the house's REG91.top best-known
    faces (most visits, at least REG91.visits — or a named old regular on a 3rd+ visit) — so a long career never laurels the whole stands */
 function reg91(sp){if(!sp||sp.human)return false;const r=regOf91(sp.rid);if(r&&(r.custom||r.kin))return true;
-  const L=S&&S.spect||[];if(REG91._n!==L.length||REG91._s!==S){REG91._n=L.length;REG91._s=S;
+  const L=S&&S.spect||[];let k=L.length;for(const x of L)k+=(x.visits||0)*31+(x.gone?7:0);if(REG91._n!==k||REG91._s!==S){REG91._n=k;REG91._s=S;
     const known=x=>!x.human&&!x.gone&&((x.visits||0)>=REG91.visits||(typeof SPECT_NAMES!=='undefined'&&SPECT_NAMES.includes(x.name)&&(x.visits||0)>=3));
     REG91._set=new Set(L.filter(known).sort((a,b)=>(b.visits||0)-(a.visits||0)).slice(0,REG91.top).map(x=>x.id))}
   return REG91._set.has(sp.id)}
