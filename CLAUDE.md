@@ -1066,6 +1066,10 @@ share copy — the site download play/flavius-rule-arena.zip.)
   the closest gladiator's Resolve, gladiators only; 04-rules npcTrigger 'scan' + closestPlayer). Aggro rules unchanged. Tholo collects the coin of
   anything he eliminates (players already go into npc.hoard; add beasts' coin rewards) — his killer gets 12 + the hoard. Tie rule: asked.
   Card checked: HP states Initial 20 / Raged ≤14 / Fazed ≤5 and 4·1·2 / 5·1·3 / 3·1·1 already match NPCT.tholo; round 3 = grid dice (S.ri≥2).
+- **v0.90 QUEUED (his ok 2026-10-06): COMPACT VERSION HISTORY** — 34-notes historyHTML: one line per version (icon · vX · title), tap to
+  open its bullets; only the newest open; What's new (115 verNotes79) unchanged. Same _T keys (no retranslation). Tholo tie rule (his pick):
+  a gladiator before a beast; between gladiators the one whose turn is now or next. Then sims before/after (deaths, beast kills, length);
+  knob if too deadly: scan every Resolve but strike at most once a rotation.
 - **v0.90 QUEUED (his yes 2026-10-05): HOT-SEAT TURNING BOARD** — a setting (Settings → On the board, OFF by default): with 2+ humans
   on one screen, the board turns to the active human's corner at the start of each human's turn (short eased spin; Reduce motion / Off
   animations = an instant cut), using the v0.89 display rotation (168). CPU turns keep the last human's view. Never in Chariot,
