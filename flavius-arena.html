@@ -48616,6 +48616,17 @@ const MUS92={mgr:false};
   if(MUS92.mgr&&up&&!(typeof audLive==='function'&&audLive())&&w!==_T('Superbus')&&w!==_T('Special'))return _T('Manager')}catch(e){}return w}}
 /* • Mail: an invitation's gladiator picker inherited the letter's dark ink (dark text on a dark box) */
 {const st=document.createElement('style');st.textContent='.mail .mbody select,.mail .mbody select option,.mail .mbody input{color:var(--bone)!important;background:var(--ink)}';document.head.appendChild(st)}
+/* • Sitting the week out (his note: the away host city's square still opened): a house that sits out never takes the road, so
+     Match Week's 🏙 button walks YOUR HOME square instead (its own thumbnail and name); the host city stays shut that week. */
+function sitOut92(){try{const w=W_();const n=w&&w.night;if(!n||!n.selfBye||n.bye)return null;const h=travelHome(me());return h!==n.loc?h:null}catch(e){return null}}
+{const base=nightHTML;nightHTML=function(){const h=base.apply(this,arguments);try{const home=sitOut92();if(home==null||typeof h!=='string')return h;
+  const T=document.createElement('template');T.innerHTML=h;const L=LOCATIONS[home];
+  for(const b of T.content.querySelectorAll('[data-mg="city"]')){b.style.backgroundImage='';b.classList.remove('city90');b.classList.add('home92');b.innerHTML=_T`🏠 Walk your home square · ${esc(L.n)}`;
+    const nt=b.nextElementSibling;if(nt&&nt.classList.contains('city90n'))nt.innerHTML=_T`Your house sits this week out — no road to ${esc(LOCATIONS[W_().night.loc].n)}.`}
+  setTimeout(()=>{try{const u=typeof city90Thumb==='function'?city90Thumb(home):'';if(u)document.querySelectorAll('#mgrBody [data-mg="city"].home92').forEach(b=>{b.style.backgroundImage=`linear-gradient(90deg,rgba(18,10,4,.88),rgba(18,10,4,.42) 70%,rgba(18,10,4,.2)),url(${u})`})}catch(e){}},60);
+  return T.innerHTML}catch(e){console.error(e)}return h}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#mgrBody [data-mg="city"]');if(!b)return;const home=sitOut92();if(home==null)return;
+  e.preventDefault();e.stopImmediatePropagation();try{openCitySquare(home,{})}catch(err){console.error(err)}},true);
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
