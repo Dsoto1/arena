@@ -63,7 +63,9 @@ const after=async p=>p.evaluate(()=>({resyncs:ONLM.resyncs,gen:ONLM.gen,odd:{...
 const r1={A:await after(A),B:await after(B),C:await after(C)};
 await run(120000,[A,B,C],async()=>(await A.evaluate(()=>ONLM.next))>=r1.A.next+8);
 /* all three have applied every input before the hashes are compared (the regression runs 3 tests at once) */
-const level=async ps=>{for(let t1=Date.now();Date.now()-t1<30000;){const ns=await Promise.all(ps.map(p=>p.evaluate(()=>ONLM.next)));if(ns.every(n=>n===ns[0]))break;await A.waitForTimeout(250)}};await level([A,B,C]);const r1b={};for(const [n,p] of Object.entries(P))r1b[n]=await p.evaluate(()=>({over:!!(S&&S.over),next:ONLM.next,turn:S&&S.turnNo,ph:S&&S.phase,busy:S&&S.busy,modal:CUR_MODAL?((document.getElementById('mTitle')||{}).textContent||'?').slice(0,40):null,act:onlmActor(),owner:onlmOwner(),me:ONLM.me,pend:!!ONLM.pend,q:ONLM.q.length,inf:ONLM.inflight,mine:onlmMine(),resyncing:!!ONLM.resyncing,cur:cur()&&cur().name,log:[...document.querySelectorAll('#log > li')].slice(0,3).map(l=>l.textContent.slice(0,80))}));
+const level=async ps=>{for(let t1=Date.now();Date.now()-t1<30000;){const ns=await Promise.all(ps.map(p=>p.evaluate(()=>ONLM.next)));if(ns.every(n=>n===ns[0]))break;await A.waitForTimeout(250)}};await level([A,B,C]);const r1b={};for(const [n,p] of Object.entries(P))r1b[n]=await p.evaluate(()=>({over:!!(S&&S.over),next:ONLM.next,turn:S&&S.turnNo,ph:S&&S.phase,busy:S&&S.busy,modal:CUR_MODAL?((document.getElementById('mTitle')||{}).textContent||'?').slice(0,40):null,act:onlmActor(),owner:onlmOwner(),me:ONLM.me,pend:!!ONLM.pend,q:ONLM.q.length,inf:ONLM.inflight,mine:onlmMine(),resyncing:!!ONLM.resyncing,cur:cur()&&cur().name,log:[...document.querySelectorAll('#log > li')].slice(0,3).map(l=>l.textContent.slice(0,80)),odd:{...ONLM.odd},oddSkips:ONL80R.oddSkips,gen:ONLM.gen,resyncs:ONLM.resyncs,sent:ONLM.sent}));
+/* (diagnostics for a stall: the server's inputs from the odd one on) */
+const srvIns=await A.evaluate(async f=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.filter(x=>x.seq>=f-1).slice(0,12).map(x=>[x.seq,x.seat,x.k,x.a||'',x.void?'void':'',x.g||'',x.n||'']),r1.A.next).catch(e=>String(e));
 /* in step again: every seq after Gamma's reload hashes the same on all three */
 const hl={};for(const [n,p] of Object.entries(P))hl[n]=await p.evaluate(()=>ONLM.hlog);
 let same=0,diff=0;const from=r1.C.next;for(let s=from;s<from+400;s++){const hs=['A','B','C'].map(n=>hl[n]['s'+s]).filter(Boolean);if(hs.length<3)continue;if(hs.every(h=>h===hs[0]))same++;else diff++}
@@ -108,7 +110,7 @@ const two={A:await A.evaluate(()=>({resyncs:ONLM.resyncs,votes:ONL80R.votes,hash
 const hA=await A.evaluate(()=>ONLM.hlog),hB=await B.evaluate(()=>ONLM.hlog);let same2=0,diff2=0;const f2=(tamp2&&tamp2.next||0)+1;for(let s=f2;s<f2+400;s++){const a=hA['s'+s],c=hB['s'+s];if(!a||!c)continue;if(a===c)same2++;else diff2++}
 for(const p of [A,B])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done('close');onlExit()});await A.waitForTimeout(1200);
 const rkBack={A:await A.evaluate(()=>({hints:HINTS,set:SETTINGS.hints,strat:showStrategy(),chest:CHEST_W.includes('cw_t80c'),rec:onl80Rec()})),B:await B.evaluate(()=>({hints:HINTS,set:SETTINGS.hints,strat:showStrategy()}))};
-console.log(JSON.stringify({pre,gear,pause,tampered,r1,r1b,same,diff,hk,strikes,res,lsDiff,back,ranked,q0,tamp2,two,same2,diff2,rkBack}));
+console.log(JSON.stringify({pre,gear,pause,tampered,r1,r1b,srvIns,same,diff,hk,strikes,res,lsDiff,back,ranked,q0,tamp2,two,same2,diff2,rkBack}));
 const miss=[];
 if(!pre.A.chest||!pre.A.market||!pre.B.chest)miss.push('custom gear set up offline');
 for(const n of ['A','B','C']){const g=gear[n];if(g.chest.length||g.market.length||g.inMatch)miss.push('printed gear only '+n);if(g.sponsor!=='flavius')miss.push('Flavius presides '+n);if(g.regulars)miss.push('no regulars '+n);if(!g.hints)miss.push('Custom keeps hints '+n)}
