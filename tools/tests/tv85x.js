@@ -25,7 +25,7 @@ const q=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms)
 ok(q.txt,'the road offer names its bout');ok(q.bi>=0&&q.fits,'the deal enters the fighter in a bout that suits him');ok(q.bx.join()==='done,next,later'&&q.slash,'bout tracker: done slashed, next lit');ok(q.walk,'the walks sit in the Road box');console.log(JSON.stringify(q));
 const z=await pg.evaluate(async()=>{const w=W_(),m=me();const t=w.night.travel;t.paid=true;t.cost=t.cost||11;t.gone=true;const g=rosterOf(m)[0];g.inj={until:w.week+2,label:'a deep thigh cut',pen:3};g.medWk=null;g.bathWk=null;
   const it=weekChecklist().find(x=>x.ic==='⚕');const need=infirmNeed73();const lt=typeof medicus84==='function'?medicus84(w):null;
-  const road=ROAD76.every(E=>!/^−\d/.test(E.a[1]));MGR.tab='night';MGR_REDRAW();await new Promise(x=>setTimeout(x,300));const tem=/Cost: \d+ coin · /.test((document.querySelector('.tmp76')||{}).innerHTML||'');
+  const road=ROAD76.every(E=>!/^−\d/.test(E.a[1]));MGR.tab='night';MGR_REDRAW();await new Promise(x=>setTimeout(x,300));const tem=/Cost: \d+ coin · /.test((()=>{const d=document.createElement('div');d.innerHTML=templeHTML76();return d.textContent})()); /* v0.90: the temple lives in the City Square only */
   MGR.tab='ludus';MGR_REDRAW();await new Promise(x=>setTimeout(x,300));const flag=!!document.querySelector('.banner73 svg image, .room73 svg image, svg image[href^="data:"]');
   return {done:!!it&&it.done&&/treatment opens after the games/.test(it.txt),need,lt,road,tem,flag}});
 ok(z.done&&z.need===0&&!z.lt,'a wound taken on the road waits for next week without nagging');ok(z.road&&z.tem,'prices read Cost: N coin');console.log(JSON.stringify(z));
