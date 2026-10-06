@@ -1121,6 +1121,10 @@ share copy — the site download play/flavius-rule-arena.zip.)
 - **I18N SOURCE GLUE (found by the zh translators, fix in v0.90):** 16-crowd stone line puts a CPU spectator's English name + "hurls"
   before translated text; recruiting "You already {0} {1}" takes English verbs (scouted/feasted/pitched); a 10-meta "…first" fragment + tier
   name stay English. Wrap the verbs with _T / reword into whole keys.
+- **v0.91 SCOPE (his call 2026-10-06):** (1) SPONSORS improved (drawn with more detail + the bigger mood set incl. 'really'; sponsor
+  creator updated) · (2) steady online tests (condition waits, not fixed times) · (3) readability pass slice · (4) NIGHT MATCH back on — improve
+  the feel, lights must NOT block the view · (5) Crowd Favor tile CF-only (built). Dropped from the open list: printed class cards to the live
+  template (he has the system cards + the custom template — done as is); login.flaviusrule.com works (his word).
 - **v0.90 QUEUED (his yes 2026-10-05): HOT-SEAT TURNING BOARD** — a setting (Settings → On the board, OFF by default): with 2+ humans
   on one screen, the board turns to the active human's corner at the start of each human's turn (short eased spin; Reduce motion / Off
   animations = an instant cut), using the v0.89 display rotation (168). CPU turns keep the last human's view. Never in Chariot,
