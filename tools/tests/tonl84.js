@@ -133,10 +133,11 @@ await world(A,(w,[a,c])=>{w.auc84={};w.aucwin84={};w.chest83=[];const cat=onlCat
   w.chest83.push(mk(11,'legendary','a'),mk(12,'epic','w'),mk(13,'rare','a'));w.chars[a].wallet=20000;w.chars[c].wallet=20000},[sa.ch,sc.ch]);
 let al=await A.evaluate(async()=>await NET.req('auction.list',{}));ok(al.lots.length===6&&al.lots.filter(l=>!l.vault89&&!(l.hist||[]).some(h=>h.vault89)).length===3&&al.lots.every(l=>l.w&&l.hist.length&&l.min===Math.ceil(l.val/2)),'six lots (v0.91): the three from the chest + three from the vault, full cards + history, half the value');
 const [l1,l2]=al.lots;const r1=await err(B,async l=>NET.req('auction.bid',{lot:l.id,amt:l.min}),l1);ok(/^auc_rank\|/.test(r1),'a Tiro may not bid ('+r1+')');
-const w0=await A.evaluate(()=>ONL.char.wallet);const bA=await A.evaluate(async l=>(await NET.req('auction.bid',{lot:l.id,amt:l.min})).char.wallet,l1);ok(bA===20000-l1.min,'escrow: the bid leaves the purse');
+const treA=()=>A.evaluate(()=>{const w=mockLoad();const c=w.chars[ONL.char.id];return ((w.domus82[c.domus]||{}).treasury|0)+(c.wallet|0)}); /* v0.92 one treasury (a purse still on him moves in at the bid) */
+const w0=await treA();await A.evaluate(async l=>await NET.req('auction.bid',{lot:l.id,amt:l.min}),l1);const bA=await treA();ok(bA===w0-l1.min,'escrow: the bid leaves the treasury '+JSON.stringify([w0,bA]));
 const r2=await err(A,async l=>NET.req('auction.bid',{lot:l.id,amt:l.min}),l2);ok(/^auc_lead\|/.test(r2),'one lead at a time ('+r2+')');
 const nx=await C.evaluate(l=>ONLC.aucNextMin({bid:{amt:l.min}}),l1);await C.evaluate(async([l,a])=>NET.req('auction.bid',{lot:l.id,amt:a}),[l1,nx]);
-const ref=await pv(A,async()=>({w:(await NET.req('char.mine',{})).find(c=>c.alive).wallet,push:P84.filter(x=>x.t==='auction.outbid').length}),v=>v.w===20000&&v.push>=1);ok(ref.w===20000&&ref.push>=1,'outbid: the coin is back at once + a notice '+JSON.stringify(ref));
+const ref=await pv(A,async()=>{const w=mockLoad();const c=w.chars[ONL.char.id];return {w:((w.domus82[c.domus]||{}).treasury|0)+(c.wallet|0),push:P84.filter(x=>x.t==='auction.outbid').length}},v=>v.push>=1);ok(ref.w===w0&&ref.push>=1,'outbid: the coin is back at once + a notice '+JSON.stringify(ref));
 /* anti-snipe: the clock moves to the last minute; Alpha's bid adds five minutes */
 const ends0=await A.evaluate(async()=>(await NET.req('auction.list',{})).lots[0].ends);await A.evaluate(e=>localStorage.setItem('flavius_onlclock84',String(e-60e3-Date.now())),ends0);
 const sn=await A.evaluate(async([l,a])=>{const r=await NET.req('auction.bid',{lot:l.id,amt:a});return {ends:r.lot.ends,now:mockT84()}},[l1,await A.evaluate(n=>ONLC.aucNextMin({bid:{amt:n}}),nx)]);

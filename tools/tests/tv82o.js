@@ -59,12 +59,12 @@ await A.evaluate(()=>{const e=document.querySelector('.rb82');if(e)e.scrollIntoV
 await A.setViewportSize({width:420,height:860});await A.waitForTimeout(400);const ph=await A.evaluate(()=>{const a=document.querySelector('.rb82').getBoundingClientRect(),s=(document.querySelector('#onl .gc89-row')||document.querySelector('.onl-gslots')).getBoundingClientRect();return a.bottom<=s.top+2&&a.width>a.height});
 ok(ph,'phone: the rank bar is a strip above the slots');await A.evaluate(()=>{document.querySelector('.rb82').scrollIntoView()});await shot(A,'domus_phone');await A.setViewportSize({width:1300,height:900});
 /* ── 3. prices by AP + the confirmation ── */
-await A.evaluate(async()=>{const w=mockLoad();const c=w.chars[ONL.char.id];c.wallet=100;mockSave(w);await onlRefresh();ONL.tab='armory';ONL.mkt='a';onlRedraw()});await A.waitForTimeout(300);
+await A.evaluate(async()=>{const w=mockLoad();const c=w.chars[ONL.char.id];c.wallet=0;w.domus82[c.domus].treasury=100;mockSave(w); /* v0.92: the treasury pays */await onlRefresh();ONL.tab='armory';ONL.mkt='a';onlRedraw()});await A.waitForTimeout(300);
 /* v0.83: the market board (137) — the tile's title names the AP, the tile shows the price */
 const pr=await A.evaluate(()=>{const t=document.querySelector('#onl .mb83-it[data-v="galea"]');return {ocrea:ONLC.priceOf(onlCatalog().ocrea),txt:t?(t.title+' '+t.textContent):'',w1:ONLC.priceOf(onlCatalog().gladius||{kind:'w',lv:1})}});
 ok(pr.ocrea===220&&/2 AP/.test(pr.txt)&&/ 30/.test(pr.txt)&&pr.w1===60,'prices by AP and level');
 await A.click('#onl [data-onl82="buy"][data-v="galea"]');await A.waitForFunction(()=>/100 → 70/.test(document.querySelector('.ask76bg')?.textContent||''),null,{timeout:10000}).catch(()=>{});const cf=await A.evaluate(()=>document.querySelector('.ask76bg')?.textContent||'');await shot(A,'buy');
-await A.click('.ask76bg [data-ask76="1"]');await A.waitForFunction(()=>ONL.char&&ONL.char.wallet===70,null,{timeout:20000}).catch(()=>{});const wal=await A.evaluate(()=>ONL.char.wallet);ok(/30 coin/.test(cf)&&/100 → 70/.test(cf)&&wal===70,'buy confirmation with the price');
+await A.click('.ask76bg [data-ask76="1"]');await A.waitForFunction(()=>ONL.domus&&ONL.domus.treasury===70,null,{timeout:20000}).catch(()=>{});const wal=await A.evaluate(()=>ONL.domus.treasury);ok(/30 coin/.test(cf)&&/100 → 70/.test(cf)&&wal===70,'buy confirmation with the price');
 /* ── 3b. the Domus (v0.89, 175): what a gladiator wears; off → the shelf; onto another gladiator from the bar ── */
 await A.evaluate(()=>{ONL.tab='char';onlRedraw()});await A.waitForFunction(()=>!!document.querySelector('#onl .sc89 [data-d89off^="galea"]'),null,{timeout:20000}).catch(()=>{});await A.waitForTimeout(300);
 const ids=await A.evaluate(()=>Object.fromEntries(ONL.chars.map(c=>[c.name,c.id])));
@@ -90,7 +90,7 @@ const note=await pv(A,()=>document.querySelector('#onlRoom80 .tbl82')?.textConte
 const st=await A.evaluate(async id=>{/* the bout is reported by hand below: A's window must not walk into it on the start push (116 auto-enter) */ONL.entered[id]=1;const L=await NET.req('lobby.start',{id});onlPre82(L);const t=L.players.map((p,i)=>({seat:i,won:i===0,place:i?2:1,f:i?5:20,coin:40,survives:true}));ONL82._t=t;return t},R1);
 await sync(A,B);await B.evaluate(async([id,t])=>{await NET.req('match.result',{id,table:t,hash:'h'})},[R1,st]);await sync(B,A);
 const rA=await A.evaluate(async id=>{const r=await NET.req('match.result',{id,table:ONL82._t,hash:'h'});T82.length=0;onlSettled(r);/* the line comes 2.5 s after the result: poll for it */for(let i=0;i<200&&!T82.some(t=>/lifetime CF/.test(t));i++)await new Promise(x=>setTimeout(x,100));await new Promise(x=>setTimeout(x,200));return {pay:r.out&&r.out.pay,award:r.out&&r.out.award,f:r.out&&r.out.factor,toast:T82.join(' ')}},R1);
-ok(rA.award===Math.round(12*0.5)&&rA.pay===rA.award-Math.round(rA.award*0.2)&&rA.f===0.5&&new RegExp('\\+'+rA.pay+' coin').test(rA.toast.replace(/<[^>]+>/g,''))&&/win \+50%/.test(rA.toast)&&/×½ table/.test(rA.toast),'award × table shown');
+ok(rA.award===Math.round(12*0.5)&&rA.pay===0&&rA.f===0.5&&new RegExp('\\+'+rA.award+' coin').test(rA.toast.replace(/<[^>]+>/g,''))&&/win \+50%/.test(rA.toast)&&/×½ table/.test(rA.toast),'award × table shown (v0.92: all of it to the house treasury)');
 const cu=await A.evaluate(async()=>{ONL82.pre={ranked:false};T82.length=0;onlSettled({char:ONL.char,out:{pay:0,cf:9,glory:4.5,factor:0.5}});/* the line comes 2.5 s after the result: poll for it */for(let i=0;i<200&&!T82.some(t=>/lifetime CF/.test(t));i++)await new Promise(x=>setTimeout(x,100));await new Promise(x=>setTimeout(x,200));return T82.join(' ')});ok(/Custom bout — no purse/.test(cu)&&!/carried/.test(cu),'Custom: no purse');
 const hd=await A.evaluate(async()=>(await NET.req('domus.get',{})).domus);ok(hd.bouts===1&&hd.wins===1&&hd.survived===1&&hd.lifeCF===20,'the house record follows the result');
 /* ── 5. the guest ── */
@@ -131,13 +131,13 @@ const R4=await A.evaluate(async()=>{const L=(ONL.lobbies=await NET.req('lobby.li
 const lb=await A.evaluate(async id=>{const r=(await NET.req('lobby.list')).find(x=>x.id===id);return {free:r.free,ticket:r.ticket}},R4);ok(lb.free&&!lb.ticket,'host sets free tickets');
 const fsel=await A.evaluate(async()=>{ONL.lobbies=await NET.req('lobby.list');ONL.tab='play';let v='';for(const t0=Date.now();Date.now()-t0<30000&&v!=='free';){onlRedraw();await new Promise(r=>setTimeout(r,300));const s=document.querySelector('#onlRoom80 select[data-onlrs="ticket"]');v=s?s.value:''}return v});ok(fsel==='free','the host’s ticket select reads free');
 await sync(A,F);await F.evaluate(async id=>{await NET.req('lobby.join',{id})},R4);await sync(F,B);
-await B.evaluate(async()=>{const w=mockLoad();onlMockChar(w,ONL.acct.id).wallet=30;mockSave(w);await onlRefresh();ONL.tab='play';onlRedraw()});await B.waitForFunction(()=>!document.getElementById('pass82'),null,{timeout:10300}).catch(()=>{});
-ok(await B.evaluate(()=>!document.getElementById('pass82')),'no pass while the purse is full');
-await B.evaluate(async()=>{const w=mockLoad();onlMockChar(w,ONL.acct.id).wallet=8;mockSave(w);await onlRefresh();onlRedraw()});
+await B.evaluate(async()=>{const w=mockLoad();w.domus82[w.accounts[ONL.acct.id].domus].treasury=30;mockSave(w); /* v0.92: the treasury decides */await onlRefresh();ONL.tab='play';onlRedraw()});await B.waitForFunction(()=>!document.getElementById('pass82'),null,{timeout:10300}).catch(()=>{});
+ok(await B.evaluate(()=>!document.getElementById('pass82')),'no pass while the treasury is full');
+await B.evaluate(async()=>{const w=mockLoad();w.domus82[w.accounts[ONL.acct.id].domus].treasury=8;mockSave(w);await onlRefresh();onlRedraw()});
 const ps=await pv(B,()=>document.getElementById('pass82')?.textContent||'',v=>/guest pass/.test(v)&&/Democritus|democritus/i.test(v));ok(/guest pass/.test(ps)&&/Democritus|democritus/i.test(ps),'pass card names the room');await shot(B,'pass');
 await B.evaluate(()=>NET.req('domus.patron',{look:{skin:'#8d5524',robe:'#123456',c1:'#112233',c2:'#445566',hat:'pileus'}}));
 await B.click('#pass82 [data-onl82="pass"]');await B.waitForFunction(()=>!document.getElementById('pass82'),null,{timeout:20000}).catch(()=>{});await B.waitForTimeout(300);
-const tk=await B.evaluate(id=>{const w=mockLoad();const L=w.lobbies[id];const t=(L.stands||[]).find(s=>s.id===ONL.acct.id);return {t,wal:ONL.char.wallet,card:!!document.getElementById('pass82')}},R4);
+const tk=await B.evaluate(id=>{const w=mockLoad();const L=w.lobbies[id];const t=(L.stands||[]).find(s=>s.id===ONL.acct.id);return {t,wal:(w.domus82[w.accounts[ONL.acct.id].domus]||{}).treasury|0,card:!!document.getElementById('pass82')}},R4);
 ok(tk.t&&tk.t.pass&&tk.t.paid===0&&tk.wal===8&&!tk.card&&tk.t.domus==='Aemilii'&&tk.t.patron&&tk.t.patron.robe==='#123456','one tap → a free seat (house + patron on the entry); the card is gone');
 ok(/One guest pass a day/.test(await err(B,id=>NET.req('lobby.pass',{id}),R4)),'once a day');
 /* a free ticket for another lanista */

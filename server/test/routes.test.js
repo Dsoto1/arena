@@ -5,6 +5,8 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
 (async()=>{
   const db=store.memory();const pushed=[];let t=1700000000000;
   const route=makeRoutes({store:db,push:async(a,ty,d)=>pushed.push([a,ty,d]),catalog,now:()=>(t+=1000),dev:true,countdown:0});
+  /* v0.92 one treasury: a house's coin */
+  const treOf=async acct=>{const P=await db.get('ACCT#'+acct,'PROFILE');const D=P&&P.domus?await db.get('DOMUS#'+P.domus,'DOMUS'):null;return D?D.treasury|0:0};
   const A={acct:'dev-a'},B={acct:'dev-b'};
   /* v0.82: every lanista founds a house before any gladiator */
   const sign=async(ctx,name)=>{await route('auth.signin',{name},ctx);await route('domus.create',{name:'Domus '+name},ctx)};
@@ -26,13 +28,13 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   await assert.rejects(route('lobby.chat',{id:ZL.id,text:'Ave'},Z),/Quick chat only/,'v0.80: no free text online');
   await route('lobby.set',{id:ZL.id,abandon:'fate',standsOff:true},Z);assert.strictEqual((await db.get('LOBBY#'+ZL.id,'LOBBY')).abandon,'fate');await route('lobby.leave',{id:ZL.id},Z);
   const cb=await route('char.create',{name:'Beta the Grim',cls:'soldier'},B);
-  await assert.rejects(route('char.buy',{char:ca.id,item:'gladius'},A),/Costs 60 coin/);
+  await assert.rejects(route('char.buy',{char:ca.id,item:'gladius'},A),/treasury needs 60 coin/);
   const L=await route('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:true},A);assert.strictEqual(L.rank,'tiro');
   await route('lobby.join',{id:L.id},B);
   /* wagers: a fighter backs only themselves; the pool is escrowed */
   let ch=await db.get('CHAR#'+cb.id,'CHAR');ch.wallet=40;await db.put('CHAR#'+cb.id,'CHAR',ch);
   await assert.rejects(route('bet.place',{id:L.id,seat:0,amt:10},B),/only back themselves/);
-  const bet=await route('bet.place',{id:L.id,seat:1,amt:10},B);assert.strictEqual(bet.char.wallet,30);assert.strictEqual(bet.lobby.pool,10);
+  const bet=await route('bet.place',{id:L.id,seat:1,amt:10},B);assert.strictEqual(bet.char.wallet,0,'v0.92: the purse moved into the treasury');assert.strictEqual(await treOf('dev-b'),30,'the treasury stakes the bet');assert.strictEqual(bet.lobby.pool,10);
   await assert.rejects(route('lobby.start',{id:L.id},B),/Only the host/);
   const L2=await route('lobby.start',{id:L.id},A);assert.strictEqual(L2.status,'live');assert.ok(Number.isInteger(L2.seed));
   await assert.rejects(route('bet.place',{id:L.id,seat:1,amt:5},B),/Bets close/);
@@ -51,16 +53,16 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   const ra=await route('match.result',{id:L.id,table,hash:'h1'},A);assert.ok(ra.pending,'waits for the other report');
   const rb=await route('match.result',{id:L.id,table,hash:'h1'},B);
   assert.ok(!rb.void);assert.ok(!rb.out.died);assert.strictEqual(rb.char.survived,1);assert.strictEqual(rb.char.streak,1);assert.strictEqual(rb.char.stats.spd+rb.char.stats.str+rb.char.stats.int+rb.char.stats.lck+rb.char.stats.cha,275+2,'+1 survived, +1 won');
-  assert.strictEqual(rb.char.wallet,30+5+10,'v0.82: the Tiro award ×1.5 for the win, ×0.5 at two lanistas (no coin carried out) + the pool back; v0.83: 1 of the 6 to the house treasury');
+  assert.strictEqual(rb.char.wallet,0);assert.strictEqual(await treOf('dev-b'),30+6+10,'v0.82: the Tiro award ×1.5 for the win, ×0.5 at two lanistas (no coin carried out) + the pool back; v0.92: all of it into the house treasury');
   assert.ok(pushed.some(([a,ty,d])=>a==='dev-a'&&ty==='match.settled'&&d.out&&d.out.died),'A hears the verdict');
   assert.ok(!(await db.get('CHAR#'+ca.id,'CHAR')).alive,'A is dead');assert.strictEqual((await route('hall.list',{},A)).length,0,'a fallen Tiro is forgotten');
   assert.strictEqual((await db.get('LOBBY#'+L.id,'LOBBY')).status,'done');
   /* two humans who disagree: void — nobody paid, nobody dies, both get a strike */
   const ca2=await route('char.create',{name:'Alpha Again',cls:'slave'},A);const M2=await route('lobby.create',{ev:'egidious',loc:3,seats:2,ranked:true},A);await route('lobby.join',{id:M2.id},B);await route('lobby.start',{id:M2.id},A);
-  const w0=(await db.get('CHAR#'+cb.id,'CHAR')).wallet;
+  const w0=await treOf('dev-b');
   await route('match.result',{id:M2.id,table:[{seat:0,won:true,survives:true},{seat:1,won:false,survives:false}],hash:'x'},A);
   const vd=await route('match.result',{id:M2.id,table:[{seat:0,won:false,survives:false},{seat:1,won:true,survives:true}],hash:'y'},B);
-  assert.ok(vd.void,'void');assert.ok((await db.get('CHAR#'+cb.id,'CHAR')).alive&&(await db.get('CHAR#'+ca2.id,'CHAR')).alive,'no deaths');assert.strictEqual((await db.get('CHAR#'+cb.id,'CHAR')).wallet,w0,'no pay');
+  assert.ok(vd.void,'void');assert.ok((await db.get('CHAR#'+cb.id,'CHAR')).alive&&(await db.get('CHAR#'+ca2.id,'CHAR')).alive,'no deaths');assert.strictEqual(await treOf('dev-b'),w0,'no pay');
   assert.strictEqual((await db.get('ACCT#dev-a','PROFILE')).strikes,1);assert.strictEqual((await db.get('ACCT#dev-b','PROFILE')).strikes,1);
   /* three strikes: only meets other struck accounts */
   const P=await db.get('ACCT#dev-b','PROFILE');P.strikes=3;await db.put('ACCT#dev-b','PROFILE',P);const L3=await route('lobby.create',{ev:'cassian',loc:2,seats:2,ranked:false},A);
@@ -84,9 +86,9 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   const ga=await route('char.create',{name:'Alpha Third',cls:'royalty'},A).catch(()=>null);
   await route('lobby.join',{id:F.id},B);assert.strictEqual((await db.get('LOBBY#'+F.id,'LOBBY')).players.find(p=>p.id==='dev-b').team,'B');
   /* tickets: before the horns only, never for a fighter; the coin goes into the pot */
-  const actA=(await route('hello',{all:1},A)).active;let chA=(await route('char.mine',{},A)).find(c=>c.id===actA);chA.wallet=20;await db.put('CHAR#'+chA.id,'CHAR',{...chA,GSI1PK:'OWNER#dev-a',GSI1SK:chA.born});
+  const actA=(await route('hello',{all:1},A)).active;let chA=(await route('char.mine',{},A)).find(c=>c.id===actA);const ta0=await treOf('dev-a');chA.wallet=20;await db.put('CHAR#'+chA.id,'CHAR',{...chA,GSI1PK:'OWNER#dev-a',GSI1SK:chA.born});
   await assert.rejects(route('lobby.ticket',{id:F.id},B),/Fighters take the sand/);
-  const tk=await route('lobby.ticket',{id:F.id},A);assert.strictEqual(tk.char.wallet,15);assert.strictEqual(tk.lobby.pot,5);assert.strictEqual(tk.lobby.stands[0].id,'dev-a');
+  const tk=await route('lobby.ticket',{id:F.id},A);assert.strictEqual(tk.char.wallet,0);assert.strictEqual(await treOf('dev-a'),ta0+15,'v0.92: the purse moved in, the treasury paid the ticket');assert.strictEqual(tk.lobby.pot,5);assert.strictEqual(tk.lobby.stands[0].id,'dev-a');
   await route('lobby.start',{id:F.id},Cc);await assert.rejects(route('lobby.ticket',{id:F.id},A),/until the horns/);
   const MF=await db.get('MATCH#'+F.id,'META');assert.strictEqual(MF.seats['dev-a'],4,'the ticket holder sits after the four fighters');assert.ok(!MF.players.includes('dev-a'));
   await route('match.open',{id:F.id,snap:{S:'{}',rng:1}},Cc);
@@ -97,8 +99,8 @@ const {makeRoutes}=require('../src/routes.js');const store=require('../src/store
   await assert.rejects(route('match.input',{id:F.id,in:{k:'act',a:'end',seat:0}},Ee),/Not your match/,'a watcher cannot move');
   /* team A wins: the pot (no bets) goes to the winning fighters */
   const ft=[{seat:0,won:true,survives:true},{seat:1,won:true,survives:true},{seat:2,won:false,survives:true},{seat:3,won:false,survives:true}];
-  const wc0=(await db.get('CHAR#'+cc.id,'CHAR')).wallet;for(const X of [Cc,Dd,B])await route('match.result',{id:F.id,table:ft,hash:'f'},X);
-  const wc1=(await db.get('CHAR#'+cc.id,'CHAR')).wallet;assert.ok(wc1>=wc0+2,'the ticket pot is split by the winning team');
+  const wc0=await treOf('dev-c');for(const X of [Cc,Dd,B])await route('match.result',{id:F.id,table:ft,hash:'f'},X);
+  const wc1=await treOf('dev-c');assert.ok(wc1>=wc0+2,'the ticket pot is split by the winning team');
   await route('party.leave',{},Dd);assert.deepStrictEqual((await route('party.get',{},Cc)).members,['dev-c']);
   /* settle: winning bets share bets + pot; void refunds bets and tickets */
   const st=C.settle([{by:'x',seat:0,amt:10},{by:'y',seat:1,amt:10}],[0],{pot:20});assert.strictEqual(st.payouts.x,38);
@@ -287,6 +289,9 @@ async function v80b(){
     cl.got=(t,since=0)=>sent.slice(since).filter(x=>x.conn===cl.conn&&x.msg.push===t).map(x=>x.msg.d);
     await cl.req('auth.signin',{name:name.toUpperCase()+' Account'});await cl.req('domus.create',{name:'Domus '+name});if(o.glad!==false)cl.ch=await cl.req('char.create',{name:o.glad||name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});return cl}
   const getC=id=>db.get('CHAR#'+id,'CHAR');const setC=async(id,f)=>{const c=await getC(id);Object.assign(c,f);await db.put('CHAR#'+id,'CHAR',c)};
+  /* v0.92 one treasury: read / set a house's coin by its lanista */
+  const domOf=async acct=>{const P=await db.get('ACCT#'+acct,'PROFILE');return P&&P.domus?await db.get('DOMUS#'+P.domus,'DOMUS'):null};
+  const treOf=async acct=>{const D=await domOf(acct);return D?D.treasury|0:0};const setT=async(acct,v)=>{const D=await domOf(acct);D.treasury=v;await db.put('DOMUS#'+D.id,'DOMUS',D)};
   const ok=r=>r.status==='fulfilled';
   /* the name filter (gladiator names are what everyone sees) */
   const ann=await client('ann'),bob=await client('bob'),cat=await client('cat'),dan=await client('dan');
@@ -298,9 +303,9 @@ async function v80b(){
   await setC(ann.ch.id,{wallet:C.PRICE[1]});const buys=await Promise.allSettled([ann.req('char.buy',{char:ann.ch.id,item:'gladius'}),ann.req('char.buy',{char:ann.ch.id,item:'mace'})]);
   assert.strictEqual(buys.filter(ok).length,1,'one buy');let ch=await getC(ann.ch.id);assert.strictEqual(ch.wallet,0);assert.strictEqual(ch.gear.length,1);
   /* a ticket given back twice at once is refunded once; a ticket holder cannot join the room */
-  let L=await bob.req('lobby.create',{ev:'democritus',cry:false});await bob.req('lobby.set',{id:L.id,ticket:10});await setC(cat.ch.id,{wallet:30});
-  await cat.req('lobby.ticket',{id:L.id});assert.strictEqual((await getC(cat.ch.id)).wallet,20);await assert.rejects(cat.req('lobby.join',{id:L.id}),/hold a ticket/);
-  const lv=await Promise.allSettled([cat.req('lobby.leave',{id:L.id}),cat.req('lobby.leave',{id:L.id})]);assert.ok(lv.every(ok));assert.strictEqual((await getC(cat.ch.id)).wallet,30,'refunded once');
+  let L=await bob.req('lobby.create',{ev:'democritus',cry:false});await bob.req('lobby.set',{id:L.id,ticket:10});const tc0=await treOf(cat.acct);await setC(cat.ch.id,{wallet:30});
+  await cat.req('lobby.ticket',{id:L.id});assert.strictEqual(await treOf(cat.acct),tc0+20,'v0.92: the purse moved in, the treasury paid');await assert.rejects(cat.req('lobby.join',{id:L.id}),/hold a ticket/);
+  const lv=await Promise.allSettled([cat.req('lobby.leave',{id:L.id}),cat.req('lobby.leave',{id:L.id})]);assert.ok(lv.every(ok));assert.strictEqual(await treOf(cat.acct),tc0+30,'refunded once, into the treasury');
   /* the Forum keeps tiny room rows; every room line says the free seats */
   const fl=(await db.query('FORUM','L#')).map(x=>x);let m0=mark();await cat.req('lobby.create',{ev:'cassian'});const fl2=(await db.query('FORUM','L#')).slice(fl.length);
   assert.strictEqual(fl2.length,1);assert.deepStrictEqual(Object.keys(fl2[0].row).sort(),['ev','id','loc','n','rank','ranked','seats','team'].sort(),'tiny rows');assert.strictEqual(fl2[0].need,3);
@@ -372,6 +377,9 @@ async function v82(){
     await cl.req('auth.signin',{name:name.toUpperCase()+' Account'});if(o.domus!==false)cl.domus=(await cl.req('domus.create',{name:o.domus||'Domus '+name})).domus;
     if(o.glad!==false&&o.domus!==false)cl.ch=await cl.req('char.create',{name:name[0].toUpperCase()+name.slice(1)+' Gladius',cls:o.cls||'hero'});return cl}
   const getC=id=>db.get('CHAR#'+id,'CHAR');const setC=async(id,f)=>{const c=await getC(id);Object.assign(c,f);await db.put('CHAR#'+id,'CHAR',c)};
+  /* v0.92 one treasury: read / set a house's coin by its lanista */
+  const domOf=async acct=>{const P=await db.get('ACCT#'+acct,'PROFILE');return P&&P.domus?await db.get('DOMUS#'+P.domus,'DOMUS'):null};
+  const treOf=async acct=>{const D=await domOf(acct);return D?D.treasury|0:0};const setT=async(acct,v)=>{const D=await domOf(acct);D.treasury=v;await db.put('DOMUS#'+D.id,'DOMUS',D)};
   const getD=id=>db.get('DOMUS#'+id,'DOMUS');
   /* old protocol: refused */
   {const r=await h({requestContext:{routeKey:'$connect',connectionId:'old'},queryStringParameters:{dev:'x',ver:'4'}});assert.strictEqual(r.statusCode,426,'protocol 4 clients reload');assert.ok(C.VER>=5)}
@@ -410,16 +418,16 @@ async function v82(){
   /* the house keeps the record of a settled Ranked match; the coin rework pays the award only */
   await lan.req('lobby.leave',{id:R0.id});
   let RR=await lan.req('lobby.create',{ev:'cassian',ranked:true,cry:false});await nan.req('lobby.join',{id:RR.id});RR=await lan.req('lobby.start',{id:RR.id});
-  const actL=(await lan.req('hello',{all:1})).active;await setC(actL,{streak:3,wallet:5});const w0=(await getC(nan.ch.id)).wallet;
+  const actL=(await lan.req('hello',{all:1})).active;await setC(actL,{streak:3});const tl0=await treOf(lan.acct),w0=await treOf(nan.acct);
   const rt=RR.players.map((p,i)=>({seat:i,won:p.id===lan.acct,place:p.id===lan.acct?1:2,f:p.id===lan.acct?30:7,coin:60,survives:true}));
   for(const x of [lan,nan])await x.req('match.result',{id:RR.id,table:rt,hash:'d'});
-  const aw=Math.round(8*1.5*1.3*0.5);assert.strictEqual((await getC(actL)).wallet,5+aw-Math.round(aw*0.2),'Tiro win with a streak of 3, two lanistas: 8 ×1.5 ×1.3 ×0.5 (carried coin is never paid); v0.83: 20% to the treasury');assert.strictEqual((await getC(nan.ch.id)).wallet,w0+3,'Tiro survivor, two lanistas: 8 ×0.5, one to the treasury');
+  const aw=Math.round(8*1.5*1.3*0.5);assert.strictEqual(await treOf(lan.acct),tl0+aw,'Tiro win with a streak of 3, two lanistas: 8 ×1.5 ×1.3 ×0.5 (carried coin is never paid); v0.92: all of it to the treasury');assert.strictEqual((await getC(actL)).wallet|0,0,'no purse');assert.strictEqual(await treOf(nan.acct),w0+4,'Tiro survivor, two lanistas: 8 ×0.5, into the treasury');
   assert.strictEqual((await getC(nan.ch.id)).glory,(7+12)*0.5,'Glory at the table factor: (7 CF + 12 survived) ×0.5');assert.strictEqual((await getC(actL)).glory,(30+12+8)*0.5,'a win adds 8');
   const hd=(await lan.req('domus.get',{})).domus;assert.deepStrictEqual([hd.bouts,hd.wins,hd.survived,hd.fallen,hd.lifeCF],[1,1,1,0,30],'the house record');
   /* Custom pays no coin */
-  let CR=await lan.req('lobby.create',{ev:'egidious',cry:false});await nan.req('lobby.join',{id:CR.id});CR=await lan.req('lobby.start',{id:CR.id});const w1=(await getC(nan.ch.id)).wallet;
+  let CR=await lan.req('lobby.create',{ev:'egidious',cry:false});await nan.req('lobby.join',{id:CR.id});CR=await lan.req('lobby.start',{id:CR.id});const w1=await treOf(nan.acct);
   const ct=CR.players.map((p,i)=>({seat:i,won:p.id===nan.acct,place:1,f:20,coin:50,survives:true}));for(const x of [lan,nan])await x.req('match.result',{id:CR.id,table:ct,hash:'c'});
-  assert.strictEqual((await getC(nan.ch.id)).wallet,w1,'Custom: no coin, even for the winner');assert.strictEqual((await nan.req('domus.get',{})).domus.bouts,2,'but the house counts the bout');
+  assert.strictEqual(await treOf(nan.acct),w1,'Custom: no coin, even for the winner');assert.strictEqual((await nan.req('domus.get',{})).domus.bouts,2,'but the house counts the bout');
 
   /* ── 2. the award table (ONLC) ── */
   const mk=(rank,o)=>({...C.newChar({name:'Tester',cls:'hero'},'x','t',0),rank,...o});
@@ -447,8 +455,8 @@ async function v82(){
   const arm=Object.entries(catalog).filter(([k,v])=>v.kind==='a');assert.ok(arm.length>10&&arm.every(([k,v])=>Number.isInteger(v.ap)&&v.ap>0),'the catalog carries every armor piece’s AP');
   for(const [k,v] of Object.entries(catalog))assert.strictEqual(C.priceOf(v),v.kind==='w'?{1:60,2:250,3:750}[v.lv]:{1:15,2:55,3:150}[v.lv]*v.ap,k);
   assert.strictEqual(C.priceOf({kind:'a',lv:2,ap:4}),220);assert.strictEqual(C.priceOf({kind:'a',lv:3,ap:5}),750);
-  const gal=catalog.galea;await setC(nan.ch.id,{wallet:C.priceOf(gal)-1});await rejects(nan.req('char.buy',{char:nan.ch.id,item:'galea'}),null,new RegExp('Costs '+C.priceOf(gal)+' coin'));
-  await setC(nan.ch.id,{wallet:C.priceOf(gal)+60});let bc=await nan.req('char.buy',{char:nan.ch.id,item:'galea'});assert.strictEqual(bc.wallet,60);bc=await nan.req('char.buy',{char:nan.ch.id,item:'mace'});assert.strictEqual(bc.wallet,0,'a level-1 weapon costs 60');
+  const gal=catalog.galea;await setT(nan.acct,C.priceOf(gal)-1);await rejects(nan.req('char.buy',{char:nan.ch.id,item:'galea'}),null,new RegExp('treasury needs '+C.priceOf(gal)+' coin'));
+  await setT(nan.acct,C.priceOf(gal)+60);let bc=await nan.req('char.buy',{char:nan.ch.id,item:'galea'});assert.strictEqual(await treOf(nan.acct),60);bc=await nan.req('char.buy',{char:nan.ch.id,item:'mace'});assert.strictEqual(await treOf(nan.acct),0,'a level-1 weapon costs 60');assert.strictEqual(bc.domus92.treasury,0,'the reply carries the house row');
 
   /* ── 3b. THE STOREROOM: move pieces between the house's gladiators and the house; tick to bring; locked in a match ── */
   const n2=await nan.req('char.create',{name:'Nan Secunda',cls:'slave'});
@@ -520,11 +528,11 @@ async function v82(){
   await sa.req('match.stands.open',{id:SL.id,rot:3});T+=C.STANDS_MS+5000;assert.ok((await sb.req('match.stands.close',{id:SL.id,rot:3})).closed);
   /* a speared ticket holder: the fighters report it; a strict majority → the ticket price back once (stands.refund) */
   await rejects(sc.req('match.speared',{id:SL.id,seat:4}),null,/Only the fighters/);await rejects(sa.req('match.speared',{id:SL.id,seat:1}),null,/No ticket holder/);
-  const wSc=(await getC(sc.ch.id)).wallet;let sp=await sa.req('match.speared',{id:SL.id,seat:4});assert.deepStrictEqual(sp,{votes:1,need:2,refunded:0});
+  const wSc=await treOf(sc.acct);let sp=await sa.req('match.speared',{id:SL.id,seat:4});assert.deepStrictEqual(sp,{votes:1,need:2,refunded:0});
   sp=await sa.req('match.speared',{id:SL.id,seat:4});assert.strictEqual(sp.votes,1,'one vote a fighter');
   m0=mark();sp=await sb.req('match.speared',{id:SL.id,seat:4});assert.strictEqual(sp.refunded,5);assert.deepStrictEqual(sc.got('stands.refund',m0),[{id:SL.id,seat:4,amt:5}]);
-  assert.strictEqual((await getC(sc.ch.id)).wallet,wSc+5,'the price back');const LP=await db.get('LOBBY#'+SL.id,'LOBBY');assert.strictEqual(LP.pot,5);assert.strictEqual(LP.stands.find(x=>x.id===sc.acct).paid,0);
-  sp=await sa.req('match.speared',{id:SL.id,seat:4});assert.strictEqual(sp.refunded,0,'refunded once');assert.strictEqual((await getC(sc.ch.id)).wallet,wSc+5);
+  assert.strictEqual(await treOf(sc.acct),wSc+5,'the price back');const LP=await db.get('LOBBY#'+SL.id,'LOBBY');assert.strictEqual(LP.pot,5);assert.strictEqual(LP.stands.find(x=>x.id===sc.acct).paid,0);
+  sp=await sa.req('match.speared',{id:SL.id,seat:4});assert.strictEqual(sp.refunded,0,'refunded once');assert.strictEqual(await treOf(sc.acct),wSc+5);
   /* stands off, or nobody in them: no window */
   const sx=await client('stx'),sy=await client('sty');let SO=await sx.req('lobby.create',{ev:'egidious',cry:false,standsOff:true});await sy.req('lobby.join',{id:SO.id});SO=await sx.req('lobby.start',{id:SO.id});
   await rejects(sx.req('match.stands.open',{id:SO.id,rot:1}),'no_stands');
@@ -545,18 +553,18 @@ async function v82(){
   assert.strictEqual(ft.char.wallet,0);assert.strictEqual(ft.lobby.pot,0);
   const lrow=(await ff.req('lobby.list',{})).find(x=>x.id===FL.id);assert.ok(lrow.lite&&lrow.free);assert.deepStrictEqual(lrow.stands,[{id:fc.acct,name:'Frc Gladius',domus:'Domus frc'}],'lists: the house, no look');
   /* the guest pass: a thin purse, once a day a house, a room selling seats */
-  await setC(fd.ch.id,{wallet:15});await rejects(fd.req('lobby.pass',{id:FL.id}),null,/thin purses — under 15/);await setC(fd.ch.id,{wallet:3});
+  await setT(fd.acct,15);await rejects(fd.req('lobby.pass',{id:FL.id}),null,/thin treasuries — under 15/);await setT(fd.acct,3);
   const SO2=await fb.req('lobby.create',{ev:'egidious',cry:false,standsOff:true});await rejects(fd.req('lobby.pass',{id:SO2.id}),null,/sells no tickets/);
   const NT=await ff.req('lobby.create',{ev:'cassian',cry:false});await rejects(fd.req('lobby.pass',{id:NT.id}),null,/sells no tickets/,'no tickets, no pass');
   await rejects(ff.req('lobby.pass',{id:FL.id}),null,/thin purses|Leave your room/);await fb.req('lobby.leave',{id:SO2.id});await ff.req('lobby.leave',{id:NT.id});
   const day=C.dayKey(T);let ps=await fd.req('lobby.pass',{id:FL.id});const td=ps.lobby.stands.find(x=>x.id===fd.acct);
-  assert.deepStrictEqual([td.paid,td.pass,td.domus],[0,1,'Domus frd'],'a pass seat');assert.strictEqual(ps.domus.passDay,day);assert.strictEqual(ps.char.wallet,3,'the pass costs nothing');
+  assert.deepStrictEqual([td.paid,td.pass,td.domus],[0,1,'Domus frd'],'a pass seat');assert.strictEqual(ps.domus.passDay,day);assert.strictEqual(await treOf(fd.acct),3,'the pass costs nothing');
   assert.ok(await db.get('DOMUS#'+ps.domus.id,'PASS#'+day),'the day’s marker');
   const FL2=await fb.req('lobby.create',{ev:'egidious',cry:false,ticket:2});await fb.req('lobby.leave',{id:FL2.id});
   /* a price again: free ends; a paying ticket carries its house; a pass in a priced room is still free */
-  FL=await fa.req('lobby.set',{id:FL.id,ticket:5});assert.deepStrictEqual([FL.free,FL.ticket],[false,5]);await setC(ff.ch.id,{wallet:10});ft=await ff.req('lobby.ticket',{id:FL.id});
-  assert.deepStrictEqual((({paid,domus,free})=>[paid,domus,free])(ft.lobby.stands.find(x=>x.id===ff.acct)),[5,'Domus frf',undefined]);assert.strictEqual(ft.char.wallet,5);
-  await setC(fe.ch.id,{wallet:0});await fe.req('lobby.pass',{id:FL.id});
+  FL=await fa.req('lobby.set',{id:FL.id,ticket:5});assert.deepStrictEqual([FL.free,FL.ticket],[false,5]);await setT(ff.acct,10);ft=await ff.req('lobby.ticket',{id:FL.id});
+  assert.deepStrictEqual((({paid,domus,free})=>[paid,domus,free])(ft.lobby.stands.find(x=>x.id===ff.acct)),[5,'Domus frf',undefined]);assert.strictEqual(await treOf(ff.acct),5);
+  await setT(fe.acct,0);await fe.req('lobby.pass',{id:FL.id});
   {const R2=await fb.req('lobby.create',{ev:'cassian',cry:false,ticket:1});await rejects(fd.req('lobby.pass',{id:R2.id}),null,/One guest pass a day/);await fb.req('lobby.leave',{id:R2.id})}
   FL=await fa.req('lobby.set',{id:FL.id,ticket:0});assert.deepStrictEqual([FL.free,FL.ticket],[false,0],'none: no more seats sold');FL=await fa.req('lobby.set',{id:FL.id,free:1,standsOff:true});assert.deepStrictEqual([FL.free,FL.ticket],[false,0],'stands off ends free');
   FL=await fa.req('lobby.set',{id:FL.id,standsOff:false,free:1});assert.strictEqual(FL.free,true);
@@ -570,7 +578,7 @@ async function v82(){
   assert.deepStrictEqual([await fameOf(fd),await fameOf(fe),await fameOf(fc),await fameOf(ff)],[1,0,0,0],'only the pass sat through earns Fame');
   assert.strictEqual((await db.get('LOBBY#'+FL.id,'LOBBY')).stands.find(x=>x.id===fd.acct).fame,1);assert.strictEqual((await fd.req('hello',{all:1})).domus.fame,1,'hello shows the Fame');
   /* the next UTC day: a new pass; away for AWAY_MS at the end → no Fame */
-  T+=86400e3;await setC(fd.ch.id,{wallet:3});let FM=await fa.req('lobby.create',{ev:'democritus',cry:false,free:1});assert.strictEqual(FM.free,true,'free at creation');
+  T+=86400e3;await setT(fd.acct,3);let FM=await fa.req('lobby.create',{ev:'democritus',cry:false,free:1});assert.strictEqual(FM.free,true,'free at creation');
   await fd.req('lobby.pass',{id:FM.id});await fb.req('lobby.join',{id:FM.id});FM=await fa.req('lobby.start',{id:FM.id});await db.set('MATCH#'+FM.id,'META',{away:{[fd.acct]:T-C.AWAY_MS-1}});
   for(const x of [fa,fb])await x.req('match.result',{id:FM.id,table:FM.players.map((p,i)=>({seat:i,won:i===0,place:i+1,f:5,coin:0,survives:true})),hash:'g'});
   assert.strictEqual(await fameOf(fd),1,'away at the end: no Fame');

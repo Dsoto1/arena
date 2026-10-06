@@ -52,12 +52,12 @@ let same=0,diff=0;for(const x of res){const a=ST.A.st[x.rot],b2=ST.B.st[x.rot],c
 const tok=await P.B.evaluate(()=>({style:SETTINGS.tokenStyle,sc:!!(S.players[0]&&S.players[0]._onlSc),marker:window.__tk.some(t=>/#12ab34/.test(t)),cpuSc:S.players.filter(p=>p.cpu).some(p=>p._onlSc),humSc:S.players.filter(p=>!p.cpu).every(p=>p._onlSc)}));
 if(shots){await P.B.evaluate(()=>{try{CAM.z=2.2;camFocus&&0}catch(e){}});await P.B.screenshot({path:shots+'/stands_token_B_cylinder.png'})}
 /* the refund: both fighters report the spearing of the ticket holder (seat 4) → refunded once, the holder hears it */
-const w0=await P.C.evaluate(()=>{const w=mockLoad();return w.chars[ONL.char.id].wallet});
+const w0=await P.C.evaluate(()=>{const w=mockLoad();const c=w.chars[ONL.char.id];return ((w.domus82[c.domus]||{}).treasury|0)+(c.wallet|0)}); /* v0.92: the house treasury */
 const sp1=await P.A.evaluate(async seat=>await NET.req('match.speared',{id:S.onl.lobby,seat}),4);
 const sp2=await P.B.evaluate(async seat=>await NET.req('match.speared',{id:S.onl.lobby,seat}),4);
 const sp3=await P.B.evaluate(async seat=>await NET.req('match.speared',{id:S.onl.lobby,seat}),4);
 await P.C.waitForTimeout(600);
-const ref=await P.C.evaluate(w0=>{const w=mockLoad();const L=Object.values(w.lobbies).find(x=>x.id===S.onl.lobby);return {gain:w.chars[ONL.char.id].wallet-w0,heard:STD82.refunded|0,pot:L.pot,paid:L.stands[0].paid}},w0);
+const ref=await P.C.evaluate(w0=>{const w=mockLoad();const L=Object.values(w.lobbies).find(x=>x.id===S.onl.lobby);const c=w.chars[ONL.char.id];return {gain:((w.domus82[c.domus]||{}).treasury|0)+(c.wallet|0)-w0,heard:STD82.refunded|0,pot:L.pot,paid:L.stands[0].paid}},w0);
 await P.A.screenshot({path:(shots||'/tmp')+'/stands_after_A.png'}).catch(()=>{});
 /* D (offline page): the locked tile, the refund line, the creator's random class */
 const D=await P.D.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();startEvent({ev:'democritus',loc:6,seats:[{cls:'hero',cpu:true},{cls:'soldier',cpu:true},{cls:'slave',cpu:true},{cls:'amazonia',cpu:true}],seed:4242,opts:{spect:0}});

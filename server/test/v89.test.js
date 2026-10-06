@@ -47,13 +47,14 @@ async function routes(){
   T+=C.ROOM_GRACE;const hh=await dan.req('hello',{all:1});L=await room();assert.strictEqual(L.host.id,cal.acct,'hello pruned: Cal hosts now');assert.ok(L.players.some(p=>p.id===cal.acct),'and sits');
   assert.ok(!C.memberOf(L,ann.acct),'Ann is out');assert.ok((hh.lobbies||[]).some(x=>x.id===R.id),'listed again: its host is here');
   /* nobody left: closed, tickets and wagers back */
+  const trO=async a=>{const P=await db.get('ACCT#'+a,'PROFILE');return ((await db.get('DOMUS#'+P.domus,'DOMUS'))||{}).treasury|0}; /* v0.92 one treasury */
   const eve=await client('eve','venatore');const ec=await db.get('CHAR#'+eve.ch.id,'CHAR');ec.wallet=30;await db.put('CHAR#'+eve.ch.id,'CHAR',ec);
   const dc=await db.get('CHAR#'+dan.ch.id,'CHAR');dc.wallet=40;await db.put('CHAR#'+dan.ch.id,'CHAR',dc);
   const R2=await dan.req('lobby.create',{ev:'egidious',loc:3,cry:false,ticket:5});await dan.req('lobby.set',{id:R2.id,ticket:5});await eve.req('lobby.ticket',{id:R2.id});
-  assert.strictEqual((await db.get('CHAR#'+eve.ch.id,'CHAR')).wallet,25,'Eve paid her ticket');await dan.req('bet.place',{id:R2.id,seat:0,amt:10});assert.strictEqual((await db.get('CHAR#'+dan.ch.id,'CHAR')).wallet,30,'Dan backed himself');
+  assert.strictEqual(await trO(eve.acct),25,'Eve paid her ticket (v0.92: from the treasury)');await dan.req('bet.place',{id:R2.id,seat:0,amt:10});assert.strictEqual(await trO(dan.acct),30,'Dan backed himself');
   await drop(dan);T+=C.ROOM_GRACE+1000;await eve.req('lobby.get',{id:R2.id});
   const L2=await db.get('LOBBY#'+R2.id,'LOBBY');assert.strictEqual(L2.status,'done','the empty room closed');
-  assert.strictEqual((await db.get('CHAR#'+eve.ch.id,'CHAR')).wallet,30,'the ticket came back');assert.strictEqual((await db.get('CHAR#'+dan.ch.id,'CHAR')).wallet,40,'the wager came back');
+  assert.strictEqual(await trO(eve.acct),30,'the ticket came back');assert.strictEqual(await trO(dan.acct),40,'the wager came back');
   assert.ok((await eve.req('lobby.get',{id:R2.id})).gone,'lobby.get says it is gone');
   /* old rooms still close after 3 hours */
   const R3=await eve.req('lobby.create',{ev:'cassian',loc:2,cry:false});T+=3*3600e3+1000;await eve.req('lobby.list',{});assert.strictEqual((await db.get('LOBBY#'+R3.id,'LOBBY')).status,'done','3 hours: closed');

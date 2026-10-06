@@ -72,12 +72,13 @@ async function routes(L){
   await rejects(ann.req('domus.rename',{name:'Lanius'}).catch(e=>{throw e}),null,/old house|keeps its name/);
   /* a won vault piece moves to the winner (history appended); the unsold ones go back to the vault, not the chest */
   const ch=await W1.db.get('CHAR#'+ann.ch.id,'CHAR');await W1.db.put('CHAR#'+ann.ch.id,'CHAR',{...ch,glory:600,wallet:20000});
-  const L1=al.lots[0];const b=await ann.req('auction.bid',{lot:L1.id,amt:L1.min});assert.ok(b.lot.mine);assert.strictEqual(b.char.wallet,20000-L1.min,'escrow as usual');
+  const trA=async()=>{const P=await W1.db.get('ACCT#'+ann.acct,'PROFILE');return ((await W1.db.get('DOMUS#'+P.domus,'DOMUS'))||{}).treasury|0}; /* v0.92 one treasury */const tA0=await trA();
+  const L1=al.lots[0];const b=await ann.req('auction.bid',{lot:L1.id,amt:L1.min});assert.ok(b.lot.mine);assert.strictEqual(await trA(),tA0+20000-L1.min,'escrow as usual (v0.92: from the treasury, the purse moved in)');
   await rejects(ann.req('auction.bid',{lot:al.lots[1].id,amt:al.lots[1].min}),'auc_lead');
   W1.setT(L1.ends+1000);al=await ann.req('auction.list',{});
   const G=await W1.db.get('CHAR#'+ann.ch.id,'CHAR');const it=G.gear.find(g=>g===L1.item);assert.ok(it,'the piece is his');const pc=C.pcOf(G,it);
   assert.strictEqual(pc.hist.slice(-1)[0].how,'auction');assert.strictEqual(pc.hist.length,L1.hist.length+1,'history appended');assert.ok(C.pieceInfo({item:it,pc},catalog).named);
-  assert.strictEqual(G.wallet,20000-L1.min,'the coin left the game');
+  assert.strictEqual(await trA(),tA0+20000-L1.min,'the coin left the game');
   const chest=await W1.db.query('CHEST','P#');assert.ok(!chest.some(x=>/^v89-/.test(C.itemUid(x.item))),'unsold vault lots never enter the chest');
   /* the next week: the chest pieces first, the vault fills the rest */
   const P=C.namedPiece(C.rollNamed(()=>0.3,catalog,'rare',[]),{id:'fallenX'});P.pc.hist=[{house:'Domus Old',glad:'Old X',when:W1.T(),how:'fell'}];await W1.db.put('CHEST','P#'+C.itemUid(P.item),{item:P.item,pc:P.pc,at:W1.T(),taken:0});

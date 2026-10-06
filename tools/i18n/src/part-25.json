@@ -257,411 +257,443 @@
  },
  {
   "k": "Only the host holds the horns.",
-  "w": "server/src/routes.js:478"
+  "w": "server/src/routes.js:480"
  },
  {
   "k": "Join the room first.",
-  "w": "server/src/routes.js:502"
- },
- {
-  "k": "Every seat is taken.",
-  "w": "server/src/routes.js:503"
- },
- {
-  "k": "The crier has called three times.",
-  "w": "server/src/routes.js:503"
- },
- {
-  "k": "The crier needs a breath — {0} s.",
   "w": "server/src/routes.js:504"
  },
  {
-  "k": "Not your match.",
-  "w": "server/src/routes.js:510"
+  "k": "Every seat is taken.",
+  "w": "server/src/routes.js:505"
  },
  {
-  "k": "The match is not over.",
+  "k": "The crier has called three times.",
+  "w": "server/src/routes.js:505"
+ },
+ {
+  "k": "The crier needs a breath — {0} s.",
+  "w": "server/src/routes.js:506"
+ },
+ {
+  "k": "Not your match.",
   "w": "server/src/routes.js:512"
  },
  {
+  "k": "The match is not over.",
+  "w": "server/src/routes.js:514"
+ },
+ {
   "k": "Join the game to talk.",
-  "w": "server/src/routes.js:517"
+  "w": "server/src/routes.js:519"
  },
  {
   "k": "The room closes when the horns sound.",
-  "w": "server/src/routes.js:518"
+  "w": "server/src/routes.js:520"
  },
  {
   "k": "Make a gladiator first.",
-  "w": "server/src/routes.js:531"
+  "w": "server/src/routes.js:533"
  },
  {
   "k": "Tickets are paid from a gladiator’s wallet.",
-  "w": "server/src/routes.js:540"
+  "w": "server/src/routes.js:542"
  },
  {
   "k": "The ticket price changed — try again.",
-  "w": "server/src/routes.js:546"
+  "w": "server/src/routes.js:548"
  },
  {
   "k": "The pass seats a gladiator’s house — make a gladiator first.",
-  "w": "server/src/routes.js:552"
- },
- {
-  "k": "Leave your room first.",
   "w": "server/src/routes.js:554"
  },
  {
+  "k": "Leave your room first.",
+  "w": "server/src/routes.js:556"
+ },
+ {
   "k": "One guest pass a day for each house — come back tomorrow.",
-  "w": "server/src/routes.js:555"
+  "w": "server/src/routes.js:557"
  },
  {
   "k": "Not a look.",
-  "w": "server/src/routes.js:562"
+  "w": "server/src/routes.js:564"
  },
  {
   "k": "That look is too large.",
-  "w": "server/src/routes.js:562"
+  "w": "server/src/routes.js:564"
  },
  {
   "k": "No party with that code.",
-  "w": "server/src/routes.js:568"
+  "w": "server/src/routes.js:570"
  },
  {
   "k": "Leave your party first.",
-  "w": "server/src/routes.js:569"
+  "w": "server/src/routes.js:571"
  },
  {
   "k": "That party is full.",
-  "w": "server/src/routes.js:569"
+  "w": "server/src/routes.js:571"
  },
  {
   "k": "Wagers are paid from a living gladiator’s wallet.",
-  "w": "server/src/routes.js:576"
+  "w": "server/src/routes.js:578"
  },
  {
   "k": "Only the host opens the match.",
-  "w": "server/src/routes.js:585"
+  "w": "server/src/routes.js:587"
  },
  {
   "k": "The opening is too large.",
-  "w": "server/src/routes.js:586"
- },
- {
-  "k": "That match is over.",
   "w": "server/src/routes.js:588"
  },
  {
+  "k": "That match is over.",
+  "w": "server/src/routes.js:590"
+ },
+ {
   "k": "The free stands are full — 30 watching.",
-  "w": "server/src/routes.js:589"
+  "w": "server/src/routes.js:591"
  },
  {
   "k": "That move is too large.",
-  "w": "server/src/routes.js:599"
+  "w": "server/src/routes.js:601"
  },
  {
   "k": "The match is not live.",
-  "w": "server/src/routes.js:600"
+  "w": "server/src/routes.js:602"
  },
  {
   "k": "A CPU holds your seat now.",
-  "w": "server/src/routes.js:601"
- },
- {
-  "k": "You left this match.",
-  "w": "server/src/routes.js:601"
- },
- {
-  "k": "That seat is not yours.",
   "w": "server/src/routes.js:603"
  },
  {
+  "k": "You left this match.",
+  "w": "server/src/routes.js:603"
+ },
+ {
+  "k": "That seat is not yours.",
+  "w": "server/src/routes.js:605"
+ },
+ {
   "k": "The sand is quiet now.",
-  "w": "server/src/routes.js:611"
+  "w": "server/src/routes.js:613"
  },
  {
   "k": "No one to name.",
-  "w": "server/src/routes.js:623"
+  "w": "server/src/routes.js:625"
  },
  {
   "k": "No one to drop.",
-  "w": "server/src/routes.js:640"
+  "w": "server/src/routes.js:642"
  },
  {
   "k": "Still here.",
-  "w": "server/src/routes.js:640"
+  "w": "server/src/routes.js:642"
  },
  {
   "k": "{0} is in a match — the satchel waits.",
-  "w": "server/src/routes.js:658"
+  "w": "server/src/routes.js:660"
  },
  {
   "k": "{0} is in a match — the forge waits.",
-  "w": "server/src/routes.js:662"
+  "w": "server/src/routes.js:664"
  },
  {
   "k": "That piece is not there.",
-  "w": "server/src/routes.js:663"
- },
- {
-  "k": "That piece is whole.",
-  "w": "server/src/routes.js:663"
- },
- {
-  "k": "The treasury needs {0} coin.",
   "w": "server/src/routes.js:665"
  },
  {
-  "k": "The repair costs {0} coin.",
-  "w": "server/src/routes.js:666"
+  "k": "That piece is whole.",
+  "w": "server/src/routes.js:665"
  },
  {
-  "k": "That piece changed a moment ago — try again.",
+  "k": "The treasury needs {0} coin.",
+  "w": "server/src/routes.js:667"
+ },
+ {
+  "k": "The repair costs {0} coin.",
   "w": "server/src/routes.js:668"
  },
  {
+  "k": "That piece changed a moment ago — try again.",
+  "w": "server/src/routes.js:670"
+ },
+ {
   "k": "No such piece.",
-  "w": "server/src/routes.js:671"
+  "w": "server/src/routes.js:673"
  },
  {
   "k": "No such gift.",
-  "w": "server/src/routes.js:679"
+  "w": "server/src/routes.js:681"
  },
  {
   "k": "{0} is in a match — open it afterwards.",
-  "w": "server/src/routes.js:680"
+  "w": "server/src/routes.js:682"
  },
  {
   "k": "That offering is not there.",
-  "w": "server/src/routes.js:706"
+  "w": "server/src/routes.js:708"
  },
  {
   "k": "Up to {0} offerings in the satchel.",
-  "w": "server/src/routes.js:708"
+  "w": "server/src/routes.js:710"
  },
  {
   "k": "The shelf is full.",
-  "w": "server/src/routes.js:708"
+  "w": "server/src/routes.js:710"
  },
  {
   "k": "Nothing to take.",
-  "w": "server/src/routes.js:712"
+  "w": "server/src/routes.js:714"
  },
  {
   "k": "The pick is made.",
-  "w": "server/src/routes.js:713"
+  "w": "server/src/routes.js:715"
  },
  {
   "k": "Pick one of the pieces.",
-  "w": "server/src/routes.js:713"
+  "w": "server/src/routes.js:715"
  },
  {
   "k": "Someone bought it first.",
-  "w": "server/src/routes.js:717"
- },
- {
-  "k": "Already yours.",
-  "w": "server/src/routes.js:718"
+  "w": "server/src/routes.js:719"
  },
  {
   "k": "Costs {0} coin.",
-  "w": "server/src/routes.js:718"
+  "w": "server/src/routes.js:720"
  },
  {
   "k": "No such house.",
-  "w": "server/src/routes.js:723"
+  "w": "server/src/routes.js:725"
  },
  {
   "k": "That is your own house.",
-  "w": "server/src/routes.js:728"
+  "w": "server/src/routes.js:730"
  },
  {
   "k": "Up to {0} houses.",
-  "w": "server/src/routes.js:729"
+  "w": "server/src/routes.js:731"
  },
  {
   "k": "Only testers may do that.",
-  "w": "server/src/routes.js:742"
+  "w": "server/src/routes.js:744"
  },
  {
   "k": "{0} is in a match — grant afterwards.",
-  "w": "server/src/routes.js:743"
+  "w": "server/src/routes.js:745"
  },
  {
   "k": "Nothing to grant.",
-  "w": "server/src/routes.js:746"
+  "w": "server/src/routes.js:748"
  },
  {
   "k": "Only the host opens the stands.",
-  "w": "server/src/routes.js:768"
- },
- {
-  "k": "This game has no stands.",
-  "w": "server/src/routes.js:769"
- },
- {
-  "k": "Which rotation?",
-  "w": "server/src/routes.js:769"
- },
- {
-  "k": "Nobody holds a ticket.",
   "w": "server/src/routes.js:770"
  },
  {
-  "k": "The stands already chose this rotation.",
+  "k": "This game has no stands.",
   "w": "server/src/routes.js:771"
  },
  {
+  "k": "Which rotation?",
+  "w": "server/src/routes.js:771"
+ },
+ {
+  "k": "Nobody holds a ticket.",
+  "w": "server/src/routes.js:772"
+ },
+ {
+  "k": "The stands already chose this rotation.",
+  "w": "server/src/routes.js:773"
+ },
+ {
   "k": "The stands have chosen — wait for the next rotation.",
-  "w": "server/src/routes.js:775"
- },
- {
-  "k": "Only ticket holders choose from the stands.",
-  "w": "server/src/routes.js:775"
- },
- {
-  "k": "You already chose this rotation.",
   "w": "server/src/routes.js:777"
  },
  {
+  "k": "Only ticket holders choose from the stands.",
+  "w": "server/src/routes.js:777"
+ },
+ {
+  "k": "You already chose this rotation.",
+  "w": "server/src/routes.js:779"
+ },
+ {
   "k": "No stands window for that rotation.",
-  "w": "server/src/routes.js:780"
+  "w": "server/src/routes.js:782"
  },
  {
   "k": "Only the host closes the stands.",
-  "w": "server/src/routes.js:781"
+  "w": "server/src/routes.js:783"
  },
  {
   "k": "The stands are still choosing.",
-  "w": "server/src/routes.js:781"
+  "w": "server/src/routes.js:783"
  },
  {
   "k": "Only the fighters report a speared spectator.",
-  "w": "server/src/routes.js:786"
+  "w": "server/src/routes.js:788"
  },
  {
   "k": "No ticket holder in that seat.",
-  "w": "server/src/routes.js:787"
+  "w": "server/src/routes.js:789"
  },
  {
   "k": "{0} won {1} at Flavius’s auction.",
-  "w": "server/src/routes.js:828"
+  "w": "server/src/routes.js:830"
  },
  {
   "k": "a named piece",
-  "w": "server/src/routes.js:828"
+  "w": "server/src/routes.js:830"
  },
  {
   "k": "Test houses may not bid.",
-  "w": "server/src/routes.js:837"
+  "w": "server/src/routes.js:839"
  },
  {
   "k": "Flavius sells to Veteranus and above.",
-  "w": "server/src/routes.js:837"
+  "w": "server/src/routes.js:839"
  },
  {
   "k": "Your house already won a lot this week.",
-  "w": "server/src/routes.js:838"
+  "w": "server/src/routes.js:840"
  },
  {
   "k": "There is no seat of yours to take back.",
-  "w": "server/src/routes.js:844"
- },
- {
-  "k": "Too late — the CPU has fought on in your seat. You may watch.",
-  "w": "server/src/routes.js:845"
- },
- {
-  "k": "Your gladiator is gone.",
   "w": "server/src/routes.js:846"
  },
  {
-  "k": "Too late — the CPU has begun your next turn. You may watch.",
+  "k": "Too late — the CPU has fought on in your seat. You may watch.",
   "w": "server/src/routes.js:847"
  },
  {
+  "k": "Your gladiator is gone.",
+  "w": "server/src/routes.js:848"
+ },
+ {
+  "k": "Too late — the CPU has begun your next turn. You may watch.",
+  "w": "server/src/routes.js:849"
+ },
+ {
   "k": "Sign in to bid.",
-  "w": "server/src/routes.js:865"
+  "w": "server/src/routes.js:867"
  },
  {
   "k": "Test houses may not bid at Flavius’s auction.",
-  "w": "server/src/routes.js:869"
- },
- {
-  "k": "No such lot.",
-  "w": "server/src/routes.js:870"
- },
- {
-  "k": "The hammer has fallen on that lot.",
   "w": "server/src/routes.js:871"
  },
  {
+  "k": "No such lot.",
+  "w": "server/src/routes.js:872"
+ },
+ {
+  "k": "The hammer has fallen on that lot.",
+  "w": "server/src/routes.js:873"
+ },
+ {
   "k": "Your house already leads another lot — one win a house a week.",
-  "w": "server/src/routes.js:874"
+  "w": "server/src/routes.js:876"
  },
  {
   "k": "Your house leads this lot already.",
-  "w": "server/src/routes.js:875"
+  "w": "server/src/routes.js:877"
  },
  {
   "k": "{0}’s purse holds less than {1} coin.",
-  "w": "server/src/routes.js:878"
+  "w": "server/src/routes.js:880"
  },
  {
   "k": "The lot is busy — try again.",
-  "w": "server/src/routes.js:884"
+  "w": "server/src/routes.js:886"
  },
  {
   "k": "No such loadout.",
-  "w": "server/src/routes.js:962"
+  "w": "server/src/routes.js:964"
  },
  {
   "k": "Too many lookups — wait a minute.",
-  "w": "server/src/routes.js:1006"
+  "w": "server/src/routes.js:1008"
  },
  {
   "k": "No house with that FID.",
-  "w": "server/src/routes.js:1009"
+  "w": "server/src/routes.js:1011"
  },
  {
   "k": "Another lanista has that name.",
-  "w": "server/src/routes.js:1024"
+  "w": "server/src/routes.js:1026"
  },
  {
   "k": "Type your house name to confirm.",
-  "w": "server/src/routes.js:1048"
+  "w": "server/src/routes.js:1050"
  },
  {
   "k": "Type your lanista name to confirm.",
-  "w": "server/src/routes.js:1048"
+  "w": "server/src/routes.js:1050"
  },
  {
   "k": "Leave your room or finish your match first.",
-  "w": "server/src/routes.js:1049"
+  "w": "server/src/routes.js:1051"
  },
  {
   "k": "No lanista with that FID.",
-  "w": "server/src/routes.js:1072"
+  "w": "server/src/routes.js:1074"
+ },
+ {
+  "k": "Only named pieces stay home — printed gear is never kept out of Ranked.",
+  "w": "server/src/routes.js:1125"
+ },
+ {
+  "k": "A seat in the stands goes to a house with a gladiator — raise one first.",
+  "w": "server/src/routes.js:1197"
+ },
+ {
+  "k": "A ticket costs {0} coin.",
+  "w": "server/src/routes.js:1199"
+ },
+ {
+  "k": "A house wagers through a living gladiator — raise one first.",
+  "w": "server/src/routes.js:1216"
+ },
+ {
+  "k": "Not enough in the treasury.",
+  "w": "server/src/routes.js:1217"
+ },
+ {
+  "k": "The treasury holds less than {0} coin.",
+  "w": "server/src/routes.js:1234"
+ },
+ {
+  "k": "Issued gear is never repaired.",
+  "w": "server/src/routes.js:1245"
+ },
+ {
+  "k": "No such kit.",
+  "w": "server/src/routes.js:1260"
+ },
+ {
+  "k": "One free kit a day for each house — come back tomorrow.",
+  "w": "server/src/routes.js:1263"
  },
  {
   "k": "Unknown request:",
-  "w": "server/src/routes.js:1103"
+  "w": "server/src/routes.js:1278"
  },
  {
   "k": "Your two hours as a guest are up — sign in to keep watching.",
-  "w": "server/src/routes.js:1105"
+  "w": "server/src/routes.js:1280"
  },
  {
   "k": "Sign in to {0}.",
-  "w": "server/src/routes.js:1106"
+  "w": "server/src/routes.js:1281"
  },
  {
   "k": "Name your house first — every lanista needs a Domus.",
-  "w": "server/src/routes.js:1109"
+  "w": "server/src/routes.js:1284"
  },
  {
   "k": "Test houses play Custom only.",
-  "w": "server/src/routes.js:1113"
+  "w": "server/src/routes.js:1288"
  },
  {
   "k": "Primus Palus",
@@ -773,426 +805,438 @@
  },
  {
   "k": "Not a team event.",
-  "w": "src/111-onlcore.js:239"
+  "w": "src/111-onlcore.js:240"
  },
  {
   "k": "Ranked teams are balanced when the horns sound.",
-  "w": "src/111-onlcore.js:239"
+  "w": "src/111-onlcore.js:240"
  },
  {
   "k": "Only the host moves other lanistas.",
-  "w": "src/111-onlcore.js:240"
+  "w": "src/111-onlcore.js:241"
  },
  {
   "k": "No such team.",
-  "w": "src/111-onlcore.js:240"
+  "w": "src/111-onlcore.js:241"
  },
  {
   "k": "▶ Sound the horns?",
-  "w": "src/111-onlcore.js:265"
+  "w": "src/111-onlcore.js:266"
  },
  {
   "k": "⇄ Swap teams?",
-  "w": "src/111-onlcore.js:265"
+  "w": "src/111-onlcore.js:266"
  },
  {
   "k": "🪑 One more seat?",
-  "w": "src/111-onlcore.js:265"
+  "w": "src/111-onlcore.js:266"
  },
  {
   "k": "Good luck",
-  "w": "src/111-onlcore.js:265"
+  "w": "src/111-onlcore.js:266"
  },
  {
   "k": "Well fought",
-  "w": "src/111-onlcore.js:266"
+  "w": "src/111-onlcore.js:267"
  },
  {
   "k": "Well struck!",
-  "w": "src/111-onlcore.js:266"
+  "w": "src/111-onlcore.js:267"
  },
  {
   "k": "⚔ Anyone for Classic?",
-  "w": "src/111-onlcore.js:266"
+  "w": "src/111-onlcore.js:267"
  },
  {
   "k": "👥 Anyone for Familia?",
-  "w": "src/111-onlcore.js:266"
+  "w": "src/111-onlcore.js:267"
  },
  {
   "k": "🏅 Ranked, anyone?",
-  "w": "src/111-onlcore.js:266"
+  "w": "src/111-onlcore.js:267"
  },
  {
   "k": "House name: {0}–{1} letters.",
-  "w": "src/111-onlcore.js:279"
+  "w": "src/111-onlcore.js:280"
  },
  {
   "k": "Pick another name for your house.",
-  "w": "src/111-onlcore.js:279"
+  "w": "src/111-onlcore.js:280"
  },
  {
   "k": "The dead keep what they fell with.",
-  "w": "src/111-onlcore.js:301"
+  "w": "src/111-onlcore.js:302"
  },
  {
   "k": "The dead carry nothing.",
-  "w": "src/111-onlcore.js:302"
- },
- {
-  "k": "Named pieces wait in the Storeroom until Veteranus.",
-  "w": "src/111-onlcore.js:302"
- },
- {
-  "k": "A {0} may carry up to level {1}.",
-  "w": "src/111-onlcore.js:302"
- },
- {
-  "k": "They already have one.",
   "w": "src/111-onlcore.js:303"
  },
  {
+  "k": "Named pieces wait in the Storeroom until Veteranus.",
+  "w": "src/111-onlcore.js:303"
+ },
+ {
+  "k": "A {0} may carry up to level {1}.",
+  "w": "src/111-onlcore.js:303"
+ },
+ {
+  "k": "They already have one.",
+  "w": "src/111-onlcore.js:304"
+ },
+ {
   "k": "That piece is not theirs.",
-  "w": "src/111-onlcore.js:308"
+  "w": "src/111-onlcore.js:309"
  },
  {
   "k": "Pick an action.",
-  "w": "src/111-onlcore.js:314"
- },
- {
-  "k": "That pick is too large.",
-  "w": "src/111-onlcore.js:314"
- },
- {
-  "k": "No such action from the stands.",
   "w": "src/111-onlcore.js:315"
  },
  {
-  "k": "Throw at a tile.",
+  "k": "That pick is too large.",
+  "w": "src/111-onlcore.js:315"
+ },
+ {
+  "k": "No such action from the stands.",
   "w": "src/111-onlcore.js:316"
  },
  {
+  "k": "Throw at a tile.",
+  "w": "src/111-onlcore.js:317"
+ },
+ {
   "k": "This game sells no tickets.",
-  "w": "src/111-onlcore.js:319"
+  "w": "src/111-onlcore.js:320"
  },
  {
   "k": "Tickets are sold until the horns.",
-  "w": "src/111-onlcore.js:319"
+  "w": "src/111-onlcore.js:320"
  },
  {
   "k": "Fighters take the sand, not the stands.",
-  "w": "src/111-onlcore.js:320"
- },
- {
-  "k": "You already hold a ticket.",
-  "w": "src/111-onlcore.js:320"
- },
- {
-  "k": "The stands are sold out.",
   "w": "src/111-onlcore.js:321"
  },
  {
-  "k": "You fell in this match — you can watch, not throw.",
-  "w": "src/111-onlcore.js:324"
+  "k": "You already hold a ticket.",
+  "w": "src/111-onlcore.js:321"
  },
  {
-  "k": "A ticket costs {0} coin.",
-  "w": "src/111-onlcore.js:327"
+  "k": "The stands are sold out.",
+  "w": "src/111-onlcore.js:322"
+ },
+ {
+  "k": "You fell in this match — you can watch, not throw.",
+  "w": "src/111-onlcore.js:325"
  },
  {
   "k": "The guest pass is for thin purses — under {0} coin.",
-  "w": "src/111-onlcore.js:331"
+  "w": "src/111-onlcore.js:332"
  },
  {
   "k": "Bets close when the match starts.",
-  "w": "src/111-onlcore.js:337"
+  "w": "src/111-onlcore.js:338"
  },
  {
   "k": "Stake {0}–{1} coin.",
-  "w": "src/111-onlcore.js:337"
+  "w": "src/111-onlcore.js:338"
  },
  {
   "k": "Not enough in the wallet.",
-  "w": "src/111-onlcore.js:338"
- },
- {
-  "k": "Back a seat.",
-  "w": "src/111-onlcore.js:338"
- },
- {
-  "k": "A fighter may only back themselves.",
   "w": "src/111-onlcore.js:339"
  },
  {
+  "k": "Back a seat.",
+  "w": "src/111-onlcore.js:339"
+ },
+ {
+  "k": "A fighter may only back themselves.",
+  "w": "src/111-onlcore.js:340"
+ },
+ {
   "k": "Survive 3 ranked bouts",
-  "w": "src/111-onlcore.js:420"
+  "w": "src/111-onlcore.js:424"
  },
  {
   "k": "Earn 60 CF in one bout",
-  "w": "src/111-onlcore.js:420"
+  "w": "src/111-onlcore.js:424"
  },
  {
   "k": "Win a bout at Capua",
-  "w": "src/111-onlcore.js:420"
+  "w": "src/111-onlcore.js:424"
  },
  {
   "k": "Slay 5 beasts",
-  "w": "src/111-onlcore.js:420"
+  "w": "src/111-onlcore.js:424"
  },
  {
   "k": "Finish 5 bouts",
-  "w": "src/111-onlcore.js:420"
+  "w": "src/111-onlcore.js:424"
  },
  {
   "k": "Win with 20+ coin left",
-  "w": "src/111-onlcore.js:420"
+  "w": "src/111-onlcore.js:424"
  },
  {
   "k": "Flavius’s armory does not sell that.",
-  "w": "src/111-onlcore.js:432"
- },
- {
-  "k": "Pick the offerings to bring.",
-  "w": "src/111-onlcore.js:435"
- },
- {
-  "k": "Bring at most {0} offerings.",
   "w": "src/111-onlcore.js:436"
  },
  {
+  "k": "Pick the offerings to bring.",
+  "w": "src/111-onlcore.js:439"
+ },
+ {
+  "k": "Bring at most {0} offerings.",
+  "w": "src/111-onlcore.js:440"
+ },
+ {
   "k": "That offering is not in the satchel.",
-  "w": "src/111-onlcore.js:437"
+  "w": "src/111-onlcore.js:441"
  },
  {
   "k": "Named armor",
-  "w": "src/111-onlcore.js:451"
+  "w": "src/111-onlcore.js:455"
  },
  {
   "k": "Named weapon",
-  "w": "src/111-onlcore.js:451"
+  "w": "src/111-onlcore.js:455"
  },
  {
   "k": "Broken — repair it first.",
-  "w": "src/111-onlcore.js:459"
+  "w": "src/111-onlcore.js:463"
  },
  {
   "k": "+1 CF a hit",
-  "w": "src/111-onlcore.js:534"
- },
- {
-  "k": "Each hit that draws blood from a gladiator heals the wielder 1 HP.",
   "w": "src/111-onlcore.js:540"
  },
  {
-  "k": "+2 CF each time it hits a gladiator.",
-  "w": "src/111-onlcore.js:541"
- },
- {
-  "k": "+2 coin each time it hits a gladiator.",
-  "w": "src/111-onlcore.js:542"
- },
- {
-  "k": "+1 damage against beasts.",
-  "w": "src/111-onlcore.js:543"
- },
- {
-  "k": "+3 CF for every beast it slays.",
-  "w": "src/111-onlcore.js:544"
- },
- {
-  "k": "While held, the first hit the wielder takes each rotation loses 1 damage.",
-  "w": "src/111-onlcore.js:545"
- },
- {
-  "k": "+1 damage against the gladiator who last hit the wielder.",
+  "k": "Each hit that draws blood from a gladiator heals the wielder 1 HP.",
   "w": "src/111-onlcore.js:546"
  },
  {
-  "k": "+3 CF each time it severs a limb.",
+  "k": "+2 CF each time it hits a gladiator.",
   "w": "src/111-onlcore.js:547"
  },
  {
-  "k": "While held, +1 CF at the start of each of the wielder’s turns.",
+  "k": "+2 coin each time it hits a gladiator.",
   "w": "src/111-onlcore.js:548"
  },
  {
-  "k": "Armor-piercing 2: up to 2 damage of each hit ignores AP.",
+  "k": "+1 damage against beasts.",
   "w": "src/111-onlcore.js:549"
  },
  {
+  "k": "+3 CF for every beast it slays.",
+  "w": "src/111-onlcore.js:550"
+ },
+ {
+  "k": "While held, the first hit the wielder takes each rotation loses 1 damage.",
+  "w": "src/111-onlcore.js:551"
+ },
+ {
+  "k": "+1 damage against the gladiator who last hit the wielder.",
+  "w": "src/111-onlcore.js:552"
+ },
+ {
+  "k": "+3 CF each time it severs a limb.",
+  "w": "src/111-onlcore.js:553"
+ },
+ {
+  "k": "While held, +1 CF at the start of each of the wielder’s turns.",
+  "w": "src/111-onlcore.js:554"
+ },
+ {
+  "k": "Armor-piercing 2: up to 2 damage of each hit ignores AP.",
+  "w": "src/111-onlcore.js:555"
+ },
+ {
   "k": "First Ranked win · {0}",
-  "w": "src/111-onlcore.js:579"
+  "w": "src/111-onlcore.js:585"
  },
  {
   "k": "Slew Tholo",
-  "w": "src/111-onlcore.js:580"
+  "w": "src/111-onlcore.js:586"
  },
  {
   "k": "Victor of the Day",
-  "w": "src/111-onlcore.js:580"
+  "w": "src/111-onlcore.js:586"
  },
  {
   "k": "10 bouts survived",
-  "w": "src/111-onlcore.js:580"
+  "w": "src/111-onlcore.js:586"
  },
  {
   "k": "25 bouts survived",
-  "w": "src/111-onlcore.js:580"
+  "w": "src/111-onlcore.js:586"
  },
  {
   "k": "Survived the Thumb of Flavius",
-  "w": "src/111-onlcore.js:580"
+  "w": "src/111-onlcore.js:586"
  },
  {
   "k": "+1 AP to another location",
-  "w": "src/111-onlcore.js:624"
- },
- {
-  "k": "the first hit each rotation loses 1 damage",
-  "w": "src/111-onlcore.js:625"
- },
- {
-  "k": "+1 movement while unhurt",
-  "w": "src/111-onlcore.js:626"
- },
- {
-  "k": "While worn, +1 CF at the start of each of the wearer’s turns.",
   "w": "src/111-onlcore.js:630"
  },
  {
-  "k": "A hit of 2 or more on the location it guards loses 1 damage.",
+  "k": "the first hit each rotation loses 1 damage",
   "w": "src/111-onlcore.js:631"
  },
  {
-  "k": "+1 CF when a gladiator’s hit on the wearer is stopped by armor (no HP lost).",
+  "k": "+1 movement while unhurt",
   "w": "src/111-onlcore.js:632"
  },
  {
+  "k": "While worn, +1 CF at the start of each of the wearer’s turns.",
+  "w": "src/111-onlcore.js:636"
+ },
+ {
+  "k": "A hit of 2 or more on the location it guards loses 1 damage.",
+  "w": "src/111-onlcore.js:637"
+ },
+ {
+  "k": "+1 CF when a gladiator’s hit on the wearer is stopped by armor (no HP lost).",
+  "w": "src/111-onlcore.js:638"
+ },
+ {
   "k": "+1 movement while worn.",
-  "w": "src/111-onlcore.js:633"
+  "w": "src/111-onlcore.js:639"
  },
  {
   "k": "+1 damage against the gladiator who last hit the wearer.",
-  "w": "src/111-onlcore.js:634"
+  "w": "src/111-onlcore.js:640"
  },
  {
   "k": "At the start of the wearer’s turns, the location it guards regains 1 AP (up to the pieces’ own AP).",
-  "w": "src/111-onlcore.js:635"
+  "w": "src/111-onlcore.js:641"
  },
  {
   "k": "The next bid is at least {0} coin.",
-  "w": "src/111-onlcore.js:687"
+  "w": "src/111-onlcore.js:693"
  },
  {
   "k": "No such upgrade.",
-  "w": "src/111-onlcore.js:709"
+  "w": "src/111-onlcore.js:715"
  },
  {
   "k": "Already built.",
-  "w": "src/111-onlcore.js:709"
+  "w": "src/111-onlcore.js:715"
  },
  {
   "k": "Pick the colours and the crest.",
-  "w": "src/111-onlcore.js:721"
+  "w": "src/111-onlcore.js:727"
  },
  {
   "k": "Pick two colours.",
-  "w": "src/111-onlcore.js:721"
+  "w": "src/111-onlcore.js:727"
  },
  {
   "k": "Pick one of the printed crests.",
-  "w": "src/111-onlcore.js:722"
+  "w": "src/111-onlcore.js:728"
  },
  {
   "k": "A gladiator’s look is set when he is raised.",
-  "w": "src/111-onlcore.js:746"
+  "w": "src/111-onlcore.js:752"
  },
  {
   "k": "Change class in the Domus — {0} coin from the treasury.",
-  "w": "src/111-onlcore.js:747"
+  "w": "src/111-onlcore.js:753"
  },
  {
   "k": "That is already his class.",
-  "w": "src/111-onlcore.js:748"
+  "w": "src/111-onlcore.js:754"
  },
  {
   "k": "Pick the loadouts.",
-  "w": "src/111-onlcore.js:760"
+  "w": "src/111-onlcore.js:766"
  },
  {
   "k": "Up to {0} loadouts.",
-  "w": "src/111-onlcore.js:760"
+  "w": "src/111-onlcore.js:766"
  },
  {
   "k": "Name the loadout.",
-  "w": "src/111-onlcore.js:761"
+  "w": "src/111-onlcore.js:767"
  },
  {
   "k": "−1 damage from beasts here",
-  "w": "src/111-onlcore.js:789"
- },
- {
-  "k": "−1 damage from thrown and shot weapons here",
-  "w": "src/111-onlcore.js:790"
- },
- {
-  "k": "floor spikes deal 0 to this leg",
-  "w": "src/111-onlcore.js:791"
- },
- {
-  "k": "a melee hit here costs the attacker 1 HP",
-  "w": "src/111-onlcore.js:792"
- },
- {
-  "k": "stones from the stands deal 0 here",
-  "w": "src/111-onlcore.js:793"
- },
- {
-  "k": "never comes back Broken",
-  "w": "src/111-onlcore.js:794"
- },
- {
-  "k": "cannot be looted: if the wearer falls it goes home",
   "w": "src/111-onlcore.js:795"
  },
  {
-  "k": "+1 on the wearer’s Thumb of Flavius roll",
+  "k": "−1 damage from thrown and shot weapons here",
   "w": "src/111-onlcore.js:796"
  },
  {
+  "k": "floor spikes deal 0 to this leg",
+  "w": "src/111-onlcore.js:797"
+ },
+ {
+  "k": "a melee hit here costs the attacker 1 HP",
+  "w": "src/111-onlcore.js:798"
+ },
+ {
+  "k": "stones from the stands deal 0 here",
+  "w": "src/111-onlcore.js:799"
+ },
+ {
+  "k": "never comes back Broken",
+  "w": "src/111-onlcore.js:800"
+ },
+ {
+  "k": "cannot be looted: if the wearer falls it goes home",
+  "w": "src/111-onlcore.js:801"
+ },
+ {
+  "k": "+1 on the wearer’s Thumb of Flavius roll",
+  "w": "src/111-onlcore.js:802"
+ },
+ {
   "k": "Lanista name: {0}–{1} letters.",
-  "w": "src/111-onlcore.js:884"
+  "w": "src/111-onlcore.js:890"
  },
  {
   "k": "Letters only, please.",
-  "w": "src/111-onlcore.js:885"
+  "w": "src/111-onlcore.js:891"
  },
  {
   "k": "One rename every 30 days — next on {0}.",
-  "w": "src/111-onlcore.js:889"
- },
- {
-  "k": "They take no invitations.",
   "w": "src/111-onlcore.js:895"
  },
  {
+  "k": "They take no invitations.",
+  "w": "src/111-onlcore.js:901"
+ },
+ {
   "k": "They take invitations only from houses they follow.",
-  "w": "src/111-onlcore.js:896"
+  "w": "src/111-onlcore.js:902"
  },
  {
   "k": "Aquila Aurea",
-  "w": "src/111-onlcore.js:923"
+  "w": "src/111-onlcore.js:929"
  },
  {
   "k": "Leaena Rubra",
-  "w": "src/111-onlcore.js:923"
+  "w": "src/111-onlcore.js:929"
  },
  {
   "k": "Anas Ferox",
-  "w": "src/111-onlcore.js:923"
+  "w": "src/111-onlcore.js:929"
  },
  {
   "k": "That name belongs to an old house of the arena.",
-  "w": "src/111-onlcore.js:935"
+  "w": "src/111-onlcore.js:941"
+ },
+ {
+  "k": "The guest pass is for thin treasuries — under {0} coin.",
+  "w": "src/111-onlcore.js:1051"
+ },
+ {
+  "k": "Send 0–{0} coin.",
+  "w": "src/111-onlcore.js:1054"
+ },
+ {
+  "k": "The treasury holds only {0} coin.",
+  "w": "src/111-onlcore.js:1054"
+ },
+ {
+  "k": "He already has all of it.",
+  "w": "src/111-onlcore.js:1092"
  }
 ]

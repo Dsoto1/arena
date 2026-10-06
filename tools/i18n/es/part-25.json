@@ -260,5 +260,16 @@
  "+1 movement while worn.": "+1 de movimiento mientras la lleva.",
  "+1 damage against the gladiator who last hit the wearer.": "+1 de daño contra el gladiador que golpeó último a quien la lleva.",
  "At the start of the wearer’s turns, the location it guards regains 1 AP (up to the pieces’ own AP).": "Al inicio de los turnos de quien la lleva, la zona que protege recupera 1 AP (hasta el AP propio de las piezas).",
- "The next bid is at least {0} coin.": "La siguiente puja es de al menos {0} monedas."
+ "The next bid is at least {0} coin.": "La siguiente puja es de al menos {0} monedas.",
+ "A seat in the stands goes to a house with a gladiator — raise one first.": "Un asiento en las gradas es para una casa con gladiador — recluta uno primero.",
+ "A house wagers through a living gladiator — raise one first.": "Una casa apuesta a través de un gladiador vivo — recluta uno primero.",
+ "Not enough in the treasury.": "No hay suficiente en el tesoro.",
+ "The treasury holds less than {0} coin.": "El tesoro tiene menos de {0} monedas.",
+ "Issued gear is never repaired.": "El equipo entregado nunca se repara.",
+ "No such kit.": "No existe ese kit.",
+ "One free kit a day for each house — come back tomorrow.": "Un kit gratis al día por casa — vuelve mañana.",
+ "The guest pass is for thin treasuries — under {0} coin.": "El pase de invitado es para tesoros escasos — menos de {0} monedas.",
+ "Send 0–{0} coin.": "Envía de 0 a {0} monedas.",
+ "The treasury holds only {0} coin.": "El tesoro solo tiene {0} monedas.",
+ "He already has all of it.": "Ya lo tiene todo."
 }

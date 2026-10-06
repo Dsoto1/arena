@@ -260,5 +260,16 @@
  "You hold a ticket to this game — give it back to join.": "Tu as un billet pour cette partie — rends-le pour rejoindre.",
  "No {0} free seats together.": "Pas {0} places libres côte à côte.",
  "No room for a party of {0}.": "Pas de place pour un groupe de {0}.",
- "The host keeps a seat.": "L'hôte garde une place."
+ "The host keeps a seat.": "L'hôte garde une place.",
+ "A seat in the stands goes to a house with a gladiator — raise one first.": "Une place en tribune revient à une maison qui a un gladiateur — recrutes-en un d'abord.",
+ "A house wagers through a living gladiator — raise one first.": "Une maison parie par un gladiateur vivant — recrutes-en un d'abord.",
+ "Not enough in the treasury.": "Pas assez dans le trésor.",
+ "The treasury holds less than {0} coin.": "Le trésor a moins de {0} pièces.",
+ "Issued gear is never repaired.": "L'équipement fourni ne se répare jamais.",
+ "No such kit.": "Ce kit n'existe pas.",
+ "One free kit a day for each house — come back tomorrow.": "Un kit gratuit par jour et par maison — reviens demain.",
+ "The guest pass is for thin treasuries — under {0} coin.": "Le laissez-passer d'invité est pour les trésors maigres — moins de {0} pièces.",
+ "Send 0–{0} coin.": "Envoie de 0 à {0} pièces.",
+ "The treasury holds only {0} coin.": "Le trésor n'a que {0} pièces.",
+ "He already has all of it.": "Il a déjà tout."
 }

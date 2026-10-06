@@ -32,7 +32,7 @@ const rk=await A.evaluate(async()=>({n:ONLC.RANKS.length,keys:Object.keys((await
 ok(rk.n===8&&rk.keys.length===8&&rk.vet===3,'eight ranks, counted');
 /* ── 2. offerings + a gift: a named weapon for a Veteranus ── */
 await world(A,(w,id)=>{Object.assign(w.chars[id],{wallet:500,glory:600,gifts:[{id:id+':rank:veteranus',why:'rank:veteranus',at:Date.now()}]})},ca);
-const of=await A.evaluate(async id=>{await NET.req('offer.buy',{char:id,key:'elix2'});await NET.req('offer.buy',{char:id,key:'cf1'});await NET.req('offer.buy',{char:id,key:'ap3'});const c=await NET.req('offer.bring',{char:id,keys:['elix2','cf1']});return {offers:c.offers,eq:c.offerEq,wallet:c.wallet}},ca);
+const of=await A.evaluate(async id=>{await NET.req('offer.buy',{char:id,key:'elix2'});await NET.req('offer.buy',{char:id,key:'cf1'});await NET.req('offer.buy',{char:id,key:'ap3'});const c=await NET.req('offer.bring',{char:id,keys:['elix2','cf1']});return {offers:c.offers,eq:c.offerEq,wallet:(()=>{const w=mockLoad();return (w.domus82[w.chars[id].domus]||{}).treasury|0})()}},ca); /* v0.92: the treasury pays */
 ok(of.offers.length===3&&of.eq.join()==='elix2,cf1'&&of.wallet===500-40-40-120,'offerings bought, two chosen to bring');
 const gift=await A.evaluate(async id=>{const r=Math.random;Math.random=()=>0.995;let g;try{g=await NET.req('gift.open',{char:id,gift:id+':rank:veteranus'})}finally{Math.random=r}
   const it=g.char.gear.find(x=>/^nw#/.test(x));return {k:g.reward.k,rar:g.reward.rar,to:g.to,it,w:it&&g.char.pcs[ONLC.itemUid(it)].w,eq:ONLC.equipOf(g.char).includes(it)}},ca);
@@ -77,6 +77,7 @@ const pick=await B.evaluate(async([id,seat,item])=>await NET.req('loot.pick',{id
 const bc=await B.evaluate(async()=>{const c=(await NET.req('char.mine',{})).find(x=>x.alive);const gi=c.gear.find(x=>/^galea#/.test(x));return {gi,glad:gi&&ONLC.pcOf(c,gi).hist[0].glad}});
 ok(pick.to==='glad'&&bc.gi&&bc.glad==='Gamma the Bold','the pick, with its owner history');
 /* repair from the treasury */
+await world(B,(w,id)=>{const o=w.chars[id].owner;for(const c of Object.values(w.chars))if(c.owner===o)c.wallet=0;w.domus82[w.accounts[o].domus].treasury=0},cb); /* v0.92: an empty treasury (purses move into it) */
 const rep=await err(B,async it=>NET.req('gear.repair',{holder:ONL.char.id,item:it,pay:'treasury'}),bs.br);ok(/^no_coin\|/.test(rep),'the treasury cannot pay yet');
 await world(B,(w,id)=>{const A=w.accounts[w.chars[id].owner];w.domus82[A.domus].treasury=200},cb);
 const rp=await B.evaluate(async it=>{const r=await NET.req('gear.repair',{holder:ONL.char.id,item:it,pay:'treasury'});return {cost:r.cost,want:ONLC.repairCost(ONLC.pieceInfo({item:'cassis'},onlCatalog())),broken:ONLC.isBroken(r.holder,it),t:r.domus.treasury}},bs.br);

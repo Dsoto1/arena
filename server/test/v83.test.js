@@ -14,7 +14,7 @@ function rules(){
   assert.strictEqual(C.rankByGlory(89).k,'tiro');assert.strictEqual(C.rankByGlory(90).k,'novicius');assert.strictEqual(C.rankByGlory(5600).k,'invictus');
   /* the treasury's cut, gifts at rank-ups and every 5 Ranked bouts survived */
   const ch=C.newChar({name:'Rule Tester',cls:'hero'},'o','gr',0);ch.glory=85;
-  const o=C.applyResult(ch,{won:true,f:10,survives:true},true,{humans:4,now:5});assert.strictEqual(o.award,12);assert.strictEqual(o.cut,2);assert.strictEqual(o.pay,10);assert.strictEqual(ch.wallet,10);
+  const o=C.applyResult(ch,{won:true,f:10,survives:true},true,{humans:4,now:5});assert.strictEqual(o.award,12);assert.strictEqual(o.cut,12,'v0.92: the whole award goes to the house');assert.strictEqual(o.pay,0);assert.strictEqual(ch.wallet,0,'no purse');
   assert.deepStrictEqual(o.ranks,['novicius']);assert.deepStrictEqual(o.gifts.map(g=>g.why),['rank:novicius']);
   ch.survived=4;const o5=C.applyResult(ch,{won:false,f:0,survives:true},true,{humans:4});assert.ok(o5.gifts.some(g=>g.why==='surv:5'),'a gift every 5 Ranked bouts survived');
   ch.glory=170;const o6=C.applyResult(ch,{won:false,f:400,survives:true},false,{});assert.deepStrictEqual(o6.ranks,['gregarius','veteranus'],'one gift for every rank crossed');assert.strictEqual(ch.gifts.length,4);
@@ -111,7 +111,7 @@ async function routes(){
   const tbl=[0,1,2,3].map(i=>i===sa?{seat:i,won:true,place:1,f:40,survives:true,brk:['galea'],off:['merc1'],kb:''}:i===sb?{seat:i,won:false,place:4,f:3,survives:false,ks:sa,kb:'g'}:{seat:i,won:false,place:2,f:5});
   m0=mark();await ann.req('match.result',{id:L.id,table:tbl,hash:'h'});const rb=await bob.req('match.result',{id:L.id,table:tbl,hash:'h'});assert.ok(rb.out.died);
   const A1=await getC(ann.ch.id);const ra=(await db.get('MATCH#'+L.id,'META')).outs[ann.acct];
-  assert.strictEqual(ra.award,Math.round(8*1.5*0.5));assert.strictEqual(ra.cut,Math.round(ra.award*0.2));assert.strictEqual((await getD(ann.domus.id)).treasury,ra.cut,'the lanista’s cut');
+  assert.strictEqual(ra.award,Math.round(8*1.5*0.5));assert.strictEqual(ra.cut,ra.award,'v0.92: the whole award');assert.strictEqual((await getD(ann.domus.id)).led89.in.cut,ra.award,'into the house treasury, booked as bout earnings');
   assert.deepStrictEqual(ra.broken,[]);assert.deepStrictEqual(ra.gone,['galea'],'v0.91: used up');assert.ok(!A1.gear.some(x=>C.itemBase(x)==='galea'));assert.deepStrictEqual(A1.offers.sort(),['elix4','merc1'],'merc1 came back, cf1 was used');
   const BD=await getD(bob.domus.id);assert.deepStrictEqual(BD.gear,['wraps'],'the dead one’s un-brought piece waits on his house’s shelf');assert.deepStrictEqual((await getC(bob.ch.id)).gear,[]);
   const lo=ann.got('loot.offer',m0);assert.strictEqual(lo.length,1,'the killer’s window');assert.deepStrictEqual(lo[0].pieces.map(p=>C.itemBase(p.item)).sort(),['cassis','flail'],'what he brought');
@@ -122,10 +122,10 @@ async function routes(){
   await rejects(ann.req('loot.pick',{id:L.id,seat:sb,item:cassisIt}),'loot_done');assert.strictEqual(ann.got('loot.done',m0).length,1);
   /* the rest went to the used market */
   let mk=(await cid.req('market.list',{})).used;assert.strictEqual(mk.length,1);assert.match(mk[0].item,/^flail#/);assert.strictEqual(mk[0].price,750);assert.strictEqual(mk[0].hist[0].how,'fell');
-  await setC(cid.ch.id,{wallet:749});await rejects(cid.req('market.buy',{char:cid.ch.id,id:mk[0].id}),'no_coin');await setC(cid.ch.id,{wallet:800});
-  const cb=await cid.req('market.buy',{char:cid.ch.id,id:mk[0].id});assert.ok(cb.char.gear.includes(mk[0].item));assert.strictEqual(cb.char.wallet,50);await rejects(ann.req('market.buy',{char:ann.ch.id,id:mk[0].id}),'sold');
+  await setD(cid.domus.id,{treasury:749});await rejects(cid.req('market.buy',{char:cid.ch.id,id:mk[0].id}),'no_coin');await setD(cid.domus.id,{treasury:800});
+  const cb=await cid.req('market.buy',{char:cid.ch.id,id:mk[0].id});assert.ok(cb.char.gear.includes(mk[0].item));assert.strictEqual((await getD(cid.domus.id)).treasury,50,'v0.92: the treasury pays');await rejects(ann.req('market.buy',{char:ann.ch.id,id:mk[0].id}),'sold');
   /* repairs: ⅓ of the value, from the treasury or a wallet */
-  let br;{const c0=await getC(ann.ch.id);C.putPiece(c0,{item:'galea',pc:null},false);br=C.breakItem(c0,'galea');await db.put('CHAR#'+c0.id,'CHAR',c0)}/* a broken piece to mend (v0.91: printed ones are used up in Ranked; repairs still exist) */const cost=Math.ceil(C.priceOf(catalog.galea)/3);await rejects(ann.req('gear.repair',{holder:ann.ch.id,item:br,pay:'treasury'}),'no_coin');
+  let br;{const c0=await getC(ann.ch.id);C.putPiece(c0,{item:'galea',pc:null},false);br=C.breakItem(c0,'galea');await db.put('CHAR#'+c0.id,'CHAR',c0)}/* a broken piece to mend (v0.91: printed ones are used up in Ranked; repairs still exist) */const cost=Math.ceil(C.priceOf(catalog.galea)/3);await ann.req('domus.get',{});await setD(ann.domus.id,{treasury:0});await rejects(ann.req('gear.repair',{holder:ann.ch.id,item:br,pay:'treasury'}),'no_coin');
   await setD(ann.domus.id,{treasury:100});const rp=await ann.req('gear.repair',{holder:ann.ch.id,item:br,pay:'treasury'});assert.strictEqual(rp.cost,cost);assert.strictEqual(rp.domus.treasury,100-cost);assert.ok(!C.isBroken(rp.holder,br));
   await rejects(ann.req('gear.repair',{holder:ann.ch.id,item:br}),null,/whole/);await ann.req('domus.equip',{char:ann.ch.id,item:br,on:true});
   /* the treasury buys for the shelf */
@@ -202,7 +202,7 @@ async function routes(){
   /* a new gladiator: the shelf's offerings move into the satchel; a house gift opens for the ACTIVE gladiator */
   const ich=await ida.req('char.create',{name:'Ida Secunda',cls:'hero'});const om=await ida.req('offer.move',{key:'merc1',from:'house',to:ich.id});assert.deepStrictEqual(om.to.offers,['merc1']);assert.deepStrictEqual(om.from.offers,[]);
   await rejects(ida.req('offer.move',{key:'curse',from:'house',to:ich.id}),null,/not there/);
-  await setD(ida.domus.id,{gifts:[{id:'hg1',why:'surv:5',at:T}]});RND=0.2;const g2=await ida.req('gift.open',{gift:'hg1'});RND=null;assert.strictEqual(g2.to,'glad');assert.strictEqual(g2.char.id,ich.id);assert.strictEqual(g2.char.wallet,g2.reward.v);
+  const ti0=(await getD(ida.domus.id)).treasury|0;await setD(ida.domus.id,{gifts:[{id:'hg1',why:'surv:5',at:T}]});RND=0.2;const g2=await ida.req('gift.open',{gift:'hg1'});RND=null;assert.strictEqual(g2.to,'house','v0.92: a coin gift goes into the treasury');assert.strictEqual(g2.char.id,ich.id);assert.strictEqual(g2.char.wallet|0,0);assert.strictEqual(g2.domus.treasury,ti0+g2.reward.v);
   /* ── 🧪 TESTER GRANTS ── */
   await rejects(jon.req('admin.grant',{coin:50}),'notTester');assert.ok(!(await jon.req('hello',{all:1})).tester,'no tester flag for others');
   const tess=await client('tess',{email:'tess@example.COM'});assert.strictEqual((await tess.req('hello',{all:1})).tester,true,'a tester by e-mail (case-insensitive)');
