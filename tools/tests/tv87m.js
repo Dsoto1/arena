@@ -1,6 +1,6 @@
 /* v0.87 Manager systems (150-v87mgr): 1 the lanista's hours are gone (never saved, no displays, actions still limited a week,
    the ticket clock), 2 the lanista perk tree on the Lanista tab (buy, ranks, effects, the ludus tile jumps), 3 Training Yard
-   standing orders + the squad table (routine, priority, bulk, row → card, repeats after End the week, attention rows),
+   standing orders → v0.92 the fighter cards + ↻ Same as last week (213-v92yard), rest, last week's gain,
    4 recruiting Fit (✓ only for the best few; a thin roster no longer makes everyone ✓), 5 win rewards (purse ×, streaks, growth,
    fans → CF, patron offer); phone width without sideways scroll */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
@@ -59,35 +59,31 @@ o.p=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
 ok(!o.p.tileCount&&o.p.tab==='me','the ludus tile has no count and opens the Lanista tab');ok(o.p.card&&o.p.nodes===9&&o.p.counts===1,'nine perks, one count');
 ok(o.p.br2dis&&o.p.br1&&o.p.pts===4&&o.p.hon===3&&o.p.br2open,'rank I first, costs a point, lifts its trait, opens rank II');
 ok(o.p.th===2,'Drillmaster: +2 training hours');ok(o.p.bargain[1]<o.p.bargain[0],'Hard bargain: signs for less '+o.p.bargain);ok(o.p.cf===1,'Grand entrance: +1 CF');ok(o.p.hone===2,'hone a trait');
-/* ---------- 3 · standing orders ---------- */
+/* ---------- 3 · standing orders → v0.92: the yard is fighter cards (213-v92yard); the week repeats with ↻ Same as last week,
+   old drill routines no longer train on their own (they seed ↻), rest still works, last week's gain is still kept ---------- */
 o.y=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const r={};const w=W_(),m=me();const ros=rosterOf(m);
-  ros.forEach(g=>{g.inj=null;g.fat=0;g.restWk=null});ros[0].fat=70;w.tplan=null;
+  ros.forEach(g=>{g.inj=null;g.fat=0;g.restWk=null;g.ord87=null});ros[0].fat=70;w.tplan=null;
   MGR.tab='practice';MGR.yd87=null;MGR_REDRAW();await W8(500);
-  r.rows=document.querySelectorAll('.yo87r').length;r.ros=ros.length;r.cards=document.querySelectorAll('.yd76grid .yd76c').length;r.need=document.querySelectorAll('.yo87r.need').length;
-  const sel=document.querySelector(`[data-yr87="${ros[1].id}"]`);sel.value='str';sel.dispatchEvent(new Event('change',{bubbles:true}));await W8(400);
-  r.ord=ros[1].ord87&&ros[1].ord87.r;r.str=((thPlan(w).g[ros[1].id])||{}).str;
-  r.prio=document.querySelector('[data-yp87]')?0:1; /* v0.90: the First/Normal/Last priority is gone */
-  /* bulk: all-round for two */
-  for(const g of [ros[2],ros[3]]){const c=document.querySelector(`[data-yk87="${g.id}"]`);c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}));await W8(250)}
-  document.getElementById('yo87bulkR').value='bal';document.querySelector('[data-ya87]').click();await W8(400);
-  r.bal=[ros[2],ros[3]].map(g=>JSON.stringify(thPlan(w).g[g.id]||{}));
-  /* rest for the worn one */
-  const s0=document.querySelector(`[data-yr87="${ros[0].id}"]`);s0.value='rest';s0.dispatchEvent(new Event('change',{bubbles:true}));await W8(400);r.rest=ros[0].restWk===w.week;
-  /* a row opens the full card */
-  document.querySelector(`.yo87r[data-yo87row="${ros[4]?ros[4].id:ros[1].id}"] .yo87gn`).click();await W8(400);r.one=document.querySelectorAll('.yo87one .yd76c').length;
-  document.querySelector('[data-ycard87="all"]')&&document.querySelector('[data-ycard87="all"]').click();await W8(300);r.all=document.querySelectorAll('.yd76grid .yd76c').length;
-  /* the week ends: the orders come back by themselves */
+  r.rows=document.querySelectorAll('.yo87r').length;r.ros=ros.length;r.cards=document.querySelectorAll('.y92c').length;r.worn=!!document.querySelector(`[data-y92c="${ros[0].id}"] .fb90-worn`);
+  /* an old drill routine: no hours booked by itself, but it seeds ↻ */
+  ros[1].ord87={r:'str',p:2};ord87RunAll(w);r.str=JSON.stringify(thPlan(w).g[ros[1].id]||{});
+  /* plan + lock for two fighters */
+  for(const g of [ros[2],ros[3]]){for(const k of ['spd','str','int']){document.querySelector(`[data-y92s="${g.id}|${k}|1"]`).click();await W8(120)}}
+  document.querySelector('[data-y92all]').click();await W8(300);r.lk=[ros[2],ros[3]].map(g=>JSON.stringify(thPlan(w).y92[g.id].L));
+  /* rest for the worn one (the Infirmary's rest routine still runs) */
+  ord87Set(ros[0],'rest');MGR_REDRAW();await W8(300);r.rest=ros[0].restWk===w.week&&!!document.querySelector(`[data-y92c="${ros[0].id}"].locked`);
+  /* the week ends: ↻ brings the week back */
   ros.forEach(g=>{g.contract.weeks=20;g.morale=90});const wk=w.week;for(const bt of (w.night&&w.night.bouts)||[])bt.done=true;w.pend=[];await endWeek();await W8(300);const w2=W_();
-  r.adv=w2.week!==wk;const hurt=g=>!!g.inj||g.alive===false||!(g.contract&&g.contract.mgr===m.id); /* a week can wound, kill or take a fighter away */const gw=ros.find(g=>!hurt(g))||ros[1];r.str2=hurt(ros[1])?3:((thPlan(w2).g[ros[1].id])||{}).str;r.bal2=hurt(ros[2])?1:((thPlan(w2).g[ros[2].id])||{}).spd;r.rest2=hurt(ros[0])||ros[0].restWk===w2.week;r.hurt2=ros.slice(0,3).map(hurt);if(r.bal2!==1||r.str2!==3)r.dbg2=ros.slice(1,4).map(g=>({p:thPlan(w2).g[g.id],o:g.ord87,rest:g.restWk,wk:w2.week,left:thLeft(w2),max:thMax(),mine:!!(g.contract&&g.contract.mgr===m.id),alive:g.alive}));r.gain=!!(gw.gain87&&gw.gain87.wk===w2.week);
-  MGR.tab='practice';MGR_REDRAW();await W8(400);r.gainTxt=(document.querySelector(`.yo87r[data-yo87row="${gw.id}"] .yo87gn`)||{}).textContent||'';
-  /* a routine the hours cannot pay is marked */
-  const g5=[ros[4],...ros].find(g=>g&&g.alive!==false&&g.contract&&g.contract.mgr===m.id)||ros[1];g5.inj=null;g5.restWk=null;const tl=window.thLeft;window.thLeft=()=>0;try{ord87Set(g5,'cha')}finally{window.thLeft=tl}MGR_REDRAW();await W8(300);r.short=g5.ord87.short;
-  r.shortRow=!!document.querySelector(`.yo87r.need[data-yo87row="${g5.id}"]`);
+  r.adv=w2.week!==wk;const hurt=g=>!!g.inj||g.alive===false||!(g.contract&&g.contract.mgr===m.id);
+  MGR.tab='practice';MGR_REDRAW();await W8(400);document.querySelector('[data-y92same]').click();await W8(300);
+  const Q=g=>JSON.stringify((thPlan(w2).y92||{})[g.id]?thPlan(w2).y92[g.id].Q:{});r.again=[ros[2],ros[3]].map(g=>hurt(g)?'{"spd":1,"str":1,"int":1}':Q(g));
+  r.seed=hurt(ros[1])?'{"str":3}':Q(ros[1]);r.selfTrain=JSON.stringify(thPlan(w2).g[ros[1].id]||{});
+  const gw=ros.find(g=>!hurt(g))||ros[1];r.gain=!!(gw.gain87&&gw.gain87.wk===w2.week);
   return r});
-ok(o.y.rows===o.y.ros&&o.y.cards===0,'the yard opens on the squad table');ok(o.y.need>=1,'the worn-out row asks for attention');
-ok(o.y.ord==='str'&&o.y.str===3&&o.y.prio===1,'a routine goes into the week, with its priority');ok(o.y.bal.every(s=>s==='{"spd":1,"str":1,"int":1,"cha":1}'),'bulk all-round '+o.y.bal);
-ok(o.y.rest,'rest routine');ok(o.y.one===1&&o.y.all===o.y.ros,'a row opens its card; All cards');
-ok(o.y.adv&&o.y.str2===3&&o.y.bal2===1&&o.y.rest2,'the orders repeat next week');ok(o.y.gain&&o.y.gainTxt.length>0,'last week\'s gain');ok(o.y.short>0&&o.y.shortRow,'an unpaid routine is marked');
+ok(o.y.rows===0&&o.y.cards===o.y.ros,'the yard opens on the fighter cards');ok(o.y.worn,'the worn-out card shows it');
+ok(o.y.str==='{}','an old drill routine does not book hours by itself '+o.y.str);ok(o.y.lk.every(s=>s==='{"spd":1,"str":1,"int":1}'),'sessions lock in '+o.y.lk);
+ok(o.y.rest,'rest routine');ok(o.y.adv&&o.y.again.every(s=>s==='{"spd":1,"str":1,"int":1}'),'↻ repeats last week '+o.y.again);
+ok(o.y.seed==='{"str":3}'&&o.y.selfTrain==='{}','the old routine seeds ↻ '+o.y.seed);ok(o.y.gain,'last week\'s gain');
 /* ---------- 4 · Fit ---------- */
 o.f=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const r={};const w=W_(),m=me();m.coin=600;
   const fa=freeAgents();r.ticks=fa.filter(g=>recFit(g,m).mark==='✓').length;
@@ -139,7 +135,7 @@ ok(o.r.letter&&o.r.btn&&o.r.pat===1,'a 3-win streak brings a patron offer you ca
 const pp=await b.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});await setup(pp);
 o.ph=await pp.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const r={};me().perkPts=3;
   for(const t of ['practice','me']){MGR.tab=t;MGR_REDRAW();await W8(500);const body=document.getElementById('mBody')||document.body;
-    r[t]={docX:document.documentElement.scrollWidth-innerWidth,bodyX:body.scrollWidth-body.clientWidth,rowsOut:[...document.querySelectorAll('.yo87r,.pk87')].filter(e=>e.getBoundingClientRect().right>innerWidth+1).length}}
+    r[t]={docX:document.documentElement.scrollWidth-innerWidth,bodyX:body.scrollWidth-body.clientWidth,rowsOut:[...document.querySelectorAll('.yo87r,.y92c,.pk87')].filter(e=>e.getBoundingClientRect().right>innerWidth+1).length}}
   return r});
 for(const t of ['practice','me'])ok(o.ph[t].docX<=1&&o.ph[t].bodyX<=1&&!o.ph[t].rowsOut,'phone '+t+': no sideways scroll '+JSON.stringify(o.ph[t]));
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();

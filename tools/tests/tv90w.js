@@ -52,7 +52,7 @@ const o=await pg.evaluate(async()=>{let sd=90;Math.random=()=>{sd=(sd*1664525+10
   const wr=rec.filter(x=>x[1]==='worn');r.worn=wr.length>3&&wr.every(x=>x[3]===0||x[2]===-1);if(!r.fresh||!r.worn)r.dbgMv=JSON.stringify(rec.slice(0,20));
   mvMax=MV;G.fat=40;
   r.tired=(boutCfg(bo,false).seats.find(s=>s.mgrGid===G.id)||{}).fat90==='tired';
-  await go('night');r.nightChip=!!q('tr.me .fb90');await go('practice');r.yardChip=[...document.querySelectorAll('.yo87r .fb90')].some(e=>e.offsetWidth>0);
+  await go('night');r.nightChip=!!q('tr.me .fb90');await go('practice');r.yardChip=[...document.querySelectorAll('.yo87r .fb90, .y92c .fb90')].some(e=>e.offsetWidth>0);
   /* ---- 3 · HP display clamps at 7 ---- */
   const BF=boostFor;boostFor=function(g){const b=BF.apply(this,arguments);if(g&&g.id===G.id)b.hp={head:5,chest:1,rarm:1};return b};
   delete G.inj;const H=hp90(G);r.clamp=H.loc.head.cur===7&&H.loc.head.bonus===2&&H.loc.chest.cur===7&&H.loc.chest.bonus===1&&H.loc.rarm.cur===6&&Object.values(H.loc).every(x=>x.cur<=7);
