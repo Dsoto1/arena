@@ -1,5 +1,5 @@
 {
- "run": 203,
+ "run": 204,
  "lastFull": 1791254037274,
  "tests": {
   "tseed4": {
@@ -2724,24 +2724,24 @@
    "lastPass": 197
   },
   "tv82o": {
-   "streak": 8,
-   "runs": 26,
+   "streak": 9,
+   "runs": 27,
    "fails": 11,
    "flaky": [
     55,
     80,
     85
    ],
-   "lastRun": 199,
-   "time": 181,
-   "sh": "1cb52bf252",
-   "lastPass": 199,
+   "lastRun": 204,
+   "time": 88,
+   "sh": "489c46a184",
+   "lastPass": 204,
    "deps": {
-    "build.sh": "bc9ce43ae934",
+    "build.sh": "d75cb14e2252",
     "src/01-head.html": "45ee202bfa07",
-    "tools/smartreg.js": "44d97ee7684f",
+    "tools/smartreg.js": "88651cfcb1b8",
     "tools/regcov.js": "1b122005f465",
-    "tools/tests/tv82o.js": "62c77acdba4c"
+    "tools/tests/tv82o.js": "1c49dd844f25"
    },
    "pinUntil": 144
   },
@@ -2818,8 +2818,8 @@
    "pinUntil": 95
   },
   "tonl84": {
-   "streak": 3,
-   "runs": 23,
+   "streak": 4,
+   "runs": 24,
    "fails": 5,
    "flaky": [
     71,
@@ -2827,16 +2827,16 @@
     133,
     176
    ],
-   "lastRun": 197,
-   "time": 95,
-   "sh": "ee0ac8743d",
-   "lastPass": 197,
+   "lastRun": 204,
+   "time": 107,
+   "sh": "489c46a184",
+   "lastPass": 204,
    "deps": {
-    "build.sh": "d477c16e9ad1",
+    "build.sh": "d75cb14e2252",
     "src/01-head.html": "45ee202bfa07",
-    "tools/smartreg.js": "44d97ee7684f",
+    "tools/smartreg.js": "88651cfcb1b8",
     "tools/regcov.js": "1b122005f465",
-    "tools/tests/tonl84.js": "c7eab56766b7"
+    "tools/tests/tonl84.js": "0bd927d3b14c"
    }
   },
   "tv84": {
@@ -3506,20 +3506,20 @@
    }
   },
   "tonl89d": {
-   "streak": 12,
-   "runs": 12,
+   "streak": 13,
+   "runs": 13,
    "fails": 0,
    "flaky": [],
-   "lastRun": 197,
-   "time": 26,
-   "sh": "ee0ac8743d",
-   "lastPass": 197,
+   "lastRun": 204,
+   "time": 43,
+   "sh": "489c46a184",
+   "lastPass": 204,
    "deps": {
-    "build.sh": "d477c16e9ad1",
+    "build.sh": "d75cb14e2252",
     "src/01-head.html": "45ee202bfa07",
-    "tools/smartreg.js": "44d97ee7684f",
+    "tools/smartreg.js": "88651cfcb1b8",
     "tools/regcov.js": "1b122005f465",
-    "tools/tests/tonl89d.js": "a5b4265696c7"
+    "tools/tests/tonl89d.js": "bd2b86c83d9b"
    }
   },
   "tonl89a": {
@@ -3730,20 +3730,20 @@
    }
   },
   "tv90b": {
-   "streak": 1,
-   "runs": 9,
+   "streak": 2,
+   "runs": 10,
    "fails": 1,
    "flaky": [],
-   "lastRun": 198,
-   "time": 19,
-   "sh": "969c560761",
-   "lastPass": 198,
+   "lastRun": 204,
+   "time": 20,
+   "sh": "489c46a184",
+   "lastPass": 204,
    "deps": {
-    "build.sh": "c4ba96bd7579",
+    "build.sh": "d75cb14e2252",
     "src/01-head.html": "45ee202bfa07",
-    "tools/smartreg.js": "44d97ee7684f",
+    "tools/smartreg.js": "88651cfcb1b8",
     "tools/regcov.js": "1b122005f465",
-    "tools/tests/tv90b.js": "08acdb78440f"
+    "tools/tests/tv90b.js": "8f61894b3159"
    },
    "pinUntil": 207
   },
@@ -4009,16 +4009,16 @@
    }
   },
   "tv92p": {
-   "streak": 1,
-   "runs": 1,
+   "streak": 2,
+   "runs": 2,
    "fails": 0,
    "flaky": [],
-   "lastRun": 202,
-   "time": 127,
-   "sh": "3bf661b805",
-   "lastPass": 202,
+   "lastRun": 204,
+   "time": 79,
+   "sh": "489c46a184",
+   "lastPass": 204,
    "deps": {
-    "build.sh": "1e7c58394161",
+    "build.sh": "d75cb14e2252",
     "src/01-head.html": "45ee202bfa07",
     "tools/smartreg.js": "88651cfcb1b8",
     "tools/regcov.js": "1b122005f465",
@@ -4026,20 +4026,54 @@
    }
   },
   "tv92c": {
-   "streak": 1,
-   "runs": 1,
+   "streak": 2,
+   "runs": 2,
    "fails": 0,
    "flaky": [],
-   "lastRun": 203,
-   "time": 38,
-   "sh": "3682ea704d",
-   "lastPass": 203,
+   "lastRun": 204,
+   "time": 22,
+   "sh": "489c46a184",
+   "lastPass": 204,
    "deps": {
-    "build.sh": "a50e1343b42a",
+    "build.sh": "d75cb14e2252",
     "src/01-head.html": "45ee202bfa07",
     "tools/smartreg.js": "88651cfcb1b8",
     "tools/regcov.js": "1b122005f465",
     "tools/tests/tv92c.js": "d2a116724f00"
+   }
+  },
+  "tv92f": {
+   "streak": 1,
+   "runs": 1,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 204,
+   "time": 26,
+   "sh": "489c46a184",
+   "lastPass": 204,
+   "deps": {
+    "build.sh": "d75cb14e2252",
+    "src/01-head.html": "45ee202bfa07",
+    "tools/smartreg.js": "88651cfcb1b8",
+    "tools/regcov.js": "1b122005f465",
+    "tools/tests/tv92f.js": "ac2633c6fdec"
+   }
+  },
+  "tonl92": {
+   "streak": 1,
+   "runs": 1,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 204,
+   "time": 31,
+   "sh": "489c46a184",
+   "lastPass": 204,
+   "deps": {
+    "build.sh": "d75cb14e2252",
+    "src/01-head.html": "45ee202bfa07",
+    "tools/smartreg.js": "88651cfcb1b8",
+    "tools/regcov.js": "1b122005f465",
+    "tools/tests/tonl92.js": "9af8aae2c8a4"
    }
   }
  },
@@ -5292,7 +5326,7 @@
    "src/204-v92perf.js": "d20bc17afc",
    "src/08-setup.js": "1d86b31d18"
   },
-  "3682ea704d": {
+  "489c46a184": {
    "src/00b-perf.js": "1c72c43c32",
    "src/00-lang.js": "b8d8c320e3",
    "src/02-data.js": "b4c91f8851",
@@ -5404,7 +5438,7 @@
    "src/108-v76.js": "295645e52c",
    "src/109-v761.js": "a04d82d590",
    "src/110-v77.js": "faf9719a4c",
-   "src/111-onlcore.js": "ab83673d6f",
+   "src/111-onlcore.js": "5e6dfa28ed",
    "src/112-online.js": "ea0d59eed0",
    "src/113-onlmatch.js": "7bfddd6b82",
    "src/114-onlnet.js": "e462ab89c8",
@@ -5479,7 +5513,7 @@
    "src/183-v90ward.js": "12d19ae843",
    "src/184-v90yard.js": "5d270ef34c",
    "src/185-v90week.js": "a6902b8f7b",
-   "src/186-v90board.js": "7d1f6f130a",
+   "src/186-v90board.js": "def795f09f",
    "src/187-v90pn.js": "c97d172986",
    "src/188-v91sponsor.js": "6d3b295a20",
    "src/189-v91night.js": "b22ecbd1a6",
@@ -5488,7 +5522,7 @@
    "src/192-v91arena.js": "a2476d28aa",
    "src/193-v91crowd.js": "04dedf043b",
    "src/194-v91wear.js": "4670f25593",
-   "src/195-v91srvexp.js": "136c005eda",
+   "src/195-v91srvexp.js": "9e74abe404",
    "src/196-v91srv.js": "5f2fcc0544",
    "src/197-v91econ.js": "2f2754d3ca",
    "src/198-v91morph.js": "44bbbe8728",
@@ -5497,11 +5531,13 @@
    "src/201-v91zora.js": "3755e4500b",
    "src/202-v91ludus.js": "41a5f1621b",
    "src/203-v91editor.js": "d6067dedcf",
+   "src/206-v92econ.js": "7beeaf876e",
    "src/208-v92zoom.js": "57df5aa125",
    "src/207-v92extras.js": "0aa840faaa",
    "src/205-v92pn.js": "b99899451a",
    "src/204-v92perf.js": "d20bc17afc",
    "src/209-v92cheer.js": "304cca84b3",
+   "src/210-v92fix.js": "a2c749dec9",
    "src/08-setup.js": "1d86b31d18"
   }
  }
