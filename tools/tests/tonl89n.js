@@ -40,8 +40,8 @@ const od=await P.evaluate(()=>{const h=odds89HTML();return /Flavius’s vault/.t
 if(SHOT){await P.evaluate(()=>{const g=document.querySelector('#onl .au84-grid');if(g)g.scrollIntoView({block:'start'})});await W(300);await P.screenshot({path:path.join(SHOT,'v89N_auction.png')})}
 /* a bid escrows as usual */
 const L1=st.ids[0][0];await P.click(`#onl [data-onl84="bid"][data-v="${L1}"]`);await idle();await W(400);
-const bid=await peek((w,[ch,id])=>{const c=w.chars[ch];const X=Object.values(w.auc84).flatMap(a=>a.lots).find(x=>x.id===id);return {wallet:c.wallet,lead:!!(X&&X.bid&&X.bid.char===ch),min:X&&X.min}},[ann.ch,L1]);
-ok(bid.lead&&bid.wallet===20000-bid.min,'the bid leads, the coin in escrow '+JSON.stringify(bid));
+const bid=await peek((w,[ch,id])=>{const c=w.chars[ch];const X=Object.values(w.auc84).flatMap(a=>a.lots).find(x=>x.id===id);return {wallet:(w.domus82[c.domus]||{}).treasury|0,lead:!!(X&&X.bid&&X.bid.char===ch),min:X&&X.min}},[ann.ch,L1]);
+ok(bid.lead&&bid.wallet===20000-bid.min,'the bid leads, the coin in escrow (v0.92: the treasury) '+JSON.stringify(bid));
 /* the week ends: the won piece is Ann's (history appended), the unsold ones go back to the vault */
 await world((w)=>{for(const A of Object.values(w.auc84))for(const X of A.lots)X.ends=Date.now()-1000},null);await P.evaluate(()=>NET.req('auction.list',{}));
 const end=await peek((w,[ch,id])=>{const c=w.chars[ch];const X=Object.values(w.auc84).flatMap(a=>a.lots).find(x=>x.id===id);const it=(c.gear||[]).find(g=>g===X.item);

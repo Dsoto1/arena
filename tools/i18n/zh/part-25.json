@@ -297,5 +297,16 @@
  "Aquila Aurea": "Aquila Aurea",
  "Leaena Rubra": "Leaena Rubra",
  "Anas Ferox": "Anas Ferox",
- "That name belongs to an old house of the arena.": "这个名字属于竞技场的一个古老家族。"
+ "That name belongs to an old house of the arena.": "这个名字属于竞技场的一个古老家族。",
+ "A seat in the stands goes to a house with a gladiator — raise one first.": "看台座位属于拥有角斗士的家族 — 先培养一名吧。",
+ "A house wagers through a living gladiator — raise one first.": "家族通过一名活着的角斗士下注 — 先培养一名吧。",
+ "Not enough in the treasury.": "金库不够。",
+ "The treasury holds less than {0} coin.": "金库少于{0}枚金币。",
+ "Issued gear is never repaired.": "配给装备永不修理。",
+ "No such kit.": "没有这个套装。",
+ "One free kit a day for each house — come back tomorrow.": "每个家族每天一份免费套装 — 明天再来。",
+ "The guest pass is for thin treasuries — under {0} coin.": "访客通行证留给拮据的金库 — 少于{0}枚金币。",
+ "Send 0–{0} coin.": "送出0–{0}枚金币。",
+ "The treasury holds only {0} coin.": "金库只有{0}枚金币。",
+ "He already has all of it.": "他全都有了。"
 }

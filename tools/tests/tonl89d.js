@@ -32,13 +32,13 @@ await P.evaluate(async id=>{await NET.req('char.active',{char:id})},ids.a);await
 
 /* ── 1 · the layout ── */
 const L1=await P.evaluate(()=>{const o=document.getElementById('onl');const q=s=>o.querySelector(s);const ban=q('.db89');
-  return {ban:!!ban,tro:!!q('.db89 [data-d89="tro"]'),tre:(q('.db89-tre')||{}).textContent||'',banTxt:ban?ban.textContent:'',show:(q('.sc89 .sc89-n')||{}).textContent||'',purse:(q('.sc89 .mon89')||{}).textContent||'',
+  return {ban:!!ban,tro:!!q('.db89 [data-d89="tro"]'),tre:(q('.db89-tre')||{}).textContent||'',banTxt:ban?ban.textContent:'',show:(q('.sc89 .sc89-n')||{}).textContent||'',purse:(q('.sc89 .sc89-mon')||{}).textContent||'',
     stake:(q('.sc89 .stk89')||{}).textContent||'',wp:o.querySelectorAll('.sc89 .wp89').length,wcard:o.querySelectorAll('.sc89 .wp89 .cimg').length,av:!!q('.sc89 .av89 svg'),
     tiles:o.querySelectorAll('.eb89 [data-p89]').length,cards:o.querySelectorAll('.gc89-row .gc89').length,act:(q('.gc89.act b')||{}).textContent||'',
     editors:o.querySelectorAll('[data-onlgp],[data-onlgt],[data-onl="gcls"],[data-onl="grlook"],input[type=checkbox][data-sr82eq],#sr82').length,rb:!!q('.rb82'),
     buy:o.querySelectorAll('.dom89 [data-onl82="buy"],.dom89 [data-onl83="dbuy"],.dom89 .buy83').length}});
-ok(L1.ban&&L1.tro&&/Treasury/i.test(L1.tre)&&/2,?210/.test(L1.tre),'the banner: 🏆 Trophies, the treasury '+JSON.stringify(L1.tre));ok(!/377/.test(L1.banTxt),'no gladiator purse on the banner');
-ok(/Alpha/.test(L1.show)&&/377/.test(L1.purse),'the showcase: Alpha and his purse');ok(L1.wp===2&&L1.wcard>=1&&L1.av,'weapon cards in full + the avatar '+JSON.stringify([L1.wp,L1.wcard,L1.av]));
+ok(L1.ban&&L1.tro&&/Treasury/i.test(L1.tre)&&/2,?587/.test(L1.tre),'the banner: 🏆 Trophies, the treasury '+JSON.stringify(L1.tre));ok(!/377/.test(L1.banTxt),'no gladiator purse on the banner');
+ok(/Alpha/.test(L1.show)&&!/377/.test(L1.purse)&&/2,?587/.test(L1.purse),'the showcase: Alpha and the treasury (v0.92: his 377 purse moved in)');ok(L1.wp===2&&L1.wcard>=1&&L1.av,'weapon cards in full + the avatar '+JSON.stringify([L1.wp,L1.wcard,L1.av]));
 ok(/stake/i.test(L1.stake),'the Ranked stake');ok(L1.tiles===5,'the Gear bar: the shelf (4) + Beta’s unworn axe = 5, got '+L1.tiles);
 ok(L1.cards===4&&/Alpha/.test(L1.act),'four gladiator cards, Alpha active '+JSON.stringify([L1.cards,L1.act]));ok(L1.editors===0,'no look editors, no checkboxes, no old Storeroom ('+L1.editors+')');ok(L1.rb,'the rank bar stays');ok(L1.buy===0,'no buying in the Domus');
 await shot('desk_1400');
@@ -78,7 +78,7 @@ await P.click('#onl [data-eb89="gear"]');await W(150);
 /* ── 5 · the class: 100 coin from the treasury; refused in a room ── */
 await P.click('#onl [data-d89="cls"]');await W(250);ok(await P.evaluate(()=>document.querySelectorAll('.cls89pop [data-cls89]').length>=8),'the class popup');await shot('class_pop');
 await P.click('.cls89pop [data-cls89="soldier"]');await idle();
-A=await peek((w,[a,dom])=>({cls:w.chars[a].cls,t:w.domus82[dom].treasury,led:ONLC.ledgerOf(w.domus82[dom])}),[ids.a,ids.dom]);ok(A.cls==='soldier'&&A.t===2110&&A.led.out.class===100,'class changed for 100 from the treasury '+JSON.stringify([A.cls,A.t]));
+A=await peek((w,[a,dom])=>({cls:w.chars[a].cls,t:w.domus82[dom].treasury,led:ONLC.ledgerOf(w.domus82[dom])}),[ids.a,ids.dom]);ok(A.cls==='soldier'&&A.t===2487&&A.led.out.class===100,'class changed for 100 from the treasury '+JSON.stringify([A.cls,A.t]));
 const inRoom=await P.evaluate(async id=>{const L=await NET.req('lobby.create',{ev:'cassian',cry:false});let r='';try{await NET.req('char.class',{char:id,cls:'hero'})}catch(e){r=e.code||e.message}await NET.req('lobby.leave',{id:(L.lobby||L).id});return r},ids.a);ok(inRoom==='in_match','refused while in a room ('+inRoom+')');
 /* the look is locked */
 const lk=await P.evaluate(async id=>{try{await NET.req('char.edit',{char:id,look:{color:'#010203',token:{sc:1,c1:'#00ff00'}}});return 'ok'}catch(e){return e.message}},ids.a);
@@ -100,7 +100,7 @@ await world((w,[a,g0])=>{w.chars[a].glory=g0},[ids.a,nh.g0]);await open();
 /* ── 6 · tester grants into the house; the ledger ⓘ ── */
 await P.evaluate(()=>localStorage.setItem('flavius_onltester83','1'));
 const g=await P.evaluate(async()=>{const r=await NET.req('admin.grant',{coin:300,gear:['manica'],offering:['ap2']});return {w:(r.char||{}).wallet,t:r.domus.treasury,gear:r.gear,offs:r.offers,cg:(r.char||{}).gear}});
-ok(g.w===377&&g.t===2410&&g.gear.includes('manica')&&!(g.cg||[]).includes('manica')&&g.offs.includes('ap2'),'grant: coin → treasury, gear + offering → the shelf '+JSON.stringify(g));
+ok(!g.w&&g.t===2787&&g.gear.includes('manica')&&!(g.cg||[]).includes('manica')&&g.offs.includes('ap2'),'grant: coin → treasury, gear + offering → the shelf '+JSON.stringify(g));
 /* a settled Ranked bout (the mock's settlement step) and a death: the cut by gladiator, the memorial */
 await world((w,[a,b])=>{const L={id:'Lx',ev:'cassian',loc:3,ranked:true,players:[{id:'me',char:a,name:'Alpha'},{id:'k',char:'zz',name:'Spiculus'},{id:'me2',char:b,name:'Beta'}]};
   mockAfter83(w,L,{},'me',0,{won:true,survives:true},{cut:7,pay:28,award:35},{left:[]});
@@ -108,7 +108,7 @@ await world((w,[a,b])=>{const L={id:'Lx',ev:'cassian',loc:3,ranked:true,players:
 await open();
 await P.hover('#onl [data-d89="led"]');await W(250);
 const led=await P.evaluate(()=>{const f=document.getElementById('led89');return f&&!f.hidden?f.textContent:''});
-ok(/Tester grants/.test(led)&&/300/.test(led)&&/Class changes/.test(led)&&/cut/.test(led)&&/Alpha/.test(led)&&/since v0\.89/.test(led),'the ledger ⓘ: by source + by gladiator '+led.slice(0,200));
+ok(/Tester grants/.test(led)&&/300/.test(led)&&/Class changes/.test(led)&&/Bout earnings|Purses moved/.test(led)&&/Alpha/.test(led)&&/since v0\.89/.test(led),'the ledger ⓘ: by source + by gladiator '+led.slice(0,200));
 await shot('ledger');await P.mouse.move(5,5);await P.click('#onl .sc89-n');await W(100);
 const mw=await P.evaluate(()=>(document.querySelector('#onl .mw89')||{}).textContent||'');ok(/Beta/.test(mw)&&/Spiculus/.test(mw)&&/D·M/.test(mw),'the memorial wall: '+mw.slice(0,160));
 

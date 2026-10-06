@@ -1,0 +1,258 @@
+[
+ {
+  "k": "Class kit",
+  "w": "206-v92econ.js:19"
+ },
+ {
+  "k": "Scrap padding",
+  "w": "206-v92econ.js:19"
+ },
+ {
+  "k": "Recruit set",
+  "w": "206-v92econ.js:19"
+ },
+ {
+  "k": "Champion plate",
+  "w": "206-v92econ.js:19"
+ },
+ {
+  "k": "Free daily kit",
+  "w": "206-v92econ.js:19"
+ },
+ {
+  "k": "Restock",
+  "w": "206-v92econ.js:19"
+ },
+ {
+  "k": "Padding for arms and legs — the cheapest cover.",
+  "w": "206-v92econ.js:20"
+ },
+ {
+  "k": "A full Level 1 set: helm, chest, belt, padding.",
+  "w": "206-v92econ.js:20"
+ },
+ {
+  "k": "Level 2–3 plate from head to greaves.",
+  "w": "206-v92econ.js:20"
+ },
+ {
+  "k": "Plain Level 1 pieces from Flavius, once a day. Issued: worth nothing, never repaired, they vanish when lost.",
+  "w": "206-v92econ.js:21"
+ },
+ {
+  "k": "Issued gear is never repaired.",
+  "w": "206-v92econ.js:42"
+ },
+ {
+  "k": "No such kit.",
+  "w": "206-v92econ.js:70"
+ },
+ {
+  "k": "🪙 {0} of the {1} coin sent came home to the treasury.",
+  "w": "206-v92econ.js:99"
+ },
+ {
+  "k": "🪙 The {0} coin sent stayed on the sand.",
+  "w": "206-v92econ.js:99"
+ },
+ {
+  "k": "Coin from the treasury on top of the class's starting coin (at most {0}). A survivor brings home what is left of it; the dead lose it.",
+  "w": "206-v92econ.js:105"
+ },
+ {
+  "k": "🪙 Send",
+  "w": "206-v92econ.js:105"
+ },
+ {
+  "k": "🪙 {0} coin go into the match with him.",
+  "w": "206-v92econ.js:109"
+ },
+ {
+  "k": "🪙 No coin sent.",
+  "w": "206-v92econ.js:109"
+ },
+ {
+  "k": "🪙 {0} coin sent into this match from the treasury — a survivor brings it home.",
+  "w": "206-v92econ.js:116"
+ },
+ {
+  "k": "the gear he brings + the coin you send",
+  "w": "206-v92econ.js:121"
+ },
+ {
+  "k": "🏛 Treasury",
+  "w": "206-v92econ.js:122"
+ },
+ {
+  "k": "pays for all his gear · up to {0} coin into a match",
+  "w": "206-v92econ.js:122"
+ },
+ {
+  "k": "Bout earnings",
+  "w": "206-v92econ.js:127"
+ },
+ {
+  "k": "Coin brought home",
+  "w": "206-v92econ.js:127"
+ },
+ {
+  "k": "Wagers won & refunds",
+  "w": "206-v92econ.js:127"
+ },
+ {
+  "k": "Purses moved to the treasury",
+  "w": "206-v92econ.js:127"
+ },
+ {
+  "k": "Kits",
+  "w": "206-v92econ.js:128"
+ },
+ {
+  "k": "Offerings",
+  "w": "206-v92econ.js:128"
+ },
+ {
+  "k": "Coin sent into matches",
+  "w": "206-v92econ.js:128"
+ },
+ {
+  "k": "Tickets & wagers",
+  "w": "206-v92econ.js:128"
+ },
+ {
+  "k": "Auction bids",
+  "w": "206-v92econ.js:128"
+ },
+ {
+  "k": "Every coin the house earns or spends — the gladiators keep no purse.",
+  "w": "206-v92econ.js:134"
+ },
+ {
+  "k": "Earned by",
+  "w": "206-v92econ.js:135"
+ },
+ {
+  "k": "The repair costs {0} coin — the treasury holds {1}.",
+  "w": "206-v92econ.js:137"
+ },
+ {
+  "k": "Issued by Flavius: worth nothing, never repaired, it vanishes when lost.",
+  "w": "206-v92econ.js:141"
+ },
+ {
+  "k": "🎁 Issued",
+  "w": "206-v92econ.js:141"
+ },
+ {
+  "k": "Rebuy what a bout used up: {0}",
+  "w": "206-v92econ.js:145"
+ },
+ {
+  "k": "🛒 {0}",
+  "w": "206-v92econ.js:145"
+ },
+ {
+  "k": "The house treasury",
+  "w": "206-v92econ.js:149"
+ },
+ {
+  "k": "Starts with the recruit kit (the class's weapons, no armor). Every coin he earns goes to your house's treasury, which buys his gear. Nothing carries over from a fallen gladiator.",
+  "w": "206-v92econ.js:151"
+ },
+ {
+  "k": "owned",
+  "w": "206-v92econ.js:160"
+ },
+ {
+  "k": "🎁 Taken today",
+  "w": "206-v92econ.js:162"
+ },
+ {
+  "k": "✓ He has it all",
+  "w": "206-v92econ.js:162"
+ },
+ {
+  "k": "🎁 Take it — free",
+  "w": "206-v92econ.js:162"
+ },
+ {
+  "k": "✓ Complete",
+  "w": "206-v92econ.js:162"
+ },
+ {
+  "k": "⇄ Take from the shelf",
+  "w": "206-v92econ.js:162"
+ },
+ {
+  "k": "Complete the kit · {0}",
+  "w": "206-v92econ.js:162"
+ },
+ {
+  "k": "Buy the missing · {0}",
+  "w": "206-v92econ.js:162"
+ },
+ {
+  "k": "{0} − {1}% kit discount",
+  "w": "206-v92econ.js:163"
+ },
+ {
+  "k": "from the house shelf",
+  "w": "206-v92econ.js:163"
+ },
+ {
+  "k": "🛒 Restock {0} · {1}",
+  "w": "206-v92econ.js:167"
+ },
+ {
+  "k": "🎒 Kits for {0}",
+  "w": "206-v92econ.js:168"
+ },
+ {
+  "k": "owned pieces (his or the shelf's) are skipped · up to {0}% off a whole kit · the treasury pays",
+  "w": "206-v92econ.js:168"
+ },
+ {
+  "k": "{0} · {1}",
+  "w": "206-v92econ.js:169"
+ },
+ {
+  "k": "his class’s printed armor",
+  "w": "206-v92econ.js:169"
+ },
+ {
+  "k": "🏛 Treasury {0} · buys for {1} · {2} wears up to level {3}{4}",
+  "w": "206-v92econ.js:173"
+ },
+ {
+  "k": "🎁 Flavius issues {0} to {1}.",
+  "w": "206-v92econ.js:181"
+ },
+ {
+  "k": "🎒 {0}: {1} for {2}{3} — {4} wears it.",
+  "w": "206-v92econ.js:181"
+ },
+ {
+  "k": "(−{0} kit discount)",
+  "w": "206-v92econ.js:181"
+ },
+ {
+  "k": "🎒 {0} wears the kit — from the house shelf.",
+  "w": "206-v92econ.js:181"
+ },
+ {
+  "k": "Buy <b>{0}</b> (level {1}{2}) for <b>{3}</b>: <b>{4}</b>?",
+  "w": "206-v92econ.js:185"
+ },
+ {
+  "k": "Treasury {0}.",
+  "w": "206-v92econ.js:185"
+ },
+ {
+  "k": "to place a wager — a house wagers through its gladiator",
+  "w": "206-v92econ.js:155"
+ },
+ {
+  "k": "to buy a ticket — a seat goes to a house with a gladiator",
+  "w": "206-v92econ.js:155"
+ }
+]

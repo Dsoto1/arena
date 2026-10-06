@@ -62,7 +62,7 @@ await A.waitForTimeout(400);if(SHOT)await A.screenshot({path:path.join(SHOT,'m80
 console.log(JSON.stringify({rec0,menu,pop,stayed,back,pop2:pop2.slice(0,200),gone,recA,today}));
 const miss=[];if(!rec0||rec0.name!=='Beta the Bold'||!(rec0.gear||[]).includes('gladius'))miss.push('live record on entering');
 if(!menu.menu||!menu.row||!/Beta the Bold is still on the sand/.test(menu.txt)||menu.btns.length!==2)miss.push('main-menu row');
-if(!pop||!pop.face||!pop.tok||pop.stats!==5||!/Damnatio/.test(pop.txt)||!/Gladius/i.test(pop.txt)||!/3 won/.test(pop.txt)||!/120/.test(pop.txt))miss.push('popup shows the gladiator at stake');
+if(!pop||!pop.face||!pop.tok||pop.stats!==5||!/Damnatio/.test(pop.txt)||!/Gladius/i.test(pop.txt)||!/3 won/.test(pop.txt))miss.push('popup shows the gladiator at stake'); /* v0.92: no purse in it (the coin sent into the match is, when any) */
 if(!stayed)miss.push('Stay keeps the match');if(!back||!back.on||back.me!==1)miss.push('Back to your match');
 if(!/On the sand now/.test(pop2)||!/Damnatio/.test(pop2))miss.push('arena popup');if(gone.alive!==false||gone.rec||!gone.left)miss.push('abandon → Damnatio, record cleared');
 if(recA)miss.push('record cleared at the end');

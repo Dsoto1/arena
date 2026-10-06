@@ -260,5 +260,16 @@
  "+1 movement while worn.": "身につけている間、移動 +1。",
  "+1 damage against the gladiator who last hit the wearer.": "着用者を最後に打った剣闘士へのダメージ +1。",
  "At the start of the wearer’s turns, the location it guards regains 1 AP (up to the pieces’ own AP).": "着用者のターン開始時、守る部位の AP が1回復する（その品自身の AP まで）。",
- "The next bid is at least {0} coin.": "次の入札は最低{0}コインです。"
+ "The next bid is at least {0} coin.": "次の入札は最低{0}コインです。",
+ "A seat in the stands goes to a house with a gladiator — raise one first.": "観客席の席は剣闘士のいる家のものです — まず1人育ててください。",
+ "A house wagers through a living gladiator — raise one first.": "家は生きている剣闘士を通じて賭けます — まず1人育ててください。",
+ "Not enough in the treasury.": "金庫が足りません。",
+ "The treasury holds less than {0} coin.": "金庫には{0}コイン未満しかありません。",
+ "Issued gear is never repaired.": "支給品は修理できません。",
+ "No such kit.": "そのキットはありません。",
+ "One free kit a day for each house — come back tomorrow.": "無料キットは1日1家につき1回 — また明日どうぞ。",
+ "The guest pass is for thin treasuries — under {0} coin.": "ゲストパスは乏しい金庫のためのものです — {0}コイン未満。",
+ "Send 0–{0} coin.": "0〜{0}コインを送ってください。",
+ "The treasury holds only {0} coin.": "金庫には{0}コインしかありません。",
+ "He already has all of it.": "すでにすべて持っています。"
 }

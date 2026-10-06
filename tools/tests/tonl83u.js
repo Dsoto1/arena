@@ -41,10 +41,10 @@ await world(A,(w,[cid,did])=>{const ch=w.chars[cid];ch.wallet=900;const D=w.domu
 /* ── 1 + 3 + 10 · the Domus: 8 ranks with living counts, treasury, trophies, gifts chest ── */
 await open(A,'char');
 const dm=await pv(A,()=>({bands:document.querySelectorAll('#onl .rb83 .rb82-band').length,living:[...document.querySelectorAll('#onl .rb83 .rb82-n')].every(x=>/living/.test(x.textContent)),top:(document.querySelector('#onl .rb83 .rb82-band b')||{}).textContent||'',
-  tre:(document.querySelector('#onl .db89-tre')||document.querySelector('#onl .tre83')||{}).textContent||'',gift:(document.querySelector('#onl .gift83.dom.on .gift83n')||{}).textContent||''}),v=>v.bands===8&&v.living&&/Invictus/.test(v.top)&&/321/.test(v.tre)&&v.gift==='2');
+  tre:(document.querySelector('#onl .db89-tre')||document.querySelector('#onl .tre83')||{}).textContent||'',gift:(document.querySelector('#onl .gift83.dom.on .gift83n')||{}).textContent||''}),v=>v.bands===8&&v.living&&/Invictus/.test(v.top)&&/1221/.test(v.tre)&&v.gift==='2');
 /* v0.89 (175): the trophies open from 🏆 at the top of the Domus */
 await A.click('#onl [data-d89="tro"]');dm.tro=await pv(A,()=>document.querySelectorAll('.tr89pop .tr83-t').length,n=>n===4);await A.evaluate(()=>{const p=document.querySelector('.tr89pop');if(p)p.remove()});
-ok(dm.bands===8&&dm.living&&/Invictus/.test(dm.top),'rank bar: 8 ranks, Invictus on top, living counts ('+JSON.stringify(dm)+')');ok(/321/.test(dm.tre),'the treasury on the Domus record');ok(dm.tro===4,'the trophy shelf');ok(dm.gift==='2','the gift chest glows with its count');
+ok(dm.bands===8&&dm.living&&/Invictus/.test(dm.top),'rank bar: 8 ranks, Invictus on top, living counts ('+JSON.stringify(dm)+')');ok(/1221/.test(dm.tre),'the treasury on the Domus record (v0.92: 321 + the 900 purse moved in)');ok(dm.tro===4,'the trophy shelf');ok(dm.gift==='2','the gift chest glows with its count');
 /* ── 2 · gear levels: the named piece is locked for a Tiro; 5 · the broken helm has 🔧 Repair ── */
 /* v0.89 (175): the equipment bar — the named piece dimmed with the reason, the broken helm cracked with 🔨 + its price (one click: the treasury pays) */
 const gl=await A.evaluate(()=>{const nw=document.querySelector('#onl .eb89 .pt89.nm89');const brk=document.querySelector('#onl .eb89 .pt89.brk89');
@@ -52,7 +52,7 @@ const gl=await A.evaluate(()=>{const nw=document.querySelector('#onl .eb89 .pt89
 ok(gl.nw&&gl.lock,'a named piece: dimmed, waits until Veteranus '+JSON.stringify(gl));ok(gl.brk&&new RegExp('🔨 '+await A.evaluate(()=>ONLC.repairCost(ONLC.pieceInfo({item:'galea'},onlCatalog())))).test(gl.rep),'broken helm: 🔨 + cost ('+gl.rep+')');
 await A.evaluate(()=>{const s=document.querySelector('#onl .eb89');if(s)s.scrollIntoView()});await shot(A,'domus_store');await A.evaluate(()=>{document.querySelector('#mBody')&&(document.querySelector('#mBody').scrollTop=0)});await shot(A,'domus');
 await A.click('#onl .eb89 .pt89.brk89 [data-d89rep]');await A.waitForFunction(()=>!ONL.busy,null,{timeout:30000}).catch(()=>{});
-const rp=await pv(A,()=>({brk:ONLC.isBroken(ONL.char,ONL.char.gear.find(g=>/^galea/.test(g))),t:ONL.domus.treasury}),v=>!v.brk&&v.t===321-10);ok(!rp.brk&&rp.t===321-10,'repaired from the treasury ('+JSON.stringify(rp)+')');
+const rp=await pv(A,()=>({brk:ONLC.isBroken(ONL.char,ONL.char.gear.find(g=>/^galea/.test(g))),t:ONL.domus.treasury}),v=>!v.brk&&v.t===1221-10);ok(!rp.brk&&rp.t===1221-10,'repaired from the treasury ('+JSON.stringify(rp)+')');
 /* ── 7 · the gift reveal: a Legendary named weapon ── */
 await A.evaluate(()=>{window._r=Math.random;Math.random=()=>0.995});await A.click('#onl .gift83.dom');await pv(A,()=>!!document.querySelector('.gift83pop .pz83'),x=>x);await A.waitForTimeout(300);await A.evaluate(()=>{Math.random=window._r});
 const gf=await pv(A,()=>({nw:!!document.querySelector('.gift83pop .pz83.named .nw83.r-legendary'),uq:(document.querySelector('.gift83pop .nw83-uq')||{}).textContent||'',val:(document.querySelector('.gift83pop .nw83-val')||{}).textContent||'',next:!!document.querySelector('.gift83pop [data-g83="next"]')}),v=>v.nw&&v.uq.length>10&&/12000/.test(v.val)&&v.next);

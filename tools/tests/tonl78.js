@@ -22,7 +22,7 @@ const code=await P.A.evaluate(async()=>(ONL.party=await NET.req('party.create'))
 await P.B.evaluate(async c=>{ONL.party=await NET.req('party.join',{code:c})},code);
 const lead=await P.B.evaluate(async()=>{try{await NET.req('lobby.create',{ev:'familia',loc:5,ranked:false});return 'created'}catch(e){return e.message}});
 const L=await P.A.evaluate(async()=>await NET.req('lobby.create',{ev:'familia',loc:5,ranked:false,ticket:5}));
-const tk=await P.C.evaluate(async id=>{const r=await NET.req('lobby.ticket',{id});return {w:r.char.wallet,pot:r.lobby.pot}},L.id);
+const tk=await P.C.evaluate(async id=>{const r=await NET.req('lobby.ticket',{id});const w=mockLoad();const c=w.chars[ONL.char.id];return {w:((w.domus82&&c.domus&&w.domus82[c.domus]||{}).treasury|0)+(c.wallet|0),pot:r.lobby.pot}} /* v0.92: the treasury pays */,L.id);
 const L2=await P.A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},L.id);
 await P.B.evaluate(L=>onlEnter(L),L2);await P.C.evaluate(L=>onlEnter(L),L2);/* (in the match the windows move in lockstep through pushes: the hand-off rests while they play) */HAND.on=false;
 const late=await P.C.evaluate(async id=>{try{await NET.req('lobby.ticket',{id});return 'sold'}catch(e){return e.message}},L.id);

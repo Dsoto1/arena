@@ -30,7 +30,7 @@ const st=await P.evaluate(()=>{const o=document.getElementById('onl');const q=s=
     buy:o.querySelectorAll('.dom82-wrap [data-onl82="buy"],.dom82-wrap [data-onl83="dbuy"],.dom82-wrap [data-onl83="obuy"],.dom82-wrap [data-onl83="ubuy"],.dom82-wrap .buy83').length,
     imm:o.querySelectorAll('.imm88').length,rb:!!q('.rb82')}});
 ok(st.stage&&st.av,'the stage with the avatar '+JSON.stringify(st));ok(st.wslots===2&&st.wcards>=1,'two weapon slots with a weapon card '+st.wslots+'/'+st.wcards);
-ok(/Alpha/.test(st.name),'the active gladiator on the stage');ok(/Purse/.test(st.purse)&&/77/.test(st.purse),'the purse on the stage: '+st.purse);ok(/Treasury/.test(st.tre)&&/210/.test(st.tre),'the treasury labelled: '+st.tre);
+ok(/Alpha/.test(st.name),'the active gladiator on the stage');ok(!/Purse/.test(st.purse)&&/At stake/.test(st.purse),'v0.92: no purse on the stage, the stake: '+st.purse);ok(/Treasury/.test(st.tre)&&/287/.test(st.tre),'the treasury labelled (v0.92: the 77 purse moved in): '+st.tre);
 ok(/Bouts/.test(st.rec)&&/Survived/.test(st.rec)&&/CF/.test(st.rec),'the record beside the stage');
 ok(st.slots===4&&st.empty===2&&/Alpha/.test(st.act),'four slot cards, two empty, Alpha active '+JSON.stringify([st.slots,st.empty,st.act]));
 ok(st.tabs==='gear,offs'&&st.store&&st.shelf&&st.tro,'the bar: Gear · Offerings tabs + 🏆 Trophies on the banner '+st.tabs);
