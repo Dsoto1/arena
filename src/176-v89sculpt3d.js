@@ -22,8 +22,9 @@
 const SC3D={on:true,maxCv:160,hits:0,miss:0}; /* TWEAK: on = the whole look; maxCv = cached canvases kept */
 /* TWEAK: the light. az = azimuth (225 = upper left in SVG's y-down space), el = elevation, blur = edge softness (figure units),
    wide = the broad roundness blur, k = bump height, lo = the darkest shade multiplier, hi = rim highlight strength */
-const SC3D_F={blur:9,k:13,lo:0.5}; /* his pick (row 3 of the mock-up): deeper */ /* TWEAK: the whole-figure roundness (blur/height) and its darkest shade */
-const SC3D_L={az:225,el:36,blur:1.2,wide:5.5,k:7.5,lo:0.3,hi:1.15};
+const SC3D_F={blur:9,k:13,lo:0.62}; /* his pick (row 3 of the mock-up): deeper; v0.91 his ask: a little softer (lo 0.5 → 0.62) */ /* TWEAK: the whole-figure roundness (blur/height) and its darkest shade */
+const SC3D_L={az:225,el:36,blur:1.2,wide:5.5,k:7.5,lo:0.42,hi:1.1}; /* v0.91: lo 0.3 → 0.42, hi 1.15 → 1.1 (less contrast against the sand) */
+const SC3D_SH=0.72; /* TWEAK (v0.91): strength of the sand shadows under a figure (1 = the v0.89 look) */
 /* sc3dRGB — [r,g,b] from #rgb/#rrggbb or rgb(); null if unreadable */
 function sc3dRGB(c){c=String(c||'').trim();let m=/^#([0-9a-f]{3})$/i.exec(c);if(m)return m[1].split('').map(h=>parseInt(h+h,16));
   m=/^#([0-9a-f]{6})$/i.exec(c);if(m)return [0,2,4].map(i=>parseInt(m[1].slice(i,i+2),16));m=/^rgba?\(\s*(\d+)[ ,]+(\d+)[ ,]+(\d+)/i.exec(c);return m?[+m[1],+m[2],+m[3]]:null}
@@ -110,12 +111,12 @@ function sc3dCanvas(spec,key,pxH){const ck=key+'|'+pxH;let c=SC3D_CV.get(ck);if(
   const bx=W/2,by=pxH*157/170;
   /* soft cast shadow, falling to the lower right (the light is upper left) */
   g.save();g.translate(bx+w*0.13,by+w*0.05);g.scale(1,0.38);let rg=g.createRadialGradient(0,0,0,0,0,w*0.52);
-  rg.addColorStop(0,'rgba(20,10,4,.42)');rg.addColorStop(.55,'rgba(20,10,4,.24)');rg.addColorStop(1,'rgba(20,10,4,0)');g.fillStyle=rg;g.beginPath();g.arc(0,0,w*0.52,0,Math.PI*2);g.fill();g.restore();
+  rg.addColorStop(0,`rgba(20,10,4,${(.42*SC3D_SH).toFixed(3)})`);rg.addColorStop(.55,`rgba(20,10,4,${(.24*SC3D_SH).toFixed(3)})`);rg.addColorStop(1,'rgba(20,10,4,0)');g.fillStyle=rg;g.beginPath();g.arc(0,0,w*0.52,0,Math.PI*2);g.fill();g.restore();
   /* tight contact shadow right under the rim */
   g.save();g.translate(bx+w*0.03,by+w*0.035);g.scale(1,0.3);rg=g.createRadialGradient(0,0,w*0.22,0,0,w*0.36);
-  rg.addColorStop(0,'rgba(10,5,2,.5)');rg.addColorStop(1,'rgba(10,5,2,0)');g.fillStyle=rg;g.beginPath();g.arc(0,0,w*0.36,0,Math.PI*2);g.fill();g.restore();
+  rg.addColorStop(0,`rgba(10,5,2,${(.5*SC3D_SH).toFixed(3)})`);rg.addColorStop(1,'rgba(10,5,2,0)');g.fillStyle=rg;g.beginPath();g.arc(0,0,w*0.36,0,Math.PI*2);g.fill();g.restore();
   /* the longer, darker cast shadow (his pick) */
-  g.save();g.translate(bx+w*0.2,by+w*0.07);g.scale(1,0.36);rg=g.createRadialGradient(0,0,0,0,0,w*0.6);rg.addColorStop(0,'rgba(20,10,4,.38)');rg.addColorStop(1,'rgba(20,10,4,0)');g.fillStyle=rg;g.beginPath();g.arc(0,0,w*0.6,0,Math.PI*2);g.fill();g.restore();
+  g.save();g.translate(bx+w*0.2,by+w*0.07);g.scale(1,0.36);rg=g.createRadialGradient(0,0,0,0,0,w*0.6);rg.addColorStop(0,`rgba(20,10,4,${(.38*SC3D_SH).toFixed(3)})`);rg.addColorStop(1,'rgba(20,10,4,0)');g.fillStyle=rg;g.beginPath();g.arc(0,0,w*0.6,0,Math.PI*2);g.fill();g.restore();
   g.drawImage(im,pad,0,w,pxH*SC3D_VH/170);
   c._pad=pad;c._w=w;c._px=pxH;SC3D_CV.set(ck,c);while(SC3D_CV.size>SC3D.maxCv)SC3D_CV.delete(SC3D_CV.keys().next().value);return c}
 /* drawFigureTok wrapper: same contract (base centred on x,y; h px tall; returns a y near the top for HP bars) */
