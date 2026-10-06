@@ -160,8 +160,10 @@ if(turn){const t0=await T.evaluate(()=>({who:S.turn,ph:S.phase,n:S.turnNo}));
      phase/turn to move (answering any window) instead of a fixed pause (3 tests at once stretch every timer) */
   const answer=async(done,ms=30000)=>{for(const t1=Date.now();Date.now()-t1<ms;){if(await T.evaluate(done,t0))return true;const m=await T.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);
     if(m)await T.evaluate(()=>{const b=document.querySelector('#mBtns button');if(b)b.click()});await T.waitForTimeout(300)}return false};
-  await step('coin',()=>T.click('#actions [data-act="coin"]',{force:true}));await answer(()=>S.phase!=='choice'&&!S.busy&&!CUR_MODAL);
-  const ph=await T.evaluate(()=>S.phase);await step('end',()=>T.click('#actions [data-act="end"]',{force:true}));await answer(t0=>S.turnNo!==t0.n||S.turn!==t0.who);
+  /* a click that lands while the turn is still settling does nothing: press again (a person would) until the phase moves */
+  const press=async(n,sel,done)=>{let ok=false;for(const t1=Date.now();Date.now()-t1<60000&&!ok;){if(await T.evaluate(s=>!!document.querySelector(s)&&!S.busy,sel))await T.click(sel,{force:true,timeout:5000}).catch(()=>{});ok=await answer(done,4000)}if(!ok)errs.push("T step "+n+": the phase never moved");return ok};
+  await press('coin','#actions [data-act="coin"]',()=>S.phase!=='choice'&&!S.busy&&!CUR_MODAL);
+  const ph=await T.evaluate(()=>S.phase);await press('end','#actions [data-act="end"]',t0=>S.turnNo!==t0.n||S.turn!==t0.who);
   for(const t1=Date.now();Date.now()-t1<10000;){const m=await T.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);if(!m)break;await T.evaluate(()=>{const b=document.querySelector('#mBtns button');if(b)b.click()});await T.waitForTimeout(400)}
   out.e.ph=ph;out.e.turnMoved=await T.evaluate(t0=>S.turnNo!==t0.n||S.turn!==t0.who,t0);await shot(T,'translated')}
 out.e.terms=await T.evaluate(()=>{const s=[...document.querySelectorAll('.gt84')];return {n:s.length,eng:s.length>0&&s.every(x=>!/«/.test(x.textContent))}});
