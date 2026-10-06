@@ -46421,6 +46421,16 @@ try{if(typeof LANG!=='undefined'&&LANG==='au')document.documentElement.lang='en-
      seed that "last step" as one pace in from its tile, so it already looks inward. Display only. */
 {const base=miniFace;miniFace=function(p,k){try{if(p&&p._fr==null&&S&&S.players&&S.players.includes(p)&&Number.isFinite(p.r)){const m=(N-1)/2;const sr=Math.sign(m-p.r),sc=Math.sign(m-p.c);
     if(sr||sc){const r=base.call(this,p,k);p._fr=p.r-sr;p._fc=p.c-sc;return base.call(this,p,k)}}}catch(e){}return base.apply(this,arguments)}}
+/* • ONE PILLAR (his call 2026-10-06): his textured stone pillar (the 3D minis' pillar image) is the pillar in every token style —
+     the sculpted column (130 drawPillar82) is only the stand-in while the image loads. Pots, Blessing token rounds (186), the
+     ×N count and the pillar's shadow come with it (miniDraw draws the shadow).
+   • NO CYLINDERS: the ⚪ Cylinders token style leaves Settings → Tokens (a placeholder idea); anyone still on it moves to figures. */
+{const base=drawPillar82;drawPillar82=function(pl){try{if(!HEADLESS&&typeof miniImg==='function'&&miniImg('pillar')){const m=center(pl.r,pl.c);const top=miniDraw('pillar',m.x,m.y);
+    if(top!=null){let y=top+TW*0.06;(pl.pots||[]).forEach(()=>{drawPot(m.x,y,TW*0.46,false);y-=TW*0.44});
+      if(pl.pots&&pl.pots.length>1&&TW>28){ctx.fillStyle='#f0cf7d';ctx.font=`500 ${Math.round(TW*0.18)}px IBM Plex Mono, monospace`;ctx.fillText('×'+pl.pots.length,m.x+TW*0.34,top+TW*0.2)}return}}}catch(e){}
+  return base.apply(this,arguments)}}
+try{if(SETTINGS.tokenStyle==='cylinder'){SETTINGS.tokenStyle='figure';applySettings()}}catch(e){}
+{const base=settingsHTML;settingsHTML=function(){const h=base.apply(this,arguments);return typeof h==='string'?h.replace(/<button type="button" class="tokrow[^"]*" data-tokstyle="cylinder">[\s\S]*?<\/button>/,''):h}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
