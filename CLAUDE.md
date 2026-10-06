@@ -355,7 +355,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   writes it) and show `#upd76` "v0.XX is out — finish your match, then reload" (never auto-reloads; asks during a live match).
   Newer-version guard: localStorage `flavius_newestver` = newest version that ran here; an older page (or one holding a world with
   a newer `w.ver`) blocks Store.put / saveWorld / matchSlotPut and says reload. Deploy order: assets → index.html → version.json,
-  never delete old assets, index.html Cache-Control no-cache, invalidate only the changed files. Test `tupd76`.
+  old assets may be deleted while nobody plays online yet (his call 2026-10-06; v0.91 dropped mandati.jpg + weapon_back1-4.webp) — keep them again once there are players, index.html Cache-Control no-cache, invalidate only the changed files. Test `tupd76`.
   Studio: armor level = one radio (`name="calv76"`); system armor/weapons are examples only (`sysExample76` strips Edit/Copy, casys/cwsys
   clicks blocked, armor "Start from" removed); printed class rows show his card (`cardHTML('k:'+k)`) + `CLS_CARD_TXT76` wording.
   Level 4 custom weapons: weapon designer Level select (`data-cwf="chest"` → `cw.chest`); `cwBuild` wrapper → lv 4, `cwChest` instead of
