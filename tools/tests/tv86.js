@@ -107,7 +107,7 @@ ok(cutU.length<=CUT_MAX,`C: cut-off texts ${cutU.length} ≤ ${CUT_MAX}: `+cutU.
 LG('── D');/* ── D · back to English ── */
 if(WL==='es'){
 await P.evaluate(()=>{menuHide();openSettings()});await P.waitForTimeout(900);
-await Promise.all([P.waitForNavigation({timeout:10000}).catch(()=>null),P.selectOption('select[data-lang84]','en')]);await P.waitForTimeout(2600);
+await Promise.all([P.waitForNavigation({timeout:10000}).catch(()=>null),P.click('[data-lang91="en"]') /* v0.91: flag buttons replace the select */]);await P.waitForTimeout(2600);
 out.d=await P.evaluate(()=>({LANG,dict:!!LANG_DICT,html:document.documentElement.lang}));
 ok(out.d.LANG==='en'&&!out.d.dict&&out.d.html==='en','D: English again after the switch '+JSON.stringify(out.d));
 }

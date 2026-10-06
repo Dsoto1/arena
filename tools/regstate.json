@@ -1,5 +1,5 @@
 {
- "run": 157,
+ "run": 158,
  "lastFull": 1791254037274,
  "tests": {
   "tseed4": {
@@ -3028,17 +3028,23 @@
    "pinUntil": 144
   },
   "tv86": {
-   "streak": 0,
-   "runs": 14,
+   "streak": 1,
+   "runs": 15,
    "fails": 6,
    "flaky": [
     98,
     110
    ],
-   "lastRun": 157,
-   "time": 91,
-   "lastPass": 155,
-   "deps": {},
+   "lastRun": 158,
+   "time": 143,
+   "lastPass": 158,
+   "deps": {
+    "build.sh": "4bfc636d1f5b",
+    "src/01-head.html": "5a6ad97ec465",
+    "tools/smartreg.js": "44d97ee7684f",
+    "tools/regcov.js": "1b122005f465",
+    "tools/tests/tv86.js": "7070f749f3f2"
+   },
    "pinUntil": 164
   },
   "tv87c": {
