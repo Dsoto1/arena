@@ -19,7 +19,7 @@ await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(
     start:async(ev,loc,night,human)=>{startEvent({ev,loc,seats:['hero','soldier','royalty','venatore'].map((c,i)=>({cls:c,cpu:i!==(human||0)})),opts:{spect:'auto',night:!!night}});
       for(let i=0;i<200;i++){await W8(120);if(CUR_MODAL){const lit=document.querySelector('#mBody [data-mi]:not(.dim):not([disabled])');const bs=[...document.querySelectorAll('#mBtns button:not([disabled])')];
           if(lit)lit.click();else if(bs.length)bs[0].click();else CUR_MODAL.done(null)}else if(S&&S.phase!=='setup'&&i>6)break}
-      SPEED='pause';try{menuHide()}catch(e){}S.zoomIn=false;if(typeof CAM!=='undefined')CAM.z=null;if(typeof DUEL!=='undefined'){DUEL.z=1;DUEL.on=false}
+      SPEED='pause';for(let i=0;i<50&&((typeof fxRAF!=='undefined'&&fxRAF)||S.busy||(S.anims&&S.anims.length));i++)await W8(100); /* v0.92: measure a still board (a CPU's walk interpolates by time) */try{menuHide()}catch(e){}S.zoomIn=false;if(typeof CAM!=='undefined')CAM.z=null;if(typeof DUEL!=='undefined'){DUEL.z=1;DUEL.on=false}
       for(const id of ['cardShow','bubbles'])(document.getElementById(id)||{}).innerHTML='';
       /* wait for the stone texture + the flags */
       for(let i=0;i<40;i++){draw();if(AR91TEX[ar91Mat().n])break;await W8(100)}await W8(400);draw()},
@@ -37,8 +37,8 @@ await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(
       for(const p of S.players)if(p.alive&&!p.exited&&!p.underground){const m=center(p.r,p.c);for(const dy of [0.15,0.35,0.55])pts.push(['piece',m.x,m.y-TW*dy])}
       for(const n of S.npcs||[])if(n.alive&&!n.out){const m=center(n.r,n.c);pts.push(['beast',m.x,m.y-TW*0.2])}
       const mid=ar91Mid();for(const sp of S.spect||[])if(!sp.gone&&sp._x!=null&&sp._y>mid.y)pts.push(['spect',sp._x,sp._y-TW*0.3],['spect',sp._x,sp._y-TW*0.1]);
-      const calm=SETTINGS.calm;SETTINGS.calm=true; /* the night flames hold still */
-      AR91.noStatic=true;draw();const A=pts.map(p=>px(p[1],p[2]));DRAW_EMPTY=true;draw();const En=pts.map(p=>px(p[1],p[2]));DRAW_EMPTY=false;AR91.noStatic=false;draw();const B=pts.map(p=>px(p[1],p[2]));DRAW_EMPTY=true;draw();const E=pts.map(p=>px(p[1],p[2]));DRAW_EMPTY=false;draw();SETTINGS.calm=calm;
+      const calm=SETTINGS.calm;SETTINGS.calm=true; /* the night flames hold still */const ch92=typeof CHEER92!=="undefined"&&CHEER92.on;if(ch92)CHEER92.on=false; /* v0.92: no cheer burst ending between the draws */
+      AR91.noStatic=true;draw();const A=pts.map(p=>px(p[1],p[2]));DRAW_EMPTY=true;draw();const En=pts.map(p=>px(p[1],p[2]));DRAW_EMPTY=false;AR91.noStatic=false;draw();const B=pts.map(p=>px(p[1],p[2]));DRAW_EMPTY=true;draw();const E=pts.map(p=>px(p[1],p[2]));DRAW_EMPTY=false;draw();SETTINGS.calm=calm;if(ch92)CHEER92.on=true;
       const far=(u,v)=>{const a=u.split(',').map(Number),c=v.split(',').map(Number);return Math.max(Math.abs(a[0]-c[0]),Math.abs(a[1]-c[1]),Math.abs(a[2]-c[2]))>10}; /* blending noise of a unit or two is not cover */
       /* a piece is covered when it shows without the stone but has vanished with it */
       const bad=pts.filter((p,i)=>(p[0]==='piece'||p[0]==='beast')?(far(A[i],En[i])&&!far(B[i],E[i])):far(A[i],B[i])).map((p,i)=>p[0]+'@'+Math.round(p[1])+','+Math.round(p[2]));const kinds={};for(const p of pts)kinds[p[0]]=(kinds[p[0]]||0)+1;return {n:pts.length,kinds,bad}},

@@ -12,7 +12,7 @@ const CHEER92={tick:700,on:true,
 function cheer92OK(){try{if(!CHEER92.on||HEADLESS||!S||S.sim||S.over||!STANDS)return false;if(document.visibilityState==='hidden'||document.body.classList.contains('idle92'))return false;
   if(typeof reduceMotion==='function'&&reduceMotion())return false;if(typeof SETTINGS!=='undefined'&&SETTINGS.anim88==='off')return false;return true}catch(e){return false}}
 /* the pose a spectator shows now: a burst, else seated (null when the old always-on rule should apply — never, from v0.92) */
-function cheer92Pose(sp,now){if(sp&&sp._cu92>now)return sp._cp92;return 0}
+function cheer92Pose(sp,now){if(!CHEER92.on)return 0;if(sp&&sp._cu92>now)return sp._cp92;return 0}
 {const base=look91;look91=function(sp,back){const o=base.apply(this,arguments);try{o.up=cheer92Pose(sp,performance.now())}catch(e){}return o}}
 function cheer92Start(sp,now,lv){const d=CHEER92.dur[0]+Math.random()*(CHEER92.dur[1]-CHEER92.dur[0]);sp._cu92=now+d;sp._cp92=lv===0?1:2}
 setInterval(()=>{if(!cheer92OK())return;const now=performance.now();let changed=false;
