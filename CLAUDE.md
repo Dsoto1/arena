@@ -1191,6 +1191,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
   out.gone, toast "🔥 Used up in the bout … buy new in the Armory"); NAMED pieces still come back Broken (repair ⅓ of value). Custom: nothing.
 - **NO FLICKER (v0.91, 198-v91morph):** onlRedraw patches #onl in place with `morph91(root, html)` (kept nodes, details stay open, focused
   inputs untouched, canvases kept) instead of innerHTML. Other full-redraw screens (Manager MGR_REDRAW, Studio) can adopt morph91 the same way.
+- **PLAY GUIDE CHARTS (his ask 2026-10-06, v0.92 or later):** the Play Now guide's charts (53-guide50 / 69-v56 SIM50 graphs) stay on ONE row at
+  the top — no wrapping to a second row (shrink/scroll them to fit).
 - **v0.92 START (his picks 2026-10-06):** (1) PERFORMANCE PASS first — measured idle: ~54 setInterval sweeps (0.1–1 s) keep the page
   restyling/repainting 25–45% busy while scripts are 1–3%; build ONE heartbeat (sweeps only after a change, ≤4/s), IDLE MODE after 2 min
   without input (decorative motion off, sweeps 1/s, wake on input), CLEAN RETURN on visibility (one redraw, drop stale FX backlog, audio/net
