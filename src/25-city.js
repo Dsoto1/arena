@@ -188,7 +188,8 @@ function cityLoop(ts){if(!CITY.open)return;const now=performance.now();const dt=
   for(const n of CITY.npcs)if(n.say&&now>n.sayUntil)n.say=null;
   // the horns: time runs out and the square empties into the arena
   if(CITY.remain>0||CITY.mode==='filing'){if(CITY.mode!=='filing')CITY.remain-=dt*spd;const left=CITY.remain;const ck=document.getElementById('cityClock');
-    if(ck){ck.hidden=false;ck.textContent=CITY.mode==='filing'?_T('🎺 the games begin — to the arena!'):_T`🏛 the games begin in ${Math.max(0,Math.ceil(left/1000))}s`;ck.classList.toggle('soon',left<30000&&CITY.mode!=='filing')}
+    if(ck){const tx=CITY.mode==='filing'?_T('🎺 the games begin — to the arena!'):_T`🏛 the games begin in ${Math.max(0,Math.ceil(left/1000))}s`;const sn=left<30000&&CITY.mode!=='filing'; /* v0.91: write only on change (a write a frame forced a page layout a frame) */
+      if(ck.hidden)ck.hidden=false;if(ck.textContent!==tx)ck.textContent=tx;if(ck.classList.contains('soon')!==sn)ck.classList.toggle('soon',sn)}
     if(left<=0&&CITY.mode!=='filing')cityHorns()}
   cityHUD();cityDraw();CITY.raf=requestAnimationFrame(cityLoop)}
 /* cityHorns — the horns sound: the gates lock and the crowd files toward the arena gate. */
