@@ -180,12 +180,25 @@ Object.assign(MOCK_ROUTES,{
     mockPush('match.hasha',{id:d.id,seq:d.seq|0,to:String(d.to||''),from:me,seat,h:String(d.h||'').slice(0,40)});return {}},
   'match.odd':(w,d,me)=>{const L=w.lobbies[d.id];const M=w.matches[d.id];if(!L||!M)throw new Error(_T('No such match.'));if(mockSeat(L,me)<0)throw new Error(_T('Not your match.'));
     const seat=d.seat|0;const acct=seat<L.seats?(L.players[seat]||{}).id:((L.stands||[])[seat-L.seats]||{}).id;if(!acct||acct===me||/^bot/.test(acct))throw new Error(_T('No one to judge.'));
-    /* the votes keep their own item: the shared mock world is rewritten by every window, a vote must not be lost to that */
+    /* the votes keep their own item: the shared mock world is rewritten by every window, a vote must not be lost to that;
+       each vote also gets its own key (v0.90 tests: two windows voting 400 ms apart under load rewrote the item over each other) */
+    try{localStorage.setItem('flavius_onlmock_oddv80.'+d.id+'.'+acct+'.'+me,'1')}catch(e){}
     const O=mockOdd80();const m=O[d.id]=O[d.id]||{votes:{},struck:{}};const v=m.votes[acct]=m.votes[acct]||[];if(!v.includes(me))v.push(me);const n=mockLiveHumans(L,M).length;let struck=false;
     if(n>=3&&v.length>=Math.floor(n/2)+1&&!m.struck[acct]){m.struck[acct]=1;mockStrike80(w,acct,d.id);struck=true;
       /* the strike lands in the shared world, which another window may be rewriting at that moment: check it again shortly */
       for(const ms of [700,2500])setTimeout(()=>{const w2=mockLoad();if(mockStrike80(w2,acct,d.id))mockSave(w2)},ms)}
-    try{localStorage.setItem('flavius_onlmock_odd80',JSON.stringify(O))}catch(e){}return {votes:v.length,struck}}});
+    try{localStorage.setItem('flavius_onlmock_odd80',JSON.stringify(O))}catch(e){}
+    /* the other voter's key can reach this window late: judge again shortly (the server counts in one place, the mock cannot) */
+    if(!m.struck[acct])for(const ms of [700,2500,6000])setTimeout(()=>{try{mockOddJudge80(d.id,acct,seat)}catch(e){}},ms);
+    return {votes:v.length,struck}}});
+function mockOddJudge80(mid,acct,seat){const w=mockLoad();const L=w.lobbies[mid],M=w.matches[mid];if(!L||!M)return;const O=mockOdd80();const m=O[mid];if(!m||m.struck[acct])return;
+  const v=m.votes[acct]||[];const n=mockLiveHumans(L,M).length;if(!(n>=3&&v.length>=Math.floor(n/2)+1))return;
+  m.struck[acct]=1;try{localStorage.setItem('flavius_onlmock_odd80',JSON.stringify(O))}catch(e){}if(mockStrike80(w,acct,mid))mockSave(w);
+  mockPush('match.youodd',{id:mid,seat,voters:v.slice(),to:acct})}
 /* one strike per match (true when it had to be written) */
 function mockStrike80(w,acct,mid){const P=w.accounts[acct];if(!P)return false;P.oddStruck=P.oddStruck||{};if(P.oddStruck[mid])return false;P.oddStruck[mid]=1;P.strikes=(P.strikes||0)+1;return true}
-function mockOdd80(){try{return JSON.parse(localStorage.getItem('flavius_onlmock_odd80')||'{}')||{}}catch(e){return {}}}
+function mockOdd80(){let O={};try{O=JSON.parse(localStorage.getItem('flavius_onlmock_odd80')||'{}')||{}}catch(e){}
+  /* + the votes kept one key each (flavius_onlmock_oddv80.<match>.<judged>.<voter>) */
+  try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k||k.indexOf('flavius_onlmock_oddv80.')!==0)continue;const [mid,acct,by]=k.slice(23).split('.');if(!mid||!acct||!by)continue;
+    const m=O[mid]=O[mid]||{votes:{},struck:{}};m.votes=m.votes||{};m.struck=m.struck||{};const v=m.votes[acct]=m.votes[acct]||[];if(!v.includes(by))v.push(by)}}catch(e){}
+  return O}
