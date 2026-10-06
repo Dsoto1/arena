@@ -90,7 +90,8 @@ const P=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   S.rotation=(S.rotation|0)+3;/* late in the event */
   for(let i=0;i<S.players.length;i++){const p=S.players[i];p.r=3+i*2;p.c=4+i}
   const time=(n)=>{draw();const t0=performance.now();for(let i=0;i<n;i++)draw();return (performance.now()-t0)/n};
-  const on=time(30);const layer=WEAR91.lastMs;WEAR91.on=false;const off=time(30);WEAR91.on=true;
+  /* warm every cache first (the crowd's sprites build on the first frames), then alternate on/off and keep the best of each */
+  for(let i=0;i<40;i++)draw();let on=1e9,off=1e9,layer=0;for(let k=0;k<4;k++){const a=time(10);if(a<on){on=a;layer=WEAR91.lastMs}WEAR91.on=false;off=Math.min(off,time(10));WEAR91.on=true}
   /* worst case: the bake every frame (wear changes each draw) */
   const t0=performance.now();for(let i=0;i<10;i++){w.ver++;draw()}const rebake=(performance.now()-t0)/10;
   draw();return {on:+on.toFixed(2),off:+off.toFixed(2),layer:+layer.toFixed(3),rebake:+rebake.toFixed(2),bakeMs:+WEAR91.lastBakeMs.toFixed(2),stats:WEAR91.stats,blood:S.blood.length,rubble:S.rubble.length,err:WEAR91.err||null}});
