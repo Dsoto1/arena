@@ -47827,6 +47827,11 @@ ar91Blit=function(L,op){if(AR91.noStatic&&!op)return;const dpr=window.devicePixe
      (galerus), Manica plates, studs, spikes, fur trim, an emblem (a Studio banner or the Manager house banner when there is one,
      else eagle / laurel / star / crescent), damage (dents / scratches / cracks), wraps (rope / cloth), lacing (lace / strap and
      buckle), a trim band, paint (wash / stripe / band).
+   • LOCATION EXTRAS (his ok): kinds with `at` are offered only on those equip points (x92Fits) and listed first under "For this
+     piece": head (crest / side plumes, feathers, visor grille, cheek guards, wide brim, griffin finial, fish crest, smooth dome),
+     chest (phalerae, scale / mail, shoulder straps, neck plate, muscle lines), belt (buckle plate, strap apron, pteruges, pouch),
+     arm (neck guard, Manica plates; knuckle plates on the hand, wrist wraps, bracer ridge), legs (knee cap, greave engraving,
+     ankle guard, quilted padding). Drawn by x92ShapeLoc.
    • The Extras tray sits in the designer's form under the sculpt bench: a row of add buttons, a large preview of the piece where
      a click selects an extra and a drag moves it (the wheel sizes it, Shift+wheel turns it), the list of extras, and for the
      selected one: style, Size, Turn, Colour, ✕ Remove. Up to X92_MAX per piece.
@@ -47894,6 +47899,74 @@ function x92Shape(e){const c=e.c,I=X92_INK,D=shade(c,-0.38),L=shade(c,0.32);cons
       if(e.v==='stripe')return `<rect x="-4" y="-22" width="8" height="44" rx="2" fill="${c}" opacity=".7"/>`;
       if(e.v==='band')return `<rect x="-22" y="-5" width="44" height="10" rx="2" fill="${c}" opacity=".7"/>`;
       return `<ellipse rx="20" ry="17" fill="${c}" opacity=".42" style="mix-blend-mode:multiply"/>`}
+  return x92ShapeLoc(e)}
+/* ---------- v0.92 LOCATION EXTRAS (his ok): kinds offered only on the equip points they belong to (at) ---------- */
+Object.assign(X92_K,{
+  /* head */
+  crest:{n:_T('Crest'),c:'#a8262a',x:50,y:14,s:100,at:['head'],v:[['crest',_T('Crest')],['plumes',_T('Side plumes')]]},
+  plume:{n:_T('Feathers'),c:'#e8e0d0',x:50,y:12,s:90,at:['head']},
+  visor:{n:_T('Visor grille'),c:'#a9aeb5',x:50,y:46,s:90,at:['head']},
+  cheek:{n:_T('Cheek guards'),c:'#b8925a',x:50,y:56,s:100,at:['head']},
+  brim:{n:_T('Wide brim'),c:'#b8925a',x:50,y:58,s:110,at:['head']},
+  griffin:{n:_T('Griffin finial'),c:'#c9a458',x:50,y:12,s:70,at:['head']},
+  fish:{n:_T('Fish crest'),c:'#c9a458',x:50,y:16,s:100,at:['head']},
+  dome:{n:_T('Smooth dome'),c:'#9aa4ae',x:50,y:42,s:120,at:['head']},
+  /* chest */
+  phalerae:{n:_T('Phalerae'),c:'#d8c27a',x:50,y:48,s:100,at:['chest']},
+  scale:{n:_T('Scale or mail'),c:'#a9aeb5',x:50,y:50,s:100,at:['chest'],v:[['scale',_T('Scale')],['mail',_T('Mail')]]},
+  straps:{n:_T('Shoulder straps'),c:'#6a4428',x:50,y:34,s:100,at:['chest']},
+  gorget:{n:_T('Neck plate'),c:'#b8925a',x:50,y:22,s:100,at:['chest']},
+  ridges:{n:_T('Muscle lines'),c:'#5a4630',x:50,y:48,s:100,at:['chest']},
+  /* belt */
+  buckle:{n:_T('Buckle plate'),c:'#d8c27a',x:50,y:52,s:80,at:['belt']},
+  apron:{n:_T('Strap apron'),c:'#6a4428',x:50,y:64,s:100,at:['belt']},
+  pteruges:{n:_T('Pteruges'),c:'#8a5a30',x:50,y:66,s:100,at:['belt']},
+  pouch:{n:_T('Pouch'),c:'#7a5232',x:70,y:56,s:70,at:['belt']},
+  /* lower arm + hand */
+  knuckle:{n:_T('Knuckle plates'),c:'#a9aeb5',x:50,y:38,s:90,at:['hand']},
+  wrist:{n:_T('Wrist wraps'),c:'#c9b8a0',x:50,y:72,s:90,at:['fore','hand']},
+  aridge:{n:_T('Bracer ridge'),c:'#8a6a3a',x:50,y:50,s:100,at:['fore']},
+  /* legs */
+  knee:{n:_T('Knee cap'),c:'#b8925a',x:50,y:20,s:80,at:['shin']},
+  gridge:{n:_T('Greave engraving'),c:'#5a4630',x:50,y:52,s:100,at:['shin']},
+  ankle:{n:_T('Ankle guard'),c:'#a9aeb5',x:50,y:84,s:90,at:['shin']},
+  quilt:{n:_T('Quilted padding'),c:'#c9b8a0',x:50,y:50,s:100,at:['thigh','shin']}});
+function x92ShapeLoc(e){const c=e.c,I=X92_INK,D=shade(c,-0.38),L=shade(c,0.32);const sw=(w)=>`stroke="${I}" stroke-width="${w}" stroke-linejoin="round"`;
+  const rv=(x,y,r)=>`<circle cx="${x}" cy="${y}" r="${r||1.3}" fill="${L}" ${sw(.5)}/>`;
+  switch(e.k){
+    case 'crest':
+      if(e.v==='plumes')return [-1,1].map(s=>`<path d="M${s*9} 10Q${s*18} -6 ${s*13} -21Q${s*5} -8 ${s*9} 10Z" fill="${c}" ${sw(1)}/><path d="M${s*9} 9Q${s*12} -6 ${s*13} -19" fill="none" stroke="${D}" stroke-width=".9"/>${[-12,-6,0].map(y=>`<path d="M${s*11} ${y}l${s*3} -3" stroke="${D}" stroke-width=".7"/>`).join('')}<rect x="${s*9-2}" y="8" width="4" height="5" rx="1" fill="${L}" ${sw(.6)}/>`).join('');
+      return `<path d="M-18 8Q-17 -14 0 -19Q17 -14 18 8Q10 -3 0 -5Q-10 -3 -18 8Z" fill="${c}" ${sw(1.2)}/>`+[-14,-9,-4,1,6,11].map((x,i)=>`<path d="M${x} ${2-i%2}Q${x+1} -10 ${x+3} -15" fill="none" stroke="${D}" stroke-width=".8"/>`).join('')+`<path d="M-12 -8Q0 -16 12 -8" fill="none" stroke="${L}" stroke-width="1.2" opacity=".7"/><rect x="-5" y="4" width="10" height="5" rx="1.5" fill="#c9a458" ${sw(.8)}/>`;
+    case 'plume':return [-14,0,14].map(a=>`<g transform="rotate(${a} 0 14)"><path d="M0 14Q-6 -2 0 -20Q6 -2 0 14Z" fill="${c}" ${sw(.9)}/><path d="M0 12V-17" stroke="${D}" stroke-width=".8"/>${[-12,-6,0,6].map(y=>`<path d="M0 ${y}l-3.5 -3M0 ${y}l3.5 -3" stroke="${D}" stroke-width=".55"/>`).join('')}</g>`).join('')+`<rect x="-4" y="12" width="8" height="5" rx="1.5" fill="#c9a458" ${sw(.7)}/>`;
+    case 'visor':{let h='';for(let r=0;r<3;r++)for(let q=0;q<5;q++)h+=`<circle cx="${-10+q*5}" cy="${-6+r*6}" r="1.7" fill="#140e09"/>`;
+      return `<rect x="-15" y="-11" width="30" height="22" rx="7" fill="${c}" ${sw(1.2)}/><rect x="-12.5" y="-8.5" width="25" height="17" rx="5" fill="none" stroke="${D}" stroke-width=".8"/>${h}<path d="M-11 -9Q0 -12 11 -9" fill="none" stroke="${L}" stroke-width="1.2" opacity=".8"/>`}
+    case 'cheek':return [-1,1].map(s=>`<path d="M${s*8} -12L${s*18} -10Q${s*20} 6 ${s*12} 15L${s*8} 10Z" fill="${c}" ${sw(1.1)}/><path d="M${s*10} -8L${s*15} -7Q${s*16} 4 ${s*11} 10" fill="none" stroke="${L}" stroke-width="1" opacity=".75"/>${rv(s*10,-10)}${rv(s*13,9)}`).join('');
+    case 'brim':return `<path d="M-23 0Q0 -9 23 0Q25 5 21 7Q0 1 -21 7Q-25 5 -23 0Z" fill="${c}" ${sw(1.2)}/><path d="M-19 1Q0 -5 19 1" fill="none" stroke="${L}" stroke-width="1.2" opacity=".8"/><path d="M-20 5Q0 0 20 5" fill="none" stroke="${D}" stroke-width=".8"/>`;
+    case 'griffin':return `<path d="M-4 18L-5 4Q-8 -4 -4 -10Q2 -18 10 -14L16 -12L10 -9Q12 -4 6 -2L4 4L6 18Z" fill="${c}" ${sw(1.1)}/><path d="M-4 -10Q-10 -14 -14 -8Q-10 -8 -8 -4" fill="${D}" ${sw(.8)}/><circle cx="4" cy="-11" r="1.4" fill="${I}"/><path d="M-2 0Q2 4 0 10M2 -1Q5 4 3 10" fill="none" stroke="${D}" stroke-width=".8"/><path d="M-1 -12Q4 -15 9 -13" fill="none" stroke="${L}" stroke-width="1" opacity=".8"/>`;
+    case 'fish':return `<path d="M-19 0Q-6 -11 10 -4L19 -11L16 0L19 11L10 4Q-6 11 -19 0Z" fill="${c}" ${sw(1.2)}/><path d="M-7 -7Q0 -16 7 -6" fill="${D}" ${sw(.8)}/>`+[-8,-3,2,7].map(x=>`<path d="M${x} -4Q${x+3} 0 ${x} 4" fill="none" stroke="${D}" stroke-width=".8"/>`).join('')+`<circle cx="-13" cy="-1.5" r="1.6" fill="${I}"/><path d="M-15 -4Q-6 -9 6 -5" fill="none" stroke="${L}" stroke-width="1.1" opacity=".8"/>`;
+    case 'dome':return `<path d="M-18 13Q-21 -18 0 -20Q21 -18 18 13Q0 19 -18 13Z" fill="${c}" ${sw(1.3)}/><path d="M-12 -6Q-10 -15 0 -16" fill="none" stroke="${L}" stroke-width="2.4" stroke-linecap="round" opacity=".8"/><path d="M0 -19V13" stroke="${D}" stroke-width=".9"/><circle cx="-5" cy="3" r="2.3" fill="#140e09" ${sw(.6)}/><circle cx="5" cy="3" r="2.3" fill="#140e09" ${sw(.6)}/>`;
+    case 'phalerae':{let g=`<path d="M-12 -20V18M12 -20V18M-18 -8H18M-18 6H18" stroke="${I}" stroke-width="3.6"/><path d="M-12 -20V18M12 -20V18M-18 -8H18M-18 6H18" stroke="#5a3a20" stroke-width="2.4"/>`;
+      for(const y of [-8,6])for(const x of [-12,0,12])g+=`<circle cx="${x}" cy="${y}" r="4.4" fill="${c}" ${sw(.9)}/><circle cx="${x}" cy="${y}" r="2.4" fill="none" stroke="${D}" stroke-width=".7"/><circle cx="${x-1.3}" cy="${y-1.3}" r="1" fill="#fff" opacity=".55"/>`;return g}
+    case 'scale':{let g=`<rect x="-17" y="-17" width="34" height="34" rx="5" fill="${D}" ${sw(1.1)}/>`;
+      if(e.v==='mail'){for(let r=0;r<8;r++)for(let q=0;q<8;q++)g+=`<circle cx="${-13.5+q*3.9+(r%2)*1.9}" cy="${-13.5+r*3.9}" r="1.7" fill="none" stroke="${c}" stroke-width=".9"/>`;return g}
+      for(let r=6;r>=0;r--)for(let q=0;q<6;q++){const x=-15+q*6+(r%2)*3,y=-15+r*5;if(x>14)continue;g+=`<path d="M${x-3} ${y}Q${x-3} ${y+5} ${x} ${y+6}Q${x+3} ${y+5} ${x+3} ${y}Z" fill="${c}" stroke="${I}" stroke-width=".55"/>`}return g}
+    case 'straps':return [-1,1].map(s=>`<rect x="${s*11-3}" y="-20" width="6" height="28" rx="1.5" fill="${c}" ${sw(.9)}/><path d="M${s*11-1.8} -18V6M${s*11+1.8} -18V6" stroke="${L}" stroke-width=".4" stroke-dasharray="1.4 1.1" opacity=".8"/><rect x="${s*11-4}" y="0" width="8" height="6" rx="1" fill="none" stroke="${I}" stroke-width="2.4"/><rect x="${s*11-4}" y="0" width="8" height="6" rx="1" fill="none" stroke="#d8c27a" stroke-width="1.2"/>`).join('');
+    case 'gorget':return `<path d="M-18 -6Q0 6 18 -6L16 2Q0 14 -16 2Z" fill="${c}" ${sw(1.2)}/><path d="M-14 -2Q0 7 14 -2" fill="none" stroke="${L}" stroke-width="1.2" opacity=".8"/>${rv(-12,0)}${rv(0,6)}${rv(12,0)}`;
+    case 'ridges':{const d='M-14 -12Q-7 -6 0 -10Q7 -6 14 -12M0 -10V16M-7 0Q0 3 7 0M-7 7Q0 10 7 7M-6 13Q0 16 6 13M-15 -4Q-12 4 -10 12M15 -4Q12 4 10 12';
+      return `<path d="${d}" fill="none" stroke="#fff" stroke-width="1" opacity=".3" transform="translate(.7 .7)"/><path d="${d}" fill="none" stroke="${c}" stroke-width="1.4" stroke-linecap="round"/>`}
+    case 'buckle':return `<rect x="-12" y="-8" width="24" height="16" rx="2.5" fill="${c}" ${sw(1.2)}/><rect x="-9.5" y="-5.5" width="19" height="11" rx="1.5" fill="none" stroke="${D}" stroke-width=".9"/><circle r="3.2" fill="${L}" ${sw(.8)}/><path d="M-8 -3Q-4 -6 -1 -3M8 3Q4 6 1 3" fill="none" stroke="${D}" stroke-width=".8"/>${rv(-9.5,-5.5,1)}${rv(9.5,-5.5,1)}${rv(-9.5,5.5,1)}${rv(9.5,5.5,1)}`;
+    case 'apron':return `<rect x="-17" y="-6" width="34" height="5" rx="1" fill="${D}" ${sw(.8)}/>`+[-12,-4,4,12].map(x=>`<rect x="${x-2.2}" y="-2" width="4.4" height="24" rx="1" fill="${c}" ${sw(.8)}/>${[3,9,15].map(y=>`<circle cx="${x}" cy="${y}" r="1.2" fill="#d8c27a" ${sw(.4)}/>`).join('')}<path d="M${x-2.4} 22h4.8l-2.4 3z" fill="#d8c27a" ${sw(.5)}/>`).join('');
+    case 'pteruges':return [-18,-12,-6,0,6,12,18].map(x=>`<path d="M${x-2.6} -10H${x+2.6}V12L${x} 15L${x-2.6} 12Z" fill="${c}" ${sw(.8)}/><path d="M${x-1.6} 9V13M${x} 9V14M${x+1.6} 9V13" stroke="${D}" stroke-width=".5"/><path d="M${x-1.6} -8V6" stroke="${L}" stroke-width=".6" opacity=".7"/>`).join('')+`<rect x="-21" y="-12" width="42" height="4" rx="1" fill="${D}" ${sw(.8)}/>`;
+    case 'pouch':return `<path d="M-11 -4H11L10 10Q0 15 -10 10Z" fill="${c}" ${sw(1.1)}/><path d="M-12 -6Q0 -10 12 -6L11 3Q0 6 -11 3Z" fill="${D}" ${sw(1)}/><circle cy="3" r="1.8" fill="#d8c27a" ${sw(.5)}/><path d="M-8 7Q0 10 8 7" fill="none" stroke="${L}" stroke-width=".6" stroke-dasharray="1.4 1"/>`;
+    case 'knuckle':return [-12,-4,4,12].map((x,i)=>`<rect x="${x-3.6}" y="${-5+Math.abs(i-1.5)*1.6}" width="7.2" height="10" rx="2.2" fill="${c}" ${sw(.9)}/><path d="M${x-2} ${-3+Math.abs(i-1.5)*1.6}h4" stroke="${L}" stroke-width="1" opacity=".8"/>${rv(x,2+Math.abs(i-1.5)*1.6,1)}`).join('');
+    case 'wrist':return [-7,0,7].map(y=>`<path d="M-15 ${y-2.6}Q0 ${y-.5} 15 ${y-2.6}L15 ${y+2.6}Q0 ${y+4.7} -15 ${y+2.6}Z" fill="${c}" ${sw(.8)}/><path d="M-8 ${y}l3 -2M2 ${y+1}l3 -2" stroke="${D}" stroke-width=".6"/>`).join('');
+    case 'aridge':return `<path d="M-2.5 -20H2.5L3.5 20H-3.5Z" fill="${c}" ${sw(1)}/><path d="M-1 -19V19" stroke="${L}" stroke-width="1" opacity=".8"/>`+[-12,-4,4,12].map(y=>`<path d="M-9 ${y-3}L-4 ${y}L-9 ${y+3}M9 ${y-3}L4 ${y}L9 ${y+3}" fill="none" stroke="${D}" stroke-width=".9"/>`).join('');
+    case 'knee':return `<path d="M-13 2Q-14 -14 0 -15Q14 -14 13 2Q8 12 0 13Q-8 12 -13 2Z" fill="${c}" ${sw(1.2)}/><circle cy="-2" r="5.5" fill="none" stroke="${D}" stroke-width="1"/><circle cy="-2" r="2.4" fill="${L}" ${sw(.6)}/><path d="M-9 -8Q-4 -13 3 -12" fill="none" stroke="${L}" stroke-width="1.4" opacity=".8"/>${rv(-10,4)}${rv(10,4)}`;
+    case 'gridge':{const d='M0 -20V20M-4 -14Q-10 -10 -6 -4Q-2 0 -7 6Q-11 12 -5 16M4 -14Q10 -10 6 -4Q2 0 7 6Q11 12 5 16';
+      return `<path d="${d}" fill="none" stroke="#fff" stroke-width=".9" opacity=".3" transform="translate(.6 .6)"/><path d="${d}" fill="none" stroke="${c}" stroke-width="1.3" stroke-linecap="round"/><circle cy="-2" r="1.6" fill="${c}"/>`}
+    case 'ankle':return `<path d="M-14 -5Q0 -1 14 -5L17 5Q0 11 -17 5Z" fill="${c}" ${sw(1.1)}/><path d="M-13 -2Q0 2 13 -2" fill="none" stroke="${L}" stroke-width="1" opacity=".8"/>${rv(-11,2)}${rv(0,5)}${rv(11,2)}`;
+    case 'quilt':{let d='';for(let r=0;r<5;r++)for(let q=0;q<4;q++){const x=-11.25+q*7.5,y=-15+r*7.5;d+=`M${x} ${y-3.75}L${x+3.75} ${y}L${x} ${y+3.75}L${x-3.75} ${y}Z`}
+      return `<rect x="-15" y="-19" width="30" height="38" rx="5" fill="${c}" ${sw(1.1)}/><path d="${d}" fill="none" stroke="${D}" stroke-width=".7" stroke-dasharray="1.6 1.2"/><path d="M-12 -16Q0 -18 12 -16" fill="none" stroke="${L}" stroke-width="1" opacity=".7"/>`}}
   return ''}
 /* the extras of a piece as one <g> in its 100-box; sel = the selected index (designer preview only: hit boxes + a ring) */
 function x92SVG(list,opt){opt=opt||{};const L=x92Clean(list);if(!L.length)return '';
@@ -47933,9 +48006,14 @@ function x92CtlHTML(d){const L=d.x92||[];const i=x92Sel();const e=i!=null?x92Cle
   return `<div class="x92list">${chips}</div>${ctl}`}
 /* v0.92 (his note): arm-only extras (neck guard, Manica plates) are offered only on an arm piece (upper arm / lower arm) */
 function x92Fits(k,d){const at=X92_K[k]&&X92_K[k].at;return !at||at.includes(d&&d.eq)}
+/* the add buttons: this location's own kinds first ("For this piece"), then the ones that fit anywhere ("General") */
+function x92AddRows(d,n){const btn=k=>`<button type="button" class="btn tksm x92addb" data-x92add="${k}" ${n>=X92_MAX?'disabled':''}>${x92AddIcon(k)}<span>${esc(X92_K[k].n)}</span></button>`;
+  const ks=Object.keys(X92_K).filter(k=>x92Fits(k,d));const own=ks.filter(k=>X92_K[k].at),gen=ks.filter(k=>!X92_K[k].at);
+  const row=(l,L,cls)=>L.length?`<div class="x92add ${cls}"><span class="x92rowl">${l}</span>${L.map(btn).join('')}</div>`:'';
+  return row(_T('For this piece'),own,'x92own')+row(_T('General'),gen,'x92gen')}
 function x92TrayHTML(d){const n=(d.x92||[]).length;
   return `<div class="x92" id="x92Tray"><div class="sect" style="margin:4px 0">${_T`Extras`} <span class="rc-sub">${_T`cosmetic only · no AP · click to add, drag on the piece to move, the wheel sizes it (Shift turns it)`}</span> <b class="x92n">${n}/${X92_MAX}</b></div>
-    <div class="x92add">${Object.keys(X92_K).filter(k=>x92Fits(k,d)).map(k=>`<button type="button" class="btn tksm x92addb" data-x92add="${k}" ${n>=X92_MAX?'disabled':''}>${x92AddIcon(k)}<span>${esc(X92_K[k].n)}</span></button>`).join('')}</div>
+    ${x92AddRows(d,n)}
     <div class="x92body"><div class="x92prev scart" id="x92Prev">${x92PrevSVG(d)}</div><div class="x92ctl" id="x92Ctl">${x92CtlHTML(d)}</div></div></div>`}
 {const base=gearAHTML;gearAHTML=function(){let h=base.apply(this,arguments);try{const d=ST.ca;if(!d)return h;if(x92Sel()==null)ST.x92sel=null;
   const t=x92TrayHTML(d);let i=h.indexOf('<div class="calevels"');if(i<0)i=h.indexOf('<div style="grid-column:1/-1" class="rc-sub crnote">');
@@ -47980,7 +48058,7 @@ const x92ArtPrevOn=d=>d&&Array.isArray(d.x92)&&d.x92.length&&typeof caArtOn==='f
 (()=>{const st=document.createElement('style');st.textContent=`
 .x92{grid-column:1/-1;border:1px solid var(--line2);border-radius:8px;padding:6px 8px;background:var(--panel2)}
 .x92 .x92n{float:right;font:600 13px var(--mono);color:var(--gold2)}
-.x92add{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 6px}.x92addb{display:inline-flex!important;align-items:center;gap:4px;padding:2px 8px 2px 4px!important}.x92addb svg{flex:none}
+.x92add{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 6px;align-items:center}.x92rowl{font:600 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--gold2);margin-right:4px;min-width:7.5em}.x92own{padding-bottom:6px;border-bottom:1px dashed var(--line2)}.x92addb{display:inline-flex!important;align-items:center;gap:4px;padding:2px 8px 2px 4px!important}.x92addb svg{flex:none}
 .x92body{display:grid;grid-template-columns:minmax(170px,260px) 1fr;gap:10px;align-items:start}
 .x92prev{aspect-ratio:1;width:100%;min-height:0!important;height:auto!important;touch-action:none;cursor:grab}.x92prev svg{width:100%;height:100%;display:block}
 .x92list{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
