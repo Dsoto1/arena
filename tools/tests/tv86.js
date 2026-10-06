@@ -20,7 +20,9 @@ LG('── A');/* ── A · first run on a Spanish browser ── */
 if(WL==='es'){const ctx=await mk('es-MX');const p=await open(ctx,'A');
   out.aAsk=await p.waitForSelector('#lang86ask',{timeout:60000}).then(()=>true).catch(()=>false); /* the card waits for the menu (700 ms ticks): late under load */
   out.aLang0=await p.evaluate(()=>LANG);
-  if(out.aAsk){await Promise.all([p.waitForNavigation({timeout:10000}).catch(()=>null),p.click('#lang86ask [data-lang86yes]')]);await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000}).catch(()=>{});await p.waitForTimeout(500)}
+  if(out.aAsk){await Promise.all([p.waitForNavigation({timeout:60000}).catch(()=>null),p.click('#lang86ask [data-lang86yes]')]);
+    /* the reloaded page is up in Spanish (the old page also says READY until it goes: wait for the language itself) */
+    for(const t0=Date.now();Date.now()-t0<60000;){if(await p.evaluate(()=>!!window.FLAVIUS_READY&&typeof LANG!=='undefined'&&LANG==='es').catch(()=>false))break;await p.waitForTimeout(300)}}
   out.aLang1=await p.evaluate(()=>({LANG,html:document.documentElement.lang,dict:!!LANG_DICT}));
   await ctx.close();
   const c2=await mk('es-ES');const p2=await open(c2,'A2');await p2.waitForSelector('#lang86ask [data-lang86no]',{timeout:60000}).catch(()=>{}); /* under load the card comes late */
@@ -64,13 +66,16 @@ add(await sweep('menu'));await shot(P,'menu');
 LG('Play Now');/* Play Now → a turn */
 const step=async(n,fn)=>{try{await fn();return true}catch(e){errs.push('B step '+n+': '+e.message.split('\n')[0]);return false}};
 out.b.play=await step('play',async()=>{await P.click('#mainMenu [data-mm="play"]');await P.waitForTimeout(1200);add(await sweep('playnow-menu'));await P.click('[data-mi="0"]');await P.waitForTimeout(1800);add(await sweep('setup'));await shot(P,'setup');await P.click('#goBtn')});
-let turn=false;for(let i=0;i<60&&!turn;i++){await P.waitForTimeout(500);const st=await P.evaluate(()=>({m:!!CUR_MODAL&&!document.getElementById('modal').hidden,h:typeof humanTurn==='function'&&humanTurn()&&S.phase}));
+let turn=false;for(let i=0,T_=Date.now();Date.now()-T_<90000&&!turn;i++){await P.waitForTimeout(500);const st=await P.evaluate(()=>({m:!!CUR_MODAL&&!document.getElementById('modal').hidden,h:typeof humanTurn==='function'&&humanTurn()&&S.phase}));
   if(st.m){if(i===2)add(await sweep('briefing'));await P.evaluate(()=>{const b=document.querySelector('#mBtns button.primary')||document.querySelector('#mBtns button');if(b)b.click()})}else if(st.h==='choice')turn=true}
 out.b.turn=turn;
 if(turn){add(await sweep('arena'));await shot(P,'arena');const t0=await P.evaluate(()=>({who:S.turn,n:S.turnNo}));
-  await step('coin',()=>P.click('#actions [data-act="coin"]'));await P.waitForTimeout(1200);
-  for(let i=0;i<10;i++){const m=await P.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);if(!m)break;add(await sweep('turn-window'));await P.evaluate(()=>{const b=document.querySelector('#mBtns button');if(b)b.click()});await P.waitForTimeout(400)}
-  await step('end',()=>P.click('#actions [data-act="end"]'));await P.waitForTimeout(1500);await closeAll();
+  /* the clicks are forced (End turn beats: never 'stable') and pressed again until the phase moves, answering any window (as tv84 E) */
+  let swept=false;const answer=async(done,ms)=>{for(const t1=Date.now();Date.now()-t1<ms;){if(await P.evaluate(done,t0))return true;const m=await P.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);
+      if(m){if(!swept){swept=true;add(await sweep('turn-window'))}await P.evaluate(()=>{const b=document.querySelector('#mBtns button');if(b)b.click()})}await P.waitForTimeout(300)}return false};
+  const press=async(n,sel,done)=>{let ok=false;for(const t1=Date.now();Date.now()-t1<60000&&!ok;){if(await P.evaluate(s=>!!document.querySelector(s)&&!S.busy,sel))await P.click(sel,{force:true,timeout:5000}).catch(()=>{});ok=await answer(done,4000)}if(!ok)errs.push('B step '+n+': the phase never moved');return ok};
+  await press('coin','#actions [data-act="coin"]',()=>S.phase!=='choice'&&!S.busy&&!CUR_MODAL);
+  await press('end','#actions [data-act="end"]',t0=>S.turnNo!==t0.n||S.turn!==t0.who);await closeAll();
   out.b.moved=await P.evaluate(t0=>S.turnNo!==t0.n||S.turn!==t0.who,t0);
   out.b.log=await P.evaluate(()=>{const L=[...document.querySelectorAll('#log > li:not(#slogPin)')].slice(0,30).map(li=>li.textContent);return {n:L.length,sample:L.slice(0,6)}})}
 out.b.names=await P.evaluate(()=>{const s=[...document.querySelectorAll('.gt84')];const re=new RegExp('^(?:'+gt84Re().source+')$');return {n:s.length,eng:s.every(x=>re.test(x.textContent.trim())),bad:s.filter(x=>!re.test(x.textContent.trim())).slice(0,5).map(x=>x.textContent)}});
@@ -110,7 +115,9 @@ ok(cutU.length<=CUT_MAX,`C: cut-off texts ${cutU.length} ≤ ${CUT_MAX}: `+cutU.
 LG('── D');/* ── D · back to English ── */
 if(WL==='es'){
 await P.evaluate(()=>{menuHide();openSettings()});await P.waitForTimeout(900);
-await Promise.all([P.waitForNavigation({timeout:10000}).catch(()=>null),P.selectOption('select[data-lang84]','en')]);await P.waitForTimeout(2600);
+await Promise.all([P.waitForNavigation({timeout:60000}).catch(()=>null),P.selectOption('select[data-lang84]','en')]);
+/* the switch reloads the page: wait for the reloaded page to be up (it reads the new language at load), not a fixed 2.6 s */
+for(const t0=Date.now();Date.now()-t0<60000;){if(await P.evaluate(()=>!!window.FLAVIUS_READY&&typeof LANG!=='undefined'&&LANG==='en').catch(()=>false))break;await P.waitForTimeout(300)}
 out.d=await P.evaluate(()=>({LANG,dict:!!LANG_DICT,html:document.documentElement.lang}));
 ok(out.d.LANG==='en'&&!out.d.dict&&out.d.html==='en','D: English again after the switch '+JSON.stringify(out.d));
 }
