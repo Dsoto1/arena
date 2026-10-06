@@ -1082,7 +1082,7 @@ share copy — the site download play/flavius-rule-arena.zip.)
   rail tab clicks flicker; F4 travelling for Match Week zeroes the remaining training hours. INFIRMARY (his design): a compact list of the
   hurt/tired like the recruiting list → avatar on the right with the areas that need care GLOWING → right of it how he can be healed (what it
   does, where); TWO BARS in different colours, HP and FATIGUE, near/above the avatar and small in the list; "Which cure should I use" → banner
-  ⓘ popup; bathhouse made obvious. (Fatigue today = only the worn-down injury risk above 50, FAT_* in 85-v65.) Open: his "HP max 7" idea.
+  ⓘ popup; bathhouse made obvious. (Fatigue today = only the worn-down injury risk above 50, FAT_* in 85-v65.) HP (his rule): defaults head 5 · chest 6 · arms/legs 5; ANY location may be raised to max 7 (elixirs in play already do; in Manager, week care — temple, baths, Medicus, etc. — can lift locations above default for that week's bout, never past 7). Open: fatigue effect, Walk the Sand home, 'Send the Doctores'.
   TRAINING YARD: each routine/option previews the week's gain per stat (icon 67 → 67.4 in green, decimals shown); the clicked fighter's card
   stops spanning the full width (sits beside the squad, no empty right); Doctore + Study cards to the right column. MATCH WEEK: Temple only
   in the City Center; Walk the City Square button with a thumbnail of that forum; Walk the Sand needs a new home (open). LEAGUE: stakes per
