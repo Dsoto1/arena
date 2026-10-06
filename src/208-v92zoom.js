@@ -32,3 +32,6 @@ ar91Blit=function(L,op){if(AR91.noStatic&&!op)return;const dpr=window.devicePixe
 /* no emoji emotes: the mood stays on the face; a shout (text) still shows as a bubble */
 {const base=emote;emote=function(sp,emo,text=''){if(sp)sp.lastEmo=emo;if(!text)return;return base.call(this,sp,'',text)}}
 {const base=drawEmotes;drawEmotes=function(){if(S&&S.emotes)S.emotes=S.emotes.filter(e=>e.text);return base.apply(this,arguments)}}
+/* v0.92 (his note): hovering armor in a window shows ONLY the try-on avatar (98 #tryOn), not the enlarged card tooltip (#tip) as well.
+   When there is no try-on (no live fighter) the card tooltip still shows. */
+{const st=document.createElement('style');st.textContent='body:has(#tryOn:not([hidden])) #tip{display:none!important}';document.head.appendChild(st)}
