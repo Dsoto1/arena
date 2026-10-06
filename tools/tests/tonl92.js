@@ -87,7 +87,7 @@ await shot('domus');
 
 /* ── 5 · 🎒 Kits ── */
 await world((w,[a,d])=>{const ch=w.chars[a];ch.gear=['wraps','gladius'];ch.equip=['wraps','gladius'];w.domus82[d].gear=['legwraps'];w.domus82[d].treasury=1000},[ids.a,ids.dom]);
-const openArm=async()=>{await P.evaluate(async()=>{ONL.tab='armory';ONL83U.mkt='board';ONL82.dgAt=0;await onlRefresh();ONL82.dg=await NET.req('domus.get',{});onlRedraw()});await P.waitForFunction(()=>!!document.querySelector('#onl details.kt92'),null,{timeout:15000}).catch(()=>{});await W(300)};
+const openArm=async()=>{await P.evaluate(async()=>{ONL.tab='armory';ONL83U.mkt='kits'; /* v0.92: kits live in their own Armory tab */ONL82.dgAt=0;await onlRefresh();ONL82.dg=await NET.req('domus.get',{});onlRedraw()});await P.waitForFunction(()=>!!document.querySelector('#onl details.kt92'),null,{timeout:15000}).catch(()=>{});await W(300)};
 await openArm();
 const ar=await P.evaluate(()=>{const k=document.querySelector('#onl details.kt92');const sub=document.querySelector('#onl .onl-lbtop .rc-sub');const c=k&&k.querySelector('.kt92c.cls');
   return {cards:k?k.querySelectorAll('.kt92c').length:0,cls:c?c.querySelector('[data-kt92]').textContent:'',av:!!(c&&c.querySelector('.kt92-av svg')),own:c?c.querySelectorAll('li.own').length:0,head:sub?sub.textContent:'',purse:/purse/i.test(sub?sub.textContent:'')}});

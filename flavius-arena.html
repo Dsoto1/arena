@@ -48764,6 +48764,16 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 .mk92t:not(.on):hover{opacity:.95}
 .mb83-row.mk92on{border-top:none;border-left:3px solid var(--mk);padding-left:4px}
 .mb83-row.mk92on .mb83-lv{color:var(--mk)}`;document.head.appendChild(st)}
+/* KITS IN THEIR OWN TAB (his note: "they take over too much"): the Armory's 🛒 Flavius's market · 🏺 Used toggle gains 🎒 Kits; the kits
+   panel (206 onlKitsHTML92) shows only there (always open), the market board only on its own tab. */
+{const base=onlArmoryHTML;onlArmoryHTML=function(){const h=base.apply(this,arguments);try{const ch=ONL.char;if(!ch||(typeof onlIsGuest82==='function'&&onlIsGuest82()))return h;
+  const T=document.createElement('template');T.innerHTML=h;const seg=T.content.querySelector('.mk83seg');if(!seg)return h;const kits=T.content.querySelector('details.kt92');
+  const t=typeof ONL83U!=='undefined'?ONL83U.mkt:'board';const on=t==='kits';
+  const b0=seg.querySelector('[data-v="board"]');const kb=`<button type="button" data-onl83="mkt" data-v="kits" class="${on?'on':''}">${_T`🎒 Kits`}</button>`;if(b0)b0.insertAdjacentHTML('afterend',kb);else seg.insertAdjacentHTML('beforeend',kb);
+  if(on){if(b0)b0.classList.remove('on');let n=seg.nextSibling;while(n){const x=n.nextSibling;n.remove();n=x}
+    if(kits){kits.setAttribute('open','');seg.after(kits)}else seg.insertAdjacentHTML('afterend',onlKitsHTML92(ch))}
+  else if(kits)kits.remove();
+  return T.innerHTML}catch(e){console.error(e);return h}}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
