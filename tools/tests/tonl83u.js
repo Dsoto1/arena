@@ -9,9 +9,9 @@ const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.r
 const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.url.split('?')[0]));if(!f.startsWith(root)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end()}const ext=path.extname(f);r.writeHead(200,{'content-type':{'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'}[ext]||'application/octet-stream'});fs.createReadStream(f).pipe(r)});
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:1300,height:900}});await ctx.route(/fonts\./,r=>r.abort());
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
-const errs=[];const pg=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);return p};
-const A=await pg('A');await A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester)/.test(k))localStorage.removeItem(k)});await A.reload();
-const B=await pg('B'),C=await pg('C');for(const P of [A,B,C])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+const errs=[];const pg=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0,{timeout:90000});return p};
+const A=await pg('A');await A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester)/.test(k))localStorage.removeItem(k)});await A.reload({timeout:90000});
+const B=await pg('B'),C=await pg('C');for(const P of [A,B,C])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};
 const shot=async(p,n,w)=>{if(!SHOT)return;for(const vw of w===390?[390]:[1300,390]){await p.setViewportSize({width:vw,height:vw===390?844:900});await p.waitForTimeout(350);await p.screenshot({path:path.join(SHOT,`u83_${n}_${vw}.png`)})}await p.setViewportSize({width:1300,height:900});await p.waitForTimeout(200)};
 const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});ONL.domus=(await NET.req('domus.create',{name:name})).domus;
@@ -81,7 +81,7 @@ const ld=await pv(A,async()=>{ONL.tab='play';await onlRefresh();onlRedraw();retu
 ok(ld.gift&&ld.inf&&ld.infLock,'the landing: chest + Ludi Infames (locked for a Tiro) '+JSON.stringify(ld));
 await world(A,(w,[cid,did])=>{w.domus82[did].gifts=[{id:'hg3',why:'surv:10',at:Date.now()}];w.chars[cid].glory=600},[sa.ch,sa.dom]);await redraw(A);await redraw(B);await shot(B,'landing_follow');await shot(A,'landing');await A.evaluate(()=>{const x=document.querySelector('#onl .inf83');if(x)x.scrollIntoView({block:'center'})});if(SHOT)await A.screenshot({path:path.join(SHOT,'u83_landing_pls_1300.png')});
 /* a page opened with #domus=<id> opens Online on that profile */
-const P2=await ctx.newPage();P2.on('pageerror',e=>errs.push('P2:'+e.message));await P2.goto(URL0+'#domus='+sa.dom);let hp=false;for(const t0=Date.now();Date.now()-t0<40000&&!hp;){await P2.waitForTimeout(400);hp=await P2.evaluate(()=>!!document.querySelector('.pf83pop'))}ok(hp,'#domus=… opens the profile');await P2.close();
+const P2=await ctx.newPage();P2.on('pageerror',e=>errs.push('P2:'+e.message));await P2.goto(URL0+'#domus='+sa.dom,{timeout:90000});let hp=false;for(const t0=Date.now();Date.now()-t0<40000&&!hp;){await P2.waitForTimeout(400);hp=await P2.evaluate(()=>!!document.querySelector('.pf83pop'))}ok(hp,'#domus=… opens the profile');await P2.close();
 
 /* ── 9 · the countdown + ✕ Hold; 12 · the Wagers tab ── */
 await A.evaluate(()=>localStorage.setItem('flavius_onlcd83','60000'));

@@ -10,7 +10,7 @@ const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;
 const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:1300,height:900},acceptDownloads:true});await ctx.route(/fonts\./,r=>r.abort());
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-const errs=[];const open=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});return p};
+const errs=[];const open=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0,{timeout:90000});await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});return p};
 const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const out={};
 const shot=async(p,n,clip)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,`v84_${n}.png`),...(clip?{clip}:{})})};
 const A=await open('A');
@@ -131,7 +131,7 @@ await D.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)});
 const d=out.d;ok(d.none&&d.ev&&d.daysIdle&&d.days&&d.season,'nudge triggers (events, days, season) '+JSON.stringify(d));ok(d.offline,'the nudge says offline only');
 ok(out.d2.gone&&out.d2.later&&out.d2.stays,'Remind me later hides it');ok(out.d2.hub&&out.d2.last,'Saves: the nudge + last backup + offline lines');ok(out.d3.file&&out.d3.last&&out.d3.clear&&out.d3.gone&&out.d3.date,'Back up now downloads and resets '+JSON.stringify(out.d3));
 /* the standalone (file://) */
-const F=await ctx.newPage();F.on('pageerror',e=>errs.push('F:'+e.message));await F.goto('file://'+path.resolve(process.argv[2]));await F.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+const F=await ctx.newPage();F.on('pageerror',e=>errs.push('F:'+e.message));await F.goto('file://'+path.resolve(process.argv[2]));await F.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 await F.evaluate(()=>{window._open=[];window.open=(u)=>{window._open.push(u);return null};if(CUR_MODAL)CUR_MODAL.done(null);menuShow()});await F.waitForTimeout(300);
 await F.click('#mainMenu [data-mm="multi"]');await F.waitForTimeout(300);
 out.f=await F.evaluate(()=>{const o=document.querySelector('#mainMenu [data-mm="online"]');return {txt:o&&o.textContent,dis:o&&o.disabled}});
@@ -147,7 +147,7 @@ await T.addInitScript(()=>{const fake=s=>'«'+s.split(/\s+/).filter(Boolean).rev
     for(const t of L){const f1=document.createElement('font');f1.style.verticalAlign='inherit';const f2=document.createElement('font');f2.style.verticalAlign='inherit';f2.textContent=fake(t.data);f1.appendChild(f2);t.replaceWith(f1)}};
   let tm=null;window.__tr={n:0};const go=()=>{tm=null;try{tr(document.body);window.__tr.n++}catch(e){}};
   document.addEventListener('DOMContentLoaded',()=>{new MutationObserver(()=>{if(!tm)tm=setTimeout(go,40)}).observe(document.body,{childList:true,subtree:true});setTimeout(go,300)})});
-await T.goto(URL0);await T.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+await T.goto(URL0,{timeout:90000});await T.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const step=async(n,fn)=>{try{await fn();return true}catch(e){errs.push('T step '+n+': '+e.message.split('\n')[0]);return false}};
 out.e={};
 out.e.menuTr=await T.evaluate(()=>!!document.querySelector('#mainMenu font')&&/«/.test(document.querySelector('#mainMenu .mmbtns').textContent));

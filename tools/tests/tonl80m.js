@@ -9,7 +9,7 @@ const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:1300,height:900}});await ctx.route(/fonts\./,r=>r.abort());
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
 const errs=[];const A=await ctx.newPage(),B=await ctx.newPage();for(const [n,p] of [['A',A],['B',B]])p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));
-await A.goto(URL0);await A.evaluate(()=>{localStorage.removeItem('flavius_onlmock');localStorage.removeItem('flavius_onlmatch80')});await B.goto(URL0);for(const P of [A,B])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+await A.goto(URL0,{timeout:90000});await A.evaluate(()=>{localStorage.removeItem('flavius_onlmock');localStorage.removeItem('flavius_onlmatch80')});await B.goto(URL0,{timeout:90000});for(const P of [A,B])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls})},[name,cls]);
 await setup(A,'Alpha','hero');await setup(B,'Beta','soldier');
 /* Beta has a record, a purse and gear to lose */
@@ -27,7 +27,7 @@ const run=async(ms,also)=>{const t0=Date.now();while(Date.now()-t0<ms){await dri
 await run(6000,true);
 const rec0=await B.evaluate(()=>{const x=JSON.parse(localStorage.getItem('flavius_onlmatch80')||'null');return x&&{id:x.id,name:x.char&&x.char.name,gear:x.kit&&x.kit.gear}});
 /* B reloads: the main menu offers the match back */
-await B.reload();await B.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+await B.reload({timeout:90000});await B.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const menu=await B.evaluate(()=>{const r=document.getElementById('mmLive80');const m=document.getElementById('mainMenu');return {menu:!!(m&&!m.hidden),row:!!r,txt:r?r.textContent.replace(/\s+/g,' ').trim():'',btns:r?[...r.querySelectorAll('button')].map(b=>b.textContent.trim()):[]}});
 if(SHOT)await B.screenshot({path:path.join(SHOT,'m80_menu.png')});
 /* 🚪 Abandon from the menu: the gladiator at stake; Stay keeps everything */

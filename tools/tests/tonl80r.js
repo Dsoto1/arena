@@ -10,7 +10,7 @@ await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()
   window.__req={};window.addEventListener('DOMContentLoaded',()=>{const t=setInterval(()=>{if(typeof NET==='undefined')return;clearInterval(t);const base=NET.req;NET.req=function(k){window.__req[k]=(window.__req[k]||0)+1;return base.apply(this,arguments)}},20)})});
 const errs=[];const A=await ctx.newPage(),B=await ctx.newPage(),C=await ctx.newPage();const P={A,B,C};
 for(const [n,p] of Object.entries(P))p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));
-await A.goto(URL0);await A.evaluate(()=>localStorage.removeItem('flavius_onlmock'));await B.goto(URL0);await C.goto(URL0);for(const P of [A,B,C])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+await A.goto(URL0,{timeout:90000});await A.evaluate(()=>localStorage.removeItem('flavius_onlmock'));await B.goto(URL0,{timeout:90000});await C.goto(URL0,{timeout:90000});for(const P of [A,B,C])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls});
   /* this browser's creations: a level 4 chest weapon and a market weapon, everything on the rolls */
   const cw1={...blankCW(),id:'t80c',name:'Test Chest Blade',chest:1,rolls:{market:true,loadout:true}};const cw2={...blankCW(),id:'t80m',name:'Test Market Blade',rolls:{market:true}};

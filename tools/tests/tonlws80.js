@@ -16,7 +16,7 @@ for(const n of ['A','B','C']){const ctx=await b.newContext({viewport:{width:1300
   await ctx.addInitScript(p=>{localStorage.setItem('flavius_onlserver',JSON.stringify({ws:'ws://127.0.0.1:'+p,dev:true}))},WS.port);
   P[n]=await ctx.newPage();P[n].on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]))}
 const {A,B,C}=P;const wait=ms=>A.waitForTimeout(ms);
-for(const p of [A,B,C])await p.goto(URL0);for(const p of [A,B,C])await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});await wait(1000);
+for(const p of [A,B,C])await p.goto(URL0,{timeout:90000});for(const p of [A,B,C])await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});await wait(1000);
 /* poll until fn (in the page) is truthy */
 /* (the regression runs 3 tests at once: every wait polls for its condition with room to spare) */
 const until=async(p,fn,arg,ms=20000)=>{const t0=Date.now();let v;while(Date.now()-t0<ms){try{v=await p.evaluate(fn,arg)}catch(e){v=null}if(v)return v;await p.waitForTimeout(200)}return v};

@@ -11,9 +11,9 @@ const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:1300,height:900}});await ctx.route(/fonts\./,r=>r.abort());
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0');
   window.P84=[];const iv=setInterval(()=>{if(typeof NET!=='undefined'&&NET.on){for(const t of ['auction.outbid','auction.won','match.input'])NET.on(t,d=>P84.push({t,d}));clearInterval(iv)}},20)});
-const errs=[];const pg=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);return p};
-const A=await pg('A');await A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester|clock)/.test(k))localStorage.removeItem(k)});await A.reload();
-const B=await pg('B'),C=await pg('C');for(const P of [A,B,C])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+const errs=[];const pg=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0,{timeout:90000});return p};
+const A=await pg('A');await A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester|clock)/.test(k))localStorage.removeItem(k)});await A.reload({timeout:90000});
+const B=await pg('B'),C=await pg('C');for(const P of [A,B,C])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};
 const shot=async(p,n,w)=>{if(!SHOT)return;for(const vw of w===390?[390]:[1300,390]){await p.setViewportSize({width:vw,height:vw===390?844:900});await p.waitForTimeout(400);await p.screenshot({path:path.join(SHOT,`u84_${n}_${vw}.png`)})}await p.setViewportSize({width:1300,height:900});await p.waitForTimeout(200)};
 const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});ONL.domus=(await NET.req('domus.create',{name})).domus;
@@ -95,7 +95,7 @@ const late2=await err(B,async id=>NET.req('match.reclaim',{id}),L1.id);ok(cg.res
 await A.evaluate(async id=>{try{await NET.req('match.abandon',{id})}catch(e){}ONL.leftMatch=ONL.leftMatch||{};ONL.leftMatch[id]=1;ONL84.rcl=null;onl84Bar()},L1.id);await A.waitForTimeout(600);
 for(const p of [A,B])await p.evaluate(()=>{try{if(S&&S.onl){S.over=true;ONLM.on=false}ONL.live=null;ONL.watching=null}catch(e){}});
 /* the mock world is one localStorage blob: a window still running the old match could overwrite a later write — B starts afresh */
-await B.reload();await B.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});await B.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);try{menuHide()}catch(e){}});
+await B.reload({timeout:90000});await B.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});await B.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);try{menuHide()}catch(e){}});
 
 /* ── 7 · the WEEKLY CHALLENGE: the fixture, three challenges, ONE gift a week ── */
 await world(A,(w,[a,c])=>{w.chars[a].glory=600;w.chars[c].glory=600},[sa.ch,sc.ch]);

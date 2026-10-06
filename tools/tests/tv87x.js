@@ -16,7 +16,7 @@ const ctx=await b.newContext({viewport:{width:1400,height:1000}});await ctx.rout
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
 const P=await ctx.newPage();P.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 const W8=ms=>P.waitForTimeout(ms);const shot=async n=>{if(SHOT)await P.screenshot({path:path.join(SHOT,`v87x_${n}.png`)})};
-await P.goto(URL0);await P.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester|clock)/.test(k))localStorage.removeItem(k)});await W8(2600);
+await P.goto(URL0,{timeout:90000});await P.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester|clock)/.test(k))localStorage.removeItem(k)});await W8(2600);
 
 /* ── 15 · the main menu has no mute button ── */
 o.mute=await P.evaluate(()=>({btn:!!document.getElementById('mmMute'),menu:!!document.querySelector('#mainMenu [data-mm="settings"]')}));

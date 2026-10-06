@@ -13,7 +13,7 @@ await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1')});
 const errs=[];const A=await ctx.newPage(),B=await ctx.newPage(),C=await ctx.newPage();for(const [n,p] of [['A',A],['B',B],['C',C]])p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));
 const wait=ms=>A.waitForTimeout(ms);
-await A.goto(URL0);await A.evaluate(()=>{for(const k of ['flavius_onlmock','flavius_onlmatch80','flavius_onlreport81','flavius_onlover81','flavius_onlsrv81'])localStorage.removeItem(k)});await B.goto(URL0);await C.goto(URL0);await wait(2500);
+await A.goto(URL0,{timeout:90000});await A.evaluate(()=>{for(const k of ['flavius_onlmock','flavius_onlmatch80','flavius_onlreport81','flavius_onlover81','flavius_onlsrv81'])localStorage.removeItem(k)});await B.goto(URL0,{timeout:90000});await C.goto(URL0,{timeout:90000});await wait(2500);
 /* the sign-in screen: no server box without the word; the wording */
 const sign=async()=>A.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();onlineOpen('play');for(let i=0;i<40&&!document.getElementById('onl');i++)await new Promise(r=>setTimeout(r,100));await new Promise(r=>setTimeout(r,300));
   const o=document.getElementById('onl');return {box:!!(o&&o.querySelector('.onl-srv')),txt:o?o.textContent.replace(/\s+/g,' '):''}});
@@ -62,7 +62,7 @@ const bAb=await B.evaluate(async id=>{const r=await NET.req('match.abandon',{id}
   const pr=onlAbandonAsk80({ranked:true,rule:'fate',char:onlLive80Char(ONL.char),over:true});await new Promise(q=>setTimeout(q,300));const box=document.querySelector('.ask76bg .verask');const txt=box?box.textContent.replace(/\s+/g,' '):'';
   const no=document.querySelector('.ask76bg [data-ask76="0"]');if(no)no.click();await pr;return {r,alive:c&&c.alive,abandoned:!!(M.abandoned||{})[ONL.acct.id],txt}},L.id);
 /* A reloads: the saved report goes */
-await A.reload();await until(A,id=>(mockLoad().matches[id]||{}).status==='done'&&!Object.keys(localStorage).some(k=>/^flavius_onlreport81/.test(k)),L.id,40000);await wait(300);
+await A.reload({timeout:90000});await until(A,id=>(mockLoad().matches[id]||{}).status==='done'&&!Object.keys(localStorage).some(k=>/^flavius_onlreport81/.test(k)),L.id,40000);await wait(300);
 const aBack=await A.evaluate(id=>{const w=mockLoad();const M=w.matches[id]||{};const Lb=w.lobbies[id]||{};const A2=ONLC.agree(M.reports||{});
   return {status:M.status,lobby:Lb.status,reps:Object.keys(M.reports||{}).length,hashes:Object.values(M.reports||{}).map(r=>r.hash),void:!!A2.void,outs:Object.keys(M.outs||{}).length,stored:Object.keys(localStorage).some(k=>/^flavius_onlreport81/.test(k))}},L.id);
 /* A's landing: the stage map, the Today ribbon, the Forum in the side column, CF with the wheat */
@@ -85,7 +85,7 @@ const inv0=await A.evaluate(()=>!!document.querySelector('.inv80bg'));
 await sync(A,C);const R=await C.evaluate(async()=>await NET.req('lobby.create',{ev:'cassian',ranked:false}));await sync(C,A);
 const invite=async row=>A.evaluate(r=>NET.emit('lobby.invite',{row:r,from:'Gamma the Bold',fromId:'u_c'}),row);
 await invite(R);await until(A,()=>!!document.querySelector('.inv80bg [data-onl="ijoin"]'));const inv1=await A.evaluate(()=>!!document.querySelector('.inv80bg [data-onl="ijoin"]'));
-await A.evaluate(()=>{for(const p of document.querySelectorAll('.inv80bg'))p.dataset.chk81=Date.now()}); /* the window's own 10 s re-check would take the invitation down first when the run is slow: it was just checked */await C.evaluate(async id=>{await NET.req('lobby.leave',{id})},R.id);await sync(C,A);
+await A.evaluate(()=>{for(const p of document.querySelectorAll('.inv80bg'))p.dataset.chk81=Date.now()}); /* the window's own 10 s re-check would take the invitation down first when the run is slow: it was just checked */await C.evaluate(async id=>{await NET.req('lobby.leave',{id})},R.id);await sync(C,A);await until(A,id=>{const L=mockLoad().lobbies[id];return !L||L.status==='done'},R.id,45000);
 /* (the re-check mark is renewed in the same breath as the click: under load the sync above can outlast its 10 s) */
 await A.evaluate(()=>{T81=[];for(const p of document.querySelectorAll('.inv80bg'))p.dataset.chk81=Date.now();{const j=document.querySelector('.inv80bg [data-onl="ijoin"]');if(j)j.click()}});await until(A,()=>T81.some(t=>/That room closed before you got there/.test(t)),null,40000);await wait(500);
 const dead1=await A.evaluate(id=>({toast:T81.some(t=>/That room closed before you got there/.test(t)),joined:(ONL.lobbies||[]).some(L=>L.id===id&&(L.members||[]).some(m=>m.id===ONL.acct.id)),pop:!!document.querySelector('.dead81bg')}),R.id);
@@ -93,12 +93,15 @@ const dead1=await A.evaluate(id=>({toast:T81.some(t=>/That room closed before yo
 const R2=await C.evaluate(async()=>await NET.req('lobby.create',{ev:'egidious',ranked:false}));await sync(C,A);
 await invite(R2);await until(A,()=>!!document.querySelector('.inv80bg [data-onl="ijoin"]'));const inv2=await A.evaluate(()=>!!document.querySelector('.inv80bg [data-onl="ijoin"]'));
 await A.evaluate(()=>{for(const p of document.querySelectorAll('.inv80bg'))p.dataset.chk81=Date.now()}); /* the window's own 10 s re-check would take the invitation down first when the run is slow: it was just checked */await C.evaluate(id=>{const w=mockLoad();w.lobbies[id].status='live';w.lobbies[id].started=Date.now();mockSave(w)},R2.id);await sync(C,A);
+/* the scenario needs A's window to see the room started (the shared mock world reaches it late under load) before Join is pressed */
+await until(A,id=>(mockLoad().lobbies[id]||{}).status==='live',R2.id,45000);
 await A.evaluate(()=>{T81=[];for(const p of document.querySelectorAll('.inv80bg'))p.dataset.chk81=Date.now();{const j=document.querySelector('.inv80bg [data-onl="ijoin"]');if(j)j.click()}});await until(A,()=>!!document.querySelector('.dead81bg'),null,40000);await wait(300);
 const dead2=await A.evaluate(()=>{const p=document.querySelector('.dead81bg');return p?{txt:p.textContent.replace(/\s+/g,' '),watch:!!p.querySelector('[data-onl81="dwatch"]')}:null});
+if(!dead2)console.log('NO DEAD POPUP',JSON.stringify(await A.evaluate(id=>({toasts:T81.slice(0,4),mine:(onlMyLobby()||{}).id||null,st:(mockLoad().lobbies[id]||{}).status,inv:!!document.querySelector('.inv80bg')}),R2.id)));
 if(SHOT)await A.screenshot({path:path.join(SHOT,'onl_deadinvite.png')});
 await A.evaluate(()=>{const x=document.querySelector('.dead81bg [data-onl81="dclose"]');if(x)x.click()});
 /* phones: the stage in one column, the playlists sideways */
-const ctx2=await b.newContext({viewport:{width:390,height:844}});await ctx2.route(/fonts\./,r=>r.abort());await ctx2.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1')});const P=await ctx2.newPage();P.on('pageerror',e=>errs.push('P:'+e.message));await P.goto(URL0);await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+const ctx2=await b.newContext({viewport:{width:390,height:844}});await ctx2.route(/fonts\./,r=>r.abort());await ctx2.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1')});const P=await ctx2.newPage();P.on('pageerror',e=>errs.push('P:'+e.message));await P.goto(URL0,{timeout:90000});await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 await P.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name:'Delta'});await NET.req('domus.create',{name:'Domus Delta'});ONL.char=await NET.req('char.create',{name:'Delta the Bold',cls:'venatore'});onlineOpen('play')});await P.waitForFunction(()=>!!document.querySelector('.onl-pls81')&&!!document.querySelector('.a81-forum'),null,{timeout:30000}).catch(()=>{});await P.waitForTimeout(500);
 const ph=await P.evaluate(async()=>{const r=document.querySelector('.onl-pls81');const sg=document.querySelector('.onl-stage');const o={flex:r&&getComputedStyle(r).display,over:r?r.scrollWidth>r.clientWidth+10:false,cols:sg?getComputedStyle(sg).gridTemplateColumns.split(' ').length:0,hscroll:document.documentElement.scrollWidth>innerWidth+2};
   r.scrollIntoView();r.dispatchEvent(new WheelEvent('wheel',{deltaY:240,bubbles:true,cancelable:true}));await new Promise(q=>setTimeout(q,200));o.left=r.scrollLeft;

@@ -11,9 +11,9 @@ const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:1300,height:900}});await ctx.route(/fonts\./,r=>r.abort());
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0');
   window.T82=[];const iv=setInterval(()=>{if(typeof mToast==='function'){const m=mToast;mToast=function(h){T82.push(String(h));return m.apply(this,arguments)};clearInterval(iv)}},20)});
-const errs=[];const pg=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);return p};
-const A=await pg('A');await A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl/.test(k))localStorage.removeItem(k)});await A.reload();
-const B=await pg('B'),C=await pg('C'),F=await pg('F');for(const P of [A,B,C,F])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+const errs=[];const pg=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0,{timeout:90000});return p};
+const A=await pg('A');await A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl/.test(k))localStorage.removeItem(k)});await A.reload({timeout:90000});
+const B=await pg('B'),C=await pg('C'),F=await pg('F');for(const P of [A,B,C,F])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,'onl_'+n+'.png')})};
 const err=async(p,fn,arg)=>p.evaluate(async([fn,arg])=>{try{await (0,eval)('('+fn+')')(arg);return 'ok'}catch(e){return (e.code||'')+'|'+((e.extra||{}).why||'')+'|'+e.message}},[fn.toString(),arg]);
 const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};
