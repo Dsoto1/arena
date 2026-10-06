@@ -223,7 +223,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     const dseats=[];
     if(!A.void)for(const a of M.players){if((M.abandoned||{})[a])continue;const pl=L.players.find(p=>p.id===a);const row=A.table.find(r=>r.seat===M.seats[a]);if(!pl||!row)continue;let out=null,before='tiro';
       let gx=null;const ch=await editChar(pl.char,c=>{if(!c.alive)return false;before=C.rankFor(c).k;out=C.applyResult(c,row,!!L.ranked,{humans:(M.players||[]).length,now:now()});gx=C.gearAfter(c,pl.kit,row,!!L.ranked);
-        out.broken=gx.broken;out.offBack=gx.offBack});if(!ch||!out)continue;M.outs[a]=out;dseats.push({acct:a,ch,before,row,out,gx,seat:M.seats[a]});
+        out.broken=gx.broken;out.gone=gx.gone||[];out.offBack=gx.offBack});if(!ch||!out)continue;M.outs[a]=out;dseats.push({acct:a,ch,before,row,out,gx,seat:M.seats[a]});
       if(out.died)await countRank(before,-1,ch);else if(out.rankUp){await countRank(before,-1,ch);await countRank(out.rankUp,1,ch)}
       await domusAfter(ch,row,out,!!L.ranked,{id,ev:L.ev,loc:L.loc,at:now(),ranked:!!L.ranked},gx);
       if(out.died){const e={name:ch.name,cls:ch.cls,rank:ch.died.rank,lifeCF:ch.lifeCF,survived:ch.survived,diedAt:now(),why:out.hall?C.hallWhy(ch):''};
@@ -715,7 +715,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     /* 🏺 the used market: the fallen's printed pieces with their history (broken ones at ⅔ price) */
     'market.list':async(d,ctx)=>{await lootSweep();return {used:(await store.query('MARKET','U#',{limit:60,desc:true})).filter(x=>!x.sold).map(x=>({id:x.id,item:x.item,base:x.base,n:x.n,kind:x.kind,lv:x.lv,st:x.st,price:x.price,at:x.at,from:x.from||null,hist:(x.pc&&x.pc.hist)||[]}))}},
     'market.buy':async(d,ctx)=>{const ch=await ownChar(ctx.acct,d.char);const sk=String(d.id||'');if(!/^U#/.test(sk))throw new Error('No such piece.');const X=await store.get('MARKET',sk);if(!X||X.sold)throw fail('sold','Someone bought it first.');
-      const I=C.pieceInfo({item:X.item,pc:X.pc},catalog);if(!I)throw new Error('No such piece.');if(!I.stack&&(ch.gear||[]).some(g=>C.itemBase(g)===I.base))throw new Error('Already yours.');if((ch.wallet|0)<X.price)throw fail('no_coin',`Costs ${X.price} coin.`,{cost:X.price});
+      const I=C.pieceInfo({item:X.item,pc:X.pc},catalog);if(!I)throw new Error('No such piece.');if((ch.wallet|0)<X.price)throw fail('no_coin',`Costs ${X.price} coin.`,{cost:X.price});
       if(!(await store.flip('MARKET',sk,'sold',0,1)))throw fail('sold','Someone bought it first.');
       const c=await editChar(ch.id,x=>{if(!x.alive||(x.wallet|0)<X.price)return false;x.wallet-=X.price;C.putPiece(x,{item:X.item,pc:X.pc},!C.wearWhy(x,X.item,X.pc))});
       if(!c){await store.set('MARKET',sk,{sold:0});throw new Error('Try again.')}await store.del('MARKET',sk);return {char:strip(c)}},

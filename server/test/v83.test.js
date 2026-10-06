@@ -21,7 +21,7 @@ function rules(){
   assert.strictEqual(C.giftAdd(ch,'rank:veteranus',1),null,'never twice');C.giftTake(ch,ch.gifts[0].id);assert.strictEqual(ch.gifts.length,3);assert.strictEqual(C.giftAdd(ch,'rank:novicius',1),null,'an opened gift does not come back');
   /* buying has no rank gate; wearing named pieces needs Veteranus */
   const t=C.newChar({name:'Tiro Buyer',cls:'slave'},'o','tb',0);t.wallet=800;C.buy(t,'charun',catalog);assert.ok(t.gear.includes('charun'),'a Tiro buys level 3');
-  assert.match(C.canBuy(t,'charun',catalog),/Already yours/);
+  assert.match(C.canBuy(t,'charun',catalog),/Costs/,'v0.91: no copy limit — only the price');t.wallet=750;C.buy(t,'charun',catalog);assert.strictEqual(t.gear.filter(g=>g==='charun').length,2,'a spare');
   const nw=C.rollNamed(seeded(7),catalog,'rare',[]);const P=C.namedPiece(nw,t);assert.match(P.item,/^nw#tb\.\d+$/);C.putPiece(t,P,false);
   assert.match(C.wearWhy(t,P.item),/Veteranus/);assert.throws(()=>C.gearEquip(t,P.item,true),/Veteranus/);assert.ok(!C.equipOf(t).includes(P.item),'never brought below Veteranus');
   assert.match(C.gearMoveWhy({gear:[P.item],pcs:{[C.itemUid(P.item)]:P.pc}},{...C.newChar({name:'Low Rank',cls:'hero'},'o','lr',0)},P.item,catalog),/Storeroom until Veteranus/);
@@ -46,7 +46,7 @@ function rules(){
   const g=C.newChar({name:'After Math',cls:'hero'},'o','am',0);g.gear=['galea','gladius','wraps'];g.offers=['elix2','cf2','ap3'];g.cfb=5;const gk=C.kitOf(g);
   const gx=C.gearAfter(g,gk,C.cleanRow({survives:true,brk:['galea','nonsense'],off:['cf2']}),true);
   assert.deepStrictEqual(gx.offBack,['cf2']);assert.deepStrictEqual(g.offers.sort(),['ap3','cf2'],'the used one is gone, the unused came back');assert.strictEqual(g.cfb,0);
-  assert.strictEqual(gx.broken.length,1);assert.ok(C.isBroken(g,gx.broken[0]));assert.ok(!C.equipOf(g).includes(gx.broken[0]),'a broken piece stays home');
+  assert.deepStrictEqual(gx.broken,[]);assert.deepStrictEqual(gx.gone,['galea'],'v0.91: a printed piece lost in Ranked is used up');assert.ok(!g.gear.some(x=>C.itemBase(x)==='galea'),'gone from the gladiator');
   const d=C.newChar({name:'Dead Man',cls:'hero'},'o','dm',0);d.gear=['galea','gladius','mace'];d.equip=['galea','gladius'];d.offers=['elix2'];const dk=C.kitOf(d);
   const dx=C.gearAfter(d,dk,{survives:false},true);assert.deepStrictEqual(dx.carried.map(P=>P.item),['galea','gladius']);assert.deepStrictEqual(dx.left.map(P=>P.item),['mace']);assert.deepStrictEqual(d.gear,[]);assert.deepStrictEqual(d.offers,[]);
   const cx=C.gearAfter(C.newChar({name:'Custom Man',cls:'hero'},'o','cm',0),dk,{survives:true,brk:['galea']},false);assert.deepStrictEqual(cx.broken,[],'Custom breaks nothing');
@@ -112,7 +112,7 @@ async function routes(){
   m0=mark();await ann.req('match.result',{id:L.id,table:tbl,hash:'h'});const rb=await bob.req('match.result',{id:L.id,table:tbl,hash:'h'});assert.ok(rb.out.died);
   const A1=await getC(ann.ch.id);const ra=(await db.get('MATCH#'+L.id,'META')).outs[ann.acct];
   assert.strictEqual(ra.award,Math.round(8*1.5*0.5));assert.strictEqual(ra.cut,Math.round(ra.award*0.2));assert.strictEqual((await getD(ann.domus.id)).treasury,ra.cut,'the lanista’s cut');
-  assert.strictEqual(ra.broken.length,1);assert.match(ra.broken[0],/^galea#/);assert.ok(C.isBroken(A1,ra.broken[0]));assert.deepStrictEqual(A1.offers.sort(),['elix4','merc1'],'merc1 came back, cf1 was used');
+  assert.deepStrictEqual(ra.broken,[]);assert.deepStrictEqual(ra.gone,['galea'],'v0.91: used up');assert.ok(!A1.gear.some(x=>C.itemBase(x)==='galea'));assert.deepStrictEqual(A1.offers.sort(),['elix4','merc1'],'merc1 came back, cf1 was used');
   const BD=await getD(bob.domus.id);assert.deepStrictEqual(BD.gear,['wraps'],'the dead one’s un-brought piece waits on his house’s shelf');assert.deepStrictEqual((await getC(bob.ch.id)).gear,[]);
   const lo=ann.got('loot.offer',m0);assert.strictEqual(lo.length,1,'the killer’s window');assert.deepStrictEqual(lo[0].pieces.map(p=>C.itemBase(p.item)).sort(),['cassis','flail'],'what he brought');
   assert.strictEqual(lo[0].dead.name,'Bob Gladius');assert.ok(lo[0].until>T);assert.strictEqual((await ann.req('hello',{all:1})).loot.length,1,'hello lists the open window');
@@ -125,7 +125,7 @@ async function routes(){
   await setC(cid.ch.id,{wallet:749});await rejects(cid.req('market.buy',{char:cid.ch.id,id:mk[0].id}),'no_coin');await setC(cid.ch.id,{wallet:800});
   const cb=await cid.req('market.buy',{char:cid.ch.id,id:mk[0].id});assert.ok(cb.char.gear.includes(mk[0].item));assert.strictEqual(cb.char.wallet,50);await rejects(ann.req('market.buy',{char:ann.ch.id,id:mk[0].id}),'sold');
   /* repairs: ⅓ of the value, from the treasury or a wallet */
-  const br=ra.broken[0];const cost=Math.ceil(C.priceOf(catalog.galea)/3);await rejects(ann.req('gear.repair',{holder:ann.ch.id,item:br,pay:'treasury'}),'no_coin');
+  let br;{const c0=await getC(ann.ch.id);C.putPiece(c0,{item:'galea',pc:null},false);br=C.breakItem(c0,'galea');await db.put('CHAR#'+c0.id,'CHAR',c0)}/* a broken piece to mend (v0.91: printed ones are used up in Ranked; repairs still exist) */const cost=Math.ceil(C.priceOf(catalog.galea)/3);await rejects(ann.req('gear.repair',{holder:ann.ch.id,item:br,pay:'treasury'}),'no_coin');
   await setD(ann.domus.id,{treasury:100});const rp=await ann.req('gear.repair',{holder:ann.ch.id,item:br,pay:'treasury'});assert.strictEqual(rp.cost,cost);assert.strictEqual(rp.domus.treasury,100-cost);assert.ok(!C.isBroken(rp.holder,br));
   await rejects(ann.req('gear.repair',{holder:ann.ch.id,item:br}),null,/whole/);await ann.req('domus.equip',{char:ann.ch.id,item:br,on:true});
   /* the treasury buys for the shelf */

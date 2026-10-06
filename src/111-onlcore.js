@@ -92,7 +92,7 @@ const ONLC=(function(){
   /* what a gladiator may buy: market level ≤ rank's level, not already owned (only padded/belt pieces stack) */
   function canBuy(ch,item,catalog){const it=catalog[item];if(!it)return 'No such piece.';if(!ch.alive)return 'The dead buy nothing.';
     /* v0.83: no rank gate on buying — the price gates; one copy of a non-stacking piece (whole or broken) */
-    if(!it.stack&&(ch.gear||[]).some(g=>itemBase(g)===item))return 'Already yours.';
+    /* v0.91 (his call): the printed market is OPEN — any number of copies; spares wait on the shelf, one is worn */
     const p=priceOf(it);if((ch.wallet||0)<p)return `Costs ${p} coin.`;return ''}
   function buy(ch,item,catalog){const why=canBuy(ch,item,catalog);if(why)throw new Error(why);ch.wallet-=priceOf(catalog[item]);ch.gear=[...(ch.gear||[]),item];return ch}
   /* the result of one match for one gladiator. row = the event's result row for that seat:
@@ -473,13 +473,15 @@ const ONLC=(function(){
      A survivor: brought offerings leave the satchel, those still in hand (row.off) come back; Ranked: pieces in row.brk break, the gift CF
      bonus is spent. A Ranked death: everything brought → {carried} (loot / market), everything else → {left} (the house Storeroom);
      the satchel and unopened gifts are lost. ── */
-  function gearAfter(ch,kit,row,ranked){kit=kit||{};const items=kit.items||[],gear=kit.gear||[];const out={broken:[],offBack:[],carried:[],left:[]};
+  function gearAfter(ch,kit,row,ranked){kit=kit||{};const items=kit.items||[],gear=kit.gear||[];const out={broken:[],gone:[],offBack:[],carried:[],left:[]};
     const brought=(kit.offer||[]).slice();const offs=(ch.offers||[]).slice();for(const k of brought){const i=offs.indexOf(k);if(i>=0)offs.splice(i,1)}
     if(ranked&&row&&row.survives===false){for(const it of items){if((ch.gear||[]).includes(it))out.carried.push(takePiece(ch,it))}
       for(const it of (ch.gear||[]).slice())out.left.push(takePiece(ch,it));out.offLeft=offs;out.gifts=giftsOut(ch);ch.offers=[];ch.offerEq=[];ch.cfb=0;return out}
     const back=(row&&row.off||[]).slice();for(const k of brought){const i=back.indexOf(k);if(i>=0){back.splice(i,1);offs.push(k);out.offBack.push(k)}}
     ch.offers=offs;if(Array.isArray(ch.offerEq)){const h=offs.slice();ch.offerEq=ch.offerEq.filter(k=>{const i=h.indexOf(k);if(i<0)return false;h.splice(i,1);return true})}
-    if(ranked){const used=new Set();for(const k of (row&&row.brk)||[]){const j=gear.findIndex((g,i)=>g===k&&!used.has(i));if(j<0)continue;used.add(j);const nit=breakItem(ch,items[j]);if(nit)out.broken.push(nit)}
+    if(ranked){const used=new Set();for(const k of (row&&row.brk)||[]){const j=gear.findIndex((g,i)=>g===k&&!used.has(i));if(j<0)continue;used.add(j);
+        /* v0.91 (his call): a printed piece lost in a Ranked bout is used up — gone (buy another); a named piece comes back broken */
+        if(isNamed(items[j])){const nit=breakItem(ch,items[j]);if(nit)out.broken.push(nit)}else if((ch.gear||[]).includes(items[j])){takePiece(ch,items[j]);out.gone.push(itemBase(items[j]))}}
       if(kit.cfb)ch.cfb=Math.max(0,(ch.cfb|0)-(kit.cfb|0))}
     out.gifts=giftsOut(ch);return out}
   /* ── v0.83 (his call): Flavius's gifts and the freebies belong to the DOMUS, not a gladiator. applyResult still names the gift on the

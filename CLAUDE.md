@@ -1154,6 +1154,10 @@ share copy — the site download play/flavius-rule-arena.zip.)
 - **DONATIVUM (his picks 2026-10-06, v0.91):** Flavius's free online gifts are called a DONATIVUM (pl. Donativa); ⓘ on the card says it is from
   Flavius; no "earned by · opened for" line; ALWAYS BRAND NEW — gift.open never hands out a used chest-pool piece (owner history is only for
   arena-worn pieces, which go to the auction). Server change → ships with the v0.91 server.
+- **OPEN MARKET + USED-UP GEAR (his picks 2026-10-06, v0.91, server change):** printed gear (L1–3) is an open market — any number of copies
+  per gladiator/house (canBuy has no copy limit; tiles show "owned ×N"; spares wait on the shelf, dressApply still wears one). In RANKED a printed
+  piece the gladiator brought and no longer holds at the end (armor at 0 AP, weapon broken/thrown/dropped/used up) is DESTROYED (gearAfter →
+  out.gone, toast "🔥 Used up in the bout … buy new in the Armory"); NAMED pieces still come back Broken (repair ⅓ of value). Custom: nothing.
 - **ONLINE SERVER VERSION (v0.91, 196-v91srv):** hello.build from server/src/build.json (tools/srvstamp.js, run by release.sh; only re-stamps when
   the server code hash changes) + SRV_EXPECT91 in the page (generated 195-v91srvexp.js) → chip bottom-left of Online screens (ok / ⚠ older /
   practice); "Unknown request" → "the server is older than this page". Found 2026-10-06: the live AWS server lacked the v0.89 Domus routes

@@ -156,7 +156,7 @@ Object.assign(MOCK_ROUTES,{
     let i=X.pieces.findIndex(p=>p.item===d.item);if(i<0)throw new Error(_T('Pick one of the pieces.'));if(Date.now()>X.until)i=null;return mockLootResolve83(w,X,i)},
   'market.list':(w)=>{mockLootSweep83(w);return {used:(w.market83||[]).slice(0,60).map(x=>({id:x.id,item:x.item,base:x.base,n:x.n,kind:x.kind,lv:x.lv,st:x.st,price:x.price,at:x.at,from:x.from||null,hist:(x.pc&&x.pc.hist)||[]}))}},
   'market.buy':(w,d,me)=>{const ch=mockOwn83(w,me,d.char);const i=(w.market83||[]).findIndex(x=>x.id===d.id);if(i<0)throw onlErr82(_T('Someone bought it first.'),'sold');const X=w.market83[i];
-    const I=ONLC.pieceInfo({item:X.item,pc:X.pc},onlCatalog());if(!I.stack&&(ch.gear||[]).some(g=>ONLC.itemBase(g)===I.base))throw new Error(_T('Already yours.'));
+    const I=ONLC.pieceInfo({item:X.item,pc:X.pc},onlCatalog());
     if((ch.wallet|0)<X.price)throw onlErr82(_T`Costs ${X.price} coin.`,'no_coin',{cost:X.price});ch.wallet-=X.price;ONLC.putPiece(ch,{item:X.item,pc:X.pc},!ONLC.wearWhy(ch,X.item,X.pc));w.market83.splice(i,1);return {char:ch}},
   'domus.profile':(w,d,me)=>{let D=d.id?mockDomus82(w,String(d.id)):null;if(!D&&d.name){const id=(w.dnames82||{})[ONLC.domusKey(d.name)];D=mockDomus82(w,id)}if(!D)throw onlErr82(_T('No such house.'),'no_domus');
     const glads=Object.values(w.chars).filter(c=>c.domus===D.id&&c.alive).map(c=>{const L=ONLC.cleanLook(c.look);return {id:c.id,name:c.name,cls:c.cls,rank:ONLC.rankFor(c).k,glory:Math.round(ONLC.gloryOf(c)),bouts:c.bouts|0,wins:c.wins|0,survived:c.survived|0,look:L.token?{token:L.token,color:L.color}:{}}});
@@ -209,7 +209,7 @@ function mockAfter83(w,L,M,a,i,row,out,gx){const ch=w.chars[L.players[i].char];i
   const bets=(L&&L.bets||[]).slice();const r=base(w,d,me);
   try{if(L&&M&&M.status==='done'&&was!=='done'){const A=ONLC.agree(M.reports||{});const gs=[];
     L.players.forEach((p,i)=>{const out=(M.outs||{})[p.id];if(!out||had.has(p.id)||/^bot/.test(p.id))return;const ch=w.chars[p.char];const row=(A.table||[]).find(x=>x.seat===i);if(!ch||!row)return;
-      const gx=ONLC.gearAfter(ch,p.kit,row,!!L.ranked);out.broken=gx.broken;out.offBack=gx.offBack;mockAfter83(w,L,M,p.id,i,row,out,gx);gs.push({acct:p.id,i,ch,row,out,gx})});
+      const gx=ONLC.gearAfter(ch,p.kit,row,!!L.ranked);out.broken=gx.broken;out.gone=gx.gone||[];out.offBack=gx.offBack;mockAfter83(w,L,M,p.id,i,row,out,gx);gs.push({acct:p.id,i,ch,row,out,gx})});
     for(const s of gs)if(s.out.died&&s.gx.carried.length){const from={house:(w.accounts[s.acct]||{}).dname||null,glad:s.ch.name};const ks=s.row.ks;
       const k=s.row.kb==='g'&&ks>=0?gs.find(z=>z.i===ks&&z.acct!==s.acct&&!z.out.died&&!(M.abandoned||{})[z.acct]):null;
       if(k){const Ps=s.gx.carried.map(P=>ONLC.tagPiece(P,s.ch));const cat=onlCatalog();w.loot83=w.loot83||{};

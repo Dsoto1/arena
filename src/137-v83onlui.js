@@ -212,8 +212,8 @@ function onl83Repair(from,item){const H=onl83Holder(from);const I=H&&ONL83.piece
 
 /* ---------------- 4 · the MARKET BOARD (offerings row, weapons | armor by level) + the USED market ---------------- */
 function onl83Board(ch){const cat=onlCatalog();const lv=[3,2,1];const coin=c83();
-  const tile=(k,it)=>{const why=ONLC.canBuy(ch,k,cat);const own=(ch.gear||[]).some(g=>ONLC.itemBase(g)===k)&&!it.stack;const pr=ONLC.priceOf(it);
-    return `<button type="button" class="mb83-it ${why&&!own?'no':''} ${own?'own':''}" data-onl82="buy" data-v="${k}" ${why||own?'disabled':''} title="${_T`${esc2(it.n)} · level ${it.lv}${it.kind==='a'?_T` · ${it.ap|0} AP`:''}${why?' — '+esc2(why):''}`}">${typeof cardHTML==='function'?cardHTML((it.kind==='w'?'w:':'a:')+k,'sm'):''}<b>${esc2(it.n)}</b><small>${own?_T('Yours'):`${coin} ${pr}`}</small></button>`};
+  const tile=(k,it)=>{const why=ONLC.canBuy(ch,k,cat);const own=false,nOwn=(ch.gear||[]).filter(g=>ONLC.itemBase(g)===k).length+((typeof ONL82!=='undefined'&&ONL82.dg&&ONL82.dg.gear)||[]).filter(g=>ONLC.itemBase(g)===k).length;const pr=ONLC.priceOf(it);
+    return `<button type="button" class="mb83-it ${why&&!own?'no':''} ${own?'own':''}" data-onl82="buy" data-v="${k}" ${why||own?'disabled':''} title="${_T`${esc2(it.n)} · level ${it.lv}${it.kind==='a'?_T` · ${it.ap|0} AP`:''}${why?' — '+esc2(why):''}`}">${typeof cardHTML==='function'?cardHTML((it.kind==='w'?'w:':'a:')+k,'sm'):''}<b>${esc2(it.n)}</b><small>${coin} ${pr}${nOwn?` · <i class="own91">${_T`owned ×${nOwn}`}</i>`:''}</small></button>`};
   const side=kind=>lv.map(l=>{const items=Object.entries(cat).filter(([k,it])=>it.kind===kind&&it.lv===l).sort((a,b)=>ONLC.priceOf(a[1])-ONLC.priceOf(b[1])||a[1].n.localeCompare(b[1].n));
     return `<div class="mb83-row"><span class="mb83-lv">${'I'.repeat(l)}</span><div class="mb83-items">${items.map(([k,it])=>tile(k,it)).join('')}</div></div>`}).join('');
   const sat=ch.offers||[];const full=sat.length>=ONLC.OFF_MAX;
@@ -225,7 +225,7 @@ function onl83Board(ch){const cat=onlCatalog();const lv=[3,2,1];const coin=c83()
 function onl83Used(ch){if(!ONL83U.used||Date.now()-ONL83U.usedAt>15000){ONL83U.usedAt=Date.now();NET.req('market.list',{}).then(r=>{ONL83U.used=r.used||[];if(ONL.tab==='armory'&&ONL83U.mkt==='used'&&!onlFocus80())onlRedraw()}).catch(()=>{})}
   const U=ONL83U.used;if(!U)return `<p class="rc-sub">${_T`Opening the stalls…`}</p>`;if(!U.length)return `<p class="rc-sub">${_T`Nothing used for sale — the fallen’s gear comes here, with its history.`}</p>`;const cat=onlCatalog();
   return `<div class="us83">${U.map(x=>{const I=ONLC.pieceInfo({item:x.item,pc:{st:x.st,hist:x.hist}},cat)||{n:x.n,lv:x.lv,kind:x.kind,base:x.base,st:x.st,hist:x.hist,val:x.price};
-    const own=(ch.gear||[]).some(g=>ONLC.itemBase(g)===x.base)&&!(cat[x.base]||{}).stack;const no=own?_T('Already yours.'):(ch.wallet|0)<x.price?_T`Costs ${coinAmt87(x.price)}.`:'';
+    const no=(ch.wallet|0)<x.price?_T`Costs ${coinAmt87(x.price)}.`:'';
     return `<div class="us83-it ${x.st==='broken'?'brk83':''}">${onl83PieceCard({...I,st:x.st,hist:x.hist})}<div class="us83-f">${x.st==='broken'?_T`<small class="brk83t">💔 Broken · ⅔ price · repair ${ONLC.repairCost(I)}</small>`:''}
       <small class="us83-from">${x.from?_T`from <b>${esc2(x.from.glad||'?')}</b>${x.from.house?' · '+esc2(onlHouse82(x.from.house)):''}`:''}</small>${onl83Hist(x.hist)}
       <button type="button" class="btn tksm ${no?'':'primary'}" data-onl83="ubuy" data-v="${esc2(x.id)}" ${no?_T`disabled title="${esc2(no)}"`:''}>${_T`Buy · ${c83()} ${x.price}`}</button></div></div>`}).join('')}</div>`}
@@ -364,6 +364,7 @@ if(typeof GUEST_ACTS82!=='undefined')GUEST_ACTS82.add('tab');
 {const base=onlSettled;onlSettled=function(res){const r=base.apply(this,arguments);try{const o=res&&res.out;if(!o||res.void)return r;const bits=[];
     if(!o.died&&(o.award|0)>0)bits.push(_T`💰 Award ${o.award} − the lanista’s cut ${o.cut|0} (to the treasury) = <b>${coinAmt87(o.pay)}</b>`);
     if((o.broken||[]).length)bits.push(_T`💔 ${o.broken.length} piece${o.broken.length===1?'':'s'} came back broken — 🔧 repair in the Storeroom`);
+    if((o.gone||[]).length)bits.push(_T`🔥 Used up in the bout: ${o.gone.map(k=>esc2((onlCatalog()[k]||{}).n||k)).join(', ')} — buy new in the Armory`);
     if((o.offBack||[]).length)bits.push(_T`🧪 ${o.offBack.length} offering${o.offBack.length===1?'':'s'} back in the satchel`);
     if((o.gifts||[]).length)bits.push(_T`🎁 Flavius sends ${o.gifts.length===1?_T('a Donativum'):o.gifts.length+_T(' Donativa')} to the house`);
     if(bits.length)setTimeout(()=>onlToast80(bits.join('<br>')),5200);ONL82.dgAt=0}catch(e){}return r}}

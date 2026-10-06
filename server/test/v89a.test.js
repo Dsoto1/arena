@@ -49,7 +49,7 @@ function armed(flag,id){const ch=C.newChar({name:'Iron Will',cls:'hero'},'o',id,
   const P=C.namedPiece(def,ch);C.putPiece(ch,P,true);C.putPiece(ch,{item:'gladius',pc:null},true);return {ch,P,key:P.pc.w.key}}
 {const {ch,P,key}=armed('integ','ig');const kit=C.kitOf(ch);assert.ok(kit.gear.includes(key));assert.ok(kit.named.find(d=>d.key===key).integ,'the kit carries the flag');
   const gx=C.gearAfter(ch,kit,C.cleanRow({survives:true,brk:[key,'gladius']}),true);
-  assert.ok(!gx.broken.some(it=>it===P.item),'Integer never breaks');assert.strictEqual(C.isBroken(ch,P.item),false);assert.strictEqual(gx.broken.length,1,'the gladius still breaks')}
+  assert.ok(!gx.broken.some(it=>it===P.item),'Integer never breaks');assert.strictEqual(C.isBroken(ch,P.item),false);assert.strictEqual(gx.broken.length,0);assert.deepStrictEqual(gx.gone,['gladius'],'v0.91: the printed gladius is used up')}
 {const {ch,P,key}=armed('lapid','pl');const kit=C.kitOf(ch);const gx=C.gearAfter(ch,kit,{survives:true,brk:[key]},true);assert.ok(gx.broken.length===1&&C.isBroken(ch,gx.broken[0]),'a plain named piece breaks as before')}
 {const {ch,P}=armed('fid','fd');const kit=C.kitOf(ch);const gx=C.gearAfter(ch,kit,{survives:false},true);
   assert.ok(!gx.carried.some(x=>x.item===P.item),'the killer never sees Fidelis');assert.ok(gx.carried.some(x=>x.item==='gladius'),'the rest is still loot');

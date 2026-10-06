@@ -32249,7 +32249,7 @@ const ONLC=(function(){
   /* what a gladiator may buy: market level ≤ rank's level, not already owned (only padded/belt pieces stack) */
   function canBuy(ch,item,catalog){const it=catalog[item];if(!it)return 'No such piece.';if(!ch.alive)return 'The dead buy nothing.';
     /* v0.83: no rank gate on buying — the price gates; one copy of a non-stacking piece (whole or broken) */
-    if(!it.stack&&(ch.gear||[]).some(g=>itemBase(g)===item))return 'Already yours.';
+    /* v0.91 (his call): the printed market is OPEN — any number of copies; spares wait on the shelf, one is worn */
     const p=priceOf(it);if((ch.wallet||0)<p)return `Costs ${p} coin.`;return ''}
   function buy(ch,item,catalog){const why=canBuy(ch,item,catalog);if(why)throw new Error(why);ch.wallet-=priceOf(catalog[item]);ch.gear=[...(ch.gear||[]),item];return ch}
   /* the result of one match for one gladiator. row = the event's result row for that seat:
@@ -32630,13 +32630,15 @@ const ONLC=(function(){
      A survivor: brought offerings leave the satchel, those still in hand (row.off) come back; Ranked: pieces in row.brk break, the gift CF
      bonus is spent. A Ranked death: everything brought → {carried} (loot / market), everything else → {left} (the house Storeroom);
      the satchel and unopened gifts are lost. ── */
-  function gearAfter(ch,kit,row,ranked){kit=kit||{};const items=kit.items||[],gear=kit.gear||[];const out={broken:[],offBack:[],carried:[],left:[]};
+  function gearAfter(ch,kit,row,ranked){kit=kit||{};const items=kit.items||[],gear=kit.gear||[];const out={broken:[],gone:[],offBack:[],carried:[],left:[]};
     const brought=(kit.offer||[]).slice();const offs=(ch.offers||[]).slice();for(const k of brought){const i=offs.indexOf(k);if(i>=0)offs.splice(i,1)}
     if(ranked&&row&&row.survives===false){for(const it of items){if((ch.gear||[]).includes(it))out.carried.push(takePiece(ch,it))}
       for(const it of (ch.gear||[]).slice())out.left.push(takePiece(ch,it));out.offLeft=offs;out.gifts=giftsOut(ch);ch.offers=[];ch.offerEq=[];ch.cfb=0;return out}
     const back=(row&&row.off||[]).slice();for(const k of brought){const i=back.indexOf(k);if(i>=0){back.splice(i,1);offs.push(k);out.offBack.push(k)}}
     ch.offers=offs;if(Array.isArray(ch.offerEq)){const h=offs.slice();ch.offerEq=ch.offerEq.filter(k=>{const i=h.indexOf(k);if(i<0)return false;h.splice(i,1);return true})}
-    if(ranked){const used=new Set();for(const k of (row&&row.brk)||[]){const j=gear.findIndex((g,i)=>g===k&&!used.has(i));if(j<0)continue;used.add(j);const nit=breakItem(ch,items[j]);if(nit)out.broken.push(nit)}
+    if(ranked){const used=new Set();for(const k of (row&&row.brk)||[]){const j=gear.findIndex((g,i)=>g===k&&!used.has(i));if(j<0)continue;used.add(j);
+        /* v0.91 (his call): a printed piece lost in a Ranked bout is used up — gone (buy another); a named piece comes back broken */
+        if(isNamed(items[j])){const nit=breakItem(ch,items[j]);if(nit)out.broken.push(nit)}else if((ch.gear||[]).includes(items[j])){takePiece(ch,items[j]);out.gone.push(itemBase(items[j]))}}
       if(kit.cfb)ch.cfb=Math.max(0,(ch.cfb|0)-(kit.cfb|0))}
     out.gifts=giftsOut(ch);return out}
   /* ── v0.83 (his call): Flavius's gifts and the freebies belong to the DOMUS, not a gladiator. applyResult still names the gift on the
@@ -37429,7 +37431,7 @@ Object.assign(MOCK_ROUTES,{
     let i=X.pieces.findIndex(p=>p.item===d.item);if(i<0)throw new Error(_T('Pick one of the pieces.'));if(Date.now()>X.until)i=null;return mockLootResolve83(w,X,i)},
   'market.list':(w)=>{mockLootSweep83(w);return {used:(w.market83||[]).slice(0,60).map(x=>({id:x.id,item:x.item,base:x.base,n:x.n,kind:x.kind,lv:x.lv,st:x.st,price:x.price,at:x.at,from:x.from||null,hist:(x.pc&&x.pc.hist)||[]}))}},
   'market.buy':(w,d,me)=>{const ch=mockOwn83(w,me,d.char);const i=(w.market83||[]).findIndex(x=>x.id===d.id);if(i<0)throw onlErr82(_T('Someone bought it first.'),'sold');const X=w.market83[i];
-    const I=ONLC.pieceInfo({item:X.item,pc:X.pc},onlCatalog());if(!I.stack&&(ch.gear||[]).some(g=>ONLC.itemBase(g)===I.base))throw new Error(_T('Already yours.'));
+    const I=ONLC.pieceInfo({item:X.item,pc:X.pc},onlCatalog());
     if((ch.wallet|0)<X.price)throw onlErr82(_T`Costs ${X.price} coin.`,'no_coin',{cost:X.price});ch.wallet-=X.price;ONLC.putPiece(ch,{item:X.item,pc:X.pc},!ONLC.wearWhy(ch,X.item,X.pc));w.market83.splice(i,1);return {char:ch}},
   'domus.profile':(w,d,me)=>{let D=d.id?mockDomus82(w,String(d.id)):null;if(!D&&d.name){const id=(w.dnames82||{})[ONLC.domusKey(d.name)];D=mockDomus82(w,id)}if(!D)throw onlErr82(_T('No such house.'),'no_domus');
     const glads=Object.values(w.chars).filter(c=>c.domus===D.id&&c.alive).map(c=>{const L=ONLC.cleanLook(c.look);return {id:c.id,name:c.name,cls:c.cls,rank:ONLC.rankFor(c).k,glory:Math.round(ONLC.gloryOf(c)),bouts:c.bouts|0,wins:c.wins|0,survived:c.survived|0,look:L.token?{token:L.token,color:L.color}:{}}});
@@ -37482,7 +37484,7 @@ function mockAfter83(w,L,M,a,i,row,out,gx){const ch=w.chars[L.players[i].char];i
   const bets=(L&&L.bets||[]).slice();const r=base(w,d,me);
   try{if(L&&M&&M.status==='done'&&was!=='done'){const A=ONLC.agree(M.reports||{});const gs=[];
     L.players.forEach((p,i)=>{const out=(M.outs||{})[p.id];if(!out||had.has(p.id)||/^bot/.test(p.id))return;const ch=w.chars[p.char];const row=(A.table||[]).find(x=>x.seat===i);if(!ch||!row)return;
-      const gx=ONLC.gearAfter(ch,p.kit,row,!!L.ranked);out.broken=gx.broken;out.offBack=gx.offBack;mockAfter83(w,L,M,p.id,i,row,out,gx);gs.push({acct:p.id,i,ch,row,out,gx})});
+      const gx=ONLC.gearAfter(ch,p.kit,row,!!L.ranked);out.broken=gx.broken;out.gone=gx.gone||[];out.offBack=gx.offBack;mockAfter83(w,L,M,p.id,i,row,out,gx);gs.push({acct:p.id,i,ch,row,out,gx})});
     for(const s of gs)if(s.out.died&&s.gx.carried.length){const from={house:(w.accounts[s.acct]||{}).dname||null,glad:s.ch.name};const ks=s.row.ks;
       const k=s.row.kb==='g'&&ks>=0?gs.find(z=>z.i===ks&&z.acct!==s.acct&&!z.out.died&&!(M.abandoned||{})[z.acct]):null;
       if(k){const Ps=s.gx.carried.map(P=>ONLC.tagPiece(P,s.ch));const cat=onlCatalog();w.loot83=w.loot83||{};
@@ -37709,8 +37711,8 @@ function onl83Repair(from,item){const H=onl83Holder(from);const I=H&&ONL83.piece
 
 /* ---------------- 4 · the MARKET BOARD (offerings row, weapons | armor by level) + the USED market ---------------- */
 function onl83Board(ch){const cat=onlCatalog();const lv=[3,2,1];const coin=c83();
-  const tile=(k,it)=>{const why=ONLC.canBuy(ch,k,cat);const own=(ch.gear||[]).some(g=>ONLC.itemBase(g)===k)&&!it.stack;const pr=ONLC.priceOf(it);
-    return `<button type="button" class="mb83-it ${why&&!own?'no':''} ${own?'own':''}" data-onl82="buy" data-v="${k}" ${why||own?'disabled':''} title="${_T`${esc2(it.n)} · level ${it.lv}${it.kind==='a'?_T` · ${it.ap|0} AP`:''}${why?' — '+esc2(why):''}`}">${typeof cardHTML==='function'?cardHTML((it.kind==='w'?'w:':'a:')+k,'sm'):''}<b>${esc2(it.n)}</b><small>${own?_T('Yours'):`${coin} ${pr}`}</small></button>`};
+  const tile=(k,it)=>{const why=ONLC.canBuy(ch,k,cat);const own=false,nOwn=(ch.gear||[]).filter(g=>ONLC.itemBase(g)===k).length+((typeof ONL82!=='undefined'&&ONL82.dg&&ONL82.dg.gear)||[]).filter(g=>ONLC.itemBase(g)===k).length;const pr=ONLC.priceOf(it);
+    return `<button type="button" class="mb83-it ${why&&!own?'no':''} ${own?'own':''}" data-onl82="buy" data-v="${k}" ${why||own?'disabled':''} title="${_T`${esc2(it.n)} · level ${it.lv}${it.kind==='a'?_T` · ${it.ap|0} AP`:''}${why?' — '+esc2(why):''}`}">${typeof cardHTML==='function'?cardHTML((it.kind==='w'?'w:':'a:')+k,'sm'):''}<b>${esc2(it.n)}</b><small>${coin} ${pr}${nOwn?` · <i class="own91">${_T`owned ×${nOwn}`}</i>`:''}</small></button>`};
   const side=kind=>lv.map(l=>{const items=Object.entries(cat).filter(([k,it])=>it.kind===kind&&it.lv===l).sort((a,b)=>ONLC.priceOf(a[1])-ONLC.priceOf(b[1])||a[1].n.localeCompare(b[1].n));
     return `<div class="mb83-row"><span class="mb83-lv">${'I'.repeat(l)}</span><div class="mb83-items">${items.map(([k,it])=>tile(k,it)).join('')}</div></div>`}).join('');
   const sat=ch.offers||[];const full=sat.length>=ONLC.OFF_MAX;
@@ -37722,7 +37724,7 @@ function onl83Board(ch){const cat=onlCatalog();const lv=[3,2,1];const coin=c83()
 function onl83Used(ch){if(!ONL83U.used||Date.now()-ONL83U.usedAt>15000){ONL83U.usedAt=Date.now();NET.req('market.list',{}).then(r=>{ONL83U.used=r.used||[];if(ONL.tab==='armory'&&ONL83U.mkt==='used'&&!onlFocus80())onlRedraw()}).catch(()=>{})}
   const U=ONL83U.used;if(!U)return `<p class="rc-sub">${_T`Opening the stalls…`}</p>`;if(!U.length)return `<p class="rc-sub">${_T`Nothing used for sale — the fallen’s gear comes here, with its history.`}</p>`;const cat=onlCatalog();
   return `<div class="us83">${U.map(x=>{const I=ONLC.pieceInfo({item:x.item,pc:{st:x.st,hist:x.hist}},cat)||{n:x.n,lv:x.lv,kind:x.kind,base:x.base,st:x.st,hist:x.hist,val:x.price};
-    const own=(ch.gear||[]).some(g=>ONLC.itemBase(g)===x.base)&&!(cat[x.base]||{}).stack;const no=own?_T('Already yours.'):(ch.wallet|0)<x.price?_T`Costs ${coinAmt87(x.price)}.`:'';
+    const no=(ch.wallet|0)<x.price?_T`Costs ${coinAmt87(x.price)}.`:'';
     return `<div class="us83-it ${x.st==='broken'?'brk83':''}">${onl83PieceCard({...I,st:x.st,hist:x.hist})}<div class="us83-f">${x.st==='broken'?_T`<small class="brk83t">💔 Broken · ⅔ price · repair ${ONLC.repairCost(I)}</small>`:''}
       <small class="us83-from">${x.from?_T`from <b>${esc2(x.from.glad||'?')}</b>${x.from.house?' · '+esc2(onlHouse82(x.from.house)):''}`:''}</small>${onl83Hist(x.hist)}
       <button type="button" class="btn tksm ${no?'':'primary'}" data-onl83="ubuy" data-v="${esc2(x.id)}" ${no?_T`disabled title="${esc2(no)}"`:''}>${_T`Buy · ${c83()} ${x.price}`}</button></div></div>`}).join('')}</div>`}
@@ -37861,6 +37863,7 @@ if(typeof GUEST_ACTS82!=='undefined')GUEST_ACTS82.add('tab');
 {const base=onlSettled;onlSettled=function(res){const r=base.apply(this,arguments);try{const o=res&&res.out;if(!o||res.void)return r;const bits=[];
     if(!o.died&&(o.award|0)>0)bits.push(_T`💰 Award ${o.award} − the lanista’s cut ${o.cut|0} (to the treasury) = <b>${coinAmt87(o.pay)}</b>`);
     if((o.broken||[]).length)bits.push(_T`💔 ${o.broken.length} piece${o.broken.length===1?'':'s'} came back broken — 🔧 repair in the Storeroom`);
+    if((o.gone||[]).length)bits.push(_T`🔥 Used up in the bout: ${o.gone.map(k=>esc2((onlCatalog()[k]||{}).n||k)).join(', ')} — buy new in the Armory`);
     if((o.offBack||[]).length)bits.push(_T`🧪 ${o.offBack.length} offering${o.offBack.length===1?'':'s'} back in the satchel`);
     if((o.gifts||[]).length)bits.push(_T`🎁 Flavius sends ${o.gifts.length===1?_T('a Donativum'):o.gifts.length+_T(' Donativa')} to the house`);
     if(bits.length)setTimeout(()=>onlToast80(bits.join('<br>')),5200);ONL82.dgAt=0}catch(e){}return r}}
@@ -46944,7 +46947,7 @@ function wear91Layer(rubble){if(!WEAR91.on||!S)return;const t0=performance.now()
 function rubbleOn91(r,c){for(const rb of (S&&S.rubble)||[]){const dr=rb.dr||0,dc=rb.dc||0;for(let k=0;k<3;k++)if(rb.r+dr*k===r&&rb.c+dc*k===c)return true}return false}
 {const base=describeTile;describeTile=function(t){let h=base.apply(this,arguments);try{if(t&&S&&typeof h==='string'&&rubbleOn91(t.r,t.c)&&!pillarAt(t.r,t.c))h+=' · '+_T('Rubble — walkable')}catch(e){}return h}}
 /* 195-v91srvexp — GENERATED by tools/srvstamp.js: the online server this page expects (server/src/build.json). */
-const SRV_EXPECT91={"v":"0.91","hash":"c98c388bde28"};
+const SRV_EXPECT91={"v":"0.91","hash":"4540d582addd"};
 /* 196-v91srv — v0.91 THE ONLINE SERVER'S VERSION (his ask 2026-10-06, after "Unknown request: domus.look" — the page was newer than the
    server running on AWS). hello now carries build {v, hash} (server/src/build.json, stamped by tools/srvstamp.js); this page knows the
    server it expects (SRV_EXPECT91, generated into 195-v91srvexp.js).
