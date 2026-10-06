@@ -1,0 +1,1798 @@
+[
+ {
+  "k": "<span>Pay for a level, then take any <b>weapon</b> or <b>one armor piece</b> from its row</span>",
+  "w": "106-v75.js:219"
+ },
+ {
+  "k": "Snake draft: {0}. Each pick may take any remaining level 1-3 weapon or armor that still fits the gladiator.",
+  "w": "122-v81play.js:50"
+ },
+ {
+  "k": "Take any lit piece — <b style=\"color:var(--gold2)\">{0}</b> fit you. Weapons go to a free hand; armor equips straight away.",
+  "w": "122-v81play.js:70"
+ },
+ {
+  "k": "Flying stones and spears, the clean-up crew, the market peeks. Quick halves them.",
+  "w": "159-v88set.js:24"
+ },
+ {
+  "k": "Really?",
+  "w": "167-v89moods.js:32"
+ },
+ {
+  "k": "What was THAT?",
+  "w": "167-v89moods.js:32"
+ },
+ {
+  "k": "I paid for this?",
+  "w": "167-v89moods.js:32"
+ },
+ {
+  "k": "Is this a joke? Am I laughing?",
+  "w": "167-v89moods.js:32"
+ },
+ {
+  "k": "Explain that to my treasurer.",
+  "w": "167-v89moods.js:32"
+ },
+ {
+  "k": "Really? At these prices?",
+  "w": "167-v89moods.js:34"
+ },
+ {
+  "k": "What was THAT? I want an invoice.",
+  "w": "167-v89moods.js:34"
+ },
+ {
+  "k": "Really, darling?",
+  "w": "167-v89moods.js:35"
+ },
+ {
+  "k": "What on earth was that?",
+  "w": "167-v89moods.js:35"
+ },
+ {
+  "k": "What was THAT, recruit?",
+  "w": "167-v89moods.js:36"
+ },
+ {
+  "k": "Really? On my sand?",
+  "w": "167-v89moods.js:36"
+ },
+ {
+  "k": "Really? Before the gods?",
+  "w": "167-v89moods.js:37"
+ },
+ {
+  "k": "What omen was THAT?",
+  "w": "167-v89moods.js:37"
+ },
+ {
+  "k": "Really? That is your line?",
+  "w": "167-v89moods.js:38"
+ },
+ {
+  "k": "What was THAT? Strike it from the scroll.",
+  "w": "167-v89moods.js:38"
+ },
+ {
+  "k": "Really? THAT is the show?",
+  "w": "167-v89moods.js:39"
+ },
+ {
+  "k": "What was THAT, folks?",
+  "w": "167-v89moods.js:39"
+ },
+ {
+  "k": "Really, dearie?",
+  "w": "167-v89moods.js:40"
+ },
+ {
+  "k": "What was THAT? Even the eels laughed.",
+  "w": "167-v89moods.js:40"
+ },
+ {
+  "k": "Coin and cards: only with the Loot action, on your turn.",
+  "w": "169-v89loot.js:26"
+ },
+ {
+  "k": "Your one Loot this turn is used — only thrown weapons in the sand can still be picked up.",
+  "w": "169-v89loot.js:27"
+ },
+ {
+  "k": "No arm left to hold it.",
+  "w": "169-v89loot.js:28"
+ },
+ {
+  "k": "Nowhere left to wear it.",
+  "w": "169-v89loot.js:29"
+ },
+ {
+  "k": "In the sand",
+  "w": "169-v89loot.js:40"
+ },
+ {
+  "k": "✝ {0}’s corpse",
+  "w": "169-v89loot.js:41"
+ },
+ {
+  "k": "{0}’s dropped gear",
+  "w": "169-v89loot.js:41"
+ },
+ {
+  "k": "Your hands",
+  "w": "169-v89loot.js:45"
+ },
+ {
+  "k": "arm lost",
+  "w": "169-v89loot.js:45"
+ },
+ {
+  "k": "style=\"--pc:{0}\"",
+  "w": "169-v89loot.js:49"
+ },
+ {
+  "k": "Not now.",
+  "w": "169-v89loot.js:72"
+ },
+ {
+  "k": "primary ↔ secondary",
+  "w": "169-v89loot.js:90"
+ },
+ {
+  "k": "Not your turn and nobody is attacking you: take anything lying here — as much as you have room for. Weapons go to a free hand (or swap one out); armor goes on a free spot.",
+  "w": "169-v89loot.js:91"
+ },
+ {
+  "k": "🪑 {0} — 💾 Save & leave?",
+  "w": "170-v89hs.js:26"
+ },
+ {
+  "k": "🪑 {0} — 🚪 Abandon the event?",
+  "w": "170-v89hs.js:26"
+ },
+ {
+  "k": "The whole table must agree: the match is saved as it stands and everyone leaves the arena. It can be resumed later.",
+  "w": "170-v89hs.js:27"
+ },
+ {
+  "k": "The whole table must agree: the event ends now, unresolved — no Fates, nothing reaches anyone’s book.",
+  "w": "170-v89hs.js:27"
+ },
+ {
+  "k": "🪑 {0} wants to play on — the table stays.",
+  "w": "170-v89hs.js:30"
+ },
+ {
+  "k": "✝ Fallen since: {0}",
+  "w": "170-v89hs.js:42"
+ },
+ {
+  "k": "🔌 You were away too long — you left the room.",
+  "w": "171-v89onl.js:60"
+ },
+ {
+  "k": "reconnecting…",
+  "w": "171-v89onl.js:65"
+ },
+ {
+  "k": "👑 Host reconnecting… — the room passes to the longest-waiting lanista if they are not back within {0} s.",
+  "w": "171-v89onl.js:70"
+ },
+ {
+  "k": "⚠ The server did not take that order:",
+  "w": "171-v89onl.js:89"
+ },
+ {
+  "k": "⇄ swap hands",
+  "w": "171-v89onl.js:95"
+ },
+ {
+  "k": "take {0}",
+  "w": "171-v89onl.js:95"
+ },
+ {
+  "k": "Take {0}",
+  "w": "171-v89onl.js:96"
+ },
+ {
+  "k": "⏳ {0} — carried out as your turn begins",
+  "w": "171-v89onl.js:97"
+ },
+ {
+  "k": "🎒 ⇄ Ordered — your hands swap as your turn begins (online, orders wait for your turn).",
+  "w": "171-v89onl.js:99"
+ },
+ {
+  "k": "🎒 Ordered — you take {0} as your turn begins.",
+  "w": "171-v89onl.js:101"
+ },
+ {
+  "k": "🎒 Carrying out your orders…",
+  "w": "171-v89onl.js:119"
+ },
+ {
+  "k": "🎒 {0} swaps hands: {1} is now primary, {2} secondary.",
+  "w": "171-v89onl.js:125"
+ },
+ {
+  "k": "🎒 {0} reaches for {1} — it is no longer there.",
+  "w": "171-v89onl.js:126"
+ },
+ {
+  "k": "Temple",
+  "w": "172-v89city.js:32"
+ },
+ {
+  "k": "Training ground",
+  "w": "172-v89city.js:42"
+ },
+ {
+  "k": "⬆ THE ARENA GATE",
+  "w": "172-v89city.js:596"
+ },
+ {
+  "k": "YOU · LANISTA",
+  "w": "172-v89city.js:598"
+ },
+ {
+  "k": "YOU",
+  "w": "172-v89city.js:598"
+ },
+ {
+  "k": "🍎 The fruit seller",
+  "w": "172-v89city.js:655"
+ },
+ {
+  "k": "Figs, pomegranates and apples from the hills. \"For your fighters, lanista — nothing builds a sword-arm like a fig.\"",
+  "w": "172-v89city.js:655"
+ },
+ {
+  "k": "🏺 The potter",
+  "w": "172-v89city.js:656"
+ },
+ {
+  "k": "Amphorae, lamps and cups stacked in towers. Every one of them, he swears, was fired in Arretium.",
+  "w": "172-v89city.js:656"
+ },
+ {
+  "k": "🍞 The baker",
+  "w": "172-v89city.js:657"
+ },
+ {
+  "k": "Round loaves stamped with the baker’s name, still warm. The queue never ends on a games day.",
+  "w": "172-v89city.js:657"
+ },
+ {
+  "k": "🏛 The temple of {0}",
+  "w": "172-v89city.js:660"
+ },
+ {
+  "k": "Incense, a smoking altar and a priest who has seen a great many lanistae pray before the games.",
+  "w": "172-v89city.js:660"
+ },
+ {
+  "k": "Offerings for your fighters are made here in the week of your games.",
+  "w": "172-v89city.js:661"
+ },
+ {
+  "k": "Lanistae make offerings here in the week of their games.",
+  "w": "172-v89city.js:661"
+ },
+ {
+  "k": "🏋 The training ground",
+  "w": "172-v89city.js:663"
+ },
+ {
+  "k": "Palus posts, raked sand and a doctore’s shout. Fighters loosen up here beside the arena wall.",
+  "w": "172-v89city.js:663"
+ },
+ {
+  "k": "Watch them work:",
+  "w": "172-v89city.js:664"
+ },
+ {
+  "k": "🏋 Your Training Yard<small>drills · spar · exhibitions</small>",
+  "w": "172-v89city.js:665"
+ },
+ {
+  "k": "The arms market and the armorer sell kit for your fighters.",
+  "w": "172-v89city.js:669"
+ },
+ {
+  "k": "{0} {1} accepts your offering.",
+  "w": "172-v89city.js:674"
+ },
+ {
+  "k": "⏎ Back to Match Week",
+  "w": "172-v89city.js:681"
+ },
+ {
+  "k": "👥 Who is here now: the lanistas online — invite, join or watch them.",
+  "w": "174-v89onlui.js:15"
+ },
+ {
+  "k": "No such loadout.",
+  "w": "175-v89domus.js:58"
+ },
+ {
+  "k": "head",
+  "w": "175-v89domus.js:102"
+ },
+ {
+  "k": "chest",
+  "w": "175-v89domus.js:102"
+ },
+ {
+  "k": "Make a gladiator active first.",
+  "w": "175-v89domus.js:130"
+ },
+ {
+  "k": "Named pieces wait until Veteranus.",
+  "w": "175-v89domus.js:131"
+ },
+ {
+  "k": "It does not fit beside what he wears.",
+  "w": "175-v89domus.js:132"
+ },
+ {
+  "k": "· replaces {0}",
+  "w": "175-v89domus.js:133"
+ },
+ {
+  "k": "each arm",
+  "w": "175-v89domus.js:135"
+ },
+ {
+  "k": "each leg",
+  "w": "175-v89domus.js:135"
+ },
+ {
+  "k": "{0}{1} AP {2}{3}",
+  "w": "175-v89domus.js:136"
+ },
+ {
+  "k": "· replaces {0} (recruit kit)",
+  "w": "175-v89domus.js:139"
+ },
+ {
+  "k": "· with {0}",
+  "w": "175-v89domus.js:150"
+ },
+ {
+  "k": "Repair: a third of its value",
+  "w": "175-v89domus.js:152"
+ },
+ {
+  "k": "🔨 {0}",
+  "w": "175-v89domus.js:152"
+ },
+ {
+  "k": "Kept home — never brought into a Ranked match (click to bring it again)",
+  "w": "175-v89domus.js:152"
+ },
+ {
+  "k": "Keep home: never bring it into a Ranked match",
+  "w": "175-v89domus.js:152"
+ },
+ {
+  "k": "The 20% cut from bouts",
+  "w": "175-v89domus.js:156"
+ },
+ {
+  "k": "Flavius’s gifts",
+  "w": "175-v89domus.js:156"
+ },
+ {
+  "k": "Sales (a full shelf)",
+  "w": "175-v89domus.js:156"
+ },
+ {
+  "k": "Refunds",
+  "w": "175-v89domus.js:156"
+ },
+ {
+  "k": "Tester grants",
+  "w": "175-v89domus.js:156"
+ },
+ {
+  "k": "Gear for the shelf",
+  "w": "175-v89domus.js:157"
+ },
+ {
+  "k": "Repairs",
+  "w": "175-v89domus.js:157"
+ },
+ {
+  "k": "Class changes",
+  "w": "175-v89domus.js:157"
+ },
+ {
+  "k": "Upgrades",
+  "w": "175-v89domus.js:157"
+ },
+ {
+  "k": "🏛 The treasury · {0}",
+  "w": "175-v89domus.js:159"
+ },
+ {
+  "k": "The ledger starts with v0.89 — nothing booked yet.",
+  "w": "175-v89domus.js:159"
+ },
+ {
+  "k": "Nothing yet.",
+  "w": "175-v89domus.js:160"
+ },
+ {
+  "k": "No bout paid the house yet.",
+  "w": "175-v89domus.js:162"
+ },
+ {
+  "k": "Totals since v0.89 ({0}) — what came before is not known.",
+  "w": "175-v89domus.js:163"
+ },
+ {
+  "k": "In",
+  "w": "175-v89domus.js:164"
+ },
+ {
+  "k": "Out",
+  "w": "175-v89domus.js:164"
+ },
+ {
+  "k": "Earned by gladiator",
+  "w": "175-v89domus.js:164"
+ },
+ {
+  "k": "Device",
+  "w": "175-v89domus.js:167"
+ },
+ {
+  "k": "Crest",
+  "w": "175-v89domus.js:168"
+ },
+ {
+  "k": "💾 Fly these colours",
+  "w": "175-v89domus.js:169"
+ },
+ {
+  "k": "The printed banner devices only.",
+  "w": "175-v89domus.js:169"
+ },
+ {
+  "k": "✓ Built",
+  "w": "175-v89domus.js:171"
+ },
+ {
+  "k": "Build · {0}",
+  "w": "175-v89domus.js:171"
+ },
+ {
+  "k": "A fifth gladiator slot",
+  "w": "175-v89domus.js:172"
+ },
+ {
+  "k": "Raise up to {0} living gladiators.",
+  "w": "175-v89domus.js:172"
+ },
+ {
+  "k": "A bigger offerings shelf",
+  "w": "175-v89domus.js:172"
+ },
+ {
+  "k": "{0} → {1} places.",
+  "w": "175-v89domus.js:172"
+ },
+ {
+  "k": "Paid from the treasury · once each.",
+  "w": "175-v89domus.js:172"
+ },
+ {
+  "k": "🎨 Colours & crest",
+  "w": "175-v89domus.js:176"
+ },
+ {
+  "k": "👤 Patron",
+  "w": "175-v89domus.js:176"
+ },
+ {
+  "k": "🏗 Upgrades",
+  "w": "175-v89domus.js:176"
+ },
+ {
+  "k": "{0} gladiator{1} raised",
+  "w": "175-v89domus.js:179"
+ },
+ {
+  "k": "The treasury ledger",
+  "w": "175-v89domus.js:182"
+ },
+ {
+  "k": "Only until your first gladiator.",
+  "w": "175-v89domus.js:183"
+ },
+ {
+  "k": "Right hand - Primary",
+  "w": "175-v89domus.js:187"
+ },
+ {
+  "k": "Left hand - Secondary",
+  "w": "175-v89domus.js:187"
+ },
+ {
+  "k": "Take it off (to the shelf)",
+  "w": "175-v89domus.js:191"
+ },
+ {
+  "k": "Kept home in Ranked",
+  "w": "175-v89domus.js:192"
+ },
+ {
+  "k": "{0} · {1} AP — take it off",
+  "w": "175-v89domus.js:194"
+ },
+ {
+  "k": "{0} — back to the shelf",
+  "w": "175-v89domus.js:196"
+ },
+ {
+  "k": "Brought into the next match",
+  "w": "175-v89domus.js:196"
+ },
+ {
+  "k": "Bring it (at most {0})",
+  "w": "175-v89domus.js:196"
+ },
+ {
+  "k": "🧪 On him · {0}/{1} · ★ brought (max {2})",
+  "w": "175-v89domus.js:197"
+ },
+ {
+  "k": "No offerings — drag one from the shelf.",
+  "w": "175-v89domus.js:197"
+ },
+ {
+  "k": "Loadouts",
+  "w": "175-v89domus.js:199"
+ },
+ {
+  "k": "Wear this loadout",
+  "w": "175-v89domus.js:199"
+ },
+ {
+  "k": "Forget this loadout",
+  "w": "175-v89domus.js:199"
+ },
+ {
+  "k": "💾 Save what he wears",
+  "w": "175-v89domus.js:200"
+ },
+ {
+  "k": "Drop armor here",
+  "w": "175-v89domus.js:208"
+ },
+ {
+  "k": "No armor — click or drag a piece from the bar.",
+  "w": "175-v89domus.js:208"
+ },
+ {
+  "k": "Change class: {0} coin from the treasury",
+  "w": "175-v89domus.js:210"
+ },
+ {
+  "k": "🔄 Class · {0}",
+  "w": "175-v89domus.js:210"
+ },
+ {
+  "k": "his own coin — lost at death",
+  "w": "175-v89domus.js:213"
+ },
+ {
+  "k": "At stake in Ranked",
+  "w": "175-v89domus.js:214"
+ },
+ {
+  "k": "gear {0} + purse {1}",
+  "w": "175-v89domus.js:214"
+ },
+ {
+  "k": "⏳ In a game — his gear waits until it is over.",
+  "w": "175-v89domus.js:216"
+ },
+ {
+  "k": "Nothing in the house — the Armory sells, Flavius gifts, the fallen leave their gear here.",
+  "w": "175-v89domus.js:221"
+ },
+ {
+  "k": "The shelf is empty — the Armory sells offerings.",
+  "w": "175-v89domus.js:222"
+ },
+ {
+  "k": "⚔ Gear <small>{0}</small>",
+  "w": "175-v89domus.js:223"
+ },
+ {
+  "k": "🧪 Offerings <small>{0}/{1}</small>",
+  "w": "175-v89domus.js:223"
+ },
+ {
+  "k": "Click a piece to put it on {0} — or drag it onto him. Drag what he wears back here to take it off.",
+  "w": "175-v89domus.js:224"
+ },
+ {
+  "k": "The house’s gear waits here for a gladiator.",
+  "w": "175-v89domus.js:224"
+ },
+ {
+  "k": "bare hands",
+  "w": "175-v89domus.js:233"
+ },
+ {
+  "k": "Purse {0}",
+  "w": "175-v89domus.js:233"
+ },
+ {
+  "k": "Stake {0}",
+  "w": "175-v89domus.js:233"
+ },
+ {
+  "k": "<small class=\"lk89t\">🔒 In a match</small>",
+  "w": "175-v89domus.js:233"
+ },
+ {
+  "k": "<span class=\"gc89-plus\">＋</span><b>New gladiator</b><small>starts as a Tiro</small>",
+  "w": "175-v89domus.js:235"
+ },
+ {
+  "k": "<span class=\"gc89-plus\">🔒</span><b>A fifth slot</b><small>{0} from the treasury</small>",
+  "w": "175-v89domus.js:236"
+ },
+ {
+  "k": "slain by {0}",
+  "w": "175-v89domus.js:243"
+ },
+ {
+  "k": "slain by a CPU gladiator",
+  "w": "175-v89domus.js:243"
+ },
+ {
+  "k": "taken by a beast",
+  "w": "175-v89domus.js:243"
+ },
+ {
+  "k": "killed by the arena",
+  "w": "175-v89domus.js:243"
+ },
+ {
+  "k": "abandoned the sand — Damnatio",
+  "w": "175-v89domus.js:243"
+ },
+ {
+  "k": "the Fate took him",
+  "w": "175-v89domus.js:243"
+ },
+ {
+  "k": "🕯 Memorial wall <small class=\"rc-sub\">every fallen gladiator of the house · {0}</small>",
+  "w": "175-v89domus.js:244"
+ },
+ {
+  "k": "fell before v0.89",
+  "w": "175-v89domus.js:245"
+ },
+ {
+  "k": "⏳ In a game ({0}) — the Domus waits until it is over.",
+  "w": "175-v89domus.js:251"
+ },
+ {
+  "k": "In a match — the storeroom waits.",
+  "w": "175-v89domus.js:263"
+ },
+ {
+  "k": "🛡 {0} wears {1}.",
+  "w": "175-v89domus.js:264"
+ },
+ {
+  "k": "🗄 {0} → the shelf.",
+  "w": "175-v89domus.js:266"
+ },
+ {
+  "k": "The repair costs {0} coin — neither the treasury nor a purse can pay.",
+  "w": "175-v89domus.js:269"
+ },
+ {
+  "k": "🔨 {0} is whole again ({1}).",
+  "w": "175-v89domus.js:270"
+ },
+ {
+  "k": "🔒 Kept home — never brought into a Ranked match.",
+  "w": "175-v89domus.js:272"
+ },
+ {
+  "k": "🔓 It goes into Ranked matches again.",
+  "w": "175-v89domus.js:272"
+ },
+ {
+  "k": "🔄 A new class for {0}",
+  "w": "175-v89domus.js:274"
+ },
+ {
+  "k": "{0} from the treasury ({1}). His gear stays his; the recruit kit follows the new class. His look stays.",
+  "w": "175-v89domus.js:274"
+ },
+ {
+  "k": "🔄 {0} is now {1}.",
+  "w": "175-v89domus.js:278"
+ },
+ {
+  "k": "💾 Save",
+  "w": "175-v89domus.js:280"
+ },
+ {
+  "k": "broken",
+  "w": "175-v89domus.js:284"
+ },
+ {
+  "k": "gone",
+  "w": "175-v89domus.js:284"
+ },
+ {
+  "k": "waits until Veteranus",
+  "w": "175-v89domus.js:284"
+ },
+ {
+  "k": "with {0}",
+  "w": "175-v89domus.js:286"
+ },
+ {
+  "k": "▶ {0} wears “{1}”.",
+  "w": "175-v89domus.js:287"
+ },
+ {
+  "k": "Left out: {0}.",
+  "w": "175-v89domus.js:287"
+ },
+ {
+  "k": "🏗 A fifth gladiator slot is built.",
+  "w": "175-v89domus.js:315"
+ },
+ {
+  "k": "🏗 The offerings shelf is bigger.",
+  "w": "175-v89domus.js:315"
+ },
+ {
+  "k": "✎ Rename {0}",
+  "w": "175-v89domus.js:321"
+ },
+ {
+  "k": "✎ Now <b>{0}</b>.",
+  "w": "175-v89domus.js:321"
+ },
+ {
+  "k": "Loadout name",
+  "w": "175-v89domus.js:322"
+ },
+ {
+  "k": "💾 Loadout “{0}” saved.",
+  "w": "175-v89domus.js:323"
+ },
+ {
+  "k": "🎨 The house flies its colours.",
+  "w": "175-v89domus.js:324"
+ },
+ {
+  "k": "Level {0}",
+  "w": "175-v89domus.js:359"
+ },
+ {
+  "k": "· {0} AP · {1}{2}",
+  "w": "175-v89domus.js:359"
+ },
+ {
+  "k": "(a pair)",
+  "w": "175-v89domus.js:359"
+ },
+ {
+  "k": "· power {0} · range {1}",
+  "w": "175-v89domus.js:359"
+ },
+ {
+  "k": "value {0}",
+  "w": "175-v89domus.js:359"
+ },
+ {
+  "k": "✓ Fits {0}: {1}",
+  "w": "175-v89domus.js:360"
+ },
+ {
+  "k": "<small>💔 Broken — 🔨 {0} to repair</small>",
+  "w": "175-v89domus.js:360"
+ },
+ {
+  "k": "<small>🔒 Kept home in Ranked</small>",
+  "w": "175-v89domus.js:360"
+ },
+ {
+  "k": "+1 AP",
+  "w": "177-v89affix.js:18"
+ },
+ {
+  "k": "−1 damage from beasts here",
+  "w": "177-v89affix.js:18"
+ },
+ {
+  "k": "−1 damage from thrown and shot weapons here",
+  "w": "177-v89affix.js:19"
+ },
+ {
+  "k": "floor spikes deal 0 to this leg",
+  "w": "177-v89affix.js:19"
+ },
+ {
+  "k": "a melee hit here costs the attacker 1 HP",
+  "w": "177-v89affix.js:19"
+ },
+ {
+  "k": "stones from the stands deal 0 here",
+  "w": "177-v89affix.js:20"
+ },
+ {
+  "k": "never comes back Broken",
+  "w": "177-v89affix.js:20"
+ },
+ {
+  "k": "cannot be looted: if the wearer falls it goes home",
+  "w": "177-v89affix.js:20"
+ },
+ {
+  "k": "+1 on the wearer’s Thumb of Flavius roll",
+  "w": "177-v89affix.js:21"
+ },
+ {
+  "k": "+1 range",
+  "w": "177-v89affix.js:22"
+ },
+ {
+  "k": "+1 use",
+  "w": "177-v89affix.js:22"
+ },
+ {
+  "k": "armor-piercing 1",
+  "w": "177-v89affix.js:22"
+ },
+ {
+  "k": "🪨 {0}'s {1} (Lapidarius) shrugs off the stone.",
+  "w": "177-v89affix.js:42"
+ },
+ {
+  "k": "{0}'s {1} (Venatorius) turns 1 damage of the beast aside.",
+  "w": "177-v89affix.js:43"
+ },
+ {
+  "k": "{0}'s {1} (Missilis) turns 1 damage of the missile aside.",
+  "w": "177-v89affix.js:47"
+ },
+ {
+  "k": "{0}'s {1} (Firmus) takes the spike: no damage.",
+  "w": "177-v89affix.js:49"
+ },
+ {
+  "k": "🪨 {0} reels at 1 HP — in Ranked the crowd wounds, Flavius kills.",
+  "w": "177-v89affix.js:52"
+ },
+ {
+  "k": "{0} → {1} {2}: no damage.",
+  "w": "177-v89affix.js:55"
+ },
+ {
+  "k": "A blow",
+  "w": "177-v89affix.js:55"
+ },
+ {
+  "k": "{0}'s {1} (Spinosus) bites back",
+  "w": "177-v89affix.js:58"
+ },
+ {
+  "k": "Flavius rolls {0}, +1 for Fortunae = {1}: spared. Fate set to 20 CF and sent to the Ludus Flavius.",
+  "w": "177-v89affix.js:65"
+ },
+ {
+  "k": "Flavius rolls {0}, +1 for Fortunae = {1}; the d12 shows {2}: {3}",
+  "w": "177-v89affix.js:66"
+ },
+ {
+  "k": "class=\"nw83-aff aff89\"",
+  "w": "177-v89affix.js:74"
+ },
+ {
+  "k": "Crowd Favor bonus",
+  "w": "177-v89affix.js:82"
+ },
+ {
+  "k": "An offering token",
+  "w": "177-v89affix.js:82"
+ },
+ {
+  "k": "Level 1 gear",
+  "w": "177-v89affix.js:82"
+ },
+ {
+  "k": "Level 2–3 gear",
+  "w": "177-v89affix.js:82"
+ },
+ {
+  "k": "A named piece",
+  "w": "177-v89affix.js:82"
+ },
+ {
+  "k": "{0}–{1}× your rank’s survival award",
+  "w": "177-v89affix.js:85"
+ },
+ {
+  "k": "+{0}–{1} starting CF in your next Ranked match",
+  "w": "177-v89affix.js:85"
+ },
+ {
+  "k": "{0} a +2 token · {1} a +3/+4 token",
+  "w": "177-v89affix.js:86"
+ },
+ {
+  "k": "{0} Level 2 · {1} Level 3",
+  "w": "177-v89affix.js:86"
+ },
+ {
+  "k": "{0} armor · {1} a weapon",
+  "w": "177-v89affix.js:87"
+ },
+ {
+  "k": "Epic",
+  "w": "177-v89affix.js:89"
+ },
+ {
+  "k": "Armor affix",
+  "w": "177-v89affix.js:94"
+ },
+ {
+  "k": "Weapon affix",
+  "w": "177-v89affix.js:95"
+ },
+ {
+  "k": "🎁 What Flavius’s gifts hold",
+  "w": "177-v89affix.js:97"
+ },
+ {
+  "k": "One gift every new rank and every 5 Ranked bouts survived, one for the weekly challenge. Each opening rolls once:",
+  "w": "177-v89affix.js:98"
+ },
+ {
+  "k": "A named piece: its tier",
+  "w": "177-v89affix.js:100"
+ },
+ {
+  "k": "Common has no affix · Rare 1 · Epic 2 · Legendary 2 + a unique effect. The chance a piece of that tier carries each affix:",
+  "w": "177-v89affix.js:101"
+ },
+ {
+  "k": "Fortunae comes only on Legendary armor. Lapidarius is twice as likely on a helm.",
+  "w": "177-v89affix.js:102"
+ },
+ {
+  "k": "Legendary uniques",
+  "w": "177-v89affix.js:103"
+ },
+ {
+  "k": "Armor:",
+  "w": "177-v89affix.js:103"
+ },
+ {
+  "k": "Each unique exists once in the world. Once all are claimed, a Legendary roll becomes Epic.",
+  "w": "177-v89affix.js:104"
+ },
+ {
+  "k": "🔨 Auction lots and some named gifts are pieces back in Flavius’s chest from fallen gladiators: no new roll — they keep their own tier and affixes.",
+  "w": "177-v89affix.js:105"
+ },
+ {
+  "k": "The odds of Flavius’s gifts",
+  "w": "177-v89affix.js:112"
+ },
+ {
+  "k": "No CF while Commodus is in the arena",
+  "w": "178-v89mkt.js:16"
+ },
+ {
+  "k": "no CF while Commodus is in the arena",
+  "w": "178-v89mkt.js:18"
+ },
+ {
+  "k": "any weapon or one armor piece",
+  "w": "179-v89market.js:41"
+ },
+ {
+  "k": "any weapon",
+  "w": "179-v89market.js:41"
+ },
+ {
+  "k": "any one armor piece",
+  "w": "179-v89market.js:41"
+ },
+ {
+  "k": "Market · level {0}",
+  "w": "179-v89market.js:42"
+ },
+ {
+  "k": "Take {0} from the level {1} row.",
+  "w": "179-v89market.js:42"
+ },
+ {
+  "k": "Take {0} from the board.",
+  "w": "179-v89market.js:42"
+ },
+ {
+  "k": "weapon · level {0} · slot {1}",
+  "w": "179-v89market.js:43"
+ },
+ {
+  "k": "armor · level {0} · slot {1}",
+  "w": "179-v89market.js:43"
+ },
+ {
+  "k": "{0} takes <b>{1}</b> from the level {2} row.",
+  "w": "179-v89market.js:47"
+ },
+ {
+  "k": "(weapons)",
+  "w": "179-v89market.js:51"
+ },
+ {
+  "k": "(armor)",
+  "w": "179-v89market.js:51"
+ },
+ {
+  "k": "{0} chooses outright at level {1}.",
+  "w": "179-v89market.js:52"
+ },
+ {
+  "k": "Now: take any one weapon left in the market (level 1, 2 or 3), free.",
+  "w": "179-v89market.js:71"
+ },
+ {
+  "k": "You have no arm left to hold a weapon.",
+  "w": "179-v89market.js:76"
+ },
+ {
+  "k": "No weapon is left in the market.",
+  "w": "179-v89market.js:76"
+ },
+ {
+  "k": "{0} declares Choose: a free weapon from the market.",
+  "w": "179-v89market.js:79"
+ },
+ {
+  "k": "Choose · a free weapon",
+  "w": "179-v89market.js:80"
+ },
+ {
+  "k": "Unlocking costs {0}. Level 1/2/3 cost 4/8/12 coin: pay for a level, then take any weapon or one armor piece from its row. The Choose card gives a free weapon of any level.",
+  "w": "179-v89market.js:89"
+ },
+ {
+  "k": "The market: 3 CF opens it for the turn; then pay for a level and take any weapon or one armor piece from its row.",
+  "w": "179-v89market.js:90"
+ },
+ {
+  "k": "Gaius",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Marcus",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Lucius",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Publius",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Quintus",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Titus",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Gnaeus",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Sextus",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Aulus",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Decimus",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Servius",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Tiberius",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Manius",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Spurius",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Appius",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Numerius",
+  "w": "180-v89profile.js:23"
+ },
+ {
+  "k": "Varro",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Fabius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Cornelius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Valerius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Claudius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Junius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Aemilius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Licinius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Sempronius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Tullius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Vettius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Calpurnius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Domitius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Sulpicius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Pompeius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Antonius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Caecilius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Octavius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Plautius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Annius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Marius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Livius",
+  "w": "180-v89profile.js:24"
+ },
+ {
+  "k": "Flavius ID — share it so friends can follow or invite you",
+  "w": "180-v89profile.js:31"
+ },
+ {
+  "k": "FID",
+  "w": "180-v89profile.js:31"
+ },
+ {
+  "k": "Copy the FID",
+  "w": "180-v89profile.js:31"
+ },
+ {
+  "k": "Too many lookups — wait a minute.",
+  "w": "180-v89profile.js:38"
+ },
+ {
+  "k": "No house with that FID.",
+  "w": "180-v89profile.js:39"
+ },
+ {
+  "k": "One rename every 30 days — next on {0}.",
+  "w": "180-v89profile.js:46"
+ },
+ {
+  "k": "Another lanista has that name.",
+  "w": "180-v89profile.js:47"
+ },
+ {
+  "k": "Type your house name to confirm.",
+  "w": "180-v89profile.js:61"
+ },
+ {
+  "k": "Type your lanista name to confirm.",
+  "w": "180-v89profile.js:61"
+ },
+ {
+  "k": "Leave your room or finish your match first.",
+  "w": "180-v89profile.js:62"
+ },
+ {
+  "k": "No lanista with that FID.",
+  "w": "180-v89profile.js:79"
+ },
+ {
+  "k": "Choose your lanista name",
+  "w": "180-v89profile.js:94"
+ },
+ {
+  "k": "Other lanistas see this name — never the name of your sign-in account.",
+  "w": "180-v89profile.js:95"
+ },
+ {
+  "k": "Another Roman name",
+  "w": "180-v89profile.js:96"
+ },
+ {
+  "k": "✓ Take this name",
+  "w": "180-v89profile.js:96"
+ },
+ {
+  "k": "{0}–{1} letters · no two lanistas share a name · one rename every 30 days.",
+  "w": "180-v89profile.js:97"
+ },
+ {
+  "k": "🔍 Find a house by FID",
+  "w": "180-v89profile.js:100"
+ },
+ {
+  "k": "🔍 Find",
+  "w": "180-v89profile.js:101"
+ },
+ {
+  "k": "★ Follow by FID",
+  "w": "180-v89profile.js:101"
+ },
+ {
+  "k": "👤 Profile & Settings",
+  "w": "180-v89profile.js:102"
+ },
+ {
+  "k": "Guests only watch. Sign in to choose a lanista name, get your FID and set who may invite you.",
+  "w": "180-v89profile.js:102"
+ },
+ {
+  "k": "Everyone",
+  "w": "180-v89profile.js:104"
+ },
+ {
+  "k": "Houses I follow",
+  "w": "180-v89profile.js:104"
+ },
+ {
+  "k": "📜 Name",
+  "w": "180-v89profile.js:106"
+ },
+ {
+  "k": "formerly {0}",
+  "w": "180-v89profile.js:106"
+ },
+ {
+  "k": "One rename every 30 days. Your old name shows as “formerly” for 14 days.",
+  "w": "180-v89profile.js:108"
+ },
+ {
+  "k": "Next rename: {0}",
+  "w": "180-v89profile.js:108"
+ },
+ {
+  "k": "🔒 Privacy",
+  "w": "180-v89profile.js:110"
+ },
+ {
+  "k": "Show me in “Here now” and on the Orbis map",
+  "w": "180-v89profile.js:110"
+ },
+ {
+  "k": "Hidden, you still count in the totals — without your name.",
+  "w": "180-v89profile.js:111"
+ },
+ {
+  "k": "Who may invite me",
+  "w": "180-v89profile.js:112"
+ },
+ {
+  "k": "⚙ Account",
+  "w": "180-v89profile.js:113"
+ },
+ {
+  "k": "🗑 Delete my account",
+  "w": "180-v89profile.js:113"
+ },
+ {
+  "k": "Deleting removes House {0}, its gladiators, gear, shelf and follows for good.",
+  "w": "180-v89profile.js:114"
+ },
+ {
+  "k": "Deleting removes your account for good.",
+  "w": "180-v89profile.js:114"
+ },
+ {
+  "k": "Open a room first",
+  "w": "180-v89profile.js:122"
+ },
+ {
+  "k": "Not free right now",
+  "w": "180-v89profile.js:122"
+ },
+ {
+  "k": "🏛 Visiting <b>{0}</b>",
+  "w": "180-v89profile.js:124"
+ },
+ {
+  "k": "lanista {0}",
+  "w": "180-v89profile.js:124"
+ },
+ {
+  "k": "(formerly {0})",
+  "w": "180-v89profile.js:124"
+ },
+ {
+  "k": "← Back to your Domus",
+  "w": "180-v89profile.js:125"
+ },
+ {
+  "k": "founded {0}",
+  "w": "180-v89profile.js:127"
+ },
+ {
+  "k": "No armor.",
+  "w": "180-v89profile.js:135"
+ },
+ {
+  "k": "{0} won · {1} survived",
+  "w": "180-v89profile.js:139"
+ },
+ {
+  "k": "🕯 Memorial wall <small class=\"rc-sub\">{0}</small>",
+  "w": "180-v89profile.js:141"
+ },
+ {
+  "k": "Choose your lanista name first",
+  "w": "180-v89profile.js:154"
+ },
+ {
+  "k": "Lanista {0} · {1}",
+  "w": "180-v89profile.js:166"
+ },
+ {
+  "k": "Invite by FID",
+  "w": "180-v89profile.js:168"
+ },
+ {
+  "k": "✉ Invite by FID",
+  "w": "180-v89profile.js:168"
+ },
+ {
+  "k": "🏛 Visit the Domus",
+  "w": "180-v89profile.js:173"
+ },
+ {
+  "k": "🗑 Delete your account?",
+  "w": "180-v89profile.js:189"
+ },
+ {
+  "k": "House <b>{0}</b>, its gladiators, their gear, the shelf, your follows and loadouts are gone for good.",
+  "w": "180-v89profile.js:189"
+ },
+ {
+  "k": "Your account is gone for good.",
+  "w": "180-v89profile.js:189"
+ },
+ {
+  "k": "Past results keep your gladiators’ names, without your house.",
+  "w": "180-v89profile.js:190"
+ },
+ {
+  "k": "Continue…",
+  "w": "180-v89profile.js:190"
+ },
+ {
+  "k": "Are you sure?",
+  "w": "180-v89profile.js:192"
+ },
+ {
+  "k": "Type your house name <b>{0}</b> to delete everything.",
+  "w": "180-v89profile.js:192"
+ },
+ {
+  "k": "Type your lanista name <b>{0}</b> to delete your account.",
+  "w": "180-v89profile.js:192"
+ },
+ {
+  "k": "🗑 Delete forever",
+  "w": "180-v89profile.js:193"
+ },
+ {
+  "k": "🗑 Your account is deleted.",
+  "w": "180-v89profile.js:196"
+ },
+ {
+  "k": "🔒 Saved.",
+  "w": "180-v89profile.js:199"
+ },
+ {
+  "k": "📜 You are {0}.",
+  "w": "180-v89profile.js:206"
+ },
+ {
+  "k": "📋 {0} copied.",
+  "w": "180-v89profile.js:207"
+ },
+ {
+  "k": "★ Following.",
+  "w": "180-v89profile.js:210"
+ },
+ {
+  "k": "⚠ No lanista with that FID.",
+  "w": "180-v89profile.js:211"
+ },
+ {
+  "k": "Stalls",
+  "w": "181-v89citybar.js:31"
+ },
+ {
+  "k": "Auction",
+  "w": "181-v89citybar.js:31"
+ },
+ {
+  "k": "People",
+  "w": "181-v89citybar.js:31"
+ },
+ {
+  "k": "Menagerie",
+  "w": "181-v89citybar.js:31"
+ },
+ {
+  "k": "👁 visiting",
+  "w": "181-v89citybar.js:58"
+ },
+ {
+  "k": "🎺 The horns! To the arena",
+  "w": "181-v89citybar.js:60"
+ },
+ {
+  "k": "🎺 {0}:{1} to the horns",
+  "w": "181-v89citybar.js:60"
+ },
+ {
+  "k": "🚪 The arena gate",
+  "w": "181-v89citybar.js:74"
+ },
+ {
+  "k": "The gate stands open. Walk in now, or wait for the horns.",
+  "w": "181-v89citybar.js:74"
+ },
+ {
+  "k": "No fighters in your ludus to kit out.",
+  "w": "181-v89citybar.js:81"
+ },
+ {
+  "k": "🏠 <b>Home-city prices</b> — a quarter off.",
+  "w": "181-v89citybar.js:86"
+ },
+ {
+  "k": "Kit rides into the fighter's next bout this week — three items a fighter.",
+  "w": "181-v89citybar.js:89"
+ },
+ {
+  "k": "🏟 The arena",
+  "w": "181-v89citybar.js:97"
+ },
+ {
+  "k": "· fought",
+  "w": "181-v89citybar.js:101"
+ },
+ {
+  "k": "no entrants yet",
+  "w": "181-v89citybar.js:101"
+ },
+ {
+  "k": "📜 Tonight's card",
+  "w": "181-v89citybar.js:102"
+ },
+ {
+  "k": "family of the fighters",
+  "w": "181-v89citybar.js:113"
+ },
+ {
+  "k": "{0} of <b>{1}</b>{2}",
+  "w": "181-v89citybar.js:113"
+ },
+ {
+  "k": "· <b class=\"cbar89gold\">fights here this week</b>",
+  "w": "181-v89citybar.js:113"
+ },
+ {
+  "k": "🎟 Ticket holders",
+  "w": "181-v89citybar.js:114"
+ },
+ {
+  "k": "🏟 Locals",
+  "w": "181-v89citybar.js:114"
+ },
+ {
+  "k": "coming to this week’s games",
+  "w": "181-v89citybar.js:114"
+ },
+ {
+  "k": "regulars of {0}",
+  "w": "181-v89citybar.js:114"
+ },
+ {
+  "k": "{0} fan{1}{2}",
+  "w": "181-v89citybar.js:114"
+ },
+ {
+  "k": "🌍 The empire",
+  "w": "181-v89citybar.js:115"
+ },
+ {
+  "k": "regulars from every city",
+  "w": "181-v89citybar.js:115"
+ },
+ {
+  "k": "{0} · {1} visits{2}",
+  "w": "181-v89citybar.js:115"
+ },
+ {
+  "k": "· <span class=\"cbar89red\">troublemaker</span>",
+  "w": "181-v89citybar.js:115"
+ },
+ {
+  "k": "The square's regulars are still strangers — they come with the games.",
+  "w": "181-v89citybar.js:116"
+ },
+ {
+  "k": "{0} <small>{1} · kit</small>",
+  "w": "181-v89citybar.js:128"
+ },
+ {
+  "k": "Return it to the stall: {0} coin back",
+  "w": "181-v89citybar.js:129"
+ },
+ {
+  "k": "Bought at auction <small>{0}</small>",
+  "w": "181-v89citybar.js:130"
+ },
+ {
+  "k": "{0} <small>{1}{2}</small>",
+  "w": "181-v89citybar.js:131"
+ },
+ {
+  "k": "The bathhouse <small>+2 morale each</small>",
+  "w": "181-v89citybar.js:132"
+ },
+ {
+  "k": "A round at the tavern <small>+3 morale each</small>",
+  "w": "181-v89citybar.js:133"
+ },
+ {
+  "k": "An evening at the lupanar <small>a rival warms to you</small>",
+  "w": "181-v89citybar.js:134"
+ },
+ {
+  "k": "Signed in the square <small>{0}</small>",
+  "w": "181-v89citybar.js:135"
+ },
+ {
+  "k": "{0} <small>{1}</small>",
+  "w": "181-v89citybar.js:136"
+ },
+ {
+  "k": "↶ +{0} back",
+  "w": "181-v89citybar.js:137"
+ },
+ {
+  "k": "free",
+  "w": "181-v89citybar.js:137"
+ },
+ {
+  "k": "The whole house",
+  "w": "181-v89citybar.js:140"
+ },
+ {
+  "k": "🧾 This visit",
+  "w": "181-v89citybar.js:143"
+ },
+ {
+  "k": "{0} item{1}",
+  "w": "181-v89citybar.js:143"
+ },
+ {
+  "k": "Nothing bought yet — the stalls are open.",
+  "w": "181-v89citybar.js:144"
+ },
+ {
+  "k": "Spent here",
+  "w": "181-v89citybar.js:145"
+ },
+ {
+  "k": "({0} back)",
+  "w": "181-v89citybar.js:145"
+ },
+ {
+  "k": "from the stands",
+  "w": "181-v89citybar.js:178"
+ },
+ {
+  "k": "A ticket",
+  "w": "181-v89citybar.js:179"
+ },
+ {
+  "k": "A round of wine",
+  "w": "181-v89citybar.js:179"
+ },
+ {
+  "k": "A favour",
+  "w": "181-v89citybar.js:179"
+ },
+ {
+  "k": "⚔ Worn by <b>{0}</b> of {1} · slain at {2} — taken by his killer",
+  "w": "182-v89vault.js:30"
+ },
+ {
+  "k": "🪦 Worn by <b>{0}</b> of {1} · fell at {2}",
+  "w": "182-v89vault.js:31"
+ },
+ {
+  "k": "An old piece from the vault, with every owner it had",
+  "w": "182-v89vault.js:38"
+ },
+ {
+  "k": "🏛 From Flavius’s vault",
+  "w": "182-v89vault.js:38"
+ },
+ {
+  "k": "Unsold — back to Flavius’s vault",
+  "w": "182-v89vault.js:39"
+ },
+ {
+  "k": "🏛 A week with too few fallen pieces is filled from Flavius’s vault: {0}.",
+  "w": "182-v89vault.js:43"
+ },
+ {
+  "k": "A ticket holder watches from the stands — fighters take the sand.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "No such upgrade.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "Already built.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "Pick the colours and the crest.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "Pick two colours.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "Pick one of the printed crests.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "A gladiator’s look is set when he is raised.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "Change class in the Domus — {0} coin from the treasury.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "That is already his class.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "Pick the loadouts.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "Up to {0} loadouts.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "Name the loadout.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "Lanista name: {0}–{1} letters.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "Letters only, please.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "They take no invitations.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "They take invitations only from houses they follow.",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "Aquila Aurea",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "Leaena Rubra",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "Anas Ferox",
+  "w": "server (111-onlcore / routes.js)"
+ },
+ {
+  "k": "That name belongs to an old house of the arena.",
+  "w": "server (111-onlcore / routes.js)"
+ }
+]

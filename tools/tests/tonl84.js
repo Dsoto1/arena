@@ -66,6 +66,8 @@ ok(flash&&/^⚔ Your turn/.test(flash.t1)&&flash.back===flash.t0&&flash.alerts>=
 for(let i=0;i<120&&!(await A.evaluate(s=>!!(ONLM.on&&!S.busy&&(ONLM.pend?ONLM.pend.seat===s:onlmActor()===s)),seatB));i++){await drive(A);await info(B);await A.waitForTimeout(300)}
 await A.evaluate(async([id,seat])=>{await NET.req('match.drop',{id,seat})},[L1.id,seatB]);
 for(let i=0;i<80&&!(await B.evaluate(s=>!!(S.players[s].cpu&&S.players[s]._cpu84),seatB));i++){await drive(A);await info(B);await A.waitForTimeout(300)}
+/* the bar is drawn by a 500 ms tick: give it a few ticks */
+for(let i=0;i<12&&!(await B.evaluate(()=>!!document.querySelector('#rcl84 [data-rcl84="go"]')));i++)await B.waitForTimeout(250);
 const dr=await B.evaluate(s=>({cpu:S.players[s].cpu,me:ONLM.me,rcl:ONL84.rcl,bar:!!document.querySelector('#rcl84 [data-rcl84="go"]'),dbg:{phase:S.phase,busy:S.busy,cur:cur()&&cur().name,turn:S.turnNo,modal:CUR_MODAL?((document.querySelector('#mTitle')||{}).textContent||'?'):null,info:ONLM.info,next:ONLM.next,q:ONLM.q.slice(0,3).map(x=>x.k+':'+x.seq+':'+x.seat),pend:ONLM.pend&&ONLM.pend.seat,halt:ONL84.halt&&ONL84.halt.seat,rs:ONLM.resyncs}}),seatB);
 ok(dr.cpu&&dr.me===-1&&dr.rcl&&dr.bar,'dropped: a CPU holds the seat, the 🔌 bar offers it back '+JSON.stringify(dr));
 await shot(B,'reclaim');

@@ -65,7 +65,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Module ordering matters: a wrapper only sees wrappers installed before it.
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
   `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
-  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`, `126-v82fix`, `127-v82onl`, `128-v82stands`, `129-v82beasts`, `130-v82vis`, `131-v83council`, `132-v83arrows`, `134-v83spikes`, `135-v83chest`, `136-v83sand`, `133-v83onl`, `137-v83onlui`, `139-v84onl`, `138-v84`, `140-v84prog`, `142-v84ui`, `143-v84roster`, `141-v85faith`, `144-v85rec`, `145-v85fix`, `146-v85land`, `147-v85music`, `148-v86lang`, `149-v87fix`, `150-v87mgr`, `151-v87ward`, `152-v87npc`, `153-v87card` (build order as listed; `00-lang` runs FIRST, before 02-data; the language file assets/lang_<l>.js is loaded by 01-head before the script).
+  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`, `126-v82fix`, `127-v82onl`, `128-v82stands`, `129-v82beasts`, `130-v82vis`, `131-v83council`, `132-v83arrows`, `134-v83spikes`, `135-v83chest`, `136-v83sand`, `133-v83onl`, `137-v83onlui`, `139-v84onl`, `138-v84`, `140-v84prog`, `142-v84ui`, `143-v84roster`, `141-v85faith`, `144-v85rec`, `145-v85fix`, `146-v85land`, `147-v85music`, `148-v86lang`, `149-v87fix`, `150-v87mgr`, `151-v87ward`, `152-v87npc`, `153-v87card`, … `164-ready`, `165-v89seats` … `182-v89vault`, `168-v89rotate` (last before 08-setup) (build order as listed; `00-lang` runs FIRST, before 02-data; the language file assets/lang_<l>.js is loaded by 01-head before the script).
   Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
 
 ### Core globals (engine)
@@ -611,6 +611,26 @@ One global script; files are concatenated in order. Later "version modules" patc
   (no arena jumps), avatar node kept, trade offers show both sides (TRADE88 set in 06-ai/07-ui), closed market dimmed, sand skipped while CAM eases,
   result cards: Fate card left + sums right. `160-v88phone` — phone pass. Weapon labels "Right hand - Primary / Left hand - Secondary".
   His art: weapon_back1-4b + npcback82p_* + arena.jpg beast cells (sources tools/art/cards88/). Tests tv88k/s/d/m/h/g/r/p.
+- **v0.89 (165-182 + server, no protocol bump):** `165-v89seats` Play Now seats dealt at random (UI Math.random, only while untouched).
+  `166-v89fix` boot-window close → menu, START89 counts as live. `167-v89moods` Flavius's painted face, 11 moods (assets/flavmood_<m>.webp,
+  tools/art/flavmoods89/make.py; 'really'). `168-v89rotate` MY CORNER AT THE BOTTOM: display-only quarter turns `ROT89.k` (rot89Want: one
+  human's p.start offline / S.onl.seat online; off in hot seat, 2+ humans, chariot, naumachia, lessons, watchers, all-CPU); iso() projects the
+  turned index, `isoFix` = unturned, `dep89` draw depth, pick turns back; Flavius's box top centre (`flavXY89`); test tv89b. `169-v89loot` loot
+  window on the market-board look. `170-v89hs` hot-seat recap only when something happened, Abandon/Save & leave ask the table. `171-v89onl`
+  rooms when lanistas go (lobby.leave on close/pagehide, ONLC.ROOM_GRACE 60 s, host passes on, 30 s lobby.get prune ping; mock test hook
+  localStorage flavius_onltest89) + MANAGE ONLINE (lockstep input {k:'gear'}, filed in S.gear89[seat]); tests tonl89, server v89.test.
+  `172-v89city` painted forum 18×18 (N89, CV89 per arena), bubbles kept off labels (keep89), `cityFig89` lit figures, exit "Back to Match
+  Week" when not home. `173-v89cjk` Japanese + CJK fonts (CJK_LANGS89; zh next). `174-v89onlui` Acta smaller, 👥 ⓘ, bells gone, armory
+  hover = avatar only, ⚔ Play CTA, leaving Online → menu. `175-v89domus` Domus rebuilt (banner + treasury ledger led89, equipment bar Gear |
+  Offerings, class change 100, loadouts, keep home, upgrades, memorial, crest; contract tools/plans/onl89-domus.md). `176-v89sculpt3d` lit
+  sculpted tokens everywhere (`sc3dSVG`, `sc3dCanvas`, `lit89(svg)`, TOKEN_IMG3, SC3D_VH 176). `177-v89affix` permanent armor affixes
+  (lapid = stone guard, spin, venat, miss, firm, integ, fid, fort; tiers 60/28/10/2; Ranked stones never kill; odds ⓘ `.odds89i`;
+  tools/affixsim.js). `178-v89mkt` Commodus = unlock disabled (no CF), class starting cards leave S.deck (giveLoadout wrapper; tame→lyre).
+  `179-v89market` NO d4: pay a level → its row lights, take any piece; slot 4 face up (W.up4 getter); Market Choice = free weapon L1-3;
+  drafts light every fitting piece (tv89k). `180-v89profile` lanista name (30-day rename), FID-XXXXXX, fid.find, domus.visit, privacy,
+  acct.delete (tonl89p). `181-v89citybar` square sidebar tabs + THIS VISIT purchases (tv89y). `182-v89vault` auction never empty (vault lots
+  60/32/8, reserved old houses Virgilante, Zora350, SrgtSlaughta, Duckio, Sotonius; tonl89n). 06-ai: CPUs never revisit a tile in one move
+  (seen89). Tholo: no hanging cape (126). Art: npccard82_* = his card fronts (tools/art/npccards82), armthumb81_lgreaves + mirrored tassets.
 - **Guide data:** `SIM50` in 53-guide50 is regenerated by `node tools/simguide.js flavius-arena.html 600` (SIMVER env);
   it includes `perk` (wins by rating perk), charted by 69-v56.
 - **Music:** procedural Web Audio (21-audio, 45-music, 16 themes; unlocked by winning in cities). Play Now plays a
@@ -798,6 +818,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   grouped Settings, Crowd Favor with pictures, visible trades, results side by side, phones fixed; his new weapon backs + beast cards.
   (Published as artifact Version 102; no server change; site zip flavius-site-update-v0.88 + flavius-download-v0.88.) Release run: 186/188
   (tv59 = a real draft bug, fixed; tarena47 flaky, passed alone).
+
+- **v0.89** your corner at the bottom (board turns to you), the city center as a painted forum + its sidebar, Flavius's painted face (11 moods),
+  the market without the d4, the online Domus rebuilt, armor bonuses (stone guard…), lanista names + FID + house visits, rooms that clean up,
+  Manage online, the auction's vault, lit sculpted tokens, 日本語; CPUs stop pacing, starting cards leave the deck, Commodus blocks only the unlock.
+  (Server zip flavius-server-15, no protocol bump — deploy it FIRST.)
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the

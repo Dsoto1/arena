@@ -21,9 +21,9 @@ function uniqueOut82(key){const k=UNIQUE_CARD82[key];if(!k||!S)return;let n=0;
    a hunched gladiator is drawn 6% larger so the top of his head meets everyone else's (Tholo keeps his own scale) */
 {const base=figureSVG;figureSVG=function(sp,opts){if(sp&&sp.stance==='hunched'&&sp.kind!=='beast'&&!((sp.scale||1)>1.1))sp={...sp,scale:(sp.scale||1)*1.062};return base.call(this,sp,opts)}}
 /* Tholo's sculpted token follows his card: grey curly hair + full grey beard, a laurel wreath, the one great eye, a grey-green
-   cloth drape over his shoulders and hips, warm bronzed skin, his wooden club (owner's ask, from his card back) */
+   cloth drape over his hips (v0.89: no hanging cape — under the lit look it read as a dark slab behind his legs), warm bronzed skin, his wooden club (owner's ask, from his card back) */
 if(typeof TOKEN_DEF!=='undefined'&&TOKEN_DEF.tholo)Object.assign(TOKEN_DEF.tholo,{hair:'long',hairC:'#d6d2c8',beard:'full',helm:'laurel',skin:'#cf8a5c',
-  c1:'#9aa596',c2:'#6f5a3a',cape:true,neck:'none',legs:'wraps',base:'#2e2a24',scale:1.32});
+  c1:'#9aa596',c2:'#6f5a3a',cape:false,neck:'none',legs:'wraps',base:'#2e2a24',scale:1.32});
 /* the main menu, leaner (his ask: "not scare them off"): Play Now and Manager Mode share the first row, Multiplayer below,
    then the two lessons beside the Creator Studio, then one slim row: Annals · Rules · Settings · Saves · sound.
    CSS only (grid order) — every button keeps its own element and handler */
