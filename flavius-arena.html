@@ -46408,6 +46408,14 @@ try{if(typeof LANG!=='undefined'&&LANG==='au')document.documentElement.lang='en-
     const c=document.createElement('div');c.id='lang86ask';c.innerHTML=`<b>🌐 ${U.ask}</b><span>${U.change}</span><div><button class="btn primary" data-lang86yes="au">${U.yes}</button><button class="btn" data-lang86no="1">${_T`Keep US spelling`}</button></div>`;
     document.body.appendChild(c);c.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;try{localStorage.setItem('flavius_langask86','1')}catch(e){}c.remove();if(b.dataset.lang86yes)langSet86('au')});return}}catch(e){}
   return base.apply(this,arguments)}}
+/* =====================================================================
+   191-V91FIX · v0.91 fixes (Virgilante's notes 2026-10-06)
+   • THE PEN CAMERA, sturdier: a Manager beast-pen fight or exhibition always opens zoomed in (185's camera). A hand zoom kept
+     from an earlier match (a pinch on a touch screen sets CAM.z, which 86's duelCam returns before anything else) no longer
+     overrides it: CAM.z is cleared when such a bout starts, and S.zoomIn is set again at its first turn.
+   ===================================================================== */
+{const base=newState;newState=function(config){const r=base.apply(this,arguments);try{if(S&&config&&(config.pen76||config.exhibCtx)&&!config.sim&&typeof CAM!=='undefined')CAM.z=null}catch(e){}return r}}
+{const base=beginTurn;beginTurn=function(){try{if(S&&S.zoom90&&!S._zoom91){S._zoom91=1;S.zoomIn=true;if(typeof CAM!=='undefined')CAM.z=null}}catch(e){}return base.apply(this,arguments)}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
