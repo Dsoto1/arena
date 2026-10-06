@@ -1,5 +1,5 @@
 {
- "run": 211,
+ "run": 212,
  "lastFull": 1791254037274,
  "tests": {
   "tseed4": {
@@ -1585,21 +1585,21 @@
    "sh": "ee0ac8743d"
   },
   "tguide48": {
-   "streak": 52,
-   "runs": 52,
+   "streak": 53,
+   "runs": 53,
    "fails": 0,
    "flaky": [],
-   "lastRun": 197,
-   "time": 10,
-   "lastPass": 197,
+   "lastRun": 212,
+   "time": 11,
+   "lastPass": 212,
    "deps": {
-    "build.sh": "d477c16e9ad1",
+    "build.sh": "7f0be9a1c9ba",
     "src/01-head.html": "45ee202bfa07",
-    "tools/smartreg.js": "44d97ee7684f",
+    "tools/smartreg.js": "88651cfcb1b8",
     "tools/regcov.js": "1b122005f465",
     "tools/tests/tguide48.js": "940b5873e529"
    },
-   "sh": "ee0ac8743d"
+   "sh": "9e01550058"
   },
   "tmgr49": {
    "streak": 54,
@@ -1688,21 +1688,21 @@
    "sh": "ee0ac8743d"
   },
   "tguide50": {
-   "streak": 53,
-   "runs": 53,
+   "streak": 54,
+   "runs": 54,
    "fails": 0,
    "flaky": [],
-   "lastRun": 200,
-   "time": 16,
-   "lastPass": 200,
+   "lastRun": 212,
+   "time": 12,
+   "lastPass": 212,
    "deps": {
-    "build.sh": "40bed63229bc",
+    "build.sh": "7f0be9a1c9ba",
     "src/01-head.html": "45ee202bfa07",
-    "tools/smartreg.js": "44d97ee7684f",
+    "tools/smartreg.js": "88651cfcb1b8",
     "tools/regcov.js": "1b122005f465",
     "tools/tests/tguide50.js": "79dd236d8038"
    },
-   "sh": "5153f2e06d"
+   "sh": "9e01550058"
   },
   "tv51": {
    "streak": 30,
@@ -1960,21 +1960,21 @@
    "sh": "ee0ac8743d"
   },
   "tv56": {
-   "streak": 53,
-   "runs": 53,
+   "streak": 54,
+   "runs": 54,
    "fails": 0,
    "flaky": [],
-   "lastRun": 197,
-   "time": 6,
-   "lastPass": 197,
+   "lastRun": 212,
+   "time": 7,
+   "lastPass": 212,
    "deps": {
-    "build.sh": "d477c16e9ad1",
+    "build.sh": "7f0be9a1c9ba",
     "src/01-head.html": "45ee202bfa07",
-    "tools/smartreg.js": "44d97ee7684f",
+    "tools/smartreg.js": "88651cfcb1b8",
     "tools/regcov.js": "1b122005f465",
     "tools/tests/tv56.js": "e2bb46e068f8"
    },
-   "sh": "ee0ac8743d"
+   "sh": "9e01550058"
   },
   "tstat55": {
    "streak": 53,
@@ -3981,16 +3981,16 @@
    }
   },
   "tv92s": {
-   "streak": 2,
-   "runs": 2,
+   "streak": 3,
+   "runs": 3,
    "fails": 0,
    "flaky": [],
-   "lastRun": 202,
-   "time": 60,
-   "sh": "3bf661b805",
-   "lastPass": 202,
+   "lastRun": 212,
+   "time": 17,
+   "sh": "9e01550058",
+   "lastPass": 212,
    "deps": {
-    "build.sh": "1e7c58394161",
+    "build.sh": "7f0be9a1c9ba",
     "src/01-head.html": "45ee202bfa07",
     "tools/smartreg.js": "88651cfcb1b8",
     "tools/regcov.js": "1b122005f465",
