@@ -20,14 +20,15 @@ LG('── A');/* ── A · first run on a Spanish browser ── */
 if(WL==='es'){const ctx=await mk('es-MX');const p=await open(ctx,'A');
   out.aAsk=await p.waitForSelector('#lang86ask',{timeout:60000}).then(()=>true).catch(()=>false); /* the card waits for the menu (700 ms ticks): late under load */
   out.aLang0=await p.evaluate(()=>LANG);
-  if(out.aAsk){await Promise.all([p.waitForNavigation({timeout:60000}).catch(()=>null),p.click('#lang86ask [data-lang86yes]')]);
+  /* the card's own buttons are clicked in the page (under load the boot cover / menu show can still sit over it for Playwright's pointer) */
+  if(out.aAsk){await Promise.all([p.waitForNavigation({timeout:60000}).catch(()=>null),p.evaluate(()=>{const b=document.querySelector('#lang86ask [data-lang86yes]');if(b)b.click()}).catch(()=>{})]);
     /* the reloaded page is up in Spanish (the old page also says READY until it goes: wait for the language itself) */
     for(const t0=Date.now();Date.now()-t0<60000;){if(await p.evaluate(()=>!!window.FLAVIUS_READY&&typeof LANG!=='undefined'&&LANG==='es').catch(()=>false))break;await p.waitForTimeout(300)}}
   out.aLang1=await p.evaluate(()=>({LANG,html:document.documentElement.lang,dict:!!LANG_DICT}));
   await ctx.close();
   const c2=await mk('es-ES');const p2=await open(c2,'A2');await p2.waitForSelector('#lang86ask [data-lang86no]',{timeout:60000}).catch(()=>{}); /* under load the card comes late */
   /* the answer is stored before the reload (not a fixed 400 ms); after it, the ask gets the menu and a few of its own 700 ms ticks (page clock) */
-  await p2.click('#lang86ask [data-lang86no]').catch(()=>{});await p2.waitForFunction(()=>localStorage.getItem('flavius_langask86')==='1'&&!document.getElementById('lang86ask'),null,{timeout:30000}).catch(()=>{});
+  await p2.evaluate(()=>{const b=document.querySelector('#lang86ask [data-lang86no]');if(b)b.click()}).catch(()=>{});await p2.waitForFunction(()=>localStorage.getItem('flavius_langask86')==='1'&&!document.getElementById('lang86ask'),null,{timeout:30000}).catch(()=>{});
   await p2.reload({timeout:90000});await p2.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000}).catch(()=>{});await p2.waitForFunction(()=>{const m=document.getElementById('mainMenu');return !!m&&!m.hidden},null,{timeout:60000}).catch(()=>{});
   await p2.evaluate(()=>new Promise(r=>setTimeout(r,3000)));
   out.aNo=await p2.evaluate(()=>({LANG,ask:!!document.getElementById('lang86ask')}));await c2.close()}
@@ -115,10 +116,11 @@ ok(cutU.length<=CUT_MAX,`C: cut-off texts ${cutU.length} ≤ ${CUT_MAX}: `+cutU.
 LG('── D');/* ── D · back to English ── */
 if(WL==='es'){
 await P.evaluate(()=>{menuHide();openSettings()});await P.waitForTimeout(900);
+const d0=await P.evaluate(()=>({live:typeof eventLive==='function'&&eventLive(),ph:S&&S.phase,over:!!(S&&S.over),sel:!!document.querySelector('select[data-lang84]'),modal:CUR_MODAL?(document.getElementById('mTitle')||{}).textContent:null})).catch(e=>String(e));
 await Promise.all([P.waitForNavigation({timeout:60000}).catch(()=>null),P.selectOption('select[data-lang84]','en')]);
 /* the switch reloads the page: wait for the reloaded page to be up (it reads the new language at load), not a fixed 2.6 s */
 for(const t0=Date.now();Date.now()-t0<60000;){if(await P.evaluate(()=>!!window.FLAVIUS_READY&&typeof LANG!=='undefined'&&LANG==='en').catch(()=>false))break;await P.waitForTimeout(300)}
-out.d=await P.evaluate(()=>({LANG,dict:!!LANG_DICT,html:document.documentElement.lang}));
+out.d=await P.evaluate(()=>({LANG,dict:!!LANG_DICT,html:document.documentElement.lang,pop:!!document.querySelector('.lang86pop')}));if(out.d.LANG!=='en')out.d.before=d0;
 ok(out.d.LANG==='en'&&!out.d.dict&&out.d.html==='en','D: English again after the switch '+JSON.stringify(out.d));
 }
 await ctx.close();

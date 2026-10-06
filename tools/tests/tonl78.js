@@ -6,6 +6,14 @@ const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
 const errs=[];const P={};for(const n of ['A','B','C','D']){P[n]=await ctx.newPage();P[n].on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]))}
 await P.A.goto(URL0,{timeout:90000});await P.A.evaluate(()=>localStorage.removeItem('flavius_onlmock'));for(const n of ['B','C','D'])await P[n].goto(URL0,{timeout:90000});for(const n of ['A','B','C','D'])await P[n].waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
+/* HAND-OFF: the mock world is ONE localStorage item that every window reads, changes and writes back; a window whose copy is still
+   behind (cross-window storage lags under load) would undo the last window's write (a lost house, a lost room). Before a window acts
+   after another one did, it waits (≤15 s) until it holds that window's copy. */
+const HAND={last:null,on:true};const handOff=pages=>{for(const p of pages){const ev=p.evaluate.bind(p);p.__ev=ev;p.evaluate=async(...a)=>{const L=HAND.last;
+  if(HAND.on&&L&&L!==p&&!L.isClosed()){for(const t0=Date.now();Date.now()-t0<15000;){const v=await L.__ev(()=>localStorage.getItem('flavius_onlmock')).catch(()=>null);
+    if(v==null||await ev(v=>localStorage.getItem('flavius_onlmock')===v,v).catch(()=>true))break;await p.waitForTimeout(100)}}
+  const r=await ev(...a);HAND.last=p;return r}}};
+handOff([P.A,P.B,P.C,P.D]);
 const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls})},[name,cls]);
 await setup(P.A,'Alpha','hero');await setup(P.B,'Beta','soldier');await setup(P.C,'Gamma','slave');await setup(P.D,'Delta','amazonia');
 /* C needs coin for the ticket (the mock world is shared localStorage) */
@@ -16,7 +24,7 @@ const lead=await P.B.evaluate(async()=>{try{await NET.req('lobby.create',{ev:'fa
 const L=await P.A.evaluate(async()=>await NET.req('lobby.create',{ev:'familia',loc:5,ranked:false,ticket:5}));
 const tk=await P.C.evaluate(async id=>{const r=await NET.req('lobby.ticket',{id});return {w:r.char.wallet,pot:r.lobby.pot}},L.id);
 const L2=await P.A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},L.id);
-await P.B.evaluate(L=>onlEnter(L),L2);await P.C.evaluate(L=>onlEnter(L),L2);
+await P.B.evaluate(L=>onlEnter(L),L2);await P.C.evaluate(L=>onlEnter(L),L2);/* (in the match the windows move in lockstep through pushes: the hand-off rests while they play) */HAND.on=false;
 const late=await P.C.evaluate(async id=>{try{await NET.req('lobby.ticket',{id});return 'sold'}catch(e){return e.message}},L.id);
 const drive=async(p,stone)=>{const r=await p.evaluate(stone=>{const sp=document.querySelector('#st82Pop');if(sp){const bs=[...sp.querySelectorAll('[data-st82]')].filter(b=>!b.disabled);if(!bs.length)return ['','','wait'];const st=(stone&&bs.find(b=>/stone|offer/.test(b.dataset.st82)))||bs[bs.length-1];st.setAttribute('data-drv','1');return ['sel','#st82Pop [data-drv="1"]','stands']}if(CUR_MODAL&&(!ONLM.on||onlmMine()||ONLM.info>0)){const bs=[...document.querySelectorAll('#modal .mbtns button')].filter(b=>!b.disabled);
     const st=stone&&bs.find(b=>/Throw a stone|Throw an offering/.test(b.textContent));if(st){st.setAttribute('data-drv','1');return ['sel','#modal [data-drv="1"]','stands']}

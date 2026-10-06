@@ -11,6 +11,14 @@ await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()
 const errs=[];const A=await ctx.newPage(),B=await ctx.newPage(),C=await ctx.newPage();const P={A,B,C};
 for(const [n,p] of Object.entries(P))p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));
 await A.goto(URL0,{timeout:90000});await A.evaluate(()=>localStorage.removeItem('flavius_onlmock'));await B.goto(URL0,{timeout:90000});await C.goto(URL0,{timeout:90000});for(const P of [A,B,C])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
+/* HAND-OFF: the mock world is ONE localStorage item that every window reads, changes and writes back; a window whose copy is still
+   behind (cross-window storage lags under load) would undo the last window's write (a lost house, a lost room). Before a window acts
+   after another one did, it waits (≤15 s) until it holds that window's copy. */
+const HAND={last:null,on:true};const handOff=pages=>{for(const p of pages){const ev=p.evaluate.bind(p);p.__ev=ev;p.evaluate=async(...a)=>{const L=HAND.last;
+  if(HAND.on&&L&&L!==p&&!L.isClosed()){for(const t0=Date.now();Date.now()-t0<15000;){const v=await L.__ev(()=>localStorage.getItem('flavius_onlmock')).catch(()=>null);
+    if(v==null||await ev(v=>localStorage.getItem('flavius_onlmock')===v,v).catch(()=>true))break;await p.waitForTimeout(100)}}
+  const r=await ev(...a);HAND.last=p;return r}}};
+handOff([A,B,C]);
 const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls});
   /* this browser's creations: a level 4 chest weapon and a market weapon, everything on the rolls */
   const cw1={...blankCW(),id:'t80c',name:'Test Chest Blade',chest:1,rolls:{market:true,loadout:true}};const cw2={...blankCW(),id:'t80m',name:'Test Market Blade',rolls:{market:true}};
@@ -25,7 +33,7 @@ const L=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'democritus',
 const sees=async(p,id,n)=>{for(let t0=Date.now();Date.now()-t0<40000;){if(await p.evaluate(([id,n])=>ONLC.humansOf(mockLoad().lobbies[id]||{}).length>=n,[id,n]))return true;await p.waitForTimeout(150)}return false};
 await join(B,L.id);await join(C,L.id);await sees(A,L.id,3);
 const L2=await A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},L.id);
-await B.evaluate(L=>onlEnter(L),L2);await C.evaluate(L=>onlEnter(L),L2);
+await B.evaluate(L=>onlEnter(L),L2);await C.evaluate(L=>onlEnter(L),L2);/* (in the match the windows move in lockstep through pushes: the hand-off rests while they play) */HAND.on=false;
 const drive=async p=>{const r=await p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on||onlmMine()||ONLM.info>0)){const t=(document.querySelector('#mTitle')||{}).textContent||'';const pb=document.querySelector('#modal .mbtns .primary')?'#modal .mbtns .primary':document.querySelector('#modal .mbtns button')?'#modal .mbtns button':null;return pb?['sel',pb,'modal:'+t.slice(0,24)]:['','','modal?']}
   if(!S||S.over||!ONLM.on)return ['','','off'];if(!onlmMine()||S.busy)return ['','','wait'];
   if(S.phase==='choice'&&document.querySelector('[data-act="coin"]'))return ['sel','[data-act="coin"]','coin'];
@@ -91,11 +99,11 @@ for(const p of [A,B])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);men
    the page's timers stretch, so a timer queued after it on the same page is the only sure sign it fired */
 for(const p of [A,B])await p.evaluate(()=>new Promise(r=>setTimeout(()=>setTimeout(r,1500),0)));
 /* the windows are still writing their match ends into the shared mock world: a room lost to such a write is opened again */
-let R=null;for(let k=0;k<5;k++){R=await A.evaluate(async()=>{try{return await NET.req('lobby.create',{ev:'egidious',loc:3,seats:4,ranked:true})}catch(e){return null}});
+HAND.on=true;HAND.last=A;let R=null;for(let k=0;k<5;k++){R=await A.evaluate(async()=>{try{return await NET.req('lobby.create',{ev:'egidious',loc:3,seats:4,ranked:true})}catch(e){return null}});
   let ok=false,lost=false;for(let t0=Date.now();R&&Date.now()-t0<20000&&!ok&&!lost;){lost=!await A.evaluate(id=>(mockLoad().lobbies[id]||{}).status==='waiting',R.id);ok=!lost&&await B.evaluate(id=>(mockLoad().lobbies[id]||{}).status==='waiting',R.id);if(!ok&&!lost)await A.waitForTimeout(200)}
   if(ok||(R&&!lost))break;await A.waitForTimeout(1000)}
 await A.waitForTimeout(1500);await join(B,R.id);await sees(A,R.id,2);
-const R2=await A.evaluate(async id=>{try{const L=await NET.req('lobby.start',{id});onlEnter(L);return L}catch(e){const w=mockLoad();const L=w.lobbies[id];return {ERR:e.message,now:Date.now(),L:L&&{status:L.status,closed:L.closed,why:L.why,players:L.players.map(p=>p.id),members:(L.members||[]).map(m=>m.id),off:L.off,host:L.host},seen:Object.fromEntries(Object.values(w.accounts).map(a=>[a.id,a.seen])),M:w.matches[id]&&{status:w.matches[id].status}}}},R.id);if(R2.ERR){console.log('DBG',JSON.stringify(R2),'B join:',await B.evaluate(()=>window.__joinWhy||null));process.exit(1)}await B.evaluate(L=>onlEnter(L),R2);
+const R2=await A.evaluate(async id=>{try{const L=await NET.req('lobby.start',{id});onlEnter(L);return L}catch(e){const w=mockLoad();const L=w.lobbies[id];return {ERR:e.message,now:Date.now(),L:L&&{status:L.status,closed:L.closed,why:L.why,players:L.players.map(p=>p.id),members:(L.members||[]).map(m=>m.id),off:L.off,host:L.host},seen:Object.fromEntries(Object.values(w.accounts).map(a=>[a.id,a.seen])),M:w.matches[id]&&{status:w.matches[id].status}}}},R.id);if(R2.ERR){console.log('DBG',JSON.stringify(R2),'B join:',await B.evaluate(()=>window.__joinWhy||null));process.exit(1)}await B.evaluate(L=>onlEnter(L),R2);HAND.on=false;
 await waitIn([A,B],R.id);
 for(const p of [A,B])await fast(p);
 const rk=async p=>p.evaluate(()=>{const r={hints:HINTS,set:SETTINGS.hints,strat:showStrategy(),dock:(document.getElementById('hintDock')||{}).hidden!==false,ranked:!!S.onl.ranked};try{hintsMaster(true,true)}catch(e){}r.forced=HINTS;return r});
