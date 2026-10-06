@@ -1,7 +1,7 @@
 /* v0.85 music: the five-letter word unlocks every theme (the old one is retired); Ave Arena plays while Online is open and renders cleanly */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1300,height:900}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(String(e)));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const r=await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();const W=String.fromCharCode(77,85,83,73,67);const old=String.fromCharCode(77,85,83,73,67,65,49,54);
   const before=musicUnlocked('Online');const oldGone=!CHEATS[cheatKey(old)];const msg=CHEATS[cheatKey(W)]?CHEATS[cheatKey(W)].run():'';

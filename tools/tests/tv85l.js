@@ -13,7 +13,7 @@ const ctx=await b.newContext({viewport:{width:1440,height:900}});await ctx.route
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
 const A=await ctx.newPage(),B=await ctx.newPage();for(const [n,p] of [['A',A],['B',B]])p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));
 const W8=(p,ms)=>p.waitForTimeout(ms);const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,`v85l_${n}.png`)})};
-await A.goto(URL0);await A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester|clock)/.test(k))localStorage.removeItem(k)});await B.goto(URL0);await W8(A,2500);
+await A.goto(URL0,{timeout:90000});await A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester|clock)/.test(k))localStorage.removeItem(k)});await B.goto(URL0,{timeout:90000});await W8(A,2500);
 const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});ONL.domus=(await NET.req('domus.create',{name})).domus;
   ONL.char=await NET.req('char.create',{name:name+' the Bold',cls});onlineOpen('play');await new Promise(r=>setTimeout(r,1200));ONL.tab='play';await onlRefresh();onlRedraw()},[name,cls]);
 await setup(A,'Vettii','hero');await W8(A,600);

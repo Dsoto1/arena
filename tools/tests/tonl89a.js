@@ -10,9 +10,9 @@ const {chromium}=require('playwright');(async()=>{const root=path.dirname(path.r
 const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.url.split('?')[0]));if(!f.startsWith(root)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end()}const ext=path.extname(f);r.writeHead(200,{'content-type':{'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'}[ext]||'application/octet-stream'});fs.createReadStream(f).pipe(r)});
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:1300,height:900}});await ctx.route(/fonts\./,r=>r.abort());
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
-const errs=[];const pg=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);return p};
-const A=await pg('A');await A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester|clock)/.test(k))localStorage.removeItem(k)});await A.reload();
-const B=await pg('B');for(const P of [A,B])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+const errs=[];const pg=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0,{timeout:90000});return p};
+const A=await pg('A');await A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester|clock)/.test(k))localStorage.removeItem(k)});await A.reload({timeout:90000});
+const B=await pg('B');for(const P of [A,B])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};
 const shot=async(p,n)=>{if(!SHOT)return;for(const vw of [1300,390]){await p.setViewportSize({width:vw,height:vw===390?844:900});await p.waitForTimeout(400);await p.screenshot({path:path.join(SHOT,`j89_${n}_${vw}.png`)})}await p.setViewportSize({width:1300,height:900});await p.waitForTimeout(200)};
 const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});ONL.domus=(await NET.req('domus.create',{name})).domus;
@@ -35,7 +35,7 @@ const odds=await A.evaluate(async()=>{if(!document.getElementById('onl')){online
   const land=document.querySelectorAll('#onl .a81-stage [data-odds89], #onl [data-odds89]').length;
   ONL.tab='char';ONL.newGlad=false;await onlRefresh();onlRedraw();await new Promise(r=>setTimeout(r,400));const dom=document.querySelectorAll('#onl .dom89 [data-odds89], #onl [data-odds89]').length;return {land,dom}});
 ok(odds.land>=1,'ⓘ beside the chest token on the landing '+JSON.stringify(odds));ok(odds.dom>=1,'ⓘ beside the chest token on the Domus '+JSON.stringify(odds));
-if(odds.dom){await A.hover('#onl [data-odds89]');await A.waitForTimeout(250);ok(await A.evaluate(()=>{const f=document.getElementById('odds89f');return !!f&&!f.hidden&&!!f.querySelector('[data-o89="kinds"]')}),'hover shows the odds card');
+if(odds.dom){await A.hover('#onl [data-odds89]');/* the card follows the hover: poll for it (timers stretch under load) */let hv=false;for(const t0=Date.now();Date.now()-t0<20000&&!hv;){hv=await A.evaluate(()=>{const f=document.getElementById('odds89f');return !!f&&!f.hidden&&!!f.querySelector('[data-o89="kinds"]')});if(!hv){await A.waitForTimeout(250);await A.hover('#onl [data-odds89]').catch(()=>{})}}ok(hv,'hover shows the odds card');
   await A.click('#onl [data-odds89]');await A.waitForTimeout(300);await shot(A,'odds');
   const card=await A.evaluate(()=>{const bg=document.querySelector('.odds89pop');if(!bg)return null;const num=el=>[...el.querySelectorAll('.o89n')].map(x=>parseFloat(x.textContent));
     const kinds=num(bg.querySelector('[data-o89="kinds"]'));const tr=[...bg.querySelectorAll('.o89t')][1];const rows=[...tr.querySelectorAll('tr')].slice(1).map(r=>num(r));

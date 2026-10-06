@@ -4,7 +4,7 @@
    Optional argv[3] = a folder for screenshots. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:1000}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const SH=process.argv[3]||null;const shot=async(n,sel)=>{if(!SH)return;await pg.mouse.move(2,2);const el=await pg.$(sel);if(el){await el.scrollIntoViewIfNeeded();await pg.waitForTimeout(250);await el.screenshot({path:SH+'/'+n+'.png'})}};
 const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const W8=ms=>pg.waitForTimeout(ms);

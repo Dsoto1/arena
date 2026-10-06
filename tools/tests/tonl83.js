@@ -9,9 +9,17 @@ const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:1300,height:900}});await ctx.route(/fonts\./,r=>r.abort());
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','1500');
   window.P83=[];const iv=setInterval(()=>{if(typeof NET!=='undefined'&&NET.on){for(const t of ['loot.offer','loot.done','lobby.update'])NET.on(t,d=>P83.push({t,d}));clearInterval(iv)}},20)});
-const errs=[];const pg=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);return p};
-const A=await pg('A');await A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match)/.test(k))localStorage.removeItem(k)});await A.reload();
-const B=await pg('B'),C=await pg('C');for(const P of [A,B,C])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+const errs=[];const pg=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0,{timeout:90000});return p};
+const A=await pg('A');await A.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match)/.test(k))localStorage.removeItem(k)});await A.reload({timeout:90000});
+const B=await pg('B'),C=await pg('C');for(const P of [A,B,C])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
+/* HAND-OFF: the mock world is ONE localStorage item that every window reads, changes and writes back; a window whose copy is still
+   behind (cross-window storage lags under load) would undo the last window's write (a lost house, a lost room). Before a window acts
+   after another one did, it waits (≤15 s) until it holds that window's copy. */
+const HAND={last:null,on:true};const handOff=pages=>{for(const p of pages){const ev=p.evaluate.bind(p);p.__ev=ev;p.evaluate=async(...a)=>{const L=HAND.last;
+  if(HAND.on&&L&&L!==p&&!L.isClosed()){for(const t0=Date.now();Date.now()-t0<15000;){const v=await L.__ev(()=>localStorage.getItem('flavius_onlmock')).catch(()=>null);
+    if(v==null||await ev(v=>localStorage.getItem('flavius_onlmock')===v,v).catch(()=>true))break;await p.waitForTimeout(100)}}
+  const r=await ev(...a);HAND.last=p;return r}}};
+handOff([A,B,C]);
 const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};
 const err=async(p,fn,arg)=>p.evaluate(async([fn,arg])=>{try{await (0,eval)('('+fn+')')(arg);return 'ok'}catch(e){return (e.code||'')+'|'+e.message}},[fn.toString(),arg]);
 const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});ONL.domus=(await NET.req('domus.create',{name:'Domus '+name})).domus;
@@ -35,13 +43,13 @@ const L1=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'democritus'
 const t0=Date.now();const L1s=await A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},L1.id);const waited=Date.now()-t0;
 ok(L1s.status==='live'&&waited>=900,'Start waits for the countdown, then the horns ('+waited+' ms)');ok(await A.evaluate(()=>P83.some(x=>x.t==='lobby.update')),'the room heard it');
 await B.evaluate(L=>{onlEnter(L)},L1s);const dismiss=p=>p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on||onlmMine()||ONLM.info>0)){const b=document.querySelector('#modal .mbtns .primary')||document.querySelector('#modal .mbtns button');if(b)b.click()}});
-for(let i=0;i<60&&!(await B.evaluate(()=>!!(ONLM.on&&S&&S.onl&&S.players.some(p=>p._nw83))));i++){await dismiss(A);await dismiss(B);await B.waitForTimeout(500)}await A.waitForTimeout(1500);
+for(const T_=Date.now();Date.now()-T_<78000&&!(await B.evaluate(()=>!!(ONLM.on&&S&&S.onl&&S.players.some(p=>p._nw83))));){await dismiss(A);await dismiss(B);await B.waitForTimeout(500)}await A.waitForTimeout(1500);
 const look=async p=>p.evaluate(k=>{const me=S.players.find(x=>x._nw83);const hand=me?['R','L'].map(a=>me['w'+a]).filter(Boolean).find(w=>w.key===k):null;
   return {w:W[k]?JSON.stringify(W[k]):null,hand:hand?JSON.stringify({p:hand.p,r:hand.r,n:hand.n,uq:hand.uq}):null,items:me?me.items.filter(i=>i.kind==='offer').map(i=>i.key).sort():[],h:onlHash(),turn:S.turnNo,next:ONLM.next}},nwKey);
 const la=await look(A),lb=await look(B);
 ok(la.w&&la.w===lb.w,'the named weapon’s W entry is the same in both windows');ok(la.hand&&la.hand===lb.hand,'in hand on both screens');
 ok(la.items.join()==='cf1,elix2'&&lb.items.join()==='cf1,elix2','the brought offerings are in the hand');
-let same=la.h===lb.h;for(let i=0;i<30&&!same;i++){await A.waitForTimeout(400);const [x,y]=[await look(A),await look(B)];same=x.h===y.h&&x.next===y.next}
+let same=la.h===lb.h;for(const T_=Date.now();Date.now()-T_<39000&&!same;){await A.waitForTimeout(400);const [x,y]=[await look(A),await look(B)];same=x.h===y.h&&x.next===y.next}
 const rs=await Promise.all([A,B].map(p=>p.evaluate(()=>ONLM.resyncs|0)));ok(same&&!rs[0]&&!rs[1],'the same arena on both screens, no resync ('+la.h+' / '+lb.h+')');
 /* the engine fills the result row: the weapon gone from the hand → brk; the cf offering used → off keeps elix2 */
 const row=await A.evaluate(async k=>{const me=S.players.find(x=>x._nw83);const keep={R:me.wR,L:me.wL,items:me.items.slice()};for(const a of ['R','L'])if(me['w'+a]&&me['w'+a].key===k)me['w'+a]=null;

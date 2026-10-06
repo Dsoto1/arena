@@ -10,7 +10,15 @@ await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()
   window.__req={};window.addEventListener('DOMContentLoaded',()=>{const t=setInterval(()=>{if(typeof NET==='undefined')return;clearInterval(t);const base=NET.req;NET.req=function(k){window.__req[k]=(window.__req[k]||0)+1;return base.apply(this,arguments)}},20)})});
 const errs=[];const A=await ctx.newPage(),B=await ctx.newPage(),C=await ctx.newPage();const P={A,B,C};
 for(const [n,p] of Object.entries(P))p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));
-await A.goto(URL0);await A.evaluate(()=>localStorage.removeItem('flavius_onlmock'));await B.goto(URL0);await C.goto(URL0);for(const P of [A,B,C])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+await A.goto(URL0,{timeout:90000});await A.evaluate(()=>localStorage.removeItem('flavius_onlmock'));await B.goto(URL0,{timeout:90000});await C.goto(URL0,{timeout:90000});for(const P of [A,B,C])await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
+/* HAND-OFF: the mock world is ONE localStorage item that every window reads, changes and writes back; a window whose copy is still
+   behind (cross-window storage lags under load) would undo the last window's write (a lost house, a lost room). Before a window acts
+   after another one did, it waits (≤15 s) until it holds that window's copy. */
+const HAND={last:null,on:true};const handOff=pages=>{for(const p of pages){const ev=p.evaluate.bind(p);p.__ev=ev;p.evaluate=async(...a)=>{const L=HAND.last;
+  if(HAND.on&&L&&L!==p&&!L.isClosed()){for(const t0=Date.now();Date.now()-t0<15000;){const v=await L.__ev(()=>localStorage.getItem('flavius_onlmock')).catch(()=>null);
+    if(v==null||await ev(v=>localStorage.getItem('flavius_onlmock')===v,v).catch(()=>true))break;await p.waitForTimeout(100)}}
+  const r=await ev(...a);HAND.last=p;return r}}};
+handOff([A,B,C]);
 const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name});await NET.req('domus.create',{name:'Domus '+name});ONL.char=await NET.req('char.create',{name:name+' the Bold',cls});
   /* this browser's creations: a level 4 chest weapon and a market weapon, everything on the rolls */
   const cw1={...blankCW(),id:'t80c',name:'Test Chest Blade',chest:1,rolls:{market:true,loadout:true}};const cw2={...blankCW(),id:'t80m',name:'Test Market Blade',rolls:{market:true}};
@@ -18,13 +26,14 @@ const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_M
   return {chest:CHEST_W.includes('cw_t80c'),market:Object.values(MARKET_W).flat().includes('cw_t80m'),hints:HINTS}},[name,cls]);
 const pre={A:await setup(A,'Alpha','hero'),B:await setup(B,'Beta','soldier'),C:await setup(C,'Gamma','amazonia')};
 /* the mock world lives in one localStorage item: a join can be lost to another window's write — join until seated */
-const join=async(p,id)=>{for(let k=0;k<8;k++){const ok=await p.evaluate(async id=>{try{await NET.req('lobby.join',{id})}catch(e){}await new Promise(r=>setTimeout(r,300));
+/* (time-boxed, not 8 tries: after a match a lanista may join only once his result is in — under load that can take a while; the last refusal is kept) */
+const join=async(p,id)=>{for(const T_=Date.now();Date.now()-T_<60000;){const ok=await p.evaluate(async id=>{try{await NET.req('lobby.join',{id})}catch(e){window.__joinWhy=e.message}await new Promise(r=>setTimeout(r,300));
   return (await NET.req('lobby.list')).some(L=>L.id===id&&L.players.some(x=>x.id===ONL.acct.id))},id);if(ok)return true;await p.waitForTimeout(400)}return false};
 const L=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:false,abandon:'cpu'}));
-const sees=async(p,id,n)=>{for(let t0=Date.now();Date.now()-t0<20000;){if(await p.evaluate(([id,n])=>ONLC.humansOf(mockLoad().lobbies[id]||{}).length>=n,[id,n]))return true;await p.waitForTimeout(150)}return false};
+const sees=async(p,id,n)=>{for(let t0=Date.now();Date.now()-t0<40000;){if(await p.evaluate(([id,n])=>ONLC.humansOf(mockLoad().lobbies[id]||{}).length>=n,[id,n]))return true;await p.waitForTimeout(150)}return false};
 await join(B,L.id);await join(C,L.id);await sees(A,L.id,3);
 const L2=await A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},L.id);
-await B.evaluate(L=>onlEnter(L),L2);await C.evaluate(L=>onlEnter(L),L2);
+await B.evaluate(L=>onlEnter(L),L2);await C.evaluate(L=>onlEnter(L),L2);/* (in the match the windows move in lockstep through pushes: the hand-off rests while they play) */HAND.on=false;
 const drive=async p=>{const r=await p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on||onlmMine()||ONLM.info>0)){const t=(document.querySelector('#mTitle')||{}).textContent||'';const pb=document.querySelector('#modal .mbtns .primary')?'#modal .mbtns .primary':document.querySelector('#modal .mbtns button')?'#modal .mbtns button':null;return pb?['sel',pb,'modal:'+t.slice(0,24)]:['','','modal?']}
   if(!S||S.over||!ONLM.on)return ['','','off'];if(!onlmMine()||S.busy)return ['','','wait'];
   if(S.phase==='choice'&&document.querySelector('[data-act="coin"]'))return ['sel','[data-act="coin"]','coin'];
@@ -63,7 +72,9 @@ const after=async p=>p.evaluate(()=>({resyncs:ONLM.resyncs,gen:ONLM.gen,odd:{...
 const r1={A:await after(A),B:await after(B),C:await after(C)};
 await run(120000,[A,B,C],async()=>(await A.evaluate(()=>ONLM.next))>=r1.A.next+8);
 /* all three have applied every input before the hashes are compared (the regression runs 3 tests at once) */
-const level=async ps=>{for(let t1=Date.now();Date.now()-t1<30000;){const ns=await Promise.all(ps.map(p=>p.evaluate(()=>ONLM.next)));if(ns.every(n=>n===ns[0]))break;await A.waitForTimeout(250)}};await level([A,B,C]);const r1b={};for(const [n,p] of Object.entries(P))r1b[n]=await p.evaluate(()=>({over:!!(S&&S.over),next:ONLM.next,turn:S&&S.turnNo,ph:S&&S.phase,busy:S&&S.busy,modal:CUR_MODAL?((document.getElementById('mTitle')||{}).textContent||'?').slice(0,40):null,act:onlmActor(),owner:onlmOwner(),me:ONLM.me,pend:!!ONLM.pend,q:ONLM.q.length,inf:ONLM.inflight,mine:onlmMine(),resyncing:!!ONLM.resyncing,cur:cur()&&cur().name,log:[...document.querySelectorAll('#log > li')].slice(0,3).map(l=>l.textContent.slice(0,80))}));
+const level=async ps=>{for(let t1=Date.now();Date.now()-t1<30000;){const ns=await Promise.all(ps.map(p=>p.evaluate(()=>ONLM.next)));if(ns.every(n=>n===ns[0]))break;await A.waitForTimeout(250)}};await level([A,B,C]);const r1b={};for(const [n,p] of Object.entries(P))r1b[n]=await p.evaluate(()=>({over:!!(S&&S.over),next:ONLM.next,turn:S&&S.turnNo,ph:S&&S.phase,busy:S&&S.busy,modal:CUR_MODAL?((document.getElementById('mTitle')||{}).textContent||'?').slice(0,40):null,act:onlmActor(),owner:onlmOwner(),me:ONLM.me,pend:!!ONLM.pend,q:ONLM.q.length,inf:ONLM.inflight,mine:onlmMine(),resyncing:!!ONLM.resyncing,cur:cur()&&cur().name,log:[...document.querySelectorAll('#log > li')].slice(0,3).map(l=>l.textContent.slice(0,80)),odd:{...ONLM.odd},oddSkips:ONL80R.oddSkips,gen:ONLM.gen,resyncs:ONLM.resyncs,sent:ONLM.sent}));
+/* (diagnostics for a stall: the server's inputs from the odd one on) */
+const srvIns=await A.evaluate(async f=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.filter(x=>x.seq>=f-1).slice(0,12).map(x=>[x.seq,x.seat,x.k,x.a||'',x.void?'void':'',x.g||'',x.n||'']),r1.A.next).catch(e=>String(e));
 /* in step again: every seq after Gamma's reload hashes the same on all three */
 const hl={};for(const [n,p] of Object.entries(P))hl[n]=await p.evaluate(()=>ONLM.hlog);
 let same=0,diff=0;const from=r1.C.next;for(let s=from;s<from+400;s++){const hs=['A','B','C'].map(n=>hl[n]['s'+s]).filter(Boolean);if(hs.length<3)continue;if(hs.every(h=>h===hs[0]))same++;else diff++}
@@ -83,12 +94,16 @@ for(const p of [A,B,C])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done('close'
 const back=await A.evaluate(()=>({chest:CHEST_W.includes('cw_t80c'),market:Object.values(MARKET_W).flat().includes('cw_t80m'),hints:HINTS}));
 /* Ranked, two lanistas: no hints / strategy / Focus suggestion; a desync resyncs the old way (no vote) */
 for(const p of [A,B])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide()});
+/* closing the Online window leaves your waiting room 700 ms later (171-v89onl, by design): a room created inside that window was
+   left and closed at once ('Already under way.' at the start). Wait on the page's own clock until that timer has run — under load
+   the page's timers stretch, so a timer queued after it on the same page is the only sure sign it fired */
+for(const p of [A,B])await p.evaluate(()=>new Promise(r=>setTimeout(()=>setTimeout(r,1500),0)));
 /* the windows are still writing their match ends into the shared mock world: a room lost to such a write is opened again */
-let R=null;for(let k=0;k<5;k++){R=await A.evaluate(async()=>{try{return await NET.req('lobby.create',{ev:'egidious',loc:3,seats:4,ranked:true})}catch(e){return null}});
-  let ok=false,lost=false;for(let t0=Date.now();R&&Date.now()-t0<20000&&!ok&&!lost;){lost=!await A.evaluate(id=>!!mockLoad().lobbies[id],R.id);ok=!lost&&await B.evaluate(id=>!!mockLoad().lobbies[id],R.id);if(!ok&&!lost)await A.waitForTimeout(200)}
+HAND.on=true;HAND.last=A;let R=null;for(let k=0;k<5;k++){R=await A.evaluate(async()=>{try{return await NET.req('lobby.create',{ev:'egidious',loc:3,seats:4,ranked:true})}catch(e){return null}});
+  let ok=false,lost=false;for(let t0=Date.now();R&&Date.now()-t0<20000&&!ok&&!lost;){lost=!await A.evaluate(id=>(mockLoad().lobbies[id]||{}).status==='waiting',R.id);ok=!lost&&await B.evaluate(id=>(mockLoad().lobbies[id]||{}).status==='waiting',R.id);if(!ok&&!lost)await A.waitForTimeout(200)}
   if(ok||(R&&!lost))break;await A.waitForTimeout(1000)}
 await A.waitForTimeout(1500);await join(B,R.id);await sees(A,R.id,2);
-const R2=await A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},R.id);await B.evaluate(L=>onlEnter(L),R2);
+const R2=await A.evaluate(async id=>{try{const L=await NET.req('lobby.start',{id});onlEnter(L);return L}catch(e){const w=mockLoad();const L=w.lobbies[id];return {ERR:e.message,now:Date.now(),L:L&&{status:L.status,closed:L.closed,why:L.why,players:L.players.map(p=>p.id),members:(L.members||[]).map(m=>m.id),off:L.off,host:L.host},seen:Object.fromEntries(Object.values(w.accounts).map(a=>[a.id,a.seen])),M:w.matches[id]&&{status:w.matches[id].status}}}},R.id);if(R2.ERR){console.log('DBG',JSON.stringify(R2),'B join:',await B.evaluate(()=>window.__joinWhy||null));process.exit(1)}await B.evaluate(L=>onlEnter(L),R2);HAND.on=false;
 await waitIn([A,B],R.id);
 for(const p of [A,B])await fast(p);
 const rk=async p=>p.evaluate(()=>{const r={hints:HINTS,set:SETTINGS.hints,strat:showStrategy(),dock:(document.getElementById('hintDock')||{}).hidden!==false,ranked:!!S.onl.ranked};try{hintsMaster(true,true)}catch(e){}r.forced=HINTS;return r});
@@ -104,7 +119,7 @@ const two={A:await A.evaluate(()=>({resyncs:ONLM.resyncs,votes:ONL80R.votes,hash
 const hA=await A.evaluate(()=>ONLM.hlog),hB=await B.evaluate(()=>ONLM.hlog);let same2=0,diff2=0;const f2=(tamp2&&tamp2.next||0)+1;for(let s=f2;s<f2+400;s++){const a=hA['s'+s],c=hB['s'+s];if(!a||!c)continue;if(a===c)same2++;else diff2++}
 for(const p of [A,B])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done('close');onlExit()});await A.waitForTimeout(1200);
 const rkBack={A:await A.evaluate(()=>({hints:HINTS,set:SETTINGS.hints,strat:showStrategy(),chest:CHEST_W.includes('cw_t80c'),rec:onl80Rec()})),B:await B.evaluate(()=>({hints:HINTS,set:SETTINGS.hints,strat:showStrategy()}))};
-console.log(JSON.stringify({pre,gear,pause,tampered,r1,r1b,same,diff,hk,strikes,res,lsDiff,back,ranked,q0,tamp2,two,same2,diff2,rkBack}));
+console.log(JSON.stringify({pre,gear,pause,tampered,r1,r1b,srvIns,same,diff,hk,strikes,res,lsDiff,back,ranked,q0,tamp2,two,same2,diff2,rkBack}));
 const miss=[];
 if(!pre.A.chest||!pre.A.market||!pre.B.chest)miss.push('custom gear set up offline');
 for(const n of ['A','B','C']){const g=gear[n];if(g.chest.length||g.market.length||g.inMatch)miss.push('printed gear only '+n);if(g.sponsor!=='flavius')miss.push('Flavius presides '+n);if(g.regulars)miss.push('no regulars '+n);if(!g.hints)miss.push('Custom keeps hints '+n)}

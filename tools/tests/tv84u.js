@@ -11,7 +11,7 @@ await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'
 const errs=[];const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const o={};
 const mk=async(init,vw)=>{const ctx=await b.newContext({viewport:vw||{width:1300,height:900}});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(init||(()=>{}));await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-  const p=await ctx.newPage();p.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});return {ctx,p}};
+  const p=await ctx.newPage();p.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0,{timeout:90000});await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});return {ctx,p}};
 const W8=(p,ms)=>p.waitForTimeout(ms);
 const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,`u84u_${n}.png`)})};
 
@@ -130,7 +130,7 @@ await p.evaluate(()=>{SETTINGS.confirmEnd=false;applySettings();if(S)S.over=true
 
 /* ── 5 · the Online landing on one screen ── */
 {const {ctx,p}=await mk(()=>{localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
-  await p.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester|clock)/.test(k))localStorage.removeItem(k)});await p.reload();await W8(p,2300);
+  await p.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester|clock)/.test(k))localStorage.removeItem(k)});await p.reload({timeout:90000});await W8(p,2300);
   await p.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();ONL.acct=await NET.req('auth.signin',{name:'Vettii'});ONL.domus=(await NET.req('domus.create',{name:'Vettii'})).domus;ONL.char=await NET.req('char.create',{name:'Vettii the Bold',cls:'hero'});
     onlineOpen('play');await new Promise(r=>setTimeout(r,1200));ONL.tab='play';await onlRefresh();
     const e={name:'Vettii the Bold',cls:'hero',ev:'democritus',loc:6,cf:24,dom:ONL.domus.id,dn:'Vettii'};

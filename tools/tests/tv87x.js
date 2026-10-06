@@ -16,7 +16,7 @@ const ctx=await b.newContext({viewport:{width:1400,height:1000}});await ctx.rout
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_online77','1');localStorage.setItem('flavius_onlcd83','0')});
 const P=await ctx.newPage();P.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
 const W8=ms=>P.waitForTimeout(ms);const shot=async n=>{if(SHOT)await P.screenshot({path:path.join(SHOT,`v87x_${n}.png`)})};
-await P.goto(URL0);await P.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester|clock)/.test(k))localStorage.removeItem(k)});await W8(2600);
+await P.goto(URL0,{timeout:90000});await P.evaluate(()=>{for(const k of Object.keys(localStorage))if(/^flavius_onl(mock|report|over|match|tester|clock)/.test(k))localStorage.removeItem(k)});await W8(2600);
 
 /* ── 15 · the main menu has no mute button ── */
 o.mute=await P.evaluate(()=>({btn:!!document.getElementById('mmMute'),menu:!!document.querySelector('#mainMenu [data-mm="settings"]')}));
@@ -54,13 +54,18 @@ ok(o.tBr&&o.tBr.v===2&&/arm81_bracers/.test(o.tBr.src)&&!o.tBr.q&&o.tBr.marks===
 ok(o.tGa&&o.tGa.marks==='larm,rarm'&&o.tGa.either&&o.tGa.v===0&&o.tGa.art===1&&o.tGa.in,'5 Lorica Segmentata: both arms marked + "either arm" '+JSON.stringify(o.tGa));
 ok(o.tHe&&o.tHe.marks==='head'&&!o.tHe.either,'5 a helm marks the head only '+JSON.stringify(o.tHe));
 /* ── 20 · a fast sweep across the tiles: no card, no red hit flash; a rested hover shows the calm gold mark ── */
-/* a busy machine may let the pointer sit >120 ms on a tile now and then: a few cards may open, never most of them, never red */
-const sweep=async(sel,n,nm)=>{await P.mouse.move(5,5);await W8(250);await P.evaluate(()=>{const t=document.getElementById('tryOn');if(t)t.hidden=true;window._red87=0;window._hit87=0;window._shows87=0;window._last87='';
-    if(!window._mo87){window._mo87=new MutationObserver(()=>{const t=document.getElementById('tryOn');if(!t||t.hidden)return;if(t.querySelector('.avhit'))window._hit87++;if(t.querySelector('[fill="#ff4a3a"]'))window._red87++;const nm=(t.querySelector('.tost b')||{}).textContent;if(nm&&nm!==window._last87){window._last87=nm;window._shows87++}});window._mo87.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']})}});
+/* a busy machine lets the pointer sit >120 ms on a tile now and then (each mouse step takes longer under load): such a card is the
+   rested hover, not a fast pass. So the page itself times every card against the pointer's arrival on its tile (its own clock):
+   a card that opens sooner than 100 ms after the pointer reached the tile is a fast-pass card (must be none); never red */
+const sweep=async(sel,n,nm)=>{await P.mouse.move(5,5);await W8(250);await P.evaluate(()=>{const t=document.getElementById('tryOn');if(t)t.hidden=true;window._red87=0;window._hit87=0;window._shows87=0;window._fast87=0;window._last87='';window._tile87=null;
+    if(!window._mo87){document.addEventListener('mouseover',e=>{const el=e.target.closest&&e.target.closest('[data-card^="a:"]');if(el&&el!==window._tile87){window._tile87=el;window._arr87=performance.now()}else if(!el)window._tile87=null},true);
+      window._mo87=new MutationObserver(()=>{const t=document.getElementById('tryOn');if(!t||t.hidden)return;if(t.querySelector('.avhit'))window._hit87++;if(t.querySelector('[fill="#ff4a3a"]'))window._red87++;const nm=(t.querySelector('.tost b')||{}).textContent;if(nm&&nm!==window._last87){window._last87=nm;window._shows87++;if(window._tile87&&performance.now()-window._arr87<100)window._fast87++}});window._mo87.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']})}});
   const boxes=await P.$$eval(sel,els=>els.slice(0,8).map(e=>{e.scrollIntoView({block:'nearest'});const r=e.getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2]}));
   for(let k=0;k<n;k++)for(const [x,y] of boxes){await P.mouse.move(x,y,{steps:2});await W8(25)}
-  await P.mouse.move(5,5);await W8(30);const mid=await P.evaluate(()=>{const t=document.getElementById('tryOn');return {shown:!!(t&&!t.hidden),shows:window._shows87,hit:window._hit87,red:window._red87,
-    av:Object.entries(AVHIT).filter(([k,v])=>/^tryon/.test(k)&&v.t&&performance.now()-v.t<1500).length}});
+  await P.mouse.move(5,5);await W8(30);const av0=await P.evaluate(()=>Object.entries(AVHIT).filter(([k,v])=>/^tryon/.test(k)&&v.t&&performance.now()-v.t<1500).length);/* off the tiles: a card the last tile earned (a loaded pointer rested there) closes — wait for that, up to 3 s */
+  for(const t0=Date.now();Date.now()-t0<3000&&await P.evaluate(()=>{const t=document.getElementById('tryOn');return !!(t&&!t.hidden)});)await W8(50);
+  const mid=await P.evaluate(()=>{const t=document.getElementById('tryOn');return {shown:!!(t&&!t.hidden),shows:window._shows87,fast:window._fast87,hit:window._hit87,red:window._red87,
+    av:Object.entries(AVHIT).filter(([k,v])=>/^tryon/.test(k)&&v.t&&performance.now()-v.t<1500).length}});mid.av=Math.max(mid.av,av0);
   await P.evaluate(()=>{window._tsh87=0;window._tov87=0;document.addEventListener('mouseover',e=>{if(e.target.closest&&e.target.closest('[data-card^="a:"]')&&!window._tov87)window._tov87=performance.now()},true);
     const mo=new MutationObserver(()=>{const t=document.getElementById('tryOn');if(t&&!t.hidden&&!window._tsh87){window._tsh87=performance.now();mo.disconnect()}});mo.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']})});
   await P.mouse.move(boxes[0][0],boxes[0][1]);await W8(400);const early=await P.evaluate(()=>{const d=window._tsh87-window._tov87;return !(window._tsh87&&window._tov87&&d>=100)?Math.round(d)||'none':false});
@@ -68,7 +73,7 @@ const sweep=async(sel,n,nm)=>{await P.mouse.move(5,5);await W8(250);await P.eval
     return {marks:m.length,stroke:cs?cs.stroke:'',fill:cs?cs.fill:'',hit:t.querySelectorAll('.avhit').length,red:t.querySelectorAll('[fill="#ff4a3a"]').length+(m.some(x=>/255, 74, 58/.test(getComputedStyle(x).fill))?1:0)}});
   if(nm)await shot(nm);await P.mouse.move(5,5);await W8(200);const gone=await P.evaluate(()=>{const t=document.getElementById('tryOn');return !t||t.hidden});return {mid,early,rest,gone,n:boxes.length,hov:boxes.length*n}};
 o.sw=await sweep('#modal [data-card^="a:"]',3,'tryon_rest');
-ok(o.sw.n>=3&&!o.sw.mid.shown&&o.sw.mid.shows<=Math.max(1,o.sw.hov>>2)&&!o.sw.mid.hit&&!o.sw.mid.red&&!o.sw.mid.av,'20 a fast sweep across the tiles shows no card and no red hit flash '+JSON.stringify(o.sw));
+ok(o.sw.n>=3&&!o.sw.mid.shown&&!o.sw.mid.fast&&!o.sw.mid.hit&&!o.sw.mid.red&&!o.sw.mid.av,'20 a fast sweep across the tiles shows no card and no red hit flash '+JSON.stringify(o.sw));
 ok(!o.sw.early&&o.sw.rest&&o.sw.rest.marks>=1&&/255, 217, 119/.test(o.sw.rest.stroke)&&!o.sw.rest.hit&&!o.sw.rest.red&&o.sw.gone,'20 a rested hover (~120 ms) shows the gold mark; leaving hides it '+JSON.stringify(o.sw));
 /* 20 · legs → head → chest quickly: only the chest is marked, nothing red, the ghost wears the chest piece */
 o.abc=await (async()=>{await P.mouse.move(5,5);await W8(250);const c=async k=>P.$eval(`#modal [data-card="a:${k}"]`,e=>{const r=e.getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2]});
@@ -201,7 +206,7 @@ ok(/Hostus/.test(o.land.mock)&&/44 CF/.test(o.land.mock),'13 the mock day reache
 o.mk=await P.evaluate(async()=>{ONL.tab='armory';onlRedraw();await new Promise(r=>setTimeout(r,500));const m=document.querySelector('#onl .mb83');return m?getComputedStyle(m).backgroundImage:'none'});
 ok(!/market_board/.test(o.mk)&&o.mk!=='none','3 no market-board art behind the online market '+o.mk.slice(0,80));await shot('armory');
 o.sw2=await sweep('#onl [data-card^="a:"]',2,'tryon_online');
-ok(o.sw2.n>=3&&!o.sw2.mid.shown&&o.sw2.mid.shows<=Math.max(1,o.sw2.hov>>2)&&!o.sw2.mid.hit&&!o.sw2.mid.red,'20 online Armory: a fast sweep — no card, no red '+JSON.stringify(o.sw2));
+ok(o.sw2.n>=3&&!o.sw2.mid.shown&&!o.sw2.mid.fast&&!o.sw2.mid.hit&&!o.sw2.mid.red,'20 online Armory: a fast sweep — no card, no red '+JSON.stringify(o.sw2));
 ok(o.sw2.rest&&o.sw2.rest.marks>=1&&/255, 217, 119/.test(o.sw2.rest.stroke)&&!o.sw2.rest.red&&o.sw2.gone,'20 online Armory: the rested hover tries it on the gladiator, in gold '+JSON.stringify(o.sw2));
 /* 4 · the Domus (v0.89, 175): no buying; a piece taken off lands in the house's visible Gear bar */
 o.sr=await P.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));const w=mockLoad();w.chars[ONL.char.id].gear=['gladius','galea'];mockSave(w);await NET.req('hello',{all:1});

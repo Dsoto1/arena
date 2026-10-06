@@ -16,7 +16,7 @@ for(const n of ['A','B','C']){const ctx=await b.newContext({viewport:{width:1300
   await ctx.addInitScript(p=>{localStorage.setItem('flavius_onlserver',JSON.stringify({ws:'ws://127.0.0.1:'+p,dev:true}))},WS.port);
   P[n]=await ctx.newPage();P[n].on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]))}
 const {A,B,C}=P;const wait=ms=>A.waitForTimeout(ms);
-for(const p of [A,B,C])await p.goto(URL0);await wait(2500);
+for(const p of [A,B,C])await p.goto(URL0,{timeout:90000});for(const p of [A,B,C])await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});await wait(1000);
 /* poll until fn (in the page) is truthy */
 /* (the regression runs 3 tests at once: every wait polls for its condition with room to spare) */
 const until=async(p,fn,arg,ms=20000)=>{const t0=Date.now();let v;while(Date.now()-t0<ms){try{v=await p.evaluate(fn,arg)}catch(e){v=null}if(v)return v;await p.waitForTimeout(200)}return v};
@@ -62,7 +62,9 @@ const drive=async p=>{let r;try{r=await p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on|
       return ['xy',[rc.left+pt.x*rc.width/cv.width,rc.top+pt.y*rc.height/cv.height],(S.mode||'')+'@'+r0+','+c0]}
     S._drv=0;if(document.querySelector('[data-act="end"]'))return ['sel','[data-act="end"]','end']}return ['','','idle:'+S.phase]})}catch(e){return 'gone'}
   /* force: the suggested End turn beats (heartbeat), so it is never 'stable' for Playwright — under load it never got clicked */if(r[0]==='sel')await p.click(r[1],{timeout:2000,force:true}).catch(()=>{});if(r[0]==='xy')await p.mouse.click(r[1][0],r[1][1]).catch(()=>{});return r[2]};
-const run=async(ms,stop)=>{const t0=Date.now();while(Date.now()-t0<ms){await drive(A);await drive(B);await wait(250);if(await A.evaluate(()=>!S||S.over).catch(()=>true))break;if(stop&&await stop(Date.now()-t0))break}};
+const runlog=[];const run=async(ms,stop)=>{const t0=Date.now();let why='time';while(Date.now()-t0<ms){await drive(A);await drive(B);await wait(250);if(await A.evaluate(()=>!S||S.over).catch(()=>false)){why='over';break}if(stop&&await stop(Date.now()-t0)){why='stop';break}}
+  runlog.push({why,ms:Date.now()-t0,st:await Promise.all([A,B].map(p=>p.evaluate(()=>({next:ONLM.next,on:ONLM.on,me:ONLM.me,over:!!(S&&S.over),turn:S&&S.turnNo,ph:S&&S.phase,cur:S&&cur()&&cur().name,mine:onlmMine(),busy:S&&S.busy,modal:CUR_MODAL?((document.getElementById('mTitle')||{}).textContent||'?').slice(0,30):null,q:ONLM.q.length,pend:!!ONLM.pend,inflight:ONLM.inflight,sent:ONLM.sent,menu:!$('#mainMenu').hidden,
+    /* what a click on the action panel lands on (v0.90: the main menu stayed over the host's match — 79-screens screenLive fix) */at:(()=>{const c=document.querySelector('[data-act="coin"],[data-act="end"]');if(!c)return null;const r=c.getBoundingClientRect();const e=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return e?(e.id||e.className||e.tagName).toString().slice(0,40):null})()})).catch(e=>String(e).slice(0,80))))})}
 for(let t0=Date.now();Date.now()-t0<120000;){const st=await Promise.all([A,B].map(p=>p.evaluate(()=>!!(S&&S.onl&&ONLM.on&&ONLM.me>=0)).catch(()=>false)));inA=inA||st[0];inB=inB||st[1];if(inA&&inB)break;await drive(A);await drive(B);await wait(250)}
 seats=await Promise.all([A,B].map(p=>p.evaluate(()=>S&&S.onl?{me:ONLM.me,lobby:S.onl.lobby,n:S.players.length,watch:!!S.onl.watch}:null)));
 /* play until enough inputs are on the server (not a fixed 30 s: under load the same play takes longer) */
@@ -70,7 +72,7 @@ await run(180000,async el=>el>=10000&&(await A.evaluate(()=>ONLM.next).catch(()=
 /* a 💬 match phrase from A → a bubble over A's gladiator on B's screen */
 await B.evaluate(()=>{window.__bub=[];new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.classList&&n.classList.contains('qbub80'))window.__bub.push(n.textContent+'@'+n.dataset.seat)}).observe(document.body,{childList:true,subtree:true})});
 const sayBtn=await until(A,()=>!!document.getElementById('btnOnlSay80'),null,20000);
-await A.evaluate(()=>{ONLM.uiAt=Date.now()});await A.click('#btnOnlSay80').catch(()=>{});await wait(300);await A.click('#onlSay80 [data-msay="struck"]').catch(()=>{});
+await A.evaluate(()=>{ONLM.uiAt=Date.now();const b=document.getElementById('btnOnlSay80');if(b)b.click()});await A.waitForSelector('#onlSay80 [data-msay="struck"]',{timeout:20000}).catch(()=>{});await A.click('#onlSay80 [data-msay="struck"]',{force:true}).catch(()=>{});
 const bub=await until(B,()=>window.__bub.length?window.__bub:null,null,20000);
 await run(10000);
 /* every input sent is applied on both screens before the hashes are read */
@@ -80,17 +82,17 @@ const ha=await A.evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs,last:ONLM.lastResync|
 const ins=await A.evaluate(async()=>(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs.map(x=>[x.seq,x.from===ONL.acct.id,x.h||x.pre,x.k]));
 let same=0,diff=0;for(const [seq,fromA,h] of ins){const other=fromA?hb.h['s'+seq]:ha.h['s'+seq];if(!other)continue;if(other===h)same++;else diff++}
 /* the bout ends on both screens at the same input → both report → the match settles */
-for(let i=0;i<60;i++){const s=await Promise.all([A,B].map(p=>p.evaluate(()=>({n:ONLM.next,ok:(typeof onlmSettled==='function'?onlmSettled():true)&&!S.busy,over:S.over}))));if(s[0].over&&s[1].over)break;if(s[0].n===s[1].n&&s[0].ok&&s[1].ok)break;await drive(A);await drive(B);await wait(250)}
+for(const T_=Date.now();Date.now()-T_<60000;){const s=await Promise.all([A,B].map(p=>p.evaluate(()=>({n:ONLM.next,ok:(typeof onlmSettled==='function'?onlmSettled():true)&&!S.busy,over:S.over}))));if(s[0].over&&s[1].over)break;if(s[0].n===s[1].n&&s[0].ok&&s[1].ok)break;await drive(A);await drive(B);await wait(250)}
 for(const p of [A,B])await p.evaluate(()=>{if(!S.over)gameOver([S.players[0]],'test')}).catch(()=>{});
 /* the closing windows (results/Fate) are answered; C (free) sees the result line in the Forum */
-for(let i=0;i<40;i++){for(const p of [A,B])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)}).catch(()=>{});await wait(300);if(await C.evaluate(()=>ONLF.lines.some(l=>l.k==='res')))break}
+for(const T_=Date.now();Date.now()-T_<60000;){for(const p of [A,B])await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)}).catch(()=>{});await wait(300);if(await C.evaluate(()=>ONLF.lines.some(l=>l.k==='res')))break}
 const resC=await C.evaluate(()=>ONLF.lines.filter(l=>l.k==='res').map(l=>(l.win||[]).join('&')+' '+l.ev+(l.void?' void':'')));
 /* both lanistas read the results for a while on the sand (no request from either window): their sockets stay open, so a farewell
    and the ⚔ Again invitation still reach them */
 await wait(10000);
 const sockets=await Promise.all([A,B].map(p=>p.evaluate(()=>!!(NETWS.ws&&NETWS.ws.readyState===1))));
 await A.evaluate(()=>{window.__bub2=[];new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.classList&&n.classList.contains('qbub80'))window.__bub2.push(n.textContent)}).observe(document.body,{childList:true,subtree:true})});
-await B.evaluate(()=>{ONLM.uiAt=Date.now()});await B.click('#btnOnlSay80').catch(()=>{});await wait(300);await B.click('#onlSay80 [data-msay="well"]').catch(()=>{});
+await B.evaluate(()=>{ONLM.uiAt=Date.now();const b=document.getElementById('btnOnlSay80');if(b)b.click()});await B.waitForSelector('#onlSay80 [data-msay="well"]',{timeout:20000}).catch(()=>{});await B.click('#onlSay80 [data-msay="well"]',{force:true}).catch(()=>{});
 const bubAfter=await until(A,()=>window.__bub2.length?window.__bub2:null,null,20000);
 /* ⚔ Again (B, a fighter): a new room like the last, A invited — A sees the invitation once back in Online */
 const againBtn=await until(B,()=>!!document.getElementById('btnOnlAgain80'),null,20000);
@@ -101,7 +103,7 @@ const pop=await until(A,()=>{const p=document.querySelector('.inv80bg');return p
 await A.click('.inv80bg [data-onl="ijoin"]').catch(()=>{});
 const joined=await until(A,id=>{const L=onlMyLobby();return L&&L.id===id?L.players.map(p=>p.name):null},again&&again.id,20000);
 const mode=await A.evaluate(()=>NET.mode);
-const out={modes,mode,hello,rA,openC:!!openC,banC,rB,waitingRooms,aSeesB,logB,logA,chatlog,freeText,startBtn,inA:!!inA,inB:!!inB,seats,inputs:ins.length,same,diff,resync:[ha.r,hb.r,ha.last,hb.last],sayBtn:!!sayBtn,bub,resC,sockets,bubAfter,againBtn:!!againBtn,again,pop,joined,notes};
+const out={runlog,modes,mode,hello,rA,openC:!!openC,banC,rB,waitingRooms,aSeesB,logB,logA,chatlog,freeText,startBtn,inA:!!inA,inB:!!inB,seats,inputs:ins.length,same,diff,resync:[ha.r,hb.r,ha.last,hb.last],sayBtn:!!sayBtn,bub,resC,sockets,bubAfter,againBtn:!!againBtn,again,pop,joined,notes};
 console.log(JSON.stringify(out));
 const miss=[];
 if(mode!=='aws'||modes.some(m=>m!=='aws'))miss.push('the real transport');
@@ -110,7 +112,7 @@ if(!rA||rA.ev!=='democritus'||rA.ranked||rA.seats!==4)miss.push('＋ Custom room
 if(!rB||!rA||rB.id!==rA.id||waitingRooms!==1)miss.push('playlist joins A’s room, no twin');if(!aSeesB)miss.push('A sees B sit down (push)');
 if(!logB||!logA)miss.push('room phrases reach the other window');if(!chatlog.some(x=>/:ave$/.test(x))||!chatlog.some(x=>/:luck$/.test(x)))miss.push('lobby.chatlog');if(!/Quick chat only/.test(freeText))miss.push('no free text');
 if(!startBtn||startBtn.dis)miss.push('▶ Start enabled ('+(startBtn&&startBtn.why)+')');if(!inA||!inB)miss.push('both enter the match');
-if(ins.length<8)miss.push('enough inputs ('+ins.length+')');if(diff||ha.r||hb.r)miss.push('lockstep with no resync');
+if(ins.length<8)miss.push('enough inputs ('+ins.length+')');if(runlog[0]&&runlog[0].st.some(s=>s&&s.menu))miss.push('no main menu over the live match');if(diff||ha.r||hb.r)miss.push('lockstep with no resync');
 if(!sayBtn||!bub||!bub.some(t=>/Well struck/.test(t)))miss.push('match.say bubble on the other screen');
 if(!resC.length)miss.push('result line in the Forum');if(!sockets[0]||!sockets[1])miss.push('sockets stay open after the match');if(!bubAfter||!bubAfter.some(t=>/Well fought/.test(t)))miss.push('after-match phrase');if(!againBtn||!again||again.ev!=='democritus'||again.ranked)miss.push('⚔ Again room');if(!/invites you/.test(pop||''))miss.push('Again invites the other fighter');if(!joined)miss.push('join from the invitation');
 console.log('MISS',miss);console.log('ERRS',JSON.stringify(errs.slice(0,6)));await b.close();srv.close();WS.close();if(miss.length||errs.length)process.exit(1)})();

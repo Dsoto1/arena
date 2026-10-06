@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:950}});await pg.route(/fonts\./,r=>r.abort());
 const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.click('#mClose');
+await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForTimeout(900);await pg.click('#mClose');
 await pg.evaluate(()=>{$('#modal').hidden=true;SETTINGS.tokenStyle='figure';startEvent({ev:'democritus',loc:6,seats:['soldier','hero'].map(c=>({cls:c,cpu:true,diff:'normal'})),opts:{spect:0}});SPEED='pause'});
 await pg.waitForTimeout(2500);
 const a=await pg.evaluate(()=>{S.players[0].hp.rarm=0;draw();return Object.keys(TOKEN_IMG).length});

@@ -10,7 +10,7 @@ const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;
 const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:1300,height:900},acceptDownloads:true});await ctx.route(/fonts\./,r=>r.abort());
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
-const errs=[];const open=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0);await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});return p};
+const errs=[];const open=async n=>{const p=await ctx.newPage();p.on('pageerror',e=>errs.push(n+':'+e.message+' '+(e.stack||'').split('\n')[1]));await p.goto(URL0,{timeout:90000});await p.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});return p};
 const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const out={};
 const shot=async(p,n,clip)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,`v84_${n}.png`),...(clip?{clip}:{})})};
 const A=await open('A');
@@ -62,7 +62,7 @@ await A.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);await new Promise(r
 /* ── B · board life ── */
 out.b=await A.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
   startEvent({ev:'democritus',loc:6,seats:[{cls:'soldier',cpu:true},{cls:'hero',cpu:true},{cls:'royalty',cpu:true},{cls:'venatore',cpu:true}],opts:{}});
-  await W8(2600);for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(200)}S.over=true;await W8(1200);const r={};
+  await W8(2600);for(const T_=Date.now();Date.now()-T_<15000&&CUR_MODAL;){CUR_MODAL.done(null);await W8(200)}S.over=true;await W8(1200);const r={};
   S.blood=[];S.rotation=5;bloodAt(6,6,'elim');const B=S.blood[0];r.stamp=B.rot84===5;const fa=[];for(let k=0;k<6;k++){S.rotation=5+k;fa.push(+bloodFade84(B).toFixed(3))}S.rotation=5;r.fades=fa;
   r.fall=fa[0]===1&&fa[1]<1&&fa[2]<fa[1]&&fa[3]<fa[2]&&fa[5]>=LIFE84.floor&&fa[5]<0.5;
   const rm=Math.random;let calls=0;Math.random=()=>{calls++;return rm()};const h0=onlHash();bloodFade84(B);bloodCol84('#8a1c14',0.5);Math.random=rm;r.cosmetic=calls===0&&onlHash()===h0;
@@ -90,10 +90,10 @@ await A.waitForTimeout(1200);await shot(A,'dust',dclip);await A.waitForTimeout(2
 /* ── C · one tab per save ── */
 const cid=await A.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));S.over=true;if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(800);
   newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;await saveWorld(true);await W8(900);return W_().id});
-out.c0=false;for(let i=0;i<15&&!out.c0;i++){out.c0=await A.evaluate(id=>TAB84.held.has('career:'+id),cid);if(!out.c0)await A.waitForTimeout(300)}
+out.c0=false;for(const T_=Date.now();Date.now()-T_<22500&&!out.c0;){out.c0=await A.evaluate(id=>TAB84.held.has('career:'+id),cid);if(!out.c0)await A.waitForTimeout(300)}
 const B=await open('B');
 await B.evaluate(async id=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;MGR.pendingLoad=id;openManager()},cid);
-let asked=false;for(let i=0;i<20&&!asked;i++){await B.waitForTimeout(300);asked=await B.evaluate(()=>!!document.querySelector('.ask76bg')&&/another tab/.test(document.querySelector('.ask76bg').textContent))}
+let asked=false;for(const T_=Date.now();Date.now()-T_<30000&&!asked;){await B.waitForTimeout(300);asked=await B.evaluate(()=>!!document.querySelector('.ask76bg')&&/another tab/.test(document.querySelector('.ask76bg').textContent))}
 await shot(B,'second_tab');
 await B.click('.ask76bg [data-ask76="1"]');await B.waitForTimeout(900);
 out.c=await A.evaluate(async()=>{const bar=document.getElementById('tab84');const r={bar:!!bar&&!bar.hidden&&/another tab/.test(bar.textContent),blocked:saveBlocked76()};
@@ -101,7 +101,7 @@ out.c=await A.evaluate(async()=>{const bar=document.getElementById('tab84');cons
 out.cb=await B.evaluate(id=>({held:TAB84.held.has('career:'+id),world:!!W_()&&W_().id===id,free:!saveBlocked76()}),cid);
 /* Cancel: a third page asks for the same career and lets go */
 const C3=await open('C');await C3.evaluate(async id=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;MGR.pendingLoad=id;openManager()},cid);
-asked=false;for(let i=0;i<20&&!asked;i++){await C3.waitForTimeout(300);asked=await C3.evaluate(()=>!!document.querySelector('.ask76bg'))}
+asked=false;for(const T_=Date.now();Date.now()-T_<30000&&!asked;){await C3.waitForTimeout(300);asked=await C3.evaluate(()=>!!document.querySelector('.ask76bg'))}
 await C3.click('.ask76bg [data-ask76="0"]');await C3.waitForTimeout(900);
 out.cc=await C3.evaluate(()=>({world:!!W_(),blocked:saveBlocked76()}));out.cb2=await B.evaluate(()=>({bar:!document.getElementById('tab84'),free:!saveBlocked76()}));
 ok(out.c0,'first tab holds its career');ok(asked,'second tab asks');ok(out.c.bar&&out.c.blocked&&out.c.put,'the first tab shows the notice and stops saving');
@@ -131,7 +131,7 @@ await D.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)});
 const d=out.d;ok(d.none&&d.ev&&d.daysIdle&&d.days&&d.season,'nudge triggers (events, days, season) '+JSON.stringify(d));ok(d.offline,'the nudge says offline only');
 ok(out.d2.gone&&out.d2.later&&out.d2.stays,'Remind me later hides it');ok(out.d2.hub&&out.d2.last,'Saves: the nudge + last backup + offline lines');ok(out.d3.file&&out.d3.last&&out.d3.clear&&out.d3.gone&&out.d3.date,'Back up now downloads and resets '+JSON.stringify(out.d3));
 /* the standalone (file://) */
-const F=await ctx.newPage();F.on('pageerror',e=>errs.push('F:'+e.message));await F.goto('file://'+path.resolve(process.argv[2]));await F.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+const F=await ctx.newPage();F.on('pageerror',e=>errs.push('F:'+e.message));await F.goto('file://'+path.resolve(process.argv[2]));await F.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 await F.evaluate(()=>{window._open=[];window.open=(u)=>{window._open.push(u);return null};if(CUR_MODAL)CUR_MODAL.done(null);menuShow()});await F.waitForTimeout(300);
 await F.click('#mainMenu [data-mm="multi"]');await F.waitForTimeout(300);
 out.f=await F.evaluate(()=>{const o=document.querySelector('#mainMenu [data-mm="online"]');return {txt:o&&o.textContent,dis:o&&o.disabled}});
@@ -147,18 +147,25 @@ await T.addInitScript(()=>{const fake=s=>'«'+s.split(/\s+/).filter(Boolean).rev
     for(const t of L){const f1=document.createElement('font');f1.style.verticalAlign='inherit';const f2=document.createElement('font');f2.style.verticalAlign='inherit';f2.textContent=fake(t.data);f1.appendChild(f2);t.replaceWith(f1)}};
   let tm=null;window.__tr={n:0};const go=()=>{tm=null;try{tr(document.body);window.__tr.n++}catch(e){}};
   document.addEventListener('DOMContentLoaded',()=>{new MutationObserver(()=>{if(!tm)tm=setTimeout(go,40)}).observe(document.body,{childList:true,subtree:true});setTimeout(go,300)})});
-await T.goto(URL0);await T.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
+await T.goto(URL0,{timeout:90000});await T.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
 const step=async(n,fn)=>{try{await fn();return true}catch(e){errs.push('T step '+n+': '+e.message.split('\n')[0]);return false}};
 out.e={};
 out.e.menuTr=await T.evaluate(()=>!!document.querySelector('#mainMenu font')&&/«/.test(document.querySelector('#mainMenu .mmbtns').textContent));
 out.e.play=await step('play',async()=>{await T.click('#mainMenu [data-mm="play"]');await T.waitForTimeout(1200);await T.click('[data-mi="0"]');await T.waitForTimeout(1800);await T.click('#goBtn')});
-let turn=false;for(let i=0;i<50&&!turn;i++){await T.waitForTimeout(500);const st=await T.evaluate(()=>({m:!!CUR_MODAL&&!document.getElementById('modal').hidden,h:typeof humanTurn==='function'&&humanTurn()&&S.phase}));
+let turn=false;for(const T_=Date.now();Date.now()-T_<75000&&!turn;){await T.waitForTimeout(500);const st=await T.evaluate(()=>({m:!!CUR_MODAL&&!document.getElementById('modal').hidden,h:typeof humanTurn==='function'&&humanTurn()&&S.phase}));
   if(st.m)await T.evaluate(()=>{const b=document.querySelector('#mBtns button.primary')||document.querySelector('#mBtns button');if(b)b.click()});else if(st.h==='choice')turn=true}
 out.e.turn=turn;
-if(turn){const t0=await T.evaluate(()=>({who:S.turn,ph:S.phase,n:S.turnNo}));await step('coin',()=>T.click('#actions [data-act="coin"]'));await T.waitForTimeout(1200);
-  for(let i=0;i<10;i++){const m=await T.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);if(!m)break;await T.evaluate(()=>{const b=document.querySelector('#mBtns button');if(b)b.click()});await T.waitForTimeout(400)}
-  const ph=await T.evaluate(()=>S.phase);await step('end',()=>T.click('#actions [data-act="end"]'));await T.waitForTimeout(1500);
-  for(let i=0;i<10;i++){const m=await T.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);if(!m)break;await T.evaluate(()=>{const b=document.querySelector('#mBtns button');if(b)b.click()});await T.waitForTimeout(400)}
+if(turn){const t0=await T.evaluate(()=>({who:S.turn,ph:S.phase,n:S.turnNo}));
+  /* the translator rewrites the DOM all the time and End turn beats: never 'stable' for Playwright — force the real clicks; then wait for the
+     phase/turn to move (answering any window) instead of a fixed pause (3 tests at once stretch every timer) */
+  const answer=async(done,ms=30000)=>{for(const t1=Date.now();Date.now()-t1<ms;){if(await T.evaluate(done,t0))return true;const m=await T.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);
+    if(m)await T.evaluate(()=>{const b=document.querySelector('#mBtns button');if(b)b.click()});await T.waitForTimeout(300)}return false};
+  /* a click that lands while the turn is still settling does nothing: press again (a person would) until the phase moves */
+  const press=async(n,sel,done)=>{let ok=false;for(const t1=Date.now();Date.now()-t1<60000&&!ok;){if(await T.evaluate(s=>!!document.querySelector(s)&&!S.busy,sel))await T.click(sel,{force:true,timeout:5000}).catch(()=>{});ok=await answer(done,4000)}if(!ok)errs.push("T step "+n+": the phase never moved "+JSON.stringify(await T.evaluate(s=>{const b=document.querySelector(s);const r=b&&b.getBoundingClientRect();const e=r&&document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+    return {ph:S.phase,busy:S.busy,speed:SPEED,turn:S.turnNo,cur:cur()&&cur().name,human:typeof humanTurn==='function'&&humanTurn(),modal:CUR_MODAL?(document.getElementById('mTitle')||{}).textContent:null,btn:!!b,dis:b&&b.disabled,at:e?(e.id||e.className||e.tagName).toString().slice(0,40):null,log:[...document.querySelectorAll('#log > li')].slice(0,3).map(l=>l.textContent.slice(0,70))}},sel).catch(e=>String(e))));return ok};
+  await press('coin','#actions [data-act="coin"]',()=>S.phase!=='choice'&&!S.busy&&!CUR_MODAL);
+  const ph=await T.evaluate(()=>S.phase);await press('end','#actions [data-act="end"]',t0=>S.turnNo!==t0.n||S.turn!==t0.who);
+  for(const t1=Date.now();Date.now()-t1<10000;){const m=await T.evaluate(()=>!!CUR_MODAL&&!document.getElementById('modal').hidden);if(!m)break;await T.evaluate(()=>{const b=document.querySelector('#mBtns button');if(b)b.click()});await T.waitForTimeout(400)}
   out.e.ph=ph;out.e.turnMoved=await T.evaluate(t0=>S.turnNo!==t0.n||S.turn!==t0.who,t0);await shot(T,'translated')}
 out.e.terms=await T.evaluate(()=>{const s=[...document.querySelectorAll('.gt84')];return {n:s.length,eng:s.length>0&&s.every(x=>!/«/.test(x.textContent))}});
 out.e.names=await T.evaluate(()=>{const n=document.querySelector('#log b[style*="color"]');return !n||n.getAttribute('translate')==='no'});
