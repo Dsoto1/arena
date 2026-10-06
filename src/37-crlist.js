@@ -8,6 +8,7 @@
      trophies → offered to events · editors → offered to the cities
    Lock guards against edits and deletion, exactly as it does for characters.
    ===================================================================== */
+/* CR_KINDS — per kind of creation (w weapons, a armor, f flags, t trophies, sp sponsors): list/set (the CUSTOM array), store (Store collection), nm (name-suggestion pool), rolls (where "the rolls" put it), on (is it in the rolls?), toggle (add/remove), edit (open it on the designer bench), after (rebuild hook, gear only). */
 const CR_KINDS={
   w:{list:()=>CUSTOM.weapons||[],set:v=>{CUSTOM.weapons=v},store:'customWeapons',nm:'weapons',rolls:_T('the market & loadouts'),
      on:x=>!!(x.rolls&&(x.rolls.market||x.rolls.loadout)),toggle:x=>{const on=CR_KINDS.w.on(x);x.rolls={...(x.rolls||{}),market:!on,loadout:!on}},
@@ -21,9 +22,12 @@ const CR_KINDS={
      on:x=>x.offered!==false,toggle:x=>{x.offered=x.offered===false?true:false},edit:x=>{ST.trd=JSON.parse(JSON.stringify(x))}},
   sp:{list:()=>CUSTOM.sponsors||[],set:v=>{CUSTOM.sponsors=v},store:'customSponsors',nm:'sponsors',rolls:_T('the cities'),
      on:x=>x.offered!==false,toggle:x=>{x.offered=x.offered===false?true:false},edit:x=>{ST.spd2=JSON.parse(JSON.stringify(x))}}};
-function crActs(k,x){const K=CR_KINDS[k];const on=K.on(x);const L=x.locked;
-  return `<div class="acts cracts">${customTag()}<button class="btn tksm ${on?'':'primary'}" type="button" data-cr="rolls" data-k="${k}" data-id="${x.id}" title="${on?_T('Remove from'):_T('Add to')} ${K.rolls}">${on?_T('Remove from the rolls'):_T('📜 Add to the rolls')}</button>${lockBtn(x).replace('data-st="lock"',`data-cr="lock" data-k="${k}"`).replace('class="btn"',_T('class="btn tksm"'))}<button class="btn tksm" type="button" data-cr="edit" data-k="${k}" data-id="${x.id}" ${L?_T('disabled title="Locked: unlock first"'):''}>${_T`Edit`}</button><button class="btn tksm" type="button" data-cr="copy" data-k="${k}" data-id="${x.id}">${_T`Copy`}</button><button class="btn tksm" type="button" data-cr="del" data-k="${k}" data-id="${x.id}" ${L?_T('disabled title="Locked: unlock first"'):''}>${_T`Delete`}</button></div>`}
-async function crClick(b,redraw){const k=b.dataset.k,K=CR_KINDS[k];if(!K)return false;const a=b.dataset.cr,id=b.dataset.id;const x=K.list().find(y=>y.id===id);if(!x)return true;const now=new Date().toISOString().slice(0,10);
+/* crActs — the action row for one creation of kind: 📜 rolls toggle · 🔒 lock · Edit · Copy · Delete (Edit/Delete disabled while locked). */
+function crActs(kind,item){const K=CR_KINDS[kind];const on=K.on(item);const L=item.locked;
+  return `<div class="acts cracts">${customTag()}<button class="btn tksm ${on?'':'primary'}" type="button" data-cr="rolls" data-k="${kind}" data-id="${item.id}" title="${on?_T('Remove from'):_T('Add to')} ${K.rolls}">${on?_T('Remove from the rolls'):_T('📜 Add to the rolls')}</button>${lockBtn(item).replace('data-st="lock"',`data-cr="lock" data-k="${kind}"`).replace('class="btn"',_T('class="btn tksm"'))}<button class="btn tksm" type="button" data-cr="edit" data-k="${kind}" data-id="${item.id}" ${L?_T('disabled title="Locked: unlock first"'):''}>${_T`Edit`}</button><button class="btn tksm" type="button" data-cr="copy" data-k="${kind}" data-id="${item.id}">${_T`Copy`}</button><button class="btn tksm" type="button" data-cr="del" data-k="${kind}" data-id="${item.id}" ${L?_T('disabled title="Locked: unlock first"'):''}>${_T`Delete`}</button></div>`}
+/* crClick — handles a [data-cr] button (rolls/lock/edit/copy/del) for its kind and id, saves to the Store, then redraws. Returns false when the kind is unknown (not ours), true otherwise. Delete of a sponsor also clears its city assignments. */
+async function crClick(btn,redraw){const k=btn.dataset.k,K=CR_KINDS[k];if(!K)return false;const a=btn.dataset.cr,id=btn.dataset.id;const x=K.list().find(y=>y.id===id);if(!x)return true;const now=new Date().toISOString().slice(0,10);
+  /* save — writes one creation to its Store collection (errors ignored). */
   const save=async y=>{await Store.put(K.store,y.id,y).catch(()=>{})};
   if(a==='rolls'){K.toggle(x);await save(x);if(K.after)K.after();if(typeof mToast==='function')mToast(`${K.on(x)?_T('📜 Added to'):_T('Removed from')} ${K.rolls}: <b>${esc(x.name||'')}</b>`)}
   else if(a==='lock'){x.locked=!x.locked;(x.lockLog=x.lockLog||[]).push({a:x.locked?'locked':'unlocked',at:now});await save(x)}
@@ -37,4 +41,5 @@ async function crClick(b,redraw){const k=b.dataset.k,K=CR_KINDS[k];if(!K)return 
 /* v0.46: SYSTEM SETS ARE LOCKED. The printed pieces, the class and beast figures, the stock beasts, the
    system special events… show the same action row as your creations, but only Copy works: the copy is
    yours to edit, and the default is always there to come back to. */
-function sysActs(copyAttrs,opt={}){return `<div class="acts cracts sysacts"><span class="cbadge sys" title="${_T`System sets are locked so the defaults are always there — copy one to make it yours`}">${_T`🔒 System`}</span>${opt.rolls===false?'':`<span class="cbadge rolls" title="${_T`Part of the classic game`}">${_T`📜 In the rolls`}</span>`}<button class="btn tksm" type="button" disabled title="${_T`System sets are locked — copy it to edit`}">${_T`Edit`}</button><button class="btn tksm primary" type="button" ${copyAttrs}>${_T`⧉ Copy &amp; edit`}</button></div>`}
+/* sysActs — the locked action row for a system set: 🔒 System badge, "In the rolls" (unless options.rolls===false), a disabled Edit and ⧉ Copy & edit (carrying copyAttrs). */
+function sysActs(copyAttrs,options={}){return `<div class="acts cracts sysacts"><span class="cbadge sys" title="${_T`System sets are locked so the defaults are always there — copy one to make it yours`}">${_T`🔒 System`}</span>${options.rolls===false?'':`<span class="cbadge rolls" title="${_T`Part of the classic game`}">${_T`📜 In the rolls`}</span>`}<button class="btn tksm" type="button" disabled title="${_T`System sets are locked — copy it to edit`}">${_T`Edit`}</button><button class="btn tksm primary" type="button" ${copyAttrs}>${_T`⧉ Copy &amp; edit`}</button></div>`}
