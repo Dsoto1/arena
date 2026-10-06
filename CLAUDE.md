@@ -822,7 +822,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
 - **v0.89** your corner at the bottom (board turns to you), the city center as a painted forum + its sidebar, Flavius's painted face (11 moods),
   the market without the d4, the online Domus rebuilt, armor bonuses (stone guard…), lanista names + FID + house visits, rooms that clean up,
   Manage online, the auction's vault, lit sculpted tokens, 日本語; CPUs stop pacing, starting cards leave the deck, Commodus blocks only the unlock.
-  (Server zip flavius-server-15, no protocol bump — deploy it FIRST.)
+  (Published as artifact Version 103; server zip flavius-server-15, no protocol bump — deploy it FIRST; site zip flavius-site-update-v0.89 +
+  flavius-download-v0.89.) Release run (REGJ=3): 204/205 + tonl80 flaky (passed alone); -j 4 runs tripped online tests under load.
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
