@@ -22,6 +22,7 @@ const CJK_LANGS89=Object.keys(CJK_STACK89);
 const CJK_ON89=typeof LANG!=='undefined'&&CJK_LANGS89.includes(LANG);
 function cjkHas89(s){return CJK_RE89.test(String(s==null?'':s))}
 /* the switch/ask words, in Japanese (shown before the dictionary loads) */
+try{LANG_UI87.zh={name:'简体中文',live:'语言将在游戏重新载入后切换。现在重新载入会丢失进行中的比赛。',now:'立即重新载入',later:'下次再说',ask:'用简体中文进行游戏吗？',change:'你可以随时在设置中更改。',yes:'好，用中文'}}catch(e){} /* i18n:skip */
 try{LANG_UI87.ja={name:'日本語',live:'言語はゲームの再読み込み後に切り替わります。今すぐ再読み込みすると、進行中の試合は失われます。',now:'今すぐ再読み込み',later:'次回から',ask:'日本語でプレイしますか？',change:'設定でいつでも変更できます。',yes:'はい、日本語で'}}catch(e){} /* i18n:skip */
 
 /* ── canvas: the CJK stack before the generic family ── */

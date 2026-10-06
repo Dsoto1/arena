@@ -6,7 +6,7 @@
      written to $REPORT (default: no file) — the release keeps them under a ceiling
    D switching back: Settings → English reloads in English; the select lists English + Español
    E English untouched: a page without flavius_lang has LANG 'en', no dictionary, and _T is identity. */
-/* v0.87: WALK_LANG=it|pt|fr|de (v0.89: |ja) runs only the B/C walk in that language (tv87l runs all four) */
+/* v0.87: WALK_LANG=it|pt|fr|de (v0.89: |ja; v0.90: |zh) runs only the B/C walk in that language (tv87l runs all four) */
 const WL=process.env.WALK_LANG||'es';
 const path=require('path'),fs=require('fs');const REPORT=process.env.REPORT||'';const SHOT=process.env.SHOT||'';
 const {chromium}=require('playwright');(async()=>{const URL0='file://'+path.resolve(process.argv[2]);
@@ -97,7 +97,7 @@ ok(out.b.menu.LANG===WL&&out.b.menu.html===WL,'B: <html lang="'+WL+'"> '+JSON.st
 ok(!/Manager mode|Settings/.test(out.b.menu.txt),'B: the main menu reads '+WL+' '+out.b.menu.txt.slice(0,120));
 ok(out.b.play&&out.b.turn&&out.b.moved,'B: Play Now → the horns → a turn played in Spanish');
 ok(out.b.log&&out.b.log.n>0,'B: the log runs');
-ok(out.b.set&&out.b.sel&&out.b.sel.v===WL&&out.b.sel.opts.join()==='en,es,it,pt,fr,de,ja','B: Settings language select '+JSON.stringify(out.b.sel));
+ok(out.b.set&&out.b.sel&&out.b.sel.v===WL&&out.b.sel.opts.join()==='en,es,it,pt,fr,de,ja,zh','B: Settings language select '+JSON.stringify(out.b.sel));
 ok(out.b.rules&&out.b.mgr&&out.b.studio&&out.b.onl,'B: Rules, Manager, Studio, Online open in Spanish');
 ok(out.b.names.n===0||out.b.names.eng,'B: game terms stay English');
 const LEFT_MAX=+(process.env.LEFT_MAX||60),CUT_MAX=+(process.env.CUT_MAX||25);
