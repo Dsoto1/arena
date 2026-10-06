@@ -92,7 +92,7 @@ function paint91(g,o){const X=32,Y=94;const ink='rgba(28,16,8,.78)';const rim='r
   const lin=(x0,y0,x1,y1,c,lo=0.22,hi=-0.38)=>{const G=g.createLinearGradient(x0,y0,x1,y1);G.addColorStop(0,cmix91(c,lo));G.addColorStop(0.45,c);G.addColorStop(1,cmix91(c,hi));return G};
   const rad=(cx,cy,r,c)=>{const G=g.createRadialGradient(cx-r*0.38,cy-r*0.42,r*0.1,cx,cy,r*1.08);G.addColorStop(0,cmix91(c,0.28));G.addColorStop(0.55,c);G.addColorStop(1,cmix91(c,-0.4));return G};
   const S_=(w=1)=>{g.lineWidth=w;g.strokeStyle=ink;g.stroke()};
-  const up=o.back?(o.mood===4?2:o.mood===0?1:0):(o.mood===4?2:o.mood===0?1:0); /* 2 both arms up, 1 one fist up */
+  const up=o.up!=null?o.up:o.back?(o.mood===4?2:o.mood===0?1:0):(o.mood===4?2:o.mood===0?1:0); /* 2 both arms up, 1 one fist up (v0.92: o.up = the cheer burst, 209) */
   /* contact shadow on the bench (light upper left → a little to the right) */
   {const G=g.createRadialGradient(X+3,Y,2,X+3,Y,24);G.addColorStop(0,'rgba(12,6,2,.5)');G.addColorStop(1,'rgba(12,6,2,0)');g.fillStyle=G;g.beginPath();g.ellipse(X+3,Y,24,6,0,0,Math.PI*2);g.fill()}
   /* long hair behind the shoulders */
@@ -177,7 +177,7 @@ function paint91(g,o){const X=32,Y=94;const ink='rgba(28,16,8,.78)';const rim='r
 /* the sprite cache: one canvas per look + device-pixel bucket */
 const CR91_CV=new Map();const CR91_STEPS=[];for(let v=14;v<520;v=Math.round(v*1.22))CR91_STEPS.push(v);
 function sprite91(o,pxH){const px=CR91_STEPS.find(v=>v>=pxH)||CR91_STEPS[CR91_STEPS.length-1];
-  const key=[o.skin,o.hair,o.long?1:0,o.beard?1:0,o.fem?1:0,o.hat||'',o.tunic,o.sash,o.mood,o.back?1:0,o.laurel?1:0,px].join('|');
+  const key=[o.skin,o.hair,o.long?1:0,o.beard?1:0,o.fem?1:0,o.hat||'',o.tunic,o.sash,o.mood,o.back?1:0,o.laurel?1:0,px,o.up==null?'':o.up].join('|');
   let c=CR91_CV.get(key);if(c){CR91.hits++;CR91_CV.delete(key);CR91_CV.set(key,c);return c}
   CR91.miss++;const k=px/100;c=document.createElement('canvas');c.width=Math.ceil(64*k);c.height=Math.ceil(104*k);const g=c.getContext('2d');g.scale(k,k);
   try{paint91(g,o)}catch(e){console.error(e)}c._k=k;CR91_CV.set(key,c);while(CR91_CV.size>CR91.maxCv)CR91_CV.delete(CR91_CV.keys().next().value);return c}
