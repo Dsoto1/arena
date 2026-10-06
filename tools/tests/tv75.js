@@ -29,9 +29,9 @@ o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));co
 o.s=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);openSetup(true);await W8(1500);const r={};
   r.layout=!!document.querySelector('#mBody .pn75')&&document.querySelectorAll('#mBody .pn-ev').length>=12&&/4 PLAYERS/.test(document.querySelector('#mBody .pn-badge').textContent);
   document.querySelector('#mBody [data-pnev="familia"]').click();await W8(500);r.pick=CFG.ev==='familia'&&!!document.querySelector('#mBody .pn-ev.on[data-pnev="familia"]');
-  r.seats=document.querySelectorAll('#mBody .pn-who .seat').length===CFG.n&&!!document.querySelector('#mBody .pn-start #goBtn');
-  localStorage.removeItem('flavius_pnpresets');document.querySelector('#mBody [data-pnpre]').click();await W8(200);document.querySelector('#mBody [data-pnsave]').click();await W8(300);
-  r.preset=JSON.parse(localStorage.getItem('flavius_pnpresets')||'[]').length===1;
+  r.seats=document.querySelectorAll('#mBody .pn-who .seat').length===CFG.n&&!!document.querySelector('#mBody .pn-top #goBtn'); /* v0.90: Begin Event sits in the top bar */
+  /* v0.90: ★ Presets removed — 🎲 Random event instead */
+  r.preset=!document.querySelector('#mBody [data-pnpre]')&&!!document.querySelector('#mBody [data-pnrand90]');
   CUR_MODAL&&CUR_MODAL.done(null);await W8(300);openSettings('general');await W8(500);r.noSkip=!document.querySelector('[data-set="skipMenu"]');CUR_MODAL&&CUR_MODAL.done(null);await W8(300);return r});
 const Q=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_();w.night.loc=8;MGR.tab='night';MGR_REDRAW();await W8(500);
   const b=document.querySelector('.roomhd.b75city .roomttl b');return {city:!!b&&b.textContent==='Pompeii'}});o.q=Q;
