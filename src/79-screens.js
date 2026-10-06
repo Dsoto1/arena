@@ -15,9 +15,11 @@
    ===================================================================== */
 const SCREEN={pending:0,intents:0};
 const screenWindowUp=()=>!$('#modal').hidden||!!CUR_MODAL;
-/* an online match is live from its start (S.onl), setup phase included: the host's opening window closing before the first turn
-   used to settle on the main menu (MM.fromMenu) and leave it over the match — under load the first beginTurn comes late */
-const screenLive=()=>!!(S&&!S.over&&(S.phase!=='setup'||S.onl))||(typeof CITY!=='undefined'&&!!CITY.open);
+/* an event is live from its start, setup phase included: an online match (S.onl), or the state a finished startEvent left
+   (window.__started89, set by 166-v89fix). The opening window (the briefing, the host's start-up) closing before the first
+   beginTurn used to settle on the main menu (MM.fromMenu / the unplayed-background rule) and leave it over the match — under
+   load the first turn comes late (v0.90 tests: every click on the action panel landed on #mainMenu) */
+const screenLive=()=>!!(S&&!S.over&&(S.phase!=='setup'||S.onl||S===window.__started89))||(typeof CITY!=='undefined'&&!!CITY.open);
 function screenIntent(label,ms=15000){SCREEN.pending++;SCREEN.intents++;let over=false;const t0=Date.now();
   const end=()=>{if(over)return;over=true;SCREEN.pending=Math.max(0,SCREEN.pending-1);screenSettleSoon()};
   const poll=()=>{if(over)return;if(screenWindowUp()||screenLive()||Date.now()-t0>ms)return end();setTimeout(poll,40)};setTimeout(poll,40);return end}

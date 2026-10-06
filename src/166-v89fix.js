@@ -12,11 +12,11 @@
      only that seat's mind and its own label — no redraw (nothing else on the page depends on it). */
 
 let START89=0;
-{const base=startEvent;startEvent=async function(){START89++;try{return await base.apply(this,arguments)}finally{START89--}}}
+{const base=startEvent;startEvent=async function(){START89++;try{const r=await base.apply(this,arguments);window.__started89=S;return r}finally{START89--}}}
 {const base=screenSettle;screenSettle=function(){if(START89>0&&!HEADLESS){if(!screenWindowUp()&&typeof transitUncover==='function')transitUncover();return}
   const r=base.apply(this,arguments);try{
   if(HEADLESS||screenWindowUp()||screenLive()||SCREEN.pending>0)return r;
-  const idle=!S||S.phase==='setup';const m=$('#mainMenu');
+  const idle=!S||S.phase==='setup'&&S!==window.__started89;/* a started event waiting for its first turn is not the unplayed background */const m=$('#mainMenu');
   if(idle&&m&&m.hidden)menuShow()}catch(e){console.error(e)}return r}}
 mmAfterClose=function(){screenSettle()};
 
