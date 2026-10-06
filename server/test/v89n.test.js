@@ -56,13 +56,16 @@ async function routes(L){
   const T0=C.SEASON_EPOCH+5*C.WEEK_MS+3600e3;const key=C.seasonAt(T0).key;
   /* an empty world: three vault lots */
   const W1=await world(T0);const ann=await W1.client('ann');let al=await ann.req('auction.list',{});
-  assert.strictEqual(al.lots.length,C.AUC_LOTS,'three lots on a fresh world');
+  assert.strictEqual(al.lots.length,C.AUC_LOTS,'six lots on a fresh world (v0.91)');
+  /* v0.91 the vault lots follow the week's plan (≥1 top tier, ≥2 armor, ≥2 weapons) — the same pieces, computed here */
+  const exp=[];{const plan=C.aucPlan91([],C.AUC_LOTS,[],[]);const tW=[],tA=[];plan.forEach((o,j)=>{const P=C.vaultLot89(key,j+1,catalog,tW,tA,{at:C.seasonAt(T0).start,...o});if(P.pc.w.uq)(P.kind==='a'?tA:tW).push(P.pc.w.uq);exp.push(P)})}
   for(const l of al.lots){assert.ok(l.hist.length>=1&&l.hist.length<=3&&l.hist.every(h=>h.vault89&&LANS.includes(h.lan)),'histories of the old houses');assert.ok(TIERS.includes(l.rar));assert.strictEqual(l.min,Math.ceil(l.val/2));
-    const n=+l.id.split('#')[1];const P=C.vaultLot89(key,n,catalog,[],[],{at:C.seasonAt(T0).start});assert.strictEqual(l.item,P.item);assert.strictEqual(l.n,P.pc.w.n)}
+    const n=+l.id.split('#')[1];const P=exp[n-1];assert.strictEqual(l.item,P.item);assert.strictEqual(l.n,P.pc.w.n)}
+  assert.ok(al.lots.filter(l=>l.kind==='a').length>=2&&al.lots.filter(l=>l.kind==='w').length>=2,'two armor + two weapons');assert.ok(al.lots.some(l=>l.rar==='legendary'),'a Legendary while uniques are free');
   /* deterministic: another server, the same week → the same lots */
   const W2=await world(T0+7777);const zed=await W2.client('zed');const al2=await zed.req('auction.list',{});
   assert.deepStrictEqual(al2.lots.map(l=>[l.id,l.item,l.n,l.rar,JSON.stringify(l.w),JSON.stringify(l.hist)]),al.lots.map(l=>[l.id,l.item,l.n,l.rar,JSON.stringify(l.w),JSON.stringify(l.hist)]),'the same lots on every instance');
-  assert.ok((await W1.db.get('AUCTION#'+key,'VAULT89')).n===3,'one fill a week');await ann.req('auction.list',{});assert.strictEqual((await W1.db.query('AUCTION#'+key,'L#')).length,3,'never twice');
+  assert.ok((await W1.db.get('AUCTION#'+key,'VAULT89')).n===C.AUC_LOTS,'one fill a week');await ann.req('auction.list',{});assert.strictEqual((await W1.db.query('AUCTION#'+key,'L#')).length,C.AUC_LOTS,'never twice');
   /* reserved names refused for real players (house + lanista) */
   const bob=await W1.client('bob',{house:false});await rejects(bob.req('domus.create',{name:'House Sotonius'}),'domus_name',/old house/);await rejects(bob.req('domus.create',{name:'Anas Ferox'}),'domus_name');
   await rejects(bob.req('lanista.name',{name:'Duckio'}),'lname',/old house/);await rejects(bob.req('lanista.name',{name:'virgilante'}),'lname');await bob.req('lanista.name',{name:'Bobius Maximus'});
@@ -79,14 +82,16 @@ async function routes(L){
   /* the next week: the chest pieces first, the vault fills the rest */
   const P=C.namedPiece(C.rollNamed(()=>0.3,catalog,'rare',[]),{id:'fallenX'});P.pc.hist=[{house:'Domus Old',glad:'Old X',when:W1.T(),how:'fell'}];await W1.db.put('CHEST','P#'+C.itemUid(P.item),{item:P.item,pc:P.pc,at:W1.T(),taken:0});
   W1.setT(C.seasonAt(W1.T()).end+1000);al=await ann.req('auction.list',{});const cur=al.lots.filter(l=>l.id.startsWith(C.seasonAt(W1.T()).key+'#'));
-  assert.strictEqual(cur.length,3);assert.strictEqual(cur.filter(l=>l.item===P.item).length,1,'the real fallen piece is drawn');assert.strictEqual(cur.filter(l=>l.hist.some(h=>h.vault89)).length,2,'two from the vault');
+  assert.strictEqual(cur.length,C.AUC_LOTS);assert.strictEqual(cur.filter(l=>l.item===P.item).length,1,'the real fallen piece is drawn');assert.strictEqual(cur.filter(l=>l.hist.some(h=>h.vault89)).length,C.AUC_LOTS-1,'the rest from the vault');
+  assert.ok(cur.filter(l=>l.kind==='a').length>=2&&cur.filter(l=>l.kind==='w').length>=2&&cur.some(l=>l.rar==='legendary'||l.rar==='epic'),'the guarantees hold with a chest lot');
   /* Legendary: the vault claims the unique; one already claimed in the world is never minted again */
-  const TL=C.SEASON_EPOCH+L.w*C.WEEK_MS+3600e3;const W3=await world(TL);const cy=await W3.client('cy');al=await cy.req('auction.list',{});const lg=al.lots.find(l=>l.id===L.key+'#'+L.n);
-  assert.strictEqual(lg.rar,'legendary');const U=(L.P.kind==='a'?'UNIQA#':'UNIQ#')+L.P.pc.w.uq;assert.ok(await W3.db.get('WORLD',U),'the unique is claimed');
-  const W4=await world(TL);await W4.db.putNew('WORLD',U,{k:L.P.pc.w.uq,at:1});const dy=await W4.client('dy');al=await dy.req('auction.list',{});const lg4=al.lots.find(l=>l.id===L.key+'#'+L.n);
-  assert.notStrictEqual(lg4.w.uq,L.P.pc.w.uq,'a claimed unique is never minted');
+  /* v0.91: the plan makes lot 1 the week's Legendary (armor first) */
+  const TL=C.SEASON_EPOCH+L.w*C.WEEK_MS+3600e3;const W3=await world(TL);const cy=await W3.client('cy');al=await cy.req('auction.list',{});const lg=al.lots.find(l=>l.id===L.key+'#1');
+  assert.strictEqual(lg.rar,'legendary');const U=(lg.kind==='a'?'UNIQA#':'UNIQ#')+lg.w.uq;assert.ok(await W3.db.get('WORLD',U),'the unique is claimed');
+  const W4=await world(TL);await W4.db.putNew('WORLD',U,{k:lg.w.uq,at:1});const dy=await W4.client('dy');al=await dy.req('auction.list',{});const lg4=al.lots.find(l=>l.id===L.key+'#1');
+  assert.notStrictEqual(lg4.w.uq,lg.w.uq,'a claimed unique is never minted');
   /* unsold: the vault takes the Legendary back and frees its unique */
   W3.setT(lg.ends+1000);await cy.req('auction.list',{});assert.ok(!(await W3.db.get('WORLD',U)),'the unique is free again');
-  console.log('server v0.89 N (empty week → 3 vault lots, same lots on every instance, one fill, reserved house + lanista names, a won vault piece moves to the winner, unsold → back to the vault, chest first then the vault, Legendary claim + never twice): all checks passed')}
+  console.log('server v0.89 N (empty week → 6 vault lots with the v0.91 guarantees, same lots on every instance, one fill, reserved house + lanista names, a won vault piece moves to the winner, unsold → back to the vault, chest first then the vault, Legendary claim + never twice): all checks passed')}
 
 (async()=>{const L=rules();await routes(L)})().catch(e=>{console.error(e);process.exit(1)});

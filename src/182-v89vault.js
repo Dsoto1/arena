@@ -13,8 +13,10 @@
 /* ---------------- THE MOCK (as server/src/routes.js v0.89 N) ---------------- */
 {const base=mockAucDraw84;mockAucDraw84=function(w,t){const r=base.apply(this,arguments);try{const S=ONLC.seasonAt(t);const A=(w.auc84||{})[S.key];
     if(A&&!A.vault89&&(A.lots||[]).length<ONLC.AUC_LOTS){A.vault89=1;const cat=onlCatalog();const ends=ONLC.aucEnds(t);w.uniq83=w.uniq83||[];w.uniqA89=w.uniqA89||[];
-      let n=A.lots.reduce((a,x)=>Math.max(a,x.n|0),0);while(A.lots.length<ONLC.AUC_LOTS){n++;let P=ONLC.vaultLot89(S.key,n,cat,w.uniq83,w.uniqA89,{at:S.start});
-        if(P&&P.pc.w.uq){const U=P.kind==='a'?w.uniqA89:w.uniq83;if(U.includes(P.pc.w.uq))P=ONLC.vaultLot89(S.key,n,cat,w.uniq83,w.uniqA89,{at:S.start,cap:'epic'});else U.push(P.pc.w.uq)}
+      /* v0.91 the week's guarantees (as the server's vaultFill89: ONLC.aucPlan91) */
+      const plan=ONLC.aucPlan91?ONLC.aucPlan91(A.lots.map(x=>({kind:ONLC.lotKind91(x.item),rar:ONLC.lotRar91(x.pc)})),ONLC.AUC_LOTS-A.lots.length,w.uniq83,w.uniqA89):[];let made=0;
+      let n=A.lots.reduce((a,x)=>Math.max(a,x.n|0),0);while(A.lots.length<ONLC.AUC_LOTS){n++;const po=plan[made++]||{};let P=ONLC.vaultLot89(S.key,n,cat,w.uniq83,w.uniqA89,{at:S.start,...po});
+        if(P&&P.pc.w.uq){const U=P.kind==='a'?w.uniqA89:w.uniq83;if(U.includes(P.pc.w.uq))P=ONLC.vaultLot89(S.key,n,cat,w.uniq83,w.uniqA89,{at:S.start,...po,cap:'epic'});else U.push(P.pc.w.uq)}
         const I=P&&ONLC.pieceInfo(P,cat);if(!I)break;const val=ONLC.valueOf(I);
         A.lots.push({id:S.key+'#'+n,key:S.key,n,item:P.item,pc:P.pc,val,min:ONLC.aucMin(val),opens:t,ends,bid:null,bids:[],done:false,won:null,from:{vault89:1},vault89:1})}}}catch(e){console.error(e)}return r}}
 

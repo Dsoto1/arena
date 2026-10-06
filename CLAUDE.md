@@ -1124,6 +1124,19 @@ share copy — the site download play/flavius-rule-arena.zip.)
   stops spanning the full width (sits beside the squad, no empty right); Doctore + Study cards to the right column. MATCH WEEK: Temple only
   in the City Center; Walk the City Square button with a thumbnail of that forum; Walk the Sand needs a new home (open). LEAGUE: stakes per
   table position + scout a rival house from the table (his picks).
+- **ONLINE ECONOMY II (v0.91, 197-v91econ; shared rules = the v0.91 section at the end of 111-onlcore; server routes.js "v0.91 ONLINE ECONOMY II"):**
+  DAMAGED PRINTED ARMOR (Ranked only): every client adds row.dmg = [[engine key, AP lost on its location 0..1]] (onl91Dmg: 1 − cur/total like
+  armShares, a pair = its worst leg; printed armor brought and still worn) → cleanRow keeps it (cleanDmg: KEY_RE, clamp, 2 decimals, ≤16) →
+  gearAfter marks a Ranked survivor's piece pc.st 'damaged' + pc.dmg in place (damageItem91; out.dmg). Repair = ceil(value × dmg) (repairCost),
+  gear.repair mends broken AND damaged (paid as before: the treasury or one purse). kitOf lists kit.dmgd → roomJoin / seatGroup / startRoom strip
+  them from RANKED kits only (worn in Custom). Domus: tile "🩹 Damaged · repair N" + 🔨, worn list 🩹 🔨 N; after-bout toast lists them.
+  KEEP HOME = NAMED PIECES ONLY: homeSet refuses printed (server/mock code home_named), isHome/kitOf ignore an old printed flag; the 🔒 shows only
+  on named pieces (tip "Never taken into Ranked: safe from loss and loot, still worn in Custom."). AUCTION: AUC_LOTS 6; aucPlan91 = the vault's
+  forced options so chest + vault lots hold ≥1 top tier (Legendary while a unique of that kind is unclaimed, else Epic), ≥2 armor, ≥2 weapons
+  (vaultLot89 o.kind / o.rar floor, draws unchanged → deterministic; a lost unique race re-rolls with cap 'epic'); a week the chest alone fills
+  gets no guarantees. Lot cards one size (fixed height, owner history + bids fold into overlays: onl91AucFold). The purse → treasury OVERDRAFT
+  was dropped (his call: v0.92 replaces purses with one house treasury). Tests: server/test/v91.test.js, tv91e (+ tonl84/tonl89n/tonl89d, v84/v89n/v89d
+  server tests to six lots / named-only lock; v84's loot flake = a random Fidelis affix, stripped in the test).
 - **I18N SOURCE GLUE (found by the zh translators, fix in v0.90):** 16-crowd stone line puts a CPU spectator's English name + "hurls"
   before translated text; recruiting "You already {0} {1}" takes English verbs (scouted/feasted/pitched); a 10-meta "…first" fragment + tier
   name stay English. Wrap the verbs with _T / reword into whole keys.
