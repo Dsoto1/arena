@@ -33267,7 +33267,7 @@ async function onlRefresh(){try{const h=await NET.req('hello',{all:1});ONL.acct=
     if(h.chars&&h.me){ONL.chars=h.chars;ONL.active=h.active||null;ONL.char=h.chars.find(c=>c.alive&&c.id===h.active)||h.chars.find(c=>c.alive)||null;ONL.lobbies=h.lobbies||[];ONL.news=h.news||[];ONL.stats={challenges:h.challenges||[],online:h.online||0};ONL.party=h.party||null;return}}catch(e){ONL.err=e.message}
   if(ONL.acct){try{ONL.chars=await NET.req('char.mine');ONL.char=ONL.chars.find(c=>c.alive&&c.id===ONL.active)||ONL.chars.find(c=>c.alive)||null}catch(e){}}
   try{ONL.lobbies=await NET.req('lobby.list')}catch(e){}try{const n=await NET.req('world.news');ONL.news=n.news;ONL.stats=n}catch(e){}}
-function onlRedraw(){const r=document.getElementById('onl');if(!r)return;const sc=($('#mBody')||{}).scrollTop||0;r.innerHTML=onlHTML();const b=$('#mBody');if(b)b.scrollTop=sc}
+function onlRedraw(){const r=document.getElementById('onl');if(!r)return;const sc=($('#mBody')||{}).scrollTop||0;if(typeof morph91==='function')morph91(r,onlHTML());else r.innerHTML=onlHTML(); /* v0.91: patched in place (198), no flicker */const b=$('#mBody');if(b)b.scrollTop=sc}
 let ONL_SUB=null;
 async function onlineOpen(tab){if(typeof modalBusy==='function'&&modalBusy())return;ONL.tab=tab||'play';ONL.newGlad=false;await onlRefresh();
   if(!ONL_SUB)ONL_SUB=NET.on('lobby.update',async()=>{if(!document.getElementById('onl'))return;try{ONL.lobbies=await NET.req('lobby.list')}catch(e){}onlRedraw();if(typeof onlLobbyTick==='function')onlLobbyTick()});
@@ -46988,6 +46988,32 @@ body.onlarena #srv91{display:none}`;document.head.appendChild(st)}
    and a Donativum is always BRAND NEW: the server (and the practice mock) never hands out a used piece from Flavius's chest — owner
    history is only for arena-worn pieces, which go to the auction. */
 {const st=document.createElement('style');st.textContent=`.dnv91i{display:inline-block;font:600 .55em/1 system-ui,sans-serif;vertical-align:.45em;color:#c9ad6a;cursor:help;margin-left:4px}`;document.head.appendChild(st)}
+/* 198-v91morph — v0.91 NO FLICKER ON ONLINE SCREENS (his note 2026-10-06: "🎲 New patron" flickered the whole page).
+   onlRedraw used to replace #onl's innerHTML: every image, card and avatar was thrown away and decoded again, folds closed and the page
+   jumped for a frame. morph91(root, html) builds the new screen off-page and patches the live one node by node: unchanged nodes stay
+   (images stay decoded), changed attributes/text are updated in place, only nodes of another kind are replaced.
+   • A <details> keeps the open/closed state the player gave it; a focused input/select/textarea keeps what is being typed.
+   • Online screens use delegated listeners (document-level), so kept nodes carry no stale handlers.
+   • 112's onlRedraw calls morph91 when it exists (plain innerHTML otherwise). Other screens can adopt it the same way. */
+function morph91(root,html){const tpl=document.createElement('template');tpl.innerHTML=html;morph91Kids(root,tpl.content);return root}
+function morph91Same(a,b){if(a.nodeType!==b.nodeType)return false;if(a.nodeType!==1)return true;
+  if(a.tagName!==b.tagName)return false;const ia=a.id||'',ib=b.getAttribute('id')||'';return ia===ib}
+function morph91Kids(oldP,newP){const nk=Array.from(newP.childNodes);let o=oldP.firstChild;
+  for(const n of nk){if(!o){oldP.appendChild(n);continue}
+    if(morph91Same(o,n)){morph91Node(o,n);o=o.nextSibling}
+    else{const next=o.nextSibling;oldP.replaceChild(n,o);o=next}}
+  while(o){const next=o.nextSibling;oldP.removeChild(o);o=next}}
+function morph91Node(o,n){if(o.nodeType===3||o.nodeType===8){if(o.nodeValue!==n.nodeValue)o.nodeValue=n.nodeValue;return}
+  if(o.nodeType!==1)return;const tag=o.tagName;
+  /* attributes */
+  for(const a of Array.from(o.attributes)){if(!n.hasAttribute(a.name)){if(tag==='DETAILS'&&a.name==='open')continue;o.removeAttribute(a.name)}}
+  for(const a of Array.from(n.attributes)){if(tag==='DETAILS'&&a.name==='open')continue;if(o.getAttribute(a.name)!==a.value)o.setAttribute(a.name,a.value)}
+  const focused=document.activeElement===o;
+  if(tag==='INPUT'){if(!focused){const v=n.getAttribute('value');if(v!=null&&o.value!==v)o.value=v;if(o.type==='checkbox'||o.type==='radio')o.checked=n.hasAttribute('checked')}return}
+  if(tag==='TEXTAREA'){if(!focused&&o.value!==n.value)o.value=n.value;return}
+  if(tag==='SELECT'){if(focused)return;morph91Kids(o,n);const sel=n.querySelector('option[selected]');if(sel&&o.value!==sel.value)o.value=sel.value;return}
+  if(tag==='CANVAS')return;
+  morph91Kids(o,n)}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

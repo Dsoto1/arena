@@ -149,7 +149,7 @@ async function onlRefresh(){try{const h=await NET.req('hello',{all:1});ONL.acct=
     if(h.chars&&h.me){ONL.chars=h.chars;ONL.active=h.active||null;ONL.char=h.chars.find(c=>c.alive&&c.id===h.active)||h.chars.find(c=>c.alive)||null;ONL.lobbies=h.lobbies||[];ONL.news=h.news||[];ONL.stats={challenges:h.challenges||[],online:h.online||0};ONL.party=h.party||null;return}}catch(e){ONL.err=e.message}
   if(ONL.acct){try{ONL.chars=await NET.req('char.mine');ONL.char=ONL.chars.find(c=>c.alive&&c.id===ONL.active)||ONL.chars.find(c=>c.alive)||null}catch(e){}}
   try{ONL.lobbies=await NET.req('lobby.list')}catch(e){}try{const n=await NET.req('world.news');ONL.news=n.news;ONL.stats=n}catch(e){}}
-function onlRedraw(){const r=document.getElementById('onl');if(!r)return;const sc=($('#mBody')||{}).scrollTop||0;r.innerHTML=onlHTML();const b=$('#mBody');if(b)b.scrollTop=sc}
+function onlRedraw(){const r=document.getElementById('onl');if(!r)return;const sc=($('#mBody')||{}).scrollTop||0;if(typeof morph91==='function')morph91(r,onlHTML());else r.innerHTML=onlHTML(); /* v0.91: patched in place (198), no flicker */const b=$('#mBody');if(b)b.scrollTop=sc}
 let ONL_SUB=null;
 async function onlineOpen(tab){if(typeof modalBusy==='function'&&modalBusy())return;ONL.tab=tab||'play';ONL.newGlad=false;await onlRefresh();
   if(!ONL_SUB)ONL_SUB=NET.on('lobby.update',async()=>{if(!document.getElementById('onl'))return;try{ONL.lobbies=await NET.req('lobby.list')}catch(e){}onlRedraw();if(typeof onlLobbyTick==='function')onlLobbyTick()});

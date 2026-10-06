@@ -1158,6 +1158,12 @@ share copy — the site download play/flavius-rule-arena.zip.)
   per gladiator/house (canBuy has no copy limit; tiles show "owned ×N"; spares wait on the shelf, dressApply still wears one). In RANKED a printed
   piece the gladiator brought and no longer holds at the end (armor at 0 AP, weapon broken/thrown/dropped/used up) is DESTROYED (gearAfter →
   out.gone, toast "🔥 Used up in the bout … buy new in the Armory"); NAMED pieces still come back Broken (repair ⅓ of value). Custom: nothing.
+- **NO FLICKER (v0.91, 198-v91morph):** onlRedraw patches #onl in place with `morph91(root, html)` (kept nodes, details stay open, focused
+  inputs untouched, canvases kept) instead of innerHTML. Other full-redraw screens (Manager MGR_REDRAW, Studio) can adopt morph91 the same way.
+- **ONE TREASURY (his picks 2026-10-06, v0.92 — replaces gladiator purses):** no purse, no banking; every survival award 100% to the house
+  treasury (the 20% cut goes; the ledger still shows earnings per gladiator); today's purses move into their house treasury once (ledger line).
+  Before a match the lanista sends 0–10 coin from the treasury ON TOP of the class's starting coin (3 + 10 = 13 → at most one L3 item); a survivor
+  brings leftover coin home (up to what was sent), the dead lose it. At stake = gear brought + coin sent. Kits/restock/repairs/buys = treasury.
 - **ONLINE KITS (his picks 2026-10-06, v0.92 — build in v0.92):** Armory "Kits" row: CLASS KITS (each printed class's loadout on the avatar;
   owned pieces on him/the shelf skipped, "Complete the kit · N"), budget tiers (Scrap · Recruit · Class · Champion L2–3), 15% bundle discount;
   FREE DAILY KIT once a day per house (plain L1, pieces marked Issued: worth 0, unsellable, unrepairable, never looted, vanish when lost);
