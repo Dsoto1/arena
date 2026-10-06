@@ -53,6 +53,13 @@ unpack(){ # unpack <zip> → prints the folder
   local d; d=$(mktemp -d "$HOME/.flavius-XXXX"); unzip -oq "$1" -d "$d"; echo "$d"; }
 
 cmd_game(){ need_zip "${1:-}"; local d; d=$(unpack "$1"); game_dir "$d/play"; rm -rf "$d"; }
+# the standalone download built HERE from a game zip (v0.91: the download zip outgrew 30 MiB — the game zip carries tools/mkshare.py)
+dl_from_game(){ local d v; d=$(unpack "$1"); [ -f "$d/tools/mkshare.py" ] || { rm -rf "$d"; die "That game zip has no tools/mkshare.py — upload the download zip instead."; }
+  v=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['v'])" "$d/play/version.json") || die "no version.json in the game zip"
+  say "The standalone download v$v (built here from the game zip)"
+  mkdir -p "$d/b/tools"; cp "$d/play/index.html" "$d/b/flavius-arena.html"; cp -r "$d/play/assets" "$d/b/assets"; cp "$d/tools/mkshare.py" "$d/b/tools/"
+  (cd "$d/b" && python3 tools/mkshare.py "$v" | tail -1 && cd share && zip -q -9 flavius-rule-arena.zip "flavius-rule-arena-v$v.html") || die "building the download failed"
+  put "$d/b/share/flavius-rule-arena.zip" "play/flavius-rule-arena.zip"; clear_cdn "/play/flavius-rule-arena.zip"; rm -rf "$d"; }
 game_dir(){ local p="$1"
   [ -f "$p/index.html" ] && [ -f "$p/version.json" ] || die "That zip has no play/index.html + play/version.json — is it a game update?"
   local v; v=$(sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p' "$p/version.json"); say "Game update v$v"
@@ -217,11 +224,11 @@ cmd_release(){ local here; here=$(pwd)
   sit=$(ls -t "$here"/flavius-site-v*.zip 2>/dev/null | head -1 || true)
   pri=""; [ -f "$here/privacy.html" ] && pri="$here/privacy.html"
   [ -n "$srv$gam$sit$pri" ] || { cmd_gitrelease "${1:-}"; return; }
-  say "Release plan"; echo "  1 server   : ${srv:-(none uploaded — skipped)}"; echo "  2 game     : ${gam:-(none uploaded — skipped)}"; echo "  3 download : ${dl:-(none uploaded — skipped)}"; echo "  4 site     : ${sit:-(none uploaded — skipped)}"; echo "  5 page     : ${pri:-(none uploaded — skipped)}"
+  say "Release plan"; echo "  1 server   : ${srv:-(none uploaded — skipped)}"; echo "  2 game     : ${gam:-(none uploaded — skipped)}"; echo "  3 download : ${dl:-$( [ -n "$gam" ] && unzip -l "$gam" tools/mkshare.py >/dev/null 2>&1 && echo "built here from the game zip" || echo "(none uploaded — skipped)")}"; echo "  4 site     : ${sit:-(none uploaded — skipped)}"; echo "  5 page     : ${pri:-(none uploaded — skipped)}"
   if [ "${DRY:-}" != 1 ]; then read -r -p "Go? [y/N] " ok; case "$ok" in y|Y|yes) ;; *) die "Stopped — nothing changed.";; esac; fi
   [ -n "$srv" ] && { cmd_server "$srv"; cd "$here"; }
   [ -n "$gam" ] && { cmd_game "$gam"; cd "$here"; }
-  [ -n "$dl" ] && { cmd_download "$dl"; cd "$here"; }
+  if [ -n "$dl" ]; then cmd_download "$dl"; cd "$here"; elif [ -n "$gam" ] && unzip -l "$gam" tools/mkshare.py >/dev/null 2>&1; then dl_from_game "$gam"; cd "$here"; fi
   [ -n "$sit" ] && { cmd_site "$sit"; cd "$here"; }
   [ -n "$pri" ] && { cmd_page "$pri"; cd "$here"; }
   # file the zips that went out, so the next release only sees new ones (kept in ~/flavius-done, the last 3 releases)

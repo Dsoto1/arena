@@ -49,9 +49,11 @@ rm -f "share/flavius-rule-arena-v$V.zip"; (cd share && zip -q -9 "flavius-rule-a
 ls -la "share/flavius-rule-arena-v$V.zip"
 step "6 site zips (what he uploads to CloudShell: bash flavius.sh release)"
 OUT=share/deploy; mkdir -p "$OUT"; T=$(mktemp -d); mkdir -p "$T/a/play" "$T/b/play"
-cp flavius-arena.html "$T/a/play/index.html"; cp version.json share/arena_shot.webp "$T/a/play/"; cp -r assets "$T/a/play/assets"; cp tools/deploy/flavius.sh "$T/a/flavius.sh"
+cp flavius-arena.html "$T/a/play/index.html"; cp version.json share/arena_shot.webp "$T/a/play/"; cp -r assets "$T/a/play/assets"; cp tools/deploy/flavius.sh "$T/a/flavius.sh"; mkdir -p "$T/a/tools"; cp tools/mkshare.py "$T/a/tools/mkshare.py"
 cp "share/flavius-rule-arena-v$V.zip" "$T/b/play/flavius-rule-arena.zip"
 rm -f "$OUT"/flavius-site-update-v*.zip "$OUT"/flavius-download-v*.zip
-(cd "$T/a" && zip -q -r "$OLDPWD/$OUT/flavius-site-update-v$V.zip" play flavius.sh); (cd "$T/b" && zip -q -r "$OLDPWD/$OUT/flavius-download-v$V.zip" play); rm -rf "$T"
+(cd "$T/a" && zip -q -r "$OLDPWD/$OUT/flavius-site-update-v$V.zip" play flavius.sh tools); (cd "$T/b" && zip -q -r "$OLDPWD/$OUT/flavius-download-v$V.zip" play); rm -rf "$T"
+# over 30 MiB: no download zip — flavius.sh builds the standalone in CloudShell from the game zip (it carries tools/mkshare.py)
+ds=$(stat -c %s "$OUT/flavius-download-v$V.zip"); if [ "$ds" -gt 31457280 ]; then rm -f "$OUT/flavius-download-v$V.zip"; echo "  download zip over 30 MiB — dropped: flavius.sh release builds the standalone from the game zip"; fi
 for z in "$OUT"/flavius-*-v$V.zip; do s=$(stat -c %s "$z"); printf '  %s  %s MiB%s\n' "$z" "$(echo "scale=1;$s/1048576" | bc)" "$([ "$s" -gt 31457280 ] && echo '  ← over 30 MiB: too big to send in one file')"; done
 printf '\nREADY v%s — next: publish (read the live artifact first), update CLAUDE.md, COMMIT + PUSH (flavius.sh release deploys from GitHub: version.json, the page, assets, server/, tools/deploy/arena_shot.webp). The zips in share/deploy are the fallback.\n' "$V"

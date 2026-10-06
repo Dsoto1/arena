@@ -65,7 +65,7 @@ await P.evaluate(()=>{S.over=true});await closeAll(P);
 
 /* ── C · back to English ── */
 await P.evaluate(()=>{menuHide();openSettings()});await P.waitForTimeout(900);
-await Promise.all([P.waitForNavigation({timeout:15000}).catch(()=>null),P.selectOption('select[data-lang84]','en')]);await ready(P);
+await Promise.all([P.waitForNavigation({timeout:15000}).catch(()=>null),P.evaluate(()=>document.querySelector('[data-lang91="en"]').click()) /* v0.91: flag buttons replace the select */]);await ready(P);
 out.c=await P.evaluate(()=>{const x=document.createElement('canvas').getContext('2d');x.font='600 14px Alegreya Sans, sans-serif';
   return {LANG,dict:!!LANG_DICT,html:document.documentElement.lang,cls:document.documentElement.className,font:x.font,style:!!document.getElementById('cjk89'),en:clsWrap('Once per event you may reroll a die',12).join('|')}});
 ok(out.c.LANG==='en'&&!out.c.dict&&out.c.html==='en'&&!/cjk/.test(out.c.cls)&&!out.c.style&&!/Hiragino/.test(out.c.font)&&out.c.en==='Once per|event you|may reroll a|die','C: English again '+JSON.stringify(out.c));
