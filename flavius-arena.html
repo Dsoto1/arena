@@ -46754,7 +46754,7 @@ if(typeof drawStuckOn83==='function'){const base=drawStuckOn83;drawStuckOn83=fun
       stains and wear; Reduce motion / Animations Off = no settle (138), the drift is per rotation with no tween.
    WEAR91.on = false turns the whole layer off (07-ui's plain rubble returns) — used by tv91w to time draw().
    ===================================================================== */
-const WEAR91={on:true,gully:0.32,trickleMax:28,bakeMaxPx:4e6,bakeDpr:2,stats:{},lastBakeMs:0,bakes:0}; /* TWEAK: gully offset (tiles past the edge) when no drains say; the trickle cap; the bake's pixel budget */
+const WEAR91={on:true,stumpH:0.07,drumD:0.15,clear:0.3,gully:0.32,trickleMax:28,bakeMaxPx:4e6,bakeDpr:2,stats:{},lastBakeMs:0,bakes:0}; /* TWEAK: stumpH = stump height (TW), drumD = fallen drum thickness (TW), clear = how far rubble keeps from a tile's middle (tiles); gully offset (tiles past the edge) when no drains say; the trickle cap; the bake's pixel budget */
 /* h91 — a cosmetic hash in [0,1) (never the dice) */
 function h91(a,b,c){let h=(Math.imul((a|0)+7919,73856093)^Math.imul((b|0)+104729,19349663)^Math.imul((c|0)+1299709,83492791))>>>0;h=Math.imul(h^(h>>>15),2246822507)>>>0;h=Math.imul(h^(h>>>13),3266489909)>>>0;return ((h^(h>>>16))>>>0)/4294967296}
 const WEAR91_S=new WeakMap();   /* S → {cnt,scuff,pos,ver,stain} */
@@ -46790,7 +46790,9 @@ function marble91(){const pc=(typeof THEME!=='undefined'&&THEME.pillar)||'#ece4d
 function rub91(rb){let R=WEAR91_RB.get(rb);if(R)return R;const seed=rb.r*31+rb.c*7+(rb.dr+2)*3+(rb.dc+2);const pieces=[];
   const dr=rb.dr||0,dc=rb.dc||0;let i=0;
   for(const k of [0,1,2]){const r0=rb.r+dr*k,c0=rb.c+dc*k;const inb=r0>=0&&c0>=0&&r0<N&&c0<N;
-    const add=(t,sz,jit)=>{const q=i++;pieces.push({t,k,i:q,sz,r:r0+(h91(seed,q,1)-0.5)*jit,c:c0+(h91(seed,q,2)-0.5)*jit,a:(h91(seed,q,3)-0.5)*0.7,s:h91(seed,q,4),roll:h91(seed,q,5)<0.4,out:!inb})};
+    const add=(t,sz,jit)=>{const q=i++;let jr=(h91(seed,q,1)-0.5)*jit,jc=(h91(seed,q,2)-0.5)*jit;
+      if(inb&&WEAR91.clear){const d=Math.hypot(jr,jc),m=t==='drum'?0.34:WEAR91.clear;if(d<m){const an=d>0.01?Math.atan2(jr,jc):h91(seed,q,6)*Math.PI*2;jr=Math.sin(an)*m;jc=Math.cos(an)*m}}   /* off the middle: the tile reads as open sand */
+      pieces.push({t,k,i:q,sz,r:r0+jr,c:c0+jc,a:(h91(seed,q,3)-0.5)*0.7,s:h91(seed,q,4),roll:h91(seed,q,5)<0.4,out:!inb})};
     if(!inb){add('chip',0.8,0.5);add('chip',0.6,0.5);continue}
     if(k===1)add('drum',1,0.25);if(k===2)add('drum',0.78,0.3);
     const nc=k===0?3:k===1?4:3;for(let j=0;j<nc;j++)add('chip',0.55+h91(seed,j,k+9)*0.6,0.8)}
@@ -46833,7 +46835,7 @@ function drum91(g,x,y,len,dia,th,seed,lift,col){const im=stone91();const phi=th-
   g.strokeStyle='rgba(70,60,48,.45)';g.lineWidth=Math.max(0.5,dia*0.02);g.beginPath();g.moveTo(-rx*0.5,ey-ry*0.2);g.lineTo(rx*0.1,ey+ry*0.15);g.lineTo(rx*0.45,ey-ry*0.3);g.stroke();
   g.restore()}
 /* stump91 — the broken stump where the pillar stood: his base + the shaft's foot, cut jagged ~0.25 TW above the sand */
-function stump91(g,x,y,col){const im=stone91();const s=stoneScale91();const H=TW*0.25;
+function stump91(g,x,y,col){const im=stone91();const s=stoneScale91();const H=TW*WEAR91.stumpH;
   g.fillStyle='rgba(0,0,0,.3)';ell91(g,x+TW*0.03,y+TW*0.025,TW*0.3,TW*0.14);g.fill();
   if(im&&s>0){const rx=STONE91.rx*s,top=y-H,ry=rx*0.42;const seed=Math.round(x*3)^Math.round(y*5);
     g.save();g.beginPath();g.moveTo(x-im.naturalWidth*s,y+TW);g.lineTo(x-rx*1.6,top+ry*0.4);
@@ -46859,7 +46861,7 @@ function rubDraw91(g,rb,G,live){const R=rub91(rb);const col=marble91();const st=
   const L=[];const sm=center(rb.r,rb.c);L.push({y:sm.y,f:()=>{stump91(g,sm.x,sm.y,col);st.stumps=(st.stumps||0)+1}});
   const th0=(()=>{const a=center(rb.r,rb.c),b=center(rb.r+dr,rb.c+dc);return Math.atan2(b.y-a.y,b.x-a.x)})();
   for(const p of R.pieces){const [r,c]=rubPos91(rb,R,p,G);const m=center(r,c);const lift=live&&typeof rubbleSettle84==='function'?rubbleSettle84(rb,p.k,p.i):0;
-    if(p.t==='drum')L.push({y:m.y,f:()=>{drum91(g,m.x,m.y,TW*0.36*p.sz,TW*0.3*p.sz,th0+p.a,R.seed*13+p.i,lift,col);st.drums=(st.drums||0)+1}});
+    if(p.t==='drum')L.push({y:m.y,f:()=>{drum91(g,m.x,m.y,TW*0.3*p.sz,TW*WEAR91.drumD*p.sz,th0+p.a,R.seed*13+p.i,lift,col);st.drums=(st.drums||0)+1}});
     else L.push({y:m.y,f:()=>{chip91(g,m.x,m.y,TW*0.055*p.sz,R.seed*17+p.i,lift,col);st.chips=(st.chips||0)+1;if(p.out||Math.min(r,c,N-1-r,N-1-c)<-0.5)st.gullyChips=(st.gullyChips||0)+1}})}
   L.sort((a,b)=>a.y-b.y);for(const o of L)o.f()}
 /* ---------- 4. the worn paths and the scuffs ---------- */
@@ -46935,6 +46937,12 @@ function wear91Layer(rubble){if(!WEAR91.on||!S)return;const t0=performance.now()
   try{wear91Sample()}catch(e){}
   const had=Object.prototype.hasOwnProperty.call(S,'rubble'),real=S.rubble,S0=S;const hook=[];hook[Symbol.iterator]=function*(){try{wear91Layer(real)}catch(e){WEAR91.err=String(e&&e.message||e)}};
   S.rubble=hook;try{return base.apply(this,arguments)}finally{if(S0.rubble===hook){if(had)S0.rubble=real;else delete S0.rubble}}}}
+
+/* RUBBLE IS WALKABLE (his note 2026-10-06): rubble never blocks a move, so it must not look like a wall — the stump is a low broken ring
+   at the plinth (WEAR91.stumpH), the fallen drums lie low (drumD), every piece keeps off the middle of its tile (clear), and the hover
+   line says so. */
+function rubbleOn91(r,c){for(const rb of (S&&S.rubble)||[]){const dr=rb.dr||0,dc=rb.dc||0;for(let k=0;k<3;k++)if(rb.r+dr*k===r&&rb.c+dc*k===c)return true}return false}
+{const base=describeTile;describeTile=function(t){let h=base.apply(this,arguments);try{if(t&&S&&typeof h==='string'&&rubbleOn91(t.r,t.c)&&!pillarAt(t.r,t.c))h+=' · '+_T('Rubble — walkable')}catch(e){}return h}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
