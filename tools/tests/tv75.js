@@ -29,7 +29,7 @@ o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));co
 o.s=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);openSetup(true);await W8(1500);const r={};
   r.layout=!!document.querySelector('#mBody .pn75')&&document.querySelectorAll('#mBody .pn-ev').length>=12&&/4 PLAYERS/.test(document.querySelector('#mBody .pn-badge').textContent);
   document.querySelector('#mBody [data-pnev="familia"]').click();await W8(500);r.pick=CFG.ev==='familia'&&!!document.querySelector('#mBody .pn-ev.on[data-pnev="familia"]');
-  r.seats=document.querySelectorAll('#mBody .pn-who .seat').length===CFG.n&&!!document.querySelector('#mBody .pn-top #goBtn'); /* v0.90: Begin Event sits in the top bar */
+  r.seats=document.querySelectorAll('#mBody .pn-who .seat:not(.stands92)').length===CFG.n&&!!document.querySelector('#mBody .pn-top #goBtn'); /* v0.90: Begin Event sits in the top bar */
   /* v0.90: ★ Presets removed — 🎲 Random event instead */
   r.preset=!document.querySelector('#mBody [data-pnpre]')&&!!document.querySelector('#mBody [data-pnrand90]');
   CUR_MODAL&&CUR_MODAL.done(null);await W8(300);openSettings('general');await W8(500);r.noSkip=!document.querySelector('[data-set="skipMenu"]');CUR_MODAL&&CUR_MODAL.done(null);await W8(300);return r});
