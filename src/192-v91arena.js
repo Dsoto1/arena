@@ -270,7 +270,12 @@ function ar91TopPaint(g,out){const lud=ar91Lud();const ring=ar91Ring;const mid=a
     g.strokeStyle='rgba(120,110,96,.7)';g.lineWidth=Math.max(0.8,TW*0.014);for(let k=1;k<6;k++){const x=a.x+ux*k/6,y=a.y+uy*k/6;g.beginPath();g.moveTo(x-TW*0.012,y-TW*0.022);g.lineTo(x+TW*0.012,y+TW*0.022);g.stroke()}}g.restore();
   /* the far walls */
   const C2=ring(0.31);const lab=ar91Labels();const H=TW*0.36;
+  const R2=ring(0.5);const Lt=R2.reduce((b,p)=>p.x<b.x?p:b),Rt=R2.reduce((b,p)=>p.x>b.x?p:b);
   for(const E of ar91Edges(0.19).filter(E=>E.far)){const left=E.mx<mid.x;let a=E.a,b=E.b,a2=C2[E.ia],b2=C2[E.ib];if(a.x>b.x){let t=a;a=b;b=t;t=a2;a2=b2;b2=t}
+    /* v0.91 (his note): the wall runs on past the sand's corner to the tower, so its red edge meets the near wall's red edge there */
+    {const L0=Math.hypot(b.x-a.x,b.y-a.y),vx=(b.x-a.x)/L0,vy=(b.y-a.y)/L0;
+      if(left&&a.x>Lt.x){const d=(a.x-Lt.x)/vx;a={x:a.x-vx*d,y:a.y-vy*d};a2={x:a2.x-vx*d,y:a2.y-vy*d}}
+      if(!left&&b.x<Rt.x){const d=(Rt.x-b.x)/vx;b={x:b.x+vx*d,y:b.y+vy*d};b2={x:b2.x+vx*d,y:b2.y+vy*d}}}
     const L=Math.hypot(b.x-a.x,b.y-a.y),ux=(b.x-a.x)/L,uy=(b.y-a.y)/L;
     g.save();g.translate(a.x,a.y);g.transform(ux,uy,0,1,0,0);
     ar91Fill(g,1);g.fillRect(0,-H,L,H);g.fillStyle=left?'rgba(40,30,20,.22)':'rgba(255,248,230,.06)';g.fillRect(0,-H,L,H);
@@ -289,7 +294,6 @@ function ar91TopPaint(g,out){const lud=ar91Lud();const ring=ar91Ring;const mid=a
     const cY=TW*0.022,k2=0.35;const A2={x:a.x+(a2.x-a.x)*k2,y:a.y+(a2.y-a.y)*k2},B2={x:b.x+(b2.x-b.x)*k2,y:b.y+(b2.y-b.y)*k2};
     g.fillStyle='#b53a33';ar91Path(g,[{x:a.x,y:a.y-H-cY},{x:b.x,y:b.y-H-cY},{x:B2.x,y:B2.y-H-cY},{x:A2.x,y:A2.y-H-cY}]);g.fill()}
   /* the towers at the far walls' ends (left and right corners) */
-  const R2=ring(0.5);const Lt=R2.reduce((b,p)=>p.x<b.x?p:b),Rt=R2.reduce((b,p)=>p.x>b.x?p:b);
   for(const p of [Lt,Rt])ar91Tower(g,p.x,p.y+TW*0.02,out.fires);
   /* the emperor's podium (attached box) or the ludus temple */
   if(lud)ar91Temple(g);else if(!AR91.det&&!(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false))ar91Podium(g,out.fires)}
