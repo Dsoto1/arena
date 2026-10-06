@@ -7,18 +7,28 @@
    Each step lights the part in question and waits for the click it asks for. Leave any time; at the end,
    a window offers the main menu, a new career, or the lesson again.
    ===================================================================== */
+/* MTUT — the lesson's state: on, current step, the week it began (w0), the two fighters' ids (A hurt, B healthy), hidden coach, last spotted/entered step. */
 const MTUT={on:false,step:0,w0:0};
+/* mtW — the sandbox world while the lesson's world is open, else null. */
 const mtW=()=>MGR.world&&MGR.world.tutorial?MGR.world:null;
-const mtG=k=>{const id=MTUT[k];return id&&typeof gById==='function'?gById(id):null};
-const mtNm=k=>{const g=mtG(k);return g?esc(g.name):_T('your fighter')};
-const mtBout=i=>{const w=mtW();return w&&w.night&&w.night.bouts[i]};
-const mtIn=(i,k)=>{const b=mtBout(i);return !!(b&&b.ents.includes(MTUT[k]))};
-const mtEl=sel=>typeof sel==='function'?sel():sel?document.querySelector(sel):null;
+/* mtG — the lesson fighter 'A' or 'B' (by MTUT id), or null. */
+const mtG=who=>{const id=MTUT[who];return id&&typeof gById==='function'?gById(id):null};
+/* mtNm — that fighter's name, HTML-escaped ("your fighter" when gone). */
+const mtNm=who=>{const g=mtG(who);return g?esc(g.name):_T('your fighter')};
+/* mtBout — Match Week bout boutIdx (0 undercard, 1 feature, 2 main event) of the sandbox week. */
+const mtBout=boutIdx=>{const w=mtW();return w&&w.night&&w.night.bouts[boutIdx]};
+/* mtIn — is lesson fighter who ('A'/'B') entered in bout boutIdx? */
+const mtIn=(boutIdx,who)=>{const b=mtBout(boutIdx);return !!(b&&b.ents.includes(MTUT[who]))};
+/* mtEl — resolves a step's spot: a function returning an element, or a CSS selector. */
+const mtEl=spot=>typeof spot==='function'?spot():spot?document.querySelector(spot):null;
+/* mtUp — a spot function: the element matching sel, lifted to its closest up ancestor (else its parent). */
 const mtUp=(sel,up)=>()=>{const e=document.querySelector(sel);return e?(up?e.closest(up)||e.parentElement:e.parentElement):null};
+/* mtRivalId — id of the most famous living rival house (the one the lesson visits). */
 const mtRivalId=()=>{const w=mtW();if(!w)return '';const r=w.mgrs.filter(m=>!m.isPlayer&&!m.dead).sort((a,b)=>(b.fame||0)-(a.fame||0))[0];return r?r.id:''};
 /* v0.45 THE DEEP LESSON — one full week, every step checked off by DOING it (the coach moves on by itself),
    with guard rails: only what the step asks for can be clicked (dialogs it opens are fine), so a lesson can
    never turn into a real career by accident. */
+/* MTUT_STEPS — the steps in order. Fields: spot (what to light), say (text or function), next (a Next button), tab (done when that tab is open), until (done when true), enter (runs once on arrival), allow (extra clickable selectors), spotOnly (the spot is only lit, not clickable), arena (step happens on the sand), finish/last (the final step). */
 const MTUT_STEPS=[
   {spot:'.mhead',say:_T`Welcome, <b>lanista</b>. This is a sandbox league made for this lesson — nothing is saved. Up top: your <b>treasury</b> (we lent you plenty), <b>fame</b>, ludus grade, record and the week's <b>lanista's hours</b>.`,next:1},
   {spot:'.mtabs',say:_T`The <b>tabs</b> run your ludus — your house, the arena, the wider world, and you. Work them left to right each week; the coach will walk you through them.`,next:1},
@@ -70,13 +80,17 @@ const MTUT_STEPS=[
   {spot:'[data-mg="endask"]',say:_T`Last: <b>⏭ End the week</b>. Wages are paid, the yard trains, rivals scheme — and the empire moves on.`,until:()=>MGR.confirmEnd||(mtW()&&mtW().week>MTUT.w0)},
   {spot:'[data-mg="endweek"]',say:_T`Confirm it.`,until:()=>mtW()&&mtW().week>MTUT.w0},
   {spot:'#mgrPane [data-mg="tab"][data-id="ludus"]',say:_T`The <b>Acta Diurna</b> — the week's gazette: results, deaths, signings, the league's top fives. When you have read it, <b>set the paper down</b> to finish this lesson.`,until:()=>mtW()&&mtW().week>MTUT.w0&&MGR.tab==='ludus',finish:1,last:1}];
-/* the lesson's one staged moment: the first bout ends at the Thumb, so there is always a verdict to settle */
+/* the lesson's one staged moment: the first bout ends at the Thumb, so there is always a verdict to settle
+   mtVerdict — rewrites fighter A's undercard result to 18 CF (the Thumb of Flavius) and queues the verdict; clears war levies. */
 function mtVerdict(){const w=mtW();if(!w)return;w.pend=(w.pend||[]).filter(x=>x.t!=='levy'); /* no wars in the lesson */const g=mtG('A');if(!g)return;if((w.pend||[]).some(x=>x.gid===g.id)||!g.alive)return;
   const b=w.night.bouts[0];const row=b&&b.res&&b.res.rows.find(x=>x.gid===g.id);if(row){row.f=18;row.vd='p-thumb';row.fname=_T('Thumb of Flavius')}
   (w.pend=w.pend||[]).push({t:'thumb',gid:g.id,bi:0,f:18});if(typeof MGR_REDRAW==='function'&&document.getElementById('mgrBody'))try{MGR_REDRAW()}catch(e){}}
-/* the fighter to back in the feature: the lowest odds on the card */
+/* the fighter to back in the feature: the lowest odds on the card
+   mtBetPick — the feature bout's Bet button with the lowest odds (data-id "1|gid|odds"), or null. */
 function mtBetPick(){const bs=[...document.querySelectorAll('#mgrPane [data-mg="bet"][data-id^="1|"]')];if(!bs.length)return null;return bs.sort((a,b)=>(+a.dataset.id.split('|')[2])-(+b.dataset.id.split('|')[2]))[0]}
-const mtSay=st=>typeof st.say==='function'?st.say():st.say;
+/* mtSay — a step's text (calls say when it is a function). */
+const mtSay=step=>typeof step.say==='function'?step.say():step.say;
+/* mtCoach — draws the coach box (Flavius, step counter, text, Next/Finish/Hide/Leave) and lights the step's spot; removes both when the lesson is off. Redraws only when the HTML changed. */
 function mtCoach(){if(HEADLESS)return;let el=document.getElementById('mtutCoach');
   if(!MTUT.on||!mtW()){if(el)el.remove();document.querySelectorAll('.tutspot').forEach(x=>x.classList.remove('tutspot'));return}
   if(!el){el=document.createElement('div');el.id='mtutCoach';el.className='tutcoach mtut';document.body.appendChild(el);
@@ -91,16 +105,21 @@ function mtCoach(){if(HEADLESS)return;let el=document.getElementById('mtutCoach'
   if(el.dataset.h!==h){el.dataset.h=h;el.innerHTML=h}}
 /* v0.46: the Manager window counts as shown only while the modal is up (its body can linger hidden in the DOM) */
 function mtMgrShown(){const e=document.getElementById('mgrBody');const m=document.getElementById('modal');return !!e&&!!m&&!m.hidden}
+/* mtNext — moves to the next step (finishes after the last). */
 function mtNext(){MTUT.step++;if(MTUT.step>=MTUT_STEPS.length){mtDone();return}MTUT.entered=-1;mtCoach()}
+/* mtTick — the lesson's heartbeat: drops war levies, runs a step's enter once, advances when its tab is open or its until() holds, else redraws the coach. */
 function mtTick(){if(!MTUT.on)return;if(!mtW()){MTUT.on=false;mtCoach();return}{const w=mtW();if(w.pend&&w.pend.some(x=>x.t==='levy'))w.pend=w.pend.filter(x=>x.t!=='levy')}const st=MTUT_STEPS[MTUT.step];if(!st)return;
   if(st.enter&&MTUT.entered!==MTUT.step){MTUT.entered=MTUT.step;try{st.enter()}catch(e){console.error(e)}}
   if(st.tab&&MGR.tab===st.tab&&mtMgrShown())mtNext();
   else if(st.until&&st.until()){if(st.finish)mtDone();else mtNext()}
   else mtCoach()}
+/* TWEAK: 350 ms between lesson checks. */
 setInterval(()=>{try{mtTick()}catch(e){}},350);
 /* the guard rails: while the lesson runs, only the step's own target (and whatever windows it opens) take clicks */
-function mtAllowed(st,t){if(!st)return true;const el=mtEl(st.spot);if(el&&!st.spotOnly&&el.contains(t))return true;
-  for(const sel of st.allow||[])if(t.closest(sel))return true;return false}
+/* mtAllowed — may this click target go through? Yes inside the step's spot (unless spotOnly) or anything matching its allow list. */
+function mtAllowed(step,target){if(!step)return true;const el=mtEl(step.spot);if(el&&!step.spotOnly&&el.contains(target))return true;
+  for(const sel of step.allow||[])if(target.closest(sel))return true;return false}
+/* capture-phase click guard: windows the step opened, the coach and harmless arena controls pass; the main-menu button asks to leave; any other control not allowed by the step is blocked with a toast. */
 document.addEventListener('click',e=>{if(!MTUT.on||!mtW())return;const t=e.target;if(!t||!t.closest)return;
   if(t.closest('#mtutCoach')||t.closest('#mClose'))return;
   const inMgr=!!t.closest('#mgrBody');
@@ -110,6 +129,7 @@ document.addEventListener('click',e=>{if(!MTUT.on||!mtW())return;const t=e.targe
   if(!t.closest('button,a,select,input,textarea,summary,label,[data-mg],[data-ct],[data-act],[role="button"],canvas'))return; // clicks on nothing in particular do nothing anyway
   const st=MTUT_STEPS[MTUT.step];if(mtAllowed(st,t))return;
   e.preventDefault();e.stopPropagation();if(typeof mToast==='function')mToast(_T`🎓 One thing at a time — ${st&&st.next?_T('press <b>Next ▶</b> on the coach'):_T('follow the coach')} (or ✖ Leave the lesson).`)},true);
+/* startManagerTutorial — builds the sandbox league (custom world flagged tutorial): a home week, 900 coin, a perk point, 12 hours, no deaths; fighter A (hurt, needs the Medicus) and fighter B (rating 76); opens the Manager on Your ludus and shows the coach. TWEAK: the coin/hours and both fighters' numbers. */
 async function startManagerTutorial(){
   if(typeof menuHide==='function')menuHide();
   if(typeof liveEventRunning==='function'&&liveEventRunning()&&S){S.over=true}
@@ -126,13 +146,16 @@ async function startManagerTutorial(){
   MTUT.A=A.id;MTUT.B=B.id;MGR.lsel=A.id;MGR.run='promote';
   MTUT.on=true;MTUT.step=0;MTUT.w0=w.week;MTUT.hidden=0;MTUT.spotted=-1;MTUT.entered=-1;MGR.tab='ludus';
   openManager();setTimeout(mtCoach,500)}
+/* mtCleanup — ends the lesson: removes the coach and highlights and drops the sandbox world (never saved). */
 function mtCleanup(){MTUT.on=false;const el=document.getElementById('mtutCoach');if(el)el.remove();document.querySelectorAll('.tutspot').forEach(x=>x.classList.remove('tutspot'));
   if(MGR.world&&MGR.world.tutorial){MGR.world=null;if(typeof ACTIVE!=='undefined'&&ACTIVE.world&&ACTIVE.world.tutorial){ACTIVE.world=null;ACTIVE.cid=null}}}
+/* mtutLeave — asks "Leave the lesson?"; Stay reopens the Manager and coach, Leave stops any lesson bout, cleans up and fades to the main menu. */
 async function mtutLeave(){const ok=await new Promise(r=>{if(typeof modalBusy==='function'&&modalBusy()&&!$('#mgrBody')&&!(S&&S.mgrCtx)){r(true);return}
     const cont=()=>modal(_T('Leave the lesson?'),`<p>${_T`The sandbox league is discarded and you return to the main menu. You can take the lesson again from the menu or Rules &amp; strategy → 🎓 Lessons.`}</p>`,[{label:_T('Leave the lesson'),value:1,primary:1},{label:_T('Stay'),value:0}],{close:0}).then(r);
     if($('#mgrBody')&&CUR_MODAL){MTUT.reopen=1;CUR_MODAL.done('mtleave');setTimeout(cont,120)}else cont()});
   if(!ok){MTUT.reopen=0;if(!$('#mgrBody')&&!(S&&S.mgrCtx&&!S.over)){openManager();setTimeout(mtCoach,400)}return}
   MTUT.reopen=0;if(S&&S.mgrCtx&&!S.over)S.over=true;mtCleanup();if(!$('#modal').hidden&&typeof modalDismiss==='function')modalDismiss();const go=()=>{if(typeof menuShow==='function')menuShow()};if(typeof fadeTo==='function')fadeTo(go);else go()}
+/* mtDone — marks the Manager lesson done (localStorage flavius_mtutDone), cleans up and offers: main menu, a new Manager career, or the lesson again. */
 async function mtDone(){if(!MTUT.on&&!mtW())return;try{localStorage.setItem('flavius_mtutDone','1')}catch(e){}
   if(CUR_MODAL&&$('#mgrBody'))CUR_MODAL.done('mtdone');mtCleanup();await new Promise(r=>setTimeout(r,150));
   const v=await modal(_T('🎓 Tutorial completed'),`<div class="rulepop"><img src="${typeof flavFaceURL==='function'?flavFaceURL('cheer'):''}" alt="" style="width:96px;border-radius:8px"><div><p>${_T`<b>You have run a week of a ludus.</b> Recruit, keep, heal, build, enter, watch, bet, settle the verdicts, court your rivals — and climb the table toward the Superbus.`}</p><p class="rc-sub">${_T`Nothing from the lesson was kept.`}</p></div></div>`,
@@ -143,12 +166,15 @@ async function mtDone(){if(!MTUT.on&&!mtW())return;try{localStorage.setItem('fla
 
 /* the lessons, in one place: the main menu's split button (hidden once both are done, unless Settings says
    otherwise) and Rules & strategy → 🎓 Lessons */
-const lessonDone=k=>{try{return localStorage.getItem(k==='manager'?'flavius_mtutDone':'flavius_tutDone')==='1'}catch(e){return false}};
+/* lessonDone — has this lesson ('manager' or 'classic') been completed in this browser? */
+const lessonDone=lesson=>{try{return localStorage.getItem(lesson==='manager'?'flavius_mtutDone':'flavius_tutDone')==='1'}catch(e){return false}};
+/* lessonsMenuVis — shows/hides the main menu's two lesson buttons (each goes once its lesson is done, unless Settings keeps them); a lone button spans the row. */
 function lessonsMenuVis(){const el=document.getElementById('mmLearn');if(!el)return;const pref=typeof SETTINGS!=='undefined'?SETTINGS.lessonsMenu:undefined;
   /* v0.46: each lesson's button goes once that lesson is done; a lone button is as wide as the rest of the menu */
   const bc=el.querySelector('[data-mm="learn"]'),bm=el.querySelector('[data-mm="learnmgr"]');
   const showC=pref===true||(pref!==false&&!lessonDone('classic')),showM=pref===true||(pref!==false&&!lessonDone('manager'));
   if(bc)bc.hidden=!showC;if(bm)bm.hidden=!showM;el.hidden=!showC&&!showM;el.classList.toggle('single',showC!==showM)}
-function lessonsHTML(){const card=(k,ic,t,d)=>`<div class="mstone"><div class="mshd"><span class="msic">${ic}</span><div><div class="msv">${lessonDone(k)?'✔ completed':_T('not taken yet')}</div><b>${t}</b></div></div><p style="margin:4px 0 8px">${d}</p><button class="btn primary" type="button" data-lesson="${k}">${lessonDone(k)?_T('Take it again'):_T('Start the lesson')}</button></div>`;
+/* lessonsHTML — Rules & strategy → 🎓 Lessons: a card per lesson (done or not, start/again) and the "lesson buttons on the main menu" switch. */
+function lessonsHTML(){const card=(k,icon,title,desc)=>`<div class="mstone"><div class="mshd"><span class="msic">${icon}</span><div><div class="msv">${lessonDone(k)?'✔ completed':_T('not taken yet')}</div><b>${title}</b></div></div><p style="margin:4px 0 8px">${desc}</p><button class="btn primary" type="button" data-lesson="${k}">${lessonDone(k)?_T('Take it again'):_T('Start the lesson')}</button></div>`;
   return `<div class="lessoncards">${card('classic','🎓',_T('Learn to Play (Classic)'),_T('A tour of the arena screen, then a guided bout against one rival and two beasts: the choice, moving, breaking a Blessings pot, your hand, ending the turn — and the fight to the finish.'))}${card('manager','💼',_T('Learn to Play Manager Mode'),_T('One full guided week of a ludus in a sandbox league: a fighter’s card and keeping them happy, courting a recruit, the infirmary, facilities and schooling, Match Week (watch a bout live, bet, enter the main event), a verdict, a rival house, the Imperium, the season — and the Acta Diurna.'))}</div>
    <label class="setrow" style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" data-lessonsmenu="1" ${(SETTINGS.lessonsMenu===true)||(SETTINGS.lessonsMenu!==false&&!(lessonDone('classic')&&lessonDone('manager')))?'checked':''}><span>${_T`<b>🎓 Lesson buttons on the main menu</b>`} <span class="rc-sub">${_T`they hide once both are done; tick to keep them`}</span></span></label>`}
