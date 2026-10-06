@@ -34,7 +34,7 @@ o.a=await pg.evaluate(async()=>{const r={body:document.body.className,col:CLASSE
   startEvent({ev:'democritus',loc:6,seats:[{cls:'venatore'},{cls:'hero',cpu:true,diff:'master'},{cls:'soldier',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}});
   await new Promise(r2=>setTimeout(r2,1500));for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await new Promise(r3=>setTimeout(r3,100))}
   r.statsUp=!!document.querySelector('#board .pb-head>.statrow')&&!document.querySelector('#board>.statrow');r.mind=/CPU (Novice|Apprentice|Fighter|Veteran|Master)/.test(document.getElementById('roster').textContent);
-  {RAT_SHUT=true;render();await new Promise(r2=>setTimeout(r2,100));const sr=document.querySelector('#board .statrow');r.fold=!sr.classList.contains('shut');r.foldKept=[...sr.querySelectorAll('.statchip')].filter(c=>c.offsetWidth>0).length>=5}
+  {RAT_SHUT=true;render();await new Promise(r2=>setTimeout(r2,100));const sr=document.querySelector('#board .statrow');r.fold=!sr.classList.contains('shut');r.foldKept=sr.offsetWidth>0&&/Speed/.test(sr.title||'') /* v0.91: perks shown, the ratings in the row's tooltip */}
   r.anim2=animOn();cvdSet84('off');r.col2=CLASSES.soldier.color /* v0.84: Off on the colour-blind select = the default palette */;return r});
 ok(/cvd/.test(o.a.body)&&/calm/.test(o.a.body)&&/ts115/.test(o.a.body),'a11y classes');ok(o.a.col==='#D55E00'&&o.a.col2==='#c0433a','cvd palette');ok(o.a.rm&&!o.a.anim2&&o.a.saved===115,'reduce motion + saved');ok(o.a.statsUp,'ratings in panel header');ok(o.a.fold&&o.a.foldKept,'ratings always show (v0.81)');ok(o.a.mind,'roster names the mind');
 await pg.evaluate(()=>{S&&(S.over=true);openStudio('events')});await pg.waitForTimeout(1200);

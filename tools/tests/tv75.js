@@ -8,7 +8,7 @@ const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();
   startEvent({ev:'democritus',loc:6,seats:[{cls:'hero',cpu:false},{cls:'soldier',cpu:true}],opts:{spect:4}});await W8(2500);for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(150)}render();await W8(300)});
 /* v0.81: the ratings always show in the panel header — no fold button (his note: the toggle felt slow) */
-const rv=()=>pg.evaluate(()=>{const r=document.querySelector('#board .statrow');const f=r&&r.querySelector('.ratfold');return !!r&&!r.classList.contains('shut')&&r.querySelectorAll('.statchip').length>=5&&[...r.querySelectorAll('.statchip')].every(c=>c.offsetWidth>0)&&(!f||getComputedStyle(f).display==='none')});
+const rv=()=>pg.evaluate(()=>{const r=document.querySelector('#board .statrow');const f=r&&r.querySelector('.ratfold');/* v0.91 (200-v91panel): the row shows the earned perks + the hand-to-CPU chip; the five ratings sit in its tooltip */return !!r&&!r.classList.contains('shut')&&r.classList.contains('row91')&&/Speed/.test(r.title||'')&&r.offsetWidth>0&&(!f||getComputedStyle(f).display==='none')});
 o.redraw=await rv();await pg.evaluate(()=>{RAT_SHUT=true;render();render()});o.once=await rv();o.key=true;o.view=await rv();
 o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const r={};
   r.ico=/data:image\/webp/.test(CW_ICO.dmg())&&/data:image\/webp/.test(cwIcoSVG('rng'));r.wsIco=!!document.querySelector('#board .ws75 img');
