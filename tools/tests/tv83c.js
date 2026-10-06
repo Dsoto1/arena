@@ -24,7 +24,7 @@ const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   r.sica=!!ds&&!ds.querySelector('.adv83');
   /* the Council card */
   const cc=q('#mgrPane #council83');r.card=!!cc&&cc.querySelectorAll('.c83p').length===6&&cc.querySelectorAll('.c83p svg.sface').length===6&&C.every(a=>cc.textContent.includes(a.name))&&/Barracks master/i.test(cc.textContent);
-  r.place=!!cc&&(cc.previousElementSibling&&(cc.previousElementSibling.classList.contains('landing')||cc.previousElementSibling.id==='mailBox'));
+  r.place=!!cc&&(cc.previousElementSibling&&(cc.previousElementSibling.classList.contains('landing')||cc.previousElementSibling.id==='mailBox'||cc.previousElementSibling.classList.contains('lrow91')));
   /* other tabs: no card */
   MGR.tab='roster';MGR_REDRAW();await W8(300);r.onlyLudus=!q('#council83');MGR.tab='ludus';MGR_REDRAW();await W8(300);
   /* an older career: no council in the save → one on load, the same as rolled, kept, no Store write */
