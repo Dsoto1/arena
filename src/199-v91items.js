@@ -63,3 +63,8 @@ function armSideArt91(key,l,h){try{const B=typeof armBox==='function'&&armBox(ke
 function armSideLoc91(key){const A=ARM[key];if(!A)return null;return A.slot==='arm'?'rarm':A.slot==='leg'?'rleg':null}
 if(typeof loot89Art==='function'){const base=loot89Art;loot89Art=function(o){const h=base.apply(this,arguments);try{const P=loot89Piece(o);const k=P&&P.kind==='a'&&P.obj&&P.obj.key;const l=k&&armSideLoc91(k);
   if(l&&ARM[k]&&(ARM[k].pair||ARM[k].stack))return `<span class="lt89a side91w"><span data-card="a:${k}">${armSideArt91(k,l,118)}</span></span>`}catch(e){}return h}}
+/* night with the v0.91 arena look (his note 2026-10-06: "the right and left corners, the lighting looks off"): the fire towers stand at the
+   left and right corners now, so 189's two side braziers (and their light pools, clipped hard along the sand's edge onto the new stone)
+   go; the towers' own fires and halos light those corners. The bottom brazier and the rim torches stay. */
+{const base=night91Spots;night91Spots=function(){const out=base.apply(this,arguments);try{if(typeof ar91On==='function'&&ar91On()&&!(typeof ar91Lud==='function'&&ar91Lud())){const n=N;
+  return out.filter(s=>!(s.k==='b'&&((s.r<0&&s.c>n)||(s.r>n&&s.c<0))))}}catch(e){}return out}}

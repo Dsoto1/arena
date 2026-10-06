@@ -53,7 +53,7 @@ const errs=[];const miss=[];const out={};const ok=(c,n)=>{if(!c)miss.push(n)};co
     for(let k=0;k<4;k++){rot89Want=()=>k;draw();const D=[isoFix(0,0),isoFix(0,N),isoFix(N,N),isoFix(N,0)];const B=NIGHT91.torches;
       res.push({k:ROT89.k,n:B.length,bad:B.filter(t=>[[t.x0,t.y0],[t.x1,t.y0],[t.x0,t.y1],[t.x1,t.y1],[(t.x0+t.x1)/2,t.y0]].some(([x,y])=>inside(D,x,y))).length})}
     rot89Want=want;draw();return {res,k0}});
-  out.torches=T;ok(T.res.every(r=>r.n===11),'3 eleven lights');ok(T.res.every(r=>r.bad===0),'3 no light inside the sand '+JSON.stringify(T.res));
+  out.torches=T;ok(T.res.every(r=>r.n===((typeof T.ar==='undefined'||T.ar)?9:11)),'3 the rim lights: 9 with the arena look (its towers light the side corners), 11 without '+JSON.stringify(T.res.map(r=>r.n)));ok(T.res.every(r=>r.bad===0),'3 no light inside the sand '+JSON.stringify(T.res));
   if(SHOT){await pg.evaluate(()=>{try{menuHide()}catch(e){}draw()});await pg.screenshot({path:path.join(SHOT,'tv91n_night.png')})}
   /* the flicker: moves by default, holds still with Reduce motion */
   const F=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const g=cv.getContext('2d');const dpr=window.devicePixelRatio||1;
