@@ -36,7 +36,7 @@ apUp=async function(player,n){const locs=LOCS.filter(l=>player.hp[l]>0&&player.a
   const pc=l=>((player.pieces&&player.pieces[l])||[]).find(x=>x&&x.key&&ARM[x.key]);
   const loc=player.cpu?locs.sort((a,b)=>player.ap[a]-player.ap[b]||HEAL_ORDER.indexOf(a)-HEAL_ORDER.indexOf(b))[0]
    :await modal(_T`AP Upgrade (+${n})`,`<p>${_T`Choose one armored location. A location can never exceed 7 AP.`}</p>`,locs.map(l=>{const P=pc(l);
-      return {label:`${P?`<span class="apu91">${cardHTML('a:'+P.key,'sm')}</span>`:''}${LOCN[l]}`,sub:_T`${P?esc(P.n||ARM[P.key]&&ARM[P.key].n||'')+' · ':''}AP ${player.ap[l]} → ${Math.min(7,player.ap[l]+n)}`,value:l}}).concat([{label:_T('Cancel'),value:null}]));
+      return {label:`${P?`<span class="apu91">${armSideArt91(P.key,l,92)}</span>`:''}${LOCN[l]}`,sub:_T`${P?esc(P.n||ARM[P.key]&&ARM[P.key].n||'')+' · ':''}AP ${player.ap[l]} → ${Math.min(7,player.ap[l]+n)}`,value:l}}).concat([{label:_T('Cancel'),value:null}]));
   if(!loc)return false;player.ap[loc]=Math.min(7,player.ap[loc]+n);log(_T`${nm(player)} reinforces ${LOCN[loc]} to ${player.ap[loc]} AP.`);return true};
 {const base=useItem;useItem=async function(player,it){
   const el=it&&((it.kind==='offer'&&(it.key==='elix2'||it.key==='elix4'))||(it.kind==='card'&&(it.key==='elixir2'||it.key==='elixir4')));
@@ -46,4 +46,16 @@ apUp=async function(player,n){const locs=LOCS.filter(l=>player.hp[l]>0&&player.a
   if(mk){const kind=it.key[1],lv=+it.key[2];const key=await marketRoll(player,kind,lv,{free:1});if(!key)return false;
     if(kind==='w')await gainWeapon(player,key);else await gainArmorPiece(player,key);player.items=player.items.filter(x=>x!==it);return true}
   return base.apply(this,arguments)}}
-{const st=document.createElement('style');st.textContent='#mBtns .apu91{float:left;margin:0 10px 0 0;width:64px;height:92px;overflow:hidden;border-radius:6px}#mBtns .apu91>*{width:64px!important;height:92px!important;max-width:none!important;margin:0!important}#mBtns .apu91 img{width:100%!important;height:100%!important;object-fit:contain}';document.head.appendChild(st)}
+{const st=document.createElement('style');st.textContent='#mBtns .apu91{float:left;margin:0 10px 0 0;width:64px;height:92px;overflow:hidden;border-radius:6px}#mBtns .apu91 svg.side91{width:64px!important;height:92px!important;max-width:none!important}';document.head.appendChild(st)}
+/* armSideArt91 — ONE armor piece exactly as worn on location l (his note: a set is split into one piece per side, each faced to its side):
+   the avatar's own drawing of it (art, crop, mirror) cropped to the piece, as a standalone svg. Falls back to the card art. */
+function armSideArt91(key,l,h){try{const B=typeof armBox==='function'&&armBox(key,l);if(!B)throw 0;const pad=Math.max(B.w,B.h)*0.08;const W=B.w+pad*2,H=B.h+pad*2;
+    const vb=`${(B.cx-W/2).toFixed(1)} ${(B.cy-H/2).toFixed(1)} ${W.toFixed(1)} ${H.toFixed(1)}`;const w=Math.round(h*W/H);
+    return `<svg class="side91" viewBox="${vb}" width="${w}" height="${h}" style="width:${w}px!important;height:${h}px!important;max-width:none!important" aria-hidden="true">${armPieceSVG(B,key,1,null,'s91'+l)}</svg>`}
+  catch(e){return typeof armArtCell==='function'?armArtCell(key,h):''}}
+/* the avatar hover card (98 avPopShow) shows each piece as worn on that side, not the pair's card */
+{const base=avPopShow;avPopShow=function(el){const r=base.apply(this,arguments);try{const pop=document.getElementById('avPop');const t=(el&&el.dataset.avtip)||'';const nm0=(t.split(':')[0]||'').trim();
+  const l=LOCS.find(x=>LOCN[x]===nm0);if(!pop||!l)return r;
+  for(const row of pop.querySelectorAll('.avpc')){const n=(row.querySelector('b')||{}).textContent;const k=Object.keys(ARM).find(x=>ARM[x].n===n);if(!k||!ARM[k].pair&&!ARM[k].stack)continue;
+    const art=row.firstElementChild&&row.firstElementChild.tagName!=='SPAN'?row.firstElementChild:null;const h=art&&art.getBoundingClientRect().height||30;const html=armSideArt91(k,l,Math.max(30,Math.round(h)));
+    if(art)art.outerHTML=html;else row.insertAdjacentHTML('afterbegin',html)}}catch(e){}return r}}
