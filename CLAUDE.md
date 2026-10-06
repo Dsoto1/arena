@@ -1093,6 +1093,9 @@ share copy — the site download play/flavius-rule-arena.zip.)
   stops spanning the full width (sits beside the squad, no empty right); Doctore + Study cards to the right column. MATCH WEEK: Temple only
   in the City Center; Walk the City Square button with a thumbnail of that forum; Walk the Sand needs a new home (open). LEAGUE: stakes per
   table position + scout a rival house from the table (his picks).
+- **I18N SOURCE GLUE (found by the zh translators, fix in v0.90):** 16-crowd stone line puts a CPU spectator's English name + "hurls"
+  before translated text; recruiting "You already {0} {1}" takes English verbs (scouted/feasted/pitched); a 10-meta "…first" fragment + tier
+  name stay English. Wrap the verbs with _T / reword into whole keys.
 - **v0.90 QUEUED (his yes 2026-10-05): HOT-SEAT TURNING BOARD** — a setting (Settings → On the board, OFF by default): with 2+ humans
   on one screen, the board turns to the active human's corner at the start of each human's turn (short eased spin; Reduce motion / Off
   animations = an instant cut), using the v0.89 display rotation (168). CPU turns keep the last human's view. Never in Chariot,
