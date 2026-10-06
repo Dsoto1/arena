@@ -40865,7 +40865,7 @@ function classBack87(k,w){const C=CLASSES[k];if(!C)return '';w=w||250;
 /* the hover card: class refs show both sides */
 {const tip=document.getElementById('tip');
   if(tip)new MutationObserver(()=>{try{if(tip.hidden||tip.dataset.cb87)return;const c=tip.querySelector('[data-card^="k:"],.cimg[aria-label]');
-    const el=document.querySelector('[data-card^="k:"]:hover,[data-card^="b:"]:hover');if(!el)return;const k=el.dataset.card.slice(2);if(!CLASSES[k])return;
+    const el=document.querySelector('[data-card^="k:"]:hover,[data-card^="b:"]:hover');if(!el)return;const k=el.dataset.card.slice(2);if(!CLASSES[k])return;if(!String(k).startsWith('cc_'))return; /* v0.91 (his call): a printed class shows only his printed card */
     if(tip.querySelector('.cb87'))return;const first=tip.firstElementChild;if(!first)return;
     const w=Math.round((first.getBoundingClientRect().width||250));const wrap=document.createElement('div');wrap.className='cb87pair';
     first.replaceWith(wrap);wrap.appendChild(first);wrap.insertAdjacentHTML('beforeend',classBack87(k,w));

@@ -8,5 +8,5 @@ const r=await pg.evaluate(()=>['soldier','royalty','hero','slave','veteranus','a
 ok(r.every(x=>x.ok),'every class rules side '+JSON.stringify(r.filter(x=>!x.ok)));
 await pg.evaluate(()=>{menuHide();const d=document.createElement('div');d.id='h87';d.style.cssText='position:fixed;left:40px;top:300px;z-index:50';d.innerHTML=cardHTML('k:hero','md');document.body.appendChild(d)});
 await pg.hover('#h87 [data-card]');await pg.waitForTimeout(600);
-ok(await pg.evaluate(()=>{const t=document.getElementById('tip');return !t.hidden&&!!t.querySelector('.cb87pair .cb87')}),'hover shows both sides');
+ok(await pg.evaluate(()=>{const t=document.getElementById('tip');return !t.hidden&&!t.querySelector('.cb87pair .cb87')}),'v0.91: a printed class hover shows only the printed card');
 console.log(JSON.stringify({miss}));console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();
