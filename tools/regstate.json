@@ -1,5 +1,5 @@
 {
- "run": 156,
+ "run": 157,
  "lastFull": 1791254037274,
  "tests": {
   "tseed4": {
@@ -2916,15 +2916,15 @@
    }
   },
   "tv84u": {
-   "streak": 5,
-   "runs": 22,
+   "streak": 6,
+   "runs": 23,
    "fails": 2,
    "flaky": [],
-   "lastRun": 154,
-   "time": 53,
-   "lastPass": 154,
+   "lastRun": 157,
+   "time": 61,
+   "lastPass": 157,
    "deps": {
-    "build.sh": "6eec1fb57708",
+    "build.sh": "4bfc636d1f5b",
     "src/01-head.html": "5a6ad97ec465",
     "tools/smartreg.js": "44d97ee7684f",
     "tools/regcov.js": "1b122005f465",
@@ -3028,23 +3028,17 @@
    "pinUntil": 144
   },
   "tv86": {
-   "streak": 1,
-   "runs": 13,
-   "fails": 5,
+   "streak": 0,
+   "runs": 14,
+   "fails": 6,
    "flaky": [
     98,
     110
    ],
-   "lastRun": 155,
-   "time": 67,
+   "lastRun": 157,
+   "time": 91,
    "lastPass": 155,
-   "deps": {
-    "build.sh": "6eec1fb57708",
-    "src/01-head.html": "5a6ad97ec465",
-    "tools/smartreg.js": "44d97ee7684f",
-    "tools/regcov.js": "1b122005f465",
-    "tools/tests/tv86.js": "1b7a5ff70628"
-   },
+   "deps": {},
    "pinUntil": 164
   },
   "tv87c": {
