@@ -36,7 +36,7 @@
      group); the sand shadow keeps falling to the lower right. Arrows stuck in it (132) flip with it; HP bars stay centred.
    ===================================================================== */
 const CR91={on:true,maxCv:420,hits:0,miss:0,frames:0,ms:0,last:0}; /* TWEAK: on = the whole look; maxCv = cached sprites */
-const REG91={visits:8}; /* TWEAK: events in the tiers that make a regular a known face (laurel) */
+const REG91={visits:8,top:4}; /* TWEAK: events in the tiers that make a regular a known face (laurel) */
 const SIZE91=0.5; /* TWEAK: a spectator's height (head top to bench) in tile widths */
 const SEATS91={cols:8,d0:1.35,tier:0.47,lift:0.08}; /* bench geometry, the same as 16-crowd drawStands' tiers */
 const WALK91={speed:2.2,maxMs:7000,stagger:260,fps:30}; /* TWEAK: tiles a second, all seated by, ms between arrivals in a section */
@@ -71,9 +71,13 @@ function assignSeats91(){const R=crowdRows91();const used={};const list=[];
 /* ---------- regulars ---------- */
 const RC91={m:null,n:-1};
 function regOf91(rid){if(!rid||typeof CROWD_CACHE==='undefined')return null;if(RC91.n!==CROWD_CACHE.length||RC91.src!==CROWD_CACHE){RC91.m=new Map(CROWD_CACHE.map(r=>[r.id,r]));RC91.n=CROWD_CACHE.length;RC91.src=CROWD_CACHE}return RC91.m.get(rid)||null}
-function reg91(sp){if(!sp||sp.human)return false;if((sp.visits||0)>=REG91.visits)return true;
-  if(typeof SPECT_NAMES!=='undefined'&&SPECT_NAMES.includes(sp.name)&&(sp.visits||0)>=3)return true;
-  const r=regOf91(sp.rid);return !!(r&&(r.custom||r.kin))}
+/* the laurel stays rare (lead's tweak): Studio-made regulars and fighters' kin always; otherwise only the house's REG91.top best-known
+   faces (most visits, at least REG91.visits — or a named old regular on a 3rd+ visit) — so a long career never laurels the whole stands */
+function reg91(sp){if(!sp||sp.human)return false;const r=regOf91(sp.rid);if(r&&(r.custom||r.kin))return true;
+  const L=S&&S.spect||[];if(REG91._n!==L.length||REG91._s!==S){REG91._n=L.length;REG91._s=S;
+    const known=x=>!x.human&&!x.gone&&((x.visits||0)>=REG91.visits||(typeof SPECT_NAMES!=='undefined'&&SPECT_NAMES.includes(x.name)&&(x.visits||0)>=3));
+    REG91._set=new Set(L.filter(known).sort((a,b)=>(b.visits||0)-(a.visits||0)).slice(0,REG91.top).map(x=>x.id))}
+  return REG91._set.has(sp.id)}
 /* mood buckets: 0 furious · 1 annoyed · 2 neutral · 3 pleased · 4 delighted (16 moodCol's thresholds) */
 const moodLv91=m=>m>=40?4:m>=10?3:m>-15?2:m>-45?1:0;
 
