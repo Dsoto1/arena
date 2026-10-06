@@ -1158,6 +1158,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   per gladiator/house (canBuy has no copy limit; tiles show "owned ×N"; spares wait on the shelf, dressApply still wears one). In RANKED a printed
   piece the gladiator brought and no longer holds at the end (armor at 0 AP, weapon broken/thrown/dropped/used up) is DESTROYED (gearAfter →
   out.gone, toast "🔥 Used up in the bout … buy new in the Armory"); NAMED pieces still come back Broken (repair ⅓ of value). Custom: nothing.
+- **ONLINE KITS (his picks 2026-10-06, v0.92 — build in v0.92):** Armory "Kits" row: CLASS KITS (each printed class's loadout on the avatar;
+  owned pieces on him/the shelf skipped, "Complete the kit · N"), budget tiers (Scrap · Recruit · Class · Champion L2–3), 15% bundle discount;
+  FREE DAILY KIT once a day per house (plain L1, pieces marked Issued: worth 0, unsellable, unrepairable, never looted, vanish when lost);
+  🛒 Restock on saved loadouts (rebuys what a bout used up); paid from his PURSE by default, treasury toggle. One server route market.kit
+  (one charge, then dress), a daily marker per house, kit tables from class data via mkserver/catalog. Arc Raiders-style loop.
 - **ONLINE SERVER VERSION (v0.91, 196-v91srv):** hello.build from server/src/build.json (tools/srvstamp.js, run by release.sh; only re-stamps when
   the server code hash changes) + SRV_EXPECT91 in the page (generated 195-v91srvexp.js) → chip bottom-left of Online screens (ok / ⚠ older /
   practice); "Unknown request" → "the server is older than this page". Found 2026-10-06: the live AWS server lacked the v0.89 Domus routes
