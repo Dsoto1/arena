@@ -23,7 +23,7 @@ if(WL==='es'){const ctx=await mk('es-MX');const p=await open(ctx,'A');
   if(out.aAsk){await Promise.all([p.waitForNavigation({timeout:10000}).catch(()=>null),p.click('#lang86ask [data-lang86yes]')]);await p.waitForTimeout(2400)}
   out.aLang1=await p.evaluate(()=>({LANG,html:document.documentElement.lang,dict:!!LANG_DICT}));
   await ctx.close();
-  const c2=await mk('es-ES');const p2=await open(c2,'A2');await p2.waitForTimeout(1200);
+  const c2=await mk('es-ES');const p2=await open(c2,'A2');await p2.waitForSelector('#lang86ask [data-lang86no]',{timeout:15000}).catch(()=>{}); /* under load the card comes late */
   await p2.click('#lang86ask [data-lang86no]').catch(()=>{});await p2.waitForTimeout(400);await p2.reload();await p2.waitForTimeout(3000);
   out.aNo=await p2.evaluate(()=>({LANG,ask:!!document.getElementById('lang86ask')}));await c2.close()}
 if(WL==='es'){ok(out.aAsk&&out.aLang0==='en','A: Spanish browser asked once on the main menu');

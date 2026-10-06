@@ -4,7 +4,10 @@ R=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # project root
 src=os.path.join(R,'flavius-arena.html');A=os.path.join(R,'assets')
 html=open(src,encoding='utf-8').read()
 data={}
+# retired art kept on the site for old cached pages, but never used by this build (v0.90: the download zip hit 30 MiB)
+RETIRED={'weapon_back1.webp','weapon_back2.webp','weapon_back3.webp','weapon_back4.webp'}
 for f in sorted(os.listdir(A)):
+    if f in RETIRED: continue
     p=os.path.join(A,f);mt=mimetypes.guess_type(f)[0] or ('image/webp' if f.endswith('.webp') else 'application/octet-stream')
     data[f]='data:%s;base64,%s'%(mt,base64.b64encode(open(p,'rb').read()).decode())
 import re

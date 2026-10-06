@@ -847,6 +847,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
 - **v0.90** the infirmary as one ward (HP + fatigue bars, care that says what it does), fatigue that counts in bouts, resting fighters sit
   out, Training Yard previews, League prizes + scouting, temple and Walk the Sand in the city, Tholo and the lions hunt anything alive,
   token-round Blessings, a turning hot-seat board, Play Now tidy + Random event, Version history in tabs, 简体中文.
+  (Published as artifact Version 104; no server change; site zip flavius-site-update-v0.90 + flavius-download-v0.90 (29.9 MiB — mkshare
+  skips RETIRED weapon_back1-4.webp).) Release run (REGJ=2): 207/209 + tv76 flaky; tv86 fixed (waits for the ask card), rest run by hand.
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
