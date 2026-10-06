@@ -164,7 +164,7 @@ const ONLC=(function(){
     return {id,host:{id:host.id,name:host.name,char:host.char||null},ev,team,teams:2,autoBal:!!spec.ranked,loc:Math.max(1,Math.min(12,spec.loc|0||6)),ranked:!!spec.ranked,rank:spec.ranked?(host.rank||'tiro'):null,
       seats:clampSeats(ev,spec.seats),players:[],members:[],kicked:{},cry:[],stands:[],watchers:0,tickets:0,pot:0,ticket:spec.standsOff?0:Math.max(0,Math.min(50,spec.ticket|0)),
       free:!spec.standsOff&&!(spec.ticket|0)&&!!spec.free,
-      abandon:spec.ranked?'fate':(spec.abandon==='fate'?'fate':'cpu'),standsOff:!!spec.standsOff,chat:[],...(spec.inf?{inf:true}:{}),startAt:null,
+      abandon:spec.ranked?'fate':(spec.abandon==='fate'?'fate':'cpu'),standsOff:!!spec.standsOff,night:!!spec.night,chat:[],...(spec.inf?{inf:true}:{}),startAt:null,
       status:'waiting',created:now,seed:null,v:VER}}
   const memberOf=(L,id)=>(L.members||[]).find(m=>m.id===id)||null;
   const seatOf=(L,id)=>(L.players||[]).findIndex(p=>p.id===id);
@@ -219,7 +219,7 @@ const ONLC=(function(){
   /* the host removes a lanista (before the horns); they may come back after KICK_MS */
   function roomKick(L,by,who,now){if(L.host.id!==by)return 'Only the host removes lanistas.';if(L.status!=='waiting')return 'Already under way.';if(who===by||!memberOf(L,who))return 'Pick someone in the room.';
     roomLeave(L,who,now);L.kicked=L.kicked||{};L.kicked[who]=(now||Date.now())+KICK_MS;return ''}
-  /* the host's settings until the horns. d may carry: ev, loc, seats, ticket, free, abandon, standsOff, teams, autoBal
+  /* the host's settings until the horns. d may carry: ev, loc, seats, ticket, free, abandon, standsOff, night, teams, autoBal
      (free: seats in the stands at no cost — ticket 0; a price, or 'none' without free, ends it; stands off ends both) */
   function roomSet(L,by,d,now){if(L.host.id!==by)return 'Only the host changes the game.';if(L.status!=='waiting')return 'Already under way.';let reset=false;
     if(d.ev!=null&&d.ev!==L.ev){if(!EVENTS_ALL.includes(d.ev))return 'No such event online.';const wasTeam=L.team;L.ev=d.ev;L.team=EVENTS_TEAM.includes(d.ev);reset=true;
@@ -231,6 +231,7 @@ const ONLC=(function(){
     if(d.standsOff!=null)L.standsOff=!!d.standsOff;if(d.free!=null){L.free=!!d.free;if(L.free)L.ticket=0}
     if(d.ticket!=null){L.ticket=Math.max(0,Math.min(50,d.ticket|0));if(L.ticket>0||d.free==null)L.free=false}if(L.standsOff){L.ticket=0;L.free=false}
     if(d.abandon!=null&&!L.ranked)L.abandon=d.abandon==='fate'?'fate':'cpu';
+    if(d.night!=null)L.night=!!d.night; /* v0.91: the night match — display only, never in the rules or the hash */
     if(d.autoBal!=null&&!L.ranked)L.autoBal=!!d.autoBal;
     if(L.team&&d.teams!=null){const t=Math.max(2,Math.min(TEAM_KEYS.length,L.seats,d.teams|0||2));if(t!==L.teams){L.teams=t;reset=true}}
     if(L.team){const keys=teamKeys(L);for(const p of L.players)if(!keys.includes(p.team)){delete p.team;p.team=leanTeam(L)}}
