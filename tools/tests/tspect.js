@@ -1,7 +1,7 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:950}});await pg.route(/fonts\./,r=>r.abort());
 const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.click('#mClose');
-await pg.evaluate(async()=>{$('#modal').hidden=true;await quickLanista();$('#modal').hidden=true;});
+await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.click('#mClose');await pg.waitForTimeout(700);
+await pg.evaluate(async()=>{$('#modal').hidden=true;await quickLanista();$('#modal').hidden=true;if(typeof menuHide==='function')menuHide();});
 await pg.waitForTimeout(500);
 const coin0=await pg.evaluate(async()=>(await getPurse()).coin);
 await pg.evaluate(()=>{startEvent({ev:'democritus',loc:6,seats:['soldier','hero','slave'].map(c=>({cls:c,cpu:true,diff:'normal'})),opts:{spect:'auto'}});SPEED='fast'});

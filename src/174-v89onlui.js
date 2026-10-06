@@ -33,5 +33,7 @@ body.calm #onl .onl-rail button[data-v="play"]{animation:none}
 /* 5 · "✖ Leave the Online arena" from the Online window landed on the empty background arena (his report): when the Online
    window closes without starting a match, no live event, no other window and no city → the main menu. */
 {const base=onlineOpen;onlineOpen=async function(){const r=await base.apply(this,arguments);
-  setTimeout(()=>{try{const live=typeof eventLive==='function'&&eventLive();const city=typeof CITY!=='undefined'&&CITY.open;
-    if(!live&&!city&&!CUR_MODAL&&!document.getElementById('onl')&&!(S&&S.onl&&!S.over)&&typeof menuShow==='function')menuShow()}catch(e){console.error(e)}},450);return r}}
+  /* only when nothing online is on its way: a joiner's match loads after the window closes (snapshot, START89), so wait for that too */
+  const quiet=()=>!(typeof ONLM!=='undefined'&&ONLM.on)&&!document.body.classList.contains('onlarena')&&!(typeof START89!=='undefined'&&START89>0)&&!(S&&S.onl);
+  setTimeout(()=>{if(!quiet())return;setTimeout(()=>{try{if(!quiet())return;const live=typeof eventLive==='function'&&eventLive();const city=typeof CITY!=='undefined'&&CITY.open;
+    if(!live&&!city&&!CUR_MODAL&&!document.getElementById('onl')&&!(S&&S.onl&&!S.over)&&typeof menuShow==='function')menuShow()}catch(e){console.error(e)}},900)},450);return r}}

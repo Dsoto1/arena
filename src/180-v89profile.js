@@ -97,8 +97,8 @@ function l89StepHTML(){const v=V89L.draft||(V89L.draft=roman89());
     <small class="rc-sub">${_T`${ONLC.LNAME_MIN89}–${ONLC.LNAME_MAX89} letters · no two lanistas share a name · one rename every 30 days.`}</small>${V89L.err?`<p class="onl-err">${esc2(V89L.err)}</p>`:''}</div></div>`}
 
 /* ---------------- 2 · the profile tab ---------------- */
-function l89FindHTML(follow){return `<div class="fd89l"><label class="rc-sub" for="fd89In">${_T`🔍 Find a house by FID`}</label><div class="dom82-row"><input class="tin" id="fd89In" placeholder="FID-XXXXXX" maxlength="14" value="${esc2(V89L.find)}" autocomplete="off" spellcheck="false">
-    <button type="button" class="btn tksm primary" data-l89="find">${_T`🔍 Find`}</button>${follow&&ONL.acct&&!l89Guest()?`<button type="button" class="btn tksm" data-l89="ffollow">${_T`★ Follow by FID`}</button>`:''}</div>${V89L.findErr?`<small class="onl-err">${esc2(V89L.findErr)}</small>`:''}</div>`}
+function l89FindHTML(follow){return `<div class="fd89l"><label class="rc-sub" for="fd89In">${_T`🔍 Find a house by FID`}</label><div class="dom82-row"><input class="tin" id="fd89In" placeholder="${follow?_T('🔍 Find a house by FID'):'FID-XXXXXX'}" maxlength="14" value="${esc2(V89L.find)}" autocomplete="off" spellcheck="false">
+    <button type="button" class="btn tksm primary" data-l89="find" title="${_T`🔍 Find a house by FID`}">${follow?'🔍':_T`🔍 Find`}</button>${follow&&ONL.acct&&!l89Guest()?`<button type="button" class="btn tksm" data-l89="ffollow" title="${_T`★ Follow by FID`}">★</button>`:''}</div>${V89L.findErr?`<small class="onl-err">${esc2(V89L.findErr)}</small>`:''}</div>`}
 function l89ProfHTML(){if(!ONL.acct||l89Guest())return `<div class="pr89"><div class="card2 pr89-s"><h3>${_T`👤 Profile & Settings`}</h3><p class="rc-sub">${_T`Guests only watch. Sign in to choose a lanista name, get your FID and set who may invite you.`}</p></div><div class="card2 pr89-s">${l89FindHTML(false)}</div></div>`;
   const L=V89L.lan||{};const P=L.priv||{hide:false,inv:'all'};const next=L.next||0;const can=!next||next<=l89Now();const D=ONL.domus;
   const inv=[['all',_T('Everyone')],['follow',_T('Houses I follow')],['none',_T('Nobody')]];
@@ -231,6 +231,8 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 .fid89 small{color:var(--muted)}.fid89 b{font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em}
 #onl .btn.danger,.pop89l .btn.danger{border-color:#b33a2a;color:#ffb3a6}#onl .btn.danger:hover,.pop89l .btn.danger:hover{background:rgba(179,58,42,.25)}
 #onl .fd89l{display:grid;gap:4px;margin-top:8px}#onl .fl83 .fd89l{border-top:1px solid var(--line,#4a3a28);padding-top:8px}
+/* the landing's followed card: one compact row under the list (the narrow column stretched the whole landing) */
+#onl .fl83 .fd89l{flex:1 0 100%;width:100%;margin-top:6px;padding-top:6px}#onl .fl83:not(:has(.fl83-r))>p{display:none}#onl .fl83:not(:has(.fl83-r)) .fd89l{flex:1 1 auto;width:auto;margin:0;padding:0;border:0}#onl .fl83 .fd89l label{display:none}#onl .fl83 .fd89l .dom82-row{flex-wrap:nowrap}#onl .fl83 .fd89l .tin{flex:1 1 auto;min-width:0;padding:3px 6px;font-size:12px}#onl .fl83 .fd89l .btn{padding:3px 7px;white-space:nowrap}
 #onl .ln89f,#onl .ln89r{color:var(--muted);font-size:12px;margin-left:6px}#onl .r80-who .ln89r{display:block;margin:0}#onl .fi89{margin:6px 0}
 #onl .vs89{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:8px 12px;margin-bottom:10px;border:1px solid var(--hc2,#d6ab4c);border-radius:10px;background:linear-gradient(90deg,color-mix(in srgb,var(--hc1,#7a2230) 40%,transparent),transparent)}
 #onl .vs89-t small{color:var(--muted)}#onl .vs89-a{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
