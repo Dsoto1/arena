@@ -36,6 +36,7 @@ step "4b advert shot (play.html)"
 mkdir -p share && node tools/siteshot.js "$PWD/flavius-arena.html" share/arena_shot.png | tail -1
 python3 -c "from PIL import Image;im=Image.open('share/arena_shot.png').convert('RGB');im=im.resize((1200,round(im.height*1200/im.width)),Image.LANCZOS);im.save('share/arena_shot.webp',quality=82,method=6)" && rm -f share/arena_shot.png
 echo "share/arena_shot.webp → the game zip's play/arena_shot.webp (flavius.sh game uploads it; play.html shows it)"
+cp share/arena_shot.webp tools/deploy/arena_shot.webp   # committed: flavius.sh release fetches it from GitHub
 if [ "$SHARE" = "0" ]; then printf '\nREADY v%s (no share build — SHARE=0 skipped it) — next: publish (read the live artifact first), update CLAUDE.md, commit.\n' "$V"; exit 0; fi
 step "5 share build"
 python3 tools/mkshare.py "$V" | tail -1
@@ -52,4 +53,4 @@ cp "share/flavius-rule-arena-v$V.zip" "$T/b/play/flavius-rule-arena.zip"
 rm -f "$OUT"/flavius-site-update-v*.zip "$OUT"/flavius-download-v*.zip
 (cd "$T/a" && zip -q -r "$OLDPWD/$OUT/flavius-site-update-v$V.zip" play flavius.sh); (cd "$T/b" && zip -q -r "$OLDPWD/$OUT/flavius-download-v$V.zip" play); rm -rf "$T"
 for z in "$OUT"/flavius-*-v$V.zip; do s=$(stat -c %s "$z"); printf '  %s  %s MiB%s\n' "$z" "$(echo "scale=1;$s/1048576" | bc)" "$([ "$s" -gt 31457280 ] && echo '  ← over 30 MiB: too big to send in one file')"; done
-printf '\nREADY v%s — next: publish (read the live artifact first), update CLAUDE.md, commit, send share/deploy/*.zip (+ the server zip when there is one).\n' "$V"
+printf '\nREADY v%s — next: publish (read the live artifact first), update CLAUDE.md, COMMIT + PUSH (flavius.sh release deploys from GitHub: version.json, the page, assets, server/, tools/deploy/arena_shot.webp). The zips in share/deploy are the fallback.\n' "$V"

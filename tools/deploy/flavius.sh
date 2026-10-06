@@ -1,7 +1,10 @@
 #!/bin/bash
 # flavius.sh — one helper for every Flavius Rule deployment, run in AWS CloudShell (us-east-1).
 #
-#   bash flavius.sh release                                 EVERYTHING in the right order, from the files uploaded here:
+#   bash flavius.sh release [0.91]                          EVERYTHING, straight from GitHub (no uploads): the newest release on the
+#                                                           repo (or the version named) → server (only when it changed) → game →
+#                                                           download → status. The GitHub token is asked once (hidden), kept in
+#                                                           ~/.flavius.conf. If zips WERE uploaded here, they are used instead:
 #                                                           server zip → game zip → site zip → privacy.html (each only if present) → status
 #   bash flavius.sh game   flavius-site-update-v0.80.zip   the game: play/assets (if any) → play/index.html → play/version.json
 #   bash flavius.sh download flavius-download-v0.88.zip    the standalone download: play/flavius-rule-arena.zip
@@ -49,7 +52,8 @@ clear_cdn(){ # clear_cdn <path> [<path> …] — and wait until CloudFront is do
 unpack(){ # unpack <zip> → prints the folder
   local d; d=$(mktemp -d "$HOME/.flavius-XXXX"); unzip -oq "$1" -d "$d"; echo "$d"; }
 
-cmd_game(){ need_zip "${1:-}"; local d; d=$(unpack "$1"); local p="$d/play"
+cmd_game(){ need_zip "${1:-}"; local d; d=$(unpack "$1"); game_dir "$d/play"; rm -rf "$d"; }
+game_dir(){ local p="$1"
   [ -f "$p/index.html" ] && [ -f "$p/version.json" ] || die "That zip has no play/index.html + play/version.json — is it a game update?"
   local v; v=$(sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p' "$p/version.json"); say "Game update v$v"
   if [ -d "$p/assets" ]; then say "New art first (old files are kept)"; run aws s3 sync "$p/assets" "s3://$BUCKET/play/assets/" --only-show-errors; ok "play/assets synced"; fi
@@ -61,8 +65,7 @@ cmd_game(){ need_zip "${1:-}"; local d; d=$(unpack "$1"); local p="$d/play"
   local cl=("/play/" "/play/index.html" "/play/version.json" "/play/flavius-rule-arena.zip" "/play/arena_shot.webp")
   [ -d "$p/assets" ] && cl+=("/play/assets/*")   # art that kept its name (arena.jpg, lang_*.js, card backs) must not be served from the old cache
   clear_cdn "${cl[@]}"
-  [ "${DRY:-}" = 1 ] || { local live; live=$(curl -s "$SITE/play/version.json?x=$RANDOM" | sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p'); [ "$live" = "$v" ] && ok "live: v$live" || printf '   live version reads "%s" — give it a minute and run: bash flavius.sh status\n' "$live"; }
-  rm -rf "$d"; }
+  [ "${DRY:-}" = 1 ] || { local live; live=$(curl -s "$SITE/play/version.json?x=$RANDOM" | sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p'); [ "$live" = "$v" ] && ok "live: v$live" || printf '   live version reads "%s" — give it a minute and run: bash flavius.sh status\n' "$live"; }; }
 
 cmd_download(){ need_zip "${1:-}"; local d; d=$(unpack "$1"); local f="$d/play/flavius-rule-arena.zip"
   [ -f "$f" ] || die "That zip has no play/flavius-rule-arena.zip — is it the download zip?"
@@ -85,11 +88,13 @@ cmd_server(){ need_zip "${1:-}"; local email=""
   [ -f "$CONF" ] && . "$CONF"; email="${ALERT_EMAIL:-}"
   if [ -z "$email" ]; then read -r -p "Budget alert e-mail (asked once, kept in ~/.flavius.conf): " email; email=$(printf '%s' "$email" | tr -d '\r\n\t '); printf 'ALERT_EMAIL=%q\n' "$email" > "$CONF"; fi
   say "Server: $1"; cd "$HOME"; run unzip -oq "$1"; [ "${DRY:-}" = 1 ] || [ -f "$HOME/server/deploy.sh" ] || die "The zip did not contain server/deploy.sh"
+  server_dir "$HOME/server" "$email"; }
+server_dir(){ local sd="$1" email="$2"
   # the Google secret stays in the server once set: only asked when you want to change it (NEW_SECRET=1 bash flavius.sh …)
   local sec=""; if [ "${NEW_SECRET:-}" = 1 ]; then printf 'Paste the NEW Google client SECRET (nothing shows), then Enter: '; read -r -s sec; echo; sec=$(printf '%s' "$sec" | tr -d '\r\n\t ')
     [ ${#sec} -ge 20 ] || die "That secret is ${#sec} characters — expected about 35. Run again."; ok "new secret read (${#sec} characters)"
   else ok "Google secret: keeping the one the server already has (NEW_SECRET=1 to change it)"; fi
-  [ "${DRY:-}" = 1 ] || cd "$HOME/server"; AUTH_DOMAIN="${AUTH_DOMAIN:-${LOGIN_DOMAIN:-none}}" AUTH_STAGE="${AUTH_STAGE:-${LOGIN_STAGE:-cert}}" GOOGLE_ID="$GOOGLE_ID" GOOGLE_SECRET="$sec" run sh deploy.sh "$email"
+  [ "${DRY:-}" = 1 ] || cd "$sd"; AUTH_DOMAIN="${AUTH_DOMAIN:-${LOGIN_DOMAIN:-none}}" AUTH_STAGE="${AUTH_STAGE:-${LOGIN_STAGE:-cert}}" GOOGLE_ID="$GOOGLE_ID" GOOGLE_SECRET="$sec" run sh deploy.sh "$email"
   unset sec; [ "${DRY:-}" = 1 ] || cmd_status; }
 
 # the own sign-in address: run once → certificate; run again 15+ minutes later → the address goes live and the game switches to it
@@ -166,6 +171,41 @@ cmd_status(){ set +e +o pipefail; say "What is live   (green = fine · yellow = 
   [ "$pc" = "200" ] && G "privacy page" "/privacy" || Y "privacy page" "/privacy answers $pc (Google's consent screen links to it)"
   echo; if [ "$RN" -gt 0 ]; then printf '\033[1;31m%s to fix now\033[0m' "$RN"; elif [ "$YN" -gt 0 ]; then printf '\033[1;33mAll working — %s worth a look\033[0m' "$YN"; else printf '\033[1;32mAll green\033[0m'; fi; echo; }
 
+# ---- releases straight from GitHub (his pick 2026-10-06: no more uploading zips) ----
+REPO="dsoto1/arena"; SRC="$HOME/.flavius-src"
+gh_token(){ [ -f "$CONF" ] && . "$CONF"; if [ -z "${GH_TOKEN:-}" ]; then
+    printf 'GitHub token (read-only, this repo only; asked once, kept in ~/.flavius.conf — nothing shows): '; read -r -s GH_TOKEN; echo; GH_TOKEN=$(printf '%s' "$GH_TOKEN" | tr -d '\r\n\t ')
+    [ ${#GH_TOKEN} -ge 20 ] || die "That token is ${#GH_TOKEN} characters — expected 40 or more. Run again."; conf_set GH_TOKEN "$GH_TOKEN"; chmod 600 "$CONF"; ok "token kept"; fi; }
+gh_api(){ curl -fsS -m 20 -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$REPO/$1"; }
+# the branch carrying the release: the version asked for, else the highest version.json among the branches
+gh_pick(){ local want="${1:-}" b v best="" bestv="0"; local list; list=$(gh_api "branches?per_page=100" | python3 -c "import json,sys;[print(x['name']) for x in json.load(sys.stdin)]") || die "GitHub refused the token (or the repo is not reachable). Make a new token and run: GH_TOKEN= bash flavius.sh release"
+  for b in $list; do v=$(curl -fsS -m 20 -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github.raw" "https://api.github.com/repos/$REPO/contents/version.json?ref=$b" 2>/dev/null | sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p' || true)
+    [ -n "$v" ] || continue; if [ -n "$want" ]; then [ "$v" = "$want" ] && { echo "$b $v"; return; }; continue; fi
+    if python3 -c "import sys;a,b=sys.argv[1:];sys.exit(0 if tuple(map(int,a.split('.')))>tuple(map(int,b.split('.'))) else 1)" "$v" "$bestv"; then best="$b"; bestv="$v"; fi; done
+  [ -n "$want" ] && die "No branch on GitHub carries v$want yet."; [ -n "$best" ] || die "No release found on GitHub."; echo "$best $bestv"; }
+srv_hash(){ (cd "$1/server" && cat template.yaml deploy.sh src/*.js src/*.json 2>/dev/null | sha256sum | cut -c1-16); }
+cmd_gitrelease(){ local want="${1:-}"; gh_token
+  local br v; if [ -n "${FLAVIUS_SRC_OK:-}" ] && [ -d "$SRC/.git" ]; then br=$(git -C "$SRC" rev-parse --abbrev-ref HEAD); v=$(sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p' "$SRC/version.json")
+  else say "Looking for the release on GitHub"; local pk; pk=$(gh_pick "$want") || exit 1; read -r br v <<< "$pk"; [ -n "$br" ] || die "No release found on GitHub."; ok "v$v on $br"
+    say "Fetching v$v (only the newest files, ~100 MB)"; rm -rf "$SRC"
+    git -c http.extraHeader="Authorization: Basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" clone -q --depth 1 --branch "$br" "https://github.com/$REPO.git" "$SRC" || die "git clone failed"
+    ok "fetched $(git -C "$SRC" log -1 --format='%h · %cd' --date=format:'%Y-%m-%d %H:%M')"
+    # the release carries the newest flavius.sh: when it differs from this one, swap it in and run again (so the steps never change)
+    if ! cmp -s "$SRC/tools/deploy/flavius.sh" "$0"; then cp "$SRC/tools/deploy/flavius.sh" "$0"; ok "flavius.sh updated from the release — continuing with the new one"; FLAVIUS_SRC_OK=1 exec bash "$0" release "$want"; fi; fi
+  [ -f "$CONF" ] && . "$CONF"; local sh; sh=$(srv_hash "$SRC"); local live; live=$(curl -s -m 10 "$SITE/play/version.json?x=$RANDOM" | sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p')
+  local dosrv=0; [ "$sh" != "${SERVER_HASH:-}" ] && dosrv=1
+  say "Release plan (from GitHub, $br)"; echo "  1 server   : $([ $dosrv = 1 ] && echo "deploy — its code changed since the last server deploy from here" || echo 'unchanged — skipped')"
+  echo "  2 game     : v$v   (live now: v${live:-?})"; echo "  3 download : the standalone v$v (built here)"
+  if [ "${DRY:-}" != 1 ]; then read -r -p "Go? [y/N] " ok; case "$ok" in y|Y|yes) ;; *) die "Stopped — nothing changed.";; esac; fi
+  if [ $dosrv = 1 ]; then local email="${ALERT_EMAIL:-}"
+    if [ -z "$email" ]; then read -r -p "Budget alert e-mail (asked once, kept in ~/.flavius.conf): " email; email=$(printf '%s' "$email" | tr -d '\r\n\t '); conf_set ALERT_EMAIL "$email"; fi
+    say "Server (from the release)"; server_dir "$SRC/server" "$email"; [ "${DRY:-}" = 1 ] || conf_set SERVER_HASH "$sh"; cd "$HOME"; fi
+  local P; P=$(mktemp -d "$HOME/.flavius-XXXX"); mkdir -p "$P/play"; cp "$SRC/flavius-arena.html" "$P/play/index.html"; cp "$SRC/version.json" "$P/play/"
+  [ -f "$SRC/tools/deploy/arena_shot.webp" ] && cp "$SRC/tools/deploy/arena_shot.webp" "$P/play/"; cp -r "$SRC/assets" "$P/play/assets"
+  say "The standalone download (built here from the release)"; (cd "$SRC" && python3 tools/mkshare.py "$v" | tail -1 && rm -f share/flavius-rule-arena.zip && cd share && zip -q -9 flavius-rule-arena.zip "flavius-rule-arena-v$v.html") || die "building the download failed"
+  cp "$SRC/share/flavius-rule-arena.zip" "$P/play/flavius-rule-arena.zip"
+  game_dir "$P/play"; rm -rf "$P" "$SRC/share"; cmd_status; }
+
 # one command per release: the newest server zip, game zip, site zip and privacy.html found here, in the safe order
 cmd_release(){ local here; here=$(pwd)
   local srv gam dl sit pri; srv=$(ls -t "$here"/flavius-server-*.zip 2>/dev/null | head -1 || true); gam=$(ls -t "$here"/flavius-site-update-*.zip 2>/dev/null | head -1 || true)
@@ -176,7 +216,7 @@ cmd_release(){ local here; here=$(pwd)
     if ! cmp -s "$t" "$0"; then cp "$t" "$0"; rm -f "$t"; ok "flavius.sh updated from the game zip — continuing with the new one"; FLAVIUS_UPDATED=1 exec bash "$0" release; fi; rm -f "$t"; fi
   sit=$(ls -t "$here"/flavius-site-v*.zip 2>/dev/null | head -1 || true)
   pri=""; [ -f "$here/privacy.html" ] && pri="$here/privacy.html"
-  [ -n "$srv$gam$sit$pri" ] || die "Nothing to release here. Upload the server zip, the game zip, the site zip and/or privacy.html first (Actions → Upload file)."
+  [ -n "$srv$gam$sit$pri" ] || { cmd_gitrelease "${1:-}"; return; }
   say "Release plan"; echo "  1 server   : ${srv:-(none uploaded — skipped)}"; echo "  2 game     : ${gam:-(none uploaded — skipped)}"; echo "  3 download : ${dl:-(none uploaded — skipped)}"; echo "  4 site     : ${sit:-(none uploaded — skipped)}"; echo "  5 page     : ${pri:-(none uploaded — skipped)}"
   if [ "${DRY:-}" != 1 ]; then read -r -p "Go? [y/N] " ok; case "$ok" in y|Y|yes) ;; *) die "Stopped — nothing changed.";; esac; fi
   [ -n "$srv" ] && { cmd_server "$srv"; cd "$here"; }
@@ -191,6 +231,6 @@ cmd_release(){ local here; here=$(pwd)
 
 CMD="${1:-}"; shift || true
 case "$CMD" in
-  release) cmd_release;; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; server) cmd_server "$@";; status) cmd_status;;
-  *) sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//';;
+  release) cmd_release "$@";; game) cmd_game "$@";; download) cmd_download "$@";; site) cmd_site "$@";; page) cmd_page "$@";; online) cmd_online "$@";; login) cmd_login;; server) cmd_server "$@";; status) cmd_status;;
+  *) sed -n '2,23p' "$0" | sed 's/^# \{0,1\}//';;
 esac

@@ -691,6 +691,12 @@ advert shot + ALL assets + flavius.sh) and flavius-download-vX.zip (play/flavius
 server changed). He: CloudShell → Actions → Upload file (all zips) → `bash flavius.sh release` → y. The script updates itself from the game zip,
 runs server → game → download → site → privacy, clears CloudFront (incl. /play/assets/*), files used zips in ~/flavius-done and prints status.
 NEVER give him console click-through steps for a release again — fix flavius.sh / release.sh instead. Each zip must stay ≤30 MiB (step 6 warns).
+**FROM v0.92: RELEASES DEPLOY STRAIGHT FROM GITHUB (his pick 2026-10-06).** `bash flavius.sh release [X.YY]` with no zips in his home folder →
+cmd_gitrelease: GitHub token (fine-grained, read-only Contents on dsoto1/arena; asked once hidden → ~/.flavius.conf GH_TOKEN) → the branch whose
+version.json is the highest (or X.YY) → shallow clone to ~/.flavius-src → self-update from tools/deploy/flavius.sh → server only when its code hash
+changed (SERVER_HASH in the conf) → page + version.json + assets + tools/deploy/arena_shot.webp → the standalone built there (mkshare) → status.
+So a release MUST be committed + pushed (release.sh copies the advert shot to tools/deploy/arena_shot.webp). v0.91 still ships zips once (its game
+zip carries the new flavius.sh); zips stay the fallback (if any are uploaded, release uses them).
 
 (tools/release.sh also takes the play.html advert shot → share/arena_shot.webp → the game zip's play/arena_shot.webp, and always builds the
 share copy — the site download play/flavius-rule-arena.zip.)
