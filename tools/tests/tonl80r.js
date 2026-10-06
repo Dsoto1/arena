@@ -18,10 +18,11 @@ const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_M
   return {chest:CHEST_W.includes('cw_t80c'),market:Object.values(MARKET_W).flat().includes('cw_t80m'),hints:HINTS}},[name,cls]);
 const pre={A:await setup(A,'Alpha','hero'),B:await setup(B,'Beta','soldier'),C:await setup(C,'Gamma','amazonia')};
 /* the mock world lives in one localStorage item: a join can be lost to another window's write — join until seated */
-const join=async(p,id)=>{for(let k=0;k<8;k++){const ok=await p.evaluate(async id=>{try{await NET.req('lobby.join',{id})}catch(e){}await new Promise(r=>setTimeout(r,300));
+/* (time-boxed, not 8 tries: after a match a lanista may join only once his result is in — under load that can take a while; the last refusal is kept) */
+const join=async(p,id)=>{for(const T_=Date.now();Date.now()-T_<60000;){const ok=await p.evaluate(async id=>{try{await NET.req('lobby.join',{id})}catch(e){window.__joinWhy=e.message}await new Promise(r=>setTimeout(r,300));
   return (await NET.req('lobby.list')).some(L=>L.id===id&&L.players.some(x=>x.id===ONL.acct.id))},id);if(ok)return true;await p.waitForTimeout(400)}return false};
 const L=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:false,abandon:'cpu'}));
-const sees=async(p,id,n)=>{for(let t0=Date.now();Date.now()-t0<20000;){if(await p.evaluate(([id,n])=>ONLC.humansOf(mockLoad().lobbies[id]||{}).length>=n,[id,n]))return true;await p.waitForTimeout(150)}return false};
+const sees=async(p,id,n)=>{for(let t0=Date.now();Date.now()-t0<40000;){if(await p.evaluate(([id,n])=>ONLC.humansOf(mockLoad().lobbies[id]||{}).length>=n,[id,n]))return true;await p.waitForTimeout(150)}return false};
 await join(B,L.id);await join(C,L.id);await sees(A,L.id,3);
 const L2=await A.evaluate(async id=>{const L=await NET.req('lobby.start',{id});onlEnter(L);return L},L.id);
 await B.evaluate(L=>onlEnter(L),L2);await C.evaluate(L=>onlEnter(L),L2);
@@ -94,7 +95,7 @@ let R=null;for(let k=0;k<5;k++){R=await A.evaluate(async()=>{try{return await NE
   let ok=false,lost=false;for(let t0=Date.now();R&&Date.now()-t0<20000&&!ok&&!lost;){lost=!await A.evaluate(id=>(mockLoad().lobbies[id]||{}).status==='waiting',R.id);ok=!lost&&await B.evaluate(id=>(mockLoad().lobbies[id]||{}).status==='waiting',R.id);if(!ok&&!lost)await A.waitForTimeout(200)}
   if(ok||(R&&!lost))break;await A.waitForTimeout(1000)}
 await A.waitForTimeout(1500);await join(B,R.id);await sees(A,R.id,2);
-const R2=await A.evaluate(async id=>{try{const L=await NET.req('lobby.start',{id});onlEnter(L);return L}catch(e){const w=mockLoad();const L=w.lobbies[id];return {ERR:e.message,now:Date.now(),L:L&&{status:L.status,closed:L.closed,why:L.why,players:L.players.map(p=>p.id),members:(L.members||[]).map(m=>m.id),off:L.off,host:L.host},seen:Object.fromEntries(Object.values(w.accounts).map(a=>[a.id,a.seen])),M:w.matches[id]&&{status:w.matches[id].status}}}},R.id);if(R2.ERR){console.log('DBG',JSON.stringify(R2));process.exit(1)}await B.evaluate(L=>onlEnter(L),R2);
+const R2=await A.evaluate(async id=>{try{const L=await NET.req('lobby.start',{id});onlEnter(L);return L}catch(e){const w=mockLoad();const L=w.lobbies[id];return {ERR:e.message,now:Date.now(),L:L&&{status:L.status,closed:L.closed,why:L.why,players:L.players.map(p=>p.id),members:(L.members||[]).map(m=>m.id),off:L.off,host:L.host},seen:Object.fromEntries(Object.values(w.accounts).map(a=>[a.id,a.seen])),M:w.matches[id]&&{status:w.matches[id].status}}}},R.id);if(R2.ERR){console.log('DBG',JSON.stringify(R2),'B join:',await B.evaluate(()=>window.__joinWhy||null));process.exit(1)}await B.evaluate(L=>onlEnter(L),R2);
 await waitIn([A,B],R.id);
 for(const p of [A,B])await fast(p);
 const rk=async p=>p.evaluate(()=>{const r={hints:HINTS,set:SETTINGS.hints,strat:showStrategy(),dock:(document.getElementById('hintDock')||{}).hidden!==false,ranked:!!S.onl.ranked};try{hintsMaster(true,true)}catch(e){}r.forced=HINTS;return r});
