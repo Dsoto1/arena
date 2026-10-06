@@ -2501,6 +2501,12 @@ function avatarSVG(player) {
   for (const l of LOCS) {
     const P = parts[l];
     const hp = player.hp[l];
+    if (hp <= 0 && typeof SEV92 !== 'undefined' && SEV92[l]) {
+      /* v0.92 (his pick): the severed part keeps the body; a red dashed outline traced from the avatar, cut at the joint */
+      const V = SEV92[l];
+      s += `<path d="${V.d}" fill="#7a1a12" fill-opacity=".28" stroke="#e0503e" stroke-width="1.1" stroke-dasharray="3 2" stroke-linejoin="round" pointer-events="visiblePainted"><title>${LOCN[l]} ${sevLabel(l).toLowerCase()}</title></path>` + V.cut.map(c => `<line x1="${c[0][0]}" y1="${c[0][1]}" x2="${c[1][0]}" y2="${c[1][1]}" stroke="#ff6a55" stroke-width="1.6" stroke-linecap="round"/>`).join('');
+      continue;
+    }
     if (hp <= 0) {
       s += `<path d="${P.d}" fill="#1a0f0b" fill-opacity=".55" stroke="#d24a3a" stroke-width="1.8" stroke-dasharray="4 3"><title>${LOCN[l]} ${sevLabel(l).toLowerCase()}</title></path><text x="${P.cx}" y="${P.cy - 5}" fill="#ff6a55" font-size="16" font-weight="700" text-anchor="middle" dominant-baseline="middle">✕</text><text x="${P.cx}" y="${P.cy + 9}" fill="#ff8a70" font-size="7" font-family="IBM Plex Mono, monospace" text-anchor="middle" dominant-baseline="middle">${sevLabel(l).toUpperCase()}</text>`;
       continue;

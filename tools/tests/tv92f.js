@@ -12,6 +12,10 @@ const R=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
 const Q=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));try{if(S)S.over=true}catch(e){}openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});await W8(800);
   const w=W_();const home=travelHome(me());w.night.loc=(home+3)%LOCATIONS.length;w.night.selfBye=true;MGR.tab='night';MGR_REDRAW();await W8(700);
   const b=document.querySelector('#mgrBody [data-mg="city"]');const o={txt:b&&b.textContent,home:LOCATIONS[home].n};if(b){b.click();await W8(1500)}o.li=typeof CITY!=='undefined'?CITY.li:null;o.want=home;return o});
+const Y=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_();w.night.selfBye=false;const R=rosterOf(me());R[0].inj={until:w.week+2,label:'a cut'};R[1].restWk=w.week;
+  MGR.tab='practice';MGR_REDRAW();await W8(700);const lk=[...document.querySelectorAll('#mgrBody .yo92lk')].map(b=>b.textContent.trim());
+  const sel=document.querySelectorAll('#mgrBody select[data-yr87]').length;R[0].inj=null;R[1].restWk=null;return {lk,sel,n:R.length}});
+ok(Y.lk.length===2&&/Infirmary/.test(Y.lk.join())&&/Resting/.test(Y.lk.join()),'yard: hurt + resting rows locked '+JSON.stringify(Y));ok(Y.sel===Y.n-2,'yard: the others keep their picker '+JSON.stringify(Y));
 ok(Q.txt&&Q.txt.includes(Q.home),'sit-out: the button names the home square '+JSON.stringify(Q));ok(Q.li===Q.want,'sit-out: the home square opens '+JSON.stringify(Q));
 ok(R.phase==='action'&&!R.cpu,'a human action phase '+JSON.stringify(R));ok(/Telemachus/.test(R.tel||''),'Telemachus named '+R.tel);ok(R.done==='no attacks left','attacks used '+R.done);
 console.log(JSON.stringify(R));console.log('MISS',JSON.stringify(miss));console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();
