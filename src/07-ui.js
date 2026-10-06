@@ -1624,6 +1624,7 @@ function draw() {
     ctx.lineWidth = 1;
     ctx.stroke();
   }
+  if (typeof night91Sand === 'function') night91Sand(Wd, Hd); /* v0.91: the night match — grade, sky, torches (189-v91night) */
   // exit / capture tiles
   if (S.evKey === 'orpheus' || S.evKey === 'goldenEagle') for (const p of S.players) {
     if (!p.alive) continue;

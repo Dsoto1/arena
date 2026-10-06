@@ -452,8 +452,8 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     /* the host removes a lanista (5 minutes before they may come back) */
     'lobby.kick':async(d,ctx)=>{const L=await getLobby(d.id);const why=C.roomKick(L,ctx.acct,d.who,now());if(why)throw new Error(why);await putLobby(L);await toRoom(L,null,{except:ctx.acct});
       await deliver([d.who],'lobby.update',{id:L.id,kicked:1});return room(L)},
-    /* the host's settings until the horns: ev, loc, seats, ticket, abandon, standsOff, teams, autoBal */
-    'lobby.set':async(d,ctx)=>{const L=await getLobby(d.id);const x={};for(const k of ['ev','loc','seats','ticket','free','abandon','standsOff','teams','autoBal'])if(d[k]!=null)x[k]=d[k];
+    /* the host's settings until the horns: ev, loc, seats, ticket, abandon, standsOff, night, teams, autoBal */
+    'lobby.set':async(d,ctx)=>{const L=await getLobby(d.id);const x={};for(const k of ['ev','loc','seats','ticket','free','abandon','standsOff','night','teams','autoBal'])if(d[k]!=null)x[k]=d[k];
       const why=C.roomSet(L,ctx.acct,x,now());if(why)throw new Error(why);await putLobby(L);await toRoom(L,null,{except:ctx.acct});return room(L)},
     'lobby.team':async(d,ctx)=>{const L=await getLobby(d.id);const why=C.roomTeam(L,ctx.acct,d.who||ctx.acct,d.team);if(why)throw new Error(why);await putLobby(L);await toRoom(L,null,{except:ctx.acct});return room(L)},
     'lobby.ready':async(d,ctx)=>{const L=await getLobby(d.id);if(L.status!=='waiting')throw new Error('Already under way.');const p=L.players.find(p=>p.id===ctx.acct);if(!p)throw new Error('Sit down first.');
