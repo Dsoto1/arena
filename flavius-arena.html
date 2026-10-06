@@ -43418,7 +43418,10 @@ body.calm #onl .onl-rail button[data-v="play"]{animation:none}
 @media(max-width:760px){#onl .onl-rail button[data-v="play"]{margin-bottom:0;font-size:16px;padding:9px 16px}}`;document.head.appendChild(st)}
 /* 5 · "✖ Leave the Online arena" from the Online window landed on the empty background arena (his report): when the Online
    window closes without starting a match, no live event, no other window and no city → the main menu. */
-{const base=onlineOpen;onlineOpen=async function(){const r=await base.apply(this,arguments);
+/* only after the player's own "✖ Leave the Online arena" (#mClose) or Esc — never when the window closes to enter or watch a match */
+let ONL_LEAVE89=0;document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#mClose')&&document.getElementById('onl'))ONL_LEAVE89=Date.now()},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('onl'))ONL_LEAVE89=Date.now()},true);
+{const base=onlineOpen;onlineOpen=async function(){ONL_LEAVE89=0;const r=await base.apply(this,arguments);if(!ONL_LEAVE89||Date.now()-ONL_LEAVE89>5000)return r;ONL_LEAVE89=0;
   /* only when nothing online is on its way: a joiner's match loads after the window closes (snapshot, START89), so wait for that too */
   const quiet=()=>!(typeof ONLM!=='undefined'&&ONLM.on)&&!document.body.classList.contains('onlarena')&&!(typeof START89!=='undefined'&&START89>0)&&!(S&&S.onl);
   setTimeout(()=>{if(!quiet())return;setTimeout(()=>{try{if(!quiet())return;const live=typeof eventLive==='function'&&eventLive();const city=typeof CITY!=='undefined'&&CITY.open;

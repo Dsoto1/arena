@@ -80,6 +80,8 @@ const t0=Date.now();while(Date.now()-t0<120000){await drive(B);await drive(C);aw
 const inMatch=await C.evaluate(()=>({on:!!(S&&S.onl&&ONLM.on),seat:ONLM.me,ev:S&&S.ev,players:S&&S.players.length,say:!!document.getElementById('btnOnlSay80')}));
 const backA=await A.evaluate(()=>({grey:!!document.querySelector('#onl .onl-room80.grey'),room:!!onlMyLobby()}));
 /* an in-match phrase: B's 💬 → C sees a bubble over B's gladiator */
+/* under load B can enter the match a little after C: wait (driving both) until B's 💬 is up */
+for(let i=0;i<120&&!(await B.evaluate(()=>{const b=document.getElementById('btnOnlSay80');return !!(b&&b.offsetParent&&S&&S.onl&&ONLM.on)}).catch(()=>false));i++){await drive(B);await drive(C);await wait(250)}
 await B.evaluate(()=>{ONLM.uiAt=Date.now()});await B.click('#btnOnlSay80');await wait(250);
 await C.evaluate(()=>{window.__bub=[];new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)if(n.classList&&n.classList.contains('qbub80'))window.__bub.push(n.textContent+'@'+n.dataset.seat)}).observe(document.body,{childList:true,subtree:true})});
 await B.click('#onlSay80 [data-msay="struck"]');await until(()=>C.evaluate(()=>window.__bub.length>0));const bub=await C.evaluate(()=>window.__bub);

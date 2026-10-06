@@ -31,7 +31,7 @@ LEAK=$(grep -oE '[A-Za-z0-9._%+-]+@(gmail|yahoo|hotmail|outlook|icloud|proton)\.
 if [ -n "$LEAK" ]; then echo "an e-mail address is in the page: $LEAK"; exit 1; fi
 echo "clean ($(echo $WORDS | wc -w) words checked)"
 step "4 full regression (~30 min at -j 4)"
-node tools/smartreg.js --full || { echo "regression failed — see tools/reg.txt"; exit 1; }
+node tools/smartreg.js --full ${REGJ:+-j $REGJ} || { echo "regression failed — see tools/reg.txt"; exit 1; }
 step "4b advert shot (play.html)"
 mkdir -p share && node tools/siteshot.js "$PWD/flavius-arena.html" share/arena_shot.png | tail -1
 python3 -c "from PIL import Image;im=Image.open('share/arena_shot.png').convert('RGB');im=im.resize((1200,round(im.height*1200/im.width)),Image.LANCZOS);im.save('share/arena_shot.webp',quality=82,method=6)" && rm -f share/arena_shot.png
