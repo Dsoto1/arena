@@ -148,6 +148,7 @@ function wearDraw91(g,w){const st=WEAR91.stats;const tile=(typeof TB!=='undefine
 /* ---------- 1. the trickles ---------- */
 function tricklePlan91(dr,G){const out=[];if(!S.blood||!S.blood.length||SETTINGS.gore===false)return out;if(typeof isNaum==='function'&&isNaum())return out;
   for(let i=S.blood.length-1;i>=0&&out.length<WEAR91.trickleMax;i--){const B=S.blood[i];if(!B||B.r==null)continue;const e=edge91(B.r,B.c);if(e.d>1)continue;
+    if(dr.length){const m0=center(B.r,B.c),m1=center(B.r+e.sr,B.c+e.sc);if(m1.y>m0.y)continue} /* v0.91: no gully on the near edges — blood there stays on the sand */
     if(B.kind==='drop'&&(B.seed||0)%3)continue;if((S.tunnels||[]).some(t=>t.r===B.r&&t.c===B.c))continue;
     const sd=B.seed||1;const fa=typeof bloodFade84==='function'?bloodFade84(B):1;
     const jit=(h91(sd,1,1)-0.5)*0.5;const r0=B.r+(e.sc?jit:0),c0=B.c+(e.sr?jit:0);

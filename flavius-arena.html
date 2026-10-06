@@ -46754,7 +46754,7 @@ function ar91Drape(g,x,y,w,h){g.save();g.fillStyle='rgba(0,0,0,.28)';g.fillRect(
 /* ar91Labels — the tile names on each side, at their grid points (turned with the board) */
 function ar91Labels(){const P=center;const n=N-1,e0=-0.5,e1=n+0.5;const lab=[];for(let r=0;r<N;r++)lab.push({t:ROWL[r],p:P(r,e0-0.3)},{t:ROWL[r],p:P(r,e1+0.3)});for(let c=0;c<N;c++)lab.push({t:COLL[c],p:P(e0-0.3,c)},{t:COLL[c],p:P(e1+0.3,c)});return lab}
 /* ar91DrainsAt — the grates (grid r/c in the gully) */
-function ar91DrainsAt(){const n=N-1,m0=0.085;return [[-0.5-m0,n*0.25,1],[-0.5-m0,n*0.75,1],[n+0.5+m0,n*0.25,1],[n+0.5+m0,n*0.75,1],[n*0.25,-0.5-m0,0],[n*0.75,-0.5-m0,0],[n*0.25,n+0.5+m0,0],[n*0.75,n+0.5+m0,0]]}
+function ar91DrainsAt(){const n=N-1,m0=0.085;const mid=ar91Mid();return [[-0.5-m0,n*0.25,1],[-0.5-m0,n*0.75,1],[n+0.5+m0,n*0.25,1],[n+0.5+m0,n*0.75,1],[n*0.25,-0.5-m0,0],[n*0.75,-0.5-m0,0],[n*0.25,n+0.5+m0,0],[n*0.75,n+0.5+m0,0]].filter(([r,c])=>center(r,c).y<mid.y) /* v0.91: the far edges' gully only */}
 /* ar91Drains — the drain grates in the current view: [{x,y,r,c}] (screen point, real grid r/c); [] when the look is off */
 function ar91Drains(){if(!ar91On())return [];return ar91DrainsAt().map(([r,c])=>{const m=center(r,c);return {x:m.x,y:m.y,r,c}})}
 function ar91Tower(g,x,y,fires){const lud=ar91Lud();if(lud){const s=TW*0.42,hh=TW*0.55;const L=[{x:x-s,y:y-s*0.5},{x,y},{x,y:y-hh},{x:x-s,y:y-s*0.5-hh}],R=[{x:x+s,y:y-s*0.5},{x,y},{x,y:y-hh},{x:x+s,y:y-s*0.5-hh}];
@@ -46803,9 +46803,11 @@ function ar91Temple(g){const F=ar91Anchor();const x=F.cx,w=F.w*0.9,h=F.h*0.8,y=F
   g.fillStyle='#e8e2d4';g.fillRect(x-tw2-TW*0.12,py-TW*0.02,tw2*2+TW*0.24,TW*0.05)}
 function ar91TopPaint(g,out){const lud=ar91Lud();const ring=ar91Ring;const mid=ar91Mid();
   /* the gully */
-  g.save();ar91Path(g,ring(0.17));const R0=ring(0).slice().reverse();R0.forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y));g.closePath();ar91Fill(g,1);g.fill('evenodd');g.fillStyle='rgba(22,15,8,.58)';g.fill('evenodd');g.restore();
-  g.save();ar91Path(g,ring(0.17));ring(0.1).slice().reverse().forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y));g.closePath();g.fillStyle='rgba(10,6,2,.35)';g.fill('evenodd');
-  g.strokeStyle='rgba(255,244,220,.28)';g.lineWidth=1;ar91Path(g,ring(0.01));g.stroke();
+  /* v0.91 (his call): the gully only along the two FAR edges — from the bottom-corner view the near sand meets its low wall directly */
+  const farE=ar91Edges(0.17).filter(E=>E.far);const Rg0=ring(0),Rg1=ring(0.1),Rg2=ring(0.17),Rg3=ring(0.01);
+  g.save();for(const E of farE){ar91Path(g,[Rg0[E.ia],Rg0[E.ib],Rg2[E.ib],Rg2[E.ia]]);ar91Fill(g,1);g.fill();g.fillStyle='rgba(22,15,8,.58)';g.fill()}g.restore();
+  g.save();for(const E of farE){ar91Path(g,[Rg1[E.ia],Rg1[E.ib],Rg2[E.ib],Rg2[E.ia]]);g.fillStyle='rgba(10,6,2,.35)';g.fill()}
+  g.strokeStyle='rgba(255,244,220,.28)';g.lineWidth=1;g.beginPath();for(const E of farE){g.moveTo(Rg3[E.ia].x,Rg3[E.ia].y);g.lineTo(Rg3[E.ib].x,Rg3[E.ib].y)}g.stroke();
   for(const [r,c,hz] of ar91DrainsAt()){const Lp=hz?[[r,c-0.32],[r,c+0.32]]:[[r-0.32,c],[r+0.32,c]];const a=center(...Lp[0]),b=center(...Lp[1]);const ux=b.x-a.x,uy=b.y-a.y;
     g.fillStyle='#120c07';ar91Path(g,[{x:a.x,y:a.y-TW*0.025},{x:b.x,y:b.y-TW*0.025},{x:b.x,y:b.y+TW*0.025},{x:a.x,y:a.y+TW*0.025}]);g.fill();
     g.strokeStyle='rgba(120,110,96,.7)';g.lineWidth=Math.max(0.8,TW*0.014);for(let k=1;k<6;k++){const x=a.x+ux*k/6,y=a.y+uy*k/6;g.beginPath();g.moveTo(x-TW*0.012,y-TW*0.022);g.lineTo(x+TW*0.012,y+TW*0.022);g.stroke()}}g.restore();
@@ -47367,6 +47369,7 @@ function wearDraw91(g,w){const st=WEAR91.stats;const tile=(typeof TB!=='undefine
 /* ---------- 1. the trickles ---------- */
 function tricklePlan91(dr,G){const out=[];if(!S.blood||!S.blood.length||SETTINGS.gore===false)return out;if(typeof isNaum==='function'&&isNaum())return out;
   for(let i=S.blood.length-1;i>=0&&out.length<WEAR91.trickleMax;i--){const B=S.blood[i];if(!B||B.r==null)continue;const e=edge91(B.r,B.c);if(e.d>1)continue;
+    if(dr.length){const m0=center(B.r,B.c),m1=center(B.r+e.sr,B.c+e.sc);if(m1.y>m0.y)continue} /* v0.91: no gully on the near edges — blood there stays on the sand */
     if(B.kind==='drop'&&(B.seed||0)%3)continue;if((S.tunnels||[]).some(t=>t.r===B.r&&t.c===B.c))continue;
     const sd=B.seed||1;const fa=typeof bloodFade84==='function'?bloodFade84(B):1;
     const jit=(h91(sd,1,1)-0.5)*0.5;const r0=B.r+(e.sc?jit:0),c0=B.c+(e.sr?jit:0);

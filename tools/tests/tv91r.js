@@ -56,7 +56,7 @@ await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(
   AR91.on=false;r.drainsOff=ar91Drains().length;AR91.on=true;draw();return r});
   out.day=R;ok(R.on,'1 the look is on');ok(R.tiers===4,'1 Roma is grand: 4 tiers');ok(R.walls.n===2&&R.walls.same&&R.walls.back,'1 two far walls with the right names '+JSON.stringify(R.walls));
   ok(R.cover.bad.length===0,'1 no stone over a tile, piece or near spectator '+JSON.stringify(R.cover));ok(R.cover.kinds.spect>0,'1 near spectators sampled');
-  ok(R.fires===4,'1 four fires (two towers, two bowls)');ok(R.drains===8&&R.drainsOff===0,'1 eight drain grates, none with the look off');
+  ok(R.fires===4,'1 four fires (two towers, two bowls)');ok(R.drains===4&&R.drainsOff===0,'1 four drain grates (the far gully only), none with the look off');
   ok(R.pots>0&&R.jugs>=R.pots,`1 the pots are jugs (${R.jugs}/${R.pots})`);ok(R.eagle===1&&R.neck,'1 the eagle is a token round '+JSON.stringify([R.eagle,R.neck,R.eagleTok]));
   ok(R.zoom.det&&Math.abs(R.zoom.w1-R.zoom.w0)<1&&R.zoom.cy<R.zoom.w1&&Math.abs(R.zoom.cx-R.zoom.wd/2)<2,'1 zoomed: the box sits at the top centre at its normal size '+JSON.stringify(R.zoom));ok(R.back,'1 zoomed out: back on the podium');
   ok(R.ms.on<R.ms.off+12,`1 draw time ${R.ms.on.toFixed(1)} ms (look off ${R.ms.off.toFixed(1)} ms)`);
