@@ -35,7 +35,7 @@ o.m=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   q(`[data-yb76="pen:${g.id}"]`).click();await W8(200);r.penPanel=!!q('[data-pen76="go"]');
   q(`[data-yb76="spar:${g.id}"]`).click();await W8(200);q(`[data-yp76p="${g.id}"]`).value=h.id;q(`[data-yp76="spar|${g.id}"]`).click();await W8(300);r.spar=thPlan(w).pairs.some(p=>p.k==='spar'&&p.a===g.id)&&q(`[data-yb76="pen:${g.id}"]`).disabled;
   /* D · temple on a home week */
-  w.night.loc=home;w.night.travel=null;MGR.tab='night';MGR_REDRAW();await W8(400);const ap0=boostFor(g).ap;q('[data-god76="mars"]').click();await W8(200);r.temple=w.night.god76==='mars'&&boostFor(g).ap===Math.min(7,ap0+1);
+  w.night.loc=home;w.night.travel=null;MGR.tab='night';MGR_REDRAW();await W8(400);const ap0=boostFor(g).ap;{const d=document.createElement('div');d.innerHTML=templeHTML76();q('#mgrBody').appendChild(d);d.querySelector('[data-god76="mars"]').click()} /* v0.90: the temple card left Match Week (City Square only) */await W8(200);r.temple=w.night.god76==='mars'&&boostFor(g).ap===Math.min(7,ap0+1);
   /* C · sit this week out (fresh away week) */
   w.night.god76=null;w.night.loc=away;w.night.travel=null;MGR_REDRAW();await W8(300);const th0=thMax();q('[data-sbye76]').click();await W8(400);q('[data-ask76="1"]').click();await W8(400);
   r.sbye=!!w.night.selfBye&&thMax()===th0+TH_BYE&&weekMoney().gate===0;
