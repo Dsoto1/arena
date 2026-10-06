@@ -1073,6 +1073,10 @@ share copy — the site download play/flavius-rule-arena.zip.)
   first version); a tab shows only its versions, so each entry may keep the words it needs (cut + compact, easy to get through); newest tab open. Tholo tie rule (his pick):
   a gladiator before a beast; between gladiators the one whose turn is now or next. Then sims before/after (deaths, beast kills, length);
   knob if too deadly: scan every Resolve but strike at most once a rotation.
+- **v0.90 QUEUED (his notes 2026-10-06):** (1) the action bar's 🌾 Crowd Favor tile is DISABLED when the CF on hand can't pay for anything
+  in the Crowd Favor window (cheapest available option > CF, or Commodus) — today it lights with "1 CF to spend" though nothing costs 1;
+  (2) Manager beast-pen fights / training bouts (108 PEN76, S.pen76, exhibitions) AUTO-ZOOM the camera onto the pen/fight area (the cage box),
+  no manual Zoom needed.
 - **v0.90 QUEUED (his yes 2026-10-05): HOT-SEAT TURNING BOARD** — a setting (Settings → On the board, OFF by default): with 2+ humans
   on one screen, the board turns to the active human's corner at the start of each human's turn (short eased spin; Reduce motion / Off
   animations = an instant cut), using the v0.89 display rotation (168). CPU turns keep the last human's view. Never in Chariot,
