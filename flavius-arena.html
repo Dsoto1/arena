@@ -32519,7 +32519,10 @@ const ONLC=(function(){
     return {seat:r.seat|0,won:!!r.won,place:Math.max(1,Math.min(8,r.place|0||4)),f:Math.max(0,Math.min(400,r.f|0)),coin:Math.max(0,Math.min(200,r.coin|0)),kills:Math.max(0,Math.min(20,r.kills|0)),survives:r.survives!==false,
       slew:Array.isArray(r.slew)?[...new Set(r.slew.filter(x=>x==='commodus'||x==='tholo'))].sort():[],
       brk:Array.isArray(r.brk)?r.brk.filter(k=>typeof k==='string'&&KEY_RE.test(k)).slice(0,16).sort():[],
-      off:Array.isArray(r.off)?r.off.filter(k=>OFFERS83.includes(k)).slice(0,OFF_CARRY).sort():[],ks,kb:['g','b','a','r'].includes(r.kb)?r.kb:'',thumb:!!r.thumb,cpu:!!r.cpu}}
+      off:Array.isArray(r.off)?r.off.filter(k=>OFFERS83.includes(k)).slice(0,OFF_CARRY).sort():[],dmg:cleanDmg(r.dmg),ks,kb:['g','b','a','r'].includes(r.kb)?r.kb:'',thumb:!!r.thumb,cpu:!!r.cpu}}
+  /* v0.91 dmg = [[engine key, AP lost on its location 0..1 (2 decimals)],…] for brought printed armor still worn at the end (→ damaged, Ranked survivors) */
+  function cleanDmg(a){if(!Array.isArray(a))return [];return a.filter(x=>Array.isArray(x)&&typeof x[0]==='string'&&KEY_RE.test(x[0])&&isFinite(+x[1])).slice(0,16)
+    .map(x=>[x[0],Math.max(0,Math.min(1,Math.round(+x[1]*100)/100))]).filter(x=>x[1]>0).sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:a[1]-b[1])}
   function cleanTable(t){return (Array.isArray(t)?t:[]).slice(0,8).map(cleanRow).sort((a,b)=>a.seat-b.seat)}
   function agree(reports){const ids=Object.keys(reports);if(!ids.length)return {table:null,void:true,minority:[]};
     const key=r=>JSON.stringify(cleanTable(r.table))+'|'+String(r.hash||'');const groups={};for(const a of ids){const k=key(reports[a]);(groups[k]=groups[k]||[]).push(a)}
@@ -32844,7 +32847,7 @@ const ONLC=(function(){
     if(X.win&&X.surv&&X.bouts>=3&&X.wins>=1&&(X.gift|0)<WEEK_GIFTS84){const g={id:'week:'+F.key+':'+(D.id||'d'),why:'week:'+F.key,at:t,glad:(ch&&ch.name)||null};const n0=(D.gifts||[]).length;
       giftsIn(D,[g]);if((D.gifts||[]).length>n0){X.gift=(X.gift|0)+1;return g}}return null}
   /* ── FLAVIUS'S AUCTION: only Flavius sells (the chest pool); escrow, anti-snipe, one win a house a week ── */
-  const AUC_LOTS=3, AUC_MIN_MS=86400000, AUC_SNIPE_MS=300000, AUC_STEP=0.05, AUC_STEP_MIN=10; /* TWEAK: lots a week, shortest life, snipe guard, raise */
+  const AUC_LOTS=6, AUC_MIN_MS=86400000, AUC_SNIPE_MS=300000, AUC_STEP=0.05, AUC_STEP_MIN=10; /* TWEAK: lots a week, shortest life, snipe guard, raise */
   const aucMin=val=>Math.ceil((val|0)/2);
   const aucNextMin=lot=>lot&&lot.bid?Math.max((lot.bid.amt|0)+AUC_STEP_MIN,Math.ceil((lot.bid.amt|0)*(1+AUC_STEP))):aucMin(lot&&lot.val);
   const aucEnds=t=>Math.max(seasonAt(t).end,t+AUC_MIN_MS);
@@ -33099,6 +33102,7 @@ const ONLC=(function(){
   const RES_MSG89='That name belongs to an old house of the arena.';
   {const base=C.domusWhy;C.domusWhy=function(s){const w=base.apply(this,arguments);return w||(vaultReserved89(s)?RES_MSG89:'')}}
   if(C.lnameWhy){const base=C.lnameWhy;C.lnameWhy=function(s){const w=base.apply(this,arguments);return w||(vaultReserved89(s)?RES_MSG89:'')}}
+  const minRar=(r,lo)=>{const o=['common','rare','epic','legendary'];return lo&&o.indexOf(lo)>o.indexOf(r)?lo:r};
   const capRar=(r,cap)=>{const o=['common','rare','epic','legendary'];return cap&&o.indexOf(r)>o.indexOf(cap)?cap:r};
   /* the owner history: 1–3 gladiators of the old houses, oldest first; an earlier owner fell to the next one ('taken'), the last fell ('fell') */
   function vaultHist89(rnd,t0){const n=wp(rnd,VAULT_HIST89);const hs=VAULT_HOUSES89.slice();const out=[];let when=t0-(30+Math.floor(rnd()*30))*86400e3*n;
@@ -33108,13 +33112,70 @@ const ONLC=(function(){
   /* the vault's lot n of week `key` → {item, pc, rar, kind}. takenW / takenA = weapon / armor uniques already claimed; o.cap = the highest tier allowed
      (the server passes 'epic' when its unique claim lost a race); o.at = the week's start (history dates end before it). Same arguments → same piece. */
   function vaultLot89(key,n,catalog,takenW,takenA,o){o=o||{};const rnd=mul(hsh('vault89#'+key+'#'+n));
-    const kind=rnd()<C.NAMED_ARMOR_SHARE?'a':'w';const rar=capRar(wp(rnd,VAULT_RAR89),o.cap);
+    /* v0.91 o.kind ('a' | 'w') forces the kind, o.rar is the lowest tier (the draws still run, so the lot stays the same piece for the same options) */
+    const kind0=rnd()<C.NAMED_ARMOR_SHARE?'a':'w';const kind=o.kind==='a'||o.kind==='w'?o.kind:kind0;const rar=capRar(minRar(wp(rnd,VAULT_RAR89),o.rar),o.cap);
     const def=kind==='a'?C.rollNamedArmor(rnd,catalog,rar,takenA||[]):C.rollNamed(rnd,catalog,rar,takenW||[]);if(!def)return null;
     const uid='v89-'+String(key).replace(/[^A-Za-z0-9]/g,'')+'-'+(n|0);const pre=kind==='a'?C.NAMED_A:C.NAMED;
     const t0=o.at!=null?o.at:C.seasonAt(Date.now()).start;
     return {item:pre+'#'+uid,pc:{st:'whole',rar:def.rar,w:{...def,key:pre+'_'+uid},hist:vaultHist89(rnd,t0),vault89:1},rar:def.rar,kind}}
   const isVault89=P=>!!(P&&P.pc&&(P.pc.vault89||(P.pc.hist||[]).some(h=>h&&h.vault89)));
   Object.assign(C,{VAULT_RAR89,VAULT_HIST89,VAULT_HOUSES89,vaultReserved89,vaultLot89,vaultHist89,isVault89})})(ONLC);
+/* ══════════ v0.91 ONLINE ECONOMY II (his picks 2026-10-06; the page side is 197-v91econ) ══════════
+   • DAMAGED PRINTED ARMOR (Ranked): a printed armor piece brought into a Ranked bout and still worn at the end, with AP lost on its location,
+     comes home DAMAGED: pc.st 'damaged' + pc.dmg = the share of the location's AP lost (row.dmg, every client computes it from the lockstep
+     state; cleanRow keeps it). Repair = ceil(price × dmg); it may be worn in Custom but never brought into Ranked until repaired (kit.dmgd,
+     stripped by roomJoin / seatGroup / startRoom like kept-home pieces). Named pieces keep their rule (lost → broken; damage is ignored).
+   • KEEP HOME = NAMED PIECES ONLY: homeSet refuses a printed piece; a printed piece that still carries the old flag counts as not kept home.
+   • THE AUCTION: AUC_LOTS 6; aucPlan91 = what the vault must force so the week's lots hold ≥1 top-tier piece (Legendary while a unique of
+     that kind is unclaimed, else Epic), ≥2 armor and ≥2 weapons (vaultLot89 o.kind / o.rar). */
+(function(C){
+  const DMG_ST='damaged';
+  const isDamaged91=(h,it)=>{const p=C.pcOf(h,it);return !!(p&&p.st===DMG_ST)};
+  const needsRepair91=(h,it)=>{const p=C.pcOf(h,it);return !!(p&&(p.st==='broken'||p.st===DMG_ST))};
+  /* the piece's card carries its damage */
+  for(const f of ['pieceInfo','pieceOf']){const base=C[f];C[f]=function(){const I=base.apply(this,arguments);try{if(I&&I.st===DMG_ST){const pc=f==='pieceInfo'?(arguments[0]&&arguments[0].pc):C.pcOf(arguments[0],arguments[1]);
+      I.dmg=Math.max(0,Math.min(1,+(pc&&pc.dmg)||0))}}catch(e){}return I}}
+  /* a broken piece: a third of its value; a damaged one: its value × the AP it lost (at least 1) */
+  {const base=C.repairCost;C.repairCost=I=>I&&I.st===DMG_ST?Math.max(1,Math.ceil(C.valueOf(I)*(+I.dmg||0)-1e-9)):base(I)}
+  {const base=C.repairItem;C.repairItem=function(h,it){const u=C.itemUid(it);const p=u&&h&&h.pcs&&h.pcs[u];if(p&&p.st===DMG_ST){const y={...p,st:'whole'};delete y.dmg;h.pcs={...h.pcs,[u]:y};return h}return base.apply(this,arguments)}}
+  /* mark one held piece damaged, in place (a plain id is tagged so it can carry the state; it stays where it was in gear / equip) */
+  function damageItem91(h,it,f){const g=(h.gear||[]).slice();const i=g.indexOf(it);if(i<0)return null;let id=it;let pc=C.pcOf(h,it);
+    if(!C.itemUid(it)){id=it+'#'+C.newUid(h);pc={st:'whole'};g[i]=id;h.gear=g;if(Array.isArray(h.equip)){const e=h.equip.slice();const j=e.indexOf(it);if(j>=0){e[j]=id;h.equip=e}}}
+    const u=C.itemUid(id);const was=pc&&pc.st===DMG_ST?+pc.dmg||0:0;h.pcs={...(h.pcs||{}),[u]:{...(pc||{}),st:DMG_ST,dmg:Math.round(Math.min(1,Math.max(was,f))*100)/100}};return id}
+  {const base=C.gearAfter;C.gearAfter=function(ch,kit,row,ranked){const out=base.apply(this,arguments);out.dmg=[];
+    try{if(ranked&&row&&row.survives!==false&&Array.isArray(row.dmg)&&row.dmg.length&&kit){const items=kit.items||[],gear=kit.gear||[];const used=new Set();
+      for(const [k,f] of row.dmg){const j=gear.findIndex((g,i)=>g===k&&!used.has(i)&&!C.isNamed(items[i])&&(ch.gear||[]).includes(items[i]));if(j<0)continue;used.add(j);
+        if(C.pcOf(ch,items[j])&&C.pcOf(ch,items[j]).st==='broken')continue;const nid=damageItem91(ch,items[j],+f||0);if(nid)out.dmg.push({item:nid,key:k,dmg:Math.round((+f||0)*100)/100})}}}catch(e){}
+    return out}}
+  /* keep home: named pieces only */
+  {const base=C.isHome;C.isHome=(h,it)=>C.isNamed(it)&&base(h,it)}
+  {const base=C.homeSet;C.homeSet=function(h,it,on){if(on&&!C.isNamed(it))throw new Error('Only named pieces stay home — printed gear is never kept out of Ranked.');return base.apply(this,arguments)}}
+  /* the kit: kept-home = named only; damaged printed pieces listed apart (kit.dmgd) */
+  {const base=C.kitOf;C.kitOf=function(ch){const k=base.apply(this,arguments);if(!k||!ch)return k;
+    if(Array.isArray(k.home)){k.home=k.home.filter(it=>C.isNamed(it));if(!k.home.length)delete k.home}
+    const d=(k.items||[]).filter(it=>!C.isNamed(it)&&isDamaged91(ch,it));if(d.length)k.dmgd=d;return k}}
+  function dmgStrip91(kit){if(!kit||!Array.isArray(kit.dmgd)||!kit.dmgd.length)return kit;const left=kit.dmgd.slice();const gear=[],items=[];
+    (kit.items||[]).forEach((it,i)=>{const j=left.indexOf(it);if(j>=0){left.splice(j,1);return}items.push(it);gear.push((kit.gear||[])[i])});
+    const y={...kit,gear,items,dmgLeft:kit.dmgd.length};delete y.dmgd;return y}
+  {const base=C.kitStrip;C.kitStrip=function(kit){if(kit&&Array.isArray(kit.home)){const h=kit.home.filter(it=>C.isNamed(it));kit=h.length?{...kit,home:h}:(()=>{const y={...kit};delete y.home;return y})()}return dmgStrip91(base.call(this,kit))}}
+  const stripRoom91=L=>{if(!L||!L.ranked)return L;for(const p of L.players||[])if(p&&p.kit)p.kit=dmgStrip91(p.kit);for(const m of L.members||[])if(m&&m.kit)m.kit=dmgStrip91(m.kit);return L};
+  for(const f of ['roomJoin','seatGroup']){const base=C[f];C[f]=function(L){const r=base.apply(this,arguments);try{stripRoom91(L)}catch(e){}return r}}
+  {const base=C.startRoom;C.startRoom=function(L){try{stripRoom91(L)}catch(e){}return base.apply(this,arguments)}}
+  /* ── the auction's guarantees ── */
+  const AUC_MIN_A91=2, AUC_MIN_W91=2;
+  const uniqLeft91=(kind,tW,tA)=>kind==='a'?C.UNIQ_A_KEYS.some(k=>!(tA||[]).includes(k)):C.UNIQUES.some(u=>!(tW||[]).includes(u.k));
+  /* chest = the lots already drawn [{kind, rar}]; m = vault lots to make → the options for each (in lot order) */
+  function aucPlan91(chest,m,tW,tA){chest=chest||[];const out=[];for(let j=0;j<m;j++)out.push({});if(!m)return out;
+    const top=chest.some(x=>x&&(x.rar==='legendary'||(x.rar==='epic'&&!uniqLeft91(x.kind,tW,tA))));
+    let a=Math.max(0,AUC_MIN_A91-chest.filter(x=>x&&x.kind==='a').length),w=Math.max(0,AUC_MIN_W91-chest.filter(x=>x&&x.kind==='w').length);
+    for(const o of out){if(a>0){o.kind='a';a--}else if(w>0){o.kind='w';w--}}
+    if(!top){let j=out.findIndex(o=>o.kind&&uniqLeft91(o.kind,tW,tA));if(j<0){j=out.findIndex(o=>!o.kind);if(j<0)j=0;
+        if(!out[j].kind){const k=uniqLeft91('w',tW,tA)?'w':uniqLeft91('a',tW,tA)?'a':null;if(k)out[j].kind=k}}
+      out[j].rar=out[j].kind&&uniqLeft91(out[j].kind,tW,tA)?'legendary':'epic'}
+    return out}
+  const lotKind91=(item)=>C.isNamedA(item)?'a':'w';
+  const lotRar91=pc=>(pc&&(pc.rar||(pc.w&&pc.w.rar)))||'common';
+  Object.assign(C,{isDamaged91,needsRepair91,damageItem91,dmgStrip91,AUC_MIN_A91,AUC_MIN_W91,uniqLeft91,aucPlan91,lotKind91,lotRar91})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
 /* =====================================================================
    112-ONLINE · MULTIPLAYER → ONLINE (phase 1: the landing space, against a mock server)
@@ -37488,7 +37549,7 @@ function mockAfter83(w,L,M,a,i,row,out,gx){const ch=w.chars[L.players[i].char];i
   const bets=(L&&L.bets||[]).slice();const r=base(w,d,me);
   try{if(L&&M&&M.status==='done'&&was!=='done'){const A=ONLC.agree(M.reports||{});const gs=[];
     L.players.forEach((p,i)=>{const out=(M.outs||{})[p.id];if(!out||had.has(p.id)||/^bot/.test(p.id))return;const ch=w.chars[p.char];const row=(A.table||[]).find(x=>x.seat===i);if(!ch||!row)return;
-      const gx=ONLC.gearAfter(ch,p.kit,row,!!L.ranked);out.broken=gx.broken;out.gone=gx.gone||[];out.offBack=gx.offBack;mockAfter83(w,L,M,p.id,i,row,out,gx);gs.push({acct:p.id,i,ch,row,out,gx})});
+      const gx=ONLC.gearAfter(ch,p.kit,row,!!L.ranked);out.broken=gx.broken;out.gone=gx.gone||[];out.dmg=gx.dmg||[];out.offBack=gx.offBack;mockAfter83(w,L,M,p.id,i,row,out,gx);gs.push({acct:p.id,i,ch,row,out,gx})});
     for(const s of gs)if(s.out.died&&s.gx.carried.length){const from={house:(w.accounts[s.acct]||{}).dname||null,glad:s.ch.name};const ks=s.row.ks;
       const k=s.row.kb==='g'&&ks>=0?gs.find(z=>z.i===ks&&z.acct!==s.acct&&!z.out.died&&!(M.abandoned||{})[z.acct]):null;
       if(k){const Ps=s.gx.carried.map(P=>ONLC.tagPiece(P,s.ch));const cat=onlCatalog();w.loot83=w.loot83||{};
@@ -44854,8 +44915,10 @@ document.addEventListener('change',e=>{const s=e.target;if(!s||s.id!=='cityKitWh
 /* ---------------- THE MOCK (as server/src/routes.js v0.89 N) ---------------- */
 {const base=mockAucDraw84;mockAucDraw84=function(w,t){const r=base.apply(this,arguments);try{const S=ONLC.seasonAt(t);const A=(w.auc84||{})[S.key];
     if(A&&!A.vault89&&(A.lots||[]).length<ONLC.AUC_LOTS){A.vault89=1;const cat=onlCatalog();const ends=ONLC.aucEnds(t);w.uniq83=w.uniq83||[];w.uniqA89=w.uniqA89||[];
-      let n=A.lots.reduce((a,x)=>Math.max(a,x.n|0),0);while(A.lots.length<ONLC.AUC_LOTS){n++;let P=ONLC.vaultLot89(S.key,n,cat,w.uniq83,w.uniqA89,{at:S.start});
-        if(P&&P.pc.w.uq){const U=P.kind==='a'?w.uniqA89:w.uniq83;if(U.includes(P.pc.w.uq))P=ONLC.vaultLot89(S.key,n,cat,w.uniq83,w.uniqA89,{at:S.start,cap:'epic'});else U.push(P.pc.w.uq)}
+      /* v0.91 the week's guarantees (as the server's vaultFill89: ONLC.aucPlan91) */
+      const plan=ONLC.aucPlan91?ONLC.aucPlan91(A.lots.map(x=>({kind:ONLC.lotKind91(x.item),rar:ONLC.lotRar91(x.pc)})),ONLC.AUC_LOTS-A.lots.length,w.uniq83,w.uniqA89):[];let made=0;
+      let n=A.lots.reduce((a,x)=>Math.max(a,x.n|0),0);while(A.lots.length<ONLC.AUC_LOTS){n++;const po=plan[made++]||{};let P=ONLC.vaultLot89(S.key,n,cat,w.uniq83,w.uniqA89,{at:S.start,...po});
+        if(P&&P.pc.w.uq){const U=P.kind==='a'?w.uniqA89:w.uniq83;if(U.includes(P.pc.w.uq))P=ONLC.vaultLot89(S.key,n,cat,w.uniq83,w.uniqA89,{at:S.start,...po,cap:'epic'});else U.push(P.pc.w.uq)}
         const I=P&&ONLC.pieceInfo(P,cat);if(!I)break;const val=ONLC.valueOf(I);
         A.lots.push({id:S.key+'#'+n,key:S.key,n,item:P.item,pc:P.pc,val,min:ONLC.aucMin(val),opens:t,ends,bid:null,bids:[],done:false,won:null,from:{vault89:1},vault89:1})}}}catch(e){console.error(e)}return r}}
 
@@ -46955,7 +47018,7 @@ function wear91Layer(rubble){if(!WEAR91.on||!S)return;const t0=performance.now()
 function rubbleOn91(r,c){for(const rb of (S&&S.rubble)||[]){const dr=rb.dr||0,dc=rb.dc||0;for(let k=0;k<3;k++)if(rb.r+dr*k===r&&rb.c+dc*k===c)return true}return false}
 {const base=describeTile;describeTile=function(t){let h=base.apply(this,arguments);try{if(t&&S&&typeof h==='string'&&rubbleOn91(t.r,t.c)&&!pillarAt(t.r,t.c))h+=' · '+_T('Rubble — walkable')}catch(e){}return h}}
 /* 195-v91srvexp — GENERATED by tools/srvstamp.js: the online server this page expects (server/src/build.json). */
-const SRV_EXPECT91={"v":"0.91","hash":"4540d582addd"};
+const SRV_EXPECT91={"v":"0.91","hash":"cc364f2c176c"};
 /* 196-v91srv — v0.91 THE ONLINE SERVER'S VERSION (his ask 2026-10-06, after "Unknown request: domus.look" — the page was newer than the
    server running on AWS). hello now carries build {v, hash} (server/src/build.json, stamped by tools/srvstamp.js); this page knows the
    server it expects (SRV_EXPECT91, generated into 195-v91srvexp.js).
@@ -46992,6 +47055,92 @@ body.onlarena #srv91{display:none}`;document.head.appendChild(st)}
    and a Donativum is always BRAND NEW: the server (and the practice mock) never hands out a used piece from Flavius's chest — owner
    history is only for arena-worn pieces, which go to the auction. */
 {const st=document.createElement('style');st.textContent=`.dnv91i{display:inline-block;font:600 .55em/1 system-ui,sans-serif;vertical-align:.45em;color:#c9ad6a;cursor:help;margin-left:4px}`;document.head.appendChild(st)}
+/* 197-v91econ — v0.91 ONLINE ECONOMY II (his picks 2026-10-06; shared rules in the v0.91 section of 111-onlcore, server in routes.js).
+   • DAMAGED PRINTED ARMOR (Ranked): every client adds row.dmg = [[engine key, share of the location's AP lost]] for the printed armor a seat
+     BROUGHT and still wears at the end (as 90-armfit armShares: 1 − cur/total, 2 decimals; a pair takes its worst leg) — deterministic
+     from the lockstep state, so the results still agree by majority. A Ranked survivor's dented piece comes home 🩹 Damaged (repair =
+     ceil(value × dmg)); it is worn in Custom, never brought into Ranked until repaired. The Domus bar tiles and the worn list show
+     "🩹 Damaged · repair N" with the 🔨 button; the after-bout toast lists them.
+   • 🔒 KEEP HOME = NAMED PIECES ONLY: the lock shows only on named (Level 4) pieces, with its one-line tip; a printed piece's old flag is ignored.
+   • FLAVIUS'S AUCTION: six lots a week (ONLC.AUC_LOTS), the vault keeps the week's guarantees (aucPlan91); every lot card the same size
+     (fixed height, the art scaled to one size, owner history and bids folded into overlays).
+   • THE MOCK: gear.repair mends damaged pieces too, gear.home refuses printed pieces (code home_named), the result carries out.dmg.
+   (The purse → treasury overdraft was dropped by his call: v0.92 replaces purses with one house treasury.) */
+
+/* ---------------- 1 · the result row: what each seat brought and wears dented ---------------- */
+function onl91Dmg(p){const K=p&&p._kit83;if(!K||!Array.isArray(K.gear))return [];const out=[];const seen={};
+  const entries=k=>{const E=[];for(const l of LOCS){const P=(p.pieces&&p.pieces[l])||[];if(!P.some(pc=>pc.key===k))continue;const tot=P.reduce((a,pc)=>a+(pc.ap||0),0);const cur=Math.max(0,(p.ap&&p.ap[l])||0);
+      if(cur<=0||!tot)continue;for(const pc of P)if(pc.key===k)E.push(Math.max(0,1-Math.min(1,cur/tot)))}return E};
+  for(const k of K.gear){if(!ARM[k]||/^n[aw]_/.test(k))continue;const i=seen[k]=(seen[k]||0);seen[k]++;const E=entries(k);let f;
+    if(ARM[k].pair){if(i>0)continue;f=E.length?Math.max(...E):0}else f=E[i]||0;f=Math.round(f*100)/100;if(f>0)out.push([k,f])}
+  return out.sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:a[1]-b[1])}
+{const base=onlRow81;onlRow81=function(G,p){const row=base.apply(this,arguments);try{row.dmg=onl91Dmg(p)}catch(e){console.error(e)}return row}}
+
+/* ---------------- 2 · the after-bout toast ---------------- */
+{const base=onlSettled;onlSettled=function(res){const r=base.apply(this,arguments);try{const o=res&&res.out;if(o&&!res.void&&!o.died&&(o.dmg||[]).length){const cat=onlCatalog();
+    const list=o.dmg.map(d=>_T`${esc2((cat[d.key]||{}).n||d.key)} (−${Math.round((d.dmg||0)*100)}% AP)`).join(', ');
+    setTimeout(()=>onlToast80(_T`🩹 Came home damaged: ${list} — 🔨 repair in the Domus before the next Ranked bout`),5600)}}catch(e){}return r}}
+
+/* ---------------- 3 · the Domus: damaged tiles, the lock on named pieces only ---------------- */
+const D91_HOME_TIP=()=>_T('Never taken into Ranked: safe from loss and loot, still worn in Custom.');
+function d91Badge(I){if(!I||I.st!=='damaged')return '';return `<small class="dm91">${_T`🩹 Damaged · repair ${ONLC.repairCost(I)}`}</small>`}
+function d91Lock(home,attr){return `<button type="button" class="hm89 ${home?'on':''}" ${attr} aria-pressed="${home}" title="${esc2((home?_T('🔒 Kept home. '):_T('🔒 Keep home. '))+D91_HOME_TIP())}">🔒</button>`}
+d89Tile=function(ch,x,i,busy){const I=x.I;const named=I.named;const col=named?ONL83.rarCol[I.rar]:'';const brk=I.st==='broken';const dmg=I.st==='damaged';const home=named&&ONLC.isHome(x.h,x.it);const lock=x.from!=='house'&&busy.has(x.from);
+  const C=d89Cmp(ch,x);const rc=ONLC.repairCost(I);
+  return `<div class="pt89 ${brk?'brk89':''} ${dmg?'dmg91':''} ${C.no?'no89':''} ${named?'nm89':''} ${lock?'lk89':''}" data-p89="${i}" ${rc89(named&&col)} role="button" tabindex="0" aria-label="${esc2(I.n)}">
+    <div class="pt89-art">${d89Art(I)}${brk?'<i class="crk89"></i>':''}</div>
+    <b class="pt89-n">${esc2(I.n)}</b><small class="pt89-s">${named?`${esc2(ONLC.rarOf(I.rar).n)} · `:''}L${I.lv}${I.kind==='a'?_T` · ${I.ap|0} AP`:''}${x.from!=='house'?_T` · with ${esc2(x.h.name||'')}`:''}</small>
+    ${d91Badge(I)}<small class="cm89 ${C.no?'why':''}">${C.no?esc2(C.no):C.ok}</small>
+    <span class="pt89-b">${brk||dmg?`<button type="button" class="rp89" data-d89rep="${i}" title="${dmg?_T`Repair: its value × the AP it lost`:_T`Repair: a third of its value`}">${_T`🔨 ${rc}`}</button>`:''}${named?d91Lock(home,`data-d89home="${i}"`):''}</span></div>`};
+d89Worn=function(ch){const out=[];for(const it of ONLC.equipOf(ch)){const I=ONL83.piece(ch,it);if(I&&I.kind==='a')out.push({it,I})}
+  return out.map(({it,I})=>{const home=I.named&&ONLC.isHome(ch,it);const dmg=I.st==='damaged';
+    return `<span class="wr89 ${I.named?'nm89':''} ${dmg?'dmg91':''}" ${rc89(I.named&&ONL83.rarCol[I.rar])}><span class="wr89-p" data-d89off="${esc2(it)}" role="button" tabindex="0" title="${_T`${esc2(I.n)} · ${I.ap|0} AP — take it off`}">${d89Art(I,'sm')}<b>${esc2(I.n)}</b></span>${dmg?`<button type="button" class="rp89 rp91" data-d91rep="${esc2(it)}" title="${_T`🩹 Damaged — never brought into Ranked until repaired`}">${_T`🩹 🔨 ${ONLC.repairCost(I)}`}</button>`:''}${I.named?d91Lock(home,`data-d89homew="${esc2(it)}"`):''}</span>`}).join('')};
+document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('#onl [data-d91rep]');if(!b)return;e.stopPropagation();e.preventDefault();const ch=d89Act();if(!ch)return;const it=b.dataset.d91rep;const I=ONL83.piece(ch,it);
+  if(I)return d89Repair({I,it,from:ch.id,h:ch})},true);
+/* the hover card names the damage */
+document.addEventListener('mouseover',e=>{const t=e.target.closest&&e.target.closest('#onl .dom89 [data-p89]');if(!t)return;const x=(V89D.bar||[])[+t.dataset.p89];if(!x||!x.I||x.I.st!=='damaged')return;
+  setTimeout(()=>{const f=document.getElementById('cmp89');if(!f||f.hidden||f.querySelector('.dm91'))return;const b=f.querySelector('.cmp89-b');if(b)b.insertAdjacentHTML('beforeend',`<small class="dm91">${_T`🩹 Damaged (−${Math.round((x.I.dmg||0)*100)}% AP) — 🔨 ${ONLC.repairCost(x.I)} to repair; worn in Custom, not in Ranked`}</small>`)},0)});
+
+/* ---------------- 4 · the mock mirrors the server ---------------- */
+MOCK_ROUTES['gear.repair']=(w,d,me)=>{const D=mockHouse83(w,me);const item=String(d.item||'');let H=D,hc=null;
+  if(d.holder!=='house'){hc=mockOwn83(w,me,d.holder);if(hc.domus!==D.id)throw new Error(_T('Not of your house.'));if(mockCharBusy82(w,hc.id))throw onlErr82(_T`${hc.name} is in a match — the forge waits.`,'in_match');H=hc}
+  const I=(H.gear||[]).includes(item)?ONLC.pieceOf(H,item,onlCatalog()):null;if(!I)throw new Error(_T('That piece is not there.'));if(I.st!=='broken'&&I.st!=='damaged')throw new Error(_T('That piece is whole.'));const cost=ONLC.repairCost(I);
+  const byT=d.pay==='treasury'||(d.pay==null&&!hc);let payer=null;
+  if(byT){if((D.treasury|0)<cost)throw onlErr82(_T`The treasury needs ${cost} coin.`,'no_coin',{cost});D.treasury-=cost;ONLC.ledAdd(D,'repair',cost)}
+  else{payer=mockOwn83(w,me,d.pay||hc.id);if(payer.domus!==D.id)throw new Error(_T('Not of your house.'));if((payer.wallet|0)<cost)throw onlErr82(_T`The repair costs ${cost} coin.`,'no_coin',{cost});payer.wallet-=cost}
+  ONLC.repairItem(H,item);return {cost,item,holder:hc?hc:mockShelf83(D),domus:mockDRow82(D),...(payer&&payer!==hc?{payer}:{})}};
+{const base=MOCK_ROUTES['gear.home'];MOCK_ROUTES['gear.home']=(w,d,me)=>{if(d&&d.on!==false&&!ONLC.isNamed(String(d.item||'')))throw onlErr82(_T('Only named pieces stay home — printed gear is never kept out of Ranked.'),'home_named');return base(w,d,me)}}
+/* a home toggle refused: no toast storm, one line */
+{const base=d89Home;d89Home=function(holder,it){if(!ONLC.isNamed(it))return onlToast80(_T('🔒 Only named pieces stay home.'));return base.apply(this,arguments)}}
+
+/* ---------------- 5 · the auction: the owner history and the bid list fold out of the card (every card one size) ---------------- */
+function onl91AucFold(h){if(!h||h.indexOf('au84-lot')<0)return h;const T=document.createElement('template');T.innerHTML=h;
+  for(const lot of T.content.querySelectorAll('.au84-lot')){const card=lot.querySelector(':scope>.nw83');const hi=card&&card.querySelector('.hist83');
+    if(hi){const n=hi.querySelectorAll('small').length;const d=document.createElement('details');d.className='hist91';d.innerHTML=`<summary>${_T`📜 Owners · ${n}`}</summary>`;d.appendChild(hi);card.after(d)}
+    const bd=lot.querySelector(':scope>.au84-bids');if(bd&&!bd.querySelector('.bl91')){const box=document.createElement('div');box.className='bl91';for(const x of [...bd.children])if(x.tagName!=='SUMMARY')box.appendChild(x);bd.appendChild(box)}}
+  return T.innerHTML}
+{const base=onl84Auction;onl84Auction=function(){const h=base.apply(this,arguments);try{return onl91AucFold(h)}catch(e){console.error(e);return h}}}
+/* one overlay open at a time; a click outside folds it */
+document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.matches('#onl .hist91,#onl .au84-bids')||!d.open)return;for(const o of document.querySelectorAll('#onl .hist91[open],#onl .au84-bids[open]'))if(o!==d)o.open=false},true);
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#onl .hist91,#onl .au84-bids'))return;for(const o of document.querySelectorAll('#onl .hist91[open],#onl .au84-bids[open]'))o.open=false},true);
+
+/* ---------------- 6 · the look ---------------- */
+{const st=document.createElement('style');st.id='econ91css';st.textContent=`
+#onl .dm91{display:block;color:#ffb27a;font-weight:600;font-size:11px;line-height:1.2}
+#onl .pt89.dmg91{box-shadow:inset 0 0 0 1px rgba(255,160,90,.55)}
+#onl .wr89.dmg91 .wr89-p b{color:#ffcf9e}#onl .rp91{all:unset;cursor:pointer;font-size:11px;padding:1px 4px;border-radius:5px;background:rgba(255,160,90,.18);color:#ffcf9e}
+#onl .rp91:focus-visible{outline:2px solid #e8c96a}
+/* the auction: every lot card the same size (history + bids fold into overlays: onl91AucFold) */
+#onl .au84-grid{grid-template-columns:repeat(auto-fill,minmax(290px,1fr));align-items:start}
+#onl .au84-lot{height:392px;box-sizing:border-box;display:flex;flex-direction:column;gap:6px;position:relative;overflow:visible}
+#onl .au84-lot>*{flex:none;min-width:0}#onl .au84-lot>.vlt89{align-self:flex-start;margin:0}
+#onl .au84-lot>.nw83{height:204px;max-height:204px;overflow:hidden;box-sizing:border-box}
+#onl .au84-lot .au84-bid{margin-top:auto}
+#onl .hist91,#onl .au84-bids{position:relative;font-size:12px}#onl .hist91>summary,#onl .au84-bids>summary{cursor:pointer;color:#d9c08a;list-style-position:inside}
+#onl .hist91>.hist83,#onl .au84-bids>.bl91{position:absolute;left:0;right:0;bottom:calc(100% + 4px);z-index:30;max-height:210px;overflow:auto;margin:0;
+  background:#1f1812;border:1px solid rgba(232,201,106,.45);border-radius:8px;padding:6px 8px;box-shadow:0 8px 24px rgba(0,0,0,.55)}
+#onl .au84-bids>.bl91 small{display:block;color:var(--muted)}
+@media (max-width:600px){#onl .au84-grid{grid-template-columns:1fr}}`;document.head.appendChild(st)}
 /* 198-v91morph — v0.91 NO FLICKER ON ONLINE SCREENS (his note 2026-10-06: "🎲 New patron" flickered the whole page).
    onlRedraw used to replace #onl's innerHTML: every image, card and avatar was thrown away and decoded again, folds closed and the page
    jumped for a frame. morph91(root, html) builds the new screen off-page and patches the live one node by node: unchanged nodes stay
