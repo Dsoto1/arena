@@ -74,7 +74,10 @@ const until=async(p,fn,arg,ms=20000)=>{for(let t0=Date.now();Date.now()-t0<ms;){
   out.atTurn=await D.evaluate(o=>{const lis=[...document.querySelectorAll('#log > li')].map(l=>l.textContent);return lis.some(t=>/swaps hands/.test(t))},ord||{seat:0});
   /* a few more moves, then the same seq on both screens: equal hashes */
   const next0=await D.evaluate(()=>ONLM.next);for(let t0=Date.now();Date.now()-t0<40000;){await step();if((await D.evaluate(()=>ONLM.next))>=next0+3)break;if(await D.evaluate(()=>!S||S.over))break}
-  for(let t1=Date.now();Date.now()-t1<20000;){const ns=await Promise.all(both.map(p=>p.evaluate(()=>[ONLM.next,S.busy,!!CUR_MODAL,ONLM.q.length])));if(ns[0][0]===ns[1][0]&&!ns[0][1]&&!ns[1][1]&&!ns[0][3]&&!ns[1][3])break;await D.waitForTimeout(200)}
+  /* the CPU turns between inputs play on by themselves: compare only once both windows have SETTLED on the same human decision
+     (onlmSettled), not merely between two steps at the same seq — under load one window can be a CPU step ahead */
+  for(let t1=Date.now();Date.now()-t1<40000;){const ns=await Promise.all(both.map(p=>p.evaluate(()=>[ONLM.next,S.busy,!!CUR_MODAL,ONLM.q.length,typeof onlmSettled==='function'?!!onlmSettled():true,S.turnNo,S.phase])));
+    if(ns[0][0]===ns[1][0]&&!ns[0][1]&&!ns[1][1]&&!ns[0][3]&&!ns[1][3]&&ns[0][4]&&ns[1][4]&&ns[0][5]===ns[1][5]&&ns[0][6]===ns[1][6])break;await D.waitForTimeout(200)}
   const hD=await D.evaluate(()=>ONLM.hlog),hE=await E.evaluate(()=>ONLM.hlog);let same=0,diff=0;for(const k of Object.keys(hD))if(/^s\d+$/.test(k)&&hE[k]){if(hD[k]===hE[k])same++;else diff++}
   out.same=same;out.diff=diff;out.resyncs=[await D.evaluate(()=>ONLM.resyncs),await E.evaluate(()=>ONLM.resyncs)];
   out.hash=[await D.evaluate(()=>[ONLM.next,onlHash()]),await E.evaluate(()=>[ONLM.next,onlHash()])];
