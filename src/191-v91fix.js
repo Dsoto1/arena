@@ -51,3 +51,7 @@ const POT91={chainOn:false /* his call 2026-10-06: no chain */,chain:'rgba(70,66
     /* the tail: from the right of the neck down behind the belly toward the pillar */
     ctx.strokeStyle=POT91.chain;ctx.lineWidth=Math.max(0.7,s*0.018);for(let i=1;i<=4;i++){const t=i/4;const lx=x+rx+s*0.06*Math.sin(t*2),ly=cy+t*s*0.36;ctx.beginPath();ctx.ellipse(lx+s*0.13*t,ly,s*0.018,s*0.026,i%2?0.4:-0.4,0,Math.PI*2);ctx.stroke()}
     ctx.restore()}}catch(e){}return r}}
+/* Flavius' Greaves on the avatar (his note 2026-10-06: "they look inverted" next to their card): his art is a front view lit from one side;
+   mirrored onto the left shin the light flipped. Both shins now wear it unmirrored, exactly like the pair on the card (ARM_NOMIRROR91). */
+const ARM_NOMIRROR91={greaves:1};
+{const base=armBox;armBox=function(key){const B=base.apply(this,arguments);if(B&&ARM_NOMIRROR91[key])B.mirror=false;return B}}
