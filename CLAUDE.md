@@ -1137,6 +1137,16 @@ share copy — the site download play/flavius-rule-arena.zip.)
   bout + a Play Now Day/Night option + online rooms (host picks; server roomSet field); look = TORCHES ON THE RIM ONLY (stands' edge and
   corners, outside the sand), soft warm pools at the sand edges, moonlit blue over the middle, pieces fully readable (rim light), gentle
   flicker (Reduce motion stops it); the square shows dusk before a night bout.
+- **TOKEN MODELLER (his picks 2026-10-06, after v0.91):** posable 3D tokens that look like the naked avatar (assets/avatar.png: skin, harness,
+  belt, loincloth, sandal straps, ink outline) — the NEW STANDARD for every Studio + online character, shown wherever a character shows
+  (board, Studio, Play Now seats, Manager cards, Domus, results…); PRINTED classes keep his 3D minis. The 3D kitbash of his TTS minis was
+  REJECTED. Rig = his pose app's joints (yellow spine/neck/head, blue/red sides, pink hands/pelvis); presets + drag joints; one or both feet
+  pinned to the base (IK), stance kept on the base. Body needs real anatomy (deltoids/trapezius into the neck, ears, eyes, nose, mouth) —
+  first mock (tools: /tmp r3d/rig.html) was a capsule mannequin. Gear = 3D shells attached to body segments (fit any pose), printed pieces
+  modelled once, custom from base shapes + EXTRAS (his idea: spikes, fur, studs/rivets, neck guard on the upper arm…). Rendered to the 8
+  MINI_YAW facings and cached; pose + parts stored small (online look ≤3 KB). LATER: Event Designer AS THE ARENA VIEW — the board in the
+  middle, the avatar/side area = a drag-and-drop palette of everything placeable, the log area = designer tools.
+- **RUBBLE IS WALKABLE (his note 2026-10-06, built in 194):** low stump ring, flat drums, pieces off the tile middle, hover "Rubble — walkable".
 - **v0.90 QUEUED (his yes 2026-10-05): HOT-SEAT TURNING BOARD** — a setting (Settings → On the board, OFF by default): with 2+ humans
   on one screen, the board turns to the active human's corner at the start of each human's turn (short eased spin; Reduce motion / Off
   animations = an instant cut), using the v0.89 display rotation (168). CPU turns keep the last human's view. Never in Chariot,
