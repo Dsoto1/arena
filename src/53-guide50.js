@@ -37,7 +37,7 @@ function guideDashHTML(){const S5=SIM50;const C=S5.cls;const cn=k=>CLASSES[k]?CL
    <div class="gstats">${tiles.map(([i,n,l,t])=>`<div class="gstat" data-tip="${esc(t)}"><span class="gti">${i}</span><b>${n}</b><span>${l}</span></div>`).join('')}</div>
    <div class="ggrid">${gvDonut(_T('How events end'),'all '+S5.gladiators.toLocaleString()+' gladiators',parts)}${gvPairs(_T('Habits that win'),_T('win rate · 2 or more vs none'),pairs,_T('2 or more'),'none')}
    ${gvHBar(_T('Win rate by class'),_T('share of events won · hover for CF and the Ludus'),clsRows,{max:40})}${gvHist(_T('Final Crowd Favor'),_T('how many gladiators end at each CF'),S5.hist.labels,S5.hist.all,S5.hist.win)}</div>
-   <ul class="gfind">${S5.findings.map((f,i)=>`<li><span>${['🐺','🛒','🏺','🂠','📈','⏳'][i]||'•'}</span>${esc(f)}</li>`).join('')}</ul></div>`}
+   <ul class="gfind">${S5.findings.map((f,i)=>`<li><span>${['🐺','🛒','🏺','🂠','📈','⏳'][i]||'•'}</span>${f}</li> /* v0.92: findings carry the coin/wheat icons (our own text) — not escaped */`).join('')}</ul></div>`}
 /* the guide: the dashboard first, then every section folded — open what you want to read */
 {const _pg=playGuideHTML;playGuideHTML=function(){const h=_pg();const inner=h.replace(/^\s*<div class="guide">/,'').replace(/<\/div>\s*$/,'');const parts=inner.split(/(?=<h4>)/);
   const intro=`<p class="rc-sub" style="margin:0 0 8px">${_T`Simulated on v${SIM50.ver}: ${SIM50.games} all-CPU events. Hover any chart or term for the detail; open a section below to read it.`}</p>`;

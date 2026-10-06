@@ -54,7 +54,7 @@ const run=async(mode)=>{const vp=mode==='p'?{width:390,height:844}:{width:844,he
   await P.evaluate(()=>{const s=document.createElement('span');s.id='tv88pk';s.dataset.card='k:hero';s.textContent='Hero';s.style.cssText='position:fixed;left:20px;top:60px;z-index:99;padding:12px;background:#000;color:#fff';document.body.appendChild(s)});
   await P.tap('#tv88pk');await W(700);
   const tip=await P.evaluate(()=>{const t=document.getElementById('tip');const r=t.getBoundingClientRect();return {shown:!t.hidden,pair:!!t.querySelector('.cb87pair'),l:Math.round(r.left),r:Math.round(r.right),b:Math.round(r.bottom),iw:innerWidth,ih:innerHeight}});
-  ok(tip.shown&&tip.pair&&tip.l>=0&&tip.r<=tip.iw&&tip.b<=tip.ih,mode+' the class card pop-up shows both sides inside the screen '+JSON.stringify(tip));await shot('classcard');
+  ok(tip.shown&&!tip.pair&&tip.l>=0&&tip.r<=tip.iw&&tip.b<=tip.ih,mode+' the printed class card pop-up (his card only, v0.91) fits inside the screen '+JSON.stringify(tip));await shot('classcard');
   await P.evaluate(()=>{document.getElementById('tv88pk').remove();document.getElementById('tip').hidden=true});
   /* draw() reads no layout on a phone */
   const reads=await P.evaluate(()=>{let n=0;const d=Object.getOwnPropertyDescriptor(Element.prototype,'clientWidth');Object.defineProperty(Element.prototype,'clientWidth',{configurable:true,get(){n++;return d.get.call(this)}});

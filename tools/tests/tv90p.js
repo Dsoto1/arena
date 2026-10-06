@@ -8,7 +8,8 @@ const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);openSetup(true);await W8(1500);const r={};
   const q=s=>document.querySelector('#mBody '+s);
   r.optUnder=!!q('.pn-bands .pn-big + .pn-optw90 details.optfold #oMandata')&&!!q('.pn-optw90 #oSeed');
-  r.spectBelow=!!q('.pn-optc .pn-spect90 #oSpectMode')&&!q('.pn-optw90 #oSpectMode')&&!q('.pn-optw90 .spectme');
+  /* v0.92: the spectator options live in the Stands card beside the seats (205-v92pn), still apart from Options */
+  r.spectBelow=!!q('.pn-who .stands92 #oSpectMode')&&!q('.pn-optw90 #oSpectMode')&&!q('.pn-optw90 .spectme');
   r.noRules=!document.getElementById('rulesBtn2')&&![...document.querySelectorAll('#mBody button')].some(x=>/Rules in this build/.test(x.textContent));
   r.noPre=!q('[data-pnpre]')&&!q('[data-pnquick]')&&![...document.querySelectorAll('#mBody button')].some(x=>/Presets/.test(x.textContent));
   const g=q('.pn-top .pn-acts #goBtn');r.begin=!!g&&/Begin Event/.test(g.textContent)&&!q('.pn-start #goBtn');
