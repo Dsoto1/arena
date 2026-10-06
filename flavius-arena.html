@@ -46757,19 +46757,22 @@ function ar91Labels(){const P=center;const n=N-1,e0=-0.5,e1=n+0.5;const lab=[];f
 function ar91DrainsAt(){const n=N-1,m0=0.085;const mid=ar91Mid();return [[-0.5-m0,n*0.25,1],[-0.5-m0,n*0.75,1],[n+0.5+m0,n*0.25,1],[n+0.5+m0,n*0.75,1],[n*0.25,-0.5-m0,0],[n*0.75,-0.5-m0,0],[n*0.25,n+0.5+m0,0],[n*0.75,n+0.5+m0,0]].filter(([r,c])=>center(r,c).y<mid.y) /* v0.91: the far edges' gully only */}
 /* ar91Drains — the drain grates in the current view: [{x,y,r,c}] (screen point, real grid r/c); [] when the look is off */
 function ar91Drains(){if(!ar91On())return [];return ar91DrainsAt().map(([r,c])=>{const m=center(r,c);return {x:m.x,y:m.y,r,c}})}
-function ar91Tower(g,x,y,fires){const lud=ar91Lud();if(lud){const s=TW*0.42,hh=TW*0.55;const L=[{x:x-s,y:y-s*0.5},{x,y},{x,y:y-hh},{x:x-s,y:y-s*0.5-hh}],R=[{x:x+s,y:y-s*0.5},{x,y},{x,y:y-hh},{x:x+s,y:y-s*0.5-hh}];
-    const m=(a,b,t)=>({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t});
-    for(const [Q,sh] of [[L,'#e9e2d2'],[R,'#cfc6b2']]){g.fillStyle=sh;ar91Path(g,Q);g.fill();g.strokeStyle='#7a5532';g.lineWidth=Math.max(1.5,TW*0.04);g.stroke();g.lineWidth=Math.max(1,TW*0.028);g.beginPath();
-      for(const t of [1/3,2/3]){const p0=m(Q[0],Q[1],t),p1=m(Q[3],Q[2],t);g.moveTo(p0.x,p0.y);g.lineTo(p1.x,p1.y)}const h0=m(Q[0],Q[3],.5),h1=m(Q[1],Q[2],.5);g.moveTo(h0.x,h0.y);g.lineTo(h1.x,h1.y);g.stroke()}
-    g.fillStyle='#d9cfb8';ar91Path(g,[{x,y:y-hh},{x:x+s,y:y-s*0.5-hh},{x,y:y-s-hh},{x:x-s,y:y-s*0.5-hh}]);g.fill();return}
-  const s=TW*0.24,hh=TW*0.72;
-  g.fillStyle='rgba(20,12,4,.28)';g.save();g.translate(x+TW*0.2,y+TW*0.06);g.scale(1,0.42);g.beginPath();g.arc(0,0,s*1.4,0,Math.PI*2);g.fill();g.restore();
-  const L=[{x:x-s,y:y-s*0.5},{x,y},{x,y:y-hh},{x:x-s,y:y-s*0.5-hh}],R=[{x:x+s,y:y-s*0.5},{x,y},{x,y:y-hh},{x:x+s,y:y-s*0.5-hh}];
-  ar91Stone(g,L,'rgba(255,248,230,.05)',0.7);ar91Stone(g,R,'rgba(40,28,16,.3)',0.7);
-  const ct=y-hh-s*0.5;ar91Soot(g,x,ct+TW*0.02,TW*0.32);
-  g.strokeStyle='rgba(40,30,20,.4)';g.lineWidth=1;for(const Q of [L,R]){ar91Path(g,Q);g.stroke()}
-  g.fillStyle=ar91Mat().cap;ar91Path(g,[{x,y:ct+s*0.5+TW*0.02},{x:x+s*1.1,y:ct},{x,y:ct-s*0.55},{x:x-s*1.1,y:ct}]);g.fill();g.strokeStyle='rgba(40,30,20,.45)';g.stroke();
-  const bw=s*0.72,by=ct-TW*0.04;const bg=g.createLinearGradient(x-bw,0,x+bw,0);bg.addColorStop(0,'#c9944a');bg.addColorStop(.5,'#9c6a2c');bg.addColorStop(1,'#5a3a16');
+/* ar91Tower — v0.91 (his note): turned 45° so a FLAT face looks at the viewer (the old corner-on tower hid the wall ends oddly);
+   the far walls run in behind it on both sides. Base centre (x,y); the top is a flat rectangle 2k × k. */
+function ar91Tower(g,x,y,fires){const lud=ar91Lud();const k=TW*(lud?0.4:0.27),hh=TW*(lud?0.55:0.72),yf=y+k/2,yt=yf-hh;
+  const F=[{x:x-k,y:yf},{x:x+k,y:yf},{x:x+k,y:yt},{x:x-k,y:yt}],T=[{x:x-k,y:yt},{x:x+k,y:yt},{x:x+k,y:yt-k},{x:x-k,y:yt-k}];
+  if(lud){g.fillStyle='#e2dac8';ar91Path(g,F);g.fill();g.strokeStyle='#7a5532';g.lineWidth=Math.max(1.5,TW*0.04);g.stroke();
+    g.lineWidth=Math.max(1,TW*0.028);g.beginPath();for(const t of [1/3,2/3]){g.moveTo(x-k+2*k*t,yf);g.lineTo(x-k+2*k*t,yt)}g.moveTo(x-k,yf-hh/2);g.lineTo(x+k,yf-hh/2);g.stroke();
+    g.fillStyle='#d9cfb8';ar91Path(g,T);g.fill();g.strokeStyle='#7a5532';g.lineWidth=Math.max(1,TW*0.03);g.stroke();return}
+  g.fillStyle='rgba(20,12,4,.28)';g.save();g.translate(x+TW*0.18,yf);g.scale(1,0.36);g.beginPath();g.arc(0,0,k*1.3,0,Math.PI*2);g.fill();g.restore();
+  ar91Stone(g,F,'rgba(40,28,16,.12)',0.7);
+  const sh=g.createLinearGradient(x-k,0,x+k,0);sh.addColorStop(0,'rgba(255,248,230,.10)');sh.addColorStop(.6,'rgba(0,0,0,0)');sh.addColorStop(1,'rgba(30,20,10,.28)');g.fillStyle=sh;ar91Path(g,F);g.fill();
+  g.strokeStyle='rgba(40,30,20,.45)';g.lineWidth=1;ar91Path(g,F);g.stroke();
+  const ct=yt-k/2;ar91Soot(g,x,yt+TW*0.02,TW*0.32);
+  /* cornice: a lip round the top + the flat top */
+  const lip=TW*0.04;g.fillStyle=ar91Mat().cap;g.fillRect(x-k-lip,yt-TW*0.01,2*(k+lip),TW*0.06);g.strokeStyle='rgba(40,30,20,.45)';g.strokeRect(x-k-lip,yt-TW*0.01,2*(k+lip),TW*0.06);
+  ar91Stone(g,[{x:x-k-lip,y:yt-TW*0.01},{x:x+k+lip,y:yt-TW*0.01},{x:x+k+lip,y:yt-k-TW*0.01},{x:x-k-lip,y:yt-k-TW*0.01}],'rgba(255,248,230,.08)',0.7);g.strokeStyle='rgba(40,30,20,.45)';g.stroke();g.fillStyle='rgba(60,45,30,.22)';g.fillRect(x-k-lip,yt-TW*0.01,2*(k+lip),TW*0.06);
+  const bw=k*0.62,by=ct-TW*0.04;const bg=g.createLinearGradient(x-bw,0,x+bw,0);bg.addColorStop(0,'#c9944a');bg.addColorStop(.5,'#9c6a2c');bg.addColorStop(1,'#5a3a16');
   g.fillStyle=bg;g.beginPath();g.moveTo(x-bw,by);g.quadraticCurveTo(x,by+TW*0.2,x+bw,by);g.closePath();g.fill();g.fillStyle='#2a1808';g.beginPath();g.ellipse(x,by,bw,TW*0.05,0,0,Math.PI*2);g.fill();
   fires.push({x,y:by,h:TW*0.34,w:TW*0.13})}
 /* ar91Podium — Flavius's stone podium with its column fire bowls (attached box only) */
@@ -46813,12 +46816,7 @@ function ar91TopPaint(g,out){const lud=ar91Lud();const ring=ar91Ring;const mid=a
     g.strokeStyle='rgba(120,110,96,.7)';g.lineWidth=Math.max(0.8,TW*0.014);for(let k=1;k<6;k++){const x=a.x+ux*k/6,y=a.y+uy*k/6;g.beginPath();g.moveTo(x-TW*0.012,y-TW*0.022);g.lineTo(x+TW*0.012,y+TW*0.022);g.stroke()}}g.restore();
   /* the far walls */
   const C2=ring(0.31);const lab=ar91Labels();const H=TW*0.36;
-  const R2=ring(0.5);const Lt=R2.reduce((b,p)=>p.x<b.x?p:b),Rt=R2.reduce((b,p)=>p.x>b.x?p:b);
   for(const E of ar91Edges(0.19).filter(E=>E.far)){const left=E.mx<mid.x;let a=E.a,b=E.b,a2=C2[E.ia],b2=C2[E.ib];if(a.x>b.x){let t=a;a=b;b=t;t=a2;a2=b2;b2=t}
-    /* v0.91 (his note): the wall runs on past the sand's corner to the tower, so its red edge meets the near wall's red edge there */
-    {const L0=Math.hypot(b.x-a.x,b.y-a.y),vx=(b.x-a.x)/L0,vy=(b.y-a.y)/L0;
-      if(left&&a.x>Lt.x){const d=(a.x-Lt.x)/vx;a={x:a.x-vx*d,y:a.y-vy*d};a2={x:a2.x-vx*d,y:a2.y-vy*d}}
-      if(!left&&b.x<Rt.x){const d=(Rt.x-b.x)/vx;b={x:b.x+vx*d,y:b.y+vy*d};b2={x:b2.x+vx*d,y:b2.y+vy*d}}}
     const L=Math.hypot(b.x-a.x,b.y-a.y),ux=(b.x-a.x)/L,uy=(b.y-a.y)/L;
     g.save();g.translate(a.x,a.y);g.transform(ux,uy,0,1,0,0);
     ar91Fill(g,1);g.fillRect(0,-H,L,H);g.fillStyle=left?'rgba(40,30,20,.22)':'rgba(255,248,230,.06)';g.fillRect(0,-H,L,H);
@@ -46837,7 +46835,9 @@ function ar91TopPaint(g,out){const lud=ar91Lud();const ring=ar91Ring;const mid=a
     const cY=TW*0.022,k2=0.35;const A2={x:a.x+(a2.x-a.x)*k2,y:a.y+(a2.y-a.y)*k2},B2={x:b.x+(b2.x-b.x)*k2,y:b.y+(b2.y-b.y)*k2};
     g.fillStyle='#b53a33';ar91Path(g,[{x:a.x,y:a.y-H-cY},{x:b.x,y:b.y-H-cY},{x:B2.x,y:B2.y-H-cY},{x:A2.x,y:A2.y-H-cY}]);g.fill()}
   /* the towers at the far walls' ends (left and right corners) */
-  for(const p of [Lt,Rt])ar91Tower(g,p.x,p.y+TW*0.02,out.fires);
+  /* v0.91 (his sketch): each tower stands AT the sand's corner — the far wall ends into its side, the near wall's red starts at its foot */
+  {const R2=ring(0.19);const Lt=R2.reduce((b,p)=>p.x<b.x?p:b),Rt=R2.reduce((b,p)=>p.x>b.x?p:b);const k=TW*(lud?0.4:0.27);
+    ar91Tower(g,Lt.x-k*0.92,Lt.y-k/2+TW*0.01,out.fires);ar91Tower(g,Rt.x+k*0.92,Rt.y-k/2+TW*0.01,out.fires)}
   /* the emperor's podium (attached box) or the ludus temple */
   if(lud)ar91Temple(g);else if(!AR91.det&&!(typeof SETTINGS!=='undefined'&&SETTINGS.flavius===false))ar91Podium(g,out.fires)}
 
