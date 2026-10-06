@@ -20953,7 +20953,9 @@ function audUnlock(){if(HEADLESS)return;const a=audSet();if(!a.on)return;if(!aud
 /* any first gesture unlocks audio. */
 for(const ev of ['pointerdown','touchend','click','keydown'])document.addEventListener(ev,audUnlock,{passive:true,capture:true});
 /* resume the audio context when the tab becomes visible again. */
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&AUD.ctx&&AUD.ctx.state!=='running'&&audSet().on)try{AUD.ctx.resume()}catch(e){}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&AUD.ctx&&AUD.ctx.state!=='running'&&audSet().on)try{AUD.ctx.resume()}catch(e){}
+  /* v0.91: going hidden fills the 3 s buffer at once; coming back schedules right away (no wait for the next tick) */
+  try{if(AUD.timer&&AUD.pump)AUD.pump()}catch(e){}});
 
 /* ---------- the arena themes ---------- */
 /* AUD_MODES — scale steps of each musical mode. */
@@ -21038,7 +21040,7 @@ function audTick(){const a=audSet();if(HEADLESS||!AUD.ctx||!a.on||!a.music||AUD.
   const want=audWant();
   if(!AUD.theme){AUD.theme=audTheme(want);AUD.loc=want;AUD.step=AUD.seek||0;AUD.seek=0;AUD.next=AUD.ctx.currentTime+0.1;audFadeTo(1,2.5)}
   else if(!AUD.playing)audFadeTo(1,2.5);
-  AUD.playing=true;if(!AUD.timer)AUD.timer=setInterval(()=>{if(!AUD.ctx||!AUD.playing)return;const live2=audLive();const a2=audSet();
+  AUD.playing=true;if(!AUD.timer)AUD.timer=setInterval(AUD.pump=()=>{if(!AUD.ctx||!AUD.playing)return;const live2=audLive();const a2=audSet();
       if(!a2.on||!a2.music||AUD.paused||(!live2&&!a2.menu&&!AUD.manual)){audStop();return}
       if(typeof SPEED!=='undefined'&&SPEED==='pause'&&live2&&typeof MODAL_PAUSE!=='undefined'&&MODAL_PAUSE!=null&&!AUD.manual&&!document.getElementById('audTracks'))return; /* v0.49: the Audio settings play while open */
       if(AUD.switching)return;
@@ -21049,8 +21051,10 @@ function audTick(){const a=audSet();if(HEADLESS||!AUD.ctx||!a.on||!a.music||AUD.
       /* v0.51: a throttled background tab never replays its backlog in a burst. v0.87 (choppy on Mac Safari): skip ahead only when the
          tab was hidden or the timer fell more than half a second behind; notes are scheduled 1 s ahead (was 0.25 s) on a 100 ms timer,
          so a busy frame on the main thread no longer opens gaps in the music */
-      if(AUD.next<AUD.ctx.currentTime-(document.hidden?0.05:0.5))AUD.next=AUD.ctx.currentTime+0.05;
-      while(AUD.next<AUD.ctx.currentTime+1.0){audStep(AUD.theme,AUD.next,AUD.step,Math.min(2,inten));AUD.step++;AUD.next+=spb}},100);
+      /* v0.91 (choppy after switching Mac desktops/windows): a hidden page's timers fire about once a second, so it schedules 3 s ahead
+         (1 s while visible); a scheduler that fell behind restarts just ahead of now instead of firing the missed notes in a burst */
+      if(AUD.next<AUD.ctx.currentTime)AUD.next=AUD.ctx.currentTime+0.05;
+      while(AUD.next<AUD.ctx.currentTime+(document.hidden?3.0:1.0)){audStep(AUD.theme,AUD.next,AUD.step,Math.min(2,inten));AUD.step++;AUD.next+=spb}},100);
   audListRefresh()}
 /* audStop — fades the music out and stops the scheduler. */
 function audStop(){const was=AUD.playing;AUD.playing=false;if(was)audFadeTo(0,1.1);
