@@ -1,4 +1,4 @@
-/* v0.90 186-v90board: the hunters (Tholo / lions hunt the closest living thing, beasts included; ties → gladiator; act in any
+/* v0.92: beasts act only on their target's turn. v0.90 186-v90board: the hunters (Tholo / lions hunt the closest living thing, beasts included; ties → gladiator; act in any
    gladiator's Resolve; Tholo hoards a slain beast's coin), the Crowd Favor tile (disabled at 1 CF and under Commodus), Blessings
    as token rounds on the pillars (draw + the flip on a break, screenshots), and the hot-seat turning board (on → the view turns
    between two humans' turns and holds on a CPU turn; off → 0). */
@@ -26,14 +26,14 @@ const hunt=await pg.evaluate(async()=>{const o={};const far=[[0,0],[0,12],[12,0]
   S.pillars=S.pillars.filter(pl=>Math.max(Math.abs(pl.r-6),Math.abs(pl.c-6))>3);
   /* a: a non-aggro Tholo next to a wolf (gladiators far away) attacks the wolf in a CPU's Resolve */
   place();S.npcs=[];const th=mkNPC('tholo','Tholo',6,6,{});const wf=mkNPC('wolf','Lupus',6,7,{});S.npcs.push(th,wf);th.aggro=null;wf.aggro=null;
-  const cpu=S.players[2];const hp0=wf.hp;await resolvePhase(cpu);let L=logTxt();
+  const cpu=S.players[0] /* v0.92: a beast prey is hunted in the Resolve of the gladiator closest to the hunter (corner tie → lowest seat) */;const hp0=wf.hp;await resolvePhase(cpu);let L=logTxt();
   o.a={hunts:/Tholo hunts the closest prey: Lupus/.test(L),attacks:/Tholo[^\n]*attacks/.test(L),wolfHp:[hp0,wf.hp],tholoAt:[th.r,th.c]};
   /* b: tie at distance 2 — a gladiator before a beast */
   place();S.players[1].r=6;S.players[1].c=4;S.npcs=[th,wf];th.r=6;th.c=6;wf.alive=true;wf.hp=6;wf.r=6;wf.c=8;
   const pr=closestThing90(th);o.b={kind:pr&&pr.kind,who:pr&&pr.ref.name,want:S.players[1].name};
   /* c: a lion acts in a non-closest gladiator's Resolve (old rule: it would not) */
   const lionAct=async on=>{place();HUNT90.on=on;const ln=mkNPC('lion','Leo',6,6,{});ln.aggro=null;S.npcs=[ln];S.players[1].r=6;S.players[1].c=8;
-    const near=S.players[1],other=S.players[3];await resolvePhase(other);const r={adj:cheb(ln,near),r:ln.r,c:ln.c,last:ln.lastWhy||null};HUNT90.on=true;return r};
+    const near=S.players[1],other=S.players[3];await resolvePhase(other);const r={adj:cheb(ln,near),r:ln.r,c:ln.c,last:ln.lastWhy||null};if(on){await resolvePhase(near);r.own=cheb(ln,near)}HUNT90.on=true;return r};
   o.c={on:await lionAct(true),off:await lionAct(false)};
   /* d: Tholo slays a beast → its coin joins his hoard */
   place();th.r=6;th.c=6;th.hoard=0;th.aggro=null;let tries=0,killed=false;
@@ -48,7 +48,7 @@ out.hunt=hunt;
 if(!hunt.e||!hunt.e.counter)miss.push('e: the hunted beast did not counter-attack at once '+JSON.stringify(hunt.e));
 if(!hunt.a.hunts||!hunt.a.attacks)miss.push('Tholo did not attack the wolf: '+JSON.stringify(hunt.a));
 if(hunt.b.kind!=='player'||hunt.b.who!==hunt.b.want)miss.push('tie did not go to the gladiator: '+JSON.stringify(hunt.b));
-if(hunt.c.on.adj>1)miss.push('lion did not hunt in a non-closest Resolve: '+JSON.stringify(hunt.c));
+if(hunt.c.on.adj<=1)miss.push('v0.92: lion acted outside its prey\'s Resolve: '+JSON.stringify(hunt.c));if(!(hunt.c.on.own<=1))miss.push('v0.92: lion did not strike in its prey\'s own Resolve: '+JSON.stringify(hunt.c));
 if(hunt.c.off.adj<=1)miss.push('old rule: lion acted outside the closest Resolve: '+JSON.stringify(hunt.c));
 if(!hunt.d.killed||hunt.d.hoard!==hunt.d.want||hunt.d.killedBy!=='Tholo')miss.push('Tholo hoard: '+JSON.stringify(hunt.d));
 /* 2. the Crowd Favor tile */

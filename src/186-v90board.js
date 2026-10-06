@@ -3,6 +3,7 @@
    =====================================================================
    1. THOLO AND THE LIONS HUNT THE CLOSEST LIVING THING (his card: "A Tholo that is not aggro scans the arena for the
       closest living player to start each resolve phase" — he: the closest living THING, beasts included).
+      (v0.92, his rule: beasts act only on their target's turn — see npcTrigger below.)
       At the start of EVERY gladiator's Resolve phase a non-aggro, untamed, un-lyred Tholo, Leo or Leaena (NPCT tholo /
       lion; other scan beasts keep 04's rule) finds the closest living target by Chebyshev distance: gladiators (not
       underground / exited) and other beasts (not itself, not its own kind — a lion never hunts a lion, HUNT90.sameKind —
@@ -46,8 +47,14 @@ function closestThing90(n){let best=null,bd=1e9;
   if(why==='aggro'||why==='opportunist'||why==='adjacent'||why==='zone')return why;
   if(!npc.alive||npc.tamedBy!=null||npc.lyred!=null||npc.aggro!=null)return why;
   const prey=closestThing90(npc);if(!prey)return null;
-  if(prey.kind==='player'&&prey.ref===player)return 'scan';
-  HUNT90.map.set(npc,{prey,seq:HUNT90.seq});return 'scan'}}  /* a WeakMap: nothing new on the beast (saves, snapshots, the online hash) */
+  /* v0.92 (his rule): a beast acts only on its target's turn — a gladiator prey is struck in HIS OWN Resolve (else the hunter
+     waits; someone stepping closer or hitting it changes that); a beast prey (beasts have no turn) is struck in the Resolve of
+     the gladiator closest to the hunter (ties: lowest seat), so once a rotation */
+  if(prey.kind==='player')return prey.ref===player?'scan':null;
+  if(nearestGlad92(npc)!==player)return null;
+  HUNT90.map.set(npc,{prey,seq:HUNT90.seq});return 'scan'}}
+/* nearestGlad92 — the living gladiator closest to a beast (ties: lowest seat — stateless, the same all rotation) */
+function nearestGlad92(n){let best=null,bd=1e9;for(const q of S.players){if(!q||!q.alive||q.underground||q.exited)continue;const d=cheb(n,q);if(d<bd){bd=d;best=q}}return best}  /* a WeakMap: nothing new on the beast (saves, snapshots, the online hash) */
 {const base=npcAct;npcAct=async function(npc,player,stay){const h=npc&&typeof npc==='object'?HUNT90.map.get(npc):null;
   if(!h||!HUNT90.live||h.seq!==HUNT90.seq)return base.apply(this,arguments);
   HUNT90.map.delete(npc);let prey=h.prey;
