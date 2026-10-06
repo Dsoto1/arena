@@ -2512,8 +2512,9 @@ function avatarSVG(player) {
       continue;
     }
     const wound = 1 - hp / BASE_HP[l];
-    s += `<path d="${P.d}" fill="${wound > 0 ? '#c0392b' : 'none'}" fill-opacity="${(wound * 0.3).toFixed(2)}" stroke="none"><title>${_T`${LOCN[l]}: ${hp} HP, ${player.ap[l]} AP${player.pieces[l].length ? ' \u00b7 ' + player.pieces[l].map(x => x.n).join(', ') : ''}`}</title></path>`;
-    if (player.ap[l] > 0) s += `<path d="${P.d}" fill="url(#met${player.id})" fill-opacity="${(0.14 + player.ap[l] * 0.055).toFixed(2)}" stroke="#dfe5ea" stroke-opacity=".8" stroke-width="${(0.6 + player.ap[l] * 0.22).toFixed(1)}" pointer-events="none"/>`;
+    const Pd = typeof SEV92 !== 'undefined' && SEV92[l] ? SEV92[l].d : P.d; /* v0.92: wounds and AP follow the body's own outline, not the old boxes */
+    s += `<path d="${Pd}" fill="${wound > 0 ? '#c0392b' : 'none'}" fill-opacity="${(wound * 0.3).toFixed(2)}" stroke="none"><title>${_T`${LOCN[l]}: ${hp} HP, ${player.ap[l]} AP${player.pieces[l].length ? ' \u00b7 ' + player.pieces[l].map(x => x.n).join(', ') : ''}`}</title></path>`;
+    if (player.ap[l] > 0) s += `<path d="${Pd}" fill="url(#met${player.id})" fill-opacity="${(0.14 + player.ap[l] * 0.055).toFixed(2)}" stroke="#dfe5ea" stroke-opacity=".8" stroke-width="${(0.6 + player.ap[l] * 0.22).toFixed(1)}" pointer-events="none"/>`;
   }
   // HP / AP chips
   for (const l of LOCS) {
