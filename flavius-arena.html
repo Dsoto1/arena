@@ -48662,8 +48662,12 @@ const AV92={q:null,how:null,best:null,hp:null};
 const AV92C={};function av92Mid(l){if(AV92C[l])return AV92C[l];const n=(SEV92[l].d.match(/-?\d+(\.\d+)?/g)||[]).map(Number);let x=0,y=0,k=0;for(let i=0;i+1<n.length;i+=2){x+=n[i];y+=n[i+1];k++}return (AV92C[l]={x:x/k,y:y/k})}
 /* av92SVG — the fighter's avatar with outlined, clickable locations: opts {locs:[…], col, best, label:l=>text} */
 function av92SVG(p,o){let s='';try{s=avatarSVG(p)}catch(e){return ''}
-  let ov='';for(const l of o.locs){if(!SEV92[l])continue;const b=l===o.best;const c=b?'#f0cf7d':o.col;const m=av92Mid(l);const t=o.label?o.label(l):'';
-    ov+=`<g class="av92l" data-av92="${l}" style="cursor:pointer"><path d="${SEV92[l].d}" fill="none" stroke="#140f0b" stroke-opacity=".75" stroke-width="3.2" stroke-linejoin="round" pointer-events="none"/><path d="${SEV92[l].d}" fill="${c}" fill-opacity="${b?.26:.2}" stroke="${c}" stroke-width="1.8" stroke-dasharray="3 2" stroke-linejoin="round"/>${t?`<text x="${m.x.toFixed(1)}" y="${m.y.toFixed(1)}" fill="#fff" stroke="#140f0b" stroke-width="2.4" paint-order="stroke" font-size="13" font-weight="700" text-anchor="middle" dominant-baseline="middle" pointer-events="none">${t}</text>`:''}<title>${esc(o.tip?o.tip(l):LOCN[l])}</title></g>`}
+  let ov=o.armor?'<defs><filter id="av92red" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0.55 0.35 0.1 0 0.28  0.12 0.12 0.06 0 0.03  0.12 0.12 0.06 0 0.03  0 0 0 0.9 0"/></filter></defs>':'';
+  for(const l of o.locs){if(!SEV92[l])continue;const b=l===o.best;const c=b?'#f0cf7d':o.col;const m=av92Mid(l);const t=o.label?o.label(l):'';
+    /* Focus (his ask): the armor worn on that location is tinted the same red — what the strike could break */
+    let arm='';if(o.armor&&typeof armShares==='function'&&typeof armBox==='function'){try{for(const sh of armShares(p,l)){const A=ARM[sh.pc.key];if(!A||A.caId||sh.cur<=0)continue;const B=armBox(sh.pc.key,l);if(B)arm+=armPieceSVG(B,sh.pc.key,1,null,'av92'+p.id+l)}}catch(e){}
+      if(arm)arm=`<g filter="url(#av92red)" pointer-events="none">${arm}</g>`}
+    ov+=`<g class="av92l" data-av92="${l}" style="cursor:pointer">${arm}<path d="${SEV92[l].d}" fill="none" stroke="#140f0b" stroke-opacity=".75" stroke-width="3.2" stroke-linejoin="round" pointer-events="none"/><path d="${SEV92[l].d}" fill="${c}" fill-opacity="${b?.26:.2}" stroke="${c}" stroke-width="1.8" stroke-dasharray="3 2" stroke-linejoin="round"/>${t?`<text x="${m.x.toFixed(1)}" y="${m.y.toFixed(1)}" fill="#fff" stroke="#140f0b" stroke-width="2.4" paint-order="stroke" font-size="13" font-weight="700" text-anchor="middle" dominant-baseline="middle" pointer-events="none">${t}</text>`:''}<title>${esc(o.tip?o.tip(l):LOCN[l])}</title></g>`}
   return s.replace(/<\/svg>\s*$/,ov+'</svg>')}
 function av92Paint(){const box=document.getElementById('mBody');if(!box||document.getElementById('modal').hidden)return;
   const old=box.querySelector(':scope > .av92');
@@ -48673,7 +48677,7 @@ function av92Paint(){const box=document.getElementById('mBody');if(!box||documen
     if(dice.length){const set=dice.filter(d=>!d.disabled);locs=[...new Set(set.map(d=>d.dataset.loc))];const b=set.find(d=>d.classList.contains('best'));best=b?b.dataset.loc:null}
     else{locs=LOCS.filter(l=>AV92.q.hp[l]>0);const pb=[...document.querySelectorAll('#mBtns button')].find(b=>/💡/.test(b.textContent));if(pb)best=LOCS.find(l=>pb.textContent.includes(LOCN[l]))||null}
     const key='f|'+locs.join(',')+'|'+best;if(old&&old.dataset.k===key)return;
-    const html=`<div class="av92" data-k="${key}" data-kind="focus">${av92SVG(AV92.q,{locs,col:'#d0605a',best})}<small>${locs.length?_T('Click where to strike'):_T('Rolling…')}</small></div>`;
+    const html=`<div class="av92" data-k="${key}" data-kind="focus">${av92SVG(AV92.q,{locs,col:'#d0605a',best,armor:true})}<small>${locs.length?_T('Click where to strike'):_T('Rolling…')}</small></div>`;
     if(old)old.outerHTML=html;else box.insertAdjacentHTML('afterbegin',html);return}
   /* Distribute health */
   if(AV92.hp&&box.querySelector('.dist [data-d]')){const p=AV92.hp;const plus=[...box.querySelectorAll('.dist [data-d="+"]')];
@@ -48690,6 +48694,7 @@ document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest
 {const st=document.createElement('style');st.textContent=`
 #mBody>.av92{float:right;width:150px;margin:0 0 6px 12px;text-align:center}
 #mBody>.av92 svg{width:150px;height:auto;display:block}
+#mBody>.av92 [data-avtip],#mBody>.av92 [data-avloc]{pointer-events:none}
 #mBody>.av92 small{display:block;font-size:11px;color:var(--dim,#a89a80)}
 #mBody>.av92 .av92l:hover path{fill-opacity:.38}
 #mBody>.av92.hov92 .av92l path{opacity:0;transition:opacity .12s}#mBody>.av92.hov92 .av92l:hover path{opacity:1}
