@@ -171,3 +171,5 @@ function rail90Watch(){const body=document.getElementById('mgrBody');if(!body)re
 @media (max-width:980px){.yd90{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:760px){.yo90r{grid-template-columns:22px minmax(0,1fr) 64px!important;grid-template-areas:"ck nm ft" "ck rt rt" "ck st st" "ck gn gn"}.yo90r .yo87gn{text-align:left}}
 `;document.head.appendChild(st)})();
+/* glue with 183-v90ward: yard87Row is replaced above, so its fatigue band chip (fatChip90) is re-applied to the new row */
+if(typeof fatChip90==='function'){const base=yard87Row;yard87Row=function(g){const h=base.apply(this,arguments);try{return h.replace(/(<span class="yo87nm">[\s\S]*?<\/b>)/,`$1${fatChip90(g)}`)}catch(e){return h}}}
