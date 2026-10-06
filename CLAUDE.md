@@ -1161,7 +1161,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
 - **ONLINE KITS (his picks 2026-10-06, v0.92 — build in v0.92):** Armory "Kits" row: CLASS KITS (each printed class's loadout on the avatar;
   owned pieces on him/the shelf skipped, "Complete the kit · N"), budget tiers (Scrap · Recruit · Class · Champion L2–3), 15% bundle discount;
   FREE DAILY KIT once a day per house (plain L1, pieces marked Issued: worth 0, unsellable, unrepairable, never looted, vanish when lost);
-  🛒 Restock on saved loadouts (rebuys what a bout used up); paid from his PURSE by default, treasury toggle. One server route market.kit
+  🛒 Restock on saved loadouts (rebuys what a bout used up); paid from his PURSE first, the TREASURY covers the shortfall (overdraft, his pick).
+  Kit discount is PROPORTIONAL: 15% × the share of the kit bought (owned pieces skipped, each missing piece at its own price). One server route market.kit
   (one charge, then dress), a daily marker per house, kit tables from class data via mkserver/catalog. Arc Raiders-style loop.
 - **ONLINE SERVER VERSION (v0.91, 196-v91srv):** hello.build from server/src/build.json (tools/srvstamp.js, run by release.sh; only re-stamps when
   the server code hash changes) + SRV_EXPECT91 in the page (generated 195-v91srvexp.js) → chip bottom-left of Online screens (ok / ⚠ older /
