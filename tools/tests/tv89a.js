@@ -15,7 +15,7 @@ const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   const sps=[CITY_SPONSORS[1],CITY_SPONSORS[2],CITY_SPONSORS[3],CITY_SPONSORS[5],CITY_SPONSORS[10],{...blankSponsor(),id:'csTest',beard:'long',head:'flowers',long:true}];
   r.sp=sps.map(sp=>{const u=M.map(m=>flavFaceURL(m,sp));return u.every(x=>/^data:image\/png/.test(x)&&x.length>2000)&&new Set(u).size===M.length});
   r.pri=FLAV_PRI.really===2;r.lines=(FLAV_LINES.really||[]).length>=3;r.voices=Object.values(SPONSOR_VOICES).every(v=>(v.really||[]).length>=1);
-  r.prev=(sponPrevHTML({...blankSponsor(),id:'csPrev'}).match(/<img /g)||[]).length===11;
+  r.prev=(sponPrevHTML({...blankSponsor(),id:'csPrev'}).match(/data-sp91m=/g)||[]).length===11; /* v0.91: big portrait + the 11-mood row */
   if(CUR_MODAL)CUR_MODAL.done(null);try{menuHide()}catch(e){}
   startEvent({ev:'democritus',loc:6,seats:[{cls:'hero',cpu:false},{cls:'soldier',cpu:true},{cls:'slave',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}});
   for(let i=0;i<30;i++){if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(100)}SPEED='pause';
