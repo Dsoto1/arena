@@ -48,7 +48,7 @@ function sandPat83(){if(SAND83_PAT)return SAND83_PAT;const c=document.createElem
 {const base=typeof drawShipTile==='function'?drawShipTile:null;drawShipTile=function(r,c){if(base)base.apply(this,arguments);
   try{if(!SAND83.grain&&!SAND83.shade)return;if(typeof isNaum==='function'&&isNaum()&&!(S.drained||S.drainLine!=null&&r+c<=S.drainLine))return;
     ctx.save();tilePath(r,c);ctx.clip();
-    if(SAND83.grain){ctx.globalAlpha=SAND83.grain;ctx.fillStyle=sandPat83();const m=center(r,c);ctx.fillRect(m.x-TW/2,m.y-TH/2,TW,TH)} /* v0.88: the tile's own box (the clip keeps the diamond) — a quarter of the old overdraw */
+    if(SAND83.grain){ctx.globalAlpha=SAND83.grain;const sp=sandPat83();try{const o0=center(0,0),z0=(typeof AR91!=='undefined'&&AR91.z)||1;sp.setTransform(new DOMMatrix().translate(o0.x,o0.y).scale(z0))}catch(e){} /* v0.92: grain pinned to the board (zoom no longer slides it) */ctx.fillStyle=sp;const m=center(r,c);ctx.fillRect(m.x-TW/2,m.y-TH/2,TW,TH)} /* v0.88: the tile's own box (the clip keeps the diamond) — a quarter of the old overdraw */
     if(SAND83.shade){const m=center(r,c);const g=ctx.createLinearGradient(m.x,m.y-TH/2,m.x,m.y+TH/2);g.addColorStop(0,'rgba(255,245,220,1)');g.addColorStop(.45,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(60,36,14,1)');
       ctx.globalAlpha=SAND83.shade;ctx.fillStyle=g;ctx.fillRect(m.x-TW/2,m.y-TH/2,TW,TH)}
     ctx.restore();tilePath(r,c)}catch(e){}}}

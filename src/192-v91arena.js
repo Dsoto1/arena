@@ -108,7 +108,7 @@ function ar91Tex(){const M=ar91Mat();const lite=typeof lite84On==='function'&&li
 
 /* ---------- drawing helpers (g = the layer's context) ---------- */
 let AR91PAT=null; /* the pattern of the layer being painted */
-function ar91Fill(g,scale){if(AR91PAT){try{AR91PAT.setTransform(new DOMMatrix().scale((scale||1)*TW*0.9/170))}catch(e){}g.fillStyle=AR91PAT}else g.fillStyle=ar91Mat().cap}
+function ar91Fill(g,scale){if(AR91PAT){try{const o=center((N-1)/2,(N-1)/2) /* v0.92 (his note): pinned to the board's middle, not the canvas corner — zooming no longer slides the stone */;AR91PAT.setTransform(new DOMMatrix().translate(o.x,o.y).scale((scale||1)*TW*0.9/170))}catch(e){}g.fillStyle=AR91PAT}else g.fillStyle=ar91Mat().cap}
 function ar91Path(g,Q){g.beginPath();Q.forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y));g.closePath()}
 function ar91Stone(g,Q,shadeA,scale){ar91Path(g,Q);ar91Fill(g,scale);g.fill();if(shadeA){g.fillStyle=shadeA;g.fill()}}
 function ar91Ring(k){const P=center;const n=N-1,e0=-0.5,e1=n+0.5;return [P(e0-k,e0-k),P(e0-k,e1+k),P(e1+k,e1+k),P(e1+k,e0-k)]}
