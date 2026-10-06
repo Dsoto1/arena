@@ -31,9 +31,9 @@ const st=await P.evaluate(LANS=>{const lots=[...document.querySelectorAll('#onl 
   return {n:lots.length,vault:lots.filter(l=>l.querySelector('.vlt89')).length,hist:lots.map(l=>{const h=l.querySelector('.hist83');return h?h.textContent.replace(/\s+/g,' '):''}),
     lans:lots.map(l=>LANS.filter(n=>l.textContent.includes(n)).length),empty:/No lots this week/.test(document.getElementById('onl').textContent),
     ids:(ONL84.auc&&ONL84.auc.lots||[]).map(x=>[x.id,x.item,x.n])}},LANS);
-ok(st.n===3,'three lots on a fresh world: '+st.n);ok(st.vault===3,'each from Flavius’s vault');ok(!st.empty,'no "no lots" line');
+ok(st.n===6,'six lots on a fresh world (v0.91): '+st.n);ok(st.vault===6,'each from Flavius’s vault');ok(!st.empty,'no "no lots" line');
 ok(st.hist.every(h=>/Worn by .+ of House .+ · (fell|slain) at .+, (Ranked|Custom), week \d+/.test(h)),'histories: '+JSON.stringify(st.hist));ok(st.lans.every(x=>x>=1),'the old lanistas named '+JSON.stringify(st.lans));
-const same=await P.evaluate(ids=>{const S=ONLC.seasonAt(mockT84());const w=mockLoad();return ids.every(([id,item,n])=>{const k=+id.split('#')[1];const P=ONLC.vaultLot89(S.key,k,onlCatalog(),[],[],{at:S.start});return P.item===item&&P.pc.w.n===n})},st.ids);
+const same=await P.evaluate(ids=>{const S=ONLC.seasonAt(mockT84());const w=mockLoad();/* v0.91 the week's plan (guarantees) */const exp=[];const tW=[],tA=[];ONLC.aucPlan91([],ONLC.AUC_LOTS,[],[]).forEach((o,j)=>{const P=ONLC.vaultLot89(S.key,j+1,onlCatalog(),tW,tA,{at:S.start,...o});if(P.pc.w.uq)(P.kind==='a'?tA:tW).push(P.pc.w.uq);exp.push(P)});return ids.every(([id,item,n])=>{const k=+id.split('#')[1];const P=exp[k-1];return P.item===item&&P.pc.w.n===n})},st.ids);
 ok(same,'the same lots as the shared rules draw for the week');
 /* the odds card */
 const od=await P.evaluate(()=>{const h=odds89HTML();return /Flavius’s vault/.test(h)&&/Rare 60%/.test(h)&&/Epic 32%/.test(h)&&/Legendary 8%/.test(h)});ok(od,'the ⓘ odds card names the vault and its split');

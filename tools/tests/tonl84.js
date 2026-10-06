@@ -121,7 +121,7 @@ await shot(A,'landing');await A.evaluate(()=>{const x=document.querySelector('#o
 await world(A,(w,[a,c])=>{w.auc84={};w.aucwin84={};w.chest83=[];const cat=onlCatalog();const mk=(s,r,k)=>{let x=s;const rnd=()=>{x=(x*1664525+1013904223)>>>0;return x/4294967296};const d=k==='a'?ONLC.rollNamedArmor(rnd,cat,r,[]):ONLC.rollNamed(rnd,cat,r,[]);
   const P=ONLC.namedPiece(d,{id:'fallen'+s});P.pc.hist=[{house:'Domus Antiqua',glad:'Old Marcus '+s,when:Date.now()-864e5*2,how:'fell'}];return {item:P.item,pc:P.pc,at:Date.now()}};
   w.chest83.push(mk(11,'legendary','a'),mk(12,'epic','w'),mk(13,'rare','a'));w.chars[a].wallet=20000;w.chars[c].wallet=20000},[sa.ch,sc.ch]);
-let al=await A.evaluate(async()=>await NET.req('auction.list',{}));ok(al.lots.length===3&&al.lots.every(l=>l.w&&l.hist.length&&l.min===Math.ceil(l.val/2)),'three lots from the chest, full cards + history, half the value');
+let al=await A.evaluate(async()=>await NET.req('auction.list',{}));ok(al.lots.length===6&&al.lots.filter(l=>!l.vault89&&!(l.hist||[]).some(h=>h.vault89)).length===3&&al.lots.every(l=>l.w&&l.hist.length&&l.min===Math.ceil(l.val/2)),'six lots (v0.91): the three from the chest + three from the vault, full cards + history, half the value');
 const [l1,l2]=al.lots;const r1=await err(B,async l=>NET.req('auction.bid',{lot:l.id,amt:l.min}),l1);ok(/^auc_rank\|/.test(r1),'a Tiro may not bid ('+r1+')');
 const w0=await A.evaluate(()=>ONL.char.wallet);const bA=await A.evaluate(async l=>(await NET.req('auction.bid',{lot:l.id,amt:l.min})).char.wallet,l1);ok(bA===20000-l1.min,'escrow: the bid leaves the purse');
 const r2=await err(A,async l=>NET.req('auction.bid',{lot:l.id,amt:l.min}),l2);ok(/^auc_lead\|/.test(r2),'one lead at a time ('+r2+')');
@@ -134,7 +134,7 @@ ok(Math.abs(sn.ends-(sn.now+ONLC_SNIPE()))<3000,'a late bid adds five minutes '+
 function ONLC_SNIPE(){return 300000}
 await A.evaluate(()=>{ONL.tab='auction';ONL84.aucAt=0;onlRedraw()});await A.waitForTimeout(900);
 const tab=await A.evaluate(()=>({lots:document.querySelectorAll('#onl .au84-lot').length,holo:document.querySelectorAll('#onl .au84-lot .holo84').length,rail:!!document.querySelector('#onl [data-onl="tab"][data-v="auction"].on'),lead:!!document.querySelector('#onl .au84-lot.mine')}));
-ok(tab.lots===3&&tab.holo>=2&&tab.rail&&tab.lead,'the 🔨 Auction tab: lot cards (shimmering), my lead '+JSON.stringify(tab));await shot(A,'auction');
+ok(tab.lots===6&&tab.holo>=2&&tab.rail&&tab.lead,'the 🔨 Auction tab: lot cards (shimmering), my lead '+JSON.stringify(tab));await shot(A,'auction');
 /* the hammer falls (the next sweep): Alpha wins lot 1 with its history; the rest go back to the chest */
 await A.evaluate(e=>localStorage.setItem('flavius_onlclock84',String(e+10e3-Date.now())),sn.ends);
 al=await C.evaluate(async()=>await NET.req('auction.list',{}));await A.waitForTimeout(300);

@@ -20,9 +20,14 @@ function rules(){C.setCatalog(catalog);
   assert.deepStrictEqual(r.eq,['galea','axe','gladius','greaves'],'two weapons, the first of the lower-leg pair wins');assert.deepStrictEqual(r.off.map(p=>p.item).sort(),['mace','ocrea']);assert.deepStrictEqual(d.gear.slice().sort(),['axe','galea','gladius','greaves']);
   r=C.dressApply(d,['gladius'],[],catalog);assert.deepStrictEqual(d.gear,['gladius']);assert.deepStrictEqual(d.equip,['gladius']);
   /* keep home: tagged, listed in the kit, stripped from a Ranked room only */
-  const h=C.newChar({name:'Home Body',cls:'hero'},'o','hb',0);h.gear=['gladius','galea'];h.equip=['gladius','galea'];const hid=C.homeSet(h,'galea',true);
-  assert.match(hid,/^galea#hb\.\d+$/);assert.ok(C.isHome(h,hid));assert.deepStrictEqual(C.equipOf(h),['gladius',hid],'still worn (Custom)');
-  const kit=C.kitOf(h);assert.deepStrictEqual(kit.home,[hid]);const ks=C.kitStrip(kit);assert.deepStrictEqual(ks.items,['gladius']);assert.deepStrictEqual(ks.gear,['gladius']);assert.ok(!ks.home);
+  /* v0.91: named pieces only — a printed piece is refused, an old printed flag is ignored */
+  const h=C.newChar({name:'Home Body',cls:'hero'},'o','hb',0);h.glory=600;h.gear=['gladius'];h.equip=['gladius'];const NP=C.namedPiece(C.rollNamed(()=>0.3,catalog,'rare',[]),h);C.putPiece(h,NP,true);
+  assert.throws(()=>C.homeSet(h,'gladius',true),/named/);
+  const hid=C.homeSet(h,NP.item,true);
+  assert.strictEqual(hid,NP.item);assert.ok(C.isHome(h,hid));assert.deepStrictEqual(C.equipOf(h),['gladius',hid],'still worn (Custom)');
+  {const o=C.newChar({name:'Old Flag',cls:'hero'},'o','of',0);o.gear=['galea#of.1'];o.equip=['galea#of.1'];o.pcs={'of.1':{st:'whole',home:1}};assert.ok(!C.isHome(o,'galea#of.1'),'an old printed flag is ignored');
+    const ko=C.kitOf(o);assert.ok(!ko.home&&ko.items.includes('galea#of.1'));assert.ok(C.kitStrip(ko).items.includes('galea#of.1'))}
+  const kit=C.kitOf(h);assert.deepStrictEqual(kit.home,[hid]);const ks=C.kitStrip(kit);assert.deepStrictEqual(ks.items,['gladius']);assert.deepStrictEqual(ks.gear,['gladius']);assert.ok(!(ks.named||[]).length);assert.ok(!ks.home);
   const LR=C.newLobby({ev:'cassian',ranked:true},{id:'a',name:'A',char:'hb',rank:'tiro'},'L1',1),LC=C.newLobby({ev:'cassian'},{id:'a',name:'A',char:'hb',rank:'tiro'},'L2',1);const who=[{id:'a',name:'A',char:'hb',rank:'tiro',kit}];
   C.roomJoin(LR,who.map(x=>({...x,kit:{...kit}})),1);C.roomJoin(LC,who.map(x=>({...x,kit:{...kit}})),1);
   const kr=(LR.players[0]||LR.members[0]).kit,kc=(LC.players[0]||LC.members[0]).kit;assert.ok(!kr.items.includes(hid)&&kc.items.includes(hid),'Ranked leaves it home, Custom brings it');
@@ -86,10 +91,14 @@ async function routes(){
   await rejects(ann.req('domus.dress',{char:ann.ch.id,equip:[],take:[{item:'gladius',from:bob.ch.id}]}),null,/Not of your house/);
 
   /* ── keep home: worn in Custom, left home in Ranked ── */
-  const hm=await ann.req('gear.home',{holder:ann.ch.id,item:'galea',on:true});assert.match(hm.item,/^galea#/);assert.ok(hm.holder.pcs[C.itemUid(hm.item)].home);
+  await rejects(ann.req('gear.home',{holder:ann.ch.id,item:'galea',on:true}),'home_named');
+  /* v0.91: a named helm in place of the galea (Veteranus wears named pieces) */
+  let NH=null;for(let sd=1;sd<400&&!NH;sd++){let x=sd*9301+49297;const r=()=>(x=(x*9301+49297)%233280)/233280;const a=C.rollNamedArmor(r,catalog,'rare',[]);if(a&&a.slot==='head')NH=a}
+  {const c=await getC(ann.ch.id);const P=C.namedPiece(NH,c);c.gear=c.gear.map(g=>g==='galea'?P.item:g);c.equip=(c.equip||[]).map(g=>g==='galea'?P.item:g);c.pcs={...(c.pcs||{}),[C.itemUid(P.item)]:P.pc};c.glory=600;await db.put('CHAR#'+c.id,'CHAR',c)}
+  const hm=await ann.req('gear.home',{holder:ann.ch.id,item:(await getC(ann.ch.id)).gear.find(g=>/^na#/.test(g)),on:true});assert.match(hm.item,/^na#/);assert.ok(hm.holder.pcs[C.itemUid(hm.item)].home);
   let LC=await ann.req('lobby.create',{ev:'cassian',cry:false});assert.ok(LC.players[0].kit.items.includes(hm.item),'Custom brings it');await ann.req('lobby.leave',{id:LC.id});
   let LR=await ann.req('lobby.create',{ev:'cassian',ranked:true,cry:false});assert.ok(!LR.players[0].kit.items.includes(hm.item)&&LR.players[0].kit.items.includes('axe'),'Ranked leaves it home');await ann.req('lobby.leave',{id:LR.id});
-  const sh=await ann.req('gear.home',{holder:'house',item:'ocrea',on:true});assert.ok(sh.holder.house&&sh.holder.gear.includes(sh.item));
+  await rejects(ann.req('gear.home',{holder:'house',item:'ocrea',on:true}),'home_named');
 
   /* ── saved loadouts ── */
   let kt=await ann.req('char.kits',{char:ann.ch.id,kits:[{n:'Ranked',items:[hm.item,'axe','manica','ghost']}]});assert.deepStrictEqual(kt.char.kits89,[{n:'Ranked',items:[hm.item,'axe','manica']}]);

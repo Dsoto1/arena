@@ -85,12 +85,18 @@ const lk=await P.evaluate(async id=>{try{await NET.req('char.edit',{char:id,look
 const lk2=await P.evaluate(async id=>{try{await NET.req('char.edit',{char:id,look:{color:'#040506',token:{sc:1,c1:'#ff00ff'}}});return 'ok'}catch(e){return e.message}},ids.a);
 ok(/look is set/.test(lk2),'the look is locked after creation ('+lk+' / '+lk2+')');
 
-/* ── 7 · keep home: never in a Ranked kit ── */
-await P.click('#onl .sc89 [data-d89homew="galea"]');await idle();
-const hk=await P.evaluate(async()=>{const it=ONLC.equipOf(ONL.char).find(x=>/^galea/.test(x));const R=await NET.req('lobby.create',{ev:'cassian',ranked:true,cry:false});const LR=R.lobby||R;const kr=LR.players[0].kit.items;await NET.req('lobby.leave',{id:LR.id});
-  const C2=await NET.req('lobby.create',{ev:'cassian',cry:false});const LC=C2.lobby||C2;const kc=LC.players[0].kit.items;await NET.req('lobby.leave',{id:LC.id});return {it,home:ONLC.isHome(ONL.char,it),kr,kc}});
+/* ── 7 · keep home: never in a Ranked kit (v0.91: named pieces only — no lock on a printed piece, the mock refuses one) ── */
+ok(await P.evaluate(()=>!document.querySelector('#onl .sc89 [data-d89homew^="galea"]')),'no 🔒 on a printed piece');
+const prh=await P.evaluate(async()=>{try{await NET.req('gear.home',{holder:ONL.char.id,item:'galea',on:true});return 'ok'}catch(e){return e.code||e.message}});ok(prh==='home_named','a printed piece is refused: '+prh);
+const nh=await world((w,a)=>{const ch=w.chars[a];const g0=ch.glory;ch.glory=600;let x=7;const r=()=>(x=(x*9301+49297)%233280)/233280;let d=null;for(let i=0;i<400&&!d;i++){const t=ONLC.rollNamedArmor(r,onlCatalog(),'rare',[]);if(t&&t.slot==='head')d=t}
+  const P=ONLC.namedPiece(d,ch);ch.gear=ch.gear.filter(g=>!/^galea/.test(g));ch.equip=(ch.equip||[]).filter(g=>!/^galea/.test(g));ONLC.putPiece(ch,P,true);return {it:P.item,g0}},ids.a);await open();
+await P.click(`#onl .sc89 [data-d89homew="${nh.it}"]`);await idle();
+const hk=await P.evaluate(async it=>{const R=await NET.req('lobby.create',{ev:'cassian',ranked:true,cry:false});const LR=R.lobby||R;const kr=LR.players[0].kit.items;await NET.req('lobby.leave',{id:LR.id});
+  const C2=await NET.req('lobby.create',{ev:'cassian',cry:false});const LC=C2.lobby||C2;const kc=LC.players[0].kit.items;await NET.req('lobby.leave',{id:LC.id});return {it,home:ONLC.isHome(ONL.char,it),kr,kc}},nh.it);
 ok(hk.home&&!hk.kr.includes(hk.it)&&hk.kc.includes(hk.it),'kept home: out of the Ranked kit, in the Custom one '+JSON.stringify(hk));
-ok(await P.evaluate(()=>!!document.querySelector('#onl .sc89 .hm89.on')),'the 🔒 shows on the worn piece');
+ok(await P.evaluate(()=>!!document.querySelector('#onl .sc89 .hm89.on')),'the 🔒 shows on the worn named piece');
+ok(await P.evaluate(()=>/safe from loss and loot/.test((document.querySelector('#onl .sc89 .hm89')||{}).title||'')),'the lock’s one-line tip');
+await world((w,[a,g0])=>{w.chars[a].glory=g0},[ids.a,nh.g0]);await open();
 /* ── 6 · tester grants into the house; the ledger ⓘ ── */
 await P.evaluate(()=>localStorage.setItem('flavius_onltester83','1'));
 const g=await P.evaluate(async()=>{const r=await NET.req('admin.grant',{coin:300,gear:['manica'],offering:['ap2']});return {w:(r.char||{}).wallet,t:r.domus.treasury,gear:r.gear,offs:r.offers,cg:(r.char||{}).gear}});

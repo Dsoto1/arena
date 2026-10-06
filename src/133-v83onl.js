@@ -209,7 +209,7 @@ function mockAfter83(w,L,M,a,i,row,out,gx){const ch=w.chars[L.players[i].char];i
   const bets=(L&&L.bets||[]).slice();const r=base(w,d,me);
   try{if(L&&M&&M.status==='done'&&was!=='done'){const A=ONLC.agree(M.reports||{});const gs=[];
     L.players.forEach((p,i)=>{const out=(M.outs||{})[p.id];if(!out||had.has(p.id)||/^bot/.test(p.id))return;const ch=w.chars[p.char];const row=(A.table||[]).find(x=>x.seat===i);if(!ch||!row)return;
-      const gx=ONLC.gearAfter(ch,p.kit,row,!!L.ranked);out.broken=gx.broken;out.gone=gx.gone||[];out.offBack=gx.offBack;mockAfter83(w,L,M,p.id,i,row,out,gx);gs.push({acct:p.id,i,ch,row,out,gx})});
+      const gx=ONLC.gearAfter(ch,p.kit,row,!!L.ranked);out.broken=gx.broken;out.gone=gx.gone||[];out.dmg=gx.dmg||[];out.offBack=gx.offBack;mockAfter83(w,L,M,p.id,i,row,out,gx);gs.push({acct:p.id,i,ch,row,out,gx})});
     for(const s of gs)if(s.out.died&&s.gx.carried.length){const from={house:(w.accounts[s.acct]||{}).dname||null,glad:s.ch.name};const ks=s.row.ks;
       const k=s.row.kb==='g'&&ks>=0?gs.find(z=>z.i===ks&&z.acct!==s.acct&&!z.out.died&&!(M.abandoned||{})[z.acct]):null;
       if(k){const Ps=s.gx.carried.map(P=>ONLC.tagPiece(P,s.ch));const cat=onlCatalog();w.loot83=w.loot83||{};

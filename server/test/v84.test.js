@@ -105,6 +105,8 @@ async function routes(){
   Q.push(0.995,0.995,0.1,0.995);/* v0.89 J: a named armor piece re-rolls its tier (RAR_A89) */const go=await ann.req('gift.open',{gift:'ga'});assert.strictEqual(go.reward.k,'named');assert.strictEqual(go.reward.piece.kind,'a');assert.strictEqual(go.to,'glad');
   const ai=go.char.gear.find(g=>/^na#/.test(g));const ad=go.char.pcs[C.itemUid(ai)].w;assert.ok(ad.named84&&ad.uq&&C.UNIQ_A_KEYS.includes(ad.uq));assert.ok(await db.get('WORLD','UNIQA#'+ad.uq),'the armor unique is claimed');
   assert.ok(C.equipOf(go.char).includes(ai),'a Veteranus brings it');
+  /* the gift's affixes come from Math.random: a Fidelis piece goes home instead of into the loot (v0.89 J) — strip it so the loot check is steady */
+  {const c=await getC(ann.ch.id);const w=c.pcs[C.itemUid(ai)].w;if(w.fid){delete w.fid;w.aff=(w.aff||[]).filter(k=>k!=='fid');await db.put('CHAR#'+c.id,'CHAR',c)}}
   await setC(bob.ch.id,{glory:600,wallet:0});const lv=await bout(ann,bob,{ev:'democritus',loc:6,ranked:true,live:true});const kit=lv.L.players[lv.sa].kit;assert.ok(kit.named.some(d=>d.kind==='a'&&d.key===ad.key),'the kit carries the armor def');
   let m0=mark();const tl=[0,1,2,3].map(i=>i===lv.sa?{seat:i,survives:false,ks:lv.sb,kb:'g',f:1}:{seat:i,f:5,won:i===lv.sb});for(const x of [ann,bob])await x.req('match.result',{id:lv.L.id,table:tl,hash:'L'});
   const lo=bob.got('loot.offer',m0)[0];const lp=lo&&lo.pieces.find(p=>/^na#/.test(p.item));assert.ok(lp&&lp.w&&lp.w.uq===ad.uq&&lp.kind==='a','the loot offer carries the named armor’s whole card');
@@ -141,9 +143,9 @@ async function routes(){
   /* ── 🔨 FLAVIUS'S AUCTION ── */
   const eve=await client('eve'),fay=await client('fay'),gus=await client('gus');for(const x of [eve,fay])await setC(x.ch.id,{glory:600,wallet:20000});await setC(gus.ch.id,{wallet:20000});
   const mk=(seed,rar,kind)=>{const d=kind==='a'?C.rollNamedArmor(seeded(seed),catalog,rar,[]):C.rollNamed(seeded(seed),catalog,rar,[]);const P=C.namedPiece(d,{id:'fallen'+seed});P.pc.hist=[{house:'Domus Old',glad:'Old '+seed,when:T-1,how:'fell'}];return P};
-  for(const [s,r,k] of [[1,'rare','w'],[2,'epic','a'],[3,'common','w'],[4,'rare','a']]){const P=mk(s,r,k);await db.put('CHEST','P#'+C.itemUid(P.item),{item:P.item,pc:P.pc,at:T,taken:0})}
+  for(const [s,r,k] of [[1,'rare','w'],[2,'epic','a'],[3,'common','w'],[4,'rare','a'],[5,'rare','w'],[6,'common','a'],[7,'rare','w']]){const P=mk(s,r,k);await db.put('CHEST','P#'+C.itemUid(P.item),{item:P.item,pc:P.pc,at:T,taken:0})}
   T=C.seasonAt(T).end+1000;/* a new week: the first sweep draws its lots */
-  let al=await eve.req('auction.list',{});assert.strictEqual(al.lots.length,C.AUC_LOTS,'three lots a week');assert.ok(al.lots.every(l=>l.w&&l.hist.length&&l.min===Math.ceil(l.val/2)),'full cards, owner history, half the value');
+  let al=await eve.req('auction.list',{});assert.strictEqual(al.lots.length,C.AUC_LOTS,'six lots a week (v0.91)');assert.ok(al.lots.every(l=>l.w&&l.hist.length&&l.min===Math.ceil(l.val/2)),'full cards, owner history, half the value');
   assert.strictEqual((await db.query('CHEST','P#')).length,1,'the rest stays in the chest');assert.ok(al.lots[0].ends>=T+C.AUC_MIN_MS-100);
   const [L1,L2,L3]=al.lots;await setC(gus.ch.id,{glory:600});await rejects(dan.req('auction.bid',{lot:L1.id,amt:L1.min}),'auc_rank');await rejects(eve.req('auction.bid',{lot:L1.id,amt:L1.min-1}),'auc_low');
   let b1=await eve.req('auction.bid',{lot:L1.id,amt:L1.min});assert.strictEqual(b1.char.wallet,20000-L1.min,'escrow');assert.ok(b1.lot.bid.mine);

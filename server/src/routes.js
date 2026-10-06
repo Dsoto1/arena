@@ -223,7 +223,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     const dseats=[];
     if(!A.void)for(const a of M.players){if((M.abandoned||{})[a])continue;const pl=L.players.find(p=>p.id===a);const row=A.table.find(r=>r.seat===M.seats[a]);if(!pl||!row)continue;let out=null,before='tiro';
       let gx=null;const ch=await editChar(pl.char,c=>{if(!c.alive)return false;before=C.rankFor(c).k;out=C.applyResult(c,row,!!L.ranked,{humans:(M.players||[]).length,now:now()});gx=C.gearAfter(c,pl.kit,row,!!L.ranked);
-        out.broken=gx.broken;out.gone=gx.gone||[];out.offBack=gx.offBack});if(!ch||!out)continue;M.outs[a]=out;dseats.push({acct:a,ch,before,row,out,gx,seat:M.seats[a]});
+        out.broken=gx.broken;out.gone=gx.gone||[];out.dmg=gx.dmg||[];out.offBack=gx.offBack});if(!ch||!out)continue;M.outs[a]=out;dseats.push({acct:a,ch,before,row,out,gx,seat:M.seats[a]});
       if(out.died)await countRank(before,-1,ch);else if(out.rankUp){await countRank(before,-1,ch);await countRank(out.rankUp,1,ch)}
       await domusAfter(ch,row,out,!!L.ranked,{id,ev:L.ev,loc:L.loc,at:now(),ranked:!!L.ranked},gx);
       if(out.died){const e={name:ch.name,cls:ch.cls,rank:ch.died.rank,lifeCF:ch.lifeCF,survived:ch.survived,diedAt:now(),why:out.hall?C.hallWhy(ch):''};
@@ -1088,9 +1088,11 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
     const lots=await store.query(pk,'L#');if(lots.length>=C.AUC_LOTS)return 0;if(M.at!==t&&t-(M.at||0)<VAULT_GRACE89)return 0;
     if(await store.get(pk,'VAULT89'))return 0;if(!(await store.putNew(pk,'VAULT89',{at:t,ttl:ttl(90)})))return 0;
     const ends=C.aucEnds(t);let n=lots.reduce((a,x)=>Math.max(a,x.n|0),0),made=0;
-    while(lots.length+made<C.AUC_LOTS){n++;const tW=(await store.query('WORLD','UNIQ#')).map(x=>x.k),tA=(await store.query('WORLD','UNIQA#')).map(x=>x.k);
-      let P=C.vaultLot89(S.key,n,catalog,tW,tA,{at:S.start});
-      if(P&&P.pc.w.uq){const U=(P.kind==='a'?'UNIQA#':'UNIQ#')+P.pc.w.uq;if(!(await store.putNew('WORLD',U,{k:P.pc.w.uq,at:now(),vault89:1})))P=C.vaultLot89(S.key,n,catalog,tW,tA,{at:S.start,cap:'epic'})}
+    /* v0.91 the week's guarantees (≥1 top tier, ≥2 armor, ≥2 weapons across the chest + vault lots): the vault lots' forced kind / tier */
+    const plan=C.aucPlan91?C.aucPlan91(lots.map(x=>({kind:C.lotKind91(x.item),rar:C.lotRar91(x.pc)})),C.AUC_LOTS-lots.length,(await store.query('WORLD','UNIQ#')).map(x=>x.k),(await store.query('WORLD','UNIQA#')).map(x=>x.k)):[];
+    while(lots.length+made<C.AUC_LOTS){n++;const tW=(await store.query('WORLD','UNIQ#')).map(x=>x.k),tA=(await store.query('WORLD','UNIQA#')).map(x=>x.k);const po=plan[made]||{};
+      let P=C.vaultLot89(S.key,n,catalog,tW,tA,{at:S.start,...po});
+      if(P&&P.pc.w.uq){const U=(P.kind==='a'?'UNIQA#':'UNIQ#')+P.pc.w.uq;if(!(await store.putNew('WORLD',U,{k:P.pc.w.uq,at:now(),vault89:1})))P=C.vaultLot89(S.key,n,catalog,tW,tA,{at:S.start,...po,cap:'epic'})}
       const I=P&&C.pieceInfo(P,catalog);if(!I)break;const val=C.valueOf(I);
       await store.put(pk,'L#'+rk(n),{id:S.key+'#'+n,key:S.key,n,item:P.item,pc:P.pc,val,min:C.aucMin(val),opens:t,ends,bid:null,bids:[],done:false,won:null,from:{vault89:1},vault89:1,ttl:ttl(90)});made++}
     await store.set(pk,'VAULT89',{n:made});return made}
@@ -1104,6 +1106,22 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
      when the server code changes) — the Online screens show it and warn when the page expects another server. */
   {let B=null;try{B=require('./build.json')}catch(e){B=null}
    const base=R['hello'];R['hello']=async(d,ctx)=>{const o=await base(d,ctx);try{if(o&&B)o.build={v:String(B.v||''),hash:String(B.hash||'')}}catch(e){}return o}}
+  /* ══════════ v0.91 ONLINE ECONOMY II (shared rules: the v0.91 section of onlcore — damaged pieces, keep home = named only) ══════════
+     gear.repair also mends DAMAGED pieces (cost = ceil(value × dmg)); paid as before: the house treasury OR one gladiator's purse (no split).
+     gear.home refuses printed pieces (a friendly refusal; onlcore homeSet refuses too). */
+  {
+    R['gear.repair']=async(d,ctx)=>{const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);if(!D)throw fail('need_domus','Name your house first.');const item=String(d.item||'');const list=await lobbies();
+      let H=D,hc=null;if(d.holder!=='house'){hc=await ownChar(ctx.acct,d.holder);if(hc.domus!==D.id)throw new Error('Not of your house.');if(charBusy(hc.id,list))throw fail('in_match',`${hc.name} is in a match — the forge waits.`);H=hc}
+      const I=(H.gear||[]).includes(item)?C.pieceOf(H,item,catalog):null;if(!I)throw new Error('That piece is not there.');if(I.st!=='broken'&&I.st!=='damaged')throw new Error('That piece is whole.');const cost=C.repairCost(I);
+      const byT=d.pay==='treasury'||(d.pay==null&&!hc);let payer=null;
+      if(byT){if(!(await editDomus(D.id,Y=>{if((Y.treasury|0)<cost)return false;Y.treasury-=cost;C.ledAdd(Y,'repair',cost,null,now())})))throw fail('no_coin',`The treasury needs ${cost} coin.`,{cost})}
+      else{payer=await ownChar(ctx.acct,d.pay||hc.id);if(payer.domus!==D.id)throw new Error('Not of your house.');if(!(await editChar(payer.id,c=>{if(!c.alive||(c.wallet|0)<cost)return false;c.wallet-=cost})))throw fail('no_coin',`The repair costs ${cost} coin.`,{cost})}
+      const ok=await (hc?editChar(hc.id,c=>{if(!C.needsRepair91(c,item))return false;C.repairItem(c,item)}):editDomus(D.id,Y=>{if(!C.needsRepair91(Y,item))return false;C.repairItem(Y,item)})).catch(()=>null);
+      if(!ok){if(byT)await editDomus(D.id,Y=>{Y.treasury=(Y.treasury|0)+cost;const L=Y.led89;if(L&&L.out&&L.out.repair!=null)L.out.repair=Math.max(0,(L.out.repair|0)-cost)});else await editChar(payer.id,c=>{c.wallet=(c.wallet|0)+cost});throw new Error('That piece changed a moment ago — try again.')}
+      const D2=await domusGet(D.id);return {cost,item,holder:hc?strip(await charById(hc.id)):{house:true,gear:D2.gear||[],pcs:D2.pcs||{}},domus:C.domusRow(D2),...(payer&&payer.id!==(hc&&hc.id)?{payer:strip(await charById(payer.id))}:{})}};
+    /* 🔒 keep home: named pieces only */
+    {const base=R['gear.home'];R['gear.home']=async(d,ctx)=>{if(d&&d.on!==false&&!C.isNamed(String(d.item||'')))throw fail('home_named','Only named pieces stay home — printed gear is never kept out of Ranked.');return base(d,ctx)}}
+  }
   const route=async function(t,d,ctx){const f=R[t];if(!f)throw new Error('Unknown request: '+t);
     /* v0.82 guests look, never act — for 2 hours from their first connect */
     if(!ctx.acct&&ctx.guest){if(now()-(ctx.guest.first||0)>C.GUEST_MS)throw fail('guest_expired','Your two hours as a guest are up — sign in to keep watching.');
