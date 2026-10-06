@@ -47683,6 +47683,11 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   const p=cur();const z=zoraChest91(p);if(!z)return;
   act(async()=>{z.carry=null;p.carrying=true;S.chest.held='p'+p.id;S.chest.r=p.r;S.chest.c=p.c;p.mv=Math.max(0,p.mv-1);
     log(_T`${nm(z)} hands the Arena Chest to ${nm(p)}.`)})});
+/* Open Arena Chest without a key (his confusion 2026-10-06: a delivered chest showed only "Pick up chest"): on or carrying the chest with
+   no Arena Key, the button shows dimmed with the reason, so the missing key is obvious (Venatore and Damnatio start with none). */
+{const base=render;render=function(){const r=base.apply(this,arguments);try{const p=typeof cur==='function'&&cur();const box=document.querySelector('#actions .acts');
+  if(p&&!p.cpu&&box&&S.chest&&S.phase==='action'&&!S.over&&p.keys<=0&&S.chest.weapons&&S.chest.weapons.length&&(onChestTile(p)||p.carrying)&&!box.querySelector('[data-act="chest"],[data-act91="chestkey"]'))
+    box.insertAdjacentHTML('beforeend',`<button class="btn" type="button" data-act91="chestkey" disabled title="${_T`Opening the Arena Chest costs 1 Arena Key.`}">${_T`Open Arena Chest`}<small>${_T`needs an Arena Key`}</small></button>`)}catch(e){console.error(e)}return r}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
