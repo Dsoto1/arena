@@ -20,7 +20,7 @@ openCrowd=async function(player){
       [{label:_T('Close'),value:'close'}],{grid,wide:1,onOpen:()=>{const b=document.getElementById('mboxEl');if(b)b.classList.remove('tall')}});   /* v0.89: a wide window, but only as tall as its choices (no fixed big-window height) */
     if(v==='close'||!v)break;
     if(v==='sp'){await humanSpear(player);render();break}
-    if(v==='mk'){player.cf-=3;player.market=true;log(_T`${nm(player)} spends ${cfAmt87(3)} to unlock the market.`)}
+    if(v==='mk'){player.cf-=3;player.market=true;log(_T`${nm(player)} spends ${cfAmt87(3)} to unlock the market.`);if(!player.cpu){render();await openMarket(player);break} /* v0.92 (his note): unlocking opens the market */}
     if(v==='key'){player.cf-=5;player.keys++;log(_T`${nm(player)} buys an Arena Key.`)}
     if(v==='card'){player.cf-=5;await drawArena(player)}
     if(v==='el'){player.cf-=8;player.items.push(mkOffer('elix4'));log(_T`${nm(player)} buys a Health Elixir token.`)}

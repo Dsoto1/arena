@@ -35,3 +35,8 @@ ar91Blit=function(L,op){if(AR91.noStatic&&!op)return;const dpr=window.devicePixe
 /* v0.92 (his note): hovering armor in a window shows ONLY the try-on avatar (98 #tryOn), not the enlarged card tooltip (#tip) as well.
    When there is no try-on (no live fighter) the card tooltip still shows. */
 {const st=document.createElement('style');st.textContent='body:has(#tryOn:not([hidden])) #tip{display:none!important}';document.head.appendChild(st)}
+/* v0.92 (his note): the market window offers only the levels you can pay for (no greyed "Buy at level 3" you cannot afford) */
+{const base=modal;modal=function(title,body,btns,opt){try{if(title===_T('Market of Flavius')&&Array.isArray(btns)&&S&&typeof cur==='function'){const p=cur();
+  if(p&&p.market){const keep=btns.filter(b=>{const m=b&&/^b([123])$/.exec(String(b.value||''));if(!m)return true;return p.coin>=purchaseCost(p,+m[1])});
+    if(!keep.some(b=>/^b[123]$/.test(String(b&&b.value||''))))keep.unshift({label:_T('Not enough coin for any level'),sub:_T`${coinAmt87(p.coin)} in your purse`,value:'nocoin92',disabled:true});btns=keep}}}catch(e){console.error(e)}
+  return base.call(this,title,body,btns,opt)}}

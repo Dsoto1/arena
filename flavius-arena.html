@@ -41928,7 +41928,7 @@ openCrowd=async function(player){
       [{label:_T('Close'),value:'close'}],{grid,wide:1,onOpen:()=>{const b=document.getElementById('mboxEl');if(b)b.classList.remove('tall')}});   /* v0.89: a wide window, but only as tall as its choices (no fixed big-window height) */
     if(v==='close'||!v)break;
     if(v==='sp'){await humanSpear(player);render();break}
-    if(v==='mk'){player.cf-=3;player.market=true;log(_T`${nm(player)} spends ${cfAmt87(3)} to unlock the market.`)}
+    if(v==='mk'){player.cf-=3;player.market=true;log(_T`${nm(player)} spends ${cfAmt87(3)} to unlock the market.`);if(!player.cpu){render();await openMarket(player);break} /* v0.92 (his note): unlocking opens the market */}
     if(v==='key'){player.cf-=5;player.keys++;log(_T`${nm(player)} buys an Arena Key.`)}
     if(v==='card'){player.cf-=5;await drawArena(player)}
     if(v==='el'){player.cf-=8;player.items.push(mkOffer('elix4'));log(_T`${nm(player)} buys a Health Elixir token.`)}
@@ -47825,6 +47825,11 @@ ar91Blit=function(L,op){if(AR91.noStatic&&!op)return;const dpr=window.devicePixe
 /* v0.92 (his note): hovering armor in a window shows ONLY the try-on avatar (98 #tryOn), not the enlarged card tooltip (#tip) as well.
    When there is no try-on (no live fighter) the card tooltip still shows. */
 {const st=document.createElement('style');st.textContent='body:has(#tryOn:not([hidden])) #tip{display:none!important}';document.head.appendChild(st)}
+/* v0.92 (his note): the market window offers only the levels you can pay for (no greyed "Buy at level 3" you cannot afford) */
+{const base=modal;modal=function(title,body,btns,opt){try{if(title===_T('Market of Flavius')&&Array.isArray(btns)&&S&&typeof cur==='function'){const p=cur();
+  if(p&&p.market){const keep=btns.filter(b=>{const m=b&&/^b([123])$/.exec(String(b.value||''));if(!m)return true;return p.coin>=purchaseCost(p,+m[1])});
+    if(!keep.some(b=>/^b[123]$/.test(String(b&&b.value||''))))keep.unshift({label:_T('Not enough coin for any level'),sub:_T`${coinAmt87(p.coin)} in your purse`,value:'nocoin92',disabled:true});btns=keep}}}catch(e){console.error(e)}
+  return base.call(this,title,body,btns,opt)}}
 /* 207-v92extras — v0.92 ARMOR EXTRAS in the 2D Armor designer (his picks 2026-10-06).
    • Printed pieces stay one fused unit. A custom piece gets click-to-add EXTRAS, all COSMETIC (no AP, no rules): neck guard
      (galerus), Manica plates, studs, spikes, fur trim, an emblem (a Studio banner or the Manager house banner when there is one,
