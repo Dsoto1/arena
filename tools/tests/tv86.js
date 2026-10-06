@@ -97,7 +97,7 @@ ok(out.b.menu.LANG===WL&&out.b.menu.html===WL,'B: <html lang="'+WL+'"> '+JSON.st
 ok(!/Manager mode|Settings/.test(out.b.menu.txt),'B: the main menu reads '+WL+' '+out.b.menu.txt.slice(0,120));
 ok(out.b.play&&out.b.turn&&out.b.moved,'B: Play Now → the horns → a turn played in Spanish');
 ok(out.b.log&&out.b.log.n>0,'B: the log runs');
-ok(out.b.set&&out.b.sel&&out.b.sel.v===WL&&out.b.sel.opts.join()==='en,es,it,pt,fr,de,ja,zh','B: Settings language select '+JSON.stringify(out.b.sel));
+ok(out.b.set&&out.b.sel&&out.b.sel.v===WL&&out.b.sel.opts.join()==='en,es,it,pt,fr,de,ja,zh,au','B: Settings language select '+JSON.stringify(out.b.sel));
 ok(out.b.rules&&out.b.mgr&&out.b.studio&&out.b.onl,'B: Rules, Manager, Studio, Online open in Spanish');
 ok(out.b.names.n===0||out.b.names.eng,'B: game terms stay English');
 const LEFT_MAX=+(process.env.LEFT_MAX||60),CUT_MAX=+(process.env.CUT_MAX||25);
