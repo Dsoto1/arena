@@ -37419,7 +37419,7 @@ Object.assign(MOCK_ROUTES,{
     if((D.treasury|0)<p)throw onlErr82(_T`The treasury needs ${p} coin.`,'no_coin',{cost:p});D.treasury-=p;D.gear=[...(D.gear||[]),d.item];return {domus:mockDRow82(D),gear:D.gear,pcs:D.pcs||{}}},
   'gift.open':(w,d,me)=>{const ch=mockOwn83(w,me,d.char);if(!(ch.gifts||[]).some(g=>g.id===d.gift))throw new Error(_T('No such gift.'));if(mockCharBusy82(w,ch.id))throw onlErr82(_T`${ch.name} is in a match — open it afterwards.`,'in_match');
     const cat=onlCatalog();const rw=ONLC.rollGift(Math.random,cat,ONLC.rankFor(ch).k);let P=null;
-    if(rw.k==='named'){w.chest83=w.chest83||[];w.uniq83=w.uniq83||[];if(w.chest83.length&&Math.random()<0.5){const x=w.chest83.splice(Math.floor(Math.random()*w.chest83.length),1)[0];P={item:x.item,pc:x.pc}}
+    if(rw.k==='named'){w.chest83=w.chest83||[];w.uniq83=w.uniq83||[];if(false&&w.chest83.length&&Math.random()<0.5){const x=w.chest83.splice(Math.floor(Math.random()*w.chest83.length),1)[0];P={item:x.item,pc:x.pc}}
       else{let def=ONLC.rollNamed(Math.random,cat,rw.rar,w.uniq83);if(def&&def.uq){if(w.uniq83.includes(def.uq))def=ONLC.rollNamed(Math.random,cat,'epic',[]);else w.uniq83.push(def.uq)}if(def)P=ONLC.namedPiece(def,ch)}
       if(!P){rw.k='coin';rw.v=50}}
     ONLC.giftTake(ch,d.gift);let res,D2=null;if(P&&!ONLC.canWearNamed(ch)){D2=mockDomus82(w,ch.domus);if(D2)ONLC.putPiece(D2,P,false);else ONLC.putPiece(ch,P,false);res={to:D2?'house':'glad'}}else res=ONLC.applyGift(ch,null,rw,P);
@@ -37563,7 +37563,7 @@ Object.assign(MOCK_ROUTES,{
     if(!old&&!(D0&&(D0.gifts||[]).some(g=>g.id===d.gift)))throw new Error(_T('No such gift.'));
     const ch=old||onlMockChar(w,me);if(ch&&mockCharBusy82(w,ch.id))throw onlErr82(_T`${ch.name} is in a match — open it afterwards.`,'in_match');
     const cat=onlCatalog();const rw=ONLC.rollGift(Math.random,cat,ch?ONLC.rankFor(ch).k:'tiro');let P=null;
-    if(rw.k==='named'){w.chest83=w.chest83||[];w.uniq83=w.uniq83||[];if(w.chest83.length&&Math.random()<0.5){const x=w.chest83.splice(Math.floor(Math.random()*w.chest83.length),1)[0];P={item:x.item,pc:x.pc}}
+    if(rw.k==='named'){w.chest83=w.chest83||[];w.uniq83=w.uniq83||[];if(false&&w.chest83.length&&Math.random()<0.5){const x=w.chest83.splice(Math.floor(Math.random()*w.chest83.length),1)[0];P={item:x.item,pc:x.pc}}
       else{let def=ONLC.rollNamed(Math.random,cat,rw.rar,w.uniq83);if(def&&def.uq){if(w.uniq83.includes(def.uq))def=ONLC.rollNamed(Math.random,cat,'epic',[]);else w.uniq83.push(def.uq)}if(def)P=ONLC.namedPiece(def,ch||D0)}
       if(!P){rw.k='coin';rw.v=50}}
     ONLC.giftTake(old||D0,d.gift);let res,D2=null;
@@ -37642,13 +37642,13 @@ function onl83PieceCard(I,o){o=o||{};if(!I)return '';if(I.named)return nw83Card(
 /* ---------------- 3 · the DOMUS: treasury, gifts chest, trophy shelf, tester panel ---------------- */
 function onl83GiftN(){const D=ONL.domus||{};const own=onl83Live().reduce((a,c)=>a+((c.gifts||[]).length),0);const dg=ONL82.dg&&ONL82.dg.gifts;return Math.max(D.gifts|0,Array.isArray(dg)?dg.length:0)+own}
 function onl83Chest(sz,where){if(!ONL.acct||onlIsGuest82()||ONL.needDomus)return '';const n=onl83GiftN();
-  return `<button type="button" class="gift83 ${n?'on':''} ${where||''}" data-onl83="gift" title="${n?_T`Flavius's gifts · ${n} unopened`:_T('Flavius sends a gift at every new rank and every 5 Ranked bouts survived')}">${typeof rtokHTML==='function'?rtokHTML('chest',sz,''):'🎁'}${n?`<b class="gift83n">${n}</b>`:''}<small>${n?_T('Open'):_T('Gifts')}</small></button>`}
+  return `<button type="button" class="gift83 ${n?'on':''} ${where||''}" data-onl83="gift" title="${n?_T`Donativum · ${n} unopened`:_T('Flavius sends a Donativum at every new rank and every 5 Ranked bouts survived')}">${typeof rtokHTML==='function'?rtokHTML('chest',sz,''):'🎁'}${n?`<b class="gift83n">${n}</b>`:''}<small>${n?_T('Open'):_T('Donativum')}</small></button>`}
 const TROPHY_IC83=k=>{const [a,b]=String(k).split(':');if(a==='first')return '🏆';if(a==='rank')return rk83(b).ic;if(a==='slew')return b==='commodus'?'👑':b==='tholo'?'🦁':'💀';return {surv10:'🛡',surv25:'🛡',thumb:'👍',vday:'☀'}[a]||'🏅'};
 function onl83Trophies(list,empty){const T=(list||[]).slice().sort((a,b)=>(b.at||0)-(a.at||0));
   return `<div class="tr83"><div class="tr83-h">${_T`🏛 Trophy room <small class="rc-sub">${T.length}</small>`}</div>${T.length?`<div class="tr83-shelf">${T.map(t=>`<div class="tr83-t" title="${esc2(t.n||ONLC.trophyName(t.k))}${t.glad?' · '+esc2(t.glad):''}"><span class="tr83-ic">${TROPHY_IC83(t.k)}${(t.x|0)>1?`<i>×${t.x}</i>`:''}</span><b>${esc2(t.n||ONLC.trophyName(t.k))}</b><small>${esc2(date83(t.at))}${t.glad?' · '+esc2(t.glad):''}</small></div>`).join('')}</div>`:`<p class="rc-sub tr83-none">${empty||_T('No trophies yet — first Ranked wins, ranks reached, Commodus or Tholo slain.')}</p>`}</div>`}
 function onl83Tester(){if(!ONL83U.tester)return '';const cat=onlCatalog();const opts=Object.entries(cat).sort((a,b)=>a[1].kind.localeCompare(b[1].kind)||a[1].lv-b[1].lv||a[1].n.localeCompare(b[1].n)).map(([k,it])=>`<option value="${k}">${it.kind==='w'?'⚔':'🛡'} L${it.lv} ${esc2(it.n)}</option>`).join('');
   return `<details class="tst83" ${ONL83U.tstOpen?'open':''}><summary>${_T`🧪 Tester <small class="rc-sub">grants make this a TEST house for good — Custom only, out of Today and the ranks</small>`}</summary>
-    <div class="tst83-g"><label>${_T`Coin`}<input class="tin" type="number" min="0" max="100000" id="tst83coin" value="0"></label><label>${_T`Gifts`}<input class="tin" type="number" min="0" max="10" id="tst83gift" value="0"></label>
+    <div class="tst83-g"><label>${_T`Coin`}<input class="tin" type="number" min="0" max="100000" id="tst83coin" value="0"></label><label>${_T`Donativa`}<input class="tin" type="number" min="0" max="10" id="tst83gift" value="0"></label>
      <label>${_T`Glory`}<input class="tin" type="number" min="0" max="10000" id="tst83glory" value="0"></label><label>${_T`Gear`}<select class="tin" id="tst83gear"><option value="">—</option>${opts}</select></label>
      <label>${_T`Offering`}<select class="tin" id="tst83off"><option value="">—</option>${ONLC.OFFERS83.map(k=>`<option value="${k}">${esc2(OFF83N(k))}</option>`).join('')}</select></label></div>
     <div class="acts"><button type="button" class="btn primary tksm" data-onl83="grant">${_T`🧪 Grant`}</button></div></details>`}
@@ -37753,9 +37753,9 @@ const GIFT_WHY83=g=>{const [a,b]=String(g&&g.why||'').split(':');if(a==='rank')r
 async function onl83GiftOpen(){if(ONL83U.giftBusy)return;ONL83U.giftBusy=true;try{
     let g=null;try{const r=await NET.req('domus.get',{});g=(r.gifts||[])[0]||null}catch(e){}
     let char=null;if(!g){const c=onl83Live().find(x=>(x.gifts||[]).length);if(c){g=c.gifts[0];char=c.id}}
-    if(!g){onlToast80(_T('🎁 No gifts waiting. Flavius sends one at every new rank and every 5 Ranked bouts survived.'));return}
+    if(!g){onlToast80(_T('🎁 No Donativum waiting. Flavius sends one at every new rank and every 5 Ranked bouts survived.'));return}
     const who=ONL.char?esc2(ONL.char.name):esc2(onlHouse82(onlMyDomus82()||_T('the house')));
-    const bg=onl83Pop('gift83pop',`<div class="gft83"><div class="gft83-tok spin">${typeof rtokHTML==='function'?rtokHTML('chest',150,''):'🎁'}</div><h3 class="pop83h">${_T`Flavius’s gift`}</h3><p class="rc-sub">${_T`${esc2(GIFT_WHY83(g))}${g.glad?_T` · earned by ${esc2(g.glad)}`:''} · opened for ${who}`}</p><div class="gft83-prize" id="gft83p"></div></div>`,{sticky:1});
+    const bg=onl83Pop('gift83pop',`<div class="gft83"><div class="gft83-tok spin">${typeof rtokHTML==='function'?rtokHTML('chest',150,''):'🎁'}</div><h3 class="pop83h">${_T`Donativum`} <span class="dnv91i" data-tip="${esc2(_T('The emperor’s gift: Flavius sends a Donativum at every new rank, every 5 Ranked bouts survived and for the weekly challenge. Everything in it is brand new.'))}">ⓘ</span></h3>${GIFT_WHY83(g)?`<p class="rc-sub">${esc2(GIFT_WHY83(g))}</p>`:''}<div class="gft83-prize" id="gft83p"></div></div>`,{sticky:1});
     const t0=Date.now();let r=null,err=null;try{r=await NET.req('gift.open',{gift:g.id,...(char?{char}:{})})}catch(e){err=e}
     await new Promise(z=>setTimeout(z,Math.max(0,1500-(Date.now()-t0))));
     const tok=bg.querySelector('.gft83-tok');if(tok){tok.classList.remove('spin');tok.classList.add('done')}
@@ -37862,7 +37862,7 @@ if(typeof GUEST_ACTS82!=='undefined')GUEST_ACTS82.add('tab');
     if(!o.died&&(o.award|0)>0)bits.push(_T`💰 Award ${o.award} − the lanista’s cut ${o.cut|0} (to the treasury) = <b>${coinAmt87(o.pay)}</b>`);
     if((o.broken||[]).length)bits.push(_T`💔 ${o.broken.length} piece${o.broken.length===1?'':'s'} came back broken — 🔧 repair in the Storeroom`);
     if((o.offBack||[]).length)bits.push(_T`🧪 ${o.offBack.length} offering${o.offBack.length===1?'':'s'} back in the satchel`);
-    if((o.gifts||[]).length)bits.push(_T`🎁 Flavius sends ${o.gifts.length===1?_T('a gift'):o.gifts.length+' gifts'} to the house`);
+    if((o.gifts||[]).length)bits.push(_T`🎁 Flavius sends ${o.gifts.length===1?_T('a Donativum'):o.gifts.length+_T(' Donativa')} to the house`);
     if(bits.length)setTimeout(()=>onlToast80(bits.join('<br>')),5200);ONL82.dgAt=0}catch(e){}return r}}
 
 /* ---------------- the controls ---------------- */
@@ -38236,7 +38236,7 @@ function onl84WeekCard(){const F=onl84Fx();const X=ONL84.week||{};const ev=esc2(
   const all=rows.every(r=>r[2]>=r[3]);
   return `<div class="card2 wk84" id="wk84"><div class="wk84-h">${_T`<b>⭐ This week: ${ev} at ${city}</b><small class="rc-sub">Season ${F.season} · week ${F.wk} of 12 · ends in ${onl84Left(F.end)}${raw?_T` · the schedule names ${esc2(raw)}`:''}</small>`}</div>
     ${rows.map(([k,t,v,n])=>`<div class="wk84-c ${v>=n?'ok':''}" data-wk84="${k}"><span>${v>=n?'☑':'◻'}</span><span>${t}</span>${n>1?`<small>${v}/${n}</small>`:''}</div>`).join('')}
-    <div class="wk84-g ${X.gift?'got':all?'':'wait'}">${X.gift?_T('🎁 Flavius’s gift for the week is in your house.'):all?_T('🎁 All done — a gift comes with your next win.'):_T('🎁 All three (with a win) earn ONE Flavius gift a week.')}</div></div>`}
+    <div class="wk84-g ${X.gift?'got':all?'':'wait'}">${X.gift?_T('🎁 This week’s Donativum is in your house.'):all?_T('🎁 All done — a Donativum comes with your next win.'):_T('🎁 All three (with a win) earn ONE Donativum a week.')}</div></div>`}
 function onl84PlCard(){const F=onl84Fx();const ok=!!ONL.char&&!onlIsGuest82();
   return `<div class="onl-pl pl81 pl84" data-pl81="week84"><div class="onl-plart">${typeof cardHTML==='function'?cardHTML('e:'+F.ev,'sm'):''}<span class="pl84-star">⭐</span></div><div class="onl-plb">${_T`<b>This week: ${esc2(onlEvName(F.ev))}</b>`}<span class="badge gold">${_T`at ${esc2(onlCityName(F.loc))}`}</span>${_T`<small>The weekly challenge · season ${F.season}, week ${F.wk}</small>`}
     <div class="acts">${ok?`<button type="button" class="btn primary tksm" data-onl84="wk" data-v="1">${_T`⚔ Ranked`}</button><button type="button" class="btn tksm" data-onl84="wk" data-v="0">${_T`Custom`}</button>`:_T('<small class="rc-sub">Raise a gladiator to play</small>')}</div></div></div>`}
@@ -38292,7 +38292,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
     return onlDo(async()=>{try{const r=await NET.req('auction.bid',{lot:v,amt});if(r.char)onl83Put(r.char);ONL84.aucAt=0;onlToast80(_T`🔨 Your bid of ${c83()} ${amt} leads — the coin waits in escrow.`)}
       catch(err){if(err&&err.code==='auc_low'){ONL84.aucAt=0;onlToast80('🔨 '+esc2(err.message));onlRedraw();return}throw err}})}},true);
 /* the result toast: the CPU played most of it */
-{const base=onlSettled;onlSettled=function(res){const r=base.apply(this,arguments);try{const o=res&&res.out;if(o&&o.cpu&&!res.void)setTimeout(()=>onlToast80(_T('🤖 The CPU fought most of that bout in your seat — Flavius pays a quarter, and no gifts.')),6200);ONL82.dgAt=0}catch(e){}return r}}
+{const base=onlSettled;onlSettled=function(res){const r=base.apply(this,arguments);try{const o=res&&res.out;if(o&&o.cpu&&!res.void)setTimeout(()=>onlToast80(_T('🤖 The CPU fought most of that bout in your seat — Flavius pays a quarter, and no Donativum.')),6200);ONL82.dgAt=0}catch(e){}return r}}
 
 {const st=document.createElement('style');st.textContent=`
 .nw83.holo84{position:relative;isolation:isolate}
@@ -43650,7 +43650,7 @@ function d89Tile(ch,x,i,busy){const I=x.I;const named=I.named;const col=named?ON
 
 /* ---------------- 1 · the banner ---------------- */
 function d89Ledger(){const L=(ONL.domus||{}).led89;const T=(ONL.domus||{}).treasury|0;
-  const IN=[['cut',_T('The 20% cut from bouts')],['gift',_T('Flavius’s gifts')],['sale',_T('Sales (a full shelf)')],['refund',_T('Refunds')],['grant',_T('Tester grants')]];
+  const IN=[['cut',_T('The 20% cut from bouts')],['gift',_T('Donativa (Flavius)')],['sale',_T('Sales (a full shelf)')],['refund',_T('Refunds')],['grant',_T('Tester grants')]];
   const OUT=[['gear',_T('Gear for the shelf')],['repair',_T('Repairs')],['class',_T('Class changes')],['upg',_T('Upgrades')]];
   const row=(l,v,neg)=>`<div class="lg89-r"><span>${l}</span><b class="${neg?'neg':''}">${neg?'−':''}${d89Coin(v)}</b></div>`;
   if(!L)return `<div class="lg89"><b class="lg89-h">${_T`🏛 The treasury · ${d89Coin(T)}`}</b><p class="rc-sub">${_T`The ledger starts with v0.89 — nothing booked yet.`}</p></div>`;
@@ -43715,7 +43715,7 @@ function d89Show(ch,busy){if(!ch)return `<div class="sc89 none"><p class="rc-sub
 /* ---------------- 3 · the equipment bar ---------------- */
 function d89BarHTML(ch,busy){const tab=V89D.tab==='offs'?'offs':'gear';const B=d89Bar();V89D.bar=B;const sh=d89Shelf();const D=ONL.domus||{};const smax=D.smax||ONLC.shelfMax(D);
   const tb=(k,l)=>`<button type="button" role="tab" data-eb89="${k}" class="${tab===k?'on':''}" aria-selected="${tab===k}">${l}</button>`;
-  const gear=B.length?B.map((x,i)=>d89Tile(ch,x,i,busy)).join(''):`<p class="rc-sub eb89-e">${_T`Nothing in the house — the Armory sells, Flavius gifts, the fallen leave their gear here.`}</p>`;
+  const gear=B.length?B.map((x,i)=>d89Tile(ch,x,i,busy)).join(''):`<p class="rc-sub eb89-e">${_T`Nothing in the house — the Armory sells, Flavius’s Donativa, the fallen leave their gear here.`}</p>`;
   const offs=(sh.offers||[]).map((k,i)=>`<span class="of89" data-d89of="${i}" role="button" tabindex="0" title="${esc2(OFF83N(k))}">${offTok83(k,40)}<small>${esc2((OFFER[k]||{}).n||k)}</small></span>`).join('')||`<p class="rc-sub eb89-e">${_T`The shelf is empty — the Armory sells offerings.`}</p>`;
   return `<div class="eb89 dz89" data-dz89="bar"><div class="eb89-tabs" role="tablist">${tb('gear',_T`⚔ Gear <small>${B.length}</small>`)}${tb('offs',_T`🧪 Offerings <small>${(sh.offers||[]).length}/${smax}</small>`)}
      <small class="rc-sub eb89-hint">${ch?_T`Click a piece to put it on ${esc2(ch.name)} — or drag it onto him. Drag what he wears back here to take it off.`:_T`The house’s gear waits here for a gladiator.`}</small></div>
@@ -44204,22 +44204,22 @@ function odds89HTML(){const G=ONLC.giftOdds89();const cat=onlCatalog();const OA=
   const affA=`<table class="o89t o89a" data-o89="affa"><tr><th>${_T`Armor affix`}</th><th>${RN.rare}</th><th>${RN.epic}</th><th>${RN.legendary}</th></tr>${affRows(OA,aKeys,k=>`<b>${esc2(ONLC.AFF_LAT89[k]||k)}</b><small>${AFF89T[k]||k}</small>`)}</table>`;
   const affW=`<table class="o89t o89a" data-o89="affw"><tr><th>${_T`Weapon affix`}</th><th>${RN.rare}</th><th>${RN.epic}</th><th>${RN.legendary}</th></tr>${affRows(OW,wKeys,k=>`<small>${AFFW89T[k]||esc2((ONLC.AFFIX[k]||{}).n||k)}</small>`)}</table>`;
   const uq=(L,t)=>`<p class="o89u"><b>${t}</b> ${L.map(u=>`<span title="${esc2(u.d)}">${esc2(u.n)}</span>`).join(' · ')}</p>`;
-  return `<div class="odds89" data-o89="card"><h3 class="pop83h">${_T`🎁 What Flavius’s gifts hold`}</h3>
-    <p class="rc-sub">${_T`One gift every new rank and every 5 Ranked bouts survived, one for the weekly challenge. Each opening rolls once:`}</p>
+  return `<div class="odds89" data-o89="card"><h3 class="pop83h">${_T`🎁 What a Donativum holds`}</h3>
+    <p class="rc-sub">${_T`Flavius sends one every new rank and every 5 Ranked bouts survived, one for the weekly challenge — always brand new. Each opening rolls once:`}</p>
     <table class="o89t" data-o89="kinds">${kinds}</table>
     <h4>${_T`A named piece: its tier`}</h4>${tiers}
     <p class="rc-sub">${_T`Common has no affix · Rare 1 · Epic 2 · Legendary 2 + a unique effect. The chance a piece of that tier carries each affix:`}</p>${affA}${affW}
     <p class="rc-sub">${_T`Fortunae comes only on Legendary armor. Lapidarius is twice as likely on a helm.`}</p>
     <h4>${_T`Legendary uniques`}</h4>${uq(ONLC.UNIQUES_A,_T('Armor:'))}${uq(ONLC.UNIQUES,_T('Weapons:'))}
     <p class="rc-sub">${_T`Each unique exists once in the world. Once all are claimed, a Legendary roll becomes Epic.`}</p>
-    <p class="rc-sub">${_T`🔨 Auction lots and some named gifts are pieces back in Flavius’s chest from fallen gladiators: no new roll — they keep their own tier and affixes.`}</p></div>`}
+    <p class="rc-sub">${_T`🔨 Auction lots are pieces back in Flavius’s chest from fallen gladiators: no new roll — they keep their own tier, affixes and owners.`}</p></div>`}
 function odds89Show(el){let f=document.getElementById('odds89f');if(!f){f=document.createElement('div');f.id='odds89f';f.className='odds89f';document.body.appendChild(f)}
   f.innerHTML=odds89HTML();f.hidden=false;const r=el.getBoundingClientRect();const w=Math.min(440,window.innerWidth-16);f.style.width=w+'px';
   f.style.left=Math.max(8,Math.min(window.innerWidth-w-8,r.left+r.width/2-w/2))+'px';f.style.top=Math.min(window.innerHeight-80,r.bottom+6)+'px';
   const b=f.getBoundingClientRect();if(b.bottom>window.innerHeight-6)f.style.top=Math.max(6,window.innerHeight-6-b.height)+'px'}
 const odds89Hide=()=>{const f=document.getElementById('odds89f');if(f)f.hidden=true};
 {const base=onl83Chest;onl83Chest=function(sz,where){const h=base.apply(this,arguments);if(!h)return h;
-  return `<span class="odds89w ${where||''}">${h}<button type="button" class="odds89i" data-odds89="1" aria-label="${_T`The odds of Flavius’s gifts`}" title="${_T`Odds`}">ⓘ</button></span>`}}
+  return `<span class="odds89w ${where||''}">${h}<button type="button" class="odds89i" data-odds89="1" aria-label="${_T`The odds of a Donativum`}" title="${_T`Odds`}">ⓘ</button></span>`}}
 document.addEventListener('mouseover',e=>{const t=e.target.closest&&e.target.closest('[data-odds89]');
   if(t&&window.matchMedia&&window.matchMedia('(hover:hover)').matches){try{odds89Show(t)}catch(err){console.error(err)}}else if(!(e.target.closest&&e.target.closest('#odds89f')))odds89Hide()});
 document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-odds89]');if(!t)return;e.preventDefault();e.stopPropagation();odds89Hide();
@@ -46944,7 +46944,7 @@ function wear91Layer(rubble){if(!WEAR91.on||!S)return;const t0=performance.now()
 function rubbleOn91(r,c){for(const rb of (S&&S.rubble)||[]){const dr=rb.dr||0,dc=rb.dc||0;for(let k=0;k<3;k++)if(rb.r+dr*k===r&&rb.c+dc*k===c)return true}return false}
 {const base=describeTile;describeTile=function(t){let h=base.apply(this,arguments);try{if(t&&S&&typeof h==='string'&&rubbleOn91(t.r,t.c)&&!pillarAt(t.r,t.c))h+=' · '+_T('Rubble — walkable')}catch(e){}return h}}
 /* 195-v91srvexp — GENERATED by tools/srvstamp.js: the online server this page expects (server/src/build.json). */
-const SRV_EXPECT91={"v":"0.91","hash":"63128e81008d"};
+const SRV_EXPECT91={"v":"0.91","hash":"c98c388bde28"};
 /* 196-v91srv — v0.91 THE ONLINE SERVER'S VERSION (his ask 2026-10-06, after "Unknown request: domus.look" — the page was newer than the
    server running on AWS). hello now carries build {v, hash} (server/src/build.json, stamped by tools/srvstamp.js); this page knows the
    server it expects (SRV_EXPECT91, generated into 195-v91srvexp.js).
@@ -46976,6 +46976,11 @@ setInterval(srv91Chip,1000);
 #srv91.old{background:rgba(70,40,6,.92);color:#ffd27a;border-color:#e0a030}
 #srv91.mock{color:#9fb7c8;border-color:rgba(159,183,200,.4)}
 body.onlarena #srv91{display:none}`;document.head.appendChild(st)}
+/* v0.91 THE DONATIVUM (his picks 2026-10-06): Flavius's free gifts are called a Donativum (plural Donativa) everywhere online — the ⓘ on
+   the opening card says they come from Flavius. The card no longer prints "earned by … · opened for …" (the prize line names who got it),
+   and a Donativum is always BRAND NEW: the server (and the practice mock) never hands out a used piece from Flavius's chest — owner
+   history is only for arena-worn pieces, which go to the auction. */
+{const st=document.createElement('style');st.textContent=`.dnv91i{display:inline-block;font:600 .55em/1 system-ui,sans-serif;vertical-align:.45em;color:#c9ad6a;cursor:help;margin-left:4px}`;document.head.appendChild(st)}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

@@ -146,7 +146,7 @@ Object.assign(MOCK_ROUTES,{
     if((D.treasury|0)<p)throw onlErr82(_T`The treasury needs ${p} coin.`,'no_coin',{cost:p});D.treasury-=p;D.gear=[...(D.gear||[]),d.item];return {domus:mockDRow82(D),gear:D.gear,pcs:D.pcs||{}}},
   'gift.open':(w,d,me)=>{const ch=mockOwn83(w,me,d.char);if(!(ch.gifts||[]).some(g=>g.id===d.gift))throw new Error(_T('No such gift.'));if(mockCharBusy82(w,ch.id))throw onlErr82(_T`${ch.name} is in a match — open it afterwards.`,'in_match');
     const cat=onlCatalog();const rw=ONLC.rollGift(Math.random,cat,ONLC.rankFor(ch).k);let P=null;
-    if(rw.k==='named'){w.chest83=w.chest83||[];w.uniq83=w.uniq83||[];if(w.chest83.length&&Math.random()<0.5){const x=w.chest83.splice(Math.floor(Math.random()*w.chest83.length),1)[0];P={item:x.item,pc:x.pc}}
+    if(rw.k==='named'){w.chest83=w.chest83||[];w.uniq83=w.uniq83||[];if(false&&w.chest83.length&&Math.random()<0.5){const x=w.chest83.splice(Math.floor(Math.random()*w.chest83.length),1)[0];P={item:x.item,pc:x.pc}}
       else{let def=ONLC.rollNamed(Math.random,cat,rw.rar,w.uniq83);if(def&&def.uq){if(w.uniq83.includes(def.uq))def=ONLC.rollNamed(Math.random,cat,'epic',[]);else w.uniq83.push(def.uq)}if(def)P=ONLC.namedPiece(def,ch)}
       if(!P){rw.k='coin';rw.v=50}}
     ONLC.giftTake(ch,d.gift);let res,D2=null;if(P&&!ONLC.canWearNamed(ch)){D2=mockDomus82(w,ch.domus);if(D2)ONLC.putPiece(D2,P,false);else ONLC.putPiece(ch,P,false);res={to:D2?'house':'glad'}}else res=ONLC.applyGift(ch,null,rw,P);

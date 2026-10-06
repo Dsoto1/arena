@@ -255,7 +255,7 @@ function onl84WeekCard(){const F=onl84Fx();const X=ONL84.week||{};const ev=esc2(
   const all=rows.every(r=>r[2]>=r[3]);
   return `<div class="card2 wk84" id="wk84"><div class="wk84-h">${_T`<b>⭐ This week: ${ev} at ${city}</b><small class="rc-sub">Season ${F.season} · week ${F.wk} of 12 · ends in ${onl84Left(F.end)}${raw?_T` · the schedule names ${esc2(raw)}`:''}</small>`}</div>
     ${rows.map(([k,t,v,n])=>`<div class="wk84-c ${v>=n?'ok':''}" data-wk84="${k}"><span>${v>=n?'☑':'◻'}</span><span>${t}</span>${n>1?`<small>${v}/${n}</small>`:''}</div>`).join('')}
-    <div class="wk84-g ${X.gift?'got':all?'':'wait'}">${X.gift?_T('🎁 Flavius’s gift for the week is in your house.'):all?_T('🎁 All done — a gift comes with your next win.'):_T('🎁 All three (with a win) earn ONE Flavius gift a week.')}</div></div>`}
+    <div class="wk84-g ${X.gift?'got':all?'':'wait'}">${X.gift?_T('🎁 This week’s Donativum is in your house.'):all?_T('🎁 All done — a Donativum comes with your next win.'):_T('🎁 All three (with a win) earn ONE Donativum a week.')}</div></div>`}
 function onl84PlCard(){const F=onl84Fx();const ok=!!ONL.char&&!onlIsGuest82();
   return `<div class="onl-pl pl81 pl84" data-pl81="week84"><div class="onl-plart">${typeof cardHTML==='function'?cardHTML('e:'+F.ev,'sm'):''}<span class="pl84-star">⭐</span></div><div class="onl-plb">${_T`<b>This week: ${esc2(onlEvName(F.ev))}</b>`}<span class="badge gold">${_T`at ${esc2(onlCityName(F.loc))}`}</span>${_T`<small>The weekly challenge · season ${F.season}, week ${F.wk}</small>`}
     <div class="acts">${ok?`<button type="button" class="btn primary tksm" data-onl84="wk" data-v="1">${_T`⚔ Ranked`}</button><button type="button" class="btn tksm" data-onl84="wk" data-v="0">${_T`Custom`}</button>`:_T('<small class="rc-sub">Raise a gladiator to play</small>')}</div></div></div>`}
@@ -311,7 +311,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
     return onlDo(async()=>{try{const r=await NET.req('auction.bid',{lot:v,amt});if(r.char)onl83Put(r.char);ONL84.aucAt=0;onlToast80(_T`🔨 Your bid of ${c83()} ${amt} leads — the coin waits in escrow.`)}
       catch(err){if(err&&err.code==='auc_low'){ONL84.aucAt=0;onlToast80('🔨 '+esc2(err.message));onlRedraw();return}throw err}})}},true);
 /* the result toast: the CPU played most of it */
-{const base=onlSettled;onlSettled=function(res){const r=base.apply(this,arguments);try{const o=res&&res.out;if(o&&o.cpu&&!res.void)setTimeout(()=>onlToast80(_T('🤖 The CPU fought most of that bout in your seat — Flavius pays a quarter, and no gifts.')),6200);ONL82.dgAt=0}catch(e){}return r}}
+{const base=onlSettled;onlSettled=function(res){const r=base.apply(this,arguments);try{const o=res&&res.out;if(o&&o.cpu&&!res.void)setTimeout(()=>onlToast80(_T('🤖 The CPU fought most of that bout in your seat — Flavius pays a quarter, and no Donativum.')),6200);ONL82.dgAt=0}catch(e){}return r}}
 
 {const st=document.createElement('style');st.textContent=`
 .nw83.holo84{position:relative;isolation:isolate}

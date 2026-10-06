@@ -29,3 +29,8 @@ setInterval(srv91Chip,1000);
 #srv91.old{background:rgba(70,40,6,.92);color:#ffd27a;border-color:#e0a030}
 #srv91.mock{color:#9fb7c8;border-color:rgba(159,183,200,.4)}
 body.onlarena #srv91{display:none}`;document.head.appendChild(st)}
+/* v0.91 THE DONATIVUM (his picks 2026-10-06): Flavius's free gifts are called a Donativum (plural Donativa) everywhere online — the ⓘ on
+   the opening card says they come from Flavius. The card no longer prints "earned by … · opened for …" (the prize line names who got it),
+   and a Donativum is always BRAND NEW: the server (and the practice mock) never hands out a used piece from Flavius's chest — owner
+   history is only for arena-worn pieces, which go to the auction. */
+{const st=document.createElement('style');st.textContent=`.dnv91i{display:inline-block;font:600 .55em/1 system-ui,sans-serif;vertical-align:.45em;color:#c9ad6a;cursor:help;margin-left:4px}`;document.head.appendChild(st)}

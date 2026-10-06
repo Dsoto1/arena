@@ -66,7 +66,7 @@ Object.assign(MOCK_ROUTES,{
     if(!old&&!(D0&&(D0.gifts||[]).some(g=>g.id===d.gift)))throw new Error(_T('No such gift.'));
     const ch=old||onlMockChar(w,me);if(ch&&mockCharBusy82(w,ch.id))throw onlErr82(_T`${ch.name} is in a match — open it afterwards.`,'in_match');
     const cat=onlCatalog();const rw=ONLC.rollGift(Math.random,cat,ch?ONLC.rankFor(ch).k:'tiro');let P=null;
-    if(rw.k==='named'){w.chest83=w.chest83||[];w.uniq83=w.uniq83||[];if(w.chest83.length&&Math.random()<0.5){const x=w.chest83.splice(Math.floor(Math.random()*w.chest83.length),1)[0];P={item:x.item,pc:x.pc}}
+    if(rw.k==='named'){w.chest83=w.chest83||[];w.uniq83=w.uniq83||[];if(false&&w.chest83.length&&Math.random()<0.5){const x=w.chest83.splice(Math.floor(Math.random()*w.chest83.length),1)[0];P={item:x.item,pc:x.pc}}
       else{let def=ONLC.rollNamed(Math.random,cat,rw.rar,w.uniq83);if(def&&def.uq){if(w.uniq83.includes(def.uq))def=ONLC.rollNamed(Math.random,cat,'epic',[]);else w.uniq83.push(def.uq)}if(def)P=ONLC.namedPiece(def,ch||D0)}
       if(!P){rw.k='coin';rw.v=50}}
     ONLC.giftTake(old||D0,d.gift);let res,D2=null;
@@ -145,13 +145,13 @@ function onl83PieceCard(I,o){o=o||{};if(!I)return '';if(I.named)return nw83Card(
 /* ---------------- 3 · the DOMUS: treasury, gifts chest, trophy shelf, tester panel ---------------- */
 function onl83GiftN(){const D=ONL.domus||{};const own=onl83Live().reduce((a,c)=>a+((c.gifts||[]).length),0);const dg=ONL82.dg&&ONL82.dg.gifts;return Math.max(D.gifts|0,Array.isArray(dg)?dg.length:0)+own}
 function onl83Chest(sz,where){if(!ONL.acct||onlIsGuest82()||ONL.needDomus)return '';const n=onl83GiftN();
-  return `<button type="button" class="gift83 ${n?'on':''} ${where||''}" data-onl83="gift" title="${n?_T`Flavius's gifts · ${n} unopened`:_T('Flavius sends a gift at every new rank and every 5 Ranked bouts survived')}">${typeof rtokHTML==='function'?rtokHTML('chest',sz,''):'🎁'}${n?`<b class="gift83n">${n}</b>`:''}<small>${n?_T('Open'):_T('Gifts')}</small></button>`}
+  return `<button type="button" class="gift83 ${n?'on':''} ${where||''}" data-onl83="gift" title="${n?_T`Donativum · ${n} unopened`:_T('Flavius sends a Donativum at every new rank and every 5 Ranked bouts survived')}">${typeof rtokHTML==='function'?rtokHTML('chest',sz,''):'🎁'}${n?`<b class="gift83n">${n}</b>`:''}<small>${n?_T('Open'):_T('Donativum')}</small></button>`}
 const TROPHY_IC83=k=>{const [a,b]=String(k).split(':');if(a==='first')return '🏆';if(a==='rank')return rk83(b).ic;if(a==='slew')return b==='commodus'?'👑':b==='tholo'?'🦁':'💀';return {surv10:'🛡',surv25:'🛡',thumb:'👍',vday:'☀'}[a]||'🏅'};
 function onl83Trophies(list,empty){const T=(list||[]).slice().sort((a,b)=>(b.at||0)-(a.at||0));
   return `<div class="tr83"><div class="tr83-h">${_T`🏛 Trophy room <small class="rc-sub">${T.length}</small>`}</div>${T.length?`<div class="tr83-shelf">${T.map(t=>`<div class="tr83-t" title="${esc2(t.n||ONLC.trophyName(t.k))}${t.glad?' · '+esc2(t.glad):''}"><span class="tr83-ic">${TROPHY_IC83(t.k)}${(t.x|0)>1?`<i>×${t.x}</i>`:''}</span><b>${esc2(t.n||ONLC.trophyName(t.k))}</b><small>${esc2(date83(t.at))}${t.glad?' · '+esc2(t.glad):''}</small></div>`).join('')}</div>`:`<p class="rc-sub tr83-none">${empty||_T('No trophies yet — first Ranked wins, ranks reached, Commodus or Tholo slain.')}</p>`}</div>`}
 function onl83Tester(){if(!ONL83U.tester)return '';const cat=onlCatalog();const opts=Object.entries(cat).sort((a,b)=>a[1].kind.localeCompare(b[1].kind)||a[1].lv-b[1].lv||a[1].n.localeCompare(b[1].n)).map(([k,it])=>`<option value="${k}">${it.kind==='w'?'⚔':'🛡'} L${it.lv} ${esc2(it.n)}</option>`).join('');
   return `<details class="tst83" ${ONL83U.tstOpen?'open':''}><summary>${_T`🧪 Tester <small class="rc-sub">grants make this a TEST house for good — Custom only, out of Today and the ranks</small>`}</summary>
-    <div class="tst83-g"><label>${_T`Coin`}<input class="tin" type="number" min="0" max="100000" id="tst83coin" value="0"></label><label>${_T`Gifts`}<input class="tin" type="number" min="0" max="10" id="tst83gift" value="0"></label>
+    <div class="tst83-g"><label>${_T`Coin`}<input class="tin" type="number" min="0" max="100000" id="tst83coin" value="0"></label><label>${_T`Donativa`}<input class="tin" type="number" min="0" max="10" id="tst83gift" value="0"></label>
      <label>${_T`Glory`}<input class="tin" type="number" min="0" max="10000" id="tst83glory" value="0"></label><label>${_T`Gear`}<select class="tin" id="tst83gear"><option value="">—</option>${opts}</select></label>
      <label>${_T`Offering`}<select class="tin" id="tst83off"><option value="">—</option>${ONLC.OFFERS83.map(k=>`<option value="${k}">${esc2(OFF83N(k))}</option>`).join('')}</select></label></div>
     <div class="acts"><button type="button" class="btn primary tksm" data-onl83="grant">${_T`🧪 Grant`}</button></div></details>`}
@@ -256,9 +256,9 @@ const GIFT_WHY83=g=>{const [a,b]=String(g&&g.why||'').split(':');if(a==='rank')r
 async function onl83GiftOpen(){if(ONL83U.giftBusy)return;ONL83U.giftBusy=true;try{
     let g=null;try{const r=await NET.req('domus.get',{});g=(r.gifts||[])[0]||null}catch(e){}
     let char=null;if(!g){const c=onl83Live().find(x=>(x.gifts||[]).length);if(c){g=c.gifts[0];char=c.id}}
-    if(!g){onlToast80(_T('🎁 No gifts waiting. Flavius sends one at every new rank and every 5 Ranked bouts survived.'));return}
+    if(!g){onlToast80(_T('🎁 No Donativum waiting. Flavius sends one at every new rank and every 5 Ranked bouts survived.'));return}
     const who=ONL.char?esc2(ONL.char.name):esc2(onlHouse82(onlMyDomus82()||_T('the house')));
-    const bg=onl83Pop('gift83pop',`<div class="gft83"><div class="gft83-tok spin">${typeof rtokHTML==='function'?rtokHTML('chest',150,''):'🎁'}</div><h3 class="pop83h">${_T`Flavius’s gift`}</h3><p class="rc-sub">${_T`${esc2(GIFT_WHY83(g))}${g.glad?_T` · earned by ${esc2(g.glad)}`:''} · opened for ${who}`}</p><div class="gft83-prize" id="gft83p"></div></div>`,{sticky:1});
+    const bg=onl83Pop('gift83pop',`<div class="gft83"><div class="gft83-tok spin">${typeof rtokHTML==='function'?rtokHTML('chest',150,''):'🎁'}</div><h3 class="pop83h">${_T`Donativum`} <span class="dnv91i" data-tip="${esc2(_T('The emperor’s gift: Flavius sends a Donativum at every new rank, every 5 Ranked bouts survived and for the weekly challenge. Everything in it is brand new.'))}">ⓘ</span></h3>${GIFT_WHY83(g)?`<p class="rc-sub">${esc2(GIFT_WHY83(g))}</p>`:''}<div class="gft83-prize" id="gft83p"></div></div>`,{sticky:1});
     const t0=Date.now();let r=null,err=null;try{r=await NET.req('gift.open',{gift:g.id,...(char?{char}:{})})}catch(e){err=e}
     await new Promise(z=>setTimeout(z,Math.max(0,1500-(Date.now()-t0))));
     const tok=bg.querySelector('.gft83-tok');if(tok){tok.classList.remove('spin');tok.classList.add('done')}
@@ -365,7 +365,7 @@ if(typeof GUEST_ACTS82!=='undefined')GUEST_ACTS82.add('tab');
     if(!o.died&&(o.award|0)>0)bits.push(_T`💰 Award ${o.award} − the lanista’s cut ${o.cut|0} (to the treasury) = <b>${coinAmt87(o.pay)}</b>`);
     if((o.broken||[]).length)bits.push(_T`💔 ${o.broken.length} piece${o.broken.length===1?'':'s'} came back broken — 🔧 repair in the Storeroom`);
     if((o.offBack||[]).length)bits.push(_T`🧪 ${o.offBack.length} offering${o.offBack.length===1?'':'s'} back in the satchel`);
-    if((o.gifts||[]).length)bits.push(_T`🎁 Flavius sends ${o.gifts.length===1?_T('a gift'):o.gifts.length+' gifts'} to the house`);
+    if((o.gifts||[]).length)bits.push(_T`🎁 Flavius sends ${o.gifts.length===1?_T('a Donativum'):o.gifts.length+_T(' Donativa')} to the house`);
     if(bits.length)setTimeout(()=>onlToast80(bits.join('<br>')),5200);ONL82.dgAt=0}catch(e){}return r}}
 
 /* ---------------- the controls ---------------- */

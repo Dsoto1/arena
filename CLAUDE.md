@@ -1151,6 +1151,9 @@ share copy — the site download play/flavius-rule-arena.zip.)
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
   token gear. Timing (my call, he left it to me): v0.92 = the 2D designer extras + the 3D body/rig groundwork; v0.93 = the token modeller
   (poses, printed gear in 3D, extras on 3D); then the Event Designer as the arena view.
+- **DONATIVUM (his picks 2026-10-06, v0.91):** Flavius's free online gifts are called a DONATIVUM (pl. Donativa); ⓘ on the card says it is from
+  Flavius; no "earned by · opened for" line; ALWAYS BRAND NEW — gift.open never hands out a used chest-pool piece (owner history is only for
+  arena-worn pieces, which go to the auction). Server change → ships with the v0.91 server.
 - **ONLINE SERVER VERSION (v0.91, 196-v91srv):** hello.build from server/src/build.json (tools/srvstamp.js, run by release.sh; only re-stamps when
   the server code hash changes) + SRV_EXPECT91 in the page (generated 195-v91srvexp.js) → chip bottom-left of Online screens (ok / ⚠ older /
   practice); "Unknown request" → "the server is older than this page". Found 2026-10-06: the live AWS server lacked the v0.89 Domus routes

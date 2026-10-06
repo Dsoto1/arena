@@ -94,22 +94,22 @@ function odds89HTML(){const G=ONLC.giftOdds89();const cat=onlCatalog();const OA=
   const affA=`<table class="o89t o89a" data-o89="affa"><tr><th>${_T`Armor affix`}</th><th>${RN.rare}</th><th>${RN.epic}</th><th>${RN.legendary}</th></tr>${affRows(OA,aKeys,k=>`<b>${esc2(ONLC.AFF_LAT89[k]||k)}</b><small>${AFF89T[k]||k}</small>`)}</table>`;
   const affW=`<table class="o89t o89a" data-o89="affw"><tr><th>${_T`Weapon affix`}</th><th>${RN.rare}</th><th>${RN.epic}</th><th>${RN.legendary}</th></tr>${affRows(OW,wKeys,k=>`<small>${AFFW89T[k]||esc2((ONLC.AFFIX[k]||{}).n||k)}</small>`)}</table>`;
   const uq=(L,t)=>`<p class="o89u"><b>${t}</b> ${L.map(u=>`<span title="${esc2(u.d)}">${esc2(u.n)}</span>`).join(' · ')}</p>`;
-  return `<div class="odds89" data-o89="card"><h3 class="pop83h">${_T`🎁 What Flavius’s gifts hold`}</h3>
-    <p class="rc-sub">${_T`One gift every new rank and every 5 Ranked bouts survived, one for the weekly challenge. Each opening rolls once:`}</p>
+  return `<div class="odds89" data-o89="card"><h3 class="pop83h">${_T`🎁 What a Donativum holds`}</h3>
+    <p class="rc-sub">${_T`Flavius sends one every new rank and every 5 Ranked bouts survived, one for the weekly challenge — always brand new. Each opening rolls once:`}</p>
     <table class="o89t" data-o89="kinds">${kinds}</table>
     <h4>${_T`A named piece: its tier`}</h4>${tiers}
     <p class="rc-sub">${_T`Common has no affix · Rare 1 · Epic 2 · Legendary 2 + a unique effect. The chance a piece of that tier carries each affix:`}</p>${affA}${affW}
     <p class="rc-sub">${_T`Fortunae comes only on Legendary armor. Lapidarius is twice as likely on a helm.`}</p>
     <h4>${_T`Legendary uniques`}</h4>${uq(ONLC.UNIQUES_A,_T('Armor:'))}${uq(ONLC.UNIQUES,_T('Weapons:'))}
     <p class="rc-sub">${_T`Each unique exists once in the world. Once all are claimed, a Legendary roll becomes Epic.`}</p>
-    <p class="rc-sub">${_T`🔨 Auction lots and some named gifts are pieces back in Flavius’s chest from fallen gladiators: no new roll — they keep their own tier and affixes.`}</p></div>`}
+    <p class="rc-sub">${_T`🔨 Auction lots are pieces back in Flavius’s chest from fallen gladiators: no new roll — they keep their own tier, affixes and owners.`}</p></div>`}
 function odds89Show(el){let f=document.getElementById('odds89f');if(!f){f=document.createElement('div');f.id='odds89f';f.className='odds89f';document.body.appendChild(f)}
   f.innerHTML=odds89HTML();f.hidden=false;const r=el.getBoundingClientRect();const w=Math.min(440,window.innerWidth-16);f.style.width=w+'px';
   f.style.left=Math.max(8,Math.min(window.innerWidth-w-8,r.left+r.width/2-w/2))+'px';f.style.top=Math.min(window.innerHeight-80,r.bottom+6)+'px';
   const b=f.getBoundingClientRect();if(b.bottom>window.innerHeight-6)f.style.top=Math.max(6,window.innerHeight-6-b.height)+'px'}
 const odds89Hide=()=>{const f=document.getElementById('odds89f');if(f)f.hidden=true};
 {const base=onl83Chest;onl83Chest=function(sz,where){const h=base.apply(this,arguments);if(!h)return h;
-  return `<span class="odds89w ${where||''}">${h}<button type="button" class="odds89i" data-odds89="1" aria-label="${_T`The odds of Flavius’s gifts`}" title="${_T`Odds`}">ⓘ</button></span>`}}
+  return `<span class="odds89w ${where||''}">${h}<button type="button" class="odds89i" data-odds89="1" aria-label="${_T`The odds of a Donativum`}" title="${_T`Odds`}">ⓘ</button></span>`}}
 document.addEventListener('mouseover',e=>{const t=e.target.closest&&e.target.closest('[data-odds89]');
   if(t&&window.matchMedia&&window.matchMedia('(hover:hover)').matches){try{odds89Show(t)}catch(err){console.error(err)}}else if(!(e.target.closest&&e.target.closest('#odds89f')))odds89Hide()});
 document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-odds89]');if(!t)return;e.preventDefault();e.stopPropagation();odds89Hide();

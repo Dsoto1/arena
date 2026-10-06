@@ -680,7 +680,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       const ch=old||await liveChar(ctx.acct,A);if(ch&&charBusy(ch.id,list))throw fail('in_match',`${ch.name} is in a match — open it afterwards.`);
       const rw=C.rollGift(rnd,catalog,ch?C.rankFor(ch).k:'tiro');let pool=null,def=null,claim=null;
       if(rw.k==='named'){const P0=(await store.query('CHEST','P#',{limit:20})).filter(x=>!x.taken);
-        if(P0.length&&rnd()<0.5){const x=P0[Math.min(P0.length-1,Math.floor(rnd()*P0.length))];if(await store.flip('CHEST',x.SK,'taken',0,1)){pool={item:x.item,pc:x.pc};await store.del('CHEST',x.SK)}}
+        if(false&&P0.length&&rnd()<0.5){/* v0.91 (his rule): a gift is BRAND NEW — never a used piece from the chest pool (those only go to the auction) */const x=P0[Math.min(P0.length-1,Math.floor(rnd()*P0.length))];if(await store.flip('CHEST',x.SK,'taken',0,1)){pool={item:x.item,pc:x.pc};await store.del('CHEST',x.SK)}}
         if(!pool){const A84=rw.kind==='a';const U=A84?'UNIQA#':'UNIQ#';const roll=A84?C.rollNamedArmor:C.rollNamed;const taken=(await store.query('WORLD',U)).map(x=>x.k);def=roll(rnd,catalog,rw.rar,taken);
           if(def&&def.uq){if(await store.putNew('WORLD',U+def.uq,{k:def.uq,at:now()}))claim=U+def.uq;else def=roll(rnd,catalog,'epic',[])}}
         if(!pool&&!def){rw.k='coin';rw.v=50}}

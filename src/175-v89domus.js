@@ -153,7 +153,7 @@ function d89Tile(ch,x,i,busy){const I=x.I;const named=I.named;const col=named?ON
 
 /* ---------------- 1 · the banner ---------------- */
 function d89Ledger(){const L=(ONL.domus||{}).led89;const T=(ONL.domus||{}).treasury|0;
-  const IN=[['cut',_T('The 20% cut from bouts')],['gift',_T('Flavius’s gifts')],['sale',_T('Sales (a full shelf)')],['refund',_T('Refunds')],['grant',_T('Tester grants')]];
+  const IN=[['cut',_T('The 20% cut from bouts')],['gift',_T('Donativa (Flavius)')],['sale',_T('Sales (a full shelf)')],['refund',_T('Refunds')],['grant',_T('Tester grants')]];
   const OUT=[['gear',_T('Gear for the shelf')],['repair',_T('Repairs')],['class',_T('Class changes')],['upg',_T('Upgrades')]];
   const row=(l,v,neg)=>`<div class="lg89-r"><span>${l}</span><b class="${neg?'neg':''}">${neg?'−':''}${d89Coin(v)}</b></div>`;
   if(!L)return `<div class="lg89"><b class="lg89-h">${_T`🏛 The treasury · ${d89Coin(T)}`}</b><p class="rc-sub">${_T`The ledger starts with v0.89 — nothing booked yet.`}</p></div>`;
@@ -218,7 +218,7 @@ function d89Show(ch,busy){if(!ch)return `<div class="sc89 none"><p class="rc-sub
 /* ---------------- 3 · the equipment bar ---------------- */
 function d89BarHTML(ch,busy){const tab=V89D.tab==='offs'?'offs':'gear';const B=d89Bar();V89D.bar=B;const sh=d89Shelf();const D=ONL.domus||{};const smax=D.smax||ONLC.shelfMax(D);
   const tb=(k,l)=>`<button type="button" role="tab" data-eb89="${k}" class="${tab===k?'on':''}" aria-selected="${tab===k}">${l}</button>`;
-  const gear=B.length?B.map((x,i)=>d89Tile(ch,x,i,busy)).join(''):`<p class="rc-sub eb89-e">${_T`Nothing in the house — the Armory sells, Flavius gifts, the fallen leave their gear here.`}</p>`;
+  const gear=B.length?B.map((x,i)=>d89Tile(ch,x,i,busy)).join(''):`<p class="rc-sub eb89-e">${_T`Nothing in the house — the Armory sells, Flavius’s Donativa, the fallen leave their gear here.`}</p>`;
   const offs=(sh.offers||[]).map((k,i)=>`<span class="of89" data-d89of="${i}" role="button" tabindex="0" title="${esc2(OFF83N(k))}">${offTok83(k,40)}<small>${esc2((OFFER[k]||{}).n||k)}</small></span>`).join('')||`<p class="rc-sub eb89-e">${_T`The shelf is empty — the Armory sells offerings.`}</p>`;
   return `<div class="eb89 dz89" data-dz89="bar"><div class="eb89-tabs" role="tablist">${tb('gear',_T`⚔ Gear <small>${B.length}</small>`)}${tb('offs',_T`🧪 Offerings <small>${(sh.offers||[]).length}/${smax}</small>`)}
      <small class="rc-sub eb89-hint">${ch?_T`Click a piece to put it on ${esc2(ch.name)} — or drag it onto him. Drag what he wears back here to take it off.`:_T`The house’s gear waits here for a gladiator.`}</small></div>
