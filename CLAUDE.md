@@ -1077,6 +1077,16 @@ share copy — the site download play/flavius-rule-arena.zip.)
   in the Crowd Favor window (cheapest available option > CF, or Commodus) — today it lights with "1 CF to spend" though nothing costs 1;
   (2) Manager beast-pen fights / training bouts (108 PEN76, S.pen76, exhibitions) AUTO-ZOOM the camera onto the pen/fight area (the cage box),
   no manual Zoom needed.
+- **v0.90 MANAGER NOTES (his list 2026-10-06; fixes go in, features wait for answers/go):** FIXES — F1 a fighter on 🛏 Rest week CAN'T
+  fight (Match Week slot locked "Resting"; undo in the Infirmary); F2 Training Yard First/Normal/Last control goes (flickers, unclear); F3 Manager
+  rail tab clicks flicker; F4 travelling for Match Week zeroes the remaining training hours. INFIRMARY (his design): a compact list of the
+  hurt/tired like the recruiting list → avatar on the right with the areas that need care GLOWING → right of it how he can be healed (what it
+  does, where); TWO BARS in different colours, HP and FATIGUE, near/above the avatar and small in the list; "Which cure should I use" → banner
+  ⓘ popup; bathhouse made obvious. (Fatigue today = only the worn-down injury risk above 50, FAT_* in 85-v65.) Open: his "HP max 7" idea.
+  TRAINING YARD: each routine/option previews the week's gain per stat (icon 67 → 67.4 in green, decimals shown); the clicked fighter's card
+  stops spanning the full width (sits beside the squad, no empty right); Doctore + Study cards to the right column. MATCH WEEK: Temple only
+  in the City Center; Walk the City Square button with a thumbnail of that forum; Walk the Sand needs a new home (open). LEAGUE: stakes per
+  table position + scout a rival house from the table (his picks).
 - **v0.90 QUEUED (his yes 2026-10-05): HOT-SEAT TURNING BOARD** — a setting (Settings → On the board, OFF by default): with 2+ humans
   on one screen, the board turns to the active human's corner at the start of each human's turn (short eased spin; Reduce motion / Off
   animations = an instant cut), using the v0.89 display rotation (168). CPU turns keep the last human's view. Never in Chariot,
