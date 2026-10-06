@@ -1082,7 +1082,12 @@ share copy — the site download play/flavius-rule-arena.zip.)
   rail tab clicks flicker; F4 travelling for Match Week zeroes the remaining training hours. INFIRMARY (his design): a compact list of the
   hurt/tired like the recruiting list → avatar on the right with the areas that need care GLOWING → right of it how he can be healed (what it
   does, where); TWO BARS in different colours, HP and FATIGUE, near/above the avatar and small in the list; "Which cure should I use" → banner
-  ⓘ popup; bathhouse made obvious. (Fatigue today = only the worn-down injury risk above 50, FAT_* in 85-v65.) HP (his rule): defaults head 5 · chest 6 · arms/legs 5; ANY location may be raised to max 7 (elixirs in play already do; in Manager, week care — temple, baths, Medicus, etc. — can lift locations above default for that week's bout, never past 7). Open: fatigue effect, Walk the Sand home, 'Send the Doctores'.
+  ⓘ popup; bathhouse made obvious. (Fatigue today = only the worn-down injury risk above 50, FAT_* in 85-v65.) HP (his rule): defaults head 5 · chest 6 · arms/legs 5; ANY location may be raised to max 7 (elixirs in play already do; in Manager, week care — temple, baths, Medicus, etc. — can lift locations above default for that week's bout, never past 7). FATIGUE (his pick): rides on the weekly routine (standing orders ROUT87, set once, repeats) — bout +25, Hard drills +15, Normal +8,
+  Light +3, Care −20 (bathhouse + rubdown folded into Care), Rest week −50 (sits out, F1); IN THE BOUT by band: Fresh 0–30 = +1 movement in
+  round 1 · Tired 31–60 = normal · Worn 61+ = −1 movement all bout + the injury risk; chips on Match Week/infirmary/yard. No extra
+  micromanaging: meaningful weekly decisions only. WALK THE SAND (his pick): moves to the ARENA GATE in the City Center — click to perform
+  (same bonus: 2 h + 6 coin → fighters on the card +1 AP and +1 coin, once a week); gone from Match Week; 'Send the Doctores' dropped.
+  GO: v0.90 starts right after v0.89 is published.
   TRAINING YARD: each routine/option previews the week's gain per stat (icon 67 → 67.4 in green, decimals shown); the clicked fighter's card
   stops spanning the full width (sits beside the squad, no empty right); Doctore + Study cards to the right column. MATCH WEEK: Temple only
   in the City Center; Walk the City Square button with a thumbnail of that forum; Walk the Sand needs a new home (open). LEAGUE: stakes per
