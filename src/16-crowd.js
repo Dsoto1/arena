@@ -179,6 +179,7 @@ function seatPos(secIdx,seatNo){
   return pt(r,c);
 }
 /* drawStands — draws the tiered stands in all 8 sections with their color markers and ambient crowd, then every seated spectator. Wrapped by 55-anim and 127-v82onl. */
+const STANDS_DOTS=false; /* TWEAK: the pale ambient-crowd dots on the benches (v0.91 his call: off — they read as empty seats) */
 function drawStands(){
   const shadeHex=(h,f)=>shade(h,f);
   for(let si=0;si<8;si++){
@@ -193,7 +194,7 @@ function drawStands(){
     ctx.fillStyle='rgba(245,232,204,.55)';ctx.font=`${Math.round(TW*0.2)}px IBM Plex Mono, monospace`;ctx.textAlign='center';ctx.textBaseline='middle';
     const far=secQuad(si,2.95,2.95);const f=pt(...far[s.half?1:0]);ctx.fillText('Q'+s.q,f.x,f.y);
     // an ambient crowd (not spectators in the rules sense) so the stands never look empty
-    ctx.fillStyle='rgba(216,199,166,.26)';for(let k=0;k<9;k++){const p=seatPos(si,(k*5+si)%12);ell(p.x+((k*37+si*11)%7-3)*TW*0.04,p.y-TW*0.2-((k*13)%3)*TW*0.03,TW*0.055,TW*0.055);ctx.fill()}
+    if(STANDS_DOTS)ctx.fillStyle='rgba(216,199,166,.26)';if(STANDS_DOTS)for(let k=0;k<9;k++){const p=seatPos(si,(k*5+si)%12);ell(p.x+((k*37+si*11)%7-3)*TW*0.04,p.y-TW*0.2-((k*13)%3)*TW*0.03,TW*0.055,TW*0.055);ctx.fill()}
   }
   // the spectators (the players of the rule): body in section color, face ringed by mood
   if(!S)return;
