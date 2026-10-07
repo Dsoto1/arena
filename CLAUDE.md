@@ -29,6 +29,10 @@ armor, trophies, banners, events, tournaments, invitationals, editors, spectator
 - **When he sends a list, do NOT build, commit or publish until he says go** — sometimes he only wants to dump notes. Read it, sort it,
   ask the questions, then wait. (A release he already approved may finish.)
 
+- **STABILIZATION RELEASES (his call 2026-10-07, from v0.95):** releases focus on fixes + changes to established features. He sends notes
+  (where · what happened · what was expected, 🔴/🟠/🟢); when an item is really a NEW feature — even if he files it as a fix — say so, sort it
+  into "New feature?" in the questions, and park it in tools/plans/backlog.md unless he pulls it in. Fixes go straight into the next build.
+
 - **QUOTA RULE (his, 2026-10-07):** the lead (Opus) plans features, reviews, merges and runs releases; routine bug fixes, test edits and
   small immediate code changes go to a Sonnet sub-agent (Agent tool `model: "sonnet"`) to save tokens. Big feature builds stay with the lead's
   default model unless he says otherwise.
