@@ -1212,6 +1212,9 @@ share copy — the site download play/flavius-rule-arena.zip.)
   modelled once, custom from base shapes + EXTRAS (his idea: spikes, fur, studs/rivets, neck guard on the upper arm…). Rendered to the 8
   MINI_YAW facings and cached; pose + parts stored small (online look ≤3 KB). LATER: Event Designer AS THE ARENA VIEW — the board in the
   middle, the avatar/side area = a drag-and-drop palette of everything placeable, the log area = designer tools.
+- **THREE.JS IN THE GAME (his yes 2026-10-07, v0.93):** the token modeller loads three.js ON DEMAND (from play/assets, only when the Studio's
+  token modeller opens; cached by the browser after) — never bundled into the page. Matches never run 3D: the modeller renders each token once to
+  the minis8 sprite-sheet format and the board keeps drawing flat images. The standalone download must still work (inline or skip the modeller there).
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
