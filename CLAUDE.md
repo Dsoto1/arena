@@ -1212,6 +1212,12 @@ share copy — the site download play/flavius-rule-arena.zip.)
   modelled once, custom from base shapes + EXTRAS (his idea: spikes, fur, studs/rivets, neck guard on the upper arm…). Rendered to the 8
   MINI_YAW facings and cached; pose + parts stored small (online look ≤3 KB). LATER: Event Designer AS THE ARENA VIEW — the board in the
   middle, the avatar/side area = a drag-and-drop palette of everything placeable, the log area = designer tools.
+- **v0.93 ALSO (his yes 2026-10-07, after the "functionally complete?" review):** (A) ACCESSIBILITY PASS — keyboard-only play (board tile
+  focus + arrow keys, every action reachable), focus order and focus trap/return in windows and popups, screen-reader labels (aria) on buttons/
+  chips/cards, a text summary of the board for screen readers (whose turn, positions, HP/AP, beasts in reach), contrast check of text/chips
+  against WCAG AA, visible focus rings; a test walking it. (B) MANAGER LESSON UPDATE — 36-mtutor teaches the v0.92 Training Yard (fighter cards,
+  sessions, Lock in, the Doctore's drills, Trials of the Yard) and anything else it describes that changed; test it end to end.
+  Not yet: a live online playtest with real players + tonlws77/tonlws80 on the real handler (needs `cd server && npm i ws`).
 - **THREE.JS IN THE GAME (his yes 2026-10-07, v0.93):** the token modeller loads three.js ON DEMAND (from play/assets, only when the Studio's
   token modeller opens; cached by the browser after) — never bundled into the page. Matches never run 3D: the modeller renders each token once to
   the minis8 sprite-sheet format and the board keeps drawing flat images. The standalone download must still work (inline or skip the modeller there).
