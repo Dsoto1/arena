@@ -1,5 +1,5 @@
 /* v0.89 the square's sidebar reworked for the forum (181-v89citybar): header card (city, tonight, coin, horns); tabs =
-   Stalls · Auction · Temple · Arena · People · Menagerie; THIS VISIT lists what was bought here (kit with cost + ↶ undo at the
+   Stalls · Auction · Temple · Arena · People · Menagerie; THIS VISIT lists what was bought here (v0.94: Armory buys with cost + ↶ undo at the
    stall's own 70%, the temple offering), net spent at the foot; a real click on a building opens its tab (folded sidebar →
    the floating panel as before); People hides empty groups (no "No … yet"); phone width: bottom sheet, no sideways scroll.
    SHOT=dir saves screenshots. */
@@ -19,18 +19,19 @@ ok(['stalls','auction','temple','arena','people','beasts','hide'].every(k=>f.tab
 ok(/Tonight/.test(f.head)&&/coin/.test(f.head)&&/to the horns/.test(f.head),'1 header: tonight, coin, horns '+f.head.slice(0,140));
 ok(f.side==='stalls','1 a lanista opens on the Stalls '+f.side);
 ok(/Nothing bought yet/.test(f.empty),'1 empty visit line '+f.empty);
-/* 2 · a kit for a fighter → THIS VISIT with cost + undo; the undo is the stall's own 70% */
-const k=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const s=document.getElementById('cityKitWho');const o={inSide:!!s.closest('#citySide')};
-  s.value=s.options[1].value;s.dispatchEvent(new Event('change',{bubbles:true}));await W8(150);const g=gById(document.getElementById('cityKitWho').value);o.follow=g.id===s.options[1].value&&document.getElementById('cityKitList').textContent.includes(g.name);
-  const c0=me().coin;const btn=[...document.querySelectorAll('#citySide .cbar89ware')].find(b=>/cityBuyKit\('mw2'/.test(b.getAttribute('onclick')));btn.click();await W8(150);
-  o.paid=c0-me().coin;o.kit=(g.kit||[]).slice();const V=document.getElementById('cbar89Visit');o.row=V.textContent;o.undo=V.querySelectorAll('[data-cbar89undo]').length;o.fig=!!V.querySelector('.cbar89vf svg');o.ico=!!V.querySelector('.cbar89vico .rtok,.cbar89vico span,.cbar89vico img');
-  const c1=me().coin;V.querySelector('[data-cbar89undo]').click();await W8(150);o.back=me().coin-c1;o.kit2=(g.kit||[]).slice();o.row2=document.getElementById('cbar89Visit').textContent;o.undo2=document.querySelectorAll('#cbar89Visit [data-cbar89undo]').length;
-  document.querySelector('#citySide .cbar89ware:not([disabled])').click();await W8(150);o.n=CITY.visit89.length;return o});
-ok(k.inSide&&k.follow,'2 the kit picker lives in the Stalls tab and follows the fighter '+JSON.stringify([k.inSide,k.follow]));
-ok(k.paid===12&&k.kit.includes('mw2'),'2 kit bought '+JSON.stringify([k.paid,k.kit]));
-ok(/Market Weapon/.test(k.row)&&/12/.test(k.row)&&k.undo===1&&k.fig,'2 THIS VISIT: fighter figure, item, cost, undo '+k.row.slice(0,160));
-ok(k.back===Math.ceil(12*0.7)&&!k.kit2.includes('mw2')&&/back/.test(k.row2)&&k.undo2===0,'2 undo = the stall return (70%) '+JSON.stringify([k.back,k.kit2,k.undo2]));
-ok(k.n===2,'2 a second kit is a second line '+k.n);
+/* 2 · (v0.94: the Armory's stalls replace the one-week kits) a piece bought for a fighter → he wears it; THIS VISIT with cost + undo;
+   the undo is the stall's own 70% */
+const k=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const s=document.getElementById('arm94Who');const o={inSide:!!(s&&s.closest('#citySide'))};
+  s.value=s.options[1].value;s.dispatchEvent(new Event('change',{bubbles:true}));await W8(150);const g=gById(document.getElementById('arm94Who').value);o.follow=!!g&&g.id===s.options[1].value&&/fits|replaces|⛔/.test(document.getElementById('citySideBody').textContent);
+  const c0=me().coin;const btn=[...document.querySelectorAll('#citySide [data-arm94buy]:not([disabled])')].find(b=>arm94Stock(W_(),CITY.li)[+b.dataset.arm94buy].t==='o');const it=arm94Stock(W_(),CITY.li)[+btn.dataset.arm94buy];o.price=cityPr(it.pr);btn.click();await W8(150);
+  o.paid=c0-me().coin;o.carry=g.eq94.o.map(P=>P.k);o.key=it.k;const V=document.getElementById('cbar89Visit');o.row=V.textContent;o.undo=V.querySelectorAll('[data-arm94undo]').length;o.fig=!!V.querySelector('.cbar89vf svg');
+  const c1=me().coin;V.querySelector('[data-arm94undo]').click();await W8(150);o.back=me().coin-c1;o.carry2=g.eq94.o.map(P=>P.k);o.row2=document.getElementById('cbar89Visit').textContent;o.undo2=document.querySelectorAll('#cbar89Visit [data-arm94undo]').length;
+  document.querySelector('#citySide [data-arm94buy]:not([disabled])').click();await W8(150);o.n=CITY.visit89.length;return o});
+ok(k.inSide&&k.follow,'2 the fighter picker lives in the Stalls tab and says what fits '+JSON.stringify([k.inSide,k.follow]));
+ok(k.paid===k.price&&k.carry.includes(k.key),'2 bought and carried '+JSON.stringify([k.paid,k.price,k.carry]));
+ok(k.row.length>10&&new RegExp(String(k.price)).test(k.row)&&k.undo===1&&k.fig,'2 THIS VISIT: fighter figure, item, cost, undo '+k.row.slice(0,160));
+ok(k.back===Math.ceil(k.price*0.7)&&!k.carry2.includes(k.key)&&/back/.test(k.row2)&&k.undo2===0,'2 undo = the stall return (70%) '+JSON.stringify([k.back,k.carry2,k.undo2]));
+ok(k.n===2,'2 a second buy is a second line '+k.n);
 if(SHOT)await pg.screenshot({path:SHOT+'/tv89y_stalls.png'});
 /* 3 · a REAL click on the temple in the forum opens the Temple tab; the offering lands in THIS VISIT */
 const pt=await pg.evaluate(()=>{const S=CB89.sprites&&CB89.sprites.temple;if(!S)return null;const rect=CITY.cv.getBoundingClientRect();

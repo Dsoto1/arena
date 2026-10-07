@@ -622,7 +622,7 @@ function guideHTML(){
    <li>${_T`<b>So a 37 against a 65 is not a fair fight</b> — but it is still a dice game. Hit dice, the Blessings bag, beasts and the crowd give the underdog real upsets, which is exactly why the bookmaker offers long odds on them.`}</li>
    <li>${_T`<b>Morale moves it.</b> High morale: +1 AP, ${cfAmt87('+1')}. Low: −1 AP. Broken: one tier worse at thinking. Injuries lower the rating itself (−3 to −5), and every severed limb costs 6.`}</li></ul>
   <h4>${_T`The square and the long game (v0.30)`}</h4><ul>
-   <li>${_T`<b>Walk the square before Match Week.</b> The tavern scouts someone for ${coinAmt87(6)}, the bathhouse is the cheapest morale in the game, and kit from the arms market means your fighter starts armed instead of spending first-turn coin at the arena market.`}</li>
+   <li>${_T`<b>Walk the square before Match Week.</b> The tavern scouts someone for ${coinAmt87(6)}, the bathhouse is the cheapest morale in the game, and the stalls sell weapons, armor and offerings into your Armory — dress your fighters in the Roster before the bout, and get damaged armor mended at the armorer.`}</li>
    <li>${_T`<b>The auction block is a lottery ticket.</b> A few coins for a body in the barracks; roughly one in eight is a hidden gem who re-rates upward on their first win for you.`}</li>
    <li>${_T`<b>Loans are a bridge, not a business.</b> 8% a week compounds brutally; borrow only what one good Match Week can repay — and pay a friendly house back early, since they remember it.`}</li>
    <li>${_T`<b>Play for Legacy.</b> There is no forced ending: cups and Superbus crowns are worth the most, and retirement at a high tier is the closest thing to "beating" Manager mode.`}</li></ul>

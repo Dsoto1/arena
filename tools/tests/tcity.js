@@ -10,8 +10,9 @@ await pg.evaluate(()=>citySelect({kind:'auction'}));await pg.waitForTimeout(300)
 out.lot=await pg.evaluate(()=>cityAuctionLot().map(g=>[g.name,g.woe,g.price,!!g.gemHid]));
 out.buy=await pg.evaluate(()=>{const g=cityAuctionLot()[0];if(g){cityBuyLot(g.id);return [g.name,!!g.contract,me().coin]}return null});
 await pg.evaluate(()=>cityShopPanel('arms'));await pg.waitForTimeout(250);await pg.screenshot({path:'c_arms.png'});
-out.kit=await pg.evaluate(()=>{cityBuyKit('mw2',12);const g=rosterOf(me()).sort((a,b)=>effOvr(b)-effOvr(a))[0];return [g.name,g.kit,me().coin]});
-out.seat=await pg.evaluate(()=>{const g=rosterOf(me()).sort((a,b)=>effOvr(b)-effOvr(a))[0];const st=seatFor(g);return st.festItems});
+/* v0.94: the stalls sell into the Armory (225-v94armory); an offering bought for a fighter rides in his satchel */
+out.kit=await pg.evaluate(()=>{const g=rosterOf(me()).sort((a,b)=>effOvr(b)-effOvr(a))[0];const i=arm94Stock(W_(),CITY.li).findIndex(x=>x.t==='o');arm94Buy(i,g.id);return [g.name,g.eq94.o.map(P=>P.k),me().coin]});
+out.seat=await pg.evaluate(()=>{const g=rosterOf(me()).sort((a,b)=>effOvr(b)-effOvr(a))[0];const st=seatFor(g);return st.gear94&&st.gear94.o});
 await pg.evaluate(()=>cityHorns());await pg.waitForTimeout(2600);await pg.screenshot({path:'c_horns.png'});
 await pg.evaluate(()=>cityEnterArena());await pg.waitForTimeout(1200);out.after=await pg.evaluate(()=>({open:CITY.open,tab:typeof MGR!=='undefined'?MGR.tab:null,modal:!$('#modal').hidden}));
 await pg.waitForTimeout(600);await pg.screenshot({path:'c_arena.png'});

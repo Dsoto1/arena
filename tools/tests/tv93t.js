@@ -1,5 +1,5 @@
 /* tv93t — v0.93 Manager lesson end to end (36-mtutor): every step's lit spot exists and is visible, the coach is on screen,
-   the Training Yard steps (card, + session under the weekly cap, 🔒 Lock in, the Doctore's drill, his panel, Trials of the Yard)
+   the Armory look (v0.94), the Training Yard steps (card, + session under the weekly cap, 🔒 Lock in, the Doctore's drill, his panel, Trials of the Yard)
    are taught and done for real, the guard rails still block a stray click, and the lesson finishes with nothing saved.
    SHOTS=dir writes a screenshot per step. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();
@@ -27,7 +27,7 @@ for(let iter=0;iter<200;iter++){
     if(!info.coach)fails.push('no coach at '+k);
     if(!info.arena&&!['enter0','enter2','watch','verdict','verdict2','acta'].includes(k)&&!(info.spot&&info.vis))fails.push('spot missing at '+k+' '+JSON.stringify(info));}
   switch(k){
-   case 'welcome':case 'tabs':case 'morale':case 'interest':case 'bouts':case 'city':case 'results':case 'impinfo':case 'schedinfo':case 'ycard':case 'ydoc':case 'ytrials':await next();break;
+   case 'welcome':case 'tabs':case 'morale':case 'armory':case 'interest':case 'bouts':case 'city':case 'results':case 'impinfo':case 'schedinfo':case 'ycard':case 'ydoc':case 'ytrials':await next();break;
    case 'roster':guard=await pg.evaluate(()=>{document.querySelector('[data-mg="tab"][data-id="recruit"]').click();return MGR.tab});await clk('[data-mg="tab"][data-id="roster"]');break;
    case 'lsel':await pg.evaluate(()=>document.querySelector(`tr[data-mg="lsel"][data-id="${MTUT.B}"]`).click());break;
    case 'meal':await pg.evaluate(()=>document.querySelector(`[data-mg="meal"][data-id="${MTUT.B}"]`).click());break;

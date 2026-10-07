@@ -2,7 +2,7 @@
    online market · 4 Storeroom: no buying, a visible shelf that takes "Move → the shelf" · 5 try it on: real art (a V for pairs), both
    sides marked for either-side pieces · 6 no hidden-mechanics text (Fame drift, Thriving numbers, the 16-season notes) · 7 perk points =
    a checklist task, no extra pill · 8 Mail half width · 9 yard banner box light grey · 10 Hygeia on the Infirmary banner · 11 city kits
-   follow the fighter, unused kits refunded at the week's end · 12 stale letters dropped, "To the ward" opens the Infirmary · 13 the
+   (v0.94: the stalls sell into the Armory; an old kit becomes owned offerings) · 12 stale letters dropped, "To the ward" opens the Infirmary · 13 the
    Acta of the day replaces the Forum box (data from ONLC.dayFromMatch / dayFell) · 14 🧠 wears its mind's hue on the Play Now seat
    chips (also after a tap) · 15 no mute button on the main menu · 16 a fallen fighter watches, never throws (offline seat/wagers/upkeep;
    online ONLC.standsHolders + sitGroup) · 17 results open on the players, wagers in their own tab · 18 the event pop-up loses This week + Season schedule · 19 the hints in one Settings box · 20 hovering armor: no red hit flash, a
@@ -134,27 +134,21 @@ ok(!/35/.test(o.m.fame)&&!/\d/.test(o.m.thr),'6 glossary: no Fame drift, no Thri
 ok(o.m.task&&!o.m.task.done&&/2/.test(o.m.task.txt)&&o.m.taskBtn,'7 unspent perk points = a checklist task with Spend');ok(o.m.pill==='none'||o.m.pill==='gone','7 no extra points pill on the Schooling card');ok(o.m.tile,'7 the perk tree shows the points');
 ok(o.m.mail>0.4&&o.m.mail<0.6,'8 Mail is half the width ('+o.m.mail+')');ok(/207, 211, 216/.test(o.m.yard),'9 yard hours box light grey '+o.m.yard.slice(0,90));
 ok(o.m.hyg.on&&o.m.hyg.btn&&!o.m.hyg.old&&o.m.hyg.apart,'10 Hygeia on the banner, beside the care count '+JSON.stringify(o.m.hyg));await shot('infirmary');
-/* 11 · the city kits */
+/* 11 · the city kits — v0.94: the one-week kits retired; the stalls sell into the house Armory (225-v94armory) and an old kit becomes
+   owned offerings on the shelf (nothing refunded twice) */
 o.k=await P.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const r={};const t=travelState(w);if(t)t.paid=true;m.coin=500;
-  openCitySquare(w.night.loc,{});await W(1500);cityShopPanel('arms');await W(400);const s=document.getElementById('cityKitWho');const ids=[...s.options].map(x=>x.value);
-  r.note=!!document.getElementById('kit87')&&/only if this fighter fights this week/.test(document.getElementById('kit87').textContent);
-  cityBuyKit('mw1',6);const A=gById(ids[0]),B=gById(ids[1]);s.value=ids[1];s.dispatchEvent(new Event('change',{bubbles:true}));await W(200);
-  r.follow=new RegExp(B.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).test(document.getElementById('cityKitList').textContent)&&/Nothing yet/.test(document.getElementById('cityKitList').textContent);
-  cityBuyKit('mw2',12);r.paid=[(A.kitPaid87||[]).join(),(B.kitPaid87||[]).join()];
-  /* A fights this week, B does not */
-  for(const b of w.night.bouts)b.ents=b.ents.filter(id=>id!==A.id&&id!==B.id);w.night.bouts[0].ents[0]=A.id;
-  if(typeof closeCity==='function')closeCity();await W(600);const c0=m.coin;for(const b of w.night.bouts){b.done=true;b.res=b.res||{att:0,winners:[],rows:[],turns:1,lines:[],reason:''}}w.pend=[];
-  const before=w.week;await endWeek();await W(300);r.week=W_().week!==before;r.gain=me().coin-c0;r.news=(W_().news||[]).concat(W_().tnews||[]).map(x=>typeof x==='string'?x:(x.t||x.txt||JSON.stringify(x))).join(' ');
-  r.kits=[A.kit,B.kit,A.kitPaid87,B.kitPaid87];return r});
-ok(o.k.note,'11 the shop says kits ride in only if the fighter fights');ok(o.k.follow,'11 the kit list follows the chosen fighter');ok(o.k.paid[0]==='6'&&o.k.paid[1]==='12','11 the price paid is recorded '+o.k.paid);
-ok(o.k.week,'11 the week ended');ok(o.k.kits.every(x=>x==null),'11 kits cleared after the week '+JSON.stringify(o.k.kits));
-/* the refund is +12 on top of the week's other money: measure it with the refund alone */
-o.k2=await P.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const ros=rosterOf(m);const B=ros.find(g=>!w.night.bouts.some(b=>b.ents.includes(g.id)))||ros[1];
-  B.kit=['mw1','mw3'];B.kitWk=w.week;B.kitPaid87=[6,15];for(const b of w.night.bouts){b.done=true;b.res=b.res||{att:0,winners:[],rows:[],turns:1,lines:[],reason:''}}w.pend=[];
-  const tn=typeof tnews==='function'?tnews:null;const lines=[];tnews=function(t){lines.push(String(t));return tn&&tn.apply(this,arguments)};let c0,c1;
-  const be=endWeek;let mid=null;const coinWrap=()=>me().coin;c0=coinWrap();await endWeek();tnews=tn;await W(200);
-  const L=lines.find(l=>/Kits refunded/.test(l))||'';return {line:L,name:esc(B.name),has21:/21 coin/.test(L.replace(/<[^>]+>/g,""))}});
-ok(o.k2.line&&o.k2.has21&&o.k2.line.includes(o.k2.name),'11 an unused kit is refunded in full with a news line '+JSON.stringify(o.k2));
+  openCitySquare(w.night.loc,{});await W(1500);cityShopPanel('arms');await W(400);const s=document.getElementById('arm94Who');const ids=[...s.options].map(x=>x.value).filter(Boolean);
+  r.note=!!s&&!document.getElementById('cityKitWho');const A=gById(ids[0]),B=gById(ids[1]);s.value=ids[1];s.dispatchEvent(new Event('change',{bubbles:true}));await W(200);
+  r.follow=AR94.who===B.id&&/fits|replaces|⛔/.test(document.getElementById('citySideBody').textContent);
+  const i=arm94Stock(w,CITY.li).findIndex(x=>x.t==='o');const c0=m.coin;arm94Buy(i,B.id);r.paid=c0-m.coin;r.carry=B.eq94.o.length;
+  if(typeof closeCity==='function')closeCity();await W(600);
+  A.kit=['mw1','mw3'];A.kitWk=w.week;A.kitPaid87=[6,15];const sh0=arm94H(m).sh.filter(P=>P.t==='o').length;
+  for(const b of w.night.bouts){b.done=true;b.res=b.res||{att:0,winners:[],rows:[],turns:1,lines:[],reason:''}}w.pend=[];
+  const tn=tnews;const lines=[];tnews=function(t){lines.push(String(t));return tn.apply(this,arguments)};const before=w.week;await endWeek();tnews=tn;await W(300);
+  r.week=W_().week!==before;r.refund=lines.some(l=>/Kits refunded/.test(l));r.shelf=arm94H(me()).sh.filter(P=>P.t==='o').length-sh0;r.kits=[A.kit,A.kitPaid87,B.kit];return r});
+ok(o.k.note,'11 the stalls sell into the Armory (no kit picker)');ok(o.k.follow,'11 the stall follows the chosen fighter');ok(o.k.paid>0&&o.k.carry===1,'11 an offering bought for him rides in his satchel '+JSON.stringify([o.k.paid,o.k.carry]));
+ok(o.k.week,'11 the week ended');ok(o.k.kits.every(x=>x==null),'11 old kits cleared '+JSON.stringify(o.k.kits));
+ok(!o.k.refund&&o.k.shelf>=2,'11 an old kit becomes owned offerings, no refund '+JSON.stringify([o.k.refund,o.k.shelf]));
 /* 12 · stale mail + the ward link */
 o.ml=await P.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const r={};const ros=rosterOf(m);const g=ros[0],h=ros[1];
   sendLetter(w,{key:'t87a',kind:'letter',from:'test',seal:'✉',title:`About ${g.name}`,body:`<p><b>${esc(g.name)}</b> needs a word.</p>`,until:w.week+1});
