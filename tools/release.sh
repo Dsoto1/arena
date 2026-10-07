@@ -8,7 +8,7 @@
 #   4b. the advert shot for flaviusrule.com/play.html (tools/siteshot.js → share/arena_shot.webp → the game zip's play/arena_shot.webp)
 #   5. share build (tools/mkshare.py) + its smoke test + zip — ALWAYS (SHARE=0 skips it): the site's download is play/flavius-rule-arena.zip (his pick, v0.82; was off by default in v0.81: the site
 #      and the artifact use the page + assets; the in-game ⇩ download builds its own one-file copy in the browser)
-# Left for Claude/the owner: publish to the artifact (read the live version first), update CLAUDE.md, send the zip.
+# Left for Claude: update CLAUDE.md, commit + push (GitHub runs the full regression), then he runs bash flavius.sh release. No artifact publish (his call, v0.95).
 set -e
 V="$1"; [ -n "$V" ] || { echo "usage: sh tools/release.sh X.YY"; exit 2; }
 cd "$(dirname "$0")/.."
@@ -33,14 +33,18 @@ ALLOW='FlaviusRule@gmail.com'
 LEAK=$(grep -oE '[A-Za-z0-9._%+-]+@(gmail|yahoo|hotmail|outlook|icloud|proton)\.(com|me)' flavius-arena.html | sort -u | grep -vixF "$ALLOW" | head -1)
 if [ -n "$LEAK" ]; then echo "an e-mail address is in the page: $LEAK"; exit 1; fi
 echo "clean ($(echo $WORDS | wc -w) words checked)"
-step "4 full regression (~30 min at -j 4)"
-node tools/smartreg.js --full ${REGJ:+-j $REGJ} || { echo "regression failed — see tools/reg.txt"; exit 1; }
+step "4 full regression"
+# v0.95: the full suite runs on GitHub Actions (8 shards, ~15 min) when the release commit (version.json changed) is pushed —
+# tools/ci/budget.json + .github/workflows/regression.yml. REG=local runs it here instead (~45-60 min on 4 cores).
+if [ "${REG:-ci}" = "local" ]; then node tools/smartreg.js --full ${REGJ:+-j $REGJ} || { echo "regression failed — see tools/reg.txt"; exit 1; }
+else echo "on GitHub Actions: push the release commit, then wait for the 'regression' run to go green (REG=local runs it here)"; fi
 step "4b advert shot (play.html)"
 mkdir -p share && node tools/siteshot.js "$PWD/flavius-arena.html" share/arena_shot.png | tail -1
 python3 -c "from PIL import Image;im=Image.open('share/arena_shot.png').convert('RGB');im=im.resize((1200,round(im.height*1200/im.width)),Image.LANCZOS);im.save('share/arena_shot.webp',quality=82,method=6)" && rm -f share/arena_shot.png
 echo "share/arena_shot.webp → the game zip's play/arena_shot.webp (flavius.sh game uploads it; play.html shows it)"
 cp share/arena_shot.webp tools/deploy/arena_shot.webp   # committed: flavius.sh release fetches it from GitHub
-if [ "$SHARE" = "0" ]; then printf '\nREADY v%s (no share build — SHARE=0 skipped it) — next: publish (read the live artifact first), update CLAUDE.md, commit.\n' "$V"; exit 0; fi
+# v0.95: the standalone is built by flavius.sh in CloudShell (mkshare from GitHub); zips are only a fallback → off unless SHARE=1
+if [ "${SHARE:-0}" != "1" ]; then printf '\nREADY v%s — next: update CLAUDE.md, COMMIT + PUSH, wait for the GitHub regression to go green, then he runs bash flavius.sh release (SHARE=1 builds the standalone + zips here).\n' "$V"; exit 0; fi
 step "5 share build"
 python3 tools/mkshare.py "$V" | tail -1
 mkdir -p /tmp/sharetest39 && cp "share/flavius-rule-arena-v$V.html" /tmp/sharetest39/
@@ -58,4 +62,4 @@ rm -f "$OUT"/flavius-site-update-v*.zip "$OUT"/flavius-download-v*.zip
 # over 30 MiB: no download zip — flavius.sh builds the standalone in CloudShell from the game zip (it carries tools/mkshare.py)
 ds=$(stat -c %s "$OUT/flavius-download-v$V.zip"); if [ "$ds" -gt 31457280 ]; then rm -f "$OUT/flavius-download-v$V.zip"; echo "  download zip over 30 MiB — dropped: flavius.sh release builds the standalone from the game zip"; fi
 for z in "$OUT"/flavius-*-v$V.zip; do s=$(stat -c %s "$z"); printf '  %s  %s MiB%s\n' "$z" "$(echo "scale=1;$s/1048576" | bc)" "$([ "$s" -gt 31457280 ] && echo '  ← over 30 MiB: too big to send in one file')"; done
-printf '\nREADY v%s — next: publish (read the live artifact first), update CLAUDE.md, COMMIT + PUSH (flavius.sh release deploys from GitHub: version.json, the page, assets, server/, tools/deploy/arena_shot.webp). The zips in share/deploy are the fallback.\n' "$V"
+printf '\nREADY v%s — next: update CLAUDE.md, COMMIT + PUSH (flavius.sh release deploys from GitHub: version.json, the page, assets, server/, tools/deploy/arena_shot.webp). The zips in share/deploy are the fallback.\n' "$V"
