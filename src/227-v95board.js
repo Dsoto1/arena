@@ -49,9 +49,12 @@ const TEAMDASH95={A:[],B:[9,5],C:[2,5],D:[10,4,2,4]};
 /* ---------- 3 floating numbers above the bubbles ---------- */
 function fx95Cv(){if(HEADLESS||typeof cv==='undefined'||!cv)return null;let c=B95.fxCv;
   if(!c||!c.isConnected){const wrap=cv.parentElement;if(!wrap)return null;c=document.createElement('canvas');c.id='fx95';c.setAttribute('aria-hidden','true');wrap.appendChild(c);B95.fxCv=c;B95.fxCx=c.getContext('2d');B95.fxW=0}
-  const w=cv.clientWidth,h=cv.clientHeight,dpr=window.devicePixelRatio||1;
-  if(w!==B95.fxW||h!==B95.fxH||B95.fxDpr!==dpr){c.width=Math.max(1,Math.round(w*dpr));c.height=Math.max(1,Math.round(h*dpr));c.style.width=w+'px';c.style.height=h+'px';B95.fxW=w;B95.fxH=h;B95.fxDpr=dpr}
-  c.style.left=cv.offsetLeft+'px';c.style.top=cv.offsetTop+'px';return c}
+  /* no layout read per frame (tv88p): measure only when the board canvas's own size attributes, the DPR or the window size changed */
+  const dpr=window.devicePixelRatio||1,key=cv.width+'x'+cv.height+'@'+dpr+'/'+window.innerWidth+'x'+window.innerHeight;
+  if(key!==B95.fxKey){B95.fxKey=key;const w=cv.clientWidth,h=cv.clientHeight;
+    c.width=Math.max(1,Math.round(w*dpr));c.height=Math.max(1,Math.round(h*dpr));c.style.width=w+'px';c.style.height=h+'px';B95.fxW=w;B95.fxH=h;B95.fxDpr=dpr;
+    c.style.left=cv.offsetLeft+'px';c.style.top=cv.offsetTop+'px'}
+  return c}
 /* the number's place: one alone rises straight; a cluster on one tile (AP + damage…) fans out, outer ones higher */
 function fx95Pos(f,idx,n,k,m){const sp=anim95()?Math.min(1,k*5):1;let x=m.x,y=m.y-TW*(0.9+k*0.8);
   if(n>1){const off=idx-(n-1)/2;x+=off*TW*0.95*sp;y-=(Math.abs(off)*TW*0.22+(idx%2)*TW*0.14)*sp}
