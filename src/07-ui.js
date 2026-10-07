@@ -1556,499 +1556,534 @@ function draw() {
   ctx.clearRect(0, 0, Wd, Hd);
   if (!S) return;
   computeHL();
-  const tA = isoFix(0, 0),
-    tB = isoFix(0, N),
-    tC = isoFix(N, N),
-    tD = isoFix(N, 0); /* v0.89: the rim is square — never turned (168-v89rotate) */
-  ctx.beginPath();
-  ctx.moveTo(tA.x, tA.y - 10);
-  ctx.lineTo(tB.x + 16, tB.y);
-  ctx.lineTo(tC.x, tC.y + 10);
-  ctx.lineTo(tD.x - 16, tD.y);
-  ctx.closePath();
-  ctx.fillStyle = TB.rim;
-  ctx.fill();
-  ctx.fillStyle = shade(TB.rim, -0.3);
-  ctx.beginPath();
-  ctx.moveTo(tD.x - 16, tD.y);
-  ctx.lineTo(tC.x, tC.y + 10);
-  ctx.lineTo(tC.x, tC.y + 10 + TW * 0.35);
-  ctx.lineTo(tD.x - 16, tD.y + TW * 0.35);
-  ctx.closePath();
-  ctx.fill();
-  ctx.fillStyle = shade(TB.rim, -0.45);
-  ctx.beginPath();
-  ctx.moveTo(tC.x, tC.y + 10);
-  ctx.lineTo(tB.x + 16, tB.y);
-  ctx.lineTo(tB.x + 16, tB.y + TW * 0.35);
-  ctx.lineTo(tC.x, tC.y + 10 + TW * 0.35);
-  ctx.closePath();
-  ctx.fill();
-  // stadium seating (rulebook p.35 seating chart): 8 sections, 2 per quadrant, one per gladiator
-  if (STANDS) drawStands();
-  const [za, zb] = ZONES[RD().zone];
-  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
-    tilePath(r, c);
-    ctx.fillStyle = (r + c) % 2 ? TB.tileA : TB.tileB;
-    if (isNaum() && !(S.drained || S.drainLine != null && r + c <= S.drainLine)) {
-      const t = nTerr(r, c);
-      ctx.fillStyle = t === 'ship' ? (r + c) % 2 ? '#8a6440' : '#7d5a39' : t === 'solid' ? '#9c9585' : (r + c) % 2 ? '#4f8f97' : '#46838b';
-    }
-    if (isChariot() && inPlayerZone(r, c)) ctx.fillStyle = (r + c) % 2 ? '#d8b39c' : '#cda58e';
-    ctx.fill();
-    if (typeof drawShipTile === 'function') drawShipTile(r, c); /* v0.58: the printed deck art, tile by tile */
-    if (isChariot() && chHatched(r, c)) {
-      ctx.save();
-      ctx.clip();
-      ctx.strokeStyle = 'rgba(60,40,30,.45)';
-      ctx.lineWidth = 2;
-      const m = center(r, c);
-      for (let i = -3; i <= 3; i++) {
-        ctx.beginPath();
-        ctx.moveTo(m.x - TW / 2 + i * TW * 0.18, m.y - TH / 2);
-        ctx.lineTo(m.x - TW / 2 + i * TW * 0.18 + TW * 0.4, m.y + TH / 2);
+  const [za, zb] = ZONES[RD().zone]; /* v0.93: read once, for the tiles and the zone ropes */
+  /* v0.93 THE LAYERS: the board is painted as ONE ordered list of layers, in exactly the old order (219-v93layers runs them with
+     per-layer timings, cache stats and a debug Off; without it, or with localStorage flavius_layers93off=1, they simply run in turn).
+     A new board layer goes into this list (or a wrapper of a function one of them calls) — never a second loose paint pass. */
+  drawLayers93([
+    ['rim', () => {
+      const tA = isoFix(0, 0),
+        tB = isoFix(0, N),
+        tC = isoFix(N, N),
+        tD = isoFix(N, 0); /* v0.89: the rim is square — never turned (168-v89rotate) */
+      ctx.beginPath();
+      ctx.moveTo(tA.x, tA.y - 10);
+      ctx.lineTo(tB.x + 16, tB.y);
+      ctx.lineTo(tC.x, tC.y + 10);
+      ctx.lineTo(tD.x - 16, tD.y);
+      ctx.closePath();
+      ctx.fillStyle = TB.rim;
+      ctx.fill();
+      ctx.fillStyle = shade(TB.rim, -0.3);
+      ctx.beginPath();
+      ctx.moveTo(tD.x - 16, tD.y);
+      ctx.lineTo(tC.x, tC.y + 10);
+      ctx.lineTo(tC.x, tC.y + 10 + TW * 0.35);
+      ctx.lineTo(tD.x - 16, tD.y + TW * 0.35);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = shade(TB.rim, -0.45);
+      ctx.beginPath();
+      ctx.moveTo(tC.x, tC.y + 10);
+      ctx.lineTo(tB.x + 16, tB.y);
+      ctx.lineTo(tB.x + 16, tB.y + TW * 0.35);
+      ctx.lineTo(tC.x, tC.y + 10 + TW * 0.35);
+      ctx.closePath();
+      ctx.fill();
+    }],
+    ['stands', () => {
+      // stadium seating (rulebook p.35 seating chart): 8 sections, 2 per quadrant, one per gladiator
+      if (STANDS) drawStands();
+    }],
+    ['tiles', () => {
+      for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+        tilePath(r, c);
+        ctx.fillStyle = (r + c) % 2 ? TB.tileA : TB.tileB;
+        if (isNaum() && !(S.drained || S.drainLine != null && r + c <= S.drainLine)) {
+          const t = nTerr(r, c);
+          ctx.fillStyle = t === 'ship' ? (r + c) % 2 ? '#8a6440' : '#7d5a39' : t === 'solid' ? '#9c9585' : (r + c) % 2 ? '#4f8f97' : '#46838b';
+        }
+        if (isChariot() && inPlayerZone(r, c)) ctx.fillStyle = (r + c) % 2 ? '#d8b39c' : '#cda58e';
+        ctx.fill();
+        if (typeof drawShipTile === 'function') drawShipTile(r, c); /* v0.58: the printed deck art, tile by tile */
+        if (isChariot() && chHatched(r, c)) {
+          ctx.save();
+          ctx.clip();
+          ctx.strokeStyle = 'rgba(60,40,30,.45)';
+          ctx.lineWidth = 2;
+          const m = center(r, c);
+          for (let i = -3; i <= 3; i++) {
+            ctx.beginPath();
+            ctx.moveTo(m.x - TW / 2 + i * TW * 0.18, m.y - TH / 2);
+            ctx.lineTo(m.x - TW / 2 + i * TW * 0.18 + TW * 0.4, m.y + TH / 2);
+            ctx.stroke();
+          }
+          ctx.restore();
+          tilePath(r, c);
+        }
+        if (isChariot() && CH_GATES.some(([a, b]) => a === r && b === c)) {
+          ctx.fillStyle = 'rgba(240,207,125,.35)';
+          ctx.fill();
+        }
+        for (const n of S.npcs) if (n.zone && n.alive && n.tamedBy == null && r >= n.zone[0] && r <= n.zone[1] && c >= n.zone[2] && c <= n.zone[3]) {
+          ctx.fillStyle = ZONE_TINT[n.t];
+          ctx.fill();
+        }
+        if (!inZone(r, c) && !S.zoneFull) {
+          ctx.fillStyle = TB.outZone;
+          ctx.fill();
+        } // v0.34: after the post-show the ropes are down — full board
+        ctx.strokeStyle = TB.grid;
+        ctx.lineWidth = 1;
         ctx.stroke();
       }
-      ctx.restore();
-      tilePath(r, c);
-    }
-    if (isChariot() && CH_GATES.some(([a, b]) => a === r && b === c)) {
-      ctx.fillStyle = 'rgba(240,207,125,.35)';
-      ctx.fill();
-    }
-    for (const n of S.npcs) if (n.zone && n.alive && n.tamedBy == null && r >= n.zone[0] && r <= n.zone[1] && c >= n.zone[2] && c <= n.zone[3]) {
-      ctx.fillStyle = ZONE_TINT[n.t];
-      ctx.fill();
-    }
-    if (!inZone(r, c) && !S.zoneFull) {
-      ctx.fillStyle = TB.outZone;
-      ctx.fill();
-    } // v0.34: after the post-show the ropes are down — full board
-    ctx.strokeStyle = TB.grid;
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  }
-  if (typeof night91Sand === 'function') night91Sand(Wd, Hd); /* v0.91: the night match — grade, sky, torches (189-v91night) */
-  // exit / capture tiles
-  if (S.evKey === 'orpheus' || S.evKey === 'goldenEagle') for (const p of S.players) {
-    if (!p.alive) continue;
-    tilePath(p.start[0], p.start[1], 3);
-    ctx.strokeStyle = p.color;
-    ctx.lineWidth = 2.5;
-    ctx.setLineDash([4, 3]);
-    ctx.stroke();
-    ctx.setLineDash([]);
-  }
-  if (S.capture) {
-    tilePath(S.capture.r, S.capture.c, 2);
-    ctx.fillStyle = 'rgba(240,207,125,.45)';
-    ctx.fill();
-    ctx.strokeStyle = '#f0cf7d';
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
-  }
-  if (isChariot()) {
-    /* seg — dashed line between two grid corners (the chariot start and finish lines). */
-    const seg = (r1, c1, r2, c2, col) => {
-      const a = iso(r1, c1),
-        b = iso(r2, c2);
-      ctx.strokeStyle = col;
-      ctx.lineWidth = 3;
-      ctx.setLineDash([6, 4]);
-      ctx.beginPath();
-      ctx.moveTo(a.x, a.y);
-      ctx.lineTo(b.x, b.y);
-      ctx.stroke();
-      ctx.setLineDash([]);
-    };
-    seg(10, 10, 10, 13, '#9bd070');
-    seg(10, 10, 13, 10, '#c0433a');
-    for (const q of S.players) if (q.alive && q.ch && !q.ch.mounted) {
-      const m = center(q.ch.cr, q.ch.cc);
-      if (!(typeof chRideTok === 'function' && chRideTok(q, m))) drawWheel(m.x, m.y, q.color); // v0.64: the parked chariot's token
-    }
-  }
-  if (isNaum() && !S.drained) {
-    for (const d of S.doors) {
-      tilePath(d.r, d.c, TW * 0.1);
-      ctx.fillStyle = '#6a4a2c';
-      ctx.fill();
-      ctx.strokeStyle = '#3a2616';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    }
-    for (const w of S.waterTok) {
-      const m = center(w.r, w.c);
-      ctx.fillStyle = 'rgba(220,235,240,.55)';
-      ell(m.x, m.y, TW * 0.14, TW * 0.07);
-      ctx.fill();
-      ctx.strokeStyle = '#2c5a60';
-      ctx.stroke();
-    }
-    const m = center(6, 6);
-    ctx.fillStyle = '#bdb3a0';
-    ell(m.x, m.y, TW * 0.2, TW * 0.1);
-    ctx.fill();
-    ctx.strokeStyle = '#6d6558';
-    ctx.stroke();
-  }
-  if (RD().zone > 1 && !S.zoneFull) {
-    const a = isoFix(za, za),
-      b = isoFix(za, zb + 1),
-      c2 = isoFix(zb + 1, zb + 1),
-      d = isoFix(zb + 1, za); /* v0.89: the zone ropes are centred — never turned */
-    ctx.beginPath();
-    ctx.moveTo(a.x, a.y);
-    ctx.lineTo(b.x, b.y);
-    ctx.lineTo(c2.x, c2.y);
-    ctx.lineTo(d.x, d.y);
-    ctx.closePath();
-    ctx.strokeStyle = '#f0cf7d';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([6, 4]);
-    ctx.stroke();
-    ctx.setLineDash([]);
-  }
-  ctx.font = `${Math.round(TW * 0.24)}px IBM Plex Mono, monospace`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#b39d80';
-  if (!(typeof ar91On === 'function' && ar91On())) { /* v0.91: the arena look hangs the tile names on the walls as banners (192-v91arena) */
-    for (let r = 0; r < N; r++) {
-      const m = center(r, -0.9);
-      ctx.fillText(ROWL[r], m.x, m.y);
-    }
-    for (let c = 0; c < N; c++) {
-      const m = center(-0.9, c);
-      ctx.fillText(COLL[c], m.x, m.y);
-    }
-  }
-  const stA = typeof startTileAlpha === 'function' ? startTileAlpha() : 1; /* v0.57: the numbered start marks fade once the match begins */
-  if (!isChariot() && !isNaum() && stA > 0) STARTS.slice(0, Math.max(4, S.players.length)).forEach(([r, c], i) => {
-    ctx.globalAlpha = stA;
-    const m = center(r, c);
-    ctx.fillStyle = 'rgba(60,20,10,.55)';
-    ell(m.x, m.y, TW * 0.2, TW * 0.1);
-    ctx.fill();
-    ctx.fillStyle = '#f0cf7d';
-    ctx.font = `${Math.round(TW * 0.2)}px Marcellus SC, serif`;
-    ctx.fillText(i + 1, m.x, m.y + 1);
-    ctx.globalAlpha = 1;
-  });
-  for (const t of S.tunnels) {
-    const sealed = typeof tunnelUsable === 'function' && !tunnelUsable(t);
-    const exitNow = S.players.some(other => other.alive && other.underground && other.r === t.r && other.c === t.c) || S.tunExit && S.tunExit.r === t.r && S.tunExit.c === t.c && S.tunExit.until > S.turnNo;
-    const img = IMG[exitNow ? 'tunnel_open' : 'tunnel_door']; /* v0.53: the door side by default; the dark shaft side marks the exit a gladiator came up through */
-    if (img && img.complete && img.naturalWidth) {
-      // the printed square tunnel tokens: an open shaft, or the barred door when sealed
-      ctx.save();
-      tilePath(t.r, t.c, TW * 0.08);
-      ctx.clip();
-      const m = center(t.r, t.c);
-      ctx.drawImage(img, m.x - TW * 0.78, m.y - TW * 0.58, TW * 1.56, TW * 1.16);
-      if (sealed) {
-        ctx.fillStyle = 'rgba(10,5,3,.5)';
-        ctx.fillRect(m.x - TW, m.y - TW, TW * 2, TW * 2);
+    }],
+    ['walls', () => {
+      if (typeof night91Sand === 'function') night91Sand(Wd, Hd); /* v0.91: the night match — grade, sky, torches (189-v91night) */
+    }],
+    ['floor', () => {
+      // exit / capture tiles
+      if (S.evKey === 'orpheus' || S.evKey === 'goldenEagle') for (const p of S.players) {
+        if (!p.alive) continue;
+        tilePath(p.start[0], p.start[1], 3);
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([4, 3]);
+        ctx.stroke();
+        ctx.setLineDash([]);
       }
-      ctx.restore();
-      tilePath(t.r, t.c, TW * 0.08);
-      ctx.strokeStyle = '#7a6048';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    } else {
-      tilePath(t.r, t.c, TW * 0.12);
-      ctx.fillStyle = '#3a2b20';
-      ctx.fill();
-      ctx.strokeStyle = '#7a6048';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-      const m = center(t.r, t.c);
-      ctx.strokeStyle = '#5c4634';
-      ctx.lineWidth = 1;
-      for (let i = -2; i <= 2; i++) {
-        ctx.beginPath();
-        ctx.moveTo(m.x + i * TW * 0.07 - TW * 0.12, m.y - TW * 0.04 + i * TW * 0.035);
-        ctx.lineTo(m.x + i * TW * 0.07 + TW * 0.12, m.y + TW * 0.04 + i * TW * 0.035);
+      if (S.capture) {
+        tilePath(S.capture.r, S.capture.c, 2);
+        ctx.fillStyle = 'rgba(240,207,125,.45)';
+        ctx.fill();
+        ctx.strokeStyle = '#f0cf7d';
+        ctx.lineWidth = 2.5;
         ctx.stroke();
       }
-    }
-  }
-  {
-    const sh9 = S.clean && S.clean.spikeH < 1 ? Math.max(0, S.clean.spikeH) : 1; // v0.33: the winches lower the spikes during the post-show
-    for (const s of S.spikes) drawSpikeTile(s, sh9);
-  }
-  // rubble where pillars were toppled
-  for (const rb of S.rubble || []) for (const [k, sz] of [[0, 1], [1, .75], [2, .5]]) {
-    const r = rb.r + rb.dr * k,
-      c = rb.c + rb.dc * k;
-    if (!inB(r, c)) continue;
-    const m = center(r, c);
-    for (let i = 0; i < 5; i++) {
-      const a = i * 2.4 + rb.r * 1.3 + k,
-        x = m.x + Math.cos(a) * TW * 0.18 * sz,
-        y = m.y + Math.sin(a) * TW * 0.08 * sz - (typeof rubbleSettle84 === 'function' ? rubbleSettle84(rb, k, i) : 0); /* v0.84: the stones settle (138-v84) */
-      ctx.fillStyle = i % 2 ? THEME.rubble || '#bdb3a0' : shade(THEME.rubble || '#bdb3a0', -0.15);
-      ctx.beginPath();
-      ctx.ellipse(x, y, TW * 0.06 * sz + 1, TW * 0.035 * sz + 1, a, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-  // piles and corpses — v0.33: the fallen LIE where they fell (token on its side) until the crew carts them out
-  for (const pl of S.piles) {
-    if (pl.gone || pileEmpty(pl) && !pl.corpse) continue;
-    const m = center(pl.r, pl.c);
-    if (pl.corpse) {
-      if (SETTINGS.gore !== false && pl.cls && !pl.retiredOut) {
-        const base = typeof tokenForCls === 'function' ? tokenForCls(pl.cls) : null;
-        if (base) {
-          drawCorpseFig(m, pl.sev && Object.values(pl.sev).some(Boolean) ? {
-            ...base,
-            sev: pl.sev
-          } : base, pl.color);
-          continue;
+      if (isChariot()) {
+        /* seg — dashed line between two grid corners (the chariot start and finish lines). */
+        const seg = (r1, c1, r2, c2, col) => {
+          const a = iso(r1, c1),
+            b = iso(r2, c2);
+          ctx.strokeStyle = col;
+          ctx.lineWidth = 3;
+          ctx.setLineDash([6, 4]);
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        };
+        seg(10, 10, 10, 13, '#9bd070');
+        seg(10, 10, 13, 10, '#c0433a');
+        for (const q of S.players) if (q.alive && q.ch && !q.ch.mounted) {
+          const m = center(q.ch.cr, q.ch.cc);
+          if (!(typeof chRideTok === 'function' && chRideTok(q, m))) drawWheel(m.x, m.y, q.color); // v0.64: the parked chariot's token
         }
       }
-      ctx.fillStyle = shade(pl.color, -0.45);
-      ell(m.x, m.y, TW * 0.3, TW * 0.15);
-      ctx.fill();
-      ctx.strokeStyle = pl.color;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-      ctx.strokeStyle = 'rgba(240,220,200,.75)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(m.x - TW * 0.1, m.y - TW * 0.05);
-      ctx.lineTo(m.x + TW * 0.1, m.y + TW * 0.05);
-      ctx.moveTo(m.x + TW * 0.1, m.y - TW * 0.05);
-      ctx.lineTo(m.x - TW * 0.1, m.y + TW * 0.05);
-      ctx.stroke();
-    } else {
-      if (typeof dropTok81 === 'function' && dropTok81(pl.owner, pl.color, m.x + TW * 0.18, m.y + TW * 0.04)) continue; /* v0.81: his token round */
-      ctx.fillStyle = pl.color;
-      ell(m.x + TW * 0.18, m.y + TW * 0.04, TW * 0.09, TW * 0.045);
-      ctx.fill();
-      ctx.strokeStyle = pl.owner < 0 ? '#f5ead2' : '#1a120c';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    }
-  }
-  // slain beasts and NPCs stay in the sand as corpses too, until the carts come
-  if (SETTINGS.gore !== false) for (const n of S.npcs) if (!n.alive && !n.gone) {
-    const tk = typeof tokenForNPC === 'function' ? tokenForNPC(n) : null;
-    drawCorpseFig(center(n.r, n.c), tk && n.t === 'tholo' ? {
-      ...tk,
-      headless: true
-    } : tk, null);
-  } // v0.36: Tholo falls headless
-  // v0.32 THE SAND REMEMBERS: blood left by severed limbs, eliminations and dragging stumps (Settings → Visuals)
-  if (SETTINGS.gore !== false && S.blood && S.blood.length) for (const B of S.blood) {
-    const m = center(B.r, B.c);
-    const R9 = mulberry32(B.seed || 1);
-    /* rr — next number from this splash's seeded random generator, so blood looks the same every frame. */
-    const rr = () => R9.next();
-    const fa = typeof bloodFade84 === 'function' ? bloodFade84(B) : 1; /* v0.84: blood soaks in and fades over the rotations (138-v84) */
-    const sp = 1 + (1 - fa) * 0.12;
-    ctx.save();
-    ctx.globalAlpha = (B.kind === 'drop' ? 0.5 : 0.72) * fa;
-    ctx.fillStyle = typeof bloodCol84 === 'function' ? bloodCol84(B.kind === 'elim' ? '#6e120c' : '#8a1c14', fa) : B.kind === 'elim' ? '#6e120c' : '#8a1c14';
-    const k = B.kind === 'elim' ? 9 : B.kind === 'limb' ? 5 : 2;
-    for (let i = 0; i < k; i++) {
-      const a = rr() * Math.PI * 2,
-        d = rr() * (B.kind === 'elim' ? 0.42 : 0.26);
-      ell(m.x + Math.cos(a) * TW * d, m.y + Math.sin(a) * TW * d * 0.5, TW * sp * (B.kind === 'drop' ? 0.03 : 0.05 + rr() * 0.06), TW * sp * (B.kind === 'drop' ? 0.018 : 0.03 + rr() * 0.03));
-      ctx.fill();
-    }
-    if (B.kind === 'elim') {
-      ctx.globalAlpha = 0.6 * fa;
-      ell(m.x, m.y, TW * 0.3, TW * 0.15);
-      ctx.fill();
-    }
-    ctx.restore();
-  }
-  if (S.clean && S.clean.crew) drawCleanCrew();
-  for (const f of S.floor) {
-    const m = center(f.r, f.c);
-    if ((f.kind === 'wheel' || f.kind === 'horse') && typeof chFloorTok === 'function' && chFloorTok(f, m)) continue; // v0.64: the printed spare tokens
-    if (f.kind === 'wheel') {
-      drawWheel(m.x, m.y, '#caa46a');
-      continue;
-    }
-    if (f.kind === 'horse') {
-      ctx.fillStyle = '#8a5a34';
-      ell(m.x, m.y, TW * 0.2, TW * 0.1);
-      ctx.fill();
-      ctx.fillStyle = '#f5e8cc';
-      ctx.font = `700 ${Math.round(TW * 0.16)}px IBM Plex Mono, monospace`;
-      ctx.fillText('H', m.x, m.y + 1);
-      continue;
-    }
-    // a thrown weapon in the sand is just a small tracker in the thrower's color, like a dropped pile
-    if (f.kind === 'weapon') {
-      const o = S.players[f.owner];
-      if (o && typeof dropTok81 === 'function' && dropTok81(o.id, o.color, m.x - TW * 0.18, m.y + TW * 0.04)) continue; /* v0.81: his token round */
-      ctx.fillStyle = o ? o.color : '#d7dde2';
-      ell(m.x - TW * 0.18, m.y + TW * 0.04, TW * 0.09, TW * 0.045);
-      ctx.fill();
-      ctx.strokeStyle = '#f5ead2';
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
-      continue;
-    }
-    if (typeof drawFloorTok === 'function' && drawFloorTok(f, m)) continue; /* v0.47: the printed token, laid on the sand */
-    const eag = f.kind === 'eagle';
-    ctx.fillStyle = eag ? '#f0cf7d' : f.kind === 'key' ? '#9aa4ad' : '#d6ab4c';
-    ell(m.x, m.y, TW * (eag ? 0.22 : 0.16), TW * (eag ? 0.11 : 0.08));
-    ctx.fill();
-    ctx.strokeStyle = '#6b4d17';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.fillStyle = '#3a2508';
-    ctx.font = `700 ${Math.round(TW * 0.16)}px IBM Plex Mono, monospace`;
-    ctx.fillText(eag ? 'E' : f.kind === 'key' ? 'K' : OFFER[f.key]?.g || '?', m.x, m.y + 1);
-  }
-  if (S.chest && S.chest.held == null && typeof drawChest83 === 'function') drawChest83(center(S.chest.r, S.chest.c)); /* v0.83: his chest (135-v83chest) */
-  else if (S.chest && S.chest.held == null) {
-    const m = center(S.chest.r, S.chest.c);
-    const w = TW * 0.22,
-      h = TW * 0.16;
-    ctx.fillStyle = THEME.chestWood || '#6a4520';
-    ctx.fillRect(m.x - w, m.y - h, w * 2, h);
-    ctx.fillStyle = THEME.chestGold || '#d6ab4c';
-    ctx.fillRect(m.x - w, m.y - h - 4, w * 2, 5);
-    ctx.fillRect(m.x - 2, m.y - h, 4, h * 0.7);
-  }
-  // highlights
-  for (const [k, h] of HL) {
-    const r = Math.floor(k / N),
-      c = k % N;
-    tilePath(r, c, 2);
-    const col = {
-      move: TB.hlMove,
-      cmove: TB.hlMove,
-      atk: TB.hlAtk,
-      catk: TB.hlAtk,
-      push: TB.hlPush,
-      topple: TB.hlPush,
-      tunnel: 'rgba(90,140,200,.55)',
-      rete: 'rgba(80,180,170,.5)'
-    }[h.t];
-    ctx.globalAlpha = TB.hlAlpha;
-    ctx.fillStyle = col;
-    ctx.fill();
-    ctx.globalAlpha = 1;
-    if ((h.t === 'move' || h.t === 'cmove') && TW > 30) {
-      const m = center(r, c);
-      ctx.fillStyle = 'rgba(50,20,0,.85)';
-      ctx.font = `500 ${Math.round(TW * 0.22)}px IBM Plex Mono, monospace`;
-      ctx.fillText(h.cost, m.x, m.y);
-    }
-  }
-  if (hoverTile) {
-    tilePath(hoverTile.r, hoverTile.c, 1);
-    ctx.strokeStyle = '#efe3cc';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-  }
-  // see-through focus points
-  const focus = [];
-  if (hoverTile) focus.push(hoverTile);
-  if (S.players[S.cur] && !S.over) {
-    const p = S.players[S.cur];
-    focus.push({
-      r: p.r,
-      c: p.c
-    });
-  }
-  for (const k of HL.keys()) focus.push({
-    r: Math.floor(k / N),
-    c: k % N
-  });
-  /* alphaFor — see-through opacity for a sprite: fixed when X-ray is on or off; in auto, faded when it covers a hovered, current or highlighted tile behind it.
-     TWEAK: 0.3 / 0.55 (on) and 0.28 / 0.45 (auto) for pillars / other pieces. */
-  const alphaFor = (kind, r, c) => {
-    if (XRAY === 'on') return kind === 'pillar' ? 0.3 : 0.55;
-    if (XRAY === 'off') return 1;
-    const m = center(r, c);
-    const b = spriteBox(kind, m.x, m.y);
-    for (const f of focus) {
-      if (dep89(f.r, f.c) >= dep89(r, c)) continue;
-      const fm = center(f.r, f.c);
-      if (fm.x > b.x0 && fm.x < b.x1 && fm.y > b.y0 && fm.y < b.y1) return kind === 'pillar' ? 0.28 : 0.45;
-    }
-    return 1;
-  };
-  const objs = [];
-  for (const pl of S.pillars) objs.push({
-    d: pl.d89 != null ? pl.d89 : dep89(pl.r, pl.c),
-    f: () => {
-      ctx.globalAlpha = alphaFor('pillar', pl.r, pl.c);
-      drawPillar(pl);
-      ctx.globalAlpha = 1;
-    }
-  });
-  if (!DRAW_EMPTY) for (const n of S.npcs) if (n.alive && !n.out) objs.push({
-    d: dep89(n.r, n.c) + .1,
-    f: () => {
-      ctx.globalAlpha = alphaFor('npc', n.r, n.c);
-      drawNPC(n);
-      ctx.globalAlpha = 1;
-    }
-  });
-  if (!DRAW_EMPTY) for (const p of S.players) if (p.alive && !p.exited) objs.push({
-    d: dep89(p.r, p.c) + .2,
-    f: () => {
-      if (p.underground) {
-        drawUnderground(p);
-        return;
-      } /* v0.41: underground = off the board; only the exit is marked */
-      ctx.globalAlpha = alphaFor('player', p.r, p.c);
-      drawPlayer(p);
-      ctx.globalAlpha = 1;
-    }
-  });
-  objs.sort((a, b) => a.d - b.d).forEach(o => o.f());
-  // aggro tethers: each wild NPC points at its single aggro target
-  for (const n of S.npcs) {
-    if (!n.alive || n.out || n.aggro == null || n.tamedBy != null) continue;
-    const q = S.players[n.aggro];
-    if (!q || !q.alive || q.exited) continue;
-    const a = center(n.r, n.c),
-      b = center(q.r, q.c);
-    ctx.strokeStyle = 'rgba(224,90,68,.55)';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([3, 4]);
-    ctx.beginPath();
-    ctx.moveTo(a.x, a.y - TW * 0.2);
-    ctx.lineTo(b.x, b.y - TW * 0.3);
-    ctx.stroke();
-    ctx.setLineDash([]);
-  }
-  for (const [k, h] of HL) if (h.t === 'atk' || h.t === 'rete' || h.t === 'catk') {
-    const r = Math.floor(k / N),
-      c = k % N,
-      m = center(r, c);
-    ctx.strokeStyle = h.t === 'rete' ? '#62d0c0' : TB.ring;
-    ctx.lineWidth = 2.5;
-    ell(m.x, m.y, TW * 0.36, TW * 0.18);
-    ctx.stroke();
-  }
-  try {
-    if (typeof drawSugTile === 'function') drawSugTile();
-  } catch (e) {}
-  try {
-    if (typeof drawTosses === 'function') drawTosses();
-  } catch (e) {}
-  if (STANDS && typeof drawFanFlags === 'function') try {
-    drawFanFlags();
-  } catch (e) {} // v0.35: banners above the board — the front tiers no longer lose them to the sand
-  if (STANDS) drawEmotes(); // above the board: front-row shouts used to disappear under the sand
-  drawFlavius();
-  drawFX();
-  renderBubbles();
-  try {
-    if (typeof duelVignette === 'function') duelVignette(Wd, Hd);
-    if (typeof duelUI === 'function') duelUI();
-  } catch (e) {}
+      if (isNaum() && !S.drained) {
+        for (const d of S.doors) {
+          tilePath(d.r, d.c, TW * 0.1);
+          ctx.fillStyle = '#6a4a2c';
+          ctx.fill();
+          ctx.strokeStyle = '#3a2616';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+        for (const w of S.waterTok) {
+          const m = center(w.r, w.c);
+          ctx.fillStyle = 'rgba(220,235,240,.55)';
+          ell(m.x, m.y, TW * 0.14, TW * 0.07);
+          ctx.fill();
+          ctx.strokeStyle = '#2c5a60';
+          ctx.stroke();
+        }
+        const m = center(6, 6);
+        ctx.fillStyle = '#bdb3a0';
+        ell(m.x, m.y, TW * 0.2, TW * 0.1);
+        ctx.fill();
+        ctx.strokeStyle = '#6d6558';
+        ctx.stroke();
+      }
+      if (RD().zone > 1 && !S.zoneFull) {
+        const a = isoFix(za, za),
+          b = isoFix(za, zb + 1),
+          c2 = isoFix(zb + 1, zb + 1),
+          d = isoFix(zb + 1, za); /* v0.89: the zone ropes are centred — never turned */
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.lineTo(c2.x, c2.y);
+        ctx.lineTo(d.x, d.y);
+        ctx.closePath();
+        ctx.strokeStyle = '#f0cf7d';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      ctx.font = `${Math.round(TW * 0.24)}px IBM Plex Mono, monospace`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#b39d80';
+      if (!(typeof ar91On === 'function' && ar91On())) { /* v0.91: the arena look hangs the tile names on the walls as banners (192-v91arena) */
+        for (let r = 0; r < N; r++) {
+          const m = center(r, -0.9);
+          ctx.fillText(ROWL[r], m.x, m.y);
+        }
+        for (let c = 0; c < N; c++) {
+          const m = center(-0.9, c);
+          ctx.fillText(COLL[c], m.x, m.y);
+        }
+      }
+      const stA = typeof startTileAlpha === 'function' ? startTileAlpha() : 1; /* v0.57: the numbered start marks fade once the match begins */
+      if (!isChariot() && !isNaum() && stA > 0) STARTS.slice(0, Math.max(4, S.players.length)).forEach(([r, c], i) => {
+        ctx.globalAlpha = stA;
+        const m = center(r, c);
+        ctx.fillStyle = 'rgba(60,20,10,.55)';
+        ell(m.x, m.y, TW * 0.2, TW * 0.1);
+        ctx.fill();
+        ctx.fillStyle = '#f0cf7d';
+        ctx.font = `${Math.round(TW * 0.2)}px Marcellus SC, serif`;
+        ctx.fillText(i + 1, m.x, m.y + 1);
+        ctx.globalAlpha = 1;
+      });
+      for (const t of S.tunnels) {
+        const sealed = typeof tunnelUsable === 'function' && !tunnelUsable(t);
+        const exitNow = S.players.some(other => other.alive && other.underground && other.r === t.r && other.c === t.c) || S.tunExit && S.tunExit.r === t.r && S.tunExit.c === t.c && S.tunExit.until > S.turnNo;
+        const img = IMG[exitNow ? 'tunnel_open' : 'tunnel_door']; /* v0.53: the door side by default; the dark shaft side marks the exit a gladiator came up through */
+        if (img && img.complete && img.naturalWidth) {
+          // the printed square tunnel tokens: an open shaft, or the barred door when sealed
+          ctx.save();
+          tilePath(t.r, t.c, TW * 0.08);
+          ctx.clip();
+          const m = center(t.r, t.c);
+          ctx.drawImage(img, m.x - TW * 0.78, m.y - TW * 0.58, TW * 1.56, TW * 1.16);
+          if (sealed) {
+            ctx.fillStyle = 'rgba(10,5,3,.5)';
+            ctx.fillRect(m.x - TW, m.y - TW, TW * 2, TW * 2);
+          }
+          ctx.restore();
+          tilePath(t.r, t.c, TW * 0.08);
+          ctx.strokeStyle = '#7a6048';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        } else {
+          tilePath(t.r, t.c, TW * 0.12);
+          ctx.fillStyle = '#3a2b20';
+          ctx.fill();
+          ctx.strokeStyle = '#7a6048';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          const m = center(t.r, t.c);
+          ctx.strokeStyle = '#5c4634';
+          ctx.lineWidth = 1;
+          for (let i = -2; i <= 2; i++) {
+            ctx.beginPath();
+            ctx.moveTo(m.x + i * TW * 0.07 - TW * 0.12, m.y - TW * 0.04 + i * TW * 0.035);
+            ctx.lineTo(m.x + i * TW * 0.07 + TW * 0.12, m.y + TW * 0.04 + i * TW * 0.035);
+            ctx.stroke();
+          }
+        }
+      }
+      {
+        const sh9 = S.clean && S.clean.spikeH < 1 ? Math.max(0, S.clean.spikeH) : 1; // v0.33: the winches lower the spikes during the post-show
+        for (const s of S.spikes) drawSpikeTile(s, sh9);
+      }
+    }],
+    ['decals', () => {
+      // rubble where pillars were toppled
+      for (const rb of S.rubble || []) for (const [k, sz] of [[0, 1], [1, .75], [2, .5]]) {
+        const r = rb.r + rb.dr * k,
+          c = rb.c + rb.dc * k;
+        if (!inB(r, c)) continue;
+        const m = center(r, c);
+        for (let i = 0; i < 5; i++) {
+          const a = i * 2.4 + rb.r * 1.3 + k,
+            x = m.x + Math.cos(a) * TW * 0.18 * sz,
+            y = m.y + Math.sin(a) * TW * 0.08 * sz - (typeof rubbleSettle84 === 'function' ? rubbleSettle84(rb, k, i) : 0); /* v0.84: the stones settle (138-v84) */
+          ctx.fillStyle = i % 2 ? THEME.rubble || '#bdb3a0' : shade(THEME.rubble || '#bdb3a0', -0.15);
+          ctx.beginPath();
+          ctx.ellipse(x, y, TW * 0.06 * sz + 1, TW * 0.035 * sz + 1, a, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      // piles and corpses — v0.33: the fallen LIE where they fell (token on its side) until the crew carts them out
+      for (const pl of S.piles) {
+        if (pl.gone || pileEmpty(pl) && !pl.corpse) continue;
+        const m = center(pl.r, pl.c);
+        if (pl.corpse) {
+          if (SETTINGS.gore !== false && pl.cls && !pl.retiredOut) {
+            const base = typeof tokenForCls === 'function' ? tokenForCls(pl.cls) : null;
+            if (base) {
+              drawCorpseFig(m, pl.sev && Object.values(pl.sev).some(Boolean) ? {
+                ...base,
+                sev: pl.sev
+              } : base, pl.color);
+              continue;
+            }
+          }
+          ctx.fillStyle = shade(pl.color, -0.45);
+          ell(m.x, m.y, TW * 0.3, TW * 0.15);
+          ctx.fill();
+          ctx.strokeStyle = pl.color;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          ctx.strokeStyle = 'rgba(240,220,200,.75)';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(m.x - TW * 0.1, m.y - TW * 0.05);
+          ctx.lineTo(m.x + TW * 0.1, m.y + TW * 0.05);
+          ctx.moveTo(m.x + TW * 0.1, m.y - TW * 0.05);
+          ctx.lineTo(m.x - TW * 0.1, m.y + TW * 0.05);
+          ctx.stroke();
+        } else {
+          if (typeof dropTok81 === 'function' && dropTok81(pl.owner, pl.color, m.x + TW * 0.18, m.y + TW * 0.04)) continue; /* v0.81: his token round */
+          ctx.fillStyle = pl.color;
+          ell(m.x + TW * 0.18, m.y + TW * 0.04, TW * 0.09, TW * 0.045);
+          ctx.fill();
+          ctx.strokeStyle = pl.owner < 0 ? '#f5ead2' : '#1a120c';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+      // slain beasts and NPCs stay in the sand as corpses too, until the carts come
+      if (SETTINGS.gore !== false) for (const n of S.npcs) if (!n.alive && !n.gone) {
+        const tk = typeof tokenForNPC === 'function' ? tokenForNPC(n) : null;
+        drawCorpseFig(center(n.r, n.c), tk && n.t === 'tholo' ? {
+          ...tk,
+          headless: true
+        } : tk, null);
+      } // v0.36: Tholo falls headless
+      // v0.32 THE SAND REMEMBERS: blood left by severed limbs, eliminations and dragging stumps (Settings → Visuals)
+      if (SETTINGS.gore !== false && S.blood && S.blood.length) for (const B of S.blood) {
+        const m = center(B.r, B.c);
+        const R9 = mulberry32(B.seed || 1);
+        /* rr — next number from this splash's seeded random generator, so blood looks the same every frame. */
+        const rr = () => R9.next();
+        const fa = typeof bloodFade84 === 'function' ? bloodFade84(B) : 1; /* v0.84: blood soaks in and fades over the rotations (138-v84) */
+        const sp = 1 + (1 - fa) * 0.12;
+        ctx.save();
+        ctx.globalAlpha = (B.kind === 'drop' ? 0.5 : 0.72) * fa;
+        ctx.fillStyle = typeof bloodCol84 === 'function' ? bloodCol84(B.kind === 'elim' ? '#6e120c' : '#8a1c14', fa) : B.kind === 'elim' ? '#6e120c' : '#8a1c14';
+        const k = B.kind === 'elim' ? 9 : B.kind === 'limb' ? 5 : 2;
+        for (let i = 0; i < k; i++) {
+          const a = rr() * Math.PI * 2,
+            d = rr() * (B.kind === 'elim' ? 0.42 : 0.26);
+          ell(m.x + Math.cos(a) * TW * d, m.y + Math.sin(a) * TW * d * 0.5, TW * sp * (B.kind === 'drop' ? 0.03 : 0.05 + rr() * 0.06), TW * sp * (B.kind === 'drop' ? 0.018 : 0.03 + rr() * 0.03));
+          ctx.fill();
+        }
+        if (B.kind === 'elim') {
+          ctx.globalAlpha = 0.6 * fa;
+          ell(m.x, m.y, TW * 0.3, TW * 0.15);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+      if (S.clean && S.clean.crew) drawCleanCrew();
+      for (const f of S.floor) {
+        const m = center(f.r, f.c);
+        if ((f.kind === 'wheel' || f.kind === 'horse') && typeof chFloorTok === 'function' && chFloorTok(f, m)) continue; // v0.64: the printed spare tokens
+        if (f.kind === 'wheel') {
+          drawWheel(m.x, m.y, '#caa46a');
+          continue;
+        }
+        if (f.kind === 'horse') {
+          ctx.fillStyle = '#8a5a34';
+          ell(m.x, m.y, TW * 0.2, TW * 0.1);
+          ctx.fill();
+          ctx.fillStyle = '#f5e8cc';
+          ctx.font = `700 ${Math.round(TW * 0.16)}px IBM Plex Mono, monospace`;
+          ctx.fillText('H', m.x, m.y + 1);
+          continue;
+        }
+        // a thrown weapon in the sand is just a small tracker in the thrower's color, like a dropped pile
+        if (f.kind === 'weapon') {
+          const o = S.players[f.owner];
+          if (o && typeof dropTok81 === 'function' && dropTok81(o.id, o.color, m.x - TW * 0.18, m.y + TW * 0.04)) continue; /* v0.81: his token round */
+          ctx.fillStyle = o ? o.color : '#d7dde2';
+          ell(m.x - TW * 0.18, m.y + TW * 0.04, TW * 0.09, TW * 0.045);
+          ctx.fill();
+          ctx.strokeStyle = '#f5ead2';
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+          continue;
+        }
+        if (typeof drawFloorTok === 'function' && drawFloorTok(f, m)) continue; /* v0.47: the printed token, laid on the sand */
+        const eag = f.kind === 'eagle';
+        ctx.fillStyle = eag ? '#f0cf7d' : f.kind === 'key' ? '#9aa4ad' : '#d6ab4c';
+        ell(m.x, m.y, TW * (eag ? 0.22 : 0.16), TW * (eag ? 0.11 : 0.08));
+        ctx.fill();
+        ctx.strokeStyle = '#6b4d17';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = '#3a2508';
+        ctx.font = `700 ${Math.round(TW * 0.16)}px IBM Plex Mono, monospace`;
+        ctx.fillText(eag ? 'E' : f.kind === 'key' ? 'K' : OFFER[f.key]?.g || '?', m.x, m.y + 1);
+      }
+      if (S.chest && S.chest.held == null && typeof drawChest83 === 'function') drawChest83(center(S.chest.r, S.chest.c)); /* v0.83: his chest (135-v83chest) */
+      else if (S.chest && S.chest.held == null) {
+        const m = center(S.chest.r, S.chest.c);
+        const w = TW * 0.22,
+          h = TW * 0.16;
+        ctx.fillStyle = THEME.chestWood || '#6a4520';
+        ctx.fillRect(m.x - w, m.y - h, w * 2, h);
+        ctx.fillStyle = THEME.chestGold || '#d6ab4c';
+        ctx.fillRect(m.x - w, m.y - h - 4, w * 2, 5);
+        ctx.fillRect(m.x - 2, m.y - h, 4, h * 0.7);
+      }
+    }],
+    ['highlights', () => {
+      // highlights
+      for (const [k, h] of HL) {
+        const r = Math.floor(k / N),
+          c = k % N;
+        tilePath(r, c, 2);
+        const col = {
+          move: TB.hlMove,
+          cmove: TB.hlMove,
+          atk: TB.hlAtk,
+          catk: TB.hlAtk,
+          push: TB.hlPush,
+          topple: TB.hlPush,
+          tunnel: 'rgba(90,140,200,.55)',
+          rete: 'rgba(80,180,170,.5)'
+        }[h.t];
+        ctx.globalAlpha = TB.hlAlpha;
+        ctx.fillStyle = col;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        if ((h.t === 'move' || h.t === 'cmove') && TW > 30) {
+          const m = center(r, c);
+          ctx.fillStyle = 'rgba(50,20,0,.85)';
+          ctx.font = `500 ${Math.round(TW * 0.22)}px IBM Plex Mono, monospace`;
+          ctx.fillText(h.cost, m.x, m.y);
+        }
+      }
+      if (hoverTile) {
+        tilePath(hoverTile.r, hoverTile.c, 1);
+        ctx.strokeStyle = '#efe3cc';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    }],
+    ['pieces', () => {
+      // see-through focus points
+      const focus = [];
+      if (hoverTile) focus.push(hoverTile);
+      if (S.players[S.cur] && !S.over) {
+        const p = S.players[S.cur];
+        focus.push({
+          r: p.r,
+          c: p.c
+        });
+      }
+      for (const k of HL.keys()) focus.push({
+        r: Math.floor(k / N),
+        c: k % N
+      });
+      /* alphaFor — see-through opacity for a sprite: fixed when X-ray is on or off; in auto, faded when it covers a hovered, current or highlighted tile behind it.
+         TWEAK: 0.3 / 0.55 (on) and 0.28 / 0.45 (auto) for pillars / other pieces. */
+      const alphaFor = (kind, r, c) => {
+        if (XRAY === 'on') return kind === 'pillar' ? 0.3 : 0.55;
+        if (XRAY === 'off') return 1;
+        const m = center(r, c);
+        const b = spriteBox(kind, m.x, m.y);
+        for (const f of focus) {
+          if (dep89(f.r, f.c) >= dep89(r, c)) continue;
+          const fm = center(f.r, f.c);
+          if (fm.x > b.x0 && fm.x < b.x1 && fm.y > b.y0 && fm.y < b.y1) return kind === 'pillar' ? 0.28 : 0.45;
+        }
+        return 1;
+      };
+      const objs = [];
+      for (const pl of S.pillars) objs.push({
+        d: pl.d89 != null ? pl.d89 : dep89(pl.r, pl.c),
+        f: () => {
+          ctx.globalAlpha = alphaFor('pillar', pl.r, pl.c);
+          drawPillar(pl);
+          ctx.globalAlpha = 1;
+        }
+      });
+      if (!DRAW_EMPTY) for (const n of S.npcs) if (n.alive && !n.out) objs.push({
+        d: dep89(n.r, n.c) + .1,
+        f: () => {
+          ctx.globalAlpha = alphaFor('npc', n.r, n.c);
+          drawNPC(n);
+          ctx.globalAlpha = 1;
+        }
+      });
+      if (!DRAW_EMPTY) for (const p of S.players) if (p.alive && !p.exited) objs.push({
+        d: dep89(p.r, p.c) + .2,
+        f: () => {
+          if (p.underground) {
+            drawUnderground(p);
+            return;
+          } /* v0.41: underground = off the board; only the exit is marked */
+          ctx.globalAlpha = alphaFor('player', p.r, p.c);
+          drawPlayer(p);
+          ctx.globalAlpha = 1;
+        }
+      });
+      objs.sort((a, b) => a.d - b.d).forEach(o => o.f());
+    }],
+    ['overlays', () => {
+      // aggro tethers: each wild NPC points at its single aggro target
+      for (const n of S.npcs) {
+        if (!n.alive || n.out || n.aggro == null || n.tamedBy != null) continue;
+        const q = S.players[n.aggro];
+        if (!q || !q.alive || q.exited) continue;
+        const a = center(n.r, n.c),
+          b = center(q.r, q.c);
+        ctx.strokeStyle = 'rgba(224,90,68,.55)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y - TW * 0.2);
+        ctx.lineTo(b.x, b.y - TW * 0.3);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      for (const [k, h] of HL) if (h.t === 'atk' || h.t === 'rete' || h.t === 'catk') {
+        const r = Math.floor(k / N),
+          c = k % N,
+          m = center(r, c);
+        ctx.strokeStyle = h.t === 'rete' ? '#62d0c0' : TB.ring;
+        ctx.lineWidth = 2.5;
+        ell(m.x, m.y, TW * 0.36, TW * 0.18);
+        ctx.stroke();
+      }
+      try {
+        if (typeof drawSugTile === 'function') drawSugTile();
+      } catch (e) {}
+      try {
+        if (typeof drawTosses === 'function') drawTosses();
+      } catch (e) {}
+    }],
+    ['crowdtop', () => {
+      if (STANDS && typeof drawFanFlags === 'function') try {
+        drawFanFlags();
+      } catch (e) {} // v0.35: banners above the board — the front tiers no longer lose them to the sand
+      if (STANDS) drawEmotes(); // above the board: front-row shouts used to disappear under the sand
+    }],
+    ['flavius', () => {
+      drawFlavius();
+    }],
+    ['fx', () => {
+      drawFX();
+      renderBubbles();
+    }],
+    ['duel', () => {
+      try {
+        if (typeof duelVignette === 'function') duelVignette(Wd, Hd);
+        if (typeof duelUI === 'function') duelUI();
+      } catch (e) {}
+    }]
+  ]);
+}
+/* drawLayers93 — runs draw()'s layers in order; 219-v93layers replaces it with the layer manager. */
+function drawLayers93(layers) {
+  for (const l of layers) l[1]();
 }
 /* drawWheel — draws a chariot wheel (spare or under a mounted chariot) ringed in col. */
 function drawWheel(x, y, col) {
