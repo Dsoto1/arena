@@ -74,9 +74,16 @@ const r4=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   const H=arm94H(m);const n0=H.sh.length;const c0=m.coin;const btn=document.querySelector('#citySideBody [data-arm94buy]:not([disabled])');const i=+btn.dataset.arm94buy;const it=arm94Stock(w,CITY.li)[i];const left0=arm94Left(w,CITY.li,i);
   btn.click();await W8(200);o.buy=H.sh.length===n0+1&&H.sh[H.sh.length-1].k===it.k&&c0-m.coin===cityPr(it.pr)&&arm94Left(w,CITY.li,i)===left0-1;
   o.visit=/to the Armory/.test(document.getElementById('cbar89Visit').textContent);
-  const sp=H.sh[0];const c1=m.coin;const n1=H.sh.length;const sb=document.querySelector(`#citySideBody [data-arm94sell="${sp.id}"]`);if(sb)sb.click();await W8(200);o.sell=!!sb&&H.sh.length===n1-1&&m.coin>c1;return o});
+  const sp=H.sh[0];const c1=m.coin;const n1=H.sh.length;const sb=document.querySelector(`#citySideBody [data-arm94sell="${sp.id}"]`);if(sb)sb.click();await W8(200);o.sell=!!sb&&H.sh.length===n1-1&&m.coin>c1;
+  /* v0.94 tuning: 30% back (15% damaged), three sales a week per house, then a plain refusal */
+  const T1=arm94New(w,'a','thorax');H.sh.push(T1);const c2=m.coin;const rr=arm94Sell(T1.id);o.sell30=rr.ok&&m.coin-c2===Math.floor(arm94Price('a','thorax')*0.3)&&ARM94.sellK===0.3&&ARM94.repK===0.2;
+  const D1=arm94New(w,'a','thorax');D1.dmg=1;H.sh.push(D1);const c3=m.coin;arm94Sell(D1.id);o.sell15=m.coin-c3===Math.floor(arm94Price('a','thorax')*0.15);
+  const E1=arm94New(w,'a','thorax');H.sh.push(E1);const n3=H.sh.length;const c4=m.coin;const r4s=arm94Sell(E1.id);o.cap=!!r4s.no&&H.sh.length===n3&&m.coin===c4&&arm94SellLeft(m,w)===0;
+  await W8(100);o.capUi=!!document.querySelector('#citySideBody [data-arm94sell][disabled]')||!document.querySelector('#citySideBody [data-arm94sell]');
+  /* next week the stalls buy again */
+  m.sell94.k='old';o.capReset=arm94SellLeft(m,w)===ARM94.sellMax;H.sh=H.sh.filter(P=>P.id!==E1.id);return o});
 ok(r4.perCity&&r4.perWeek&&r4.same,'4 stock differs per city and per week, stable within one '+JSON.stringify(r4));ok(r4.romaL3&&!r4.veronaL3,'4 Roma carries Level 3, a small city never');
-ok(r4.capua,'4 Capua: blades, at a discount');ok(r4.mw,'4 Match Week: Gear up in <city>');ok(r4.open,'4 Gear up opens the square on the Stalls');ok(r4.sell,'4 the stall buys back a shelf piece');ok(r4.buy&&r4.visit,'4 a buy lands in the Armory, stock counts down, THIS VISIT '+JSON.stringify(r4));
+ok(r4.capua,'4 Capua: blades, at a discount');ok(r4.mw,'4 Match Week: Gear up in <city>');ok(r4.open,'4 Gear up opens the square on the Stalls');ok(r4.sell,'4 the stall buys back a shelf piece');ok(r4.sell30&&r4.sell15,'4 sell-back is 30% (15% damaged), repairs a fifth '+JSON.stringify(r4));ok(r4.cap&&r4.capUi&&r4.capReset,'4 at most 3 sales a house a week, refused after, resets next week '+JSON.stringify(r4));ok(r4.buy&&r4.visit,'4 a buy lands in the Armory, stock counts down, THIS VISIT '+JSON.stringify(r4));
 if(SHOT)await pg.screenshot({path:SHOT+'/tv94m_stalls.png'});
 /* ---- 5 · a bout uses the equipped gear; 6 · after the bout ---- */
 const r5=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));try{if(typeof closeCity==='function')closeCity()}catch(e){}await W8(500);const w=W_(),m=me();const o={};const A=gById(window.__A);
@@ -90,6 +97,11 @@ const r5=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   const b2={ents:[A.id]};arm94Settle(w,b2,{g94:{[A.id]:X}});const th=E.a.find(P=>P.id==='t_th');
   o.lost=!E.R||E.R.id!=='t_fl';o.loot=[E.R,E.L].some(P=>P&&P.k==='gladius');o.dmg=!!(th&&th.dmg);o.offer=E.o.map(P=>P.k).join()==='ap2';
   o.seatDmg=!seatFor(A).gear94.a.some(x=>x[0]==='thorax');
+  /* v0.94 tuning: a piece BOUGHT at the in-bout arena market (X.mk) does not come home; a looted one does */
+  E.L=null;E.R=E.R||null;const shN=arm94H(m).sh.length;const bX={got:{R:null,L:null,a:[]},mk:['gladius'],carry:false,cls:A.cls,R:null,L:'gladius',pc:{head:[],chest:[],rarm:[],larm:[],rleg:[],lleg:[]},items:[]};
+  arm94Settle(w,{ents:[A.id]},{g94:{[A.id]:bX}});o.mkSkip=!E.L&&arm94H(m).sh.length===shN;
+  arm94Settle(w,{ents:[A.id]},{g94:{[A.id]:{...bX,mk:[]}}});o.mkLoot=!!E.L&&E.L.k==='gladius';E.L=null;
+  const pp={_g94got:{}};arm94Mk(pp,'gladius');o.mkTag=pp._g94mk&&pp._g94mk[0]==='gladius';
   /* the repair at the armorer */
   w.night.travel={cost:0,paid:true};openCitySquare(w.night.loc,{});await W8(2000);const c0=m.coin;const fx=document.querySelector(`#citySideBody [data-arm94fix="t_th"]`);if(fx)fx.click();await W8(200);
   o.fixed=!!fx&&!th.dmg&&m.coin===c0-cityPr(arm94Fix(th));try{if(typeof closeCity==='function')closeCity()}catch(e){}await W8(500);
@@ -97,7 +109,7 @@ const r5=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   const st0=JSON.stringify(arm94St(w));await runBoutSim(w.night.bouts.indexOf(bo));o.settled=JSON.stringify(arm94St(w))!==st0||bo.done;return o});
 ok(r5.seat,'5 the seat carries the equipped gear + offerings '+JSON.stringify(r5));ok(r5.engine,'5 the engine gave the equipped flail + thorax, not the class kit '+r5.dbg);ok(r5.snap,'5 the bout result carries the gear snapshot');
 ok(r5.lost&&r5.loot,'6 the broken flail is gone, the picked-up gladius came home');ok(r5.dmg&&r5.seatDmg,'6 armor stripped at 0 AP comes back damaged and stays home');ok(r5.offer,'6 the unused offering came home, the used one is gone');
-ok(r5.fixed,'6 the armorer mends it for a third of the price');ok(r5.settled,'6 a simulated bout settles');
+ok(r5.fixed,'6 the armorer mends it for a fifth of the price');ok(r5.mkSkip&&r5.mkLoot&&r5.mkTag,'6 an in-bout market buy does not come home, a looted piece does '+JSON.stringify(r5));ok(r5.settled,'6 a simulated bout settles');
 /* ---- 7 · a dead fighter's gear goes back to the shelf ---- */
 const r7=await pg.evaluate(()=>{const w=W_(),m=me();const B0=gById(window.__B);const B=B0&&B0.alive&&B0.eq94&&(B0.eq94.R||B0.eq94.a.length)?B0:rosterOf(m).find(g=>g.eq94&&(g.eq94.R||g.eq94.a.length)); /* the bout in 5 may have killed B */const ids=[B.eq94.R,B.eq94.L,...B.eq94.a].filter(Boolean).map(P=>P.id);
   B.alive=false;const X={got:{R:null,L:null,a:[]},carry:false,cls:B.cls,R:null,L:null,pc:{},items:[]};arm94Settle(w,{ents:[B.id]},{g94:{[B.id]:X}});
@@ -112,8 +124,12 @@ ok(r8.filled&&r8.paid,'8 a rival rebuys his fighter\'s lost weapon '+JSON.string
 /* ---- 9 · checklist nudges ---- */
 const r9=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const A0=gById(window.__A);const A=A0&&A0.alive&&A0.eq94?A0:rosterOf(m).find(g=>g.eq94&&g.eq94.a.length); /* the bout in 5 may have killed A */delete A.inj;A.eq94.R=null;A.eq94.L=null;A.eq94.a[0].dmg=1;
   const I=weekChecklist();const o={empty:I.some(x=>!x.done&&/bare hands|empty (right|left) hand/.test(x.txt)&&x.txt.includes(esc(A.name))),rep:I.some(x=>!x.done&&/need(s)? repair/.test(x.txt))};
-  MGR.tab='roster';MGR_REDRAW();await W8(500);o.warn=/empty/.test((document.querySelector('#ar94 .ar94g[data-ar94g="'+A.id+'"]')||{}).textContent||'')||/⚠/.test((document.querySelector('#ar94 .ar94g[data-ar94g="'+A.id+'"]')||{}).textContent||'');return o});
-ok(r9.empty&&r9.rep,'9 checklist: empty hands + repairs '+JSON.stringify(r9));ok(r9.warn,'9 the chip warns');
+  MGR.tab='roster';MGR_REDRAW();await W8(500);o.warn=/empty/.test((document.querySelector('#ar94 .ar94g[data-ar94g="'+A.id+'"]')||{}).textContent||'')||/⚠/.test((document.querySelector('#ar94 .ar94g[data-ar94g="'+A.id+'"]')||{}).textContent||'');
+  /* v0.94 tuning: 🔨 Repair all · N coin on the checklist item, one click mends everything */
+  if(A.eq94.a[1])A.eq94.a[1].dmg=1;const bx=document.createElement('button');bx.dataset.arm94fixall='1';document.body.appendChild(bx);m.coin=Math.max(m.coin,500);
+  const I2=weekChecklist();const it=I2.find(x=>!x.done&&/need(s)? repair/.test(x.txt));const tot=arm94FixTotal(m);const nD=arm94All(m).filter(x=>x.P.dmg).length;o.fixBtn=!!it&&it.btn.includes('data-arm94fixall')&&it.btn.includes(tot+' coin');
+  const c0=m.coin;bx.click();await W8(200);bx.remove();o.fixedAll=nD>=1&&tot>0&&arm94All(m).filter(x=>x.P.dmg).length===0&&c0-m.coin===tot;o.none=!!arm94RepairAll().no;return o});
+ok(r9.empty&&r9.rep,'9 checklist: empty hands + repairs '+JSON.stringify(r9));ok(r9.warn,'9 the chip warns');ok(r9.fixBtn&&r9.fixedAll&&r9.none,'9 Repair all · N coin on the checklist mends every damaged piece in one click '+JSON.stringify(r9));
 /* ---- 10 · phone 390 ---- */
 await pg.setViewportSize({width:390,height:844});await W(700);
 const r10=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));MGR.tab='roster';MGR_REDRAW();await W8(600);const a=document.querySelector('#ar94');a.scrollIntoView();const R=a.getBoundingClientRect();
