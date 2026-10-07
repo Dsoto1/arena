@@ -1226,6 +1226,17 @@ share copy — the site download play/flavius-rule-arena.zip.)
   practice); "Unknown request" → "the server is older than this page". Found 2026-10-06: the live AWS server lacked the v0.89 Domus routes
   (domus.look) — re-sent as flavius-server-16 (= the v0.89 release tree; he deploys with `bash flavius.sh server flavius-server-16.zip`).
 - **RUBBLE IS WALKABLE (his note 2026-10-06, built in 194):** low stump ring, flat drums, pieces off the tile middle, hover "Rubble — walkable".
+- **v0.93 BACKEND + I18N HARDENING, PHASE 1 (his yes 2026-10-07; audit given in chat):** already in place = server owns money/progression/
+  inventory/wagers/auction/matchmaking/rooms (routes.js), shared rules (111-onlcore ↔ server/src/onlcore.js), Cognito JWT on connect (jwt.js),
+  no secrets in the page (Google secret = NoEcho deploy param), store.js memory|dynamo + versioned writes (putRev/flip), 13 server suites,
+  _T keys in 8 languages + plurals + check/newkeys/mkdict + walk tests, player-written server errors (TXP). PHASE 1 (v0.93, alongside the token
+  modeller): (1) request ids on every paying route → a replayed buy/bid/ticket/repair/kit is answered once (idempotency); (2) one general
+  per-account rate limit on top of the per-feature ones; (3) tests: authorization (wrong account/seat), replay, concurrency races, rate limits,
+  failure recovery; (4) player-facing error audit — no raw err.message on screen, plain wording + a short reference code from the 00c error log;
+  (5) server texts as stable codes + values (client turns them into words) instead of English sentences matched by TXP; (6) pseudolocalization +
+  missing/unused-key + fallback checks in the test suite; (7) docs/ folder (architecture, backend run/test/extend, data shapes + rollout/rollback,
+  i18n workflow) LINKED from CLAUDE.md (no second source of truth). PHASE 2 (later, his call): server-side verification of Ranked results
+  (separate the engine from the screen code, replay seed + inputs on the server). RTL: skipped unless an RTL language is planned.
 - **v0.90 QUEUED (his yes 2026-10-05): HOT-SEAT TURNING BOARD** — a setting (Settings → On the board, OFF by default): with 2+ humans
   on one screen, the board turns to the active human's corner at the start of each human's turn (short eased spin; Reduce motion / Off
   animations = an instant cut), using the v0.89 display rotation (168). CPU turns keep the last human's view. Never in Chariot,
