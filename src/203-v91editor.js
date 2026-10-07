@@ -5,7 +5,7 @@
    so the designer saves exactly as before. Display only. */
 function edp91HTML(cur){const face=sp=>typeof flavFaceURL==='function'?`<img src="${flavFaceURL('calm',sp)}" alt="">`:'🎭';
   const tile=(id,sp,name,sub,lock)=>`<button type="button" class="edp91t${String(cur||'')===String(id)?' on':''}${lock?' lock':''}" data-edp91="${esc(id)}" ${lock?'disabled':''} title="${esc(lock||sub||'')}">${sp?face(sp):'<span class="edp91c">🏛</span>'}<b>${esc(name)}</b><small>${esc(lock?_T('🔒 locked'):sub||'')}</small></button>`;
-  let h=tile('',null,_T('The city’s editor'),_T('default'));h+=tile('flavius',SPONSOR_FLAVIUS,'Flavius','Roma');
+  let h=tile('',null,_T('The city’s editor'),_T('default'));h+=tile('flavius',SPONSOR_FLAVIUS,'Flavius','Roma'); /* i18n:skip */
   for(const [li,sp] of Object.entries(CITY_SPONSORS)){const ok=cityUnlocked(li);h+=tile(sp.id,sp,sp.short||sp.name,sp.city,ok?'':_T`Win a match in ${sp.city} to seat ${sp.short||sp.name}`)}
   for(const s of ((typeof CUSTOM!=='undefined'&&CUSTOM.sponsors)||[]))h+=tile(s.id,s,'✦ '+(s.short||s.name),_T('your editor'));
   const open=typeof creatorUnlocked==='function'&&creatorUnlocked();const n=new Set(typeof HALL_LOCS!=='undefined'?HALL_LOCS:[]).size;

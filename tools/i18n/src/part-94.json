@@ -1,0 +1,114 @@
+[
+ {
+  "k": "Telemachus Interdico! — no attacks until he is dragged out (a 1 or 6 at a turn’s start)",
+  "w": "210-v92fix.js:5"
+ },
+ {
+  "k": "no arm left to attack with",
+  "w": "210-v92fix.js:6"
+ },
+ {
+  "k": "your weapons are spent (no ammo or uses left)",
+  "w": "210-v92fix.js:7"
+ },
+ {
+  "k": "🏠 Walk your home square · {0}",
+  "w": "210-v92fix.js:25"
+ },
+ {
+  "k": "Your house sits this week out — no road to {0}.",
+  "w": "210-v92fix.js:26"
+ },
+ {
+  "k": "In the Infirmary — rehab only",
+  "w": "210-v92fix.js:34"
+ },
+ {
+  "k": "Undo or change it in the Infirmary",
+  "w": "210-v92fix.js:36"
+ },
+ {
+  "k": "Click where to strike",
+  "w": "212-v92pick.js:32"
+ },
+ {
+  "k": "Rolling…",
+  "w": "212-v92pick.js:32"
+ },
+ {
+  "k": "Hover a part · click to add 1 AP",
+  "w": "212-v92pick.js:38"
+ },
+ {
+  "k": "Hover a part · click to add 1 HP",
+  "w": "212-v92pick.js:38"
+ },
+ {
+  "k": "Online is open in another tab.",
+  "w": "214-v92tabs.js:12"
+ },
+ {
+  "k": "Online is open in another tab",
+  "w": "214-v92tabs.js:14"
+ },
+ {
+  "k": "Only one tab can play Online at a time. This one has stopped.",
+  "w": "214-v92tabs.js:14"
+ },
+ {
+  "k": "Use here",
+  "w": "214-v92tabs.js:14"
+ },
+ {
+  "k": "Leave Online",
+  "w": "214-v92tabs.js:14"
+ },
+ {
+  "k": "🪑 The table’s autosave moved to your other tab — 💾 save by hand to keep this one.",
+  "w": "214-v92tabs.js:31"
+ },
+ {
+  "k": "Autosave moved to your other tab — 💾 save by hand to keep this one.",
+  "w": "214-v92tabs.js:31"
+ },
+ {
+  "k": "🎒 Kits",
+  "w": "215-v92mkt.js:31"
+ },
+ {
+  "k": "Error log",
+  "w": "216-v92errui.js:5"
+ },
+ {
+  "k": "🐞 Error log",
+  "w": "216-v92errui.js:5"
+ },
+ {
+  "k": "{0} kept · stays on this device",
+  "w": "216-v92errui.js:5"
+ },
+ {
+  "k": "No errors logged. Good.",
+  "w": "216-v92errui.js:6"
+ },
+ {
+  "k": "📋 Copy for a bug report",
+  "w": "216-v92errui.js:7"
+ },
+ {
+  "k": "🗑 Clear",
+  "w": "216-v92errui.js:7"
+ },
+ {
+  "k": "If something misbehaves, copy this into your bug report.",
+  "w": "216-v92errui.js:10"
+ },
+ {
+  "k": "Open ({0})",
+  "w": "216-v92errui.js:10"
+ },
+ {
+  "k": "📋 Copied — paste it into your report.",
+  "w": "216-v92errui.js:16"
+ }
+]

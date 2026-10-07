@@ -33,5 +33,5 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
      the rest week is over). Rest set in the Infirmary is undone there only. */
 function yard92Lock(g){try{const w=W_();if(g.inj&&!g.inj.war)return ['🩹',_T('In the Infirmary — rehab only')];if(g.restWk!=null&&g.restWk===w.week)return ['🛏',_T('Resting this week')]}catch(e){}return null}
 if(typeof yard87Row==='function'){const base=yard87Row;yard87Row=function(g){const h=base.apply(this,arguments);try{const L=yard92Lock(g);if(!L)return h;
-  return h.replace(/<span class="yo87rt">[\s\S]*?<\/span>/,`<span class="yo87rt"><button type="button" class="btn tksm yo92lk" data-mg="tab" data-id="infirm" title="${esc(_T('Undo or change it in the Infirmary'))}">${L[0]} ${L[1]}</button></span>`).replace('class="yo87r ','class="yo87r yo92lock ')}catch(e){return h}}}
+  return h.replace(/<span class="yo87rt">[\s\S]*?<\/span>/,`<span class="yo87rt"><button type="button" class="btn tksm yo92lk" data-mg="tab" data-id="infirm" title="${esc(_T('Undo or change it in the Infirmary'))}">${L[0]} ${L[1]}</button></span>`).replace('class="yo87r ','class="yo87r yo92lock ')}catch(e){return h}}} /* i18n:skip */
 {const st=document.createElement('style');st.textContent='.yo92lk{white-space:nowrap;font-size:12px;padding:2px 8px;opacity:.9}.yo87r.yo92lock .yo90pv{opacity:.45}';document.head.appendChild(st)}

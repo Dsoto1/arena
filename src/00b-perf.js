@@ -40,7 +40,7 @@ const PERF92_SWEEPS=[
   ['chrome69','chromeoff'],                            /* 91 phone chrome under windows */
   ['wager71','wagerWatch()'],                          /* 93 wager bubbles + log pin */
   ['avhit73','AVHIT_MS'],                              /* 98 avatar hit flash redraw */
-  ['pp73','function ppTick'],                          /* 99 phones portrait tabs */
+  ['pp73','function ppTick'],                          /* 99 phones portrait tabs */ /* i18n:skip */
   ['stalls89','cbar89Refresh']                         /* 181 city stalls coin watcher */
 ];
 if(!PERF92.off){

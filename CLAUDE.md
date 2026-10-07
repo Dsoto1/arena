@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.91**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.92**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -65,7 +65,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Module ordering matters: a wrapper only sees wrappers installed before it.
 - Version modules: `47-mgr47`, `48-arena47`, `49-studio47`, `50-v48`, `51-v49`, `52-v50`, `53-guide50`, `54-v51`,
   `55-anim`, `56-v52`, `57-classes`, `58-looks`, `59-bye`, `60-v53`, `61-studio53`, `62-rules53`, `63-empire53`, `64-v54`,
-  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`, `126-v82fix`, `127-v82onl`, `128-v82stands`, `129-v82beasts`, `130-v82vis`, `131-v83council`, `132-v83arrows`, `134-v83spikes`, `135-v83chest`, `136-v83sand`, `133-v83onl`, `137-v83onlui`, `139-v84onl`, `138-v84`, `140-v84prog`, `142-v84ui`, `143-v84roster`, `141-v85faith`, `144-v85rec`, `145-v85fix`, `146-v85land`, `147-v85music`, `148-v86lang`, `149-v87fix`, `150-v87mgr`, `151-v87ward`, `152-v87npc`, `153-v87card`, … `164-ready`, `165-v89seats` … `182-v89vault`, `168-v89rotate`, `183-v90ward` … `187-v90pn`, `188-v91sponsor` … `202-v91ludus` (last before 08-setup) (build order as listed; `00-lang` runs FIRST, before 02-data; the language file assets/lang_<l>.js is loaded by 01-head before the script).
+  `65-stats55`, `66-mgr55`, `67-studio55`, `68-fix55`, `69-v56`, `70-v57`, `71-v58`, `72-v59`, `73-credits`, `74-zora`, `75-naum59`, `76-chariot59`, `77-rivalry`, `78-v60`, `79-screens`, `80-aitiers`, `81-v63`, `82-access`, `83-edsteps`, `84-v64`, `85-v65`, `86-v66`, `87-v67`, `88-v68`, `89-stands`, `90-armfit`, `91-v69`, `92-v70`, `93-v71`, `94-v72`, `95-v73`, `96-armlv`, `97-armor73`, `98-avatar73`, `99-phone73`, `100-sica73`, `101-rec73`, `102-minis73`, `103-v74`, `104-cards74`, `105-mgr74`, `106-v75`, `107-v751`, `108-v76`, `109-v761`, `110-v77`, `111-onlcore`, `112-online`, `113-onlmatch`, `114-onlnet`, `115-v79`, `116-onl79`, `117-onltz`, `118-onl80`, `119-onl80rules`, `120-v80fix`, `121-onl80fix`, `122-v81play`, `123-v81art`, `124-v81onl`, `125-v81fix`, `126-v82fix`, `127-v82onl`, `128-v82stands`, `129-v82beasts`, `130-v82vis`, `131-v83council`, `132-v83arrows`, `134-v83spikes`, `135-v83chest`, `136-v83sand`, `133-v83onl`, `137-v83onlui`, `139-v84onl`, `138-v84`, `140-v84prog`, `142-v84ui`, `143-v84roster`, `141-v85faith`, `144-v85rec`, `145-v85fix`, `146-v85land`, `147-v85music`, `148-v86lang`, `149-v87fix`, `150-v87mgr`, `151-v87ward`, `152-v87npc`, `153-v87card`, … `164-ready`, `165-v89seats` … `182-v89vault`, `168-v89rotate`, `183-v90ward` … `187-v90pn`, `188-v91sponsor` … `202-v91ludus`, `203-v91editor`, `206-v92econ`, `208-v92zoom`, `207-v92extras`, `205-v92pn`, `204-v92perf`, `209-v92cheer`, `210-v92fix` … `216-v92errui` (last before 08-setup); `00b-perf` and `00c-errlog` run FIRST (build order as listed; `00-lang` runs FIRST, before 02-data; the language file assets/lang_<l>.js is loaded by 01-head before the script).
   Each starts with a header comment listing what it does. Put new batch work in a new `NN-vXX.js` module.
 
 ### Core globals (engine)
@@ -671,6 +671,29 @@ One global script; files are concatenated in order. Later "version modules" patc
   `perf92Return` on visibility/5 s gap: stale FX dropped, one render/draw/window redraw, every sweep once, dead NETWS reconnected.
   Game timers (audio, online net/lockstep, countdowns, CPU pacing, one-shots, plTick) stay real. **A new UI poller: add its signature
   to PERF92_SWEEPS** (or leave it real when timing matters). Off: localStorage flavius_perf92off=1. Test `tv92p` (soak + idle numbers).
+- **v0.92 (00b/00c + 204-216 + server, no protocol bump):** `204-v92perf` heartbeat/idle (see PERFORMANCE above). `205-v92pn` Play Now 🎟 Stands
+  card + guide charts on one row (findings = one `.gft` span per line — loose text pieces became grid cells). `206-v92econ` ONE TREASURY + online KITS
+  (server routes.js "v0.92" section, kits92.json from mkserver; purse92 sweeps purses; lobby.send 0–10 coin sent; market.kit; daily Issued kit; restock).
+  `207-v92extras` armor-designer extras per location (X92_K, at:[…], Murmillo fish crest, Secutor dome). `208-v92zoom` arena layers in a padded
+  REFERENCE frame (AR92.ref; no repaint while the camera eases), no emoji emotes, try-on hides #tip, market modal offers only affordable levels.
+  `209-v92cheer` crowd arm bursts by mood + waves (CHEER92; look91 o.up; cached sprites). `210-v92fix` Attack tile says why (atk92Why: Telemachus…),
+  Manager music stays on the Manager theme under popups (MUS92), mail pickers readable, sit-out week walks the HOME square (sitOut92), Infirmary
+  fighters' yard rows locked (yard92Lock). `211-v92sev` SEV92 = per-location outlines traced from avatar.png (tools/art/sev92.py: neck/shoulder/
+  waist 418/crotch cuts) — severed = dark fill + dashed red outline + dashed cuts; wound tint + AP sheen use them too (07-ui avatarSVG). `212-v92pick`
+  pick on the body: Focus = target avatar, light-maroon outlines + its worn armor tinted red (filter #av92red); Distribute health/armor = hover-only
+  green / dark gray with +N (clicks go through the window's own buttons / CUR_MODAL.done). `213-v92yard` TRAINING YARD (agent): fighter cards
+  (+/− sessions, cap 3, 1 house hour each, 🔒 Lock in gold, incremental previews y92Sim == endWeek, dropped if unlocked), Doctore panel (level =
+  1 + yard + doc hours/2 ≤6; Intensity = the old regime × gains 1/1.1/1.2/1.35 × fatigue 1/1/1.25/1.5 — Y92_MUL; drills Footwork/Iron/Showman/Blood and
+  Sand/Veteran/Parade, 2 h, one a week, outside the cap, bonus 10% + 5%/level), ↻ Same as last week (w.y92last), Care button, ⚔ Trials of the Yard strip
+  (old data-yb76 handlers). `214-v92tabs` one live Online per account (connect &tab=NET.conn; server index.js pushes session.replaced to the older
+  tab → #tab92 cover: Use here / Leave Online; NET.req refused while covered) + the Autosave/table slots belong to one tab (auto92 via TAB84 bc).
+  `215-v92mkt` online market level tabs I/II/III (ONL92M, Level I default) + 🎒 Kits as its own Armory tab. `216-v92errui` Settings → 🐞 Error log
+  viewer (Copy for a bug report / Clear) + gold Lock in CSS. `00c-errlog` ERR92 ring (50, localStorage flavius_errlog92): window error, unhandled
+  rejection, every console.error; errNew92(mark) for tests. 186: beasts act only on their target's turn (gladiator prey = its own Resolve; beast prey
+  = the Resolve of the gladiator nearest the hunter). 192: near walls + the dark gap run on to the corner towers. 53: guide findings fixed.
+  Tests: tv92c/f/k/m/p/s/t/x/y, trng92 (dice don't move while screens open + no new errors), tonl92, server v92 + v92t. 3D TOKEN GROUNDWORK:
+  tools/art/rig92/ (body.js procedural skinned body, rig.js joints in his colours + IK + pose JSON ≤600 B, presets.js, rig.html editor, make.js →
+  out/ sheets in the minis8 format; README.md lists v0.93 work) — not in the game yet.
 - **Guide data:** `SIM50` in 53-guide50 is regenerated by `node tools/simguide.js flavius-arena.html 600` (SIMVER env);
   it includes `perk` (wins by rating perk), charted by 69-v56.
 - **Music:** procedural Web Audio (21-audio, 45-music, 16 themes; unlocked by winning in cities). Play Now plays a
