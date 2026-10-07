@@ -249,7 +249,7 @@ window.addEventListener('click',async e=>{const b=e.target&&e.target.closest&&e.
   const lp=L&&L.players[seat];const cid=(ONL.live&&ONL.live.id===id&&ONL.live.char)||(lp&&lp.char);const c=(ONL.chars||[]).find(x=>x.id===cid)||ONL.char;const p=S.players[seat];
   const ok=await onlAbandonAsk80({ranked:!!S.onl.ranked,rule,char:c?onlLive80Char(c):null,kit:lp&&lp.kit?{gear:lp.kit.gear||[]}:null,now:p?{cf:p.cf,coin:p.coin}:null});if(!ok)return;
   try{const r=await NET.req('match.abandon',{id});(ONL.leftMatch=ONL.leftMatch||{})[id]=1;onlLive80Clear(id);if(r&&r.out&&r.out.died)setTimeout(()=>onlToast80(_T('🌫 Your gladiator abandoned the sand — Damnatio.')),600)}
-  catch(err){onlToast80('⚠ '+esc2(err.message))}onlExit()},true);
+  catch(err){onlToast80('⚠ '+esc2(errText92(err)))}onlExit()},true);
 /* the Online card of a live match: 🚪 Abandon beside ⚔ Back to the sand */
 {const base=onlRoomTop80;onlRoomTop80=function(){let h=base.apply(this,arguments);try{const L=onlMyLobby();const me=onlMe80();
   if(L&&L.status==='live'&&L.players.some(p=>p.id===me)&&!(ONL.leftMatch||{})[L.id]&&h.includes('data-onl="enter"')){const x=onlLive80Get();const dropped=!!(x&&x.id===L.id&&x.dropped);
@@ -259,7 +259,7 @@ window.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target
   const c=(ONL.chars||[]).find(x=>x.id===p.char)||ONL.char;const x=onlLive80Get();
   onlAbandonAsk80({ranked:!!L.ranked,rule:ONLC.abandonRule(L),dropped:!!(x&&x.id===L.id&&x.dropped),char:c?onlLive80Char(c):null,kit:p.kit?{gear:p.kit.gear||[]}:null}).then(async ok=>{if(!ok)return;
     try{const r=await NET.req('match.abandon',{id:v});(ONL.leftMatch=ONL.leftMatch||{})[v]=1;onlLive80Clear(v);onlToast80(r&&r.out&&r.out.died?_T('🌫 Your gladiator abandoned the sand — Damnatio.'):_T('🚪 You left the match.'));
-      await onlRefresh();onlRedraw()}catch(err){onlToast80('⚠ '+esc2(err.message))}})},true);
+      await onlRefresh();onlRedraw()}catch(err){onlToast80('⚠ '+esc2(errText92(err)))}})},true);
 
 /* ---------------- ☀ Today in the arena (the Online landing) ---------------- */
 function onlTodayHTML80(){const T=ONL80F.today;if(!T)return '';const yd=T.day==='yesterday';const WN=T.wins||[],F=T.fallen||[],U=T.upsets||[];

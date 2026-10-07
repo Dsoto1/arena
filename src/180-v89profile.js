@@ -141,7 +141,7 @@ function l89VisitHTML(){const r=V89L.visit;if(!r)return '';const D=r.domus||{};c
   const wall=memo.length?`<div class="mw89"><div class="mw89-h">${_T`🕯 Memorial wall <small class="rc-sub">${memo.length}</small>`}</div><div class="mw89-r">${memo.map(m=>`<div class="pq89"><span class="pq89-m">${m.fa==='c'?'✝':'D·M'}</span><b>${esc2(m.name)}</b><small>${esc2((CLASSES[m.cls]||{}).name||'')} · ${onlRankChip(m.rank||'tiro')}</small>${m.at?`<small>${esc2(l89Date(m.at))}</small>`:''}</div>`).join('')}</div></div>`:'';
   return `<div class="dom82-wrap d89w vs89w"><div class="dom82-main dom89" style="--hc1:${esc2(L.c1)};--hc2:${esc2(L.c2)}">${strip}${banner}${show}${cards}${wall}</div></div>`}
 async function onl89Visit(x){if(!x)return;V89L.findErr='';const d=typeof x==='object'?x:ONLC.fidClean(x)?{fid:x}:/^D/.test(String(x))?{id:x}:{name:String(x).replace(/^House /i,'')};let r;
-  try{r=await NET.req('domus.visit',d)}catch(e){const msg=e&&(e.code==='no_fid'||e.code==='no_domus')?_T('No house with that FID.'):(e&&e.message)||_T('No such house.');if(d.fid!=null){V89L.findErr=msg;if(document.getElementById('onl'))onlRedraw()}onlToast80('🏛 '+esc2(msg));return null}
+  try{r=await NET.req('domus.visit',d)}catch(e){const msg=e&&(e.code==='no_fid'||e.code==='no_domus')?_T('No house with that FID.'):errText92(e,_T('No such house.'));if(d.fid!=null){V89L.findErr=msg;if(document.getElementById('onl'))onlRedraw()}onlToast80('🏛 '+esc2(msg));return null}
   V89L.visit=r;V89L.vSel=r.active;if(ONL.tab!=='visit')V89L.back=ONL.tab==='prof'?'prof':'char';ONL.tab='visit';for(const p of document.querySelectorAll('.pf83pop,.pop89l'))p.remove();
   if(document.getElementById('onl'))onlRedraw();else if(typeof onlineOpen==='function')onlineOpen('visit');return r}
 
@@ -192,7 +192,7 @@ function l89Delete(){const D=ONL.domus;const want=D?D.name:((V89L.lan||{}).name|
     const b2=l89Pop(`<h3>${_T`Are you sure?`}</h3><p>${D?_T`Type your house name <b>${esc2(want)}</b> to delete everything.`:_T`Type your lanista name <b>${esc2(want)}</b> to delete your account.`}</p>
       <input class="tin" id="del89In" autocomplete="off" spellcheck="false" aria-label="${_T`Confirm`}"><p class="onl-err" id="del89Err" hidden></p><div class="acts"><button type="button" class="btn" data-p89="x">${_T`Cancel`}</button><button type="button" class="btn danger" data-p89="del">${_T`🗑 Delete forever`}</button></div>`);
     b2.addEventListener('click',async e2=>{const c=e2.target.closest('[data-p89]');if(!c)return;if(c.dataset.p89==='x'){b2.remove();return}
-      const v=(b2.querySelector('#del89In')||{}).value||'';try{await NET.req('acct.delete',{confirm:v})}catch(err){const er=b2.querySelector('#del89Err');if(er){er.hidden=false;er.textContent=err.message}return}
+      const v=(b2.querySelector('#del89In')||{}).value||'';try{await NET.req('acct.delete',{confirm:v})}catch(err){const er=b2.querySelector('#del89Err');if(er){er.hidden=false;er.textContent=errText92(err)}return}
       b2.remove();onlToast80(_T('🗑 Your account is deleted.'));V89L.lan=null;V89L.need=false;V89L.visit=null;ONL.tab='play';ONL.domus=null;ONL.chars=[];ONL.char=null;
       const so=document.querySelector('#onl [data-onl="signout"]');if(so)so.click();else{ONL.acct=null;if(document.getElementById('onl'))onlRedraw()}})})}
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.closest||!t.closest('#onl')||!t.dataset||!t.dataset.l89p)return;const k=t.dataset.l89p;
@@ -203,11 +203,11 @@ document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const t=e.targ
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-l89]');if(!b||!b.closest('#onl,.onl80pop'))return;e.preventDefault();e.stopPropagation();const a=b.dataset.l89,v=b.dataset.v;
   if(a==='dice'){V89L.draft=roman89();const i=document.getElementById('ln89Name');if(i)i.value=V89L.draft;return}
   if(a==='take'||a==='rename'){const i=document.getElementById(a==='take'?'ln89Name':'ln89Ren');const name=(i&&i.value)||'';V89L.err='';
-    return onlDo(async()=>{try{const r=await NET.req('lanista.name',{name});V89L.lan={...(V89L.lan||{}),...r.lan};V89L.need=false;if(ONL.acct)ONL.acct.name=r.lan.name;onlToast80(_T`📜 You are ${esc2(r.lan.name)}.`)}catch(err){V89L.err=err.message}onlRedraw()})}
+    return onlDo(async()=>{try{const r=await NET.req('lanista.name',{name});V89L.lan={...(V89L.lan||{}),...r.lan};V89L.need=false;if(ONL.acct)ONL.acct.name=r.lan.name;onlToast80(_T`📜 You are ${esc2(r.lan.name)}.`)}catch(err){V89L.err=errText92(err)}onlRedraw()})}
   if(a==='copy'){l89Copy(v).then(ok=>{b.textContent=ok?'✓':'📋';onlToast80(ok?_T`📋 ${esc2(v)} copied.`:esc2(v))});return}
   if(a==='find'){const i=b.parentElement&&b.parentElement.querySelector('input');const s=(i&&i.value)||V89L.find;V89L.find=s;if(!ONLC.fidClean(s)){V89L.findErr=_T('No house with that FID.');onlRedraw();return}return onl89Visit({fid:s})}
   if(a==='ffollow'){const i=b.parentElement&&b.parentElement.querySelector('input');const s=(i&&i.value)||V89L.find;V89L.findErr='';
-    return onlDo(async()=>{try{const r=await NET.req('domus.follow',{fid:s,on:true});ONL83U.follows=r.follows||ONL83U.follows;onlToast80(_T('★ Following.'))}catch(err){V89L.findErr=err.code==='no_fid'?_T('No house with that FID.'):err.message}onlRedraw()})}
+    return onlDo(async()=>{try{const r=await NET.req('domus.follow',{fid:s,on:true});ONL83U.follows=r.follows||ONL83U.follows;onlToast80(_T('★ Following.'))}catch(err){V89L.findErr=err.code==='no_fid'?_T('No house with that FID.'):errText92(err)}onlRedraw()})}
   if(a==='finv'){const i=document.getElementById('fi89In');const s=(i&&i.value)||'';if(!ONLC.fidClean(s)){onlToast80(_T('⚠ No lanista with that FID.'));return}
     return onlDo(async()=>{await NET.req('lobby.invite',{id:v,to:ONLC.fidShow(ONLC.fidClean(s))});onlToast80(_T('✉ Invitation sent.'));if(i)i.value=''})}
   if(a==='del')return l89Delete();

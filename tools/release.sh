@@ -18,6 +18,8 @@ grep -q "arena · v$V<" src/01-head.html || grep -q "arena · v$V\b" src/01-head
 head -20 src/34-notes.js | grep -m1 "{v:'" | grep -q "{v:'$V'" || { echo "first MILESTONES entry is not v:'$V' (src/34-notes.js)"; exit 1; }
 echo "badge + milestone v$V"
 step "2 build"
+node tools/i18n/srvtext93.js   # v0.93 server texts → stable codes (server/src/texts93.json + src/223a-v93srvtext.js)
+node tools/i18n/check93.js || echo "⚠ i18n check over its ceilings (see above)"
 node tools/srvstamp.js   # the online server's version (server/src/build.json + src/195-v91srvexp.js) — only changes when the server code did
 OUT=$(sh build.sh); echo "$OUT" | tail -1
 echo "$OUT" | grep -q SYNTAX_OK || { echo "build failed"; exit 1; }

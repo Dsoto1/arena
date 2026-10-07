@@ -316,7 +316,7 @@ function onlInvitePop80(it){const r=it.row;const bg=document.createElement('div'
    <div class="acts"><button type="button" class="btn primary" data-onl="ijoin" data-v="${esc2(r.id)}">${_T`⚔ Join`}</button><button type="button" class="btn" data-onl="ino">${_T`Not now`}</button><button type="button" class="btn" data-onl="imute" data-v="${esc2(it.fromId||'')}">${_T`🔇 Mute`}</button></div></div>`;
   bg.addEventListener('click',e=>{if(e.target===bg)bg.remove()});document.body.appendChild(bg)}
 /* the who list: lanistas here now */
-async function onlWho80(){let rows=[];try{rows=await NET.req('who.list')}catch(e){onlToast80('⚠ '+esc2(e.message));return}for(const o of document.querySelectorAll('.w80bg'))o.remove();
+async function onlWho80(){let rows=[];try{rows=await NET.req('who.list')}catch(e){onlToast80('⚠ '+esc2(errText92(e)));return}for(const o of document.querySelectorAll('.w80bg'))o.remove();
   const room=onlWaitRoom80();const st={free:'free',room:_T('in a room'),fight:'fighting'};
   const row=w=>{const R=(ONL.lobbies||[]).find(L=>L.status==='waiting'&&(L.members||[]).some(m=>m.id===w.id));const F=(ONL.lobbies||[]).find(L=>L.status==='live'&&L.players.some(p=>p.id===w.id));const mu=ONLF.muted.has(w.id);
     return `<div class="w80r" data-who="${esc2(w.id)}"><b>${esc2(w.name)}</b> ${onlRankChip(w.rank)} <span class="badge ${w.st==='free'?'gold':''}">${st[w.st]||esc2(w.st)}</span><span class="acts">
@@ -369,7 +369,7 @@ window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('
   if(a==='ticket')return onlDo(async()=>{const r=await onlReq80('lobby.ticket',{id:v});ONL.char=r.char;onlToast80(_T`🎟 A seat in the stands at ${esc2(onlCityName(r.lobby.loc))} — it opens when the horns sound.`)});
   if(a==='betgo')return onlDo(async()=>{const r=await onlReq80('bet.place',{id:v,seat:+($('#onlBetSeat')||{}).value,amt:+($('#onlBetAmt')||{}).value});ONL.char=r.char;ONL.betting=null;onlToast80(_T('💰 Wager placed.'))})},true);
 async function onlSayRoom80(q){const id=onlRoomId80();if(!id)return;try{const r=await NET.req('lobby.say',{id,q});const l=r&&r.line;if(l){const c=ONLF.chat[id]=(ONLF.chat[id]||[]);if(!c.some(x=>!x.sys&&x.at===l.at&&x.by===l.by))c.push(l)}onlPatchLog80()}
-  catch(e){onlToast80('⚠ '+esc2(e.message))}}
+  catch(e){onlToast80('⚠ '+esc2(errText92(e)))}}
 /* the host's settings: one change → lobby.set → the room comes back */
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.onlrs)return;const L=onlMyLobby();if(!L)return;const k=t.dataset.onlrs;
   const v=k==='autoBal'?t.checked:k==='standsOff'?t.value==='1':k==='ev'||k==='abandon'?t.value:+t.value;onlDo(async()=>{await onlReq80('lobby.set',{id:L.id,[k]:v})})},true);
@@ -401,10 +401,10 @@ setInterval(()=>{try{onlSayBar80()}catch(e){}},500);
 function onlSayPop80(){let p=document.getElementById('onlSay80');if(p){p.remove();return}const b=document.getElementById('btnOnlSay80');if(!b)return;const r=b.getBoundingClientRect();
   p=document.createElement('div');p.id='onlSay80';const sc=S.over?'after':'match';p.innerHTML=ONLC.QC[sc].map(q=>`<button type="button" data-msay="${q}">${esc2(onlQ80(q))}</button>`).join('');
   p.style.left=Math.max(8,Math.min(innerWidth-260,r.left))+'px';p.style.top=(r.bottom+6)+'px';document.body.appendChild(p)}
-async function onlMatchSay80(q){try{await NET.req('match.say',{id:S.onl.lobby,q});onlBubble80(S.onl.seat,q);return true}catch(err){onlToast80('⚠ '+esc2(err.message));return false}}
+async function onlMatchSay80(q){try{await NET.req('match.say',{id:S.onl.lobby,q});onlBubble80(S.onl.seat,q);return true}catch(err){onlToast80('⚠ '+esc2(errText92(err)));return false}}
 async function onlAgain80(){const id=S&&S.onl&&S.onl.lobby;if(!id)return;
   try{const r=await NET.req('lobby.again',{id});onlUpsert80(r.lobby);const n=(r.invited||[]).length;onlToast80(_T`⚔ A new room — ${n?(n===1?_T('1 lanista invited'):_T`${n} lanistas invited`):_T('the others are elsewhere')}.`);ONL.tab='play';onlExit();return r}
-  catch(err){onlToast80('⚠ '+esc2(err.message));return null}}
+  catch(err){onlToast80('⚠ '+esc2(errText92(err)));return null}}
 document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
   if(t.closest('#btnOnlSay80')){e.preventDefault();e.stopPropagation();ONLM.uiAt=Date.now();onlSayPop80();return}
   const m=t.closest('#onlSay80 [data-msay]');if(m){e.preventDefault();e.stopPropagation();ONLM.uiAt=Date.now();const p=document.getElementById('onlSay80');if(p)p.remove();onlMatchSay80(m.dataset.msay);return}

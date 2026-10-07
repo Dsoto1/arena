@@ -3,7 +3,7 @@
 const assert=require('assert');const {makeHandler}=require('../src/index.js');const store=require('../src/store.js');
 (async()=>{const db=store.memory();const sent=[];const gone=new Set();
   const send=async(conn,msg)=>{if(gone.has(conn))return true;sent.push({conn,msg});return false};
-  const h=makeHandler({db,send,dev:true,verifyCfg:{}});
+  const h=makeHandler({limits:false,db,send,dev:true,verifyCfg:{}});
   const connect=(conn,tab)=>h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{ver:String(require('../src/onlcore.js').VER),dev:'ann',...(tab?{tab}:{})}});
   const rep=c=>sent.filter(x=>x.conn===c&&x.msg&&x.msg.push==='session.replaced').length;
   /* the account needs a profile: a dev sign-in creates it on the first request */

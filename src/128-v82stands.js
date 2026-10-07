@@ -86,7 +86,7 @@ function st82PopClose(){clearInterval(STD82.popT);STD82.popT=0;const o=document.
 NET.on('stands.window',d=>{try{if(!d||!S||!S.onl||d.id!==S.onl.lobby||!ONL.acct)return;if(d.seat!==ONLM.me)return;st82Popup(d)}catch(e){console.error(e)}});
 function st82Pick(d,pick){const P=STD82.pop;if(!P||P.sent)return;P.sent=1;const o=document.getElementById('st82Pop');if(o)for(const b of o.querySelectorAll('button,select'))b.disabled=true;
   const msg=o&&o.querySelector('.st82msg');if(msg)msg.textContent=pick.a==='pass'?_T('You watch this rotation.'):_T('✓ Your choice is in — the stands throw together.');
-  NET.req('match.stands.pick',{id:d.id,rot:d.rot,pick}).then(()=>{setTimeout(st82PopClose,pick.a==='pass'?600:1400)}).catch(e=>{if(msg)msg.textContent='⚠ '+(e.message||_T('The stands have chosen.'));setTimeout(st82PopClose,1800)})}
+  NET.req('match.stands.pick',{id:d.id,rot:d.rot,pick}).then(()=>{setTimeout(st82PopClose,pick.a==='pass'?600:1400)}).catch(e=>{if(msg)msg.textContent='⚠ '+errText92(e,_T('The stands have chosen.'));setTimeout(st82PopClose,1800)})}
 function st82Popup(d){st82PopClose();const s=(S.spect||[]).find(x=>x.onlIdx===d.seat);
   STD82.pop={rot:d.rot,sent:0,d};if(!s||s.gone||!s.human){st82Pick(d,{a:'pass'});return}
   const q=SECTIONS[s.sec].q;const act=activePlayers();const inQ=act.filter(p=>!p.underground&&quadOf(p)===q);

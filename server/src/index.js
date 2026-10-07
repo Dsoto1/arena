@@ -10,17 +10,17 @@
    v0.89 (no protocol bump): a socket that opens or closes tells the lanista's waiting rooms (route.presence: L.off marks "reconnecting…";
    prune takes a member out after the grace — roomGrace, 60 s). */
 'use strict';
-const {makeRoutes,reconnect,away,online}=require('./routes.js');const C=require('./onlcore.js');const {verify}=require('./jwt.js');const store=require('./store.js');
+const {makeRoutes,reconnect,away,online}=require('./routes.js');const H93=require('./harden93.js');const C=require('./onlcore.js');const {verify}=require('./jwt.js');const store=require('./store.js');
 const catalog=require('./catalog.json');
 /* v0.83 tester grants: TESTERS = comma-separated sign-in e-mails (deploy parameter → Lambda env). Only a yes/no rides on the connection;
    the e-mail itself is never stored or sent. Dev stacks/tests may pass ?email= with ?dev= (dev only). */
 const testerSet=s=>new Set(String(s||'').split(',').map(x=>x.trim().toLowerCase()).filter(x=>x&&x!=='none'));
-function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),hereMs=0,countdown,rnd,testers='',roomGrace}){const TESTERS=testerSet(testers);let route=null;
+function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),hereMs=0,countdown,rnd,testers='',roomGrace,limits,log}){const TESTERS=testerSet(testers);let route=null;
   /* a push to a known connection: true when the socket is gone (then the account's presence is cleared) */
   /* a push that finds the socket gone clears presence AND marks the lanista away in a live match (their $disconnect may come later and find
      nothing left to clear) — so the others can drop the seat after AWAY_MS */
   const pushConn=async(conn,t,d,acct)=>{const gone=await send(conn,{push:t,d});if(gone&&acct){if(/^guest-/.test(acct))await db.clearGuest(acct,conn);else if(await db.clearConn(acct,conn,now())){await away(db,acct,now());if(route&&route.presence)await route.presence(acct,false,now())}}return gone};
-  route=makeRoutes({store:db,catalog,dev,now,hereMs,countdown,...(rnd?{rnd}:{}),...(roomGrace!=null?{roomGrace}:{}),pushConn,push:async(acct,t,d)=>{const a=await db.get('ACCT#'+acct,'PROFILE');if(a&&a.conn)await pushConn(a.conn,t,d,acct)}});
+  route=makeRoutes({store:db,catalog,dev,now,hereMs,countdown,...(limits!==undefined?{limits}:{}),...(rnd?{rnd}:{}),...(roomGrace!=null?{roomGrace}:{}),pushConn,push:async(acct,t,d)=>{const a=await db.get('ACCT#'+acct,'PROFILE');if(a&&a.conn)await pushConn(a.conn,t,d,acct)}});
   return async ev=>{const rc=ev.requestContext||{};const conn=rc.connectionId;
     if(rc.routeKey==='$connect'){const q=ev.queryStringParameters||{};if(String(q.ver)!==String(C.VER))return {statusCode:426,body:'Please reload: a new version is out.'};
       /* v0.82 a guest: looks only, 2 hours from the first connect of that guest id */
@@ -40,7 +40,7 @@ function makeHandler({db,send,dev,verifyCfg,verifyFn=verify,now=()=>Date.now(),h
     let m;try{m=JSON.parse(ev.body||'{}')}catch(e){return {statusCode:400}}
     const c=await db.get('CONN#'+conn,'CONN');const ctx={acct:c&&c.acct,conn,...(c&&c.tester?{tester:true}:{}),...(c&&c.guest?{guest:{id:c.guest,first:c.first}}:{})};
     try{const out=await route(m.t,m.d,ctx);if(m.t==='auth.signin'&&out&&out.id){await online(db,out.id,conn,now());await route.presence(out.id,true)}
-      await send(conn,{re:m.id,ok:true,d:out})}catch(e){await send(conn,{...(e.extra||{}),re:m.id,ok:false,err:String(e.message||e).slice(0,200),...(e.code?{code:e.code}:{})})}
+      await send(conn,{re:m.id,ok:true,d:out})}catch(e){/* v0.93: {err (English), code, mcode + vals (the text as a stable code)}; internal failures only as a ref */await send(conn,{...H93.errReply(e,log),re:m.id,ok:false})}
     return {statusCode:200}}}
 /* AWS: DynamoDB + the API Gateway management API */
 let LIVE=null;

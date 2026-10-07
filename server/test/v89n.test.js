@@ -45,7 +45,7 @@ async function routes(L){
   const {makeHandler}=require('../src/index.js');
   async function world(T0){let T=T0;const db=store.memory();const sent=[];const live=new Set();
     const send=async(conn,msg)=>{if(!live.has(conn))return true;sent.push({conn,msg});return false};
-    const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0,countdown:0});let nc=0,rid=0;
+    const h=makeHandler({limits:false,db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0,countdown:0});let nc=0,rid=0;
     const ask=async(conn,t,d)=>{T+=10;const id=++rid;await h({requestContext:{routeKey:'$default',connectionId:conn},body:JSON.stringify({t,id,d})});const m=sent.find(x=>x.conn===conn&&x.msg.re===id);if(!m)throw new Error('no reply to '+t);
       if(!m.msg.ok){const e=new Error(m.msg.err);e.code=m.msg.code;throw e}return m.msg.d};
     async function client(name,o={}){const cl={name,acct:'dev-'+name};cl.conn='w'+(++nc);live.add(cl.conn);

@@ -192,7 +192,7 @@ for(const k of ['lobby.join','lobby.create','lobby.quick']){const base=MOCK_ROUT
 async function onlGuestRefresh82(){try{if(NET.mode==='aws')await netPick();
     const g=await NET.req('auth.guest',{tz:onlTz80()});ONL.acct={id:g.id,name:'Guest',guest:true};ONL82.until=g.until||ONL82.until;
     const h=await NET.req('hello',{all:1});ONL.lobbies=h.lobbies||[];ONL.news=h.news||[];ONL.stats={challenges:h.challenges||[],online:(h.here||{}).n||h.online||0};ONL.chars=[];ONL.char=null;ONL.party=null;ONL.needDomus=false;ONL82.expired=false}
-  catch(e){if(e&&e.code==='guest_expired'){ONL82.expired=true;ONL.acct={id:'guest-'+onlGuestId82(),name:'Guest',guest:true};ONL.chars=[];ONL.char=null}else ONL.err=e.message}}
+  catch(e){if(e&&e.code==='guest_expired'){ONL82.expired=true;ONL.acct={id:'guest-'+onlGuestId82(),name:'Guest',guest:true};ONL.chars=[];ONL.char=null}else ONL.err=errText92(e)}}
 {const base=onlRefresh;onlRefresh=async function(){if(onlGuestOn82())return onlGuestRefresh82();const r=await base.apply(this,arguments);if(ONL.needDomus)ONL.newGlad=false;return r}}
 const GUEST_ACTS82=new Set(['tab','refresh','watch','omap','quiet','wwatch','uwatch','cryx','ino','wx','google','mocksign','srvset','srvclear']);
 const GWHY82={quick:_T('fight in a playlist'),join:_T('join a room'),take:_T('take a seat'),mkroom:_T('open a room'),newgame:_T('open a room'),ticket:_T('buy a ticket'),bet:'wager',betgo:'wager',fsay:_T('speak in the Forum'),
@@ -400,7 +400,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
     return onlDo(async()=>{ONL82.ferr='';try{const r=await NET.req(a==='drename'?'domus.rename':'domus.create',{name});ONL.domus=r.domus;ONL.needDomus=false;ONL82.dgAt=0;ONL82.draft='';if(a==='found'){const dr=onlPatronDraft82(ONL.acct.id);if(dr)onlPatronPut82(dr)}
         await onlRefresh();const live=(ONL.chars||[]).filter(c=>c.alive).length;if(a==='found'&&!live){ONL.newGlad=true;ONL.creating=null}
         onlToast80(a==='drename'?_T`✎ Your house is now <b>${esc2(onlHouse82(r.domus.name))}</b>.`:_T`🏛 <b>${esc2(onlHouse82(r.domus.name))}</b> is founded${r.joined?_T` — ${r.joined} gladiator${r.joined===1?'':'s'} joined with their record`:live?'':_T(' — now your first gladiator')}.`)}
-      catch(err){ONL82.ferr=err.message;throw err}})}
+      catch(err){ONL82.ferr=errText92(err);throw err}})}
   if(a==='prand'||a==='pdef'){if(!ONL.acct)return;if(a==='pdef')onlPatronPut82(null);else{const r=onlPatronDef82(ONL.acct.id+Math.random(),onlMyDomus82()+Math.random());onlPatronPut82(r)}onlRedraw();return}
   if(a==='buy'){const cat=onlCatalog();const it=cat[v];const ch=ONL.char;if(!it||!ch)return;const pr=ONLC.priceOf(it);
     return ask76(_T('🛒 Buy this piece?'),`<p style="margin:0">${_T`Buy <b>${esc2(it.n)}</b> (level ${it.lv}${it.kind==='a'?_T` · ${it.ap|0} AP`:''}) for <b>${coinAmt87(pr)}</b>?`}</p><p class="rc-sub" style="margin:6px 0 0">${_T`Wallet ${coinAmt87(`${ch.wallet} → ${ch.wallet-pr}`)}.`}</p>`,_T`Buy · ${pr}`,_T('Not now'))

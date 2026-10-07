@@ -19,3 +19,16 @@ window.addEventListener('unhandledrejection',e=>{const r=e&&e.reason;err92Add('p
 {const base=console.error.bind(console);console.error=function(...a){try{const e=a.find(x=>x instanceof Error);err92Add('caught',e?e.message:a.map(x=>typeof x==='string'?x:(x&&x.message)||'').join(' '),e?err92Stack(e):'')}catch(x){}return base(...a)}}
 /* tests: errNew92(mark) → the entries logged since ERR92.n was `mark` */
 function errNew92(mark){const k=Math.max(0,ERR92.n-(mark|0));return k?ERR92.list.slice(-k):[]}
+/* v0.93 PLAYER-FACING ERRORS: nothing raw ever reaches the screen (no stack traces, JSON, ids, request names, HTTP codes).
+   errText92(e, fallback) → the message when it is player text (the server's own refusals, the game's own lines), else the fallback
+   (default "Something went wrong.") + " (ref E-XXXX)": errRef92 files the raw error in the log above under that ref (Settings → 🐞 Error log,
+   "Copy for a bug report"), so a player can quote the ref and the log says what happened. */
+const ERR_RAW93=/\b(TypeError|ReferenceError|SyntaxError|RangeError|EvalError|is not a function|is not defined|is not iterable|is not a constructor|Cannot read propert|Cannot set propert|Cannot destructure|Cannot access '|Unexpected token|Unexpected end of|in JSON at position|JSON\.parse|NetworkError|Failed to fetch|Load failed|Maximum call stack|out of memory|QuotaExceeded|DOMException|ECONN\w+|ETIMEDOUT)\b|\[object (Object|Promise|Error)\]|\bat \S+ \(|\.js:\d+(:\d+)?|\bHTTP\/?\s?[45]\d\d\b|\bstatus(Code)?[ :=]+[45]\d\d\b|^\s*\{\s*"|^\s*\[\s*[{"\d]|^\s*<!?(html|DOCTYPE)/i;
+function errSafe92(e,m){if(!m||typeof m!=='string')return false;if(e&&typeof e==='object'&&!e.extra&&e instanceof Error&&e.constructor!==Error)return false;return !ERR_RAW93.test(m)}
+function errRef92(e,kind){let ref='E-';try{ref+=Math.random().toString(36).slice(2,6).toUpperCase().padEnd(4,'0')}catch(x){ref+='0000'}
+  try{const m=e&&typeof e==='object'?String(e.message||e.name||e):String(e);const now=Date.now();ERR92.n++;
+    ERR92.list.push({t:new Date(now).toISOString().slice(0,19).replace('T',' '),kind:kind||'shown',msg:('['+ref+'] '+m).slice(0,400),at:e&&e.stack?err92Stack(e):'',where:err92Where(),ver:''});
+    if(ERR92.list.length>ERR92.max)ERR92.list.splice(0,ERR92.list.length-ERR92.max);clearTimeout(ERR92.tm);ERR92.tm=setTimeout(()=>{try{localStorage.setItem('flavius_errlog92',JSON.stringify(ERR92.list))}catch(x){}},300)}catch(x){}
+  return ref}
+function errText92(e,fallback){const m=e==null?'':typeof e==='object'?String(e.message||''):String(e);if(errSafe92(e,m))return m;
+  if(!m&&fallback)return fallback;const ref=errRef92(e);return (fallback||_T('Something went wrong.'))+' '+_T`(ref ${ref})`}

@@ -72,7 +72,7 @@ async function routes(){
   const {makeHandler}=require('../src/index.js');
   let T=1950000000000;const db=store.memory();const sent=[];const live=new Set();let RND=null;
   const send=async(conn,msg)=>{if(!live.has(conn))return true;sent.push({conn,msg});return false};
-  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0,rnd:()=>RND!=null?RND:Math.random(),testers:' Tess@Example.com ,other@example.com'});
+  const h=makeHandler({limits:false,db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0,rnd:()=>RND!=null?RND:Math.random(),testers:' Tess@Example.com ,other@example.com'});
   let nc=0,rid=0;const mark=()=>sent.length;
   const ask=async(conn,t,d)=>{T+=10;const id=++rid;await h({requestContext:{routeKey:'$default',connectionId:conn},body:JSON.stringify({t,id,d})});const m=sent.find(x=>x.conn===conn&&x.msg.re===id);if(!m)throw new Error('no reply to '+t);
     if(!m.msg.ok){const e=new Error(m.msg.err);e.code=m.msg.code;e.reply=m.msg;throw e}return m.msg.d};

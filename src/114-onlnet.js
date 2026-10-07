@@ -41,7 +41,7 @@ async function netToken(){const t=netTokGet();if(!t)return null;if(t.exp>Date.no
 async function netSignOut(){try{localStorage.removeItem('flavius_onltok')}catch(e){}NETWS.close();const c=await NETWS.config();if(c&&c.auth)location.href=`${c.auth}/logout?client_id=${encodeURIComponent(c.client)}&logout_uri=${encodeURIComponent(netRedirect())}`}
 /* back from Google: trade the code, tidy the address, open Online */
 (async()=>{const u=new URL(location.href);const code=u.searchParams.get('code');if(!code)return;let p=null;try{p=JSON.parse(sessionStorage.getItem('flavius_onlpkce')||'null')}catch(e){}
-  if(!p||u.searchParams.get('state')!==p.st)return;try{await netTokenCall({grant_type:'authorization_code',code,redirect_uri:netRedirect(),code_verifier:p.ver});sessionStorage.removeItem('flavius_onlpkce')}catch(e){if(typeof mToast==='function')mToast('⚠ '+e.message)}
+  if(!p||u.searchParams.get('state')!==p.st)return;try{await netTokenCall({grant_type:'authorization_code',code,redirect_uri:netRedirect(),code_verifier:p.ver});sessionStorage.removeItem('flavius_onlpkce')}catch(e){if(typeof mToast==='function')mToast('⚠ '+esc(errText92(e)))}
   history.replaceState(null,'',netRedirect());try{localStorage.setItem('flavius_online77','1')}catch(e){}setTimeout(()=>{try{if(typeof menuHide==='function')menuHide();onlineOpen('play')}catch(e){}},300)})();
 /* ---------------- choose the transport ---------------- */
 async function netPick(){const c=await NETWS.config();NET.mode=c?'aws':'mock';return NET.mode}
@@ -50,7 +50,7 @@ function netIdleClose(){if(NET.mode==='aws'&&!document.getElementById('onl')&&!(
 {const base=onlineOpen;onlineOpen=async function(){await netPick();try{return await base.apply(this,arguments)}finally{setTimeout(netIdleClose,1500)}}}
 {const base=gameOver;gameOver=async function(){const r=await base.apply(this,arguments);if(S&&S.onl)setTimeout(netIdleClose,8000);return r}}
 /* hello in aws mode: not signed in → no token → the sign-in screen */
-{const base=onlRefresh;onlRefresh=async function(){if(NET.mode==='aws'){const c=await NETWS.config();if(!c.dev&&!(await netToken())){ONL.acct=null;ONL.mode='aws';return}}try{return await base.apply(this,arguments)}catch(e){ONL.err=e.message}}}
+{const base=onlRefresh;onlRefresh=async function(){if(NET.mode==='aws'){const c=await NETWS.config();if(!c.dev&&!(await netToken())){ONL.acct=null;ONL.mode='aws';return}}try{return await base.apply(this,arguments)}catch(e){ONL.err=errText92(e)}}}
 /* sign out / dev sign-in on the real server */
 document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl="signout"],#onl [data-onl="mocksign"],#onl [data-onl="srvset"],#onl [data-onl="srvclear"]');if(!b)return;const a=b.dataset.onl;
   if(a==='srvset'){e.stopImmediatePropagation();const t=($('#onlSrv')||{}).value||'';try{const c=JSON.parse(t);if(!c.ws)throw 0;localStorage.setItem('flavius_onlserver',JSON.stringify(c));NETWS.cfg=null;NETWS.close();if(typeof mToast==='function')mToast(_T('🌐 Server set.'));onlRefresh().then(onlRedraw)}catch(err){if(typeof mToast==='function')mToast(_T('⚠ Paste the JSON from the deploy (ws, auth, client).'))}return}

@@ -365,7 +365,7 @@ function menuHide(){const m=$('#mainMenu');if(m)m.hidden=true;if(MM.raf){cancelA
    and nothing else claimed the screen — no event started since, no city square open. */
 function mmLaunch(fn,label){if(Date.now()-(MM.launchedAt||0)<700)return; // v0.41: a double click never launches twice
   MM.fromMenu=true;MM.launchedAt=Date.now();
-  const fail=e=>{console.error(e);MM.fromMenu=false;menuShow();if(typeof mToast==='function')mToast(_T`⚠ ${esc(label||_T('That mode'))} could not open: ${esc(String(e&&e.message||e))}`)};
+  const fail=e=>{console.error(e);MM.fromMenu=false;menuShow();if(typeof mToast==='function')mToast(_T`⚠ ${esc(label||_T('That mode'))} could not open: ${esc(errText92(e))}`)};
   transitRun(()=>{menuHide();try{const r=fn();if(r&&r.catch)r.catch(fail)}catch(e){fail(e)}},_T`Loading ${label||''}…`)
   // watchdog: if nothing took the screen, bring the menu back instead of leaving a blank arena
   const t0=MM.launchedAt;setTimeout(()=>{if(MM.launchedAt!==t0)return;const m=$('#mainMenu');if(!m||!m.hidden)return;

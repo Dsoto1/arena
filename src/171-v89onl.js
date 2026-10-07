@@ -86,7 +86,7 @@ function g89Queued(){const q=g89Q(ONLM.me).concat(G89.fly);return q}
 function g89Send(op){const p=g89Me();if(!p||!gear88Ok(p))return;const inp={k:'gear',seat:ONLM.me,...op};G89.fly.push(op);render();
   NET.req('match.input',{id:S.onl.lobby,in:inp}).then(r=>{G89.fly.splice(G89.fly.indexOf(op),1);if(!r||!Number.isInteger(r.seq))return;G89.mine.add(r.seq);ONLM.own.delete(r.seq);
     if(r.seq>=ONLM.next&&!ONLM.q.some(x=>x.seq===r.seq)){ONLM.q.push({...inp,from:'self89',seq:r.seq});ONLM.q.sort((a,b)=>a.seq-b.seq)}onlmPump()})
-  .catch(e=>{const i=G89.fly.indexOf(op);if(i>=0)G89.fly.splice(i,1);onlToast80(_T('⚠ The server did not take that order: ')+esc(e.message));render()})}
+  .catch(e=>{const i=G89.fly.indexOf(op);if(i>=0)G89.fly.splice(i,1);onlToast80(_T('⚠ The server did not take that order: ')+esc(errText92(e)));render()})}
 /* the bar online: ⇄ swap and one button per piece lying here; queued orders wait for your turn */
 {const base=gear88Bar;gear88Bar=function(p){if(!(S&&S.onl))return base.apply(this,arguments);if(!p||g89Me()!==p)return '';const q=g89Queued();const ok=gear88Ok(p);if(!ok&&!q.length)return '';
   const arms=armsAttached(p);const canSwap=ok&&arms.length===2&&(p.wR||p.wL)&&!q.some(x=>x.op==='swap');

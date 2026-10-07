@@ -1095,4 +1095,27 @@ const ONLC=(function(){
   {const base=C.domusRow;C.domusRow=function(D){const r=base.apply(this,arguments);if(r&&D){if(D.kitDay92)r.kitDay92=D.kitDay92;if(D.purse92)r.purse92=D.purse92}return r}}
   {const base=C.domusPub89;if(base)C.domusPub89=function(D){const r=base.apply(this,arguments);if(r){delete r.kitDay92;delete r.purse92}return r}}
   Object.assign(C,{SEND_MAX92,KIT_DISC92,KIT_TIERS92,KIT_KEYS92,DAILY92,CLASS_KITS92,setKits92,classKits92,kitFromArmor92,sendWhy92,sendBack92,isIssued92,kitList92,kitPlan92,restockList92,kitPieces92,kitEquip92,kitRemap92,kitWhy92})})(ONLC);
+/* ══════════ v0.93 BACKEND HARDENING (phase 1) — shared by the server (routes.js) and the page's mock server (223-v93harden) ══════════
+   • IDEMPOTENCY: every request in IDEM93 that spends, moves or claims something may carry a client request id `rid` (ridOK93); the
+     server keeps its reply for IDEM_MS93 (10 min) per account + rid and answers a replay with that reply instead of acting twice.
+     A rid still in flight → 'rid_busy' (the client waits and asks again); a rid reused for another request → 'rid_reuse'.
+   • RATE LIMIT: one token bucket per account (guests by id) on top of the per-feature limits — RATE93 {burst, per second};
+     match.* requests (lockstep moves, hashes, snapshots) fill their own, larger bucket. Refusal = code 'rate_limit' + {wait} ms. */
+(function(C){
+  const IDEM93=['char.buy','offer.buy','market.buy','lobby.ticket','lobby.pass','bet.place','auction.bid','gear.repair','lobby.send','market.kit','gift.open',
+    'domus.buy','domus.upgrade','char.class','char.create','char.edit','char.kitapply','domus.create','domus.rename','domus.move','domus.equip','domus.dress',
+    'gear.home','offer.move','offer.bring','loot.pick','lanista.name','domus.patron','domus.look','admin.grant'];
+  const IDEM_MS93=10*60e3,RID_BUSY_MS93=60e3;
+  const RATE93={burst:40,per:10,mburst:90,mper:30};
+  const ridOK93=r=>typeof r==='string'&&/^[A-Za-z0-9_-]{8,40}$/.test(r);
+  /* one token bucket: B = {n, at} (mutated) → 0 when a token was taken, else the ms to wait for one */
+  function bucket93(B,now,burst,per){if(B.at==null){B.n=burst;B.at=now}const add=Math.max(0,now-B.at)*per/1000;B.n=Math.min(burst,B.n+add);B.at=now;
+    if(B.n>=1){B.n-=1;return 0}return Math.max(1,Math.ceil((1-B.n)*1000/per))}
+  const rateClass93=t=>/^match\./.test(String(t||''))?'m':'g';
+  /* a limiter over many keys (accounts / guests), forgetting idle ones */
+  function limiter93(cfg){cfg=cfg||RATE93;const M=new Map();let sweep=0;
+    return (key,t,now)=>{if(!key)return 0;if(now-sweep>60e3){sweep=now;for(const [x,y] of M)if(now-(y.at||0)>120e3)M.delete(x)}
+      const c=rateClass93(t);const k=c+'|'+key;let B=M.get(k);if(!B){B={};M.set(k,B)}
+      return c==='m'?bucket93(B,now,cfg.mburst,cfg.mper):bucket93(B,now,cfg.burst,cfg.per)}}
+  Object.assign(C,{IDEM93,IDEM_MS93,RID_BUSY_MS93,RATE93,ridOK93,bucket93,rateClass93,limiter93})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

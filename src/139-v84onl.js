@@ -124,13 +124,13 @@ function onl84Bar(){let el=document.getElementById('rcl84');const X=ONL84.rcl;co
   if(el.dataset.k!==txt){el.innerHTML=txt;el.dataset.k=txt}}
 setInterval(()=>{try{onl84Bar();const W=ONL84.want;if(W&&!W.sent&&S&&S.onl&&S.onl.lobby===W.id&&ONLM.on&&!ONL.watching){W.sent=1;onl84Ask(W.id)}}catch(e){}},500);
 async function onl84Ask(id){try{await NET.req('match.reclaim',{id});if(typeof mToast==='function')mToast(_T('🔌 Flavius hears you — your seat is yours at its next turn.'))}
-  catch(e){ONL84.want=null;if(e&&e.code==='reclaim_late')ONL84.rcl=null;if(typeof mToast==='function')mToast('⚠ '+esc(e.message||_T('Too late.')));onl84Bar()}}
+  catch(e){ONL84.want=null;if(e&&e.code==='reclaim_late')ONL84.rcl=null;if(typeof mToast==='function')mToast('⚠ '+esc(errText92(e,_T('Too late.'))));onl84Bar()}}
 async function onl84ReclaimGo(){const X=ONL84.rcl;if(!X||ONL84.want)return;ONL84.want={id:X.id,sent:0};onl84Bar();
   if(S&&S.onl&&S.onl.lobby===X.id&&ONLM.on&&!S.over){ONL84.want.sent=1;return onl84Ask(X.id)}
   /* not on that sand yet: watch it first (a CPU holds the seat), then ask */
   try{let L=(ONL.lobbies||[]).find(x=>x.id===X.id);if(!L){const ls=await NET.req('lobby.list',{});L=(ls||[]).find(x=>x.id===X.id)}
     if(!L||L.status!=='live'){ONL84.want=null;ONL84.rcl=null;onl84Bar();if(typeof mToast==='function')mToast(_T('⌛ That match is over.'));return}
-    if(ONL.leftMatch)delete ONL.leftMatch[X.id];await onlAttach(L,'seat')}catch(e){ONL84.want=null;onl84Bar();if(typeof mToast==='function')mToast('⚠ '+esc(e.message||String(e)))}}
+    if(ONL.leftMatch)delete ONL.leftMatch[X.id];await onlAttach(L,'seat')}catch(e){ONL84.want=null;onl84Bar();if(typeof mToast==='function')mToast('⚠ '+esc(errText92(e)))}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-rcl84]');if(!b)return;e.preventDefault();e.stopPropagation();if(b.dataset.rcl84==='x'){const el=document.getElementById('rcl84');if(el)el.remove();ONL84.rcl=null;return}onl84ReclaimGo()},true);
 
 /* =========================== "YOUR TURN" NOTICES (in the browser only) =========================== */
@@ -277,7 +277,7 @@ function onl84TodayChips(h){const T=typeof ONL80F!=='undefined'?ONL80F.today:nul
 {const base=onlTodayHTML80;onlTodayHTML80=function(){const h=base.apply(this,arguments);try{return onl84TodayChips(h)}catch(e){return h}}}
 
 /* ---------------- 🔨 the AUCTION tab ---------------- */
-function onl84Auction(){if(!ONL84.auc||Date.now()-ONL84.aucAt>10000){ONL84.aucAt=Date.now();NET.req('auction.list',{}).then(r=>{ONL84.auc=r;ONL84.aucSkew=(r.now||Date.now())-Date.now();if(ONL.tab==='auction'&&document.getElementById('onl')&&!onlFocus80())onlRedraw()}).catch(e=>{ONL84.auc=ONL84.auc||{lots:[],past:[],mine:{},err:e.message}})}
+function onl84Auction(){if(!ONL84.auc||Date.now()-ONL84.aucAt>10000){ONL84.aucAt=Date.now();NET.req('auction.list',{}).then(r=>{ONL84.auc=r;ONL84.aucSkew=(r.now||Date.now())-Date.now();if(ONL.tab==='auction'&&document.getElementById('onl')&&!onlFocus80())onlRedraw()}).catch(e=>{ONL84.auc=ONL84.auc||{lots:[],past:[],mine:{},err:errText92(e)}})}
   const X=ONL84.auc;if(!X)return `<h3>${_T`🔨 Flavius’s Auction`}</h3><p class="rc-sub">${_T`The auctioneer unrolls his lists…`}</p>`;const M=X.mine||{};const now=Date.now()+(ONL84.aucSkew||0);
   const lot=(L,past)=>{const I={item:L.item,named:true,kind:L.kind,rar:L.rar,w:L.w||{n:L.n,rar:L.rar},val:L.val,st:'whole',hist:L.hist||[]};const left=L.ends-now;
     const lead=L.bid?`<div class="au84-lead ${L.bid.mine?'me':''}">${_T`🏛 <b>${esc2(L.bid.name)}</b>${L.bid.dname?` · ${esc2(onlHouse82(L.bid.dname))}`:''} leads with ${c83()} <b>${L.bid.amt}</b>`}</div>`:`<div class="au84-lead none">${_T`No bid yet · opens at ${c83()} <b>${L.min}</b>`}</div>`;
@@ -309,7 +309,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   if(a==='aur'){ONL84.aucAt=0;onlRedraw();return}
   if(a==='bid'){const inp=document.querySelector(`[data-au84amt="${CSS.escape(v)}"]`);const amt=Math.floor(+((inp&&inp.value)||0));
     return onlDo(async()=>{try{const r=await NET.req('auction.bid',{lot:v,amt});if(r.char)onl83Put(r.char);ONL84.aucAt=0;onlToast80(_T`🔨 Your bid of ${c83()} ${amt} leads — the coin waits in escrow.`)}
-      catch(err){if(err&&err.code==='auc_low'){ONL84.aucAt=0;onlToast80('🔨 '+esc2(err.message));onlRedraw();return}throw err}})}},true);
+      catch(err){if(err&&err.code==='auc_low'){ONL84.aucAt=0;onlToast80('🔨 '+esc2(errText92(err)));onlRedraw();return}throw err}})}},true);
 /* the result toast: the CPU played most of it */
 {const base=onlSettled;onlSettled=function(res){const r=base.apply(this,arguments);try{const o=res&&res.out;if(o&&o.cpu&&!res.void)setTimeout(()=>onlToast80(_T('🤖 The CPU fought most of that bout in your seat — Flavius pays a quarter, and no Donativum.')),6200);ONL82.dgAt=0}catch(e){}return r}}
 

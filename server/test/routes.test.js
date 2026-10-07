@@ -4,7 +4,7 @@ const assert=require('assert');const path=require('path');const crypto=require('
 const {makeRoutes}=require('../src/routes.js');const store=require('../src/store.js');const catalog=require('../src/catalog.json');const C=require('../src/onlcore.js');const {verify}=require('../src/jwt.js');
 (async()=>{
   const db=store.memory();const pushed=[];let t=1700000000000;
-  const route=makeRoutes({store:db,push:async(a,ty,d)=>pushed.push([a,ty,d]),catalog,now:()=>(t+=1000),dev:true,countdown:0});
+  const route=makeRoutes({limits:false,store:db,push:async(a,ty,d)=>pushed.push([a,ty,d]),catalog,now:()=>(t+=1000),dev:true,countdown:0});
   /* v0.92 one treasury: a house's coin */
   const treOf=async acct=>{const P=await db.get('ACCT#'+acct,'PROFILE');const D=P&&P.domus?await db.get('DOMUS#'+P.domus,'DOMUS'):null;return D?D.treasury|0:0};
   const A={acct:'dev-a'},B={acct:'dev-b'};
@@ -128,7 +128,7 @@ async function v80(){
   const {makeHandler}=require('../src/index.js');
   let T=1800000000000;const db=store.memory();const sent=[];const live=new Set();
   const send=async(conn,msg)=>{if(!live.has(conn))return true;sent.push({conn,msg});return false};
-  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0,countdown:0});
+  const h=makeHandler({limits:false,db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0,countdown:0});
   let nc=0,rid=0;
   const connect=async name=>{const conn='c'+(++nc);live.add(conn);const r=await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER)}});assert.strictEqual(r.statusCode,200);return conn};
   const disconnect=async conn=>{live.delete(conn);await h({requestContext:{routeKey:'$disconnect',connectionId:conn}})};
@@ -281,7 +281,7 @@ async function v80b(){
   const {makeHandler}=require('../src/index.js');
   let T=1800000000000;const db=store.memory();const sent=[];const live=new Set();
   const send=async(conn,msg)=>{if(!live.has(conn))return true;sent.push({conn,msg});return false};
-  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0,countdown:0});
+  const h=makeHandler({limits:false,db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0,countdown:0});
   let nc=0,rid=0;const mark=()=>sent.length;
   const connect=async name=>{const conn='k'+(++nc);live.add(conn);await h({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER)}});return conn};
   async function client(name,o={}){const cl={name,acct:'dev-'+name};cl.conn=await connect(name);
@@ -347,7 +347,7 @@ async function v80b(){
   T+=86400e3;td=(await dan.req('hello',{all:1})).today;assert.strictEqual(td.day,'today');assert.deepStrictEqual([td.wins.length,td.fallen.length,td.upsets.length],[0,0,0]);
   /* Find me a fight: two presses whose new rooms the (eventually consistent) room index cannot show yet still meet in one room */
   {const db2=store.memory();const lag={...db2,byIndex:async g=>g==='LOBBIES'?[]:db2.byIndex(g)};const sent2=[];const live2=new Set();
-    const h2=makeHandler({db:lag,send:async(conn,msg)=>{if(!live2.has(conn))return true;sent2.push({conn,msg});return false},dev:true,verifyCfg:{},now:()=>T,hereMs:0,countdown:0});let r2=0;
+    const h2=makeHandler({limits:false,db:lag,send:async(conn,msg)=>{if(!live2.has(conn))return true;sent2.push({conn,msg});return false},dev:true,verifyCfg:{},now:()=>T,hereMs:0,countdown:0});let r2=0;
     const cl2=async name=>{const conn='q'+name;live2.add(conn);await h2({requestContext:{routeKey:'$connect',connectionId:conn},queryStringParameters:{dev:name,ver:String(C.VER)}});
       const req=async(t,d)=>{T+=10;const id=++r2;await h2({requestContext:{routeKey:'$default',connectionId:conn},body:JSON.stringify({t,id,d})});const m=sent2.find(x=>x.conn===conn&&x.msg.re===id);if(!m.msg.ok)throw new Error(m.msg.err);return m.msg.d};
       await req('auth.signin',{name});await req('domus.create',{name:'Domus '+name});await req('char.create',{name:name+' Gladius',cls:'hero'});return req};
@@ -366,7 +366,7 @@ async function v82(){
   const {makeHandler}=require('../src/index.js');
   let T=1900000000000;const db=store.memory();const sent=[];const live=new Set();
   const send=async(conn,msg)=>{if(!live.has(conn))return true;sent.push({conn,msg});return false};
-  const h=makeHandler({db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0,countdown:0});
+  const h=makeHandler({limits:false,db,send,dev:true,verifyCfg:{},now:()=>T,hereMs:0,countdown:0});
   let nc=0,rid=0;const mark=()=>sent.length;
   const ask=async(conn,t,d)=>{T+=10;const id=++rid;await h({requestContext:{routeKey:'$default',connectionId:conn},body:JSON.stringify({t,id,d})});const m=sent.find(x=>x.conn===conn&&x.msg.re===id);if(!m)throw new Error('no reply to '+t);
     if(!m.msg.ok){const e=new Error(m.msg.err);e.code=m.msg.code;e.reply=m.msg;throw e}return m.msg.d};

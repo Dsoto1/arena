@@ -1287,6 +1287,19 @@ window.addEventListener('unhandledrejection',e=>{const r=e&&e.reason;err92Add('p
 {const base=console.error.bind(console);console.error=function(...a){try{const e=a.find(x=>x instanceof Error);err92Add('caught',e?e.message:a.map(x=>typeof x==='string'?x:(x&&x.message)||'').join(' '),e?err92Stack(e):'')}catch(x){}return base(...a)}}
 /* tests: errNew92(mark) → the entries logged since ERR92.n was `mark` */
 function errNew92(mark){const k=Math.max(0,ERR92.n-(mark|0));return k?ERR92.list.slice(-k):[]}
+/* v0.93 PLAYER-FACING ERRORS: nothing raw ever reaches the screen (no stack traces, JSON, ids, request names, HTTP codes).
+   errText92(e, fallback) → the message when it is player text (the server's own refusals, the game's own lines), else the fallback
+   (default "Something went wrong.") + " (ref E-XXXX)": errRef92 files the raw error in the log above under that ref (Settings → 🐞 Error log,
+   "Copy for a bug report"), so a player can quote the ref and the log says what happened. */
+const ERR_RAW93=/\b(TypeError|ReferenceError|SyntaxError|RangeError|EvalError|is not a function|is not defined|is not iterable|is not a constructor|Cannot read propert|Cannot set propert|Cannot destructure|Cannot access '|Unexpected token|Unexpected end of|in JSON at position|JSON\.parse|NetworkError|Failed to fetch|Load failed|Maximum call stack|out of memory|QuotaExceeded|DOMException|ECONN\w+|ETIMEDOUT)\b|\[object (Object|Promise|Error)\]|\bat \S+ \(|\.js:\d+(:\d+)?|\bHTTP\/?\s?[45]\d\d\b|\bstatus(Code)?[ :=]+[45]\d\d\b|^\s*\{\s*"|^\s*\[\s*[{"\d]|^\s*<!?(html|DOCTYPE)/i;
+function errSafe92(e,m){if(!m||typeof m!=='string')return false;if(e&&typeof e==='object'&&!e.extra&&e instanceof Error&&e.constructor!==Error)return false;return !ERR_RAW93.test(m)}
+function errRef92(e,kind){let ref='E-';try{ref+=Math.random().toString(36).slice(2,6).toUpperCase().padEnd(4,'0')}catch(x){ref+='0000'}
+  try{const m=e&&typeof e==='object'?String(e.message||e.name||e):String(e);const now=Date.now();ERR92.n++;
+    ERR92.list.push({t:new Date(now).toISOString().slice(0,19).replace('T',' '),kind:kind||'shown',msg:('['+ref+'] '+m).slice(0,400),at:e&&e.stack?err92Stack(e):'',where:err92Where(),ver:''});
+    if(ERR92.list.length>ERR92.max)ERR92.list.splice(0,ERR92.list.length-ERR92.max);clearTimeout(ERR92.tm);ERR92.tm=setTimeout(()=>{try{localStorage.setItem('flavius_errlog92',JSON.stringify(ERR92.list))}catch(x){}},300)}catch(x){}
+  return ref}
+function errText92(e,fallback){const m=e==null?'':typeof e==='object'?String(e.message||''):String(e);if(errSafe92(e,m))return m;
+  if(!m&&fallback)return fallback;const ref=errRef92(e);return (fallback||_T('Something went wrong.'))+' '+_T`(ref ${ref})`}
 /* 00-lang — v0.86 languages (runs before everything else).
    • _T marks player-facing text. tools/i18n/wrap.js put it on every prose literal / template run:
        _T('Plain text')   _T`Text with ${x} inside`   `<div>${_T`Run of text`}</div>`
@@ -33355,6 +33368,29 @@ const ONLC=(function(){
   {const base=C.domusRow;C.domusRow=function(D){const r=base.apply(this,arguments);if(r&&D){if(D.kitDay92)r.kitDay92=D.kitDay92;if(D.purse92)r.purse92=D.purse92}return r}}
   {const base=C.domusPub89;if(base)C.domusPub89=function(D){const r=base.apply(this,arguments);if(r){delete r.kitDay92;delete r.purse92}return r}}
   Object.assign(C,{SEND_MAX92,KIT_DISC92,KIT_TIERS92,KIT_KEYS92,DAILY92,CLASS_KITS92,setKits92,classKits92,kitFromArmor92,sendWhy92,sendBack92,isIssued92,kitList92,kitPlan92,restockList92,kitPieces92,kitEquip92,kitRemap92,kitWhy92})})(ONLC);
+/* ══════════ v0.93 BACKEND HARDENING (phase 1) — shared by the server (routes.js) and the page's mock server (223-v93harden) ══════════
+   • IDEMPOTENCY: every request in IDEM93 that spends, moves or claims something may carry a client request id `rid` (ridOK93); the
+     server keeps its reply for IDEM_MS93 (10 min) per account + rid and answers a replay with that reply instead of acting twice.
+     A rid still in flight → 'rid_busy' (the client waits and asks again); a rid reused for another request → 'rid_reuse'.
+   • RATE LIMIT: one token bucket per account (guests by id) on top of the per-feature limits — RATE93 {burst, per second};
+     match.* requests (lockstep moves, hashes, snapshots) fill their own, larger bucket. Refusal = code 'rate_limit' + {wait} ms. */
+(function(C){
+  const IDEM93=['char.buy','offer.buy','market.buy','lobby.ticket','lobby.pass','bet.place','auction.bid','gear.repair','lobby.send','market.kit','gift.open',
+    'domus.buy','domus.upgrade','char.class','char.create','char.edit','char.kitapply','domus.create','domus.rename','domus.move','domus.equip','domus.dress',
+    'gear.home','offer.move','offer.bring','loot.pick','lanista.name','domus.patron','domus.look','admin.grant'];
+  const IDEM_MS93=10*60e3,RID_BUSY_MS93=60e3;
+  const RATE93={burst:40,per:10,mburst:90,mper:30};
+  const ridOK93=r=>typeof r==='string'&&/^[A-Za-z0-9_-]{8,40}$/.test(r);
+  /* one token bucket: B = {n, at} (mutated) → 0 when a token was taken, else the ms to wait for one */
+  function bucket93(B,now,burst,per){if(B.at==null){B.n=burst;B.at=now}const add=Math.max(0,now-B.at)*per/1000;B.n=Math.min(burst,B.n+add);B.at=now;
+    if(B.n>=1){B.n-=1;return 0}return Math.max(1,Math.ceil((1-B.n)*1000/per))}
+  const rateClass93=t=>/^match\./.test(String(t||''))?'m':'g';
+  /* a limiter over many keys (accounts / guests), forgetting idle ones */
+  function limiter93(cfg){cfg=cfg||RATE93;const M=new Map();let sweep=0;
+    return (key,t,now)=>{if(!key)return 0;if(now-sweep>60e3){sweep=now;for(const [x,y] of M)if(now-(y.at||0)>120e3)M.delete(x)}
+      const c=rateClass93(t);const k=c+'|'+key;let B=M.get(k);if(!B){B={};M.set(k,B)}
+      return c==='m'?bucket93(B,now,cfg.mburst,cfg.mper):bucket93(B,now,cfg.burst,cfg.per)}}
+  Object.assign(C,{IDEM93,IDEM_MS93,RID_BUSY_MS93,RATE93,ridOK93,bucket93,rateClass93,limiter93})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;
 /* =====================================================================
    112-ONLINE · MULTIPLAYER → ONLINE (phase 1: the landing space, against a mock server)
@@ -33504,7 +33540,7 @@ function onlMini(cls,h=220){const src=typeof MINI_URL!=='undefined'&&MINI_URL[cl
 function onlEvName(k){return (EVENTS[k]||{}).n||k}
 function onlCityName(i){return (LOCATIONS[i]||{}).n||'—'}
 async function onlRefresh(){try{const h=await NET.req('hello',{all:1});ONL.acct=h.me;ONL.mode=h.mode;
-    if(h.chars&&h.me){ONL.chars=h.chars;ONL.active=h.active||null;ONL.char=h.chars.find(c=>c.alive&&c.id===h.active)||h.chars.find(c=>c.alive)||null;ONL.lobbies=h.lobbies||[];ONL.news=h.news||[];ONL.stats={challenges:h.challenges||[],online:h.online||0};ONL.party=h.party||null;return}}catch(e){ONL.err=e.message}
+    if(h.chars&&h.me){ONL.chars=h.chars;ONL.active=h.active||null;ONL.char=h.chars.find(c=>c.alive&&c.id===h.active)||h.chars.find(c=>c.alive)||null;ONL.lobbies=h.lobbies||[];ONL.news=h.news||[];ONL.stats={challenges:h.challenges||[],online:h.online||0};ONL.party=h.party||null;return}}catch(e){ONL.err=errText92(e)}
   if(ONL.acct){try{ONL.chars=await NET.req('char.mine');ONL.char=ONL.chars.find(c=>c.alive&&c.id===ONL.active)||ONL.chars.find(c=>c.alive)||null}catch(e){}}
   try{ONL.lobbies=await NET.req('lobby.list')}catch(e){}try{const n=await NET.req('world.news');ONL.news=n.news;ONL.stats=n}catch(e){}}
 function onlRedraw(){const r=document.getElementById('onl');if(!r)return;const sc=($('#mBody')||{}).scrollTop||0;if(typeof morph91==='function')morph91(r,onlHTML());else r.innerHTML=onlHTML(); /* v0.91: patched in place (198), no flicker */const b=$('#mBody');if(b)b.scrollTop=sc}
@@ -33600,7 +33636,7 @@ function onlHallHTML(){if(!ONL.hallAt||Date.now()-ONL.hallAt>20000){ONL.hallAt=D
    ${!ONL.char&&ONL.acct?`<div class="mbtns"><button type="button" class="btn primary" data-onl="tab" data-v="play">${_T`⚔ Make a new gladiator`}</button></div>`:''}`}
 
 /* ---------------- the controls ---------------- */
-async function onlDo(fn){if(ONL.busy)return;ONL.busy=true;ONL.err='';try{await fn()}catch(e){ONL.err=e.message;if(typeof mToast==='function')mToast('⚠ '+esc2(e.message))}finally{ONL.busy=false;onlRedraw()}}
+async function onlDo(fn){if(ONL.busy)return;ONL.busy=true;ONL.err='';try{await fn()}catch(e){ONL.err=errText92(e);if(typeof mToast==='function')mToast('⚠ '+esc2(ONL.err))}finally{ONL.busy=false;onlRedraw()}}
 document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl]');if(!b)return;e.preventDefault();e.stopPropagation();const a=b.dataset.onl,v=b.dataset.v;
   if(a==='tab'){ONL.tab=v;onlRedraw();return}
   if(a==='google'){if(NET.mode==='aws'&&typeof netSignIn==='function')return netSignIn();if(typeof mToast==='function')mToast(_T('Google sign-in opens once the AWS template is deployed. Use a name for now.'));return}
@@ -33752,7 +33788,7 @@ function onlmMine(){if(ONLM.me<0)return false;return onlmActor()===ONLM.me||(!!C
 function onlmName(i){const p=S.players[i];if(p)return p.name;const t=((S.onl&&S.onl.stands)||[])[i-((S.onl&&S.onl.fighters)||S.players.length)];return t?t.name+_T(' (in the stands)'):_T('Another lanista')}
 function onlHash(){try{const x=JSON.stringify([S.turnNo,S.rotation,S.ri,RNG&&RNG.s,S.players.map(p=>[p.r,p.c,p.alive?1:0,p.exited?1:0,Math.round(p.cf||0),p.coin,p.hp,p.ap,p.keys,(p.items||[]).length,p.wR&&p.wR.key,p.wL&&p.wL.key]),(S.npcs||[]).map(n=>[n.t,n.r,n.c,n.hp,n.alive?1:0])]);return 'h'+hashStr(x)}catch(e){return ''}}
 /* ---------------- sending ---------------- */
-function onlmSend(inp){inp.h=onlHash();ONLM.hlog['n'+(ONLM.sent+1)]=inp.k==='modal'?inp.pre:inp.h;inp.seat=ONLM.me;inp.n=++ONLM.sent;ONLM.inflight=(ONLM.inflight||0)+1;NET.req('match.input',{id:S.onl.lobby,in:inp}).then(r=>{ONLM.inflight--;if(r&&Number.isInteger(r.seq)&&r.seq>=ONLM.next){ONLM.own.add(r.seq);onlmPump()}}).catch(e=>{ONLM.inflight--;if(typeof mToast==='function')mToast(_T('⚠ The server did not take that move: ')+esc(e.message))})}
+function onlmSend(inp){inp.h=onlHash();ONLM.hlog['n'+(ONLM.sent+1)]=inp.k==='modal'?inp.pre:inp.h;inp.seat=ONLM.me;inp.n=++ONLM.sent;ONLM.inflight=(ONLM.inflight||0)+1;NET.req('match.input',{id:S.onl.lobby,in:inp}).then(r=>{ONLM.inflight--;if(r&&Number.isInteger(r.seq)&&r.seq>=ONLM.next){ONLM.own.add(r.seq);onlmPump()}}).catch(e=>{ONLM.inflight--;if(typeof mToast==='function')mToast(_T('⚠ The server did not take that move: ')+esc(errText92(e)))})}
 /* board clicks */
 {const base=onTile;onTile=function(r,c){if(!onlmOn()||ONLM.replay)return base.apply(this,arguments);if(!onlmMine())return;
   const p=cur();onlmSend({k:'tile',r,c,mode:S.mode,focus:p&&p.focusRoll?1:0});return base.apply(this,arguments)}}
@@ -33826,7 +33862,7 @@ NET.on('match.snap',d=>{if(!S||!S.onl||d.id!==S.onl.lobby||d.to!==ONL.acct.id)re
 function onlmLoad(snap,onl){try{matchSlotPut('onl',snap);const ok=matchLoad('onl');matchSlotDel('onl');S.onl={...onl};S.limits=S.limits?{...S.limits,min:0}:S.limits;return ok}catch(e){console.error(e);return false}}
 /* ---------------- the opening ---------------- */
 {const base=beginTurn;beginTurn=async function(){if(S&&S.onl&&!S.onl.opened){S.onl.opened=true;ONLM.on=true;ONLM.me=S.onl.seat;ONLM.owners=S.onl.owners||[];ONLM.next=0;ONLM.q=[];ONLM.pend=null;ONLM.sent=0;ONLM.own=new Set();
-    if(S.limits)S.limits.min=0;if(S.onl.host){try{await NET.req('match.open',{id:S.onl.lobby,snap:matchSnapshot('online')})}catch(e){if(typeof mToast==='function')mToast('⚠ '+esc(e.message))}}onlmWaitShow()}
+    if(S.limits)S.limits.min=0;if(S.onl.host){try{await NET.req('match.open',{id:S.onl.lobby,snap:matchSnapshot('online')})}catch(e){if(typeof mToast==='function')mToast('⚠ '+esc(errText92(e)))}}onlmWaitShow()}
   return base.apply(this,arguments)}}
 async function onlJoinMatch(L,onl){if(typeof mToast==='function')mToast(_T('⚔ Waiting for the host to open the arena…'));let g=null;
   for(let i=0;i<150&&!(g&&g.open);i++){try{g=await NET.req('match.get',{id:L.id,from:0})}catch(e){}if(!(g&&g.open))await new Promise(r=>setTimeout(r,400))}
@@ -33942,7 +33978,7 @@ async function netToken(){const t=netTokGet();if(!t)return null;if(t.exp>Date.no
 async function netSignOut(){try{localStorage.removeItem('flavius_onltok')}catch(e){}NETWS.close();const c=await NETWS.config();if(c&&c.auth)location.href=`${c.auth}/logout?client_id=${encodeURIComponent(c.client)}&logout_uri=${encodeURIComponent(netRedirect())}`}
 /* back from Google: trade the code, tidy the address, open Online */
 (async()=>{const u=new URL(location.href);const code=u.searchParams.get('code');if(!code)return;let p=null;try{p=JSON.parse(sessionStorage.getItem('flavius_onlpkce')||'null')}catch(e){}
-  if(!p||u.searchParams.get('state')!==p.st)return;try{await netTokenCall({grant_type:'authorization_code',code,redirect_uri:netRedirect(),code_verifier:p.ver});sessionStorage.removeItem('flavius_onlpkce')}catch(e){if(typeof mToast==='function')mToast('⚠ '+e.message)}
+  if(!p||u.searchParams.get('state')!==p.st)return;try{await netTokenCall({grant_type:'authorization_code',code,redirect_uri:netRedirect(),code_verifier:p.ver});sessionStorage.removeItem('flavius_onlpkce')}catch(e){if(typeof mToast==='function')mToast('⚠ '+esc(errText92(e)))}
   history.replaceState(null,'',netRedirect());try{localStorage.setItem('flavius_online77','1')}catch(e){}setTimeout(()=>{try{if(typeof menuHide==='function')menuHide();onlineOpen('play')}catch(e){}},300)})();
 /* ---------------- choose the transport ---------------- */
 async function netPick(){const c=await NETWS.config();NET.mode=c?'aws':'mock';return NET.mode}
@@ -33951,7 +33987,7 @@ function netIdleClose(){if(NET.mode==='aws'&&!document.getElementById('onl')&&!(
 {const base=onlineOpen;onlineOpen=async function(){await netPick();try{return await base.apply(this,arguments)}finally{setTimeout(netIdleClose,1500)}}}
 {const base=gameOver;gameOver=async function(){const r=await base.apply(this,arguments);if(S&&S.onl)setTimeout(netIdleClose,8000);return r}}
 /* hello in aws mode: not signed in → no token → the sign-in screen */
-{const base=onlRefresh;onlRefresh=async function(){if(NET.mode==='aws'){const c=await NETWS.config();if(!c.dev&&!(await netToken())){ONL.acct=null;ONL.mode='aws';return}}try{return await base.apply(this,arguments)}catch(e){ONL.err=e.message}}}
+{const base=onlRefresh;onlRefresh=async function(){if(NET.mode==='aws'){const c=await NETWS.config();if(!c.dev&&!(await netToken())){ONL.acct=null;ONL.mode='aws';return}}try{return await base.apply(this,arguments)}catch(e){ONL.err=errText92(e)}}}
 /* sign out / dev sign-in on the real server */
 document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl="signout"],#onl [data-onl="mocksign"],#onl [data-onl="srvset"],#onl [data-onl="srvclear"]');if(!b)return;const a=b.dataset.onl;
   if(a==='srvset'){e.stopImmediatePropagation();const t=($('#onlSrv')||{}).value||'';try{const c=JSON.parse(t);if(!c.ws)throw 0;localStorage.setItem('flavius_onlserver',JSON.stringify(c));NETWS.cfg=null;NETWS.close();if(typeof mToast==='function')mToast(_T('🌐 Server set.'));onlRefresh().then(onlRedraw)}catch(err){if(typeof mToast==='function')mToast(_T('⚠ Paste the JSON from the deploy (ws, auth, client).'))}return}
@@ -34151,7 +34187,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('#btnOnlLea
   const rule=S.onl.ranked?'fate':((ONL.lobbies||[]).find(x=>x.id===id)||{}).abandon==='fate'?'fate':'cpu';
   const v=await modal(_T('🚪 Abandon the match?'),`<p>${S.onl.ranked?_T('<b>Ranked:</b> your gladiator is eliminated and <b>dies by Damnatio</b>. This cannot be undone.'):rule==='fate'?_T('Your gladiator is eliminated — the bout is over for you.'):_T('A CPU takes your seat and fights on.')}</p><p class="rc-sub">${_T`You may come back to watch, but not to fight.`}</p>`,
     [{label:_T('Abandon'),value:'go'},{label:_T('Stay'),value:null,primary:1}],{close:null});
-  if(v!=='go')return;try{const r=await NET.req('match.abandon',{id});(ONL.leftMatch=ONL.leftMatch||{})[id]=1;if(r&&r.out&&r.out.died&&typeof mToast==='function')setTimeout(()=>mToast(_T('🌫 Your gladiator abandoned the sand — Damnatio.')),600)}catch(err){if(typeof mToast==='function')mToast('⚠ '+esc(err.message))}onlExit()},true);
+  if(v!=='go')return;try{const r=await NET.req('match.abandon',{id});(ONL.leftMatch=ONL.leftMatch||{})[id]=1;if(r&&r.out&&r.out.died&&typeof mToast==='function')setTimeout(()=>mToast(_T('🌫 Your gladiator abandoned the sand — Damnatio.')),600)}catch(err){if(typeof mToast==='function')mToast('⚠ '+esc(errText92(err)))}onlExit()},true);
 function onlExit(){try{if(S&&!S.over){S.over=true}}catch(e){}ONLM.on=false;ONL.watching=null;ONL.live=ONL.live&&ONL.live.reported?ONL.live:null;onlBarSync();
   try{if(typeof cleanFinishNow==='function')cleanFinishNow()}catch(e){}try{if(typeof menuShow==='function')menuShow()}catch(e){}setTimeout(()=>{try{onlineOpen('play')}catch(e){}},200)}
 {const st=document.createElement('style');st.textContent=`
@@ -34593,7 +34629,7 @@ function onlInvitePop80(it){const r=it.row;const bg=document.createElement('div'
    <div class="acts"><button type="button" class="btn primary" data-onl="ijoin" data-v="${esc2(r.id)}">${_T`⚔ Join`}</button><button type="button" class="btn" data-onl="ino">${_T`Not now`}</button><button type="button" class="btn" data-onl="imute" data-v="${esc2(it.fromId||'')}">${_T`🔇 Mute`}</button></div></div>`;
   bg.addEventListener('click',e=>{if(e.target===bg)bg.remove()});document.body.appendChild(bg)}
 /* the who list: lanistas here now */
-async function onlWho80(){let rows=[];try{rows=await NET.req('who.list')}catch(e){onlToast80('⚠ '+esc2(e.message));return}for(const o of document.querySelectorAll('.w80bg'))o.remove();
+async function onlWho80(){let rows=[];try{rows=await NET.req('who.list')}catch(e){onlToast80('⚠ '+esc2(errText92(e)));return}for(const o of document.querySelectorAll('.w80bg'))o.remove();
   const room=onlWaitRoom80();const st={free:'free',room:_T('in a room'),fight:'fighting'};
   const row=w=>{const R=(ONL.lobbies||[]).find(L=>L.status==='waiting'&&(L.members||[]).some(m=>m.id===w.id));const F=(ONL.lobbies||[]).find(L=>L.status==='live'&&L.players.some(p=>p.id===w.id));const mu=ONLF.muted.has(w.id);
     return `<div class="w80r" data-who="${esc2(w.id)}"><b>${esc2(w.name)}</b> ${onlRankChip(w.rank)} <span class="badge ${w.st==='free'?'gold':''}">${st[w.st]||esc2(w.st)}</span><span class="acts">
@@ -34646,7 +34682,7 @@ window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('
   if(a==='ticket')return onlDo(async()=>{const r=await onlReq80('lobby.ticket',{id:v});ONL.char=r.char;onlToast80(_T`🎟 A seat in the stands at ${esc2(onlCityName(r.lobby.loc))} — it opens when the horns sound.`)});
   if(a==='betgo')return onlDo(async()=>{const r=await onlReq80('bet.place',{id:v,seat:+($('#onlBetSeat')||{}).value,amt:+($('#onlBetAmt')||{}).value});ONL.char=r.char;ONL.betting=null;onlToast80(_T('💰 Wager placed.'))})},true);
 async function onlSayRoom80(q){const id=onlRoomId80();if(!id)return;try{const r=await NET.req('lobby.say',{id,q});const l=r&&r.line;if(l){const c=ONLF.chat[id]=(ONLF.chat[id]||[]);if(!c.some(x=>!x.sys&&x.at===l.at&&x.by===l.by))c.push(l)}onlPatchLog80()}
-  catch(e){onlToast80('⚠ '+esc2(e.message))}}
+  catch(e){onlToast80('⚠ '+esc2(errText92(e)))}}
 /* the host's settings: one change → lobby.set → the room comes back */
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.onlrs)return;const L=onlMyLobby();if(!L)return;const k=t.dataset.onlrs;
   const v=k==='autoBal'?t.checked:k==='standsOff'?t.value==='1':k==='ev'||k==='abandon'?t.value:+t.value;onlDo(async()=>{await onlReq80('lobby.set',{id:L.id,[k]:v})})},true);
@@ -34678,10 +34714,10 @@ setInterval(()=>{try{onlSayBar80()}catch(e){}},500);
 function onlSayPop80(){let p=document.getElementById('onlSay80');if(p){p.remove();return}const b=document.getElementById('btnOnlSay80');if(!b)return;const r=b.getBoundingClientRect();
   p=document.createElement('div');p.id='onlSay80';const sc=S.over?'after':'match';p.innerHTML=ONLC.QC[sc].map(q=>`<button type="button" data-msay="${q}">${esc2(onlQ80(q))}</button>`).join('');
   p.style.left=Math.max(8,Math.min(innerWidth-260,r.left))+'px';p.style.top=(r.bottom+6)+'px';document.body.appendChild(p)}
-async function onlMatchSay80(q){try{await NET.req('match.say',{id:S.onl.lobby,q});onlBubble80(S.onl.seat,q);return true}catch(err){onlToast80('⚠ '+esc2(err.message));return false}}
+async function onlMatchSay80(q){try{await NET.req('match.say',{id:S.onl.lobby,q});onlBubble80(S.onl.seat,q);return true}catch(err){onlToast80('⚠ '+esc2(errText92(err)));return false}}
 async function onlAgain80(){const id=S&&S.onl&&S.onl.lobby;if(!id)return;
   try{const r=await NET.req('lobby.again',{id});onlUpsert80(r.lobby);const n=(r.invited||[]).length;onlToast80(_T`⚔ A new room — ${n?(n===1?_T('1 lanista invited'):_T`${n} lanistas invited`):_T('the others are elsewhere')}.`);ONL.tab='play';onlExit();return r}
-  catch(err){onlToast80('⚠ '+esc2(err.message));return null}}
+  catch(err){onlToast80('⚠ '+esc2(errText92(err)));return null}}
 document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
   if(t.closest('#btnOnlSay80')){e.preventDefault();e.stopPropagation();ONLM.uiAt=Date.now();onlSayPop80();return}
   const m=t.closest('#onlSay80 [data-msay]');if(m){e.preventDefault();e.stopPropagation();ONLM.uiAt=Date.now();const p=document.getElementById('onlSay80');if(p)p.remove();onlMatchSay80(m.dataset.msay);return}
@@ -35224,7 +35260,7 @@ window.addEventListener('click',async e=>{const b=e.target&&e.target.closest&&e.
   const lp=L&&L.players[seat];const cid=(ONL.live&&ONL.live.id===id&&ONL.live.char)||(lp&&lp.char);const c=(ONL.chars||[]).find(x=>x.id===cid)||ONL.char;const p=S.players[seat];
   const ok=await onlAbandonAsk80({ranked:!!S.onl.ranked,rule,char:c?onlLive80Char(c):null,kit:lp&&lp.kit?{gear:lp.kit.gear||[]}:null,now:p?{cf:p.cf,coin:p.coin}:null});if(!ok)return;
   try{const r=await NET.req('match.abandon',{id});(ONL.leftMatch=ONL.leftMatch||{})[id]=1;onlLive80Clear(id);if(r&&r.out&&r.out.died)setTimeout(()=>onlToast80(_T('🌫 Your gladiator abandoned the sand — Damnatio.')),600)}
-  catch(err){onlToast80('⚠ '+esc2(err.message))}onlExit()},true);
+  catch(err){onlToast80('⚠ '+esc2(errText92(err)))}onlExit()},true);
 /* the Online card of a live match: 🚪 Abandon beside ⚔ Back to the sand */
 {const base=onlRoomTop80;onlRoomTop80=function(){let h=base.apply(this,arguments);try{const L=onlMyLobby();const me=onlMe80();
   if(L&&L.status==='live'&&L.players.some(p=>p.id===me)&&!(ONL.leftMatch||{})[L.id]&&h.includes('data-onl="enter"')){const x=onlLive80Get();const dropped=!!(x&&x.id===L.id&&x.dropped);
@@ -35234,7 +35270,7 @@ window.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target
   const c=(ONL.chars||[]).find(x=>x.id===p.char)||ONL.char;const x=onlLive80Get();
   onlAbandonAsk80({ranked:!!L.ranked,rule:ONLC.abandonRule(L),dropped:!!(x&&x.id===L.id&&x.dropped),char:c?onlLive80Char(c):null,kit:p.kit?{gear:p.kit.gear||[]}:null}).then(async ok=>{if(!ok)return;
     try{const r=await NET.req('match.abandon',{id:v});(ONL.leftMatch=ONL.leftMatch||{})[v]=1;onlLive80Clear(v);onlToast80(r&&r.out&&r.out.died?_T('🌫 Your gladiator abandoned the sand — Damnatio.'):_T('🚪 You left the match.'));
-      await onlRefresh();onlRedraw()}catch(err){onlToast80('⚠ '+esc2(err.message))}})},true);
+      await onlRefresh();onlRedraw()}catch(err){onlToast80('⚠ '+esc2(errText92(err)))}})},true);
 
 /* ---------------- ☀ Today in the arena (the Online landing) ---------------- */
 function onlTodayHTML80(){const T=ONL80F.today;if(!T)return '';const yd=T.day==='yesterday';const WN=T.wins||[],F=T.fallen||[],U=T.upsets||[];
@@ -36180,7 +36216,7 @@ for(const k of ['lobby.join','lobby.create','lobby.quick']){const base=MOCK_ROUT
 async function onlGuestRefresh82(){try{if(NET.mode==='aws')await netPick();
     const g=await NET.req('auth.guest',{tz:onlTz80()});ONL.acct={id:g.id,name:'Guest',guest:true};ONL82.until=g.until||ONL82.until;
     const h=await NET.req('hello',{all:1});ONL.lobbies=h.lobbies||[];ONL.news=h.news||[];ONL.stats={challenges:h.challenges||[],online:(h.here||{}).n||h.online||0};ONL.chars=[];ONL.char=null;ONL.party=null;ONL.needDomus=false;ONL82.expired=false}
-  catch(e){if(e&&e.code==='guest_expired'){ONL82.expired=true;ONL.acct={id:'guest-'+onlGuestId82(),name:'Guest',guest:true};ONL.chars=[];ONL.char=null}else ONL.err=e.message}}
+  catch(e){if(e&&e.code==='guest_expired'){ONL82.expired=true;ONL.acct={id:'guest-'+onlGuestId82(),name:'Guest',guest:true};ONL.chars=[];ONL.char=null}else ONL.err=errText92(e)}}
 {const base=onlRefresh;onlRefresh=async function(){if(onlGuestOn82())return onlGuestRefresh82();const r=await base.apply(this,arguments);if(ONL.needDomus)ONL.newGlad=false;return r}}
 const GUEST_ACTS82=new Set(['tab','refresh','watch','omap','quiet','wwatch','uwatch','cryx','ino','wx','google','mocksign','srvset','srvclear']);
 const GWHY82={quick:_T('fight in a playlist'),join:_T('join a room'),take:_T('take a seat'),mkroom:_T('open a room'),newgame:_T('open a room'),ticket:_T('buy a ticket'),bet:'wager',betgo:'wager',fsay:_T('speak in the Forum'),
@@ -36388,7 +36424,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
     return onlDo(async()=>{ONL82.ferr='';try{const r=await NET.req(a==='drename'?'domus.rename':'domus.create',{name});ONL.domus=r.domus;ONL.needDomus=false;ONL82.dgAt=0;ONL82.draft='';if(a==='found'){const dr=onlPatronDraft82(ONL.acct.id);if(dr)onlPatronPut82(dr)}
         await onlRefresh();const live=(ONL.chars||[]).filter(c=>c.alive).length;if(a==='found'&&!live){ONL.newGlad=true;ONL.creating=null}
         onlToast80(a==='drename'?_T`✎ Your house is now <b>${esc2(onlHouse82(r.domus.name))}</b>.`:_T`🏛 <b>${esc2(onlHouse82(r.domus.name))}</b> is founded${r.joined?_T` — ${r.joined} gladiator${r.joined===1?'':'s'} joined with their record`:live?'':_T(' — now your first gladiator')}.`)}
-      catch(err){ONL82.ferr=err.message;throw err}})}
+      catch(err){ONL82.ferr=errText92(err);throw err}})}
   if(a==='prand'||a==='pdef'){if(!ONL.acct)return;if(a==='pdef')onlPatronPut82(null);else{const r=onlPatronDef82(ONL.acct.id+Math.random(),onlMyDomus82()+Math.random());onlPatronPut82(r)}onlRedraw();return}
   if(a==='buy'){const cat=onlCatalog();const it=cat[v];const ch=ONL.char;if(!it||!ch)return;const pr=ONLC.priceOf(it);
     return ask76(_T('🛒 Buy this piece?'),`<p style="margin:0">${_T`Buy <b>${esc2(it.n)}</b> (level ${it.lv}${it.kind==='a'?_T` · ${it.ap|0} AP`:''}) for <b>${coinAmt87(pr)}</b>?`}</p><p class="rc-sub" style="margin:6px 0 0">${_T`Wallet ${coinAmt87(`${ch.wallet} → ${ch.wallet-pr}`)}.`}</p>`,_T`Buy · ${pr}`,_T('Not now'))
@@ -36530,7 +36566,7 @@ function st82PopClose(){clearInterval(STD82.popT);STD82.popT=0;const o=document.
 NET.on('stands.window',d=>{try{if(!d||!S||!S.onl||d.id!==S.onl.lobby||!ONL.acct)return;if(d.seat!==ONLM.me)return;st82Popup(d)}catch(e){console.error(e)}});
 function st82Pick(d,pick){const P=STD82.pop;if(!P||P.sent)return;P.sent=1;const o=document.getElementById('st82Pop');if(o)for(const b of o.querySelectorAll('button,select'))b.disabled=true;
   const msg=o&&o.querySelector('.st82msg');if(msg)msg.textContent=pick.a==='pass'?_T('You watch this rotation.'):_T('✓ Your choice is in — the stands throw together.');
-  NET.req('match.stands.pick',{id:d.id,rot:d.rot,pick}).then(()=>{setTimeout(st82PopClose,pick.a==='pass'?600:1400)}).catch(e=>{if(msg)msg.textContent='⚠ '+(e.message||_T('The stands have chosen.'));setTimeout(st82PopClose,1800)})}
+  NET.req('match.stands.pick',{id:d.id,rot:d.rot,pick}).then(()=>{setTimeout(st82PopClose,pick.a==='pass'?600:1400)}).catch(e=>{if(msg)msg.textContent='⚠ '+errText92(e,_T('The stands have chosen.'));setTimeout(st82PopClose,1800)})}
 function st82Popup(d){st82PopClose();const s=(S.spect||[]).find(x=>x.onlIdx===d.seat);
   STD82.pop={rot:d.rot,sent:0,d};if(!s||s.gone||!s.human){st82Pick(d,{a:'pass'});return}
   const q=SECTIONS[s.sec].q;const act=activePlayers();const inQ=act.filter(p=>!p.underground&&quadOf(p)===q);
@@ -38018,7 +38054,7 @@ async function onl83GiftOpen(){if(ONL83U.giftBusy)return;ONL83U.giftBusy=true;tr
     const t0=Date.now();let r=null,err=null;try{r=await NET.req('gift.open',{gift:g.id,...(char?{char}:{})})}catch(e){err=e}
     await new Promise(z=>setTimeout(z,Math.max(0,1500-(Date.now()-t0))));
     const tok=bg.querySelector('.gft83-tok');if(tok){tok.classList.remove('spin');tok.classList.add('done')}
-    const P=bg.querySelector('#gft83p');if(err){P.innerHTML=`<p class="onl-err">${esc2(err.message)}</p><div class="acts"><button type="button" class="btn" data-g83="x">${_T`Close`}</button></div>`}
+    const P=bg.querySelector('#gft83p');if(err){P.innerHTML=`<p class="onl-err">${esc2(errText92(err))}</p><div class="acts"><button type="button" class="btn" data-g83="x">${_T`Close`}</button></div>`}
     else{if(r.char&&r.char.id)onl83Put(r.char);if(r.domus)ONL.domus=r.domus;P.innerHTML=onl83Prize(r);const n=onl83GiftN();
       P.insertAdjacentHTML('beforeend',`<div class="acts">${n?`<button type="button" class="btn primary" data-g83="next">${_T`🎁 Open the next (${n})`}</button>`:''}<button type="button" class="btn" data-g83="x">${n?_T('Later'):_T('Close')}</button></div>`)}
     bg.classList.add('opened');
@@ -38067,7 +38103,7 @@ function onl83Stakes(L){const S83=ONL83.stakes(L);
 setInterval(()=>{try{const el=document.getElementById('cd83');if(!el)return;const n=document.getElementById('cd83n');const at=+el.dataset.at;const s=Math.max(0,Math.ceil((at-onlNow82())/1000));if(n&&n.textContent!==String(s))n.textContent=s;el.classList.toggle('go',s<=3)}catch(e){}},250);
 
 /* ---------------- 11 · PROFILES + ★ FOLLOW + the share link ---------------- */
-async function onl83Profile(x){if(!x)return;let r;try{r=await ONL83.profile(x)}catch(e){if(e&&e.code==='no_domus'&&typeof x==='string'&&/^House /i.test(x))return onl83Profile(x.replace(/^House /i,''));onlToast80('🏛 '+esc2(e.message||_T('No such house.')));return}
+async function onl83Profile(x){if(!x)return;let r;try{r=await ONL83.profile(x)}catch(e){if(e&&e.code==='no_domus'&&typeof x==='string'&&/^House /i.test(x))return onl83Profile(x.replace(/^House /i,''));onlToast80('🏛 '+esc2(errText92(e,_T('No such house.'))));return}
   const D=r.domus||{};const nowS={off:_T('⚫ Away'),free:_T('🟢 In the arena'),room:_T('🟡 In a room'),fight:_T('🔴 Fighting now')}[(r.now||{}).st]||'';const rec=[[_T('Bouts'),D.bouts|0],[_T('Won'),D.wins|0],[_T('Survived'),D.survived|0],[_T('Fallen'),D.fallen|0],[_T('Lifetime CF'),D.lifeCF|0],[_T('Fame'),D.fame|0]];
   const glads=(r.glads||[]).map(g=>`<div class="pf83-g">${_T`${onlFig(g.cls,{token:(g.look||{}).token,color:(g.look||{}).color},70)}<b>${esc2(g.name)}</b><small>${onlRankChip(g.rank)}</small><small>✦ ${g.glory} Glory · ${g.survived} survived · ${g.wins} won</small>`}</div>`).join('')||`<p class="rc-sub">${_T`No living gladiators.`}</p>`;
   const recent=(D.recent||[]).map(m=>`<div class="pf83-m ${m.died?'died':m.won?'won':''}">${_T`<b>${m.died?'🪦':m.won?'🏆':'⚔'} ${esc2(m.glad)}</b><small>${esc2(onlEvName(m.ev))} · ${esc2(onlCityName(m.loc))} · ${m.ranked?_T('Ranked'):_T('Custom')} · ${cfAmt87(m.cf)}${m.place?` · #${m.place}`:''} · ${esc2(date83(m.at))}</small>`}</div>`).join('')||`<p class="rc-sub">${_T`No matches yet.`}</p>`;
@@ -38080,7 +38116,7 @@ async function onl83Profile(x){if(!x)return;let r;try{r=await ONL83.profile(x)}c
     if(a==='x'){bg.remove();return}
     if(a==='share'){const link=ONL83.share(v);let ok=false;try{await navigator.clipboard.writeText(link);ok=true}catch(err){}if(!ok){try{const t=document.createElement('textarea');t.value=link;document.body.appendChild(t);t.select();ok=document.execCommand('copy');t.remove()}catch(err){}}
       b.textContent=ok?_T('✓ Link copied'):'🔗 '+link;ONL83U.lastShare=link;return}
-    if(a==='follow'){try{const r2=await ONL83.follow(v,b.dataset.on==='1');ONL83U.follows=r2.follows||[];bg.remove();onl83Profile(v);if(document.getElementById('onl'))onlRedraw()}catch(err){onlToast80('⚠ '+esc2(err.message))}return}
+    if(a==='follow'){try{const r2=await ONL83.follow(v,b.dataset.on==='1');ONL83U.follows=r2.follows||[];bg.remove();onl83Profile(v);if(document.getElementById('onl'))onlRedraw()}catch(err){onlToast80('⚠ '+esc2(errText92(err)))}return}
     if(a==='watch'){bg.remove();const L=(ONL.lobbies||[]).find(x=>x.id===v);if(L&&typeof onlWatch==='function')onlDo(()=>onlWatch(L))}})}
 /* any house chip, the stage's house line, Forum / room / invitation names */
 document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('.dom82c,.dom82-pl,.dom82-ttl h3');if(!t||!t.closest('#onl,.onl80pop'))return;if(t.closest('.pop83'))return;e.preventDefault();e.stopPropagation();
@@ -38093,7 +38129,7 @@ document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest
   let k=0;const iv2=setInterval(()=>{k++;if(document.getElementById('onl')&&NET.mode){clearInterval(iv2);onl83Profile(id)}else if(k>60)clearInterval(iv2)},250)},250)})();
 
 /* ---------------- 12 · the WAGERS tab ---------------- */
-function onl83Wagers(){if(!ONL83U.wl||Date.now()-ONL83U.wlAt>10000){ONL83U.wlAt=Date.now();NET.req('wager.list',{}).then(r=>{ONL83U.wl=r;if(ONL.tab==='wagers'&&document.getElementById('onl')&&!onlFocus80())onlRedraw()}).catch(e=>{ONL83U.wl=ONL83U.wl||{open:[],mine:[],top:[],err:e.message}})}
+function onl83Wagers(){if(!ONL83U.wl||Date.now()-ONL83U.wlAt>10000){ONL83U.wlAt=Date.now();NET.req('wager.list',{}).then(r=>{ONL83U.wl=r;if(ONL.tab==='wagers'&&document.getElementById('onl')&&!onlFocus80())onlRedraw()}).catch(e=>{ONL83U.wl=ONL83U.wl||{open:[],mine:[],top:[],err:errText92(e)}})}
   const X=ONL83U.wl;if(!X)return `<h3>${_T`💰 Wagers`}</h3><p class="rc-sub">${_T`Reading the bookmakers’ tablets…`}</p>`;
   const open=(X.open||[]).map(L=>{const names=Object.fromEntries((L.players||[]).map(p=>[p.seat,p]));
     return `<div class="card2 wg83-pot"><div class="wg83-h">${typeof cardHTML==='function'?`<span class="wg83-ev">${cardHTML('e:'+L.ev,'sm')}</span>`:''}<div><b>${esc2(onlEvName(L.ev))}</b> <small class="rc-sub">${esc2(onlCityName(L.loc))} · ${L.ranked?_T('⚔ Ranked'):_T('Custom')} · ${L.status==='live'?'🔴 live':'waiting'}</small>
@@ -38133,7 +38169,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   if(a==='mkt'){ONL83U.mkt=v;if(v==='used')ONL83U.usedAt=0;onlRedraw();return}
   if(a==='wlr'){ONL83U.wlAt=0;onlRedraw();return}
   if(a==='repair'){const [from,item]=v.split('|');return onl83Repair(from,item)}
-  if(a==='hold'){const L=onlMyLobby();if(L)NET.req('lobby.hold',{id:L.id}).then(R=>{ONL83U.stop[L.id]=Date.now();if(R&&R.id)onlUpsert80(R);onlRedraw()}).catch(err=>onlToast80('⚠ '+esc2(err.message)));return}
+  if(a==='hold'){const L=onlMyLobby();if(L)NET.req('lobby.hold',{id:L.id}).then(R=>{ONL83U.stop[L.id]=Date.now();if(R&&R.id)onlUpsert80(R);onlRedraw()}).catch(err=>onlToast80('⚠ '+esc2(errText92(err))));return}
   if(a==='obuy'){const ch=ONL.char;if(!ch)return;const pr=ONLC.PRICE_OFF[v];
     return ask76(_T('🧪 Buy this offering?'),`<div style="display:flex;gap:12px;align-items:center">${offTok83(v,64)}<p style="margin:0">${_T`<b>${esc2(OFF83N(v))}</b> for <b>${coinAmt87(pr)}</b> into ${esc2(ch.name)}’s satchel.<br><small class="rc-sub">Up to ${ONLC.OFF_CARRY} go into a match; the unused come back.</small>`}</p></div>`,_T`Buy · ${pr}`,_T('Not now'))
       .then(ok=>{if(ok)onlDo(async()=>{const c=await NET.req('offer.buy',{char:ch.id,key:v});onl83Put(c);ONL.char=c;onlToast80(_T`🧪 ${esc2(OFF83N(v))} is in the satchel.`)})})}
@@ -38365,13 +38401,13 @@ function onl84Bar(){let el=document.getElementById('rcl84');const X=ONL84.rcl;co
   if(el.dataset.k!==txt){el.innerHTML=txt;el.dataset.k=txt}}
 setInterval(()=>{try{onl84Bar();const W=ONL84.want;if(W&&!W.sent&&S&&S.onl&&S.onl.lobby===W.id&&ONLM.on&&!ONL.watching){W.sent=1;onl84Ask(W.id)}}catch(e){}},500);
 async function onl84Ask(id){try{await NET.req('match.reclaim',{id});if(typeof mToast==='function')mToast(_T('🔌 Flavius hears you — your seat is yours at its next turn.'))}
-  catch(e){ONL84.want=null;if(e&&e.code==='reclaim_late')ONL84.rcl=null;if(typeof mToast==='function')mToast('⚠ '+esc(e.message||_T('Too late.')));onl84Bar()}}
+  catch(e){ONL84.want=null;if(e&&e.code==='reclaim_late')ONL84.rcl=null;if(typeof mToast==='function')mToast('⚠ '+esc(errText92(e,_T('Too late.'))));onl84Bar()}}
 async function onl84ReclaimGo(){const X=ONL84.rcl;if(!X||ONL84.want)return;ONL84.want={id:X.id,sent:0};onl84Bar();
   if(S&&S.onl&&S.onl.lobby===X.id&&ONLM.on&&!S.over){ONL84.want.sent=1;return onl84Ask(X.id)}
   /* not on that sand yet: watch it first (a CPU holds the seat), then ask */
   try{let L=(ONL.lobbies||[]).find(x=>x.id===X.id);if(!L){const ls=await NET.req('lobby.list',{});L=(ls||[]).find(x=>x.id===X.id)}
     if(!L||L.status!=='live'){ONL84.want=null;ONL84.rcl=null;onl84Bar();if(typeof mToast==='function')mToast(_T('⌛ That match is over.'));return}
-    if(ONL.leftMatch)delete ONL.leftMatch[X.id];await onlAttach(L,'seat')}catch(e){ONL84.want=null;onl84Bar();if(typeof mToast==='function')mToast('⚠ '+esc(e.message||String(e)))}}
+    if(ONL.leftMatch)delete ONL.leftMatch[X.id];await onlAttach(L,'seat')}catch(e){ONL84.want=null;onl84Bar();if(typeof mToast==='function')mToast('⚠ '+esc(errText92(e)))}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-rcl84]');if(!b)return;e.preventDefault();e.stopPropagation();if(b.dataset.rcl84==='x'){const el=document.getElementById('rcl84');if(el)el.remove();ONL84.rcl=null;return}onl84ReclaimGo()},true);
 
 /* =========================== "YOUR TURN" NOTICES (in the browser only) =========================== */
@@ -38518,7 +38554,7 @@ function onl84TodayChips(h){const T=typeof ONL80F!=='undefined'?ONL80F.today:nul
 {const base=onlTodayHTML80;onlTodayHTML80=function(){const h=base.apply(this,arguments);try{return onl84TodayChips(h)}catch(e){return h}}}
 
 /* ---------------- 🔨 the AUCTION tab ---------------- */
-function onl84Auction(){if(!ONL84.auc||Date.now()-ONL84.aucAt>10000){ONL84.aucAt=Date.now();NET.req('auction.list',{}).then(r=>{ONL84.auc=r;ONL84.aucSkew=(r.now||Date.now())-Date.now();if(ONL.tab==='auction'&&document.getElementById('onl')&&!onlFocus80())onlRedraw()}).catch(e=>{ONL84.auc=ONL84.auc||{lots:[],past:[],mine:{},err:e.message}})}
+function onl84Auction(){if(!ONL84.auc||Date.now()-ONL84.aucAt>10000){ONL84.aucAt=Date.now();NET.req('auction.list',{}).then(r=>{ONL84.auc=r;ONL84.aucSkew=(r.now||Date.now())-Date.now();if(ONL.tab==='auction'&&document.getElementById('onl')&&!onlFocus80())onlRedraw()}).catch(e=>{ONL84.auc=ONL84.auc||{lots:[],past:[],mine:{},err:errText92(e)}})}
   const X=ONL84.auc;if(!X)return `<h3>${_T`🔨 Flavius’s Auction`}</h3><p class="rc-sub">${_T`The auctioneer unrolls his lists…`}</p>`;const M=X.mine||{};const now=Date.now()+(ONL84.aucSkew||0);
   const lot=(L,past)=>{const I={item:L.item,named:true,kind:L.kind,rar:L.rar,w:L.w||{n:L.n,rar:L.rar},val:L.val,st:'whole',hist:L.hist||[]};const left=L.ends-now;
     const lead=L.bid?`<div class="au84-lead ${L.bid.mine?'me':''}">${_T`🏛 <b>${esc2(L.bid.name)}</b>${L.bid.dname?` · ${esc2(onlHouse82(L.bid.dname))}`:''} leads with ${c83()} <b>${L.bid.amt}</b>`}</div>`:`<div class="au84-lead none">${_T`No bid yet · opens at ${c83()} <b>${L.min}</b>`}</div>`;
@@ -38550,7 +38586,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   if(a==='aur'){ONL84.aucAt=0;onlRedraw();return}
   if(a==='bid'){const inp=document.querySelector(`[data-au84amt="${CSS.escape(v)}"]`);const amt=Math.floor(+((inp&&inp.value)||0));
     return onlDo(async()=>{try{const r=await NET.req('auction.bid',{lot:v,amt});if(r.char)onl83Put(r.char);ONL84.aucAt=0;onlToast80(_T`🔨 Your bid of ${c83()} ${amt} leads — the coin waits in escrow.`)}
-      catch(err){if(err&&err.code==='auc_low'){ONL84.aucAt=0;onlToast80('🔨 '+esc2(err.message));onlRedraw();return}throw err}})}},true);
+      catch(err){if(err&&err.code==='auc_low'){ONL84.aucAt=0;onlToast80('🔨 '+esc2(errText92(err)));onlRedraw();return}throw err}})}},true);
 /* the result toast: the CPU played most of it */
 {const base=onlSettled;onlSettled=function(res){const r=base.apply(this,arguments);try{const o=res&&res.out;if(o&&o.cpu&&!res.void)setTimeout(()=>onlToast80(_T('🤖 The CPU fought most of that bout in your seat — Flavius pays a quarter, and no Donativum.')),6200);ONL82.dgAt=0}catch(e){}return r}}
 
@@ -42909,7 +42945,7 @@ function g89Queued(){const q=g89Q(ONLM.me).concat(G89.fly);return q}
 function g89Send(op){const p=g89Me();if(!p||!gear88Ok(p))return;const inp={k:'gear',seat:ONLM.me,...op};G89.fly.push(op);render();
   NET.req('match.input',{id:S.onl.lobby,in:inp}).then(r=>{G89.fly.splice(G89.fly.indexOf(op),1);if(!r||!Number.isInteger(r.seq))return;G89.mine.add(r.seq);ONLM.own.delete(r.seq);
     if(r.seq>=ONLM.next&&!ONLM.q.some(x=>x.seq===r.seq)){ONLM.q.push({...inp,from:'self89',seq:r.seq});ONLM.q.sort((a,b)=>a.seq-b.seq)}onlmPump()})
-  .catch(e=>{const i=G89.fly.indexOf(op);if(i>=0)G89.fly.splice(i,1);onlToast80(_T('⚠ The server did not take that order: ')+esc(e.message));render()})}
+  .catch(e=>{const i=G89.fly.indexOf(op);if(i>=0)G89.fly.splice(i,1);onlToast80(_T('⚠ The server did not take that order: ')+esc(errText92(e)));render()})}
 /* the bar online: ⇄ swap and one button per piece lying here; queued orders wait for your turn */
 {const base=gear88Bar;gear88Bar=function(p){if(!(S&&S.onl))return base.apply(this,arguments);if(!p||g89Me()!==p)return '';const q=g89Queued();const ok=gear88Ok(p);if(!ok&&!q.length)return '';
   const arms=armsAttached(p);const canSwap=ok&&arms.length===2&&(p.wR||p.wL)&&!q.some(x=>x.op==='swap');
@@ -44014,7 +44050,7 @@ function d89HTML(){if(typeof onlDomusLoad82==='function')onlDomusLoad82();const 
 function d89Put(r){if(!r)return;if(r.char&&r.char.id)onl83Put(r.char);for(const c of r.from||[])if(c&&c.id)onl83Put(c);if(r.holder&&r.holder.cls)onl83Put(r.holder);
   if(r.domus&&r.domus.id){ONL.domus=r.domus;if(ONL82.dg)ONL82.dg.domus=r.domus}
   if(ONL82.dg){if(r.gear)ONL82.dg.gear=r.gear;if(r.pcs)ONL82.dg.pcs=r.pcs;if(r.holder&&r.holder.house){ONL82.dg.gear=r.holder.gear;ONL82.dg.pcs=r.holder.pcs}}}
-const d89Err=e=>{onlToast80('⚠ '+esc2(e&&e.message||e))};
+const d89Err=e=>{onlToast80('⚠ '+esc2(errText92(e)))};
 function d89Wear(x,hand){const ch=d89Act();if(!ch||!x)return;const C=d89Cmp(ch,x);if(C.no)return d89Err(C.no);if(d89Busy().has(ch.id)||(x.from!=='house'&&d89Busy().has(x.from)))return d89Err(_T('In a match — the storeroom waits.'));
   const P=d89Plan(ch,x,hand);return onlDo(async()=>{const r=await NET.req('domus.dress',{char:ch.id,equip:P.equip,take:P.take});d89Put(r);onlToast80(_T`🛡 ${esc2(ch.name)} wears ${esc2(x.I.n)}.`)})}
 function d89Off(it){const ch=d89Act();if(!ch)return;if(d89Busy().has(ch.id))return d89Err(_T('In a match — the storeroom waits.'));const I=ONL83.piece(ch,it);
@@ -44757,7 +44793,7 @@ function l89VisitHTML(){const r=V89L.visit;if(!r)return '';const D=r.domus||{};c
   const wall=memo.length?`<div class="mw89"><div class="mw89-h">${_T`🕯 Memorial wall <small class="rc-sub">${memo.length}</small>`}</div><div class="mw89-r">${memo.map(m=>`<div class="pq89"><span class="pq89-m">${m.fa==='c'?'✝':'D·M'}</span><b>${esc2(m.name)}</b><small>${esc2((CLASSES[m.cls]||{}).name||'')} · ${onlRankChip(m.rank||'tiro')}</small>${m.at?`<small>${esc2(l89Date(m.at))}</small>`:''}</div>`).join('')}</div></div>`:'';
   return `<div class="dom82-wrap d89w vs89w"><div class="dom82-main dom89" style="--hc1:${esc2(L.c1)};--hc2:${esc2(L.c2)}">${strip}${banner}${show}${cards}${wall}</div></div>`}
 async function onl89Visit(x){if(!x)return;V89L.findErr='';const d=typeof x==='object'?x:ONLC.fidClean(x)?{fid:x}:/^D/.test(String(x))?{id:x}:{name:String(x).replace(/^House /i,'')};let r;
-  try{r=await NET.req('domus.visit',d)}catch(e){const msg=e&&(e.code==='no_fid'||e.code==='no_domus')?_T('No house with that FID.'):(e&&e.message)||_T('No such house.');if(d.fid!=null){V89L.findErr=msg;if(document.getElementById('onl'))onlRedraw()}onlToast80('🏛 '+esc2(msg));return null}
+  try{r=await NET.req('domus.visit',d)}catch(e){const msg=e&&(e.code==='no_fid'||e.code==='no_domus')?_T('No house with that FID.'):errText92(e,_T('No such house.'));if(d.fid!=null){V89L.findErr=msg;if(document.getElementById('onl'))onlRedraw()}onlToast80('🏛 '+esc2(msg));return null}
   V89L.visit=r;V89L.vSel=r.active;if(ONL.tab!=='visit')V89L.back=ONL.tab==='prof'?'prof':'char';ONL.tab='visit';for(const p of document.querySelectorAll('.pf83pop,.pop89l'))p.remove();
   if(document.getElementById('onl'))onlRedraw();else if(typeof onlineOpen==='function')onlineOpen('visit');return r}
 
@@ -44808,7 +44844,7 @@ function l89Delete(){const D=ONL.domus;const want=D?D.name:((V89L.lan||{}).name|
     const b2=l89Pop(`<h3>${_T`Are you sure?`}</h3><p>${D?_T`Type your house name <b>${esc2(want)}</b> to delete everything.`:_T`Type your lanista name <b>${esc2(want)}</b> to delete your account.`}</p>
       <input class="tin" id="del89In" autocomplete="off" spellcheck="false" aria-label="${_T`Confirm`}"><p class="onl-err" id="del89Err" hidden></p><div class="acts"><button type="button" class="btn" data-p89="x">${_T`Cancel`}</button><button type="button" class="btn danger" data-p89="del">${_T`🗑 Delete forever`}</button></div>`);
     b2.addEventListener('click',async e2=>{const c=e2.target.closest('[data-p89]');if(!c)return;if(c.dataset.p89==='x'){b2.remove();return}
-      const v=(b2.querySelector('#del89In')||{}).value||'';try{await NET.req('acct.delete',{confirm:v})}catch(err){const er=b2.querySelector('#del89Err');if(er){er.hidden=false;er.textContent=err.message}return}
+      const v=(b2.querySelector('#del89In')||{}).value||'';try{await NET.req('acct.delete',{confirm:v})}catch(err){const er=b2.querySelector('#del89Err');if(er){er.hidden=false;er.textContent=errText92(err)}return}
       b2.remove();onlToast80(_T('🗑 Your account is deleted.'));V89L.lan=null;V89L.need=false;V89L.visit=null;ONL.tab='play';ONL.domus=null;ONL.chars=[];ONL.char=null;
       const so=document.querySelector('#onl [data-onl="signout"]');if(so)so.click();else{ONL.acct=null;if(document.getElementById('onl'))onlRedraw()}})})}
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.closest||!t.closest('#onl')||!t.dataset||!t.dataset.l89p)return;const k=t.dataset.l89p;
@@ -44819,11 +44855,11 @@ document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const t=e.targ
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-l89]');if(!b||!b.closest('#onl,.onl80pop'))return;e.preventDefault();e.stopPropagation();const a=b.dataset.l89,v=b.dataset.v;
   if(a==='dice'){V89L.draft=roman89();const i=document.getElementById('ln89Name');if(i)i.value=V89L.draft;return}
   if(a==='take'||a==='rename'){const i=document.getElementById(a==='take'?'ln89Name':'ln89Ren');const name=(i&&i.value)||'';V89L.err='';
-    return onlDo(async()=>{try{const r=await NET.req('lanista.name',{name});V89L.lan={...(V89L.lan||{}),...r.lan};V89L.need=false;if(ONL.acct)ONL.acct.name=r.lan.name;onlToast80(_T`📜 You are ${esc2(r.lan.name)}.`)}catch(err){V89L.err=err.message}onlRedraw()})}
+    return onlDo(async()=>{try{const r=await NET.req('lanista.name',{name});V89L.lan={...(V89L.lan||{}),...r.lan};V89L.need=false;if(ONL.acct)ONL.acct.name=r.lan.name;onlToast80(_T`📜 You are ${esc2(r.lan.name)}.`)}catch(err){V89L.err=errText92(err)}onlRedraw()})}
   if(a==='copy'){l89Copy(v).then(ok=>{b.textContent=ok?'✓':'📋';onlToast80(ok?_T`📋 ${esc2(v)} copied.`:esc2(v))});return}
   if(a==='find'){const i=b.parentElement&&b.parentElement.querySelector('input');const s=(i&&i.value)||V89L.find;V89L.find=s;if(!ONLC.fidClean(s)){V89L.findErr=_T('No house with that FID.');onlRedraw();return}return onl89Visit({fid:s})}
   if(a==='ffollow'){const i=b.parentElement&&b.parentElement.querySelector('input');const s=(i&&i.value)||V89L.find;V89L.findErr='';
-    return onlDo(async()=>{try{const r=await NET.req('domus.follow',{fid:s,on:true});ONL83U.follows=r.follows||ONL83U.follows;onlToast80(_T('★ Following.'))}catch(err){V89L.findErr=err.code==='no_fid'?_T('No house with that FID.'):err.message}onlRedraw()})}
+    return onlDo(async()=>{try{const r=await NET.req('domus.follow',{fid:s,on:true});ONL83U.follows=r.follows||ONL83U.follows;onlToast80(_T('★ Following.'))}catch(err){V89L.findErr=err.code==='no_fid'?_T('No house with that FID.'):errText92(err)}onlRedraw()})}
   if(a==='finv'){const i=document.getElementById('fi89In');const s=(i&&i.value)||'';if(!ONLC.fidClean(s)){onlToast80(_T('⚠ No lanista with that FID.'));return}
     return onlDo(async()=>{await NET.req('lobby.invite',{id:v,to:ONLC.fidShow(ONLC.fidClean(s))});onlToast80(_T('✉ Invitation sent.'));if(i)i.value=''})}
   if(a==='del')return l89Delete();
@@ -47671,7 +47707,7 @@ function wear91Layer(rubble){if(!WEAR91.on||!S)return;const t0=performance.now()
 function rubbleOn91(r,c){for(const rb of (S&&S.rubble)||[]){const dr=rb.dr||0,dc=rb.dc||0;for(let k=0;k<3;k++)if(rb.r+dr*k===r&&rb.c+dc*k===c)return true}return false}
 {const base=describeTile;describeTile=function(t){let h=base.apply(this,arguments);try{if(t&&S&&typeof h==='string'&&rubbleOn91(t.r,t.c)&&!pillarAt(t.r,t.c))h+=' · '+_T('Rubble — walkable')}catch(e){}return h}}
 /* 195-v91srvexp — GENERATED by tools/srvstamp.js: the online server this page expects (server/src/build.json). */
-const SRV_EXPECT91={"v":"0.92","hash":"a8aecab8d953"};
+const SRV_EXPECT91={"v":"0.93","hash":"c420b69d3f37"};
 /* 196-v91srv — v0.91 THE ONLINE SERVER'S VERSION (his ask 2026-10-06, after "Unknown request: domus.look" — the page was newer than the
    server running on AWS). hello now carries build {v, hash} (server/src/build.json, stamped by tools/srvstamp.js); this page knows the
    server it expects (SRV_EXPECT91, generated into 195-v91srvexp.js).
@@ -49164,6 +49200,61 @@ drawTosses=function(){if(!S||!S.tosses||!S.tosses.length)return;const now=perfor
     /* the shadow on the sand under the landing point, firmer as it comes down */
     if(k>0.35){ctx.save();ctx.globalAlpha=Math.min(1,(k-0.35)/0.65)*0.35;ctx.fillStyle='#2a1a0c';ctx.beginPath();ctx.ellipse(q.sx+(q.tx-q.sx)*k,q.sy+(q.ty-q.sy)*k+TW*0.04,size*0.8,size*0.3,0,0,Math.PI*2);ctx.fill();ctx.restore()}
     ctx.save();ctx.translate(x,y);ctx.rotate(q.rot+(k<1?k*9:0));toss92Draw(ctx,q,size);ctx.restore()}};
+/* 223a-v93srvtext — GENERATED by tools/i18n/srvtext93.js: the server texts by stable code (server/src/texts93.json).
+   223-v93harden turns a refusal's {mcode, vals} into the player's language with it (the template is the translation key). */
+const SRV_TEXT93={"t14wr4sv":"+1 AP to another location","t1boyu5c":"+1 CF a hit","t1v2td0c":"+1 CF when a gladiator’s hit on the wearer is stopped by armor (no HP lost).","t1cetktv":"+1 damage against beasts.","tzm0m31":"+1 damage against the gladiator who last hit the wearer.","t1g91sm3":"+1 damage against the gladiator who last hit the wielder.","t1dsf2kj":"+1 movement while unhurt","tll2ogf":"+1 movement while worn.","t1i7sl2n":"+1 on the wearer’s Thumb of Flavius roll","twtt3aa":"+2 CF each time it hits a gladiator.","toomor6":"+2 coin each time it hits a gladiator.","t7z0waq":"+3 CF each time it severs a limb.","t1rqusp8":"+3 CF for every beast it slays.","tlo0qcj":"10 bouts survived","t1pwl4jb":"25 bouts survived","t6umbe6":"A CPU holds your seat now.","t7g58v3":"A fighter may only back themselves.","tq9x8sz":"A gladiator’s look is set when he is raised.","t141td5i":"A hit of 2 or more on the location it guards loses 1 damage.","tobg901":"A house wagers through a living gladiator — raise one first.","t1xbgoxt":"A house with gladiators keeps its name.","t1oovzqi":"A seat in the stands goes to a house with a gladiator — raise one first.","t1i9ncxq":"A team event needs at least two teams.","t158mrmp":"A ticket costs {0} coin.","tdsn81b":"A ticket holder watches from the stands — fighters take the sand.","t1cd058f":"A {0} may carry up to level {1}.","t1wotxbr":"Already built.","t1xilrdy":"Already in the room.","twa6vxc":"Already under way.","t1i1352z":"An online match needs at least {0} lanistas — wait for someone to join.","t17zr1ww":"Anas Ferox","txga70u":"Another lanista has that name.","tg844yy":"Another lanista’s house has that name.","t1ets6ek":"Aquila Aurea","t1m3opo0":"Armor-piercing 2: up to 2 damage of each hit ignores AP.","t1fpklsw":"At the start of the wearer’s turns, the location it guards regains 1 AP (up to the pieces’ own AP).","t1pvna60":"Back a seat.","t1yw6h6w":"Bets close when the match starts.","t1b46oc":"Bring at most {0} offerings.","t1s9g2hm":"Broken — repair it first.","t1bjvcht":"Busy — try again.","t1164juo":"Change class in the Domus — {0} coin from the treasury.","t16y8wi6":"Costs {0} coin.","t1gnlr84":"Each hit that draws blood from a gladiator heals the wielder 1 HP.","t1asgehr":"Earn 60 CF in one bout","tzr7gxe":"Enough invitations for this hour.","t1kf6q8u":"Every seat is taken.","tqeyeb0":"Fighters take the sand, not the stands.","t1bcas9h":"Fighting right now.","t1nat58a":"Finish 5 bouts","t1wcbtul":"Finish or leave your game first.","t1nkkbt":"First Ranked win · {0}","tgoxs4u":"Flavius sells to Veteranus and above.","t76uraq":"Flavius’s armory does not sell that.","t1khlapl":"Good luck","tpuwufj":"He already has all of it.","t1gkzdav":"House name: {0}–{1} letters.","t88r8np":"Issued gear is never repaired.","tk0q4sa":"It could not go there — it stayed where it was.","t1mrs85p":"Join the game to talk.","tsug15f":"Join the room first.","t1nfgmgr":"Lanista name: {0}–{1} letters.","t1uvjx69":"Leaena Rubra","tcuf39l":"Leave your party first.","t1g9ly2y":"Leave your room first.","t1785igk":"Leave your room or finish your match first.","t17nh8vw":"Letters only, please.","tm5oh8l":"Ludi Infames: Veteranus and above.","t15p4n57":"Make a gladiator first.","t8paiu9":"Name the loadout.","t11530gs":"Name your house first — every lanista needs a Domus.","t1h15uwb":"Name your house first.","t2dyx16":"Name: 2–24 letters.","t9py9uh":"Named armor","tumr137":"Named pieces wait in the Storeroom until Veteranus.","t4g81o2":"Named weapon","tmgtea2":"No house with that FID.","ttqpzfa":"No lanista with that FID.","t1qbbjba":"No one to drop.","tk7u3q0":"No one to name.","t1g05gke":"No party with that code.","tekby86":"No room for a party of {0}.","t17mstsf":"No stands window for that rotation.","t17d5ynx":"No such action from the stands.","t1t3zzsq":"No such event online.","tlovel":"No such gift.","t1dvw3c5":"No such house.","twgye0t":"No such kit.","t1145qrp":"No such loadout.","t3kbir8":"No such lot.","t1fyyv76":"No such match.","t1917tcr":"No such piece.","tnvxdbk":"No such team.","trpl9ix":"No such upgrade.","tgsq97x":"No ticket holder in that seat.","t1c7367k":"No {0} free seats together.","t1apt0xp":"Nobody holds a ticket.","t1ty8wpi":"Not a look.","t190xqdc":"Not a team event.","t7hkcur":"Not enough in the treasury.","t1riqmxn":"Not enough in the wallet.","tknxslx":"Not in the arena now.","tdbw7iw":"Not of your house.","takbugm":"Not your match.","t1brho4w":"Not yours.","tkpd3y5":"Nothing to grant.","tdlqbd8":"Nothing to take.","tnbzvqa":"One free kit a day for each house — come back tomorrow.","tlnyb43":"One guest pass a day for each house — come back tomorrow.","t1vavql4":"One rename every 30 days — next on {0}.","t32lqg6":"Only named pieces stay home — printed gear is never kept out of Ranked.","tth7sn2":"Only testers may do that.","tv8wubo":"Only the fighters report a speared spectator.","t13fh3vc":"Only the host changes the game.","t1y1o69":"Only the host closes the stands.","t1ffqej6":"Only the host gives the room away.","t3p83s1":"Only the host holds the horns.","thpocab":"Only the host moves other lanistas.","t12rqagt":"Only the host opens the match.","txiywc5":"Only the host opens the stands.","trldn1i":"Only the host removes lanistas.","trjdvlg":"Only the host starts the game.","t1khjg5f":"Only ticket holders choose from the stands.","t1eltqko":"Open the arena as a guest first.","t1srv5vz":"Pick a lanista.","tfczt8b":"Pick an action.","tghsuma":"Pick another name for your house.","t1tjzyf0":"Pick another name.","tcqkktj":"Pick one of the eight printed classes.","ts6sn45":"Pick one of the pieces.","t9vgn6q":"Pick one of the printed crests.","t1issq1b":"Pick someone in the room.","t1ttcgif":"Pick the colours and the crest.","t1mf9hji":"Pick the loadouts.","t1yo4mel":"Pick the offerings to bring.","t1ynpkov":"Pick the pieces to bring.","t1lz0ob3":"Pick two colours.","ts4mqjo":"Pick where it goes.","t1oyw328":"Primus Palus","tcjudxm":"Quick chat only.","t6d5phi":"Ranked needs a living gladiator.","t9a54jm":"Ranked teams are balanced when the horns sound.","tfhl18e":"Ranked: {0} only.","t1dlsj8v":"Send 0–{0} coin.","t1lfi5sp":"Sign in first.","t1bxnehz":"Sign in to bid.","t1egp2uc":"Sign in to {0}.","t1r075s2":"Sign in with Google.","tk886t3":"Sit down first.","t1rgk1vh":"Slay 5 beasts","tbngujh":"Slew Commodus","t1r0h76m":"Slew Tholo","tsvpub2":"Slow down.","t18sdmp5":"Someone bought it first.","t1s1i46c":"Someone in your party has no house yet.","t1idudo2":"Someone in your party is already in a room.","t1chms8o":"Someone in your party is still in a match.","tg4070a":"Stake {0}–{1} coin.","t1v6wd0p":"Still here.","ta2deo5":"Still working on that — a moment.","t19ddwsl":"Summa Rudis","t7znlpk":"Survive 3 ranked bouts","t1o4v3wd":"Survived the Thumb of Flavius","t1rzme5n":"Test houses may not bid at Flavius’s auction.","toyum4t":"Test houses may not bid.","t1v7cbvv":"Test houses play Custom only.","t1yuzl70":"That game has started — you can watch it.","tqceeoh":"That game is gone.","t1rqe7ru":"That invitation is gone.","t1n4hc5e":"That is already his class.","t11uc9un":"That is your own house.","t1dvd5oe":"That look is too large.","t116fffb":"That match is over.","te1tjwg":"That move is too large.","t19zgeyr":"That name belongs to an old house of the arena.","tmsa8qb":"That offering is not in the satchel.","t18hxtx5":"That offering is not there.","trppwf5":"That party is full.","t19724ck":"That pick is too large.","t1q3tb4z":"That piece changed a moment ago — try again.","tcrb4gu":"That piece is not theirs.","t1gh4ar5":"That piece is not there.","t5ed5np":"That piece is whole.","tvl90vc":"That piece moved a moment ago — try again.","t14b0m5":"That request id was used for something else — try again.","t11hbcn1":"That room has closed.","tbh0nsk":"That room has filled up.","t1bskcpw":"That seat is not yours.","thnjb8v":"That was already done — refresh to see it.","tnixrzt":"The arena hit a snag — try again (ref {0}).","t1fyu5v3":"The arena is busy — try again in a moment.","t1fxi2m":"The countdown was stopped — press Start again.","t1i6bmz4":"The crier has called three times.","ty6pdh8":"The crier needs a breath — {0} s.","tt5efiv":"The dead buy nothing.","tt3jmya":"The dead carry nothing.","ti8hgea":"The dead keep what they fell with.","tar5n6c":"The dead stay as they fell.","t1mg6v3g":"The free stands are full — 30 watching.","tdy72h0":"The guest pass is for thin purses — under {0} coin.","t1rflezp":"The guest pass is for thin treasuries — under {0} coin.","t5rcj5l":"The hammer has fallen on that lot.","t1sf9ez7":"The horns are not yet.","tsrjhuy":"The host keeps a seat.","t1ph6g2n":"The host removed you — try again in a few minutes.","t1tiku4v":"The host sounds the horns.","t5rk5wt":"The lanista who invited you has left the room.","tdioh63":"The lot is busy — try again.","t1pymudu":"The match is not live.","t52sifu":"The match is not over.","t87kupt":"The next bid is at least {0} coin.","t19eim7l":"The opening is too large.","taa43xx":"The pass seats a gladiator’s house — make a gladiator first.","t1x0wjna":"The pick is made.","tnggtok":"The repair costs {0} coin.","tlahac2":"The room changed a moment ago — try again.","t19qmteo":"The room closes when the horns sound.","t14kxz1b":"The room is busy — try again.","t1p9egdg":"The room is full.","tp2s9lg":"The sand is quiet now.","t6wd15d":"The shelf is full.","t1kbjg2b":"The stands already chose this rotation.","t3fri5n":"The stands are sold out.","t1om3inh":"The stands are still choosing.","t5h9ha3":"The stands have chosen — wait for the next rotation.","tytszqi":"The ticket price changed — try again.","t9lvaao":"The treasury holds less than {0} coin.","t10ihm7o":"The treasury holds only {0} coin.","t1e1vtsf":"The treasury needs {0} coin.","tjfk847":"There is no seat of yours to take back.","t11zk6vb":"They already have one.","t19q424i":"They cannot join this game.","t12pepe6":"They hold a ticket to this game.","tufdxo":"They take invitations only from houses they follow.","t19r64wp":"They take no invitations.","twfe0rp":"This game has no stands.","t1d3l1ow":"This game sells no tickets.","tdnlqg1":"Throw at a tile.","tw87dmp":"Tickets are paid from a gladiator’s wallet.","t17ks7bz":"Tickets are sold until the horns.","t1ahl8b9":"Too late — the CPU has begun your next turn. You may watch.","tog0uea":"Too late — the CPU has fought on in your seat. You may watch.","tq5gpe1":"Too many lookups — wait a minute.","t1jrcdf6":"Too many requests — wait a moment.","tbigbss":"Try again.","t1x4x8gi":"Type your house name to confirm.","tubrqda":"Type your lanista name to confirm.","tt6dgqi":"Unknown request:","t6fgw02":"Up to {0} houses.","t1fgzej0":"Up to {0} living gladiators.","t11ftsuy":"Up to {0} loadouts.","tek1d18":"Up to {0} offerings in the satchel.","t1ie9phm":"Victor of the Day","tgbusw2":"Wagers are paid from a living gladiator’s wallet.","t1683jb8":"Well fought","tljqqr2":"Well struck!","t3dwobt":"Which rotation?","tdmbqry":"While held, +1 CF at the start of each of the wielder’s turns.","t4d2qsp":"While held, the first hit the wielder takes each rotation loses 1 damage.","tsua27d":"While worn, +1 CF at the start of each of the wearer’s turns.","t19crltb":"Win a bout at Capua","t1qeyk3q":"Win with 20+ coin left","tw6pkr0":"You already chose this rotation.","t1p31gk":"You already hold a ticket.","t51bpsx":"You are already in a room.","t1cijxdd":"You are signed in.","t1owluw6":"You fell in this match — you can watch, not throw.","t1daf295":"You hold a ticket to this game — give it back to join.","tivpvp7":"You invited them already.","t1ld5zow":"You left this match.","t12nuesk":"You removed them a moment ago.","tz1i9li":"Your gladiator changed a moment ago — try again.","t9mq6vu":"Your gladiator is gone.","tlv4h2t":"Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.","trlw6np":"Your house already has gladiators — it stands as it is.","tj9hr9t":"Your house already leads another lot — one win a house a week.","t1b8hoyo":"Your house already won a lot this week.","tpfxe4i":"Your house leads this lot already.","t189xxhz":"Your name: 2–24 letters.","t2p8t0m":"Your party leader picks the game.","tyt7zky":"Your two hours as a guest are up — sign in to keep watching.","t5ied68":"a melee hit here costs the attacker 1 HP","t19ucf6b":"a named piece","t1xzr15w":"buy a ticket","tx2jj1y":"cannot be looted: if the wearer falls it goes home","tbrj2j1":"floor spikes deal 0 to this leg","t1vm2iuo":"found a house","t1h9rf0o":"never comes back Broken","t32em9b":"raise gladiators","troirn6":"speak in the Forum","t1gloa0b":"stones from the stands deal 0 here","t1cvjbt3":"take a seat in the stands","ta2q2xw":"the first hit each rotation loses 1 damage","twlua2p":"use strict","t13jyy8n":"{0} abandoned the sand — Damnatio. Forgotten.","t1gnqqw0":"{0} bouts survived","t1of4c23":"{0} fell and is forgotten.","tijqiig":"{0} fell. The Hall of the Fallen keeps the name.","t1ugmpx3":"{0} is in a match — grant afterwards.","t1kfagms":"{0} is in a match — open it afterwards.","t1jov04c":"{0} is in a match — the forge waits.","t1cv69fj":"{0} is in a match — the satchel waits.","tup13l3":"{0} is in a match — the storeroom waits.","tewznl2":"{0} is now {1}.","t7y7c25":"{0} lifetime CF","tnspj4":"{0} won {1} at Flavius’s auction.","t136bz9i":"{0} {1} not connected.","t8xslli":"{0}’s purse holds less than {1} coin.","t1ct71kp":"⇄ Swap teams?","tkdpcrx":"−1 damage from beasts here","t29yuej":"−1 damage from thrown and shot weapons here","t1xk7kns":"▶ Sound the horns?","t1seomcp":"⚔ Anyone for Classic?","ts62auq":"🏅 Ranked, anyone?","tha4unj":"👥 Anyone for Familia?","t1fc4c2v":"🪑 One more seat?"};
+/* 223-v93harden — v0.93 BACKEND + I18N HARDENING, phase 1 (the client half; the server half is server/src/harden93.js, the shared numbers
+   are the v0.93 section of 111-onlcore: IDEM93, IDEM_MS93, RATE93, limiter93).
+   • REQUEST IDS: NET.req gives every request in ONLC.IDEM93 (buys, kits, bids, tickets, repairs, gifts, coin sent …) a fresh `rid`;
+     its own retries reuse it, so the server answers a replay with the stored reply and nothing is paid twice. Retries: a lost connection /
+     no answer (Online on AWS, paying requests only) → once more after a reconnect; 'rid_busy' (the first try still running) → wait 1 s;
+     'rate_limit' → wait what the server said (any request, at most 3 times).
+   • SERVER TEXTS AS CODES: a refusal carrying {mcode, vals} becomes the sentence of SRV_TEXT93[mcode] (223a, generated) in the player's
+     language (LANG_DICT[template], plural forms included; each value that is itself a server text is translated too). No code (an older
+     server) → the English text as before (148's TXP pattern match). 'unknown_req' → plain words.
+   • NOTHING RAW ON SCREEN: every rejection leaves NET.req as player text (errText92 in 00c: raw errors become "Something went wrong.
+     (ref E-XXXX)" and go to the 🐞 Error log); mToast refuses raw-looking text the same way (a last line of defence).
+   • THE MOCK mirrors the server: the same rate limit (per account, per tab) and the same rid replay (localStorage flavius_onlrid93,
+     10 minutes, ≤40 replies). */
+const V93={inflight:new Set(),lim:(typeof ONLC!=='undefined'&&ONLC.limiter93)?ONLC.limiter93():null,retries:0};
+const v93Sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function v93Rid(){return 'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,9)}
+/* a coded server text in the player's language (null when the code is unknown) */
+function srvText93(code,vals){const tpl=typeof SRV_TEXT93!=='undefined'?SRV_TEXT93[code]:null;if(!tpl)return null;
+  const v=(Array.isArray(vals)?vals:[]).map(x=>{const s=String(x==null?'':x);try{return typeof TX==='function'?TX(s):s}catch(e){return s}});
+  try{if(typeof LANG_DICT!=='undefined'&&LANG_DICT){const r=langLook86(tpl,v,true);if(r!=null)return r}}catch(e){}
+  return tpl.replace(/\{(\d+)\}/g,(m,n)=>v[+n]!=null?v[+n]:m)}
+/* a transport failure (the request may or may not have reached the server) */
+const v93Lost=e=>!!e&&!e.extra&&!e.code&&[_T('Connection lost.'),_T('The server did not answer.'),_T('The server closed the door.')].includes(e.message);
+/* the rejection a caller sees: coded text → words; raw → plain + ref */
+function v93Err(e,t){if(!e||typeof e!=='object'||!(e instanceof Error)){const x=new Error(typeof e==='string'?e:'');if(e&&typeof e==='object'){x.code=e.code;x.extra=e.extra}e=x}
+  try{const ex=e.extra||{};if(ex.mcode){const m=srvText93(ex.mcode,ex.vals);if(m)e.message=m}
+    /* a request the server does not know: plain words, never the request's name (196 already lit the server chip) */
+    if(e.code==='unknown_req'||/^Unknown request: /.test(e.message||'')||String(e.message||'').startsWith(_T('Unknown request: '))||(t&&typeof SRV91!=='undefined'&&SRV91.unknown===t&&String(e.message||'').includes('('+t+')')))e.message=_T('The online server is older than this page — try again once it has updated.');
+    if(!errSafe92(e,e.message))e.message=errText92(e)}catch(x){}
+  return e}
+{const base=NET.req;NET.req=function(t,d){const self=this;const idem=!!(typeof ONLC!=='undefined'&&ONLC.IDEM93&&ONLC.IDEM93.includes(t));
+  if(idem){if(!d||typeof d!=='object')d={};if(!d.rid)d={...d,rid:v93Rid()}}
+  const go=async n=>{try{return await base.call(self,t,d)}catch(e){const code=e&&e.code;const ex=(e&&e.extra)||{};
+      if(code==='rate_limit'&&n<5){V93.retries++;await v93Sleep(Math.min(4000,Math.max(150,(ex.wait|0)||700)));return go(n+1)}
+      if(code==='rid_busy'&&n<4){V93.retries++;await v93Sleep(1000);return go(n+1)}
+      if(idem&&NET.mode==='aws'&&n<1&&v93Lost(e)){V93.retries++;await v93Sleep(900);return go(n+1)}
+      throw v93Err(e,t)}};
+  return go(0)}}
+/* ── the mock: the same rate limit and the same rid replay as the server ── */
+const RID93_KEY='flavius_onlrid93';
+function rid93Load(){try{const o=JSON.parse(localStorage.getItem(RID93_KEY)||'{}');return o&&typeof o==='object'?o:{}}catch(e){return {}}}
+function rid93Save(o){try{const now=Date.now();const ks=Object.keys(o).filter(k=>now-(o[k].at||0)<ONLC.IDEM_MS93).sort((a,b)=>o[b].at-o[a].at).slice(0,40);const p={};for(const k of ks)p[k]=o[k];localStorage.setItem(RID93_KEY,JSON.stringify(p))}catch(e){}}
+if(typeof mockReq==='function'){const base=mockReq;mockReq=async function(t,d){const me=typeof mockMe==='function'?mockMe():null;
+  if(V93.lim&&MOCK_ROUTES[t]){const w=V93.lim(me||'anon',t,Date.now());if(w)throw onlErr82(_T('Too many requests — wait a moment.'),'rate_limit',{wait:w})}
+  if(!me||!ONLC.IDEM93.includes(t)||!d||!ONLC.ridOK93(d.rid))return base.apply(this,arguments);
+  const k=me+'|'+d.rid;const X=rid93Load()[k];
+  if(X&&Date.now()-(X.at||0)<ONLC.IDEM_MS93){if(X.t!==t)throw onlErr82(_T('That request id was used for something else — try again.'),'rid_reuse');return JSON.parse(X.out)}
+  if(V93.inflight.has(k))throw onlErr82(_T('Still working on that — a moment.'),'rid_busy');
+  V93.inflight.add(k);try{const out=await base.apply(this,arguments);try{const j=JSON.stringify(out===undefined?{}:out);if(j.length<60000){const M=rid93Load();M[k]={t,at:Date.now(),out:j};rid93Save(M)}}catch(e){}return out}
+  finally{V93.inflight.delete(k)}}}
+/* ── a last line of defence: a toast never shows raw error text ── */
+if(typeof mToast==='function'){const base=mToast;mToast=function(h){try{if(typeof h==='string'){const txt=h.replace(/<[^>]+>/g,'');if(ERR_RAW93.test(txt))h='⚠ '+esc(errText92(new Error(txt)))}}catch(e){}return base.apply(this,[h,...[].slice.call(arguments,1)])}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
@@ -49531,7 +49622,7 @@ function menuHide(){const m=$('#mainMenu');if(m)m.hidden=true;if(MM.raf){cancelA
    and nothing else claimed the screen — no event started since, no city square open. */
 function mmLaunch(fn,label){if(Date.now()-(MM.launchedAt||0)<700)return; // v0.41: a double click never launches twice
   MM.fromMenu=true;MM.launchedAt=Date.now();
-  const fail=e=>{console.error(e);MM.fromMenu=false;menuShow();if(typeof mToast==='function')mToast(_T`⚠ ${esc(label||_T('That mode'))} could not open: ${esc(String(e&&e.message||e))}`)};
+  const fail=e=>{console.error(e);MM.fromMenu=false;menuShow();if(typeof mToast==='function')mToast(_T`⚠ ${esc(label||_T('That mode'))} could not open: ${esc(errText92(e))}`)};
   transitRun(()=>{menuHide();try{const r=fn();if(r&&r.catch)r.catch(fail)}catch(e){fail(e)}},_T`Loading ${label||''}…`)
   // watchdog: if nothing took the screen, bring the menu back instead of leaving a blank arena
   const t0=MM.launchedAt;setTimeout(()=>{if(MM.launchedAt!==t0)return;const m=$('#mainMenu');if(!m||!m.hidden)return;

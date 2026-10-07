@@ -31,7 +31,7 @@ function onlmMine(){if(ONLM.me<0)return false;return onlmActor()===ONLM.me||(!!C
 function onlmName(i){const p=S.players[i];if(p)return p.name;const t=((S.onl&&S.onl.stands)||[])[i-((S.onl&&S.onl.fighters)||S.players.length)];return t?t.name+_T(' (in the stands)'):_T('Another lanista')}
 function onlHash(){try{const x=JSON.stringify([S.turnNo,S.rotation,S.ri,RNG&&RNG.s,S.players.map(p=>[p.r,p.c,p.alive?1:0,p.exited?1:0,Math.round(p.cf||0),p.coin,p.hp,p.ap,p.keys,(p.items||[]).length,p.wR&&p.wR.key,p.wL&&p.wL.key]),(S.npcs||[]).map(n=>[n.t,n.r,n.c,n.hp,n.alive?1:0])]);return 'h'+hashStr(x)}catch(e){return ''}}
 /* ---------------- sending ---------------- */
-function onlmSend(inp){inp.h=onlHash();ONLM.hlog['n'+(ONLM.sent+1)]=inp.k==='modal'?inp.pre:inp.h;inp.seat=ONLM.me;inp.n=++ONLM.sent;ONLM.inflight=(ONLM.inflight||0)+1;NET.req('match.input',{id:S.onl.lobby,in:inp}).then(r=>{ONLM.inflight--;if(r&&Number.isInteger(r.seq)&&r.seq>=ONLM.next){ONLM.own.add(r.seq);onlmPump()}}).catch(e=>{ONLM.inflight--;if(typeof mToast==='function')mToast(_T('⚠ The server did not take that move: ')+esc(e.message))})}
+function onlmSend(inp){inp.h=onlHash();ONLM.hlog['n'+(ONLM.sent+1)]=inp.k==='modal'?inp.pre:inp.h;inp.seat=ONLM.me;inp.n=++ONLM.sent;ONLM.inflight=(ONLM.inflight||0)+1;NET.req('match.input',{id:S.onl.lobby,in:inp}).then(r=>{ONLM.inflight--;if(r&&Number.isInteger(r.seq)&&r.seq>=ONLM.next){ONLM.own.add(r.seq);onlmPump()}}).catch(e=>{ONLM.inflight--;if(typeof mToast==='function')mToast(_T('⚠ The server did not take that move: ')+esc(errText92(e)))})}
 /* board clicks */
 {const base=onTile;onTile=function(r,c){if(!onlmOn()||ONLM.replay)return base.apply(this,arguments);if(!onlmMine())return;
   const p=cur();onlmSend({k:'tile',r,c,mode:S.mode,focus:p&&p.focusRoll?1:0});return base.apply(this,arguments)}}
@@ -105,7 +105,7 @@ NET.on('match.snap',d=>{if(!S||!S.onl||d.id!==S.onl.lobby||d.to!==ONL.acct.id)re
 function onlmLoad(snap,onl){try{matchSlotPut('onl',snap);const ok=matchLoad('onl');matchSlotDel('onl');S.onl={...onl};S.limits=S.limits?{...S.limits,min:0}:S.limits;return ok}catch(e){console.error(e);return false}}
 /* ---------------- the opening ---------------- */
 {const base=beginTurn;beginTurn=async function(){if(S&&S.onl&&!S.onl.opened){S.onl.opened=true;ONLM.on=true;ONLM.me=S.onl.seat;ONLM.owners=S.onl.owners||[];ONLM.next=0;ONLM.q=[];ONLM.pend=null;ONLM.sent=0;ONLM.own=new Set();
-    if(S.limits)S.limits.min=0;if(S.onl.host){try{await NET.req('match.open',{id:S.onl.lobby,snap:matchSnapshot('online')})}catch(e){if(typeof mToast==='function')mToast('⚠ '+esc(e.message))}}onlmWaitShow()}
+    if(S.limits)S.limits.min=0;if(S.onl.host){try{await NET.req('match.open',{id:S.onl.lobby,snap:matchSnapshot('online')})}catch(e){if(typeof mToast==='function')mToast('⚠ '+esc(errText92(e)))}}onlmWaitShow()}
   return base.apply(this,arguments)}}
 async function onlJoinMatch(L,onl){if(typeof mToast==='function')mToast(_T('⚔ Waiting for the host to open the arena…'));let g=null;
   for(let i=0;i<150&&!(g&&g.open);i++){try{g=await NET.req('match.get',{id:L.id,from:0})}catch(e){}if(!(g&&g.open))await new Promise(r=>setTimeout(r,400))}

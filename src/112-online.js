@@ -146,7 +146,7 @@ function onlMini(cls,h=220){const src=typeof MINI_URL!=='undefined'&&MINI_URL[cl
 function onlEvName(k){return (EVENTS[k]||{}).n||k}
 function onlCityName(i){return (LOCATIONS[i]||{}).n||'—'}
 async function onlRefresh(){try{const h=await NET.req('hello',{all:1});ONL.acct=h.me;ONL.mode=h.mode;
-    if(h.chars&&h.me){ONL.chars=h.chars;ONL.active=h.active||null;ONL.char=h.chars.find(c=>c.alive&&c.id===h.active)||h.chars.find(c=>c.alive)||null;ONL.lobbies=h.lobbies||[];ONL.news=h.news||[];ONL.stats={challenges:h.challenges||[],online:h.online||0};ONL.party=h.party||null;return}}catch(e){ONL.err=e.message}
+    if(h.chars&&h.me){ONL.chars=h.chars;ONL.active=h.active||null;ONL.char=h.chars.find(c=>c.alive&&c.id===h.active)||h.chars.find(c=>c.alive)||null;ONL.lobbies=h.lobbies||[];ONL.news=h.news||[];ONL.stats={challenges:h.challenges||[],online:h.online||0};ONL.party=h.party||null;return}}catch(e){ONL.err=errText92(e)}
   if(ONL.acct){try{ONL.chars=await NET.req('char.mine');ONL.char=ONL.chars.find(c=>c.alive&&c.id===ONL.active)||ONL.chars.find(c=>c.alive)||null}catch(e){}}
   try{ONL.lobbies=await NET.req('lobby.list')}catch(e){}try{const n=await NET.req('world.news');ONL.news=n.news;ONL.stats=n}catch(e){}}
 function onlRedraw(){const r=document.getElementById('onl');if(!r)return;const sc=($('#mBody')||{}).scrollTop||0;if(typeof morph91==='function')morph91(r,onlHTML());else r.innerHTML=onlHTML(); /* v0.91: patched in place (198), no flicker */const b=$('#mBody');if(b)b.scrollTop=sc}
@@ -242,7 +242,7 @@ function onlHallHTML(){if(!ONL.hallAt||Date.now()-ONL.hallAt>20000){ONL.hallAt=D
    ${!ONL.char&&ONL.acct?`<div class="mbtns"><button type="button" class="btn primary" data-onl="tab" data-v="play">${_T`⚔ Make a new gladiator`}</button></div>`:''}`}
 
 /* ---------------- the controls ---------------- */
-async function onlDo(fn){if(ONL.busy)return;ONL.busy=true;ONL.err='';try{await fn()}catch(e){ONL.err=e.message;if(typeof mToast==='function')mToast('⚠ '+esc2(e.message))}finally{ONL.busy=false;onlRedraw()}}
+async function onlDo(fn){if(ONL.busy)return;ONL.busy=true;ONL.err='';try{await fn()}catch(e){ONL.err=errText92(e);if(typeof mToast==='function')mToast('⚠ '+esc2(ONL.err))}finally{ONL.busy=false;onlRedraw()}}
 document.addEventListener('click',e=>{const b=e.target.closest('#onl [data-onl]');if(!b)return;e.preventDefault();e.stopPropagation();const a=b.dataset.onl,v=b.dataset.v;
   if(a==='tab'){ONL.tab=v;onlRedraw();return}
   if(a==='google'){if(NET.mode==='aws'&&typeof netSignIn==='function')return netSignIn();if(typeof mToast==='function')mToast(_T('Google sign-in opens once the AWS template is deployed. Use a name for now.'));return}

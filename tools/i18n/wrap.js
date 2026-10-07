@@ -14,7 +14,7 @@ const fs=require('fs'),path=require('path'),ts=require('typescript');
 const ROOT=path.resolve(__dirname,'..','..');
 const MODE=process.argv.includes('--write')?'write':'list';
 const ONLY=process.argv.filter(a=>/\.js$/.test(a)&&!/wrap\.js$/.test(a));
-const SKIP_FILES=new Set(['00-lang.js','00-lang-es.js','111-onlcore.js','13-sim.js','14-names.js','148-v86lang.js','173-v89cjk.js','wip-armlevels.js']);
+const SKIP_FILES=new Set(['00-lang.js','00c-errlog.js','223a-v93srvtext.js','00-lang-es.js','111-onlcore.js','13-sim.js','14-names.js','148-v86lang.js','173-v89cjk.js','wip-armlevels.js']);
 const build=fs.readFileSync(path.join(ROOT,'build.sh'),'utf8');
 const FILES=(build.match(/src\/[\w.-]+\.js/g)||[]).map(f=>path.basename(f)).filter(f=>!SKIP_FILES.has(f)).filter(f=>!ONLY.length||ONLY.some(o=>o.endsWith(f)));
 

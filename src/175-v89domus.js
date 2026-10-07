@@ -259,7 +259,7 @@ function d89HTML(){if(typeof onlDomusLoad82==='function')onlDomusLoad82();const 
 function d89Put(r){if(!r)return;if(r.char&&r.char.id)onl83Put(r.char);for(const c of r.from||[])if(c&&c.id)onl83Put(c);if(r.holder&&r.holder.cls)onl83Put(r.holder);
   if(r.domus&&r.domus.id){ONL.domus=r.domus;if(ONL82.dg)ONL82.dg.domus=r.domus}
   if(ONL82.dg){if(r.gear)ONL82.dg.gear=r.gear;if(r.pcs)ONL82.dg.pcs=r.pcs;if(r.holder&&r.holder.house){ONL82.dg.gear=r.holder.gear;ONL82.dg.pcs=r.holder.pcs}}}
-const d89Err=e=>{onlToast80('⚠ '+esc2(e&&e.message||e))};
+const d89Err=e=>{onlToast80('⚠ '+esc2(errText92(e)))};
 function d89Wear(x,hand){const ch=d89Act();if(!ch||!x)return;const C=d89Cmp(ch,x);if(C.no)return d89Err(C.no);if(d89Busy().has(ch.id)||(x.from!=='house'&&d89Busy().has(x.from)))return d89Err(_T('In a match — the storeroom waits.'));
   const P=d89Plan(ch,x,hand);return onlDo(async()=>{const r=await NET.req('domus.dress',{char:ch.id,equip:P.equip,take:P.take});d89Put(r);onlToast80(_T`🛡 ${esc2(ch.name)} wears ${esc2(x.I.n)}.`)})}
 function d89Off(it){const ch=d89Act();if(!ch)return;if(d89Busy().has(ch.id))return d89Err(_T('In a match — the storeroom waits.'));const I=ONL83.piece(ch,it);

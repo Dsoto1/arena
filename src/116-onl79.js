@@ -164,7 +164,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('#btnOnlLea
   const rule=S.onl.ranked?'fate':((ONL.lobbies||[]).find(x=>x.id===id)||{}).abandon==='fate'?'fate':'cpu';
   const v=await modal(_T('🚪 Abandon the match?'),`<p>${S.onl.ranked?_T('<b>Ranked:</b> your gladiator is eliminated and <b>dies by Damnatio</b>. This cannot be undone.'):rule==='fate'?_T('Your gladiator is eliminated — the bout is over for you.'):_T('A CPU takes your seat and fights on.')}</p><p class="rc-sub">${_T`You may come back to watch, but not to fight.`}</p>`,
     [{label:_T('Abandon'),value:'go'},{label:_T('Stay'),value:null,primary:1}],{close:null});
-  if(v!=='go')return;try{const r=await NET.req('match.abandon',{id});(ONL.leftMatch=ONL.leftMatch||{})[id]=1;if(r&&r.out&&r.out.died&&typeof mToast==='function')setTimeout(()=>mToast(_T('🌫 Your gladiator abandoned the sand — Damnatio.')),600)}catch(err){if(typeof mToast==='function')mToast('⚠ '+esc(err.message))}onlExit()},true);
+  if(v!=='go')return;try{const r=await NET.req('match.abandon',{id});(ONL.leftMatch=ONL.leftMatch||{})[id]=1;if(r&&r.out&&r.out.died&&typeof mToast==='function')setTimeout(()=>mToast(_T('🌫 Your gladiator abandoned the sand — Damnatio.')),600)}catch(err){if(typeof mToast==='function')mToast('⚠ '+esc(errText92(err)))}onlExit()},true);
 function onlExit(){try{if(S&&!S.over){S.over=true}}catch(e){}ONLM.on=false;ONL.watching=null;ONL.live=ONL.live&&ONL.live.reported?ONL.live:null;onlBarSync();
   try{if(typeof cleanFinishNow==='function')cleanFinishNow()}catch(e){}try{if(typeof menuShow==='function')menuShow()}catch(e){}setTimeout(()=>{try{onlineOpen('play')}catch(e){}},200)}
 {const st=document.createElement('style');st.textContent=`

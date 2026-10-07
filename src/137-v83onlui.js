@@ -262,7 +262,7 @@ async function onl83GiftOpen(){if(ONL83U.giftBusy)return;ONL83U.giftBusy=true;tr
     const t0=Date.now();let r=null,err=null;try{r=await NET.req('gift.open',{gift:g.id,...(char?{char}:{})})}catch(e){err=e}
     await new Promise(z=>setTimeout(z,Math.max(0,1500-(Date.now()-t0))));
     const tok=bg.querySelector('.gft83-tok');if(tok){tok.classList.remove('spin');tok.classList.add('done')}
-    const P=bg.querySelector('#gft83p');if(err){P.innerHTML=`<p class="onl-err">${esc2(err.message)}</p><div class="acts"><button type="button" class="btn" data-g83="x">${_T`Close`}</button></div>`}
+    const P=bg.querySelector('#gft83p');if(err){P.innerHTML=`<p class="onl-err">${esc2(errText92(err))}</p><div class="acts"><button type="button" class="btn" data-g83="x">${_T`Close`}</button></div>`}
     else{if(r.char&&r.char.id)onl83Put(r.char);if(r.domus)ONL.domus=r.domus;P.innerHTML=onl83Prize(r);const n=onl83GiftN();
       P.insertAdjacentHTML('beforeend',`<div class="acts">${n?`<button type="button" class="btn primary" data-g83="next">${_T`🎁 Open the next (${n})`}</button>`:''}<button type="button" class="btn" data-g83="x">${n?_T('Later'):_T('Close')}</button></div>`)}
     bg.classList.add('opened');
@@ -311,7 +311,7 @@ function onl83Stakes(L){const S83=ONL83.stakes(L);
 setInterval(()=>{try{const el=document.getElementById('cd83');if(!el)return;const n=document.getElementById('cd83n');const at=+el.dataset.at;const s=Math.max(0,Math.ceil((at-onlNow82())/1000));if(n&&n.textContent!==String(s))n.textContent=s;el.classList.toggle('go',s<=3)}catch(e){}},250);
 
 /* ---------------- 11 · PROFILES + ★ FOLLOW + the share link ---------------- */
-async function onl83Profile(x){if(!x)return;let r;try{r=await ONL83.profile(x)}catch(e){if(e&&e.code==='no_domus'&&typeof x==='string'&&/^House /i.test(x))return onl83Profile(x.replace(/^House /i,''));onlToast80('🏛 '+esc2(e.message||_T('No such house.')));return}
+async function onl83Profile(x){if(!x)return;let r;try{r=await ONL83.profile(x)}catch(e){if(e&&e.code==='no_domus'&&typeof x==='string'&&/^House /i.test(x))return onl83Profile(x.replace(/^House /i,''));onlToast80('🏛 '+esc2(errText92(e,_T('No such house.'))));return}
   const D=r.domus||{};const nowS={off:_T('⚫ Away'),free:_T('🟢 In the arena'),room:_T('🟡 In a room'),fight:_T('🔴 Fighting now')}[(r.now||{}).st]||'';const rec=[[_T('Bouts'),D.bouts|0],[_T('Won'),D.wins|0],[_T('Survived'),D.survived|0],[_T('Fallen'),D.fallen|0],[_T('Lifetime CF'),D.lifeCF|0],[_T('Fame'),D.fame|0]];
   const glads=(r.glads||[]).map(g=>`<div class="pf83-g">${_T`${onlFig(g.cls,{token:(g.look||{}).token,color:(g.look||{}).color},70)}<b>${esc2(g.name)}</b><small>${onlRankChip(g.rank)}</small><small>✦ ${g.glory} Glory · ${g.survived} survived · ${g.wins} won</small>`}</div>`).join('')||`<p class="rc-sub">${_T`No living gladiators.`}</p>`;
   const recent=(D.recent||[]).map(m=>`<div class="pf83-m ${m.died?'died':m.won?'won':''}">${_T`<b>${m.died?'🪦':m.won?'🏆':'⚔'} ${esc2(m.glad)}</b><small>${esc2(onlEvName(m.ev))} · ${esc2(onlCityName(m.loc))} · ${m.ranked?_T('Ranked'):_T('Custom')} · ${cfAmt87(m.cf)}${m.place?` · #${m.place}`:''} · ${esc2(date83(m.at))}</small>`}</div>`).join('')||`<p class="rc-sub">${_T`No matches yet.`}</p>`;
@@ -324,7 +324,7 @@ async function onl83Profile(x){if(!x)return;let r;try{r=await ONL83.profile(x)}c
     if(a==='x'){bg.remove();return}
     if(a==='share'){const link=ONL83.share(v);let ok=false;try{await navigator.clipboard.writeText(link);ok=true}catch(err){}if(!ok){try{const t=document.createElement('textarea');t.value=link;document.body.appendChild(t);t.select();ok=document.execCommand('copy');t.remove()}catch(err){}}
       b.textContent=ok?_T('✓ Link copied'):'🔗 '+link;ONL83U.lastShare=link;return}
-    if(a==='follow'){try{const r2=await ONL83.follow(v,b.dataset.on==='1');ONL83U.follows=r2.follows||[];bg.remove();onl83Profile(v);if(document.getElementById('onl'))onlRedraw()}catch(err){onlToast80('⚠ '+esc2(err.message))}return}
+    if(a==='follow'){try{const r2=await ONL83.follow(v,b.dataset.on==='1');ONL83U.follows=r2.follows||[];bg.remove();onl83Profile(v);if(document.getElementById('onl'))onlRedraw()}catch(err){onlToast80('⚠ '+esc2(errText92(err)))}return}
     if(a==='watch'){bg.remove();const L=(ONL.lobbies||[]).find(x=>x.id===v);if(L&&typeof onlWatch==='function')onlDo(()=>onlWatch(L))}})}
 /* any house chip, the stage's house line, Forum / room / invitation names */
 document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('.dom82c,.dom82-pl,.dom82-ttl h3');if(!t||!t.closest('#onl,.onl80pop'))return;if(t.closest('.pop83'))return;e.preventDefault();e.stopPropagation();
@@ -337,7 +337,7 @@ document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest
   let k=0;const iv2=setInterval(()=>{k++;if(document.getElementById('onl')&&NET.mode){clearInterval(iv2);onl83Profile(id)}else if(k>60)clearInterval(iv2)},250)},250)})();
 
 /* ---------------- 12 · the WAGERS tab ---------------- */
-function onl83Wagers(){if(!ONL83U.wl||Date.now()-ONL83U.wlAt>10000){ONL83U.wlAt=Date.now();NET.req('wager.list',{}).then(r=>{ONL83U.wl=r;if(ONL.tab==='wagers'&&document.getElementById('onl')&&!onlFocus80())onlRedraw()}).catch(e=>{ONL83U.wl=ONL83U.wl||{open:[],mine:[],top:[],err:e.message}})}
+function onl83Wagers(){if(!ONL83U.wl||Date.now()-ONL83U.wlAt>10000){ONL83U.wlAt=Date.now();NET.req('wager.list',{}).then(r=>{ONL83U.wl=r;if(ONL.tab==='wagers'&&document.getElementById('onl')&&!onlFocus80())onlRedraw()}).catch(e=>{ONL83U.wl=ONL83U.wl||{open:[],mine:[],top:[],err:errText92(e)}})}
   const X=ONL83U.wl;if(!X)return `<h3>${_T`💰 Wagers`}</h3><p class="rc-sub">${_T`Reading the bookmakers’ tablets…`}</p>`;
   const open=(X.open||[]).map(L=>{const names=Object.fromEntries((L.players||[]).map(p=>[p.seat,p]));
     return `<div class="card2 wg83-pot"><div class="wg83-h">${typeof cardHTML==='function'?`<span class="wg83-ev">${cardHTML('e:'+L.ev,'sm')}</span>`:''}<div><b>${esc2(onlEvName(L.ev))}</b> <small class="rc-sub">${esc2(onlCityName(L.loc))} · ${L.ranked?_T('⚔ Ranked'):_T('Custom')} · ${L.status==='live'?'🔴 live':'waiting'}</small>
@@ -377,7 +377,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   if(a==='mkt'){ONL83U.mkt=v;if(v==='used')ONL83U.usedAt=0;onlRedraw();return}
   if(a==='wlr'){ONL83U.wlAt=0;onlRedraw();return}
   if(a==='repair'){const [from,item]=v.split('|');return onl83Repair(from,item)}
-  if(a==='hold'){const L=onlMyLobby();if(L)NET.req('lobby.hold',{id:L.id}).then(R=>{ONL83U.stop[L.id]=Date.now();if(R&&R.id)onlUpsert80(R);onlRedraw()}).catch(err=>onlToast80('⚠ '+esc2(err.message)));return}
+  if(a==='hold'){const L=onlMyLobby();if(L)NET.req('lobby.hold',{id:L.id}).then(R=>{ONL83U.stop[L.id]=Date.now();if(R&&R.id)onlUpsert80(R);onlRedraw()}).catch(err=>onlToast80('⚠ '+esc2(errText92(err))));return}
   if(a==='obuy'){const ch=ONL.char;if(!ch)return;const pr=ONLC.PRICE_OFF[v];
     return ask76(_T('🧪 Buy this offering?'),`<div style="display:flex;gap:12px;align-items:center">${offTok83(v,64)}<p style="margin:0">${_T`<b>${esc2(OFF83N(v))}</b> for <b>${coinAmt87(pr)}</b> into ${esc2(ch.name)}’s satchel.<br><small class="rc-sub">Up to ${ONLC.OFF_CARRY} go into a match; the unused come back.</small>`}</p></div>`,_T`Buy · ${pr}`,_T('Not now'))
       .then(ok=>{if(ok)onlDo(async()=>{const c=await NET.req('offer.buy',{char:ch.id,key:v});onl83Put(c);ONL.char=c;onlToast80(_T`🧪 ${esc2(OFF83N(v))} is in the satchel.`)})})}
