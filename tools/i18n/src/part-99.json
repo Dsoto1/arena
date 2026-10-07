@@ -1,0 +1,22 @@
+[
+ {
+  "k": "{0} pieces mended.",
+  "w": "225-v94armory.js:65"
+ },
+ {
+  "k": "The stalls buy {0} pieces a week from one house — come back next week.",
+  "w": "225-v94armory.js:269"
+ },
+ {
+  "k": "⅕ of the price",
+  "w": "225-v94armory.js:287"
+ },
+ {
+  "k": "🔨 Repair all · {0} coin",
+  "w": "225-v94armory.js:287"
+ },
+ {
+  "k": "{0}% of the price ({1}% if damaged) · at most {2} a week — {3} left",
+  "w": "225-v94armory.js:288"
+ }
+]

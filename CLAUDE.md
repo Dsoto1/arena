@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.93**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.94**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -1021,6 +1021,13 @@ share copy — the site download play/flavius-rule-arena.zip.)
   key checks, docs/. (Published as artifact Version 107; server changes — `bash flavius.sh release` deploys it from GitHub.) Release run (REGJ=3):
   236/239 + tonl83u/tv91n flaky (passed alone) + tv87l (Italian walk counted the new screen-reader text as leftover English — the walker now skips
   .sr93; 5 languages green).
+
+- **v0.94** the Event Designer as the arena (palette, round strip, checks, Undo/Redo, ▶ Test play), the Manager Armory (owned gear, Roster
+  dressing like the Domus, City Square stalls per city/week, repairs ⅕, sell-back 30% ≤3/week, market buys not kept), online 3D tokens as
+  server pictures (Safari via libwebp WebAssembly). (Published as artifact Version 108; server changes — `bash flavius.sh release` deploys it
+  from GitHub.) Release run (REGJ=3): 238/242 + tonl78/tonl83u/tv86/tv91n flaky (passed alone); the armory tuning landed after the run:
+  tv94m tcity tv89y tv87x tv93t tv85f tv86 green (tv94m flaky once under smartreg, 3/3 alone). mgrsim 20 runs: player treasury −15% vs
+  gear off, wins −0.7, rivals healthy, shelves ~37.
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
