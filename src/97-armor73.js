@@ -23,7 +23,7 @@ function caStartHTML(d){const sys=Object.keys(ARM).filter(k=>!ARM[k].custom);con
    <label>${_T`Base shape`}<select data-caf="shape">${CA_SHAPES.map(([k,l])=>`<option value="${k}" ${d.shape===k?'selected':''}>${l}</option>`).join('')}</select></label>
    ${d.art&&ARM[d.art]?`<label class="caartrow"><input type="checkbox" data-caart ${caArtOn(d)?'checked':''} ${(d.layers||[]).length||(d.baked||[]).length?'disabled':''}> ${_T`Wear the printed art of <b>${esc(ARM[d.art].n)}</b>${(d.layers||[]).length||(d.baked||[]).length?_T(' <span class="rc-sub">(your sculpt replaces it)</span>'):''}`}</label>`:''}`}
 {const base=gearAHTML;gearAHTML=function(){let h=base.apply(this,arguments);try{const d=ST.ca;if(!d)return h;
-  h=h.replace(/<label>Start from<select data-caf="shape">[\s\S]*?<\/select><\/label>/,caStartHTML(d));
+  h=h.replace(new RegExp('<label>'+RXL('Start from')+'<select data-caf="shape">[\\s\\S]*?<\\/select><\\/label>'),caStartHTML(d));
   if(caArtOn(d))h=h.replace(/(<div class="scart[^"]*" id="caPiece"[^>]*>)[\s\S]*?(<\/div>)/,`$1<div class="caartprev">${armArtCell(d.art,200)}</div>$2`)}catch(e){console.error(e)}return h}}
 {const base=caPrevRefresh;caPrevRefresh=function(){const d=ST.ca;if(caArtOn(d)){const pv=document.getElementById('caPiece');if(pv)pv.innerHTML=`<div class="caartprev">${armArtCell(d.art,200)}</div>`;return}return base.apply(this,arguments)}}
 /* the art of a copy that keeps the printed look: the printed piece's own drawing (graded by level, if any) */

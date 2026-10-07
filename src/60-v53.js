@@ -12,7 +12,16 @@ const PHASE_LABEL={resolve:_T('Resolve'),command:_T('Resolve'),choice:_T('Choice
 /* phaseTag(phase): a small coloured chip for a phase name */
 function phaseTag(phase){const key=phase==='command'?'resolve':phase;return `<span class="phtag ph-${key}">${PHASE_LABEL[phase]||phase}</span>`}
 /* log headers like "Phase 2 · Choice: …" get the chip instead of the number */
-{const baseLog=log;log=function(html,cls){if(typeof html==='string')html=html.replace(/^Phase \d · (Resolve|Choice|Action|End)(:?)/,(m,name,colon)=>phaseTag(name.toLowerCase())+colon);return baseLog(html,cls)}}
+/* v0.95: the log lines open "Phase 1 · Resolve:" in English; in another language that lead-in is translated, so the matcher is built from the
+   dictionary's own "Phase N · Name…" keys (once, lazily) */
+let PHLEAD95=null;
+function phLead95(){if(PHLEAD95)return PHLEAD95;const map=new Map();map.set('E',null);const leads=['Phase \\d · (Resolve|Choice|Action|End)'];
+  if(typeof LANG_DICT!=='undefined'&&LANG_DICT){for(const k in LANG_DICT){const m=/^Phase \d · (Resolve|Choice|Action|End)(:?)/.exec(k);if(!m)continue;const t=LANG_DICT[k];const i=t.search(/[:：]/);if(i<=0||i>40)continue;const lead=t.slice(0,i);if(!map.has(lead))map.set(lead,m[1].toLowerCase())}}
+  map.delete('E');const alts=[...map.keys()].sort((a,b)=>b.length-a.length).map(RXE);
+  PHLEAD95={map,rx:alts.length?new RegExp('^(?:'+alts.join('|')+')([:：]?)'):null};return PHLEAD95}
+{const baseLog=log;log=function(html,cls){if(typeof html==='string'){const L=html.replace(/^Phase \d · (Resolve|Choice|Action|End)(:?)/,(m,name,colon)=>phaseTag(name.toLowerCase())+colon);
+  if(L!==html)html=L;else{const P=phLead95();if(P.rx){const m=P.rx.exec(html);if(m){const lead=m[0].slice(0,m[0].length-m[1].length);const nm=P.map.get(lead);if(nm)html=phaseTag(nm)+m[1]+html.slice(m[0].length)}}}}
+  return baseLog(html,cls)}}
 
 /* ---------- the turn indicator: a glowing dot, the name, the phase — the rest on hover ---------- */
 renderTurnInd=function(){if(HEADLESS)return;const box=$('#turnInd');if(!box)return;

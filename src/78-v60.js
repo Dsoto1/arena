@@ -16,7 +16,7 @@ let ROAD_NOW=null; /* the Road as last read, for the cards (ludusDetail is synch
   const R=ROAD_NOW&&!ROAD_NOW.over?ROAD_NOW:null;
   const btn=R&&R.gid===g.id?(()=>{const st=roadStage(R);return `<button type="button" class="btn roadsend primary" data-road="go" title="${_T`Opens New event with ${esc(g.name)} summoned`}">${_T`⚔ Walk stage ${R.step+1}: ${esc(st.L.n)}`}</button>`})()
     :`<button type="button" class="btn roadsend" data-roadsend="${g.id}" title="${_T`Win the twelve arenas in order with ${esc(g.name)}${R?_T` — replaces ${esc(R.name)}`:''}`}">${_T`🛣 Send on the Road`}</button>`;
-  h=h.replace(/<button type="button" class="btn roadsend" data-roadsend="[^"]*"[^>]*>🛣 Send on the Road<\/button>/,'');
+  h=h.replace(new RegExp('<button type="button" class="btn roadsend" data-roadsend="[^"]*"[^>]*>'+RXE(TX('🛣 Send on the Road'))+'<\\/button>'),'');
   return h.replace('<div class="gdetail" id="gDetail">',`<div class="gdetail" id="gDetail">${btn}`)}}
 /* ⚔ Walk stage from the walker's record: the same hand-off as the Hall's button */
 document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('#ludusBody [data-road="go"]');if(!b)return;e.stopPropagation();

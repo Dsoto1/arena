@@ -47,7 +47,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   const g=gById(b.dataset.id87);if(!g||!g.inj||!inBed76(g))return;g.inj.plan87=b.dataset.plan87;
   if(!b.dataset.mg){e.preventDefault();e.stopPropagation();saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()}},true);
 /* bedTiles87 — the plan tiles in a bed: every tile names its plan, Rest is pickable, the chosen one is marked */
-function bedTiles87(g){let h=planTiles(g).replace('<div class="rc-sub">🛏 In a bed</div>','');const cur=planOf87(g);
+function bedTiles87(g){let h=planTiles(g).replace('<div class="rc-sub">'+TX('🛏 In a bed')+'</div>','');const cur=planOf87(g);
   h=h.replace(/<button type="button" class="plantile ([^"]*)"([^>]*)>(<span class="pi">([^<]*)<\/span>)/g,(m0,cls,attrs,pi,ic)=>{const k=Object.keys(PLAN87).find(k=>PLAN87[k][0]===ic.trim());if(!k)return m0;
     let a=attrs;if(k==='rest')a=a.replace(/\sdisabled/,'');return `<button type="button" class="plantile ${cls}${k===cur?' pick87':''}" data-plan87="${k}" data-id87="${g.id}"${a}>${pi}`});return h}
 /* the popup an empty bed opens */

@@ -46,7 +46,7 @@ function wpnSetsHTML(){const sys=sysWeapons();const L=CUSTOM.weapons||[];
   const sysc=sys.map(k=>{const X=W[k];return `<div class="lrow"><span class="setart wcard">${cardHTML('w:'+k,'md')}</span><div class="t"><b>${esc(X.n)}</b><small>L${X.lv} · ${X.shield?'shield':X.p+' dmg · range '+X.r}${X.throw?' · throws':''}</small></div>${sysActs(`data-gs="cwsys" data-id="${k}"`)}</div>`}).join('');
   return `<h4>${_T`Your weapons · ${L.length}`}</h4>${L.length?`<div class="list2 setgrid">${mine}</div>`:`<p class="rc-sub">${_T`The forge is cold. Nothing yet — save a weapon above, or copy a printed one.`}</p>`}
    <h4>${_T`🔒 System weapons · ${sys.length}`} <span class="rc-sub">${_T`the printed cards`}</span></h4><div class="list2 setgrid sys">${sysc}</div>`}
-{const base=gearWHTML;gearWHTML=function(){let h=base.apply(this,arguments);try{const i=h.indexOf('<h4>Your weapons');if(i>=0)h=h.slice(0,i) /* the old list was the template's tail */;h+=wpnSetsHTML()}catch(e){console.error(e)}return h}}
+{const base=gearWHTML;gearWHTML=function(){let h=base.apply(this,arguments);try{const i=h.indexOf('<h4>'+TXPRE('Your weapons · {0}'));if(i>=0)h=h.slice(0,i) /* the old list was the template's tail */;h+=wpnSetsHTML()}catch(e){console.error(e)}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-gs="cwsys"]');if(!b)return;e.stopImmediatePropagation();cwFromSystem(b.dataset.id);ST.gearSub='w';
   const r=document.querySelector('[data-st="tab"][data-v="gear:w"]');if(r)r.click();else openStudio('gear');setTimeout(()=>{const t=document.querySelector('#mBody .trstudio,#cwPrev');if(t)t.scrollIntoView({block:'start'})},120);
   mToast(_T`Started from the printed <b>${esc(W[b.dataset.id].n)}</b> — make it yours and save.`)},true);

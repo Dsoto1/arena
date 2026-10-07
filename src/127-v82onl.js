@@ -232,8 +232,8 @@ function onlFoundHTML82(full){const live=(ONL.chars||[]).length;
   const a=h.indexOf('<main class="onl-main">');const b=h.lastIndexOf('</main>');if(a<0||b<0)return card+h;
   return h.slice(0,a)+'<main class="onl-main">'+card+'<div class="dom82-grey" aria-disabled="true" title="Found your house first">'+h.slice(a+23,b)+'</div>'+h.slice(b)}
 {const base=onlHTML;onlHTML=function(){if(onlIsGuest82())return onlGuestHTML82();
-  if(ONL.acct&&ONL.needDomus){ONL.newGlad=false;const keep=ONL.tab;if(ONL.tab==='char'||ONL.tab==='armory')ONL.tab='play';let h;try{h=base.apply(this,arguments)}finally{ONL.tab=keep}return onlFoundHTML82(h.replace('>🛡 My Gladiators<',_T('>🏛 Domus<')))}
-  return base.apply(this,arguments).replace('>🛡 My Gladiators<',_T('>🏛 Domus<')).replace('set in 🛡 My Gladiators',_T('set in 🏛 Domus'))}}
+  if(ONL.acct&&ONL.needDomus){ONL.newGlad=false;const keep=ONL.tab;if(ONL.tab==='char'||ONL.tab==='armory')ONL.tab='play';let h;try{h=base.apply(this,arguments)}finally{ONL.tab=keep}return onlFoundHTML82(h.replace('>'+TX('🛡 My Gladiators')+'<',_T('>🏛 Domus<')))}
+  return base.apply(this,arguments).replace('>'+TX('🛡 My Gladiators')+'<',_T('>🏛 Domus<')).replace('set in 🛡 My Gladiators',_T('set in 🏛 Domus'))}}
 
 /* ---------------- the house beside names (rooms, lobby rows, the Forum) ---------------- */
 let MK82=[];const mk82=(name,id)=>{if(!id||!onlDomOf82(id))return name;if(MK82.length>4000)MK82=[];return `${name}⟦${MK82.push(id)-1}⟧`};
@@ -280,7 +280,7 @@ function onlDomusHTML82(){onlDomusLoad82();const D=ONL.domus||{};const G=ONL82.d
    <div class="dom82-rec">${rec.map(([k,v])=>`<div><b>${v}</b><small>${k}</small></div>`).join('')}</div>
    ${locked?`<p class="rc-sub dom82-lock">${_T`🔒 A house with gladiators keeps its name.`}</p>`:`<div class="dom82-row"><input class="tin" id="dom82Ren" maxlength="${ONLC.DOMUS_MAX}" value="${esc2(D.name||'')}"><button type="button" class="btn" data-onl82="drename">${_T`✎ Rename`}</button><button type="button" class="btn" data-onl82="dnew" title="${_T`The old house is archived with its record`}">${_T`🏛 Found a new house`}</button></div>${_T`<small class="rc-sub">Only until your first gladiator.</small>`}`}
    ${ONL82.ferr&&ONL.tab==='char'?`<p class="onl-err">${esc2(ONL82.ferr)}</p>`:''}${`<details class="pat82d" ${ONL82.patOpen?'open':''}><summary>${_T`✎ Patron <small class="rc-sub">your seat in the stands</small>`}</summary>${onlPatronHTML82()}</details>`}</div>`}
-{const base=onlCharHTML;onlCharHTML=function(){let g=base.apply(this,arguments).replace('🛡 My Gladiators',_T('⚔ Gladiators'));
+{const base=onlCharHTML;onlCharHTML=function(){let g=base.apply(this,arguments).replace(TX('🛡 My Gladiators'),_T('⚔ Gladiators'));
   for(const c of ONL.chars||[])g=g.replace(`<b>${esc2(c.name)}</b><small>`,`<b>${esc2(c.name)}</b><small class="gl82">✦ ${Math.round(ONLC.gloryOf(c))} Glory</small><small>`);
   return `<div class="dom82-wrap"><div class="dom82-main">${onlDomusHTML82()}${g}${onlStoreHTML82()}</div>${onlRankBar82()}</div>`}}
 

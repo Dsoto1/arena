@@ -99,10 +99,10 @@ function nmLookRefresh(){const box=document.getElementById('nmPortrait');if(!box
 {const _sh=startHTML;startHTML=function(){let h=_sh.apply(this,arguments);try{if(MGR.view==='create'&&NEWMGR){const c=NEWMGR;
     const chars=(CUSTOM.chars||[]).filter(x=>x.portrait);
     const look=`<div class="mbtns"><button class="btn" type="button" data-mg="nmlook">${_T`🎲 Random look`}</button></div>${chars.length?`<label style="display:grid;gap:3px;font-size:12.5px;text-align:left">${_T`Borrow a Studio character’s look`}<select class="tin" data-nmimport="1"><option value="">— choose —</option>${chars.map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join('')}</select></label>`:''}<div style="text-align:left">${portraitControlsHTML(c.portrait,'data-nmpt')}</div></div>`;
-    h=h.replace('<div class="mbtns"><button class="btn" type="button" data-mg="nmlook">🎲 Random look</button></div></div>',look);
+    h=h.replace('<div class="mbtns"><button class="btn" type="button" data-mg="nmlook">'+TX('🎲 Random look')+'</button></div></div>',look);
     const extra=`<div class="formgrid" style="margin-top:8px"><label>${_T`Epithet`}<span style="display:flex;gap:4px"><input class="tin" data-nmx="nick" value="${esc(c.nick||'')}" maxlength="30" placeholder="${_T`e.g. the Iron Purse`}"><button type="button" class="btn" data-nmxa="nick" style="padding:4px 8px" aria-label="${_T`Generate an epithet`}">🎲</button></span></label></div>
      <label style="display:grid;gap:3px;margin-top:6px">${_T`Story`}<textarea class="tin" data-nmx="bio" maxlength="600" placeholder="${_T`How this lanista came to own a ludus…`}">${esc(c.bio||'')}</textarea></label><div class="mbtns" style="margin-top:4px"><button class="btn tksm" type="button" data-nmxa="bio">${_T`🎲 Write a story`}</button></div>`;
-    h=h.replace('<p class="rc-sub" style="margin:4px 0 0">🏠 <b>Your home city</b>',extra+`<p class="rc-sub" style="margin:4px 0 0">${_T`🏠 <b>Your home city</b>`}`);
+    h=h.replace('<p class="rc-sub" style="margin:4px 0 0">'+TX('🏠 <b>Your home city</b>'),extra+`<p class="rc-sub" style="margin:4px 0 0">${_T`🏠 <b>Your home city</b>`}`);
     h=h.replace('grid-template-columns:minmax(0,220px) minmax(0,1fr)','grid-template-columns:minmax(0,300px) minmax(0,1fr)')}}catch(e){console.error(e)}return h}}
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||typeof NEWMGR==='undefined'||!NEWMGR)return;
   if(t.dataset.nmpt){const f=t.dataset.nmpt;const P=NEWMGR.portrait=NEWMGR.portrait||{};let v=t.value;if(f==='fem'||f==='smile')v=v==='1';

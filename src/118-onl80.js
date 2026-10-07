@@ -240,7 +240,7 @@ const ONL_ROOM79=onlMyLobbyHTML;
 function onlRoomTop80(){const U=ONL.unseated80;if(U&&Date.now()<U.until)return onlRoomHTML80(U.L,true);const L=onlMyLobby();if(!L)return '';return L.status==='waiting'?onlRoomHTML80(L,false):ONL_ROOM79()}
 onlMyLobbyHTML=function(){return ONL._play80?onlLandingHTML80():onlRoomTop80()};
 {const base=onlPlayHTML;onlPlayHTML=function(){ONL._play80=1;let h;try{h=base.apply(this,arguments)}finally{ONL._play80=0}
-  return onlRoomTop80()+h.replace('👥 Team · 2 v 2','👥 Teams · 4–8 seats')}}
+  return onlRoomTop80()+h.replace(TX('<span class="badge gold">👥 Team · 2 v 2</span>'),'<span class="badge gold">'+_T('👥 Teams · 4–8 seats')+'</span>')}}
 /* the Lobby Browser: rooms, made in one click */
 onlLobbyHTML=function(){const me=onlMe80();const rows=ONL.lobbies||[];const st=L=>L.status==='waiting'?_T('<span class="badge gold">Waiting</span>'):_T('<span class="badge">In progress</span>');
   return `<div class="onl-lbtop"><h3>${_T`📜 Lobby Browser`} <span class="rc-sub">${_T`${rows.length} room${rows.length===1?'':'s'}`}</span></h3><div class="acts"><button type="button" class="btn" data-onl="refresh">${_T`↻ Refresh`}</button><button type="button" class="btn primary" data-onl="mkroom" data-v="1">${_T`＋ Ranked room`}</button><button type="button" class="btn" data-onl="mkroom" data-v="0">${_T`＋ Custom room`}</button></div></div>

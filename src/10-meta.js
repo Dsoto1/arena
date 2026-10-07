@@ -100,9 +100,9 @@ function fateBreakdown(player,won,champ){
   return {lines:L.map(([a,v])=>[a,(v>0&&a!=='Crowd Favor held'?'+':'')+v]),total};
 }
 /* fateIdxOf — which Fate card image matches a fate result ([title, text]); spared thumbs show the 20 CF card. */
-const fateIdxOf=fate=>{if(!fate)return null;if(/spared/.test(fate[0]))return fateRow(20).img;const F=FATES.find(F=>fate[0].endsWith(F.n));return F?F.img:null};
+const fateIdxOf=fate=>{if(!fate)return null;if(fateSpared(fate[0]))return fateRow(20).img;const F=FATES.find(F=>fate[0].endsWith(F.n));return F?F.img:null};
 /* aliveInUniverse — whether a result row's gladiator lives on after the event: not retired, not thumbed down, and 20+ CF or spared. */
-const aliveInUniverse=row=>!row.p.retired&&row.fate&&!/^Thumbs down/.test(row.fate[0])&&(row.f>=20||/spared/.test(row.fate[0]));
+const aliveInUniverse=row=>!row.p.retired&&row.fate&&!fateThumbsDown(row.fate[0])&&(row.f>=20||fateSpared(row.fate[0]));
 /* placements — result rows in finishing order: winners, then survivors by CF, then the eliminated, last out first. */
 function placements(rows,winnerIds){
   const order=S.elimOrder||[];const pos=id=>order.findIndex(o=>o.id===id);
@@ -191,7 +191,7 @@ async function gameOver(winners,reason){
   const rows=S.players.map(player=>{const won=wset.has(player.id);const f=finalCF(player,won);const fate=interim||(typeof missioNoFate==='function'&&missioNoFate(player))?null:(player.retired?[FATES[0].g+' · '+FATES[0].n,FATES[0].t]:(S.thumbsDown||[]).includes(player.id)?thumbsDownFate():fateFor(f));
     // a human facing the Thumb of Flavius rolls the die themselves, in the results window: the outcome
     // is already decided here (records need it), but it stays hidden until they press the button.
-    const thumbHide=!!(fate&&/^Thumb of Flavius/.test(fate[0])&&!player.cpu&&!S.sim&&!HEADLESS);
+    const thumbHide=!!(fate&&fateIsThumb(fate[0])&&!player.cpu&&!S.sim&&!HEADLESS);
     return {p:player,won,f,fate,thumbHide}});
   S.result={winners:[...wset],rows:rows.map(x=>({id:x.p.id,cls:x.p.cls,f:x.f,won:x.won,fate:x.fate?x.fate[0]:'',pers:x.p.pers,pots:x.p.stats.pots||0,r1pots:x.p.r1pots??(x.p.stats.pots||0),kp:x.p.trophies.filter(t=>t.pk==='player').length,kn:x.p.trophies.filter(t=>t.pk!=='player').length,buys:x.p.stats.buy||0,cards:x.p.stats.cardsDrawn||0,alive:x.p.alive,diff:x.p.diff,wR:x.p.wR&&x.p.wR.key,wL:x.p.wL&&x.p.wL.key,ap:LOCS.reduce((s,l)=>s+x.p.ap[l],0),armor:LOCS.flatMap(l=>x.p.pieces[l].map(pc=>pc.key)),bought:x.p.bought||[]}))};
   {const el=id=>(S.elimOrder||[]).find(o=>o.id===id);
@@ -265,7 +265,7 @@ async function gameOver(winners,reason){
       const t=e.target.closest('[data-rtab]');if(t){mb.querySelectorAll('[data-rtab]').forEach(b=>b.classList.toggle('on',b===t));$('#rtab-res').hidden=t.dataset.rtab!=='res';$('#rtab-graph').hidden=t.dataset.rtab!=='graph';{const f=$('#rtab-fates');if(f)f.hidden=t.dataset.rtab!=='fates'}return}
       const sv=e.target.closest('[data-save]');if(sv)done('save:'+sv.dataset.save);const fr=e.target.closest('[data-free]');if(fr)done('free:'+fr.dataset.free);const th=e.target.closest('[data-thumb]');
       if(th&&!th.dataset.busy){th.dataset.busy='1';const x=rows.find(r=>r.p.id===+th.dataset.thumb);const fz=th.closest('.rc-fate');
-        if(x&&fz&&x.fate){const d6v=x.fate.d6||(/spared/.test(x.fate[0])?4+Math.floor(Math.random()*3):1+Math.floor(Math.random()*3));
+        if(x&&fz&&x.fate){const d6v=x.fate.d6||(fateSpared(x.fate[0])?4+Math.floor(Math.random()*3):1+Math.floor(Math.random()*3));
           thumbRitual(fz,{name:x.p.name,f:x.f,d6:d6v,d12:x.fate.d12||1,d12Fate:x.fate.sub}).then(()=>{const b3=document.createElement('button');b3.className='btn';b3.type='button';b3.textContent=_T('Continue');b3.onclick=()=>done('thumb:'+x.p.id);fz.querySelector('.tr-body').appendChild(b3);setTimeout(()=>{if(b3.isConnected)done('thumb:'+x.p.id)},4500)})}
         else done('thumb:'+th.dataset.thumb)}})}});
     if(v==='export'){await exportLog();continue}
@@ -275,7 +275,7 @@ async function gameOver(winners,reason){
     if(typeof v==='string'&&v.startsWith('thumb:')){const x=rows.find(r=>r.p.id===+v.slice(6));
       if(x&&x.thumbHide&&!x.thumbShown){x.thumbShown=true;
         log(_T`The die leaves ${edName()}’s hand… <b>${esc(x.fate[1])}</b>`,'big');
-        flaviusMood&&flaviusMood(/spared/.test(x.fate[0])?'cheer':'laugh',4200,.9);
+        flaviusMood&&flaviusMood(fateSpared(x.fate[0])?'cheer':'laugh',4200,.9);
         // now the deferred roguelike consequence lands
         if(x.p.saved){if(aliveInUniverse(x)){x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);if(rec)log(_T`${nm(x.p)}'s Ludus record updates automatically: ${cfAmt87(rec.cf)}, returns with ${rec.carry}.`)}
           else if(!(S.missio&&(!x.p.cpu||(typeof missioHero==='function'&&x.p===missioHero())))){await markFallen(x.p,x).catch(()=>{});log(_T`${nm(x.p)} did not survive the thumb; their Ludus record is struck from the rolls for good.`,'bad')}}}
@@ -540,7 +540,7 @@ async function advanceMissio(rows){
   const recs=await Store.list('missios');const rec=recs.find(r=>r.id===S.missio.id);if(!rec)return null;
   const x=rows.find(x=>!x.p.cpu&&x.p.name===rec.name)||rows[0];const p=x.p;
   const st=MISSIOS[rec.cls].path[rec.step];
-  const spared=x.fate&&/spared/.test(x.fate[0]);
+  const spared=x.fate&&fateSpared(x.fate[0]);
   const pass=st.win?x.won:(x.won||x.f>=20||spared);
   rec.events++;rec.trophies+=p.trophies.length;
   rec.history.push({step:rec.step,ev:EVENTS[S.evKey].short,loc:LOCATIONS[S.locIdx]?LOCATIONS[S.locIdx].n:'',cf:x.f,won:x.won});

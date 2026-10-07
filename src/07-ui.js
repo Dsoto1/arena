@@ -3096,7 +3096,7 @@ function modal(title, body, buttons, opt = {}) {
     // a × (and Escape) closes any window that has a harmless way out
     const closeB = opt.close !== undefined ? {
       value: opt.close
-    } : buttons.find(b => /^(Close|Cancel|Keep it|Skip|Look at the board|Opt out)/.test(String(b.label)));
+    } : buttons.find(b => LBLRX('Close|Cancel|Keep it|Skip|Look at the board|Opt out').test(String(b.label)));
     /* btnHTML — one dialog button with optional card art and a sub-label. */
     const btnHTML = (b, i) => `<button class="btn ${b.primary ? 'primary' : ''}" type="button" data-mi="${i}" ${b.disabled ? 'disabled' : ''} ${b.style ? `style="${b.style}"` : ''}>${b.card && cardRef(b.card) ? cardHTML(b.card, cardRef(b.card).sh.wide ? 'sm' : 'xs') : ''}${b.label}${b.sub ? `<small>${b.sub}</small>` : ''}</button>`;
     if (opt.grid) {
@@ -3106,7 +3106,7 @@ function modal(title, body, buttons, opt = {}) {
       g.innerHTML = opt.grid.map((b, i) => btnHTML(b, off + i)).join('');
     }
     // v0.21: the × at the top right replaces redundant bottom "Close" buttons
-    $('#mBtns').innerHTML = buttons.map((b, i) => closeB && (b === closeB || b.value === closeB.value) && /^Close$/.test(String(b.label)) ? '' : btnHTML(b, i)).join('');
+    $('#mBtns').innerHTML = buttons.map((b, i) => closeB && (b === closeB || b.value === closeB.value) && LBLRX('Close', 1).test(String(b.label)) ? '' : btnHTML(b, i)).join('');
     $('#mBtns').hidden = !$('#mBtns').innerHTML.trim();
     $('#modal').hidden = false;
     document.body.classList.add('modal-open'); // no scroll bleed into the page behind
@@ -3172,7 +3172,7 @@ function modal(title, body, buttons, opt = {}) {
     CUR_MODAL = {
       done,
       closeB,
-      harmless: !!closeB && (opt.close !== undefined || /^(Close|Look at the board)$/.test(String(closeB.label)))
+      harmless: !!closeB && (opt.close !== undefined || LBLRX('Close|Look at the board', 1).test(String(closeB.label)))
     };
     if (opt.onOpen) opt.onOpen(done);
     requestAnimationFrame(() => {

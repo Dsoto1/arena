@@ -863,7 +863,7 @@ function leagueFate(glad,row,mgr,bout,boutIdx,opt){
   let cond=F,d6=null,d12=null;
   if(F.n==='Thumb of Flavius'){
     if(mine&&!(opt.live&&row.human)){(w.pend=w.pend||[]).push({t:'thumb',gid:glad.id,bi:boutIdx,f});return {vd:'p-thumb',fname:_T('Thumb of Flavius'),line:_T`${esc(glad.name)} faces the <b>Thumb of Flavius</b> (${cfAmt87(f)}) — you roll the die on Match Week`}}
-    if(/spared/.test(row.fate||'')){glad.rec.surv++;return {vd:'spared',fname:_T('Thumb of Flavius · spared'),line:_T`${esc(glad.name)} faces the thumb (${cfAmt87(f)}) — it goes up. Spared.`}}
+    if(fateSpared(row.fate)){glad.rec.surv++;return {vd:'spared',fname:_T('Thumb of Flavius · spared'),line:_T`${esc(glad.name)} faces the thumb (${cfAmt87(f)}) — it goes up. Spared.`}}
     const nm2=String(row.fate||'').split(' · ')[1];cond=FATES.find(x=>x.n===nm2)||FATES[0];
   }
   if(glad.sotonium){glad.rec.surv++;ghist(glad,_T`condemned (${cond.n}) — the crowd would not allow it: clemency, as always`);return {vd:'clemency',fname:`${cond.g} · ${cond.n}`,line:_T`${esc(glad.name)} is condemned (${cfAmt87(f)}) — and the whole arena rises for <b>${esc(glad.name)}</b>. The editor has no choice. Clemency.`}}

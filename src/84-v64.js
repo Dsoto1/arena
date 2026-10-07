@@ -24,7 +24,7 @@ advanceMissio=async function(rows){
   const recs=await Store.list('missios');const rec=recs.find(r=>r.id===S.missio.id);if(!rec)return null;
   const x=rows.find(x=>!x.p.cpu&&x.p.name===rec.name)||rows.find(x=>x.p.name===rec.name)||rows[0];const p=x.p;
   const st=MISSIOS[rec.cls].path[rec.step];const noCF=missioNoCF(S.evKey);
-  const spared=!!(x.fate&&/spared/.test(x.fate[0]));
+  const spared=!!(x.fate&&fateSpared(x.fate[0]));
   const fell=!p.alive||p.retired||S.missioFell;
   const fateDeath=!noCF&&!fell&&!!x.fate&&!aliveInUniverse(x);
   const dead=fell||fateDeath;
@@ -66,4 +66,4 @@ function chFloorTok(f,m){if(HEADLESS||!f.part)return false;const art=f.kind==='w
 function chCardComp(p){const ch=p.ch;if(!ch||!ch.art)return '';const H=ch.horse,hart=H?(H.sides[H.face]||{}).art||'saxoA':null;
   return `<span class="chcomp">${cardHTML('g:'+ch.art,'sm')}${H?`<span class="chtk horse" data-card="h:${hart}" title="${esc(H.name||'horse')}">${cardHTML('h:'+hart,'xs')}</span>`:''}${ch.wheel?`<span class="chtk wheel" data-card="h:${ch.wheel.art||'wheel8'}" title="${esc(ch.wheel.name||'wheel')}">${cardHTML('h:'+(ch.wheel.art||'wheel8'),'xs')}</span>`:''}</span>`}
 {const base=boardHTML;boardHTML=function(player){let h=base.apply(this,arguments);try{if(player&&player.ch&&player.ch.mounted&&player.ch.art){
-  const card=cardHTML('g:'+player.ch.art,'xs');const i=h.indexOf('<div class="sect">Chariot</div>');if(i>=0){const j=h.indexOf(card,i);if(j>=0)h=h.slice(0,j)+chCardComp(player)+h.slice(j+card.length)}}}catch(e){}return h}}
+  const card=cardHTML('g:'+player.ch.art,'xs');const i=h.indexOf('<div class="sect">'+TX('Chariot')+'</div>');if(i>=0){const j=h.indexOf(card,i);if(j>=0)h=h.slice(0,j)+chCardComp(player)+h.slice(j+card.length)}}}catch(e){}return h}}

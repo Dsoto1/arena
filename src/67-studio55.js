@@ -21,7 +21,7 @@ function statSlidersHTML(c){const st=draftStats(c);const sum=statSum(st);const o
     <div style="display:grid;gap:4px">${STATS.map(([k,n,ic,what])=>`<label class="sliderow" title="${n}: ${k==='int'?_T('how a CPU plays (Normal at 76, Hard at 96)'):k==='str'?_T('+1 damage at 76, +2 at 87, +3 at 96'):_T`+1 ${what} at 76, +2 at 96`}"><span>${ic} ${n}</span><input type="range" min="${STAT_MIN}" max="${STAT_MAX}" data-stat="${k}" value="${st[k]}"><output>${st[k]}</output><span class="rc-sub" data-statperk="${k}"></span></label>`).join('')}</div>
     <p class="rc-sub" style="margin:4px 0 0">${_T`Movement, damage, coin and CF bonuses pay in rounds that allow class abilities. In Manager mode, ratings grow with training and fights.`}</p>`}
 {const base=charEditorHTML;charEditorHTML=function(){const c=ST.draft;let h=base.apply(this,arguments);if(!c)return h;
-  const i=h.indexOf('<h4>CPU personality');return i<0?h:h.slice(0,i)+statSlidersHTML(c)+h.slice(i)}}
+  const i=h.indexOf('<h4>'+TX('CPU personality (when a CPU plays this character)'));return i<0?h:h.slice(0,i)+statSlidersHTML(c)+h.slice(i)}}
 document.addEventListener('input',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.stat||typeof ST==='undefined'||!ST.draft)return;const c=ST.draft;const st=draftStats(c);const k=t.dataset.stat;
   let v=statFix(t.value);if(!c.sandbox){const others=statSum(st)-st[k];v=Math.min(v,STAT_BUDGET-others)}v=statFix(v);st[k]=v;t.value=v;if(t.nextElementSibling)t.nextElementSibling.textContent=v;
   const sum=statSum(st);const box=document.getElementById('stStatSum');if(box){box.classList.toggle('over',!c.sandbox&&sum>STAT_BUDGET);box.firstChild.textContent=_T`${sum} / ${c.sandbox?'—':STAT_BUDGET} points · `}
@@ -36,4 +36,4 @@ document.addEventListener('input',e=>{const t=e.target;if(!t||!t.dataset||!t.dat
 {const base=npcEditorHTML;npcEditorHTML=function(){let h=base.apply(this,arguments);const n=ST.draft;if(!n)return h;
   const sp=statFix((NPC_SPD[clamp(+n.mv||1,1,7)]||73)),str=statFix((NPC_STR[clamp(+n.ap||1,1,6)]||99));
   const chip=`<div class="rc-sub" style="margin:4px 0 8px">${_T`Ratings: 🏃 Speed <b>${sp}</b> · 💪 Strength <b>${str}</b> <span>— set by Movement and Attack</span>`}</div>`;
-  const i=h.indexOf('<label>Coin when slain');return i<0?h:h.slice(0,i)+`<div style="grid-column:1/-1">${chip}</div>`+h.slice(i)}}
+  const i=h.indexOf('<label>'+TXPRE('Coin when slain {0}'));return i<0?h:h.slice(0,i)+`<div style="grid-column:1/-1">${chip}</div>`+h.slice(i)}}

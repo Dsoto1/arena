@@ -86,10 +86,10 @@ function armsHTML(p){return `<div class="sect">${_T`⚔ Weapons`}</div><div clas
     return `<div class="warm ${used?'used':''} ${alive?'':'sev'}"><div class="wart">${art||`<span class="wfist">${alive?'✊':'✖'}</span>`}</div><div class="winfo"><span class="whand">${a==='R'?_T('Right hand'):_T('Left hand')}<span class="wrole"> - ${a==='R'?_T('Primary'):_T('Secondary')}</span></span><b>${alive?(w?esc(w.n):_T('Empty hand')):_T('Severed')}</b>
       ${alive?`<div class="wchips">${weaponChips(w)}<span class="qi" data-tip="${esc(weaponTip(w))}">ⓘ</span></div>`:''}${used?_T('<span class="wspent">spent this turn</span>'):''}</div></div>`}).join('')}</div>`}
 {const _bh=boardHTML;boardHTML=function(p,interactive){let h=_bh(p,interactive);try{
-  h=h.replace(/<div class="sect">Weapons<\/div>[\s\S]*?(?=<div class="sect">Movement)/,armsHTML(p));
+  h=h.replace(new RegExp('<div class="sect">'+RXE(TX('Weapons'))+'<\\/div>[\\s\\S]*?(?=<div class="sect">'+RXE(TX('Movement'))+')'),armsHTML(p));
   h=h.replace(/<button class="stat" type="button" data-act="trophies"[^>]*>/,m0=>m0.replace(/ title="[^"]*"/,'').replace('<button class="stat"',_T('<button class="stat" data-tip="')+esc(trophyTip(p)).replace(/&lt;br&gt;/g,'<br>').replace(/&lt;(\/?)b&gt;/g,'<$1b>')+'"').replace('Trophies ▸',_T('Trophies ⓘ')));
-  h=h.replace('<span>Trophies ▸</span>',_T('<span>Trophies ⓘ</span>'));
-  h=h.replace('<div class="stat"><span>Keys</span>',`<div class="stat" data-tip="${_T`<b>Arena keys · ${p.keys}</b><br>Each key opens the chest (a Level 4 weapon) or a tunnel to another tunnel tile. A used key is gone.${weak(p,'noTunnel')?_T('<br>This gladiator cannot use tunnels.'):''}`}">${_T`<span>Keys ⓘ</span>`}`);
+  h=h.replace(TXHEAD('<span>Trophies ▸</span><b>{0} {1}','<b>'),_T('<span>Trophies ⓘ</span>'));
+  h=h.replace('<div class="stat">'+TXHEAD('<span>Keys</span><b>{0} {1}','<b>'),`<div class="stat" data-tip="${_T`<b>Arena keys · ${p.keys}</b><br>Each key opens the chest (a Level 4 weapon) or a tunnel to another tunnel tile. A used key is gone.${weak(p,'noTunnel')?_T('<br>This gladiator cannot use tunnels.'):''}`}">${_T`<span>Keys ⓘ</span>`}`);
   h=h.replace(/<div class="stat" title="([^"]*)">/g,(m0,t)=>`<div class="stat" data-tip="${t.replace(/&#10;|\n/g,'<br>')}">`);
   }catch(e){console.error(e)}
   try{const home=boardHome(cur());if(S&&!S.over&&home&&p!==home&&!home.cpu)h=`<div class="boardback"><span>${_T`Looking at`} <b style="color:${p.color}">${esc(p.name)}</b></span><button type="button" class="btn tksm" data-act="inspect" data-pid="${home.id}">↩ ${esc(home.name)}</button></div>`+h}catch(e){}

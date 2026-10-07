@@ -23,16 +23,16 @@ const SR_IMG={};const srImage=k=>{if(SR_IMG[k])return SR_IMG[k].complete&&SR_IMG
 {const base=briefingHTML;briefingHTML=function(){let h=base.apply(this,arguments);try{const k=srKey(EV());if(k)h=h.replace('<div class="brname">',`<div class="brsr">${srImgHTML(k,58)}<span class="rc-sub">${_T`Summa Rudis<br><b>${esc(EV().sr)}</b>`}</span></div><div class="brname">`)}catch(e){}return h}}
 function statusDecor(){const st=document.getElementById('status');if(!st||!S||S.phase==='setup')return;
   for(const c of st.querySelectorAll('.chip')){const t=c.getAttribute('title')||'';
-    const m=/^Round (\d+) of/.exec(t);if(m&&!c.querySelector('.roundmk')){c.classList.add('roundchip');c.innerHTML=c.innerHTML.replace(/^Round \d+\/\d+ · /,'');c.insertAdjacentHTML('afterbegin',`<span class="roundmk" aria-label="${_T`Round ${m[1]}`}"><img src="${assetURL('round.webp')}" alt=""><b>${m[1]}</b></span>`)}
+    const m=new RegExp('^'+RXE((()=>{const t=TXK('Round {0} of {1}: {2}. Zone');const i=t.indexOf('{0}');return i<0?t:t.slice(0,i)})())+'(\\d+)').exec(t);if(m&&!c.querySelector('.roundmk')){c.classList.add('roundchip');const rk=TX('Round {0}/{1} · {2} · {3}×{4}');c.innerHTML=c.innerHTML.replace(new RegExp('^'+RXE(rk.slice(0,rk.indexOf('{2}'))).replace(/\\\{\d\\\}/g,'\\d+')),'');c.insertAdjacentHTML('afterbegin',`<span class="roundmk" aria-label="${_T`Round ${m[1]}`}"><img src="${assetURL('round.webp')}" alt=""><b>${m[1]}</b></span>`)}
     const k=srKey(EV());if(k&&/Summa Rudis/.test(t)&&!c.querySelector('.srmed'))c.insertAdjacentHTML('afterbegin',srImgHTML(k,20,'inchip'))}}
 {const base=render;render=function(){const r=base.apply(this,arguments);try{statusDecor()}catch(e){}return r}}
 /* festival setup: the medallion beside the picker */
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='festSR'){const im=document.getElementById('festSRimg');if(im)im.outerHTML=srImgHTML(e.target.value,44,'festsr').replace('<img',_T('<img id="festSRimg"'))}});
 {const base=openSetup;openSetup=function(){const r=base.apply(this,arguments);setTimeout(function fx(n){const s=document.getElementById('festSR');if(s&&!document.getElementById('festSRimg'))s.insertAdjacentHTML('afterend',srImgHTML(s.value,44,'festsr').replace('<img',_T('<img id="festSRimg"')));else if(!s&&n<20)setTimeout(()=>fx(n+1),250)},300,0);return r}}
 /* Manager: Cassian presides over the Grand Games */
-{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(' · the Grand Games: purses ×1.6',_T` · ${srImgHTML('cassian',22,'inline')} the Grand Games, Cassian presiding: purses ×1.6`)}catch(e){}return h}}
+{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(TX(' · the Grand Games: purses ×1.6'),_T` · ${srImgHTML('cassian',22,'inline')} the Grand Games, Cassian presiding: purses ×1.6`)}catch(e){}return h}}
 /* the Mandata Flavi card back on hidden objectives */
-{const base=boardHTML;boardHTML=function(){let h=base.apply(this,arguments);try{h=h.split('<div class="item mf"><span><span>Mandata Flavi<em>Secret objective').join(`<div class="item mf"><span><img class="mfback" src="${assetURL('mandata_back.webp')}" alt="${_T`Mandata Flavi card back`}"><span>${_T`Mandata Flavi<em>Secret objective`}`)}catch(e){}return h}}
+{const base=boardHTML;boardHTML=function(){let h=base.apply(this,arguments);try{h=h.split('<div class="item mf"><span><span>Mandata Flavi<em>'+TX('Secret objective')).join(`<div class="item mf"><span><img class="mfback" src="${assetURL('mandata_back.webp')}" alt="${_T`Mandata Flavi card back`}"><span>${_T`Mandata Flavi<em>Secret objective`}`)}catch(e){}return h}} // i18n:skip
 /* the stands line, pinned at the top of the arena log */
 tickerApply=function(){const el=document.getElementById('crowdTick');if(el)el.hidden=true;slogPinApply()};
 let SLOG_N=0;
