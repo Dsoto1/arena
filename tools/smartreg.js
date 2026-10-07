@@ -207,7 +207,7 @@ function record(t, r, run) {
     }
   }
   let extra = {};
-  if (real.length && idle.length) {
+  if (real.length && idle.length && process.env.REGNOEXPAND !== '1') { /* CI shards set REGNOEXPAND=1: another shard runs the rest */
     const files = new Set(real.flatMap(t => (map[t] || {}).files || []));
     const blind = real.some(t => !map[t]);
     const dom = blind ? idle : idle.filter(t => ((map[t] || {}).files || []).some(f => files.has(f)));

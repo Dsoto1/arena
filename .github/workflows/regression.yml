@@ -5,7 +5,7 @@ name: regression
 on:
   push:
     branches: ['claude/**', 'main']
-    paths-ignore: ['CLAUDE.md', 'docs/**', 'tools/art/**', 'tools/plans/**', 'share/**']
+    paths-ignore: ['CLAUDE.md', 'docs/**', 'tools/art/**', 'tools/plans/**', 'share/**', 'tools/regstate.json', 'tools/regmap.json', 'tools/reg.txt']
   workflow_dispatch:
     inputs:
       mode:
@@ -65,7 +65,12 @@ jobs:
         env:
           NODE_PATH: /tmp/ci/node_modules
           CI_SHARD: ${{ matrix.shard }}
-        run: node tools/smartreg.js -j 2 ${{ matrix.tests }}
+          REGNOEXPAND: '1'
+        run: |
+          rc=0; node tools/smartreg.js -j 2 ${{ matrix.tests }} || rc=$?
+          awk '/^== /{b=$0"\n";next}{b=b $0"\n"}/^exit=/{if($0!="exit=0"||b~/ERRS \[[^\]]/)printf "%s",b}' tools/reg.txt | tail -c 20000
+          grep -E '^(FLAKY|SUMMARY)' tools/reg.txt || true
+          exit $rc
       - if: always()
         uses: actions/upload-artifact@v4
         with:
