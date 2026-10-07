@@ -11,8 +11,8 @@ function cycleEnd(){const d=cycleStart();d.setUTCMonth(d.getUTCMonth()+1);return
 async function gh(p){const r=await fetch('https://api.github.com/repos/'+process.env.GITHUB_REPOSITORY+p,{headers:{authorization:'Bearer '+process.env.GITHUB_TOKEN,accept:'application/vnd.github+json'}});if(!r.ok)throw new Error(p+' '+r.status);return r.json()}
 async function usedMin(){if(!process.env.GITHUB_TOKEN)return {used:0,today:0};const since=cycleStart().toISOString().slice(0,10);let used=0,today=0;
   for(let page=1;page<=10;page++){const j=await gh(`/actions/runs?per_page=100&page=${page}&created=>=${since}`);for(const run of j.workflow_runs){
-    if(String(run.id)===String(process.env.GITHUB_RUN_ID))continue;let ms=0;try{const t=await gh(`/actions/runs/${run.id}/timing`);for(const k in (t.billable||{}))ms+=t.billable[k].total_ms||0}catch(e){}
-    const m=Math.ceil(ms/60000);used+=m;if(run.created_at.slice(0,10)===day)today+=m}
+    if(String(run.id)===String(process.env.GITHUB_RUN_ID))continue;let m=0;try{const J=await gh(`/actions/runs/${run.id}/jobs?per_page=100`);for(const j of J.jobs){if(!j.started_at)continue;const end=j.completed_at?Date.parse(j.completed_at):Date.now();m+=Math.ceil(Math.max(1,end-Date.parse(j.started_at))/60000)}}catch(e){}
+    /* billed per job, rounded up to the minute (the /timing endpoint answers 0 now) */used+=m;if(run.created_at.slice(0,10)===day)today+=m}
     if(j.workflow_runs.length<100)break}
   return {used,today}}
 const tm=t=>Math.max(20,((st.tests[t]||{}).time||60));
