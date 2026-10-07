@@ -1233,6 +1233,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   against WCAG AA, visible focus rings; a test walking it. (B) MANAGER LESSON UPDATE — 36-mtutor teaches the v0.92 Training Yard (fighter cards,
   sessions, Lock in, the Doctore's drills, Trials of the Yard) and anything else it describes that changed; test it end to end.
   Not yet: a live online playtest with real players + tonlws77/tonlws80 on the real handler (needs `cd server && npm i ws`).
+- **v0.93 GO (his word 2026-10-07):** all six parts in ONE release — token modeller, backend + i18n phase 1, accessibility pass, Manager
+  lesson update, event bus, layer manager. Token modeller answers: existing Studio characters AUTO-CONVERT (a 3D token built from their look —
+  skin, hair, beard, colours — in a default pose, re-posable; the old token stays as a fallback setting); the modeller lives INSIDE the
+  Character designer's token step; ONLINE keeps the sculpted tokens until v0.94 (then: three.js in online matches vs server-stored sprites).
+  v0.94 = drag-and-drop gear in the Manager Roster (like the Domus) + the Event Designer as the arena view + online 3D tokens.
 - **EVENT BUS + LAYER MANAGER (his yes 2026-10-07, v0.93):** (1) EVENT BUS — one in-page `emit(name,data)` / `on(name,fn)` for game
   happenings (turn began, hit, elimination, spear, round end, market buy, save, window opened…) so new features listen instead of wrapping
   core functions (log/render/beginTurn wrappers today); wrappers stay where they are, new code uses the bus; perf92Mark, the error log and
