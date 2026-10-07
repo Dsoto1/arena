@@ -94,7 +94,7 @@ function fateBreakdown(player,won,champ){
     const t3=Math.floor(player.trophies.length/3);if(t3)L.push([_T`Trophies: ${player.trophies.length} (5 CF per 3)`,t3*5]);
     const fl=['R','L'].filter(a=>player['w'+a]&&player['w'+a].flav).length+LOCS.reduce((s,l)=>s+player.pieces[l].filter(pc=>ARM[pc.key].flav).length,0);if(fl)L.push([_T`Flavius items ×${fl}`,fl*2]);
     if(player.items.some(i=>i.kind==='offer'&&i.key==='eagle'))L.push([_T('Golden Eagle held'),15]);
-    if(weak(player,'pelted'))L.push([player.cls==='damnatio'?_T('Damnatio victory'):_T('Crowd-hated victory'),10]);}
+    if(weak(player,'pelted')&&pelt10_95(player))L.push([player.cls==='damnatio'?_T('Damnatio victory'):_T('Crowd-hated victory'),10]);}
   if(champ)L.push([_T('Festival champion'),5]);
   const total=L.reduce((s,[,v])=>s+v,0);
   return {lines:L.map(([a,v])=>[a,(v>0&&a!=='Crowd Favor held'?'+':'')+v]),total};

@@ -1015,7 +1015,7 @@ function finalCF(player, winner) {
   if (player.items) v -= 5 * player.items.filter(i => i.kind === 'mf').length;
   if (winner) {
     v += EV().rounds[EV().rounds.length - 1].reward.win || 15;
-    if (weak(player, 'pelted')) v += 10;
+    if (weak(player, 'pelted') && pelt10_95(player)) v += 10; /* v0.95: only the printed Damnatio's win bonus */
     v += Math.floor(player.trophies.length / 3) * 5;
     v += 2 * (['R', 'L'].filter(a => player['w' + a] && player['w' + a].flav).length + LOCS.reduce((s, l) => s + player.pieces[l].filter(pc => ARM[pc.key].flav).length, 0));
     if (player.items.some(i => i.kind === 'offer' && i.key === 'eagle')) v += 15;

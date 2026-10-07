@@ -6,7 +6,7 @@ const o={};
 o.sliders=await pg.evaluate(()=>document.querySelectorAll('[data-stat]').length);
 o.pool=await pg.evaluate(async()=>{const c=ST.draft;c.sandbox=false;c.stats={spd:70,str:70,int:70,lck:70,cha:70};
   const s=document.querySelector('[data-stat="spd"]');s.value=99;s.dispatchEvent(new Event('input',{bubbles:true}));const st={...c.stats};
-  return {spd:st.spd,sum:statSum(st),sumTxt:document.getElementById('stStatSum').textContent.slice(0,12)}});
+  return {spd:st.spd,sum:statSum(st),sumTxt:(document.getElementById('stStatSum')||document.getElementById('st95num')).textContent.slice(0,12)}});
 o.save=await pg.evaluate(async()=>{const c=ST.draft;c.name='Rated Test';c.stats={spd:96,str:76,int:60,lck:68,cha:75};const d=await stSaveDraft();return d?{id:d.id,st:d.stats}:'nosave'});
 o.walk=await pg.evaluate(()=>{const c=CUSTOM.chars.find(x=>x.name==='Rated Test');if(!c)return 'nochar';if(CUR_MODAL)CUR_MODAL.done(null);
   startEvent({ev:'democritus',loc:6,seats:[{cls:'cc_'+c.id,cpu:true},{cls:'hero',cpu:true},{cls:'slave',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}});const p=S.players[0];S.over=true;return {st:p.st,diff:p.diff,ab:CLASSES['cc_'+c.id].ab}});

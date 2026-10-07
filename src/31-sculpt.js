@@ -74,7 +74,7 @@ function scbClick(btn,redraw){const k=btn.dataset.k;const D=SCB_KIND[k];if(!D)re
   else if(a==='flip'){const L=Ls[li];if(L){L.x=D.vb[0]-L.x;L.r=-(L.r||0);L.fx=L.fx?0:1}}
   else if(a==='cut'){const L=Ls[li];if(L){L.cut=L.cut?0:1;if(!L.cut)delete L.cut}}
   else if(a==='clearL'){o.layers=[];SCB.editL[k]=o.layers;scbSelSet(k,-1)}
-  else if(a==='add'){const n=Ls.length%6;Ls.push({t:btn.dataset.v,x:D.add.x+(n%3-1)*10,y:D.add.y+(Math.floor(n/3)*2-1)*8+(n>=3?4:0),w:14,h:14,r:0,c:['#e6b93a','#c0433a','#4f7fc4','#4f9a57','#e8e0cc','#8a5cc0'][Ls.length%6],o:1});scbSelSet(k,Ls.length-1)} /* v0.42: each new shape lands beside the last, in its own color */
+  else if(a==='add'){const n=Ls.length%6;Ls.push({t:btn.dataset.v,x:D.add.x+(n%3-1)*10,y:D.add.y+(Math.floor(n/3)*2-1)*8+(n>=3?4:0),w:14,h:14,r:0,c:scbPickColor95(Ls),o:1});scbSelSet(k,Ls.length-1)} /* v0.42: each new shape lands beside the last, in its own color */
   else if(a==='hide'){const L=Ls[+btn.dataset.v];if(L){L.hid=L.hid?0:1;if(!L.hid)delete L.hid}}
   else if(a==='lock'){const L=Ls[+btn.dataset.v];if(L){L.lk=L.lk?0:1;if(!L.lk)delete L.lk}}
   else if(a==='sel')scbSelSet(k,+btn.dataset.v);
