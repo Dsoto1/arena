@@ -1422,8 +1422,12 @@ share copy — the site download play/flavius-rule-arena.zip.)
   his wants (Show him the Training Yard, Dine at the lanista's table, Promise him the sand, Tour the infirmary, Meet your champion…) with
   projections ("with our Doctore his Strength B could reach A-"); wants-matching pitches count most; rival counter-bids stay; the Scout tab stays
   usable while courting. ③ OFFER as today. On signing a "The truth" card: scouted grade vs real value. Card tabs reorganised (clear sections,
-  emphasis on what matters). ADVISOR LEVELS (his 3): every council advisor starts at LEVEL 1 in a new career, EXCEPT a starter house or Easy
-  start (higher); levels rise (perk tree / hiring for coin) — in v0.96 the Recruiter's level drives grade accuracy + hours; other advisors' effects later.
+  emphasis on what matters). ADVISOR LEVELS (his 3): every council advisor starts at LEVEL 1 in a new career, EXCEPT taking over an EXISTING house (the
+  starter houses offered to take over: level 2–3 by how established) or an Easy start (level 2); levels rise (perk tree / hiring for coin) — in v0.96 the Recruiter's level drives grade accuracy + hours; other advisors' effects later.
+  ROSTER + ARMORY (his notes 2026-10-07, v0.95): ARMORY becomes its own Manager rail tab (out of the Roster); only HEALTHY fighters can be
+  equipped; an INJURED fighter's weapons/armor/offerings go to the armory shelf at once (the manager re-equips after healing; checklist nudge).
+  Roster: AT MOST 3 STARTERS; the bench = every healthy non-starter (no depth columns at the top); Promote to starter + Lend live on the fighter
+  list rows below; Loans = a tab beside the depth chart (not under it); the fighter card on the right moves up into the freed space.
   FIX: Training Yard fighter card → Bond: the "Nobody free to bond with" box, the + buttons and the N/N count overflow the card (wrap/shrink inside it).
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
