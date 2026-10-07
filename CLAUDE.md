@@ -1233,6 +1233,12 @@ share copy — the site download play/flavius-rule-arena.zip.)
   against WCAG AA, visible focus rings; a test walking it. (B) MANAGER LESSON UPDATE — 36-mtutor teaches the v0.92 Training Yard (fighter cards,
   sessions, Lock in, the Doctore's drills, Trials of the Yard) and anything else it describes that changed; test it end to end.
   Not yet: a live online playtest with real players + tonlws77/tonlws80 on the real handler (needs `cd server && npm i ws`).
+- **EVENT BUS + LAYER MANAGER (his yes 2026-10-07, v0.93):** (1) EVENT BUS — one in-page `emit(name,data)` / `on(name,fn)` for game
+  happenings (turn began, hit, elimination, spear, round end, market buy, save, window opened…) so new features listen instead of wrapping
+  core functions (log/render/beginTurn wrappers today); wrappers stay where they are, new code uses the bus; perf92Mark, the error log and
+  online lockstep can subscribe. (2) LAYER MANAGER — one ordered list of canvas layers (sky, under, sand, tiles, decals/blood, pieces, FX,
+  top walls, night, UI marks) each with its own cache key + Off path, replacing the scattered draw() order + ad-hoc caches (192/194/208);
+  draw() asks each layer to paint or reuse; per-layer timings feed tv92p. Both behaviour-neutral: screenshots + tv91r/tv92p before/after.
 - **THREE.JS IN THE GAME (his yes 2026-10-07, v0.93):** the token modeller loads three.js ON DEMAND (from play/assets, only when the Studio's
   token modeller opens; cached by the browser after) — never bundled into the page. Matches never run 3D: the modeller renders each token once to
   the minis8 sprite-sheet format and the board keeps drawing flat images. The standalone download must still work (inline or skip the modeller there).
