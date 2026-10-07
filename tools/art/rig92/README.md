@@ -1,7 +1,9 @@
-# rig92 — posable 3D gladiator tokens (v0.92 groundwork)
+# rig92 — posable 3D gladiator tokens (v0.92 groundwork, in the game since v0.93)
 
-The procedural body + rig that becomes the standard token for every custom and online character in v0.93
-(printed classes keep their 3D minis). **Nothing here is wired into the game yet** — no `src/` or `build.sh` changes.
+The procedural body + rig behind the standard token of every Studio custom character (printed classes keep their 3D minis;
+online keeps the sculpted tokens until v0.94). **In the game since v0.93:** `node tools/art/rig92/mkgame.js` bundles rig.js +
+body.js + presets.js + gear.js + game.js into `assets/tok93.js` and three.js into `assets/three93.js` (both plain scripts, loaded
+on demand by src/222-v93token.js — re-run it after editing any of these files and commit the two assets).
 
 ## Run
 
@@ -22,6 +24,9 @@ make.js starts its own `python3 -m http.server` and drives headless Chromium (Pl
 | `presets.js` | Stand, Guard, Lunge, Victory, Defend, Taunt (specs: FK + pinned feet + wrist IK targets) |
 | `rig.html` | the editor + the render API (`renderSheet`, `renderHero`, `renderFront`, `footCheck`) |
 | `make.js` | headless renders → `out/<preset>_sheet.png`, `out/<preset>_hero.png`, `out/compare.png`, `out/meta.json` |
+| `gear.js` | v0.93: armor shells per equip point (cuirass, belt, manica, bracers, greaves, thigh plates, wraps, cestus) + rigid helmets / crests / cosmetic headgear / shields / weapons; custom pieces' 3D-able extras (studs, spikes, fur, neck guard, trim, paint); `makeGear(B).set(spec)` rebuilds only changed pieces |
+| `game.js` | v0.93: the engine the game uses — `createToken()` → `apply({look,gear,pose})`, `sheet()` (minis8 format), `facings()`, `editor(canvas)` (drag joints on a 2D canvas; one WebGL context), `presets`, `pins()` |
+| `mkgame.js` | v0.93: bundles the above into `assets/tok93.js` (window.TOK93LIB) and three into `assets/three93.js` (window.THREE93) |
 | `vendor/` | three.js r169 (`three.module.min.js`, MIT, see `vendor/LICENSE`) + `OrbitControls.js` |
 
 ## Space and scale
@@ -71,7 +76,14 @@ cut by a mask attribute (crisp edge + ink/hem bands in the shader), so they foll
 Body build ~4.1 s (field 2.1 s, mesh 0.5 s, weights 0.8 s, gear 0.7 s) → 171k verts / 343k tris.
 Sheet (8 facings ×4 supersampled) ~5–6 s, hero close-up ~0.8 s. On a real GPU the renders are a fraction of that.
 
-## Left for v0.93
+## Done in v0.93
+
+- `buildBodyAsync` (the same build cut into ~14 ms slices, so the Studio stays responsive), `setLook({skin,hair,hs,bs,fem,cloth})`
+  repaints skin/hair/cloth and shows hair styles (cap, crop, curly, crest, long, braid), beards (full, goatee, stache, stubble,
+  forked) and the gladiatrix's strophium, built lazily; `kit` + `kill` let gear.js add and remove shells and rigid bits.
+- The game builds at `res 0.005` (~107k verts, ~2.5–6 s on SwiftShader, far less on a GPU); a sheet is ss 2 + MSAA (~35–45 KB webp).
+
+## Still open (was: Left for v0.93)
 
 1. **Gear shells on bones**: printed armor/weapons modelled once (helmets on `he`, manica on `sL/eL`, greaves on `kL/aL`,
    shields/weapons in the hand on `wL/wR` with a grip pose), custom pieces from base shapes + the ARMOR EXTRAS (studs, spikes,

@@ -22,6 +22,8 @@ export const COL = {
   belt: [142, 73, 26], stud: [205, 200, 185], wrap: [140, 131, 114],
   loin: [210, 165, 75], hem: [120, 72, 34], strap: [79, 73, 65], sole: [138, 116, 90],
 };
+/* '#rrggbb' → [r,g,b] 0-255 (null when it is not one) */
+const hexRGB = (h) => { const m = /^#?([0-9a-f]{6})$/i.exec(String(h || '')); if (!m) return Array.isArray(h) ? h : null; const n = parseInt(m[1], 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
 const lin = (c) => { const k = new THREE.Color().setRGB(c[0] / 255, c[1] / 255, c[2] / 255, THREE.SRGBColorSpace); return [k.r, k.g, k.b]; };
 
 /* ---------- small vector helpers on arrays ---------- */
@@ -217,13 +219,15 @@ export function sculpt(opt = {}) {
 function smin(a, b, k) { if (k <= 0) return Math.min(a, b); const h = Math.max(k - Math.abs(a - b), 0) / k; return Math.min(a, b) - h * h * k * 0.25; }
 function smax(a, b, k) { return -smin(-a, -b, k); }
 
-function buildField(prims, h) {
+function* buildField(prims, h) {
   let lo = [1e9, 1e9, 1e9], hi = [-1e9, -1e9, -1e9];
   for (const p of prims) for (let i = 0; i < 3; i++) { lo[i] = Math.min(lo[i], p.box[0][i]); hi[i] = Math.max(hi[i], p.box[1][i]); }
   lo = lo.map(v => v - 2 * h); hi = hi.map(v => v + 2 * h);
   const nx = Math.ceil((hi[0] - lo[0]) / h) + 1, ny = Math.ceil((hi[1] - lo[1]) / h) + 1, nz = Math.ceil((hi[2] - lo[2]) / h) + 1;
   const N = nx * ny * nz; const F = new Float32Array(N).fill(1); const G = new Uint8Array(N);
+  let pn = 0;
   for (const p of prims) {
+    if ((++pn & 3) === 0) yield;
     const i0 = Math.max(0, Math.floor((p.box[0][0] - lo[0]) / h)), i1 = Math.min(nx - 1, Math.ceil((p.box[1][0] - lo[0]) / h));
     const j0 = Math.max(0, Math.floor((p.box[0][1] - lo[1]) / h)), j1 = Math.min(ny - 1, Math.ceil((p.box[1][1] - lo[1]) / h));
     const k0 = Math.max(0, Math.floor((p.box[0][2] - lo[2]) / h)), k1 = Math.min(nz - 1, Math.ceil((p.box[1][2] - lo[2]) / h));
@@ -256,14 +260,14 @@ function gradF(fd, x, y, z) {
 }
 
 /* surface nets: one vertex per sign-changing cell, one quad per sign-changing grid edge */
-function surfaceNets(fd) {
+function* surfaceNets(fd) {
   const { F, nx, ny, nz, lo, h } = fd; const sy = nx, sz = nx * ny;
   const vid = new Map(); const pos = []; const quads = [];
   const corner = [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 1], [0, 1, 1], [1, 1, 1]];
   const coff = corner.map(c => c[0] + sy * c[1] + sz * c[2]);
   const edges = [[0, 1], [2, 3], [4, 5], [6, 7], [0, 2], [1, 3], [4, 6], [5, 7], [0, 4], [1, 5], [2, 6], [3, 7]];
   const v = new Float32Array(8);
-  for (let k = 0; k < nz - 1; k++) for (let j = 0; j < ny - 1; j++) { let o = nx * (j + ny * k);
+  for (let k = 0; k < nz - 1; k++) { if ((k & 7) === 0) yield; for (let j = 0; j < ny - 1; j++) { let o = nx * (j + ny * k);
     for (let i = 0; i < nx - 1; i++, o++) {
       let m = 0; for (let c = 0; c < 8; c++) { v[c] = F[o + coff[c]]; if (v[c] < 0) m |= 1 << c; }
       if (m === 0 || m === 255) continue;
@@ -274,10 +278,12 @@ function surfaceNets(fd) {
         px += A[0] + (B[0] - A[0]) * t; py += A[1] + (B[1] - A[1]) * t; pz += A[2] + (B[2] - A[2]) * t; n++;
       }
       vid.set(o, pos.length / 3); pos.push(lo[0] + (i + px / n) * h, lo[1] + (j + py / n) * h, lo[2] + (k + pz / n) * h);
-    } }
+    } } }
   /* quads: every sign-changing grid edge at a cell's min corner; its 4 cells all hold vertices */
   const tri = [];
+  let qn = 0;
   for (const [o] of vid) {
+    if ((++qn & 32767) === 0) yield;
     const i = o % nx, j = Math.floor(o / nx) % ny, k = Math.floor(o / sz);
     const g0 = F[o] < 0;
     if (j > 0 && k > 0 && g0 !== (F[o + 1] < 0)) push([o, o - sy, o - sy - sz, o - sz], g0);
@@ -307,17 +313,24 @@ function hitSkin(fd, from, dir, maxd = 0.6) {
 }
 
 /* ================= build ================= */
-export function buildBody(opts = {}) {
+export function buildBody(opts = {}) { const g = buildSteps(opts); for (;;) { const r = g.next(); if (r.done) return r.value; } }
+/* the same build cut into slices of ~sliceMs so a page stays responsive (the game builds the body this way) */
+export async function buildBodyAsync(opts = {}, sliceMs = 14, onStep) {
+  const g = buildSteps(opts); let t = performance.now(), n = 0;
+  for (;;) { const r = g.next(); if (r.done) return r.value; if (performance.now() - t > sliceMs) { if (onStep) onStep(++n); await new Promise(ok => setTimeout(ok, 0)); t = performance.now(); } }
+}
+function* buildSteps(opts = {}) {
   const t0 = performance.now();
   const o = Object.assign({ res: 0.004, hair: 'cap', outline: 0.012 }, opts);
   const prims = sculpt(o);
-  const fd = buildField(prims, o.res);
+  const fd = yield* buildField(prims, o.res);
   const t1 = performance.now();
-  const sn = surfaceNets(fd);
+  const sn = yield* surfaceNets(fd);
   const t2 = performance.now();
   const nv = sn.pos.length / 3; const pos = new Float32Array(sn.pos); const nor = new Float32Array(nv * 3);
   /* project onto the surface, smooth normals from the field gradient */
   for (let i = 0; i < nv; i++) {
+    if ((i & 4095) === 4095) yield;
     let p = [pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]];
     for (let it = 0; it < 2; it++) { const f = sampleF(fd, ...p), g = gradF(fd, ...p); p = sub(p, mul(g, f)); }
     const g = gradF(fd, ...p);
@@ -329,6 +342,7 @@ export function buildBody(opts = {}) {
   const addPrims = prims.filter(p => p.op === 'add');
   const SIG = 0.010;
   for (let i = 0; i < nv; i++) {
+    if ((i & 2047) === 2047) yield;
     const x = pos[i * 3], y = pos[i * 3 + 1], z = pos[i * 3 + 2];
     const cand = []; let dmin = 1e9, gmin = 0;
     for (const p of addPrims) {
@@ -363,14 +377,16 @@ export function buildBody(opts = {}) {
   const eyeC = [1, -1].map(sx => add(HO, mul([sx * 0.031, 0.100, 0.080], hs)));
   const browL = [1, -1].map(sx => [add(HO, mul([sx * 0.050, 0.118, 0.080], hs)), add(HO, mul([sx * 0.030, 0.123, 0.095], hs)), add(HO, mul([sx * 0.011, 0.119, 0.099], hs))]);
   const ink = new Float32Array(nv);
+  const vk = new Uint8Array(nv);   /* what each vertex is painted as: 0 skin · 1 iris · 2 eye white · 3 brow · 4 lip (setLook repaints) */
   for (let i = 0; i < nv; i++) {
+    if ((i & 8191) === 8191) yield;
     const p = [pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]], n = [nor[i * 3], nor[i * 3 + 1], nor[i * 3 + 2]];
     let c = L.skin;
     if (grp[i] === GI.H) {
-      for (const ec of eyeC) { const d = Math.hypot(...sub(p, ec)); if (d < 0.0155 * hs) { const fwd = (p[2] - ec[2]) / d; c = fwd > 0.62 ? L.iris : L.eyeW; } }
-      for (const bl of browL) if (polyDist(p, bl) < 0.0050 * hs && n[2] > 0.2) c = L.brow;
+      for (const ec of eyeC) { const d = Math.hypot(...sub(p, ec)); if (d < 0.0155 * hs) { const fwd = (p[2] - ec[2]) / d; c = fwd > 0.62 ? L.iris : L.eyeW; vk[i] = fwd > 0.62 ? 1 : 2; } }
+      for (const bl of browL) if (polyDist(p, bl) < 0.0050 * hs && n[2] > 0.2) { c = L.brow; vk[i] = 3; }
       const ly = p[1] - HO[1];
-      if (Math.abs(p[0]) < 0.016 * hs && ly > 0.031 * hs && ly < 0.050 * hs && p[2] > 0.088 * hs + HO[2]) c = L.lip;
+      if (Math.abs(p[0]) < 0.016 * hs && ly > 0.031 * hs && ly < 0.050 * hs && p[2] > 0.088 * hs + HO[2]) { c = L.lip; vk[i] = 4; }
     }
     /* crease ink: how much the skin is hemmed in just above it */
     const e = grp[i] === GI.H ? 0.0065 : 0.011; const f = sampleF(fd, p[0] + n[0] * e, p[1] + n[1] * e, p[2] + n[2] * e) / e;
@@ -428,7 +444,7 @@ export function buildBody(opts = {}) {
     g.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(SI, 4)); g.setAttribute('skinWeight', new THREE.Float32BufferAttribute(SW, 4));
     g.setIndex(outTri);
     const m = new THREE.SkinnedMesh(g, opt2.hem ? hemMat(opt2.mat || mats.cloth, opt2.hem) : (opt2.mat || mats.cloth)); m.name = name; m.bind(skeleton, body.bindMatrix); m.frustumCulled = false;
-    group.add(m); addOutline(m, true); shellParts.push(m); return m;
+    group.add(m); m.userData.ink = addOutline(m, true); shellParts.push(m); return m;
   };
   /* where the harness runs: polylines found on the skin */
   const front = (x, y) => hitSkin(fd, [x, y, 0.35], [0, 0, -1]);
@@ -449,7 +465,7 @@ export function buildBody(opts = {}) {
     return m;
   };
   const leather = (p, m) => { const hi = (Math.sin(p[0] * 210 + p[1] * 160) * 0.5 + 0.5) * 0.25; return lerp(L.harness, L.harnessHi, hi); };
-  shellFrom('harness', harnessMask, leather, 0.0055, { mat: mats.leather });
+  yield; const harnessBits = [shellFrom('harness', harnessMask, leather, 0.0055, { mat: mats.leather })]; yield;
 
   const beltY = (p) => 1.080 - 0.010 * Math.max(0, Math.min(1, p[2] / 0.09));
   shellFrom('belt', (p, g) => g === GI.T ? 0.027 - Math.abs(p[1] - beltY(p)) : -1,
@@ -471,9 +487,9 @@ export function buildBody(opts = {}) {
     return ((Math.abs(p[0]) - vA[0]) * dy - (p[1] - vA[1]) * dx) / l;
   };
   const loinCol = (p, m) => {
-    const fold = Math.sin(Math.atan2(p[0], p[2]) * 14 + p[1] * 30) * 0.5 + 0.5; return lerp(L.loin, mul(L.loin, 0.86), fold * (Math.abs(p[0]) > 0.09 ? 0.8 : 0.25));
+    const fold = Math.sin(Math.atan2(p[0], p[2]) * 14 + p[1] * 30) * 0.5 + 0.5; return lerp([1, 1, 1], [0.86, 0.86, 0.86], fold * (Math.abs(p[0]) > 0.09 ? 0.8 : 0.25));   /* neutral folds: the colour is the material's (setLook) */
   };
-  shellFrom('loincloth', loinMask, loinCol, (p, m) => 0.0065 + Math.max(0, Math.abs(p[0]) - 0.1) * 0.12, { mat: mats.cloth, band: vBand, hem: { w: 0.009, col: COL.hem, bw: 0.0032, bcol: COL.hem } });
+  yield; const loin = shellFrom('loincloth', loinMask, loinCol, (p, m) => 0.0065 + Math.max(0, Math.abs(p[0]) - 0.1) * 0.12, { mat: mats.cloth, band: vBand, hem: { w: 0.009, col: COL.hem, bw: 0.0032, bcol: COL.hem } });
 
   /* sandal straps: helices up the shin crossing at front and back, a band below the knee, foot straps */
   const shin = { L: [P('kL'), P('aL')], R: [P('kR'), P('aR')] };
@@ -502,34 +518,61 @@ export function buildBody(opts = {}) {
     }
     return m;
   };
-  shellFrom('sandals', sandalMask, (p, m) => lerp(L.strap, mul(L.strap, 1.25), (Math.sin(p[1] * 400) * 0.5 + 0.5) * 0.2), 0.0048, { mat: mats.leather });
+  yield; shellFrom('sandals', sandalMask, (p, m) => lerp(L.strap, mul(L.strap, 1.25), (Math.sin(p[1] * 400) * 0.5 + 0.5) * 0.2), 0.0048, { mat: mats.leather });
 
-  if (o.hair === 'cap') {
-    const hairMask = (p, g, n) => {
-      if (g !== GI.H) return -1;
-      const lp = sub(p, HO).map(v => v / hs); const th = Math.atan2(Math.abs(lp[0]), lp[2]);  /* 0 front, π back */
-      const line = th < 0.9 ? 0.186 - th * 0.035 : th < 1.9 ? 0.154 - (th - 0.9) * 0.07 : 0.084 - (th - 1.9) * 0.03;
-      let m = lp[1] - line;
-      if (Math.abs(lp[0]) > 0.066 && lp[1] < 0.125 && lp[1] > 0.045 && lp[2] > -0.04 && lp[2] < 0.02) m = Math.min(m, -0.001);
-      return m;
-    };
-    shellFrom('hair', hairMask, (p) => lerp(L.hair, mul(L.hair, 1.3), (Math.sin(p[0] * 600 + p[2] * 300) * 0.5 + 0.5) * 0.4), (p, m) => 0.0045 + Math.min(0.006, Math.max(0, m) * 0.25), { mat: mats.hair });
-  }
+  loin.material.color.setRGB(...L.loin);
+  /* ---------- hair, beards, the strophium: shells made the first time a look asks for them (setLook) ---------- */
+  const hl = (p) => sub(p, HO).map(v => v / hs);   /* head-local, unscaled */
+  const capLine = (lp) => { const th = Math.atan2(Math.abs(lp[0]), lp[2]); return th < 0.9 ? 0.186 - th * 0.035 : th < 1.9 ? 0.154 - (th - 0.9) * 0.07 : 0.084 - (th - 1.9) * 0.03; };
+  const noEars = (lp, m) => (Math.abs(lp[0]) > 0.066 && lp[1] < 0.125 && lp[1] > 0.045 && lp[2] > -0.04 && lp[2] < 0.02) ? Math.min(m, -0.001) : m;
+  const hairCol = (p) => lerp([0.74, 0.74, 0.74], [1, 1, 1], (Math.sin(p[0] * 600 + p[2] * 300) * 0.5 + 0.5) * 0.7);
+  const mouthCut = (lp, m) => { const d = Math.max(Math.abs(lp[0]) - 0.019, Math.abs(lp[1] - 0.041) - 0.012, 0.068 - lp[2]); return d < 0 ? Math.min(m, d) : m; };
+  const HAIR = {
+    cap: () => shellFrom('hair', (p, g) => g !== GI.H ? -1 : noEars(hl(p), hl(p)[1] - capLine(hl(p))), hairCol, (p, m) => 0.0045 + Math.min(0.006, Math.max(0, m) * 0.25), { mat: mats.hair }),
+    crop: () => shellFrom('hair_crop', (p, g) => g !== GI.H ? -1 : noEars(hl(p), hl(p)[1] - capLine(hl(p)) - 0.014), hairCol, 0.0028, { mat: mats.hair }),
+    curly: () => shellFrom('hair_curly', (p, g) => g !== GI.H ? -1 : noEars(hl(p), hl(p)[1] - capLine(hl(p)) + 0.004), hairCol,
+      (p, m) => 0.006 + 0.0045 * (Math.sin(p[0] * 520) * Math.sin(p[1] * 480) * Math.sin(p[2] * 560) * 0.5 + 0.5) + Math.min(0.005, Math.max(0, m) * 0.2), { mat: mats.hair }),
+    crest: () => shellFrom('hair_crest', (p, g) => { if (g !== GI.H) return -1; const lp = hl(p); return Math.min(0.02 - Math.abs(lp[0]), lp[1] - 0.105); }, hairCol,
+      (p, m) => 0.004 + Math.max(0, m) * 1.25, { mat: mats.hair }),
+    long: () => shellFrom('hair_long', (p, g) => {
+      if (g === GI.H) { const lp = hl(p); let m = lp[1] - capLine(lp); if (lp[2] < -0.005 && lp[1] > -0.04) m = Math.max(m, Math.min(-lp[2] - 0.005, lp[1] + 0.04)); return noEars(lp, m); }
+      if (g === GI.T && p[2] < -0.03 && p[1] > 1.36 && p[1] < 1.66) return Math.min(0.105 - Math.abs(p[0]) - (1.66 - p[1]) * 0.12, p[1] - 1.36 - Math.abs(p[0]) * 0.25);
+      return -1; }, hairCol, (p, m) => 0.0055 + Math.min(0.007, Math.max(0, m) * 0.3), { mat: mats.hair }),
+  };
+  HAIR.braid = () => { const m = HAIR.cap(); const bits = [m];
+    for (let i = 0; i < 6; i++) { const r = 0.017 - i * 0.0017; bits.push(rigid(new THREE.SphereGeometry(r, 10, 8), mats.hair, 'he', add(HO, mul([0, 0.10 - i * 0.034, -0.105 - i * 0.004], hs)))); }
+    return bits; };
+  const BEARD = {
+    full: () => shellFrom('beard', (p, g) => { if (g !== GI.H) return -1; const lp = hl(p); let m = Math.min(0.076 - lp[1], lp[2] + 0.028, lp[1] + 0.034);
+      if (lp[1] < 0.11 && Math.abs(lp[0]) > 0.05 && lp[2] > -0.025 && lp[2] < 0.045) m = Math.max(m, Math.min(0.11 - lp[1], 0.045 - lp[2]) * 0.5);
+      return mouthCut(lp, m); }, hairCol, (p, m) => 0.0035 + Math.min(0.006, Math.max(0, m) * 0.18), { mat: mats.hair }),
+    goatee: () => shellFrom('beard_goatee', (p, g) => { if (g !== GI.H) return -1; const lp = hl(p); return mouthCut(lp, Math.min(0.026 - Math.abs(lp[0]), 0.06 - lp[1], lp[2] - 0.035)); }, hairCol, 0.0045, { mat: mats.hair }),
+    stache: () => shellFrom('beard_stache', (p, g) => { if (g !== GI.H) return -1; const lp = hl(p); return Math.min(0.03 - Math.abs(lp[0]) - Math.max(0, lp[1] - 0.06) * 0.6, 0.0085 - Math.abs(lp[1] - 0.0585), lp[2] - 0.07); }, hairCol, 0.0035, { mat: mats.hair }),
+    stubble: () => shellFrom('beard_stubble', (p, g) => { if (g !== GI.H) return -1; const lp = hl(p); return mouthCut(lp, Math.min(0.072 - lp[1], lp[2] + 0.025, lp[1] + 0.03)); }, hairCol, 0.0012, { mat: mats.stubble }),
+  };
+  BEARD.forked = () => { const m = BEARD.full(); const bits = [m];
+    for (const sx of [1, -1]) { const at = add(HO, mul([sx * 0.016, -0.012, 0.072], hs)); const c = rigid(new THREE.ConeGeometry(0.012, 0.05, 8), mats.hair, 'he', at); c.rotation.set(Math.PI, 0, sx * 0.25); bits.push(c); }
+    return bits; };
+  const strophium = () => shellFrom('strophium', (p, g) => g === GI.T ? Math.min(p[1] - 1.285, 1.43 - p[1], 0.175 - Math.abs(p[0])) : -1,
+    (p) => lerp([1, 1, 1], [0.85, 0.85, 0.85], (Math.sin(p[0] * 160 + p[1] * 90) * 0.5 + 0.5) * 0.5), 0.0075, { mat: mats.strophium, hem: { w: 0.006, col: COL.hem, bw: 0, bcol: COL.hem } });
+  const looks = {};   /* built look shells by key → [meshes] */
+  const lookPart = (key, make) => { if (!looks[key]) looks[key] = [].concat(make()); return looks[key]; };
+  const showAll = (L2, on) => { for (const m of L2) { m.visible = on; if (m.userData.ink) m.userData.ink.visible = on; } };
 
   /* ---------- rigid bits riding a bone ---------- */
   const rigid = (geo2, mat, boneKey, at, lookN) => {
     const m = new THREE.Mesh(geo2, mat); const b = rig.bones[boneKey]; const bp = P(boneKey);
     m.position.set(at[0] - bp[0], at[1] - bp[1], at[2] - bp[2]);
     if (lookN) m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(...lookN).normalize());
-    b.add(m); addOutline(m, false); return m;
+    b.add(m); m.userData.ink = addOutline(m, false); return m;
   };
   const nAt = (p) => gradF(fd, ...p);
-  if (RING) rigid(new THREE.TorusGeometry(0.020, 0.0055, 8, 24), mats.metal, 'ch', add(RING, [0, 0, 0.008]), [0, 0.1, 1]);
-  if (BRING) rigid(new THREE.TorusGeometry(0.018, 0.005, 8, 20), mats.metal, 'ch', add(BRING, mul(nAt(BRING), 0.010)), nAt(BRING));
+  if (RING) harnessBits.push(rigid(new THREE.TorusGeometry(0.020, 0.0055, 8, 24), mats.metal, 'ch', add(RING, [0, 0, 0.008]), [0, 0.1, 1]));
+  if (BRING) harnessBits.push(rigid(new THREE.TorusGeometry(0.018, 0.005, 8, 20), mats.metal, 'ch', add(BRING, mul(nAt(BRING), 0.010)), nAt(BRING)));
   for (const s of straps) {   /* a square buckle part-way up each front strap */
     const i = s.findIndex(p => p[1] > 1.395); if (i < 1) continue; const hit = s[i], prev = s[i - 1];
     const bk = rigid(new THREE.TorusGeometry(0.017, 0.0035, 4, 4), mats.metal, 'ch', add(hit, mul(nAt(hit), 0.010)), nAt(hit));
-    bk.rotateZ(Math.PI / 4 + Math.atan2(hit[1] - prev[1], hit[0] - prev[0]));
+    bk.rotateZ(Math.PI / 4 + Math.atan2(hit[1] - prev[1], hit[0] - prev[0])); harnessBits.push(bk);
   }
   const BF = front(0, beltY([0, 0, 0.1]) - 0.02);
   if (BF) rigid(new THREE.TorusGeometry(0.031, 0.0072, 10, 28), mats.iron, 'pe', add(BF, [0, 0, 0.021]), [0, -0.15, 1]);
@@ -554,8 +597,43 @@ export function buildBody(opts = {}) {
 
   const setOutline = (w) => { for (const m of outlines) m.material.userData.u.value = w; mats.out.userData.u.value = w; };
   setOutline(o.outline);
+
+  /* ---------- the look: skin, hair, beard, cloth colour, the gladiatrix's strophium ---------- */
+  const colA = geo.attributes.color, iris = L.iris, eyeW = L.eyeW;
+  let lookNow = null;
+  const setLook = (lk = {}) => {
+    const skin = lin(hexRGB(lk.skin) || COL.skin), hair = lin(hexRGB(lk.hair) || COL.hair);
+    const brow = mul(hair, 0.75), lip = [skin[0] * 0.95, skin[1] * 0.72, skin[2] * 0.7];
+    const k = (lk.skin || '') + '|' + (lk.hair || '');
+    if (!lookNow || lookNow.k !== k) {
+      const A = colA.array;
+      for (let i = 0; i < nv; i++) { const c = vk[i] === 0 ? skin : vk[i] === 1 ? iris : vk[i] === 2 ? eyeW : vk[i] === 3 ? brow : lip; A[i * 3] = c[0]; A[i * 3 + 1] = c[1]; A[i * 3 + 2] = c[2]; }
+      colA.needsUpdate = true;
+    }
+    mats.hair.color.setRGB(...hair); mats.stubble.color.setRGB(...lerp(hair, skin, 0.55));
+    loin.material.color.setRGB(...lin(hexRGB(lk.cloth) || COL.loin));
+    const hs2 = lk.hs === 'bald' ? null : HAIR[lk.hs] ? lk.hs : 'cap', bs2 = BEARD[lk.bs] ? lk.bs : null;
+    for (const key in looks) showAll(looks[key], false);
+    if (hs2) showAll(lookPart('h:' + hs2, HAIR[hs2]), true);
+    if (bs2) showAll(lookPart('b:' + bs2, BEARD[bs2]), true);
+    if (lk.fem) { const st = lookPart('strophium', strophium); st[0].material.color.setRGB(...lin(hexRGB(lk.band) || [230, 220, 196])); showAll(st, true); }
+    showAll(harnessBits, !lk.fem && !lk.noHarness);
+    lookNow = { k, lk };
+  };
+  /* take a shell or rigid bit off again (gear changes) */
+  const kill = (m) => {
+    if (!m) return; const ink = m.userData.ink;
+    for (const x of [m, ink]) { if (!x) continue; if (x.parent) x.parent.remove(x); const i = outlines.indexOf(x); if (i >= 0) outlines.splice(i, 1); const j = shellParts.indexOf(x); if (j >= 0) shellParts.splice(j, 1); }
+    if (m.geometry) m.geometry.dispose(); if (m.userData.ownMat && m.material) m.material.dispose(); if (ink && ink.material) ink.material.dispose();
+  };
+  /* what gear.js builds with */
+  const kit = { shellFrom, rigid, kill, nAt, P, GI, HO, hs, mats, lin, hexRGB, showAll,
+    makeToon: (c, ex) => toonMat(c, mats, ex),
+    maskedMat: (ex) => maskedToon(Object.assign({ vertexColors: true, gradientMap: mats.gm, side: THREE.DoubleSide }, ex || {}), 0.0024),
+    hitSkin: (from, dir, maxd) => hitSkin(fd, from, dir, maxd), rig, group, setHarness: (on) => showAll(harnessBits, on) };
+  setLook({ hs: o.hair === 'none' ? 'bald' : 'cap' });
   const t4 = performance.now();
-  return { group, body, rig: Object.assign(rig, { skeleton, space: group }), setOutline, shells: shellParts, mats,
+  return { group, body, rig: Object.assign(rig, { skeleton, space: group }), setOutline, shells: shellParts, mats, setLook, kit,
     stats: { verts: nv, tris: sn.tri.length / 3, grid: [fd.nx, fd.ny, fd.nz], ms: { field: t1 - t0, mesh: t2 - t1, weights: t3 - t2, rest: t4 - t3, total: t4 - t0 } } };
 }
 
@@ -597,6 +675,8 @@ diffuseColor.rgb = mix(diffuseColor.rgb, uInkCol, smoothstep(0.50, 0.58, vCav) *
   m.customProgramCacheKey = () => 'inkedSkin';
   return m;
 }
+/* a plain toon material in an sRGB colour (gear) */
+function toonMat(c, mats, extra = {}) { const k = new THREE.Color(c); return new THREE.MeshToonMaterial(Object.assign({ color: k, gradientMap: mats.gm }, extra)); }
 function makeMaterials(o) {
   const gm = ramp();
   const toon = (c, extra = {}) => new THREE.MeshToonMaterial(Object.assign({ color: new THREE.Color().setRGB(...lin(c)), gradientMap: gm }, extra));
@@ -607,6 +687,9 @@ function makeMaterials(o) {
     hair: maskedToon({ vertexColors: true, gradientMap: gm, side: THREE.DoubleSide }, 0.0),
     metal: toon(COL.metal), bronze: toon(COL.bronze), sole: toon(COL.sole), iron: toon(COL.metalDark), stud: toon(COL.stud),
   };
+  mats.stubble = maskedToon({ vertexColors: true, gradientMap: gm, side: THREE.DoubleSide, transparent: true, opacity: 0.55 }, 0.0);
+  mats.strophium = maskedToon({ vertexColors: true, gradientMap: gm, side: THREE.DoubleSide }, 0.0024);
+  mats.gm = gm;
   mats.out = new THREE.MeshBasicMaterial({ color: 0x120c0a });
   mats.out.userData.u = { value: o.outline };
   return mats;
