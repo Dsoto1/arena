@@ -26,6 +26,10 @@ const MATCH=async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MO
   out.tasks0=await pg.evaluate(()=>PERF92.tasks.length);if(out.tasks0<20)miss.push('sweeps not managed: '+out.tasks0);
   out.phase=await pg.evaluate(MATCH);await pg.waitForTimeout(3000);
   out.activeBusy=await busy(P,10000);
+  /* v0.93 the layer manager (219-v93layers): per-layer draw times on the paused match (printed; the run must be in order) */
+  out.layers93=await pg.evaluate(()=>{if(typeof LAYERS93==='undefined')return null;LAYERS93.reset();const t0=performance.now();for(let i=0;i<30;i++)draw();const R=LAYERS93.report();
+    return {on:R.on,frames:R.frames,orderErr:R.orderErr,unknown:R.unknown,drawMs:+((performance.now()-t0)/30).toFixed(2),rows:R.rows.map(x=>x.cached?`${x.name} ${x.hits}/${x.misses} paint ${x.paintMs} blit ${x.blitMs}`:`${x.name} ${x.avg} (max ${x.max})`)}});
+  if(out.layers93){const L=out.layers93;console.log('layers93 ms/frame '+L.drawMs+' — '+L.rows.join(' · '));if(!(L.on&&L.frames>=30))miss.push('layer manager did not run '+JSON.stringify(L));if(L.orderErr||L.unknown)miss.push('layers out of order '+L.orderErr+'/'+L.unknown)}
   await pg.evaluate(()=>{PERF92.lastInput=PERF92.lastAct=performance.now()-PERF92_IDLE_MS-5000;perf92Beat(true)});await pg.waitForTimeout(1500);
   out.idle=await pg.evaluate(()=>PERF92.idle&&document.body.classList.contains('idle92'));if(!out.idle)miss.push('idle mode did not start');
   out.idleBusy=await busy(P,10000);
