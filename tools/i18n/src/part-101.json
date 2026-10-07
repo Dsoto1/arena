@@ -1,0 +1,30 @@
+[
+ {
+  "k": "A steadier arena",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Faster play: the panels no longer redraw their pictures, speed changes take effect at once",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Manager: up to 3 starters, one per bout; the Armory is its own tab; a hurt fighter’s gear waits on the shelf",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Team rings, damage numbers above the bubbles, Focus dice with the printed faces",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Studio: live card previews, Both sides in the fit tool, shields with clear rules, “Your characters” in Play Now",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Trade offers whose fighter is gone are withdrawn; a special week ends like any other; many Studio and board fixes",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "arena · v0.95",
+  "w": "01-head.html"
+ }
+]
