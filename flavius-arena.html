@@ -51445,7 +51445,9 @@ function inj95Sweep(){try{const w=W_(),pm=me();if(!w||!pm||w.dead)return 0;let n
   return n}catch(e){console.error(e);return 0}}
 {const base=applyBout;applyBout=function(){const r=base.apply(this,arguments);inj95Sweep();return r}}
 function re95Ids(g){const pm=me();const H=arm94H(pm);return (g.re95||[]).filter(id=>H.sh.some(P=>P.id===id))}
-function re95Do(g){const pm=me();let n=0;for(const id of re95Ids(g)){const r=arm94Put(pm,id,{g:g.id,z:'auto'});if(r&&r.ok)n++}delete g.re95;return n}
+function re95Do(g){const pm=me();let n=0;for(const id of re95Ids(g)){const at=arm94Find(pm,id);const P=at&&at.P;let r;
+    if(P&&P.dmg&&P.t==='a'&&g.eq94){/* a damaged piece he wore goes back on as it was (arm94Fit refuses damaged pieces from the shelf; bouts skip it until repaired) */arm94Detach(pm,at);if(P.loc==null)delete P.loc;g.eq94.a.push(P);r={ok:1}}
+    else r=arm94Put(pm,id,{g:g.id,z:'auto'});if(r&&r.ok)n++}delete g.re95;return n}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-re95]');if(!b)return;e.stopPropagation();e.preventDefault();const g=gById(b.dataset.re95);if(!g)return;const n=re95Do(g);
   if(typeof mToast==='function')mToast(n?_T`🛡 ${esc(g.name)} is equipped again.`:_T`Nothing of his is left on the shelf.`);saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
 {const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const pm=me(),w=W_();if(!pm||!w)return I;
