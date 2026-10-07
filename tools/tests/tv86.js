@@ -52,7 +52,7 @@ const sweep=async(where)=>P.evaluate(([where,WL])=>{
   const names=new Set(GAME_TERMS);
   const vis=el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&getComputedStyle(el).visibility!=='hidden'};
   const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);const left=new Map();let n,tot=0;
-  while((n=w.nextNode())){const p=n.parentElement;if(!p||/^(SCRIPT|STYLE|TEXTAREA|OPTION|TITLE)$/.test(p.tagName)||p.closest('[translate="no"],svg,#log'))continue;
+  while((n=w.nextNode())){const p=n.parentElement;if(!p||/^(SCRIPT|STYLE|TEXTAREA|OPTION|TITLE)$/.test(p.tagName)||p.closest('[translate="no"],svg,#log,.sr93'))continue;
     const t=n.data.replace(/\s+/g,' ').trim();if(t.length<8||!/[a-z]{3}/.test(t))continue;if(!vis(p))continue;tot++;
     const ws=t.toLowerCase().match(/[a-záéíóúñüàèìòùâêîôûçãõäöß']+/g)||[];const en=ws.filter(x=>EN.has(x)).length,es=ws.filter(x=>ES.has(x)).length;
     if(en>=2&&en>es&&!(/^(ja|zh)$/.test(WL)&&/[\u3040-\u30ff\u4e00-\u9fff]/.test(t)))left.set(t.slice(0,90),(left.get(t.slice(0,90))||0)+1)}

@@ -956,6 +956,13 @@ share copy — the site download play/flavius-rule-arena.zip.)
   day the lots outlive the week, so last week's six show beside the new six — the test now runs mid-week). Laurels + rubble landed after the
   snapshot: covered by ttoss / tv91w.
 
+- **v0.93** 3D tokens you pose yourself (token modeller in the Character designer, auto-converted characters, three.js on demand), keyboard play +
+  screen-reader summary + focus handling + contrast (30 → 1 below AA), the Manager lesson teaches the new Training Yard, event bus + layer manager
+  (pixel-identical), online hardening (a request id per paying route, a rate limit, codes + values for server texts, no raw errors, refs), pseudoloc +
+  key checks, docs/. (Published as artifact Version 107; server changes — `bash flavius.sh release` deploys it from GitHub.) Release run (REGJ=3):
+  236/239 + tonl83u/tv91n flaky (passed alone) + tv87l (Italian walk counted the new screen-reader text as leftover English — the walker now skips
+  .sr93; 5 languages green).
+
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
   8 printed classes move to the live template (104-cards74 classCard74) so rule changes update their cards. Art NOT drawn yet (optional,
