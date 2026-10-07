@@ -1282,7 +1282,7 @@ share copy — the site download play/flavius-rule-arena.zip.)
   corners 1–4 / team colours, printed + custom beasts, Zora) · Zones (paint each round's area, a colour per round); bottom (log area) = tools:
   round strip (R1..Rn cards: zone, PvE/PvP/CF/CA, end, reward; click → its zone), deck slots (Tholo + 3), music, live checks list (click → the
   tile), Undo/Redo; step tabs Basics · Rounds · Rules · Finish stay on top for text settings; drag/right-click on desktop, tap-to-stamp +
-  long-press remove on phones; old custom events open unchanged. NO mirror switch, NO Test play (his "7 no, place by hand").
+  long-press remove on phones; old custom events open unchanged. NO mirror switch (his "place by hand"); ▶ Test play YES (his later word): a quick all-CPU game of the unsaved draft, no records, back to the designer unchanged.
   (2) MANAGER ARMORY — a house Armory (Storeroom) of owned weapons/armor/offerings; the Roster works like the Domus (plaque → avatar wearing
   the gear + shelf, drag onto body/hands and between fighters, fits/replaces + stacking rules); 1a a signed fighter brings his class loadout as
   owned pieces; 2a a dead fighter's gear returns to the Armory minus what broke; 3a the one-week City Square kits are replaced (offerings = the
