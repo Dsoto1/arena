@@ -1402,8 +1402,10 @@ share copy — the site download play/flavius-rule-arena.zip.)
   lock proportions, random default colour (not always yellow), check height/width sliders (may be swapped), snap ticks on sliders game-wide.
   Custom weapons: ≤4 icons; "A shield?" checkbox → must have Absorb, optional Attack power + Range, + one other (4 max); BUG: icons picked
   before ticking shield stay on the preview AND the saved weapon. Play Now: The Stands personality dropdown stays open (bug); characters on
-  the rolls can't be found for CPU seats with "All my creations" (bug) + an easy way to seat them (pending his pick). Pending his answers:
-  low-rating penalties, editing characters already on the rolls, seat picker for creations.
+  the rolls can't be found for CPU seats with "All my creations" (bug) + an easy way to seat them (pending his pick). HIS ANSWERS: 1a Studio ratings 40–99, below 60 = Poor: Speed −1 move,
+  Strength −1 dmg (min 1), Luck −1 coin every other turn, Charisma −1 CF every other turn, Intelligence = weaker CPU mind; 2a characters on the
+  rolls stay editable — running careers + saved matches keep the version they started with, new events use the edit; 3a each Play Now seat
+  picker gets a "Your characters" tab (roster-set filtered, seat as You or CPU) + "🎲 Fill CPU seats with my characters".
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
