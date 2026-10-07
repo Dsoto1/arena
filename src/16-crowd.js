@@ -1027,7 +1027,7 @@ function menagerieHTML(){
     return `<div class="lrow" style="--pc:${T.col}">${(tokenStyle()==='figure'&&TOKEN_DEF[k])?figureHTML(tokenForNPC({t:k}),54):TYPE_STANDEE[k]&&tokenStyle()==='standee'?standeeHTML(TYPE_STANDEE[k],54):`<span class="bglyph" style="background:${T.col}">${T.g}</span>`}${typeof NPC_TOK!=='undefined'&&NPC_TOK[k]?rtokHTML(NPC_TOK[k][0],44,T.n):''}<div class="t">${_T`<b>${T.n}</b>${live?` <span class="badge gold">${_T`${live} on the sand now`}</span>`:''}${T.tameable?' <span class="badge">tameable</span>':''}
       <small>${BEAST_LORE[k]||_T('A creature of the editor\u2019s menagerie.')}</small>
       <small>HP ${T.hp} · ATK ${T.ap} · MV ${T.mv} · worth ${coinAmt87(T.coin)}, ${cfAmt87(T.cf)}${T.states?_T(' · behavior states'):''}</small>
-      <small><b>The ledger:</b> ${B.slain} slain in your events · ${B.ate} gladiator${B.ate===1?'':'s'} eaten · ${B.tamed?B.tamed+' tamed':_T('never tamed')}</small>`}</div></div>`};
+      <small><b>The ledger:</b> ${B.slain} slain in your events · ${B.ate} gladiator${B.ate===1?'':'s'} ${ate95(k)} · ${B.tamed?B.tamed+' tamed':_T('never tamed')}</small>`}</div></div>`};
   return `<div class="setup-grid">
     <div>${S?`<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">${cardHTML('e:'+S.evKey,'sm')}<div><b>${esc(EV().n)}</b><div class="rc-sub">${_T`Round ${S.ri+1}: ${esc(rd.n)} · ${rd.pvp?_T('PvP'):_T('no PvP')} · ${rd.pve?_T('PvE'):_T('no PvE')}${S.endgame?_T(' · <b style=\"color:var(--gold2)\">END GAME</b>'):''}`}</div></div></div>
       <div class="sect" style="margin-top:0">${_T`On the sand now`}</div><div id="npcDrawer">${typeof npcTrackerHTML==='function'?npcTrackerHTML():''}</div>
@@ -1037,7 +1037,7 @@ function menagerieHTML(){
     <div>${cityBeastsHTML(S?S.locIdx:(typeof CFG!=='undefined'?CFG.loc:6))}
       <div class="sect" style="margin-top:0">${_T`📖 The Bestiary`} <span class="rc-sub">${_T`its ledgers survive every event`}</span></div>
       <div class="list2" style="grid-template-columns:minmax(0,1fr)">${Object.entries(NPCT).filter(([k])=>!k.startsWith('cn_')).map(([k,T])=>bestRow(k,T)).join('')}
-      ${custom.length?custom.map(n=>`<div class="lrow" style="--pc:#8a5cc0"><span class="bglyph" style="background:#8a5cc0">✦</span><div class="t"><b>${esc(n.name)}</b> <span class="cbadge">✦ custom</span>${_T`<small>${esc(n.bio||_T('A beast of your own devising (Creator Studio).'))}</small><small>HP ${n.hp} · ATK ${n.atk||n.ap||'?'} · MV ${n.mv}</small><small><b>The ledger:</b> ${(BESTIARY['cn_'+n.id]||{}).slain||0} slain · ${(BESTIARY['cn_'+n.id]||{}).ate||0} gladiator${(BESTIARY['cn_'+n.id]||{}).ate===1?'':'s'} eaten · ${(BESTIARY['cn_'+n.id]||{}).tamed||0} tamed</small>`}</div></div>`).join(''):''}</div></div>
+      ${custom.length?custom.map(n=>`<div class="lrow" style="--pc:#8a5cc0"><span class="bglyph" style="background:#8a5cc0">✦</span><div class="t"><b>${esc(n.name)}</b> <span class="cbadge">✦ custom</span>${_T`<small>${esc(n.bio||_T('A beast of your own devising (Creator Studio).'))}</small><small>HP ${n.hp} · ATK ${n.atk||n.ap||'?'} · MV ${n.mv}</small><small><b>The ledger:</b> ${(BESTIARY['cn_'+n.id]||{}).slain||0} slain · ${(BESTIARY['cn_'+n.id]||{}).ate||0} gladiator${(BESTIARY['cn_'+n.id]||{}).ate===1?'':'s'} ${ate95(n)} · ${(BESTIARY['cn_'+n.id]||{}).tamed||0} tamed</small>`}</div></div>`).join(''):''}</div></div>
   </div>`;
 }
 /* v0.46: every city's beasts in one scrollable list — the chosen city first, and anything on the sand right now

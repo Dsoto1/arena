@@ -109,7 +109,7 @@ function sponsorStart(cfg){if(!S)return;const ev=EV();S.sponsorId=ev&&ev.custom&
 // after an event: a human win at a new city unlocks its patron
 async function sponsorAfterEvent(hall){const before=new Set(HALL_LOCS);HALL_LOCS=(hall&&hall.locs)||HALL_LOCS;
   for(const li of HALL_LOCS)if(!before.has(li)&&CITY_SPONSORS[li]&&typeof mToast==='function'){const sp=CITY_SPONSORS[li];setTimeout(()=>mToast(_T`🎭 <b>${esc(sp.name)}</b>, editor of ${esc(sp.city)}, is unlocked — seat them in Settings → Editors to have them give the games there`),1600)}
-  if(before.size<12&&creatorUnlocked()&&typeof mToast==='function')setTimeout(()=>mToast(_T('🎭 You have won in all twelve cities — the <b>Editor creator</b> is open in the Creator Studio!')),3400)}
+  if(before.size<12&&creatorUnlocked()&&!DEV_KEY()&&typeof mToast==='function'&&edTold95()){setTimeout(()=>mToast(_T('🎭 You have won in all twelve cities — the <b>Editor creator</b> is open in the Creator Studio!')),3400)}} /* v0.95: told once (edTold95 in 227-v95board), never after every event */
 /* sponImg — a sponsor's face image in a mood. */
 const sponImg=(sponsor,mood='calm')=>`<img class="sponimg" src="${flavFaceURL(mood,sponsor)}" alt="${esc(sponsor.name)}">`;
 /* sponsorSettingsHTML — Settings → Editors: who sponsors each unlocked city. */

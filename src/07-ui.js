@@ -2371,12 +2371,12 @@ function drawPlayer(player) {
     ctx.stroke();
   }
 }
-/* teamColor — ring color for a team letter (gold if unknown). TWEAK: the team colors. */
+/* teamColor — ring color for a team letter (gold if unknown). v0.95: A–D are fixed Okabe–Ito-style hues (blue, orange, green, pink) that stay apart in the colour-blind modes. TWEAK: the team colors. */
 const teamColor = target => ({
-  A: '#e0a33a',
-  B: '#6fb0e6',
-  C: '#9bd070',
-  D: '#d07ad0',
+  A: '#4aa8e8',
+  B: '#f0a020',
+  C: '#2fc79a',
+  D: '#e07ab5',
   J: '#ff6a55',
   T: '#6fb0e6'
 })[target] || '#f0cf7d';

@@ -26,7 +26,7 @@ function classCard74(k,ch){k=k||{};const x=esc;const col=k.color||'#b0271c';cons
     return `[${g.a.ap} AP] ${part}${where}${pair?_T(' *For each'):''}${bo}`});
   const abil=(k.abilText?k.abilText+': ':'')+(k.abil&&k.abil!=='none'?abilDesc(k.abil,k.abilVal||1)+_T(' (while class abilities are on)'):_T('None.'));
   const weap=[k.R,k.L].filter(Boolean).map(w=>W[w]?_T`1x LVL ${W[w].lv} “${W[w].n}”`:'').filter(Boolean);
-  const start=[];if(+k.coin)start.push(`[${k.coin}x Coin]`);if(k.keys)start.push(_T`1x Arena Key Token (${k.keys}x Keys)`);if(+k.cf)start.push(`[${k.cf} CF]`);start.push(_T('2x Player Trackers'));
+  const start=[];if(+k.coin)start.push(`[${k.coin}x Coin]`);if(k.keys)start.push(_T`1x Arena Key Token (${k.keys} keys)`);if(+k.cf)start.push(`[${k.cf} CF]`);start.push(_T('2x Player Trackers'));
   const uniq=(k.items||[]).filter(Boolean).map(i=>{const o=CLS_ITEM_OPTS.find(z=>z[0]===i);return '1x '+(o?o[1].replace(/ \((card)\)$/,' card'):i)});
   const weakT=k.weak&&k.weak!=='none'&&WEAKNESSES[k.weak]?WEAKNESSES[k.weak][1].replace(/\s*\([^)]*\)\.?$/,'.'):'';
   const wrap=(t,n)=>typeof clsWrap==='function'?clsWrap(t,n):[t];
