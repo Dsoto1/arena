@@ -1277,6 +1277,19 @@ share copy — the site download play/flavius-rule-arena.zip.)
   skin, hair, beard, colours — in a default pose, re-posable; the old token stays as a fallback setting); the modeller lives INSIDE the
   Character designer's token step; ONLINE keeps the sculpted tokens until v0.94 (then: three.js in online matches vs server-stored sprites).
   v0.94 = drag-and-drop gear in the Manager Roster (like the Domus) + the Event Designer as the arena view + online 3D tokens.
+- **v0.94 GO (his picks 2026-10-07, ONE release):** (1) EVENT DESIGNER AS THE ARENA VIEW — the real board in the middle (never turned,
+  tile names on hover), right column = palette tabs Terrain (pillar+Blessings, spikes, tunnel/door, water, chest, pots, eraser) · Pieces (start
+  corners 1–4 / team colours, printed + custom beasts, Zora) · Zones (paint each round's area, a colour per round); bottom (log area) = tools:
+  round strip (R1..Rn cards: zone, PvE/PvP/CF/CA, end, reward; click → its zone), deck slots (Tholo + 3), music, live checks list (click → the
+  tile), Undo/Redo; step tabs Basics · Rounds · Rules · Finish stay on top for text settings; drag/right-click on desktop, tap-to-stamp +
+  long-press remove on phones; old custom events open unchanged. NO mirror switch, NO Test play (his "7 no, place by hand").
+  (2) MANAGER ARMORY — a house Armory (Storeroom) of owned weapons/armor/offerings; the Roster works like the Domus (plaque → avatar wearing
+  the gear + shelf, drag onto body/hands and between fighters, fits/replaces + stacking rules); 1a a signed fighter brings his class loadout as
+  owned pieces; 2a a dead fighter's gear returns to the Armory minus what broke; 3a the one-week City Square kits are replaced (offerings = the
+  carry-in items, ≤2, unused come home); 4a stock per city and per week with specialties (bigger cities carry L3); 5a used-up/broken weapons are
+  lost, armor at 0 AP comes back damaged → repair at the armorer; checklist nudges; rival houses buy gear (check with tools/mgrsim.js);
+  SAVE_MIGRATIONS: current class loadouts become owned pieces. (3) ONLINE 3D TOKENS = SERVER PICTURES (his pick): the owner's browser renders
+  the 8-facing sheet (~35 KB webp), uploads it, the server stores it (size/type limits), other screens download the picture — no three.js in matches.
 - **EVENT BUS + LAYER MANAGER (his yes 2026-10-07, v0.93):** (1) EVENT BUS — one in-page `emit(name,data)` / `on(name,fn)` for game
   happenings (turn began, hit, elimination, spear, round end, market buy, save, window opened…) so new features listen instead of wrapping
   core functions (log/render/beginTurn wrappers today); wrappers stay where they are, new code uses the bus; perf92Mark, the error log and
