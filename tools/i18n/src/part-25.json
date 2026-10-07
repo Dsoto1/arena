@@ -680,28 +680,44 @@
   "w": "server/src/routes.js:1268"
  },
  {
+  "k": "The dead stay as they fell.",
+  "w": "server/src/routes.js:1293"
+ },
+ {
+  "k": "That upload is out of order — save the token again.",
+  "w": "server/src/routes.js:1300"
+ },
+ {
+  "k": "At most {0} token pictures a day — try again tomorrow.",
+  "w": "server/src/routes.js:1304"
+ },
+ {
+  "k": "No such picture.",
+  "w": "server/src/routes.js:1309"
+ },
+ {
   "k": "Unknown request:",
-  "w": "server/src/routes.js:1285"
+  "w": "server/src/routes.js:1313"
  },
  {
   "k": "Too many requests — wait a moment.",
-  "w": "server/src/routes.js:1286"
+  "w": "server/src/routes.js:1314"
  },
  {
   "k": "Your two hours as a guest are up — sign in to keep watching.",
-  "w": "server/src/routes.js:1288"
+  "w": "server/src/routes.js:1316"
  },
  {
   "k": "Sign in to {0}.",
-  "w": "server/src/routes.js:1289"
+  "w": "server/src/routes.js:1317"
  },
  {
   "k": "Name your house first — every lanista needs a Domus.",
-  "w": "server/src/routes.js:1292"
+  "w": "server/src/routes.js:1320"
  },
  {
   "k": "Test houses play Custom only.",
-  "w": "server/src/routes.js:1296"
+  "w": "server/src/routes.js:1324"
  },
  {
   "k": "The arena hit a snag — try again (ref {0}).",
@@ -742,10 +758,6 @@
  {
   "k": "The dead buy nothing.",
   "w": "src/111-onlcore.js:93"
- },
- {
-  "k": "The dead stay as they fell.",
-  "w": "src/111-onlcore.js:135"
  },
  {
   "k": "Pick the pieces to bring.",
@@ -1262,5 +1274,33 @@
  {
   "k": "He already has all of it.",
   "w": "src/111-onlcore.js:1092"
+ },
+ {
+  "k": "That token picture is not a token sheet.",
+  "w": "src/111-onlcore.js:1147"
+ },
+ {
+  "k": "The pose is too long.",
+  "w": "src/111-onlcore.js:1149"
+ },
+ {
+  "k": "The pose is not readable.",
+  "w": "src/111-onlcore.js:1149"
+ },
+ {
+  "k": "Each part of the picture may hold at most 24000 characters.",
+  "w": "src/111-onlcore.js:1153"
+ },
+ {
+  "k": "That token picture is not a WebP image.",
+  "w": "src/111-onlcore.js:1153"
+ },
+ {
+  "k": "The token picture is too big (64 KB at most).",
+  "w": "src/111-onlcore.js:1155"
+ },
+ {
+  "k": "The token picture has the wrong size for its sheet.",
+  "w": "src/111-onlcore.js:1158"
  }
 ]
