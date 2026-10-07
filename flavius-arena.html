@@ -42148,10 +42148,8 @@ function trade88Body(T){const side=(who,x,owner,cap)=>`<div class="tr88s"><div c
 .tr88l{display:inline-flex;align-items:center;gap:10px;text-align:left}.tr88p{flex:none;display:grid;place-items:center;width:52px}.tr88p .rtok{width:44px!important;height:44px!important}.tr88p .tr88coin .ico,.tr88p .tr88coin img{width:24px;height:24px}.tr88p .tr88coin b{font-size:14px}
 .mkt75 .mboard75{width:min(100%,calc((100vh - 330px) * 1.5456));margin:0 auto}
 .mkt75-lock{z-index:20;background:rgba(10,6,4,.68);backdrop-filter:grayscale(.7)}`;document.head.appendChild(css)}
-/* zoomed in, the follow camera redraws every frame while it eases: those in-between frames skip the sand grain and edge shade
-   (the frame where the camera settles draws them again), so zooming and panning stay smooth */
-{const base=drawShipTile;drawShipTile=function(){const moving=typeof CAM!=='undefined'&&CAM&&CAM.raf;if(!moving||typeof SAND83==='undefined')return base.apply(this,arguments);
-  const g=SAND83.grain,s=SAND83.shade;SAND83.grain=0;SAND83.shade=0;try{return base.apply(this,arguments)}finally{SAND83.grain=g;SAND83.shade=s}}}
+/* (v0.92 follow-up) the sand grain + edge shade are no longer skipped while the zoomed camera eases: switching them off and back on made
+   the tile gaps flicker, and they cost under 1 ms a frame */
 /* RESULT CARDS (his layout, v0.88): the Fate card on the left, the Fate's name + the CF sums + Final Fate score on the right — same
    font sizes, the card as tall as the sums, both centred; a narrow card (phones, three-across tables) stacks them again. */
 {const css=document.createElement('style');css.textContent=`
