@@ -51778,7 +51778,7 @@ if(typeof LIFE84!=='undefined'){const d0=LIFE84.dustMs,s0=LIFE84.settleMs;
 /* ---------------- 5 · layout once ---------------- */
 (()=>{try{if(!P95.on||typeof ResizeObserver!=='function'||typeof cv==='undefined'||!cv)return;const wrap=cv.parentElement;if(!wrap)return;
   const d=Object.getOwnPropertyDescriptor(Element.prototype,'clientWidth');const keep={wrap:0,cv:0};
-  const redraw=()=>{try{if(typeof S!=='undefined'&&S&&!HEADLESS)draw()}catch(e){}};
+  let rq=0;const redraw=()=>{if(rq)return;rq=requestAnimationFrame(()=>{rq=0;try{if(typeof S!=='undefined'&&S&&!HEADLESS)draw()}catch(e){}})} /* deferred: drawing inside the callback resizes observed elements -> 'ResizeObserver loop' */;
   new ResizeObserver(()=>{const a=Math.round(d.get.call(wrap)),b=Math.round(d.get.call(cv));const ch=(keep.wrap&&a!==keep.wrap)||(keep.cv&&b!==keep.cv);keep.wrap=a;keep.cv=b;if(ch)redraw()}).observe(wrap);
   new ResizeObserver(()=>{const b=Math.round(d.get.call(cv));const ch=keep.cv&&b!==keep.cv;keep.cv=b;if(ch)redraw()}).observe(cv);
   const own=Object.getOwnPropertyDescriptor(wrap,'clientWidth'); /* 160's phone keeper, if any */
@@ -51788,7 +51788,7 @@ if(typeof LIFE84!=='undefined'){const d0=LIFE84.dustMs,s0=LIFE84.settleMs;
 const FIT95={off:(()=>{try{return localStorage.getItem('flavius_fit95off')==='1'}catch(e){return false}})() /* debug */,v:null,key:'',obs:null,seen:new WeakSet()};
 function fit95Key(){const b=document.body.classList;return innerWidth+'x'+innerHeight+'|'+(typeof STANDS!=='undefined'?STANDS:'')+'|'+(b.contains('phoneL')?1:0)+(b.contains('phoneP2')?1:0)+(b.contains('phoneP')?1:0)}
 function fit95Watch(){if(typeof ResizeObserver!=='function')return;if(!FIT95.obs)FIT95.obs=new ResizeObserver(()=>{if(FIT95.v==null)return;
-    try{const was=FIT95.v;FIT95.v=FIT95.base();FIT95.key=fit95Key();if(FIT95.v!==was&&typeof S!=='undefined'&&S&&!HEADLESS)draw()}catch(e){}});
+    try{const was=FIT95.v;FIT95.v=FIT95.base();FIT95.key=fit95Key();if(FIT95.v!==was&&typeof S!=='undefined'&&S&&!HEADLESS)requestAnimationFrame(()=>{try{draw()}catch(e){}})}catch(e){}});
   for(const el of [cv&&cv.parentElement,document.querySelector('.dock'),document.getElementById('actions'),document.getElementById('hover'),document.querySelector('.bar'),document.getElementById('crowdTick')])
     if(el&&!FIT95.seen.has(el)){FIT95.seen.add(el);FIT95.obs.observe(el)}}
 if(typeof fitReserve==='function'){const base=fitReserve;FIT95.base=()=>base();fitReserve=function(){if(!P95.on||FIT95.off||typeof ResizeObserver!=='function')return base.apply(this,arguments);
