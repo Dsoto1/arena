@@ -47486,8 +47486,12 @@ function rub91(rb){let R=WEAR91_RB.get(rb);if(R)return R;const seed=rb.r*31+rb.c
     const add=(t,sz,jit)=>{const q=i++;let jr=(h91(seed,q,1)-0.5)*jit,jc=(h91(seed,q,2)-0.5)*jit;
       if(inb&&WEAR91.clear){const d=Math.hypot(jr,jc),m=t==='drum'?0.34:WEAR91.clear;if(d<m){const an=d>0.01?Math.atan2(jr,jc):h91(seed,q,6)*Math.PI*2;jr=Math.sin(an)*m;jc=Math.cos(an)*m}}   /* off the middle: the tile reads as open sand */
       pieces.push({t,k,i:q,sz,r:r0+jr,c:c0+jc,a:(h91(seed,q,3)-0.5)*0.7,s:h91(seed,q,4),roll:h91(seed,q,5)<0.4,out:!inb})};
+    /* v0.92 (his note): the fallen drum SPLITS IN HALF and the halves roll apart, each to the edge of the tile it landed on */
+    const half=(sz)=>{let pr=dc,pc=-dr;const L=Math.hypot(pr,pc)||1;if(!dr&&!dc){pr=0;pc=1}else{pr/=L;pc/=L}
+      for(const h of [-1,1]){const q=i++;const ed=0.34+h91(seed,q,1)*0.06,al=h*(0.1+h91(seed,q,2)*0.08);
+        pieces.push({t:'drum',half:h,k,i:q,sz,r:r0+pr*ed*h+dr*al,c:c0+pc*ed*h+dc*al,a:(h91(seed,q,3)-0.5)*0.5,s:h91(seed,q,4),roll:false,out:false})}};
     if(!inb){add('chip',0.8,0.5);add('chip',0.6,0.5);continue}
-    if(k===1)add('drum',1,0.25);if(k===2)add('drum',0.78,0.3);
+    if(k===1)half(1);if(k===2)half(0.78);
     const nc=k===0?3:k===1?4:3;for(let j=0;j<nc;j++)add('chip',0.55+h91(seed,j,k+9)*0.6,0.8)}
   R={rot:S?S.rotation|0:0,pieces,seed};WEAR91_RB.set(rb,R);return R}
 /* where a piece lies now: the tile's jitter + the slow drift toward the gully (by rotations, no tween) */
@@ -47553,8 +47557,10 @@ function rubDraw91(g,rb,G,live){const R=rub91(rb);const col=marble91();const st=
     g.save();g.translate(m.x,m.y);g.scale(1,0.5);g.translate(-m.x,-m.y);g.fillStyle=dg;g.beginPath();g.arc(m.x,m.y,TW*0.5,0,Math.PI*2);g.fill();g.restore()}
   const L=[];const sm=center(rb.r,rb.c);L.push({y:sm.y,f:()=>{stump91(g,sm.x,sm.y,col);st.stumps=(st.stumps||0)+1}});
   const th0=(()=>{const a=center(rb.r,rb.c),b=center(rb.r+dr,rb.c+dc);return Math.atan2(b.y-a.y,b.x-a.x)})();
-  for(const p of R.pieces){const [r,c]=rubPos91(rb,R,p,G);const m=center(r,c);const lift=live&&typeof rubbleSettle84==='function'?rubbleSettle84(rb,p.k,p.i):0;
-    if(p.t==='drum')L.push({y:m.y,f:()=>{drum91(g,m.x,m.y,TW*0.3*p.sz,TW*WEAR91.drumD*p.sz,th0+p.a,R.seed*13+p.i,lift,col);st.drums=(st.drums||0)+1}});
+  const roll92=(p,r,c)=>{if(!p.half||!live||typeof RUB84==='undefined'||!RUB84.t)return [r,c];const t0=RUB84.t.get(rb);if(t0==null)return [r,c];   /* the halves land together, then roll apart */
+    const u=Math.max(0,Math.min(1,(performance.now()-t0-p.k*110-380)/480)),e=1-Math.pow(1-u,3);const r0=rb.r+dr*p.k,c0=rb.c+dc*p.k;return [r0+(r-r0)*e,c0+(c-c0)*e]};
+  for(const p of R.pieces){const [r,c]=roll92(p,...rubPos91(rb,R,p,G));const m=center(r,c);const lift=live&&typeof rubbleSettle84==='function'?rubbleSettle84(rb,p.k,p.i):0;
+    if(p.t==='drum')L.push({y:m.y,f:()=>{drum91(g,m.x,m.y,TW*0.3*p.sz*(p.half?0.56:1),TW*WEAR91.drumD*p.sz,th0+p.a,R.seed*13+p.i,lift,col);st.drums=(st.drums||0)+1}});
     else L.push({y:m.y,f:()=>{chip91(g,m.x,m.y,TW*0.055*p.sz,R.seed*17+p.i,lift,col);st.chips=(st.chips||0)+1;if(p.out||Math.min(r,c,N-1-r,N-1-c)<-0.5)st.gullyChips=(st.gullyChips||0)+1}})}
   L.sort((a,b)=>a.y-b.y);for(const o of L)o.f()}
 /* ---------- 4. the worn paths and the scuffs ---------- */
