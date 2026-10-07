@@ -273,7 +273,11 @@ function gearWHTML(){const d=ST.cw||(ST.cw=blankCW());const st=d.stats;const w=c
        out.push(tile('abs',`<label>${_T`Absorb ${sel('absorb',[1,2],st.absorb)}`}</label><label>${_T`Use ${sel('uses',[3,4,5,6,7,8,9,10,11,12],st.uses)}`}</label>`,!!st.shield,`<label class="icotog"><input type="checkbox" data-cwf="s.shield" ${st.shield?'checked':''}> ${_T`a shield`}</label>`));
        if(!st.shield){
          out.push(tile('dmg',`<label>${_T`Value ${sel('p',[1,2,3,4],st.p)}`}</label>`));
-         out.push(tile('rng',`<label>${_T`Value ${sel('r',[1,2,3,4,5],st.r)}`}</label>`));
+         out.push(tile('rng',`<label>${_T`Value ${sel('r',[1,2,3,4,5],st.r)}`}</label>`))}
+       else{ /* v0.95: a shield's attack power and range are optional (range only with power) */
+         out.push(tile('dmg',`<label>${_T`Value ${sel('shP',[1,2,3,4],st.shP||1)}`}</label>`,!!st.shP,tg('shP',!!st.shP)));
+         out.push(tile('rng',`<label>${_T`Value ${sel('shR',[1,2,3,4,5],st.shR||1)}`}</label>`,!!st.shR,st.shP?tg('shR',!!st.shR):''))}
+       {
          out.push(tile('thr',`<label>${_T`Throws ${sel('thrN',[1,3,6],st.thrN)}`}</label><label>${_T`Thrown power ${sel('thrP',[1,2,3,4],st.thrP||st.p)}`}</label><label>${_T`Thrown range ${sel('thrR',[2,3,4,5],st.thrR||2)}`}</label>`,!!st.thrN,tg('thr',!!st.thrN)));
          out.push(tile('ammo',`<label>${_T`Ammo ${sel('ammo',[3,4,5,6],st.ammo)}`}</label><label class="icotog"><input type="checkbox" data-cwf="s.stones" ${st.stones?'checked':''}> ${_T`🪨 reloads from Stones`}</label>`,!!st.ammo,tg('ammo',!!st.ammo)));
          out.push(tile('use',`<label>${_T`Uses ${sel('atkUses',[3,6],st.atkUses)}`}</label>`,!!st.atkUses,tg('use',!!st.atkUses)));
