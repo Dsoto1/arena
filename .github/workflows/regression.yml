@@ -1,0 +1,94 @@
+# Regression on GitHub Actions (tools/ci/plan.js decides full / smart / skip within the minute budget in tools/ci/budget.json).
+# Each shard: build the page, run its tests with smartreg (-j 2, shared browsers, failures re-run alone → FLAKY), upload reg.txt.
+# The report job merges the shards into one summary + a CIRESULT line (read from the logs by tools/ci/absorb.js).
+name: regression
+on:
+  push:
+    branches: ['claude/**', 'main']
+    paths-ignore: ['CLAUDE.md', 'docs/**', 'tools/art/**', 'tools/plans/**', 'share/**']
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'auto | smart | full'
+        default: 'auto'
+concurrency:
+  group: regression-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      mode: ${{ steps.p.outputs.mode }}
+      matrix: ${{ steps.p.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: npm i --no-save --prefix /tmp/ci typescript@5 >/dev/null 2>&1
+      - id: p
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          INPUT_MODE: ${{ github.event.inputs.mode }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          NODE_PATH: /tmp/ci/node_modules
+        run: node tools/ci/plan.js
+  test:
+    needs: plan
+    if: needs.plan.outputs.mode != 'skip'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-1.56.1-chromium
+      - name: tools
+        run: |
+          npm i --no-save --prefix /tmp/ci playwright@1.56.1 typescript@5 >/dev/null 2>&1
+          npx --prefix /tmp/ci playwright install --with-deps chromium >/dev/null
+          (cd server && npm i --no-audit --no-fund >/dev/null 2>&1 || true)
+      - name: build
+        run: sh build.sh | tail -1
+      - name: tests
+        env:
+          NODE_PATH: /tmp/ci/node_modules
+          CI_SHARD: ${{ matrix.shard }}
+        run: node tools/smartreg.js -j 2 ${{ matrix.tests }}
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reg-${{ matrix.shard }}
+          path: tools/reg.txt
+          retention-days: 7
+  server:
+    needs: plan
+    if: needs.plan.outputs.mode == 'full'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: cd server && npm i --no-audit --no-fund >/dev/null 2>&1 && npm test
+  report:
+    needs: [plan, test]
+    if: always() && needs.plan.outputs.mode != 'skip'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { path: /tmp/reg }
+      - run: node tools/ci/report.js /tmp/reg "${{ needs.plan.outputs.mode }}"
