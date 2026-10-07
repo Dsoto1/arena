@@ -102,30 +102,30 @@ export function sculpt(opt = {}) {
   const add_ = (p) => { prims.push(p); return p; };
   /* ---------------- torso (T) ---------------- */
   const T = (b, k = 0.03) => ({ g: 'T', b, k, op: 'add' });
-  add_(E([0, 1.340, -0.014], [0.138, 0.170, 0.112], T('ch')));                       /* ribcage */
-  add_(E([0, 1.430, -0.030], [0.165, 0.070, 0.085], T('ch', 0.035)));                  /* shoulder girdle */
-  add_(E([0, 1.150, -0.004], [0.115, 0.130, 0.092], T('sp', 0.05)));                         /* abdomen */
+  add_(E([0, 1.335, -0.026], [0.132, 0.175, 0.098], T('ch', 0.06)));                       /* ribcage */
+  add_(E([0, 1.452, -0.032], [0.158, 0.068, 0.078], T('ch', 0.045)));                  /* shoulder girdle */
+  add_(E([0, 1.155, -0.008], [0.115, 0.140, 0.090], T('sp', 0.07)));                         /* abdomen */
   add_(E([0, 0.968, -0.014], [0.145, 0.110, 0.100], T('pe')));                         /* pelvis */
   for (const sx of [1, -1]) {
     add_(E([sx * 0.074, 1.362, 0.066], [0.090, 0.050, 0.037], T('ch', 0.026), sx * -8));   /* pec */
     add_(C([sx * 0.110, 1.365, 0.058], [sx * 0.178, 1.408, 0.012], 0.040, 0.030, T('ch', 0.02)));  /* pec → arm insertion */
     add_(E([sx * 0.112, 1.320, -0.044], [0.058, 0.125, 0.066], T('ch', 0.05), sx * 14));    /* lat */
     add_(E([sx * 0.098, 1.120, 0.004], [0.040, 0.080, 0.070], T('sp', 0.02), sx * -4));     /* oblique */
-    add_(E([sx * 0.088, 0.985, 0.040], [0.050, 0.060, 0.050], T('pe', 0.02)));             /* lower belly / hip front */
-    add_(E([sx * 0.130, 0.965, -0.020], [0.048, 0.070, 0.068], T('pe', 0.025)));           /* glute medius / hip side */
-    add_(E([sx * 0.068, 0.905, -0.066], [0.078, 0.092, 0.068], T('pe', 0.022)));           /* glute */
-    add_(C([0, 1.600, -0.035], [sx * 0.170, 1.475, -0.030], 0.052, 0.036, T([['ch', 0.7], ['ne', 0.3]], 0.03)));  /* upper trapezius slope */
+    add_(E([sx * 0.080, 0.975, 0.036], [0.052, 0.065, 0.050], T('pe', 0.04)));             /* lower belly / hip front */
+    add_(M([sx * 0.125, 1.010, -0.018], [sx * 0.118, 0.800, -0.008], 0.052, 0.068, [0, 0, 1], T({ a: 'pe', b: 'h' + (sx > 0 ? 'L' : 'R'), t0: 0.35, t1: 0.85 }, 0.05)));  /* hip side flows into the thigh */
+    add_(E([sx * 0.068, 0.900, -0.064], [0.078, 0.095, 0.066], T({ a: 'pe', b: 'h' + (sx > 0 ? 'L' : 'R'), t0: 0.2, t1: 1.2 }, 0.045)));           /* glute */
+    add_(C([0, 1.545, -0.042], [sx * 0.165, 1.505, -0.030], 0.036, 0.032, T([['ch', 0.7], ['ne', 0.3]], 0.03)));  /* upper trapezius slope */
     add_(E([sx * 0.088, 1.360, -0.088], [0.058, 0.075, 0.030], T('ch', 0.02), sx * 10));    /* scapula */
     add_(E([sx * 0.034, 1.130, -0.078], [0.030, 0.130, 0.030], T('sp', 0.015)));           /* spinal erector */
-    add_(C([sx * 0.050, 1.680, -0.020], [sx * 0.014, 1.512, 0.048], 0.016, 0.013, T('ne', 0.014)));  /* sternocleidomastoid */
+    add_(C([sx * 0.044, 1.660, -0.018], [sx * 0.014, 1.515, 0.042], 0.013, 0.011, T('ne', 0.014)));  /* sternocleidomastoid */
     /* abs: four rows of the six-pack (+ the lower pair) */
     for (let i = 0; i < 4; i++) {
       const y = 1.238 - i * 0.058, z = [0.066, 0.075, 0.075, 0.060][i];
       add_(E([sx * 0.029, y, z], [0.027, 0.023, 0.013], T('sp', 0.014)));
     }
   }
-  add_(E([0, 1.405, -0.072], [0.100, 0.115, 0.045], T('ch', 0.03)));                   /* mid trapezius */
-  add_(C([0, 1.490, -0.024], [0, 1.650, -0.010], 0.074, 0.060, T([['ne', 0.8], ['ch', 0.2]], 0.03)));  /* neck */
+  add_(E([0, 1.400, -0.070], [0.095, 0.110, 0.042], T('ch', 0.04)));                   /* mid trapezius */
+  add_(C([0, 1.470, -0.024], [0, 1.645, -0.012], 0.061, 0.054, T([['ne', 0.8], ['ch', 0.2]], 0.03)));  /* neck */
   add_(S([0, 1.105, 0.093], 0.008, { g: 'T', b: 'sp', k: 0.004, op: 'sub' }));          /* navel */
 
   /* ---------------- head (H) ---------------- */
@@ -157,16 +157,16 @@ export function sculpt(opt = {}) {
     const S0 = P(s), E0 = P(e), W0 = P(w);
     const up = limbFrame(S0, E0, sx), lo = limbFrame(E0, W0, sx);
     const A = (b, k = 0.012) => ({ g, b, k, op: 'add' });
-    add_(M(up.at(-0.15, 0.022, 0.000), up.at(0.47, 0.026, 0.002), 0.064, 0.072, up.f, A({ a: 'ch', b: s, t0: 0.0, t1: 0.45 }, 0.03)));  /* deltoid */
+    add_(M(up.at(-0.20, 0.010, 0.000), up.at(0.47, 0.020, 0.002), 0.060, 0.066, up.f, A({ a: 'ch', b: s, t0: 0.0, t1: 0.45 }, 0.03)));  /* deltoid */
     add_(M(up.at(-0.06, 0.004, 0.032), up.at(0.38, 0.008, 0.028), 0.040, 0.036, up.f, A({ a: 'ch', b: s, t0: 0.0, t1: 0.5 }, 0.02)));     /* front deltoid */
     add_(M(up.at(-0.06, 0.006, -0.030), up.at(0.36, 0.008, -0.026), 0.038, 0.034, up.f, A({ a: 'ch', b: s, t0: 0.0, t1: 0.5 }, 0.02)));   /* rear deltoid */
     add_(C(S0, E0, 0.052, 0.040, A(s, 0.016)));                                       /* upper arm core */
     add_(M(up.at(0.28, 0.000, 0.026), up.at(0.86, 0.000, 0.020), 0.042, 0.040, up.f, A(s)));   /* biceps */
     add_(M(up.at(0.14, 0.008, -0.026), up.at(0.74, 0.004, -0.022), 0.046, 0.040, up.f, A(s))); /* triceps */
     add_(S(E0, 0.040, A([[s, 0.5], [e, 0.5]], 0.01)));                                 /* elbow */
-    add_(C(E0, W0, 0.044, 0.028, A(e)));                                               /* forearm core */
-    add_(M(lo.at(0.00, 0.012, 0.008), lo.at(0.58, 0.006, 0.004), 0.052, 0.043, lo.f, A(e)));   /* forearm muscles */
-    add_(S(W0, 0.029, A([[e, 0.5], [w, 0.5]], 0.008)));                                /* wrist */
+    add_(C(E0, W0, 0.039, 0.024, A(e)));                                               /* forearm core */
+    add_(M(lo.at(0.02, 0.008, 0.006), lo.at(0.50, 0.003, 0.002), 0.040, 0.034, lo.f, A(e, 0.018)));   /* forearm muscles */
+    add_(S(W0, 0.025, A([[e, 0.5], [w, 0.5]], 0.010)));                                /* wrist */
     /* hand: palm faces the thigh (inward); width runs front-back */
     const tip = ENDS[w]; const hd = limbFrame(W0, tip, sx, [0, 0, 1]);
     const Hn = (k = 0.006) => ({ g, b: w, k, op: 'add' });
@@ -186,7 +186,7 @@ export function sculpt(opt = {}) {
     const H0 = P(hh), K0 = P(kk), A0 = P(aa);
     const th = limbFrame(H0, K0, sx), sh = limbFrame(K0, A0, sx);
     const Lg = (b, k = 0.014) => ({ g, b, k, op: 'add' });
-    add_(C(add(H0, [sx * 0.014, 0.035, -0.008]), K0, 0.087, 0.052, Lg({ a: 'pe', b: hh, t0: 0.0, t1: 0.18 }, 0.04)));   /* thigh core */
+    add_(C(add(H0, [sx * 0.006, 0.050, -0.010]), K0, 0.078, 0.052, Lg({ a: 'pe', b: hh, t0: 0.0, t1: 0.25 }, 0.07)));   /* thigh core */
     add_(M(th.at(0.18, 0.042, 0.010), th.at(0.86, 0.032, 0.008), 0.050, 0.054, th.f, Lg(hh)));     /* vastus lateralis */
     add_(M(th.at(0.10, 0.008, 0.040), th.at(0.80, 0.004, 0.034), 0.048, 0.044, th.f, Lg(hh)));     /* rectus femoris */
     add_(M(th.at(0.66, -0.030, 0.024), th.at(0.95, -0.026, 0.020), 0.040, 0.036, th.f, Lg(hh, 0.012)));  /* vastus medialis */
@@ -459,7 +459,7 @@ export function buildBody(opts = {}) {
   /* subligaculum: below the wrap, down to the leg line (outer hip high, crotch low) */
   const legLine = (p) => { const ax = Math.abs(p[0]); const back_ = p[2] < -0.02; return (back_ ? 0.815 : 0.805) + (back_ ? 0.08 : 0.115) * Math.max(0, Math.min(1, (ax - 0.025) / 0.13)); };
   const loinMask = (p, g) => {
-    const topY = beltY(p) - 0.068;
+    const topY = beltY(p) - 0.058;
     if (g === GI.T) return Math.min(topY - p[1] + 0.012, p[1] - legLine(p) + 0.03);
     if (g === GI.LL || g === GI.LR) return Math.min(topY - p[1], p[1] - legLine(p));
     return -1;
@@ -524,7 +524,7 @@ export function buildBody(opts = {}) {
     b.add(m); addOutline(m, false); return m;
   };
   const nAt = (p) => gradF(fd, ...p);
-  if (RING) rigid(new THREE.TorusGeometry(0.020, 0.0055, 8, 24), mats.metal, 'ch', add(RING, [0, 0, 0.014]), [0, 0.1, 1]);
+  if (RING) rigid(new THREE.TorusGeometry(0.020, 0.0055, 8, 24), mats.metal, 'ch', add(RING, [0, 0, 0.008]), [0, 0.1, 1]);
   if (BRING) rigid(new THREE.TorusGeometry(0.018, 0.005, 8, 20), mats.metal, 'ch', add(BRING, mul(nAt(BRING), 0.010)), nAt(BRING));
   for (const s of straps) {   /* a square buckle part-way up each front strap */
     const i = s.findIndex(p => p[1] > 1.395); if (i < 1) continue; const hit = s[i], prev = s[i - 1];
@@ -532,7 +532,7 @@ export function buildBody(opts = {}) {
     bk.rotateZ(Math.PI / 4 + Math.atan2(hit[1] - prev[1], hit[0] - prev[0]));
   }
   const BF = front(0, beltY([0, 0, 0.1]) - 0.02);
-  if (BF) rigid(new THREE.TorusGeometry(0.031, 0.0072, 10, 28), mats.iron, 'pe', add(BF, [0, 0, 0.030]), [0, -0.15, 1]);
+  if (BF) rigid(new THREE.TorusGeometry(0.031, 0.0072, 10, 28), mats.iron, 'pe', add(BF, [0, 0, 0.021]), [0, -0.15, 1]);
     for (const sx of [1, -1]) for (const x of [0.05, 0.075, 0.10, 0.125]) {   /* belt studs */
     const ang = Math.asin(Math.min(0.95, x / 0.13)); const dir = [Math.sin(ang) * sx, 0, Math.cos(ang)];
     const hit = hitSkin(fd, [dir[0] * 0.35, beltY([0, 0, 0.1]) + 0.004, dir[2] * 0.35], [-dir[0], 0, -dir[2]]); if (!hit) continue;
