@@ -1280,6 +1280,34 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   {const base=R['gift.open'];R['gift.open']=async(d,ctx)=>{const r=await base(d,ctx);try{const X=await purse92(ctx.acct,'gift');if(r&&r.char&&r.char.id)r.char=strip(await charById(r.char.id));
       if(r&&r.reward&&r.reward.k==='coin')r.to='house';const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);if(D){r.domus=C.domusRow(D);r.domus92=r.domus}else if(X)r.domus92=C.domusRow(X)}catch(e){}return r}}
   /* ══════════ end of v0.92 ══════════ */
+  /* ══════════ v0.94 ONLINE 3D TOKENS AS SERVER PICTURES (the rules: the v0.94 section of onlcore) ══════════
+     TOK#<char> / PIC         {owner, h, b (base64 WebP ≤ 64 KB), meta [cellW,cellH,ax,ay], pose ≤600 B, pk, at, v} — ONE picture per gladiator,
+                              in its own item (the CHAR item only carries the reference ch.tok94 = {h, at}: it is read and rewritten often)
+     TOKUP#<char> / U#<up>    an upload in progress {owner, n, meta, pose, pk, p0…p3} (ttl 1 h) — parts ≤ 24000 base64 characters, so each
+                              request stays under API Gateway's 32 KB WebSocket frame
+     ACCT#<sub> PROFILE       + tq94 {h: utc day, n}: pictures saved that day (TOK94.DAY_MAX)
+     char.tok {char, up, i, n, b, meta, pose, pk}  one part; the last one checks the whole picture, stores it, and answers {done, h, tok94, char}
+     char.tok {char, off: 1}                        back to the sculpted token (the picture is deleted)
+     tok.get  {c, h?}                               the picture {c, h, b, meta, pose, pk} (or {same:1} when the caller holds h already, {none:1} when there is none) */
+  Object.assign(R,{
+    'char.tok':async(d,ctx)=>{const ch=await charById(d.char);if(!ch||ch.owner!==ctx.acct)throw new Error('Not yours.');if(!ch.alive)throw new Error('The dead stay as they fell.');
+      if(await busyIn(ctx.acct))throw fail('in_match','Finish or leave your game first.');
+      if(d.off){await store.del('TOK#'+ch.id,'PIC');const c=await editChar(ch.id,x=>{delete x.tok94});return {off:1,char:strip(c||ch)}}
+      const why=C.tokPartWhy94(d);if(why)throw fail('tok_part',why);const pk='TOKUP#'+ch.id,sk='U#'+d.up;
+      let U=await store.get(pk,sk);
+      if(d.i===0){const mw=C.tokMetaWhy94(d.meta)||C.tokPoseWhy94(d.pose,d.pk);if(mw)throw fail('tok_bad',mw);
+        if(!U)U={owner:ctx.acct,n:d.n,meta:d.meta.slice(),pose:String(d.pose||''),pk:String(d.pk||''),at:now(),ttl:Math.floor((now()+C.TOK94.UP_MS)/1000)}}
+      if(!U||U.owner!==ctx.acct||U.n!==d.n)throw fail('tok_part','That upload is out of order — save the token again.');
+      U['p'+d.i]=d.b;const parts=[];for(let i=0;i<U.n;i++)parts.push(U['p'+i]);
+      if(parts.some(x=>typeof x!=='string')){await store.put(pk,sk,U);return {got:d.i}}
+      const chk=C.tokCheck94(parts.join(''),U.meta);if(chk.why){await store.del(pk,sk);throw fail('tok_bad',chk.why)}
+      if(!(await store.quota('ACCT#'+ctx.acct,'PROFILE','tq94',C.dayKey(now()),C.TOK94.DAY_MAX))){await store.del(pk,sk);throw fail('tok_day',`At most ${C.TOK94.DAY_MAX} token pictures a day — try again tomorrow.`)}
+      const rec={owner:ctx.acct,h:chk.h,b:parts.join(''),meta:U.meta,pose:U.pose,pk:U.pk,at:now(),v:1};
+      await store.put('TOK#'+ch.id,'PIC',rec);await store.del(pk,sk).catch(()=>{});
+      const c=await editChar(ch.id,x=>{if(!x.alive)return false;x.tok94={h:chk.h,at:rec.at}});if(!c)throw new Error('Your gladiator changed a moment ago — try again.');
+      return {done:1,h:chk.h,tok94:c.tok94,char:strip(c),bytes:chk.bytes.length}},
+    'tok.get':async(d)=>{const c=String(d.c||'');if(!/^[A-Za-z0-9_-]{1,40}$/.test(c))throw new Error('No such picture.');const T=await store.get('TOK#'+c,'PIC');
+      if(!T||!T.b)return {c,none:1};if(d.h&&d.h===T.h)return {c,h:T.h,same:1};return {c,h:T.h,b:T.b,meta:T.meta,pose:T.pose||'',pk:T.pk||''}}});
   /* v0.93 one general rate limit per account (guests by id, else the socket) on top of the per-feature ones (limits:false = off, for tests) */
   const LIM93=limits===false?null:C.limiter93(limits&&typeof limits==='object'?{...C.RATE93,...limits}:C.RATE93);
   const route=async function(t,d,ctx){const f=R[t];if(!f)throw fail('unknown_req','Unknown request: '+t);

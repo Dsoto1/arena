@@ -77,8 +77,39 @@ handler turns every refusal into the reply with `harden93.errReply`:
 ## Data
 
 One table, single-table design; the item list (PK / SK / what) is the header of `server/src/store.js`. v0.93 adds
-`RID#<acct>` / `<rid>` (idempotency, ttl ~20 min). Items with a `ttl` (epoch seconds) are dropped by DynamoDB.
+`RID#<acct>` / `<rid>` (idempotency, ttl ~20 min). v0.94 adds `TOK#<char>` / `PIC` and `TOKUP#<char>` / `U#<up>` (token pictures, below). Items with a `ttl` (epoch seconds) are dropped by DynamoDB.
 Shapes of rooms, gladiators, houses and pieces are built by `ONLC` (`newLobby`, `newChar`, `newDomus`, `pieceInfo` …).
+
+## Token pictures (v0.94)
+
+Online gladiators may wear a posable 3D token (the v0.93 modeller). The owner's browser renders the 8-facing sheet once and uploads it;
+the server stores the picture and every screen downloads it by hash. Matches never run 3D and never hash the picture (drawing only).
+
+- `char.tok {char, up, i, n, b, meta, pose, pk}` — one part of an upload. API Gateway WebSocket frames are at most **32 KB** and browsers
+  never fragment a message, so a picture goes up in parts of **≤ 24000 base64 characters** (`ONLC.TOK94.PART`, ≤ 4 parts); each part is
+  its own request with its own `rid` (`char.tok` is in `IDEM93`). Part 0 carries `meta` and the pose. The staging item
+  `TOKUP#<char>` / `U#<up>` (ttl 1 h) collects the parts; the last one checks the whole picture and stores it, answering
+  `{done, h, tok94, char}` (earlier parts answer `{got: i}`).
+- `char.tok {char, off: 1}` — back to the sculpted token (deletes the picture, drops the reference).
+- `tok.get {c, h?}` — `{c, h, b, meta, pose, pk}`, `{same: 1}` when the caller already holds `h`, `{none: 1}` when there is none. Guests may
+  call it (`GUEST_OK`). One reply ≤ ~90 KB (API Gateway's message limit is 128 KB).
+- **Limits** (shared: the v0.94 section of `111-onlcore`, `TOK94`): WebP only — `RIFF` + `WEBP` magic and a RIFF size that matches the
+  length; ≤ **64 KB decoded** (`MAX`; the game's sheets are ~35–45 KB at quality 0.9 and the client steps the quality down until it fits,
+  and 64 KB keeps the largest part plan at 4 frames and the download well under 128 KB); width exactly `8 × meta[0]` and height `meta[1]`,
+  read from the VP8 / VP8L / VP8X header; meta = four numbers, cell 40–240 × 60–240 px, anchor inside the cell; pose JSON ≤ 600 B, preset
+  key ≤ 16 `[a-z0-9]`; owner only; refused (`in_match`) while the lanista is in a waiting room or a live match (`busyIn`, like
+  `char.edit`); ≤ `DAY_MAX` (12) pictures saved per account per online day (`ACCT … tq94`, `store.quota`); the general rate limit applies.
+  Refusal codes: `tok_part` (order / part size), `tok_bad` (not WebP, wrong size, too big, bad meta/pose), `tok_day`, `in_match`.
+- **Data**: `TOK#<char>` / `PIC` = `{owner, h, b (base64), meta, pose, pk, at, v}` — its own item, never inside `CHAR` / `ACCT` (those are
+  read and rewritten all the time). The gladiator only carries `ch.tok94 = {h, at}`; `ONLC.kitOf` passes it on as `kit.look.t94 = {c, h}`
+  (`h` = `tokHash94` of the bytes, the same in the page and the server), so rooms, seats and matches know what to fetch.
+- **Abuse**: the server checks the type, size and dimensions, **not the content** — a modified client can upload any WebP of the right size
+  (an offensive picture on a token). Mitigations today: owner only, the daily cap, one picture per gladiator (replacing it deletes the old
+  one). If it is ever abused: a report/hide route, a manual `DeleteItem` on `TOK#<char>` (clients fall back to the sculpted token), or turning
+  the feature off by making `tok.get` answer `{none:1}`.
+- **Rollback**: an older server does not know `char.tok` / `tok.get` — the page shows "the server is older" on Save and draws sculpted tokens
+  (a failed fetch is never retried for a minute and never blocks a match). `TOK#` / `TOKUP#` items and `ch.tok94` are ignored by older
+  servers; `kit.look.t94` passes through older `cleanLook` callers untouched or is dropped (both are fine).
 
 ## Versions, deploy, rollout, rollback
 

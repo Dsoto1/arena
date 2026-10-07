@@ -1118,4 +1118,50 @@ const ONLC=(function(){
       const c=rateClass93(t);const k=c+'|'+key;let B=M.get(k);if(!B){B={};M.set(k,B)}
       return c==='m'?bucket93(B,now,cfg.mburst,cfg.mper):bucket93(B,now,cfg.burst,cfg.per)}}
   Object.assign(C,{IDEM93,IDEM_MS93,RID_BUSY_MS93,RATE93,ridOK93,bucket93,rateClass93,limiter93})})(ONLC);
+/* ══════════ v0.94 ONLINE 3D TOKENS AS SERVER PICTURES — shared by the server (routes.js) and the page's mock server (226-v94onltok) ══════════
+   The owner's browser renders the v0.93 token sheet (8 facings in one row, minis8 format, meta [cellW,cellH,anchorX,anchorY]) once and
+   uploads it; the server keeps ONE picture per gladiator in its own item (TOK#<char> / PIC) and every screen downloads it by hash.
+   • API Gateway WebSocket limits: a client frame ≤ 32 KB (browsers never fragment), a message ≤ 128 KB → the upload goes in parts of
+     ≤ TOK94.PART base64 characters (char.tok, one part a request, ≤ TOK94.PARTS parts); a download (tok.get) is one reply ≤ ~90 KB.
+   • The picture: WebP only (RIFF….WEBP magic + a consistent RIFF size), ≤ TOK94.MAX bytes decoded, exactly 8 × cellW wide and cellH high
+     (read from the VP8 / VP8L / VP8X header), meta within TOK94 bounds, the pose JSON ≤ TOK94.POSE bytes.
+   • The gladiator carries only the reference ch.tok94 = {h, at} (h = tokHash94 of the bytes); kitOf passes it on as kit.look.t94 = {c, h}
+     so every seat in a room / match knows which picture to fetch. Drawing only: nothing of it enters the lockstep state or its hash. */
+(function(C){
+  const TOK94={MAX:65536,PART:24000,PARTS:4,POSE:600,PK:16,DAY_MAX:12,W:[40,240],H:[60,240],UP_MS:3600e3};
+  const B64=/^[A-Za-z0-9+/]*={0,2}$/;
+  const HID=/^[A-Za-z0-9_-]{1,40}$/,HH=/^t[0-9a-z]{4,16}$/;
+  function b64Bytes94(s){s=String(s||'');if(typeof Buffer!=='undefined')return new Uint8Array(Buffer.from(s,'base64'));const bin=atob(s);const a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return a}
+  /* a 53-bit hash of the bytes (the same on the server and in the page) */
+  function tokHash94(a){let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0;i<a.length;i++){const c=a[i];h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}
+    h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);
+    return 't'+(4294967296*(2097151&h2)+(h1>>>0)).toString(36)}
+  /* WebP width × height from its header, or null (not a WebP / a broken one) */
+  function webpDims94(a){if(!a||a.length<30)return null;const s=(o,n)=>String.fromCharCode(...a.slice(o,o+n));if(s(0,4)!=='RIFF'||s(8,4)!=='WEBP')return null;
+    const riff=(a[4]|a[5]<<8|a[6]<<16|a[7]<<24)>>>0;if(riff+8!==a.length)return null;const fc=s(12,4);
+    if(fc==='VP8X')return {w:1+(a[24]|a[25]<<8|a[26]<<16),h:1+(a[27]|a[28]<<8|a[29]<<16)};
+    if(fc==='VP8 '){if(a[23]!==0x9d||a[24]!==0x01||a[25]!==0x2a)return null;return {w:(a[26]|a[27]<<8)&0x3fff,h:(a[28]|a[29]<<8)&0x3fff}}
+    if(fc==='VP8L'){if(a[20]!==0x2f)return null;const b=a[21]|a[22]<<8|a[23]<<16|a[24]<<24;return {w:1+(b&0x3fff),h:1+((b>>>14)&0x3fff)}}
+    return null}
+  /* '' or why the meta is refused */
+  function tokMetaWhy94(m){if(!Array.isArray(m)||m.length!==4||!m.every(x=>typeof x==='number'&&isFinite(x)))return 'That token picture is not a token sheet.';
+    const [w,h,ax,ay]=m;if(w!==Math.round(w)||h!==Math.round(h)||w<TOK94.W[0]||w>TOK94.W[1]||h<TOK94.H[0]||h>TOK94.H[1]||ax<0||ax>w||ay<0||ay>h)return 'That token picture is not a token sheet.';return ''}
+  function tokPoseWhy94(pose,pk){if(pose!=null){if(typeof pose!=='string'||pose.length>TOK94.POSE)return 'The pose is too long.';if(pose){try{const o=JSON.parse(pose);if(!o||typeof o!=='object'||Array.isArray(o))return 'The pose is not readable.'}catch(e){return 'The pose is not readable.'}}}
+    if(pk!=null&&(typeof pk!=='string'||!/^[a-z0-9]{0,16}$/.test(pk)))return 'The pose is not readable.';return ''}
+  /* one upload part: '' or why */
+  function tokPartWhy94(d){if(!d||!HID.test(String(d.up||''))||!(d.n>=1&&d.n<=TOK94.PARTS&&d.n===Math.round(d.n))||!(d.i>=0&&d.i<d.n&&d.i===Math.round(d.i)))return 'That upload is out of order — save the token again.';
+    if(typeof d.b!=='string'||!d.b.length||d.b.length>TOK94.PART)return 'Each part of the picture may hold at most 24000 characters.';if(!B64.test(d.b))return 'That token picture is not a WebP image.';return ''}
+  /* the whole picture: → {why} or {bytes, dims, h} */
+  function tokCheck94(b64,meta){const mw=tokMetaWhy94(meta);if(mw)return {why:mw};if(typeof b64!=='string'||b64.length>Math.ceil(TOK94.MAX/3)*4)return {why:'The token picture is too big (64 KB at most).'};
+    if(!B64.test(b64))return {why:'That token picture is not a WebP image.'};const bytes=b64Bytes94(b64);if(bytes.length>TOK94.MAX)return {why:'The token picture is too big (64 KB at most).'};
+    const dims=webpDims94(bytes);if(!dims)return {why:'That token picture is not a WebP image.'};
+    if(dims.w!==8*meta[0]||dims.h!==meta[1])return {why:'The token picture has the wrong size for its sheet.'};return {bytes,dims,h:tokHash94(bytes)}}
+  const tokRef94=x=>x&&typeof x==='object'&&HH.test(String(x.h||''))?{h:String(x.h),at:x.at|0}:null;
+  /* the kit tells every seat which picture the gladiator wears */
+  {const base=C.kitOf;C.kitOf=function(ch){const k=base.apply(this,arguments);try{const r=k&&ch&&HID.test(String(ch.id||''))&&tokRef94(ch.tok94);if(r)k.look={...(k.look||{}),t94:{c:ch.id,h:r.h}}}catch(e){}return k}}
+  /* a look's picture reference (rooms, seats), or null */
+  const lookTok94=L=>{const t=L&&L.t94;return t&&HID.test(String(t.c||''))&&HH.test(String(t.h||''))?{c:String(t.c),h:String(t.h)}:null};
+  if(Array.isArray(C.GUEST_OK)&&!C.GUEST_OK.includes('tok.get'))C.GUEST_OK.push('tok.get'); /* watchers see the pictures too */
+  if(Array.isArray(C.IDEM93)&&!C.IDEM93.includes('char.tok'))C.IDEM93.push('char.tok'); /* each part carries its own rid: a replayed part is answered once */
+  Object.assign(C,{TOK94,b64Bytes94,tokHash94,webpDims94,tokMetaWhy94,tokPoseWhy94,tokPartWhy94,tokCheck94,tokRef94,lookTok94})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

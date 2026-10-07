@@ -160,7 +160,8 @@ const T93_PRE={stand:_T('Stand'),guard:_T('Guard'),lunge:_T('Lunge'),victory:_T(
   return n?d.innerHTML:h}catch(e){console.error(e);return h}}}
 
 /* ---------- the modeller (a window of its own over the Studio) ---------- */
-function t93Open(){const c=ST.draft;if(!c||T93.busy)return;T93.busy=true;const from=document.activeElement;
+/* c0 = the character (default: the Studio draft); opt.save(api, pose, pk, say) = a caller's own Save (v0.94 online: render + upload), opt.errText(e) its words for a failure */
+function t93Open(c0,opt){opt=opt||{};const c=c0||(typeof ST!=='undefined'?ST.draft:null);if(!c||T93.busy)return;T93.busy=true;const from=document.activeElement;
   const ov=document.createElement('div');ov.id='t93m';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.setAttribute('aria-label',_T('3D token modeller'));
   ov.innerHTML=`<div class="t93box"><div class="t93hd"><b>${_T`🧍 3D token · ${esc(c.name||'')}`}</b><button type="button" class="btn" data-t93m="close" aria-label="${_T('Close')}">✕</button></div>
     <div class="t93bd"><div class="t93view"><canvas id="t93cv"></canvas><div class="t93msg" id="t93msg">${_T('Building the body…')}</div></div>
@@ -183,9 +184,9 @@ function t93Open(){const c=ST.draft;if(!c||T93.busy)return;T93.busy=true;const f
     const a=b.dataset.t93m;if(a==='close')return close();
     if(a==='reset'){const p0=(c.tok93&&c.tok93.pose)||t93Stand(api);api.setPose(p0);pk=(c.tok93&&c.tok93.pk)||(c.tok93&&c.tok93.pose?'':'stand');preUI();pinsUI();ed.render();strip();return}
     if(a==='save'){b.disabled=true;cv.style.pointerEvents='none';msg.textContent=_T('Rendering the eight facings…');msg.hidden=false;await new Promise(r=>setTimeout(r,30));
-      try{const pose=api.pose();const tok=await t93Make(c,pose,'3d',pk);c.tok93=tok;await t93Persist(c.id,tok);close();
+      try{const pose=api.pose();if(opt.save){await opt.save(api,pose,pk,m=>{msg.textContent=m});close();return}const tok=await t93Make(c,pose,'3d',pk);c.tok93=tok;await t93Persist(c.id,tok);close();
         if(typeof studioRedraw==='function')studioRedraw();if(typeof mToast==='function')mToast(_T('🧍 3D token saved'))}
-      catch(err){console.error(err);msg.textContent=_T('That did not work. Try again.');b.disabled=false;cv.style.pointerEvents=''}}});
+      catch(err){if(!opt.errText)console.error(err);msg.textContent=opt.errText?opt.errText(err):_T('That did not work. Try again.');b.disabled=false;cv.style.pointerEvents=''}}});
   ov.addEventListener('change',e=>{const el=e.target.closest('[data-t93pin]');if(!el||!api)return;const p=api.pinned();p[el.dataset.t93pin]=el.checked;api.pins(p.L,p.R);pk='';preUI();ed.render();strip()});
   window.addEventListener('resize',fit);
   t93Load(n=>{if(!closed)msg.textContent=_T('Building the body…')+' '+'·'.repeat(1+n%12)}).then(a=>{if(closed)return;api=a;
