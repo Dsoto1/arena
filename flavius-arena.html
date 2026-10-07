@@ -24120,61 +24120,74 @@ const mtEl=spot=>typeof spot==='function'?spot():spot?document.querySelector(spo
 const mtUp=(sel,up)=>()=>{const e=document.querySelector(sel);return e?(up?e.closest(up)||e.parentElement:e.parentElement):null};
 /* mtRivalId — id of the most famous living rival house (the one the lesson visits). */
 const mtRivalId=()=>{const w=mtW();if(!w)return '';const r=w.mgrs.filter(m=>!m.isPlayer&&!m.dead).sort((a,b)=>(b.fame||0)-(a.fame||0))[0];return r?r.id:''};
+/* mtYC — fighter B's Training Yard card (v0.92 213-v92yard), or the part of it matching sub. */
+const mtYC=sub=>{const c=document.querySelector(`#mgrPane [data-y92c="${MTUT.B}"]`);return c&&sub?c.querySelector(sub):c};
+/* mtY — fighter B's yard plan this week ({L locked, Q planned, pre drill}); empty when the yard is not loaded. */
+const mtY=()=>{try{return y92Peek(thPlan(mtW()),MTUT.B)}catch(e){return {L:{},Q:{},pre:null}}};
 /* v0.45 THE DEEP LESSON — one full week, every step checked off by DOING it (the coach moves on by itself),
    with guard rails: only what the step asks for can be clicked (dialogs it opens are fine), so a lesson can
    never turn into a real career by accident. */
 /* MTUT_STEPS — the steps in order. Fields: spot (what to light), say (text or function), next (a Next button), tab (done when that tab is open), until (done when true), enter (runs once on arrival), allow (extra clickable selectors), spotOnly (the spot is only lit, not clickable), arena (step happens on the sand), finish/last (the final step). */
 const MTUT_STEPS=[
-  {spot:'.mhead',say:_T`Welcome, <b>lanista</b>. This is a sandbox league made for this lesson — nothing is saved. Up top: your <b>treasury</b> (we lent you plenty), <b>fame</b>, ludus grade, record and the week's <b>lanista's hours</b>.`,next:1},
-  {spot:'.mtabs',say:_T`The <b>tabs</b> run your ludus — your house, the arena, the wider world, and you. Work them left to right each week; the coach will walk you through them.`,next:1},
+  {k:'welcome',spot:'.mhead',say:_T`Welcome, <b>lanista</b>. This is a sandbox league made for this lesson — nothing is saved. Up top: your <b>treasury</b> (we lent you plenty), <b>fame</b>, ludus grade and record.`,next:1},
+  {k:'tabs',spot:'.mtabs',say:_T`The <b>rail</b> on the left runs your ludus — your house, the arena, the wider world, and you. Work it top to bottom each week; the coach will walk you through it.`,next:1},
   // the roster and a fighter's card
-  {spot:'[data-mg="tab"][data-id="roster"]',say:_T`Open <b>🛡 Roster</b> — the fighters under contract to your house.`,tab:'roster'},
-  {spot:()=>document.querySelector(`#mgrPane tr[data-mg="lsel"][data-id="${MTUT.B}"]`),say:()=>_T`You have two fighters. Click <b>${mtNm('B')}</b> in the list to open <b>their card</b> beside it.`,until:()=>MGR.lsel===MTUT.B},
-  {spot:()=>document.querySelector(`#mgrPane [data-mg="meal"][data-id="${MTUT.B}"]`),say:()=>_T`The card: rating, morale, loyalty, contract. Under <b>Keeping them</b> you spend hours and coin to keep a fighter happy and loyal. Click <b>🍷 Share a meal</b> with ${mtNm('B')}.`,until:()=>{const g=mtG('B');return g&&g.mealWk===mtW().week}},
-  {spot:'#mgrPane',spotOnly:1,say:()=>_T`Morale and loyalty rise. <b>Morale</b> walks onto the sand with them (80+ adds AP and CF); <b>loyalty</b> is what a rival must beat to poach them.`,next:1},
+  {k:'roster',spot:'[data-mg="tab"][data-id="roster"]',say:_T`Open <b>🛡 Roster</b> — the fighters under contract to your house.`,tab:'roster'},
+  {k:'lsel',spot:()=>document.querySelector(`#mgrPane tr[data-mg="lsel"][data-id="${MTUT.B}"]`),say:()=>_T`You have two fighters. Click <b>${mtNm('B')}</b> in the list to open <b>their card</b> beside it.`,until:()=>MGR.lsel===MTUT.B},
+  {k:'meal',spot:()=>document.querySelector(`#mgrPane [data-mg="meal"][data-id="${MTUT.B}"]`),say:()=>_T`The card: rating, morale, loyalty, contract. Under <b>Keeping them</b> you spend hours and coin to keep a fighter happy and loyal. Click <b>🍷 Share a meal</b> with ${mtNm('B')}.`,until:()=>{const g=mtG('B');return g&&g.mealWk===mtW().week}},
+  {k:'morale',spot:'#mgrPane',spotOnly:1,say:()=>_T`Morale and loyalty rise. <b>Morale</b> walks onto the sand with them (80+ adds AP and CF); <b>loyalty</b> is what a rival must beat to poach them.`,next:1},
   // recruiting: courting a free agent
-  {spot:'[data-mg="tab"][data-id="recruit"]',say:_T`Now <b>🤝 Recruiting</b> — the free agents of the empire.`,tab:'recruit'},
-  {spot:'#mgrPane table.tally',say:_T`Click any <b>free agent</b> in the list to open their recruiting card.`,enter:()=>{MTUT.sel0=MGR.sel},until:()=>MGR.sel&&MGR.sel!==MTUT.sel0,allow:['[data-mg="sort"]','[data-mg="filter"]']},
-  {spot:()=>document.querySelector('#mgrPane [data-mg="scout"]'),say:_T`Courting starts with knowing them. Press <b>Scout</b> — six sparring bouts in your ludus reveal what they want and how they grade your house.`,enter:()=>{MTUT.court=MGR.sel},until:()=>{const g=gById(MGR.sel);return g&&(g.scout||0)>=1&&!MGR.busy}},
-  {spot:mtUp('#mgrPane [data-mg="pitch"]','.acts'),say:_T`Now <b>pitch</b> them — sell what they care about most (the grades you just revealed). One pitch per recruit a week; each costs an hour.`,until:()=>{const g=gById(MGR.sel);const r=g&&g.recW&&g.recW[me().id];return !!(r&&r.wk===mtW().week&&r.a&&r.a.pitch)}},
-  {spot:'#mgrPane',spotOnly:1,say:_T`Their <b>interest</b> climbs as you court them — feasts, pitches, a famous house, a fair wage. When it is high enough, <b>Offer a contract</b>. Not today: we have a card to fight.`,next:1},
+  {k:'recruit',spot:'[data-mg="tab"][data-id="recruit"]',say:_T`Now <b>🤝 Recruiting</b> — the free agents of the empire.`,tab:'recruit'},
+  {k:'fa',spot:'#mgrPane table.tally',say:_T`Click any <b>free agent</b> in the list to open their recruiting card.`,enter:()=>{MTUT.sel0=MGR.sel},until:()=>MGR.sel&&MGR.sel!==MTUT.sel0,allow:['[data-mg="sort"]','[data-mg="filter"]']},
+  {k:'scout',spot:()=>document.querySelector('#mgrPane [data-mg="scout"]'),say:_T`Courting starts with knowing them. Press <b>Scout</b> — six sparring bouts in your ludus reveal what they want and how they grade your house.`,enter:()=>{MTUT.court=MGR.sel},until:()=>{const g=gById(MGR.sel);return g&&(g.scout||0)>=1&&!MGR.busy}},
+  {k:'pitch',spot:mtUp('#mgrPane [data-mg="pitch"]','.acts'),enter:()=>{MGR.recStep=2;if(typeof MGR_REDRAW==='function'&&document.getElementById('mgrBody'))MGR_REDRAW()},allow:['[data-recstep]'],say:_T`Now <b>pitch</b> them — sell what they care about most (the grades you just revealed). One pitch per recruit a week.`,until:()=>{const g=gById(MGR.sel);const r=g&&g.recW&&g.recW[me().id];return !!(r&&r.wk===mtW().week&&r.a&&r.a.pitch)}},
+  {k:'interest',spot:'#mgrPane',spotOnly:1,say:_T`Their <b>interest</b> climbs as you court them — feasts, pitches, a famous house, a fair wage. When it is high enough, <b>Offer a contract</b>. Not today: we have a card to fight.`,next:1},
   // the infirmary
-  {spot:'[data-mg="tab"][data-id="infirm"]',say:()=>_T`${mtNm('A')} came home hurt last week. Open the <b>⚕ Infirmary</b>.`,tab:'infirm'},
-  {spot:()=>document.querySelector(`#mgrPane [data-mg="medic"][data-id="${MTUT.A}"]`),say:()=>_T`A hurt fighter cannot be entered. Call the <b>Medicus</b> for ${mtNm('A')} — it clears the wound and lifts their spirits.`,until:()=>{const g=mtG('A');return g&&!g.inj}},
+  {k:'infirm',spot:'[data-mg="tab"][data-id="infirm"]',say:()=>_T`${mtNm('A')} came home hurt last week. Open the <b>⚕ Infirmary</b>.`,tab:'infirm'},
+  {k:'medic',spot:()=>document.querySelector(`#mgrPane [data-mg="medic"][data-id="${MTUT.A}"]`),say:()=>_T`A hurt fighter cannot be entered. Call the <b>Medicus</b> for ${mtNm('A')} — it clears the wound and lifts their spirits.`,until:()=>{const g=mtG('A');return g&&!g.inj}},
   // my ludus: spending to improve
-  {spot:'[data-mg="tab"][data-id="ludus"]',say:_T`Cleared for play. Now <b>🏛 Your ludus</b> — where coin and points become a better house.`,tab:'ludus'},
-  {spot:'[data-mg="run"][data-id="fac"]',say:_T`Open <b>🏗 Facilities</b>: permanent upgrades — one project a week.`,until:()=>MGR.run==='fac'},
-  {spot:'[data-mg="build"][data-id="stables"]',say:_T`Build the <b>🐎 Stables</b> — your own road crew makes every away trip cheaper. (The yard, the infirmary wing, the barracks, the armory and the practice stands each help in their own way; together they set your <b>Ludus grade</b>, which recruits look at.)`,until:()=>facLvl(me(),'stables')>=1},
-  {spot:'[data-mg="run"][data-id="school"]',say:_T`Coin builds the house; <b>perk points</b> build <i>you</i>. Open <b>🎓 Schooling</b>.`,until:()=>MGR.run==='school'},
-  {spot:mtUp('#mgrPane [data-mg="perk"]','.card2'),say:_T`Spend your perk point on any trait — Honor, Showmanship, Discipline… Recruits grade you on exactly these. You earn more each week: wins, kept pledges, training.`,until:()=>(me().perkPts||0)<1},
-  {spot:'.rundash [data-id="practice"]',spotOnly:1,say:_T`The weekly drills live in the <b>🏋 Training Yard</b> tab (with sparring against other stables). This tile takes you there any week.`,next:1},
+  {k:'ludus',spot:'[data-mg="tab"][data-id="ludus"]',say:_T`Cleared for play. Now <b>🏛 Your ludus</b> — where coin and points become a better house.`,tab:'ludus'},
+  {k:'fac',spot:'[data-mg="run"][data-id="fac"]',say:_T`Open <b>🏗 Facilities</b>: permanent upgrades — one project a week.`,until:()=>MGR.run==='fac'},
+  {k:'stables',spot:'[data-mg="build"][data-id="stables"]',say:_T`Build the <b>🐎 Stables</b> — your own road crew makes every away trip cheaper. (The yard, the infirmary wing, the barracks, the armory and the practice stands each help in their own way; together they set your <b>Ludus grade</b>, which recruits look at.)`,until:()=>facLvl(me(),'stables')>=1},
+  {k:'school',spot:'[data-mg="run"][data-id="school"]',say:_T`Coin builds the house; <b>perk points</b> build <i>you</i>. Open <b>🎓 Schooling</b> (in your own career it lives on the Lanista tab).`,until:()=>MGR.run==='school'},
+  {k:'perk',spot:mtUp('#mgrPane [data-mg="perk"]','.card2'),say:_T`Spend your perk point: a <b>perk</b> from one of the three trees (each says what it does), or <b>hone a trait</b> recruits grade you on. You earn more each week: wins, kept pledges, training.`,until:()=>(me().perkPts||0)<1},
+  /* v0.93: the Training Yard (213-v92yard) — a card per fighter, sessions under the weekly cap, Lock in, the Doctore's drill, Trials */
+  {k:'yard',spot:'[data-mg="tab"][data-id="practice"]',say:_T`Your fighters grow in the <b>🏋 Training Yard</b>. Open it.`,tab:'practice'},
+  {k:'ycard',spot:()=>mtYC(''),spotOnly:1,say:_T`One <b>card per fighter</b>. Each bar is a rating — 🏃 Speed, 💪 Strength, 📜 Tactics, 🎭 Crowd — and shows what this week's work adds. Fatigue sits under them.`,next:1},
+  {k:'yplus',spot:()=>mtYC('.y92bars'),say:()=>_T`Press <b>+</b> on a rating to plan a <b>session</b> for ${mtNm('B')}. Each takes one of the house's training hours; a fighter takes at most <b>${Y92.CAP} a week</b> (the counter on the card).`,until:()=>{const y=mtY();return y92Sum(y.Q)+y92Sum(y.L)>=1},allow:['[data-y92s]']},
+  {k:'ylock',spot:()=>document.querySelector(`#mgrPane [data-y92lock="${MTUT.B}"]`),say:_T`A plan is only a plan: unlocked sessions never train. Press <b>🔒 Lock in</b>.`,until:()=>y92Sum(mtY().L)>=1},
+  {k:'ydrill',spot:()=>mtYC('.y92pre'),say:_T`A locked session opens the <b>Doctore's drill</b>: two ratings in one drill, with his bonus — 2 hours, one a week, outside the cap. Pick one.`,until:()=>!!mtY().pre,allow:['[data-y92pre]']},
+  {k:'ydlock',spot:()=>document.querySelector(`#mgrPane [data-y92lock="${MTUT.B}"]`),say:_T`Lock in again — the drill counts only once it is locked.`,until:()=>!!(mtY().pre&&mtY().pre.lock)},
+  {k:'ydoc',spot:'#mgrPane .y92doc',spotOnly:1,say:_T`<b>Your Doctore.</b> His level (your yard + the hours he spends with the squad) unlocks more drills. <b>Intensity</b> drives every session: more gain, more fatigue. <b>↻ Same as last week</b> re-plans the squad; <b>🔒 Lock all</b> locks every card.`,next:1},
+  {k:'ytrials',spot:'#mgrPane .y92trials',spotOnly:1,say:_T`<b>⚔ Trials of the Yard</b>: a spar with a housemate, an exhibition against a rival house, or the beast pen — one a week per fighter, each with its cost and fatigue. Not today: we have a card to fight.`,next:1},
   // match night
-  {spot:'[data-mg="tab"][data-id="night"]',say:_T`The heart of it: <b>⚔️ Match Week</b>.`,tab:'night'},
-  {spot:'[data-mg="city"]',spotOnly:1,say:_T`Each week's games are in one city — and in that week you can walk its <b>city square</b>: shops, the tavern, the auction block, the crowd. Explore it in your own career (after paying the road, away from home). Not in this lesson.`,next:1},
-  {spot:'#mgrPane .bout',spotOnly:1,say:_T`Three bouts: <b>undercard</b>, <b>feature</b>, <b>main event</b>. Every fighter you enter earns an appearance fee; the winner's house takes the <b>purse</b>. They are fought in order.`,next:1},
-  {spot:mtUp('#ent0','.bslip'),say:()=>_T`Pick <b>${mtNm('A')}</b> in the Undercard's list and press <b>Enter your fighter</b>.`,until:()=>mtIn(0,'A')},
-  {spot:mtUp('#mgrPane [data-mg="watch"][data-id="0"]','.acts'),say:()=>_T`Now watch ${mtNm('A')} fight — <b>👁 Watch it live</b> from your box, or <b>🎟 Spectate</b> from a seat in the stands.`,until:()=>!!(S&&S.mgrCtx&&!S.over&&!mtMgrShown()),allow:['[data-mg="watch"][data-id="0"]','[data-mg="spect"][data-id="0"]']},
-  {arena:1,spot:'#btnSimEnd',say:_T`The bout is live on the sand (close the briefing first — it tells you the event's rules). You could watch it to the end; for the lesson, press <b>⏭ Sim to end</b> to resolve it now.`,until:()=>{const b=mtBout(0);return !!(b&&b.done)||!!(S&&S.over)}},
-  {arena:1,spot:()=>[...document.querySelectorAll('#mBtns button')].find(b=>/Return to Match Week/.test(b.dataset.en84||b.textContent))||null,say:_T`The result is in. Press <b>⏎ Return to Match Week</b>.`,until:()=>!!mtMgrShown()&&MGR.tab==='night'},
-  {spot:'#pendbox',say:()=>_T`A <b>verdict awaits</b> for ${mtNm('A')}: the Fate table sent them to the <b>Thumb of Flavius</b>. Face it — roll the d6 yourself.`,enter:()=>mtVerdict(),until:()=>!(mtW().pend||[]).length&&!MGR.busy,allow:['[data-mg="pthumb"]','[data-mg="pblood"]','[data-mg="prudis"]']},
-  {spot:()=>document.querySelector('#mgrPane [data-stk="1|5"]'),say:()=>_T`The <b>Feature bout</b>. You do have a fighter who could go in — ${mtNm('B')} — but we are saving them for the <b>Main event</b>. So <b>bet</b> on this one instead: raise your stake with <b>+5</b>.`,enter:()=>{const i=document.getElementById('mgStake1');MTUT.stk0=i?+i.value:10},until:()=>{const i=document.getElementById('mgStake1');return !!i&&+i.value>(MTUT.stk0||10)}},
-  {spot:()=>mtBetPick(),say:_T`Now press <b>Bet</b> beside the lit fighter — the bookmaker's favourite (the lowest odds).`,until:()=>{const b=mtBout(1);return !!(b&&(b.bets||[]).length)},allow:['[data-mg="bet"]','#mgStake1','[data-stk]']},
-  {spot:()=>document.querySelector('#mgrPane [data-mg="sim"][data-id="1"]'),say:_T`Slip in hand. The card runs in order — press <b>⚡ Simulate</b> on the Feature bout to fight it now. (You could also watch it or fight it yourself.)`,until:()=>{const b=mtBout(1);return !!(b&&b.done)&&!MGR.busy}},
-  {spot:mtUp('#ent2','.bslip'),say:()=>_T`The <b>Main event</b> — the big purse. Pick <b>${mtNm('B')}</b> and press <b>Enter your fighter</b>.`,until:()=>mtIn(2,'B')},
-  {spot:'[data-mg="simall"]',say:()=>_T`Now <b>⚡ Simulate Match Week</b> — the main event is fought in a moment, with ${mtNm('B')} in it. (In your own career you can also <b>watch it live</b> or <b>fight it yourself</b> — take your fighter's reins on the sand. For the lesson, we simulate.)`,until:()=>{const w=mtW();return w&&w.night.bouts.every(b=>b.done)&&!MGR.busy}},
-  {spot:'#nightRes',spotOnly:1,say:_T`<b>The results.</b> Each fighter's place, the <b>Crowd Favor</b> they earned and the <b>Fate</b> it bought (under ${cfAmt87(17)}: condemned; 17-19: the Thumb; 20-49: back to the ludus; 50+: the rudis), your purses and fees, the crowd — and your betting slip.`,next:1},
-  {spot:'#pendbox',say:_T`Another verdict from the main event — settle it the same way before the week can end.`,until:()=>!(mtW().pend||[]).length&&!MGR.busy,allow:['[data-mg="pthumb"]','[data-mg="pblood"]','[data-mg="prudis"]']},
+  {k:'night',spot:'[data-mg="tab"][data-id="night"]',say:_T`The heart of it: <b>⚔️ Match Week</b>.`,tab:'night'},
+  {k:'city',spot:'[data-mg="city"]',spotOnly:1,say:_T`Each week's games are in one city — and in that week you can walk its <b>city square</b>: the temple, the market stalls, the auction — and <b>Walk the Sand</b> at the arena gate. Explore it in your own career. Not in this lesson.`,next:1},
+  {k:'bouts',spot:'#mgrPane .bout',spotOnly:1,say:_T`Three bouts: <b>undercard</b>, <b>feature</b>, <b>main event</b>. Every fighter you enter earns an appearance fee; the winner's house takes the <b>purse</b>. They are fought in order.`,next:1},
+  {k:'enter0',spot:mtUp('#ent0','.bslip'),say:()=>_T`Pick <b>${mtNm('A')}</b> in the Undercard's list and press <b>Enter your fighter</b>.`,until:()=>mtIn(0,'A')},
+  {k:'watch',spot:mtUp('#mgrPane [data-mg="watch"][data-id="0"]','.acts'),say:()=>_T`Now watch ${mtNm('A')} fight — <b>👁 Watch it live</b> from your box, or <b>🎟 Spectate</b> from a seat in the stands.`,until:()=>!!(S&&S.mgrCtx&&!S.over&&!mtMgrShown()),allow:['[data-mg="watch"][data-id="0"]','[data-mg="spect"][data-id="0"]']},
+  {k:'sim',arena:1,spot:'#btnSimEnd',say:_T`The bout is live on the sand (close the briefing first — it tells you the event's rules). You could watch it to the end; for the lesson, press <b>⏭ Sim to end</b> to resolve it now.`,until:()=>{const b=mtBout(0);return !!(b&&b.done)||!!(S&&S.over)}},
+  {k:'ret',arena:1,spot:()=>[...document.querySelectorAll('#mBtns button')].find(b=>/Return to Match Week/.test(b.dataset.en84||b.textContent))||null,say:_T`The result is in. Press <b>⏎ Return to Match Week</b>.`,until:()=>!!mtMgrShown()&&MGR.tab==='night'},
+  {k:'verdict',spot:'#pendbox',say:()=>_T`A <b>verdict awaits</b> for ${mtNm('A')}: the Fate table sent them to the <b>Thumb of Flavius</b>. Face it — roll the d6 yourself.`,enter:()=>mtVerdict(),until:()=>!(mtW().pend||[]).length&&!MGR.busy,allow:['[data-mg="pthumb"]','[data-mg="pblood"]','[data-mg="prudis"]']},
+  {k:'stake',spot:()=>document.querySelector('#mgrPane [data-stk="1|5"]'),say:()=>_T`The <b>Feature bout</b>. You do have a fighter who could go in — ${mtNm('B')} — but we are saving them for the <b>Main event</b>. So <b>bet</b> on this one instead: raise your stake with <b>+5</b>.`,enter:()=>{const i=document.getElementById('mgStake1');MTUT.stk0=i?+i.value:10},until:()=>{const i=document.getElementById('mgStake1');return !!i&&+i.value>(MTUT.stk0||10)}},
+  {k:'bet',spot:()=>mtBetPick(),say:_T`Now press <b>Bet</b> beside the lit fighter — the bookmaker's favourite (the lowest odds).`,until:()=>{const b=mtBout(1);return !!(b&&(b.bets||[]).length)},allow:['[data-mg="bet"]','#mgStake1','[data-stk]']},
+  {k:'sim1',spot:()=>document.querySelector('#mgrPane [data-mg="sim"][data-id="1"]'),say:_T`Slip in hand. The card runs in order — press <b>⚡ Simulate</b> on the Feature bout to fight it now. (You could also watch it or fight it yourself.)`,until:()=>{const b=mtBout(1);return !!(b&&b.done)&&!MGR.busy}},
+  {k:'enter2',spot:mtUp('#ent2','.bslip'),say:()=>_T`The <b>Main event</b> — the big purse. Pick <b>${mtNm('B')}</b> and press <b>Enter your fighter</b>.`,until:()=>mtIn(2,'B')},
+  {k:'simall',spot:'[data-mg="simall"]',say:()=>_T`Now <b>⚡ Simulate Match Week</b> — the main event is fought in a moment, with ${mtNm('B')} in it. (In your own career you can also <b>watch it live</b> or <b>fight it yourself</b> — take your fighter's reins on the sand. For the lesson, we simulate.)`,until:()=>{const w=mtW();return w&&w.night.bouts.every(b=>b.done)&&!MGR.busy}},
+  {k:'results',spot:'#nightRes',spotOnly:1,say:_T`<b>The results.</b> Each fighter's place, the <b>Crowd Favor</b> they earned and the <b>Fate</b> it bought (under ${cfAmt87(17)}: condemned; 17-19: the Thumb; 20-49: back to the ludus; 50+: the rudis), your purses and fees, the crowd — and your betting slip.`,next:1},
+  {k:'verdict2',spot:'#pendbox',say:_T`Another verdict from the main event — settle it the same way before the week can end.`,until:()=>!(mtW().pend||[]).length&&!MGR.busy,allow:['[data-mg="pthumb"]','[data-mg="pblood"]','[data-mg="prudis"]']},
   // the league
-  {spot:'[data-mg="tab"][data-id="league"]',say:_T`<b>📊 League</b> — the table. A win is 3 points, a runner-up finish 1; the top four go to the Superbus at season's end.`,tab:'league'},
-  {spot:()=>document.querySelector(`#mgrPane tr[data-mg="team"][data-id="${mtRivalId()}"]`),say:()=>{const m=mgrById(mtRivalId());return _T`Every house can be visited. Click <b>${esc(m?m.ludus:_T('a rival house'))}</b>${m?_T` — ${esc(m.name)}'s stable, the most famous in the league`:''}.`},until:()=>MGR.tab==='team'&&MGR.teamId===mtRivalId()},
-  {spot:()=>{const e=document.querySelector(`#mgrPane [data-mg="envoy"][data-id="${mtRivalId()}|gift"]`);return e?e.closest('.commsacts')||e.parentElement:null},say:_T`Their lanista, roster and ledger — and <b>correspondence</b>. Send an envoy: <b>🎁 gifts</b> warm a rival (trades and pacts need a warm opinion).`,until:()=>{const m=mgrById(mtRivalId());return m&&m.envoyWk===mtW().week},allow:['[data-mg="envoy"]']},
-  {spot:'[data-mg="tab"][data-id="imp"]',say:_T`<b>🌍 Imperium</b> — the map of the empire.`,tab:'imp'},
-  {spot:'#mgrPane',spotOnly:1,say:_T`Fans on the roads, weather, wars and plagues, each city's crowd and mood — all of it moves attendance, purses and risk. A war can even call your fighters to the levy.`,next:1},
-  {spot:'[data-mg="tab"][data-id="sched"]',say:_T`<b>📅 Season</b> — the schedule.`,tab:'sched'},
-  {spot:'#mgrPane',spotOnly:1,say:_T`Twelve weeks, a city each week; festivals and invitationals on the side; the Superbus in Roma at the end. Plan your roads and your stars around it.`,next:1},
-  {spot:'[data-mg="endask"]',say:_T`Last: <b>⏭ End the week</b>. Wages are paid, the yard trains, rivals scheme — and the empire moves on.`,until:()=>MGR.confirmEnd||(mtW()&&mtW().week>MTUT.w0)},
-  {spot:'[data-mg="endweek"]',say:_T`Confirm it.`,until:()=>mtW()&&mtW().week>MTUT.w0},
-  {spot:'#mgrPane [data-mg="tab"][data-id="ludus"]',say:_T`The <b>Acta Diurna</b> — the week's gazette: results, deaths, signings, the league's top fives. When you have read it, <b>set the paper down</b> to finish this lesson.`,until:()=>mtW()&&mtW().week>MTUT.w0&&MGR.tab==='ludus',finish:1,last:1}];
+  {k:'league',spot:'[data-mg="tab"][data-id="league"]',say:_T`<b>📊 League</b> — the table. A win is 3 points, a runner-up finish 1; the top four go to the Superbus at season's end.`,tab:'league'},
+  {k:'rival',spot:()=>document.querySelector(`#mgrPane [data-lg90box="${mtRivalId()}"]`)||document.querySelector(`#mgrPane tr[data-mg="team"][data-id="${mtRivalId()}"]`),say:()=>{const m=mgrById(mtRivalId());const open=!!document.querySelector(`#mgrPane [data-lg90box="${mtRivalId()}"]`);
+    return open?_T`Their scouting card: fighters, form, this week's bouts. Press <b>🏛 Team screen</b> to visit the house.`:_T`Every house can be visited. Click <b>${esc(m?m.ludus:_T('a rival house'))}</b>${m?_T` — ${esc(m.name)}'s stable, the most famous in the league`:''}.`},until:()=>MGR.tab==='team'&&MGR.teamId===mtRivalId()},
+  {k:'envoy',spot:()=>{const e=document.querySelector(`#mgrPane [data-mg="envoy"][data-id="${mtRivalId()}|gift"]`);return e?e.closest('.commsacts')||e.parentElement:null},say:_T`Their lanista, roster and ledger — and <b>correspondence</b>. Send an envoy: <b>🎁 gifts</b> warm a rival (trades and pacts need a warm opinion).`,until:()=>{const m=mgrById(mtRivalId());return m&&m.envoyWk===mtW().week},allow:['[data-mg="envoy"]']},
+  {k:'imp',spot:'[data-mg="tab"][data-id="imp"]',say:_T`<b>🌍 Imperium</b> — the map of the empire.`,tab:'imp'},
+  {k:'impinfo',spot:'#mgrPane',spotOnly:1,say:_T`Fans on the roads, weather, wars and plagues, each city's crowd and mood — all of it moves attendance, purses and risk. A war can even call your fighters to the levy.`,next:1},
+  {k:'sched',spot:'[data-mg="tab"][data-id="sched"]',say:_T`<b>📅 Season</b> — the schedule.`,tab:'sched'},
+  {k:'schedinfo',spot:'#mgrPane',spotOnly:1,say:_T`Twelve weeks, a city each week; festivals and invitationals on the side; the Superbus in Roma at the end. Plan your roads and your stars around it.`,next:1},
+  {k:'endask',spot:'[data-mg="endask"]',say:_T`Last: <b>⏭ End the week</b>. Wages are paid, the yard trains, rivals scheme — and the empire moves on.`,until:()=>MGR.confirmEnd||(mtW()&&mtW().week>MTUT.w0)},
+  {k:'endweek',spot:'[data-mg="endweek"]',say:_T`Confirm it.`,until:()=>mtW()&&mtW().week>MTUT.w0},
+  {k:'acta',spot:'#mgrPane [data-mg="tab"][data-id="ludus"]',say:_T`The <b>Acta Diurna</b> — the week's gazette: results, deaths, signings, the league's top fives. When you have read it, <b>set the paper down</b> to finish this lesson.`,until:()=>mtW()&&mtW().week>MTUT.w0&&MGR.tab==='ludus',finish:1,last:1}];
 /* the lesson's one staged moment: the first bout ends at the Thumb, so there is always a verdict to settle
    mtVerdict — rewrites fighter A's undercard result to 18 CF (the Thumb of Flavius) and queues the verdict; clears war levies. */
 function mtVerdict(){const w=mtW();if(!w)return;w.pend=(w.pend||[]).filter(x=>x.t!=='levy'); /* no wars in the lesson */const g=mtG('A');if(!g)return;if((w.pend||[]).some(x=>x.gid===g.id)||!g.alive)return;
@@ -24271,7 +24284,7 @@ function lessonsMenuVis(){const el=document.getElementById('mmLearn');if(!el)ret
   if(bc)bc.hidden=!showC;if(bm)bm.hidden=!showM;el.hidden=!showC&&!showM;el.classList.toggle('single',showC!==showM)}
 /* lessonsHTML — Rules & strategy → 🎓 Lessons: a card per lesson (done or not, start/again) and the "lesson buttons on the main menu" switch. */
 function lessonsHTML(){const card=(k,icon,title,desc)=>`<div class="mstone"><div class="mshd"><span class="msic">${icon}</span><div><div class="msv">${lessonDone(k)?'✔ completed':_T('not taken yet')}</div><b>${title}</b></div></div><p style="margin:4px 0 8px">${desc}</p><button class="btn primary" type="button" data-lesson="${k}">${lessonDone(k)?_T('Take it again'):_T('Start the lesson')}</button></div>`;
-  return `<div class="lessoncards">${card('classic','🎓',_T('Learn to Play (Classic)'),_T('A tour of the arena screen, then a guided bout against one rival and two beasts: the choice, moving, breaking a Blessings pot, your hand, ending the turn — and the fight to the finish.'))}${card('manager','💼',_T('Learn to Play Manager Mode'),_T('One full guided week of a ludus in a sandbox league: a fighter’s card and keeping them happy, courting a recruit, the infirmary, facilities and schooling, Match Week (watch a bout live, bet, enter the main event), a verdict, a rival house, the Imperium, the season — and the Acta Diurna.'))}</div>
+  return `<div class="lessoncards">${card('classic','🎓',_T('Learn to Play (Classic)'),_T('A tour of the arena screen, then a guided bout against one rival and two beasts: the choice, moving, breaking a Blessings pot, your hand, ending the turn — and the fight to the finish.'))}${card('manager','💼',_T('Learn to Play Manager Mode'),_T('One full guided week of a ludus in a sandbox league: a fighter’s card and keeping them happy, courting a recruit, the infirmary, facilities and schooling, the Training Yard, Match Week (watch a bout live, bet, enter the main event), a verdict, a rival house, the Imperium, the season — and the Acta Diurna.'))}</div>
    <label class="setrow" style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" data-lessonsmenu="1" ${(SETTINGS.lessonsMenu===true)||(SETTINGS.lessonsMenu!==false&&!(lessonDone('classic')&&lessonDone('manager')))?'checked':''}><span>${_T`<b>🎓 Lesson buttons on the main menu</b>`} <span class="rc-sub">${_T`they hide once both are done; tick to keep them`}</span></span></label>`}
 /* =====================================================================
    37-CRLIST · ONE SET OF BUTTONS FOR EVERY CREATION (v0.44)
@@ -49164,6 +49177,179 @@ drawTosses=function(){if(!S||!S.tosses||!S.tosses.length)return;const now=perfor
     /* the shadow on the sand under the landing point, firmer as it comes down */
     if(k>0.35){ctx.save();ctx.globalAlpha=Math.min(1,(k-0.35)/0.65)*0.35;ctx.fillStyle='#2a1a0c';ctx.beginPath();ctx.ellipse(q.sx+(q.tx-q.sx)*k,q.sy+(q.ty-q.sy)*k+TW*0.04,size*0.8,size*0.3,0,0,Math.PI*2);ctx.fill();ctx.restore()}
     ctx.save();ctx.translate(x,y);ctx.rotate(q.rot+(k<1?k*9:0));toss92Draw(ctx,q,size);ctx.restore()}};
+/* =====================================================================
+   220-V93A11Y · v0.93 ACCESSIBILITY PASS (his yes 2026-10-07, §8 "v0.93 ALSO" A)
+   =====================================================================
+   1. KEYBOARD ON THE SAND: the board canvas takes focus (Tab). Arrow keys move a gold tile cursor in SCREEN directions
+      (the view may be turned, 168-v89rotate): ↑ up-right, → down-right, ↓ down-left, ← up-left — the four grid neighbours
+      as they sit on screen. Enter / Space = a click on that tile (a real click event on the canvas at the tile's centre,
+      so pick/onTile and every guard see the same path as the mouse). Escape = back to Move (cancels an attack/push/
+      topple/tunnel mode). I = read the board aloud (summary). The cursor shows only while the keyboard drives the board
+      (a mouse click never draws it; Space still pauses unless the arrows were used since the last pointer).
+      Hotkeys kept: X see-through, S stands, B Bestiary, T stands hub, M mute, H hints, C words (menu), Space pause.
+   2. WINDOWS: every open dialog (#modal's #mboxEl, ask76/verAsk popups, [role=dialog][aria-modal], [role=alertdialog]
+      such as #tab92) takes focus when it opens (primary button, else the first control that is not a text field),
+      Tab / Shift+Tab are trapped inside the top one (the lesson coach #mtutCoach/#tutCoach stays reachable), focus goes
+      back to the opener when it closes. When a window redraws under a keyboard user, focus returns to the same control.
+   3. SCREEN READERS: a polite live region (#a11yLive93) speaks turn changes, important log lines (big/bad) and the
+      cursor's tile; a hidden region (#a11ySum93) holds the board summary (whose turn, phase, every gladiator's tile +
+      HP/AP by location, beasts and which are in reach). Icon-only buttons/chips get an aria-label from their title,
+      data-tip or a small icon dictionary (a debounced MutationObserver over added nodes).
+   4. FOCUS RINGS: one gold :focus-visible ring everywhere (mouse focus never shows it).
+   5. CONTRAST (WCAG AA): a few muted text tones lifted (CON93 below) — measured by tools/tests/tv93a.js.
+   Off: nothing to switch; none of it draws unless the keyboard is used. Phones: no change (no ring without a keyboard).
+   Test: tv93a.
+   ===================================================================== */
+const A93={kbd:false,cur:null,stack:[],last:null,sig:null,liveQ:[],liveT:0,sumT:0};
+/* ---------- styles: the ring, visually hidden helpers, contrast lifts ---------- */
+{const st=document.createElement('style');st.id='a11y93css';st.textContent=`
+:focus-visible{outline:2px solid #f2c75c!important;outline-offset:2px!important;box-shadow:0 0 0 4px rgba(20,12,4,.85)!important}
+#cv:focus{outline:none}#cv:focus-visible{outline:2px solid #f2c75c!important;outline-offset:-3px!important;box-shadow:none!important}
+.sr93{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;white-space:nowrap!important;border:0!important}
+.sr93f:focus{position:fixed!important;left:12px!important;top:12px!important;width:auto!important;height:auto!important;clip:auto!important;padding:6px 10px!important;margin:0!important;z-index:99999;background:#2a1d10;color:#f6e7c8;border:1px solid #f2c75c!important;border-radius:6px;white-space:normal!important}
+.mbox:focus,.verask:focus,[role="dialog"]:focus,[role="alertdialog"]:focus{outline:none}
+:root{--dim:#a3907a}
+`;document.head.appendChild(st)}
+/* ---------- the live region, the board summary, the skip button ---------- */
+function a11yNodes93(){if(document.getElementById('a11yLive93'))return;
+  const live=document.createElement('div');live.id='a11yLive93';live.className='sr93';live.setAttribute('aria-live','polite');live.setAttribute('role','status');document.body.appendChild(live);
+  const sum=document.createElement('div');sum.id='a11ySum93';sum.className='sr93';sum.setAttribute('role','region');sum.setAttribute('aria-label',_T('Board summary'));document.body.appendChild(sum);
+  if(typeof cv!=='undefined'&&cv){cv.tabIndex=0;cv.setAttribute('role','application');cv.setAttribute('aria-roledescription',_T('arena board'));
+    cv.setAttribute('aria-label',_T('The arena. Arrow keys move the cursor, Enter or Space picks the tile, Escape goes back to Move, I reads the board.'));
+    const b=document.createElement('button');b.type='button';b.id='a11ySumBtn93';b.className='sr93 sr93f';b.textContent=_T('Read the board (I)');
+    b.addEventListener('click',()=>a11yRead93());cv.insertAdjacentElement('afterend',b)}}
+/* a11ySay93 — queue words for the polite live region (merged, spoken once per ~0.6 s). */
+function a11ySay93(t,now){if(HEADLESS||!t)return;t=String(t).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();if(!t)return;
+  const live=document.getElementById('a11yLive93');if(!live)return;if(now){A93.liveQ=[];live.textContent='';setTimeout(()=>{live.textContent=t.slice(0,900)},30);return}
+  A93.liveQ.push(t);if(A93.liveT)return;A93.liveT=setTimeout(()=>{A93.liveT=0;const s=A93.liveQ.join(' · ').slice(0,600);A93.liveQ=[];live.textContent=s},600)}
+const a11yLocN93=l=>({head:_T('head'),chest:_T('chest'),rarm:_T('right arm'),larm:_T('left arm'),rleg:_T('right leg'),lleg:_T('left leg')}[l]||l);
+/* a11yInReach93 — beasts the gladiator can reach this turn: next to a tile he can walk to (or to him). */
+function a11yInReach93(p){const out=[];try{if(!p||p.r==null)return out;const ok=new Set([p.r*N+p.c]);
+    try{for(const [k,c] of reach(p).tiles)if(c<=(p.mv||0))ok.add(k)}catch(e){}
+    for(const n of S.npcs||[]){if(!n.alive||n.r==null)continue;let near=false;for(const k of ok){const r=Math.floor(k/N),c=k%N;if(Math.max(Math.abs(r-n.r),Math.abs(c-n.c))<=1){near=true;break}}if(near)out.push(n)}}catch(e){}return out}
+/* a11ySummary93 — the board in words: event, round, phase, whose turn, every gladiator (tile, HP/AP by location, CF), beasts. */
+function a11ySummary93(){if(!S||!S.players)return _T('No event on the sand.');const L=[];
+  try{const ev=EV();const p=cur();L.push(_T`${ev?ev.n||ev.name||'':''} · round ${(S.ri||0)+1}${S.over?_T(' · the event is over'):''}`);
+    if(p&&!S.over)L.push(_T`${p.name}'s turn${p.cpu?_T(' (CPU)'):''} · phase: ${S.phase||''}`);
+    for(const q of S.players){if(!q)continue;if(!q.alive){L.push(_T`${q.name}: out`);continue}
+      const locs=(typeof LOCS!=='undefined'?LOCS:['head','chest','rarm','larm','rleg','lleg']).map(l=>`${a11yLocN93(l)} ${q.hp[l]}${q.ap&&q.ap[l]?'+'+q.ap[l]+' AP':''}`).join(', ');
+      L.push(_T`${q.name}${q.cpu?'':_T(' (you)')} on ${q.r!=null?tl(q.r,q.c):'—'}: ${locs}; CF ${q.cf||0}, coin ${q.coin||0}`)}
+    const bs=(S.npcs||[]).filter(n=>n.alive&&n.r!=null);
+    if(bs.length){const near=new Set(p&&!p.cpu?a11yInReach93(p):[]);L.push(_T`Beasts: ${bs.map(n=>`${typeof nm==='function'?nm(n):n.name} ${n.hp} HP on ${tl(n.r,n.c)}${near.has(n)?_T(' — in reach'):''}`).join('; ')}`)}
+    else L.push(_T('No beasts on the sand.'))}catch(e){L.push(_T('The board could not be read.'))}
+  return L.join('. ')}
+function a11ySumUpd93(){const el=document.getElementById('a11ySum93');if(el){const t=a11ySummary93();if(el.textContent!==t)el.textContent=t}}
+/* a11yRead93 — the I key / the hidden button: refresh the panel and speak it. */
+function a11yRead93(){a11ySumUpd93();a11ySay93(a11ySummary93(),true)}
+/* ---------- the tile cursor ---------- */
+function a11yCurInit93(){if(A93.cur&&inB(A93.cur.r,A93.cur.c))return;const p=S&&cur&&cur();A93.cur=p&&p.r!=null?{r:p.r,c:p.c}:{r:Math.floor(N/2),c:Math.floor(N/2)}}
+/* a11yMove93 — the neighbour whose screen offset best matches the arrow (skewed a quarter turn so each arrow has one tile). */
+const A93_DIR={ArrowUp:[0.35,-1],ArrowRight:[1,0.35],ArrowDown:[-0.35,1],ArrowLeft:[-1,-0.35]};
+function a11yNext93(key,from){const d=A93_DIR[key];if(!d||!from)return null;const {r,c}=from;const o=center(r,c);let best=null,bs=-1e9;
+  for(const [dr,dc] of [[-1,0],[1,0],[0,-1],[0,1]]){const nr=r+dr,nc=c+dc;if(!inB(nr,nc))continue;const q=center(nr,nc);const vx=q.x-o.x,vy=q.y-o.y;const len=Math.hypot(vx,vy)||1;
+    const s=(vx*d[0]+vy*d[1])/len;if(s>bs){bs=s;best={r:nr,c:nc}}}
+  return best&&bs>0?best:null}
+function a11yMove93(key){a11yCurInit93();const n=a11yNext93(key,A93.cur);if(n)A93.cur=n;a11yShowCur93(true)}
+function a11yShowCur93(say){const t=A93.cur;if(!t)return;try{hoverTile={r:t.r,c:t.c};const h=document.getElementById('hover');if(h)h.innerHTML=describeTile(hoverTile)+(typeof ruleForTile==='function'?ruleForTile(hoverTile):'');draw()}catch(e){}
+  if(say){let x='';try{x=describeTile(t);const hl=HL.get(t.r*N+t.c);if(hl)x+=' · '+({move:_T('you can move here'),atk:_T('you can attack here'),push:_T('you can push here'),topple:_T('you can topple this pillar'),tunnel:_T('tunnel exit')}[hl.t]||_T('you can act here'))}catch(e){}a11ySay93(x,true)}}
+/* a11yPick93 — Enter/Space: a click on the canvas at the tile's centre (same path as the mouse); onTile if the point misses. */
+function a11yPick93(){a11yCurInit93();const {r,c}=A93.cur;const b=cv.getBoundingClientRect();const m=center(r,c);const x=b.left+m.x,y=b.top+m.y;
+  let hit=null;try{hit=pick({clientX:x,clientY:y})}catch(e){}
+  if(hit&&hit.r===r&&hit.c===c)cv.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,clientX:x,clientY:y,view:window}));
+  else{hoverTile={r,c};onTile(r,c)}}
+/* the cursor on the canvas: a gold double diamond, only while the keyboard drives the board */
+{const base=draw;draw=function(){const r=base.apply(this,arguments);try{if(A93.kbd&&A93.cur&&document.activeElement===cv&&S&&!S.over&&inB(A93.cur.r,A93.cur.c)){
+    const dpr=window.devicePixelRatio||1;ctx.save();ctx.setTransform(dpr,0,0,dpr,0,0);tilePath(A93.cur.r,A93.cur.c,0);ctx.lineWidth=4;ctx.strokeStyle='rgba(20,12,4,.9)';ctx.stroke();
+    tilePath(A93.cur.r,A93.cur.c,2);ctx.lineWidth=2.5;ctx.strokeStyle='#f2c75c';ctx.setLineDash([6,3]);ctx.stroke();ctx.restore()}}catch(e){}return r}}
+/* board keys (on the canvas itself, so window hotkeys only lose the keys the board uses) */
+function a11yBoardKey93(e){if(e.ctrlKey||e.metaKey||e.altKey)return;const k=e.key;
+  if(A93_DIR[k]){e.preventDefault();e.stopPropagation();A93.kbd=true;a11yMove93(k);return}
+  if((k==='Enter'||k===' ')&&A93.kbd){e.preventDefault();e.stopPropagation();a11yPick93();return}
+  if(k==='Escape'){if(S&&!S.over&&S.phase==='action'&&typeof humanTurn==='function'&&humanTurn()){const p=cur();if(S.mode!=='move'||p.focusRoll){e.preventDefault();e.stopPropagation();S.mode='move';if(p.focusRoll)p.focusRoll=false;try{render();draw()}catch(er){}a11ySay93(_T('Back to Move.'),true)}}return}
+  if(k==='i'||k==='I'){e.preventDefault();e.stopPropagation();a11yRead93()}}
+/* ---------- windows: focus in, trap, focus back ---------- */
+const A93_FOC='a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),summary,[tabindex]:not([tabindex="-1"]),[contenteditable="true"]';
+const a11yVis93=e=>!!e&&e.isConnected&&e.getClientRects().length>0&&!e.closest('[hidden],[aria-hidden="true"]')&&(!e.checkVisibility||e.checkVisibility({visibilityProperty:true}));
+function a11yDlgs93(){return [...document.querySelectorAll('[role="dialog"][aria-modal="true"],[role="alertdialog"]')].filter(a11yVis93)}
+/* the top dialog: a popup over the big window wins (they are appended later), else #mboxEl */
+function a11yTop93(){const d=a11yDlgs93();if(!d.length)return null;const pop=d.filter(x=>x.id!=='mboxEl');return pop.length?pop[pop.length-1]:d[0]}
+function a11yFocusables93(root){return [...root.querySelectorAll(A93_FOC)].filter(e=>a11yVis93(e)&&getComputedStyle(e).visibility!=='hidden')}
+function a11yExtras93(){return ['#mtutCoach','#tutCoach'].map(s=>document.querySelector(s)).filter(e=>e&&a11yVis93(e))}
+function a11yFirst93(root){const f=a11yFocusables93(root).filter(e=>!e.matches('#mClose,#mPeek'));
+  return root.querySelector('[autofocus]')||(root.id==='mboxEl'?root.querySelector('#mBtns .btn.primary:not([disabled])'):null)||root.querySelector('[data-ask76="1"]')||f.find(e=>!e.matches('input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),textarea'))||f[0]||null}
+function a11yFoc93(el){if(!el)return false;try{if(!el.matches(A93_FOC)&&!el.hasAttribute('tabindex'))el.tabIndex=-1;el.focus({preventScroll:true});return document.activeElement===el}catch(e){return false}}
+/* a11ySig93 — a way to find "the same control" after a redraw */
+function a11ySig93(el){if(!el||el===document.body)return null;const at=['id','data-mg','data-id','data-act','data-mi','data-tab','data-y92s','data-y92lock','data-ask76','data-mt'];const o={tag:el.tagName};let any=false;
+  for(const a of at){const v=el.getAttribute(a);if(v!=null){o[a]=v;any=true}}return any?o:null}
+function a11yFind93(root,s){if(!s)return null;const sel=s.tag.toLowerCase()+Object.entries(s).filter(([k])=>k!=='tag').map(([k,v])=>k==='id'?`#${CSS.escape(v)}`:`[${k}="${CSS.escape(v)}"]`).join('');try{const e=root.querySelector(sel);return e&&a11yVis93(e)?e:null}catch(e){return null}}
+function a11ySync93(){A93.syncT=0;if(HEADLESS)return;
+  /* closed dialogs leave the stack; focus goes back to the opener of the last one closed */
+  let back=null;while(A93.stack.length&&!a11yVis93(A93.stack[A93.stack.length-1].el)){back=A93.stack.pop()}
+  A93.stack=A93.stack.filter(x=>a11yVis93(x.el));
+  const top=a11yTop93();
+  if(top&&!A93.stack.some(x=>x.el===top)){const opener=A93.last&&!top.contains(A93.last)?A93.last:null;A93.stack.push({el:top,opener});
+    if(!top.contains(document.activeElement)&&!a11yExtras93().some(x=>x.contains(document.activeElement))){const f=a11yFirst93(top);if(!a11yFoc93(f)){if(!top.hasAttribute('tabindex'))top.tabIndex=-1;a11yFoc93(top)}}
+    return}
+  if(back&&!top){const o=back.opener;if(o&&a11yVis93(o))a11yFoc93(o);else if(S&&!S.over&&S.phase!=='setup'&&typeof cv!=='undefined'&&a11yVis93(cv)&&A93.kbd)a11yFoc93(cv);return}
+  if(back&&top){const f=back.opener&&top.contains(back.opener)&&a11yVis93(back.opener)?back.opener:a11yFirst93(top);a11yFoc93(f);return}
+  /* the window redrew under a keyboard user: the same control again */
+  if(top&&A93.kbd&&A93.lastEl&&!A93.lastEl.isConnected){const e=a11yFind93(top,A93.sig)||a11yFirst93(top);A93.lastEl=null;if(e)a11yFoc93(e)}}
+function a11ySyncSoon93(){if(!A93.syncT)A93.syncT=setTimeout(a11ySync93,40)}
+document.addEventListener('focusin',e=>{const t=e.target;if(!t||t===document.body)return;A93.lastEl=t;A93.sig=a11ySig93(t);if(!t.closest('[role="dialog"][aria-modal="true"],[role="alertdialog"]'))A93.last=t},true);
+document.addEventListener('keydown',e=>{if(e.key==='Tab'||/^Arrow/.test(e.key))A93.kbd=true;if(e.key!=='Tab'||e.ctrlKey||e.metaKey||e.altKey)return;
+  const top=a11yTop93();if(!top)return;const list=[...a11yFocusables93(top),...a11yExtras93().flatMap(a11yFocusables93)];if(!list.length){e.preventDefault();return}
+  const i=list.indexOf(document.activeElement);e.preventDefault();const L=list.length,dir=e.shiftKey?-1:1;let n=i<0?(e.shiftKey?L-1:0):(i+dir+L)%L;
+  for(let k=0;k<L;k++){if(a11yFoc93(list[n]))break;n=(n+dir+L)%L}},true);
+for(const ev of ['pointerdown','mousedown','touchstart'])document.addEventListener(ev,e=>{if(e.isTrusted)A93.kbd=false},{capture:true,passive:true});
+/* ---------- accessible names for icon-only controls ---------- */
+const A93_ICO=[['×',_T('Close')],['✕',_T('Remove')],['✖',_T('Close')],['👁',_T('Look')],['⏭',_T('Skip to the end')],['🔇',_T('Sound off')],['🔊',_T('Sound on')],['⚙',_T('Settings')],['🏛',_T('Main menu')],['▶',_T('Play')],['⏸',_T('Pause')],
+  ['🔍',_T('Zoom')],['ⓘ',_T('More information')],['＋',_T('Add')],['+',_T('Add')],['−',_T('Take one back')],['-',_T('Take one back')],['★',_T('Favourite')],['☆',_T('Favourite')],['📌',_T('Pin')],['⋯',_T('More')],['↻',_T('Again')],['🗑',_T('Delete')],
+  ['✎',_T('Edit')],['🔒',_T('Lock')],['📜',_T('Scroll')],['💾',_T('Save')],['🎓',_T('Lessons')],['☰',_T('Menu')],['◀',_T('Back')],['▲',_T('Up')],['▼',_T('Down')],['?',_T('Help')]];
+const A93_SEL='button,[role="button"],a[href],[data-act],[data-mg],[data-tab],.chip[title],.badge[title],.fchip[title],[data-card][title]';
+const a11yWordy93=t=>/[\p{L}\p{N}]/u.test(t||'');
+function a11yName93(el){if(el.hasAttribute('aria-labelledby'))return;const al=el.getAttribute('aria-label');if(al&&a11yWordy93(al))return;
+  const txt=(el.textContent||'').trim();if(a11yWordy93(txt)&&!al)return;
+  let n=el.getAttribute('title')||'';if(!a11yWordy93(n)){const tip=el.getAttribute('data-tip');if(tip)n=tip.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim()}
+  if(!a11yWordy93(n)){const im=el.querySelector('img[alt]');if(im&&a11yWordy93(im.alt))n=im.alt}
+  if(!a11yWordy93(n)){const s=(txt||al||'').replace(/️/g,'');const hit=A93_ICO.find(([k])=>s.startsWith(k));if(hit)n=hit[1]}
+  if(!a11yWordy93(n))return;n=n.slice(0,120);el.setAttribute('aria-label',n);
+  if(!el.matches('button,a,[role]')){el.setAttribute('role',el.matches('[data-act],[data-mg],[data-tab]')?'button':'img');if(el.matches('[data-act],[data-mg],[data-tab]')&&!el.hasAttribute('tabindex'))el.tabIndex=0}}
+/* ---------- contrast: text in a player's / class's own colour (inline style) is lifted (same hue) until it reads at AA ---------- */
+const a11yRGB93=s=>{const m=s&&s.match(/rgba?\(([^)]+)\)/);if(!m)return null;const p=m[1].split(/[ ,/]+/).filter(Boolean).map(Number);return {r:p[0],g:p[1],b:p[2],a:p.length>3?p[3]:1}};
+const a11yLum93=c=>{const f=v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4)};return 0.2126*f(c.r)+0.7152*f(c.g)+0.0722*f(c.b)};
+const a11yRatio93=(a,b)=>{const x=a11yLum93(a),y=a11yLum93(b);return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05)};
+function a11yBg93(el){const L=[];for(let e=el;e&&e.nodeType===1;e=e.parentElement){const cs=getComputedStyle(e);if(cs.backgroundImage&&cs.backgroundImage!=='none'&&!/gradient/.test(cs.backgroundImage))return null;
+    const c=a11yRGB93(cs.backgroundColor);if(c&&c.a>0){L.push(c);if(c.a>=0.99)break}}
+  let acc=(!L.length||L[L.length-1].a<0.99)?(a11yRGB93(getComputedStyle(document.body).backgroundColor)||{r:20,g:14,b:10,a:1}):{r:0,g:0,b:0,a:1};
+  for(let i=L.length-1;i>=0;i--){const t=L[i];acc={r:t.r*t.a+acc.r*(1-t.a),g:t.g*t.a+acc.g*(1-t.a),b:t.b*t.a+acc.b*(1-t.a),a:1}}return acc}
+function a11yHSL93(c){const r=c.r/255,g=c.g/255,b=c.b/255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h=0,s=0;const l=(mx+mn)/2;if(mx!==mn){const d=mx-mn;s=l>0.5?d/(2-mx-mn):d/(mx+mn);h=mx===r?(g-b)/d+(g<b?6:0):mx===g?(b-r)/d+2:(r-g)/d+4;h/=6}return {h,s,l}}
+function a11yRGBof93(h,s,l){const f=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;return t<1/6?p+(q-p)*6*t:t<1/2?q:t<2/3?p+(q-p)*(2/3-t)*6:p};if(!s)return {r:l*255,g:l*255,b:l*255};const q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;return {r:f(p,q,h+1/3)*255,g:f(p,q,h)*255,b:f(p,q,h-1/3)*255}}
+function a11yLift93(el){try{if(!el.style||!el.style.color||el.dataset.lift93)return;if(!a11yWordy93(el.textContent))return;el.dataset.lift93='1';
+  const cs=getComputedStyle(el);const fg=a11yRGB93(cs.color);const bg=a11yBg93(el);if(!fg||!bg||fg.a<0.9)return;const px=parseFloat(cs.fontSize),wt=+cs.fontWeight||400;const need=(px>=24||(px>=18.66&&wt>=700))?3:4.5;
+  if(a11yRatio93(fg,bg)>=need)return;const up=a11yLum93(bg)<0.4;const hs=a11yHSL93(fg);let c=fg;
+  for(let i=0;i<20&&a11yRatio93(c,bg)<need+0.15;i++){hs.l=Math.max(0,Math.min(1,hs.l+(up?0.03:-0.03)));c=a11yRGBof93(hs.h,hs.s,hs.l)}
+  el.style.color=`rgb(${Math.round(c.r)},${Math.round(c.g)},${Math.round(c.b)})`}catch(e){}}
+const A93_LIFT='[style*="color"]';
+function a11yNameAll93(root){try{if(root.nodeType!==1)return;if(root.matches&&root.matches(A93_SEL))a11yName93(root);for(const el of root.querySelectorAll(A93_SEL))a11yName93(el);
+  if(root.closest&&root.closest('header.bar,main.layout,#mboxEl')||root===document.body){if(root.matches&&root.matches(A93_LIFT))a11yLift93(root);for(const el of root.querySelectorAll(A93_LIFT))if(el.closest('header.bar,main.layout,#mboxEl'))a11yLift93(el)}}catch(e){}}
+/* Escape from the action dock also goes back to Move */
+document.addEventListener('keydown',e=>{if(e.key!=='Escape'||a11yTop93())return;const t=document.activeElement;if(!t||!t.closest||!t.closest('#actions'))return;a11yBoardKey93(e)});
+/* non-button clickables in the action dock answer Enter/Space like buttons */
+document.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const t=e.target;if(!t||!t.matches||t.matches('button,a,input,select,textarea,summary,#cv'))return;
+  if(t.matches('[role="button"][tabindex]')){e.preventDefault();t.click()}});
+{const pend=new Set();let tm=0;const run=()=>{tm=0;const list=[...pend];pend.clear();for(const n of list)if(n.isConnected)a11yNameAll93(n);a11ySyncSoon93()};
+  const mo=new MutationObserver(ms=>{for(const m of ms){if(m.type==='attributes'){a11ySyncSoon93();continue}for(const n of m.addedNodes)if(n.nodeType===1)pend.add(n);if(m.removedNodes.length)a11ySyncSoon93()}if(pend.size&&!tm)tm=setTimeout(run,150);else if(!pend.size)a11ySyncSoon93()});
+  const start=()=>{if(HEADLESS)return;a11yNodes93();a11yNameAll93(document.body);mo.observe(document.body,{childList:true,subtree:true});
+    const m=document.getElementById('modal');if(m)mo.observe(m,{attributes:true,attributeFilter:['hidden']});
+    if(typeof cv!=='undefined'&&cv)cv.addEventListener('keydown',a11yBoardKey93);
+    if(typeof cv!=='undefined'&&cv)cv.addEventListener('focus',()=>{if(A93.kbd){a11yCurInit93();a11yShowCur93(false)}});
+    if(typeof cv!=='undefined'&&cv)cv.addEventListener('blur',()=>{try{draw()}catch(e){}})};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start()}
+/* ---------- speaking the game: turns and the big log lines ---------- */
+{const base=beginTurn;beginTurn=function(){const r=base.apply(this,arguments);try{if(!HEADLESS&&S&&!S.sim&&!S.snap)setTimeout(()=>{try{if(!S||S.over)return;const p=cur();if(!p)return;
+    a11ySay93(p.cpu?_T`Round ${(S.ri||0)+1}: ${p.name}'s turn.`:_T`Round ${(S.ri||0)+1}: your turn, ${p.name}.`);a11ySumUpd93();
+    if(!p.cpu&&A93.kbd&&document.activeElement===cv){A93.cur={r:p.r,c:p.c};a11yShowCur93(false)}}catch(e){}},60)}catch(e){}return r}}
+{const base=log;log=function(html,cls){const r=base.apply(this,arguments);try{if(!HEADLESS&&S&&!S.sim&&!S.snap&&(cls==='big'||cls==='bad'))a11ySay93(html)}catch(e){}return r}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
