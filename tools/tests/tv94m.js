@@ -14,7 +14,7 @@ const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const W=ms=>pg.waitForTimeout
 const mark=await pg.evaluate(()=>ERR92.n);
 /* ---- 1 · the migration ---- */
 const m1=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));let sd=94;Math.random=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296};if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;window.travelOK=()=>true;window.travelBlock=()=>false;
-  openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_(),m=me();m.coin=2000;const o={};
+  openManager();await W8(800);sd=94;newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;W_().id='ctv94m'; /* the world id comes from the clock and feeds the stalls' stock hash: fixed (and the seeded stream restarted just before) so the run is the same every time */const w=W_(),m=me();m.coin=2000;const o={};
   const old=JSON.parse(JSON.stringify(w));old.ver='0.93';for(const g of old.glads){delete g.eq94;delete g.k94}for(const x of old.mgrs)delete x.arm94;delete old.n94;
   const pg0=old.glads.find(g=>g.alive&&g.contract&&g.contract.mgr===m.id);pg0.kit=['mw1','elix2'];pg0.kitWk=old.week;
   migrateWorld(old);const mw=mgrMigrate(old);o.dirty=!!mw._arm94dirty;
@@ -70,7 +70,8 @@ const r4=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   o.capua=arm94Stock(w,li('Capua')).filter(x=>x.t==='w'&&SPEC94.blades.w.includes(x.k)).length>=2&&arm94Stock(w,li('Capua')).some(x=>x.sp&&x.pr<arm94Price(x.t,x.k));
   const t=travelState(w);if(t)t.paid=true;w.night.travel={cost:0,paid:true};MGR.tab='night';MGR_REDRAW();await W8(400);
   o.mw=!!document.querySelector('#mgrPane [data-arm94sq]')&&/Gear up in/.test(document.querySelector('#mgrPane .ar94mw').textContent);
-  document.querySelector('#mgrPane .ar94mw [data-arm94sq]').click();await W8(2500);o.open=CITY.open&&CITY.side==='stalls'&&!!document.querySelector('#citySideBody .ar94shop');
+  document.querySelector('#mgrPane .ar94mw [data-arm94sq]').click();for(let i=0;i<200&&!(CITY.open&&CITY.side==='stalls'&&document.querySelector('#citySideBody .ar94shop'));i++)await W8(100); /* the square paints when its art has decoded: polled, not a fixed 2.5 s */
+  o.open=CITY.open&&CITY.side==='stalls'&&!!document.querySelector('#citySideBody .ar94shop');
   const H=arm94H(m);const n0=H.sh.length;const c0=m.coin;const btn=document.querySelector('#citySideBody [data-arm94buy]:not([disabled])');const i=+btn.dataset.arm94buy;const it=arm94Stock(w,CITY.li)[i];const left0=arm94Left(w,CITY.li,i);
   btn.click();await W8(200);o.buy=H.sh.length===n0+1&&H.sh[H.sh.length-1].k===it.k&&c0-m.coin===cityPr(it.pr)&&arm94Left(w,CITY.li,i)===left0-1;
   o.visit=/to the Armory/.test(document.getElementById('cbar89Visit').textContent);
@@ -103,7 +104,7 @@ const r5=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   arm94Settle(w,{ents:[A.id]},{g94:{[A.id]:{...bX,mk:[]}}});o.mkLoot=!!E.L&&E.L.k==='gladius';E.L=null;
   const pp={_g94got:{}};arm94Mk(pp,'gladius');o.mkTag=pp._g94mk&&pp._g94mk[0]==='gladius';
   /* the repair at the armorer */
-  w.night.travel={cost:0,paid:true};openCitySquare(w.night.loc,{});await W8(2000);const c0=m.coin;const fx=document.querySelector(`#citySideBody [data-arm94fix="t_th"]`);if(fx)fx.click();await W8(200);
+  w.night.travel={cost:0,paid:true};openCitySquare(w.night.loc,{});for(let i=0;i<300&&!document.querySelector('#citySideBody [data-arm94fix="t_th"]');i++){await W8(100);if(i===60&&CITY.open&&CITY.side!=='stalls'){CITY.side='stalls';citySideDraw()}}const c0=m.coin;const fx=document.querySelector(`#citySideBody [data-arm94fix="t_th"]`);if(fx)fx.click();await W8(200);
   o.fixed=!!fx&&!th.dmg&&m.coin===c0-cityPr(arm94Fix(th));try{if(typeof closeCity==='function')closeCity()}catch(e){}await W8(500);
   /* a real simulated bout through runBoutSim + applyBout settles without error */
   const st0=JSON.stringify(arm94St(w));await runBoutSim(w.night.bouts.indexOf(bo));o.settled=JSON.stringify(arm94St(w))!==st0||bo.done;return o});
@@ -118,12 +119,17 @@ ok(r7.back&&r7.gone,'7 the dead man\'s gear is back on the shelf '+JSON.stringif
 /* ---- 8 · rival houses buy gear ---- */
 const r8=await pg.evaluate(async()=>{const w=W_();const o={};const R=w.mgrs.find(x=>!x.isPlayer&&!x.dead&&rosterOf(x).some(g=>g.eq94&&g.eq94.R));const g=rosterOf(R).find(g=>g.eq94&&g.eq94.R);
   const k=g.eq94.R.k;g.eq94.R=null;arm94H(R).sh=arm94H(R).sh.filter(P=>P.t!=='w');R.coin=500;const c0=R.coin;const sp=arm94AutoShop(w,R);o.sp=sp;o.filled=!!g.eq94.R&&g.eq94.R.k===k;o.paid=sp>0&&R.coin<c0;
-  g.eq94.R=null;R.coin=500;for(const b of w.night.bouts){b.done=true;b.res=b.res||{att:0,winners:[],rows:[],turns:1,lines:[],reason:''}}w.pend=[];await endWeek();o.week=!!g.eq94&&!!g.eq94.R;
+  /* the week's end: every rival house's armed fighter loses his weapon and each house has coin; the week's own events (bouts, injuries, deaths, releases — the page's clock
+     feeds the seeded stream, so which fighter survives is not fixed) may remove some of them, so "rivals shop at the week's end" = at least one of them is armed again */
+  const T=[];for(const x of w.mgrs){if(x.isPlayer||x.dead)continue;x.coin=500;arm94H(x).sh=arm94H(x).sh.filter(P=>P.t!=='w');for(const f of rosterOf(x))if(f.alive&&f.eq94&&f.eq94.R){f.eq94.R=null;T.push(f)}}
+  for(const b of w.night.bouts){b.done=true;b.res=b.res||{att:0,winners:[],rows:[],turns:1,lines:[],reason:''}}w.pend=[];const rr=await endWeek();o.ended=rr!==false;o.n=T.length;o.week=T.some(f=>f.alive&&f.eq94&&f.eq94.R);
   const poor=w.mgrs.find(x=>!x.isPlayer&&!x.dead&&x!==R);poor.coin=ARM94.rivFloor;const pg0=rosterOf(poor).find(g=>g.eq94);if(pg0)pg0.eq94.R=null;o.reserve=arm94AutoShop(w,poor)===0&&poor.coin===ARM94.rivFloor;return o});
-ok(r8.filled&&r8.paid,'8 a rival rebuys his fighter\'s lost weapon '+JSON.stringify(r8));ok(r8.week,'8 rivals shop at the week\'s end');ok(r8.reserve,'8 a poor house keeps its reserve');
+ok(r8.filled&&r8.paid,'8 a rival rebuys his fighter\'s lost weapon '+JSON.stringify(r8));ok(r8.week,'8 rivals shop at the week\'s end '+JSON.stringify(r8));ok(r8.reserve,'8 a poor house keeps its reserve');
 /* ---- 9 · checklist nudges ---- */
-const r9=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const A0=gById(window.__A);const A=A0&&A0.alive&&A0.eq94?A0:rosterOf(m).find(g=>g.eq94&&g.eq94.a.length); /* the bout in 5 may have killed A */delete A.inj;for(const g of rosterOf(m))if(g!==A&&!g.inj)g.inj={until:99,label:'x',pen:1}; /* v0.95: hurt fighters' gear goes to the shelf, healed ones are bare until re-equipped — only A should show */A.eq94.R=null;A.eq94.L=null;A.eq94.a[0].dmg=1;
-  const I=weekChecklist();const o={empty:I.some(x=>!x.done&&/bare hands|empty (right|left) hand/.test(x.txt)&&x.txt.includes(esc(A.name))),rep:I.some(x=>!x.done&&/need(s)? repair/.test(x.txt))};
+const r9=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const A0=gById(window.__A);const A=A0&&A0.alive&&A0.eq94&&A0.eq94.a.length?A0:rosterOf(m).find(g=>g.alive&&g.eq94&&g.eq94.a.length); /* the bout in 5 may have killed or hurt A (v0.95: a hurt fighter's gear goes to the shelf) */delete A.inj;A.severed=[]; /* the bout in 5 may have cost A a limb (no hand to fill = no nudge) and the story in 7 left B bare: only A is made bare here, so he is the one the nudge names */
+  for(const g of rosterOf(m)){if(g===A||!g.eq94)continue;const K=arm94Kit(g.cls);g.severed=[];delete g.inj;g.eq94.R=K.R?{id:'z'+g.id+'R',t:'w',k:K.R}:null;g.eq94.L=K.L?{id:'z'+g.id+'L',t:'w',k:K.L}:null}
+  A.eq94.R=null;A.eq94.L=null;A.eq94.a[0].dmg=1;
+  const I=weekChecklist();const o={txt:I.filter(x=>!x.done).map(x=>x.txt.replace(/<[^>]*>/g,'')).join(' ‖ ').slice(0,400),a:A.name,empty:I.some(x=>!x.done&&/bare hands|empty (right|left) hand/.test(x.txt)&&x.txt.includes(esc(A.name))),rep:I.some(x=>!x.done&&/need(s)? repair/.test(x.txt))};
   MGR.tab='armory';MGR_REDRAW();await W8(500);o.warn=/empty/.test((document.querySelector('#ar94 .ar94g[data-ar94g="'+A.id+'"]')||{}).textContent||'')||/⚠/.test((document.querySelector('#ar94 .ar94g[data-ar94g="'+A.id+'"]')||{}).textContent||'');
   /* v0.94 tuning: 🔨 Repair all · N coin on the checklist item, one click mends everything */
   if(A.eq94.a[1])A.eq94.a[1].dmg=1;const bx=document.createElement('button');bx.dataset.arm94fixall='1';document.body.appendChild(bx);m.coin=Math.max(m.coin,500);
@@ -137,7 +143,7 @@ const r10=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,m
   return {sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,right:Math.round(R.right),wide}});
 ok(r10.sw<=r10.cw&&r10.right<=390&&r10.wide===0,'10 phone: the Armory fits 390 px '+JSON.stringify(r10));
 if(SHOT)await pg.screenshot({path:SHOT+'/tv94m_phone.png'});
-const r10b=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_();w.night.travel={cost:0,paid:true};openCitySquare(w.night.loc,{});await W8(2000);CITY.side='stalls';citySideDraw();await W8(300);
+const r10b=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_();w.night.travel={cost:0,paid:true};openCitySquare(w.night.loc,{});for(let i=0;i<300&&!(CITY.open&&document.getElementById('citySideBody'));i++)await W8(100);CITY.side='stalls';citySideDraw();for(let i=0;i<100&&!document.querySelector('#citySideBody .ar94shop');i++)await W8(100);
   const s=document.querySelector('#citySideBody .ar94shop');const R=s?s.getBoundingClientRect():{right:999};return {shop:!!s,sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,ovw:document.getElementById('cityOv').scrollWidth,right:Math.round(R.right)}});
 ok(r10b.shop&&r10b.sw<=r10b.cw&&r10b.ovw<=390&&r10b.right<=390,'10 phone: the stalls fit '+JSON.stringify(r10b));
 if(SHOT)await pg.screenshot({path:SHOT+'/tv94m_phone_stalls.png'});

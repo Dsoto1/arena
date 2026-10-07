@@ -10,6 +10,12 @@ const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.
 await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+page;const b=await chromium.launch();
 const errs=[];const miss=[];const out={};const ok=(c,n)=>{if(!c)miss.push(n)};const SHOT=process.env.SHOT||'';
 
+/* SETTLED: the board is still while the page decodes images / eases the camera / finishes the start-up windows; under load that takes seconds and a frame sampled
+   earlier differs from the next (the piece's contrast, the 'identical frames' checks). Waits until no window is up and the whole canvas (flame-free: Reduce
+   motion on) is the same on three frames in a row, ≤40 s; returns whether it settled. */
+const settle=pg=>pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const g=cv.getContext('2d');const calm0=SETTINGS.calm;
+  const sig=()=>{draw();const d=g.getImageData(0,0,cv.width,cv.height).data;let h=0;for(let i=0;i<d.length;i+=37)h=(h*31+d[i]+d[i+1]*7+d[i+2]*13)>>>0;return h};
+  let last=-1,n=0;try{SETTINGS.calm=true;for(let t0=Date.now();Date.now()-t0<40000;){await W8(250);if(CUR_MODAL){n=0;continue}const h=sig();if(h===last){if(++n>=3)return true}else{n=0;last=h}}return {m:!!CUR_MODAL,b:!!S.busy,n,ph:S.phase,sp:SPEED,last}}finally{SETTINGS.calm=calm0}});
 /* ======== 1. Play Now: the Night option, the look, the lights, the flicker ======== */
 {const ctx=await b.newContext({viewport:{width:1440,height:900}});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
@@ -18,13 +24,13 @@ const errs=[];const miss=[];const out={};const ok=(c,n)=>{if(!c)miss.push(n)};co
   const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(120)}
     openSetup(true);for(let i=0;i<40&&!document.getElementById('oNight91');i++)await W8(100);const sel=document.getElementById('oNight91');const r={sel:!!sel,inOpts:!!(sel&&sel.closest('.optfold'))};
     if(!sel)return r;sel.value='night';sel.dispatchEvent(new Event('change',{bubbles:true}));r.cfg=!!CFG.opts.night;
-    CFG.seats.slice(0,4).forEach((s,i)=>{s.cpu=i!==0});document.getElementById('goBtn').click();
+    CFG.seats.slice(0,4).forEach((s,i)=>{s.cpu=i!==0});CFG.seats[0].cls='soldier'; /* Play Now deals the seats' classes at random (165-v89seats): the contrast check below measures THIS piece's pixels vs the sand, which depends on the class colour (Slave / Veteranus read ~1 at night) — pinned so the run is the same every time */document.getElementById('goBtn').click();
     for(let i=0;i<80;i++){await W8(150);if(CUR_MODAL){const t=(document.getElementById('mTitle')||{}).textContent||'';const lit=document.querySelector('#mBody [data-mi]:not(.dim):not([disabled])');
         const bs=[...document.querySelectorAll('#mBtns button:not([disabled])')];if(lit&&/raft/.test(t))lit.click();else if(bs.length)bs[0].click();else CUR_MODAL.done(null)}
       else if(S&&S.phase!=='setup'&&i>8)break}
     SPEED='pause';r.night=!!(S&&S.night);r.on=night91On();return r});
   out.option=o;ok(o.sel,'1 the Night option is in the setup');ok(o.inOpts,'1 inside ⚙ Options');ok(o.cfg,'1 CFG.opts.night set');ok(o.night&&o.on,'1 the event starts at night');
-  await pg.waitForTimeout(600);
+  {const st=await settle(pg);ok(st===true,'2 the board settles before it is sampled '+JSON.stringify(st))}
   /* day vs night on the same board: the sand's middle, a piece */
   const L=await pg.evaluate(()=>{SPEED='pause';const g=cv.getContext('2d');const dpr=window.devicePixelRatio||1;
     const grab=(x0,y0,w,h)=>g.getImageData(Math.round(x0*dpr),Math.round(y0*dpr),Math.max(1,Math.round(w*dpr)),Math.max(1,Math.round(h*dpr))).data;
@@ -36,16 +42,18 @@ const errs=[];const miss=[];const out={};const ok=(c,n)=>{if(!c)miss.push(n)};co
     const p=S.players.find(q=>q.alive&&!q.cpu)||S.players.find(q=>q.alive);
     const shot=()=>{draw();const m=mids.map(([r,c])=>{const x=center(r,c);return stat(grab(x.x-TW*0.15,x.y-TW*0.06,TW*0.3,TW*0.12))});
       const avg=k=>m.reduce((a,s)=>a+s[k],0)/Math.max(1,m.length);const pc=center(p.r,p.c);const box=[pc.x-TW*0.2,pc.y-TW*0.85,TW*0.4,TW*0.8];return {mid:{r:avg('r'),g:avg('g'),b:avg('b'),lum:avg('lum')},piece:stat(grab(...box)),raw:Array.from(grab(...box))}};
-    S.night=false;const D=shot();S.night=true;const Nn=shot();let same=0;
+    /* both shots in the same still state (idle bobbing / flame flicker are clock-driven: a piece a pixel apart between the two draws is no longer 'the pixels night left alone') */
+    const calm0=SETTINGS.calm,an0=SETTINGS.anim88;SETTINGS.calm=true;SETTINGS.anim88='off';
+    S.night=false;const D=shot();S.night=true;const Nn=shot();SETTINGS.calm=calm0;SETTINGS.anim88=an0;let same=0;
     /* the piece = pixels that night left alone; the ground behind = the rest: their difference in brightness is the piece's contrast */
     const lum=(d,i)=>0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];let pc=0,pn=0,bd=0,bn=0,nb=0;
     for(let i=0;i<D.raw.length;i+=4){if(D.raw[i]===Nn.raw[i]&&D.raw[i+1]===Nn.raw[i+1]&&D.raw[i+2]===Nn.raw[i+2]){same++;pc+=lum(D.raw,i);pn++}else{bd+=lum(D.raw,i);bn+=lum(Nn.raw,i);nb++}}
     const pm=pc/Math.max(1,pn),cDay=Math.abs(pm-bd/Math.max(1,nb)),cNight=Math.abs(pm-bn/Math.max(1,nb));
-    return {tiles:mids.length,day:D.mid,night:Nn.mid,pieceDay:{lum:D.piece.lum,sd:D.piece.sd,c:cDay},pieceNight:{lum:Nn.piece.lum,sd:Nn.piece.sd,c:cNight},same:same/(D.raw.length/4)}});
+    return {pcls:p.cls,pr:p.r,pc:p.c,tiles:mids.length,day:D.mid,night:Nn.mid,pieceDay:{lum:D.piece.lum,sd:D.piece.sd,c:cDay},pieceNight:{lum:Nn.piece.lum,sd:Nn.piece.sd,c:cNight},same:same/(D.raw.length/4)}});
   out.look=L;ok(L.tiles>=2,'2 empty middle tiles to sample');
   ok(L.night.lum<L.day.lum*0.85,`2 the middle is darker at night (${L.night.lum.toFixed(1)} vs ${L.day.lum.toFixed(1)})`);
   ok(L.night.b/Math.max(1,L.night.r)>L.day.b/Math.max(1,L.day.r)+0.05,'2 the middle is bluer at night');
-  ok(L.pieceNight.c>=20,`2 the piece stands out from the sand (contrast ${L.pieceNight.c.toFixed(1)} vs ${L.pieceDay.c.toFixed(1)} by day)`);
+  ok(L.pieceNight.c>=20,`2 the piece stands out from the sand (contrast ${L.pieceNight.c.toFixed(1)} vs ${L.pieceDay.c.toFixed(1)} by day; ${L.pcls} at ${L.pr},${L.pc})`);
   ok(L.same>=0.2,'2 the piece keeps its own pixels '+L.same.toFixed(2));
   /* the lights: 12, every one outside the sand diamond (all four turns of the view) */
   const T=await pg.evaluate(()=>{const inside=(P,x,y)=>{let c=false;for(let i=0,j=P.length-1;i<P.length;j=i++){const a=P[i],b=P[j];if((a.y>y)!==(b.y>y)&&x<(b.x-a.x)*(y-a.y)/(b.y-a.y)+a.x)c=!c}return c};
@@ -56,6 +64,7 @@ const errs=[];const miss=[];const out={};const ok=(c,n)=>{if(!c)miss.push(n)};co
   out.torches=T;ok(T.res.every(r=>r.n===((typeof T.ar==='undefined'||T.ar)?9:11)),'3 the rim lights: 9 with the arena look (its towers light the side corners), 11 without '+JSON.stringify(T.res.map(r=>r.n)));ok(T.res.every(r=>r.bad===0),'3 no light inside the sand '+JSON.stringify(T.res));
   if(SHOT){await pg.evaluate(()=>{try{menuHide()}catch(e){}draw()});await pg.screenshot({path:path.join(SHOT,'tv91n_night.png')})}
   /* the flicker: moves by default, holds still with Reduce motion */
+  await settle(pg);
   const F=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const g=cv.getContext('2d');const dpr=window.devicePixelRatio||1;
     const sig=()=>{draw();let h=0;for(const t of NIGHT91.torches){const d=g.getImageData(Math.round(t.x0*dpr),Math.round(t.y0*dpr),Math.max(1,Math.round((t.x1-t.x0)*dpr)),Math.max(1,Math.round((t.y1-t.y0)*dpr))).data;for(let i=0;i<d.length;i+=4)h=(h*31+d[i]+d[i+1]*7+d[i+2]*13)>>>0}return h};
     const calm0=SETTINGS.calm;SETTINGS.calm=false;const a=sig();await W8(260);const b2=sig();

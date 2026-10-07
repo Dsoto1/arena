@@ -9,7 +9,12 @@
 /* v0.87: WALK_LANG=it|pt|fr|de (v0.89: |ja; v0.90: |zh) runs only the B/C walk in that language (tv87l runs all four) */
 const WL=process.env.WALK_LANG||'es';
 const path=require('path'),fs=require('fs');const REPORT=process.env.REPORT||'';const SHOT=process.env.SHOT||'';
-const {chromium}=require('playwright');(async()=>{const URL0='file://'+path.resolve(process.argv[2]);
+const http=require('http');const {chromium}=require('playwright');(async()=>{
+/* The page is served over http, not file://: with file:// Chromium's localStorage answers a reload with the writes of the last seconds missing (seen under load:
+   the 'Keep English' answer or flavius_lang='en' written just before the reload gone, the ask / Spanish page coming back). An http origin keeps them. */
+const root=path.dirname(path.resolve(process.argv[2])),pageName=path.basename(process.argv[2]);
+const srv=http.createServer((q,r)=>{const f=path.join(root,decodeURIComponent(q.url.split('?')[0]));if(!f.startsWith(root)||!fs.existsSync(f)||fs.statSync(f).isDirectory()){r.writeHead(404);return r.end()}const ext=path.extname(f);r.writeHead(200,{'content-type':{'.html':'text/html','.js':'text/javascript','.webp':'image/webp','.png':'image/png','.jpg':'image/jpeg','.json':'application/json'}[ext]||'application/octet-stream'});fs.createReadStream(f).pipe(r)});
+await new Promise(r=>srv.listen(0,'127.0.0.1',r));const URL0='http://127.0.0.1:'+srv.address().port+'/'+pageName;
 const T0=Date.now();const LG=(...a)=>{if(process.env.DBG)console.error('['+((Date.now()-T0)/1000|0)+'s]',...a)};const b=await chromium.launch();const errs=[];const miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const out={};
 const mk=async(locale,init,arg)=>{const ctx=await b.newContext({viewport:{width:1300,height:900},locale});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(init||(()=>{}),arg);await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});return ctx};
@@ -133,4 +138,4 @@ if(WL==='es')ok(out.e.LANG==='en'&&!out.e.dict&&out.e.id&&!out.e.ask,'E: English
 
 console.log(JSON.stringify({c:out.c,missN:out.missN,b:{turn:out.b.turn,log:out.b.log&&out.b.log.sample}}).slice(0,1500));
 console.log('ERRS',JSON.stringify(errs.slice(0,10)));console.log('MISS',JSON.stringify(miss));
-await b.close();process.exit(errs.length||miss.length?1:0)})();
+await b.close();srv.close();process.exit(errs.length||miss.length?1:0)})();
