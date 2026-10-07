@@ -47488,7 +47488,7 @@ function rub91(rb){let R=WEAR91_RB.get(rb);if(R)return R;const seed=rb.r*31+rb.c
       pieces.push({t,k,i:q,sz,r:r0+jr,c:c0+jc,a:(h91(seed,q,3)-0.5)*0.7,s:h91(seed,q,4),roll:h91(seed,q,5)<0.4,out:!inb})};
     /* v0.92 (his note): the fallen drum SPLITS IN HALF and the halves roll apart, each to the edge of the tile it landed on */
     const half=(sz)=>{let pr=dc,pc=-dr;const L=Math.hypot(pr,pc)||1;if(!dr&&!dc){pr=0;pc=1}else{pr/=L;pc/=L}
-      for(const h of [-1,1]){const q=i++;const ed=0.34+h91(seed,q,1)*0.06,al=h*(0.1+h91(seed,q,2)*0.08);
+      for(const h of [-1,1]){const q=i++;const ed=0.34+h91(seed,q,1)*0.06,al=(h91(seed,q,2)-0.5)*0.1;
         pieces.push({t:'drum',half:h,k,i:q,sz,r:r0+pr*ed*h+dr*al,c:c0+pc*ed*h+dc*al,a:(h91(seed,q,3)-0.5)*0.5,s:h91(seed,q,4),roll:false,out:false})}};
     if(!inb){add('chip',0.8,0.5);add('chip',0.6,0.5);continue}
     if(k===1)half(1);if(k===2)half(0.78);
@@ -47531,6 +47531,28 @@ function drum91(g,x,y,len,dia,th,seed,lift,col){const im=stone91();const phi=th-
   g.strokeStyle='rgba(50,42,34,.6)';g.stroke();
   g.strokeStyle='rgba(70,60,48,.45)';g.lineWidth=Math.max(0.5,dia*0.02);g.beginPath();g.moveTo(-rx*0.5,ey-ry*0.2);g.lineTo(rx*0.1,ey+ry*0.15);g.lineTo(rx*0.45,ey-ry*0.3);g.stroke();
   g.restore()}
+/* half92 — v0.92 (his pick): the drum SPLIT LENGTHWISE. A half-cylinder lying cut face up: the rough fractured face on top (paler stone,
+   jagged long edges, cracks), the fluted curved side showing below its near edge, a half-round cap on the end nearer the viewer. */
+function half92(g,x,y,len,dia,th,seed,lift,col){const ax=Math.cos(th),ay=Math.sin(th);let px=-ay,py=ax*0.5;const pl=Math.hypot(px,py)||1;px/=pl;py/=pl;
+  if(py<0){px=-px;py=-py}   /* P points toward the viewer (down the screen) */
+  const w=dia*0.5,H=dia*0.55,cy=y-lift-H;const P=(u,v,z)=>[x+ax*u+px*v,cy+ay*u+py*v+(z||0)];
+  g.fillStyle='rgba(28,18,10,.34)';ell91(g,x+dia*0.14,y+dia*0.12,len*0.6,dia*0.42,th*0.5);g.fill();   /* contact shadow */
+  const n=7,J=(i,k)=>(h91(seed,i,k)-0.5)*dia*0.16;
+  const far=[],near=[];for(let i=0;i<=n;i++){const u=-len/2+len*i/n;far.push(P(u,-w+J(i,21)));near.push(P(u,w+J(i,22)))}
+  /* the curved side: from the near edge down to the sand */
+  g.beginPath();near.forEach((q,i)=>i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]));for(let i=n;i>=0;i--){const q=P(-len/2+len*i/n,w*0.7,H);g.lineTo(q[0],q[1])}g.closePath();
+  const sg=g.createLinearGradient(0,cy,0,cy+H+w*py);sg.addColorStop(0,col.mid);sg.addColorStop(1,col.dark);g.fillStyle=sg;g.fill();const im=stone91();if(im){g.save();g.clip();g.globalAlpha=0.55;g.drawImage(im,STONE91.x0,STONE91.y0+h91(seed,1,9)*(STONE91.y1-STONE91.y0)*0.6,STONE91.x1-STONE91.x0,(STONE91.y1-STONE91.y0)*0.3,x-len*0.6,cy-H,len*1.2,H*2.6);g.restore()}
+  g.save();g.clip();g.strokeStyle='rgba(60,50,40,.35)';g.lineWidth=Math.max(0.5,dia*0.03);for(const f of [0.3,0.62]){g.beginPath();const a0=P(-len/2,w*(1-f*0.3),H*f),a1=P(len/2,w*(1-f*0.3),H*f);g.moveTo(a0[0],a0[1]);g.lineTo(a1[0],a1[1]);g.stroke()}g.restore();
+  g.strokeStyle='rgba(50,42,34,.55)';g.lineWidth=Math.max(0.6,dia*0.035);g.stroke();
+  /* the half-round cap on the near end */
+  const e=(ax*px+ay*py)>=0?1:-1,eu=e*len/2;g.beginPath();for(let i=0;i<=10;i++){const a=i/10*Math.PI;const q=P(eu,-Math.cos(a)*w,Math.sin(a)*H);i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1])}g.closePath();
+  g.fillStyle=col.side;g.fill();g.stroke();
+  /* the fractured face on top */
+  g.beginPath();far.forEach((q,i)=>i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]));for(let i=n;i>=0;i--)g.lineTo(near[i][0],near[i][1]);g.closePath();
+  const fg=g.createLinearGradient(far[0][0],far[0][1],near[n][0],near[n][1]);fg.addColorStop(0,col.top);fg.addColorStop(0.55,col.mid);fg.addColorStop(1,col.side);g.fillStyle=fg;g.fill();g.fillStyle='rgba(120,100,78,.18)';g.fill();
+  g.strokeStyle='rgba(50,42,34,.6)';g.lineWidth=Math.max(0.6,dia*0.035);g.stroke();
+  g.strokeStyle='rgba(70,60,48,.5)';g.lineWidth=Math.max(0.5,dia*0.022);for(let k=0;k<2;k++){const u0=(h91(seed,k,23)-0.5)*len*0.7;g.beginPath();let q=P(u0,-w*0.6);g.moveTo(q[0],q[1]);q=P(u0+len*0.08,(h91(seed,k,24)-0.5)*w*0.4);g.lineTo(q[0],q[1]);q=P(u0+len*0.04,w*0.55);g.lineTo(q[0],q[1]);g.stroke()}
+  g.fillStyle='rgba(90,78,62,.35)';for(let k=0;k<5;k++){const q=P((h91(seed,k,25)-0.5)*len*0.8,(h91(seed,k,26)-0.5)*w*1.4);ell91(g,q[0],q[1],dia*0.03,dia*0.02);g.fill()}}
 /* stump91 — the broken stump where the pillar stood: his base + the shaft's foot, cut jagged ~0.25 TW above the sand */
 function stump91(g,x,y,col){const im=stone91();const s=stoneScale91();const H=TW*WEAR91.stumpH;
   g.fillStyle='rgba(0,0,0,.3)';ell91(g,x+TW*0.03,y+TW*0.025,TW*0.3,TW*0.14);g.fill();
@@ -47560,7 +47582,8 @@ function rubDraw91(g,rb,G,live){const R=rub91(rb);const col=marble91();const st=
   const roll92=(p,r,c)=>{if(!p.half||!live||typeof RUB84==='undefined'||!RUB84.t)return [r,c];const t0=RUB84.t.get(rb);if(t0==null)return [r,c];   /* the halves land together, then roll apart */
     const u=Math.max(0,Math.min(1,(performance.now()-t0-p.k*110-380)/480)),e=1-Math.pow(1-u,3);const r0=rb.r+dr*p.k,c0=rb.c+dc*p.k;return [r0+(r-r0)*e,c0+(c-c0)*e]};
   for(const p of R.pieces){const [r,c]=roll92(p,...rubPos91(rb,R,p,G));const m=center(r,c);const lift=live&&typeof rubbleSettle84==='function'?rubbleSettle84(rb,p.k,p.i):0;
-    if(p.t==='drum')L.push({y:m.y,f:()=>{drum91(g,m.x,m.y,TW*0.3*p.sz*(p.half?0.56:1),TW*WEAR91.drumD*p.sz,th0+p.a,R.seed*13+p.i,lift,col);st.drums=(st.drums||0)+1}});
+    if(p.t==='drum'&&p.half)L.push({y:m.y,f:()=>{half92(g,m.x,m.y,TW*0.3*p.sz,TW*WEAR91.drumD*p.sz,th0+p.a,R.seed*13+p.i,lift,col);st.drums=(st.drums||0)+1}});
+    else if(p.t==='drum')L.push({y:m.y,f:()=>{drum91(g,m.x,m.y,TW*0.3*p.sz,TW*WEAR91.drumD*p.sz,th0+p.a,R.seed*13+p.i,lift,col);st.drums=(st.drums||0)+1}});
     else L.push({y:m.y,f:()=>{chip91(g,m.x,m.y,TW*0.055*p.sz,R.seed*17+p.i,lift,col);st.chips=(st.chips||0)+1;if(p.out||Math.min(r,c,N-1-r,N-1-c)<-0.5)st.gullyChips=(st.gullyChips||0)+1}})}
   L.sort((a,b)=>a.y-b.y);for(const o of L)o.f()}
 /* ---------- 4. the worn paths and the scuffs ---------- */
