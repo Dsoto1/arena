@@ -13,7 +13,7 @@ const o=await p.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));
   S.npcs.push({id:'cmX',t:'commodus',n:'Commodus',alive:true,hp:15,r:0,c:0});
   r.after=(await peek()).find(x=>/Unlock market/.test(x.t));pl.market=true;r.buy=(await peek()).filter(x=>/Buy at level/.test(x.t));
   /* free pick: no d4 (rnd not called), Market Choice kept */
-  pl.mchoice=false;pl.cpu=true;S.npcs=S.npcs.filter(n=>n.id!=='cmX');const k=await marketRoll(pl,'w',1);const rolls=[...document.querySelectorAll('#log li')].slice(0,6).filter(l=>/market die/.test(l.textContent)).length;pl.cpu=false;r.free={k,rolls,mch:pl.mchoice,log:[...document.querySelectorAll('#log li')].slice(0,8).map(l=>l.textContent).join(' | ')};
+  pl.mchoice=false;pl.cpu=true;S.npcs=S.npcs.filter(n=>n.id!=='cmX');const k=await marketRoll(pl,'w',1);const rolls=[...document.querySelectorAll('#log li')].filter(l=>/market die/.test(l.textContent)).length;pl.cpu=false;r.free={k,rolls,mch:pl.mchoice,log:[...document.querySelectorAll('#log li')].map(l=>l.textContent).join(' | ')};
   const cnt=k=>S.deck.filter(x=>x===k).length+((S.round2||[]).filter(x=>x===k).length);r.deck={rete:cnt('rete'),ward:cnt('ward'),lyre:cnt('lyre'),lure:cnt('lure'),n:S.deck.length,end:S.deck[0]};
   return r});
 ok(o.before&&!o.before.dis,'unlock enabled before Commodus '+JSON.stringify(o.before));

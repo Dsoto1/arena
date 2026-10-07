@@ -363,7 +363,7 @@ async function startTutorial(){
   const G=S;S.tutorial=true;
   S.deck=['wealth3','elixir2','merc1','forge2','wealth5','elixir4','merc2','hercules1','wealth3','elixir2'];S.deck.unshift('endgame');
   S.round2=['hercules2','focus','hercules2','hercules2','focus','hercules2'];
-  setTimeout(()=>{if(S!==G)return;const p=S.players[0],q=S.players[1];TUT.p=p;setSpeedUI('pause');
+  setTimeout(()=>{if(S!==G)return;const p=S.players[0],q=S.players[1];TUT.p=p;/* v0.95: sleep() now holds a wait that is already running when Pause is set, so pausing mid-Resolve would freeze the lesson before the human's Choice — pause once it is reached */{let n=0;const hold=()=>{if(S!==G||!TUT.on||SPEED==='pause')return;if(S.phase==='choice'||++n>150)setSpeedUI('pause');else setTimeout(hold,100)};hold()}
     p.r=12;p.c=9;p.keys=Math.max(p.keys||0,1);q.r=12;q.c=0;
     TUT.potTile=[10,9];TUT.exit=[9,3];
     const pl=S.pillars.find(x=>x.r===10&&x.c===10);if(pl)pl.pots=['ap2'];

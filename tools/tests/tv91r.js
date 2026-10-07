@@ -40,8 +40,8 @@ await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(
       const calm=SETTINGS.calm;SETTINGS.calm=true; /* the night flames hold still */const ch92=typeof CHEER92!=="undefined"&&CHEER92.on;if(ch92)CHEER92.on=false; /* v0.92: no cheer burst ending between the draws */
       AR91.noStatic=true;draw();const A=pts.map(p=>px(p[1],p[2]));DRAW_EMPTY=true;draw();const En=pts.map(p=>px(p[1],p[2]));DRAW_EMPTY=false;AR91.noStatic=false;draw();const B=pts.map(p=>px(p[1],p[2]));DRAW_EMPTY=true;draw();const E=pts.map(p=>px(p[1],p[2]));DRAW_EMPTY=false;draw();SETTINGS.calm=calm;if(ch92)CHEER92.on=true;
       const far=(u,v)=>{const a=u.split(',').map(Number),c=v.split(',').map(Number);return Math.max(Math.abs(a[0]-c[0]),Math.abs(a[1]-c[1]),Math.abs(a[2]-c[2]))>10}; /* blending noise of a unit or two is not cover */
-      /* a piece is covered when it shows without the stone but has vanished with it */
-      const bad=pts.filter((p,i)=>(p[0]==='piece'||p[0]==='beast')?(far(A[i],En[i])&&!far(B[i],E[i])):far(A[i],B[i])).map((p,i)=>p[0]+'@'+Math.round(p[1])+','+Math.round(p[2]));const kinds={};for(const p of pts)kinds[p[0]]=(kinds[p[0]]||0)+1;return {n:pts.length,kinds,bad}},
+      /* a piece (or a spectator sprite) is covered when it shows without the stone but has vanished with it — a sample on a sprite's anti-aliased edge sees stone behind it either way */
+      const bad=pts.filter((p,i)=>(p[0]==='piece'||p[0]==='beast'||p[0]==='spect')?(far(A[i],En[i])&&!far(B[i],E[i])):far(A[i],B[i])).map((p,i)=>p[0]+'@'+Math.round(p[1])+','+Math.round(p[2]));const kinds={};for(const p of pts)kinds[p[0]]=(kinds[p[0]]||0)+1;return {n:pts.length,kinds,bad}},
     ms:()=>{draw();const t0=performance.now();for(let i=0;i<15;i++)draw();const on=(performance.now()-t0)/15;AR91.on=false;draw();const t1=performance.now();for(let i=0;i<15;i++)draw();const off=(performance.now()-t1)/15;AR91.on=true;draw();return {on,off}}}});
 
 /* ======== 1. a classic event by day (Roma, grand) ======== */
