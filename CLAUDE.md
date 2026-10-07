@@ -1411,6 +1411,7 @@ share copy — the site download play/flavius-rule-arena.zip.)
   Accept ("This offer is no longer on the table"). CHANGE: the "How the fighters grew this week" letter goes INTO the Week N in review letter
   (202 .rev91) as a subsection "From your Doctores": one row per fighter (portrait, the five rating icons with old → new and a green +0.4,
   band-ups highlighted, fatigue chip), quiet fighters folded; the separate letter is no longer sent. Mail letters may use icons/structure freely.
+  FIX: Training Yard fighter card → Bond: the "Nobody free to bond with" box, the + buttons and the N/N count overflow the card (wrap/shrink inside it).
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
