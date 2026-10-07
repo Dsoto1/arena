@@ -91,7 +91,7 @@
  "Three starters already — bench one or pick a slot above.": "Schon drei Starter — setze einen auf die Bank oder wähle oben einen Platz.",
  "Make him a starter": "Zum Starter machen",
  "⭐ Promote": "⭐ Befördern",
- "🪑 {0} want{1} arena time and sat on the bench: −1 morale.": "🪑 {0} will Arena-Zeit und saß auf der Bank: −1 Moral.",
+ "🪑 {0} want{1} arena time and sat on the bench: −1 morale.": "🪑 {0} {1|will|wollen} Arena-Zeit und {1|saß|saßen} auf der Bank: −1 Moral.",
  "<b>🛡 The Armory</b> — its own tab. Your fighters own their gear: pick a fighter, then drag a weapon into a hand or armor onto the body. Only fit fighters can be equipped; weapons lost on the sand are gone; armor broken to 0 AP comes home damaged — the armorer in the City Square mends it.": "<b>🛡 Die Rüstkammer</b> — ein eigener Tab. Deine Kämpfer besitzen ihre Ausrüstung: wähle einen Kämpfer, dann zieh eine Waffe in eine Hand oder Rüstung auf den Körper. Nur fitte Kämpfer können ausgerüstet werden; auf dem Sand verlorene Waffen sind weg; auf 0 AP zerbrochene Rüstung kommt beschädigt heim — der Rüstmeister auf dem Platz flickt sie.",
  "Earned": "Verdient",
  "Not earned yet": "Noch nicht verdient",
