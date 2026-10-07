@@ -6,6 +6,8 @@ html=open(src,encoding='utf-8').read()
 data={}
 # retired art kept on the site for old cached pages, but never used by this build (v0.90: the download zip hit 30 MiB)
 RETIRED={'weapon_back1.webp','weapon_back2.webp','weapon_back3.webp','weapon_back4.webp'}
+# online-only helpers: the standalone has no Online (v0.94: the Safari WebP encoder for online token pictures)
+RETIRED|={'webpenc94.js'}
 for f in sorted(os.listdir(A)):
     if f in RETIRED: continue
     p=os.path.join(A,f);mt=mimetypes.guess_type(f)[0] or ('image/webp' if f.endswith('.webp') else 'application/octet-stream')

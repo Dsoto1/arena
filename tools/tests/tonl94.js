@@ -41,6 +41,12 @@ ok(S1.pk==='victory'&&S1.pose>20&&S1.pose<=600,'pose stored '+JSON.stringify({pk
 ok(!S1.inChar&&S1.charLen<6000,'the picture lives in its own item, not the gladiator');ok(S1.onl&&S1.fig&&S1.off,'the card shows the picture + Classic '+JSON.stringify(S1));
 ok(S1.kit===JSON.stringify({c:await A.evaluate(()=>ONL.char.id),h:S1.h}),'the kit names the picture '+S1.kit);
 await shot(A,'domus');
+/* ── 1b · SAFARI: a canvas that answers PNG for WebP → the libwebp WebAssembly encoder (assets/webpenc94.js) makes the sheet ── */
+const SF=await A.evaluate(async()=>{const real=HTMLCanvasElement.prototype.toDataURL;HTMLCanvasElement.prototype.toDataURL=function(t,q){return real.call(this,/webp/.test(t||'')?'image/png':t,q)};
+  try{T94.noWebp=false;const api=await t93Load();const P=T94.pose[ONL.char.id]||{};const r=await t94Sheet(api,t94Char(ONL.char),P.pose||'');const chk=ONLC.tokCheck94(r.b64,r.meta);
+    return {wasm:!!window.WEBPENC94,flag:T94.noWebp,why:chk.why||'',len:r.b64.length,magic:atob(r.b64.slice(0,24)).slice(8,12)}}
+  catch(e){return {err:String(e&&e.message||e)}}finally{HTMLCanvasElement.prototype.toDataURL=real;T94.noWebp=false}});
+ok(SF.wasm&&SF.flag&&!SF.why&&SF.magic==='WEBP'&&SF.len<=Math.ceil(65536/3)*4,'Safari path: the WebAssembly encoder makes a valid sheet '+JSON.stringify(SF));
 
 /* ── 2 · busy: in a room → refused by the server, the card greyed ── */
 const L=await A.evaluate(async()=>await NET.req('lobby.create',{ev:'democritus',loc:6,seats:4,ranked:false,abandon:'fate'}));

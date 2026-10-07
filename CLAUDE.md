@@ -743,6 +743,9 @@ One global script; files are concatenated in order. Later "version modules" patc
   seat. Board: tokenForP tags the sculpted spec (p._onlSc) with a non-enumerable t93 from `p._onlLook.t94` → 222's figure path (any token style);
   figureHTML/onlFig show the front cell. Never in S state or onlHash; missing → sculpted. Mock: MOCK_ROUTES char.tok/tok.get, pictures in localStorage
   flavius_onlmocktok94. Tests `tonl94`, server `v94.test.js`. Abuse: content is not checked (any WebP of the right size) — see docs/backend.md.
+  SAFARI (his ask): its canvas cannot make WebP → `t94EncWasm` loads assets/webpenc94.js on demand (libwebp WebAssembly from @jsquash/webp,
+  Apache-2.0, rebuilt by tools/mkwebpenc94.py; wasm inlined as base64; T94.noWebp remembers) — same WebP bytes, no server change; mkshare skips it
+  (the standalone has no Online). tonl94 1b fakes Safari (toDataURL answers PNG). Not tried on a real Safari here.
 - **v0.94 EVENT DESIGNER AS THE ARENA VIEW (224-v94designer):** the Board step (83 ED_STEPS[1] = "🏟 Arena"; editing a saved event lands
   there) = `e94HTML` (edBoardHTML wrapper; localStorage flavius_ed94off=1 → the old grid). BOARD = the real draw(): `e94Base` swaps in a designer
   state (`e94State`: the draft layout as S, phase 'setup', no players, `S.ed94` → computeHL off, zoomOut, the selected round's zone), parks #cv in an

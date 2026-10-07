@@ -67,10 +67,22 @@ function t94Char(ch){const L=ch.look||{};const CK=(typeof CLASSES!=='undefined'&
   return {id:'onl94_'+ch.id,name:ch.name,portrait:{...(L.portrait||{})},color:L.color||CK.color||'',arm:{rarm:{wraps:1},larm:{wraps:1}},R:null,L:null,tok93:P&&P.pose?{pose:P.pose,pk:P.pk||''}:null}}
 /* the sheet as WebP within the server's limit: quality steps down until it fits */
 async function t94Sheet(api,c,pose){const P=t93Parts(c);api.apply({look:P.look,gear:P.gear,pose});const s=await api.sheetAsync();const max=Math.ceil(ONLC.TOK94.MAX/3)*4;
-  for(const q of [0.9,0.8,0.7,0.6,0.5,0.4]){let d='';try{d=s.canvas.toDataURL('image/webp',q)}catch(e){}
-    if(!/^data:image\/webp;base64,/.test(d))throw t94Err(_T('This browser cannot save WebP pictures — try Chrome, Edge or Firefox.'),'no_webp');
-    const b=d.slice(d.indexOf(',')+1);if(b.length<=max)return {b64:b,meta:s.meta}}
+  for(const q of [0.9,0.8,0.7,0.6,0.5,0.4]){let d='';if(!T94.noWebp)try{d=s.canvas.toDataURL('image/webp',q)}catch(e){}
+    let b;if(/^data:image\/webp;base64,/.test(d))b=d.slice(d.indexOf(',')+1);
+    else{T94.noWebp=true;try{b=await t94EncWasm(s.canvas,Math.round(q*100))}catch(e){console.error(e);throw t94Err(_T('This browser cannot save WebP pictures — try Chrome, Edge or Firefox.'),'no_webp')}}
+    if(b.length<=max)return {b64:b,meta:s.meta}}
   throw t94Err(_T('The token picture is too big (64 KB at most).'),'too_big')}
+/* SAFARI: its canvas cannot make WebP (toDataURL quietly answers PNG) → libwebp as WebAssembly (assets/webpenc94.js, built by
+   tools/mkwebpenc94.py from @jsquash/webp), loaded on demand only here; the bytes are the same kind of WebP Chrome makes */
+const T94_WOPT={quality:75,target_size:0,target_PSNR:0,method:4,sns_strength:50,filter_strength:60,filter_sharpness:0,filter_type:1,partitions:0,segments:4,pass:1,
+  show_compressed:0,preprocessing:0,autofilter:0,partition_limit:0,alpha_compression:1,alpha_filtering:1,alpha_quality:100,lossless:0,exact:0,image_hint:0,
+  emulate_jpeg_size:0,thread_level:0,low_memory:0,near_lossless:100,use_delta_palette:0,use_sharp_yuv:0};
+function t94EncLoad(){if(T94.enc)return T94.enc;T94.enc=(async()=>{if(!window.WEBPENC94)await t93Script('webpenc94.js');
+    const bin=Uint8Array.from(atob(window.WEBPENC94_WASM),ch=>ch.charCodeAt(0));return window.WEBPENC94({noInitialRun:true,wasmBinary:bin})})();
+  T94.enc.catch(()=>{T94.enc=null});return T94.enc}
+async function t94EncWasm(cv,q){const M=await t94EncLoad();const d=cv.getContext('2d').getImageData(0,0,cv.width,cv.height);
+  const out=M.encode(d.data,cv.width,cv.height,{...T94_WOPT,quality:q});if(!out||!out.length)throw new Error('webp encode');
+  let bin='';const u=new Uint8Array(out.buffer||out);for(let i=0;i<u.length;i+=0x8000)bin+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(bin)}
 /* the upload: parts in order (each its own request + rid) → the server's answer to the last one */
 async function t94Upload(ch,b64,meta,pose,pk,say){const P=ONLC.TOK94.PART,parts=[];for(let i=0;i<b64.length;i+=P)parts.push(b64.slice(i,i+P));
   if(!parts.length||parts.length>ONLC.TOK94.PARTS)throw t94Err(_T('The token picture is too big (64 KB at most).'),'too_big');
