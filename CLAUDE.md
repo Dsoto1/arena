@@ -1384,7 +1384,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   RIGHT, player-count picker under its icon, seats >4 on a second row, Stands card fixed right; Creator Studio designers get TABS (like elsewhere).
   RULES: ONLINE — Damnatio only at creation, never switched into or out of, other class switches stay 100 coin (server). FOCUS — players only
   (beasts never Focus); costs at least 3 movement and uses ALL remaining movement; Focus on a pillar's Blessings = +1 damage on a successful
-  attack (like the Soldier ability). Waiting on uploads: Zora's TTS bundle, the Quick Reference page, his armor-fit Export.
+  attack (like the Soldier ability) — DIGITAL-EXCLUSIVE rule (his call): with 5 movement you may walk 2 then Focus with the last 3; the
+  rulebook's 'Focus = all available movement' stays in the Quick Reference with a purple digital note. UPLOADS IN: Zora's TTS bundle
+  (tools/art/zora95/zora2024.unity3d → render like the other minis), Quick Reference p.72 (tools/art/quickref95/quickref_p72.webp + refpage.pdf;
+  checked vs the engine 2026-10-07: NPC stats, move/push/topple costs, hit dice 2 vs players / 4 vs beasts / 2 beast vs beast, damage order,
+  HP 7 all match). Still waiting: his armor-fit Export.
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
