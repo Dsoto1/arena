@@ -915,6 +915,15 @@ share copy — the site download play/flavius-rule-arena.zip.)
   only: the download outgrew 30 MiB, so flavius.sh builds the standalone in CloudShell from the game zip (it carries tools/mkshare.py).
   The last zip release; from v0.92 flavius.sh deploys from GitHub.) Release run (REGJ=2): 217/222 + 5 re-run green (tests edited mid-run).
 
+- **v0.92** a new Training Yard (fighter cards, sessions, Lock in, the Doctore's drills, Trials), one house treasury + online kits, the performance
+  heartbeat + idle mode, pick on the body (Focus / health / armor), severed parts traced from the avatar, cheering crowd, one live Online per account,
+  market level tabs + Kits tab, error log + dice check, shaded laurels, rubble that splits lengthwise; fixes (beasts on their target's turn, Attack
+  tile reason, Manager music, sit-out square, infirmary fighters don't train). (Published as artifact Version 106; first GITHUB release: `bash
+  flavius.sh release` clones the branch; server deploys too (v92t session.replaced). Fallback zip flavius-site-update-v0.92 only — the download
+  outgrew 30 MiB.) Release run (REGJ=3): 228/234 + 4 flaky (passed alone) + tv91r (passed alone) + tonl84 (date bug in the TEST: on a week's last
+  day the lots outlive the week, so last week's six show beside the new six — the test now runs mid-week). Laurels + rubble landed after the
+  snapshot: covered by ttoss / tv91w.
+
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
   8 printed classes move to the live template (104-cards74 classCard74) so rule changes update their cards. Art NOT drawn yet (optional,
