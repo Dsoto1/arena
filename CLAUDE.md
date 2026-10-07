@@ -29,6 +29,10 @@ armor, trophies, banners, events, tournaments, invitationals, editors, spectator
 - **When he sends a list, do NOT build, commit or publish until he says go** — sometimes he only wants to dump notes. Read it, sort it,
   ask the questions, then wait. (A release he already approved may finish.)
 
+- **QUOTA RULE (his, 2026-10-07):** the lead (Opus) plans features, reviews, merges and runs releases; routine bug fixes, test edits and
+  small immediate code changes go to a Sonnet sub-agent (Agent tool `model: "sonnet"`) to save tokens. Big feature builds stay with the lead's
+  default model unless he says otherwise.
+
 - **VISUAL POLISH RULE (his, 2026-10-07):** preserve gameplay clarity, responsiveness, accessibility, localization, save compatibility, network
   authority and the existing desktop + mobile experiences — never improve a beauty shot while making the game harder to read or slower to play.
   Every visual change must keep passing: draw-cost budgets (tv91r "draw time", tv92p soak/idle), clarity (tv91r nothing over the sand/pieces),
