@@ -7,7 +7,7 @@ await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=
 await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:15000});
 const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 const o=await pg.evaluate(async()=>{let sd=90;Math.random=()=>{sd=(sd*1664525+1013904223)>>>0;return sd/4294967296};
-  const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;
+  const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);await W8(300);menuHide();MM.fromMenu=true;openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;W_().fill95=W_().season*100+W_().week; /* v0.95: no default fill of the starters (the test enters by hand) */
   const w=W_(),m=me();m.coin=2000;const ros=rosterOf(m);const r={};const q=s=>document.querySelector(s);const go=async t=>{MGR.tab=t;MGR_REDRAW();await W8(400)};
   for(const g of ros){g.age=24;g.morale=90;g.contract.weeks=20;g.faith='pagan';g.bench=false;delete g.inj;g.severed=[];g.fat=0}
   const mine=new Set(ros.map(g=>g.id));for(const bo of w.night.bouts)bo.ents=bo.ents.filter(id=>!mine.has(id));fillNight();

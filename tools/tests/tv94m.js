@@ -29,10 +29,10 @@ ok(m1.dirty&&m1.idem&&m1.save,'1 migration marked dirty once, idempotent, in SAV
 /* ---- 2 · the Roster's Armory: plaque, drag between fighters, tap-to-place ---- */
 const r2=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const ros=rosterOf(m).sort((a,b)=>effOvr(b)-effOvr(a));
   for(const g of ros){g.severed=[];delete g.inj}const A=ros.find(g=>g.eq94.R),B=ros.find(g=>g!==A&&g.eq94.R);window.__A=A.id;window.__B=B.id;
-  MGR.tab='roster';MGR_REDRAW();await W8(600);const o={card:!!document.querySelector('#mgrPane #ar94'),wall:!!document.querySelector('#mgrPane .dcard[data-gid84]')};
-  const pl=document.querySelector(`#mgrPane .dcard[data-gid84="${A.id}"] .dpn84`);pl.click();await W8(200);o.sel=MGR.ar94===A.id&&!!document.querySelector(`#ar94 .ar94stage[data-ar94who="${A.id}"]`);
+  MGR.tab='armory';MGR_REDRAW();await W8(600);const o={card:!!document.querySelector('#mgrPane #ar94'),wall:!!document.querySelector('.mtabs [data-id="armory"]')&&!document.querySelector('#mgrPane .dcard[data-gid84]')};
+  const pl=document.querySelector(`#mgrPane #ar94 .ar94g[data-ar94g="${A.id}"]`);pl.click();await W8(200);o.sel=MGR.ar94===A.id&&!!document.querySelector(`#ar94 .ar94stage[data-ar94who="${A.id}"]`);
   o.Ar=A.eq94.R.k;o.Br=B.eq94.R.k;o.Bl=B.eq94.L?B.eq94.L.k:null;return o});
-ok(r2.card&&r2.wall,'2 the Armory card sits under the barracks wall');ok(r2.sel,'2 a plaque click selects the fighter');
+ok(r2.card&&r2.wall,'2 the Armory is its own tab (v0.95), not in the Roster');ok(r2.sel,'2 a fighter chip click selects the fighter');
 /* a real drag: A's right-hand weapon onto B's chip */
 const src=await pg.evaluate(()=>{const e=document.querySelector('#ar94 .ar94hand[data-ar94z="R"] [data-ar94p]');e.scrollIntoView({block:'center'});const r=e.getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2}});
 const dst=await pg.evaluate(()=>{const e=document.querySelector(`#ar94 [data-ar94g="${window.__B}"]`);const r=e.getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2}});
@@ -122,9 +122,9 @@ const r8=await pg.evaluate(async()=>{const w=W_();const o={};const R=w.mgrs.find
   const poor=w.mgrs.find(x=>!x.isPlayer&&!x.dead&&x!==R);poor.coin=ARM94.rivFloor;const pg0=rosterOf(poor).find(g=>g.eq94);if(pg0)pg0.eq94.R=null;o.reserve=arm94AutoShop(w,poor)===0&&poor.coin===ARM94.rivFloor;return o});
 ok(r8.filled&&r8.paid,'8 a rival rebuys his fighter\'s lost weapon '+JSON.stringify(r8));ok(r8.week,'8 rivals shop at the week\'s end');ok(r8.reserve,'8 a poor house keeps its reserve');
 /* ---- 9 · checklist nudges ---- */
-const r9=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const A0=gById(window.__A);const A=A0&&A0.alive&&A0.eq94?A0:rosterOf(m).find(g=>g.eq94&&g.eq94.a.length); /* the bout in 5 may have killed A */delete A.inj;A.eq94.R=null;A.eq94.L=null;A.eq94.a[0].dmg=1;
+const r9=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const A0=gById(window.__A);const A=A0&&A0.alive&&A0.eq94?A0:rosterOf(m).find(g=>g.eq94&&g.eq94.a.length); /* the bout in 5 may have killed A */delete A.inj;for(const g of rosterOf(m))if(g!==A&&!g.inj)g.inj={until:99,label:'x',pen:1}; /* v0.95: hurt fighters' gear goes to the shelf, healed ones are bare until re-equipped — only A should show */A.eq94.R=null;A.eq94.L=null;A.eq94.a[0].dmg=1;
   const I=weekChecklist();const o={empty:I.some(x=>!x.done&&/bare hands|empty (right|left) hand/.test(x.txt)&&x.txt.includes(esc(A.name))),rep:I.some(x=>!x.done&&/need(s)? repair/.test(x.txt))};
-  MGR.tab='roster';MGR_REDRAW();await W8(500);o.warn=/empty/.test((document.querySelector('#ar94 .ar94g[data-ar94g="'+A.id+'"]')||{}).textContent||'')||/⚠/.test((document.querySelector('#ar94 .ar94g[data-ar94g="'+A.id+'"]')||{}).textContent||'');
+  MGR.tab='armory';MGR_REDRAW();await W8(500);o.warn=/empty/.test((document.querySelector('#ar94 .ar94g[data-ar94g="'+A.id+'"]')||{}).textContent||'')||/⚠/.test((document.querySelector('#ar94 .ar94g[data-ar94g="'+A.id+'"]')||{}).textContent||'');
   /* v0.94 tuning: 🔨 Repair all · N coin on the checklist item, one click mends everything */
   if(A.eq94.a[1])A.eq94.a[1].dmg=1;const bx=document.createElement('button');bx.dataset.arm94fixall='1';document.body.appendChild(bx);m.coin=Math.max(m.coin,500);
   const I2=weekChecklist();const it=I2.find(x=>!x.done&&/need(s)? repair/.test(x.txt));const tot=arm94FixTotal(m);const nD=arm94All(m).filter(x=>x.P.dmg).length;o.fixBtn=!!it&&it.btn.includes('data-arm94fixall')&&it.btn.includes(tot+' coin');
@@ -132,7 +132,7 @@ const r9=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
 ok(r9.empty&&r9.rep,'9 checklist: empty hands + repairs '+JSON.stringify(r9));ok(r9.warn,'9 the chip warns');ok(r9.fixBtn&&r9.fixedAll&&r9.none,'9 Repair all · N coin on the checklist mends every damaged piece in one click '+JSON.stringify(r9));
 /* ---- 10 · phone 390 ---- */
 await pg.setViewportSize({width:390,height:844});await W(700);
-const r10=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));MGR.tab='roster';MGR_REDRAW();await W8(600);const a=document.querySelector('#ar94');a.scrollIntoView();const R=a.getBoundingClientRect();
+const r10=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));MGR.tab='armory';MGR_REDRAW();await W8(600);const a=document.querySelector('#ar94');a.scrollIntoView();const R=a.getBoundingClientRect();
   const wide=[...a.querySelectorAll('*')].filter(e=>{if(e.closest('.ar94gs')||e.ownerSVGElement)return false;const r=e.getBoundingClientRect();return r.width>0&&r.right>R.right+2}).length;
   return {sw:document.documentElement.scrollWidth,cw:document.documentElement.clientWidth,right:Math.round(R.right),wide}});
 ok(r10.sw<=r10.cw&&r10.right<=390&&r10.wide===0,'10 phone: the Armory fits 390 px '+JSON.stringify(r10));
