@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.94**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.95**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -1488,6 +1488,21 @@ share copy — the site download play/flavius-rule-arena.zip.)
   fills the bouts from them by default (still swappable there). Starter perk (my proposal, his "maybe"): +2 morale and +1 loyalty per week as a
   starter; a benched healthy fighter whose want is "arena time" loses 1 morale a week — tunable.
   FIX: Training Yard fighter card → Bond: the "Nobody free to bond with" box, the + buttons and the N/N count overflow the card (wrap/shrink inside it).
+- **v0.96 NOTES (his list 2026-10-07 evening; his picks 1b 2a 3a 5a 6b):** v0.95 ships as merged; ALL of these go into v0.96 beside Recruiting III.
+  FIXES: belts drawn above thigh armor on every avatar · raw HTML in the "Raise the Shield of Achilles?" window · 🔴 an attack that should eliminate
+  (often the head) uses the weapon but applies nothing and leaves no log line — trace it first; RULE: every attack is logged (hit or miss), anything
+  that cancels/saves (block, heal) shows on screen for everyone · your turn → the panel snaps back to your own avatar · Sim to end shows no beast
+  cards and none linger after the end. CHANGES: online Domus loses Loadouts ("save what he wears") · Carmina window = 3 cards, each with its verses as
+  a selectable column to its left, no empty space · uses/ammo/absorb counters on weapons/shields · the pinned stands line (#slogPin) goes; spectator
+  actions touching a gladiator/the arena stay in the arena log, seat switches + wagers only under Stands · a spectator without CF gets no upkeep window;
+  small "Switch section (CF)" button in the arena tools; the window still offers the switch when it opens for Tholo/stone/offering · STONE CAP (2a): at
+  most 3 stones HIT one gladiator per turn, the rest fly wide (log line) · ONLINE RELOAD (3a): reloading during a match goes straight back into it (one
+  live match per lanista is already the server's busy rule) · FAST (5a): Fast skips in-between animation frames (pieces jump, no bubbles/cards, one
+  board draw per action); Slow/Normal unchanged; rules/log/dice unchanged · ACTION BUTTONS (6b): MOCK-UP FIRST — ⚔ Attack (weapons + Focus, red frame),
+  🏃 Move (remaining movement on top + Topple/Push/Tunnel), 🤝 Deal (Trade/Truce/Loot), 🏛 Market & Crowd always shown (greyed when not usable, what's
+  left + what you can afford), End turn apart. OPEN (Q4, re-asked): may a Leather Tasset (upper-leg padding) be worn under a thigh plate on the same
+  leg? Today yes (padding stacks per equip point); his rule said only lower padding sits underneath. Confirmed: two hard pieces on one equip point never
+  stack (armorConflict), belts sit on top of chest armor.
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D

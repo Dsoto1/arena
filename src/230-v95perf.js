@@ -164,7 +164,7 @@ if(typeof rtokHTML==='function'&&typeof RTOK_NAMES!=='undefined'){const base=rto
     const c=cut95Cell('rtok.webp',RTOK_COLS,RTOK_ROWS,col,row);return c?s.slice(0,at)+cut95New(c)+s.slice(at+head.length):s}catch(e){console.error(e);return s}}}
 /* the armor worn on the avatar: the whole sheet scaled and clipped → the piece's own cell, placed on the same pixels */
 if(typeof armPieceSVG==='function'&&typeof ARM_SHEET!=='undefined'){const base=armPieceSVG;armPieceSVG=function(B){const s=base.apply(this,arguments);
-  try{if(!P95.on||!B||!B.crop)return s;const href=assetURL(ARM_SHEET.f);const i=s.indexOf('<image href="'+href+'"');if(i<0)return s;
+  try{if(!P95.on||!B||!B.crop)return s;const href=assetURL(ARM_SHEET.f);const i=s.indexOf(_T('<image href="')+href+'"');if(i<0)return s;
     const cols=SHEETS.a.cols,rows=SHEETS.a.rows,cw=ARM_SHEET.w/cols,ch=ARM_SHEET.h/rows;const c=B.crop;const col=Math.floor((c[0]+0.5)/cw),row=Math.floor((c[1]+0.5)/ch);
     if((c[0]+c[2])>(col+1)*cw+0.5||(c[1]+c[3])>(row+1)*ch+0.5)return s; /* a crop across two cells: keep the sheet */
     const u=cut95Cell(ARM_SHEET.f,cols,rows,col,row);if(!u)return s;

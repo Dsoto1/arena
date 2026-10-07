@@ -1,0 +1,390 @@
+[
+ {
+  "k": "<b>{0}</b>{1}{2}\n      <small>{3}</small>\n      <small>HP {4} · ATK {5} · MV {6} · worth {7}, {8}{9}</small>\n      <small><b>The ledger:</b> {10} slain in your events · {11} gladiator{12} {13} · {14}</small>",
+  "w": "16-crowd.js:1027"
+ },
+ {
+  "k": "<small>{0}</small><small>HP {1} · ATK {2} · MV {3}</small><small><b>The ledger:</b> {4} slain · {5} gladiator{6} {7} · {8} tamed</small>",
+  "w": "16-crowd.js:1040"
+ },
+ {
+  "k": "1x Arena Key Token ({0} keys)",
+  "w": "104-cards74.js:29"
+ },
+ {
+  "k": "pick a fighter · drag a piece onto him, or tap it and tap where it goes",
+  "w": "225-v94armory.js:332"
+ },
+ {
+  "k": "Arena Key Token (2 keys)",
+  "w": "227-v95board.js:125"
+ },
+ {
+  "k": "Arena Key Token (1 key)",
+  "w": "227-v95board.js:125"
+ },
+ {
+  "k": "Arena Key Token",
+  "w": "227-v95board.js:125"
+ },
+ {
+  "k": "2 keys · using one flips it to 1 key",
+  "w": "227-v95board.js:125"
+ },
+ {
+  "k": "1 key · using it discards the token",
+  "w": "227-v95board.js:125"
+ },
+ {
+  "k": "slain",
+  "w": "227-v95board.js:162"
+ },
+ {
+  "k": "eaten",
+  "w": "227-v95board.js:162"
+ },
+ {
+  "k": "No creation matches that.",
+  "w": "228-v95studio.js:30"
+ },
+ {
+  "k": "CPU plays {0}",
+  "w": "228-v95studio.js:47"
+ },
+ {
+  "k": "📊 Ratings",
+  "w": "228-v95studio.js:50"
+ },
+ {
+  "k": "points used",
+  "w": "228-v95studio.js:51"
+ },
+ {
+  "k": "The five ratings share a pool of {0}.",
+  "w": "228-v95studio.js:51"
+ },
+ {
+  "k": "✨ Abilities gained",
+  "w": "228-v95studio.js:52"
+ },
+ {
+  "k": "Legs · Upper (pair){0}",
+  "w": "228-v95studio.js:68"
+ },
+ {
+  "k": "Legs · Lower (pair){0}",
+  "w": "228-v95studio.js:68"
+ },
+ {
+  "k": "Both sides",
+  "w": "228-v95studio.js:89"
+ },
+ {
+  "k": "Moves, scales and turns both sides together.",
+  "w": "228-v95studio.js:90"
+ },
+ {
+  "k": "Only the left side moves — it keeps its own fit.",
+  "w": "228-v95studio.js:90"
+ },
+ {
+  "k": "Only the right side moves — the left keeps its own fit.",
+  "w": "228-v95studio.js:90"
+ },
+ {
+  "k": "💾 Save this fit",
+  "w": "228-v95studio.js:92"
+ },
+ {
+  "k": "🎯 Fit saved — it applies for everyone.",
+  "w": "228-v95studio.js:94"
+ },
+ {
+  "k": "Pelted with a stone (1 damage) every Resolve phase.",
+  "w": "228-v95studio.js:103"
+ },
+ {
+  "k": "A shield holds Absorb, optional Attack power and Range, and one other ability.",
+  "w": "228-v95studio.js:122"
+ },
+ {
+  "k": "A weapon card holds 4 icons — untick one first.",
+  "w": "228-v95studio.js:122"
+ },
+ {
+  "k": "card icons",
+  "w": "228-v95studio.js:128"
+ },
+ {
+  "k": "a shield: Absorb, then Attack power and Range if you like, plus one other ability",
+  "w": "228-v95studio.js:128"
+ },
+ {
+  "k": "Attack power and Range, plus up to two other abilities",
+  "w": "228-v95studio.js:128"
+ },
+ {
+  "k": "The card is full — untick another ability first.",
+  "w": "228-v95studio.js:130"
+ },
+ {
+  "k": "🔒 Lock proportions",
+  "w": "228-v95studio.js:136"
+ },
+ {
+  "k": "width and height change together",
+  "w": "228-v95studio.js:136"
+ },
+ {
+  "k": "🤝 COHORT",
+  "w": "228-v95studio.js:168"
+ },
+ {
+  "k": "A new cohort",
+  "w": "228-v95studio.js:168"
+ },
+ {
+  "k": "Pick the members.",
+  "w": "228-v95studio.js:169"
+ },
+ {
+  "k": "⭐ Your characters",
+  "w": "228-v95studio.js:185"
+ },
+ {
+  "k": "Seat them as",
+  "w": "228-v95studio.js:189"
+ },
+ {
+  "k": "Not in this event.",
+  "w": "228-v95studio.js:190"
+ },
+ {
+  "k": "No characters of yours are on the rolls under this roster set. Make one in the Creator Studio and add it to the rolls.",
+  "w": "228-v95studio.js:191"
+ },
+ {
+  "k": "No characters of yours are on the rolls under this roster set.",
+  "w": "228-v95studio.js:201"
+ },
+ {
+  "k": "There are no CPU seats to fill.",
+  "w": "228-v95studio.js:202"
+ },
+ {
+  "k": "🎲 {0} CPU seat{1} filled with your characters.",
+  "w": "228-v95studio.js:209"
+ },
+ {
+  "k": "Your characters are all seated already.",
+  "w": "228-v95studio.js:209"
+ },
+ {
+  "k": "Give every CPU seat one of your characters on the rolls, at random",
+  "w": "228-v95studio.js:212"
+ },
+ {
+  "k": "🎲 Fill CPU seats with my characters",
+  "w": "228-v95studio.js:212"
+ },
+ {
+  "k": "This offer is no longer on the table.",
+  "w": "229-v95mgr.js:38"
+ },
+ {
+  "k": "The invitational is settled — the week ends.",
+  "w": "229-v95mgr.js:45"
+ },
+ {
+  "k": "movement",
+  "w": "229-v95mgr.js:64"
+ },
+ {
+  "k": "now +{0} {1}",
+  "w": "229-v95mgr.js:64"
+ },
+ {
+  "k": "📈 From your Doctores",
+  "w": "229-v95mgr.js:81"
+ },
+ {
+  "k": "how the fighters grew this week",
+  "w": "229-v95mgr.js:81"
+ },
+ {
+  "k": "Nobody moved this week.",
+  "w": "229-v95mgr.js:81"
+ },
+ {
+  "k": "No change:",
+  "w": "229-v95mgr.js:82"
+ },
+ {
+  "k": "every blade, plate and token your house owns",
+  "w": "229-v95mgr.js:88"
+ },
+ {
+  "k": "🛡 Armory · {0}",
+  "w": "229-v95mgr.js:91"
+ },
+ {
+  "k": "Weapons, armor and offerings: who wears what, the shelf, repairs",
+  "w": "229-v95mgr.js:91"
+ },
+ {
+  "k": "🛡 Your Armory",
+  "w": "229-v95mgr.js:94"
+ },
+ {
+  "k": "only fit fighters can be equipped — a hurt fighter's gear waits on the shelf",
+  "w": "229-v95mgr.js:94"
+ },
+ {
+  "k": "⚕ Hurt:",
+  "w": "229-v95mgr.js:94"
+ },
+ {
+  "k": "{0} is hurt — equip him after he has healed.",
+  "w": "229-v95mgr.js:96"
+ },
+ {
+  "k": "⚕ Hurt — he cannot be equipped until he has healed; his gear is on the shelf.",
+  "w": "229-v95mgr.js:97"
+ },
+ {
+  "k": "⚕ <b>{0}</b> is hurt — his gear went to the Armory shelf. Equip him again after he has healed.",
+  "w": "229-v95mgr.js:103"
+ },
+ {
+  "k": "🛡 {0} is equipped again.",
+  "w": "229-v95mgr.js:111"
+ },
+ {
+  "k": "Nothing of his is left on the shelf.",
+  "w": "229-v95mgr.js:111"
+ },
+ {
+  "k": "<b>{0}</b> has healed — equip him again",
+  "w": "229-v95mgr.js:116"
+ },
+ {
+  "k": "Re-equip",
+  "w": "229-v95mgr.js:116"
+ },
+ {
+  "k": "<b>{0} of 3</b> starter slots filled",
+  "w": "229-v95mgr.js:118"
+ },
+ {
+  "k": "Bout I",
+  "w": "229-v95mgr.js:122"
+ },
+ {
+  "k": "Undercard",
+  "w": "229-v95mgr.js:122"
+ },
+ {
+  "k": "Bout II",
+  "w": "229-v95mgr.js:122"
+ },
+ {
+  "k": "Feature bout",
+  "w": "229-v95mgr.js:122"
+ },
+ {
+  "k": "Bout III",
+  "w": "229-v95mgr.js:122"
+ },
+ {
+  "k": "Main event",
+  "w": "229-v95mgr.js:122"
+ },
+ {
+  "k": "Only a fit fighter can start.",
+  "w": "229-v95mgr.js:150"
+ },
+ {
+  "k": "Three starters already — pick a slot to change, or bench one first.",
+  "w": "229-v95mgr.js:151"
+ },
+ {
+  "k": "on the card",
+  "w": "229-v95mgr.js:155"
+ },
+ {
+  "k": "✓ entered",
+  "w": "229-v95mgr.js:161"
+ },
+ {
+  "k": "Empty — promote someone from the list.",
+  "w": "229-v95mgr.js:161"
+ },
+ {
+  "k": "Who starts in {0}",
+  "w": "229-v95mgr.js:162"
+ },
+ {
+  "k": "Change…",
+  "w": "229-v95mgr.js:162"
+ },
+ {
+  "k": "Choose…",
+  "w": "229-v95mgr.js:162"
+ },
+ {
+  "k": "⚕ Hurt",
+  "w": "229-v95mgr.js:166"
+ },
+ {
+  "k": "up to three starters, one Match Week bout each — Match Week is filled from them",
+  "w": "229-v95mgr.js:170"
+ },
+ {
+  "k": "fighters you lend out or borrow — never with a rival",
+  "w": "229-v95mgr.js:170"
+ },
+ {
+  "k": "No fighter is on loan. Lend a benched fighter from the list below.",
+  "w": "229-v95mgr.js:171"
+ },
+ {
+  "k": "Squad",
+  "w": "229-v95mgr.js:177"
+ },
+ {
+  "k": "⚕ hurt",
+  "w": "229-v95mgr.js:180"
+ },
+ {
+  "k": "Three starters already — bench one or pick a slot above.",
+  "w": "229-v95mgr.js:181"
+ },
+ {
+  "k": "Make him a starter",
+  "w": "229-v95mgr.js:181"
+ },
+ {
+  "k": "⭐ Promote",
+  "w": "229-v95mgr.js:181"
+ },
+ {
+  "k": "🪑 {0} want{1} arena time and sat on the bench: −1 morale.",
+  "w": "229-v95mgr.js:203"
+ },
+ {
+  "k": "<b>🛡 The Armory</b> — its own tab. Your fighters own their gear: pick a fighter, then drag a weapon into a hand or armor onto the body. Only fit fighters can be equipped; weapons lost on the sand are gone; armor broken to 0 AP comes home damaged — the armorer in the City Square mends it.",
+  "w": "229-v95mgr.js:212"
+ },
+ {
+  "k": "Earned",
+  "w": "229-v95mgr.js:217"
+ },
+ {
+  "k": "Not earned yet",
+  "w": "229-v95mgr.js:217"
+ },
+ {
+  "k": "<image href=\"",
+  "w": "230-v95perf.js:167"
+ }
+]
