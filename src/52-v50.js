@@ -143,7 +143,7 @@ setTimeout(mmQuiet,30);setTimeout(mmQuiet,600);
 
 /* ---------- the setup: the options fold away, the calendar is one line ---------- */
 {const _oh=optionsHTML;optionsHTML=function(ev,L){let h=_oh(ev,L);try{const o=CFG.opts;const on=[o.mods,o.mandata,o.carmina,o.optOffers,o.eaglePot,o.zoraCard].filter(Boolean).length;
-  h=h.replace('<h4>Options</h4><div class="opts">',`<details class="optfold" ${CFG.optOpen?'open':''}><summary>${_T`<b>⚙ Options</b>`} <span class="rc-sub">${_T`${on} on`}</span></summary><div class="opts">`);
+  h=h.replace('<h4>'+_T('Options')+'</h4><div class="opts">', /* v0.95: the heading is translated, so match it in the page's language */`<details class="optfold" ${CFG.optOpen?'open':''}><summary>${_T`<b>⚙ Options</b>`} <span class="rc-sub">${_T`${on} on`}</span></summary><div class="opts">`);
   h=h.replace(/<p style="font-size:13px;color:var\(--muted\);margin-top:6px">([\s\S]*?)<\/p>\s*$/,(m0,t)=>`<p class="rc-sub" style="margin-top:6px"><span class="qi" data-tip="${esc(t.replace(/<[^>]+>/g,''))}">${_T`ⓘ How the Blessings bag works`}</span></p></details>`);
   if(!/<\/details>\s*$/.test(h))h+='</details>'}catch(e){}return h}}
 document.addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('optfold'))CFG.optOpen=e.target.open},true);
