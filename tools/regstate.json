@@ -1,5 +1,5 @@
 {
- "run": 236,
+ "run": 237,
  "lastFull": 1791382783754,
  "tests": {
   "tseed4": {
@@ -1977,21 +1977,21 @@
    "sh": "32ee2cd6c9"
   },
   "tstat55": {
-   "streak": 56,
-   "runs": 56,
+   "streak": 57,
+   "runs": 57,
    "fails": 0,
    "flaky": [],
-   "lastRun": 232,
-   "time": 8,
-   "lastPass": 232,
+   "lastRun": 237,
+   "time": 19,
+   "lastPass": 237,
    "deps": {
-    "build.sh": "5cb06e6cf468",
+    "build.sh": "f541b912d283",
     "src/01-head.html": "b7a6b382020c",
-    "tools/smartreg.js": "88651cfcb1b8",
+    "tools/smartreg.js": "f324391b30d6",
     "tools/regcov.js": "1b122005f465",
-    "tools/tests/tstat55.js": "fe2f8173600f"
+    "tools/tests/tstat55.js": "9d8a1dc0ff23"
    },
-   "sh": "32ee2cd6c9"
+   "sh": "1cb18fca0b"
   },
   "tv57": {
    "streak": 58,
@@ -4319,20 +4319,37 @@
    }
   },
   "tv95a": {
-   "streak": 1,
-   "runs": 1,
+   "streak": 2,
+   "runs": 2,
    "fails": 0,
    "flaky": [],
-   "lastRun": 236,
-   "time": 52,
-   "sh": "4c714bbe99",
-   "lastPass": 236,
+   "lastRun": 237,
+   "time": 49,
+   "sh": "1cb18fca0b",
+   "lastPass": 237,
    "deps": {
-    "build.sh": "89e319ed3f48",
+    "build.sh": "f541b912d283",
     "src/01-head.html": "b7a6b382020c",
     "tools/smartreg.js": "f324391b30d6",
     "tools/regcov.js": "1b122005f465",
     "tools/tests/tv95a.js": "10a6923f1867"
+   }
+  },
+  "tv95b": {
+   "streak": 1,
+   "runs": 1,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 237,
+   "time": 146,
+   "sh": "1cb18fca0b",
+   "lastPass": 237,
+   "deps": {
+    "build.sh": "f541b912d283",
+    "src/01-head.html": "b7a6b382020c",
+    "tools/smartreg.js": "f324391b30d6",
+    "tools/regcov.js": "1b122005f465",
+    "tools/tests/tv95b.js": "842f2a1eb367"
    }
   }
  },
@@ -5249,7 +5266,7 @@
    "src/226-v94onltok.js": "57d8ee3f99",
    "src/08-setup.js": "1d86b31d18"
   },
-  "4c714bbe99": {
+  "1cb18fca0b": {
    "src/00b-perf.js": "5855549036",
    "src/00c-errlog.js": "08e4ecbd61",
    "src/00d-bus.js": "48d654b212",
@@ -5480,6 +5497,7 @@
    "src/225-v94armory.js": "03ecd3fc7a",
    "src/226-v94onltok.js": "57d8ee3f99",
    "src/227-v95board.js": "149bde5dc3",
+   "src/228-v95studio.js": "52fe38eff5",
    "src/08-setup.js": "1d86b31d18"
   }
  }
