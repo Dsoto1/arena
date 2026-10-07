@@ -142,7 +142,7 @@ function depthChartHTML(){const pm=me(),w=W_();const D=depthOf(pm);const lenders
   return ''}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-m47]');if(!b||typeof W_!=='function')return;const w=W_();if(!w)return;e.stopPropagation();const a=b.dataset.m47,id=b.dataset.id;
   if(a==='qsseen'&&w.qsLast)w.qsLast.seen=true;
-  if(a==='offyes'||a==='offno'){const o=(w.offers||[]).find(x=>x.id===id);if(o){if(a==='offyes'){if(o.kind==='loan'){const g=gById(o.gid),m=mgrById(o.mid);lendTo(g,m,o.fee,o.weeks)}else if(!offerAccept(o))mToast(_T('That deal cannot go through any more.'))}
+  if(a==='offyes'||a==='offno'){const o=(w.offers||[]).find(x=>x.id===id);if(o){if(a==='offyes'){if(o.kind==='loan'){const g=gById(o.gid),m=mgrById(o.mid);lendTo(g,m,o.fee,o.weeks)}else if(!offerAccept(o))mToast(OFFER_FAIL95||_T('That deal cannot go through any more.'))}
     w.offers=w.offers.filter(x=>x!==o)}}
   saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||typeof W_!=='function'||!W_())return;

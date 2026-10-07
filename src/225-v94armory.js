@@ -329,7 +329,7 @@ function arm94HTML(){const pm=me(),w=W_();if(!pm||!w)return '';arm94Ensure(w);co
   const tab=AR94.tab;const sh=H.sh.filter(P=>P.t===tab);const n=t=>H.sh.filter(P=>P.t===t).length;
   const tb=(k,l)=>`<button type="button" role="tab" data-ar94tab="${k}" class="${tab===k?'on':''}" aria-selected="${tab===k}">${l} <small>${n(k)}</small></button>`;
   const nl=w.night&&!w.night.bye&&LOCATIONS[w.night.loc]?LOCATIONS[w.night.loc].n:'';
-  return `<div class="card2 ar94" id="ar94"><div class="sect" style="margin-top:0">${_T`🛡 The Armory`} <span class="rc-sub">${_T`click a plaque · drag a piece onto him, or tap it and tap where it goes`}</span>${nDmg?` <span class="ar94bad">${_T`🩹 ${nDmg} need repair`}</span>`:''}</div>
+  return `<div class="card2 ar94" id="ar94"><div class="sect" style="margin-top:0">${_T`🛡 The Armory`} <span class="rc-sub">${_T`pick a fighter · drag a piece onto him, or tap it and tap where it goes`}</span>${nDmg?` <span class="ar94bad">${_T`🩹 ${nDmg} need repair`}</span>`:''}</div>
     <div class="ar94gs">${chips}</div>${stage}
     ${AR94.sel?`<p class="ar94hint">${_T`Tap where it goes: a hand, the body, the satchel, another fighter — or the shelf.`} <button type="button" class="btn tksm" data-ar94cancel="1">${_T`Cancel`}</button></p>`:''}
     <div class="ar94shelf" data-ar94z="shelf"><div class="ar94tabs" role="tablist">${tb('w',_T('⚔ Weapons'))}${tb('a',_T('🛡 Armor'))}${tb('o',_T('🧪 Offerings'))}<small class="rc-sub">${nl?_T`Buy and repair at the stalls of ${esc(nl)}'s City Square.`:_T('Buy and repair in the City Square.')}</small></div>

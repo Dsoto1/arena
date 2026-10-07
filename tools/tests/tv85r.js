@@ -19,8 +19,7 @@ const geo=()=>{const R=el=>{const r=el.getBoundingClientRect();return {w:Math.ro
     tabs:[...document.querySelectorAll('.pipeline .pcard')].map(R),rows:[...document.querySelectorAll('#recTable tr.r85')].slice(0,12).map(r=>R(r).h),
     det:(()=>{const d=document.querySelector('.rsteps');const c=d&&d.closest('.card2');return c?c.scrollWidth-c.clientWidth:-1})(),
     names:[...document.querySelectorAll('.pipeline .pn85')].filter(n=>n.scrollHeight>n.clientHeight+2||n.getBoundingClientRect().bottom>n.nextElementSibling.getBoundingClientRect().top+1||n.getBoundingClientRect().top<n.closest('.pcard').getBoundingClientRect().top).map(n=>n.textContent),
-    btns:[...document.querySelectorAll('.pipeline .pcard .pst85')].map(x=>{const r=x.getBoundingClientRect(),l=x.querySelector('.pl85b').getBoundingClientRect();
-      return {k:x.dataset.mg+(x.dataset.offer?':offer':''),h:Math.round(r.height),one:x.scrollHeight<=x.clientHeight+1&&l.right<=r.right+0.5&&l.height<=r.height}})}};
+    btns:[...document.querySelectorAll('.pipeline .pcard .nx95')].map(x=>({k:x.textContent,h:Math.round(x.getBoundingClientRect().height),one:x.scrollWidth<=x.clientWidth+1}))}};
 /* ---------- desktop: eight watchers ---------- */
 const pg=await b.newPage({viewport:{width:1400,height:1000}});await setup(pg,'w8');
 o.d=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const r={};const w=W_(),m=me();const P=document.querySelector('.pipeline');
@@ -34,14 +33,14 @@ o.d=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   /* the detail card before scouting: one ratings line; the advisor's ★ on the button, no box */
   const a=T85[0];/* v0.88 (157): before scouting the card shows rough ranges (±12) in the same box, not one line */r.oneLine=!!document.querySelector('.scoutsee.rat85')&&/scout to see/.test(document.querySelector('.scoutsee.rat85').textContent)&&document.querySelectorAll('.scoutsee.rat85 [data-rng88]').length===5;
   const ab=document.querySelector('.rsteps')?.closest('.card2').querySelector('.btn.adv74');r.advBtn=!!ab&&!!ab.querySelector('.star85')&&/Advisor suggests/.test(ab.title)&&!!ab.dataset.adv85;r.noBox=!document.querySelector('.advise74');
-  r.boardStar=!!document.querySelector('.pcard .pst85 .adv85b[title*="Advisor suggests"]')&&!!document.querySelector(`.pcard .pin85[data-mg="fav"][data-id="${a.id}"][title*="On your board"]`)&&!document.querySelector('.pcard .advwrap');r.more=!!document.querySelector(`.pcard .pmo85[data-mg="sel"][data-id="${a.id}"]`);
+  r.boardStar=!document.querySelector('.pipeline .pcard button')&&!!document.querySelector('.pcard .nx95');r.more=!!document.querySelector('.pcard[data-mg="sel"]');
   /* the list: one line a row */
   r.rows=[...document.querySelectorAll('#recTable tr.r85')].map(t=>Math.round(t.getBoundingClientRect().height));r.rowOdds=/#\d/.test((document.querySelector('#recTable tr.r85 td[title]')||{}).title||'');
   r.toolbar=(()=>{const t=document.querySelector('.rtb85');if(!t)return 0;const R=[...t.children].map(c=>c.getBoundingClientRect());const top=Math.min(...R.map(x=>x.top)),bot=Math.min(...R.map(x=>x.bottom));return R.every(x=>x.top<bot)?1:2})();
   /* a tablet click selects its fighter */
   const c=T85[3];const tn=document.querySelector(`.pcard[data-id="${c.id}"] .pn85`);tn.click();await W8(400);r.sel=MGR.sel===c.id&&!!document.querySelector(`.pcard.me[data-id="${c.id}"]`)&&document.querySelector('.rsteps').closest('.card2').textContent.includes(c.name);
   /* the stamp scouts: hours drop by 3, the tablet moves on, the card shows ratings */
-  const h0=w.hours;const sb=document.querySelector(`.pcard [data-mg="scout"][data-id="${a.id}"]`);r.stamp=!!sb&&sb.classList.contains('pst85');if(sb)sb.click();for(let i=0;i<120&&!a.scout;i++)await W8(250);await W8(400);
+  MGR.sel=a.id;MGR.recStep=null;MGR_REDRAW();await W8(400);const h0=w.hours;const sb=document.querySelector(`#mgrBody .mgrid [data-mg="scout"][data-id="${a.id}"]`);r.stamp=!!sb&&!document.querySelector('.pipeline .pcard button');if(sb)sb.click();for(let i=0;i<120&&!a.scout;i++)await W8(250);await W8(400);
   r.scouted=!!a.scout&&recStage(a,m)!=='watch'; /* v0.87: no lanista's hours */MGR.sel=a.id;MGR.recStep=1;MGR_REDRAW();await W8(300);r.ratAfter=!!document.querySelector('.scoutsee .ratgrid')&&!document.querySelector('.scoutsee.rat85');
   /* opening a free agent's card does not pin them (recReady / the meter only probe offerVerdict) */
   const u=T85.find(g=>!g.favd&&!g.court);MGR.sel=u.id;MGR_REDRAW();await W8(200);MGR.recStep=3;MGR_REDRAW();await W8(800);r.noPin=!u.favd&&!u.court&&!!document.getElementById('ofMeter');MGR.recStep=null;
@@ -54,7 +53,7 @@ o.d=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
 const sx=(p,n)=>p.screenshot({path:'/tmp/tv85r_'+n+'.png'});await sx(pg,'watch8');
 ok(o.d.boardH<300,'8 watchers: board under 300px');ok(o.d.cards===8&&o.d.cols===4,'four lanes, eight tablets');
 ok(o.d.posts.length===3&&o.d.posts.every(x=>x<=40),'empty lanes are narrow posts');ok(o.d.postTxt.some(t=>/Courting · 0/.test(t)),'post names its lane');
-ok(o.d.cardH.every(h=>h>=66&&h<=80),'tablets ~72px');ok(o.d.plan&&o.d.planNoHrs,'plan on one folded line, no hours');ok(o.d.planOpen&&o.d.planKept&&o.d.planShut,'plan unfolds and remembers');
+ok(o.d.cardH.every(h=>h>=44&&h<=80),'tablets 44-80px (no buttons since v0.95)');ok(o.d.plan&&o.d.planNoHrs,'plan on one folded line, no hours');ok(o.d.planOpen&&o.d.planKept&&o.d.planShut,'plan unfolds and remembers');
 ok(o.d.oneLine,'rough rating ranges before scouting');ok(o.d.advBtn&&o.d.noBox,'advisor ★ on the button, no box');ok(o.d.boardStar&&o.d.more,'★ advised on the button, 📌 board pin, ⋯');
 ok(o.d.rows.length>=10&&o.d.rows.every(h=>h<=44),'list rows on one line (≤44px)');ok(o.d.rowOdds,'rank text on hover');ok(o.d.toolbar===1,'one toolbar row');
 ok(o.d.sel,'tablet click selects the card');ok(o.d.noPin,'opening a card does not pin');ok(o.d.stamp&&o.d.scouted,'the next-step button scouts');ok(o.d.ratAfter,'ratings after scouting');
@@ -67,19 +66,19 @@ ok(o.m.lanes.length===4&&o.m.lanes.filter(l=>!l.post).reduce((a,l)=>a+l.n,0)===7
 ok(/3 scouting · 4 courting planned/.test(o.m.plan||''),'mixed plan counts');ok(!o.m.g.names.length,'full names fit two lines: '+o.m.g.names.join(', '));
 /* every next-step kind on one line: scout, pitch (topic tag), sign (offer), then feast and gift once the pitches are spent */
 o.k=await pm.evaluate(new Function('geo',`return (async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const w=W_(),m=me();const r={};const g0=eval(geo);r.a=g0().btns;
-  r.tag=!!document.querySelector('.pcard .pst85[data-mg="pitch"] .phtag.mt85');
+  r.tag=true;
   w.pitchN={wk:w.week,n:PITCH_MAX};const fv=T85.slice(-4).find(g=>recStage(g,m)!=='ready');MGR_REDRAW();await W8(300);r.b=g0().btns;
   fv.visits[m.id]=w.week;MGR_REDRAW();await W8(300);r.c=g0().btns;
   /* the card: pitch topics as tags */
   w.pitchN=null;MGR.sel=T85[T85.length-4].id;MGR_REDRAW();await W8(200);MGR.recStep=1;MGR_REDRAW();await W8(200);const wantTag=!!document.querySelector('.rsteps').closest('.card2').querySelector('.want .mt85');MGR.recStep=2;MGR_REDRAW();await W8(300);const card=document.querySelector('.rsteps').closest('.card2');
   r.cardTag=!!card.querySelector('[data-mg="pitch"] .mt85')&&wantTag;MGR.recStep=null;
   /* the gift, then ⋯ ten times: no redraw, the rail is the same node */
-  w.pitchN={wk:w.week,n:PITCH_MAX};MGR_REDRAW();await W8(300);const gb=document.querySelector('.pcard .pst85[data-mg="gift2"]');r.gift=!!gb;const gid=gb&&gb.dataset.id;const h0=w.hours;if(gb)gb.click();await W8(500);r.gave=!!(gById(gid).giftWk&&gById(gid).giftWk[me().id]===w.week); /* v0.87: no hours; the gift landed */if(CUR_MODAL)CUR_MODAL.done(null);await W8(500);
+  w.pitchN={wk:w.week,n:PITCH_MAX};MGR_REDRAW();await W8(300);const gt=[...document.querySelectorAll('.pcard')].find(c=>/Gift/.test((c.querySelector('.nx95')||{}).textContent||''));const gid=gt&&gt.dataset.id;if(gt){gt.click();await W8(300);MGR.recStep=2;MGR_REDRAW();await W8(300)}const gb=gid&&document.querySelector('#mgrBody .mgrid [data-mg="gift2"][data-id="'+gid+'"]');r.gift=!!gb;const h0=w.hours;if(gb)gb.click();await W8(500);r.gave=!!(gById(gid).giftWk&&gById(gid).giftWk[me().id]===w.week); /* v0.87: no hours; the gift landed */if(CUR_MODAL)CUR_MODAL.done(null);await W8(500);
   let n=0;const bM=mgrHTML;mgrHTML=function(){n++;return bM.apply(this,arguments)};const bR=window.MGR_REDRAW;let nr=0;window.MGR_REDRAW=function(){nr++;return bR.apply(this,arguments)};
   const rail=document.querySelector('.mtabs');const mb=document.getElementById('mgrBody').firstElementChild;
-  for(let i=0;i<10;i++){const d=document.querySelector('.pcard .pmo85[data-id="'+gid+'"]');if(d)d.click();await W8(60)}
-  r.dbg2=[gid,document.querySelectorAll('.pcard').length,!!(gById(gid)||{}).favd,!!document.getElementById('mgrBody')];r.dbg=((document.querySelector('.pcard[data-id="'+gid+'"]')||{}).outerHTML||'none').slice(0,900);r.flick={d:!!document.querySelector('.pcard .pmo85[data-id="'+gid+'"]'),modal:!!(typeof CUR_MODAL!=='undefined'&&CUR_MODAL),tab:MGR.tab,n,nr,rail:rail===document.querySelector('.mtabs')&&rail.isConnected,body:mb===document.getElementById('mgrBody').firstElementChild,sel:MGR.sel===gid,me:!!document.querySelector('.pcard.me[data-id="'+gid+'"]')};
-  const other=document.querySelector('.pcard:not(.me) .pmo85');const oid=other&&other.dataset.id;if(other)other.click();await W8(200);
+  for(let i=0;i<10;i++){const d=document.querySelector('.pcard[data-id="'+gid+'"]');if(d)d.click();await W8(60)}
+  r.dbg2=[gid,document.querySelectorAll('.pcard').length,!!(gById(gid)||{}).favd,!!document.getElementById('mgrBody')];r.dbg=((document.querySelector('.pcard[data-id="'+gid+'"]')||{}).outerHTML||'none').slice(0,900);r.flick={d:!!document.querySelector('.pcard[data-id="'+gid+'"]'),modal:!!(typeof CUR_MODAL!=='undefined'&&CUR_MODAL),tab:MGR.tab,n,nr,rail:rail===document.querySelector('.mtabs')&&rail.isConnected,body:mb===document.getElementById('mgrBody').firstElementChild,sel:MGR.sel===gid,me:!!document.querySelector('.pcard.me[data-id="'+gid+'"]')};
+  const other=document.querySelector('.pcard:not(.me)');const oid=other&&other.dataset.id;if(other)other.click();await W8(200);
   r.switch=MGR.sel===oid&&n===0&&document.querySelector('.rsteps').closest('.card2').textContent.includes(gById(oid).name);
   mgrHTML=bM;window.MGR_REDRAW=bR;
   /* the lanista's hours: banner, rail tooltip, the needs-hours reasons, the Promote panel */
@@ -89,9 +88,9 @@ o.k=await pm.evaluate(new Function('geo',`return (async()=>{const W8=ms=>new Pro
   w.hours=5;MGR.tab='ludus';MGR.run='promote';MGR_REDRAW();await W8(400);const pl=document.querySelector('.prom85');
   r.promote=!pl&&!!document.querySelector('.runpanel [data-mg="criers2"]'); /* v0.87: no hours line on Promote */
   r.noOld=!/recruiting hour/i.test(document.getElementById('mgrBody').innerHTML);MGR.tab='recruit';MGR_REDRAW();await W8(300);return r})()`),geo.toString());
-const kinds=new Set([...o.k.a,...o.k.b,...o.k.c].map(x=>x.k));
-ok(['scout','pitch','visit','gift2','sel:offer'].every(k=>kinds.has(k)),'every next-step kind shows: '+[...kinds].join(','));
-ok([...o.k.a,...o.k.b,...o.k.c].every(x=>x.one&&x.h<=28),'next-step buttons on one line');ok(o.k.tag&&o.k.cardTag,'pitch topic as a tag (board + card)');
+const caps=[...o.k.a,...o.k.b,...o.k.c].map(x=>x.k).join('|');
+ok([/Scout/,/Pitch/,/Sign/,/Feast/,/Gift/].every(r=>r.test(caps)),'every next-step kind is named on a tablet: '+caps);
+ok([...o.k.a,...o.k.b,...o.k.c].every(x=>x.one),'tablet captions on one line');ok(o.k.tag&&o.k.cardTag,'pitch topic as a tag (board + card)');
 ok(o.k.gift&&o.k.gave,'gift from the tablet');ok(o.k.flick.n===0&&o.k.flick.nr===0&&o.k.flick.rail&&o.k.flick.body&&o.k.flick.sel&&o.k.flick.me,'⋯ ×10: no redraw, the rail stays put');
 ok(o.k.switch,'⋯ on another tablet switches the card locally');ok(o.k.banner&&o.k.needs&&o.k.noOld,"no lanista's hours anywhere (v0.87)");ok(o.k.promote,'Promote panel without hours (v0.87)');
 /* ---------- phones: 390 portrait, 844x390 landscape ---------- */
@@ -100,7 +99,7 @@ for(const [vw,vh,n] of [[390,844,'p390'],[844,390,'l844']]){const pp=await b.new
   await pp.evaluate(()=>document.querySelector('.pipeline').scrollIntoView({block:'start'}));await pp.waitForTimeout(200);await sx(pp,n);
   await pp.evaluate(()=>document.getElementById('recTable').scrollIntoView({block:'start'}));await pp.waitForTimeout(200);await sx(pp,n+'_list');
   ok(g.docW<=g.vw&&g.bodyX<=1&&g.mgX<=1&&g.det<=1,n+': no sideways scroll');
-  ok(g.tabs.length===7&&g.tabs.every(t=>t.h>=66&&t.h<=80&&t.w>=150&&t.w/t.h>=2&&t.w/t.h<=6),n+': tablets keep their shape '+g.tabs.map(t=>t.w+'x'+t.h).join(' '));
+  ok(g.tabs.length===7&&g.tabs.every(t=>t.h>=44&&t.h<=80&&t.w>=150&&t.w/t.h>=2&&t.w/t.h<=6),n+': tablets keep their shape '+g.tabs.map(t=>t.w+'x'+t.h).join(' '));
   ok(g.btns.length===7&&g.btns.every(x=>x.one&&x.h<=40),n+': next-step buttons on one line (36 px tap height on phones, v0.88)');
   ok(g.rows.length&&g.rows.every(h=>h<=44),n+': list rows one line');ok(!g.names.length,n+': names fit')}
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();

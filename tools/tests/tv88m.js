@@ -18,10 +18,10 @@ o.i=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   w.specialLog.pop();g.ovr=40;r.permanent=mgrImmortalis88(g);g.ovr=95;
   /* the frame: roster plaque + row + card */
   MGR.tab='roster';MGR.lsel=g.id;MGR_REDRAW();await W8(500);
-  const pl=document.querySelector(`.dcard[data-gid84="${g.id}"]`);r.plaque=!!(pl&&pl.classList.contains('imm88')&&pl.classList.contains('imm88m')&&pl.querySelector('.imm88lf'));
+  const pl=document.querySelector(`.st95chip[data-id="${g.id}"]`);r.plaque=!!(pl&&pl.classList.contains('imm88')&&pl.classList.contains('imm88m')&&pl.querySelector('.imm88lf'));
   const row=document.querySelector(`tr[data-mg="lsel"][data-id="${g.id}"]`);r.row=!row||row.classList.contains('imm88m');
   r.card=!!document.querySelector('#mgrBody .card2.imm88.imm88m .imm88chip');
-  const other=rosterOf(m).find(x=>x.id!==g.id);r.otherPlain=!other||!document.querySelector(`.dcard[data-gid84="${other.id}"].imm88m`);
+  const other=rosterOf(m).find(x=>x.id!==g.id);r.otherPlain=!other||!document.querySelector(`.st95chip[data-id="${other.id}"].imm88m`);
   /* Training Yard */
   MGR.tab='practice';MGR.yd87=g.id;MGR_REDRAW();await W8(500);r.yard=!!document.querySelector('#mgrBody .yd76c.imm88m, #mgrBody .yo87r.imm88m, #mgrBody .y92c.imm88m');
   /* Match Week: his row framed, the others fear him */
@@ -108,5 +108,5 @@ ok(!('m' in o.r3)||o.r3.mOK,'Match signs at their wage');ok(!('o' in o.r3)||o.r3
 ok(o.r3.zBid&&o.r3.zChip&&o.r4.z&&o.r4.news,'doing nothing: the rival signs him at the week\'s end '+JSON.stringify([o.r3.zBid,o.r3.zChip,o.r4]));
 /* screenshots for the eye */
 if(process.env.SHOT88){await pg.evaluate(async()=>{for(let i=0;i<4;i++)document.querySelectorAll('button').forEach(x=>{if(/Welcome to the ludus/.test(x.textContent))x.click()});const S=S88;S.contract=null;S.favd=true;S.scout=2;delete S.court88;MGR.tab='recruit';MGR.sel=S.id;MGR.recFor=S.id;MGR.recStep=2;MGR_REDRAW();await new Promise(x=>setTimeout(x,600))});await pg.screenshot({path:process.env.SHOT88+'/rec88.png'});
-  await pg.evaluate(async()=>{MGR.tab='roster';MGR.lsel=IMM.id;MGR_REDRAW();await new Promise(x=>setTimeout(x,600));const d=document.querySelector('.dcard.imm88m');d&&d.scrollIntoView()});await pg.screenshot({path:process.env.SHOT88+'/imm88.png'})}
+  await pg.evaluate(async()=>{MGR.tab='roster';MGR.lsel=IMM.id;MGR_REDRAW();await new Promise(x=>setTimeout(x,600));const d=document.querySelector('.st95chip.imm88m');d&&d.scrollIntoView()});await pg.screenshot({path:process.env.SHOT88+'/imm88.png'})}
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();
