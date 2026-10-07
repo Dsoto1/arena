@@ -77,7 +77,32 @@ const sleep = ms => {
   if (SPEED === 'step' && ms >= 200 && typeof stepGate === 'function' && stepGate()) return stepWait(); // v0.37: a CPU action just finished — wait for Next
   if (SPEED === 'snap') return new Promise(r => setTimeout(r, 0)); // yield to the browser, never wait
   const t = ms * (SPEEDMUL[SPEED] ?? 1);
-  return t <= 0 ? Promise.resolve() : new Promise(r => setTimeout(r, t));
+  if (t <= 0) return Promise.resolve();
+  if (t <= 150) return new Promise(r => setTimeout(r, t));
+  /* v0.95: a long wait re-reads SPEED every ≤100 ms, so a new speed takes effect at once (Slow → Fast finishes at Fast's pace, Pause holds,
+     Step / Sim to end let go). The part already waited counts at the speed it was waited at. TWEAK: the 150 ms / 100 ms. */
+  return new Promise(r => {
+    let done = 0,
+      last = performance.now();
+    const tick = () => {
+      const now = performance.now(),
+        sp = SPEED;
+      if (sp === 'pause') {
+        last = now;
+        setTimeout(tick, 120);
+        return;
+      }
+      const mul = sp === 'step' || sp === 'snap' ? 0 : SPEEDMUL[sp] ?? 1;
+      done += mul > 0 ? (now - last) / (ms * mul) : 1;
+      last = now;
+      if (done >= 0.999) {
+        r();
+        return;
+      }
+      setTimeout(tick, Math.min(100, (1 - done) * ms * mul));
+    };
+    setTimeout(tick, Math.min(100, t));
+  });
 };
 /* sevLabel — the word used when a location reaches 0 HP: chest 'Caved in', head 'Crushed', limbs 'Severed'. TWEAK: the label text. */
 const sevLabel = l => l === 'chest' ? _T('Caved in') : l === 'head' ? _T('Crushed') : _T('Severed');
