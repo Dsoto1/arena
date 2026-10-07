@@ -18,7 +18,7 @@ const ctx=await b.newContext({viewport:{width:1440,height:900}});await ctx.route
 await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
 const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));await pg.goto(URL0);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:30000});
 await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MODAL){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(120)}try{menuHide()}catch(e){}
-  window.T93={W8,s:1,
+  window.TL93={W8,s:1,
     start:async(ev,loc,night,human)=>{startEvent({ev,loc,seed:4242,seats:['hero','soldier','royalty','venatore'].map((c,i)=>({cls:c,cpu:i!==(human==null?-1:human)})),opts:{spect:'auto',night:!!night}});
       for(let i=0;i<200;i++){await W8(120);if(CUR_MODAL){const lit=document.querySelector('#mBody [data-mi]:not(.dim):not([disabled])');const bs=[...document.querySelectorAll('#mBtns button:not([disabled])')];
           if(lit)lit.click();else if(bs.length)bs[0].click();else CUR_MODAL.done(null)}else if(S&&S.phase!=='setup'&&i>6)break}
@@ -26,18 +26,18 @@ await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(
       S.zoomIn=false;CAM.z=null;if(typeof DUEL!=='undefined'){DUEL.z=1;DUEL.on=false}for(const id of ['cardShow','bubbles'])(document.getElementById(id)||{}).innerHTML='';
       for(let i=0;i<30;i++){draw();await W8(100)} /* the stone texture, flags, art */},
     /* one draw with the clock frozen and Math.random seeded: the same frame every time */
-    shot(prep){T93.s=12345;if(prep)prep();draw();const c=cv.getContext('2d');return c.getImageData(0,0,cv.width,cv.height).data},
+    shot(prep){TL93.s=12345;if(prep)prep();draw();const c=cv.getContext('2d');return c.getImageData(0,0,cv.width,cv.height).data},
     frozen(fn){const T=performance.now(),D=Date.now();const mr=Math.random,dn=Date.now;Object.defineProperty(performance,'now',{value:()=>T,configurable:true,writable:true});
-      Date.now=()=>D;Math.random=()=>{T93.s=(T93.s*1103515245+12345)&0x7fffffff;return T93.s/0x7fffffff};
+      Date.now=()=>D;Math.random=()=>{TL93.s=(TL93.s*1103515245+12345)&0x7fffffff;return TL93.s/0x7fffffff};
       try{return fn()}finally{delete performance.now;Date.now=dn;Math.random=mr}},
     diff(a,b){if(a.length!==b.length)return {max:255,n:-1};let max=0,n=0;for(let i=0;i<a.length;i++){const d=Math.abs(a[i]-b[i]);if(d){n++;if(d>max)max=d}}return {max,n}},
     /* ON (warm) → ON → OFF → ON again; plus the debug Off of one layer */
-    compare(prep,dbg){return T93.frozen(()=>{LAYERS93.reset();LAYERS93.on=true;T93.shot(prep);const a=T93.shot(prep);LAYERS93.on=false;const f0=LAYERS93.frames;const b=T93.shot(prep);const plain=LAYERS93.frames===f0;
-      LAYERS93.on=true;const c=T93.shot(prep);const r={off:T93.diff(a,b),again:T93.diff(a,c),plain,frames:LAYERS93.frames,orderErr:LAYERS93.orderErr,unknown:LAYERS93.unknown,w:cv.width,h:cv.height};
-      if(dbg){LAYERS93.dbg.add(dbg);const d=T93.shot(prep);LAYERS93.dbg.delete(dbg);const e=T93.shot(prep);r.dbg={name:dbg,removed:T93.diff(a,d).n,back:T93.diff(a,e)}}
+    compare(prep,dbg){return TL93.frozen(()=>{LAYERS93.reset();LAYERS93.on=true;TL93.shot(prep);const a=TL93.shot(prep);LAYERS93.on=false;const f0=LAYERS93.frames;const b=TL93.shot(prep);const plain=LAYERS93.frames===f0;
+      LAYERS93.on=true;const c=TL93.shot(prep);const r={off:TL93.diff(a,b),again:TL93.diff(a,c),plain,frames:LAYERS93.frames,orderErr:LAYERS93.orderErr,unknown:LAYERS93.unknown,w:cv.width,h:cv.height};
+      if(dbg){LAYERS93.dbg.add(dbg);const d=TL93.shot(prep);LAYERS93.dbg.delete(dbg);const e=TL93.shot(prep);r.dbg={name:dbg,removed:TL93.diff(a,d).n,back:TL93.diff(a,e)}}
       return r})}}});
-const scene=async(name,startArgs,prepSrc,dbg)=>{if(startArgs)await pg.evaluate(a=>T93.start(...a),startArgs);
-  const r=await pg.evaluate(([src,dbg])=>{const prep=src?eval(src):null;return T93.compare(prep,dbg)},[prepSrc,dbg||null]);out[name]=r;
+const scene=async(name,startArgs,prepSrc,dbg)=>{if(startArgs)await pg.evaluate(a=>TL93.start(...a),startArgs);
+  const r=await pg.evaluate(([src,dbg])=>{const prep=src?eval(src):null;return TL93.compare(prep,dbg)},[prepSrc,dbg||null]);out[name]=r;
   ok(r.off.max===0,name+': manager ON vs OFF pixels differ '+JSON.stringify(r.off));ok(r.again.max===0,name+': ON twice differ '+JSON.stringify(r.again));
   ok(r.plain,name+': OFF still ran the manager');ok(r.orderErr===0&&r.unknown===0,name+': order '+r.orderErr+'/'+r.unknown);
   if(dbg){ok(r.dbg.removed>0,name+': debug Off of '+dbg+' changed nothing');ok(r.dbg.back.max===0,name+': debug Off did not come back')}
@@ -61,7 +61,7 @@ await scene('chariot',['chariot',3,false],null,'floor');
 await scene('rotated',['cassian',5,false,2],null,'decals');
 out.rot=await pg.evaluate(()=>ROT89.k);ok(out.rot!==0,'the corner did not turn '+out.rot);
 /* ---------------- BUS ---------------- */
-out.bus=await pg.evaluate(async()=>{const W8=T93.W8;const r={};const got={};const offs=[];const rec=n=>offs.push(BUS.on(n,d=>{(got[n]=got[n]||[]).push(d)}));
+out.bus=await pg.evaluate(async()=>{const W8=TL93.W8;const r={};const got={};const offs=[];const rec=n=>offs.push(BUS.on(n,d=>{(got[n]=got[n]||[]).push(d)}));
   /* on / once / off */
   let a=0,c=0;const offA=BUS.on('t93',()=>a++);BUS.once('t93',()=>c++);BUS.emit('t93');BUS.emit('t93');offA();BUS.emit('t93');r.api=[a,c,BUS.has('t93')];
   /* a throwing handler */
@@ -74,7 +74,7 @@ out.bus=await pg.evaluate(async()=>{const W8=T93.W8;const r={};const got={};cons
   const N0=S.npcs.find(n=>n.alive);if(N0)hurtNPC(N0,1,P,'');
   const V=S.players.find(p=>p.alive&&p!==P);eliminate(V,{type:'player',p:P});eliminate(V,{type:'player',p:P}) /* already out: no second event */;
   matchSlotPut('t93',{name:'t93'});try{localStorage.removeItem(MSAVE_KEY('t93'))}catch(e){}
-  const mp=modal('T93 window','<p>x</p>',[{label:'OK',value:7}]);await W8(50);CUR_MODAL.done(7);await mp;await W8(20);
+  const mp=modal('TL93 window','<p>x</p>',[{label:'OK',value:7}]);await W8(50);CUR_MODAL.done(7);await mp;await W8(20);
   const Q=S.players.find(p=>p.alive);Q.coin=99;const mb=marketBuy75(Q,1,{free:true});for(let i=0;i<30&&CUR_MODAL;i++){const lit=document.querySelector('#mBody [data-mi]:not(.dim):not([disabled])');if(lit)lit.click();else CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(80)}
   for(let i=0;i<40;i++){await W8(100);if(CUR_MODAL){const lit=document.querySelector('#mBody [data-mi]:not(.dim):not([disabled])');if(lit)lit.click();else CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null)}if(got['market.buy'])break}
   await mb.catch(()=>{});
@@ -82,7 +82,7 @@ out.bus=await pg.evaluate(async()=>{const W8=T93.W8;const r={};const got={};cons
   r.log=got.log&&got.log.filter(x=>x.html==='t93 one line').length;
   r.hit=(got.hit||[]).map(h=>({t:h.target&&h.target.name,npc:h.target&&h.target.npc,by:h.by&&h.by.name,loc:h.loc,amount:h.amount,before:h.before,after:h.after}));r.hp0=hp0;
   r.elim=(got.elim||[]).map(e=>({v:e.victim&&e.victim.name,by:e.by&&e.by.name,type:e.type}));r.vName=V.name;r.pName=P.name;
-  r.save=got.save;r.win=[(got['window.open']||[]).filter(x=>x.title==='T93 window').length,(got['window.close']||[]).filter(x=>x.title==='T93 window').map(x=>x.value)];
+  r.save=got.save;r.win=[(got['window.open']||[]).filter(x=>x.title==='TL93 window').length,(got['window.close']||[]).filter(x=>x.title==='TL93 window').map(x=>x.value)];
   r.mkt=got['market.buy'];
   offs.forEach(f=>f());
   /* cost while nobody listens */
@@ -98,7 +98,7 @@ out.bus=await pg.evaluate(async()=>{const W8=T93.W8;const r={};const got={};cons
   ok(B.mkt&&B.mkt.length===1&&B.mkt[0].lv===1&&B.mkt[0].free===true,'market.buy '+JSON.stringify(B.mkt));
   ok(B.emitNs<200,'an emit nobody hears costs '+B.emitNs+' ns')}
 /* a whole all-CPU event: start once, a turn.begin per turn, phases, rounds, over once */
-out.flow=await pg.evaluate(async()=>{const W8=T93.W8;const got={};const offs=['event.start','turn.begin','phase','round.end','event.over','hit','elim'].map(n=>BUS.on(n,d=>{(got[n]=got[n]||[]).push(d)}));
+out.flow=await pg.evaluate(async()=>{const W8=TL93.W8;const got={};const offs=['event.start','turn.begin','phase','round.end','event.over','hit','elim'].map(n=>BUS.on(n,d=>{(got[n]=got[n]||[]).push(d)}));
   startEvent({ev:'triumviratus',loc:4,seed:777,seats:['hero','soldier','royalty','venatore'].map(c=>({cls:c,cpu:true})),opts:{spect:0}});SPEED='fast';
   for(let i=0;i<900;i++){await W8(100);if(CUR_MODAL){const bs=[...document.querySelectorAll('#mBtns button:not([disabled])')];if(bs.length)bs[0].click();else CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null)}if(S.over&&got['event.over'])break}
   SPEED='pause';offs.forEach(f=>f());const tb=got['turn.begin']||[];const nums=tb.map(t=>t.turnNo);
