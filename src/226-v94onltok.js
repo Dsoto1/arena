@@ -81,7 +81,7 @@ function t94EncLoad(){if(T94.enc)return T94.enc;T94.enc=(async()=>{if(!window.WE
     const bin=Uint8Array.from(atob(window.WEBPENC94_WASM),ch=>ch.charCodeAt(0));return window.WEBPENC94({noInitialRun:true,wasmBinary:bin})})();
   T94.enc.catch(()=>{T94.enc=null});return T94.enc}
 async function t94EncWasm(cv,q){const M=await t94EncLoad();const d=cv.getContext('2d').getImageData(0,0,cv.width,cv.height);
-  const out=M.encode(d.data,cv.width,cv.height,{...T94_WOPT,quality:q});if(!out||!out.length)throw new Error('webp encode');
+  const out=M.encode(d.data,cv.width,cv.height,{...T94_WOPT,quality:q});if(!out||!out.length)throw new Error('webp encode'); // i18n:skip
   let bin='';const u=new Uint8Array(out.buffer||out);for(let i=0;i<u.length;i+=0x8000)bin+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(bin)}
 /* the upload: parts in order (each its own request + rid) → the server's answer to the last one */
 async function t94Upload(ch,b64,meta,pose,pk,say){const P=ONLC.TOK94.PART,parts=[];for(let i=0;i<b64.length;i+=P)parts.push(b64.slice(i,i+P));

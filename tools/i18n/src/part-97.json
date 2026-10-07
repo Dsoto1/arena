@@ -1,0 +1,766 @@
+[
+ {
+  "k": "<b>Walk the square before Match Week.</b> The tavern scouts someone for {0}, the bathhouse is the cheapest morale in the game, and the stalls sell weapons, armor and offerings into your Armory — dress your fighters in the Roster before the bout, and get damaged armor mended at the armorer.",
+  "w": "11-extra.js:625"
+ },
+ {
+  "k": "Blessings pot (random)",
+  "w": "224-v94designer.js:103"
+ },
+ {
+  "k": "Blessings pot ({0})",
+  "w": "224-v94designer.js:103"
+ },
+ {
+  "k": "Tunnel door",
+  "w": "224-v94designer.js:104"
+ },
+ {
+  "k": "Start {0}",
+  "w": "224-v94designer.js:105"
+ },
+ {
+  "k": "Stamp: {0} — tap tiles · long-press or right-click removes",
+  "w": "224-v94designer.js:109"
+ },
+ {
+  "k": "Drag from the palette onto the sand · drag a piece to move it · right-click removes",
+  "w": "224-v94designer.js:109"
+ },
+ {
+  "k": "· empty sand",
+  "w": "224-v94designer.js:110"
+ },
+ {
+  "k": "🏛 At most 12 pillars.",
+  "w": "224-v94designer.js:125"
+ },
+ {
+  "k": "🏛 A start tile cannot hold a pillar.",
+  "w": "224-v94designer.js:125"
+ },
+ {
+  "k": "🏺 A Blessings pot sits on a <b>pillar</b> — place a pillar there first.",
+  "w": "224-v94designer.js:127"
+ },
+ {
+  "k": "A start tile cannot sit on a pillar.",
+  "w": "224-v94designer.js:131"
+ },
+ {
+  "k": "{0} is on spikes",
+  "w": "224-v94designer.js:175"
+ },
+ {
+  "k": "{0} is on a tunnel",
+  "w": "224-v94designer.js:175"
+ },
+ {
+  "k": "{0} is on the chest",
+  "w": "224-v94designer.js:175"
+ },
+ {
+  "k": "A beast stands on {0} — it will step aside",
+  "w": "224-v94designer.js:176"
+ },
+ {
+  "k": "{0} is outside Round 1's area",
+  "w": "224-v94designer.js:177"
+ },
+ {
+  "k": "{0}: this beast no longer exists",
+  "w": "224-v94designer.js:178"
+ },
+ {
+  "k": "{0} starts outside Round 1's area",
+  "w": "224-v94designer.js:178"
+ },
+ {
+  "k": "Round {0} has no end",
+  "w": "224-v94designer.js:179"
+ },
+ {
+  "k": "Round {0}'s area is bigger than Round {1}'s",
+  "w": "224-v94designer.js:180"
+ },
+ {
+  "k": "Round {0} has no fighting (PvE and PvP off)",
+  "w": "224-v94designer.js:181"
+ },
+ {
+  "k": "Palette",
+  "w": "224-v94designer.js:231"
+ },
+ {
+  "k": "Terrain",
+  "w": "224-v94designer.js:231"
+ },
+ {
+  "k": "Pieces",
+  "w": "224-v94designer.js:231"
+ },
+ {
+  "k": "Zones",
+  "w": "224-v94designer.js:231"
+ },
+ {
+  "k": "Pot holds",
+  "w": "224-v94designer.js:236"
+ },
+ {
+  "k": "Coin in the pile",
+  "w": "224-v94designer.js:240"
+ },
+ {
+  "k": "Blessings pot on the pillar at {0}",
+  "w": "224-v94designer.js:241"
+ },
+ {
+  "k": "🏺 Random blessing",
+  "w": "224-v94designer.js:241"
+ },
+ {
+  "k": "Place pillars first — each can carry one Blessings pot.",
+  "w": "224-v94designer.js:241"
+ },
+ {
+  "k": "Blessings on the pillars · {0}/{1}",
+  "w": "224-v94designer.js:245"
+ },
+ {
+  "k": "How many pillars get a blessing",
+  "w": "224-v94designer.js:246"
+ },
+ {
+  "k": "Layout",
+  "w": "224-v94designer.js:249"
+ },
+ {
+  "k": "Classic arena",
+  "w": "224-v94designer.js:249"
+ },
+ {
+  "k": "Start corners",
+  "w": "224-v94designer.js:257"
+ },
+ {
+  "k": "· teams A / B (setup can change them)",
+  "w": "224-v94designer.js:257"
+ },
+ {
+  "k": "Your beasts ✦",
+  "w": "224-v94designer.js:259"
+ },
+ {
+  "k": "Next beast placed",
+  "w": "224-v94designer.js:261"
+ },
+ {
+  "k": "Pick a round, then tap the board: the ring you tap sets its playing area.",
+  "w": "224-v94designer.js:263"
+ },
+ {
+  "k": "Round {0} area {1}",
+  "w": "224-v94designer.js:263"
+ },
+ {
+  "k": "rounds.{0}.",
+  "w": "224-v94designer.js:266"
+ },
+ {
+  "k": "Round {0} name",
+  "w": "224-v94designer.js:268"
+ },
+ {
+  "k": "Move round {0} earlier",
+  "w": "224-v94designer.js:269"
+ },
+ {
+  "k": "Move round {0} later",
+  "w": "224-v94designer.js:269"
+ },
+ {
+  "k": "Remove round {0}",
+  "w": "224-v94designer.js:270"
+ },
+ {
+  "k": "Area",
+  "w": "224-v94designer.js:271"
+ },
+ {
+  "k": "Round {0} area",
+  "w": "224-v94designer.js:271"
+ },
+ {
+  "k": "Round {0} end condition",
+  "w": "224-v94designer.js:273"
+ },
+ {
+  "k": "— no end —",
+  "w": "224-v94designer.js:273"
+ },
+ {
+  "k": "Round {0} N",
+  "w": "224-v94designer.js:273"
+ },
+ {
+  "k": "Reward",
+  "w": "224-v94designer.js:274"
+ },
+ {
+  "k": "Round {0} reward coin",
+  "w": "224-v94designer.js:274"
+ },
+ {
+  "k": "Round {0} reward CF",
+  "w": "224-v94designer.js:274"
+ },
+ {
+  "k": "Round {0} reward cards",
+  "w": "224-v94designer.js:274"
+ },
+ {
+  "k": "cards",
+  "w": "224-v94designer.js:274"
+ },
+ {
+  "k": "Winner: {0} CF",
+  "w": "224-v94designer.js:274"
+ },
+ {
+  "k": "Checks",
+  "w": "224-v94designer.js:277"
+ },
+ {
+  "k": "✓ Nothing to fix",
+  "w": "224-v94designer.js:277"
+ },
+ {
+  "k": "The arena deck is off (Rules).",
+  "w": "224-v94designer.js:281"
+ },
+ {
+  "k": "Undo · test",
+  "w": "224-v94designer.js:285"
+ },
+ {
+  "k": "Undo",
+  "w": "224-v94designer.js:285"
+ },
+ {
+  "k": "↶ Undo",
+  "w": "224-v94designer.js:285"
+ },
+ {
+  "k": "↷ Redo",
+  "w": "224-v94designer.js:285"
+ },
+ {
+  "k": "Test play: watch CPUs play this event",
+  "w": "224-v94designer.js:285"
+ },
+ {
+  "k": "▶ Test play",
+  "w": "224-v94designer.js:285"
+ },
+ {
+  "k": "CPUs play the event as it stands — nothing is saved or recorded.",
+  "w": "224-v94designer.js:285"
+ },
+ {
+  "k": "Arena board. Arrow keys move the cursor, Enter places the selected piece, Delete removes.",
+  "w": "224-v94designer.js:292"
+ },
+ {
+  "k": "That piece cannot go there.",
+  "w": "224-v94designer.js:314"
+ },
+ {
+  "k": "◀ Back to the designer",
+  "w": "224-v94designer.js:381"
+ },
+ {
+  "k": "nothing from this test is kept",
+  "w": "224-v94designer.js:381"
+ },
+ {
+  "k": "Stop the test play and go back to the Event Designer",
+  "w": "224-v94designer.js:385"
+ },
+ {
+  "k": "Fix this first: {0}",
+  "w": "224-v94designer.js:387"
+ },
+ {
+  "k": "(test)",
+  "w": "224-v94designer.js:390"
+ },
+ {
+  "k": "Imperial forges — Level 3",
+  "w": "225-v94armory.js:48"
+ },
+ {
+  "k": "Capuan blades",
+  "w": "225-v94armory.js:48"
+ },
+ {
+  "k": "Armorers’ quarter",
+  "w": "225-v94armory.js:48"
+ },
+ {
+  "k": "Harbour imports — offerings",
+  "w": "225-v94armory.js:49"
+ },
+ {
+  "k": "Missiles",
+  "w": "225-v94armory.js:49"
+ },
+ {
+  "k": "Hunting weapons",
+  "w": "225-v94armory.js:49"
+ },
+ {
+  "k": "Helmets",
+  "w": "225-v94armory.js:50"
+ },
+ {
+  "k": "Shields",
+  "w": "225-v94armory.js:50"
+ },
+ {
+  "k": "Heavy weapons",
+  "w": "225-v94armory.js:50"
+ },
+ {
+  "k": "L{0} · power {1} · range {2}{3}{4}",
+  "w": "225-v94armory.js:59"
+ },
+ {
+  "k": "· two hands",
+  "w": "225-v94armory.js:59"
+ },
+ {
+  "k": "· shield",
+  "w": "225-v94armory.js:59"
+ },
+ {
+  "k": "both arms",
+  "w": "225-v94armory.js:60"
+ },
+ {
+  "k": "both legs",
+  "w": "225-v94armory.js:60"
+ },
+ {
+  "k": "one arm",
+  "w": "225-v94armory.js:60"
+ },
+ {
+  "k": "one leg",
+  "w": "225-v94armory.js:60"
+ },
+ {
+  "k": "L{0} · {1} AP · {2}{3}",
+  "w": "225-v94armory.js:61"
+ },
+ {
+  "k": "· padding",
+  "w": "225-v94armory.js:61"
+ },
+ {
+  "k": "Offerings go in the satchel.",
+  "w": "225-v94armory.js:105"
+ },
+ {
+  "k": "{0} carries two offerings at most.",
+  "w": "225-v94armory.js:106"
+ },
+ {
+  "k": "Unknown weapon.",
+  "w": "225-v94armory.js:107"
+ },
+ {
+  "k": "Weapons go in the hands.",
+  "w": "225-v94armory.js:107"
+ },
+ {
+  "k": "{0} has no right arm.",
+  "w": "225-v94armory.js:112"
+ },
+ {
+  "k": "{0} has no left arm.",
+  "w": "225-v94armory.js:112"
+ },
+ {
+  "k": "Two hands needed — {0} has one arm.",
+  "w": "225-v94armory.js:113"
+ },
+ {
+  "k": "Unknown armor.",
+  "w": "225-v94armory.js:116"
+ },
+ {
+  "k": "Armor goes on the body.",
+  "w": "225-v94armory.js:116"
+ },
+ {
+  "k": "Damaged — repair it at the armorer first.",
+  "w": "225-v94armory.js:117"
+ },
+ {
+  "k": "{0} has no {1}.",
+  "w": "225-v94armory.js:120"
+ },
+ {
+  "k": "That piece is not in your Armory.",
+  "w": "225-v94armory.js:125"
+ },
+ {
+  "k": "🛡 Back from the sand: {0}",
+  "w": "225-v94armory.js:183"
+ },
+ {
+  "k": "🩹 {0} damaged (repair at the armorer)",
+  "w": "225-v94armory.js:183"
+ },
+ {
+  "k": "brought home {0}",
+  "w": "225-v94armory.js:183"
+ },
+ {
+  "k": "Lanistae only.",
+  "w": "225-v94armory.js:234"
+ },
+ {
+  "k": "Sold out this week.",
+  "w": "225-v94armory.js:235"
+ },
+ {
+  "k": "— {0} wears it",
+  "w": "225-v94armory.js:237"
+ },
+ {
+  "k": "— to the shelf ({0})",
+  "w": "225-v94armory.js:237"
+ },
+ {
+  "k": "{0} bought{1}.",
+  "w": "225-v94armory.js:239"
+ },
+ {
+  "k": "Repairs are done at the armorer in the City Square.",
+  "w": "225-v94armory.js:240"
+ },
+ {
+  "k": "{0} mended.",
+  "w": "225-v94armory.js:242"
+ },
+ {
+  "k": "Sell at the stalls in the City Square.",
+  "w": "225-v94armory.js:246"
+ },
+ {
+  "k": "Only pieces on the shelf can be sold.",
+  "w": "225-v94armory.js:246"
+ },
+ {
+  "k": "{0} sold.",
+  "w": "225-v94armory.js:248"
+ },
+ {
+  "k": "✓ replaces {0}",
+  "w": "225-v94armory.js:254"
+ },
+ {
+  "k": "✓ fits",
+  "w": "225-v94armory.js:254"
+ },
+ {
+  "k": "×{0}",
+  "w": "225-v94armory.js:255"
+ },
+ {
+  "k": "sold out",
+  "w": "225-v94armory.js:255"
+ },
+ {
+  "k": "Nothing today.",
+  "w": "225-v94armory.js:256"
+ },
+ {
+  "k": "on the shelf",
+  "w": "225-v94armory.js:258"
+ },
+ {
+  "k": "Nothing needs mending.",
+  "w": "225-v94armory.js:258"
+ },
+ {
+  "k": "🛒 The stalls",
+  "w": "225-v94armory.js:259"
+ },
+ {
+  "k": "a great market",
+  "w": "225-v94armory.js:260"
+ },
+ {
+  "k": "a busy market",
+  "w": "225-v94armory.js:260"
+ },
+ {
+  "k": "a small market",
+  "w": "225-v94armory.js:260"
+ },
+ {
+  "k": "Everything goes to your house Armory — dress your fighters here or in the Roster. Stock changes every week.",
+  "w": "225-v94armory.js:261"
+ },
+ {
+  "k": "🏛 The Armory shelf",
+  "w": "225-v94armory.js:262"
+ },
+ {
+  "k": "🔨 Repairs",
+  "w": "225-v94armory.js:264"
+ },
+ {
+  "k": "⅓ of the price",
+  "w": "225-v94armory.js:264"
+ },
+ {
+  "k": "🧪 The offerings stall",
+  "w": "225-v94armory.js:264"
+ },
+ {
+  "k": "💰 Sell from the shelf · {0}",
+  "w": "225-v94armory.js:265"
+ },
+ {
+  "k": "A fighter carries two offerings into a bout; unused ones come home.",
+  "w": "225-v94armory.js:266"
+ },
+ {
+  "k": "💰 {0} <small>sold from the shelf</small>",
+  "w": "225-v94armory.js:275"
+ },
+ {
+  "k": "🔨 {0} <small>mended</small>",
+  "w": "225-v94armory.js:275"
+ },
+ {
+  "k": "{0} <small>{1} · to the Armory</small>",
+  "w": "225-v94armory.js:275"
+ },
+ {
+  "k": "offering",
+  "w": "225-v94armory.js:275"
+ },
+ {
+  "k": "✓ fits {0}",
+  "w": "225-v94armory.js:283"
+ },
+ {
+  "k": "Put it on him",
+  "w": "225-v94armory.js:285"
+ },
+ {
+  "k": "No arm",
+  "w": "225-v94armory.js:287"
+ },
+ {
+  "k": "Drag it away, or tap it then tap where it goes",
+  "w": "225-v94armory.js:288"
+ },
+ {
+  "k": "Take it off",
+  "w": "225-v94armory.js:288"
+ },
+ {
+  "k": "On loan — his gear belongs to his own house",
+  "w": "225-v94armory.js:291"
+ },
+ {
+  "k": "{0}<b>{1}{2}</b><small>{3} AP</small>",
+  "w": "225-v94armory.js:293"
+ },
+ {
+  "k": "⚠ {0} empty",
+  "w": "225-v94armory.js:295"
+ },
+ {
+  "k": "right hand",
+  "w": "225-v94armory.js:295"
+ },
+ {
+  "k": "left hand",
+  "w": "225-v94armory.js:295"
+ },
+ {
+  "k": "and",
+  "w": "225-v94armory.js:295"
+ },
+ {
+  "k": "🩹 {0} damaged — left home until repaired at the armorer",
+  "w": "225-v94armory.js:295"
+ },
+ {
+  "k": "🤝 On loan — he fights in his own house's gear.",
+  "w": "225-v94armory.js:300"
+ },
+ {
+  "k": "No armor — drag a piece from the shelf.",
+  "w": "225-v94armory.js:301"
+ },
+ {
+  "k": "🧪 Satchel · {0}/{1} — carried into the bout, unused ones come home",
+  "w": "225-v94armory.js:302"
+ },
+ {
+  "k": "He fights with what he wears. Ability, weakness, coin and keys stay with his class.",
+  "w": "225-v94armory.js:304"
+ },
+ {
+  "k": "No fighters in your ludus.",
+  "w": "225-v94armory.js:305"
+ },
+ {
+  "k": "🛡 The Armory",
+  "w": "225-v94armory.js:309"
+ },
+ {
+  "k": "click a plaque · drag a piece onto him, or tap it and tap where it goes",
+  "w": "225-v94armory.js:309"
+ },
+ {
+  "k": "🩹 {0} need repair",
+  "w": "225-v94armory.js:309"
+ },
+ {
+  "k": "Tap where it goes: a hand, the body, the satchel, another fighter — or the shelf.",
+  "w": "225-v94armory.js:311"
+ },
+ {
+  "k": "🧪 Offerings",
+  "w": "225-v94armory.js:312"
+ },
+ {
+  "k": "Buy and repair at the stalls of {0}'s City Square.",
+  "w": "225-v94armory.js:312"
+ },
+ {
+  "k": "Buy and repair in the City Square.",
+  "w": "225-v94armory.js:312"
+ },
+ {
+  "k": "The shelf is empty — the City Square sells; the fallen leave their gear here.",
+  "w": "225-v94armory.js:313"
+ },
+ {
+  "k": "🩹 {0} to repair",
+  "w": "225-v94armory.js:361"
+ },
+ {
+  "k": "⚠ {0}: empty hand",
+  "w": "225-v94armory.js:361"
+ },
+ {
+  "k": "🛡 Gear up in {0}",
+  "w": "225-v94armory.js:362"
+ },
+ {
+  "k": "arms · armor · offerings · repairs — into your Armory",
+  "w": "225-v94armory.js:362"
+ },
+ {
+  "k": "🛡 Armory",
+  "w": "225-v94armory.js:366"
+ },
+ {
+  "k": "🛒 City Square",
+  "w": "225-v94armory.js:367"
+ },
+ {
+  "k": "<b>{0}</b> fights with bare hands",
+  "w": "225-v94armory.js:369"
+ },
+ {
+  "k": "<b>{0}</b> fights with both hands empty",
+  "w": "225-v94armory.js:369"
+ },
+ {
+  "k": "<b>{0}</b> fights with an empty right hand",
+  "w": "225-v94armory.js:369"
+ },
+ {
+  "k": "<b>{0}</b> fights with an empty left hand",
+  "w": "225-v94armory.js:369"
+ },
+ {
+  "k": "{0} more fighters have an empty hand",
+  "w": "225-v94armory.js:370"
+ },
+ {
+  "k": "<b>1 piece</b> needs repair",
+  "w": "225-v94armory.js:371"
+ },
+ {
+  "k": "<b>{0} pieces</b> need repair",
+  "w": "225-v94armory.js:371"
+ },
+ {
+  "k": "<b>🛡 The Armory.</b> Your fighters own their gear: click a plaque, then drag a weapon into a hand or armor onto the body. Weapons lost on the sand are gone; armor broken to 0 AP comes home damaged — the armorer in the City Square mends it.",
+  "w": "225-v94armory.js:373"
+ },
+ {
+  "k": "Each week's games are in one city — and in that week you can walk its <b>city square</b>: the temple, the <b>stalls</b> that sell weapons, armor and offerings into your Armory, the auction — and <b>Walk the Sand</b> at the arena gate. Explore it in your own career. Not in this lesson.",
+  "w": "225-v94armory.js:374"
+ },
+ {
+  "k": "This browser cannot save WebP pictures — try Chrome, Edge or Firefox.",
+  "w": "226-v94onltok.js:72"
+ },
+ {
+  "k": "The token picture is too big (64 KB at most).",
+  "w": "226-v94onltok.js:74"
+ },
+ {
+  "k": "Sending the picture… {0}/{1}",
+  "w": "226-v94onltok.js:90"
+ },
+ {
+  "k": "🧍 3D token saved — every lanista sees it now.",
+  "w": "226-v94onltok.js:100"
+ },
+ {
+  "k": "The sculpted token is back.",
+  "w": "226-v94onltok.js:103"
+ },
+ {
+  "k": "In a game — the token waits until it is over.",
+  "w": "226-v94onltok.js:107"
+ },
+ {
+  "k": "Every lanista sees this token on the sand.",
+  "w": "226-v94onltok.js:107"
+ },
+ {
+  "k": "Pose a 3D token: it replaces the sculpted one on every screen.",
+  "w": "226-v94onltok.js:107"
+ },
+ {
+  "k": "🧍 Change the pose",
+  "w": "226-v94onltok.js:109"
+ },
+ {
+  "k": "That upload is out of order — save the token again.",
+  "w": "226-v94onltok.js:126"
+ },
+ {
+  "k": "At most {0} token pictures a day — try again tomorrow.",
+  "w": "226-v94onltok.js:130"
+ },
+ {
+  "k": "No such picture.",
+  "w": "226-v94onltok.js:133"
+ }
+]
