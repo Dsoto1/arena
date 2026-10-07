@@ -1406,6 +1406,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   Strength −1 dmg (min 1), Luck −1 coin every other turn, Charisma −1 CF every other turn, Intelligence = weaker CPU mind; 2a characters on the
   rolls stay editable — running careers + saved matches keep the version they started with, new events use the edit; 3a each Play Now seat
   picker gets a "Your characters" tab (roster-set filtered, seat as You or CPU) + "🎲 Fill CPU seats with my characters".
+  MORE (2026-10-07): BUG trade offers — a swap offer stays open 2 weeks even when THEIR offered fighter dies/leaves (offersWeek only checks
+  ours) → "You get" empty, Accept hands ours over for nothing (offerAccept skips missing ones) → withdraw at week start / when shown / on
+  Accept ("This offer is no longer on the table"). CHANGE: the "How the fighters grew this week" letter goes INTO the Week N in review letter
+  (202 .rev91) as a subsection "From your Doctores": one row per fighter (portrait, the five rating icons with old → new and a green +0.4,
+  band-ups highlighted, fatigue chip), quiet fighters folded; the separate letter is no longer sent. Mail letters may use icons/structure freely.
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
