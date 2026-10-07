@@ -5,7 +5,8 @@
      yard  — the same + Brutal drills, every training hour on Speed/Strength, rest weeks above fatigue 60
      cheap — yard + in weeks 1-3 signs every free agent asking ≤ 12 with potential ≥ 60 (up to 12 fighters)
    Reports per strategy: wins, league rank among the 12 houses (by wins), roster rating (avg effOvr) vs the rival average,
-   rating gained over the run, treasury, fighters lost, injuries. Prints JSON lines + a table. */
+   rating gained over the run, treasury, fighters lost, injuries, rival houses' average treasury, league deaths (v0.94) and, with the Manager
+   Armory (225-v94armory), arm94Stats: pieces owned / damaged / lost / bought / coin spent on gear. Prints JSON lines + a table. */
 const {chromium}=require('playwright');const path=require('path');
 (async()=>{const page=path.resolve(process.argv[2]);const SEASONS=+(process.argv[3]||2),RUNS=+(process.argv[4]||4);const STRATS=(process.argv[5]||'base,yard,cheap').split(',');
 const b=await chromium.launch();const pg=await b.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message));
@@ -34,6 +35,8 @@ for(const strat of STRATS)for(let run=0;run<RUNS;run++){
       for(const g of ros())if(g.contract&&g.contract.weeks<=2&&g.morale>=35){g.contract.weeks=Math.max(0,g.contract.weeks)+8;g.contract.wage=Math.max(g.contract.wage,askWage(g));g.contract.expired=0}
       /* care */
       for(const g of ros())if(g.inj&&!g.inj.war){const req=injReq(g.inj);if(req==='surgeon'&&m.coin>=SURGEON+20){m.coin-=SURGEON;delete g.inj}else if(req!=='surgeon'&&m.coin>=MEDICUS+20){m.coin-=MEDICUS;delete g.inj}}
+      /* v0.94 the Armory: an attentive lanista keeps his fighters armed (repairs, empty hands, missing class pieces) — the rivals' own shopping rule */
+      if(typeof arm94AutoShop==='function')arm94AutoShop(w,m,{player:true});
       /* the yard */
       w.train=yard&&m.coin>60?'hard':yard?'std':'off';
       if(yard){const P=thPlan(w);let left=thLeft(w);for(const g of ros().filter(g=>!g.inj).sort((a,b)=>(gFat(a))-(gFat(b)))){if(gFat(g)>60){g.restWk=w.week;continue}
@@ -52,9 +55,10 @@ for(const strat of STRATS)for(let run=0;run<RUNS;run++){
       if(m.dead||w.dead||(!ros().length&&m.coin<0)){collapsed=wk;break}}
     const table=w.mgrs.filter(x=>!x.dead).map(x=>({p:x.isPlayer,wins:x.wins||0})).sort((a,b)=>b.wins-a.wins);
     return {strat,run,wins:m.wins||0,rank:table.findIndex(x=>x.p)+1,wage:rosterOf(m).reduce((a,g)=>a+(g.contract?g.contract.wage:0),0),houses:table.length,mine:+avg(rosterOf(m).map(effOvr)).toFixed(1),riv:+avg(rivals().flatMap(x=>rosterOf(x).map(effOvr))).toFixed(1),
-      gain:+(avg(rosterOf(m).map(effOvr))-start.mine).toFixed(1),rivGain:+(avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))-start.riv).toFixed(1),coin:m.coin,c6,c12,c24,minCoin,collapsed,fighters:rosterOf(m).length,n0,injuries,lost,weeks:w.week}},{strat,run,SEASONS});
+      gain:+(avg(rosterOf(m).map(effOvr))-start.mine).toFixed(1),rivGain:+(avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))-start.riv).toFixed(1),coin:m.coin,c6,c12,c24,minCoin,collapsed,fighters:rosterOf(m).length,n0,injuries,lost,weeks:w.week,rivCoin:Math.round(avg(rivals().map(x=>x.coin))),deaths:w.glads.filter(g=>!g.alive&&!g.retired&&g.debut).length,gear:typeof arm94Stats==='function'?arm94Stats(w):null}},{strat,run,SEASONS});
   rows.push(r);process.stderr.write(JSON.stringify(r)+'\n')}
 const by={};for(const r of rows)(by[r.strat]=by[r.strat]||[]).push(r);const A=(a,k)=>(a.reduce((s,x)=>s+x[k],0)/a.length).toFixed(1);
-console.log('strategy   wins  rank/12  myOvr  rivOvr  myGain  rivGain  coin  roster  injuries  lost  coin@6  coin@12  coin@24  lowest  collapsed');
-for(const [s,a] of Object.entries(by))console.log(`${s.padEnd(9)} ${A(a,'wins').padStart(5)} ${A(a,'rank').padStart(7)} ${A(a,'mine').padStart(6)} ${A(a,'riv').padStart(7)} ${A(a,'gain').padStart(7)} ${A(a,'rivGain').padStart(8)} ${A(a,'coin').padStart(5)} ${A(a,'fighters').padStart(7)} ${A(a,'injuries').padStart(9)} ${A(a,'lost').padStart(5)} ${A(a.filter(x=>x.c6!=null),'c6').padStart(7)} ${A(a.filter(x=>x.c12!=null),'c12').padStart(8)} ${A(a.filter(x=>x.c24!=null),'c24').padStart(8)} ${A(a,'minCoin').padStart(7)} ${a.filter(x=>x.collapsed).length}/${a.length}`);
+console.log('strategy   wins  rank/12  myOvr  rivOvr  myGain  rivGain  coin  roster  injuries  lost  coin@6  coin@12  coin@24  lowest  collapsed  rivCoin  deaths');
+for(const [s,a] of Object.entries(by))console.log(`${s.padEnd(9)} ${A(a,'wins').padStart(5)} ${A(a,'rank').padStart(7)} ${A(a,'mine').padStart(6)} ${A(a,'riv').padStart(7)} ${A(a,'gain').padStart(7)} ${A(a,'rivGain').padStart(8)} ${A(a,'coin').padStart(5)} ${A(a,'fighters').padStart(7)} ${A(a,'injuries').padStart(9)} ${A(a,'lost').padStart(5)} ${A(a.filter(x=>x.c6!=null),'c6').padStart(7)} ${A(a.filter(x=>x.c12!=null),'c12').padStart(8)} ${A(a.filter(x=>x.c24!=null),'c24').padStart(8)} ${A(a,'minCoin').padStart(7)} ${a.filter(x=>x.collapsed).length}/${a.length}  ${A(a,'rivCoin').padStart(7)} ${A(a,'deaths').padStart(7)}`);
+for(const r of rows)if(r.gear)console.log('gear',r.strat,r.run,JSON.stringify(r.gear));
 if(errs.length)console.log('page errors:',errs.slice(0,3));await b.close()})();
