@@ -1,0 +1,158 @@
+{
+ "stand": {
+  "cell": [
+   86,
+   124,
+   43.5,
+   101.4
+  ],
+  "poseBytes": 243,
+  "sheetMs": 6348,
+  "heroMs": 878,
+  "feet": {
+   "L": {
+    "ankleY": 0.095,
+    "toeY": 0.016,
+    "r": 0.23,
+    "heelR": 0.118
+   },
+   "R": {
+    "ankleY": 0.095,
+    "toeY": 0.016,
+    "r": 0.23,
+    "heelR": 0.118
+   },
+   "baseR": 0.723
+  }
+ },
+ "guard": {
+  "cell": [
+   86,
+   123,
+   43.5,
+   100.4
+  ],
+  "poseBytes": 308,
+  "sheetMs": 5235,
+  "heroMs": 841,
+  "feet": {
+   "L": {
+    "ankleY": 0.095,
+    "toeY": 0.016,
+    "r": 0.412,
+    "heelR": 0.242
+   },
+   "R": {
+    "ankleY": 0.095,
+    "toeY": 0.016,
+    "r": 0.298,
+    "heelR": 0.25
+   },
+   "baseR": 0.723
+  }
+ },
+ "lunge": {
+  "cell": [
+   90,
+   120,
+   45.5,
+   97.4
+  ],
+  "poseBytes": 304,
+  "sheetMs": 5082,
+  "heroMs": 751,
+  "feet": {
+   "L": {
+    "ankleY": 0.095,
+    "toeY": 0.016,
+    "r": 0.59,
+    "heelR": 0.409
+   },
+   "R": {
+    "ankleY": 0.095,
+    "toeY": 0.016,
+    "r": 0.315,
+    "heelR": 0.398
+   },
+   "baseR": 0.723
+  }
+ },
+ "victory": {
+  "cell": [
+   86,
+   141,
+   43.5,
+   118.4
+  ],
+  "poseBytes": 285,
+  "sheetMs": 5179,
+  "heroMs": 804,
+  "feet": {
+   "L": {
+    "ankleY": 0.095,
+    "toeY": 0.016,
+    "r": 0.295,
+    "heelR": 0.166
+   },
+   "R": {
+    "ankleY": 0.095,
+    "toeY": 0.016,
+    "r": 0.264,
+    "heelR": 0.163
+   },
+   "baseR": 0.723
+  }
+ },
+ "defend": {
+  "cell": [
+   86,
+   122,
+   43.5,
+   99.4
+  ],
+  "poseBytes": 334,
+  "sheetMs": 5095,
+  "heroMs": 781,
+  "feet": {
+   "L": {
+    "ankleY": 0.095,
+    "toeY": 0.016,
+    "r": 0.433,
+    "heelR": 0.259
+   },
+   "R": {
+    "ankleY": 0.095,
+    "toeY": 0.016,
+    "r": 0.3,
+    "heelR": 0.248
+   },
+   "baseR": 0.723
+  }
+ },
+ "taunt": {
+  "cell": [
+   86,
+   127,
+   43.5,
+   104.4
+  ],
+  "poseBytes": 330,
+  "sheetMs": 5249,
+  "heroMs": 756,
+  "feet": {
+   "L": {
+    "ankleY": 0.095,
+    "toeY": 0.016,
+    "r": 0.348,
+    "heelR": 0.18
+   },
+   "R": {
+    "ankleY": 0.095,
+    "toeY": 0.016,
+    "r": 0.254,
+    "heelR": 0.17
+   },
+   "baseR": 0.723
+  }
+ }
+}
