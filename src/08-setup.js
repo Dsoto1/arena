@@ -549,8 +549,9 @@ function mmOverlay(c2,time,W9,H9){const P=MM.plan;if(!P||time<22)return;const cx
   // laurels and flowers from the stands, arcing down to the emperor's feet
   for(const q of P.tosses){if(time<q.t0)continue;const k=Math.min(1,(time-q.t0)/1.1);const ex=cx+q.dx,ey=cy+q.dy;
     const x=q.sx+(ex-q.sx)*k,y=q.sy+(ey-q.sy)*k-Math.sin(k*Math.PI)*90;c2.save();c2.translate(x,y);c2.rotate(q.rot+(k<1?time*5:0));
-    if(q.kind==='laurel'){c2.fillStyle='#4f8a3a';for(let i=0;i<4;i++){c2.beginPath();c2.ellipse(i*5-8,(i%2?3:-3),5,2.2,(i%2?0.5:-0.5),0,Math.PI*2);c2.fill()}}
-    else{c2.fillStyle=q.col;for(let i=0;i<5;i++){c2.beginPath();c2.ellipse(Math.cos(i*1.256)*3.4,Math.sin(i*1.256)*3.4,2.8,2.8,0,0,Math.PI*2);c2.fill()}c2.fillStyle='#f5d65a';c2.beginPath();c2.arc(0,0,1.8,0,Math.PI*2);c2.fill()}
+    if(typeof toss92Draw==='function')toss92Draw(c2,q,12); /* v0.92: the shaded sprite (217) */
+    else{if(q.kind==='laurel'){c2.fillStyle='#4f8a3a';for(let i=0;i<4;i++){c2.beginPath();c2.ellipse(i*5-8,(i%2?3:-3),5,2.2,(i%2?0.5:-0.5),0,Math.PI*2);c2.fill()}}
+    else{c2.fillStyle=q.col;for(let i=0;i<5;i++){c2.beginPath();c2.ellipse(Math.cos(i*1.256)*3.4,Math.sin(i*1.256)*3.4,2.8,2.8,0,0,Math.PI*2);c2.fill()}c2.fillStyle='#f5d65a';c2.beginPath();c2.arc(0,0,1.8,0,Math.PI*2);c2.fill()}}
     c2.restore()}
   // the dust cloud of the duel
   if(P.duel){const dt=time-27;if(dt>1.1&&dt<4){const k=dt<1.6?ease((dt-1.1)/0.5):dt>3.3?1-ease((dt-3.3)/0.7):1;const bx=cx-60,by=cy-H9*0.28;
