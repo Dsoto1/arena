@@ -108,25 +108,28 @@ function drum91(g,x,y,len,dia,th,seed,lift,col){const im=stone91();const phi=th-
   g.restore()}
 /* half92 — v0.92 (his pick): the drum SPLIT LENGTHWISE. A half-cylinder lying cut face up: the rough fractured face on top (paler stone,
    jagged long edges, cracks), the fluted curved side showing below its near edge, a half-round cap on the end nearer the viewer. */
-function half92(g,x,y,len,dia,th,seed,lift,col){const ax=Math.cos(th),ay=Math.sin(th);let px=-ay,py=ax*0.5;const pl=Math.hypot(px,py)||1;px/=pl;py/=pl;
+function half92(g,x,y,len,dia,th,seed,lift,col){len*=0.72+h91(seed,0,30)*0.38;dia*=0.86+h91(seed,0,31)*0.24;const ax=Math.cos(th),ay=Math.sin(th);let px=-ay,py=ax*0.5;const pl=Math.hypot(px,py)||1;px/=pl;py/=pl;
   if(py<0){px=-px;py=-py}   /* P points toward the viewer (down the screen) */
   const w=dia*0.5,H=dia*0.55,cy=y-lift-H;const P=(u,v,z)=>[x+ax*u+px*v,cy+ay*u+py*v+(z||0)];
   g.fillStyle='rgba(28,18,10,.34)';ell91(g,x+dia*0.14,y+dia*0.12,len*0.6,dia*0.42,th*0.5);g.fill();   /* contact shadow */
-  const n=7,J=(i,k)=>(h91(seed,i,k)-0.5)*dia*0.16;
-  const far=[],near=[];for(let i=0;i<=n;i++){const u=-len/2+len*i/n;far.push(P(u,-w+J(i,21)));near.push(P(u,w+J(i,22)))}
+  /* jagged long edges: small chatter everywhere, deep bites in a few spots; the broken ends sit at an angle, not square */
+  const n=11,J=(i,k)=>{let v=(h91(seed,i,k)-0.5)*dia*0.1;if(i>0&&i<n&&h91(seed,i,k+40)<0.22)v+=dia*(0.07+h91(seed,i,k+50)*0.09);return v};
+  const U=(i,k)=>-len/2+len*i/n+((i===0||i===n)?(h91(seed,i,k+60)-0.5)*dia*0.34:(h91(seed,i,k+70)-0.5)*len*0.04);
+  const far=[],near=[];for(let i=0;i<=n;i++){far.push(P(U(i,21),-w+J(i,21)));near.push(P(U(i,22),w-J(i,22)))}
+  const endJag=(i,k)=>{const a=far[i],b=near[i];const out=[];for(let j=1;j<4;j++){const t=j/4,o=(h91(seed,j+i,k)-0.5)*dia*0.18;out.push([a[0]+(b[0]-a[0])*t+ax*o,a[1]+(b[1]-a[1])*t+ay*o])}return out};
   /* the curved side: from the near edge down to the sand */
   g.beginPath();near.forEach((q,i)=>i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]));for(let i=n;i>=0;i--){const q=P(-len/2+len*i/n,w*0.7,H);g.lineTo(q[0],q[1])}g.closePath();
   const sg=g.createLinearGradient(0,cy,0,cy+H+w*py);sg.addColorStop(0,col.mid);sg.addColorStop(1,col.dark);g.fillStyle=sg;g.fill();const im=stone91();if(im){g.save();g.clip();g.globalAlpha=0.55;g.drawImage(im,STONE91.x0,STONE91.y0+h91(seed,1,9)*(STONE91.y1-STONE91.y0)*0.6,STONE91.x1-STONE91.x0,(STONE91.y1-STONE91.y0)*0.3,x-len*0.6,cy-H,len*1.2,H*2.6);g.restore()}
   g.save();g.clip();g.strokeStyle='rgba(60,50,40,.35)';g.lineWidth=Math.max(0.5,dia*0.03);for(const f of [0.3,0.62]){g.beginPath();const a0=P(-len/2,w*(1-f*0.3),H*f),a1=P(len/2,w*(1-f*0.3),H*f);g.moveTo(a0[0],a0[1]);g.lineTo(a1[0],a1[1]);g.stroke()}g.restore();
   g.strokeStyle='rgba(50,42,34,.55)';g.lineWidth=Math.max(0.6,dia*0.035);g.stroke();
   /* the half-round cap on the near end */
-  const e=(ax*px+ay*py)>=0?1:-1,eu=e*len/2;g.beginPath();for(let i=0;i<=10;i++){const a=i/10*Math.PI;const q=P(eu,-Math.cos(a)*w,Math.sin(a)*H);i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1])}g.closePath();
+  const e=(ax*px+ay*py)>=0?1:-1,eu=e*len/2;g.beginPath();for(let i=0;i<=10;i++){const a=i/10*Math.PI;const r=1-(i&&i<10?h91(seed,i,33)*0.22:0)-(h91(seed,i,34)<0.2?0.18:0);const q=P(eu+(h91(seed,i,35)-0.5)*dia*0.12,-Math.cos(a)*w*r,Math.sin(a)*H*r);i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1])}g.closePath();
   g.fillStyle=col.side;g.fill();g.stroke();
   /* the fractured face on top */
-  g.beginPath();far.forEach((q,i)=>i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]));for(let i=n;i>=0;i--)g.lineTo(near[i][0],near[i][1]);g.closePath();
+  g.beginPath();far.forEach((q,i)=>i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]));for(const q of endJag(n,36))g.lineTo(q[0],q[1]);for(let i=n;i>=0;i--)g.lineTo(near[i][0],near[i][1]);for(const q of endJag(0,37).reverse())g.lineTo(q[0],q[1]);g.closePath();
   const fg=g.createLinearGradient(far[0][0],far[0][1],near[n][0],near[n][1]);fg.addColorStop(0,col.top);fg.addColorStop(0.55,col.mid);fg.addColorStop(1,col.side);g.fillStyle=fg;g.fill();g.fillStyle='rgba(120,100,78,.18)';g.fill();
   g.strokeStyle='rgba(50,42,34,.6)';g.lineWidth=Math.max(0.6,dia*0.035);g.stroke();
-  g.strokeStyle='rgba(70,60,48,.5)';g.lineWidth=Math.max(0.5,dia*0.022);for(let k=0;k<2;k++){const u0=(h91(seed,k,23)-0.5)*len*0.7;g.beginPath();let q=P(u0,-w*0.6);g.moveTo(q[0],q[1]);q=P(u0+len*0.08,(h91(seed,k,24)-0.5)*w*0.4);g.lineTo(q[0],q[1]);q=P(u0+len*0.04,w*0.55);g.lineTo(q[0],q[1]);g.stroke()}
+  g.strokeStyle='rgba(70,60,48,.5)';g.lineWidth=Math.max(0.5,dia*0.022);for(let k=0,nk=1+Math.floor(h91(seed,0,38)*3);k<nk;k++){const u0=(h91(seed,k,23)-0.5)*len*0.7;g.beginPath();let q=P(u0,-w*0.6);g.moveTo(q[0],q[1]);q=P(u0+len*0.08,(h91(seed,k,24)-0.5)*w*0.4);g.lineTo(q[0],q[1]);q=P(u0+len*0.04,w*0.55);g.lineTo(q[0],q[1]);g.stroke()}
   g.fillStyle='rgba(90,78,62,.35)';for(let k=0;k<5;k++){const q=P((h91(seed,k,25)-0.5)*len*0.8,(h91(seed,k,26)-0.5)*w*1.4);ell91(g,q[0],q[1],dia*0.03,dia*0.02);g.fill()}}
 /* stump91 — the broken stump where the pillar stood: his base + the shaft's foot, cut jagged ~0.25 TW above the sand */
 function stump91(g,x,y,col){const im=stone91();const s=stoneScale91();const H=TW*WEAR91.stumpH;
