@@ -1266,6 +1266,27 @@ if(!PERF92.off){
   window.clearInterval=function(id){if(unmanage(id))return;return PERF92.real.clearInterval(id)};
   window.clearTimeout=function(id){if(unmanage(id))return;return PERF92.real.clearTimeout(id)};
 }
+/* 00c-errlog — v0.92 THE ERROR LOG (his pick 2026-10-07). Runs right after 00b-perf, before everything else, so it sees every error:
+   window 'error' + 'unhandledrejection', and every console.error (the game's try/catch blocks report through it). Keeps the last 50
+   ({t, kind, msg, at, ver, where}) in ERR92.list and in localStorage flavius_errlog92 (so a crash survives the reload), the same
+   message at the same spot only once per 10 s. The viewer (Settings → General → 🐞 Error log: Copy for a bug report / Clear) is in
+   216-v92errui. Tests read window.ERR92 (errNew92(since) = entries after a mark). Nothing is ever sent anywhere. */
+const ERR92={list:[],max:50,seen:{},n:0};
+try{const s=localStorage.getItem('flavius_errlog92');if(s){const a=JSON.parse(s);if(Array.isArray(a))ERR92.list=a.slice(-ERR92.max)}}catch(e){}
+function err92Where(){try{if(typeof S!=='undefined'&&S&&!S.over&&S.phase&&S.phase!=='setup')return 'event:'+(S.evKey||'')+(S.onl?':online':'');
+  if(document.getElementById('mgrBody'))return 'manager';if(document.getElementById('onl'))return 'online';if(document.getElementById('stBody')||document.getElementById('studio'))return 'studio';
+  const mm=document.getElementById('mainMenu');if(mm&&!mm.hidden)return 'menu'}catch(e){}return ''}
+function err92Add(kind,msg,at){try{msg=String(msg||'').slice(0,400);at=String(at||'').slice(0,240);const k=kind+'|'+msg+'|'+at;const now=Date.now();
+  if(ERR92.seen[k]&&now-ERR92.seen[k]<10000)return;ERR92.seen[k]=now;ERR92.n++;
+  let ver='';try{const m=/v(\d+\.\d+)/.exec((document.querySelector('.brand .ed')||{}).textContent||'');ver=m?m[1]:''}catch(e){}
+  ERR92.list.push({t:new Date(now).toISOString().slice(0,19).replace('T',' '),kind,msg,at,where:err92Where(),ver:ver.slice(0,24)});if(ERR92.list.length>ERR92.max)ERR92.list.splice(0,ERR92.list.length-ERR92.max);
+  clearTimeout(ERR92.tm);ERR92.tm=setTimeout(()=>{try{localStorage.setItem('flavius_errlog92',JSON.stringify(ERR92.list))}catch(e){}},300)}catch(e){}}
+const err92Stack=e=>{try{const L=String(e&&e.stack||'').split('\n').map(s=>s.trim()).filter(s=>/^at /.test(s));return (L[0]||'').replace(/\(?(file|https?):\/\/[^\s)]*\/([^\s/)]+)\)?/,'$2')}catch(x){return ''}};
+window.addEventListener('error',e=>{if(!e)return;const er=e.error;err92Add('error',er&&er.message||e.message,er?err92Stack(er):`${e.filename||''}:${e.lineno||''}`)});
+window.addEventListener('unhandledrejection',e=>{const r=e&&e.reason;err92Add('promise',r&&r.message||String(r),r&&r.stack?err92Stack(r):'')});
+{const base=console.error.bind(console);console.error=function(...a){try{const e=a.find(x=>x instanceof Error);err92Add('caught',e?e.message:a.map(x=>typeof x==='string'?x:(x&&x.message)||'').join(' '),e?err92Stack(e):'')}catch(x){}return base(...a)}}
+/* tests: errNew92(mark) → the entries logged since ERR92.n was `mark` */
+function errNew92(mark){const k=Math.max(0,ERR92.n-(mark|0));return k?ERR92.list.slice(-k):[]}
 /* 00-lang — v0.86 languages (runs before everything else).
    • _T marks player-facing text. tools/i18n/wrap.js put it on every prose literal / template run:
        _T('Plain text')   _T`Text with ${x} inside`   `<div>${_T`Run of text`}</div>`
@@ -49036,6 +49057,38 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
     if(kits){kits.setAttribute('open','');seg.after(kits)}else seg.insertAdjacentHTML('afterend',onlKitsHTML92(ch))}
   else if(kits)kits.remove();
   return T.innerHTML}catch(e){console.error(e);return h}}}
+/* 216-v92errui — v0.92 the error log's viewer (00c-errlog keeps it): Settings → General → 🐞 Error log (N) opens a small window over
+   Settings with the entries, newest first, 📋 Copy for a bug report (plain text with the version and browser) and 🗑 Clear. */
+function err92Text(){const L=ERR92.list.slice().reverse();return [`Flavius Rule ${typeof GAME_VER!=='undefined'?'v'+GAME_VER:''} · ${navigator.userAgent}`,...L.map(e=>`${e.t} [${e.kind}] ${e.where?e.where+' · ':''}${e.msg}${e.at?' — '+e.at:''}`)].join('\n')}
+function err92Open(){let p=document.getElementById('err92pop');if(p)p.remove();p=document.createElement('div');p.id='err92pop';const L=ERR92.list.slice().reverse();
+  p.innerHTML=`<div class="err92b" role="dialog" aria-label="${esc(_T('Error log'))}"><div class="err92h"><b>${_T('🐞 Error log')}</b><small>${_T`${L.length} kept · stays on this device`}</small><button type="button" class="btn tksm" data-err92x aria-label="${esc(_T('Close'))}">✕</button></div>
+    <div class="err92l">${L.length?L.map(e=>`<div class="err92e"><span class="err92k ${e.kind}">${esc(e.kind)}</span><span class="err92t">${esc(e.t)}${e.where?' · '+esc(e.where):''}</span><div>${esc(e.msg)}</div>${e.at?`<small>${esc(e.at)}</small>`:''}</div>`).join(''):`<p class="rc-sub">${_T('No errors logged. Good.')}</p>`}</div>
+    <div class="acts"><button type="button" class="btn primary" data-err92c ${L.length?'':'disabled'}>${_T('📋 Copy for a bug report')}</button><button type="button" class="btn" data-err92clr ${L.length?'':'disabled'}>${_T('🗑 Clear')}</button></div></div>`;
+  document.body.appendChild(p)}
+{const base=settingsHTML;settingsHTML=function(tab){const h=base.apply(this,arguments);try{if(tab&&tab!=='general')return h;
+  const row=`<div class="setrow err92row"><span><b>${_T('🐞 Error log')}</b><br><span class="hint" style="margin:0">${_T('If something misbehaves, copy this into your bug report.')}</span></span><button type="button" class="btn tksm" data-err92o>${_T`Open (${ERR92.list.length})`}</button></div>`;
+  const i=h.lastIndexOf('</div>');return i>0?h.slice(0,i)+row+h.slice(i):h+row}catch(e){return h}}}
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('[data-err92o],[data-err92x],[data-err92c],[data-err92clr]');if(!t)return;e.preventDefault();e.stopPropagation();
+  if(t.dataset.err92o!=null){err92Open();return}
+  const p=document.getElementById('err92pop');
+  if(t.dataset.err92x!=null){if(p)p.remove();return}
+  if(t.dataset.err92c!=null){const txt=err92Text();const done=()=>{try{mToast(_T('📋 Copied — paste it into your report.'))}catch(x){}};
+    try{navigator.clipboard.writeText(txt).then(done,()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(x){}ta.remove();done()})}catch(x){}return}
+  if(t.dataset.err92clr!=null){ERR92.list=[];ERR92.seen={};try{localStorage.removeItem('flavius_errlog92')}catch(x){}err92Open();
+    document.querySelectorAll('[data-err92o]').forEach(b=>b.textContent=_T`Open (${0})`)}},true);
+{const st=document.createElement('style');st.textContent=`
+#err92pop{position:fixed;inset:0;z-index:100001;background:rgba(10,6,3,.6);display:grid;place-items:center}
+#err92pop .err92b{width:min(620px,calc(100vw - 32px));max-height:80vh;display:flex;flex-direction:column;gap:8px;padding:14px;border:1px solid var(--gold,#c9a24e);border-radius:10px;background:#21170f;color:#e8dcc0}
+#err92pop .err92h{display:flex;gap:10px;align-items:baseline}#err92pop .err92h small{flex:1;opacity:.7}
+#err92pop .err92l{overflow:auto;display:grid;gap:6px;font-size:12.5px}
+#err92pop .err92e{padding:6px 8px;border-left:3px solid #8a3a2a;background:rgba(255,255,255,.03);border-radius:0 6px 6px 0;word-break:break-word}
+#err92pop .err92e small{opacity:.65;font-family:var(--mono,monospace)}#err92pop .err92t{opacity:.7;margin-left:6px;font-size:11px}
+#err92pop .err92k{font:700 10px var(--mono,monospace);text-transform:uppercase;padding:1px 6px;border-radius:8px;background:#5a2a1a}
+#err92pop .err92k.caught{background:#4a3a1a}#err92pop .acts{display:flex;gap:8px;flex-wrap:wrap}
+/* v0.92 (his pick): the Training Yard's Lock in buttons are gold */
+.btn.y92go,.btn[data-y92all]{background:linear-gradient(#ecc96c,#b8862e);color:#2a1a08;border-color:#f3d98a;text-shadow:none}
+.btn.y92go:not([disabled]):hover,.btn[data-y92all]:not([disabled]):hover{background:linear-gradient(#f4d67e,#c6953a)}
+.btn.y92go[disabled],.btn[data-y92all][disabled]{background:#3a2c18;color:#9a8a6a;border-color:#5a4a2a}`;document.head.appendChild(st)}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
