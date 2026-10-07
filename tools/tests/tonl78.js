@@ -40,7 +40,8 @@ const drive=async(p,stone)=>{const r=await p.evaluate(stone=>{const sp=document.
 const t0=Date.now();let watching=false;const acts={A:0,B:0,C:0};
 const enough=async()=>P.A.evaluate(async()=>{const ins=(await NET.req('match.get',{id:S.onl.lobby,from:0})).inputs;const c=ins.filter(x=>x.k==='stands.result'&&(x.picks||[]).some(p=>p.seat===4)).length;return ins.length>=16&&c>0}).catch(()=>false);
 let chk=0;
-while(Date.now()-t0<280000){if(Date.now()-t0>=(+process.env.T78||110000)&&Date.now()-chk>3000){chk=Date.now();if(await enough()&&await P.D.evaluate(()=>!!(S&&S.onl&&S.onl.watch)&&Object.keys(ONLM.hlog).filter(k=>/^s\d+$/.test(k)).length>=6).catch(()=>false))break}
+/* the match runs until the checks below have what they need (enough inputs, a stands decision from the ticket holder, the watcher in step); the deadline is generous because a loaded machine plays it slowly */
+while(Date.now()-t0<420000){if(Date.now()-t0>=(+process.env.T78||110000)&&Date.now()-chk>3000){chk=Date.now();if(await enough()&&await P.D.evaluate(()=>!!(S&&S.onl&&S.onl.watch)&&Object.keys(ONLM.hlog).filter(k=>/^s\d+$/.test(k)).length>=6).catch(()=>false))break}
   for(const n of ['A','B','C']){const v=await drive(P[n],n==='C');if(v!=='wait'&&v!=='off'&&v!=='idle')acts[n]++}
   if(!watching&&Date.now()-t0>9000){watching=true;await P.D.evaluate(async id=>{ONL.lobbies=await NET.req('lobby.list');onlWatch(ONL.lobbies.find(x=>x.id===id))},L.id)}
   await P.A.waitForTimeout(250);if(await P.A.evaluate(()=>S&&S.over))break}

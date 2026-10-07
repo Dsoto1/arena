@@ -101,7 +101,9 @@ ok(cd.box&&cd.n>30&&cd.seats===4&&cd.hold,'the countdown with the line-up and �
 await A.click('#cd83 [data-onl83="hold"]');for(const t0=Date.now();Date.now()-t0<30000&&!(await A.evaluate(()=>!!document.querySelector('.cd83.stop')));){await A.waitForTimeout(300);await redraw(A)}ok(await A.evaluate(()=>!document.getElementById('cd83')&&!!document.querySelector('.cd83.stop'))," '⏸ Countdown stopped' after ✕ Hold");
 await A.evaluate(()=>localStorage.setItem('flavius_onlcd83','0'));
 await open(C,'wagers');
-const wg=await pv(C,async()=>{await onlRefresh();onlRedraw();return {tab:!!document.querySelector('#onl .onl-rail [data-v="wagers"].on'),pots:document.querySelectorAll('#onl .wg83-pot').length,odds:(document.querySelector('#onl .wg83-odds')||{}).textContent||'',mine:document.querySelectorAll('#onl .wg83-side tr').length}},v=>v.tab&&v.pots===1&&/×/.test(v.odds)&&v.mine>=1);
+/* cross-window storage lags and an idle window's background refresh can write back a copy that predates the bet (a lost bet = no pot): the bet is re-asserted
+   from inside the poll while the lobby still holds none (only then, so a stake is never doubled) */
+const wg=await pv(C,async(id)=>{try{const w0=mockLoad(),L0=w0.lobbies[id];if(L0&&!(L0.bets||[]).length&&!(L0.pot|0)){const w=mockLoad();w.chars[ONL.char.id].wallet=Math.max(100,w.chars[ONL.char.id].wallet|0);mockSave(w);await NET.req('bet.place',{id,seat:0,amt:12})}}catch(e){}await onlRefresh();ONL83U.wlAt=0;onlRedraw();return {tab:!!document.querySelector('#onl .onl-rail [data-v="wagers"].on'),pots:document.querySelectorAll('#onl .wg83-pot').length,odds:(document.querySelector('#onl .wg83-odds')||{}).textContent||'',mine:document.querySelectorAll('#onl .wg83-side tr').length}},v=>v.tab&&v.pots===1&&/×/.test(v.odds)&&v.mine>=1,L1.id);
 ok(wg.tab&&wg.pots===1&&/×/.test(wg.odds)&&wg.mine>=1,'the Wagers tab: open pot with odds, my bets '+JSON.stringify(wg));await shot(C,'wagers');
 await A.evaluate(async id=>{await NET.req('lobby.leave',{id})},L1.id).catch(()=>{});await B.evaluate(async id=>{try{await NET.req('lobby.leave',{id})}catch(e){}},L1.id);
 
