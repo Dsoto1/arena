@@ -223,7 +223,8 @@ cmd_release(){ local here; here=$(pwd)
     if ! cmp -s "$t" "$0"; then cp "$t" "$0"; rm -f "$t"; ok "flavius.sh updated from the game zip — continuing with the new one"; FLAVIUS_UPDATED=1 exec bash "$0" release; fi; rm -f "$t"; fi
   sit=$(ls -t "$here"/flavius-site-v*.zip 2>/dev/null | head -1 || true)
   pri=""; [ -f "$here/privacy.html" ] && pri="$here/privacy.html"
-  [ -n "$srv$gam$sit$pri" ] || { cmd_gitrelease "${1:-}"; return; }
+  # no zips here = a GitHub release; a privacy.html lying here never blocks it (it goes up after, then is filed away)
+  if [ -z "$srv$gam$sit" ]; then cmd_gitrelease "${1:-}"; if [ -n "$pri" ] && [ "${DRY:-}" != 1 ]; then cd "$here"; cmd_page "$pri"; mkdir -p "$HOME/flavius-done"; mv -f "$pri" "$HOME/flavius-done/"; fi; return; fi
   say "Release plan"; echo "  1 server   : ${srv:-(none uploaded — skipped)}"; echo "  2 game     : ${gam:-(none uploaded — skipped)}"; echo "  3 download : ${dl:-$( [ -n "$gam" ] && unzip -l "$gam" tools/mkshare.py >/dev/null 2>&1 && echo "built here from the game zip" || echo "(none uploaded — skipped)")}"; echo "  4 site     : ${sit:-(none uploaded — skipped)}"; echo "  5 page     : ${pri:-(none uploaded — skipped)}"
   if [ "${DRY:-}" != 1 ]; then read -r -p "Go? [y/N] " ok; case "$ok" in y|Y|yes) ;; *) die "Stopped — nothing changed.";; esac; fi
   [ -n "$srv" ] && { cmd_server "$srv"; cd "$here"; }
@@ -232,7 +233,7 @@ cmd_release(){ local here; here=$(pwd)
   [ -n "$sit" ] && { cmd_site "$sit"; cd "$here"; }
   [ -n "$pri" ] && { cmd_page "$pri"; cd "$here"; }
   # file the zips that went out, so the next release only sees new ones (kept in ~/flavius-done, the last 3 releases)
-  if [ "${DRY:-}" != 1 ]; then mkdir -p "$HOME/flavius-done"; for f in $srv $gam $dl $sit; do [ -n "$f" ] && mv -f "$f" "$HOME/flavius-done/"; done
+  if [ "${DRY:-}" != 1 ]; then mkdir -p "$HOME/flavius-done"; for f in $srv $gam $dl $sit $pri; do [ -n "$f" ] && mv -f "$f" "$HOME/flavius-done/"; done
     ls -t "$HOME"/flavius-done/*.zip 2>/dev/null | tail -n +13 | xargs -r rm -f; fi
   cmd_status; }
 
