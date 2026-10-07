@@ -42,6 +42,10 @@
      WORLD             COUNTS        + seeded6 (re-seeded once for the 8 ranks)
      BETS#<acct>       B#<ts13>#<room>#<r>     one bet and its outcome (ttl 30 days)
      WAGERWK#<week>    A#<acct>      the week's tally {staked, net, won, name, domus, dom}
+   v0.94 (token pictures, docs/backend.md "Token pictures"):
+     TOK#<char>        PIC           the gladiator's 3D token sheet {owner, h, b (base64 WebP ≤ 64 KB), meta, pose, pk, at, v}; CHAR carries tok94 {h, at}
+     TOKUP#<char>      U#<up>        an upload in parts {owner, n, meta, pose, pk, p0…p3} (ttl 1 h)
+     ACCT#<sub>        PROFILE       + tq94 {h: online day, n}: pictures saved that day
 */
 'use strict';
 function memory(){
