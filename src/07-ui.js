@@ -1543,6 +1543,9 @@ function draw() {
         OX = f.x - (f.c - f.r) * TW / 2;
         OY = f.y - (f.c + f.r) * TH / 2;
       }
+      const dp0 = window.devicePixelRatio || 1;
+      OX = Math.round(OX * dp0) / dp0;
+      OY = Math.round(OY * dp0) / dp0; /* v0.92: whole screen pixels — a fractional camera made the tile lines shimmer as it eased */
     }
   } /* v0.46: the final duel camera leans in on the centre of the sand */
   const dpr = window.devicePixelRatio || 1;

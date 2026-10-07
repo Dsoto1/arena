@@ -35,3 +35,8 @@ function yard92Lock(g){try{const w=W_();if(g.inj&&!g.inj.war)return ['🩹',_T('
 if(typeof yard87Row==='function'){const base=yard87Row;yard87Row=function(g){const h=base.apply(this,arguments);try{const L=yard92Lock(g);if(!L)return h;
   return h.replace(/<span class="yo87rt">[\s\S]*?<\/span>/,`<span class="yo87rt"><button type="button" class="btn tksm yo92lk" data-mg="tab" data-id="infirm" title="${esc(_T('Undo or change it in the Infirmary'))}">${L[0]} ${L[1]}</button></span>`).replace('class="yo87r ','class="yo87r yo92lock ')}catch(e){return h}}} /* i18n:skip */
 {const st=document.createElement('style');st.textContent='.yo92lk{white-space:nowrap;font-size:12px;padding:2px 8px;opacity:.9}.yo87r.yo92lock .yo90pv{opacity:.45}';document.head.appendChild(st)}
+/* TILE SEAMS (v0.92 follow-up, his note): every tile is filled on its own, so the anti-aliased edges of two neighbours leave a hairline
+   of the floor beneath; zoomed in, it shimmers as the camera moves by fractions of a pixel. Each tile now also strokes its own outline
+   in its own colour, about one screen pixel wide, closing the seam (the painted grid lines go on top as before). */
+{const base=drawShipTile;drawShipTile=function(r,c){try{if(typeof ctx!=='undefined'&&ctx&&typeof ctx.fillStyle==='string'){const t=ctx.getTransform();const k=Math.hypot(t.a,t.b)||1;
+    ctx.save();ctx.strokeStyle=ctx.fillStyle;ctx.lineWidth=1.25/k;ctx.lineJoin='round';ctx.stroke();ctx.restore()}}catch(e){}return base.apply(this,arguments)}}
