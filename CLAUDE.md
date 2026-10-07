@@ -1500,8 +1500,8 @@ share copy — the site download play/flavius-rule-arena.zip.)
   live match per lanista is already the server's busy rule) · FAST (5a): Fast skips in-between animation frames (pieces jump, no bubbles/cards, one
   board draw per action); Slow/Normal unchanged; rules/log/dice unchanged · ACTION BUTTONS (6b): MOCK-UP FIRST — ⚔ Attack (weapons + Focus, red frame),
   🏃 Move (remaining movement on top + Topple/Push/Tunnel), 🤝 Deal (Trade/Truce/Loot), 🏛 Market & Crowd always shown (greyed when not usable, what's
-  left + what you can afford), End turn apart. OPEN (Q4, re-asked): may a Leather Tasset (upper-leg padding) be worn under a thigh plate on the same
-  leg? Today yes (padding stacks per equip point); his rule said only lower padding sits underneath. Confirmed: two hard pieces on one equip point never
+  left + what you can afford), End turn apart. Q4a (his): the Leather Tasset (legwrapsU) is NOT padding any more — it takes the upper leg alone like a thigh
+  plate (armorConflict: only LOWER padding stacks under hard pieces); check class loadouts that wear both + the Manager/online shelves. Confirmed: two hard pieces on one equip point never
   stack (armorConflict), belts sit on top of chest armor.
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
