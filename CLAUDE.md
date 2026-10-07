@@ -1428,6 +1428,9 @@ share copy — the site download play/flavius-rule-arena.zip.)
   equipped; an INJURED fighter's weapons/armor/offerings go to the armory shelf at once (the manager re-equips after healing; checklist nudge).
   Roster: AT MOST 3 STARTERS; the bench = every healthy non-starter (no depth columns at the top); Promote to starter + Lend live on the fighter
   list rows below; Loans = a tab beside the depth chart (not under it); the fighter card on the right moves up into the freed space.
+  STARTERS (his answer): each of the 3 starters is set to ONE Match Week bout (Bout I / II / III), all reassignable by the manager; Match Week
+  fills the bouts from them by default (still swappable there). Starter perk (my proposal, his "maybe"): +2 morale and +1 loyalty per week as a
+  starter; a benched healthy fighter whose want is "arena time" loses 1 morale a week — tunable.
   FIX: Training Yard fighter card → Bond: the "Nobody free to bond with" box, the + buttons and the N/N count overflow the card (wrap/shrink inside it).
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
