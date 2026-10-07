@@ -1389,6 +1389,21 @@ share copy — the site download play/flavius-rule-arena.zip.)
   (tools/art/zora95/zora2024.unity3d → render like the other minis), Quick Reference p.72 (tools/art/quickref95/quickref_p72.webp + refpage.pdf;
   checked vs the engine 2026-10-07: NPC stats, move/push/topple costs, hit dice 2 vs players / 4 vs beasts / 2 beast vs beast, damage order,
   HP 7 all match). Still waiting: his armor-fit Export.
+  PERFORMANCE (his yes, v0.95; measured 2026-10-07 with /tmp prof95 scripts: all-CPU Democritus, Normal 26 fps p95 114 ms, Fast 9 fps p50 80 ms,
+  busy 74-81% but game script only ~9%; the rest = IMAGE RE-DECODING (#board fighter panel rebuilt by innerHTML up to 5×/s → avatar, armor2.webp,
+  weapons.jpg, arena.jpg, coin, sr medallion re-inserted; #npcPanel re-inserts rtok.webp ~30/s) + forced layout (clientWidth on every draw)):
+  (1) patch panels in place with morph91 (fighter panel, Field, status, turn panel); (2) small cut-out images instead of the big sheets in
+  panels, keep big ones decoded once; (3) ≤1 panel update per frame, ~4/s while CPUs act (own turn immediate); (4) at Fast skip decorative
+  extras (speech/wager bubbles, cheer waves, dust/blood anims short, floating numbers short) — rules/log/dice unchanged; (5) measure layout once;
+  (6) speed changes take effect at once (sleep re-reads SPEED mid-wait). Goal Fast ≥40 fps; a perf test joins the suite. Spectators were NOT the cost.
+  MORE NOTES (2026-10-07): Classes — custom "Hated by the crowd" (pelted) = the stone each Resolve ONLY, no +10 CF (that stays the printed
+  Damnatio's); tamed-ally picker excludes humanoids (Tholo, Commodus, custom humanoid types) — lions, Zora, Ursa, Brutum, snake, wolf, custom
+  non-humanoid beasts on the rolls. Character creator: 375-point budget + the abilities gained shown on the RIGHT, visually distinct. Sculptors:
+  lock proportions, random default colour (not always yellow), check height/width sliders (may be swapped), snap ticks on sliders game-wide.
+  Custom weapons: ≤4 icons; "A shield?" checkbox → must have Absorb, optional Attack power + Range, + one other (4 max); BUG: icons picked
+  before ticking shield stay on the preview AND the saved weapon. Play Now: The Stands personality dropdown stays open (bug); characters on
+  the rolls can't be found for CPU seats with "All my creations" (bug) + an easy way to seat them (pending his pick). Pending his answers:
+  low-rating penalties, editing characters already on the rolls, seat picker for creations.
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
