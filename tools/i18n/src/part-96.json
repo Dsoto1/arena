@@ -1,0 +1,402 @@
+[
+ {
+  "k": "Something went wrong.",
+  "w": "00c-errlog.js:34"
+ },
+ {
+  "k": "(ref {0})",
+  "w": "00c-errlog.js:34"
+ },
+ {
+  "k": "3D tokens you pose yourself, and a game for every hand",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Studio characters get a 3D token: pick a pose, drag the joints, it wears their look and gear",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Play by keyboard: a tile cursor, windows that keep focus, a board summary for screen readers, clearer text",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "The Manager lesson teaches the new Training Yard",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Online: a buy or bid sent twice counts once, plain error messages, server texts in your language",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Rubble splits lengthwise; zoomed-in tile edges no longer flicker",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "The <b>rail</b> on the left runs your ludus — your house, the arena, the wider world, and you. Work it top to bottom each week; the coach will walk you through it.",
+  "w": "36-mtutor.js:38"
+ },
+ {
+  "k": "Now <b>pitch</b> them — sell what they care about most (the grades you just revealed). One pitch per recruit a week.",
+  "w": "36-mtutor.js:48"
+ },
+ {
+  "k": "Coin builds the house; <b>perk points</b> build <i>you</i>. Open <b>🎓 Schooling</b> (in your own career it lives on the Lanista tab).",
+  "w": "36-mtutor.js:57"
+ },
+ {
+  "k": "Spend your perk point: a <b>perk</b> from one of the three trees (each says what it does), or <b>hone a trait</b> recruits grade you on. You earn more each week: wins, kept pledges, training.",
+  "w": "36-mtutor.js:58"
+ },
+ {
+  "k": "Your fighters grow in the <b>🏋 Training Yard</b>. Open it.",
+  "w": "36-mtutor.js:60"
+ },
+ {
+  "k": "One <b>card per fighter</b>. Each bar is a rating — 🏃 Speed, 💪 Strength, 📜 Tactics, 🎭 Crowd — and shows what this week's work adds. Fatigue sits under them.",
+  "w": "36-mtutor.js:61"
+ },
+ {
+  "k": "Press <b>+</b> on a rating to plan a <b>session</b> for {0}. Each takes one of the house's training hours; a fighter takes at most <b>{1} a week</b> (the counter on the card).",
+  "w": "36-mtutor.js:62"
+ },
+ {
+  "k": "A plan is only a plan: unlocked sessions never train. Press <b>🔒 Lock in</b>.",
+  "w": "36-mtutor.js:63"
+ },
+ {
+  "k": "A locked session opens the <b>Doctore's drill</b>: two ratings in one drill, with his bonus — 2 hours, one a week, outside the cap. Pick one.",
+  "w": "36-mtutor.js:64"
+ },
+ {
+  "k": "Lock in again — the drill counts only once it is locked.",
+  "w": "36-mtutor.js:65"
+ },
+ {
+  "k": "<b>Your Doctore.</b> His level (your yard + the hours he spends with the squad) unlocks more drills. <b>Intensity</b> drives every session: more gain, more fatigue. <b>↻ Same as last week</b> re-plans the squad; <b>🔒 Lock all</b> locks every card.",
+  "w": "36-mtutor.js:66"
+ },
+ {
+  "k": "<b>⚔ Trials of the Yard</b>: a spar with a housemate, an exhibition against a rival house, or the beast pen — one a week per fighter, each with its cost and fatigue. Not today: we have a card to fight.",
+  "w": "36-mtutor.js:67"
+ },
+ {
+  "k": "Each week's games are in one city — and in that week you can walk its <b>city square</b>: the temple, the market stalls, the auction — and <b>Walk the Sand</b> at the arena gate. Explore it in your own career. Not in this lesson.",
+  "w": "36-mtutor.js:70"
+ },
+ {
+  "k": "Their scouting card: fighters, form, this week's bouts. Press <b>🏛 Team screen</b> to visit the house.",
+  "w": "36-mtutor.js:87"
+ },
+ {
+  "k": "One full guided week of a ludus in a sandbox league: a fighter’s card and keeping them happy, courting a recruit, the infirmary, facilities and schooling, the Training Yard, Match Week (watch a bout live, bet, enter the main event), a verdict, a rival house, the Imperium, the season — and the Acta Diurna.",
+  "w": "36-mtutor.js:192"
+ },
+ {
+  "k": "The online server is older than this page — try again once it has updated.",
+  "w": "223-v93harden.js:28"
+ },
+ {
+  "k": "Too many requests — wait a moment.",
+  "w": "223-v93harden.js:44"
+ },
+ {
+  "k": "That request id was used for something else — try again.",
+  "w": "223-v93harden.js:47"
+ },
+ {
+  "k": "Still working on that — a moment.",
+  "w": "223-v93harden.js:48"
+ },
+ {
+  "k": "3D token",
+  "w": "222-v93token.js:80"
+ },
+ {
+  "k": "Your own pose",
+  "w": "222-v93token.js:131"
+ },
+ {
+  "k": "3D tokens need WebGL, which this browser has switched off. The classic token is used.",
+  "w": "222-v93token.js:132"
+ },
+ {
+  "k": "The classic token is on the board.",
+  "w": "222-v93token.js:133"
+ },
+ {
+  "k": "Not made yet — open the modeller, or it is made in the background.",
+  "w": "222-v93token.js:134"
+ },
+ {
+  "k": "The look changed: the token is remade in the background after you save.",
+  "w": "222-v93token.js:135"
+ },
+ {
+  "k": "Pose: {0}",
+  "w": "222-v93token.js:136"
+ },
+ {
+  "k": "🧍 3D token",
+  "w": "222-v93token.js:137"
+ },
+ {
+  "k": "🧍 Pose the 3D token",
+  "w": "222-v93token.js:140"
+ },
+ {
+  "k": "Stand",
+  "w": "222-v93token.js:141"
+ },
+ {
+  "k": "Guard",
+  "w": "222-v93token.js:141"
+ },
+ {
+  "k": "Lunge",
+  "w": "222-v93token.js:141"
+ },
+ {
+  "k": "Defend",
+  "w": "222-v93token.js:141"
+ },
+ {
+  "k": "Taunt",
+  "w": "222-v93token.js:141"
+ },
+ {
+  "k": "3D token modeller",
+  "w": "222-v93token.js:164"
+ },
+ {
+  "k": "🧍 3D token · {0}",
+  "w": "222-v93token.js:165"
+ },
+ {
+  "k": "Building the body…",
+  "w": "222-v93token.js:166"
+ },
+ {
+  "k": "Poses",
+  "w": "222-v93token.js:167"
+ },
+ {
+  "k": "Feet on the base",
+  "w": "222-v93token.js:168"
+ },
+ {
+  "k": "Pin left",
+  "w": "222-v93token.js:168"
+ },
+ {
+  "k": "Pin right",
+  "w": "222-v93token.js:168"
+ },
+ {
+  "k": "Drag a joint to turn it; drag a wrist or an ankle to reach. Drag empty space to turn the view, the wheel zooms.",
+  "w": "222-v93token.js:169"
+ },
+ {
+  "k": "spine",
+  "w": "222-v93token.js:170"
+ },
+ {
+  "k": "hands, hips",
+  "w": "222-v93token.js:170"
+ },
+ {
+  "k": "The eight facings on the board",
+  "w": "222-v93token.js:171"
+ },
+ {
+  "k": "↺ Reset",
+  "w": "222-v93token.js:172"
+ },
+ {
+  "k": "✓ Save token",
+  "w": "222-v93token.js:172"
+ },
+ {
+  "k": "Rendering the eight facings…",
+  "w": "222-v93token.js:185"
+ },
+ {
+  "k": "🧍 3D token saved",
+  "w": "222-v93token.js:187"
+ },
+ {
+  "k": "That did not work. Try again.",
+  "w": "222-v93token.js:188"
+ },
+ {
+  "k": "3D tokens need WebGL, which this browser has switched off.",
+  "w": "222-v93token.js:196"
+ },
+ {
+  "k": "The 3D engine did not load. Check the connection and try again.",
+  "w": "222-v93token.js:196"
+ },
+ {
+  "k": "Board summary",
+  "w": "220-v93a11y.js:37"
+ },
+ {
+  "k": "arena board",
+  "w": "220-v93a11y.js:38"
+ },
+ {
+  "k": "The arena. Arrow keys move the cursor, Enter or Space picks the tile, Escape goes back to Move, I reads the board.",
+  "w": "220-v93a11y.js:39"
+ },
+ {
+  "k": "Read the board (I)",
+  "w": "220-v93a11y.js:40"
+ },
+ {
+  "k": "{0} · round {1}{2}",
+  "w": "220-v93a11y.js:53"
+ },
+ {
+  "k": "· the event is over",
+  "w": "220-v93a11y.js:53"
+ },
+ {
+  "k": "{0}'s turn{1} · phase: {2}",
+  "w": "220-v93a11y.js:54"
+ },
+ {
+  "k": "(CPU)",
+  "w": "220-v93a11y.js:54"
+ },
+ {
+  "k": "{0}: out",
+  "w": "220-v93a11y.js:55"
+ },
+ {
+  "k": "{0}{1} on {2}: {3}; CF {4}, coin {5}",
+  "w": "220-v93a11y.js:57"
+ },
+ {
+  "k": "(you)",
+  "w": "220-v93a11y.js:57"
+ },
+ {
+  "k": "Beasts: {0}",
+  "w": "220-v93a11y.js:59"
+ },
+ {
+  "k": "— in reach",
+  "w": "220-v93a11y.js:59"
+ },
+ {
+  "k": "No beasts on the sand.",
+  "w": "220-v93a11y.js:60"
+ },
+ {
+  "k": "The board could not be read.",
+  "w": "220-v93a11y.js:60"
+ },
+ {
+  "k": "you can move here",
+  "w": "220-v93a11y.js:75"
+ },
+ {
+  "k": "you can attack here",
+  "w": "220-v93a11y.js:75"
+ },
+ {
+  "k": "you can push here",
+  "w": "220-v93a11y.js:75"
+ },
+ {
+  "k": "you can topple this pillar",
+  "w": "220-v93a11y.js:75"
+ },
+ {
+  "k": "tunnel exit",
+  "w": "220-v93a11y.js:75"
+ },
+ {
+  "k": "you can act here",
+  "w": "220-v93a11y.js:75"
+ },
+ {
+  "k": "Back to Move.",
+  "w": "220-v93a11y.js:89"
+ },
+ {
+  "k": "Skip to the end",
+  "w": "220-v93a11y.js:126"
+ },
+ {
+  "k": "Sound off",
+  "w": "220-v93a11y.js:126"
+ },
+ {
+  "k": "Sound on",
+  "w": "220-v93a11y.js:126"
+ },
+ {
+  "k": "Zoom",
+  "w": "220-v93a11y.js:127"
+ },
+ {
+  "k": "More information",
+  "w": "220-v93a11y.js:127"
+ },
+ {
+  "k": "Add",
+  "w": "220-v93a11y.js:127"
+ },
+ {
+  "k": "Take one back",
+  "w": "220-v93a11y.js:127"
+ },
+ {
+  "k": "Favourite",
+  "w": "220-v93a11y.js:127"
+ },
+ {
+  "k": "Pin",
+  "w": "220-v93a11y.js:127"
+ },
+ {
+  "k": "Again",
+  "w": "220-v93a11y.js:127"
+ },
+ {
+  "k": "Scroll",
+  "w": "220-v93a11y.js:128"
+ },
+ {
+  "k": "Lessons",
+  "w": "220-v93a11y.js:128"
+ },
+ {
+  "k": "Menu",
+  "w": "220-v93a11y.js:128"
+ },
+ {
+  "k": "Up",
+  "w": "220-v93a11y.js:128"
+ },
+ {
+  "k": "Down",
+  "w": "220-v93a11y.js:128"
+ },
+ {
+  "k": "Help",
+  "w": "220-v93a11y.js:128"
+ },
+ {
+  "k": "Round {0}: {1}'s turn.",
+  "w": "220-v93a11y.js:171"
+ },
+ {
+  "k": "Round {0}: your turn, {1}.",
+  "w": "220-v93a11y.js:171"
+ },
+ {
+  "k": "arena · v0.93",
+  "w": "01-head.html"
+ }
+]

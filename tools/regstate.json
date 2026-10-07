@@ -1,5 +1,5 @@
 {
- "run": 226,
+ "run": 227,
  "lastFull": 1791254037274,
  "tests": {
   "tseed4": {
@@ -4174,16 +4174,16 @@
    }
   },
   "tv93i": {
-   "streak": 3,
-   "runs": 3,
+   "streak": 4,
+   "runs": 4,
    "fails": 0,
    "flaky": [],
-   "lastRun": 225,
-   "time": 40,
-   "sh": "2284ce1e0d",
-   "lastPass": 225,
+   "lastRun": 227,
+   "time": 46,
+   "sh": "f4d618dced",
+   "lastPass": 227,
    "deps": {
-    "build.sh": "c97ed32a2854",
+    "build.sh": "19f83cf747cb",
     "src/01-head.html": "5a8ff8726fdc",
     "tools/smartreg.js": "88651cfcb1b8",
     "tools/regcov.js": "1b122005f465",
@@ -4191,16 +4191,16 @@
    }
   },
   "tv93l": {
-   "streak": 1,
-   "runs": 3,
+   "streak": 2,
+   "runs": 4,
    "fails": 1,
    "flaky": [],
-   "lastRun": 226,
-   "time": 151,
-   "sh": "2284ce1e0d",
-   "lastPass": 226,
+   "lastRun": 227,
+   "time": 171,
+   "sh": "f4d618dced",
+   "lastPass": 227,
    "deps": {
-    "build.sh": "c97ed32a2854",
+    "build.sh": "19f83cf747cb",
     "src/01-head.html": "5a8ff8726fdc",
     "tools/smartreg.js": "88651cfcb1b8",
     "tools/regcov.js": "1b122005f465",
@@ -4208,20 +4208,54 @@
    }
   },
   "tv93k": {
-   "streak": 1,
-   "runs": 1,
+   "streak": 2,
+   "runs": 2,
    "fails": 0,
    "flaky": [],
-   "lastRun": 225,
-   "time": 48,
-   "sh": "2284ce1e0d",
-   "lastPass": 225,
+   "lastRun": 227,
+   "time": 75,
+   "sh": "f4d618dced",
+   "lastPass": 227,
    "deps": {
-    "build.sh": "c97ed32a2854",
+    "build.sh": "19f83cf747cb",
     "src/01-head.html": "5a8ff8726fdc",
     "tools/smartreg.js": "88651cfcb1b8",
     "tools/regcov.js": "1b122005f465",
     "tools/tests/tv93k.js": "348eccd0a9b0"
+   }
+  },
+  "tv93a": {
+   "streak": 1,
+   "runs": 1,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 227,
+   "time": 40,
+   "sh": "f4d618dced",
+   "lastPass": 227,
+   "deps": {
+    "build.sh": "19f83cf747cb",
+    "src/01-head.html": "5a8ff8726fdc",
+    "tools/smartreg.js": "88651cfcb1b8",
+    "tools/regcov.js": "1b122005f465",
+    "tools/tests/tv93a.js": "491a32214e7e"
+   }
+  },
+  "tv93t": {
+   "streak": 1,
+   "runs": 1,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 227,
+   "time": 114,
+   "sh": "f4d618dced",
+   "lastPass": 227,
+   "deps": {
+    "build.sh": "19f83cf747cb",
+    "src/01-head.html": "5a8ff8726fdc",
+    "tools/smartreg.js": "88651cfcb1b8",
+    "tools/regcov.js": "1b122005f465",
+    "tools/tests/tv93t.js": "e0a2aee7ce02"
    }
   }
  },
@@ -5775,7 +5809,7 @@
    "src/223-v93harden.js": "bdfd7974e5",
    "src/08-setup.js": "1d86b31d18"
   },
-  "2284ce1e0d": {
+  "f4d618dced": {
    "src/00b-perf.js": "5855549036",
    "src/00c-errlog.js": "08e4ecbd61",
    "src/00d-bus.js": "48d654b212",
@@ -5814,7 +5848,7 @@
    "src/33-tickets.js": "fb42d5d0f4",
    "src/34-notes.js": "071e967268",
    "src/35-travel.js": "8e0a7b1467",
-   "src/36-mtutor.js": "4684023c91",
+   "src/36-mtutor.js": "9d4438db1d",
    "src/37-crlist.js": "ee4f4d5f57",
    "src/38-matchsave.js": "18e2466620",
    "src/39-sotonium.js": "d0ed5b21bc",
@@ -6001,6 +6035,7 @@
    "src/223a-v93srvtext.js": "141331c160",
    "src/223-v93harden.js": "bdfd7974e5",
    "src/222-v93token.js": "4e405f75c9",
+   "src/220-v93a11y.js": "a06cde0ae4",
    "src/08-setup.js": "1d86b31d18"
   }
  }

@@ -5,695 +5,719 @@
  },
  {
   "k": "speak in the Forum",
-  "w": "server/src/routes.js:41"
+  "w": "server/src/routes.js:42"
  },
  {
   "k": "buy a ticket",
-  "w": "server/src/routes.js:41"
+  "w": "server/src/routes.js:42"
  },
  {
   "k": "raise gladiators",
-  "w": "server/src/routes.js:41"
+  "w": "server/src/routes.js:42"
  },
  {
   "k": "found a house",
-  "w": "server/src/routes.js:41"
+  "w": "server/src/routes.js:42"
  },
  {
   "k": "take a seat in the stands",
-  "w": "server/src/routes.js:41"
+  "w": "server/src/routes.js:42"
+ },
+ {
+  "k": "The arena is busy — try again in a moment.",
+  "w": "server/src/routes.js:46"
  },
  {
   "k": "Not yours.",
-  "w": "server/src/routes.js:49"
+  "w": "server/src/routes.js:52"
  },
  {
   "k": "That game is gone.",
-  "w": "server/src/routes.js:58"
+  "w": "server/src/routes.js:61"
  },
  {
   "k": "The room changed a moment ago — try again.",
-  "w": "server/src/routes.js:62"
+  "w": "server/src/routes.js:65"
  },
  {
   "k": "The room is busy — try again.",
-  "w": "server/src/routes.js:64"
+  "w": "server/src/routes.js:67"
  },
  {
   "k": "Your gladiator changed a moment ago — try again.",
-  "w": "server/src/routes.js:66"
+  "w": "server/src/routes.js:69"
  },
  {
   "k": "Busy — try again.",
-  "w": "server/src/routes.js:68"
+  "w": "server/src/routes.js:71"
  },
  {
   "k": "That room has closed.",
-  "w": "server/src/routes.js:173"
+  "w": "server/src/routes.js:176"
  },
  {
   "k": "That game has started — you can watch it.",
-  "w": "server/src/routes.js:173"
+  "w": "server/src/routes.js:176"
  },
  {
   "k": "That room has filled up.",
-  "w": "server/src/routes.js:173"
+  "w": "server/src/routes.js:176"
  },
  {
   "k": "The lanista who invited you has left the room.",
-  "w": "server/src/routes.js:173"
+  "w": "server/src/routes.js:176"
  },
  {
   "k": "Your party leader picks the game.",
-  "w": "server/src/routes.js:192"
+  "w": "server/src/routes.js:195"
  },
  {
   "k": "Your gladiator is still fighting a match — go back to it (⚔ Rejoin) or abandon it first.",
-  "w": "server/src/routes.js:194"
+  "w": "server/src/routes.js:197"
  },
  {
   "k": "Someone in your party is still in a match.",
-  "w": "server/src/routes.js:194"
+  "w": "server/src/routes.js:197"
  },
  {
   "k": "Name your house first.",
-  "w": "server/src/routes.js:195"
+  "w": "server/src/routes.js:198"
  },
  {
   "k": "Someone in your party has no house yet.",
-  "w": "server/src/routes.js:195"
+  "w": "server/src/routes.js:198"
  },
  {
   "k": "Someone in your party is already in a room.",
-  "w": "server/src/routes.js:198"
+  "w": "server/src/routes.js:201"
  },
  {
   "k": "You are already in a room.",
-  "w": "server/src/routes.js:198"
+  "w": "server/src/routes.js:201"
  },
  {
   "k": "No such match.",
-  "w": "server/src/routes.js:202"
+  "w": "server/src/routes.js:205"
  },
  {
   "k": "{0} fell. The Hall of the Fallen keeps the name.",
-  "w": "server/src/routes.js:230"
+  "w": "server/src/routes.js:233"
  },
  {
   "k": "{0} fell and is forgotten.",
-  "w": "server/src/routes.js:230"
+  "w": "server/src/routes.js:233"
  },
  {
   "k": "{0} is now {1}.",
-  "w": "server/src/routes.js:231"
+  "w": "server/src/routes.js:234"
  },
  {
   "k": "{0} abandoned the sand — Damnatio. Forgotten.",
-  "w": "server/src/routes.js:254"
+  "w": "server/src/routes.js:257"
  },
  {
   "k": "Pick a lanista.",
-  "w": "server/src/routes.js:319"
- },
- {
-  "k": "Not in the arena now.",
-  "w": "server/src/routes.js:319"
- },
- {
-  "k": "Fighting right now.",
-  "w": "server/src/routes.js:320"
- },
- {
-  "k": "Already in the room.",
-  "w": "server/src/routes.js:320"
- },
- {
-  "k": "They hold a ticket to this game.",
-  "w": "server/src/routes.js:320"
- },
- {
-  "k": "You removed them a moment ago.",
-  "w": "server/src/routes.js:320"
- },
- {
-  "k": "They cannot join this game.",
-  "w": "server/src/routes.js:321"
- },
- {
-  "k": "Ranked: {0} only.",
   "w": "server/src/routes.js:322"
  },
  {
-  "k": "Slow down.",
+  "k": "Not in the arena now.",
+  "w": "server/src/routes.js:322"
+ },
+ {
+  "k": "Fighting right now.",
+  "w": "server/src/routes.js:323"
+ },
+ {
+  "k": "Already in the room.",
+  "w": "server/src/routes.js:323"
+ },
+ {
+  "k": "They hold a ticket to this game.",
+  "w": "server/src/routes.js:323"
+ },
+ {
+  "k": "You removed them a moment ago.",
+  "w": "server/src/routes.js:323"
+ },
+ {
+  "k": "They cannot join this game.",
   "w": "server/src/routes.js:324"
  },
  {
-  "k": "You invited them already.",
+  "k": "Ranked: {0} only.",
   "w": "server/src/routes.js:325"
  },
  {
+  "k": "Slow down.",
+  "w": "server/src/routes.js:327"
+ },
+ {
+  "k": "You invited them already.",
+  "w": "server/src/routes.js:328"
+ },
+ {
   "k": "Enough invitations for this hour.",
-  "w": "server/src/routes.js:326"
+  "w": "server/src/routes.js:329"
  },
  {
   "k": "Ranked needs a living gladiator.",
-  "w": "server/src/routes.js:335"
+  "w": "server/src/routes.js:338"
  },
  {
   "k": "Ludi Infames: Veteranus and above.",
-  "w": "server/src/routes.js:336"
+  "w": "server/src/routes.js:339"
  },
  {
   "k": "Sign in with Google.",
-  "w": "server/src/routes.js:366"
+  "w": "server/src/routes.js:369"
  },
  {
   "k": "Your name: 2–24 letters.",
-  "w": "server/src/routes.js:366"
+  "w": "server/src/routes.js:369"
  },
  {
   "k": "You are signed in.",
-  "w": "server/src/routes.js:370"
+  "w": "server/src/routes.js:373"
  },
  {
   "k": "Open the arena as a guest first.",
-  "w": "server/src/routes.js:370"
+  "w": "server/src/routes.js:373"
  },
  {
   "k": "Not of your house.",
-  "w": "server/src/routes.js:378"
+  "w": "server/src/routes.js:381"
  },
  {
   "k": "{0} is in a match — the storeroom waits.",
-  "w": "server/src/routes.js:378"
+  "w": "server/src/routes.js:381"
  },
  {
   "k": "Pick where it goes.",
-  "w": "server/src/routes.js:379"
+  "w": "server/src/routes.js:382"
  },
  {
   "k": "That piece moved a moment ago — try again.",
-  "w": "server/src/routes.js:385"
+  "w": "server/src/routes.js:388"
  },
  {
   "k": "It could not go there — it stayed where it was.",
-  "w": "server/src/routes.js:386"
+  "w": "server/src/routes.js:389"
  },
  {
   "k": "Sign in first.",
-  "w": "server/src/routes.js:392"
+  "w": "server/src/routes.js:395"
  },
  {
   "k": "Your house already has gladiators — it stands as it is.",
-  "w": "server/src/routes.js:393"
+  "w": "server/src/routes.js:396"
  },
  {
   "k": "Another lanista’s house has that name.",
-  "w": "server/src/routes.js:394"
+  "w": "server/src/routes.js:397"
  },
  {
   "k": "Try again.",
-  "w": "server/src/routes.js:398"
+  "w": "server/src/routes.js:401"
  },
  {
   "k": "A house with gladiators keeps its name.",
-  "w": "server/src/routes.js:404"
+  "w": "server/src/routes.js:407"
  },
  {
   "k": "Up to {0} living gladiators.",
-  "w": "server/src/routes.js:409"
- },
- {
-  "k": "Finish or leave your game first.",
   "w": "server/src/routes.js:412"
  },
  {
+  "k": "Finish or leave your game first.",
+  "w": "server/src/routes.js:415"
+ },
+ {
   "k": "Quick chat only.",
-  "w": "server/src/routes.js:424"
+  "w": "server/src/routes.js:427"
  },
  {
   "k": "That invitation is gone.",
-  "w": "server/src/routes.js:434"
+  "w": "server/src/routes.js:437"
  },
  {
   "k": "Already under way.",
-  "w": "server/src/routes.js:459"
+  "w": "server/src/routes.js:462"
  },
  {
   "k": "Sit down first.",
-  "w": "server/src/routes.js:459"
+  "w": "server/src/routes.js:462"
  },
  {
   "k": "The countdown was stopped — press Start again.",
-  "w": "server/src/routes.js:467"
- },
- {
-  "k": "The horns are not yet.",
-  "w": "server/src/routes.js:469"
- },
- {
-  "k": "The host sounds the horns.",
   "w": "server/src/routes.js:470"
  },
  {
+  "k": "The horns are not yet.",
+  "w": "server/src/routes.js:472"
+ },
+ {
+  "k": "The host sounds the horns.",
+  "w": "server/src/routes.js:473"
+ },
+ {
   "k": "Only the host holds the horns.",
-  "w": "server/src/routes.js:480"
+  "w": "server/src/routes.js:483"
  },
  {
   "k": "Join the room first.",
-  "w": "server/src/routes.js:504"
+  "w": "server/src/routes.js:507"
  },
  {
   "k": "Every seat is taken.",
-  "w": "server/src/routes.js:505"
+  "w": "server/src/routes.js:508"
  },
  {
   "k": "The crier has called three times.",
-  "w": "server/src/routes.js:505"
+  "w": "server/src/routes.js:508"
  },
  {
   "k": "The crier needs a breath — {0} s.",
-  "w": "server/src/routes.js:506"
+  "w": "server/src/routes.js:509"
  },
  {
   "k": "Not your match.",
-  "w": "server/src/routes.js:512"
+  "w": "server/src/routes.js:515"
  },
  {
   "k": "The match is not over.",
-  "w": "server/src/routes.js:514"
+  "w": "server/src/routes.js:517"
  },
  {
   "k": "Join the game to talk.",
-  "w": "server/src/routes.js:519"
+  "w": "server/src/routes.js:522"
  },
  {
   "k": "The room closes when the horns sound.",
-  "w": "server/src/routes.js:520"
+  "w": "server/src/routes.js:523"
  },
  {
   "k": "Make a gladiator first.",
-  "w": "server/src/routes.js:533"
+  "w": "server/src/routes.js:536"
  },
  {
   "k": "Tickets are paid from a gladiator’s wallet.",
-  "w": "server/src/routes.js:542"
+  "w": "server/src/routes.js:545"
  },
  {
   "k": "The ticket price changed — try again.",
-  "w": "server/src/routes.js:548"
+  "w": "server/src/routes.js:551"
  },
  {
   "k": "The pass seats a gladiator’s house — make a gladiator first.",
-  "w": "server/src/routes.js:554"
- },
- {
-  "k": "Leave your room first.",
-  "w": "server/src/routes.js:556"
- },
- {
-  "k": "One guest pass a day for each house — come back tomorrow.",
   "w": "server/src/routes.js:557"
  },
  {
+  "k": "Leave your room first.",
+  "w": "server/src/routes.js:559"
+ },
+ {
+  "k": "One guest pass a day for each house — come back tomorrow.",
+  "w": "server/src/routes.js:560"
+ },
+ {
   "k": "Not a look.",
-  "w": "server/src/routes.js:564"
+  "w": "server/src/routes.js:567"
  },
  {
   "k": "That look is too large.",
-  "w": "server/src/routes.js:564"
+  "w": "server/src/routes.js:567"
  },
  {
   "k": "No party with that code.",
-  "w": "server/src/routes.js:570"
+  "w": "server/src/routes.js:573"
  },
  {
   "k": "Leave your party first.",
-  "w": "server/src/routes.js:571"
+  "w": "server/src/routes.js:574"
  },
  {
   "k": "That party is full.",
-  "w": "server/src/routes.js:571"
+  "w": "server/src/routes.js:574"
  },
  {
   "k": "Wagers are paid from a living gladiator’s wallet.",
-  "w": "server/src/routes.js:578"
+  "w": "server/src/routes.js:581"
  },
  {
   "k": "Only the host opens the match.",
-  "w": "server/src/routes.js:587"
- },
- {
-  "k": "The opening is too large.",
-  "w": "server/src/routes.js:588"
- },
- {
-  "k": "That match is over.",
   "w": "server/src/routes.js:590"
  },
  {
-  "k": "The free stands are full — 30 watching.",
+  "k": "The opening is too large.",
   "w": "server/src/routes.js:591"
  },
  {
+  "k": "That match is over.",
+  "w": "server/src/routes.js:593"
+ },
+ {
+  "k": "The free stands are full — 30 watching.",
+  "w": "server/src/routes.js:594"
+ },
+ {
   "k": "That move is too large.",
-  "w": "server/src/routes.js:601"
+  "w": "server/src/routes.js:604"
  },
  {
   "k": "The match is not live.",
-  "w": "server/src/routes.js:602"
- },
- {
-  "k": "A CPU holds your seat now.",
-  "w": "server/src/routes.js:603"
- },
- {
-  "k": "You left this match.",
-  "w": "server/src/routes.js:603"
- },
- {
-  "k": "That seat is not yours.",
   "w": "server/src/routes.js:605"
  },
  {
+  "k": "A CPU holds your seat now.",
+  "w": "server/src/routes.js:606"
+ },
+ {
+  "k": "You left this match.",
+  "w": "server/src/routes.js:606"
+ },
+ {
+  "k": "That seat is not yours.",
+  "w": "server/src/routes.js:608"
+ },
+ {
   "k": "The sand is quiet now.",
-  "w": "server/src/routes.js:613"
+  "w": "server/src/routes.js:616"
  },
  {
   "k": "No one to name.",
-  "w": "server/src/routes.js:625"
+  "w": "server/src/routes.js:628"
  },
  {
   "k": "No one to drop.",
-  "w": "server/src/routes.js:642"
+  "w": "server/src/routes.js:645"
  },
  {
   "k": "Still here.",
-  "w": "server/src/routes.js:642"
+  "w": "server/src/routes.js:645"
  },
  {
   "k": "{0} is in a match — the satchel waits.",
-  "w": "server/src/routes.js:660"
+  "w": "server/src/routes.js:663"
  },
  {
   "k": "{0} is in a match — the forge waits.",
-  "w": "server/src/routes.js:664"
- },
- {
-  "k": "That piece is not there.",
-  "w": "server/src/routes.js:665"
- },
- {
-  "k": "That piece is whole.",
-  "w": "server/src/routes.js:665"
- },
- {
-  "k": "The treasury needs {0} coin.",
   "w": "server/src/routes.js:667"
  },
  {
-  "k": "The repair costs {0} coin.",
+  "k": "That piece is not there.",
   "w": "server/src/routes.js:668"
  },
  {
-  "k": "That piece changed a moment ago — try again.",
+  "k": "That piece is whole.",
+  "w": "server/src/routes.js:668"
+ },
+ {
+  "k": "The treasury needs {0} coin.",
   "w": "server/src/routes.js:670"
  },
  {
-  "k": "No such piece.",
+  "k": "The repair costs {0} coin.",
+  "w": "server/src/routes.js:671"
+ },
+ {
+  "k": "That piece changed a moment ago — try again.",
   "w": "server/src/routes.js:673"
  },
  {
+  "k": "No such piece.",
+  "w": "server/src/routes.js:676"
+ },
+ {
   "k": "No such gift.",
-  "w": "server/src/routes.js:681"
+  "w": "server/src/routes.js:684"
  },
  {
   "k": "{0} is in a match — open it afterwards.",
-  "w": "server/src/routes.js:682"
+  "w": "server/src/routes.js:685"
  },
  {
   "k": "That offering is not there.",
-  "w": "server/src/routes.js:708"
+  "w": "server/src/routes.js:711"
  },
  {
   "k": "Up to {0} offerings in the satchel.",
-  "w": "server/src/routes.js:710"
+  "w": "server/src/routes.js:713"
  },
  {
   "k": "The shelf is full.",
-  "w": "server/src/routes.js:710"
+  "w": "server/src/routes.js:713"
  },
  {
   "k": "Nothing to take.",
-  "w": "server/src/routes.js:714"
+  "w": "server/src/routes.js:717"
  },
  {
   "k": "The pick is made.",
-  "w": "server/src/routes.js:715"
+  "w": "server/src/routes.js:718"
  },
  {
   "k": "Pick one of the pieces.",
-  "w": "server/src/routes.js:715"
+  "w": "server/src/routes.js:718"
  },
  {
   "k": "Someone bought it first.",
-  "w": "server/src/routes.js:719"
+  "w": "server/src/routes.js:722"
  },
  {
   "k": "Costs {0} coin.",
-  "w": "server/src/routes.js:720"
+  "w": "server/src/routes.js:723"
  },
  {
   "k": "No such house.",
-  "w": "server/src/routes.js:725"
+  "w": "server/src/routes.js:728"
  },
  {
   "k": "That is your own house.",
-  "w": "server/src/routes.js:730"
+  "w": "server/src/routes.js:733"
  },
  {
   "k": "Up to {0} houses.",
-  "w": "server/src/routes.js:731"
+  "w": "server/src/routes.js:734"
  },
  {
   "k": "Only testers may do that.",
-  "w": "server/src/routes.js:744"
+  "w": "server/src/routes.js:747"
  },
  {
   "k": "{0} is in a match — grant afterwards.",
-  "w": "server/src/routes.js:745"
- },
- {
-  "k": "Nothing to grant.",
   "w": "server/src/routes.js:748"
  },
  {
+  "k": "Nothing to grant.",
+  "w": "server/src/routes.js:751"
+ },
+ {
   "k": "Only the host opens the stands.",
-  "w": "server/src/routes.js:770"
- },
- {
-  "k": "This game has no stands.",
-  "w": "server/src/routes.js:771"
- },
- {
-  "k": "Which rotation?",
-  "w": "server/src/routes.js:771"
- },
- {
-  "k": "Nobody holds a ticket.",
-  "w": "server/src/routes.js:772"
- },
- {
-  "k": "The stands already chose this rotation.",
   "w": "server/src/routes.js:773"
  },
  {
+  "k": "This game has no stands.",
+  "w": "server/src/routes.js:774"
+ },
+ {
+  "k": "Which rotation?",
+  "w": "server/src/routes.js:774"
+ },
+ {
+  "k": "Nobody holds a ticket.",
+  "w": "server/src/routes.js:775"
+ },
+ {
+  "k": "The stands already chose this rotation.",
+  "w": "server/src/routes.js:776"
+ },
+ {
   "k": "The stands have chosen — wait for the next rotation.",
-  "w": "server/src/routes.js:777"
+  "w": "server/src/routes.js:780"
  },
  {
   "k": "Only ticket holders choose from the stands.",
-  "w": "server/src/routes.js:777"
+  "w": "server/src/routes.js:780"
  },
  {
   "k": "You already chose this rotation.",
-  "w": "server/src/routes.js:779"
- },
- {
-  "k": "No stands window for that rotation.",
   "w": "server/src/routes.js:782"
  },
  {
+  "k": "No stands window for that rotation.",
+  "w": "server/src/routes.js:785"
+ },
+ {
   "k": "Only the host closes the stands.",
-  "w": "server/src/routes.js:783"
+  "w": "server/src/routes.js:786"
  },
  {
   "k": "The stands are still choosing.",
-  "w": "server/src/routes.js:783"
+  "w": "server/src/routes.js:786"
  },
  {
   "k": "Only the fighters report a speared spectator.",
-  "w": "server/src/routes.js:788"
+  "w": "server/src/routes.js:791"
  },
  {
   "k": "No ticket holder in that seat.",
-  "w": "server/src/routes.js:789"
+  "w": "server/src/routes.js:792"
  },
  {
   "k": "{0} won {1} at Flavius’s auction.",
-  "w": "server/src/routes.js:830"
+  "w": "server/src/routes.js:833"
  },
  {
   "k": "a named piece",
-  "w": "server/src/routes.js:830"
+  "w": "server/src/routes.js:833"
  },
  {
   "k": "Test houses may not bid.",
-  "w": "server/src/routes.js:839"
+  "w": "server/src/routes.js:842"
  },
  {
   "k": "Flavius sells to Veteranus and above.",
-  "w": "server/src/routes.js:839"
+  "w": "server/src/routes.js:842"
  },
  {
   "k": "Your house already won a lot this week.",
-  "w": "server/src/routes.js:840"
+  "w": "server/src/routes.js:843"
  },
  {
   "k": "There is no seat of yours to take back.",
-  "w": "server/src/routes.js:846"
- },
- {
-  "k": "Too late — the CPU has fought on in your seat. You may watch.",
-  "w": "server/src/routes.js:847"
- },
- {
-  "k": "Your gladiator is gone.",
-  "w": "server/src/routes.js:848"
- },
- {
-  "k": "Too late — the CPU has begun your next turn. You may watch.",
   "w": "server/src/routes.js:849"
  },
  {
+  "k": "Too late — the CPU has fought on in your seat. You may watch.",
+  "w": "server/src/routes.js:850"
+ },
+ {
+  "k": "Your gladiator is gone.",
+  "w": "server/src/routes.js:851"
+ },
+ {
+  "k": "Too late — the CPU has begun your next turn. You may watch.",
+  "w": "server/src/routes.js:852"
+ },
+ {
   "k": "Sign in to bid.",
-  "w": "server/src/routes.js:867"
+  "w": "server/src/routes.js:870"
  },
  {
   "k": "Test houses may not bid at Flavius’s auction.",
-  "w": "server/src/routes.js:871"
+  "w": "server/src/routes.js:874"
  },
  {
   "k": "No such lot.",
-  "w": "server/src/routes.js:872"
+  "w": "server/src/routes.js:875"
  },
  {
   "k": "The hammer has fallen on that lot.",
-  "w": "server/src/routes.js:873"
- },
- {
-  "k": "Your house already leads another lot — one win a house a week.",
   "w": "server/src/routes.js:876"
  },
  {
-  "k": "Your house leads this lot already.",
-  "w": "server/src/routes.js:877"
+  "k": "Your house already leads another lot — one win a house a week.",
+  "w": "server/src/routes.js:879"
  },
  {
-  "k": "{0}’s purse holds less than {1} coin.",
+  "k": "Your house leads this lot already.",
   "w": "server/src/routes.js:880"
  },
  {
+  "k": "{0}’s purse holds less than {1} coin.",
+  "w": "server/src/routes.js:883"
+ },
+ {
   "k": "The lot is busy — try again.",
-  "w": "server/src/routes.js:886"
+  "w": "server/src/routes.js:889"
  },
  {
   "k": "No such loadout.",
-  "w": "server/src/routes.js:964"
+  "w": "server/src/routes.js:967"
  },
  {
   "k": "Too many lookups — wait a minute.",
-  "w": "server/src/routes.js:1008"
- },
- {
-  "k": "No house with that FID.",
   "w": "server/src/routes.js:1011"
  },
  {
+  "k": "No house with that FID.",
+  "w": "server/src/routes.js:1014"
+ },
+ {
   "k": "Another lanista has that name.",
-  "w": "server/src/routes.js:1026"
+  "w": "server/src/routes.js:1029"
  },
  {
   "k": "Type your house name to confirm.",
-  "w": "server/src/routes.js:1050"
+  "w": "server/src/routes.js:1053"
  },
  {
   "k": "Type your lanista name to confirm.",
-  "w": "server/src/routes.js:1050"
+  "w": "server/src/routes.js:1053"
  },
  {
   "k": "Leave your room or finish your match first.",
-  "w": "server/src/routes.js:1051"
+  "w": "server/src/routes.js:1054"
  },
  {
   "k": "No lanista with that FID.",
-  "w": "server/src/routes.js:1074"
+  "w": "server/src/routes.js:1077"
  },
  {
   "k": "Only named pieces stay home — printed gear is never kept out of Ranked.",
-  "w": "server/src/routes.js:1125"
+  "w": "server/src/routes.js:1128"
  },
  {
   "k": "A seat in the stands goes to a house with a gladiator — raise one first.",
-  "w": "server/src/routes.js:1197"
+  "w": "server/src/routes.js:1202"
  },
  {
   "k": "A ticket costs {0} coin.",
-  "w": "server/src/routes.js:1199"
+  "w": "server/src/routes.js:1204"
  },
  {
   "k": "A house wagers through a living gladiator — raise one first.",
-  "w": "server/src/routes.js:1216"
+  "w": "server/src/routes.js:1221"
  },
  {
   "k": "Not enough in the treasury.",
-  "w": "server/src/routes.js:1217"
+  "w": "server/src/routes.js:1222"
  },
  {
   "k": "The treasury holds less than {0} coin.",
-  "w": "server/src/routes.js:1234"
+  "w": "server/src/routes.js:1239"
  },
  {
   "k": "Issued gear is never repaired.",
-  "w": "server/src/routes.js:1245"
+  "w": "server/src/routes.js:1250"
  },
  {
   "k": "No such kit.",
-  "w": "server/src/routes.js:1260"
+  "w": "server/src/routes.js:1265"
  },
  {
   "k": "One free kit a day for each house — come back tomorrow.",
-  "w": "server/src/routes.js:1263"
+  "w": "server/src/routes.js:1268"
  },
  {
   "k": "Unknown request:",
-  "w": "server/src/routes.js:1278"
+  "w": "server/src/routes.js:1285"
+ },
+ {
+  "k": "Too many requests — wait a moment.",
+  "w": "server/src/routes.js:1286"
  },
  {
   "k": "Your two hours as a guest are up — sign in to keep watching.",
-  "w": "server/src/routes.js:1280"
+  "w": "server/src/routes.js:1288"
  },
  {
   "k": "Sign in to {0}.",
-  "w": "server/src/routes.js:1281"
+  "w": "server/src/routes.js:1289"
  },
  {
   "k": "Name your house first — every lanista needs a Domus.",
-  "w": "server/src/routes.js:1284"
+  "w": "server/src/routes.js:1292"
  },
  {
   "k": "Test houses play Custom only.",
-  "w": "server/src/routes.js:1288"
+  "w": "server/src/routes.js:1296"
+ },
+ {
+  "k": "The arena hit a snag — try again (ref {0}).",
+  "w": "server/src/harden93.js:36"
+ },
+ {
+  "k": "That was already done — refresh to see it.",
+  "w": "server/src/harden93.js:41"
+ },
+ {
+  "k": "That request id was used for something else — try again.",
+  "w": "server/src/harden93.js:46"
+ },
+ {
+  "k": "Still working on that — a moment.",
+  "w": "server/src/harden93.js:47"
  },
  {
   "k": "Primus Palus",
