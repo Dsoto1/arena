@@ -1411,6 +1411,19 @@ share copy — the site download play/flavius-rule-arena.zip.)
   Accept ("This offer is no longer on the table"). CHANGE: the "How the fighters grew this week" letter goes INTO the Week N in review letter
   (202 .rev91) as a subsection "From your Doctores": one row per fighter (portrait, the five rating icons with old → new and a green +0.4,
   band-ups highlighted, fatigue chip), quiet fighters folded; the separate letter is no longer sent. Mail letters may use icons/structure freely.
+  FIXES (v0.95): after a SPECIAL EVENT week the game did not return to Your ludus nor show the Acta Diurna — every week end the same path;
+  a signed recruit shows his PORTRAIT (was a blank avatar); recruiting board tablets lose their buttons (click selects; act on the right card).
+  RECRUITING III = v0.96 HEADLINE (his 1a, 2026-10-07): ① SCOUT — ratings as letter-grade blocks A+…F (start "?", hover = meaning + how sure),
+  no numbers before signing; weekly RECRUITER'S HOURS (2a: 20/week, ≤8 per recruit, scaled with the Recruiter): Ask around the forum 1 h (one
+  rough grade) · Watch him train 2 h (Speed/Strength) · Share a cup 2 h (Intelligence/Charisma) · Study his bouts 3 h (sharpens all + Luck) ·
+  Trial bout 5 h (+ a little coin, small injury risk, sharpens everything); all five graded → personality (wants, temper, dealbreakers) revealed;
+  grades are ESTIMATES (an A may be 91–99 or really a B+), accuracy from the Recruiter's level. ② COURT — the ludus has PUBLIC GRADES the whole
+  league sees (4a: Training, Medicine, Glory, Pay, City); recruit grades are known only to houses that scouted them; pitches tied to house grades +
+  his wants (Show him the Training Yard, Dine at the lanista's table, Promise him the sand, Tour the infirmary, Meet your champion…) with
+  projections ("with our Doctore his Strength B could reach A-"); wants-matching pitches count most; rival counter-bids stay; the Scout tab stays
+  usable while courting. ③ OFFER as today. On signing a "The truth" card: scouted grade vs real value. Card tabs reorganised (clear sections,
+  emphasis on what matters). ADVISOR LEVELS (his 3): every council advisor starts at LEVEL 1 in a new career, EXCEPT a starter house or Easy
+  start (higher); levels rise (perk tree / hiring for coin) — in v0.96 the Recruiter's level drives grade accuracy + hours; other advisors' effects later.
   FIX: Training Yard fighter card → Bond: the "Nobody free to bond with" box, the + buttons and the N/N count overflow the card (wrap/shrink inside it).
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
