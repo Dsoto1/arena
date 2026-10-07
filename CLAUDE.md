@@ -1365,6 +1365,26 @@ share copy — the site download play/flavius-rule-arena.zip.)
 - **THREE.JS IN THE GAME (his yes 2026-10-07, v0.93):** the token modeller loads three.js ON DEMAND (from play/assets, only when the Studio's
   token modeller opens; cached by the browser after) — never bundled into the page. Matches never run 3D: the modeller renders each token once to
   the minis8 sprite-sheet format and the board keeps drawing flat images. The standalone download must still work (inline or skip the modeller there).
+- **v0.95 STABILIZATION (his notes + answers 2026-10-07; numbering = his list):** FIXES: Zora mini fits a tile; menu intro preloads (no
+  stutter); Bestiary opens inside the rules window and returns there; humanoids "slay", never "eat"; Trophy Case locked look until earned + own
+  border colour each; Studio Find a creation crash + search width = name length; starting Arena Key token = "2 keys" face → "1 key" → discarded;
+  character card preview live; class editor legs laid out like arms (Leather Tasset under Legs · Upper (pair), no padded upper leg), no red leg
+  flash; armor fit tool Both sides + independent sides, Mirror works, "choose an equip point" save error gone (then he Exports, we bake); beast
+  token rounds without the letter; Cohorts card header + real token; CF purchase feedback + arena keys in the inventory; damage/AP popups above
+  bubbles, fanned out; "editors unlocked" popup no longer after every event.
+  CHANGES: team rings at mini bases (fixed A–D colours, colour-blind safe); main menu buttons AAA quality (sandstone, bevel, raised); Rules window
+  → "Tactics" (button + title): Tutorials, one Rules-at-a-Glance (purple/gold marks, no scroll), What's New = first card of Version History,
+  Strategy tab (Play Now Guide + Manager Guide), Reference tab (Glossary · Bestiary of system + custom TYPES · Quick Reference from his PDF),
+  one Rulebook link in the last tab; Your Play Now Gladiators button in the Play Now submenu (Annals keeps it); SETTINGS FULL SCREEN (Studio-like
+  rail); Language = an inline dropdown, the flag updates (no popup); Blessings on pillars → the "Board & pieces" tab (old Tokens + Editors merged)
+  with pot/token pictures; home-city-banner setting removed; Hints & help shares a row with On the board; Themes as compact swatches; Saves tab
+  removed from Settings; spectator emotes setting removed; custom class card shows its weapon cards (1×2) or on hover; Arena Chest swap shows the
+  outgoing card; Focus roll = locdie.jpg faces, dice stacked in a column, clearer clickable limbs; 3D poser joint highlight, athletic body, 3D card
+  upper right, short personality sliders; PLAY NOW: Begin Event + 🎲 (icon, hover text) + one-line event summary grouped compactly in the UPPER
+  RIGHT, player-count picker under its icon, seats >4 on a second row, Stands card fixed right; Creator Studio designers get TABS (like elsewhere).
+  RULES: ONLINE — Damnatio only at creation, never switched into or out of, other class switches stay 100 coin (server). FOCUS — players only
+  (beasts never Focus); costs at least 3 movement and uses ALL remaining movement; Focus on a pillar's Blessings = +1 damage on a successful
+  attack (like the Soldier ability). Waiting on uploads: Zora's TTS bundle, the Quick Reference page, his armor-fit Export.
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
