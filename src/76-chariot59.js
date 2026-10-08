@@ -13,6 +13,8 @@ const CH_CARDS59=[['chRed',_T('Invicta Gloria')],['chBlue',_T('Azureus Magnus')]
 chariotDraft=async function(){
   log(_T('Chariot draft — a snake draft: every racer drafts a chariot card, head armor, chest armor and a level 1-2 weapon; wheel and horse tokens are dealt at random.'),'hd');
   const heads=['galea','galea','cassis','crista','murmillo','cassis'],chests=['balteus','pectorale','pectorale','lorica','lorica','balteus1'],weps=[...MARKET_W[1],...MARKET_W[2]];
+  /* v0.98 (257-v98draft): custom head/chest armor and level 1-2 weapons the racers' classes bring join the pools */
+  if(typeof draftExtra98==='function')for(const x of draftExtra98(S.players,[])){if(x.kind==='w'){if(x.lv<=2)weps.push(x.k)}else if(ARM[x.k].slot==='head')heads.push(x.k);else if(ARM[x.k].slot==='chest')chests.push(x.k)}
   const rounds=[[_T('Chariot'),CH_CARDS59.map(x=>x[0]),'c'],[_T('Head armor'),heads,'a'],[_T('Chest armor'),chests,'a'],[_T('Weapon'),weps,'w']];
   rounds.forEach(([title,pool,kind],ri)=>rounds[ri].avail=[...pool]);
   for(let ri=0;ri<rounds.length;ri++){const [title,,kind]=rounds[ri];const avail=rounds[ri].avail;const order=ri%2?[...S.players].reverse():S.players;
