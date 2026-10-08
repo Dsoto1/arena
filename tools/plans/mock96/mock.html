@@ -1,0 +1,140 @@
+<!doctype html><html><head><meta charset="utf-8"><title>v0.96 mock-ups</title>
+<style>
+:root{--bg:#1b130d;--pan:#2a1d13;--pan2:#33241a;--line:#5a4128;--gold:#d8b45a;--txt:#efe2c8;--dim:#a3907a;--red:#b8432f;--grn:#6fae5a;--blu:#4f8fd0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.35 Georgia,serif}
+.shot{width:1440px;padding:18px;border-bottom:4px solid #000}
+h2{margin:0 0 10px;color:var(--gold);font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+.box{background:var(--pan);border:1px solid var(--line);border-radius:10px;padding:12px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:7px;border:1px solid var(--line);background:linear-gradient(#4a3420,#33241a);color:var(--txt);font:inherit;font-size:13px}
+.btn.gold{background:linear-gradient(#e2c06a,#a9842f);color:#2a1a08;border-color:#f0d58a;font-weight:bold}
+.btn.dim{opacity:.45}.chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;background:#3c2a1b;border:1px solid var(--line);font-size:12px}
+.coin{width:16px;height:16px;vertical-align:-3px}
+/* room */
+.room{display:grid;grid-template-columns:1fr 300px;gap:14px}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.evcard{width:62px;height:86px;border-radius:6px;background:linear-gradient(#7a5a2e,#3a2814);border:2px solid var(--gold);display:grid;place-items:center;font-size:11px;text-align:center}
+.top .t1{font-size:20px;color:var(--gold)}.top .sp{flex:1}
+.seats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.seat{height:218px;border-radius:10px;background:var(--pan2);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:8px;position:relative}
+.seat img.fig{height:104px;margin-top:2px}.seat .nm{font-weight:bold;margin-top:4px}.seat .sub{color:var(--dim);font-size:12px}
+.seat.me{border:2px solid var(--gold);box-shadow:0 0 0 3px #d8b45a22}
+.seat.open{border:2px dashed #6b5136;background:transparent;justify-content:center;color:var(--dim)}
+.seat.cpu{opacity:.75}.seat .rdy{position:absolute;top:6px;right:8px;color:var(--grn);font-size:12px}
+.seat .tm{position:absolute;top:6px;left:8px;width:12px;height:12px;border-radius:50%}
+.send{margin-top:auto;display:flex;align-items:center;gap:6px;font-size:12px;background:#1f160e;border:1px solid var(--line);border-radius:6px;padding:3px 6px}
+.send input{width:44px;background:#120c07;color:var(--txt);border:1px solid var(--line);border-radius:4px;padding:1px 4px}
+.settings{margin-top:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px 14px}
+.settings label{display:flex;flex-direction:column;font-size:12px;color:var(--dim);gap:3px}
+.settings select,.settings .fake{background:#1f160e;color:var(--txt);border:1px solid var(--line);border-radius:5px;padding:5px 6px;font:inherit;font-size:13px}
+.actions{display:flex;gap:10px;margin-top:12px;align-items:center}.actions .sp{flex:1}
+.users h3{margin:0 0 8px;font-size:14px;color:var(--gold)}
+.u{display:flex;align-items:center;gap:8px;padding:6px;border-radius:7px;border:1px solid transparent}.u:hover,.u.hl{background:#3a2a1c;border-color:var(--line)}
+.u .n{flex:1}.u .n b{display:block}.u .n span{font-size:11px;color:var(--dim)}
+.u .x{font-size:11px;color:var(--dim)}
+.qc{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.feed{margin-top:8px;font-size:12px;color:var(--dim);height:74px;overflow:hidden;border-top:1px solid var(--line);padding-top:6px}
+/* domus rank banner (vertical) */
+.ban{width:22px;height:34px;position:relative;flex:none}
+.ban svg{width:100%;height:100%}
+/* list */
+.filters{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.filters select{background:#1f160e;color:var(--txt);border:1px solid var(--line);border-radius:5px;padding:5px}
+table{width:100%;border-collapse:collapse;font-size:13px}th{color:var(--dim);font-weight:normal;text-align:left;border-bottom:1px solid var(--line);padding:6px}
+td{padding:7px 6px;border-bottom:1px solid #3a2a1c}tr.sel td{background:#3a2a1c}
+.flag{width:26px;height:18px;border-radius:2px;display:inline-block;vertical-align:-4px;border:1px solid #0006}
+.pop{position:absolute;width:390px;background:#271b11;border:2px solid var(--gold);border-radius:10px;padding:12px;box-shadow:0 10px 30px #000a}
+.rec{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:8px}
+.rec div{border-radius:5px;padding:4px;text-align:center;font-size:11px;background:#33241a;border:1px solid var(--line)}
+.rec .w{border-color:var(--grn);color:#bfe3b0}.rec .l{border-color:var(--red);color:#f0b8ad}
+/* ranks */
+.ranks{display:flex;gap:18px;align-items:flex-end}.ranks .r{text-align:center;font-size:12px}.ranks .r .ban{width:56px;height:96px;margin:0 auto 4px}
+/* action bar */
+.bar{display:flex;gap:10px;align-items:stretch}
+.grp{flex:1;border-radius:10px;border:2px solid var(--line);background:var(--pan2);padding:8px}
+.grp h4{margin:0 0 6px;font-size:14px;display:flex;justify-content:space-between}.grp h4 small{color:var(--dim);font-weight:normal}
+.grp.atk{border-color:#a33a28;background:linear-gradient(#3a1d14,#2a1a12)}
+.grp .row{display:flex;gap:6px;flex-wrap:wrap}.grp .btn{font-size:12px;padding:6px 9px}
+.grp.off{opacity:.55}.end{width:150px;display:grid;place-items:center;border-radius:10px;border:2px solid var(--gold);background:linear-gradient(#5a4020,#33241a);font-size:16px;color:var(--gold)}
+.note{color:var(--dim);font-size:12px;margin-top:8px}
+</style></head><body>
+
+<!-- ===================== A. THE ROOM ===================== -->
+<div class="shot" id="room"><h2>A · Online room (Familia, 8 seats) — you are the host</h2>
+<div class="room"><div>
+ <div class="top"><div class="evcard">Familia<br>2 v 2</div>
+  <div><div class="t1">Familia · Capua</div><div class="note" style="margin:2px 0 0">Custom · <span class="chip">🔒 Password</span> <span class="chip">🌙 Night</span> <span class="chip">🎟 Tickets 5 <img class="coin" src="../../../assets/coin.webp"></span> 6/8 seated · 7 in the room</div></div>
+  <div class="sp"></div><span class="btn">✉ Invite by FID</span><span class="btn">📣 Call the crier</span><span class="btn">🚪 Exit lobby</span></div>
+ <div class="seats">
+  <div class="seat me"><span class="tm" style="background:var(--blu)"></span><span class="rdy">✓ Ready</span><img class="fig" src="../../../assets/mini_hero.webp"><div class="nm">👑 Cassius Varro</div><div class="sub">Hero · Veteranus</div>
+   <div class="send">Send <input value="6"> <img class="coin" src="../../../assets/coin.webp"> <span style="color:var(--dim)">0–10</span></div></div>
+  <div class="seat"><span class="tm" style="background:var(--blu)"></span><span class="rdy">✓ Ready</span><img class="fig" src="../../../assets/mini_amazonia.webp"><div class="nm">Thessa</div><div class="sub">Amazonia · Gregarius</div></div>
+  <div class="seat"><span class="tm" style="background:#e08a2c"></span><img class="fig" src="../../../assets/mini_soldier.webp"><div class="nm">Marcus Rufus</div><div class="sub">Soldier · Primus Palus</div></div>
+  <div class="seat"><span class="tm" style="background:#e08a2c"></span><span class="rdy">✓ Ready</span><img class="fig" src="../../../assets/mini_venatore.webp"><div class="nm">Ostorius</div><div class="sub">Venatore · Veteranus</div></div>
+  <div class="seat"><span class="tm" style="background:var(--grn)"></span><img class="fig" src="../../../assets/mini_slave.webp"><div class="nm">Nyx</div><div class="sub">Slave · Tiro</div></div>
+  <div class="seat cpu"><span class="tm" style="background:var(--grn)"></span><img class="fig" src="../../../assets/mini_royalty.webp"><div class="nm">CPU</div><div class="sub">Royalty · 🧠 Fighter</div></div>
+  <div class="seat open">＋ Open seat<br><span style="font-size:12px">Sit · ✉ Invite</span></div>
+  <div class="seat open">＋ Open seat<br><span style="font-size:12px">Sit · ✉ Invite</span></div>
+ </div>
+ <div class="box" style="margin-top:12px"><h2 style="margin-bottom:6px">Table settings <span style="text-transform:none;color:var(--dim);font-size:12px;letter-spacing:0">(host only — others see them read-only)</span></h2>
+ <div class="settings">
+  <label>Event<select><option>Familia</option></select></label><label>City<select><option>Capua</option></select></label>
+  <label>Seats<select><option>8</option></select></label><label>Teams<select><option>3 teams · auto-balance</option></select></label>
+  <label>Time<select><option>Night</option></select></label><label>If someone leaves<select><option>A CPU takes over</option></select></label>
+  <label>Stands<select><option>Open · 5 coin</option></select></label><label>🔒 Password<span class="fake">••••  (only Custom)</span></label>
+ </div>
+ <div class="actions"><span class="note" style="margin:0">Quick chat:</span><span class="chip">Ave!</span><span class="chip">Ready</span><span class="chip">One moment</span><span class="chip">Good luck</span><span class="chip">Let's begin</span><div class="sp"></div><span class="btn gold" style="font-size:15px;padding:9px 22px">⚔ Start</span></div></div>
+</div>
+<div class="box users"><h3>In the room · 7/8</h3>
+ <div class="u hl"><span class="ban" data-r="4"></span><div class="n"><b>👑 Cassius Varro</b><span>House Varro · Ludus Magnus</span></div><span class="x">you</span></div>
+ <div class="u"><span class="ban" data-r="2"></span><div class="n"><b>Thessa</b><span>House Ilia · Ludus</span></div><span class="x">👑 Give host · ✕</span></div>
+ <div class="u"><span class="ban" data-r="6"></span><div class="n"><b>Marcus Rufus</b><span>House Rufia · Domus Illustris</span></div></div>
+ <div class="u"><span class="ban" data-r="3"></span><div class="n"><b>Ostorius</b><span>House Ostia · Ludus Minor+</span></div></div>
+ <div class="u"><span class="ban" data-r="0"></span><div class="n"><b>Nyx</b><span>House Nox · Tugurium</span></div></div>
+ <div class="u"><span class="ban" data-r="1"></span><div class="n"><b>Aelia</b><span>House Aelia · Taberna</span></div><span class="x">standing</span></div>
+ <div class="u"><span class="ban" data-r="5"></span><div class="n"><b>Severus</b><span>House Seva · Familia Nota</span></div><span class="x">🎟 stands</span></div>
+ <div class="feed">Room · Thessa: Ave! · Ostorius: Ready · Nyx joined · Aelia stood up</div>
+ <div class="note">Click a name → their house card (record, last 6 events). The crown passes to whoever joined earliest if the host leaves.</div>
+</div></div></div>
+
+<!-- ===================== B. LOBBY LIST ===================== -->
+<div class="shot" id="list" style="position:relative;height:560px"><h2>B · Lobby browser — filters, refresh, region flags, host's house rank</h2>
+<div class="box"><div class="filters">Event <select><option>All events</option></select> City <select><option>All cities</option></select> Region <select><option>All regions</option></select>
+ <label class="chip"><input type="checkbox" checked> Open seats only</label><label class="chip"><input type="checkbox"> Hide 🔒</label><div style="flex:1"></div><span class="btn">↻ Refresh</span><span class="btn gold">＋ Create room</span></div>
+<table><tr><th></th><th>Host</th><th>House rank</th><th>Event</th><th>City</th><th>Type</th><th>Seats</th><th>Status</th><th></th></tr>
+<tr class="sel"><td><span class="flag" data-f="eu"></span></td><td><b>Marcus Rufus</b></td><td><span class="ban" data-r="6" style="display:inline-block;vertical-align:-10px"></span> Domus Illustris</td><td>Democritus</td><td>Roma</td><td>Ranked</td><td>3/4</td><td>Waiting</td><td><span class="btn">Join</span> <span class="btn">👁</span></td></tr>
+<tr><td><span class="flag" data-f="na"></span></td><td><b>Cassius Varro</b></td><td><span class="ban" data-r="4" style="display:inline-block;vertical-align:-10px"></span> Ludus Magnus</td><td>Familia</td><td>Capua</td><td>Custom 🔒</td><td>6/8</td><td>Waiting</td><td><span class="btn">Join</span> <span class="btn">👁</span></td></tr>
+<tr><td><span class="flag" data-f="sa"></span></td><td><b>Nyx</b></td><td><span class="ban" data-r="0" style="display:inline-block;vertical-align:-10px"></span> Tugurium</td><td>Cassian</td><td>Pompeii</td><td>Custom</td><td>1/4</td><td>Waiting</td><td><span class="btn">Join</span> <span class="btn">👁</span></td></tr>
+<tr><td><span class="flag" data-f="as"></span></td><td><b>Severus</b></td><td><span class="ban" data-r="5" style="display:inline-block;vertical-align:-10px"></span> Familia Nota</td><td>Egidious</td><td>Alexandria</td><td>Ranked</td><td>4/4</td><td>In the arena</td><td><span class="btn">👁</span></td></tr>
+</table></div>
+<div class="pop" style="left:240px;top:150px"><div style="display:flex;gap:10px;align-items:center"><span class="ban" data-r="6" style="width:36px;height:58px"></span><div><b style="font-size:16px">House Rufia</b> <span class="chip">Domus Illustris</span><div class="note" style="margin:2px 0 0">Lanista Marcus Rufus · FID-4K2P9Q · <span class="flag" data-f="eu" style="width:18px;height:12px"></span> Europe</div></div></div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px;font-size:12px;text-align:center">
+<div class="box" style="padding:6px">Gladiators<br><b>4</b></div><div class="box" style="padding:6px">Record<br><b>31–12</b></div><div class="box" style="padding:6px">Fallen<br><b>3</b></div><div class="box" style="padding:6px">Best<br><b>Primus</b></div></div>
+<div class="note">Last 6 events</div><div class="rec"><div class="w">W<br>Roma</div><div class="w">W<br>Capua</div><div class="l">L<br>Ostia</div><div class="w">W<br>Roma</div><div class="l">✝ L<br>Nola</div><div class="w">W<br>Capua</div></div>
+<div style="margin-top:10px;text-align:right"><span class="btn">Visit house</span> <span class="btn">★ Follow</span></div></div>
+</div>
+
+<!-- ===================== C. DOMUS RANK BANNERS ===================== -->
+<div class="shot" id="ranks"><h2>C · Domus ranks — vertical banners (shown top right of the Domus, above the rank bar)</h2>
+<div class="box"><div class="ranks" id="rk"></div>
+<div class="note">Placeholder banners drawn here; the real set would be made in the Studio banner creator (one per rank, house colours on the tails).</div></div></div>
+
+<!-- ===================== D. ACTION BUTTONS ===================== -->
+<div class="shot" id="act"><h2>D · Action buttons (your Action phase)</h2>
+<div class="bar">
+ <div class="grp atk"><h4>⚔ Attack <small>2 attacks left</small></h4><div class="row"><span class="btn">🗡 Gladius · 3 dmg</span><span class="btn">🔱 Trident · 2 dmg · range 2</span><span class="btn">🎯 Focus <small>(3+ move)</small></span></div></div>
+ <div class="grp"><h4>🏃 Move <small><b style="color:var(--gold);font-size:15px">4</b> movement left</small></h4><div class="row"><span class="btn">Move</span><span class="btn">Topple · 3</span><span class="btn">Push · 2</span><span class="btn dim">Tunnel</span></div></div>
+ <div class="grp"><h4>🤝 Deal <small>1 rival in reach</small></h4><div class="row"><span class="btn">Trade</span><span class="btn">Truce</span><span class="btn dim">Loot</span></div></div>
+ <div class="grp"><h4>🏛 Market &amp; Crowd <small>7 <img class="coin" src="../../../assets/coin.webp"> · 2 🌾</small></h4><div class="row"><span class="btn">Market · L1–L2 affordable</span><span class="btn dim">Crowd Favor</span></div></div>
+ <div class="end">End turn ⏎</div></div>
+<div class="note">Every group is always on screen (same place every turn); a button greys out with the reason on hover when it can't be used now. Phones: the four groups become four big tabs, the buttons open in a tray.</div></div>
+
+<script>
+const COL=[['#6b5a48','#3d3126'],['#7d6a3a','#4a3b1c'],['#8a4a2a','#4f2614'],['#2f6a8a','#163a4d'],['#7a2a2a','#4a1212'],['#5a2f7a','#2e1645'],['#b08a2a','#5e4410'],['#d8b45a','#7a2a10']];
+const NAMES=['Tugurium','Taberna','Ludus Minor','Ludus','Ludus Magnus','Familia Nota','Domus Illustris','Domus Aurea'];
+function ban(r){const [a,b]=COL[r];const stars='★'.repeat(Math.min(r,3));return `<svg viewBox="0 0 40 64"><rect x="2" y="1" width="36" height="3" rx="1.5" fill="#c9a24a"/><path d="M5 4h30v50l-15-9-15 9z" fill="${a}" stroke="${b}" stroke-width="2"/><path d="M5 4h30v6H5z" fill="${b}"/><text x="20" y="31" font-size="${r>5?13:12}" text-anchor="middle" fill="#f3e2b0" font-family="Georgia">${['I','II','III','IV','V','VI','VII','VIII'][r]}</text>${r>=6?'<circle cx="20" cy="42" r="3" fill="#f3d27a"/>':''}</svg>`}
+document.querySelectorAll('.ban[data-r]').forEach(e=>e.innerHTML=ban(+e.dataset.r));
+const TH=[0,200,600,1500,3000,5500,9000,15000];
+document.getElementById('rk').innerHTML=NAMES.map((n,i)=>`<div class="r"><div class="ban">${ban(i)}</div><b>${n}</b><br><span style="color:var(--dim)">${TH[i]}+</span></div>`).join('');
+const FL={eu:'linear-gradient(90deg,#5a2f7a 33%,#d8b45a 33% 66%,#5a2f7a 66%)',na:'linear-gradient(#2f6a8a 50%,#b8432f 50%)',sa:'linear-gradient(90deg,#3f7a3a 50%,#d8b45a 50%)',as:'linear-gradient(#b8432f 60%,#d8b45a 60%)'};
+document.querySelectorAll('.flag').forEach(e=>e.style.background=FL[e.dataset.f]);
+</script></body></html>

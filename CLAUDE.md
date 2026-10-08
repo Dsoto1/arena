@@ -1538,7 +1538,16 @@ share copy — the site download play/flavius-rule-arena.zip.)
   (12, his screenshot 2026-10-08) ONLINE ROOM SCREEN (onlMyLobbyHTML, 118/137): the middle is empty (seats + host rules squeezed into a thin right
   column, FID invite floating mid-page, chat box at the very bottom) → proposed: seats as large cards across the middle (figure, name, class,
   rank, Ready; open seats as dashed cards with Invite), event card + rules as one strip above them, host settings + Start/Call/Send in the right
-  column, invite-by-FID + quick-chat phrases in one row under the seats; phones one column. Pending his pick (a this / b mock-up first).
+  column, invite-by-FID + quick-chat phrases in one row under the seats; phones one column. Mock-ups sent 2026-10-08: tools/plans/mock96/ (room, lobby list, domus rank banners, action buttons).
+- **v0.96 NOTES III (his list 2026-10-08, ONLINE + armory; mock-ups tools/plans/mock96/mock.html):** (13) Manager Armory rail icon = an ANVIL (today the
+  Roster's), damaged pieces in their own section on the right of the Armory tab; (14) ROOM LAYOUT (his): seats CENTRED 2×4, user list on the RIGHT
+  (👑 host, Give host, kick), table settings UNDER the seats, the "send coin" box (new coin icon, not the silver one) INSIDE your own seat card,
+  Leave = "Exit lobby" when others are there / "Close lobby" when alone, host leaves → crown to the earliest joiner (already the server rule);
+  (15) the crier (📣 lobby.call) ONLY by the host's click — never automatic on create; (16) Custom rooms may set a PASSWORD (server keeps a hash;
+  join asks; 🔒 in the list); (17) lobby list: filter/sort by event, city, region + ↻ Refresh; a REGION FLAG per room (regions drawn with the
+  system banner creator); (18) click a host/member name (list or room) → house card: record, gladiators, fallen, best rank, last 6 events W/L
+  (like Manager League rosters), Visit house · ★ Follow; (19) DOMUS RANK (new, needs his answers): one online rank per house from its whole
+  roster, shown beside every name in rooms/lists, a VERTICAL BANNER per rank (top right of the Domus above the rank bar).
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
