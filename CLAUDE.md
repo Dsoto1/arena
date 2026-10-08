@@ -1556,7 +1556,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   beside their name in the list), the phrase picker sits bottom right under the user list; q5b ACTION BAR restyled to HIS PICTURE (painted
   materials: brass plate Attack with blade/trident-shaped weapon buttons + Focus medallion, wood-plank Move with stitched leather buttons + compass,
   parchment scroll Deal with wax-seal Trade/Truce + chest Loot, stitched leather Market & Crowd with coin purse + laurel, a brass handle End turn) —
-  mock2 D shown; build with small painted textures, greyed = desaturated + reason on hover.
+  mock2 D shown → HE REFINED (2026-10-08): do NOT recreate it — keep TODAY's action bar and its tiles, only give it that look (mock3.html):
+  the 1 Resolve · 2 Choice · 3 Action · 4 End phase strip stays as a brass rail on top (done ✓, current lit gold); groups Attack (brass: one
+  button per weapon + Focus centred below), Move (wood + stitched leather: Move/Push/Topple/Tunnel, movement left in the header), Deal (parchment,
+  wax-seal Trade/Truce + Loot), Market · Crowd (stitched leather: Market/Crowd Favor/Wager on yourself); End turn = a plain red button with brass
+  rivets ("to phase IV", Enter). ROOM bubbles go UNDER the speaker's token (space kept, no jumping, fade ~6 s).
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
