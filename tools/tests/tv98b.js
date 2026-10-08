@@ -88,11 +88,12 @@ await pg.evaluate(()=>{const b=[...document.querySelectorAll('#studio button')].
 const T3=await tabs();ok(T3.length>=6&&T3.some(x=>/zone/.test(x))&&T3.some(x=>/face/.test(x))&&T3.some(x=>/round token/.test(x)),'beast designer tabs '+JSON.stringify(T3));
 /* ---- 5 · character designer: 3D card upper right, short sliders, the poser's lit joint ---- */
 await pg.evaluate(()=>document.querySelector('#studio [data-st="tab"][data-v="chars"]').click());await W8(600);
-await pg.evaluate(()=>{const b=[...document.querySelectorAll('#studio button')].find(x=>/New character/.test(x.textContent));b&&b.click()});await until(()=>document.querySelector('#studio .st98rc [data-t93card]'));await W8(300);
-const E=await pg.evaluate(()=>{const rc=document.querySelector('#studio .st98rc');const card=rc&&rc.querySelector('[data-t93card]'),pan=rc&&rc.querySelector('.st95stats');const r=card.getBoundingClientRect(),g=document.querySelector('#studio .setup-grid.st95c3').getBoundingClientRect();
-  return {first:rc.firstElementChild===card,above:r.bottom<=pan.getBoundingClientRect().top+1,right:r.left>g.left+g.width*0.6,top:r.top-g.top}});
-ok(E.first&&E.above&&E.right&&E.top<40,'3D token card upper right '+JSON.stringify(E));
-await pg.evaluate(()=>{const b=[...document.querySelectorAll('#studio .st98bar [data-st98t]')].find(x=>/personality/i.test(x.textContent));b&&b.click()});await W8(250);
+await pg.evaluate(()=>{const b=[...document.querySelectorAll('#studio button')].find(x=>/New character/.test(x.textContent));b&&b.click()});await until(()=>document.querySelector('#studio .df99 [data-t93card]'));await W8(300);
+/* v0.99: the character designer lives in the DF99 frame (262) — the 3D token card sits in Appearance's Tokens card beside the Classic token */
+await pg.evaluate(()=>DF99.tab(document.querySelector('#studio .df99'),'look'));await W8(200);
+const E=await pg.evaluate(()=>{const card=document.querySelector('#studio .df99pane[data-df99p="look"] .df99tok [data-t93card]');const cl=document.querySelector('#studio .df99tok [data-f="tokenRef"]');return {card:!!card&&!!card.offsetParent,beside:!!card&&!!cl&&card.getBoundingClientRect().left>cl.getBoundingClientRect().right-2}});
+ok(E.card&&E.beside,'3D token card in the Tokens card, beside the Classic token '+JSON.stringify(E));
+await pg.evaluate(()=>DF99.tab(document.querySelector('#studio .df99'),'mind'));await W8(250);
 const sl=await pg.evaluate(()=>{const s=[...document.querySelectorAll('#studio .perswrap input[type=range]')].filter(x=>x.offsetParent);return {n:s.length,w:Math.max(...s.map(x=>x.getBoundingClientRect().width))}});
 ok(sl.n>=4&&sl.w<=160,'personality sliders shorter '+JSON.stringify(sl));
 await pg.evaluate(()=>document.querySelector('#studio [data-t93="open"]').click());
