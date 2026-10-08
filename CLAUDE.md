@@ -1125,6 +1125,15 @@ share copy — the site download play/flavius-rule-arena.zip.)
   extras off, speed at once); language sweep (~50 places matched English text — translated pages kept old layouts; Thumb-of-Flavius spares not
   counted alive in other languages). FIRST RELEASE TESTED ON GITHUB ACTIONS: full run 244/244 + 3 flaky (tv91n t12b tv65). No server change.
 
+- **v0.96** a clearer turn: the compact action bar (phase rail in the phase colours, grouped actions, board previews on hover, unused moves,
+  done-phase tips, turn owner + next, key hints, hint glow, phones swipe row); every attack logged (the silent head shots: full misses never
+  logged, an aim window after a miss, a closed Focus window aimed at nothing); belts under thigh armor, Leather Tasset alone on the upper leg
+  (server rule too), stone cap 3, Fast skips frames, weapon counters, Carmina window, no pinned stands line; Manager standings podium, Acta per
+  week in the Season tab, trait cards, Road box, invitational picker, anvil Armory + damaged card, warnings for this week only; online room
+  2×4 seats + bubbles under tokens, crier only on the host's click, lobby filters + refresh, reload straight back into a live match, no Domus
+  loadouts; invitations to a just-created room no longer dropped. GitHub full run: 249/249 + tv87l/tv91n flaky (first run caught tv81o =
+  the invitation bug, tonlws80 = test expected the old crier). Server changed (111 armPlace) — flavius.sh release deploys it.
+
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
   8 printed classes move to the live template (104-cards74 classCard74) so rule changes update their cards. Art NOT drawn yet (optional,
@@ -1590,7 +1599,7 @@ share copy — the site download play/flavius-rule-arena.zip.)
   2 coin); (5) whose turn + "next: <name>" with a small face at the left of the rail; (6) small key hints on the buttons (A/M/P/T/Enter, the
   v0.93 keyboard layer); (7) hints mode only (never Ranked): soft glow on the action the strategy hints would pick; (8) phones: the groups = one
   swipe row, End turn fixed on the right.
-- **SPLIT (his call 2026-10-08): v0.96 / v0.97.** v0.96 (no server change) = all Manager fixes/changes of notes I/II/III (standings, Season
+- **SPLIT (his call 2026-10-08): v0.96 / v0.97.** v0.96 SHIPPED; v0.97 also gets: Find me a fight (lobby.quick) still cries — make it silent server-side. v0.96 (no server change) = all Manager fixes/changes of notes I/II/III (standings, Season
   Acta cards, Match Week Road box, invitational answer, warnings, "no fighter" item, Armory anvil + damaged section, Save and Exit, trait
   cards), all board/match items of notes I (🔴 attack trace first, belts, Shield popup, snap-back, sim beast cards, stone cap, Fast skips
   frames, counters, #slogPin, spectator upkeep, Tasset, Carmina window) + the COMPACT ACTION BAR with its 8 extras, and the client-only online
