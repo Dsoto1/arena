@@ -1643,7 +1643,10 @@ share copy — the site download play/flavius-rule-arena.zip.)
   + Recruiting III + the online list below. Mock-ups first for Settings / Tactics / main menu / Play Now.
   ALSO v0.98 (his 2026-10-08): Online 👤 Profile & Settings regrouped (today one big row across the top; mock-up 5); named-gear bonus texts
   approved as listed; NAMES: the same kind of bonus at a higher level shares the name with a Roman numeral (Gloriosus I / II …) — proposed
-  mapping waiting for his ok (see chat 2026-10-08).
+  mapping APPROVED (2026-10-08): Gloriosus → Gloriosus I; weapon unique Gloriae (+2 CF a gladiator hit) → Gloriosus II;
+  Acutus → Acutus I; Percussor (AP 2) → Acutus II; Velox → Velox I; Mercurii (+1 move always) → Velox II; armor unique Gloriae (+1 CF when armor
+  stops a hit) → Laudis; Tutus (armor) and Aegis (weapon) keep their names (same strength, different gear). Names live in 111-onlcore
+  AFFIX/AFFIX_A/UNIQUES/UNIQUES_A + AUC96_AFF (239) → server deploy; owned gear shows the new names.
 - **v0.97 / v0.98 (his ok 2026-10-08):** v0.97 = the post-v0.96 fixes round (above, no server change). v0.98 (server deploy, wait for his go)
   = Recruiting III + advisor levels + house grades, passwords (Custom), region flags (time zone), house card on names, Domus rank + banners, silent
   lobby.quick, AND online events beyond the Classics (his 1a 2b 3a: printed events as Custom only, in approved waves — Familia already, then Ludus,
