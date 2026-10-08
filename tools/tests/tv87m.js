@@ -18,7 +18,7 @@ o.h=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   r.lanH=/lanista's hours|lanista’s hours/.test(txt);r.btnH=(body.match(/<small>[^<]*\b\d+ h\b[^<]*<\/small>/g)||[]).slice(0,4);
   r.badge=/Recruiting hours/.test(body);r.stat=tabStat73('recruit');r.done=tabDone73('recruit');
   /* a pitch: free, answers with a result, one per recruit a week */
-  const pb=[...document.querySelectorAll(`#mgrBody [data-mg="pitch"][data-id^="${g.id}|"]`)].find(x=>!x.disabled);r.pitchBtn=!!pb;if(!pb)r.pdbg=[...document.querySelectorAll('#mgrBody [data-mg="pitch"]')].map(x=>x.dataset.id.split('|')[0]===g.id?'G':'o'+(x.disabled?(x.title||'dis'):'')).slice(0,6).concat([pitchesLeft(),m.fame,reqFame(g),MGR.recStep,!!g.contract]);const coin0=m.coin;pb&&pb.click();await W8(500);
+  const pb=[...document.querySelectorAll(`#mgrBody [data-rec98p$="|${g.id}"]`)].find(x=>!x.disabled); /* v0.98: the house-grade pitches */r.pitchBtn=!!pb;if(!pb)r.pdbg=[...document.querySelectorAll('#mgrBody [data-mg="pitch"]')].map(x=>x.dataset.id.split('|')[0]===g.id?'G':'o'+(x.disabled?(x.title||'dis'):'')).slice(0,6).concat([pitchesLeft(),m.fame,reqFame(g),MGR.recStep,!!g.contract]);const coin0=m.coin;pb&&pb.click();await W8(500);
   r.pitchMsg=MGR.msg||'';r.pitchCoin=m.coin-coin0;r.gate=recGate(g,'pitch')[0];r.clk=w.clk87&&w.clk87.n;
   /* the oval on the Recruiting tab is gone */
   await W8(800);const ov=document.querySelector('.mtabs [data-id="recruit"] .mcount.c73');r.oval=!!(ov&&getComputedStyle(ov).display!=='none'&&!ov.hidden);
@@ -35,7 +35,7 @@ o.h=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   const old={ver:'0.86',hours:7,letters:[{key:'bye-x',body:`<li>${_T`<b>Recruit</b>: you have ${BYE_HOURS} extra lanista's hours — scout, pitch and sign before the others wake up.`}</li>`}]};migrateWorld(old);r.mig=['hours' in old,/lanista/.test(old.letters[0].body)];
   return r});
 ok(!o.h.saved,'hours never saved');ok(o.h.after0===99&&o.h.afterSub===99,'no hours pool to spend');ok(!o.h.lanH,'no "lanista\'s hours" on Recruiting');
-ok(!o.h.btnH.length,'no "N h" on recruiting buttons '+o.h.btnH.join(' | '));ok(!o.h.badge&&o.h.stat===null&&o.h.done===false,'no hours badge / banner count / ✓');
+ok(!o.h.btnH.length,'no "N h" on recruiting buttons '+o.h.btnH.join(' | '));ok(!o.h.badge&&Array.isArray(o.h.stat)&&/recruiter/.test(o.h.stat[1])&&o.h.done===false,'no lanista hours badge / ✓; the banner counts the recruiter\'s hours (v0.98)');
 ok(o.h.pitchBtn&&/interest/.test(o.h.pitchMsg)&&o.h.pitchCoin===0&&o.h.gate,'a pitch is free, says what it gained, once a week');ok(o.h.clk>=1,'the clock counts actions');
 ok(!o.h.oval,'no Recruiting oval');ok(!o.h.todo&&!o.h.endc,'no hours to-do / end-week line');ok(!o.h.prom,'Promote without hours');
 ok(o.h.raiseBtn&&o.h.raise2dis&&o.h.raised===2,'one raise a week '+o.h.raised);ok(!o.h.sales||o.h.sales[1]>=o.h.sales[0],'ticket sales follow the week');

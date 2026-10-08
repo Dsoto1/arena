@@ -416,7 +416,7 @@ function cityAuctionPanel(){const mgr=CITY.mgr;const lot=cityAuctionLot();const 
   cityPanel(`<div class="sect" style="margin-top:0">${_T`⚖ The auction block`}</div>
    <p class="rc-sub" style="margin:0 0 6px">${_T`"HONEST VULSO'S — fighters no ludus wants, at prices no lanista can refuse!" The unwanted go cheap. Most are exactly what they look like. <b>Most.</b> You learn the truth only if they win their first bout under your name.`}</p>
    ${!CITY.w?`<p class="rc-sub">${_T`Come back wearing a lanista’s ring — Vulso only sells to managers.`}</p>`:lot.length?lot.map(g=>`<div class="card2" style="margin-bottom:6px"><div style="display:flex;gap:8px">${typeof gArt==='function'?gArt(g,'sm'):''}<div style="flex:1"><b>${esc(g.name)}</b> <span class="stars">${'★'.repeat(starsOf(pubOvr(g)))}</span>
-      <div class="rc-sub">${CLASSES[g.cls]?CLASSES[g.cls].name:''} · ${gAge(g)} · rated ~${pubOvr(g)} · <i>${esc(g.woe)}</i></div>
+      <div class="rc-sub">${CLASSES[g.cls]?CLASSES[g.cls].name:''} · ${gAge(g)} · rated ~${typeof rec98PubG==='function'?rec98PubG(g):pubOvr(g)} · <i>${esc(g.woe)}</i></div>
       <div class="acts" style="margin-top:4px"><button class="btn primary tksm" type="button" ${mgr&&pm.coin>=g.price?'':'disabled'} onclick="cityBuyLot('${g.id}')">${_T`Buy · ${coinAmt87(g.price)}<small>signs 6 weeks at 2/wk</small>`}</button></div></div></div></div>`).join(''):`<p class="rc-sub">${_T`The block stands empty — sold out, or nobody desperate enough this week.`}</p>`}`)}
 /* cityBuyLot — buys an auction lot onto your roster (wage 2, 6 weeks). */
 function cityBuyLot(gid){const g=gById(gid);const pm=me();const w=CITY.w;if(!g||!pm||pm.coin<g.price)return;

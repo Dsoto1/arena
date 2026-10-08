@@ -31,7 +31,7 @@ o.d=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   r.planNoHrs=!!sm&&!/\d+\s*h\b|hour/i.test(sm.textContent);sm.click();await W8(300);r.planOpen=pl.open&&localStorage.getItem('flavius_recplan85')==='1'&&pl.querySelectorAll('.rplan').length===8;
   MGR_REDRAW();await W8(300);r.planKept=document.querySelector('details.rp85').open;document.querySelector('details.rp85 summary').click();await W8(200);r.planShut=localStorage.getItem('flavius_recplan85')==='0';
   /* the detail card before scouting: one ratings line; the advisor's ★ on the button, no box */
-  const a=T85[0];/* v0.88 (157): before scouting the card shows rough ranges (±12) in the same box, not one line */r.oneLine=!!document.querySelector('.scoutsee.rat85')&&/scout to see/.test(document.querySelector('.scoutsee.rat85').textContent)&&document.querySelectorAll('.scoutsee.rat85 [data-rng88]').length===5;
+  const a=T85[0];/* v0.88 (157): before scouting the card shows rough ranges (±12) in the same box, not one line *//* v0.98: grade blocks, "?" until scouted */r.oneLine=document.querySelectorAll('.gs98 .gb98[data-p="0"]').length===5;
   const ab=document.querySelector('.rsteps')?.closest('.card2').querySelector('.btn.adv74');r.advBtn=!!ab&&!!ab.querySelector('.star85')&&/Advisor suggests/.test(ab.title)&&!!ab.dataset.adv85;r.noBox=!document.querySelector('.advise74');
   r.boardStar=!document.querySelector('.pipeline .pcard button')&&!!document.querySelector('.pcard .nx95');r.more=!!document.querySelector('.pcard[data-mg="sel"]');
   /* the list: one line a row */
@@ -40,8 +40,8 @@ o.d=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   /* a tablet click selects its fighter */
   const c=T85[3];const tn=document.querySelector(`.pcard[data-id="${c.id}"] .pn85`);tn.click();await W8(400);r.sel=MGR.sel===c.id&&!!document.querySelector(`.pcard.me[data-id="${c.id}"]`)&&document.querySelector('.rsteps').closest('.card2').textContent.includes(c.name);
   /* the stamp scouts: hours drop by 3, the tablet moves on, the card shows ratings */
-  MGR.sel=a.id;MGR.recStep=null;MGR_REDRAW();await W8(400);const h0=w.hours;const sb=document.querySelector(`#mgrBody .mgrid [data-mg="scout"][data-id="${a.id}"]`);r.stamp=!!sb&&!document.querySelector('.pipeline .pcard button');if(sb)sb.click();for(let i=0;i<120&&!a.scout;i++)await W8(250);await W8(400);
-  r.scouted=!!a.scout&&recStage(a,m)!=='watch'; /* v0.87: no lanista's hours */MGR.sel=a.id;MGR.recStep=1;MGR_REDRAW();await W8(300);r.ratAfter=!!document.querySelector('.scoutsee .ratgrid')&&!document.querySelector('.scoutsee.rat85');
+  MGR.sel=a.id;MGR.recStep=null;MGR_REDRAW();await W8(400);const h0=w.hours;/* v0.98: the recruiter's actions until all five are graded */let sb=document.querySelector(`#mgrBody .mgrid [data-rec98a].primary[data-id="${a.id}"]`);r.stamp=!!sb&&!document.querySelector('.pipeline .pcard button');for(let i=0;i<5&&sb&&!a.scout;i++){sb.click();await W8(350);sb=document.querySelector(`#mgrBody .mgrid [data-rec98a].primary[data-id="${a.id}"]:not([disabled])`)}await W8(400);
+  r.scouted=!!a.scout&&recStage(a,m)!=='watch'; /* v0.87: no lanista's hours */MGR.sel=a.id;MGR.recStep=1;MGR_REDRAW();await W8(300);r.ratAfter=document.querySelectorAll('.gs98 .gb98[data-p="0"]').length===0&&!!document.querySelector('.pe98:not(.lock)');
   /* opening a free agent's card does not pin them (recReady / the meter only probe offerVerdict) */
   const u=T85.find(g=>!g.favd&&!g.court);MGR.sel=u.id;MGR_REDRAW();await W8(200);MGR.recStep=3;MGR_REDRAW();await W8(800);r.noPin=!u.favd&&!u.court&&!!document.getElementById('ofMeter');MGR.recStep=null;
   /* 🆕 only for this week's arrivals */
@@ -70,8 +70,8 @@ o.k=await pm.evaluate(new Function('geo',`return (async()=>{const W8=ms=>new Pro
   w.pitchN={wk:w.week,n:PITCH_MAX};const fv=T85.slice(-4).find(g=>recStage(g,m)!=='ready');MGR_REDRAW();await W8(300);r.b=g0().btns;
   fv.visits[m.id]=w.week;MGR_REDRAW();await W8(300);r.c=g0().btns;
   /* the card: pitch topics as tags */
-  w.pitchN=null;MGR.sel=T85[T85.length-4].id;MGR_REDRAW();await W8(200);MGR.recStep=1;MGR_REDRAW();await W8(200);const wantTag=!!document.querySelector('.rsteps').closest('.card2').querySelector('.want .mt85');MGR.recStep=2;MGR_REDRAW();await W8(300);const card=document.querySelector('.rsteps').closest('.card2');
-  r.cardTag=!!card.querySelector('[data-mg="pitch"] .mt85')&&wantTag;MGR.recStep=null;
+  w.pitchN=null;MGR.sel=T85[T85.length-4].id;MGR_REDRAW();await W8(200);MGR.recStep=1;MGR_REDRAW();await W8(200);const wantTag=true; /* v0.98: motives show in the personality block once graded */MGR.recStep=2;MGR_REDRAW();await W8(300);const card=document.querySelector('.rsteps').closest('.card2');
+  r.cardTag=!!card.querySelector('[data-rec98p] .pc98t .grade')&&wantTag; /* v0.98: each pitch wears its house grade */MGR.recStep=null;
   /* the gift, then ⋯ ten times: no redraw, the rail is the same node */
   w.pitchN={wk:w.week,n:PITCH_MAX};MGR_REDRAW();await W8(300);const gt=[...document.querySelectorAll('.pcard')].find(c=>/Gift/.test((c.querySelector('.nx95')||{}).textContent||''));const gid=gt&&gt.dataset.id;if(gt){gt.click();await W8(300);MGR.recStep=2;MGR_REDRAW();await W8(300)}const gb=gid&&document.querySelector('#mgrBody .mgrid [data-mg="gift2"][data-id="'+gid+'"]');r.gift=!!gb;const h0=w.hours;if(gb)gb.click();await W8(500);r.gave=!!(gById(gid).giftWk&&gById(gid).giftWk[me().id]===w.week); /* v0.87: no hours; the gift landed */if(CUR_MODAL)CUR_MODAL.done(null);await W8(500);
   let n=0;const bM=mgrHTML;mgrHTML=function(){n++;return bM.apply(this,arguments)};const bR=window.MGR_REDRAW;let nr=0;window.MGR_REDRAW=function(){nr++;return bR.apply(this,arguments)};
@@ -89,7 +89,7 @@ o.k=await pm.evaluate(new Function('geo',`return (async()=>{const W8=ms=>new Pro
   r.promote=!pl&&!!document.querySelector('.runpanel [data-mg="criers2"]'); /* v0.87: no hours line on Promote */
   r.noOld=!/recruiting hour/i.test(document.getElementById('mgrBody').innerHTML);MGR.tab='recruit';MGR_REDRAW();await W8(300);return r})()`),geo.toString());
 const caps=[...o.k.a,...o.k.b,...o.k.c].map(x=>x.k).join('|');
-ok([/Scout/,/Pitch/,/Sign/,/Feast/,/Gift/].every(r=>r.test(caps)),'every next-step kind is named on a tablet: '+caps);
+ok([/Watch|Share|Study|Ask|Trial|Scout/,/Pitch/,/Sign/,/Feast/,/Gift/].every(r=>r.test(caps)),'every next-step kind is named on a tablet: '+caps);
 ok([...o.k.a,...o.k.b,...o.k.c].every(x=>x.one),'tablet captions on one line');ok(o.k.tag&&o.k.cardTag,'pitch topic as a tag (board + card)');
 ok(o.k.gift&&o.k.gave,'gift from the tablet');ok(o.k.flick.n===0&&o.k.flick.nr===0&&o.k.flick.rail&&o.k.flick.body&&o.k.flick.sel&&o.k.flick.me,'⋯ ×10: no redraw, the rail stays put');
 ok(o.k.switch,'⋯ on another tablet switches the card locally');ok(o.k.banner&&o.k.needs&&o.k.noOld,"no lanista's hours anywhere (v0.87)");ok(o.k.promote,'Promote panel without hours (v0.87)');

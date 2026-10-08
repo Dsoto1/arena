@@ -56,12 +56,12 @@ o.r=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
     nested:L4.every(x=>{const a=L8.find(y=>y.k===x.k);return a.lo<=x.lo&&x.hi<=a.hi})&&L8.every(x=>{const a=L12.find(y=>y.k===x.k);return a.lo<=x.lo&&x.hi<=a.hi})};
   /* the unscouted card shows the ranges */
   const u=fa[1];u.scout=0;delete u.watch74;u.favd=false;MGR.tab='recruit';MGR.sel=u.id;MGR.recFor=u.id;MGR.recStep=1;MGR_REDRAW();await W8(400);
-  r.unscoutedRanges=document.querySelectorAll('#mgrBody .scoutsee [data-rng88]').length===5&&!document.querySelector('#mgrBody .want88[data-want88k]');
+  r.unscoutedRanges=document.querySelectorAll('#mgrBody .gs98 .gb98[data-p="0"]').length===5&&!document.querySelector('#mgrBody [data-rng88]')&&!document.querySelector('#mgrBody .want88[data-want88k]'); /* v0.98: "?" grades */
   /* wants after scouting: chips, a want pitch, the meter gain */
   const s=fa[2];s.scout=2;s.favd=true;s.interest[m.id]=20;MGR.sel=s.id;MGR.recFor=s.id;MGR.recStep=1;MGR_REDRAW();await W8(400);
   r.chips=document.querySelectorAll('#mgrBody .want88[data-want88k]').length===wants88(s).length;r.cd=/Rival bid in 2 weeks/.test(document.getElementById('mgrBody').innerText);
-  MGR.recStep=2;MGR_REDRAW();await W8(300);const pb=document.querySelector(`#mgrBody [data-want88^="${wants88(s)[0]}|${s.id}"]`);r.pitchBtn=!!pb&&/\+\d+ interest/.test(pb.textContent);
-  const i0=interestOf(s,m);pb&&pb.click();await W8(300);r.pitchGain=interestOf(s,m)-i0;const pb2=document.querySelector(`#mgrBody [data-want88^="${wants88(s)[0]}|"]`);r.pitchOnce=!!(pb2&&pb2.disabled);
+  MGR.recStep=2;MGR_REDRAW();await W8(300);/* v0.98: speaking to a want = the house-grade pitch that answers it (249) */const P98=PITCH98.find(p=>wants88(s).includes(p.want))||PITCH98[0];const pb=document.querySelector(`#mgrBody [data-rec98p="${P98.k}|${s.id}"]`);r.pitchBtn=!!pb&&/\+\d+/.test(pb.textContent);
+  const i0=interestOf(s,m);pb&&pb.click();await W8(300);r.pitchGain=interestOf(s,m)-i0;const pb2=document.querySelector(`#mgrBody [data-rec98p="${P98.k}|${s.id}"]`);r.pitchOnce=!!(pb2&&pb2.disabled);
   /* the offer meter: force a coin want; wage over 115% of the ask answers it */
   const c=fa.slice(3).find(x=>wants88(x).includes('coin'))||fa[3];c.scout=2;c.favd=true;c.interest[m.id]=30;const ask=askWage(c);
   const T=(wage)=>want88Bonus(c,m,{wage,weeks:8,pledge:false,rudis:false});r.coinWant=wants88(c).includes('coin');r.bon=[T(ask),T(Math.ceil(ask*1.2))];
@@ -72,8 +72,8 @@ o.r=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   r.tablet=!!document.querySelector(`.pcard.pt85[data-id="${k.id}"] .cd88`);if(!r.tablet||!r.courted)r.tdbg={c88:k.court88,wk:w.week,pc:!!document.querySelector(`.pcard.pt85[data-id="${k.id}"]`),same:[k===s,k===c,k===u],con:!!k.contract,ps:((document.querySelector(`.pcard.pt85[data-id="${k.id}"]`)||{}).innerHTML||'').replace(/<span class="portrait[\s\S]*?<\/svg><\/span>/,'P'),ph:pipelineHTML().slice(0,300)};
   window.K88=k;window.S88=s;window.C88=c;return r});
 ok(o.r.wantsN,'1–2 wants per free agent, stable');
-ok(o.r.rng.n.join()==='5,5,5,0'&&o.r.rng.holds.every(Boolean)&&o.r.rng.w.join()==='24,16,8'&&o.r.rng.stable&&o.r.rng.nested,'ranges ±12/±8/±4 → exact, true value inside, stable, nested '+JSON.stringify(o.r.rng));
-ok(o.r.unscoutedRanges,'the unscouted card shows rough ranges, no wants');
+ok(o.r.rng.n.join()==='0,0,0,0','v0.98: free agents show letter grades, never number ranges '+JSON.stringify(o.r.rng));
+ok(o.r.unscoutedRanges,'the unscouted card shows "?" grades, no wants');
 ok(o.r.chips&&o.r.cd,'wants chips after scouting + the countdown on the card '+JSON.stringify([o.r.chips,o.r.cd]));
 ok(o.r.pitchBtn&&o.r.pitchGain>0&&o.r.pitchOnce,'speak to a want: preview, gain, once a week '+JSON.stringify([o.r.pitchBtn,o.r.pitchGain,o.r.pitchOnce]));
 ok(!o.r.coinWant||(o.r.bon[1]-o.r.bon[0]===14),'a coin want answered by the wage adds +14 '+JSON.stringify(o.r.bon));ok(o.r.meterWant,'the offer meter lists the wants');
