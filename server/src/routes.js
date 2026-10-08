@@ -710,7 +710,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       const took=sc?await editChar(sc.id,x=>{if(!(x.offers||[]).includes(k))return false;C.offerMove(x,{offers:[]},k)}):await editDomus(D.id,Y=>{if(!(Y.offers||[]).includes(k))return false;C.offerMove(Y,{offers:[],cls:1},k)});
       if(!took)throw new Error('That offering is not there.');
       const put=dc?await editChar(dc.id,x=>{if((x.offers||[]).length>=C.OFF_MAX)return false;x.offers=[...(x.offers||[]),k]}):await editDomus(D.id,Y=>{if((Y.offers||[]).length>=(C.shelfMax?C.shelfMax(Y):C.OFF_SHELF))return false; /* v0.89: the shelf upgrade */Y.offers=[...(Y.offers||[]),k]});
-      if(!put){if(sc)await editChar(sc.id,x=>{x.offers=[...(x.offers||[]),k]});else await editDomus(D.id,Y=>{Y.offers=[...(Y.offers||[]),k]});throw new Error(dc?`Up to ${C.OFF_MAX} offerings in the satchel.`:'The shelf is full.')}
+      if(!put){if(sc)await editChar(sc.id,x=>{x.offers=[...(x.offers||[]),k]});else await editDomus(D.id,Y=>{Y.offers=[...(Y.offers||[]),k]});throw new Error(dc?`He carries at most ${C.OFF_MAX} offerings.`:'The shelf is full.')}
       const D2=await domusGet(D.id);const out=x=>x?strip(x):{house:true,offers:D2.offers||[]};return {from:out(sc&&await charById(sc.id)),to:out(dc&&await charById(dc.id)),domus:C.domusRow(D2)}},
     /* ⚔ the killer's pick from the fallen's brought gear (LOOT_MS after the settlement; then the most valuable is taken for him) */
     'loot.list':async(d,ctx)=>{await lootSweep();return (await lootMine(ctx.acct)).map(lootOut)},
@@ -1189,7 +1189,7 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       const why=C.offerBuyWhy({...ch,wallet:D.treasury|0},k);if(why)throw (/^Costs/.test(why)?fail('no_coin',`The treasury needs ${C.PRICE_OFF[k]} coin.`,{cost:C.PRICE_OFF[k]}):new Error(why));
       const p=C.PRICE_OFF[k];if(!(await pay92(D.id,p,'off')))throw fail('no_coin',`The treasury needs ${p} coin.`,{cost:p});
       const c=await soft93(editChar(ch.id,x=>{if(!x.alive||(x.offers||[]).length>=C.OFF_MAX)return false;x.offers=[...(x.offers||[]),k]}));
-      if(!c){await back92(D.id,p,'off');throw new Error(`Up to ${C.OFF_MAX} offerings in the satchel.`)}return {...strip(c),domus92:await row92(D.id)}},
+      if(!c){await back92(D.id,p,'off');throw new Error(`He carries at most ${C.OFF_MAX} offerings.`)}return {...strip(c),domus92:await row92(D.id)}},
     /* 🏺 a used piece for a gladiator — the treasury pays */
     'market.buy':async(d,ctx)=>{const {D}=await house92(ctx.acct);const ch=await ownChar(ctx.acct,d.char);if(ch.domus!==D.id)throw new Error('Not of your house.');const sk=String(d.id||'');if(!/^U#/.test(sk))throw new Error('No such piece.');
       const X=await store.get('MARKET',sk);if(!X||X.sold)throw fail('sold','Someone bought it first.');const I=C.pieceInfo({item:X.item,pc:X.pc},catalog);if(!I)throw new Error('No such piece.');
@@ -1279,6 +1279,22 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
   {const base=R['domus.get'];R['domus.get']=async(d,ctx)=>{try{await purse92(ctx.acct)}catch(e){}return base(d,ctx)}}
   {const base=R['gift.open'];R['gift.open']=async(d,ctx)=>{const r=await base(d,ctx);try{const X=await purse92(ctx.acct,'gift');if(r&&r.char&&r.char.id)r.char=strip(await charById(r.char.id));
       if(r&&r.reward&&r.reward.k==='coin')r.to='house';const A=await acctOf(ctx.acct);const D=await domusGet(A&&A.domus);if(D){r.domus=C.domusRow(D);r.domus92=r.domus}else if(X)r.domus92=C.domusRow(X)}catch(e){}return r}}
+  /* ══════════ v0.98 OFFERINGS CAP 2 (his rule): a gladiator holds at most OFF_MAX=2 offerings and brings all of them. off98 keeps the first two of a
+     gladiator who holds more (read on hello / domus.get / char.* like purse92); the rest go to the house shelf, and with the shelf full the price paid is
+     refunded to the treasury (ledger 'refund'). Once per gladiator (ch.off98), the char first (versioned write), then the house; a failed house write
+     puts the offerings back and clears the flag. ══════════ */
+  async function off98(acct){if(!acct||/^bot/.test(acct))return null;const A=await acctOf(acct);if(!A)return null;
+    for(const c of await store.byIndex('OWNER#'+acct)){if(!c||!c.alive||c.off98)continue;let extra=[];
+      const x=await editChar(c.id,y=>{if(!y.alive||y.off98)return false;const before=(y.offers||[]).slice();const r=C.offCap98(y,null,now());
+        extra=before.slice((y.offers||[]).length);if(r&&r.refund){y.wallet=(y.wallet|0)-r.refund}}).catch(()=>null);
+      if(!x||!extra.length)continue;
+      /* offCap98 without a house credited the refund to the wallet; undone above — now the house takes the offerings (shelf) or the refund (treasury) */
+      const D=A.domus?await editDomus(A.domus,Y=>{Y.offers=Y.offers||[];const cap=C.shelfMax?C.shelfMax(Y):C.OFF_SHELF;let refund=0;
+        for(const k of extra){if(Y.offers.length<cap)Y.offers=[...Y.offers,k];else refund+=C.PRICE_OFF[k]|0}
+        if(refund){Y.treasury=(Y.treasury|0)+refund;C.ledAdd(Y,'refund',refund,x,now())}}):null;
+      if(!D)await editChar(c.id,y=>{y.offers=[...(y.offers||[]),...extra];delete y.off98}).catch(()=>{})}
+    return true}
+  for(const t of ['hello','domus.get','offer.buy','offer.move']){const base=R[t];if(!base)continue;R[t]=async(d,ctx)=>{if(ctx&&ctx.acct)try{await off98(ctx.acct)}catch(e){}return base(d,ctx)}}
   /* ══════════ end of v0.92 ══════════ */
   /* ══════════ v0.94 ONLINE 3D TOKENS AS SERVER PICTURES (the rules: the v0.94 section of onlcore) ══════════
      TOK#<char> / PIC         {owner, h, b (base64 WebP ≤ 64 KB), meta [cellW,cellH,ax,ay], pose ≤600 B, pk, at, v} — ONE picture per gladiator,

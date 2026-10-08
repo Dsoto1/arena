@@ -32,8 +32,8 @@ const rk=await A.evaluate(async()=>({n:ONLC.RANKS.length,keys:Object.keys((await
 ok(rk.n===8&&rk.keys.length===8&&rk.vet===3,'eight ranks, counted');
 /* ── 2. offerings + a gift: a named weapon for a Veteranus ── */
 await world(A,(w,id)=>{Object.assign(w.chars[id],{wallet:500,glory:600,gifts:[{id:id+':rank:veteranus',why:'rank:veteranus',at:Date.now()}]})},ca);
-const of=await A.evaluate(async id=>{await NET.req('offer.buy',{char:id,key:'elix2'});await NET.req('offer.buy',{char:id,key:'cf1'});await NET.req('offer.buy',{char:id,key:'ap3'});const c=await NET.req('offer.bring',{char:id,keys:['elix2','cf1']});return {offers:c.offers,eq:c.offerEq,wallet:(()=>{const w=mockLoad();return (w.domus82[w.chars[id].domus]||{}).treasury|0})()}},ca); /* v0.92: the treasury pays */
-ok(of.offers.length===3&&of.eq.join()==='elix2,cf1'&&of.wallet===500-40-40-120,'offerings bought, two chosen to bring');
+const of=await A.evaluate(async id=>{await NET.req('offer.buy',{char:id,key:'elix2'});await NET.req('offer.buy',{char:id,key:'cf1'});let third='';try{await NET.req('offer.buy',{char:id,key:'ap3'})}catch(e){third=e.message}const c=await NET.req('offer.bring',{char:id,keys:['elix2','cf1']});return {third,offers:c.offers,eq:c.offerEq,wallet:(()=>{const w=mockLoad();return (w.domus82[w.chars[id].domus]||{}).treasury|0})()}},ca); /* v0.92: the treasury pays */
+ok(of.offers.length===2&&/He carries at most 2 offerings/.test(of.third)&&of.wallet===500-40-40,'v0.98: two offerings bought, a 3rd refused, all he holds is brought');
 const gift=await A.evaluate(async id=>{const r=Math.random;Math.random=()=>0.995;let g;try{g=await NET.req('gift.open',{char:id,gift:id+':rank:veteranus'})}finally{Math.random=r}
   const it=g.char.gear.find(x=>/^nw#/.test(x));return {k:g.reward.k,rar:g.reward.rar,to:g.to,it,w:it&&g.char.pcs[ONLC.itemUid(it)].w,eq:ONLC.equipOf(g.char).includes(it)}},ca);
 ok(gift.k==='named'&&gift.rar==='legendary'&&gift.to==='glad'&&gift.w&&gift.w.uq&&gift.eq,'a Legendary named weapon from Flavius’s gift, brought by a Veteranus');
@@ -57,7 +57,7 @@ const row=await A.evaluate(async k=>{const me=S.players.find(x=>x._nw83);const k
 ok(row.brk&&row.brk.includes(nwKey)&&row.off.join()==='elix2'&&row.cf===1&&row.ks===-1&&row.kb==='','result rows: brk / off / ks / kb ('+JSON.stringify(row)+')');
 const t1=[0,1,2,3].map(i=>({seat:i,won:i===0,place:i?2:1,f:i?4:12,survives:true,off:i===0?['elix2']:[]}));
 for(const p of [A,B])await p.evaluate(async([id,t])=>{await NET.req('match.result',{id,table:t,hash:'c1'})},[L1.id,t1]);
-const back=await A.evaluate(async()=>(await NET.req('char.mine',{})).find(c=>c.alive).offers.sort().join());ok(back==='ap3,elix2','Custom: the unused offering came back, the used one is gone');
+const back=await A.evaluate(async()=>(await NET.req('char.mine',{})).find(c=>c.alive).offers.sort().join());ok(back==='elix2','Custom: the unused offering came back, the used one is gone');
 /* ── 4. Ranked: Beta kills Gamma; the countdown again; Alpha wagers ── */
 await world(B,(w,id)=>{w.chars[id].wallet=400},cb);await world(C,(w,id)=>{w.chars[id].wallet=400},cc);
 await B.evaluate(async id=>{await NET.req('char.buy',{char:id,item:'cassis'});await NET.req('char.buy',{char:id,item:'gladius'})},cb);

@@ -430,11 +430,11 @@ const ONLC=(function(){
      (ch.offers), ≤OFF_CARRY brought (ch.offerEq; absent = the first two). They enter the match in the hand; unused ones come back
      to a survivor, used ones are gone; a Ranked death loses them all. ── */
   const PRICE_OFF={elix2:40,ap2:40,merc1:40,cf1:40,elix4:120,ap3:120,merc2:120,cf2:120};
-  const OFFERS83=Object.keys(PRICE_OFF), OFF_CARRY=2, OFF_MAX=10;
-  function offersBrought(ch){const have=(ch&&ch.offers||[]).slice();const want=Array.isArray(ch&&ch.offerEq)?ch.offerEq:have.slice();const out=[];
-    for(const k of want){if(out.length>=OFF_CARRY)break;const i=have.indexOf(k);if(i>=0){out.push(k);have.splice(i,1)}}return out}
+  const OFFERS83=Object.keys(PRICE_OFF), OFF_CARRY=2, OFF_MAX=2;
+  /* v0.98 (his rule): a gladiator holds at most OFF_MAX=2 offerings and ALL he holds go into a match (ch.offerEq is kept but ignored) */
+  function offersBrought(ch){return ((ch&&ch.offers)||[]).slice(0,OFF_CARRY)}
   function offerBuyWhy(ch,k){if(!ch||!ch.alive)return 'The dead buy nothing.';if(!OFFERS83.includes(k))return 'Flavius’s armory does not sell that.';
-    if((ch.offers||[]).length>=OFF_MAX)return `Up to ${OFF_MAX} offerings in the satchel.`;if((ch.wallet|0)<PRICE_OFF[k])return `Costs ${PRICE_OFF[k]} coin.`;return ''}
+    if((ch.offers||[]).length>=OFF_MAX)return `He carries at most ${OFF_MAX} offerings.`;if((ch.wallet|0)<PRICE_OFF[k])return `Costs ${PRICE_OFF[k]} coin.`;return ''}
   function offerBuy(ch,k){const why=offerBuyWhy(ch,k);if(why)throw new Error(why);ch.wallet-=PRICE_OFF[k];ch.offers=[...(ch.offers||[]),k];return ch}
   function offerBring(ch,keys){if(!ch.alive)throw new Error('The dead stay as they fell.');if(!Array.isArray(keys))throw new Error('Pick the offerings to bring.');
     if(keys.length>OFF_CARRY)throw new Error(`Bring at most ${OFF_CARRY} offerings.`);const have=(ch.offers||[]).slice();const eq=[];
@@ -497,7 +497,7 @@ const ONLC=(function(){
   function offersIn(D,keys){D.offers=D.offers||[];let sold=0;for(const k of keys||[]){if(!OFFERS83.includes(k))continue;if(D.offers.length>=OFF_SHELF){sold+=Math.round(PRICE_OFF[k]/2);continue}D.offers=[...D.offers,k]}if(sold)D.treasury=(D.treasury|0)+sold;return D}
   /* one offering between the house shelf (D) and a gladiator's satchel (or two satchels) */
   function offerMoveWhy(src,dst,k){if(!src||!dst||src===dst)return 'Pick where it goes.';if(!(src.offers||[]).includes(k))return 'That offering is not there.';
-    const cap=dst.cls?OFF_MAX:OFF_SHELF;if((dst.offers||[]).length>=cap)return dst.cls?`Up to ${OFF_MAX} offerings in the satchel.`:'The shelf is full.';return ''}
+    const cap=dst.cls?OFF_MAX:OFF_SHELF;if((dst.offers||[]).length>=cap)return dst.cls?`He carries at most ${OFF_MAX} offerings.`:'The shelf is full.';return ''}
   function offerMove(src,dst,k){const why=offerMoveWhy(src,dst,k);if(why)throw new Error(why);const o=(src.offers||[]).slice();o.splice(o.indexOf(k),1);src.offers=o;
     if(Array.isArray(src.offerEq)){const h=o.slice();src.offerEq=src.offerEq.filter(x=>{const i=h.indexOf(x);if(i<0)return false;h.splice(i,1);return true})}dst.offers=[...(dst.offers||[]),k];return {src,dst}}
   /* a house gift opened with no living gladiator: coin → the treasury, a CF bonus → coin (CFB_COIN a point), offerings / gear / named → the shelf */
@@ -1287,6 +1287,17 @@ const ONLC=(function(){
   /* a reply / push walked for named defs (the page): every {n, named83|named84} object renamed in place */
   function renameDeep98(x,depth){if(!x||typeof x!=='object'||(depth|0)>12)return x;if(Array.isArray(x)){for(const v of x)renameDeep98(v,(depth|0)+1);return x}
     if((x.named83||x.named84)&&typeof x.n==='string')rename98(x);for(const k in x){const v=x[k];if(v&&typeof v==='object')renameDeep98(v,(depth|0)+1)}return x}
+
+  /* ── 9 · OFFERINGS CAP 2 (his rule, v0.98): a gladiator holding more than OFF_MAX keeps the first two; the rest go to the house shelf, and with the shelf full
+     the price paid is refunded to the treasury (ledger 'refund'). Once per gladiator: ch.off98. D = his house (null → the refund goes to his wallet, swept later). ── */
+  function offCap98(ch,D,t){if(!ch||ch.off98)return null;ch.off98=1;const all=(ch.offers||[]).slice();if(all.length<=C.OFF_MAX)return {moved:0,refund:0};
+    const keep=all.slice(0,C.OFF_MAX),extra=all.slice(C.OFF_MAX);ch.offers=keep;if(Array.isArray(ch.offerEq))ch.offerEq=keep.slice();
+    let moved=0,refund=0;if(D){D.offers=D.offers||[];const cap=C.shelfMax?C.shelfMax(D):C.OFF_SHELF;
+      for(const k of extra){if(D.offers.length<cap){D.offers=[...D.offers,k];moved++}else refund+=C.PRICE_OFF[k]|0}
+      if(refund){D.treasury=(D.treasury|0)+refund;C.ledAdd(D,'refund',refund,ch,t)}}
+    else for(const k of extra){refund+=C.PRICE_OFF[k]|0;ch.wallet=(ch.wallet|0)+(C.PRICE_OFF[k]|0)}
+    return {moved,refund}}
+  Object.assign(C,{offCap98});
 
   if(Array.isArray(C.GUEST_OK)&&!C.GUEST_OK.includes('house.card'))C.GUEST_OK.push('house.card');
   Object.assign(C,{PW98,pwClean98,pwWhy98,sha256hex98,pwHash98,REGIONS98,regionOf98,regionByKey98,DRANKS98,DR_TOP98,DR_FALLEN98,drankScore98,drankOf98,drankIdx98,drankKeep98,

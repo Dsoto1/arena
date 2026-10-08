@@ -180,9 +180,9 @@ onlStoreHTML82=function(){if(!ONL.acct||onlIsGuest82())return '';const cat=onlCa
   /* offerings: each satchel + the shelf */
   const offs=[...live.map(c=>({o:c,id:c.id,name:c.name,list:c.offers||[],eq:ONLC.offersBrought(c)})),{o:house,id:'house',name:'🗄 Shelf',list:house.offers||[],eq:[]}];
   const offRow=x=>{const lock=x.id!=='house'&&busy.has(x.id);const eq=x.eq.slice();
-    return `<div class="of83-row"><b>${esc2(x.name)}</b>${x.id!=='house'?_T`<small class="rc-sub">brings ${x.eq.length}/${ONLC.OFF_CARRY}</small>`:''}<div class="of83-toks">${x.list.map(k=>{const j=eq.indexOf(k);const br=j>=0;if(br)eq.splice(j,1);
+    return `<div class="of83-row"><b>${esc2(x.name)}</b>${x.id!=='house'?_T`<small class="rc-sub">holds ${x.list.length}/${ONLC.OFF_MAX}</small>`:''}<div class="of83-toks">${x.list.map(k=>{const j=eq.indexOf(k);const br=j>=0;if(br)eq.splice(j,1);
       const dests=offs.filter(y=>y.id!==x.id).map(y=>`<option value="${esc2(y.id)}" ${y.id!=='house'&&busy.has(y.id)?'disabled':''}>→ ${esc2(y.name)}</option>`).join('');
-      return `<span class="of83 ${br?'br':''}" title="${esc2(OFF83N(k))}${br?_T(' · brought into the next match'):''}">${offTok83(k,30)}${x.id!=='house'?`<label><input type="checkbox" data-of83br="${esc2(x.id)}|${k}" ${br?'checked':''} ${lock?'disabled':''}>bring</label>`:''}<select class="tin" data-of83mv="${esc2(x.id)}|${k}" ${lock?'disabled':''} aria-label="${_T`Move`}"><option value="">⇄</option>${dests}</select></span>`}).join('')||'<small class="rc-sub">empty</small>'}</div></div>`};
+      return `<span class="of83 ${br?'br':''}" title="${esc2(OFF83N(k))}${br?_T(' · brought into the next match'):''}">${offTok83(k,30)}<select class="tin" data-of83mv="${esc2(x.id)}|${k}" ${lock?'disabled':''} aria-label="${_T`Move`}"><option value="">⇄</option>${dests}</select></span>`}).join('')||'<small class="rc-sub">empty</small>'}</div></div>`};
   const buyable=Object.entries(cat).sort((a,b)=>a[1].kind.localeCompare(b[1].kind)||a[1].lv-b[1].lv||a[1].n.localeCompare(b[1].n));
   const shop=`<details class="buy83" ${ONL83U.srOpen.buy?'open':''} data-d83="buy"><summary>${_T`🏛 Buy for the shelf <small class="rc-sub">paid from the treasury · ${c83()} ${T}</small>`}</summary>
     <div class="buy83-g"><select class="tin" id="buy83sel">${buyable.map(([k,it])=>{const p=ONLC.priceOf(it);return `<option value="${k}" ${p>T?'disabled':''}>${it.kind==='w'?'⚔':'🛡'} L${it.lv} ${esc2(it.n)} · ${p}</option>`}).join('')}</select><button type="button" class="btn tksm primary" data-onl83="dbuy">${_T`Buy`}</button></div>
@@ -190,16 +190,13 @@ onlStoreHTML82=function(){if(!ONL.acct||onlIsGuest82())return '';const cat=onlCa
   return `<div class="sr82" id="sr82"><div class="onl-lbtop"><h3>${_T`🗄 Storeroom`} <span class="rc-sub">${_T`${rows.length} piece${rows.length===1?'':'s'} · tick to bring · move between your gladiators`}</span></h3></div>
    <div class="sr82-chips">${chip('all',_T('All'),rows.length)}${live.map(c=>chip(c.id,`${busy.has(c.id)?'🔒 ':''}${esc2(c.name)}`,rows.filter(r=>r.o===c).length)).join('')}${chip('house',_T('🗄 Shelf'),house.gear.length)}</div>
    <div class="sr82-grid">${shown.map(row).join('')||`<p class="rc-sub">${_T`Nothing here yet — the Armory sells to your gladiators.`}</p>`}</div>${shop}
-   <div class="of83-box"><div class="tr83-h">${_T`🧪 Offerings <small class="rc-sub">at most ${ONLC.OFF_CARRY} brought into a match · the unused come back</small>`}</div>${offs.map(offRow).join('')}</div></div>`};
+   <div class="of83-box"><div class="tr83-h">${_T`🧪 Offerings <small class="rc-sub">he carries at most ${ONLC.OFF_MAX} · all he holds goes into a match · the unused come back</small>`}</div>${offs.map(offRow).join('')}</div></div>`};
 document.addEventListener('toggle',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.d83)ONL83U.srOpen[t.dataset.d83]=t.open;if(t&&t.classList&&t.classList.contains('tst83'))ONL83U.tstOpen=t.open},true);
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset)return;
   if(t.dataset.sr83mv&&t.value){const [from,item]=t.dataset.sr83mv.split('|');const to=t.value;e.stopPropagation();const I=ONL83.piece(onl83Holder(from)||{},item);
     return onlDo(async()=>{const r=await NET.req('domus.move',{item,from,to});await onlStoreAfter82(r);const nm=to==='house'?_T('the shelf'):((ONL.chars||[]).find(c=>c.id===to)||{}).name;onlToast80(`🗄 ${esc2((I&&I.n)||item)} → ${esc2(nm||'')}`)})}
   if(t.dataset.of83mv&&t.value){const [from,key]=t.dataset.of83mv.split('|');const to=t.value;e.stopPropagation();
-    return onlDo(async()=>{const r=await NET.req('offer.move',{key,from,to});for(const s of [r.from,r.to])if(s&&s.cls)onl83Put(s);onlToast80(_T`🧪 ${esc2(OFF83N(key))} moved.`)})}
-  if(t.dataset.of83br){const [cid,key]=t.dataset.of83br.split('|');const c=onl83Holder(cid);if(!c)return;e.stopPropagation();let keys=ONLC.offersBrought(c).slice();
-    if(t.checked){if(keys.length>=ONLC.OFF_CARRY){t.checked=false;onlToast80(_T`At most ${ONLC.OFF_CARRY} offerings go into a match.`);return}keys.push(key)}else{const i=keys.indexOf(key);if(i>=0)keys.splice(i,1)}
-    return onlDo(async()=>{onl83Put(await NET.req('offer.bring',{char:cid,keys}))})}},true);
+    return onlDo(async()=>{const r=await NET.req('offer.move',{key,from,to});for(const s of [r.from,r.to])if(s&&s.cls)onl83Put(s);onlToast80(_T`🧪 ${esc2(OFF83N(key))} moved.`)})}},true);
 
 /* ---------------- 5 · repair: the treasury or a purse ---------------- */
 function onl83Repair(from,item){const H=onl83Holder(from);const I=H&&ONL83.piece(H,item);if(!I)return;const cost=ONLC.repairCost(I);const T=(ONL.domus||{}).treasury|0;const live=onl83Live();
@@ -219,8 +216,7 @@ function onl83Board(ch){const cat=onlCatalog();const lv=[3,2,1];const coin=c83()
   const sat=ch.offers||[];const full=sat.length>=ONLC.OFF_MAX;
   const offers=ONLC.OFFERS83.slice().sort((a,b)=>ONLC.PRICE_OFF[a]-ONLC.PRICE_OFF[b]).map(k=>{const why=ONLC.offerBuyWhy(ch,k);
     return `<button type="button" class="mb83-of" data-onl83="obuy" data-v="${k}" ${why?_T`disabled title="${esc2(why)}"`:`title="${esc2(OFF83N(k))}"`}>${offTok83(k,42)}<small>${esc2(OFF83N(k))}</small><b>${coin} ${ONLC.PRICE_OFF[k]}</b></button>`}).join('');
-  const br=ONLC.offersBrought(ch);
-  return `<div class="mb83"><div class="mb83-offs"><div class="mb83-h">${_T`🧪 Offerings <small>${sat.length}/${ONLC.OFF_MAX} in ${esc2(ch.name)}’s satchel${full?' — full':''} · brings ${br.length?br.map(k=>esc2(OFFER[k]?OFFER[k].s||k:k)).join(' + '):_T('none')}</small>`}</div><div class="mb83-ofrow">${offers}</div></div>
+  return `<div class="mb83"><div class="mb83-offs"><div class="mb83-h">${_T`🧪 Offerings <small>${sat.length}/${ONLC.OFF_MAX} on ${esc2(ch.name)}${full?' — full':''}</small>`}</div><div class="mb83-ofrow">${offers}</div></div>
     <div class="mb83-halves"><div class="mb83-half w"><div class="mb83-h">${_T`⚔ Weapons`}</div>${side('w')}</div><div class="mb83-half a"><div class="mb83-h">${_T`🛡 Armor`}</div>${side('a')}</div></div></div>`}
 function onl83Used(ch){if(!ONL83U.used||Date.now()-ONL83U.usedAt>15000){ONL83U.usedAt=Date.now();NET.req('market.list',{}).then(r=>{ONL83U.used=r.used||[];if(ONL.tab==='armory'&&ONL83U.mkt==='used'&&!onlFocus80())onlRedraw()}).catch(()=>{})}
   const U=ONL83U.used;if(!U)return `<p class="rc-sub">${_T`Opening the stalls…`}</p>`;if(!U.length)return `<p class="rc-sub">${_T`Nothing used for sale — the fallen’s gear comes here, with its history.`}</p>`;const cat=onlCatalog();

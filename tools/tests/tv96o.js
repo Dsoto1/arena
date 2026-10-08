@@ -22,18 +22,18 @@ const worn=()=>P.evaluate(()=>{const l=document.querySelector('#onl .wr89-l');re
 const n0=await P.evaluate(()=>ONLC.equipOf(ONL.chars.find(c=>c.active)||ONL.char).filter(it=>{const I=ONL83.piece(ONL.char,it);return I&&I.kind==='a'}).length);
 await shot('before_or_after_closed');
 /* 1 */
-const L=await P.evaluate(()=>{const t=document.querySelector('#onl .db89 .tr89b'),r=document.querySelector('#onl .db89-tre');if(!t||!r)return null;const a=t.getBoundingClientRect(),c=r.getBoundingClientRect();return {below:a.top>=c.bottom-2,right:Math.abs(a.right-c.right)<6,inBan:!!t.closest('.db89'),tro:t.dataset.d89}});
+const L=await P.evaluate(()=>{const t=document.querySelector('#onl .db89 .tr89b'),r=document.querySelector('#onl .db89-tre');if(!t||!r)return null;const a=t.getBoundingClientRect(),c=r.getBoundingClientRect();return {below:a.top>=c.bottom-2,right:Math.abs(a.right-document.querySelector('#onl .db89').getBoundingClientRect().right)<20,inBan:!!t.closest('.db89'),tro:t.dataset.d89}});
 ok(L&&L.below&&L.right&&L.inBan&&L.tro==='tro','Trophies directly under the treasury, right aligned '+JSON.stringify(L));
 await P.click('#onl .db89 .tr89b');await W(300);ok(await P.evaluate(()=>!!document.querySelector('.tr89pop,.pop83')),'Trophies still opens');await P.evaluate(()=>document.querySelectorAll('.pop83').forEach(e=>e.remove()));
 /* 3 */
-let w=await worn();ok(w.chips===4&&/2 more|＋\d+ more/.test(w.more)&&w.off===4,'closed: 4 chips + more '+JSON.stringify(w));
+let w=await worn();ok(w.chips===n0&&!w.more&&w.off===n0,'v0.98: the armor box shows ALL pieces, no fold '+JSON.stringify(w));
 await P.click('#onl .wr89-l [data-d89off]');await idle();
 const n1=await P.evaluate(()=>ONLC.equipOf(ONL.char).filter(it=>{const I=ONL83.piece(ONL.char,it);return I&&I.kind==='a'}).length);w=await worn();
-ok(n1===n0-1&&n1<=5&&w.chips===n1&&!w.more,'<=5 shows all, no toggle '+JSON.stringify([n1,w]));
+ok(n1===n0-1&&w.chips===n1&&!w.more,'still all, no toggle '+JSON.stringify([n1,w]));
 /* 2 */
 ok(await P.evaluate(()=>!document.querySelector('#onl .tst83')),'no Tester panel on the Domus (not a tester)');await open('prof');ok(await P.evaluate(()=>!document.querySelector('#onl .tst83')),'no Tester panel in the profile for a non-tester');
 await P.evaluate(()=>localStorage.setItem('flavius_onltester83','1'));await open('char');ok(await P.evaluate(()=>!document.querySelector('#onl .tst83')),'tester: still none on the Domus');
-await open('prof');ok(await P.evaluate(()=>!!document.querySelector('#onl .pr89 .tst83')),'tester: the panel is in Profile & settings');await shot('profile');
+await open('prof');ok(await P.evaluate(()=>!!document.querySelector('#onl .pr96-tst .tst83')),'tester: the panel is in Profile & settings');await shot('profile');
 await P.evaluate(()=>localStorage.removeItem('flavius_onltester83'));
 await P.evaluate(()=>localStorage.setItem('flavius_dm96arm','1'));await P.reload({timeout:90000});await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});ok(await P.evaluate(()=>DM96.open===true),'open state read back after reload');
 console.log(miss.length?'MISSING '+JSON.stringify(miss):'ALL OK');console.log('ERRS',JSON.stringify(errs));

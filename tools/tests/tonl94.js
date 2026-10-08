@@ -26,7 +26,7 @@ lap('ready');
 
 /* ── 1 · A poses + saves in the Domus ── */
 await A.evaluate(async()=>{onlineOpen('play');await new Promise(r=>setTimeout(r,900));ONL.tab='char';onlRedraw()});
-const card=await seenBy(A,()=>!!document.querySelector('#onl [data-t94card] [data-t94="pose"]'),null,20000);ok(card,'the Domus shows the 3D token card');
+const card=await seenBy(A,()=>!!document.querySelector('#onl .sc98 .sc89-sub [data-t94="pose"]'),null,20000);ok(card,'the Domus shows the 3D token chip (v0.98: replaces the card)');
 await A.evaluate(()=>document.querySelector('#onl [data-t94="pose"]').click());
 const ready=await seenBy(A,()=>{const b=document.querySelector('#t93m [data-t93m="save"]');return !!b&&!b.disabled},null,120000);ok(ready,'the modeller opens on the online gladiator');lap('modeller');
 await seenBy(A,()=>document.querySelectorAll('#t93m #t93strip canvas').length===8,null,60000);await shot(A,'modeller');
@@ -35,10 +35,10 @@ await A.evaluate(()=>document.querySelector('#t93m [data-t93m="save"]').click())
 const saved=await seenBy(A,()=>!document.getElementById('t93m')&&!T94.up,null,150000);ok(saved,'Save renders + uploads');lap('saved');
 const S1=await A.evaluate(()=>{const w=mockLoad();const ch=w.chars[ONL.char.id];const P=t94MLoad()[ONL.char.id]||{};const chk=P.b?ONLC.tokCheck94(P.b,P.meta):{why:'none'};
   return {ref:ch.tok94&&ch.tok94.h,h:P.h,len:(P.b||'').length,why:chk.why||'',pk:P.pk,pose:(P.pose||'').length,charLen:JSON.stringify(ch).length,inChar:/RIFF|UklGR/.test(JSON.stringify(ch)),onl:!!(ONL.char.tok94&&ONL.char.tok94.h===P.h),
-    kit:JSON.stringify((ONLC.kitOf(ch).look||{}).t94||null),fig:!!document.querySelector('#onl [data-t94card] .t93fig'),off:!!document.querySelector('#onl [data-t94="off"]')}});
+    kit:JSON.stringify((ONLC.kitOf(ch).look||{}).t94||null),fig:(()=>{const c=document.querySelector('#onl .sc98 [data-t94="pose"]');c.dispatchEvent(new MouseEvent('mouseover',{bubbles:true}));const f=!!document.querySelector('#t94pop98 .t93fig');dm98PopOff();return f})(),off:!!document.querySelector('#onl [data-t94="off"]')}});
 ok(S1.ref&&S1.ref===S1.h&&!S1.why&&S1.len>1000&&S1.len<=Math.ceil(65536/3)*4,'stored: a WebP within the limits, the gladiator holds the hash '+JSON.stringify({h:S1.h,len:S1.len,why:S1.why}));
 ok(S1.pk==='victory'&&S1.pose>20&&S1.pose<=600,'pose stored '+JSON.stringify({pk:S1.pk,pose:S1.pose}));
-ok(!S1.inChar&&S1.charLen<6000,'the picture lives in its own item, not the gladiator');ok(S1.onl&&S1.fig&&S1.off,'the card shows the picture + Classic '+JSON.stringify(S1));
+ok(!S1.inChar&&S1.charLen<6000,'the picture lives in its own item, not the gladiator');ok(S1.onl&&S1.fig&&S1.off,'the chip hover shows the picture + Classic '+JSON.stringify(S1));
 ok(S1.kit===JSON.stringify({c:await A.evaluate(()=>ONL.char.id),h:S1.h}),'the kit names the picture '+S1.kit);
 await shot(A,'domus');
 /* ── 1b · SAFARI: a canvas that answers PNG for WebP → the libwebp WebAssembly encoder (assets/webpenc94.js) makes the sheet ── */

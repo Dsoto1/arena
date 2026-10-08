@@ -101,7 +101,7 @@ async function routes(){
   await bob.req('char.buy',{char:bob.ch.id,item:'gladius',rid:rf});assert.strictEqual(await tre(bob),5000-C.priceOf(catalog.gladius),'a refused rid may be asked again');
   /* an old rid (past 10 minutes) runs again; requests without a rid are never cached */
   const ro=rid();const t1=await tre(bob);await bob.req('offer.buy',{char:bob.ch.id,key:'ap2',rid:ro});T+=C.IDEM_MS93+1000;await bob.req('offer.buy',{char:bob.ch.id,key:'ap2',rid:ro});assert.strictEqual(t1-await tre(bob),80,'expired: a new request');
-  const t2=await tre(bob);await bob.req('offer.buy',{char:bob.ch.id,key:'cf1'});await bob.req('offer.buy',{char:bob.ch.id,key:'cf1'}).catch(()=>{});assert.ok(t2-await tre(bob)>=40);
+  const t2=await tre(ann);await ann.req('offer.buy',{char:ann.ch.id,key:'cf1'});await ann.req('offer.buy',{char:ann.ch.id,key:'cf1'}).catch(()=>{});assert.ok(t2-await tre(ann)>=40);
 
   /* ── races: two requests of one account at once (different rids) ── */
   {await setD(cat,{treasury:C.priceOf(catalog.gladius)+10});const p=C.priceOf(catalog.gladius);
@@ -110,7 +110,7 @@ async function routes(){
     const tr=await tre(cat);assert.ok(tr>=0,'never negative');const g=(await getC(cat.ch.id)).gear;assert.strictEqual(g.length,1,'one piece');assert.strictEqual(tr,p+10-C.priceOf(catalog[C.itemBase(g[0])]))}
   {await setD(cat,{treasury:100});const rs=await Promise.allSettled([1,2,3,4].map(()=>cat.req('offer.buy',{char:cat.ch.id,key:'elix2',rid:rid()},false)));
     assert.strictEqual(rs.filter(r=>r.status==='fulfilled').length,2,'two of four fit the treasury');assert.strictEqual(await tre(cat),20);assert.strictEqual((await getC(cat.ch.id)).offers.length,2)}
-  {/* the same rid twice at once: one runs, the other waits (rid_busy) or replays */const r=rid();await setD(cat,{treasury:500});const t0=await tre(cat);
+  {/* the same rid twice at once: one runs, the other waits (rid_busy) or replays */const r=rid();await setC(cat.ch.id,{offers:[]});await setD(cat,{treasury:500});const t0=await tre(cat);
     const rs=await Promise.allSettled([cat.req('offer.buy',{char:cat.ch.id,key:'ap2',rid:r},false),cat.req('offer.buy',{char:cat.ch.id,key:'ap2',rid:r},false)]);
     assert.strictEqual(t0-await tre(cat),40,'charged once');assert.ok(rs.every(x=>x.status==='fulfilled'||x.reason.code==='rid_busy'),rs.map(x=>x.reason&&x.reason.code).join())}
   {/* two houses bid on one lot at once: one leads, the other gets its coin back */const b2=await client('dax');await setD(b2,{treasury:50000});await setC(b2.ch.id,{glory:900,rankK:'veteranus',rank:'veteranus'});await setD(bob,{treasury:50000});await setC(bob.ch.id,{glory:900,rankK:'veteranus',rank:'veteranus'});

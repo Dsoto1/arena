@@ -46,8 +46,8 @@ function emptyBarracksWeek(w,pm){if(ownRoster(pm).length){w.cartSpell=0;return}
   if(!w.cartSpell){w.cartSpell=1;const lot=[];for(let i=0;i<3;i++){const g=genGlad({ovr:37+rnd(11)});const [woe,fx]=pickOne(AUCTION_WOES);fx(g);g.woe=woe;g.auction=1;g.gemHid=Math.random()<.18?6+rnd(8):0;g.price=4+rnd(7);w.glads.push(g);lot.push(g.id)}
     w.cart={wk:w.week,ids:lot};tnews(_T`🛒 <b>Vulso's cart</b> rattles up to your gate: three lots off the auction block, no road to pay. See the top of any tab.`,'big')}}
 function cartHTML(){const w=W_(),pm=me();const C=w.cart;if(!C)return '';const lot=C.ids.map(gById).filter(g=>g&&g.alive&&!g.contract);if(!lot.length||C.wk<w.week-1){if(C.wk<w.week-1)w.cart=null;return ''}
-  return `<div class="card2 offerbox cartbox"><div class="sect" style="margin-top:0">${_T`🛒 Vulso's cart at your gate`} <span class="rc-sub">${_T`this week only · no road to pay`}</span></div><div class="cartlots">${lot.map(g=>`<div class="cartlot">${gArt(g,'sm')}<div><b>${esc(g.name)}</b><span class="rc-sub">${CLASSES[g.cls]?CLASSES[g.cls].name:''} · ${gAge(g)} · rated ~${typeof rec98PubG==='function'?rec98PubG(g):pubOvr(g)} · <i>${esc(g.woe)}</i></span>
-    <button class="btn primary tksm" type="button" data-m48="cartbuy" data-id="${g.id}" ${pm.coin>=g.price?'':_T('disabled title="Not enough coin"')}>${_T`Buy · ${coinAmt87(g.price)}<small>6 weeks at 2/wk</small>`}</button></div></div>`).join('')}</div></div>`}
+  return `<div class="card2 offerbox cartbox"><div class="sect" style="margin-top:0">${_T`🛒 Vulso's cart at your gate`} <span class="rc-sub">${_T`this week only · no road to pay · take two of the three`}</span></div><div class="cartlots">${lot.map(g=>`<div class="cartlot">${gArt(g,'sm')}<div><b>${esc(g.name)}</b><span class="rc-sub">${CLASSES[g.cls]?CLASSES[g.cls].name:''} · ${gAge(g)} · rated ~${typeof rec98PubG==='function'?rec98PubG(g):pubOvr(g)} · <i>${esc(g.woe)}</i></span>
+    ${(C.bought||0)>=2?`<span class="rc-sub cart98left">${_T('Vulso keeps the last lot for the auction block')}</span>`:`<button class="btn primary tksm" type="button" data-m48="cartbuy" data-id="${g.id}" ${pm.coin>=g.price?'':_T('disabled title="Not enough coin"')}>${_T`Buy · ${coinAmt87(g.price)}<small>6 weeks at 2/wk</small>`}</button>`}</div></div>`).join('')}</div></div>`}
 function loanReturnCheck(w,pm){if(!ownRoster(pm).length)return;for(const g of loanedIn(pm))if(g.loanFrom.dire){const owner=mgrById(g.loanFrom.mid);if(!owner)continue;g.contract.mgr=owner.id;delete g.loanFrom;g.bench=false;if(g.direWage!=null){g.contract.wage=g.direWage;delete g.direWage}ghist(g,_T`back home to ${owner.ludus}: the borrowing house signed its own fighter`);
   tnews(_T`🤝 <b>${esc(g.name)}</b> goes home to ${esc(owner.ludus)} — you have a fighter of your own now. ${esc(owner.name)} sends their regards.`,'big')}}
 /* every loan remembers who borrowed — a death clears the contract */
@@ -97,7 +97,7 @@ function hygeiaUse(m){const w=W_();const hurt=rosterOf(m).filter(g=>g.inj&&!g.in
 document.addEventListener('click',e=>{const b=e.target.closest('[data-m48]');if(!b||typeof W_!=='function')return;const w=W_();if(!w)return;e.stopPropagation();const a=b.dataset.m48,id=b.dataset.id;const pm=me();
   if(a==='bench'){const g=gById(id);if(g&&!g.inj)g.bench=!g.bench}
   if(a==='hygeia')hygeiaUse(pm);
-  if(a==='cartbuy'){const g=gById(id);if(g&&!g.contract&&pm.coin>=g.price){pm.coin-=g.price;g.contract={mgr:pm.id,wage:2,weeks:6,since:w.week};delete g.auction;g.morale=55;g.scout=1;ghist(g,_T`bought off Vulso's cart for ${coinAmt87(g.price)} (${g.woe})`);tnews(_T`🛒 Bought ${esc(g.name)} off Vulso's cart (${coinAmt87(g.price)}). ${esc(g.woe)}.`);w.cart.ids=w.cart.ids.filter(x=>x!==id)}}
+  if(a==='cartbuy'){const g=gById(id);if(g&&!g.contract&&w.cart&&(w.cart.bought||0)<2&&pm.coin>=g.price){w.cart.bought=(w.cart.bought||0)+1;pm.coin-=g.price;g.contract={mgr:pm.id,wage:2,weeks:6,since:w.week};delete g.auction;g.morale=55;g.scout=1;ghist(g,_T`bought off Vulso's cart for ${coinAmt87(g.price)} (${g.woe})`);tnews(_T`🛒 Bought ${esc(g.name)} off Vulso's cart (${coinAmt87(g.price)}). ${esc(g.woe)}.`);w.cart.ids=w.cart.ids.filter(x=>x!==id)}}
   if(a==='loaninyes'||a==='loaninno'){const o=(w.offers||[]).find(x=>x.id===id);if(o){if(a==='loaninyes'){const g=gById(o.gid),m=mgrById(o.mid);if(g&&m&&borrowFrom(g,m,o.fee,o.weeks)){g.loanFrom.dire=1;g.bench=false;g.direWage=g.contract.wage;g.contract.wage=0}}w.offers=w.offers.filter(x=>x!==o)}}
   saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()},true);
 
@@ -166,7 +166,7 @@ function mgrGuideHTML(){const ref=guideParts().mgr;return `<div class="guide">
   <li>${_T`The fighter who sparred takes <b>+1 AP and ${cfAmt87('+2')}</b> into this week's Match Week. Spar the fighter you're about to enter.`}</li></ul>
  <h4>${_T`Empty barracks`}</h4><ul>
   <li>${_T`Lose everyone and a friendly house writes to offer a fighter on loan. You decide whether to accept.`}</li>
-  <li>${_T`<b>Vulso's cart</b> also comes to your gate once, with three cheap lots and no travel cost.`}</li>
+  <li>${_T`<b>Vulso's cart</b> also comes to your gate once, with three cheap lots and no travel cost. You may take two of them.`}</li>
   <li>${_T`A loaned fighter goes home as soon as you sign one of your own.`}</li>
   <li>${_T`If a loaned fighter dies under your colours, you owe their house a fee.`}</li></ul>
  <h4>${_T`Health`}</h4><ul>

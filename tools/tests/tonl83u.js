@@ -108,7 +108,7 @@ ok(wg.tab&&wg.pots===1&&/×/.test(wg.odds)&&wg.mine>=1,'the Wagers tab: open pot
 await A.evaluate(async id=>{await NET.req('lobby.leave',{id})},L1.id).catch(()=>{});await B.evaluate(async id=>{try{await NET.req('lobby.leave',{id})}catch(e){}},L1.id);
 
 /* ── 13 · gifts outlive a gladiator: Gamma (Fabii) holds a house gift and falls in a Ranked bout ── */
-await world(C,(w,did)=>{w.domus82[did].gifts=[{id:'cg1',why:'rank:novicius',at:Date.now()}]},sc.dom);await world(C,(w,cid)=>{w.chars[cid].offers=['merc1','ap2'];w.chars[cid].offerEq=['ap2']},sc.ch);
+await world(C,(w,did)=>{w.domus82[did].gifts=[{id:'cg1',why:'rank:novicius',at:Date.now()}];w.domus82[did].offers=['merc1']},sc.dom);await world(C,(w,cid)=>{w.chars[cid].offers=['ap2'];w.chars[cid].offerEq=['ap2']},sc.ch);
 const L2=await B.evaluate(async()=>await NET.req('lobby.create',{ev:'cassian',loc:3,seats:4,ranked:true,cry:false}));await C.evaluate(async id=>await NET.req('lobby.join',{id}),L2.id);
 const L2s=await B.evaluate(async id=>await NET.req('lobby.start',{id}),L2.id);const xb=L2s.players.findIndex(p=>p.char===sb.ch),xc=L2s.players.findIndex(p=>p.char===sc.ch);
 const t2=[0,1,2,3].map(i=>i===xb?{seat:i,won:true,place:1,f:20,survives:true}:i===xc?{seat:i,won:false,place:4,f:1,survives:false,kb:'b'}:{seat:i,won:false,place:2,f:4,survives:true});

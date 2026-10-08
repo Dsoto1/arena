@@ -192,9 +192,9 @@ function d89Hand(ch,x,side,busy){const lbl=side==='R'?_T('Right hand - Primary')
     <small>${lbl} · <b>${esc2(nm)}</b>${x.kit?_T(' <i>recruit kit</i>'):named?` <i>${esc2(ONLC.rarOf(I.rar).n)}</i>`:''}${home?` <i class="hm89i" title="${_T`Kept home in Ranked`}">🔒</i>`:''}</small></div>`}
 function d89Worn(ch){const out=[];for(const it of ONLC.equipOf(ch)){const I=ONL83.piece(ch,it);if(I&&I.kind==='a')out.push({it,I})}
   return out.map(({it,I})=>{const home=ONLC.isHome(ch,it);return `<span class="wr89 ${I.named?'nm89':''}" ${rc89(I.named&&ONL83.rarCol[I.rar])}><span class="wr89-p" data-d89off="${esc2(it)}" role="button" tabindex="0" title="${_T`${esc2(I.n)} · ${I.ap|0} AP — take it off`}">${d89Art(I,'sm')}<b>${esc2(I.n)}</b></span><button type="button" class="hm89 ${home?'on':''}" data-d89homew="${esc2(it)}" aria-pressed="${home}" title="${home?_T('Kept home in Ranked'):_T('Keep home: never bring it into a Ranked match')}">🔒</button></span>`}).join('')}
-function d89Satchel(ch){const offs=ch.offers||[];const br=ONLC.offersBrought(ch).slice();
-  const toks=offs.map((k,i)=>{const j=br.indexOf(k);const on=j>=0;if(on)br.splice(j,1);return `<span class="so89 ${on?'br':''}"><span class="so89-t" data-d89so="${i}" role="button" tabindex="0" title="${_T`${esc2(OFF83N(k))} — back to the shelf`}">${offTok83(k,30)}</span><button type="button" class="so89-s" data-d89br="${i}" aria-pressed="${on}" title="${on?_T('Brought into the next match'):_T`Bring it (at most ${ONLC.OFF_CARRY})`}">★</button></span>`}).join('');
-  return `<div class="sat89 dz89" data-dz89="sat"><small class="sat89-h">${_T`🧪 On him · ${offs.length}/${ONLC.OFF_MAX} · ★ brought (max ${ONLC.OFF_CARRY})`}</small><div class="sat89-r">${toks||`<small class="rc-sub">${_T`No offerings — drag one from the shelf.`}</small>`}</div></div>`}
+function d89Satchel(ch){const offs=ch.offers||[];
+  const toks=offs.map((k,i)=>`<span class="so89 br"><span class="so89-t" data-d89so="${i}" role="button" tabindex="0" title="${_T`${esc2(OFF83N(k))} — back to the shelf`}">${offTok83(k,30)}</span></span>`).join('');
+  return `<div class="sat89 dz89" data-dz89="sat"><small class="sat89-h">${_T`🧪 On him · ${offs.length}/${ONLC.OFF_MAX}`}</small><div class="sat89-r">${toks||`<small class="rc-sub">${_T`No offerings — drag one from the shelf.`}</small>`}</div></div>`}
 function d89Kits(ch){const K=ch.kits89||[];
   return `<div class="kt89"><small class="kt89-h">${_T`Loadouts`}</small>${K.map((k,i)=>`<span class="kt89-c"><button type="button" class="btn tksm" data-d89kit="${i}" title="${_T`Wear this loadout`}">▶ ${esc2(k.n)} <small>${k.items.length}</small></button><button type="button" class="kt89-x" data-d89kx="${i}" aria-label="${_T`Forget this loadout`}">✕</button></span>`).join('')}
     ${K.length<ONLC.KITS_MAX89?`<button type="button" class="btn tksm" data-d89="kitsave">${_T`💾 Save what he wears`}</button>`:''}</div>`}
@@ -304,10 +304,6 @@ document.addEventListener('click',e=>{const t=e.target;if(!t||!t.closest)return;
   if((b=t.closest('[data-d89off]'))){return d89Off(b.dataset.d89off)}
   if((b=t.closest('[data-d89of]'))){const ch=d89Act();const k=(d89Shelf().offers||[])[+b.dataset.d89of];if(ch&&k)return d89Offer('house',ch.id,k);return}
   if((b=t.closest('[data-d89so]'))){const ch=d89Act();const k=ch&&(ch.offers||[])[+b.dataset.d89so];if(k)return d89Offer(ch.id,'house',k);return}
-  if((b=t.closest('[data-d89br]'))){const ch=d89Act();if(!ch)return;const i=+b.dataset.d89br;const k=(ch.offers||[])[i];if(!k)return;const offs=ch.offers||[];
-    const cur=ONLC.offersBrought(ch).slice();const tagged=[];{const left=cur.slice();offs.forEach((x,j)=>{const q=left.indexOf(x);if(q>=0){left.splice(q,1);tagged.push(j)}})}
-    let keys;if(tagged.includes(i)){const left=cur.slice();left.splice(left.indexOf(k),1);keys=left}else{if(cur.length>=ONLC.OFF_CARRY)return d89Err(_T`At most ${ONLC.OFF_CARRY} offerings go into a match.`);keys=[...cur,k]}
-    return onlDo(async()=>{onl83Put(await NET.req('offer.bring',{char:ch.id,keys}))})}
   if((b=t.closest('[data-eb89]'))){const k=b.dataset.eb89;V89D.tab=k;try{localStorage.setItem('flavius_dombar89',k)}catch(err){}const box=b.closest('.eb89');if(box){for(const x of box.querySelectorAll('[data-eb89]')){x.classList.toggle('on',x===b);x.setAttribute('aria-selected',String(x===b))}for(const p of box.querySelectorAll('[data-eb89p]'))p.hidden=p.dataset.eb89p!==k}return}
   if((b=t.closest('[data-d89kit]'))){return d89KitApply(+b.dataset.d89kit)}
   if((b=t.closest('[data-d89kx]'))){const ch=d89Act();if(!ch)return;const K=(ch.kits89||[]).filter((x,i)=>i!==+b.dataset.d89kx);return onlDo(async()=>{d89Put(await NET.req('char.kits',{char:ch.id,kits:K}))})}

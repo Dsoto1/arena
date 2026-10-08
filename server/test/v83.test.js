@@ -39,8 +39,8 @@ function rules(){
   const all=C.UNIQUES.map(u=>u.k);assert.strictEqual(C.rollNamed(seeded(3),catalog,'legendary',all).rar,'epic','every unique claimed → Epic');
   assert.strictEqual(C.cleanNamed({key:'gladius',p:9}),null,'only nw_ keys');assert.strictEqual(C.cleanNamed({key:'nw_a',p:40,r:-3,uq:'evil'}).p,6);
   /* offerings */
-  const of=C.newChar({name:'Satchel',cls:'hero'},'o','of',0);of.wallet=200;assert.match(C.offerBuyWhy(of,'spiders'),/does not sell/);C.offerBuy(of,'elix4');C.offerBuy(of,'cf1');C.offerBuy(of,'ap2');
-  assert.strictEqual(of.wallet,200-120-40-40);assert.deepStrictEqual(C.offersBrought(of),['elix4','cf1'],'the first two by default');C.offerBring(of,['ap2']);assert.deepStrictEqual(C.kitOf(of).offer,['ap2']);
+  const of=C.newChar({name:'Satchel',cls:'hero'},'o','of',0);of.wallet=200;assert.match(C.offerBuyWhy(of,'spiders'),/does not sell/);C.offerBuy(of,'elix4');C.offerBuy(of,'cf1');assert.throws(()=>C.offerBuy(of,'ap2'),/He carries at most 2 offerings\./,'v0.98: a 3rd is refused');
+  assert.strictEqual(of.wallet,200-120-40);assert.deepStrictEqual(C.offersBrought(of),['elix4','cf1'],'v0.98: all he holds is brought');C.offerBring(of,['cf1']);assert.deepStrictEqual(C.kitOf(of).offer,['elix4','cf1'],'offerEq is ignored');
   assert.throws(()=>C.offerBring(of,['ap2','ap2']),/not in the satchel/);assert.throws(()=>C.offerBring(of,['a','b','c']),/at most 2/);
   /* gearAfter: a survivor (breaks, offerings back, cf bonus spent) and the dead (carried / left) */
   const g=C.newChar({name:'After Math',cls:'hero'},'o','am',0);g.gear=['galea','gladius','wraps'];g.offers=['elix2','cf2','ap3'];g.cfb=5;const gk=C.kitOf(g);
@@ -91,8 +91,8 @@ async function routes(){
   /* ── offerings + buying without a rank gate ── */
   await setC(ann.ch.id,{wallet:2000});await setC(bob.ch.id,{wallet:2000});
   let a=await ann.req('char.buy',{char:ann.ch.id,item:'galea'});a=await ann.req('char.buy',{char:ann.ch.id,item:'charun'});assert.ok(a.gear.includes('charun'),'a Tiro buys a level-3 weapon');
-  a=await ann.req('offer.buy',{char:ann.ch.id,key:'elix4'});a=await ann.req('offer.buy',{char:ann.ch.id,key:'cf1'});a=await ann.req('offer.buy',{char:ann.ch.id,key:'merc1'});
-  await rejects(ann.req('offer.buy',{char:ann.ch.id,key:'curse'}),null,/does not sell/);a=await ann.req('offer.bring',{char:ann.ch.id,keys:['cf1','merc1']});assert.deepStrictEqual(a.offerEq,['cf1','merc1']);
+  a=await ann.req('offer.buy',{char:ann.ch.id,key:'elix4'});a=await ann.req('offer.buy',{char:ann.ch.id,key:'cf1'});await rejects(ann.req('offer.buy',{char:ann.ch.id,key:'merc1'}),null,/He carries at most 2 offerings\./);
+  await rejects(ann.req('offer.buy',{char:ann.ch.id,key:'curse'}),null,/does not sell/);a=await ann.req('offer.bring',{char:ann.ch.id,keys:['cf1','elix4']});assert.deepStrictEqual(a.offerEq,['cf1','elix4']);
   let b=await bob.req('char.buy',{char:bob.ch.id,item:'cassis'});b=await bob.req('char.buy',{char:bob.ch.id,item:'flail'});b=await bob.req('char.buy',{char:bob.ch.id,item:'wraps'});
   await bob.req('domus.equip',{char:bob.ch.id,item:'wraps',on:false});
   /* ── the START COUNTDOWN: Start → startAt; a line-up change stops it; ✕ Hold; go:1 at startAt ── */
@@ -105,14 +105,14 @@ async function routes(){
   L=await ann.req('lobby.start',{id:L.id});await bob.req('lobby.ready',{id:L.id,ready:true});assert.ok((await db.get('LOBBY#'+L.id,'LOBBY')).startAt,'a ready mark does not stop it');
   T=L.startAt+1;await rejects(bob.req('lobby.start',{id:L.id,go:1}),null,/host sounds/);L=await ann.req('lobby.start',{id:L.id,go:1});assert.strictEqual(L.status,'live');assert.strictEqual(L.startAt,null);
   const sa=C.seatOf(L,ann.acct),sb=C.seatOf(L,bob.acct);const ka=L.players[sa].kit,kb=L.players[sb].kit;
-  assert.deepStrictEqual(ka.offer,['cf1','merc1']);assert.deepStrictEqual(ka.items,['galea','charun']);assert.deepStrictEqual(kb.items,['cassis','flail'],'the unticked piece stays home');
+  assert.deepStrictEqual(ka.offer,['elix4','cf1']);assert.deepStrictEqual(ka.items,['galea','charun']);assert.deepStrictEqual(kb.items,['cassis','flail'],'the unticked piece stays home');
   /* a bet from the stands-less outsider: the wagers tab sees it before the horns only — place one on a second room below */
   /* ── the result: Ann survives (galea lost on the sand, merc1 still in hand); Bob is slain by Ann and dies ── */
-  const tbl=[0,1,2,3].map(i=>i===sa?{seat:i,won:true,place:1,f:40,survives:true,brk:['galea'],off:['merc1'],kb:''}:i===sb?{seat:i,won:false,place:4,f:3,survives:false,ks:sa,kb:'g'}:{seat:i,won:false,place:2,f:5});
+  const tbl=[0,1,2,3].map(i=>i===sa?{seat:i,won:true,place:1,f:40,survives:true,brk:['galea'],off:['elix4'],kb:''}:i===sb?{seat:i,won:false,place:4,f:3,survives:false,ks:sa,kb:'g'}:{seat:i,won:false,place:2,f:5});
   m0=mark();await ann.req('match.result',{id:L.id,table:tbl,hash:'h'});const rb=await bob.req('match.result',{id:L.id,table:tbl,hash:'h'});assert.ok(rb.out.died);
   const A1=await getC(ann.ch.id);const ra=(await db.get('MATCH#'+L.id,'META')).outs[ann.acct];
   assert.strictEqual(ra.award,Math.round(8*1.5*0.5));assert.strictEqual(ra.cut,ra.award,'v0.92: the whole award');assert.strictEqual((await getD(ann.domus.id)).led89.in.cut,ra.award,'into the house treasury, booked as bout earnings');
-  assert.deepStrictEqual(ra.broken,[]);assert.deepStrictEqual(ra.gone,['galea'],'v0.91: used up');assert.ok(!A1.gear.some(x=>C.itemBase(x)==='galea'));assert.deepStrictEqual(A1.offers.sort(),['elix4','merc1'],'merc1 came back, cf1 was used');
+  assert.deepStrictEqual(ra.broken,[]);assert.deepStrictEqual(ra.gone,['galea'],'v0.91: used up');assert.ok(!A1.gear.some(x=>C.itemBase(x)==='galea'));assert.deepStrictEqual(A1.offers.sort(),['elix4'],'elix4 came back, cf1 was used');
   const BD=await getD(bob.domus.id);assert.deepStrictEqual(BD.gear,['wraps'],'the dead one’s un-brought piece waits on his house’s shelf');assert.deepStrictEqual((await getC(bob.ch.id)).gear,[]);
   const lo=ann.got('loot.offer',m0);assert.strictEqual(lo.length,1,'the killer’s window');assert.deepStrictEqual(lo[0].pieces.map(p=>C.itemBase(p.item)).sort(),['cassis','flail'],'what he brought');
   assert.strictEqual(lo[0].dead.name,'Bob Gladius');assert.ok(lo[0].until>T);assert.strictEqual((await ann.req('hello',{all:1})).loot.length,1,'hello lists the open window');
@@ -183,14 +183,14 @@ async function routes(){
   const best=(await ann.req('hello',{all:1})).today.wins[0];assert.ok(best.dom,'Today entries carry the house id');T+=86400e3;await hal.req('hello',{all:1});
   const vd=(await getD(best.dom)).trophies.find(t=>t.k==='vday');assert.ok(vd&&vd.x===1,'Victor of the Day');await cid.req('world.news',{});assert.strictEqual((await getD(best.dom)).trophies.find(t=>t.k==='vday').x,1,'once a day');
   /* ── HIS CALL: gifts belong to the HOUSE (they survive a death); a Ranked death puts the un-brought satchel on the shelf ── */
-  const ida=await client('ida');await setC(ida.ch.id,{wallet:300,glory:85});await ida.req('offer.buy',{char:ida.ch.id,key:'elix2'});await ida.req('offer.buy',{char:ida.ch.id,key:'ap2'});await ida.req('offer.buy',{char:ida.ch.id,key:'merc1'});
+  const ida=await client('ida');await setC(ida.ch.id,{wallet:300,glory:85});await ida.req('offer.buy',{char:ida.ch.id,key:'elix2'});await ida.req('offer.buy',{char:ida.ch.id,key:'ap2'});
   await ida.req('offer.bring',{char:ida.ch.id,keys:['elix2']});const jon=await client('jon');
   let LG=await ida.req('lobby.create',{ev:'democritus',ranked:true,cry:false});await jon.req('lobby.join',{id:LG.id});LG=await ida.req('lobby.start',{id:LG.id});T=LG.startAt+1;LG=await ida.req('lobby.start',{id:LG.id,go:1});
   const si=C.seatOf(LG,ida.acct),sj=C.seatOf(LG,jon.acct);const tg=[0,1,2,3].map(i=>i===si?{seat:i,f:20,won:true,survives:true}:{seat:i,f:2});for(const x of [ida,jon])await x.req('match.result',{id:LG.id,table:tg,hash:'g'});
   let IC=await getC(ida.ch.id);assert.deepStrictEqual(IC.gifts||[],[],'the new gift left the gladiator');let ID=await getD(ida.domus.id);assert.ok(ID.gifts.some(g=>g.why==='rank:novicius'&&g.glad==='Ida Gladius'),'… onto the house');
   assert.strictEqual((await ida.req('hello',{all:1})).domus.gifts,ID.gifts.length,'the house row counts its gifts');assert.deepStrictEqual((await ida.req('domus.get',{})).gifts.map(g=>g.id),ID.gifts.map(g=>g.id));
   /* a Ranked death: the brought offering dies with him, the rest of the satchel and the gifts stay with the house */
-  await ida.req('offer.bring',{char:ida.ch.id,keys:['ap2']});
+  await setD(ida.domus.id,{offers:['merc1']});await ida.req('offer.buy',{char:ida.ch.id,key:'ap2'});
   await setC(jon.ch.id,{glory:C.gloryOf(await getC(ida.ch.id)),rankK:C.rankFor(await getC(ida.ch.id)).k});
   let LD=await ida.req('lobby.create',{ev:'egidious',ranked:true,cry:false});await jon.req('lobby.join',{id:LD.id});LD=await ida.req('lobby.start',{id:LD.id});T=LD.startAt+1;LD=await ida.req('lobby.start',{id:LD.id,go:1});
   const td=[0,1,2,3].map(i=>i===C.seatOf(LD,ida.acct)?{seat:i,f:1,survives:false,kb:'b'}:{seat:i,f:4,won:i===C.seatOf(LD,jon.acct)});for(const x of [ida,jon])await x.req('match.result',{id:LD.id,table:td,hash:'d'});

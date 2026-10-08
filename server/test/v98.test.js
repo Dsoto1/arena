@@ -138,5 +138,24 @@ async function routes(){
   await rejects(cat.req('char.class',{char:dm.id,cls:'hero'}),null,/Damnatio/);await rejects(cat.req('char.class',{char:cat.ch.id,cls:'damnatio'}),null,/Damnatio/);
   const ok=await cat.req('char.class',{char:cat.ch.id,cls:'slave'});assert.strictEqual(ok.char.cls,'slave','other switches stay open (100 coin)');
   assert.strictEqual((await db.get('DOMUS#'+DC.id,'DOMUS')).treasury,800,'and cost 100');
+  /* ── 9 · OFFERINGS CAP 2 ── */
+  assert.strictEqual(C.OFF_MAX,2);assert.deepStrictEqual(C.offersBrought({offers:['elix2','ap2'],offerEq:['ap2']}),['elix2','ap2'],'all he holds is brought, offerEq ignored');
+  const eve=await client('eve');const EC=await db.get('CHAR#'+eve.ch.id,'CHAR'),ED=await db.get('DOMUS#'+eve.ch.domus,'DOMUS');
+  await db.put('DOMUS#'+ED.id,'DOMUS',{...ED,treasury:100,offers:[]});
+  await db.put('CHAR#'+EC.id,'CHAR',{...EC,offers:['elix2','ap2'],wallet:0});await db.put('DOMUS#'+ED.id,'DOMUS',{...(await db.get('DOMUS#'+ED.id,'DOMUS')),treasury:1000});
+  await rejects(eve.req('offer.buy',{char:eve.ch.id,key:'cf1'}),null,/He carries at most 2 offerings\./);
+  await db.put('DOMUS#'+ED.id,'DOMUS',{...(await db.get('DOMUS#'+ED.id,'DOMUS')),offers:['merc1']});
+  await rejects(eve.req('offer.move',{key:'merc1',from:'house',to:eve.ch.id}),null,/He carries at most 2 offerings\./);
+  /* an old gladiator holding 4: the first two stay, two go to the shelf */
+  await db.put('CHAR#'+EC.id,'CHAR',{...(await db.get('CHAR#'+EC.id,'CHAR')),offers:['elix2','ap2','cf1','merc1'],offerEq:['merc1'],off98:undefined});
+  await db.put('DOMUS#'+ED.id,'DOMUS',{...(await db.get('DOMUS#'+ED.id,'DOMUS')),offers:[],treasury:100});
+  await eve.req('hello',{all:1});let E1=await db.get('CHAR#'+EC.id,'CHAR'),D1=await db.get('DOMUS#'+ED.id,'DOMUS');
+  assert.deepStrictEqual(E1.offers,['elix2','ap2']);assert.ok(E1.off98);assert.deepStrictEqual(D1.offers.slice().sort(),['cf1','merc1']);assert.strictEqual(D1.treasury,100,'no refund while the shelf has room');
+  await eve.req('domus.get',{});assert.deepStrictEqual((await db.get('CHAR#'+EC.id,'CHAR')).offers,['elix2','ap2'],'once: a second read changes nothing');assert.strictEqual((await db.get('DOMUS#'+ED.id,'DOMUS')).offers.length,2);
+  /* the shelf full: the price paid is refunded to the treasury with a ledger line */
+  const cap=C.shelfMax(D1);await db.put('CHAR#'+EC.id,'CHAR',{...(await db.get('CHAR#'+EC.id,'CHAR')),offers:['elix2','ap2','elix4','ap3'],off98:undefined});
+  await db.put('DOMUS#'+ED.id,'DOMUS',{...(await db.get('DOMUS#'+ED.id,'DOMUS')),offers:Array(cap-1).fill('cf1'),treasury:100});
+  await eve.req('hello',{all:1});E1=await db.get('CHAR#'+EC.id,'CHAR');D1=await db.get('DOMUS#'+ED.id,'DOMUS');
+  assert.deepStrictEqual(E1.offers,['elix2','ap2']);assert.strictEqual(D1.offers.length,cap);assert.strictEqual(D1.treasury,100+C.PRICE_OFF.ap3,'the 2nd extra (ap3) refunded');assert.strictEqual(D1.led89.in.refund,C.PRICE_OFF.ap3,'ledger line');
 }
 (async()=>{units();await routes();console.log('v0.98 routes: all checks passed')})().catch(e=>{console.error(e);process.exit(1)});
