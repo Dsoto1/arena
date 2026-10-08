@@ -55549,6 +55549,34 @@ if(typeof MOCK_ROUTES!=='undefined')for(const t of Object.keys(MOCK_ROUTES)){con
  #onl .db89.a98 .db96-tc .tr89b{position:static}#onl .db89.a98{min-height:0}
  #onl .dom89 .sc98 .sc89-rec{grid-template-columns:repeat(5,minmax(0,1fr))}}
 `;document.head.appendChild(st)})();
+/* 254-v98fastonl — v0.98 fix: ONLINE LOCKSTEP WHEN A VIEWER PLAYS AT FAST (online only; offline untouched).
+   ROOT CAUSE (traced 2026-10-08 with two windows, one at Fast): a remote move was applied in the wrong place. The End-turn button
+   (07-ui 'end', also 'exit' and the tunnel) runs act(async()=>{S.busy=false;await endTurn()}), and act()'s own tail clears S.busy before
+   it awaits settle() (a round end: rewards, picks). For that whole stretch the phase is still 'action', the same gladiator is cur() and
+   nothing is busy — so 113's onlmReady said "ready" to a move of THAT seat. A lanista at Fast plays the CPU turns that follow almost at
+   once and sends his NEXT turn's move (coin, a tile) while a Normal-speed window is still inside the old endTurn (zone check, hand
+   limit, restless stones, Mandata, recordHist): the move was applied there, turns too early → hash mismatch → resync (3+ humans:
+   majority vote, the slow window struck as the odd one). Normal/Normal hid it only because both windows took the CPU turns equally slowly.
+   Nothing in the engine changes state or draws from the dice by speed: the cause is purely when a queued input may be applied.
+   FIX: while an endTurn() or a settle() is running (counted per arena S, so a loaded snapshot / new event starts at 0), a board input
+   (tile / act / drop) is NOT ready on any client, the 121 stuck check does not call it "impossible", your own board clicks are not
+   taken (onlmMine false outside windows — no move recorded half-way through your own turn's end), and no snapshot is cut. Windows
+   (modal inputs: the hand limit, a round reward pick) still flow, so nothing waits on itself. Test: tonl98f. */
+const F98={G:null,n:0,held:0};
+function f98Busy(){return !!(S&&F98.G===S&&F98.n>0)}
+function f98Wrap(fn){return async function(){const G=S;if(F98.G!==G){F98.G=G;F98.n=0}F98.n++;
+  try{return await fn.apply(this,arguments)}finally{if(F98.G===G)F98.n=Math.max(0,F98.n-1);
+    try{if(typeof onlmOn==='function'&&onlmOn())setTimeout(onlmPump,30)}catch(e){}}}}
+endTurn=f98Wrap(endTurn);
+settle=f98Wrap(settle);
+{const base=onlmReady;onlmReady=function(inp){if(inp&&inp.k!=='modal'&&inp.k!=='void'&&inp.k!=='abandon'&&f98Busy()){F98.held++;return false}return base.apply(this,arguments)}}
+{const base=onl80fImpossible;onl80fImpossible=function(inp){if(f98Busy()&&!ONLM.pend)return false;return base.apply(this,arguments)}}
+{const base=onlmMine;onlmMine=function(){if(f98Busy()&&!CUR_MODAL&&onlmOn())return false;return base.apply(this,arguments)}}
+{const base=onlmSettled;onlmSettled=function(){if(f98Busy())return false;return base.apply(this,arguments)}}
+/* the speed is this viewer's own: a resync snapshot (38-matchsave matchLoad sets SPEED from the sender's save) no longer hands the
+   sender's speed to this window */
+{const base=onlmLoad;onlmLoad=function(){const sp=SPEED,keep=()=>{try{if(SPEED!==sp&&!['pause','step','snap'].includes(sp))setSpeedUI(sp)}catch(e){}};
+  const r=base.apply(this,arguments);keep();try{Promise.resolve(r).then(keep,()=>{})}catch(e){}return r}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
