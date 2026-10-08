@@ -1,0 +1,32 @@
+{
+ "bust": {
+  "paintTodayMs": 0.003,
+  "paintAfterMs": 0.055,
+  "paintAfterGrainMs": 0.027,
+  "bytesToday": 1359,
+  "bytesAfter": 7866,
+  "bytesAfterGrain": 8198,
+  "rasterTodayMs170": 0.828,
+  "rasterAfterMs170": 1.992,
+  "rasterAfterGrainMs170": 1.673,
+  "rasterTodayMs54": 0.479,
+  "rasterAfterMs54": 1.939
+ },
+ "chip": {
+  "paintTodayMs": 0,
+  "paintAfterMs": 0.03,
+  "bytesToday": 748,
+  "bytesAfter": 7582,
+  "rasterTodayMs20": 0.227,
+  "rasterAfterMs20": 1.697,
+  "rasterAfterNoPolishMs20": 0.351
+ },
+ "beast": {
+  "paintTodayMs": 0.081,
+  "paintAfterMs": 0.081,
+  "bytesToday": 3895,
+  "bytesAfter": 6604,
+  "rasterTodayMs28": 0.849,
+  "rasterAfterMs28": 1.337
+ }
+}
