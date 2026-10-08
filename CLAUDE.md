@@ -1599,7 +1599,7 @@ share copy — the site download play/flavius-rule-arena.zip.)
   2 coin); (5) whose turn + "next: <name>" with a small face at the left of the rail; (6) small key hints on the buttons (A/M/P/T/Enter, the
   v0.93 keyboard layer); (7) hints mode only (never Ranked): soft glow on the action the strategy hints would pick; (8) phones: the groups = one
   swipe row, End turn fixed on the right.
-- **SPLIT (his call 2026-10-08): v0.96 / v0.97.** v0.96 SHIPPED; v0.97 also gets: Find me a fight (lobby.quick) still cries — make it silent server-side. v0.96 (no server change) = all Manager fixes/changes of notes I/II/III (standings, Season
+- **SPLIT (his call 2026-10-08): v0.96 / v0.97.** v0.96 SHIPPED; GRADE CUT-OFFS CONFIRMED (his ok 2026-10-08): A+92 A85 B+78 B70 C+62 C54 D44 F — Recruiting III uses trait96Grade as is; v0.97 also gets: Find me a fight (lobby.quick) still cries — make it silent server-side. v0.96 (no server change) = all Manager fixes/changes of notes I/II/III (standings, Season
   Acta cards, Match Week Road box, invitational answer, warnings, "no fighter" item, Armory anvil + damaged section, Save and Exit, trait
   cards), all board/match items of notes I (🔴 attack trace first, belts, Shield popup, snap-back, sim beast cards, stone cap, Fast skips
   frames, counters, #slogPin, spectator upkeep, Tasset, Carmina window) + the COMPACT ACTION BAR with its 8 extras, and the client-only online
