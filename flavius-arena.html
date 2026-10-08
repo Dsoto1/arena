@@ -1359,6 +1359,26 @@ function _T(s,...v){
   let o=s[0];for(let i=0;i<v.length;i++)o+=String(v[i])+s[i+1];return o}
 /* exact lookup for text that never went through _T (static HTML in 01-head, server replies) */
 function TX(str){if(!LANG_DICT||typeof str!=='string')return str;const r=langLook86(str,[],true);return r==null?str:r}
+/* v0.95 — patch-by-match helpers: a later module that finds a spot in HTML an earlier module made must look for the TRANSLATED text, not the English.
+   TX('key') = the exact key as the producer wrapped it; TXPRE('key {0}…') = its translation up to the first {0} (templates with values);
+   TXHEAD(key,tail) = TXPRE minus a trailing tail (markup the pattern should not include); RXE(s) = regexp-escape. English: identity. */
+/* Fate titles are built with _T (e.g. 'Thumb of Flavius · spared'), so a test on the English words fails in every other language */
+function fateSpared(t){t=String(t||'');return /spared/.test(t)||t===TX('Thumb of Flavius · spared')}
+function fateThumbsDown(t){t=String(t||'');return /^Thumbs down/.test(t)||t.startsWith(TXPRE('Thumbs down · {0}'))}
+function fateIsThumb(t){t=String(t||'');return /^Thumb of Flavius/.test(t)||t.startsWith(TXPRE('Thumb of Flavius · {0}'))}
+/* LBLRX(['Close',…],end) — /^(Close|Cerrar|…)/ so code that recognises a window's button by its label keeps working in every language */
+function LBLRX(words,end){return new RegExp('^('+String(words).split('|').map(w=>{const t=TX(w);return t===w?RXE(w):RXE(w)+'|'+RXE(t)}).join('|')+')'+(end?'$':''))}
+/* TXL('Label') = the translated label of a form field made as _T`Label${select}` (key 'Label{0}') or _T`Label` — RXL() = regexp-escaped */
+function TXL(en){const a=TX(en+'{0}');return a!==en+'{0}'?a.replace(/\{0\}$/,''):TX(en)}
+function RXL(en){return RXE(TXL(en))}
+/* HRX('Rounds') = /^Rounds/ in the player's language (headings tested by their text) */
+function HRX(en){return new RegExp('^'+RXE(TX(en)))}
+/* TXK(prefix) = the translation of the first dictionary key that starts with prefix (for long keys whose tail is not worth repeating); English: the prefix itself */
+const TXK_CACHE=new Map();
+function TXK(prefix){if(!LANG_DICT)return prefix;if(TXK_CACHE.has(prefix))return TXK_CACHE.get(prefix);let r=prefix;for(const k in LANG_DICT){if(k.startsWith(prefix)){r=LANG_DICT[k];break}}TXK_CACHE.set(prefix,r);return r}
+function TXPRE(key){const t=TX(key);const i=t.indexOf('{0}');return i<0?t:t.slice(0,i)}
+function TXHEAD(key,tail){const t=TXPRE(key);return tail&&t.endsWith(tail)?t.slice(0,t.length-tail.length):t}
+function RXE(s){return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
 /* v0.52: a brand-new player is one with nothing of ours in this browser yet — checked before anything is written */
 const FIRST_RUN = (() => {
   try {
@@ -13514,7 +13534,7 @@ function modal(title, body, buttons, opt = {}) {
     // a × (and Escape) closes any window that has a harmless way out
     const closeB = opt.close !== undefined ? {
       value: opt.close
-    } : buttons.find(b => /^(Close|Cancel|Keep it|Skip|Look at the board|Opt out)/.test(String(b.label)));
+    } : buttons.find(b => LBLRX('Close|Cancel|Keep it|Skip|Look at the board|Opt out').test(String(b.label)));
     /* btnHTML — one dialog button with optional card art and a sub-label. */
     const btnHTML = (b, i) => `<button class="btn ${b.primary ? 'primary' : ''}" type="button" data-mi="${i}" ${b.disabled ? 'disabled' : ''} ${b.style ? `style="${b.style}"` : ''}>${b.card && cardRef(b.card) ? cardHTML(b.card, cardRef(b.card).sh.wide ? 'sm' : 'xs') : ''}${b.label}${b.sub ? `<small>${b.sub}</small>` : ''}</button>`;
     if (opt.grid) {
@@ -13524,7 +13544,7 @@ function modal(title, body, buttons, opt = {}) {
       g.innerHTML = opt.grid.map((b, i) => btnHTML(b, off + i)).join('');
     }
     // v0.21: the × at the top right replaces redundant bottom "Close" buttons
-    $('#mBtns').innerHTML = buttons.map((b, i) => closeB && (b === closeB || b.value === closeB.value) && /^Close$/.test(String(b.label)) ? '' : btnHTML(b, i)).join('');
+    $('#mBtns').innerHTML = buttons.map((b, i) => closeB && (b === closeB || b.value === closeB.value) && LBLRX('Close', 1).test(String(b.label)) ? '' : btnHTML(b, i)).join('');
     $('#mBtns').hidden = !$('#mBtns').innerHTML.trim();
     $('#modal').hidden = false;
     document.body.classList.add('modal-open'); // no scroll bleed into the page behind
@@ -13590,7 +13610,7 @@ function modal(title, body, buttons, opt = {}) {
     CUR_MODAL = {
       done,
       closeB,
-      harmless: !!closeB && (opt.close !== undefined || /^(Close|Look at the board)$/.test(String(closeB.label)))
+      harmless: !!closeB && (opt.close !== undefined || LBLRX('Close|Look at the board', 1).test(String(closeB.label)))
     };
     if (opt.onOpen) opt.onOpen(done);
     requestAnimationFrame(() => {
@@ -14505,9 +14525,9 @@ function fateBreakdown(player,won,champ){
   return {lines:L.map(([a,v])=>[a,(v>0&&a!=='Crowd Favor held'?'+':'')+v]),total};
 }
 /* fateIdxOf — which Fate card image matches a fate result ([title, text]); spared thumbs show the 20 CF card. */
-const fateIdxOf=fate=>{if(!fate)return null;if(/spared/.test(fate[0]))return fateRow(20).img;const F=FATES.find(F=>fate[0].endsWith(F.n));return F?F.img:null};
+const fateIdxOf=fate=>{if(!fate)return null;if(fateSpared(fate[0]))return fateRow(20).img;const F=FATES.find(F=>fate[0].endsWith(F.n));return F?F.img:null};
 /* aliveInUniverse — whether a result row's gladiator lives on after the event: not retired, not thumbed down, and 20+ CF or spared. */
-const aliveInUniverse=row=>!row.p.retired&&row.fate&&!/^Thumbs down/.test(row.fate[0])&&(row.f>=20||/spared/.test(row.fate[0]));
+const aliveInUniverse=row=>!row.p.retired&&row.fate&&!fateThumbsDown(row.fate[0])&&(row.f>=20||fateSpared(row.fate[0]));
 /* placements — result rows in finishing order: winners, then survivors by CF, then the eliminated, last out first. */
 function placements(rows,winnerIds){
   const order=S.elimOrder||[];const pos=id=>order.findIndex(o=>o.id===id);
@@ -14596,7 +14616,7 @@ async function gameOver(winners,reason){
   const rows=S.players.map(player=>{const won=wset.has(player.id);const f=finalCF(player,won);const fate=interim||(typeof missioNoFate==='function'&&missioNoFate(player))?null:(player.retired?[FATES[0].g+' · '+FATES[0].n,FATES[0].t]:(S.thumbsDown||[]).includes(player.id)?thumbsDownFate():fateFor(f));
     // a human facing the Thumb of Flavius rolls the die themselves, in the results window: the outcome
     // is already decided here (records need it), but it stays hidden until they press the button.
-    const thumbHide=!!(fate&&/^Thumb of Flavius/.test(fate[0])&&!player.cpu&&!S.sim&&!HEADLESS);
+    const thumbHide=!!(fate&&fateIsThumb(fate[0])&&!player.cpu&&!S.sim&&!HEADLESS);
     return {p:player,won,f,fate,thumbHide}});
   S.result={winners:[...wset],rows:rows.map(x=>({id:x.p.id,cls:x.p.cls,f:x.f,won:x.won,fate:x.fate?x.fate[0]:'',pers:x.p.pers,pots:x.p.stats.pots||0,r1pots:x.p.r1pots??(x.p.stats.pots||0),kp:x.p.trophies.filter(t=>t.pk==='player').length,kn:x.p.trophies.filter(t=>t.pk!=='player').length,buys:x.p.stats.buy||0,cards:x.p.stats.cardsDrawn||0,alive:x.p.alive,diff:x.p.diff,wR:x.p.wR&&x.p.wR.key,wL:x.p.wL&&x.p.wL.key,ap:LOCS.reduce((s,l)=>s+x.p.ap[l],0),armor:LOCS.flatMap(l=>x.p.pieces[l].map(pc=>pc.key)),bought:x.p.bought||[]}))};
   {const el=id=>(S.elimOrder||[]).find(o=>o.id===id);
@@ -14670,7 +14690,7 @@ async function gameOver(winners,reason){
       const t=e.target.closest('[data-rtab]');if(t){mb.querySelectorAll('[data-rtab]').forEach(b=>b.classList.toggle('on',b===t));$('#rtab-res').hidden=t.dataset.rtab!=='res';$('#rtab-graph').hidden=t.dataset.rtab!=='graph';{const f=$('#rtab-fates');if(f)f.hidden=t.dataset.rtab!=='fates'}return}
       const sv=e.target.closest('[data-save]');if(sv)done('save:'+sv.dataset.save);const fr=e.target.closest('[data-free]');if(fr)done('free:'+fr.dataset.free);const th=e.target.closest('[data-thumb]');
       if(th&&!th.dataset.busy){th.dataset.busy='1';const x=rows.find(r=>r.p.id===+th.dataset.thumb);const fz=th.closest('.rc-fate');
-        if(x&&fz&&x.fate){const d6v=x.fate.d6||(/spared/.test(x.fate[0])?4+Math.floor(Math.random()*3):1+Math.floor(Math.random()*3));
+        if(x&&fz&&x.fate){const d6v=x.fate.d6||(fateSpared(x.fate[0])?4+Math.floor(Math.random()*3):1+Math.floor(Math.random()*3));
           thumbRitual(fz,{name:x.p.name,f:x.f,d6:d6v,d12:x.fate.d12||1,d12Fate:x.fate.sub}).then(()=>{const b3=document.createElement('button');b3.className='btn';b3.type='button';b3.textContent=_T('Continue');b3.onclick=()=>done('thumb:'+x.p.id);fz.querySelector('.tr-body').appendChild(b3);setTimeout(()=>{if(b3.isConnected)done('thumb:'+x.p.id)},4500)})}
         else done('thumb:'+th.dataset.thumb)}})}});
     if(v==='export'){await exportLog();continue}
@@ -14680,7 +14700,7 @@ async function gameOver(winners,reason){
     if(typeof v==='string'&&v.startsWith('thumb:')){const x=rows.find(r=>r.p.id===+v.slice(6));
       if(x&&x.thumbHide&&!x.thumbShown){x.thumbShown=true;
         log(_T`The die leaves ${edName()}’s hand… <b>${esc(x.fate[1])}</b>`,'big');
-        flaviusMood&&flaviusMood(/spared/.test(x.fate[0])?'cheer':'laugh',4200,.9);
+        flaviusMood&&flaviusMood(fateSpared(x.fate[0])?'cheer':'laugh',4200,.9);
         // now the deferred roguelike consequence lands
         if(x.p.saved){if(aliveInUniverse(x)){x.savedDone=true;const rec=await saveGladiator(x).catch(()=>null);if(rec)log(_T`${nm(x.p)}'s Ludus record updates automatically: ${cfAmt87(rec.cf)}, returns with ${rec.carry}.`)}
           else if(!(S.missio&&(!x.p.cpu||(typeof missioHero==='function'&&x.p===missioHero())))){await markFallen(x.p,x).catch(()=>{});log(_T`${nm(x.p)} did not survive the thumb; their Ludus record is struck from the rolls for good.`,'bad')}}}
@@ -14945,7 +14965,7 @@ async function advanceMissio(rows){
   const recs=await Store.list('missios');const rec=recs.find(r=>r.id===S.missio.id);if(!rec)return null;
   const x=rows.find(x=>!x.p.cpu&&x.p.name===rec.name)||rows[0];const p=x.p;
   const st=MISSIOS[rec.cls].path[rec.step];
-  const spared=x.fate&&/spared/.test(x.fate[0]);
+  const spared=x.fate&&fateSpared(x.fate[0]);
   const pass=st.win?x.won:(x.won||x.f>=20||spared);
   rec.events++;rec.trophies+=p.trophies.length;
   rec.history.push({step:rec.step,ev:EVENTS[S.evKey].short,loc:LOCATIONS[S.locIdx]?LOCATIONS[S.locIdx].n:'',cf:x.f,won:x.won});
@@ -19332,7 +19352,7 @@ function leagueFate(glad,row,mgr,bout,boutIdx,opt){
   let cond=F,d6=null,d12=null;
   if(F.n==='Thumb of Flavius'){
     if(mine&&!(opt.live&&row.human)){(w.pend=w.pend||[]).push({t:'thumb',gid:glad.id,bi:boutIdx,f});return {vd:'p-thumb',fname:_T('Thumb of Flavius'),line:_T`${esc(glad.name)} faces the <b>Thumb of Flavius</b> (${cfAmt87(f)}) — you roll the die on Match Week`}}
-    if(/spared/.test(row.fate||'')){glad.rec.surv++;return {vd:'spared',fname:_T('Thumb of Flavius · spared'),line:_T`${esc(glad.name)} faces the thumb (${cfAmt87(f)}) — it goes up. Spared.`}}
+    if(fateSpared(row.fate)){glad.rec.surv++;return {vd:'spared',fname:_T('Thumb of Flavius · spared'),line:_T`${esc(glad.name)} faces the thumb (${cfAmt87(f)}) — it goes up. Spared.`}}
     const nm2=String(row.fate||'').split(' · ')[1];cond=FATES.find(x=>x.n===nm2)||FATES[0];
   }
   if(glad.sotonium){glad.rec.surv++;ghist(glad,_T`condemned (${cond.n}) — the crowd would not allow it: clemency, as always`);return {vd:'clemency',fname:`${cond.g} · ${cond.n}`,line:_T`${esc(glad.name)} is condemned (${cfAmt87(f)}) — and the whole arena rises for <b>${esc(glad.name)}</b>. The editor has no choice. Clemency.`}}
@@ -24796,7 +24816,7 @@ function rtZoneMini(z){const rad=+z.rad||1,at=z.at||'c';const s=2*rad+1;const [r
   return `<span class="zmini" style="grid-template-columns:repeat(${s},1fr)" title="${_T`The zone, with the beast's starting tile`}">${cells.join('')}</span>`}
 {const _ne=npcEditorHTML;npcEditorHTML=function(){const n=ST.draft;n.rtok=n.rtok||rtokBlank(n);const sp=n.rtok;let h=_ne();
   h=h.replace(/<div id="stNpcPrev"[^>]*>[^<]*<\/div>/,`<div id="rtPrev" class="rtprev" data-scbprev="rt" title="${_T`The beast's round token — drag a selected shape here`}">${rtokSVG(sp,n)}</div><div class="rc-sub" style="font:600 10px var(--mono);letter-spacing:.1em">${_T`ROUND TOKEN`}</div>`);
-  h=h.replace(/<label>Token letter[\s\S]*?<\/label><label>Color<input[^>]*><\/label>/,`<label>${_T`Token letter${fTxt('glyph',n.glyph,'maxlength="1"')}`}</label><label>${_T`Color`}<input type="color" class="tin" data-f="color" value="${esc(n.color)}" style="height:34px;padding:2px"></label>`);
+  h=h.replace(new RegExp('<label>'+RXL('Token letter')+'[\\s\\S]*?<\\/label><label>'+RXL('Color')+'<input[^>]*><\\/label>'),`<label>${_T`Token letter${fTxt('glyph',n.glyph,'maxlength="1"')}`}</label><label>${_T`Color`}<input type="color" class="tin" data-f="color" value="${esc(n.color)}" style="height:34px;padding:2px"></label>`);
   const zone=n.beh==='zone'||!n.beh?(()=>{n.zone=n.zone||{rad:2,at:'c'};return `<div class="card2 zonecard">${_T`<b>🛡 The zone it guards</b>`} <span class="rc-sub">${_T`it stays inside, attacking anyone who steps in — placed in the Event Designer, the zone shows on the board`}</span>
       <div class="formgrid" style="margin-top:6px;align-items:center"><label>${_T`How big${fSel('zone.rad',[['1',_T('3 × 3 — one tile around it')],['2',_T('5 × 5 — two tiles around it')],['3',_T('7 × 7 — three tiles around it')]],String(n.zone.rad))}`}</label><label>${_T`Where it starts in the zone${fSel('zone.at',RT_AT,n.zone.at)}`}</label>${rtZoneMini(n.zone)}</div></div>`})():'';
   const tokCard=`<div class="card2 rtcard">${_T`<b>🪙 The round token</b>`} <span class="rc-sub">${_T`the NPC token in the printed game's bronze ring — used in the Menagerie, the NPC tracker, hover cards, the event designer and on the board in cylinder style`}</span>
@@ -24805,7 +24825,7 @@ function rtZoneMini(z){const rad=+z.rad||1,at=z.at||'c';const s=2*rad+1;const [r
       <label>${_T`Letter color`}<input type="color" data-f="rtok.glyphC" value="${esc(sp.glyphC||'#fff3d8')}" style="width:44px;height:30px;border:0;background:none;padding:0"></label></div>
       <div class="chkgrid" style="margin-top:4px">${fChk('rtok.glyph',sp.glyph,_T('Show the token letter'))}</div>${scbBenchHTML('rt')}</div>`;
   h=h.replace('<div class="chkgrid" style="margin-top:8px">',zone+'<div class="chkgrid" style="margin-top:8px">');
-  h=h.replace('<p class="hint">Beasts attack with 2 hit dice',tokCard+`<p class="hint">${_T`Beasts attack with 2 hit dice`}`);
+  h=h.replace('<p class="hint">'+TX('Beasts attack with 2 hit dice against gladiators; each hit deals their attack value. Place them on the board in the Event Designer.'),m0=>tokCard+m0);
   return h}}
 document.addEventListener('input',e=>{const t=e.target;if(t&&t.dataset&&/^rtok\./.test(t.dataset.f||'')&&ST.draft){if(t.type==='color')setPath(ST.draft,t.dataset.f,t.value);rtPrevRefresh()}});
 
@@ -24899,7 +24919,7 @@ const PB_WIN=[0.297,0.702];
   h=h.replace('<div class="trstudio">',seg+'<div class="trstudio">');
   if(pb)h=h.replace(/(<img id="fdPrev"[^>]*>)/,`<span class="pbwrap">$1<span class="pbcrop" aria-hidden="true"><i style="width:${PB_WIN[0]*100}%"></i><b style="left:${PB_WIN[0]*100}%;width:${(PB_WIN[1]-PB_WIN[0])*100}%">${_T`<em>the portrait's window</em>`}</b><i style="left:${PB_WIN[1]*100}%;right:0"></i></span></span><span class="pbface">${portraitSVG({skin:SKINS[3],hair:HAIRS[2],bg:'flag:c:__draft',helm:'none'},'#8a1c1c').replace('<svg ',_T('<svg class="pbmini" '))}</span>`);
   /* the list: portrait banners wear their frame */
-  h=h.replace(/<h4>Your banners · (\d+)<\/h4>/,(m,n)=>`<h4>${_T`Your banners · ${n}`} <span class="rc-sub">${_T`🖼 portrait banners hang only behind portraits (the character creator and system portraits) — the rack never shows them`}</span></h4>`);
+  h=h.replace(new RegExp('<h4>'+RXE(TXPRE('Your banners · {0}'))+'(\\d+)<\\/h4>'),(m,n)=>`<h4>${_T`Your banners · ${n}`} <span class="rc-sub">${_T`🖼 portrait banners hang only behind portraits (the character creator and system portraits) — the rack never shows them`}</span></h4>`);
   return h}}
 /* the preview face uses the banner on the bench */
 {window.__pbDraft=()=>ST&&ST.fd?houseFlagURI(ST.fd):null}
@@ -24936,7 +24956,7 @@ function srCardURL(e){const s=srCardSVG(e);const k=e.id+'|'+hashStr(s);return SR
       <label>${_T`Build${sel('fem',[['',_T('Man')],['1',_T('Woman')]],p.fem?'1':'')}`}</label><label>${_T`Expression${sel('smile',[['',_T('Stern')],['1',_T('Smiling')]],p.smile?'1':'')}`}</label>
       <label style="grid-column:1/-1">${_T`Backdrop${sel('bg',BGS.map((v,i)=>[v,BG_NAMES[i]||_T('Backdrop ')+(i+1)]).concat(typeof FLAGS!=='undefined'?Object.entries(FLAGS).map(([k,F])=>['flag:'+k,_T('🏳 City banner · ')+F.n]):[]).concat((CUSTOM.flags||[]).map(f=>['flag:c:'+f.id,(f.fmt==='portrait'?'🖼 ':'✦ ')+(f.name||_T('your banner'))])),p.bg)}`}</label></div>
       <div class="mbtns"><button class="btn" type="button" data-srx="rand">${_T`🎲 Another face`}</button><button class="btn" type="button" data-srx="clear">${_T`✖ No face`}</button></div>`:''}</div></div></div>`;
-  return _er().replace('<h4>Rounds</h4>',box+`<h4>${_T`Rounds`}</h4>`)}}
+  return _er().replace('<h4>'+TX('Rounds')+'</h4>',box+`<h4>${_T`Rounds`}</h4>`)}}
 function srPrevRefresh(){const pv=document.getElementById('srPrev');const e=ST&&ST.draft;if(pv&&e&&e.srp)pv.innerHTML=`<img src="${srCardURL(e)}" alt="${_T`The Summa Rudis card`}">`}
 
 /* ---------------- 🤝 PAIRINGS ---------------- */
@@ -25488,7 +25508,7 @@ async function rivalTrophy(tid,o={}){const d=trophyDef(tid);if(!d)return;const e
 if(typeof SAVE_COLS!=='undefined'&&!SAVE_COLS.includes('rivalTrophies'))SAVE_COLS.push('rivalTrophies');
 {const _ht=hallTrophiesHTML;hallTrophiesHTML=async function(){const h=await _ht();const R=(await Store.list('rivalTrophies').catch(()=>[])).sort((a,b)=>String(b.date).localeCompare(String(a.date)));if(!R.length)return h;
   return h+`<h4>${_T`🏺 Held by rivals`} <span class="rc-sub">${_T`trophies a CPU gladiator took home — win them back`}</span></h4><div class="tcgrid wide">${R.slice(0,24).map(t=>{const d=trophyDef(t.tid)||{};return `<div class="tcitem">${trophySVG(d,46)}<b>${esc(t.name)}</b><span class="rc-sub">${esc(t.who)}${t.cls&&CLASSES[t.cls]?' · '+esc(CLASSES[t.cls].name):''} · ${esc(t.date)}</span><span class="rc-sub">${esc(t.why)}</span></div>`}).join('')}</div>`}}
-{const _ld=ludusDetail;ludusDetail=function(g){let h=_ld(g);if(g&&(g.trophyWins||[]).length)h=h.replace('<h4>History</h4>',`<h4>${_T`🏆 Trophies they hold`}</h4><div class="badges">${g.trophyWins.map(t=>`<span class="badge gold" title="${esc(t.why)} · ${esc(t.date)}">🏆 ${esc(t.name)}</span>`).join('')}</div><h4>${_T`History`}</h4>`);return h}}
+{const _ld=ludusDetail;ludusDetail=function(g){let h=_ld(g);if(g&&(g.trophyWins||[]).length)h=h.replace('<h4>'+TX('History')+'</h4>',`<h4>${_T`🏆 Trophies they hold`}</h4><div class="badges">${g.trophyWins.map(t=>`<span class="badge gold" title="${esc(t.why)} · ${esc(t.date)}">🏆 ${esc(t.name)}</span>`).join('')}</div><h4>${_T`History`}</h4>`);return h}}
 
 /* ---------------- ⚔ Match Week glows until it is fought ---------------- */
 setInterval(()=>{try{const b=document.querySelector('.mtabs [data-mg="tab"][data-id="night"]');if(!b)return;const w=typeof W_==='function'?W_():null;const pend=!!(w&&w.night&&w.night.bouts&&w.night.bouts.some(x=>!x.done));b.classList.toggle('nightpend',pend);b.title=pend?_T('Match Week has not been fought yet'):''}catch(e){}},700);
@@ -25509,8 +25529,8 @@ function lanRecordHTML(m,w){const s=msp(m,w.season);const L=leagueSort(w.mgrs,w.
     <div class="badges" style="margin-top:8px"><span class="badge">${_T`Fame ${m.fame} (best ${m.fameBest||m.fame})`}</span><span class="badge">${_T`Fighters improved ${m.improved||0}`}</span><span class="badge">${_T`Pledges kept ${m.kept||0} · broken ${m.broken||0}`}</span><span class="badge">${_T`Poached ${m.poached||0}`}</span><span class="badge">${_T`Deaths ${m.deaths||0}`}</span><span class="badge">${_T`Betting ${(m.betNet||0)>=0?'+':''}${m.betNet||0}`}</span></div>
     ${A.length?`<table class="tally compact" style="margin-top:6px"><tr><th>${_T`Season`}</th><th>${_T`Finish`}</th><th>${_T`Record`}</th><th>${_T`Coin`}</th></tr>${A.slice(-5).reverse().map(a=>{const i=(a.standings||[]).findIndex(x=>x.me);return `<tr><td>${a.season}</td><td>${i>=0?'#'+(i+1):'—'}</td><td>${esc((a.standings||[])[i]?a.standings[i].rec:(a.you||{}).rec||'')}</td><td class="n">${(a.you||{}).coin??''}</td></tr>`}).join('')}</table>`:''}</div>`}
 {const _me=meHTML;meHTML=function(){const m=me(),w=W_();let h=_me();
-  h=h.replace('<details class="card2"><summary><b>Raising your name</b>',_T('<details class="card2" open><summary><b>Raising your name</b>'));
-  h=h.replace(/<div class="card2"><div class="sect" style="margin-top:0">Your record<\/div>[\s\S]*?<\/div><\/div>/,lanRecordHTML(m,w));return h}}
+  h=h.replace('<details class="card2"><summary>'+TX('<b>Raising your name</b>'),_T('<details class="card2" open><summary><b>Raising your name</b>'));
+  h=h.replace(new RegExp('<div class="card2"><div class="sect" style="margin-top:0">'+RXE(TX('Your record'))+'<\\/div>[\\s\\S]*?<\\/div><\\/div>'),lanRecordHTML(m,w));return h}}
 
 /* ---------------- fame, fans, debt: the header ---------------- */
 function teamFans(){const pm=me();const names=new Map(rosterOf(pm).map(g=>[g.name.toLowerCase(),g]));const out=[];
@@ -25819,8 +25839,8 @@ function rtokFaceSVG(sp,n){const F=n&&n.face;if(!F||(sp&&sp.useFace===false))ret
 {const _ne=npcEditorHTML;npcEditorHTML=function(){const n=ST.draft;if(!n.face)n.face=faceBlank(n);if(n.rtok&&n.rtok.faceMig!==1){n.rtok.glyph=false;n.rtok.faceMig=1}const F=n.face;let h=_ne();
   const sel=(f,opts,v)=>fSel(_T('face.')+f,opts,v);
   h=h.replace('<div id="rtPrev"',`<div class="bfprev" id="bfPrev" title="${_T`${esc(n.name)}’s face`}">${beastFaceSVG(F)}</div><div class="rc-sub" style="font:600 10px var(--mono);letter-spacing:.1em">${_T`THE FACE`}</div><div id="rtPrev"`);
-  h=h.replace(/<label>Token letter[\s\S]*?<\/label>(<label>Color)/,'$1');
-  h=h.replace(/<label>Letter color[\s\S]*?<\/label><\/div>/,'</div>').replace(/<div class="chkgrid" style="margin-top:4px">\s*<label class="chk"><input type="checkbox" data-f="rtok\.glyph"[^<]*<\/label>[^<]*<\/div>/,`<div class="chkgrid" style="margin-top:4px">${fChk('rtok.useFaceOff',n.rtok&&n.rtok.useFace===false,_T('Hide the face on the token (sculpt your own instead)'))}</div>`);
+  h=h.replace(new RegExp('<label>'+RXL('Token letter')+'[\\s\\S]*?<\\/label>(<label>'+RXL('Color')+')'),'$1');
+  h=h.replace(new RegExp('<label>'+RXL('Letter color')+'[\\s\\S]*?<\\/label><\\/div>'),'</div>').replace(/<div class="chkgrid" style="margin-top:4px">\s*<label class="chk"><input type="checkbox" data-f="rtok\.glyph"[^<]*<\/label>[^<]*<\/div>/,`<div class="chkgrid" style="margin-top:4px">${fChk('rtok.useFaceOff',n.rtok&&n.rtok.useFace===false,_T('Hide the face on the token (sculpt your own instead)'))}</div>`);
   const faceCard=`<div class="card2 bfcard">${_T`<b>🦁 The face</b>`} <span class="rc-sub">${_T`like a character's portrait — it heads this page, fills the round token and colours the board figure`}</span>
     <div class="formgrid" style="margin-top:6px"><label>${_T`Species${sel('species',BF_SPECIES,F.species)}`}</label><label>${_T`Horns${sel('horns',BF_HORNS,F.horns||'')}`}</label><label>${_T`Pattern${sel('pattern',BF_PATTERN,F.pattern||'')}`}</label><label>${_T`Gear${sel('gear',BF_GEAR,F.gear||'')}`}</label>
      <label>${_T`Eyes${sel('eyeT',[['two',_T('Two')],['one',_T('One great eye')],['many',_T('Many (spiders)')]],F.eyeT||'two')}`}</label>
@@ -25891,7 +25911,7 @@ function specialOnlyHTML(){const h=specialStudioHTML();const a=h.indexOf('<h3 cl
 /* ---------------- 📚 which roster set is loaded ---------------- */
 {const _rs=rosterStudioHTML;rosterStudioHTML=function(){const cur=rosterById((typeof CFG!=='undefined'&&CFG.roster)||'classic');const w=typeof MGR!=='undefined'&&MGR.world;
   return `<div class="card2 rsloaded">${_T`<b>▶ Loaded now</b> · Play Now / New event: <b>${esc(cur.name)}</b>${w&&w.roster?_T` · your open career (${esc((w.mgrs.find(m=>m.isPlayer)||{}).ludus||'')}) plays with <b>${esc(w.roster.name)}</b> — chosen at its founding, it never changes`:''}`}</div>`+_rs().replace(/<span class="badge gold">New event uses this<\/span>/,_T('<span class="badge gold">▶ LOADED for Play Now</span>'))}}
-{const _me=meHTML;meHTML=function(){const w=W_();const h=_me();if(!w||!w.roster)return h;return h.replace('<div class="card2"><div class="sect" style="margin-top:0">🏜 Sandbox',`<div class="card2"><div class="sect" style="margin-top:0">${_T`📚 Roster set`} <span class="rc-sub">${_T`locked at the founding`}</span></div><p style="margin:0">${_T`This career plays with <b>${esc(w.roster.name)}</b>${w.roster.sel?` — ${esc(rosterSummary(w.roster))}`:''}.`}</p></div><div class="card2"><div class="sect" style="margin-top:0">${_T`🏜 Sandbox`}`)}}
+{const _me=meHTML;meHTML=function(){const w=W_();const h=_me();if(!w||!w.roster)return h;return h.replace('<div class="card2"><div class="sect" style="margin-top:0">'+TX("🏜 Sandbox · this career's house rules"),`<div class="card2"><div class="sect" style="margin-top:0">${_T`📚 Roster set`} <span class="rc-sub">${_T`locked at the founding`}</span></div><p style="margin:0">${_T`This career plays with <b>${esc(w.roster.name)}</b>${w.roster.sel?` — ${esc(rosterSummary(w.roster))}`:''}.`}</p></div><div class="card2"><div class="sect" style="margin-top:0">${TX("🏜 Sandbox · this career's house rules")}`)}}
 document.addEventListener('change',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.roster==='cfg'&&typeof mToast==='function')mToast(_T`📚 Loaded for Play Now: <b>${esc(rosterById(t.value).name)}</b>`)});
 
 /* ---------------- save checks ---------------- */
@@ -26272,7 +26292,7 @@ function hsBoardHTML(){const L=[...HS_PROFILES].sort((a,b)=>(b.wins-a.wins)||(b.
    ${L.length?`<div style="overflow-x:auto"><table class="tally compact hstable"><tr><th>${_T`Player`}</th><th>${_T`Events`}</th><th>${_T`Wins`}</th><th>${_T`Best CF`}</th><th>${_T`Wallet`}</th><th>${_T`Honors`}</th><th>${_T`Road`}</th><th></th></tr>${L.map(p=>`<tr><td><span class="hsdot" style="background:${p.color}"></span><b>${esc(p.name)}</b></td><td class="n">${p.events}</td><td class="n">${p.wins}</td><td class="n">${p.cfBest}</td><td class="n">💰 ${p.coin}</td><td>${HS_HONORS.filter(([k])=>p.honors[k]).map(([k,n,d])=>`<span class="hshon" title="${esc(n)}: ${esc(d)}">🏅</span>`).join('')||'<span class="rc-sub">—</span>'}</td><td class="n">${p.road}/12</td><td><button type="button" class="btn tksm" data-hsdel="${p.id}" title="${_T`Delete this profile`}">🗑</button></td></tr>`).join('')}</table></div>`:`<p class="rc-sub">${_T`No players yet — names you type become profiles when the horns sound.`}</p>`}
    <datalist id="hsNames">${HS_PROFILES.map(p=>`<option value="${esc(p.name)}">`).join('')}</datalist></div>`}
 {const _sb=setupBody;setupBody=function(){if(!CFG.hotseat)return _sb();CFG.mode='event';window.HS_IN_SETUP=1;let h;try{h=_sb()}finally{window.HS_IN_SETUP=0}
-  return h.replace(/^<div class="seg" role="tablist"[\s\S]*?<\/div>/,hsBoardHTML()).replace('>Sound the horns<',_T('>Sound the horns · Hot seat<'))}}
+  return h.replace(/^<div class="seg" role="tablist"[\s\S]*?<\/div>/,hsBoardHTML()).replace('>'+TX('Sound the horns')+'<',_T('>Sound the horns · Hot seat<'))}}
 {const _sr=seatRows;seatRows=function(ev,n,cls){let h=_sr(ev,n,cls);if(!CFG.hotseat||!window.HS_IN_SETUP)return h;const parts=h.split('<div class="seat"');
   h=parts[0]+parts.slice(1).map((seg,i)=>{const s=CFG.seats[i];seg=seg.replace(/>You<\/option>/,_T('>Player</option>'));if(!s||s.cpu)return _T('<div class="seat"')+seg;
     return _T('<div class="seat"')+seg.replace(/(<span class="cn">)/,`<label class="hsname">🎮 <input class="tin" type="text" list="hsNames" data-hsn="${i}" value="${esc(s.hsName||'')}" placeholder="${_T`Player ${i+1}`}" maxlength="20" autocomplete="off" aria-label="${_T`Player name for seat ${i+1}`}"><span class="rc-sub">player</span></label>$1`)}).join('');return h}}
@@ -26636,10 +26656,10 @@ function armsHTML(p){return `<div class="sect">${_T`⚔ Weapons`}</div><div clas
     return `<div class="warm ${used?'used':''} ${alive?'':'sev'}"><div class="wart">${art||`<span class="wfist">${alive?'✊':'✖'}</span>`}</div><div class="winfo"><span class="whand">${a==='R'?_T('Right hand'):_T('Left hand')}<span class="wrole"> - ${a==='R'?_T('Primary'):_T('Secondary')}</span></span><b>${alive?(w?esc(w.n):_T('Empty hand')):_T('Severed')}</b>
       ${alive?`<div class="wchips">${weaponChips(w)}<span class="qi" data-tip="${esc(weaponTip(w))}">ⓘ</span></div>`:''}${used?_T('<span class="wspent">spent this turn</span>'):''}</div></div>`}).join('')}</div>`}
 {const _bh=boardHTML;boardHTML=function(p,interactive){let h=_bh(p,interactive);try{
-  h=h.replace(/<div class="sect">Weapons<\/div>[\s\S]*?(?=<div class="sect">Movement)/,armsHTML(p));
+  h=h.replace(new RegExp('<div class="sect">'+RXE(TX('Weapons'))+'<\\/div>[\\s\\S]*?(?=<div class="sect">'+RXE(TX('Movement'))+')'),armsHTML(p));
   h=h.replace(/<button class="stat" type="button" data-act="trophies"[^>]*>/,m0=>m0.replace(/ title="[^"]*"/,'').replace('<button class="stat"',_T('<button class="stat" data-tip="')+esc(trophyTip(p)).replace(/&lt;br&gt;/g,'<br>').replace(/&lt;(\/?)b&gt;/g,'<$1b>')+'"').replace('Trophies ▸',_T('Trophies ⓘ')));
-  h=h.replace('<span>Trophies ▸</span>',_T('<span>Trophies ⓘ</span>'));
-  h=h.replace('<div class="stat"><span>Keys</span>',`<div class="stat" data-tip="${_T`<b>Arena keys · ${p.keys}</b><br>Each key opens the chest (a Level 4 weapon) or a tunnel to another tunnel tile. A used key is gone.${weak(p,'noTunnel')?_T('<br>This gladiator cannot use tunnels.'):''}`}">${_T`<span>Keys ⓘ</span>`}`);
+  h=h.replace(TXHEAD('<span>Trophies ▸</span><b>{0} {1}','<b>'),_T('<span>Trophies ⓘ</span>'));
+  h=h.replace('<div class="stat">'+TXHEAD('<span>Keys</span><b>{0} {1}','<b>'),`<div class="stat" data-tip="${_T`<b>Arena keys · ${p.keys}</b><br>Each key opens the chest (a Level 4 weapon) or a tunnel to another tunnel tile. A used key is gone.${weak(p,'noTunnel')?_T('<br>This gladiator cannot use tunnels.'):''}`}">${_T`<span>Keys ⓘ</span>`}`);
   h=h.replace(/<div class="stat" title="([^"]*)">/g,(m0,t)=>`<div class="stat" data-tip="${t.replace(/&#10;|\n/g,'<br>')}">`);
   }catch(e){console.error(e)}
   try{const home=boardHome(cur());if(S&&!S.over&&home&&p!==home&&!home.cpu)h=`<div class="boardback"><span>${_T`Looking at`} <b style="color:${p.color}">${esc(p.name)}</b></span><button type="button" class="btn tksm" data-act="inspect" data-pid="${home.id}">↩ ${esc(home.name)}</button></div>`+h}catch(e){}
@@ -27119,10 +27139,10 @@ function nmLookRefresh(){const box=document.getElementById('nmPortrait');if(!box
 {const _sh=startHTML;startHTML=function(){let h=_sh.apply(this,arguments);try{if(MGR.view==='create'&&NEWMGR){const c=NEWMGR;
     const chars=(CUSTOM.chars||[]).filter(x=>x.portrait);
     const look=`<div class="mbtns"><button class="btn" type="button" data-mg="nmlook">${_T`🎲 Random look`}</button></div>${chars.length?`<label style="display:grid;gap:3px;font-size:12.5px;text-align:left">${_T`Borrow a Studio character’s look`}<select class="tin" data-nmimport="1"><option value="">— choose —</option>${chars.map(x=>`<option value="${esc(x.id)}">${esc(x.name)}</option>`).join('')}</select></label>`:''}<div style="text-align:left">${portraitControlsHTML(c.portrait,'data-nmpt')}</div></div>`;
-    h=h.replace('<div class="mbtns"><button class="btn" type="button" data-mg="nmlook">🎲 Random look</button></div></div>',look);
+    h=h.replace('<div class="mbtns"><button class="btn" type="button" data-mg="nmlook">'+TX('🎲 Random look')+'</button></div></div>',look);
     const extra=`<div class="formgrid" style="margin-top:8px"><label>${_T`Epithet`}<span style="display:flex;gap:4px"><input class="tin" data-nmx="nick" value="${esc(c.nick||'')}" maxlength="30" placeholder="${_T`e.g. the Iron Purse`}"><button type="button" class="btn" data-nmxa="nick" style="padding:4px 8px" aria-label="${_T`Generate an epithet`}">🎲</button></span></label></div>
      <label style="display:grid;gap:3px;margin-top:6px">${_T`Story`}<textarea class="tin" data-nmx="bio" maxlength="600" placeholder="${_T`How this lanista came to own a ludus…`}">${esc(c.bio||'')}</textarea></label><div class="mbtns" style="margin-top:4px"><button class="btn tksm" type="button" data-nmxa="bio">${_T`🎲 Write a story`}</button></div>`;
-    h=h.replace('<p class="rc-sub" style="margin:4px 0 0">🏠 <b>Your home city</b>',extra+`<p class="rc-sub" style="margin:4px 0 0">${_T`🏠 <b>Your home city</b>`}`);
+    h=h.replace('<p class="rc-sub" style="margin:4px 0 0">'+TX('🏠 <b>Your home city</b>'),extra+`<p class="rc-sub" style="margin:4px 0 0">${_T`🏠 <b>Your home city</b>`}`);
     h=h.replace('grid-template-columns:minmax(0,220px) minmax(0,1fr)','grid-template-columns:minmax(0,300px) minmax(0,1fr)')}}catch(e){console.error(e)}return h}}
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||typeof NEWMGR==='undefined'||!NEWMGR)return;
   if(t.dataset.nmpt){const f=t.dataset.nmpt;const P=NEWMGR.portrait=NEWMGR.portrait||{};let v=t.value;if(f==='fem'||f==='smile')v=v==='1';
@@ -27202,7 +27222,16 @@ const PHASE_LABEL={resolve:_T('Resolve'),command:_T('Resolve'),choice:_T('Choice
 /* phaseTag(phase): a small coloured chip for a phase name */
 function phaseTag(phase){const key=phase==='command'?'resolve':phase;return `<span class="phtag ph-${key}">${PHASE_LABEL[phase]||phase}</span>`}
 /* log headers like "Phase 2 · Choice: …" get the chip instead of the number */
-{const baseLog=log;log=function(html,cls){if(typeof html==='string')html=html.replace(/^Phase \d · (Resolve|Choice|Action|End)(:?)/,(m,name,colon)=>phaseTag(name.toLowerCase())+colon);return baseLog(html,cls)}}
+/* v0.95: the log lines open "Phase 1 · Resolve:" in English; in another language that lead-in is translated, so the matcher is built from the
+   dictionary's own "Phase N · Name…" keys (once, lazily) */
+let PHLEAD95=null;
+function phLead95(){if(PHLEAD95)return PHLEAD95;const map=new Map();map.set('E',null);const leads=['Phase \\d · (Resolve|Choice|Action|End)'];
+  if(typeof LANG_DICT!=='undefined'&&LANG_DICT){for(const k in LANG_DICT){const m=/^Phase \d · (Resolve|Choice|Action|End)(:?)/.exec(k);if(!m)continue;const t=LANG_DICT[k];const i=t.search(/[:：]/);if(i<=0||i>40)continue;const lead=t.slice(0,i);if(!map.has(lead))map.set(lead,m[1].toLowerCase())}}
+  map.delete('E');const alts=[...map.keys()].sort((a,b)=>b.length-a.length).map(RXE);
+  PHLEAD95={map,rx:alts.length?new RegExp('^(?:'+alts.join('|')+')([:：]?)'):null};return PHLEAD95}
+{const baseLog=log;log=function(html,cls){if(typeof html==='string'){const L=html.replace(/^Phase \d · (Resolve|Choice|Action|End)(:?)/,(m,name,colon)=>phaseTag(name.toLowerCase())+colon);
+  if(L!==html)html=L;else{const P=phLead95();if(P.rx){const m=P.rx.exec(html);if(m){const lead=m[0].slice(0,m[0].length-m[1].length);const nm=P.map.get(lead);if(nm)html=phaseTag(nm)+m[1]+html.slice(m[0].length)}}}}
+  return baseLog(html,cls)}}
 
 /* ---------- the turn indicator: a glowing dot, the name, the phase — the rest on hover ---------- */
 renderTurnInd=function(){if(HEADLESS)return;const box=$('#turnInd');if(!box)return;
@@ -27333,9 +27362,9 @@ classCardHTML=function(ref,size='sm',ch){const w=CLS_SZ[size]||130;const wrap=sv
   const k=presetByRef(ref)||(ref.startsWith('ccl:')?(CUSTOM.classes||[]).find(c=>c.id===ref.slice(4)):null);return wrap(classCardSVG(k||{},ch))};
 /* the character designer's picker shows the card as this character */
 {const basePick=charClassPickHTML;charClassPickHTML=function(c){let h=basePick(c);try{const ref=c.classRef||'cls:soldier';if(!ref.startsWith('cls:'))h=h.replace(/<span class="clscard"[\s\S]*?<\/svg><\/span>/,classCardHTML(ref,'md',c));
-    if(ref.startsWith('ccp:'))h=h.replace(/<button class="btn tksm" type="button" data-clsa="edit"[^>]*>✎ Edit this class<\/button>/,`<button class="btn tksm" type="button" data-clsa="copypreset" data-v="${esc(ref.slice(4))}">${_T`⧉ Copy into a new class`}</button>`)}catch(e){console.error(e)}return h}}
+    if(ref.startsWith('ccp:'))h=h.replace(new RegExp('<button class="btn tksm" type="button" data-clsa="edit"[^>]*>'+RXE(TX('✎ Edit this class'))+'<\\/button>'),`<button class="btn tksm" type="button" data-clsa="copypreset" data-v="${esc(ref.slice(4))}">${_T`⧉ Copy into a new class`}</button>`)}catch(e){console.error(e)}return h}}
 /* the character's own colour picker gives way to the class colour */
-{const baseEd=charEditorHTML;charEditorHTML=function(){let h=baseEd();return h.replace(/<label>Color<input type="color" class="tin" data-f="color"[^>]*><\/label>/,'')}}
+{const baseEd=charEditorHTML;charEditorHTML=function(){let h=baseEd();return h.replace(new RegExp('<label>'+RXL('Color')+'<input type="color" class="tin" data-f="color"[^>]*><\\/label>'),'')}}
 
 /* ---------- the Classes tab lists: your classes with the common button row, system classes below ---------- */
 CR_KINDS.cl={list:()=>CUSTOM.classes||[],set:v=>{CUSTOM.classes=v},store:'customClasses',nm:'classes',rolls:_T('the character designer'),
@@ -27345,7 +27374,7 @@ CR_KINDS.cl={list:()=>CUSTOM.classes||[],set:v=>{CUSTOM.classes=v},store:'custom
   const mine=(CUSTOM.classes||[]).map(c=>`<div class="lrow" style="--pc:${esc(c.color||'#c9a44a')}">${classCardHTML('ccl:'+c.id,'xs')}<div class="t">${_T`<b>${esc(c.name)}</b> ${c.sandbox?customTag({sandbox:1}):''}<small>${c.abil&&c.abil!=='none'?esc(ABILITIES[c.abil][0]):_T('no ability')} · ${[c.R,c.L].filter(Boolean).map(w=>W[w]?W[w].n:w).join(' & ')||'fists'} · ${coinAmt87(c.coin||0)}${+c.cf?_T` · ${cfAmt87(c.cf)}`:''} · used by ${used(c.id)}</small>`}</div>${crActs('cl',c)}</div>`).join('');
   const printed=BASE_CLS.map(b=>`<div class="lrow" style="--pc:${CLASSES[b].color}">${classCardHTML('cls:'+b,'xs')}<div class="t">${_T`<b>${esc(CLASSES[b].name)}</b><small>printed · ${esc(CLASSES[b].sub)}</small>`}</div>${sysActs(`data-clsa="copybase" data-v="${b}"`)}</div>`).join('');
   const presets=CLASS_PRESETS.map(k=>`<div class="lrow" style="--pc:${k.color}">${classCardHTML(k,'xs')}<div class="t"><b>${esc(k.name)}</b><small>${esc(k.lore)}</small></div>${sysActs(`data-clsa="copypreset" data-v="${k.key}"`)}</div>`).join('');
-  h=h.replace(/<div class="stlist"><h4>Your classes[\s\S]*$/,`<div class="stlist"><h4>${_T`Your classes · ${(CUSTOM.classes||[]).length}`}</h4>${mine?`<div class="list2 onecol">${mine}</div>`:`<p class="hint">${_T`None yet — save one above, or copy a system class.`}</p>`}<h4>${_T`System classes · ${BASE_CLS.length+CLASS_PRESETS.length}`}</h4><div class="list2 onecol">${printed}${presets}</div></div>`)}catch(e){console.error(e)}return h}}
+  h=h.replace(new RegExp('<div class="stlist"><h4>'+RXE(TXPRE('Your classes · {0}'))+'[\\s\\S]*$'),`<div class="stlist"><h4>${_T`Your classes · ${(CUSTOM.classes||[]).length}`}</h4>${mine?`<div class="list2 onecol">${mine}</div>`:`<p class="hint">${_T`None yet — save one above, or copy a system class.`}</p>`}<h4>${_T`System classes · ${BASE_CLS.length+CLASS_PRESETS.length}`}</h4><div class="list2 onecol">${printed}${presets}</div></div>`)}catch(e){console.error(e)}return h}}
 {const baseClick=classStudioClick;classStudioClick=async function(b,redraw){if(b.dataset.clsa==='copypreset'){const p=CLASS_PRESETS.find(k=>k.key===b.dataset.v);if(!p)return;const k={...JSON.parse(JSON.stringify(p)),_cls:1,id:null,sys:0,name:p.name+' II'};delete k.key;ST.tab='classes';ST.draft=k;redraw();try{$('#mBody').scrollTop=0}catch(e){}return}return baseClick(b,redraw)}}
 /* the studio's lock button for a class goes through crClick (it keys on data-cr) — nothing else needed */
 
@@ -27393,7 +27422,7 @@ document.addEventListener('change',e=>{const t=e.target;if(typeof ST==='undefine
 function lanistasForPicker(){const all=(CUSTOM.lanistas||[]).filter(x=>x.rolls!==false);const R=NEWMGR&&NEWMGR.roster&&typeof rosterById==='function'?rosterById(NEWMGR.roster):null;const pick=R&&R.sel&&R.sel.lanistas;return pick&&pick.length?all.filter(x=>pick.includes(x.id)):all}
 {const baseStart=startHTML;startHTML=function(){let h=baseStart.apply(this,arguments);try{if(MGR.view==='create'&&NEWMGR&&!NEWMGR.takeKey){const L=lanistasForPicker();
     const row=`<div class="card2" style="margin:0 0 8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">${_T`<b>🎩 Studio lanistas</b>${L.length?`<select class="tin" data-nmlan="1" style="width:auto"><option value="">${_T`— start from one —`}</option>${L.map(x=>`<option value="${esc(x.id)}">${esc(x.name)}${x.nick?' “'+esc(x.nick)+'”':''}</option>`).join('')}</select>`:_T('<span class="rc-sub">none yet — design them in the Creator Studio</span>')}`}<button class="btn tksm" type="button" data-nmxa="savelan">${_T`💾 Save this lanista to the Studio`}</button></div>`;
-    h=h.replace('<div class="formgrid"><label>Name<span',row+'<div class="formgrid"><label>Name<span')}}catch(e){console.error(e)}return h}}
+    h=h.replace('<div class="formgrid"><label>'+TXL('Name')+'<span',m0=>row+m0)}}catch(e){console.error(e)}return h}}
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.nmlan||!t.value||typeof NEWMGR==='undefined'||!NEWMGR)return;const x=(CUSTOM.lanistas||[]).find(l=>l.id===t.value);if(!x)return;
   Object.assign(NEWMGR,{lanId:x.id,name:x.name,ludus:x.ludus,color:x.color,portrait:JSON.parse(JSON.stringify(x.portrait||{})),nick:x.nick||'',bio:x.bio||'',p:{...x.p}});if(LANISTA_CITIES().includes(x.city))NEWMGR.city=x.city;if(typeof MGR_REDRAW==='function')MGR_REDRAW()});
 document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('[data-nmxa="savelan"]');if(!b||typeof NEWMGR==='undefined'||!NEWMGR)return;
@@ -27516,7 +27545,7 @@ function nearestOpenCity(from,wkey){const L0=LOCATIONS[from];const w=W_();
   if(w&&w.moved&&w.moved.week===w.week&&w.night){w.night.moved={...w.moved};tnews(_T`🛣 This week’s games move from <b>${esc(LOCATIONS[w.moved.from].n)}</b> (${esc(w.moved.why)}) to <b>${esc(LOCATIONS[w.moved.to].n)}</b>, the nearest open arena.`,'big')}}catch(e){console.error(e)}return r}}
 {const baseNight=nightHTML;nightHTML=function(){let h=baseNight.apply(this,arguments);try{const w=W_(),n=w&&w.night;
   if(n&&n.moved&&!n.bye)h=`<div class="card2 movedcard" style="border-color:var(--blood2)">${_T`🛣 <b>The games moved.</b> ${esc(LOCATIONS[n.moved.from].n)} is shut (${esc(n.moved.why)}); the nearest open arena, <b>${esc(LOCATIONS[n.moved.to].n)}</b>, hosts this week.`}</div>`+h;
-  if(n&&n.imposed)h=h.replace('<h4 style="margin-top:0">🌿 Bye week',`<p class="rc-sub" style="margin:0 0 6px">${_T`🌋 Impromptu bye: ${esc(n.imposed.from)} is shut (${esc(n.imposed.why)}) and no arena can take the games.`}</p><h4 style="margin-top:0">${_T`🌿 Bye week`}`)}catch(e){}return h}}
+  if(n&&n.imposed)h=h.replace('<h4 style="margin-top:0">'+TXPRE('🌿 Bye week · week {0} of season {1}'),m0=>`<p class="rc-sub" style="margin:0 0 6px">${_T`🌋 Impromptu bye: ${esc(n.imposed.from)} is shut (${esc(n.imposed.why)}) and no arena can take the games.`}</p>`+m0)}catch(e){}return h}}
 /* =====================================================================
    64-V54 · PIACULA FOR EVERY CLASS, THE PRINTED CLASSES AS THE DEFAULTS,
              INVITATIONALS, A FRIENDLIER EVENT DESIGNER (v0.54)
@@ -27589,13 +27618,13 @@ function classThumbHTML(k,tokenHTML=''){const W2=(k.R&&W[k.R]?W[k.R].n:'fists')+
   return `<span class="clsthumb" style="--cc:${esc(k.color||'#a3281f')}"><span class="cthead">${esc(String(k.name||_T('Class')).toUpperCase())}</span><span class="ctbody">${tokenHTML||'<span class="ctnotok" title="A character’s token appears here">?</span>'}</span><span class="ctfoot">${esc(W2)}</span></span>`}
 {const baseStudio=classStudioHTML;classStudioHTML=function(){let h=baseStudio();try{const k=ST.draft||{};
   /* the champion is whoever takes the class — no field for it */
-  h=h.replace(/<label>Champion \(card subtitle\)[\s\S]*?<\/label>/,'');
+  h=h.replace(new RegExp('<label>'+RXL('Champion (card subtitle)')+'[\\s\\S]*?<\\/label>'),'');
   /* what the weakness does */
-  const W0=WEAKNESSES[k.weak||'none'];h=h.replace(/(<label>Weakness<select[\s\S]*?<\/select>)<\/label>/,`$1<small class="rc-sub weakdesc">${esc(W0?W0[1]:'')}</small></label>`);
+  const W0=WEAKNESSES[k.weak||'none'];h=h.replace(new RegExp('(<label>'+RXL('Weakness')+'<select[\\s\\S]*?<\\/select>)<\\/label>'),`$1<small class="rc-sub weakdesc">${esc(W0?W0[1]:'')}</small></label>`);
   /* name and colour checks, live */
   const dup=classNameTaken(k.name,k.id);const clash=classColorClash(k.color,k.id);
-  h=h.replace(/(<label>Class name[\s\S]*?<\/label>)/,`$1${dup?`<p class="clswarn">${_T`⚠ “${esc(k.name)}” is taken — class names are unique.`}</p>`:''}`);
-  h=h.replace(/(<label>Color<input type="color"[^>]*><\/label>)/,`$1${clash?`<p class="clswarn">${_T`⚠ Too close to ${esc(clash.n)}’s colour — pick another, or`} <button type="button" class="btn tksm" data-clsa="newcolor">${_T`🎲 a free colour`}</button></p>`:''}`);
+  h=h.replace(new RegExp('(<label>'+RXL('Class name')+'[\\s\\S]*?<\\/label>)'),`$1${dup?`<p class="clswarn">${_T`⚠ “${esc(k.name)}” is taken — class names are unique.`}</p>`:''}`);
+  h=h.replace(new RegExp('(<label>'+RXL('Color')+'<input type="color"[^>]*><\\/label>)'),`$1${clash?`<p class="clswarn">${_T`⚠ Too close to ${esc(clash.n)}’s colour — pick another, or`} <button type="button" class="btn tksm" data-clsa="newcolor">${_T`🎲 a free colour`}</button></p>`:''}`);
   if(dup||clash)h=h.replace(/(data-clsa="save")/,'$1 disabled');
   /* the lists: your classes as thumbnails, the printed classes as the system defaults */
   const used=id=>(CUSTOM.chars||[]).filter(c=>c.classRef==='ccl:'+id);
@@ -27603,7 +27632,7 @@ function classThumbHTML(k,tokenHTML=''){const W2=(k.R&&W[k.R]?W[k.R].n:'fists')+
     return `<div class="lrow" style="--pc:${esc(c.color||'#c9a44a')}">${classThumbHTML(c,tok)}<div class="t">${_T`<b>${esc(c.name)}</b> ${c.sandbox?customTag({sandbox:1}):''}<small>${c.abil&&c.abil!=='none'?esc(ABILITIES[c.abil][0]):_T('no ability')} · ${coinAmt87(c.coin||0)}${+c.cf?_T` · ${cfAmt87(c.cf)}`:''} · used by ${u.length?u.map(x=>esc(x.name)).join(', '):_T('no one yet')}</small>`}</div>${crActs('cl',c)}</div>`}).join('');
   const printed=PRINTED_KEYS().map(key=>{const P=printedClass(key);const tok=typeof clsPieceHTML==='function'?clsPieceHTML(key,54):'';const items=(CLASSES[key].items||[]).map(i=>{const o=CLS_ITEM_OPTS.find(z=>z[0]===i);return o?o[1]:i}).join(', ');
     return `<div class="lrow" style="--pc:${P.color}" data-card="k:${key}">${classThumbHTML(P,tok)}<div class="t"><b>${esc(P.name)}</b> <span class="rc-sub">${esc(CLASSES[key].sub||'')}</span>${_T`<small>${esc(String(CLASSES[key].ab||'').replace(/^Ability:\s*/,''))}</small><small>${[P.R,P.L].filter(Boolean).map(w=>W[w].n).join(' & ')} · ${coinAmt87(P.coin)} · ${P.keys} key${P.keys===1?'':'s'}${items?' · '+esc(items):''}</small>`}</div>${sysActs(`data-clsa="copybase" data-v="${key}"`)}</div>`}).join('');
-  h=h.replace(/<div class="stlist"><h4>Your classes[\s\S]*$/,`<div class="stlist"><h4>${_T`Your classes · ${(CUSTOM.classes||[]).length}`}</h4>${mine?`<div class="list2 onecol">${mine}</div>`:`<p class="hint">${_T`None yet — save one above, or copy a printed class.`}</p>`}<h4>${_T`🔒 System classes · the printed ${PRINTED_KEYS().length}`} <span class="rc-sub">${_T`hover for the printed card · copy one to make it yours`}</span></h4><div class="list2 onecol">${printed}</div></div>`)}catch(e){console.error(e)}return h}}
+  h=h.replace(new RegExp('<div class="stlist"><h4>'+RXE(TXPRE('Your classes · {0}'))+'[\\s\\S]*$'),`<div class="stlist"><h4>${_T`Your classes · ${(CUSTOM.classes||[]).length}`}</h4>${mine?`<div class="list2 onecol">${mine}</div>`:`<p class="hint">${_T`None yet — save one above, or copy a printed class.`}</p>`}<h4>${_T`🔒 System classes · the printed ${PRINTED_KEYS().length}`} <span class="rc-sub">${_T`hover for the printed card · copy one to make it yours`}</span></h4><div class="list2 onecol">${printed}</div></div>`)}catch(e){console.error(e)}return h}}
 function classNameTaken(name,exceptId){const n=String(name||'').trim().toLowerCase();if(!n)return false;return PRINTED_KEYS().some(k=>CLASSES[k].name.toLowerCase()===n)||(CUSTOM.classes||[]).some(c=>c.id!==exceptId&&String(c.name).toLowerCase()===n)}
 {const baseClick=classStudioClick;classStudioClick=async function(b,redraw){const a=b.dataset.clsa;
   if(a==='newcolor'&&ST.draft){ST.draft.color=uniqueClassColor(ST.draft.id);return redraw()}
@@ -27622,9 +27651,9 @@ document.addEventListener('input',e=>{const t=e.target;if(typeof ST==='undefined
 {const baseOnly=specialOnlyHTML;specialOnlyHTML=function(){let h=baseOnly();try{
   h=h.replace(/<div class="sect">🤝 Cohorts in this event[\s\S]*?<\/div>\s*<div class="chkgrid">[\s\S]*?<\/div>/,'');
   const pull=re=>{const m=h.match(re);if(!m)return '';h=h.replace(m[0],'');return m[0]};
-  const arena=pull(/<label>(?:The bout|The heats)<select[\s\S]*?<\/select><\/label>/);const trophy=pull(/<label>Trophy<select[\s\S]*?<\/select><\/label>/);
-  const shell=`<div class="card2 sxshell"><div class="sect" style="margin-top:0">${_T`The invitational`}</div><div class="formgrid">${arena.replace(/<label>(The bout|The heats)/,`<label>${_T`🏟 The arena · $1`} <span class="rc-sub">${_T`printed or your Custom Event`}</span>`)}${trophy.replace('<label>Trophy',`<label>${_T`🏆 The trophy`} <span class="rc-sub">${_T`printed or yours`}</span>`)}</div></div>`;
-  h=h.replace('<div><div class="formgrid"><label>Name',`<div>${shell}<div class="formgrid"><label>${_T`Name`}`);
+  const arenaRx=new RegExp('<label>('+RXE(TX('The bout'))+'|'+RXE(TX('The heats'))+')'),trophyPre='<label>'+TXPRE('Trophy{0}');const arena=pull(new RegExp('<label>(?:'+RXE(TX('The bout'))+'|'+RXE(TX('The heats'))+')<select[\\s\\S]*?<\\/select><\\/label>'));const trophy=pull(new RegExp(RXE(trophyPre)+'<select[\\s\\S]*?<\\/select><\\/label>'));
+  const shell=`<div class="card2 sxshell"><div class="sect" style="margin-top:0">${_T`The invitational`}</div><div class="formgrid">${arena.replace(arenaRx,`<label>${_T`🏟 The arena · $1`} <span class="rc-sub">${_T`printed or your Custom Event`}</span>`)}${trophy.replace(trophyPre,`<label>${_T`🏆 The trophy`} <span class="rc-sub">${_T`printed or yours`}</span>`)}</div></div>`;
+  h=h.replace('<div><div class="formgrid"><label>'+TXL('Name'),`<div>${shell}<div class="formgrid"><label>${_T`Name`}`);
   h=h.replace(/^<p>[\s\S]*?<\/p>/,`<p>${_T`Design the <b>invitationals</b> that arrive in Manager mode. Each is a shell: pick the <b>arena</b> (a printed event or one of your Custom Events) and the <b>trophy</b>, then the field, the purse and how often it comes. New ones start off the rolls. The system invitationals sit at the bottom: locked, copy one to make it yours. ${customTag()}`}</p>`)
     .replace('💾 Save special event',_T('💾 Save invitational')).replace(/Your special events/,_T('Your invitationals')).replace(/The system special events/,_T('The system invitationals')).replace(/special event/g,'invitational').replace(/Special event/g,_T('Invitational'))}catch(e){console.error(e)}return h}}
 
@@ -27716,7 +27745,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 {const baseRec=recruitHTML;recruitHTML=function(){let h=baseRec.apply(this,arguments);try{const w=W_(),m=me();const favs=w.glads.filter(g=>g.alive&&g.favd&&!(g.contract&&g.contract.mgr===m.id)).sort((a,b)=>interestOf(b,m)-interestOf(a,m));
   const fav=favs.length?`<div class="card2 favbox"><div class="sect" style="margin-top:0">${_T`★ Favorites · ${favs.length}`} <span class="rc-sub">${_T`your shortlist — click one for their card and every courting action`}</span></div><table class="tally">${favs.map(g=>{const iv=interestOf(g,m);return `<tr class="${MGR.sel===g.id?'me':''}" data-mg="sel" data-id="${g.id}" style="cursor:pointer"><td><button class="btn" type="button" data-mg="fav" data-id="${g.id}" title="${_T`Remove from Favorites`}" style="padding:1px 6px;border:none;background:none;font-size:15px;color:var(--gold2)">★</button>${gArt(g,'xs')} <b>${esc(g.name)}</b> <span class="rc-sub">${CLASSES[g.cls]?CLASSES[g.cls].name:''}${g.contract?` · ${esc(mgrById(g.contract.mgr).ludus)}`:_T(' · free agent')}</span></td><td>${starHTML(starsOf(estOvr(g).v))}</td><td style="min-width:120px"><div class="meter gold"><i style="width:${iv}%"></i></div><span class="rc-sub">${_T`interest ${iv}`}</span></td><td class="n">${askWage(g)}/wk</td></tr>`}).join('')}</table></div>`:'';
   h=h.replace('<div class="mgrid"><div>',`<div class="mgrid"><div>${fav}`);
-  h=h.replace('<div class="seg"><span class="lbl">Sort</span>',`<div class="seg sorttray${MGR.sortOpen?' open':''}"><span class="lbl">${_T`Sort`}</span>`);
+  h=h.replace('<div class="seg"><span class="lbl">'+TX('Sort')+'</span>',`<div class="seg sorttray${MGR.sortOpen?' open':''}"><span class="lbl">${_T`Sort`}</span>`);
   h=h.replace('<div style="overflow-x:auto;max-height:62vh">','<div id="recTable" style="overflow-x:auto;max-height:62vh">')}catch(e){console.error(e)}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mg="sort"],[data-mg="fav"]');if(!b||typeof MGR==='undefined')return;
   if(b.dataset.mg==='sort'){const tray=b.closest('.sorttray');if(tray&&!tray.classList.contains('open')&&b.classList.contains('on')){e.stopImmediatePropagation();e.preventDefault();MGR.sortOpen=true;tray.classList.add('open');return}MGR.sortOpen=false;return}
@@ -28035,7 +28064,7 @@ function statSlidersHTML(c){const st=draftStats(c);const sum=statSum(st);const o
     <div style="display:grid;gap:4px">${STATS.map(([k,n,ic,what])=>`<label class="sliderow" title="${n}: ${k==='int'?_T('how a CPU plays (Normal at 76, Hard at 96)'):k==='str'?_T('+1 damage at 76, +2 at 87, +3 at 96'):_T`+1 ${what} at 76, +2 at 96`}"><span>${ic} ${n}</span><input type="range" min="${STAT_MIN}" max="${STAT_MAX}" data-stat="${k}" value="${st[k]}"><output>${st[k]}</output><span class="rc-sub" data-statperk="${k}"></span></label>`).join('')}</div>
     <p class="rc-sub" style="margin:4px 0 0">${_T`Movement, damage, coin and CF bonuses pay in rounds that allow class abilities. In Manager mode, ratings grow with training and fights.`}</p>`}
 {const base=charEditorHTML;charEditorHTML=function(){const c=ST.draft;let h=base.apply(this,arguments);if(!c)return h;
-  const i=h.indexOf('<h4>CPU personality');return i<0?h:h.slice(0,i)+statSlidersHTML(c)+h.slice(i)}}
+  const i=h.indexOf('<h4>'+TX('CPU personality (when a CPU plays this character)'));return i<0?h:h.slice(0,i)+statSlidersHTML(c)+h.slice(i)}}
 document.addEventListener('input',e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.stat||typeof ST==='undefined'||!ST.draft)return;const c=ST.draft;const st=draftStats(c);const k=t.dataset.stat;
   let v=statFix(t.value);if(!c.sandbox){const others=statSum(st)-st[k];v=Math.min(v,STAT_BUDGET-others)}v=statFix(v);st[k]=v;t.value=v;if(t.nextElementSibling)t.nextElementSibling.textContent=v;
   const sum=statSum(st);const box=document.getElementById('stStatSum');if(box){box.classList.toggle('over',!c.sandbox&&sum>STAT_BUDGET);box.firstChild.textContent=_T`${sum} / ${c.sandbox?'—':STAT_BUDGET} points · `}
@@ -28050,7 +28079,7 @@ document.addEventListener('input',e=>{const t=e.target;if(!t||!t.dataset||!t.dat
 {const base=npcEditorHTML;npcEditorHTML=function(){let h=base.apply(this,arguments);const n=ST.draft;if(!n)return h;
   const sp=statFix((NPC_SPD[clamp(+n.mv||1,1,7)]||73)),str=statFix((NPC_STR[clamp(+n.ap||1,1,6)]||99));
   const chip=`<div class="rc-sub" style="margin:4px 0 8px">${_T`Ratings: 🏃 Speed <b>${sp}</b> · 💪 Strength <b>${str}</b> <span>— set by Movement and Attack</span>`}</div>`;
-  const i=h.indexOf('<label>Coin when slain');return i<0?h:h.slice(0,i)+`<div style="grid-column:1/-1">${chip}</div>`+h.slice(i)}}
+  const i=h.indexOf('<label>'+TXPRE('Coin when slain {0}'));return i<0?h:h.slice(0,i)+`<div style="grid-column:1/-1">${chip}</div>`+h.slice(i)}}
 /* =====================================================================
    68-FIX55 · v0.55 SOUND ON EVERY DESK
    =====================================================================
@@ -28149,7 +28178,7 @@ document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.ma
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mailgo]');if(!b)return;e.stopPropagation();MGR.tab='ludus';MGR.mailOpen=b.dataset.mailgo;if(typeof MGR_REDRAW==='function')MGR_REDRAW();
   setTimeout(()=>{const el=document.querySelector(`details.mail[data-mail="${CSS.escape(b.dataset.mailgo)}"]`);if(el){el.open=true;el.scrollIntoView({block:'center'})}MGR.mailOpen=null},60)},true);
 /* the left menu counts the unread */
-{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(w&&!w.dead){const live=mailLive('');const keys=new Set([...live.items.map(x=>x.key),...MAIL_BODYKEYS]);const R=new Set(w.mailRead||[]);const n=[...keys].filter(k=>!R.has(k)).length;if(n)h=h.replace('🏛 Your ludus</button>',`${_T`🏛 Your ludus`} <span class="mcount" title="${_T`${n} unread letter${n===1?'':'s'}`}">✉ ${n}</span></button>`)}}catch(err){}return h}}
+{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(w&&!w.dead){const live=mailLive('');const keys=new Set([...live.items.map(x=>x.key),...MAIL_BODYKEYS]);const R=new Set(w.mailRead||[]);const n=[...keys].filter(k=>!R.has(k)).length;if(n)h=h.replace(TX('🏛 Your ludus')+'</button>',`${_T`🏛 Your ludus`} <span class="mcount" title="${_T`${n} unread letter${n===1?'':'s'}`}">✉ ${n}</span></button>`)}}catch(err){}return h}}
 /* reports that used to be news lines: weekly growth and contracts ending arrive as mail too */
 {const base=growthDigest;growthDigest=function(w){const sg=w.sgain||{};const rows=[];for(const [id,o] of Object.entries(sg)){const g=gById(id);if(!g)continue;
     const bits=STATS.filter(([k])=>o[k]>0).map(([k,n])=>{const v=gStats(g)[k];const nb=nextBand(k,v);return `${n} +${(+o[k]).toFixed(1)} <span class="rc-sub">${_T`(now ${v}${nb?_T`, ${nb-v} to the next band`:''})`}</span>`});
@@ -28170,8 +28199,8 @@ Object.assign(GLOSS,{
   synd:{t:_T("Sica's syndicate"),re:/Sica's syndicate/,d:_T('The lender of last resort: only to a house in the red, 12% a week added to the debt. Pay the weekly minimum by hand; three short weeks and a spear finds your best fighter.')}});
 /* chips and sliders carry the glossary tooltips */
 {const base=statChips;statChips=function(st,opt={}){return base.apply(this,arguments).replace(/<span class="statchip([^"]*)" title="([^"]*)">([^<]*)<b>/g,(m,c,t,ic)=>{const k=STATS.find(s=>s[2]===ic.trim());return `<span class="statchip${c}" data-tt="${k?k[0]:'ratings'}" aria-label="${t}">${ic}<b>`})}}
-{const base=ratingsHTML;ratingsHTML=function(g){return base.apply(this,arguments).replace(/<span>([^<]*) (Speed|Strength|Intelligence|Luck|Charisma)<\/span>/g,(m,ic,n)=>`<span>${ic} <span class="gl" data-tt="${STATS.find(s=>s[1]===n)[0]}">${n}</span></span>`)}}
-{const base=statSlidersHTML;statSlidersHTML=function(c){return base.apply(this,arguments).replace(/<span>([^<]*) (Speed|Strength|Intelligence|Luck|Charisma)<\/span>/g,(m,ic,n)=>`<span>${ic} <span class="gl" data-tt="${STATS.find(s=>s[1]===n)[0]}">${n}</span></span>`)}}
+{const base=ratingsHTML;ratingsHTML=function(g){return base.apply(this,arguments).replace(new RegExp('<span>([^<]*) ('+STATS.map(s=>RXE(s[1])).join('|')+')<\\/span>','g'),(m,ic,n)=>`<span>${ic} <span class="gl" data-tt="${STATS.find(s=>s[1]===n)[0]}">${n}</span></span>`)}}
+{const base=statSlidersHTML;statSlidersHTML=function(c){return base.apply(this,arguments).replace(new RegExp('<span>([^<]*) ('+STATS.map(s=>RXE(s[1])).join('|')+')<\\/span>','g'),(m,ic,n)=>`<span>${ic} <span class="gl" data-tt="${STATS.find(s=>s[1]===n)[0]}">${n}</span></span>`)}}
 /* the guides: a Ratings section in both, and the Classes tips read the ratings */
 const RATINGS_GUIDE=`<h4>${_T`Ratings: Speed, Strength, Intelligence, Luck, Charisma`}</h4><ul>
   <li>${_T`<b>Every gladiator has five ratings</b> from 50 to 99. Classes set the loadout; the ratings set the perks. A Slave tends to be fast and a Soldier strong, but not every one is.`}</li>
@@ -28239,7 +28268,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 /* ---------- MANAGER · houses called in by a word can be taken over like any other ---------- */
 function houseTakeRows(){return Object.entries(FAMILY_HOUSES).filter(([k])=>houseOn(k)).map(([k,H])=>`<div class="lrow" style="--pc:${H.mgr.color}"><div class="t">${_T`<b>${esc(H.mgr.name)}</b><small>${esc(H.mgr.ludus)} · ${esc(H.mgr.city)} · fame 22 · ${coinAmt87(180)} · ${esc(H.child.name)} and three fighters</small><small style="color:var(--bone)">${esc(H.mgr.bio)}</small>`}</div><div class="a"><button class="btn primary" type="button" data-takehouse="${k}">${_T`Take over`}</button></div></div>`).join('')}
 {const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{
-  if(MGR.view==='take'){const rows=houseTakeRows();if(rows)h=h.replace('</div><div class="mbtns"><button class="btn" type="button" data-mg="back">Back</button></div>',rows+`</div><div class="mbtns"><button class="btn" type="button" data-mg="back">${_T`Back`}</button></div>`)}
+  if(MGR.view==='take'){const rows=houseTakeRows();if(rows)h=h.replace('</div><div class="mbtns"><button class="btn" type="button" data-mg="back">'+TX('Back')+'</button></div>',rows+`</div><div class="mbtns"><button class="btn" type="button" data-mg="back">${_T`Back`}</button></div>`)}
   if(MGR.view==='create'&&typeof NEWMGR!=='undefined'&&NEWMGR&&!NEWMGR.takeKey&&!NEWMGR.sale){const D=START_DIFF[NEWMGR.diff||'normal'];
     h=h.replace(_T`You start with ${coinAmt87(40)}, no fame and one raw recruit.`,_T`You start with ${coinAmt87(D.coin)}, no fame and ${D.glads?D.glads===1?_T('one raw recruit'):_T('two raw recruits'):_T('no fighters')}.`);
     h=h.replace('<div class="mbtns"><button class="btn primary" type="button" data-mg="nmgo">',startDiffHTML(NEWMGR)+'<div class="mbtns"><button class="btn primary" type="button" data-mg="nmgo">')}
@@ -28270,7 +28299,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 loanTag=function(g){if(!g||!g.loanFrom)return '';const pm=me();const from=mgrById(g.loanFrom.mid);const to=g.contract?mgrById(g.contract.mgr):null;const L=g.loanFrom;
   const tip=_T`On loan from ${from?from.ludus:_T('another house')} to ${to?to.ludus:_T('another house')} · ${coinAmt87(L.fee)} a week · ${L.weeks} week${L.weeks===1?'':'s'} left${pm&&L.mid===pm.id?_T(' · your fighter'):''}`;
   return ` <span class="loantag" data-tip="${esc(tip)}">LOANED</span>`};
-{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(w&&w.night&&!w.dead){const n=(w.night.bouts||[]).reduce((a,b)=>a+(b.bets||[]).length,0);if(n)h=h.replace('💰 Wagers</button>',`${_T`💰 Wagers · ${n}`}</button>`)}}catch(e){}return h}}
+{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(w&&w.night&&!w.dead){const n=(w.night.bouts||[]).reduce((a,b)=>a+(b.bets||[]).length,0);if(n)h=h.replace(TX('💰 Wagers')+'</button>',`${_T`💰 Wagers · ${n}`}</button>`)}}catch(e){}return h}}
 {const base=nightHTML;nightHTML=function(){let h=base.apply(this,arguments);try{const w=W_();if(typeof travelOK==='function'&&!travelOK(w)&&!w.night.bye){const t=travelState(w);const msg=_T`Travel to ${LOCATIONS[w.night.loc].n} first (${t.cost} coin) — pay the road at the top of Match Week, then enter, watch or walk the sand.`;
   h=h.replace(/<button ([^>]*?)data-mg="(enter|fight|watch|spect|scoutarena)"/g,(m0,pre,a)=>`<button ${pre}data-mg="${a}" data-dis="${esc(msg)}" data-tip="${esc(msg)}" aria-disabled="true"`)}}catch(e){}return h}}
 {const base=weekLoopBtns;weekLoopBtns=function(){const w=W_();if(MGR.confirmEnd||(w&&MGR.loopHidden===w.week))return '';return base.apply(this,arguments)}}
@@ -28710,7 +28739,7 @@ let ROAD_NOW=null; /* the Road as last read, for the cards (ludusDetail is synch
   const R=ROAD_NOW&&!ROAD_NOW.over?ROAD_NOW:null;
   const btn=R&&R.gid===g.id?(()=>{const st=roadStage(R);return `<button type="button" class="btn roadsend primary" data-road="go" title="${_T`Opens New event with ${esc(g.name)} summoned`}">${_T`⚔ Walk stage ${R.step+1}: ${esc(st.L.n)}`}</button>`})()
     :`<button type="button" class="btn roadsend" data-roadsend="${g.id}" title="${_T`Win the twelve arenas in order with ${esc(g.name)}${R?_T` — replaces ${esc(R.name)}`:''}`}">${_T`🛣 Send on the Road`}</button>`;
-  h=h.replace(/<button type="button" class="btn roadsend" data-roadsend="[^"]*"[^>]*>🛣 Send on the Road<\/button>/,'');
+  h=h.replace(new RegExp('<button type="button" class="btn roadsend" data-roadsend="[^"]*"[^>]*>'+RXE(TX('🛣 Send on the Road'))+'<\\/button>'),'');
   return h.replace('<div class="gdetail" id="gDetail">',`<div class="gdetail" id="gDetail">${btn}`)}}
 /* ⚔ Walk stage from the walker's record: the same hand-off as the Hall's button */
 document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('#ludusBody [data-road="go"]');if(!b)return;e.stopPropagation();
@@ -29101,9 +29130,9 @@ function edTagPane(pane){const k=ED_STEPS[edStepIdx()][0],sub=ST.sub;let cur=sub
       if(el.querySelector&&el.querySelector('[data-f="trophy"]'))cur='finish';
       else if(el.querySelector&&el.querySelector('[data-edmusic]'))cur='basics';
       else if(el.classList.contains('srcard'))cur='finish';
-      else if(el.tagName==='H4'&&/^Rounds/.test(t))cur='rounds';
-      else if(el.tagName==='H4'&&/^Arena rules/.test(t))cur='rules';
-      else if(el.tagName==='H4'&&/^Notes/.test(t))cur='finish';
+      else if(el.tagName==='H4'&&HRX('Rounds').test(t))cur='rounds';
+      else if(el.tagName==='H4'&&HRX('Arena rules').test(t))cur='rules';
+      else if(el.tagName==='H4'&&HRX('Notes').test(t))cur='finish';
       else if(cur==='finish'&&!el.classList.contains('srcard')&&el.querySelector&&el.querySelector('[data-f="name"]'))cur='basics';
     }
     el.dataset.edstep=cur;el.classList.toggle('edcur',cur===k)}}
@@ -29160,7 +29189,7 @@ advanceMissio=async function(rows){
   const recs=await Store.list('missios');const rec=recs.find(r=>r.id===S.missio.id);if(!rec)return null;
   const x=rows.find(x=>!x.p.cpu&&x.p.name===rec.name)||rows.find(x=>x.p.name===rec.name)||rows[0];const p=x.p;
   const st=MISSIOS[rec.cls].path[rec.step];const noCF=missioNoCF(S.evKey);
-  const spared=!!(x.fate&&/spared/.test(x.fate[0]));
+  const spared=!!(x.fate&&fateSpared(x.fate[0]));
   const fell=!p.alive||p.retired||S.missioFell;
   const fateDeath=!noCF&&!fell&&!!x.fate&&!aliveInUniverse(x);
   const dead=fell||fateDeath;
@@ -29202,7 +29231,7 @@ function chFloorTok(f,m){if(HEADLESS||!f.part)return false;const art=f.kind==='w
 function chCardComp(p){const ch=p.ch;if(!ch||!ch.art)return '';const H=ch.horse,hart=H?(H.sides[H.face]||{}).art||'saxoA':null;
   return `<span class="chcomp">${cardHTML('g:'+ch.art,'sm')}${H?`<span class="chtk horse" data-card="h:${hart}" title="${esc(H.name||'horse')}">${cardHTML('h:'+hart,'xs')}</span>`:''}${ch.wheel?`<span class="chtk wheel" data-card="h:${ch.wheel.art||'wheel8'}" title="${esc(ch.wheel.name||'wheel')}">${cardHTML('h:'+(ch.wheel.art||'wheel8'),'xs')}</span>`:''}</span>`}
 {const base=boardHTML;boardHTML=function(player){let h=base.apply(this,arguments);try{if(player&&player.ch&&player.ch.mounted&&player.ch.art){
-  const card=cardHTML('g:'+player.ch.art,'xs');const i=h.indexOf('<div class="sect">Chariot</div>');if(i>=0){const j=h.indexOf(card,i);if(j>=0)h=h.slice(0,j)+chCardComp(player)+h.slice(j+card.length)}}}catch(e){}return h}}
+  const card=cardHTML('g:'+player.ch.art,'xs');const i=h.indexOf('<div class="sect">'+TX('Chariot')+'</div>');if(i>=0){const j=h.indexOf(card,i);if(j>=0)h=h.slice(0,j)+chCardComp(player)+h.slice(j+card.length)}}}catch(e){}return h}}
 /* =====================================================================
    85-V65 · v0.65 TRAINING YARD, RAIL, INFIRMARY
    =====================================================================
@@ -29222,7 +29251,7 @@ const gFat=g=>Math.max(0,Math.min(100,Math.round(g&&g.fat||0)));
 const fatCol=f=>f>=70?'#c9564a':f>=50?'#d9a441':'#7fae5f';
 /* ---------- the Training Yard: regime first ---------- */
 {const base=practiceHTML;practiceHTML=function(){let h=base.apply(this,arguments);try{
-  const i=h.indexOf('<div class="sect">This week\'s regime');const j=i>=0?h.indexOf('<div class="regcards">',i):-1;
+  const i=h.indexOf('<div class="sect">'+TX("This week's regime"));const j=i>=0?h.indexOf('<div class="regcards">',i):-1;
   if(i<0||j<0)return h;
   /* the regime block = its heading + the regcards row (buttons only, so the row ends at the first </div> after its last button) */
   let e=j+'<div class="regcards">'.length,depth=1;while(depth&&e<h.length){const o=h.indexOf('<div',e),c=h.indexOf('</div>',e);if(c<0)break;if(o>=0&&o<c){depth++;e=o+4}else{depth--;e=c+6}}
@@ -29314,7 +29343,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-rest]');if
   const rows=fit.sort((a,b)=>gFat(b)-gFat(a)).map(g=>{const f=gFat(g);const r=g.restWk===w.week;return `<div class="fatrow">${mgAvatar(g)}<b>${esc(g.name)}</b><span class="fatbar"><i style="width:${f}%;background:${fatCol(f)}"></i></span><span class="rc-sub">${f}${f>50?_T(' · at risk'):''}${onCard(g)?_T(' · on the card'):''}</span>
     <button type="button" class="btn tksm ${r?'on':''}" data-rest="${g.id}" title="${_T`No drills this week; fatigue −${FAT_REST} at the week's end`}">${r?_T('🛏 Resting'):_T('🛏 Rest week')}</button></div>`}).join('');
   const blk=`<div class="sect">${_T`😮‍💨 Fatigue`} <span class="rc-sub">${_T`bouts and hard work wear fighters down · above 50 they may get hurt · a rest week clears it`}</span></div><div class="fatrows">${rows}</div>`;
-  const i=h.indexOf('<div class="sect">🗡 Cleared for the sand');return i>=0?h.slice(0,i)+blk+h.slice(i):h+blk}catch(e){console.error(e);return h}}}
+  const i=h.indexOf('<div class="sect">'+TX('🗡 Cleared for the sand'));return i>=0?h.slice(0,i)+blk+h.slice(i):h+blk}catch(e){console.error(e);return h}}}
 {const st=document.createElement('style');st.textContent=`.plantiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:6px;margin-top:6px}
 .plantile{all:unset;cursor:pointer;border:1px solid var(--line2);border-radius:7px;padding:6px;display:grid;grid-template-columns:auto 1fr;column-gap:6px;font-size:12px}.plantile:hover{border-color:var(--gold)}
 .plantile .pi{grid-row:span 3;font-size:18px}.plantile .pc{color:var(--muted)}.plantile .pf{color:#9cc46e}.plantile.off{opacity:.45;cursor:default}.plantile .pw,.pw{color:#d9a441;font-size:11px;grid-column:1/-1}
@@ -29484,7 +29513,7 @@ MGR.rf=MGR.rf||{};
 {const base=recruitHTML;recruitHTML=function(){let h=base.apply(this,arguments);try{const w=W_(),m=me();if(MGR.filter==='mine')return h;
   const fb=h.indexOf('<div class="card2 favbox">');if(fb>=0){const c=cutDiv(h,fb);if(c)h=c[1]}
   h=h.replace('<div class="mgrid"><div>',`<div class="mgrid"><div>${pipelineHTML()}`);
-  h=h.replace('<th>Wants</th>',_T('<th title="✓ fills a roster gap and is affordable · ~ one of the two · ✗ neither">Fit</th>'));
+  h=h.replace('<th>'+TX('Wants')+'</th>',_T('<th title="✓ fills a roster gap and is affordable · ~ one of the two · ✗ neither">Fit</th>'));
   h=h.replace(/(<tr class="[^"]*" data-mg="sel" data-id="([^"]+)"[\s\S]*?<\/td><td>[\s\S]*?<\/td>)<td class="rc-sub">[\s\S]*?<\/td>(<td style="min-width:110px"><div class="meter"><i style="width:\d+%"><\/i><\/div>)<span class="rc-sub">[\s\S]*?<\/span>/g,(all,pre,id,meter)=>{const g=gById(id);if(!g)return all;const f=recFit(g,m),o=recOdds(g,m);
     return `${pre}<td><span class="fitchip f${f.mark==='✓'?'y':f.mark==='~'?'m':'n'}" title="${esc(f.why)}">${f.mark}</span></td>${meter}<span class="rc-sub ${o.lead?'lead':'trail'}">${interestOf(g,m)} · ${esc(o.txt)}${m.fame<reqFame(g)?' · 🔒':''}</span>`});
   /* filters */
@@ -29564,7 +29593,7 @@ document.addEventListener('change',e=>{const t=e.target;if(!t||!/^team\d$/.test(
 {const base=ludusDetail;ludusDetail=function(g){let h=base.apply(this,arguments);try{
   const m=h.match(/<button type="button" class="btn roadsend[^"]*"[^>]*>[\s\S]*?<\/button>/);if(!m)return h;
   const i=h.indexOf('<div class="mbtns"');if(i<0)return h;const j=h.indexOf('</div>',i);if(j<0)return h;
-  const btn=m[0].replace('class="btn roadsend',_T('class="btn roadsend inrow')).replace(/>(🛣 Send on the Road)</,_T('>$1<small>win the twelve arenas in order</small><')).replace(/>(⚔ Walk stage[^<]*)</,_T('>$1<small>opens the next stage</small><'));
+  const btn=m[0].replace('class="btn roadsend',_T('class="btn roadsend inrow')).replace(new RegExp('>('+RXE(TX('🛣 Send on the Road'))+')<'),_T('>$1<small>win the twelve arenas in order</small><')).replace(new RegExp('>('+RXE(TXPRE('⚔ Walk stage {0}: {1}<small>opens New event with {2} summoned</small>'))+'[^<]*)<'),_T('>$1<small>opens the next stage</small><'));
   h=h.replace(m[0],'');return h.slice(0,h.indexOf('</div>',h.indexOf('<div class="mbtns"')))+btn+h.slice(h.indexOf('</div>',h.indexOf('<div class="mbtns"')))}catch(e){return h}}}
 {const st=document.createElement('style');st.textContent=`.roadsend.inrow{position:static!important;float:none!important;margin:0!important}`;document.head.appendChild(st)}
 /* ---------- ECONOMY (v0.68 tuning, the same rules for every house): an attentive lanista who enters the card each week roughly
@@ -29614,7 +29643,7 @@ function checklistHTML(){const I=weekChecklist();const todo=I.filter(x=>!x.done)
   /* the ledger strip in the header */
   const M=weekMoney();const tone=M.net>=0?'good':M.runway<=2?'bad':M.runway<=5?'warn':'';
   const led=`<span class="badge ledger ${tone}" title="${_T`This week: wages and drills ${M.wages} · gate share +${M.gate} · appearance fees +${M.fees} (fighters entered) — purses and bets on top`}">${_T`${M.net>=0?'▲':'▼'} ${coinAmt87((M.net>=0?'+':'')+M.net)}/wk${M.net<0?` · ${M.runway===Infinity?'':M.runway+_T(' wk runway')}`:''}${!M.fees&&w.night&&w.night.bouts.some(b=>!b.done)?_T(' · before fees'):''}`}</span>`;
-  h=h.replace(/(<span class="badge [^"]*">Treasury (?:<span class=amt87>[\s\S]*?<\/span><\/span>|[^<]*)<\/span>)/,`$1${led}`); /* v0.87: the amount wears the coin (154-v87icons) */
+  h=h.replace(new RegExp('(<span class="badge [^"]*">'+RXE(TXPRE('Treasury {0}'))+'(?:<span class=amt87>[\\s\\S]*?<\\/span><\\/span>|[^<]*)<\\/span>)'),`$1${led}`); /* v0.87: the amount wears the coin (154-v87icons) */
   /* the checklist replaces the to-do box */
   if(MGR.tab==='ludus'){const i=h.indexOf('<div class="todobox">');if(i>=0){const c=cutDiv(h,i);if(c)h=c[1].slice(0,i)+checklistHTML()+c[1].slice(i)}}}catch(e){console.error(e)}return h}}
 /* end the week: what you are about to skip */
@@ -29664,7 +29693,7 @@ function sideTabsHTML(){const n=standsCount(),k=S&&S.npcKills||0;
 function standsPaneHTML(){if(!S||!S.spect||!S.spect.length)return `<p class="hint" style="margin:0">${_T`The stands are empty this event.`}</p>${typeof standsDrawerHTML==='function'?standsDrawerHTML({chronOnly:1}):''}`;
   if(typeof standsDrawerHTML!=='function')return crowdPanelHTML();
   /* the crowd first; the arena's chronicle as one quiet line after the stands log, then the roster */
-  const h=standsDrawerHTML({noChron:1}).replace('<div class="sect">In the stands right now</div>',''),ch=standsDrawerHTML({chronOnly:1})||'';const i=h.indexOf('<div class="sect">Spectator roster');
+  const h=standsDrawerHTML({noChron:1}).replace('<div class="sect">'+TX('In the stands right now')+'</div>',''),ch=standsDrawerHTML({chronOnly:1})||'';const i=h.indexOf('<div class="sect">'+TXPRE('Spectator roster · {0}K spectators known to the ushers'));
   return i<0?h+ch:h.slice(0,i)+ch+h.slice(i)}
 function fieldHeadHTML(){const d=S&&S.deck&&EV()&&EV().deck?_T`${S.deck.length} arena card${S.deck.length===1?'':'s'} left`:'';
   return `<div class="fieldhd"><span class="rc-sub">${d}</span><button class="btn tksm" type="button" data-bestiary>${_T`📖 Bestiary`}</button></div>`}
@@ -29818,7 +29847,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-afact]');i
 const CA_EQ={head:[['head',_T('Head')]],chest:[['chest',_T('Chest')],['belt',_T('Belt')]],arm:[['sho',_T('Shoulder')],['fore',_T('Forearm')],['hand',_T('Hand')]],leg:[['thigh',_T('Thigh')],['shin',_T('Shin')]]};
 {const base=gearAHTML;gearAHTML=function(){let h=base.apply(this,arguments);try{const d=ST.ca||{};const L=CA_EQ[d.slot]||[];if(!L.length)return h;
   const cur=d.eq&&L.some(x=>x[0]===d.eq)?d.eq:L[0][0];
-  h=h.replace(/(<label>Body location<select data-caf="slot">[\s\S]*?<\/select><\/label>)/,`$1<label>${_T`Equip point`}<select data-caeq>${L.map(([k,l])=>`<option value="${k}" ${k===cur?'selected':''}>${l}</option>`).join('')}</select></label>`)}catch(e){}return h}}
+  h=h.replace(new RegExp('(<label>'+RXL('Body location')+'<select data-caf="slot">[\\s\\S]*?<\\/select><\\/label>)'),`$1<label>${_T`Equip point`}<select data-caeq>${L.map(([k,l])=>`<option value="${k}" ${k===cur?'selected':''}>${l}</option>`).join('')}</select></label>`)}catch(e){}return h}}
 document.addEventListener('change',e=>{const s=e.target.closest('[data-caeq]');if(!s||!ST.ca)return;const d=ST.ca;d.eq=s.value;const p=EQ[d.eq];const F=caFit(d);
   d.fit={slot:d.slot,x:p[0],y:p[1],s:F.s};const t=document.querySelector(`[data-gs="caview"][data-id="${ST.caAvatar?'avatar':'piece'}"]`);if(t)setTimeout(()=>t.click(),0)},true);
 /* 91-v69 — the armor designer, reworked (Virgilante, v0.69).
@@ -29868,10 +29897,10 @@ const armSculptOn=()=>(typeof SETTINGS==='undefined'||(SETTINGS.armorStyle||'dra
     /* the mock-up straight below the piece */
     const pi=h.indexOf('<div class="scart');if(pi>=0){const c=cutDiv(h,pi);if(c){const end=pi+c[0].length;h=c[1].slice(0,pi)+c[0]+caMockHTML(d)+c[1].slice(pi)}}
     /* one Equip point select replaces Body location + Point (and 90's helper select) */
-    h=h.replace(/<label>Equip point<select data-caeq>[\s\S]*?<\/select><\/label>/,'');
-    h=h.replace(/<label>Body location<select data-caf="slot">[\s\S]*?<\/select><\/label>/,caEqSelectHTML(d)).replace(/<label>Point<select data-caf="pt">[\s\S]*?<\/select><\/label>/,'');
+    h=h.replace(new RegExp('<label>'+RXL('Equip point')+'<select data-caeq>[\\s\\S]*?<\\/select><\\/label>'),'');
+    h=h.replace(new RegExp('<label>'+RXL('Body location')+'<select data-caf="slot">[\\s\\S]*?<\\/select><\\/label>'),caEqSelectHTML(d)).replace(new RegExp('<label>'+RXL('Point')+'<select data-caf="pt">[\\s\\S]*?<\\/select><\\/label>'),'');
     /* the sculpted set only with the Sculpted armor style */
-    if(!armSculptOn()){const si=h.indexOf('<h4>The sculpted set');if(si>=0){const gi=h.indexOf('<div class="armgrid sysgrid">',si);const c=gi>=0?cutDiv(h,gi):null;if(c)h=h.slice(0,si)+c[1].slice(gi)}
+    if(!armSculptOn()){const si=h.indexOf('<h4>'+TX('The sculpted set · every printed piece'));if(si>=0){const gi=h.indexOf('<div class="armgrid sysgrid">',si);const c=gi>=0?cutDiv(h,gi):null;if(c)h=h.slice(0,si)+c[1].slice(gi)}
       h=h.replace(/The <b>sculpted set<\/b> below recreates all \d+ printed pieces — pick any of them \(or choose one under <b>Start from<\/b>\) to begin from its rulebook stats\./,_T('Choose a printed piece under <b>Start from</b> to begin from its rulebook stats.'))}
     h=h.replace('<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-caf="pair"',`<label style="display:flex;gap:6px;align-items:center" title="${_T`Unticked: the piece covers one arm or leg — the one it is equipped to`}"><input type="checkbox" data-caf="pair"`);
   }catch(e){console.error(e)}return h}}
@@ -30016,16 +30045,16 @@ const SR_IMG={};const srImage=k=>{if(SR_IMG[k])return SR_IMG[k].complete&&SR_IMG
 {const base=briefingHTML;briefingHTML=function(){let h=base.apply(this,arguments);try{const k=srKey(EV());if(k)h=h.replace('<div class="brname">',`<div class="brsr">${srImgHTML(k,58)}<span class="rc-sub">${_T`Summa Rudis<br><b>${esc(EV().sr)}</b>`}</span></div><div class="brname">`)}catch(e){}return h}}
 function statusDecor(){const st=document.getElementById('status');if(!st||!S||S.phase==='setup')return;
   for(const c of st.querySelectorAll('.chip')){const t=c.getAttribute('title')||'';
-    const m=/^Round (\d+) of/.exec(t);if(m&&!c.querySelector('.roundmk')){c.classList.add('roundchip');c.innerHTML=c.innerHTML.replace(/^Round \d+\/\d+ · /,'');c.insertAdjacentHTML('afterbegin',`<span class="roundmk" aria-label="${_T`Round ${m[1]}`}"><img src="${assetURL('round.webp')}" alt=""><b>${m[1]}</b></span>`)}
+    const m=new RegExp('^'+RXE((()=>{const t=TXK('Round {0} of {1}: {2}. Zone');const i=t.indexOf('{0}');return i<0?t:t.slice(0,i)})())+'(\\d+)').exec(t);if(m&&!c.querySelector('.roundmk')){c.classList.add('roundchip');const rk=TX('Round {0}/{1} · {2} · {3}×{4}');c.innerHTML=c.innerHTML.replace(new RegExp('^'+RXE(rk.slice(0,rk.indexOf('{2}'))).replace(/\\\{\d\\\}/g,'\\d+')),'');c.insertAdjacentHTML('afterbegin',`<span class="roundmk" aria-label="${_T`Round ${m[1]}`}"><img src="${assetURL('round.webp')}" alt=""><b>${m[1]}</b></span>`)}
     const k=srKey(EV());if(k&&/Summa Rudis/.test(t)&&!c.querySelector('.srmed'))c.insertAdjacentHTML('afterbegin',srImgHTML(k,20,'inchip'))}}
 {const base=render;render=function(){const r=base.apply(this,arguments);try{statusDecor()}catch(e){}return r}}
 /* festival setup: the medallion beside the picker */
 document.addEventListener('change',e=>{if(e.target&&e.target.id==='festSR'){const im=document.getElementById('festSRimg');if(im)im.outerHTML=srImgHTML(e.target.value,44,'festsr').replace('<img',_T('<img id="festSRimg"'))}});
 {const base=openSetup;openSetup=function(){const r=base.apply(this,arguments);setTimeout(function fx(n){const s=document.getElementById('festSR');if(s&&!document.getElementById('festSRimg'))s.insertAdjacentHTML('afterend',srImgHTML(s.value,44,'festsr').replace('<img',_T('<img id="festSRimg"')));else if(!s&&n<20)setTimeout(()=>fx(n+1),250)},300,0);return r}}
 /* Manager: Cassian presides over the Grand Games */
-{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(' · the Grand Games: purses ×1.6',_T` · ${srImgHTML('cassian',22,'inline')} the Grand Games, Cassian presiding: purses ×1.6`)}catch(e){}return h}}
+{const base=mgrHTML;mgrHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(TX(' · the Grand Games: purses ×1.6'),_T` · ${srImgHTML('cassian',22,'inline')} the Grand Games, Cassian presiding: purses ×1.6`)}catch(e){}return h}}
 /* the Mandata Flavi card back on hidden objectives */
-{const base=boardHTML;boardHTML=function(){let h=base.apply(this,arguments);try{h=h.split('<div class="item mf"><span><span>Mandata Flavi<em>Secret objective').join(`<div class="item mf"><span><img class="mfback" src="${assetURL('mandata_back.webp')}" alt="${_T`Mandata Flavi card back`}"><span>${_T`Mandata Flavi<em>Secret objective`}`)}catch(e){}return h}}
+{const base=boardHTML;boardHTML=function(){let h=base.apply(this,arguments);try{h=h.split('<div class="item mf"><span><span>Mandata Flavi<em>'+TX('Secret objective')).join(`<div class="item mf"><span><img class="mfback" src="${assetURL('mandata_back.webp')}" alt="${_T`Mandata Flavi card back`}"><span>${_T`Mandata Flavi<em>Secret objective`}`)}catch(e){}return h}} // i18n:skip
 /* the stands line, pinned at the top of the arena log */
 tickerApply=function(){const el=document.getElementById('crowdTick');if(el)el.hidden=true;slogPinApply()};
 let SLOG_N=0;
@@ -30127,7 +30156,7 @@ function wpnSetsHTML(){const sys=sysWeapons();const L=CUSTOM.weapons||[];
   const sysc=sys.map(k=>{const X=W[k];return `<div class="lrow"><span class="setart wcard">${cardHTML('w:'+k,'md')}</span><div class="t"><b>${esc(X.n)}</b><small>L${X.lv} · ${X.shield?'shield':X.p+' dmg · range '+X.r}${X.throw?' · throws':''}</small></div>${sysActs(`data-gs="cwsys" data-id="${k}"`)}</div>`}).join('');
   return `<h4>${_T`Your weapons · ${L.length}`}</h4>${L.length?`<div class="list2 setgrid">${mine}</div>`:`<p class="rc-sub">${_T`The forge is cold. Nothing yet — save a weapon above, or copy a printed one.`}</p>`}
    <h4>${_T`🔒 System weapons · ${sys.length}`} <span class="rc-sub">${_T`the printed cards`}</span></h4><div class="list2 setgrid sys">${sysc}</div>`}
-{const base=gearWHTML;gearWHTML=function(){let h=base.apply(this,arguments);try{const i=h.indexOf('<h4>Your weapons');if(i>=0)h=h.slice(0,i) /* the old list was the template's tail */;h+=wpnSetsHTML()}catch(e){console.error(e)}return h}}
+{const base=gearWHTML;gearWHTML=function(){let h=base.apply(this,arguments);try{const i=h.indexOf('<h4>'+TXPRE('Your weapons · {0}'));if(i>=0)h=h.slice(0,i) /* the old list was the template's tail */;h+=wpnSetsHTML()}catch(e){console.error(e)}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-gs="cwsys"]');if(!b)return;e.stopImmediatePropagation();cwFromSystem(b.dataset.id);ST.gearSub='w';
   const r=document.querySelector('[data-st="tab"][data-v="gear:w"]');if(r)r.click();else openStudio('gear');setTimeout(()=>{const t=document.querySelector('#mBody .trstudio,#cwPrev');if(t)t.scrollIntoView({block:'start'})},120);
   mToast(_T`Started from the printed <b>${esc(W[b.dataset.id].n)}</b> — make it yours and save.`)},true);
@@ -30287,7 +30316,7 @@ function banner73(k){const B=BANNERS73[k];if(!B)return '';return `<div class="ro
   if(/<div class="roomhd (infirm|yard)">/.test(h))h=h.replace(/(<div class="roomhd (infirm|yard)">[\s\S]*?<div class="roomttl">[\s\S]*?<\/div>)/,`$1${bannerStat73(k)}`);
   else if(BANNERS73[k])h=h.replace('<div class="railmain">',m0=>m0+banner73(k));
   /* the infirmary's " · N" in its label becomes the oval */
-  h=h.replace(/⚕ Infirmary · \d+/,_T('⚕ Infirmary'))}catch(e){console.error(e)}return h}}
+  h=h.replace(new RegExp(RXE(TXPRE('⚕ Infirmary · {0}'))+'\\d+'),_T('⚕ Infirmary'))}catch(e){console.error(e)}return h}}
 /* the rail ovals (kept live by the sweep, like the hour chips of v0.65) */
 setInterval(()=>{try{if(typeof W_!=='function'||!W_()||W_().dead)return;const w=W_();
   const vals={ludus:[ludusTodo73(),n=>`📋 ${n}`,n=>_T`${n} task${n===1?'':'s'} left this week`],recruit:[w.hours||0,n=>`${n} h`,n=>_T`${n} of the lanista's hours left`],practice:[thLeft(w),n=>`${n} h`,n=>_T`${n} training hours left`],infirm:[infirmNeed73(),n=>`⚕ ${n}`,n=>_T`${n} fighter${n===1?'':'s'} need care`]};
@@ -30435,7 +30464,7 @@ function caLevelsHTML(d){caLevelsInit(d);const btn=(a,n,v,l,dis)=>`<button class
       ${d.bonusLoc?`<div class="calvrow">${_T`Bonus ${btn('bonus',n,-1,'−',!L.bonusAp)}<b>+${L.bonusAp||0}</b>${btn('bonus',n,1,'+',left<2||(L.bonusAp||0)>=4)}`}</div>`:''}
       <div class="calvleft ${left<0?'bad':''}">${_T`${left} point${left===1?'':'s'} left`}</div><div class="rc-sub">${esc(d.name||_T('Unnamed'))} ${CA_NUM[n]}</div>`:`<div class="rc-sub" style="margin-top:6px">${_T`not made`}</div>`}</div>`}).join('')}</div></div>`}
 {const base=gearAHTML;gearAHTML=function(){let h=base.apply(this,arguments);try{const d=ST.ca;if(!d)return h;caLevelsInit(d);
-  h=h.replace(/<label>AP<select data-caf="ap">[\s\S]*?<\/select><\/label>/,'').replace(/<label>Market level<select data-caf="lv">[\s\S]*?<\/select><\/label>/,'').replace(/<label>Bonus amount<select data-caf="bonusAp">[\s\S]*?<\/select><\/label>/,'');
+  h=h.replace(new RegExp('<label>'+RXL('AP')+'<select data-caf="ap">[\\s\\S]*?<\\/select><\\/label>'),'').replace(new RegExp('<label>'+RXL('Market level')+'<select data-caf="lv">[\\s\\S]*?<\\/select><\\/label>'),'').replace(new RegExp('<label>'+RXL('Bonus amount')+'<select data-caf="bonusAp">[\\s\\S]*?<\\/select><\\/label>'),'');
   const i=h.indexOf('<div style="grid-column:1/-1" class="rc-sub crnote">');if(i>=0)h=h.slice(0,i)+caLevelsHTML(d)+h.slice(i);
   h=h.replace(/(<div class="rc-sub" style="text-align:center">)[^<]*·\s*\d+ AP(<\/div>)/,`$1${esc(d.name||_T('Unnamed piece'))} · ${caOnLv(d).map(n=>CA_NUM[n]+' '+d.levels[n].ap+' AP').join(' · ')||_T('no level ticked')}$2`)}catch(e){console.error(e)}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest('button[data-calv]');if(!b||!ST.ca)return;const d=ST.ca;caLevelsInit(d);const n=+b.dataset.n,v=+b.dataset.v,L=d.levels[n];
@@ -30484,7 +30513,7 @@ function caStartHTML(d){const sys=Object.keys(ARM).filter(k=>!ARM[k].custom);con
    <label>${_T`Base shape`}<select data-caf="shape">${CA_SHAPES.map(([k,l])=>`<option value="${k}" ${d.shape===k?'selected':''}>${l}</option>`).join('')}</select></label>
    ${d.art&&ARM[d.art]?`<label class="caartrow"><input type="checkbox" data-caart ${caArtOn(d)?'checked':''} ${(d.layers||[]).length||(d.baked||[]).length?'disabled':''}> ${_T`Wear the printed art of <b>${esc(ARM[d.art].n)}</b>${(d.layers||[]).length||(d.baked||[]).length?_T(' <span class="rc-sub">(your sculpt replaces it)</span>'):''}`}</label>`:''}`}
 {const base=gearAHTML;gearAHTML=function(){let h=base.apply(this,arguments);try{const d=ST.ca;if(!d)return h;
-  h=h.replace(/<label>Start from<select data-caf="shape">[\s\S]*?<\/select><\/label>/,caStartHTML(d));
+  h=h.replace(new RegExp('<label>'+RXL('Start from')+'<select data-caf="shape">[\\s\\S]*?<\\/select><\\/label>'),caStartHTML(d));
   if(caArtOn(d))h=h.replace(/(<div class="scart[^"]*" id="caPiece"[^>]*>)[\s\S]*?(<\/div>)/,`$1<div class="caartprev">${armArtCell(d.art,200)}</div>$2`)}catch(e){console.error(e)}return h}}
 {const base=caPrevRefresh;caPrevRefresh=function(){const d=ST.ca;if(caArtOn(d)){const pv=document.getElementById('caPiece');if(pv)pv.innerHTML=`<div class="caartprev">${armArtCell(d.art,200)}</div>`;return}return base.apply(this,arguments)}}
 /* the art of a copy that keeps the printed look: the printed piece's own drawing (graded by level, if any) */
@@ -31657,7 +31686,7 @@ function bedsHTML76(){const w=W_(),m=me();const beds=bedsClean76(w);const N=beds
 {const base=infirmaryHTML;infirmaryHTML=function(){let h=base.apply(this,arguments);try{const w=W_();const occ=bedsClean76(w).length,N=bedsOf76(me()),wait=bedWait76(w).length;
   /* the room's Patients tile counts the real beds */
   h=h.replace(/(<div class="rtv">)\d+ \/ \d+ beds(<\/div><div class="rtl">)Patients(<\/div>)(<div class="rc-sub">[^<]*<\/div>)?(<div class="meter"[^>]*><i style="width:)[\d.]+%/,(m0,a,b,c,d,e)=>_T`${a}${occ} / ${N} beds${b}Serious patients${c}${wait?`<div class="rc-sub">${_T`${wait} waiting · half-pace mending`}</div>`:''}${e}${Math.round(occ/N*100)}%`);
-  const b=bedsHTML76();const i=h.indexOf('<p class="rc-sub" style="margin:4px 0 8px"><b>Care must match');h=i>=0?h.slice(0,i)+b+h.slice(i):b+h;const n=lockNote76(_T('Infirmary'));if(n)h=n+`<div class="locked76">${h}</div>`}catch(e){console.error(e)}return h}}
+  const b=bedsHTML76();const i=h.indexOf('<p class="rc-sub" style="margin:4px 0 8px"><b>');h=i>=0?h.slice(0,i)+b+h.slice(i):b+h;const n=lockNote76(_T('Infirmary'));if(n)h=n+`<div class="locked76">${h}</div>`}catch(e){console.error(e)}return h}}
 {const base=planTiles;planTiles=function(g){let h=base.apply(this,arguments);try{if(serious76(g)&&!inBed76(g))h=h.replace(/class="plantile ([^"]*)" data-mg="(medic|surgeon)" data-id="[^"]*"/g,_T('class="plantile off" disabled data-bedneed76="1"'))+`<div class="pw">${_T`🛏 Needs a bed — heals at half pace without one`}</div>`;else if(inBed76(g))h+=`<div class="rc-sub">${_T`🛏 In a bed`}</div>`}catch(e){}return h}}
 {const base=careHTML;careHTML=function(g){let h=base.apply(this,arguments);try{if(g&&(g.severed||[]).length&&!inBed76(g))h=h.replace(/(<button class="btn[^"]*" type="button") data-mg="heal" data-id="[^"]*"[^>]*>/,_T('$1 disabled title="Needs a bed in the Infirmary first">'))}catch(e){}return h}}
 {const base=infirmNeed73;infirmNeed73=function(){let r=base.apply(this,arguments);try{const w=W_();r+=Math.min(bedFree76(w),bedWait76(w).length)}catch(e){}return r}}
@@ -31942,7 +31971,7 @@ function wardHTML76(){const w=W_(),m=me();const ros=rosterOf(m);const beds=bedsC
   const cot=(id,n)=>{if(!id)return `<div class="wd76cot empty"><div class="wd76ct">${_T`🛏 Bed ${n}`}</div><div class="wd76mt">${_T`Empty — give it to someone on the bench`}</div></div>`;
     const g=gById(id);const P=wardPatient76(g,w,m);
     return `<div class="wd76cot ${g.inj&&g.inj.neglect?'bad':''}"><div class="wd76ct">${_T`🛏 Bed ${n}`}<button class="btn tksm" type="button" data-unbed76="${g.id}">${_T`Discharge`}</button></div>
-      <div class="wd76pt"><div class="wd76av">${P.av}</div><div>${P.info}</div></div>${P.cures.replace('<div class="rc-sub">🛏 In a bed</div>','')}${done(P.done)}</div>`};
+      <div class="wd76pt"><div class="wd76av">${P.av}</div><div>${P.info}</div></div>${P.cures.replace('<div class="rc-sub">'+TX('🛏 In a bed')+'</div>','')}${done(P.done)}</div>`};
   const hurt=ros.filter(g=>(g.inj||(g.severed||[]).length)&&!beds.includes(g.id));const free=N-beds.length;
   const bench=hurt.map(g=>{const war=g.inj&&g.inj.war;const ser=!war&&serious76(g);const P=wardPatient76(g,w,m);
     return `<div class="wd76bn ${ser?'ser':''}"><div class="wd76av sm">${P.av}</div><div class="wd76bi">${war?`<b>${esc(g.name)}</b> <span class="rc-sub">${_T`⚔ ${esc(g.inj.label)} · back ${wkName(g.inj.until)}`}</span>`:P.info}
@@ -32160,12 +32189,12 @@ document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.c
 document.addEventListener('change',e=>{const c=e.target.closest&&e.target.closest('input[data-calv="on"]');if(!c||typeof ST==='undefined'||!ST.ca)return;const d=ST.ca;caLevelsInit(d);const n=+c.dataset.n;
   if(!c.checked){e.stopImmediatePropagation();c.checked=true;return}for(const k of [1,2,3])if(k!==n&&d.levels[k])d.levels[k].on=0},true);
 {const base=caLevelsInit;caLevelsInit=function(ca){const r=base.apply(this,arguments);try{if(ca&&ca.levels){const on=[1,2,3].filter(n=>ca.levels[n]&&ca.levels[n].on);for(const n of on.slice(1))ca.levels[n].on=0}}catch(e){}return r}}
-{const base=caLevelsHTML;caLevelsHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/(<div class="sect" style="margin:4px 0">Levels <span class="rc-sub">)[^<]*/,_T('$1pick its level · AP 1 point each above the first · bonus AP 2 · stackable 1')).replace(/type="checkbox" data-calv="on"/g,'type="radio" name="calv76" data-calv="on"')}catch(e){}return h}}
-const sysExample76=h=>h.replace(/<button class="btn tksm" type="button" disabled title="System sets are locked[^"]*">Edit<\/button><button class="btn tksm primary" type="button" data-gs="c[aw]sys" data-id="[^"]*">⧉ Copy &amp; edit<\/button>/g,'')
-  .replace(/title="System sets are locked so the defaults are always there — copy one to make it yours">🔒 System/g,_T('title="The printed set — shown as examples">🔒 Example'));
-{const base=armSetsHTML;armSetsHTML=function(){let h=base.apply(this,arguments);try{h=sysExample76(h).replace('Nothing forged yet — save a piece above, or copy a printed one.',_T('Nothing forged yet — sculpt your own above.')).replace(/(<h4>🔒 System armor · \d+ <span class="rc-sub">)the printed pieces/,_T('$1examples · the printed pieces'))}catch(e){}return h}}
-{const base=wpnSetsHTML;wpnSetsHTML=function(){let h=base.apply(this,arguments);try{h=sysExample76(h).replace(/(<h4>🔒 System weapons · \d+)/,_T('$1 <span class="rc-sub">examples · make your own above</span>'))}catch(e){}return h}}
-{const base=caStartHTML;caStartHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/<label>Start from<select data-caf="start">[\s\S]*?<\/select><\/label>/,'')}catch(e){}return h}}
+{const base=caLevelsHTML;caLevelsHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(new RegExp('(<div class="sect" style="margin:4px 0">'+RXE(TX('Levels'))+' <span class="rc-sub">)[^<]*'),_T('$1pick its level · AP 1 point each above the first · bonus AP 2 · stackable 1')).replace(/type="checkbox" data-calv="on"/g,'type="radio" name="calv76" data-calv="on"')}catch(e){}return h}}
+const sysExample76=h=>h.replace(new RegExp('<button class="btn tksm" type="button" disabled title="[^"]*">'+RXE(TX('Edit'))+'<\\/button><button class="btn tksm primary" type="button" data-gs="c[aw]sys" data-id="[^"]*">'+RXE(TX('⧉ Copy &amp; edit'))+'<\\/button>','g'),'')
+  .replace(new RegExp('title="'+RXE(TX('System sets are locked so the defaults are always there — copy one to make it yours'))+'">'+RXE(TX('🔒 System')),'g'),_T('title="The printed set — shown as examples">🔒 Example'));
+{const base=armSetsHTML;armSetsHTML=function(){let h=base.apply(this,arguments);try{h=sysExample76(h).replace(TX('Nothing forged yet — save a piece above, or copy a printed one.'),_T('Nothing forged yet — sculpt your own above.')).replace(new RegExp('(<h4>'+RXE(TXPRE('🔒 System armor · {0}'))+'\\d+ <span class="rc-sub">)'+RXE(TXPRE('the printed pieces · {0}').replace(/\s*·\s*$/,''))),_T('$1examples · the printed pieces'))}catch(e){}return h}}
+{const base=wpnSetsHTML;wpnSetsHTML=function(){let h=base.apply(this,arguments);try{h=sysExample76(h).replace(new RegExp('(<h4>'+RXE(TXPRE('🔒 System weapons · {0}'))+'\\d+)'),_T('$1 <span class="rc-sub">examples · make your own above</span>'))}catch(e){}return h}}
+{const base=caStartHTML;caStartHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(new RegExp('<label>'+RXL('Start from')+'<select data-caf="start">[\\s\\S]*?<\\/select><\\/label>'),'')}catch(e){}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-gs="casys"],[data-gs="cwsys"]');if(b){e.preventDefault();e.stopImmediatePropagation()}},true);
 {const base=classStudioHTML;classStudioHTML=function(){let h=base.apply(this,arguments);try{h=h.replace(/(<div class="lrow" style="--pc:[^"]*" data-card="k:(\w+)">)[\s\S]*?(<div class="t">)/g,(m0,a,k,t)=>a+`<span class="clscard76">${cardHTML('k:'+k,'sm')}</span>`+t)}catch(e){console.error(e)}return h}}
 (()=>{const st=document.createElement('style');st.textContent=`.clscard76{flex:none;width:92px;display:block}.clscard76 .cimg,.clscard76 img{width:92px!important;height:auto}`;document.head.appendChild(st)})();
@@ -32184,7 +32213,7 @@ const CHEST_W0_76=[...CHEST_W];
   for(const cw of CUSTOM.weapons||[]){const w=W['cw_'+cw.id];if(w&&w.cwChest&&(typeof rosterGate!=='function'||rosterGate('weapons',cw,true)))CHEST_W.push('cw_'+cw.id)}return r}}
 {const base=gearStudioInput;gearStudioInput=function(t){const r=base.apply(this,arguments);if(t&&t.dataset&&t.dataset.cwf==='chest'){ST.cw.chest=t.value==='1'?1:0;return 'redraw'}return r}}
 {const base=gearWHTML;gearWHTML=function(){let h=base.apply(this,arguments);try{const d=ST.cw||{};const lvSel=`<label>${_T`Level`}<select data-cwf="chest"><option value="" ${d.chest?'':'selected'}>${_T`By its stats (1–3) · market`}</option><option value="1" ${d.chest?'selected':''}>${_T`4 · the Arena Chest`}</option></select></label>`;
-  h=h.replace(/(<label>Start from<select data-cwf="a\.type">)/,lvSel+'$1');
+  h=h.replace(new RegExp('(<label>'+RXL('Start from')+'<select data-cwf="a\\.type">)'),lvSel+'$1');
   if(d.chest)h=h.replace(/its card · Level 4 · [^<]*/,_T('its card · Level 4 · a chest prize — on the rolls it joins the Arena Chest’s draw'));
   for(const cw of CUSTOM.weapons||[]){const wk=W['cw_'+cw.id];if(wk&&wk.cwChest)h=h.replace(new RegExp(`(<b>${esc(cw.name).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}</b> <span class="rc-sub">)`),_T('$1🗝 in the Arena Chest'))}
   }catch(e){}return h}}
@@ -32293,7 +32322,7 @@ function st77Counts(){const n=x=>(x||[]).length;const sp=(typeof CROWD_CACHE!=='
 const ST77_FIRST=[['chars','🛡',_T('a character')],['classes','🎭',_T('a class')],['npcs','🐾',_T('a beast')],['gear:w','⚔',_T('a weapon')],['gear:a','🛡','armor'],['events','🎪',_T('an event')],['flags','🚩',_T('a banner')],['trophies','🏆',_T('a trophy')],['tokens','🗿',_T('a token')],['lanistas','🎩',_T('a lanista')],['tourneys','🏆',_T('a tournament')],['spect','👥',_T('a regular')]];
 const ST77_K2SEL={chars:'chars',npcs:'npcs',events:'events',weapons:'weapons',armor:'armor',flags:'flags',trophies:'trophies',sponsors:'sponsors',specials:'specials',pairings:'pairs',tourneys:'tourneys',classes:'classes',lanistas:'lanistas'};
 function st77AllTidy(root){const tb=root.querySelector('table.tally');if(!tb)return;const R=rosterById((typeof CFG!=='undefined'&&CFG.roster)||'classic');const sel=rs77Sel(R);
-  const rows=[...tb.querySelectorAll('tr')];if(rows.length<=2&&/Nothing made yet/.test(tb.textContent)){const wrap=tb.closest('div');const box=document.createElement('div');box.className='st77first';
+  const rows=[...tb.querySelectorAll('tr')];if(rows.length<=2&&new RegExp(RXE(TX('Nothing made yet'))).test(tb.textContent)){const wrap=tb.closest('div');const box=document.createElement('div');box.className='st77first';
     box.innerHTML=`<p class="intro77">${_T`Nothing made yet. Start anywhere:`}</p><div class="st77fgrid">${ST77_FIRST.map(([t,ic,l])=>`<button type="button" class="st77f" data-st="tab" data-v="${t}">${_T`<span>${ic}</span>Make ${l}`}</button>`).join('')}</div>`;(wrap||tb).replaceWith(box);return}
   const hd=rows[0];if(!hd||hd.dataset.s77)return;hd.dataset.s77=1;const th=document.createElement('th');th.textContent=_T('Play Now set');th.title=R.name;hd.insertBefore(th,hd.lastElementChild);
   for(const tr of rows.slice(1)){const b=tr.querySelector('[data-st="allopen"]');const td=document.createElement('td');td.className='rc-sub';if(b){const [k,id]=b.dataset.v.split('|');const sk=ST77_K2SEL[k];td.innerHTML=sk?((sel[sk]||[]).includes(id)?'<span class="badge gold">✓ in</span>':'—'):''}tr.insertBefore(td,tr.lastElementChild)}}
@@ -32325,7 +32354,7 @@ function ed77Tidy(root){const lc=root.querySelector('.lockcard');if(!lc||lc.data
 function sx77Tidy(root){const nmL=[...root.querySelectorAll('label')].find(l=>l.querySelector('[data-sxf="name"]'));if(!nmL)return;const fg=nmL.parentElement;if(!fg||fg.dataset.s77)return;fg.dataset.s77=1;
   const lab=f=>{const x=fg.querySelector(`[data-sxf="${f}"]`);let l=x&&x.closest('label');while(l&&l.parentElement!==fg)l=l.parentElement;return l};
   const hd=(t,el)=>{if(!el)return;const d=document.createElement('div');d.className='sect sx77h';d.style.gridColumn='1/-1';d.innerHTML=t;el.before(d)};
-  const t0=[...root.querySelectorAll('div,span,b,small')].find(x=>!x.children.length&&x.textContent.trim().toUpperCase()==='THE INVITATIONAL');if(t0)t0.textContent='① Arena & trophy';
+  const t0=[...root.querySelectorAll('div,span,b,small')].find(x=>!x.children.length&&x.textContent.trim().toUpperCase()===TX('The invitational').toUpperCase());if(t0)t0.textContent='① Arena & trophy';
   hd(_T('② The invitation'),nmL);hd(_T('③ The field'),lab('format'));hd(_T('④ Purse &amp; fame'),lab('purse'));hd(_T('⑤ Words'),lab('blurb'))}
 function tn77Tidy(root){for(const l of root.querySelectorAll('.tseat label.chk')){if(l.dataset.s77)continue;l.dataset.s77=1;const i=l.querySelector('input');l.classList.add('tn77you');for(const n of [...l.childNodes])if(n.nodeType===3)n.remove();l.append(_T(' 🎮 You'));if(i&&i.checked)l.classList.add('on')}}
 document.addEventListener('change',e=>{const i=e.target;if(i&&i.dataset&&i.dataset.tnh!=null){const l=i.closest('label');if(l)l.classList.toggle('on',i.checked)}},true);
@@ -34703,7 +34732,7 @@ const ONL_ROOM79=onlMyLobbyHTML;
 function onlRoomTop80(){const U=ONL.unseated80;if(U&&Date.now()<U.until)return onlRoomHTML80(U.L,true);const L=onlMyLobby();if(!L)return '';return L.status==='waiting'?onlRoomHTML80(L,false):ONL_ROOM79()}
 onlMyLobbyHTML=function(){return ONL._play80?onlLandingHTML80():onlRoomTop80()};
 {const base=onlPlayHTML;onlPlayHTML=function(){ONL._play80=1;let h;try{h=base.apply(this,arguments)}finally{ONL._play80=0}
-  return onlRoomTop80()+h.replace('👥 Team · 2 v 2','👥 Teams · 4–8 seats')}}
+  return onlRoomTop80()+h.replace(TX('<span class="badge gold">👥 Team · 2 v 2</span>'),'<span class="badge gold">'+_T('👥 Teams · 4–8 seats')+'</span>')}}
 /* the Lobby Browser: rooms, made in one click */
 onlLobbyHTML=function(){const me=onlMe80();const rows=ONL.lobbies||[];const st=L=>L.status==='waiting'?_T('<span class="badge gold">Waiting</span>'):_T('<span class="badge">In progress</span>');
   return `<div class="onl-lbtop"><h3>${_T`📜 Lobby Browser`} <span class="rc-sub">${_T`${rows.length} room${rows.length===1?'':'s'}`}</span></h3><div class="acts"><button type="button" class="btn" data-onl="refresh">${_T`↻ Refresh`}</button><button type="button" class="btn primary" data-onl="mkroom" data-v="1">${_T`＋ Ranked room`}</button><button type="button" class="btn" data-onl="mkroom" data-v="0">${_T`＋ Custom room`}</button></div></div>
@@ -35866,7 +35895,7 @@ setTimeout(async()=>{try{if(!onlRepGet81()||!(typeof ONL_ON==='function'&&ONL_ON
 /* the abandon popup after the bout: no Damnatio, you just leave */
 {const base=onlStakeHTML80;onlStakeHTML80=function(o){let h=onlWheat81(base.apply(this,arguments));
   if(o&&o.over){const nm=esc2((o.char||{}).name||_T('Your gladiator'));h=h.replace(/<div class="stk80-(warn|ok)">[\s\S]*?<\/div>(?=<p class="rc-sub")/,`<div class="stk80-ok">${_T`<b>The bout is over.</b> Your result was sent — leaving changes nothing for ${nm}: pay, CF and the Fate come from the result.`}</div>`)
-    .replace('You may come back to watch, but not to fight.',_T('You simply leave.'))}return h}}
+    .replace(TX('You may come back to watch, but not to fight.'),_T('You simply leave.'))}return h}}
 onlAbandonAsk80=function(o){o=o||{};if(!o.over&&S&&S.onl&&S.over&&!S.onl.watch&&onlOver81(S.onl.lobby))o={...o,over:true};
   return o.over?ask76(_T('🚪 Leave the match?'),onlStakeHTML80(o),_T('🚪 Leave'),_T('Stay')):ask76(_T('🚪 Abandon the match?'),onlStakeHTML80(o),_T('🚪 Abandon'),o.dropped?_T('Let the CPU fight on'):_T('Stay'))};
 
@@ -35921,7 +35950,7 @@ const onlSrvOn81=()=>{try{return localStorage.getItem('flavius_onlsrv81')==='1'}
 cheatRegister('h2944489914',()=>{try{localStorage.setItem('flavius_onlsrv81','1')}catch(e){}try{if(document.getElementById('onl'))onlRedraw()}catch(e){}return _T('🌐 The <b>Online server</b> box shows on the Online sign-in screen.')},_T('Online server box'));
 CHEAT_SHOW.push([[86,85,83,90,89,93],_T('🌐 Shows the "Online server" box on the Online sign-in screen (for test servers)')]);
 {const base=onlSignInHTML;onlSignInHTML=function(){let h=base.apply(this,arguments);
-  h=h.replace('Signing in shares your Google name and e-mail with the arena.',_T('Signing in shares your Google name and e-mail with the arena. Other players see only your gladiator’s name.'));
+  h=h.replace(TX('Signing in shares your Google name and e-mail with the arena.'),_T('Signing in shares your Google name and e-mail with the arena. Other players see only your gladiator’s name.'));
   if(!onlSrvOn81())h=h.replace(/<details class="onl-srv">[\s\S]*?<\/details>/,'');return h}}
 
 /* ---------------- the landing: your gladiator on the world ---------------- */
@@ -36406,8 +36435,8 @@ function onlFoundHTML82(full){const live=(ONL.chars||[]).length;
   const a=h.indexOf('<main class="onl-main">');const b=h.lastIndexOf('</main>');if(a<0||b<0)return card+h;
   return h.slice(0,a)+'<main class="onl-main">'+card+'<div class="dom82-grey" aria-disabled="true" title="Found your house first">'+h.slice(a+23,b)+'</div>'+h.slice(b)}
 {const base=onlHTML;onlHTML=function(){if(onlIsGuest82())return onlGuestHTML82();
-  if(ONL.acct&&ONL.needDomus){ONL.newGlad=false;const keep=ONL.tab;if(ONL.tab==='char'||ONL.tab==='armory')ONL.tab='play';let h;try{h=base.apply(this,arguments)}finally{ONL.tab=keep}return onlFoundHTML82(h.replace('>🛡 My Gladiators<',_T('>🏛 Domus<')))}
-  return base.apply(this,arguments).replace('>🛡 My Gladiators<',_T('>🏛 Domus<')).replace('set in 🛡 My Gladiators',_T('set in 🏛 Domus'))}}
+  if(ONL.acct&&ONL.needDomus){ONL.newGlad=false;const keep=ONL.tab;if(ONL.tab==='char'||ONL.tab==='armory')ONL.tab='play';let h;try{h=base.apply(this,arguments)}finally{ONL.tab=keep}return onlFoundHTML82(h.replace('>'+TX('🛡 My Gladiators')+'<',_T('>🏛 Domus<')))}
+  return base.apply(this,arguments).replace('>'+TX('🛡 My Gladiators')+'<',_T('>🏛 Domus<')).replace('set in 🛡 My Gladiators',_T('set in 🏛 Domus'))}}
 
 /* ---------------- the house beside names (rooms, lobby rows, the Forum) ---------------- */
 let MK82=[];const mk82=(name,id)=>{if(!id||!onlDomOf82(id))return name;if(MK82.length>4000)MK82=[];return `${name}⟦${MK82.push(id)-1}⟧`};
@@ -36454,7 +36483,7 @@ function onlDomusHTML82(){onlDomusLoad82();const D=ONL.domus||{};const G=ONL82.d
    <div class="dom82-rec">${rec.map(([k,v])=>`<div><b>${v}</b><small>${k}</small></div>`).join('')}</div>
    ${locked?`<p class="rc-sub dom82-lock">${_T`🔒 A house with gladiators keeps its name.`}</p>`:`<div class="dom82-row"><input class="tin" id="dom82Ren" maxlength="${ONLC.DOMUS_MAX}" value="${esc2(D.name||'')}"><button type="button" class="btn" data-onl82="drename">${_T`✎ Rename`}</button><button type="button" class="btn" data-onl82="dnew" title="${_T`The old house is archived with its record`}">${_T`🏛 Found a new house`}</button></div>${_T`<small class="rc-sub">Only until your first gladiator.</small>`}`}
    ${ONL82.ferr&&ONL.tab==='char'?`<p class="onl-err">${esc2(ONL82.ferr)}</p>`:''}${`<details class="pat82d" ${ONL82.patOpen?'open':''}><summary>${_T`✎ Patron <small class="rc-sub">your seat in the stands</small>`}</summary>${onlPatronHTML82()}</details>`}</div>`}
-{const base=onlCharHTML;onlCharHTML=function(){let g=base.apply(this,arguments).replace('🛡 My Gladiators',_T('⚔ Gladiators'));
+{const base=onlCharHTML;onlCharHTML=function(){let g=base.apply(this,arguments).replace(TX('🛡 My Gladiators'),_T('⚔ Gladiators'));
   for(const c of ONL.chars||[])g=g.replace(`<b>${esc2(c.name)}</b><small>`,`<b>${esc2(c.name)}</b><small class="gl82">✦ ${Math.round(ONLC.gloryOf(c))} Glory</small><small>`);
   return `<div class="dom82-wrap"><div class="dom82-main">${onlDomusHTML82()}${g}${onlStoreHTML82()}</div>${onlRankBar82()}</div>`}}
 
@@ -36902,11 +36931,11 @@ onlFig=function(cls,look,h){try{return figureHTML(sc82Spec(cls,look||{}),h)}catc
 const sc82Txt=v=>String(v||'').replace(/[<>"'`\\]/g,'').slice(0,40);
 {const base=onlCharHTML;onlCharHTML=function(){let h=base.apply(this,arguments);const D=ONL.ged;if(!D||!h)return h;try{
     sc82Ensure('g:'+D.id,()=>ONL.ged&&ONL.ged.id===D.id?ONL.ged.look:null,D.cls);
-    const a=h.indexOf('<div class="sect">Board token</div>'),b=h.indexOf('<div class="sect">Gear to bring');if(a>=0&&b>a)h=h.slice(0,a)+sc82SectionHTML()+h.slice(b);
+    const a=h.indexOf('<div class="sect">'+TX('Board token')+'</div>'),b=h.indexOf('<div class="sect">'+TX('Gear to bring'));if(a>=0&&b>a)h=h.slice(0,a)+sc82SectionHTML()+h.slice(b);
     const p=D.look.portrait||{};const P=(path,label,opts,val)=>`<label>${label}${onlSel(path,opts,val,'data-onlgp')}</label>`;
     const more=P('portrait.neck',_T('Neck'),NECKS,p.neck||'')+P('portrait.face',_T('Face piece'),FACES,p.face||'')+P('portrait.bg',_T('Backdrop'),BGS.map((v,i)=>[v,BG_NAMES[i]||_T('Backdrop ')+(i+1)]),p.bg||'')
       +`<label>${_T`Epithet`}<input class="tin" data-onlgp="portrait.nick" maxlength="40" value="${esc2(p.nick||'')}" placeholder="${_T`e.g. the Iron Wall`}"></label>`+P('portrait.home',_T('Birthplace'),[['','—'],...HOME_CITIES().map(x=>[x,x])],p.home||'');
-    const k=h.indexOf('<label>Colour<input type="color" data-onlgp="color"');if(k>=0)h=h.slice(0,k)+more+h.slice(k);
+    const k=h.indexOf('<label>'+TX('Colour')+'<input type="color" data-onlgp="color"');if(k>=0)h=h.slice(0,k)+more+h.slice(k); // i18n:skip
     h=h.replace('<div id="onlGTok" title="The board token">','<div id="onlGTok" title="The board token (sculpted)">')}catch(e){console.error(e)}return h}}
 
 /* =========================== THE ONLINE CREATOR =========================== */
@@ -36922,8 +36951,8 @@ function sc82Creating(){const fem=Math.random()<.35;const pt=typeof randomPortra
     const det=`<div class="formgrid onl-g2 onl-cdet82"><label>${_T`Epithet`}<span style="display:flex;gap:4px"><input class="tin" data-onl82c="nick" maxlength="40" value="${esc2(p.nick||'')}"><button type="button" class="btn" data-onl82="nick" style="padding:4px 8px" aria-label="${_T`Roll an epithet`}">🎲</button></span></label>
       <label>${_T`Birthplace`}<select class="tin" data-onl82c="home">${[['','—'],...HOME_CITIES().map(x=>[x,x])].map(([v,l])=>`<option value="${esc2(v)}" ${p.home===v?'selected':''}>${esc2(l)}</option>`).join('')}</select></label></div>
       <div class="mbtns" style="margin:2px 0"><button type="button" class="btn" data-onl82="roll" title="${_T`Name, class, epithet, birthplace, look and token`}">${_T`📜 Roll everything`}</button></div>`;
-    const k=h.indexOf('<div class="sect">Class</div>');if(k>=0)h=h.slice(0,k)+det+h.slice(k);
-    const look=`<details class="onl-clook82"><summary class="sect">${_T`Look`} <span class="rc-sub">${_T`face, accessories, backdrop`}</span></summary>${portraitControlsHTML(p,'data-onl82p').replace('>Lanista (woman)<',_T('>Gladiatrix<')).replace('>Lanista<',_T('>Gladiator<'))}</details>
+    const k=h.indexOf('<div class="sect">'+TX('Class')+'</div>');if(k>=0)h=h.slice(0,k)+det+h.slice(k);
+    const look=`<details class="onl-clook82"><summary class="sect">${_T`Look`} <span class="rc-sub">${_T`face, accessories, backdrop`}</span></summary>${portraitControlsHTML(p,'data-onl82p').replace('>'+TX('Lanista (woman)')+'<',_T('>Gladiatrix<')).replace('>'+TX('Lanista')+'<',_T('>Gladiator<'))}</details>
       <details class="onl-ctokd82" ${SC82.copen?'open':''}><summary class="sect">${_T`Board token`} <span class="rc-sub">${_T`sculpted · everyone sees it, whatever their token style`}</span></summary>${sc82SectionHTML(1)}</details>`;
     const m=h.lastIndexOf('<div class="mbtns"><button type="button" class="btn primary" data-onl="create">');if(m>=0)h=h.slice(0,m)+look+h.slice(m)}catch(e){console.error(e)}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-onl82="roll"],#onl [data-onl82="nick"],#onl .onl-ctokd82>summary');if(!b)return;
@@ -37103,7 +37132,7 @@ function cn82Card(n){const T=NPCT['cn_'+n.id]||npcType(n);
       <label class="chk"><input type="checkbox" data-st82="unique" ${n.unique82?'checked':''}> ${_T`Unique — enters an event at most once`}</label></div>
       <div class="nc82des"><div class="rc-sub">${_T`Its card · front and back`}</div>${nc82Pair(nc82Spec('cn_tmp82'),170)}</div>`;
     h=h.replace(/<label class="chk"><input type="checkbox" data-f="states"[^>]*>[^<]*<\/label>/,'');
-    const i=h.indexOf('<p class="hint">Beasts attack with 2 hit dice');h=i<0?h+blk:h.slice(0,i)+blk+h.slice(i);
+    const i=h.indexOf('<p class="hint">'+TX('Beasts attack with 2 hit dice against gladiators; each hit deals their attack value. Place them on the board in the Event Designer.'));h=i<0?h+blk:h.slice(0,i)+blk+h.slice(i);
   }catch(e){console.error(e)}return h}}
 /* the preview card reads the draft through a temporary NPCT entry */
 {const base=npcEditorHTML;npcEditorHTML=function(){const n=ST.draft;try{if(n){const T=npcType(n);T.custom=true;T.cid='__draft82';NPCT.cn_tmp82=T}}catch(e){}
@@ -37171,7 +37200,7 @@ function ed82HTML(e){ed82Convert(e);const s=e.slots82;const mine=CUSTOM.npcs||[]
   return `<h4>${_T`Arena deck beasts`}</h4><p class="hint" style="margin-top:0">${_T`At most 4 beast cards: Tholo + 3 slots. Untick Tholo to free his place. Beasts you place on the board use no slot.`}</p>
    <div class="slot82row"><label class="chk slot82 fix"><input type="checkbox" data-ed82="tholo" ${s.tholo?'checked':''}> ${_T`Tholo`}</label>${Array.from({length:n},(_,i)=>`<label class="slot82">${_T`Slot ${i+1}`}<select class="tin" data-ed82="${i}">${opts(s.s[i])}</select></label>`).join('')}</div>
    <div class="chkgrid">${fChk('deckSpawns.Zora',!!(e.deckSpawns||{}).Zora,_T('Zora card stays in the deck'))}</div>`}
-{const base=edRosterHTML;edRosterHTML=function(){let h=base.apply(this,arguments);try{const e=ST.draft;if(e&&e.deck)h=h.replace(/<h4>Arena deck spawn cards<\/h4><div class="chkgrid">[\s\S]*?<\/label><\/div>/,ed82HTML(e))}catch(err){console.error(err)}return h}}
+{const base=edRosterHTML;edRosterHTML=function(){let h=base.apply(this,arguments);try{const e=ST.draft;if(e&&e.deck)h=h.replace(new RegExp('<h4>'+RXE(TX('Arena deck spawn cards'))+'<\\/h4><div class="chkgrid">[\\s\\S]*?<\\/label><\\/div>'),ed82HTML(e))}catch(err){console.error(err)}return h}}
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||t.dataset.ed82==null||typeof ST==='undefined'||!ST.draft||ST.tab!=='events')return;const d=ST.draft;ed82Convert(d);
   if(t.dataset.ed82==='tholo'){d.slots82.tholo=t.checked;if(t.checked)d.slots82.s[3]=''}else d.slots82.s[+t.dataset.ed82]=t.value;ed82Sync(d);studioRedraw()},true);
 
@@ -39738,7 +39767,7 @@ document.addEventListener('toggle',e=>{const t=e.target;if(t&&t.classList&&t.cla
 {const base=recruitHTML;recruitHTML=function(){let h=base.apply(this,arguments);try{const w=W_(),m=me();
   h=h.replace('<div class="acts" style="margin-bottom:8px"><div class="seg">','<div class="acts rtb85" style="margin-bottom:8px"><div class="seg">');
   for(const [k,full,short] of [['signed',_T('Signed elsewhere'),_T('Signed')],['targets',_T('Interested in you'),_T('Interested')],['mine',_T('Your stable'),_T('Stable')]])h=h.replace(new RegExp(`(data-mg="filter" data-id="${k}" class="[^"]*")>${full}<`),`$1 title="${full}">${short}<`);
-  h=h.replace('<div class="seg recflt"><span class="lbl">Show</span>','<div class="seg recflt" title="Show only">').replace(/(<button type="button" data-recf="\w+" class="[^"]*")>(\S+) ([^<]+)</g,_T('$1 title="Show only: $3" aria-label="$3">$2<'));
+  h=h.replace('<div class="seg recflt"><span class="lbl">'+TX('Show')+'</span>','<div class="seg recflt" title="Show only">').replace(/(<button type="button" data-recf="\w+" class="[^"]*")>(\S+) ([^<]+)</g,_T('$1 title="Show only: $3" aria-label="$3">$2<'));
   if(MGR.filter==='mine')return h;const t=h.indexOf('<div id="recTable"');if(t<0)return h;
   let tail=h.slice(t);
   tail=tail.replace('<table class="tally">','<table class="tally rt85"><colgroup><col><col class="c85r"><col class="c85f"><col class="c85i"><col class="c85a"></colgroup>');
@@ -41073,7 +41102,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   const g=gById(b.dataset.id87);if(!g||!g.inj||!inBed76(g))return;g.inj.plan87=b.dataset.plan87;
   if(!b.dataset.mg){e.preventDefault();e.stopPropagation();saveWorld();if(typeof MGR_REDRAW==='function')MGR_REDRAW()}},true);
 /* bedTiles87 — the plan tiles in a bed: every tile names its plan, Rest is pickable, the chosen one is marked */
-function bedTiles87(g){let h=planTiles(g).replace('<div class="rc-sub">🛏 In a bed</div>','');const cur=planOf87(g);
+function bedTiles87(g){let h=planTiles(g).replace('<div class="rc-sub">'+TX('🛏 In a bed')+'</div>','');const cur=planOf87(g);
   h=h.replace(/<button type="button" class="plantile ([^"]*)"([^>]*)>(<span class="pi">([^<]*)<\/span>)/g,(m0,cls,attrs,pi,ic)=>{const k=Object.keys(PLAN87).find(k=>PLAN87[k][0]===ic.trim());if(!k)return m0;
     let a=attrs;if(k==='rest')a=a.replace(/\sdisabled/,'');return `<button type="button" class="plantile ${cls}${k===cur?' pick87':''}" data-plan87="${k}" data-id87="${g.id}"${a}>${pi}`});return h}
 /* the popup an empty bed opens */
@@ -44699,7 +44728,7 @@ const mktShut89=()=>{try{return !!(S&&!S.over&&typeof commodusIn==='function'&&c
     if(title===_T('Market of Flavius')&&Array.isArray(btns)&&mktShut89())
       btns=btns.map(b=>b&&b.value==='unlock'?{...b,disabled:true,sub:_T('No CF while Commodus is in the arena')}:b);
     if(typeof body==='string'&&mktShut89()&&body.includes('cf88mb'))
-      body=body.replace(/(<img[^>]*class="cf88mb"[\s\S]*?)(Unlock market for this turn)/,`$1$2 · ${_T('no CF while Commodus is in the arena')}`)}catch(e){console.error(e)}
+      body=body.replace(new RegExp('(<img[^>]*class="cf88mb"[\\s\\S]*?)('+RXE(TX('Unlock market for this turn'))+')'),`$1$2 · ${_T('no CF while Commodus is in the arena')}`)}catch(e){console.error(e)}
   return base.call(this,title,body,btns,opt)}}
 /* v0.89 K: the free-pick wrapper that borrowed the Market Choice path is gone — 179-v89market's marketBuy75 lets everyone choose
    outright from the level's row (free picks keep the line "X chooses outright at level N"). */
@@ -48918,7 +48947,7 @@ function av92SVG(p,o){let s='';try{s=avatarSVG(p)}catch(e){return ''}
 function av92Paint(){const box=document.getElementById('mBody');if(!box||document.getElementById('modal').hidden)return;
   const old=box.querySelector(':scope > .av92');
   /* Focus */
-  if(AV92.q&&(box.querySelector('.focdice2')||(AV92.how==='card'&&/Focus!/.test((document.getElementById('mTitle')||{}).textContent||'')))){
+  if(AV92.q&&(box.querySelector('.focdice2')||(AV92.how==='card'&&new RegExp(RXE(TX('Focus!'))).test((document.getElementById('mTitle')||{}).textContent||'')))){
     let locs,best=null;const dice=[...box.querySelectorAll('.focdice2 [data-loc]')];
     if(dice.length){const set=dice.filter(d=>!d.disabled);locs=[...new Set(set.map(d=>d.dataset.loc))];const b=set.find(d=>d.classList.contains('best'));best=b?b.dataset.loc:null}
     else{locs=LOCS.filter(l=>AV92.q.hp[l]>0);const pb=[...document.querySelectorAll('#mBtns button')].find(b=>/💡/.test(b.textContent));if(pb)best=LOCS.find(l=>pb.textContent.includes(LOCN[l]))||null}
