@@ -1,0 +1,45 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+.noise{position:absolute;inset:0;pointer-events:none;border-radius:inherit;mix-blend-mode:overlay;opacity:.35;
+ background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+.dock{position:relative}
+.rail{display:grid;grid-template-columns:repeat(4,1fr);height:22px;margin-bottom:8px;border-radius:11px;background:#1c130c;border:1px solid #4a3620;overflow:hidden}
+.ph{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a7558;border-right:1px solid #00000060}
+.ph:last-child{border-right:0}.ph.done{color:#b9a27a}.ph.done::before{content:"✓";color:#d8b45a}
+.ph.now{color:#2a1a08;font-weight:bold;background:linear-gradient(#e8c977,#b48a38);text-shadow:0 1px 0 #f8e6b0}
+.grid{display:grid;grid-template-columns:1.1fr 1.2fr .8fr 1.25fr 108px;gap:8px}
+.g{position:relative;border-radius:8px;padding:0 6px 6px;background:#2a1d13;border:1px solid #4e3a24;display:flex;flex-direction:column;gap:5px;overflow:hidden}
+.g .hd{position:relative;margin:0 -6px;padding:4px 8px;display:flex;justify-content:space-between;align-items:baseline;white-space:nowrap;font-size:13px;font-weight:bold;border-bottom:1px solid #00000060}
+.g .hd small{font-size:10.5px;font-weight:normal;letter-spacing:.05em;text-transform:uppercase;opacity:.85}
+.brass .hd{background:linear-gradient(#c9a456,#94702e);color:#24180a;text-shadow:0 1px 0 #f0d58a80}
+.wood .hd{background:repeating-linear-gradient(0deg,#6e4120 0 3px,#7b4a26 3px 6px);color:#f3e2c2}
+.parch .hd{background:linear-gradient(#e6cf9c,#c9a86c);color:#3a2410}
+.leath .hd{background:linear-gradient(#743820,#55240f);color:#f4e2c4;box-shadow:inset 0 -3px 0 -2px #d9a77060}
+.b{position:relative;border-radius:5px;padding:5px 8px;font-size:13px;line-height:1.15;background:#33241a;border:1px solid #5a4128;color:#efe2c8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b small{font:10px ui-monospace,monospace;opacity:.7;margin-left:4px}
+.brass .b{border-color:#8a6a36}.wood .b{border-color:#6e4a2a}.parch .b{border-color:#8a7450}.leath .b{border-color:#7a4a2e}
+.b.on{border-color:#ffd77a;box-shadow:0 0 0 1px #ffd77a,0 0 8px #ffd77a60}
+.b.off{opacity:.45}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.focus{align-self:center;width:60%;text-align:center}
+.seal::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px;background:radial-gradient(circle at 40% 35%,#d0423a,#7e1612)}
+.end{position:relative;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(#a8322a,#7a1b14);border:1px solid #d8b45a;box-shadow:inset 0 0 0 2px #5a100a;color:#fff1d8}
+.end b{font-size:16px}.end small{font-size:10px;opacity:.8;margin-top:2px}
+.end i{position:absolute;width:5px;height:5px;border-radius:50%;background:#d8b45a}
+.hint{margin-top:6px;font-size:12px;color:#a3907a}
+</style></head><body><div><div class="dock">
+ <div class="rail"><div class="ph done">Resolve</div><div class="ph done">Choice</div><div class="ph now">III · Action</div><div class="ph">IV · End</div></div>
+ <div class="grid">
+  <div class="g brass"><div class="hd"><span>⚔ Attack</span><small>2 left</small></div>
+   <div class="r2"><div class="b">Gladius</div><div class="b off">Fist</div></div>
+   <div class="b focus off">🎯 Focus<small>3 mv</small></div></div>
+  <div class="g wood"><div class="hd"><span>🏃 Move</span><small><b style="color:#ffd77a">3</b> left</small></div>
+   <div class="r2"><div class="b on">Move<small>diag 2</small></div><div class="b">Push<small>2</small></div><div class="b">Topple<small>3</small></div><div class="b off">Tunnel<small>1 key</small></div></div></div>
+  <div class="g parch"><div class="hd"><span>🤝 Deal</span><small>none near</small></div>
+   <div class="r2"><div class="b seal off">Trade</div><div class="b seal off">Truce</div></div><div class="b off" style="width:50%;align-self:center;text-align:center">Loot</div></div>
+  <div class="g leath"><div class="hd"><span>🏛 Market · Crowd</span><small>5 🪙 · 2 🌾</small></div>
+   <div class="r2"><div class="b">Market<small>3 CF</small></div><div class="b off">Crowd Favor<small>2 CF</small></div></div><div class="b" style="width:70%;align-self:center;text-align:center">Wager on yourself</div></div>
+  <div class="end"><i style="top:5px;left:5px"></i><i style="top:5px;right:5px"></i><i style="bottom:5px;left:5px"></i><i style="bottom:5px;right:5px"></i><b>End turn</b><small>Enter</small></div>
+ </div>
+ <div class="hint">Click an orange tile to move. Numbers show the movement it costs.</div>
+</div></div>
+<div class="shot" id="room"></div></body></html>
