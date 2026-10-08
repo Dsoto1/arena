@@ -42,7 +42,7 @@ const MATCH=async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));while(CUR_MO
     document.dispatchEvent(new Event('visibilitychange'));return {ret:PERF92.returns-r0,stale:FX.some(f=>f.text==='old'),swept:PERF92.runs-runs0>=PERF92.tasks.length}});
   if(!out.ret.ret||out.ret.stale||!out.ret.swept)miss.push('clean return '+JSON.stringify(out.ret));
   /* compressed hours: 3 scenes × 3600 heartbeats with every sweep due (= an hour each at the idle rate) */
-  const soak=async label=>{const h0=await heap(P);const n0=await pg.evaluate(()=>document.getElementsByTagName('*').length);const t0=await pg.evaluate(()=>PERF92.tasks.length);
+  const soak=async label=>{await pg.evaluate(()=>{try{if(S&&S.phase!=='setup')render()}catch(e){}}); /* v0.96: settle the scene first (the 233 bar has more nodes than the old dock, so the first render after S.over shrank the DOM by ~70) */const h0=await heap(P);const n0=await pg.evaluate(()=>document.getElementsByTagName('*').length);const t0=await pg.evaluate(()=>PERF92.tasks.length);
     await pg.evaluate(async()=>{for(let i=0;i<3600;i++){for(const t of PERF92.tasks)t.last=-1e9;if(i%2)PERF92.seq++;perf92Beat(true);if(i%300===0){try{if(S&&S.phase!=='setup')render()}catch(e){}await new Promise(r=>setTimeout(r,0))}}});
     const h1=await heap(P);const n1=await pg.evaluate(()=>document.getElementsByTagName('*').length);const t1=await pg.evaluate(()=>PERF92.tasks.length);
     const r={heapMB:+((h1-h0)/1e6).toFixed(2),nodes:n1-n0,tasks:t1-t0};out['soak_'+label]=r;
