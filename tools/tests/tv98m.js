@@ -31,16 +31,16 @@ const r2=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
 ok(r2.b1&&r2.b2&&r2.bought===2,'2 two buys work '+JSON.stringify(r2));ok(r2.btnLeft===0&&/auction block/.test(r2.note),'2 last lot greyed with the note '+r2.btnLeft+' '+r2.note);ok(!r2.third,'2 handler refuses the third');ok(r2.intro,'2 header says take two');
 if(SHOT)await pg.screenshot({path:SHOT+'/cart.png'});
 /* ---- 3 · podium inside the banner ---- */
-const shotLeague=async(w,h,name)=>{await pg.setViewportSize({width:w,height:h});await W(400);return pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),rv=w.mgrs.filter(x=>!x.isPlayer);msp(rv[0]).pts=9;msp(rv[1]).pts=6;msp(me()).pts=3;MGR.tab='league';MGR_REDRAW();await W8(500);
+const shotLeague=async(w,h,name)=>{await pg.setViewportSize({width:w,height:h});await W(400);return pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),rv=w.mgrs.filter(x=>!x.isPlayer);const fx=(x,pts,wn,b)=>{const q=msp(x);q.pts=pts;q.w=wn;q.b=b};fx(rv[0],9,3,3);fx(rv[1],8,2,4);fx(me(),3,1,3);/* consistent with play: a win = 3 pts, a runner-up place = 1, each counts a bout (9 pts = 3-0, 8 = 2 wins + 2 seconds in 4, 3 = one win in 3) */MGR.tab='league';MGR_REDRAW();await W8(500);
   const B=document.getElementById('mgrBody');const bn=B.querySelector('.b73-league');const o={};o.banner=!!bn;o.inBanner=!!(bn&&bn.querySelector('.lp96pod .lp96p.p1 .lp96cup svg'));o.n=B.querySelectorAll('.lp96pod').length;
   o.pod=bn?[...bn.querySelectorAll('.lp96p')].map(x=>x.className.replace(/\s*me/,'').replace('lp96p ','')).join():'';o.below=!!B.querySelector('.lp96 .lp96pod');o.table=!!B.querySelector('.lp96t');
   o.tip=(bn&&bn.querySelector('.lp96p.p1')||{}).title||'';
   if(bn){const pr=bn.querySelector('.lp96pod').getBoundingClientRect(),tr=bn.querySelector('.roomttl').getBoundingClientRect(),br=bn.getBoundingClientRect();const sr=bn.querySelector('.roomstat');const rr=sr?sr.getBoundingClientRect():null;
     const hit=(a,c)=>c&&a.left<c.right&&a.right>c.left&&a.top<c.bottom&&a.bottom>c.top;o.overTitle=hit(pr,tr);o.overStat=hit(pr,rr);o.inside=pr.left>=br.left-1&&pr.right<=br.right+1&&pr.top>=br.top-1&&pr.bottom<=br.bottom+1;
-    o.hscroll=document.documentElement.scrollWidth>innerWidth+1}return o})};
+    o.hscroll=document.documentElement.scrollWidth>innerWidth+1;o.bh=Math.round(br.height)}return o})};
 const r3=await shotLeague(1440,900);await pg.screenshot({path:SHOT+'/league_banner_1440.png'});
 ok(r3.banner&&r3.inBanner&&r3.pod==='p2,p1,p3','3 podium inside the banner, 2nd-1st-3rd with the cup '+JSON.stringify(r3));ok(r3.n===1&&!r3.below&&r3.table,'3 no separate block below, table kept '+JSON.stringify(r3));
-ok(/Superbus/.test(r3.tip)&&/Quaestor/.test(r3.tip),'3 hover keeps prizes + Quaestor '+r3.tip);ok(!r3.overTitle&&!r3.overStat&&r3.inside,'3 no overlap at 1440 '+JSON.stringify(r3));
+ok(/Superbus/.test(r3.tip)&&/Quaestor/.test(r3.tip),'3 hover keeps prizes + Quaestor '+r3.tip);ok(!r3.overTitle&&!r3.overStat&&r3.inside,'3 no overlap at 1440 '+JSON.stringify(r3));ok(r3.bh<=150,'3 the league banner is compact at 1440 (<=150 px) '+r3.bh);
 const r3p=await shotLeague(390,800);await pg.screenshot({path:SHOT+'/league_banner_390.png'});
 ok(r3p.inBanner&&!r3p.below&&!r3p.overTitle&&!r3p.overStat&&r3p.inside&&!r3p.hscroll,'3 phone width fits '+JSON.stringify(r3p));
 const real=errs.filter(e=>!/boom98/.test(e));

@@ -1,7 +1,7 @@
 /* v0.98 PART E: Custom-room passwords (salted hash in its own item, pw_need / pw_bad / Ranked refuses / tries capped / Find me a fight skips
    🔒 rooms / the host sets and clears it), the room's region from the host's time zone, house.card (record, gladiators, fallen, best rank, last
    events, privacy), the DOMUS RANK (best 4 living + 20% of the fallen, never drops, members carry their tier), a silent Find me a fight,
-   Ludus + Golden Eagle as Custom only, Damnatio only at creation, the bonus renames. node server/test/v98.test.js (also run by npm test) */
+   Golden Eagle as Custom only (Ludus refused: not online), Damnatio only at creation, the bonus renames. node server/test/v98.test.js (also run by npm test) */
 'use strict';
 const assert=require('assert');const store=require('../src/store.js');const C=require('../src/onlcore.js');const crypto=require('crypto');
 
@@ -22,14 +22,15 @@ function units(){
   const D={dr98:1150};assert.ok(!C.drankKeep98(D,750)&&D.dr98===1150,'never drops');assert.ok(C.drankKeep98(D,1200)&&D.dr98===1200,'rises');
   assert.deepStrictEqual(C.domusRow({id:'d',name:'X',dr98:3001.7}).dr98,{s:3001,k:'ludusmagnus'},'domusRow carries it');
   /* events */
-  assert.ok(C.EVENTS_ALL.includes('ludus')&&C.EVENTS_ALL.includes('goldenEagle')&&!C.EVENTS_ALL.includes('gauntlet')&&C.EVENTS_TEAM.includes('goldenEagle'),'the first wave');
+  assert.ok(!C.EVENTS_ALL.includes('ludus')&&C.EVENTS_ALL.includes('goldenEagle')&&!C.EVENTS_ALL.includes('gauntlet')&&C.EVENTS_TEAM.includes('goldenEagle'),'the first wave');
   assert.ok(C.EVENTS3.every(k=>!C.customOnly98(k))&&!C.customOnly98('familia'),'Classics + Familia stay Ranked-able');
   for(let t=C.SEASON_EPOCH;t<C.SEASON_EPOCH+40*C.WEEK_MS;t+=C.WEEK_MS)assert.ok(!C.customOnly98(C.onlineFixture(t).ev),'the weekly fixture never becomes a Custom-only event');
-  assert.throws(()=>C.newLobby({ev:'ludus',ranked:true},{id:'a',name:'A'},'L1',1),/Custom only/);
-  const L=C.newLobby({ev:'ludus'},{id:'a',name:'A'},'L2',1);assert.ok(L.ev==='ludus'&&!L.team&&L.seats===4,'Ludus room');
+  assert.throws(()=>C.newLobby({ev:'goldenEagle',ranked:true},{id:'a',name:'A'},'L1',1),/Custom only/);
+  assert.throws(()=>C.newLobby({ev:'ludus'},{id:'a',name:'A'},'L1b',1),/not played online/,'Ludus is not online (his pick C)');
+  const L=C.newLobby({ev:'democritus'},{id:'a',name:'A'},'L2',1);assert.match(C.roomSet(L,'a',{ev:'ludus'},1),/not played online/,'a room cannot switch to Ludus');
   assert.ok(!C.roomSet(L,'a',{ev:'goldenEagle'},2)&&L.team&&L.seats>=4&&L.ev==='goldenEagle','to Golden Eagle (teams)');
   assert.ok(!C.roomSet(L,'a',{seats:8},3)&&L.seats===8,'Golden Eagle seats 4–8');assert.ok(!C.roomSet(L,'a',{ev:'democritus'},4)&&L.ev==='democritus'&&!L.team&&L.seats===4,'back to a Classic');
-  const RL=C.newLobby({ev:'democritus',ranked:true},{id:'a',name:'A',rank:'tiro'},'L3',1);assert.match(C.roomSet(RL,'a',{ev:'ludus'},2),/Custom only/);
+  const RL=C.newLobby({ev:'democritus',ranked:true},{id:'a',name:'A',rank:'tiro'},'L3',1);assert.match(C.roomSet(RL,'a',{ev:'goldenEagle'},2),/Custom only/);
   /* Damnatio */
   const live=cls=>({alive:true,cls});const T={treasury:999};
   assert.match(C.classWhy(live('hero'),'damnatio',T),/Damnatio/);assert.match(C.classWhy(live('damnatio'),'hero',T),/Damnatio/);assert.strictEqual(C.classWhy(live('hero'),'slave',T),'');
@@ -94,10 +95,10 @@ async function routes(){
   const L3=await ann.req('lobby.set',{id:L.id,pw:'Other one',loc:4});assert.ok(L3.pw===1&&L3.loc===4,'set again, with another setting in the same request');
   await leave(bob,L.id);await leave(ann,L.id);await leave(cat,q.lobby.id);
   const RL=await ann.req('lobby.create',{ev:'democritus',ranked:true,cry:false});await rejects(ann.req('lobby.set',{id:RL.id,pw:'abcd'}),'pw_ranked');
-  /* 6 · Ludus + Golden Eagle are Custom only */
-  await rejects(ann.req('lobby.set',{id:RL.id,ev:'ludus'}),null,/Custom only/);await leave(ann,RL.id);
-  await rejects(ann.req('lobby.create',{ev:'goldenEagle',ranked:true}),null,/Custom only/);await rejects(ann.req('lobby.quick',{ev:'ludus',ranked:true}),null,/Custom only/);
-  const LU=await ann.req('lobby.create',{ev:'ludus',cry:false});assert.ok(LU.ev==='ludus'&&LU.seats===4&&!LU.ranked,'a Ludus room');
+  /* 6 · Golden Eagle is Custom only; Ludus is refused */
+  await rejects(ann.req('lobby.set',{id:RL.id,ev:'goldenEagle'}),null,/Custom only/);await rejects(ann.req('lobby.set',{id:RL.id,ev:'ludus'}),null,/not played online/);await leave(ann,RL.id);
+  await rejects(ann.req('lobby.create',{ev:'goldenEagle',ranked:true}),null,/Custom only/);await rejects(ann.req('lobby.quick',{ev:'goldenEagle',ranked:true}),null,/Custom only/);await rejects(ann.req('lobby.create',{ev:'ludus'}),null,/not played online/);
+  const LU=await ann.req('lobby.create',{ev:'cassian',cry:false});assert.ok(LU.ev==='cassian'&&!LU.ranked,'a Custom room');
   const GE=await ann.req('lobby.set',{id:LU.id,ev:'goldenEagle',seats:6});assert.ok(GE.ev==='goldenEagle'&&GE.team&&GE.seats===6,'Golden Eagle with teams');
   await bob.req('lobby.join',{id:LU.id});const GL=(await bob.req("lobby.get",{id:LU.id})).lobby;assert.ok(GL.players.every(p=>p.team),'seated on teams');
   await leave(bob,LU.id);await leave(ann,LU.id);

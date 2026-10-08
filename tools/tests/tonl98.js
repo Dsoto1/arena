@@ -5,7 +5,7 @@
    3 · the house card from a lanista's name (list + room): record, gladiators, best rank, last events, 🏛 Visit house opens their Domus.
    4 · the Domus rank: a banner chip beside house names in the room and the list; the big banner above the Domus Glory bar; never drops.
    6 · the two event squares under the playlists (Custom only, no Ranked buttons); ⚔ Play opens a Custom room for that event;
-       LUDUS and GOLDEN EAGLE each START and PLAY online with two lanistas in lockstep (inputs, same hashes, no resync).
+       GOLDEN EAGLE STARTS and PLAYS online with two lanistas in lockstep; LUDUS is NOT online (a room asking for it is refused, no square offers it).
    7 · the Domus class picker greys Damnatio.   9 · 👤 Profile & Settings: header card + two columns (one on a phone), the flash and horn switches.
    SHOT=<dir> saves the screenshots (tools/plans/onl98/). ERRS must be []. */
 const http=require('http'),fs=require('fs'),path=require('path');
@@ -38,11 +38,11 @@ for(const p of [A,B,C,D]){p.evaluate(()=>{onlineOpen('play')}).catch(()=>{})}for
 /* ── 6 · the event squares (A's landing) ── */
 out.sq=await until(A,()=>{const r=document.querySelector('#onl .ev98row');if(!r)return null;const s=[...r.querySelectorAll('.ev98s')];return {n:s.length,evs:s.map(x=>x.dataset.ev98),play:r.querySelectorAll('[data-onl="quick"][data-v$="|0"]').length,
   ranked:[...document.querySelectorAll('#onl [data-onl="quick"][data-v$="|1"]')].map(b=>b.dataset.v.split('|')[0]).filter(k=>ONLC.customOnly98(k)).length,vis:r.getBoundingClientRect().height>60}});
-ok(out.sq&&out.sq.n===2&&out.sq.play===2&&out.sq.evs[0]!==out.sq.evs[1]&&out.sq.evs.every(k=>['familia','ludus','goldenEagle'].includes(k))&&out.sq.vis,'two event squares, different events '+JSON.stringify(out.sq));
+ok(out.sq&&out.sq.n===2&&out.sq.play===2&&out.sq.evs[0]!==out.sq.evs[1]&&out.sq.evs.every(k=>['familia','goldenEagle'].includes(k))&&out.sq.vis,'two event squares, different events '+JSON.stringify(out.sq));
 ok(out.sq&&out.sq.ranked===0,'no Ranked button for a Custom-only event');
 await A.evaluate(()=>{const r=document.querySelector('#onl .ev98row');if(r)r.scrollIntoView({block:'center'})});await wait(300);await shot(A,'landing98.png');
-/* the square turns to another event on its own */
-out.turn=await until(A,ev=>{const s=[...document.querySelectorAll('#onl .ev98s')].map(x=>x.dataset.ev98);return s.join()!==ev?s.join():null},out.sq?out.sq.evs.join():'',12000);ok(!!out.turn,'a square turns to another event: '+out.turn);
+/* with Ludus gone only Familia + Golden Eagle are approved: the two squares show exactly those (no cycling to do) */
+ok(out.sq&&[...out.sq.evs].sort().join()==='familia,goldenEagle','the squares are Familia + Golden Eagle '+JSON.stringify(out.sq));
 /* ⚔ Play on a square → a Custom room for it */
 const sqEv=await A.evaluate(()=>document.querySelector('#onl .ev98s').dataset.ev98);await click(A,'#onl .ev98s [data-onl="quick"]');
 out.sqRoom=await until(A,()=>{const L=onlMyLobby();return L&&{ev:L.ev,ranked:!!L.ranked,quick:!!L.quick,reg:L.reg}});ok(out.sqRoom&&out.sqRoom.ev===sqEv&&!out.sqRoom.ranked,'⚔ Play made a Custom '+sqEv+' room '+JSON.stringify(out.sqRoom));
@@ -116,7 +116,7 @@ out.pr390=await A.evaluate(()=>{const cols=[...document.querySelectorAll('#onl .
 ok(out.pr390.cols.length===2&&out.pr390.cols[0]===out.pr390.cols[1]&&out.pr390.over<=1,'phone: one column, no sideways scroll '+JSON.stringify(out.pr390));await shot(A,'profile98_390.png');
 await A.setViewportSize({width:1440,height:900});await wait(300);
 
-/* ── 6 · LUDUS (A + B) and GOLDEN EAGLE (C + D) start and play online in lockstep ── */
+/* ── 6 · GOLDEN EAGLE (C + D) starts and plays online in lockstep; Ludus is refused ── */
 HAND.on=false;
 const drive=async p=>{const r=await p.evaluate(()=>{if(CUR_MODAL&&(!ONLM.on||onlmMine()||ONLM.info>0)){const bs=[...document.querySelectorAll('#modal .mbtns button')].filter(b=>!b.disabled&&b.offsetParent);
       const lit=document.querySelector('#modal [data-mi]:not(.dim):not([disabled])');if(lit&&!bs.length){lit.setAttribute('data-drv','1');return ['sel','#modal [data-drv="1"]','pick']}
@@ -137,13 +137,13 @@ async function result(ev,H,G){for(const t1=Date.now();Date.now()-t1<40000;){cons
   const HH={H:await H.evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs,acct:ONL.acct.id,ev:S.evKey,n:S.players.length,teams:S.players.map(p=>p.team||''),seats:S.players.map(p=>!!p.cpu)})),G:await G.evaluate(()=>({h:ONLM.hlog,r:ONLM.resyncs,acct:ONL.acct.id,ev:S.evKey,n:S.players.length}))};
   let same=0,diff=0;for(const [seq,from,h] of inputs){if(!h)continue;for(const k of ['H','G']){if(HH[k].acct===from)continue;const o=HH[k].h['s'+seq];if(!o)continue;o===h?same++:diff++}}
   return {ev,inputs:inputs.length,kinds:[...new Set(inputs.map(x=>x[3]))],same,diff,resync:[HH.H.r,HH.G.r],evH:HH.H.ev,evG:HH.G.ev,players:HH.H.n,teams:HH.H.teams,cpu:HH.H.seats}}
-/* both matches at once (a loaded machine plays them slowly): Ludus = A + B (its draft runs on the host), Golden Eagle = C + D (teams) */
-await start('ludus',A,B,4);await start('goldenEagle',C,D,4);
-{const t0=Date.now();let n=0;while(Date.now()-t0<330000){for(const p of [A,B,C,D])await drive(p);await A.waitForTimeout(150);
-  if(++n%10===0&&Date.now()-t0>40000){const [a,c]=[await nIn(A),await nIn(C)];if(a>=8&&c>=8)break}}}
-out.ludus=await result('ludus',A,B);console.log('LUDUS',JSON.stringify(out.ludus));
-ok(out.ludus.evH==='ludus'&&out.ludus.evG==='ludus'&&out.ludus.players===4&&out.ludus.inputs>=6&&out.ludus.same>=3&&!out.ludus.diff&&!out.ludus.resync[0]&&!out.ludus.resync[1],'Ludus plays online in lockstep '+JSON.stringify(out.ludus));
-await shot(A,'ludus98.png');
+/* both matches at once (a loaded machine plays them slowly): Golden Eagle = C + D (teams) */
+out.noLudus=await A.evaluate(async()=>{const o={};try{await NET.req('lobby.create',{ev:'ludus',loc:3});o.create='ok'}catch(e){o.create=e.message}try{await NET.req('lobby.quick',{ev:'ludus'});o.quick='ok'}catch(e){o.quick=e.message}
+  o.cards=[...document.querySelectorAll('#onl [data-ev98="ludus"]')].length;o.ok=ONLC.EVENTS_ALL.includes('ludus');return o});
+ok(/not played online/.test(out.noLudus.create)&&!out.noLudus.ok&&!out.noLudus.cards,'Ludus is refused online '+JSON.stringify(out.noLudus));
+await start('goldenEagle',C,D,4);
+{const t0=Date.now();let n=0;while(Date.now()-t0<330000){for(const p of [C,D])await drive(p);await A.waitForTimeout(150);
+  if(++n%10===0&&Date.now()-t0>40000){if(await nIn(C)>=8)break}}}
 out.eagle=await result('goldenEagle',C,D);console.log('EAGLE',JSON.stringify(out.eagle));
 ok(out.eagle.evH==='goldenEagle'&&out.eagle.evG==='goldenEagle'&&out.eagle.players===4&&new Set(out.eagle.teams).size===2&&out.eagle.inputs>=6&&out.eagle.same>=3&&!out.eagle.diff&&!out.eagle.resync[0]&&!out.eagle.resync[1],'Golden Eagle plays online in lockstep (two teams) '+JSON.stringify(out.eagle));
 await shot(C,'eagle98.png');
