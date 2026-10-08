@@ -44,6 +44,8 @@ runDraft=async function(){
   const S0=S;const ev=EVENTS[S.evKey];const pool=[];let uidD=0;
   const maxLv=player=>ev.teams==='jugg'&&player.team!=='J'?2:3;
   for(const lv of [1,2,3]){for(const k of MARKET_W[lv])pool.push({id:uidD++,kind:'w',k,lv});for(const k of MARKET_A[lv])pool.push({id:uidD++,kind:'a',k,lv})}
+  /* v0.98 (257-v98draft): the custom pieces the seats' classes bring join the pool */
+  if(typeof draftExtra98==='function')for(const x of draftExtra98(S.players,pool))pool.push({id:uidD++,kind:x.kind,k:x.k,lv:x.lv});
   const picks=player=>ev.draft.all||(player.team==='J'?ev.draft.jugg:ev.draft.team);
   const maxRounds=Math.max(...S.players.map(picks));
   /* v0.89 (179-v89market, his rule): every pick offers ALL the remaining level 1-3 gear that still fits the drafter */
