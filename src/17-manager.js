@@ -806,7 +806,7 @@ function cpuLeagueWeek(){
   const w=W_();
   for(const m of w.mgrs){if(m.isPlayer)continue;const ros=rosterOf(m);const want=2+Math.round(m.p.ambition/28);
     // recruiting: pitch the best fighter they can afford and who will listen
-    if(ros.length<want&&m.coin>30){const cand=freeAgents().filter(g=>(m.fame>=reqFame(g)||m.coin>askWage(g)*fameBypassX(g,m)*10)&&askWage(g)*4<m.coin).sort((a,b)=>(effOvr(b)*(1+m.p.ambition/100)-askWage(b))-(effOvr(a)*(1+m.p.ambition/100)-askWage(a)))[0];
+    if(ros.length<want&&m.coin>30){const cand=freeAgents().filter(g=>(m.fame>=reqFame(g)||m.coin>askWage(g)*fameBypassX(g,m)*10)&&askWage(g)*4<m.coin).sort((a,b)=>{const ov=x=>typeof rec98Rival==='function'?rec98Rival(m,x):effOvr(x); /* v0.98: rivals read their own scouting estimate */ return (ov(b)*(1+m.p.ambition/100)-askWage(b))-(ov(a)*(1+m.p.ambition/100)-askWage(a))})[0];
       if(cand){cand.interest[m.id]=capInterest(cand,m,interestOf(cand,m)+8+Math.round(m.p.show/12));
         mlog(m,_T`courted ${cand.name}`);if(cand.scout>=1&&Math.random()<.6)mnews(_T`${esc(m.ludus)} courts <b>${esc(cand.name)}</b> — your scouts say the feast ran late.`);
         const top=suitors(cand)[0];
@@ -1203,7 +1203,7 @@ function consiliumHTML(){const w=W_(),m=me(),n=w.night;const ros=rosterOf(m);con
   const d=hurt.length?_T`${hurt.map(g=>esc(g.name)).join(', ')} ${hurt.length===1?_T('is'):_T('are')} hurt — heal before Match Week or they sit it out.`:tired?_T`<b>${esc(tired.name)}</b> is low (${tired.morale} morale): a meal or kin tickets before they fight a tier worse.`:prospect?_T`<b>${esc(prospect.name)}</b> has the most room to grow (${prospect.ovr} → ${prospect.pot}). A personal trainer (doctore) this week is money well spent.`:_T('Sign fighters first — the yard is empty.');
   // the Scout: best value on the market you can afford
   const fa=freeAgents().filter(g=>askWage(g)<=Math.max(4,m.coin/4)&&m.fame>=reqFame(g)).sort((a,b)=>(estOvr(b).v/Math.max(1,askWage(b)))-(estOvr(a).v/Math.max(1,askWage(a))))[0];
-  const sc=fa?_T`Best value you can afford: <b>${esc(fa.name)}</b> — ~${estOvr(fa).v} for ${askWage(fa)}/wk${fa.scout?'':_T(' (unscouted — could be a gem or a trap)')}.`:_T`No free agent fits your purse and fame right now. Promote the ludus to widen the market.`;
+  const sc=fa?_T`Best value you can afford: <b>${esc(fa.name)}</b> — ~${String(estOvr(fa).txt).replace(/^~/,'')} for ${askWage(fa)}/wk${fa.scout?'':_T(' (unscouted — could be a gem or a trap)')}.`:_T`No free agent fits your purse and fame right now. Promote the ludus to widen the market.`;
   // the Augur: the next three fixtures
   const fx=[1,2,3].map(k=>{const wk=w.week+k;const f=fixtureFor(w.season+Math.floor((((w.week-1)%12)+k)/12),wk);return f?`${esc(LOCATIONS[f.loc].n)} (${esc((EVENTS[f.ev]||{}).short||'')}${f.purse>1?_T(', rich purse'):''})`:''}).filter(Boolean);
   const au=_T`${n?_T`This week: <b>${esc(LOCATIONS[n.loc].n)}</b>${n.omen&&n.omen.k!=='clear'?_T` under <i>${esc(n.omen.n)}</i>`:''}. `:''}Coming: ${fx.join(' → ')}. Fighters from those cities fight harder at home.`;

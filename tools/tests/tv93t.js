@@ -33,8 +33,8 @@ for(let iter=0;iter<200;iter++){
    case 'meal':await pg.evaluate(()=>document.querySelector(`[data-mg="meal"][data-id="${MTUT.B}"]`).click());break;
    case 'recruit':await clk('[data-mg="tab"][data-id="recruit"]');break;
    case 'fa':await pg.evaluate(()=>{const r=[...document.querySelectorAll('#mgrPane tr[data-mg="sel"]')];(r[2]||r[0]).click()});break;
-   case 'scout':await clk('#mgrPane [data-mg="scout"]');await until(()=>!MGR.busy);break;
-   case 'pitch':await pg.evaluate(()=>{const b=[...document.querySelectorAll('#mgrPane [data-mg="pitch"]')].find(x=>!x.disabled&&!x.dataset.dis);b&&b.click()});break;
+   case 'scout':await clk('#mgrPane [data-rec98a]:not([disabled])');await until(()=>!MGR.busy);break;
+   case 'pitch':await pg.evaluate(()=>{const b=[...document.querySelectorAll('#mgrPane [data-rec98p], #mgrPane [data-mg="pitch"]')].find(x=>!x.disabled&&!x.dataset.dis);b&&b.click()});break;
    case 'infirm':await clk('[data-mg="tab"][data-id="infirm"]');break;
    case 'medic':await pg.evaluate(()=>{const b=document.querySelector(`[data-mg="medic"][data-id="${MTUT.A}"]`);b&&b.click()});break;
    case 'ludus':await clk('[data-mg="tab"][data-id="ludus"]');break;
