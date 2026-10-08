@@ -1,0 +1,282 @@
+{
+ "bust": {
+  "original": {
+   "28": {
+    "buildMs": 0.007,
+    "kb": 1.3,
+    "paintMs": 0.363
+   },
+   "64": {
+    "buildMs": 0.006,
+    "kb": 1.3,
+    "paintMs": 0.419
+   },
+   "240": {
+    "buildMs": 0.006,
+    "kb": 1.4,
+    "paintMs": 1.392
+   }
+  },
+  "first": {
+   "28": {
+    "buildMs": 0.025,
+    "kb": 7.7,
+    "paintMs": 1.3
+   },
+   "64": {
+    "buildMs": 0.027,
+    "kb": 7.7,
+    "paintMs": 1.3
+   },
+   "240": {
+    "buildMs": 0.028,
+    "kb": 8,
+    "paintMs": 2.083
+   }
+  },
+  "paint": {
+   "28": {
+    "buildMs": 1.732,
+    "kb": 10.2,
+    "paintMs": 2.146
+   },
+   "64": {
+    "buildMs": 2.482,
+    "kb": 22,
+    "paintMs": 3.643
+   },
+   "240": {
+    "buildMs": 2.543,
+    "kb": 23.9,
+    "paintMs": 4.171
+   }
+  },
+  "ink": {
+   "28": {
+    "buildMs": 1.33,
+    "kb": 10.3,
+    "paintMs": 2.089
+   },
+   "64": {
+    "buildMs": 2.598,
+    "kb": 20.7,
+    "paintMs": 3.378
+   },
+   "240": {
+    "buildMs": 2.61,
+    "kb": 22.4,
+    "paintMs": 3.458
+   }
+  }
+ },
+ "bust_fem": {
+  "original": {
+   "28": {
+    "buildMs": 0.014,
+    "kb": 2.6,
+    "paintMs": 0.459
+   },
+   "64": {
+    "buildMs": 0.009,
+    "kb": 2.6,
+    "paintMs": 0.637
+   },
+   "240": {
+    "buildMs": 0.013,
+    "kb": 2.6,
+    "paintMs": 1.808
+   }
+  },
+  "first": {
+   "28": {
+    "buildMs": 0.03,
+    "kb": 8.7,
+    "paintMs": 1.35
+   },
+   "64": {
+    "buildMs": 0.037,
+    "kb": 8.7,
+    "paintMs": 1.553
+   },
+   "240": {
+    "buildMs": 0.037,
+    "kb": 9,
+    "paintMs": 2.558
+   }
+  },
+  "paint": {
+   "28": {
+    "buildMs": 1.768,
+    "kb": 12.3,
+    "paintMs": 2.257
+   },
+   "64": {
+    "buildMs": 2.943,
+    "kb": 28.7,
+    "paintMs": 4.026
+   },
+   "240": {
+    "buildMs": 3.143,
+    "kb": 29.5,
+    "paintMs": 4.238
+   }
+  },
+  "ink": {
+   "28": {
+    "buildMs": 1.705,
+    "kb": 12.1,
+    "paintMs": 2.112
+   },
+   "64": {
+    "buildMs": 2.918,
+    "kb": 26.5,
+    "paintMs": 3.539
+   },
+   "240": {
+    "buildMs": 3.493,
+    "kb": 26.7,
+    "paintMs": 3.579
+   }
+  }
+ },
+ "chip": {
+  "original": {
+   "28": {
+    "buildMs": 0.001,
+    "kb": 0.7,
+    "paintMs": 0.145
+   },
+   "64": {
+    "buildMs": 0.001,
+    "kb": 0.7,
+    "paintMs": 0.277
+   },
+   "240": {
+    "buildMs": 0,
+    "kb": 0.7,
+    "paintMs": 1.313
+   }
+  },
+  "first": {
+   "28": {
+    "buildMs": 0.03,
+    "kb": 7.4,
+    "paintMs": 1.294
+   },
+   "64": {
+    "buildMs": 0.043,
+    "kb": 7.4,
+    "paintMs": 1.236
+   },
+   "240": {
+    "buildMs": 0.036,
+    "kb": 7.4,
+    "paintMs": 2.117
+   }
+  },
+  "paint": {
+   "28": {
+    "buildMs": 1.44,
+    "kb": 9.9,
+    "paintMs": 2.265
+   },
+   "64": {
+    "buildMs": 3.243,
+    "kb": 21.8,
+    "paintMs": 3.608
+   },
+   "240": {
+    "buildMs": 2.273,
+    "kb": 23.9,
+    "paintMs": 4.133
+   }
+  },
+  "ink": {
+   "28": {
+    "buildMs": 1.193,
+    "kb": 9.9,
+    "paintMs": 2.131
+   },
+   "64": {
+    "buildMs": 4.575,
+    "kb": 20.2,
+    "paintMs": 3.406
+   },
+   "240": {
+    "buildMs": 2.957,
+    "kb": 22.1,
+    "paintMs": 4.738
+   }
+  }
+ },
+ "beast": {
+  "original": {
+   "28": {
+    "buildMs": 0.025,
+    "kb": 3.8,
+    "paintMs": 0.554
+   },
+   "64": {
+    "buildMs": 0.036,
+    "kb": 3.8,
+    "paintMs": 0.627
+   },
+   "240": {
+    "buildMs": 0.033,
+    "kb": 3.8,
+    "paintMs": 1.387
+   }
+  },
+  "first": {
+   "28": {
+    "buildMs": 0.049,
+    "kb": 6.5,
+    "paintMs": 0.982
+   },
+   "64": {
+    "buildMs": 0.074,
+    "kb": 6.5,
+    "paintMs": 0.983
+   },
+   "240": {
+    "buildMs": 0.055,
+    "kb": 6.5,
+    "paintMs": 2.088
+   }
+  },
+  "paint": {
+   "28": {
+    "buildMs": 2.7,
+    "kb": 10.6,
+    "paintMs": 1.817
+   },
+   "64": {
+    "buildMs": 2.835,
+    "kb": 29.9,
+    "paintMs": 2.827
+   },
+   "240": {
+    "buildMs": 3.498,
+    "kb": 37.2,
+    "paintMs": 3.596
+   }
+  },
+  "ink": {
+   "28": {
+    "buildMs": 1.55,
+    "kb": 11,
+    "paintMs": 2.028
+   },
+   "64": {
+    "buildMs": 2.593,
+    "kb": 30.1,
+    "paintMs": 2.914
+   },
+   "240": {
+    "buildMs": 3.405,
+    "kb": 37.4,
+    "paintMs": 3.383
+   }
+  }
+ }
+}
