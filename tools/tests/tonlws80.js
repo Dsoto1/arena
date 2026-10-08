@@ -31,8 +31,10 @@ const room=p=>p.evaluate(()=>{const L=onlMyLobby();return L?{id:L.id,ev:L.ev,ran
 /* A: ＋ Custom room from the Lobby Browser */
 await click(A,'#onl [data-onl="tab"][data-v="lobby"]');await click(A,'#onl [data-onl="mkroom"][data-v="0"]');
 const rA=await until(A,()=>{const L=onlMyLobby();return L&&L.status==='waiting'?{id:L.id,ev:L.ev,ranked:!!L.ranked,seats:L.seats}:null});
-/* C (free, Online open on Play) hears the Praeco's 'open' line, with the room's row */
-const openC=await until(C,id=>ONLF.lines.some(l=>l.k==='open'&&l.row&&l.row.id===id),rA&&rA.id,20000);
+/* v0.96: creating a room no longer cries; the host calls the crier by hand → C (free, Online open on Play) hears the Praeco's 'call' line, with the room's row */
+await wait(1500);const silentC=await C.evaluate(id=>!ONLF.lines.some(l=>l.k==='open'&&l.row&&l.row.id===id),rA&&rA.id);
+await click(A,'#onl [data-onl="rcall"]');
+const openC=silentC&&await until(C,id=>ONLF.lines.some(l=>l.k==='call'&&l.row&&l.row.id===id),rA&&rA.id,20000);
 const banC=await C.evaluate(()=>{const b=document.getElementById('onlCry80');return b&&!b.hidden?b.textContent:''});
 await C.click('#onlCry80 [data-onl="cryx"]').catch(()=>{});
 /* B: the Classic Custom playlist → lobby.quick → A's room (no twin) */

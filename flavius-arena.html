@@ -52189,6 +52189,11 @@ async function onl96Auto(){if(R96.auto)return;R96.auto=true;try{if(localStorage.
 @media(max-width:760px){#onl .r96 .r96-body{grid-template-columns:1fr}#onl .r96 .r80-seats{grid-template-columns:repeat(2,minmax(0,1fr))}#onl .r96 .r96-acts{justify-content:flex-start;margin-left:0}
   #onl .r96 .r80-seat.r96s{min-height:176px}#onl .r96 .r96-fig{height:84px}#onl .r96 .r96-fig img,#onl .r96 .r96-fig svg{max-height:84px}}
 `;document.head.appendChild(css)}
+
+/* An invitation checked against a lobby list cached in the last 3 s could miss a room created a moment ago (the crier's
+   announcement used to refresh the list first) — a room not found in the cache is looked up fresh before the invitation
+   is treated as closed. */
+{const base=onlRoomCheck81;onlRoomCheck81=async function(id,fresh){const c=await base(id,fresh);if(!fresh&&c&&!c.ok&&c.why==='closed')return base(id,true);return c}}
 /* 232-v96board — v0.96 part B, BOARD & MATCH (his v0.96 notes 2026-10-07; numbering = the batch list). Display + small rule fixes;
    nothing here draws from the dice except where a rule says so (the location dice of a Focus roll, exactly as before).
    1 🔴 THE SILENT ATTACK. Root cause (traced 2026-10-08): hurt() (03-engine) writes a log line only when something happened — AP lost,
