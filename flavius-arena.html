@@ -19774,7 +19774,7 @@ function weekLoopBtns(){const r=weekReady();return `<div class="acts wkloop"><bu
 function endConfirmHTML(){const w=W_(),m=me();const wages=rosterOf(m).reduce((a,g)=>a+g.contract.wage+(g.ptrain?PTRAIN_COST:0),0);const R2=TRAIN_REGIMES[w.train]||TRAIN_REGIMES.off;const cost=wages+(R2.c||0);
   const nx=absSW(w,w.week+1);const dt=empireDate(nx.season,nx.wk);
   return `<div class="endconfirm"><div class="card2"><h4 style="margin-top:0">${_T`⏭ End week ${((w.week-1)%12)+1} of season ${w.season}?`}</h4>
-    <ul class="rc-sub" style="margin:0 0 8px 16px;padding:0"><li>${_T`Wages${R2.c?_T(' and drills'):''} are paid: about <b>${coinAmt87(cost)}</b> (treasury ${coinAmt87(m.coin)} → ~${m.coin-cost}).`}</li><li>${_T`Training resolves, injuries heal or fester, contracts tick down, rivals recruit, build and poach.`}</li><li>${_T`The Acta Diurna prints this week's results${w.week%12===0?_T(' — and the <b>season recap</b>; the Flavius Superbus opens next'):''}.`}</li><li>${_T`The empire's calendar moves to <b>${esc(dt.short)}</b>, week ${nx.wk}${nx.season!==w.season?_T` of season ${nx.season}`:''}.`}</li></ul>
+    <ul class="rc-sub" style="margin:0 0 8px 16px;padding:0"><li>${_T`Wages${R2.c?_T(' and drills'):''} are paid: about <b>${coinAmt87(cost)}</b> (treasury ${coinAmt87(m.coin)} → ≈ ${m.coin-cost<0?'−'+(cost-m.coin):m.coin-cost}).`}</li><li>${_T`Training resolves, injuries heal or fester, contracts tick down, rivals recruit, build and poach.`}</li><li>${_T`The Acta Diurna prints this week's results${w.week%12===0?_T(' — and the <b>season recap</b>; the Flavius Superbus opens next'):''}.`}</li><li>${_T`The empire's calendar moves to <b>${esc(dt.short)}</b>, week ${nx.wk}${nx.season!==w.season?_T` of season ${nx.season}`:''}.`}</li></ul>
     ${w.hours>0?`<p class="rc-sub" style="margin:0 0 6px">${_T`⏳ You still have <b>${w.hours}</b> of the lanista's hours — they do not carry over.`}</p>`:''}${(m.perkPts||0)>0?`<p class="rc-sub" style="margin:0 0 6px">${_T`🎓 <b>${m.perkPts}</b> perk point${m.perkPts===1?'':'s'} unspent (they keep).`}</p>`:''}
     <div class="acts"><button class="btn primary" type="button" data-mg="endweek">${_T`Confirm — end the week`}</button><button class="btn" type="button" data-mg="endcancel">${_T`Not yet`}</button></div></div></div>`}
 /* nightResultsHTML — the match night result sheet once every bout is decided. */
@@ -51941,7 +51941,7 @@ function lp96Letter(w){try{if(!w||w.tutorial||w.dead||!w.night)return;const N=lp
 
 /* ---------------- 8 · any fighter on any card clears "none entered" ---------------- */
 function onCard96(w,m){try{w=w||W_();m=m||me();const n=w&&w.night;if(!n||n.bye||!n.bouts||!m)return 0;let k=0;for(const b of n.bouts)for(const id of b.ents||[]){const g=gById(id);if(g&&g.contract&&g.contract.mgr===m.id)k++}return k}catch(e){return 0}}
-{const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const k=onCard96();if(k)for(const x of I)if(x.ic==='⚔'&&!x.done){x.done=true;x.btn='';x.txt=k===1?_T('1 of your fighters is on this week\'s card'):_T`${k} of your fighters are on this week's card`}}catch(e){console.error(e)}return I}}
+{const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const k=onCard96();if(k){const x=I.find(y=>y.ic==='⚔'&&!/hand/.test(y.txt));if(x&&!x.done){x.done=true;x.btn='';x.txt=k===1?_T('1 of your fighters is on this week\'s card'):_T`${k} of your fighters are on this week's card`}}}catch(e){console.error(e)}return I}}
 {const base=ludusTodos;ludusTodos=function(){const T=base.apply(this,arguments);try{if(Array.isArray(T)&&onCard96())return T.filter(x=>x[0]!=='⚔')}catch(e){}return T}}
 {const base=nightTodo73;nightTodo73=function(){const r=base.apply(this,arguments);try{const w=W_();if(r&&!(w.pend||[]).length&&onCard96())return null}catch(e){}return r}}
 
@@ -53433,6 +53433,14 @@ body.calm #onl .pu96,body.calm #onl .pu96g{animation:none}
 body.calm #onl .onl-rail button.pu96{box-shadow:inset 0 0 0 2px rgba(232,170,60,.7)}
 @media (prefers-reduced-motion:reduce){#onl .pu96,#onl .pu96g{animation:none}#onl .onl-rail button.pu96{box-shadow:inset 0 0 0 2px rgba(232,170,60,.7)}}`;
 document.head.appendChild(st)}
+/* v0.96 fix — 241-v96skip: the weekly checklist (and so "You are about to skip", the Your ludus list and the rail count) shows ONLY what can be done
+   before this week ends. On the road (roadLocked76) the Infirmary and Training Yard are shut: wounds, beds, maimed, drills, hours, unlocked yard sessions go.
+   Once the week's bouts are all fought: fighter-entry, empty-hand and starter items go. Repairs stay while a city square (the armorer) can be reached.
+   They return next week. Last wrapper over weekChecklist. */
+const SKIP241_ROAD=['⚕','🛏','🦿','🔒','🏋','⏳'],SKIP241_BOUTS=['⚔','⭐'];
+{const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const w=W_();if(!w||w.dead||w.tutorial)return I;const n=w.night;
+  const road=typeof roadLocked76==='function'&&roadLocked76(w);const fought=!!(n&&n.bouts&&n.bouts.length&&n.bouts.every(b=>b.done));const noCity=!n||n.bye;
+  return I.filter(x=>{if(x.done)return true;if(road&&SKIP241_ROAD.includes(x.ic))return false;if(fought&&SKIP241_BOUTS.includes(x.ic))return false;if(noCity&&x.ic==='🩹')return false;return true})}catch(e){console.error(e)}return I}}
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
