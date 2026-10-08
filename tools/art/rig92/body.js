@@ -99,25 +99,31 @@ function limbFrame(a, b, sx, frontHint = [0, 0, 1]) {
   return { u, f, o, at: (t, out = 0, fw = 0) => add(add(lerp(a, b, t), mul(o, out)), mul(f, fw)) };
 }
 
+/* v0.98 ATHLETIC BUILD (his ask): broader chest, lats and shoulders, fuller arms and legs, a slimmer waist. opt.ath 1 = athletic (default), 0 = the v0.92 build;
+   each value scales the muscle's cross radii (girdle and abdomen: width only) by 1 + (f - 1) * ath */
+export const ATH = { pec: 1.16, lat: 1.16, girdle: 1.07, trap: 1.12, neck: 1.06, abd: 0.93, delt: 1.15, bi: 1.15, fore: 1.07, thigh: 1.08, calf: 1.1 };
 export function sculpt(opt = {}) {
   const prims = [];
   const add_ = (p) => { prims.push(p); return p; };
+  const ath = opt.ath == null ? 1 : +opt.ath || 0;
+  const bulk = (p, k) => { const f = 1 + ((ATH[k] || 1) - 1) * ath; if (f === 1) return p; const wOnly = k === 'girdle' || k === 'abd';
+    if (p.t === 'e') { p.r = [p.r[0] * f, p.r[1], wOnly ? p.r[2] : p.r[2] * f]; } else { p.r1 *= f; p.r2 *= f; } return p; };
   /* ---------------- torso (T) ---------------- */
   const T = (b, k = 0.03) => ({ g: 'T', b, k, op: 'add' });
   add_(E([0, 1.335, -0.026], [0.132, 0.175, 0.098], T('ch', 0.06)));                       /* ribcage */
-  add_(E([0, 1.452, -0.032], [0.158, 0.068, 0.078], T('ch', 0.045)));                  /* shoulder girdle */
-  add_(E([0, 1.155, -0.008], [0.115, 0.140, 0.090], T('sp', 0.07)));                         /* abdomen */
+  bulk(add_(E([0, 1.452, -0.032], [0.158, 0.068, 0.078], T('ch', 0.045))),'girdle');  /* shoulder girdle */
+  bulk(add_(E([0, 1.155, -0.008], [0.115, 0.140, 0.090], T('sp', 0.07))),'abd');  /* abdomen */
   add_(E([0, 0.968, -0.014], [0.145, 0.110, 0.100], T('pe')));                         /* pelvis */
   for (const sx of [1, -1]) {
-    add_(E([sx * 0.074, 1.362, 0.066], [0.090, 0.050, 0.037], T('ch', 0.026), sx * -8));   /* pec */
+    bulk(add_(E([sx * 0.074, 1.362, 0.066], [0.090, 0.050, 0.037], T('ch', 0.026), sx * -8)),'pec');  /* pec */
     add_(C([sx * 0.110, 1.365, 0.058], [sx * 0.178, 1.408, 0.012], 0.040, 0.030, T('ch', 0.02)));  /* pec → arm insertion */
-    add_(E([sx * 0.112, 1.320, -0.044], [0.058, 0.125, 0.066], T('ch', 0.05), sx * 14));    /* lat */
+    bulk(add_(E([sx * 0.112, 1.320, -0.044], [0.058, 0.125, 0.066], T('ch', 0.05), sx * 14)),'lat');  /* lat */
     add_(E([sx * 0.098, 1.120, 0.004], [0.040, 0.080, 0.070], T('sp', 0.02), sx * -4));     /* oblique */
     add_(E([sx * 0.080, 0.975, 0.036], [0.052, 0.065, 0.050], T('pe', 0.04)));             /* lower belly / hip front */
     add_(M([sx * 0.125, 1.010, -0.018], [sx * 0.118, 0.800, -0.008], 0.052, 0.068, [0, 0, 1], T({ a: 'pe', b: 'h' + (sx > 0 ? 'L' : 'R'), t0: 0.35, t1: 0.85 }, 0.05)));  /* hip side flows into the thigh */
-    add_(E([sx * 0.068, 0.900, -0.064], [0.078, 0.095, 0.066], T({ a: 'pe', b: 'h' + (sx > 0 ? 'L' : 'R'), t0: 0.2, t1: 1.2 }, 0.045)));           /* glute */
-    add_(C([0, 1.545, -0.042], [sx * 0.165, 1.505, -0.030], 0.036, 0.032, T([['ch', 0.7], ['ne', 0.3]], 0.03)));  /* upper trapezius slope */
-    add_(E([sx * 0.088, 1.360, -0.088], [0.058, 0.075, 0.030], T('ch', 0.02), sx * 10));    /* scapula */
+    bulk(add_(E([sx * 0.068, 0.900, -0.064], [0.078, 0.095, 0.066], T({ a: 'pe', b: 'h' + (sx > 0 ? 'L' : 'R'), t0: 0.2, t1: 1.2 }, 0.045))),'fore');  /* glute */
+    bulk(add_(C([0, 1.545, -0.042], [sx * 0.165, 1.505, -0.030], 0.036, 0.032, T([['ch', 0.7], ['ne', 0.3]], 0.03))),'trap');  /* upper trapezius slope */
+    bulk(add_(E([sx * 0.088, 1.360, -0.088], [0.058, 0.075, 0.030], T('ch', 0.02), sx * 10)),'fore');  /* scapula */
     add_(E([sx * 0.034, 1.130, -0.078], [0.030, 0.130, 0.030], T('sp', 0.015)));           /* spinal erector */
     add_(C([sx * 0.044, 1.660, -0.018], [sx * 0.014, 1.515, 0.042], 0.013, 0.011, T('ne', 0.014)));  /* sternocleidomastoid */
     /* abs: four rows of the six-pack (+ the lower pair) */
@@ -126,8 +132,8 @@ export function sculpt(opt = {}) {
       add_(E([sx * 0.029, y, z], [0.027, 0.023, 0.013], T('sp', 0.014)));
     }
   }
-  add_(E([0, 1.400, -0.070], [0.095, 0.110, 0.042], T('ch', 0.04)));                   /* mid trapezius */
-  add_(C([0, 1.470, -0.024], [0, 1.645, -0.012], 0.061, 0.054, T([['ne', 0.8], ['ch', 0.2]], 0.03)));  /* neck */
+  bulk(add_(E([0, 1.400, -0.070], [0.095, 0.110, 0.042], T('ch', 0.04))),'trap');  /* mid trapezius */
+  bulk(add_(C([0, 1.470, -0.024], [0, 1.645, -0.012], 0.061, 0.054, T([['ne', 0.8], ['ch', 0.2]], 0.03))),'neck');  /* neck */
   add_(S([0, 1.105, 0.093], 0.008, { g: 'T', b: 'sp', k: 0.004, op: 'sub' }));          /* navel */
 
   /* ---------------- head (H) ---------------- */
@@ -159,15 +165,15 @@ export function sculpt(opt = {}) {
     const S0 = P(s), E0 = P(e), W0 = P(w);
     const up = limbFrame(S0, E0, sx), lo = limbFrame(E0, W0, sx);
     const A = (b, k = 0.012) => ({ g, b, k, op: 'add' });
-    add_(M(up.at(-0.20, 0.010, 0.000), up.at(0.47, 0.020, 0.002), 0.060, 0.066, up.f, A({ a: 'ch', b: s, t0: 0.0, t1: 0.45 }, 0.03)));  /* deltoid */
-    add_(M(up.at(-0.06, 0.004, 0.032), up.at(0.38, 0.008, 0.028), 0.040, 0.036, up.f, A({ a: 'ch', b: s, t0: 0.0, t1: 0.5 }, 0.02)));     /* front deltoid */
-    add_(M(up.at(-0.06, 0.006, -0.030), up.at(0.36, 0.008, -0.026), 0.038, 0.034, up.f, A({ a: 'ch', b: s, t0: 0.0, t1: 0.5 }, 0.02)));   /* rear deltoid */
-    add_(C(S0, E0, 0.052, 0.040, A(s, 0.016)));                                       /* upper arm core */
-    add_(M(up.at(0.28, 0.000, 0.026), up.at(0.86, 0.000, 0.020), 0.042, 0.040, up.f, A(s)));   /* biceps */
-    add_(M(up.at(0.14, 0.008, -0.026), up.at(0.74, 0.004, -0.022), 0.046, 0.040, up.f, A(s))); /* triceps */
+    bulk(add_(M(up.at(-0.20, 0.010, 0.000), up.at(0.47, 0.020, 0.002), 0.060, 0.066, up.f, A({ a: 'ch', b: s, t0: 0.0, t1: 0.45 }, 0.03))),'delt');  /* deltoid */
+    bulk(add_(M(up.at(-0.06, 0.004, 0.032), up.at(0.38, 0.008, 0.028), 0.040, 0.036, up.f, A({ a: 'ch', b: s, t0: 0.0, t1: 0.5 }, 0.02))),'delt');  /* front deltoid */
+    bulk(add_(M(up.at(-0.06, 0.006, -0.030), up.at(0.36, 0.008, -0.026), 0.038, 0.034, up.f, A({ a: 'ch', b: s, t0: 0.0, t1: 0.5 }, 0.02))),'delt');  /* rear deltoid */
+    bulk(add_(C(S0, E0, 0.052, 0.040, A(s, 0.016))),'fore');  /* upper arm core */
+    bulk(add_(M(up.at(0.28, 0.000, 0.026), up.at(0.86, 0.000, 0.020), 0.042, 0.040, up.f, A(s))),'bi');  /* biceps */
+    bulk(add_(M(up.at(0.14, 0.008, -0.026), up.at(0.74, 0.004, -0.022), 0.046, 0.040, up.f, A(s))),'bi');  /* triceps */
     add_(S(E0, 0.040, A([[s, 0.5], [e, 0.5]], 0.01)));                                 /* elbow */
     add_(C(E0, W0, 0.039, 0.024, A(e)));                                               /* forearm core */
-    add_(M(lo.at(0.02, 0.008, 0.006), lo.at(0.50, 0.003, 0.002), 0.040, 0.034, lo.f, A(e, 0.018)));   /* forearm muscles */
+    bulk(add_(M(lo.at(0.02, 0.008, 0.006), lo.at(0.50, 0.003, 0.002), 0.040, 0.034, lo.f, A(e, 0.018))),'fore');  /* forearm muscles */
     add_(S(W0, 0.025, A([[e, 0.5], [w, 0.5]], 0.010)));                                /* wrist */
     /* hand: palm faces the thigh (inward); width runs front-back */
     const tip = ENDS[w]; const hd = limbFrame(W0, tip, sx, [0, 0, 1]);
@@ -189,16 +195,16 @@ export function sculpt(opt = {}) {
     const th = limbFrame(H0, K0, sx), sh = limbFrame(K0, A0, sx);
     const Lg = (b, k = 0.014) => ({ g, b, k, op: 'add' });
     add_(C(add(H0, [sx * 0.006, 0.050, -0.010]), K0, 0.078, 0.052, Lg({ a: 'pe', b: hh, t0: 0.0, t1: 0.25 }, 0.07)));   /* thigh core */
-    add_(M(th.at(0.18, 0.042, 0.010), th.at(0.86, 0.032, 0.008), 0.050, 0.054, th.f, Lg(hh)));     /* vastus lateralis */
-    add_(M(th.at(0.10, 0.008, 0.040), th.at(0.80, 0.004, 0.034), 0.048, 0.044, th.f, Lg(hh)));     /* rectus femoris */
+    bulk(add_(M(th.at(0.18, 0.042, 0.010), th.at(0.86, 0.032, 0.008), 0.050, 0.054, th.f, Lg(hh))),'thigh');  /* vastus lateralis */
+    bulk(add_(M(th.at(0.10, 0.008, 0.040), th.at(0.80, 0.004, 0.034), 0.048, 0.044, th.f, Lg(hh))),'thigh');  /* rectus femoris */
     add_(M(th.at(0.66, -0.030, 0.024), th.at(0.95, -0.026, 0.020), 0.040, 0.036, th.f, Lg(hh, 0.012)));  /* vastus medialis */
-    add_(M(th.at(0.10, 0.004, -0.034), th.at(0.86, 0.000, -0.030), 0.054, 0.044, th.f, Lg(hh)));  /* hamstrings */
+    bulk(add_(M(th.at(0.10, 0.004, -0.034), th.at(0.86, 0.000, -0.030), 0.054, 0.044, th.f, Lg(hh))),'thigh');  /* hamstrings */
     add_(M(th.at(0.06, -0.022, 0.004), th.at(0.52, -0.024, 0.004), 0.034, 0.048, th.f, Lg(hh, 0.012)));  /* adductors */
     add_(S(K0, 0.048, Lg([[hh, 0.5], [kk, 0.5]], 0.012)));                                /* knee */
     add_(M(add(K0, mul(th.f, 0.026)), add(add(K0, mul(th.f, 0.028)), [0, -0.05, 0]), 0.024, 0.016, th.f, Lg([[hh, 0.4], [kk, 0.6]], 0.01)));  /* patella */
     add_(C(K0, A0, 0.048, 0.030, Lg(kk)));                                                /* shin core */
-    add_(M(sh.at(0.05, -0.021, -0.028), sh.at(0.52, -0.014, -0.022), 0.040, 0.046, sh.f, Lg(kk, 0.012)));  /* calf, inner head */
-    add_(M(sh.at(0.05, 0.022, -0.026), sh.at(0.44, 0.014, -0.020), 0.036, 0.040, sh.f, Lg(kk, 0.012)));    /* calf, outer head */
+    bulk(add_(M(sh.at(0.05, -0.021, -0.028), sh.at(0.52, -0.014, -0.022), 0.040, 0.046, sh.f, Lg(kk, 0.012))),'calf');  /* calf, inner head */
+    bulk(add_(M(sh.at(0.05, 0.022, -0.026), sh.at(0.44, 0.014, -0.020), 0.036, 0.040, sh.f, Lg(kk, 0.012))),'calf');  /* calf, outer head */
     add_(M(sh.at(0.30, 0.000, -0.018), sh.at(0.82, 0.000, -0.012), 0.044, 0.032, sh.f, Lg(kk)));           /* soleus */
     add_(M(sh.at(0.10, 0.016, 0.022), sh.at(0.62, 0.010, 0.020), 0.024, 0.020, sh.f, Lg(kk, 0.01)));       /* tibialis */
     add_(S(A0, 0.029, Lg([[kk, 0.5], [aa, 0.5]], 0.01)));                                 /* ankle */

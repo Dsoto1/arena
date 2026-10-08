@@ -136,6 +136,13 @@ export async function createToken(opts = {}) {
     for (const k of ['wL', 'wR']) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.024, 14, 10), hMat(HANDLE_COL.pink)); m.renderOrder = 999; m.userData = { k, kind: 'hand' }; handles.add(m); HD.push(m); }
     const lg = new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(JOINTS.length * 6), 3)); lg.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(JOINTS.length * 6), 3));
     const lines = new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ vertexColors: true, depthTest: false, transparent: true, opacity: 0.8 })); lines.renderOrder = 998; handles.add(lines);
+    /* v0.98: the joint under the pointer (or being dragged) lights up — a bigger handle + a soft white halo */
+    const halo = new THREE.Mesh(new THREE.SphereGeometry(0.058, 18, 12), new THREE.MeshBasicMaterial({ color: 0xfff4c8, depthTest: false, transparent: true, opacity: 0.5 })); halo.renderOrder = 997; halo.visible = false; handles.add(halo);
+    let hot = null;
+    const lightHot = () => { const k = drag && drag.k ? drag.k : hot; let on = null;
+      for (const m of HD) { const me = m.userData.k === k; m.scale.setScalar(me ? 1.55 : 1); if (me) on = m; }
+      halo.visible = !!on; if (on) { halo.position.copy(on.position); halo.scale.setScalar(on.userData.k === 'pe' ? 1.25 : 1); }
+      cv.style.cursor = drag ? (drag.k ? 'grabbing' : 'grabbing') : (hot ? 'pointer' : 'grab'); };
     function place() {
       for (const m of HD) m.position.copy(m.userData.kind === 'hand' ? endPos(rig, m.userData.k) : jointPos(rig, m.userData.k));
       const P = lg.attributes.position, C = lg.attributes.color; let n = 0;
@@ -147,7 +154,7 @@ export async function createToken(opts = {}) {
     function render() {
       const w = cv.width, h = cv.height; if (!w || !h) return;
       const ppm = h / 2.6 * view.zoom; cam = orthoCam(w, h, ppm, view.el, new THREE.Vector3(0, 0.93, 0)); lightFor(cam); B.setOutline(1.6 / ppm);
-      turn.rotation.y = view.yaw * D2R; turn.updateMatrixWorld(true); place();
+      turn.rotation.y = view.yaw * D2R; turn.updateMatrixWorld(true); place(); lightHot();
       const r = renderer(w, h); r.render(scene, cam); ctx.clearRect(0, 0, w, h); ctx.drawImage(r.domElement, 0, 0, w, h, 0, 0, w, h);
       turn.rotation.y = 0; turn.updateMatrixWorld(true);
     }
@@ -164,10 +171,16 @@ export async function createToken(opts = {}) {
       const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(cam.getWorldDirection(new THREE.Vector3()).negate(), p0);
       if (k[0] === 'a') plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, ANKLE_H, 0));
       drag = { k, kind, plane, x: e.clientX, y: e.clientY, pe0: rig.bones.pe.position.clone(), p0: p0.clone().applyMatrix4(toSpace()) };
-      turn.rotation.y = 0; turn.updateMatrixWorld(true); e.preventDefault();
+      turn.rotation.y = 0; turn.updateMatrixWorld(true); e.preventDefault(); later();
+    };
+    const hover = (e) => {
+      if (!cam) return; pick(e); toSpace(); place(); handles.updateMatrixWorld(true);
+      const hit = ray.intersectObjects(HD, false)[0]; const k = hit ? hit.object.userData.k : null;
+      turn.rotation.y = 0; turn.updateMatrixWorld(true);
+      if (k !== hot) { hot = k; later(); }
     };
     const move = (e) => {
-      if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.x = e.clientX; drag.y = e.clientY;
+      if (!drag) { hover(e); return; } const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.x = e.clientX; drag.y = e.clientY;
       if (!drag.k) { view.yaw += dx * 0.6; view.el = Math.max(-10, Math.min(60, view.el + dy * 0.3)); later(); return; }
       pick(e); const inv = toSpace(); const hit = new THREE.Vector3(); const k = drag.k, side = k.slice(-1);
       const qInv = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -view.yaw * D2R);
@@ -184,13 +197,19 @@ export async function createToken(opts = {}) {
       } else { rotateJointWorld(rig, k, up, dx * 0.01); rotateJointWorld(rig, k, right, dy * 0.01); }
       pose = readPose(rig, pinsNow()); applyPose(rig, pose); later(); if (onChange) onChange(false);
     };
-    const up = () => { if (drag && drag.k && onChange) onChange(true); drag = null; };
+    const up = () => { if (drag && drag.k && onChange) onChange(true); drag = null; later(); };
+    const leave = () => { if (!drag && hot) { hot = null; later(); } };
     const wheel = (e) => { e.preventDefault(); view.zoom = Math.max(0.7, Math.min(3, view.zoom * (e.deltaY < 0 ? 1.1 : 0.9))); later(); };
-    cv.addEventListener('pointerdown', down); cv.addEventListener('pointermove', move); cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up); cv.addEventListener('wheel', wheel, { passive: false });
+    cv.addEventListener('pointerdown', down); cv.addEventListener('pointermove', move); cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up); cv.addEventListener('wheel', wheel, { passive: false }); cv.addEventListener('pointerleave', leave);
     render();
     return {
       render: later, view,
-      destroy() { cv.removeEventListener('pointerdown', down); cv.removeEventListener('pointermove', move); cv.removeEventListener('pointerup', up); cv.removeEventListener('pointercancel', up); cv.removeEventListener('wheel', wheel);
+      /* v0.98: the lit joint (hover or drag) and a joint's place on the canvas in CSS pixels (tests, hints) */
+      hot: () => (drag && drag.k) || hot,
+      screenOf(k) { if (!cam) return null; turn.rotation.y = view.yaw * D2R; turn.updateMatrixWorld(true); place(); const m = HD.find(x => x.userData.k === k); if (!m) return null;
+        const v = m.position.clone().applyMatrix4(turn.matrixWorld).project(cam); turn.rotation.y = 0; turn.updateMatrixWorld(true); const b = cv.getBoundingClientRect();
+        return { x: b.left + (v.x + 1) / 2 * b.width, y: b.top + (1 - v.y) / 2 * b.height }; },
+      destroy() { cv.removeEventListener('pointerleave', leave); cv.removeEventListener('pointerdown', down); cv.removeEventListener('pointermove', move); cv.removeEventListener('pointerup', up); cv.removeEventListener('pointercancel', up); cv.removeEventListener('wheel', wheel);
         if (raf) cancelAnimationFrame(raf); turn.remove(handles); handles.traverse(x => { if (x.geometry) x.geometry.dispose(); if (x.material) x.material.dispose(); }); handles = null; },
     };
   }
