@@ -221,3 +221,114 @@ shadow, a catchlight). At 28 px the strong pass reads like the original with dep
 Reading: 2.5–3× the original at 240 px, 5–9× in small lists. The build (DOMParser + serializer) is 1.5–3.5 ms in the prototype; a
 production painter would emit the same markup as strings (~0.1 ms). **Needed for the game:** the raster cache of §5 (each spec hash ×
 size drawn once to a bitmap), so lists cost the same as any small image; the 64-px tier should also drop the strands (most of its KB).
+
+---
+
+## 7. Face VARIETY parts (his ask 2026-10-08: more variety in the face itself)
+
+Prototype `face99v.js` (loaded after `face99b.js`), runner `variety.js` → `variety.html`, `variety_parts.png` (one base man + a woman
+for five parts, every option, painterly 150–160 px), `variety_crowd.png` (24 random people with today's parts vs the SAME 24 with the
+new parts rolled, 96 + 40 px), `variety_generated.png` (12 Manager fighters: `gladPortrait(id,cls)` before → + parts from the id's hash).
+
+**How it is drawn.** `faceV(spec,opt)` = `face99b` with two hooks (face99b.js gained `opt.pre` and `opt.geo`; with neither, its output is
+byte-identical to before — checked on 24 samples, paint + ink, 240/64/28 px):
+- `pre` reshapes the bust BEFORE the paint pass: the face ellipse becomes a Catmull-Rom profile (crown · temple · cheekbone · jaw angle ·
+  chin), ears move with the cheek width and change size/turn/outline, eyes move (set) and change rx/ry/tilt, brows/nose/mouth paths are
+  swapped, the neck changes width/length (the shoulders and everything on them scale about the frame's bottom edge, so the frame stays
+  filled), beards scale to the new jaw/chin, earrings ride the lobe, kohl/tears/bruise/patch/lashes follow the eyes. Reshaped parts carry
+  `data-v` so the paint pass finds them.
+- `geo` gives the paint pass shape-aware planes: cheekbone light + hollows, temple shade, chin light, jaw light/shadow and square-jaw angles
+  are placed from the profile; nose planes per nose type; lips (upper/lower volume, highlight, shadow, corners) from the lip parameters; eyes
+  get the iris clipped to the eye, lids/crease per eye type (hooded = a skin fold, deep-set = a darker socket + brow shadow); ears keep the
+  helix/concha drawing at the new size (cauliflower = lumps + bruise tint); neck muscles/collar AO move with the neck; age lines are painted
+  creases (dark line + light line under it).
+- A face without any new part is drawn exactly as today (`ident: true` in the runner).
+
+### 7a. The new keys (all values short; `''` = today's shape)
+
+| key | part | values |
+|---|---|---|
+| `fs` | face shape | '' oval · `sq` square · `rd` round · `lg` long · `ht` heart · `dm` diamond |
+| `jw` | jaw | '' · `nar` narrow · `wid` wide · `str` strong (angle shadow + chin cleft) |
+| `ck` | cheekbones | '' · `hi` high (brighter, hollow below) · `flat` |
+| `br` | brows | '' · `thk` thick · `thn` thin · `arc` arched · `str` straight/low · `scr` scar-split · `uni` unibrow |
+| `ey` | eye shape | '' · `alm` almond (tilted, flick) · `rnd` round · `hod` hooded · `nar` narrow · `dep` deep-set — eye colours unchanged |
+| `es` | eye set | '' · `wide` · `close` |
+| `ns` | nose | '' · `rom` roman/aquiline · `brd` broad · `btn` button · `lng` long straight · `brk` broken/crooked (+ a small scar) |
+| `lp` | lips | '' · `thn` thin · `ful` full · `wid` wide · `sml` small · `dwn` downturned · `smk` smirk — combines with `smile` |
+| `ea` | ears | '' · `sml` small · `lrg` large · `pro` protruding · `caul` cauliflower |
+| `nk` | neck | '' · `sht` short-thick · `lng` long-slim · `bul` bull |
+| `ag` | age | '' · `yng` young (no nasolabial, fuller cheeks) · `wth` weathered (tan, 2 forehead lines, crow's feet, under-eye line) · `old` (3 lines, bags, jowls, marionette lines, neck lines; **greys hair, brows and beard** 58% toward #c9c6bf) |
+| `ln` | extra lines | '' · `f` forehead · `c` cheek · `fc` both |
+
+**Storage — packed (recommended):** one key `fx`, one base-36 character per part in the order above, `0` = default, trailing zeros dropped
+(`{fs:'sq',ns:'brk',ag:'wth'}` → `fx:"10000005002"`). `vPack` / `vUnpack` in face99v.js. Painter reads `fx` and also loose keys (editor drafts).
+
+| | bytes added to the stored look |
+|---|---|
+| packed `fx`, any face (≤12 chars) | **≤ 19 B** (`,"fx":"130550554321"`); 0 B for a face with no new parts |
+| flat keys instead, a typical rolled face | ~68 B average (crowd sample), ~110 B with all twelve set |
+| online `look.portrait` (cleanLook ≤40 keys, ≤3 KB) | FACE1 19 keys + `fx` = 20 keys; ~300 B → ~320 B — **no server change** |
+| online patron (cleanPatron ≤16 keys, ≤1 KB) | today 12 keys + `fx` = 13 — fits; flat keys (+12) would NOT fit → that is why `fx` is packed |
+
+### 7b. Generated faces — DECISION (Virgilante 2026-10-08)
+
+**Every generated fighter gets the new variety. No version gate keeps the old generated faces.** Generated faces (Manager fighters via
+`gladPortrait`/`gLook`, Ludus/Hall records without a stored portrait, spectators/crowd regulars, council advisors, CPU seats) roll ALL new parts
+deterministically from their id hash — a SECOND hash stream (`fnv('fx:'+id)`), so the fields `gladPortrait` already rolls (skin, hair, helm,
+beard…) stay exactly as they are and only the new parts are added. Same id → same face on every screen and every reload, never the dice RNG.
+Existing generated fighters therefore change look once (same colours/helm/beard; new shape, eyes, nose, age…) — his call.
+**Stored / custom faces keep today's shapes** (Studio characters, lanistas, Manager houses, online looks, patrons): a stored look without `fx`
+draws exactly as today until the player changes a part in the designer (which writes `fx`).
+(Note for the build: `gLook` saves `g.look` lazily into the world. The roll must run at DRAW time from the id for any look the GAME generated —
+tag generated looks, e.g. `g.look.gen=1`, or treat a Manager `g.look` without `fx` as generated — so already-saved generated looks pick up the
+variety without a save migration rewrite; a look the player edited is never re-rolled.)
+
+Weights used in the mock (`rollParts` in variety.js; '' = today's shape):
+
+| part | weights |
+|---|---|
+| fs | '' 28 · sq 16 · rd 14 · lg 14 · ht 13 · dm 15 |
+| jw | '' 52 · nar 13 (women 22) · wid 15 · str 20 (women 4) |
+| ck | '' 58 · hi 26 · flat 16 |
+| br | '' 32 · thk 18 (w 6) · thn 7 (w 26) · arc 10 (w 18) · str 12 · scr 9 for male fighters (else 3) · uni 6 |
+| ey | '' 34 · alm 16 · rnd 12 · hod 14 · nar 12 · dep 12 |
+| es | '' 70 · wide 15 · close 15 |
+| ns | '' 28 · rom 18 · brd 15 · btn 8 (w 16) · lng 15 · brk 16 for male fighters (else 4) |
+| lp | '' 32 · thn 13 · ful 11 (w 20) · wid 10 · sml 10 · dwn 12 · smk 10 |
+| ea | '' 55 · sml 13 · lrg 12 · pro 11 · caul 12 for male fighters (else 1) |
+| nk | '' 50 · sht 16 · lng 12 (w 24) · bul 20 (w 2) |
+| ag | '' 48 · yng 26 · wth 19 · old 7; Veteranus '' 30 · wth 45 · old 25; Slave/Damnatio '' 40 · yng 20 · wth 35 · old 5 (a Manager fighter with an age can map it directly) |
+| ln | '' 74 · f 10 · c 10 · fc 6 |
+
+The crowd/spectators/advisors use the non-fighter weights (few broken noses/cauliflower ears; advisors could lean `wth`/`old`).
+
+### 7c. Findings from the shots
+- **Reads at 160 and 96 px:** face shape (square/round/long/heart/diamond), age (grey hair, lines, bags), neck (long/bull), ears
+  (protruding/cauliflower/large), brows (thick/unibrow/arched), nose (roman/broad/button/broken), lips (full/thin/smirk/downturned) all read.
+  Eye shape and eye set are the subtlest (the eyes are small in this bust); hooded and narrow read best, round/almond only at ≥96 px.
+- **At 40 px:** what survives is silhouette + value — face width/length, neck, grey hair, big ears. Eyes/nose/lips/lines are lost (expected;
+  the <48 px tier draws volumes only).
+- **In a random crowd** today's look pieces still dominate: helmets (galea/murmillo/secutor), beards and hair hide jaw, chin and ears, so a
+  crowd of helmeted fighters gains less than a bare-headed one. Bare heads, women and the old gain the most. Generated Manager fighters
+  (mostly bare or open helmets) show a clear before/after difference.
+- **Iterated:** roman and broken nose lines first curled into "?" / "2" shapes → straightened (one bump / one bend); the bull neck's flat
+  bottom edge sat like a plinth on the tunic → curved bottom. No broken shapes or misplaced features in the final shots: features stay on the
+  face for every combination in the crowd and generated sets (beards follow the jaw, earrings the lobes, kohl/patch/tears the eyes).
+- **Known limits:** the broken nose still reads a little graphic at 160 px; helmets/hoods are drawn for today's head width (a round or
+  diamond face shows ≤1.5 units of cheek beside a galea's cheek guard — fine in the shots); `old` greying overrides a chosen hair colour
+  (intended: salt-and-pepper; a designer could offer "keep hair colour").
+
+### 7d. Costs (headless Chromium, this machine)
+| | today's parts | with the new parts |
+|---|---|---|
+| build (string → string, prototype DOMParser) 240 px | 2.9–3.3 ms | 3.4–3.5 ms (+0.2–0.5 ms: the reshaping pass) |
+| SVG size 240 / 64 / 28 px | 21.8 / 18.1 / 8.6 KB | 22.8 / 19.1 / 9.3 KB (+~1 KB) |
+| stored look | — | +0–19 B (`fx`) |
+Paint cost per face is unchanged in kind (same number of gradients/clip paths, a few more small paths); the raster cache of §5 still applies
+(the cache key = spec hash, which now includes `fx`). A production painter would emit the reshaped geometry directly as strings (no DOM pass).
+
+### 7e. Designer
+The `faceDesigner` component (§2c) gets a **Face shape** fold: face shape · jaw · cheekbones · brows · eyes · eye set · nose · lips · ears ·
+neck · age · lines as small picture chips (each chip = the current face with that option, 48 px), plus 🎲 "Random features" that rolls only
+these twelve. `fields:'crowd'` keeps all of them (spectators and patrons benefit most).
