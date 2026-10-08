@@ -16987,7 +16987,7 @@ function edApplyCell(r,c){
 /* randomArena — a random layout mirrored in four quadrants (pillars, tunnels, maybe spikes, 2–6 base beasts, maybe Leo). NOTE: uses rnd()/shuffle, the seeded dice, from UI code. */
 function randomArena(){
   const L={pillars:[],tunnels:[],spikes:[],chest:[6,6],chestW:[...CHEST_W],npcs:[],items:[],starts:STARTS.map(x=>[...x])};
-  const free=(r,c)=>!(r===6&&c===6)&&!L.starts.some(s=>s[0]===r&&s[1]===c)&&!L.pillars.some(p=>p.r===r&&p.c===c)&&!L.tunnels.some(t=>t[0]===r&&t[1]===c);
+  const free=(r,c)=>!(r===6&&c===6)&&!L.starts.some(s=>s&&s[0]===r&&s[1]===c)&&!L.pillars.some(p=>p.r===r&&p.c===c)&&!L.tunnels.some(t=>t[0]===r&&t[1]===c);
   // mirrored in four quadrants so no start is favored
   const mirror=(r,c)=>[[r,c],[c,12-r],[12-r,12-c],[12-c,r]];
   for(let k=0;k<30&&L.pillars.length<12;k++){const r=rnd(6),c=1+rnd(5);if(mirror(r,c).every(([a,b])=>free(a,b)))for(const [a,b] of mirror(r,c))L.pillars.push({r:a,c:b,pot:'?'})}
@@ -50532,7 +50532,7 @@ async function e94Test(){const d=ST.draft;let errs=[];try{errs=eventErrors(d)}ca
   const copy=JSON.parse(JSON.stringify(d));if(!copy.id)copy.id='e94test';
   E94T.snap={draft:JSON.stringify(d),undo:[...E94.undo],redo:[...E94.redo],round:E94.round,tab:E94.tab,tool:E94.tool,opt:{...E94.opt},step:ST.edStep,seen:ST.edSeen};
   E94T.def=eventDef(copy);E94T.def.n=E94T.def.short=(copy.name||_T('Custom event'))+_T(' (test)');E94T.def.trophy=null;E94T.def.sponsor=null;E94T.def.nofates=true;
-  const def=E94T.def;const pool=(copy.classes&&copy.classes.length?copy.classes:BASE_CLS).filter(k=>CLASSES[k]);const n=Math.max(def.min,Math.min(def.max,4));
+  const def=E94T.def;const pool=(copy.classes&&copy.classes.length?copy.classes:BASE_CLS).filter(k=>CLASSES[k]);const n=Math.max(def.min,Math.min(def.max,Math.max(4,(copy.layout&&copy.layout.starts||[]).filter(Boolean).length)));
   const bag=[...pool];const seats=Array.from({length:n},(_,i)=>{if(!bag.length)bag.push(...pool);const cls=bag.splice(Math.floor(Math.random()*bag.length),1)[0];
     return {cls,cpu:true,diff:'normal',team:def.coop?'A':def.teams?(i%2?'B':'A'):undefined}});
   if(CUR_MODAL)CUR_MODAL.done('e94test');await new Promise(r=>setTimeout(r,250));
@@ -55813,6 +55813,15 @@ function adv98RLine(m){const R=adv98R(m);if(!R)return '';const names=Object.from
     if(g&&!g.querySelector('button[data-act]:not([disabled])')){const why=atk92Why(p);
       if(why)for(const b of g.querySelectorAll('.wb98')){const t=(b.dataset.tip||'').split('<br>')[0];b.dataset.tip=(t?t+'<br>':'')+esc(why);
         const al=b.getAttribute('aria-label')||'';b.setAttribute('aria-label',al.replace(/ — [^—]*$/,'')+' — '+why)}}}}}catch(e){console.error(e)}
+  return r}}
+/* 261-v99fix — v0.99 fixes (Virgilante's notes).
+   1) Event Designer with 8 players: a seat whose start tile was never placed no longer falls back onto a printed start tile another
+      seat already uses (two gladiators on one tile); Test play seats every placed start (was capped at 4) — see 224 e94Test.
+   2) 15-custom random-arena helper skips unplaced (null) start slots. */
+{const base=customSeatStarts;customSeatStarts=function(config,evDef){const r=base.apply(this,arguments);
+  try{const used=new Set(config.seats.filter(s=>s.start).map(s=>s.start[0]+','+s.start[1]));
+    config.seats.forEach((s,i)=>{if(s.start)return;const d=STARTS[i];if(d&&!used.has(d[0]+','+d[1]))return;
+      const f=STARTS.find(t=>!used.has(t[0]+','+t[1]));if(f){s.start=[...f];used.add(f[0]+','+f[1])}})}catch(e){console.error(e)}
   return r}}
 
 /* =====================================================================

@@ -388,7 +388,7 @@ async function e94Test(){const d=ST.draft;let errs=[];try{errs=eventErrors(d)}ca
   const copy=JSON.parse(JSON.stringify(d));if(!copy.id)copy.id='e94test';
   E94T.snap={draft:JSON.stringify(d),undo:[...E94.undo],redo:[...E94.redo],round:E94.round,tab:E94.tab,tool:E94.tool,opt:{...E94.opt},step:ST.edStep,seen:ST.edSeen};
   E94T.def=eventDef(copy);E94T.def.n=E94T.def.short=(copy.name||_T('Custom event'))+_T(' (test)');E94T.def.trophy=null;E94T.def.sponsor=null;E94T.def.nofates=true;
-  const def=E94T.def;const pool=(copy.classes&&copy.classes.length?copy.classes:BASE_CLS).filter(k=>CLASSES[k]);const n=Math.max(def.min,Math.min(def.max,4));
+  const def=E94T.def;const pool=(copy.classes&&copy.classes.length?copy.classes:BASE_CLS).filter(k=>CLASSES[k]);const n=Math.max(def.min,Math.min(def.max,Math.max(4,(copy.layout&&copy.layout.starts||[]).filter(Boolean).length)));
   const bag=[...pool];const seats=Array.from({length:n},(_,i)=>{if(!bag.length)bag.push(...pool);const cls=bag.splice(Math.floor(Math.random()*bag.length),1)[0];
     return {cls,cpu:true,diff:'normal',team:def.coop?'A':def.teams?(i%2?'B':'A'):undefined}});
   if(CUR_MODAL)CUR_MODAL.done('e94test');await new Promise(r=>setTimeout(r,250));
