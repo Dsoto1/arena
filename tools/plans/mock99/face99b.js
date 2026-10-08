@@ -116,6 +116,7 @@ window.face99b=function(spec,opt){opt=opt||{};spec=spec||{};const color=opt.colo
   let s=portraitSVG(base,color);
   if(mantle)s=s.replace(/fill="#efe6d2"/,`fill="${spec.tunic||'#e8dcc0'}"`).replace(/stroke="#8a1c1c" stroke-width="5"/,`stroke="${spec.robe||'#5a4636'}" stroke-width="9"`);
   if(spec.helm==='straw')s=s.replace(/<\/svg>$/,`<ellipse cx="50" cy="40" rx="34" ry="7" fill="#d8b866" stroke="#8a6a2a"/><path d="M32 40C32 22 68 22 68 40Z" fill="#e2c477" stroke="#8a6a2a"/><path d="M33 36h34" stroke="#8a4a2a" stroke-width="2.2"/></svg>`);
+  if(opt.pre)s=opt.pre(s,spec,color); /* variety.js: reshape the bust (face shape, eyes, nose, lips, ears, neck…) before the paint pass */
   if(opt.polish!==false){tex99b();s=strong99(s,spec,{...opt,color})}
   const FR={bust:'0 0 100 140',chip:'6 30 88 88',head:'12 28 76 76'};s=s.replace('viewBox="0 0 100 140"',`viewBox="${FR[opt.frame||'bust']}"`);
   if(opt.w)s=s.replace('<svg ',`<svg width="${opt.w}" height="${opt.h||opt.w}" `);
@@ -128,14 +129,16 @@ function strong99(svg,p,opt){const X=new Engine(svg,opt),root=X.root,ink=X.ink,T
   const bg=all.find(e=>e.tagName==='rect'&&A('width')(e)==='100'&&A('height')(e)==='140');
   const disc=all.find(e=>e.tagName==='circle'&&A('r')(e)==='46');
   const dStart=(e,pre)=>e.tagName==='path'&&(e.getAttribute('d')||'').startsWith(pre);
-  const bodyO=all.find(e=>dStart(e,'M6 140C8 110')||dStart(e,'M12 140C14 112'));
-  const bodyI=all.find(e=>dStart(e,'M20 140C22 117 34 107 50 107S')||dStart(e,'M24 140C26 118'));
-  const neck=all.find(e=>e.tagName==='rect'&&A('y')(e)==='78');
-  const ears=all.filter(e=>e.tagName==='ellipse'&&A('cy')(e)==='62'&&['28','72','30','70'].includes(A('cx')(e)));
-  const face=all.find(e=>e.tagName==='ellipse'&&A('cx')(e)==='50'&&A('cy')(e)==='58');
-  const eyes=all.filter(e=>e.tagName==='ellipse'&&A('cy')(e)==='58'&&A('rx')(e)==='3'&&['41','59'].includes(A('cx')(e)));
-  const mouth=all.find(e=>dStart(e,'M44 77Q50'));const brows=all.find(e=>dStart(e,'M35 52L46 53'));const nose=all.find(e=>dStart(e,'M50 60L47 70'));
-  const fixed=new Set([bg,disc,bodyO,bodyI,neck,face,mouth,brows,nose,...ears,...eyes].filter(Boolean));
+  /* variety (variety.js): opt.geo = shape-aware hooks; the parts it reshaped carry data-v and are found by that tag */
+  const G=opt.geo||null;const V=k=>all.filter(e=>e.getAttribute('data-v')===k);
+  const bodyO=V('bodyO')[0]||all.find(e=>dStart(e,'M6 140C8 110')||dStart(e,'M12 140C14 112'));
+  const bodyI=V('bodyI')[0]||all.find(e=>dStart(e,'M20 140C22 117 34 107 50 107S')||dStart(e,'M24 140C26 118'));
+  const neck=V('neck')[0]||all.find(e=>e.tagName==='rect'&&A('y')(e)==='78');
+  const ears=G&&V('ear').length?V('ear'):all.filter(e=>e.tagName==='ellipse'&&A('cy')(e)==='62'&&['28','72','30','70'].includes(A('cx')(e)));
+  const face=V('face')[0]||all.find(e=>e.tagName==='ellipse'&&A('cx')(e)==='50'&&A('cy')(e)==='58');
+  const eyes=G&&V('eye').length?V('eye'):all.filter(e=>e.tagName==='ellipse'&&A('cy')(e)==='58'&&A('rx')(e)==='3'&&['41','59'].includes(A('cx')(e)));
+  const mouth=V('mouth')[0]||all.find(e=>dStart(e,'M44 77Q50'));const brows=V('brows')[0]||all.find(e=>dStart(e,'M35 52L46 53'));const nose=V('nose')[0]||all.find(e=>dStart(e,'M50 60L47 70'));
+  const fixed=new Set([bg,disc,bodyO,bodyI,neck,face,mouth,brows,nose,...ears,...eyes,...all.filter(e=>e.hasAttribute('data-v'))].filter(Boolean));
   const matOf=c=>{if(!c||c==='none'||c.startsWith('url'))return null;if(same(c,skin))return 'skin';if(same(c,hair))return 'hair';
     if(METAL.some(m=>same(m,c)))return 'metal';if(GOLD.some(m=>same(m,c)))return 'gold';if(STRAW.some(m=>same(m,c)))return 'straw';if(FUR.some(m=>same(m,c)))return 'fur';if(LEAF.some(m=>same(m,c)))return 'leaf';
     if(LEATHER.some(m=>same(m,c)))return 'leather';if(same(c,acc)||same(c,dkAcc)||CLOTHL.some(m=>same(m,c))||(p.tunic&&same(c,p.tunic))||(p.robe&&same(c,p.robe))||same(c,'#8a1c1c'))return 'cloth';return null};
@@ -165,13 +168,14 @@ function strong99(svg,p,opt){const X=new Engine(svg,opt),root=X.root,ink=X.ink,T
   if(neck){neck.setAttribute('fill',X.cyl(skin,'skin'));let last=neck;
     const occN=[face,...items.filter(o=>o.after&&o.filled&&['hair','metal','cloth','fur'].includes(o.mat)&&o.b.y1>80&&o.b.y0<92).map(o=>o.e)].filter(Boolean);
     last=X.after(last,X.cast([neck],occN,{dx:1.3,dy:3,op:.55,col:mix(shSkin,'#000',.35)}));
-    if(T>=2)last=X.after(last,X.frag(`<g clip-path="${X.clip([neck])}" fill="none" stroke-linecap="round"><path d="M${fem?44.5:43.5} 88Q46 96 48 103M${fem?55.5:56.5} 88Q54 96 52 103" stroke="${shSkin}" stroke-opacity=".38" stroke-width=".8"/><path d="M${fem?43.6:42.6} 89Q45 96 47 103" stroke="${ltSkin}" stroke-opacity=".3" stroke-width=".7"/><ellipse cx="50" cy="104" rx="7" ry="2.6" fill="${mix(shSkin,'#000',.3)}" stroke="none" opacity=".45"/>${ink&&T>=2?`<rect x="${fem?54:55}" y="78" width="6" height="26" fill="${shSkin}" opacity=".35"/>`:''}</g>`));
+    if(T>=2)last=X.after(last,X.frag(G&&G.neckM?G.neckM({clip:X.clip([neck]),shSkin,ltSkin,ink,T,fem,mix}):`<g clip-path="${X.clip([neck])}" fill="none" stroke-linecap="round"><path d="M${fem?44.5:43.5} 88Q46 96 48 103M${fem?55.5:56.5} 88Q54 96 52 103" stroke="${shSkin}" stroke-opacity=".38" stroke-width=".8"/><path d="M${fem?43.6:42.6} 89Q45 96 47 103" stroke="${ltSkin}" stroke-opacity=".3" stroke-width=".7"/><ellipse cx="50" cy="104" rx="7" ry="2.6" fill="${mix(shSkin,'#000',.3)}" stroke="none" opacity=".45"/>${ink&&T>=2?`<rect x="${fem?54:55}" y="78" width="6" height="26" fill="${shSkin}" opacity=".35"/>`:''}</g>`));
     if(ink){neck.setAttribute('stroke',INK);neck.setAttribute('stroke-width','.9')}}
   /* ----- ears: helix, concha, AO where they meet the head; rim on the far ear ----- */
   if(ears.length===2){ears.forEach(e=>{e.setAttribute('fill',X.vol(skin,'skin'));if(ink){e.setAttribute('stroke',INK);e.setAttribute('stroke-width','.9')}});
     const L=(cx,mir,lit)=>{const s=fem?'scale(.88 .86)':'';const t=`translate(${cx} 62) ${mir?'scale(-1 1)':''} ${s} translate(-28 -62)`;
       return `<g transform="${t}" fill="none" stroke-linecap="round"><path d="M27.6 55.4Q23.3 56.6 23.6 62Q24 67.4 27.6 69.3" stroke="${lit?ltSkin:shSkin}" stroke-opacity="${lit?.55:.4}" stroke-width=".85"/><path d="M28.6 58Q25.9 59.2 26.1 62.4Q26.4 65.6 28.7 66.6" stroke="${shSkin}" stroke-opacity=".6" stroke-width=".8"/><ellipse cx="27.7" cy="62.6" rx="1.5" ry="2.7" fill="${mix(shSkin,'#000',.2)}" stroke="none" opacity="${lit?.38:.5}"/><circle cx="26.4" cy="68.1" r=".7" fill="${ltSkin}" stroke="none" opacity="${lit?.5:.2}"/></g>`};
-    const ex=fem?30:28;const g=X.frag(`<g clip-path="${X.clip(ears)}">${T>=2?L(ex,false,true)+L(100-ex,true,false):''}<circle cx="${ex+4.5}" cy="62" r="4.5" fill="#140804" opacity=".32"/><circle cx="${100-ex-4.5}" cy="62" r="4.5" fill="#140804" opacity=".42"/></g>`);
+    const L2=G&&G.ear?(cx,mir,lit)=>G.ear(cx,mir,lit,{ltSkin,shSkin,fem,mix}):L;
+    const ex=G&&G.earX?G.earX:fem?30:28;const g=X.frag(`<g clip-path="${X.clip(ears)}">${T>=2?L2(ex,false,true)+L2(100-ex,true,false):''}<circle cx="${ex+4.5}" cy="62" r="4.5" fill="#140804" opacity=".32"/><circle cx="${100-ex-4.5}" cy="62" r="4.5" fill="#140804" opacity=".42"/></g>`);
     X.after(ears[1],g);X.after(g,X.rim(ears[1],{w:1.2}))}
   /* ----- the face: volume, modelled planes, lips, texture, cast shadows from hair/headgear, rim + reflected light ----- */
   if(face){face.setAttribute('fill',X.vol(skin,'skin'));if(ink){face.setAttribute('stroke',INK);face.setAttribute('stroke-width','1')}
@@ -181,7 +185,7 @@ function strong99(svg,p,opt){const X=new Engine(svg,opt),root=X.root,ink=X.ink,T
     const sm=p.smile?2:0;const k=fem?.6:1;
     const lipU=fem?mix(skin,'#8a2234',.55):mix(skin,'#7a3a2c',.4),lipL=fem?mix(skin,'#c44a5c',.45):mix(skin,'#b0625a',.3);
     let m='';
-    if(T>=2){m+=`<ellipse cx="44" cy="42" rx="10" ry="6" fill="${li}" opacity=".55"/><ellipse cx="40" cy="50.4" rx="4.5" ry="1.3" fill="${li}" opacity=".4"/><ellipse cx="70" cy="50" rx="5" ry="9" fill="${ao}" opacity=".45"/>`
+    if(G&&G.planes)m=G.planes({li,ao,wm,shSkin,ltSkin,skin,sm,k,fem,lipU,lipL,T,ink,mix});else if(T>=2){m+=`<ellipse cx="44" cy="42" rx="10" ry="6" fill="${li}" opacity=".55"/><ellipse cx="40" cy="50.4" rx="4.5" ry="1.3" fill="${li}" opacity=".4"/><ellipse cx="70" cy="50" rx="5" ry="9" fill="${ao}" opacity=".45"/>`
       +`<ellipse cx="41" cy="56.6" rx="6.8" ry="4.5" fill="${ao}" opacity=".6"/><ellipse cx="59" cy="56.6" rx="6.8" ry="4.5" fill="${ao}" opacity=".72"/>`
       +`<ellipse cx="36.6" cy="63.4" rx="5.6" ry="2.4" fill="${li}" opacity=".55" transform="rotate(-18 36.6 63.4)"/><ellipse cx="63.6" cy="63.4" rx="4" ry="1.8" fill="${li}" opacity=".22" transform="rotate(18 63.6 63.4)"/>`
       +`<ellipse cx="35.5" cy="70.6" rx="5.5" ry="2.6" fill="${ao}" opacity="${.22*k}"/><ellipse cx="65" cy="70.2" rx="5.5" ry="3" fill="${ao}" opacity="${.36*k}"/>`
@@ -198,7 +202,7 @@ function strong99(svg,p,opt){const X=new Engine(svg,opt),root=X.root,ink=X.ink,T
       +`<ellipse cx="49" cy="83" rx="3.6" ry="1.7" fill="${li}" opacity=".5"/><path d="M30.6 66Q31.6 76 38 82" fill="none" stroke="${ltSkin}" stroke-opacity=".3" stroke-width="1.4"/><path d="M60 83.6Q66 80.6 70 72" fill="none" stroke="${shSkin}" stroke-opacity=".35" stroke-width="1.6"/>`}
     else m+=`<ellipse cx="59" cy="56.6" rx="6" ry="4" fill="${ao}" opacity=".45"/><path d="M50.6 60.4Q52.3 65 53.5 69.5L50.8 70Z" fill="${shSkin}" opacity=".45"/><ellipse cx="50.4" cy="71.7" rx="3.6" ry="1.2" fill="${ao}" opacity=".6"/><path d="M45 77.4Q50 81 55 77.4Z" fill="${lipL}"/>`;
     if(T===3&&!ink)m+=`<rect x="20" y="28" width="60" height="60" fill="url(#t99skin)" opacity=".7"/>`;
-    if(ink&&T>=2){const e=(cx,cy,rx,ry)=>`M${cx-rx} ${cy}a${rx} ${ry} 0 1 0 ${rx*2} 0a${rx} ${ry} 0 1 0 ${-rx*2} 0`;const cr=`${e(50,58,fem?20:22,fem?26.5:27)}${e(46.6,55.2,fem?20:22,fem?26.5:27)}`;m+=`<path d="${cr}" fill-rule="evenodd" fill="${shSkin}" opacity=".38"/><path d="${cr}" fill-rule="evenodd" fill="url(#t99hatch)" opacity=".22"/>`}
+    if(ink&&T>=2){const e=(cx,cy,rx,ry)=>`M${cx-rx} ${cy}a${rx} ${ry} 0 1 0 ${rx*2} 0a${rx} ${ry} 0 1 0 ${-rx*2} 0`;const cr=G&&G.crescent?G.crescent:`${e(50,58,fem?20:22,fem?26.5:27)}${e(46.6,55.2,fem?20:22,fem?26.5:27)}`;m+=`<path d="${cr}" fill-rule="evenodd" fill="${shSkin}" opacity=".38"/><path d="${cr}" fill-rule="evenodd" fill="url(#t99hatch)" opacity=".22"/>`}
     const planes=X.frag(`<g clip-path="${X.clip([face,...ears])}"><g ${fem?'transform="translate(50 58) scale(.92 .98) translate(-50 -58)"':''}>${m}</g></g>`);let last=X.after(face,planes);
     /* hair / headgear cast onto the face and ears */
     const occF=items.filter(o=>o.after&&o.filled&&['hair','metal','gold','cloth','fur','straw','leaf'].includes(o.mat)&&o.b.y0<84&&o.b.w>2.5).map(o=>o.e);
@@ -206,7 +210,7 @@ function strong99(svg,p,opt){const X=new Engine(svg,opt),root=X.root,ink=X.ink,T
     last=X.after(last,X.rim(face,{w:1.4,col:mix(RIM,skin,.3),op:.5}));
     if(!ink&&T>=2)last=X.after(last,X.rim(face,{w:1.6,dx:-.6,dy:-1.6,col:mix(acc,'#ffd2a0',.55),op:.2,dir:'b'}))}
   /* ----- eyes: lids, crease, iris, pupil, catchlights ----- */
-  eyes.forEach((e,i)=>{const cx=+e.getAttribute('cx'),cy=58;const blind=i===1&&p.mark==='blind',patch=i===1&&p.mark==='patch';if(patch)return;
+  eyes.forEach((e,i)=>{if(G&&G.eye){const r=G.eye(e,i,{p,T,ink,X,INK,shSkin,ltSkin,lum,mix,mul});if(r)X.after(e,X.frag(r));return}const cx=+e.getAttribute('cx'),cy=58;const blind=i===1&&p.mark==='blind',patch=i===1&&p.mark==='patch';if(patch)return;
     const ec=p.eyes||'#1a120c';const irisC=lum(ec)<.12?'#6a4428':mix(ec,'#fff',.12);let m='';
     if(T>=2&&!blind){const ig=X.grad('iris'+irisC,j=>{const g=X.E('radialGradient',{id:j,cx:'.5',cy:'.62',r:'.6'},X.defs);X.stops(g,[[0,mix(irisC,'#fff2c8',.35)],[.6,irisC],[1,mul(irisC,.45)]])});
       m+=`<circle cx="${cx+.2}" cy="${cy+.1}" r="1.85" fill="${ig}"/><circle cx="${cx+.2}" cy="${cy+.1}" r=".85" fill="#0a0604"/>`}
@@ -215,7 +219,7 @@ function strong99(svg,p,opt){const X=new Engine(svg,opt),root=X.root,ink=X.ink,T
     if(T>=2)m+=`<circle cx="${cx+.95}" cy="${cy+.7}" r=".3" fill="#fff" opacity=".55"/><path d="M${cx-3.4} ${cy-.1}Q${cx} ${cy-3.1} ${cx+3.4} ${cy-.1}" fill="none" stroke="${INK}" stroke-opacity=".85" stroke-width="1.05" stroke-linecap="round"/>`
       +`<path d="M${cx-3.1} ${cy-2.1}Q${cx} ${cy-4.7} ${cx+3.4} ${cy-1.9}" fill="none" stroke="${shSkin}" stroke-opacity=".6" stroke-width=".55"/><path d="M${cx-2.6} ${cy+1.95}Q${cx} ${cy+3} ${cx+2.6} ${cy+1.95}" fill="none" stroke="${ltSkin}" stroke-opacity=".7" stroke-width=".5"/>`;
     X.after(e,X.frag(m))});
-  if(brows&&T>=2)X.after(brows,X.frag(`<path d="M35.6 51.3L45.6 52.3M54.4 52.3L64.4 51.3" stroke="#fff4e0" stroke-opacity=".28" stroke-width=".7" stroke-linecap="round"/>`));
+  if(G&&G.browHL){if(T>=2&&brows)X.after(brows,X.frag(G.browHL))}else if(brows&&T>=2)X.after(brows,X.frag(`<path d="M35.6 51.3L45.6 52.3M54.4 52.3L64.4 51.3" stroke="#fff4e0" stroke-opacity=".28" stroke-width=".7" stroke-linecap="round"/>`));
   /* ----- everything else, by material ----- */
   const crown=[50,24];
   for(const o of items){const {e,b,mat,filled}=o;const c=o.col;
