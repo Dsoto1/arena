@@ -69,8 +69,8 @@ const r4=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   o.romaL3=arm94Stock(w,li('Roma')).some(x=>lv(x)===3);o.veronaL3=[0,1,2,3,4,5].some(d=>{const k=w.week;w.week=k+d;const r=arm94Stock(w,li('Verona')).some(x=>lv(x)===3);w.week=k;return r});
   o.capua=arm94Stock(w,li('Capua')).filter(x=>x.t==='w'&&SPEC94.blades.w.includes(x.k)).length>=2&&arm94Stock(w,li('Capua')).some(x=>x.sp&&x.pr<arm94Price(x.t,x.k));
   const t=travelState(w);if(t)t.paid=true;w.night.travel={cost:0,paid:true};MGR.tab='night';MGR_REDRAW();await W8(400);
-  o.mw=!!document.querySelector('#mgrPane [data-arm94sq]')&&/Gear up in/.test(document.querySelector('#mgrPane .ar94mw').textContent);
-  document.querySelector('#mgrPane .ar94mw [data-arm94sq]').click();for(let i=0;i<200&&!(CITY.open&&CITY.side==='stalls'&&document.querySelector('#citySideBody .ar94shop'));i++)await W8(100); /* the square paints when its art has decoded: polled, not a fixed 2.5 s */
+  o.mw=!document.querySelector('#mgrPane [data-arm94sq]')&&!document.querySelector('#mgrPane .ar94mw'); /* v0.96: the Gear-up tile is gone — the City Square button covers it */
+  CITY.side='stalls';document.querySelector('#mgrPane [data-mg="city"]').click();for(let i=0;i<200&&!(CITY.open&&CITY.side==='stalls'&&document.querySelector('#citySideBody .ar94shop'));i++)await W8(100); /* the square paints when its art has decoded: polled, not a fixed 2.5 s */
   o.open=CITY.open&&CITY.side==='stalls'&&!!document.querySelector('#citySideBody .ar94shop');
   const H=arm94H(m);const n0=H.sh.length;const c0=m.coin;const btn=document.querySelector('#citySideBody [data-arm94buy]:not([disabled])');const i=+btn.dataset.arm94buy;const it=arm94Stock(w,CITY.li)[i];const left0=arm94Left(w,CITY.li,i);
   btn.click();await W8(200);o.buy=H.sh.length===n0+1&&H.sh[H.sh.length-1].k===it.k&&c0-m.coin===cityPr(it.pr)&&arm94Left(w,CITY.li,i)===left0-1;
@@ -84,7 +84,7 @@ const r4=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   /* next week the stalls buy again */
   m.sell94.k='old';o.capReset=arm94SellLeft(m,w)===ARM94.sellMax;H.sh=H.sh.filter(P=>P.id!==E1.id);return o});
 ok(r4.perCity&&r4.perWeek&&r4.same,'4 stock differs per city and per week, stable within one '+JSON.stringify(r4));ok(r4.romaL3&&!r4.veronaL3,'4 Roma carries Level 3, a small city never');
-ok(r4.capua,'4 Capua: blades, at a discount');ok(r4.mw,'4 Match Week: Gear up in <city>');ok(r4.open,'4 Gear up opens the square on the Stalls');ok(r4.sell,'4 the stall buys back a shelf piece');ok(r4.sell30&&r4.sell15,'4 sell-back is 30% (15% damaged), repairs a fifth '+JSON.stringify(r4));ok(r4.cap&&r4.capUi&&r4.capReset,'4 at most 3 sales a house a week, refused after, resets next week '+JSON.stringify(r4));ok(r4.buy&&r4.visit,'4 a buy lands in the Armory, stock counts down, THIS VISIT '+JSON.stringify(r4));
+ok(r4.capua,'4 Capua: blades, at a discount');ok(r4.mw,'4 Match Week: no Gear-up tile (v0.96)');ok(r4.open,'4 the City Square opens on the Stalls');ok(r4.sell,'4 the stall buys back a shelf piece');ok(r4.sell30&&r4.sell15,'4 sell-back is 30% (15% damaged), repairs a fifth '+JSON.stringify(r4));ok(r4.cap&&r4.capUi&&r4.capReset,'4 at most 3 sales a house a week, refused after, resets next week '+JSON.stringify(r4));ok(r4.buy&&r4.visit,'4 a buy lands in the Armory, stock counts down, THIS VISIT '+JSON.stringify(r4));
 if(SHOT)await pg.screenshot({path:SHOT+'/tv94m_stalls.png'});
 /* ---- 5 · a bout uses the equipped gear; 6 · after the bout ---- */
 const r5=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));try{if(typeof closeCity==='function')closeCity()}catch(e){}await W8(500);const w=W_(),m=me();const o={};const A=gById(window.__A);
