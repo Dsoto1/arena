@@ -75,7 +75,8 @@ await pg.evaluate(()=>{SETTINGS.pots90='tokens';const pl=S.pillars.find(x=>x.pot
 await pg.screenshot({path:SHOTS+'/tokens_flip.png',clip:{x:Math.max(0,box.x-box.w/2),y:Math.max(0,box.y),width:box.w*2,height:box.h*1.3}});
 await pg.evaluate(()=>{SETTINGS.pots90='pots';TOK90.fly.length=0;draw()});
 /* settings rows */
-const set=await pg.evaluate(async()=>{const h=settingsHTML('general');return {pots:/data-pots90="tokens"/.test(h),hs:/data-set="hsTurn90"/.test(h)}});
+/* v0.98 (246): Settings is a full screen with pages — pot pictures live on Board & pieces, the hot-seat turn on Hints & board */
+const set=await pg.evaluate(async()=>{const a=settingsHTML('pieces'),b=settingsHTML('help');return {pots:/data-pots90="tokens"/.test(a),hs:/data-set="hsTurn90"/.test(b)}});
 out.set=set;if(!set.pots||!set.hs)miss.push('settings rows: '+JSON.stringify(set));
 /* 4. the hot-seat turning board */
 await run('democritus',[0,2]);

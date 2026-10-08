@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1400,height:950}});await pg.route(/fonts\./,r=>r.abort());
 const errs=[];pg.on('pageerror',e=>errs.push(e.message+' '+(e.stack||'').split('\n')[1]));
-await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.click('#mClose');
+require('./_st98').auto(pg);await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(900);await pg.click('#mClose');
 await pg.evaluate(()=>{openStudio('gear').catch(e=>window.__e=String(e.stack))});await pg.waitForTimeout(300);console.log(await pg.evaluate(()=>window.__e));await pg.waitForTimeout(800);
 const tab=async v=>{await pg.evaluate(v=>{const b=document.querySelector(`[data-st="tab"][data-v="${v}"]`);b&&b.click()},v);await pg.waitForTimeout(400)};
 const addDrag=async(k,prevSel,to)=>{await pg.click(`[data-scb="add"][data-k="${k}"][data-v="circle"]`);await pg.waitForTimeout(200);

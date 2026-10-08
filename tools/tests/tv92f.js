@@ -7,7 +7,7 @@ const R=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   startEvent({ev:'egidious',loc:0,seats:['royalty','soldier','hero','venatore'].map((c,i)=>({cls:c,cpu:i!==0})),opts:{}});
   for(let i=0;i<120;i++){await W8(150);if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);else if(S&&S.phase==='action'&&!cur().cpu)break}
   if(S.phase==='choice'){const c=document.querySelector('[data-act="coin"]');if(c)c.click();for(let i=0;i<40&&S.phase!=='action';i++)await W8(150)}
-  const p=cur();const txt=()=>{render();const b=document.querySelector('[data-act="none"]');return b?b.querySelector('small').textContent:null};
+  const p=cur();const txt=()=>{render();/* v0.98: the v2 bar (248, 259) puts the reason on the spent weapon buttons' tip */const w=document.querySelector('[data-g96="atk"] .wb98');if(w)return (w.dataset.tip||'').split('<br>').pop();const b=document.querySelector('[data-act="none"]');return b?b.querySelector('small').textContent:null};
   const o={phase:S.phase,cpu:p.cpu};S.active.telemachus=1;o.tel=txt();S.active.telemachus=0;p.attacks=9;o.done=txt();p.attacks=0;o.free=txt();return o});
 const Q=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));try{if(S)S.over=true}catch(e){}openManager();await W8(800);newWorld({type:'pre',key:MGR_PRE[0].key});await W8(800);
   const w=W_();const home=travelHome(me());w.night.loc=(home+3)%LOCATIONS.length;w.night.selfBye=true;MGR.tab='night';MGR_REDRAW();await W8(700);

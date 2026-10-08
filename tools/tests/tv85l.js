@@ -21,7 +21,7 @@ await setup(A,'Vettii','hero');await W8(A,600);
 /* ── 1 · the 2×2 grid + the Classic tabs, no ribbon ── */
 o.grid=await A.evaluate(()=>{const g=document.querySelector('#onl .onl-play81.v85');const box=document.querySelector('#onl .a85-bot .onl-pls81');const cards=box?[...box.children].filter(c=>c.offsetParent!==null&&!c.classList.contains('pl85div')):[];
   const tops=[...new Set(cards.map(c=>Math.round(c.getBoundingClientRect().top)))];
-  return {v85:!!g,cols:box?getComputedStyle(box).gridTemplateColumns.split(' ').length:0,n:cards.length,rows:tops.length,order:cards.map(c=>c.classList.contains('pl84')?'week':c.classList.contains('pl85cl')?'classic':c.classList.contains('inf83')?'inf':c.dataset.pl81||'?'),
+  return {v85:!!g,cols:box?getComputedStyle(box).gridTemplateColumns.split(' ').length:0,n:cards.length,rows:tops.length,order:cards.map(c=>c.classList.contains('pl84')?'week':c.classList.contains('pl85cl')?'classic':c.classList.contains('inf83')?'inf':c.classList.contains('rot88')?'familia' /* v0.98: Golden Eagle approved, so Familia sits in the cycling box */:c.dataset.pl81||'?'),
     week:cards[0]?getComputedStyle(cards[0]).borderTopStyle:'',ribbon:!!document.querySelector('#onl #onlToday80'),more:!!document.querySelector('#onl .td81-more'),show:!!document.querySelector('#onl .a85-bot #v85show')}});
 ok(o.grid.v85&&o.grid.cols===2&&o.grid.n===4&&o.grid.rows===2,'playlists in a 2×2 grid '+JSON.stringify(o.grid));
 ok(o.grid.order.join()==='week,classic,familia,inf','This week · Classic · Familia · Ludi Infames '+o.grid.order.join());
@@ -106,7 +106,7 @@ await B.keyboard.press('Escape');await W8(B,200);ok(await B.evaluate(()=>!docume
 await B.click('#onl [data-v85p="open"]');await W8(B,200);await B.click('#onl .v85pp [data-onl="pleave"]');await W8(B,600);
 o.p5=await B.evaluate(()=>({party:ONL.party,share:/Share your code/.test((document.querySelector('#onl .v85pp')||{}).textContent||'')}));ok(!o.p5.party&&o.p5.share,'Leave the party '+JSON.stringify(o.p5));
 await B.mouse.click(5,890);await W8(B,200);ok(await B.evaluate(()=>!document.querySelector('#onl .v85pp')),'a click elsewhere closes the panel');
-await A.evaluate(()=>{V85.party=true;onlRedraw()});await W8(A,200);await A.click('#onl [data-pl85="cassian"]');await W8(A,200);
+await A.evaluate(()=>{V85.party=true;onlRedraw()});await W8(A,200);await A.mouse.click(5,890);await W8(A,200) /* v0.98: the party panel sits over the tabs on the shorter stage — close it first */;await A.click('#onl [data-pl85="cassian"]');await W8(A,200);
 o.thru=await A.evaluate(()=>({panel:!!document.querySelector('#onl .v85pp'),tab:(document.querySelector('#onl [data-pl85].on')||{}).dataset?.pl85}));
 ok(!o.thru.panel&&o.thru.tab==='cassian','a click elsewhere closes the panel AND still does its job '+JSON.stringify(o.thru));
 await A.click('#onl [data-pl85="democritus"]');await A.evaluate(()=>{V85.party=false;onlRedraw()});
