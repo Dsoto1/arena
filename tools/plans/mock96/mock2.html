@@ -1,0 +1,139 @@
+<!doctype html><html><head><meta charset="utf-8"><title>v0.96 mock-ups II</title>
+<style>
+:root{--gold:#d8b45a;--txt:#efe2c8;--dim:#a3907a}
+*{box-sizing:border-box}body{margin:0;background:#1a120c;color:var(--txt);font:14px/1.3 Georgia,"Times New Roman",serif}
+.shot{width:1440px;padding:18px;background:#1e150e url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M40 6c10 14 24 20 34 34-10 14-24 20-34 34C30 60 16 54 6 40 16 26 30 20 40 6z' fill='none' stroke='%23ffffff08' stroke-width='2'/%3E%3C/svg%3E")}
+h2{margin:0 0 12px;color:var(--gold);font-size:16px;letter-spacing:.06em;text-transform:uppercase}
+.noise{position:absolute;inset:0;pointer-events:none;border-radius:inherit;mix-blend-mode:overlay;opacity:.55;
+ background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+.bar{display:flex;gap:10px;align-items:stretch;height:200px}
+.pnl{position:relative;border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;box-shadow:0 6px 14px #000a, inset 0 1px 0 #ffffff30}
+.pnl h4{position:relative;margin:0 0 10px;display:flex;justify-content:space-between;align-items:center;font-size:21px;font-weight:bold}
+.pnl h4 small{font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:bold;display:flex;align-items:center;gap:6px}
+.corner{position:absolute;width:26px;height:26px}
+/* BRASS */
+.brass{flex:1.7;background:radial-gradient(ellipse at 30% 20%,#e8d08e,#b99545 45%,#7a5a22 100%);border:3px solid #5c4318;color:#2b1d0a;text-shadow:0 1px 0 #f3e2a8}
+.brass h4 small{color:#3a2810}
+.blade{position:relative;height:46px;display:flex;align-items:center;padding:0 22px 0 46px;color:#1f1608;font-size:13.5px;white-space:nowrap;text-shadow:0 1px 0 #ffffffa0;filter:drop-shadow(0 3px 2px #0008)}
+.blade svg{position:absolute;inset:0;width:100%;height:100%}
+.blade span{position:relative}
+.wrow{display:flex;gap:6px;position:relative}
+.medal{position:relative;margin:8px auto 0;display:flex;align-items:center;gap:6px;background:linear-gradient(#5a3a1c,#3b2410);border:1px solid #c8a24f;border-radius:16px;padding:4px 12px 4px 4px;color:#f3e2b0;text-shadow:none;font-size:14px;box-shadow:0 2px 3px #0008}
+/* WOOD */
+.wood{flex:1.15;background:repeating-linear-gradient(0deg,#7b4a26 0 5px,#6e4120 5px 9px,#85532c 9px 12px),#6e4120;border:3px solid #3d2410;color:#f5e3c0}
+.wood::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(90deg,#00000030,transparent 20%,transparent 80%,#00000030)}
+.leather{position:relative;flex:1;min-width:0;display:grid;place-items:center;height:70px;border-radius:8px;background:radial-gradient(ellipse at 40% 30%,#9a5a32,#6a3618 75%);box-shadow:0 3px 4px #000a, inset 0 1px 0 #ffffff30;color:#f6e6c8;font-size:15px;outline:2px dashed #e6c79a90;outline-offset:-7px}
+.leather.off{background:radial-gradient(ellipse at 40% 30%,#8c8a86,#5d5b57 75%);color:#cfcac2;outline-color:#ffffff40;opacity:.8}
+.compass{width:28px;height:28px}
+/* PARCHMENT */
+.parch{flex:.85;color:#3a2410;padding:22px 16px;background:radial-gradient(ellipse at 50% 50%,#f1dfb0,#d9bd84 70%,#b8945a);border:none;border-radius:4px}
+.parch .roll{position:absolute;left:-6px;right:-6px;height:16px;border-radius:8px;background:linear-gradient(#e8d29a,#b9955a 60%,#8a6a3a)}
+.seal{position:relative;width:74px;height:74px;display:grid;place-items:center;color:#f6e0c4;font-size:15px;text-shadow:0 1px 1px #0008}
+.seal svg{position:absolute;inset:0}
+.seal span{position:relative}
+.chestb{width:64px;height:74px;border-radius:8px;background:linear-gradient(#5a3a22,#3a2414);border:2px solid #8a6a3a;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#d8c8a8;font-size:14px;opacity:.6}
+/* LEATHER PANEL */
+.lpan{flex:1.05;background:radial-gradient(ellipse at 30% 20%,#7c3e24,#5a2814 70%);border:3px solid #2e140a;outline:2px dashed #d9a77060;outline-offset:-9px;color:#f4e2c4}
+.coinbox{white-space:nowrap;display:flex;align-items:center;gap:6px;background:#2e170c;border:1px solid #a07040;border-radius:8px;padding:2px 8px;font-size:15px}
+.mk{position:relative;display:flex;align-items:center;gap:10px;flex:1.4;height:78px;border-radius:8px;background:radial-gradient(ellipse at 40% 30%,#8a4a2a,#5a2814);border:1px solid #c89a5a;outline:2px dashed #e8c08a70;outline-offset:-6px;padding:0 12px;box-shadow:0 3px 4px #000a;font-size:15px}
+.crowd{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:.55;font-size:15px}
+/* END TURN */
+.endt{width:120px;position:relative;display:grid;place-items:center;filter:drop-shadow(0 6px 6px #000c)}
+.endt svg{position:absolute;inset:0;width:100%;height:100%}
+.endt b{position:relative;font-size:24px;color:#f3dc9a;text-align:center;line-height:1.05;text-shadow:0 2px 3px #000}
+.note{color:var(--dim);font-size:13px;margin-top:10px}
+/* ROOM */
+.room{display:grid;grid-template-columns:1fr 290px;gap:14px;position:relative}
+.seats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.seat{height:210px;border-radius:10px;background:#33241a;border:1px solid #5a4128;display:flex;flex-direction:column;align-items:center;padding:8px;position:relative}
+.seat img{height:100px}.seat .nm{font-weight:bold;margin-top:4px}.seat .sub{color:var(--dim);font-size:12px}
+.seat.me{border:2px solid var(--gold)}.seat.open{border:2px dashed #6b5136;background:transparent;justify-content:center;color:var(--dim)}
+.bub{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#f3e6c8;color:#2a1a08;border-radius:12px;padding:4px 12px;font-size:13px;white-space:nowrap;box-shadow:0 3px 6px #000a}
+.bub::after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-7px;border:7px solid transparent;border-top-color:#f3e6c8;border-bottom:0}
+.users{background:#2a1d13;border:1px solid #5a4128;border-radius:10px;padding:12px;display:flex;flex-direction:column}
+.u{display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:7px}.u .n{flex:1}.u .n b{display:block}.u .n span{font-size:11px;color:var(--dim)}
+.qc{margin-top:auto;border-top:1px solid #5a4128;padding-top:10px}.qc .t{font-size:12px;color:var(--dim);margin-bottom:6px}
+.chip{display:inline-block;padding:4px 10px;margin:0 4px 6px 0;border-radius:14px;background:#3c2a1b;border:1px solid #6b5136;font-size:13px}
+.ranks{display:flex;gap:26px;align-items:flex-end;padding:8px 6px}.ranks .r{text-align:center;font-size:13px}.ranks .r svg{width:64px;height:112px;display:block;margin:0 auto 6px;filter:drop-shadow(0 4px 4px #000a)}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+ <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f4f0"/><stop offset=".45" stop-color="#b9bcbd"/><stop offset=".55" stop-color="#8e9295"/><stop offset="1" stop-color="#c9ccce"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbe9a6"/><stop offset=".4" stop-color="#d9b257"/><stop offset=".7" stop-color="#a47a2a"/><stop offset="1" stop-color="#e2c070"/></linearGradient>
+ <radialGradient id="wax" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#d0423a"/><stop offset=".7" stop-color="#8e1a16"/><stop offset="1" stop-color="#5e0e0c"/></radialGradient>
+</defs></svg>
+
+<div class="shot" id="act"><h2>D · Action bar (your Action phase) — materials after your picture</h2>
+<div class="bar">
+ <div class="pnl brass"><div class="noise"></div>
+  <h4><span>⚔ Attack</span><small>📜 2 attacks left</small></h4>
+  <div class="wrow">
+   <div class="blade" style="flex:1"><svg viewBox="0 0 300 46" preserveAspectRatio="none"><rect x="2" y="17" width="22" height="12" rx="4" fill="#6a4420" stroke="#2a1808"/><rect x="22" y="6" width="9" height="34" rx="3" fill="url(#gold)" stroke="#5a3e12"/><path d="M31 9 H262 L296 23 L262 37 H31 Z" fill="url(#steel)" stroke="#4a4e52" stroke-width="2"/><path d="M36 23 H270" stroke="#ffffff90" stroke-width="1.5"/></svg><span>Gladius · 3 dmg</span></div>
+   <div class="blade" style="flex:1.3"><svg viewBox="0 0 340 46" preserveAspectRatio="none"><rect x="2" y="19" width="60" height="8" rx="3" fill="#6a4420" stroke="#2a1808"/><rect x="60" y="8" width="8" height="30" rx="3" fill="url(#gold)" stroke="#5a3e12"/><path d="M68 13 H300 L336 7 L310 17 L338 23 L310 29 L336 39 L300 33 H68 Z" fill="url(#steel)" stroke="#4a4e52" stroke-width="2"/></svg><span style="margin-left:24px">Trident · 2 dmg · range 2</span></div>
+  </div>
+  <div class="medal"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="13" fill="url(#gold)" stroke="#5a3e12"/><circle cx="14" cy="14" r="9" fill="#f1e6cc"/><circle cx="14" cy="14" r="6" fill="#b8302a"/><circle cx="14" cy="14" r="3" fill="#f1e6cc"/><circle cx="14" cy="14" r="1.5" fill="#b8302a"/></svg>Focus <small style="opacity:.8">(3+ move)</small></div>
+ </div>
+ <div class="pnl wood"><div class="noise"></div>
+  <h4><span>🏃 Move</span><small style="gap:4px"><svg class="compass" viewBox="0 0 34 34"><circle cx="17" cy="17" r="16" fill="url(#gold)" stroke="#4a3010"/><circle cx="17" cy="17" r="12" fill="#efe3c6"/><path d="M17 6 L20 17 L17 28 L14 17Z" fill="#b8302a"/><path d="M6 17 L17 14 L28 17 L17 20Z" fill="#3a4a5a"/></svg><b style="font-size:18px;color:#ffd77a">4</b> movement left</small></h4>
+  <div style="display:flex;gap:8px;position:relative;margin-top:auto;margin-bottom:auto"><div class="leather">Move</div><div class="leather">Topple</div><div class="leather">Push</div><div class="leather off">Tunnel</div></div>
+ </div>
+ <div class="pnl parch"><div class="roll" style="top:-6px"></div><div class="roll" style="bottom:-6px"></div><div class="noise" style="opacity:.35"></div>
+  <h4><span>🤝 Deal</span><small>1 rival in reach</small></h4>
+  <div style="display:flex;gap:6px;position:relative;align-items:center;justify-content:center;flex:1">
+   <div class="seal"><svg viewBox="0 0 74 74"><path d="M37 3 C46 6 52 2 58 9 C66 13 64 22 70 28 C72 37 68 43 70 50 C64 58 62 64 54 68 C46 72 40 70 34 72 C26 70 18 70 12 63 C6 56 4 50 4 42 C2 34 6 26 10 20 C14 12 22 8 28 5 C31 4 34 3 37 3Z" fill="url(#wax)"/><circle cx="37" cy="37" r="24" fill="none" stroke="#5e0e0c" stroke-width="2"/></svg><span>Trade</span></div>
+   <div class="seal"><svg viewBox="0 0 74 74"><path d="M37 3 C46 6 52 2 58 9 C66 13 64 22 70 28 C72 37 68 43 70 50 C64 58 62 64 54 68 C46 72 40 70 34 72 C26 70 18 70 12 63 C6 56 4 50 4 42 C2 34 6 26 10 20 C14 12 22 8 28 5 C31 4 34 3 37 3Z" fill="url(#wax)"/><circle cx="37" cy="37" r="24" fill="none" stroke="#5e0e0c" stroke-width="2"/></svg><span>Truce</span></div>
+   <div class="chestb"><svg width="30" height="26" viewBox="0 0 30 26"><rect x="2" y="9" width="26" height="15" rx="2" fill="#7a4a22" stroke="#d8b45a"/><path d="M2 10 Q15 0 28 10" fill="#8a5a2a" stroke="#d8b45a"/><rect x="13" y="12" width="4" height="5" fill="#d8b45a"/></svg>Loot</div>
+  </div>
+ </div>
+ <div class="pnl lpan"><div class="noise"></div>
+  <h4 style="font-size:18px;white-space:nowrap"><span>🏛 Market &amp; Crowd</span><span class="coinbox">7 <svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="8" fill="url(#gold)" stroke="#5a3e12"/></svg> · 2 🌾</span></h4>
+  <div style="display:flex;gap:10px;position:relative;align-items:center;flex:1">
+   <div class="mk"><svg width="46" height="50" viewBox="0 0 46 50"><path d="M15 8 Q23 2 31 8 L28 14 Q40 22 40 34 Q40 47 23 47 Q6 47 6 34 Q6 22 18 14Z" fill="#b8824a" stroke="#4a2a10" stroke-width="2"/><path d="M16 14 H30" stroke="#4a2a10" stroke-width="3"/><circle cx="23" cy="32" r="7" fill="url(#gold)" stroke="#5a3e12"/></svg><span>Market<br><small style="opacity:.85">L1–L2 affordable</small></span></div>
+   <div class="crowd"><svg width="56" height="40" viewBox="0 0 56 40"><path d="M28 36 C14 34 6 24 6 10 M28 36 C42 34 50 24 50 10" stroke="url(#gold)" stroke-width="3" fill="none"/><g fill="url(#gold)"><ellipse cx="9" cy="16" rx="3" ry="6" transform="rotate(-20 9 16)"/><ellipse cx="13" cy="26" rx="3" ry="6" transform="rotate(-45 13 26)"/><ellipse cx="47" cy="16" rx="3" ry="6" transform="rotate(20 47 16)"/><ellipse cx="43" cy="26" rx="3" ry="6" transform="rotate(45 43 26)"/></g></svg>Crowd Favor<small style="font-size:11px">need 3 🌾</small></div>
+  </div>
+ </div>
+ <div class="endt"><svg viewBox="0 0 150 200"><path d="M32 8 H92 Q140 8 140 60 V140 Q140 192 92 192 H32 V160 H90 Q108 160 108 140 V60 Q108 40 90 40 H32Z" fill="url(#gold)" stroke="#5a3e12" stroke-width="3"/><rect x="10" y="4" width="34" height="192" rx="10" fill="url(#gold)" stroke="#5a3e12" stroke-width="3"/><circle cx="27" cy="22" r="5" fill="#7a5a22"/><circle cx="27" cy="178" r="5" fill="#7a5a22"/></svg><b style="margin-left:20px;font-size:20px">End<br>turn</b></div>
+</div>
+<div class="note">Real build: each material is a small painted texture (brass, planks, leather, parchment, wax) under CSS — the same pieces reused in every theme size; greyed = desaturated + the reason on hover. Phones: four big tabs, the buttons open in a tray.</div></div>
+
+<div class="shot" id="room"><h2>A · Room — chat feed gone: phrases pop over the speaker's seat, picker bottom right</h2>
+<div class="room"><div class="seats">
+ <div class="seat me"><div class="bub">Ready!</div><img src="../../../assets/mini_hero.webp"><div class="nm">👑 Cassius Varro</div><div class="sub">Hero · Veteranus</div></div>
+ <div class="seat"><div class="bub">Ave!</div><img src="../../../assets/mini_amazonia.webp"><div class="nm">Thessa</div><div class="sub">Amazonia · Gregarius</div></div>
+ <div class="seat"><img src="../../../assets/mini_soldier.webp"><div class="nm">Marcus Rufus</div><div class="sub">Soldier · Primus Palus</div></div>
+ <div class="seat"><img src="../../../assets/mini_venatore.webp"><div class="nm">Ostorius</div><div class="sub">Venatore · Veteranus</div></div>
+ <div class="seat"><div class="bub">One moment</div><img src="../../../assets/mini_slave.webp"><div class="nm">Nyx</div><div class="sub">Slave · Tiro</div></div>
+ <div class="seat" style="opacity:.75"><img src="../../../assets/mini_royalty.webp"><div class="nm">CPU</div><div class="sub">Royalty · 🧠 Fighter</div></div>
+ <div class="seat open">＋ Open seat</div><div class="seat open">＋ Open seat</div>
+</div>
+<div class="users"><b style="color:var(--gold)">In the room · 7/8</b>
+ <div class="u"><span class="rb" data-r="4"></span><div class="n"><b>👑 Cassius Varro</b><span>Ludus Magnus</span></div></div>
+ <div class="u"><span class="rb" data-r="2"></span><div class="n"><b>Thessa</b><span>Ludus Minor</span></div></div>
+ <div class="u"><span class="rb" data-r="6"></span><div class="n"><b>Marcus Rufus</b><span>Domus Illustris</span></div></div>
+ <div class="u"><span class="rb" data-r="3"></span><div class="n"><b>Ostorius</b><span>Ludus</span></div></div>
+ <div class="u"><span class="rb" data-r="0"></span><div class="n"><b>Nyx</b><span>Tugurium</span></div></div>
+ <div class="u"><span class="rb" data-r="1"></span><div class="n"><b>Aelia</b><span>Taberna · standing</span></div></div>
+ <div class="qc"><div class="t">Quick chat</div><span class="chip">Ave!</span><span class="chip">Ready</span><span class="chip">One moment</span><span class="chip">Good luck</span><span class="chip">Let's begin</span><span class="chip">Well fought</span></div>
+</div></div>
+<div class="note">Table settings stay under the seats as in mock A (not repeated here). A standing lanista's phrase pops beside their name in the list.</div></div>
+
+<div class="shot" id="ranks"><h2>C · Domus rank banners — a symbol per rank (no numerals)</h2>
+<div class="ranks" id="rk"></div></div>
+
+<script>
+const COL=[['#6b5a48','#3d3126'],['#7d6a3a','#4a3b1c'],['#8a4a2a','#4f2614'],['#2f6a8a','#163a4d'],['#7a2a2a','#4a1212'],['#5a2f7a','#2e1645'],['#b08a2a','#5e4410'],['#c99a3a','#7a2a10']];
+const NAMES=['Tugurium','Taberna','Ludus Minor','Ludus','Ludus Magnus','Familia Nota','Domus Illustris','Domus Aurea'];
+const SUB=['the hut','the tavern','the wooden sword','crossed blades','the helm','the shield','the laurel','the eagle'];
+const F='#f3dc9a';
+const SYM=[
+ `<path d="M20 26 L32 16 L44 26 V40 H20Z" fill="none" stroke="${F}" stroke-width="2.5"/><path d="M29 40 V32 H35 V40" fill="none" stroke="${F}" stroke-width="2.5"/>`,
+ `<path d="M27 18 H37 M29 18 V22 Q22 26 24 34 Q26 42 32 44 Q38 42 40 34 Q42 26 35 22 V18" fill="none" stroke="${F}" stroke-width="2.5"/><path d="M25 24 Q20 26 22 30 M39 24 Q44 26 42 30" fill="none" stroke="${F}" stroke-width="2"/>`,
+ `<path d="M32 14 L35 18 V36 H29 V18Z" fill="none" stroke="${F}" stroke-width="2.5"/><path d="M25 36 H39 M32 36 V44" stroke="${F}" stroke-width="3"/>`,
+ `<path d="M20 16 L42 40 M44 16 L22 40" stroke="${F}" stroke-width="3"/><path d="M18 36 L24 42 M46 36 L40 42" stroke="${F}" stroke-width="3"/>`,
+ `<path d="M22 40 V28 Q22 16 32 16 Q42 16 42 28 V40 H36 V32 H28 V40Z" fill="none" stroke="${F}" stroke-width="2.5"/><path d="M32 12 V18" stroke="#c0392b" stroke-width="5"/>`,
+ `<path d="M32 14 L44 18 V28 Q44 40 32 46 Q20 40 20 28 V18Z" fill="none" stroke="${F}" stroke-width="2.5"/><path d="M32 20 V40 M24 28 H40" stroke="${F}" stroke-width="2"/>`,
+ `<path d="M32 44 C22 42 18 32 20 20 M32 44 C42 42 46 32 44 20" stroke="${F}" stroke-width="2.5" fill="none"/><g fill="${F}"><ellipse cx="21" cy="24" rx="2.2" ry="4.5" transform="rotate(-15 21 24)"/><ellipse cx="22" cy="33" rx="2.2" ry="4.5" transform="rotate(-40 22 33)"/><ellipse cx="43" cy="24" rx="2.2" ry="4.5" transform="rotate(15 43 24)"/><ellipse cx="42" cy="33" rx="2.2" ry="4.5" transform="rotate(40 42 33)"/></g>`,
+ `<path d="M32 18 Q28 22 30 26 L18 22 Q20 30 28 32 L26 40 L32 36 L38 40 L36 32 Q44 30 46 22 L34 26 Q36 22 32 18Z" fill="${F}" stroke="#5a3e12"/><circle cx="32" cy="14" r="3" fill="${F}"/>`];
+function ban(r,w){const[a,b]=COL[r];return `<svg viewBox="0 0 64 112" ${w?`width="${w}" height="${w*1.75}"`:''}><rect x="2" y="2" width="60" height="5" rx="2.5" fill="url(#gold)"/><circle cx="4" cy="4.5" r="4" fill="url(#gold)"/><circle cx="60" cy="4.5" r="4" fill="url(#gold)"/><path d="M8 7 H56 V96 L32 84 L8 96Z" fill="${a}" stroke="${b}" stroke-width="3"/><path d="M8 7 H56 V14 H8Z" fill="${b}"/><path d="M12 18 H52 V88 L32 78 L12 88Z" fill="none" stroke="#f3dc9a50" stroke-width="1"/>${r>=6?'<path d="M8 96 L4 106 M56 96 L60 106" stroke="url(#gold)" stroke-width="2"/>':''}<g transform="translate(0,12)">${SYM[r]}</g></svg>`}
+document.getElementById('rk').innerHTML=NAMES.map((n,i)=>`<div class="r">${ban(i)}<b>${n}</b><br><span style="color:var(--dim)">${SUB[i]}</span></div>`).join('');
+document.querySelectorAll('.rb').forEach(e=>e.innerHTML=ban(+e.dataset.r,20));
+</script></body></html>

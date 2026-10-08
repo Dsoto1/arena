@@ -1548,6 +1548,15 @@ share copy — the site download play/flavius-rule-arena.zip.)
   system banner creator); (18) click a host/member name (list or room) → house card: record, gladiators, fallen, best rank, last 6 events W/L
   (like Manager League rosters), Visit house · ★ Follow; (19) DOMUS RANK (new, needs his answers): one online rank per house from its whole
   roster, shown beside every name in rooms/lists, a VERTICAL BANNER per rank (top right of the Domus above the rank bar).
+  HIS ANSWERS (2026-10-08): q1a DOMUS RANK = sum of the best 4 LIVING gladiators' Glory + 20% of all fallen gladiators' Glory, never drops;
+  Tugurium 0 · Taberna 200 · Ludus Minor 600 · Ludus 1500 · Ludus Magnus 3000 · Familia Nota 5500 · Domus Illustris 9000 · Domus Aurea 15000;
+  q2a REGION from the browser time zone (no IP); q3a password = Custom rooms only; q4a I draw the 8 rank banners + ~7 region flags with the system
+  banner creator, each rank banner carries a SYMBOL (hut, amphora, wooden sword, crossed blades, helm, shield, laurel, eagle — no numerals; mock
+  tools/plans/mock96/mock2.html C); q5a room approved + NO chat feed: quick-chat phrases pop as bubbles over the speaker's seat (standing lanistas
+  beside their name in the list), the phrase picker sits bottom right under the user list; q5b ACTION BAR restyled to HIS PICTURE (painted
+  materials: brass plate Attack with blade/trident-shaped weapon buttons + Focus medallion, wood-plank Move with stitched leather buttons + compass,
+  parchment scroll Deal with wax-seal Trade/Truce + chest Loot, stitched leather Market & Crowd with coin purse + laurel, a brass handle End turn) —
+  mock2 D shown; build with small painted textures, greyed = desaturated + reason on hover.
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
