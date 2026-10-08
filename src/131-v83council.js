@@ -39,7 +39,7 @@ SAVE_MIGRATIONS.push(['0.83',w=>{council83Ensure(w)}]);
 {const base=newWorld;newWorld=function(){const r=base.apply(this,arguments);try{council83Ensure(W_())}catch(e){console.error(e)}return r}}
 {const base=mgrMigrate;mgrMigrate=function(w){const o=base.apply(this,arguments);try{if(o&&o.glads)council83Ensure(o)}catch(e){console.error(e)}return o}}
 /* the face at any size (specFaceSVG draws 20 px) */
-const face83=(a,sz)=>specFaceSVG(a.face).replace('width="20" height="20"',`width="${sz}" height="${sz}"`);
+const face83=(a,sz)=>{try{if(!FACE99.off)return face99Spect(a.face,{px:sz})}catch(e){}return specFaceSVG(a.face).replace('width="20" height="20"',`width="${sz}" height="${sz}"`)}; /* v0.99: 263 one face (the bust cropped) */
 function advisor83(L){const w=W_();if(!w||!L)return null;const k=L.adv||ADV_FROM83[String(L.from||'').trim().toLowerCase()];return k?council83(w).find(a=>a.k===k)||null:null}
 const adv83Head=a=>`<div class="adv83"><span class="adv83f">${face83(a,46)}</span><span class="adv83n"><b>${esc(a.name)}</b><small>${esc(a.role)}</small></span></div>`;
 /* opened letters: the advisor's face beside their name, inside the body only (the envelope's summary stays as it was) */
