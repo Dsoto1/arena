@@ -9,7 +9,7 @@ const r=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   const A=ros[0],B=ros[1];A.inj={until:w.week+4,label:'a torn shoulder',pen:4};w.beds76=[];arm94EnsureG(w,B);B.eq94.R=null;B.eq94.L=null;B.eq94.a=[];
   const txt=()=>weekChecklist().filter(x=>!x.done).map(x=>x.ic+' '+x.txt.replace(/<[^>]+>/g,'')).join(' | ');
   const n=w.night;n.bye=false;n.selfBye=false;n.travel=null;
-  n.bouts.forEach(x=>{x.done=false;x.ents=[]});o.home=txt();o.dbg=JSON.stringify([ros.length,B.eq94,arm94Todo(m).empty.length,B.inj]);
+  n.bouts.forEach(x=>{x.done=false});if(!n.bouts.some(x=>x.ents&&x.ents.includes(B.id)))n.bouts[0].ents=[B.id];o.home=txt();o.dbg=JSON.stringify([ros.length,B.eq94,arm94Todo(m).empty.length,B.inj]);
   n.travel={cost:20,paid:true,gone:true};n.bouts.forEach(x=>{x.done=true});o.lock=roadLocked76(w);o.road=txt();
   MGR.confirmEnd=true;MGR_REDRAW();await W8(300);o.confirm=(document.querySelector('.skiplist')||{}).textContent||'';
   m.coin=1;const h=endConfirmHTML();o.neg=(h.match(/treasury[\s\S]{0,200}/)||[''])[0].replace(/<[^>]+>/g,'');

@@ -64,7 +64,7 @@ function lp96Letter(w){try{if(!w||w.tutorial||w.dead||!w.night)return;const N=lp
 
 /* ---------------- 8 · any fighter on any card clears "none entered" ---------------- */
 function onCard96(w,m){try{w=w||W_();m=m||me();const n=w&&w.night;if(!n||n.bye||!n.bouts||!m)return 0;let k=0;for(const b of n.bouts)for(const id of b.ents||[]){const g=gById(id);if(g&&g.contract&&g.contract.mgr===m.id)k++}return k}catch(e){return 0}}
-{const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const k=onCard96();if(k)for(const x of I)if(x.ic==='⚔'&&!x.done){x.done=true;x.btn='';x.txt=k===1?_T('1 of your fighters is on this week\'s card'):_T`${k} of your fighters are on this week's card`}}catch(e){console.error(e)}return I}}
+{const base=weekChecklist;weekChecklist=function(){const I=base.apply(this,arguments);try{const k=onCard96();if(k){const x=I.find(y=>y.ic==='⚔'&&!/hand/.test(y.txt));if(x&&!x.done){x.done=true;x.btn='';x.txt=k===1?_T('1 of your fighters is on this week\'s card'):_T`${k} of your fighters are on this week's card`}}}catch(e){console.error(e)}return I}}
 {const base=ludusTodos;ludusTodos=function(){const T=base.apply(this,arguments);try{if(Array.isArray(T)&&onCard96())return T.filter(x=>x[0]!=='⚔')}catch(e){}return T}}
 {const base=nightTodo73;nightTodo73=function(){const r=base.apply(this,arguments);try{const w=W_();if(r&&!(w.pend||[]).length&&onCard96())return null}catch(e){}return r}}
 
