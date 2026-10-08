@@ -1636,6 +1636,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   2 coin); (5) whose turn + "next: <name>" with a small face at the left of the rail; (6) small key hints on the buttons (A/M/P/T/Enter, the
   v0.93 keyboard layer); (7) hints mode only (never Ranked): soft glow on the action the strategy hints would pick; (8) phones: the groups = one
   swipe row, End turn fixed on the right.
+- **v0.98 = EVERYTHING (his call 2026-10-08, "put it all together"):** the v0.95 CHANGES block that slipped (never built: Settings full
+  screen with a rail + inline Language dropdown + "Board & pieces" tab + Themes swatches + removals; Rules → "Tactics" window with the Quick
+  Reference; main-menu AAA buttons; Play Now upper-right group; Studio designer tabs; custom class card weapon cards; 3D poser tweaks; Your Play
+  Now Gladiators in the Play Now submenu; FOCUS digital rule ≥3 movement + all the rest, +1 dmg on Blessings; online Damnatio only at creation)
+  + Recruiting III + the online list below. Mock-ups first for Settings / Tactics / main menu / Play Now.
 - **v0.97 / v0.98 (his ok 2026-10-08):** v0.97 = the post-v0.96 fixes round (above, no server change). v0.98 (server deploy, wait for his go)
   = Recruiting III + advisor levels + house grades, passwords (Custom), region flags (time zone), house card on names, Domus rank + banners, silent
   lobby.quick, AND online events beyond the Classics (his 1a 2b 3a: printed events as Custom only, in approved waves — Familia already, then Ludus,
