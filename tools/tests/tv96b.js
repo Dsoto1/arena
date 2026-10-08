@@ -104,7 +104,7 @@ const f9=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   const path=()=>{const out=[];let r=p.r,c=p.c;for(const [dr,dc] of [[0,1],[0,1],[0,1],[0,-1],[0,-1],[0,-1]]){const nr=r+dr,nc=c+dc;if(nr<0||nc<0||nr>=N||nc>=N||pillarAt(nr,nc)||unitAt(nr,nc)||spikeAt(nr,nc))continue;out.push(nr*N+nc);r=nr;c=nc}return out};
   const run=async sp=>{SPEED=sp;p.mv=6;const pa=path().slice(0,3);n=0;const t0=performance.now();await movePlayer(p,pa);return {steps:pa.length,draws:n,ms:performance.now()-t0}};
   o.normal=await run('normal');o.fast=await run('fast');o.mul=SPEEDMUL.fast;off();SPEED='pause';return o});
-ok(f9.fast.steps>=2&&f9.fast.draws===1,'9a Fast: one board draw per move ('+JSON.stringify(f9.fast)+')');ok(f9.normal.draws>=f9.normal.steps,'9b Normal still draws every step ('+JSON.stringify(f9.normal)+')');
+ok(f9.fast.steps>=2&&f9.fast.draws>=1&&f9.fast.draws<=f9.fast.steps+2,'9a Fast: at most one board draw per step, a frame each (235-v96fast; was one per move) ('+JSON.stringify(f9.fast)+')');ok(f9.normal.draws>=f9.normal.steps,'9b Normal still draws every step ('+JSON.stringify(f9.normal)+')');
 ok(f9.fast.ms<f9.normal.ms&&f9.mul===0.18,'9c Fast waits nothing between steps; speeds restored');
 /* ---- 12 Carmina ---- */
 const c12=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={};SPEED='normal';

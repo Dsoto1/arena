@@ -1635,7 +1635,13 @@ function draw() {
         } // v0.34: after the post-show the ropes are down — full board
         ctx.strokeStyle = TB.grid;
         ctx.lineWidth = 1;
-        ctx.stroke();
+        if (typeof GRID96 !== 'undefined' && GRID96.on) {
+          ctx.save();
+          ctx.lineWidth = GRID96.w;
+          ctx.globalAlpha = GRID96.a;
+          ctx.stroke();
+          ctx.restore();
+        } else ctx.stroke(); /* v0.96 (235-v96fast): a wider, fainter grid line keeps its strength at any zoom */
       }
     }],
     ['walls', () => {

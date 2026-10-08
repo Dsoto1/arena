@@ -63,6 +63,8 @@ const later = (fn, ms) => {
   if (++LATER_N % 30) return Promise.resolve().then(fn);
   return setTimeout(fn, 0);
 };
+/* SLEEP_HOOK — set by 235-v96fast: given the wait in ms, returns a promise to use instead (one animation frame while a Fast move runs) or null. */
+let SLEEP_HOOK = null;
 /* sleep — awaitable pause scaled by the current SPEED (SPEEDMUL). Instant in HEADLESS, polls every 120ms while paused, waits for Next in step mode, and only yields in snap mode. TWEAK: the 120ms pause poll and the 200ms step-mode threshold. */
 const sleep = ms => {
   if (HEADLESS) return Promise.resolve();
@@ -76,6 +78,10 @@ const sleep = ms => {
   });
   if (SPEED === 'step' && ms >= 200 && typeof stepGate === 'function' && stepGate()) return stepWait(); // v0.37: a CPU action just finished — wait for Next
   if (SPEED === 'snap') return new Promise(r => setTimeout(r, 0)); // yield to the browser, never wait
+  if (SLEEP_HOOK) {
+    const h = SLEEP_HOOK(ms);
+    if (h) return h;
+  } /* v0.96 (235-v96fast): Fast moves wait one animation frame per step */
   const t = ms * (SPEEDMUL[SPEED] ?? 1);
   if (t <= 0) return Promise.resolve();
   if (t <= 150) return new Promise(r => setTimeout(r, t));
