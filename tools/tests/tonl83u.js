@@ -122,9 +122,9 @@ await C.evaluate(()=>{const x=document.querySelector('.gift83pop [data-g83]');if
 
 /* ── 14 · tester grants ── */
 const nt=await B.evaluate(async()=>{try{await NET.req('admin.grant',{coin:10});return 'ok'}catch(e){return e.code}});ok(nt==='notTester','a non-tester is refused ('+nt+')');
-await B.evaluate(()=>localStorage.setItem('flavius_onltester83','1'));await open(B,'char');ok(await B.evaluate(()=>!!document.querySelector('#onl .tst83')),'the 🧪 Tester panel for a tester');
+await B.evaluate(()=>localStorage.setItem('flavius_onltester83','1'));await open(B,'char');ok(await B.evaluate(()=>!document.querySelector('#onl .tst83')),'v0.97: no Tester panel on the Domus');await open(B,'prof');ok(await B.evaluate(()=>!!document.querySelector('#onl .tst83')),'the 🧪 Tester panel for a tester (Profile & settings)');
 const rc0=await B.evaluate(async()=>(await NET.req('hello',{all:1})).rankCounts);
-await B.evaluate(()=>{document.querySelector('#onl .tst83').open=true;document.getElementById('tst83coin').value='250';document.getElementById('tst83gift').value='1'});await B.click('#onl [data-onl83="grant"]');await pv(B,async()=>!!(await NET.req('hello',{all:1})).domus.test&&!!document.querySelector('#onl .db89-ttl .test83,#onl .dom82-ttl .test83'),x=>x);
+await B.evaluate(()=>{document.querySelector('#onl .tst83').open=true;document.getElementById('tst83coin').value='250';document.getElementById('tst83gift').value='1'});await B.click('#onl [data-onl83="grant"]');await pv(B,async()=>!!(await NET.req('hello',{all:1})).domus.test,x=>x);await open(B,'char');await pv(B,async()=>!!document.querySelector('#onl .db89-ttl .test83,#onl .dom82-ttl .test83'),x=>x);
 const tg=await B.evaluate(async()=>{const h=await NET.req('hello',{all:1});let r='';try{await NET.req('lobby.create',{ev:'democritus',ranked:true,cry:false})}catch(e){r=e.code}return {test:!!h.domus.test,rc:h.rankCounts,refused:r,chip:!!document.querySelector('#onl .db89-ttl .test83,#onl .dom82-ttl .test83'),wallet:ONL.char.wallet}});
 ok(tg.test&&tg.chip&&tg.refused==='testHouse','granted: a TEST house, Custom only '+JSON.stringify({t:tg.test,c:tg.chip,r:tg.refused}));
 const sum=o=>Object.values(o||{}).reduce((a,v)=>a+(v|0),0);ok(sum(tg.rc)===sum(rc0)-1,'out of the rank counts');
