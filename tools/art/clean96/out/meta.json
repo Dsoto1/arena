@@ -1,0 +1,58 @@
+{
+ "slave": {
+  "meta": [
+   114,
+   108,
+   57,
+   77.9,
+   11
+  ],
+  "rows": [
+   "walkA",
+   "walkB",
+   "stand",
+   "rakeA",
+   "rakeB",
+   "carryA",
+   "carryB",
+   "pushA",
+   "pushB",
+   "haulA",
+   "haulB"
+  ],
+  "bytes": 129972
+ },
+ "charun": {
+  "meta": [
+   112,
+   130,
+   56,
+   99.9,
+   5
+  ],
+  "rows": [
+   "walkA",
+   "walkB",
+   "stand",
+   "raise",
+   "strike"
+  ],
+  "bytes": 54429
+ },
+ "guard": {
+  "meta": [
+   158,
+   139,
+   79,
+   100.9,
+   4
+  ],
+  "rows": [
+   "walkA",
+   "walkB",
+   "idle",
+   "crack"
+  ],
+  "bytes": 55581
+ }
+}
