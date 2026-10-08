@@ -969,10 +969,20 @@ async function cpuAct(player) {
         t
       };
     }
+    /* v0.98: a Veteran / Master may take a focused shot at a Blessings pot when it beats the best attack (248-v98bar) */
+    const fp98 = typeof focus98CpuPot === 'function' ? focus98CpuPot(player, best) : null;
+    if (fp98) {
+      await doAttack(player, fp98.src, fp98.t, {
+        focusRoll: true
+      });
+      render();
+      await sleep(380);
+      continue;
+    }
     if (best) {
       const q0 = best.t.ref,
         reachKill = best.t.kind === 'player' && ['head', 'chest'].some(l => q0.hp[l] > 0 && q0.hp[l] + q0.ap[l] <= 2 * srcPow(best.src) + statDmgB(player));
-      const focus = aiSk(player, 'focus', player.diff === 'hard') && best.t.kind === 'player' && player.mv > 0 && (player.mv <= 2 || aiSk(player, 'focusAny', false) || aiSk(player, 'focusKill', false) && reachKill); // Master: spends a full walk on Focus when a vital blow can kill
+      const focus = aiSk(player, 'focus', player.diff === 'hard') && best.t.kind === 'player' && player.mv >= (typeof FOCUS98 !== 'undefined' ? FOCUS98.min : 1) && (player.mv <= 3 || aiSk(player, 'focusAny', false) || aiSk(player, 'focusKill', false) && reachKill); // Master: spends a full walk on Focus when a vital blow can kill
       if (best.t.kind === 'player' && rand() < .3) think(player, pickOne(QUOTES.pvp), 'think');else if (best.t.kind === 'npc' && rand() < .2) think(player, pickOne(QUOTES.npc), 'think');
       await doAttack(player, best.src, best.t, {
         focusRoll: focus
