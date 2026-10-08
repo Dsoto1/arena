@@ -230,7 +230,7 @@ function wear91Layer(rubble){if(!WEAR91.on||!S)return;const t0=performance.now()
       for(const rb of still)rubDraw91(g,rb,G,false);
       Object.assign(WEAR91_C,{key,ox:OX,oy:OY,bx,by,bw,bh});WEAR91.bakeStats={...st};WEAR91.lastBakeMs=performance.now()-tb;WEAR91.bakes++}
     else Object.assign(st,WEAR91.bakeStats||{});
-    ctx.drawImage(WEAR91_C.cv,WEAR91_C.bx+(OX-WEAR91_C.ox),WEAR91_C.by+(OY-WEAR91_C.oy),WEAR91_C.bw,WEAR91_C.bh);st.cached=true}
+    {const a=[WEAR91_C.bx+(OX-WEAR91_C.ox),WEAR91_C.by+(OY-WEAR91_C.oy),WEAR91_C.bw,WEAR91_C.bh];if(typeof z99Img==='function')z99Img(WEAR91_C,...a);else ctx.drawImage(WEAR91_C.cv,...a)} /* v0.99: blitted as ImageBitmap pieces (260-v99zoom) */st.cached=true}
   for(const rb of live)rubDraw91(ctx,rb,G,true);
   st.live=live.length;WEAR91.lastMs=performance.now()-t0}
 /* the hook: for one draw, S.rubble is an empty list whose iteration draws this layer (07-ui's rubble loop sits right where it belongs) */
