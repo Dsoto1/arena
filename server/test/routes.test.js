@@ -209,13 +209,15 @@ async function v80(){
   /* the Praeco: lobby.quick never makes twin rooms; opening a room cries it to free lanistas who fit */
   const gus=await client('gus'),hal=await client('hal'),ida=await client('ida'),jon=await client('jon'),kim=await client('kim');
   await kim.req('forum.mute',{who:gus.acct,on:true});m0=mark();const q1=await gus.req('lobby.quick',{ev:'cassian'});assert.ok(q1.made);
-  const op=hal.got('forum.line',m0).map(x=>x.line).find(l=>l.k==='open');assert.ok(op&&op.row.id===q1.lobby.id&&op.name==='Gus Gladius','free lanistas hear the opening');assert.ok(JSON.stringify(op.row).length<1024,'a lite row is small');
-  assert.ok(!kim.got('forum.line',m0).length,'muted: no cries');assert.strictEqual((await fay.req('forum.get',{})).slice(-1)[0].k,'open','the opening is kept in the Forum');
+  assert.ok(!hal.got('forum.line',m0).some(x=>x.line&&x.line.k==='open'),'v0.98: Find me a fight is silent — no opening line');
+  m0=mark();assert.strictEqual((await gus.req('lobby.call',{id:q1.lobby.id})).left,2,'v0.98: a playlist room spends no call');
+  const op=hal.got('forum.line',m0).map(x=>x.line).find(l=>l.k==='call');assert.ok(op&&op.row.id===q1.lobby.id&&op.name==='Gus Gladius','free lanistas hear the call');assert.ok(JSON.stringify(op.row).length<1024,'a lite row is small');
+  assert.ok(!kim.got('forum.line',m0).length,'muted: no cries');assert.strictEqual((await fay.req('forum.get',{})).slice(-1)[0].k,'call','the call is kept in the Forum');
   const q2=await hal.req('lobby.quick',{ev:'cassian'});assert.ok(!q2.made);assert.strictEqual(q2.lobby.id,q1.lobby.id,'the playlist joins the waiting room');
   const [q3,q4]=await Promise.all([ida.req('lobby.quick',{ev:'egidious'}),jon.req('lobby.quick',{ev:'egidious'})]);
   const eg=(await db.byIndex('LOBBIES')).filter(x=>x.ev==='egidious'&&x.status==='waiting');assert.strictEqual(eg.length,1,'no twin rooms');assert.strictEqual(eg[0].players.length,2);assert.strictEqual(q3.lobby.id,q4.lobby.id);
   assert.ok((await db.byIndex('LOBBIES_DONE')).some(x=>x.closed==='merged'&&x.ev==='egidious'),'both pressed at once: the later twin folded into the earlier');
-  /* 📣 calls: the opening counts, 3 a room, 2 minutes apart, only with a free seat */
+  /* 📣 calls: 3 a room (v0.98: a playlist room's silent opening spends none), 2 minutes apart, only with a free seat */
   await assert.rejects(gus.req('lobby.call',{id:q1.lobby.id}),/needs a breath — 120 s/);T+=C.RATE.cryGap;m0=mark();assert.strictEqual((await gus.req('lobby.call',{id:q1.lobby.id})).left,1);
   assert.ok(bob.got('forum.line',m0).some(x=>x.line.k==='call'&&x.line.need===2&&x.line.row.id===q1.lobby.id),'the call says the free seats');assert.strictEqual(kim.got('forum.line',m0).length,0,'muted');assert.strictEqual(hal.got('forum.line',m0).length,0,'not to the room itself');
   await assert.rejects(hal.req('lobby.call',{id:q1.lobby.id}),/breath/);T+=C.RATE.cryGap;await hal.req('lobby.call',{id:q1.lobby.id});T+=C.RATE.cryGap;await assert.rejects(gus.req('lobby.call',{id:q1.lobby.id}),/three times/);
