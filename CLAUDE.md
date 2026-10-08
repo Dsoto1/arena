@@ -1641,6 +1641,9 @@ share copy — the site download play/flavius-rule-arena.zip.)
   Reference; main-menu AAA buttons; Play Now upper-right group; Studio designer tabs; custom class card weapon cards; 3D poser tweaks; Your Play
   Now Gladiators in the Play Now submenu; FOCUS digital rule ≥3 movement + all the rest, +1 dmg on Blessings; online Damnatio only at creation)
   + Recruiting III + the online list below. Mock-ups first for Settings / Tactics / main menu / Play Now.
+  ALSO v0.98 (his 2026-10-08): Online 👤 Profile & Settings regrouped (today one big row across the top; mock-up 5); named-gear bonus texts
+  approved as listed; NAMES: the same kind of bonus at a higher level shares the name with a Roman numeral (Gloriosus I / II …) — proposed
+  mapping waiting for his ok (see chat 2026-10-08).
 - **v0.97 / v0.98 (his ok 2026-10-08):** v0.97 = the post-v0.96 fixes round (above, no server change). v0.98 (server deploy, wait for his go)
   = Recruiting III + advisor levels + house grades, passwords (Custom), region flags (time zone), house card on names, Domus rank + banners, silent
   lobby.quick, AND online events beyond the Classics (his 1a 2b 3a: printed events as Custom only, in approved waves — Familia already, then Ludus,
