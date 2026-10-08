@@ -849,7 +849,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   pixels.js (230 ON vs OFF in one page: identical) · serve.js. Test tv95p (OFF vs ON in one run, decode ms/s, p50, patch = innerHTML, sleep).
 - **v0.97 bout tracker (242-v96bt):** Match Week banner chips are a grid (sword mark 26 px LEFT of day/bout/result, never over them; phones 18 px, day + result only); test tv96t, shots tools/plans/bt96.
 - **v0.97 grow (245-v96grow):** `weeklyGrowth` wrapper (66 runs for every house's contracted fighters): beside the +0.2 Luck, `grow96Roll(w,g,week)` (hash of world id + fighter id + absolute week, never the dice RNG) gives 10% (`GROW96.chance`) +0.2 to one of spd/str/int/cha through statGain, so band-ups and "From your Doctores" show it. Test `tv96g`.
-- **v0.98 part E ONLINE (250-v98onl + the v0.98 section of 111-onlcore + server routes.js "v0.98" block; docs/backend.md "v0.98"; NO protocol bump — VER stays 7):**
+- **v0.98 part E ONLINE (252-v98onl + the v0.98 section of 111-onlcore + server routes.js "v0.98" block; docs/backend.md "v0.98"; NO protocol bump — VER stays 7):**
   🔒 Custom-room PASSWORDS (`pwWhy98`, `pwHash98` = pure-JS SHA-256 of a salt + the password, kept in `LOBBY#<id>`/`PW98` — never on the room, which carries `pw:1`;
   `lobby.create {pw}` / host's `lobby.set {pw}` ('' clears), `lobby.join {pw}` → `pw_need` / `pw_bad`, `PW98.TRIES` 8 tries per 10 min (`slow`), Ranked → `pw_ranked`,
   invitations skip it, `quickPick` never picks a 🔒 room; page: a `NET.req` wrapper asks (`pw98Ask`) for every join path, the table settings' 🔒 Password row).

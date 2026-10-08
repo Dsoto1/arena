@@ -1,4 +1,4 @@
-/* online v0.98 part E (250-v98onl + the v0.98 section of 111-onlcore; mock, four windows):
+/* online v0.98 part E (252-v98onl + the v0.98 section of 111-onlcore; mock, four windows):
    1 · 🔒 a Custom room's password: the host sets it in the table settings; the list row wears 🔒; joining asks (wrong → asked again, right → in);
        the mock keeps only a salted hash; a Ranked room has no password field.
    2 · the region flag (the browser's time zone → Europe) in the list and the room; the Region filter hides / shows the row.

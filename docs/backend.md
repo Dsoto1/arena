@@ -113,7 +113,7 @@ the server stores the picture and every screen downloads it by hash. Matches nev
 
 ## Rooms, houses and ranks (v0.98)
 
-Shared rules: the v0.98 section at the end of `111-onlcore`; routes: the "v0.98" block in `routes.js` (just before the rate limiter); mock: `250-v98onl`.
+Shared rules: the v0.98 section at the end of `111-onlcore`; routes: the "v0.98" block in `routes.js` (just before the rate limiter); mock: `252-v98onl`.
 No protocol bump — an older page still works (it cannot set a password, and a 🔒 room refuses it with `pw_need`).
 
 - **Passwords (Custom rooms only).** `lobby.create {pw}` or the host's `lobby.set {id, pw}` (`''` removes it). The hash lives in its own item
