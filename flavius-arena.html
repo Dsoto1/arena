@@ -52323,14 +52323,17 @@ async function fast96Batch(fn){if(F96.batch||!fast96())return fn();
 {const base=draw;draw=function(){if(F96.batch&&!CUR_MODAL){F96.dirty=1;return}return base.apply(this,arguments)}}
 
 /* ---------------- 10 · weapon counters ---------------- */
+/* WCTR96.badge: set while the fighter panel's weapon rows are built — the counter sits on the card's badge there, not in the chips */
+const WCTR96={badge:false};
 const ctr96=(left,max)=>left==null||max==null?String(max??left??''):`${left}/${max}`;
 weaponChips=function(w){const I=(k,v,t)=>`<span class="wchip wchip75" title="${esc(t)}"><img src="${WICO75[k]}" alt="">${v}</span>`;
   if(!w)return I('dmg','1',_T('Power (fists)'))+I('rng','1',_T('Range'));if(w.lyre)return '<span class="wchip">🎵 lyre</span>';if(w.noAtk)return '<span class="wchip">✋ held</span>';const c=[];
   if(w.p)c.push(I('dmg',w.p,_T('Attack power')));if(w.r)c.push(I('rng',w.r,_T('Range')));
-  if(w.ammo!=null)c.push(I('ammo',ctr96(w.ammoLeft,w.ammo),_T('Ammo left')));
-  if(w.throw)c.push(I('thr',`${w.throw.p}·${w.throw.r} ×${ctr96(w.throwsLeft,w.throw.n)}`,_T('Throw: power · range × throws left')));
-  if(w.shield){c.push(I('abs',w.absorb,_T('Shield absorb per hit')));c.push(I('use',ctr96(w.usesLeft,w.uses),_T('Shield uses left')))}
-  if(w.atkUses)c.push(I('use',ctr96(w.atkLeft,w.atkUses),_T('Uses left before it breaks')));if(w.both)c.push(I('both','',_T('Both attacks')));
+  const nb=WCTR96.badge;
+  if(w.ammo!=null&&!nb)c.push(I('ammo',ctr96(w.ammoLeft,w.ammo),_T('Ammo left')));
+  if(w.throw)c.push(nb?I('thr',`${w.throw.p}·${w.throw.r}`,_T('Throw: power · range')):I('thr',`${w.throw.p}·${w.throw.r} ×${ctr96(w.throwsLeft,w.throw.n)}`,_T('Throw: power · range × throws left')));
+  if(w.shield){c.push(I('abs',w.absorb,_T('Shield absorb per hit')));if(!nb)c.push(I('use',ctr96(w.usesLeft,w.uses),_T('Shield uses left')))}
+  if(w.atkUses&&!nb)c.push(I('use',ctr96(w.atkLeft,w.atkUses),_T('Uses left before it breaks')));if(w.both)c.push(I('both','',_T('Both attacks')));
   if(w.cfw)c.push(I('cf','+'+w.cfw,_T('Crowd favor per hit')));if(w.soul)c.push(I('soul','+'+w.soul,_T('Soul steal')));return c.join('')};
 /* the badge on the card: the counter that runs out (several when it has several) */
 function wCtr96(w){if(!w||w.lyre||w.noAtk)return '';const o=[];
@@ -52340,7 +52343,7 @@ function wCtr96(w){if(!w||w.lyre||w.noAtk)return '';const o=[];
   if(w.atkUses)o.push([_T('uses'),ctr96(w.atkLeft,w.atkUses),'use']);
   if(!o.length)return '';
   return `<span class="wctr96" title="${esc(o.map(x=>x[0]+' '+x[1]).join(' · '))}">${o.map(x=>`<i><img src="${WICO75[x[2]]}" alt="">${x[1]}</i>`).join('')}</span>`}
-if(typeof armsHTML==='function'){const base=armsHTML;armsHTML=function(p){let h=base.apply(this,arguments);
+if(typeof armsHTML==='function'){const base=armsHTML;armsHTML=function(p){let h;WCTR96.badge=true;try{h=base.apply(this,arguments)}finally{WCTR96.badge=false}
   try{const parts=h.split('<div class="wart">');if(parts.length===3){const ws=['R','L'].map(a=>armAlive(p,a)?p['w'+a]:null);h=parts[0]+'<div class="wart">'+wCtr96(ws[0])+parts[1]+'<div class="wart">'+wCtr96(ws[1])+parts[2]}}catch(e){console.error(e)}
   return h}}
 
