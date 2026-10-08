@@ -253,6 +253,7 @@ function showRules(tab='build'){
   <li>${_T`All 40 weapon cards (power, range, ammo, uses, throws, absorb, CF per hit, soul steal, both attacks); one card of each in the market, class weapons pulled out for the gladiators in play, and the level 4 Labrys, Psykhe and Shield of Achilles in the Arena Chest.`}</li>
   <li>${_T`The full 70-card arena deck and the 12 round-2 cards, the 15 Mandata Flavi, the 12 Carmina verses, the 8 class cards, the 13 Summa Rudis event cards and the 12 Fates. Hover any card name or thumbnail to see the card.`}</li></ul>
   <h4>${_T`Interpretations`}</h4><ul>
+  <li><span style="color:#c9a8ff">${_T`Digital rule: picking up the Arena Chest costs 1 movement, so with none left you cannot take it that turn. Carrying it still costs 1 movement on the turns after.`}</span></li>
   <li>${_T`Commodus' entrance damage goes to the location every gladiator can best afford. Lure and Rete use range 4 from the thrower. Herculean Vigor applies to your next attack. "A generous applause" is flavor.`}</li>
   <li>${_T`The Naumachia water tokens now use the printed set (water tiles, crocodiles, sunken Level 1–3 weapons and armor, and +2/+3 AP Armor Upgrades; 16 drawn face-down), and the chariot horses (Palmatus, Ocianus, Saxo, Vindex), wheels (Wagon, Laurel, Gilded) and chariot names use the printed token stats. The 36 Blessings tokens remain an estimated mix.`}</li></ul>
   <h4>${_T`Simplifications`}</h4><ul>

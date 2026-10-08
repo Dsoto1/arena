@@ -947,7 +947,7 @@ async function cpuAct(player) {
       await sleep(250);
       continue;
     }
-    if (S.evKey === 'orpheus' && S.chest && onChestTile(player) && player.keys === 0 && allLimbs(player) && !player.carrying && player.diff === 'hard') {
+    if (S.evKey === 'orpheus' && S.chest && onChestTile(player) && player.keys === 0 && allLimbs(player) && !player.carrying && player.mv >= 1 && player.diff === 'hard') {
       player.carrying = true;
       S.chest.held = 'p' + player.id;
       player.mv = Math.max(0, player.mv - 1);

@@ -1,0 +1,50 @@
+[
+ {
+  "k": "needs 1 movement",
+  "w": "07-ui.js:2814"
+ },
+ {
+  "k": "Crowd Favor can't be spent this event, so nothing can be bought at the Market. Cards and offerings can still provide weapons and armor.",
+  "w": "236-v96deals.js:16"
+ },
+ {
+  "k": "🌾 No CF: no Market buys",
+  "w": "236-v96deals.js:17"
+ },
+ {
+  "k": "No CF this event",
+  "w": "236-v96deals.js:22"
+ },
+ {
+  "k": "🛡 Teammate",
+  "w": "236-v96deals.js:48"
+ },
+ {
+  "k": "🕊 Truce",
+  "w": "236-v96deals.js:49"
+ },
+ {
+  "k": "Already offered this turn",
+  "w": "236-v96deals.js:51"
+ },
+ {
+  "k": "🤝 Truce: {0} ⟷ {1}",
+  "w": "236-v96deals.js:66"
+ },
+ {
+  "k": "🤝 Trade: {0} ⟷ {1}",
+  "w": "236-v96deals.js:67"
+ },
+ {
+  "k": "The Arena Chest: 1 Arena Key opens it for a level-4 weapon. You can also pick it up and carry it (−1 movement while held). Digital rule: lifting it costs 1 movement, so you cannot take it with none left.",
+  "w": "236-v96deals.js:79"
+ },
+ {
+  "k": "Pick up the chest: costs 1 movement (digital rule), then −1 movement on later turns while you carry it.",
+  "w": "236-v96deals.js:80"
+ },
+ {
+  "k": "Digital rule: picking up the Arena Chest costs 1 movement, so with none left you cannot take it that turn. Carrying it still costs 1 movement on the turns after.",
+  "w": "08-setup.js:256"
+ }
+]
