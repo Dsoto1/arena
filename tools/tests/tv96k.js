@@ -1,0 +1,23 @@
+/* tv96k — the skip list / checklist shows only what can be done before the week ends: on the road (Infirmary + Yard shut) no bed/wound/hours items;
+   bouts fought -> no bare-hands / card items; at home before the bouts they are there; negative treasury prints "≈ −40". */
+const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:900}});await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(String(e)));
+await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
+await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
+const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};const mark=await pg.evaluate(()=>ERR92.n);
+await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await new Promise(r=>setTimeout(r,800));newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;me().coin=3000;MGR.tab='ludus';MGR_REDRAW();await new Promise(r=>setTimeout(r,400))});
+const r=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me(),ros=rosterOf(m),o={};
+  const A=ros[0],B=ros[1];A.inj={until:w.week+4,label:'a torn shoulder',pen:4};w.beds76=[];arm94EnsureG(w,B);B.eq94.R=null;B.eq94.L=null;B.eq94.a=[];
+  const txt=()=>weekChecklist().filter(x=>!x.done).map(x=>x.ic+' '+x.txt.replace(/<[^>]+>/g,'')).join(' | ');
+  const n=w.night;n.bye=false;n.selfBye=false;n.travel=null;
+  n.bouts.forEach(x=>{x.done=false;x.ents=[]});o.home=txt();o.dbg=JSON.stringify([ros.length,B.eq94,arm94Todo(m).empty.length,B.inj]);
+  n.travel={cost:20,paid:true,gone:true};n.bouts.forEach(x=>{x.done=true});o.lock=roadLocked76(w);o.road=txt();
+  MGR.confirmEnd=true;MGR_REDRAW();await W8(300);o.confirm=(document.querySelector('.skiplist')||{}).textContent||'';
+  m.coin=1;const h=endConfirmHTML();o.neg=(h.match(/treasury[\s\S]{0,200}/)||[''])[0].replace(/<[^>]+>/g,'');
+  m.coin=3000;return o});
+ok(/bed|hurt/.test(r.home)&&/bare hands|empty/.test(r.home),'at home: bed/wound + bare-handed items present '+r.home+r.dbg);
+ok(r.lock,'road lock on');
+ok(!/bed|hurt|maim|yard session|training hour/.test(r.road)&&!/bare hands|empty|card|starter/.test(r.road),'on the road after the bouts: items gone '+r.road);
+ok(!/bed|bare hands/.test(r.confirm),'skip list clean '+r.confirm);
+ok(/≈ −\d+/.test(r.neg)&&!/~-/.test(r.neg),'negative treasury formatting '+r.neg);
+const e=await pg.evaluate(m0=>ERR92.n-m0,mark);ok(e===0,'no new error-log entries '+e);
+console.log(miss.length?'FAIL '+miss.join('\n  '):'tv96k OK');console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();
