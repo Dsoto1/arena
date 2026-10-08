@@ -1178,7 +1178,7 @@ const ONLC=(function(){
        best ever (D.dr98 — it never drops); tiers DRANKS98 with a symbol each (q4a: hut, amphora, wooden sword, crossed blades, helm, shield,
        laurel, eagle — no numerals). domusRow carries dr98 = {s, k}; room members carry dr (tier key) so every house name wears its banner.
    5 · (server only) lobby.quick never calls the crier.
-   6 · MORE EVENTS, CUSTOM ONLY (his 1a 2b 3a): EVENTS_CUSTOM98 = Ludus, Golden Eagle (teams). C.EVENTS_ALL / C.EVENTS_TEAM become NEW lists that
+   6 · MORE EVENTS, CUSTOM ONLY (his 1a 2b 3a): EVENTS_CUSTOM98 = Golden Eagle (teams; Ludus was dropped — no per-lanista draft yet). C.EVENTS_ALL / C.EVENTS_TEAM become NEW lists that
        include them — the internal lists (and so the weekly fixture, onlineFixture) are untouched; newLobby / roomSet refuse them in Ranked.
        Gauntlet is left out: a solo event (1 seat) cannot hold the 2 lanistas an online match needs.
    7 · DAMNATIO ONLY AT CREATION (v0.95 rule): classWhy refuses a switch into or out of Damnatio; other class changes stay 100 coin.
@@ -1249,17 +1249,18 @@ const ONLC=(function(){
       for(const x of [...(y.members||[]),...(y.players||[])])if(dr[x.id])x.dr=dr[x.id];if(y.host&&dr[y.host.id])y.host={...y.host,dr:dr[y.host.id]}}catch(e){}return y}}
 
   /* ── 6 · more events, Custom only ── */
-  const EVENTS_CUSTOM98=['ludus','goldenEagle'];
-  const EV_SEATS98={ludus:[2,4],goldenEagle:[4,8]};
+  const EVENTS_CUSTOM98=['goldenEagle'];  /* v0.98: Ludus stays OFFLINE until every lanista can draft their own gear (his pick C) */
+  const EV_SEATS98={goldenEagle:[4,8]};
   Object.assign(C.EV_SEATS,EV_SEATS98);
   const ALL0=C.EVENTS_ALL.slice(),TEAM0=C.EVENTS_TEAM.slice();
   C.EVENTS_ALL=ALL0.concat(EVENTS_CUSTOM98.filter(k=>!ALL0.includes(k)));
   C.EVENTS_TEAM=TEAM0.concat(['goldenEagle'].filter(k=>!TEAM0.includes(k)));
   const customOnly98=ev=>EVENTS_CUSTOM98.includes(ev);
   const CUSTOM_ONLY_TXT='That event is played online as Custom only.';
-  {const base=C.newLobby;C.newLobby=function(spec,host,id,now){spec=spec||{};if(!customOnly98(spec.ev))return base.apply(this,arguments);if(spec.ranked)throw new Error(CUSTOM_ONLY_TXT);
+  const OFFLINE_ONLY98=['ludus'],OFFLINE_TXT='That event is not played online yet.';
+  {const base=C.newLobby;C.newLobby=function(spec,host,id,now){spec=spec||{};if(OFFLINE_ONLY98.includes(spec.ev))throw new Error(OFFLINE_TXT);if(!customOnly98(spec.ev))return base.apply(this,arguments);if(spec.ranked)throw new Error(CUSTOM_ONLY_TXT);
     const L=base.call(this,{...spec,ev:'democritus'},host,id,now);L.ev=spec.ev;L.team=C.EVENTS_TEAM.includes(spec.ev);L.teams=2;L.seats=C.clampSeats(spec.ev,spec.seats||4);return L}}
-  {const base=C.roomSet;C.roomSet=function(L,by,d,now){d=d||{};if(d.ev==null||d.ev===L.ev||!customOnly98(d.ev))return base.apply(this,arguments);
+  {const base=C.roomSet;C.roomSet=function(L,by,d,now){d=d||{};if(OFFLINE_ONLY98.includes(d.ev))return OFFLINE_TXT;if(d.ev==null||d.ev===L.ev||!customOnly98(d.ev))return base.apply(this,arguments);
     if(L.host.id!==by)return 'Only the host changes the game.';if(L.status!=='waiting')return 'Already under way.';if(L.ranked)return CUSTOM_ONLY_TXT;
     const wasTeam=L.team;L.ev=d.ev;L.team=C.EVENTS_TEAM.includes(d.ev);if(L.team&&!wasTeam){L.teams=2;L.players.forEach((p,i)=>{p.team=C.TEAM_KEYS[i%2]})}if(!L.team)for(const p of L.players)delete p.team;
     for(const p of L.players)p.ready=false;const x={...d};delete x.ev;if(x.seats==null)x.seats=L.seats;return base.call(this,L,by,x,now)}}

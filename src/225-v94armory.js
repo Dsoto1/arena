@@ -176,7 +176,7 @@ function arm94Snap(){const out={};const live=x=>x&&W[x.key]&&!(x.usesLeft===0||x
 {const base=mgrAfterWatch;mgrAfterWatch=async function(res){try{if(res&&!res.g94&&S&&S._g94snap)res.g94=S._g94snap}catch(e){}return base.apply(this,arguments)}}
 /* arm94Settle — what came back from the sand (see the header, 3) */
 function arm94Settle(w,b,res){const st=arm94St(w);const mine=[];
-  for(const gid of b.ents||[]){const g=gById(gid);const X=res&&res.g94&&res.g94[gid];if(!g||!g.eq94||!X||!X.got)continue;const E=g.eq94;const m=arm94M(w,E.h);const sh=m?arm94H(m).sh:[];
+  for(const gid of b.ents||[]){const g=gById(gid);const X=res&&res.g94&&res.g94[gid];if(g&&g.eq94&&!g.alive&&!(X&&X.got)){arm94Strip(w,g);continue}/* v0.98: a draft bout (no loadout, no snapshot) that kills him still sends his kit back to the shelf */if(!g||!g.eq94||!X||!X.got)continue;const E=g.eq94;const m=arm94M(w,E.h);const sh=m?arm94H(m).sh:[];
     const lost=[],dmg=[],loot=[];const mk=(X.mk||[]).slice();const bought=k=>{const i=mk.indexOf(k);if(i<0)return false;mk.splice(i,1);if(m)arm94Fl(w,m,'skip',arm94Price(k&&W[k]?'w':'a',k));return true};
     /* weapons: a brought one comes back only if a hand still holds it */
     const held={R:X.R,L:X.L};const used=new Set();

@@ -18,3 +18,4 @@ Each line: idea · where it came from · date.
 - Play Now setup: city/modifier header aligned to the map width · old
 
 - **Trade bundles (his note 2026-10-08, parked q4a):** from a rival's team page offer 2+ of yours for 1 of theirs; once a week; a declined offer with interest comes back as a counter-offer letter the next week.
+- Online Ludus: real per-lanista draft over the network before the horns (his pick C, v0.98) — Ludus is kept out of online until then · 2026-10-08

@@ -67,7 +67,8 @@ await world((w,[a,dom])=>{w.domus82[dom].offers=['merc1']},[ids.a,ids.dom]);
 const mv2=await P.evaluate(async id=>{try{await NET.req('offer.move',{key:'merc1',from:'house',to:id});return 'ok'}catch(e){return e.message}},ids.a);ok(/He carries at most 2 offerings\./.test(mv2),'moving a 3rd onto him is refused '+mv2);
 await world((w,[a,dom])=>{w.domus82[dom].offers=[]},[ids.a,ids.dom]);
 await open('char');ok(await P.evaluate(()=>document.querySelectorAll('#onl .sat89 .so89').length===2&&/2\/2/.test(document.querySelector('#onl .sat89-h').textContent)),'two offerings shown 2/2');
-await P.mouse.move(700,880);await W(300);await shot('1440_domus','#onl .dom89');
+await P.mouse.move(700,880);await P.waitForFunction(()=>!document.querySelector('#mToast.show'),null,{timeout:10000}).catch(()=>{});await W(600);/* the 'wears …' toast of the drag step is not part of the Domus: wait it out before the picture */
+await shot('1440_domus','#onl .dom89');
 /* migration: 4 held → 2 + 2 to the shelf; shelf nearly full → refund */
 await world((w,[a,dom])=>{const c=w.chars[a];c.offers=['elix2','ap2','cf1','merc1'];c.offerEq=['cf1'];delete c.off98;w.domus82[dom].offers=[];w.domus82[dom].treasury=100},[ids.a,ids.dom]);
 await P.evaluate(async()=>{await NET.req('domus.get',{})});

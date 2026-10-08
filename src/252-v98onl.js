@@ -10,7 +10,7 @@
        its symbol above the Glory bar (onlRankBar82 wrapper). The banners are drawn with the banner press too (dr98URI: flagURI + a symbol layer,
        framed as a hanging swallow-tail banner; hut, amphora, wooden sword, crossed blades, helm, shield, laurel, eagle — no numerals).
    5 · Find me a fight stays silent (server); nothing to do here.
-   6 · MORE EVENTS (Custom only): Ludus and Golden Eagle join ONL_EVENTS_OK88 (161's Familia cycle) and TWO SQUARES under the playlists
+   6 · MORE EVENTS (Custom only): Golden Eagle joins ONL_EVENTS_OK88 (Ludus was taken out again in 255-v98fix2: online drafts need a per-lanista draft) (161's Familia cycle) and TWO SQUARES under the playlists
        (ev98Squares) each cycle a random approved event; ⚔ Play opens or joins a Custom room for it (lobby.quick ranked:false). Their Ranked
        buttons are taken off everywhere; Ranked rooms / Ludi Infames never list them.
    7 · DAMNATIO only at creation: the Domus class picker greys Damnatio (and every class while he is a Damnatio) with the reason.
@@ -177,13 +177,6 @@ setInterval(()=>{try{if(document.hidden)return;const row=document.querySelector(
   const pool=evs.filter(k=>k!==keep&&k!==cur.dataset.ev98);const pick=(pool.length?pool:evs.filter(k=>k!==keep))[Math.floor(Math.random()*Math.max(1,(pool.length?pool:evs.filter(k=>k!==keep)).length))];
   if(!pick||pick===cur.dataset.ev98)return;ONL98.sq[i]=evs.indexOf(pick);const t=document.createElement('template');t.innerHTML=ev98Square(pick,i);const nx=t.content.firstElementChild;
   if(!document.body.classList.contains('calm')){nx.classList.add('in');setTimeout(()=>nx.classList.remove('in'),40)}cur.replaceWith(nx)}catch(e){}},1000);
-
-/* 6b · ONLINE DRAFTS (Ludus): the draft runs on the host before the lockstep starts (the opening snapshot carries its result), so the other
-   lanistas' picks cannot reach it — the host drafts for them as the CPU would (cpuDraftPick), and the log says so. The host picks his own. */
-{const base=runDraft;runDraft=async function(){const on=S&&S.onl&&!S.onl.watch;const flip=[];
-  if(on)S.players.forEach((p,i)=>{if(p&&!p.cpu&&i!==S.onl.seat){p.cpu=true;flip.push(p)}});
-  if(flip.length)log(_T`Online draft: the arena picks for ${flip.map(p=>p.name).join(', ')} (their picks cannot reach the host before the horns).`,'hd');
-  try{return await base.apply(this,arguments)}finally{for(const p of flip)p.cpu=false}}}
 
 /* ---------------- 7 · Damnatio only at creation (the Domus class picker) ---------------- */
 if(typeof d89ClassPop==='function'){const base=d89ClassPop;d89ClassPop=function(){const r=base.apply(this,arguments);try{const ch=d89Act();const bg=document.querySelector('.cls89pop');if(ch&&bg){
