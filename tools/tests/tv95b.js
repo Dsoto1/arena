@@ -23,7 +23,8 @@ await q(()=>{const k=blankClass();k.id='k95';k.name='Dust';k.color='#3a7bd5';CUS
 await q(()=>{const e=document.getElementById('stName');e.value='Zedekiah';e.dispatchEvent(new Event('input',{bubbles:true}))});await W(300);
 r.card=await q(()=>{const c=document.querySelector('.clspick .clscard');return !!c&&/zedekiah/i.test(c.textContent+c.innerHTML)});
 /* 10 · the ratings panel on the right, live */
-r.panel=await q(()=>{const p=document.getElementById('st95stats');const m=document.querySelector('.setup-grid.st95c3>div:nth-child(2)');if(!p||!m)return false;return p.getBoundingClientRect().left>=m.getBoundingClientRect().right-2&&!!document.getElementById('st95bar')&&!document.querySelector('#studio .clspick #stStatSum')});
+await q(()=>{const f=document.querySelector('#studio .df99');if(f)DF99.tab(f,'fight')});await W(200);
+r.panel=await q(()=>{const p=document.getElementById('st95stats');const m=document.querySelector('#studio .df99 .ch99cls')/* v0.99: Class & ratings tab, ratings in the right column */;if(!p||!m)return false;return p.getBoundingClientRect().left>=m.getBoundingClientRect().right-2&&!!document.getElementById('st95bar')&&!document.querySelector('#studio .clspick #stStatSum')});
 const n0=await q(()=>document.getElementById('st95num').textContent);
 await q(()=>{const e=document.querySelector('[data-stat="str"]');e.value=99;e.dispatchEvent(new Event('input',{bubbles:true}))});await W(200);
 r.live=await q(n0=>{const t=document.getElementById('st95num').textContent;const st=ST.draft.stats;return t!==n0&&t.startsWith(String(statSum(st)))&&document.querySelectorAll('#st95gl .st95chip').length>=1&&/(\d+)%/.test(document.getElementById('st95bar').firstElementChild.style.width+'%')},n0);
