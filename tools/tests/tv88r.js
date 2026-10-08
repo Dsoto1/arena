@@ -20,16 +20,17 @@ const setup=async(p,name,cls)=>p.evaluate(async([name,cls])=>{if(CUR_MODAL)CUR_M
 await setup(A,'Vettii','hero');await W8(A,600);
 
 
-o.one=await A.evaluate(()=>({rot:!!document.querySelector('#onl .rot88'),fam:!!document.querySelector('#onl [data-pl81="familia"]')}));
-ok(!o.one.rot&&o.one.fam,'one approved event: the plain Familia card '+JSON.stringify(o.one));
+/* v0.98 (252): Golden Eagle is approved for online, so the Familia box already cycles — Familia + Golden Eagle */
+o.one=await A.evaluate(()=>({rot:!!document.querySelector('#onl .rot88'),fam:!!document.querySelector('#onl [data-pl81="familia"]'),slides:document.querySelectorAll('#onl .rot88>.rot88s').length,ge:ONL_EVENTS_OK88.includes('goldenEagle')}));
+ok(o.one.rot&&o.one.fam&&o.one.ge&&o.one.slides===2,'Golden Eagle approved: the Familia box cycles two cards '+JSON.stringify(o.one));
 /* approve a second event (test only) */
 o.two=await A.evaluate(async()=>{ONL_EVENTS_OK88.push('ludus');if(!ONLC.EVENTS_ALL.includes('ludus'))ONLC.EVENTS_ALL.push('ludus');ROT88.MS=1500;onlRedraw();await new Promise(r=>setTimeout(r,400));
-  const box=document.querySelector('#onl .rot88');if(!box)return {box:false};const on=()=>box.querySelector('.rot88s.on [data-pl81]').dataset.pl81;const a=on();
+  const box=document.querySelector('#onl .rot88');if(!box)return {box:false};box.querySelector('[data-rot88i="0"]').click();const on=()=>box.querySelector('.rot88s.on [data-pl81]').dataset.pl81;const a=on();
   await new Promise(r=>setTimeout(r,2800));const b=on();box.querySelector('[data-rot88i="0"]').click();const c=on();
   const btn=[...box.querySelectorAll('.rot88s.on [data-onl="quick"]')].map(x=>x.dataset.v);
   return {box:true,slides:box.querySelectorAll('.rot88s').length,dots:box.querySelectorAll('.rot88d button').length,a,b,c,btn}});
-ok(o.two.box&&o.two.slides===2&&o.two.dots===2,'two approved: a cycling box with dots '+JSON.stringify(o.two));
-ok(o.two.a==='familia'&&o.two.b==='ludus'&&o.two.c==='familia','it cycles and the dots jump');
+ok(o.two.box&&o.two.slides===3&&o.two.dots===3,'three approved: a cycling box with dots '+JSON.stringify(o.two));
+ok(o.two.a==='familia'&&['goldenEagle','ludus'].includes(o.two.b)&&o.two.c==='familia','it cycles and the dots jump');
 ok(o.two.btn&&o.two.btn.includes('familia|1'),'Ranked/Custom buttons on the shown card');
-o.kids=await A.evaluate(()=>[...document.querySelector('#onl .a85-bot .onl-pls81').children].map(c=>c.className.slice(0,40)+'|'+(c.dataset.pl81||'')));ok(o.kids.filter(k=>/\|ludus$/.test(k)).length===0,'no separate card for a cycling event');if(SHOT)await shot(A,'rot');
+o.kids=await A.evaluate(()=>[...document.querySelector('#onl .a85-bot .onl-pls81').children].map(c=>c.className.slice(0,40)+'|'+(c.dataset.pl81||'')));ok(o.kids.filter(k=>/\|(ludus|goldenEagle)$/.test(k)).length===0,'no separate card for a cycling event');if(SHOT)await shot(A,'rot');
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',JSON.stringify(errs));await b.close();srv.close();process.exit(miss.length||errs.length?1:0)})();

@@ -71,7 +71,7 @@ const land=await A.evaluate(()=>{const o=document.getElementById('onl');const t=
   return {map:!!o.querySelector('.onl-stage #onlStageMap81 .omap-in'),dots:o.querySelectorAll('#onlStageMap81 .omap-dot').length,oval:!!o.querySelector('.omap'),row80:!!document.getElementById('onlRow80'),
     forum:!!o.querySelector('.a81-forum #acta87')&&!o.querySelector('#onlFeed80') /* v0.87: the Acta of the day replaced the Forum box */,news:1,empire:/The empire/.test(o.textContent),cap:(document.getElementById('omapCap')||{}).textContent||'',
     online:(o.textContent.match(/lanistas? · \d+ guests?/g)||[]).length,today:t?{ribbon:!document.getElementById('onlToday80'),txt:t.textContent.replace(/\s+/g,' '),wheat:!!t.querySelector('svg.ico')}:null,
-    stageWheat:!!o.querySelector('.onl-pstats svg.ico,.onl-pstats .ic87w'),star:/⭐\s*\d+\s*(lifetime )?CF|CF\s*⭐/.test(o.textContent),tones:[...o.querySelectorAll('.onl-pl.pl81')].map(e=>getComputedStyle(e).borderTopColor)}});
+    stageWheat:!!o.querySelector('.onl-pstats svg.ico,.onl-pstats .ic87w'),star:/⭐\s*\d+\s*(lifetime )?CF|CF\s*⭐/.test(o.textContent),tones:[...o.querySelectorAll('.onl-pl.pl81')].filter(e=>{const s=e.closest('.rot88s');return !s||s.classList.contains('on')})/* v0.98: a cycling box (Familia + more events) counts once */.map(e=>getComputedStyle(e).borderTopColor)}});
 if(SHOT)await A.screenshot({path:path.join(SHOT,'onl_landing.png')});
 /* v0.87: a click on the map does nothing; only the 🔍 opens the large view */
 await A.evaluate(()=>{const s=document.querySelector('#onlStageMap81');if(s)s.click()});await wait(400);const big0=await A.evaluate(()=>{const o=document.querySelector('.omapbig');if(o)o.remove();return !!o});

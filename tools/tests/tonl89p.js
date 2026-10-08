@@ -43,11 +43,11 @@ ok((await txt('#onl .onl-acct span'))==='Marcus Aurelius','the rail after a refr
 ok(await peek((w,id)=>!/Annabel/.test(JSON.stringify(w.accounts[id])),ann.id),'the sign-in name is not kept');
 
 /* 2 · the profile tab: FID, rename once, formerly */
-await tab('prof');let pr=await txt('#onl .pr89');ok(pr.includes(ann.fid)&&/Marcus Aurelius/.test(pr),'the profile: name + FID');ok(await P.evaluate(()=>{const r=[...document.querySelectorAll('#onl .onl-rail button[data-onl="tab"]')].map(b=>b.dataset.v);return r.indexOf('prof')===r.length-1&&r.includes('hall')}),'the tab sits after the Hall, before the account box');
-ok(await P.evaluate(()=>{const b=document.querySelector('#onl [data-l89="rename"]');return !!b&&b.disabled}),'rename locked inside 30 days');ok(/Next rename/.test(pr),'says when');
+await tab('prof');let pr=await txt('#onl .pr98');ok(pr.includes(ann.fid)&&/Marcus Aurelius/.test(pr),'the profile: name + FID');ok(await P.evaluate(()=>{const r=[...document.querySelectorAll('#onl .onl-rail button[data-onl="tab"]')].map(b=>b.dataset.v);return r.indexOf('prof')===r.length-1&&r.includes('hall')}),'the tab sits after the Hall, before the account box');
+ok(await P.evaluate(()=>{const b=document.querySelector('#onl [data-l89="rename"]');return !!b&&b.disabled}),'rename locked inside 30 days');ok(/next on/.test(pr) /* v0.98 wording */,'says when');
 let e=await rej(()=>NET.req('lanista.name',{name:'Titus Varro'}));ok(e&&e.code==='too_soon','the server refuses too ('+(e&&e.code)+')');
 await world((w,id)=>{w.accounts[id].nameAt=Date.now()-31*86400e3},ann.id);await P.evaluate(()=>onlRefresh().then(()=>onlRedraw()));await idle();
-await P.fill('#ln89Ren','Marcus Varro');await P.click('[data-l89="rename"]');await idle();pr=await txt('#onl .pr89');
+await P.fill('#ln89Ren','Marcus Varro');await P.click('[data-l89="rename"]');await idle();pr=await txt('#onl .pr98');
 ok(/Marcus Varro/.test(pr)&&/formerly Marcus Aurelius/.test(pr),'renamed, formerly shown: '+pr.slice(0,120));ok((await txt('#onl .onl-acct span'))==='Marcus Varro','the rail follows');
 e=await rej(()=>NET.req('lanista.name',{name:'Titus Varro'}));ok(e&&e.code==='too_soon','once only');
 await shot('profile');
@@ -58,7 +58,7 @@ ok(H.bob&&H.lan==='Gaius Varro'&&H.tz,'Bob is here, named, glowing in Nairobi '+
 await world((w,id)=>{w.accounts[id].priv89={hide:true,inv:'all'}},bob.id);
 const H2=await P.evaluate(async()=>{const w=await NET.req('who.list');const h=await NET.req('hello',{all:1});return {bob:w.some(r=>r.name==='Bobus Ferox'),tz:!!h.here.zones['Africa/Nairobi'],n:h.here.n}});
 ok(!H2.bob&&!H2.tz&&H2.n===H.n,'hidden: no pill, no glow, still counted '+JSON.stringify(H2));
-await P.click('#onl [data-l89p="hide"]');await idle();ok(await peek((w,id)=>!!(w.accounts[id].priv89||{}).hide,ann.id),'my own switch saves');
+await P.click('#onl label.sw98:has([data-l89p="hide"]) i') /* v0.98: the Profile switches are drawn (252 .sw98) */;await idle();ok(await peek((w,id)=>!!(w.accounts[id].priv89||{}).hide,ann.id),'my own switch saves');
 await P.check('#onl [data-l89p="inv"][value="follow"]');await idle();ok(await peek((w,id)=>(w.accounts[id].priv89||{}).inv==='follow',ann.id),'who may invite me saves');
 
 /* 4 · invites: Bob says nobody → refused; everyone → ✉ Invite by FID from the room */
@@ -93,7 +93,7 @@ const slow=await P.evaluate(async fid=>{for(let i=0;i<25;i++){try{await NET.req(
 
 /* 6 · phones */
 await P.evaluate(()=>{ONL.tab='prof';V89L.visit=null;onlRedraw()});await P.setViewportSize({width:390,height:844});await W(400);await P.evaluate(()=>onlRedraw());await W(300);
-const ph=await P.evaluate(()=>{const mb=document.querySelector('#mBody');const s=document.querySelector('#onl .pr89');return {wide:mb?mb.scrollWidth-mb.clientWidth:0,w:s?s.getBoundingClientRect().width:0}});
+const ph=await P.evaluate(()=>{const mb=document.querySelector('#mBody');const s=document.querySelector('#onl .pr98');return {wide:mb?mb.scrollWidth-mb.clientWidth:0,w:s?s.getBoundingClientRect().width:0}});
 ok(ph.wide<=2&&ph.w>200&&ph.w<=392,'the profile fits 390 px '+JSON.stringify(ph));await shot('profile_phone');
 await P.evaluate(fid=>onl89Visit({fid}),bob.fid);await idle();await W(300);
 const pv=await P.evaluate(()=>{const mb=document.querySelector('#mBody');return {wide:mb?mb.scrollWidth-mb.clientWidth:0,strip:!!document.querySelector('#onl .vs89')}});ok(pv.strip&&pv.wide<=2,'the visit fits 390 px '+JSON.stringify(pv));await shot('visit_phone');
