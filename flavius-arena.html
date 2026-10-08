@@ -53504,6 +53504,36 @@ const SKIP241_ROAD=['⚕','🛏','🦿','🔒','🏋','⏳'],SKIP241_BOUTS=['⚔
 #mgrBody .walk96 .btn.walk96b{width:164px;height:30px;font-size:14px}
 #mgrBody .walk96 .city90n{font-size:10px;line-height:1.2}
 #mgrBody .travelcard.strip96,#mgrBody .card2.strip96{font-size:12.5px}}`;document.head.appendChild(st)}
+/* 243-v96armban (v0.97 prep) — the Manager Armory banner gets its own scene (it borrowed the roster's):
+   a stone armory with racks (gladii, spears, trident), hung shields, armor on a stand, an anvil with hammer and a glowing brazier.
+   Same 600x120 centred scene + full-width sky as roomScene73; static except the brazier glow (CSS, off under Reduce motion/idle).
+   Right-side chip (tabStat73 'armory'): pieces to repair, else pieces on the shelf. */
+BANNERS73.armory=[_T('🛡 The Armory'),_T('what the house owns, and who wears it')];
+function armoryScene96(){const k='armory';
+  const sky=`<defs><linearGradient id="b73${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a2a1c"/><stop offset="1" stop-color="#1a120c"/></linearGradient><radialGradient id="ab96g" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffb347" stop-opacity=".75"/><stop offset="1" stop-color="#ff7a1a" stop-opacity="0"/></radialGradient></defs><rect x="-700" width="2000" height="120" fill="url(#b73${k})"/>`;
+  const wall=`<rect x="-700" y="0" width="2000" height="120" fill="#2a1d12"/>`+Array.from({length:8},(_,r)=>Array.from({length:60},(_,i)=>`<rect x="${-690+i*36+(r%2)*18}" y="${r*15}" width="34" height="13" fill="${(i+r)%3?'#33241a':'#3a2a1c'}"/>`).join('')).join('')+`<rect x="-700" y="104" width="2000" height="16" fill="#150e09"/><rect x="-700" y="100" width="2000" height="5" fill="#6b4a2a"/>`;
+  const beam=`<rect x="-700" y="14" width="2000" height="7" fill="#5a3c22"/><rect x="-700" y="62" width="2000" height="5" fill="#5a3c22"/>`;
+  const gladius=(x,y)=>`<g transform="translate(${x} ${y})"><path d="M0 0v40" stroke="#d8dde2" stroke-width="4"/><path d="M-5 0h10" stroke="#c9a458" stroke-width="3"/><rect x="-2" y="-8" width="4" height="8" fill="#8a5a2a"/></g>`;
+  const spear=(x)=>`<path d="M${x} 20v82" stroke="#8a6a44" stroke-width="3"/><path d="M${x} 8l-5 14h10z" fill="#d8dde2"/>`;
+  const trident=(x)=>`<path d="M${x} 24v78" stroke="#8a6a44" stroke-width="3"/><path d="M${x-8} 8v14q8 6 16 0V8M${x} 8v16" stroke="#d8dde2" stroke-width="2.5" fill="none"/>`;
+  const shield=(x,y,c,r=15)=>`<g transform="translate(${x} ${y})"><circle r="${r}" fill="${c}" stroke="#150e09" stroke-width="2"/><circle r="${r-5}" fill="none" stroke="#e8dcc0" stroke-width="1.5" opacity=".6"/><circle r="4" fill="#c9a458" stroke="#150e09" stroke-width="1.5"/></g>`;
+  const rackL=`<rect x="40" y="62" width="100" height="5" fill="#4a321c"/><rect x="40" y="86" width="100" height="5" fill="#4a321c"/>${[52,72,92,112,128].map(x=>gladius(x,50)).join('')}${spear(46)}${spear(134)}`;
+  const racks=`${rackL}${shield(60,30,'#a3281f')}${shield(100,30,'#3a6a7a')}${shield(140,30,'#a3281f',13)}<rect x="170" y="62" width="70" height="5" fill="#4a321c"/>${[180,200,220].map(trident).join('')}`;
+  const armor=`<g transform="translate(270 102)"><rect x="-2" y="-64" width="4" height="64" fill="#4a321c"/><rect x="-16" y="-3" width="32" height="4" fill="#4a321c"/><path d="M-20-62q20-8 40 0l4 14-8 4v28h-32v-28l-8-4z" fill="#9aa3ab" stroke="#150e09" stroke-width="2"/><path d="M-14-46h28M-14-38h28M-14-30h28" stroke="#5c6670" stroke-width="2"/><path d="M-11-66q11-14 22 0z" fill="#c9a458" stroke="#150e09" stroke-width="1.5"/><path d="M0-80v14" stroke="#a3281f" stroke-width="5"/></g>`;
+  const anvil=`<g transform="translate(360 104)"><rect x="-18" y="-18" width="36" height="18" rx="2" fill="#5a3c22"/><path d="M-30-40h54l-10 8h-10v14h-24v-14h-10z" fill="#4c5560" stroke="#150e09" stroke-width="2"/><path d="M24-40l16 5-16 3z" fill="#4c5560" stroke="#150e09" stroke-width="2"/><path d="M-26-39h46" stroke="#9aa3ab" stroke-width="2"/><g transform="translate(-6 -42) rotate(-28)"><rect x="-1.5" y="-26" width="3" height="26" fill="#8a5a2a"/><rect x="-8" y="-34" width="16" height="9" rx="1.5" fill="#6b747d" stroke="#150e09" stroke-width="1.5"/></g></g>`;
+  const brazier=`<ellipse class="ab96glow" cx="450" cy="62" rx="62" ry="46" fill="url(#ab96g)"/><g transform="translate(450 104)"><path d="M-3 0h6v-34h-6z" fill="#3a2a1c"/><path d="M-14 0h28M-22-34h44l-6 14h-32z" stroke="#150e09" stroke-width="2" fill="#4c5560"/><rect x="-10" y="-4" width="20" height="4" fill="#3a2a1c"/><path class="ab96fl" d="M-12-34q-4-18 4-24q2 8 6 6q0-12 6-18q2 14 8 20q4 6-2 16z" fill="#ff9a2a"/><path d="M-6-34q-2-10 2-14q2 6 6 8q2 4-2 6z" fill="#ffd96a"/></g>`;
+  const right=`${[500,540,570].map((x,i)=>gladius(x,46+i%2*4)).join('')}<rect x="490" y="62" width="90" height="5" fill="#4a321c"/>${shield(530,28,'#8a6a44',14)}${shield(566,32,'#3a6a7a',12)}`;
+  const crates=`<rect x="300" y="86" width="32" height="18" fill="#6b4a2a" stroke="#150e09" stroke-width="1.5"/><path d="M300 95h32" stroke="#4a321c" stroke-width="2"/>`;
+  return `<svg viewBox="0 0 600 120" preserveAspectRatio="xMidYMid meet" style="overflow:hidden" aria-hidden="true">${sky}${wall}${beam}${racks}${armor}${crates}${anvil}${brazier}${right}</svg>`}
+{const base=roomScene73;roomScene73=function(k){if(k==='armory'){try{return armoryScene96()}catch(e){console.error(e)}}return base.apply(this,arguments)}}
+/* count chip: pieces to repair, else pieces on the shelf */
+{const base=tabStat73;tabStat73=function(k){if(k==='armory'){try{const w=W_();const pm=me();if(!w||w.dead||!pm)return null;
+    const dm=arm94All(pm).filter(x=>x.P.dmg).length;if(dm)return [dm,dm===1?_T('piece to repair'):_T('pieces to repair')];
+    const sh=((pm.arm94||{}).sh||[]).length;return sh?[sh,sh===1?_T('piece on the shelf'):_T('pieces on the shelf')]:null}catch(e){console.error(e)}return null}
+  return base.apply(this,arguments)}}
+(function(){if(typeof document==='undefined'||document.getElementById('ab96css'))return;const st=document.createElement('style');st.id='ab96css';
+  st.textContent='.b73-armory .ab96glow{animation:ab96p 2.6s ease-in-out infinite}@keyframes ab96p{0%,100%{opacity:.8}50%{opacity:1}}body.calm .b73-armory .ab96glow,body.idle92 .b73-armory .ab96glow{animation:none}@media (prefers-reduced-motion:reduce){.b73-armory .ab96glow{animation:none}}';
+  document.head.appendChild(st)})();
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)
