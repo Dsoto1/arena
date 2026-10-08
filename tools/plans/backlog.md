@@ -16,3 +16,5 @@ Each line: idea · where it came from · date.
 - Player listings in Flavius's Auction (only if the economy is healthy; cooldown, floor price, Flavius' cut) · v0.84 decision
 - Event Designer full step-by-step wizard (deferred v0.54) · old
 - Play Now setup: city/modifier header aligned to the map width · old
+
+- **Trade bundles (his note 2026-10-08, parked q4a):** from a rival's team page offer 2+ of yours for 1 of theirs; once a week; a declined offer with interest comes back as a counter-offer letter the next week.

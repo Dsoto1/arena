@@ -1523,6 +1523,18 @@ share copy — the site download play/flavius-rule-arena.zip.)
   left + what you can afford), End turn apart. Q4a (his): the Leather Tasset (legwrapsU) is NOT padding any more — it takes the upper leg alone like a thigh
   plate (armorConflict: only LOWER padding stacks under hard pieces); check class loadouts that wear both + the Manager/online shelves. Confirmed: two hard pieces on one equip point never
   stack (armorConflict), belts sit on top of chest armor.
+- **v0.96 NOTES II (his list 2026-10-08 + answers q1a q2(a assumed) q3a q4a q5a):** FIXES — (6) pre-fight warning letters cover only the CURRENT
+  week's event/city (a Capua warning arrived while fighting in Roma); (7) Manica/galerus: Right/Left shoulder choice wherever gear is dressed
+  (Manager Armory, Domus, designers) — today it always lands on the left and they replace each other; (8) a fighter on the card but the "no fighter
+  entered" letter/checklist item stays; (10) City Square fades in only after the crowd has loaded and walks. CHANGES — (1, q1a) ONE set of house
+  grades: the lanista traits ARE the public grades recruits see (Recruiting III uses them); the perk tab's "hone a trait" row = prominent trait cards
+  with current grade + green gain preview; (2) "Save and leave your career" → "Save and Exit"; (3, q2a) standings: "Now" → "Ludus", the Quaestor
+  line leaves the table (stays in the season-end ledger letter + the podium prize hover), league prize column → banner podium with the Superbus
+  trophy on 1st (hover = season-finish prizes), new columns top-rated gladiator · record · latest event result, livelier look; (4, q3a) Season tab:
+  each finished week's Acta results card (your house's bouts) stored to the right of Billing; (5) Match Week Road box sized to content, advisor's
+  "don't fight" note inside it, "N points to the next prize" → a letter, "Gear up in <city>" removed (City Square → Stalls covers it; guide line);
+  (11, q5a) invitational Answer opens the fighter picker + accept at once (no reopening the letter). PARKED (q4a): trade bundles 2+-for-1 +
+  counter-offers by mail → tools/plans/backlog.md.
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
