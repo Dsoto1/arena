@@ -1241,7 +1241,7 @@ share copy — the site download play/flavius-rule-arena.zip.)
   bar, Vulso 2 of 3, podium in the League banner (251/255); online passwords/regions/house card/Domus rank/Golden Eagle Custom/Damnatio at creation/
   bonus renames/Profile regroup (252, server); Domus layout + offerings cap 2 (253, server); online Fast desync fixed (254); custom gear joins drafts
   (257); chariot horses: pool of 12 two-horse tokens, drawn per race, visible flip, his sharper art (258); regression fixes (259). Ludus stays off
-  online until a real per-lanista draft exists (backlog). Server changed — flavius.sh release deploys it.
+  online until a real per-lanista draft exists (backlog). Server changed — flavius.sh release deploys it. GitHub full run: 258/259 + tv91n (flaky, passed alone) + 3 flaky.
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
