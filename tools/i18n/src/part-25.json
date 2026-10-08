@@ -440,7 +440,7 @@
   "w": "server/src/routes.js:711"
  },
  {
-  "k": "Up to {0} offerings in the satchel.",
+  "k": "He carries at most {0} offerings.",
   "w": "server/src/routes.js:713"
  },
  {
@@ -681,59 +681,59 @@
  },
  {
   "k": "The dead stay as they fell.",
-  "w": "server/src/routes.js:1293"
- },
- {
-  "k": "That upload is out of order — save the token again.",
-  "w": "server/src/routes.js:1300"
- },
- {
-  "k": "At most {0} token pictures a day — try again tomorrow.",
-  "w": "server/src/routes.js:1304"
- },
- {
-  "k": "No such picture.",
   "w": "server/src/routes.js:1309"
  },
  {
+  "k": "That upload is out of order — save the token again.",
+  "w": "server/src/routes.js:1316"
+ },
+ {
+  "k": "At most {0} token pictures a day — try again tomorrow.",
+  "w": "server/src/routes.js:1320"
+ },
+ {
+  "k": "No such picture.",
+  "w": "server/src/routes.js:1325"
+ },
+ {
   "k": "This room has a password.",
-  "w": "server/src/routes.js:1326"
+  "w": "server/src/routes.js:1342"
  },
  {
   "k": "Too many tries — wait a few minutes.",
-  "w": "server/src/routes.js:1327"
+  "w": "server/src/routes.js:1343"
  },
  {
   "k": "Wrong password.",
-  "w": "server/src/routes.js:1328"
+  "w": "server/src/routes.js:1344"
  },
  {
   "k": "Only the host changes the game.",
-  "w": "server/src/routes.js:1353"
- },
- {
-  "k": "Unknown request:",
-  "w": "server/src/routes.js:1362"
- },
- {
-  "k": "Too many requests — wait a moment.",
-  "w": "server/src/routes.js:1363"
- },
- {
-  "k": "Your two hours as a guest are up — sign in to keep watching.",
-  "w": "server/src/routes.js:1365"
- },
- {
-  "k": "Sign in to {0}.",
-  "w": "server/src/routes.js:1366"
- },
- {
-  "k": "Name your house first — every lanista needs a Domus.",
   "w": "server/src/routes.js:1369"
  },
  {
+  "k": "Unknown request:",
+  "w": "server/src/routes.js:1378"
+ },
+ {
+  "k": "Too many requests — wait a moment.",
+  "w": "server/src/routes.js:1379"
+ },
+ {
+  "k": "Your two hours as a guest are up — sign in to keep watching.",
+  "w": "server/src/routes.js:1381"
+ },
+ {
+  "k": "Sign in to {0}.",
+  "w": "server/src/routes.js:1382"
+ },
+ {
+  "k": "Name your house first — every lanista needs a Domus.",
+  "w": "server/src/routes.js:1385"
+ },
+ {
   "k": "Test houses play Custom only.",
-  "w": "server/src/routes.js:1373"
+  "w": "server/src/routes.js:1389"
  },
  {
   "k": "The arena hit a snag — try again (ref {0}).",
@@ -1360,23 +1360,27 @@
   "w": "src/111-onlcore.js:1259"
  },
  {
+  "k": "That event is not played online yet.",
+  "w": "src/111-onlcore.js:1260"
+ },
+ {
   "k": "A Damnatio stays condemned — the class is chosen only when he is raised.",
-  "w": "src/111-onlcore.js:1269"
+  "w": "src/111-onlcore.js:1270"
  },
  {
   "k": "Damnatio is chosen only when a gladiator is raised.",
-  "w": "src/111-onlcore.js:1269"
+  "w": "src/111-onlcore.js:1270"
  },
  {
   "k": "Gloriosus II",
-  "w": "src/111-onlcore.js:1273"
+  "w": "src/111-onlcore.js:1274"
  },
  {
   "k": "Acutus II",
-  "w": "src/111-onlcore.js:1273"
+  "w": "src/111-onlcore.js:1274"
  },
  {
   "k": "Velox II",
-  "w": "src/111-onlcore.js:1273"
+  "w": "src/111-onlcore.js:1274"
  }
 ]

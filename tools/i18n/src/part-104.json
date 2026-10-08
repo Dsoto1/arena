@@ -1,0 +1,1942 @@
+[
+ {
+  "k": "🐎 {0}: <b data-card=\"h:{1}\">{2}</b> is spent — <b data-card=\"h:{3}\">{4}</b> takes the reins: +{5} movement, {6} HP.",
+  "w": "09-special.js:85"
+ },
+ {
+  "k": "Win bouts for points: the top four houses after 12 weeks go to the <b>Flavius Superbus</b>. Three week-ends in the red closes the ludus. <b>Tactics → Strategy</b> has the rest.",
+  "w": "17-manager.js:1175"
+ },
+ {
+  "k": "Gladiators: roll 2 hit dice and 1 hit location die; each hit deals your weapon’s power to that location, armor first, then HP. A limb at 0 is severed; a head or chest at 0 eliminates. A gladiator trophy is worth 10 CF.",
+  "w": "29-guide.js:122"
+ },
+ {
+  "k": "Attack: roll 2 hit dice vs a gladiator (plus the hit location die), 4 vs a beast; each hit deals the weapon’s power (thrown weapons use their thrown numbers, a|b = normal|thrown). Armor first, then HP.",
+  "w": "29-guide.js:153"
+ },
+ {
+  "k": "<b>📜 Tactics.</b> The rules at a glance, the strategy guides, the Quick Reference, the full rulebook — and these lessons, any time.",
+  "w": "29-guide.js:223"
+ },
+ {
+  "k": "Courting starts with knowing them. His ratings are letter grades — \"?\" until your <b>Recruiter</b> looks. Spend some of the recruiter's hours: press <b>👁 Watch him train</b> (or any scouting action). Grade all five and his personality shows.",
+  "w": "36-mtutor.js:47"
+ },
+ {
+  "k": "Now <b>pitch</b> them. Each pitch leans on one of your <b>house grades</b> (your lanista traits — every recruit sees them); one that answers his wish counts double. One pitch per recruit a week.",
+  "w": "36-mtutor.js:48"
+ },
+ {
+  "k": "The sandbox league is discarded and you return to the main menu. You can take the lesson again from the menu or Tactics → 🎓 Tutorials.",
+  "w": "36-mtutor.js:167"
+ },
+ {
+  "k": "this week only · no road to pay · take two of the three",
+  "w": "50-v48.js:49"
+ },
+ {
+  "k": "Vulso keeps the last lot for the auction block",
+  "w": "50-v48.js:50"
+ },
+ {
+  "k": "<b>Vulso's cart</b> also comes to your gate once, with three cheap lots and no travel cost. You may take two of them.",
+  "w": "50-v48.js:169"
+ },
+ {
+  "k": "📜 Tactics",
+  "w": "52-v50.js:138"
+ },
+ {
+  "k": "Power: damage dealt by each hit",
+  "w": "54-v51.js:74"
+ },
+ {
+  "k": "Power {0}: each hit deals {1} damage.",
+  "w": "54-v51.js:77"
+ },
+ {
+  "k": "Strikes twice: can make both of your turn’s attacks.",
+  "w": "54-v51.js:79"
+ },
+ {
+  "k": "<small class=\"rc-sub\">holds {0}/{1}</small>",
+  "w": "137-v83onlui.js:183"
+ },
+ {
+  "k": "🧪 Offerings <small class=\"rc-sub\">he carries at most {0} · all he holds goes into a match · the unused come back</small>",
+  "w": "137-v83onlui.js:193"
+ },
+ {
+  "k": "🧪 Offerings <small>{0}/{1} on {2}{3}</small>",
+  "w": "137-v83onlui.js:219"
+ },
+ {
+  "k": "🧪 On him · {0}/{1}",
+  "w": "175-v89domus.js:197"
+ },
+ {
+  "k": "Hints & board",
+  "w": "246-v98ui.js:33"
+ },
+ {
+  "k": "Board & pieces",
+  "w": "246-v98ui.js:34"
+ },
+ {
+  "k": "Sound & access",
+  "w": "246-v98ui.js:35"
+ },
+ {
+  "k": "Audio",
+  "w": "246-v98ui.js:35"
+ },
+ {
+  "k": "Game terms — class names, CF, the Fate, Missio — stay English in every language. Switching reloads the page (asks first during a match).",
+  "w": "246-v98ui.js:55"
+ },
+ {
+  "k": "Same switch as the arena bar. Step waits after each CPU action.",
+  "w": "246-v98ui.js:58"
+ },
+ {
+  "k": "Animations",
+  "w": "246-v98ui.js:59"
+ },
+ {
+  "k": "Flying stones and spears, the clean-up crew, market peeks.",
+  "w": "246-v98ui.js:59"
+ },
+ {
+  "k": "Confirm before End turn",
+  "w": "246-v98ui.js:60"
+ },
+ {
+  "k": "Asks once when you still have moves or attacks left.",
+  "w": "246-v98ui.js:60"
+ },
+ {
+  "k": "Follow camera",
+  "w": "246-v98ui.js:61"
+ },
+ {
+  "k": "Event briefing",
+  "w": "246-v98ui.js:62"
+ },
+ {
+  "k": "The rounds, the rules and who fights, when the horns sound.",
+  "w": "246-v98ui.js:62"
+ },
+ {
+  "k": "Context menus",
+  "w": "246-v98ui.js:63"
+ },
+ {
+  "k": "Right-click or long-press anything on the sand for its actions.",
+  "w": "246-v98ui.js:63"
+ },
+ {
+  "k": "Now and then an emperor, a poet or a legend takes a seat.",
+  "w": "246-v98ui.js:64"
+ },
+ {
+  "k": "How the game plays and talks to you.",
+  "w": "246-v98ui.js:66"
+ },
+ {
+  "k": "Hints — master switch",
+  "w": "246-v98ui.js:72"
+ },
+ {
+  "k": "Every hint at once. Never in Ranked online matches.",
+  "w": "246-v98ui.js:72"
+ },
+ {
+  "k": "The hint box under your actions.",
+  "w": "246-v98ui.js:73"
+ },
+ {
+  "k": "A short window the first time a rule comes up.",
+  "w": "246-v98ui.js:73"
+ },
+ {
+  "k": "✨ Turn hints",
+  "w": "246-v98ui.js:74"
+ },
+ {
+  "k": "One suggested move glows gold, with a line on why.",
+  "w": "246-v98ui.js:74"
+ },
+ {
+  "k": "Hovering a tile or button adds what the rules say.",
+  "w": "246-v98ui.js:74"
+ },
+ {
+  "k": "What happened since your last turn.",
+  "w": "246-v98ui.js:75"
+ },
+ {
+  "k": "Damage, healing, CF and coin rise from the board.",
+  "w": "246-v98ui.js:76"
+ },
+ {
+  "k": "Drawn and played cards show in the arena corner.",
+  "w": "246-v98ui.js:77"
+ },
+ {
+  "k": "The newest log lines over the arena corner.",
+  "w": "246-v98ui.js:78"
+ },
+ {
+  "k": "6+ damage or a fall.",
+  "w": "246-v98ui.js:79"
+ },
+ {
+  "k": "Blood & severed limbs",
+  "w": "246-v98ui.js:80"
+ },
+ {
+  "k": "Off hides the red; lost limbs still count.",
+  "w": "246-v98ui.js:80"
+ },
+ {
+  "k": "See-through",
+  "w": "246-v98ui.js:81"
+ },
+ {
+  "k": "Fade pillars in front of what you look at (X).",
+  "w": "246-v98ui.js:81"
+ },
+ {
+  "k": "Hot seat: turn the board",
+  "w": "246-v98ui.js:82"
+ },
+ {
+  "k": "Each player's corner turns to the bottom on their turn.",
+  "w": "246-v98ui.js:82"
+ },
+ {
+  "k": "Spectator shouts",
+  "w": "246-v98ui.js:83"
+ },
+ {
+  "k": "\"Bread and blood!\", \"Murderer!\" and the rest.",
+  "w": "246-v98ui.js:83"
+ },
+ {
+  "k": "Flavius reacts — cheers, insults, the odd tear.",
+  "w": "246-v98ui.js:84"
+ },
+ {
+  "k": "CPU gladiators speak their minds.",
+  "w": "246-v98ui.js:85"
+ },
+ {
+  "k": "City-square chatter",
+  "w": "246-v98ui.js:86"
+ },
+ {
+  "k": "Townsfolk gossip in the Manager's forum.",
+  "w": "246-v98ui.js:86"
+ },
+ {
+  "k": "What the game tells you, and what shows on the sand.",
+  "w": "246-v98ui.js:87"
+ },
+ {
+  "k": "H toggles all",
+  "w": "246-v98ui.js:88"
+ },
+ {
+  "k": "Voices & bubbles",
+  "w": "246-v98ui.js:90"
+ },
+ {
+  "k": "Virgilante's sculpted minis on their bases — the eight classes and the printed beasts.",
+  "w": "246-v98ui.js:93"
+ },
+ {
+  "k": "Figures",
+  "w": "246-v98ui.js:93"
+ },
+ {
+  "k": "Sculpted tokens for every class, beast and creation.",
+  "w": "246-v98ui.js:93"
+ },
+ {
+  "k": "A 3D pot on each pillar. When it falls it breaks and the offering lands.",
+  "w": "246-v98ui.js:100"
+ },
+ {
+  "k": "Clay pot on a pillar",
+  "w": "246-v98ui.js:100"
+ },
+ {
+  "k": "The printed Blessing tokens, face up. A knocked-off token flips to its offering.",
+  "w": "246-v98ui.js:101"
+ },
+ {
+  "k": "Token rounds on a pillar",
+  "w": "246-v98ui.js:101"
+ },
+ {
+  "k": "✓ unlocked",
+  "w": "246-v98ui.js:108"
+ },
+ {
+  "k": "🔒 win here",
+  "w": "246-v98ui.js:108"
+ },
+ {
+  "k": "{0} / {1} cities won · win a match at a city to unlock its editor",
+  "w": "246-v98ui.js:110"
+ },
+ {
+  "k": "How gladiators, Blessings and the editor in the box look.",
+  "w": "246-v98ui.js:111"
+ },
+ {
+  "k": "Gladiators & beasts",
+  "w": "246-v98ui.js:112"
+ },
+ {
+  "k": "Your own creations always wear their own 3D tokens.",
+  "w": "246-v98ui.js:112"
+ },
+ {
+  "k": "Blessings on pillars",
+  "w": "246-v98ui.js:113"
+ },
+ {
+  "k": "Floor spikes",
+  "w": "246-v98ui.js:113"
+ },
+ {
+  "k": "The metal of the 3D spike caps.",
+  "w": "246-v98ui.js:113"
+ },
+ {
+  "k": "Light board for older phones",
+  "w": "246-v98ui.js:113"
+ },
+ {
+  "k": "Skips the sand grain and scars. Auto: on sharp phone screens.",
+  "w": "246-v98ui.js:113"
+ },
+ {
+  "k": "Editors in the box",
+  "w": "246-v98ui.js:114"
+ },
+ {
+  "k": "The house colours",
+  "w": "246-v98ui.js:123"
+ },
+ {
+  "k": "Location flavours",
+  "w": "246-v98ui.js:126"
+ },
+ {
+  "k": "Each arena tints sand and stone its own way.",
+  "w": "246-v98ui.js:126"
+ },
+ {
+  "k": "Name — e.g. Night games",
+  "w": "246-v98ui.js:128"
+ },
+ {
+  "k": "Look name",
+  "w": "246-v98ui.js:128"
+ },
+ {
+  "k": "One click changes the whole palette. Your board and your panels follow.",
+  "w": "246-v98ui.js:132"
+ },
+ {
+  "k": "Tune it",
+  "w": "246-v98ui.js:134"
+ },
+ {
+  "k": "Save this look",
+  "w": "246-v98ui.js:135"
+ },
+ {
+  "k": "🖌 Custom colours — interface, board, furniture",
+  "w": "246-v98ui.js:136"
+ },
+ {
+  "k": "Sound",
+  "w": "246-v98ui.js:139"
+ },
+ {
+  "k": "M mutes everything.",
+  "w": "246-v98ui.js:139"
+ },
+ {
+  "k": "Grows with the rounds.",
+  "w": "246-v98ui.js:139"
+ },
+ {
+  "k": "Hits, coin, cards, fanfares.",
+  "w": "246-v98ui.js:140"
+ },
+ {
+  "k": "Roma's theme, softly.",
+  "w": "246-v98ui.js:140"
+ },
+ {
+  "k": "Music volume",
+  "w": "246-v98ui.js:141"
+ },
+ {
+  "k": "Effects volume",
+  "w": "246-v98ui.js:141"
+ },
+ {
+  "k": "Every arena has its own theme, unlocked by winning there.",
+  "w": "246-v98ui.js:144"
+ },
+ {
+  "k": "Try it",
+  "w": "246-v98ui.js:145"
+ },
+ {
+  "k": "<div class=\"seg s98-seg\"",
+  "w": "246-v98ui.js:145"
+ },
+ {
+  "k": "The music",
+  "w": "246-v98ui.js:146"
+ },
+ {
+  "k": "{0} of {1} themes yours",
+  "w": "246-v98ui.js:146"
+ },
+ {
+  "k": "Panels, log and windows. The arena itself keeps its size.",
+  "w": "246-v98ui.js:152"
+ },
+ {
+  "k": "Reduce motion",
+  "w": "246-v98ui.js:153"
+ },
+ {
+  "k": "No pulses, glows or camera eases. Every effect has a still version.",
+  "w": "246-v98ui.js:153"
+ },
+ {
+  "k": "Colour-blind colours",
+  "w": "246-v98ui.js:154"
+ },
+ {
+  "k": "Okabe–Ito class colours, a class letter on every token, blue/orange signals.",
+  "w": "246-v98ui.js:154"
+ },
+ {
+  "k": "Also in General.",
+  "w": "246-v98ui.js:155"
+ },
+ {
+  "k": "Bigger text, calmer motion, colours you can tell apart.",
+  "w": "246-v98ui.js:158"
+ },
+ {
+  "k": "Reading & motion",
+  "w": "246-v98ui.js:159"
+ },
+ {
+  "k": "Preview",
+  "w": "246-v98ui.js:160"
+ },
+ {
+  "k": "◆ HP 5",
+  "w": "246-v98ui.js:160"
+ },
+ {
+  "k": "signals keep a shape, not only a colour",
+  "w": "246-v98ui.js:160"
+ },
+ {
+  "k": "Text at {0}%",
+  "w": "246-v98ui.js:161"
+ },
+ {
+  "k": "hits",
+  "w": "246-v98ui.js:161"
+ },
+ {
+  "k": "'s chest for 3",
+  "w": "246-v98ui.js:161"
+ },
+ {
+  "k": "2 AP, 1 HP",
+  "w": "246-v98ui.js:161"
+ },
+ {
+  "k": "moves to D-7 and loots a Gladius",
+  "w": "246-v98ui.js:161"
+ },
+ {
+  "k": "<span>{0} — <b style=\"color:var(--gold2)\">+2 CF</b> {1} {2}</span>",
+  "w": "246-v98ui.js:161"
+ },
+ {
+  "k": "The crowd roars",
+  "w": "246-v98ui.js:161"
+ },
+ {
+  "k": "to",
+  "w": "246-v98ui.js:161"
+ },
+ {
+  "k": "<b>Keyboard play is always on.</b> Tab to the board, arrows move the cursor, Enter acts, I reads the board aloud for screen readers.",
+  "w": "246-v98ui.js:162"
+ },
+ {
+  "k": "Saved in this browser · changes apply at once",
+  "w": "246-v98ui.js:166"
+ },
+ {
+  "k": "↺ Restore all defaults",
+  "w": "246-v98ui.js:167"
+ },
+ {
+  "k": "Settings sections",
+  "w": "246-v98ui.js:168"
+ },
+ {
+  "k": "💾 Saves and backups live in",
+  "w": "246-v98ui.js:169"
+ },
+ {
+  "k": "on the main menu.",
+  "w": "246-v98ui.js:169"
+ },
+ {
+  "k": "<span>arena · v{0}</span>",
+  "w": "246-v98ui.js:169"
+ },
+ {
+  "k": "💾 Game saves",
+  "w": "246-v98ui.js:173"
+ },
+ {
+  "k": "Tutorials",
+  "w": "246-v98ui.js:196"
+ },
+ {
+  "k": "Rules at a Glance",
+  "w": "246-v98ui.js:196"
+ },
+ {
+  "k": "What's New",
+  "w": "246-v98ui.js:196"
+ },
+ {
+  "k": "Strategy",
+  "w": "246-v98ui.js:196"
+ },
+ {
+  "k": "Reference",
+  "w": "246-v98ui.js:196"
+ },
+ {
+  "k": "Digital",
+  "w": "246-v98ui.js:200"
+ },
+ {
+  "k": "a rule only this game uses (Virgilante's house rules)",
+  "w": "246-v98ui.js:207"
+ },
+ {
+  "k": "the page in the Magnus Edition rulebook",
+  "w": "246-v98ui.js:207"
+ },
+ {
+  "k": "Printed rules win where a card disagrees.",
+  "w": "246-v98ui.js:207"
+ },
+ {
+  "k": "A turn",
+  "w": "246-v98ui.js:209"
+ },
+ {
+  "k": "<b>Resolve</b> — beasts in range act; spikes and stones land.",
+  "w": "246-v98ui.js:210"
+ },
+ {
+  "k": "<i>II</i><span>{0}</span>",
+  "w": "246-v98ui.js:211"
+ },
+ {
+  "k": "<b>Choice</b> — take <b>2 coin</b> or draw <b>1 arena card</b>.",
+  "w": "246-v98ui.js:211"
+ },
+ {
+  "k": "<i>III</i><span>{0}</span>",
+  "w": "246-v98ui.js:212"
+ },
+ {
+  "k": "<b>Action</b> — move, up to <b>2 attacks</b>, play cards and offerings, the market, Crowd Favor, trade or truce.",
+  "w": "246-v98ui.js:212"
+ },
+ {
+  "k": "<i>IV</i><span>{0}</span>",
+  "w": "246-v98ui.js:213"
+ },
+ {
+  "k": "<b>End &amp; Manage</b> — swap hands, take loot.",
+  "w": "246-v98ui.js:213"
+ },
+ {
+  "k": "Manage between turns too, while nobody is attacking you.",
+  "w": "246-v98ui.js:214"
+ },
+ {
+  "k": "resolves at once",
+  "w": "246-v98ui.js:216"
+ },
+ {
+  "k": "declare in phase III, then resolve",
+  "w": "246-v98ui.js:217"
+ },
+ {
+  "k": "use whenever you like",
+  "w": "246-v98ui.js:218"
+ },
+ {
+  "k": "stays in play, resolves later",
+  "w": "246-v98ui.js:219"
+ },
+ {
+  "k": "<b>1 + one per leg</b> (3 with both) · +1 with both greaves · −1 carrying the chest · max 7.",
+  "w": "246-v98ui.js:220"
+ },
+ {
+  "k": "Step (side by side)",
+  "w": "246-v98ui.js:221"
+ },
+ {
+  "k": "Step (diagonal)",
+  "w": "246-v98ui.js:221"
+ },
+ {
+  "k": "Push a gladiator",
+  "w": "246-v98ui.js:221"
+ },
+ {
+  "k": "Topple a pillar",
+  "w": "246-v98ui.js:221"
+ },
+ {
+  "k": "Focus roll",
+  "w": "246-v98ui.js:221"
+ },
+ {
+  "k": "all left",
+  "w": "246-v98ui.js:221"
+ },
+ {
+  "k": "Lifting the Arena Chest costs 1.",
+  "w": "246-v98ui.js:222"
+ },
+ {
+  "k": "Attacks",
+  "w": "246-v98ui.js:223"
+ },
+ {
+  "k": "<b>2 attacks</b> a turn, one per weapon. Roll hit dice:",
+  "w": "246-v98ui.js:223"
+ },
+ {
+  "k": "Miss",
+  "w": "246-v98ui.js:224"
+ },
+ {
+  "k": "<b>2</b> vs gladiators · <b>4</b> vs beasts · beast vs beast <b>2</b>",
+  "w": "246-v98ui.js:224"
+ },
+ {
+  "k": "Damage goes <b>shield → armor AP → HP</b>.",
+  "w": "246-v98ui.js:225"
+ },
+ {
+  "k": "Focus needs ≥3 movement — walk first, Focus with the last 3.",
+  "w": "246-v98ui.js:225"
+ },
+ {
+  "k": "The body",
+  "w": "246-v98ui.js:226"
+ },
+ {
+  "k": "<b>Head · chest · two arms · two legs</b>, each with its own HP (max 7) and the AP of the armor worn there.",
+  "w": "246-v98ui.js:226"
+ },
+ {
+  "k": "An arm or leg at 0 HP is <b>severed</b> — its armor and weapon fall. Head or chest at 0: <b>out</b>.",
+  "w": "246-v98ui.js:227"
+ },
+ {
+  "k": "Focus on a pillar's Blessings: +1 damage on a hit.",
+  "w": "246-v98ui.js:227"
+ },
+ {
+  "k": "Unlock the market (this turn)",
+  "w": "246-v98ui.js:228"
+ },
+ {
+  "k": "Arena Key · Arena card",
+  "w": "246-v98ui.js:228"
+ },
+ {
+  "k": "Elixir +4 HP · AP Upgrade +3",
+  "w": "246-v98ui.js:228"
+ },
+ {
+  "k": "At most 3 spectator stones hit one gladiator a turn.",
+  "w": "246-v98ui.js:229"
+ },
+ {
+  "k": "Pay a level, take <b>any weapon</b> or <b>one armor piece</b> from its row. Slot 4 lies face up.",
+  "w": "246-v98ui.js:230"
+ },
+ {
+  "k": "The Fate",
+  "w": "246-v98ui.js:232"
+ },
+ {
+  "k": "Your final CF decides. Winning adds <b>15 CF</b>.",
+  "w": "246-v98ui.js:232"
+ },
+ {
+  "k": "condemned",
+  "w": "246-v98ui.js:233"
+ },
+ {
+  "k": "the rudis",
+  "w": "246-v98ui.js:234"
+ },
+ {
+  "k": "Thumb: a d6 of 4+ spares you.",
+  "w": "246-v98ui.js:235"
+ },
+ {
+  "k": "Deals",
+  "w": "246-v98ui.js:236"
+ },
+ {
+  "k": "Trade gear and coin, or swear a truce. Flavius may break any truce.",
+  "w": "246-v98ui.js:236"
+ },
+ {
+  "k": "One trade-or-truce offer per gladiator, per target, per turn.",
+  "w": "246-v98ui.js:236"
+ },
+ {
+  "k": "Initial state. Tholo and the lions hunt the nearest living thing each Resolve.",
+  "w": "246-v98ui.js:237"
+ },
+ {
+  "k": "Not taken yet",
+  "w": "246-v98ui.js:243"
+ },
+ {
+  "k": "{0} / {1} steps",
+  "w": "246-v98ui.js:244"
+ },
+ {
+  "k": "{0} steps",
+  "w": "246-v98ui.js:244"
+ },
+ {
+  "k": "↻ Play it again",
+  "w": "246-v98ui.js:246"
+ },
+ {
+  "k": "▶ Start the lesson",
+  "w": "246-v98ui.js:246"
+ },
+ {
+  "k": "Learn to Play",
+  "w": "246-v98ui.js:249"
+ },
+ {
+  "k": "One bout, step by step: the four phases, moving and pushing, attacks and the Focus roll, the market, Crowd Favor and the Fate.",
+  "w": "246-v98ui.js:249"
+ },
+ {
+  "k": "Phases",
+  "w": "246-v98ui.js:249"
+ },
+ {
+  "k": "Moving",
+  "w": "246-v98ui.js:249"
+ },
+ {
+  "k": "Manager Mode",
+  "w": "246-v98ui.js:250"
+ },
+ {
+  "k": "Run a ludus through a week: recruiting, the Training Yard and its Doctore, the Armory, the infirmary, Match Week and the city square.",
+  "w": "246-v98ui.js:250"
+ },
+ {
+  "k": "Armory",
+  "w": "246-v98ui.js:250"
+ },
+ {
+  "k": "Rule popups",
+  "w": "246-v98ui.js:251"
+ },
+ {
+  "k": "— the short rule windows the game shows the first time; open any of them again",
+  "w": "246-v98ui.js:251"
+ },
+ {
+  "k": "the newest version",
+  "w": "246-v98ui.js:255"
+ },
+ {
+  "k": "Also:",
+  "w": "246-v98ui.js:256"
+ },
+ {
+  "k": "Play Now Guide",
+  "w": "246-v98ui.js:258"
+ },
+ {
+  "k": "Manager Guide",
+  "w": "246-v98ui.js:259"
+ },
+ {
+  "k": "Quick Reference",
+  "w": "246-v98ui.js:262"
+ },
+ {
+  "k": "Rulebook page 72 with the digital notes",
+  "w": "246-v98ui.js:262"
+ },
+ {
+  "k": "Glossary",
+  "w": "246-v98ui.js:262"
+ },
+ {
+  "k": "Every game term, A to Z",
+  "w": "246-v98ui.js:262"
+ },
+ {
+  "k": "Bestiary",
+  "w": "246-v98ui.js:262"
+ },
+ {
+  "k": "Every beast, its card and its ledger",
+  "w": "246-v98ui.js:262"
+ },
+ {
+  "k": "Quick Reference, rulebook page 72",
+  "w": "246-v98ui.js:264"
+ },
+ {
+  "k": "Rulebook p.72",
+  "w": "246-v98ui.js:265"
+ },
+ {
+  "k": "The printed Quick Reference, as in the box. Where this game plays a rule differently, the note is beside it.",
+  "w": "246-v98ui.js:265"
+ },
+ {
+  "k": "the page says \"all available movement\". Here it needs at least 3 and uses all that is left, so you may walk 2 first, then Focus with the last 3.",
+  "w": "246-v98ui.js:266"
+ },
+ {
+  "k": "Focus on Blessings",
+  "w": "246-v98ui.js:267"
+ },
+ {
+  "k": "Focusing on a pillar's Blessings adds +1 damage on a hit, like the Soldier's ability.",
+  "w": "246-v98ui.js:267"
+ },
+ {
+  "k": "lifting it costs 1 movement and is refused at 0.",
+  "w": "246-v98ui.js:268"
+ },
+ {
+  "k": "Spectator stones",
+  "w": "246-v98ui.js:269"
+ },
+ {
+  "k": "at most 3 hit one gladiator a turn; the rest fly wide.",
+  "w": "246-v98ui.js:269"
+ },
+ {
+  "k": "Checked against the engine: beast stats, move/push/topple costs, hit dice and damage order all match the page.",
+  "w": "246-v98ui.js:270"
+ },
+ {
+  "k": "Reading the ledgers…",
+  "w": "246-v98ui.js:272"
+ },
+ {
+  "k": "Humanoids",
+  "w": "246-v98ui.js:274"
+ },
+ {
+  "k": "Lions",
+  "w": "246-v98ui.js:274"
+ },
+ {
+  "k": "Birds",
+  "w": "246-v98ui.js:274"
+ },
+ {
+  "k": "Bears",
+  "w": "246-v98ui.js:275"
+ },
+ {
+  "k": "Wolves",
+  "w": "246-v98ui.js:275"
+ },
+ {
+  "k": "Snakes",
+  "w": "246-v98ui.js:275"
+ },
+ {
+  "k": "golden eagle · ally",
+  "w": "246-v98ui.js:276"
+ },
+ {
+  "k": "the emperor",
+  "w": "246-v98ui.js:276"
+ },
+ {
+  "k": "hunts",
+  "w": "246-v98ui.js:276"
+ },
+ {
+  "k": "hunts the crowd’s darling",
+  "w": "246-v98ui.js:276"
+ },
+ {
+  "k": "tameable",
+  "w": "246-v98ui.js:276"
+ },
+ {
+  "k": "guards its zone",
+  "w": "246-v98ui.js:276"
+ },
+ {
+  "k": "<b>{0}</b><small>{1} HP · {2}</small>",
+  "w": "246-v98ui.js:278"
+ },
+ {
+  "k": "Always",
+  "w": "246-v98ui.js:280"
+ },
+ {
+  "k": "printed",
+  "w": "246-v98ui.js:282"
+ },
+ {
+  "k": "unique",
+  "w": "246-v98ui.js:282"
+ },
+ {
+  "k": "State",
+  "w": "246-v98ui.js:286"
+ },
+ {
+  "k": "A Focus-aimed bolt to his head kills him outright.",
+  "w": "246-v98ui.js:287"
+ },
+ {
+  "k": "Yours · {0}",
+  "w": "246-v98ui.js:291"
+ },
+ {
+  "k": "The ledgers — every city’s beasts, slain, taken and tamed",
+  "w": "246-v98ui.js:293"
+ },
+ {
+  "k": "Learn it, look it up, win it",
+  "w": "246-v98ui.js:309"
+ },
+ {
+  "k": "📖 The Rulebook (PDF) ↗",
+  "w": "246-v98ui.js:310"
+ },
+ {
+  "k": "Multiplayer",
+  "w": "246-v98ui.js:333"
+ },
+ {
+  "k": "Hot seat · Online",
+  "w": "246-v98ui.js:333"
+ },
+ {
+  "k": "Saves",
+  "w": "246-v98ui.js:335"
+ },
+ {
+  "k": "A random event in a random city — you as a random class against CPUs.",
+  "w": "247-v98pn.js:40"
+ },
+ {
+  "k": "Only rolls the setup; Begin Event when you like it.",
+  "w": "247-v98pn.js:40"
+ },
+ {
+  "k": "{0} seats {1} in teams",
+  "w": "247-v98pn.js:58"
+ },
+ {
+  "k": "{0} seats {1}",
+  "w": "247-v98pn.js:58"
+ },
+ {
+  "k": "records, looks and the Road of your gladiators",
+  "w": "247-v98pn.js:116"
+ },
+ {
+  "k": "✎ Design",
+  "w": "247-v98pn.js:156"
+ },
+ {
+  "k": "Designer sections",
+  "w": "247-v98pn.js:172"
+ },
+ {
+  "k": "Focus needs at least {0} movement and spends all you have left (digital rule). You have {1}.",
+  "w": "248-v98bar.js:58"
+ },
+ {
+  "k": "needs {0}+ movement",
+  "w": "248-v98bar.js:63"
+ },
+ {
+  "k": "Focus: a ranged or thrown shot may now reach a Blessings pot (+1 damage on a hit)",
+  "w": "248-v98bar.js:64"
+ },
+ {
+  "k": "Focus roll (digital rule): needs at least 3 movement and spends ALL you have left — walk first, then Focus with the rest. The location die is rolled three times; you pick where the blow lands. With Focus a ranged or thrown weapon may also hit a pillar's Blessings pot in range, +1 damage on a hit. Players only.",
+  "w": "248-v98bar.js:65"
+ },
+ {
+  "k": "{0} dmg · rng {1}",
+  "w": "248-v98bar.js:69"
+ },
+ {
+  "k": "Focus with this weapon",
+  "w": "248-v98bar.js:88"
+ },
+ {
+  "k": "Focus: only in a PvP round",
+  "w": "248-v98bar.js:88"
+ },
+ {
+  "k": "Focus: a gladiator in reach and movement left",
+  "w": "248-v98bar.js:88"
+ },
+ {
+  "k": "No attack left with it",
+  "w": "248-v98bar.js:94"
+ },
+ {
+  "k": "Focus is on — aim it with this weapon",
+  "w": "248-v98bar.js:106"
+ },
+ {
+  "k": "Focus is ON — click to turn it off",
+  "w": "248-v98bar.js:110"
+ },
+ {
+  "k": "Focus with this weapon: needs {0}+ movement, spends all you have left; pick 1 of 3 rolled locations",
+  "w": "248-v98bar.js:110"
+ },
+ {
+  "k": "Forum",
+  "w": "248-v98bar.js:125"
+ },
+ {
+  "k": "🏃 Move · ⚔ Attack",
+  "w": "248-v98bar.js:141"
+ },
+ {
+  "k": "Choose one",
+  "w": "248-v98bar.js:141"
+ },
+ {
+  "k": "🏛 Forum",
+  "w": "248-v98bar.js:141"
+ },
+ {
+  "k": "🂠 Draw an arena card",
+  "w": "248-v98bar.js:144"
+ },
+ {
+  "k": "Ask around the forum",
+  "w": "249-v98rec.js:56"
+ },
+ {
+  "k": "one rough grade",
+  "w": "249-v98rec.js:56"
+ },
+ {
+  "k": "Watch him train",
+  "w": "249-v98rec.js:56"
+ },
+ {
+  "k": "Speed · Strength",
+  "w": "249-v98rec.js:56"
+ },
+ {
+  "k": "Share a cup",
+  "w": "249-v98rec.js:56"
+ },
+ {
+  "k": "Intelligence · Charisma",
+  "w": "249-v98rec.js:56"
+ },
+ {
+  "k": "Study his bouts",
+  "w": "249-v98rec.js:56"
+ },
+ {
+  "k": "every grade sharper · Luck",
+  "w": "249-v98rec.js:56"
+ },
+ {
+  "k": "Trial bout",
+  "w": "249-v98rec.js:56"
+ },
+ {
+  "k": "everything sure · interest",
+  "w": "249-v98rec.js:56"
+ },
+ {
+  "k": "not graded yet",
+  "w": "249-v98rec.js:57"
+ },
+ {
+  "k": "a rough guess — could be a grade or two off",
+  "w": "249-v98rec.js:57"
+ },
+ {
+  "k": "a fair read — maybe one step off",
+  "w": "249-v98rec.js:57"
+ },
+ {
+  "k": "sure — your recruiter would bet on it",
+  "w": "249-v98rec.js:57"
+ },
+ {
+  "k": "among the very best in the empire",
+  "w": "249-v98rec.js:58"
+ },
+ {
+  "k": "elite",
+  "w": "249-v98rec.js:58"
+ },
+ {
+  "k": "very good",
+  "w": "249-v98rec.js:58"
+ },
+ {
+  "k": "good",
+  "w": "249-v98rec.js:58"
+ },
+ {
+  "k": "decent",
+  "w": "249-v98rec.js:58"
+ },
+ {
+  "k": "ordinary",
+  "w": "249-v98rec.js:58"
+ },
+ {
+  "k": "weak",
+  "w": "249-v98rec.js:58"
+ },
+ {
+  "k": "poor",
+  "w": "249-v98rec.js:58"
+ },
+ {
+  "k": "Already as good as they come.",
+  "w": "249-v98rec.js:68"
+ },
+ {
+  "k": "Coin teaches up to level 2 — the rest is earned by deeds.",
+  "w": "249-v98rec.js:68"
+ },
+ {
+  "k": "More hours a week and sharper grades ({0} h)",
+  "w": "249-v98rec.js:71"
+ },
+ {
+  "k": "Coin teaches up to level 2",
+  "w": "249-v98rec.js:71"
+ },
+ {
+  "k": "⬆ Train · {0}",
+  "w": "249-v98rec.js:71"
+ },
+ {
+  "k": "Advisor level",
+  "w": "249-v98rec.js:72"
+ },
+ {
+  "k": "Lv {0}",
+  "w": "249-v98rec.js:72"
+ },
+ {
+  "k": "⬆ {0} ({1}) trains up to level {2}.",
+  "w": "249-v98rec.js:75"
+ },
+ {
+  "k": "⬆ {0} is now level {1}.",
+  "w": "249-v98rec.js:75"
+ },
+ {
+  "k": "Once a week for each recruit.",
+  "w": "249-v98rec.js:112"
+ },
+ {
+  "k": "Nothing more to learn this way.",
+  "w": "249-v98rec.js:113"
+ },
+ {
+  "k": "Your recruiter has {0} h left this week.",
+  "w": "249-v98rec.js:114"
+ },
+ {
+  "k": "At most {0} h of your recruiter's week on one recruit.",
+  "w": "249-v98rec.js:115"
+ },
+ {
+  "k": "a bruise from the trial bout",
+  "w": "249-v98rec.js:124"
+ },
+ {
+  "k": "fought a trial bout on {0}'s sand",
+  "w": "249-v98rec.js:125"
+ },
+ {
+  "k": "· interest +{0}",
+  "w": "249-v98rec.js:128"
+ },
+ {
+  "k": "· he took a bruise",
+  "w": "249-v98rec.js:128"
+ },
+ {
+  "k": "· all five graded: his personality is on the card.",
+  "w": "249-v98rec.js:128"
+ },
+ {
+  "k": "Won’t sign with a greedy house (Greed B+ or higher)",
+  "w": "249-v98rec.js:137"
+ },
+ {
+  "k": "Won’t serve a lanista without honor (Honor below C)",
+  "w": "249-v98rec.js:137"
+ },
+ {
+  "k": "Wants a house that trains (Discipline C or better)",
+  "w": "249-v98rec.js:138"
+ },
+ {
+  "k": "Won’t fight where nobody watches (Showmanship C or better)",
+  "w": "249-v98rec.js:138"
+ },
+ {
+  "k": "Won’t fight for a gambler (Risk A or higher)",
+  "w": "249-v98rec.js:139"
+ },
+ {
+  "k": "{0} balks: {1}. Only about {2} coin a week would make him overlook it.",
+  "w": "249-v98rec.js:144"
+ },
+ {
+  "k": "Something about your house bothers {0}. About {1} coin a week would settle it — or grade him to learn what.",
+  "w": "249-v98rec.js:144"
+ },
+ {
+  "k": "🔒 Personality",
+  "w": "249-v98rec.js:146"
+ },
+ {
+  "k": "Grade all five ratings to read him — wants, temper, dealbreakers.",
+  "w": "249-v98rec.js:146"
+ },
+ {
+  "k": "🎭 Personality",
+  "w": "249-v98rec.js:150"
+ },
+ {
+  "k": "Temper",
+  "w": "249-v98rec.js:151"
+ },
+ {
+  "k": "Cares about",
+  "w": "249-v98rec.js:153"
+ },
+ {
+  "k": "Dealbreaker",
+  "w": "249-v98rec.js:154"
+ },
+ {
+  "k": "{0}: {1} — {2}. How sure: {3}.",
+  "w": "249-v98rec.js:158"
+ },
+ {
+  "k": "{0}: {1} — ask around, watch him train, share a cup or study his bouts.",
+  "w": "249-v98rec.js:158"
+ },
+ {
+  "k": "Overall: {0} — your recruiter's estimate. How sure: {1}.",
+  "w": "249-v98rec.js:161"
+ },
+ {
+  "k": "Overall: {0} — the street's word. Grade all five to know better.",
+  "w": "249-v98rec.js:161"
+ },
+ {
+  "k": "Overall",
+  "w": "249-v98rec.js:161"
+ },
+ {
+  "k": "as your recruiter grades them",
+  "w": "249-v98rec.js:163"
+ },
+ {
+  "k": "Show him the Training Yard",
+  "w": "249-v98rec.js:168"
+ },
+ {
+  "k": "Dine at the lanista’s table",
+  "w": "249-v98rec.js:168"
+ },
+ {
+  "k": "Promise him the sand",
+  "w": "249-v98rec.js:168"
+ },
+ {
+  "k": "Tour the infirmary",
+  "w": "249-v98rec.js:168"
+ },
+ {
+  "k": "Meet your champion",
+  "w": "249-v98rec.js:168"
+ },
+ {
+  "k": "Talk terms with the Clerk",
+  "w": "249-v98rec.js:168"
+ },
+ {
+  "k": "Grade his Speed or Strength to see how far our Doctore could take him.",
+  "w": "249-v98rec.js:175"
+ },
+ {
+  "k": "With our Doctore his {0} {1} could reach {2} within a season.",
+  "w": "249-v98rec.js:176"
+ },
+ {
+  "k": "With our Doctore his {0} {1} would hold firm.",
+  "w": "249-v98rec.js:176"
+ },
+ {
+  "k": "He would train beside {0} ({1}).",
+  "w": "249-v98rec.js:177"
+ },
+ {
+  "k": "Your house has no champion yet — this pitch lands soft.",
+  "w": "249-v98rec.js:177"
+ },
+ {
+  "k": "{0}, your Medicus, shows him the cots and the baths.",
+  "w": "249-v98rec.js:178"
+ },
+ {
+  "k": "Bold entries: he would see the sand often.",
+  "w": "249-v98rec.js:179"
+ },
+ {
+  "k": "Wine, a full table and the house’s best stories.",
+  "w": "249-v98rec.js:180"
+ },
+ {
+  "k": "Your Clerk lays out wages, bonuses and the purse.",
+  "w": "249-v98rec.js:181"
+ },
+ {
+  "k": "what every recruit sees",
+  "w": "249-v98rec.js:184"
+ },
+ {
+  "k": "he cares about this",
+  "w": "249-v98rec.js:185"
+ },
+ {
+  "k": "One pitch per recruit a week.",
+  "w": "249-v98rec.js:187"
+ },
+ {
+  "k": "Interest this pitch wins",
+  "w": "249-v98rec.js:189"
+ },
+ {
+  "k": "🗣 Pitch",
+  "w": "249-v98rec.js:192"
+ },
+ {
+  "k": "{0} of {1} left this week · one per recruit · a pitch on his wish counts double",
+  "w": "249-v98rec.js:192"
+ },
+ {
+  "k": "{0} {1} — {2}: interest {3}{4}{5}.",
+  "w": "249-v98rec.js:198"
+ },
+ {
+  "k": "(it answered his wish)",
+  "w": "249-v98rec.js:198"
+ },
+ {
+  "k": "🔍 Recruiter's hours",
+  "w": "249-v98rec.js:202"
+ },
+ {
+  "k": "{0} of {1} left this week",
+  "w": "249-v98rec.js:202"
+ },
+ {
+  "k": "{0} of {1} h on {2}",
+  "w": "249-v98rec.js:202"
+ },
+ {
+  "k": "The next thing your recruiter can learn about him.",
+  "w": "249-v98rec.js:203"
+ },
+ {
+  "k": "potential",
+  "w": "249-v98rec.js:207"
+ },
+ {
+  "k": "grade all five to learn",
+  "w": "249-v98rec.js:211"
+ },
+ {
+  "k": "It answers his wish, and your {0} grade backs it.",
+  "w": "249-v98rec.js:223"
+ },
+ {
+  "k": "Your {0} grade makes this the strongest pitch.",
+  "w": "249-v98rec.js:223"
+ },
+ {
+  "k": "★ advised",
+  "w": "249-v98rec.js:224"
+ },
+ {
+  "k": "of {0} · the recruiter's hours",
+  "w": "249-v98rec.js:228"
+ },
+ {
+  "k": "<span>Rating</span><b>{0}</b>",
+  "w": "249-v98rec.js:235"
+ },
+ {
+  "k": "🔎 The truth",
+  "w": "249-v98rec.js:246"
+ },
+ {
+  "k": "your recruiter's grades → the real fighter",
+  "w": "249-v98rec.js:246"
+ },
+ {
+  "k": "{0} Aggros You!",
+  "w": "250-v98bears.js:8"
+ },
+ {
+  "k": "{0}'s aggro token moves to you. If {1} is already eliminated or tamed, gain 2 CF.",
+  "w": "250-v98bears.js:9"
+ },
+ {
+  "k": "⏩ Your doctores run the ludus",
+  "w": "251-v98mgrfix.js:9"
+ },
+ {
+  "k": "Week {0} of {1}",
+  "w": "251-v98mgrfix.js:13"
+ },
+ {
+  "k": "Domus rank: {0}",
+  "w": "252-v98onl.js:50"
+ },
+ {
+  "k": "Region: {0}",
+  "w": "252-v98onl.js:52"
+ },
+ {
+  "k": "North America",
+  "w": "252-v98onl.js:55"
+ },
+ {
+  "k": "South America",
+  "w": "252-v98onl.js:55"
+ },
+ {
+  "k": "Europe",
+  "w": "252-v98onl.js:55"
+ },
+ {
+  "k": "Africa",
+  "w": "252-v98onl.js:55"
+ },
+ {
+  "k": "Middle East",
+  "w": "252-v98onl.js:55"
+ },
+ {
+  "k": "Asia",
+  "w": "252-v98onl.js:55"
+ },
+ {
+  "k": "Oceania",
+  "w": "252-v98onl.js:55"
+ },
+ {
+  "k": "🔒 This room has a password",
+  "w": "252-v98onl.js:58"
+ },
+ {
+  "k": "{0} at {1} — hosted by {2}.",
+  "w": "252-v98onl.js:59"
+ },
+ {
+  "k": "Password",
+  "w": "252-v98onl.js:60"
+ },
+ {
+  "k": "No password — you stay out.",
+  "w": "252-v98onl.js:67"
+ },
+ {
+  "k": "Gloriosus I",
+  "w": "252-v98onl.js:78"
+ },
+ {
+  "k": "Acutus I",
+  "w": "252-v98onl.js:78"
+ },
+ {
+  "k": "Velox I",
+  "w": "252-v98onl.js:78"
+ },
+ {
+  "k": "Region",
+  "w": "252-v98onl.js:89"
+ },
+ {
+  "k": "All regions",
+  "w": "252-v98onl.js:89"
+ },
+ {
+  "k": "Open the house card",
+  "w": "252-v98onl.js:93"
+ },
+ {
+  "k": "A password is needed to join",
+  "w": "252-v98onl.js:95"
+ },
+ {
+  "k": "Custom only",
+  "w": "252-v98onl.js:96"
+ },
+ {
+  "k": "🔒 Password",
+  "w": "252-v98onl.js:103"
+ },
+ {
+  "k": "set — type a new one",
+  "w": "252-v98onl.js:116"
+ },
+ {
+  "k": "none — anyone may join",
+  "w": "252-v98onl.js:116"
+ },
+ {
+  "k": "Change",
+  "w": "252-v98onl.js:117"
+ },
+ {
+  "k": "Set",
+  "w": "252-v98onl.js:117"
+ },
+ {
+  "k": "Invited lanistas come in without it.",
+  "w": "252-v98onl.js:118"
+ },
+ {
+  "k": "🔓 The room is open to all again.",
+  "w": "252-v98onl.js:123"
+ },
+ {
+  "k": "🔒 Password set — share it with your guests.",
+  "w": "252-v98onl.js:123"
+ },
+ {
+  "k": "{0} Glory",
+  "w": "252-v98onl.js:131"
+ },
+ {
+  "k": "{0} at {1} · {2}{3}",
+  "w": "252-v98onl.js:132"
+ },
+ {
+  "k": "W",
+  "w": "252-v98onl.js:132"
+ },
+ {
+  "k": "L",
+  "w": "252-v98onl.js:132"
+ },
+ {
+  "k": "No events yet.",
+  "w": "252-v98onl.js:132"
+ },
+ {
+  "k": "🏛 Visit house",
+  "w": "252-v98onl.js:134"
+ },
+ {
+  "k": "Domus rank · {0}",
+  "w": "252-v98onl.js:137"
+ },
+ {
+  "k": "Best rank",
+  "w": "252-v98onl.js:137"
+ },
+ {
+  "k": "Last 6 events",
+  "w": "252-v98onl.js:139"
+ },
+ {
+  "k": "Reading the house…",
+  "w": "252-v98onl.js:141"
+ },
+ {
+  "k": "The best four living gladiators' Glory + 20% of the fallen's. It never drops.",
+  "w": "252-v98onl.js:153"
+ },
+ {
+  "k": "Domus rank",
+  "w": "252-v98onl.js:154"
+ },
+ {
+  "k": "{0} open",
+  "w": "252-v98onl.js:161"
+ },
+ {
+  "k": "More events — Custom",
+  "w": "252-v98onl.js:163"
+ },
+ {
+  "k": "✦ More events <small>Custom · a new one every few seconds</small>",
+  "w": "252-v98onl.js:163"
+ },
+ {
+  "k": "A Damnatio stays condemned — the class is chosen only when he is raised.",
+  "w": "252-v98onl.js:184"
+ },
+ {
+  "k": "★ Follow a house from its card or its Domus to see it here.",
+  "w": "252-v98onl.js:198"
+ },
+ {
+  "k": "in the arena",
+  "w": "252-v98onl.js:199"
+ },
+ {
+  "k": "fighting now",
+  "w": "252-v98onl.js:199"
+ },
+ {
+  "k": "away",
+  "w": "252-v98onl.js:199"
+ },
+ {
+  "k": "★ Houses you follow · {0}",
+  "w": "252-v98onl.js:201"
+ },
+ {
+  "k": "Fewer ▴",
+  "w": "252-v98onl.js:201"
+ },
+ {
+  "k": "See all ▸",
+  "w": "252-v98onl.js:201"
+ },
+ {
+  "k": "bouts",
+  "w": "252-v98onl.js:207"
+ },
+ {
+  "k": "fame",
+  "w": "252-v98onl.js:207"
+ },
+ {
+  "k": "gladiators",
+  "w": "252-v98onl.js:207"
+ },
+ {
+  "k": "Allowed",
+  "w": "252-v98onl.js:211"
+ },
+ {
+  "k": "Blocked by the browser",
+  "w": "252-v98onl.js:211"
+ },
+ {
+  "k": "Not in this browser",
+  "w": "252-v98onl.js:211"
+ },
+ {
+  "k": "Allow in this browser",
+  "w": "252-v98onl.js:211"
+ },
+ {
+  "k": "of <b>{0}</b>",
+  "w": "252-v98onl.js:216"
+ },
+ {
+  "k": "Copy a link to your house",
+  "w": "252-v98onl.js:218"
+ },
+ {
+  "k": "Lanista name",
+  "w": "252-v98onl.js:219"
+ },
+ {
+  "k": "One rename every 30 days · next on {0}",
+  "w": "252-v98onl.js:220"
+ },
+ {
+  "k": "Show me in “Here now” and on the Orbis",
+  "w": "252-v98onl.js:223"
+ },
+ {
+  "k": "Calls from the Praeco follow the same rule.",
+  "w": "252-v98onl.js:224"
+ },
+ {
+  "k": "🔔 Notifications",
+  "w": "252-v98onl.js:228"
+ },
+ {
+  "k": "Your turn: flash the tab title",
+  "w": "252-v98onl.js:229"
+ },
+ {
+  "k": "When the match waits for you in another tab.",
+  "w": "252-v98onl.js:229"
+ },
+ {
+  "k": "Your turn: sound the horn",
+  "w": "252-v98onl.js:230"
+ },
+ {
+  "k": "The game’s mute applies.",
+  "w": "252-v98onl.js:230"
+ },
+ {
+  "k": "Browser notifications",
+  "w": "252-v98onl.js:231"
+ },
+ {
+  "k": "Your turn, while the tab is in the background.",
+  "w": "252-v98onl.js:231"
+ },
+ {
+  "k": "No popups for calls and invites; they wait in the list.",
+  "w": "252-v98onl.js:232"
+ },
+ {
+  "k": "Quiet",
+  "w": "252-v98onl.js:232"
+ },
+ {
+  "k": "Practice account (this browser)",
+  "w": "252-v98onl.js:234"
+ },
+ {
+  "k": "Signed in with Google",
+  "w": "252-v98onl.js:234"
+ },
+ {
+  "k": "A mock server for trying Online — nothing leaves this browser.",
+  "w": "252-v98onl.js:234"
+ },
+ {
+  "k": "Your Google name is never shown — only your lanista name.",
+  "w": "252-v98onl.js:234"
+ },
+ {
+  "k": "Removes {0}, its gladiators, gear, shelf and follows for good. It asks twice.",
+  "w": "252-v98onl.js:235"
+ },
+ {
+  "k": "Removes your account for good. It asks twice.",
+  "w": "252-v98onl.js:235"
+ },
+ {
+  "k": "Delete my account…",
+  "w": "252-v98onl.js:236"
+ },
+ {
+  "k": "This room has a password.",
+  "w": "252-v98onl.js:255"
+ },
+ {
+  "k": "Too many tries — wait a few minutes.",
+  "w": "252-v98onl.js:256"
+ },
+ {
+  "k": "Wrong password.",
+  "w": "252-v98onl.js:257"
+ },
+ {
+  "k": "🛡 Armor on him · <b>{0}</b> piece{1} · drag one back to the shelf to take it off",
+  "w": "253-v98domus.js:48"
+ },
+ {
+  "k": "🛡 Armor on him · none yet · click or drag a piece from the bar",
+  "w": "253-v98domus.js:48"
+ },
+ {
+  "k": "{0} (+{1}, {2} HP)",
+  "w": "258-v98horses.js:35"
+ },
+ {
+  "k": "<b>{0}</b> · chariot horse · +{1} movement, {2} HP on this face",
+  "w": "258-v98horses.js:36"
+ },
+ {
+  "k": "Other side: {0}. The token flips at each pillar gate and the other horse takes the reins (fresh HP).",
+  "w": "258-v98horses.js:36"
+ },
+ {
+  "k": "{0} (horse token)",
+  "w": "258-v98horses.js:38"
+ },
+ {
+  "k": "graded signings",
+  "w": "256-v98adv.js:57"
+ },
+ {
+  "k": "a signing rated 80",
+  "w": "256-v98adv.js:57"
+ },
+ {
+  "k": "rating band-ups",
+  "w": "256-v98adv.js:58"
+ },
+ {
+  "k": "a fighter at 85 or Immortalis",
+  "w": "256-v98adv.js:58"
+ },
+ {
+  "k": "wounds healed",
+  "w": "256-v98adv.js:59"
+ },
+ {
+  "k": "seasons without a death",
+  "w": "256-v98adv.js:59"
+ },
+ {
+  "k": "treasury",
+  "w": "256-v98adv.js:60"
+ },
+ {
+  "k": "treasury, up on the season",
+  "w": "256-v98adv.js:60"
+ },
+ {
+  "k": "bouts won in a season (or a top-8 finish)",
+  "w": "256-v98adv.js:61"
+ },
+ {
+  "k": "seasons in the top four",
+  "w": "256-v98adv.js:61"
+ },
+ {
+  "k": "a league or invitational title",
+  "w": "256-v98adv.js:61"
+ },
+ {
+  "k": "average morale (3+ fighters)",
+  "w": "256-v98adv.js:62"
+ },
+ {
+  "k": "average morale (4+ fighters)",
+  "w": "256-v98adv.js:62"
+ },
+ {
+  "k": "weeks without an unhappy exit",
+  "w": "256-v98adv.js:62"
+ },
+ {
+  "k": "third",
+  "w": "256-v98adv.js:65"
+ },
+ {
+  "k": "fourth",
+  "w": "256-v98adv.js:65"
+ },
+ {
+  "k": "fifth",
+  "w": "256-v98adv.js:65"
+ },
+ {
+  "k": "{0} has earned the {1} laurel",
+  "w": "256-v98adv.js:69"
+ },
+ {
+  "k": "{0}, your {1}, has applied what the house taught — level {2}.{3}",
+  "w": "256-v98adv.js:70"
+ },
+ {
+  "k": "More hours a week and sharper grades.",
+  "w": "256-v98adv.js:70"
+ },
+ {
+  "k": "🏛 {0} ({1}) reaches level {2}.",
+  "w": "256-v98adv.js:71"
+ },
+ {
+  "k": "top level",
+  "w": "256-v98adv.js:75"
+ },
+ {
+  "k": "Earned, not bought: the advisor must apply what he learned.",
+  "w": "256-v98adv.js:77"
+ },
+ {
+  "k": "Council levels",
+  "w": "256-v98adv.js:98"
+ },
+ {
+  "k": "🏛 Council",
+  "w": "256-v98adv.js:98"
+ },
+ {
+  "k": "Digital rule: a Focus roll needs at least 3 movement and spends all you have left — you may walk first (with 5 movement: walk 2, then Focus with the last 3). Only gladiators Focus; beasts never do.",
+  "w": "08-setup.js:256"
+ },
+ {
+  "k": "Digital rule: with Focus, a ranged or thrown weapon may also hit a pillar's Blessings pot in range and line of sight, and a focused hit on a pot deals +1 damage (so a power-1 weapon can snap the chains). The pot still falls one tile toward the attacker; a throw is spent like any other.",
+  "w": "08-setup.js:257"
+ },
+ {
+  "k": "Tactics: the rules at a glance, the guides, the Quick Reference and the rulebook",
+  "w": "01-head.html [title]"
+ }
+]
