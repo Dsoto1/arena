@@ -1,0 +1,14 @@
+[
+ {
+  "k": "from {0} · the trip paid by {1}",
+  "w": "35-travel.js:36"
+ },
+ {
+  "k": "from {0} · you paid {1} for the trip",
+  "w": "35-travel.js:36"
+ },
+ {
+  "k": "Walk the city square",
+  "w": "244-v96walk.js:13"
+ }
+]
