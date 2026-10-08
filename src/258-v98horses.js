@@ -3,10 +3,13 @@
    =====================================================================
    - HIS SHEET (tools/art/horses98/horse.pdf, cells rebuilt by tools/art/horses98/make.py): sharper art for the 8 horse
      faces on assets/chtok.webp + a 9th face, Saxo +1 / 10 HP (cell 17, `saxoC`).
-   - EVERY TOKEN = TWO DIFFERENT HORSES (his design): `HORSE_SET98` pairs the printed faces into 6 tokens (one per
-     start tile; the floor spares come from the same 6). Each face keeps its own art, name and printed numbers.
-     Picked with tools/horsesim.js (150 all-CPU races, starting face dealt at random): win rates 20–33 %, the steady
-     Palmatus 2 ⇄ Ocianus 2 token the meta (two even halves beat a sprint + a lull), no token useless.
+   - EVERY TOKEN = TWO DIFFERENT HORSES (his design): `HORSE_SET98` = a POOL of 12 tokens (24 faces, each horse 6 times;
+     printed faces reused, the art is per face). At chariotSetup every racer DRAWS a token from the shuffled pool (09
+     chHorseDraw, seeded dice, without replacement), the floor spares come from what is left. Each face keeps its own
+     art, name and printed numbers.
+     Balance (tools/horsesim.js, 60 all-CPU 4-racer races, random starting face): a 3/1 token (sprint + lull) is weaker
+     than an even 2/2 one; one +5 meta token (Vindex 3/8 ⇄ Ocianus 2/8, the fragile faces) — wins ≈ +5 62 %, 2/2 28 %,
+     3/1 16 %. HP barely matters (a horse is lost ~0.02 times a race).
    - A token is dealt with a random face up (09 chHorseDeal, seeded dice); the horse's name = the face up. A gate flip
      names the new horse in the log (09 chStep), floats its name (76) and turns the token over beside the chariot on
      the board (`flip98Draw`, ~1.4 s; Reduce motion / animations Off = the new face held still) and on the panel's
@@ -18,9 +21,10 @@ const HORSE_FACES98={
   ocianusA:{n:'Ocianus',mv:2,hp:8},ocianusB:{n:'Ocianus',mv:2,hp:10},
   saxoA:{n:'Saxo',mv:1,hp:8},saxoB:{n:'Saxo',mv:1,hp:12},saxoC:{n:'Saxo',mv:1,hp:10},
   vindexA:{n:'Vindex',mv:3,hp:8},vindexB:{n:'Vindex',mv:3,hp:12}};
-/* HORSE_SET98 — the tokens: [face up first, other face]. Uses 12 of his 16 printed faces at their printed counts
-   (Palmatus 3/10 ×2, Saxo 1/8 ×3, Vindex 3/12 ×2). TWEAK: rerun `node tools/horsesim.js flavius-arena.html deep 150 "a+b,…"`. */
-const HORSE_SET98=[['vindexA','saxoA'],['vindexB','saxoA'],['vindexB','saxoC'],['palmatusA','saxoB'],['palmatusA','saxoA'],['palmatusB','ocianusA']];
+/* HORSE_SET98 — the pool: [face, other face]. Palmatus 2/12 ×5 + 3/10, Ocianus 2/8 ×3 + 2/10 ×3, Saxo 1/8 · 1/10 · 1/12
+   ×2 each, Vindex 3/8 ×3 + 3/12 ×3. TWEAK: rerun `node tools/horsesim.js flavius-arena.html deep 60 "a+b,…"`. */
+const HORSE_SET98=[['vindexA','ocianusA'],['palmatusB','ocianusA'],['palmatusB','ocianusA'],['palmatusB','ocianusB'],['palmatusB','ocianusB'],['palmatusB','ocianusB'],
+  ['palmatusA','saxoA'],['vindexA','saxoB'],['vindexA','saxoC'],['vindexB','saxoA'],['vindexB','saxoB'],['vindexB','saxoC']];
 CHTOK_IDX.saxoC=17;
 HORSES.splice(0,HORSES.length,...HORSE_SET98.map(([a,b])=>({n:HORSE_FACES98[a].n,sides:[a,b].map(k=>({n:HORSE_FACES98[k].n,mv:HORSE_FACES98[k].mv,hp:HORSE_FACES98[k].hp,art:k}))})));
 /* horseTok98 — "Vindex ⇄ Saxo" for a horse (token object or HORSES entry). */
