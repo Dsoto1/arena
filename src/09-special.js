@@ -119,14 +119,17 @@ async function chAttack(player,source,target){
 }
 /* chHorseDeal — a horse token dealt from HORSES with a random face up (rulebook: dealt at random; seeded dice); the horse's name = the face up (v0.98: each face is its own horse). */
 function chHorseDeal(H){const face=rnd(2);return {name:(H.sides[face]&&H.sides[face].n)||H.n,sides:H.sides,face,dmg:0}}
+/* chHorseDraw — v0.98: the next token from this race's shuffled pool (S.chPool, seeded dice; drawn without replacement — racers first, then the floor spares); an empty pool falls back to any token. */
+function chHorseDraw(){if(!S.chPool){const ix=HORSES.map((_,i)=>i);for(let i=ix.length-1;i>0;i--){const j=rnd(i+1);[ix[i],ix[j]]=[ix[j],ix[i]]}S.chPool=ix}return chHorseDeal(S.chPool.length?HORSES[S.chPool.shift()]:pickOne(HORSES))}
 /* chariotSetup — builds the chariot board: gate pillars, corner tunnels, spare wheels/horses on the floor, and each racer's chariot, wheel and horse. */
 function chariotSetup(){
   S.pillars=CH_PILLARS.map(([r,c],i)=>({id:i,r,c,pots:[]}));
   S.tunnels=[[0,0],[0,12],[12,0],[12,12]].map(([r,c])=>({r,c}));
   S.npcs=[];S.chest=null;
-  for(const [kind,r,c] of CH_SPARES)placeFloor(kind,kind,r,c,{part:kind==='wheel'?(w=>({name:w.n,art:w.art,hp:w.hp,max:w.hp}))(pickOne(WHEELS)):chHorseDeal(pickOne(HORSES))});
+  S.chPool=null;const racerH=S.players.map(()=>chHorseDraw());
+  for(const [kind,r,c] of CH_SPARES)placeFloor(kind,kind,r,c,{part:kind==='wheel'?(w=>({name:w.n,art:w.art,hp:w.hp,max:w.hp}))(pickOne(WHEELS)):chHorseDraw()});
   S.players.forEach((player,i)=>{[player.r,player.c]=CH_STARTS[i];player.start=[player.r,player.c];
-    const W0=pickOne(WHEELS),H0=chHorseDeal(pickOne(HORSES)),F0=H0.sides[H0.face],CN=chariotFor(player.color);player.ch={mounted:true,name:CN.n,art:CN.art,cr:player.r,cc:player.c,wheel:{name:W0.n,art:W0.art,hp:W0.hp,max:W0.hp},horse:H0,laps:0,check:false,attackLap:-1};if(!player.cpu)cardShow('g:'+CN.art,player);log(`${_T`${nm(player)} takes the reins of the`} <b data-card="g:${CN.art}">${CN.n}</b>${_T`, drawn by`} <b data-card="h:${F0.art}">${H0.name}</b> ${_T`(+${F0.mv} speed, ${F0.hp} HP) on a`} <span data-card="h:${W0.art}">${W0.n}</span> ${_T`(${W0.hp} HP).`}`)});
+    const W0=pickOne(WHEELS),H0=racerH[i],F0=H0.sides[H0.face],CN=chariotFor(player.color);player.ch={mounted:true,name:CN.n,art:CN.art,cr:player.r,cc:player.c,wheel:{name:W0.n,art:W0.art,hp:W0.hp,max:W0.hp},horse:H0,laps:0,check:false,attackLap:-1};if(!player.cpu)cardShow('g:'+CN.art,player);log(`${_T`${nm(player)} takes the reins of the`} <b data-card="g:${CN.art}">${CN.n}</b>${_T`, drawn by`} <b data-card="h:${F0.art}">${H0.name}</b> ${_T`(+${F0.mv} speed, ${F0.hp} HP) on a`} <span data-card="h:${W0.art}">${W0.n}</span> ${_T`(${W0.hp} HP).`}`)});
 }
 /* chariotDraft — the chariot draft: head armor, chest armor and a level 1–2 weapon picked in turn; each racer gets 2 keys and 3 CF. Replaced by 76-chariot59. */
 async function chariotDraft(){
