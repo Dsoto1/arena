@@ -1,5 +1,5 @@
 {
- "run": 267,
+ "run": 270,
  "lastFull": 1791382783754,
  "tests": {
   "tseed4": {
@@ -2165,22 +2165,22 @@
    "pinUntil": 90
   },
   "tv65": {
-   "streak": 23,
-   "runs": 57,
-   "fails": 3,
+   "streak": 1,
+   "runs": 60,
+   "fails": 5,
    "flaky": [
     8,
     23,
     60
    ],
-   "lastRun": 232,
-   "time": 11,
-   "sh": "32ee2cd6c9",
-   "lastPass": 232,
+   "lastRun": 270,
+   "time": 8,
+   "sh": "7ecff0b2b8",
+   "lastPass": 270,
    "deps": {
-    "build.sh": "5cb06e6cf468",
-    "src/01-head.html": "b7a6b382020c",
-    "tools/smartreg.js": "88651cfcb1b8",
+    "build.sh": "86b6fa0dcadf",
+    "src/01-head.html": "747b0884cea6",
+    "tools/smartreg.js": "f324391b30d6",
     "tools/regcov.js": "1b122005f465",
     "tools/tests/tv65.js": "637629b98e77"
    }
