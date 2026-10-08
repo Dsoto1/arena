@@ -1164,4 +1164,131 @@ const ONLC=(function(){
   if(Array.isArray(C.GUEST_OK)&&!C.GUEST_OK.includes('tok.get'))C.GUEST_OK.push('tok.get'); /* watchers see the pictures too */
   if(Array.isArray(C.IDEM93)&&!C.IDEM93.includes('char.tok'))C.IDEM93.push('char.tok'); /* each part carries its own rid: a replayed part is answered once */
   Object.assign(C,{TOK94,b64Bytes94,tokHash94,webpDims94,tokMetaWhy94,tokPoseWhy94,tokPartWhy94,tokCheck94,tokRef94,lookTok94})})(ONLC);
+/* ══════════ v0.98 PART E — ONLINE: passwords, regions, the house card, DOMUS RANK, silent Find me a fight, more events (Custom), Damnatio at
+   creation only, the bonus renames. Shared by the server (routes.js "v0.98" block) and the page's mock (250-v98onl). No protocol bump: an older
+   page keeps working against this server (new fields are extra; a password room simply refuses it; renames are display). ══════════
+   1 · PASSWORDS (Custom rooms only; his q3a): pwWhy98 checks one; the server keeps a SALTED HASH (pwHash98 = SHA-256 of salt + password, pure JS so
+       the page's mock hashes the same) in its own item, never on the room — the room only carries pw:1 (🔒 in the list). Ranked refuses one.
+       Find me a fight never picks a 🔒 room (quickPick wrapper). An invitation lets the guest in without the password.
+   2 · REGIONS (his q2a): regionOf98(time zone) → one of REGIONS98 (7) from the host's browser time zone (no IP); each wears a flag drawn
+       with the game's banner press (flagURI: bg, fg, device, word). The room carries reg; a hidden lanista's room has none.
+   3 · THE HOUSE CARD: a small public summary (route house.card) — record, living gladiators, fallen, best rank ever, the last 6 events W/L,
+       the Domus rank; privacy respected (a hidden lanista shows no "now").
+   4 · DOMUS RANK (his q1a): drankScore98 = the best 4 LIVING gladiators' Glory + 20% of ALL fallen gladiators' Glory; the server keeps the
+       best ever (D.dr98 — it never drops); tiers DRANKS98 with a symbol each (q4a: hut, amphora, wooden sword, crossed blades, helm, shield,
+       laurel, eagle — no numerals). domusRow carries dr98 = {s, k}; room members carry dr (tier key) so every house name wears its banner.
+   5 · (server only) lobby.quick never calls the crier.
+   6 · MORE EVENTS, CUSTOM ONLY (his 1a 2b 3a): EVENTS_CUSTOM98 = Ludus, Golden Eagle (teams). C.EVENTS_ALL / C.EVENTS_TEAM become NEW lists that
+       include them — the internal lists (and so the weekly fixture, onlineFixture) are untouched; newLobby / roomSet refuse them in Ranked.
+       Gauntlet is left out: a solo event (1 seat) cannot hold the 2 lanistas an online match needs.
+   7 · DAMNATIO ONLY AT CREATION (v0.95 rule): classWhy refuses a switch into or out of Damnatio; other class changes stay 100 coin.
+   8 · BONUS RENAMES (his approved table 2026-10-08): Gloriosus → Gloriosus I · weapon unique Gloriae → Gloriosus II · Acutus → Acutus I ·
+       Percussor → Acutus II · Velox → Velox I · armor unique Mercurii → Velox II · armor unique Gloriae → Laudis; Tutus and Aegis keep theirs.
+       A named piece's name is STORED (rolled once), so rename98(def) rewrites it from its affixes / unique (idempotent, gender kept): new rolls,
+       the engine's defs (cleanNamed / cleanNamedA) and — in the page — every reply and push (250-v98onl) show the new names. */
+(function(C){
+  /* ── 1 · passwords ── */
+  const PW98={MIN:3,MAX:24,TRIES:8,WIN:600e3}; /* TWEAK: length; wrong guesses an account may make per 10 minutes */
+  const pwClean98=s=>String(s==null?'':s).replace(/[\u0000-\u001f]/g,'').trim().slice(0,64);
+  function pwWhy98(pw,ranked){const p=pwClean98(pw);if(ranked)return 'Ranked rooms are open to all — passwords are for Custom rooms.';
+    if(p.length<PW98.MIN||p.length>PW98.MAX)return `A password: ${PW98.MIN}–${PW98.MAX} characters.`;return ''}
+  /* SHA-256 (hex) of a string's UTF-8 bytes — small and pure, the same in Node and the browser */
+  function sha256hex98(str){const b=unescape(encodeURIComponent(String(str)));const K=[],H=[];let n=2,c=0;
+    const fr=x=>(x-Math.floor(x))*4294967296|0;while(c<64){let p=true;for(let i=2;i*i<=n;i++)if(n%i===0){p=false;break}if(p){if(c<8)H[c]=fr(Math.pow(n,1/2));K[c]=fr(Math.cbrt(n));c++}n++}
+    const w=[];const len=b.length;const words=[];for(let i=0;i<len;i++)words[i>>2]|=b.charCodeAt(i)<<((3-i%4)*8);words[len>>2]|=0x80<<((3-len%4)*8);
+    const nb=((len+8)>>6)+1;for(let i=0;i<nb*16;i++)words[i]=words[i]|0;words[nb*16-1]=len*8;
+    const r=(x,k)=>(x>>>k)|(x<<(32-k));const h=H.slice();
+    for(let j=0;j<nb*16;j+=16){const a=h.slice();for(let i=0;i<64;i++){if(i<16)w[i]=words[j+i]|0;else{const s0=r(w[i-15],7)^r(w[i-15],18)^(w[i-15]>>>3),s1=r(w[i-2],17)^r(w[i-2],19)^(w[i-2]>>>10);w[i]=(w[i-16]+s0+w[i-7]+s1)|0}
+        const S1=r(a[4],6)^r(a[4],11)^r(a[4],25),ch=(a[4]&a[5])^(~a[4]&a[6]),t1=(a[7]+S1+ch+K[i]+w[i])|0,S0=r(a[0],2)^r(a[0],13)^r(a[0],22),mj=(a[0]&a[1])^(a[0]&a[2])^(a[1]&a[2]),t2=(S0+mj)|0;
+        a.pop();a.unshift((t1+t2)|0);a[4]=(a[4]+t1)|0}for(let i=0;i<8;i++)h[i]=(h[i]+a[i])|0}
+    return h.map(x=>(x>>>0).toString(16).padStart(8,'0')).join('')}
+  const pwHash98=(salt,pw)=>sha256hex98('flavius98|'+String(salt)+'|'+pwClean98(pw));
+  /* playlists never seat anyone in a locked room */
+  {const base=C.quickPick;C.quickPick=function(list){return base.apply(this,[(list||[]).filter(L=>!L||!L.pw),...[].slice.call(arguments,1)])}}
+
+  /* ── 2 · regions (from the host's time zone) ── */
+  const REGIONS98=[
+    {k:'na',n:'North America',w:'AMERICA',bg:'#1c3566',fg:'#e8e0cc',shape:'mount'},
+    {k:'sa',n:'South America',w:'AMERICA·S',bg:'#1d4a2a',fg:'#f0d66a',shape:'sun'},
+    {k:'eu',n:'Europe',w:'EVROPA',bg:'#6e1414',fg:'#e2b64a',shape:'column'},
+    {k:'af',n:'Africa',w:'AFRICA',bg:'#8a5a0e',fg:'#fff0b8',shape:'lion'},
+    {k:'me',n:'Middle East',w:'ORIENS',bg:'#11474a',fg:'#e9efe6',shape:'olive'},
+    {k:'as',n:'Asia',w:'ASIA',bg:'#3d1c4a',fg:'#e6c46a',shape:'tower'},
+    {k:'oc',n:'Oceania',w:'OCEANVS',bg:'#1d3f5c',fg:'#e8b26a',shape:'ship'}];
+  const SA98=/^America\/(Sao_Paulo|Buenos_Aires|Argentina\/|Santiago|Lima|Bogota|Caracas|Montevideo|La_Paz|Asuncion|Guayaquil|Cayenne|Paramaribo|Guyana|Belem|Fortaleza|Recife|Manaus|Bahia|Cuiaba|Porto_Velho|Rio_Branco|Noronha|Maceio|Araguaina|Campo_Grande|Santarem|Boa_Vista|Punta_Arenas|Cordoba|Mendoza|Catamarca|Jujuy|Rosario)/;
+  const ME98=/^Asia\/(Dubai|Riyadh|Tehran|Baghdad|Jerusalem|Tel_Aviv|Beirut|Damascus|Amman|Qatar|Kuwait|Bahrain|Muscat|Aden|Gaza|Hebron|Nicosia|Famagusta)|^Europe\/Istanbul$|^Asia\/Istanbul$/;
+  function regionOf98(tz){tz=C.cleanTz(tz);if(!tz)return '';if(SA98.test(tz))return 'sa';if(ME98.test(tz))return 'me';const p=tz.split('/')[0];
+    if(p==='America'||p==='US'||p==='Canada'||p==='Mexico')return 'na';if(p==='Atlantic')return /Bermuda/.test(tz)?'na':/Stanley|South_Georgia/.test(tz)?'sa':'eu';if(p==='Europe')return 'eu';
+    if(p==='Africa')return 'af';if(p==='Asia'||p==='Indian')return 'as';if(p==='Australia'||p==='Pacific')return /Honolulu/.test(tz)?'na':'oc';return ''}
+  const regionByKey98=k=>REGIONS98.find(r=>r.k===k)||null;
+
+  /* ── 4 · DOMUS RANK ── */
+  const DRANKS98=[
+    {k:'tugurium',n:'Tugurium',at:0,sym:'hut',bg:'#5d5246',fg:'#eadfc4'},
+    {k:'taberna',n:'Taberna',at:200,sym:'amphora',bg:'#6e6236',fg:'#f2e4b2'},
+    {k:'ludusminor',n:'Ludus Minor',at:600,sym:'rudis',bg:'#874626',fg:'#f6dcbc'},
+    {k:'ludus',n:'Ludus',at:1500,sym:'blades',bg:'#2b5a78',fg:'#eaf1f4'},
+    {k:'ludusmagnus',n:'Ludus Magnus',at:3000,sym:'helm',bg:'#6e1d22',fg:'#f0cf7d'},
+    {k:'familianota',n:'Familia Nota',at:5500,sym:'shield',bg:'#4a2a6a',fg:'#f2da92'},
+    {k:'illustris',n:'Domus Illustris',at:9000,sym:'laurel',bg:'#9a7524',fg:'#fff3c8'},
+    {k:'aurea',n:'Domus Aurea',at:15000,sym:'eagle',bg:'#c08a22',fg:'#fff8de'}];
+  const DR_TOP98=4, DR_FALLEN98=0.2;
+  function drankScore98(chars){const g=c=>Math.max(0,+C.gloryOf(c)||0);const all=(chars||[]).filter(Boolean);
+    const live=all.filter(c=>c.alive).map(g).sort((a,b)=>b-a).slice(0,DR_TOP98).reduce((a,x)=>a+x,0);const fell=all.filter(c=>!c.alive).map(g).reduce((a,x)=>a+x,0);
+    return Math.round((live+DR_FALLEN98*fell)*10)/10}
+  function drankOf98(s){let r=DRANKS98[0];for(const R of DRANKS98)if((+s||0)>=R.at)r=R;return r}
+  const drankIdx98=k=>Math.max(0,DRANKS98.findIndex(r=>r.k===k));
+  /* the stored best never drops: → true when D changed */
+  function drankKeep98(D,s){if(!D)return false;s=+s||0;if(s>(+D.dr98||0)){D.dr98=s;return true}return false}
+  {const base=C.domusRow;C.domusRow=function(D){const r=base.apply(this,arguments);if(r&&D){const s=+D.dr98||0;r.dr98={s:Math.floor(s),k:drankOf98(s).k}}return r}}
+  /* room members (and seats) carry their house's tier key; lists show it beside every name */
+  const DRK98=/^[a-z]{3,16}$/;
+  {const base=C.roomJoin;C.roomJoin=function(L,whos){const r=base.apply(this,arguments);try{if(!r)for(const w of whos||[]){if(!w||!DRK98.test(String(w.dr||'')))continue;
+        for(const x of [...(L.members||[]),...(L.players||[])])if(x.id===w.id)x.dr=w.dr;if(L.host&&L.host.id===w.id)L.host.dr=w.dr}}catch(e){}return r}}
+  {const base=C.liteRow;C.liteRow=function(L){const y=base.apply(this,arguments);try{const dr={};for(const x of [...(L.members||[]),...(L.players||[])])if(x&&x.dr)dr[x.id]=x.dr;
+      for(const x of [...(y.members||[]),...(y.players||[])])if(dr[x.id])x.dr=dr[x.id];if(y.host&&dr[y.host.id])y.host={...y.host,dr:dr[y.host.id]}}catch(e){}return y}}
+
+  /* ── 6 · more events, Custom only ── */
+  const EVENTS_CUSTOM98=['ludus','goldenEagle'];
+  const EV_SEATS98={ludus:[2,4],goldenEagle:[4,8]};
+  Object.assign(C.EV_SEATS,EV_SEATS98);
+  const ALL0=C.EVENTS_ALL.slice(),TEAM0=C.EVENTS_TEAM.slice();
+  C.EVENTS_ALL=ALL0.concat(EVENTS_CUSTOM98.filter(k=>!ALL0.includes(k)));
+  C.EVENTS_TEAM=TEAM0.concat(['goldenEagle'].filter(k=>!TEAM0.includes(k)));
+  const customOnly98=ev=>EVENTS_CUSTOM98.includes(ev);
+  const CUSTOM_ONLY_TXT='That event is played online as Custom only.';
+  {const base=C.newLobby;C.newLobby=function(spec,host,id,now){spec=spec||{};if(!customOnly98(spec.ev))return base.apply(this,arguments);if(spec.ranked)throw new Error(CUSTOM_ONLY_TXT);
+    const L=base.call(this,{...spec,ev:'democritus'},host,id,now);L.ev=spec.ev;L.team=C.EVENTS_TEAM.includes(spec.ev);L.teams=2;L.seats=C.clampSeats(spec.ev,spec.seats||4);return L}}
+  {const base=C.roomSet;C.roomSet=function(L,by,d,now){d=d||{};if(d.ev==null||d.ev===L.ev||!customOnly98(d.ev))return base.apply(this,arguments);
+    if(L.host.id!==by)return 'Only the host changes the game.';if(L.status!=='waiting')return 'Already under way.';if(L.ranked)return CUSTOM_ONLY_TXT;
+    const wasTeam=L.team;L.ev=d.ev;L.team=C.EVENTS_TEAM.includes(d.ev);if(L.team&&!wasTeam){L.teams=2;L.players.forEach((p,i)=>{p.team=C.TEAM_KEYS[i%2]})}if(!L.team)for(const p of L.players)delete p.team;
+    for(const p of L.players)p.ready=false;const x={...d};delete x.ev;if(x.seats==null)x.seats=L.seats;return base.call(this,L,by,x,now)}}
+
+  /* ── 7 · Damnatio only at creation ── */
+  const DAMN98='damnatio';
+  {const base=C.classWhy;if(base)C.classWhy=function(ch,cls){if(ch&&ch.alive&&cls!==ch.cls&&(cls===DAMN98||ch.cls===DAMN98))return ch.cls===DAMN98?'A Damnatio stays condemned — the class is chosen only when he is raised.':'Damnatio is chosen only when a gladiator is raised.';return base.apply(this,arguments)}}
+
+  /* ── 8 · the bonus renames ── */
+  {const U=k=>C.UNIQUES.find(u=>u.k===k),UA=k=>C.UNIQUES_A.find(u=>u.k===k);const set=(u,n)=>{if(u)u.n=n};
+    set(U('gloria'),'Gloriosus II');set(U('percussor'),'Acutus II');set(UA('mercurialis'),'Velox II');set(UA('gloriosa'),'Laudis')}
+  /* the noun's gender (0 m · 1 f · 2 n · 3 pl), as the namer used it */
+  const GEN_W98={gladius:0,mace:1,sica:1,hasta:1,stones:3,thracian:1,knives:3,trident:0,rudis:1,axe:1,falcata:1,bow:0,pugio:0,scissor:1,scutum:2,sling:1,arcu:1,charun:0,flavgl:0,jade:1,flail:2,pilum:2};
+  const GEN_A98={head:1,chest:1,belt:0,arm:1,leg:1};
+  const GLOR98=['Gloriosus','Gloriosa','Gloriosum','Gloriosi'],ACUT98=['Acutus','Acuta','Acutum','Acuti'];
+  function rename98(w){if(!w||typeof w!=='object'||typeof w.n!=='string')return w;const armor=w.kind==='a'||!!w.named84;
+    const g=armor?(GEN_A98[w.slot]!=null?GEN_A98[w.slot]:1):(GEN_W98[w.base]!=null?GEN_W98[w.base]:0);let n=w.n;
+    if(w.uq){const noun=n.split(' ')[0];
+      if(!armor&&w.uq==='gloria')n=noun+' '+GLOR98[g]+' II';else if(!armor&&w.uq==='percussor')n=noun+' '+ACUT98[g]+' II';
+      else if(armor&&w.uq==='mercurialis')n=noun+' Velox II';else if(armor&&w.uq==='gloriosa')n=noun+' Laudis'}
+    else{const a0=(w.aff||[])[0];const add=re=>{n=n.replace(re,'$1 I')};
+      if(!armor&&a0==='crowd')add(/\b(Glorios(?:us|a|um|i))\b(?! I{1,2}\b)/);else if(!armor&&a0==='pierce')add(/\b(Acut(?:us|a|um|i))\b(?! I{1,2}\b)/);else if(armor&&a0==='swift')add(/\b(Velox)\b(?! I{1,2}\b)/)}
+    if(n!==w.n)w.n=n;return w}
+  for(const f of ['rollNamed','rollNamedArmor','cleanNamed','cleanNamedA']){const base=C[f];if(typeof base==='function')C[f]=function(){const r=base.apply(this,arguments);try{rename98(r)}catch(e){}return r}}
+  /* a reply / push walked for named defs (the page): every {n, named83|named84} object renamed in place */
+  function renameDeep98(x,depth){if(!x||typeof x!=='object'||(depth|0)>12)return x;if(Array.isArray(x)){for(const v of x)renameDeep98(v,(depth|0)+1);return x}
+    if((x.named83||x.named84)&&typeof x.n==='string')rename98(x);for(const k in x){const v=x[k];if(v&&typeof v==='object')renameDeep98(v,(depth|0)+1)}return x}
+
+  if(Array.isArray(C.GUEST_OK)&&!C.GUEST_OK.includes('house.card'))C.GUEST_OK.push('house.card');
+  Object.assign(C,{PW98,pwClean98,pwWhy98,sha256hex98,pwHash98,REGIONS98,regionOf98,regionByKey98,DRANKS98,DR_TOP98,DR_FALLEN98,drankScore98,drankOf98,drankIdx98,drankKeep98,
+    EVENTS_CUSTOM98,EV_SEATS98,customOnly98,rename98,renameDeep98})})(ONLC);
 if(typeof module!=='undefined'&&module.exports)module.exports=ONLC;

@@ -849,6 +849,26 @@ One global script; files are concatenated in order. Later "version modules" patc
   pixels.js (230 ON vs OFF in one page: identical) · serve.js. Test tv95p (OFF vs ON in one run, decode ms/s, p50, patch = innerHTML, sleep).
 - **v0.97 bout tracker (242-v96bt):** Match Week banner chips are a grid (sword mark 26 px LEFT of day/bout/result, never over them; phones 18 px, day + result only); test tv96t, shots tools/plans/bt96.
 - **v0.97 grow (245-v96grow):** `weeklyGrowth` wrapper (66 runs for every house's contracted fighters): beside the +0.2 Luck, `grow96Roll(w,g,week)` (hash of world id + fighter id + absolute week, never the dice RNG) gives 10% (`GROW96.chance`) +0.2 to one of spd/str/int/cha through statGain, so band-ups and "From your Doctores" show it. Test `tv96g`.
+- **v0.98 part E ONLINE (250-v98onl + the v0.98 section of 111-onlcore + server routes.js "v0.98" block; docs/backend.md "v0.98"; NO protocol bump — VER stays 7):**
+  🔒 Custom-room PASSWORDS (`pwWhy98`, `pwHash98` = pure-JS SHA-256 of a salt + the password, kept in `LOBBY#<id>`/`PW98` — never on the room, which carries `pw:1`;
+  `lobby.create {pw}` / host's `lobby.set {pw}` ('' clears), `lobby.join {pw}` → `pw_need` / `pw_bad`, `PW98.TRIES` 8 tries per 10 min (`slow`), Ranked → `pw_ranked`,
+  invitations skip it, `quickPick` never picks a 🔒 room; page: a `NET.req` wrapper asks (`pw98Ask`) for every join path, the table settings' 🔒 Password row).
+  REGIONS: `regionOf98(tz)` → 7 `REGIONS98` from the host's time zone (page sends `tz` on lobby.create/quick; else hello's; hidden lanista → none) → `L.reg`; flags drawn with
+  flagURI (`rg98Flag`); Lobby Browser Region filter + sort (`ONL96.reg`). HOUSE CARD: route `house.card {acct|id|fid|name}` (guests too, look89 rate) = public domus row,
+  living gladiators by Glory, fallen, best rank ever, last 6 `D.recent` W/L, lanista/FID, now (hidden → off); page `hc98Open` from any `[data-hc98]` (list host, room
+  names) / `[data-hc98d]` (followed houses), 🏛 Visit (`onl89Visit`) · ★ Follow. DOMUS RANK: `drankScore98` = best 4 living Glory + 20% of all fallen, `D.dr98` keeps the
+  best (never drops; recomputed on domus.get / house.card / after settleMatch / match.abandon), `DRANKS98` Tugurium 0 · Taberna 200 · Ludus Minor 600 · Ludus 1500 ·
+  Ludus Magnus 3000 · Familia Nota 5500 · Domus Illustris 9000 · Domus Aurea 15000 (symbols hut/amphora/rudis/blades/helm/shield/laurel/eagle); `domusRow.dr98={s,k}`;
+  room members/players/host carry `dr` (groupOf re-point → `C.roomJoin` wrapper; `C.liteRow` keeps it); page `dr98URI` = a swallow-tail banner image (flagURI cloth +
+  symbol layer), `dr98Chip` beside names, the big one atop the Domus Glory bar (`onlRankBar82` wrapper). Find me a fight is SILENT (makeRoom re-point: quick → cry:false;
+  `announce` skips `L.quick`). EVENTS: `EVENTS_CUSTOM98` = Ludus [2,4] + Golden Eagle [4,8] (team) — `C.EVENTS_ALL`/`C.EVENTS_TEAM` are NEW arrays (the internal
+  ones, so `onlineFixture`, unchanged); newLobby/roomSet refuse them in Ranked; GAUNTLET LEFT OUT (solo, 1 seat — an online match needs 2 lanistas); page: in
+  ONL_EVENTS_OK88 + two cycling squares under the playlists (`ev98Squares`, ⚔ Play = lobby.quick ranked:false), no Ranked buttons for them. DAMNATIO only at creation
+  (`C.classWhy` wrapper; the Domus picker greys it). RENAMES (his table): UNIQUES gloria → Gloriosus II, percussor → Acutus II, UNIQUES_A mercurialis → Velox II,
+  gloriosa → Laudis; affixes crowd/pierce/swift get " I". Named pieces STORE their names, so `rename98(def)` rewrites from aff/uq (gender kept, idempotent) in
+  rollNamed/rollNamedArmor/cleanNamed/cleanNamedA, and the page walks every reply + push (`ONLC.renameDeep98` in NET.req/NET.emit wrappers); AUC96_AFF labels follow.
+  👤 PROFILE & SETTINGS = his mock (tools/plans/mock98/profile.html): header card + Privacy · Find (+ followed houses) · Tester | Notifications · Account;
+  separate switches flavius_onlflash98 / flavius_onlhorn98 (`onl84Alert` replaced). Tests tonl98 (mock, 4 windows: Ludus + Golden Eagle played in lockstep), server v98.test.js.
 - **v0.96 (231-234, parts A–D; 111-onlcore armPlace changed → the server redeploys):** `231-v96mgr` — trait cards `trait96Grade` (A+≥92 A≥85
   B+≥78 B≥70 C+≥62 C≥54 D≥44 F), "Save and Exit", League "🏆 Standings" podium (Superbus art on 1st, hover = prizes + Quaestor) + columns Place ·
   Ludus · Top gladiator · Record · Latest event · Superbus, `w.acta96[week]` → Season tab 📜 Acta column, Road box sized to content + Consilium

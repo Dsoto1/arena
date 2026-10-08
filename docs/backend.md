@@ -111,6 +111,33 @@ the server stores the picture and every screen downloads it by hash. Matches nev
   (a failed fetch is never retried for a minute and never blocks a match). `TOK#` / `TOKUP#` items and `ch.tok94` are ignored by older
   servers; `kit.look.t94` passes through older `cleanLook` callers untouched or is dropped (both are fine).
 
+## Rooms, houses and ranks (v0.98)
+
+Shared rules: the v0.98 section at the end of `111-onlcore`; routes: the "v0.98" block in `routes.js` (just before the rate limiter); mock: `250-v98onl`.
+No protocol bump — an older page still works (it cannot set a password, and a 🔒 room refuses it with `pw_need`).
+
+- **Passwords (Custom rooms only).** `lobby.create {pw}` or the host's `lobby.set {id, pw}` (`''` removes it). The hash lives in its own item
+  `LOBBY#<id>` / `PW98` = `{s, h, ttl}` with `h = pwHash98(s, pw)` (SHA-256 of `flavius98|salt|password`, pure JS so the mock matches); the room item only
+  carries `pw: 1`, so lists, pushes and members never see it. `lobby.join {id, pw}` → `pw_need` (none given), `pw_bad` (wrong), `slow` (more than
+  `PW98.TRIES` tries in `PW98.WIN`; counted on `ACCT … pwq98`). Ranked → `pw_ranked`. An invitation (`lobby.accept`, `lobby.join {inv}`) needs no password;
+  `quickPick` never picks a 🔒 room. Tickets are not gated.
+- **Region.** `lobby.create` / `lobby.quick` may send `tz` (the browser's time zone); otherwise the presence entry's (`A.here.tz`). `regionOf98(tz)` → one of
+  `REGIONS98` (`na sa eu af me as oc`) → `L.reg`. A lanista who hides from "Here now" (`priv89.hide`) opens rooms without a region. No IPs anywhere.
+- **House card.** `house.card {acct | id | fid | name}` → `{domus (public row incl. dr98), glads [{id,name,cls,rank,glory}], fallen, best, last [≤6 {ev,loc,at,won,
+  died,glad,ranked}], lan, fid, following, mine, now {st}, acct, inv}`. Guests may call it (`GUEST_OK`); the lookup limit is `look89`'s (FIND_MAX89 a minute).
+  A hidden lanista's card says `now: {st:'off'}` and no `acct`.
+- **Domus rank.** `drankScore98(chars)` = the 4 best living gladiators' Glory + 20% of every fallen gladiator's Glory. `DOMUS.dr98` keeps the best score ever
+  (`drankKeep98` only raises it); it is recomputed on `domus.get`, `house.card`, after `settleMatch` (every player) and `match.abandon`. `domusRow` carries
+  `dr98 = {s, k}` (tier key from `DRANKS98`). Room members / seats / the host carry `dr` (the tier key, set when they join through `groupOf` → `C.roomJoin`);
+  `C.liteRow` keeps it for lists. Rollback: older servers ignore `dr98`, `reg`, `pw` and the `PW98` items (the ttl drops them).
+- **Find me a fight is silent.** A room made by `lobby.quick` is marked `quick`, spends no crier call and is never announced (`announce` skips it).
+- **More events, Custom only.** `EVENTS_CUSTOM98` (Ludus 2–4 seats, Golden Eagle 4–8 with teams) are in `C.EVENTS_ALL` / `C.EVENTS_TEAM` (new arrays — the internal
+  lists, and so the weekly fixture, are unchanged). `newLobby` / `roomSet` refuse them for Ranked. Gauntlet is not online: it seats one, a match needs two lanistas.
+- **Damnatio at creation only.** `classWhy` refuses a change into or out of Damnatio (`char.class`); other changes cost `CLASS_FEE89` as before.
+- **Renamed bonuses.** Named pieces store their rolled name; `rename98(def)` rewrites the epithet from the def's affixes / unique (Gloriosus I/II, Acutus I/II,
+  Velox I/II, Laudis; Tutus and Aegis unchanged), idempotent and gender-kept. New rolls and `cleanNamed*` use it; stored records keep the old text until a
+  page shows them (the page renames every reply and push). Nothing is migrated in the table.
+
 ## Versions, deploy, rollout, rollback
 
 - **Protocol** `ONLC.VER` (111-onlcore): `$connect` refuses another version with 426 ("reload"). Bump it only when old clients

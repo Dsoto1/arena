@@ -1308,6 +1308,55 @@ function makeRoutes({store,push,pushConn=null,catalog,now=()=>Date.now(),rnd=()=
       return {done:1,h:chk.h,tok94:c.tok94,char:strip(c),bytes:chk.bytes.length}},
     'tok.get':async(d)=>{const c=String(d.c||'');if(!/^[A-Za-z0-9_-]{1,40}$/.test(c))throw new Error('No such picture.');const T=await store.get('TOK#'+c,'PIC');
       if(!T||!T.b)return {c,none:1};if(d.h&&d.h===T.h)return {c,h:T.h,same:1};return {c,h:T.h,b:T.b,meta:T.meta,pose:T.pose||'',pk:T.pk||''}}});
+  /* ══════════ v0.98 PART E (shared rules: the v0.98 section of onlcore; no protocol bump) ══════════
+     LOBBY#<id> PW98      {s (salt), h = pwHash98(s, password), ttl} — a Custom room's password, never on the room item (the room carries pw:1)
+     ACCT PROFILE         + pwq98 {h: 10-minute bucket, n}: password tries (PW98.TRIES a window)
+     DOMUS               + dr98: the best Domus-rank score ever (drankScore98; it never drops)
+     lobby.create / lobby.quick: {tz} → the room's region (L.reg, from the host's time zone; none for a hidden lanista); {pw} (Custom only)
+     lobby.join {id, pw}  a 🔒 room asks for it (pw_need / pw_bad); an invitation (lobby.accept, lobby.join {inv}) lets the guest in without it
+     lobby.set {id, pw}   the host sets ('' clears) a Custom room's password before the horns
+     lobby.quick          never calls the crier (no 'open' line, no first call) and never picks a 🔒 room
+     house.card {acct | id | fid | name}  the house's public summary (guests too; privacy: a hidden lanista shows no "now")
+     char.class           Damnatio only at creation (C.classWhy) */
+  async function dr98Upd(x){const D=typeof x==='string'?await domusGet(x):x;if(!D)return null;const cs=(await store.byIndex('OWNER#'+D.owner)).filter(c=>c.domus===D.id);
+    const s=C.drankScore98(cs);if(s<=(+D.dr98||0))return D;return (await editDomus(D.id,X=>{if(!C.drankKeep98(X,s))return false}))||D}
+  async function dr98Acct(acct){try{const A=await acctOf(acct);if(A&&A.domus)return await dr98Upd(A.domus)}catch(e){}return null}
+  async function pwSet98(id,pw){if(!pw){await store.del('LOBBY#'+id,'PW98');return}const s=now().toString(36)+Math.floor(rnd()*1e9).toString(36)+Math.floor(rnd()*1e9).toString(36);
+    await store.put('LOBBY#'+id,'PW98',{s,h:C.pwHash98(s,pw),ttl:ttl(3)})}
+  async function pwCheck98(id,pw,acct){pw=C.pwClean98(pw);if(!pw)throw fail('pw_need','This room has a password.');
+    if(!(await store.quota('ACCT#'+acct,'PROFILE','pwq98',Math.floor(now()/C.PW98.WIN),C.PW98.TRIES)))throw fail('slow','Too many tries — wait a few minutes.');
+    const X=await store.get('LOBBY#'+id,'PW98');if(!X||X.h!==C.pwHash98(X.s,pw))throw fail('pw_bad','Wrong password.')}
+  /* room members carry their house's Domus-rank tier (dr) */
+  {const base=groupOf;groupOf=async function(acct,o){const r=await base.apply(this,arguments);for(const w of r.g){try{const A=await acctOf(w.id);const D=A&&A.domus?await domusGet(A.domus):null;if(D)w.dr=C.drankOf98(+D.dr98||0).k}catch(e){}}return r}}
+  /* a new room: the password (Custom), the region; a playlist room is made silent */
+  {const base=makeRoom;makeRoom=async function(d,acct,g){d=d||{};const pw=d.pw!=null&&d.pw!==''?C.pwClean98(d.pw):'';
+      if(pw){const why=C.pwWhy98(pw,!!d.ranked);if(why)throw fail(d.ranked?'pw_ranked':'pw_bad',why)}
+      if(d.quick)d={...d,cry:false};const L=await base(d,acct,g);
+      const A=await acctOf(acct);const hide=!!(A&&C.privOf89&&C.privOf89(A).hide);const reg=hide?'':C.regionOf98(d.tz!=null?d.tz:(A&&A.here&&A.here.tz)||'');
+      let ch=false;if(reg){L.reg=reg;ch=true}if(pw){await pwSet98(L.id,pw);L.pw=1;ch=true}if(ch)await putLobby(L);return L}}
+  /* Find me a fight: the room it makes is never announced */
+  {const base=announce;announce=async function(L){if(L&&L.quick)return;return base.apply(this,arguments)}}
+  {const base=settleMatch;settleMatch=async function(id,M){const r=await base.apply(this,arguments);try{for(const a of (M&&M.players)||[])await dr98Acct(a)}catch(e){}return r}}
+  Object.assign(R,{
+    'house.card':async(d,ctx)=>{d=d||{};await look89(ctx);let D=null;
+      if(d.acct!=null){const A=await acctOf(String(d.acct));D=A&&A.domus?await domusGet(A.domus):null;if(!D)throw fail('no_domus','No such house.')}else D=await houseOf89(d);
+      D=(await dr98Upd(D))||D;const O=await acctOf(D.owner);const all=(await store.byIndex('OWNER#'+D.owner)).filter(c=>c.domus===D.id);
+      const glads=all.filter(c=>c.alive).sort((a,b)=>C.gloryOf(b)-C.gloryOf(a)).map(c=>({id:c.id,name:c.name,cls:c.cls,rank:C.rankFor(c).k,glory:Math.round(C.gloryOf(c))}));
+      let best='tiro';for(const c of all){for(const k of [c.died&&c.died.rank,c.rankK,C.rankFor(c).k])if(k&&C.RANKS.some(r=>r.k===k)&&C.rankIdx(k)>C.rankIdx(best))best=k}
+      const last=(D.recent||[]).slice(0,6).map(e=>({ev:e.ev,loc:e.loc|0,at:e.at|0,won:!!e.won,died:!!e.died,glad:e.glad||'',ranked:!!e.ranked}));
+      const me=ctx.acct?await acctOf(ctx.acct):null;const hide=!!(O&&C.privOf89(O).hide);let st=null;if(!hide){try{[st]=await followsOut([{id:D.id,name:D.name}])}catch(e){}}
+      const inv=me&&O&&me.id!==O.id?C.invWhy89(O,{domus:me.domus}):'';
+      return {domus:C.domusPub89(D),glads,fallen:Math.max(D.fallen|0,all.filter(c=>!c.alive).length),best,last,lan:O?C.lanOut(O,now()):null,fid:O?C.fidShow(await fidOf89(O)):'',
+        following:!!(me&&(me.follows||[]).some(f=>f.id===D.id)),mine:!!(me&&me.domus===D.id),now:hide||!st?{st:'off'}:{st:st.st,...(st.match?{match:st.match}:{})},acct:!hide&&st&&st.st==='free'&&!inv&&O?O.id:null,inv}}});
+  {const base=R['lobby.join'];R['lobby.join']=async(d,ctx)=>{d=d||{};if(!d.inv&&d.id){const L=await store.get('LOBBY#'+d.id,'LOBBY');if(L&&L.pw&&L.status==='waiting'&&!C.memberOf(L,ctx.acct))await pwCheck98(L.id,d.pw,ctx.acct)}return base(d,ctx)}}
+  {const base=R['lobby.set'];R['lobby.set']=async(d,ctx)=>{d=d||{};if(d.pw===undefined)return base(d,ctx);
+      const L=await getLobby(d.id);if(L.host.id!==ctx.acct)throw new Error('Only the host changes the game.');if(L.status!=='waiting')throw new Error('Already under way.');
+      const pw=C.pwClean98(d.pw);if(pw){const why=C.pwWhy98(pw,!!L.ranked);if(why)throw fail(L.ranked?'pw_ranked':'pw_bad',why)}
+      await pwSet98(L.id,pw);const X=await editLobby(L.id,Y=>{if(pw)Y.pw=1;else delete Y.pw});const rest={...d};delete rest.pw;
+      if(Object.keys(rest).some(k=>k!=='id'&&k!=='rid'))return base(rest,ctx);await toRoom(X,null,{except:ctx.acct});return room(X)}}
+  {const base=R['domus.get'];R['domus.get']=async(d,ctx)=>{await dr98Acct(ctx.acct);return base(d,ctx)}}
+  {const base=R['match.abandon'];R['match.abandon']=async(d,ctx)=>{const r=await base(d,ctx);await dr98Acct(ctx.acct);return r}}
+  /* ══════════ end of v0.98 PART E ══════════ */
   /* v0.93 one general rate limit per account (guests by id, else the socket) on top of the per-feature ones (limits:false = off, for tests) */
   const LIM93=limits===false?null:C.limiter93(limits&&typeof limits==='object'?{...C.RATE93,...limits}:C.RATE93);
   const route=async function(t,d,ctx){const f=R[t];if(!f)throw fail('unknown_req','Unknown request: '+t);
