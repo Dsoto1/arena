@@ -85,7 +85,7 @@ function bar96Grid(p,acts,idle){const all=acts?[...acts.querySelectorAll('button
   const ap=bar96AtkPips(p);const wpn=by.atk.filter(b=>b.dataset.act!=='focus');const foc=by.atk.find(b=>b.dataset.act==='focus');
   let atkPh='';if(!wpn.length){const ws=[p.wR,p.wL].map(w=>w?w.n:(typeof PUNCH!=='undefined'?PUNCH.n:_T('Fist')));atkPh=ws.map(n=>b96Ph(esc(n),idle?'':_T('No attacks left'))).join('')}
   const atkHd=`<span class="pips96" aria-label="${_T`${ap.left} attacks left`}">${ap.h}</span>`;
-  const mvHd=`<span class="pips96 mv96" aria-label="${_T`${p.mv||0} movement left`}">${bar96MvPips(p)}</span><b class="n96">${p.mv||0}</b>`;
+  const mvHd=`<span class="pips96 mv96" aria-label="${_T`${p.mv||0} movement left`}" data-tip="${_T`${p.mv||0} movement left`}">${bar96MvPips(p)}</span><b class="n96 ${p.mv?'':'z96'}">${p.mv||0}</b>`;
   const mvPh=ch?'':[['m-push',_T('Push'),_T('Nothing to push next to you')],['m-topple',_T('Topple'),_T('No pillar next to you')],['m-tunnel',_T('Tunnel'),_T('No tunnel exit, or no Arena Key')]].filter(([k])=>!have(k)).map(([k,l,t])=>b96Ph(l,idle?'':t,'ph-'+k)).join('');
   const dlNear=(()=>{try{return tradePartners(p).length}catch(e){return 0}})();
   const dlPh=(have('trade')?'':b96Ph(_T('Trade · Truce'),idle?'':_T('Nobody within 4 tiles'),'seal96'))+(have('loot')?'':b96Ph(_T('Loot'),idle?'':_T('Nothing to loot here')));
@@ -217,7 +217,7 @@ window.addEventListener('keydown',e=>{if(!BAR96.on||e.ctrlKey||e.metaKey||e.altK
 body.calm #actions .sugglow,body.idle92 #actions .sugglow{animation:none!important}@media (prefers-reduced-motion:reduce){#actions .sugglow{animation:none!important}}
 .pips96{display:inline-flex;gap:2px;align-items:center}.pip96{display:inline-block;width:6px;height:9px;border-radius:2px;background:#00000050;border:1px solid #f0a04060}
 .pip96.on{background:#f0a040;border-color:#ffc070}.pip96.on.spend96{background:#6b4a24;border-color:#f0a04080;opacity:.55}
-.mv96+.n96{color:#ffd77a}
+.mv96+.n96{color:#ffd77a}.mv96+.n96.z96{color:#7d6f60;font-weight:400}
 .sw96{font-style:normal;font-size:11px;opacity:.3;filter:grayscale(1)}.sw96.on{opacity:1;filter:none}
 .end96{display:flex;min-width:0}
 #actions .end96 .btn.end96b{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;text-align:center;border-radius:8px;border:1px solid #d8b45a;color:#fff1d8;padding:6px 6px;white-space:nowrap;

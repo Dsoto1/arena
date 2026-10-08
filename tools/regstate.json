@@ -1,5 +1,5 @@
 {
- "run": 255,
+ "run": 256,
  "lastFull": 1791382783754,
  "tests": {
   "tseed4": {
@@ -4458,6 +4458,23 @@
     "tools/smartreg.js": "f324391b30d6",
     "tools/regcov.js": "1b122005f465",
     "tools/tests/tonl96.js": "0684e6f4d1dd"
+   }
+  },
+  "tv96a": {
+   "streak": 1,
+   "runs": 1,
+   "fails": 0,
+   "flaky": [],
+   "lastRun": 256,
+   "time": 62,
+   "sh": "5cca20e1bc",
+   "lastPass": 256,
+   "deps": {
+    "build.sh": "53f6312f97fb",
+    "src/01-head.html": "d98814c6f514",
+    "tools/smartreg.js": "f324391b30d6",
+    "tools/regcov.js": "1b122005f465",
+    "tools/tests/tv96a.js": "0478b1a4f59f"
    }
   }
  },
