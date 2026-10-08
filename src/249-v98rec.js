@@ -50,7 +50,7 @@ const REC98={hrs:20,perLv:4,cap:8,lvMax:5,
   sig:[0,9,4.5,1.6],lvK:[0,1,.8,.62,.45,.3],
   acts:{ask:{h:1,ic:'🍺'},watch:{h:2,ic:'👁',st:['spd','str']},cup:{h:2,ic:'🍷',st:['int','cha']},study:{h:3,ic:'📜'},trial:{h:5,ic:'⚔',coin:4,inj:.07}},
   order:['ask','watch','cup','study','trial'],
-  up:[0,60,120,200,320],coinMax:3,
+  up:[0,60,120,200,320],coinMax:2,
   pitch:{'A+':9,A:8,'B+':7,B:6,'C+':4,C:3,D:1,F:-2},wantX:2,motX:10,
   deal:1.25,dealP:6,rivalLv:2};
 const REC98_ACT_L=()=>({ask:[_T('Ask around the forum'),_T('one rough grade')],watch:[_T('Watch him train'),_T('Speed · Strength')],cup:[_T('Share a cup'),_T('Intelligence · Charisma')],study:[_T('Study his bouts'),_T('every grade sharper · Luck')],trial:[_T('Trial bout'),_T('everything sure · interest')]});
@@ -65,10 +65,10 @@ function adv98StartLv(choice,pm){try{if(choice&&choice.type==='pre'){const t=MGR
   if(choice&&choice.type==='custom')return (choice.mgr&&choice.mgr.diff)==='easy'?2:1}catch(e){}return 1}
 {const base=newWorld;newWorld=function(choice){const r=base.apply(this,arguments);try{const w=W_();if(w&&!w.dead){council83Ensure(w);for(const a of council83(w))delete a.lv;adv98Start(w,adv98StartLv(choice));w._rec98dirty=1}}catch(e){console.error(e)}return r}}
 function adv98Up(k){const w=W_(),m=me();if(!w||!m)return {ok:false};const a=council83(w).find(x=>x.k===k);if(!a)return {ok:false};const lv=a.lv||1;
-  if(lv>=REC98.coinMax)return {ok:false,why:lv>=REC98.lvMax?_T('Already as good as they come.'):_T('Coin teaches up to level 3 — the rest is earned by deeds.')};const c=REC98.up[lv];if((m.coin||0)<c)return {ok:false,why:_T('Not enough coin.')};
+  if(lv>=REC98.coinMax)return {ok:false,why:lv>=REC98.lvMax?_T('Already as good as they come.'):_T('Coin teaches up to level 2 — the rest is earned by deeds.')};const c=REC98.up[lv];if((m.coin||0)<c)return {ok:false,why:_T('Not enough coin.')};
   m.coin-=c;a.lv=lv+1;return {ok:true,lv:a.lv,c}}
 {const base=council83HTML;council83HTML=function(){let h=base.apply(this,arguments);try{const w=W_(),m=me();if(!h||!w||!m)return h;
-  for(const a of council83(w)){const lv=a.lv||1;const up=!w.tutorial&&lv<REC98.coinMax?`<button class="btn tksm c98up" type="button" data-c98up="${a.k}" ${(m.coin||0)<REC98.up[lv]?dis88(_T('Not enough coin.')):''} title="${esc(a.k==='recruiter'?_T`More hours a week and sharper grades (${REC98.hrs+REC98.perLv*lv} h)`:_T('Coin teaches up to level 3'))}">${_T`⬆ Train · ${coinAmt87(REC98.up[lv])}`}</button>`:(typeof adv98EvHTML==='function'?adv98EvHTML(w,a):'');
+  for(const a of council83(w)){const lv=a.lv||1;const up=!w.tutorial&&lv<REC98.coinMax?`<button class="btn tksm c98up" type="button" data-c98up="${a.k}" ${(m.coin||0)<REC98.up[lv]?dis88(_T('Not enough coin.')):''} title="${esc(a.k==='recruiter'?_T`More hours a week and sharper grades (${REC98.hrs+REC98.perLv*lv} h)`:_T('Coin teaches up to level 2'))}">${_T`⬆ Train · ${coinAmt87(REC98.up[lv])}`}</button>`:(typeof adv98EvHTML==='function'?adv98EvHTML(w,a):'');
     h=h.replace(new RegExp(`(<div class="c83p" data-c83="${a.k}">[\\s\\S]*?)(</div>)`),(x,p,e)=>`${p}<span class="c98lv" title="${esc(_T('Advisor level'))}">${_T`Lv ${lv}`}</span>${up}${e}`)}}catch(e){console.error(e)}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-c98up]');if(!b||b.disabled)return;e.preventDefault();e.stopPropagation();
   const r=adv98Up(b.dataset.c98up);if(!r.ok){if(r.why&&typeof mToast==='function')mToast(esc(r.why));return}const a=council83(W_()).find(x=>x.k===b.dataset.c98up);
