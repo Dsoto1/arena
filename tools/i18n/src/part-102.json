@@ -1,0 +1,466 @@
+[
+ {
+  "k": "Save and Exit",
+  "w": "17-manager.js:1749"
+ },
+ {
+  "k": "A clearer turn",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "A new action bar: the phase rail, grouped actions, board previews on hover and what you would leave unused",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Online rooms: seats in the middle, chat bubbles under each token, the crier only when the host calls",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Manager: a standings podium, each week’s Acta kept in the Season tab, trait cards with their grades",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Every attack is now logged, hit or miss",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Belts sit under thigh armor, the Leather Tasset takes the upper leg alone, at most 3 stones hit a gladiator a turn, Fast skips the in-between frames",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "📯 Your room is open — 📣 Call the crier when you want more lanistas.",
+  "w": "118-onl80.js:354"
+ },
+ {
+  "k": "top of the scale",
+  "w": "231-v96mgr.js:37"
+ },
+ {
+  "k": "What one point buys",
+  "w": "231-v96mgr.js:37"
+ },
+ {
+  "k": "Maxed",
+  "w": "231-v96mgr.js:39"
+ },
+ {
+  "k": "Hone · 1 point",
+  "w": "231-v96mgr.js:39"
+ },
+ {
+  "k": "🏛 Your house grades",
+  "w": "231-v96mgr.js:40"
+ },
+ {
+  "k": "Recruits grade your ludus on these. One point adds +2.",
+  "w": "231-v96mgr.js:40"
+ },
+ {
+  "k": "{0} point{1} to the next prize",
+  "w": "231-v96mgr.js:53"
+ },
+ {
+  "k": "1 of your fighters is on this week's card",
+  "w": "231-v96mgr.js:67"
+ },
+ {
+  "k": "{0} of your fighters are on this week's card",
+  "w": "231-v96mgr.js:67"
+ },
+ {
+  "k": "sat out",
+  "w": "231-v96mgr.js:76"
+ },
+ {
+  "k": "The Acta results card: how your house did that week",
+  "w": "231-v96mgr.js:80"
+ },
+ {
+  "k": "📜 Acta",
+  "w": "231-v96mgr.js:80"
+ },
+ {
+  "k": "League prize +{0} coin{1}",
+  "w": "231-v96mgr.js:87"
+ },
+ {
+  "k": "no league prize",
+  "w": "231-v96mgr.js:87"
+ },
+ {
+  "k": "Flavius Superbus invitation",
+  "w": "231-v96mgr.js:88"
+ },
+ {
+  "k": "Quaestor's Ledger +{0} coin",
+  "w": "231-v96mgr.js:88"
+ },
+ {
+  "k": "🏆 won",
+  "w": "231-v96mgr.js:90"
+ },
+ {
+  "k": "pts",
+  "w": "231-v96mgr.js:97"
+ },
+ {
+  "k": "The top three houses",
+  "w": "231-v96mgr.js:99"
+ },
+ {
+  "k": "the other {0} houses",
+  "w": "231-v96mgr.js:107"
+ },
+ {
+  "k": "<b>🏆 Standings</b>",
+  "w": "231-v96mgr.js:108"
+ },
+ {
+  "k": "hover a place for its season-finish prizes",
+  "w": "231-v96mgr.js:108"
+ },
+ {
+  "k": "Top gladiator",
+  "w": "231-v96mgr.js:110"
+ },
+ {
+  "k": "Latest event",
+  "w": "231-v96mgr.js:110"
+ },
+ {
+  "k": "The top four are invited to the Flavius Superbus",
+  "w": "231-v96mgr.js:110"
+ },
+ {
+  "k": "win",
+  "w": "231-v96mgr.js:117"
+ },
+ {
+  "k": "a heat to appear",
+  "w": "231-v96mgr.js:117"
+ },
+ {
+  "k": "No fit fighter to send.",
+  "w": "231-v96mgr.js:118"
+ },
+ {
+  "k": "🩹 Damaged",
+  "w": "231-v96mgr.js:140"
+ },
+ {
+  "k": "Armor that fell to 0 AP comes home damaged and stays on the shelf until it is mended. The armorer in the City Square charges less at home.",
+  "w": "231-v96mgr.js:141"
+ },
+ {
+  "k": "Nothing needs repair.",
+  "w": "231-v96mgr.js:142"
+ },
+ {
+  "k": "standing",
+  "w": "234-v96onl.js:41"
+ },
+ {
+  "k": "👑 Give host",
+  "w": "234-v96onl.js:42"
+ },
+ {
+  "k": "Remove from the room",
+  "w": "234-v96onl.js:42"
+ },
+ {
+  "k": "A patron",
+  "w": "234-v96onl.js:45"
+ },
+ {
+  "k": "in the stands",
+  "w": "234-v96onl.js:45"
+ },
+ {
+  "k": "In the room · {0}/{1}",
+  "w": "234-v96onl.js:46"
+ },
+ {
+  "k": "📣 Call the crier <small>{0} left</small>",
+  "w": "234-v96onl.js:53"
+ },
+ {
+  "k": "🚪 Exit lobby",
+  "w": "234-v96onl.js:54"
+ },
+ {
+  "k": "🚪 Close lobby",
+  "w": "234-v96onl.js:54"
+ },
+ {
+  "k": "Leave the room; the others stay (the crown passes to whoever joined earliest).",
+  "w": "234-v96onl.js:55"
+ },
+ {
+  "k": "You are alone: leaving closes the room.",
+  "w": "234-v96onl.js:55"
+ },
+ {
+  "k": "Table settings",
+  "w": "234-v96onl.js:72"
+ },
+ {
+  "k": "you are the host — changes reach everyone",
+  "w": "234-v96onl.js:72"
+ },
+ {
+  "k": "set by the host",
+  "w": "234-v96onl.js:72"
+ },
+ {
+  "k": "Quick chat",
+  "w": "234-v96onl.js:75"
+ },
+ {
+  "k": "All events",
+  "w": "234-v96onl.js:94"
+ },
+ {
+  "k": "All cities",
+  "w": "234-v96onl.js:95"
+ },
+ {
+  "k": "Newest",
+  "w": "234-v96onl.js:96"
+ },
+ {
+  "k": "Open seats",
+  "w": "234-v96onl.js:96"
+ },
+ {
+  "k": "{0} of {1} shown",
+  "w": "234-v96onl.js:97"
+ },
+ {
+  "k": "Read the list of rooms again",
+  "w": "234-v96onl.js:97"
+ },
+ {
+  "k": "⚔ Back to your match — 🚪 Abandon is on the arena bar.",
+  "w": "234-v96onl.js:115"
+ },
+ {
+  "k": "{0} → misses {1}.",
+  "w": "232-v96board.js:41"
+ },
+ {
+  "k": "Fidelis: −1 die",
+  "w": "232-v96board.js:60"
+ },
+ {
+  "k": "✚ Elixir",
+  "w": "232-v96board.js:63"
+ },
+ {
+  "k": "🚶 Switch section · {0}",
+  "w": "232-v96board.js:96"
+ },
+ {
+  "k": "Once a rotation — you already moved this rotation.",
+  "w": "232-v96board.js:97"
+ },
+ {
+  "k": "Not enough Crowd Favor (3 CF).",
+  "w": "232-v96board.js:97"
+ },
+ {
+  "k": "Move to another stand. Its gladiator earns 1 CF from you every turn.",
+  "w": "232-v96board.js:97"
+ },
+ {
+  "k": "{0} a stone at {1} — it flies wide ({2} stones have already struck this turn).",
+  "w": "232-v96board.js:112"
+ },
+ {
+  "k": "<b>{0}</b>'s stone flies wide of {1}.",
+  "w": "232-v96board.js:113"
+ },
+ {
+  "k": "Ammo left",
+  "w": "232-v96board.js:134"
+ },
+ {
+  "k": "Throw: power · range × throws left",
+  "w": "232-v96board.js:135"
+ },
+ {
+  "k": "Shield absorb per hit",
+  "w": "232-v96board.js:136"
+ },
+ {
+  "k": "Shield uses left",
+  "w": "232-v96board.js:136"
+ },
+ {
+  "k": "Uses left before it breaks",
+  "w": "232-v96board.js:137"
+ },
+ {
+  "k": "uses",
+  "w": "232-v96board.js:141"
+ },
+ {
+  "k": "ammo",
+  "w": "232-v96board.js:142"
+ },
+ {
+  "k": "already recited",
+  "w": "232-v96board.js:160"
+ },
+ {
+  "k": "No beasts stirred.",
+  "w": "233-v96bar.js:36"
+ },
+ {
+  "k": "Nothing noted.",
+  "w": "233-v96bar.js:36"
+ },
+ {
+  "k": "End",
+  "w": "233-v96bar.js:45"
+ },
+ {
+  "k": "Turn phases",
+  "w": "233-v96bar.js:48"
+ },
+ {
+  "k": "next: {0}",
+  "w": "233-v96bar.js:48"
+ },
+ {
+  "k": "Throw {0}",
+  "w": "233-v96bar.js:59"
+ },
+ {
+  "k": "diag 2",
+  "w": "233-v96bar.js:60"
+ },
+ {
+  "k": "Topple",
+  "w": "233-v96bar.js:62"
+ },
+ {
+  "k": "1 key",
+  "w": "233-v96bar.js:63"
+ },
+ {
+  "k": "🎯 Focus",
+  "w": "233-v96bar.js:66"
+ },
+ {
+  "k": "ON",
+  "w": "233-v96bar.js:66"
+ },
+ {
+  "k": "{0} mv",
+  "w": "233-v96bar.js:66"
+ },
+ {
+  "k": "open",
+  "w": "233-v96bar.js:67"
+ },
+ {
+  "k": "Trade · Truce",
+  "w": "233-v96bar.js:69"
+ },
+ {
+  "k": "Affordable now: level {0}",
+  "w": "233-v96bar.js:72"
+ },
+ {
+  "k": "Nothing affordable right now",
+  "w": "233-v96bar.js:72"
+ },
+ {
+  "k": "Opens for 3 CF; then level {0} fits your purse",
+  "w": "233-v96bar.js:72"
+ },
+ {
+  "k": "No attacks left",
+  "w": "233-v96bar.js:86"
+ },
+ {
+  "k": "{0} attacks left",
+  "w": "233-v96bar.js:87"
+ },
+ {
+  "k": "{0} movement left",
+  "w": "233-v96bar.js:88"
+ },
+ {
+  "k": "Nothing to push next to you",
+  "w": "233-v96bar.js:89"
+ },
+ {
+  "k": "No pillar next to you",
+  "w": "233-v96bar.js:89"
+ },
+ {
+  "k": "No tunnel exit, or no Arena Key",
+  "w": "233-v96bar.js:89"
+ },
+ {
+  "k": "Nobody within 4 tiles",
+  "w": "233-v96bar.js:91"
+ },
+ {
+  "k": "Nothing to loot here",
+  "w": "233-v96bar.js:91"
+ },
+ {
+  "k": "No market in this event",
+  "w": "233-v96bar.js:92"
+ },
+ {
+  "k": "🏃 Move",
+  "w": "233-v96bar.js:95"
+ },
+ {
+  "k": "🤝 Deal",
+  "w": "233-v96bar.js:96"
+ },
+ {
+  "k": "{0} near",
+  "w": "233-v96bar.js:96"
+ },
+ {
+  "k": "none near",
+  "w": "233-v96bar.js:96"
+ },
+ {
+  "k": "🏛 Market · Crowd",
+  "w": "233-v96bar.js:97"
+ },
+ {
+  "k": "Focus: a PvP round, movement left and a gladiator in reach",
+  "w": "233-v96bar.js:101"
+ },
+ {
+  "k": "{0} move",
+  "w": "233-v96bar.js:113"
+ },
+ {
+  "k": "{0} attack{1}",
+  "w": "233-v96bar.js:114"
+ },
+ {
+  "k": "{0} unused",
+  "w": "233-v96bar.js:115"
+ },
+ {
+  "k": "II · Choice",
+  "w": "233-v96bar.js:129"
+ },
+ {
+  "k": "pick one",
+  "w": "233-v96bar.js:129"
+ },
+ {
+  "k": "arena · v0.96",
+  "w": "01-head.html"
+ }
+]
