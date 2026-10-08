@@ -1,4 +1,4 @@
-/* v0.98 (248-v98bears): the Ursa / Brutum arena cards name this arena's bears (Syracusae = Ortygia, Roma = Ursa). */
+/* v0.98 (250-v98bears): the Ursa / Brutum arena cards name this arena's bears (Syracusae = Ortygia, Roma = Ursa). */
 const {chromium}=require('playwright');const path=require('path');const page=path.resolve(process.argv[2]||'flavius-arena.html');
 (async()=>{const b=await chromium.launch();const pg=await b.newPage({viewport:{width:1440,height:900}});const errs=[],miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};pg.on('pageerror',e=>errs.push(e.message));
 await pg.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
