@@ -1562,7 +1562,7 @@ share copy — the site download play/flavius-rule-arena.zip.)
   wax-seal Trade/Truce + Loot), Market · Crowd (stitched leather: Market/Crowd Favor/Wager on yourself); End turn = a plain red button with brass
   rivets ("to phase IV", Enter). ROOM bubbles go UNDER the speaker's token (space kept, no jumping, fade ~6 s).
   FINAL PICK (2026-10-08, mock4.html / mock96e_full.png): the COMPACT version — today's height, the house's dark panels, materials only on the
-  group header strips, one-line buttons with a short cost (full reason on hover), slim phase rail, End turn red with gold edge + rivets.
+  group header strips, one-line buttons with a short cost (full reason on hover), slim phase rail IN THE PHASE COLOURS used everywhere (.ph-resolve teal, .ph-choice gold, .ph-action red, .ph-end grey: underline per segment, done ✓, current filled), End turn red with gold edge + rivets.
   "Wager on yourself" leaves the action bar (his call: not needed — the button only; CPU self-bets/the Wagers list stay as they are).
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,

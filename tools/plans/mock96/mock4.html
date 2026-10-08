@@ -3,9 +3,10 @@
  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
 .dock{position:relative}
 .rail{display:grid;grid-template-columns:repeat(4,1fr);height:22px;margin-bottom:8px;border-radius:11px;background:#1c130c;border:1px solid #4a3620;overflow:hidden}
-.ph{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a7558;border-right:1px solid #00000060}
-.ph:last-child{border-right:0}.ph.done{color:#b9a27a}.ph.done::before{content:"✓";color:#d8b45a}
-.ph.now{color:#2a1a08;font-weight:bold;background:linear-gradient(#e8c977,#b48a38);text-shadow:0 1px 0 #f8e6b0}
+.ph{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--pc);opacity:.55;border-right:1px solid #00000060;box-shadow:inset 0 -2px 0 var(--pb)}
+.ph:last-child{border-right:0}.ph.done{opacity:.85}.ph.done::before{content:"✓"}
+.ph.now{opacity:1;font-weight:bold;color:#1a0f08;background:var(--pc);box-shadow:inset 0 0 0 1px var(--pb),0 0 10px var(--pb)}
+.p1{--pc:#9fe0d8;--pb:#4f9a94}.p2{--pc:#f0cf7d;--pb:#c9a44a}.p3{--pc:#ffb3a3;--pb:#c8604c}.p4{--pc:#c9ccd6;--pb:#7d8290}
 .grid{display:grid;grid-template-columns:1.1fr 1.2fr .8fr 1.25fr 108px;gap:8px}
 .g{position:relative;border-radius:8px;padding:0 6px 6px;background:#2a1d13;border:1px solid #4e3a24;display:flex;flex-direction:column;gap:5px;overflow:hidden}
 .g .hd{position:relative;margin:0 -6px;padding:4px 8px;display:flex;justify-content:space-between;align-items:baseline;white-space:nowrap;font-size:13px;font-weight:bold;border-bottom:1px solid #00000060}
@@ -27,7 +28,7 @@
 .end i{position:absolute;width:5px;height:5px;border-radius:50%;background:#d8b45a}
 .hint{margin-top:6px;font-size:12px;color:#a3907a}
 </style></head><body><div><div class="dock">
- <div class="rail"><div class="ph done">Resolve</div><div class="ph done">Choice</div><div class="ph now">III · Action</div><div class="ph">IV · End</div></div>
+ <div class="rail"><div class="ph p1 done">Resolve</div><div class="ph p2 done">Choice</div><div class="ph p3 now">III · Action</div><div class="ph p4">IV · End</div></div>
  <div class="grid">
   <div class="g brass"><div class="hd"><span>⚔ Attack</span><small>2 left</small></div>
    <div class="r2"><div class="b">Gladius</div><div class="b off">Fist</div></div>
