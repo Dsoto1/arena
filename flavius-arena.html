@@ -4437,7 +4437,8 @@ const legs = player => (player.hp.rleg > 0) + (player.hp.lleg > 0);
 /* allLimbs — true if the player still has all four limbs. */
 const allLimbs = player => player.hp.larm > 0 && player.hp.rarm > 0 && player.hp.rleg > 0 && player.hp.lleg > 0;
 /* hasPiece — true if any armor piece worn at a location has the given ARM flag (e.g. 'cestus'). */
-const hasPiece = (player, location, flag) => player.pieces[location].some(pc => ARM[pc.key][flag]);
+/* v0.99: a piece counts only while its location still stands (HP > 0) and holds AP — the location's AP pool is the armor, so at 0 AP it is destroyed even if the piece is still listed. */
+const hasPiece = (player, location, flag) => player.hp[location] > 0 && player.ap[location] > 0 && player.pieces[location].some(pc => ARM[pc.key][flag]);
 /* hasCestus — true if that hand's arm wears a Cestus (lets punches hurt through armor). */
 const hasCestus = (player, arm) => hasPiece(player, armLoc(arm), 'cestus');
 /* greavesOn — true if both legs wear greaves (+1 movement). */
@@ -22884,7 +22885,7 @@ CW_ICO.brk=CW_ICO.use; // older cards: "breaks after" is the rulebook's USE
 /* CW_ICO_NAME — the icons' names, as the rulebook prints them. */
 const CW_ICO_NAME={dmg:_T('Attack power'),rng:_T('Range'),abs:_T('Shield absorb'),ammo:_T('Ammo'),soul:_T('Soul steal'),cf:_T('Crowd favor'),use:_T('Use'),thr:_T('Throw'),both:_T('Both attacks')};
 /* CW_ICO_DESC — the icons' one-line rules, as the rulebook prints them. */
-const CW_ICO_DESC={dmg:_T('Damage dealt for each hit rolled in an attack.'),rng:_T('How far a player (or NPC) can be from a target to make an attack.'),abs:_T('Damage absorbed by the shield before it hits a player.'),ammo:_T('Initial ammo value of a weapon, managed via ammo dice and replenished via arena cards.'),soul:_T('For each hit rolled with this weapon, 1 HP to the player holding it — distributed to any body location.'),cf:_T('For every hit rolled with this weapon, 1 CF to the player holding it.'),use:_T('The number of times a weapon can be used for attacks. Discard the card at 0 uses.'),thr:_T('The number of times a weapon can be thrown, using a second set of weapon values. Discard the card at 0 throws.'),both:_T('The weapon may be used for both of a player\u2019s attacks on a turn — still two unique targets.')};
+const CW_ICO_DESC={dmg:_T('Attack power: the damage each hit rolled in an attack deals.'),rng:_T('How far a player (or NPC) can be from a target to make an attack.'),abs:_T('Damage absorbed by the shield before it hits a player.'),ammo:_T('Initial ammo value of a weapon, managed via ammo dice and replenished via arena cards.'),soul:_T('For each hit rolled with this weapon, 1 HP to the player holding it — distributed to any body location.'),cf:_T('For every hit rolled with this weapon, 1 CF to the player holding it.'),use:_T('The number of times a weapon can be used for attacks. Discard the card at 0 uses.'),thr:_T('The number of times a weapon can be thrown, using a second set of weapon values. Discard the card at 0 throws.'),both:_T('The weapon may be used for both of a player\u2019s attacks on a turn — still two unique targets.')};
 /* cwIcoSVG — one weapon-card icon on its black diamond, px pixels square. */
 function cwIcoSVG(icon,px=26){return `<svg viewBox="-9 -9 18 18" width="${px}" height="${px}" aria-hidden="true"><rect x="-6.3" y="-6.3" width="12.6" height="12.6" transform="rotate(45)" fill="#15110d" stroke="#6a5a44" stroke-width=".5"/>${CW_ICO[icon]()}</svg>`}
 /* cwCardSVG — a custom weapon's full card (300×208 SVG) in the printed layout: frame by level, name plaque, LEVEL pillar, stat tiles, fine print. */
@@ -30195,8 +30196,8 @@ function cwFromSystem(k){const X=W[k];if(!X)return;const d=blankCW();d.name=X.n+
   Object.assign(d.stats,{p:X.p||1,r:X.r||1,ammo:X.ammo||0,thrN:X.throw?X.throw.n:0,thrP:X.throw?X.throw.p:0,thrR:X.throw?X.throw.r:0,shield:X.shield?1:0,absorb:X.absorb||1,uses:X.uses||3,cfw:X.cfw?1:0,soul:X.soul?1:0,both:X.both?1:0,atkUses:X.atkUses||0});
   if(X.stones)d.stats.stones=1;if(X.flav)d.stats.flav=1;d.base=k;ST.cw=d}
 function wpnSetsHTML(){const sys=sysWeapons();const L=CUSTOM.weapons||[];
-  const mine=L.map(c=>{const wk=W['cw_'+c.id];return `<div class="lrow" style="--pc:#8a5cc0"><div class="setart wcard">${cwCardSVG(c)}</div><div class="t"><b>${esc(c.name)}</b><small>${wk?_T`L${wk.lv} · ${wk.p} dmg · range ${wk.r}`:''}</small></div>${crActs('w',c)}</div>`}).join('');
-  const sysc=sys.map(k=>{const X=W[k];return `<div class="lrow"><span class="setart wcard">${cardHTML('w:'+k,'md')}</span><div class="t"><b>${esc(X.n)}</b><small>L${X.lv} · ${X.shield?'shield':X.p+' dmg · range '+X.r}${X.throw?' · throws':''}</small></div>${sysActs(`data-gs="cwsys" data-id="${k}"`)}</div>`}).join('');
+  const mine=L.map(c=>{const wk=W['cw_'+c.id];return `<div class="lrow" style="--pc:#8a5cc0"><div class="setart wcard">${cwCardSVG(c)}</div><div class="t"><b>${esc(c.name)}</b><small>${wk?_T`L${wk.lv} · attack power ${wk.p} · range ${wk.r}`:''}</small></div>${crActs('w',c)}</div>`}).join('');
+  const sysc=sys.map(k=>{const X=W[k];return `<div class="lrow"><span class="setart wcard">${cardHTML('w:'+k,'md')}</span><div class="t"><b>${esc(X.n)}</b><small>L${X.lv} · ${X.shield?'shield':'power '+X.p+' · range '+X.r}${X.throw?' · throws':''}</small></div>${sysActs(`data-gs="cwsys" data-id="${k}"`)}</div>`}).join('');
   return `<h4>${_T`Your weapons · ${L.length}`}</h4>${L.length?`<div class="list2 setgrid">${mine}</div>`:`<p class="rc-sub">${_T`The forge is cold. Nothing yet — save a weapon above, or copy a printed one.`}</p>`}
    <h4>${_T`🔒 System weapons · ${sys.length}`} <span class="rc-sub">${_T`the printed cards`}</span></h4><div class="list2 setgrid sys">${sysc}</div>`}
 {const base=gearWHTML;gearWHTML=function(){let h=base.apply(this,arguments);try{const i=h.indexOf('<h4>'+TXPRE('Your weapons · {0}'));if(i>=0)h=h.slice(0,i) /* the old list was the template's tail */;h+=wpnSetsHTML()}catch(e){console.error(e)}return h}}
@@ -54524,7 +54525,7 @@ if(typeof t93Load==='function'){const base=t93Load;t93Load=function(){const p=ba
        Move · Attack · Forum · End turn with a shared header height and button height. Nothing new is clicked: every button keeps its data-act and
        07-ui handler, so the online lockstep (113 records trusted [data-act] clicks) and the tutorial see the same acts.
        • MOVE (wood): Move · Push / Topple · Tunnel (+ chest, exit, mount… rows), orange movement pips in the header.
-       • ATTACK (brass): one larger button per equipped weapon (icon, name, "N dmg · rng N", key A on the first). Docked on its right: a small ◎
+       • ATTACK (brass): one larger button per equipped weapon (icon, name, power + range icons, key A on the first). Docked on its right: a small ◎
          Focus button = the ONE focus act (07-ui's toggle). The first weapon's dock holds 07-ui's own button; the others hold copies with the
          same data-act="focus" (same act, same handler); a click remembers its weapon (data-w98) and, once focus is on, points the attack mode at
          that weapon (a local m- mode, never recorded — the tile input carries mode + focus). While focus is on, the other docks switch the weapon
@@ -54534,7 +54535,7 @@ if(typeof t93Load==='function'){const base=t93Load;t93Load=function(){const p=ba
        • CHOICE phase: one centred gold "✦ Choose one" group (Take 2 coin / Draw an arena card, larger text, keys 1 / 2).
        • CPU / Resolve / not your turn: the same plate, greyed (233's placeholders moved).
        Extras of 233 keep working (hover previews, pips + spend dimming, unused line, done-phase tips, whose turn + next, key hints A/P/Enter,
-       the guide's glow, phones: one swipe row with End turn fixed right; the weapon's dmg·rng hides on phones and a long-press shows it).
+       the guide's glow, phones: one swipe row with End turn fixed right; the weapon's power·range hides on phones and a long-press shows it).
        Kill switch: localStorage flavius_bar98off=1 → 233's bar (flavius_bar96off=1 → the old dock, which also skips v2).
    2 · FOCUS — DIGITAL RULE (his v0.95 note): players only (beasts never Focus — they have no focus path); Focus needs at least FOCUS98.min (3)
        movement and spends ALL that is left — walk 2 of 5, then Focus with the last 3. Below 3 the button is refused with the reason; the engine
@@ -54586,14 +54587,16 @@ try{RULE_ACT.focus=_T`Focus roll (digital rule): needs at least 3 movement and s
 
 /* ---------------- 1 · the bar ---------------- */
 const b98Ico=(src)=>{try{const w=src.w;const k=w.shield?'abs':src.thr?'thr':w.ammo!=null?'ammo':'dmg';return wIco87(k)}catch(e){return ''}};
-const b98Stats=(src)=>{try{return _T`${srcPow(src)} dmg · rng ${srcRange(src)}`}catch(e){return ''}};
+const b98Stats=(src)=>{try{return _T`Attack power ${srcPow(src)} · Range ${srcRange(src)}`}catch(e){return ''}};
+/* the face shows his icons (attack power, range) instead of words */
+const b98StatsIco=(src)=>{try{return `${wIco87('dmg')}${srcPow(src)} · ${wIco87('rng')}${srcRange(src)}`}catch(e){return ''}};
 const B98_FOC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.6"/><circle cx="12" cy="12" r=".9" fill="currentColor"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4" stroke-linecap="round"/></svg>';
 /* the weapon a button attacks with (arm R|L, thrown or not) */
 function b98Src(p,k){try{const m=/^m-atk([RL])(T?)$/.exec(k||'');if(!m)return null;return attackSources(p).find(s=>s.arm===m[1]&&!!s.thr===(m[2]==='T'))||null}catch(e){return null}}
-/* a weapon button's face: icon · name · dmg · rng · key (the hidden reason <small> stays) */
+/* a weapon button's face: icon · name · power icon · range icon · key (the hidden reason <small> stays) */
 function b98Face(b,src,key){const sm=b.querySelector('small.r96');const kb=b.querySelector('.kb96');const k=key||(kb?kb.textContent:'');
   const name=src.thr?_T`Throw ${esc(src.w.n)}`:esc(src.w.n);const st=b98Stats(src);
-  b.innerHTML=`<span class="wi98">${b98Ico(src)}</span><span class="l96">${name}</span><i class="c96 st98">${st}</i>${k?`<kbd class="kb96" aria-hidden="true">${k}</kbd>`:''}`;
+  b.innerHTML=`<span class="wi98">${b98Ico(src)}</span><span class="l96">${name}</span><i class="c96 st98" aria-hidden="true">${b98StatsIco(src)}</i>${k?`<kbd class="kb96" aria-hidden="true">${k}</kbd>`:''}`;
   if(sm)b.appendChild(sm);b.dataset.st98=b96Txt(name)+' — '+st;const tip=b.dataset.tip||'';if(tip.indexOf(st)<0)b.dataset.tip=st+(tip?'<br>'+tip:'');
   b.setAttribute('aria-label',b96Txt(name)+' — '+st+(tip?' — '+b96Txt(tip):''));b.classList.add('wb98')}
 const b98Btn=(cls,inner,tip,extra='')=>`<button type="button" class="btn b96 ph96b ${cls}" disabled ${tip?`data-tip="${esc(tip)}"`:''} ${extra}>${inner}</button>`;
@@ -55263,9 +55266,9 @@ document.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;c
 function ev98Pick(n){const evs=ev98Ok();if(!evs.length)return [];const out=[];for(let i=0;i<n;i++)out.push(evs[(ONL98.sq[i]|0)%evs.length]);if(n>1&&evs.length>1&&out[0]===out[1])out[1]=evs[(evs.indexOf(out[0])+1)%evs.length];return out}
 function ev98Square(k,i){const E=EVENTS[k]||{};const open=(ONL.lobbies||[]).filter(L=>L.ev===k&&L.status==='waiting'&&!L.ranked);const tm=ONLC.EVENTS_TEAM.includes(k);const [lo,hi]=ONLC.seatRange(k);
   return `<div class="ev98s" data-ev98="${esc2(k)}" data-ev98i="${i}"><div class="ev98a">${typeof cardHTML==='function'?cardHTML('e:'+k,'sm').replace(/ data-card="[^"]*"/g,''):''}</div>
-    <div class="ev98b"><b>${esc2(onlEvName(k))}</b><small>${tm?_T`👥 Teams · ${lo}–${hi} seats`:_T`${lo===hi?lo:lo+'–'+hi} seats`}${ONLC.customOnly98(k)?' · '+_T('Custom only'):' · '+_T('Custom')} · ${_T`${open.length} open`}</small>
+    <div class="ev98b"><b>${esc2(onlEvName(k))}</b><small>${tm?_T`👥 Teams · ${lo}–${hi} seats`:_T`${lo===hi?lo:lo+'–'+hi} seats`} · ${_T`${open.length} open`}</small>
     <button type="button" class="btn primary tksm" data-onl="quick" data-v="${esc2(k)}|0">${_T`⚔ Play`}</button></div></div>`}
-function ev98Squares(){const evs=ev98Pick(2);if(!evs.length)return '';return `<div class="ev98row" aria-label="${_T`More events — Custom`}"><div class="ev98h">${_T`✦ More events <small>Custom · a new one every few seconds</small>`}</div><div class="ev98g">${evs.map(ev98Square).join('')}</div></div>`}
+function ev98Squares(){const evs=ev98Pick(2);if(!evs.length)return '';return `<div class="ev98row" aria-label="${_T`More events — Custom`}"><div class="ev98h">${_T`✦ More events`}</div><div class="ev98g">${evs.map(ev98Square).join('')}</div></div>`}
 {const base=onlPlayHTML;onlPlayHTML=function(){let h=base.apply(this,arguments);try{
     const T=document.createElement('template');T.innerHTML=h;
     /* Custom-only events: no Ranked buttons anywhere on the landing */
@@ -56162,6 +56165,70 @@ if(typeof set98Pieces==='function'){const base=set98Pieces;set98Pieces=function(
   h=h.replace(/<\/div>$/,card+'</div>')}catch(e){console.error(e)}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-face99]');if(!b)return;SETTINGS.face99=b.dataset.face99;face99Clear();
   try{applySettings()}catch(err){}b.parentElement.querySelectorAll('[data-face99]').forEach(x=>{const on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-pressed',String(on))})});
+/* 264-v99fix2 — v0.99, Virgilante's five notes (second round).
+   1 · PIECE BONUSES FOLLOW THE ARMOR. Flavius' Greaves (+1 movement) and the Cestus (+1 damage) read hasPiece(), which only looked at the
+       piece LIST. A location's AP is one shared pool (rulebook p.22): at 0 AP its armor is destroyed, but the list could still hold the
+       piece (taking another piece off a damaged location — unequipPiece — drained the pool and left the survivors listed; damaged
+       loadouts equipped at 0), so the bonus lived on. Fixes: (a) 03-engine hasPiece needs the location alive and its AP > 0;
+       (b) unequipPiece sweeps — any location left at 0 AP loses its listed pieces (and their bonus AP, exactly like stripLoc);
+       (c) movement is granted at the start of a turn (player.mv = mvMax), so losing a greave DURING one's own turn used to keep the
+       extra step until the next turn: stripLoc / unequipPiece take that 1 step back at once when both greaves were on and one is now
+       gone with both legs still attached (a severed leg is already handled by the engine's own min(mv, mvMax)). Every client runs the
+       same code on the same state, so online hashes agree. Cestus: hasCestus follows hasPiece, so the +1 stops with the piece.
+   2 · (the attack button face lives in 248-v98bar: power/range icons; wording sweep in 94-v72 / 26-gear).
+   4 · RANKED / CUSTOM CHIP everywhere a game is named: .rk99 gold "⚔ RANKED" / grey "Custom" on Lobby Browser rows, the room header (replaces
+       the plain badge), "Your game" / waiting cards, invitations + the Praeco lines (onlRowTxt80), Spectate cards, the Custom-only event squares.
+   5 · Recruiting: .mgrid holding #recTable = list | card at about 55 / 45 (was 728 | 380 px at 1440).
+       The playlist cards' two play buttons wear the same two looks (gold-edged Ranked, grey Custom). */
+/* ---------------- 1 · bonuses follow the armor ---------------- */
+function pcSweep264(p){try{if(!p||!p.pieces)return;for(const l of LOCS)if(p.pieces[l]&&p.pieces[l].length&&p.ap[l]<=0)stripLoc(p,l)}catch(e){console.error(e)}}
+const GV264=new WeakMap();
+function pcMv264(p,had){try{if(!had||!p||greavesOn(p)||!(p.hp.rleg>0&&p.hp.lleg>0))return;if(GV264.get(p)===S.turnNo)return;if(S&&S.players&&cur()===p&&p.mv>0){p.mv--;GV264.set(p,S.turnNo)}}catch(e){}}
+const gvPre264=p=>{const had=!!(p&&p.pieces&&greavesOn(p));if(had)GV264.delete(p);return had};
+{const base=stripLoc;stripLoc=function(player){const had=gvPre264(player);const r=base.apply(this,arguments);pcMv264(player,had);return r}}
+{const base=unequipPiece;unequipPiece=function(player){const had=gvPre264(player);const r=base.apply(this,arguments);pcSweep264(player);pcMv264(player,had);return r}}
+/* a hit empties the location's AP first and only then calls stripLoc, so the state before the hit is read here */
+{const base=hurt;hurt=async function(victim){const had=gvPre264(victim);const r=await base.apply(this,arguments);pcMv264(victim,had);return r}}
+
+/* ---------------- 4 · the Ranked / Custom chip ---------------- */
+function rk99(ranked,only){return ranked?`<span class="rk99 r" title="${esc2(_T('Ranked: your rank only, the Fate is final'))}">${_T`⚔ RANKED`}</span>`:`<span class="rk99 c" title="${esc2(only?_T('Custom only: no death, no rank'):_T('Custom: anyone, no death'))}">${_T`Custom`}</span>`}
+function rk99Of(id){return (ONL.lobbies||[]).find(L=>L.id===id)||null}
+const rk99Tpl=h=>{const T=document.createElement('template');T.innerHTML=h;return T};
+/* Lobby Browser rows: the chip leads the Event cell */
+{const base=onlLobbyHTML;onlLobbyHTML=function(){const h=base.apply(this,arguments);try{const T=rk99Tpl(h);
+    for(const tr of T.content.querySelectorAll('tr[data-row]')){const L=rk99Of(tr.dataset.row);const td=tr.children[1];if(!L||!td||td.querySelector('.rk99'))continue;td.insertAdjacentHTML('afterbegin',rk99(!!L.ranked)+' ')}
+    return T.innerHTML}catch(e){console.error(e);return h}}}
+/* the room header: the chip replaces the plain Ranked/Custom badge */
+{const base=onlRoomHTML80;onlRoomHTML80=function(L,grey){const h=base.apply(this,arguments);try{if(!L||typeof h!=='string')return h;const T=rk99Tpl(h);const tags=T.content.querySelector('.r80-tags');if(!tags||tags.querySelector('.rk99'))return h;
+    const first=tags.querySelector('.badge');if(first&&(first.textContent.includes(_T('Custom'))||first.textContent.includes(_T('⚔ Ranked'))))first.remove();
+    tags.insertAdjacentHTML('afterbegin',rk99(!!L.ranked)+' ');return T.innerHTML}catch(e){console.error(e);return h}}}
+/* "Your game" + waiting cards: ' · ⚔ Ranked' / ' · Custom' in the first line → the chip */
+{const base=onlPlayHTML;onlPlayHTML=function(){const h=base.apply(this,arguments);try{const L=typeof onlMyLobby==='function'?onlMyLobby():null;if(!L||typeof h!=='string'||h.indexOf('onl-mine')<0)return h;
+    const T=rk99Tpl(h);const lab=L.ranked?_T('⚔ Ranked'):_T('Custom');
+    for(const c of T.content.querySelectorAll('.onl-mine')){if(c.querySelector('.rk99'))continue;const n=[...c.childNodes].find(x=>x.nodeType===3&&x.nodeValue.includes(' · '+lab));
+      if(n){const i=n.nodeValue.indexOf(' · '+lab);const a=document.createTextNode(n.nodeValue.slice(0,i)+' '),b=document.createTextNode(n.nodeValue.slice(i+3+lab.length));const s=document.createElement('span');s.innerHTML=rk99(!!L.ranked);
+        n.replaceWith(a,s.firstChild,b)}else{const f=c.querySelector('b');if(f)f.insertAdjacentHTML('beforebegin',rk99(!!L.ranked)+' ')}}
+    return T.innerHTML}catch(e){console.error(e);return h}}}
+/* invitations, the Praeco lines, the feed: "<event> · Ranked · <city>" */
+onlRowTxt80=function(r){if(!r)return '';return `${rk99(!!r.ranked)} ${esc2(onlEvName(r.ev))} · ${esc2(onlCityName(r.loc))}`};
+/* Spectate cards (live + tickets on sale) */
+if(typeof onlSpectHTML==='function'){const base=onlSpectHTML;onlSpectHTML=function(){const h=base.apply(this,arguments);try{const T=rk99Tpl(h);
+    for(const c of T.content.querySelectorAll('.onl-sp')){if(c.querySelector('.rk99'))continue;const btn=c.querySelector('[data-v]');const L=btn&&rk99Of(btn.dataset.v);const b=c.querySelector('b');if(L&&b)b.insertAdjacentHTML('beforebegin',rk99(!!L.ranked)+' ')}
+    return T.innerHTML}catch(e){console.error(e);return h}}}
+/* the cycling Custom-only event squares */
+{const base=ev98Square;ev98Square=function(k,i){const h=base.apply(this,arguments);try{if(h.indexOf('rk99')>=0)return h;return h.replace('<div class="ev98b">','<div class="ev98b"><span class="ev98c">'+rk99(false,ONLC.customOnly98(k))+'</span>')}catch(e){return h}}}
+(()=>{try{if(typeof document==='undefined')return;const st=document.createElement('style');st.id='fix99';st.textContent=`
+.rk99{display:inline-flex;align-items:center;gap:3px;font:800 10.5px/1 system-ui,sans-serif;letter-spacing:.07em;text-transform:uppercase;padding:3px 8px;border-radius:999px;white-space:nowrap;vertical-align:middle}
+.rk99.r{background:linear-gradient(#f3d98a,#c9972f);color:#2b1c05;border:1px solid #f6dc95;box-shadow:0 0 0 1px rgba(0,0,0,.35)}
+.rk99.c{background:#3a3a42;color:#d2d2da;border:1px solid #60606a}
+#onl .onl-lb td .rk99{margin-right:6px}#onl .onl-lb td:nth-child(2){white-space:nowrap}
+#onl .ev98b .ev98c{grid-column:1;grid-row:1;margin-bottom:2px}#onl .ev98b{grid-template-rows:auto auto auto}#onl .ev98b .btn{grid-row:1/4}
+#onl .r80-tags .rk99{margin-right:2px}
+#onl [data-onl="quick"][data-v$="|1"]{border-color:#e6c56a;box-shadow:inset 0 0 0 1px rgba(246,220,149,.45)}
+#onl [data-onl="quick"][data-v$="|0"]{background:#3a3a42;border-color:#60606a;color:#d9d9e0}
+/* 5 · Recruiting: the big card gets the wider share (list rows are one line) */
+@media (min-width:901px){.mgrid:has(#recTable){grid-template-columns:minmax(0,1fr) minmax(400px,45%)}}
+`;document.head.appendChild(st)}catch(e){console.error(e)}})();
 
 /* =====================================================================
    08-SETUP · THE NEW EVENT SCREEN (loaded last, boots the page)

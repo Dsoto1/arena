@@ -158,9 +158,9 @@ document.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;c
 function ev98Pick(n){const evs=ev98Ok();if(!evs.length)return [];const out=[];for(let i=0;i<n;i++)out.push(evs[(ONL98.sq[i]|0)%evs.length]);if(n>1&&evs.length>1&&out[0]===out[1])out[1]=evs[(evs.indexOf(out[0])+1)%evs.length];return out}
 function ev98Square(k,i){const E=EVENTS[k]||{};const open=(ONL.lobbies||[]).filter(L=>L.ev===k&&L.status==='waiting'&&!L.ranked);const tm=ONLC.EVENTS_TEAM.includes(k);const [lo,hi]=ONLC.seatRange(k);
   return `<div class="ev98s" data-ev98="${esc2(k)}" data-ev98i="${i}"><div class="ev98a">${typeof cardHTML==='function'?cardHTML('e:'+k,'sm').replace(/ data-card="[^"]*"/g,''):''}</div>
-    <div class="ev98b"><b>${esc2(onlEvName(k))}</b><small>${tm?_T`👥 Teams · ${lo}–${hi} seats`:_T`${lo===hi?lo:lo+'–'+hi} seats`}${ONLC.customOnly98(k)?' · '+_T('Custom only'):' · '+_T('Custom')} · ${_T`${open.length} open`}</small>
+    <div class="ev98b"><b>${esc2(onlEvName(k))}</b><small>${tm?_T`👥 Teams · ${lo}–${hi} seats`:_T`${lo===hi?lo:lo+'–'+hi} seats`} · ${_T`${open.length} open`}</small>
     <button type="button" class="btn primary tksm" data-onl="quick" data-v="${esc2(k)}|0">${_T`⚔ Play`}</button></div></div>`}
-function ev98Squares(){const evs=ev98Pick(2);if(!evs.length)return '';return `<div class="ev98row" aria-label="${_T`More events — Custom`}"><div class="ev98h">${_T`✦ More events <small>Custom · a new one every few seconds</small>`}</div><div class="ev98g">${evs.map(ev98Square).join('')}</div></div>`}
+function ev98Squares(){const evs=ev98Pick(2);if(!evs.length)return '';return `<div class="ev98row" aria-label="${_T`More events — Custom`}"><div class="ev98h">${_T`✦ More events`}</div><div class="ev98g">${evs.map(ev98Square).join('')}</div></div>`}
 {const base=onlPlayHTML;onlPlayHTML=function(){let h=base.apply(this,arguments);try{
     const T=document.createElement('template');T.innerHTML=h;
     /* Custom-only events: no Ranked buttons anywhere on the landing */

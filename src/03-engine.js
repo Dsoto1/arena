@@ -100,7 +100,8 @@ const legs = player => (player.hp.rleg > 0) + (player.hp.lleg > 0);
 /* allLimbs — true if the player still has all four limbs. */
 const allLimbs = player => player.hp.larm > 0 && player.hp.rarm > 0 && player.hp.rleg > 0 && player.hp.lleg > 0;
 /* hasPiece — true if any armor piece worn at a location has the given ARM flag (e.g. 'cestus'). */
-const hasPiece = (player, location, flag) => player.pieces[location].some(pc => ARM[pc.key][flag]);
+/* v0.99: a piece counts only while its location still stands (HP > 0) and holds AP — the location's AP pool is the armor, so at 0 AP it is destroyed even if the piece is still listed. */
+const hasPiece = (player, location, flag) => player.hp[location] > 0 && player.ap[location] > 0 && player.pieces[location].some(pc => ARM[pc.key][flag]);
 /* hasCestus — true if that hand's arm wears a Cestus (lets punches hurt through armor). */
 const hasCestus = (player, arm) => hasPiece(player, armLoc(arm), 'cestus');
 /* greavesOn — true if both legs wear greaves (+1 movement). */
