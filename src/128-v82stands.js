@@ -124,8 +124,8 @@ async function st82Apply(inp){const picks=(inp.picks||[]).slice().sort((a,b)=>a.
         if(q&&!q.underground){q.items.push(mkOffer(off));stat(q,'spectOffers');stat(q,'spectVal',OFFER_VAL[off]||4);log(_T`${me?_T('You throw'):_T`${who} throws`} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s}) — ${nm(q)} catches it.`);slog(_T`<b>${esc(s.name)}</b> pays ${cfAmt87(8)}: an offering lands at ${esc(q.name)}'s feet — ${O.n}.`,'big')}
         else if(inB(r,c)){placeFloor('offer',off,r,c);const n=npcAt(r,c);log(_T`${me?_T('You throw'):_T`${who} throws`} an offering onto ${tl(r,c)}: <b>${O.n}</b> (${O.s})${n?_T` — it lies under ${nm(n)}`:typeof spikeAt==='function'&&spikeAt(r,c)?_T(' — it falls into the spikes'):_T(' — it lies on the sand')}.`);slog(_T`<b>${esc(s.name)}</b>'s offering lands on ${tl(r,c)}.`)}
         try{fx(r,c,'✦','#f0cf7d',{big:1})}catch(e){}}
-      else if(a==='move'){const to=pick.sec|0;if(to<0||to>=SECTIONS.length||to===s.sec)continue;if(s.cf<3){log(_T`${who} cannot afford to change section (${cfAmt87(3)}).`);continue}
-        s.cf-=3;log(_T`${me?_T('You move'):_T`${who} moves`} from ${SECTIONS[s.sec].n} to ${SECTIONS[to].n}.`);s.sec=to;emote(s,'🚶','')}
+      else if(a==='move'){const to=pick.sec|0;if(to<0||to>=SECTIONS.length||to===s.sec)continue;if(s.cf<3){slog(_T`${who} cannot afford to change section (${cfAmt87(3)}).`);continue}
+        s.cf-=3;slog(_T`${me?_T('You move'):_T`${who} moves`} from ${SECTIONS[s.sec].n} to ${SECTIONS[to].n}.`);s.sec=to;emote(s,'🚶','')}
       else if(a==='cheer'){const p=S.players[pick.v|0];if(!p||!p.alive||p.exited)continue;s.fav=p.id;s.favCls=p.cls;emote(s,'📣','');log(_T`${me?_T('You cheer'):_T`${who} cheers`} for ${nm(p)}.`);slog(_T`<b>${esc(s.name)}</b> cheers for ${esc(p.name)}.`)}
       else if(a==='tholo')chant.push(s)}
     finally{ONLM.specName=prev}}

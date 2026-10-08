@@ -66,7 +66,7 @@ function arm94RepairAll(){const pm=me();if(!pm)return {no:'?'};const list=arm94A
 function arm94Name(P){if(!P)return '';if(P.t==='w')return (W[P.k]||{}).n||P.k;if(P.t==='a')return (ARM[P.k]||{}).n||P.k;const O=OFFER[P.k]||{};return O.n?`${O.n} (${O.s})`:P.k}
 function arm94Meta(P){if(P.t==='w'){const d=W[P.k]||{};return _T`L${d.lv||1} · power ${d.p!=null?d.p:'—'} · range ${d.r!=null?d.r:1}${d.both?_T(' · two hands'):''}${d.shield?_T(' · shield'):''}`}
   if(P.t==='a'){const A=ARM[P.k]||{};const where=A.slot==='head'?LOCN.head:A.slot==='chest'||A.slot==='belt'?LOCN.chest:A.pair?(A.slot==='arm'?_T('both arms'):_T('both legs')):P.loc&&LOCN[P.loc]?LOCN[P.loc]:A.slot==='arm'?_T('one arm'):_T('one leg');
-    return _T`L${A.lv||1} · ${A.ap||0} AP · ${where}${A.stack?_T(' · padding'):''}`}
+    return _T`L${A.lv||1} · ${A.ap||0} AP · ${where}${armPad(A)?_T(' · padding'):''}`}
   return esc((OFFER[P.k]||{}).s||'')}
 function arm94Art(P,h){try{if(P.t==='w')return `<span class="ar94wc">${cardHTML('w:'+P.k,'xs')}</span>`;if(P.t==='a')return typeof armArtCell==='function'?armArtCell(P.k,h||40):'🛡';
   return typeof rtokHTML==='function'&&rtokHTML(P.k,h||36)||`<b>${esc((OFFER[P.k]||{}).g||'•')}</b>`}catch(e){return ''}}
@@ -128,7 +128,7 @@ function arm94Fit(g,P,want){const E=g&&g.eq94;if(!E)return {no:_T('Not of your h
     let loc=null;if(!A.pair&&(A.slot==='arm'||A.slot==='leg')){loc=LOCS.includes(want)&&arm94Slot(want)===A.slot?want:(P.loc&&P.loc!=='pair'?P.loc:arm94DefLoc(A));
       if(arm94Gone(g,loc)){const other={rarm:'larm',larm:'rarm',rleg:'lleg',lleg:'rleg'}[loc];if(!LOCS.includes(want)&&other&&!arm94Gone(g,other))loc=other}}
     const locs=arm94Locs({...P,loc});if(locs.every(l=>arm94Gone(g,l)))return {no:_T`${nm} has no ${(LOCN[locs[0]]||'').toLowerCase()}.`};
-    const rep=E.a.filter(x=>x!==P&&ARM[x.k]&&arm94Locs(x).some(l=>locs.includes(l))&&!!ARM[x.k].stack===!!A.stack&&ARM[x.k].pt===A.pt);
+    const rep=E.a.filter(x=>x!==P&&ARM[x.k]&&arm94Locs(x).some(l=>locs.includes(l))&&armPad(ARM[x.k])===armPad(A)&&ARM[x.k].pt===A.pt);
     return {z:'body',loc,rep}}
   return {no:'?'}}
 /* arm94Put — move a piece (shelf or worn) onto a fighter (z: R|L|body|off|auto|a location) or back to the shelf */
@@ -227,7 +227,7 @@ function arm94AutoShop(w,m,o={}){if(!w||!m||m.dead)return 0;const H=arm94H(m);co
       if(fromShelf(g,x=>x.t==='w'&&(x.k===want||(!want&&!(W[x.k]||{}).shield)||(want&&!!(W[x.k]||{}).shield===!!(W[want]||{}).shield)),h))continue;
       const k=want||(MARKET_W[1]||['gladius'])[Math.floor(R.next()*(MARKET_W[1]||['gladius']).length)];if(W[k]&&!(W[k].lv>3))buy(g,'w',k,h)}
     for(const x of K.a){const P0={t:'a',k:x.k,loc:x.loc==='pair'?undefined:x.loc};const F=arm94Fit(g,P0,x.loc==='pair'?'body':x.loc);if(F.no||F.rep.length)continue;
-      if(fromShelf(g,y=>y.t==='a'&&!y.dmg&&ARM[y.k]&&ARM[y.k].pt===ARM[x.k].pt&&ARM[y.k].slot===ARM[x.k].slot&&!!ARM[y.k].stack===!!ARM[x.k].stack,x.loc==='pair'?'body':x.loc))continue;buy(g,'a',x.k,x.loc==='pair'?'body':x.loc)}
+      if(fromShelf(g,y=>y.t==='a'&&!y.dmg&&ARM[y.k]&&ARM[y.k].pt===ARM[x.k].pt&&ARM[y.k].slot===ARM[x.k].slot&&armPad(ARM[y.k])===armPad(ARM[x.k]),x.loc==='pair'?'body':x.loc))continue;buy(g,'a',x.k,x.loc==='pair'?'body':x.loc)}
     while(E.o.length<ARM94.carry){const P=H.sh.find(y=>y.t==='o');if(!P||!arm94Put(m,P.id,{g:g.id,z:'off'}).ok)break}}
   return spent+fixed}
 {const base=endWeek;endWeek=async function(){try{const w=W_();if(w)arm94Ensure(w)}catch(e){console.error(e)}const w0=W_();const r=await base.apply(this,arguments);

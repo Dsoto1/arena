@@ -57,9 +57,12 @@ function armPieceSVG(B,key,ratio,extra,uid){const c=B.crop;const x=B.cx-B.w/2,y=
   const inner=`<g class="armpc" opacity="${(1-ARM_DIM*(1-ratio)).toFixed(2)}" transform="${tr}"><clipPath id="${id}"><rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${B.w.toFixed(1)}" height="${B.h.toFixed(1)}"/></clipPath><image href="${href}" x="${(x-c[0]*k).toFixed(2)}" y="${(y-c[1]*k).toFixed(2)}" width="${(ARM_SHEET.w*k).toFixed(1)}" height="${(ARM_SHEET.h*k).toFixed(1)}" clip-path="url(#${id})" preserveAspectRatio="none"${B.gold?_T` style="filter:${BRACER_GOLD}"`:''}/>${cracks}</g>`;
   return extra?`<g class="${extra.cls}" style="${extra.style}">${inner}</g>`:inner}
 /* draw order: padded and wraps first, plate over them, the belt last */
-const armZ=key=>ARM[key]&&ARM[key].slot==='chest'?-1:/* v0.91 (his call): chest armor sits under every other piece */key==='balteus'||key==='balteus1'?3:ARM[key]&&ARM[key].stack?0:key==='spaulder'||key==='galerus'?2:1;
+const armZ=key=>key==='balteus'||key==='balteus1'?-0.5:/* v0.96: the belt sits on the chest armor and under every limb piece (thigh plates, tassets) */ARM[key]&&ARM[key].slot==='chest'?-1:/* v0.91 (his call): chest armor sits under every other piece */ARM[key]&&ARM[key].stack?0:key==='spaulder'||key==='galerus'?2:1;
 function armWornSVG(p){let s='';const now=performance.now();const items=[];
-  for(const l of LOCS){if(p.hp[l]<=0)continue;for(const sh of armShares(p,l)){const A=ARM[sh.pc.key];if(!A||A.caId)continue;const k=`${p.id}|${l}|${sh.pc.key}`;
+  for(const l of LOCS){if(p.hp[l]<=0)continue;for(const sh of armShares(p,l)){const A=ARM[sh.pc.key];
+    /* v0.96: custom forge pieces join the same layer order (they used to be drawn under every printed piece, so a printed belt covered a custom thigh piece) */
+    if(A&&A.caId){try{const cu=typeof caOnBodySVG==='function'&&typeof CUSTOM!=='undefined'?(CUSTOM.armor||[]).find(c=>c.id===A.caId):null;if(cu&&cu.fit)items.push({z:cu.eq==='belt'?-0.5:armZ(sh.pc.key),svg:caOnBodySVG(cu,sh.pc.key,l==='larm'||l==='lleg')})}catch(e){console.error(e)}continue}
+    if(!A)continue;const k=`${p.id}|${l}|${sh.pc.key}`;
     const was=ARM_SEEN[k];ARM_SEEN[k]=sh.cur;if(was>0&&sh.cur<=0&&!(typeof reduceMotion==='function'&&reduceMotion()))ARM_FALL.push({k,pid:p.id,l,key:sh.pc.key,t0:now});
     if(sh.cur<=0)continue;const B=armBox(sh.pc.key,l);if(B)items.push({z:armZ(sh.pc.key),svg:armPieceSVG(B,sh.pc.key,sh.ratio,null,p.id+l)})}}
   for(let i=ARM_FALL.length-1;i>=0;i--){const F=ARM_FALL[i];const age=now-F.t0;if(age>1000){ARM_FALL.splice(i,1);continue}if(F.pid!==p.id)continue;const B=armBox(F.key,F.l);
