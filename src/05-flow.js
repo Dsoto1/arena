@@ -1675,7 +1675,7 @@ async function doLoot(player, o) {
   }
 }
 /* tradePartners — active players within 4 tiles (not underground) who can trade. TWEAK: range (4). */
-const tradePartners = player => activePlayers().filter(other => other !== player && !other.underground && cheb(player, other) <= 4);
+const tradePartners = player => activePlayers().filter(other => other !== player && !other.underground && cheb(player, other) <= 4 && !(CPUDIP96 && offered96(player, other))); /* v0.97 (236): CPUs skip targets already offered to this turn */
 /* tradeables — what the player can offer in a trade: coin in lots of 1/3/5/10, a key, non-Mandata items and held weapons (not Lyres), with CPU values. TWEAK: coin lots, key value (4), weapon weight (1.4). */
 function tradeables(player) {
   const out = [];

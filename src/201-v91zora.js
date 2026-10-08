@@ -7,7 +7,7 @@ function zoraChest91(p){if(!p||!S||!S.chest||S.onl||p.cpu||!p.alive||p.carrying)
   if(z&&box&&!box.querySelector('[data-act91="zorachest"]')&&S.phase==='action'&&!S.over)box.insertAdjacentHTML('beforeend',`<button class="btn" type="button" data-act91="zorachest" ${S.busy?'disabled':''}>${_T`🦅 Take the chest from Zora`}<small>${_T`−1 movement while held`}</small></button>`)}catch(e){console.error(e)}return r}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-act91="zorachest"]');if(!b||b.disabled)return;e.preventDefault();
   const p=cur();const z=zoraChest91(p);if(!z)return;
-  act(async()=>{z.carry=null;p.carrying=true;S.chest.held='p'+p.id;S.chest.r=p.r;S.chest.c=p.c;p.mv=Math.max(0,p.mv-1);
+  act(async()=>{z.carry=null;p.carrying=true;S.chest.held='p'+p.id;S.chest.r=p.r;S.chest.c=p.c; /* v0.97: a hand-over is not the carrier's own pickup: no movement cost */
     log(_T`${nm(z)} hands the Arena Chest to ${nm(p)}.`)})});
 /* Open Arena Chest without a key (his confusion 2026-10-06: a delivered chest showed only "Pick up chest"): on or carrying the chest with
    no Arena Key, the button shows dimmed with the reason, so the missing key is obvious (Venatore and Damnatio start with none). */

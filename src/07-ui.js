@@ -2811,7 +2811,7 @@ function render() {
       ${btn('m-topple', _T('Topple pillar'), '3 movement', m === 'topple', toppleTargets(p).length > 0)}
       ${!weak(p, 'noTunnel') ? btn('m-tunnel', _T('Tunnel'), _T('1 Arena Key · ends turn'), m === 'tunnel', ex.length > 0) : ''}
       ${canOpenChest(p) ? btn('chest', _T('Open Arena Chest'), _T('1 Arena Key'), false) : ''}
-      ${S.chest && onChestTile(p) && !p.carrying && armsAttached(p).length === 2 ? btn('chestup', _T('Pick up chest'), _T('−1 movement while held'), false) : ''}
+      ${S.chest && onChestTile(p) && !p.carrying && armsAttached(p).length === 2 ? btn('chestup', _T('Pick up chest'), p.mv > 0 ? _T('−1 movement while held') : _T('needs 1 movement'), false, p.mv > 0) : ''}
       ${p.carrying ? btn('chestdown', _T('Drop chest'), 'free', false) : ''}
       ${loot.length ? btn('loot', _T('Loot'), p.looted ? _T('thrown weapons only') : _T('1 item per turn'), false) : ''}
       ${EV().noMarket ? '' : btn('market', _T('Market'), p.market ? 'unlocked' : cfAllowed() ? _T`${cfAmt87(3)} to unlock` : _T('CF locked'), false)}
@@ -2936,6 +2936,7 @@ document.addEventListener('click', e => {
   if (k === 'crowd') act(() => openCrowd(p));
   if (k === 'chest') act(() => openChest(p));
   if (k === 'chestup') act(async () => {
+    if (p.mv < 1) return; /* v0.97 digital rule: lifting the chest costs 1 movement */
     p.carrying = true;
     S.chest.held = 'p' + p.id;
     p.mv = Math.max(0, p.mv - 1);
