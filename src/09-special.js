@@ -81,7 +81,8 @@ async function chStep(player,fromR,fromC){
   if(a>0.75&&b<0.25&&ch.check){ch.laps++;ch.check=false;log(_T`${nm(player)} completes lap ${ch.laps} of 3!`,'big');if(ch.laps>=3){S.raceWinner=player.id;checkEnd()}}
   if(CH_GATES.some(([r,c])=>r===player.r&&c===player.c)){
     log(_T`${nm(player)} passes through a pillar gate.`);
-    if(ch.horse){ch.horse.face^=1;ch.horse.dmg=0;const f=ch.horse.sides[ch.horse.face];log(_T`${ch.horse.name||_T('The horse')}'s token flips: ${f.hp} HP, +${f.mv} movement.`)}
+    if(ch.horse){const o=ch.horse.sides[ch.horse.face];ch.horse.face^=1;ch.horse.dmg=0;const f=ch.horse.sides[ch.horse.face];if(f.n)ch.horse.name=f.n; /* v0.98: each face is its own horse */
+      if(f.n&&o.n&&f.n!==o.n)log(_T`🐎 ${nm(player)}: <b data-card="h:${o.art}">${o.n}</b> is spent — <b data-card="h:${f.art}">${f.n}</b> takes the reins: +${f.mv} movement, ${f.hp} HP.`);else log(_T`${ch.horse.name||_T('The horse')}'s token flips: ${f.hp} HP, +${f.mv} movement.`)}
     const o=drawChOffer();
     if(o==='merc1'||o==='merc2'){const v=o==='merc1'?1:2;player.mv+=v;log(_T`Speed of Mercury: +${v} movement.`)}
     else if(o==='cf1'||o==='cf2'){const v=o==='cf1'?1:2;cfWhy(_T('breaking pots'));player.cf+=v;log(_T`The crowd roars: ${cfAmt87('+'+(v))}.`)}
@@ -116,14 +117,16 @@ async function chAttack(player,source,target){
   else await hurt(q,tgt,dmg,{type:'player',p:player},pre);
   checkEnd();
 }
+/* chHorseDeal — a horse token dealt from HORSES with a random face up (rulebook: dealt at random; seeded dice); the horse's name = the face up (v0.98: each face is its own horse). */
+function chHorseDeal(H){const face=rnd(2);return {name:(H.sides[face]&&H.sides[face].n)||H.n,sides:H.sides,face,dmg:0}}
 /* chariotSetup — builds the chariot board: gate pillars, corner tunnels, spare wheels/horses on the floor, and each racer's chariot, wheel and horse. */
 function chariotSetup(){
   S.pillars=CH_PILLARS.map(([r,c],i)=>({id:i,r,c,pots:[]}));
   S.tunnels=[[0,0],[0,12],[12,0],[12,12]].map(([r,c])=>({r,c}));
   S.npcs=[];S.chest=null;
-  for(const [kind,r,c] of CH_SPARES)placeFloor(kind,kind,r,c,{part:kind==='wheel'?(w=>({name:w.n,art:w.art,hp:w.hp,max:w.hp}))(pickOne(WHEELS)):(H=>({name:H.n,sides:H.sides,face:0,dmg:0}))(pickOne(HORSES))});
+  for(const [kind,r,c] of CH_SPARES)placeFloor(kind,kind,r,c,{part:kind==='wheel'?(w=>({name:w.n,art:w.art,hp:w.hp,max:w.hp}))(pickOne(WHEELS)):chHorseDeal(pickOne(HORSES))});
   S.players.forEach((player,i)=>{[player.r,player.c]=CH_STARTS[i];player.start=[player.r,player.c];
-    const W0=pickOne(WHEELS),H0=pickOne(HORSES),CN=chariotFor(player.color);player.ch={mounted:true,name:CN.n,art:CN.art,cr:player.r,cc:player.c,wheel:{name:W0.n,art:W0.art,hp:W0.hp,max:W0.hp},horse:{name:H0.n,sides:H0.sides,face:0,dmg:0},laps:0,check:false,attackLap:-1};if(!player.cpu)cardShow('g:'+CN.art,player);log(`${_T`${nm(player)} takes the reins of the`} <b data-card="g:${CN.art}">${CN.n}</b>${_T`, drawn by`} <b data-card="h:${H0.sides[0].art}">${H0.n}</b> ${_T`(+${H0.sides[0].mv} speed, ${H0.sides[0].hp} HP) on a`} <span data-card="h:${W0.art}">${W0.n}</span> ${_T`(${W0.hp} HP).`}`)});
+    const W0=pickOne(WHEELS),H0=chHorseDeal(pickOne(HORSES)),F0=H0.sides[H0.face],CN=chariotFor(player.color);player.ch={mounted:true,name:CN.n,art:CN.art,cr:player.r,cc:player.c,wheel:{name:W0.n,art:W0.art,hp:W0.hp,max:W0.hp},horse:H0,laps:0,check:false,attackLap:-1};if(!player.cpu)cardShow('g:'+CN.art,player);log(`${_T`${nm(player)} takes the reins of the`} <b data-card="g:${CN.art}">${CN.n}</b>${_T`, drawn by`} <b data-card="h:${F0.art}">${H0.name}</b> ${_T`(+${F0.mv} speed, ${F0.hp} HP) on a`} <span data-card="h:${W0.art}">${W0.n}</span> ${_T`(${W0.hp} HP).`}`)});
 }
 /* chariotDraft — the chariot draft: head armor, chest armor and a level 1–2 weapon picked in turn; each racer gets 2 keys and 3 CF. Replaced by 76-chariot59. */
 async function chariotDraft(){

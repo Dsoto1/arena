@@ -34,7 +34,7 @@ chariotDraft=async function(){
   if(ch&&ch.gateAt!=null&&ch.gateAt!==p.r*N+p.c)ch.gateAt=null;
   const r=await base.apply(this,arguments);
   try{if(ch&&ch.mounted&&CH_GATES.some(([a,b])=>a===p.r&&b===p.c)&&p.mv>=mv0+2){p.mv-=1;ch.gateAt=p.r*N+p.c}
-    if(ch&&ch.horse&&flip0!=null&&ch.horse.face!==flip0){ch.horse.flipT=performance.now();if(typeof fx==='function')fx(p.r,p.c,'🐎 flip','#f0cf7d')}}catch(e){}
+    if(ch&&ch.horse&&flip0!=null&&ch.horse.face!==flip0){ch.horse.flipT=performance.now();if(typeof fx==='function')fx(p.r,p.c,'🐎 '+(ch.horse.name||'flip'),'#f0cf7d')}}catch(e){}
   return r}}
 chReach=function(p){
   const start=p.r*N+p.c;const gate=p.ch&&p.ch.gateAt===start;
