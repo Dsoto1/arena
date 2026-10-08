@@ -1,12 +1,13 @@
 /* v0.96 part C (233-v96bar): THE ACTION BAR — phase rail in the phase colours, four material groups + End turn, the original [data-act]
    buttons moved (not re-made), placeholders dimmed in place, no "Wager on yourself"; extras 1-8: board preview on hover (never S),
    header pips + spend dimming, "unused" line, done-phase tips from this turn's log, whose turn + next with a face, key hints + A/P/Enter,
-   the guide's soft glow, phones = one swipe row with End turn fixed right; CPU turns greyed; Choice = one gold group. SHOT=<dir> saves pictures. */
+   the guide's soft glow, phones = one swipe row with End turn fixed right; CPU turns greyed; Choice = one gold group. SHOT=<dir> saves pictures.
+   v0.98: the v2 bar (248-v98bar) sits on top; this test keeps checking 233's bar = the flavius_bar98off=1 fallback (tv98c checks v2). */
 const {chromium}=require('playwright');const path=require('path');const page=path.resolve(process.argv[2]||'flavius-arena.html');const SHOT=process.env.SHOT||'';
 (async()=>{const b=await chromium.launch();const errs=[],miss=[];const ok=(c,m)=>{if(!c)miss.push(m)};const out={};
 const boot=async(vp,mob)=>{const ctx=await b.newContext(mob?{viewport:vp,screen:vp,isMobile:true,hasTouch:true,deviceScaleFactor:2}:{viewport:vp});
   await ctx.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());
-  await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
+  await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_bar98off','1')});
   const pg=await ctx.newPage();pg.on('pageerror',e=>errs.push(e.message));
   await pg.goto('file://'+page);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:90000});return pg};
 /* start Democritus as seat 0 (soldier) vs 3 CPUs; stop at a phase of our own turn */
