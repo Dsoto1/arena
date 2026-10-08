@@ -11,8 +11,8 @@ o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if
   await W8(2800);r.brief=!!document.querySelector('#mBody .brsr img[src*="sr_democritus"]');for(let i=0;i<10&&CUR_MODAL;i++){CUR_MODAL.done(null);await W8(200)}await W8(800);
   r.round=document.querySelector('#status .roundmk b')&&document.querySelector('#status .roundmk b').textContent===String(S.ri+1);r.srchip=!!document.querySelector('#status img.srmed');
   r.coinUI=!!document.querySelector('#board img.coinimg');r.mfback=boardHTML(S.players[1],false).includes('mandata_back');
-  if(!S.spectLog.length)slog('test line','');await W8(400);r.pin=!!document.querySelector('#log > #slogPin:first-child');log('a new log line');r.pinTop=document.getElementById('log').firstChild.id==='slogPin';
-  sideTab('fighter');document.getElementById('slogPin').click();await W8(200);r.pinGo=SIDE.tab==='stands';sideTab('fighter');
+  slog('test stands line 71','');await W8(400);r.pin=!document.getElementById('slogPin'); /* v0.96: no pinned stands line; the stands log lives under Stands */log('a new log line');r.pinTop=document.getElementById('log').firstChild.textContent.includes('a new log line');
+  render();sideTab('stands');await W8(400);r.pinGo=SIDE.tab==='stands'&&(document.getElementById('standsPane')||document.body).textContent.includes('test stands line 71');sideTab('fighter');
   const sp=S.spect.find(s=>!s.bet&&!s.gone)||(()=>{const x=S.spect.find(s=>!s.gone);if(x)x.bet=null;return x})();sp.bet={pid:1,amt:2,odds:2};S.players[2].selfBet={stake:3,odds:2};await W8(500);
   r.bub=[...document.querySelectorAll('#wbubs .wbub')].map(e=>e.textContent);return r});
 o.b=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));S.over=true;if(CUR_MODAL)CUR_MODAL.done(null);await W8(400);
@@ -20,5 +20,5 @@ o.b=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));S.
   const s=document.getElementById('festSR');if(!s)return {skip:true};await W8(1500);const had=!!document.getElementById('festSRimg');s.value='cassian';s.dispatchEvent(new Event('change',{bubbles:true}));await W8(200);
   return {had,swap:(document.getElementById('festSRimg')||{}).src.includes('sr_cassian')}});
 const a=o.a;ok(a.key2&&a.coin&&a.spell,'tokens, coin, spelling');ok(a.brief&&a.srchip,'summa rudis medallions');ok(a.round,'round marker');ok(a.coinUI&&a.mfback,'coin in the panel + Mandata back');
-ok(a.pin&&a.pinTop&&a.pinGo,'stands line pinned in the log');ok(a.bub.length===2&&a.bub.some(t=>/2\s*CF/.test(t))&&a.bub.some(t=>/^3$/.test(t.trim())),'wager bubbles');ok(o.b.skip||(o.b.had&&o.b.swap),'festival picker medallion');
+ok(a.pin&&a.pinTop&&a.pinGo,'no pinned stands line; stands log under Stands (v0.96)');ok(a.bub.length===2&&a.bub.some(t=>/2\s*CF/.test(t))&&a.bub.some(t=>/^3$/.test(t.trim())),'wager bubbles');ok(o.b.skip||(o.b.had&&o.b.swap),'festival picker medallion');
 console.log(JSON.stringify(o));console.log('MISS',miss);console.log('ERRS',errs.slice(0,4));await b.close();if(miss.length||errs.length)process.exit(1)})();

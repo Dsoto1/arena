@@ -291,8 +291,14 @@ function armorConflict(player, location, key) {
   const d = ARM[key];
   return player.pieces[location].find(pc => {
     const e = ARM[pc.key];
-    return d.stack ? !!e.stack && e.pt === d.pt : !e.stack && e.pt === d.pt; /* v0.83: padding stacks per equip point — upper + lower padding on one leg both fit (his rule) */
+    return armPad(d) ? armPad(e) && e.pt === d.pt : !armPad(e) && e.pt === d.pt; /* v0.83: padding stacks per equip point; v0.96: only LOWER padding (and the belt) sits under a hard piece */
   }) || null;
+}
+/* armPad — v0.96 (his call): a stackable piece that sits UNDER a hard piece on its equip point = lower padding (arm wraps, leg wraps) and the
+   belt over the chest. The Leather Tasset (legwrapsU, upper leg) is no longer padding: it takes the upper leg alone, like a thigh plate.
+   `stack` itself still means "the market has copies" (62-rules53). */
+function armPad(A) {
+  return !!(A && A.stack && A.pt !== 'upper');
 }
 /* equipPiece — puts an armor piece on a location if it is alive and the equip point is free: adds its AP (cap 7) plus any bonus AP to other living locations, remembering how much bonus actually landed. TWEAK: the 7 AP cap. */
 function equipPiece(player, key, location, apOverride) {
@@ -724,7 +730,7 @@ async function hurt(victim, location, damage, source, prefix, {
       const ab = Math.min(rem, w.absorb);
       let use;
       if (victim.cpu) use = victim.diff === 'hard' ? ab >= 2 || victim.ap[location] + victim.hp[location] - rem <= 1 || w.usesLeft >= 3 : rand() < (victim.diff === 'easy' ? .8 : .95); // hard lanistae save uses on chip damage when they can afford to
-      else use = await modal(_T`Raise the ${w.n}?`, `<p>${_T`${esc(prefix || _T('An attack'))} brings <b>${rem} damage</b> at your ${LOCN[location].toLowerCase()}. The ${w.n} can absorb <b>${ab}</b> of it; the rest falls on armor, then flesh.`}</p>${typeof hint === 'function' ? hint('shield') : ''}`, [{
+      else use = await modal(_T`Raise the ${w.n}?`, `<p>${_T`${prefix || _T('An attack')} brings <b>${rem} damage</b> at your ${LOCN[location].toLowerCase()}. The ${w.n} can absorb <b>${ab}</b> of it; the rest falls on armor, then flesh.`}</p>${typeof hint === 'function' ? hint('shield') : ''}`, [{
         label: wIco87('abs') + _T`Absorb ${ab} damage`,
         sub: `${wIco87('use')}${w.usesLeft - 1 === 0 ? _T('this use BREAKS the shield') : _T`${w.usesLeft - 1} use${w.usesLeft - 1 === 1 ? '' : 's'} left after`}`,
         value: 1,

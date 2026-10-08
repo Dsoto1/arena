@@ -546,7 +546,7 @@ async function spectatorsAct(){
     const want=grudge&&grudge.alive&&!grudge.exited?grudge:fav;const wq=want?quadOf(want):0;
     if(want&&wq&&wq!==q&&s.cf>=3+thrift+2&&rand()<(s.temper==='fickle'?.6:s.temper==='hothead'?.4:.2)*crowdA()){
       const opts=SECTIONS.map((x,i)=>i).filter(i=>SECTIONS[i].q===wq);const to=opts.includes(secOf(want))?secOf(want):pickOne(opts);
-      s.cf-=3;log(_T`${esc(s.name)} pays ${cfAmt87(3)} to move from ${SECTIONS[s.sec].n} to ${SECTIONS[to].n}${want===grudge?_T`, to get closer to ${nm(want)}`:_T`, to cheer ${nm(want)}`}.`);slog(_T`<b>${esc(s.name)}</b> moves to ${SECTIONS[to].n} (${want===grudge?_T('hunting'):_T('following')} ${esc(want.name)}).`);s.sec=to;emote(s,'🚶','');}
+      s.cf-=3;slog(_T`<b>${esc(s.name)}</b> moves to ${SECTIONS[to].n} (${want===grudge?_T('hunting'):_T('following')} ${esc(want.name)}).`);s.sec=to;/* v0.96: seat switches live under Stands only */emote(s,'🚶','');}
   }
 }
 /* spectStone — a spectator's stone: 1 hit die, 1 damage to a rolled location; a stone that finishes a gladiator collects all their CF. */
@@ -575,7 +575,7 @@ async function humanSpectatorTurn(me){
     if(!v||v==='pass')return;
     if(v.startsWith('stone:')){me.cf-=2;const q9=S.players[+v.slice(6)];if(typeof spectHelpCheck==='function')spectHelpCheck('stone',q9);await spectStone(me,q9);render();return}
     if(v.startsWith('offer:')){me.cf-=8;const p=S.players[+v.slice(6)];if(typeof spectHelpCheck==='function')spectHelpCheck('offer',p);const off=drawOffer();p.items.push(mkOffer(off));stat(p,'spectOffers');stat(p,'spectVal',OFFER_VAL[off]||4);log(_T`You throw ${nm(p)} an offering from the stands: <b>${OFFER[off].n}</b> (${OFFER[off].s}).`);render();return}
-    if(v==='move'){const to=typeof seatMapPick==='function'?await seatMapPick(_T`Change section · ${cfAmt87(3)}`,_T`Pick a new stand. Its gladiator earns ${cfAmt87(1)} from you every turn.`,{disabled:i=>i===me.sec}):null;if(to!=null){me.cf-=3;me.sec=to;log(_T`You move to ${SECTIONS[to].n}.`);render();return}continue}
+    if(v==='move'){const to=typeof seatMapPick==='function'?await seatMapPick(_T`Change section · ${cfAmt87(3)}`,_T`Pick a new stand. Its gladiator earns ${cfAmt87(1)} from you every turn.`,{disabled:i=>i===me.sec}):null;if(to!=null){me.cf-=3;me.sec=to;slog(_T`You move to ${SECTIONS[to].n}.`);render();return}continue}
     if(v==='tholo'){const payers={};for(const s of S.spect)if(!s.gone&&s.cf>=3){const k=SECTIONS[s.sec].q;if(!payers[k]||s.human)payers[k]=s}for(const s of Object.values(payers))s.cf-=3;log(_T('The stands take up your chant: “Tholo! Tholo!”'),'big');spawnNPC('tholo',_T('Tholo'),S.ri<2?[6,6]:null);crowdReact('boss',{n:'Tholo'});render();return}
   }
 }
@@ -706,7 +706,7 @@ async function openWagers(){if(!bookOpen()&&!(typeof MGR!=='undefined'&&MGR.worl
     const [,kind,key,odds,stake0]=v.split('|');const stake=clamp(Math.floor(+stake0||0),0,betMaxStake(+odds,bank));if(!stake)continue;
     const label=kind==='win'?_T`${(tbl.find(o=>o.key===key)||{label:key}).label} wins the event`:_T`${S.players[+key].name} falls first`;
     purse.coin-=stake;await setPurse(purse);const bid=betRec({src:'event',ev:S.seed,dayOff:0,min:840+Math.min(400,(S.turnNo||0)*4)+Math.floor(Math.random()*4),city:LOCATIONS[S.locIdx]?LOCATIONS[S.locIdx].n:'',who:purse.name||_T('You'),kind:'you',on:label,stake,odds:+odds});(S.bets=S.bets||[]).push({kind,key,odds:+odds,stake,label,at:S.turnNo,bid});
-    log(_T`You wager ${coinAmt87(stake)} on <b>${esc(label)}</b> at ${fmtOdds(+odds)}.`);render();
+    slog(_T`You wager ${coinAmt87(stake)} on <b>${esc(label)}</b> at ${fmtOdds(+odds)}.`);render(); /* v0.96: wagers live under Stands only */
   }
 }
 /* the top-bar Wagers button. */
@@ -722,7 +722,7 @@ async function humanSelfWager(player){
   if(!v)return;placeSelfBet(player,v,o.odds);
 }
 /* placeSelfBet — a gladiator slips coin to the bookmaker on themselves (logged on the exchange). */
-function placeSelfBet(player,stake,odds){player.coin-=stake;coinLog(player,-stake,'wagers');player.selfBet={stake,odds};const bid=HEADLESS?null:betRec({src:'event',ev:S.seed,dayOff:0,min:840+Math.min(400,(S.turnNo||0)*4)+Math.floor(Math.random()*4),city:LOCATIONS[S.locIdx]?LOCATIONS[S.locIdx].n:'',who:player.name,kind:'gladiator',on:_T`${player.name} (on themselves)`,stake,odds});(S.selfBets=S.selfBets||[]).push({pid:player.id,stake,odds,bid});log(_T`${nm(player)} slips ${coinAmt87(stake)} to the bookmaker, on ${player.cpu?_T('themselves'):_T('yourself')} at ${fmtOdds(odds)}.`)}
+function placeSelfBet(player,stake,odds){player.coin-=stake;coinLog(player,-stake,'wagers');player.selfBet={stake,odds};const bid=HEADLESS?null:betRec({src:'event',ev:S.seed,dayOff:0,min:840+Math.min(400,(S.turnNo||0)*4)+Math.floor(Math.random()*4),city:LOCATIONS[S.locIdx]?LOCATIONS[S.locIdx].n:'',who:player.name,kind:'gladiator',on:_T`${player.name} (on themselves)`,stake,odds});(S.selfBets=S.selfBets||[]).push({pid:player.id,stake,odds,bid});slog(_T`${nm(player)} slips ${coinAmt87(stake)} to the bookmaker, on ${player.cpu?_T('themselves'):_T('yourself')} at ${fmtOdds(odds)}.`)}
 /* cpuSelfWager — a coin-loving CPU with a good chance sometimes bets on itself. TWEAK: pr > 0.34, coin taste > 55, 18%. */
 function cpuSelfWager(player){
   if(!player.cpu||player.selfBet||!wagersOpen()||isChariot()||player.coin<6||!selfWagerRound())return;

@@ -613,7 +613,7 @@ const ONLC=(function(){
   const ARM_SIDES84={head:['head'],chest:['chest'],belt:['chest'],arm:['rarm','larm'],leg:['rleg','lleg']};
   function armOf(h,it,catalog){const b=itemBase(it);if(b==='na'){const w=(pcOf(h,it)||{}).w;return w&&w.slot?{slot:w.slot,pt:String(w.pt||''),stack:false,pair:!!w.pair}:null}
     const c=(catalog||{})[b];if(!c||c.kind!=='a'||!c.slot)return null;return {slot:c.slot,pt:String(c.pt||''),stack:!!c.stack,pair:!!c.pair}}
-  function armPlace(occ,a){const locs=ARM_SIDES84[a.slot]||[a.slot];const k=(a.stack?'s:':'h:')+a.pt;const free=locs.filter(l=>!(occ[l]||[]).includes(k));
+  function armPlace(occ,a){const locs=ARM_SIDES84[a.slot]||[a.slot];const k=(a.stack&&a.pt!=='upper'?'s:':'h:')+a.pt; /* v0.96: only lower padding (and the belt) stacks — an upper stackable piece (the Leather Tasset) takes its point alone */const free=locs.filter(l=>!(occ[l]||[]).includes(k));
     if(a.pair){if(free.length<locs.length)return false;for(const l of locs)(occ[l]=occ[l]||[]).push(k);return true}if(!free.length)return false;(occ[free[0]]=occ[free[0]]||[]).push(k);return true}
   /* items (in order) → [true|false]: each armor piece fits beside the ones before it (weapons and unknown pieces always true) */
   function armFit(h,items,catalog){const occ={};return (items||[]).map(it=>{const a=armOf(h,it,catalog);return !a||armPlace(occ,a)})}
