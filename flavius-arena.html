@@ -23435,7 +23435,7 @@ function drawSugTile(){if(!S||!S.sugTile||S.over)return;const m=center(S.sugTile
 /* RULE_TILE — the rule hint lines for what can stand on a tile. */
 const RULE_TILE={
   pillar:_T('Pillars: from an adjacent tile you can attack the Blessings pots on top — 2 damage breaks one (2 coin, 1 CF, a hidden offering). Push a pillar (2 movement) onto a tunnel to seal it, or topple it (3 movement): the next two tiles take 3 damage and every pot breaks.'),
-  player:_T('Gladiators: roll the hit die for each point of your weapon’s power; each hit lands on a rolled body location, armor first, then HP. A limb at 0 is severed; a head or chest at 0 eliminates. A gladiator trophy is worth 10 CF.'),
+  player:_T('Gladiators: roll 2 hit dice and 1 hit location die; each hit deals your weapon’s power to that location, armor first, then HP. A limb at 0 is severed; a head or chest at 0 eliminates. A gladiator trophy is worth 10 CF.'),
   npc:_T('Beasts: attacking one makes it hunt you (aggro). Slaying it earns its coin, CF and a trophy. Raged beasts hit harder; Fazed ones slow down. A beast that kills you costs you 5 CF.'),
   tunnel:_T('Tunnels: 1 Arena Key takes you underground. You choose the exit tunnel, your turn ends, and you surface there at the start of your next turn — untouchable while underground. A gladiator standing on a tunnel is fair game. A pillar pushed onto a tunnel seals it.'),
   spike:_T('Floor spikes: entering this tile deals 2 damage. Push rivals and beasts onto them.'),
@@ -23466,7 +23466,7 @@ function ruleForTile(tile){if(!gOn('ruleHints')||!HINTS||!S||!tile)return '';con
   if(!inZone(r,c))out.push(RULE_TILE.zone);
   return out.length?`<div class="rulehint">📜 ${out.map(esc).join('<br>📜 ')}</div>`:''}
 /* ruleForAct — the rule hint for an action button. */
-function ruleForAct(act){if(!act)return '';if(act.startsWith('m-atk'))return _T('Attack: roll the hit die per point of power (thrown weapons use their thrown numbers, a|b = normal|thrown). Each hit lands on a rolled location — armor first, then HP.');return RULE_ACT[act]||''}
+function ruleForAct(act){if(!act)return '';if(act.startsWith('m-atk'))return _T('Attack: roll 2 hit dice vs a gladiator (plus the hit location die), 4 vs a beast; each hit deals the weapon’s power (thrown weapons use their thrown numbers, a|b = normal|thrown). Armor first, then HP.');return RULE_ACT[act]||''}
 document.addEventListener('mouseover',e=>{if(!gOn('ruleHints')||!HINTS)return;const b=e.target.closest&&e.target.closest('#actions [data-act]');if(!b)return;const t=ruleForAct(b.dataset.act);if(!t)return;
   const h=document.getElementById('hover');if(h)h.innerHTML=`<b>${esc((b.childNodes[0]&&b.childNodes[0].textContent)||'')}</b><div class="rulehint">📜 ${esc(t)}</div>`});
 
