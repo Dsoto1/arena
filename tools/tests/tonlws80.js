@@ -42,9 +42,9 @@ const waitingRooms=await A.evaluate(async()=>(await NET.req('lobby.list')).filte
 const aSeesB=await until(A,()=>{const L=onlMyLobby();return L&&L.players.some(p=>/Beta/.test(p.name))?L.players.map(p=>p.name):null});
 /* room phrases: A says Ave → B's log; B wishes luck (3 s later than its own last phrase) → A's log; the log comes back from lobby.chatlog */
 await click(A,'#onl [data-onl="rsay"][data-v="ave"]');
-const logB=await until(B,()=>{const t=[...document.querySelectorAll('#r80Log > div')].map(d=>d.textContent);return t.some(x=>/Ave!/.test(x))?t:null},null,20000);
+const logB=await until(B,()=>{const t=((ONLF.chat[(onlMyLobby()||{}).id]||[]).filter(l=>!l.sys).map(l=>l.name+': '+onlQ80(l.q))) /* v0.96: no log on screen — phrases pop as bubbles (234) */;return t.some(x=>/Ave!/.test(x))?t:null},null,20000);
 await click(B,'#onl [data-onl="rsay"][data-v="luck"]');
-const logA=await until(A,()=>{const t=[...document.querySelectorAll('#r80Log > div')].map(d=>d.textContent);return t.some(x=>/Good luck/.test(x))?t:null},null,20000);
+const logA=await until(A,()=>{const t=((ONLF.chat[(onlMyLobby()||{}).id]||[]).filter(l=>!l.sys).map(l=>l.name+': '+onlQ80(l.q))) /* v0.96: no log on screen — phrases pop as bubbles (234) */;return t.some(x=>/Good luck/.test(x))?t:null},null,20000);
 const chatlog=await B.evaluate(async id=>(await NET.req('lobby.chatlog',{id})).map(l=>l.name+':'+l.q),rA&&rA.id);
 const freeText=await A.evaluate(async id=>{try{await NET.req('lobby.chat',{id,text:'hello'});return 'sent'}catch(e){return e.message}},rA&&rA.id);
 /* A sounds the horns (▶ Start); B walks in on the push */
