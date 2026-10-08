@@ -882,6 +882,20 @@ One global script; files are concatenated in order. Later "version modules" patc
 - When a UI move breaks an old test intentionally, update the test (keep its intent).
 - Visual checks: write a short Playwright script, screenshot, and look at it.
 
+## 5b. GitHub Actions regression (v0.95, replaces the local full run)
+- `.github/workflows/regression.yml`: push on claude/** or main (CLAUDE.md, docs, tools/art, tools/plans, share, regstate/regmap/reg.txt ignored)
+  or workflow_dispatch(mode). Jobs: plan (tools/ci/plan.js) → 8 test shards (smartreg -j 2 on its test list, REGNOEXPAND=1, Playwright
+  install bounded 240 s ×3 tries) → server (npm test, full mode) → report (tools/ci/report.js merges reg-N artifacts, prints CIRESULT).
+- Budget tools/ci/budget.json (2000 min/month, reserve 300; "exclusive" = always full until 2026-10-10, then the SPREAD schedule: full only for
+  releases ([full] in the message or version.json changed) or manual runs, smart otherwise, skip when over the daily allowance). A full run ≈
+  100 GitHub minutes, ~25 min wall. Put `[skip ci]` in a commit that must not start a run (it also keeps a running one from being cancelled).
+- Failing output is printed in the job log (artifacts can't be downloaded through this sandbox's proxy): read it with the GitHub MCP
+  get_job_logs (failed_only + return_content) or `curl -H "Authorization: Bearer $GITHUB_TOKEN" …/actions/runs/<id>/jobs`.
+- Merge agent branches with `sh tools/ci/merge.sh <branch>` (auto-unites build.sh / runreg DEFAULT / CLAUDE.md, rebuilds); translations:
+  `sh tools/i18n/prep.sh` → ONE Sonnet agent with tools/i18n/TRANSLATE.md → `sh tools/i18n/finish.sh`.
+- release.sh: REG=local runs the suite here; SHARE=1 builds the standalone + zips (off by default — flavius.sh builds it in CloudShell).
+  Releases are no longer published as claude.ai artifacts (his 3A, 2026-10-07).
+
 ## 6. Release workflow
 **HIS DEPLOY IS ALWAYS THE SAME (v0.88):** release.sh step 6 writes share/deploy/flavius-site-update-vX.zip (play/ page + version.json +
 advert shot + ALL assets + flavius.sh) and flavius-download-vX.zip (play/flavius-rule-arena.zip). Send those (+ flavius-server-N.zip when the
@@ -1084,6 +1098,12 @@ share copy — the site download play/flavius-rule-arena.zip.)
   from GitHub.) Release run (REGJ=3): 238/242 + tonl78/tonl83u/tv86/tv91n flaky (passed alone); the armory tuning landed after the run:
   tv94m tcity tv89y tv87x tv93t tv85f tv86 green (tv94m flaky once under smartreg, 3/3 alone). mgrsim 20 runs: player treasury −15% vs
   gear off, wins −0.7, rivals healthy, shelves ~37.
+
+- **v0.95** stabilization: team rings, numbers above bubbles, Focus dice art, key tokens, Bestiary tab; Studio fixes (Find, live card, legs layout,
+  fit tool sides, shields ≤4 icons, sculptor locks/snaps, ratings panel, Your characters in Play Now); Manager (3 starters per bout, Armory tab,
+  hurt fighters' gear to the shelf, From your Doctores, stale trade offers withdrawn); performance (panels patched in place, cut-out images, Fast
+  extras off, speed at once); language sweep (~50 places matched English text — translated pages kept old layouts; Thumb-of-Flavius spares not
+  counted alive in other languages). FIRST RELEASE TESTED ON GITHUB ACTIONS: full run 244/244 + 3 flaky (tv91n t12b tv65). No server change.
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
