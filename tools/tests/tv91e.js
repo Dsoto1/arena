@@ -70,7 +70,7 @@ ok(A1.n===6,'six lots: '+A1.n);ok(new Set(A1.hs).size===1&&new Set(A1.ws).size==
 ok(A1.kinds.filter(k=>k==='a').length>=2&&A1.kinds.filter(k=>k==='w').length>=2&&A1.rars.some(r=>r==='legendary'||r==='epic'),'the guarantees '+JSON.stringify([A1.kinds,A1.rars]));
 await P.evaluate(()=>{const g=document.querySelector('#onl .au84-grid');if(g)g.scrollIntoView({block:'start'})});await W(300);await shot('auction_1440');
 await P.setViewportSize({width:390,height:844});await P.evaluate(()=>onlRedraw());await W(600);
-A1=await au();ok(A1.n===6&&new Set(A1.hs).size===1,'390 px: the same height '+JSON.stringify(A1.hs));ok(!A1.over,'390 px: no sideways scroll');
+A1=await au();ok(A1.n===6,'390 px: six lots (v0.97 card: art on top, height follows the bonuses)');ok(!A1.over,'390 px: no sideways scroll');
 await P.evaluate(()=>{const g=document.querySelector('#onl .au84-grid');if(g)g.scrollIntoView({block:'start'})});await W(300);await shot('auction_390');
 
 console.log(miss.length?'MISSING '+JSON.stringify(miss):'ALL OK');console.log('ERRS',JSON.stringify(errs));
