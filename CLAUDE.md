@@ -1570,6 +1570,13 @@ share copy — the site download play/flavius-rule-arena.zip.)
   2 coin); (5) whose turn + "next: <name>" with a small face at the left of the rail; (6) small key hints on the buttons (A/M/P/T/Enter, the
   v0.93 keyboard layer); (7) hints mode only (never Ranked): soft glow on the action the strategy hints would pick; (8) phones: the groups = one
   swipe row, End turn fixed on the right.
+- **SPLIT (his call 2026-10-08): v0.96 / v0.97.** v0.96 (no server change) = all Manager fixes/changes of notes I/II/III (standings, Season
+  Acta cards, Match Week Road box, invitational answer, warnings, "no fighter" item, Armory anvil + damaged section, Save and Exit, trait
+  cards), all board/match items of notes I (🔴 attack trace first, belts, Shield popup, snap-back, sim beast cards, stone cap, Fast skips
+  frames, counters, #slogPin, spectator upkeep, Tasset, Carmina window) + the COMPACT ACTION BAR with its 8 extras, and the client-only online
+  items: room screen layout + bubbles under tokens, crier on click only, Exit/Close lobby, coin box in your seat, lobby ↻ Refresh + event/city
+  filters, Domus Loadouts off, reload goes straight back into the match. v0.97 (server deploy) = RECRUITING III (+ advisor levels, house grades)
+  + online passwords, region flags (time zone), house card on names, DOMUS RANK + banners.
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
