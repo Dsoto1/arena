@@ -22,6 +22,7 @@ await pg.evaluate(()=>{const p=S.players[0];p.hp.head=2;p.hp.rarm=1;window.__h=d
 await pg.waitForFunction(()=>document.querySelectorAll('#mBody .av92[data-kind="hp"] [data-av92]').length>=2,null,{timeout:8000});
 const H0=await pg.evaluate(()=>({col:document.querySelector('#mBody .av92 [data-av92] path[stroke-dasharray]').getAttribute('stroke')}));
 await pg.hover('#mBody .av92 [data-av92="head"] path[stroke-dasharray]',{force:true});await pg.waitForTimeout(250);
+await pg.waitForFunction(()=>getComputedStyle(document.querySelector('#mBody .av92 [data-av92="head"] path[stroke-dasharray]')).opacity==='1',null,{timeout:8000}).catch(()=>{}); /* the 0.12 s fade lags under load */
 const hov=await pg.evaluate(()=>[...document.querySelectorAll('#mBody .av92 [data-av92] path[stroke-dasharray]')].map(p=>getComputedStyle(p).opacity==='1'?p.parentNode.dataset.av92:null).filter(Boolean));
 await pg.click('#mBody .av92 [data-av92="head"] path',{force:true});await pg.waitForTimeout(300);
 const lab=await pg.evaluate(()=>{const g=document.querySelector('#mBody .av92 [data-av92="head"] text');return g&&g.textContent});

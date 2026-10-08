@@ -137,7 +137,7 @@ ok(o.m.hyg.on&&o.m.hyg.btn&&!o.m.hyg.old&&o.m.hyg.apart,'10 Hygeia on the banner
 /* 11 · the city kits — v0.94: the one-week kits retired; the stalls sell into the house Armory (225-v94armory) and an old kit becomes
    owned offerings on the shelf (nothing refunded twice) */
 o.k=await P.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const r={};const t=travelState(w);if(t)t.paid=true;m.coin=500;
-  openCitySquare(w.night.loc,{});await W(1500);cityShopPanel('arms');await W(400);const s=document.getElementById('arm94Who');const ids=[...s.options].map(x=>x.value).filter(Boolean);
+  openCitySquare(w.night.loc,{});await W(1500);cityShopPanel('arms');await W(400);const s=document.getElementById('arm94Who');const ids=[...s.options].map(x=>x.value).filter(Boolean).filter(id=>{const g=gById(id);return g&&!(g.inj&&(Array.isArray(g.inj)?g.inj.length:1))}); /* v0.95: only healthy fighters can be equipped (229) */
   r.note=!!s&&!document.getElementById('cityKitWho');const A=gById(ids[0]),B=gById(ids[1]);s.value=ids[1];s.dispatchEvent(new Event('change',{bubbles:true}));await W(200);
   r.follow=AR94.who===B.id&&/fits|replaces|⛔/.test(document.getElementById('citySideBody').textContent);
   const i=arm94Stock(w,CITY.li).findIndex(x=>x.t==='o');const c0=m.coin;arm94Buy(i,B.id);r.paid=c0-m.coin;r.carry=B.eq94.o.length;
