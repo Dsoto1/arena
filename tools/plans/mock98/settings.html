@@ -1,0 +1,332 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Settings — v0.98 mock</title>
+<link rel="stylesheet" href="mock98.css">
+<style>
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.grid2 .rows{grid-template-columns:1fr}
+.rows.two{grid-template-columns:1fr 1fr}
+.pane{display:none}.pane.on{display:block}
+.stack{display:grid;gap:14px}
+/* language */
+.langrow{display:flex;align-items:center;gap:16px;padding:12px 14px;background:var(--panel2);border:1px solid #3a2c1e;border-radius:6px}
+.langrow .t{flex:1}.langrow .t b{font-size:15px}.langrow .t span{display:block;color:var(--muted);font-size:15px}.langrow .t b{font-size:17px}
+.ldd{position:relative}
+.ldd .sel{min-width:260px;font-size:15px;padding:8px 12px}
+.ldd .menu{display:none;position:absolute;right:0;top:calc(100% + 4px);width:260px;background:#1b130d;border:1px solid var(--gold);border-radius:7px;box-shadow:0 14px 34px #000c;z-index:5;padding:4px}
+.ldd.open .menu{display:block}
+.ldd .menu div{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:5px;font-size:14.5px}
+.ldd .menu div.on{background:#3a2a18;color:var(--gold2)}.ldd .menu div.on::after{content:"✓";margin-left:auto;color:var(--gold)}
+.ldd .menu div:hover{background:#2a1f17}
+.ldd .menu small{margin-left:auto;color:var(--dim);font:11px var(--mono)}
+/* picture cards */
+.pics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.pic{position:relative;display:flex;gap:14px;align-items:center;padding:10px 14px 10px 10px;border:1px solid var(--line2);border-radius:8px;background:var(--panel2);cursor:pointer}
+.pic.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset,0 0 18px #d6ab4c22}
+.pic .im{flex:none;width:118px;height:150px;border-radius:6px;overflow:hidden;background:#d9c49a;display:grid;place-items:center;box-shadow:inset 0 0 0 1px #00000060}
+.pic .im img{width:100%;height:100%;object-fit:cover}
+.pic .tx b{display:block;font:400 18px var(--display);color:var(--bone);letter-spacing:.03em}
+.pic.on .tx b{color:var(--gold2)}
+.pic .tx span{display:block;color:var(--muted);font-size:15px;line-height:1.35;margin-top:3px}
+.pic .badge{position:absolute;top:9px;right:10px}
+.dot{position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:50%;border:1.5px solid #7a6040;background:#160f0b}
+.pic.on .dot,.tokpic.on .dot{border-color:var(--gold2);background:radial-gradient(circle,var(--gold2) 0 4px,#3a2a18 5px)}
+.tokpic{display:flex;flex-direction:column;gap:8px;padding:12px 14px;border:1px solid var(--line2);border-radius:8px;background:var(--panel2);position:relative;cursor:pointer}
+.tokpic.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+.tokpic .lu{height:76px;overflow:hidden;display:flex;align-items:center}
+.tokpic .lu img{height:76px}
+.tokpic b{font:400 18px var(--display);letter-spacing:.03em}.tokpic.on b{color:var(--gold2)}
+.tokpic span{color:var(--muted);font-size:14.5px;line-height:1.3}
+/* editors */
+.eds{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.ed{display:flex;gap:8px;align-items:center;padding:6px;min-width:0;border:1px solid #3a2c1e;border-radius:7px;background:var(--panel2)}
+.ed img{width:44px;height:44px;object-fit:cover;object-position:50% 35%;border-radius:5px;box-shadow:0 0 0 1px #6b5236;flex:none}
+.ed .n{font-weight:700;font-size:14px;line-height:1.1}
+.ed .s{font-size:12px;color:var(--dim);margin-top:2px}
+.ed .s.ok{color:var(--gold2)}
+.ed>div{min-width:0}.ed .n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ed .mini{max-width:100%;white-space:nowrap;overflow:hidden;margin-top:4px;display:inline-flex;align-items:center;gap:6px;background:#160f0b;border:1px solid #4a3826;border-radius:4px;padding:2px 7px;font-size:12.5px;color:var(--muted)}
+.ed.lock{opacity:.78}.ed.lock img{filter:grayscale(.6) brightness(.7)}
+/* themes */
+.thg h4{font:500 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:2px 0 8px;display:flex;gap:8px;align-items:center}
+.thg h4::after{content:"";flex:1;height:1px;background:var(--line2)}
+.sws{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px}
+.swt{border:1px solid #3a2c1e;border-radius:7px;overflow:hidden;background:var(--panel2);cursor:pointer;position:relative}
+.swt .bar{display:flex;height:30px}.swt .bar i{flex:1}
+.swt .bar i:first-child{flex:1.6}
+.swt .nm{padding:5px 9px 6px;font-size:13px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.swt .nm small{display:block;color:var(--dim);font-size:11.5px;overflow:hidden;text-overflow:ellipsis}
+.swt.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+.swt.on::after{content:"✓";position:absolute;top:5px;right:6px;width:18px;height:18px;border-radius:50%;background:var(--gold2);color:#1a1008;font:700 11px/18px var(--body);text-align:center}
+/* audio */
+.tracks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.trk{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid #3a2c1e;border-radius:6px;background:var(--panel2);font-size:14px}
+.trk .pl{width:28px;height:28px;border-radius:50%;border:1px solid #6b5236;display:grid;place-items:center;font-size:11px;color:var(--gold2);flex:none}
+.trk.on{border-color:var(--gold)}.trk.on .pl{background:var(--gold);color:#1a1008}
+.trk em{font-style:normal;color:var(--dim);font-size:12.5px;display:block}
+.trk small{margin-left:auto;font:11px var(--mono);color:var(--gold2)}
+.lockfold{margin-top:8px;padding:9px 12px;border:1px dashed #4a3826;border-radius:6px;color:var(--muted);font-size:13.5px}
+/* accessibility preview */
+.prev{padding:12px;border-radius:7px;background:#160f0b;border:1px solid #3a2c1e;display:flex;flex-wrap:wrap;gap:6px}
+.cchip{display:inline-flex;align-items:center;gap:6px;padding:3px 9px 3px 4px;border-radius:999px;background:var(--panel2);border:1px solid #3a2c1e;font-size:13px}
+.cchip i{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font:700 10px var(--mono);color:#140f0b;font-style:normal}
+.note{display:flex;gap:9px;align-items:flex-start;padding:9px 12px;border-radius:6px;background:#2a2014;border:1px solid #5a4424;color:var(--muted);font-size:13px}
+.note b{color:var(--bone)}
+.rail .tag{margin-left:auto;font:10px var(--mono);color:var(--gold);border:1px solid #6b5236;border-radius:3px;padding:0 4px}
+@media (max-width:600px){
+  .fs-hd{padding:10px 14px}.fs-hd h1{font-size:23px}.fs-hd .sub{display:none}
+  .fs-body{flex-direction:column}
+  .rail{order:2;width:auto;margin:0;border-radius:0;border-width:1px 0 0;display:flex;overflow-x:auto;align-self:stretch;flex:none;padding:6px 8px;gap:6px;background:#150f0b}
+  .rail .grp{display:none}
+  .rail a{flex:none;flex-direction:column;gap:2px;padding:6px 10px;font-size:11.5px;border:1px solid var(--line2);border-radius:999px;border-left-width:1px;flex-direction:row}
+  .rail a .ic{width:auto;font-size:14px}.rail a small,.rail a .tag{display:none}
+  .rail a.on{border-color:var(--gold)}
+  .main{padding:12px 16px 18px}
+  .grid2,.rows.two,.pics{grid-template-columns:minmax(0,1fr)!important}.grid2>*,.card{min-width:0}.tokpic,.pic{min-width:0;overflow:hidden}.tokpic .lu{height:auto}.tokpic .lu img{height:auto;max-width:100%}
+  .eds{grid-template-columns:1fr 1fr}
+  .tracks{grid-template-columns:1fr}
+  .langrow{flex-wrap:wrap}.ldd,.ldd .sel{width:100%}
+  .row{flex-wrap:wrap}.row:has(.seg) .t,.row:has(.sel) .t{flex-basis:100%}.row .sel{width:100%}
+  .sec h2{font-size:19px}.sec p{display:none}
+  .foot{display:none}
+  .pic .im{width:84px;height:110px}
+}
+</style></head><body>
+<div class="fs">
+ <div class="fs-hd"><h1>⚙ Settings</h1><span class="sub">Saved in this browser · changes apply at once</span><span class="sp"></span><button class="btn">↺ Restore all defaults</button><button class="x" aria-label="Close">✕</button></div>
+ <div class="fs-body">
+  <nav class="rail" aria-label="Settings sections">
+   <div class="grp">⚙ Play</div>
+   <a href="#general" data-p="general"><span class="ic">🎛</span>General</a>
+   <a href="#help" data-p="help"><span class="ic">💡</span>Hints &amp; board</a>
+   <div class="grp">🏛 Look</div>
+   <a href="#pieces" data-p="pieces"><span class="ic">🗿</span>Board &amp; pieces</a>
+   <a href="#themes" data-p="themes"><span class="ic">🎨</span>Themes</a>
+   <div class="grp">♪ Sound &amp; access</div>
+   <a href="#audio" data-p="audio"><span class="ic">🔊</span>Audio</a>
+   <a href="#access" data-p="access"><span class="ic">♿</span>Accessibility</a>
+  </nav>
+  <main class="main">
+
+<!-- ================= GENERAL ================= -->
+<section class="pane" id="p-general">
+ <div class="sec"><h2>General</h2><p>How the game plays and talks to you.</p></div>
+ <div class="stack">
+  <div class="langrow">
+   <span style="font-size:22px">🌐</span>
+   <div class="t"><b>Language</b><span>Game terms — class names, CF, the Fate, Missio — stay English in every language. Switching reloads the page (asks first during a match).</span></div>
+   <div class="ldd" id="ldd">
+    <div class="sel"><span class="flag" data-f="us"></span>English<span class="car">▼</span></div>
+    <div class="menu">
+     <div class="on"><span class="flag" data-f="us"></span>English</div>
+     <div><span class="flag" data-f="au"></span>English (Australia)</div>
+     <div><span class="flag" data-f="mx"></span>Español</div>
+     <div><span class="flag" data-f="it"></span>Italiano</div>
+     <div><span class="flag" data-f="br"></span>Português (Brasil)</div>
+     <div><span class="flag" data-f="fr"></span>Français</div>
+     <div><span class="flag" data-f="de"></span>Deutsch</div>
+     <div><span class="flag" data-f="jp"></span>日本語</div>
+     <div><span class="flag" data-f="cn"></span>简体中文</div>
+    </div>
+   </div>
+  </div>
+  <div class="card">
+   <h3>🎲 Gameplay</h3>
+   <div class="rows two">
+    <div class="row"><div class="t"><b>CPU speed</b><span>Same switch as the arena bar. Step waits after each CPU action.</span></div><div class="seg"><button>❚❚</button><button>⏯ Step</button><button>Slow</button><button class="on">Normal</button><button>Fast</button></div></div>
+    <div class="row"><div class="t"><b>Animations</b><span>Flying stones and spears, the clean-up crew, market peeks.</span></div><div class="seg"><button class="on">Full</button><button>Quick</button><button>Off</button></div></div>
+    <div class="row"><div class="t"><b>Confirm before End turn</b><span>Asks once when you still have moves or attacks left.</span></div><span class="sw"></span></div>
+    <div class="row"><div class="t"><b>Follow camera</b><span>When zoomed in, the view follows whoever's turn it is.</span></div><span class="sw on"></span></div>
+    <div class="row"><div class="t"><b>Event briefing</b><span>The rounds, the rules and who fights, when the horns sound.</span></div><span class="sw on"></span></div>
+    <div class="row"><div class="t"><b>Context menus</b><span>Right-click or long-press anything on the sand for its actions.</span></div><span class="sw on"></span></div>
+    <div class="row" style="grid-column:1/-1"><div class="t"><b>Famous visitors</b><span>Now and then an emperor, a poet or a legend takes a seat.</span></div><span class="sw on"></span></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- ================= HINTS & BOARD ================= -->
+<section class="pane" id="p-help">
+ <div class="sec"><h2>Hints &amp; board</h2><p>What the game tells you, and what shows on the sand.</p></div>
+ <div class="grid2">
+  <div class="card">
+   <h3>💡 Hints &amp; help <small>H toggles all</small></h3>
+   <div class="rows">
+    <div class="row"><div class="t"><b>Hints — master switch</b><span>Every hint at once. Never in Ranked online matches.</span></div><span class="sw on"></span></div>
+    <div class="row sub"><span class="ck on"></span><div class="t"><b>🧭 Strategy panel</b><span>The hint box under your actions.</span></div></div>
+    <div class="row sub"><span class="ck on"></span><div class="t"><b>📖 Rule popups</b><span>A short window the first time a rule comes up.</span></div></div>
+    <div class="row sub"><span class="ck on"></span><div class="t"><b>✨ Turn hints</b><span>One suggested move glows gold, with a line on why.</span></div></div>
+    <div class="row sub"><span class="ck"></span><div class="t"><b>📜 Rule hints</b><span>Hovering a tile or button adds what the rules say.</span></div></div>
+    <div class="row sub"><span class="ck on"></span><div class="t"><b>📰 Turn recap</b><span>What happened since your last turn.</span></div></div>
+   </div>
+  </div>
+  <div class="card">
+   <h3>🎯 On the board</h3>
+   <div class="rows">
+    <div class="row"><div class="t"><b>Floating combat numbers</b><span>Damage, healing, CF and coin rise from the board.</span></div><span class="sw on"></span></div>
+    <div class="row"><div class="t"><b>Card reveals</b><span>Drawn and played cards show in the arena corner.</span></div><span class="sw on"></span></div>
+    <div class="row"><div class="t"><b>Log on the arena</b><span>The newest log lines over the arena corner.</span></div><span class="sw"></span></div>
+    <div class="row"><div class="t"><b>Screen shake on big hits</b><span>6+ damage or a fall.</span></div><span class="sw on"></span></div>
+    <div class="row"><div class="t"><b>Blood &amp; severed limbs</b><span>Off hides the red; lost limbs still count.</span></div><span class="sw on"></span></div>
+    <div class="row"><div class="t"><b>See-through</b><span>Fade pillars in front of what you look at (X).</span></div><div class="seg"><button class="on">Auto</button><button>On</button><button>Off</button></div></div>
+   </div>
+  </div>
+  <div class="card" style="grid-column:1/-1">
+   <h3>🗣 Voices &amp; bubbles</h3>
+   <div class="rows two">
+    <div class="row"><div class="t"><b>Spectator shouts</b><span>"Bread and blood!", "Murderer!" and the rest.</span></div><span class="sw on"></span></div>
+    <div class="row"><div class="t"><b>The editor in the box</b><span>Flavius reacts — cheers, insults, the odd tear.</span></div><span class="sw on"></span></div>
+    <div class="row"><div class="t"><b>CPU thought bubbles</b><span>CPU gladiators speak their minds.</span></div><span class="sw on"></span></div>
+    <div class="row"><div class="t"><b>City-square chatter</b><span>Townsfolk gossip in the Manager's forum.</span></div><span class="sw on"></span></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- ================= BOARD & PIECES ================= -->
+<section class="pane" id="p-pieces">
+ <div class="sec"><h2>Board &amp; pieces</h2><p>How gladiators, Blessings and the editor in the box look.</p></div>
+ <div class="stack">
+  <div class="grid2">
+   <div class="card">
+    <h3>🗿 Gladiators &amp; beasts</h3>
+    <div style="display:grid;gap:10px">
+     <div class="tokpic on"><span class="dot"></span><b>3D minis</b><div class="lu"><img src="img/mini_lineup.webp" alt=""></div><span>Virgilante's sculpted minis on their bases — the eight classes and the printed beasts.</span></div>
+     <div class="tokpic"><span class="dot"></span><b>Figures</b><div class="lu"><img src="img/fig_lineup.webp" alt=""></div><span>Sculpted tokens for every class, beast and creation.</span></div>
+    </div>
+    <p class="muted" style="font-size:12.5px;margin:8px 2px 0">Your own creations always wear their own 3D tokens.</p>
+   </div>
+   <div class="card">
+    <h3>🏺 Blessings on pillars</h3>
+    <div style="display:grid;gap:10px">
+     <div class="pic on"><span class="dot"></span><div class="im"><img src="img/pillar_pots.webp" alt="Clay pot on a pillar"></div><div class="tx"><b>Clay pots</b><span>A 3D pot on each pillar. When it falls it breaks and the offering lands.</span></div></div>
+     <div class="pic"><span class="dot"></span><div class="im"><img src="img/pillar_tokens.webp" alt="Token rounds on a pillar"></div><div class="tx"><b>Token rounds</b><span>The printed Blessing tokens, face up. A knocked-off token flips to its offering.</span></div></div>
+    </div>
+    <div class="rows" style="margin-top:10px"><div class="row"><div class="t"><b>Floor spikes</b><span>The metal of the 3D spike caps.</span></div><div class="seg"><button class="on">Iron</button><button>Bronze</button></div></div></div>
+   </div>
+  </div>
+  <div class="card">
+   <h3>🎭 Editors in the box <small>3 / 12 cities won · win a match at a city to unlock its editor</small></h3>
+   <div class="eds" id="eds"></div>
+  </div>
+ </div>
+</section>
+
+<!-- ================= THEMES ================= -->
+<section class="pane" id="p-themes">
+ <div class="sec"><h2>Themes</h2><p>One click changes the whole palette. Your board and your panels follow.</p></div>
+ <div class="grid2" style="grid-template-columns:1fr 330px">
+  <div class="thg" id="thg"></div>
+  <div class="stack">
+   <div class="card"><h3>✦ Tune it</h3>
+    <div style="display:grid;gap:12px">
+     <div><div class="muted" style="font-size:13px;margin-bottom:4px">Highlight strength</div><div class="range"><span class="tr"><i style="width:50%"></i><b style="left:50%"></b></span><output>50%</output></div></div>
+     <div><div class="muted" style="font-size:13px;margin-bottom:4px">Outside-zone shade</div><div class="range"><span class="tr"><i style="width:53%"></i><b style="left:53%"></b></span><output>50%</output></div></div>
+     <div><div class="muted" style="font-size:13px;margin-bottom:4px">Board brightness</div><div class="range"><span class="tr"><i style="width:50%"></i><b style="left:50%"></b></span><output>0</output></div></div>
+    </div>
+    <div class="rows" style="margin-top:12px"><div class="row"><div class="t"><b>Location flavours</b><span>Each arena tints sand and stone its own way.</span></div><span class="sw on"></span></div></div>
+   </div>
+   <div class="card"><h3>💾 Save this look</h3>
+    <div style="display:flex;gap:6px"><span class="sel" style="min-width:0;flex:1;color:var(--dim)">Name — e.g. Night games</span><button class="btn gold">Save</button></div>
+    <div style="display:grid;gap:6px;margin-top:10px">
+     <div class="trk"><span style="display:flex;width:56px;height:18px;border-radius:3px;overflow:hidden"><i style="flex:1;background:#140c18"></i><i style="flex:1;background:#2a1a33"></i><i style="flex:1;background:#d8b04a"></i><i style="flex:1;background:#c0457a"></i></span>Purple nights<small style="color:var(--muted)">Apply · ✕</small></div>
+    </div>
+   </div>
+   <details class="card" style="padding:10px 14px"><summary style="cursor:pointer;color:var(--muted)">🖌 Custom colours — interface, board, furniture</summary></details>
+  </div>
+ </div>
+</section>
+
+<!-- ================= AUDIO ================= -->
+<section class="pane" id="p-audio">
+ <div class="sec"><h2>Audio</h2><p>Every arena has its own theme, unlocked by winning there.</p></div>
+ <div class="grid2" style="grid-template-columns:400px 1fr">
+  <div class="stack">
+   <div class="card"><h3>🔊 Sound</h3>
+    <div class="rows">
+     <div class="row"><div class="t"><b>Sound</b><span>M mutes everything.</span></div><span class="sw on"></span></div>
+     <div class="row"><div class="t"><b>Arena music</b><span>Grows with the rounds.</span></div><span class="sw on"></span></div>
+     <div class="row"><div class="t"><b>Sound effects</b><span>Hits, coin, cards, fanfares.</span></div><span class="sw on"></span></div>
+     <div class="row"><div class="t"><b>Music between events</b><span>Roma's theme, softly.</span></div><span class="sw"></span></div>
+    </div>
+    <div style="display:grid;gap:12px;margin-top:14px">
+     <div><div class="muted" style="font-size:13px;margin-bottom:4px">Music volume</div><div class="range"><span class="tr"><i style="width:70%"></i><b style="left:70%"></b></span><output>70</output></div></div>
+     <div><div class="muted" style="font-size:13px;margin-bottom:4px">Effects volume</div><div class="range"><span class="tr"><i style="width:85%"></i><b style="left:85%"></b></span><output>85</output></div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:14px"><span class="muted" style="font-size:13px">Try it</span><div class="seg"><button>Hit</button><button>Coin</button><button>CF</button><button>Fall</button><button>Victory</button></div></div>
+   </div>
+  </div>
+  <div class="card"><h3>🎶 The music <small>5 of 16 themes yours</small></h3>
+   <div class="tracks" id="tracks"></div>
+   <div class="lockfold">▸ 🔒 11 locked — win an event in their city to hear each</div>
+  </div>
+ </div>
+</section>
+
+<!-- ================= ACCESSIBILITY ================= -->
+<section class="pane" id="p-access">
+ <div class="sec"><h2>Accessibility</h2><p>Bigger text, calmer motion, colours you can tell apart.</p></div>
+ <div class="grid2">
+  <div class="card"><h3>👁 Reading &amp; motion</h3>
+   <div class="rows">
+    <div class="row"><div class="t"><b>Text size</b><span>Panels, log and windows. The arena itself keeps its size.</span></div><div class="seg"><button>100%</button><button class="on">115%</button><button>130%</button></div></div>
+    <div class="row"><div class="t"><b>Reduce motion</b><span>No pulses, glows or camera eases. Every effect has a still version.</span></div><span class="sw"></span></div>
+    <div class="row"><div class="t"><b>Colour-blind colours</b><span>Okabe–Ito class colours, a class letter on every token, blue/orange signals.</span></div><span class="sel" style="min-width:200px">Red-green safe<span class="car">▼</span></span></div>
+    <div class="row"><div class="t"><b>Confirm before End turn</b><span>Also in General.</span></div><span class="sw"></span></div>
+   </div>
+  </div>
+  <div class="stack">
+   <div class="card"><h3>◐ Preview</h3>
+    <div class="prev" style="font-size:15px">
+     <span class="cchip"><i style="background:#d55e00">S</i>Soldier</span><span class="cchip"><i style="background:#0072b2">R</i>Royalty</span><span class="cchip"><i style="background:#009e73">H</i>Hero</span><span class="cchip"><i style="background:#f0e442">S</i>Slave</span><span class="cchip"><i style="background:#e8e2d6">V</i>Veteranus</span><span class="cchip"><i style="background:#e69f00">A</i>Amazonia</span><span class="cchip"><i style="background:#cc79a7">V</i>Venatore</span><span class="cchip"><i style="background:#999">D</i>Damnatio</span>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;font-size:13.5px"><span class="badge" style="border-color:#3d8fd6;color:#9cc8f0">◆ HP 5</span><span class="badge" style="border-color:#e69f00;color:#ffc766">▲ −2 AP</span><span class="muted">signals keep a shape, not only a colour</span></div>
+   </div>
+   <div class="card"><h3>📜 Text at 115%</h3>
+    <div style="font-size:17px;line-height:1.5;display:grid;gap:4px">
+     <div style="border-left:3px solid #4f9a57;padding-left:9px"><b style="color:#7fc488">Hero</b> hits <b style="color:#e8c46a">Slave</b>'s chest for 3 — <span style="color:var(--muted)">2 AP, 1 HP</span></div>
+     <div style="border-left:3px solid #d4b13c;padding-left:9px"><b style="color:#e8c46a">Slave</b> moves to D-7 and loots a Gladius</div>
+     <div style="border-left:3px solid var(--gold);padding-left:9px;color:var(--muted)">The crowd roars — <b style="color:var(--gold2)">+2 CF</b> to Hero</div>
+    </div>
+   </div>
+   <div class="note"><span>⌨</span><span><b>Keyboard play is always on.</b> Tab to the board, arrows move the cursor, Enter acts, I reads the board aloud for screen readers.</span></div>
+  </div>
+ </div>
+</section>
+
+  </main>
+ </div>
+ <div class="foot"><span>💾 Saves and backups live in <b style="color:var(--muted)">💾 Saves</b> on the main menu.</span><span class="sp"></span><span>arena · v0.98</span></div>
+</div>
+<script>
+const FL={
+ us:'<svg viewBox="0 0 22 15"><rect width="22" height="15" fill="#b22234"/><g fill="#fff">'+[1,3,5,7,9,11,13].map(y=>`<rect y="${y*15/13}" width="22" height="${15/13}"/>`).join('')+'</g><rect width="9.5" height="8.1" fill="#3c3b6e"/></svg>',
+ au:'<svg viewBox="0 0 22 15"><rect width="22" height="15" fill="#012169"/><path d="M0 0L11 7.5M11 0L0 7.5" stroke="#fff" stroke-width="1.6"/><path d="M5.5 0v7.5M0 3.75h11" stroke="#fff" stroke-width="2.4"/><path d="M5.5 0v7.5M0 3.75h11" stroke="#c8102e" stroke-width="1.2"/><g fill="#fff"><circle cx="5.5" cy="11.5" r="1.3"/><circle cx="16.5" cy="3" r=".8"/><circle cx="14" cy="7" r=".8"/><circle cx="19" cy="6.5" r=".8"/><circle cx="16.5" cy="12" r=".9"/></g></svg>',
+ mx:'<svg viewBox="0 0 22 15"><rect width="7.33" height="15" fill="#006847"/><rect x="7.33" width="7.34" height="15" fill="#fff"/><rect x="14.67" width="7.33" height="15" fill="#ce1126"/><circle cx="11" cy="7.5" r="1.8" fill="#8a6a2a"/></svg>',
+ it:'<svg viewBox="0 0 22 15"><rect width="7.33" height="15" fill="#009246"/><rect x="7.33" width="7.34" height="15" fill="#fff"/><rect x="14.67" width="7.33" height="15" fill="#ce2b37"/></svg>',
+ br:'<svg viewBox="0 0 22 15"><rect width="22" height="15" fill="#009c3b"/><path d="M11 1.8L20 7.5 11 13.2 2 7.5z" fill="#ffdf00"/><circle cx="11" cy="7.5" r="3.3" fill="#002776"/></svg>',
+ fr:'<svg viewBox="0 0 22 15"><rect width="7.33" height="15" fill="#0055a4"/><rect x="7.33" width="7.34" height="15" fill="#fff"/><rect x="14.67" width="7.33" height="15" fill="#ef4135"/></svg>',
+ de:'<svg viewBox="0 0 22 15"><rect width="22" height="5" fill="#000"/><rect y="5" width="22" height="5" fill="#dd0000"/><rect y="10" width="22" height="5" fill="#ffce00"/></svg>',
+ jp:'<svg viewBox="0 0 22 15"><rect width="22" height="15" fill="#fff"/><circle cx="11" cy="7.5" r="4.2" fill="#bc002d"/></svg>',
+ cn:'<svg viewBox="0 0 22 15"><rect width="22" height="15" fill="#de2910"/><g fill="#ffde00"><circle cx="4.5" cy="4" r="2"/><circle cx="8.5" cy="1.8" r=".6"/><circle cx="9.8" cy="3.5" r=".6"/><circle cx="9.8" cy="5.8" r=".6"/><circle cx="8.5" cy="7.4" r=".6"/></g></svg>'};
+document.querySelectorAll('.flag[data-f]').forEach(e=>e.innerHTML=FL[e.dataset.f]);
+/* editors */
+const cities=[['Syracusae',0],['Verona',0],['Arles',1],['Capua',1],['Thysdrus',0],['Roma',2],['Nemausus',0],['Pompeii',1],['Leptis Magna',0],['Uthina',0],['Pola',0],['Puteoli',0]];
+const edNames={Arles:'Lucius Arelas',Capua:'Batiatus Minor',Pompeii:'Gaia Cinnabara'};
+document.getElementById('eds').innerHTML=cities.map(([c,s])=>`<div class="ed ${s?'':'lock'}"><img src="../../../assets/flavmood_${s===1?'smug':'calm'}.webp" alt=""><div><div class="n">${c}</div>${s===2?'<div class="s ok">Flavius’s own city</div>':s?`<div class="s ok">✓ unlocked</div>`:'<div class="s">🔒 win here</div>'}<div class="mini">${s===1?edNames[c]:'Flavius'} ▾</div></div></div>`).join('');
+/* themes */
+const TH=[['Themes',[['Arena (default)','',['#140f0b','#2a1f17','#d6ab4c','#d24a3a','#6fae4c','#d9c49a'],1],['Flavius Rule','Gold, red, carbon',['#0b0b0b','#201e1b','#d4a02c','#e03a32','#c9a227','#3a3632']]]],
+ ['Roman',[['Imperial Purple','Tyrian purple, gold leaf',['#140c18','#2a1a33','#d8b04a','#c0457a','#7fae5c','#d9c7a2']],['Pompeii Fresco','Cinnabar and ochre',['#1a0d0a','#341c16','#d49a3a','#d9523a','#7aa04c','#e2c49a']],['Senate Marble','Marble, slate, laurel',['#101316','#222a30','#9fbf6b','#d05a4e','#8fc46a','#dcdad3']]]],
+ ['Accessibility',[['Red-green safe','Blue / orange signals',['#140f0b','#2a1f17','#d6ab4c','#e69f00','#3d8fd6','#d9c49a']],['Blue-yellow safe','Red / teal signals',['#140f0b','#2a1f17','#e06a8a','#d24a3a','#009e8f','#d9c49a']],['High contrast','Black, white, yellow',['#000','#1a1a1a','#ffd400','#ff5050','#40e040','#e8d9b8']],['Large text','Arena colours, 125%',['#140f0b','#2a1f17','#d6ab4c','#d24a3a','#6fae4c','#d9c49a']]]],
+ ['Arenas',[['Syracusae','Sea Cliff',['#1d2a2b','#39554f','#274b52','#4f7a72','#dccfa8','#cec092']],['Verona','Rose Stone',['#2a1a1c','#4a2530','#7a4a44','#d24a3a','#e0bfa8','#d2ae94']],['Arles','Gallic Gold',['#251f2e','#3a2c44','#6e5a3a','#d6ab4c','#e0c894','#d2b880']],['Capua','Old Blood',['#2a1f17','#33150f','#5f3020','#e04a34','#c9ab7e','#b8996c']],['Thysdrus','Amber Sands',['#2a1f17','#4a2a10','#8a5a24','#e8962e','#e3bc7e','#d5aa68']],['Roma','Colosseum',['#2a1f17','#2b2118','#7a5c2c','#dcae42','#d9c49a','#cbb488']],['Nemausus','Laurel Green',['#2a1f17','#22301e','#4e6038','#7cb857','#cfc79a','#c0b888']],['Pompeii','Ash & Cinnabar',['#2a1f17','#38201a','#6a4234','#d9523a','#c9bcab','#bbaf9c']],['Leptis Magna','Desert Marble',['#2a1f17','#4f4433','#8f7c50','#f6efe0','#e8d8ae','#dbca9a']],['Uthina','Punic Dusk',['#2a1f17','#341a2e','#6a3c50','#ff6a80','#d4b088','#c5a074']],['Pola','Adriatic',['#2a1f17','#1e2c3a','#46607a','#c2ccda','#d8cdb2','#cabfa2']],['Puteoli','Sulfur Fields',['#2a1f17','#3a3313','#6e6224','#e6d23c','#d6c488','#c8b672']]]]];
+document.getElementById('thg').innerHTML=TH.map(([g,L])=>`<h4>${g}</h4><div class="sws">${L.map(([n,d,c,on])=>`<div class="swt ${on?'on':''}" title="${d}"><div class="bar">${c.map(x=>`<i style="background:${x}"></i>`).join('')}</div><div class="nm">${n}<small>${d||'The house colours'}</small></div></div>`).join('')}</div>`).join('');
+/* tracks */
+const TR=[['Roma','Ave Imperator',1,1],['Capua','The School of Batiatus',1],['Arles','Dusk on the Rhône',1],['Pompeii','Under the Mountain',1],['Manager','The Lanista’s March',1]];
+document.getElementById('tracks').innerHTML=TR.map(([c,n,u,on])=>`<div class="trk ${on?'on':''}"><span class="pl">${on?'❚❚':'▶'}</span><span><b>${c}</b><em>${n}</em></span>${on?'<small>♪ now playing</small>':''}</div>`).join('');
+/* pane switching */
+function show(){let h=(location.hash||'#general').slice(1);const open=h.endsWith('+lang');h=h.replace('+lang','');
+ document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.id==='p-'+h));
+ document.querySelectorAll('.rail a').forEach(a=>a.classList.toggle('on',a.dataset.p===h));
+ document.getElementById('ldd').classList.toggle('open',open)}
+addEventListener('hashchange',show);show();
+document.querySelector('#ldd .sel').onclick=()=>document.getElementById('ldd').classList.toggle('open');
+</script>
+</body></html>

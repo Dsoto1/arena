@@ -1,0 +1,172 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Play Now — v0.98 mock</title>
+<link rel="stylesheet" href="mock98.css">
+<style>
+.pn{position:fixed;inset:0;display:flex;flex-direction:column;background:linear-gradient(#1d150f,#160f0b);overflow:auto}
+.top{display:flex;align-items:center;gap:14px;padding:12px 22px;border-bottom:1px solid var(--line2);background:linear-gradient(#21180f,#1a120d);flex:none;position:sticky;top:0;z-index:5}
+.top h1{font:400 25px/1 var(--display);color:var(--gold2);letter-spacing:.04em;white-space:nowrap}
+.top .sp{flex:1}
+.date{white-space:nowrap;display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);border:1px solid var(--line2);border-radius:6px;padding:5px 10px;background:var(--panel)}
+.date b{font:400 15px var(--display);color:var(--bone)}
+/* upper-right group: summary · 🎲 · Begin Event */
+.go{display:flex;align-items:stretch;border:1px solid #6b5236;border-radius:8px;background:#160f0b;box-shadow:0 0 0 1px #00000060,0 6px 16px #0007;overflow:visible}
+.go .sum{display:flex;align-items:center;gap:9px;padding:0 14px;font-size:14.5px;color:var(--muted);white-space:nowrap;max-width:430px}
+.go .sum .et{width:26px;height:26px;border-radius:50%;background:url(../../../assets/events.jpg) 100% 0%/500% 300%;box-shadow:0 0 0 1px var(--gold)}
+.go .sum b{color:var(--bone);font-weight:700}
+.go .sum .gd{color:var(--gold2)}
+.dice{position:relative;width:46px;display:grid;place-items:center;border-left:1px solid #4a3826;border-right:1px solid #4a3826;background:var(--panel2);cursor:pointer;font-size:22px}
+.dice:hover,.dice.hov{background:#3a2a18;box-shadow:inset 0 0 0 1px var(--gold)}
+.tipb{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);width:250px;padding:9px 11px;border-radius:7px;border:1px solid var(--gold);background:#1b130d;box-shadow:0 12px 28px #000c;font-size:13.5px;color:var(--bone);line-height:1.35;z-index:9;text-align:left}
+.tipb::before{content:"";position:absolute;top:-6px;left:50%;margin-left:-6px;width:10px;height:10px;background:#1b130d;border-left:1px solid var(--gold);border-top:1px solid var(--gold);transform:rotate(45deg)}
+.tipb b{color:var(--gold2)}.tipb small{display:block;color:var(--muted);margin-top:3px;font-size:12.5px}
+.begin{border:0;border-radius:0 7px 7px 0;padding:0 22px;font:400 19px var(--display);letter-spacing:.06em;color:#fff3e6;background:linear-gradient(#c23b2e,#8f2219);box-shadow:inset 0 1px 0 #ff9a85a0,inset 0 -2px 0 #5a120c;cursor:pointer;white-space:nowrap;height:44px}
+.x{flex:none}
+.body{padding:12px 22px 18px;display:grid;gap:12px}
+.cardp{background:var(--panel);border:1px solid var(--line2);border-radius:9px;padding:10px 14px 12px}
+.ttl{font:400 15px var(--display);letter-spacing:.08em;color:var(--gold2);display:flex;gap:10px;align-items:baseline;margin-bottom:8px}
+.ttl small{font:13.5px var(--body);letter-spacing:0;color:var(--muted)}
+.ttl .sp{flex:1}
+.row1{display:grid;grid-template-columns:330px minmax(0,1fr);gap:12px}
+.map{position:relative;width:100%;aspect-ratio:1/1;max-height:262px;border-radius:7px;overflow:hidden;background:url(../../../assets/map.jpg) center/cover;box-shadow:inset 0 0 0 1px #00000080}
+.pin{position:absolute;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#2a1d14;border:1.5px solid #e9d6a8;color:#f3e3bd;font:600 9.5px/15px var(--mono);text-align:center;box-shadow:0 1px 3px #000}
+.pin.on{width:26px;height:26px;margin:-13px 0 0 -13px;background:#a3281f;border:2px solid var(--gold2);font-size:12px;line-height:22px;box-shadow:0 0 0 4px #d6ab4c55,0 2px 6px #000}
+.city{display:flex;gap:8px;align-items:center;margin-top:8px}
+.city .sel{flex:1;min-width:0;white-space:nowrap}
+.city b{font:400 18px var(--display);color:var(--gold2)}
+.mods{display:flex;gap:6px;margin-top:6px;font-size:12.5px;align-items:center;color:var(--muted)}
+.mods span{padding:1px 7px;border-radius:3px;border:1px solid #4d7a43;color:#bfe3b0}.mods span.b{border-color:#c0513f;color:#ffb7a8}
+.strip{display:flex;gap:6px;overflow:hidden;margin-bottom:10px}
+.ev{flex:none;width:66px;border:1px solid #3a2c1e;border-radius:6px;padding:3px;background:var(--panel2);text-align:center;font-size:11px;color:var(--muted)}
+.ev i{display:block;aspect-ratio:480/692;border-radius:3px;background-image:url(../../../assets/events.jpg);background-size:500% 300%;margin-bottom:2px}
+.ev.on{border-color:var(--gold);color:var(--gold2);box-shadow:0 0 0 1px var(--gold) inset}
+.what{display:grid;grid-template-columns:150px minmax(0,1fr);gap:14px}
+.bigcard{aspect-ratio:480/692;border-radius:6px;background:url(../../../assets/events.jpg) 100% 0%/500% 300%;box-shadow:0 8px 20px #000b,0 0 0 1px #6b5236}
+.evh{display:flex;align-items:center;gap:10px}
+.evh h2{font:400 25px var(--display);color:var(--gold2);letter-spacing:.03em}
+.evh small{color:var(--muted);font-size:14px}
+.desc{margin:4px 0 8px;font-size:15px;color:#e2d5bb}
+.rchips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.rchips span{font:12.5px var(--mono);padding:3px 8px;border:1px solid var(--line2);border-radius:4px;background:#160f0b}
+.rchips span em{font-style:normal;color:#ffb7a8}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:5px 18px;font-size:14.5px;border-top:1px solid #3a2c1e;padding-top:8px}
+.opts label{display:flex;gap:8px;align-items:center}
+.opts .ck{width:17px;height:17px;font-size:11px}
+/* who */
+.who{display:grid;grid-template-columns:120px minmax(0,1fr) 270px;gap:12px;align-items:start}
+.pc{display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:4px}
+.pc .bd{width:96px;height:96px;background:url(../../../assets/badge_players.webp) center/contain no-repeat;filter:drop-shadow(0 4px 10px #000a)}
+.pc .lbl{font:500 10.5px var(--mono);letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.cnt{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;width:112px}
+.cnt button{height:26px;border:1px solid var(--line2);background:var(--panel2);border-radius:4px;font:500 13px var(--mono);cursor:pointer;padding:0}
+.cnt button.on{border-color:var(--gold);background:#3a2a18;color:var(--gold2);box-shadow:0 0 0 1px var(--gold) inset}
+.cnt button.no{opacity:.32;cursor:default}
+.pc small{font-size:12px;color:var(--dim);text-align:center;line-height:1.25}
+.seats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.seat{position:relative;border:1px solid #3a2c1e;border-top:3px solid var(--pc);border-radius:8px;background:linear-gradient(180deg,color-mix(in srgb,var(--pc) 12%,#2a1f17),#231a13 60%);padding:8px 10px 9px;min-height:150px;overflow:hidden}
+.seat .no{font:500 10.5px var(--mono);letter-spacing:.1em;color:var(--muted);display:flex;align-items:center;gap:6px}
+.team{font:600 10px var(--mono);padding:1px 6px;border-radius:3px;color:#140f0b}
+.seat h3{font:400 21px var(--display);color:var(--pc);margin:3px 0 0;letter-spacing:.02em;text-shadow:0 1px 0 #000}
+.seat .sub{font-size:13px;color:var(--muted)}
+.seat .mini{position:absolute;right:4px;top:12px;width:70px;height:80px;background-size:contain;background-repeat:no-repeat;background-position:center bottom;filter:drop-shadow(0 4px 6px #000a)}
+.seat .ctl{display:flex;gap:6px;align-items:center;margin-top:7px}
+.seat .seg button{padding:3px 9px;font-size:13px}
+.mind{font-size:12.5px;padding:2px 8px;border-radius:999px;border:1px solid #6b5236;color:var(--gold2);background:#2e2212}
+.wr{margin-top:8px;font-size:12.5px;color:var(--muted)}.wr b{color:var(--bone)}
+.wr .tr{height:5px;border-radius:3px;background:#160f0b;margin-top:3px;overflow:hidden}.wr .tr i{display:block;height:100%;background:var(--pc)}
+.seat.you{box-shadow:0 0 0 1px var(--gold),0 0 18px #d6ab4c30}
+
+.add{border:1.5px dashed #4a3826;border-radius:8px;display:grid;place-items:center;color:var(--dim);font-size:14px;min-height:150px;text-align:center;background:#1a130e}
+.add b{display:block;font-size:22px;color:var(--muted)}
+.stands{position:sticky;top:76px;border:1px solid var(--line2);border-top:3px solid var(--gold);border-radius:9px;background:linear-gradient(#2a1f17,#1f1711);padding:10px 12px}
+.stands h3{font:400 20px var(--display);color:var(--gold2);display:flex;gap:8px;align-items:center}
+.stands .sub{font-size:13px;color:var(--muted);margin:-1px 0 8px}
+.crowd{height:58px;border-radius:6px;margin-bottom:9px;background:url(../../../assets/stands_wood81.webp) center/cover;position:relative;overflow:hidden;box-shadow:inset 0 0 0 1px #00000080}
+.crowd::after{content:"13K";position:absolute;right:8px;bottom:5px;font:500 16px var(--mono);color:var(--gold2);text-shadow:0 1px 3px #000}
+.crowd i{position:absolute;bottom:6px;width:12px;height:16px;border-radius:6px 6px 2px 2px;opacity:.9}
+.meter{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:7px;background:#160f0b;border:1px solid #3a2c1e}.meter b{font:400 30px var(--display);color:var(--gold2)}.meter span{font-size:14px;line-height:1.15;color:var(--bone)}.meter small{color:var(--muted);font-size:12px}
+.stands .f{font-size:13px;color:var(--muted);margin:8px 0 3px}
+.stands .sel{width:100%;min-width:0}
+.stands label{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;margin-top:9px;color:#d9ccb3;line-height:1.3}
+.stands .ck{width:17px;height:17px;margin-top:1px}
+.pers{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.pers span{font-size:12px;padding:1px 7px;border-radius:999px;border:1px solid #4a3826;color:var(--muted)}
+@media (max-width:600px){.row1,.who,.what{grid-template-columns:1fr}.seats{grid-template-columns:1fr 1fr}.go .sum{display:none}}
+</style></head><body>
+<div class="pn">
+ <div class="top">
+  <h1>Play Now</h1>
+  <div class="seg"><button class="on">Single event</button><button>Festival</button><button>Missio</button><button>🏆 Tournament</button></div>
+  <div class="date">📅 <b>January 1</b> · this week: Verona</div>
+  <span class="sp"></span>
+  <div class="go">
+   <div class="sum"><span class="et"></span><span><b>Familia</b> at <b>Thysdrus</b> · 6 gladiators · 3 v 3 · You: <span class="gd">Hero</span></span></div>
+   <div class="dice hov" aria-label="Random event">🎲
+    <div class="tipb"><b>🎲 Random event</b><br>A random event in a random city — you as a random class against CPUs.<small>Only rolls the setup; Begin Event when you like it.</small></div>
+   </div>
+   <button class="begin">Begin Event ▸</button>
+  </div>
+  <button class="x" aria-label="Close">✕</button>
+ </div>
+ <div class="body">
+  <div class="row1">
+   <div class="cardp">
+    <div class="ttl">Where <small>· the city</small></div>
+    <div class="map" id="map"></div>
+    <div class="city"><b>Thysdrus</b><span class="sel">5 · Thysdrus (home)<span class="car">▼</span></span><button class="btn" title="Random city">🎲</button></div>
+    <div class="mods">Class modifiers: <span>Soldier +4 AP</span><span class="b">Hero no Shield</span></div>
+   </div>
+   <div class="cardp">
+    <div class="ttl">What <small>· the event</small><span class="sp"></span><small>13 printed · 2 of yours</small></div>
+    <div class="strip" id="strip"></div>
+    <div class="what">
+     <div class="bigcard"></div>
+     <div>
+      <div class="evh"><h2>Familia</h2><small>Team Elimination · teams of 3</small></div>
+      <p class="desc">Two houses, one sand. Fight beside your teammates; the last team standing wins. No Crowd Favor, no class abilities.</p>
+      <div class="rchips"><span>R1 Elimination Royale · Z1 · PvE · PvP · <em>no CF · no CA</em></span><span>Win: 1 team remains · 15 CF</span><span>🏆 Best: won as Hero, 31 CF</span></div>
+      <div class="opts">
+       <label><span class="ck"></span>Mandata Flavi secret objectives</label>
+       <label><span class="ck on"></span>Apply Thysdrus's class modifiers</label>
+       <label><span class="ck"></span>Shuffle optional offerings into the Blessings bag</label>
+       <label><span class="ck"></span>Carmina Fescennina before the event</label>
+       <label><span class="ck"></span>Zora in the arena deck</label>
+       <label>Time of day <span class="seg" style="margin-left:6px"><button class="on">☀ Day</button><button>☾ Night</button></span></label>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="cardp">
+   <div class="ttl">Who <small>· the gladiators</small><span class="sp"></span><small>Printed classes · <span class="gold">⭐ Your characters</span> in each seat's picker</small></div>
+   <div class="who">
+    <div class="pc">
+     <div class="bd" role="img" aria-label="Players"></div>
+     <span class="lbl">Gladiators</span>
+     <div class="cnt"><button class="no">2</button><button class="no">3</button><button>4</button><button>5</button><button class="on">6</button><button>7</button><button>8</button></div>
+     <small>Familia seats 4–8 in teams</small>
+    </div>
+    <div class="seats" id="seats"></div>
+    <aside class="stands">
+     <h3>🎟 The Stands</h3>
+     <div class="sub">The crowd of Thysdrus</div>
+     <div class="meter"><b>13K</b><span>spectators<br><small>Thysdrus · a full house</small></span></div>
+     <div class="f">Crowd size</div>
+     <span class="sel">🎲 Random — the empire decides<span class="car">▼</span></span>
+     <div class="f">Personalities <span style="color:var(--dim)">· interactivity 100%</span></div>
+     <div class="pers"><span>Bloodthirsty</span><span>Gamblers</span><span>Loyal fans</span><span>Hecklers</span><span>＋2</span></div>
+     <label><span class="ck"></span><span><b>Play as a spectator</b> — every seat turns CPU. Earn CF each rotation, throw stones or offerings, switch sections, chant for Tholo.</span></label>
+    </aside>
+   </div>
+  </div>
+ </div>
+</div>
+<script>
+const L=[[1,.7089,.6261],[2,.4914,.0925],[3,.2738,.2015],[4,.7396,.2991],[5,.4862,.7858],[6,.636,.2611],[7,.1907,.1711],[8,.746,.3346],[9,.7409,.9759],[10,.4543,.7199],[11,.6859,.052],[12,.7191,.3232]];
+document.getElementById('map').innerHTML=L.map(([n,x,y])=>`<span class="pin ${n===5?'on':''}" style="left:${x*100}%;top:${Math.min(y,.96)*100}%">${n}</span>`).join('');
+const E=[['Democritus',0,0],['Egidious',1,0],['Cassian',2,0],['Commodus',3,0],['Familia',4,0,1],['Gauntlet',0,1],['Golden Eagle',1,1],['Juggernaut',2,1],['Orpheus',3,1],['Triumviratus',4,1],['Chariot',0,2],['Lupus',1,2],['Naumachia',2,2]];
+document.getElementById('strip').innerHTML=E.map(([n,c,r,on])=>`<div class="ev ${on?'on':''}"><i style="background-position:${c*25}% ${r*50}%"></i>${n}</div>`).join('');
+const S=[['Hero','hero','#4f9a57','Thraex Murmillo','A',1,33,'You'],['Soldier','soldier','#c0433a','Legionnaire','A',0,22,'Fighter'],['Amazonia','amazonia','#dc7a34','Sagittaria','A',0,31,'Veteran'],['Royalty','royalty','#4f7fc4','Patrician','B',0,32,'Fighter'],['Slave','slave','#d4b13c','Retiarius','B',0,26,'Apprentice'],['Venatore','venatore','#8a5cc0','Bestiarius','B',0,24,'Master']];
+const TC={A:'#5b9bd5',B:'#e8923a'};
+document.getElementById('seats').innerHTML=S.map(([n,k,c,sub,t,you,w,mind],i)=>`<div class="seat ${you?'you':''}" style="--pc:${c}"><div class="no">SEAT ${i+1} ${you?'<span class="team" style="background:var(--gold2)">YOU</span>':''}<span class="team" style="background:${TC[t]}">TEAM ${t}</span></div><h3>${n}</h3><div class="sub">${sub} ▾</div><div class="mini" style="background-image:url(../../../assets/mini_${k}.webp)"></div><div class="ctl"><span class="seg"><button class="${you?'on':''}">You</button><button class="${you?'':'on'}">CPU</button></span>${you?'':`<span class="mind">🧠 ${mind}</span>`}</div><div class="wr">Wins <b>${w}%</b> of classic events<div class="tr"><i style="width:${w*2}%"></i></div></div></div>`).join('')+`<div class="add"><span><b>＋</b>Seat 7</span></div><div class="add"><span><b>＋</b>Seat 8</span></div>`;
+
+</script>
+</body></html>

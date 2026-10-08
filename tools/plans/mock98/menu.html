@@ -1,0 +1,79 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Main menu — v0.98 mock</title>
+<link rel="stylesheet" href="mock98.css">
+<style>
+body{background:radial-gradient(ellipse 70% 60% at 50% 42%,#2e2116 0%,#1a120c 55%,#0d0805 100%);min-height:100vh;display:flex;justify-content:center}
+.mm{width:500px;display:flex;flex-direction:column;align-items:center;padding-top:44px}
+.logo{width:390px;filter:drop-shadow(0 8px 18px #000c)}
+.tag{margin-top:4px;font:500 12.5px var(--mono);letter-spacing:.34em;color:#b9a27f}
+.ed{margin-top:8px;font:400 15px var(--display);letter-spacing:.42em;color:var(--gold)}
+.stage{width:620px;height:171px;margin-top:6px;background:url(img/menu_stage.webp) center/100% 100%;-webkit-mask:radial-gradient(ellipse 50% 60% at 50% 55%,#000 70%,transparent 100%);mask:radial-gradient(ellipse 50% 62% at 50% 55%,#000 72%,transparent 100%)}
+.btns{width:460px;display:grid;gap:12px;margin-top:2px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.r4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px}
+
+/* ---------- sandstone slab ---------- */
+.ss{--h:50px;--fs:21px;position:relative;height:var(--h);display:flex;align-items:center;justify-content:center;gap:11px;border:0;border-radius:5px;cursor:pointer;
+  font:400 var(--fs)/1 var(--display);letter-spacing:.08em;color:#4a3017;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .22 0 0 0 0 .1 0 0 0 .8 0'/%3E%3C/filter%3E%3Crect width='240' height='120' filter='url(%23n)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='160'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .05' numOctaves='4' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .95 0 0 0 0 .85 0 0 0 0 .62 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='600' height='160' filter='url(%23m)'/%3E%3C/svg%3E"),
+    linear-gradient(176deg,#dcc196 0%,#c9a877 38%,#b48f5c 100%);
+  background-size:240px 120px,600px 160px,100% 100%;
+  box-shadow:
+    inset 0 2px 0 rgba(255,244,214,.75), inset 0 -3px 0 rgba(92,60,28,.55), inset 2px 0 0 rgba(255,238,204,.35), inset -2px 0 0 rgba(80,52,24,.4),
+    0 5px 0 #6b4e2b, 0 6px 0 #4b3519, 0 12px 20px rgba(0,0,0,.65);
+  text-shadow:0 1px 0 rgba(255,240,206,.75),0 -1px 0 rgba(60,36,14,.6);
+  transition:transform .12s, box-shadow .12s, filter .12s}
+/* chiselled inner frame */
+.ss::before{content:"";position:absolute;inset:5px;border-radius:3px;border:1px solid rgba(96,64,30,.45);box-shadow:0 1px 0 rgba(255,238,204,.45),inset 0 1px 0 rgba(255,238,204,.35);pointer-events:none}
+/* worn corners / chips */
+.ss::after{content:"";position:absolute;inset:0;border-radius:5px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,246,222,.2),transparent 38%,rgba(60,36,14,.16)),radial-gradient(ellipse 120% 160% at 50% 50%,transparent 60%,rgba(70,44,18,.28))}
+.ss svg{width:calc(var(--fs) + 4px);height:calc(var(--fs) + 4px);fill:#4a3017;filter:drop-shadow(0 1px 0 rgba(255,240,206,.75)) drop-shadow(0 -1px 0 rgba(60,36,14,.5));flex:none}
+.ss:hover,.ss.hov{transform:translateY(-2px);filter:brightness(1.06);box-shadow:inset 0 2px 0 rgba(255,244,214,.75),inset 0 -3px 0 rgba(92,60,28,.55),inset 2px 0 0 rgba(255,238,204,.35),inset -2px 0 0 rgba(80,52,24,.4),0 7px 0 #6b4e2b,0 8px 0 #4b3519,0 16px 26px rgba(0,0,0,.7),0 0 0 2px rgba(240,207,125,.55),0 0 22px rgba(240,190,90,.28)}
+.ss:active{transform:translateY(3px);box-shadow:inset 0 2px 0 rgba(255,244,214,.6),inset 0 -2px 0 rgba(92,60,28,.5),0 2px 0 #6b4e2b,0 3px 0 #4b3519,0 5px 10px rgba(0,0,0,.6)}
+.ss small{font:500 11px var(--body);letter-spacing:.05em;color:#6b4c2a;text-shadow:0 1px 0 rgba(255,240,206,.6);margin-left:2px}
+/* Play Now: the big slab with gilded letters and a porphyry inlay */
+.ss.play{--h:68px;--fs:28px;color:transparent}
+.ss.play .gild{background:linear-gradient(180deg,#fff2be 0%,#f0cf7d 30%,#b98a2a 62%,#e7c46c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 1px 0 rgba(60,20,8,.85)) drop-shadow(0 -1px 0 rgba(255,236,190,.35))}
+.ss.play::before{inset:7px;border:0;border-radius:3px;background:linear-gradient(180deg,#8f2a1e,#6d1c13 60%,#5a160f);box-shadow:inset 0 2px 4px rgba(0,0,0,.6),inset 0 -1px 0 rgba(255,180,150,.25),0 1px 0 rgba(255,238,204,.55);z-index:0}
+.ss.play>*{position:relative;z-index:1}
+.ss.play svg{fill:url(#gold);filter:drop-shadow(0 1px 0 rgba(60,20,8,.85))}
+.ss.mgr{--h:56px;--fs:23px}
+.ss.mp{--h:50px;--fs:20px}
+.ss.half{--h:48px;--fs:18px}
+.ss.tab{--h:40px;--fs:14.5px;gap:7px;letter-spacing:.06em}
+.ss.tab::before{inset:4px}
+.mfoot{margin-top:22px;font-size:13.5px;color:#9c8566;display:flex;gap:8px;align-items:center}
+.mfoot a{color:var(--gold2)}
+.ver{font:12px var(--mono);border:1px solid #6b5236;border-radius:4px;padding:1px 6px;color:var(--gold2);background:#1e150e}
+.note{position:fixed;right:22px;bottom:18px;width:300px;font-size:13px;color:var(--muted);border:1px solid var(--line2);border-radius:8px;background:#1a120dcc;padding:10px 12px}
+.note b{color:var(--gold2);font-weight:500}
+@media (max-width:600px){.mm{width:100%;padding:24px 16px}.logo{width:300px}.stage{width:100%;height:auto;aspect-ratio:620/171}.btns{width:100%}.note{display:none}.r4{grid-template-columns:1fr 1fr}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2be"/><stop offset=".35" stop-color="#f0cf7d"/><stop offset=".7" stop-color="#b98a2a"/><stop offset="1" stop-color="#e7c46c"/></linearGradient></defs></svg>
+<div class="mm">
+ <img class="logo" src="../../../assets/logo.png" alt="Flavius Rule">
+ <div class="tag">THE GLADIATORIAL SURVIVAL SANDBOX</div>
+ <div class="ed">[ MAGNVS EDITION ]</div>
+ <div class="stage" role="img" aria-label="The eight classes on the menu stage"></div>
+ <div class="btns">
+  <button class="ss play"><svg viewBox="0 0 24 24"><path d="M3 2l9.2 9.2-1.4 1.4L1.6 3.4 3 2zm18 0l1.4 1.4-7.1 7.1 2.1 2.1 1.4-1.4 1.4 1.4-2.1 2.1 2.8 2.8-1.4 1.4-2.8-2.8-2.1 2.1-1.4-1.4 1.4-1.4-2.1-2.1-2.1 2.1 1.4 1.4-1.4 1.4-2.1-2.1-2.8 2.8L4.6 20l2.8-2.8-2.1-2.1 1.4-1.4 1.4 1.4L21 2z"/></svg><span class="gild">Play Now</span></button>
+  <button class="ss mgr"><svg viewBox="0 0 24 24"><path d="M12 1.5L22 7v1.6H2V7l10-5.5zM4 10h2.4v8H4zm4.5 0h2.4v8H8.5zm4.6 0h2.4v8h-2.4zm4.5 0H20v8h-2.4zM2 19.5h20V22H2z"/></svg>Manager Mode</button>
+  <button class="ss mp hov"><svg viewBox="0 0 24 24"><path d="M7.5 3a5 5 0 015 5v4.5H10V15h2.5v2H2.5v-2H5v-2.5H2.5V8a5 5 0 015-5zm-2.2 5.6h4.4v1.6H5.3zM16.5 3a5 5 0 015 5v4.5H19V15h2.5v2h-6.2v-2H14v-2.5h-1V8a5 5 0 013.5-5zm-1.6 5.6h3.8v1.6h-3.8zM2 19h20v2H2z"/></svg>Multiplayer<small>Hot seat · Online</small></button>
+  <div class="r2">
+   <button class="ss half"><svg viewBox="0 0 24 24"><path d="M14.5 2.5l7 7-2.1 2.1-1.4-1.4-6.4 6.4 1.4 1.4-2.1 2.1-7-7 2.1-2.1 1.4 1.4 6.4-6.4-1.4-1.4 2.1-2.1zM3 18.5l2.5 2.5L3 22.5 1.5 21z"/></svg>Creator Studio</button>
+   <button class="ss half"><svg viewBox="0 0 24 24"><path d="M12 2c1.6 2.2 2.6 3.8 2.6 5.2A2.6 2.6 0 0112 9.8a2.6 2.6 0 01-2.6-2.6C9.4 5.8 10.4 4.2 12 2zM3 13c0-1.7 1.3-3 3-3h12c2.8 0 5 1.8 5 3.6 0 2.2-3 3.4-6.5 3.4H8.5L6 21H3.5l1.4-4.4C3.7 15.9 3 14.6 3 13z"/></svg>Tutorials</button>
+  </div>
+  <div class="r4">
+   <button class="ss tab"><svg viewBox="0 0 24 24"><path d="M12 21c-1.1-1.7-3.1-3-5.6-3.3C3.4 17.3 2 14.6 2 11.6l1.5.2c-.6-1.8-.3-3.8.8-5.5l1.3 1c.3-1.7 1.3-3.3 2.8-4.3l.8 1.5C8.2 7.6 9.4 12.6 12 16c2.6-3.4 3.8-8.4 2.8-11.5l.8-1.5c1.5 1 2.5 2.6 2.8 4.3l1.3-1c1.1 1.7 1.4 3.7.8 5.5l1.5-.2c0 3-1.4 5.7-4.4 6.1-2.5.3-4.5 1.6-5.6 3.3z"/></svg>Annals</button>
+   <button class="ss tab"><svg viewBox="0 0 24 24"><path d="M5 3h12a3 3 0 013 3v1h-3v12a3 3 0 01-3 3H5a3 3 0 01-3-3v-1h3V6a3 3 0 00-3-3zm2.5 5v1.6h7V8zm0 3.5v1.6h7v-1.6zm0 3.5v1.6h5V15z"/></svg>Tactics</button>
+   <button class="ss tab"><svg viewBox="0 0 24 24"><path d="M9 2h6v2h-1v2.2c3.4.9 6 4 6 7.8 0 3-1.6 5.6-4 7v1H8v-1c-2.4-1.4-4-4-4-7 0-3.8 2.6-6.9 6-7.8V4H9zM4 9.5L2 11v4l2 1.5zm16 0V16.5l2-1.5v-4z"/></svg>Saves</button>
+   <button class="ss tab"><svg viewBox="0 0 24 24"><path d="M10.3 2h3.4l.5 2.6 1.9.8 2.2-1.5 2.4 2.4-1.5 2.2.8 1.9 2.6.5v3.4l-2.6.5-.8 1.9 1.5 2.2-2.4 2.4-2.2-1.5-1.9.8-.5 2.6h-3.4l-.5-2.6-1.9-.8-2.2 1.5-2.4-2.4 1.5-2.2-.8-1.9L2 13.7v-3.4l2.6-.5.8-1.9-1.5-2.2 2.4-2.4 2.2 1.5 1.9-.8zM12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7z"/></svg>Settings</button>
+  </div>
+ </div>
+ <div class="mfoot">© 2026 Flavius Rule · <a href="#">D.Soto</a> · <span class="ver">v0.98</span></div>
+</div>
+<div class="note"><b>Mock notes</b> — every button is the same sandstone slab: a bevel lit from above, a chiselled inner frame, a 5 px stone edge underneath and carved lettering. Play Now carries a porphyry inlay with gold-leaf letters. "Multiplayer" shows the hover lift + gold rim. "Rules" is renamed <b>Tactics</b>.</div>
+</body></html>
