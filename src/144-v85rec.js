@@ -75,7 +75,7 @@ document.addEventListener('toggle',e=>{const t=e.target;if(t&&t.classList&&t.cla
 {const base=recruitHTML;recruitHTML=function(){let h=base.apply(this,arguments);try{const w=W_(),m=me();
   h=h.replace('<div class="acts" style="margin-bottom:8px"><div class="seg">','<div class="acts rtb85" style="margin-bottom:8px"><div class="seg">');
   for(const [k,full,short] of [['signed',_T('Signed elsewhere'),_T('Signed')],['targets',_T('Interested in you'),_T('Interested')],['mine',_T('Your stable'),_T('Stable')]])h=h.replace(new RegExp(`(data-mg="filter" data-id="${k}" class="[^"]*")>${full}<`),`$1 title="${full}">${short}<`);
-  h=h.replace('<div class="seg recflt"><span class="lbl">Show</span>','<div class="seg recflt" title="Show only">').replace(/(<button type="button" data-recf="\w+" class="[^"]*")>(\S+) ([^<]+)</g,_T('$1 title="Show only: $3" aria-label="$3">$2<'));
+  h=h.replace('<div class="seg recflt"><span class="lbl">'+TX('Show')+'</span>','<div class="seg recflt" title="Show only">').replace(/(<button type="button" data-recf="\w+" class="[^"]*")>(\S+) ([^<]+)</g,_T('$1 title="Show only: $3" aria-label="$3">$2<'));
   if(MGR.filter==='mine')return h;const t=h.indexOf('<div id="recTable"');if(t<0)return h;
   let tail=h.slice(t);
   tail=tail.replace('<table class="tally">','<table class="tally rt85"><colgroup><col><col class="c85r"><col class="c85f"><col class="c85i"><col class="c85a"></colgroup>');

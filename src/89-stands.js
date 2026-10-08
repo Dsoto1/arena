@@ -18,7 +18,7 @@ function sideTabsHTML(){const n=standsCount(),k=S&&S.npcKills||0;
 function standsPaneHTML(){if(!S||!S.spect||!S.spect.length)return `<p class="hint" style="margin:0">${_T`The stands are empty this event.`}</p>${typeof standsDrawerHTML==='function'?standsDrawerHTML({chronOnly:1}):''}`;
   if(typeof standsDrawerHTML!=='function')return crowdPanelHTML();
   /* the crowd first; the arena's chronicle as one quiet line after the stands log, then the roster */
-  const h=standsDrawerHTML({noChron:1}).replace('<div class="sect">In the stands right now</div>',''),ch=standsDrawerHTML({chronOnly:1})||'';const i=h.indexOf('<div class="sect">Spectator roster');
+  const h=standsDrawerHTML({noChron:1}).replace('<div class="sect">'+TX('In the stands right now')+'</div>',''),ch=standsDrawerHTML({chronOnly:1})||'';const i=h.indexOf('<div class="sect">'+TXPRE('Spectator roster · {0}K spectators known to the ushers'));
   return i<0?h+ch:h.slice(0,i)+ch+h.slice(i)}
 function fieldHeadHTML(){const d=S&&S.deck&&EV()&&EV().deck?_T`${S.deck.length} arena card${S.deck.length===1?'':'s'} left`:'';
   return `<div class="fieldhd"><span class="rc-sub">${d}</span><button class="btn tksm" type="button" data-bestiary>${_T`📖 Bestiary`}</button></div>`}

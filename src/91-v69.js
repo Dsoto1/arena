@@ -45,10 +45,10 @@ const armSculptOn=()=>(typeof SETTINGS==='undefined'||(SETTINGS.armorStyle||'dra
     /* the mock-up straight below the piece */
     const pi=h.indexOf('<div class="scart');if(pi>=0){const c=cutDiv(h,pi);if(c){const end=pi+c[0].length;h=c[1].slice(0,pi)+c[0]+caMockHTML(d)+c[1].slice(pi)}}
     /* one Equip point select replaces Body location + Point (and 90's helper select) */
-    h=h.replace(/<label>Equip point<select data-caeq>[\s\S]*?<\/select><\/label>/,'');
-    h=h.replace(/<label>Body location<select data-caf="slot">[\s\S]*?<\/select><\/label>/,caEqSelectHTML(d)).replace(/<label>Point<select data-caf="pt">[\s\S]*?<\/select><\/label>/,'');
+    h=h.replace(new RegExp('<label>'+RXL('Equip point')+'<select data-caeq>[\\s\\S]*?<\\/select><\\/label>'),'');
+    h=h.replace(new RegExp('<label>'+RXL('Body location')+'<select data-caf="slot">[\\s\\S]*?<\\/select><\\/label>'),caEqSelectHTML(d)).replace(new RegExp('<label>'+RXL('Point')+'<select data-caf="pt">[\\s\\S]*?<\\/select><\\/label>'),'');
     /* the sculpted set only with the Sculpted armor style */
-    if(!armSculptOn()){const si=h.indexOf('<h4>The sculpted set');if(si>=0){const gi=h.indexOf('<div class="armgrid sysgrid">',si);const c=gi>=0?cutDiv(h,gi):null;if(c)h=h.slice(0,si)+c[1].slice(gi)}
+    if(!armSculptOn()){const si=h.indexOf('<h4>'+TX('The sculpted set · every printed piece'));if(si>=0){const gi=h.indexOf('<div class="armgrid sysgrid">',si);const c=gi>=0?cutDiv(h,gi):null;if(c)h=h.slice(0,si)+c[1].slice(gi)}
       h=h.replace(/The <b>sculpted set<\/b> below recreates all \d+ printed pieces — pick any of them \(or choose one under <b>Start from<\/b>\) to begin from its rulebook stats\./,_T('Choose a printed piece under <b>Start from</b> to begin from its rulebook stats.'))}
     h=h.replace('<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-caf="pair"',`<label style="display:flex;gap:6px;align-items:center" title="${_T`Unticked: the piece covers one arm or leg — the one it is equipped to`}"><input type="checkbox" data-caf="pair"`);
   }catch(e){console.error(e)}return h}}

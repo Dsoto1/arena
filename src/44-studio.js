@@ -34,7 +34,7 @@ const PB_WIN=[0.297,0.702];
   h=h.replace('<div class="trstudio">',seg+'<div class="trstudio">');
   if(pb)h=h.replace(/(<img id="fdPrev"[^>]*>)/,`<span class="pbwrap">$1<span class="pbcrop" aria-hidden="true"><i style="width:${PB_WIN[0]*100}%"></i><b style="left:${PB_WIN[0]*100}%;width:${(PB_WIN[1]-PB_WIN[0])*100}%">${_T`<em>the portrait's window</em>`}</b><i style="left:${PB_WIN[1]*100}%;right:0"></i></span></span><span class="pbface">${portraitSVG({skin:SKINS[3],hair:HAIRS[2],bg:'flag:c:__draft',helm:'none'},'#8a1c1c').replace('<svg ',_T('<svg class="pbmini" '))}</span>`);
   /* the list: portrait banners wear their frame */
-  h=h.replace(/<h4>Your banners · (\d+)<\/h4>/,(m,n)=>`<h4>${_T`Your banners · ${n}`} <span class="rc-sub">${_T`🖼 portrait banners hang only behind portraits (the character creator and system portraits) — the rack never shows them`}</span></h4>`);
+  h=h.replace(new RegExp('<h4>'+RXE(TXPRE('Your banners · {0}'))+'(\\d+)<\\/h4>'),(m,n)=>`<h4>${_T`Your banners · ${n}`} <span class="rc-sub">${_T`🖼 portrait banners hang only behind portraits (the character creator and system portraits) — the rack never shows them`}</span></h4>`);
   return h}}
 /* the preview face uses the banner on the bench */
 {window.__pbDraft=()=>ST&&ST.fd?houseFlagURI(ST.fd):null}
@@ -71,7 +71,7 @@ function srCardURL(e){const s=srCardSVG(e);const k=e.id+'|'+hashStr(s);return SR
       <label>${_T`Build${sel('fem',[['',_T('Man')],['1',_T('Woman')]],p.fem?'1':'')}`}</label><label>${_T`Expression${sel('smile',[['',_T('Stern')],['1',_T('Smiling')]],p.smile?'1':'')}`}</label>
       <label style="grid-column:1/-1">${_T`Backdrop${sel('bg',BGS.map((v,i)=>[v,BG_NAMES[i]||_T('Backdrop ')+(i+1)]).concat(typeof FLAGS!=='undefined'?Object.entries(FLAGS).map(([k,F])=>['flag:'+k,_T('🏳 City banner · ')+F.n]):[]).concat((CUSTOM.flags||[]).map(f=>['flag:c:'+f.id,(f.fmt==='portrait'?'🖼 ':'✦ ')+(f.name||_T('your banner'))])),p.bg)}`}</label></div>
       <div class="mbtns"><button class="btn" type="button" data-srx="rand">${_T`🎲 Another face`}</button><button class="btn" type="button" data-srx="clear">${_T`✖ No face`}</button></div>`:''}</div></div></div>`;
-  return _er().replace('<h4>Rounds</h4>',box+`<h4>${_T`Rounds`}</h4>`)}}
+  return _er().replace('<h4>'+TX('Rounds')+'</h4>',box+`<h4>${_T`Rounds`}</h4>`)}}
 function srPrevRefresh(){const pv=document.getElementById('srPrev');const e=ST&&ST.draft;if(pv&&e&&e.srp)pv.innerHTML=`<img src="${srCardURL(e)}" alt="${_T`The Summa Rudis card`}">`}
 
 /* ---------------- 🤝 PAIRINGS ---------------- */

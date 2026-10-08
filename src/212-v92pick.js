@@ -24,7 +24,7 @@ function av92SVG(p,o){let s='';try{s=avatarSVG(p)}catch(e){return ''}
 function av92Paint(){const box=document.getElementById('mBody');if(!box||document.getElementById('modal').hidden)return;
   const old=box.querySelector(':scope > .av92');
   /* Focus */
-  if(AV92.q&&(box.querySelector('.focdice2')||(AV92.how==='card'&&/Focus!/.test((document.getElementById('mTitle')||{}).textContent||'')))){
+  if(AV92.q&&(box.querySelector('.focdice2')||(AV92.how==='card'&&new RegExp(RXE(TX('Focus!'))).test((document.getElementById('mTitle')||{}).textContent||'')))){
     let locs,best=null;const dice=[...box.querySelectorAll('.focdice2 [data-loc]')];
     if(dice.length){const set=dice.filter(d=>!d.disabled);locs=[...new Set(set.map(d=>d.dataset.loc))];const b=set.find(d=>d.classList.contains('best'));best=b?b.dataset.loc:null}
     else{locs=LOCS.filter(l=>AV92.q.hp[l]>0);const pb=[...document.querySelectorAll('#mBtns button')].find(b=>/💡/.test(b.textContent));if(pb)best=LOCS.find(l=>pb.textContent.includes(LOCN[l]))||null}

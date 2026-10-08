@@ -71,7 +71,7 @@ MGR.rf=MGR.rf||{};
 {const base=recruitHTML;recruitHTML=function(){let h=base.apply(this,arguments);try{const w=W_(),m=me();if(MGR.filter==='mine')return h;
   const fb=h.indexOf('<div class="card2 favbox">');if(fb>=0){const c=cutDiv(h,fb);if(c)h=c[1]}
   h=h.replace('<div class="mgrid"><div>',`<div class="mgrid"><div>${pipelineHTML()}`);
-  h=h.replace('<th>Wants</th>',_T('<th title="✓ fills a roster gap and is affordable · ~ one of the two · ✗ neither">Fit</th>'));
+  h=h.replace('<th>'+TX('Wants')+'</th>',_T('<th title="✓ fills a roster gap and is affordable · ~ one of the two · ✗ neither">Fit</th>'));
   h=h.replace(/(<tr class="[^"]*" data-mg="sel" data-id="([^"]+)"[\s\S]*?<\/td><td>[\s\S]*?<\/td>)<td class="rc-sub">[\s\S]*?<\/td>(<td style="min-width:110px"><div class="meter"><i style="width:\d+%"><\/i><\/div>)<span class="rc-sub">[\s\S]*?<\/span>/g,(all,pre,id,meter)=>{const g=gById(id);if(!g)return all;const f=recFit(g,m),o=recOdds(g,m);
     return `${pre}<td><span class="fitchip f${f.mark==='✓'?'y':f.mark==='~'?'m':'n'}" title="${esc(f.why)}">${f.mark}</span></td>${meter}<span class="rc-sub ${o.lead?'lead':'trail'}">${interestOf(g,m)} · ${esc(o.txt)}${m.fame<reqFame(g)?' · 🔒':''}</span>`});
   /* filters */
@@ -151,7 +151,7 @@ document.addEventListener('change',e=>{const t=e.target;if(!t||!/^team\d$/.test(
 {const base=ludusDetail;ludusDetail=function(g){let h=base.apply(this,arguments);try{
   const m=h.match(/<button type="button" class="btn roadsend[^"]*"[^>]*>[\s\S]*?<\/button>/);if(!m)return h;
   const i=h.indexOf('<div class="mbtns"');if(i<0)return h;const j=h.indexOf('</div>',i);if(j<0)return h;
-  const btn=m[0].replace('class="btn roadsend',_T('class="btn roadsend inrow')).replace(/>(🛣 Send on the Road)</,_T('>$1<small>win the twelve arenas in order</small><')).replace(/>(⚔ Walk stage[^<]*)</,_T('>$1<small>opens the next stage</small><'));
+  const btn=m[0].replace('class="btn roadsend',_T('class="btn roadsend inrow')).replace(new RegExp('>('+RXE(TX('🛣 Send on the Road'))+')<'),_T('>$1<small>win the twelve arenas in order</small><')).replace(new RegExp('>('+RXE(TXPRE('⚔ Walk stage {0}: {1}<small>opens New event with {2} summoned</small>'))+'[^<]*)<'),_T('>$1<small>opens the next stage</small><'));
   h=h.replace(m[0],'');return h.slice(0,h.indexOf('</div>',h.indexOf('<div class="mbtns"')))+btn+h.slice(h.indexOf('</div>',h.indexOf('<div class="mbtns"')))}catch(e){return h}}}
 {const st=document.createElement('style');st.textContent=`.roadsend.inrow{position:static!important;float:none!important;margin:0!important}`;document.head.appendChild(st)}
 /* ---------- ECONOMY (v0.68 tuning, the same rules for every house): an attentive lanista who enters the card each week roughly

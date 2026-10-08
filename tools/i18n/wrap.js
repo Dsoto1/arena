@@ -22,7 +22,7 @@ const KEYSKIP=new Set(['id','k','key','cls','type','kind','img','src','ico','ico
   'font','bg','music','theme','n','name','nm','short','city','loc','ev','cell','file','url','href','tag','code','cls2','clsRef','classRef','pal','fill','stroke',
   'face','hair','skin','eyes','shape','style','look','tok','token','art','thumb','frame','ver','v','fn','lead','mode2','root','prog','zone','end','reward',
   'gender','sex','faith','house','home','lanista','by','owner','kill','killer','emoji','glyph','flag','badge','grade','rank','stat','st','key2','lbl0','sfx']);
-const CALLSKIP=new Set(['querySelector','querySelectorAll','getElementById','getElementsByClassName','getElementsByTagName','closest','matches','contains',
+const CALLSKIP=new Set(['TX','TXL','TXPRE','TXHEAD','TXK','RXL','HRX','LBLRX','fateSpared','fateThumbsDown','fateIsThumb','querySelector','querySelectorAll','getElementById','getElementsByClassName','getElementsByTagName','closest','matches','contains',
   'setAttribute','getAttribute','removeAttribute','hasAttribute','toggleAttribute','addEventListener','removeEventListener','dispatchEvent','createElement','createElementNS',
   'getItem','setItem','removeItem','includes','indexOf','lastIndexOf','startsWith','endsWith','split','replace','replaceAll','match','matchAll','test','search',
   'RegExp','require','fetch','postMessage','BroadcastChannel','cheatRegister','hashStr','cheatKey','Event','CustomEvent','toggle','getPropertyValue','setProperty',

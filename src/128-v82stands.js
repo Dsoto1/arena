@@ -272,11 +272,11 @@ onlFig=function(cls,look,h){try{return figureHTML(sc82Spec(cls,look||{}),h)}catc
 const sc82Txt=v=>String(v||'').replace(/[<>"'`\\]/g,'').slice(0,40);
 {const base=onlCharHTML;onlCharHTML=function(){let h=base.apply(this,arguments);const D=ONL.ged;if(!D||!h)return h;try{
     sc82Ensure('g:'+D.id,()=>ONL.ged&&ONL.ged.id===D.id?ONL.ged.look:null,D.cls);
-    const a=h.indexOf('<div class="sect">Board token</div>'),b=h.indexOf('<div class="sect">Gear to bring');if(a>=0&&b>a)h=h.slice(0,a)+sc82SectionHTML()+h.slice(b);
+    const a=h.indexOf('<div class="sect">'+TX('Board token')+'</div>'),b=h.indexOf('<div class="sect">'+TX('Gear to bring'));if(a>=0&&b>a)h=h.slice(0,a)+sc82SectionHTML()+h.slice(b);
     const p=D.look.portrait||{};const P=(path,label,opts,val)=>`<label>${label}${onlSel(path,opts,val,'data-onlgp')}</label>`;
     const more=P('portrait.neck',_T('Neck'),NECKS,p.neck||'')+P('portrait.face',_T('Face piece'),FACES,p.face||'')+P('portrait.bg',_T('Backdrop'),BGS.map((v,i)=>[v,BG_NAMES[i]||_T('Backdrop ')+(i+1)]),p.bg||'')
       +`<label>${_T`Epithet`}<input class="tin" data-onlgp="portrait.nick" maxlength="40" value="${esc2(p.nick||'')}" placeholder="${_T`e.g. the Iron Wall`}"></label>`+P('portrait.home',_T('Birthplace'),[['','—'],...HOME_CITIES().map(x=>[x,x])],p.home||'');
-    const k=h.indexOf('<label>Colour<input type="color" data-onlgp="color"');if(k>=0)h=h.slice(0,k)+more+h.slice(k);
+    const k=h.indexOf('<label>'+TX('Colour')+'<input type="color" data-onlgp="color"');if(k>=0)h=h.slice(0,k)+more+h.slice(k); // i18n:skip
     h=h.replace('<div id="onlGTok" title="The board token">','<div id="onlGTok" title="The board token (sculpted)">')}catch(e){console.error(e)}return h}}
 
 /* =========================== THE ONLINE CREATOR =========================== */
@@ -292,8 +292,8 @@ function sc82Creating(){const fem=Math.random()<.35;const pt=typeof randomPortra
     const det=`<div class="formgrid onl-g2 onl-cdet82"><label>${_T`Epithet`}<span style="display:flex;gap:4px"><input class="tin" data-onl82c="nick" maxlength="40" value="${esc2(p.nick||'')}"><button type="button" class="btn" data-onl82="nick" style="padding:4px 8px" aria-label="${_T`Roll an epithet`}">🎲</button></span></label>
       <label>${_T`Birthplace`}<select class="tin" data-onl82c="home">${[['','—'],...HOME_CITIES().map(x=>[x,x])].map(([v,l])=>`<option value="${esc2(v)}" ${p.home===v?'selected':''}>${esc2(l)}</option>`).join('')}</select></label></div>
       <div class="mbtns" style="margin:2px 0"><button type="button" class="btn" data-onl82="roll" title="${_T`Name, class, epithet, birthplace, look and token`}">${_T`📜 Roll everything`}</button></div>`;
-    const k=h.indexOf('<div class="sect">Class</div>');if(k>=0)h=h.slice(0,k)+det+h.slice(k);
-    const look=`<details class="onl-clook82"><summary class="sect">${_T`Look`} <span class="rc-sub">${_T`face, accessories, backdrop`}</span></summary>${portraitControlsHTML(p,'data-onl82p').replace('>Lanista (woman)<',_T('>Gladiatrix<')).replace('>Lanista<',_T('>Gladiator<'))}</details>
+    const k=h.indexOf('<div class="sect">'+TX('Class')+'</div>');if(k>=0)h=h.slice(0,k)+det+h.slice(k);
+    const look=`<details class="onl-clook82"><summary class="sect">${_T`Look`} <span class="rc-sub">${_T`face, accessories, backdrop`}</span></summary>${portraitControlsHTML(p,'data-onl82p').replace('>'+TX('Lanista (woman)')+'<',_T('>Gladiatrix<')).replace('>'+TX('Lanista')+'<',_T('>Gladiator<'))}</details>
       <details class="onl-ctokd82" ${SC82.copen?'open':''}><summary class="sect">${_T`Board token`} <span class="rc-sub">${_T`sculpted · everyone sees it, whatever their token style`}</span></summary>${sc82SectionHTML(1)}</details>`;
     const m=h.lastIndexOf('<div class="mbtns"><button type="button" class="btn primary" data-onl="create">');if(m>=0)h=h.slice(0,m)+look+h.slice(m)}catch(e){console.error(e)}return h}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#onl [data-onl82="roll"],#onl [data-onl82="nick"],#onl .onl-ctokd82>summary');if(!b)return;

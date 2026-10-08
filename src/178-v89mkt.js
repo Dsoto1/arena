@@ -15,7 +15,7 @@ const mktShut89=()=>{try{return !!(S&&!S.over&&typeof commodusIn==='function'&&c
     if(title===_T('Market of Flavius')&&Array.isArray(btns)&&mktShut89())
       btns=btns.map(b=>b&&b.value==='unlock'?{...b,disabled:true,sub:_T('No CF while Commodus is in the arena')}:b);
     if(typeof body==='string'&&mktShut89()&&body.includes('cf88mb'))
-      body=body.replace(/(<img[^>]*class="cf88mb"[\s\S]*?)(Unlock market for this turn)/,`$1$2 · ${_T('no CF while Commodus is in the arena')}`)}catch(e){console.error(e)}
+      body=body.replace(new RegExp('(<img[^>]*class="cf88mb"[\\s\\S]*?)('+RXE(TX('Unlock market for this turn'))+')'),`$1$2 · ${_T('no CF while Commodus is in the arena')}`)}catch(e){console.error(e)}
   return base.call(this,title,body,btns,opt)}}
 /* v0.89 K: the free-pick wrapper that borrowed the Market Choice path is gone — 179-v89market's marketBuy75 lets everyone choose
    outright from the level's row (free picks keep the line "X chooses outright at level N"). */

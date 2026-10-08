@@ -39,7 +39,7 @@ async function rivalTrophy(tid,o={}){const d=trophyDef(tid);if(!d)return;const e
 if(typeof SAVE_COLS!=='undefined'&&!SAVE_COLS.includes('rivalTrophies'))SAVE_COLS.push('rivalTrophies');
 {const _ht=hallTrophiesHTML;hallTrophiesHTML=async function(){const h=await _ht();const R=(await Store.list('rivalTrophies').catch(()=>[])).sort((a,b)=>String(b.date).localeCompare(String(a.date)));if(!R.length)return h;
   return h+`<h4>${_T`🏺 Held by rivals`} <span class="rc-sub">${_T`trophies a CPU gladiator took home — win them back`}</span></h4><div class="tcgrid wide">${R.slice(0,24).map(t=>{const d=trophyDef(t.tid)||{};return `<div class="tcitem">${trophySVG(d,46)}<b>${esc(t.name)}</b><span class="rc-sub">${esc(t.who)}${t.cls&&CLASSES[t.cls]?' · '+esc(CLASSES[t.cls].name):''} · ${esc(t.date)}</span><span class="rc-sub">${esc(t.why)}</span></div>`}).join('')}</div>`}}
-{const _ld=ludusDetail;ludusDetail=function(g){let h=_ld(g);if(g&&(g.trophyWins||[]).length)h=h.replace('<h4>History</h4>',`<h4>${_T`🏆 Trophies they hold`}</h4><div class="badges">${g.trophyWins.map(t=>`<span class="badge gold" title="${esc(t.why)} · ${esc(t.date)}">🏆 ${esc(t.name)}</span>`).join('')}</div><h4>${_T`History`}</h4>`);return h}}
+{const _ld=ludusDetail;ludusDetail=function(g){let h=_ld(g);if(g&&(g.trophyWins||[]).length)h=h.replace('<h4>'+TX('History')+'</h4>',`<h4>${_T`🏆 Trophies they hold`}</h4><div class="badges">${g.trophyWins.map(t=>`<span class="badge gold" title="${esc(t.why)} · ${esc(t.date)}">🏆 ${esc(t.name)}</span>`).join('')}</div><h4>${_T`History`}</h4>`);return h}}
 
 /* ---------------- ⚔ Match Week glows until it is fought ---------------- */
 setInterval(()=>{try{const b=document.querySelector('.mtabs [data-mg="tab"][data-id="night"]');if(!b)return;const w=typeof W_==='function'?W_():null;const pend=!!(w&&w.night&&w.night.bouts&&w.night.bouts.some(x=>!x.done));b.classList.toggle('nightpend',pend);b.title=pend?_T('Match Week has not been fought yet'):''}catch(e){}},700);
@@ -60,8 +60,8 @@ function lanRecordHTML(m,w){const s=msp(m,w.season);const L=leagueSort(w.mgrs,w.
     <div class="badges" style="margin-top:8px"><span class="badge">${_T`Fame ${m.fame} (best ${m.fameBest||m.fame})`}</span><span class="badge">${_T`Fighters improved ${m.improved||0}`}</span><span class="badge">${_T`Pledges kept ${m.kept||0} · broken ${m.broken||0}`}</span><span class="badge">${_T`Poached ${m.poached||0}`}</span><span class="badge">${_T`Deaths ${m.deaths||0}`}</span><span class="badge">${_T`Betting ${(m.betNet||0)>=0?'+':''}${m.betNet||0}`}</span></div>
     ${A.length?`<table class="tally compact" style="margin-top:6px"><tr><th>${_T`Season`}</th><th>${_T`Finish`}</th><th>${_T`Record`}</th><th>${_T`Coin`}</th></tr>${A.slice(-5).reverse().map(a=>{const i=(a.standings||[]).findIndex(x=>x.me);return `<tr><td>${a.season}</td><td>${i>=0?'#'+(i+1):'—'}</td><td>${esc((a.standings||[])[i]?a.standings[i].rec:(a.you||{}).rec||'')}</td><td class="n">${(a.you||{}).coin??''}</td></tr>`}).join('')}</table>`:''}</div>`}
 {const _me=meHTML;meHTML=function(){const m=me(),w=W_();let h=_me();
-  h=h.replace('<details class="card2"><summary><b>Raising your name</b>',_T('<details class="card2" open><summary><b>Raising your name</b>'));
-  h=h.replace(/<div class="card2"><div class="sect" style="margin-top:0">Your record<\/div>[\s\S]*?<\/div><\/div>/,lanRecordHTML(m,w));return h}}
+  h=h.replace('<details class="card2"><summary>'+TX('<b>Raising your name</b>'),_T('<details class="card2" open><summary><b>Raising your name</b>'));
+  h=h.replace(new RegExp('<div class="card2"><div class="sect" style="margin-top:0">'+RXE(TX('Your record'))+'<\\/div>[\\s\\S]*?<\\/div><\\/div>'),lanRecordHTML(m,w));return h}}
 
 /* ---------------- fame, fans, debt: the header ---------------- */
 function teamFans(){const pm=me();const names=new Map(rosterOf(pm).map(g=>[g.name.toLowerCase(),g]));const out=[];

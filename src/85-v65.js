@@ -17,7 +17,7 @@ const gFat=g=>Math.max(0,Math.min(100,Math.round(g&&g.fat||0)));
 const fatCol=f=>f>=70?'#c9564a':f>=50?'#d9a441':'#7fae5f';
 /* ---------- the Training Yard: regime first ---------- */
 {const base=practiceHTML;practiceHTML=function(){let h=base.apply(this,arguments);try{
-  const i=h.indexOf('<div class="sect">This week\'s regime');const j=i>=0?h.indexOf('<div class="regcards">',i):-1;
+  const i=h.indexOf('<div class="sect">'+TX("This week's regime"));const j=i>=0?h.indexOf('<div class="regcards">',i):-1;
   if(i<0||j<0)return h;
   /* the regime block = its heading + the regcards row (buttons only, so the row ends at the first </div> after its last button) */
   let e=j+'<div class="regcards">'.length,depth=1;while(depth&&e<h.length){const o=h.indexOf('<div',e),c=h.indexOf('</div>',e);if(c<0)break;if(o>=0&&o<c){depth++;e=o+4}else{depth--;e=c+6}}
@@ -109,7 +109,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-rest]');if
   const rows=fit.sort((a,b)=>gFat(b)-gFat(a)).map(g=>{const f=gFat(g);const r=g.restWk===w.week;return `<div class="fatrow">${mgAvatar(g)}<b>${esc(g.name)}</b><span class="fatbar"><i style="width:${f}%;background:${fatCol(f)}"></i></span><span class="rc-sub">${f}${f>50?_T(' · at risk'):''}${onCard(g)?_T(' · on the card'):''}</span>
     <button type="button" class="btn tksm ${r?'on':''}" data-rest="${g.id}" title="${_T`No drills this week; fatigue −${FAT_REST} at the week's end`}">${r?_T('🛏 Resting'):_T('🛏 Rest week')}</button></div>`}).join('');
   const blk=`<div class="sect">${_T`😮‍💨 Fatigue`} <span class="rc-sub">${_T`bouts and hard work wear fighters down · above 50 they may get hurt · a rest week clears it`}</span></div><div class="fatrows">${rows}</div>`;
-  const i=h.indexOf('<div class="sect">🗡 Cleared for the sand');return i>=0?h.slice(0,i)+blk+h.slice(i):h+blk}catch(e){console.error(e);return h}}}
+  const i=h.indexOf('<div class="sect">'+TX('🗡 Cleared for the sand'));return i>=0?h.slice(0,i)+blk+h.slice(i):h+blk}catch(e){console.error(e);return h}}}
 {const st=document.createElement('style');st.textContent=`.plantiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:6px;margin-top:6px}
 .plantile{all:unset;cursor:pointer;border:1px solid var(--line2);border-radius:7px;padding:6px;display:grid;grid-template-columns:auto 1fr;column-gap:6px;font-size:12px}.plantile:hover{border-color:var(--gold)}
 .plantile .pi{grid-row:span 3;font-size:18px}.plantile .pc{color:var(--muted)}.plantile .pf{color:#9cc46e}.plantile.off{opacity:.45;cursor:default}.plantile .pw,.pw{color:#d9a441;font-size:11px;grid-column:1/-1}

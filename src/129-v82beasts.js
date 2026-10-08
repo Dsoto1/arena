@@ -151,7 +151,7 @@ function cn82Card(n){const T=NPCT['cn_'+n.id]||npcType(n);
       <label class="chk"><input type="checkbox" data-st82="unique" ${n.unique82?'checked':''}> ${_T`Unique — enters an event at most once`}</label></div>
       <div class="nc82des"><div class="rc-sub">${_T`Its card · front and back`}</div>${nc82Pair(nc82Spec('cn_tmp82'),170)}</div>`;
     h=h.replace(/<label class="chk"><input type="checkbox" data-f="states"[^>]*>[^<]*<\/label>/,'');
-    const i=h.indexOf('<p class="hint">Beasts attack with 2 hit dice');h=i<0?h+blk:h.slice(0,i)+blk+h.slice(i);
+    const i=h.indexOf('<p class="hint">'+TX('Beasts attack with 2 hit dice against gladiators; each hit deals their attack value. Place them on the board in the Event Designer.'));h=i<0?h+blk:h.slice(0,i)+blk+h.slice(i);
   }catch(e){console.error(e)}return h}}
 /* the preview card reads the draft through a temporary NPCT entry */
 {const base=npcEditorHTML;npcEditorHTML=function(){const n=ST.draft;try{if(n){const T=npcType(n);T.custom=true;T.cid='__draft82';NPCT.cn_tmp82=T}}catch(e){}
@@ -219,7 +219,7 @@ function ed82HTML(e){ed82Convert(e);const s=e.slots82;const mine=CUSTOM.npcs||[]
   return `<h4>${_T`Arena deck beasts`}</h4><p class="hint" style="margin-top:0">${_T`At most 4 beast cards: Tholo + 3 slots. Untick Tholo to free his place. Beasts you place on the board use no slot.`}</p>
    <div class="slot82row"><label class="chk slot82 fix"><input type="checkbox" data-ed82="tholo" ${s.tholo?'checked':''}> ${_T`Tholo`}</label>${Array.from({length:n},(_,i)=>`<label class="slot82">${_T`Slot ${i+1}`}<select class="tin" data-ed82="${i}">${opts(s.s[i])}</select></label>`).join('')}</div>
    <div class="chkgrid">${fChk('deckSpawns.Zora',!!(e.deckSpawns||{}).Zora,_T('Zora card stays in the deck'))}</div>`}
-{const base=edRosterHTML;edRosterHTML=function(){let h=base.apply(this,arguments);try{const e=ST.draft;if(e&&e.deck)h=h.replace(/<h4>Arena deck spawn cards<\/h4><div class="chkgrid">[\s\S]*?<\/label><\/div>/,ed82HTML(e))}catch(err){console.error(err)}return h}}
+{const base=edRosterHTML;edRosterHTML=function(){let h=base.apply(this,arguments);try{const e=ST.draft;if(e&&e.deck)h=h.replace(new RegExp('<h4>'+RXE(TX('Arena deck spawn cards'))+'<\\/h4><div class="chkgrid">[\\s\\S]*?<\\/label><\\/div>'),ed82HTML(e))}catch(err){console.error(err)}return h}}
 document.addEventListener('change',e=>{const t=e.target;if(!t||!t.dataset||t.dataset.ed82==null||typeof ST==='undefined'||!ST.draft||ST.tab!=='events')return;const d=ST.draft;ed82Convert(d);
   if(t.dataset.ed82==='tholo'){d.slots82.tholo=t.checked;if(t.checked)d.slots82.s[3]=''}else d.slots82.s[+t.dataset.ed82]=t.value;ed82Sync(d);studioRedraw()},true);
 

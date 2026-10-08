@@ -74,7 +74,7 @@ function banner73(k){const B=BANNERS73[k];if(!B)return '';return `<div class="ro
   if(/<div class="roomhd (infirm|yard)">/.test(h))h=h.replace(/(<div class="roomhd (infirm|yard)">[\s\S]*?<div class="roomttl">[\s\S]*?<\/div>)/,`$1${bannerStat73(k)}`);
   else if(BANNERS73[k])h=h.replace('<div class="railmain">',m0=>m0+banner73(k));
   /* the infirmary's " · N" in its label becomes the oval */
-  h=h.replace(/⚕ Infirmary · \d+/,_T('⚕ Infirmary'))}catch(e){console.error(e)}return h}}
+  h=h.replace(new RegExp(RXE(TXPRE('⚕ Infirmary · {0}'))+'\\d+'),_T('⚕ Infirmary'))}catch(e){console.error(e)}return h}}
 /* the rail ovals (kept live by the sweep, like the hour chips of v0.65) */
 setInterval(()=>{try{if(typeof W_!=='function'||!W_()||W_().dead)return;const w=W_();
   const vals={ludus:[ludusTodo73(),n=>`📋 ${n}`,n=>_T`${n} task${n===1?'':'s'} left this week`],recruit:[w.hours||0,n=>`${n} h`,n=>_T`${n} of the lanista's hours left`],practice:[thLeft(w),n=>`${n} h`,n=>_T`${n} training hours left`],infirm:[infirmNeed73(),n=>`⚕ ${n}`,n=>_T`${n} fighter${n===1?'':'s'} need care`]};

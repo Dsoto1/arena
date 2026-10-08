@@ -25,9 +25,9 @@ function edTagPane(pane){const k=ED_STEPS[edStepIdx()][0],sub=ST.sub;let cur=sub
       if(el.querySelector&&el.querySelector('[data-f="trophy"]'))cur='finish';
       else if(el.querySelector&&el.querySelector('[data-edmusic]'))cur='basics';
       else if(el.classList.contains('srcard'))cur='finish';
-      else if(el.tagName==='H4'&&/^Rounds/.test(t))cur='rounds';
-      else if(el.tagName==='H4'&&/^Arena rules/.test(t))cur='rules';
-      else if(el.tagName==='H4'&&/^Notes/.test(t))cur='finish';
+      else if(el.tagName==='H4'&&HRX('Rounds').test(t))cur='rounds';
+      else if(el.tagName==='H4'&&HRX('Arena rules').test(t))cur='rules';
+      else if(el.tagName==='H4'&&HRX('Notes').test(t))cur='finish';
       else if(cur==='finish'&&!el.classList.contains('srcard')&&el.querySelector&&el.querySelector('[data-f="name"]'))cur='basics';
     }
     el.dataset.edstep=cur;el.classList.toggle('edcur',cur===k)}}

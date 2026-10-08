@@ -257,7 +257,7 @@ function bedsHTML76(){const w=W_(),m=me();const beds=bedsClean76(w);const N=beds
 {const base=infirmaryHTML;infirmaryHTML=function(){let h=base.apply(this,arguments);try{const w=W_();const occ=bedsClean76(w).length,N=bedsOf76(me()),wait=bedWait76(w).length;
   /* the room's Patients tile counts the real beds */
   h=h.replace(/(<div class="rtv">)\d+ \/ \d+ beds(<\/div><div class="rtl">)Patients(<\/div>)(<div class="rc-sub">[^<]*<\/div>)?(<div class="meter"[^>]*><i style="width:)[\d.]+%/,(m0,a,b,c,d,e)=>_T`${a}${occ} / ${N} beds${b}Serious patients${c}${wait?`<div class="rc-sub">${_T`${wait} waiting · half-pace mending`}</div>`:''}${e}${Math.round(occ/N*100)}%`);
-  const b=bedsHTML76();const i=h.indexOf('<p class="rc-sub" style="margin:4px 0 8px"><b>Care must match');h=i>=0?h.slice(0,i)+b+h.slice(i):b+h;const n=lockNote76(_T('Infirmary'));if(n)h=n+`<div class="locked76">${h}</div>`}catch(e){console.error(e)}return h}}
+  const b=bedsHTML76();const i=h.indexOf('<p class="rc-sub" style="margin:4px 0 8px"><b>');h=i>=0?h.slice(0,i)+b+h.slice(i):b+h;const n=lockNote76(_T('Infirmary'));if(n)h=n+`<div class="locked76">${h}</div>`}catch(e){console.error(e)}return h}}
 {const base=planTiles;planTiles=function(g){let h=base.apply(this,arguments);try{if(serious76(g)&&!inBed76(g))h=h.replace(/class="plantile ([^"]*)" data-mg="(medic|surgeon)" data-id="[^"]*"/g,_T('class="plantile off" disabled data-bedneed76="1"'))+`<div class="pw">${_T`🛏 Needs a bed — heals at half pace without one`}</div>`;else if(inBed76(g))h+=`<div class="rc-sub">${_T`🛏 In a bed`}</div>`}catch(e){}return h}}
 {const base=careHTML;careHTML=function(g){let h=base.apply(this,arguments);try{if(g&&(g.severed||[]).length&&!inBed76(g))h=h.replace(/(<button class="btn[^"]*" type="button") data-mg="heal" data-id="[^"]*"[^>]*>/,_T('$1 disabled title="Needs a bed in the Infirmary first">'))}catch(e){}return h}}
 {const base=infirmNeed73;infirmNeed73=function(){let r=base.apply(this,arguments);try{const w=W_();r+=Math.min(bedFree76(w),bedWait76(w).length)}catch(e){}return r}}
@@ -542,7 +542,7 @@ function wardHTML76(){const w=W_(),m=me();const ros=rosterOf(m);const beds=bedsC
   const cot=(id,n)=>{if(!id)return `<div class="wd76cot empty"><div class="wd76ct">${_T`🛏 Bed ${n}`}</div><div class="wd76mt">${_T`Empty — give it to someone on the bench`}</div></div>`;
     const g=gById(id);const P=wardPatient76(g,w,m);
     return `<div class="wd76cot ${g.inj&&g.inj.neglect?'bad':''}"><div class="wd76ct">${_T`🛏 Bed ${n}`}<button class="btn tksm" type="button" data-unbed76="${g.id}">${_T`Discharge`}</button></div>
-      <div class="wd76pt"><div class="wd76av">${P.av}</div><div>${P.info}</div></div>${P.cures.replace('<div class="rc-sub">🛏 In a bed</div>','')}${done(P.done)}</div>`};
+      <div class="wd76pt"><div class="wd76av">${P.av}</div><div>${P.info}</div></div>${P.cures.replace('<div class="rc-sub">'+TX('🛏 In a bed')+'</div>','')}${done(P.done)}</div>`};
   const hurt=ros.filter(g=>(g.inj||(g.severed||[]).length)&&!beds.includes(g.id));const free=N-beds.length;
   const bench=hurt.map(g=>{const war=g.inj&&g.inj.war;const ser=!war&&serious76(g);const P=wardPatient76(g,w,m);
     return `<div class="wd76bn ${ser?'ser':''}"><div class="wd76av sm">${P.av}</div><div class="wd76bi">${war?`<b>${esc(g.name)}</b> <span class="rc-sub">${_T`⚔ ${esc(g.inj.label)} · back ${wkName(g.inj.until)}`}</span>`:P.info}
