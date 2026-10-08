@@ -351,7 +351,7 @@ window.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('
       onlToast80(on?_T('🔇 Muted — no phrases, calls or invites from them.'):_T('🔊 Unmuted.'));if(a==='wmute'){const p=document.querySelector('.w80bg');if(p){p.remove();onlWho80()}}})}
   if(a==='quick'){const [ev,rk]=String(v).split('|');return onlDo(async()=>{const r=await onlReq80('lobby.quick',{ev,ranked:rk==='1'});
     onlToast80(r.made?_T`📯 A new ${esc2(onlEvName(ev))} room — the crier calls for lanistas.`:_T`⚔ You joined ${esc2(r.lobby.host.name)}’s room.`)})}
-  if(a==='mkroom'||a==='newgame')return onlDo(async()=>{await onlReq80('lobby.create',{ranked:v==='1'||a==='newgame'});onlToast80(_T('📯 Your room is open — the crier calls.'))});
+  if(a==='mkroom'||a==='newgame')return onlDo(async()=>{await onlReq80('lobby.create',{ranked:v==='1'||a==='newgame'});onlToast80(_T('📯 Your room is open — 📣 Call the crier when you want more lanistas.') /* v0.96: no call on create (234) */)});
   if(a==='join'||a==='take'||a==='ijoin'||a==='wjoin'){onlPopClose80(b);if(a==='take'){const x=document.getElementById('onlCry80');if(x)x.hidden=true}
     return onlDo(async()=>{const L=await onlReq80('lobby.join',{id:v});if(ONL.tab!=='lobby')ONL.tab='play';const sat=L.players.some(p=>p.id===onlMe80());onlToast80(sat?_T`🪑 You sat down in ${esc2(L.host.name)}’s room.`:_T`👤 You stand in ${esc2(L.host.name)}’s room — every seat is taken.`)})}
   if(a==='leave')return onlDo(async()=>{await onlReq80('lobby.leave',{id:v})});

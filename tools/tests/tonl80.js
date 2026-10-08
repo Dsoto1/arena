@@ -44,8 +44,8 @@ const blocked=await C.evaluate(async id=>{try{await NET.req('lobby.join',{id});r
 /* phrases + the room's log; no lobby.list re-reads on pushes */
 const lists0=await B.evaluate(()=>window.__lists);
 await click(A,'#onl [data-onl="rsay"][data-v="ave"]');await wait(3200);await click(B,'#onl [data-onl="rsay"][data-v="luck"]');await click(A,'#onl [data-onl="rready"]');
-await until(()=>B.evaluate(()=>{const t=[...document.querySelectorAll('#r80Log > div')].map(d=>d.textContent);const L=onlMyLobby();return t.some(x=>/Ave!/.test(x))&&t.some(x=>/Good luck/.test(x))&&L&&L.players.some(p=>/Alpha/.test(p.name)&&p.ready)}));await wait(300);
-const logB=await B.evaluate(()=>[...document.querySelectorAll('#r80Log > div')].map(d=>d.textContent));const lists1=await B.evaluate(()=>window.__lists);
+await until(()=>B.evaluate(()=>{const t=((ONLF.chat[(onlMyLobby()||{}).id]||[]).filter(l=>!l.sys).map(l=>l.name+': '+onlQ80(l.q))) /* v0.96: no log on screen — phrases pop as bubbles (234) */;const L=onlMyLobby();return t.some(x=>/Ave!/.test(x))&&t.some(x=>/Good luck/.test(x))&&L&&L.players.some(p=>/Alpha/.test(p.name)&&p.ready)}));await wait(300);
+const logB=await B.evaluate(()=>((ONLF.chat[(onlMyLobby()||{}).id]||[]).filter(l=>!l.sys).map(l=>l.name+': '+onlQ80(l.q))) /* v0.96: no log on screen — phrases pop as bubbles (234) */);const lists1=await B.evaluate(()=>window.__lists);
 const readyA=(await room(B)).players.find(x=>/Alpha/.test(x[0]));
 /* the Forum: C (free, Online open) says Ave; the 📣 call reaches C as a banner */
 /* v0.87: the Forum box left the landing; its route stays — the phrase still reaches the others' feed */

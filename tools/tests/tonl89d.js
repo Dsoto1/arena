@@ -117,11 +117,8 @@ const t0=await peek((w,dom)=>w.domus82[dom].treasury,ids.dom);const rc=await P.e
 await P.click(await P.evaluate(()=>{const i=(V89D.bar||[]).findIndex(x=>/^cassis/.test(x.it));return `#onl [data-d89rep="${i}"]`}));await idle();
 A=await peek((w,dom)=>{const D=w.domus82[dom];const it=D.gear.find(x=>/^cassis/.test(x));return {t:D.treasury,brk:ONLC.isBroken(D,it),rep:ONLC.ledgerOf(D).out.repair}},ids.dom);ok(rc>0&&A.t===t0-rc&&!A.brk&&A.rep===rc,'repaired from the bar '+JSON.stringify([rc,t0,A]));
 
-/* ── 9 · loadouts: save what he wears, take a piece off, wear the loadout again ── */
-await P.click('#onl [data-d89="kitsave"]');await W(200);await P.fill('#ask89i','Ranked');await P.click('.kit89pop [data-ask89="ok"]');await idle();
-A=await peek((w,a)=>({k:w.chars[a].kits89,eq:ONLC.equipOf(w.chars[a])}),ids.a);ok(A.k&&A.k[0]&&A.k[0].n==='Ranked'&&A.k[0].items.length===A.eq.length,'the loadout saved '+JSON.stringify(A.k));
-await P.click('#onl .sc89 [data-d89off="ocrea"]');await idle();ok(!(await peek((w,a)=>ONLC.equipOf(w.chars[a]),ids.a)).includes('ocrea'),'the Ocrea off');
-await P.click('#onl [data-d89kit="0"]');await idle();ok((await peek((w,a)=>ONLC.equipOf(w.chars[a]),ids.a)).includes('ocrea'),'▶ the loadout puts it back');
+/* ── 9 · loadouts: gone (v0.96, 234-v96onl) ── */
+ok(await P.evaluate(()=>!document.querySelector('#onl .kt89,#onl [data-d89="kitsave"],#onl [data-d89kit]')),'no Loadouts in the Domus');
 
 /* ── 10 · colours + crest ── */
 await P.evaluate(()=>{const d=document.querySelector('#onl [data-fd89="look"]');d.open=true});await W(150);await P.click('#onl [data-crest89="wolf"]');await W(200);await P.click('#onl [data-d89="look"]');await idle();
