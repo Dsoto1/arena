@@ -610,7 +610,7 @@ function edApplyCell(r,c){
 /* randomArena — a random layout mirrored in four quadrants (pillars, tunnels, maybe spikes, 2–6 base beasts, maybe Leo). NOTE: uses rnd()/shuffle, the seeded dice, from UI code. */
 function randomArena(){
   const L={pillars:[],tunnels:[],spikes:[],chest:[6,6],chestW:[...CHEST_W],npcs:[],items:[],starts:STARTS.map(x=>[...x])};
-  const free=(r,c)=>!(r===6&&c===6)&&!L.starts.some(s=>s[0]===r&&s[1]===c)&&!L.pillars.some(p=>p.r===r&&p.c===c)&&!L.tunnels.some(t=>t[0]===r&&t[1]===c);
+  const free=(r,c)=>!(r===6&&c===6)&&!L.starts.some(s=>s&&s[0]===r&&s[1]===c)&&!L.pillars.some(p=>p.r===r&&p.c===c)&&!L.tunnels.some(t=>t[0]===r&&t[1]===c);
   // mirrored in four quadrants so no start is favored
   const mirror=(r,c)=>[[r,c],[c,12-r],[12-r,12-c],[12-c,r]];
   for(let k=0;k<30&&L.pillars.length<12;k++){const r=rnd(6),c=1+rnd(5);if(mirror(r,c).every(([a,b])=>free(a,b)))for(const [a,b] of mirror(r,c))L.pillars.push({r:a,c:b,pot:'?'})}

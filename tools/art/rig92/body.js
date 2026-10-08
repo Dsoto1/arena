@@ -115,7 +115,9 @@ export function sculpt(opt = {}) {
   bulk(add_(E([0, 1.155, -0.008], [0.115, 0.140, 0.090], T('sp', 0.07))),'abd');  /* abdomen */
   add_(E([0, 0.968, -0.014], [0.145, 0.110, 0.100], T('pe')));                         /* pelvis */
   for (const sx of [1, -1]) {
-    bulk(add_(E([sx * 0.074, 1.362, 0.066], [0.090, 0.050, 0.037], T('ch', 0.026), sx * -8)),'pec');  /* pec */
+    bulk(add_(E([sx * 0.076, 1.388, 0.054], [0.100, 0.040, 0.027], T('ch', 0.03), sx * -6)),'pec');  /* pec (v0.99: a flat, broad, high male pectoral — less forward, no drooping underside) */
+    add_(E([sx * 0.062, 1.290, 0.040], [0.090, 0.070, 0.048], T('ch', 0.05)));            /* v0.99 lower chest wall: carries the pec smoothly into the ribs (no gap under it) */
+    add_(C([sx * 0.150, 1.285, -0.030], [sx * 0.112, 1.100, -0.004], 0.034, 0.040, T({ a: 'ch', b: 'sp', t0: 0.0, t1: 1.0 }, 0.07)));  /* v0.99 lateral taper: lats flow down into the waist (no step below the ribs) */
     add_(C([sx * 0.110, 1.365, 0.058], [sx * 0.178, 1.408, 0.012], 0.040, 0.030, T('ch', 0.02)));  /* pec → arm insertion */
     bulk(add_(E([sx * 0.112, 1.320, -0.044], [0.058, 0.125, 0.066], T('ch', 0.05), sx * 14)),'lat');  /* lat */
     add_(E([sx * 0.098, 1.120, 0.004], [0.040, 0.080, 0.070], T('sp', 0.02), sx * -4));     /* oblique */
