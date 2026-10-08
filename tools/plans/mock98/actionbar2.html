@@ -1,0 +1,254 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Action Bar II</title>
+<link rel="stylesheet" href="mock98.css">
+<!-- v0.98 mock-up: the compact action bar, round 2 (his changes 1–5 on top of tools/plans/mock96/mock4.html = 233-v96bar).
+     Static: no game code. Shots: node tools/plans/mock98/shotbar2.js -->
+<style>
+/* ---------- page ---------- */
+body{padding:22px 0 40px}
+.pg{width:1004px;margin:0 auto}
+.pg h1{font:400 26px/1 var(--display);color:var(--gold2);letter-spacing:.05em;margin:0 0 4px}
+.pg .lead{margin:0 0 18px}
+.cap{display:flex;align-items:baseline;gap:10px;margin:22px 0 6px}
+.cap h2{font:400 17px var(--display);color:var(--gold2);letter-spacing:.06em}
+.cap span{color:var(--muted);font-size:13.5px}
+.note{margin:10px 0 0;color:var(--muted);font-size:13.5px;line-height:1.45;max-width:960px}
+.note b{color:var(--bone)}
+.note .alt{color:var(--gold2)}
+/* a slice of sand above the bar so it reads in place */
+.stage{position:relative;width:1004px;padding:16px 16px 14px;border-radius:10px;
+ background:linear-gradient(#c9a66b00,#00000000),linear-gradient(180deg,#5c4428 0,#3a2a1a 34px,#1a120c 35px,#160f0b 100%);border:1px solid #3a2c1e}
+.stage::before{content:"";position:absolute;left:0;right:0;top:0;height:34px;border-radius:10px 10px 0 0;
+ background:repeating-linear-gradient(115deg,#b48c56 0 2px,#a98251 2px 9px),linear-gradient(#c49a60,#9a7444);opacity:.55}
+
+/* ---------- THE BAR: one plate ---------- */
+.ab{--hd:24px;--row:34px;position:relative;width:972px;border-radius:10px;padding:5px 6px 6px;
+ background:linear-gradient(#271b12,#1d140d);border:1px solid #5a4128;
+ box-shadow:inset 0 1px 0 #ffffff10,inset 0 0 0 1px #00000060,0 4px 14px #00000080}
+.ab .nz{position:absolute;inset:0;pointer-events:none;border-radius:inherit;mix-blend-mode:overlay;opacity:.32;
+ background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* phase rail (unchanged look) */
+.rl{position:relative;display:grid;grid-template-columns:minmax(0,auto) repeat(4,1fr);height:22px;margin-bottom:5px;border-radius:11px;background:#1c130c;border:1px solid #4a3620;overflow:hidden}
+.who{display:flex;align-items:center;gap:6px;padding:0 10px 0 2px;font-size:12px;white-space:nowrap;border-right:1px solid #0008;color:var(--bone)}
+.who .f{width:18px;height:18px;border-radius:50%;border:1.5px solid #f0cf7d;background:radial-gradient(circle at 50% 38%,#d9b48a 0 4px,#7a5236 4.5px 6px,#2a1d13 6.5px);flex:none}
+.who small{font:10px var(--mono);color:var(--muted)}
+.ph{display:flex;align-items:center;justify-content:center;gap:4px;font:11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--pc);opacity:.55;border-right:1px solid #00000060;box-shadow:inset 0 -2px 0 var(--pb);white-space:nowrap}
+.ph:last-child{border-right:0}.ph.done{opacity:.85}.ph.done::before{content:"✓"}
+.ph.now{opacity:1;font-weight:bold;color:#1a0f08;background:var(--pc);box-shadow:inset 0 0 0 1px var(--pb),0 0 10px var(--pb)}
+.p1{--pc:#9fe0d8;--pb:#4f9a94}.p2{--pc:#f0cf7d;--pb:#c9a44a}.p3{--pc:#ffb3a3;--pb:#c8604c}.p4{--pc:#c9ccd6;--pb:#7d8290}
+
+/* body: groups share one inset tray, one header line, one row grid */
+.tray{position:relative;display:grid;gap:0;grid-template-columns:var(--cols);border-radius:7px;background:#160f0a;border:1px solid #3e2d1c;box-shadow:inset 0 1px 3px #000a}
+.ab.act .tray{--cols:1fr 1.2fr 1.42fr 112px}
+.ab,.hint,.note,.pnote{word-spacing:.14em}
+.ab .c,.ab small,.ab .ph,.ab .u,.ab .why,.who small{word-spacing:0}
+.phone .wpn .c{display:none}
+.swd{width:9px;height:13px;display:inline-block}
+.swd.no{opacity:.3}
+.g{position:relative;display:flex;flex-direction:column;min-width:0;border-right:1px solid #00000080;box-shadow:1px 0 0 #ffffff0c}
+.g:first-child .hd{border-top-left-radius:6px}
+.g .hd{position:relative;height:var(--hd);padding:0 9px;display:flex;align-items:center;gap:7px;white-space:nowrap;font:700 13px var(--body);letter-spacing:.02em;border-bottom:1px solid #00000080;overflow:hidden}
+.g .hd .ic{font-size:13px;line-height:1}
+.g .hd .sp{flex:1}
+.g .hd small{display:flex;align-items:center;gap:5px;font:10.5px var(--mono);letter-spacing:.05em;text-transform:uppercase;opacity:.92}
+.g .bd{padding:6px 6px 6px;display:grid;gap:5px;flex:1;align-content:start}
+/* materials, only on the header strips */
+.wood .hd{background:repeating-linear-gradient(0deg,#6e4120 0 3px,#7b4a26 3px 6px);color:#f3e2c2;text-shadow:0 1px 0 #0006}
+.brass .hd{background:linear-gradient(#c9a456,#94702e);color:#24180a;text-shadow:0 1px 0 #f0d58a80}
+.forum .hd{background:linear-gradient(90deg,#e3cb98 0,#d2b47c 46%,#7a3c22 54%,#5c2812 100%);color:#3a2410}
+.forum .hd .rt{color:#f4e2c4;text-shadow:0 1px 0 #0008}
+/* Forum strip: parchment (dealings) melting into leather (market) — the two old headers in one */
+.forum .hd::after{content:"";position:absolute;left:50%;top:3px;bottom:3px;width:0;border-left:1px dashed #f4e2c450}
+
+/* buttons: one look everywhere, material shows in the border */
+.b{position:relative;height:var(--row);display:flex;align-items:center;gap:6px;min-width:0;padding:0 9px;border-radius:5px;
+ background:linear-gradient(#3a291c,#2f2117);border:1px solid #5a4128;color:#efe2c8;font-size:13.5px;line-height:1;white-space:nowrap;box-shadow:inset 0 1px 0 #ffffff12}
+.b .l{overflow:hidden;text-overflow:ellipsis}
+.b .c{font:10.5px var(--mono);opacity:.75;display:inline-flex;align-items:center;gap:3px}
+.b .k{margin-left:auto;font:9.5px var(--mono);padding:0 3px;border:1px solid #ffffff30;border-radius:3px;opacity:.55;line-height:13px}
+.wood .b{border-color:#6e4a2a}.brass .b{border-color:#8a6a36}.forum .b.p{border-color:#8a7450}.forum .b.lt{border-color:#7a4a2e}
+.b.on{border-color:#ffd77a;box-shadow:0 0 0 1px #ffd77a,0 0 8px #ffd77a60;color:#fff1cc}
+.b.off{opacity:.42;box-shadow:none}
+.b.off .why{font:10px var(--mono);margin-left:auto;opacity:.9}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.seal::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#d0423a,#7e1612);box-shadow:0 0 0 1px #4a0c08}
+.ico{width:15px;height:15px;flex:none;display:inline-block;vertical-align:middle}
+.coin{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 38% 34%,#ffe7a6,#d6ab4c 55%,#8a6420);box-shadow:0 0 0 1px #5a4020;display:inline-block;flex:none}
+.wheat{width:11px;height:13px;display:inline-block;flex:none}
+
+/* Attack: one big button per weapon + Focus docked on its right */
+.wpn{display:grid;grid-template-columns:1fr 36px;height:var(--row)}
+.wpn .b{border-radius:5px 0 0 5px;font-size:15px;font-weight:700;gap:7px;padding:0 8px 0 7px}
+.wpn .b .wi{width:22px;height:22px;flex:none;border-radius:4px;background:#1b130c;border:1px solid #8a6a3680;display:grid;place-items:center}
+.wpn .b .wi svg{width:18px;height:18px}
+.wpn .b .c{font-weight:400;font-size:10.5px}
+.wpn .fo{height:var(--row);border-radius:0 5px 5px 0;border:1px solid #8a6a36;border-left:1px solid #00000090;display:grid;place-items:center;
+ background:linear-gradient(#4a3418,#33241a);box-shadow:inset 1px 0 0 #ffffff10,inset 0 1px 0 #ffffff12;position:relative}
+.wpn .fo svg{width:19px;height:19px}
+.wpn .fo i{position:absolute;right:2px;bottom:1px;font:8.5px var(--mono);font-style:normal;color:#f0cf7d;opacity:.8}
+.wpn.on .b{border-color:#ffd77a;box-shadow:0 0 0 1px #ffd77a,0 0 8px #ffd77a60;color:#fff1cc;z-index:1}
+.wpn.on .fo{border-color:#ffd77a}
+.wpn.used{opacity:.42}
+
+/* End turn (unchanged look, taller to the tray) */
+.end{position:relative;margin:4px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-align:center;color:#fff1d8;border:1px solid #d8b45a;
+ background:radial-gradient(circle at 6px 6px,#d8b45a 2px,transparent 2.6px),radial-gradient(circle at calc(100% - 6px) 6px,#d8b45a 2px,transparent 2.6px),radial-gradient(circle at 6px calc(100% - 6px),#d8b45a 2px,transparent 2.6px),radial-gradient(circle at calc(100% - 6px) calc(100% - 6px),#d8b45a 2px,transparent 2.6px),linear-gradient(#a8322a,#7a1b14);
+ box-shadow:inset 0 0 0 2px #5a100a}
+.end b{font:700 16px var(--body)}
+.end .k{font:9.5px var(--mono);padding:0 4px;border:1px solid #ffffff40;border-radius:3px;opacity:.8;line-height:13px}
+.end .u{font:9.5px var(--mono);line-height:1.2;color:#ffd9c8;opacity:.9}
+.end.off{opacity:.45}
+
+/* header pips */
+.pips{display:inline-flex;gap:2px;align-items:center}
+.pip{width:6px;height:9px;border-radius:2px;background:#00000050;border:1px solid #f0a04060}.pip.on{background:#f0a040;border-color:#ffc070}
+.n{font:700 12px var(--mono);color:#ffd77a}
+.sw{font-size:11px;font-style:normal}.sw.no{opacity:.3;filter:grayscale(1)}
+
+.hint{margin:6px 2px 0;font-size:12px;color:var(--dim)}
+
+/* ---------- Choice phase: one centred group ---------- */
+.ab.ch .tray{--cols:1fr 112px}
+.chz{display:flex;justify-content:center;align-items:stretch;padding:0;border-right:1px solid #00000080}
+.chg{width:520px;display:flex;flex-direction:column;border-left:1px solid #00000080;border-right:1px solid #00000080;box-shadow:-1px 0 0 #ffffff0c,1px 0 0 #ffffff0c}
+.chg .hd{background:linear-gradient(#e6c06a,#b88a34);color:#24180a;text-shadow:0 1px 0 #f7dd9a80;justify-content:center}
+.chg .hd small{position:absolute;right:9px}
+.chg .bd{padding:8px 14px 9px;display:flex;justify-content:center;gap:12px}
+.cb{width:230px;height:44px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:6px;font:700 17px var(--body);color:#fff1cc;
+ background:linear-gradient(#4a3418,#33241a);border:1px solid #c9a44a;box-shadow:inset 0 1px 0 #ffffff18,0 1px 0 #000}
+.cb .coin{width:16px;height:16px}
+.cb .k{font:9.5px var(--mono);padding:0 3px;border:1px solid #ffffff30;border-radius:3px;opacity:.6;line-height:13px;font-weight:400}
+.cb.sug{box-shadow:0 0 0 1px #f0cf7d,0 0 10px 2px rgba(240,207,125,.45)}
+.chside{display:flex;align-items:center;justify-content:center;color:#4a3b2b;font:11px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.chwrap{display:grid;grid-template-columns:1fr 520px 1fr}
+
+/* ---------- phone, 390 px ---------- */
+.phone{width:390px;border-radius:24px;padding:12px 0 14px;background:#0c0806;border:1px solid #3a2c1e;box-shadow:0 6px 18px #000a}
+.phone .scr{position:relative;margin:0 auto;width:390px;overflow:hidden}
+.phone .sand{height:150px;margin:0 0 8px;background:repeating-linear-gradient(115deg,#b48c56 0 2px,#a98251 2px 9px),#a98251;opacity:.55;border-radius:0}
+.phone .ab{width:auto;margin:0 6px;padding:4px 4px 5px;border-radius:9px}
+.phone .rl{grid-template-columns:auto repeat(4,1fr);height:20px;margin-bottom:4px}
+.phone .who{padding:0 4px 0 1px}.phone .who b,.phone .who small{display:none}
+.phone .ph{font-size:9.5px;letter-spacing:.02em}
+.phone .prow{position:relative;display:flex;gap:0;border-radius:7px;background:#160f0a;border:1px solid #3e2d1c;overflow:hidden}
+.phone .swipe{display:flex;gap:0;overflow:hidden;flex:1;min-width:0}
+.phone .g{flex:0 0 206px}
+.phone .g.mv{flex-basis:172px}
+.phone .b,.phone .wpn,.phone .wpn .fo{--row:38px}
+.phone .wpn{grid-template-columns:1fr 40px}
+.phone .endp{flex:0 0 84px;display:flex;position:relative;background:#160f0a;box-shadow:-10px 0 12px #000c}
+.phone .endp .end{flex:1}
+.phone .endp .end b{font-size:14px}
+.phone .fade{position:absolute;right:84px;top:0;bottom:0;width:26px;background:linear-gradient(90deg,transparent,#160f0acc);pointer-events:none}
+.dots{display:flex;justify-content:center;gap:5px;margin:5px 0 0}
+.dots i{width:16px;height:3px;border-radius:2px;background:#4a3620}.dots i.on{background:var(--gold)}
+.phone .chg2 .bd{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px}
+.phone .chg2 .cb{width:auto;height:44px;font-size:16px}
+.phone .chg2 .hd{justify-content:center}
+.phn{display:flex;gap:26px;align-items:flex-start}
+.phn .pnote{flex:1;color:var(--muted);font-size:13.5px;line-height:1.5;padding-top:30px}
+.phn .pnote b{color:var(--bone)}
+
+/* close-up */
+.zoomwrap{width:972px}
+</style></head><body><div class="pg">
+
+<h1>Action bar · round 2</h1>
+<p class="lead">The approved compact bar (v0.96, 233-v96bar) with your five changes: Move before Attack · Choice buttons sized and centred · Deal + Market·Crowd = one <b class="gold">Forum</b> block · one big button per weapon with Focus docked on its right · one plate for the whole bar. Same height, dark panels, material strips, phase rail, red End turn.</p>
+
+<!-- ================= CHOICE ================= -->
+<div class="cap"><h2>II · Choice phase</h2><span>two buttons, sensible width, centred text, larger font; the group sits in the middle of the bar</span></div>
+<div class="stage" id="sChoice">
+ <div class="ab ch"><div class="nz"></div>
+  <div class="rl"><div class="who"><span class="f"></span><b>Trajan Felix</b><small>next: Decimus</small></div>
+   <div class="ph p1 done">Resolve</div><div class="ph p2 now">II · Choice</div><div class="ph p3">Action</div><div class="ph p4">End</div></div>
+  <div class="tray">
+   <div class="chwrap">
+    <div class="chside">🏃 Move · ⚔ Attack</div>
+    <div class="chg g"><div class="hd"><span>✦ Choose one</span><small>Pick one</small></div>
+     <div class="bd">
+      <div class="cb sug">Take 2 <span class="coin"></span><span class="k">1</span></div>
+      <div class="cb">🂠 Draw an arena card<span class="k">2</span></div>
+     </div></div>
+    <div class="chside">🏛 Forum</div>
+   </div>
+   <div class="end off"><b>End turn</b><span class="k">Enter</span></div>
+  </div>
+ </div>
+ <div class="hint">Take 2 coin or draw a card from the arena deck. The soft glow is the guide's pick (hints on).</div>
+</div>
+
+<!-- ================= ACTION ================= -->
+<div class="cap"><h2>III · Action phase</h2><span>two weapons · 3 movement left · Topple disabled · Market affordable · Loot unavailable</span></div>
+<div class="stage" id="sAction">
+ <div class="ab act" id="barAct"><div class="nz"></div>
+  <div class="rl"><div class="who"><span class="f"></span><b>Trajan Felix</b><small>next: Decimus</small></div>
+   <div class="ph p1 done">Resolve</div><div class="ph p2 done">Choice</div><div class="ph p3 now">III · Action</div><div class="ph p4">End</div></div>
+  <div class="tray">
+   <!-- MOVE -->
+   <div class="g wood"><div class="hd"><span class="ic">🏃</span><span>Move</span><span class="sp"></span><small><span class="pips"><i class="pip on"></i><i class="pip on"></i><i class="pip on"></i><i class="pip"></i><i class="pip"></i></span><span class="n">3</span></small></div>
+    <div class="bd">
+     <div class="r2"><div class="b on"><span class="l">Move</span><span class="c">diag 2</span></div><div class="b"><span class="l">Push</span><span class="c">2</span><span class="k">P</span></div></div>
+     <div class="r2"><div class="b off" title="No pillar beside you"><span class="l">Topple</span><span class="c">3</span></div><div class="b"><span class="l">Tunnel</span><span class="c">1 🗝</span></div></div>
+    </div></div>
+   <!-- ATTACK -->
+   <div class="g brass"><div class="hd"><span class="ic">⚔</span><span>Attack</span><span class="sp"></span><small><svg class="swd" viewBox="0 0 9 13"><path d="M4.5 0.5v8.5" stroke="#24180a" stroke-width="1.8" stroke-linecap="round"/><path d="M1.5 9h6M4.5 9v3.2" stroke="#24180a" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="swd" viewBox="0 0 9 13"><path d="M4.5 0.5v8.5" stroke="#24180a" stroke-width="1.8" stroke-linecap="round"/><path d="M1.5 9h6M4.5 9v3.2" stroke="#24180a" stroke-width="1.4" stroke-linecap="round"/></svg> 2 left</small></div>
+    <div class="bd">
+     <div class="wpn"><div class="b"><span class="wi"><svg viewBox="0 0 24 24"><path d="M3 21 15.5 8.5" stroke="#d6ab4c" stroke-width="2.2" stroke-linecap="round"/><path d="M14 4l6-1-1 6-3.2-1.8z" fill="#e9dcc2" stroke="#8a6a36" stroke-width=".8"/></svg></span><span class="l">Hasta</span><span class="c">3 dmg · rng 2</span><span class="k">A</span></div>
+      <div class="fo" title="Focus with the Hasta — 3+ movement, uses all you have left"><svg viewBox="0 0 24 24" fill="none" stroke="#f0cf7d" stroke-width="1.7"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.6"/><circle cx="12" cy="12" r=".9" fill="#f0cf7d"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4" stroke-linecap="round"/></svg></div></div>
+     <div class="wpn"><div class="b"><span class="wi"><svg viewBox="0 0 24 24"><path d="M5 19l9-9" stroke="#b9c1c9" stroke-width="3" stroke-linecap="round"/><path d="M14 10l5-6" stroke="#e9eef2" stroke-width="2" stroke-linecap="round"/><path d="M4 16l4 4" stroke="#8a6a36" stroke-width="2.4" stroke-linecap="round"/></svg></span><span class="l">Pugio</span><span class="c">2 dmg · rng 1</span></div>
+      <div class="fo" title="Focus with the Pugio"><svg viewBox="0 0 24 24" fill="none" stroke="#f0cf7d" stroke-width="1.7"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.6"/><circle cx="12" cy="12" r=".9" fill="#f0cf7d"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4" stroke-linecap="round"/></svg></div></div>
+    </div></div>
+   <!-- FORUM -->
+   <div class="g forum"><div class="hd"><span class="ic">🏛</span><span>Forum</span><span class="sp"></span><small class="rt"><span class="coin"></span>5 · <svg class="wheat" viewBox="0 0 12 14"><path d="M6 13V3" stroke="#e9c46a" stroke-width="1.2"/><g fill="#e9c46a"><ellipse cx="4.3" cy="4.5" rx="1.3" ry="2.1" transform="rotate(-25 4.3 4.5)"/><ellipse cx="7.7" cy="4.5" rx="1.3" ry="2.1" transform="rotate(25 7.7 4.5)"/><ellipse cx="4.3" cy="8" rx="1.3" ry="2.1" transform="rotate(-25 4.3 8)"/><ellipse cx="7.7" cy="8" rx="1.3" ry="2.1" transform="rotate(25 7.7 8)"/><ellipse cx="6" cy="1.8" rx="1.1" ry="1.8"/></g></svg>4</small></div>
+    <div class="bd">
+     <div class="r2"><div class="b lt"><span class="l">Market</span><span class="c">L1–2 · 3<svg class="wheat" viewBox="0 0 12 14"><path d="M6 13V3" stroke="#e9c46a" stroke-width="1.2"/><g fill="#e9c46a"><ellipse cx="4.3" cy="5" rx="1.3" ry="2.1" transform="rotate(-25 4.3 5)"/><ellipse cx="7.7" cy="5" rx="1.3" ry="2.1" transform="rotate(25 7.7 5)"/><ellipse cx="6" cy="2" rx="1.1" ry="1.8"/></g></svg></span></div>
+      <div class="b lt"><span class="l">Crowd Favor</span><span class="c">2<svg class="wheat" viewBox="0 0 12 14"><path d="M6 13V3" stroke="#e9c46a" stroke-width="1.2"/><g fill="#e9c46a"><ellipse cx="4.3" cy="5" rx="1.3" ry="2.1" transform="rotate(-25 4.3 5)"/><ellipse cx="7.7" cy="5" rx="1.3" ry="2.1" transform="rotate(25 7.7 5)"/><ellipse cx="6" cy="2" rx="1.1" ry="1.8"/></g></svg></span></div></div>
+     <div class="r2"><div class="b p off" title="Nothing to loot beside you"><span class="l">Loot</span><span class="why">none near</span></div>
+      <div class="b p seal"><span class="l">Trade · Truce</span></div></div>
+    </div></div>
+   <!-- END -->
+   <div class="end"><b>End turn</b><span class="k">Enter</span><span class="u">3 move · 2 attacks<br>unused</span></div>
+  </div>
+ </div>
+ <div class="hint">Click an orange tile to move. Numbers show the movement it costs.</div>
+</div>
+<p class="note"><b>Name of the merged block:</b> <span class="alt">Forum</span> (the marketplace where Romans bought, sold and struck deals — Market, Crowd Favor, Loot, Trade · Truce all live there). Alternates: <span class="alt">Macellum</span> (the Roman market hall — strong on buying, weaker on deals) · <span class="alt">Negotium</span> (Latin "business, dealings" — strong on trade/truce, weaker on the market). Its strip blends the old Deal parchment into the Market leather.<br>
+<b>Weapons:</b> one big button per equipped weapon (icon, name, short damage · range); the docked <b>◎</b> on its right = Focus with that weapon (3+ movement, uses all that is left; dimmed under 3). A throwable weapon would show a small ↗ in the same dock below Focus — not drawn here. Key A still cycles the weapons.</p>
+
+<!-- ================= PHONE ================= -->
+<div class="cap"><h2>Phone · 390 px</h2><span>the groups are one swipe row, End turn fixed on the right</span></div>
+<div class="phn">
+ <div class="phone" id="sPhone"><div class="scr">
+  <div class="sand"></div>
+  <div class="ab act"><div class="nz"></div>
+   <div class="rl"><div class="who"><span class="f"></span></div>
+    <div class="ph p1 done">Res.</div><div class="ph p2 done">Choice</div><div class="ph p3 now">III · Act</div><div class="ph p4">End</div></div>
+   <div class="prow">
+    <div class="swipe">
+     <div class="g wood mv"><div class="hd"><span class="ic">🏃</span><span>Move</span><span class="sp"></span><small><span class="pips"><i class="pip on"></i><i class="pip on"></i><i class="pip on"></i><i class="pip"></i><i class="pip"></i></span><span class="n">3</span></small></div>
+      <div class="bd"><div class="r2"><div class="b on"><span class="l">Move</span></div><div class="b"><span class="l">Push</span><span class="c">2</span></div></div>
+       <div class="r2"><div class="b off"><span class="l">Topple</span></div><div class="b"><span class="l">Tunnel</span><span class="c">🗝</span></div></div></div></div>
+     <div class="g brass"><div class="hd"><span class="ic">⚔</span><span>Attack</span><span class="sp"></span><small><svg class="swd" viewBox="0 0 9 13"><path d="M4.5 0.5v8.5" stroke="#24180a" stroke-width="1.8" stroke-linecap="round"/><path d="M1.5 9h6M4.5 9v3.2" stroke="#24180a" stroke-width="1.4" stroke-linecap="round"/></svg><svg class="swd" viewBox="0 0 9 13"><path d="M4.5 0.5v8.5" stroke="#24180a" stroke-width="1.8" stroke-linecap="round"/><path d="M1.5 9h6M4.5 9v3.2" stroke="#24180a" stroke-width="1.4" stroke-linecap="round"/></svg></small></div>
+      <div class="bd">
+       <div class="wpn"><div class="b"><span class="wi"><svg viewBox="0 0 24 24"><path d="M3 21 15.5 8.5" stroke="#d6ab4c" stroke-width="2.2" stroke-linecap="round"/><path d="M14 4l6-1-1 6-3.2-1.8z" fill="#e9dcc2" stroke="#8a6a36" stroke-width=".8"/></svg></span><span class="l">Hasta</span><span class="c">3 · r2</span></div>
+        <div class="fo"><svg viewBox="0 0 24 24" fill="none" stroke="#f0cf7d" stroke-width="1.7"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.6"/><circle cx="12" cy="12" r=".9" fill="#f0cf7d"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4" stroke-linecap="round"/></svg></div></div>
+       <div class="wpn"><div class="b"><span class="wi"><svg viewBox="0 0 24 24"><path d="M5 19l9-9" stroke="#b9c1c9" stroke-width="3" stroke-linecap="round"/><path d="M14 10l5-6" stroke="#e9eef2" stroke-width="2" stroke-linecap="round"/><path d="M4 16l4 4" stroke="#8a6a36" stroke-width="2.4" stroke-linecap="round"/></svg></span><span class="l">Pugio</span><span class="c">2 · r1</span></div>
+        <div class="fo"><svg viewBox="0 0 24 24" fill="none" stroke="#f0cf7d" stroke-width="1.7"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.6"/><circle cx="12" cy="12" r=".9" fill="#f0cf7d"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4" stroke-linecap="round"/></svg></div></div>
+      </div></div>
+     <div class="g forum"><div class="hd"><span class="ic">🏛</span><span>Forum</span></div>
+      <div class="bd"><div class="r2"><div class="b lt"><span class="l">Market</span></div><div class="b lt"><span class="l">Crowd</span></div></div>
+       <div class="r2"><div class="b p off"><span class="l">Loot</span></div><div class="b p seal"><span class="l">Trade</span></div></div></div></div>
+    </div>
+    <div class="fade"></div>
+    <div class="endp"><div class="end"><b>End<br>turn</b><span class="u">3 mv<br>2 atk</span></div></div>
+   </div>
+   <div class="dots"><i class="on"></i><i class="on"></i><i></i></div>
+  </div>
+ </div></div>
+ <div class="pnote"><b>Phones:</b> same plate and order — Move, Attack, Forum — as one swipe row (snap per block); End turn stays fixed on the right with its unused line. Buttons are 38 px tall for thumbs; weapon damage · range moves to long-press, key hints drop. The dots show which blocks are in view. Choice on a phone: the two choice buttons side by side, half the row each, End turn fixed right.<br><br>
+  <b>Kept from v0.96:</b> phase rail in the phase colours with whose turn + next, material header strips, pips (orange movement, two swords), the guide's glow, board previews on hover, done-phase tips, key hints, red End turn with rivets and "unused" line.</div>
+</div>
+
+</div></body></html>
