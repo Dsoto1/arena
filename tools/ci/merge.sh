@@ -7,7 +7,7 @@ set -e; B="$1"; [ -n "$B" ] || { echo "usage: sh tools/ci/merge.sh <branch>"; ex
 cd "$(dirname "$0")/../.."
 git merge --no-edit "$B" >/dev/null 2>&1 || true
 C=$(git diff --name-only --diff-filter=U)
-[ -z "$C" ] && { sh build.sh | tail -1; git add -A flavius-arena.html 2>/dev/null; git commit -qm "Merge $B" --allow-empty >/dev/null 2>&1 || true; echo "merged $B (no conflicts)"; exit 0; }
+[ -z "$C" ] && { sh build.sh | tail -1; git add -A flavius-arena.html 2>/dev/null; git commit -qm "Merge $B [skip ci]" --allow-empty >/dev/null 2>&1 || true; echo "merged $B (no conflicts)"; exit 0; }
 python3 - "$B" <<'PY'
 import re,subprocess,sys
 B=sys.argv[1]
@@ -38,4 +38,4 @@ if left:print('HAND MERGE NEEDED:',' '.join(left));sys.exit(3)
 PY
 OUT=$(sh build.sh | tail -1); echo "$OUT"; [ "$OUT" = "SYNTAX_OK" ] || { echo "build failed after merge"; exit 1; }
 git add -A build.sh tools/runreg.sh CLAUDE.md tools/regstate.json tools/regmap.json flavius-arena.html
-git commit -qm "Merge $B" && echo "merged $B"
+git commit -qm "Merge $B [skip ci]" && echo "merged $B"
