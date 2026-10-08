@@ -5,7 +5,7 @@ await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLA
 await pg.click('[data-mm="manager"]');await pg.waitForTimeout(350);await pg.screenshot({path:'load45.png'});await pg.waitForTimeout(1500);
 await pg.click('#mClose');await pg.waitForTimeout(1500);
 // guide cheats
-await pg.click('[data-mm="rules"]');await pg.waitForTimeout(800);await pg.click('[data-rul="guide"]');await pg.waitForTimeout(300);
+await pg.click('[data-mm="rules"]');await pg.waitForTimeout(800);await pg.click('[data-tac98="strat"]') /* v0.98: Tactics → Strategy */;await pg.waitForTimeout(300);
 const o={};o.cheatHidden=await pg.evaluate(()=>document.querySelector('.cheatlist').hidden);await pg.evaluate(()=>{const d=document.querySelector('[data-cheatshow]').closest('details');if(d)d.open=true});await pg.click('[data-cheatshow]');await pg.waitForTimeout(200);
 o.cheats=await pg.evaluate(()=>[...document.querySelectorAll('.cheatrow code')].map(c=>c.textContent));
 await pg.click('#mClose');await pg.waitForTimeout(800);

@@ -135,7 +135,7 @@ function glSweep(){try{{const i=TT.stack.findIndex(t=>!t.a.isConnected);if(i>=0)
 if(!HEADLESS)glObs.observe(document.body,{childList:true,subtree:true});
 
 /* ---------- the main menu: names only; what each one does is a hover away ---------- */
-const MM_NAMES={learn:_T('🎓 Learn to Play'),learnmgr:_T('💼 Learn Manager Mode'),play:_T('⚔️ Play Now'),multi:_T('👥 Multiplayer'),manager:_T('💼 Manager Mode'),studio:_T('🎨 Creator Studio'),annals:_T('🏛️ The Annals'),rules:'📜 Rules & Strategy',settings:_T('⚙️ Settings'),hotseat:_T('🪑 Hot Seat'),lan:'🖧 LAN',online:_T('🌐 Online')};
+const MM_NAMES={learn:_T('🎓 Learn to Play'),learnmgr:_T('💼 Learn Manager Mode'),play:_T('⚔️ Play Now'),multi:_T('👥 Multiplayer'),manager:_T('💼 Manager Mode'),studio:_T('🎨 Creator Studio'),annals:_T('🏛️ The Annals'),rules:_T('📜 Tactics'),settings:_T('⚙️ Settings'),hotseat:_T('🪑 Hot Seat'),lan:'🖧 LAN',online:_T('🌐 Online')};
 function mmQuiet(){const box=document.querySelector('#mainMenu .mmbtns');if(!box)return;for(const b of box.querySelectorAll('[data-mm]')){if(b.dataset.quietDone)continue;const sm=b.querySelector('small');const tip=sm?sm.textContent.trim():'';
     if(MM_NAMES[b.dataset.mm]){b.textContent=MM_NAMES[b.dataset.mm]}else if(sm)sm.remove();if(tip)b.dataset.tip=esc(tip.charAt(0).toUpperCase()+tip.slice(1));b.dataset.quietDone='1'}
   const f=document.querySelector('#mainMenu .mmfoot');if(f)f.innerHTML=`${_T`© 2026 Flavius Rule ·`} <button type="button" class="mmlink" data-proto title="${_T`The prototype this game was distilled from`}">D.Soto</button>`}

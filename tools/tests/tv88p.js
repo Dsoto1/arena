@@ -106,7 +106,7 @@ await run('p');await run('l');
 {const ctx=await b.newContext({viewport:{width:1400,height:900}});await ctx.route(/fonts\./,r=>r.abort());
   await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});const P=await ctx.newPage();P.on('pageerror',e=>errs.push('desk:'+e.message));
   await P.goto(URL0,{timeout:90000});await P.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:60000});
-  const D=await P.evaluate(async()=>{openSettings('general');await new Promise(r=>setTimeout(r,600));const r=document.querySelector('#modal .mbox').getBoundingClientRect();const c=document.querySelector('#mBody input[type=checkbox]');
+  const D=await P.evaluate(async()=>{ /* v0.98: Settings is full screen by design — check an ordinary window */modal('Test','<label><input type="checkbox"> tick</label>',[{label:'Close',value:1}],{wide:1});await new Promise(r=>setTimeout(r,600));const r=document.querySelector('#modal .mbox').getBoundingClientRect();const c=document.querySelector('#mBody input[type=checkbox]');
     return {w:Math.round(r.width),cb:c?Math.round(c.getBoundingClientRect().width):0,lite:lite84On()}});
   ok(D.w<1400&&D.cb<20&&!D.lite,'desktop unchanged '+JSON.stringify(D));await ctx.close()}
 console.log(miss.length?'MISSING '+JSON.stringify(miss):'ALL OK');console.log('ERRS',JSON.stringify(errs));

@@ -10,10 +10,10 @@ await pg.waitForTimeout(700);out.intro=await pg.evaluate(()=>!!document.querySel
 out.house=await pg.evaluate(()=>document.querySelector('.house')&&document.querySelector('.house').textContent+' | '+document.querySelector('.house').title);
 out.mute=await pg.evaluate(()=>{document.querySelector('#btnMute').click();const a=audSet().on;document.querySelector('#btnMute').click();return [a,audSet().on]});
 await pg.waitForTimeout(3500);
-await pg.click('#btnRules');await pg.waitForTimeout(300);await pg.screenshot({path:'shot_rules25.png'});await pg.click('[data-rul="new"]');await pg.waitForTimeout(200);out.newTab=await pg.evaluate(()=>!document.querySelector('#rulTab-new').hidden);
+await pg.click('#btnRules');await pg.waitForTimeout(300);await pg.screenshot({path:'shot_rules25.png'});await pg.click('[data-tac98="new"]') /* v0.98: Tactics tabs */;await pg.waitForTimeout(200);out.newTab=await pg.evaluate(()=>!document.querySelector('#rulTab-new').hidden);
 out.closeRight=await pg.evaluate(()=>{const b=document.querySelector('#mClose').getBoundingClientRect(),m=document.querySelector('#mboxEl').getBoundingClientRect();return b.left>m.left+m.width/2});
 await pg.click('#mClose');await pg.waitForTimeout(200);
-await pg.click('#navTog');await pg.waitForTimeout(350);await pg.click('#btnSettings');await pg.waitForTimeout(300);await pg.click('[data-stab="tokens"]');await pg.waitForTimeout(300);out.tokRows=await pg.evaluate(()=>document.querySelectorAll('.tokrow').length);await pg.screenshot({path:'shot_settok25.png'});await pg.click('#mClose');
+await pg.click('#navTog');await pg.waitForTimeout(350);await pg.click('#btnSettings');await pg.waitForTimeout(300);await pg.click('[data-stab="pieces"]');await pg.waitForTimeout(300);out.tokRows=await pg.evaluate(()=>document.querySelectorAll('[data-tokstyle]').length); /* v0.98: Board & pieces */await pg.screenshot({path:'shot_settok25.png'});await pg.click('#mClose');
 await pg.evaluate(()=>document.getElementById('btnStudio').click());await pg.waitForTimeout(400);await pg.evaluate(()=>{ST.tab='chars';stReady();document.querySelector('#studio').innerHTML=studioHTML()});await pg.waitForTimeout(400);
 await pg.evaluate(()=>{ST.draft.portrait.helm='galea';ST.draft.portrait.hs='long';ST.draft.portrait.bs='goatee';document.querySelector('#studio').innerHTML=studioHTML()});await pg.waitForTimeout(200);
 await pg.screenshot({path:'shot_char25.png'});

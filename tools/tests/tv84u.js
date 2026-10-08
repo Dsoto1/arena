@@ -25,21 +25,22 @@ const shot=async(p,n)=>{if(SHOT)await p.screenshot({path:path.join(SHOT,`u84u_${
 const {ctx,p}=await mk();
 await p.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)});await W8(p,400);
 await p.evaluate(()=>openSettings('general'));await W8(p,600);
-o.gen=await p.evaluate(()=>{const box=document.getElementById('setBody');const grid=box.querySelector('.setgrid');const first=grid&&grid.firstElementChild;
-  const vis=box.querySelector('h4:not([hidden])');const hs=[...box.querySelectorAll('h4')].map(h=>h.textContent);
-  const vi=[...box.querySelectorAll('h4')].find(h=>/^Visuals/.test(h.textContent));
-  return {tabs:[...box.querySelectorAll('[data-stab]')].map(x=>x.dataset.stab),first:first&&first.className,lang:first?[...first.querySelectorAll('select[data-lang84] option')].map(x=>x.value):[],langTxt:first?first.textContent:'',
-    lessons:!!box.querySelector('[data-lessonsmenu]'),ts:box.querySelectorAll('[data-ts84]').length,tsOld:box.querySelectorAll('[data-tscale]').length,cvdSel:!!box.querySelector('select[data-cvd84]'),cvdBox:!!box.querySelector('[data-set="cvd"]'),
-    ce:!!box.querySelector('[data-set="confirmEnd"]')&&!SETTINGS.confirmEnd,rst:!!box.querySelector('[data-rst84]'),lite:!!(vi&&vi.nextElementSibling&&vi.nextElementSibling.querySelector('[data-lite84]'))}});
-ok(JSON.stringify(o.gen.tabs)===JSON.stringify(['general','themes','tokens','sponsors','audio','saves']),'tabs without Profiles '+JSON.stringify(o.gen.tabs));
-ok(/lang84/.test(o.gen.first||'')&&o.gen.lang[0]==='en'&&o.gen.lang.includes('es')&&/* v0.86: Spanish joined *//Translate works on this game; game terms stay English/.test(o.gen.langTxt),'🌐 Language row first (English, then the built-in languages) '+JSON.stringify(o.gen.lang));
-ok(!o.gen.lessons,'no lesson-buttons row');ok(o.gen.ts===1&&o.gen.tsOld===0,'one text-size control (a slider)');ok(o.gen.cvdSel&&!o.gen.cvdBox,'colour-blind is a select');
-ok(o.gen.ce,'Confirm before End turn (off by default)');ok(o.gen.rst,'Restore all defaults');ok(o.gen.lite,'Light board stays under Visuals');
+/* v0.98: Settings full screen with a rail (246-v98ui): Language first on General; text size / colour-blind / confirm on Accessibility; Light board on Board & pieces */
+o.gen=await p.evaluate(async()=>{const box=document.getElementById('setBody');const first=box.querySelector('.s98-main').querySelector('.s98-lang');
+  const pg=async k=>{box.querySelector(`[data-stab="${k}"]`).click();await new Promise(r=>setTimeout(r,250))};const lang=first?[...first.querySelectorAll('select[data-lang84] option')].map(x=>x.value):[],langTxt=first?first.textContent:'';
+  const tabs=[...box.querySelectorAll('[data-stab]')].map(x=>x.dataset.stab);const lessons=!!box.querySelector('[data-lessonsmenu]');const rst=!!box.querySelector('[data-rst84]');
+  await pg('access');const acc={ts:box.querySelectorAll('[data-ts98]').length>=3,tsOld:box.querySelectorAll('[data-tscale],[data-ts84]').length,cvdSel:!!box.querySelector('select[data-cvd84]'),cvdBox:!!box.querySelector('[data-set="cvd"]'),ce:!!box.querySelector('[data-set="confirmEnd"]')&&!SETTINGS.confirmEnd};
+  await pg('pieces');const lite=!!box.querySelector('[data-lite84]');await pg('access');
+  return {tabs,first:first&&first.className,lang,langTxt,lessons,...acc,rst,lite}});
+ok(JSON.stringify(o.gen.tabs)===JSON.stringify(['general','help','pieces','themes','audio','access']),'the rail: no Profiles, no Saves '+JSON.stringify(o.gen.tabs));
+ok(/s98-lang/.test(o.gen.first||'')&&o.gen.lang[0]==='en'&&o.gen.lang.includes('es')&&/stay English in every language/.test(o.gen.langTxt),'🌐 Language row first (English, then the built-in languages) '+JSON.stringify(o.gen.lang));
+ok(!o.gen.lessons,'no lesson-buttons row');ok(o.gen.ts&&o.gen.tsOld===0,'one text-size control (100 / 115 / 130)');ok(o.gen.cvdSel&&!o.gen.cvdBox,'colour-blind is a select');
+ok(o.gen.ce,'Confirm before End turn (off by default)');ok(o.gen.rst,'Restore all defaults');ok(o.gen.lite,'Light board lives in Board & pieces');
 await shot(p,'set_general');
 /* text size */
-o.ts=await p.evaluate(()=>{const r=document.querySelector('[data-ts84]');r.value='110';r.dispatchEvent(new Event('input',{bubbles:true}));
-  return {v:SETTINGS.tscale,body:document.body.className,z:getComputedStyle(document.getElementById('mBody')).zoom,saved:JSON.parse(localStorage.getItem('flavius_settings')).tscale,out:r.nextElementSibling.textContent}});
-ok(o.ts.v===110&&/tsz84/.test(o.ts.body)&&/ts110/.test(o.ts.body)&&Math.abs(+o.ts.z-1.1)<0.01&&o.ts.saved===110&&o.ts.out==='110%','text size 110% '+JSON.stringify(o.ts));
+o.ts=await p.evaluate(async()=>{document.querySelector('[data-ts98="115"]').click();await new Promise(r=>setTimeout(r,250));const on=document.querySelector('[data-ts98].on');
+  return {v:SETTINGS.tscale,body:document.body.className,z:getComputedStyle(document.getElementById('mBody')).zoom,saved:JSON.parse(localStorage.getItem('flavius_settings')).tscale,out:on&&on.textContent}});
+ok(o.ts.v===115&&/tsz84/.test(o.ts.body)&&/ts115/.test(o.ts.body)&&Math.abs(+o.ts.z-1.15)<0.01&&o.ts.saved===115&&o.ts.out==='115%','text size 115% '+JSON.stringify(o.ts));
 /* colour-blind select → its theme */
 await p.selectOption('[data-cvd84]','rg');await W8(p,200);
 o.rg=await p.evaluate(()=>({mode:SETTINGS.cvdMode,cvd:SETTINGS.cvd,hp:THEME.hp,cc:!!THEME.classColors,body:document.body.classList.contains('cvd'),sol:CLASSES.soldier.color}));
@@ -54,38 +55,37 @@ ok(o.off.mode==='off'&&o.off.hp===o.off.base&&!o.off.cc&&o.off.sol===o.off.sol0,
 await p.click('#setBody [data-stab="themes"]');await W8(p,300);
 o.th=await p.evaluate(()=>{const box=document.getElementById('setBody');return {scale:!!box.querySelector('[data-tr="scale"]'),large:!!box.querySelector('[data-preset="large"]'),
   chest:!!box.querySelector('[data-tk="chestWood"],[data-tk="chestGold"]'),keep:['pot','pillar','pillarBase','rubble','standA','standB','spike'].every(k=>box.querySelector(`[data-tk="${k}"]`)),
-  look:!!box.querySelector('#look84')&&!!box.querySelector('[data-psave]')&&!!box.querySelector('#profName'),txt:/Text & UI size/.test(box.textContent)}});
-ok(!o.th.scale&&!o.th.large&&!o.th.txt,'Themes: no Text & UI size, no Large text');ok(!o.th.chest&&o.th.keep,'Themes: chest pickers gone, pots/pillars/bases/rubble/stands/spike caps kept');ok(o.th.look,'Save this look at the bottom of Themes');
-await shot(p,'set_themes');await p.evaluate(()=>{const l=document.getElementById('look84');if(l)l.scrollIntoView()});await W8(p,150);await shot(p,'set_themes_look');
+  look:!!box.querySelector('[data-psave]')&&!!box.querySelector('#profName'),txt:/Text & UI size/.test(box.textContent)}});
+ok(!o.th.scale&&!o.th.large&&!o.th.txt,'Themes: no Text & UI size, no Large text');ok(!o.th.chest&&o.th.keep,'Themes: chest pickers gone, pots/pillars/bases/rubble/stands/spike caps kept');ok(o.th.look,'Save this look in Themes');
+await shot(p,'set_themes');
 await p.click('#setBody [data-preset="deut"]');await W8(p,200);o.pd=await p.evaluate(()=>({mode:SETTINGS.cvdMode,cvd:SETTINGS.cvd}));
 await p.click('#setBody [data-preset="marble"]');await W8(p,200);o.pm=await p.evaluate(()=>({mode:SETTINGS.cvdMode,cvd:SETTINGS.cvd}));
 await p.click('#setBody [data-preset="trit"]');await W8(p,200);
-await p.click('#setBody [data-stab="general"]');await W8(p,200);o.pt=await p.evaluate(()=>document.querySelector('[data-cvd84]').value);
+await p.click('#setBody [data-stab="access"]');await W8(p,200);o.pt=await p.evaluate(()=>document.querySelector('[data-cvd84]').value);
 ok(o.pd.mode==='rg'&&o.pd.cvd&&o.pm.mode==='off'&&!o.pm.cvd&&o.pt==='by','the Themes presets move the colour-blind select '+JSON.stringify([o.pd,o.pm,o.pt]));
 await p.click('#setBody [data-stab="themes"]');await W8(p,200);
 o.look=await p.evaluate(async()=>{const n0=(JSON.parse(localStorage.getItem('flavius_profiles')||'[]')).length;document.getElementById('profName').value='Night look';document.querySelector('#setBody [data-psave]').click();await new Promise(r=>setTimeout(r,200));
-  const L=JSON.parse(localStorage.getItem('flavius_profiles')||'[]');return {n:L.length-n0,apply:!!document.querySelector('#setBody #look84 ~ .look84 [data-papply]'),tab:[...document.querySelectorAll('#setBody [data-stab].on')].map(x=>x.dataset.stab).join()}});
+  const L=JSON.parse(localStorage.getItem('flavius_profiles')||'[]');return {n:L.length-n0,apply:!!document.querySelector('#setBody .s98-profs [data-papply]'),tab:[...document.querySelectorAll('#setBody [data-stab].on')].map(x=>x.dataset.stab).join()}});
 ok(o.look.n===1&&o.look.apply&&o.look.tab==='themes','a look is saved and listed (still on Themes) '+JSON.stringify(o.look));
 o.prof=await p.evaluate(async()=>{CUR_MODAL&&CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,300));openSettings('profiles');await new Promise(r=>setTimeout(r,500));return [...document.querySelectorAll('#setBody [data-stab].on')].map(x=>x.dataset.stab).join()});
 ok(o.prof==='themes','openSettings("profiles") lands on Themes');
 /* Tokens: no Armor section */
-await p.click('#setBody [data-stab="tokens"]');await W8(p,300);
+await p.click('#setBody [data-stab="pieces"]');await W8(p,300);
 o.tok=await p.evaluate(()=>{const box=document.getElementById('setBody');return {arm:!!box.querySelector('[data-sarmor]'),txt:/🛡 Armor/.test(box.textContent),rows:box.querySelectorAll('[data-tokstyle]').length}});
 ok(!o.tok.arm&&!o.tok.txt&&o.tok.rows>=2,'Tokens: no Armor section '+JSON.stringify(o.tok));await shot(p,'set_tokens');
-for(const t of ['sponsors','audio']){await p.click(`#setBody [data-stab="${t}"]`);await W8(p,300);await shot(p,'set_'+t)}
-/* Saves: one line + a button → the Saves window; Backups → the shelf; the Saves tab again is the short one */
-await p.click('#setBody [data-stab="saves"]');await W8(p,300);
-o.sv=await p.evaluate(()=>({btn:!!document.querySelector('#setBody [data-sv84]'),shelf:!!document.querySelector('#setBody #saveName')}));await shot(p,'set_saves');
-ok(o.sv.btn&&!o.sv.shelf,'Saves tab = one line + a button');
+for(const t of ['help','audio']){await p.click(`#setBody [data-stab="${t}"]`);await W8(p,300);await shot(p,'set_'+t)}
+/* Saves: no tab any more (v0.98) — the footer line's 💾 Saves → the Saves window; Backups → the shelf */
+o.sv=await p.evaluate(()=>({btn:!!document.querySelector('#setBody .s98-foot [data-sv84]'),shelf:!!document.querySelector('#setBody #saveName'),tab:!!document.querySelector('#setBody [data-stab="saves"]')}));
+ok(o.sv.btn&&!o.sv.shelf&&!o.sv.tab,'no Saves tab; the footer opens 💾 Saves');
 await p.evaluate(()=>{window.__mm=[];const iv=setInterval(()=>{__mm.push(!document.getElementById('mainMenu').hidden&&document.getElementById('modal').hidden)},15);setTimeout(()=>clearInterval(iv),1500)});
 await p.click('#setBody [data-sv84]');await W8(p,1600);
 o.hub=await p.evaluate(()=>({hub:!!document.getElementById('hub76'),tab:(document.querySelector('#hub76 [data-hub76].on')||{}).dataset?.hub76,set:!!document.getElementById('setBody'),bare:__mm.some(x=>x)}));
 ok(o.hub.hub&&o.hub.tab==='backups'&&!o.hub.set,'the button opens the Saves window on Backups '+JSON.stringify(o.hub));ok(!o.hub.bare,'no bare main menu between the windows');
 await p.click('#hub76 [data-hubbk="manage"]');await W8(p,900);
-o.shelf=await p.evaluate(()=>({shelf:!!document.querySelector('#setBody #saveName')&&!!document.querySelector('#setBody #saveList'),tab:[...document.querySelectorAll('#setBody [data-stab].on')].map(x=>x.dataset.stab).join()}));
+o.shelf=await p.evaluate(()=>({shelf:!!document.querySelector('#setBody #saveName')&&!!document.querySelector('#setBody #saveList'),tab:(document.querySelector('#s98')||{dataset:{}}).dataset.page}));
 ok(o.shelf.shelf&&o.shelf.tab==='saves','Backups → manage → the game-save shelf '+JSON.stringify(o.shelf));
-await p.click('#setBody [data-stab="general"]');await W8(p,200);await p.click('#setBody [data-stab="saves"]');await W8(p,200);
-ok(await p.evaluate(()=>!!document.querySelector('#setBody [data-sv84]')&&!document.querySelector('#setBody #saveName')),'the Saves tab is the short one again');
+await p.click('#setBody [data-stab="general"]');await W8(p,200);
+ok(await p.evaluate(()=>!!document.querySelector('#setBody [data-sv84]')&&!document.querySelector('#setBody #saveName')),'leaving the shelf: the footer link again');
 /* Restore all defaults (asks first; saves stay) */
 await p.evaluate(async()=>{await Store.put('customChars','c84u',{name:'Kept Kaeso',custom:true});SETTINGS.gore=false;SETTINGS.tscale=130;SETTINGS.confirmEnd=true;applySettings();applyTheme({...THEME_PRESETS.imperial.v})});
 await p.click('#setBody [data-stab="general"]');await W8(p,200);await p.click('#setBody [data-rst84]');await W8(p,300);

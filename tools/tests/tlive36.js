@@ -4,7 +4,7 @@ await pg.goto('file://'+process.argv[2],{timeout:90000});await pg.waitForTimeout
 await pg.evaluate(()=>{$('#modal').hidden=true;SETTINGS.tokenStyle='figure';startEvent({ev:'democritus',loc:6,seats:['soldier','hero'].map(c=>({cls:c,cpu:true,diff:'normal'})),opts:{spect:0}});SPEED='pause'});
 await pg.waitForTimeout(2500);
 const a=await pg.evaluate(()=>{S.players[0].hp.rarm=0;draw();return Object.keys(TOKEN_IMG).length});
-await pg.evaluate(()=>{const m=document.getElementById('modal');if(m)m.hidden=true;openSettings('general')});await pg.waitForTimeout(500);
+await pg.evaluate(()=>{const m=document.getElementById('modal');if(m)m.hidden=true;openSettings('help')});await pg.waitForTimeout(500); /* v0.98: Blood lives in Hints & board */
 await pg.click('[data-set="gore"]');await pg.waitForTimeout(400);
 const b2=await pg.evaluate(()=>({gore:SETTINGS.gore,cached:Object.keys(TOKEN_IMG).filter(k=>/"sev"/.test(k)).length,stored:JSON.parse(localStorage.getItem('flavius_settings')||'{}').gore}));
 console.log(JSON.stringify({a,b2}),errs.slice(0,3));await b.close()})();

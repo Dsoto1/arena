@@ -23,12 +23,12 @@ o.mute=await P.evaluate(()=>({btn:!!document.getElementById('mmMute'),menu:!!doc
 ok(!o.mute.btn&&o.mute.menu,'15 no #mmMute on the main menu');await shot('menu');
 
 /* ── 19 · Settings → General: the hints in one box ── */
-await P.evaluate(()=>{hintsMaster(false,true);openSettings('general')});await W8(800);
+await P.evaluate(()=>{hintsMaster(false,true);openSettings('help') /* v0.98: Hints & board */});await W8(800);
 o.hb=await P.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));const box=document.querySelector('#setBody #hint87');const m=document.querySelector('#setBody input[data-set="hints"]');
   const subs=['hintDock','rulePops','turnHints','ruleHints','turnRecap'].map(k=>document.querySelector(`#setBody input[data-set="${k}"]`));
   const r={box:!!box,master:!!(box&&m&&box.contains(m)),subs:subs.filter(i=>i&&box&&box.contains(i)).length,sr:subs[0]?subs[0].closest('.hint87s'):null};
   r.offPE=r.sr?getComputedStyle(subs[0].closest('label')).pointerEvents:'';r.offCls=r.sr?r.sr.classList.contains('hintsoff'):null;
-  m.click();await W(300);const sr2=document.querySelector('#setBody .hint87s');r.onCls=sr2?sr2.classList.contains('hintsoff'):null;r.onPE=sr2?getComputedStyle(sr2.querySelector('label')).pointerEvents:'';r.on=!!SETTINGS.hints;const hb=document.getElementById('hint87');if(hb)hb.scrollIntoView({block:'center'});await W(150);
+  m.click();await W(300);const sr2=document.querySelector('#setBody .hint87s');r.onCls=sr2?sr2.classList.contains('hintsoff'):null;r.onPE=sr2?getComputedStyle(sr2.closest('label')||sr2.querySelector('label')).pointerEvents:'';r.on=!!SETTINGS.hints;const hb=document.getElementById('hint87');if(hb)hb.scrollIntoView({block:'center'});await W(150);
   r.sr=!!r.sr;return r});
 await shot('settings');await P.evaluate(async()=>{document.querySelector('#setBody input[data-set="hints"]').click();await new Promise(r=>setTimeout(r,300));if(CUR_MODAL)CUR_MODAL.done(null)});await W8(200);
 ok(o.hb.box&&o.hb.master&&o.hb.subs===5,'19 the hints master + its five switches share one box '+JSON.stringify(o.hb));

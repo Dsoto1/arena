@@ -220,7 +220,7 @@ const TUT_STEPS=[
   {id:'t_speed',spot:'.speedseg',say:_T`<b>CPU speed.</b> Slow, Normal or Fast — or <b>⏯ Step</b> to watch each CPU move one at a time. <b>Space</b> pauses.`,next:1,tour:1},
   {id:'t_log',spot:'#log',say:_T`<b>The arena log.</b> Every roll, hit and cheer, newest first.`,next:1,tour:1},
   {id:'t_stand',spot:'#btnGraph',say:_T`<b>📊 Standings.</b> The race for Crowd Favor, as it stands — the dot wears the leader's color.`,next:1,tour:1},
-  {id:'t_rules',spot:'#btnRules',say:_T`<b>📜 Rules.</b> The rules at a glance, the strategy guide, the full rulebook — and these lessons, any time.`,next:1,tour:1},
+  {id:'t_rules',spot:'#btnRules',say:_T`<b>📜 Tactics.</b> The rules at a glance, the strategy guides, the Quick Reference, the full rulebook — and these lessons, any time.`,next:1,tour:1},
   {id:'t_menu',spot:'#btnMenu',say:_T`<b>🏛 The main menu.</b> During a lesson it asks before you leave. (New events, Manager mode and Settings wait until the lesson is done.)`,next:1,tour:1},
   {id:'hello',info:1,say:_T`That is the arena. I am <b>Flavius</b>, editor of these games. Every turn has four phases: <b>1 Resolve</b> (the arena reacts), <b>2 Choice</b>, <b>3 Action</b>, <b>4 End</b>. I will light the button to press; I only step in to talk when something big happens.`,next:1},
   {id:'choice',say:_T`<b>Choice:</b> take the safe <b>${coinAmt87(2)}</b>.`,act:'coin',until:()=>S.phase==='action'},
