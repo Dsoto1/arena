@@ -1535,6 +1535,10 @@ share copy — the site download play/flavius-rule-arena.zip.)
   "don't fight" note inside it, "N points to the next prize" → a letter, "Gear up in <city>" removed (City Square → Stalls covers it; guide line);
   (11, q5a) invitational Answer opens the fighter picker + accept at once (no reopening the letter). PARKED (q4a): trade bundles 2+-for-1 +
   counter-offers by mail → tools/plans/backlog.md.
+  (12, his screenshot 2026-10-08) ONLINE ROOM SCREEN (onlMyLobbyHTML, 118/137): the middle is empty (seats + host rules squeezed into a thin right
+  column, FID invite floating mid-page, chat box at the very bottom) → proposed: seats as large cards across the middle (figure, name, class,
+  rank, Ready; open seats as dashed cards with Invite), event card + rules as one strip above them, host settings + Start/Call/Send in the right
+  column, invite-by-FID + quick-chat phrases in one row under the seats; phones one column. Pending his pick (a this / b mock-up first).
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
