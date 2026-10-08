@@ -13,7 +13,7 @@
     cb.innerHTML=home?cb.textContent.replace(/^[^\p{L}\p{N}]+/u,'').trim():_T('Walk the city square');cb.classList.add('walk96b');
     const box=document.createElement('div');box.className='walk96';box.appendChild(cb);if(note){note.classList.remove('rc-sub');box.appendChild(note)}
     hd.appendChild(box);hd.classList.add('has-walk96');
-    if(window.innerWidth<=600){const sv=hd.querySelector(':scope > svg');if(sv)sv.setAttribute('preserveAspectRatio','xMidYMid slice')}
+    if(window.innerWidth<=600){const sv=hd.querySelector(':scope > svg');if(sv)sv.setAttribute('preserveAspectRatio','xMidYMid slice')} // i18n:skip
     for(const t of T.content.querySelectorAll('.road85t'))if(!t.children.length)t.remove()}
   /* 2 · one strip */
   const ml=Q('.mailline');let ask=null;

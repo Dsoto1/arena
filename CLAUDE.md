@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.96**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.97**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -1165,6 +1165,12 @@ share copy — the site download play/flavius-rule-arena.zip.)
   loadouts; invitations to a just-created room no longer dropped. GitHub full run: 249/249 + tv87l/tv91n flaky (first run caught tv81o =
   the invitation bug, tonlws80 = test expected the old crier). Server changed (111 armPlace) — flavius.sh release deploys it.
 
+- **v0.97** smoother and tidier (no server change, his split 2026-10-08): Fast frame-paced + cached tiles + steady seams (235), deals (236: one
+  trade/truce offer per player per turn, accepted banner, chest pickup costs 1 movement — digital rule, No-CF reasons + chips), online Domus tidy
+  (237), clean-up show crew rendered with rig92 (238), auction cards (239), Lobby Browser host pulse (240), only-doable end-week tasks (241), banner
+  bout tracker (242), Armory banner (243), Walk the city square on the banner + one road strip (244), 10% weekly chance of +0.2 to another rating
+  (245); counters only on the card badge, Leather Tasset pair mirrored, road "you paid N for the trip".
+
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
   8 printed classes move to the live template (104-cards74 classCard74) so rule changes update their cards. Art NOT drawn yet (optional,
@@ -1630,6 +1636,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   2 coin); (5) whose turn + "next: <name>" with a small face at the left of the rail; (6) small key hints on the buttons (A/M/P/T/Enter, the
   v0.93 keyboard layer); (7) hints mode only (never Ranked): soft glow on the action the strategy hints would pick; (8) phones: the groups = one
   swipe row, End turn fixed on the right.
+- **v0.97 / v0.98 (his ok 2026-10-08):** v0.97 = the post-v0.96 fixes round (above, no server change). v0.98 (server deploy, wait for his go)
+  = Recruiting III + advisor levels + house grades, passwords (Custom), region flags (time zone), house card on names, Domus rank + banners, silent
+  lobby.quick, AND online events beyond the Classics (his 1a 2b 3a: printed events as Custom only, in approved waves — Familia already, then Ludus,
+  Golden Eagle, Gauntlet; two squares under the playlists each cycle a random approved event and open/join a Custom room for it). Asked, not yet
+  answered: Match Week "This week" card (3 bout tiles) — the walk button + road strip were built instead.
 - **SPLIT (his call 2026-10-08): v0.96 / v0.97.** v0.96 SHIPPED; GRADE CUT-OFFS CONFIRMED (his ok 2026-10-08): A+92 A85 B+78 B70 C+62 C54 D44 F — Recruiting III uses trait96Grade as is; v0.97 also gets: Find me a fight (lobby.quick) still cries — make it silent server-side. v0.96 (no server change) = all Manager fixes/changes of notes I/II/III (standings, Season
   Acta cards, Match Week Road box, invitational answer, warnings, "no fighter" item, Armory anvil + damaged section, Save and Exit, trait
   cards), all board/match items of notes I (🔴 attack trace first, belts, Shield popup, snap-back, sim beast cards, stone cap, Fast skips

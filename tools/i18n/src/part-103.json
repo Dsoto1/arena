@@ -1,0 +1,290 @@
+[
+ {
+  "k": "needs 1 movement",
+  "w": "07-ui.js:2820"
+ },
+ {
+  "k": "Wages{0} are paid: about <b>{1}</b> (treasury {2} → ≈ {3}).",
+  "w": "17-manager.js:1269"
+ },
+ {
+  "k": "Smoother and tidier",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Fast speed flows: pieces glide, the sand is drawn once, no seams while zooming",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "The clean-up show rebuilt: chained crews in 3D, carts, rakes, Charun and an overseer",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Deals: one trade or truce offer a player a turn, a banner when one is accepted, picking up the chest costs 1 movement",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Online: auction cards with big art and every bonus explained, the Lobby Browser pulses while you host",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "Manager: only doable tasks before the week ends, Walk the city square on the banner, the Armory banner, a small weekly chance of another rating; No-CF events say so on the Market",
+  "w": "34-notes.js:8"
+ },
+ {
+  "k": "from {0} · the trip paid by {1}",
+  "w": "35-travel.js:36"
+ },
+ {
+  "k": "from {0} · you paid {1} for the trip",
+  "w": "35-travel.js:36"
+ },
+ {
+  "k": "Crowd Favor can't be spent this event, so nothing can be bought at the Market. Cards and offerings can still provide weapons and armor.",
+  "w": "236-v96deals.js:16"
+ },
+ {
+  "k": "🌾 No CF: no Market buys",
+  "w": "236-v96deals.js:17"
+ },
+ {
+  "k": "No CF this event",
+  "w": "236-v96deals.js:22"
+ },
+ {
+  "k": "🛡 Teammate",
+  "w": "236-v96deals.js:48"
+ },
+ {
+  "k": "🕊 Truce",
+  "w": "236-v96deals.js:49"
+ },
+ {
+  "k": "Already offered this turn",
+  "w": "236-v96deals.js:51"
+ },
+ {
+  "k": "🤝 Truce: {0} ⟷ {1}",
+  "w": "236-v96deals.js:66"
+ },
+ {
+  "k": "🤝 Trade: {0} ⟷ {1}",
+  "w": "236-v96deals.js:67"
+ },
+ {
+  "k": "The Arena Chest: 1 Arena Key opens it for a level-4 weapon. You can also pick it up and carry it (−1 movement while held). Digital rule: lifting it costs 1 movement, so you cannot take it with none left.",
+  "w": "236-v96deals.js:79"
+ },
+ {
+  "k": "Pick up the chest: costs 1 movement (digital rule), then −1 movement on later turns while you carry it.",
+  "w": "236-v96deals.js:80"
+ },
+ {
+  "k": "▴ less",
+  "w": "237-v96domus.js:25"
+ },
+ {
+  "k": "＋{0} more ▾",
+  "w": "237-v96domus.js:25"
+ },
+ {
+  "k": "Cruentus",
+  "w": "239-v96auc.js:11"
+ },
+ {
+  "k": "+1 damage on every hit.",
+  "w": "239-v96auc.js:11"
+ },
+ {
+  "k": "Longus",
+  "w": "239-v96auc.js:12"
+ },
+ {
+  "k": "+1 range: it reaches one tile farther.",
+  "w": "239-v96auc.js:12"
+ },
+ {
+  "k": "Perpetuus",
+  "w": "239-v96auc.js:13"
+ },
+ {
+  "k": "+1 use before it is spent.",
+  "w": "239-v96auc.js:13"
+ },
+ {
+  "k": "Acutus",
+  "w": "239-v96auc.js:14"
+ },
+ {
+  "k": "Armor-piercing 1: 1 damage of each hit ignores armor.",
+  "w": "239-v96auc.js:14"
+ },
+ {
+  "k": "Gloriosus",
+  "w": "239-v96auc.js:15"
+ },
+ {
+  "k": "Each hit earns 1 Crowd Favor.",
+  "w": "239-v96auc.js:15"
+ },
+ {
+  "k": "Solidus",
+  "w": "239-v96auc.js:16"
+ },
+ {
+  "k": "+1 AP on the location it guards.",
+  "w": "239-v96auc.js:16"
+ },
+ {
+  "k": "Amplus",
+  "w": "239-v96auc.js:17"
+ },
+ {
+  "k": "+1 AP on another location of the wearer.",
+  "w": "239-v96auc.js:17"
+ },
+ {
+  "k": "Tutus",
+  "w": "239-v96auc.js:18"
+ },
+ {
+  "k": "The first hit on the wearer each rotation loses 1 damage.",
+  "w": "239-v96auc.js:18"
+ },
+ {
+  "k": "Velox",
+  "w": "239-v96auc.js:19"
+ },
+ {
+  "k": "+1 movement while the wearer is unhurt.",
+  "w": "239-v96auc.js:19"
+ },
+ {
+  "k": "Venatorius",
+  "w": "239-v96auc.js:20"
+ },
+ {
+  "k": "Beasts deal 1 less damage to this location.",
+  "w": "239-v96auc.js:20"
+ },
+ {
+  "k": "Missilis",
+  "w": "239-v96auc.js:21"
+ },
+ {
+  "k": "Thrown and shot weapons deal 1 less damage to this location.",
+  "w": "239-v96auc.js:21"
+ },
+ {
+  "k": "Firmus",
+  "w": "239-v96auc.js:22"
+ },
+ {
+  "k": "Floor spikes deal 0 damage to this leg.",
+  "w": "239-v96auc.js:22"
+ },
+ {
+  "k": "Spinosus",
+  "w": "239-v96auc.js:23"
+ },
+ {
+  "k": "A melee hit on this location costs the attacker 1 HP.",
+  "w": "239-v96auc.js:23"
+ },
+ {
+  "k": "Lapidarius",
+  "w": "239-v96auc.js:24"
+ },
+ {
+  "k": "Stones thrown from the stands deal 0 here.",
+  "w": "239-v96auc.js:24"
+ },
+ {
+  "k": "Integer",
+  "w": "239-v96auc.js:25"
+ },
+ {
+  "k": "Never comes back Broken from a bout.",
+  "w": "239-v96auc.js:25"
+ },
+ {
+  "k": "Fidelis",
+  "w": "239-v96auc.js:26"
+ },
+ {
+  "k": "Cannot be looted: if the wearer falls, it goes home.",
+  "w": "239-v96auc.js:26"
+ },
+ {
+  "k": "Fortunae",
+  "w": "239-v96auc.js:27"
+ },
+ {
+  "k": "+1 on the wearer’s Thumb of Flavius roll.",
+  "w": "239-v96auc.js:27"
+ },
+ {
+  "k": "+1 AP on the {0}.",
+  "w": "239-v96auc.js:30"
+ },
+ {
+  "k": "{0} · {1}{2} · <b>{3} AP</b>",
+  "w": "239-v96auc.js:38"
+ },
+ {
+  "k": "power",
+  "w": "239-v96auc.js:39"
+ },
+ {
+  "k": "range",
+  "w": "239-v96auc.js:39"
+ },
+ {
+  "k": "Bonuses",
+  "w": "239-v96auc.js:44"
+ },
+ {
+  "k": "No bonuses — a plain named piece.",
+  "w": "239-v96auc.js:44"
+ },
+ {
+  "k": "Value",
+  "w": "239-v96auc.js:45"
+ },
+ {
+  "k": "{0} joined your room",
+  "w": "240-v96pulse.js:15"
+ },
+ {
+  "k": "Walk the city square",
+  "w": "244-v96walk.js:13"
+ },
+ {
+  "k": "what the house owns, and who wears it",
+  "w": "243-v96armban.js:5"
+ },
+ {
+  "k": "piece to repair",
+  "w": "243-v96armban.js:25"
+ },
+ {
+  "k": "pieces to repair",
+  "w": "243-v96armban.js:25"
+ },
+ {
+  "k": "piece on the shelf",
+  "w": "243-v96armban.js:26"
+ },
+ {
+  "k": "pieces on the shelf",
+  "w": "243-v96armban.js:26"
+ },
+ {
+  "k": "Digital rule: picking up the Arena Chest costs 1 movement, so with none left you cannot take it that turn. Carrying it still costs 1 movement on the turns after.",
+  "w": "08-setup.js:256"
+ },
+ {
+  "k": "arena · v0.97",
+  "w": "01-head.html"
+ }
+]
