@@ -4,7 +4,7 @@
        Move · Attack · Forum · End turn with a shared header height and button height. Nothing new is clicked: every button keeps its data-act and
        07-ui handler, so the online lockstep (113 records trusted [data-act] clicks) and the tutorial see the same acts.
        • MOVE (wood): Move · Push / Topple · Tunnel (+ chest, exit, mount… rows), orange movement pips in the header.
-       • ATTACK (brass): one larger button per equipped weapon (icon, name, "N dmg · rng N", key A on the first). Docked on its right: a small ◎
+       • ATTACK (brass): one larger button per equipped weapon (icon, name, power + range icons, key A on the first). Docked on its right: a small ◎
          Focus button = the ONE focus act (07-ui's toggle). The first weapon's dock holds 07-ui's own button; the others hold copies with the
          same data-act="focus" (same act, same handler); a click remembers its weapon (data-w98) and, once focus is on, points the attack mode at
          that weapon (a local m- mode, never recorded — the tile input carries mode + focus). While focus is on, the other docks switch the weapon
@@ -14,7 +14,7 @@
        • CHOICE phase: one centred gold "✦ Choose one" group (Take 2 coin / Draw an arena card, larger text, keys 1 / 2).
        • CPU / Resolve / not your turn: the same plate, greyed (233's placeholders moved).
        Extras of 233 keep working (hover previews, pips + spend dimming, unused line, done-phase tips, whose turn + next, key hints A/P/Enter,
-       the guide's glow, phones: one swipe row with End turn fixed right; the weapon's dmg·rng hides on phones and a long-press shows it).
+       the guide's glow, phones: one swipe row with End turn fixed right; the weapon's power·range hides on phones and a long-press shows it).
        Kill switch: localStorage flavius_bar98off=1 → 233's bar (flavius_bar96off=1 → the old dock, which also skips v2).
    2 · FOCUS — DIGITAL RULE (his v0.95 note): players only (beasts never Focus — they have no focus path); Focus needs at least FOCUS98.min (3)
        movement and spends ALL that is left — walk 2 of 5, then Focus with the last 3. Below 3 the button is refused with the reason; the engine
@@ -66,14 +66,16 @@ try{RULE_ACT.focus=_T`Focus roll (digital rule): needs at least 3 movement and s
 
 /* ---------------- 1 · the bar ---------------- */
 const b98Ico=(src)=>{try{const w=src.w;const k=w.shield?'abs':src.thr?'thr':w.ammo!=null?'ammo':'dmg';return wIco87(k)}catch(e){return ''}};
-const b98Stats=(src)=>{try{return _T`${srcPow(src)} dmg · rng ${srcRange(src)}`}catch(e){return ''}};
+const b98Stats=(src)=>{try{return _T`Attack power ${srcPow(src)} · Range ${srcRange(src)}`}catch(e){return ''}};
+/* the face shows his icons (attack power, range) instead of words */
+const b98StatsIco=(src)=>{try{return `${wIco87('dmg')}${srcPow(src)} · ${wIco87('rng')}${srcRange(src)}`}catch(e){return ''}};
 const B98_FOC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.6"/><circle cx="12" cy="12" r=".9" fill="currentColor"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4" stroke-linecap="round"/></svg>';
 /* the weapon a button attacks with (arm R|L, thrown or not) */
 function b98Src(p,k){try{const m=/^m-atk([RL])(T?)$/.exec(k||'');if(!m)return null;return attackSources(p).find(s=>s.arm===m[1]&&!!s.thr===(m[2]==='T'))||null}catch(e){return null}}
-/* a weapon button's face: icon · name · dmg · rng · key (the hidden reason <small> stays) */
+/* a weapon button's face: icon · name · power icon · range icon · key (the hidden reason <small> stays) */
 function b98Face(b,src,key){const sm=b.querySelector('small.r96');const kb=b.querySelector('.kb96');const k=key||(kb?kb.textContent:'');
   const name=src.thr?_T`Throw ${esc(src.w.n)}`:esc(src.w.n);const st=b98Stats(src);
-  b.innerHTML=`<span class="wi98">${b98Ico(src)}</span><span class="l96">${name}</span><i class="c96 st98">${st}</i>${k?`<kbd class="kb96" aria-hidden="true">${k}</kbd>`:''}`;
+  b.innerHTML=`<span class="wi98">${b98Ico(src)}</span><span class="l96">${name}</span><i class="c96 st98" aria-hidden="true">${b98StatsIco(src)}</i>${k?`<kbd class="kb96" aria-hidden="true">${k}</kbd>`:''}`;
   if(sm)b.appendChild(sm);b.dataset.st98=b96Txt(name)+' — '+st;const tip=b.dataset.tip||'';if(tip.indexOf(st)<0)b.dataset.tip=st+(tip?'<br>'+tip:'');
   b.setAttribute('aria-label',b96Txt(name)+' — '+st+(tip?' — '+b96Txt(tip):''));b.classList.add('wb98')}
 const b98Btn=(cls,inner,tip,extra='')=>`<button type="button" class="btn b96 ph96b ${cls}" disabled ${tip?`data-tip="${esc(tip)}"`:''} ${extra}>${inner}</button>`;

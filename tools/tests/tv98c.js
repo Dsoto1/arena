@@ -43,7 +43,7 @@ const L=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   const now=[...A.querySelectorAll('[data-act]')].map(x=>x.dataset.act);
   const gr=[...A.querySelectorAll('.grid98 > [data-g96]')].map(e=>e.dataset.g96);
   const rows=[...A.querySelectorAll('[data-g96="atk"] .wpn98')].map(r=>({main:(r.querySelector('.wb98')||{}).dataset.act,foc:!!r.querySelector('.dock98 [data-act="focus"]'),
-    thr:(r.querySelector('.dock98 .th98')||{dataset:{}}).dataset.act||'',st:(r.querySelector('.st98')||{}).textContent||'',key:(r.querySelector('.wb98 .kb96')||{}).textContent||'',h:Math.round(r.getBoundingClientRect().height)}));
+    thr:(r.querySelector('.dock98 .th98')||{dataset:{}}).dataset.act||'',st:(r.querySelector('.st98')||{}).textContent||'',ico:(r.querySelector('.st98')||{innerHTML:''}).innerHTML,tipst:(r.querySelector('.wb98')||{dataset:{}}).dataset.st98||'',key:(r.querySelector('.wb98 .kb96')||{}).textContent||'',h:Math.round(r.getBoundingClientRect().height)}));
   const fm=q_('[data-g96="fm"]');const top=[...fm.querySelectorAll('.k96 > button')].map(x=>x.dataset.act||(x.querySelector('.l96')||x).textContent.trim());
   const low=[...fm.querySelectorAll('.d96 > button')].map(x=>x.dataset.act||(x.querySelector('.l96')||x).textContent.trim());
   const hds=[...A.querySelectorAll('.grid98 .hd98')].map(h=>Math.round(h.getBoundingClientRect().height));
@@ -56,7 +56,7 @@ ok(L.hds.length===1&&L.btnH.length===1,'2c shared header + button heights '+JSON
 ok(L.old===L.now,'2d same data-act set as before (07-ui\'s buttons moved) '+L.old+' | '+L.now);
 ok(L.rows.length===2&&L.rows[0].main==='m-atkR'&&L.rows[1].main==='m-atkL','2e one button per weapon '+JSON.stringify(L.rows));
 ok(L.rows.every(r=>r.foc)&&L.dock2===2,'2f a Focus dock beside every weapon (the focus act)');ok(L.rows[0].thr==='m-atkRT'&&!L.rows[1].thr,'2g ↗ Throw only on the throwable weapon');
-ok(/dmg/.test(L.rows[0].st)&&/rng 2/.test(L.rows[0].st)&&L.rows[0].key==='A'&&!L.rows[1].key,'2h "N dmg · rng N" + key A on the first');
+ok(/wi87dmg/.test(L.rows[0].ico)&&/wi87rng/.test(L.rows[0].ico)&&/^\s*\d+\s*·\s*2\s*$/.test(L.rows[0].st)&&/Attack power \d+ · Range 2/.test(L.rows[0].tipst)&&L.rows[0].key==='A'&&!L.rows[1].key,'2h power/range icons "N · N" (tooltip "Attack power N · Range N") + key A on the first');
 ok(L.top.join()==='market,crowd','2i Forum top row: Market + Crowd Favor '+L.top);ok(L.low.length===2&&/Loot|loot/.test(L.low[0])&&/trade|Trade/.test(L.low[1]),'2j Forum second row: Loot + Trade · Truce '+L.low);
 ok(/ic87c/.test(L.fmHd)&&/ic87w|CF/.test(L.fmHd),'2k coin + CF in the Forum header');ok(L.mvFirst==='m-move','2l Move first in its block');ok(L.h<=210,'2m bar height '+L.h);
 if(SHOT){await pg.mouse.move(5,5);await (await pg.$('#actions')).screenshot({path:path.join(SHOT,'tv98c_action.png')})}
@@ -143,6 +143,6 @@ out.ph=await P.evaluate(()=>{document.body.classList.add('pl-act','pp-act');rend
   return {disp:gs.display,ox:gs.overflowX,pos:es.position,right:Math.round(gb.right-eb.right),stHidden:!st||getComputedStyle(st).display==='none',lp:!!document.querySelector('#actions .wb98[data-st98]'),
     page:document.documentElement.scrollWidth-innerWidth,minBtn:Math.round(Math.min(...[...g.querySelectorAll('.g98 .btn.b96')].map(x=>x.getBoundingClientRect().height)))}});
 ok(out.ph.disp==='flex'&&/auto|scroll/.test(out.ph.ox),'7a one swipe row '+JSON.stringify(out.ph));ok(out.ph.pos==='sticky'&&Math.abs(out.ph.right)<=2,'7b End turn fixed right');
-ok(out.ph.stHidden&&out.ph.lp,'7c dmg · rng hidden, long-press text on the weapon');ok(out.ph.page<=1,'7d no sideways page scroll');ok(out.ph.minBtn>=36,'7e touch-size buttons');
+ok(out.ph.stHidden&&out.ph.lp,'7c power · range hidden, long-press text on the weapon');ok(out.ph.page<=1,'7d no sideways page scroll');ok(out.ph.minBtn>=36,'7e touch-size buttons');
 if(SHOT)await P.screenshot({path:path.join(SHOT,'tv98c_390.png')});
 console.log(JSON.stringify(out));console.log('MISS',miss);console.log('ERRS',errs.slice(0,6));await b.close();if(miss.length||errs.length)process.exit(1)})();
