@@ -53377,7 +53377,7 @@ function auc96Fix(h){if(!h||h.indexOf('au84-lot')<0)return h;const X=ONL84.auc;i
 #onl .au96c .au96a{align-self:stretch;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.28);position:relative}
 #onl .au96c .au96a>.cimg{width:100%;height:auto;max-height:100%;image-rendering:auto}
 #onl .au96c .au96a>.vlt89{position:absolute;top:4px;left:4px;z-index:3;margin:0}
-#onl .au96c.na84 .au96a>.cimg{width:82%;height:82%;max-height:82%;aspect-ratio:auto;background-size:contain;background-repeat:no-repeat;background-position:center}
+#onl .au96c.na84 .au96a>.cimg{width:82%;height:82%;max-height:82%;aspect-ratio:auto;object-fit:contain;background-size:contain;background-repeat:no-repeat;background-position:center}#onl .au96c .au96a>.vlt89{font-size:11px;padding:2px 7px;white-space:nowrap;line-height:1.3}
 #onl .au96c .au96b{display:flex;flex-direction:column;gap:4px;min-width:0}
 #onl .au96c .nw83-n{font-size:17px}
 #onl .au96h{font:700 10.5px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#d9c08a;border-bottom:1px solid rgba(217,192,138,.3);margin-top:2px}
@@ -53393,7 +53393,7 @@ function auc96Fix(h){if(!h||h.indexOf('au84-lot')<0)return h;const X=ONL84.auc;i
 #onl .au96f>.hist91,#onl .au96f>.au84-bids{grid-column:1/-1;display:inline-block}
 #onl .au96-note{margin:6px 0;padding:6px 10px;border:1px solid rgba(232,201,106,.4);border-radius:8px;background:rgba(232,201,106,.08);color:#f6e7c4;font-size:13px}
 @media (max-width:600px){#onl .au84-grid{grid-template-columns:1fr}#onl .au84-lot.au96{height:auto}
- #onl .au84-lot.au96>.nw83.au96c{grid-template-columns:1fr}#onl .au96c .au96a>.cimg{width:min(100%,220px);margin:0 auto}#onl .au96c.na84 .au96a{min-height:240px}#onl .au96c.na84 .au96a>.cimg{width:82%;height:200px;max-height:none}}`;document.head.appendChild(st)}
+ #onl .au84-lot.au96>.nw83.au96c{grid-template-columns:1fr}#onl .au96c .au96a>.cimg{width:min(100%,220px);margin:0 auto}#onl .au96c.na84 .au96a{min-height:240px}#onl .au96c.na84 .au96a>.cimg{width:82%;height:200px;max-height:none;object-fit:contain}}`;document.head.appendChild(st)}
 /* v0.97 (240-v96pulse): hosting pulse + join flash in Online. While I host a WAITING room the Lobby Browser rail tab pulses (my list row = a static gold outline)
    (gold, ~2 s; Reduce motion/calm = a static highlight; body.idle92 pauses it). A NEW lanista joining it flashes the rail tab and the
    new seat/name GREEN for 1.5 s and, if the room screen is not showing, a toast "<name> joined your room". Cosmetic only: state lives on PULSE96,
