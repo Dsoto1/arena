@@ -3,7 +3,7 @@
    new seat/name GREEN for 1.5 s and, if the room screen is not showing, a toast "<name> joined your room". Cosmetic only: state lives on PULSE96,
    classes are re-applied after every onlRedraw (morph91 patches). Never in S / onlHash. */
 const PULSE96={seen:{},left:{},flash:{},tm:0};
-function pu96Mine(){const me=typeof onlMe80==='function'?onlMe80():null;if(!me)return null;return (ONL.lobbies||[]).find(L=>L&&L.status==='waiting'&&L.host&&L.host.id===me)||null}
+function pu96Mine(){const me=typeof onlMe80==='function'?onlMe80():null;if(!me)return null;return (ONL.lobbies||[]).find(L=>L&&L.status==='waiting'&&L.host&&L.host.id===me&&(L.members||L.players||[]).some(m=>m.id===me))||null}
 function pu96Looking(){return !!(document.getElementById('onl')&&document.getElementById('onlRoom80')&&ONL.tab==='play')}
 function pu96Scan(){try{const me=onlMe80();const L=pu96Mine();const now=Date.now();
   if(!L){PULSE96.seen={};PULSE96.flash={};return}
@@ -24,6 +24,8 @@ function pu96Apply(){try{const root=document.getElementById('onl');if(!root)retu
   clearTimeout(PULSE96.tm);let next=0;for(const k of Object.keys(PULSE96.flash)){const t=PULSE96.flash[k];if(t>now&&(!next||t<next))next=t}
   if(next)PULSE96.tm=setTimeout(pu96Apply,next-now+30)}catch(e){}}
 {const base=onlRedraw;onlRedraw=function(){pu96Scan();const r=base.apply(this,arguments);pu96Apply();return r}}
+/* my own leave: the stale copy of the room goes at once (the host passes on; the list refreshes later) */
+{const base=NET.req;NET.req=function(t,d){const r=base.apply(this,arguments);if(t==='lobby.leave'||t==='lobby.close'){const id=d&&d.id;Promise.resolve(r).then(()=>{try{ONL.lobbies=(ONL.lobbies||[]).filter(x=>x&&x.id!==id);pu96Scan();pu96Apply()}catch(e){}},()=>{})}return r}}
 NET.on('lobby.update',()=>{setTimeout(()=>{pu96Scan();pu96Apply()},0)});
 {const st=document.createElement('style');st.textContent=`
 @keyframes pu96p{0%,100%{box-shadow:0 0 0 0 rgba(232,170,60,0)}50%{box-shadow:0 0 10px 2px rgba(232,170,60,.65)}}

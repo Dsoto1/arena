@@ -37,6 +37,9 @@ out.seat=await until(A,id=>!!document.querySelector(`#onlRoom80 .r80-seat.pu96g 
 out.name=await A.evaluate(id=>!!document.querySelector(`#onlRoom80 [data-u96="${id}"].pu96g`),idB);ok(out.name,'new member’s name row flashes');
 out.noToast=await A.evaluate(()=>!window.__toasts.some(t=>/joined your room/.test(t)));ok(out.noToast,'no toast while looking at the room');
 /* host leaves: pulse gone */
-await B.evaluate(async id=>{await NET.req('lobby.leave',{id})},rid);await A.waitForTimeout(500);await A.evaluate(async id=>{await NET.req('lobby.leave',{id})},rid);
+/* host leaves with B still present: the pulse stops at once */
+await A.evaluate(async id=>{await NET.req('lobby.leave',{id})},rid);
+out.off0=await until(A,()=>{const t=document.querySelector('#onl .onl-rail [data-v="lobby"]');return t&&!t.classList.contains('pu96')},null,2000);ok(out.off0,'pulse stops at once when the host leaves with others present');
+await B.evaluate(async id=>{await NET.req('lobby.leave',{id})},rid);await A.waitForTimeout(500);
 out.off=await until(A,()=>{onlRedraw();const t=document.querySelector('#onl .onl-rail [data-v="lobby"]');return t&&!t.classList.contains('pu96')},null,8000);ok(out.off,'pulse stops when the room is gone');
 console.log(JSON.stringify(out));console.log('MISS',miss);console.log('ERRS',errs);await b.close();srv.close();process.exit(miss.length||errs.length?1:0)})();
