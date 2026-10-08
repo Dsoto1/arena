@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.97**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.98**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -1234,6 +1234,14 @@ share copy — the site download play/flavius-rule-arena.zip.)
   (237), clean-up show crew rendered with rig92 (238), auction cards (239), Lobby Browser host pulse (240), only-doable end-week tasks (241), banner
   bout tracker (242), Armory banner (243), Walk the city square on the banner + one road strip (244), 10% weekly chance of +0.2 to another rating
   (245); counters only on the card badge, Leather Tasset pair mirrored, road "you paid N for the trip".
+
+- **v0.98** everything together: Settings full screen + Tactics (Quick Reference) + sandstone menu (246); Play Now upper-right group, Studio designer
+  tabs, class card weapons, athletic poser (247); action bar v2 Move · Attack · Forum + Focus digital rule ≥3 movement + Blessings pot rule B (248);
+  Recruiting III + advisor levels (coin to 2, levels 3–5 earned; rivals build councils) (249/256); bear cards name the arena's bears (250); catch-up
+  bar, Vulso 2 of 3, podium in the League banner (251/255); online passwords/regions/house card/Domus rank/Golden Eagle Custom/Damnatio at creation/
+  bonus renames/Profile regroup (252, server); Domus layout + offerings cap 2 (253, server); online Fast desync fixed (254); custom gear joins drafts
+  (257); chariot horses: pool of 12 two-horse tokens, drawn per race, visible flip, his sharper art (258); regression fixes (259). Ludus stays off
+  online until a real per-lanista draft exists (backlog). Server changed — flavius.sh release deploys it.
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
