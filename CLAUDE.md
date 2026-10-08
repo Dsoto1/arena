@@ -847,6 +847,7 @@ One global script; files are concatenated in order. Later "version modules" patc
   the tiles layer ≈ half: 169 clipped tiles with grain/shade/scar) + the CPU turns' own script; a cached tiles layer (±1 rounding at the board
   edge) is the next lever. tools/perf95: prof.js · trace.js (decodes, main CPU ms/s, commits; LS='{…}' page flags) · imgs.js · compare.sh ·
   pixels.js (230 ON vs OFF in one page: identical) · serve.js. Test tv95p (OFF vs ON in one run, decode ms/s, p50, patch = innerHTML, sleep).
+- **v0.97 grow (245-v96grow):** `weeklyGrowth` wrapper (66 runs for every house's contracted fighters): beside the +0.2 Luck, `grow96Roll(w,g,week)` (hash of world id + fighter id + absolute week, never the dice RNG) gives 10% (`GROW96.chance`) +0.2 to one of spd/str/int/cha through statGain, so band-ups and "From your Doctores" show it. Test `tv96g`.
 - **v0.96 (231-234, parts A–D; 111-onlcore armPlace changed → the server redeploys):** `231-v96mgr` — trait cards `trait96Grade` (A+≥92 A≥85
   B+≥78 B≥70 C+≥62 C≥54 D≥44 F), "Save and Exit", League "🏆 Standings" podium (Superbus art on 1st, hover = prizes + Quaestor) + columns Place ·
   Ludus · Top gladiator · Record · Latest event · Superbus, `w.acta96[week]` → Season tab 📜 Acta column, Road box sized to content + Consilium
