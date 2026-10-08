@@ -26,9 +26,9 @@ ok(o.m.rail.rec&&o.m.rail.inf&&o.m.rail.tr,'rail borders');ok(o.m.nightCss==='no
 ok(o.m.left===2&&o.m.exh===true,'hours accounting');ok(o.m.fa===true,'free-agent list fills the column');ok(o.m.rehab===null||o.m.rehab===o.m.until0-1,'rehab');ok(o.m.grew,'drill growth');
 ok(o.m.newWeek&&o.m.fresh&&o.m.yard===0,'week rollover');ok(o.m.cities===12&&o.m.citiesOk,'lanista cities');
 await pg.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)});await pg.waitForTimeout(600);
-await pg.evaluate(()=>openSettings('general'));await pg.waitForTimeout(700);
-/* v0.84: colour-blind is one select (Red-green = the cvd palette), text size one slider */
-await pg.selectOption('[data-cvd84]','rg');await pg.click('[data-set="calm"]');await pg.evaluate(()=>{const r=document.querySelector('[data-ts84]');r.value='115';r.dispatchEvent(new Event('input',{bubbles:true}))});await pg.waitForTimeout(300);
+await pg.evaluate(()=>openSettings('access'));await pg.waitForTimeout(700);
+/* v0.84: colour-blind is one select (Red-green = the cvd palette); v0.98: Accessibility page, text size steps */
+await pg.selectOption('[data-cvd84]','rg');await pg.waitForTimeout(300);await pg.click('[data-set="calm"]');await pg.waitForTimeout(300);await pg.click('[data-ts98="115"]');await pg.waitForTimeout(300);
 o.a=await pg.evaluate(async()=>{const r={body:document.body.className,col:CLASSES.soldier.color,rm:reduceMotion(),anim:animOn(),saved:JSON.parse(localStorage.getItem('flavius_settings')).tscale};
   if(CUR_MODAL)CUR_MODAL.done(null);await new Promise(r2=>setTimeout(r2,400));menuHide();
   startEvent({ev:'democritus',loc:6,seats:[{cls:'venatore'},{cls:'hero',cpu:true,diff:'master'},{cls:'soldier',cpu:true},{cls:'royalty',cpu:true}],opts:{spect:0}});

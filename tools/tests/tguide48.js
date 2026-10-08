@@ -3,8 +3,8 @@ const pg=await b.newPage({viewport:{width:1400,height:950}});await pg.route(/fon
 const errs=[];pg.on('pageerror',e=>errs.push(e.message));
 await pg.goto('file://'+process.argv[2]);await pg.waitForTimeout(1200);await pg.evaluate(()=>{if(CUR_MODAL)CUR_MODAL.done(null)});await pg.waitForTimeout(300);
 await pg.evaluate(()=>{showRules()});await pg.waitForTimeout(500);
-const o={};o.tabs=await pg.evaluate(()=>[...document.querySelectorAll('[data-rul]')].map(b=>b.textContent));
-await pg.click('[data-rul="mguide"]');await pg.waitForTimeout(200);
+const o={};o.tabs=await pg.evaluate(()=>[...document.querySelectorAll('[data-tac98]')].map(b=>b.textContent)); /* v0.98: Tactics */
+await pg.click('[data-tac98="strat"]');await pg.waitForTimeout(200);
 o.m=await pg.evaluate(()=>{const el=document.getElementById('rulTab-mguide');return {vis:!el.hidden,h4:[...el.querySelectorAll('h4')].length,ref:!!el.querySelector('details.gref')}});
 o.p=await pg.evaluate(()=>{const el=document.getElementById('rulTab-guide');return {mgr:/Manager mode/.test([...el.querySelectorAll('h4')].map(h=>h.textContent).join()),h4:el.querySelectorAll('h4').length}});
 await pg.screenshot({path:'shot_mguide48.png'});

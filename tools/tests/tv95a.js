@@ -65,12 +65,14 @@ ok(f7.box&&f7.col&&f7.dice===3,'7a three dice in a column');ok(f7.art,'7b die ar
 const e9=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const o={};localStorage.removeItem('flavius_edtold95');o.first=edTold95();o.second=edTold95();
   o.th=ate95('tholo')==='slain'&&ate95({t:'commodus'})==='slain'&&ate95({tok:{kind:'human'}})==='slain'&&ate95('bear')==='eaten'&&ate95({id:'x'})==='eaten';
   while(CUR_MODAL){CUR_MODAL.done(null);await W8(100)}
-  showRules();await W8(400);const bb=document.querySelector('#modal [data-bestiary]');o.btn=!!bb;if(bb){bb.click();await W8(900);
-    const pane=document.getElementById('rulTab-best95');o.pane=!!pane&&!pane.hidden&&pane.textContent.length>200;o.stillRules=!!CUR_MODAL&&/Rules/.test(document.getElementById('mTitle').textContent);o.noEat=!/gladiators? eaten/.test(pane?pane.textContent:'')||true;
-    o.tholoSlain=/Tholo[\s\S]{0,900}gladiators? slain/.test(pane?pane.textContent:'');
-    const tab=document.querySelector('#modal [data-rul="build"]');tab.click();await W8(200);o.back=!!pane&&pane.hidden&&!document.getElementById('rulTab-build').hidden}
+  /* v0.98: the Bestiary is Tactics → Reference → Bestiary (246-v98ui); its ledgers sit in a fold under the cards */
+  showRules();await W8(400);const rf=document.querySelector('#modal [data-tac98="ref"]');if(rf){rf.click();await W8(150)}const bb=document.querySelector('#modal [data-tac98r="best"]');o.btn=!!bb;if(bb){bb.click();
+    for(let i=0;i<40&&!(document.querySelector('#rulTab-be98 #menagBody')||{textContent:''}).textContent.match(/Tholo/);i++)await W8(150);
+    const pane=document.getElementById('rulTab-be98');const ref=document.getElementById('rulTab-ref');o.pane=!!pane&&!!ref&&!ref.hidden&&!pane.closest('[hidden]')&&pane.textContent.length>200;o.stillRules=!!CUR_MODAL&&/Tactics/.test(document.getElementById('mTitle').textContent);o.noEat=!/gladiators? eaten/.test(pane?pane.textContent:'')||true;
+    const led=pane&&pane.querySelector('#menagBody');o.tholoSlain=/Tholo[\s\S]{0,900}gladiators? slain/.test(led?led.textContent:'');
+    const tab=document.querySelector('#modal [data-tac98="build"]');tab.click();await W8(200);o.back=!!ref&&ref.hidden&&!document.getElementById('rulTab-build').hidden}
   while(CUR_MODAL){CUR_MODAL.done(null);await W8(100)}return o});
-ok(e9.first&&!e9.second,'8 editors toast only once');ok(e9.th,'9a humanoid wording helper');ok(e9.btn&&e9.pane&&e9.stillRules,'9b Bestiary opens inside Rules & strategy');ok(e9.tholoSlain,'9c Tholo ledger says slain');ok(e9.back,'9d other tab returns');
+ok(e9.first&&!e9.second,'8 editors toast only once');ok(e9.th,'9a humanoid wording helper');ok(e9.btn&&e9.pane&&e9.stillRules,'9b Bestiary opens inside Tactics');ok(e9.tholoSlain,'9c Tholo ledger says slain');ok(e9.back,'9d other tab returns');
 const fresh=await pg.evaluate(m=>typeof errNew92==='function'?errNew92(m):[],mark).catch(()=>[]);ok(!fresh||!fresh.length,'no new 00c errors '+JSON.stringify(fresh));
 console.log(JSON.stringify({t:{rings:t.rings.length},r,c6,f7,e9}));
 console.log('MISS',JSON.stringify(miss));console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();

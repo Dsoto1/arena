@@ -17,7 +17,7 @@ await pg.click('#mClose');await pg.waitForTimeout(200);
 // save / load
 await pg.evaluate(async()=>{await Store.put('customChars','cTEST',{name:'Saved Sam',custom:true});});
 /* v0.84: Settings → 💾 Saves points at the Saves window; its Backups → "Restore or manage backups" opens the game-save shelf */
-await pg.evaluate(()=>{openSettings()});await pg.waitForTimeout(300);await pg.click('[data-stab="saves"]');await pg.waitForTimeout(300);await pg.click('[data-sv84]');await pg.waitForTimeout(700);
+await pg.evaluate(()=>{openSettings()});await pg.waitForTimeout(300);await pg.click('#s98 [data-sv84]'); /* v0.98: no Saves tab; the footer opens 💾 Saves */await pg.waitForTimeout(700);
 await pg.click('#hub76 [data-hubbk="manage"]');await pg.waitForTimeout(900);
 await pg.fill('#saveName','T1');await pg.click('[data-gsave]');await pg.waitForTimeout(800);
 out.slots=await pg.evaluate(()=>document.querySelectorAll('#saveList [data-gload]').length);

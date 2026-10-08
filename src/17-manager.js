@@ -1172,7 +1172,7 @@ function weekReviewHTML(){const w=W_(),m=me();const R=w.review;const T=ludusTodo
     <li>${_T`<b>Decide.</b> After the bouts, you rule on thumbs, blood money and the rudis.`}</li>
     <li>${_T`<b>End the week.</b> Wages are paid, fighters train and heal, contracts tick down, and the <b>Acta Diurna</b> prints the week's news.`}</li>
    </ol>
-   <p class="rc-sub" style="margin:4px 0">${_T`Win bouts for points: the top four houses after 12 weeks go to the <b>Flavius Superbus</b>. Three week-ends in the red closes the ludus. <b>Rules &amp; strategy → Manager guide</b> has the rest.`}</p></div>`;
+   <p class="rc-sub" style="margin:4px 0">${_T`Win bouts for points: the top four houses after 12 weeks go to the <b>Flavius Superbus</b>. Three week-ends in the red closes the ludus. <b>Tactics → Strategy</b> has the rest.`}</p></div>`;
   return `${lagBannerHTML()}<div class="landing">${rev}<div class="todobox"><div class="sect" style="margin-top:0">${_T`✅ This week · ${esc(dt.short)}`} <span class="rc-sub">${T.length?T.length+' thing'+(T.length===1?'':'s')+_T(' to see to'):_T('all in order')}</span></div>
     ${T.length?`<div class="todos">${T.map(([i,t,b])=>`<div class="todo"><span class="ti">${i}</span><span class="tt">${t}</span>${b}</div>`).join('')}</div>`:`<p class="rc-sub" style="margin:4px 0">${_T`Nothing pressing. Enjoy the quiet — or go looking for trouble on the Recruiting board.`}</p>`}</div></div>`}
 /* v0.22 THE EXCHANGE TAB: the same betting system as the Wagers window, from the lanista's box */
