@@ -1564,6 +1564,12 @@ share copy — the site download play/flavius-rule-arena.zip.)
   FINAL PICK (2026-10-08, mock4.html / mock96e_full.png): the COMPACT version — today's height, the house's dark panels, materials only on the
   group header strips, one-line buttons with a short cost (full reason on hover), slim phase rail IN THE PHASE COLOURS used everywhere (.ph-resolve teal, .ph-choice gold, .ph-action red, .ph-end grey: underline per segment, done ✓, current filled), End turn red with gold edge + rivets.
   "Wager on yourself" leaves the action bar (his call: not needed — the button only; CPU self-bets/the Wagers list stay as they are).
+  EXTRAS (all 8, his yes 2026-10-08): (1) hover a button → preview on the board (weapon → targets in range, Push/Topple → usable tiles/pillars,
+  Market → affordable levels); (2) pips in the headers (Move = orange movement pips, hovering a cost dims what it would spend; Attack = 2 sword
+  pips); (3) "3 move · 2 attacks unused" under End turn; (4) hover a done phase → what happened in it (Resolve: no beasts stirred / Choice: took
+  2 coin); (5) whose turn + "next: <name>" with a small face at the left of the rail; (6) small key hints on the buttons (A/M/P/T/Enter, the
+  v0.93 keyboard layer); (7) hints mode only (never Ranked): soft glow on the action the strategy hints would pick; (8) phones: the groups = one
+  swipe row, End turn fixed on the right.
 - **ARMOR EXTRAS (his picks 2026-10-06):** printed pieces stay ONE fused unit (the Manica is one piece, no separate galerus piece/AP).
   The 2D Armor designer gets CLICK-TO-ADD extras (all COSMETIC, no AP): galerus/neck guard, Manica segments, studs/rivets, spikes, fur trim,
   emblems (house crest), damage (dents/scratches/cracks), rope/cloth wraps, leather lacing/straps, trim bands, paint. Same set later on the 3D
