@@ -70,7 +70,7 @@ const r4=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   o.capua=arm94Stock(w,li('Capua')).filter(x=>x.t==='w'&&SPEC94.blades.w.includes(x.k)).length>=2&&arm94Stock(w,li('Capua')).some(x=>x.sp&&x.pr<arm94Price(x.t,x.k));
   const t=travelState(w);if(t)t.paid=true;w.night.travel={cost:0,paid:true};MGR.tab='night';MGR_REDRAW();await W8(400);
   o.mw=!document.querySelector('#mgrPane [data-arm94sq]')&&!document.querySelector('#mgrPane .ar94mw'); /* v0.96: the Gear-up tile is gone — the City Square button covers it */
-  CITY.side='stalls';document.querySelector('#mgrPane [data-mg="city"]').click();for(let i=0;i<200&&!(CITY.open&&CITY.side==='stalls'&&document.querySelector('#citySideBody .ar94shop'));i++)await W8(100); /* the square paints when its art has decoded: polled, not a fixed 2.5 s */
+  CITY.side='stalls';document.querySelector('[data-mg="city"]').click() /* v0.97: the button sits on the city banner */;for(let i=0;i<200&&!(CITY.open&&CITY.side==='stalls'&&document.querySelector('#citySideBody .ar94shop'));i++)await W8(100); /* the square paints when its art has decoded: polled, not a fixed 2.5 s */
   o.open=CITY.open&&CITY.side==='stalls'&&!!document.querySelector('#citySideBody .ar94shop');
   const H=arm94H(m);const n0=H.sh.length;const c0=m.coin;const btn=document.querySelector('#citySideBody [data-arm94buy]:not([disabled])');const i=+btn.dataset.arm94buy;const it=arm94Stock(w,CITY.li)[i];const left0=arm94Left(w,CITY.li,i);
   btn.click();await W8(200);o.buy=H.sh.length===n0+1&&H.sh[H.sh.length-1].k===it.k&&c0-m.coin===cityPr(it.pr)&&arm94Left(w,CITY.li,i)===left0-1;

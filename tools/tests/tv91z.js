@@ -12,10 +12,10 @@ const r=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   const adj=adjTiles(p).find(([r,c])=>!pillarAt(r,c)&&!unitAt(r,c));z.r=adj[0];z.c=adj[1];S.chest.held=z.id;z.carry={kind:'chest',label:'the Arena Chest'};p.keys=Math.max(1,p.keys);const mv0=p.mv;
   render();await W8(100);o.btn=!!document.querySelector('[data-act91="zorachest"]');o.dbg={busy:S.busy,ph:S.phase,acts:!!document.querySelector('#actions .acts'),z:zoraChest91(p)?1:0,cheb:cheb(z,p),cpu:p.cpu,onl:!!S.onl};if(!o.btn)return o;
   document.querySelector('[data-act91="zorachest"]').click();await W8(400);render();await W8(100);
-  o.carrying=p.carrying===true&&S.chest.held==='p'+p.id&&!z.carry;o.mv=p.mv===Math.max(0,mv0-1);o.open=!!document.querySelector('[data-act="chest"]');
+  o.carrying=p.carrying===true&&S.chest.held==='p'+p.id&&!z.carry;o.mv=p.mv===mv0; /* v0.97: Zora handing the chest over is not a pickup — no cost now, the −1 comes from the next turn (mvMax) */o.open=!!document.querySelector('[data-act="chest"]');
   /* not when he is two tiles away */
   p.carrying=false;S.chest.held=z.id;z.carry={kind:'chest',label:'the Arena Chest'};const far=S.players[0];z.r=-99;z.c=-99;render();await W8(100);o.farNo=!document.querySelector('[data-act91="zorachest"]');
   return o});
 console.log(JSON.stringify(r));
-ok(r.btn,'1 the button appears next to your Zora');ok(r.carrying,'2 the chest passes to you');ok(r.mv,'3 −1 movement while held');ok(r.open,'4 Open Arena Chest is offered');ok(r.farNo,'5 not offered when he is not next to you');
+ok(r.btn,'1 the button appears next to your Zora');ok(r.carrying,'2 the chest passes to you');ok(r.mv,'3 handed over by Zora: no movement spent this turn');ok(r.open,'4 Open Arena Chest is offered');ok(r.farNo,'5 not offered when he is not next to you');
 console.log('MISS',JSON.stringify(miss));console.log('ERRS',JSON.stringify(errs));await b.close();process.exit(miss.length||errs.length?1:0)})();
