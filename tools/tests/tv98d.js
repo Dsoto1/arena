@@ -15,13 +15,13 @@ o.lv=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));i
   newWorld(cm('easy'));r.easy=lv();r.hEasy=rec98HrsMax(W_());
   newWorld({type:'pre',key:'servius'});r.small=lv();
   newWorld({type:'pre',key:'crispus'});r.big=lv();r.hBig=rec98HrsMax(W_());
-  const m=me();m.coin=900;const c0=m.coin;const u=adv98Up('recruiter');r.up=[u.ok,u.lv,c0-m.coin,rec98HrsMax(W_())];
+  newWorld(cm('normal'));const m=me();m.coin=900;const c0=m.coin;const u=adv98Up('recruiter');r.up=[u.ok,u.lv,c0-m.coin,rec98HrsMax(W_())];const c1=m.coin;const u2=adv98Up('recruiter');r.up2=[u2.ok,u2.lv,c1-m.coin];const u3=adv98Up('recruiter');r.up3=[u3.ok,m.coin===c1-120,council83(W_()).find(x=>x.k==='recruiter').lv];const u4=adv98Up('doctore');r.upD=[u4.ok,u4.lv];a_=council83(W_()).find(x=>x.k==='recruiter');a_.lv=1;m.coin=900;
   MGR.view=null;MGR.tab='ludus';MGR_REDRAW();await W8(500);r.card=document.querySelectorAll('#mgrBody .c98lv').length;r.btn=!!document.querySelector('#mgrBody [data-c98up="recruiter"]');
   const a=council83(W_()).find(x=>x.k==='recruiter');a.lv=3;return r});
 const all=(a,v)=>Array.isArray(a)&&a.length===6&&a.every(x=>x===v);
 ok(all(o.lv.custom,1)&&o.lv.hCustom===20,'a new house: level 1, 20 h '+JSON.stringify(o.lv));ok(all(o.lv.easy,2)&&o.lv.hEasy===24,'an Easy start: level 2');
 ok(all(o.lv.small,2)&&all(o.lv.big,3)&&o.lv.hBig===28,'a taken-over house: 2, or 3 when established');
-ok(o.lv.up[0]&&o.lv.up[1]===4&&o.lv.up[2]===200&&o.lv.up[3]===32,'training the recruiter up costs coin and adds hours '+JSON.stringify(o.lv.up));ok(o.lv.card===6&&o.lv.btn,'council card shows levels + the train button');
+ok(o.lv.up[0]&&o.lv.up[1]===2&&o.lv.up[2]===60&&o.lv.up[3]===24,'coin: level 1 → 2 costs 60 and adds hours '+JSON.stringify(o.lv.up));ok(o.lv.up2[0]&&o.lv.up2[1]===3&&o.lv.up2[2]===120,'coin: level 2 → 3 costs 120');ok(!o.lv.up3[0]&&o.lv.up3[1]&&o.lv.up3[2]===3,'coin stops at level 3 '+JSON.stringify(o.lv.up3));ok(o.lv.upD[0]&&o.lv.upD[1]===2,'every advisor can be trained (Doctore)');ok(o.lv.card===6&&o.lv.btn,'council card shows levels + the train button');
 /* ---------- 2 · no numbers before signing ---------- */
 o.nn=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));const w=W_(),m=me();m.fame=Math.max(m.fame,60);
   const fa=freeAgents().filter(x=>m.fame>=reqFame(x)).sort((a,b)=>effOvr(b)-effOvr(a));window.FA=fa;fa.slice(0,4).forEach(g=>g.favd=true);const g=fa[0];
@@ -113,6 +113,35 @@ o.t=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   const R=w.mgrs.find(x=>!x.isPlayer&&!x.dead);const f=freeAgents().slice(0,30);const est=f.map(x=>rec98Rival(R,x)-effOvr(x));r.rv=[Math.max(...est.map(Math.abs)),est.some(x=>x!==0),rec98Rival(R,f[0])===rec98Rival(R,f[0])];
   return r});
 ok(o.t.mine&&o.t.snap&&o.t.rows===6&&o.t.shown,'the truth card on signing '+JSON.stringify(o.t));ok(o.t.rv[0]<=25&&o.t.rv[1]&&o.t.rv[2],'rivals court with estimates '+JSON.stringify(o.t.rv));
+/* ---------- 10 · levels 4 and 5 are earned ---------- */
+o.e4=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));newWorld({type:'pre',key:'crispus'});const w=W_(),m=me();const r={};const lv=()=>Object.fromEntries(council83(w).map(a=>[a.k,a.lv]));
+  r.start=lv();const S=adv98S(w);m.fame=10;adv98Check(w,m);r.low=lv();
+  /* recruiter L4: 5 graded signings + fame 50 */
+  S.sgn=5;m.fame=49;adv98Check(w,m);r.fame49=lv().recruiter;m.fame=50;adv98Check(w,m);r.l4=lv().recruiter;
+  const n1=(w.letters||[]).filter(L=>/^adv98-recruiter-4/.test(L.key)).length;adv98Check(w,m);adv98Check(w,m);r.letters=[n1,(w.letters||[]).filter(L=>/^adv98-recruiter-4/.test(L.key)).length];
+  S.best=80;m.fame=70;adv98Check(w,m);r.l5=lv().recruiter;
+  /* others */
+  S.bands=10;m.fame=70;S.healed=8;S.topCoin=1500;S.top4=1;S.morBest=70;adv98Check(w,m);r.o4=lv();
+  S.healed=20;S.clean=1;S.rich=1;S.won=1;S.calm=12;S.best=85;adv98Check(w,m);r.o5=lv();
+  MGR.view=null;MGR.tab='ludus';MGR_REDRAW();await W8(500);r.ev=[...document.querySelectorAll('#mgrBody .c98ev')].length;
+  /* the card shows progress for an advisor below the target */
+  council83(w).find(x=>x.k==='clerk').lv=3;S.topCoin=900;MGR_REDRAW();await W8(400);r.prog=(document.querySelector('#mgrBody [data-c83="clerk"] .c98ev')||{}).textContent;
+  /* a level bought above 3 by coin is never taken away */
+  const w2=JSON.parse(JSON.stringify(w));w2.ver='0.97';delete w2.adv98;council83(w2).find(x=>x.k==='doctore').lv=5;council83(w2).find(x=>x.k==='clerk').lv=4;const prev=MGR.world;MGR.world=w2;try{migrateWorld(w2);adv98Check(w2,w2.mgrs.find(x=>x.isPlayer));r.mig=[council83(w2).find(x=>x.k==='doctore').lv,council83(w2).find(x=>x.k==='clerk').lv,w2.adv98&&w2.adv98.sgn]}finally{MGR.world=prev}
+  /* rivals: own council, start by fame, deterministic, trains with coin */
+  const rb=ADV98R.recBonus;const R=w.mgrs.filter(x=>!x.isPlayer);const lvs=R.map(x=>advLvM(x,'recruiter'));r.rv=[Math.min(...lvs),Math.max(...lvs)];
+  const x=R[0];x.adv98=null;x.fame=60;r.f60b=advLvM(x,'recruiter');ADV98R.recBonus=0;x.adv98=null;x.fame=60;r.f60=advLvM(x,'recruiter');x.adv98=null;x.fame=20;r.f20=advLvM(x,'recruiter');r.bonus=[rb,Math.min(5,3+rb)];
+  x.coin=1000;adv98R(x).lv.recruiter=1;let up=0;for(let i=0;i<40;i++){w.week++;adv98RivalWeek(w)}r.rtrain=[adv98R(x).lv.recruiter,adv98R(x).lv.recruiter<=3||x.fame>=50,1000-x.coin>0];
+  x.adv98=null;x.fame=20;adv98R(x);x.coin=10;for(let i=0;i<10;i++){w.week++;adv98RivalWeek(w)}r.poor=adv98R(x).lv.recruiter;
+  const y=R[1];y.adv98=null;y.fame=20;y.coin=1e5;adv98R(y).lv.consilium=3;y.top4=0;adv98R(y).top4=1;w.week++;adv98RivalWeek(w);r.rearn=adv98R(y).lv.consilium;
+  ADV98R.recBonus=rb;r.line=adv98RLine(x).includes('Recruiter');r.dices=typeof Math.random==='function';return r});
+ok(o.e4.start.recruiter===3&&o.e4.low.recruiter===3,'a taken-over house at 3 stays 3 without deeds '+JSON.stringify(o.e4.low));
+ok(o.e4.fame49===3&&o.e4.l4===4,'Recruiter L4: 5 graded signings + fame 50 '+JSON.stringify([o.e4.fame49,o.e4.l4]));ok(o.e4.letters[0]===1&&o.e4.letters[1]===1,'the level-up letter is sent once');
+ok(o.e4.l5===5,'Recruiter L5: a signing at 80 + fame 70');ok(Object.entries(o.e4.o4).every(([k,v])=>v>=4),'every advisor reaches 4 on its conditions '+JSON.stringify(o.e4.o4));ok(Object.values(o.e4.o5).every(v=>v===5),'every advisor reaches 5 '+JSON.stringify(o.e4.o5));
+ok(/Level 4/.test(o.e4.prog||'')&&/900\/1500/.test(o.e4.prog||''),'the council card shows progress '+o.e4.prog);
+ok(o.e4.mig[0]===5&&o.e4.mig[1]===4&&o.e4.mig[2]===0,'migration keeps coin-bought levels above 3, counters start at 0 '+JSON.stringify(o.e4.mig));
+ok(o.e4.rv[0]>=1&&o.e4.rv[1]<=5&&o.e4.f60b===o.e4.bonus[1]&&o.e4.f60===3&&o.e4.f20===1,'rival councils start by fame '+JSON.stringify([o.e4.rv,o.e4.f60,o.e4.f20]));
+ok(o.e4.rtrain[0]===3&&o.e4.rtrain[2]&&o.e4.poor===1&&o.e4.rearn>=4&&o.e4.line,'rivals train with spare coin to 3, a poor house cannot, deeds earn 4 '+JSON.stringify([o.e4.rtrain,o.e4.poor,o.e4.rearn]));
 /* ---------- 9 · migration of an old save ---------- */
 o.m=await pg.evaluate(()=>{const w0=W_();const w=JSON.parse(JSON.stringify(w0));w.ver='0.97';for(const a of w.council83)delete a.lv;const fa=w.glads.filter(g=>!g.contract&&g.alive!==false);
   for(const g of fa)delete g.sc98;fa[0].scout=1;fa[1].scout=2;fa[2].scout=3;fa[3].scout=0;fa[3].watchK=[[STATS[0][1],60,70]];

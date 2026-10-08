@@ -8,7 +8,7 @@ const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;MGR.tab='ludus';const w=W_();const r={};const q=s=>document.querySelector(s);const C=w.council83||[];
   r.six=C.length===6&&C.map(a=>a.k).join()==='consilium,recruiter,doctore,medicus,clerk,barracks'&&C.every(a=>/^\S+ \S+$/.test(a.name)&&a.role&&a.spec&&a.face&&a.face.skin);
   r.uniq=new Set(C.map(a=>a.name.split(' ')[0])).size===6&&new Set(C.map(a=>a.name.split(' ')[1])).size===6;
-  r.det=JSON.stringify(council83Make(w.id))===JSON.stringify(C)&&JSON.stringify(council83Make(w.id+'z'))!==JSON.stringify(C);
+  const nl=A=>JSON.stringify(A.map(a=>{const b={...a};delete b.lv;return b}));r.det=nl(council83Make(w.id))===nl(C)&&nl(council83Make(w.id+'z'))!==nl(C);
   const rnd0=Math.random;let calls=0;Math.random=()=>{calls++;return rnd0()};council83Make('abc');Math.random=rnd0;r.noRandom=calls===0;
   /* letters: an advisor's (opened) and a rival's */
   sendLetter(w,{key:'grow-t83',kind:'report',from:'your doctores',seal:'📈',title:'How the fighters grew this week',body:'<ul><li>x</li></ul>'});
@@ -30,7 +30,7 @@ const o=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms)
   /* an older career: no council in the save → one on load, the same as rolled, kept, no Store write */
   const old=JSON.parse(JSON.stringify(w));delete old.council83;let puts=0;const p0=Store.put;Store.put=function(){puts++;return p0.apply(this,arguments)};
   const m1=mgrMigrate(old);const c1=m1.council83;const m2=mgrMigrate(m1);Store.put=p0;
-  r.old=Array.isArray(c1)&&c1.length===6&&JSON.stringify(c1)===JSON.stringify(council83Make(old.id))&&m2.council83===c1&&puts===0;
+  r.old=Array.isArray(c1)&&c1.length===6&&(()=>{const nl=A=>JSON.stringify(A.map(a=>{const b={...a};delete b.lv;return b}));return nl(c1)===nl(council83Make(old.id))})()&&m2.council83===c1&&puts===0;
   const old2=JSON.parse(JSON.stringify(w));delete old2.council83;old2.ver='0.82';migrateWorld(old2);r.mig=Array.isArray(old2.council83)&&old2.council83.length===6;
   /* never re-rolled: a changed council stays */
   w.council83[0].name='Kept Name';council83Ensure(w);r.fixed=w.council83[0].name==='Kept Name';

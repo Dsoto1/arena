@@ -12,6 +12,7 @@ const {chromium}=require('playwright');const path=require('path');
 const b=await chromium.launch();const pg=await b.newPage();await pg.route(/fonts\./,r=>r.abort());const errs=[];pg.on('pageerror',e=>errs.push(e.message));
 await pg.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_lfpool','0')});
 await pg.goto('file://'+page);await pg.waitForTimeout(2000);
+if(process.env.ADV98)await pg.evaluate(o=>{for(const [k,v] of Object.entries(o.ADV98R||{}))ADV98R[k]=v;for(const [k,v] of Object.entries(o.REC98||{}))REC98[k]=v},JSON.parse(process.env.ADV98)); /* tuning study: ADV98='{"ADV98R":{"start":[[55,5],[35,4],[0,3]]}}' */
 await pg.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await new Promise(r=>setTimeout(r,800));
   /* the sim never waits on windows or animations */
   window.modal=async(t,b,btns)=>{const p=(btns||[]).find(x=>x.primary)||(btns||[])[0];return p?p.value:null};window.mToast=()=>{};window.say=()=>{};SPEED='snap'});
@@ -58,7 +59,7 @@ for(const strat of STRATS)for(let run=0;run<RUNS;run++){
       if(m.dead||w.dead||(!ros().length&&m.coin<0)){collapsed=wk;break}}
     const table=w.mgrs.filter(x=>!x.dead).map(x=>({p:x.isPlayer,wins:x.wins||0})).sort((a,b)=>b.wins-a.wins);
     return {strat,run,wins:m.wins||0,rank:table.findIndex(x=>x.p)+1,wage:rosterOf(m).reduce((a,g)=>a+(g.contract?g.contract.wage:0),0),houses:table.length,mine:+avg(rosterOf(m).map(effOvr)).toFixed(1),riv:+avg(rivals().flatMap(x=>rosterOf(x).map(effOvr))).toFixed(1),
-      gain:+(avg(rosterOf(m).map(effOvr))-start.mine).toFixed(1),rivGain:+(avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))-start.riv).toFixed(1),coin:m.coin,c6,c12,c24,minCoin,collapsed,fighters:rosterOf(m).length,n0,injuries,lost,weeks:w.week,rivCoin:Math.round(avg(rivals().map(x=>x.coin))),deaths:w.glads.filter(g=>!g.alive&&!g.retired&&g.debut).length,nCard,bare,miss,sev:rosterOf(m).reduce((a,g)=>a+(g.severed||[]).length,0),gear:typeof arm94Stats==='function'?arm94Stats(w):null,rivMin:Math.min(...rivals().map(x=>x.coin)),rivBroke:rivals().filter(x=>x.coin<30).length,shelf:avg(w.mgrs.filter(x=>!x.dead).map(x=>(x.arm94?x.arm94.sh.length:0)))}},{strat,run,SEASONS,GEAR,GEARM});
+      gain:+(avg(rosterOf(m).map(effOvr))-start.mine).toFixed(1),rivGain:+(avg(rivals().flatMap(x=>rosterOf(x).map(effOvr)))-start.riv).toFixed(1),coin:m.coin,c6,c12,c24,minCoin,collapsed,fighters:rosterOf(m).length,n0,injuries,lost,weeks:w.week,rivLv:typeof advLvM==="function"?+avg(rivals().map(x=>advLvM(x,"recruiter"))).toFixed(2):0,rivCoin:Math.round(avg(rivals().map(x=>x.coin))),deaths:w.glads.filter(g=>!g.alive&&!g.retired&&g.debut).length,nCard,bare,miss,sev:rosterOf(m).reduce((a,g)=>a+(g.severed||[]).length,0),gear:typeof arm94Stats==='function'?arm94Stats(w):null,rivMin:Math.min(...rivals().map(x=>x.coin)),rivBroke:rivals().filter(x=>x.coin<30).length,shelf:avg(w.mgrs.filter(x=>!x.dead).map(x=>(x.arm94?x.arm94.sh.length:0)))}},{strat,run,SEASONS,GEAR,GEARM});
   rows.push(r);process.stderr.write(JSON.stringify(r)+'\n')}
 const by={};for(const r of rows)(by[r.strat]=by[r.strat]||[]).push(r);const A=(a,k)=>(a.reduce((s,x)=>s+x[k],0)/a.length).toFixed(1);
 console.log('strategy   wins  rank/12  myOvr  rivOvr  myGain  rivGain  coin  roster  injuries  lost  coin@6  coin@12  coin@24  lowest  collapsed  rivCoin  deaths');
@@ -68,4 +69,5 @@ for(const r of rows)if(r.gear)console.log('gear',r.strat,r.run,JSON.stringify(r.
 {const keys=['rep','repN','buy','buyN','loot','lootN','skip','skipN','sell','sellN','lost','lostN'];console.log('audit (avg per run): fighters on card '+A(by[Object.keys(by)[0]],'nCard')+' · bare-handed '+A(by[Object.keys(by)[0]],'bare')+' · armor pieces missing '+A(by[Object.keys(by)[0]],'miss')+' · severed limbs at end '+A(by[Object.keys(by)[0]],'sev'));console.log('flows (avg per run; r = all rivals together)   side '+keys.join(' ')+'  wins deaths treasury rivMin rivBroke shelf');
  for(const [s2,a] of Object.entries(by)){for(const side of ['p','r']){const f=k=>(a.reduce((t,x)=>t+(((x.gear&&x.gear.fl&&x.gear.fl[side])||{})[k]||0),0)/a.length).toFixed(0);
    console.log(`${s2.padEnd(9)} ${side} ${keys.map(f).join(' ')}  ${A(a,'wins')} ${A(a,'deaths')} ${A(a,'coin')} ${A(a,'rivMin')} ${A(a,'rivBroke')} ${A(a,'shelf')}`)}}}
+for(const [s2,a] of Object.entries(by))console.log(`${s2} rival avg Recruiter level ${A(a,'rivLv')}`);
 if(errs.length)console.log('page errors:',errs.slice(0,3));await b.close()})();
