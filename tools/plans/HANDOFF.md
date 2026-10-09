@@ -37,6 +37,7 @@ Only ONE place works on this repo at a time (VS Code or the cloud session). `sh 
 - Claude: at the start of any session read BATON and remind him to take it; if the other side holds it, say so and stop before editing. If he says "keep me honest", check `sh tools/baton.sh status` before every build.
 
 ## Last session notes
+- (cloud, 2026-10-09 later) VS Code on API credits was tried and BACKED OUT: the API key kept returning "credit balance too low" even though the org shows $199.99 of $200 promo credits (expire 2026-11-05). Work stays in the cloud session for now; VS Code did no work. Baton taken back by cloud (force; no commits from VS Code). If retried: create a key in the org that holds the credits, `/status` must show that org.
 - (cloud, 2026-10-09) Moved work to VS Code on API credits. Added HANDOFF.md, PLANNING.md and the baton. No code changes pending. Next: his go on the translation pass, or planning the v1.0 mocks listed in PLANNING.md.
 
 ## Standing rules (see CLAUDE.md too)
