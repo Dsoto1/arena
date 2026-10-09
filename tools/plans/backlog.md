@@ -38,3 +38,11 @@ Each line: idea · where it came from · date.
 - v1.0 SERVER BATCH: 4a remove online wagers (client tab + buttons, server bet.place refuse, tests tonl77/83/83u/ws77/v82o/v87x + server suites), 9g ranked verification
   (backlog: server replay; interim = every human must report the same result), 9d/9e online results screen for every player with coin + CF (custom = nothing paid), cleanup wording.
 - 9b/9c: the frozen client + results that waited for her were the Hand-to-CPU desync (fixed by 9a); re-test with two real windows after the release.
+
+## v1.0 SERVER + SECURITY (his ask 2026-10-09)
+- **Security pass on the online backend:** read-through of routes.js, template.yaml IAM + throttles, rate limits, abuse paths (token-picture content, hidden Mandata info, WAF layer?), then fix what it finds. Report first; fixes with his go.
+- **REAL RANKED VERIFICATION (server replay):** today results = agreement of the humans (ONLC.agree) + end hashes; a lone human vs CPUs is unverified. Goal: the server re-plays a Ranked match from its seed + the stored input log (the lockstep inputs already carry seq/seat/hash) on a headless engine (HEADLESS exists for sims) and compares winners/deaths/CF to the reports; mismatch -> void + strike. Needs: the engine separated from DOM/screen code (or a jsdom-free headless build), run in a Lambda or queue worker after the match ends, cost check, interim = every human must report the same result. Do before wagers/Ranked rewards matter at scale.
+
+## v1.0 MANAGER "MY LUDUS" MOCK (his PDF mockludusmanager 2026-10-09)
+- His mock: rail + banner "WEEK N PRE-MATCH" with a Match Week button + parchment WEEKLY TASKS list (progress N/7, per-task counts) + 5 painted tiles (Your Team, Promote Team, Upgrade School, Facilities, Advisors). Rename Match Week -> **Fight Night** (Match Week = what the manager does before it); tasks list changes by the week's needs and stays thematic.
+- BUG: the My ludus banner does not track the fallen correctly (record 1-8, many lost in bouts, also simulated ones) -> count every death incl. sims.
