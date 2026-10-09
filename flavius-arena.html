@@ -54697,7 +54697,7 @@ try{RULE_ACT.focus=_T`Focus roll (digital rule): needs at least 3 movement and s
 const b98Ico=(src)=>{try{const w=src.w;const k=w.shield?'abs':src.thr?'thr':w.ammo!=null?'ammo':'dmg';return wIco87(k)}catch(e){return ''}};
 const b98Stats=(src)=>{try{return _T`Attack power ${srcPow(src)} · Range ${srcRange(src)}`}catch(e){return ''}};
 /* the face shows his icons (attack power, range) instead of words */
-const b98StatsIco=(src)=>{try{return `${wIco87('dmg')}${srcPow(src)} · ${wIco87('rng')}${srcRange(src)}`}catch(e){return ''}};
+const b98StatsIco=(src)=>{try{return `<span class=sv98>${wIco87('dmg')}${srcPow(src)}</span><span class=sd98>·</span><span class=sv98>${wIco87('rng')}${srcRange(src)}</span>`}catch(e){return ''}};
 const B98_FOC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.6"/><circle cx="12" cy="12" r=".9" fill="currentColor"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4" stroke-linecap="round"/></svg>';
 /* the weapon a button attacks with (arm R|L, thrown or not) */
 function b98Src(p,k){try{const m=/^m-atk([RL])(T?)$/.exec(k||'');if(!m)return null;return attackSources(p).find(s=>s.arm===m[1]&&!!s.thr===(m[2]==='T'))||null}catch(e){return null}}
@@ -54705,7 +54705,7 @@ function b98Src(p,k){try{const m=/^m-atk([RL])(T?)$/.exec(k||'');if(!m)return nu
 function b98Face(b,src,key){const sm=b.querySelector('small.r96');const kb=b.querySelector('.kb96');const k=key||(kb?kb.textContent:'');
   const name=src.thr?_T`Throw ${esc(src.w.n)}`:esc(src.w.n);const st=b98Stats(src);
   b.innerHTML=`<span class="wi98">${b98Ico(src)}</span><span class="l96">${name}</span><i class="c96 st98" aria-hidden="true">${b98StatsIco(src)}</i>${k?`<kbd class="kb96" aria-hidden="true">${k}</kbd>`:''}`;
-  if(sm)b.appendChild(sm);b.dataset.st98=b96Txt(name)+' — '+st;const tip=b.dataset.tip||'';if(tip.indexOf(st)<0)b.dataset.tip=st+(tip?'<br>'+tip:'');
+  if(sm)b.appendChild(sm);b.dataset.st98=b96Txt(name)+' — '+st;b.dataset.lp98=name+' — '+b98StatsIco(src);const tip=b.dataset.tip||'';if(tip.indexOf(st)<0)b.dataset.tip=st+(tip?'<br>'+tip:'');
   b.setAttribute('aria-label',b96Txt(name)+' — '+st+(tip?' — '+b96Txt(tip):''));b.classList.add('wb98')}
 const b98Btn=(cls,inner,tip,extra='')=>`<button type="button" class="btn b96 ph96b ${cls}" disabled ${tip?`data-tip="${esc(tip)}"`:''} ${extra}>${inner}</button>`;
 /* one weapon row: [weapon][◎ focus][↗ throw] */
@@ -54727,7 +54727,7 @@ function b98Attack(p,G96,idle){const box=document.createElement('div');box.class
     const src=b98Src(p,main.dataset.act)||{arm:a,w:p['w'+a]||PUNCH,thr:main.dataset.act.endsWith('T')?1:0};
     b98Face(main,src,first?'A':'');first=false;
     if(thr){const ts=b98Src(p,thr.dataset.act);const st=ts?b98Stats(ts):'';const sm=thr.querySelector('small.r96');
-      thr.innerHTML=`<span class="th98i" aria-hidden="true">↗</span>`;if(sm)thr.appendChild(sm);thr.classList.add('th98');
+      thr.innerHTML=`<span class="th98i" aria-hidden="true">${wIco87('thr')}</span>`;if(sm)thr.appendChild(sm);thr.classList.add('th98');
       const nm=ts?_T`Throw ${esc(ts.w.n)}`:_T('Throw');thr.dataset.tip=nm+(st?' — '+st:'')+(thr.dataset.tip&&thr.dataset.tip!==nm?'<br>'+thr.dataset.tip:'');thr.setAttribute('aria-label',b96Txt(nm)+(st?' — '+st:''))}
     rows.push({main,thr,arm:a,mode:'atk'+a})}
   /* the focus docks: 07-ui's one toggle; copies of the same act on the other weapons */
@@ -54795,7 +54795,7 @@ window.addEventListener('keydown',e=>{if(!BAR98.on||e.ctrlKey||e.metaKey||e.altK
 function b98LpEnd(){if(BAR98.lp){clearTimeout(BAR98.lp.t);BAR98.lp=null}}
 document.addEventListener('pointerdown',e=>{if(!BAR98.on||e.pointerType==='mouse')return;const b=e.target.closest&&e.target.closest('#actions .wb98[data-st98]');if(!b)return;
   b98LpEnd();BAR98.lp={b,t:setTimeout(()=>{try{let el=document.getElementById('lp98');if(!el){el=document.createElement('div');el.id='lp98';el.setAttribute('role','status');document.body.appendChild(el)}
-    el.textContent=b.dataset.st98;const r=b.getBoundingClientRect();el.style.left=Math.max(8,Math.min(innerWidth-8,r.left+r.width/2))+'px';el.style.top=Math.max(4,r.top-30)+'px';el.hidden=false;
+    el.innerHTML=b.dataset.lp98||'';if(!el.innerHTML)el.textContent=b.dataset.st98;const r=b.getBoundingClientRect();el.style.left=Math.max(8,Math.min(innerWidth-8,r.left+r.width/2))+'px';el.style.top=Math.max(4,r.top-30)+'px';el.hidden=false;
     BAR98.lpShown=Date.now();clearTimeout(BAR98.lpHide);BAR98.lpHide=setTimeout(()=>{el.hidden=true},1600)}catch(err){}},450)}},true);
 for(const ev of ['pointerup','pointercancel','pointerleave'])document.addEventListener(ev,b98LpEnd,true);
 window.addEventListener('click',e=>{if(BAR98.lpShown&&Date.now()-BAR98.lpShown<700&&e.target.closest&&e.target.closest('#actions .wb98')){BAR98.lpShown=0;e.preventDefault();e.stopImmediatePropagation()}},true);
@@ -54828,7 +54828,9 @@ window.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest(
 #actions .grid98 .dock98{display:flex;height:var(--row98)}
 #actions .grid98 .dock98 .btn.b96{width:36px;padding:0;justify-content:center;border-radius:0;border-left:1px solid #00000090;background:linear-gradient(#4a3418,#33241a);color:#f0cf7d;position:relative}
 #actions .grid98 .dock98 .btn.b96:last-child{border-radius:0 5px 5px 0}
-#actions .grid98 .dock98 .th98{width:30px!important;font:700 15px var(--mono)}
+#actions .grid98 .dock98 .th98{width:30px!important;font:700 15px var(--mono)}#actions .grid98 .th98 .th98i{display:grid;place-items:center}#actions .grid98 .th98 .th98i i{width:20px;height:20px;margin:0;background-color:#e8d7a8;border-radius:5px;box-sizing:border-box;padding:1px}
+#actions .grid98 .wpn98 .wb98 .st98{font:700 14px/1 var(--mono);opacity:1;color:#f3dfae;display:inline-flex;flex-wrap:nowrap;align-items:center;gap:5px;margin:0;white-space:nowrap}#actions .grid98 .wpn98 .wb98 .st98 span{border:0;padding:0;border-radius:0;font-size:inherit;color:inherit;background:none}#actions .grid98 .wpn98 .st98 .sv98{display:inline-flex;align-items:center;gap:0}#actions .grid98 .wpn98 .st98 .sd98{opacity:.5}#actions .grid98 .wpn98 .st98 [class^=wi87]{width:18px;height:18px;margin:0 2px 0 0;vertical-align:0;background-color:#e8d7a8;border-radius:5px;box-sizing:border-box;padding:1px}
+#lp98 [class^=wi87]{width:16px;height:16px;margin:0 2px 0 3px;vertical-align:-4px;background-color:#e8d7a8;border-radius:4px;box-sizing:border-box;padding:1px}#lp98 .sd98{margin:0 4px;opacity:.6}
 #actions .grid98 .dock98 svg{width:19px;height:19px}
 #actions .grid98 .dock98 .on98{position:absolute;right:2px;bottom:1px;font:8.5px var(--mono);font-style:normal;color:#ffd77a}
 #actions .grid98 .dock98 .btn.b96.on{color:#fff1cc}
