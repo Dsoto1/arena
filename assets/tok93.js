@@ -1018,7 +1018,7 @@ const PRESETS = {
       h: { L: [250, 1010, 60], R: [-150, 2160, 60] }, hp: { L: [1, 0, -0.6], R: [1, 0.2, -0.3] } },
   },
   defend: {
-    label: 'Defend',
+    label: 'Shield up',
     spec: { p: [0, -130, -10],
       j: { pe: [6, -24, 0], sp: [12, 12, 0], ch: [8, 10, 0], he: [-16, 4, 0], wL: [0, 60, 0], wR: [-40, 0, 0] },
       f: { L: [165, 200, 10], R: [-170, -180, -40] },
@@ -1031,10 +1031,126 @@ const PRESETS = {
       f: { L: [150, 100, 18], R: [-150, -80, -26] },
       h: { L: [560, 1230, 170], R: [-560, 1230, 170] }, hp: { L: [0.4, -1, -0.4], R: [0.4, -1, -0.4] } },
   },
+  /* ---- v0.99 (his 8a): many more, grouped. Weapon hand = RIGHT, shield / off hand = LEFT; every preset pins both feet. ---- */
+  ready: {
+    label: 'Ready',
+    spec: { p: [0, -55, 0], j: { pe: [4, -10, 0], sp: [4, 4, 0], he: [-4, 4, 0], wR: [-20, 0, 0] },
+      f: { L: [140, 100, 10], R: [-140, -90, -28] },
+      h: { L: [240, 1060, 260], R: [-210, 990, 280] }, hp: { L: [1, -0.6, -0.3], R: [1, -1, -0.3] } },
+  },
+  wide: {
+    label: 'Wide',
+    spec: { p: [0, -125, 0], j: { sp: [2, 0, 0], he: [-6, 0, 0] },
+      f: { L: [300, 30, 28], R: [-300, -30, -28] },
+      h: { L: [430, 1150, 160], R: [-430, 1150, 160] }, hp: { L: [1, -0.5, -0.5], R: [1, -0.5, -0.5] } },
+  },
+  crouch: {
+    label: 'Crouch',
+    spec: { p: [0, -300, 30], j: { pe: [22, -8, 0], sp: [14, 4, 0], ch: [6, 4, 0], he: [-26, 4, 0], wR: [-30, 0, 0] },
+      f: { L: [190, 150, 16], R: [-190, -150, -32] },
+      h: { L: [190, 910, 390], R: [-170, 800, 380] }, hp: { L: [1, -0.6, -0.2], R: [1, -1, -0.2] } },
+  },
+  coil: {
+    label: 'Lunge prep',
+    spec: { p: [0, -165, -60], j: { pe: [4, -26, 0], sp: [6, -6, 0], ch: [4, -6, 0], he: [-8, 18, 0], wR: [-10, 0, 0] },
+      f: { L: [140, 290, 6], R: [-150, -270, -52] },
+      h: { L: [130, 1150, 380], R: [-270, 960, -160] }, hp: { L: [1, -0.6, -0.2], R: [1, -0.6, -0.6] } },
+  },
+  overhead: {
+    label: 'Overhead strike',
+    spec: { p: [0, -80, 10], j: { sp: [-4, 4, 0], ch: [-8, 6, 0], he: [-6, 4, 0], wR: [-30, 0, 0] },
+      f: { L: [150, 200, 6], R: [-150, -180, -36] },
+      h: { L: [210, 1150, 310], R: [-130, 2030, -60] }, hp: { L: [1, -0.6, -0.2], R: [1, 0.3, -0.5] } },
+  },
+  thrust: {
+    label: 'Thrust',
+    spec: { p: [0, -185, 60], j: { pe: [8, -22, 0], sp: [10, -10, 0], ch: [6, -8, 0], he: [-14, 14, 0], wR: [60, 0, 0] },
+      f: { L: [140, 340, 6], R: [-130, -330, -38] },
+      h: { L: [200, 1180, 230], R: [-70, 1240, 700] }, hp: { L: [1, -1, -0.2], R: [1, -1, 0] } },
+  },
+  slash: {
+    label: 'Slash wind-up',
+    spec: { p: [0, -110, 0], j: { pe: [0, -28, 0], sp: [4, -14, 0], ch: [0, -16, 0], he: [-6, 34, 0], wR: [-20, 0, 0] },
+      f: { L: [165, 180, 12], R: [-160, -170, -42] },
+      h: { L: [270, 1200, 330], R: [-380, 1480, -250] }, hp: { L: [1, -0.6, -0.2], R: [1, 0.2, -0.6] } },
+  },
+  bash: {
+    label: 'Shield bash',
+    spec: { p: [0, -175, 55], j: { pe: [10, -30, 0], sp: [10, -12, 0], ch: [6, -8, 0], he: [-14, 26, 0], wL: [0, 60, 0], wR: [-20, 0, 0] },
+      f: { L: [140, 330, 10], R: [-140, -300, -46] },
+      h: { L: [170, 1330, 470], R: [-270, 990, -120] }, hp: { L: [0, 0, -1], R: [1, -0.6, -0.6] } },
+  },
+  throw: {
+    label: 'Spear throw',
+    spec: { p: [0, -90, -20], j: { pe: [0, -34, 0], sp: [-4, -16, 0], ch: [-10, -18, 0], he: [-6, 40, 0], wR: [0, 0, 0] },
+      f: { L: [160, 290, 16], R: [-150, -250, -62] },
+      h: { L: [300, 1500, 450], R: [-330, 1760, -380] }, hp: { L: [1, -0.4, -0.2], R: [1, 0.1, -0.7] } },
+  },
+  net: {
+    label: 'Net cast',
+    spec: { p: [0, -120, 20], j: { pe: [4, 28, 0], sp: [6, 14, 0], ch: [0, 14, 0], he: [-8, -10, 0], wL: [0, 0, 0], wR: [-30, 0, 0] },
+      f: { L: [190, 240, 24], R: [-170, -200, -30] },
+      h: { L: [470, 1450, 380], R: [-260, 950, -80] }, hp: { L: [1, -0.4, -0.6], R: [1, -0.6, -0.6] } },
+  },
+  aim: {
+    label: 'Aim',
+    spec: { p: [0, -60, 0], j: { pe: [0, 40, 0], sp: [0, 10, 0], ch: [-2, 10, 0], he: [-2, -48, 0], wL: [0, 0, 0], wR: [0, 0, 0] },
+      f: { L: [140, 200, 30], R: [-150, -150, 30] },
+      h: { L: [430, 1450, 380], R: [-60, 1520, -60] }, hp: { L: [1, -0.4, -0.4], R: [1, 0, -1] } },
+  },
+  parry: {
+    label: 'Parry',
+    spec: { p: [0, -110, 0], j: { pe: [4, -14, 0], sp: [6, 6, 0], he: [-8, 4, 0], wR: [-50, 0, 0] },
+      f: { L: [150, 180, 6], R: [-150, -180, -40] },
+      h: { L: [270, 1080, 200], R: [-10, 1430, 380] }, hp: { L: [1, -0.6, -0.3], R: [1, -0.6, 0] } },
+  },
+  brace: {
+    label: 'Brace',
+    spec: { p: [0, -235, -20], j: { pe: [16, -12, 0], sp: [16, 0, 0], ch: [6, 0, 0], he: [-24, 6, 0], wL: [0, 60, 0], wR: [-20, 0, 0] },
+      f: { L: [180, 300, 10], R: [-200, -300, -32] },
+      h: { L: [160, 1180, 440], R: [-210, 940, 200] }, hp: { L: [0, 0, -1], R: [1, -1, -0.3] } },
+  },
+  salute: {
+    label: 'Salute',
+    spec: { p: [0, -8, 0], j: { sp: [-4, 0, 0], ch: [-6, 0, 0], ne: [-6, 0, 0], he: [-14, 0, 0], wR: [0, 0, 0] },
+      f: { L: [118, 0, 8], R: [-118, 0, -8] },
+      h: { L: [250, 1000, 80], R: [-150, 1950, 470] }, hp: { L: [1, -0.4, -0.6], R: [1, 0, -0.6] } },
+  },
+  kneel: {
+    label: 'Kneel',
+    spec: { p: [0, -450, -20], j: { pe: [0, -8, 0], sp: [6, 0, 0], ch: [4, 0, 0], he: [10, 0, 0], wR: [60, 0, 0] },
+      f: { L: [150, 330, 6], R: [-130, -380, -10] },
+      h: { L: [200, 760, 360], R: [-280, 640, 120] }, hp: { L: [1, -0.4, -0.3], R: [1, -0.6, -0.4] } },
+  },
+  crossed: {
+    label: 'Arms crossed',
+    spec: { p: [0, -6, 0], j: { sp: [-2, 0, 0], ch: [-4, 0, 0], he: [-8, 0, 0], wL: [0, 0, 0], wR: [0, 0, 0] },
+      f: { L: [140, 10, 14], R: [-140, -10, -14] },
+      h: { L: [-70, 1270, 190], R: [70, 1230, 210] }, hp: { L: [1, -0.6, 0], R: [1, -0.6, 0] } },
+  },
+  limp: {
+    label: 'Wounded',
+    spec: { p: [40, -70, 0], j: { pe: [4, 0, 8], sp: [16, 0, -8], ch: [10, 0, -6], he: [18, 0, 6], wR: [40, 0, 0] },
+      f: { L: [170, 60, 12], R: [-110, 150, -6] },
+      h: { L: [120, 1110, 110], R: [-320, 780, 60] }, hp: { L: [1, -0.6, -0.4], R: [1, -0.6, -0.4] } },
+  },
+  spent: {
+    label: 'Exhausted',
+    spec: { p: [0, -130, -60], j: { pe: [26, 0, 0], sp: [24, 0, 0], ch: [14, 0, 0], ne: [-10, 0, 0], he: [-20, 0, 0], wR: [30, 0, 0] },
+      f: { L: [170, 50, 12], R: [-170, 50, -12] },
+      h: { L: [160, 630, 270], R: [-160, 630, 270] }, hp: { L: [1, -0.6, -0.4], R: [1, -0.6, -0.4] } },
+  },
 };
-const PRESET_ORDER = ['stand', 'guard', 'lunge', 'victory', 'defend', 'taunt'];
+/* the modeller's preset groups (labels are translated in the game: src/222-v93token.js T93_PRE / T93_GRP) */
+const PRESET_GROUPS = [
+  ['stance', 'Stances', ['stand', 'guard', 'ready', 'wide', 'crouch', 'coil']],
+  ['attack', 'Attacks', ['overhead', 'thrust', 'lunge', 'slash', 'bash', 'throw', 'net', 'aim']],
+  ['defence', 'Defence', ['defend', 'parry', 'brace']],
+  ['show', 'Show', ['victory', 'salute', 'taunt', 'kneel', 'crossed', 'limp', 'spent']],
+];
+const PRESET_ORDER = PRESET_GROUPS.flatMap(g => g[2]);
 
-return {PRESETS,PRESET_ORDER};})();
+return {PRESETS,PRESET_GROUPS,PRESET_ORDER};})();
 __M.gear=(function(){
 /* =====================================================================
    rig92/gear.js — armor + weapons on the posable token (v0.93)
@@ -1296,11 +1412,15 @@ __M.game=(function(){
      api.facings(px)                      8 small live canvases (the modeller's strip)
      api.editor(canvas, onChange)         drag joints / turn the view on a 2D canvas (one WebGL context for everything)
      api.presets                          [[key, label, poseJSON], …]  (resolved once on this body)
+     api.groups                           [[groupKey, label, [presetKey…]], …]  (v0.99: Stances · Attacks · Defence · Show)
+     api.thumb(json, px)                  a small 3/4 view of a pose (the preset buttons), the live pose untouched
+     api.joint(k) / api.setJoint(k,[x,y,z]) / api.offset() / api.setOffset([x,y,z])   v0.99 joint tools (degrees / mm)
+     api.mirror(limb, from) / api.resetJoint(k) / api.resetLimb(limb, side)            limb 'arm' | 'leg' | 'spine' | 'all'
      api.pose() / api.setPose(json) / api.pins(L,R) / api.dispose() */
 
 const {buildBodyAsync}=__M.body;
-const {JOINTS,HANDLE_COL,applyPose,poseToJSON,poseFromJSON,readPose,emptyPose,jointPos,endPos,solveArm,rotateJointWorld,footNow,solveTwoBone,resolveSpec,BASE_R,BASE_H,MM_PER_M,ANKLE_H}=__M.rig;
-const {PRESETS,PRESET_ORDER}=__M.presets;
+const {JOINTS,JK,HANDLE_COL,applyPose,poseToJSON,poseFromJSON,readPose,emptyPose,jointPos,endPos,solveArm,rotateJointWorld,footNow,solveTwoBone,resolveSpec,BASE_R,BASE_H,MM_PER_M,ANKLE_H}=__M.rig;
+const {PRESETS,PRESET_ORDER,PRESET_GROUPS}=__M.presets;
 const {makeGear}=__M.gear;
 const MINI_YAW = [0, 45, 90, 135, 180, -135, -90, -45];   /* src/102-minis73.js */
 const MINI_PXMM = 3.143;                                     /* src/94-v72.js */
@@ -1332,6 +1452,7 @@ async function createToken(opts = {}) {
   turn.add(B.group);
   const rig = B.rig, gear = makeGear(B);
   const presets = PRESET_ORDER.map(k => [k, PRESETS[k].label, poseToJSON(resolveSpec(rig, PRESETS[k].spec))]);
+  const groups = PRESET_GROUPS.map(([g, l, ks]) => [g, l, ks.slice()]);
   let pose = poseFromJSON(presets[0][2]); applyPose(rig, pose);
 
   /* ---------- renderer: one WebGL context, never in the page (images are copied out) ---------- */
@@ -1411,8 +1532,50 @@ async function createToken(opts = {}) {
   const pinsNow = () => { const f = {}; for (const s of ['L', 'R']) if (pose.f && pose.f[s]) f[s] = pose.f[s]; return f; };
   const poseJSON = () => poseToJSON(readPose(rig, pinsNow()));
 
+  /* ---------- v0.99 joint tools (eulers in degrees, XYZ, as in the pose JSON) ---------- */
+  const LIMB = { arm: ['s', 'e', 'w'], leg: ['h', 'k', 'a'], spine: ['pe', 'sp', 'ch', 'ne', 'he'] };
+  const sync = () => { pose = readPose(rig, pinsNow()); };
+  const clampE = (e) => [0, 1, 2].map(i => Math.max(-180, Math.min(180, Math.round(+e[i] || 0))));
+  function joint(k) { sync(); return clampE((pose.j && pose.j[k]) || [0, 0, 0]); }
+  function setJoint(k, e) { if (!JK[k]) return; sync(); const v = clampE(e); if (v.some(x => x)) pose.j[k] = v; else delete pose.j[k]; applyPose(rig, pose); }
+  function offset() { sync(); return pose.p.map(v => Math.round(v)); }
+  function setOffset(p) { sync(); pose.p = [0, 1, 2].map(i => Math.max(-450, Math.min(450, Math.round(+p[i] || 0)))); applyPose(rig, pose); }
+  /* a leg pinned to the base is placed by IK: its joints follow the pin, not the sliders */
+  const legPinned = (k) => /^[hka][LR]$/.test(k) && !!(pose.f && pose.f[k[1]]);
+  /* mirror one side onto the other: a reflection across the body's middle keeps X and turns Y and Z round; a pinned foot moves to the other side */
+  function mirror(limb, from) {
+    sync(); const to = from === 'L' ? 'R' : 'L'; const kinds = limb === 'all' ? ['arm', 'leg'] : [limb];
+    for (const L of kinds) {
+      if (!LIMB[L] || L === 'spine') continue;
+      for (const b of LIMB[L]) { const e = pose.j[b + from]; if (e) pose.j[b + to] = [e[0], -e[1], -e[2]]; else delete pose.j[b + to]; }
+      if (L === 'leg') { const f = pose.f && pose.f[from]; if (f) pose.f[to] = [-f[0], f[1], -(f[2] || 0)]; else if (pose.f) delete pose.f[to]; }
+    }
+    if (limb === 'all') { for (const b of ['pe', 'sp', 'ch', 'ne', 'he']) { const e = pose.j[b]; if (e) pose.j[b] = [e[0], 0, 0]; } pose.p[0] = 0; }
+    applyPose(rig, pose);
+  }
+  function resetJoint(k) { sync(); delete pose.j[k]; if (k === 'pe') pose.p = [0, 0, 0]; applyPose(rig, pose); }
+  function resetLimb(limb, side) {
+    sync(); const ks = limb === 'spine' ? LIMB.spine : (LIMB[limb] || []).map(b => b + side);
+    for (const k of ks) delete pose.j[k]; if (limb === 'spine') pose.p = [0, 0, 0];
+    if (limb === 'leg' && pose.f && pose.f[side]) { const st = poseFromJSON(presets[0][2]); if (st.f && st.f[side]) pose.f[side] = st.f[side].slice(); }
+    applyPose(rig, pose);
+  }
+  /* a small 3/4 view of any pose (preset buttons); the live pose is restored exactly */
+  function thumb(json, px = 72, o = {}) {
+    const snap = { pose: JSON.parse(JSON.stringify(pose)), b: JOINTS.map(J => rig.bones[J.k].quaternion.clone()), p: rig.bones.pe.position.clone() };
+    try {
+      setPose(json); const ss = 2, S = px * ss, ppm = S / (o.span || 2.35);
+      const cam = orthoCam(S, Math.round(S * (o.tall || 1.15)), ppm, o.el == null ? 14 : o.el, new THREE.Vector3(0, 0.98, 0)); lightFor(cam); B.setOutline(1.1 * ss / ppm);
+      const H = Math.round(S * (o.tall || 1.15)); const r = renderer(S, H);
+      hideHandles(() => { turn.rotation.y = (o.yaw == null ? 25 : o.yaw) * D2R; turn.updateMatrixWorld(true); r.render(scene, cam); });
+      turn.rotation.y = 0; turn.updateMatrixWorld(true); return halve(grab(r, S, H));
+    } finally {
+      pose = snap.pose; JOINTS.forEach((J, i) => rig.bones[J.k].quaternion.copy(snap.b[i])); rig.bones.pe.position.copy(snap.p); rig.bones.pe.updateMatrixWorld(true);
+    }
+  }
+
   /* ---------- the editor: joints dragged on a 2D canvas ---------- */
-  function editor(cv, onChange) {
+  function editor(cv, onChange, eo = {}) {
     const ctx = cv.getContext('2d');
     const view = { yaw: 25, el: 12, zoom: 1 };
     handles = new THREE.Group(); turn.add(handles);
@@ -1423,10 +1586,13 @@ async function createToken(opts = {}) {
     const lines = new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ vertexColors: true, depthTest: false, transparent: true, opacity: 0.8 })); lines.renderOrder = 998; handles.add(lines);
     /* v0.98: the joint under the pointer (or being dragged) lights up — a bigger handle + a soft white halo */
     const halo = new THREE.Mesh(new THREE.SphereGeometry(0.058, 18, 12), new THREE.MeshBasicMaterial({ color: 0xfff4c8, depthTest: false, transparent: true, opacity: 0.5 })); halo.renderOrder = 997; halo.visible = false; handles.add(halo);
-    let hot = null;
-    const lightHot = () => { const k = drag && drag.k ? drag.k : hot; let on = null;
-      for (const m of HD) { const me = m.userData.k === k; m.scale.setScalar(me ? 1.55 : 1); if (me) on = m; }
+    /* v0.99: the SELECTED joint (click, drag, or the modeller's joint list) keeps a gold ring + the rotation gizmo */
+    const selHalo = new THREE.Mesh(new THREE.SphereGeometry(0.05, 18, 12), new THREE.MeshBasicMaterial({ color: 0xe8b84a, depthTest: false, transparent: true, opacity: 0.45 })); selHalo.renderOrder = 996; selHalo.visible = false; handles.add(selHalo);
+    let hot = null, sel = null, axis = 0;
+    const lightHot = () => { const k = drag && drag.k ? drag.k : hot; let on = null, so = null;
+      for (const m of HD) { const me = m.userData.k === k; m.scale.setScalar(me ? 1.55 : m.userData.k === sel && m.userData.kind === 'joint' ? 1.3 : 1); if (me) on = m; if (m.userData.k === sel && m.userData.kind === 'joint') so = m; }
       halo.visible = !!on; if (on) { halo.position.copy(on.position); halo.scale.setScalar(on.userData.k === 'pe' ? 1.25 : 1); }
+      selHalo.visible = !!so; if (so) selHalo.position.copy(so.position);
       cv.style.cursor = drag ? (drag.k ? 'grabbing' : 'grabbing') : (hot ? 'pointer' : 'grab'); };
     function place() {
       for (const m of HD) m.position.copy(m.userData.kind === 'hand' ? endPos(rig, m.userData.k) : jointPos(rig, m.userData.k));
@@ -1441,7 +1607,33 @@ async function createToken(opts = {}) {
       const ppm = h / 2.6 * view.zoom; cam = orthoCam(w, h, ppm, view.el, new THREE.Vector3(0, 0.93, 0)); lightFor(cam); B.setOutline(1.6 / ppm);
       turn.rotation.y = view.yaw * D2R; turn.updateMatrixWorld(true); place(); lightHot();
       const r = renderer(w, h); r.render(scene, cam); ctx.clearRect(0, 0, w, h); ctx.drawImage(r.domElement, 0, 0, w, h, 0, 0, w, h);
+      if (sel && eo.gizmo !== false) gizmo(w, h);
       turn.rotation.y = 0; turn.updateMatrixWorld(true);
+    }
+    /* the gizmo: three rings round the selected joint, one per euler axis (X bend red · Y twist green · Z side blue), the active one bold.
+       XYZ order: X turns about the parent's X, Y about the X-turned Y, Z about the X-and-Y-turned Z — so each ring is the true axis of its slider. */
+    const AXC = ['#ff6b5b', '#63d36b', '#5b9bff'];
+    function gizmo(w, h) {
+      const J = JK[sel]; if (!J) return;
+      const pq = J.p ? jointQ2(J.p) : new THREE.Quaternion(); const e = new THREE.Euler().setFromQuaternion(rig.bones[sel].quaternion, 'XYZ');
+      const qx = pq.clone().multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), e.x));
+      const qxy = qx.clone().multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), e.y));
+      const ax = [new THREE.Vector3(1, 0, 0).applyQuaternion(pq), new THREE.Vector3(0, 1, 0).applyQuaternion(qx), new THREE.Vector3(0, 0, 1).applyQuaternion(qxy)];
+      const tq = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), view.yaw * D2R);
+      const c = jointPos(rig, sel).applyQuaternion(tq);
+      const px = (v) => { const p = v.clone().project(cam); return [(p.x + 1) / 2 * w, (1 - p.y) / 2 * h]; };
+      const R = 0.11 * (sel === 'pe' ? 1.35 : 1);
+      ctx.save(); ctx.lineCap = 'round';
+      const order = [0, 1, 2].filter(i => i !== axis).concat([axis]);
+      for (const i of order) {
+        const a = ax[i].clone().applyQuaternion(tq).normalize(); const u = new THREE.Vector3(0, 1, 0); if (Math.abs(a.dot(u)) > 0.9) u.set(1, 0, 0);
+        const p1 = u.sub(a.clone().multiplyScalar(a.dot(u))).normalize(), p2 = new THREE.Vector3().crossVectors(a, p1);
+        ctx.beginPath(); for (let t = 0; t <= 48; t++) { const g = t / 48 * Math.PI * 2; const q = px(c.clone().add(p1.clone().multiplyScalar(Math.cos(g) * R)).add(p2.clone().multiplyScalar(Math.sin(g) * R))); t ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); }
+        ctx.strokeStyle = AXC[i]; ctx.globalAlpha = i === axis ? 1 : 0.4; ctx.lineWidth = (i === axis ? 3 : 1.2) * Math.max(1, w / 900); ctx.stroke();
+        if (i === axis) { const s0 = px(c.clone().sub(a.clone().multiplyScalar(R * 1.5))), s1 = px(c.clone().add(a.clone().multiplyScalar(R * 1.5)));
+          ctx.setLineDash([4, 4]); ctx.lineWidth = 1.5 * Math.max(1, w / 900); ctx.beginPath(); ctx.moveTo(s0[0], s0[1]); ctx.lineTo(s1[0], s1[1]); ctx.stroke(); ctx.setLineDash([]); }
+      }
+      ctx.restore();
     }
     let raf = 0; const later = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; render(); }); };
     const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(); let drag = null;
@@ -1456,6 +1648,7 @@ async function createToken(opts = {}) {
       const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(cam.getWorldDirection(new THREE.Vector3()).negate(), p0);
       if (k[0] === 'a') plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, ANKLE_H, 0));
       drag = { k, kind, plane, x: e.clientX, y: e.clientY, pe0: rig.bones.pe.position.clone(), p0: p0.clone().applyMatrix4(toSpace()) };
+      if (k !== sel) { sel = k; if (eo.onSelect) eo.onSelect(k); }
       turn.rotation.y = 0; turn.updateMatrixWorld(true); e.preventDefault(); later();
     };
     const hover = (e) => {
@@ -1489,6 +1682,8 @@ async function createToken(opts = {}) {
     render();
     return {
       render: later, view,
+      /* v0.99: the selected joint and the gizmo's active axis (0 X bend · 1 Y twist · 2 Z side) */
+      select(k) { sel = k && JK[k] ? k : null; later(); }, selected: () => sel, axis(i) { if (i != null) { axis = Math.max(0, Math.min(2, i | 0)); later(); } return axis; },
       /* v0.98: the lit joint (hover or drag) and a joint's place on the canvas in CSS pixels (tests, hints) */
       hot: () => (drag && drag.k) || hot,
       screenOf(k) { if (!cam) return null; turn.rotation.y = view.yaw * D2R; turn.updateMatrixWorld(true); place(); const m = HD.find(x => x.userData.k === k); if (!m) return null;
@@ -1498,6 +1693,8 @@ async function createToken(opts = {}) {
         if (raf) cancelAnimationFrame(raf); turn.remove(handles); handles.traverse(x => { if (x.geometry) x.geometry.dispose(); if (x.material) x.material.dispose(); }); handles = null; },
     };
   }
+  /* a joint's rotation in the figure's own space (the rig's jointQ, without importing it twice) */
+  function jointQ2(k) { const b = rig.bones[k]; b.updateWorldMatrix(true, false); const m = turn.matrixWorld.clone().invert().multiply(b.matrixWorld); const q = new THREE.Quaternion(); m.decompose(new THREE.Vector3(), q, new THREE.Vector3()); return q; }
   /* pin / unpin a foot on the base (the leg is then solved by IK) */
   function pins(L, Rt) {
     pose = readPose(rig, pinsNow());
@@ -1505,7 +1702,7 @@ async function createToken(opts = {}) {
     applyPose(rig, pose);
   }
   return {
-    apply, setPose, pose: poseJSON, pins, pinned: () => ({ L: !!(pose.f && pose.f.L), R: !!(pose.f && pose.f.R) }), presets, sheet, sheetAsync, facings, editor, stats: B.stats, _dbg: { B, turn, scene },
+    apply, setPose, pose: poseJSON, pins, groups, thumb, joint, setJoint, offset, setOffset, mirror, resetJoint, resetLimb, legPinned: (k) => { sync(); return legPinned(k); }, pinned: () => ({ L: !!(pose.f && pose.f.L), R: !!(pose.f && pose.f.R) }), presets, sheet, sheetAsync, facings, editor, stats: B.stats, _dbg: { B, turn, scene, resolve: (spec) => poseToJSON(resolveSpec(rig, spec)) },
     dispose() { gear.clear(); if (R) { R.dispose(); R.forceContextLoss(); R = null; } },
   };
 }

@@ -21,7 +21,7 @@ make.js starts its own `python3 -m http.server` and drives headless Chromium (Pl
 |---|---|
 | `body.js` | the sculpt (~150 anatomical primitives: muscle ellipsoids, round cones, smooth unions, sub-tracted eye sockets/mouth/navel) → field on a 4 mm grid → surface nets → skin weights → base gear shells + rigid bits → toon/ink materials |
 | `rig.js` | joints, `makeBones`, pose JSON (`poseToJSON`/`poseFromJSON`), `applyPose`, two-bone IK (`solveTwoBone`, `solveFoot`, `solveArm`), feet kept on the base (`clampFoot`), `resolveSpec` for presets |
-| `presets.js` | Stand, Guard, Lunge, Victory, Defend, Taunt (specs: FK + pinned feet + wrist IK targets) |
+| `presets.js` | v0.99: 24 presets in `PRESET_GROUPS` — Stances (stand guard ready wide crouch coil) · Attacks (overhead thrust lunge slash bash throw net aim) · Defence (defend parry brace) · Show (victory salute taunt kneel crossed limp spent); specs: FK + pinned feet + wrist IK targets. Keys stay `[a-z0-9]{≤16}` (the online `pk` check) |
 | `rig.html` | the editor + the render API (`renderSheet`, `renderHero`, `renderFront`, `footCheck`) |
 | `make.js` | headless renders → `out/<preset>_sheet.png`, `out/<preset>_hero.png`, `out/compare.png`, `out/meta.json` |
 | `gear.js` | v0.93: armor shells per equip point (cuirass, belt, manica, bracers, greaves, thigh plates, wraps, cestus) + rigid helmets / crests / cosmetic headgear / shields / weapons; custom pieces' 3D-able extras (studs, spikes, fur, neck guard, trim, paint); `makeGear(B).set(spec)` rebuilds only changed pieces |
@@ -52,7 +52,11 @@ limbs hanging down: +X swings back, −X forward, +Z toward +x; spine/neck/head:
 - `p` pelvis offset from rest, mm (body space), ints. `j` joint eulers in degrees, ints, order XYZ; omitted joints = 0.
 - `f` pinned feet: ankle x,z in mm over the base + foot yaw. On load the legs are re-solved by IK, the sole lies flat on
   the base, the foot is pulled inside the base disc (`clampFoot`), and the pelvis drops if a leg can't reach.
-- Size: 243–334 bytes for the six presets (limit 600; the whole online look must stay ≤ 3 KB).
+- Size: 243–334 bytes for the 24 presets (limit 600; the whole online look must stay ≤ 3 KB). game.js clamps hand-made eulers to ±180° and the
+  pelvis to ±450 mm, so even every joint at its extreme stays ≤ ~470 B (tv93k checks it).
+- v0.99 joint tools in game.js: `joint/setJoint`, `offset/setOffset`, `mirror(limb, from)` (a reflection keeps X and negates Y and Z; a pinned
+  foot moves to [-x, z, -yaw]), `resetJoint/resetLimb`, `thumb(json, px)` (preset pictures), and the editor's `select(k)` / `axis(i)` gizmo
+  (rings for the X / Y / Z euler axes in XYZ order, the active one bold).
 
 ## Sprite sheet format (same as `assets/minis8_<key>.webp`)
 
