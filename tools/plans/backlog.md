@@ -46,3 +46,41 @@ Each line: idea · where it came from · date.
 ## v1.0 MANAGER "MY LUDUS" MOCK (his PDF mockludusmanager 2026-10-09)
 - His mock: rail + banner "WEEK N PRE-MATCH" with a Match Week button + parchment WEEKLY TASKS list (progress N/7, per-task counts) + 5 painted tiles (Your Team, Promote Team, Upgrade School, Facilities, Advisors). Rename Match Week -> **Fight Night** (Match Week = what the manager does before it); tasks list changes by the week's needs and stays thematic.
 - BUG: the My ludus banner does not track the fallen correctly (record 1-8, many lost in bouts, also simulated ones) -> count every death incl. sims.
+
+## HIS DECISIONS 2026-10-09 (late)
+- My ludus: the fallen-count BANNER BUG goes in v0.99 (count every death, simulated bouts too). The Fight Night rename + the mock layout = v1.0.
+- Tile art for the 5 My ludus tiles: reuse the SAME banners (roomScene73/banner73 scenes), cropped per tile, so the user associates tile and room. No new painted images needed.
+- Server (v1.0): security pass + REAL ranked verification (server replay), see above.
+
+## NOTES LIST 2026-10-09 (28 items, numbered in his order; NOTHING BUILT — waiting for his go + answers)
+STATUS KEY: FIX = clear, v0.99 candidate on his go · ASK = needs his answer first · V1 = v1.0 (mock first) 
+1 ASK  Infirmary: can a lost limb regrow by resting? (today only Hygeia, in a bed; 3rd lost limb = 1-week deadline). Options: keep / long bed rest regrows one.
+2 ASK  Recruits come without armor/weapons; the house provides (today: class loadout free on first signing = g.k94). a) keep, recruit card shows no gear; b) bare-handed, buy at stalls.
+3a FIX Armory repair hammer shows a coin icon with the price.
+3b ASK Damaged armor must not stay equipped after a bout (-> shelf automatically).
+3c ASK Easier selling: "Sell damaged / Sell all damaged" in Armory + City Square; today 30%/15% damaged, cap 3 sales a week (should damaged skip the cap?).
+4  FIX Match Week bout buttons too large (esp. wide screens) -> the compact AAA button look/layout.
+5  FIX Golden Eagle pot IS on in Manager bouts (eaglePot) -> highlight it on the bout card.
+6  FIX Psyche soul steal: auto-add the HP to limbs on a kill (no manual add) so the results screen shows.
+7  ASK Golden Eagle token in round 3: "CF cannot be redeemed" -> earn CF allowed, only spending blocked?
+8  V1  Fortuna's Bounty: offerings thrown from the stands onto the tiles (animation).
+9  FIX Veteranus "Pay old debts" = +1 per market purchase paid in coin or CF; reword so it is clear.
+10 FIX Zora still the old image crop: assets/mini_zora.webp exists but 74-zora STANDEE_SRC.zoraMini still the old data URI -> wire the new mini.
+11 ASK Manager gear enters the arena like online (already v0.94 seat.gear94) -> verify with a test / his repro.
+12 ASK Lyre of Orpheus tame picker shows the beast token round; tamed beasts get move AND attack (either order, some need no move).
+13 V1  Signing a recruit: celebratory screen with gem / dud effects (gem = true rating well above scouted grade).
+14 FIX Tunnel action highlights usable tunnels; none under a standing pillar or a token.
+15 V1  Spiders animation looks like bats -> redraw to the new spider look.
+16 V1  3D armor on the 3D tokens (system pieces rebuilt from the armor art; designer upgraded).
+17 V1  3D weapons on the 3D tokens (system pieces rebuilt from the weapon art; designer upgraded).
+18 FIX 3D token base slightly large for the tile -> scale the model down a little.
+19 V1  Frame-by-frame expressive animation for gameplay (push, pillars, knock pots, attack, block, limbs, injured, scared, breathing/weight shifts).
+20 V1  3D spectators seated/standing + cheering in the arena square.
+21 ASK New career: welcome letter becomes a thematic popup dismissed by the ledger seal; no special-event invitations in season 1.
+22 ASK Triumviratus never a main event; enter your fighter in any event, not only classic bouts.
+23 FIX First week: roster-light letter but no green "20h" recruiting count on the nav bar (trace).
+24 FIX Recruiting list: Ask column shows the coin icon per week.
+25 FIX Mail: "The week in review" can be dismissed.
+26 FIX Recruiting: reopening a recruit lands on his active stage (scout/court/offer).
+27 FIX Match Week elimination verdict buttons/card too large -> smaller card.
+28 ASK 7 cities each specialise in one of the 7 non-Damnatio classes (more of that class comes from there); Damnatio only via Vulso + the auction block.
