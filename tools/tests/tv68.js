@@ -8,15 +8,15 @@ const o={};const miss=[];const ok=(c,n)=>{if(!c)miss.push(n)};
 o.a=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await W8(800);
   newWorld({type:'pre',key:MGR_PRE[0].key});MGR.view=null;const w=W_(),m=me(),ros=rosterOf(m);
   ros[0].inj={until:w.week+2,label:'a torn shoulder',pen:2};ros[1].contract.weeks=1;MGR.tab='ludus';MGR_REDRAW();await W8(500);
-  const r={items:[...document.querySelectorAll('.wkcheck .wkitem:not(.done)')].filter(x=>!x.querySelector('[data-re95]')).length /* v0.95: healed fighter gets an extra 'equip him again' nudge (229) */,ledger:(document.querySelector('.badge.ledger')||{}).textContent||'',money:weekMoney(),
+  const r={items:[...document.querySelectorAll('#desk99 .dk99tw>.dk99row')].filter(x=>!x.querySelector('[data-re95]')).length /* v0.95: healed fighter gets an extra 'equip him again' nudge (229) */,ledger:(document.querySelector('.badge.ledger')||{}).textContent||'',money:weekMoney(),
     econ:TIERS.main.fee===ECON.fees.main&&WAGE_MUL<1&&gateShare({fame:200})===ECON.gateMax,bonus:!!w._econ68,
-    hurt:/is hurt/.test(document.querySelector('.wkcheck').textContent),renewBtn:!!document.querySelector(`.wkcheck [data-mg="extend"][data-id="${ros[1].id}"]`)};
+    hurt:/is hurt/.test(document.querySelector('#desk99 .dk99tw').textContent),renewBtn:!!document.querySelector(`#desk99 [data-mg="extend"][data-id="${ros[1].id}"]`)};
   r.skip=(endConfirmHTML()||'').includes('You are about to skip');
   {const riv=w.mgrs.find(x=>!x.isPlayer&&!x.dead&&rosterOf(x).length);riv.p.discipline=90;riv.coin=500;const g=rosterOf(riv).find(x=>!x.inj);g.fat=0;const s0={...gStats(g)},x0={...(g.sxp||{})},c0=riv.coin;
    rivalTrain(w);const s1=gStats(g);r.riv={reg:riv.train,paid:c0-riv.coin===TRAIN_REGIMES.hard.c,grew:(s1.str+s1.spd)>(s0.str+s0.spd)||((g.sxp||{}).str||0)+((g.sxp||{}).spd||0)>(x0.str||0)+(x0.spd||0)||s1.str>=STAT_MAX||!!g.inj,fat:g.fat>0||!!g.inj};
    const h=rosterOf(riv)[0];h.fat=80;h.inj=null;rivalTrain(w);r.riv.rest=h.restWk===w.week}
-  document.querySelector('.wkcheck [data-mg="tab"][data-id="infirm"]').click();await W8(400);r.tab=MGR.tab;
-  MGR.tab='ludus';delete ros[0].inj;MGR_REDRAW();await W8(300);r.hurtGone=![...document.querySelectorAll('.wkcheck .wkitem:not(.done) .wktxt')].some(x=>/is hurt/.test(x.textContent));r.after=[...document.querySelectorAll('.wkcheck .wkitem:not(.done)')].filter(x=>!x.querySelector('[data-re95]')).length /* v0.95: healed fighter gets an extra 'equip him again' nudge (229) */;r.done=!!document.querySelector('.wkcheck .wkdone');return r});
+  document.querySelector('#desk99 .dk99row [data-mg="tab"][data-id="infirm"]').click();await W8(400);r.tab=MGR.tab;
+  MGR.tab='ludus';delete ros[0].inj;MGR_REDRAW();await W8(300);r.hurtGone=![...document.querySelectorAll('#desk99 .dk99tw>.dk99row .tx')].some(x=>/is hurt/.test(x.textContent));r.after=[...document.querySelectorAll('#desk99 .dk99tw>.dk99row')].filter(x=>!x.querySelector('[data-re95]')).length /* v0.95: healed fighter gets an extra 'equip him again' nudge (229) */;r.done=!!document.querySelector('#desk99 .dk99done');return r});
 ok(o.a.items>=4,'checklist items');ok(o.a.hurt&&o.a.renewBtn,'hurt + renew items');ok(/\/wk/.test(o.a.ledger)&&o.a.money.net===o.a.money.gate+o.a.money.fees-o.a.money.wages,'ledger');
 ok(o.a.econ&&o.a.bonus,'economy levers');ok(o.a.riv.reg==='hard'&&o.a.riv.paid&&o.a.riv.grew&&o.a.riv.fat&&o.a.riv.rest,'rivals train');ok(o.a.skip,'skip list');ok(o.a.tab==='infirm','button opens the tab');ok(o.a.hurtGone&&o.a.done,'done items fold') /* v0.95: healing also adds gear nudges (bare hands / equip him again), so count is not fixed */;
 /* the stands: right-column tabs, the top-bar Stands button, the ticker, the Bestiary */
