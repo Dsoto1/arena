@@ -37,6 +37,7 @@ Only ONE place works on this repo at a time (VS Code or the cloud session). `sh 
 - Claude: at the start of any session read BATON and remind him to take it; if the other side holds it, say so and stop before editing. If he says "keep me honest", check `sh tools/baton.sh status` before every build.
 
 ## Last session notes
+- (cloud, 2026-10-09 end of day) WHERE WE LEFT OFF: nothing built. His 28-item notes + answers are in tools/plans/backlog.md (sections 'NOTES LIST', 'HIS ANSWERS' x2). Rank for restricted events = rating grade (22a). NEXT: wait for his 'go' on the v0.99 fixes (3a 4 5 6 9 10 14 18 23 24 25 26 27 + My ludus fallen-count bug; item 11 = test only), then translation pass (ask first, costs tokens) -> badge + MILESTONE -> release. No auto-start was authorized. Baton: held by cloud.
 - (cloud, 2026-10-09 later) VS Code on API credits was tried and BACKED OUT: the API key kept returning "credit balance too low" even though the org shows $199.99 of $200 promo credits (expire 2026-11-05). Work stays in the cloud session for now; VS Code did no work. Baton taken back by cloud (force; no commits from VS Code). If retried: create a key in the org that holds the credits, `/status` must show that org.
 - (cloud, 2026-10-09) Moved work to VS Code on API credits. Added HANDOFF.md, PLANNING.md and the baton. No code changes pending. Next: his go on the translation pass, or planning the v1.0 mocks listed in PLANNING.md.
 
