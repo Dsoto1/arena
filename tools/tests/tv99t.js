@@ -3,7 +3,7 @@
    the location flavour carries only board keys (no highlight / ring / class colours), the accessibility + house themes are untouched,
    a preset's stone follows THEME.arena99, every text token reaches AA over every surface, no page errors. */
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const errs=[];const fails=[];const ok=(c,m)=>{if(!c)fails.push(m)};
-const get=async on=>{const ctx=await b.newContext({viewport:{width:1280,height:800}});await ctx.addInitScript(o=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');if(o)localStorage.setItem('flavius_themes99','1')},on);
+const get=async on=>{const ctx=await b.newContext({viewport:{width:1280,height:800}});await ctx.addInitScript(o=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown');localStorage.setItem('flavius_themes99',o?'1':'0')},on);
   const pg=await ctx.newPage();await pg.route(/fonts\./,r=>r.abort());pg.on('pageerror',e=>errs.push((on?'on ':'off ')+e.message));await pg.goto('file://'+process.argv[2]);await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:20000});
   const r=await pg.evaluate(()=>{const P={};for(const k of Object.keys(THEME_PRESETS))P[k]=JSON.stringify(THEME_PRESETS[k].v);const L={};for(const k of Object.keys(LOC_THEMES))L[k]={...LOC_THEMES[k].v};const M={};for(const k of Object.keys(AR91MAT))M[k]=AR91MAT[k].n;
     applyTheme({...THEME_PRESETS.loc5.v},false);const mat5=ar91Mat().n;applyTheme({},false);const matDef=ar91Mat().n;

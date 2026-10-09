@@ -57076,7 +57076,7 @@ body.dk99on .mtabs [data-id="ludus"] .mcount.c73{display:none!important}
    - THEME.arena99 = the arena whose stone the board wears (ar91Mat wrapper; the ludus plaster stays first).
    - Accessibility themes (Red-green safe, Blue-yellow safe, High contrast), Arena (default), Flavius Rule and the Roman
      group are untouched.
-   - STEP 1 (proposal for his approval): OFF unless localStorage flavius_themes99=1 (read once at load).
+   - APPROVED (his a, 2026-10-09): ON by default; kill switch localStorage flavius_themes99=0 (read once at load).
      Sheet: tools/plans/themes99/ (shot.js → sheet.png).
    ===================================================================== */
 const THEMES99={on:false,OLD:{},P:{
@@ -57129,7 +57129,7 @@ const THEMES99={on:false,OLD:{},P:{
      board:{tileA:'#ded082',tileB:'#cebd66',rim:'#3c3610',grid:'#7c7024',standA:'#5a5420',standB:'#6e662a',pillar:'#eee8c4',pillarBase:'#c6bc84'},
      mat:{n:'Sulfur tuff 99',f:'sepia(.85) saturate(2.3) hue-rotate(16deg) brightness(1.02) contrast(.62)',cap:'#dccc66'}}}};
 /* themes99On — the proposal is switched on in this browser */
-function themes99On(){try{return localStorage.getItem('flavius_themes99')==='1'}catch(e){return false}}
+function themes99On(){try{return localStorage.getItem('flavius_themes99')!=='0'}catch(e){return true}}
 /* themes99Apply — swap the 12 arena presets, the location flavours and the stones (once, at load) */
 function themes99Apply(){if(THEMES99.on)return;THEMES99.on=true;
   for(const [k,p] of Object.entries(THEMES99.P)){
