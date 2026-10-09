@@ -214,7 +214,7 @@ const TUT={on:false,step:0,p:null,done:{}};
 const TUT_STEPS=[
   {id:'t_sand',spot:'#cv',say:_T`<b>The sand.</b> Thirteen by thirteen tiles: pillars carrying <b>Blessings pots</b>, tunnels, spikes, the Arena Chest — and the beasts. <b>Hover</b> anything to read it; <b>right-click</b> a tile for everything you can do there.`,next:1,tour:1},
   {id:'t_board',spot:'#board',say:_T`<b>Your player board.</b> Health (HP) and armor (AP) for each body location, your two weapons, your movement, and the cards and offerings in your hand. Lose your head or chest — and you are out.`,next:1,tour:1},
-  {id:'t_roster',spot:'#roster',say:_T`<b>The gladiators.</b> Everyone on the sand at a glance: health, <b>Crowd Favor</b> (CF) and coin. Click one to see their board. CF decides your Fate at the end — and buys things mid-bout.`,next:1,tour:1},
+  {id:'t_roster',spot:'[data-sidetab="field"]',say:_T`<b>The gladiators.</b> Open the glowing <b>🐾 Field</b> tab to see everyone on the sand at a glance: health, <b>Crowd Favor</b> (CF) and coin. Click one to see their board and cards. CF decides your Fate at the end — and buys things mid-bout.`,next:1,tour:1},
   {id:'t_actions',spot:'#actions',say:_T`<b>Your actions.</b> The buttons for this phase of your turn. The one glowing <b style="color:var(--gold2)">gold</b> is a good idea.`,next:1,tour:1},
   {id:'t_hints',spot:'#hintDock',say:_T`<b>Hints.</b> A suggested move with its reason, and a recap of what happened while you waited.`,next:1,tour:1},
   {id:'t_speed',spot:'.speedseg',say:_T`<b>CPU speed.</b> Slow, Normal or Fast — or <b>⏯ Step</b> to watch each CPU move one at a time. <b>Space</b> pauses.`,next:1,tour:1},
@@ -295,7 +295,7 @@ function tutCoach(){if(HEADLESS)return;let el=document.getElementById('tutCoach'
     el.addEventListener('click',e=>{const b=e.target.closest('[data-tut]');if(!b)return;const a=b.dataset.tut;
       if(a==='next')tutNext();else if(a==='skip'){TUT.hidden=1;tutCoach()}else if(a==='unhide'){TUT.hidden=0;el.dataset.h='';tutCoach()}else if(a==='exit')tutExit();else if(a==='show')tutShow();else if(a==='menu')tutToMenu()})}
   if(over){const won=(S.result&&S.result.winners||[]).includes(TUT.p?TUT.p.id:0);tutSpot(null);try{localStorage.setItem('flavius_tutDone','1')}catch(e){}
-    const h=`<img src="${typeof flavFaceURL==='function'?flavFaceURL(won?'cheer':'pleased'):''}" alt=""><div><div class="tutstep">${_T`Learn to play · the bout is over`}</div><div>${_T`${won?_T('<b>Victory!</b> You are a graduate of the ludus — the crowd will remember the name.'):_T('<b>You fell</b> — but every champion did, once. The sand teaches.')} Stay for the <b>clean-up show</b>, or head back to the menu.`}</div>
+    const h=`<img src="${typeof flavFaceURL==='function'?flavFaceURL(won?'cheer':'pleased',TUTOR99()):''}" alt=""><div><div class="tutstep">${_T`Learn to play · the bout is over`}</div><div>${_T`${won?_T('<b>Victory!</b> You are a graduate of the ludus — the crowd will remember the name.'):_T('<b>You fell</b> — but every champion did, once. The sand teaches.')} Stay for the <b>clean-up show</b>, or head back to the menu.`}</div>
       <div class="acts" style="margin-top:6px">${S.cleanDone?`<button class="btn tksm" type="button" disabled title="${_T`The crew has already swept the sand`}">${_T`🧹 The show is over`}</button><button class="btn primary tksm" type="button" data-tut="menu">${_T`🏛 Back to the main menu`}</button>`:`<button class="btn primary tksm" type="button" data-tut="show">${_T`🧹 Watch the clean-up show`}</button><button class="btn tksm" type="button" data-tut="menu">${_T`🏛 Back to the main menu`}</button>`}</div></div>`;
     if(el.dataset.h!==h){el.dataset.h=h;el.innerHTML=h}return}
   if(TUT.hidden){const h=`<button class="btn tksm tutpill" type="button" data-tut="unhide">${_T`🎓 Show the coach`}</button>`;if(el.dataset.h!==h){el.dataset.h=h;el.innerHTML=h;el.classList.add('mini')}tutSpot(null);TUT.lastSpot=null;return}
@@ -307,23 +307,19 @@ function tutCoach(){if(HEADLESS)return;let el=document.getElementById('tutCoach'
   /* v0.46: Flavius only steps forward to TALK (the tour and the big moments); for a button to press he shrinks to a
      one-line cue, and he always stands clear of what he is pointing at */
   const cue=!st.tour&&!st.info&&!st.last;el.classList.toggle('cue',cue);
-  const h=cue?`<img src="${typeof flavFaceURL==='function'?flavFaceURL('calm'):''}" alt=""><div><div class="tutstep">${_T`Learn to play · ${n}`}</div><div>${say}</div><div class="acts" style="margin-top:4px">${st.next?`<button class="btn primary tksm" type="button" data-tut="next">${st.skipLbl||_T('Next ▶')}</button>`:''}<button class="btn tksm" type="button" data-tut="exit">${_T`✖ Exit tutorial`}</button></div></div>`
-    :`<img src="${typeof flavFaceURL==='function'?flavFaceURL(st.last?'cheer':'calm'):''}" alt=""><div><div class="tutstep">${_T`Learn to play · ${n}`}</div><div>${say}</div>
+  const h=cue?`<img src="${typeof flavFaceURL==='function'?flavFaceURL('calm',TUTOR99()):''}" alt=""><div><div class="tutstep">${_T`Learn to play · ${n}`}</div><div>${say}</div><div class="acts" style="margin-top:4px">${st.next?`<button class="btn primary tksm" type="button" data-tut="next">${st.skipLbl||_T('Next ▶')}</button>`:''}<button class="btn tksm" type="button" data-tut="exit">${_T`✖ Exit tutorial`}</button></div></div>`
+    :`<img src="${typeof flavFaceURL==='function'?flavFaceURL(st.last?'cheer':'calm',TUTOR99()):''}" alt=""><div><div class="tutstep">${_T`Learn to play · ${n}`}</div><div>${say}</div>
     <div class="acts" style="margin-top:6px">${st.next?`<button class="btn primary tksm" type="button" data-tut="next">${st.skipLbl||_T('Next ▶')}</button>`:''}<button class="btn tksm" type="button" data-tut="skip" title="${_T`A small 🎓 button stays in the corner to bring him back`}">${_T`Hide the coach`}</button><button class="btn tksm" type="button" data-tut="exit">${_T`✖ Exit tutorial`}</button></div></div>`;
   if(el.dataset.h!==h){el.dataset.h=h;el.innerHTML=h}
   tutPlace(el)}
 /* keep the coach clear of the thing he points at (and of the action dock): pick the corner furthest from it */
 /* tutPlace — moves the coach to the corner that covers the least of the spotlight, the action dock, the hand and the top bar. */
-function tutPlace(el){try{const tgt=document.querySelector('.tutspot,.sugglow');const W=innerWidth,H=innerHeight;
-  let r=tgt?tgt.getBoundingClientRect():null;const dock=document.getElementById('actions');const dr=dock?dock.getBoundingClientRect():null;
-  const hand=document.querySelector('#board .items');const hr=hand?hand.getBoundingClientRect():null;const bar=document.querySelector('header.bar');const br=bar?bar.getBoundingClientRect():null;
-  const boxes=[r,dr,hr,br].filter(Boolean);const cw=el.offsetWidth||420,ch=el.offsetHeight||120;const cvr=cv.getBoundingClientRect();
-  const top=Math.max(8,(br?br.bottom:60)+8);
-  const cands=[{l:cvr.left+12,t:Math.max(top,cvr.top+12)},{l:cvr.right-cw-12,t:Math.max(top,cvr.top+12)},{l:14,t:H-ch-14},{l:W-cw-14,t:H-ch-14},{l:14,t:top},{l:W-cw-14,t:top}].map(c=>({l:Math.max(8,Math.min(W-cw-8,c.l)),t:Math.max(8,Math.min(H-ch-8,c.t))}));
-  /* hit — how much of the boxes a corner position would cover. */
-  const hit=c=>boxes.reduce((a,b)=>a+Math.max(0,Math.min(c.l+cw,b.right)-Math.max(c.l,b.left))*Math.max(0,Math.min(c.t+ch,b.bottom)-Math.max(c.t,b.top)),0);
-  const best=cands.map(c=>({c,h:hit(c)})).sort((a,b)=>a.h-b.h)[0].c;
-  el.style.left=best.l+'px';el.style.top=best.t+'px';el.style.right='auto';el.style.bottom='auto'}catch(e){}}
+/* TUTOR99 — the lesson's teacher is a city editor, not Flavius (he already sits in the mood box): the Learn to play veteran, Gaius Tolosanus. */
+function TUTOR99(){try{return CITY_SPONSORS[3]||null}catch(e){return null}}
+function tutPlace(el){try{const W=innerWidth;const cvr=cv.getBoundingClientRect();const br=(document.querySelector('header.bar')||{getBoundingClientRect:()=>({bottom:0})}).getBoundingClientRect();
+  /* v0.99 (his notes 5a/6b): ONE fixed place — the upper-left corner of the arena window, never jumping between corners; narrower than the canvas on tablets/phones */
+  const top=Math.max(cvr.top+10,br.bottom+6),left=Math.max(8,cvr.left+10);const cw=Math.max(200,Math.min(460,(cvr.width||W)-20,W-16));
+  el.style.maxWidth=cw+'px';el.style.left=Math.min(left,Math.max(8,W-cw-8))+'px';el.style.top=top+'px';el.style.right='auto';el.style.bottom='auto';el.style.transition='none'}catch(e){}}
 /* tutNext — advances to the next lesson step (the tour ending sets Normal speed). */
 function tutNext(){const was=TUT_STEPS[TUT.step];TUT.step++;
   if(was&&was.tour&&!(TUT_STEPS[TUT.step]||{}).tour){setSpeedUI('normal')} // the tour is over — the bout begins

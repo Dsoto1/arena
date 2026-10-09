@@ -104,6 +104,8 @@ function mtBetPick(){const bs=[...document.querySelectorAll('#mgrPane [data-mg="
 /* mtSay — a step's text (calls say when it is a function). */
 const mtSay=step=>typeof step.say==='function'?step.say():step.say;
 /* mtCoach — draws the coach box (Flavius, step counter, text, Next/Finish/Hide/Leave) and lights the step's spot; removes both when the lesson is off. Redraws only when the HTML changed. */
+/* MTUTOR99 — the Manager lesson's teacher: Lady Aurelia of Verona, patroness of games (not Flavius). */
+function MTUTOR99(){try{return CITY_SPONSORS[2]||null}catch(e){return null}}
 function mtCoach(){if(HEADLESS)return;let el=document.getElementById('mtutCoach');
   if(!MTUT.on||!mtW()){if(el)el.remove();document.querySelectorAll('.tutspot').forEach(x=>x.classList.remove('tutspot'));return}
   if(!el){el=document.createElement('div');el.id='mtutCoach';el.className='tutcoach mtut';document.body.appendChild(el);
@@ -113,7 +115,7 @@ function mtCoach(){if(HEADLESS)return;let el=document.getElementById('mtutCoach'
   const st=MTUT_STEPS[MTUT.step];if(!st)return;
   // light the part in question (re-applied as the window redraws)
   const tgt=mtEl(st.spot);document.querySelectorAll('.tutspot').forEach(x=>{if(x!==tgt)x.classList.remove('tutspot')});if(tgt&&!tgt.classList.contains('tutspot')){tgt.classList.add('tutspot');if(MTUT.spotted!==MTUT.step){MTUT.spotted=MTUT.step;try{tgt.scrollIntoView({block:'nearest',behavior:'smooth'})}catch(e){}}}
-  const h=`<img src="${typeof flavFaceURL==='function'?flavFaceURL(st.last?'cheer':'calm'):''}" alt=""><div><div class="tutstep">${_T`Learn to play · Manager mode · ${MTUT.step+1} of ${MTUT_STEPS.length}`}</div><div>${mtSay(st)}</div>
+  const h=`<img src="${typeof flavFaceURL==='function'?flavFaceURL(st.last?'cheer':'calm',MTUTOR99()):''}" alt=""><div><div class="tutstep">${_T`Learn to play · Manager mode · ${MTUT.step+1} of ${MTUT_STEPS.length}`}</div><div>${mtSay(st)}</div>
     <div class="acts" style="margin-top:6px">${st.finish?`<button class="btn primary tksm" type="button" data-mt="finish">${_T`✔ Finish this lesson`}</button>`:st.next?`<button class="btn primary tksm" type="button" data-mt="next">${_T`Next ▶`}</button>`:''}${st.last?'':`<button class="btn tksm" type="button" data-mt="hide">${_T`Hide the coach`}</button><button class="btn tksm" type="button" data-mt="leave">${_T`✖ Leave the lesson`}</button>`}</div></div>`;
   if(el.dataset.h!==h){el.dataset.h=h;el.innerHTML=h}}
 /* v0.46: the Manager window counts as shown only while the modal is up (its body can linger hidden in the DOM) */
@@ -171,7 +173,7 @@ async function mtutLeave(){const ok=await new Promise(r=>{if(typeof modalBusy===
 /* mtDone — marks the Manager lesson done (localStorage flavius_mtutDone), cleans up and offers: main menu, a new Manager career, or the lesson again. */
 async function mtDone(){if(!MTUT.on&&!mtW())return;try{localStorage.setItem('flavius_mtutDone','1')}catch(e){}
   if(CUR_MODAL&&$('#mgrBody'))CUR_MODAL.done('mtdone');mtCleanup();await new Promise(r=>setTimeout(r,150));
-  const v=await modal(_T('🎓 Tutorial completed'),`<div class="rulepop"><img src="${typeof flavFaceURL==='function'?flavFaceURL('cheer'):''}" alt="" style="width:96px;border-radius:8px"><div><p>${_T`<b>You have run a week of a ludus.</b> Recruit, keep, heal, build, enter, watch, bet, settle the verdicts, court your rivals — and climb the table toward the Superbus.`}</p><p class="rc-sub">${_T`Nothing from the lesson was kept.`}</p></div></div>`,
+  const v=await modal(_T('🎓 Tutorial completed'),`<div class="rulepop"><img src="${typeof flavFaceURL==='function'?flavFaceURL('cheer',MTUTOR99()):''}" alt="" style="width:96px;border-radius:8px"><div><p>${_T`<b>You have run a week of a ludus.</b> Recruit, keep, heal, build, enter, watch, bet, settle the verdicts, court your rivals — and climb the table toward the Superbus.`}</p><p class="rc-sub">${_T`Nothing from the lesson was kept.`}</p></div></div>`,
     [{label:_T('🏛 Main menu'),value:'menu'},{label:_T('💼 Start a new Manager career'),value:'new',primary:1},{label:_T('↺ Restart the tutorial'),value:'again'}],{close:'menu'});
   if(v==='again'){startManagerTutorial();return}
   if(v==='new'){MGR.world=null;if(typeof openManager==='function'){await new Promise(r=>setTimeout(r,80));openManager();setTimeout(()=>{const b=document.querySelector('[data-mg="create"]');if(b)b.click()},500)}return}

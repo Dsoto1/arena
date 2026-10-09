@@ -330,7 +330,7 @@ const MM98_IC={
   rules:'<path d="M5 3h12a3 3 0 013 3v1h-3v12a3 3 0 01-3 3H5a3 3 0 01-3-3v-1h3V6a3 3 0 00-3-3zm2.5 5v1.6h7V8zm0 3.5v1.6h7v-1.6zm0 3.5v1.6h5V15z"/>',
   saves:'<path d="M9 2h6v2h-1v2.2c3.4.9 6 4 6 7.8 0 3-1.6 5.6-4 7v1H8v-1c-2.4-1.4-4-4-4-7 0-3.8 2.6-6.9 6-7.8V4H9zM4 9.5L2 11v4l2 1.5zm16 0V16.5l2-1.5v-4z"/>',
   settings:'<path d="M10.3 2h3.4l.5 2.6 1.9.8 2.2-1.5 2.4 2.4-1.5 2.2.8 1.9 2.6.5v3.4l-2.6.5-.8 1.9 1.5 2.2-2.4 2.4-2.2-1.5-1.9.8-.5 2.6h-3.4l-.5-2.6-1.9-.8-2.2 1.5-2.4-2.4 1.5-2.2-.8-1.9L2 13.7v-3.4l2.6-.5.8-1.9-1.5-2.2 2.4-2.4 2.2 1.5 1.9-.8zM12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7z"/>'};
-const MM98=[['play','play','Play Now',()=>_T('Play Now'),'',0],['manager','mgr','Manager Mode',()=>_T('Manager Mode'),'',0],['multi','mp','Multiplayer',()=>_T('Multiplayer'),()=>_T('Hot seat · Online'),0], /* i18n:skip — English names (data-en84 / beast names / printed card types) */
+const MM98=[['play','play','Play Now',()=>_T('Play Now'),'',0],['manager','mgr','Manager Mode',()=>_T('Manager Mode'),'',0],['multi','mp','Multiplayer',()=>_T('Multiplayer'),'',0], /* i18n:skip — English names (data-en84 / beast names / printed card types) */
   ['studio','half','Creator Studio',()=>_T('Creator Studio'),'',0],['tut','half','Tutorials',()=>_T('Tutorials'),'',1],['annals','tab','Annals',()=>_T('Annals'),'',0],['rules','tab','Tactics',()=>_T('Tactics'),'',0], /* i18n:skip — English names (data-en84 / beast names / printed card types) */
   ['saves','tab','Saves',()=>_T('Saves'),'',0],['settings','tab','Settings',()=>_T('Settings'),'',0]]; /* i18n:skip — English names (data-en84 / beast names / printed card types) */
 function mm98(){const box=document.querySelector('#mainMenu .mmbtns');if(!box)return;box.classList.add('mm98');
