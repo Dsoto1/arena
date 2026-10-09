@@ -54704,7 +54704,7 @@ function b98Src(p,k){try{const m=/^m-atk([RL])(T?)$/.exec(k||'');if(!m)return nu
 /* a weapon button's face: icon · name · power icon · range icon · key (the hidden reason <small> stays) */
 function b98Face(b,src,key){const sm=b.querySelector('small.r96');const kb=b.querySelector('.kb96');const k=key||(kb?kb.textContent:'');
   const name=src.thr?_T`Throw ${esc(src.w.n)}`:esc(src.w.n);const st=b98Stats(src);
-  b.innerHTML=`<span class="wi98">${b98Ico(src)}</span><span class="l96">${name}</span><i class="c96 st98" aria-hidden="true">${b98StatsIco(src)}</i>${k?`<kbd class="kb96" aria-hidden="true">${k}</kbd>`:''}`;
+  b.innerHTML=`<span class="l96">${name}</span><i class="c96 st98" aria-hidden="true">${b98StatsIco(src)}</i>${k?`<kbd class="kb96" aria-hidden="true">${k}</kbd>`:''}`;
   if(sm)b.appendChild(sm);b.dataset.st98=b96Txt(name)+' — '+st;b.dataset.lp98=name+' — '+b98StatsIco(src);const tip=b.dataset.tip||'';if(tip.indexOf(st)<0)b.dataset.tip=st+(tip?'<br>'+tip:'');
   b.setAttribute('aria-label',b96Txt(name)+' — '+st+(tip?' — '+b96Txt(tip):''));b.classList.add('wb98')}
 const b98Btn=(cls,inner,tip,extra='')=>`<button type="button" class="btn b96 ph96b ${cls}" disabled ${tip?`data-tip="${esc(tip)}"`:''} ${extra}>${inner}</button>`;
