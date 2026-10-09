@@ -33,6 +33,8 @@ armor, trophies, banners, events, tournaments, invitationals, editors, spectator
   (where · what happened · what was expected, 🔴/🟠/🟢); when an item is really a NEW feature — even if he files it as a fix — say so, sort it
   into "New feature?" in the questions, and park it in tools/plans/backlog.md unless he pulls it in. Fixes go straight into the next build.
 
+- **ONE CONVERSATION AT A TIME (his call 2026-10-09):** two places work on this repo (VS Code on API credits, the cloud session). Before editing, run `sh tools/baton.sh status`; take the baton with `sh tools/baton.sh take <vscode|cloud>`, and when he says wrap up/hand off: update tools/plans/HANDOFF.md ("Last session notes"), commit, push, `sh tools/baton.sh give`. If the other side holds the baton, stop and tell him. Keep him honest.
+
 - **QUOTA RULE (his, 2026-10-07):** the lead (Opus) plans features, reviews, merges and runs releases; routine bug fixes, test edits and
   small immediate code changes go to a Sonnet sub-agent (Agent tool `model: "sonnet"`) to save tokens. Big feature builds stay with the lead's
   default model unless he says otherwise.

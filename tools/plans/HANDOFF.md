@@ -30,6 +30,15 @@ Branch: `claude/cloud-credits-usage-vq4w63` (v0.99, unreleased). Always `git pul
 ## Waiting for v1.0 (do not start without his go)
 Mocks: Play Now layout, sandstone buttons/pop-ups, bubbles system, lobby banner/seats. Features: event carousel, option example cards, custom beast guard zones, Resume after refresh, Domus slot progression, spectator support. Server batch: remove online wagers, online results screen/cleanup wording, ranked verification interim. Full list: tools/plans/backlog.md.
 
+## THE BATON (one conversation at a time)
+Only ONE place works on this repo at a time (VS Code or the cloud session). `sh tools/baton.sh status` shows who holds it.
+- START of a session: `git pull`, then `sh tools/baton.sh take vscode` (or `cloud`). It refuses if the other side still holds it or origin is ahead.
+- END of a session (he says "give the baton" / "wrap up"): Claude must (1) update "Last session notes" below with what was done, decisions, mocks made (paths), open questions; (2) commit + push; (3) run `sh tools/baton.sh give`. The script refuses if HANDOFF.md was not touched, anything is uncommitted or unpushed.
+- Claude: at the start of any session read BATON and remind him to take it; if the other side holds it, say so and stop before editing. If he says "keep me honest", check `sh tools/baton.sh status` before every build.
+
+## Last session notes
+- (cloud, 2026-10-09) Moved work to VS Code on API credits. Added HANDOFF.md, PLANNING.md and the baton. No code changes pending. Next: his go on the translation pass, or planning the v1.0 mocks listed in PLANNING.md.
+
 ## Standing rules (see CLAUDE.md too)
 - No sub-agents and no GitHub Actions runs without asking first (keep costs low). Run only touched tests: `node tools/smartreg.js <names>`.
 - Do not build lists/features until he says go; fixes go straight in.
