@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lanista's Desk</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;700&family=IBM+Plex+Mono:wght@400;700&family=Marcellus+SC&display=swap">
+<!-- MOCK-UP ONLY (v0.99 plan): the Lanista's desk replaces Your ludus' Mail panel + weekly checklist. Content = a real week-3 career
+     (Ludus Crispinus, Capua) captured by desk_before.js. Shots: node tools/plans/mock99/desk_shot.js -->
+<style>
+:root{color-scheme:dark;--ink:#140f0b;--panel:#1f1711;--panel2:#2a1f17;--line2:#4a3826;--line3:#6a5130;--bone:#efe3cc;--muted:#b39d80;--dim:#a3907a;
+ --gold:#d6ab4c;--gold2:#f0cf7d;--blood:#a3281f;--blood2:#d24a3a;--hp:#6fae4c;--sky:#8fc3ea;--rep:#7f858c;
+ --display:"Marcellus SC","Trajan Pro",Georgia,serif;--body:"Alegreya Sans","Gill Sans","Segoe UI",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+ --parch:#efe4c9 url(../../../assets/parchment.webp);--pink:#2a1d12}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--bone);font:15px/1.35 var(--body)}
+.cap{font:11px var(--mono);letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);margin:22px 0 8px}
+.page{width:1440px;padding:0 40px 30px}
+.btn{font:14px var(--body);color:#f0e2c4;background:var(--panel2);border:1px solid var(--line2);border-radius:4px;padding:3px 10px;cursor:pointer;white-space:nowrap}
+.btn.go{border-color:#8a6a2c;background:linear-gradient(#3a2a17,#2a1f17);color:var(--gold2)}
+.btn.go.red{border-color:#8a3a2c;color:#ffd2c4;background:linear-gradient(#4a2017,#2a1712)}
+.rc-sub{font-size:12.5px;color:var(--muted)}
+/* ---------- manager chrome (as today) ---------- */
+.mgr{background:var(--ink);border:1px solid var(--line2);border-radius:10px;padding:14px 18px 18px}
+.mhd{display:flex;align-items:center;gap:14px}
+.mhd h1{font:400 24px var(--display);color:var(--gold2);margin:0;flex:1}
+.who{display:flex;gap:12px;align-items:center;margin:10px 0}
+.who .pt{width:54px;height:72px;border-radius:4px;background:linear-gradient(#7a3b2b,#3a1a12)}
+.who b{font:400 20px var(--display);color:var(--gold2);display:block}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.badge{font:13px var(--mono);border:1px solid var(--line2);background:var(--panel);border-radius:3px;padding:4px 9px;color:var(--bone)}
+.badge.g{color:var(--gold2);border-color:#7a5d2a}
+.grid{display:grid;grid-template-columns:220px minmax(0,1fr);gap:18px;align-items:start}
+.rail{border:1px solid var(--line2);border-radius:8px;overflow:hidden}
+.rail .hd{font:700 10px var(--mono);letter-spacing:1.5px;text-align:center;color:var(--gold);background:#24190f;padding:6px;border-bottom:1px solid var(--line2)}
+.rail .t{display:flex;align-items:center;gap:7px;padding:8px 14px;font-size:14px;border-top:1px solid rgba(214,171,76,.12)}
+.rail .t.on{background:linear-gradient(90deg,rgba(214,171,76,.25),rgba(214,171,76,.06));box-shadow:inset 3px 0 0 var(--gold)}
+.mcount{margin-left:auto;font:700 10px var(--mono);color:#3a2414;background:#e9dcbf url(../../../assets/parchment.webp);border-radius:9px;padding:1px 7px;box-shadow:inset 0 0 0 1px #b39d74}
+.mcount.hot{background:#f0cf7d;color:#2a1708;box-shadow:inset 0 0 0 1px #a8802e}
+.mcount.hr{background:#d9d4ca}
+.rail.end{margin-top:10px;border:1px solid var(--line2);border-radius:6px;padding:7px 12px;font:700 13px var(--body);color:var(--muted)}
+.banner{position:relative;border:1px solid #dcae42;border-radius:8px;height:96px;padding:14px 18px;overflow:hidden;
+ background:linear-gradient(180deg,#5a3c22 0%,#2e2014 70%),#2e2014}
+.banner:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 120px,rgba(239,227,204,.06) 120px 136px);pointer-events:none}
+.banner .t{font:400 23px var(--display);color:var(--gold2)}
+.banner .s{font-size:13px;color:#e0d2b4;font-style:italic}
+.banner .chips{display:flex;gap:6px;margin-top:6px}
+.banner .chips span{font-size:12px;color:#d9ccb0;background:rgba(20,12,6,.45);border:1px solid rgba(201,162,78,.35);border-radius:10px;padding:1px 8px}
+.banner .box{position:absolute;right:12px;top:10px;width:88px;height:76px;border-radius:9px;background:rgba(20,12,6,.6);border:1px solid rgba(201,162,78,.45);text-align:center;font-size:12px;color:#e8dcc0;padding-top:6px;z-index:2}
+.banner .box b{display:block;margin:0 auto 3px;width:42px;height:42px;line-height:42px;border-radius:8px;font:700 22px var(--body);color:#2a1708;background:linear-gradient(#f6dd95,#c99a3c);box-shadow:0 0 0 2px #fff6 inset}
+/* ---------- THE DESK ---------- */
+.desk{margin-top:12px;background:var(--panel2);border:1px solid var(--line3);border-radius:8px;padding:12px 14px 14px}
+.dhd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.dhd h2{font:400 21px var(--display);color:var(--gold2);margin:0}
+.dhd .rc-sub b{color:var(--gold2)}
+.dhd .acta{margin-left:auto}
+.sec{display:flex;align-items:center;gap:8px;font:11px var(--mono);letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);margin:12px 0 6px}
+.sec:after{content:"";flex:1;height:1px;background:var(--line2)}
+.sec .n{color:var(--gold2)}
+.tw{display:grid;gap:4px}
+.row{display:grid;grid-template-columns:28px minmax(0,1fr) auto auto 22px;align-items:center;gap:8px;min-height:38px;
+ background:var(--panel);border:1px solid var(--line2);border-left:4px solid var(--line3);border-radius:6px;padding:4px 8px 4px 8px}
+.row .ic{font-size:17px;text-align:center}
+.row .tx{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .tx b{color:var(--gold2);font-weight:700}
+.row .tx .q{color:var(--muted);font-size:13px}
+.due{font:700 10px var(--mono);letter-spacing:.6px;text-transform:uppercase;border-radius:9px;padding:2px 7px;margin-left:6px;vertical-align:1px;white-space:nowrap}
+.due.now{background:#7a2219;color:#ffd9cf}
+.due.wk{background:#5c4316;color:#f6dd95}
+.due.nx{background:#2f3a44;color:#cfe3f5}
+.ltr{font-size:15px;opacity:.85;cursor:pointer;padding:0 2px;border-radius:4px;filter:sepia(.3)}
+.ltr:hover{background:rgba(240,207,125,.15)}
+.ltr.none{visibility:hidden}
+.x{width:22px;height:22px;border-radius:50%;border:1px solid transparent;color:var(--dim);font-size:14px;line-height:20px;text-align:center;cursor:pointer}
+.x:hover{border-color:var(--line2);color:var(--bone)}
+.x.lock{visibility:hidden}
+.row.k-fight{border-left-color:var(--blood2)}
+.row.k-offer{border-left-color:var(--gold)}
+.row.k-invite{border-left-color:var(--sky)}
+.row.k-care{border-left-color:var(--hp)}
+.row.k-plan{border-left-color:#9c8a6c}
+.row.k-council{border-left-color:#c9a458}
+.row.open{border-color:#7a5d2a;border-left-color:var(--gold);background:#251b12}
+.row .ex{grid-column:2 / -1;margin:2px 0 6px;color:var(--pink);background:var(--parch);border-radius:5px;padding:8px 12px;font-size:14px}
+.ex .tr{display:grid;grid-template-columns:1fr 26px 1fr;gap:8px;align-items:center;margin:6px 0}
+.ex .gc{background:rgba(255,255,255,.35);border:1px solid #c9b58c;border-radius:5px;padding:5px 8px}
+.ex .gc b{color:#3a2414}
+.ex .acts{display:flex;gap:6px;justify-content:flex-end;margin-top:6px}
+.ex .acts .btn{background:#3a2a1a;color:#f6e7c6}
+.done{margin-top:6px;font-size:13px;color:var(--muted)}
+.done summary{cursor:pointer;list-style:none}
+.done summary:before{content:"▸ ";color:var(--dim)}
+.done .dl{display:grid;gap:2px;margin:5px 0 0 22px}
+.done .dl span{color:var(--dim)}
+.done .dl s{color:#8c7a64}
+/* letters */
+.lt{display:grid;gap:4px}
+.lrow{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:8px;background:var(--parch);color:var(--pink);border-radius:6px;
+ border-left:4px solid var(--rep);padding:5px 10px 5px 8px;min-height:34px}
+.lrow .ic{font-size:16px;text-align:center}
+.lrow .tx{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lrow .tx b{font-weight:700;color:#2a1708}
+.lrow .tx .f{font-size:12.5px;color:#6d5638}
+.lrow.unread{box-shadow:0 0 0 1px rgba(160,120,40,.7) inset}
+.lrow.read{opacity:.62}
+.lrow.k-adv{border-left-color:#c9a458}
+.lrow .new{font:700 10px var(--mono);letter-spacing:.8px;background:#dcae42;color:#1a120c;border-radius:9px;padding:1px 6px}
+.lrow .wk{font:11px var(--mono);color:#6d5638}
+.lopen{background:var(--parch);color:var(--pink);border-radius:6px;border-left:4px solid var(--rep);padding:8px 12px 10px;box-shadow:0 0 0 1px rgba(160,120,40,.7) inset}
+.lopen .h{display:flex;gap:8px;align-items:baseline}
+.lopen .h b{font:400 17px var(--display);color:#2a1708}
+.lopen .h .f{font-size:12.5px;color:#6d5638;margin-left:auto}
+.lopen p{margin:6px 0}
+.grow{display:grid;gap:3px;margin-top:4px}
+.grow .gr{display:grid;grid-template-columns:30px 150px 64px 1fr;align-items:center;gap:8px;background:rgba(255,255,255,.3);border-radius:5px;padding:3px 8px}
+.grow .face{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 50% 40%,#c99a74 0 45%,#5a3424 46%);border:1px solid #8a6a40}
+.grow .fat{font:700 10px var(--mono);color:#2f5a1e;background:#cfe6b8;border-radius:8px;padding:1px 6px;text-align:center}
+.grow .st{font:13px var(--mono);color:#3a2414}
+.grow .st i{font-style:normal;color:#2f7a1e;font-weight:700}
+.grow .st .up{background:#f6dd95;border-radius:4px;padding:0 4px}
+.past{margin-top:6px;font-size:13px;color:var(--muted)}
+.adv{display:flex;gap:10px;align-items:flex-start}
+.adv .fc{flex:none;width:46px;height:46px;border-radius:50%;border:2px solid #b08a3c;background:radial-gradient(circle at 50% 42%,#b07a54 0 40%,#4a2a1a 41% 60%,#7a2a22 61%)}
+.adv .nm{font-size:12px;color:#6d5638}
+/* end-week popup */
+.ask{width:440px;background:#1d150f;border:1px solid #7a5d2a;border-radius:10px;padding:16px 18px;box-shadow:0 10px 30px #000a}
+.ask h3{font:400 20px var(--display);color:var(--gold2);margin:0 0 6px}
+.ask .sl{display:grid;gap:3px;margin:8px 0}
+.ask .sl div{display:grid;grid-template-columns:24px 1fr auto;gap:6px;align-items:center;font-size:14px;background:var(--panel);border:1px solid var(--line2);border-radius:5px;padding:3px 8px}
+.ask .acts{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+/* phone */
+.phone{width:390px;height:844px;border:10px solid #000;border-radius:36px;overflow:hidden;position:relative;background:var(--ink)}
+.phone .scr{height:100%;overflow:hidden;padding:10px 10px 70px}
+.phone .mhd h1{font-size:22px}
+.phone .badges{flex-wrap:nowrap;overflow:hidden}
+.phone .banner{height:auto;padding:10px 12px}
+.phone .banner .box{width:70px;height:62px;top:8px}
+.phone .banner .box b{width:34px;height:34px;line-height:34px;font-size:18px}
+.phone .desk{padding:10px 8px}
+.phone .dhd h2{font-size:19px}
+.phone .row{grid-template-columns:24px minmax(0,1fr) 22px;grid-template-rows:auto auto;row-gap:2px;padding:6px 6px 6px 6px}
+.phone .row .tx{white-space:normal;grid-column:2;grid-row:1;font-size:14px;line-height:1.25}
+.phone .row .ic{grid-row:1 / span 2;align-self:start;margin-top:2px}
+.phone .row .x{grid-column:3;grid-row:1;align-self:start}
+.phone .row .bb{grid-column:2 / -1;grid-row:2;display:flex;justify-content:flex-end;align-items:center;gap:8px}
+.phone .row .ltr,.phone .row>.btn{display:none}
+.bb{display:none}
+.phone .lrow .tx{white-space:normal;font-size:14px}
+.pills{position:absolute;left:0;right:0;bottom:0;display:flex;gap:6px;padding:8px 10px;background:#1a120cee;border-top:1px solid var(--line2);overflow:hidden}
+.pills span{flex:none;border:1px solid var(--line2);border-radius:16px;padding:5px 11px;font-size:13px;display:flex;gap:6px;align-items:center}
+.pills span.on{border-color:var(--gold);background:rgba(214,171,76,.18)}
+.pills .mcount{margin-left:2px}
+.notes{max-width:1360px;color:var(--muted);font-size:13.5px}
+.notes b{color:var(--gold2)}
+.lower{display:flex;gap:40px;align-items:flex-start}
+</style></head><body><div class="page">
+
+<div class="cap">Desktop · 1440 · Your ludus with the Lanista's desk (mock-up — content from a real week-3 career)</div>
+<div class="mgr" id="desk1440">
+ <div class="mhd"><h1>Manager mode</h1><button class="btn">💾 Save &amp; quit</button></div>
+ <div class="who"><div class="pt"></div><div><b>Aulus Vettius Crispus</b><span class="rc-sub">Ludus Crispinus · Capua · season 1, week 3</span></div></div>
+ <div class="badges"><span class="badge g">Treasury 🪙232</span><span class="badge">▼ −58/wk · 4 wk runway</span><span class="badge">Fame 62 · Imperial</span><span class="badge">Grade D</span><span class="badge">Record 0-0</span><span class="badge">5 fighters</span></div>
+ <div class="grid">
+  <div>
+   <div class="rail">
+    <div class="hd">🏛 LUDUS ▾</div>
+    <div class="t on">🏛 Your ludus <span class="mcount hot" title="9 things wait for you this week">9</span></div>
+    <div class="t">🛡 Roster · 5</div><div class="t">⚒ Armory</div>
+    <div class="t">🤝 Recruiting <span class="mcount hr">20 h</span></div>
+    <div class="t">⚕ Infirmary <span class="mcount">1</span></div>
+    <div class="t">🏋 Training Yard <span class="mcount hr">10 h</span></div>
+    <div class="hd">⚔ ARENA ▾</div>
+    <div class="t">⚔ Match Week <span class="mcount">3</span></div><div class="t">💰 Wagers</div>
+    <div class="hd">🌍 WORLD ▾</div>
+    <div class="t">📯 News</div><div class="t">📊 League</div><div class="t">🌍 Imperium</div><div class="t">🏆 Trophies</div><div class="t">📅 Season</div>
+    <div class="hd">👤 LANISTA ▾</div><div class="t">👤 Lanista</div>
+   </div>
+   <div class="rail end" style="border:1px solid var(--line2)">⏭ End the week</div>
+  </div>
+  <div>
+   <div class="banner"><div class="t">🏛 Your ludus</div><div class="s">the house, the ledger and the morning mail</div>
+    <div class="chips"><span>🪙 −94 treasury (now 232)</span><span>🌾 0 fame</span><span>0/0 wins / bouts</span><span>0 fallen</span></div>
+    <div class="box"><b>9</b>this week</div></div>
+
+   <div class="desk">
+    <div class="dhd"><h2>🪶 The Lanista's desk</h2><span class="rc-sub"><b>9</b> wait for you · 3 unread letters</span><button class="btn acta">📜 Read the Acta Diurna</button></div>
+
+    <div class="sec">This week <span class="n">· 9 to do</span></div>
+    <div class="tw">
+     <div class="row k-fight"><span class="ic">⚔</span><span class="tx"><b>Bout III · main event</b> has none of your fighters <span class="q">— Volero Malleus is fit</span><span class="due now">bouts this week</span></span><span class="ltr none">📜</span><button class="btn go red">Enter a fighter</button><span class="x lock" title="Required">✕</span></div>
+     <div class="row k-offer open"><span class="ic">📨</span><span class="tx"><b>Ludus Severianus</b> wants Statius Saxo for Pompeia Ferreus + 🪙25<span class="due wk">answer by week 4</span></span><span class="ltr" title="Read the letter">📜</span><button class="btn go">Decide ▴</button><span class="x" title="Not this week">✕</span>
+      <div class="ex"><b>📨 A trade offer from Ludus Severianus</b> <span class="rc-sub" style="color:#6d5638">· answer by week 4</span>
+       <div class="tr"><div class="gc">They want<br><b>Statius Saxo</b> · rated 76 · 28/wk</div><div style="text-align:center;font-size:18px">⇄</div><div class="gc">You get<br><b>Pompeia Ferreus</b> · rated 71 · 21/wk + 🪙25</div></div>
+       <div class="acts"><button class="btn">✔ Accept</button><button class="btn">✖ Decline</button></div></div></div>
+     <div class="row k-invite"><span class="ic">🎟</span><span class="tx"><b>The Golden Trident Challenge</b> — the editors invite one fighter<span class="due wk">answer this week</span></span><span class="ltr" title="Read the letter">📜</span><button class="btn go">Pick a fighter</button><span class="x">✕</span></div>
+     <div class="row k-fight"><span class="ic">🗣</span><span class="tx"><b>The Fox of Gallia</b> asks for a fight <span class="q">— +4 morale if entered, −6 if not</span><span class="due wk">this week</span></span><span class="ltr none">📜</span><button class="btn go">Enter him</button><span class="x">✕</span></div>
+     <div class="row k-council"><span class="ic">🗡</span><span class="tx"><b>Domitia Severa</b> mocks your training <span class="q">— answer in kind: +1 fame, +4 rivalry</span><span class="due wk">this week</span></span><span class="ltr" title="Read the letter">📜</span><button class="btn go">✍ Answer</button><span class="x">✕</span></div>
+     <div class="row k-care"><span class="ic">⚕</span><span class="tx"><b>Gnaeus Bestia</b> is hurt <span class="q">— a gashed thigh, fit in week 5 with care</span></span><span class="ltr none">📜</span><button class="btn go">Infirmary</button><span class="x">✕</span></div>
+     <div class="row k-council"><span class="ic">★</span><span class="tx"><b>Recruiter's pick:</b> Iulus "Saxum" Celer · Soldier · ~B+ · asks 38/wk <span class="q">— lifts your average</span></span><span class="ltr" title="Opiter Vitalis' letter">📜</span><button class="btn go">See in Recruiting</button><span class="x">✕</span></div>
+     <div class="row k-plan"><span class="ic">🏋</span><span class="tx"><b>No drills</b> set for the week <span class="q">— and 10 training hours unspent</span></span><span class="ltr none">📜</span><button class="btn go">Training Yard</button><span class="x">✕</span></div>
+     <div class="row k-plan"><span class="ic">🎓</span><span class="tx"><b>2 perk points</b> to spend</span><span class="ltr none">📜</span><button class="btn go">Spend</button><span class="x">✕</span></div>
+    </div>
+    <details class="done" open><summary>✓ 4 done · 1 not this week</summary><div class="dl">
+     <span>✓ 2 of your fighters are on this week's card</span><span>✓ No contract runs out this week</span><span>✓ 4 fighters on the roster</span><span>✓ The Quaestor's ledger sealed</span>
+     <span><s>★ Recruiter's pick: The Shield of Corinth</s> · not this week <button class="btn" style="font-size:12px;padding:0 6px">↶ Back on the list</button></span></div></details>
+
+    <div class="sec">Letters <span class="n">· 3 unread</span></div>
+    <div class="lt">
+     <div class="lopen"><div class="h"><span>📅</span><b>Week II in review · season I</b><span class="f">Report · from your clerk</span></div>
+      <p>None of your fighters took the sand last week.</p>
+      <div style="font-weight:700;margin-top:6px">📈 From your Doctores</div>
+      <div class="grow">
+       <div class="gr"><span class="face"></span><b>Statius Saxo</b><span class="fat">Fresh</span><span class="st">🏃 64→64.2 <i>+0.2</i> · 🍀 66→66.2 <i>+0.2</i></span></div>
+       <div class="gr"><span class="face"></span><b>The Fox of Gallia</b><span class="fat">Fresh</span><span class="st">🍀 67→67.2 <i>+0.2</i> · <span class="up">💪 69→70 Band B</span></span></div>
+       <div class="gr" style="grid-template-columns:1fr"><span class="rc-sub" style="color:#6d5638">▸ 2 quiet fighters · Luck +0.2 each</span></div>
+      </div></div>
+     <div class="lrow unread k-adv"><span class="ic">🏛</span><span class="tx"><b>Counsel for Pompeii: hold our fighters back</b> <span class="f">· Gaius Calvus, the Consilium</span></span><span class="new">new</span></div>
+     <div class="lrow unread k-adv"><span class="ic">🏛</span><span class="tx"><b>Tiberius Draco has earned the fourth laurel</b> <span class="f">· your Barracks master</span></span><span class="new">new</span></div>
+     <div class="lrow"><span class="ic">📊</span><span class="tx"><b>Top of the table</b> <span class="f">· the Quaestor — finish 1st for 🪙120, +5 fame and the Superbus</span></span><span class="wk">wk 3</span></div>
+     <div class="lrow read"><span class="ic">🏛</span><span class="tx"><b>The Quaestor's ledger</b> <span class="f">· your founding treasury +320 · sealed</span></span><span class="wk">wk 3</span></div>
+     <div class="lrow read"><span class="ic">📰</span><span class="tx"><b>Acta Diurna · week II</b> <span class="f">· three bouts in Capua, no deaths</span></span><span class="wk">wk 2</span></div>
+    </div>
+    <details class="past"><summary>Past letters · 12 kept</summary></details>
+   </div>
+  </div>
+ </div>
+</div>
+
+<div class="cap">Phone · 390 (portrait) · and End the week reading the This-week section</div>
+<div class="lower">
+<div class="phone" id="desk390"><div class="scr">
+ <div class="mhd"><h1>Manager mode</h1><button class="btn">💾</button></div>
+ <div class="badges" style="margin-top:8px"><span class="badge g">Treasury 🪙232</span><span class="badge">▼ −58/wk</span><span class="badge">Fame 62</span></div>
+ <div class="banner"><div class="t">🏛 Your ludus</div><div class="chips" style="flex-wrap:wrap"><span>🪙 −94</span><span>0/0 wins</span></div><div class="box"><b>9</b>this week</div></div>
+ <div class="desk">
+  <div class="dhd"><h2>🪶 The Lanista's desk</h2><span class="rc-sub"><b>9</b> wait · 3 unread</span><button class="btn acta" title="Read the Acta Diurna">📜 Acta</button></div>
+  <div class="sec">This week <span class="n">· 9</span></div>
+  <div class="tw">
+   <div class="row k-fight"><span class="ic">⚔</span><span class="tx"><b>Bout III · main event</b> has none of your fighters</span><span class="x lock">✕</span><span class="bb"><span class="due now">this week</span><button class="btn go red">Enter a fighter</button></span></div>
+   <div class="row k-offer"><span class="ic">📨</span><span class="tx"><b>Ludus Severianus</b> wants Statius Saxo for Pompeia Ferreus + 🪙25</span><span class="x">✕</span><span class="bb"><span class="due wk">by week 4</span><span class="ltr" style="display:inline">📜</span><button class="btn go">Decide ▾</button></span></div>
+   <div class="row k-invite"><span class="ic">🎟</span><span class="tx"><b>The Golden Trident Challenge</b> invites one fighter</span><span class="x">✕</span><span class="bb"><span class="due wk">this week</span><span class="ltr" style="display:inline">📜</span><button class="btn go">Pick a fighter</button></span></div>
+   <div class="row k-fight"><span class="ic">🗣</span><span class="tx"><b>The Fox of Gallia</b> asks for a fight (+4 / −6 morale)</span><span class="x">✕</span><span class="bb"><button class="btn go">Enter him</button></span></div>
+   <div class="row k-council"><span class="ic">🗡</span><span class="tx"><b>Domitia Severa</b> mocks your training</span><span class="x">✕</span><span class="bb"><span class="ltr" style="display:inline">📜</span><button class="btn go">✍ Answer</button></span></div>
+   <div class="row k-care"><span class="ic">⚕</span><span class="tx"><b>Gnaeus Bestia</b> is hurt — a gashed thigh</span><span class="x">✕</span><span class="bb"><button class="btn go">Infirmary</button></span></div>
+  </div>
+  <div class="done" style="margin-top:4px">▸ 3 more · ✓ 4 done</div>
+  <div class="sec">Letters <span class="n">· 3 unread</span></div>
+  <div class="lt">
+   <div class="lrow unread"><span class="ic">📅</span><span class="tx"><b>Week II in review</b> <span class="f">· your clerk</span></span><span class="new">new</span></div>
+   <div class="lrow unread k-adv"><span class="ic">🏛</span><span class="tx"><b>Counsel for Pompeii</b> <span class="f">· the Consilium</span></span><span class="new">new</span></div>
+  </div>
+ </div>
+ <div class="pills"><span class="on">🏛 Your ludus <span class="mcount hot">9</span></span><span>🛡 Roster</span><span>⚒ Armory</span><span>⏭ End</span></div>
+</div></div>
+
+<div>
+ <div class="ask" id="askEnd"><h3>End week 3?</h3><div class="rc-sub" style="font-size:14px">You are about to skip — straight from the desk's This-week section:</div>
+  <div class="sl">
+   <div><span>⚔</span><span><b>Bout III</b> has none of your fighters</span><span class="due now">lost</span></div>
+   <div><span>📨</span><span>Ludus Severianus' trade offer</span><span class="due wk">until wk 4</span></div>
+   <div><span>🎟</span><span>The Golden Trident Challenge</span><span class="due now">expires</span></div>
+   <div><span>🗣</span><span>The Fox of Gallia sulks (−6 morale)</span><span class="due now">lost</span></div>
+   <div><span>🗡</span><span>Domitia Severa's taunt goes unanswered</span><span class="due now">expires</span></div>
+   <div><span>⚕</span><span>Gnaeus Bestia untreated</span><span></span></div>
+   <div><span>…</span><span class="rc-sub">+ 3 more (drills, perk points, Recruiter's pick)</span><span></span></div>
+  </div>
+  <div class="rc-sub">Treasury after wages ≈ 🪙174 · letters stay in the Letters section.</div>
+  <div class="acts"><button class="btn">Back to the desk</button><button class="btn go red">End the week</button></div></div>
+
+ <div class="adv" style="margin-top:24px;width:440px;background:var(--parch);color:var(--pink);border-radius:6px;border-left:4px solid #c9a458;padding:10px 12px">
+  <div class="fc"></div><div><div style="font:400 16px var(--display);color:#2a1708">Counsel for Pompeii: hold our fighters back</div><div class="nm">Gaius Calvus · Consilium · Level 3</div>
+  <p style="margin:6px 0 0;font-size:14px">An opened letter looks as today: the advisor's face inside, the envelope row stays plain.</p></div></div>
+</div>
+</div>
+</div></body></html>
