@@ -84,3 +84,15 @@ STATUS KEY: FIX = clear, v0.99 candidate on his go · ASK = needs his answer fir
 26 FIX Recruiting: reopening a recruit lands on his active stage (scout/court/offer).
 27 FIX Match Week elimination verdict buttons/card too large -> smaller card.
 28 ASK 7 cities each specialise in one of the 7 non-Damnatio classes (more of that class comes from there); Damnatio only via Vulso + the auction block.
+
+## HIS ANSWERS 2026-10-09 (to the 28-item list) — still NOTHING built/tested/mocked
+1a  keep: only Hygeia regrows a limb (no rest regrow).
+2b  recruits start bare; the house provides gear. He asks: can managers buy every L1-3 piece somewhere across the city centers (stock per city/week: CITY94 sz3 Roma+Capua all levels, sz2 sometimes one L3, sz1 no L3; SPEC94 specialties x3)? -> check coverage when building (every printed piece must be buyable in at least one city, L3 in the sz2/3 ones).
+3   Why so much gear: a dead fighter's gear returns to the shelf (v0.94 rule 2a), signing brings the class loadout as owned pieces (g.k94), damaged pieces stay home until repaired. HIS RULE: when a gladiator is eliminated for good, his STARTER KIT (class loadout, issued) does NOT return; bought/won pieces do. (Open: weapons too? release/sell/retire too?) + auto-unequip damaged after a bout + easier selling (3b/3c).
+7   Golden Eagle token / CF in a no-CF round: you may EARN CF during the match (and hold it for the end-of-match payout); only SPENDING CF is blocked.
+11  test it (manager gear -> arena) when building.
+12  yes: tame picker shows the beast token round; tamed beasts get move AND attack (either order, some need no move).
+13  yes: gem/dud signing celebration (v1.0 with mock).
+21  yes: welcome popup with ledger-seal dismiss; no special-event invitations in season 1.
+22  yes: Triumviratus never a main event, only an UNDERCARD bout. "Any event": he is unsure what it meant -> ask again (can your fighter enter the week's headline special events, e.g. Familia/Juggernaut/Orpheus, instead of only classic bouts?).
+28  his pick = mine, thematic: Roma Royalty (imperial capital) · Capua Slave (Spartacus' school) · Syracusae Hero (Greek heroes) · Leptis Magna Venatore (African beasts) · Thysdrus Amazonia (Libyan Amazons) · Arles Veteranus (colony of legion veterans) · Verona Soldier (legion garrison road); Pompeii/Puteoli/Nemausus/Uthina/Pola neutral. A city's class ~40% of free agents there. Damnatio only via Vulso + the auction block.
