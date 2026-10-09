@@ -10,11 +10,15 @@
      api.facings(px)                      8 small live canvases (the modeller's strip)
      api.editor(canvas, onChange)         drag joints / turn the view on a 2D canvas (one WebGL context for everything)
      api.presets                          [[key, label, poseJSON], …]  (resolved once on this body)
+     api.groups                           [[groupKey, label, [presetKey…]], …]  (v0.99: Stances · Attacks · Defence · Show)
+     api.thumb(json, px)                  a small 3/4 view of a pose (the preset buttons), the live pose untouched
+     api.joint(k) / api.setJoint(k,[x,y,z]) / api.offset() / api.setOffset([x,y,z])   v0.99 joint tools (degrees / mm)
+     api.mirror(limb, from) / api.resetJoint(k) / api.resetLimb(limb, side)            limb 'arm' | 'leg' | 'spine' | 'all'
      api.pose() / api.setPose(json) / api.pins(L,R) / api.dispose() */
 import * as THREE from 'three';
 import { buildBodyAsync } from './body.js';
-import { JOINTS, HANDLE_COL, applyPose, poseToJSON, poseFromJSON, readPose, emptyPose, jointPos, endPos, solveArm, rotateJointWorld, footNow, solveTwoBone, resolveSpec, BASE_R, BASE_H, MM_PER_M, ANKLE_H } from './rig.js';
-import { PRESETS, PRESET_ORDER } from './presets.js';
+import { JOINTS, JK, HANDLE_COL, applyPose, poseToJSON, poseFromJSON, readPose, emptyPose, jointPos, endPos, solveArm, rotateJointWorld, footNow, solveTwoBone, resolveSpec, BASE_R, BASE_H, MM_PER_M, ANKLE_H } from './rig.js';
+import { PRESETS, PRESET_ORDER, PRESET_GROUPS } from './presets.js';
 import { makeGear } from './gear.js';
 
 const MINI_YAW = [0, 45, 90, 135, 180, -135, -90, -45];   /* src/102-minis73.js */
@@ -47,6 +51,7 @@ export async function createToken(opts = {}) {
   turn.add(B.group);
   const rig = B.rig, gear = makeGear(B);
   const presets = PRESET_ORDER.map(k => [k, PRESETS[k].label, poseToJSON(resolveSpec(rig, PRESETS[k].spec))]);
+  const groups = PRESET_GROUPS.map(([g, l, ks]) => [g, l, ks.slice()]);
   let pose = poseFromJSON(presets[0][2]); applyPose(rig, pose);
 
   /* ---------- renderer: one WebGL context, never in the page (images are copied out) ---------- */
@@ -126,8 +131,50 @@ export async function createToken(opts = {}) {
   const pinsNow = () => { const f = {}; for (const s of ['L', 'R']) if (pose.f && pose.f[s]) f[s] = pose.f[s]; return f; };
   const poseJSON = () => poseToJSON(readPose(rig, pinsNow()));
 
+  /* ---------- v0.99 joint tools (eulers in degrees, XYZ, as in the pose JSON) ---------- */
+  const LIMB = { arm: ['s', 'e', 'w'], leg: ['h', 'k', 'a'], spine: ['pe', 'sp', 'ch', 'ne', 'he'] };
+  const sync = () => { pose = readPose(rig, pinsNow()); };
+  const clampE = (e) => [0, 1, 2].map(i => Math.max(-180, Math.min(180, Math.round(+e[i] || 0))));
+  function joint(k) { sync(); return clampE((pose.j && pose.j[k]) || [0, 0, 0]); }
+  function setJoint(k, e) { if (!JK[k]) return; sync(); const v = clampE(e); if (v.some(x => x)) pose.j[k] = v; else delete pose.j[k]; applyPose(rig, pose); }
+  function offset() { sync(); return pose.p.map(v => Math.round(v)); }
+  function setOffset(p) { sync(); pose.p = [0, 1, 2].map(i => Math.max(-450, Math.min(450, Math.round(+p[i] || 0)))); applyPose(rig, pose); }
+  /* a leg pinned to the base is placed by IK: its joints follow the pin, not the sliders */
+  const legPinned = (k) => /^[hka][LR]$/.test(k) && !!(pose.f && pose.f[k[1]]);
+  /* mirror one side onto the other: a reflection across the body's middle keeps X and turns Y and Z round; a pinned foot moves to the other side */
+  function mirror(limb, from) {
+    sync(); const to = from === 'L' ? 'R' : 'L'; const kinds = limb === 'all' ? ['arm', 'leg'] : [limb];
+    for (const L of kinds) {
+      if (!LIMB[L] || L === 'spine') continue;
+      for (const b of LIMB[L]) { const e = pose.j[b + from]; if (e) pose.j[b + to] = [e[0], -e[1], -e[2]]; else delete pose.j[b + to]; }
+      if (L === 'leg') { const f = pose.f && pose.f[from]; if (f) pose.f[to] = [-f[0], f[1], -(f[2] || 0)]; else if (pose.f) delete pose.f[to]; }
+    }
+    if (limb === 'all') { for (const b of ['pe', 'sp', 'ch', 'ne', 'he']) { const e = pose.j[b]; if (e) pose.j[b] = [e[0], 0, 0]; } pose.p[0] = 0; }
+    applyPose(rig, pose);
+  }
+  function resetJoint(k) { sync(); delete pose.j[k]; if (k === 'pe') pose.p = [0, 0, 0]; applyPose(rig, pose); }
+  function resetLimb(limb, side) {
+    sync(); const ks = limb === 'spine' ? LIMB.spine : (LIMB[limb] || []).map(b => b + side);
+    for (const k of ks) delete pose.j[k]; if (limb === 'spine') pose.p = [0, 0, 0];
+    if (limb === 'leg' && pose.f && pose.f[side]) { const st = poseFromJSON(presets[0][2]); if (st.f && st.f[side]) pose.f[side] = st.f[side].slice(); }
+    applyPose(rig, pose);
+  }
+  /* a small 3/4 view of any pose (preset buttons); the live pose is restored exactly */
+  function thumb(json, px = 72, o = {}) {
+    const snap = { pose: JSON.parse(JSON.stringify(pose)), b: JOINTS.map(J => rig.bones[J.k].quaternion.clone()), p: rig.bones.pe.position.clone() };
+    try {
+      setPose(json); const ss = 2, S = px * ss, ppm = S / (o.span || 2.35);
+      const cam = orthoCam(S, Math.round(S * (o.tall || 1.15)), ppm, o.el == null ? 14 : o.el, new THREE.Vector3(0, 0.98, 0)); lightFor(cam); B.setOutline(1.1 * ss / ppm);
+      const H = Math.round(S * (o.tall || 1.15)); const r = renderer(S, H);
+      hideHandles(() => { turn.rotation.y = (o.yaw == null ? 25 : o.yaw) * D2R; turn.updateMatrixWorld(true); r.render(scene, cam); });
+      turn.rotation.y = 0; turn.updateMatrixWorld(true); return halve(grab(r, S, H));
+    } finally {
+      pose = snap.pose; JOINTS.forEach((J, i) => rig.bones[J.k].quaternion.copy(snap.b[i])); rig.bones.pe.position.copy(snap.p); rig.bones.pe.updateMatrixWorld(true);
+    }
+  }
+
   /* ---------- the editor: joints dragged on a 2D canvas ---------- */
-  function editor(cv, onChange) {
+  function editor(cv, onChange, eo = {}) {
     const ctx = cv.getContext('2d');
     const view = { yaw: 25, el: 12, zoom: 1 };
     handles = new THREE.Group(); turn.add(handles);
@@ -138,10 +185,13 @@ export async function createToken(opts = {}) {
     const lines = new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ vertexColors: true, depthTest: false, transparent: true, opacity: 0.8 })); lines.renderOrder = 998; handles.add(lines);
     /* v0.98: the joint under the pointer (or being dragged) lights up — a bigger handle + a soft white halo */
     const halo = new THREE.Mesh(new THREE.SphereGeometry(0.058, 18, 12), new THREE.MeshBasicMaterial({ color: 0xfff4c8, depthTest: false, transparent: true, opacity: 0.5 })); halo.renderOrder = 997; halo.visible = false; handles.add(halo);
-    let hot = null;
-    const lightHot = () => { const k = drag && drag.k ? drag.k : hot; let on = null;
-      for (const m of HD) { const me = m.userData.k === k; m.scale.setScalar(me ? 1.55 : 1); if (me) on = m; }
+    /* v0.99: the SELECTED joint (click, drag, or the modeller's joint list) keeps a gold ring + the rotation gizmo */
+    const selHalo = new THREE.Mesh(new THREE.SphereGeometry(0.05, 18, 12), new THREE.MeshBasicMaterial({ color: 0xe8b84a, depthTest: false, transparent: true, opacity: 0.45 })); selHalo.renderOrder = 996; selHalo.visible = false; handles.add(selHalo);
+    let hot = null, sel = null, axis = 0;
+    const lightHot = () => { const k = drag && drag.k ? drag.k : hot; let on = null, so = null;
+      for (const m of HD) { const me = m.userData.k === k; m.scale.setScalar(me ? 1.55 : m.userData.k === sel && m.userData.kind === 'joint' ? 1.3 : 1); if (me) on = m; if (m.userData.k === sel && m.userData.kind === 'joint') so = m; }
       halo.visible = !!on; if (on) { halo.position.copy(on.position); halo.scale.setScalar(on.userData.k === 'pe' ? 1.25 : 1); }
+      selHalo.visible = !!so; if (so) selHalo.position.copy(so.position);
       cv.style.cursor = drag ? (drag.k ? 'grabbing' : 'grabbing') : (hot ? 'pointer' : 'grab'); };
     function place() {
       for (const m of HD) m.position.copy(m.userData.kind === 'hand' ? endPos(rig, m.userData.k) : jointPos(rig, m.userData.k));
@@ -156,7 +206,33 @@ export async function createToken(opts = {}) {
       const ppm = h / 2.6 * view.zoom; cam = orthoCam(w, h, ppm, view.el, new THREE.Vector3(0, 0.93, 0)); lightFor(cam); B.setOutline(1.6 / ppm);
       turn.rotation.y = view.yaw * D2R; turn.updateMatrixWorld(true); place(); lightHot();
       const r = renderer(w, h); r.render(scene, cam); ctx.clearRect(0, 0, w, h); ctx.drawImage(r.domElement, 0, 0, w, h, 0, 0, w, h);
+      if (sel && eo.gizmo !== false) gizmo(w, h);
       turn.rotation.y = 0; turn.updateMatrixWorld(true);
+    }
+    /* the gizmo: three rings round the selected joint, one per euler axis (X bend red · Y twist green · Z side blue), the active one bold.
+       XYZ order: X turns about the parent's X, Y about the X-turned Y, Z about the X-and-Y-turned Z — so each ring is the true axis of its slider. */
+    const AXC = ['#ff6b5b', '#63d36b', '#5b9bff'];
+    function gizmo(w, h) {
+      const J = JK[sel]; if (!J) return;
+      const pq = J.p ? jointQ2(J.p) : new THREE.Quaternion(); const e = new THREE.Euler().setFromQuaternion(rig.bones[sel].quaternion, 'XYZ');
+      const qx = pq.clone().multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), e.x));
+      const qxy = qx.clone().multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), e.y));
+      const ax = [new THREE.Vector3(1, 0, 0).applyQuaternion(pq), new THREE.Vector3(0, 1, 0).applyQuaternion(qx), new THREE.Vector3(0, 0, 1).applyQuaternion(qxy)];
+      const tq = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), view.yaw * D2R);
+      const c = jointPos(rig, sel).applyQuaternion(tq);
+      const px = (v) => { const p = v.clone().project(cam); return [(p.x + 1) / 2 * w, (1 - p.y) / 2 * h]; };
+      const R = 0.11 * (sel === 'pe' ? 1.35 : 1);
+      ctx.save(); ctx.lineCap = 'round';
+      const order = [0, 1, 2].filter(i => i !== axis).concat([axis]);
+      for (const i of order) {
+        const a = ax[i].clone().applyQuaternion(tq).normalize(); const u = new THREE.Vector3(0, 1, 0); if (Math.abs(a.dot(u)) > 0.9) u.set(1, 0, 0);
+        const p1 = u.sub(a.clone().multiplyScalar(a.dot(u))).normalize(), p2 = new THREE.Vector3().crossVectors(a, p1);
+        ctx.beginPath(); for (let t = 0; t <= 48; t++) { const g = t / 48 * Math.PI * 2; const q = px(c.clone().add(p1.clone().multiplyScalar(Math.cos(g) * R)).add(p2.clone().multiplyScalar(Math.sin(g) * R))); t ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); }
+        ctx.strokeStyle = AXC[i]; ctx.globalAlpha = i === axis ? 1 : 0.4; ctx.lineWidth = (i === axis ? 3 : 1.2) * Math.max(1, w / 900); ctx.stroke();
+        if (i === axis) { const s0 = px(c.clone().sub(a.clone().multiplyScalar(R * 1.5))), s1 = px(c.clone().add(a.clone().multiplyScalar(R * 1.5)));
+          ctx.setLineDash([4, 4]); ctx.lineWidth = 1.5 * Math.max(1, w / 900); ctx.beginPath(); ctx.moveTo(s0[0], s0[1]); ctx.lineTo(s1[0], s1[1]); ctx.stroke(); ctx.setLineDash([]); }
+      }
+      ctx.restore();
     }
     let raf = 0; const later = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; render(); }); };
     const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(); let drag = null;
@@ -171,6 +247,7 @@ export async function createToken(opts = {}) {
       const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(cam.getWorldDirection(new THREE.Vector3()).negate(), p0);
       if (k[0] === 'a') plane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, ANKLE_H, 0));
       drag = { k, kind, plane, x: e.clientX, y: e.clientY, pe0: rig.bones.pe.position.clone(), p0: p0.clone().applyMatrix4(toSpace()) };
+      if (k !== sel) { sel = k; if (eo.onSelect) eo.onSelect(k); }
       turn.rotation.y = 0; turn.updateMatrixWorld(true); e.preventDefault(); later();
     };
     const hover = (e) => {
@@ -204,6 +281,8 @@ export async function createToken(opts = {}) {
     render();
     return {
       render: later, view,
+      /* v0.99: the selected joint and the gizmo's active axis (0 X bend · 1 Y twist · 2 Z side) */
+      select(k) { sel = k && JK[k] ? k : null; later(); }, selected: () => sel, axis(i) { if (i != null) { axis = Math.max(0, Math.min(2, i | 0)); later(); } return axis; },
       /* v0.98: the lit joint (hover or drag) and a joint's place on the canvas in CSS pixels (tests, hints) */
       hot: () => (drag && drag.k) || hot,
       screenOf(k) { if (!cam) return null; turn.rotation.y = view.yaw * D2R; turn.updateMatrixWorld(true); place(); const m = HD.find(x => x.userData.k === k); if (!m) return null;
@@ -213,6 +292,8 @@ export async function createToken(opts = {}) {
         if (raf) cancelAnimationFrame(raf); turn.remove(handles); handles.traverse(x => { if (x.geometry) x.geometry.dispose(); if (x.material) x.material.dispose(); }); handles = null; },
     };
   }
+  /* a joint's rotation in the figure's own space (the rig's jointQ, without importing it twice) */
+  function jointQ2(k) { const b = rig.bones[k]; b.updateWorldMatrix(true, false); const m = turn.matrixWorld.clone().invert().multiply(b.matrixWorld); const q = new THREE.Quaternion(); m.decompose(new THREE.Vector3(), q, new THREE.Vector3()); return q; }
   /* pin / unpin a foot on the base (the leg is then solved by IK) */
   function pins(L, Rt) {
     pose = readPose(rig, pinsNow());
@@ -220,7 +301,7 @@ export async function createToken(opts = {}) {
     applyPose(rig, pose);
   }
   return {
-    apply, setPose, pose: poseJSON, pins, pinned: () => ({ L: !!(pose.f && pose.f.L), R: !!(pose.f && pose.f.R) }), presets, sheet, sheetAsync, facings, editor, stats: B.stats, _dbg: { B, turn, scene },
+    apply, setPose, pose: poseJSON, pins, groups, thumb, joint, setJoint, offset, setOffset, mirror, resetJoint, resetLimb, legPinned: (k) => { sync(); return legPinned(k); }, pinned: () => ({ L: !!(pose.f && pose.f.L), R: !!(pose.f && pose.f.R) }), presets, sheet, sheetAsync, facings, editor, stats: B.stats, _dbg: { B, turn, scene, resolve: (spec) => poseToJSON(resolveSpec(rig, spec)) },
     dispose() { gear.clear(); if (R) { R.dispose(); R.forceContextLoss(); R = null; } },
   };
 }

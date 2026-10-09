@@ -33,13 +33,47 @@ const ready=await until(()=>{const b=document.querySelector('#t93m [data-t93m="s
 await until(()=>document.querySelectorAll('#t93m #t93strip canvas').length===8,60000);
 const C0=await pg.evaluate(()=>({pre:[...document.querySelectorAll('#t93m [data-t93pre]')].map(x=>x.dataset.t93pre).join(','),strip:document.querySelectorAll('#t93m #t93strip canvas').length,
   pins:[...document.querySelectorAll('#t93m [data-t93pin]')].map(x=>x.checked).join(','),stand:T93.api.pose(),cv:(()=>{const c=document.getElementById('t93cv');return c.width>100&&c.height>100})()}));
-ok(ready&&C0.pre==='stand,guard,lunge,victory,defend,taunt'&&C0.strip===8&&C0.pins==='true,true'&&C0.cv,'modeller: presets, 8 facings, pinned feet '+JSON.stringify({ready,pre:C0.pre,strip:C0.strip,pins:C0.pins}));
+const P99=C0.pre.split(',');const G99=await pg.evaluate(()=>[...document.querySelectorAll('#t93m [data-t93grp]')].map(g=>g.dataset.t93grp+':'+g.querySelectorAll('[data-t93pre]').length).join(','));
+ok(ready&&P99.length>=24&&['stand','guard','lunge','victory','defend','taunt','overhead','thrust','bash','throw','net','aim','parry','brace','salute','kneel','crossed','limp','spent'].every(k=>P99.includes(k))&&P99[0]==='stand'&&C0.strip===8&&C0.pins==='true,true'&&C0.cv,'modeller: presets, 8 facings, pinned feet '+JSON.stringify({ready,n:P99.length,strip:C0.strip,pins:C0.pins}));
+ok(G99==='stance:6,attack:8,defence:3,show:7','v0.99 preset groups '+G99);
+/* v0.99: every preset is a picture rendered from the rig, and every one keeps its feet on the base (pinned) and ≤ 600 B */
+const thOK=await until(()=>document.querySelector('#t93m')&&document.querySelector('#t93m').dataset.t93th==='1',150000);
+const TH=await pg.evaluate(()=>({pics:[...document.querySelectorAll('#t93m [data-t93pre] .t93th')].filter(x=>/url\(.?data:image\/png/.test(x.style.backgroundImage)).length,
+  sizes:T93.api.presets.map(p=>p[2].length),pinned:T93.api.presets.every(p=>{const o=JSON.parse(p[2]);return o.f&&o.f.L&&o.f.R})}));
+ok(thOK&&TH.pics===P99.length&&TH.pinned&&Math.max(...TH.sizes)<=600,'preset pictures + pinned feet + sizes '+JSON.stringify({thOK,pics:TH.pics,max:Math.max(...TH.sizes),pinned:TH.pinned}));
+if(SHOT)await pg.screenshot({path:SHOT+'/tv93k_presets.png'});
 if(SHOT)await pg.screenshot({path:SHOT+'/tv93k_modeller.png'});
 await pg.evaluate(()=>document.querySelector('#t93m [data-t93pre="guard"]').click());await pg.waitForTimeout(400);
 /* drag the pelvis a little (a pose of his own: the preset mark goes) */
 const g=await pg.evaluate(()=>({pose:T93.api.pose(),on:(document.querySelector('#t93m [data-t93pre].on')||{}).dataset}));
 ok(g.pose!==C0.stand&&g.on&&g.on.t93pre==='guard','Guard applied');
 const old=await pg.evaluate(()=>CUSTOM.chars.find(x=>x.id==='old93').tok93.sheet);
+/* v0.99 joint tools: pick a joint, a slider turns it (pose JSON changes), nudges, mirror, symmetric, undo/redo, keys, size ≤ 600 B */
+const J=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const q=s=>document.querySelector('#t93m '+s);const api=T93.api;const o={};
+  q('[data-t93tab="joints"]').click();q('[data-t93j="sL"]').click();await W8(100);o.tab=!q('[data-t93pane="joints"]').hidden&&T93.ui.sel()==='sL'&&(!T93.ed||T93.ed.selected()==='sL');
+  const p0=api.pose();const r=q('[data-t93ax="2"]');r.value=40;r.dispatchEvent(new Event('input',{bubbles:true}));r.dispatchEvent(new Event('change',{bubbles:true}));await W8(50);
+  o.slider=api.joint('sL')[2]===40&&api.pose()!==p0&&q('[data-t93o="2"]').textContent==='40°'&&!q('[data-t93pre].on');
+  q('[data-t93n="0:1"]').click();await W8(50);const x0=api.joint('sL')[0];q('[data-t93n="0:1"]').click();await W8(50);o.nudge=api.joint('sL')[0]===x0+5;
+  q('[data-t93m="ml"]').click();await W8(50);const L=api.joint('sL'),R=api.joint('sR');o.mirror=R[0]===L[0]&&R[1]===-L[1]&&R[2]===-L[2];
+  o.rshow=(q('[data-t93j="sR"]').click(),await W8(30),q('[data-t93o="2"]').textContent==='40°');
+  const sym=q('[data-t93sym]');sym.checked=true;sym.dispatchEvent(new Event('change',{bubbles:true}));q('[data-t93j="eL"]').click();await W8(30);
+  const r0=q('[data-t93ax="0"]');r0.value=-70;r0.dispatchEvent(new Event('input',{bubbles:true}));r0.dispatchEvent(new Event('change',{bubbles:true}));await W8(50);
+  o.sym=api.joint('eL')[0]===-70&&api.joint('eR')[0]===-70;sym.checked=false;sym.dispatchEvent(new Event('change',{bubbles:true}));
+  const before=api.pose(),n=T93.hist.at;q('[data-t93m="undo"]').click();await W8(50);const undone=api.pose();q('[data-t93m="redo"]').click();await W8(50);
+  o.undo=undone!==before&&api.pose()===before&&T93.hist.at===n;
+  q('[data-t93j="kL"]').click();await W8(30);o.pinned=q('[data-t93ax="0"]').disabled&&!!q('#t93jnote').textContent;
+  q('[data-t93j="he"]').click();await W8(30);document.activeElement&&document.activeElement.blur&&document.activeElement.blur();const h0=api.joint('he')[T93.ui.axis()];
+  document.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowUp',bubbles:true}));await W8(30);const h1=api.joint('he')[T93.ui.axis()];
+  await W8(500);document.dispatchEvent(new KeyboardEvent('keydown',{key:'z',ctrlKey:true,bubbles:true}));await W8(50);o.keys=h1===h0+5&&api.joint('he')[T93.ui.axis()]===h0;
+  q('[data-t93j="pe"]').click();await W8(30);o.pelvis=!q('#t93offs').hidden;
+  for(const k of ['pe','sp','ch','ne','he','sL','eL','wL','sR','eR','wR','hL','kL','aL','hR','kR','aR'])api.setJoint(k,[-179,-89,-179]);api.setOffset([-449,-449,-449]);api.pins(false,false);
+  o.big=api.pose().length;q('[data-t93tab="poses"]').click();await W8(30);o.back=T93.ed?T93.ed.selected()===null:true;return o});
+ok(J.tab&&J.slider&&J.nudge,'joint tab: pick + slider + nudge change the pose '+JSON.stringify(J));
+ok(J.mirror&&J.rshow&&J.sym,'mirror left → right + symmetric mode '+JSON.stringify({m:J.mirror,r:J.rshow,s:J.sym}));
+ok(J.undo&&J.keys,'undo / redo + keyboard nudge '+JSON.stringify({u:J.undo,k:J.keys}));
+ok(J.pinned&&J.pelvis&&J.back,'pinned leg locked, pelvis rows, gizmo off on Poses '+JSON.stringify({p:J.pinned,pe:J.pelvis,b:J.back}));
+ok(J.big<=600,'the biggest pose stays ≤ 600 B '+J.big);
+await pg.evaluate(()=>document.querySelector('#t93m [data-t93pre="guard"]').click());await pg.waitForTimeout(300);
 await pg.evaluate(()=>document.querySelector('#t93m [data-t93m="save"]').click());
 const saved=await until(()=>!document.getElementById('t93m'),120000);
 const D=await pg.evaluate(o=>{const c=CUSTOM.chars.find(x=>x.id==='old93'),t=c.tok93;return {pk:t.pk,pose:t.pose.length,changed:t.sheet!==o,puts:window.__puts,draft:ST.draft&&ST.draft.tok93&&ST.draft.tok93.pk,meta:t.meta,len:t.sheet.length}},old);
