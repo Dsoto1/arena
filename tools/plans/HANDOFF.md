@@ -15,6 +15,21 @@ Branch: `claude/cloud-credits-usage-vq4w63` (v0.99, unreleased). Always `git pul
 5. Studio designers frame job (module 267-v99designers) was killed by the spend limit; its worktree is unmerged. Restart only if he asks.
 6. Re-test online 9a-9c with two real windows; Profile page (7a) needs his report if it still fails (Settings -> Error log).
 
+## In progress right now
+- Nothing is running. No agents, no CI runs, no unpushed work. The branch is the single source of truth.
+- The only open job is the v0.99 release (see "Remaining for v0.99"). The last work done was the V99 fixes batch.
+- The Studio designers frame job (267-v99designers) is parked: its worktree is unmerged and it was killed by the spend limit.
+
+## Needed from him (Virgilante)
+1. A "go" on the translation pass (costs tokens: ONE translate agent, prep.sh -> agent -> finish.sh). Until then tv86 stays red on purpose.
+2. Test Online with two real windows: no "Hand to CPU" / "Take control" online (9a), lobby Start/Ready bar, and that 9b/9c desync no longer happens.
+3. If the Online Profile page is still blank: send what it says (the reason + ref code) and Settings -> Error log -> Copy.
+4. Decide: restart the Studio designers frame job now, or leave it for v1.0.
+5. After the release is pushed, he runs `bash flavius.sh release` in CloudShell.
+
+## Waiting for v1.0 (do not start without his go)
+Mocks: Play Now layout, sandstone buttons/pop-ups, bubbles system, lobby banner/seats. Features: event carousel, option example cards, custom beast guard zones, Resume after refresh, Domus slot progression, spectator support. Server batch: remove online wagers, online results screen/cleanup wording, ranked verification interim. Full list: tools/plans/backlog.md.
+
 ## Standing rules (see CLAUDE.md too)
 - No sub-agents and no GitHub Actions runs without asking first (keep costs low). Run only touched tests: `node tools/smartreg.js <names>`.
 - Do not build lists/features until he says go; fixes go straight in.
