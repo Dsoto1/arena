@@ -4,7 +4,19 @@
      spent (ammo / uses), or the two attacks already made. Display only. */
 function atk92Why(p){try{if(S.active&&S.active.telemachus&&!isChariot())return _T('Telemachus Interdico! — no attacks until he is dragged out (a 1 or 6 at a turn’s start)');
   const arms=armsAttached(p);if(!arms.length)return _T('no arm left to attack with');if(p.attacks>=arms.length)return _T('no attacks left');
-  return _T('your weapons are spent (no ammo or uses left)')}catch(e){return ''}}
+  const srcs=attackSources(p);
+  if(!srcs.length){const spent=arms.some(a=>{const w=p['w'+a];return w&&(w.ammo!=null&&w.ammoLeft<=0||w.atkUses&&w.atkLeft<=0)});
+    return spent?_T('your weapons are spent (no ammo or uses left)'):_T('nothing you hold can attack this turn')}
+  /* a source exists: the reason is the reach — same targetsFor the buttons use */
+  const R=Math.max(0,...srcs.map(s=>srcRange(s)-(swimming(p)?1:0)));
+  if(srcs.some(s=>targetsFor(p,s).length))return '';
+  const foes=S.players.filter(q=>q!==p&&q.alive&&!q.exited&&!friendly(p,q));
+  const beasts=S.npcs.filter(n=>n.alive&&n.tamedBy==null&&cheb(p,n)<=R);
+  if(!RD().pvp&&!beasts.length&&foes.some(q=>cheb(p,q)<=R))return _T('this round forbids attacks on gladiators');
+  const near=foes.filter(q=>!q.underground).sort((x,y)=>cheb(p,x)-cheb(p,y))[0];
+  if(isNaum()&&near&&cheb(p,near)>R&&shipAt(p.r,p.c)!==shipAt(near.r,near.c))return _T('Across the water — board their ship or swim closer');
+  if(!foes.some(q=>!q.underground&&cheb(p,q)<=R)&&!beasts.length)return _T`No enemy within range ${R}`;
+  return _T('No target you can attack from here')}catch(e){return ''}}
 {const base=render;render=function(){const r=base.apply(this,arguments);try{if(S&&S.phase==='action'){const b=document.querySelector('[data-act="none"]');const p=cur();
   if(b&&p&&!p.cpu){const why=atk92Why(p);const sm=b.querySelector('small');if(why&&sm&&sm.textContent!==why){sm.textContent=why;b.title=why}}}}catch(e){console.error(e)}return r}}
 /* • Music in the Manager (his note: clicking a recruit card's buttons paused/restarted the music): a popup opened from the Manager
