@@ -24,3 +24,17 @@ Each line: idea · where it came from · date.
   made beside the v0.93 minis8 sheet, cached by the look + pose hash, uploaded like 226's pictures online), frames picked by the board's
   move/attack/hurt/eliminate moments; perf budget (one drawImage per piece as today, decode once, ≤ ~150 KB a sheet, tv91r draw time + tv92p idle
   unchanged); Off path = the still sheet (Settings Animations Off, Reduce motion, Fast, HEADLESS/sims) · v0.99 pose batch · 2026-10-08
+
+## V99 notes (his PDF 2026-10-09; answers 1a 2a 3yes 4a 5a 6a 7yes 8yes 10 mine) — for v1.0 (v0.99 = fixes + what is built)
+- BUILT in v0.99 (271-v99fix3): 1b, 5a/6a/6b (fixed lesson coach), 5b (editors: Gaius Tolosanus = Learn to play, Lady Aurelia = Manager), 5c, 7a (shows why + ref),
+  7b, 9a (no Hand to CPU online = the desync), 10b/10c, 11a, 12a/12b/12c, 13b.
+- v1.0 MOCKS FIRST: 1a/1c/1d/1e (Play Now: map right of the event, Follow schedule into Options, rounds stacked; sandstone Play Now/Manager pop-ups; menu background shift;
+  Hot Seat on the same layout), 2a (sandstone Begin Event + the button style reused across the UI; also 5d lesson-complete buttons), 4 (ONE speech/thought bubble system),
+  10a (lobby banner: FID, call the crier, close lobby; no Invite), 10e–10g (static 8-row player list, wider, seat = portrait + token + name + rank).
+- v1.0 FEATURES: 2b event card carousel, 2c/2d Options example cards (Carmina, Mandata, Golden Eagle, Zora token rounds) + class modifiers, 3a–3d custom beast guard zones
+  (zone relative to the gold start tile, click/drag tile select, walls cut it, parts outside the arena ignored), 6a autosave offline events + Resume on the main menu (13a),
+  8 Domus slots: ONE at the start, more bought with a Ranked threshold (slot 2 150 Glory + 200 coin · 3 600 + 500 · 4 1500 + 1000; existing houses keep theirs) = server,
+  10i spectators: members not seated at the horns WATCH (button) and are not counted as players; free watchers ≤30 + ticket holders ≤8 today.
+- v1.0 SERVER BATCH: 4a remove online wagers (client tab + buttons, server bet.place refuse, tests tonl77/83/83u/ws77/v82o/v87x + server suites), 9g ranked verification
+  (backlog: server replay; interim = every human must report the same result), 9d/9e online results screen for every player with coin + CF (custom = nothing paid), cleanup wording.
+- 9b/9c: the frozen client + results that waited for her were the Hand-to-CPU desync (fixed by 9a); re-test with two real windows after the release.

@@ -319,7 +319,7 @@ function TUTOR99(){try{return CITY_SPONSORS[3]||null}catch(e){return null}}
 function tutPlace(el){try{const W=innerWidth;const cvr=cv.getBoundingClientRect();const br=(document.querySelector('header.bar')||{getBoundingClientRect:()=>({bottom:0})}).getBoundingClientRect();
   /* v0.99 (his notes 5a/6b): ONE fixed place — the upper-left corner of the arena window, never jumping between corners; narrower than the canvas on tablets/phones */
   const top=Math.max(cvr.top+10,br.bottom+6),left=Math.max(8,cvr.left+10);const cw=Math.max(200,Math.min(460,(cvr.width||W)-20,W-16));
-  el.style.maxWidth=cw+'px';el.style.left=Math.min(left,Math.max(8,W-cw-8))+'px';el.style.top=top+'px';el.style.right='auto';el.style.bottom='auto';el.style.transition='none'}catch(e){}}
+  el.style.maxWidth=cw+'px';const ch=el.offsetHeight||120;el.style.left=Math.min(left,Math.max(8,W-cw-8))+'px';el.style.top=Math.max(8,Math.min(top,innerHeight-ch-8))+'px';el.style.right='auto';el.style.bottom='auto';el.style.transition='none'}catch(e){}}
 /* tutNext — advances to the next lesson step (the tour ending sets Normal speed). */
 function tutNext(){const was=TUT_STEPS[TUT.step];TUT.step++;
   if(was&&was.tour&&!(TUT_STEPS[TUT.step]||{}).tour){setSpeedUI('normal')} // the tour is over — the bout begins

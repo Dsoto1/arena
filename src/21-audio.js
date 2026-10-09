@@ -135,7 +135,7 @@ function audTick(){const a=audSet();if(HEADLESS||!AUD.ctx||!a.on||!a.music||AUD.
       /* v0.91 (choppy after switching Mac desktops/windows): a hidden page's timers fire about once a second, so it schedules 3 s ahead
          (1 s while visible); a scheduler that fell behind restarts just ahead of now instead of firing the missed notes in a burst */
       if(AUD.next<AUD.ctx.currentTime)AUD.next=AUD.ctx.currentTime+0.05;
-      while(AUD.next<AUD.ctx.currentTime+(document.hidden?3.0:1.0)){audStep(AUD.theme,AUD.next,AUD.step,Math.min(2,inten));AUD.step++;AUD.next+=spb}},100);
+      while(AUD.next<AUD.ctx.currentTime+((document.hidden||(typeof RZ99!=='undefined'&&Date.now()-RZ99.t<1500))?3.0:1.0)){audStep(AUD.theme,AUD.next,AUD.step,Math.min(2,inten));AUD.step++;AUD.next+=spb}},100);
   audListRefresh()}
 /* audStop — fades the music out and stops the scheduler. */
 function audStop(){const was=AUD.playing;AUD.playing=false;if(was)audFadeTo(0,1.1);

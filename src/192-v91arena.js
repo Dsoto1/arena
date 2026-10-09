@@ -370,7 +370,7 @@ function ar91Zoomed(){return (AR91.z||1)>1.05}
 {const base=flavXY89;flavXY89=function(){if(!ar91On()||!ar91Zoomed()||ar91Lud())return base.apply(this,arguments);
   const z=AR91.z||1;const k=typeof flavK==='function'?flavK():1;const T0=AR91.gold?TW:TW/z; /* inside drawFlavius TW is already the unzoomed size */const w=T0*1.55*k,h=T0*1.2*k;
   const wrap=typeof cv!=='undefined'&&cv&&cv.parentElement;const Wd=wrap&&wrap.clientWidth?wrap.clientWidth:OX*2;return {cx:Wd/2,cy:h/2+6,w,h}}}
-function ar91Pennant(F,T1){const T0=T1*(typeof flavK==='function'?flavK():1);const x=F.cx,y=F.cy,w=F.w,h=F.h;const px0=x-w/2-T0*0.09,px1=x+w/2+T0*0.09,py0=y-h/2-T0*0.05,py1=y+h/2+T0*0.32,tip=py1+T0*0.32;
+function ar91Pennant(F,T1){const T0=T1*(typeof flavK==='function'?flavK():1);const x=F.cx,y=F.cy,w=F.w,h=F.h;const px0=x-w/2-T0*0.09,px1=x+w/2+T0*0.09,py0=y-h/2-T0*0.05,py1=y+h/2+T0*0.32+T0*0.11 /* v0.99: the banner reaches down to the podium's V (no sky showing between) */,tip=py1+T0*0.32;
   ctx.save();ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.moveTo(px0+2,py0+2);ctx.lineTo(px1+2,py0+2);ctx.lineTo(px1+2,py1+2);ctx.lineTo(x+2,tip+2);ctx.lineTo(px0+2,py1+2);ctx.closePath();ctx.fill();
   ctx.fillStyle='#3d1838';ctx.beginPath();ctx.moveTo(px0,py0);ctx.lineTo(px1,py0);ctx.lineTo(px1,py1);ctx.lineTo(x,tip);ctx.lineTo(px0,py1);ctx.closePath();ctx.fill();
   ctx.strokeStyle='rgba(201,162,78,.75)';ctx.lineWidth=Math.max(1,T0*0.025);ctx.beginPath();ctx.moveTo(px0+3,py0+3);ctx.lineTo(px1-3,py0+3);ctx.lineTo(px1-3,py1-1);ctx.lineTo(x,tip-4);ctx.lineTo(px0+3,py1-1);ctx.closePath();ctx.stroke();
