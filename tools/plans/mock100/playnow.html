@@ -34,10 +34,20 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
 .sb.pri .t,.sb.dan .t{background:linear-gradient(180deg,#fff2be 0%,#f0cf7d 30%,#b98a2a 62%,#e7c46c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 1px 0 rgba(60,20,8,.85))}
 .sb.pri svg{fill:#f0cf7d;filter:drop-shadow(0 1px 0 rgba(60,20,8,.85))}
 .sb.pri.prs::before{box-shadow:inset 0 4px 8px rgba(0,0,0,.75)}
-/* danger: black basalt inlay + red-gold letters */
-.sb.dan::before{inset:6px;border:0;background:linear-gradient(180deg,#2c2522,#1b1513 60%,#120d0b);box-shadow:inset 0 2px 4px rgba(0,0,0,.7),0 1px 0 rgba(255,238,204,.5)}
-.sb.dan .t{background:linear-gradient(180deg,#ffd0b8,#e0654c 45%,#a3281f 80%);-webkit-background-clip:text;background-clip:text}
-.sb.dan svg{fill:#e0654c;filter:none}
+/* danger: CARBON-BLACK slab (whole button) — deep matte black, faint weave + soot, red-gold letters */
+.sb.dan{color:#e0654c;text-shadow:none;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .48 0 0 0 0 .46 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='200' height='100' filter='url(%23s)'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(45deg,rgba(255,255,255,.035) 0 2px,transparent 2px 4px),
+    repeating-linear-gradient(-45deg,rgba(0,0,0,.35) 0 2px,transparent 2px 4px),
+    linear-gradient(178deg,#26262a 0%,#151517 45%,#0b0b0c 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -2px 0 rgba(0,0,0,.8),0 4px 0 #050505,0 5px 0 #000,0 10px 18px rgba(0,0,0,.7)}
+.sb.dan::before{inset:5px;border:1px solid rgba(224,101,76,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.05);background:none}
+.sb.dan::after{background:linear-gradient(180deg,rgba(255,255,255,.06),transparent 40%,rgba(0,0,0,.25))}
+.sb.dan .t{background:linear-gradient(180deg,#ffd9c4,#e8805f 40%,#c8402e 70%,#e7c46c 100%);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 1px 0 #000)}
+.sb.dan svg{fill:#e0654c;filter:drop-shadow(0 1px 0 #000)}
+.sb.dan:hover,.sb.dan.hov{box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 6px 0 #050505,0 7px 0 #000,0 14px 24px rgba(0,0,0,.75),0 0 0 2px rgba(224,101,76,.55),0 0 20px rgba(224,101,76,.25)}
+.sb.dan.prs{box-shadow:inset 0 3px 6px rgba(0,0,0,.9),0 1px 0 #050505,0 2px 0 #000}
 /* sizes */
 .sb.l{--h:58px;--fs:24px;padding:0 30px}
 .sb.m{--h:46px;--fs:19px}
@@ -75,6 +85,7 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
   box-shadow:inset 0 2px 0 rgba(255,244,214,.7),inset 0 -3px 0 rgba(80,52,24,.6),0 6px 0 #5a4024,0 7px 0 #3d2a15,0 30px 70px rgba(0,0,0,.85),0 0 0 1px #2b1d10}
 .tab-pop::before{content:"";position:absolute;inset:8px;border-radius:5px;border:1px solid rgba(96,64,30,.55);box-shadow:0 1px 0 rgba(255,238,204,.45),inset 0 1px 0 rgba(255,238,204,.3);pointer-events:none}
 .tab-pop>*{position:relative}
+.grab{display:none}
 .tp-hd{display:flex;align-items:center;gap:10px;padding:6px 6px 2px}
 .tp-hd h2{font:400 27px/1 var(--display);letter-spacing:.09em;color:#4a2e14;text-shadow:0 1px 0 rgba(255,240,206,.8),0 -1px 0 rgba(60,36,14,.7)}
 .tp-hd svg{width:28px;height:28px;fill:#5a3a1a;filter:drop-shadow(0 1px 0 rgba(255,240,206,.7))}
@@ -164,6 +175,27 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
 .optg label{display:flex;gap:9px;align-items:center;min-width:0}
 .optg .ck{width:17px;height:17px;font-size:11px}
 .optg .wide{grid-column:1/-1}
+.locked .strip .ev:not(.on){opacity:.32;filter:grayscale(.8)}
+.locked .mapbox .map{filter:grayscale(.75) brightness(.6)}
+.locked .mapbox .map .pin.on{filter:none}
+.locked .mapbox .city .sel,.locked .mapbox .city .btn{opacity:.45}
+.lockbar{display:none;align-items:center;gap:9px;margin:-4px 0 10px;padding:6px 10px;border-radius:6px;border:1px dashed var(--gold);background:#2a1f12;font-size:13.5px;color:var(--muted)}
+.lockbar b{color:var(--gold2)}.lockbar .sp{flex:1}
+.locked .lockbar{display:flex}
+.maplock{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:none;padding:5px 11px;border-radius:999px;background:#160f0bdd;border:1px solid var(--gold);color:var(--gold2);font-size:13px;white-space:nowrap;z-index:2}
+.locked .maplock{display:block}
+.mapbox{position:relative}
+/* A3 hot-seat turn ribbon */
+.ribbon{position:absolute;left:0;right:0;top:0;bottom:0;display:none;align-items:center;justify-content:center;gap:14px;z-index:6;
+  background:linear-gradient(90deg,transparent,#14303f 18%,#1d4558 50%,#14303f 82%,transparent),#0d1a22e6;border-bottom:2px solid #7fc2e8;
+  font:400 22px var(--display);letter-spacing:.06em;color:#fff;text-shadow:0 1px 3px #000;animation:rib 1.5s ease both}
+.ribbon small{font:13px var(--body);letter-spacing:0;color:#bfe0f0}
+.ribbon i{position:absolute;left:0;bottom:-2px;height:2px;width:62%;background:var(--gold2)}
+.ribbon .tok{width:30px;height:36px;background-size:contain;background-repeat:no-repeat;background-position:center bottom}
+.show-rib .ribbon{display:flex}
+@keyframes rib{from{transform:translateY(-100%)}to{transform:none}}
+.ribnote{display:none;font-size:12.5px;color:#9fbccb;margin:-4px 0 0}
+.show-rib .ribnote{display:block}
 .follow{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:7px;border:1px solid var(--gold);background:linear-gradient(90deg,#3a2a18,#241a12);margin-bottom:10px;flex-wrap:wrap}
 .follow b{color:var(--bone)}
 .follow .t{flex:1;min-width:200px;font-size:14.5px;color:var(--muted)}
@@ -240,6 +272,7 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
 .mnote{margin-top:2px;font-size:13px;color:var(--muted);border:1px dashed #6b5236;border-radius:8px;padding:8px 11px;background:#1a120d}
 .mnote b{color:var(--gold2);font-weight:500}
 @media (max-width:1100px){.what{grid-template-columns:150px 230px minmax(0,1fr)}.rd{grid-template-columns:30px minmax(0,1fr) auto;row-gap:4px}.rd .end{grid-column:2/4}.rd .rw{grid-column:2/4}.rd.hd{display:none}}
+@keyframes sheet{from{transform:translateY(100%)}to{transform:none}}
 @media (max-width:600px){
   .top{padding:10px 16px;gap:10px}.top h1{font-size:22px}.top .seg{order:5;width:100%;display:flex}.top .seg button{flex:1;padding:6px 4px;font-size:13px}
   .date{order:6;font-size:13px}.go{order:7;width:100%}.go .sum{display:none}.go .sb{flex:1}
@@ -250,9 +283,12 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
   .optg{grid-template-columns:1fr}
   .who{grid-template-columns:1fr}.pc{flex-direction:row;flex-wrap:wrap;justify-content:center}.pc .bd{width:56px;height:56px}
   .seats{grid-template-columns:1fr 1fr}.seat{min-height:142px}.seat .mini{width:50px;height:64px}.seat h3{font-size:18px}
-  .pass{flex-wrap:wrap}
+  .pass{flex-wrap:wrap}.ribbon{font-size:17px;gap:8px}.ribbon small{display:none}
   .mm{width:100%;padding:24px 16px}.logo{width:280px}.stage{width:100%;height:auto;aspect-ratio:620/171}.btns{width:100%}.r4{grid-template-columns:1fr 1fr}
-  .tab-pop{width:calc(100vw - 32px);padding:12px}.tp-hd h2{font-size:22px}.well{padding:9px}.well .r2{grid-template-columns:1fr}
+  .tab-pop{left:0;right:0;top:auto;bottom:0;width:100%;max-width:none;transform:none;border-radius:16px 16px 0 0;padding:8px 12px calc(14px + env(safe-area-inset-bottom));animation:sheet .3s cubic-bezier(.2,.7,.2,1) both;box-shadow:inset 0 2px 0 rgba(255,244,214,.7),0 -18px 50px rgba(0,0,0,.85),0 0 0 1px #2b1d10}
+  .tab-pop::before{inset:6px 6px 0;border-bottom:0;border-radius:12px 12px 0 0}
+  .grab{display:block;width:44px;height:5px;border-radius:3px;margin:2px auto 4px;background:#7a5a34;box-shadow:inset 0 1px 1px rgba(0,0,0,.5),0 1px 0 rgba(255,238,204,.5)}
+  .menuview.shift .mmw{transform:scale(1.03) translateY(-10px);filter:brightness(.5) saturate(.75)}.tp-hd h2{font-size:22px}.well{padding:9px}.well .r2{grid-template-columns:1fr}
   .sb.l{--fs:20px;padding:0 18px}
   .caption,.seal{display:none}
   .frames,.spec,.uses{grid-template-columns:1fr}
@@ -278,6 +314,7 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
 <!-- ================= 1a / HOT SEAT : Play Now ================= -->
 <section class="view" id="v-pn"><div class="pn">
  <div class="top">
+  <div class="ribbon" aria-live="polite"><span class="tok" style="background-image:url(../../../assets/mini_soldier.webp)"></span>👤 Marcus — your turn <small>Soldier · seat 1</small><i></i></div>
   <h1 id="pnTitle">Play Now</h1>
   <span class="hsflag" id="hsFlag" hidden>🪑 ONE SCREEN</span>
   <div class="seg" id="pnModes"><button class="on">Single event</button><button>Festival</button><button>Missio</button><button>🏆 Tournament</button></div>
@@ -293,18 +330,19 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
  <div class="body">
   <div class="pass" id="passHint" hidden>
    <span class="ic">🔁</span>
-   <span><b>Pass the device.</b> Each player takes their turn on this screen, then hands it on.<br><small>Your Mandata stay face down — hold 👁 to peek.</small></span>
+   <span><b>Pass the device.</b> Each player takes their turn on this screen, then hands it on.<br><small>Your Mandata stay face down — hold 👁 to peek.</small><span class="ribnote" style="display:block">In the match, each human turn opens with a slim "Marcus — your turn" ribbon over the top bar for ~1.5 s (shown above); it never covers the board.</span></span>
    <span class="sp"></span>
    <span style="font-size:13.5px;color:#cfe4ee;display:flex;align-items:center;gap:8px">Turn the board to each player <span class="sw on"></span></span>
   </div>
 
   <div class="cardp">
    <div class="ttl">The event <small>· where and what</small><span class="sp"></span><small>13 printed · 2 of yours</small></div>
+   <div class="lockbar">🔒 <span><b>Following the schedule</b> — this week's event and city are set.</span><span class="sp"></span><a class="btn" style="text-decoration:none;padding:3px 10px">Unlock · switch off</a></div>
    <div class="strip" id="strip"></div>
    <div class="what">
     <div class="bigcard" role="img" aria-label="Democritus event card"></div>
     <div class="mapbox">
-     <div class="map" id="map"></div>
+     <div class="map" id="map"></div><span class="maplock">🔒 Roma · this week</span>
      <div class="city"><span class="sel">6 · Roma (home)<span class="car">▼</span></span><button class="btn" title="Random city">🎲</button></div>
      <div class="mods">Class modifiers: <span>none in Roma</span></div>
     </div>
@@ -321,7 +359,7 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
    <div class="ttl">⚙ Options <small>· 1 on</small></div>
    <div class="follow">
     <span class="sw on"></span>
-    <span class="t"><b>Follow the schedule</b> — play this week's games: <b>Democritus in Roma</b>. Off = any event, any city.</span>
+    <span class="t"><b>Follow the schedule</b> — 🔒 event and city locked to this week: <b>Democritus in Roma</b>. Switch off to pick any.</span>
     <a class="btn" style="text-decoration:none">📅 Season schedule</a>
    </div>
    <div class="optg">
@@ -369,7 +407,7 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
   <div class="mfoot">© 2026 Flavius Rule · D.Soto · <span class="ver">v1.0</span></div>
  </div></div>
  <div class="veil"></div>
- <div class="tab-pop" id="popPN" hidden>
+ <div class="tab-pop" id="popPN" hidden><span class="grab"></span>
   <div class="tp-hd"><svg><use href="#i-swords"/></svg><h2>Play Now</h2><span class="sp"></span><button class="stud" aria-label="Close">✕</button></div>
   <p class="tp-sub">A new event, or a saved match.</p>
   <div class="well">
@@ -382,7 +420,7 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
   </div>
   <div class="tp-ft"><button class="sb s"><svg><use href="#i-back"/></svg>Back</button><span class="seal">ESC · BACK</span></div>
  </div>
- <div class="tab-pop" id="popMG" hidden>
+ <div class="tab-pop" id="popMG" hidden><span class="grab"></span>
   <div class="tp-hd"><svg><use href="#i-temple"/></svg><h2>Manager Mode</h2><span class="sp"></span><button class="stud" aria-label="Close">✕</button></div>
   <p class="tp-sub">Only Manager careers live here.</p>
   <div class="well">
@@ -410,7 +448,7 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
  <div class="spec">
   <div><b>Timing</b>320 ms ease-out in · 220 ms out.</div>
   <div><b>Reduce motion / Calm</b>Dim only — no blur, no zoom, no slide.</div>
-  <div><b>Phones / idle</b>Blur skipped on phones (cost); dim + zoom stay.</div>
+  <div><b>Phones</b>The tablet is a bottom sheet that slides up; the menu dims and lifts slightly, no blur.</div>
   <div><b>Window to window</b>Pop-up → Play Now keeps the menu dimmed under the curtain (no flash).</div>
  </div>
 </div></section>
@@ -427,6 +465,13 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
   <div><button class="sb pri l prs"><svg><use href="#i-swords"/></svg><span class="t">Begin Event</span></button><span>PRESSED</span></div>
   <div><button class="sb pri l dis"><svg><use href="#i-swords"/></svg><span class="t">Begin Event</span></button><span>DISABLED</span></div>
  </div>
+ <h2>Danger — states</h2>
+ <div class="states">
+  <div><button class="sb dan l"><svg><use href="#i-x"/></svg><span class="t">Abandon</span></button><span>REST</span></div>
+  <div><button class="sb dan l hov"><svg><use href="#i-x"/></svg><span class="t">Abandon</span></button><span>HOVER · FOCUS</span></div>
+  <div><button class="sb dan l prs"><svg><use href="#i-x"/></svg><span class="t">Abandon</span></button><span>PRESSED</span></div>
+  <div><button class="sb dan l dis"><svg><use href="#i-x"/></svg><span class="t">Abandon</span></button><span>DISABLED</span></div>
+ </div>
 
  <h2>Kinds × sizes</h2>
  <div class="grid3">
@@ -439,7 +484,7 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
   <div><button class="sb l"><svg><use href="#i-temple"/></svg>Back to menu</button></div>
   <div><button class="sb m"><svg><use href="#i-gear"/></svg>Options</button></div>
   <div><button class="sb s"><svg><use href="#i-back"/></svg>Back</button></div>
-  <span class="rl">Danger<small>basalt inlay, red-gold — asks first</small></span>
+  <span class="rl">Danger<small>carbon-black slab, red-gold — asks first</small></span>
   <div><button class="sb dan l"><svg><use href="#i-x"/></svg><span class="t">Abandon</span></button></div>
   <div><button class="sb dan m"><svg><use href="#i-x"/></svg><span class="t">Delete career</span></button></div>
   <div><button class="sb dan s"><span class="t">Release</span></button></div>
@@ -506,7 +551,7 @@ function show(){
   document.getElementById('pnModes').style.display=hot?'none':'';
   document.getElementById('sumYou').innerHTML=hot?'3 players · 1 CPU':'You: <span class="gd">Soldier</span>';
   document.getElementById('whoNote').innerHTML=hot?'Name each player · turns pass in seat order':'Printed classes · <span class="gold">⭐ Your characters</span> in each seat\'s picker';
-  seats(hot);
+  seats(hot);document.getElementById('v-pn').classList.add('locked');document.getElementById('v-pn').classList.toggle('show-rib',hot);
  }else if(h==='buttons'||h==='2a'||h==='5d'){document.getElementById('v-btn').classList.add('on')}
  else if(h==='1d'){document.getElementById('v-cmp').classList.add('on');fitFrames()}
  else{ /* menu, 1c, 1c-mgr, 1d-mid */
