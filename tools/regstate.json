@@ -1,5 +1,5 @@
 {
- "run": 298,
+ "run": 299,
  "lastFull": 1791382783754,
  "tests": {
   "tseed4": {
@@ -88,20 +88,14 @@
    "sh": "32ee2cd6c9"
   },
   "tstudio45": {
-   "streak": 31,
-   "runs": 58,
-   "fails": 3,
+   "streak": 0,
+   "runs": 59,
+   "fails": 4,
    "flaky": [],
-   "lastRun": 232,
-   "time": 45,
+   "lastRun": 299,
+   "time": 39,
    "lastPass": 232,
-   "deps": {
-    "build.sh": "5cb06e6cf468",
-    "src/01-head.html": "b7a6b382020c",
-    "tools/smartreg.js": "88651cfcb1b8",
-    "tools/regcov.js": "1b122005f465",
-    "tools/tests/tstudio45.js": "e09d945c325c"
-   },
+   "deps": {},
    "sh": "32ee2cd6c9"
   },
   "tb4": {
@@ -695,20 +689,14 @@
    "sh": "1dd159dc1a"
   },
   "tbuy": {
-   "streak": 57,
-   "runs": 57,
-   "fails": 0,
+   "streak": 0,
+   "runs": 58,
+   "fails": 1,
    "flaky": [],
-   "lastRun": 282,
-   "time": 17,
+   "lastRun": 299,
+   "time": 42,
    "lastPass": 282,
-   "deps": {
-    "build.sh": "c6e21886b1fd",
-    "src/01-head.html": "1f47f47b0f33",
-    "tools/smartreg.js": "f324391b30d6",
-    "tools/regcov.js": "1b122005f465",
-    "tools/tests/tbuy.js": "b4b34372cef0"
-   },
+   "deps": {},
    "sh": "1dd159dc1a"
   },
   "tnames": {
@@ -2825,11 +2813,11 @@
   },
   "tv83c": {
    "streak": 0,
-   "runs": 21,
-   "fails": 2,
+   "runs": 22,
+   "fails": 3,
    "flaky": [],
-   "lastRun": 282,
-   "time": 10,
+   "lastRun": 299,
+   "time": 8,
    "sh": "3b3484c609",
    "lastPass": 253,
    "deps": {}
@@ -3065,40 +3053,28 @@
    }
   },
   "tv87m": {
-   "streak": 20,
-   "runs": 20,
-   "fails": 0,
+   "streak": 0,
+   "runs": 21,
+   "fails": 1,
    "flaky": [],
-   "lastRun": 288,
-   "time": 49,
+   "lastRun": 299,
+   "time": 27,
    "sh": "34113f5886",
    "lastPass": 288,
-   "deps": {
-    "build.sh": "c90f949a67e7",
-    "src/01-head.html": "10f03bacf0a0",
-    "tools/smartreg.js": "f324391b30d6",
-    "tools/regcov.js": "1b122005f465",
-    "tools/tests/tv87m.js": "8edfe3f9a06d"
-   }
+   "deps": {}
   },
   "tv87x": {
-   "streak": 20,
-   "runs": 28,
-   "fails": 1,
+   "streak": 0,
+   "runs": 29,
+   "fails": 2,
    "flaky": [
     107
    ],
-   "lastRun": 251,
-   "time": 72,
+   "lastRun": 299,
+   "time": 79,
    "sh": "c6f95a8dc6",
    "lastPass": 251,
-   "deps": {
-    "build.sh": "499d7a9558b3",
-    "src/01-head.html": "77d1991e8a83",
-    "tools/smartreg.js": "f324391b30d6",
-    "tools/regcov.js": "1b122005f465",
-    "tools/tests/tv87x.js": "30c06031f2f9"
-   }
+   "deps": {}
   },
   "tv87i": {
    "streak": 13,
@@ -3622,11 +3598,13 @@
   },
   "tv90y": {
    "streak": 0,
-   "runs": 13,
-   "fails": 1,
-   "flaky": [],
-   "lastRun": 288,
-   "time": 50,
+   "runs": 14,
+   "fails": 2,
+   "flaky": [
+    299
+   ],
+   "lastRun": 299,
+   "time": 21,
    "sh": "32ee2cd6c9",
    "lastPass": 232,
    "deps": {}
@@ -3712,23 +3690,23 @@
    "pinUntil": 242
   },
   "tv91c": {
-   "streak": 3,
-   "runs": 10,
+   "streak": 4,
+   "runs": 11,
    "fails": 2,
    "flaky": [
     203
    ],
-   "lastRun": 232,
-   "time": 13,
+   "lastRun": 299,
+   "time": 12,
    "deps": {
-    "build.sh": "5cb06e6cf468",
-    "src/01-head.html": "b7a6b382020c",
-    "tools/smartreg.js": "88651cfcb1b8",
+    "build.sh": "64278cdfc1f7",
+    "src/01-head.html": "92e329f3da80",
+    "tools/smartreg.js": "f324391b30d6",
     "tools/regcov.js": "1b122005f465",
     "tools/tests/tv91c.js": "e0fda8d176dc"
    },
-   "sh": "32ee2cd6c9",
-   "lastPass": 232
+   "sh": "e610046835",
+   "lastPass": 299
   },
   "tv91w": {
    "streak": 3,
@@ -4221,25 +4199,20 @@
    }
   },
   "tv94m": {
-   "streak": 1,
-   "runs": 14,
-   "fails": 5,
+   "streak": 0,
+   "runs": 15,
+   "fails": 6,
    "flaky": [
     233,
     234,
-    239
+    239,
+    299
    ],
-   "lastRun": 295,
-   "time": 25,
+   "lastRun": 299,
+   "time": 24,
    "sh": "5b9057c8cd",
    "lastPass": 295,
-   "deps": {
-    "build.sh": "64278cdfc1f7",
-    "src/01-head.html": "10f03bacf0a0",
-    "tools/smartreg.js": "f324391b30d6",
-    "tools/regcov.js": "1b122005f465",
-    "tools/tests/tv94m.js": "18a5c7e7585b"
-   }
+   "deps": {}
   },
   "tv94d": {
    "streak": 3,
@@ -4365,11 +4338,11 @@
   },
   "tonl96": {
    "streak": 0,
-   "runs": 2,
-   "fails": 1,
+   "runs": 3,
+   "fails": 2,
    "flaky": [],
-   "lastRun": 291,
-   "time": 274,
+   "lastRun": 299,
+   "time": 108,
    "sh": "5cca20e1bc",
    "lastPass": 255,
    "deps": {}
