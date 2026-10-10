@@ -44,19 +44,26 @@ out.a=await A.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));i
   MGR.tab='ludus';MGR_REDRAW();await W8(300);const LC=w.letters.find(l=>l.key===k3);r.card=!bt||(!!LC&&/on this week's card/.test(LC.body));
   /* opened: the faces */
   MGR.mailOpen='L:'+k1;MGR_REDRAW();await W8(500);const C=council83(w);const q=s=>document.querySelector(s);
-  const d=q(`details.mail[data-mail="L:${k1}"]`);r.recFace=!!d&&d.open&&!!d.querySelector('.adv83 svg')&&d.querySelector('.adv83').textContent.includes(C.find(a=>a.k==='recruiter').name);
-  r.btn=!!d&&!!d.querySelector('[data-rec84]');
+  let d=q(`details.mail[data-mail="L:${k1}"]`);let row=null;
+  /* v0.99 desk: a letter that needs an answer is a desk row — 📜 opens its text inside the row */
+  if(!d){const bt=[...document.querySelectorAll('#desk99 [data-dk99open]')].find(x=>x.dataset.dk99open.includes(k1));row=bt&&bt.closest('.dk99row');if(bt){bt.click();await W8(400)}
+    const rn=C.find(a=>a.k==='recruiter').name;d=[...document.querySelectorAll('#desk99 .dk99ex')].find(x=>x.querySelector('.adv83')&&x.querySelector('.adv83').textContent.includes(rn))||null;row=row&&document.querySelector(`#desk99 .dk99row[data-dk99="${row.dataset.dk99}"]`)}
+  r.recFace=!!d&&(d.open||d.classList.contains('dk99ex'))&&!!d.querySelector('.adv83 svg, .adv83 img')&&d.querySelector('.adv83').textContent.includes(C.find(a=>a.k==='recruiter').name);
+  r.btn=(!!d&&!!d.querySelector('[data-rec84]'))||(!!row&&!!row.querySelector('[data-rec84]'));
   return r});
 await A.evaluate(()=>{const d=document.querySelector('details.mail[open]');if(d)d.scrollIntoView({block:'start'})});await A.waitForTimeout(300);await shot(A,'letter_recruiter');
 out.a2=await A.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_();const L=w.letters.find(l=>/^med84-/.test(l.key));MGR.mailOpen='L:'+L.key;MGR_REDRAW();await W8(500);
-  const d=document.querySelector(`details.mail[data-mail="L:${L.key}"]`);if(d)d.scrollIntoView({block:'start'});const C=council83(w);
-  const r={medFace:!!d&&d.open&&d.querySelector('.adv83').textContent.includes(C.find(a=>a.k==='medicus').name)};
+  let d=document.querySelector(`details.mail[data-mail="L:${L.key}"]`);
+  /* v0.99 desk: the Medicus letter rides on its ⚕ row — 📜 opens it inside the row */
+  if(!d){const b=[...document.querySelectorAll('#desk99 [data-dk99open]')].find(x=>x.dataset.dk99open.includes(L.key));if(b){b.click();await W8(400)}d=[...document.querySelectorAll('#desk99 .dk99ex')].find(x=>x.querySelector('[data-med84]'))||null}
+  if(d)d.scrollIntoView({block:'start'});const C=council83(w);
+  const r={medFace:!!d&&(d.open||d.classList.contains('dk99ex'))&&!!d.querySelector('.adv83')&&d.querySelector('.adv83').textContent.includes(C.find(a=>a.k==='medicus').name)};
   d.querySelector('[data-med84]').click();await W8(400);r.ward=MGR.tab==='infirm';MGR.tab='ludus';MGR_REDRAW();await W8(200);
   MGR.mailOpen='L:'+L.key;MGR_REDRAW();await W8(300);const d2=document.querySelector(`details.mail[data-mail="L:${L.key}"]`);if(d2)d2.scrollIntoView({block:'start'});return r});
 await A.waitForTimeout(300);await shot(A,'letter_medicus');
 const a=out.a;ok(a.quiet,'recruiter silent with nothing to say');ok(a.bargain,'recruiter bargain letter');ok(a.once,'recruiter ≤1 a week');ok(a.next,'next week another name');
 ok(a.medQuiet&&a.med&&a.medOnce&&a.restOk,'medicus: silent / fatigue letter / once / rest clears');ok(a.card,'medicus: fighting worn down on the card');
-ok(a.recFace&&a.btn&&out.a2.medFace,'faces in the opened letters');ok(out.a2.ward,'To the ward');
+ok(a.recFace&&a.btn&&out.a2.medFace,'faces in the opened letters '+JSON.stringify({rf:a.recFace,b:a.btn,mf:out.a2.medFace}));ok(out.a2.ward,'To the ward');
 await A.evaluate(async()=>{if(CUR_MODAL)CUR_MODAL.done(null);await new Promise(r=>setTimeout(r,500))});
 
 /* ── B · board life ── */

@@ -68,7 +68,7 @@ function computeHL() {
         });
       }
     }
-    for (const t of tamedTargets(n, p)) HL.set(t.r * N + t.c, {
+    if (!S.cmd.attacked) for (const t of tamedTargets(n, p)) HL.set(t.r * N + t.c, { /* v0.99: move AND attack, in either order */
       t: 'catk',
       target: t
     });
@@ -118,12 +118,16 @@ function onTile(r, c) {
         await npcWalk(cmd.n, [[r, c]], npcStats(cmd.n).mv + (fly ? 0 : 0));
         cmd.moved = true;
         cmd.lock = false;
-        if (!tamedTargets(cmd.n, cmd.p).length) {
+        if (cmd.attacked || !tamedTargets(cmd.n, cmd.p).length) {
           finishCommand();
         } else render();
       } else if (h.t === 'catk') {
         await tamedAttack(cmd.n, cmd.p, h.target);
-        finishCommand();
+        cmd.attacked = true;
+        cmd.lock = false;
+        /* v0.99: a beast that attacked first may still move (unless it already moved, carries something, or fell) */
+        if (cmd.moved || !cmd.n.alive || cmd.n.carry || S.over) finishCommand();
+        else { computeHL(); render(); }
       }
     })();
     return;
@@ -1952,13 +1956,18 @@ function draw() {
           catk: TB.hlAtk,
           push: TB.hlPush,
           topple: TB.hlPush,
-          tunnel: 'rgba(90,140,200,.55)',
+          tunnel: 'rgba(110,175,255,.75)',
           rete: 'rgba(80,180,170,.5)'
         }[h.t];
         ctx.globalAlpha = TB.hlAlpha;
         ctx.fillStyle = col;
         ctx.fill();
         ctx.globalAlpha = 1;
+        if (h.t === 'tunnel') { /* v0.99: usable exits stand out — a bright blue edge over the dark shaft token */
+          ctx.strokeStyle = '#9fd4ff';
+          ctx.lineWidth = Math.max(2, TW * 0.05);
+          ctx.stroke();
+        }
         if ((h.t === 'move' || h.t === 'cmove') && TW > 30) {
           const m = center(r, c);
           ctx.fillStyle = 'rgba(50,20,0,.85)';
@@ -2781,7 +2790,7 @@ function render() {
   if (S.over) a = `<p class="hint">${_T`The event is over. Start a new one from the top bar.`}</p>`;else if (ph === 'command' && S.cmd) {
     const n = S.cmd.n,
       zo = n.t === 'zora' ? zoraPickOptions(n) : [];
-    a = `<p class="hint">${_T`Command <b>${n.name}</b>: click an orange tile to move${S.cmd.moved ? ' (moved)' : ''}${n.carry ? `. Carrying ${n.carry.label}: half movement, no attacks` : _T(', or a red ring to attack')}${n.t === 'zora' ? '. Zora flies over everything and can land on pillars' : ''}.`}</p><div class="acts">${zo.map((o, i) => `<button class="btn" type="button" data-act="zpick" data-i="${i}">${_T`Pick up ${o.label}<small>halves his movement</small>`}</button>`).join('')}${n.carry ? `<button class="btn" type="button" data-act="zdrop">${cheb(n, S.cmd.p) <= 1 ? _T('Deliver to ') + S.cmd.p.name : _T('Drop here')}<small>${n.carry.label}</small></button>` : ''}<button class="btn primary" type="button" data-act="cmddone">${_T`Done commanding`}</button></div>`;
+    a = `<p class="hint">${_T`Command <b>${n.name}</b>: click an orange tile to move${S.cmd.moved ? ' (moved)' : ''}${S.cmd.attacked ? _T(' (it attacked, it may still move)') : ''}${n.carry ? `. Carrying ${n.carry.label}: half movement, no attacks` : _T(', or a red ring to attack')}${n.t === 'zora' ? '. Zora flies over everything and can land on pillars' : ''}.`}</p><div class="acts">${zo.map((o, i) => `<button class="btn" type="button" data-act="zpick" data-i="${i}">${_T`Pick up ${o.label}<small>halves his movement</small>`}</button>`).join('')}${n.carry ? `<button class="btn" type="button" data-act="zdrop">${cheb(n, S.cmd.p) <= 1 ? _T('Deliver to ') + S.cmd.p.name : _T('Drop here')}<small>${n.carry.label}</small></button>` : ''}<button class="btn primary" type="button" data-act="cmddone">${_T`Done commanding`}</button></div>`;
   } else if (p.cpu) a = `<p class="hint">${_T`${p.name} (CPU, ${typeof AI_TIERS !== 'undefined' && p.tier != null ? AI_TIERS[p.tier].n : p.diff}) is taking their turn…`}</p>`;else if (ph === 'resolve') a = `<p class="hint">${_T`The arena reacts to you. NPCs are moving…`}</p>`;else if (ph === 'choice') a = `<div class="acts"><button class="btn primary" type="button" data-act="coin" ${S.busy ? 'disabled' : ''}>${_T`Take ${coinAmt87(2)}<small>safe</small>`}</button><button class="btn" type="button" data-act="card" ${S.busy || !canDraw() ? 'disabled' : ''}>${_T`Draw arena card<small>${canDraw() ? S.deck.length + _T(' left · high risk') : _T('no arena deck in this event')}</small>`}</button></div>`;else if (ph === 'action' && isChariot()) {
     const srcs = attackSources(p).filter(s => !s.thr);
     const m = S.mode;
@@ -3309,8 +3318,8 @@ async function openMarket(player) {
       });
     }
     if (player.market && vetOn) btns.push({
-      label: vetCF ? _T('⚖ Pay old debts in coin') : _T('⚖ Pay old debts in CF'),
-      sub: _T('Veteranus: +1 per purchase'),
+      label: vetCF ? _T('⚖ Pay the +1 in coin instead') : _T('⚖ Pay the +1 in CF instead'),
+      sub: _T('Veteranus old debts: every buy costs +1'),
       value: 'taxswap'
     });
     btns.push({

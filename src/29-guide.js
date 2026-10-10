@@ -55,7 +55,7 @@ function turnSuggest(player){
 /* v0.46: only point at a card or offering the player can actually use right now, to some effect */
 /* itemPlayable — can this card or offering in hand be used right now, to some effect? */
 function itemPlayable(player,item){try{const k=String(item.key||'');const hurt=typeof hurtBad==='function'&&hurtBad(player);
-  if(item.kind==='offer'){if(/^elix/.test(k))return hurt;if(/^ap/.test(k))return LOCS.some(l=>player.hp[l]>0);if(k==='eagle')return cfAllowed();return /^m[wa]\d|^merc/.test(k)}
+  if(item.kind==='offer'){if(/^elix/.test(k))return hurt;if(/^ap/.test(k))return LOCS.some(l=>player.hp[l]>0);if(k==='eagle')return true;return /^m[wa]\d|^merc/.test(k)}
   if(item.kind!=='card')return false;const C=CARDS[k];if(!C)return false;
   const foes=activePlayers().filter(q=>q!==player&&!q.underground);const beastsNear=S.npcs.filter(n=>n.alive&&n.t!=='zora');
   switch(k){case 'elixir4':case 'elixir2':return hurt;case 'hygeia':return LOCS.some(l=>player.hp[l]<=0&&l!=='head'&&l!=='chest');

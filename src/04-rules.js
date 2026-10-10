@@ -326,7 +326,7 @@ async function doAttack(player, source, target, {
       log(wIco87('use') + _T`The ${w.n} is worn out.`);
     }
   }
-  if (h > 0 && w.soul && player.alive) await distributeHP(player, h * w.soul, _T`${w.n}'s soul steal`);
+  if (h > 0 && w.soul && player.alive) await distributeHP(player, h * w.soul, _T`${w.n}'s soul steal`, target && target.alive === false); /* v0.99: a killing blow places the stolen HP itself */
   if (h > 0 && w.cfw) {
     cfWhy('crowd-pleasing weapons');
     player.cf += h * w.cfw;
@@ -596,7 +596,7 @@ async function lyreControl(player) {
     })).filter(o => o.d < 1e9).sort((a, b) => a.d - b.d)[0]?.x;
   } else {
     const id = await modal(_T('Lyre of Orpheus'), `<p>${_T`Serenade one beast and lead it toward your starting tile ${tl(sr, sc)}. Two captures let you exit. Step off your starting tile so the beast can reach it.`}</p>`, cands.map(x => ({
-      label: `${x.name} (${NPCT[x.t].n})`,
+      label: `${typeof npcTokHTML === 'function' ? `<span class="tok99">${npcTokHTML(x, 30)}</span>` : ''}${x.name} (${NPCT[x.t].n})`,
       sub: `${tl(x.r, x.c)} · ${dOf(x) >= 1e9 ? _T('no path') : dOf(x) + _T(' moves away')}`,
       value: x.id
     })).concat([{
@@ -1032,7 +1032,7 @@ async function pickNPC(player, title, filter, note = '') {
   }
   if (player.cpu) return c.sort((a, b) => cheb(player, a) - cheb(player, b))[0];
   const id = await modal(title, `<p>${note}</p>`, c.map(n => ({
-    label: `${n.name} (${NPCT[n.t].n})`,
+    label: `${typeof npcTokHTML === 'function' ? `<span class="tok99">${npcTokHTML(n, 30)}</span>` : ''}${n.name} (${NPCT[n.t].n})`, /* v0.99: the beast's token round beside its name */
     sub: _T`${tl(n.r, n.c)} · ${n.hp} HP${n.tamedBy != null ? _T(' · tamed by ') + S.players[n.tamedBy].name : ''}`,
     value: n.id
   })).concat([{
@@ -1068,13 +1068,7 @@ async function useItem(player, it) {
       player.mv = Math.min(7, player.mv + v);
       log(_T`${nm(player)} declares Speed of Mercury: +${v} movement.`);
     } else if (k === 'eagle') {
-      if (!cfAllowed()) {
-        if (!player.cpu) await modal(_T('Crowd Favor is locked'), `<p>${_T`Crowd Favor cannot be redeemed right now.`}</p>`, [{
-          label: 'OK',
-          value: 1
-        }]);
-        return false;
-      }
+      /* v0.99 (his rule): a no-CF round only stops SPENDING Crowd Favor — trading the Eagle to the crowd still earns it */
       player.cf += 5;
       log(_T`${nm(player)} trades the Golden Eagle to the crowd for ${cfAmt87(5)}. It respawns atop a pillar.`);
       const pl = pickOne(S.pillars);

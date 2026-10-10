@@ -39,7 +39,7 @@ ONL83.regNamed=function(defs){for(const d0 of defs||[]){const d=ONLC.cleanNamed(
 
 /* ---------------- offerings brought: cf1/cf2 are played from the hand (the printed ones resolve on reveal) ---------------- */
 {const base=useItem;useItem=async function(player,it){if(it&&it.kind==='offer'&&(it.key==='cf1'||it.key==='cf2')){
-    if(!cfAllowed()){if(!player.cpu)await modal(_T('Crowd Favor is locked'),`<p>${_T`Crowd Favor cannot be gained right now.`}</p>`,[{label:'OK',value:1}]);return false}
+    /* v0.99: a no-CF round blocks spending only; the offering still earns */
     const v=it.key==='cf1'?1:2;cfWhy('offerings');player.cf+=v;log(_T`${nm(player)} offers to the crowd: <b>${cfAmt87('+'+(v))}</b>.`);player.items=player.items.filter(x=>x!==it);return true}
   return base.apply(this,arguments)}}
 

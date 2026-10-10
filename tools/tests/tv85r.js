@@ -51,11 +51,11 @@ o.d=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   r.oldNo=!!old&&!/🆕/.test(gTags(old));r.noLastWk=!/this week or last/.test(document.getElementById('mgrBody').innerHTML);
   old.debut={s:w.season,wk:1};w.week=3;ng.debut={s:w.season,wk:2};r.lastWkNo=!/🆕/.test(gTags(ng));w.week=1;return r});
 const sx=(p,n)=>p.screenshot({path:'/tmp/tv85r_'+n+'.png'});await sx(pg,'watch8');
-ok(o.d.boardH<300,'8 watchers: board under 300px');ok(o.d.cards===8&&o.d.cols===4,'four lanes, eight tablets');
+ok(o.d.boardH<360,'8 watchers: board under 360px (v0.99: the recruit card is wider, his ask)');ok(o.d.cards===8&&o.d.cols===4,'four lanes, eight tablets');
 ok(o.d.posts.length===3&&o.d.posts.every(x=>x<=40),'empty lanes are narrow posts');ok(o.d.postTxt.some(t=>/Courting · 0/.test(t)),'post names its lane');
 ok(o.d.cardH.every(h=>h>=44&&h<=80),'tablets 44-80px (no buttons since v0.95)');ok(o.d.plan&&o.d.planNoHrs,'plan on one folded line, no hours');ok(o.d.planOpen&&o.d.planKept&&o.d.planShut,'plan unfolds and remembers');
 ok(o.d.oneLine,'rough rating ranges before scouting');ok(o.d.advBtn&&o.d.noBox,'advisor ★ on the button, no box');ok(o.d.boardStar&&o.d.more,'★ advised on the button, 📌 board pin, ⋯');
-ok(o.d.rows.length>=10&&o.d.rows.every(h=>h<=44),'list rows on one line (≤44px)');ok(o.d.rowOdds,'rank text on hover');ok(o.d.toolbar===1,'one toolbar row');
+ok(o.d.rows.length>=10&&o.d.rows.every(h=>h<=44),'list rows on one line (≤44px)');ok(o.d.rowOdds,'rank text on hover');ok(o.d.toolbar>=1&&o.d.toolbar<=2,'a compact toolbar (≤2 rows beside the wider card)');
 ok(o.d.sel,'tablet click selects the card');ok(o.d.noPin,'opening a card does not pin');ok(o.d.stamp&&o.d.scouted,'the next-step button scouts');ok(o.d.ratAfter,'ratings after scouting');
 ok(o.d.newYes&&o.d.newNo&&o.d.oldNo&&o.d.noLastWk&&o.d.lastWkNo,'🆕 only this week');
 /* ---------- desktop: a mixed board ---------- */

@@ -81,10 +81,10 @@ ok(r6.stamp,'6 the Consilium letter is stamped with the host city');ok(r6.droppe
 /* ---- 8 · any fighter on a card clears "none entered" ---- */
 const r8=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const o={};const mineIds=new Set(rosterOf(m).map(g=>g.id));
   for(const b of w.night.bouts){b.ents=b.ents.map(id=>mineIds.has(id)?null:id);b.ents=b.ents.filter(x=>x)}
-  MGR.tab='ludus';MGR_REDRAW();await W8(400);const txt=()=>[...document.querySelectorAll('#mgrBody .wkitem')].map(x=>x.textContent).join('|');
+  MGR.tab='ludus';MGR_REDRAW();await W8(400);const txt=()=>[...document.querySelectorAll('#mgrBody .wkitem, #mgrBody #desk99 .dk99row')].map(x=>x.textContent).join('|');
   o.before=/None of your fighters is on this week/.test(txt());o.none=onCard96()===0;
   const g=rosterOf(m).find(x=>!x.inj);w.night.bouts[0].ents.push(g.id);MGR_REDRAW();await W8(400);
-  o.after=!/None of your fighters is on this week/.test(txt())&&/on this week's card/.test(document.querySelector('#mgrBody .wkcheck').textContent);o.n=onCard96();
+  o.after=!/None of your fighters is on this week/.test(txt())&&/on this week's card/.test((document.querySelector('#mgrBody .wkcheck')||document.querySelector('#mgrBody #desk99')||{textContent:''}).textContent);o.n=onCard96();
   o.todo=!(ludusTodos().some(x=>x[0]==='⚔'&&/None of your fighters/.test(x[1])));return o});
 ok(r8.before&&r8.none,'8 nobody entered shows the item first '+JSON.stringify(r8));ok(r8.after&&r8.n===1&&r8.todo,'8 one fighter on a card clears it at once '+JSON.stringify(r8));
 /* ---- 11 · invitational Answer ---- */

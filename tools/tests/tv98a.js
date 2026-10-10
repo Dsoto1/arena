@@ -108,7 +108,7 @@ const m1=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   return {rules:t('[data-mm="rules"]').trim(),en:(q('[data-mm="rules"]')||{dataset:{}}).dataset.en84,slabs:document.querySelectorAll('#mainMenu .ss98').length,play:!!q('[data-mm="play"].ss98-play svg'),
     sub:t('[data-mm="multi"] small'),bg:getComputedStyle(q('[data-mm="manager"]')).backgroundImage.includes('linear-gradient'),top:(document.getElementById('btnRules')||{}).textContent}});
 ok(m1.rules==='Tactics'&&m1.en==='Tactics'&&/Tactics/.test(m1.top||''),'"Rules" → "Tactics" (menu + top bar) '+JSON.stringify([m1.rules,m1.top]));
-ok(m1.slabs>=9&&m1.play&&m1.bg&&/Hot seat/.test(m1.sub),'sandstone slabs, Play Now porphyry, Multiplayer subtitle '+JSON.stringify(m1));
+ok(m1.slabs>=9&&m1.play&&m1.bg&&!/Hot seat/.test(m1.sub),'sandstone slabs, Play Now porphyry, no hot-seat line under Multiplayer (v0.99 1b) '+JSON.stringify(m1));
 const e=await pg.evaluate(m0=>ERR92.n-m0,mark);ok(e===0,'no new error-log entries '+e);
 
 /* ── 4 · phones: 390 px, no sideways scroll ── */

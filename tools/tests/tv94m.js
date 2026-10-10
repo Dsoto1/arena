@@ -112,10 +112,10 @@ ok(r5.seat,'5 the seat carries the equipped gear + offerings '+JSON.stringify(r5
 ok(r5.lost&&r5.loot,'6 the broken flail is gone, the picked-up gladius came home');ok(r5.dmg&&r5.seatDmg,'6 armor stripped at 0 AP comes back damaged and stays home');ok(r5.offer,'6 the unused offering came home, the used one is gone');
 ok(r5.fixed,'6 the armorer mends it for a fifth of the price');ok(r5.mkSkip&&r5.mkLoot&&r5.mkTag,'6 an in-bout market buy does not come home, a looted piece does '+JSON.stringify(r5));ok(r5.settled,'6 a simulated bout settles');
 /* ---- 7 · a dead fighter's gear goes back to the shelf ---- */
-const r7=await pg.evaluate(()=>{const w=W_(),m=me();const B0=gById(window.__B);const B=B0&&B0.alive&&B0.eq94&&(B0.eq94.R||B0.eq94.a.length)?B0:rosterOf(m).find(g=>g.eq94&&(g.eq94.R||g.eq94.a.length)); /* the bout in 5 may have killed B */const ids=[B.eq94.R,B.eq94.L,...B.eq94.a].filter(Boolean).map(P=>P.id);
+const r7=await pg.evaluate(()=>{const w=W_(),m=me();const B0=gById(window.__B);const B=B0&&B0.alive&&B0.eq94&&(B0.eq94.R||B0.eq94.a.length)?B0:rosterOf(m).find(g=>g.eq94&&(g.eq94.R||g.eq94.a.length)); /* the bout in 5 may have killed B */const PS=[B.eq94.R,B.eq94.L,...B.eq94.a].filter(Boolean);const ids=PS.filter(P=>P.iss!==B.id).map(P=>P.id),issued=PS.filter(P=>P.iss===B.id).map(P=>P.id); /* v0.99: the issued class kit vanishes with him */
   B.alive=false;const X={got:{R:null,L:null,a:[]},carry:false,cls:B.cls,R:null,L:null,pc:{},items:[]};arm94Settle(w,{ents:[B.id]},{g94:{[B.id]:X}});
-  const sh=arm94H(m).sh.map(P=>P.id);const o={back:ids.length>0&&ids.every(id=>sh.includes(id)),gone:!B.eq94};B.alive=true;arm94EnsureG(w,B);o.noFree=!!B.eq94&&!B.eq94.R&&!B.eq94.a.length;return o});
-ok(r7.back&&r7.gone,'7 the dead man\'s gear is back on the shelf '+JSON.stringify(r7));ok(r7.noFree,'7 a second signing makes no gear from nothing');
+  const sh=arm94H(m).sh.map(P=>P.id);const o={back:ids.every(id=>sh.includes(id))&&issued.every(id=>!sh.includes(id))&&PS.length>0,gone:!B.eq94};B.alive=true;arm94EnsureG(w,B);o.noFree=!!B.eq94&&!B.eq94.R&&!B.eq94.a.length;return o});
+ok(r7.back&&r7.gone,'7 the dead man\'s own gear is back on the shelf, his issued kit is gone '+JSON.stringify(r7));ok(r7.noFree,'7 a second signing makes no gear from nothing');
 /* ---- 8 · rival houses buy gear ---- */
 const r8=await pg.evaluate(async()=>{const w=W_();const o={};const R=w.mgrs.find(x=>!x.isPlayer&&!x.dead&&rosterOf(x).some(g=>g.eq94&&g.eq94.R));const g=rosterOf(R).find(g=>g.eq94&&g.eq94.R);
   const k=g.eq94.R.k;g.eq94.R=null;arm94H(R).sh=arm94H(R).sh.filter(P=>P.t!=='w');R.coin=500;const c0=R.coin;const sp=arm94AutoShop(w,R);o.sp=sp;o.filled=!!g.eq94.R&&g.eq94.R.k===k;o.paid=sp>0&&R.coin<c0;

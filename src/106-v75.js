@@ -222,7 +222,7 @@ openMarket=async function(player){mktFix75();const vetOn=weak(player,'tax');if(v
     if(!player.market)btns.push({label:_T('Unlock market'),sub:cfAllowed()?cfAmt87(3):_T('Crowd Favor is locked'),value:'unlock',disabled:player.cf<3||!cfAllowed(),primary:1});
     else for(const lv of [1,2,3]){const left=[1,2,3,4].some(s=>wHas75(S.market.w[lv],s)||aHas75(S.market.a[lv],s));
       btns.push({label:_T`Buy at level ${lv}`,sub:_T`${coinAmt87(purchaseCost(player,lv)+vet)}${vetCF?` + ${cfAmt87(1)}`:''}${left?'':' · empty'}`,value:'b'+lv,disabled:!left||player.coin<purchaseCost(player,lv)+vet||vetCF&&player.cf<1})}
-    if(player.market&&vetOn)btns.push({label:vetCF?_T('⚖ Pay old debts in coin'):_T('⚖ Pay old debts in CF'),sub:_T('Veteranus: +1 per purchase'),value:'taxswap'});
+    if(player.market&&vetOn)btns.push({label:vetCF?_T('⚖ Pay the +1 in coin instead'):_T('⚖ Pay the +1 in CF instead'),sub:_T('Veteranus old debts: every buy costs +1'),value:'taxswap'});
     btns.push({label:_T('Close market'),value:'close'});
     const v=await modal(_T('Market of Flavius'),body,btns,{wide:1});
     if(v==='close'||!v)break;

@@ -1,0 +1,11 @@
+const {chromium}=require('playwright');const path=require('path');
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:1600,height:1000}});await ctx.route(/fonts\./,r=>r.abort());
+ await ctx.addInitScript(()=>{Object.defineProperty(navigator,'webdriver',{get:()=>false});localStorage.setItem('flavius_firstrun','shown')});
+ const pg=await ctx.newPage();await pg.goto('file://'+path.resolve(process.argv[2]));await pg.waitForFunction(()=>window.FLAVIUS_READY,null,{timeout:90000});
+ await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));if(CUR_MODAL)CUR_MODAL.done(null);menuHide();openManager();await W8(800);
+  newWorld({type:'custom',mgr:{name:'T',ludus:'LT',city:'Roma',color:'#c0433a',p:{...MGR_PRESETS.balanced[1]},portrait:{},diff:'normal'}});
+  const w=W_(),m=me();const fa=freeAgents().sort((a,b)=>effOvr(b)-effOvr(a));for(const g of fa.slice(0,3)){g.contract={mgr:m.id,wage:5,weeks:20,since:w.week}}w.pend=[{t:"blood",gid:fa[0].id,fi:2,f:12,price:30},{t:"thumb",gid:fa[1].id,f:18}];
+  MGR.tab='night';MGR_REDRAW();await W8(800);const a=document.querySelector('#mgrBody .card2.bout .acts');if(a)a.scrollIntoView({block:'center'});await W8(300)});
+ await pg.screenshot({path:process.argv[3]});
+ await pg.evaluate(async()=>{const a=[...document.querySelectorAll('#mgrBody .mbtns,#mgrBody .acts')].pop();if(a)a.scrollIntoView({block:'center'});await new Promise(r=>setTimeout(r,300))});
+ await pg.screenshot({path:process.argv[3].replace('.png','_b.png')});await b.close()})();

@@ -100,3 +100,12 @@ STATUS KEY: FIX = clear, v0.99 candidate on his go · ASK = needs his answer fir
 ## HIS ANSWERS 2026-10-09 (round 2) — still nothing built
 3   Starter kits (class loadout, weapons AND armor) are ISSUED: just to get a fighter into the arena, never a profit source -> worth 0, cannot be sold, vanish when the fighter dies/leaves/loses them (like the online Issued kit); bought or won pieces still return to the shelf. (Assumption to confirm when building: a fighter who is released alive also takes/loses his issued kit.)
 22  Your gladiator may enter ANY event on the card, incl. the week's headline special events (Familia, Juggernaut, Orpheus...). Triumviratus stays undercard-only. Plus: every so often ONE event / special event is RANK-RESTRICTED (only gladiators of a given rank may enter). OPEN: what "rank" means in Manager — rating band (grade A/B/C...), medal-ladder grade, or wins/fame tiers?
+
+## BUILT 2026-10-10 for v0.99 (272-v99fix4, test tv99q) — his "build all for .99 if it makes sense"
+Built: 3a 3 3b 3c 4 5 6 7 9 10 11(test) 12 14 18 21 22(Triumviratus undercard-only) 23 24 25 26 28 + the fallen-count banner bug.
+Notes: 10 = his TTS Zora was already the 3D-minis render (same bundle); the figure styles used the old crop → assets/zora99.webp. 2b: city stalls stock
+per city/week (Roma/Capua carry all levels; over the weeks every printed L1-3 piece shows up there) — no change made. Welcome scroll skips headless test
+browsers unless localStorage flavius_welc99on=1.
+STILL v1.0 (not built): 22 "enter your gladiator into ANY event" + occasional rank-restricted events (rank = rating grade, 22a) — needs a design for how
+the card offers special events; 8 Fortuna's Bounty animation, 13 gem/dud signing celebration, 15 spiders, 16/17 3D armor + weapons, 19 expressive animation,
+20 3D spectators; Fight Night rename + My ludus mock layout; server security pass + real ranked verification.
