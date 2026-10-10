@@ -1,7 +1,7 @@
 # Flavius Rule Arena — handoff notes for Claude Code
 
 A single-file HTML/JS/Canvas adaptation of **Virgilante's board game "Flavius Rule"** (gladiators in a 13×13 isometric
-arena, Roman-themed). Current version: **v0.98**. Owner: Virgilante.
+arena, Roman-themed). Current version: **v0.99**. Owner: Virgilante.
 
 Modes: **Play Now / New event** (single events, festival, missio, tournament), **Manager mode** (run a ludus through
 12-week seasons), **Creator Studio** (designers for characters, classes, lanistas, beasts, cohorts, tokens, weapons,
@@ -1288,6 +1288,11 @@ share copy — the site download play/flavius-rule-arena.zip.)
   bonus renames/Profile regroup (252, server); Domus layout + offerings cap 2 (253, server); online Fast desync fixed (254); custom gear joins drafts
   (257); chariot horses: pool of 12 two-horse tokens, drawn per race, visible flip, his sharper art (258); regression fixes (259). Ludus stays off
   online until a real per-lanista draft exists (backlog). Server changed — flavius.sh release deploys it. GitHub full run: 258/259 + tv91n (flaky, passed alone) + 3 flaky.
+
+- **v0.99** one face, one desk (no server change): every human face through one painterly painter + shapeable features (263/268), the Lanista's
+  desk (270), twelve arena themes on by default, zoomed play steady (260), Character + Lanista designers on one frame (262), Event Designer test play
+  seats all starts, pick your fighter in a live Manager bout, fixes from his V99 notes (271) and fix4 (272: issued kits, damaged armor shelved, Armory
+  selling, compact Match Week, welcome scroll, city classes, tamed beasts move+attack, eagle CF in no-CF rounds, new Zora figure).
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
