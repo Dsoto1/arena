@@ -35,7 +35,7 @@ o.h=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms));co
   const old={ver:'0.86',hours:7,letters:[{key:'bye-x',body:`<li>${_T`<b>Recruit</b>: you have ${BYE_HOURS} extra lanista's hours — scout, pitch and sign before the others wake up.`}</li>`}]};migrateWorld(old);r.mig=['hours' in old,/lanista/.test(old.letters[0].body)];
   return r});
 ok(!o.h.saved,'hours never saved');ok(o.h.after0===99&&o.h.afterSub===99,'no hours pool to spend');ok(!o.h.lanH,'no "lanista\'s hours" on Recruiting');
-ok(!o.h.btnH.length,'no "N h" on recruiting buttons '+o.h.btnH.join(' | '));ok(!o.h.badge&&Array.isArray(o.h.stat)&&/recruiter/.test(o.h.stat[1])&&o.h.done===false,'no lanista hours badge / ✓; the banner counts the recruiter\'s hours (v0.98)');
+ok(!o.h.btnH.length,'no "N h" on recruiting buttons '+o.h.btnH.join(' | '));ok(!o.h.badge&&Array.isArray(o.h.stat)&&/recruiter/i.test(o.h.stat[1])&&o.h.done===false,'no lanista hours badge / ✓; the banner counts the recruiter\'s hours (v0.98)');
 ok(o.h.pitchBtn&&/interest/.test(o.h.pitchMsg)&&o.h.pitchCoin===0&&o.h.gate,'a pitch is free, says what it gained, once a week');ok(o.h.clk>=1,'the clock counts actions');
 ok(!o.h.oval,'no Recruiting oval');ok(!o.h.todo&&!o.h.endc,'no hours to-do / end-week line');ok(!o.h.prom,'Promote without hours');
 ok(o.h.raiseBtn&&o.h.raise2dis&&o.h.raised===2,'one raise a week '+o.h.raised);ok(!o.h.sales||o.h.sales[1]>=o.h.sales[0],'ticket sales follow the week');

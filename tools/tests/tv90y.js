@@ -23,7 +23,7 @@ const p=await pg.evaluate(async()=>{const W8=ms=>new Promise(x=>setTimeout(x,ms)
   const g=ros[0];w.train='hard';r.regPvOk=yd90Week(g,{regime:'hard'}).str[1]>yd90Week(g,{regime:'off'}).str[1];
   const K=['spd','str','int','cha'];const val=x=>{const s=gStats(x);return Object.fromEntries(K.map(k=>[k,s[k]+((x.sxp||{})[k]||0)]))};
   const pre=ros.map(x=>{const v=yd90Week(x);return Object.fromEntries(K.map(k=>[k,v[k][1]]))});
-  for(const bt of (w.night&&w.night.bouts)||[])bt.done=true;w.pend=[];const wk=w.week;const MR=Math.random;Math.random=()=>0.97;try{await endWeek()}finally{Math.random=MR}await W8(400);r.adv=W_().week!==wk;
+  for(const bt of (w.night&&w.night.bouts)||[])bt.done=true;w.pend=[];const wk=w.week;const MR=Math.random;const G96c=GROW96.chance;GROW96.chance=0;/* v0.97: the hashed 10% chance of +0.2 elsewhere would move a stat */Math.random=()=>0.97;try{await endWeek()}finally{Math.random=MR;GROW96.chance=G96c}await W8(400);r.adv=W_().week!==wk;
   r.diff=ros.map((x,i)=>{const a=val(x);return Math.max(...K.map(k=>Math.abs(a[k]-pre[i][k])))});w.train='off';MGR.tab='practice';MGR_REDRAW();await W8(300);
   return r});
 ok(p.prio===0&&!p.prioTxt,'4 no routine select, squad rows or First/Normal/Last');ok(p.docSide&&p.studySide&&p.cards,'3 doctore + study in the Doctore panel, one card each');

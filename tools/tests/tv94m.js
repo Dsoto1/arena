@@ -75,7 +75,7 @@ const r4=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms
   const H=arm94H(m);const n0=H.sh.length;const c0=m.coin;const btn=document.querySelector('#citySideBody [data-arm94buy]:not([disabled])');const i=+btn.dataset.arm94buy;const it=arm94Stock(w,CITY.li)[i];const left0=arm94Left(w,CITY.li,i);
   btn.click();await W8(200);o.buy=H.sh.length===n0+1&&H.sh[H.sh.length-1].k===it.k&&c0-m.coin===cityPr(it.pr)&&arm94Left(w,CITY.li,i)===left0-1;
   o.visit=/to the Armory/.test(document.getElementById('cbar89Visit').textContent);
-  const sp=H.sh[0];const c1=m.coin;const n1=H.sh.length;const sb=document.querySelector(`#citySideBody [data-arm94sell="${sp.id}"]`);if(sb)sb.click();await W8(200);o.sell=!!sb&&H.sh.length===n1-1&&m.coin>c1;
+  const sp=H.sh.find(P=>P&&!P.iss&&!P.dmg)||H.sh[0]; /* v0.99: issued starter kits are not sellable */const c1=m.coin;const n1=H.sh.length;const sb=document.querySelector(`#citySideBody [data-arm94sell="${sp.id}"]`);if(sb)sb.click();await W8(200);o.sell=!!sb&&H.sh.length===n1-1&&m.coin>c1;
   /* v0.94 tuning: 30% back (15% damaged), three sales a week per house, then a plain refusal */
   const T1=arm94New(w,'a','thorax');H.sh.push(T1);const c2=m.coin;const rr=arm94Sell(T1.id);o.sell30=rr.ok&&m.coin-c2===Math.floor(arm94Price('a','thorax')*0.3)&&ARM94.sellK===0.3&&ARM94.repK===0.2;
   const D1=arm94New(w,'a','thorax');D1.dmg=1;H.sh.push(D1);const c3=m.coin;arm94Sell(D1.id);o.sell15=m.coin-c3===Math.floor(arm94Price('a','thorax')*0.15);

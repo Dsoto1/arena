@@ -6,7 +6,7 @@ await pg.click('[data-mm="studio"]');await pg.waitForTimeout(1800);
 await pg.click('[data-st="tab"][data-v="chars"]');await pg.waitForTimeout(600);
 const o={};o.chars=await pg.evaluate(()=>({top:!!document.querySelector('.chartop [data-st="new"]'),rand:!!document.querySelector('.chartop [data-st="random"]'),saveplay:!!document.querySelector('[data-st="saveplay"]'),budget:!!document.querySelector('.budgetcard'),flags:document.querySelectorAll('.bgflag').length,listNew:document.querySelectorAll('[data-st="new"]').length}));
 await pg.click('.chartop [data-st="random"]');await pg.waitForTimeout(400);
-await pg.click('.bgflag:nth-child(3)');await pg.waitForTimeout(400);o.bg=await pg.evaluate(()=>ST.draft.portrait.bg);
+await pg.evaluate(()=>{const b=document.querySelector('.df99 [data-df99t="look"]');if(b)b.click()});await pg.waitForTimeout(300);await pg.click('.bgflag:nth-child(3)');await pg.waitForTimeout(400);o.bg=await pg.evaluate(()=>ST.draft.portrait.bg);
 await pg.click('[data-st="tab"][data-v="classes"]');await pg.waitForTimeout(500);await pg.evaluate(()=>{const c=document.querySelector('[data-f="sandbox"]');c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}))});await pg.waitForTimeout(400);
 o.sbx=await pg.evaluate(()=>!!document.querySelector('.budgetcard .cbadge.sbx'));
 await pg.screenshot({path:'st_char.png'});

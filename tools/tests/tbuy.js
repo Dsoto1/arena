@@ -5,8 +5,8 @@ await pg.evaluate(()=>{newWorld({type:'pre',key:MGR_PRE[0].key});openManager()})
 const setup=await pg.evaluate(()=>{const w=W_(),m=me();const g=rosterOf(m)[0];g.dream='ludus';g.fame=60;g.ovr=82;g.pot=85;g.purse=200;w.forceBuy=1;w.buyWk=-99;purseWeek(w,m);MGR.tab='ludus';MGR_REDRAW();
   return {offer:w.buyOffer,glad:g.name,oldLudus:m.ludus,oldCoin:m.coin,card:!!document.querySelector('[data-mg="buyaccept"]')}});
 await pg.screenshot({path:'buy_offer.png',clip:{x:0,y:0,width:1500,height:520}});
-await pg.evaluate(()=>{const d=document.querySelector('[data-mg="buyaccept"]');const m=d&&d.closest('details');if(m)m.open=true}); /* v0.56: the offer arrives as mail */
-await pg.click('[data-mg="buyaccept"]');await pg.waitForTimeout(500);
+await pg.evaluate(()=>{const d=document.querySelector('[data-mg="buyaccept"]');const m=d&&d.closest('details');if(m)m.open=true;const x=d&&d.closest('.dk99ex');if(x&&x.hidden){const r=x.closest('.dk99row');const t=r&&r.querySelector('[data-dk99open]');if(t)t.click()}}); /* v0.56: the offer arrives as mail */
+await pg.waitForTimeout(200);await pg.click('[data-mg="buyaccept"]');await pg.waitForTimeout(500);
 const create=await pg.evaluate(()=>({h:(document.querySelector('#mgrBody h4')||{}).textContent,btn:(document.querySelector('[data-mg="nmgo"]')||{}).textContent}));
 await pg.evaluate(()=>{const i=document.querySelector('[data-nm="ludus"]');i.value='Ludus Novus';i.dispatchEvent(new Event('input',{bubbles:true}))});
 await pg.click('[data-mg="nmgo"]');await pg.waitForTimeout(800);

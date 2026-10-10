@@ -43,7 +43,7 @@ out.lay=await A.evaluate(()=>{const R=document.getElementById('onlRoom80');const
     figs:R.querySelectorAll('.r80-seat .r96-fig').length,slots:R.querySelectorAll('.r80-seat .r96-bub[data-bub96]').length,row1:new Set(seats.map(s=>Math.round(box(s).y))).size,
     seatsR:S0.r,sideX:side?box(side).x:0,tblY:tbl?box(tbl).y:0,seatsB:S0.b,users:R.querySelectorAll('.r96-side .r96-u').length,host:R.querySelectorAll('.r96-side [data-onl="rhost"]').length,kick:R.querySelectorAll('.r96-side [data-onl="rkick"]').length,
     seatCtl:R.querySelectorAll('.r80-seat [data-onl="rhost"]').length,chips:R.querySelectorAll('.r96-side .r96-qc [data-onl="rsay"]').length,log:!!document.getElementById('r80Log'),evcard:!!q('.r80-head .r80-ev'),
-    openInv:R.querySelectorAll('.r80-seat.open [data-onl="rinvite"]').length,fid:!!q('.r96-acts .fi89 input'),start:!!q('.r96-tbl [data-onl="start"]'),
+    openInv:R.querySelectorAll('.r80-seat.open [data-onl="rinvite"]').length,fid:!!q('.r96-acts .fi89 input'),start:!!q('.r96-tbl [data-onl="start"],.r99-foot [data-onl="start"]'),
     snd:!!q('.r80-seat.me .snd92 [data-snd92]'),coin:!!q('.r80-seat.me .snd92 img.coinimg'),silver:/🪙/.test((q('.r80-seat.me .snd92')||{}).textContent||''),sndOut:R.querySelectorAll('.snd92').length}});
 const Ly=out.lay;ok(Ly.cls&&Ly.seats===4&&Ly.cards===4&&Ly.open===1&&Ly.figs===3&&Ly.slots===3&&Ly.row1===1,'seats as cards, 4 in one row '+JSON.stringify(Ly));
 ok(Ly.sideX>=Ly.seatsR-2&&Ly.tblY>=Ly.seatsB-2,'list on the right, table settings under the seats');ok(Ly.users===3&&Ly.host===2&&Ly.kick===2&&Ly.seatCtl===0,'lanistas list with Give host + ✕');
