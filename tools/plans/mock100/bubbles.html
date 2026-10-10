@@ -1,0 +1,381 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>One Bubble Family</title>
+<!-- v1.0 mock-up (his note 4): ONE speech/thought bubble system for the whole game. Static: no game code.
+     Board pictures are real game shots (bubbles_board_clean*.png, bubbles_city_crop.png); speaker positions come from the game
+     (bubbles_pos.json / bubbles_city.json, center() minus 0.95 tile for the head). Shots: node tools/plans/mock100/bubbles_shot.js -->
+<style>
+@import url("../mock98/mock98.css");
+:root{
+  --parch:#f5ead2; --parch2:#efe2c4; --ink:#241910; --inkl:#7a5a34; --thought:#ebe2cd; --thoughtk:#8f7a58;
+  --rim:#d6ab4c; --rimk:#5a3c10;
+}
+body{padding:22px 0 48px}
+.pg{width:min(1200px,calc(100% - 32px));margin:0 auto}
+.pg>h1{font:400 28px/1.1 var(--display);color:var(--gold2);letter-spacing:.05em;margin:0 0 6px}
+.pg>.lead{max-width:880px;font-size:15px}
+.cap{display:flex;align-items:baseline;gap:12px;margin:30px 0 10px;flex-wrap:wrap}
+.cap h2{font:400 21px var(--display);color:var(--gold2);letter-spacing:.05em}
+.cap span{color:var(--muted);font-size:14px}
+.note{color:var(--muted);font-size:14px;line-height:1.5;margin:8px 0 0;max-width:1000px}
+.note b{color:var(--bone)}
+.k{font:11px var(--mono);color:var(--dim);letter-spacing:.06em}
+
+/* ================= THE BUBBLE (one component, six variants) ================= */
+/* .b100 = a zero-size anchor at the speaker's head (or the box edge); .bd = the body, placed by slot; .tl = the tail, always at the anchor. */
+.b100{position:absolute;width:0;height:0;z-index:3;--fs:12.5px;--mw:200px;pointer-events:none}
+.b100 .bd{position:absolute;width:max-content;max-width:var(--mw);padding:4px 9px 5px;border-radius:9px;
+  background:linear-gradient(#fbf3e0,var(--parch));color:var(--ink);border:1.5px solid var(--inkl);
+  font:500 var(--fs)/1.28 var(--body);box-shadow:0 3px 10px #0000006b,0 1px 0 #ffffff80 inset;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:var(--lines,3);overflow:hidden;text-wrap:balance;animation:in100 .16s ease-out both}
+.b100 .nm{display:block;font:600 calc(var(--fs) - 3px)/1.15 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:color-mix(in srgb,var(--pc,#6a5540) 72%,#241910);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px}
+.b100 .nm::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--pc,#6a5540);margin-right:4px;vertical-align:1px;box-shadow:0 0 0 1px #0004}
+.b100 .tl{position:absolute;width:14px;height:12px;left:-7px;top:-12px;overflow:visible}
+.b100 .tl path.f{fill:var(--parch)}.b100 .tl path.s{fill:none;stroke:var(--inkl);stroke-width:1.5;stroke-linejoin:round}
+/* slots: N above · NE / NW above, slid sideways · E / W beside the head · S below (online room seats) */
+.b100.n .bd{left:0;bottom:11px;transform:translateX(-50%)}
+.b100.ne .bd{left:-18px;bottom:11px}
+.b100.nw .bd{right:-18px;bottom:11px}
+.b100.e .bd{left:11px;top:0;transform:translateY(-50%)}
+.b100.w .bd{right:11px;top:0;transform:translateY(-50%)}
+.b100.s .bd{left:0;top:11px;transform:translateX(-50%)}
+.b100.e.tp .bd{transform:none;top:-10px} /* clamped to the board top */
+.b100.e .tl{transform:rotate(90deg);left:-1px;top:-6px}
+.b100.w .tl{transform:rotate(-90deg);left:-13px;top:-6px}
+.b100.s .tl{transform:rotate(180deg);top:0}
+@keyframes in100{from{opacity:0;translate:0 4px;scale:.94}to{opacity:1;translate:0 0;scale:1}}
+
+/* SPEECH moods: ink only, the body stays parchment (readable) */
+.b100.angry .bd{border-color:#a3281f}.b100.angry .tl path.s{stroke:#a3281f}
+.b100.gift .bd{border-color:#4f7a3a}.b100.gift .tl path.s{stroke:#4f7a3a}
+.b100.quote .bd{font-style:italic}
+
+/* THOUGHT: cloud edge, muted, italic, trailing dots instead of a tail */
+.b100.th .bd{background:none;border:9px solid transparent;border-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2260%22%20height%3D%2260%22%3E%3Ccircle%20cx%3D%226%22%20cy%3D%226%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2214%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2222%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2230%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2238%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2246%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2254%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2214%22%20cy%3D%226%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2214%22%20cy%3D%2254%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2222%22%20cy%3D%226%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2222%22%20cy%3D%2254%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%226%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2254%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%226%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%2254%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2246%22%20cy%3D%226%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2246%22%20cy%3D%2254%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2254%22%20cy%3D%226%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2254%22%20cy%3D%2214%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2254%22%20cy%3D%2222%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2254%22%20cy%3D%2230%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2254%22%20cy%3D%2238%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2254%22%20cy%3D%2246%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%2254%22%20cy%3D%2254%22%20r%3D%226%22%20fill%3D%22%23ebe2cd%22%20stroke%3D%22%238f7a58%22%20stroke-width%3D%221.6%22/%3E%3Ccircle%20cx%3D%226%22%20cy%3D%226%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2214%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2222%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2230%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2238%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2246%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2254%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2214%22%20cy%3D%226%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2214%22%20cy%3D%2254%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2222%22%20cy%3D%226%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2222%22%20cy%3D%2254%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%226%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2254%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%226%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%2254%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2246%22%20cy%3D%226%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2246%22%20cy%3D%2254%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2254%22%20cy%3D%226%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2254%22%20cy%3D%2214%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2254%22%20cy%3D%2222%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2254%22%20cy%3D%2230%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2254%22%20cy%3D%2238%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2254%22%20cy%3D%2246%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Ccircle%20cx%3D%2254%22%20cy%3D%2254%22%20r%3D%225.2%22%20fill%3D%22%23ebe2cd%22/%3E%3Crect%20x%3D%226%22%20y%3D%226%22%20width%3D%2248%22%20height%3D%2248%22%20fill%3D%22%23ebe2cd%22/%3E%3C/svg%3E") 18 fill / 9px round;padding:0 2px 1px;border-radius:0;
+  color:#4a3a28;font-style:italic;box-shadow:none;filter:drop-shadow(0 3px 6px #00000055);opacity:.96}
+.b100.th .nm{font-style:normal}
+.b100.th .tl{display:none}
+.b100.th .dots{position:absolute;left:0;top:0}
+.b100.th .dots i{position:absolute;border-radius:50%;background:var(--thought);border:1.3px solid var(--thoughtk);box-shadow:0 1px 3px #0005}
+.b100.th .dots i:nth-child(1){width:4px;height:4px;left:-2px;top:-6px}
+.b100.th .dots i:nth-child(2){width:6px;height:6px;left:1px;top:-14px}
+.b100.th .dots i:nth-child(3){width:8px;height:8px;left:5px;top:-24px}
+.b100.th.n .bd,.b100.th.ne .bd,.b100.th.nw .bd{bottom:22px}
+
+/* SHOUT: Flavius / the editor in the box — bolder, gold rim, display face, from his box */
+.b100.sh{--fs:13.5px;--mw:240px;--lines:2}
+.b100.sh .bd{background:linear-gradient(#fff7e2,#f3e2b8);border:2px solid var(--rim);box-shadow:0 0 0 1px var(--rimk),0 4px 12px #00000080,0 1px 0 #fff inset;
+  font:400 var(--fs)/1.22 var(--display);letter-spacing:.02em;color:#2a1a08;padding:4px 10px 5px}
+.b100.sh .nm{font-family:var(--mono);color:#8a6418}.b100.sh .nm::before{background:var(--rim)}
+.b100.sh .tl path.f{fill:#f6e8c4}.b100.sh .tl path.s{stroke:var(--rim);stroke-width:2}
+
+/* WAGER: a small pill, coin or wheat + the amount; the only one that rises */
+.b100.wg{--fs:12px}
+.b100.wg .bd{display:flex;align-items:center;gap:3px;padding:1px 8px 1px 2px;border-radius:999px;border:1.5px solid #8a6418;
+  background:linear-gradient(#fff3cf,#f0d488);font:700 var(--fs)/1.2 var(--mono);color:#2a1c06;box-shadow:0 2px 7px #0007;animation:in100 .16s ease-out both}
+.b100.wg .bd img,.b100.wg .bd svg{width:17px;height:17px;flex:none}
+.b100.wg .bd small{font-size:9px;font-weight:600;color:#6b4a12}
+.b100.wg .tl{width:10px;height:8px;left:-5px;top:-8px}.b100.wg.n .bd{bottom:7px}
+.b100.wg .tl path.s{stroke:#8a6418}
+@keyframes rise100{0%,70%{translate:0 0;opacity:1}100%{translate:0 -10px;opacity:0}}
+
+/* CHAT: online quick-chat phrase — speech shape + the player's colour band, bold phrase */
+.b100.ch .bd{border-left:5px solid var(--pc);padding-left:7px;font-weight:700;--lines:1;white-space:nowrap}
+.b100.ch .bd .q{display:inline-block;margin-right:4px;font-size:.9em;opacity:.75}
+.b100.ch.far .bd{border-radius:0 0 8px 8px;border-top:0;top:0;bottom:auto}
+/* CROWD: tiny, one line, no name, a short tail — stands and the city square */
+.b100.cr{--fs:10.5px;--mw:120px;--lines:1}
+.b100.cr .bd{padding:1px 6px 2px;border-radius:6px;border-width:1px;font-weight:600;white-space:nowrap;box-shadow:0 2px 5px #0006;background:#f5ead2f2}
+.b100.cr .tl{width:8px;height:7px;left:-4px;top:-7px}.b100.cr.n .bd{bottom:6px}
+.b100.cr .tl path.s{stroke-width:1}
+
+/* ================= stages ================= */
+.fam{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.spec{background:var(--panel);border:1px solid var(--line2);border-radius:10px;overflow:hidden}
+.spec .st{position:relative;height:150px;background:radial-gradient(ellipse at 50% 110%,#e3cf9f 0,#cdb27a 55%,#a98a55 100%);border-bottom:1px solid var(--line2);overflow:hidden}
+.spec .st::before{content:"";position:absolute;inset:0;opacity:.35;background:repeating-linear-gradient(30deg,#0000 0 22px,#00000014 22px 23px),repeating-linear-gradient(-30deg,#0000 0 22px,#00000014 22px 23px)}
+.tok{position:absolute;width:22px;height:34px;transform:translate(-50%,-100%);border-radius:8px 8px 4px 4px;background:linear-gradient(90deg,#00000030,#0000 40%,#ffffff30 60%,#00000030),var(--pc,#777);box-shadow:0 0 0 1.5px #0007}
+.tok::after{content:"";position:absolute;left:50%;bottom:-6px;width:30px;height:11px;transform:translateX(-50%);border-radius:50%;background:#2a1d13;box-shadow:0 0 0 2px var(--pc,#777);z-index:-1}
+.flbox{position:absolute;width:62px;height:52px;border:2px solid #c9a24a;background:linear-gradient(#3a2a4a,#2a1d36);border-radius:3px;box-shadow:0 0 0 1px #000a}
+.flbox::after{content:"FLAVIUS";position:absolute;left:0;right:0;bottom:2px;text-align:center;font:9px var(--display);color:#e9d39a}
+.flbox i{position:absolute;left:14px;top:5px;width:34px;height:30px;border-radius:50% 50% 40% 40%;background:radial-gradient(circle at 50% 40%,#c99a7a 0 9px,#4a2a1a 10px 13px,#0000 14px)}
+.spec .tx{padding:10px 12px 12px}
+.spec h3{font:400 17px var(--display);color:var(--gold2);letter-spacing:.05em;display:flex;align-items:center;gap:8px;margin:0 0 4px}
+.spec h3 small{margin-left:auto;font:11px var(--mono);color:var(--dim);letter-spacing:.04em}
+.spec dl{display:grid;grid-template-columns:76px 1fr;gap:2px 8px;margin:6px 0 0;font-size:13.5px}
+.spec dt{font:11px/1.9 var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+.spec dd{margin:0;color:var(--bone)}
+.spec dd em{color:var(--muted);font-style:normal}
+
+/* boards: real game shots; bubble coords are the game's own px, scaled with container units */
+.board{position:relative;container-type:inline-size;border-radius:8px;overflow:hidden;border:1px solid var(--line2);box-shadow:0 6px 24px #0008}
+.board>img{display:block;width:100%;height:auto}
+.board .b100{left:calc(var(--x) * 100cqw / var(--W));top:calc(var(--y) * 100cqw / var(--W))}
+.bwrap{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:16px;align-items:start}
+.legend{display:grid;gap:8px}
+.lg{background:var(--panel);border:1px solid var(--line2);border-radius:8px;padding:8px 10px;font-size:13.5px;color:var(--muted)}
+.lg b{color:var(--bone);font-weight:600}
+.lg .n{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--gold);color:#1a1008;font:700 11px var(--mono);margin-right:6px}
+.pin{position:absolute;z-index:5;width:18px;height:18px;border-radius:50%;background:var(--gold);color:#1a1008;font:700 10.5px/18px var(--mono);text-align:center;box-shadow:0 0 0 2px #1a1008;transform:translate(-50%,-50%);
+  left:calc(var(--x) * 100cqw / var(--W));top:calc(var(--y) * 100cqw / var(--W))}
+.ann .pin{display:none}
+
+/* rules diagrams */
+.rules3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.dg{background:var(--panel);border:1px solid var(--line2);border-radius:10px;padding:10px 12px 12px}
+.dg h3{font:400 16px var(--display);color:var(--gold2);letter-spacing:.05em;margin:0 0 6px}
+.dg .pic{position:relative;height:210px;width:300px;max-width:100%;margin:0 auto;border-radius:6px;background:#d8c08c;overflow:hidden;container-type:inline-size}
+.dg .pic svg.bgx{position:absolute;inset:0;width:100%;height:100%}
+.dg ol,.dg ul{margin:8px 0 0;padding-left:18px;font-size:13.5px;color:var(--muted)}
+.dg li{margin:2px 0}.dg li b{color:var(--bone)}
+.ghost{position:absolute;border:1.5px dashed #7a5a34;border-radius:8px;background:#ffffff40;font:700 10px var(--mono);color:#5a3c1a;display:grid;place-items:center}
+.ghost.no{border-color:#a3281f;background:#a3281f1c;color:#a3281f}
+.ghost.yes{border-style:solid;border-color:#4f7a3a;background:#4f7a3a22;color:#2f5a1a}
+
+/* timeline */
+.tlbar{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:2px;margin:6px 0 4px;font:11px var(--mono)}
+.tlbar span{padding:6px 6px;border-radius:4px;color:#1a1008;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+table.t{width:100%;border-collapse:collapse;font-size:13.5px}
+table.t th{font:11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line2);font-weight:400}
+table.t td{padding:6px 8px;border-bottom:1px solid #3a2c1e;color:var(--bone);vertical-align:top}
+table.t td em{color:var(--muted);font-style:normal}
+.tw{overflow-x:auto}
+
+/* phone frame */
+.phone{width:390px;max-width:100%;border:10px solid #0b0806;border-radius:28px;background:#160f0b;box-shadow:0 0 0 1px #4a3826,0 10px 30px #000a;overflow:hidden}
+.phone .bar{height:22px;background:#0b0806}
+.phone .board{border-radius:0;border:0;box-shadow:none}
+.phone .acts{height:72px;background:linear-gradient(#271b12,#1d140d);border-top:1px solid #5a4128;display:flex;gap:6px;padding:8px}
+.phone .acts i{flex:1;border-radius:6px;background:#2a1f17;border:1px solid #4a3620}
+.side2{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:start}
+
+/* before */
+.bef{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.bef figure{margin:0;background:var(--panel);border:1px solid var(--line2);border-radius:8px;overflow:hidden}
+.bef img{display:block;width:100%;height:220px;object-fit:cover;object-position:center top}
+.bef figcaption{padding:8px 10px;font-size:13px;color:var(--muted)}.bef figcaption b{color:var(--bone)}
+
+/* room seat */
+.seat{flex:none;position:relative;width:150px;height:150px;border-radius:10px;background:linear-gradient(#2a1f17,#1f1711);border:1px solid var(--line2)}
+.seat .tok{left:75px;top:70px}
+.seat .sn{position:absolute;left:0;right:0;bottom:8px;text-align:center;font:600 13px var(--body)}
+.only-phone{display:none}
+@media (max-width:760px){
+  .fam,.rules3,.bef{grid-template-columns:minmax(0,1fr)}
+  .bwrap,.side2{grid-template-columns:minmax(0,1fr)}
+  .only-desk{display:none}.only-phone{display:block}
+  .pg>h1{font-size:23px}
+  .phone{border-width:0;border-radius:10px;width:100%}
+  .phone .bar{display:none}
+}
+@media (prefers-reduced-motion:reduce){.b100 .bd{animation:none!important}}
+</style></head><body>
+<div class="pg">
+<h1>One bubble family</h1>
+<p class="lead">Every voice in the game — CPU speech and thoughts, Flavius in his box, wagers, online quick chat, the stands and the city square —
+drawn by <b>one bubble</b> with six variants that share a shape language: parchment body, ink outline, a tail (or trailing dots) to whoever speaks,
+the speaker's colour as a dot or band. One layer, one placement rule, one lifetime rule, one Reduce-motion path.</p>
+
+<div class="cap"><h2>1 · The family</h2><span>same body, same tail; what changes is edge, weight and size</span></div>
+<div class="fam">
+ <div class="spec"><div class="st">
+   <div class="tok" style="--pc:#4f7fc4;left:50%;top:132px"></div>
+   <div class="b100 n" style="left:50%;top:92px;--pc:#4f7fc4"><div class="bd"><span class="nm">Varinius Gracchi</span>Nothing personal, friend.</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+  </div><div class="tx"><h3>Speech <small>SAY</small></h3>
+  <dl><dt>Who</dt><dd>CPU gladiators, a human's own lines, card quotes</dd><dt>Look</dt><dd>solid parchment, ink rim, name plate with the colour dot, tail to the head <em>· moods tint the ink only (angry red, gift green, quote italic)</em></dd><dt>Max</dt><dd>3 lines · 200 px · 1 per speaker</dd></dl></div></div>
+
+ <div class="spec"><div class="st">
+   <div class="tok" style="--pc:#8a5cc0;left:50%;top:132px"></div>
+   <div class="b100 th n" style="left:50%;top:92px;--pc:#8a5cc0"><div class="bd"><span class="nm">Trajan Falto</span>Patience. Let them bleed first.</div><span class="dots"><i></i><i></i><i></i></span></div>
+  </div><div class="tx"><h3>Thought <small>THINK</small></h3>
+  <dl><dt>Who</dt><dd>CPU minds (casual thoughts, plans)</dd><dt>Look</dt><dd>cloud edge, muted, italic, three trailing dots instead of a tail</dd><dt>Max</dt><dd>2 lines · 200 px · first to go when crowded</dd></dl></div></div>
+
+ <div class="spec"><div class="st">
+   <div class="flbox" style="left:22px;top:22px"><i></i></div>
+   <div class="b100 sh e" style="left:90px;top:48px"><div class="bd"><span class="nm">Flavius</span>My spectators are not targets!</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+  </div><div class="tx"><h3>Shout <small>FLAVIUS · SPONSOR</small></h3>
+  <dl><dt>Who</dt><dd>Flavius or the city's editor/sponsor in the box</dd><dt>Look</dt><dd>bolder: display face, gold double rim, tail from the box's side — never over the sand</dd><dt>Max</dt><dd>2 lines · 240 px · one at a time</dd></dl></div></div>
+
+ <div class="spec"><div class="st">
+   <div class="tok" style="--pc:#c9b28a;left:30%;top:132px;width:14px;height:20px"></div>
+   <div class="b100 wg n" style="left:30%;top:104px"><div class="bd" style="animation:in100 .16s both"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 15V4" stroke="#d9b24a" stroke-width="1.3" stroke-linecap="round"/><g fill="#e8c65a" stroke="#9a7a24" stroke-width=".5"><ellipse cx="8" cy="2.6" rx="1.3" ry="2"/><ellipse cx="6.2" cy="5" rx="1.1" ry="1.9" transform="rotate(-30 6.2 5)"/><ellipse cx="9.8" cy="5" rx="1.1" ry="1.9" transform="rotate(30 9.8 5)"/><ellipse cx="6.2" cy="8" rx="1.1" ry="1.9" transform="rotate(-30 6.2 8)"/><ellipse cx="9.8" cy="8" rx="1.1" ry="1.9" transform="rotate(30 9.8 8)"/><ellipse cx="6.2" cy="11" rx="1.1" ry="1.9" transform="rotate(-30 6.2 11)"/><ellipse cx="9.8" cy="11" rx="1.1" ry="1.9" transform="rotate(30 9.8 11)"/></g></svg><b>4</b><small>CF</small></div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+   <div class="tok" style="--pc:#c0433a;left:70%;top:132px"></div>
+   <div class="b100 wg n" style="left:70%;top:92px"><div class="bd" style="animation:in100 .16s both"><img src="../../../assets/coin.webp" alt=""><b>10</b></div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+  </div><div class="tx"><h3>Wager <small>BET</small></h3>
+  <dl><dt>Who</dt><dd>a spectator's slip (CF) or a gladiator's self-bet (coin)</dd><dt>Look</dt><dd>small gold-rim pill: coin or wheat + amount; the only one that rises as it fades</dd><dt>Max</dt><dd>1 line · amount only · name on hover</dd></dl></div></div>
+
+ <div class="spec"><div class="st">
+   <div class="tok" style="--pc:#c0433a;left:28%;top:132px"></div>
+   <div class="b100 ch ne" style="left:28%;top:92px;--pc:#c0433a"><div class="bd"><span class="q">💬</span>Truce?</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+   <div class="b100 ch far n" style="left:72%;top:0;--pc:#4f9a57"><div class="bd"><span class="nm">Sotonius · watching</span><span class="q">💬</span>Well fought!</div></div>
+  </div><div class="tx"><h3>Chat <small>ONLINE PHRASE</small></h3>
+  <dl><dt>Who</dt><dd>online quick-chat phrases (match, room seat, after the bout)</dd><dt>Look</dt><dd>speech body + the player's colour band, bold phrase; a speaker not on the sand docks at the board's top edge as a tab with the name</dd><dt>Max</dt><dd>1 line (phrases are short) · 6 s</dd></dl></div></div>
+
+ <div class="spec"><div class="st">
+   <div class="tok" style="--pc:#b98d5a;left:24%;top:132px;width:12px;height:18px"></div>
+   <div class="b100 cr n" style="left:24%;top:112px"><div class="bd">Iugula!</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+   <div class="tok" style="--pc:#7a9a6a;left:52%;top:120px;width:12px;height:18px"></div>
+   <div class="b100 cr n" style="left:52%;top:100px"><div class="bd">Bread and blood!</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+   <div class="tok" style="--pc:#8a6a9a;left:80%;top:134px;width:12px;height:18px"></div>
+   <div class="b100 cr n" style="left:80%;top:114px"><div class="bd">😡 Boo!</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+  </div><div class="tx"><h3>Crowd <small>STANDS · CITY</small></h3>
+  <dl><dt>Who</dt><dd>spectator shouts + emotes, city-square chatter</dd><dt>Look</dt><dd>tiny, one line, no name, short tail; the emote sits inside as the first glyph (no loose floating emoji)</dd><dt>Max</dt><dd>1 line · 18 chars · 2 on screen</dd></dl></div></div>
+</div>
+<p class="note"><b>Shared:</b> parchment <span class="mono">#f5ead2</span> + ink <span class="mono">#241910</span> (AA 14:1), outline <span class="mono">#7a5a34</span>; text never on a coloured fill — colour lives in the dot, the band or the rim (colour-blind safe: the name is always written once). One HTML layer over the board (replaces <span class="mono">#bubbles</span> + <span class="mono">#wbubs</span>), above the pieces, <b>below</b> the floating numbers (#fx95) and every window.</p>
+
+<div class="cap"><h2>2 · On the sand</h2><span>a real all-CPU Democritus board, 1440 × 900 · speakers at their real positions</span></div>
+<div class="bwrap only-desk">
+ <div class="board" style="--W:972">
+  <img src="bubbles_board_clean.png" alt="arena board">
+  <!-- Flavius box right edge 525, 37 -->
+  <div class="b100 sh e" style="--x:529;--y:40"><div class="bd"><span class="nm">Flavius</span>My spectators are not targets!</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+  <!-- Varinius 511,192 head 143: N blocked by the box/banner, NE blocked too → E -->
+  <div class="b100 e" style="--x:524;--y:146;--pc:#4f7fc4"><div class="bd"><span class="nm">Varinius Gracchi</span>Nothing personal, friend.</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+  <!-- Trajan 485,465 head 416 -->
+  <div class="b100 th n" style="--x:485;--y:418;--pc:#8a5cc0"><div class="bd"><span class="nm">Trajan Falto</span>Patience. Let them bleed first.</div><span class="dots"><i></i><i></i><i></i></span></div>
+  <!-- Decimus 173,309 head 260, online chat -->
+  <div class="b100 ch ne" style="--x:173;--y:262;--pc:#c0433a"><div class="bd"><span class="nm">Decimus Triarius</span><span class="q">💬</span>Truce?</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+  <!-- Thraex 797,309 head 260 gift -->
+  <div class="b100 gift e" style="--x:808;--y:264;--pc:#4f9a57"><div class="bd"><span class="nm">Thraex Murmillo</span>For the familia.</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+  <!-- wagers -->
+  <div class="b100 wg n" style="--x:604;--y:434"><div class="bd" style="animation:in100 .16s both"><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 15V4" stroke="#d9b24a" stroke-width="1.3" stroke-linecap="round"/><g fill="#e8c65a" stroke="#9a7a24" stroke-width=".5"><ellipse cx="8" cy="2.6" rx="1.3" ry="2"/><ellipse cx="6.2" cy="5" rx="1.1" ry="1.9" transform="rotate(-30 6.2 5)"/><ellipse cx="9.8" cy="5" rx="1.1" ry="1.9" transform="rotate(30 9.8 5)"/><ellipse cx="6.2" cy="8" rx="1.1" ry="1.9" transform="rotate(-30 6.2 8)"/><ellipse cx="9.8" cy="8" rx="1.1" ry="1.9" transform="rotate(30 9.8 8)"/><ellipse cx="6.2" cy="11" rx="1.1" ry="1.9" transform="rotate(-30 6.2 11)"/><ellipse cx="9.8" cy="11" rx="1.1" ry="1.9" transform="rotate(30 9.8 11)"/></g></svg><b>4</b><small>CF</small></div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+  <div class="b100 wg n" style="--x:786;--y:222"><div class="bd" style="animation:in100 .16s both"><img src="../../../assets/coin.webp" alt=""><b>10</b></div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+  <!-- crowd -->
+  <div class="b100 cr n" style="--x:201;--y:352"><div class="bd">Iugula!</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+  <div class="b100 cr n" style="--x:112;--y:261"><div class="bd">😄 Ave!</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+  <span class="pin" style="--x:560;--y:12">1</span><span class="pin" style="--x:690;--y:118">2</span><span class="pin" style="--x:610;--y:366">3</span><span class="pin" style="--x:322;--y:212">4</span><span class="pin" style="--x:930;--y:236">5</span><span class="pin" style="--x:636;--y:410">6</span><span class="pin" style="--x:150;--y:322">7</span>
+ </div>
+ <div class="legend">
+  <div class="lg"><span class="n">1</span><b>Shout</b> — Flavius, beside his box, never over the sand.</div>
+  <div class="lg"><span class="n">2</span><b>Speech, side slot</b> — above was blocked by Flavius's box and banner, so it sits beside the head (slot E).</div>
+  <div class="lg"><span class="n">3</span><b>Thought</b> — cloud edge, dots to the head; pillars may be covered, pieces may not.</div>
+  <div class="lg"><span class="n">4</span><b>Chat</b> — online phrase, the player's red band; slid right (NE) to stay on the sand.</div>
+  <div class="lg"><span class="n">5</span><b>Speech, gift mood</b> — green ink only. N and NE were taken by the wager pill above him, so it sits beside the head (E).</div>
+  <div class="lg"><span class="n">6</span><b>Wagers</b> — CF from a spectator, coin from a gladiator's self-bet; they rise and fade.</div>
+  <div class="lg"><span class="n">7</span><b>Crowd</b> — tiny shouts from the stands; the emote is the first glyph.</div>
+ </div>
+</div>
+<p class="note only-phone">The desktop board is shown in the 1440 shot; below is the phone board at its real size.</p>
+
+<div class="cap"><h2>3 · Placement</h2><span>one rule for every variant on the board</span></div>
+<div class="rules3">
+ <div class="dg"><h3>Slots, in order</h3>
+  <div class="pic">
+   <svg class="bgx" viewBox="0 0 300 210" preserveAspectRatio="none"><g fill="#c9ad74" stroke="#a88a52"><path d="M150 140 L196 163 L150 186 L104 163Z" fill="#a3281f33" stroke="#a3281f"/></g>
+     <rect x="139" y="96" width="22" height="66" fill="#a3281f22" stroke="#a3281f" stroke-dasharray="3 2"/></svg>
+   <div class="tok" style="--pc:#4f7fc4;left:150px;top:160px"></div>
+   <div class="ghost yes" style="left:95px;top:38px;width:110px;height:40px">1 · N</div>
+   <div class="ghost" style="left:168px;top:6px;width:110px;height:30px">2 · NE</div>
+   <div class="ghost" style="left:22px;top:6px;width:110px;height:30px">3 · NW</div>
+   <div class="ghost" style="left:170px;top:88px;width:110px;height:34px">4 · E</div>
+   <div class="ghost" style="left:20px;top:88px;width:110px;height:34px">5 · W</div>
+  </div>
+  <ol><li><b>Anchor</b> = the speaker's head (tile centre − 0.95 tile), the box edge for Flavius, the seat token online.</li>
+  <li>Try <b>N → NE → NW → E → W</b>; the first slot that fits wins. NE/NW slide the body, the tail stays on the head.</li>
+  <li>Never <b>S</b> on the board (it would sit on the sand in front of the speaker); S is only for room seats.</li></ol></div>
+
+ <div class="dg"><h3>Keep-out</h3>
+  <div class="pic">
+   <svg class="bgx" viewBox="0 0 300 210" preserveAspectRatio="none">
+    <path d="M90 150 L136 173 L90 196 L44 173Z" fill="#a3281f33" stroke="#a3281f"/><rect x="79" y="106" width="22" height="66" fill="#a3281f22" stroke="#a3281f" stroke-dasharray="3 2"/>
+    <rect x="189" y="116" width="22" height="58" fill="#a3281f22" stroke="#a3281f" stroke-dasharray="3 2"/>
+    <rect x="200" y="6" width="80" height="54" fill="#3a2a4a" stroke="#c9a24a" stroke-width="2"/><text x="240" y="40" fill="#e9d39a" font-size="11" text-anchor="middle" font-family="serif">BOX</text></svg>
+   <div class="tok" style="--pc:#4f7fc4;left:90px;top:170px"></div><div class="tok" style="--pc:#c0433a;left:200px;top:172px"></div>
+   <div class="ghost no" style="left:150px;top:80px;width:120px;height:36px">covers a piece</div>
+   <div class="ghost yes" style="left:24px;top:62px;width:132px;height:38px">fits · N</div>
+  </div>
+  <ul><li><b>Never covers</b>: the speaker's tile + head column, any other piece's head box, Flavius's box, the turn chip, another bubble.</li>
+  <li><b>May cover</b>: sand, pillars, walls, the stands.</li>
+  <li>Stays 6 px inside the board; if nothing fits it takes the least-covering slot and drops to 1 line.</li></ul></div>
+
+ <div class="dg"><h3>Several speak · fan-out</h3>
+  <div class="pic">
+   <svg class="bgx" viewBox="0 0 300 210" preserveAspectRatio="none"><g fill="#c9ad74" stroke="#a88a52"><path d="M90 160 L130 180 L90 200 L50 180Z"/><path d="M150 160 L190 180 L150 200 L110 180Z"/><path d="M210 160 L250 180 L210 200 L170 180Z"/></g></svg>
+   <div class="tok" style="--pc:#4f7fc4;left:90px;top:182px"></div><div class="tok" style="--pc:#c0433a;left:150px;top:182px"></div><div class="tok" style="--pc:#4f9a57;left:210px;top:182px"></div>
+   <div class="b100 n" style="left:150px;top:138px;--pc:#c0433a;--fs:11.5px;--mw:120px"><div class="bd"><span class="nm">Decimus</span>Only one walks out.</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+   <div class="b100 nw" style="left:90px;top:138px;--pc:#4f7fc4;--fs:11.5px;--mw:110px;opacity:.9"><div class="bd" style="bottom:52px"><span class="nm">Varinius</span>Fall back.</div><svg class="tl" viewBox="0 0 14 12" style="top:-12px"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg><i style="position:absolute;left:-1px;top:-52px;width:2px;height:40px;background:#7a5a34"></i></div>
+   <div class="b100 th ne" style="left:210px;top:138px;--pc:#4f9a57;--fs:11px;--mw:100px;opacity:.85"><div class="bd" style="bottom:56px"><span class="nm">Thraex</span>Wait…</div><span class="dots"><i></i><i></i><i></i></span></div>
+  </div>
+  <ul><li>Newest takes the best slot; older ones <b>fan up and out</b> (stem stretches, ≤ 1.5 bubble heights).</li>
+  <li><b>One per speaker</b> — a new line replaces the old. Board cap: <b>3</b> piece bubbles + 1 shout + wagers (2 on phones).</li>
+  <li>Over the cap, <b>thoughts go first</b>, then the oldest speech; chat and shouts are never dropped early.</li></ul></div>
+</div>
+
+<div class="cap"><h2>4 · Life & motion</h2><span>one clock for all six</span></div>
+<div class="rules3" style="grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)">
+ <div class="dg"><h3>Lifetime at Normal</h3>
+  <div class="tlbar" style="--n:10"><span style="background:#6fae4c" title="in .16 s">in</span><span style="background:#efe3cc;grid-column:span 7">hold = 2.0 s + 0.05 s / character (≤ 6 s)</span><span style="background:#b39d80;grid-column:span 2">fade .3 s</span></div>
+  <div class="tw"><table class="t"><tr><th>Variant</th><th>Slow</th><th>Normal</th><th>Fast</th><th>Pause</th></tr>
+   <tr><td>Speech · Thought</td><td>×1.6</td><td>2 s + text</td><td><em>speech only when it names you; no thoughts</em></td><td>held</td></tr>
+   <tr><td>Shout</td><td>×1.6</td><td>2.6 s + text</td><td>×0.6</td><td>held</td></tr>
+   <tr><td>Wager</td><td>2.4 s</td><td>2.4 s</td><td><em>off (as v0.95)</em></td><td>held</td></tr>
+   <tr><td>Chat</td><td>6 s</td><td>6 s</td><td>6 s</td><td>6 s <em>(it's a person)</em></td></tr>
+   <tr><td>Crowd</td><td>×1.6</td><td>2.6 s</td><td><em>off</em></td><td>held</td></tr></table></div>
+ </div>
+ <div class="dg"><h3>Motion & settings</h3>
+  <ul><li><b>In</b>: fade + 4 px rise + scale .94 → 1. <b>Out</b>: fade. Only wagers drift up 10 px.</li>
+  <li><b>Reduce motion / calm / Animations Off</b>: opacity only (120 ms), no rise, no scale, no stem stretch.</li>
+  <li><b>Hover</b> a bubble holds it; <b>click</b> scrolls the log to its line (the log keeps every word).</li>
+  <li><b>Turn sweep</b> (72-v59): the previous turn's thoughts leave; speech may finish its hold.</li>
+  <li><b>Event over / clean-up</b>: everything leaves at once (48-arena47 rule kept).</li>
+  <li>Settings → <b>Voices &amp; bubbles</b> keeps its switches: CPU thoughts, the editor in the box, spectator shouts, city chatter.</li>
+  <li>Bubbles are <span class="mono">aria-hidden</span>; the live region + log carry the words (220-v93a11y).</li></ul></div>
+</div>
+
+<div class="cap"><h2>5 · Size by zoom · phones</h2><span>text scales with the tile, inside a floor and a ceiling</span></div>
+<div class="side2">
+ <div class="phone"><div class="bar"></div>
+  <div class="board" style="--W:390">
+   <img src="bubbles_board_clean_390.png" alt="arena board on a phone">
+   <div class="b100 sh e tp" style="--x:212;--y:20;--fs:11px;--mw:150px"><div class="bd"><span class="nm">Flavius</span>Who pays for that seat now?</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+   <div class="b100 th n" style="--x:194;--y:226;--fs:11px;--mw:150px;--lines:2;--pc:#8a5cc0"><div class="bd">Patience. Let them bleed first.</div><span class="dots"><i></i><i></i><i></i></span></div>
+   <div class="b100 angry w" style="--x:312;--y:122;--fs:11px;--mw:130px;--lines:2;--pc:#4f9a57"><div class="bd"><span class="nm">Thraex</span>Coward!</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+   <div class="b100 ch ne" style="--x:26;--y:142;--fs:11px;--pc:#c0433a"><div class="bd"><span class="q">💬</span>Truce?</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+   <div class="b100 wg n" style="--x:286;--y:214;--fs:10.5px"><div class="bd" style="animation:in100 .16s both"><img src="../../../assets/coin.webp" alt=""><b>4</b></div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+  </div><div class="acts"><i></i><i></i><i></i></div></div>
+ <div>
+  <div class="tw"><table class="t">
+   <tr><th>Board</th><th>Tile (TW)</th><th>Text</th><th>Max width</th><th>Lines S / T / Sh</th></tr>
+   <tr><td>Desktop, normal</td><td>52 px</td><td>12.5 px</td><td>200 px</td><td>3 / 2 / 2</td></tr>
+   <tr><td>Desktop, zoomed 2×</td><td>104 px</td><td>15 px <em>(ceiling)</em></td><td>240 px</td><td>3 / 2 / 2</td></tr>
+   <tr><td>Tablet</td><td>36–44 px</td><td>12 px</td><td>180 px</td><td>3 / 2 / 2</td></tr>
+   <tr><td>Phone (390)</td><td>28 px</td><td>11 px <em>(floor)</em></td><td>40% of board (≤ 150)</td><td>2 / 2 / 2</td></tr>
+  </table></div>
+  <ul class="note" style="padding-left:18px">
+   <li>Text = clamp(11, 0.24 × TW, 15) px; crowd = text − 2 (floor 9.5); wager = text − 0.5.</li>
+   <li><b>Phones</b>: name plates fold to the colour dot when the speaker is the current fighter; the speaker's ring already says who.</li>
+   <li><b>Phones</b>: 2 piece bubbles + Flavius + wagers; crowd shouts show only their emote glyph (no words) unless zoomed.</li>
+   <li>Zoomed in, bubbles follow the camera (230/260 frame) and never hide behind the action drawers (fitReserve band is keep-out).</li>
+   <li>Text over the ceiling ellipsizes; the whole line is in the log.</li>
+  </ul>
+ </div>
+</div>
+
+<div class="cap"><h2>6 · Off the sand</h2><span>the same family in the city square and the online room</span></div>
+<div class="bwrap">
+ <div class="board" style="--W:620">
+  <img src="bubbles_city_crop.png" alt="city square">
+  <!-- crop offset 380,400; folk heads ~ feet − 34 -->
+  <div class="b100 cr n" style="--x:389;--y:112;--fs:11px;--mw:150px"><div class="bd">Bread and blood!</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+  <div class="b100 cr n" style="--x:269;--y:144;--fs:11px;--mw:160px"><div class="bd">My coin's on the Thraex.</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+  <div class="b100 cr nw" style="--x:89;--y:232;--fs:11px;--mw:160px"><div class="bd">Did you hear? Capua lost two.</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+ </div>
+ <div class="legend">
+  <div class="lg"><b>City chatter = Crowd</b>, one size up (11 px, 2 lines in the square: people stand still to gossip). Keep-out = the building labels, the gate, YOU and other bubbles — 172's <span class="mono">keep89</span> becomes the shared rule.</div>
+  <div class="lg" style="display:flex;gap:12px;align-items:center">
+   <div class="seat"><div class="tok" style="--pc:#c0433a"></div>
+    <div class="b100 ch s" style="left:75px;top:76px;--pc:#c0433a;--fs:12px"><div class="bd">Ready!</div><svg class="tl" viewBox="0 0 14 12"><path class="f" d="M0 -2H14V0L7 12L0 0Z"/><path class="s" d="M0 0L7 12L14 0"/></svg></div>
+    <div class="sn" style="color:#e88">Decimus</div></div>
+   <span><b>Room seat</b>: Chat in slot <b>S</b> under the token (234's reserved slot, no jumping), 6 s. A standing lanista's phrase is the same chip beside their name in the list.</span></div>
+ </div>
+</div>
+
+<div class="cap"><h2>7 · Today</h2><span>live shots from v0.99 — seven looks, three layers, two of them on the canvas</span></div>
+<div class="bef">
+ <figure><img src="bubbles_before_arena_crop.png" alt=""><figcaption><b>Board, desktop</b> — speech (name in mono), a green "gift" body, a gold wager pill, an online "Truce?" chip drawn on top of Decimus's own bubble, Flavius's flat slip. Beast cards share the same space.</figcaption></figure>
+ <figure><img src="bubbles_before_shout_crop.png" alt="" style="object-position:60% 75%"><figcaption><b>Stands</b> — a spectator's shout is a canvas rectangle with no tail; the emoji floats loose above the figure.</figcaption></figure>
+ <figure><img src="bubbles_before_city_crop.png" alt=""><figcaption><b>City square</b> — canvas chips, no tail, no speaker; the only system with a keep-out rule (labels, gate, YOU).</figcaption></figure>
+ <figure><img src="bubbles_before_390_crop.png" alt=""><figcaption><b>Phone</b> — desktop-sized bubbles cover a third of the board; the wager pill sits on Trajan's bubble; "Coward!" covers the right stands.</figcaption></figure>
+</div>
+<p class="note">Full inventory and the rules in words: <span class="mono">tools/plans/mock100/NOTES-bubbles.md</span>.</p>
+</div>
+</body></html>

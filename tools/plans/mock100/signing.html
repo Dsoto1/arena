@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Signing Day</title>
+<link rel="stylesheet" href="../mock98/fonts.css">
+<!-- MOCK-UP ONLY (v1.0, his note 13): the celebratory signing screen that replaces today's small signCard73 popup (before_signing_*.png).
+     One recruit (portrait taken from the game), three outcomes of "The truth": #gem · #dud · #fair. #pre = the moment before the seal
+     is broken. #static = Reduce motion (no flips, no burst/dust; both grades side by side). Add ?still to any state for the end frame.
+     Grades: A+ ≥92 · A ≥85 · B+ ≥78 · B ≥70 · C+ ≥62 · C ≥54 · D ≥44 · F (trait96Grade).
+     Shots: node tools/plans/mock100/ludus_shot.js signing.html#gem:1440 … -->
+<style>
+:root{color-scheme:dark;--ink:#140f0b;--panel:#1f1711;--panel2:#2a1f17;--line2:#4a3826;--line3:#6a5130;--bone:#efe3cc;--muted:#b39d80;--dim:#a3907a;
+ --gold:#d6ab4c;--gold2:#f0cf7d;--blood:#a3281f;--hp:#6fae4c;--cls:#cfc6b4;
+ --display:"Marcellus SC","Trajan Pro",Georgia,serif;--body:"Alegreya Sans","Gill Sans","Segoe UI",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+ --parch:#e9dcbf url(../../../assets/parchment.webp)}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:#140f0b url(before_ludus_1440.png) top center/1440px auto no-repeat;color:var(--bone);font:15px/1.35 var(--body);overflow:hidden}
+.scrim{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(20,12,6,.72),rgba(8,5,3,.94))}
+.coin{width:15px;height:15px;vertical-align:-2px}
+.stage{position:fixed;inset:0;display:grid;place-items:center;overflow:auto;padding:16px}
+.card{position:relative;width:820px;max-width:100%;background:linear-gradient(#2a1f17,#1a120c);border:2px solid var(--gold);border-radius:14px;
+ box-shadow:0 0 0 1px #000,0 24px 70px rgba(0,0,0,.8),inset 0 0 0 4px rgba(240,207,125,.08);padding:18px 22px 16px;display:grid;grid-template-columns:230px minmax(0,1fr);gap:8px 24px}
+.kicker{grid-column:1/-1;display:flex;align-items:center;gap:10px;font:700 12px var(--mono);letter-spacing:3px;color:var(--gold2)}
+.kicker:before,.kicker:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+/* left: portrait + terms */
+.who{text-align:center;position:relative}
+.frame{position:relative;width:200px;height:250px;margin:4px auto 0}
+.frame .pic{position:absolute;inset:14px 18px 10px;border-radius:50% 50% 8px 8px/38% 38% 8px 8px;overflow:hidden;border:3px solid var(--cls);box-shadow:0 0 0 2px #1a120c,0 0 22px rgba(240,207,125,.25)}
+.frame .pic img{width:100%;height:100%;object-fit:cover}
+.frame svg.laurel{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .6s}
+.who h2{margin:6px 0 0;font:400 23px/1.1 var(--display);color:var(--gold2)}
+.who .sub{font-size:13.5px;color:var(--muted);margin-top:3px}
+.who .cls{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--cls);margin-right:4px;vertical-align:0}
+.terms{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:10px}
+.terms span{background:var(--panel2);border:1px solid var(--line2);border-radius:6px;padding:5px 2px;font-size:11.5px;color:var(--muted)}
+.terms b{display:block;font:700 17px var(--body);color:var(--bone)}
+.clause{margin-top:6px;font-size:12.5px;color:var(--muted)}.clause b{color:var(--gold2)}
+/* right: the truth */
+.truth h3{margin:2px 0 2px;font:400 21px var(--display);color:var(--gold2);display:flex;align-items:baseline;gap:10px}
+.truth h3 small{font:13px var(--body);color:var(--muted)}
+.grid{display:grid;gap:5px;margin-top:8px}
+.rw{display:grid;grid-template-columns:120px 76px 22px 96px minmax(0,1fr);align-items:center;gap:8px}
+.rw .lb{font-size:14px;color:var(--bone)}.rw .lb i{font-style:normal;margin-right:5px}
+.rw .arr{color:var(--dim);text-align:center}
+.tab{position:relative;height:44px;perspective:500px}
+.tab .in{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,.7,.3,1.2)}
+.tab .f,.tab .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:6px}
+.sc{background:var(--parch);color:#2a1708;border:1px solid #9c8058;font:700 21px var(--display)}
+.sc .sure{display:flex;gap:2px;flex-direction:column}.sc .sure i{width:4px;height:4px;border-radius:50%;background:#2a1708;opacity:.2}.sc .sure i.on{opacity:.85}
+.rl{background:linear-gradient(#3a2a17,#24190f);border:1px solid var(--gold);color:var(--gold2);font:700 21px var(--display)}
+.rl small{font:700 13px var(--mono);color:var(--bone)}
+.tab.real .b{transform:rotateY(180deg)}
+.seal{background:var(--panel2);border:1px dashed var(--line3)}.seal i{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#d24a3a,#7a1a12);box-shadow:0 1px 2px #000}
+body.s-dud .rl{border-color:#8a7a62;color:#d9ccb0;background:linear-gradient(#3a332b,#26211c)}
+body.go .tab.real .in{transform:rotateY(180deg)}
+.tab.ghost .f{background:var(--panel2);border:1px dashed var(--line3);color:var(--dim);font:700 17px var(--display)}
+.dl{font:700 12.5px var(--mono);opacity:0;transition:opacity .4s}
+.dl.up{color:#9fd77e}.dl.dn{color:#ff9a86}.dl.eq{color:var(--dim)}
+body.go .dl{opacity:1}
+.rw.ovr{margin-top:6px;padding-top:8px;border-top:1px solid var(--line2)}
+.rw.ovr .lb{font:400 16px var(--display);color:var(--gold2)}
+.rw.ovr .tab{height:54px}.rw.ovr .sc,.rw.ovr .rl{font-size:27px}
+.crack{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s 0s}
+/* verdict */
+.verdict{grid-column:1/-1;position:relative;margin-top:6px;border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:14px;min-height:74px;
+ opacity:0;transform:translateY(8px);transition:opacity .5s,transform .5s}
+body.go .verdict{opacity:1;transform:none}
+.verdict .big{font:400 30px/1 var(--display);letter-spacing:.04em;white-space:nowrap}
+.verdict .rec{display:flex;gap:10px;align-items:center;flex:1;min-width:0;font-size:14px;font-style:italic;color:#e8dcc0}
+.verdict .rec img{width:42px;height:42px;border-radius:50%;border:2px solid #b08a3c;flex:none}
+.verdict .rec small{display:block;font-style:normal;font-size:12px;color:var(--muted)}
+.acts{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+.btn{font:15px var(--body);color:#f0e2c4;background:var(--panel2);border:1px solid var(--line2);border-radius:6px;padding:7px 14px;cursor:pointer}
+.btn.pri{background:linear-gradient(#8a2a1e,#5e1a12);border-color:#e2b04e;color:#fff1cf}
+.reveal{display:none}
+body.s-pre .reveal{display:inline-block}
+body.s-pre .verdict,body.s-pre .acts .after{display:none}
+/* GEM */
+.burst{position:fixed;left:50%;top:50%;width:1400px;height:1400px;margin:-700px 0 0 -700px;pointer-events:none;opacity:0;transition:opacity .8s;
+ background:repeating-conic-gradient(from 0deg,rgba(240,207,125,.16) 0 6deg,transparent 6deg 18deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 62%);mask:radial-gradient(circle,#000 0,transparent 62%);animation:spin 40s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spark{position:fixed;left:50%;top:40%;width:8px;height:8px;border-radius:50%;background:#ffe39a;box-shadow:0 0 8px #f0cf7d;opacity:0;pointer-events:none}
+body.go.s-gem .spark{animation:fly 1.6s ease-out forwards}
+@keyframes fly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(.4)}}
+body.go.s-gem .burst{opacity:1}
+body.s-gem .verdict{background:linear-gradient(90deg,rgba(214,171,76,.35),rgba(214,171,76,.08));border:1px solid var(--gold2);box-shadow:0 0 26px rgba(240,207,125,.35)}
+body.s-gem .verdict .big{color:#ffe39a;text-shadow:0 0 14px rgba(240,207,125,.6)}
+body.go.s-gem .frame svg.laurel{opacity:1}
+body.go.s-gem .card{border-color:#ffe39a;box-shadow:0 0 0 1px #000,0 0 60px rgba(240,207,125,.35),0 24px 70px rgba(0,0,0,.8)}
+/* DUD */
+body.s-dud .verdict{background:linear-gradient(90deg,rgba(120,100,80,.35),rgba(60,50,40,.15));border:1px solid #8a7a62}
+body.s-dud .verdict .big{color:#d9ccb0}
+body.go.s-dud .rw.ovr .crack{opacity:1;transition-delay:2.2s}
+body.go.s-dud .frame .pic{filter:saturate(.55) brightness(.92);transition:filter 1s 2s}
+.dust{position:absolute;width:60px;height:60px;border-radius:50%;background:radial-gradient(rgba(190,170,140,.55),transparent 70%);filter:blur(2px);opacity:0;pointer-events:none}
+body.go.s-dud .dust{animation:dust 2.4s ease-out 2.2s forwards}
+@keyframes dust{0%{opacity:0;transform:translate(0,0) scale(.4)}25%{opacity:.9}100%{opacity:0;transform:translate(var(--x),-30px) scale(1.8)}}
+/* FAIR */
+body.s-fair .verdict{background:linear-gradient(90deg,rgba(111,174,76,.22),rgba(111,174,76,.05));border:1px solid #6f9a5a}
+body.s-fair .verdict .big{color:#cfe8b8}
+/* stagger */
+.rw:nth-child(1) .in{transition-delay:.0s}.rw:nth-child(2) .in{transition-delay:.25s}.rw:nth-child(3) .in{transition-delay:.5s}.rw:nth-child(4) .in{transition-delay:.75s}.rw:nth-child(5) .in{transition-delay:1s}.rw.ovr .in{transition-delay:1.6s}
+.verdict{transition-delay:2.2s}
+.rw:nth-child(1) .dl{transition-delay:.6s}.rw:nth-child(2) .dl{transition-delay:.85s}.rw:nth-child(3) .dl{transition-delay:1.1s}.rw:nth-child(4) .dl{transition-delay:1.35s}.rw:nth-child(5) .dl{transition-delay:1.6s}.rw.ovr .dl{transition-delay:2.2s}
+body.still *{transition-delay:0s!important;transition-duration:0s!important}
+body.still .spark{animation:none;opacity:0}
+body.still .dust{animation:none;opacity:0}
+/* REDUCE MOTION (#static or the OS setting): no flip — the scouted grade stays and the real grade sits beside it; no burst, sparks, dust */
+body.rm .tab.real .in{transform:none!important;transition:none}
+body.rm .tab.real .f{display:none}body.rm .tab.real .b{transform:none}
+body.rm .burst,body.rm .spark,body.rm .dust{display:none}
+body.rm *{transition:none!important;animation:none!important}
+body.rm .rmnote{display:block}
+.rmnote{display:none;grid-column:1/-1;font:11px var(--mono);color:var(--dim);text-align:right}
+.statebar{position:fixed;right:10px;bottom:8px;z-index:50;display:flex;gap:4px;font:11px var(--mono)}
+.statebar a{color:var(--dim);border:1px solid var(--line2);border-radius:9px;padding:1px 8px;text-decoration:none;background:#140f0bcc}
+.statebar a.on{color:var(--gold2);border-color:var(--gold)}
+@media (max-width:600px){
+ body{background-size:cover}
+ .stage{place-items:start center;padding:10px}
+ .card{width:100%;grid-template-columns:minmax(0,1fr);padding:12px 12px 12px;gap:6px}
+ .who{display:grid;grid-template-columns:110px 1fr;gap:4px 10px;text-align:left;align-items:center}
+ .frame{width:110px;height:138px;grid-row:1/3;margin:0}.frame .pic{inset:8px 10px 6px}
+ .who h2{font-size:19px;margin:0}.terms{grid-column:1/-1}.clause{grid-column:1/-1}
+ .rw{grid-template-columns:86px 58px 14px 76px minmax(0,1fr);gap:5px}
+ .rw .lb{font-size:13px}.tab{height:38px}.sc,.rl{font-size:18px}.rl small{font-size:11px}
+ .rw.ovr .tab{height:46px}.rw.ovr .sc,.rw.ovr .rl{font-size:22px}
+ .dl{font-size:11px}.dl em{display:none}
+ .verdict .rec{flex-basis:100%}
+ .verdict{flex-wrap:wrap;gap:8px}.verdict .big{font-size:24px}
+ .acts{flex-wrap:wrap}.acts .btn{flex:1}
+ .statebar{display:none}
+}
+</style></head>
+<body>
+<div class="scrim"></div>
+<div class="burst"></div>
+<div id="sparks"></div>
+<div class="stage"><div class="card">
+ <div class="kicker">✍ SIGNED · LUDUS CRISPINUS</div>
+ <div class="who">
+  <div class="frame"><div class="pic"><img src="ludus_img/sign_face.png" alt=""></div>
+   <svg class="laurel" viewBox="0 0 200 250" aria-hidden="true"><g fill="#e8c35a" stroke="#7a5a1a" stroke-width=".8">
+    <g id="lv"><path d="M60 236q-52-60-30-150" fill="none" stroke="#c9a03e" stroke-width="3"/>
+    <ellipse cx="28" cy="96" rx="6" ry="14" transform="rotate(-12 28 96)"/><ellipse cx="22" cy="126" rx="6" ry="14" transform="rotate(-26 22 126)"/><ellipse cx="24" cy="156" rx="6" ry="14" transform="rotate(-40 24 156)"/>
+    <ellipse cx="32" cy="184" rx="6" ry="14" transform="rotate(-56 32 184)"/><ellipse cx="46" cy="210" rx="6" ry="14" transform="rotate(-70 46 210)"/></g>
+    <use href="#lv" transform="translate(200 0) scale(-1 1)"/></g></svg>
+   <div class="dust" style="left:20px;top:150px;--x:-40px"></div><div class="dust" style="left:110px;top:170px;--x:40px"></div>
+  </div>
+  <div><h2>Durmius "Aurora" Rufus</h2><div class="sub"><span class="cls"></span>Veteranus · 30 yrs · from Neapolis</div></div>
+  <div class="terms"><span><b><img class="coin" src="../../../assets/coin.webp" alt="">34</b>a week</span><span><b>12</b>weeks</span><span><b><img class="coin" src="../../../assets/coin.webp" alt="">40</b>to sign</span></div>
+  <div class="clause">Clause: <b>no Naumachia</b> · he wants <b>arena time</b></div>
+ </div>
+ <div class="truth">
+  <h3>The truth <small id="sub">what the Recruiter saw · what he really is</small></h3>
+  <div class="grid" id="rows"></div>
+ </div>
+ <div class="verdict"><span class="big" id="vbig"></span><span class="rec"><img src="ludus_img/face_1.png" alt=""><span><span id="vline"></span><small>Gnaeus Cicatrix, your Recruiter · Lv 3</small></span></span></div>
+ <div class="acts"><button class="btn reveal pri">🔓 Break the seal</button><button class="btn after">🛡 See him in the Roster</button><button class="btn pri after">Welcome to the ludus</button></div>
+ <div class="rmnote">Reduce motion: no flips, burst or dust — scouted and real side by side</div>
+</div></div>
+<div class="statebar"><a href="#pre">#pre</a><a href="#gem">#gem</a><a href="#dud">#dud</a><a href="#fair">#fair</a><a href="#static">#static</a></div>
+<script>
+const G=v=>v>=92?'A+':v>=85?'A':v>=78?'B+':v>=70?'B':v>=62?'C+':v>=54?'C':v>=44?'D':'F';
+const ORD=['F','D','C','C+','B','B+','A','A+'];
+const ST=[['spd','🏃','Speed'],['str','💪','Strength'],['int','🧠','Intelligence'],['lck','🍀','Luck'],['cha','🎭','Charisma']];
+/* scouted: [grade, how sure 0-3]  real: number */
+const D={
+ gem:{sc:{spd:['C+',2],str:['B',2],int:['C',1],lck:['?',0],cha:['B',1]},rl:{spd:81,str:88,int:63,lck:74,cha:93},ovr:['C+',80],
+  big:'✦ A gem!',line:'"I had him two grades low. The forum will be talking about this one by Friday."'},
+ dud:{sc:{spd:['B+',1],str:['A',2],int:['B',1],lck:['C',0],cha:['B',1]},rl:{spd:61,str:72,int:58,lck:66,cha:50},ovr:['B+',61],
+  big:'A dud.',line:'"He looked better in the forum light. We paid for a statue and got the plinth."'},
+ fair:{sc:{spd:['B',2],str:['B+',3],int:['C+',2],lck:['C',1],cha:['B',2]},rl:{spd:72,str:79,int:63,lck:57,cha:73},ovr:['B',73],
+  big:'As scouted.',line:'"What I told you is what you bought. A solid hand for the card."'}};
+const h=(location.hash||'#gem').slice(1);const still=location.search.includes('still');
+const key=h==='static'||h==='pre'?'gem':h;const d=D[key]||D.gem;
+document.body.className='s-'+key+(h==='pre'?' s-pre':'')+(h==='static'||matchMedia('(prefers-reduced-motion:reduce)').matches?' rm':'')+(still?' still':'');
+document.querySelectorAll('.statebar a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+h));
+const pips=n=>`<span class="sure" title="how sure">${[2,1,0].map(i=>`<i class="${n>i?'on':''}"></i>`).join('')}</span>`;
+function row(lb,sc,sure,v,cls){const g=G(v);const s=ORD.indexOf(sc),r=ORD.indexOf(g);const df=sc==='?'?'':r>s?`<span class="dl up">▲ ${r-s}<em> grade${r-s>1?'s':''} up</em></span>`:r<s?`<span class="dl dn">▼ ${s-r}<em> grade${s-r>1?'s':''} down</em></span>`:`<span class="dl eq">=<em> as scouted</em></span>`;
+ return `<div class="rw ${cls||''}"><span class="lb">${lb}</span><div class="tab ${sc==='?'?'ghost':''}"><div class="in"><div class="f ${sc==='?'?'':'sc'}">${sc}${sc==='?'?'':pips(sure)}</div></div></div><span class="arr">→</span>
+  <div class="tab real"><div class="in"><div class="f seal"><i></i></div><div class="b rl">${g} <small>${v}</small></div></div></div>${df||'<span class="dl eq">?<em> never scouted</em></span>'}${cls==='ovr'?`<svg class="crack" viewBox="0 0 100 54" preserveAspectRatio="none" style="left:auto;width:96px;grid-column:4;position:absolute"></svg>`:''}</div>`}
+let html=ST.map(([k,ic,n])=>row(`<i>${ic}</i>${n}`,d.sc[k][0],d.sc[k][1],d.rl[k])).join('');
+html+=row('Overall',d.ovr[0],2,d.ovr[1],'ovr');
+document.getElementById('rows').innerHTML=html;
+/* the overall real tablet: crack overlay (dud) */
+const ov=document.querySelector('.rw.ovr .tab.real');ov.insertAdjacentHTML('beforeend',`<svg class="crack" viewBox="0 0 96 54" preserveAspectRatio="none"><path d="M40 0l6 14-9 9 12 10-5 21M46 14l14-4M37 23l-12 6" stroke="#1a120c" stroke-width="2.4" fill="none"/><path d="M40 0l6 14-9 9 12 10-5 21" stroke="#d9ccb0" stroke-width=".8" fill="none" transform="translate(1 0)"/></svg>`);
+document.querySelectorAll('.rw.ovr > .crack').forEach(e=>e.remove());
+document.getElementById('vbig').textContent=d.big;document.getElementById('vline').textContent=d.line;
+if(key==='gem'){const s=document.getElementById('sparks');for(let i=0;i<22;i++){const a=i/22*Math.PI*2,r=180+(i%5)*40;s.insertAdjacentHTML('beforeend',`<span class="spark" style="--x:${Math.cos(a)*r}px;--y:${Math.sin(a)*r}px;animation-delay:${2.1+(i%4)*.06}s"></span>`)}}
+if(h==='pre')document.querySelector('.reveal').onclick=()=>{document.body.classList.remove('s-pre');document.body.classList.add('go')};
+else if(still||document.body.classList.contains('rm'))document.body.classList.add('go');
+else setTimeout(()=>document.body.classList.add('go'),700);
+addEventListener('hashchange',()=>location.reload());
+</script>
+</body></html>
