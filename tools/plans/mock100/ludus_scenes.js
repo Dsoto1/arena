@@ -57,7 +57,7 @@ function promote(p){const c=common(p,[.55,.45,.35]);let s='';
   <text x="${x}" y="118" text-anchor="middle" font-family="Marcellus SC,Georgia,serif" font-size="26" fill="#a3281f" opacity=".9" letter-spacing="2">${a}</text>
   <text x="${x}" y="146" text-anchor="middle" font-family="Marcellus SC,Georgia,serif" font-size="15" fill="#2a1a10" opacity=".8" letter-spacing="1">${b}</text>
   <path d="M${x-70} 158h140" stroke="#a3281f" stroke-width="2" opacity=".6"/></g>`;
- s+=prog(-150,'MVNERA','CAPVAE · VI · DIES',-1)+prog(150,'L · CRISPINVS','GLADIATORES · XX',1.5)+prog(430,'VENATIO','IN · AMPHITHEATRO',-1.2)+prog(720,'AVE · FLAVI','FELICITER',1);
+ s+=prog(-150,'MVNERA','CAPVAE &#183; VI &#183; DIES',-1)+prog(150,'L &#183; CRISPINVS','GLADIATORES &#183; XX',1.5)+prog(430,'VENATIO','IN &#183; AMPHITHEATRO',-1.2)+prog(720,'AVE &#183; FLAVI','FELICITER',1);
  /* hanging banner */
  s+=`<path d="M30 74h44v96l-22-12-22 12z" fill="url(#${p}ban)" stroke="#e2b04e" stroke-width="2"/><path d="M52 100l6 10h-12z" fill="#e2b04e"/><path d="M74 74v96l-22-12" fill="#000" opacity=".25"/>`;
  /* the crier on a step, horn raised */
@@ -85,7 +85,7 @@ function school(p){const c=common(p,[.6,.5,.35]);let s='';
  s+=bld(-330,260,80,7)+bld(-40,300,96,8)+bld(300,200,70,6)+bld(560,320,90,8);
  /* scaffolding + treadwheel crane: the "upgrade" */
  s+=`<g stroke="#6e4622" stroke-width="4">${[262,290,318,346].map(x=>`<path d="M${x} 190V84"/>`).join('')}<path d="M256 112h96M256 140h96M256 168h96" stroke-width="5"/><path d="M262 84l84 84M346 84l-84 84" stroke-width="2" opacity=".6"/></g>
-  <path d="M410 190L470 30" stroke="url(#${p}wd)" stroke-width="7"/><path d="M470 30L380 70" stroke="#6e4622" stroke-width="4"/><path d="M380 70v54" stroke="#3a2414" stroke-width="1.5"/>
+  <path d="M410 190L470 30" stroke="#8a5a2a" stroke-width="7"/><path d="M470 30L380 70" stroke="#6e4622" stroke-width="4"/><path d="M380 70v54" stroke="#3a2414" stroke-width="1.5"/>
   <rect x="368" y="124" width="24" height="18" fill="url(#${p}stn)" stroke="#5a4a34"/><circle cx="452" cy="170" r="22" fill="none" stroke="url(#${p}wd)" stroke-width="5"/>${[0,45,90,135].map(a=>`<path d="M452 170l${22*Math.cos(a/57.3)} ${22*Math.sin(a/57.3)}M452 170l${-22*Math.cos(a/57.3)} ${-22*Math.sin(a/57.3)}" stroke="#6e4622" stroke-width="2"/>`).join('')}`;
  /* sand yard, posts with shadows to the lower right */
  s+=`<rect x="-400" y="186" width="1400" height="54" fill="url(#${p}snd)"/><rect x="-400" y="186" width="1400" height="54" filter="url(#${p}gr)"/>`;
@@ -100,7 +100,7 @@ function armory(p){const c=common(p,[.5,.35,.2]);let s='';
  s+=`<rect x="20" y="14" width="60" height="40" fill="#e8d6a8" opacity=".6"/><path d="M20 54h60l220 186H120z" fill="url(#${p}sh)"/>`;
  /* rack: swords + spears */
  s+=`<rect x="-400" y="66" width="1400" height="8" fill="url(#${p}wd)"/>`;
- for(let i=-8;i<24;i++){const x=i*44+10;s+=i%3===2?`<path d="M${x} 20v150" stroke="url(#${p}wd)" stroke-width="4"/><path d="M${x-5} 22l5-18 5 18z" fill="url(#${p}stl)"/>`:`<path d="M${x} 70v80" stroke="url(#${p}stl)" stroke-width="5"/><path d="M${x-9} 70h18" stroke="#c9902e" stroke-width="4"/><path d="M${x} 50v20" stroke="#4a2a14" stroke-width="5"/>`}
+ for(let i=-8;i<24;i++){const x=i*44+10;s+=i%3===2?`<path d="M${x} 24v150" stroke="#7a4a22" stroke-width="4"/><path d="M${x-1} 24v150" stroke="#b07a46" stroke-width="1.2"/><path d="M${x-6} 26l6-22 6 22z" fill="#c9d0d6" stroke="#4f575e" stroke-width=".8"/>`:`<path d="M${x-3} 76l3 -4 3 4v70l-3 8-3-8z" fill="#cfd6db" stroke="#4f575e" stroke-width=".8"/><path d="M${x-1.5} 78v64" stroke="#fff" stroke-width="1" opacity=".6"/><path d="M${x-10} 74h20" stroke="#c9902e" stroke-width="4"/><path d="M${x} 52v20" stroke="#4a2a14" stroke-width="5"/><circle cx="${x}" cy="50" r="3.5" fill="#c9902e"/>`}
  /* hung round shields */
  for(let i=-3;i<9;i++){const x=i*170+100;s+=`<ellipse cx="${x+8}" cy="120" rx="32" ry="32" fill="#000" opacity=".35" filter="url(#${p}bl)"/><circle cx="${x}" cy="112" r="30" fill="url(#${p}br)" stroke="#4a2a0a" stroke-width="2"/><circle cx="${x}" cy="112" r="20" fill="none" stroke="#6e4614" stroke-width="2" opacity=".6"/><circle cx="${x}" cy="112" r="7" fill="url(#${p}stl)"/><ellipse cx="${x-10}" cy="100" rx="8" ry="5" fill="#fff" opacity=".35"/>`}
  /* armor stand (lorica) */

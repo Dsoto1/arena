@@ -198,7 +198,9 @@ body.s-scout .pane.scout,body.s-court .pane.court,body.s-offer .pane.offer{displ
 body.ph .mrail,body.ph .list{display:none}
 body.ph .top{padding:8px 12px;gap:8px}body.ph .top h1{font-size:20px}body.ph .top .chip{display:none}body.ph .top .chip.k{display:inline-block}
 body.ph .body{padding:12px 12px 0}
-body.ph .r2,body.ph .r3{grid-template-columns:1fr}
+body.ph .r2,body.ph .r3{grid-template-columns:minmax(0,1fr)}
+.panel,.pane>*{min-width:0}
+body.ph .hrsh{flex-wrap:wrap;row-gap:6px}body.ph .hrsh .pips{flex-basis:100%}body.ph .pips i{width:10px}
 body.ph .tab{grid-template-columns:86px minmax(0,1fr)}
 body.ph .tab .pent{grid-column:1/-1;justify-self:center}
 body.ph .sketch{height:150px}
@@ -253,7 +255,11 @@ body.ph .su{grid-template-columns:22px minmax(0,1fr) 70px 26px}
 .pit .tg .none{font-size:11.5px;color:#5a4a38}
 .pit .scene{grid-row:1/4;align-self:start;margin:0;height:72px}
 .pit p{grid-row:4;align-self:end;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.r3>.panel{height:232px}
+.r3>.panel{height:216px}
+.pg{grid-template-columns:repeat(2,minmax(0,1fr))}
+.hg{grid-template-columns:repeat(4,minmax(0,1fr))}
+.hgc.lab{border:0;background:none;font:500 10.5px var(--mono);letter-spacing:.12em;color:var(--muted);text-transform:uppercase;padding-left:2px}
+.pstars{white-space:nowrap}.pstars .pchip{margin-left:auto}
 .won{grid-template-columns:1fr;align-content:start}
 .wo{height:76px}.wo>div:last-child{min-width:0}.wo b,.wo small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .su{height:28px;padding:0}.need{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -341,10 +347,10 @@ body.ph .pbtns .pchip.warn{display:none}
       <div style="min-width:0">
        <div class="pname" title="Barbatus Bone-Breaker"><span class="pin">★</span>Barbatus Bone-Breaker</div>
        <div class="pmeta"><div title="♂ Royalty · 34 years old · from Neapolis · fame 24">♂ <b>Royalty</b> · 34 · <b>Neapolis</b> · fame 24</div><div title="3 wins in 7 events · first sand S1 W1">3 wins in 7 · first sand S1 W1</div></div>
-       <div class="pstars"><span class="s">★★★★<i>★</i></span><span class="street" title="the street's word">~B+</span><span class="lau">UUU<i>UU</i></span></div>
+       <div class="pstars"><span class="s">★★★★<i>★</i></span><span class="street" title="the street's word">~B+</span><span class="lau">UUU<i>UU</i></span><span class="pchip warn" title="Ludus Severianus bids in 2 weeks">⚖ bid in 2 wk</span></div>
       </div>
      </div>
-     <div class="pbtns"><span class="btn">⇄ Compare</span><span class="pchip" id="wantsChip">🎯 <span id="wantsTop">grade all five to learn</span></span><span class="pchip warn" title="Ludus Severianus bids in 2 weeks">⚖ bid in 2 wk</span></div>
+     <div class="pbtns"><span class="btn">⇄ Compare</span><span class="pchip" id="wantsChip">🎯 <span id="wantsTop">grade all five to learn</span></span></div>
     </section>
 
     <section class="panel"><div class="ptitle">Stats Tablet</div>
@@ -379,7 +385,7 @@ body.ph .pbtns .pchip.warn{display:none}
    <!-- ===== ② COURT ===== -->
    <div class="pane court">
     <section class="panel cmd"><span class="ribbon">The Lanista's Command Table</span>
-     <div class="hgl">🏛 Your house grades · what every recruit sees</div><div class="hg" id="hg"></div>
+     <div class="hg" id="hg"><span class="hgc lab" title="Your house grades — what every recruit sees">🏛 House grades</span></div>
      <div class="meta"><b>🗣 Pitch · 2 of 3 left · one per recruit</b><span>his wish ×2 · green = he cares</span></div>
      <div class="pg" id="pg"></div>
     </section>
