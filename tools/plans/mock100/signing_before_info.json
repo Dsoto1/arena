@@ -1,0 +1,15 @@
+{
+ "name": "Durmius \"Aurora\" Rufus",
+ "cls": "veteranus",
+ "clsName": "Veteranus",
+ "color": "#cfc6b4",
+ "age": 30,
+ "st": {
+  "spd": 51,
+  "str": 61,
+  "int": 63,
+  "lck": 74,
+  "cha": 67
+ },
+ "ovr": 51
+}

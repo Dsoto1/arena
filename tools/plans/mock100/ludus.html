@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Your Ludus v1.0</title>
+<link rel="stylesheet" href="../mock98/fonts.css">
+<!-- MOCK-UP ONLY (v1.0 plan, his PDF "mockludusmanager" 2026-10-09 = ludus_img/his_mock.png).
+     Content = a real week-3 career (Ludus Crispinus, Capua; this week's games in Pompeii) captured by ludus_before.js.
+     Tile art = the game's own room banner scenes (roomScene73 / roomScene / armoryScene96 / cityScene75) exported as SVG, cropped per tile.
+     States: #week (default) · #bye (week 4) · #mail (letters drawer open) · #phone (390 px frame of #week).
+     Shots: node tools/plans/mock100/ludus_shot.js -->
+<style>
+:root{color-scheme:dark;--ink:#140f0b;--panel:#1f1711;--panel2:#2a1f17;--line2:#4a3826;--line3:#6a5130;--bone:#efe3cc;--muted:#b39d80;--dim:#a3907a;
+ --gold:#d6ab4c;--gold2:#f0cf7d;--blood:#a3281f;--blood2:#d24a3a;--hp:#6fae4c;--sky:#8fc3ea;
+ --display:"Marcellus SC","Trajan Pro",Georgia,serif;--body:"Alegreya Sans","Gill Sans","Segoe UI",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+ --parch:#e9dcbf url(../../../assets/parchment.webp);--pink:#2a1d12;--pdim:#6d5638}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ink);color:var(--bone);font:15px/1.35 var(--body);-webkit-font-smoothing:antialiased}
+.coin{width:15px;height:15px;vertical-align:-2px}
+.btn{font:14px var(--body);color:#f0e2c4;background:var(--panel2);border:1px solid var(--line2);border-radius:5px;padding:4px 11px;cursor:pointer;white-space:nowrap}
+/* ---------- states ---------- */
+body:not(.s-bye) .bye-only{display:none!important}
+body.s-bye .week-only{display:none!important}
+#phoneFrame{display:none}
+body.s-phone>.app,body.s-phone>.statebar{display:none}
+body.s-phone #phoneFrame{display:flex;justify-content:center;padding:20px}
+#phoneFrame iframe{width:390px;height:844px;border:10px solid #000;border-radius:36px;background:var(--ink)}
+.statebar{position:fixed;right:10px;bottom:8px;z-index:50;display:flex;gap:4px;font:11px var(--mono)}
+.statebar a{color:var(--dim);border:1px solid var(--line2);border-radius:9px;padding:1px 8px;text-decoration:none;background:#140f0bcc}
+.statebar a.on{color:var(--gold2);border-color:var(--gold)}
+@media (max-width:600px){.statebar{display:none}}
+/* ---------- manager chrome (as today) ---------- */
+.app{padding:12px 24px 16px;max-width:1440px;margin:0 auto}
+.mhd{display:flex;align-items:center;gap:14px}
+.mhd h1{font:400 25px var(--display);color:var(--gold2);margin:0;flex:1;letter-spacing:.02em}
+.savebtn{border:1px solid var(--gold);border-radius:16px;padding:4px 12px;font-size:13px;color:var(--bone);background:transparent}
+.who{display:flex;gap:12px;align-items:center;margin:6px 0 8px}
+.who .pt{width:46px;height:62px;border-radius:4px;object-fit:cover;border:1px solid var(--line2)}
+.who .fl{width:62px;height:38px;border-radius:3px;object-fit:cover}
+.who b{font:400 20px var(--display);color:var(--gold2);display:block}
+.who small{font-size:13px;color:var(--muted)}
+.who .sp{flex:1}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.badge{font:13px var(--mono);border:1px solid var(--line2);background:var(--panel);border-radius:3px;padding:4px 9px;color:var(--bone);white-space:nowrap}
+.badge.g{color:var(--gold2);border-color:#7a5d2a}.badge.r{color:#ffb4a4;border-color:#6a2a1e}
+.grid{display:grid;grid-template-columns:210px minmax(0,1fr);gap:16px;align-items:start}
+.rail{border:1px solid var(--line2);border-radius:8px;overflow:hidden;background:#1a130d}
+.rail .hd{font:700 10px var(--mono);letter-spacing:1.5px;text-align:center;color:var(--gold);background:#24190f;padding:5px;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+.rail .hd:first-child{border-top:0}
+.rail .t{display:flex;align-items:center;gap:7px;padding:7px 14px;font-size:14px;border-top:1px solid rgba(214,171,76,.1);cursor:pointer}
+.rail .t:hover{color:var(--gold2)}
+.rail .t.on{background:linear-gradient(90deg,rgba(214,171,76,.25),rgba(214,171,76,.06));box-shadow:inset 3px 0 0 var(--gold)}
+.rail .t .new{font:700 9px var(--mono);letter-spacing:.6px;color:#2a1708;background:#f0cf7d;border-radius:8px;padding:0 5px}
+.mcount{margin-left:auto;font:700 10px var(--mono);color:#3a2414;background:var(--parch);border-radius:9px;padding:1px 7px;box-shadow:inset 0 0 0 1px #b39d74}
+.mcount.hot{background:#f0cf7d;color:#2a1708}
+.mcount.fn{background:#5a1e16;color:#ffd2c4;box-shadow:inset 0 0 0 1px #a3281f}
+.endwk{display:block;width:100%;margin-top:10px;border:1px solid #c0433a;border-radius:6px;padding:8px 12px;font:700 14px var(--body);color:#ffe2d8;background:linear-gradient(#8a2a1e,#5e1a12);text-align:left;cursor:pointer}
+.endwk small{display:block;font:400 11.5px var(--body);color:#f2c6b8;opacity:.85}
+
+/* ---------- BANNER: week + Fight Night ---------- */
+.ban{position:relative;height:118px;border:1px solid #dcae42;border-radius:8px;overflow:hidden;display:flex;align-items:center;gap:16px;padding:0 16px}
+.ban>img.scene{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 70%;z-index:0}
+.ban:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(20,12,6,.88) 0%,rgba(20,12,6,.55) 38%,rgba(20,12,6,.1) 60%,rgba(20,12,6,.55) 100%)}
+.ban>*:not(img){position:relative;z-index:2}
+.medal{flex:none;width:76px;height:76px}
+.bt b{display:block;font:400 26px/1 var(--display);color:var(--gold2);letter-spacing:.04em}
+.bt .ph{font:700 11px var(--mono);letter-spacing:2px;color:#f6dd95;text-transform:uppercase;margin:4px 0 3px}
+.bt .ln{font-size:13.5px;color:#e8dcc0;font-style:italic}
+.bt .chips{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.bt .chips span{font-size:12px;color:#e8dcc0;background:rgba(20,12,6,.6);border:1px solid rgba(201,162,78,.4);border-radius:10px;padding:1px 8px;white-space:nowrap}
+.bt .chips span.f{border-color:#a3281f;color:#ffc9bb}
+.ban .sp{flex:1}
+.fnbtn{flex:none;display:flex;align-items:center;gap:12px;padding:10px 18px 10px 14px;border-radius:8px;cursor:pointer;
+ background:linear-gradient(#7a2318,#4a140d);border:2px solid #e2b04e;box-shadow:0 0 0 1px #2a0c06,0 4px 14px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,220,160,.35);color:#ffe9c9;text-align:left}
+.fnbtn:hover{filter:brightness(1.12)}
+.fnbtn .sw{font-size:30px;filter:drop-shadow(0 1px 1px #000)}
+.fnbtn b{display:block;font:400 22px/1 var(--display);letter-spacing:.06em;color:#fff1cf}
+.fnbtn small{display:block;font-size:12.5px;color:#f6d0b0;margin-top:3px}
+.fnbtn .days{display:flex;gap:4px;margin-top:5px}
+.fnbtn .days i{font:700 10px var(--mono);letter-spacing:.5px;font-style:normal;padding:1px 6px;border-radius:8px;background:rgba(0,0,0,.35);border:1px solid rgba(240,207,125,.4);color:#f6dd95}
+.fnbtn.stone{background:linear-gradient(#4a4036,#2c251f);border-color:#8a7a62;color:#d9ccb0;cursor:default}
+.fnbtn.stone b{color:#e8dcc0}.fnbtn.stone small{color:#bfb29a}
+
+/* ---------- body: tasks + tiles ---------- */
+.body{display:grid;grid-template-columns:minmax(0,46fr) minmax(0,54fr);gap:14px;margin-top:12px}
+/* weekly tasks — parchment */
+.tasks{background:var(--parch);color:var(--pink);border-radius:8px;border:1px solid #b39d74;box-shadow:inset 0 0 0 3px rgba(122,93,42,.25),inset 0 0 40px rgba(110,70,20,.25);padding:12px 14px 10px;display:flex;flex-direction:column}
+.thd{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.thd .wr{width:34px;height:34px;flex:none}
+.thd h2{margin:0;font:400 21px var(--display);letter-spacing:.06em;color:#2a1708}
+.thd .sp{flex:1}
+.bar{width:120px;height:9px;border-radius:5px;background:#c9b58c;box-shadow:inset 0 1px 2px rgba(0,0,0,.35);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(#4a3420,#2a1a0e)}
+.thd .n{font:700 14px var(--mono);color:#2a1708}
+.trow{display:grid;grid-template-columns:22px 40px minmax(0,1fr) auto 16px;align-items:center;gap:9px;padding:6px 4px;border-top:1px solid rgba(122,93,42,.3);cursor:pointer}
+.trow:hover{background:rgba(255,255,255,.22)}
+.trow .ck{width:18px;height:18px;border-radius:50%;border:2px solid #5c4326}
+.trow.done .ck{background:#2f5a1e;border-color:#2f5a1e;color:#e9f2d9;font-size:11px;display:grid;place-items:center}
+.trow .ti{width:40px;height:40px;border-radius:6px;background:linear-gradient(#efe6d0,#d8c8a4);border:1px solid #9c8058;display:grid;place-items:center;font-size:20px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)}
+.trow .tx b{display:block;font:700 15.5px var(--body);color:#2a1708}
+.trow .tx span{display:block;font-size:13px;color:var(--pdim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trow .tx .due{display:inline-block;font:700 9.5px var(--mono);letter-spacing:.6px;text-transform:uppercase;border-radius:8px;padding:1px 6px;margin-left:6px;vertical-align:2px;background:#7a2219;color:#ffd9cf}
+.trow .tx .due.new{background:#dcae42;color:#2a1708}
+.trow .cnt{font:700 14px var(--mono);color:#2a1708;text-align:right}
+.trow .cnt small{display:block;font:600 11px var(--body);color:#7a2a1e;white-space:nowrap}
+.trow .go{font:700 18px var(--body);color:#5c4326}
+.trow.done .tx b{color:#5c4a34;text-decoration:line-through;text-decoration-color:rgba(60,40,20,.45)}
+.trow.done .cnt{color:#2f5a1e}
+.ok{font-size:12.5px;color:var(--pdim);padding:5px 4px 0 35px;border-top:1px solid rgba(122,93,42,.3)}
+.ok b{color:#2f5a1e}
+.quote{margin-top:auto;padding:8px 6px 0;display:flex;align-items:center;gap:8px;font-style:italic;color:#5c4326;font-size:13.5px}
+.quote .by{margin-left:auto;font-size:12.5px;white-space:nowrap}
+/* tiles */
+.tiles{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:12px}
+.tile{position:relative;border:1px solid #8a6a2c;border-radius:8px;overflow:hidden;background:#1a120c;cursor:pointer;display:flex;flex-direction:column;
+ box-shadow:inset 0 0 0 1px rgba(240,207,125,.15),0 3px 10px rgba(0,0,0,.4);min-height:186px}
+.tile:hover{border-color:var(--gold2)}.tile:hover .art img.bg{transform:scale(1.04)}
+.tile .art{position:relative;flex:1;min-height:104px;overflow:hidden;border-bottom:1px solid #6a5130}
+.tile .art img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.tile .art:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(20,12,6,.55))}
+.tile .art .st{position:absolute;left:8px;top:8px;z-index:2;display:flex;gap:4px;flex-wrap:wrap}
+.tile .art .st span{font:600 11.5px var(--body);color:#f3e3b8;background:rgba(20,12,6,.72);border:1px solid rgba(201,162,78,.45);border-radius:9px;padding:0 7px;white-space:nowrap}
+.tile .art .st span.w{border-color:#c0433a;color:#ffc9bb}
+.tile .cap{display:flex;align-items:center;gap:10px;padding:8px 10px;background:linear-gradient(#24190f,#170f0a)}
+.tile .em{font-style:normal;flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:18px;border:1.5px solid var(--gold);background:radial-gradient(#3a2a17,#1a120c);box-shadow:inset 0 0 0 2px #1a120c}
+.tile .cap b{display:block;font:400 17px/1.05 var(--display);letter-spacing:.06em;color:var(--gold2)}
+.tile .cap span{display:block;font-size:12.5px;color:var(--muted);line-height:1.25}
+.tile .cap .chev{font-style:normal;margin-left:auto;flex:none;width:24px;height:24px;border:1px solid #8a6a2c;border-radius:4px;display:grid;place-items:center;color:var(--gold2);font-size:15px}
+.tile .cnt{font-style:normal;font:700 10px var(--mono);border-radius:9px;padding:1px 7px;background:#f0cf7d;color:#2a1708;margin-left:6px;vertical-align:2px}
+.tile.wide{grid-column:1 / -1;min-height:150px}
+.tile.wide .art{min-height:80px}
+.faces{position:absolute;right:10px;bottom:8px;z-index:2;display:flex;gap:6px}
+.faces img{width:40px;height:40px;border-radius:50%;border:2px solid #b08a3c;background:#2a1d12}
+.counsel{position:absolute;left:10px;bottom:9px;z-index:2;max-width:46%;font-size:12.5px;color:#f3e3b8;background:rgba(20,12,6,.75);border-left:3px solid var(--gold);border-radius:3px;padding:3px 8px;font-style:italic}
+/* letters drawer (#mail) */
+.mailbtn{display:inline-flex;align-items:center;gap:6px;font:13px var(--body);color:#2a1708;background:rgba(255,255,255,.35);border:1px solid #9c8058;border-radius:5px;padding:2px 9px;cursor:pointer}
+.mailbtn b{font:700 10px var(--mono);background:#7a2219;color:#ffd9cf;border-radius:8px;padding:0 6px}
+.drawer{display:none;position:fixed;top:0;right:0;bottom:0;width:520px;z-index:30;background:#1d150f;border-left:1px solid #7a5d2a;box-shadow:-12px 0 30px rgba(0,0,0,.6);padding:14px 16px;overflow:auto}
+.scrim{display:none;position:fixed;inset:0;z-index:29;background:rgba(0,0,0,.45)}
+body.s-mail .drawer,body.s-mail .scrim{display:block}
+.drawer h3{display:flex;align-items:center;gap:8px;margin:0 0 10px;font:400 21px var(--display);color:var(--gold2)}
+.drawer h3 .x{margin-left:auto;width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;font-size:16px;color:var(--bone)}
+.lrow{display:grid;grid-template-columns:26px minmax(0,1fr) auto;align-items:center;gap:8px;background:var(--parch);color:var(--pink);border-radius:6px;border-left:4px solid #8c7a64;padding:6px 10px 6px 8px;margin-bottom:4px}
+.lrow .tx{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lrow .tx b{color:#2a1708}.lrow .tx .f{font-size:12.5px;color:var(--pdim)}
+.lrow.unread{box-shadow:0 0 0 1px rgba(160,120,40,.7) inset;border-left-color:var(--gold)}
+.lrow .new{font:700 10px var(--mono);letter-spacing:.8px;background:#dcae42;color:#1a120c;border-radius:9px;padding:1px 6px}
+.lopen{background:var(--parch);color:var(--pink);border-radius:6px;border-left:4px solid var(--gold);padding:10px 12px;margin-bottom:6px}
+.lopen b.t{font:400 17px var(--display);color:#2a1708}
+.lopen p{margin:6px 0}
+.lopen .adv{display:flex;gap:10px;align-items:center}.lopen .adv img{width:44px;height:44px;border-radius:50%;border:2px solid #b08a3c}
+.past{font-size:13px;color:var(--muted);margin-top:8px}
+.sec{display:flex;align-items:center;gap:8px;font:11px var(--mono);letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);margin:12px 0 6px}
+.sec:after{content:"";flex:1;height:1px;background:var(--line2)}
+
+/* ---------- phone (≤600 px) — today's pattern: rail = bottom pill row ---------- */
+.pills{display:none}
+@media (max-width:600px){
+ .app{padding:10px 10px 74px}
+ .mhd h1{font-size:22px}
+ .who{flex-wrap:wrap}.who .sp{display:none}.who>div:not(.badges){flex:1;min-width:0}.badges{width:100%}
+ .who .pt{width:40px;height:54px}.who .fl{display:none}.who b{font-size:17px}
+ .badges{flex-wrap:nowrap;overflow:hidden}.badge{font-size:12px;padding:3px 7px}
+ .grid{display:block}.grid>.railcol{display:none}
+ .ban{height:auto;flex-wrap:wrap;padding:10px 12px;gap:8px 10px}
+ .ban:before{background:linear-gradient(180deg,rgba(20,12,6,.75),rgba(20,12,6,.35) 50%,rgba(20,12,6,.8))}
+ .medal{width:52px;height:52px}
+ .bt{flex:1;min-width:0}.bt b{font-size:21px}.bt .ln{font-size:12.5px}
+ .ban .sp{display:none}
+ .fnbtn{width:100%;justify-content:center;padding:8px 12px}.fnbtn b{font-size:19px}.fnbtn .days{justify-content:center}
+ .body{display:block}
+ .tasks{padding:10px 10px 8px}
+ .thd h2{font-size:18px}.bar{width:64px}.thd .wr{width:28px;height:28px}
+ .trow{grid-template-columns:18px 34px minmax(0,1fr) auto;gap:7px}
+ .trow .go{display:none}.trow .ti{width:34px;height:34px;font-size:17px}
+ .trow .tx b{font-size:14.5px}.trow .tx span{white-space:normal;font-size:12.5px}
+ .mailbtn span{display:none}
+ .tiles{margin-top:12px;gap:8px}
+ .tile{min-height:150px}.tile .art{min-height:76px}
+ .tile .cap{padding:6px 7px;gap:7px}.tile .em{width:30px;height:30px;font-size:14px}
+ .tile .cap b{font-size:14px}.tile .cap span{font-size:11.5px}.tile .cap .chev{font-style:normal;display:none}
+ .tile .art .st span{font-size:10.5px}
+ .faces img{width:30px;height:30px}.counsel{display:none}
+ .quote{font-size:12.5px}
+ .pills{display:flex;gap:6px;position:fixed;left:0;right:0;bottom:0;padding:8px 10px;background:linear-gradient(transparent,#140f0b 30%);overflow:hidden;z-index:20}
+ .pills span{flex:none;border:1px solid var(--line2);border-radius:18px;padding:6px 12px;font-size:14px;background:var(--panel);white-space:nowrap}
+ .pills span.on{border-color:var(--gold);color:var(--gold2)}
+ .pills span.fn{border-color:#c0433a;color:#ffd2c4;background:#3a1510}
+ .drawer{width:100%}
+}
+@media (prefers-reduced-motion:reduce){.tile .art img.bg{transition:none}}
+</style></head>
+<body>
+<div class="app">
+ <div class="mhd"><h1>Manager mode</h1><button class="savebtn">💾 Save and Exit</button></div>
+ <div class="who"><img class="pt" src="ludus_img/lanista.png" alt=""><img class="fl" src="ludus_img/flag.png" alt="">
+  <div><b>Aulus Vettius Crispus</b><small>Ludus Crispinus · Capua · season 1, week <span class="week-only">3</span><span class="bye-only">4</span></small></div><span class="sp"></span>
+  <div class="badges"><span class="badge g">Treasury <img class="coin" src="../../../assets/coin.webp" alt="">156</span><span class="badge r">▼ −56/wk · 2 wk runway</span><span class="badge">Fame 62 · Imperial</span><span class="badge">Grade D</span><span class="badge">Record 0-0</span><span class="badge">5 fighters</span></div>
+ </div>
+
+ <div class="grid">
+  <div class="railcol">
+   <div class="rail">
+    <div class="hd">🏛 LUDUS</div>
+    <div class="t on">🏛 Your ludus <span class="mcount hot week-only">6</span><span class="mcount hot bye-only">7</span></div>
+    <div class="t">🛡 Roster · 5</div>
+    <div class="t">⚒ Armory</div>
+    <div class="t">🤝 Recruiting <span class="mcount">20 h</span></div>
+    <div class="t">⚕ Infirmary <span class="mcount bye-only">1</span><span class="week-only" style="margin-left:auto;color:var(--hp)">✓</span></div>
+    <div class="t">🏋 Training Yard <span class="mcount week-only">10 h</span><span class="mcount bye-only">14 h</span></div>
+    <div class="hd">⚔ ARENA</div>
+    <div class="t">⚔ Fight Night <span class="new week-only">NEW NAME</span><span class="mcount fn week-only">3</span><span class="mcount bye-only">bye</span></div>
+    <div class="t">💰 Wagers</div>
+    <div class="hd">🌍 WORLD</div>
+    <div class="t">📯 News</div><div class="t">📊 League</div><div class="t">🌍 Imperium</div><div class="t">🏆 Trophies</div><div class="t">📅 Season</div>
+    <div class="hd">👤 LANISTA</div>
+    <div class="t">👤 Lanista <span class="mcount hot">2</span></div>
+   </div>
+   <button class="endwk">⏭ End the week<small class="week-only">Fight Night first — 3 bouts in Pompeii</small><small class="bye-only">Rest, train, recruit — then on to week 5</small></button>
+  </div>
+
+  <div class="main">
+   <!-- banner: week + Fight Night -->
+   <div class="ban">
+    <img class="scene week-only" src="ludus_img/scene_city.svg" alt="">
+    <img class="scene bye-only" src="ludus_img/scene_ludus.svg" alt="" style="object-position:50% 40%">
+    <svg class="medal" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="37" fill="#1a120c" stroke="#d6ab4c" stroke-width="2.5"/>
+     <g id="lf" fill="#d6ab4c"><path d="M24 62q-12-12-10-30" stroke="#d6ab4c" stroke-width="2" fill="none"/>
+      <ellipse cx="15" cy="34" rx="2.6" ry="6" transform="rotate(-20 15 34)"/><ellipse cx="14" cy="44" rx="2.6" ry="6" transform="rotate(-40 14 44)"/><ellipse cx="17" cy="53" rx="2.6" ry="6" transform="rotate(-60 17 53)"/><ellipse cx="23" cy="60" rx="2.6" ry="6" transform="rotate(-80 23 60)"/></g>
+     <use href="#lf" transform="translate(80 0) scale(-1 1)"/>
+     <text x="40" y="38" text-anchor="middle" font-family="Marcellus SC,Georgia,serif" font-size="11" fill="#f0cf7d">WEEK</text>
+     <text x="40" y="56" text-anchor="middle" font-family="Marcellus SC,Georgia,serif" font-size="20" fill="#f6dd95"><tspan class="week-only">III</tspan><tspan class="bye-only">IV</tspan></text></svg>
+    <div class="bt">
+     <b><span class="week-only">Week 3 · Match Week</span><span class="bye-only">Week 4 · Bye week</span></b>
+     <div class="ph week-only">Pre-match · Fight Night in Pompeii</div><div class="ph bye-only">No games anywhere in the league</div>
+     <div class="ln week-only">Three bouts Friday to Sunday. Get the house ready, then light the torches.</div>
+     <div class="ln bye-only">A quiet week: rest the worn, train harder, court a recruit.</div>
+     <div class="chips"><span><img class="coin" src="../../../assets/coin.webp" alt=""> −132 this season</span><span>🌾 0 fame</span><span>0/0 wins / bouts</span><span class="f">✝ 0 fallen</span></div>
+    </div>
+    <span class="sp"></span>
+    <button class="fnbtn week-only"><span class="sw">⚔</span><span><b>FIGHT NIGHT</b><small>Pompeii · 3 bouts · your fighters on all 3</small><span class="days"><i>FRI Undercard</i><i>SAT Feature</i><i>SUN Main</i></span></span></button>
+    <div class="fnbtn stone bye-only"><span class="sw">🌙</span><span><b>NO FIGHT NIGHT</b><small>Next: week 5 · Fight Night in Capua (home)</small></span></div>
+   </div>
+
+   <div class="body">
+    <!-- WEEKLY TASKS -->
+    <div class="tasks">
+     <div class="thd">
+      <svg class="wr" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="none" stroke="#5c4326" stroke-width="1.5"/><path d="M12 30q-6-8-3-18M28 30q6-8 3-18" stroke="#5c4326" stroke-width="2" fill="none"/><text x="20" y="25" text-anchor="middle" font-size="13" fill="#5c4326">✦</text></svg>
+      <h2>Weekly tasks</h2><span class="sp"></span>
+      <span class="mailbtn" title="All letters (opens the letters drawer)">📬 <span>Letters</span> <b class="week-only">5</b><b class="bye-only">3</b></span>
+      <span class="bar"><i class="week-only" style="width:14%"></i><i class="bye-only" style="width:0%"></i></span><span class="n"><span class="week-only">1/7</span><span class="bye-only">0/7</span></span>
+     </div>
+
+     <!-- week 3 -->
+     <div class="week-only">
+      <div class="trow"><span class="ck"></span><span class="ti">✉️</span><span class="tx"><b>Read the morning letters</b><span>The Quaestor, the Consilium and your barracks master wrote</span></span><span class="cnt">0/5</span><span class="go">›</span></div>
+      <div class="trow"><span class="ck"></span><span class="ti">🗣</span><span class="tx"><b>Answer the eager <span class="due">this week</span></b><span>The Fox of Roma, Hostus "Lupa" Regulus, Lupercus ask for a fight</span></span><span class="cnt">0/3<small>+4 morale</small></span><span class="go">›</span></div>
+      <div class="trow done"><span class="ck">✓</span><span class="ti">⚔</span><span class="tx"><b>Fill the Fight Night card</b><span>Undercard, Feature and Main in Pompeii carry your fighters</span></span><span class="cnt">3/3</span><span class="go">›</span></div>
+      <div class="trow"><span class="ck"></span><span class="ti">🏋</span><span class="tx"><b>Set the drills</b><span>The doctores wait for orders in the Training Yard</span></span><span class="cnt">0/5</span><span class="go">›</span></div>
+      <div class="trow"><span class="ck"></span><span class="ti">⏳</span><span class="tx"><b>Spend the training hours</b><span>Hours not spent are lost at the week's end</span></span><span class="cnt">0/10 h</span><span class="go">›</span></div>
+      <div class="trow"><span class="ck"></span><span class="ti">🎓</span><span class="tx"><b>Learn from the season</b><span>2 perk points wait on the lanista's tree</span></span><span class="cnt">0/2</span><span class="go">›</span></div>
+      <div class="trow"><span class="ck"></span><span class="ti">★</span><span class="tx"><b>Meet the Recruiter's pick <span class="due new">new</span></b><span>Galba Bone-Breaker · Soldier · ~B+ · asks 38/wk</span></span><span class="cnt">0/1</span><span class="go">›</span></div>
+      <div class="ok">Already in order: <b>✓</b> no untreated wounds · <b>✓</b> no contract runs out · <b>✓</b> 5 on the roster</div>
+     </div>
+     <!-- week 4, bye -->
+     <div class="bye-only">
+      <div class="trow"><span class="ck"></span><span class="ti">✉️</span><span class="tx"><b>Read the morning letters</b><span>The bye letter, the Quaestor, a rival's taunt</span></span><span class="cnt">0/3</span><span class="go">›</span></div>
+      <div class="trow"><span class="ck"></span><span class="ti">🛏</span><span class="tx"><b>Rest the worn <span class="due new">bye</span></b><span>Aper the Gilded is Worn (fatigue 64) — a rest week costs no bout</span></span><span class="cnt">0/1</span><span class="go">›</span></div>
+      <div class="trow"><span class="ck"></span><span class="ti">⚕</span><span class="tx"><b>Tend the wounded</b><span>Grando Red-Beard · a gashed thigh · a bed heals it by week 5</span></span><span class="cnt">0/1</span><span class="go">›</span></div>
+      <div class="trow"><span class="ck"></span><span class="ti">🏋</span><span class="tx"><b>Drill harder</b><span>The bye adds 4 training hours (14 this week)</span></span><span class="cnt">0/14 h</span><span class="go">›</span></div>
+      <div class="trow"><span class="ck"></span><span class="ti">🤝</span><span class="tx"><b>Court a recruit</b><span>The Recruiter has 20 hours to watch, ask and share a cup</span></span><span class="cnt">0/20 h</span><span class="go">›</span></div>
+      <div class="trow"><span class="ck"></span><span class="ti">🖌</span><span class="tx"><b>Keep the name on the walls</b><span>Paint the programmata in Capua: fans while the sand is quiet</span></span><span class="cnt">0/1</span><span class="go">›</span></div>
+      <div class="trow"><span class="ck"></span><span class="ti">🎓</span><span class="tx"><b>Learn from the season</b><span>2 perk points wait on the lanista's tree</span></span><span class="cnt">0/2</span><span class="go">›</span></div>
+     </div>
+     <div class="quote">🌿 <span>"A great lanista does not just train fighters — he builds a name."</span><span class="by">— Flavius</span></div>
+    </div>
+
+    <!-- TILES -->
+    <div class="tiles">
+     <div class="tile"><div class="art"><img class="bg" src="ludus_img/scene_roster.svg" alt="" style="object-position:38% 60%"><div class="st"><span>5 fighters</span><span>3 on the card</span><span class="w bye-only">1 hurt · 1 worn</span></div></div>
+      <div class="cap"><i class="em">🛡</i><span><b>Your Team</b><span>Roster, armory, infirmary, yard</span></span><i class="chev">›</i></div></div>
+     <div class="tile"><div class="art"><img class="bg" src="ludus_img/scene_news.svg" alt="" style="object-position:30% 50%"><div class="st"><span>Fame 62 · Imperial</span><span>fans in 4 cities</span></div></div>
+      <div class="cap"><i class="em">📯</i><span><b>Promote Team</b><span>Feast, sponsor, criers, programmata</span></span><i class="chev">›</i></div></div>
+     <div class="tile"><div class="art"><img class="bg" src="ludus_img/scene_yard.svg" alt="" style="object-position:22% 50%"><div class="st"><span>Grade D</span><span>0 of 18 levels built</span></div></div>
+      <div class="cap"><i class="em">🏛</i><span><b>Upgrade School</b><span>Build the yard, barracks, ward, stands, stables</span></span><i class="chev">›</i></div></div>
+     <div class="tile"><div class="art"><img class="bg" src="ludus_img/scene_armory.svg" alt="" style="object-position:62% 50%"><div class="st"><span>12 pieces on the shelf</span><span class="w">2 to repair</span></div></div>
+      <div class="cap"><i class="em">⚒</i><span><b>Facilities</b><span>Armory, infirmary beds, the yard's posts</span></span><i class="chev">›</i></div></div>
+     <div class="tile wide"><div class="art"><img class="bg" src="ludus_img/scene_ludus.svg" alt="" style="object-position:50% 40%">
+       <div class="counsel week-only">Consilium: "Hold our fighters back in Pompeii."</div><div class="counsel bye-only">Doctore: "A bye is a gift. Use the extra hours."</div>
+       <div class="faces"><img src="ludus_img/face_0.png" alt=""><img src="ludus_img/face_1.png" alt=""><img src="ludus_img/face_2.png" alt=""><img src="ludus_img/face_3.png" alt=""><img src="ludus_img/face_4.png" alt=""><img src="ludus_img/face_5.png" alt=""></div></div>
+      <div class="cap"><i class="em">🏛</i><span><b>Advisors <i class="cnt">2 new</i></b><span>Six advisors for life: Consilium, Recruiter, Doctore, Medicus, Clerk, Barracks master</span></span><i class="chev">›</i></div></div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="pills"><span class="on">🏛 Your ludus 6</span><span class="fn">⚔ Fight Night 3</span><span>🛡 Roster · 5</span><span>⏭ End the week</span></div>
+</div>
+
+<!-- letters drawer (#mail) -->
+<div class="scrim"></div>
+<div class="drawer">
+ <h3>📬 Letters <span style="font:13px var(--body);color:var(--muted)">5 unread · answers live in Weekly tasks</span><span class="x">✕</span></h3>
+ <div class="lopen"><div class="adv"><img src="ludus_img/face_0.png" alt=""><div><b class="t">Counsel for Pompeii: hold our fighters back</b><div style="font-size:12.5px;color:var(--pdim)">Kaeso Ahenobarbus, the Consilium · week 3</div></div></div>
+  <p>The Pompeii card is stacked with veterans this week. Send the ones who need the coin, keep the Fox fresh for Capua.</p></div>
+ <div class="lrow unread"><span>📅</span><span class="tx"><b>Week II in review</b> <span class="f">· from your clerk</span></span><span class="new">NEW</span></div>
+ <div class="lrow unread"><span>🏛</span><span class="tx"><b>The Quaestor's ledger</b> <span class="f">· founding treasury +320 · sealed</span></span><span class="new">NEW</span></div>
+ <div class="lrow unread"><span>📊</span><span class="tx"><b>Top of the table</b> <span class="f">· finish 1st for 120 and the Superbus</span></span><span class="new">NEW</span></div>
+ <div class="lrow unread"><span>🏛</span><span class="tx"><b>Nonus Flamma has earned the fourth laurel</b> <span class="f">· Barracks master</span></span><span class="new">NEW</span></div>
+ <div class="lrow"><span>✝</span><span class="tx"><b>The Christians keep together</b> <span class="f">· your barracks</span></span><span class="f" style="font:11px var(--mono);color:var(--pdim)">wk 3</span></div>
+ <div class="sec">Past letters · 12 kept</div>
+ <div class="past">▸ Acta Diurna · week II · three bouts in Capua, no deaths</div>
+</div>
+
+<div id="phoneFrame"><iframe title="phone" src="ludus.html#week"></iframe></div>
+<div class="statebar"><a href="#week">#week</a><a href="#bye">#bye</a><a href="#mail">#mail</a><a href="#phone">#phone</a></div>
+<script>
+function st(){const h=(location.hash||'#week').slice(1);document.body.className='s-'+h;document.querySelectorAll('.statebar a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+h))}
+addEventListener('hashchange',st);st();
+document.querySelector('.mailbtn').onclick=()=>location.hash='#mail';
+document.querySelector('.scrim').onclick=document.querySelector('.drawer .x').onclick=()=>location.hash='#week';
+</script>
+</body></html>
