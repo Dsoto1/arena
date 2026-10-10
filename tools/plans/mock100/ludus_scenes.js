@@ -140,6 +140,6 @@ function council(p){const c=common(p,[.55,.35,.3]);let s='';
 
 const SC={team,promote,school,armory,council};
 window.SCENE99=function(k,mode){const p='s'+(N++)+k[0];const r=SC[k](p);
- const vb=mode==='banner'?'-300 40 1200 160':'0 0 600 240';
- return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs>${r.defs}</defs>${r.body}</svg>`};
+ const vb=mode==='banner'?(k==='council'||k==='armory'?'-300 40 1200 190':'-300 40 1200 160'):'0 0 600 240';
+ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" preserveAspectRatio="${mode==='banner'&&(k==='council'||k==='armory')?'xMidYMax':'xMidYMid'} slice" aria-hidden="true"><defs>${r.defs}</defs>${r.body}</svg>`};
 })();

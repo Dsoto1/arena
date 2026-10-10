@@ -191,6 +191,11 @@ body.s-mail .drawer,body.s-mail .scrim{display:block}
 @media (prefers-reduced-motion:reduce){.tile .art .bg{transition:none}}
 
 /* ---------- round 2 ---------- */
+.body{align-items:start}.lcol{display:grid;gap:12px}
+.fncard{background:linear-gradient(#2e1712,#1e100c);border:1px solid #8a3a2c;border-radius:8px;padding:10px 12px}
+.fncard .fh{font:400 17px var(--display);color:#ffd2c4;margin-bottom:6px}.fncard .fh span{font:12px var(--body);color:var(--dim);margin-left:8px}
+.fncard .fb{display:grid;grid-template-columns:40px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:5px 0;border-top:1px solid rgba(240,207,125,.12);font-size:13.5px}
+.fncard .fb b{font:700 11px var(--mono);color:#f6dd95}.fncard .fb span{color:var(--muted)}.fncard .fb em{font-style:normal;color:var(--bone);font-weight:700}.fncard .fb i{font-style:normal}
 body:not(.s-team-a):not(.s-team-b) .team-only{display:none!important}
 body.s-team-a .ludus-only,body.s-team-b .ludus-only{display:none!important}
 body:not(.s-team-b) .hub-only{display:none!important}
@@ -208,7 +213,7 @@ body:not(.s-team-a) .a-only{display:none!important}
 .rban:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(20,12,6,.85),rgba(20,12,6,.35) 40%,rgba(20,12,6,0) 70%)}
 .rban .tt{position:relative;z-index:2}
 .rban .tt b{display:block;font:400 25px var(--display);color:var(--gold2)}
-.rban .tt span{font-size:13.5px;color:#e8dcc0;font-style:italic}
+.rban .tt>span{font-size:13.5px;color:#e8dcc0;font-style:italic}
 .rban .tt .chips{display:flex;gap:5px;margin-top:6px}
 .rban .tt .chips i{font-style:normal;font-size:12px;color:#e8dcc0;background:rgba(20,12,6,.6);border:1px solid rgba(201,162,78,.4);border-radius:10px;padding:1px 8px}
 /* team hub tabs */
@@ -305,6 +310,7 @@ body.s-rooms .roomsv{display:grid!important;gap:8px}
    </div>
 
    <div class="body ludus-only">
+    <div class="lcol">
     <div class="tasks">
      <div class="thd">
       <svg class="wr" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="none" stroke="#5c4326" stroke-width="1.5"/><path d="M12 30q-6-8-3-18M28 30q6-8 3-18" stroke="#5c4326" stroke-width="2" fill="none"/><text x="20" y="25" text-anchor="middle" font-size="13" fill="#5c4326">✦</text></svg>
@@ -330,6 +336,11 @@ body.s-rooms .roomsv{display:grid!important;gap:8px}
       <div class="trow"><span class="ck"></span><span class="ti">🖌</span><span class="tx"><b>Keep the name on the walls</b><span>Paint the programmata in Capua: fans while the sand is quiet</span></span><span class="cnt">0/1</span><span class="go">›</span></div>
      </div>
      <div class="quote">🌿 <span>"A great lanista does not just train fighters — he builds a name."</span><span class="by">— Flavius</span></div>
+    </div>
+    <div class="fncard week-only"><div class="fh">⚔ This Fight Night · Pompeii <span>your fighters on all 3</span></div>
+     <div class="fb"><b>FRI</b><span>Undercard · Classic: Egidious</span><em>Grando Red-Beard</em><i class="chip tr">Tired</i></div>
+     <div class="fb"><b>SAT</b><span>Feature · Classic: Democritus</span><em>Hostus "Lupa" Regulus</em><i class="chip fr0">Fresh</i></div>
+     <div class="fb"><b>SUN</b><span>Main · Classic: Democritus</span><em>The Fox of Roma</em><i class="chip fr0">Fresh</i></div></div>
     </div>
 
     <div class="tiles">

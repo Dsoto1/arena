@@ -51,3 +51,27 @@ Shots: `signing_pre_1440.png`, `signing_gem_1440_t1500.png` (mid flip), `signing
 - **Reduce motion** (`#static`, the OS setting or SETTINGS.calm / Animations Off): no flip, burst, sparks or dust; the final frame is shown
   straight away (scouted and real side by side). `#pre` shows an optional "🔓 Break the seal" step.
 - Buttons: 🛡 See him in the Roster · Welcome to the ludus. This card would also hold 249's "The truth" block (g.truth98).
+
+---
+## ROUND 2 (his answers D1–D7, 2026-10-10). This section replaces the tile table and states above where they differ.
+States now: `#week` (4 tasks) · `#bye` (6 tasks) · `#mail` · `#team-a` · `#team-b` · `#rooms` · `#phone`.
+Shots: `ludus_week_1440/390`, `ludus_bye_1440/390`, `ludus_mail_1440`, `ludus_team-a_1440`, `ludus_team-b_1440/390`, `ludus_rooms_1440`, `ludus_phone_1440`.
+- **D1 tiles = one weekly job each.** (1) **Your Team**: the people (roster + ward + yard). (2) **Promote**: feast, sponsors, criers, programmata.
+  (3) **Upgrade School**: the BUILDINGS (yard, barracks, beds/valetudinarium, kitchen, shrine, stands), with 3 level pips each on the tile and the
+  next build + price in the caption. (4) **Armory** (his "Facilities — better gear"): shelf, repairs, City Square stalls. (5) **Advisors**: wide tile, council.
+- **D5b richer scenes** (`ludus_scenes.js`, `SCENE99(key,'tile'|'banner')`): one painted SVG per room with gradients, grain, stone texture, light
+  from the upper left, cast shadows to the lower right and a vignette. The subjects are the old banners' subjects: helmets and shields on the barracks wall; the forum
+  wall with red programmata and a crier; the ludus colonnades with scaffolding and a treadwheel crane over the sand yard; the forge with
+  anvil, brazier, racks and round shields; the council hall with drapes, columns, a long table and candles. The SAME picture is the tile and the
+  room's banner (`#rooms` shows all five as banners; `#team-a/b` use the team one). The bye-week banner uses the school scene. Fight Night keeps
+  the city banner.
+- **D2: what "Roster" vs "team hub" means.**
+  - `#team-a`: the Your Team tile opens today's Roster tab, and the rail is unchanged (Roster · Armory · Recruiting · Infirmary · Training Yard).
+    + Nothing to relearn, and every room is one click from anywhere. − The tile is only a shortcut, and the rail stays long (6 Ludus entries).
+  - `#team-b`: ONE screen, "Your Team", with tabs Roster · Armory · Infirmary · Training Yard across the top. The same fighter stays selected on
+    every tab, with the same card on the right. The rail drops those four and keeps a single "Your Team" entry. In this option the Armory tile opens the hub on its Armory tab.
+    + Shorter rail (3 Ludus entries), and you follow one fighter through his gear, wounds and drills. − Infirmary and Yard are one click deeper, their
+    rail counts merge into one, and the lesson steps and checklist buttons have to be re-pointed.
+- **D3: as many tasks as needed**, progress N/M. `#week` has 4 tasks (1/4; drills and hours merged into "Set the week's training"). When the
+  list is short, the left column shows a "This Fight Night" card (day, bout, event, your fighter, fatigue) under it. `#bye` has 6 (0/6).
+- **D4a**: letters drawer, as before. **D6a**: GEM/DUD = 2+ grades off on Overall. **D7a**: the reveal plays by itself (signing.html unchanged).
