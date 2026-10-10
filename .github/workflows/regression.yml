@@ -2,8 +2,10 @@
 # Each shard: build the page, run its tests with smartreg (-j 2, shared browsers, failures re-run alone → FLAKY), upload reg.txt.
 # The report job merges the shards into one summary + a CIRESULT line (read from the logs by tools/ci/absorb.js).
 name: regression
-# From v1.0 (his call 2026-10-10, monthly minutes): MANUAL ONLY — the regression runs in the cloud session (REG=local, the default in release.sh).
 on:
+  push:
+    branches: ['claude/**', 'main']
+    paths-ignore: ['CLAUDE.md', 'docs/**', 'tools/art/**', 'tools/plans/**', 'share/**', 'tools/regstate.json', 'tools/regmap.json', 'tools/reg.txt']
   workflow_dispatch:
     inputs:
       mode:
