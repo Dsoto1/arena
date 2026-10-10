@@ -1,0 +1,1238 @@
+[
+ {
+  "k": "Command <b>{0}</b>: click an orange tile to move{1}{2}{3}{4}.",
+  "w": "07-ui.js:2793"
+ },
+ {
+  "k": "(it attacked, it may still move)",
+  "w": "07-ui.js:2793"
+ },
+ {
+  "k": "⚖ Pay the +1 in coin instead",
+  "w": "07-ui.js:3321"
+ },
+ {
+  "k": "⚖ Pay the +1 in CF instead",
+  "w": "07-ui.js:3321"
+ },
+ {
+  "k": "Veteranus old debts: every buy costs +1",
+  "w": "07-ui.js:3322"
+ },
+ {
+  "k": "Attack power: the damage each hit rolled in an attack deals.",
+  "w": "26-gear.js:106"
+ },
+ {
+  "k": "<b>The gladiators.</b> Open the glowing <b>🐾 Field</b> tab to see everyone on the sand at a glance: health, <b>Crowd Favor</b> (CF) and coin. Click one to see their board and cards. CF decides your Fate at the end — and buys things mid-bout.",
+  "w": "29-guide.js:217"
+ },
+ {
+  "k": "L{0} · attack power {1} · range {2}",
+  "w": "94-v72.js:45"
+ },
+ {
+  "k": "nothing you hold can attack this turn",
+  "w": "210-v92fix.js:9"
+ },
+ {
+  "k": "this round forbids attacks on gladiators",
+  "w": "210-v92fix.js:15"
+ },
+ {
+  "k": "Across the water — board their ship or swim closer",
+  "w": "210-v92fix.js:17"
+ },
+ {
+  "k": "No enemy within range {0}",
+  "w": "210-v92fix.js:18"
+ },
+ {
+  "k": "No target you can attack from here",
+  "w": "210-v92fix.js:19"
+ },
+ {
+  "k": "Shield up",
+  "w": "222-v93token.js:146"
+ },
+ {
+  "k": "Ready",
+  "w": "222-v93token.js:148"
+ },
+ {
+  "k": "Wide",
+  "w": "222-v93token.js:148"
+ },
+ {
+  "k": "Crouch",
+  "w": "222-v93token.js:148"
+ },
+ {
+  "k": "Lunge prep",
+  "w": "222-v93token.js:148"
+ },
+ {
+  "k": "Overhead strike",
+  "w": "222-v93token.js:148"
+ },
+ {
+  "k": "Thrust",
+  "w": "222-v93token.js:148"
+ },
+ {
+  "k": "Slash wind-up",
+  "w": "222-v93token.js:148"
+ },
+ {
+  "k": "Shield bash",
+  "w": "222-v93token.js:148"
+ },
+ {
+  "k": "Spear throw",
+  "w": "222-v93token.js:149"
+ },
+ {
+  "k": "Net cast",
+  "w": "222-v93token.js:149"
+ },
+ {
+  "k": "Aim",
+  "w": "222-v93token.js:149"
+ },
+ {
+  "k": "Parry",
+  "w": "222-v93token.js:149"
+ },
+ {
+  "k": "Brace",
+  "w": "222-v93token.js:149"
+ },
+ {
+  "k": "Salute",
+  "w": "222-v93token.js:149"
+ },
+ {
+  "k": "Kneel",
+  "w": "222-v93token.js:149"
+ },
+ {
+  "k": "Arms crossed",
+  "w": "222-v93token.js:149"
+ },
+ {
+  "k": "Wounded",
+  "w": "222-v93token.js:149"
+ },
+ {
+  "k": "Exhausted",
+  "w": "222-v93token.js:149"
+ },
+ {
+  "k": "Stances",
+  "w": "222-v93token.js:171"
+ },
+ {
+  "k": "Defence",
+  "w": "222-v93token.js:171"
+ },
+ {
+  "k": "Pelvis",
+  "w": "222-v93token.js:172"
+ },
+ {
+  "k": "Spine",
+  "w": "222-v93token.js:172"
+ },
+ {
+  "k": "Elbow",
+  "w": "222-v93token.js:172"
+ },
+ {
+  "k": "Wrist",
+  "w": "222-v93token.js:172"
+ },
+ {
+  "k": "Hip",
+  "w": "222-v93token.js:172"
+ },
+ {
+  "k": "Knee",
+  "w": "222-v93token.js:172"
+ },
+ {
+  "k": "Ankle",
+  "w": "222-v93token.js:172"
+ },
+ {
+  "k": "Bend",
+  "w": "222-v93token.js:175"
+ },
+ {
+  "k": "Twist",
+  "w": "222-v93token.js:175"
+ },
+ {
+  "k": "Side",
+  "w": "222-v93token.js:175"
+ },
+ {
+  "k": "Left {0}",
+  "w": "222-v93token.js:176"
+ },
+ {
+  "k": "Right {0}",
+  "w": "222-v93token.js:176"
+ },
+ {
+  "k": "{0} −",
+  "w": "222-v93token.js:192"
+ },
+ {
+  "k": "{0} +",
+  "w": "222-v93token.js:192"
+ },
+ {
+  "k": "Joints",
+  "w": "222-v93token.js:197"
+ },
+ {
+  "k": "Forward",
+  "w": "222-v93token.js:204"
+ },
+ {
+  "k": "↺ Joint",
+  "w": "222-v93token.js:205"
+ },
+ {
+  "k": "↺ Limb",
+  "w": "222-v93token.js:205"
+ },
+ {
+  "k": "Copy the left side of this limb onto the right (a body joint: both arms and legs)",
+  "w": "222-v93token.js:206"
+ },
+ {
+  "k": "Left → Right",
+  "w": "222-v93token.js:206"
+ },
+ {
+  "k": "Copy the right side of this limb onto the left (a body joint: both arms and legs)",
+  "w": "222-v93token.js:206"
+ },
+ {
+  "k": "Right → Left",
+  "w": "222-v93token.js:206"
+ },
+ {
+  "k": "Symmetric: both sides move together",
+  "w": "222-v93token.js:207"
+ },
+ {
+  "k": "Lock feet on the base",
+  "w": "222-v93token.js:208"
+ },
+ {
+  "k": "Left",
+  "w": "222-v93token.js:208"
+ },
+ {
+  "k": "Right",
+  "w": "222-v93token.js:208"
+ },
+ {
+  "k": "Keys: ↑ ↓ turn the joint (Shift: 1°), ← → pick the axis, [ ] the joint, Ctrl+Z undo.",
+  "w": "222-v93token.js:209"
+ },
+ {
+  "k": "This foot is locked on the base: drag the ankle, or unlock it to bend the leg.",
+  "w": "222-v93token.js:228"
+ },
+ {
+  "k": "Attack power {0} · Range {1}",
+  "w": "248-v98bar.js:69"
+ },
+ {
+  "k": "✦ More events",
+  "w": "252-v98onl.js:163"
+ },
+ {
+  "k": "Portrait detail",
+  "w": "263-v99face.js:181"
+ },
+ {
+  "k": "Light and shade on every face. Light and Off draw them plainer and faster.",
+  "w": "263-v99face.js:181"
+ },
+ {
+  "k": "Portraits",
+  "w": "263-v99face.js:182"
+ },
+ {
+  "k": "Live preview",
+  "w": "262-v99designer.js:54"
+ },
+ {
+  "k": "fights on when hurt",
+  "w": "262-v99designer.js:90"
+ },
+ {
+  "k": "heals when a location is low",
+  "w": "262-v99designer.js:90"
+ },
+ {
+  "k": "flees to heal at the first wound",
+  "w": "262-v99designer.js:90"
+ },
+ {
+  "k": "leaves beasts alone",
+  "w": "262-v99designer.js:91"
+ },
+ {
+  "k": "takes a beast when it is the closest prize",
+  "w": "262-v99designer.js:91"
+ },
+ {
+  "k": "hunts beasts for coin and CF",
+  "w": "262-v99designer.js:91"
+ },
+ {
+  "k": "rarely shops",
+  "w": "262-v99designer.js:92"
+ },
+ {
+  "k": "buys when a level is affordable",
+  "w": "262-v99designer.js:92"
+ },
+ {
+  "k": "saves and spends at every market",
+  "w": "262-v99designer.js:92"
+ },
+ {
+  "k": "ignores the stands",
+  "w": "262-v99designer.js:93"
+ },
+ {
+  "k": "plays to the crowd now and then",
+  "w": "262-v99designer.js:93"
+ },
+ {
+  "k": "chases Crowd Favor first",
+  "w": "262-v99designer.js:93"
+ },
+ {
+  "k": "avoids rivals",
+  "w": "262-v99designer.js:94"
+ },
+ {
+  "k": "attacks rivals in reach",
+  "w": "262-v99designer.js:94"
+ },
+ {
+  "k": "goes after rivals across the sand",
+  "w": "262-v99designer.js:94"
+ },
+ {
+  "k": "breaks truces early",
+  "w": "262-v99designer.js:95"
+ },
+ {
+  "k": "keeps a truce for a rotation or two",
+  "w": "262-v99designer.js:95"
+ },
+ {
+  "k": "keeps truces to the end",
+  "w": "262-v99designer.js:95"
+ },
+ {
+  "k": "Ability",
+  "w": "262-v99designer.js:104"
+ },
+ {
+  "k": "Weakness",
+  "w": "262-v99designer.js:104"
+ },
+ {
+  "k": "{0} coin · {1} keys{2}",
+  "w": "262-v99designer.js:104"
+ },
+ {
+  "k": "CPU plays Normal",
+  "w": "262-v99designer.js:107"
+ },
+ {
+  "k": "Ratings {0}/{1}",
+  "w": "262-v99designer.js:109"
+ },
+ {
+  "k": "Ratings over {0} ({1})",
+  "w": "262-v99designer.js:109"
+ },
+ {
+  "k": "ready to save",
+  "w": "262-v99designer.js:110"
+ },
+ {
+  "k": "fix the marked items",
+  "w": "262-v99designer.js:110"
+ },
+ {
+  "k": "🪪 Identity",
+  "w": "262-v99designer.js:116"
+ },
+ {
+  "k": "what the arena calls her",
+  "w": "262-v99designer.js:116"
+ },
+ {
+  "k": "what the arena calls him",
+  "w": "262-v99designer.js:116"
+ },
+ {
+  "k": "📋 Record",
+  "w": "262-v99designer.js:118"
+ },
+ {
+  "k": "filled in by the arena",
+  "w": "262-v99designer.js:118"
+ },
+ {
+  "k": "📜 Backstory",
+  "w": "262-v99designer.js:120"
+ },
+ {
+  "k": "where she comes from, what she fights for",
+  "w": "262-v99designer.js:120"
+ },
+ {
+  "k": "where he comes from, what he fights for",
+  "w": "262-v99designer.js:120"
+ },
+ {
+  "k": "🙂 Face",
+  "w": "262-v99designer.js:123"
+ },
+ {
+  "k": "skin, hair, features",
+  "w": "262-v99designer.js:123"
+ },
+ {
+  "k": "🧥 Garb & jewellery",
+  "w": "262-v99designer.js:124"
+ },
+ {
+  "k": "or hang a city banner:",
+  "w": "262-v99designer.js:125"
+ },
+ {
+  "k": "🚩 Backdrop",
+  "w": "262-v99designer.js:126"
+ },
+ {
+  "k": "behind the portrait",
+  "w": "262-v99designer.js:126"
+ },
+ {
+  "k": "df99tk ch99tkA",
+  "w": "262-v99designer.js:128"
+ },
+ {
+  "k": "Classic token",
+  "w": "262-v99designer.js:128"
+ },
+ {
+  "k": "df99tk ch99tkB",
+  "w": "262-v99designer.js:129"
+ },
+ {
+  "k": "how she stands on the sand",
+  "w": "262-v99designer.js:131"
+ },
+ {
+  "k": "how he stands on the sand",
+  "w": "262-v99designer.js:131"
+ },
+ {
+  "k": "Everything she looks like, in one place — the preview on the right follows every change.",
+  "w": "262-v99designer.js:132"
+ },
+ {
+  "k": "Everything he looks like, in one place — the preview on the right follows every change.",
+  "w": "262-v99designer.js:132"
+ },
+ {
+  "k": "weapons, armor, ability, coin, keys, starting CF and items",
+  "w": "262-v99designer.js:134"
+ },
+ {
+  "k": "📊 Ratings & abilities",
+  "w": "262-v99designer.js:138"
+ },
+ {
+  "k": "{0} points across five ratings",
+  "w": "262-v99designer.js:138"
+ },
+ {
+  "k": "Start from:",
+  "w": "262-v99designer.js:140"
+ },
+ {
+  "k": "🧠 Temper",
+  "w": "262-v99designer.js:141"
+ },
+ {
+  "k": "when a CPU plays this character",
+  "w": "262-v99designer.js:141"
+ },
+ {
+  "k": "🎲 At the table",
+  "w": "262-v99designer.js:143"
+ },
+ {
+  "k": "what these sliders make her do",
+  "w": "262-v99designer.js:143"
+ },
+ {
+  "k": "what these sliders make him do",
+  "w": "262-v99designer.js:143"
+ },
+ {
+  "k": "from Intelligence (Class & ratings tab)",
+  "w": "262-v99designer.js:143"
+ },
+ {
+  "k": "3D",
+  "w": "262-v99designer.js:153"
+ },
+ {
+  "k": "Class card",
+  "w": "262-v99designer.js:153"
+ },
+ {
+  "k": "✎ Character designer",
+  "w": "262-v99designer.js:155"
+ },
+ {
+  "k": "name · city · story",
+  "w": "262-v99designer.js:156"
+ },
+ {
+  "k": "Appearance",
+  "w": "262-v99designer.js:157"
+ },
+ {
+  "k": "portrait · tokens",
+  "w": "262-v99designer.js:157"
+ },
+ {
+  "k": "Class & ratings",
+  "w": "262-v99designer.js:158"
+ },
+ {
+  "k": "loadout · {0} pool",
+  "w": "262-v99designer.js:158"
+ },
+ {
+  "k": "CPU personality",
+  "w": "262-v99designer.js:159"
+ },
+ {
+  "k": "how a CPU plays it",
+  "w": "262-v99designer.js:159"
+ },
+ {
+  "k": "📜 Your characters · {0}",
+  "w": "262-v99designer.js:160"
+ },
+ {
+  "k": "{0} start",
+  "w": "262-v99designer.js:181"
+ },
+ {
+  "k": "🪪 The lanista",
+  "w": "262-v99designer.js:188"
+ },
+ {
+  "k": "how the league addresses you",
+  "w": "262-v99designer.js:188"
+ },
+ {
+  "k": "📜 Story",
+  "w": "262-v99designer.js:190"
+ },
+ {
+  "k": "your letters and the Annals quote it",
+  "w": "262-v99designer.js:190"
+ },
+ {
+  "k": "🎩 Studio lanistas",
+  "w": "262-v99designer.js:192"
+ },
+ {
+  "k": "start from one you designed, or keep this one",
+  "w": "262-v99designer.js:192"
+ },
+ {
+  "k": "🎨 Colours",
+  "w": "262-v99designer.js:198"
+ },
+ {
+  "k": "backdrop · house colour",
+  "w": "262-v99designer.js:198"
+ },
+ {
+  "k": "The same face designer as a Studio character — one face, everywhere.",
+  "w": "262-v99designer.js:199"
+ },
+ {
+  "k": "🏛 The ludus",
+  "w": "262-v99designer.js:204"
+ },
+ {
+  "k": "which creations are in this league",
+  "w": "262-v99designer.js:205"
+ },
+ {
+  "k": "🚩 House banner",
+  "w": "262-v99designer.js:207"
+ },
+ {
+  "k": "masthead · league table · stands",
+  "w": "262-v99designer.js:207"
+ },
+ {
+  "k": "🎭 Start from a type",
+  "w": "262-v99designer.js:212"
+ },
+ {
+  "k": "🎚 Temperament",
+  "w": "262-v99designer.js:212"
+ },
+ {
+  "k": "seven sliders · 0–100",
+  "w": "262-v99designer.js:212"
+ },
+ {
+  "k": "⚖ Starting difficulty",
+  "w": "262-v99designer.js:218"
+ },
+ {
+  "k": "⚖ The start",
+  "w": "262-v99designer.js:218"
+ },
+ {
+  "k": "🏜 House rules",
+  "w": "262-v99designer.js:219"
+ },
+ {
+  "k": "optional — baked in for the whole career",
+  "w": "262-v99designer.js:219"
+ },
+ {
+  "k": "🏟 Use in a new career",
+  "w": "262-v99designer.js:223"
+ },
+ {
+  "k": "Manager mode starts from this lanista",
+  "w": "262-v99designer.js:223"
+ },
+ {
+  "k": "Saves this lanista, then opens Manager mode’s <b>Create your lanista</b> with the face, house and temperament filled in — pick the difficulty and house rules there.",
+  "w": "262-v99designer.js:223"
+ },
+ {
+  "k": "🏛 Start a career with this lanista",
+  "w": "262-v99designer.js:223"
+ },
+ {
+  "k": "lanista of",
+  "w": "262-v99designer.js:233"
+ },
+ {
+  "k": "🎩 Lanista designer",
+  "w": "262-v99designer.js:236"
+ },
+ {
+  "k": "🎩 Take over a house · your lanista",
+  "w": "262-v99designer.js:238"
+ },
+ {
+  "k": "🎩 A new house · your lanista",
+  "w": "262-v99designer.js:238"
+ },
+ {
+  "k": "🎩 New career · your lanista",
+  "w": "262-v99designer.js:238"
+ },
+ {
+  "k": "Identity",
+  "w": "262-v99designer.js:239"
+ },
+ {
+  "k": "name · epithet · story",
+  "w": "262-v99designer.js:239"
+ },
+ {
+  "k": "Portrait & colours",
+  "w": "262-v99designer.js:240"
+ },
+ {
+  "k": "face · house colour",
+  "w": "262-v99designer.js:240"
+ },
+ {
+  "k": "ludus · city · banner",
+  "w": "262-v99designer.js:241"
+ },
+ {
+  "k": "ludus · city",
+  "w": "262-v99designer.js:241"
+ },
+ {
+  "k": "Temperament",
+  "w": "262-v99designer.js:242"
+ },
+ {
+  "k": "how rivals read you",
+  "w": "262-v99designer.js:242"
+ },
+ {
+  "k": "🎭 Temperament",
+  "w": "262-v99designer.js:242"
+ },
+ {
+  "k": "difficulty · house rules",
+  "w": "262-v99designer.js:243"
+ },
+ {
+  "k": "use in a new career",
+  "w": "262-v99designer.js:243"
+ },
+ {
+  "k": "📜 Your lanistas · {0}",
+  "w": "262-v99designer.js:245"
+ },
+ {
+  "k": "Which fighter will you command?",
+  "w": "265-v99rival.js:12"
+ },
+ {
+  "k": "Ranked: your rank only, the Fate is final",
+  "w": "264-v99fix2.js:27"
+ },
+ {
+  "k": "⚔ RANKED",
+  "w": "264-v99fix2.js:27"
+ },
+ {
+  "k": "Custom only: no death, no rank",
+  "w": "264-v99fix2.js:27"
+ },
+ {
+  "k": "Custom: anyone, no death",
+  "w": "264-v99fix2.js:27"
+ },
+ {
+  "k": "Used this week by {0}",
+  "w": "269-v99yard.js:24"
+ },
+ {
+  "k": "Ready for a trial",
+  "w": "269-v99yard.js:44"
+ },
+ {
+  "k": "one trial a week per fighter · each trial one fighter a week",
+  "w": "269-v99yard.js:47"
+ },
+ {
+  "k": "⚔ Selected for a trial",
+  "w": "269-v99yard.js:52"
+ },
+ {
+  "k": "⚔ Select for a trial",
+  "w": "269-v99yard.js:52"
+ },
+ {
+  "k": "class=\"y92c sel99",
+  "w": "269-v99yard.js:53"
+ },
+ {
+  "k": "expires",
+  "w": "270-v99desk.js:44"
+ },
+ {
+  "k": "until wk {0}",
+  "w": "270-v99desk.js:45"
+ },
+ {
+  "k": "Enter her",
+  "w": "270-v99desk.js:55"
+ },
+ {
+  "k": "Enter him",
+  "w": "270-v99desk.js:55"
+ },
+ {
+  "k": "Enter them",
+  "w": "270-v99desk.js:55"
+ },
+ {
+  "k": "<b>{0}</b> asks for a fight <span class=\"q\">— +{1} morale if entered, −{2} if not</span>",
+  "w": "270-v99desk.js:56"
+ },
+ {
+  "k": "<b>{0}</b> ask for a fight <span class=\"q\">— +{1} morale if entered, −{2} if not</span>",
+  "w": "270-v99desk.js:56"
+ },
+ {
+  "k": "<b>{0}</b> offers {1} for {2}",
+  "w": "270-v99desk.js:59"
+ },
+ {
+  "k": "<b>{0}</b> wants {1} for {2}{3}",
+  "w": "270-v99desk.js:59"
+ },
+ {
+  "k": "<b>{0}</b> — the editors invite your fighters",
+  "w": "270-v99desk.js:67"
+ },
+ {
+  "k": "<b>{0} invitations</b> to special events",
+  "w": "270-v99desk.js:67"
+ },
+ {
+  "k": "<b>{0}</b> <span class=\"q\">— {1}</span>",
+  "w": "270-v99desk.js:72"
+ },
+ {
+  "k": "bouts this week",
+  "w": "270-v99desk.js:88"
+ },
+ {
+  "k": "Decide ▴",
+  "w": "270-v99desk.js:105"
+ },
+ {
+  "k": "Decide ▾",
+  "w": "270-v99desk.js:105"
+ },
+ {
+  "k": "Required",
+  "w": "270-v99desk.js:108"
+ },
+ {
+  "k": "Not this week",
+  "w": "270-v99desk.js:108"
+ },
+ {
+  "k": "🪶 The Lanista's desk",
+  "w": "270-v99desk.js:112"
+ },
+ {
+  "k": "<b>{0}</b> wait for you",
+  "w": "270-v99desk.js:112"
+ },
+ {
+  "k": "nothing waits for you",
+  "w": "270-v99desk.js:112"
+ },
+ {
+  "k": "1 unread letter",
+  "w": "270-v99desk.js:112"
+ },
+ {
+  "k": "{0} unread letters",
+  "w": "270-v99desk.js:112"
+ },
+ {
+  "k": "· {0} to do",
+  "w": "270-v99desk.js:113"
+ },
+ {
+  "k": "· all done — end the week when ready",
+  "w": "270-v99desk.js:113"
+ },
+ {
+  "k": "▴ fewer",
+  "w": "270-v99desk.js:115"
+ },
+ {
+  "k": "▸ {0} more",
+  "w": "270-v99desk.js:115"
+ },
+ {
+  "k": "✓ {0} done · {1} not this week",
+  "w": "270-v99desk.js:115"
+ },
+ {
+  "k": "not this week",
+  "w": "270-v99desk.js:115"
+ },
+ {
+  "k": "↶ Back on the list",
+  "w": "270-v99desk.js:115"
+ },
+ {
+  "k": "Letters",
+  "w": "270-v99desk.js:116"
+ },
+ {
+  "k": "· {0} unread",
+  "w": "270-v99desk.js:116"
+ },
+ {
+  "k": "Past letters",
+  "w": "270-v99desk.js:118"
+ },
+ {
+  "k": "{0} · from {1} · S{2} W{3}",
+  "w": "270-v99desk.js:118"
+ },
+ {
+  "k": "1 thing waits for you this week",
+  "w": "270-v99desk.js:123"
+ },
+ {
+  "k": "{0} things wait for you this week",
+  "w": "270-v99desk.js:123"
+ },
+ {
+  "k": "Read the Acta Diurna",
+  "w": "270-v99desk.js:133"
+ },
+ {
+  "k": "Acta",
+  "w": "270-v99desk.js:133"
+ },
+ {
+  "k": "No letters this week.",
+  "w": "270-v99desk.js:139"
+ },
+ {
+  "k": "<b>You are about to skip:</b>",
+  "w": "270-v99desk.js:157"
+ },
+ {
+  "k": "+ {0} more",
+  "w": "270-v99desk.js:157"
+ },
+ {
+  "k": "The page did not load.",
+  "w": "271-v99fix3.js:35"
+ },
+ {
+  "k": "Copy it from Settings → Error log if it keeps happening.",
+  "w": "271-v99fix3.js:36"
+ },
+ {
+  "k": "Oval",
+  "w": "268-v99face2.js:685"
+ },
+ {
+  "k": "Square",
+  "w": "268-v99face2.js:685"
+ },
+ {
+  "k": "Heart",
+  "w": "268-v99face2.js:685"
+ },
+ {
+  "k": "Diamond",
+  "w": "268-v99face2.js:685"
+ },
+ {
+  "k": "Jaw",
+  "w": "268-v99face2.js:686"
+ },
+ {
+  "k": "Usual",
+  "w": "268-v99face2.js:686"
+ },
+ {
+  "k": "Narrow",
+  "w": "268-v99face2.js:686"
+ },
+ {
+  "k": "Strong",
+  "w": "268-v99face2.js:686"
+ },
+ {
+  "k": "Cheekbones",
+  "w": "268-v99face2.js:687"
+ },
+ {
+  "k": "High",
+  "w": "268-v99face2.js:687"
+ },
+ {
+  "k": "Flat",
+  "w": "268-v99face2.js:687"
+ },
+ {
+  "k": "Brows",
+  "w": "268-v99face2.js:688"
+ },
+ {
+  "k": "Thick",
+  "w": "268-v99face2.js:688"
+ },
+ {
+  "k": "Thin",
+  "w": "268-v99face2.js:688"
+ },
+ {
+  "k": "Arched",
+  "w": "268-v99face2.js:688"
+ },
+ {
+  "k": "Straight",
+  "w": "268-v99face2.js:688"
+ },
+ {
+  "k": "Scar-split",
+  "w": "268-v99face2.js:688"
+ },
+ {
+  "k": "Unibrow",
+  "w": "268-v99face2.js:688"
+ },
+ {
+  "k": "Almond",
+  "w": "268-v99face2.js:689"
+ },
+ {
+  "k": "Hooded",
+  "w": "268-v99face2.js:689"
+ },
+ {
+  "k": "Deep-set",
+  "w": "268-v99face2.js:689"
+ },
+ {
+  "k": "Eye set",
+  "w": "268-v99face2.js:690"
+ },
+ {
+  "k": "Wide-set",
+  "w": "268-v99face2.js:690"
+ },
+ {
+  "k": "Close-set",
+  "w": "268-v99face2.js:690"
+ },
+ {
+  "k": "Nose",
+  "w": "268-v99face2.js:691"
+ },
+ {
+  "k": "Broad",
+  "w": "268-v99face2.js:691"
+ },
+ {
+  "k": "Button",
+  "w": "268-v99face2.js:691"
+ },
+ {
+  "k": "Broken",
+  "w": "268-v99face2.js:691"
+ },
+ {
+  "k": "Lips",
+  "w": "268-v99face2.js:692"
+ },
+ {
+  "k": "Small",
+  "w": "268-v99face2.js:692"
+ },
+ {
+  "k": "Downturned",
+  "w": "268-v99face2.js:692"
+ },
+ {
+  "k": "Smirk",
+  "w": "268-v99face2.js:692"
+ },
+ {
+  "k": "Ears",
+  "w": "268-v99face2.js:693"
+ },
+ {
+  "k": "Large",
+  "w": "268-v99face2.js:693"
+ },
+ {
+  "k": "Protruding",
+  "w": "268-v99face2.js:693"
+ },
+ {
+  "k": "Cauliflower",
+  "w": "268-v99face2.js:693"
+ },
+ {
+  "k": "Short-thick",
+  "w": "268-v99face2.js:694"
+ },
+ {
+  "k": "Long-slim",
+  "w": "268-v99face2.js:694"
+ },
+ {
+  "k": "Bull",
+  "w": "268-v99face2.js:694"
+ },
+ {
+  "k": "Weathered",
+  "w": "268-v99face2.js:695"
+ },
+ {
+  "k": "Old",
+  "w": "268-v99face2.js:695"
+ },
+ {
+  "k": "Lines",
+  "w": "268-v99face2.js:696"
+ },
+ {
+  "k": "Forehead",
+  "w": "268-v99face2.js:696"
+ },
+ {
+  "k": "Cheeks",
+  "w": "268-v99face2.js:696"
+ },
+ {
+  "k": "Both",
+  "w": "268-v99face2.js:696"
+ },
+ {
+  "k": "Portrait detail is Off in Settings — the features show with Light or Full.",
+  "w": "268-v99face2.js:706"
+ },
+ {
+  "k": "Feature",
+  "w": "268-v99face2.js:706"
+ },
+ {
+  "k": "Keep the hair colour when old",
+  "w": "268-v99face2.js:707"
+ },
+ {
+  "k": "🎲 Random features",
+  "w": "268-v99face2.js:707"
+ },
+ {
+  "k": "↺ Usual shape",
+  "w": "268-v99face2.js:707"
+ },
+ {
+  "k": "🧬 Features",
+  "w": "268-v99face2.js:708"
+ },
+ {
+  "k": "face shape · eyes · nose · age",
+  "w": "268-v99face2.js:708"
+ },
+ {
+  "k": "Repair all",
+  "w": "272-v99fix4.js:76"
+ },
+ {
+  "k": "Issued kit: the house lent it to him — it cannot be sold.",
+  "w": "272-v99fix4.js:90"
+ },
+ {
+  "k": "issued",
+  "w": "272-v99fix4.js:91"
+ },
+ {
+  "k": "💰 Spares on the shelf",
+  "w": "272-v99fix4.js:115"
+ },
+ {
+  "k": "{0} · the stalls buy {1} more this week (30% of the price)",
+  "w": "272-v99fix4.js:115"
+ },
+ {
+  "k": "Sell it as scrap (15%) — damaged pieces do not count against the weekly limit",
+  "w": "272-v99fix4.js:120"
+ },
+ {
+  "k": "Sell all damaged",
+  "w": "272-v99fix4.js:122"
+ },
+ {
+  "k": "Sold for {0}.",
+  "w": "272-v99fix4.js:127"
+ },
+ {
+  "k": "{0} pieces sold for {1}.",
+  "w": "272-v99fix4.js:127"
+ },
+ {
+  "k": "of {0} · the Recruiter's hours",
+  "w": "272-v99fix4.js:132"
+ },
+ {
+  "k": "{0} of the Recruiter's hours left this week",
+  "w": "272-v99fix4.js:136"
+ },
+ {
+  "k": "The Golden Eagle is one of the 12 Blessings on the pillars: trade it to the crowd for 5 CF",
+  "w": "272-v99fix4.js:158"
+ },
+ {
+  "k": "Golden Eagle in play",
+  "w": "272-v99fix4.js:158"
+ },
+ {
+  "k": "/wk",
+  "w": "272-v99fix4.js:159"
+ },
+ {
+  "k": "Dismiss until next week",
+  "w": "272-v99fix4.js:161"
+ },
+ {
+  "k": "{0} in all",
+  "w": "272-v99fix4.js:162"
+ },
+ {
+  "k": "A letter from your council, sealed with the house's wax",
+  "w": "272-v99fix4.js:174"
+ },
+ {
+  "k": "Lanista, the ludus is yours. Every week runs the same way:",
+  "w": "272-v99fix4.js:175"
+ },
+ {
+  "k": "<b>Your ludus</b> — read the desk: letters that need an answer and the week's tasks.",
+  "w": "272-v99fix4.js:176"
+ },
+ {
+  "k": "<b>Prepare</b> — sign fighters in <b>Recruiting</b> (the Recruiter's hours), set drills in the <b>Training Yard</b>, heal in the <b>Infirmary</b>, dress them from the <b>Armory</b>.",
+  "w": "272-v99fix4.js:177"
+ },
+ {
+  "k": "<b>Match Week</b> — three bouts in the host city (Friday, Saturday, Sunday). Enter your fighters, then fight, watch or simulate.",
+  "w": "272-v99fix4.js:178"
+ },
+ {
+  "k": "<b>Decide</b> — thumbs, blood money and the rudis wait for your verdict.",
+  "w": "272-v99fix4.js:179"
+ },
+ {
+  "k": "<b>End the week</b> — wages, training, healing and the Acta Diurna.",
+  "w": "272-v99fix4.js:180"
+ },
+ {
+  "k": "The top four houses after 12 weeks meet in the Flavius Superbus. Three week-ends in the red close the ludus.",
+  "w": "272-v99fix4.js:181"
+ },
+ {
+  "k": "Break the seal and begin",
+  "w": "272-v99fix4.js:182"
+ },
+ {
+  "k": "Break the seal",
+  "w": "272-v99fix4.js:182"
+ }
+]
