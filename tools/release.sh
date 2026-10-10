@@ -36,7 +36,7 @@ echo "clean ($(echo $WORDS | wc -w) words checked)"
 step "4 full regression"
 # v0.95: the full suite runs on GitHub Actions (8 shards, ~15 min) when the release commit (version.json changed) is pushed —
 # tools/ci/budget.json + .github/workflows/regression.yml. REG=local runs it here instead (~45-60 min on 4 cores).
-if [ "${REG:-ci}" = "local" ]; then node tools/smartreg.js --full ${REGJ:+-j $REGJ} || { echo "regression failed — see tools/reg.txt"; exit 1; }
+if [ "${REG:-local}" = "local" ]; then node tools/smartreg.js --full -j ${REGJ:-3} || { echo "regression failed — see tools/reg.txt"; exit 1; }
 else echo "on GitHub Actions: push the release commit, then wait for the 'regression' run to go green (REG=local runs it here)"; fi
 step "4b advert shot (play.html)"
 mkdir -p share && node tools/siteshot.js "$PWD/flavius-arena.html" share/arena_shot.png | tail -1

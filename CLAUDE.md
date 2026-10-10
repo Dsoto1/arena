@@ -1044,6 +1044,9 @@ One global script; files are concatenated in order. Later "version modules" patc
 - Visual checks: write a short Playwright script, screenshot, and look at it.
 
 ## 5b. GitHub Actions regression (v0.95, replaces the local full run)
+- **FROM v1.0 (his call 2026-10-10, GitHub monthly minutes): the regression runs HERE again.** The workflow is manual-only (workflow_dispatch;
+  pushes start nothing, so `[skip ci]` is no longer needed); `sh tools/release.sh X.YY` runs `smartreg --full -j 3` locally (REG=ci skips it).
+  While building, `node tools/smartreg.js <names>` as before. v0.99 was the last release tested on GitHub Actions.
 - `.github/workflows/regression.yml`: push on claude/** or main (CLAUDE.md, docs, tools/art, tools/plans, share, regstate/regmap/reg.txt ignored)
   or workflow_dispatch(mode). Jobs: plan (tools/ci/plan.js) → 8 test shards (smartreg -j 2 on its test list, REGNOEXPAND=1, Playwright
   install bounded 240 s ×3 tries) → server (npm test, full mode) → report (tools/ci/report.js merges reg-N artifacts, prints CIRESULT).
