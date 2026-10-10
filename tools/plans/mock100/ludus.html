@@ -5,7 +5,9 @@
 <!-- MOCK-UP ONLY (v1.0 plan, his PDF "mockludusmanager" 2026-10-09 = ludus_img/his_mock.png).
      Content = a real week-3 career (Ludus Crispinus, Capua; this week's games in Pompeii) captured by ludus_before.js.
      Tile art = the game's own room banner scenes (roomScene73 / roomScene / armoryScene96 / cityScene75) exported as SVG, cropped per tile.
-     States: #week (default) · #bye (week 4) · #mail (letters drawer open) · #phone (390 px frame of #week).
+     States: #week (default, 4 tasks) · #bye (week 4, 6 tasks) · #mail (letters drawer) · #team-a (Your Team → today's Roster tab) ·
+     #team-b (Your Team → one team hub with tabs; the rail loses Roster/Armory/Infirmary/Training Yard) · #rooms (the new scenes as room banners) · #phone.
+     Round 2 (his answers D1–D7): tiles = one weekly job each, RICHER painted scenes (ludus_scenes.js) used as tile AND room banner.
      Shots: node tools/plans/mock100/ludus_shot.js -->
 <style>
 :root{color-scheme:dark;--ink:#140f0b;--panel:#1f1711;--panel2:#2a1f17;--line2:#4a3826;--line3:#6a5130;--bone:#efe3cc;--muted:#b39d80;--dim:#a3907a;
@@ -113,9 +115,9 @@ body.s-phone #phoneFrame{display:flex;justify-content:center;padding:20px}
 .tiles{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:12px}
 .tile{position:relative;border:1px solid #8a6a2c;border-radius:8px;overflow:hidden;background:#1a120c;cursor:pointer;display:flex;flex-direction:column;
  box-shadow:inset 0 0 0 1px rgba(240,207,125,.15),0 3px 10px rgba(0,0,0,.4);min-height:186px}
-.tile:hover{border-color:var(--gold2)}.tile:hover .art img.bg{transform:scale(1.04)}
+.tile:hover{border-color:var(--gold2)}.tile:hover .art .bg{transform:scale(1.04)}
 .tile .art{position:relative;flex:1;min-height:104px;overflow:hidden;border-bottom:1px solid #6a5130}
-.tile .art img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.tile .art .bg{position:absolute;inset:0;width:100%;height:100%;transition:transform .4s}.tile .art .bg svg{width:100%;height:100%;display:block}
 .tile .art:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(20,12,6,.55))}
 .tile .art .st{position:absolute;left:8px;top:8px;z-index:2;display:flex;gap:4px;flex-wrap:wrap}
 .tile .art .st span{font:600 11.5px var(--body);color:#f3e3b8;background:rgba(20,12,6,.72);border:1px solid rgba(201,162,78,.45);border-radius:9px;padding:0 7px;white-space:nowrap}
@@ -186,7 +188,67 @@ body.s-mail .drawer,body.s-mail .scrim{display:block}
  .pills span.fn{border-color:#c0433a;color:#ffd2c4;background:#3a1510}
  .drawer{width:100%}
 }
-@media (prefers-reduced-motion:reduce){.tile .art img.bg{transition:none}}
+@media (prefers-reduced-motion:reduce){.tile .art .bg{transition:none}}
+
+/* ---------- round 2 ---------- */
+body:not(.s-team-a):not(.s-team-b) .team-only{display:none!important}
+body.s-team-a .ludus-only,body.s-team-b .ludus-only{display:none!important}
+body:not(.s-team-b) .hub-only{display:none!important}
+body.s-team-b .today-only{display:none!important}
+body:not(.s-team-a) .a-only{display:none!important}
+.rail .t.sub{padding-left:28px;font-size:13px;color:var(--muted)}
+.pips{position:absolute;left:8px;right:8px;bottom:6px;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:2px 8px;background:rgba(20,12,6,.72);border:1px solid rgba(201,162,78,.4);border-radius:6px;padding:3px 7px}
+.pips span{display:flex;align-items:center;gap:4px;font-size:11px;color:#f3e3b8;white-space:nowrap}
+.pips span i{width:7px;height:7px;border-radius:50%;border:1px solid #d6ab4c;display:inline-block}
+.pips span i.on{background:#f0cf7d}
+.pips span em{font-style:normal;margin-right:auto}
+/* room banner with the new scene */
+.rban{position:relative;height:118px;border:1px solid #dcae42;border-radius:8px;overflow:hidden;display:flex;align-items:center;padding:0 18px}
+.rban .bg{position:absolute;inset:0}.rban .bg svg{width:100%;height:100%;display:block}
+.rban:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(20,12,6,.85),rgba(20,12,6,.35) 40%,rgba(20,12,6,0) 70%)}
+.rban .tt{position:relative;z-index:2}
+.rban .tt b{display:block;font:400 25px var(--display);color:var(--gold2)}
+.rban .tt span{font-size:13.5px;color:#e8dcc0;font-style:italic}
+.rban .tt .chips{display:flex;gap:5px;margin-top:6px}
+.rban .tt .chips i{font-style:normal;font-size:12px;color:#e8dcc0;background:rgba(20,12,6,.6);border:1px solid rgba(201,162,78,.4);border-radius:10px;padding:1px 8px}
+/* team hub tabs */
+.htabs{display:flex;gap:4px;margin-top:10px;border-bottom:1px solid var(--line3)}
+.htabs span{display:flex;align-items:center;gap:7px;padding:8px 16px;border:1px solid var(--line2);border-bottom:0;border-radius:8px 8px 0 0;background:var(--panel);color:var(--muted);font-size:15px;cursor:pointer}
+.htabs span.on{background:linear-gradient(#3a2a18,#2a1f17);color:var(--gold2);border-color:var(--gold);position:relative;top:1px}
+.htabs span small{font:700 10px var(--mono);border-radius:9px;padding:1px 7px;background:#e9dcbf;color:#2a1708}
+.htabs span small.w{background:#7a2219;color:#ffd9cf}
+.htabs .keep{margin-left:auto;align-self:center;font-size:12.5px;color:var(--dim);font-style:italic}
+/* roster content */
+.tm{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;margin-top:12px}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.slot{background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:8px 10px;display:flex;gap:10px;align-items:center}
+.slot .k{font:700 10px var(--mono);letter-spacing:1px;color:var(--gold);text-transform:uppercase}
+.pp{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font:700 14px var(--display);color:#1a120c;border:2px solid #b08a3c}
+.slot b,.fr b{display:block;font-weight:700;color:var(--bone)}
+.slot small,.fr small{font-size:12.5px;color:var(--muted)}
+.lst{margin-top:10px;border:1px solid var(--line2);border-radius:8px;overflow:hidden}
+.lst .h{font:11px var(--mono);letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);background:#1a130d;padding:6px 10px;display:grid;grid-template-columns:42px minmax(0,1fr) 70px 80px 90px 110px;gap:10px}
+.fr{display:grid;grid-template-columns:42px minmax(0,1fr) 70px 80px 90px 110px;gap:10px;align-items:center;padding:6px 10px;border-top:1px solid var(--line2);background:var(--panel)}
+.fr.sel{background:linear-gradient(90deg,rgba(214,171,76,.2),rgba(214,171,76,.04));box-shadow:inset 3px 0 0 var(--gold)}
+.fr .g{font:700 18px var(--display);color:var(--gold2)}
+.chip{font:700 10.5px var(--mono);border-radius:9px;padding:1px 7px;white-space:nowrap}
+.chip.fr0{background:#cfe6b8;color:#2f5a1e}.chip.tr{background:#f0e0b0;color:#5c4316}.chip.wn{background:#f2c2b0;color:#7a2219}
+.chip.st{background:#3a2a18;color:var(--gold2);border:1px solid #7a5d2a}
+.fcard{background:var(--panel2);border:1px solid var(--line3);border-radius:10px;padding:12px}
+.fcard .top{display:flex;gap:12px;align-items:center}
+.fcard .pp{width:64px;height:64px;font-size:20px}
+.fcard h3{margin:0;font:400 20px var(--display);color:var(--gold2)}
+.rat{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:10px 0}
+.rat span{background:var(--panel);border:1px solid var(--line2);border-radius:6px;text-align:center;font-size:11px;color:var(--muted);padding:4px 0}
+.rat b{display:block;font:700 16px var(--mono);color:var(--bone)}
+.gear{display:flex;flex-wrap:wrap;gap:4px}.gear span{font-size:12px;background:var(--panel);border:1px solid var(--line2);border-radius:5px;padding:2px 7px}
+.optnote{margin-top:12px;border:1px dashed #7a5d2a;border-radius:8px;padding:8px 12px;font-size:13.5px;color:#e8dcc0;background:rgba(214,171,76,.06)}
+.optnote b{color:var(--gold2)}.optnote .pc{color:#9fd77e}.optnote .cn{color:#ff9a86}
+/* #rooms */
+.roomsv{display:none}
+body.s-rooms .app>.grid .main>*{display:none}
+body.s-rooms .roomsv{display:grid!important;gap:8px}
+@media (max-width:600px){.tm{grid-template-columns:1fr}.slots{grid-template-columns:1fr}.lst .h{display:none}.fr{grid-template-columns:36px minmax(0,1fr) auto}.fr>:nth-child(n+4){display:none}.htabs{overflow-x:auto}.htabs span{padding:6px 10px;font-size:13px;white-space:nowrap}.htabs .keep{display:none}.rban{height:92px}.rban .tt b{font-size:20px}}
 </style></head>
 <body>
 <div class="app">
@@ -200,12 +262,14 @@ body.s-mail .drawer,body.s-mail .scrim{display:block}
   <div class="railcol">
    <div class="rail">
     <div class="hd">🏛 LUDUS</div>
-    <div class="t on">🏛 Your ludus <span class="mcount hot week-only">6</span><span class="mcount hot bye-only">7</span></div>
-    <div class="t">🛡 Roster · 5</div>
-    <div class="t">⚒ Armory</div>
+    <div class="t ludus-only on">🏛 Your ludus <span class="mcount hot week-only">3</span><span class="mcount hot bye-only">6</span></div>
+    <div class="t team-only">🏛 Your ludus <span class="mcount hot">3</span></div>
+    <div class="t today-only a-on">🛡 Roster · 5</div>
+    <div class="t today-only">⚒ Armory <span class="mcount">2</span></div>
+    <div class="t hub-only on">🛡 Your Team · 5 <span class="mcount">10 h</span></div>
     <div class="t">🤝 Recruiting <span class="mcount">20 h</span></div>
-    <div class="t">⚕ Infirmary <span class="mcount bye-only">1</span><span class="week-only" style="margin-left:auto;color:var(--hp)">✓</span></div>
-    <div class="t">🏋 Training Yard <span class="mcount week-only">10 h</span><span class="mcount bye-only">14 h</span></div>
+    <div class="t today-only">⚕ Infirmary <span class="mcount bye-only">1</span><span class="week-only" style="margin-left:auto;color:var(--hp)">✓</span></div>
+    <div class="t today-only">🏋 Training Yard <span class="mcount week-only">10 h</span><span class="mcount bye-only">14 h</span></div>
     <div class="hd">⚔ ARENA</div>
     <div class="t">⚔ Fight Night <span class="new week-only">NEW NAME</span><span class="mcount fn week-only">3</span><span class="mcount bye-only">bye</span></div>
     <div class="t">💰 Wagers</div>
@@ -218,10 +282,10 @@ body.s-mail .drawer,body.s-mail .scrim{display:block}
   </div>
 
   <div class="main">
-   <!-- banner: week + Fight Night -->
-   <div class="ban">
+   <!-- ===== YOUR LUDUS ===== -->
+   <div class="ban ludus-only">
     <img class="scene week-only" src="ludus_img/scene_city.svg" alt="">
-    <img class="scene bye-only" src="ludus_img/scene_ludus.svg" alt="" style="object-position:50% 40%">
+    <div class="scene bye-only bg" data-sc="school" data-mode="banner" style="position:absolute;inset:0;z-index:0"></div>
     <svg class="medal" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="37" fill="#1a120c" stroke="#d6ab4c" stroke-width="2.5"/>
      <g id="lf" fill="#d6ab4c"><path d="M24 62q-12-12-10-30" stroke="#d6ab4c" stroke-width="2" fill="none"/>
       <ellipse cx="15" cy="34" rx="2.6" ry="6" transform="rotate(-20 15 34)"/><ellipse cx="14" cy="44" rx="2.6" ry="6" transform="rotate(-40 14 44)"/><ellipse cx="17" cy="53" rx="2.6" ry="6" transform="rotate(-60 17 53)"/><ellipse cx="23" cy="60" rx="2.6" ry="6" transform="rotate(-80 23 60)"/></g>
@@ -240,28 +304,23 @@ body.s-mail .drawer,body.s-mail .scrim{display:block}
     <div class="fnbtn stone bye-only"><span class="sw">🌙</span><span><b>NO FIGHT NIGHT</b><small>Next: week 5 · Fight Night in Capua (home)</small></span></div>
    </div>
 
-   <div class="body">
-    <!-- WEEKLY TASKS -->
+   <div class="body ludus-only">
     <div class="tasks">
      <div class="thd">
       <svg class="wr" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="none" stroke="#5c4326" stroke-width="1.5"/><path d="M12 30q-6-8-3-18M28 30q6-8 3-18" stroke="#5c4326" stroke-width="2" fill="none"/><text x="20" y="25" text-anchor="middle" font-size="13" fill="#5c4326">✦</text></svg>
       <h2>Weekly tasks</h2><span class="sp"></span>
       <span class="mailbtn" title="All letters (opens the letters drawer)">📬 <span>Letters</span> <b class="week-only">5</b><b class="bye-only">3</b></span>
-      <span class="bar"><i class="week-only" style="width:14%"></i><i class="bye-only" style="width:0%"></i></span><span class="n"><span class="week-only">1/7</span><span class="bye-only">0/7</span></span>
+      <span class="bar"><i class="week-only" style="width:25%"></i><i class="bye-only" style="width:0%"></i></span><span class="n"><span class="week-only">1/4</span><span class="bye-only">0/6</span></span>
      </div>
-
-     <!-- week 3 -->
+     <!-- week 3: a light week, 4 tasks -->
      <div class="week-only">
       <div class="trow"><span class="ck"></span><span class="ti">✉️</span><span class="tx"><b>Read the morning letters</b><span>The Quaestor, the Consilium and your barracks master wrote</span></span><span class="cnt">0/5</span><span class="go">›</span></div>
       <div class="trow"><span class="ck"></span><span class="ti">🗣</span><span class="tx"><b>Answer the eager <span class="due">this week</span></b><span>The Fox of Roma, Hostus "Lupa" Regulus, Lupercus ask for a fight</span></span><span class="cnt">0/3<small>+4 morale</small></span><span class="go">›</span></div>
       <div class="trow done"><span class="ck">✓</span><span class="ti">⚔</span><span class="tx"><b>Fill the Fight Night card</b><span>Undercard, Feature and Main in Pompeii carry your fighters</span></span><span class="cnt">3/3</span><span class="go">›</span></div>
-      <div class="trow"><span class="ck"></span><span class="ti">🏋</span><span class="tx"><b>Set the drills</b><span>The doctores wait for orders in the Training Yard</span></span><span class="cnt">0/5</span><span class="go">›</span></div>
-      <div class="trow"><span class="ck"></span><span class="ti">⏳</span><span class="tx"><b>Spend the training hours</b><span>Hours not spent are lost at the week's end</span></span><span class="cnt">0/10 h</span><span class="go">›</span></div>
-      <div class="trow"><span class="ck"></span><span class="ti">🎓</span><span class="tx"><b>Learn from the season</b><span>2 perk points wait on the lanista's tree</span></span><span class="cnt">0/2</span><span class="go">›</span></div>
-      <div class="trow"><span class="ck"></span><span class="ti">★</span><span class="tx"><b>Meet the Recruiter's pick <span class="due new">new</span></b><span>Galba Bone-Breaker · Soldier · ~B+ · asks 38/wk</span></span><span class="cnt">0/1</span><span class="go">›</span></div>
-      <div class="ok">Already in order: <b>✓</b> no untreated wounds · <b>✓</b> no contract runs out · <b>✓</b> 5 on the roster</div>
+      <div class="trow"><span class="ck"></span><span class="ti">🏋</span><span class="tx"><b>Set the week's training</b><span>Drills for 5 fighters, 10 hours in the Training Yard</span></span><span class="cnt">0/10 h</span><span class="go">›</span></div>
+      <div class="ok">Already in order: <b>✓</b> no untreated wounds · <b>✓</b> no contract runs out · <b>✓</b> 5 on the roster · <b>✓</b> no perk points</div>
      </div>
-     <!-- week 4, bye -->
+     <!-- week 4, bye: 6 tasks -->
      <div class="bye-only">
       <div class="trow"><span class="ck"></span><span class="ti">✉️</span><span class="tx"><b>Read the morning letters</b><span>The bye letter, the Quaestor, a rival's taunt</span></span><span class="cnt">0/3</span><span class="go">›</span></div>
       <div class="trow"><span class="ck"></span><span class="ti">🛏</span><span class="tx"><b>Rest the worn <span class="due new">bye</span></b><span>Aper the Gilded is Worn (fatigue 64) — a rest week costs no bout</span></span><span class="cnt">0/1</span><span class="go">›</span></div>
@@ -269,30 +328,69 @@ body.s-mail .drawer,body.s-mail .scrim{display:block}
       <div class="trow"><span class="ck"></span><span class="ti">🏋</span><span class="tx"><b>Drill harder</b><span>The bye adds 4 training hours (14 this week)</span></span><span class="cnt">0/14 h</span><span class="go">›</span></div>
       <div class="trow"><span class="ck"></span><span class="ti">🤝</span><span class="tx"><b>Court a recruit</b><span>The Recruiter has 20 hours to watch, ask and share a cup</span></span><span class="cnt">0/20 h</span><span class="go">›</span></div>
       <div class="trow"><span class="ck"></span><span class="ti">🖌</span><span class="tx"><b>Keep the name on the walls</b><span>Paint the programmata in Capua: fans while the sand is quiet</span></span><span class="cnt">0/1</span><span class="go">›</span></div>
-      <div class="trow"><span class="ck"></span><span class="ti">🎓</span><span class="tx"><b>Learn from the season</b><span>2 perk points wait on the lanista's tree</span></span><span class="cnt">0/2</span><span class="go">›</span></div>
      </div>
      <div class="quote">🌿 <span>"A great lanista does not just train fighters — he builds a name."</span><span class="by">— Flavius</span></div>
     </div>
 
-    <!-- TILES -->
     <div class="tiles">
-     <div class="tile"><div class="art"><img class="bg" src="ludus_img/scene_roster.svg" alt="" style="object-position:38% 60%"><div class="st"><span>5 fighters</span><span>3 on the card</span><span class="w bye-only">1 hurt · 1 worn</span></div></div>
-      <div class="cap"><i class="em">🛡</i><span><b>Your Team</b><span>Roster, armory, infirmary, yard</span></span><i class="chev">›</i></div></div>
-     <div class="tile"><div class="art"><img class="bg" src="ludus_img/scene_news.svg" alt="" style="object-position:30% 50%"><div class="st"><span>Fame 62 · Imperial</span><span>fans in 4 cities</span></div></div>
-      <div class="cap"><i class="em">📯</i><span><b>Promote Team</b><span>Feast, sponsor, criers, programmata</span></span><i class="chev">›</i></div></div>
-     <div class="tile"><div class="art"><img class="bg" src="ludus_img/scene_yard.svg" alt="" style="object-position:22% 50%"><div class="st"><span>Grade D</span><span>0 of 18 levels built</span></div></div>
-      <div class="cap"><i class="em">🏛</i><span><b>Upgrade School</b><span>Build the yard, barracks, ward, stands, stables</span></span><i class="chev">›</i></div></div>
-     <div class="tile"><div class="art"><img class="bg" src="ludus_img/scene_armory.svg" alt="" style="object-position:62% 50%"><div class="st"><span>12 pieces on the shelf</span><span class="w">2 to repair</span></div></div>
-      <div class="cap"><i class="em">⚒</i><span><b>Facilities</b><span>Armory, infirmary beds, the yard's posts</span></span><i class="chev">›</i></div></div>
-     <div class="tile wide"><div class="art"><img class="bg" src="ludus_img/scene_ludus.svg" alt="" style="object-position:50% 40%">
+     <div class="tile"><div class="art"><div class="bg" data-sc="team"></div><div class="st"><span>5 fighters</span><span>3 on the card</span><span class="w bye-only">1 hurt · 1 worn</span></div></div>
+      <div class="cap"><i class="em">🛡</i><span><b>Your Team</b><span>The people: roster, ward, yard</span></span><i class="chev">›</i></div></div>
+     <div class="tile"><div class="art"><div class="bg" data-sc="promote"></div><div class="st"><span>Fame 62 · Imperial</span><span>fans in 4 cities</span></div></div>
+      <div class="cap"><i class="em">📯</i><span><b>Promote</b><span>Feast, sponsors, criers, programmata</span></span><i class="chev">›</i></div></div>
+     <div class="tile"><div class="art"><div class="bg" data-sc="school"></div><div class="st"><span>Grade D</span></div>
+       <div class="pips"><span><em>🏋 Yard</em><i class="on"></i><i></i><i></i></span><span><em>🛏 Barracks</em><i></i><i></i><i></i></span><span><em>⚕ Beds</em><i class="on"></i><i></i><i></i></span><span><em>🍲 Kitchen</em><i></i><i></i><i></i></span><span><em>🕯 Shrine</em><i></i><i></i><i></i></span><span><em>🏟 Stands</em><i></i><i></i><i></i></span></div></div>
+      <div class="cap"><i class="em">🏛</i><span><b>Upgrade School</b><span>The buildings · next: Barracks I · <img class="coin" src="../../../assets/coin.webp" alt="">250</span></span><i class="chev">›</i></div></div>
+     <div class="tile"><div class="art"><div class="bg" data-sc="armory"></div><div class="st"><span>12 on the shelf</span><span class="w">2 to repair</span></div></div>
+      <div class="cap"><i class="em">⚒</i><span><b>Armory</b><span>Better gear. Shelf, repairs, the stalls</span></span><i class="chev">›</i></div></div>
+     <div class="tile wide"><div class="art"><div class="bg" data-sc="council"></div>
        <div class="counsel week-only">Consilium: "Hold our fighters back in Pompeii."</div><div class="counsel bye-only">Doctore: "A bye is a gift. Use the extra hours."</div>
        <div class="faces"><img src="ludus_img/face_0.png" alt=""><img src="ludus_img/face_1.png" alt=""><img src="ludus_img/face_2.png" alt=""><img src="ludus_img/face_3.png" alt=""><img src="ludus_img/face_4.png" alt=""><img src="ludus_img/face_5.png" alt=""></div></div>
       <div class="cap"><i class="em">🏛</i><span><b>Advisors <i class="cnt">2 new</i></b><span>Six advisors for life: Consilium, Recruiter, Doctore, Medicus, Clerk, Barracks master</span></span><i class="chev">›</i></div></div>
     </div>
    </div>
+
+   <!-- ===== YOUR TEAM (#team-a = today's Roster tab, #team-b = the hub) ===== -->
+   <div class="rban team-only"><div class="bg" data-sc="team" data-mode="banner"></div>
+    <div class="tt"><b><span class="a-only">🛡 The roster</span><span class="hub-only">🛡 Your Team</span></b><span>the men and women who carry your name onto the sand</span>
+     <div class="chips"><i>5 fighters</i><i>3 starters</i><i>0 hurt</i><i>1 worn</i></div></div></div>
+   <div class="htabs hub-only"><span class="on">🛡 Roster <small>5</small></span><span>⚒ Armory <small class="w">2</small></span><span>⚕ Infirmary <small>✓</small></span><span>🏋 Training Yard <small>10 h</small></span><span class="keep">The Fox of Roma stays selected on every tab</span></div>
+   <div class="tm team-only">
+    <div>
+     <div class="slots">
+      <div class="slot"><span class="pp" style="background:#c8b07a">F</span><span><span class="k">Bout III · Main</span><b>The Fox of Roma</b><small>Amazonia · rated 84</small></span></div>
+      <div class="slot"><span class="pp" style="background:#c0433a">H</span><span><span class="k">Bout II · Feature</span><b>Hostus "Lupa" Regulus</b><small>Soldier · rated 83</small></span></div>
+      <div class="slot"><span class="pp" style="background:#a8754e">G</span><span><span class="k">Bout I · Undercard</span><b>Grando Red-Beard</b><small>Slave · rated 78</small></span></div>
+     </div>
+     <div class="lst"><div class="h"><span></span><span>Fighter</span><span>Grade</span><span>Fatigue</span><span>Role</span><span>Contract</span></div>
+      <div class="fr sel"><span class="pp" style="background:#c8b07a">F</span><span><b>The Fox of Roma</b><small>Amazonia · 26 yrs</small></span><span class="g">A</span><span><span class="chip fr0">Fresh</span></span><span><span class="chip st">Bout III</span></span><span><small>41/wk · 9 wks</small></span></div>
+      <div class="fr"><span class="pp" style="background:#c0433a">H</span><span><b>Hostus "Lupa" Regulus</b><small>Soldier · 31 yrs</small></span><span class="g">B+</span><span><span class="chip fr0">Fresh</span></span><span><span class="chip st">Bout II</span></span><span><small>38/wk · 6 wks</small></span></div>
+      <div class="fr"><span class="pp" style="background:#a8754e">G</span><span><b>Grando Red-Beard</b><small>Slave · 24 yrs</small></span><span class="g">B+</span><span><span class="chip tr">Tired</span></span><span><span class="chip st">Bout I</span></span><span><small>22/wk · 11 wks</small></span></div>
+      <div class="fr"><span class="pp" style="background:#cfc6b4">A</span><span><b>Aper the Gilded</b><small>Veteranus · 35 yrs</small></span><span class="g">B</span><span><span class="chip wn">Worn</span></span><span><small>Bench</small></span><span><small>30/wk · 3 wks</small></span></div>
+      <div class="fr"><span class="pp" style="background:#cfc6b4">L</span><span><b>Lupercus the Lucky</b><small>Veteranus · 29 yrs</small></span><span class="g">B</span><span><span class="chip fr0">Fresh</span></span><span><small>Bench</small></span><span><small>24/wk · 8 wks</small></span></div>
+     </div>
+     <div class="optnote a-only"><b>Option A: Your Team opens today's Roster tab.</b> The rail keeps Roster · Armory · Infirmary · Training Yard.
+      <span class="pc">+ Nothing to relearn; every room is one click from anywhere.</span> <span class="cn">− The tile is just a shortcut, and the rail stays long (6 Ludus entries).</span></div>
+     <div class="optnote hub-only"><b>Option B: one team hub.</b> Tabs Roster · Armory · Infirmary · Training Yard, the same fighter selected on each, same card on the right; the rail loses those four.
+      <span class="pc">+ Shorter rail (3 Ludus entries), and you look after one fighter across his gear, wounds and drills without losing him.</span> <span class="cn">− Infirmary and Yard sit one click deeper, their rail counts merge into one, and the lesson + checklist links need re-pointing.</span></div>
+    </div>
+    <div class="fcard"><div class="top"><span class="pp" style="background:#c8b07a">F</span><div><h3>The Fox of Roma</h3><small style="color:var(--muted)">Amazonia · from Roma · Bout III starter</small></div></div>
+     <div class="rat"><span><b>86</b>Spd</span><span><b>82</b>Str</span><span><b>79</b>Int</span><span><b>71</b>Lck</span><span><b>88</b>Cha</span></div>
+     <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Morale high · loyalty 7 · 3 wins, 0 losses</div>
+     <div class="gear"><span>🗡 Hasta</span><span>🛡 Parma</span><span>⛑ Steel Helm</span><span>🦵 Leather Greaves</span><span>🩹 Lorica: repair 12</span></div>
+     <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap"><button class="btn">Bench</button><button class="btn">Lend</button><button class="btn">⚒ Dress</button><button class="btn">🏋 Drills</button></div></div>
+   </div>
+
+   <!-- ===== #rooms: the same scenes atop each room ===== -->
+   <div class="roomsv">
+    <div class="rban"><div class="bg" data-sc="team" data-mode="banner"></div><div class="tt"><b>🛡 Your Team</b><span>the men and women who carry your name onto the sand</span></div></div>
+    <div class="rban"><div class="bg" data-sc="promote" data-mode="banner"></div><div class="tt"><b>📯 Promote</b><span>feasts, sponsors, criers and paint on every wall</span></div></div>
+    <div class="rban"><div class="bg" data-sc="school" data-mode="banner"></div><div class="tt"><b>🏛 Upgrade School</b><span>stone, timber and a crane that never rests</span></div></div>
+    <div class="rban"><div class="bg" data-sc="armory" data-mode="banner"></div><div class="tt"><b>⚒ The Armory</b><span>what the house owns, and who wears it</span></div></div>
+    <div class="rban"><div class="bg" data-sc="council" data-mode="banner"></div><div class="tt"><b>🏛 The Council</b><span>six voices, one seal</span></div></div>
+   </div>
   </div>
  </div>
- <div class="pills"><span class="on">🏛 Your ludus 6</span><span class="fn">⚔ Fight Night 3</span><span>🛡 Roster · 5</span><span>⏭ End the week</span></div>
+ <div class="pills"><span class="on">🏛 Your ludus 3</span><span class="fn">⚔ Fight Night 3</span><span>🛡 Your Team · 5</span><span>⏭ End the week</span></div>
 </div>
 
 <!-- letters drawer (#mail) -->
@@ -311,11 +409,15 @@ body.s-mail .drawer,body.s-mail .scrim{display:block}
 </div>
 
 <div id="phoneFrame"><iframe title="phone" src="ludus.html#week"></iframe></div>
-<div class="statebar"><a href="#week">#week</a><a href="#bye">#bye</a><a href="#mail">#mail</a><a href="#phone">#phone</a></div>
+<div class="statebar"><a href="#week">#week</a><a href="#bye">#bye</a><a href="#mail">#mail</a><a href="#team-a">#team-a</a><a href="#team-b">#team-b</a><a href="#rooms">#rooms</a><a href="#phone">#phone</a></div>
+<script src="ludus_scenes.js"></script>
 <script>
-function st(){const h=(location.hash||'#week').slice(1);document.body.className='s-'+h;document.querySelectorAll('.statebar a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+h))}
+document.querySelectorAll('[data-sc]').forEach(e=>e.innerHTML=SCENE99(e.dataset.sc,e.dataset.mode||'tile'));
+function st(){const h=(location.hash||'#week').slice(1);document.body.className='s-'+h;document.querySelectorAll('.statebar a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+h));
+ document.querySelectorAll('.rail .t.a-on').forEach(t=>t.classList.toggle('on',h==='team-a'))}
 addEventListener('hashchange',st);st();
 document.querySelector('.mailbtn').onclick=()=>location.hash='#mail';
 document.querySelector('.scrim').onclick=document.querySelector('.drawer .x').onclick=()=>location.hash='#week';
+document.querySelectorAll('.tile')[0].onclick=()=>location.hash='#team-b';
 </script>
 </body></html>
