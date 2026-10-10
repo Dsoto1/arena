@@ -220,8 +220,9 @@ body.ph .su{grid-template-columns:22px minmax(0,1fr) 70px 26px}
 
 /* ===== E1 · UNIFORM (his note): fixed heights, one line per label, chips in one column ===== */
 .one{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.list{width:340px}
-.lhead,.lr{display:grid;grid-template-columns:14px 26px minmax(0,1fr) 64px 38px 30px;gap:7px;align-items:center;padding:0 10px}
+.list{width:304px}
+.laurel{width:100px;height:100px}.pname{font-size:18px}.prow{gap:10px}
+.lhead,.lr{display:grid;grid-template-columns:12px 24px minmax(0,1fr) 60px 34px 24px;gap:6px;align-items:center;padding:0 10px}
 .lhead{height:24px;font:500 10px var(--mono);letter-spacing:.1em;color:var(--dim);text-transform:uppercase;border-bottom:1px solid var(--line2)}
 .lhead span:nth-child(n+5),.lr .gr,.lr .iv{text-align:right}
 .lr{height:38px;font-size:14px}
@@ -303,7 +304,7 @@ body.ph .r3>.panel{height:auto}
 body.ph .pit{grid-template-columns:minmax(0,1fr) 92px}
 body.ph .nb{height:84px}
 body.ph .act{height:118px}
-body.ph .pstars .pchip.warn{display:none}
+
 </style></head>
 <body class="s-scout">
 <svg width="0" height="0" style="position:absolute"><defs>
@@ -347,10 +348,10 @@ body.ph .pstars .pchip.warn{display:none}
       <div style="min-width:0">
        <div class="pname" title="Barbatus Bone-Breaker"><span class="pin">★</span>Barbatus Bone-Breaker</div>
        <div class="pmeta"><div title="♂ Royalty · 34 years old · from Neapolis · fame 24">♂ <b>Royalty</b> · 34 · <b>Neapolis</b> · fame 24</div><div title="3 wins in 7 events · first sand S1 W1">3 wins in 7 · first sand S1 W1</div></div>
-       <div class="pstars"><span class="s">★★★★<i>★</i></span><span class="street" title="the street's word">~B+</span><span class="lau">UUU<i>UU</i></span><span class="pchip warn" title="Ludus Severianus bids in 2 weeks">⚖ bid in 2 wk</span></div>
+       <div class="pstars"><span class="s">★★★★<i>★</i></span><span class="street" title="the street's word">~B+</span><span class="lau">UUU<i>UU</i></span></div>
       </div>
      </div>
-     <div class="pbtns"><span class="btn">⇄ Compare</span><span class="pchip" id="wantsChip">🎯 <span id="wantsTop">grade all five to learn</span></span></div>
+     <div class="pbtns"><span class="btn">⇄ Compare</span><span class="pchip" id="wantsChip">🎯 <span id="wantsTop">grade all five to learn</span></span><span class="pchip warn" title="Ludus Severianus bids in 2 weeks">⚖ bid in 2 wk</span></div>
     </section>
 
     <section class="panel"><div class="ptitle">Stats Tablet</div>
@@ -508,7 +509,7 @@ document.getElementById('ccgrid').innerHTML=`<span></span>`+[['a','(a) Chart + c
 function apply(){let h=(location.hash||'#scout').slice(1);const phone=h==='phone'||h==='phone-chart'||innerWidth<600;if(h==='phone')h='court';if(h==='phone-chart')h='chart';if(!['scout','court','offer','chart'].includes(h))h='scout';
  document.body.className='s-'+h+(phone?' ph':'');const S=h==='scout'?STATE.scout:STATE.full;
  document.getElementById('grows').innerHTML=grows(S);document.getElementById('pent').innerHTML=pent(S);document.getElementById('persBody').innerHTML=persHTML(S.pers);
- document.getElementById('wantsTop').textContent=S.pers?'Rudis path · Fame':'wants: grade all five';document.getElementById('scDone').textContent=S.pers?'✓':'';
+ document.getElementById('wantsTop').textContent=S.pers?'Rudis path · Fame':'wants: ?';document.getElementById('scDone').textContent=S.pers?'✓':'';
  document.querySelectorAll('.step').forEach(a=>a.classList.toggle('on',a.classList.contains(h)))}
 addEventListener('hashchange',apply);addEventListener('resize',apply);apply();
 </script>

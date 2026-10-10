@@ -53,3 +53,12 @@ All data shapes are the real ones: 249-v98rec (REC98, PITCH98, DEAL98), 157 WANT
 5. Personality block placement: (a) always above the three steps (mock) · (b) inside ① Scout only · (c) inside ② Court beside the house grades.
 6. Private notes: (a) parchment scroll at the bottom of Court (mock) · (b) a 4th small tab · (c) keep today's three buttons.
 7. Feast/gift cards: (a) cost + cadence only (mock) · (b) also preview the interest they would win (like the pitch badges: new math on screen).
+
+## Revision 2 (his answers E1–E4)
+- **E1 uniform:** every card and row has a fixed height, and every label sits on one line (shorter wording; the full text is in a hover `title`).
+  - Free-agent list: one line per row, fixed columns ★ · face · Name · Class · Grade · Int.
+  - House grades: a 4-column grid with each chip right-aligned.
+  - Pitches: 2 × 3 cards of the same height. Rows are title + gain / trait + chip at a fixed x / wish + motive slot ("no wish · no motive" when empty) / one-line projection; the scene sits right.
+  - Scout actions: 122 px cards. Win-over cards: 76 px. Suitors rows: 28 px. Note columns: 84 px with the fit badge beside the title. Offer lines: one line each.
+- **E2:** `#chart` shows the tablet three ways: (a) chart + certainty band, (b) chart without the band, (c) grade rows only. Each is shown for a barely scouted recruit (one ask around) and a fully graded one (watch + cup + study). Shots: `recruit_chart_1440.png`, `recruit_chart_390*.png`.
+- **E3a** (sepia avatar sketch) and **E4a** (flat SVG scenes) are kept.
