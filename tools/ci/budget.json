@@ -1,6 +1,6 @@
 {
   "_doc": "GitHub Actions budget for the regression (tools/ci/plan.js). month_cap = free minutes per billing cycle (private repo, Linux 1x); cycle starts on billing_day; until exclusive_until (inclusive, UTC date) every push runs the FULL sharded suite; after it 'spread' mode: a push runs only the tests its change reaches (smartreg plan), a FULL run only for releases ([full] in the commit message, version.json changed, or a manual run with mode=full), always within the daily allowance = (cap - used - reserve) / days left in the cycle; over the allowance → skipped (run locally).",
-  "month_cap": 2000,
+  "month_cap": 5000,
   "billing_day": 1,
   "reserve": 300,
   "exclusive_until": "2026-10-10",

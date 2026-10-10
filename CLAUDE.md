@@ -1047,7 +1047,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - `.github/workflows/regression.yml`: push on claude/** or main (CLAUDE.md, docs, tools/art, tools/plans, share, regstate/regmap/reg.txt ignored)
   or workflow_dispatch(mode). Jobs: plan (tools/ci/plan.js) → 8 test shards (smartreg -j 2 on its test list, REGNOEXPAND=1, Playwright
   install bounded 240 s ×3 tries) → server (npm test, full mode) → report (tools/ci/report.js merges reg-N artifacts, prints CIRESULT).
-- Budget tools/ci/budget.json (2000 min/month, reserve 300; "exclusive" = always full until 2026-10-10, then the SPREAD schedule: full only for
+- Budget tools/ci/budget.json (5000 min/month since 2026-10-10: 2000 free + 3000 he pays for, $24/month, reserve 300; "exclusive" = always full until 2026-10-10, then the SPREAD schedule: full only for
   releases ([full] in the message or version.json changed) or manual runs, smart otherwise, skip when over the daily allowance). A full run ≈
   100 GitHub minutes, ~25 min wall. Put `[skip ci]` in a commit that must not start a run (it also keeps a running one from being cancelled).
 - Failing output is printed in the job log (artifacts can't be downloaded through this sandbox's proxy): read it with the GitHub MCP
