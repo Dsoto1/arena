@@ -1293,6 +1293,7 @@ share copy — the site download play/flavius-rule-arena.zip.)
   desk (270), twelve arena themes on by default, zoomed play steady (260), Character + Lanista designers on one frame (262), Event Designer test play
   seats all starts, pick your fighter in a live Manager bout, fixes from his V99 notes (271) and fix4 (272: issued kits, damaged armor shelved, Armory
   selling, compact Match Week, welcome scroll, city classes, tamed beasts move+attack, eagle CF in no-CF rounds, new Zora figure).
+  GitHub full run #20: green (first run #19 caught 9 tests still expecting pre-v0.99 screens — tests updated, no game change).
 
 ## 8. Next steps / open items
 - Next for the class cards: Virgilante sends the BLANK card template + each class's figure (+ mini photos, city badge, fonts) → the
