@@ -26,3 +26,17 @@ portraits via portraitSVG(gladPortrait), sculpted tokens via onlFig, Domus rank 
 
 ## Not decided in the mock (see questions)
 Where the invite-by-FID goes now (Lobby Browser? house card?), whether the room code is new or reuses the host FID, Glory chip art.
+
+## Revision 2 (his answers C1a–C4a)
+- **C1a** `#extras`: Lobby Browser top bar gets a **Join by code / FID** box (R-… → that room, FID-… → the room that lanista is in; refusals
+  inline under it). House cards gain **⚔ Join** while that house sits in a waiting room you may enter (beside 🏛 Visit · ★ Follow).
+- **C2a room code — why it is needed:** it replaces Invite. A friend types or pastes it and lands straight in your room without searching
+  the list, and it works across regions and list filters (a 🔒 Custom room still asks for the password).
+  *Alternative:* drop the code and join only from house cards (follow the house → its card shows ⚔ Join). Simpler, but the friend must
+  find your house first, and a room hosted by a stranger can't be shared.
+- **C3** `#eight`: 8-seat Familia, teams A/B, 4×2 **compact** seat cards (portrait 44 px + 90 px token + name + Glory medal chip +
+  Domus rank chip, bubble kept). Phone 390: 2 per row (`lobby_eight_390*.png`).
+- **C4a** Glory rank medals for the 8 online ranks (ONLC.RANKS): Tiro wood/rudis · Novicius copper/sprig · Gregarius bronze/shield ·
+  Veteranus iron/crossed swords · Primus Palus silver/column · Summa Rudis gold/crown · Rudiarius gold + red enamel/gladius ·
+  Invictus gold + purple enamel + laurel/eagle. Used on seat chips (18 px), list rows (14 px), the banner rank gate and house cards;
+  medal sheet in `#extras`. Drawn as inline SVG (`medal(k,size)` in lobby.html) — can ship as code, no image files.

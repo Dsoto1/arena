@@ -72,6 +72,7 @@ body{overflow:auto}
 .cl{font-size:13px;color:var(--muted);text-align:center}
 .rks{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
 .gr{display:inline-flex;align-items:center;gap:4px;padding:1px 8px 1px 4px;border-radius:999px;border:1px solid #8a6a3a;background:#1a120c;font:500 12px var(--mono);color:#f0d9a6}
+.medal{flex:none;vertical-align:-3px;filter:drop-shadow(0 1px 1px #000a)}
 .gr i{width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#f6dd94,#9a7524);display:inline-block;font-style:normal}
 .dr{display:inline-flex;align-items:center;gap:4px;padding:1px 8px 1px 3px;border-radius:4px;border:1px solid var(--line2);background:#1a120c;font:500 12px var(--body);color:var(--bone)}
 .dr img{height:20px;width:auto;display:block}
@@ -133,6 +134,51 @@ body{overflow:auto}
 .anno{position:fixed;right:10px;bottom:8px;font:500 11px var(--mono);color:#6a5a48}
 .stnav{position:fixed;left:10px;bottom:8px;display:flex;gap:6px;font:500 11px var(--mono)}
 .stnav a{color:var(--muted);padding:2px 6px;border:1px solid var(--line2);border-radius:4px;text-decoration:none;background:#160f0b}
+.seats.cmp .seat{min-height:0;padding:8px 8px 9px}
+.seats.cmp .stage{height:96px;margin-top:14px}
+.seats.cmp .stage .por{width:44px;height:62px}
+.seats.cmp .stage .tok .tkfig{height:90px!important;width:54px!important}
+.seats.cmp .stage .tok{height:90px}
+.seats.cmp .bub{margin-top:3px;min-height:22px}.seats.cmp .bub span{font-size:12px;padding:2px 9px}
+.seats.cmp .nm{font-size:15.5px}.seats.cmp .cl{font-size:12px}
+.seats.cmp .rks{flex-direction:column;align-items:center;gap:3px;margin-top:4px}
+.seats.cmp .rdy{top:26px;font-size:11px}
+.seats.cmp .send{padding:4px 6px;font-size:12px;margin-top:6px!important}
+.seats.cmp .send + div{display:none}
+body.ph .seats.cmp .seat{min-height:0}
+body.ph .seats.cmp .stage{height:90px}
+/* ---------- extras (C1a join box, house card, C4a medal sheet) ---------- */
+.exw{padding:18px 24px;max-width:1200px;margin:0 auto;display:none}
+body.ex .app,body.ex .stnav,body.ex .anno{display:none}body.ex .exw{display:block}
+.exw h2{font:400 24px var(--display);color:var(--gold2);margin:0 0 4px}
+.exw .lead{color:var(--muted);font-size:14px;margin-bottom:14px}
+.lbtop{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;border:1px solid var(--line2);border-radius:10px;background:var(--panel)}
+.lbtop h3{font:400 22px var(--display);color:var(--gold2)}
+.jbox{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 12px;border:1px solid var(--gold);border-radius:9px;background:#140e09;box-shadow:0 0 12px #d6ab4c22}
+.jbox .l{font:500 11px var(--mono);letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.jbox .in{width:190px;padding:7px 10px;border:1px solid var(--line2);border-radius:6px;background:#1d150f;font:500 16px var(--mono);color:var(--gold2);letter-spacing:.06em}
+.jhint{font-size:12.5px;color:var(--dim);margin-top:6px}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+.hc{border:1px solid var(--gold);border-radius:12px;background:linear-gradient(#2a1d12,#1a120c);padding:14px;box-shadow:0 8px 24px #000a}
+.hc .top{display:flex;gap:12px;align-items:center}
+.hc .top img{height:58px}
+.hc .top b{font:400 22px var(--display);color:var(--gold2);display:block}
+.hc .gl{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+.hc .gl span{display:flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid var(--line2);border-radius:8px;background:#160f0b;font-size:13.5px}
+.hc .gl .mp{width:34px;height:48px;border-radius:4px;overflow:hidden}.hc .gl .mp svg{width:100%;height:100%;display:block}
+.hc .wl{display:flex;gap:4px;margin:6px 0 12px}.hc .wl i{width:22px;height:22px;border-radius:4px;display:grid;place-items:center;font:600 12px var(--mono);font-style:normal}
+.hc .wl .w{background:#2f5a2a;color:#d8f5cc}.hc .wl .l{background:#5a1f1a;color:#f5d0c8}
+.hc .now{padding:8px 10px;border:1px solid #5a7a3a;border-radius:8px;background:#18200f;display:flex;align-items:center;gap:10px;font-size:14px}
+.hc .acts{display:flex;gap:8px;margin-top:12px}
+.sheet{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-top:8px}
+.sheet div{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);text-align:center}
+.sheet b{font:400 15px var(--display);color:var(--bone)}
+.sheet small{font:500 11px var(--mono);color:var(--muted)}
+.sizes{display:flex;gap:14px;align-items:center;margin-top:12px;color:var(--muted);font-size:13px}
+body.ex.ph .exw{padding:12px}
+body.ex.ph .twocol{grid-template-columns:1fr}
+body.ex.ph .sheet{grid-template-columns:repeat(4,1fr)}
+body.ex.ph .jbox{flex-wrap:wrap;width:100%}body.ex.ph .jbox .in{flex:1;width:auto}
 /* ---------- phone ---------- */
 body.ph .orail{display:none}
 body.ph .main{padding:10px 12px 90px}
@@ -158,7 +204,8 @@ body.ph .stnav,body.ph .anno{display:none}
 </style></head>
 <body>
 <div class="app"><nav class="orail" id="rail"></nav><div class="main" id="main"></div></div>
-<div class="stnav"><a href="#host">#host</a><a href="#guest">#guest</a><a href="#full">#full</a><a href="#phone">#phone</a></div>
+<div class="exw" id="ex"></div>
+<div class="stnav"><a href="#eight">#eight</a><a href="#extras">#extras</a><a href="#host">#host</a><a href="#guest">#guest</a><a href="#full">#full</a><a href="#phone">#phone</a></div>
 <div class="anno">mock100 · online room v1.0 · static mock-up</div>
 <script>
 const A=window.ART;const coin='<img class="coin" src="../../../assets/coin.webp" alt="">';
@@ -174,11 +221,36 @@ const P={ /* seed → name, house, class, glory rank, domus rank, team */
 const DRN={tugurium:'Tugurium',taberna:'Taberna',ludusminor:'Ludus Minor',ludus:'Ludus',ludusmagnus:'Ludus Magnus',familianota:'Familia Nota',illustris:'Domus Illustris',aurea:'Domus Aurea'};
 const drImg=k=>`<img src="${A.dr[k]}" alt="">`;
 const drChip=k=>`<span class="dr" title="Domus rank · ${DRN[k]}">${drImg(k)}${DRN[k]}</span>`;
-const grChip=g=>`<span class="gr" title="Glory rank"><i></i>${g}</span>`;
+/* C4a · Glory rank medals, one per ONLC.RANKS (111-onlcore): metal + symbol rise with the rank */
+const RK=[
+ {k:'tiro',n:'Tiro',gl:0,m:['#b07a44','#6a4220'],ink:'#2a1708',sym:'rudis',rim:'#4a2c12'},
+ {k:'novicius',n:'Novicius',gl:90,m:['#d08a56','#8a4a24'],ink:'#2e1406',sym:'sprig',rim:'#5a2e14'},
+ {k:'gregarius',n:'Gregarius',gl:180,m:['#d2a060','#8a6026'],ink:'#2a1a06',sym:'shield',rim:'#5a3a12'},
+ {k:'veteranus',n:'Veteranus',gl:550,m:['#c4cbd1','#646c74'],ink:'#1a1e22',sym:'swords',rim:'#3a4046'},
+ {k:'primus',n:'Primus Palus',gl:1150,m:['#f2f5f8','#9aa3ad'],ink:'#1e2630',sym:'column',rim:'#5a6470'},
+ {k:'summa',n:'Summa Rudis',gl:2100,m:['#ffe39a','#b98a2a'],ink:'#3a2404',sym:'crown',rim:'#7a5414'},
+ {k:'rudiarius',n:'Rudiarius',gl:3500,m:['#ffe39a','#b98a2a'],ink:'#3a2404',sym:'gladius',rim:'#a3281f',enamel:1},
+ {k:'invictus',n:'Invictus',gl:5500,m:['#fff0b8','#c9952a'],ink:'#2a103a',sym:'eagle',rim:'#5b2a86',enamel:1,laurel:1}];
+const RKN=Object.fromEntries(RK.map(r=>[r.n,r]));
+const SYM={
+ rudis:'<path d="M19 9h2v16h-2z"/><path d="M15 25h10v2.4H15z"/><path d="M19.2 27.4h1.6v4h-1.6z"/><circle cx="20" cy="32" r="1.4"/>',
+ sprig:'<path d="M20 31 C20 24 21 18 24 11" fill="none" stroke="currentColor" stroke-width="1.6"/><ellipse cx="17" cy="20" rx="4.2" ry="2" transform="rotate(-35 17 20)"/><ellipse cx="24.5" cy="19" rx="4.2" ry="2" transform="rotate(30 24.5 19)"/><ellipse cx="18.5" cy="14" rx="3.6" ry="1.7" transform="rotate(-40 18.5 14)"/><ellipse cx="25" cy="13" rx="3.2" ry="1.6" transform="rotate(35 25 13)"/>',
+ shield:'<path d="M12 10.5h16v9.5c0 6-8 10.5-8 10.5s-8-4.5-8-10.5z"/><path d="M20 12.5v15.5" stroke="#0000" /><circle cx="20" cy="19" r="2.4" fill="#ffffff55"/>',
+ swords:'<g transform="rotate(40 20 20)"><path d="M19.1 7h1.8v18h-1.8z"/><path d="M16 25h8v2H16z"/><path d="M19.3 27h1.4v4h-1.4z"/></g><g transform="rotate(-40 20 20)"><path d="M19.1 7h1.8v18h-1.8z"/><path d="M16 25h8v2H16z"/><path d="M19.3 27h1.4v4h-1.4z"/></g>',
+ column:'<path d="M12 10h16v2.5H12z"/><path d="M13.5 12.5h13v1.8h-13z"/><path d="M15 14.3h2v12h-2zM19 14.3h2v12h-2zM23 14.3h2v12h-2z"/><path d="M13.5 26.3h13v1.8h-13z"/><path d="M12 28.1h16v2.4H12z"/>',
+ crown:'<path d="M11 27l1.8-13 5 6.2L20 11l2.2 9.2 5-6.2L29 27z"/><path d="M11 28.3h18V31H11z"/>',
+ gladius:'<g transform="rotate(35 20 20)"><path d="M18.6 6.5L20 4.5l1.4 2v17.5h-2.8z"/><path d="M14.5 24h11v2.4h-11z"/><path d="M19 26.4h2v4.6h-2z"/><circle cx="20" cy="32" r="1.8"/></g>',
+ eagle:'<path d="M20 12c1.8 0 2.8 1.4 2.8 2.8l2.2-.6-1.8 1.8C26 15 30 13 33 9c-1 5-4 9-8.5 10.5L26 25l-3-1.5L20 30l-3-6.5-3 1.5 1.5-5.5C11 18 8 14 7 9c3 4 7 6 9.8 7l-1.8-1.8 2.2.6c0-1.4 1-2.8 2.8-2.8z"/>'};
+function medal(k,sz){const r=RK.find(x=>x.k===k||x.n===k)||RK[0];sz=sz||18;const id='md'+r.k;
+ const laurel=r.laurel?Array.from({length:14},(_,i)=>{const a=(i/14)*Math.PI*2;const x=20+18.2*Math.cos(a),y=20+18.2*Math.sin(a);return `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="2.6" ry="1.2" transform="rotate(${(a*180/Math.PI+90).toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})" fill="#e7c568"/>`}).join(''):'';
+ return `<svg class="medal" width="${sz}" height="${sz}" viewBox="0 0 40 40" role="img" aria-label="${r.n}"><defs><radialGradient id="${id}" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="${r.m[0]}"/><stop offset="1" stop-color="${r.m[1]}"/></radialGradient></defs>
+ ${laurel}<circle cx="20" cy="20" r="${r.laurel?16:18}" fill="${r.rim}"/>${r.enamel?`<circle cx="20" cy="20" r="${r.laurel?14.6:16.4}" fill="${r.rim}" stroke="#ffe39a" stroke-width="1"/>`:''}<circle cx="20" cy="20" r="${r.laurel?12.8:r.enamel?14.4:16}" fill="url(#${id})"/>
+ <g fill="${r.ink}" color="${r.ink}" transform="translate(20 20) scale(${r.laurel?.72:r.enamel?.78:.86}) translate(-20 -20)">${SYM[r.sym]}</g><ellipse cx="15" cy="12" rx="6" ry="3" fill="#ffffff30" transform="rotate(-25 15 12)"/></svg>`}
+const grChip=g=>`<span class="gr" title="Glory rank · ${g}">${medal(g,18)}${g}</span>`;
 
 /* ---- states ---- */
-const S0=location.hash.slice(1)||'host';
-const phone=S0==='phone';if(phone)document.body.classList.add('ph');
+const S0=location.hash.slice(1)||'host';if(S0==='extras')document.body.classList.add('ex');
+const phone=S0==='phone'||innerWidth<600;if(phone)document.body.classList.add('ph');
 const ST={
  host:{me:'alpha',hostK:'alpha',ev:'Classic · Democritus',city:'Roma',ranked:true,team:false,seats:4,
    seated:[['alpha',1,true,'Ave!'],['marcus',2,false,'Good luck'],['thrax',3,true,null]],standing:['livia'],hov:'marcus',crier:{left:2,cd:'1:24'},start:true},
@@ -187,6 +259,9 @@ const ST={
  full:{me:'alpha',hostK:'alpha',ev:'Familia',city:'Capua',ranked:false,team:true,seats:6,horns:7,
    seated:[['alpha',1,true,'Vale',1],['marcus',2,true,null,2],['thrax',3,true,'Good luck',1],['cato',4,true,null,2],['brennus',5,true,'Ave!',1],['nerva',6,true,null,2]],
    standing:['livia','quintus'],crier:{left:0,cd:null}},
+eight:{me:'alpha',hostK:'alpha',ev:'Familia',city:'Capua',ranked:false,team:true,seats:8,compact:true,
+   seated:[['alpha',1,true,'Ave!',1],['marcus',2,true,null,2],['thrax',3,false,null,1],['cato',4,true,'Good luck',2],['brennus',5,true,null,1],['nerva',6,false,'2 min',2],['livia',7,true,null,1],['quintus',8,true,null,2]],
+   standing:[],crier:{left:3,cd:null},start:true},
 };ST.phone=Object.assign({},ST.host,{hov:null});
 const s=ST[S0]||ST.host;const isHost=s.me===s.hostK;
 const room=s.seated.length+s.standing.length;
@@ -242,13 +317,31 @@ let rows='';for(let i=0;i<8;i++){const m=members[i];
  const p=P[m.k];const me=m.k===s.me;const hov=s.hov===m.k&&isHost;
  const stt=m.seat?`<span class="st s">Seat ${m.seat}${s.team?' · '+(m.team===1?'A':'B'):''}</span>`:`<span class="st">${s.horns?'👁 watching':'standing'}</span>`;
  rows+=`<div class="row ${me?'me':''} ${hov?'hov':''}"><span class="cr">${m.k===s.hostK?'👑':'<span class="idx">'+(i+1)+'</span>'}</span><span class="bnr" title="${DRN[p.dr]}">${drImg(p.dr)}</span>
-  <span class="who"><b>${p.n}${me?' <span style="color:var(--gold2);font-size:12px">· you</span>':''}</b><small>${p.h} · ${p.g} · ${DRN[p.dr]}</small></span>${stt}<span class="ok ${m.ready?'':'no'}">${m.seat?(m.ready?'✓':'○'):''}</span>
+  <span class="who"><b>${p.n}${me?' <span style="color:var(--gold2);font-size:12px">· you</span>':''}</b><small>${medal(p.g,14)} ${p.g} · ${p.h}</small></span>${stt}<span class="ok ${m.ready?'':'no'}">${m.seat?(m.ready?'✓':'○'):''}</span>
   ${isHost&&!me?`<span class="acts"><button class="btn sm">👑 Give host</button><button class="btn sm exit">✕ Kick</button></span>`:''}</div>`}
 const list=`<div class="pane"><div class="ph"><h3>In the room</h3><span class="n">${room}/8</span><span class="sp"></span><span class="n">✓ ready · ○ not yet</span></div><div class="list">${rows}</div>
  ${isHost?'<div class="legend">Hover a lanista: 👑 Give host · ✕ Kick (5 min). Click a name: house card.</div>':'<div class="legend">Click a name: house card (record, gladiators, ★ Follow).</div>'}
  <div class="qc"><div class="ph"><h3>Quick chat</h3><span class="n">pops under your token · 6 s</span></div><div class="chips">${['Ave!','2 min','Sound the horns?','Swap teams?','One more seat?','Good luck','Vale'].map(x=>`<span>${x}</span>`).join('')}</div></div></div>`;
 
-document.getElementById('main').innerHTML=banner+`<div class="grid"><div><div class="pane">${s.horns?foot+watch:''}<div class="seats" style="${s.horns?'margin-top:12px':''}">${seatsH}</div>${s.horns?'':watch}${set}${s.horns?'':foot}</div></div><div>${list}</div></div>`;
-if(phone){/* phone: list after seats, settings folded */}
+document.getElementById('main').innerHTML=banner+`<div class="grid"><div><div class="pane">${s.horns?foot+watch:''}<div class="seats ${s.compact?'cmp':''}" style="${s.horns?'margin-top:12px':''}">${seatsH}</div>${s.horns?'':watch}${set}${s.horns?'':foot}</div></div><div>${list}</div></div>`;
+
+/* ---- #extras: C1a Lobby Browser join box + house card Join, C4a medal sheet ---- */
+document.getElementById('ex').innerHTML=`<h2>Lobby Browser · Join by code</h2><div class="lead">C1a — replaces the room's Invite buttons. A friend pastes the room code (or a lanista's FID) and lands in that room — no searching, no region or filter in the way.</div>
+<div class="lbtop"><h3>📜 Lobby Browser</h3><span class="chip dim">5 rooms</span><span style="flex:1"></span>
+ <div class="jbox"><span class="l">Join by code / FID</span><span class="in">R-7KQ2M</span><button class="btn go" style="font-size:15px;padding:7px 18px">Join ▸</button></div>
+ <button class="btn">＋ Ranked room</button><button class="btn">＋ Custom room</button></div>
+<div class="jhint">Room code (R-…) → that room · FID (FID-…) → the room that lanista is in now; "not in a room" / "room full" / "🔒 password" answers inline under the box.</div>
+<div class="twocol"><div><h2 style="font-size:19px">House card · Join</h2><div class="lead">Click any name (list, room, followed houses) → house card. While that house sits in a waiting room you may join, the card offers ⚔ Join.</div>
+<div class="hc"><div class="top">${drImg('ludus')}<div><b>Domus Thracia</b><span class="muted">lanista Thrax · FID-4Q8M2T · ★ followed</span><div style="margin-top:4px" class="muted">Domus rank · Ludus</div></div></div>
+ <div class="gl"><span><span class="mp">${A.por.thrax}</span>Thrax the Patient ${grChip('Veteranus')}</span><span><span class="mp">${A.por.brennus}</span>Brennus ${grChip('Gregarius')}</span></div>
+ <div class="muted" style="font-size:12.5px">Last 6 events</div><div class="wl"><i class="w">W</i><i class="l">L</i><i class="w">W</i><i class="w">W</i><i class="l">L</i><i class="w">W</i></div>
+ <div class="now">🟢 In a waiting room · Classic · Democritus at Roma · 3/4 seated</div>
+ <div class="acts"><button class="btn go" style="font-size:16px;padding:8px 20px">⚔ Join</button><button class="btn">🏛 Visit</button><button class="btn">★ Following</button></div></div></div>
+<div><h2 style="font-size:19px">Where the medals show</h2><div class="lead">Seat chip (18 px), list row (14 px), house card, Domus rank bar.</div>
+ <div class="pane"><div class="rks" style="justify-content:flex-start">${grChip('Tiro')}${grChip('Primus Palus')}${grChip('Invictus')}</div>
+ <div class="list" style="margin-top:10px"><div class="row"><span class="cr">👑</span><span class="bnr">${drImg('ludus')}</span><span class="who"><b>Thrax the Patient</b><small>${medal('Veteranus',14)} Veteranus · Domus Thracia</small></span><span class="st s">Seat 3</span><span class="ok">✓</span></div></div></div></div></div>
+<h2 style="margin-top:22px">Glory rank medals</h2><div class="lead">C4a — one per online gladiator rank (ONLC.RANKS). Metal climbs wood → copper → bronze → iron → silver → gold; Rudiarius adds a red enamel ring, Invictus purple enamel + a laurel.</div>
+<div class="sheet">${RK.map(r=>`<div>${medal(r.k,64)}<b>${r.n}</b><small>${r.gl} glory</small></div>`).join('')}</div>
+<div class="sizes">At chip sizes: ${RK.map(r=>medal(r.k,18)).join(' ')} &nbsp; ${RK.map(r=>medal(r.k,14)).join(' ')}</div>`;
 </script>
 </body></html>

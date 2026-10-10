@@ -176,15 +176,15 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
 .optg .ck{width:17px;height:17px;font-size:11px}
 .optg .wide{grid-column:1/-1}
 .locked .strip .ev:not(.on){opacity:.32;filter:grayscale(.8)}
-.locked .mapbox .map{filter:grayscale(.75) brightness(.6)}
-.locked .mapbox .map .pin.on{filter:none}
+.locked .mapbox .map::after{content:'';position:absolute;inset:0;background:rgba(22,16,11,.62);z-index:1}
+.locked .mapbox .map .pin.on{z-index:3}
 .locked .mapbox .city .sel,.locked .mapbox .city .btn{opacity:.45}
 .lockbar{display:none;align-items:center;gap:9px;margin:-4px 0 10px;padding:6px 10px;border-radius:6px;border:1px dashed var(--gold);background:#2a1f12;font-size:13.5px;color:var(--muted)}
 .lockbar b{color:var(--gold2)}.lockbar .sp{flex:1}
 .locked .lockbar{display:flex}
-.maplock{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:none;padding:5px 11px;border-radius:999px;background:#160f0bdd;border:1px solid var(--gold);color:var(--gold2);font-size:13px;white-space:nowrap;z-index:2}
+.maplock{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:none;padding:5px 11px;border-radius:999px;background:#160f0bdd;border:1px solid var(--gold);color:var(--gold2);font-size:13px;white-space:nowrap;z-index:2}
 .locked .maplock{display:block}
-.mapbox{position:relative}
+.mapbox{position:relative}.mapbox .map .maplock{bottom:10px}
 /* A3 hot-seat turn ribbon */
 .ribbon{position:absolute;left:0;right:0;top:0;bottom:0;display:none;align-items:center;justify-content:center;gap:14px;z-index:6;
   background:linear-gradient(90deg,transparent,#14303f 18%,#1d4558 50%,#14303f 82%,transparent),#0d1a22e6;border-bottom:2px solid #7fc2e8;
@@ -342,7 +342,7 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
    <div class="what">
     <div class="bigcard" role="img" aria-label="Democritus event card"></div>
     <div class="mapbox">
-     <div class="map" id="map"></div><span class="maplock">🔒 Roma · this week</span>
+     <div class="map" id="map"></div>
      <div class="city"><span class="sel">6 · Roma (home)<span class="car">▼</span></span><button class="btn" title="Random city">🎲</button></div>
      <div class="mods">Class modifiers: <span>none in Roma</span></div>
     </div>
@@ -514,7 +514,7 @@ html,body{height:auto;min-height:100%}body{overflow-x:clip}
 <script>
 /* ---------- data ---------- */
 const L=[[1,.7089,.6261],[2,.4914,.0925],[3,.2738,.2015],[4,.7396,.2991],[5,.4862,.7858],[6,.636,.2611],[7,.1907,.1711],[8,.746,.3346],[9,.7409,.9759],[10,.4543,.7199],[11,.6859,.052],[12,.7191,.3232]];
-document.getElementById('map').innerHTML=L.map(([n,x,y])=>`<span class="pin ${n===6?'on':''}" style="left:${x*100}%;top:${Math.min(y,.96)*100}%">${n}</span>`).join('');
+document.getElementById('map').innerHTML='<span class="maplock">🔒 Roma · this week</span>'+L.map(([n,x,y])=>`<span class="pin ${n===6?'on':''}" style="left:${x*100}%;top:${Math.min(y,.96)*100}%">${n}</span>`).join('');
 const E=[['Democritus',0,0,1],['Egidious',1,0],['Cassian',2,0],['Commodus',3,0],['Familia',4,0],['Gauntlet',0,1],['Golden Eagle',1,1],['Juggernaut',2,1],['Orpheus',3,1],['Triumviratus',4,1],['Chariot',0,2],['Lupus',1,2],['Naumachia',2,2]];
 document.getElementById('strip').innerHTML=E.map(([n,c,r,on])=>`<div class="ev ${on?'on':''}"><i style="background-position:${c*25}% ${r*50}%"></i>${n}</div>`).join('');
 const C='<img src="../../../assets/coin.webp" alt="coin">';

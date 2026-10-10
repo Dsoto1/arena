@@ -4,4 +4,4 @@ const go=async(hash,out,W,H,full)=>{const pg=await b.newPage({viewport:{width:W,
  await pg.goto('file://'+path.resolve(__dirname,'lobby.html')+'#'+hash);await pg.evaluate(()=>document.fonts.ready);await pg.waitForTimeout(500);
  await pg.screenshot({path:path.resolve(__dirname,out),fullPage:!!full});await pg.close()};
 await go('host','lobby_host_1440.png',1440,900);await go('guest','lobby_guest_1440.png',1440,900);await go('full','lobby_full_1440.png',1440,900);await go('full','lobby_full_1440_page.png',1440,900,true);
-await go('phone','lobby_phone_390.png',390,844);await go('phone','lobby_phone_390_full.png',390,844,true);await b.close()})();
+await go('phone','lobby_phone_390.png',390,844);await go('eight','lobby_eight_1440.png',1440,900);await go('eight','lobby_eight_1440_page.png',1440,900,true);await go('eight','lobby_eight_390.png',390,844);await go('eight','lobby_eight_390_full.png',390,844,true);await go('extras','lobby_extras_1440.png',1440,900,true);await go('extras','lobby_extras_390.png',390,844,true);await go('phone','lobby_phone_390_full.png',390,844,true);await b.close()})();

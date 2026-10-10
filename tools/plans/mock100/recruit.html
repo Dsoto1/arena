@@ -215,6 +215,87 @@ body.ph .legend{display:none}
 body.ph .dos{padding-bottom:30px}
 body.ph .ribbon{font-size:13px}
 body.ph .su{grid-template-columns:22px minmax(0,1fr) 70px 26px}
+
+/* ===== E1 · UNIFORM (his note): fixed heights, one line per label, chips in one column ===== */
+.one{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.list{width:340px}
+.lhead,.lr{display:grid;grid-template-columns:14px 26px minmax(0,1fr) 64px 38px 30px;gap:7px;align-items:center;padding:0 10px}
+.lhead{height:24px;font:500 10px var(--mono);letter-spacing:.1em;color:var(--dim);text-transform:uppercase;border-bottom:1px solid var(--line2)}
+.lhead span:nth-child(n+5),.lr .gr,.lr .iv{text-align:right}
+.lr{height:38px;font-size:14px}
+.lr .av{width:26px;height:26px}
+.lr b{font-weight:700}
+.lr .cl{color:var(--muted);font-size:12.5px}
+.lr .gr{font:400 16px var(--display);color:var(--gold2)}
+.lr .iv{font:12px var(--mono);color:var(--dim)}
+.pname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pmeta>div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:19px}
+.pbtns{flex-wrap:nowrap;overflow:hidden}.pbtns>*{flex:none}.pbtns .pchip{min-width:0;flex:0 1 auto;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:block;line-height:22px;height:26px}
+.gr98 span:nth-child(2){white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gr98{height:28px}
+.tabnote{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prs{grid-auto-rows:62px}
+.pc{height:62px;overflow:hidden}.pc .v{flex-wrap:nowrap;overflow:hidden;white-space:nowrap}
+.pc .one{display:block;font-size:13px}
+.lock{height:62px;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:0 12px}.lock div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hrsh{flex-wrap:nowrap;white-space:nowrap}.hrs .sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.act{height:122px;min-height:0}.act b,.act small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.act .cost{height:16px}
+.hg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.hgl{font:500 10.5px var(--mono);letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hgc{justify-content:space-between;height:30px;min-width:0}.hgc .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmd .meta{flex-wrap:nowrap;white-space:nowrap}.cmd .meta>*{overflow:hidden;text-overflow:ellipsis}
+.pit{height:126px;min-height:0;grid-template-columns:minmax(0,1fr) 92px;grid-template-rows:24px 26px 24px 1fr;padding:9px 10px 8px;row-gap:2px}
+.pit .ttl{grid-column:1;grid-row:1;display:flex;align-items:center;gap:6px;min-width:0}
+.pit h3{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px}
+.pit .gain{position:static;flex:none;width:38px;text-align:center}
+.pit .tr{grid-column:1;grid-row:2;margin:0;flex-wrap:nowrap;display:grid;grid-template-columns:88px 30px;align-items:center}
+.pit .tg{grid-column:1;grid-row:3;display:flex;gap:5px;align-items:center;white-space:nowrap;overflow:hidden}
+.pit .tg .none{font-size:11.5px;color:#5a4a38}
+.pit .scene{grid-row:1/4;align-self:start;margin:0;height:72px}
+.pit p{grid-row:4;align-self:end;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r3>.panel{height:232px}
+.won{grid-template-columns:1fr;align-content:start}
+.wo{height:76px}.wo>div:last-child{min-width:0}.wo b,.wo small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.su{height:28px;padding:0}.need{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nb{height:84px;display:grid;grid-template-rows:26px 20px 20px;align-content:start}
+.nb .nt1{display:flex;justify-content:space-between;align-items:center}
+.nb .nt1 .fit{margin:0}
+.nb span.one{font-size:14px;margin:0}
+.notes .nh span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.verdict .h,.verdict p,.oform label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ===== E2 · #chart: the three chart choices side by side ===== */
+.chartcmp{display:none}
+body.s-chart .dwrap>*{display:none}
+body.s-chart .dwrap>.chartcmp{display:block}
+.chartcmp{padding:6px 16px 16px}
+.cc-lead{color:var(--muted);font-size:14px;text-align:center;margin:2px 0 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cc-grid{display:grid;grid-template-columns:120px repeat(3,minmax(0,1fr));gap:10px;align-items:stretch}
+.cc-h{height:44px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--line2)}
+.cc-h b{font:400 16px var(--display);color:var(--gold2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cc-h span{font-size:12px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cc-rl{display:flex;flex-direction:column;justify-content:center;gap:4px}
+.cc-rl b{font:400 15px var(--display);color:var(--bone)}.cc-rl span{font-size:12.5px;color:var(--muted)}
+.cc-c{height:224px;border:1px solid #3a2c1e;border-radius:8px;background:#1a120d;padding:8px;display:grid;grid-template-columns:minmax(0,1fr) 112px;gap:8px;align-items:center}
+.cc-c.rowsonly{grid-template-columns:minmax(0,1fr)}
+.cc-c .pent{width:112px;height:112px}
+.cc-c .gr98{grid-template-columns:16px minmax(0,1fr) 34px 32px;padding:2px 6px;height:27px;font-size:13px}
+.cc-c .gr98 .g{font-size:17px}
+.cc-key{display:flex;gap:18px;justify-content:center;margin-top:12px;font-size:12.5px;color:var(--muted);white-space:nowrap;flex-wrap:wrap}
+.cc-key i{display:inline-block;width:18px;height:10px;border-radius:2px;vertical-align:0;margin-right:5px}
+body.ph .cc-grid{grid-template-columns:1fr}
+body.ph .cc-h{display:none}
+body.ph .cc-c{height:auto;grid-template-columns:minmax(0,1fr) 104px}
+body.ph .cc-c .pent{width:104px;height:104px}
+body.ph .cc-c::before{content:attr(data-l);grid-column:1/-1;font:400 14px var(--display);color:var(--gold2)}
+body.ph .cc-rl{flex-direction:row;align-items:baseline;gap:8px;margin-top:8px;border-top:1px solid var(--line2);padding-top:8px}
+body.ph .lead2{display:none}
+/* phone uniform */
+body.ph .hg{grid-template-columns:repeat(2,minmax(0,1fr))}
+body.ph .r3>.panel{height:auto}
+body.ph .pit{grid-template-columns:minmax(0,1fr) 92px}
+body.ph .nb{height:84px}
+body.ph .act{height:118px}
+body.ph .pbtns .pchip.warn{display:none}
 </style></head>
 <body class="s-scout">
 <svg width="0" height="0" style="position:absolute"><defs>
@@ -233,10 +314,17 @@ body.ph .su{grid-template-columns:22px minmax(0,1fr) 70px 26px}
   </nav>
   <div class="list">
    <div class="hd">Free agents · 31<span class="sp"></span><span class="badge">Rating ▾</span></div>
-   <div class="lrows" id="lrows"></div>
+   <div class="lrows"><div class="lhead"><span>★</span><span></span><span>Name</span><span>Class</span><span title="the street's word">Grade</span><span title="your interest">Int.</span></div><div id="lrows"></div></div>
   </div>
 
   <main class="dos"><div class="dwrap">
+   <!-- ===== E2 · #chart — the three chart choices ===== -->
+   <section class="panel chartcmp"><div class="ptitle">Stats Tablet · which chart?</div>
+    <p class="cc-lead">Same recruiter, same grades: a barely scouted recruit (one ask around) and a fully graded one (watch + cup + study).</p>
+    <div class="cc-grid" id="ccgrid"></div>
+    <div class="cc-key"><span><i style="background:#7fae5f88;border:1px solid #9be86c"></i>the grade</span><span><i style="background:#d6ab4c33;border:1px dashed #d6ab4c"></i>where the true rating may lie (rough = wide, sure = none)</span><span>? = not graded yet</span></div>
+   </section>
+
    <!-- ===== PROFILE + STATS TABLET ===== -->
    <div class="r2">
     <section class="panel prof"><div class="ptitle">Profile</div>
@@ -249,12 +337,12 @@ body.ph .su{grid-template-columns:22px minmax(0,1fr) 70px 26px}
         <use href="#lf" transform="translate(120 0) scale(-1 1)"/>
         <path d="M52 110l8 6 8-6" fill="none" stroke="#a3281f" stroke-width="3"/></svg></div>
       <div style="min-width:0">
-       <div class="pname"><span class="pin">★</span>Barbatus Bone-Breaker</div>
-       <div class="pmeta">♂ <b>Royalty</b> · 34 years old · from <b>Neapolis</b> · fame 24<br>3 wins in 7 events · first sand S1 W1</div>
+       <div class="pname" title="Barbatus Bone-Breaker"><span class="pin">★</span>Barbatus Bone-Breaker</div>
+       <div class="pmeta"><div title="♂ Royalty · 34 years old · from Neapolis · fame 24">♂ <b>Royalty</b> · 34 · <b>Neapolis</b> · fame 24</div><div title="3 wins in 7 events · first sand S1 W1">3 wins in 7 · first sand S1 W1</div></div>
        <div class="pstars"><span class="s">★★★★<i>★</i></span><span class="street" title="the street's word">~B+</span><span class="lau">UUU<i>UU</i></span></div>
       </div>
      </div>
-     <div class="pbtns"><span class="btn">⇄ Compare</span><span class="pchip">🎯 Wants: <span id="wantsTop">grade all five to learn</span></span><span class="pchip warn">⚖ Rival bid in 2 weeks</span></div>
+     <div class="pbtns"><span class="btn">⇄ Compare</span><span class="pchip" id="wantsChip">🎯 <span id="wantsTop">grade all five to learn</span></span><span class="pchip warn" title="Ludus Severianus bids in 2 weeks">⚖ bid in 2 wk</span></div>
     </section>
 
     <section class="panel"><div class="ptitle">Stats Tablet</div>
@@ -262,7 +350,7 @@ body.ph .su{grid-template-columns:22px minmax(0,1fr) 70px 26px}
       <div class="sketch" title="his figure, as the recruiter sketched him"></div>
       <div class="grows" id="grows"></div>
       <svg class="pent" id="pent" viewBox="-80 -80 160 160"></svg>
-      <p class="tabnote">Grades are your recruiter's estimates — ● sure · ●● fair · ● rough. No numbers before he signs.</p>
+      <p class="tabnote">Recruiter's estimates · ●●● sure · ●●○ fair · ●○○ rough · no numbers</p>
      </div>
     </section>
    </div>
@@ -280,8 +368,8 @@ body.ph .su{grid-template-columns:22px minmax(0,1fr) 70px 26px}
    <!-- ===== ① SCOUT ===== -->
    <div class="pane scout">
     <section class="panel hrs">
-     <div class="hrsh"><b>🔍 The Recruiter's hours</b><span class="n">14 of 20 left this week</span><span class="pips" id="pips"></span></div>
-     <div class="sub">3 of 8 h on Barbatus this week · <b style="color:var(--bone)">Iulus Saxo</b>, your Recruiter · Level 1 <span class="ii2">(⬆ Train on his council card: more hours, sharper grades)</span></div>
+     <div class="hrsh"><b>🔍 Recruiter's hours</b><span class="n">14 of 20 left</span><span class="pips" id="pips"></span></div>
+     <div class="sub" title="⬆ Train him on his council card: more hours, sharper grades">3 of 8 h on him · Recruiter <b style="color:var(--bone)">Iulus Saxo</b> · Lv 1</div>
      <div class="acts" id="acts"></div>
     </section>
    </div>
@@ -289,8 +377,8 @@ body.ph .su{grid-template-columns:22px minmax(0,1fr) 70px 26px}
    <!-- ===== ② COURT ===== -->
    <div class="pane court">
     <section class="panel cmd"><span class="ribbon">The Lanista's Command Table</span>
-     <div class="hg" id="hg"><span class="lbl">🏛 Your house grades · what every recruit sees</span></div>
-     <div class="meta"><b>🗣 Pitch · 2 of 3 left this week · one per recruit</b><span>A pitch on his wish counts double · green outline = he cares about it</span></div>
+     <div class="hgl">🏛 Your house grades · what every recruit sees</div><div class="hg" id="hg"></div>
+     <div class="meta"><b>🗣 Pitch · 2 of 3 left · one per recruit</b><span>his wish ×2 · green = he cares</span></div>
      <div class="pg" id="pg"></div>
     </section>
     <div class="r3">
@@ -298,19 +386,19 @@ body.ph .su{grid-template-columns:22px minmax(0,1fr) 70px 26px}
       <div class="wo"><div class="ico"><svg viewBox="0 0 52 52"><rect width="52" height="52" fill="#5a3c22"/><rect x="4" y="30" width="44" height="6" fill="#8a5a34"/><path d="M8 36v12M44 36v12" stroke="#4a2a14" stroke-width="3"/><path d="M14 30c0-8 4-12 6-12s6 4 6 12z" fill="#b07a4a"/><ellipse cx="34" cy="28" rx="8" ry="3" fill="#e8dcc0"/><circle cx="31" cy="26" r="2" fill="#a3281f"/><circle cx="36" cy="26" r="2" fill="#7a9a3a"/><path d="M10 14h32" stroke="#f0cf7d" stroke-dasharray="3 3"/></svg></div>
        <div><b>🍷 Host a feast</b><small>the big swing · every 3 weeks</small><span class="cost"><span class="coin"></span> 26</span></div></div>
       <div class="wo"><div class="ico"><svg viewBox="0 0 52 52"><rect width="52" height="52" fill="#2a1f30"/><rect x="12" y="22" width="28" height="22" rx="2" fill="#a3281f"/><rect x="10" y="17" width="32" height="7" rx="1" fill="#c0433a"/><path d="M26 17v27" stroke="#f0cf7d" stroke-width="4"/><path d="M26 17c-6-10-14-4-8 0M26 17c6-10 14-4 8 0" fill="none" stroke="#f0cf7d" stroke-width="2.5"/></svg></div>
-       <div><b>🎁 Send a gift</b><small>lands hardest on the coin-hungry · once a week</small><span class="cost"><span class="coin"></span> 13</span></div></div>
+       <div><b>🎁 Send a gift</b><small>coin-hungry fighters love it · weekly</small><span class="cost"><span class="coin"></span> 13</span></div></div>
      </section>
      <section class="panel suit"><span class="ribbon">Suitors</span>
       <div id="suit"></div>
-      <div class="need">He signs at about <b>52</b> interest. You are <b>3rd</b>. Ludus Severianus bids in 2 weeks unless you lead.</div>
+      <div class="need" title="He signs at about 52 interest. You are 3rd. Ludus Severianus bids in 2 weeks unless you lead.">Signs at ~<b>52</b> · you are <b>3rd</b> · Severianus bids in 2 wk</div>
      </section>
     </div>
     <section class="notes">
-     <div class="nh"><span>✉ A private note · once a week · doesn't use a pitch</span><span>tone</span></div>
+     <div class="nh"><span>✉ A private note · once a week · no pitch used</span><span>tone</span></div>
      <div class="nt">
-      <div class="nb"><b>Praise</b><span>speaks to Glory and Spectacle — proud fighters like it</span><span class="fit fair">fair</span></div>
-      <div class="nb"><b>Promise</b><span>more interest now, but he asks +10% at signing — speaks to Coin and Arena time</span><span class="fit weak">weak</span></div>
-      <div class="nb best"><b>Plain truth</b><span>speaks to Honor and Training — +2 more when your Honor is C+ or better</span><span class="fit good">lands well</span></div>
+      <div class="nb" title="Speaks to Glory and Spectacle — proud fighters like it"><span class="nt1"><b>Praise</b><span class="fit fair">fair</span></span><span class="one">Glory · Spectacle</span><span class="one">proud fighters like it</span></div>
+      <div class="nb" title="More interest now, but he asks +10% at signing — speaks to Coin and Arena time"><span class="nt1"><b>Promise</b><span class="fit weak">weak</span></span><span class="one">Coin · Arena time</span><span class="one">+3 now · asks +10% later</span></div>
+      <div class="nb best" title="Speaks to Honor and Training — +2 more when your Honor is C+ or better"><span class="nt1"><b>Plain truth</b><span class="fit good">lands well</span></span><span class="one">Honor · Training</span><span class="one">+2 if your Honor is C+ or better</span></div>
      </div>
     </section>
    </div>
@@ -322,10 +410,10 @@ body.ph .su{grid-template-columns:22px minmax(0,1fr) 70px 26px}
       <div class="slider"><i></i><b></b><u style="left:0">15</u><u style="left:48%">ask 23</u><u style="left:100%">40</u></div></div>
      <div class="oform"><label>Weeks <select class="tin" style="width:auto"><option>4</option><option selected>8</option><option>12</option></select></label>
       <label>Bonus <input class="tin" value="0"></label>
-      <label><span class="ck"></span> Pledge him the main event within 2 weeks (+12)</label></div>
+      <label title="Pledge him the main event within 2 weeks: +12 interest now"><span class="ck"></span> Pledge the main event (+12)</label></div>
      <div class="verdict"><div class="vbar"><i></i><u></u></div>
-      <div class="h">✗ <b>Not yet</b> — your pull 45 (money +3) · he needs 52 · Ludus Severianus at 48</div>
-      <p>Raise the wage — every coin over 23 a week counts most — or pitch, feast and gift next week. His dealbreaker is safe: your Honor is A.</p></div>
+      <div class="h">✗ <b>Not yet</b> · pull 45 (money +3) · needs 52 · Severianus 48</div>
+      <p title="Raise the wage — every coin over 23 a week counts most — or pitch, feast and gift next week. His dealbreaker is safe: your Honor is A.">Raise the wage, or pitch, feast and gift next week · dealbreaker safe</p></div>
      <button class="obtn">✍ Offer the contract<small>one offer per recruit a week</small></button>
     </section>
     <p class="hint">Unchanged from today (157 / 249) — restyled only: wage slider, weeks, bonus, pledge, live verdict meter.</p>
@@ -333,7 +421,7 @@ body.ph .su{grid-template-columns:22px minmax(0,1fr) 70px 26px}
   </div></main>
  </div>
 </div>
-<div class="legend">states: <a href="#scout">#scout</a><a href="#court">#court</a><a href="#offer">#offer</a><a href="#phone">#phone</a></div>
+<div class="legend">states: <a href="#scout">#scout</a><a href="#court">#court</a><a href="#offer">#offer</a><a href="#chart">#chart</a><a href="#phone">#phone</a></div>
 
 <script>
 /* ---------- mock data (real shapes: 249-v98rec REC98/PITCH98/DEAL98, 157 WANTS88, 17 MGR_KEYS/MOTIVES, 105 TONES74) ---------- */
@@ -347,23 +435,23 @@ const STATE={
 const dots=p=>`<span class="dots">${'●'.repeat(p)}<i>${'○'.repeat(3-p)}</i></span>`;
 function grows(S){return `<div class="gr98 ov"><span class="ic">⚖</span><span>Overall</span><span class="g ${gcls(S.ovr[0].replace('~',''))}">${S.ovr[0]}</span>${dots(S.ovr[1])}</div>`+
  S.stats.map(([k,n,ic,g,p])=>`<div class="gr98" title="${g?n+': '+g+' — '+['','a rough guess','a fair read','sure'][p]:n+': not graded yet'}"><span class="ic">${ic}</span><span>${n}</span><span class="g ${g?gcls(g):'q'}">${g||'?'}</span>${dots(p)}</div>`).join('')}
-function pent(S){const ang=i=>-Math.PI/2+i*2*Math.PI/5,pt=(i,r)=>[Math.cos(ang(i))*r*62,Math.sin(ang(i))*r*62].map(v=>v.toFixed(1)).join(',');
+function pent(S,band=true){const ang=i=>-Math.PI/2+i*2*Math.PI/5,pt=(i,r)=>[Math.cos(ang(i))*r*62,Math.sin(ang(i))*r*62].map(v=>v.toFixed(1)).join(',');
  let s='';for(const f of [1,.75,.5,.25])s+=`<polygon points="${[0,1,2,3,4].map(i=>pt(i,f)).join(' ')}" fill="none" stroke="#4a3826" stroke-width="${f===1?1.4:.7}"/>`;
  s+=[0,1,2,3,4].map(i=>`<line x1="0" y1="0" x2="${pt(i,1).split(',')[0]}" y2="${pt(i,1).split(',')[1]}" stroke="#4a3826" stroke-width=".7"/>`).join('');
- const spread=[1,2,1,.5][0];const band=(dir)=>S.stats.map(([k,n,ic,g,p],i)=>{if(!g)return pt(i,dir>0?1:0);const idx=GR.indexOf(g);const st=[3,2,1,0][p];const j=Math.max(0,Math.min(7,idx+dir*st));return pt(i,R[GR[j]])}).join(' ');
- s+=`<polygon points="${band(1)}" fill="#d6ab4c22" stroke="#d6ab4c55" stroke-dasharray="3 2"/>`;
- s+=`<polygon points="${band(-1)}" fill="#1c140e" stroke="none" opacity=".55"/>`;
+ const spread=[1,2,1,.5][0];const bnd=(dir)=>S.stats.map(([k,n,ic,g,p],i)=>{if(!g)return pt(i,dir>0?1:0);const idx=GR.indexOf(g);const st=[3,2,1,0][p];const j=Math.max(0,Math.min(7,idx+dir*st));return pt(i,R[GR[j]])}).join(' ');
+ if(band){s+=`<polygon points="${bnd(1)}" fill="#d6ab4c22" stroke="#d6ab4c88" stroke-dasharray="3 2"/>`;
+ s+=`<polygon points="${bnd(-1)}" fill="#1c140e" stroke="none" opacity=".55"/>`}
  const known=S.stats.map(([k,n,ic,g],i)=>g?pt(i,R[g]):null);
  s+=`<polygon points="${S.stats.map(([k,n,ic,g],i)=>pt(i,g?R[g]:0)).join(' ')}" fill="#7fae5f44" stroke="#9be86c" stroke-width="1.6"/>`;
  s+=known.map((p,i)=>p?`<circle cx="${p.split(',')[0]}" cy="${p.split(',')[1]}" r="3" fill="#9be86c"/>`:'').join('');
  s+=S.stats.map(([k,n,ic,g],i)=>{const [x,y]=pt(i,1.2).split(',');return `<text x="${x}" y="${+y+4}" text-anchor="middle"><tspan font-size="12">${ic}</tspan><tspan dx="2" fill="${g?'#efe3cc':'#7a6650'}" font-family="Marcellus SC,serif" font-size="12">${g||'?'}</tspan></text>`}).join('');
  return s}
-function persHTML(on){if(!on)return `<div class="lock">🔒 <b>Grade all five ratings to read him</b> — temper, wants, what he cares about, dealbreakers. <span class="mono">(3/5)</span><br><span style="font-size:12.5px">Next: 🍷 Share a cup grades Intelligence + Charisma.</span></div>`;
+function persHTML(on){if(!on)return `<div class="lock" title="Grade all five ratings to read him: temper, wants, what he cares about, dealbreakers"><div>🔒 <b>Grade all five to read him</b> <span class="mono">(3/5)</span></div><div style="font-size:12.5px">Next: 🍷 Share a cup → Intelligence + Charisma</div></div>`;
  return `<div class="prs">
   <div class="pc"><h4>Temper</h4><div class="v"><span class="temp">Proud</span><span class="temp">Steady</span></div></div>
   <div class="pc"><h4>Wants</h4><div class="v"><span class="want">🗡 Rudis path</span><span class="want ok">📣 Fame</span></div></div>
-  <div class="pc"><h4>Cares about</h4><div class="v"><span class="mo">Training <i>40%</i></span><span class="mo">Glory <i>35%</i></span><span class="mo">Honor <i>25%</i></span></div></div>
-  <div class="pc"><h4>Dealbreaker</h4><div class="deal"><b>✓ safe</b> · won't serve a lanista without honor (Honor below C)</div></div></div>`}
+  <div class="pc" title="Training 40% · Glory 35% · Honor 25%"><h4>Cares about</h4><span class="one">Training <i class="gold">40</i> · Glory <i class="gold">35</i> · Honor <i class="gold">25</i></span></div>
+  <div class="pc" title="Won’t serve a lanista without honor (Honor below C). Your Honor is A."><h4>Dealbreaker</h4><span class="one deal"><b>✓ safe</b> · Honor below C</span></div></div>`}
 /* the five scout actions (REC98.acts) */
 const ART={
  ask:`<svg viewBox="0 0 120 44" preserveAspectRatio="xMidYMid slice"><rect width="120" height="44" fill="#c9925a"/><rect y="30" width="120" height="14" fill="#7a5a3a"/><path d="M10 14h50l-4-6H14z" fill="#a3281f"/><path d="M10 14h50" stroke="#e8dcc0" stroke-width="2" stroke-dasharray="5 4"/><rect x="14" y="14" width="3" height="18" fill="#4a2a14"/><rect x="53" y="14" width="3" height="18" fill="#4a2a14"/><use href="#man" x="70" y="10" width="14" height="32" color="#4a2a14" fill="#4a2a14"/><use href="#man" x="86" y="12" width="13" height="30" color="#6b3a1a" fill="#6b3a1a"/><text x="96" y="12" font-size="9" fill="#3a1a0c">…?</text></svg>`,
@@ -371,10 +459,10 @@ const ART={
  cup:`<svg viewBox="0 0 120 44" preserveAspectRatio="xMidYMid slice"><rect width="120" height="44" fill="#5a3c22"/><circle cx="104" cy="10" r="5" fill="#f0cf7d" opacity=".8"/><rect y="30" width="120" height="14" fill="#3a2414"/><rect x="34" y="26" width="52" height="5" fill="#8a5a34"/><path d="M50 26v-6h6v6M64 26v-6h6v6" fill="#c9a458"/><use href="#man" x="14" y="6" width="16" height="36" color="#c98e62" fill="#c98e62"/><use href="#man" x="90" y="6" width="16" height="36" color="#e0b080" fill="#e0b080"/></svg>`,
  study:`<svg viewBox="0 0 120 44" preserveAspectRatio="xMidYMid slice"><rect width="120" height="44" fill="#2a1d12"/><rect x="12" y="6" width="96" height="32" rx="3" fill="#e9ddc0"/><path d="M20 14h40M20 20h50M20 26h34M20 32h44" stroke="#8a6a44" stroke-width="2"/><circle cx="88" cy="20" r="9" fill="none" stroke="#a3281f" stroke-width="2"/><path d="M82 26l12-12" stroke="#a3281f" stroke-width="2"/></svg>`,
  trial:`<svg viewBox="0 0 120 44" preserveAspectRatio="xMidYMid slice"><rect width="120" height="44" fill="#e0a35a"/><path d="M0 44V26q60-26 120 0v18z" fill="#c9925a"/><use href="#man" x="34" y="6" width="17" height="36" color="#4a2a14" fill="#4a2a14"/><use href="#man" x="68" y="6" width="17" height="36" color="#a3281f" fill="#a3281f"/><path d="M50 16l18 4M70 14l-18 6" stroke="#eee" stroke-width="2"/></svg>`};
-const ACTS=[['ask','🍺','Ask around the forum',1,0,'one rough grade','done'],['watch','👁','Watch him train',2,0,'Speed · Strength to a fair read','done'],
- ['cup','🍷','Share a cup',2,0,'Intelligence · Charisma to a fair read','adv'],['study','📜','Study his bouts',3,0,'every grade one step sharper · Luck',''],
- ['trial','⚔','Trial bout',5,4,'everything sure · +6–10 interest · 7% bruise','']];
-function acts(){return ACTS.map(([k,ic,n,h,c,sub,st])=>`<div class="act ${st}">${st==='adv'?'<span class="adv74">★ ADVISED</span>':''}<div class="art">${ART[k]}</div><b>${ic} ${n}</b><span class="cost">⏳ ${h} h${c?` · <span class="coin"></span> ${c}`:''}</span><small>${sub}</small></div>`).join('')}
+const ACTS=[['ask','🍺','Ask around',1,0,'1 rough grade','done','Ask around the forum — one rough grade'],['watch','👁','Watch him train',2,0,'Speed · Strength','done','Speed + Strength to a fair read'],
+ ['cup','🍷','Share a cup',2,0,'Intel · Charisma','adv','Intelligence + Charisma to a fair read'],['study','📜','Study his bouts',3,0,'all sharper · Luck','','Every grade one step sharper, Luck to a fair read'],
+ ['trial','⚔','Trial bout',5,4,'all sure · interest','','Everything sure, +6–10 interest, 7% chance of a bruise']];
+function acts(){return ACTS.map(([k,ic,n,h,c,sub,st,full])=>`<div class="act ${st}" title="${full}">${st==='adv'?'<span class="adv74">★ ADVISED</span>':''}<div class="art">${ART[k]}</div><b>${ic} ${n}</b><span class="cost">⏳ ${h} h${c?` · <span class="coin"></span> ${c}`:''}</span><small>${sub}</small></div>`).join('')}
 /* house grades = the lanista traits (17 MGR_KEYS, trait96Grade) */
 const HG=[['ambition','Ambition','C+'],['cunning','Cunning','B'],['honor','Honor','A'],['greed','Greed','D'],['show','Showmanship','B+'],['discipline','Discipline','B'],['risk','Risk','C']];
 const HOT=new Set(['discipline','ambition','honor']);
@@ -386,27 +474,33 @@ const SC={
  ward:`<rect width="96" height="70" fill="#c9b48a"/><path d="M58 70V30a18 18 0 0 1 36 0v40z" fill="#7a9ab0"/><path d="M58 52h36" stroke="#a8c8d8" stroke-width="3"/><rect x="6" y="44" width="40" height="7" rx="2" fill="#e9ddc0" stroke="#8a6a44"/><path d="M8 51v10M44 51v10" stroke="#5a3c22" stroke-width="3"/><rect x="6" y="30" width="34" height="6" rx="2" fill="#e9ddc0" stroke="#8a6a44"/><path d="M20 6v14M13 13h14" stroke="#a3281f" stroke-width="4"/>`,
  champ:`<rect width="96" height="70" fill="#3a2a1c"/><rect x="0" y="54" width="96" height="16" fill="#5a3c22"/><rect x="30" y="40" width="36" height="14" fill="#c9a458"/><path d="M48 18c-10 0-14 8-14 8M48 18c10 0 14 8 14 8" stroke="#7ccf4f" stroke-width="4" fill="none"/><use href="#man" x="14" y="16" width="20" height="42" color="#d6ab4c" fill="#d6ab4c"/><use href="#man" x="62" y="20" width="18" height="38" color="#b07a4a" fill="#b07a4a"/>`,
  purse:`<rect width="96" height="70" fill="#2a1d12"/><rect x="8" y="10" width="44" height="34" rx="2" fill="#e9ddc0"/><path d="M14 18h30M14 24h26M14 30h32M14 36h20" stroke="#8a6a44" stroke-width="2"/>${[0,1,2,3,4].map(j=>`<ellipse cx="72" cy="${60-j*6}" rx="13" ry="4" fill="#e6b93a" stroke="#8a6414" stroke-width="1.5"/>`).join('')}<path d="M60 22h24M72 14v8M62 22l-4 10h8zM82 22l-4 10h8z" stroke="#c9a458" stroke-width="2" fill="#c9a45855"/>`};
-const PITCH=[['yard','🏋','Show him the Training Yard','discipline','Discipline','B',16,'🗡 Rudis path','Training','With our Doctore his Strength B could reach B+ within a season.',1],
- ['table','🍷','Dine at the lanista’s table','show','Showmanship','B+',7,'','','Wine, a full table and the house’s best stories.'],
- ['sand','⚔','Promise him the sand','risk','Risk','C',3,'','','Bold entries: he would see the sand often.'],
- ['ward','⚕','Tour the infirmary','honor','Honor','A',11,'','Honor','Titus Severus, your Medicus, shows him the cots and the baths.'],
- ['champ','🏆','Meet your champion','ambition','Ambition','C+',12,'📣 Fame','Glory','He would train beside Asper Nine-Lives (B).'],
- ['purse','💰','Talk terms with the Clerk','cunning','Cunning','B',6,'','','Your Clerk lays out wages, bonuses and the purse.']];
-function pitches(){return PITCH.map(([k,ic,n,t,tn,g,gain,want,mot,proj,adv])=>`<button class="pit ${adv?'adv':''}">${adv?'<span class="adv74">★ ADVISED</span>':''}<span class="gain ${gain<8?'lo':''}">+${gain}</span>
- <h3>${ic} ${n}</h3><span class="tr">${tn} ${chip(g)}${want?`<span class="wtag">🎯 ${want} ×2</span>`:''}${mot?`<span class="mtag">${mot}</span>`:''}</span>
+const PITCH=[['yard','🏋','Training Yard','Show him the Training Yard','Discipline','B',16,'🗡 Rudis path','Training','Doctore: Strength B → B+ in a season',1],
+ ['table','🍷','The lanista’s table','Dine at the lanista’s table','Showmanship','B+',7,'','','Wine, a full table, the best stories'],
+ ['sand','⚔','Promise the sand','Promise him the sand','Risk','C',3,'','','Bold entries: often on the sand'],
+ ['ward','⚕','Tour the infirmary','Tour the infirmary','Honor','A',11,'','Honor','Titus Severus shows cots and baths'],
+ ['champ','🏆','Meet your champion','Meet your champion','Ambition','C+',12,'📣 Fame','Glory','Trains beside Asper Nine-Lives (B)'],
+ ['purse','💰','Terms with the Clerk','Talk terms with the Clerk','Cunning','B',6,'','','Wages, bonuses and the purse']];
+function pitches(){return PITCH.map(([k,ic,n,full,tn,g,gain,want,mot,proj,adv])=>`<button class="pit ${adv?'adv':''}" title="${full} — ${proj}">${adv?'<span class="adv74">★ ADVISED</span>':''}
+ <span class="ttl"><h3>${ic} ${n}</h3><span class="gain ${gain<8?'lo':''}">+${gain}</span></span>
+ <span class="tr"><span class="one">${tn}</span>${chip(g)}</span>
+ <span class="tg">${want?`<span class="wtag">🎯 ${want} ×2</span>`:''}${mot?`<span class="mtag">${mot}</span>`:''}${!want&&!mot?'<span class="none">no wish · no motive</span>':''}</span>
  <span class="scene"><svg viewBox="0 0 96 70" preserveAspectRatio="xMidYMid slice">${SC[k]}</svg></span><p>${proj}</p></button>`).join('')}
 const SUIT=[['Ludus Severianus','#8a5cc0',48,0],['Ludus Nervanus','#4f7fc4',46,1],['Ludus Virgilanti (you)','#c0433a',45,-1],['Ludus Crispinus','#c0433a',37,2],['Schola Nemausensis','#6fa8a0',33,3]];
 function suit(){return SUIT.map(([n,c,v,f])=>`<div class="su ${f<0?'me':''}"><span class="fl" style="${f>=0?`background-image:url(img/rec_flag${f}.svg)`:'background:linear-gradient(#c0433a,#7a1a12)'}"></span><span class="nm" style="color:${f<0?'var(--gold2)':c}">${n}</span><span class="bar"><i style="width:${v}%;background:linear-gradient(90deg,${c}88,${c})"></i></span><span class="v">${v}</span></div>`).join('')}
 const LIST=[['Barbatus Bone-Breaker','Royalty · Neapolis','~B+',1,'img/rec_f1.png'],['Lartius Saxo','Venatore · Corinth','~B',1],['Gaius Pollio','Hero · Ephesus','~B',1],['Fatum the Oathless','Slave · Gades','~C+',0],['Pertinax the Pale','Amazonia · Roma','~C+',1],['Statius Vitalis','Hero · Capua','~C+',0],['Decimus Scaurus','Soldier · Ostia','~C',0],['Spurius Taurus','Hero · Puteoli','~C',0],['Aulus Messala','Slave · Londinium','~C',0],['Procella of Neapolis','Royalty · Neapolis','~D',0]];
-document.getElementById('lrows').innerHTML=LIST.map(([n,s,g,st,img],i)=>`<div class="lr ${i===0?'on':''}"><span class="st">${st?'★':'☆'}</span><span class="av" style="${img?`background-image:url(${img})`:`background:hsl(${i*47%360} 25% 30%)`}"></span><span style="min-width:0"><b>${n}</b><span>${s}</span></span><span class="gr">${g}<i>interest ${[42,40,37,29,36,31,28,26,22,30][i]}</i></span></div>`).join('');
-document.getElementById('hg').innerHTML+=HG.map(([k,n,g])=>`<span class="hgc ${HOT.has(k)?'hot':''}">${n} ${chip(g)}</span>`).join('');
+document.getElementById('lrows').innerHTML=LIST.map(([n,c,g,st,img],i)=>`<div class="lr ${i===0?'on':''}" title="${n} · ${c}"><span class="st">${st?'★':'☆'}</span><span class="av" style="${img?`background-image:url(${img})`:`background:hsl(${i*47%360} 25% 30%)`}"></span><b class="one">${n}</b><span class="cl one">${c.split(' · ')[0]}</span><span class="gr">${g}</span><span class="iv">${[42,40,37,29,36,31,28,26,22,30][i]}</span></div>`).join('');
+document.getElementById('hg').innerHTML+=HG.map(([k,n,g])=>`<span class="hgc ${HOT.has(k)?'hot':''}" title="${n} ${g}${HOT.has(k)?' — he cares about this':''}"><span class="nm">${n}</span>${chip(g)}</span>`).join('');
 document.getElementById('pg').innerHTML=pitches();document.getElementById('suit').innerHTML=suit();document.getElementById('acts').innerHTML=acts();
 /* pips: 3 spent on him (gold), 3 elsewhere (grey), 14 left (green) */
 document.getElementById('pips').innerHTML=Array.from({length:20},(_,i)=>`<i class="${i<3?'him':i<6?'u':''}"></i>`).join('');
-function apply(){let h=(location.hash||'#scout').slice(1);const phone=h==='phone'||innerWidth<600;if(h==='phone')h='court';if(!['scout','court','offer'].includes(h))h='scout';
+const SCARCE={stats:[['spd','Speed','🏃',null,0],['str','Strength','💪','B',1],['int','Intelligence','🧠',null,0],['lck','Luck','🍀',null,0],['cha','Charisma','🎭',null,0]],ovr:['~B+',0]};
+function ccCell(S,v,l){const rows=`<div class="grows">${grows(S)}</div>`;return `<div class="cc-c ${v==='c'?'rowsonly':''}" data-l="${l}">${rows}${v==='c'?'':`<svg class="pent" viewBox="-80 -80 160 160">${pent(S,v==='a')}</svg>`}</div>`}
+document.getElementById('ccgrid').innerHTML=`<span></span>`+[['a','(a) Chart + certainty band','grade + where it may really lie'],['b','(b) Chart, no band','the grades as a shape'],['c','(c) No chart','grade rows only (today)']].map(([k,t,d])=>`<div class="cc-h"><b>${t}</b><span>${d}</span></div>`).join('')+
+ [['Barely scouted','1 action · 1 rough grade',SCARCE],['Fully graded','watch + cup + study',STATE.full]].map(([t,d,S])=>`<div class="cc-rl"><b>${t}</b><span>${d}</span></div>`+['a','b','c'].map(v=>ccCell(S,v,{a:'(a) band',b:'(b) no band',c:'(c) rows only'}[v])).join('')).join('');
+function apply(){let h=(location.hash||'#scout').slice(1);const phone=h==='phone'||h==='phone-chart'||innerWidth<600;if(h==='phone')h='court';if(h==='phone-chart')h='chart';if(!['scout','court','offer','chart'].includes(h))h='scout';
  document.body.className='s-'+h+(phone?' ph':'');const S=h==='scout'?STATE.scout:STATE.full;
  document.getElementById('grows').innerHTML=grows(S);document.getElementById('pent').innerHTML=pent(S);document.getElementById('persBody').innerHTML=persHTML(S.pers);
- document.getElementById('wantsTop').textContent=S.pers?'🗡 Rudis path · 📣 Fame':'grade all five to learn';document.getElementById('scDone').textContent=S.pers?'✓':'';
+ document.getElementById('wantsTop').textContent=S.pers?'Rudis path · Fame':'wants: grade all five';document.getElementById('scDone').textContent=S.pers?'✓':'';
  document.querySelectorAll('.step').forEach(a=>a.classList.toggle('on',a.classList.contains(h)))}
 addEventListener('hashchange',apply);addEventListener('resize',apply);apply();
 </script>

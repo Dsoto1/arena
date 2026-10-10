@@ -15,9 +15,9 @@ Today's game for comparison: `pn_before_*.png` (menu, Play Now pop-up, Play Now 
 - **2a sandstone button** (`.sb`): one style, three kinds (Primary porphyry + gold, Secondary plain sandstone, Danger basalt + red-gold) × three sizes (58/46/34 px); states rest / hover-focus (lift + gold rim) / pressed (sinks 3 px, edge gone) / disabled (greyed). Only for big doors — panel controls keep today's dark style.
 - **5d lesson complete:** "Back to menu" (secondary) + "Next lesson ▸" (primary) as large slabs.
 
-## Open questions
-1. Rounds table: (a) always open · (b) folded to one line per round, click to open · (c) open only for 2+ round events.
-2. Follow the schedule ON locks event + city? (a) yes, strip/map greyed until switched off · (b) no, it only picks them once.
-3. Hot seat pass-the-device: (a) strip only (as mocked) · (b) also a short "Marcus, your turn" card between human turns (no board cover).
-4. Submenu tablet on phones: (a) centred (as mocked) · (b) slides up from the bottom as a sheet.
-5. Danger kind: (a) basalt + red-gold (as mocked) · (b) porphyry like primary with a red rim · (c) no danger slab — dangerous actions stay small dark buttons.
+## His answers (built in the mock)
+- A1a rounds table always open.
+- A2a Follow the schedule ON locks event + city: dashed 🔒 bar "Following the schedule" with Unlock · switch off, other event cards greyed, map dimmed with "🔒 Roma · this week", city select + 🎲 greyed (#1a and #hotseat).
+- A3 (lead's pick) hot seat keeps the pass-the-device strip + a slim "👤 Marcus — your turn" ribbon that slides over the top bar for ~1.5 s at each human turn, never over the board (#hotseat).
+- A4 (lead's pick) submenus: centred tablet on desktop/tablet; on phones a bottom sheet that slides up (grab handle, rounded top, safe-area padding; menu dims + lifts, no blur) (#1c / #1c-mgr at 390).
+- A5 danger = CARBON-BLACK slab (matte black, faint weave + soot noise, red-gold letters, red rim on hover), not basalt; #buttons has its own Danger states row.
