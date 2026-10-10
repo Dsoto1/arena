@@ -307,7 +307,7 @@ function openSettings(tab='general'){if(tab==='visuals')tab='general'; // v0.35:
     box.onchange=e=>{const t=e.target;if(t.dataset&&t.dataset.lessonsmenu){SETTINGS.lessonsMenu=t.checked;applySettings();try{lessonsMenuVis()}catch(err){}return}if(typeof sponsorSettingsChange==='function'&&sponsorSettingsChange(t)){redraw('sponsors');return}if(t.dataset.aud){SETTINGS.audio={...audSet(),[t.dataset.aud]:t.checked};applySettings();audInit();audApplyVol();if(!audSet().on||!audSet().music)audStop();else audTick();if(typeof audMuteUI==='function')audMuteUI();return}if(t.dataset.set){const k9=t.dataset.set;if(k9==='hints'){hintsMaster(t.checked,true);redraw();return}SETTINGS[k9]=t.checked;if(HINT_SUBS.includes(k9)){SETTINGS.hints=HINT_SUBS.some(k=>SETTINGS[k]!==false);applySettings();settingsLive(k9);redraw();return}applySettings();settingsLive(k9);if(k9==='banners')redraw()}};
     box.oninput=e=>{const t=e.target;
       if(t.dataset.audv){SETTINGS.audio={...audSet(),[t.dataset.audv]:(+t.value)/100};applySettings();audApplyVol();if(t.nextElementSibling)t.nextElementSibling.textContent=t.value;return}
-      if(t.dataset.tk){applyTheme({...THEME,[t.dataset.tk]:t.value});return}
+      if(t.dataset.tk){applyTheme({...(USER_THEME||THEME),[t.dataset.tk]:t.value});return} /* the player's own theme, never the arena tint of the live event */
       if(t.dataset.tr){const k=t.dataset.tr,v=+t.value;const o=t.nextElementSibling;
         const keep=(key,val)=>{USER_THEME={...(USER_THEME||THEME),[key]:val};lsSet('theme',USER_THEME);applyTheme({...THEME,[key]:val},false)};
         if(k==='scale'){keep('scale',v);o.textContent=v+'%'}

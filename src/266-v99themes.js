@@ -79,5 +79,11 @@ if(typeof ar91Mat==='function'){const base=ar91Mat;ar91Mat=function(){
 if(themes99On())try{themes99Apply();
   /* a saved arena theme keeps its old colours until clicked again — refresh it to the proposal's when it is one of the 12 */
   const ut=typeof USER_THEME!=='undefined'&&USER_THEME;if(ut){for(const [k,o] of Object.entries(THEMES99.OLD)){const ov=o.pre;if(!ov)continue;
-    const ks=Object.keys(ov).filter(x=>typeof ov[x]==='string');if(ks.length&&ks.every(x=>String(ut[x]||'').toLowerCase()===String(ov[x]).toLowerCase())){applyTheme({...THEME_PRESETS['loc'+k].v});break}}}
+    const ks=Object.keys(ov).filter(x=>typeof ov[x]==='string');if(ks.length&&ks.every(x=>String(ut[x]||'').toLowerCase()===String(ov[x]).toLowerCase())){applyTheme({...ut,...THEMES99.P[k].board,arena99:+k});break}  /* v0.99 fix: board + stone only — a saved theme that matched an old arena tint (5 board colours, e.g. one picked up during an event) must not turn the panels to that arena's palette (the violet Uthina menu) */}}
 }catch(e){}
+/* v0.99 repair (once per browser): v0.99's first load could turn a saved theme's PANELS into an arena palette (the 5-key match above
+   promoted it to the full preset). A saved theme whose panel colours equal an arena preset's exactly goes back to the default panels; its
+   board + stone stay. Someone who picked that arena on purpose clicks it again in Settings → Themes. */
+try{if(THEMES99.on&&localStorage.getItem('flavius_themes99fix')!=='1'){localStorage.setItem('flavius_themes99fix','1');
+  const ut=typeof USER_THEME!=='undefined'&&USER_THEME;if(ut)for(const p of Object.values(THEMES99.P)){const ks=Object.keys(p.ui);
+    if(ks.every(x=>String(ut[x]||'').toLowerCase()===p.ui[x].toLowerCase())){const def={};for(const x of ks)def[x]=BASE_THEME[x];applyTheme({...ut,...def});break}}}}catch(e){}
