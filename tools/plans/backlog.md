@@ -109,3 +109,19 @@ browsers unless localStorage flavius_welc99on=1.
 STILL v1.0 (not built): 22 "enter your gladiator into ANY event" + occasional rank-restricted events (rank = rating grade, 22a) — needs a design for how
 the card offers special events; 8 Fortuna's Bounty animation, 13 gem/dud signing celebration, 15 spiders, 16/17 3D armor + weapons, 19 expressive animation,
 20 3D spectators; Fight Night rename + My ludus mock layout; server security pass + real ranked verification.
+
+## v1.0 MOCKS round 1 answers (2026-10-10; mocks in tools/plans/mock100/)
+A1a A2a A3 (lead: strip + 1.5 s "your turn" ribbon) A4 (lead: centred desktop, bottom sheet phones) A5 carbon-black danger slab (not basalt).
+B1 explain canvas vs HTML more · B2 same box for thought/speech, thoughts in italics · B3 lead's pick asked (plate when 2+ bubbles) · B4a B5b B6a.
+C1a · C2a (asked why needed) · C3a + show 8 seats, compact · C4a medals like the online gladiator ranks.
+D1 tiles: finalise with lead's input (Team · Promote · Upgrade School = buildings · Armory · Advisors) · D2 show Roster vs Team hub · D4a D5b D6a D7a (gem reveal approved look).
+E1 uniform text, no wrapping rows · E2 show chart examples · E3a E4a.
+
+## HIS v0.99 TEST NOTES (2026-10-10) — sorted, NOTHING built yet (wait for go)
+FIX: main menu online version chip off · zoom mid-action → rest of event stutters · city center crowd loads frozen then all move at once (stutter) ·
+Manager +AP start bonus only onto locations with armor · fighter trained while in an infirmary bed · Focus CARD = pick the location in a popup (no roll) ·
+Mandata Flavi cards + round tokens look faded (he sends better PNGs).
+CHANGE: League standings + Points column, banner tooltip on how points are earned · Trials of the Yard: better layout/location · Acta Diurna: 3-4 rabble-rouser
+spectators of the week (portraits) under the Darwinius awards.
+NEW?: who's-online list (Orbis?) · Rete (net) throw animation · ONE banner system (online banners as the standard offline).
+QUESTIONS: how free agents heal after surviving an event · do Manager/online gladiators bring their equipped gear (answer from code).
