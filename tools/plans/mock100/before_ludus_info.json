@@ -1,0 +1,49 @@
+{
+ "wk": 3,
+ "ck": [
+  "·✝ Lartius Ferreus is named in the edict of Pompeii",
+  "·⚖ 1 verdict wait for you",
+  "✓⚕ No untreated wounds",
+  "✓📜 No contract runs out this week",
+  "·🏋 No drills set for the week",
+  "·⏳ 10 training hours unspent",
+  "✓⚔ 2 of your fighters are on this week's card",
+  "✓🤝 4 fighters on the roster",
+  "·🎓 2 perk points to spend",
+  "·⭐ 2 of 3 starter slots filled"
+ ],
+ "desk": [
+  "{\"ic\":\"✝\",\"t\":\"Lartius Ferreus is named in the edict of Pompeii\",\"btn\":\"Decide\",\"tier\":1}",
+  "{\"ic\":\"⚖\",\"t\":\"1 verdict wait for you\",\"btn\":\"Settle\",\"tier\":1}",
+  "{\"ic\":\"⭐\",\"t\":\"2 of 3 starter slots filled\",\"btn\":\"Roster\",\"tier\":2}",
+  "{\"ic\":\"🗣\",\"t\":\"Junia Celer, Publius &quot;Fulmen&quot; Aquila ask for a fight — +4 morale if entered, −6 if not\",\"btn\":\"Enter them\",\"tier\":2}",
+  "{\"ic\":\"⚔\",\"t\":\"2 of your fighters are on this week's card\",\"btn\":\"\",\"tier\":2}",
+  "{\"ic\":\"📨\",\"t\":\"Ludus Nervanus wants Lartius Ferreus for \",\"btn\":\"\",\"tier\":3}",
+  "{\"ic\":\"🗡\",\"t\":\"A word from Domitia Severa — Ludus Severianus\",\"btn\":\"✍ Answer in kind · +1 fame, +4 rivalry\",\"tier\":3}",
+  "{\"ic\":\"⚕\",\"t\":\"No untreated wounds\",\"btn\":\"\",\"tier\":4}",
+  "{\"ic\":\"📜\",\"t\":\"No contract runs out this week\",\"btn\":\"\",\"tier\":4}",
+  "{\"ic\":\"🏋\",\"t\":\"No drills set for the week\",\"btn\":\"Set drills\",\"tier\":5}",
+  "{\"ic\":\"⏳\",\"t\":\"10 training hours unspent\",\"btn\":\"Plan hours\",\"tier\":5}",
+  "{\"ic\":\"🤝\",\"t\":\"4 fighters on the roster\",\"btn\":\"\",\"tier\":5}",
+  "{\"ic\":\"🎓\",\"t\":\"2 perk points to spend\",\"btn\":\"Spend\",\"tier\":5}",
+  "{\"ic\":\"★\",\"t\":\"Pick of the week: Tonitrus of Thracia — your recruiter\",\"btn\":\"👁 See them in Recruiting\",\"tier\":5}",
+  "{\"ic\":\"🏛\",\"t\":\"\",\"btn\":\"\"}",
+  "{\"ic\":\"🏛\",\"t\":\"\",\"btn\":\"\"}",
+  "{\"ic\":\"📊\",\"t\":\"\",\"btn\":\"\"}",
+  "{\"ic\":\"🏛\",\"t\":\"\",\"btn\":\"\"}",
+  "{\"ic\":\"✝\",\"t\":\"\",\"btn\":\"\"}",
+  "{\"ic\":\"🍷\",\"t\":\"\",\"btn\":\"\"}"
+ ],
+ "ros": [
+  "Junia Celer · amazonia · 73",
+  "Flamma Skull-Drummer · hero · 73",
+  "Publius \"Fulmen\" Aquila · veteranus · 69",
+  "Lartius Ferreus · slave · 72"
+ ],
+ "ludus": "Ludus Crispinus",
+ "bouts": [
+  "under Classic · Egidious 4",
+  "feature Classic · Democritus 4",
+  "main Classic · Democritus 4"
+ ]
+}

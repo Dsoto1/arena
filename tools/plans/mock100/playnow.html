@@ -1,0 +1,522 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Play Now — v1.0 mock</title>
+<link rel="stylesheet" href="../mock98/mock98.css">
+<style>
+/* =====================================================================
+   v1.0 mock — Play Now (1a), sandstone submenus (1c), menu shift (1d),
+   hot seat (1e), sandstone buttons (2a + 5d). States by URL hash.
+   ===================================================================== */
+html,body{overflow-x:hidden}
+.view{display:none}
+.view.on{display:block}
+
+/* ---------- 2a SANDSTONE BUTTON (one style everywhere) ---------- */
+.sb{--h:46px;--fs:19px;position:relative;height:var(--h);display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:0 22px;border:0;border-radius:5px;cursor:pointer;white-space:nowrap;
+  font:400 var(--fs)/1 var(--display);letter-spacing:.07em;color:#4a3017;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .22 0 0 0 0 .1 0 0 0 .8 0'/%3E%3C/filter%3E%3Crect width='240' height='120' filter='url(%23n)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='160'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .05' numOctaves='4' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .95 0 0 0 0 .85 0 0 0 0 .62 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='600' height='160' filter='url(%23m)'/%3E%3C/svg%3E"),
+    linear-gradient(176deg,#dcc196 0%,#c9a877 38%,#b48f5c 100%);
+  background-size:240px 120px,600px 160px,100% 100%;
+  box-shadow:inset 0 2px 0 rgba(255,244,214,.75),inset 0 -3px 0 rgba(92,60,28,.55),inset 2px 0 0 rgba(255,238,204,.35),inset -2px 0 0 rgba(80,52,24,.4),0 4px 0 #6b4e2b,0 5px 0 #4b3519,0 10px 18px rgba(0,0,0,.6);
+  text-shadow:0 1px 0 rgba(255,240,206,.75),0 -1px 0 rgba(60,36,14,.6);transition:transform .12s,box-shadow .12s,filter .12s}
+.sb::before{content:"";position:absolute;inset:5px;border-radius:3px;border:1px solid rgba(96,64,30,.45);box-shadow:0 1px 0 rgba(255,238,204,.45),inset 0 1px 0 rgba(255,238,204,.35);pointer-events:none}
+.sb::after{content:"";position:absolute;inset:0;border-radius:5px;pointer-events:none;background:linear-gradient(180deg,rgba(255,246,222,.2),transparent 38%,rgba(60,36,14,.16)),radial-gradient(ellipse 120% 160% at 50% 50%,transparent 60%,rgba(70,44,18,.28))}
+.sb>*{position:relative;z-index:1}
+.sb svg{width:calc(var(--fs) + 2px);height:calc(var(--fs) + 2px);fill:#4a3017;flex:none;filter:drop-shadow(0 1px 0 rgba(255,240,206,.7))}
+.sb small{font:500 11px var(--body);letter-spacing:.04em;color:#6b4c2a;text-shadow:0 1px 0 rgba(255,240,206,.6)}
+.sb:hover,.sb.hov{transform:translateY(-2px);filter:brightness(1.06);box-shadow:inset 0 2px 0 rgba(255,244,214,.75),inset 0 -3px 0 rgba(92,60,28,.55),0 6px 0 #6b4e2b,0 7px 0 #4b3519,0 14px 24px rgba(0,0,0,.7),0 0 0 2px rgba(240,207,125,.55),0 0 20px rgba(240,190,90,.28)}
+.sb:active,.sb.prs{transform:translateY(3px);filter:brightness(.94);box-shadow:inset 0 3px 6px rgba(60,36,14,.45),inset 0 -1px 0 rgba(255,238,204,.3),0 1px 0 #6b4e2b,0 2px 0 #4b3519,0 3px 6px rgba(0,0,0,.6)}
+.sb.dis{filter:grayscale(.6) brightness(.62);cursor:not-allowed;transform:none;box-shadow:inset 0 2px 0 rgba(255,244,214,.4),0 3px 0 #4b3519}
+/* primary: porphyry inlay + gold leaf */
+.sb.pri::before{inset:6px;border:0;background:linear-gradient(180deg,#8f2a1e,#6d1c13 60%,#5a160f);box-shadow:inset 0 2px 4px rgba(0,0,0,.6),inset 0 -1px 0 rgba(255,180,150,.25),0 1px 0 rgba(255,238,204,.55)}
+.sb.pri .t,.sb.dan .t{background:linear-gradient(180deg,#fff2be 0%,#f0cf7d 30%,#b98a2a 62%,#e7c46c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 1px 0 rgba(60,20,8,.85))}
+.sb.pri svg{fill:#f0cf7d;filter:drop-shadow(0 1px 0 rgba(60,20,8,.85))}
+.sb.pri.prs::before{box-shadow:inset 0 4px 8px rgba(0,0,0,.75)}
+/* danger: black basalt inlay + red-gold letters */
+.sb.dan::before{inset:6px;border:0;background:linear-gradient(180deg,#2c2522,#1b1513 60%,#120d0b);box-shadow:inset 0 2px 4px rgba(0,0,0,.7),0 1px 0 rgba(255,238,204,.5)}
+.sb.dan .t{background:linear-gradient(180deg,#ffd0b8,#e0654c 45%,#a3281f 80%);-webkit-background-clip:text;background-clip:text}
+.sb.dan svg{fill:#e0654c;filter:none}
+/* sizes */
+.sb.l{--h:58px;--fs:24px;padding:0 30px}
+.sb.m{--h:46px;--fs:19px}
+.sb.s{--h:34px;--fs:14.5px;padding:0 14px;gap:7px}
+.sb.s::before{inset:4px}
+
+/* ---------- MAIN MENU (copy of the v0.98 menu, for 1c/1d) ---------- */
+.menuview{position:fixed;inset:0;overflow:hidden;background:#0d0805}
+.mmw{position:absolute;inset:0;display:flex;justify-content:center;background:radial-gradient(ellipse 70% 60% at 50% 42%,#2e2116 0%,#1a120c 55%,#0d0805 100%);transform-origin:50% 56%;transition:transform .32s cubic-bezier(.2,.7,.2,1),filter .32s}
+.mm{width:500px;display:flex;flex-direction:column;align-items:center;padding-top:44px}
+.logo{width:390px;filter:drop-shadow(0 8px 18px #000c)}
+.tag{margin-top:4px;font:500 12.5px var(--mono);letter-spacing:.34em;color:#b9a27f}
+.ed{margin-top:8px;font:400 15px var(--display);letter-spacing:.42em;color:var(--gold)}
+.stage{width:620px;height:171px;margin-top:6px;background:url(../mock98/img/menu_stage.webp) center/100% 100%;-webkit-mask:radial-gradient(ellipse 50% 62% at 50% 55%,#000 72%,transparent 100%);mask:radial-gradient(ellipse 50% 62% at 50% 55%,#000 72%,transparent 100%)}
+.btns{width:460px;display:grid;gap:12px;margin-top:2px}
+.btns .sb{width:100%}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.r4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px}
+.r4 .sb{padding:0 6px}
+.mfoot{margin-top:22px;font-size:13.5px;color:#9c8566}
+.mfoot .ver{font:12px var(--mono);border:1px solid #6b5236;border-radius:4px;padding:1px 6px;color:var(--gold2);background:#1e150e}
+/* 1d — the background shift */
+.veil{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .32s;background:radial-gradient(ellipse 46% 40% at 50% 56%,rgba(240,190,90,.10),transparent 70%),radial-gradient(ellipse 80% 75% at 50% 52%,rgba(10,6,3,.35),rgba(6,4,2,.86))}
+.menuview.shift .mmw{transform:scale(1.045) translateY(14px);filter:blur(3.5px) brightness(.5) saturate(.75)}
+.menuview.shift .veil{opacity:1}
+.menuview.mid .mmw{transform:scale(1.022) translateY(7px);filter:blur(1.7px) brightness(.75) saturate(.88)}
+.menuview.mid .veil{opacity:.5}
+.menuview.mid .tab-pop{opacity:.5;transform:translate(-50%,-46%) scale(.97)}
+
+/* 1c — sandstone pop-up: a carved tablet */
+.tab-pop{position:absolute;left:50%;top:56%;transform:translate(-50%,-50%);width:560px;max-width:calc(100vw - 32px);border-radius:8px;padding:16px 18px 18px;transition:opacity .28s,transform .28s;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .22 0 0 0 0 .1 0 0 0 .7 0'/%3E%3C/filter%3E%3Crect width='240' height='120' filter='url(%23n)'/%3E%3C/svg%3E"),
+    linear-gradient(178deg,#d3b787 0%,#bf9c69 45%,#a98457 100%);
+  box-shadow:inset 0 2px 0 rgba(255,244,214,.7),inset 0 -3px 0 rgba(80,52,24,.6),0 6px 0 #5a4024,0 7px 0 #3d2a15,0 30px 70px rgba(0,0,0,.85),0 0 0 1px #2b1d10}
+.tab-pop::before{content:"";position:absolute;inset:8px;border-radius:5px;border:1px solid rgba(96,64,30,.55);box-shadow:0 1px 0 rgba(255,238,204,.45),inset 0 1px 0 rgba(255,238,204,.3);pointer-events:none}
+.tab-pop>*{position:relative}
+.tp-hd{display:flex;align-items:center;gap:10px;padding:6px 6px 2px}
+.tp-hd h2{font:400 27px/1 var(--display);letter-spacing:.09em;color:#4a2e14;text-shadow:0 1px 0 rgba(255,240,206,.8),0 -1px 0 rgba(60,36,14,.7)}
+.tp-hd svg{width:28px;height:28px;fill:#5a3a1a;filter:drop-shadow(0 1px 0 rgba(255,240,206,.7))}
+.tp-hd .sp{flex:1}
+.stud{width:34px;height:34px;border-radius:50%;border:0;cursor:pointer;font-size:17px;color:#4a2e14;background:radial-gradient(circle at 40% 35%,#e3cb9f,#b08a58 70%);box-shadow:inset 0 1px 0 rgba(255,244,214,.8),inset 0 -2px 0 rgba(80,52,24,.6),0 2px 0 #5a4024,0 4px 8px rgba(0,0,0,.5)}
+.tp-sub{margin:4px 6px 12px;font-size:14.5px;color:#5a3d1e;text-shadow:0 1px 0 rgba(255,240,206,.5)}
+.well{border-radius:6px;padding:12px;background:linear-gradient(#5b4128,#4a3420);box-shadow:inset 0 3px 8px rgba(0,0,0,.55),inset 0 -1px 0 rgba(255,238,204,.25),0 1px 0 rgba(255,238,204,.5);display:grid;gap:11px}
+.well .sb{width:100%;justify-content:flex-start;padding:0 18px}
+.well .sb .lab{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0}
+.well .sb .lab small{white-space:normal;text-align:left;line-height:1.2}
+.well .sb.pri .lab small{color:#f3d9a8;text-shadow:0 1px 0 #3a0e08}
+.well .r2{gap:11px}
+.well .r2 .sb{--h:54px}
+.tp-ft{display:flex;justify-content:space-between;align-items:center;margin:12px 4px 0}
+.tp-ft span{font-size:12.5px;color:#5a3d1e}
+.seal{margin-left:auto;font:500 11px var(--mono);letter-spacing:.12em;color:#5a3d1e}
+.caption{position:fixed;left:16px;bottom:14px;max-width:360px;font-size:13px;color:var(--muted);border:1px solid var(--line2);border-radius:8px;background:#1a120dd9;padding:9px 11px;z-index:5}
+.caption b{color:var(--gold2);font-weight:500}
+
+/* 1d comparison sheet */
+.cmp{padding:20px 22px 30px}
+.cmp h1{font:400 26px var(--display);color:var(--gold2);margin-bottom:4px}
+.frames{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+.fr{border:1px solid var(--line2);border-radius:8px;background:var(--panel);padding:8px}
+.fr .box{position:relative;width:100%;aspect-ratio:1440/900;overflow:hidden;border-radius:5px;background:#000}
+.fr iframe{position:absolute;left:0;top:0;width:1440px;height:900px;border:0;transform-origin:0 0;pointer-events:none}
+.fr b{display:block;font:400 17px var(--display);color:var(--gold2);margin:8px 2px 2px}
+.fr p{margin:0 2px;font-size:13.5px;color:var(--muted)}
+.spec{margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.spec div{background:var(--panel2);border:1px solid #3a2c1e;border-radius:7px;padding:8px 10px;font-size:13.5px;color:var(--muted)}
+.spec div b{display:block;color:var(--bone);font-weight:700;margin-bottom:2px}
+
+/* ---------- PLAY NOW (1a + hot seat) ---------- */
+.pn{min-height:100vh;background:linear-gradient(#1d150f,#160f0b)}
+.top{display:flex;align-items:center;gap:14px;padding:11px 22px;border-bottom:1px solid var(--line2);background:linear-gradient(#21180f,#1a120d);position:sticky;top:0;z-index:5;flex-wrap:wrap}
+.top h1{font:400 25px/1 var(--display);color:var(--gold2);letter-spacing:.04em;white-space:nowrap}
+.top .sp{flex:1}
+.date{white-space:nowrap;display:flex;align-items:center;gap:7px;font-size:14px;color:var(--muted);border:1px solid var(--line2);border-radius:6px;padding:6px 10px;background:var(--panel)}
+.date b{font:400 15px var(--display);color:var(--bone)}
+.date .on{color:var(--gold2)}
+.go{display:flex;align-items:center;gap:10px}
+.go .sum{display:flex;align-items:center;gap:9px;font-size:14px;color:var(--muted);white-space:nowrap}
+.go .sum b{color:var(--bone)}
+.go .sum .gd{color:var(--gold2)}
+.dice{width:44px;height:44px;border-radius:7px;border:1px solid #6b5236;background:var(--panel2);font-size:21px;cursor:pointer;display:grid;place-items:center}
+.top .x{flex:none}
+.hsflag{font:500 11px var(--mono);letter-spacing:.1em;padding:3px 8px;border-radius:4px;border:1px solid var(--gold);color:var(--gold2);background:#3a2a18}
+.body{padding:12px 22px 22px;display:grid;gap:12px}
+.cardp{background:var(--panel);border:1px solid var(--line2);border-radius:9px;padding:10px 14px 12px;min-width:0}
+.ttl{display:flex;align-items:baseline;gap:8px;font:400 16px var(--display);color:var(--gold2);letter-spacing:.06em;margin-bottom:8px}
+.ttl small{font:13px var(--body);color:var(--muted);letter-spacing:0}
+.ttl .sp{flex:1}
+.strip{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;scrollbar-width:thin}
+.ev{flex:none;width:66px;border:1px solid #3a2c1e;border-radius:6px;padding:3px;background:var(--panel2);text-align:center;font-size:11px;color:var(--muted)}
+.ev i{display:block;aspect-ratio:480/692;border-radius:3px;background-image:url(../../../assets/events.jpg);background-size:500% 300%;margin-bottom:2px}
+.ev.on{border-color:var(--gold);color:var(--gold2);box-shadow:0 0 0 1px var(--gold) inset}
+/* 1a — card | map | rounds */
+.what{display:grid;grid-template-columns:180px 270px minmax(0,1fr);gap:16px;align-items:start}
+.bigcard{aspect-ratio:480/692;border-radius:6px;background:url(../../../assets/events.jpg) 0% 0%/500% 300%;box-shadow:0 8px 20px #000b,0 0 0 1px #6b5236}
+.mapbox .map{position:relative;width:100%;aspect-ratio:1/1;border-radius:7px;overflow:hidden;background:url(../../../assets/map.jpg) center/cover;box-shadow:inset 0 0 0 1px #00000080,0 6px 16px #0008}
+.pin{position:absolute;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#2a1d14;border:1.5px solid #e9d6a8;color:#f3e3bd;font:600 9.5px/15px var(--mono);text-align:center;box-shadow:0 1px 3px #000}
+.pin.on{width:26px;height:26px;margin:-13px 0 0 -13px;background:#a3281f;border:2px solid var(--gold2);font-size:12px;line-height:22px;box-shadow:0 0 0 4px #d6ab4c55,0 2px 6px #000}
+.mapbox .city{display:flex;gap:6px;align-items:center;margin-top:8px}
+.mapbox .city .sel{flex:1;min-width:0;white-space:nowrap}
+.mapbox .mods{display:flex;gap:6px;margin-top:6px;font-size:12.5px;align-items:center;color:var(--muted);flex-wrap:wrap}
+.mapbox .mods span{padding:1px 7px;border-radius:3px;border:1px solid #4a3826;color:var(--dim)}
+.evh{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.evh h2{font:400 25px var(--display);color:var(--gold2);letter-spacing:.03em}
+.evh small{color:var(--muted);font-size:14px}
+.desc{margin:3px 0 10px;font-size:15px;color:#e2d5bb}
+.rounds{display:grid;gap:1px;background:#00000050;border:1px solid #3a2c1e;border-radius:7px;overflow:hidden}
+.rd{display:grid;grid-template-columns:34px minmax(0,1.1fr) auto minmax(0,1.3fr) minmax(0,1fr);gap:12px;align-items:center;padding:9px 12px;background:var(--panel2)}
+.rd.hd{background:#160f0b;padding:5px 12px;font:500 10.5px var(--mono);letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+.rd .n{font:400 22px var(--display);color:var(--gold);text-align:center}
+.rd .nm b{display:block;font:400 17px var(--display);color:var(--bone);letter-spacing:.02em}
+.rd .nm span{font:12px var(--mono);color:var(--muted)}
+.rch{display:flex;gap:4px}
+.rch span{font:600 11px var(--mono);padding:2px 6px;border-radius:3px;border:1px solid}
+.rch .y{border-color:#4d7a43;color:#bfe3b0;background:#1e2d19}
+.rch .n0{border-color:#4a3826;color:#7a6650;text-decoration:line-through;background:#1a130e}
+.rd .end,.rd .rw{font-size:14px;color:#ddd0b6;line-height:1.3}
+.rd .rw{color:var(--gold2)}
+.rd .rw img{width:14px;height:14px;vertical-align:-2px}
+.rec{margin-top:8px;font-size:13.5px;color:var(--muted)}
+/* options */
+.optg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 22px;font-size:14.5px}
+.optg label{display:flex;gap:9px;align-items:center;min-width:0}
+.optg .ck{width:17px;height:17px;font-size:11px}
+.optg .wide{grid-column:1/-1}
+.follow{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:7px;border:1px solid var(--gold);background:linear-gradient(90deg,#3a2a18,#241a12);margin-bottom:10px;flex-wrap:wrap}
+.follow b{color:var(--bone)}
+.follow .t{flex:1;min-width:200px;font-size:14.5px;color:var(--muted)}
+.follow .t b{color:var(--gold2)}
+.seed{display:inline-block;width:110px;border:1px solid #6b5236;border-radius:4px;background:#160f0b;padding:3px 7px;color:var(--dim);font:12.5px var(--mono)}
+/* who */
+.who{display:grid;grid-template-columns:120px minmax(0,1fr) 260px;gap:12px;align-items:start}
+.pc{display:flex;flex-direction:column;align-items:center;gap:6px;padding-top:4px}
+.pc .bd{width:92px;height:92px;background:url(../../../assets/badge_players.webp) center/contain no-repeat;filter:drop-shadow(0 4px 10px #000a)}
+.pc .lbl{font:500 10.5px var(--mono);letter-spacing:.12em;color:var(--muted)}
+.cnt{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;width:112px}
+.cnt button{height:26px;border:1px solid var(--line2);background:var(--panel2);border-radius:4px;font:500 13px var(--mono);padding:0}
+.cnt button.on{border-color:var(--gold);background:#3a2a18;color:var(--gold2)}
+.cnt button.no{opacity:.32}
+.pc small{font-size:12px;color:var(--dim);text-align:center}
+.seats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.seat{position:relative;border:1px solid #3a2c1e;border-top:3px solid var(--pc);border-radius:8px;background:linear-gradient(180deg,color-mix(in srgb,var(--pc) 12%,#2a1f17),#231a13 60%);padding:8px 10px 9px;min-height:156px;overflow:hidden}
+.seat .no{font:500 10.5px var(--mono);letter-spacing:.1em;color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tagx{font:600 10px var(--mono);padding:1px 6px;border-radius:3px;color:#140f0b;background:var(--gold2)}
+.tagx.cpu{background:#6b5a46;color:#efe3cc}
+.tagx.hum{background:#7fc2e8}
+.seat h3{font:400 21px var(--display);color:var(--pc);margin:4px 0 0;letter-spacing:.02em;text-shadow:0 1px 0 #000}
+.seat .sub{font-size:13px;color:var(--muted)}
+.seat .mini{position:absolute;right:2px;top:16px;width:68px;height:84px;background-size:contain;background-repeat:no-repeat;background-position:center bottom;filter:drop-shadow(0 4px 6px #000a)}
+.seat .ctl{display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.seat .seg button{padding:3px 9px;font-size:13px}
+.mind{font-size:12.5px;padding:2px 8px;border-radius:999px;border:1px solid #6b5236;color:var(--gold2);background:#2e2212}
+.nm-in{display:flex;align-items:center;gap:6px;margin-top:6px;border:1px solid #6b5236;border-radius:5px;background:#160f0b;padding:4px 8px;font-size:14px;color:var(--bone);max-width:150px}
+.nm-in i{font-style:normal;color:var(--dim);font-size:12px}
+.seat.you{box-shadow:0 0 0 1px var(--gold),0 0 18px #d6ab4c30}
+.seat.hs{box-shadow:0 0 0 1px #7fc2e8,0 0 16px #7fc2e828}
+.stands{border:1px solid var(--line2);border-top:3px solid var(--gold);border-radius:9px;background:linear-gradient(#2a1f17,#1f1711);padding:10px 12px}
+.stands h3{font:400 20px var(--display);color:var(--gold2)}
+.stands .sub{font-size:13px;color:var(--muted);margin:-1px 0 8px}
+.meter{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:7px;background:#160f0b;border:1px solid #3a2c1e}
+.meter b{font:400 28px var(--display);color:var(--gold2)}.meter span{font-size:14px;line-height:1.15}
+.stands .f{font-size:13px;color:var(--muted);margin:8px 0 3px}
+.stands .sel{width:100%;min-width:0}
+.stands label{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;margin-top:9px;color:#d9ccb3;line-height:1.3}
+.stands .ck{width:17px;height:17px;margin-top:1px}
+.pass{display:flex;gap:12px;align-items:center;padding:10px 14px;border-radius:8px;border:1px solid #7fc2e8;background:linear-gradient(90deg,#1b2a33,#1a1612 70%);font-size:14.5px;color:#cfe4ee;margin-bottom:10px}
+.pass .ic{font-size:26px}
+.pass b{color:#fff}
+.pass .sp{flex:1}
+.pass .sw{flex:none}
+.pass small{color:#9fbccb}
+.chgs{display:none}
+
+/* ---------- BUTTON SHEET ---------- */
+.sheet{padding:20px 24px 40px;max-width:1240px;margin:0 auto}
+.sheet h1{font:400 28px var(--display);color:var(--gold2)}
+.sheet h2{font:400 19px var(--display);color:var(--gold2);margin:22px 0 10px;letter-spacing:.05em}
+.lead{color:var(--muted);margin:4px 0 0}
+.grid3{display:grid;grid-template-columns:150px repeat(3,minmax(0,1fr));gap:16px 18px;align-items:center;background:var(--panel);border:1px solid var(--line2);border-radius:9px;padding:16px}
+.grid3 .h{font:500 10.5px var(--mono);letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.grid3 .rl{font:400 16px var(--display);color:var(--bone)}
+.grid3 .rl small{display:block;font:12.5px var(--body);color:var(--muted)}
+.states{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;background:var(--panel);border:1px solid var(--line2);border-radius:9px;padding:18px 16px 14px}
+.states>div{display:flex;flex-direction:column;align-items:center;gap:12px}
+.states span{font:500 11px var(--mono);letter-spacing:.12em;color:var(--dim)}
+.uses{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.use{background:var(--panel);border:1px solid var(--line2);border-radius:9px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.use h4{font:500 11px var(--mono);letter-spacing:.12em;color:var(--dim);margin:0}
+.use .row2{display:flex;gap:10px;flex-wrap:wrap}
+.lesson{position:relative;background:linear-gradient(#2a1f17,#1d150f);border:1px solid var(--gold);border-radius:10px;padding:20px 22px;text-align:center;max-width:620px;margin:0 auto;box-shadow:0 18px 50px #000c}
+.lesson .lau{font-size:40px;line-height:1}
+.lesson h3{font:400 28px var(--display);color:var(--gold2);margin:6px 0 2px}
+.lesson p{margin:0 0 6px;color:var(--muted)}
+.lesson .got{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0 16px}
+.lesson .got span{font-size:13px;padding:3px 9px;border-radius:999px;border:1px solid #4d7a43;color:#bfe3b0;background:#1e2d19}
+.lesson .row2{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ---------- NOTES / phones ---------- */
+.mnote{margin-top:2px;font-size:13px;color:var(--muted);border:1px dashed #6b5236;border-radius:8px;padding:8px 11px;background:#1a120d}
+.mnote b{color:var(--gold2);font-weight:500}
+@media (max-width:1100px){.what{grid-template-columns:150px 230px minmax(0,1fr)}.rd{grid-template-columns:30px minmax(0,1fr) auto;row-gap:4px}.rd .end{grid-column:2/4}.rd .rw{grid-column:2/4}.rd.hd{display:none}}
+@media (max-width:600px){
+  .top{padding:10px 16px;gap:10px}.top h1{font-size:22px}.top .seg{order:5;width:100%;display:flex}.top .seg button{flex:1;padding:6px 4px;font-size:13px}
+  .date{order:6;font-size:13px}.go{order:7;width:100%}.go .sum{display:none}.go .sb{flex:1}
+  .body{padding:10px 16px 18px}
+  .what{grid-template-columns:110px minmax(0,1fr);gap:12px}.what>.det{grid-column:1/-1}
+  .mapbox .city .sel{font-size:12.5px;padding:5px 7px}
+  .rd{grid-template-columns:26px minmax(0,1fr)}.rd .rch,.rd .end,.rd .rw{grid-column:2}
+  .optg{grid-template-columns:1fr}
+  .who{grid-template-columns:1fr}.pc{flex-direction:row;flex-wrap:wrap;justify-content:center}.pc .bd{width:56px;height:56px}
+  .seats{grid-template-columns:1fr 1fr}.seat{min-height:142px}.seat .mini{width:50px;height:64px}.seat h3{font-size:18px}
+  .pass{flex-wrap:wrap}
+  .mm{width:100%;padding:24px 16px}.logo{width:280px}.stage{width:100%;height:auto;aspect-ratio:620/171}.btns{width:100%}.r4{grid-template-columns:1fr 1fr}
+  .tab-pop{width:calc(100vw - 32px);padding:12px}.tp-hd h2{font-size:22px}.well{padding:9px}.well .r2{grid-template-columns:1fr}
+  .sb.l{--fs:20px;padding:0 18px}
+  .caption{display:none}
+  .frames,.spec,.uses{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr;justify-items:start}.grid3 .h{display:none}
+  .states{grid-template-columns:1fr 1fr}
+  .sheet{padding:16px}
+  .cmp{padding:16px}
+}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+ <symbol id="i-swords" viewBox="0 0 24 24"><path d="M3 2l9.2 9.2-1.4 1.4L1.6 3.4 3 2zm18 0l1.4 1.4-7.1 7.1 2.1 2.1 1.4-1.4 1.4 1.4-2.1 2.1 2.8 2.8-1.4 1.4-2.8-2.8-2.1 2.1-1.4-1.4 1.4-1.4-2.1-2.1-2.1 2.1 1.4 1.4-1.4 1.4-2.1-2.1-2.8 2.8L4.6 20l2.8-2.8-2.1-2.1 1.4-1.4 1.4 1.4L21 2z"/></symbol>
+ <symbol id="i-temple" viewBox="0 0 24 24"><path d="M12 1.5L22 7v1.6H2V7l10-5.5zM4 10h2.4v8H4zm4.5 0h2.4v8H8.5zm4.6 0h2.4v8h-2.4zm4.5 0H20v8h-2.4zM2 19.5h20V22H2z"/></symbol>
+ <symbol id="i-scroll" viewBox="0 0 24 24"><path d="M5 3h12a3 3 0 013 3v1h-3v12a3 3 0 01-3 3H5a3 3 0 01-3-3v-1h3V6a3 3 0 00-3-3zm2.5 5v1.6h7V8zm0 3.5v1.6h7v-1.6zm0 3.5v1.6h5V15z"/></symbol>
+ <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 3l15 9-15 9z"/></symbol>
+ <symbol id="i-back" viewBox="0 0 24 24"><path d="M10 4L2 12l8 8v-5h12V9H10z"/></symbol>
+ <symbol id="i-chest" viewBox="0 0 24 24"><path d="M3 9a5 5 0 015-5h8a5 5 0 015 5v1H3zm0 3h7v2h4v-2h7v8H3z"/></symbol>
+ <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5z"/></symbol>
+ <symbol id="i-plus" viewBox="0 0 24 24"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z"/></symbol>
+ <symbol id="i-x" viewBox="0 0 24 24"><path d="M5 3l7 7 7-7 2 2-7 7 7 7-2 2-7-7-7 7-2-2 7-7-7-7z"/></symbol>
+ <symbol id="i-gear" viewBox="0 0 24 24"><path d="M10.3 2h3.4l.5 2.6 1.9.8 2.2-1.5 2.4 2.4-1.5 2.2.8 1.9 2.6.5v3.4l-2.6.5-.8 1.9 1.5 2.2-2.4 2.4-2.2-1.5-1.9.8-.5 2.6h-3.4l-.5-2.6-1.9-.8-2.2 1.5-2.4-2.4 1.5-2.2-.8-1.9L2 13.7v-3.4l2.6-.5.8-1.9-1.5-2.2 2.4-2.4 2.2 1.5 1.9-.8zM12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7z"/></symbol>
+</defs></svg>
+
+<!-- ================= 1a / HOT SEAT : Play Now ================= -->
+<section class="view" id="v-pn"><div class="pn">
+ <div class="top">
+  <h1 id="pnTitle">Play Now</h1>
+  <span class="hsflag" id="hsFlag" hidden>🪑 ONE SCREEN</span>
+  <div class="seg" id="pnModes"><button class="on">Single event</button><button>Festival</button><button>Missio</button><button>🏆 Tournament</button></div>
+  <div class="date">📅 <b>January 1</b> · this week: <span class="on">Roma</span></div>
+  <span class="sp"></span>
+  <div class="go">
+   <div class="sum"><span><b>Democritus</b> at <b>Roma</b> · 4 gladiators · <span id="sumYou">You: <span class="gd">Soldier</span></span></span></div>
+   <button class="dice" title="Random event: event, city and your class">🎲</button>
+   <button class="sb pri m"><svg><use href="#i-swords"/></svg><span class="t">Begin Event</span></button>
+  </div>
+  <button class="x" aria-label="Close">✕</button>
+ </div>
+ <div class="body">
+  <div class="pass" id="passHint" hidden>
+   <span class="ic">🔁</span>
+   <span><b>Pass the device.</b> Each player takes their turn on this screen, then hands it on.<br><small>Your Mandata stay face down — hold 👁 to peek.</small></span>
+   <span class="sp"></span>
+   <span style="font-size:13.5px;color:#cfe4ee;display:flex;align-items:center;gap:8px">Turn the board to each player <span class="sw on"></span></span>
+  </div>
+
+  <div class="cardp">
+   <div class="ttl">The event <small>· where and what</small><span class="sp"></span><small>13 printed · 2 of yours</small></div>
+   <div class="strip" id="strip"></div>
+   <div class="what">
+    <div class="bigcard" role="img" aria-label="Democritus event card"></div>
+    <div class="mapbox">
+     <div class="map" id="map"></div>
+     <div class="city"><span class="sel">6 · Roma (home)<span class="car">▼</span></span><button class="btn" title="Random city">🎲</button></div>
+     <div class="mods">Class modifiers: <span>none in Roma</span></div>
+    </div>
+    <div class="det">
+     <div class="evh"><h2>Democritus</h2><small>Classic Elimination · 4 gladiators</small></div>
+     <p class="desc">Flavius Rule as it was meant. Outlast the other three.</p>
+     <div class="rounds" id="rounds"></div>
+     <div class="rec">🏆 No record yet — set one</div>
+    </div>
+   </div>
+  </div>
+
+  <div class="cardp">
+   <div class="ttl">⚙ Options <small>· 1 on</small></div>
+   <div class="follow">
+    <span class="sw on"></span>
+    <span class="t"><b>Follow the schedule</b> — play this week's games: <b>Democritus in Roma</b>. Off = any event, any city.</span>
+    <a class="btn" style="text-decoration:none">📅 Season schedule</a>
+   </div>
+   <div class="optg">
+    <label>Time of day <span class="seg" style="margin-left:4px"><button class="on">☀ Day</button><button>☾ Night</button></span></label>
+    <label><span class="ck"></span>Mandata Flavi secret objectives</label>
+    <label><span class="ck"></span>Carmina Fescennina first</label>
+    <label><span class="ck"></span>Optional offerings in the Blessings bag</label>
+    <label><span class="ck"></span>Golden Eagle among the 12 Blessings</label>
+    <label><span class="ck"></span>Zora in the arena deck</label>
+    <label><span class="ck dis" style="opacity:.4"></span><span style="opacity:.5">Roma's class modifiers (none)</span></label>
+    <label>Dice seed <span class="seed">random</span></label>
+   </div>
+  </div>
+
+  <div class="cardp">
+   <div class="ttl">Who <small>· the gladiators</small><span class="sp"></span><small id="whoNote">Printed classes · <span class="gold">⭐ Your characters</span> in each seat's picker</small></div>
+   <div class="who">
+    <div class="pc">
+     <div class="bd" role="img" aria-label="Players"></div>
+     <span class="lbl">GLADIATORS</span>
+     <div class="cnt"><button class="no">2</button><button class="no">3</button><button class="on">4</button><button class="no">5</button></div>
+     <small>Democritus seats 4</small>
+    </div>
+    <div class="seats" id="seats"></div>
+    <aside class="stands" id="stands"></aside>
+   </div>
+  </div>
+ </div>
+</div></section>
+
+<!-- ================= 1c / 1d : main menu + sandstone pop-ups ================= -->
+<section class="view" id="v-menu"><div class="menuview" id="menuview">
+ <div class="mmw"><div class="mm">
+  <img class="logo" src="../../../assets/logo.png" alt="Flavius Rule">
+  <div class="tag">THE GLADIATORIAL SURVIVAL SANDBOX</div>
+  <div class="ed">[ MAGNVS EDITION ]</div>
+  <div class="stage" role="img" aria-label="Menu stage"></div>
+  <div class="btns">
+   <button class="sb pri l"><svg><use href="#i-swords"/></svg><span class="t">Play Now</span></button>
+   <button class="sb" style="--h:54px;--fs:22px"><svg><use href="#i-temple"/></svg>Manager Mode</button>
+   <button class="sb">Multiplayer<small>Hot seat · Online</small></button>
+   <div class="r2"><button class="sb" style="--fs:17px">Creator Studio</button><button class="sb" style="--fs:17px">Tutorials</button></div>
+   <div class="r4"><button class="sb s">Annals</button><button class="sb s">Tactics</button><button class="sb s">Saves</button><button class="sb s">Settings</button></div>
+  </div>
+  <div class="mfoot">© 2026 Flavius Rule · D.Soto · <span class="ver">v1.0</span></div>
+ </div></div>
+ <div class="veil"></div>
+ <div class="tab-pop" id="popPN" hidden>
+  <div class="tp-hd"><svg><use href="#i-swords"/></svg><h2>Play Now</h2><span class="sp"></span><button class="stud" aria-label="Close">✕</button></div>
+  <p class="tp-sub">A new event, or a saved match.</p>
+  <div class="well">
+   <button class="sb pri" style="--h:62px"><svg><use href="#i-swords"/></svg><span class="lab"><span class="t" style="font-size:22px">New event</span><small>arena · event · gladiators</small></span></button>
+   <div class="r2">
+    <button class="sb dis"><svg><use href="#i-chest"/></svg><span class="lab"><span style="font-size:17px">Load game</span><small>no saves yet</small></span></button>
+    <button class="sb"><svg><use href="#i-scroll"/></svg><span class="lab"><span style="font-size:17px">Manage saves</span><small>rename · download · delete</small></span></button>
+   </div>
+   <button class="sb" style="--h:52px"><svg><use href="#i-shield"/></svg><span class="lab"><span style="font-size:17px">Your Play Now Gladiators</span><small>records, looks and the Road</small></span></button>
+  </div>
+  <div class="tp-ft"><button class="sb s"><svg><use href="#i-back"/></svg>Back</button><span class="seal">ESC · BACK</span></div>
+ </div>
+ <div class="tab-pop" id="popMG" hidden>
+  <div class="tp-hd"><svg><use href="#i-temple"/></svg><h2>Manager Mode</h2><span class="sp"></span><button class="stud" aria-label="Close">✕</button></div>
+  <p class="tp-sub">Only Manager careers live here.</p>
+  <div class="well">
+   <button class="sb pri" style="--h:64px"><svg><use href="#i-play"/></svg><span class="lab"><span class="t" style="font-size:22px">Continue · Ludus Aurelius</span><small>Marcus · season I, week 3 · saved today</small></span></button>
+   <div class="r2">
+    <button class="sb"><svg><use href="#i-chest"/></svg><span class="lab"><span style="font-size:17px">Load a career</span><small>2 saved careers</small></span></button>
+    <button class="sb"><svg><use href="#i-scroll"/></svg><span class="lab"><span style="font-size:17px">Manage saves</span><small>download · delete</small></span></button>
+   </div>
+   <button class="sb" style="--h:52px"><svg><use href="#i-plus"/></svg><span class="lab"><span style="font-size:17px">New career</span><small>found a house or take one over</small></span></button>
+  </div>
+  <div class="tp-ft"><button class="sb s"><svg><use href="#i-back"/></svg>Back</button><span class="seal">ESC · BACK</span></div>
+ </div>
+ <div class="caption" id="cap"></div>
+</div></section>
+
+<!-- ================= 1d : before / after sheet ================= -->
+<section class="view" id="v-cmp"><div class="cmp">
+ <h1>1d · The menu steps back</h1>
+ <p class="lead" style="color:var(--muted)">When a submenu opens, the main menu dims, blurs and leans 4.5% toward the pop-up, as if you stepped up to the tablet. Closing plays it in reverse.</p>
+ <div class="frames">
+  <div class="fr"><div class="box"><iframe src="playnow.html#menu" title="before" loading="eager"></iframe></div><b>Before</b><p>The menu at rest.</p></div>
+  <div class="fr"><div class="box"><iframe src="playnow.html#1d-mid" title="mid" loading="eager"></iframe></div><b>~160 ms</b><p>Background half dimmed; the tablet rises in.</p></div>
+  <div class="fr"><div class="box"><iframe src="playnow.html#1c" title="after" loading="eager"></iframe></div><b>After (320 ms)</b><p>Menu blurred 3.5 px, 50% light, scale 1.045, 14 px down; warm glow behind the tablet.</p></div>
+ </div>
+ <div class="spec">
+  <div><b>Timing</b>320 ms ease-out in · 220 ms out.</div>
+  <div><b>Reduce motion / Calm</b>Dim only — no blur, no zoom, no slide.</div>
+  <div><b>Phones / idle</b>Blur skipped on phones (cost); dim + zoom stay.</div>
+  <div><b>Window to window</b>Pop-up → Play Now keeps the menu dimmed under the curtain (no flash).</div>
+ </div>
+</div></section>
+
+<!-- ================= 2a + 5d : button sheet ================= -->
+<section class="view" id="v-btn"><div class="sheet">
+ <h1>2a · The sandstone button</h1>
+ <p class="lead">One carved slab for every big action: lit bevel, chiselled frame, 4 px stone edge. Primary carries a porphyry inlay with gold-leaf letters.</p>
+
+ <h2>Begin Event — states</h2>
+ <div class="states">
+  <div><button class="sb pri l"><svg><use href="#i-swords"/></svg><span class="t">Begin Event</span></button><span>REST</span></div>
+  <div><button class="sb pri l hov"><svg><use href="#i-swords"/></svg><span class="t">Begin Event</span></button><span>HOVER · FOCUS</span></div>
+  <div><button class="sb pri l prs"><svg><use href="#i-swords"/></svg><span class="t">Begin Event</span></button><span>PRESSED</span></div>
+  <div><button class="sb pri l dis"><svg><use href="#i-swords"/></svg><span class="t">Begin Event</span></button><span>DISABLED</span></div>
+ </div>
+
+ <h2>Kinds × sizes</h2>
+ <div class="grid3">
+  <span></span><span class="h">Large · 58 px</span><span class="h">Medium · 46 px</span><span class="h">Small · 34 px</span>
+  <span class="rl">Primary<small>porphyry + gold leaf — one per screen</small></span>
+  <div><button class="sb pri l"><svg><use href="#i-swords"/></svg><span class="t">Begin Event</span></button></div>
+  <div><button class="sb pri m"><svg><use href="#i-play"/></svg><span class="t">Next lesson</span></button></div>
+  <div><button class="sb pri s"><span class="t">Save</span></button></div>
+  <span class="rl">Secondary<small>plain sandstone, carved letters</small></span>
+  <div><button class="sb l"><svg><use href="#i-temple"/></svg>Back to menu</button></div>
+  <div><button class="sb m"><svg><use href="#i-gear"/></svg>Options</button></div>
+  <div><button class="sb s"><svg><use href="#i-back"/></svg>Back</button></div>
+  <span class="rl">Danger<small>basalt inlay, red-gold — asks first</small></span>
+  <div><button class="sb dan l"><svg><use href="#i-x"/></svg><span class="t">Abandon</span></button></div>
+  <div><button class="sb dan m"><svg><use href="#i-x"/></svg><span class="t">Delete career</span></button></div>
+  <div><button class="sb dan s"><span class="t">Release</span></button></div>
+ </div>
+
+ <h2>5d · Lesson complete</h2>
+ <div class="lesson">
+  <div class="lau">🏛</div>
+  <h3>Lesson complete</h3>
+  <p>You won your first bout — Flavius is pleased.</p>
+  <div class="got"><span>✓ Moving</span><span>✓ Attacking</span><span>✓ The market</span></div>
+  <div class="row2">
+   <button class="sb l"><svg><use href="#i-temple"/></svg>Back to menu</button>
+   <button class="sb pri l"><span class="t">Next lesson</span><svg><use href="#i-play"/></svg></button>
+  </div>
+ </div>
+
+ <h2>Where else it goes</h2>
+ <div class="uses">
+  <div class="use"><h4>MAIN MENU · SUBMENUS</h4><div class="row2"><button class="sb pri m"><span class="t">New event</span></button><button class="sb m">Load game</button></div></div>
+  <div class="use"><h4>MANAGER</h4><div class="row2"><button class="sb pri m"><span class="t">End the week</span></button><button class="sb m">Save and Exit</button></div></div>
+  <div class="use"><h4>RESULTS · ONLINE</h4><div class="row2"><button class="sb pri m"><span class="t">Play again</span></button><button class="sb dan m"><span class="t">Abandon</span></button></div></div>
+ </div>
+ <p class="mnote" style="margin-top:16px"><b>Rule:</b> sandstone is for the few big doors (start, continue, finish, leave). Panel controls (tabs, ticks, chips, the action bar) keep today's dark style so screens stay readable.</p>
+</div></section>
+
+<script>
+/* ---------- data ---------- */
+const L=[[1,.7089,.6261],[2,.4914,.0925],[3,.2738,.2015],[4,.7396,.2991],[5,.4862,.7858],[6,.636,.2611],[7,.1907,.1711],[8,.746,.3346],[9,.7409,.9759],[10,.4543,.7199],[11,.6859,.052],[12,.7191,.3232]];
+document.getElementById('map').innerHTML=L.map(([n,x,y])=>`<span class="pin ${n===6?'on':''}" style="left:${x*100}%;top:${Math.min(y,.96)*100}%">${n}</span>`).join('');
+const E=[['Democritus',0,0,1],['Egidious',1,0],['Cassian',2,0],['Commodus',3,0],['Familia',4,0],['Gauntlet',0,1],['Golden Eagle',1,1],['Juggernaut',2,1],['Orpheus',3,1],['Triumviratus',4,1],['Chariot',0,2],['Lupus',1,2],['Naumachia',2,2]];
+document.getElementById('strip').innerHTML=E.map(([n,c,r,on])=>`<div class="ev ${on?'on':''}"><i style="background-position:${c*25}% ${r*50}%"></i>${n}</div>`).join('');
+const C='<img src="../../../assets/coin.webp" alt="coin">';
+const R=[['I','Bestiarii','Zone 1',[1,0,1,1],'4 beasts slain or a gladiator falls','3 cards · 2 '+C+' · 2 CF'],
+         ['II','Royale','Zone 2',[1,1,1,0],'Two left standing','2 '+C+' · 2 CF'],
+         ['III','Duel','Zone 3 · the whole sand',[1,1,0,0],'Last one standing','Winner +15 CF']];
+const K=['PvE','PvP','CF','CA'];
+document.getElementById('rounds').innerHTML=`<div class="rd hd"><span>#</span><span>Round</span><span>Rules</span><span>Ends when</span><span>Reward</span></div>`+
+ R.map(([n,nm,z,f,end,rw])=>`<div class="rd"><span class="n">${n}</span><span class="nm"><b>${nm}</b><span>${z}</span></span><span class="rch">${f.map((v,i)=>`<span class="${v?'y':'n0'}">${K[i]}</span>`).join('')}</span><span class="end">⏱ ${end}</span><span class="rw">${rw}</span></div>`).join('');
+
+function seats(hot){
+ const S=[['Soldier','soldier','#c0433a','Legionnaire'],['Royalty','royalty','#4f7fc4','Patrician'],['Hero','hero','#4f9a57','Provocator'],['Slave','slave','#d4b13c','Retiarius']];
+ const H=hot?[['Marcus',1],['Livia',1],['Gaius',1],[null,0]]:[['You',1],[null,0],[null,0],[null,0]];
+ const M=['Fighter','Veteran','Apprentice','Fighter'];
+ document.getElementById('seats').innerHTML=S.map(([n,k,c,sub],i)=>{const [nm,h]=H[i];
+  const tag=hot?(h?`<span class="tagx hum">👤 PLAYER ${i+1}</span>`:`<span class="tagx cpu">CPU</span>`):(h?`<span class="tagx">YOU</span>`:`<span class="tagx cpu">CPU</span>`);
+  const ctl=hot?(h?`<span class="nm-in">${nm}<i>✎</i></span>`:`<span class="mind">🧠 ${M[i]}</span>`)
+   :`<span class="seg"><button class="${h?'on':''}">You</button><button class="${h?'':'on'}">CPU</button></span>${h?'':`<span class="mind">🧠 ${M[i]}</span>`}`;
+  const ctl2=hot?`<div class="ctl"><span class="seg"><button class="${h?'on':''}">Human</button><button class="${h?'':'on'}">CPU</button></span></div>`:'';
+  return `<div class="seat ${hot&&h?'hs':(!hot&&h?'you':'')}" style="--pc:${c}"><div class="no">SEAT ${i+1} ${tag}</div><h3>${n}</h3><div class="sub">${sub} ▾</div><div class="mini" style="background-image:url(../../../assets/mini_${k}.webp)"></div><div class="ctl">${ctl}</div>${ctl2}</div>`}).join('');
+ document.getElementById('stands').innerHTML=hot?
+  `<h3>🎟 The Stands</h3><div class="sub">The crowd of Roma</div><div class="meter"><b>13K</b><span>spectators<br><small style="color:var(--muted)">CPU crowd</small></span></div><div class="f">Crowd size</div><span class="sel">🎲 Random<span class="car">▼</span></span><label><span class="ck"></span><span>A player may sit in the stands instead of a seat</span></label>`
+  :`<h3>🎟 The Stands</h3><div class="sub">The crowd of Roma</div><div class="meter"><b>13K</b><span>spectators<br><small style="color:var(--muted)">a full house</small></span></div><div class="f">Crowd size</div><span class="sel">🎲 Random — the empire decides<span class="car">▼</span></span><label><span class="ck"></span><span><b>Play as a spectator</b> — every seat turns CPU.</span></label>`;
+}
+
+/* ---------- views by hash ---------- */
+function show(){
+ const h=(location.hash||'#1a').slice(1);
+ document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+ if(h==='1a'||h==='hotseat'||h==='1e'){
+  const hot=h!=='1a';document.getElementById('v-pn').classList.add('on');
+  document.getElementById('pnTitle').textContent=hot?'Hot Seat':'Play Now';
+  document.getElementById('hsFlag').hidden=!hot;document.getElementById('passHint').hidden=!hot;
+  document.getElementById('pnModes').style.display=hot?'none':'';
+  document.getElementById('sumYou').innerHTML=hot?'3 players · 1 CPU':'You: <span class="gd">Soldier</span>';
+  document.getElementById('whoNote').innerHTML=hot?'Name each player · turns pass in seat order':'Printed classes · <span class="gold">⭐ Your characters</span> in each seat\'s picker';
+  seats(hot);
+ }else if(h==='buttons'||h==='2a'||h==='5d'){document.getElementById('v-btn').classList.add('on')}
+ else if(h==='1d'){document.getElementById('v-cmp').classList.add('on');fitFrames()}
+ else{ /* menu, 1c, 1c-mgr, 1d-mid */
+  document.getElementById('v-menu').classList.add('on');const mv=document.getElementById('menuview');
+  mv.classList.toggle('shift',h==='1c'||h==='1c-mgr');mv.classList.toggle('mid',h==='1d-mid');
+  document.getElementById('popPN').hidden=!(h==='1c'||h==='1d-mid');document.getElementById('popMG').hidden=h!=='1c-mgr';
+  const inFrame=window.self!==window.top;const cap=document.getElementById('cap');cap.hidden=inFrame||h==='menu'||h==='1d-mid';
+  cap.innerHTML=h==='1c-mgr'?'<b>1c · Manager submenu</b> — same carved tablet; Continue is the porphyry slab.':'<b>1c · Play Now submenu</b> — a sandstone tablet with a recessed well; New event is the porphyry slab, Back a small slab. The menu behind has stepped back (1d).';
+ }
+}
+function fitFrames(){document.querySelectorAll('.fr .box').forEach(b=>{const f=b.querySelector('iframe');f.style.transform=`scale(${b.clientWidth/1440})`})}
+addEventListener('hashchange',show);addEventListener('resize',()=>{if(location.hash==='#1d')fitFrames()});show();
+</script>
+</body></html>

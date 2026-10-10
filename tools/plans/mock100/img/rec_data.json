@@ -1,0 +1,71 @@
+{
+ "g": {
+  "name": "Barbatus Bone-Breaker",
+  "cls": "royalty",
+  "age": 34,
+  "city": "Neapolis",
+  "fame": 24
+ },
+ "S": [
+  {
+   "n": "Ludus Severianus",
+   "c": "#8a5cc0",
+   "v": 44
+  },
+  {
+   "n": "Ludus Nervanus",
+   "c": "#4f7fc4",
+   "v": 39
+  },
+  {
+   "n": "Ludus Crispinus",
+   "c": "#c0433a",
+   "v": 37
+  },
+  {
+   "n": "Schola Nemausensis",
+   "c": "#6fa8a0",
+   "v": 37
+  }
+ ],
+ "champ": "Asper Nine-Lives",
+ "champG": "D",
+ "mk": [
+  [
+   "ambition",
+   "Ambition",
+   "D"
+  ],
+  [
+   "cunning",
+   "Cunning",
+   "D"
+  ],
+  [
+   "honor",
+   "Honor",
+   "D"
+  ],
+  [
+   "greed",
+   "Greed",
+   "D"
+  ],
+  [
+   "show",
+   "Showmanship",
+   "D"
+  ],
+  [
+   "discipline",
+   "Discipline",
+   "D"
+  ],
+  [
+   "risk",
+   "Risk",
+   "D"
+  ]
+ ],
+ "ask": 10
+}

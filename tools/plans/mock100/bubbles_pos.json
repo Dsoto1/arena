@@ -1,0 +1,322 @@
+{
+ "d": {
+  "wrap": {
+   "x": 16,
+   "y": 107,
+   "w": 972,
+   "h": 569
+  },
+  "tw": 52,
+  "players": [
+   {
+    "name": "Trajan Falto",
+    "color": "#8a5cc0",
+    "x": 485,
+    "y": 465.4
+   },
+   {
+    "name": "Decimus Triarius",
+    "color": "#c0433a",
+    "x": 173,
+    "y": 309.4
+   },
+   {
+    "name": "Varinius Gracchi",
+    "color": "#4f7fc4",
+    "x": 511,
+    "y": 192.39999999999998
+   },
+   {
+    "name": "Thraex Murmillo",
+    "color": "#4f9a57",
+    "x": 797,
+    "y": 309.4
+   }
+  ],
+  "npcs": [
+   {
+    "t": "snake",
+    "x": 615,
+    "y": 244.39999999999998
+   },
+   {
+    "t": "snake",
+    "x": 355,
+    "y": 374.4
+   },
+   {
+    "t": "wolf",
+    "x": 355,
+    "y": 244.39999999999998
+   },
+   {
+    "t": "wolf",
+    "x": 615,
+    "y": 374.4
+   },
+   {
+    "t": "bear",
+    "x": 485,
+    "y": 283.4
+   },
+   {
+    "t": "bear",
+    "x": 485,
+    "y": 335.4
+   }
+  ],
+  "spect": [
+   {
+    "x": 274.0256,
+    "y": 409.4271999999999,
+    "name": "Durmius the stonecutter"
+   },
+   {
+    "x": 201.22560000000004,
+    "y": 373.02719999999994,
+    "name": "Cornelia the barber"
+   },
+   {
+    "x": 184.3256,
+    "y": 245.90279999999998,
+    "name": "Gaius the tanner"
+   },
+   {
+    "x": 785.6744,
+    "y": 245.90279999999998,
+    "name": "Manius the fish-seller"
+   },
+   {
+    "x": 709.7544,
+    "y": 224.32279999999997,
+    "name": "Galla the flute-girl"
+   },
+   {
+    "x": 111.5256,
+    "y": 282.3028,
+    "name": "Domitia the potter"
+   },
+   {
+    "x": 603.6744,
+    "y": 455.57719999999995,
+    "name": "Hostilia the fish-seller"
+   },
+   {
+    "x": 260.2456,
+    "y": 224.32279999999997,
+    "name": "Rufina the baker"
+   },
+   {
+    "x": 217.60559999999998,
+    "y": 212.88279999999997,
+    "name": "Hostilia the mule-driver"
+   },
+   {
+    "x": 147.92560000000003,
+    "y": 264.10279999999995,
+    "name": "Livia the weaver"
+   },
+   {
+    "x": 276.62559999999996,
+    "y": 199.75279999999998,
+    "name": "Sabina the weaver"
+   },
+   {
+    "x": 858.4744000000001,
+    "y": 282.3028,
+    "name": "Lartius the perfumer"
+   }
+  ],
+  "flav": {
+   "x": 485,
+   "y": 37.2,
+   "w": 80.60000000000001,
+   "h": 62.4
+  }
+ },
+ "_390": {
+  "wrap": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 363
+  },
+  "tw": 28,
+  "players": [
+   {
+    "name": "Trajan Falto",
+    "color": "#8a5cc0",
+    "x": 194,
+    "y": 250.6
+   },
+   {
+    "name": "Decimus Triarius",
+    "color": "#c0433a",
+    "x": 26,
+    "y": 166.6
+   },
+   {
+    "name": "Varinius Gracchi",
+    "color": "#4f7fc4",
+    "x": 208,
+    "y": 103.6
+   },
+   {
+    "name": "Thraex Murmillo",
+    "color": "#4f9a57",
+    "x": 320,
+    "y": 145.6
+   }
+  ],
+  "npcs": [
+   {
+    "t": "snake",
+    "x": 264,
+    "y": 131.6
+   },
+   {
+    "t": "snake",
+    "x": 124,
+    "y": 201.6
+   },
+   {
+    "t": "wolf",
+    "x": 124,
+    "y": 131.6
+   },
+   {
+    "t": "wolf",
+    "x": 264,
+    "y": 201.6
+   },
+   {
+    "t": "bear",
+    "x": 194,
+    "y": 152.6
+   },
+   {
+    "t": "bear",
+    "x": 194,
+    "y": 180.6
+   }
+  ],
+  "spect": [
+   {
+    "x": 257.9016,
+    "y": 245.31079999999997,
+    "name": "Herminius the midwife"
+   },
+   {
+    "x": 41.19840000000002,
+    "y": 200.86079999999998,
+    "name": "Decimus One-Eye"
+   },
+   {
+    "x": 315.0216,
+    "y": 120.7892,
+    "name": "Kaeso the barber"
+   },
+   {
+    "x": 355.9016,
+    "y": 132.4092,
+    "name": "Big Sextus"
+   },
+   {
+    "x": 285.6216,
+    "y": 227.1108,
+    "name": "Petronia the barber"
+   },
+   {
+    "x": 120.9984,
+    "y": 87.9592,
+    "name": "Volero the baker"
+   },
+   {
+    "x": 32.09840000000003,
+    "y": 132.4092,
+    "name": "Galla the potter"
+   },
+   {
+    "x": 161.8784,
+    "y": 76.33919999999999,
+    "name": "Drusilla the potter"
+   },
+   {
+    "x": 218.70159999999998,
+    "y": 264.9108,
+    "name": "Rufina the mule-driver"
+   },
+   {
+    "x": 337.98159999999996,
+    "y": 114.62919999999998,
+    "name": "Servius the scribe"
+   },
+   {
+    "x": 81.7984,
+    "y": 107.5592,
+    "name": "Livia the gossip"
+   },
+   {
+    "x": 395.10159999999996,
+    "y": 152.0092,
+    "name": "Publius the potter"
+   },
+   {
+    "x": 80.39840000000001,
+    "y": 220.46079999999998,
+    "name": "Aelia the midwife"
+   },
+   {
+    "x": 346.8016,
+    "y": 200.86079999999998,
+    "name": "Marcia the moneylender"
+   },
+   {
+    "x": -7.101599999999991,
+    "y": 152.0092,
+    "name": "Durmius the moneylender"
+   },
+   {
+    "x": 307.60159999999996,
+    "y": 220.46079999999998,
+    "name": "Tertia the weaver"
+   },
+   {
+    "x": 138.91840000000002,
+    "y": 70.1792,
+    "name": "Mamercus the tanner"
+   },
+   {
+    "x": 267.0016,
+    "y": 87.9592,
+    "name": "Nonus the widow"
+   },
+   {
+    "x": 374.52160000000003,
+    "y": 182.6608,
+    "name": "Domitia the widow"
+   },
+   {
+    "x": 306.2016,
+    "y": 107.5592,
+    "name": "Lucius the drunk"
+   },
+   {
+    "x": 226.1216,
+    "y": 76.33919999999999,
+    "name": "Vibia and her sister"
+   },
+   {
+    "x": 249.08159999999998,
+    "y": 70.1792,
+    "name": "Gaius the tanner"
+   }
+  ],
+  "flav": {
+   "x": 194,
+   "y": 17.759999999999998,
+   "w": 30.379999999999995,
+   "h": 23.52
+  }
+ }
+}
