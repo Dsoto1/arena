@@ -1991,9 +1991,10 @@ share copy — the site download play/flavius-rule-arena.zip.)
   from the server's reply.
   Order (when resumed): engine/UI request layer (every in-match decision through one layer; test locally with two windows) →
   the AWS template → wire the client. Hosting: the game sits at flaviusrule.com/play/ (S3 + CloudFront).
-- **His website (flaviusrule.com):** redesigned to the game's look and delivered as zips (site + play/ folder) — NOT in git (his
-  call; the source also holds his AWS policy file). Pages keep their class names; styles.css rewritten; play.html added;
-  FlaviusSiteMedia/ (logo, covers, STL renders) lives only on S3 — he will send it for previews.
+- **His website (flaviusrule.com):** the public pages live in `site/` (in git since 2026-10-11, his call — never his AWS policy file or
+  secrets). `bash flavius.sh release` syncs them when their hash changed (SITE_HASH in ~/.flavius.conf) and deletes the paths in
+  site/REMOVED.txt; play/ (the game) and FlaviusSiteMedia/ stay S3-only. Menu = Home · Overview · Downloads · ⚔ Play (Media, Videos, Contact removed).
+  play.html shows play/arena_shot.webp (retaken each release). Old site zips sit in website/ (git-excluded).
 - **Readability pass, phase 2+** (Virgilante chose "phased"): files 02–07 are done (Babel scope-safe parameter renames via
   `tools/rename.js`, then comments on every function with `TWEAK:` notes; verified with `tools/samecode.js`, which
   compares code ignoring comments/whitespace). Remaining: 08–64, file by file, regression after each. Rename only

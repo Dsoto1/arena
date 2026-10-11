@@ -202,7 +202,7 @@ cmd_gitrelease(){ local want="${1:-}"; gh_token
   [ -f "$CONF" ] && . "$CONF"; local sh; sh=$(srv_hash "$SRC"); local live; live=$(curl -s -m 10 "$SITE/play/version.json?x=$RANDOM" | sed -n 's/.*"v" *: *"\([^"]*\)".*/\1/p')
   local dosrv=0; [ "$sh" != "${SERVER_HASH:-}" ] && dosrv=1
   say "Release plan (from GitHub, $br)"; echo "  1 server   : $([ $dosrv = 1 ] && echo "deploy — its code changed since the last server deploy from here" || echo 'unchanged — skipped')"
-  echo "  2 game     : v$v   (live now: v${live:-?})"; echo "  3 download : the standalone v$v (built here)"
+  echo "  2 game     : v$v   (live now: v${live:-?})"; echo "  3 download : the standalone v$v (built here)"; echo "  4 site     : the pages in site/ (only when they changed)"
   if [ "${DRY:-}" != 1 ]; then read -r -p "Go? [y/N] " ok; case "$ok" in y|Y|yes) ;; *) die "Stopped — nothing changed.";; esac; fi
   if [ $dosrv = 1 ]; then local email="${ALERT_EMAIL:-}"
     if [ -z "$email" ]; then read -r -p "Budget alert e-mail (asked once, kept in ~/.flavius.conf): " email; email=$(printf '%s' "$email" | tr -d '\r\n\t '); conf_set ALERT_EMAIL "$email"; fi
@@ -211,7 +211,16 @@ cmd_gitrelease(){ local want="${1:-}"; gh_token
   [ -f "$SRC/tools/deploy/arena_shot.webp" ] && cp "$SRC/tools/deploy/arena_shot.webp" "$P/play/"; cp -r "$SRC/assets" "$P/play/assets"
   say "The standalone download (built here from the release)"; (cd "$SRC" && python3 tools/mkshare.py "$v" | tail -1 && rm -f share/flavius-rule-arena.zip && cd share && zip -q -9 flavius-rule-arena.zip "flavius-rule-arena-v$v.html") || die "building the download failed"
   cp "$SRC/share/flavius-rule-arena.zip" "$P/play/flavius-rule-arena.zip"
-  game_dir "$P/play"; rm -rf "$P" "$SRC/share"; cmd_status; }
+  game_dir "$P/play"; rm -rf "$P" "$SRC/share"; site_git "$SRC/site"; cmd_status; }
+# the public site pages from the release's site/ folder (in git since 2026-10-11) — only when they changed since the last site deploy from here
+site_hash(){ (cd "$1" && find . -type f -not -name 'README*' | sort | xargs cat | sha256sum | cut -c1-16); }
+site_git(){ local d="$1"; [ -f "$d/index.html" ] || return 0; [ -f "$CONF" ] && . "$CONF"; local h; h=$(site_hash "$d")
+  [ "$h" = "${SITE_HASH:-}" ] && { ok "site pages unchanged — skipped"; return 0; }
+  say "Website pages (from the release; play/ and FlaviusSiteMedia/ are left alone)"
+  run aws s3 sync "$d/" "s3://$BUCKET/" --exclude "README*" --exclude "REMOVED.txt" --exclude "play/*" --exclude "FlaviusSiteMedia/*" --cache-control no-cache --only-show-errors
+  local f; if [ -f "$d/REMOVED.txt" ]; then while IFS= read -r f; do f="${f#/}"; case "$f" in ""|play/*|FlaviusSiteMedia/*|*..*) continue;; esac
+    run aws s3 rm "s3://$BUCKET/$f" --only-show-errors || true; done < "$d/REMOVED.txt"; fi
+  ok "site synced"; clear_cdn "/*"; [ "${DRY:-}" = 1 ] || conf_set SITE_HASH "$h"; }
 
 # one command per release: the newest server zip, game zip, site zip and privacy.html found here, in the safe order
 cmd_release(){ local here; here=$(pwd)

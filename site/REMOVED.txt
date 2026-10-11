@@ -1,0 +1,3 @@
+media.html
+videos.html
+contact.html

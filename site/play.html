@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Play Flavius Rule in your browser: the digital arena. Flavius Rule, a turn-based gladiatorial survival strategy board game developed by Virgilante and produced by Mifune Media.">
+    <title>Flavius Rule: Play</title>
+
+
+
+    <!-- Preconnect to external font resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Load fonts efficiently -->
+    <link href="https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Link to CSS -->
+    <link rel="icon" type="image/png" href="siteart/fr_icon.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+      <nav>
+          <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="overview.html">Overview</a></li>
+              <li class="dropdown">
+                  <a href="downloads.html" class="dropbtn">Downloads</a>
+                  <div class="dropdown-content">
+                      <a href="rulebook.html">Rulebook</a>
+                      <a href="pnp.html">Print&Play</a>
+                      <a href="stls.html">STLs</a>
+                      <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=809267424">TTS Mod</a>
+                  </div>
+              </li>
+              <li><a href="play.html" class="play">⚔ Play</a></li>
+          </ul>
+      </nav>
+        <div class="logo">
+            <img src="FlaviusSiteMedia/LogoMST.png" alt="Board Game Logo" loading="lazy"> <!-- Lazy load the logo -->
+        </div>
+    </header>
+
+    <main>
+        <h1>The Digital Arena</h1>
+        <h3>Flavius Rule in your browser — every class, event and beast from the Magnus Edition</h3>
+        <section class="playhero">
+          <img src="play/arena_shot.webp" onerror="this.onerror=null;this.src='siteart/arena_shot.webp'" alt="A classic event in the digital arena — this release" class="playshot" loading="lazy">
+          <div>
+            <h2>Step onto the sand</h2>
+            <p>Fight the classic events against CPU gladiators with five kinds of mind, run your own ludus through a twelve-week season, or build new classes, beasts, armor and events in the Creator Studio.</p>
+            <p>No install. It runs on desktop, tablets and phones — sign in with Google only to fight Online.</p>
+            <div class="button-container">
+              <a href="play/index.html" class="button">▶ Play in your browser</a>
+              <a href="play/flavius-rule-arena.zip" class="button ghost">⬇ Download (one file, plays offline)</a>
+            </div>
+          </div>
+        </section>
+        <div class="modes">
+          <div class="mode"><b>⚔ Play Now</b><span>Single events, festivals, missios and tournaments, on any of the twelve arenas.</span></div>
+          <div class="mode"><b>💼 Manager mode</b><span>Run a ludus: recruit, train, heal, bet and climb the league for the Flavius Superbus.</span></div>
+          <div class="mode"><b>🎨 Creator Studio</b><span>Characters, classes, beasts, weapons, armor, events, banners and more.</span></div>
+          <div class="mode"><b>🪑 Hot seat</b><span>Pass one screen between friends, up to eight gladiators.</span></div>
+          <div class="mode"><b>🌍 Online<span class="badge">new</span></b><span>Fight other lanistas live. In Ranked the Fate decides who lives; or watch, buy a ticket to the stands.</span></div>
+        </div>
+        <section class="whatsnew">
+          <h2>New in v0.82</h2>
+          <ul>
+            <li>Online: found your own house — four gladiators, a storeroom, a patron in the stands, ranks by Glory.</li>
+            <li>The stands choose together each rotation; guests can watch without signing in.</li>
+            <li>Every beast has its two-sided card, and you can make your own with a spawn card of their own.</li>
+            <li>Spear a spectator and Flavius scowls, refunds the seat and hands you a Mandate.</li>
+          </ul>
+        </section>
+    </main>
+
+    <footer>
+      <div class="marquee">
+          <span id="stats-marquee">Loading stats...</span>
+      </div><br>
+        <p>Copyright &copy; 2026 Flavius Rule - Mifune Media · <a href="privacy.html">Privacy</a></p>
+    </footer>
+
+    <!-- Link to external JavaScript files -->
+    <script defer src="https://unpkg.com/scrollreveal@4"></script>
+    <script defer src="scripts.js"></script>
+</body>
+</html>

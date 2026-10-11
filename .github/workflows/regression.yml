@@ -5,7 +5,7 @@ name: regression
 on:
   push:
     branches: ['claude/**', 'main']
-    paths-ignore: ['CLAUDE.md', 'docs/**', 'tools/art/**', 'tools/plans/**', 'share/**', 'tools/regstate.json', 'tools/regmap.json', 'tools/reg.txt']
+    paths-ignore: ['CLAUDE.md', 'docs/**', 'tools/art/**', 'tools/plans/**', 'share/**', 'tools/regstate.json', 'tools/regmap.json', 'tools/reg.txt', 'site/**']
   workflow_dispatch:
     inputs:
       mode:
