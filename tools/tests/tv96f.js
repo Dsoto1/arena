@@ -36,13 +36,15 @@ ok(p1.noise===0&&p1.n<p1.total*0.005,'1c only a few pixels differ (under 0.5%), 
 
 /* ---- 5 seams hold still while zooming (snapped tile corners + the wider, fainter grid line) ---- */
 const p5=await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));SPEED='pause';
+  /* v1.0 294: while the zoom moves the last crisp layers are drawn scaled (no snapping); this walk measures the crisp, settled frames */
+  if(typeof Z100!=='undefined')Z100.force=true;
   const others=LAYERS93.defs.map(d=>d[0]).filter(n=>n!=='tiles');others.forEach(n=>LAYERS93.dbg.add(n));const keep=[SAND83.grain,SAND83.shade,SCAR83.alpha];SAND83.grain=SAND83.shade=SCAR83.alpha=0;
   const walk=()=>{const fr=[];for(let z=1.2;z<=1.4;z+=0.008){CAM.z=z;S.zoomIn=true;draw();const d=ctx.getImageData(0,0,cv.width,cv.height).data,W=cv.width,H=cv.height;const pts=[];
       for(let r=2;r<10;r++)for(let c=2;c<10;c++){const a=iso(r,c+1),b=iso(r+1,c+1);for(let f=0.2;f<=0.8;f+=0.15){const x=Math.round(a.x+(b.x-a.x)*f),y=a.y+(b.y-a.y)*f;let mn=1e9,ref=0;
         for(let k=-4;k<=4;k++){const yy=Math.round(y+k);if(x<1||yy<1||x>=W||yy>=H){mn=-1;break}const i=(yy*W+x)*4,L=d[i]*.3+d[i+1]*.59+d[i+2]*.11;if(Math.abs(k)===4)ref+=L/2;else mn=Math.min(mn,L)}pts.push(mn<0?null:ref-mn)}}
       fr.push(pts)}
     let j=0,n=0;for(let i=1;i<fr.length;i++)fr[i].forEach((v,k)=>{const u=fr[i-1][k];if(v!=null&&u!=null){j+=Math.abs(v-u);n++}});return n?j/n:0};
-  const on=walk();SNAP96.on=GRID96.on=false;const off=walk();SNAP96.on=GRID96.on=true;CAM.z=null;S.zoomIn=false;
+  const on=walk();SNAP96.on=GRID96.on=false;const off=walk();SNAP96.on=GRID96.on=true;CAM.z=null;S.zoomIn=false;if(typeof Z100!=='undefined')Z100.force=false;
   SAND83.grain=keep[0];SAND83.shade=keep[1];SCAR83.alpha=keep[2];others.forEach(n=>LAYERS93.dbg.delete(n));draw();return {on:+on.toFixed(2),off:+off.toFixed(2)}});
 ok(p5.on>0&&p5.on<p5.off*0.6,'5 seams jump less from frame to frame while zooming '+JSON.stringify(p5));
 

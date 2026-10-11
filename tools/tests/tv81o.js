@@ -120,7 +120,7 @@ if(bOnl.after.on||bOnl.after.watching||bOnl.after.banner||bOnl.after.inMatch)mis
 if(!bAb.r.over||!bAb.alive||bAb.abandoned||!/The bout is over/.test(bAb.txt)||/dies and is struck/.test(bAb.txt))miss.push('abandon after the bout: no Damnatio');
 if(aBack.status!=='done'||aBack.reps!==2||aBack.void||!aBack.outs||aBack.stored||aBack.hashes.some(h=>h!==aEnd.hashAt))miss.push('saved report resent after reload → settled');
 if(!land.map||!land.dots||land.oval||land.row80||!land.forum||!land.news||land.empire||land.online!==1)miss.push('landing: stage map, the Acta in the side column, one online count');
-if(!land.today||!land.today.ribbon||!/Alpha the Bold/.test(land.today.txt)||!land.today.wheat)miss.push('Today showcases (no ribbon)');
+if(!land.today||!land.today.ribbon||!/(Alpha|Beta) the Bold/.test(land.today.txt)/* v1.0 293: Ranked seats are dealt at random at the horns, so either lanista may hold seat 0 and win */||!land.today.wheat)miss.push('Today showcases (no ribbon)');
 if(!land.stageWheat||land.star)miss.push('wheat on the stage');if(land.tones.length<4||new Set(land.tones).size!==land.tones.length)miss.push('playlist border tones');if(!big)miss.push('only the 🔍 opens the large view');
 if(!wheat)miss.push('result toast wheat');if(!hall)miss.push('Hall wheat');
 if(inv0)miss.push('invite to a missing room popped up');if(!inv1||!dead1.toast||dead1.joined||dead1.pop)miss.push('closed room → message');
