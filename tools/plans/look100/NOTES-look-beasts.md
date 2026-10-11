@@ -302,3 +302,61 @@ sides, legs/feet, tail (17 joints). As in round 2 every frame is re-sculpted (sp
    - a) good as is (thin, loose S, raised neck)
    - b) even thinner / smaller coil
    - c) a little thicker (between round 2 and round 3)
+
+# Round 4: his round-3 answers (1a split Tholo + Commodus · 2c ivory cape + bronze clasp · 3a bigger lion face · 4 Zora on a broken pillar chunk · 5 snake thinner)
+
+These are pictures only, not game code. Nothing in `src/`, `assets/`, `tools/art/` or the tests was touched. The `beast4_*` files are copies of round 3 with the changes.
+The naming lets `tools/art/mm100/make.js` keep picking the newest `beastN_rig.js` + `beastN_hum.js`. Both files still expose `BEAST300` / `LOOK100.humanoid3`.
+Their result still carries the FULL sheet (`png/meta/rows`), plus `parts`.
+
+## What changed
+| beast | round 4 |
+|---|---|
+| **Tholo** (1a + 2c) | TWO sheets: `beast4_tholo_sheet.webp` = idle + walk (10 frames, cell 126×152) and `beast4_tholo_act_sheet.webp` = attack/hit/die (13 frames, 212×228). The cape is IVORY `#efe7d2` (was red), with the same length (calves) and the same cloth motion. A BRONZE CLASP sits on each shoulder top (13 cm disc + dark rim + raised boss), and a bronze chain across the chest joins the two. In the attack frames the body showed through the ivory cloth as red ovals. The cloth now keeps 7 cm off the body (`m: 0.07`; it was 1.6 cm) and is a little thicker. |
+| **Commodus** (1a + 3a) | TWO sheets (idle + walk 112×147, actions 182×203). The lion's face is about 1.6× and sits HIGH on the hood. It has a long nose bridge to a broad dark nose, a heavy brow, a pale muzzle with whisker pads, dark sockets with amber eyes and small cone ears. A dark mane ring goes round the lion's head, and longer tufts frame his face. The first try had round ears and read as a teddy bear; the long nose makes it read as a lion. |
+| **Zora** (4) | She perches on a BROKEN CHUNK OF PILLAR: a fluted drum (16 flutes, shaded grooves) in the pillars' grey stone. The top is broken off unevenly: high where she stands, falling away to one side, with a paler fresh break. A torus band runs round its foot and two fallen chips lie on the base. The drum is 6.6 mm high and 9 mm across (the rock was 3.2 mm high). Her die frames carry her 4.2 mm further forward so she falls clear of it. |
+| **Glykon / Arenosus** (5) | Thinner again: body radius 0.68 mm (round 3: 0.95, round 2: 2.1), head ×0.6. The S-coil, raised neck and small head are unchanged. |
+| others | Unchanged: Leo (round-3 sheets); Leaena, the bears, wolves, boar, croc and spider (round-2 sheets). The board composite uses those sheets. |
+
+## Files
+| file | what |
+|---|---|
+| `beast4_r3_vs_r4.webp` | **round 3 above round 4** for the five changed beasts (idle, 8 facings, as drawn at zoom ×2; Tholo and Commodus at ×1.4, plus their walk) |
+| `beast4_board.png` | every beast (round-4 sheets for the changed ones) + two ×1.15 gladiators on the real board |
+| `beast4_close_tholo.png` | Tholo ×3, upper body: idle, walk, attack and hit × 5 facings (cape, clasps, chain) |
+| `beast4_close_commodus.png` | Commodus ×3, head + shoulders: idle, walk and attack × 5 facings (the lion face) |
+| `beast4_close_zora.png` | Zora ×2.5 on the pillar chunk: idle, hop (walk2), strike, die1 and die4 × 5 facings |
+| `beast4_cape_frames.png`, `beast4_clip_cape.webp` | Tholo walk0–5 at four facings (×1.8); Tholo walking two tiles (48 × 40 ms, 194 KB) |
+| `beast4_strip_<glykon|arenosus|zora|tholo|commodus>.png` | animation strips (facings 1 and 3) |
+| `beast4_<key>_sheet.webp` | game-format sheets: `tholo` + `tholo_act`, `commodus` + `commodus_act`, `zora`, `glykon`, `arenosus` |
+| `beast4_rig.js/.html`, `beast4_make.js`, `beast4_comp.js`, `beast4_hum.js/.html`, `beast4_humanoid.js`, `beast4_report.json` (incl. `memory`), `beast4_hum.json` | how it was made |
+
+**Re-run** with `LOOK_SCRATCH` set to any scratch folder. The round-3 side and the unchanged beasts come from the committed beast3_/beast2_ sheets, and the gladiator from `anim_glad_main_sheet.webp`.
+1. `node tools/plans/look100/beast4_make.js render zora glykon arenosus` (~1 min)
+2. `node tools/plans/look100/beast4_humanoid.js` (Tholo + Commodus; 5–8 min each under load). It writes `beast4_<k>_part.png` for each part to the scratch folder.
+3. `node tools/plans/look100/beast4_make.js comp`
+
+## Memory (decoded = cells × w × h × 4; full numbers in `beast4_report.json` → `memory`)
+| beast | round 3 | round 4 idle + walk | round 4 actions | round 4 both |
+|---|---|---|---|---|
+| tholo | one sheet 212×228, 512 KB, **33.9 MB** (all of it loaded even to stand) | 126×152, 246 KB, **5.8 MB** | 212×228, 314 KB, 19.2 MB | 25.0 MB |
+| commodus | one sheet 182×203, 517 KB, **25.9 MB** | 112×147, 232 KB, **5.0 MB** | 182×203, 312 KB, 14.7 MB | 19.7 MB |
+| zora | 110×130, 271 KB, 10.0 MB (idle + walk 4.4) | 110×141, 311 KB, 10.9 MB (idle + walk 4.7); the taller perch costs 0.9 MB | | |
+| glykon / arenosus | 96×83, 242 / 238 KB, 5.6 MB | 96×82, 232 / 229 KB, 5.5 MB; the raised neck sets the cell, not the body | | |
+
+- Tholo + Commodus standing or walking: **59.9 MB → 10.9 MB**. The action sheets load only when they act.
+- All 14 loaded: ≈ 184 → **≈ 170 MB**. The split also trims 15 MB of empty cell space around the idle/walk frames.
+
+## What still falls short
+1. At board size (zoom ×1) Tholo's clasps are only a few gold pixels. The chain and clasps read from zoom ×2 up. The cape reads clearly (ivory against the red tunic).
+2. The cape now hangs a hand's width off his back, so the body never shows through the pale cloth. In the back facings it looks a little stiff and boxy.
+3. From the front-top camera, Commodus's own face is mostly under the lion's upper jaw. The lion reads; his face reads less.
+4. Zora's die1/die2: a wing tip dips under the base in two facings. This was already there in round 3 and is unchanged.
+5. The snake is thinner, but the coil and head still set the cell, so its memory hardly changes.
+
+## Open questions (multiple choice)
+1. **Tholo's cape off the back:** a) as is (7 cm, the body never shows) · b) closer (4 cm), accepting a rare red fleck in the swing frames · c) closer + a darker ivory/linen so a fleck doesn't show
+2. **Clasps:** a) as is (disc + boss + chain) · b) bigger discs, no chain · c) lion-head brooches (Tholo's own touch)
+3. **Commodus's lion face:** a) as is · b) the lion's jaw higher, so more of his face shows · c) bigger still, so it reads at zoom ×1
+4. **Zora's pillar chunk:** a) as is (grey drum, broken top) · b) a lower drum · c) marble-white like the arena's pillars in the lighter themes
+5. **Split every beast whose actions widen the cell** (the lions are done; bears, croc and wolves next)? a) yes · b) only if the menu/board needs the memory · c) no

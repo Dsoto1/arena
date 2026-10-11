@@ -1,0 +1,522 @@
+{
+ "beasts": {
+  "zora": {
+   "key": "zora",
+   "meta": [
+    110,
+    141,
+    55,
+    98.5,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 36421,
+   "sculptMs": 6944,
+   "renderMs": 29363,
+   "tris": 36796,
+   "verts": 18313,
+   "h": 0.32,
+   "kb": 311.1,
+   "decodedMB": 10.89,
+   "idleWalkMB": 4.73,
+   "frames": 23,
+   "parts": [],
+   "pxmm": 3.143,
+   "sc": 0.828
+  },
+  "glykon": {
+   "key": "glykon",
+   "meta": [
+    96,
+    82,
+    48,
+    51.1,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 11399,
+   "sculptMs": 1095,
+   "renderMs": 10213,
+   "tris": 8844,
+   "verts": 4421,
+   "h": 0.26,
+   "kb": 231.9,
+   "decodedMB": 5.53,
+   "idleWalkMB": 2.4,
+   "frames": 23,
+   "parts": [],
+   "pxmm": 3.143,
+   "sc": 1.15
+  },
+  "arenosus": {
+   "key": "arenosus",
+   "meta": [
+    96,
+    82,
+    48,
+    51.1,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 8707,
+   "sculptMs": 921,
+   "renderMs": 7689,
+   "tris": 8844,
+   "verts": 4421,
+   "h": 0.26,
+   "kb": 228.9,
+   "decodedMB": 5.53,
+   "idleWalkMB": 2.4,
+   "frames": 23,
+   "parts": [],
+   "pxmm": 3.143,
+   "sc": 1.15
+  },
+  "tholo": {
+   "key": "tholo",
+   "meta": [
+    212,
+    228,
+    106,
+    141.6,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 295541,
+   "clothMs": 59,
+   "kb": 530.9,
+   "parts": [
+    {
+     "name": "tholo",
+     "meta": [
+      126,
+      152,
+      63,
+      120.6,
+      10
+     ],
+     "rows": [
+      "idle0",
+      "idle1",
+      "idle2",
+      "idle3",
+      "walk0",
+      "walk1",
+      "walk2",
+      "walk3",
+      "walk4",
+      "walk5"
+     ],
+     "kb": 246.3,
+     "decodedMB": 5.84
+    },
+    {
+     "name": "tholo_act",
+     "meta": [
+      212,
+      228,
+      106,
+      141.6,
+      13
+     ],
+     "rows": [
+      "attack0",
+      "attack1",
+      "attack2",
+      "attack3",
+      "attack4",
+      "hit0",
+      "hit1",
+      "hit2",
+      "die0",
+      "die1",
+      "die2",
+      "die3",
+      "die4"
+     ],
+     "kb": 314.3,
+     "decodedMB": 19.18
+    }
+   ],
+   "decodedMB": 33.93,
+   "idleWalkMB": 14.75,
+   "frames": 23,
+   "pxmm": 3.143
+  },
+  "commodus": {
+   "key": "commodus",
+   "meta": [
+    182,
+    203,
+    91,
+    129.6,
+    23
+   ],
+   "rows": [
+    "idle0",
+    "idle1",
+    "idle2",
+    "idle3",
+    "walk0",
+    "walk1",
+    "walk2",
+    "walk3",
+    "walk4",
+    "walk5",
+    "attack0",
+    "attack1",
+    "attack2",
+    "attack3",
+    "attack4",
+    "hit0",
+    "hit1",
+    "hit2",
+    "die0",
+    "die1",
+    "die2",
+    "die3",
+    "die4"
+   ],
+   "ms": 487780,
+   "clothMs": 31,
+   "kb": 557.3,
+   "parts": [
+    {
+     "name": "commodus",
+     "meta": [
+      112,
+      147,
+      56,
+      115.6,
+      10
+     ],
+     "rows": [
+      "idle0",
+      "idle1",
+      "idle2",
+      "idle3",
+      "walk0",
+      "walk1",
+      "walk2",
+      "walk3",
+      "walk4",
+      "walk5"
+     ],
+     "kb": 231.5,
+     "decodedMB": 5.02
+    },
+    {
+     "name": "commodus_act",
+     "meta": [
+      182,
+      203,
+      91,
+      129.6,
+      13
+     ],
+     "rows": [
+      "attack0",
+      "attack1",
+      "attack2",
+      "attack3",
+      "attack4",
+      "hit0",
+      "hit1",
+      "hit2",
+      "die0",
+      "die1",
+      "die2",
+      "die3",
+      "die4"
+     ],
+     "kb": 311.5,
+     "decodedMB": 14.66
+    }
+   ],
+   "decodedMB": 25.93,
+   "idleWalkMB": 11.28,
+   "frames": 23,
+   "pxmm": 3.143
+  }
+ },
+ "diag": {},
+ "cape": {
+  "n": 48,
+  "ms": 40,
+  "tiles": [
+   5,
+   4
+  ],
+  "w": 248,
+  "h": 274,
+  "scale": 1.417,
+  "kb": 194.2
+ },
+ "placed": [
+  "tholo",
+  "arenosus",
+  "zora",
+  "leaena",
+  "croc",
+  "spider",
+  "ursa",
+  "brutum",
+  "leo",
+  "commodus",
+  "boar",
+  "valencia",
+  "moechus",
+  "glykon",
+  "glad",
+  "glad2"
+ ],
+ "memory": {
+  "note": "decoded = cells x w x h x 4 bytes (8 facings per frame). \"idle+walk\" = what a beast on the board needs until it acts; round 3 Tholo/Commodus had ONE sheet, so loading them at all decoded the whole sheet.",
+  "beasts": {
+   "tholo": {
+    "round3": {
+     "sheet": "beast3_tholo_sheet.webp",
+     "cell": [
+      212,
+      228
+     ],
+     "frames": 23,
+     "kb": 512.0,
+     "decodedMB": 33.93,
+     "idleWalkRowsMB": 14.75,
+     "loadedForIdleWalkMB": 33.93
+    },
+    "round4": {
+     "idleWalk": {
+      "sheet": "beast4_tholo_sheet.webp",
+      "cell": [
+       126,
+       152
+      ],
+      "frames": 10,
+      "kb": 246.3,
+      "decodedMB": 5.84
+     },
+     "actions": {
+      "sheet": "beast4_tholo_act_sheet.webp",
+      "cell": [
+       212,
+       228
+      ],
+      "frames": 13,
+      "kb": 314.3,
+      "decodedMB": 19.18
+     },
+     "bothMB": 25.02,
+     "renderMin": 4.9
+    }
+   },
+   "commodus": {
+    "round3": {
+     "sheet": "beast3_commodus_sheet.webp",
+     "cell": [
+      182,
+      203
+     ],
+     "frames": 23,
+     "kb": 517.3,
+     "decodedMB": 25.93,
+     "idleWalkRowsMB": 11.28,
+     "loadedForIdleWalkMB": 25.93
+    },
+    "round4": {
+     "idleWalk": {
+      "sheet": "beast4_commodus_sheet.webp",
+      "cell": [
+       112,
+       147
+      ],
+      "frames": 10,
+      "kb": 231.5,
+      "decodedMB": 5.02
+     },
+     "actions": {
+      "sheet": "beast4_commodus_act_sheet.webp",
+      "cell": [
+       182,
+       203
+      ],
+      "frames": 13,
+      "kb": 311.5,
+      "decodedMB": 14.66
+     },
+     "bothMB": 19.68,
+     "renderMin": 8.1
+    }
+   },
+   "zora": {
+    "round3": {
+     "cell": [
+      110,
+      130
+     ],
+     "kb": 270.6,
+     "decodedMB": 10.04,
+     "idleWalkMB": 4.36
+    },
+    "round4": {
+     "cell": [
+      110,
+      141
+     ],
+     "kb": 311.1,
+     "decodedMB": 10.89,
+     "idleWalkMB": 4.73,
+     "renderS": 36
+    }
+   },
+   "glykon": {
+    "round3": {
+     "cell": [
+      96,
+      83
+     ],
+     "kb": 241.5,
+     "decodedMB": 5.59,
+     "idleWalkMB": 2.43
+    },
+    "round4": {
+     "cell": [
+      96,
+      82
+     ],
+     "kb": 231.9,
+     "decodedMB": 5.53,
+     "idleWalkMB": 2.4,
+     "renderS": 11
+    }
+   },
+   "arenosus": {
+    "round3": {
+     "cell": [
+      96,
+      83
+     ],
+     "kb": 237.8,
+     "decodedMB": 5.59,
+     "idleWalkMB": 2.43
+    },
+    "round4": {
+     "cell": [
+      96,
+      82
+     ],
+     "kb": 228.9,
+     "decodedMB": 5.53,
+     "idleWalkMB": 2.4,
+     "renderS": 9
+    }
+   }
+  },
+  "totals": {
+   "all14_round3MB": 184,
+   "all14_round4MB": 169.6,
+   "idleWalkOnly_round3MB_asReported": 76,
+   "tholoCommodus_idleWalk_round3MB_loaded": 59.86,
+   "tholoCommodus_idleWalk_round4MB": 10.86,
+   "deltaAllMB": -14.43,
+   "deltaIdleWalkVsLoadedMB": -48.69
+  }
+ }
+}
