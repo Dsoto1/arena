@@ -1,0 +1,228 @@
+[
+ {
+  "label": "online-landing",
+  "secs": 10,
+  "ok": true,
+  "calls": {},
+  "cdp": {
+   "taskMsPerS": 550,
+   "scriptMsPerS": 20,
+   "layoutPerS": 64.1,
+   "layoutMsPerS": 27,
+   "styleRecalcPerS": 64.1,
+   "styleMsPerS": 30
+  },
+  "trace": {
+   "decode": {
+    "n": 42,
+    "perS": 10.5,
+    "msPerS": 4
+   },
+   "paint": {
+    "n": 925,
+    "perS": 231.3,
+    "msPerS": 159
+   },
+   "commit": {
+    "n": 231,
+    "perS": 57.8,
+    "msPerS": 137
+   },
+   "layout": {
+    "n": 233,
+    "perS": 58.3,
+    "msPerS": 31
+   },
+   "style": {
+    "n": 233,
+    "perS": 58.3,
+    "msPerS": 30
+   },
+   "parseHTML": {
+    "n": 2,
+    "perS": 0.5,
+    "msPerS": 0
+   }
+  },
+  "innerHTML": {
+   "perS": 0.1,
+   "kcharsPerS": 0.1,
+   "top": [
+    {
+     "k": "#who100pL",
+     "n": 1,
+     "kch": 1,
+     "site": [
+      "who100Patch<who100Fetch"
+     ]
+    }
+   ]
+  },
+  "layoutReads": {
+   "perS": 0.6,
+   "sites": [
+    [
+     "gCS srv91Chip<perf92Run<perf92Beat",
+     1
+    ]
+   ]
+  },
+  "perf92Runs": {
+   "msave38": 9,
+   "night47": 8,
+   "bubbles47": 5,
+   "tint50": 6,
+   "speed52": 8,
+   "rail63": 8,
+   "hrs65": 8,
+   "tutlock66": 11,
+   "ofMeter67": 11,
+   "chrome69": 11,
+   "wager71": 11,
+   "rail73": 11,
+   "srInfo73": 8,
+   "tabchk73": 11,
+   "tip74": 11,
+   "avhit73": 11,
+   "pp73": 11,
+   "penOff76": 11,
+   "onlBar79": 11,
+   "onlCry80": 8,
+   "onlSay80": 11,
+   "rb82Fit": 11,
+   "faith85": 11,
+   "night85": 11,
+   "shelf87": 11,
+   "tally88": 11,
+   "stalls89": 8,
+   "srv91": 6,
+   "hr99": 9
+  },
+  "realIntervals": [
+   [
+    11.2,
+    "100ms ()=>{if(!AUD.ctx||!AUD.playing)return;const live2=audLive();const a2=a"
+   ],
+   [
+    10.2,
+    "110ms ()=>{try{if(HEADLESS||document.hidden||(typeof PERF92!=='undefined'&&P"
+   ],
+   [
+    9.3,
+    "120ms function plActFix82(){const B=document.body;if(!B.classList.contains('"
+   ],
+   [
+    5.6,
+    "200ms ()=>{try{if(onlmOn()&&!G89.busy)g89Flush()}catch(e){}}"
+   ],
+   [
+    4.4,
+    "250ms ()=>{if(!HEADLESS&&document.getElementById('audTracks'))audBarsSync()}"
+   ],
+   [
+    4.4,
+    "250ms ()=>{try{if(ONL80R.hq.length&&onlmOn())onl80Answer()}catch(e){}}"
+   ],
+   [
+    4.4,
+    "250ms ()=>{try{const el=document.getElementById('cd83');if(!el)return;const "
+   ],
+   [
+    3.7,
+    "300ms function plTick(){try{const B=document.body;const on=phoneLand(); if(o"
+   ],
+   [
+    3.7,
+    "300ms ()=>{try{onlWaitGuard81()}catch(e){}}"
+   ],
+   [
+    3.2,
+    "350ms ()=>{try{mtTick()}catch(e){}}"
+   ]
+  ],
+  "timeouts": [
+   [
+    4.4,
+    "250ms function perf92Beat(manual){if(!manual)PERF92.beatT=0;const now=perfor"
+   ],
+   [
+    0.2,
+    "40ms function a11ySync93(){A93.syncT=0;if(HEADLESS)return; /* closed dialog"
+   ],
+   [
+    0.1,
+    "80ms function () { [native code] }"
+   ],
+   [
+    0.1,
+    "30ms ()=>{try{setGridify()}catch(e){}}"
+   ],
+   [
+    0.1,
+    "40ms ()=>{t=0;try{imm88Sweep()}catch(e){console.error(e)}}"
+   ],
+   [
+    0.1,
+    "60ms ()=>{tm=0;const s=pend;pend=new Set();for(const r of s)if(r.isConnecte"
+   ],
+   [
+    0.1,
+    "90ms function glSweep(){try{{const i=TT.stack.findIndex(t=>!t.a.isConnected"
+   ],
+   [
+    0.1,
+    "150ms ()=>{tm=0;const list=[...pend];pend.clear();for(const n of list)if(n.i"
+   ]
+  ],
+  "raf": [
+   [
+    4.5,
+    "()=>{pend=false;try{av92Paint()}catch(e){console.error(e)}}"
+   ]
+  ],
+  "anims": {
+   "running": 9,
+   "offscreen": 0,
+   "by": [
+    [
+     "omapB .omap-dot",
+     {
+      "n": 6,
+      "off": 0
+     }
+    ],
+    [
+     "pulse #leadDot",
+     {
+      "n": 1,
+      "off": 0
+     }
+    ],
+    [
+     "mmglow .mmed",
+     {
+      "n": 1,
+      "off": 0
+     }
+    ],
+    [
+     "onlplay89 .on",
+     {
+      "n": 1,
+      "off": 0
+     }
+    ]
+   ]
+  },
+  "layers": null,
+  "mem": {
+   "heapMB0": 10.3,
+   "heapMB1": 10.3,
+   "nodes0": 2183,
+   "nodes1": 2183,
+   "docs": 34,
+   "listeners": 752
+  },
+  "idle": false
+ }
+]

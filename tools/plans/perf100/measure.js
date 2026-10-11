@@ -67,7 +67,9 @@ const MGR=async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));for(let i=0;i<
 (async()=>{const b=await chromium.launch();const all=[];
  try{
  if(WANT.includes('menu')||WANT.includes('menuidle')){const {pg,cdp}=await fresh(b);
-   if(WANT.includes('menu'))all.push(await measure(b,pg,cdp,'menu'));
+   if(WANT.includes('menu'))all.push(await measure(b,pg,cdp,'menu-show'));
+   /* the menu show plays ~28 s once (08-setup mmLoop), then the picture holds: measure the menu after it */
+   await pg.waitForFunction(()=>!MM.raf,null,{timeout:60000}).catch(()=>{});await pg.waitForTimeout(1000);if(WANT.includes('menu'))all.push(await measure(b,pg,cdp,'menu-still'));
    if(WANT.includes('menuidle')){await pg.evaluate(()=>{PERF92.lastInput=PERF92.lastAct=performance.now()-PERF92_IDLE_MS-5000;perf92Beat(true)});await pg.waitForTimeout(1500);all.push(await measure(b,pg,cdp,'menuidle'))}
    await pg.close()}
  if(WANT.includes('event')){const {pg,cdp}=await fresh(b);
@@ -89,7 +91,11 @@ const MGR=async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));for(let i=0;i<
    await pg.close()}
  if(WANT.includes('online')){const {pg,cdp}=await fresh(b,'?onl');await pg.evaluate(()=>localStorage.removeItem('flavius_onlmock'));
    await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));for(let i=0;i<30&&CUR_MODAL;i++){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(150)}onlineOpen('play')});
-   const ok=await pg.waitForFunction(()=>!!document.querySelector('#onl'),null,{timeout:30000}).then(()=>true).catch(()=>false);await pg.waitForTimeout(4000);all.push(await measure(b,pg,cdp,'online-landing',{ok}));await pg.close()}
+   await pg.waitForFunction(()=>!!document.querySelector('#onl input'),null,{timeout:30000}).catch(()=>{});
+   /* mock sign-in with a name, then the landing (no gladiator yet); wait for the main-menu show behind it to end */
+   await pg.fill('#onl input','Perfus').catch(()=>{});await pg.click('#onl button:has-text("Enter")').catch(()=>{});
+   const ok=await pg.waitForFunction(()=>!!document.querySelector('#onl #onlStageMap81, #onl .omap-in, #onl [data-onlnav]'),null,{timeout:30000}).then(()=>true).catch(()=>false);
+   await pg.waitForFunction(()=>!MM.raf,null,{timeout:60000}).catch(()=>{});await pg.waitForTimeout(1000);all.push(await measure(b,pg,cdp,'online-landing',{ok}));await pg.close()}
  if(WANT.includes('studio')){const {pg,cdp}=await fresh(b);await pg.evaluate(async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));for(let i=0;i<30&&CUR_MODAL;i++){CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.value:null);await W8(150)}menuHide();openStudio('chars');await W8(3000)});
    all.push(await measure(b,pg,cdp,'studio-chars'));await pg.close()}
  }catch(e){console.log('ERR',e.message)}

@@ -1,0 +1,974 @@
+{
+ "files": 280,
+ "topNames": 5301,
+ "wrapped": 759,
+ "top30": [
+  {
+   "name": "endWeek",
+   "decl": "17-manager.js",
+   "kind": "function",
+   "layers": 35,
+   "assigns": 35,
+   "modules": 30,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "mgrHTML",
+   "decl": "17-manager.js",
+   "kind": "function",
+   "layers": 29,
+   "assigns": 29,
+   "modules": 23,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "modal",
+   "decl": "07-ui.js",
+   "kind": "function",
+   "layers": 23,
+   "assigns": 23,
+   "modules": 22,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "render",
+   "decl": "07-ui.js",
+   "kind": "function",
+   "layers": 22,
+   "assigns": 22,
+   "modules": 20,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "beginTurn",
+   "decl": "05-flow.js",
+   "kind": "function",
+   "layers": 18,
+   "assigns": 18,
+   "modules": 18,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "nightHTML",
+   "decl": "17-manager.js",
+   "kind": "function",
+   "layers": 17,
+   "assigns": 17,
+   "modules": 16,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "gameOver",
+   "decl": "10-meta.js",
+   "kind": "function",
+   "layers": 16,
+   "assigns": 16,
+   "modules": 15,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "newWorld",
+   "decl": "17-manager.js",
+   "kind": "function",
+   "layers": 15,
+   "assigns": 15,
+   "modules": 14,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "startEvent",
+   "decl": "05-flow.js",
+   "kind": "function",
+   "layers": 15,
+   "assigns": 15,
+   "modules": 13,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "applyBout",
+   "decl": "17-manager.js",
+   "kind": "function",
+   "layers": 14,
+   "assigns": 14,
+   "modules": 12,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "settingsHTML",
+   "decl": "12-settings.js",
+   "kind": "function",
+   "layers": 14,
+   "assigns": 14,
+   "modules": 14,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "newState",
+   "decl": "05-flow.js",
+   "kind": "function",
+   "layers": 13,
+   "assigns": 13,
+   "modules": 12,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "menuShow",
+   "decl": "08-setup.js",
+   "kind": "function",
+   "layers": 12,
+   "assigns": 13,
+   "modules": 12,
+   "replacements": [
+    "52-v50.js:31"
+   ],
+   "droppedWrapperSlots": 1
+  },
+  {
+   "name": "detailHTML",
+   "decl": "17-manager.js",
+   "kind": "function",
+   "layers": 12,
+   "assigns": 12,
+   "modules": 10,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "weekChecklist",
+   "decl": "88-v68.js",
+   "kind": "function",
+   "layers": 12,
+   "assigns": 12,
+   "modules": 12,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "draw",
+   "decl": "07-ui.js",
+   "kind": "function",
+   "layers": 12,
+   "assigns": 12,
+   "modules": 12,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "onlPlayHTML",
+   "decl": "112-online.js",
+   "kind": "function",
+   "layers": 12,
+   "assigns": 13,
+   "modules": 13,
+   "replacements": [
+    "124-v81onl.js:194"
+   ],
+   "droppedWrapperSlots": 2
+  },
+  {
+   "name": "log",
+   "decl": "03-engine.js",
+   "kind": "function",
+   "layers": 11,
+   "assigns": 11,
+   "modules": 11,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "mkPlayer",
+   "decl": "05-flow.js",
+   "kind": "function",
+   "layers": 11,
+   "assigns": 11,
+   "modules": 10,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "drawPlayer",
+   "decl": "07-ui.js",
+   "kind": "function",
+   "layers": 11,
+   "assigns": 11,
+   "modules": 11,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "boardHTML",
+   "decl": "07-ui.js",
+   "kind": "function",
+   "layers": 10,
+   "assigns": 10,
+   "modules": 10,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "onlRoomHTML80",
+   "decl": "118-onl80.js",
+   "kind": "function",
+   "layers": 10,
+   "assigns": 10,
+   "modules": 10,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "setupBody",
+   "decl": "08-setup.js",
+   "kind": "function",
+   "layers": 9,
+   "assigns": 9,
+   "modules": 9,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "practiceHTML",
+   "decl": "17-manager.js",
+   "kind": "function",
+   "layers": 9,
+   "assigns": 9,
+   "modules": 7,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "gearAHTML",
+   "decl": "26-gear.js",
+   "kind": "function",
+   "layers": 9,
+   "assigns": 9,
+   "modules": 7,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "onlRedraw",
+   "decl": "112-online.js",
+   "kind": "function",
+   "layers": 9,
+   "assigns": 9,
+   "modules": 9,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "mgrMigrate",
+   "decl": "17-manager.js",
+   "kind": "function",
+   "layers": 8,
+   "assigns": 8,
+   "modules": 8,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "infirmaryHTML",
+   "decl": "17-manager.js",
+   "kind": "function",
+   "layers": 8,
+   "assigns": 9,
+   "modules": 8,
+   "replacements": [
+    "42-rooms.js:20"
+   ],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "doAttack",
+   "decl": "04-rules.js",
+   "kind": "function",
+   "layers": 8,
+   "assigns": 8,
+   "modules": 8,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  },
+  {
+   "name": "charEditorHTML",
+   "decl": "15-custom.js",
+   "kind": "function",
+   "layers": 8,
+   "assigns": 8,
+   "modules": 8,
+   "replacements": [],
+   "droppedWrapperSlots": 0
+  }
+ ],
+ "withReplacements": [
+  {
+   "name": "portraitSVG",
+   "decl": "15-custom.js",
+   "kind": "function",
+   "layers": 2,
+   "assigns": 4,
+   "modules": 4,
+   "replacements": [
+    "263-v99face.js:130",
+    "268-v99face2.js:673"
+   ],
+   "droppedWrapperSlots": 4
+  },
+  {
+   "name": "mmAfterClose",
+   "decl": "08-setup.js",
+   "kind": "function",
+   "layers": 2,
+   "assigns": 4,
+   "modules": 4,
+   "replacements": [
+    "79-screens.js:40",
+    "166-v89fix.js:21"
+   ],
+   "droppedWrapperSlots": 4
+  },
+  {
+   "name": "fx",
+   "decl": "11-extra.js",
+   "kind": "function",
+   "layers": 2,
+   "assigns": 4,
+   "modules": 3,
+   "replacements": [
+    "268-v99face2.js:598",
+    "268-v99face2.js:598"
+   ],
+   "droppedWrapperSlots": 4
+  },
+  {
+   "name": "onlPlayHTML",
+   "decl": "112-online.js",
+   "kind": "function",
+   "layers": 12,
+   "assigns": 13,
+   "modules": 13,
+   "replacements": [
+    "124-v81onl.js:194"
+   ],
+   "droppedWrapperSlots": 2
+  },
+  {
+   "name": "wardHTML76",
+   "decl": "108-v76.js",
+   "kind": "function",
+   "layers": 1,
+   "assigns": 3,
+   "modules": 3,
+   "replacements": [
+    "151-v87ward.js:64",
+    "183-v90ward.js:167"
+   ],
+   "droppedWrapperSlots": 2
+  },
+  {
+   "name": "menuShow",
+   "decl": "08-setup.js",
+   "kind": "function",
+   "layers": 12,
+   "assigns": 13,
+   "modules": 12,
+   "replacements": [
+    "52-v50.js:31"
+   ],
+   "droppedWrapperSlots": 1
+  },
+  {
+   "name": "giveLoadout",
+   "decl": "05-flow.js",
+   "kind": "function",
+   "layers": 6,
+   "assigns": 7,
+   "modules": 7,
+   "replacements": [
+    "62-rules53.js:27"
+   ],
+   "droppedWrapperSlots": 1
+  },
+  {
+   "name": "rosterStudioHTML",
+   "decl": "44-studio.js",
+   "kind": "function",
+   "layers": 3,
+   "assigns": 4,
+   "modules": 4,
+   "replacements": [
+    "110-v77.js:58"
+   ],
+   "droppedWrapperSlots": 1
+  },
+  {
+   "name": "yard87Row",
+   "decl": "150-v87mgr.js",
+   "kind": "function",
+   "layers": 3,
+   "assigns": 4,
+   "modules": 3,
+   "replacements": [
+    "184-v90yard.js:67"
+   ],
+   "droppedWrapperSlots": 1
+  },
+  {
+   "name": "marketBuy75",
+   "decl": "106-v75.js",
+   "kind": "function",
+   "layers": 2,
+   "assigns": 3,
+   "modules": 3,
+   "replacements": [
+    "179-v89market.js:50"
+   ],
+   "droppedWrapperSlots": 1
+  },
+  {
+   "name": "audListRefresh",
+   "decl": "21-audio.js",
+   "kind": "function",
+   "layers": 1,
+   "assigns": 3,
+   "modules": 3,
+   "replacements": [
+    "45-music.js:124",
+    "159-v88set.js:41"
+   ],
+   "droppedWrapperSlots": 1
+  },
+  {
+   "name": "showRules",
+   "decl": "08-setup.js",
+   "kind": "function",
+   "layers": 1,
+   "assigns": 2,
+   "modules": 2,
+   "replacements": [
+    "246-v98ui.js:306"
+   ],
+   "droppedWrapperSlots": 1
+  },
+  {
+   "name": "d89Kits",
+   "decl": "175-v89domus.js",
+   "kind": "function",
+   "layers": 1,
+   "assigns": 2,
+   "modules": 2,
+   "replacements": [
+    "234-v96onl.js:107"
+   ],
+   "droppedWrapperSlots": 1
+  },
+  {
+   "name": "l89ProfHTML",
+   "decl": "180-v89profile.js",
+   "kind": "function",
+   "layers": 1,
+   "assigns": 2,
+   "modules": 2,
+   "replacements": [
+    "252-v98onl.js:203"
+   ],
+   "droppedWrapperSlots": 1
+  }
+ ],
+ "globals": [
+  {
+   "name": "S",
+   "decl": "03-engine.js",
+   "kind": "let",
+   "files": 159,
+   "writers": 71
+  },
+  {
+   "name": "ctx",
+   "decl": "07-ui.js",
+   "kind": "const",
+   "files": 60,
+   "writers": 44
+  },
+  {
+   "name": "MGR",
+   "decl": "17-manager.js",
+   "kind": "const",
+   "files": 59,
+   "writers": 34
+  },
+  {
+   "name": "ST",
+   "decl": "15-custom.js",
+   "kind": "let",
+   "files": 36,
+   "writers": 28
+  },
+  {
+   "name": "SETTINGS",
+   "decl": "12-settings.js",
+   "kind": "let",
+   "files": 49,
+   "writers": 21
+  },
+  {
+   "name": "CFG",
+   "decl": "08-setup.js",
+   "kind": "let",
+   "files": 29,
+   "writers": 20
+  },
+  {
+   "name": "NET",
+   "decl": "112-online.js",
+   "kind": "const",
+   "files": 26,
+   "writers": 20
+  },
+  {
+   "name": "ONL",
+   "decl": "112-online.js",
+   "kind": "const",
+   "files": 31,
+   "writers": 18
+  },
+  {
+   "name": "MOCK_ROUTES",
+   "decl": "112-online.js",
+   "kind": "const",
+   "files": 21,
+   "writers": 17
+  },
+  {
+   "name": "cv",
+   "decl": "07-ui.js",
+   "kind": "const",
+   "files": 38,
+   "writers": 13
+  },
+  {
+   "name": "W",
+   "decl": "02-data.js",
+   "kind": "const",
+   "files": 77,
+   "writers": 11
+  },
+  {
+   "name": "CUSTOM",
+   "decl": "15-custom.js",
+   "kind": "const",
+   "files": 42,
+   "writers": 10
+  },
+  {
+   "name": "MM",
+   "decl": "08-setup.js",
+   "kind": "const",
+   "files": 13,
+   "writers": 10
+  },
+  {
+   "name": "ARM",
+   "decl": "02-data.js",
+   "kind": "const",
+   "files": 59,
+   "writers": 9
+  },
+  {
+   "name": "uid",
+   "decl": "03-engine.js",
+   "kind": "let",
+   "files": 11,
+   "writers": 9
+  },
+  {
+   "name": "ONLM",
+   "decl": "113-onlmatch.js",
+   "kind": "const",
+   "files": 12,
+   "writers": 8
+  },
+  {
+   "name": "CITY",
+   "decl": "25-city.js",
+   "kind": "const",
+   "files": 16,
+   "writers": 7
+  },
+  {
+   "name": "CLASSES",
+   "decl": "02-data.js",
+   "kind": "const",
+   "files": 80,
+   "writers": 6
+  },
+  {
+   "name": "CARDS",
+   "decl": "02-data.js",
+   "kind": "const",
+   "files": 21,
+   "writers": 6
+  },
+  {
+   "name": "ONL82",
+   "decl": "127-v82onl.js",
+   "kind": "const",
+   "files": 6,
+   "writers": 6
+  },
+  {
+   "name": "SPEED",
+   "decl": "02-data.js",
+   "kind": "let",
+   "files": 25,
+   "writers": 5
+  },
+  {
+   "name": "AUD",
+   "decl": "21-audio.js",
+   "kind": "const",
+   "files": 13,
+   "writers": 5
+  },
+  {
+   "name": "RNG",
+   "decl": "02-data.js",
+   "kind": "let",
+   "files": 6,
+   "writers": 5
+  },
+  {
+   "name": "NEWMGR",
+   "decl": "17-manager.js",
+   "kind": "let",
+   "files": 6,
+   "writers": 5
+  },
+  {
+   "name": "ONLF",
+   "decl": "118-onl80.js",
+   "kind": "const",
+   "files": 5,
+   "writers": 5
+  },
+  {
+   "name": "Store",
+   "decl": "10-meta.js",
+   "kind": "const",
+   "files": 38,
+   "writers": 4
+  },
+  {
+   "name": "LUDUS_CACHE",
+   "decl": "11-extra.js",
+   "kind": "let",
+   "files": 17,
+   "writers": 4
+  },
+  {
+   "name": "ONL83",
+   "decl": "133-v83onl.js",
+   "kind": "const",
+   "files": 11,
+   "writers": 4
+  },
+  {
+   "name": "HINTS",
+   "decl": "11-extra.js",
+   "kind": "let",
+   "files": 8,
+   "writers": 4
+  },
+  {
+   "name": "ARM_FIT",
+   "decl": "90-armfit.js",
+   "kind": "const",
+   "files": 7,
+   "writers": 4
+  }
+ ],
+ "globalsByFiles": [
+  {
+   "name": "S",
+   "decl": "03-engine.js",
+   "kind": "let",
+   "files": 159,
+   "writers": 71
+  },
+  {
+   "name": "HEADLESS",
+   "decl": "02-data.js",
+   "kind": "let",
+   "files": 95,
+   "writers": 1
+  },
+  {
+   "name": "CLASSES",
+   "decl": "02-data.js",
+   "kind": "const",
+   "files": 80,
+   "writers": 6
+  },
+  {
+   "name": "W",
+   "decl": "02-data.js",
+   "kind": "const",
+   "files": 77,
+   "writers": 11
+  },
+  {
+   "name": "ctx",
+   "decl": "07-ui.js",
+   "kind": "const",
+   "files": 60,
+   "writers": 44
+  },
+  {
+   "name": "MGR",
+   "decl": "17-manager.js",
+   "kind": "const",
+   "files": 59,
+   "writers": 34
+  },
+  {
+   "name": "ARM",
+   "decl": "02-data.js",
+   "kind": "const",
+   "files": 59,
+   "writers": 9
+  },
+  {
+   "name": "N",
+   "decl": "02-data.js",
+   "kind": "const",
+   "files": 57,
+   "writers": 0
+  },
+  {
+   "name": "TW",
+   "decl": "03-engine.js",
+   "kind": "let",
+   "files": 52,
+   "writers": 2
+  },
+  {
+   "name": "SETTINGS",
+   "decl": "12-settings.js",
+   "kind": "let",
+   "files": 49,
+   "writers": 21
+  },
+  {
+   "name": "LOCATIONS",
+   "decl": "02-data.js",
+   "kind": "const",
+   "files": 48,
+   "writers": 0
+  },
+  {
+   "name": "CUR_MODAL",
+   "decl": "07-ui.js",
+   "kind": "let",
+   "files": 45,
+   "writers": 0
+  },
+  {
+   "name": "CUSTOM",
+   "decl": "15-custom.js",
+   "kind": "const",
+   "files": 42,
+   "writers": 10
+  },
+  {
+   "name": "cv",
+   "decl": "07-ui.js",
+   "kind": "const",
+   "files": 38,
+   "writers": 13
+  },
+  {
+   "name": "Store",
+   "decl": "10-meta.js",
+   "kind": "const",
+   "files": 38,
+   "writers": 4
+  }
+ ],
+ "functionsUsedByMostFiles": [
+  {
+   "name": "_T",
+   "files": 230
+  },
+  {
+   "name": "esc",
+   "files": 163
+  },
+  {
+   "name": "me",
+   "files": 91
+  },
+  {
+   "name": "cur",
+   "files": 90
+  },
+  {
+   "name": "nm",
+   "files": 87
+  },
+  {
+   "name": "mToast",
+   "files": 85
+  },
+  {
+   "name": "R",
+   "files": 82
+  },
+  {
+   "name": "coinAmt87",
+   "files": 78
+  },
+  {
+   "name": "W_",
+   "files": 71
+  },
+  {
+   "name": "log",
+   "files": 60
+  },
+  {
+   "name": "modal",
+   "files": 60
+  },
+  {
+   "name": "cfAmt87",
+   "files": 58
+  },
+  {
+   "name": "draw",
+   "files": 56
+  },
+  {
+   "name": "render",
+   "files": 52
+  },
+  {
+   "name": "gById",
+   "files": 51
+  }
+ ],
+ "sFields": {
+  "distinctWritten": 176,
+  "top": [
+   {
+    "field": "over",
+    "modules": 11
+   },
+   {
+    "field": "pillars",
+    "modules": 8
+   },
+   {
+    "field": "mode",
+    "modules": 7
+   },
+   {
+    "field": "busy",
+    "modules": 7
+   },
+   {
+    "field": "floor",
+    "modules": 5
+   },
+   {
+    "field": "chest",
+    "modules": 5
+   },
+   {
+    "field": "phase",
+    "modules": 5
+   },
+   {
+    "field": "zoomIn",
+    "modules": 5
+   },
+   {
+    "field": "bubbles",
+    "modules": 4
+   },
+   {
+    "field": "spikes",
+    "modules": 4
+   },
+   {
+    "field": "npcs",
+    "modules": 4
+   },
+   {
+    "field": "deck",
+    "modules": 4
+   },
+   {
+    "field": "rubble",
+    "modules": 4
+   },
+   {
+    "field": "boardPid",
+    "modules": 4
+   },
+   {
+    "field": "overShown",
+    "modules": 4
+   },
+   {
+    "field": "bag",
+    "modules": 3
+   },
+   {
+    "field": "snap",
+    "modules": 3
+   },
+   {
+    "field": "tosses",
+    "modules": 3
+   },
+   {
+    "field": "spect",
+    "modules": 3
+   },
+   {
+    "field": "attendance",
+    "modules": 3
+   },
+   {
+    "field": "stonesThrown",
+    "modules": 3
+   },
+   {
+    "field": "blood",
+    "modules": 2
+   },
+   {
+    "field": "lastDmgRot",
+    "modules": 2
+   },
+   {
+    "field": "elims",
+    "modules": 2
+   },
+   {
+    "field": "pendingCommodus",
+    "modules": 2
+   }
+  ]
+ }
+}

@@ -1,0 +1,604 @@
+[
+ {
+  "label": "event-normal",
+  "secs": 10,
+  "calls": {
+   "renderTurnInd": {
+    "perS": 3,
+    "msPerS": 1.7
+   },
+   "computeHL": {
+    "perS": 18.3,
+    "msPerS": 0.3
+   },
+   "drawStands": {
+    "perS": 18.3,
+    "msPerS": 17.5
+   },
+   "renderBubbles": {
+    "perS": 18.3,
+    "msPerS": 1.8
+   },
+   "draw": {
+    "perS": 18.3,
+    "msPerS": 158.2
+   },
+   "sideApply": {
+    "perS": 3,
+    "msPerS": 1.4
+   },
+   "render": {
+    "perS": 5.1,
+    "msPerS": 165.6
+   }
+  },
+  "cdp": {
+   "taskMsPerS": 929,
+   "scriptMsPerS": 188,
+   "layoutPerS": 9.5,
+   "layoutMsPerS": 41,
+   "styleRecalcPerS": 37.6,
+   "styleMsPerS": 73
+  },
+  "trace": {
+   "decode": {
+    "n": 302,
+    "perS": 75.5,
+    "msPerS": 37
+   },
+   "paint": {
+    "n": 198,
+    "perS": 49.5,
+    "msPerS": 48
+   },
+   "commit": {
+    "n": 62,
+    "perS": 15.5,
+    "msPerS": 303
+   },
+   "layout": {
+    "n": 53,
+    "perS": 13.3,
+    "msPerS": 36
+   },
+   "style": {
+    "n": 133,
+    "perS": 33.3,
+    "msPerS": 68
+   },
+   "parseHTML": {
+    "n": 826,
+    "perS": 206.5,
+    "msPerS": 33
+   }
+  },
+  "innerHTML": {
+   "perS": 109.8,
+   "kcharsPerS": 330.4,
+   "top": [
+    {
+     "k": "#board",
+     "n": 30,
+     "kch": 1455,
+     "site": [
+      "render<render<render"
+     ]
+    },
+    {
+     "k": "#npcPanel",
+     "n": 30,
+     "kch": 1294,
+     "site": [
+      "render<render<render"
+     ]
+    },
+    {
+     "k": "#roster",
+     "n": 30,
+     "kch": 323,
+     "site": [
+      "render<render<render"
+     ]
+    },
+    {
+     "k": "TEMPLATE",
+     "n": 194,
+     "kch": 126,
+     "site": [
+      "b98Attack<bar98Grid<bar98Apply",
+      "bar96Grid<bar96Apply<render"
+     ]
+    },
+    {
+     "k": "#status",
+     "n": 30,
+     "kch": 20,
+     "site": [
+      "render<render<render"
+     ]
+    },
+    {
+     "k": ".f96",
+     "n": 2,
+     "kch": 12,
+     "site": [
+      "bar96Face<bar96Apply<render"
+     ]
+    },
+    {
+     "k": ".btn",
+     "n": 52,
+     "kch": 12,
+     "site": [
+      "b98Face<b98Attack<bar98Grid"
+     ]
+    },
+    {
+     "k": "#sideTabs",
+     "n": 30,
+     "kch": 10,
+     "site": [
+      "sideApply<window.<computed><render"
+     ]
+    }
+   ]
+  },
+  "layoutReads": {
+   "perS": 189.9,
+   "sites": [
+    [
+     "gCS a11yBg93<a11yLift93<a11yNameAll93",
+     81
+    ],
+    [
+     "gCS a11yLift93<a11yNameAll93<run",
+     13
+    ],
+    [
+     "gBCR bar88Hold<fitReserve<draw",
+     1
+    ]
+   ]
+  },
+  "perf92Runs": {
+   "msave38": 16,
+   "night47": 13,
+   "bubbles47": 11,
+   "tint50": 11,
+   "speed52": 13,
+   "rail63": 13,
+   "hrs65": 13,
+   "tutlock66": 31,
+   "ofMeter67": 31,
+   "chrome69": 34,
+   "wager71": 31,
+   "rail73": 17,
+   "srInfo73": 13,
+   "tabchk73": 17,
+   "tip74": 26,
+   "avhit73": 21,
+   "pp73": 31,
+   "penOff76": 19,
+   "onlBar79": 17,
+   "onlCry80": 13,
+   "onlSay80": 17,
+   "rb82Fit": 19,
+   "faith85": 19,
+   "night85": 17,
+   "shelf87": 34,
+   "tally88": 19,
+   "stalls89": 13,
+   "srv91": 11,
+   "hr99": 16
+  },
+  "realIntervals": [
+   [
+    7.4,
+    "100ms ()=>{if(!AUD.ctx||!AUD.playing)return;const live2=audLive();const a2=a"
+   ],
+   [
+    7,
+    "110ms ()=>{try{if(HEADLESS||document.hidden||(typeof PERF92!=='undefined'&&P"
+   ],
+   [
+    6.7,
+    "120ms function plActFix82(){const B=document.body;if(!B.classList.contains('"
+   ],
+   [
+    5,
+    "200ms ()=>{try{if(onlmOn()&&!G89.busy)g89Flush()}catch(e){}}"
+   ],
+   [
+    4.4,
+    "250ms ()=>{try{const el=document.getElementById('cd83');if(!el)return;const "
+   ],
+   [
+    4.3,
+    "250ms ()=>{try{if(ONL80R.hq.length&&onlmOn())onl80Answer()}catch(e){}}"
+   ],
+   [
+    4.2,
+    "250ms ()=>{if(!HEADLESS&&document.getElementById('audTracks'))audBarsSync()}"
+   ],
+   [
+    3.8,
+    "300ms function plTick(){try{const B=document.body;const on=phoneLand(); if(o"
+   ],
+   [
+    3.8,
+    "300ms ()=>{try{onlWaitGuard81()}catch(e){}}"
+   ],
+   [
+    3.7,
+    "300ms ()=>{if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.val"
+   ]
+  ],
+  "timeouts": [
+   [
+    5.4,
+    "40ms function a11ySync93(){A93.syncT=0;if(HEADLESS)return; /* closed dialog"
+   ],
+   [
+    4.8,
+    "30ms function(){if(e94Testing())return isAsync?Promise.resolve(null):null;r"
+   ],
+   [
+    4.2,
+    "40ms ()=>{t=0;try{imm88Sweep()}catch(e){console.error(e)}}"
+   ],
+   [
+    3.9,
+    "60ms ()=>{tm=0;const s=pend;pend=new Set();for(const r of s)if(r.isConnecte"
+   ],
+   [
+    3.5,
+    "30ms ()=>{try{setGridify()}catch(e){}}"
+   ],
+   [
+    3.3,
+    "250ms function perf92Beat(manual){if(!manual)PERF92.beatT=0;const now=perfor"
+   ],
+   [
+    3.2,
+    "150ms ()=>{tm=0;const list=[...pend];pend.clear();for(const n of list)if(n.i"
+   ],
+   [
+    3.1,
+    "100ms () => { const now = performance.now(), sp = SPEED; if (sp === 'pause')"
+   ]
+  ],
+  "raf": [
+   [
+    10.4,
+    "()=>{fxRAF=null;try{draw()}catch(e){}if(FX.length||FXL.length||HITFX.l"
+   ],
+   [
+    8,
+    "()=>{pend=false;try{av92Paint()}catch(e){console.error(e)}}"
+   ],
+   [
+    0.7,
+    "()=>{ANIM_RAF=null;try{draw()}catch(e){}if(PROJ.length||CORPSES.some(c"
+   ]
+  ],
+  "anims": {
+   "running": 2,
+   "offscreen": 0,
+   "by": [
+    [
+     "pulse #leadDot",
+     {
+      "n": 1,
+      "off": 0
+     }
+    ],
+    [
+     "pulse .dot",
+     {
+      "n": 1,
+      "off": 0
+     }
+    ]
+   ]
+  },
+  "layers": {
+   "frames": 183,
+   "rows": [
+    {
+     "n": "rim",
+     "avg": 0.04,
+     "max": 0.2
+    },
+    {
+     "n": "stands",
+     "avg": 0.788,
+     "max": 34
+    },
+    {
+     "n": "stands/under",
+     "hit": 183,
+     "miss": 0,
+     "paint": 0,
+     "blit": 0.1
+    },
+    {
+     "n": "stands/deco",
+     "hit": 183,
+     "miss": 0,
+     "paint": 0,
+     "blit": 0
+    },
+    {
+     "n": "tiles",
+     "avg": 0.082,
+     "max": 41.2
+    },
+    {
+     "n": "walls",
+     "avg": 0.212,
+     "max": 1.1
+    },
+    {
+     "n": "walls/top",
+     "hit": 183,
+     "miss": 0,
+     "paint": 0,
+     "blit": 0
+    },
+    {
+     "n": "walls/light",
+     "hit": 183,
+     "miss": 0,
+     "paint": 0,
+     "blit": 0
+    },
+    {
+     "n": "walls/sky",
+     "hit": 183,
+     "miss": 0,
+     "paint": 0,
+     "blit": 0.1
+    },
+    {
+     "n": "floor",
+     "avg": 0.74,
+     "max": 15.5
+    },
+    {
+     "n": "decals",
+     "avg": 1.247,
+     "max": 5.9
+    },
+    {
+     "n": "decals/wear",
+     "hit": 164,
+     "miss": 19,
+     "paint": 0.5,
+     "blit": 0.1
+    },
+    {
+     "n": "highlights",
+     "avg": 0.005,
+     "max": 0.1
+    },
+    {
+     "n": "pieces",
+     "avg": 2.28,
+     "max": 38.1
+    },
+    {
+     "n": "overlays",
+     "avg": 0.02,
+     "max": 0.3
+    },
+    {
+     "n": "crowdtop",
+     "avg": 0.01,
+     "max": 0.2
+    },
+    {
+     "n": "flavius",
+     "avg": 0.2,
+     "max": 1.8
+    },
+    {
+     "n": "fx",
+     "avg": 0.235,
+     "max": 4.1
+    },
+    {
+     "n": "duel",
+     "avg": 0.018,
+     "max": 0.2
+    }
+   ]
+  },
+  "mem": {
+   "heapMB0": 11.2,
+   "heapMB1": 11.2,
+   "nodes0": 2426,
+   "nodes1": 2542,
+   "docs": 42,
+   "listeners": 746
+  },
+  "idle": false,
+  "turns": 4
+ },
+ {
+  "label": "event-paused",
+  "secs": 10,
+  "calls": {},
+  "cdp": {
+   "taskMsPerS": 334,
+   "scriptMsPerS": 12,
+   "layoutPerS": 0,
+   "layoutMsPerS": 0,
+   "styleRecalcPerS": 62.9,
+   "styleMsPerS": 10
+  },
+  "trace": {
+   "decode": {
+    "n": 0,
+    "perS": 0,
+    "msPerS": 0
+   },
+   "paint": {
+    "n": 725,
+    "perS": 181.3,
+    "msPerS": 117
+   },
+   "commit": {
+    "n": 241,
+    "perS": 60.3,
+    "msPerS": 110
+   },
+   "layout": {
+    "n": 0,
+    "perS": 0,
+    "msPerS": 0
+   },
+   "style": {
+    "n": 240,
+    "perS": 60,
+    "msPerS": 10
+   },
+   "parseHTML": {
+    "n": 0,
+    "perS": 0,
+    "msPerS": 0
+   }
+  },
+  "innerHTML": {
+   "perS": 0,
+   "kcharsPerS": 0,
+   "top": []
+  },
+  "layoutReads": {
+   "perS": 0,
+   "sites": []
+  },
+  "perf92Runs": {
+   "msave38": 11,
+   "night47": 12,
+   "bubbles47": 8,
+   "tint50": 8,
+   "speed52": 12,
+   "rail63": 12,
+   "hrs65": 12,
+   "tutlock66": 17,
+   "ofMeter67": 17,
+   "chrome69": 32,
+   "wager71": 17,
+   "rail73": 18,
+   "srInfo73": 12,
+   "tabchk73": 18,
+   "tip74": 17,
+   "avhit73": 17,
+   "pp73": 17,
+   "penOff76": 17,
+   "onlBar79": 18,
+   "onlCry80": 12,
+   "onlSay80": 18,
+   "rb82Fit": 17,
+   "faith85": 17,
+   "night85": 18,
+   "shelf87": 32,
+   "tally88": 17,
+   "stalls89": 12,
+   "srv91": 8,
+   "hr99": 11
+  },
+  "realIntervals": [
+   [
+    10.5,
+    "100ms ()=>{if(!AUD.ctx||!AUD.playing)return;const live2=audLive();const a2=a"
+   ],
+   [
+    9.6,
+    "110ms ()=>{try{if(HEADLESS||document.hidden||(typeof PERF92!=='undefined'&&P"
+   ],
+   [
+    8.8,
+    "120ms function plActFix82(){const B=document.body;if(!B.classList.contains('"
+   ],
+   [
+    5.2,
+    "200ms ()=>{try{if(onlmOn()&&!G89.busy)g89Flush()}catch(e){}}"
+   ],
+   [
+    4.2,
+    "250ms ()=>{if(!HEADLESS&&document.getElementById('audTracks'))audBarsSync()}"
+   ],
+   [
+    4.2,
+    "250ms ()=>{try{if(ONL80R.hq.length&&onlmOn())onl80Answer()}catch(e){}}"
+   ],
+   [
+    4.2,
+    "250ms ()=>{try{const el=document.getElementById('cd83');if(!el)return;const "
+   ],
+   [
+    3.5,
+    "300ms ()=>{if(CUR_MODAL)CUR_MODAL.done(CUR_MODAL.closeB?CUR_MODAL.closeB.val"
+   ],
+   [
+    3.5,
+    "300ms function plTick(){try{const B=document.body;const on=phoneLand(); if(o"
+   ],
+   [
+    3.5,
+    "300ms ()=>{try{onlWaitGuard81()}catch(e){}}"
+   ]
+  ],
+  "timeouts": [
+   [
+    8.6,
+    "120ms () => { const now = performance.now(), sp = SPEED; if (sp === 'pause')"
+   ],
+   [
+    4.1,
+    "250ms function perf92Beat(manual){if(!manual)PERF92.beatT=0;const now=perfor"
+   ],
+   [
+    1.2,
+    "30ms function(){if(e94Testing())return isAsync?Promise.resolve(null):null;r"
+   ]
+  ],
+  "raf": [
+   [
+    3.5,
+    "()=>{pend=false;try{av92Paint()}catch(e){console.error(e)}}"
+   ]
+  ],
+  "anims": {
+   "running": 2,
+   "offscreen": 0,
+   "by": [
+    [
+     "pulse #leadDot",
+     {
+      "n": 1,
+      "off": 0
+     }
+    ],
+    [
+     "pulse .dot",
+     {
+      "n": 1,
+      "off": 0
+     }
+    ]
+   ]
+  },
+  "layers": null,
+  "mem": {
+   "heapMB0": 11,
+   "heapMB1": 11,
+   "nodes0": 2537,
+   "nodes1": 2537,
+   "docs": 42,
+   "listeners": 746
+  },
+  "idle": false
+ }
+]

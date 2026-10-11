@@ -1,0 +1,600 @@
+[
+ {
+  "label": "mgr-ludus",
+  "secs": 10,
+  "ok": true,
+  "calls": {},
+  "cdp": {
+   "taskMsPerS": 224,
+   "scriptMsPerS": 16,
+   "layoutPerS": 0,
+   "layoutMsPerS": 0,
+   "styleRecalcPerS": 63.6,
+   "styleMsPerS": 12
+  },
+  "trace": {
+   "decode": {
+    "n": 0,
+    "perS": 0,
+    "msPerS": 0
+   },
+   "paint": {
+    "n": 480,
+    "perS": 120,
+    "msPerS": 67
+   },
+   "commit": {
+    "n": 240,
+    "perS": 60,
+    "msPerS": 63
+   },
+   "layout": {
+    "n": 0,
+    "perS": 0,
+    "msPerS": 0
+   },
+   "style": {
+    "n": 242,
+    "perS": 60.5,
+    "msPerS": 12
+   },
+   "parseHTML": {
+    "n": 12,
+    "perS": 3,
+    "msPerS": 0
+   }
+  },
+  "innerHTML": {
+   "perS": 1.2,
+   "kcharsPerS": 0.6,
+   "top": [
+    {
+     "k": "TEMPLATE",
+     "n": 12,
+     "kch": 6,
+     "site": [
+      "dk99Tmpl<dk99Mail<deskItems99",
+      "mailFromHTML<mailLive<mailLive"
+     ]
+    }
+   ]
+  },
+  "layoutReads": {
+   "perS": 0,
+   "sites": []
+  },
+  "perf92Runs": {
+   "msave38": 12,
+   "night47": 12,
+   "bubbles47": 8,
+   "tint50": 8,
+   "speed52": 12,
+   "rail63": 12,
+   "hrs65": 12,
+   "tutlock66": 18,
+   "ofMeter67": 18,
+   "chrome69": 33,
+   "wager71": 18,
+   "rail73": 18,
+   "srInfo73": 12,
+   "tabchk73": 18,
+   "tip74": 18,
+   "avhit73": 18,
+   "pp73": 18,
+   "penOff76": 18,
+   "onlBar79": 18,
+   "onlCry80": 12,
+   "onlSay80": 18,
+   "rb82Fit": 18,
+   "faith85": 18,
+   "night85": 18,
+   "shelf87": 33,
+   "tally88": 18,
+   "stalls89": 12,
+   "srv91": 8,
+   "hr99": 12
+  },
+  "realIntervals": [
+   [
+    9.6,
+    "110ms ()=>{try{if(HEADLESS||document.hidden||(typeof PERF92!=='undefined'&&P"
+   ],
+   [
+    8.8,
+    "120ms function plActFix82(){const B=document.body;if(!B.classList.contains('"
+   ],
+   [
+    5.3,
+    "200ms ()=>{try{if(onlmOn()&&!G89.busy)g89Flush()}catch(e){}}"
+   ],
+   [
+    4.3,
+    "250ms ()=>{try{if(ONL80R.hq.length&&onlmOn())onl80Answer()}catch(e){}}"
+   ],
+   [
+    4.3,
+    "250ms ()=>{try{const el=document.getElementById('cd83');if(!el)return;const "
+   ],
+   [
+    4.2,
+    "250ms ()=>{if(!HEADLESS&&document.getElementById('audTracks'))audBarsSync()}"
+   ],
+   [
+    3.5,
+    "300ms function plTick(){try{const B=document.body;const on=phoneLand(); if(o"
+   ],
+   [
+    3.5,
+    "300ms ()=>{try{onlWaitGuard81()}catch(e){}}"
+   ],
+   [
+    3.1,
+    "350ms ()=>{try{mtTick()}catch(e){}}"
+   ],
+   [
+    2.7,
+    "400ms ()=>{try{/* v0.81: no timer — an invite dies with its room (124) */if("
+   ]
+  ],
+  "timeouts": [
+   [
+    4.2,
+    "250ms function perf92Beat(manual){if(!manual)PERF92.beatT=0;const now=perfor"
+   ],
+   [
+    2.4,
+    "40ms function a11ySync93(){A93.syncT=0;if(HEADLESS)return; /* closed dialog"
+   ],
+   [
+    1.9,
+    "30ms ()=>{try{setGridify()}catch(e){}}"
+   ],
+   [
+    1.9,
+    "40ms ()=>{t=0;try{imm88Sweep()}catch(e){console.error(e)}}"
+   ],
+   [
+    1.9,
+    "60ms ()=>{tm=0;const s=pend;pend=new Set();for(const r of s)if(r.isConnecte"
+   ],
+   [
+    1.9,
+    "90ms function glSweep(){try{{const i=TT.stack.findIndex(t=>!t.a.isConnected"
+   ],
+   [
+    1.2,
+    "150ms ()=>{tm=0;const list=[...pend];pend.clear();for(const n of list)if(n.i"
+   ]
+  ],
+  "raf": [
+   [
+    6.3,
+    "()=>{pend=false;try{av92Paint()}catch(e){console.error(e)}}"
+   ]
+  ],
+  "anims": {
+   "running": 1,
+   "offscreen": 0,
+   "by": [
+    [
+     "pulse #leadDot",
+     {
+      "n": 1,
+      "off": 0
+     }
+    ]
+   ]
+  },
+  "layers": null,
+  "mem": {
+   "heapMB0": 11.1,
+   "heapMB1": 11.2,
+   "nodes0": 2292,
+   "nodes1": 2292,
+   "docs": 35,
+   "listeners": 742
+  },
+  "idle": false
+ },
+ {
+  "label": "mgr-recruit",
+  "secs": 10,
+  "calls": {},
+  "cdp": {
+   "taskMsPerS": 231,
+   "scriptMsPerS": 16,
+   "layoutPerS": 0,
+   "layoutMsPerS": 0,
+   "styleRecalcPerS": 63.5,
+   "styleMsPerS": 13
+  },
+  "trace": {
+   "decode": {
+    "n": 0,
+    "perS": 0,
+    "msPerS": 0
+   },
+   "paint": {
+    "n": 480,
+    "perS": 120,
+    "msPerS": 66
+   },
+   "commit": {
+    "n": 240,
+    "perS": 60,
+    "msPerS": 66
+   },
+   "layout": {
+    "n": 0,
+    "perS": 0,
+    "msPerS": 0
+   },
+   "style": {
+    "n": 241,
+    "perS": 60.3,
+    "msPerS": 13
+   },
+   "parseHTML": {
+    "n": 6,
+    "perS": 1.5,
+    "msPerS": 0
+   }
+  },
+  "innerHTML": {
+   "perS": 0.9,
+   "kcharsPerS": 0.5,
+   "top": [
+    {
+     "k": "TEMPLATE",
+     "n": 9,
+     "kch": 5,
+     "site": [
+      "mailFromHTML<mailLive<mailLive",
+      "dk99Tmpl<dk99Mail<deskItems99"
+     ]
+    }
+   ]
+  },
+  "layoutReads": {
+   "perS": 0,
+   "sites": []
+  },
+  "perf92Runs": {
+   "msave38": 13,
+   "night47": 13,
+   "bubbles47": 10,
+   "tint50": 9,
+   "speed52": 13,
+   "rail63": 13,
+   "hrs65": 13,
+   "tutlock66": 19,
+   "ofMeter67": 19,
+   "chrome69": 36,
+   "wager71": 19,
+   "rail73": 19,
+   "srInfo73": 13,
+   "tabchk73": 19,
+   "tip74": 19,
+   "avhit73": 19,
+   "pp73": 19,
+   "penOff76": 19,
+   "onlBar79": 19,
+   "onlCry80": 13,
+   "onlSay80": 19,
+   "rb82Fit": 19,
+   "faith85": 19,
+   "night85": 19,
+   "shelf87": 36,
+   "tally88": 19,
+   "stalls89": 13,
+   "srv91": 9,
+   "hr99": 13
+  },
+  "realIntervals": [
+   [
+    9.5,
+    "110ms ()=>{try{if(HEADLESS||document.hidden||(typeof PERF92!=='undefined'&&P"
+   ],
+   [
+    8.7,
+    "120ms function plActFix82(){const B=document.body;if(!B.classList.contains('"
+   ],
+   [
+    5.2,
+    "200ms ()=>{try{if(onlmOn()&&!G89.busy)g89Flush()}catch(e){}}"
+   ],
+   [
+    4.2,
+    "250ms ()=>{if(!HEADLESS&&document.getElementById('audTracks'))audBarsSync()}"
+   ],
+   [
+    4.2,
+    "250ms ()=>{try{if(ONL80R.hq.length&&onlmOn())onl80Answer()}catch(e){}}"
+   ],
+   [
+    4.2,
+    "250ms ()=>{try{const el=document.getElementById('cd83');if(!el)return;const "
+   ],
+   [
+    3.5,
+    "300ms function plTick(){try{const B=document.body;const on=phoneLand(); if(o"
+   ],
+   [
+    3.5,
+    "300ms ()=>{try{onlWaitGuard81()}catch(e){}}"
+   ],
+   [
+    3,
+    "350ms ()=>{try{mtTick()}catch(e){}}"
+   ],
+   [
+    2.6,
+    "400ms ()=>{try{tutTick()}catch(e){}}"
+   ]
+  ],
+  "timeouts": [
+   [
+    4.2,
+    "250ms function perf92Beat(manual){if(!manual)PERF92.beatT=0;const now=perfor"
+   ],
+   [
+    2.6,
+    "40ms function a11ySync93(){A93.syncT=0;if(HEADLESS)return; /* closed dialog"
+   ],
+   [
+    2,
+    "30ms ()=>{try{setGridify()}catch(e){}}"
+   ],
+   [
+    2,
+    "40ms ()=>{t=0;try{imm88Sweep()}catch(e){console.error(e)}}"
+   ],
+   [
+    2,
+    "60ms ()=>{tm=0;const s=pend;pend=new Set();for(const r of s)if(r.isConnecte"
+   ],
+   [
+    2,
+    "90ms function glSweep(){try{{const i=TT.stack.findIndex(t=>!t.a.isConnected"
+   ],
+   [
+    1.3,
+    "150ms ()=>{tm=0;const list=[...pend];pend.clear();for(const n of list)if(n.i"
+   ]
+  ],
+  "raf": [
+   [
+    6.1,
+    "()=>{pend=false;try{av92Paint()}catch(e){console.error(e)}}"
+   ]
+  ],
+  "anims": {
+   "running": 1,
+   "offscreen": 0,
+   "by": [
+    [
+     "pulse #leadDot",
+     {
+      "n": 1,
+      "off": 0
+     }
+    ]
+   ]
+  },
+  "layers": null,
+  "mem": {
+   "heapMB0": 10.6,
+   "heapMB1": 10.6,
+   "nodes0": 3006,
+   "nodes1": 3006,
+   "docs": 36,
+   "listeners": 743
+  },
+  "idle": false
+ },
+ {
+  "label": "city-square",
+  "secs": 10,
+  "calls": {
+   "cityDraw": {
+    "perS": 6.6,
+    "msPerS": 51.3
+   }
+  },
+  "cdp": {
+   "taskMsPerS": 1066,
+   "scriptMsPerS": 60,
+   "layoutPerS": 2.2,
+   "layoutMsPerS": 3,
+   "styleRecalcPerS": 7.9,
+   "styleMsPerS": 9
+  },
+  "trace": {
+   "decode": {
+    "n": 18,
+    "perS": 4.5,
+    "msPerS": 0
+   },
+   "paint": {
+    "n": 54,
+    "perS": 13.5,
+    "msPerS": 11
+   },
+   "commit": {
+    "n": 22,
+    "perS": 5.5,
+    "msPerS": 888
+   },
+   "layout": {
+    "n": 8,
+    "perS": 2,
+    "msPerS": 3
+   },
+   "style": {
+    "n": 28,
+    "perS": 7,
+    "msPerS": 9
+   },
+   "parseHTML": {
+    "n": 6,
+    "perS": 1.5,
+    "msPerS": 0
+   }
+  },
+  "innerHTML": {
+   "perS": 0.9,
+   "kcharsPerS": 0.5,
+   "top": [
+    {
+     "k": "TEMPLATE",
+     "n": 9,
+     "kch": 5,
+     "site": [
+      "mailFromHTML<mailLive<mailLive",
+      "dk99Tmpl<dk99Mail<deskItems99"
+     ]
+    }
+   ]
+  },
+  "layoutReads": {
+   "perS": 0,
+   "sites": []
+  },
+  "perf92Runs": {
+   "msave38": 10,
+   "night47": 8,
+   "bubbles47": 7,
+   "tint50": 7,
+   "speed52": 8,
+   "rail63": 8,
+   "hrs65": 8,
+   "tutlock66": 15,
+   "ofMeter67": 15,
+   "chrome69": 15,
+   "wager71": 15,
+   "rail73": 12,
+   "srInfo73": 8,
+   "tabchk73": 12,
+   "tip74": 15,
+   "avhit73": 15,
+   "pp73": 15,
+   "penOff76": 15,
+   "onlBar79": 12,
+   "onlCry80": 8,
+   "onlSay80": 12,
+   "rb82Fit": 15,
+   "faith85": 15,
+   "night85": 12,
+   "shelf87": 15,
+   "tally88": 15,
+   "stalls89": 8,
+   "srv91": 7,
+   "hr99": 10
+  },
+  "realIntervals": [
+   [
+    3.7,
+    "110ms ()=>{try{if(HEADLESS||document.hidden||(typeof PERF92!=='undefined'&&P"
+   ],
+   [
+    3.6,
+    "120ms function plActFix82(){const B=document.body;if(!B.classList.contains('"
+   ],
+   [
+    3,
+    "250ms ()=>{if(!HEADLESS&&document.getElementById('audTracks'))audBarsSync()}"
+   ],
+   [
+    2.9,
+    "200ms ()=>{try{if(onlmOn()&&!G89.busy)g89Flush()}catch(e){}}"
+   ],
+   [
+    2.9,
+    "250ms ()=>{try{if(ONL80R.hq.length&&onlmOn())onl80Answer()}catch(e){}}"
+   ],
+   [
+    2.8,
+    "250ms ()=>{try{const el=document.getElementById('cd83');if(!el)return;const "
+   ],
+   [
+    2.8,
+    "300ms ()=>{try{onlWaitGuard81()}catch(e){}}"
+   ],
+   [
+    2.7,
+    "350ms ()=>{try{mtTick()}catch(e){}}"
+   ],
+   [
+    2.5,
+    "400ms ()=>{try{tutTick()}catch(e){}}"
+   ],
+   [
+    2.5,
+    "400ms ()=>{try{/* v0.81: no timer — an invite dies with its room (124) */if("
+   ]
+  ],
+  "timeouts": [
+   [
+    2.3,
+    "250ms function perf92Beat(manual){if(!manual)PERF92.beatT=0;const now=perfor"
+   ],
+   [
+    2,
+    "60ms ()=>{tm=0;const s=pend;pend=new Set();for(const r of s)if(r.isConnecte"
+   ],
+   [
+    2,
+    "40ms ()=>{t=0;try{imm88Sweep()}catch(e){console.error(e)}}"
+   ],
+   [
+    2,
+    "40ms function a11ySync93(){A93.syncT=0;if(HEADLESS)return; /* closed dialog"
+   ],
+   [
+    1.8,
+    "30ms ()=>{try{setGridify()}catch(e){}}"
+   ],
+   [
+    1.5,
+    "90ms function glSweep(){try{{const i=TT.stack.findIndex(t=>!t.a.isConnected"
+   ],
+   [
+    0.8,
+    "150ms ()=>{tm=0;const list=[...pend];pend.clear();for(const n of list)if(n.i"
+   ]
+  ],
+  "raf": [
+   [
+    6.6,
+    "function(ts){const W=CITY.open&&CITY.warm100;if(!W)return base.apply(t"
+   ],
+   [
+    3.8,
+    "()=>{pend=false;try{av92Paint()}catch(e){console.error(e)}}"
+   ]
+  ],
+  "anims": {
+   "running": 1,
+   "offscreen": 0,
+   "by": [
+    [
+     "pulse #leadDot",
+     {
+      "n": 1,
+      "off": 0
+     }
+    ]
+   ]
+  },
+  "layers": null,
+  "mem": {
+   "heapMB0": 11.5,
+   "heapMB1": 11.4,
+   "nodes0": 2567,
+   "nodes1": 2567,
+   "docs": 62,
+   "listeners": 758
+  },
+  "idle": false
+ }
+]

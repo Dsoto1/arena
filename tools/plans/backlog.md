@@ -246,3 +246,11 @@ Tactics online-rules page lists what is offline-only (missio, festivals, tournam
 MANAGER WORLD TABS (his 1a 2a 3a 4a, 2026-10-11): mock first (tools/plans/mock100/world.html) — one shell; News = Forum Wall with the Acta pinned; League = Standings with all columns
 + house card; Imperium = clickable map + city cards; Trophies = Tituli hall; Season = Calendar of 12 week tablets + LOOK UP TO TWO SEASONS AHEAD (his add).
 FIX (his 2026-10-11): recruiting cards always say "his/him" — use the fighter's sex everywhere in Manager (whole strings per sex for i18n). Building (tv100g2).
+
+## His answers 2026-10-11 (later)
+v0.99 fixes: Focus card — unsure (keep 1a; he re-tests in the build) · rabble-rousers fictional regulars OK (satire) · +AP start bonus: 3b a DIALOG to choose, limited to armored locations.
+WHO'S ONLINE: 1a struck shown normally · 2c no-house lanistas only on the full tab · 3 per-GLADIATOR status: a gladiator in a live match stays "fighting" until it ends or his
+Fate is recorded, while his lanista (who abandoned) may already be in another room with another gladiator — show the lanista's current activity + the gladiator still fighting ·
+4a count listed only. CHANGES: NO who's-online panel on the Online landing (Lobby Browser tab only); the follow-house search leaves the landing → Profile & Settings;
+Acta of the day merged INTO the biggest winner / biggest loser boxes; re-fit the landing.
+WORLD TABS: W1–W9 all a. Calendar: more contrast between the schedule tablets and the light background; the current week ALWAYS clearly highlighted. Build in the Manager wave.
