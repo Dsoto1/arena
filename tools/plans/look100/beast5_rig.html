@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Beasts look test round 5</title>
+<script type="importmap">{"imports":{"three":"../../art/rig92/vendor/three.module.min.js","three/addons/":"../../art/rig92/vendor/"}}</script>
+</head><body style="background:#2a2520;color:#eee;font:13px sans-serif">
+<p>v1.0 beasts look test — driven by beast_make.js</p>
+<script type="module">
+window.addEventListener('error', e => { window.__err = String(e.message); });
+import('./beast5_rig.js').catch(e => { window.__err = String(e && e.stack || e); });
+</script>
+<script src="beast5_comp.js"></script>
+</body></html>
