@@ -1017,6 +1017,23 @@ One global script; files are concatenated in order. Later "version modules" patc
   are sculpted ONCE by `node tools/art/rig92/mkgear.js` → assets/gear100.js (window.GEAR100, meshoptimizer-simplified + coded, ~300 KB; full detail
   would be 5.2 MB), loaded on demand by a t93Load wrapper; re-run it after editing body/rig/sculpt/gear8 (tv100g checks the source hash), then
   mkgame.js. T93_VER 2 (one re-convert), board size = TW·MINI_BASE/(25.4·MINI_PXMM) (272's ×0.88 retired), loincloth per printed class (CLOTH100). Test tv100g.
+- **v1.0 MANAGER WORLD TABS (290-v100world, his W1–W9 all a; mock tools/plans/mock100/world.html, shots tools/plans/world100/):** ONE shell for the
+  five World tabs (news, league, imp, trophy, sched): a final mgrHTML wrapper swaps 95's banner for `wd100Banner` (keeps `.roomhd.b73.b73-<k>` +
+  `.roomttl`; League keeps 231's `.lp96pod` podium in it) and puts the tab's new view in #mgrPane; the tab's OLD content stays below in a fold
+  `details.wd100fold` (open state localStorage flavius_world100fold) so every handler/test selector still works (.lp96t, .lg90, table.stable2,
+  #standsHubBody, the glass case). CSS prefix `wd100` (287 owns `w100`). Shared: `parma100(m,px)`/`scutum100(m)` house insignia (flagURI emblem,
+  cached), `face100`, `gch100` grade chips, `plq100` bronze plaque, `seg100`, `tituli100Plaque({art,name,sub,won,prog,hint})` (reusable plaque).
+  NEWS = Acta pinned (P.darwin, P.rabble, victors from g.recent; 📜 Read it = data-mg="paper") + programmata wall 3 across from w.news + this week's
+  world events (tags Ours/Rival/Arena/Empire, filter WD100.nf). LEAGUE = next-prize bar (lp90Next), one-line rows `[data-wd100h]` (parma, Pts, form
+  dots from roster g.recent, top gladiator + grade, W-L, rivalry flames) → MGR.lg90 → right-column house card `.wd100hc[data-lg90box]` (🔍 Scout =
+  185 lg90HTML in `.lg90row.wd100scout`, ⚔ Challenge = 185 `[data-lg90ch]`, 🏛 Team screen). IMPERIUM = map.jpg + 12 pins `[data-wd100c]` (host,
+  home, closed, event/weather badges, fans glow from CROWD_CACHE) + floating city card (AR91MAT stone, CITY94/SPEC94 stalls, TEMPLE76 gods,
+  CITY_CLS99, worldImpact news, next games art); 🏛 Walk the square = data-ct="square" ONLY when citySquareGate is null; no Plan a trip (his call);
+  phones: the card drops under the map. TROPHIES = Tituli plaques (trophySVG art, never emoji; progress from season tallies g.ss; filters Manager ·
+  Play Now (Store hallTrophies) · Online (ONL82.dg.trophies, art mapped TIT100_ONL)); the glass case stays under it. SEASON = 12 DARK tablets + Final
+  on the light parchment, current week gold ring + THIS WEEK (scrolled into view), switcher This season · Next · The one after (seasonSchedule; TBA),
+  listed schedule = dark ink on striped near-white rows (AA ≥ 4.5), current row highlighted. The lesson's "rival" step lights the new row/card.
+  Display only. Kill switch localStorage flavius_world100off=1. Test `tv100w2`.
 - **v1.0 FREE AGENTS HEAL (17-manager endWeek, his pick a 2026-10-11):** a free agent's surgeon wound never festers — the city physician closes it on its due week (history line); contracted fighters unchanged. Test tv100f.
 - **v1.0 CITY SQUARE WARM-UP (279-v100city):** the square opens under a black cover (`#cityFade.hold100`): paint → bake89 → one cityDraw (figure images requested) → wait for decodes (≤ `WARM100.cap` 1.8 s) → priming draw → reveal; walkers get random start phases (Math.random), animals/chatter/beast timers fresh starts; Reduce motion = cover cuts (`cut100`). Root cause: the 600 ms bake ran in the first loop frame and no walker had t0, so all stepped together. Kill switch flavius_city100off=1. Test tv100c.
 - **v1.0 FIXES FROM HIS v0.99 TEST NOTES (284-v100fix + small edits; header lists F1-F4, C1-C3; test `tv100x`, shots tools/plans/fix100/):** F1 196 srv91Chip needs #onl on screen and
