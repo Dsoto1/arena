@@ -39,7 +39,9 @@ export const WGEO4 = {
     [plate([[-0.02, 0.07], [0.022, 0.07], [0.035, 0.22], [0.055, 0.4], [0.02, 0.56], [-0.01, 0.42], [-0.025, 0.22]], 0.008), STL]]),
   bow: () => { const R = 0.6, arc = new THREE.TorusGeometry(R, 0.014, 6, 32, 1.7); arc.rotateZ(Math.PI - 0.85); arc.translate(R, 0, 0);
     const tips = [[R * (1 - Math.cos(0.85)), R * Math.sin(0.85), 0], [R * (1 - Math.cos(0.85)), -R * Math.sin(0.85), 0]];
-    const g = merge([[arc, '#6a4428'], [cyl(0.018, 0.018, 0.1, 0, 8), '#3a2a20'], ...tips.map(t => [at(new THREE.ConeGeometry(0.01, 0.04, 5), t[0] + 0.01, t[1] * 1.02, 0), '#e8dcc0'])]); g.userData = { tips }; return g; },
+    const g = merge([[arc, '#6a4428'], [cyl(0.018, 0.018, 0.1, 0, 8), '#3a2a20'], ...tips.map(t => [at(new THREE.ConeGeometry(0.01, 0.04, 5), t[0] + 0.01, t[1] * 1.02, 0), '#e8dcc0'])]);
+    /* v1.0 (his 3a): turned half round so the limbs curve back toward the archer (the grip leads, the string runs on his side) */
+    g.rotateY(Math.PI); g.userData = { tips: tips.map(t => [-t[0], t[1], -t[2]]) }; return g; },
   pugio: () => merge([[cyl(0.012, 0.012, 0.09, 0, 8), '#2a2420'], [ball(0.022, 0, -0.055, 0), '#c99a3e'], [box(0.06, 0.016, 0.03, 0, 0.05), '#c99a3e'], [leaf(0.2, 0.04, 0.055), STL]]),
   scissor: () => merge([[cyl(0.046, 0.04, 0.24, -0.04, 14), '#5f5c56'], [at(new THREE.TorusGeometry(0.047, 0.005, 4, 16).rotateX(Math.PI / 2), 0, 0.075, 0), '#8e979e'],
     [at(new THREE.TorusGeometry(0.1, 0.016, 6, 22, Math.PI).rotateY(Math.PI / 2).rotateX(Math.PI), 0, 0.2, 0), '#d6dadd']]),
@@ -84,8 +86,10 @@ export const H5 = {
   /* round 8: the sword hold the max-load search settled on (gladius clear of the scutum and the body) */
   sword: { R: { th: 15, b: [-0.1, 0.2, 1], hint: [-0.14, -0.06, 1], at: [-0.33, 1.2, 0.44] } },
   dagger: { R: { th: -100, b: [0.12, -1, 0.25], hint: [0, 0.12, 1], at: [-0.27, 1.22, 0.3] } },
-  spear: { R: { th: -90, b: [0.03, -0.08, 1], hint: [0, -1, 0.25], at: [-0.2, 1.66, 0.05] } },
-  trident: { R: { th: 25, b: [0.12, 0.22, 1], hint: [-0.05, -0.35, 1], at: [-0.2, 1.0, 0.1] }, two: { d: 0.5, th: 25, hint: [0.2, -0.35, 1] } },
+  /* v1.0 (his 4a, best fit on the tile): the long shafts STAND UPRIGHT in the armed stand, butt by the foot (round 5 held them level, which
+     made the stand 1.5–2× wider than its tile); the throw / thrust presets still carry them level */
+  spear: { R: { th: 90, b: [0.04, 1, 0.06], hint: [0, 0, 1], at: [-0.34, 0.95, 0.2] } },
+  trident: { R: { th: 90, b: [0.04, 1, 0.06], hint: [0, 0, 1], at: [-0.34, 0.95, 0.2] } },
   hafted: { R: { th: 80, b: [-0.12, 1, -0.15], hint: [0, 0.05, 1], at: [-0.28, 1.36, 0.24] } },
   throw: { R: { th: 0, b: [0, 1, -0.2], hint: [0, 0, 1], at: [-0.24, 1.66, -0.05] } },
   bow: { L: { th: 90, b: [0, 1, 0.05], hint: [0.25, 0, 1], at: [0.2, 1.42, 0.52] }, hand: 'L', drawR: { h: [-60, 1500, 160], hp: [1, -0.3, -1] } },
@@ -179,7 +183,32 @@ export function mountWeapons(B, gear) {
   for (const [sd, k, th] of ho.mounts) out.push(mount5(B, k, sd, th));
   if (ho.shield) out.push(...weaponKit(B, { [ho.shield[0]]: ho.shield[1], up8: 1 }));
   if (ho.R === 'trident' && !ho.L) out.push(...net(B));
+  for (const m of out.slice()) if (m.userData && m.userData.w4 && m.userData.w4.k === 'bow') out.push(...bowString(B, m));
   return out;
+}
+/* v1.0 (his 3a): THE BOW STRING — rebuilt at every render (so every sheet, facing, thumbnail and the editor) from the bow's two tips
+   (the mounted bow, geometry userData.tips) and the draw hand: when the right hand's grip is beyond the chord, away from the bow's grip
+   (a drawn bow, any pose / facing / yaw), the string runs tip → hand → tip; otherwise it is straight. Two thin segments + their ink. */
+function bowString(B, bow) {
+  const tips = bow.geometry && bow.geometry.userData && bow.geometry.userData.tips; if (!tips) return [];
+  const R = 0.0032, gl = new THREE.CylinderGeometry(1, 1, 1, 6, 1, true); gl.translate(0, 0.5, 0);
+  const light = B.kit.makeToon('#efe4c8'), dark = new THREE.MeshBasicMaterial({ color: 0x120c0a, side: THREE.BackSide });
+  const segs = [0, 1].map(() => [new THREE.Mesh(gl, light), new THREE.Mesh(gl.clone(), dark)]);
+  const r = REST.R, W0 = JK.wR.pos, loc = r.u.clone().multiplyScalar(r.gl).sub(r.o.clone().multiplyScalar(0.03));
+  const t1 = V(tips[0]), t2 = V(tips[1]), q = new THREE.Quaternion(), Y = V([0, 1, 0]), sc = new THREE.Vector3();
+  const place = (m, a, b, rad) => { const d = b.clone().sub(a), l = d.length() || 1e-6; q.setFromUnitVectors(Y, d.divideScalar(l)); m.matrixWorld.compose(a, q, sc.set(rad, l, rad)); };
+  const update = () => {
+    const A = bow.localToWorld(t1.clone()), C = bow.localToWorld(t2.clone()), G = bow.localToWorld(V([0, 0, 0]));
+    const H = B.rig.bones.wR.localToWorld(loc.clone()), AC = C.clone().sub(A), L2 = AC.lengthSq() || 1e-9;
+    const t = Math.max(0, Math.min(1, H.clone().sub(A).dot(AC) / L2)), P = A.clone().add(AC.clone().multiplyScalar(t));
+    const pull = H.clone().sub(P), drawn = t > 0.15 && t < 0.85 && pull.dot(P.clone().sub(G)) > 0 && pull.length() < Math.sqrt(L2) * 1.1;
+    const mid = drawn ? H : A.clone().add(C).multiplyScalar(0.5), sw = B.group.scale.x || 1, ink = (B.mats.out.userData.u.value || 0) * sw;
+    place(segs[0][0], A, mid, R * sw); place(segs[0][1], A, mid, R * sw + ink); place(segs[1][0], mid, C, R * sw); place(segs[1][1], mid, C, R * sw + ink);
+    bow.userData.string = { drawn, t: +t.toFixed(3) };
+  };
+  const out = [];
+  for (const [m, k] of segs) for (const x of [m, k]) { x.matrixAutoUpdate = false; x.matrixWorldAutoUpdate = false; x.frustumCulled = false; x.userData.raw = 1; x.name = 'bowstring'; x.onBeforeRender = update; B.group.add(x); out.push(x); }
+  bow.userData.stringUpdate = update; return out;
 }
 export function killWeapons(B, list) {
   for (const m of list || []) { if (m.userData && m.userData.raw) { if (m.parent) m.parent.remove(m); m.geometry.dispose(); if (m.material) m.material.dispose(); continue; }

@@ -20,7 +20,7 @@ import { buildBodyAsync } from './body.js';
 import { JOINTS, JK, HANDLE_COL, applyPose, poseToJSON, poseFromJSON, readPose, emptyPose, jointPos, jointQ, endPos, ENDS, solveArm, rotateJointWorld, footNow, solveTwoBone, resolveSpec, BASE_R, BASE_H, MM_PER_M, ANKLE_H } from './rig.js';
 import { PRESETS, PRESET_ORDER, PRESET_GROUPS } from './presets.js';
 import { makeGear } from './gear.js';
-import { loadBaked, wearBaked, merge8, beltShow8 } from './gear8.js';
+import { loadBaked, loadBody8, wearBaked, merge8, beltShow8 } from './gear8.js';
 import { mountWeapons, killWeapons, armedSpec, armedFinish, shieldCheck, wristBend, holdsOf, STANCE } from './hold.js';
 import { MeshoptDecoder } from './vendor/meshopt_decoder.js';
 /* v1.0 (his picks, look100 rounds 2–8): printed pieces in a token's gear spec are worn as the PRE-BAKED SDF sculpts (assets/gear100.js,
@@ -70,8 +70,12 @@ export async function createToken(opts = {}) {
     const ink = new THREE.Mesh(new THREE.CylinderGeometry(rTop + 0.02, BASE_R + 0.02, BASE_H + 0.03, 64), new THREE.MeshBasicMaterial({ color: 0x120c0a, side: THREE.BackSide }));
     ink.position.y = -BASE_H / 2; baseG.add(ink);
   }
-  /* ---------- the body (time-sliced build) ---------- */
-  const B = await buildBodyAsync(Object.assign({ res: o.res, hair: 'cap' }, o.body || {}), o.slice, o.onStep);
+  /* ---------- the body (his 2a, v1.0: the slow core pre-baked in assets/body100.js — window.BODY100, made by mkgear.js on exactly this
+     body; opts.body8 = null builds it fresh, as mkgear.js itself does; a missing / other-body bake builds it fresh, time-sliced) ---------- */
+  let core = null, bodyWhy = '';
+  { const BD = o.body8 !== undefined ? o.body8 : (typeof window !== 'undefined' ? window.BODY100 : null);
+    if (!BD) bodyWhy = 'none'; else if (BD.key !== bodyKey8(o)) bodyWhy = 'body'; else try { core = await loadBody8(BD, MeshoptDecoder); } catch (e) { bodyWhy = String(e && e.message || e); core = null; } }
+  const B = await buildBodyAsync(Object.assign({ res: o.res, hair: 'cap', core }, o.body || {}), o.slice, o.onStep);
   turn.add(B.group);
   /* look100 round 2: the figure +15% against its base (his minis' heroic scale; the base stays 25.4 mm = 0.8 tile) */
   if (o.scale) B.group.scale.setScalar(o.scale);
@@ -109,6 +113,33 @@ export async function createToken(opts = {}) {
   let handles = null;
   const hideHandles = (fn) => { const v = handles && handles.visible; if (handles) handles.visible = false; try { return fn(); } finally { if (handles) handles.visible = v; } };
 
+  /* v1.0 (his 4a): BEST FIT ON THE TILE. The base stays exactly 0.8 tile, so the tile is 1.25 base radii either side of the anchor; nothing
+     of the figure (+15%) may reach past that column or below the tile's lowest corner, in any of the 8 facings. reach() measures the posed
+     figure as the sheet sees it (CPU skinning, every 2nd body vertex, the sheet's own yaw + 30° projection); fitTile() scales a figure that
+     spills INSIDE the render (the base never changes) and returns what it did. */
+  const TILE_HALF = BASE_R * 1.25;
+  function reach(el = 30) {
+    turn.rotation.y = 0; turn.updateMatrixWorld(true);
+    const v = new THREE.Vector3(), ce = Math.cos(el * D2R), se = Math.sin(el * D2R), ys = MINI_YAW.map(y => [Math.cos(y * D2R), Math.sin(y * D2R)]);
+    let hw = 0, dn = -1e9, n = 0; const sk = new Set();
+    B.group.traverseVisible(o => { if (o.isSkinnedMesh && o.skeleton && !sk.has(o.skeleton)) { sk.add(o.skeleton); o.skeleton.update(); } });
+    B.group.traverseVisible(o => {
+      if (!o.isMesh || o.name === 'bowstring' || /_ink$/.test(o.name)) return;   /* raw meshes count too (the retiarius' net); the string lies between the bow's tips */ const P = o.geometry && o.geometry.attributes.position; if (!P) return;
+      const st = o.isSkinnedMesh && P.count > 30000 ? 2 : 1;
+      for (let i = 0; i < P.count; i += st) { if (o.isSkinnedMesh) o.getVertexPosition(i, v); else v.fromBufferAttribute(P, i); v.applyMatrix4(o.matrixWorld);
+        for (const [c, s2] of ys) { const xs = v.x * c + v.z * s2, zs = -v.x * s2 + v.z * c; if (Math.abs(xs) > hw) hw = Math.abs(xs); const d = zs * se - (v.y + BASE_H) * ce; if (d > dn) dn = d; } n++; }
+    });
+    return { hw, dn, n, tileHalf: TILE_HALF };
+  }
+  function fitTile(s) {
+    const s0 = o.scale || 1; B.group.scale.setScalar(s0); B.group.updateMatrixWorld(true);
+    const pad = ((s.outlinePx || 0.85) + 1.0) / (s.pxmm * MM_PER_M), ce = Math.cos(s.el * D2R), BH = BASE_H * ce;
+    const r = reach(s.el); let f = 1;
+    if (r.hw > TILE_HALF - pad) f = Math.min(f, (TILE_HALF - pad) / r.hw);
+    if (r.dn > TILE_HALF / 2 - pad && r.dn + BH > 1e-6) f = Math.min(f, (TILE_HALF / 2 - pad + BH) / (r.dn + BH));
+    if (f < 0.999) { B.group.scale.setScalar(s0 * f); B.group.updateMatrixWorld(true); }
+    return { f: +f.toFixed(4), hw: +r.hw.toFixed(4), dn: +r.dn.toFixed(4), restore: () => { B.group.scale.setScalar(s0); B.group.updateMatrixWorld(true); } };
+  }
   /* the minis' sheet: 8 yaw cells in one row, transparent, cropped round the anchor; meta like MINI8 */
   function sheet(so = {}) { const g = sheetSteps(so); for (;;) { const r = g.next(); if (r.done) return r.value; } }
   /* the same, one facing per step (the game awaits between them so a page never freezes for the whole sheet) */
@@ -122,7 +153,7 @@ export async function createToken(opts = {}) {
     const r = renderer(S, S);
     const anc = new THREE.Vector3(0, -BASE_H, 0).project(cam);
     const AX = (anc.x * 0.5 + 0.5) * S / s.ss, AY = (-anc.y * 0.5 + 0.5) * S / s.ss;
-    const cells = [];
+    const cells = []; const fit = s.fit === false ? null : fitTile(s);
     for (const yaw of MINI_YAW) {
       lightFor(cam); B.setOutline(s.outlinePx * s.ss / ppm);   /* again: an editor redraw may run between the steps */
       renderer(S, S); hideHandles(() => { turn.rotation.y = yaw * D2R; turn.updateMatrixWorld(true); r.render(scene, cam); });
@@ -130,21 +161,23 @@ export async function createToken(opts = {}) {
       let c = grab(r, S, S); for (let k = s.ss; k > 1; k /= 2) c = halve(c); cells.push({ c, box: alphaBox(c) });
       if (cells.length < MINI_YAW.length) yield;
     }
+    if (fit) fit.restore();
     let L = 0, Rr = 0, T = 0, Bm = 0;
     for (const { box } of cells) { L = Math.max(L, AX - box[0]); Rr = Math.max(Rr, box[2] + 1 - AX); T = Math.max(T, AY - box[1]); Bm = Math.max(Bm, box[3] + 1 - AY); }
+    const pxm = s.pxmm * MM_PER_M, tile = { f: fit ? fit.f : 1, half: +Math.max(L, Rr).toFixed(1), below: +Bm.toFixed(1), limH: +(TILE_HALF * pxm).toFixed(1), limD: +(TILE_HALF / 2 * pxm).toFixed(1) };
     const half = Math.ceil(Math.max(L, Rr)) + 1, w = half * 2, top = Math.ceil(T) + 1, h = top + Math.ceil(Bm) + 1;
     const x0 = Math.floor(AX) - half, y0 = Math.floor(AY) - top;
     const out = document.createElement('canvas'); out.width = w * cells.length; out.height = h; const g = out.getContext('2d');
     cells.forEach(({ c }, i) => g.drawImage(c, x0, y0, w, h, i * w, 0, w, h));
-    return { canvas: out, meta: [w, h, +(AX - x0).toFixed(1), +(AY - y0).toFixed(1)], ms: Math.round(performance.now() - t0) };
+    return { canvas: out, meta: [w, h, +(AX - x0).toFixed(1), +(AY - y0).toFixed(1)], ms: Math.round(performance.now() - t0), tile };
   }
   /* small live facings for the modeller's strip (no supersampling) */
   function facings(px = 84) {
     const S = px, ppm = S / 2.75, out = [];
     const cam = orthoCam(S, S, ppm, 30, new THREE.Vector3(0, 0.9, 0)); lightFor(cam); B.setOutline(0.9 / ppm);
-    const r = renderer(S, S);
+    const r = renderer(S, S); const fit = fitTile({ el: 30, pxmm: MINI_PXMM, outlinePx: 0.85 });   /* his 4a: the strip shows the board's fit */
     hideHandles(() => { for (const yaw of MINI_YAW) { turn.rotation.y = yaw * D2R; turn.updateMatrixWorld(true); r.render(scene, cam); out.push(grab(r, S, S)); } });
-    turn.rotation.y = 0; turn.updateMatrixWorld(true); return out;
+    fit.restore(); turn.rotation.y = 0; turn.updateMatrixWorld(true); return out;
   }
 
   /* ---------- look + gear + pose ---------- */
@@ -381,7 +414,8 @@ export async function createToken(opts = {}) {
   return {
     hero, specPose, align, B, rig, turn, scene, baseG, sculpted: () => last8.slice(), standFor,
     /* v1.0: the bake (null when missing: bakeWhy), the shield check on what is held now, the wrists' bend */
-    baked: BK ? { keys: BK.keys.length, bytes: BK.bytes, ms: BK.ms } : null, bakeWhy, bodyKey: bodyKey8(o), shieldCheck: () => shieldCheck(B, turn, held), wrists: () => ({ L: wristBend(rig, 'L'), R: wristBend(rig, 'R') }),
+    baked: BK ? { keys: BK.keys.length, bytes: BK.bytes, ms: BK.ms } : null, bakeWhy, bodyBaked: core ? { verts: core.nv, bytes: core.bytes, ms: core.ms.load } : null, bodyWhy, bodyKey: bodyKey8(o), shieldCheck: () => shieldCheck(B, turn, held), wrists: () => ({ L: wristBend(rig, 'L'), R: wristBend(rig, 'R') }),
+    reach, fitTile: (so) => { const f = fitTile(Object.assign({ el: 30, pxmm: MINI_PXMM, outlinePx: 0.85 }, so || {})); f.restore(); return { f: f.f, hw: f.hw, dn: f.dn, tileHalf: TILE_HALF }; },
     apply, setPose, pose: poseJSON, pins, groups, thumb, joint, setJoint, offset, setOffset, mirror, resetJoint, resetLimb, legPinned: (k) => { sync(); return legPinned(k); }, pinned: () => ({ L: !!(pose.f && pose.f.L), R: !!(pose.f && pose.f.R) }), presets, sheet, sheetAsync, facings, editor, stats: B.stats, _dbg: { B, turn, scene, resolve: (spec) => poseToJSON(resolveSpec(rig, spec)) },
     dispose() { gear.clear(); killWeapons(B, held); held = []; if (R) { R.dispose(); R.forceContextLoss(); R = null; } },
   };

@@ -1040,6 +1040,13 @@ One global script; files are concatenated in order. Later "version modules" patc
   are sculpted ONCE by `node tools/art/rig92/mkgear.js` → assets/gear100.js (window.GEAR100, meshoptimizer-simplified + coded, ~300 KB; full detail
   would be 5.2 MB), loaded on demand by a t93Load wrapper; re-run it after editing body/rig/sculpt/gear8 (tv100g checks the source hash), then
   mkgame.js. T93_VER 2 (one re-convert), board size = TW·MINI_BASE/(25.4·MINI_PXMM) (272's ×0.88 retired), loincloth per printed class (CLOTH100). Test tv100g.
+  FOLLOW-UP (his 1a 2a 3a 4a): the BODY's core (body.js coreSteps: mesh, skin weights, face paint, crease ink, harness points) is pre-baked
+  too by mkgear.js → assets/body100.js (window.BODY100, meshopt-simplified 292k → 60k tris with paint/group edges locked, ~330 KB; `--btris`,
+  `--bfull`, `--nobody`; gear8.js loadBody8; game.js falls back to the on-device build when missing/stale); 276 g100Load loads both. Bow STRING
+  (hold.js bowString, rebuilt each render; the bow turned so its limbs curve back to the archer). BEST FIT (game.js reach/fitTile): base stays
+  0.8 tile; a figure (net included) reaching past its tile column / lowest corner in any of the 8 facings is scaled down inside the render;
+  spears + tridents stand upright in the armed stand (stands ≥ 0.75 for every class; thrust/lunge with long shafts shrink to ~0.45).
+  tv100g checks every class kit + max load × 24 presets × 8 facings. Tools: tools/plans/gear100/{fitscan,bowprobe,shots}.js + shots.
 - **v1.0 MANAGER WORLD TABS (290-v100world, his W1–W9 all a; mock tools/plans/mock100/world.html, shots tools/plans/world100/):** ONE shell for the
   five World tabs (news, league, imp, trophy, sched): a final mgrHTML wrapper swaps 95's banner for `wd100Banner` (keeps `.roomhd.b73.b73-<k>` +
   `.roomttl`; League keeps 231's `.lp96pod` podium in it) and puts the tab's new view in #mgrPane. NO FOLDS (his 1c, 2026-10-11): the old content's useful parts moved INTO the views with their handlers/ids

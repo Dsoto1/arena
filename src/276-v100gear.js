@@ -16,13 +16,22 @@
    • SIZE on the board: the figure path draws a 3D sheet at the minis' rule TW·MINI_BASE/(25.4·MINI_PXMM) (the base = 0.8 tile, whatever
      height a caller asks for); the figure itself stands +15% on its base (game.js scale 1.15).
    • T93_VER 2 (222): every stored token is remade ONCE (its hash changes once; the converter saves it once — idempotent).
+   • v1.0 follow-up (his answers 2026-10-11): 1a the pieces stay the ~300 KB simplified bake; 2a the BODY pre-baked the same way
+     (assets/body100.js beside gear100.js: body.js coreSteps — mesh, skin weights, face paint, crease ink, harness points — built once by
+     mkgear.js and SIMPLIFIED with meshoptimizer to 60k triangles, paint/group edges locked, ~330 KB; look options stay runtime choices);
+     3a the bow STRING (hold.js bowString: tip → draw hand → tip when drawn, rebuilt at every render; the bow turned so its limbs curve
+     back toward the archer); 4a BEST FIT ON THE TILE (game.js fitTile: the base stays 0.8 tile, a figure reaching past its tile in any
+     of the 8 facings is scaled down inside the render — sheet.tile reports it; spears and tridents stand upright in the armed stand).
    Globals: G100 (state: loading, ms, used), g100Load. Tests: tv100g (+ tv93k, tonl94). */
 const G100={loading:null,ms:0,used:0,fail:''};
 /* the loincloth per printed class (look100 round 7 3b: k-means of his minis' hip band, lifted to survive the toon ramp) */
 const CLOTH100={soldier:'#7a1c14',royalty:'#2c3550',hero:'#5c6a2a',slave:'#9c7a46',veteranus:'#b1a391',amazonia:'#8a4a2a',venatore:'#5a3466',damnatio:'#4a3a2e'};
 /* the pre-baked pieces, loaded once on demand (a plain script, like tok93.js: file://, the site and the standalone's data: URLs) */
-function g100Load(){if(window.GEAR100)return Promise.resolve(true);if(G100.loading)return G100.loading;const t0=performance.now();
-  G100.loading=t93Script('gear100.js').then(()=>{G100.ms=Math.round(performance.now()-t0);return !!window.GEAR100},e=>{G100.fail=String(e&&e.message||e);G100.loading=null;return false});return G100.loading}
+/* v1.0 follow-up (his 2a): the BODY's slow core is pre-baked too — assets/body100.js (window.BODY100, ~330 KB, made by mkgear.js) loads
+   beside gear100.js; a missing file only means the old on-device build (game.js falls back by itself) */
+function g100Load(){if(window.GEAR100&&window.BODY100)return Promise.resolve(true);if(G100.loading)return G100.loading;const t0=performance.now();
+  const one=(f,g)=>window[g]?Promise.resolve(true):t93Script(f).then(()=>!!window[g],e=>{G100.fail=String(e&&e.message||e);return false});
+  G100.loading=Promise.all([one('gear100.js','GEAR100'),one('body100.js','BODY100')]).then(r=>{G100.ms=Math.round(performance.now()-t0);G100.loading=null;return r[0]});return G100.loading}
 /* the armed stand: a request for the plain stand on an armed figure becomes the armed stand (the modeller's Stand preset, its Reset,
    the converter); api.presets' stand entry follows the gear so its picture and its button agree */
 function g100Hook(api){if(!api||api._g100)return api;api._g100=1;if(typeof api.standFor!=='function')return api;

@@ -387,9 +387,13 @@ export async function buildBodyAsync(opts = {}, sliceMs = 14, onStep) {
   const g = buildSteps(opts); let t = performance.now(), n = 0;
   for (;;) { const r = g.next(); if (r.done) return r.value; if (performance.now() - t > sliceMs) { if (onStep) onStep(++n); await new Promise(ok => setTimeout(ok, 0)); t = performance.now(); } }
 }
-function* buildSteps(opts = {}) {
+/* v1.0 (his 2a, 2026-10-11): the build is cut in two. coreSteps = the slow, deterministic part (field, surface nets, head grid, skin
+   weights, face paint, crease ink, harness lines found on the skin) — PRE-BAKED once at build time by tools/art/rig92/mkgear.js into
+   assets/body100.js (gear8.js loadBody8 decodes it); assembling (materials, clothing shells, rigid bits, the look) still runs here,
+   so every look option stays a cheap runtime choice. opts.core = a decoded core skips coreSteps (its field is not shipped: kit.fd null). */
+const beltY = (p) => 1.080 - 0.010 * Math.max(0, Math.min(1, p[2] / 0.09));
+function* coreSteps(o) {
   const t0 = performance.now();
-  const o = Object.assign({ res: 0.004, hair: 'cap', outline: 0.012 }, opts);
   const prims = sculpt(o);
   const fd = yield* buildField(prims, o.res);
   const t1 = performance.now();
@@ -490,6 +494,44 @@ function* buildSteps(opts = {}) {
     ink[i] = (wS > 0.04 && wT > 0.04) || (grp[i] !== GI.T && wT > 0.04 && (grp[i] === GI.AL || grp[i] === GI.AR)) ? k * 0.2 : k;
     col.set(c, i * 3);
   }
+  const t4 = performance.now();
+  /* v1.0: drop the vertices no triangle uses (the body's own head vertices under the fine head) — fewer to bake, skin and mask */
+  const used = new Int32Array(nv).fill(-1); let nu = 0; const tri0 = sn.tri; for (let t = 0; t < tri0.length; t++) { const v = tri0[t]; if (used[v] < 0) used[v] = nu++; }
+  const triC = new Uint32Array(tri0.length); for (let t = 0; t < tri0.length; t++) triC[t] = used[tri0[t]];
+  const cP = new Float32Array(nu * 3), cN = new Float32Array(nu * 3), cI = new Uint16Array(nu * 4), cW = new Float32Array(nu * 4), cG = new Uint8Array(nu), cV = new Uint8Array(nu), cK = new Float32Array(nu);
+  for (let v = 0; v < nv; v++) { const n = used[v]; if (n < 0) continue; for (let a = 0; a < 3; a++) { cP[n * 3 + a] = pos[v * 3 + a]; cN[n * 3 + a] = nor[v * 3 + a]; }
+    for (let a = 0; a < 4; a++) { cI[n * 4 + a] = skinI[v * 4 + a]; cW[n * 4 + a] = skinW[v * 4 + a]; } cG[n] = grp[v]; cV[n] = vk[v]; cK[n] = ink[v]; }
+  yield;
+  /* where the harness, its rings and buckles and the belt's studs sit: found on the skin (the field), kept as plain points */
+  const front = (x, y) => hitSkin(fd, [x, y, 0.35], [0, 0, -1]);
+  const back = (x, y) => hitSkin(fd, [x, y, -0.35], [0, 0, 1]);
+  const top = (x, z) => hitSkin(fd, [x, 1.75, z], [0, -1, 0], 0.5);
+  const nAt = (p) => gradF(fd, ...p);
+  const RING = front(0, 1.312), BRING = back(0, 1.318);
+  const straps = [1, -1].map(sx => [RING, front(sx * 0.05, 1.360), front(sx * 0.095, 1.425), front(sx * 0.118, 1.470), top(sx * 0.122, -0.005), back(sx * 0.115, 1.455), back(sx * 0.06, 1.378), BRING].filter(Boolean));
+  const projSkin = (p) => { for (let it = 0; it < 4; it++) { const f = sampleF(fd, ...p), g = gradF(fd, ...p); p = sub(p, mul(g, f)); } return p; };
+  const densify = (pts) => { const out = [pts[0]]; for (let i = 1; i < pts.length; i++) { const n = Math.max(1, Math.ceil(Math.hypot(...sub(pts[i], pts[i - 1])) / 0.008)); for (let j = 1; j <= n; j++) out.push(projSkin(lerp(pts[i - 1], pts[i], j / n))); } return out; };
+  for (let i = 0; i < straps.length; i++) straps[i] = densify(straps[i]);
+  const buckles = []; for (const s of straps) { const i = s.findIndex(p => p[1] > 1.395); if (i < 1) continue; const hit = s[i], prev = s[i - 1];
+    buckles.push({ at: add(hit, mul(nAt(hit), 0.010)), n: nAt(hit), rz: Math.PI / 4 + Math.atan2(hit[1] - prev[1], hit[0] - prev[0]) }); }
+  const studs = []; for (const sx of [1, -1]) for (const x of [0.05, 0.075, 0.10, 0.125]) {
+    const ang = Math.asin(Math.min(0.95, x / 0.13)); const dir = [Math.sin(ang) * sx, 0, Math.cos(ang)];
+    const hit = hitSkin(fd, [dir[0] * 0.35, beltY([0, 0, 0.1]) + 0.004, dir[2] * 0.35], [-dir[0], 0, -dir[2]]); if (!hit) continue;
+    for (const dy of [-0.0085, 0.0085]) studs.push(add(add(hit, mul(nAt(hit), 0.0135)), [0, dy, 0])); }
+  const anc = { ring: RING, bring: BRING ? { at: add(BRING, mul(nAt(BRING), 0.010)), n: nAt(BRING) } : null, straps, buckles, bf: front(0, beltY([0, 0, 0.1]) - 0.02), studs };
+  const t5 = performance.now();
+  return { nv: nu, pos: cP, nor: cN, tri: triC, skinI: cI, skinW: cW, grp: cG, vk: cV, ink: cK, anc, fd, grid: [fd.nx, fd.ny, fd.nz],
+    ms: { field: t1 - t0, mesh: t2 - t1, weights: t3 - t2, paint: t4 - t3, anchors: t5 - t4, total: t5 - t0 } };
+}
+function* buildSteps(opts = {}) {
+  const t0 = performance.now();
+  const o = Object.assign({ res: 0.004, hair: 'cap', outline: 0.012 }, opts);
+  const core = o.core || (yield* coreSteps(o)); const t3 = performance.now();
+  const { nv, pos, nor, skinI, skinW, grp, vk, ink, anc } = core; const fd = core.fd || null; const sn = { tri: core.tri };
+  const col = new Float32Array(nv * 3);
+  const L = Object.fromEntries(Object.entries(COL).map(([k, c]) => [k, lin(c)]));
+  const HO = [0, 1.605, 0], hs = o.headScale || 1;
+  const rig = makeBones();
 
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
@@ -539,15 +581,8 @@ function* buildSteps(opts = {}) {
     const m = new THREE.SkinnedMesh(g, opt2.hem ? hemMat(opt2.mat || mats.cloth, opt2.hem) : (opt2.mat || mats.cloth)); m.name = name; m.bind(skeleton, body.bindMatrix); m.frustumCulled = false;
     group.add(m); m.userData.ink = addOutline(m, true); shellParts.push(m); return m;
   };
-  /* where the harness runs: polylines found on the skin */
-  const front = (x, y) => hitSkin(fd, [x, y, 0.35], [0, 0, -1]);
-  const back = (x, y) => hitSkin(fd, [x, y, -0.35], [0, 0, 1]);
-  const top = (x, z) => hitSkin(fd, [x, 1.75, z], [0, -1, 0], 0.5);
-  const RING = front(0, 1.312), BRING = back(0, 1.318);
-  const straps = [1, -1].map(sx => [RING, front(sx * 0.05, 1.360), front(sx * 0.095, 1.425), front(sx * 0.118, 1.470), top(sx * 0.122, -0.005), back(sx * 0.115, 1.455), back(sx * 0.06, 1.378), BRING].filter(Boolean));
-  const projSkin = (p) => { for (let it = 0; it < 4; it++) { const f = sampleF(fd, ...p), g = gradF(fd, ...p); p = sub(p, mul(g, f)); } return p; };
-  const densify = (pts) => { const out = [pts[0]]; for (let i = 1; i < pts.length; i++) { const n = Math.max(1, Math.ceil(Math.hypot(...sub(pts[i], pts[i - 1])) / 0.008)); for (let j = 1; j <= n; j++) out.push(projSkin(lerp(pts[i - 1], pts[i], j / n))); } return out; };
-  for (let i = 0; i < straps.length; i++) straps[i] = densify(straps[i]);
+  /* where the harness runs: polylines found on the skin (coreSteps) */
+  const straps = anc.straps;
   const isTorsoish = (g, p) => g === GI.T || ((g === GI.AL || g === GI.AR) && Math.abs(p[0]) < 0.215 && p[1] > 1.38);
   const harnessMask = (p, g) => {
     if (!isTorsoish(g, p)) return -1;
@@ -560,7 +595,6 @@ function* buildSteps(opts = {}) {
   const leather = (p, m) => { const hi = (Math.sin(p[0] * 210 + p[1] * 160) * 0.5 + 0.5) * 0.25; return lerp(L.harness, L.harnessHi, hi); };
   yield; const harnessBits = [shellFrom('harness', harnessMask, leather, 0.0055, { mat: mats.leather })]; yield;
 
-  const beltY = (p) => 1.080 - 0.010 * Math.max(0, Math.min(1, p[2] / 0.09));
   shellFrom('belt', (p, g) => g === GI.T ? 0.027 - Math.abs(p[1] - beltY(p)) : -1,
     (p, m) => lerp(L.belt, L.harnessHi, (Math.sin(p[0] * 120) * 0.5 + 0.5) * 0.3), 0.011, { mat: mats.leather });
   shellFrom('wrap', (p, g) => g === GI.T ? 0.029 - Math.abs(p[1] - (beltY(p) - 0.052)) : -1,
@@ -659,21 +693,15 @@ function* buildSteps(opts = {}) {
     if (lookN) m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(...lookN).normalize());
     b.add(m); m.userData.ink = addOutline(m, false); return m;
   };
-  const nAt = (p) => gradF(fd, ...p);
-  if (RING) harnessBits.push(rigid(new THREE.TorusGeometry(0.020, 0.0055, 8, 24), mats.metal, 'ch', add(RING, [0, 0, 0.008]), [0, 0.1, 1]));
-  if (BRING) harnessBits.push(rigid(new THREE.TorusGeometry(0.018, 0.005, 8, 20), mats.metal, 'ch', add(BRING, mul(nAt(BRING), 0.010)), nAt(BRING)));
-  for (const s of straps) {   /* a square buckle part-way up each front strap */
-    const i = s.findIndex(p => p[1] > 1.395); if (i < 1) continue; const hit = s[i], prev = s[i - 1];
-    const bk = rigid(new THREE.TorusGeometry(0.017, 0.0035, 4, 4), mats.metal, 'ch', add(hit, mul(nAt(hit), 0.010)), nAt(hit));
-    bk.rotateZ(Math.PI / 4 + Math.atan2(hit[1] - prev[1], hit[0] - prev[0])); harnessBits.push(bk);
+  /* a pre-baked core carries no field: nAt / hitSkin answer from the field only on a fresh build (the sculptor's, at build time) */
+  const nAt = (p) => fd ? gradF(fd, ...p) : [0, 0, 1];
+  if (anc.ring) harnessBits.push(rigid(new THREE.TorusGeometry(0.020, 0.0055, 8, 24), mats.metal, 'ch', add(anc.ring, [0, 0, 0.008]), [0, 0.1, 1]));
+  if (anc.bring) harnessBits.push(rigid(new THREE.TorusGeometry(0.018, 0.005, 8, 20), mats.metal, 'ch', anc.bring.at, anc.bring.n));
+  for (const bq of anc.buckles) {   /* a square buckle part-way up each front strap */
+    const bk = rigid(new THREE.TorusGeometry(0.017, 0.0035, 4, 4), mats.metal, 'ch', bq.at, bq.n); bk.rotateZ(bq.rz); harnessBits.push(bk);
   }
-  const BF = front(0, beltY([0, 0, 0.1]) - 0.02);
-  if (BF) rigid(new THREE.TorusGeometry(0.031, 0.0072, 10, 28), mats.iron, 'pe', add(BF, [0, 0, 0.021]), [0, -0.15, 1]);
-    for (const sx of [1, -1]) for (const x of [0.05, 0.075, 0.10, 0.125]) {   /* belt studs */
-    const ang = Math.asin(Math.min(0.95, x / 0.13)); const dir = [Math.sin(ang) * sx, 0, Math.cos(ang)];
-    const hit = hitSkin(fd, [dir[0] * 0.35, beltY([0, 0, 0.1]) + 0.004, dir[2] * 0.35], [-dir[0], 0, -dir[2]]); if (!hit) continue;
-    for (const dy of [-0.0085, 0.0085]) rigid(new THREE.SphereGeometry(0.0052, 8, 6), mats.stud, 'pe', add(add(hit, mul(nAt(hit), 0.0135)), [0, dy, 0]));
-  }
+  if (anc.bf) rigid(new THREE.TorusGeometry(0.031, 0.0072, 10, 28), mats.iron, 'pe', add(anc.bf, [0, 0, 0.021]), [0, -0.15, 1]);
+  for (const st of anc.studs) rigid(new THREE.SphereGeometry(0.0052, 8, 6), mats.stud, 'pe', st);   /* belt studs */
   /* sandal soles */
   for (const sd of ['L', 'R']) {
     const sx = sd === 'L' ? 1 : -1, A0 = P('a' + sd);
@@ -734,11 +762,11 @@ function* buildSteps(opts = {}) {
   const kit = { fd, addOutline, sever, shellFrom, rigid, kill, nAt, P, GI, HO, hs, mats, lin, hexRGB, showAll,
     makeToon: (c, ex) => toonMat(c, mats, ex),
     maskedMat: (ex) => maskedToon(Object.assign({ vertexColors: true, gradientMap: mats.gm, side: THREE.DoubleSide }, ex || {}), 0.0024),
-    hitSkin: (from, dir, maxd) => hitSkin(fd, from, dir, maxd), rig, group, setHarness: (on) => showAll(harnessBits, on) };
+    hitSkin: (from, dir, maxd) => fd ? hitSkin(fd, from, dir, maxd) : null, rig, group, setHarness: (on) => showAll(harnessBits, on) };
   setLook({ hs: o.hair === 'none' ? 'bald' : 'cap' });
   const t4 = performance.now();
-  return { group, body, rig: Object.assign(rig, { skeleton, space: group }), setOutline, shells: shellParts, mats, setLook, kit,
-    stats: { verts: nv, tris: sn.tri.length / 3, grid: [fd.nx, fd.ny, fd.nz], ms: { field: t1 - t0, mesh: t2 - t1, weights: t3 - t2, rest: t4 - t3, total: t4 - t0 } } };
+  return { group, body, rig: Object.assign(rig, { skeleton, space: group }), setOutline, shells: shellParts, mats, setLook, kit, core,
+    stats: { verts: nv, tris: sn.tri.length / 3, grid: core.grid, baked: !!o.core, ms: Object.assign({}, o.core ? { core: t3 - t0 } : core.ms, { assemble: t4 - t3, total: t4 - t0 }) } };
 }
 
 /* ================= materials ================= */
