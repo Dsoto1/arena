@@ -21,7 +21,7 @@ const A=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
   t.click();await W8(300);let p=document.getElementById('lu100pop');r.ov=!!p&&!!p.querySelector('.lu2ov')&&p.querySelectorAll('.lu2o[data-lu100adv]').length===4&&/Ludus grade/.test(p.textContent);
   p.querySelector('.lu2o[data-lu100adv="medicus"]').click();await W8(300);p=document.getElementById('lu100pop');r.jump=LU100.pop==='medicus'&&!!p&&!!p.querySelector('[data-mg="build"][data-id="valet"]');
   r.links=!document.querySelector('.lu100lk [data-id="consil"],.lu100lk [data-id="ledger"]');return r});
-ok(A.per.doctore==='stands,yard'&&A.per.medicus==='kitchen,valet'&&A.per.barracks==='barracks,shrine'&&A.per.clerk==='armory,stables'&&A.per.recruiter==='','buildings per advisor '+JSON.stringify(A));
+ok(A.per.doctore==='stands,yard'&&A.per.medicus==='kitchen,valet'&&A.per.barracks==='armory,barracks,shrine'&&A.per.clerk==='stables'&&A.per.recruiter==='','buildings per advisor '+JSON.stringify(A));
 ok(A.mk.join()==='barracks,clerk,doctore,medicus','🏗 marker on the four builders');ok(A.tile&&A.ov&&A.jump,'Upgrade School → the Consilium overview → an advisor');ok(A.links,'counsel + Ledger left the links row');
 /* build from the popover: coin, level, one a week */
 const B=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const r={};LU100.pop='doctore';MGR_REDRAW();await W8(250);const c0=m.coin;
@@ -43,12 +43,15 @@ const L=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));cons
   r.badge=MGR.tab==='ludus'&&MGR.run==='ledger'&&!!document.querySelector('#mgrPane .lu100panel .ledgers');LU100.panel=null;MGR_REDRAW();await W8(200);return r});
 ok(L.pop&&L.badge,'Ledger from the Clerk and the badge '+JSON.stringify(L));
 /* counsel */
-const K=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_();const r={};delete w.lu2c;MGR_REDRAW();await W8(250);r.lit=!!document.querySelector('#council83 .c83p.lit[data-c83="consilium"]');
+const K=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const w=W_(),m=me();const r={};const lit=()=>!!document.querySelector('#council83 .c83p.lit[data-c83="consilium"]');
+  delete w.lu2c;w.loan=null;m.coin=900;MGR_REDRAW();await W8(250);r.quiet=!lit()&&lu2Counsel(w)===null;
+  LU100.pop='consilium';MGR_REDRAW();await W8(250);r.always=!!document.getElementById('lu100pop').querySelector('[data-mg="run"][data-id="consil"]');LU100.pop=null;
+  m.coin=-5;MGR_REDRAW();await W8(250);r.lit=lit();
   LU100.pop='consilium';MGR_REDRAW();await W8(250);const p=document.getElementById('lu100pop');r.btn=!!p.querySelector('[data-mg="run"][data-id="consil"]');const rd=p.querySelector('[data-lu100read^="lu2:"]');r.rd=!!rd;rd.click();await W8(400);
-  r.panel=MGR.run==='consil'&&!!document.querySelector('#mgrPane .lu100panel')&&w.lu2c===w.week&&!document.querySelector('#council83 .c83p.lit[data-c83="consilium"]');
+  r.panel=MGR.run==='consil'&&!!document.querySelector('#mgrPane .lu100panel')&&w.lu2c===w.week&&!lit();
   document.querySelector('[data-lu100panel]').click();await W8(300);LU100.pop='consilium';MGR_REDRAW();await W8(250);document.querySelector('#lu100pop [data-mg="run"][data-id="consil"]').click();await W8(400);
-  r.btnGo=MGR.run==='consil'&&!!document.querySelector('#mgrPane .lu100panel');LU100.panel=null;MGR_REDRAW();await W8(200);return r});
-ok(K.lit&&K.btn&&K.rd&&K.panel&&K.btnGo,'Consilium counsel: lit, read, the button '+JSON.stringify(K));
+  r.btnGo=MGR.run==='consil'&&!!document.querySelector('#mgrPane .lu100panel');LU100.panel=null;m.coin=900;MGR_REDRAW();await W8(200);return r});
+ok(K.quiet&&K.always&&K.lit&&K.btn&&K.rd&&K.panel&&K.btnGo,'Consilium counsel: lit, read, the button '+JSON.stringify(K));
 /* banners */
 const N=await ev(pg,async()=>{const W8=ms=>new Promise(r=>setTimeout(r,ms));const r={};MGR.tab='roster';MGR_REDRAW();await W8(400);let h=document.querySelector('.roomhd.b73-roster');
   r.roster=!!h&&!!h.querySelector('img.lu2ban[data-sc100^="team|banner"]')&&!h.querySelector(':scope>svg')&&/roster/i.test(h.querySelector('.roomttl').textContent);
