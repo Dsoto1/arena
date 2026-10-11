@@ -1,0 +1,364 @@
+{
+ "runs": [
+  {
+   "dcl": 3723,
+   "load": 4162,
+   "menu": 2150,
+   "ready": 4256,
+   "nodes": 1932,
+   "heapMB": 56.8,
+   "B": {
+    "si": 34,
+    "st": 109,
+    "raf": 30,
+    "mo": 23,
+    "ls": 672,
+    "menuAt": 2149.899999999441,
+    "atMenu": {
+     "si": 34,
+     "st": 60,
+     "raf": 4,
+     "mo": 20,
+     "ls": 653,
+     "menuAt": 2149.899999999441
+    },
+    "readyAt": 4255.5999999996275,
+    "atReady": {
+     "si": 34,
+     "st": 109,
+     "raf": 28,
+     "mo": 23,
+     "ls": 672
+    }
+   },
+   "res": 22,
+   "resKB": 682,
+   "trace": {
+    "DocumentLoader::CreateParserPostCommit": {
+     "n": 45,
+     "ms": 39
+    },
+    "DecodedDataDocumentParser::AppendBytes": {
+     "n": 53,
+     "ms": 91
+    },
+    "HTMLDocumentParser::MaybeFetchQueuedPreloads": {
+     "n": 1,
+     "ms": 2
+    },
+    "V8.CompileCode": {
+     "n": 1674,
+     "ms": 335
+    },
+    "V8.ParseProgram": {
+     "n": 197,
+     "ms": 392
+    },
+    "V8.Compile": {
+     "n": 18,
+     "ms": 36
+    },
+    "V8.CompileIgnition": {
+     "n": 1846,
+     "ms": 72
+    },
+    "V8.CompileIgnitionFinalization": {
+     "n": 1820,
+     "ms": 20
+    },
+    "V8.PreParse": {
+     "n": 13529,
+     "ms": 242
+    },
+    "ParseHTML": {
+     "n": 145,
+     "ms": 1612
+    },
+    "HTMLDocumentParser::DocumentElementAvailable": {
+     "n": 45,
+     "ms": 0
+    },
+    "ParseAuthorStyleSheet": {
+     "n": 1,
+     "ms": 0
+    },
+    "UpdateLayoutTree": {
+     "n": 134,
+     "ms": 102
+    },
+    "Layout": {
+     "n": 106,
+     "ms": 219
+    },
+    "PrePaint": {
+     "n": 148,
+     "ms": 24
+    },
+    "Paint": {
+     "n": 87,
+     "ms": 40
+    },
+    "EvaluateScript": {
+     "n": 3,
+     "ms": 1255
+    },
+    "V8.CompileScript": {
+     "n": 6,
+     "ms": 212
+    },
+    "v8.run": {
+     "n": 3,
+     "ms": 1041
+    },
+    "FunctionCall": {
+     "n": 709,
+     "ms": 924
+    },
+    "V8.ParseFunction": {
+     "n": 1485,
+     "ms": 48
+    },
+    "V8.CompileEval": {
+     "n": 178,
+     "ms": 2
+    }
+   }
+  },
+  {
+   "dcl": 3293,
+   "load": 3796,
+   "menu": 1841,
+   "ready": 3854,
+   "nodes": 1920,
+   "heapMB": 27.6,
+   "B": {
+    "si": 34,
+    "st": 109,
+    "raf": 34,
+    "mo": 23,
+    "ls": 672,
+    "menuAt": 1840.8999999994412,
+    "atMenu": {
+     "si": 34,
+     "st": 60,
+     "raf": 5,
+     "mo": 20,
+     "ls": 653,
+     "menuAt": 1840.8999999994412
+    },
+    "readyAt": 3854.2000000001863,
+    "atReady": {
+     "si": 34,
+     "st": 109,
+     "raf": 33,
+     "mo": 23,
+     "ls": 672
+    }
+   },
+   "res": 22,
+   "resKB": 682,
+   "trace": {
+    "DocumentLoader::CreateParserPostCommit": {
+     "n": 44,
+     "ms": 17
+    },
+    "DecodedDataDocumentParser::AppendBytes": {
+     "n": 57,
+     "ms": 60
+    },
+    "HTMLDocumentParser::MaybeFetchQueuedPreloads": {
+     "n": 1,
+     "ms": 2
+    },
+    "V8.CompileCode": {
+     "n": 1680,
+     "ms": 307
+    },
+    "V8.ParseProgram": {
+     "n": 197,
+     "ms": 360
+    },
+    "V8.Compile": {
+     "n": 18,
+     "ms": 35
+    },
+    "V8.CompileIgnition": {
+     "n": 1847,
+     "ms": 61
+    },
+    "V8.CompileIgnitionFinalization": {
+     "n": 1789,
+     "ms": 17
+    },
+    "V8.PreParse": {
+     "n": 13530,
+     "ms": 224
+    },
+    "ParseHTML": {
+     "n": 142,
+     "ms": 1354
+    },
+    "HTMLDocumentParser::DocumentElementAvailable": {
+     "n": 44,
+     "ms": 0
+    },
+    "ParseAuthorStyleSheet": {
+     "n": 1,
+     "ms": 0
+    },
+    "EvaluateScript": {
+     "n": 3,
+     "ms": 1017
+    },
+    "V8.CompileScript": {
+     "n": 6,
+     "ms": 205
+    },
+    "v8.run": {
+     "n": 3,
+     "ms": 811
+    },
+    "FunctionCall": {
+     "n": 711,
+     "ms": 900
+    },
+    "V8.ParseFunction": {
+     "n": 1491,
+     "ms": 42
+    },
+    "UpdateLayoutTree": {
+     "n": 132,
+     "ms": 94
+    },
+    "Layout": {
+     "n": 104,
+     "ms": 118
+    },
+    "PrePaint": {
+     "n": 144,
+     "ms": 27
+    },
+    "Paint": {
+     "n": 83,
+     "ms": 36
+    },
+    "V8.CompileEval": {
+     "n": 178,
+     "ms": 1
+    }
+   }
+  }
+ ],
+ "mods": {
+  "first": 806,
+  "end": 1443,
+  "total": 636,
+  "top": [
+   [
+    "08-setup.js",
+    366.1
+   ],
+   [
+    "12-settings.js",
+    179.4
+   ],
+   [
+    "122-v81play.js",
+    3.6
+   ],
+   [
+    "172-v89city.js",
+    3.6
+   ],
+   [
+    "246-v98ui.js",
+    3.6
+   ],
+   [
+    "112-online.js",
+    2.9
+   ],
+   [
+    "138-v84.js",
+    2.6
+   ],
+   [
+    "02-data.js",
+    2.3
+   ],
+   [
+    "64-v54.js",
+    2.3
+   ],
+   [
+    "111-onlcore.js",
+    2.3
+   ],
+   [
+    "147-v85music.js",
+    1.7
+   ],
+   [
+    "142-v84ui.js",
+    1.5
+   ],
+   [
+    "11-extra.js",
+    1.4
+   ],
+   [
+    "106-v75.js",
+    1.4
+   ],
+   [
+    "108-v76.js",
+    1.2
+   ],
+   [
+    "118-onl80.js",
+    1.2
+   ],
+   [
+    "137-v83onlui.js",
+    1.2
+   ],
+   [
+    "175-v89domus.js",
+    1.2
+   ],
+   [
+    "145-v85fix.js",
+    1.1
+   ],
+   [
+    "119-onl80rules.js",
+    1
+   ],
+   [
+    "121-onl80fix.js",
+    1
+   ],
+   [
+    "213-v92yard.js",
+    1
+   ],
+   [
+    "126-v82fix.js",
+    0.9
+   ],
+   [
+    "07-ui.js",
+    0.8
+   ],
+   [
+    "61-studio53.js",
+    0.8
+   ]
+  ],
+  "n": 280,
+  "over5": 2,
+  "under1": 258,
+  "readyAt": 3821,
+  "menuAt": 1754
+ }
+}
