@@ -83,11 +83,10 @@ ok(!V.bar&&!V.tre&&V.edit===0&&!/Treasury|Purse|stake|4321|987/i.test(V.t),'no t
 ok(V.t.includes(bob.fid),'their FID');await shot('visit');
 await P.click('#onl [data-l89="vfollow"]');await idle();ok(await peek((w,id)=>(w.accounts[id].follows||[]).length===1,ann.id),'★ Follow from the visit');
 await P.click('#onl [data-l89="vback"]');await idle();ok(await P.evaluate(()=>ONL.tab==='prof'&&!V89L.visit),'← Back');
-/* a house name in the followed list opens the visit */
-await P.evaluate(()=>{ONL.tab='play';onlRedraw()});await idle();
-if(await P.$('#onl .fl83 [data-onl83="prof"]')){await P.click('#onl .fl83 [data-onl83="prof"]');await idle();await W(300);ok(await P.evaluate(()=>ONL.tab==='visit'&&!!document.querySelector('#onl .vs89')&&!document.querySelector('.pf83pop')),'a followed house → the visit')}
-else ok(false,'the followed houses card');
-ok(await P.evaluate(()=>!!document.querySelector('#onl .fl83 .fd89l')||ONL.tab==='visit'),'find box on the followed card');
+/* the followed houses + the find box live in Profile & Settings (v1.0: not on the landing) */
+await P.evaluate(()=>{ONL.tab='prof';onlRedraw()});await idle();
+ok(await P.evaluate(()=>!!document.querySelector('#onl .pr98-find #fd89In')&&document.querySelectorAll('#onl .pr98-fol .hc98n').length>=1),'followed houses + the find box in Profile & Settings');
+await P.evaluate(()=>{ONL.tab='play';onlRedraw()});await idle();ok(await P.evaluate(()=>!document.querySelector('#onl .fl83')&&!document.querySelector('#onl #fd89In')),'not on the landing');
 /* the lookup limit */
 const slow=await P.evaluate(async fid=>{for(let i=0;i<25;i++){try{await NET.req('fid.find',{fid})}catch(e){return e.code}}return null},bob.fid);ok(slow==='slow','20 lookups a minute');await world((w,id)=>{delete w.accounts[id].fq89},ann.id);
 

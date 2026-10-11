@@ -183,18 +183,18 @@ o.map=await P.evaluate(async()=>{const W=ms=>new Promise(r=>setTimeout(r,ms));co
   if(m)m.click();await W(300);r.bigOnMap=!!document.querySelector('.omapbig');for(const x of document.querySelectorAll('.omapbig'))x.remove();
   const z=document.querySelector('#onl .scap81 [data-onl="omap"]');if(z)z.click();await W(300);r.bigOnZoom=!!document.querySelector('.omapbig');for(const x of document.querySelectorAll('.omapbig'))x.remove();return r});
 ok(o.map.has&&!o.map.btn&&o.map.cur!=='zoom-in'&&!o.map.bigOnMap&&o.map.bigOnZoom,'1 only the 🔍 opens the map '+JSON.stringify(o.map));
-o.forum=await P.evaluate(()=>({feed:!!document.getElementById('onlFeed80'),chips:document.querySelectorAll('#onl .ofor-chips').length,acta:!!document.querySelector('#onl .a81-forum #acta87'),here:!!document.querySelector('#onl .acta87 [data-onl="who"]')}));
-ok(!o.forum.feed&&!o.forum.chips&&o.forum.acta&&o.forum.here,'13 the Forum box is gone, the Acta sits in its place '+JSON.stringify(o.forum));
+o.forum=await P.evaluate(()=>({feed:!!document.getElementById('onlFeed80'),chips:document.querySelectorAll('#onl .ofor-chips').length,acta:!!document.querySelector('#onl #acta87'),here:!!document.querySelector('#onl .acta87 [data-onl="who"]'),merged:!!document.querySelector('#onl .a100-right #v85show')}));
+ok(!o.forum.feed&&!o.forum.chips&&!o.forum.acta&&!o.forum.here&&o.forum.merged,'13 (v1.0) the Forum box is gone, the Acta box too — its lines sit inside the Biggest winner / loser boxes '+JSON.stringify(o.forum));
 o.land=await P.evaluate(async(D)=>{const W=ms=>new Promise(r=>setTimeout(r,ms));const out=ONLC.dayOut(D,'today');out.acta[1].w.dn='Vettii';ONL80F.today=out;onlToday80Patch();await W(100);
-  const L=[...document.querySelectorAll('#acta87 .ac87')].map(b=>b.textContent.replace(/\s+/g,' ').trim());const r={L};
-  document.querySelector('#acta87 .ac87').click();await W(400);r.pop=!!document.querySelector('.td81pop');for(const x of document.querySelectorAll('.td81pop'))x.remove();
-  ONL80F.today={day:'yesterday',wins:[],fallen:[],upsets:[],acta:[out.acta[1]]};onlToday80Patch();await W(50);r.yd=document.getElementById('acta87').textContent.replace(/\s+/g,' ');
-  ONL80F.today={day:'today',wins:[],fallen:[],upsets:[],acta:[]};onlToday80Patch();await W(50);r.empty=document.getElementById('acta87').textContent.replace(/\s+/g,' ');
+  const L=[...document.querySelectorAll('#v85show .v85sc.win .a100-acta .ac87')].map(b=>b.textContent.replace(/\s+/g,' ').trim());const r={L};
+  document.querySelector('#v85show .a100-acta .ac87').click();await W(400);r.pop=!!document.querySelector('.td81pop');for(const x of document.querySelectorAll('.td81pop'))x.remove();
+  ONL80F.today={day:'yesterday',wins:[],fallen:[],upsets:[],acta:[out.acta[1]]};onlToday80Patch();await W(50);r.yd=document.getElementById('v85show').textContent.replace(/\s+/g,' ');
+  ONL80F.today={day:'today',wins:[],fallen:[],upsets:[],acta:[]};onlToday80Patch();await W(50);r.empty=document.getElementById('v85show').textContent.replace(/\s+/g,' ');
   /* the mock world: a settled match reaches the Acta through a hello */
   const w=mockLoad();w.days80={};w.days80[ONLC.dayKey(Date.now())]=ONLC.dayFromMatch({},{id:'mm',ev:'cassian',loc:2,at:Date.now(),ranked:true,seats:[{acct:'z',ch:{name:'Hostus',cls:'veteranus',rank:'tiro',look:{}},before:'tiro',row:{won:true,f:44},out:{award:18}}]});mockSave(w);
-  await onlRefresh();onlRedraw();await W(400);r.mock=(document.getElementById('acta87')||{}).textContent||'';return r},o.acta.D);
+  await onlRefresh();onlRedraw();await W(400);r.mock=(document.getElementById('v85show')||{}).textContent||'';return r},o.acta.D);
 ok(o.land.L.length===2&&/Gamma/.test(o.land.L[0])&&/Alpha/.test(o.land.L[1])&&/\(House Vettii\)|\(Vettii\)/.test(o.land.L[1])&&/31 CF/.test(o.land.L[1])&&/✝ 1/.test(o.land.L[1]),'13 Acta lines: time · event at city — winner (house) CF · ✝ '+JSON.stringify(o.land.L));
-ok(o.land.pop,'13 a line opens the day\'s list');ok(/yesterday/.test(o.land.yd)&&/Alpha/.test(o.land.yd),'13 yesterday\'s results while today is empty');ok(/No bout settled yet today/.test(o.land.empty),'13 the empty state');
+ok(o.land.pop,'13 a line opens the day\'s list');ok(/yesterday/.test(o.land.yd)&&/Alpha/.test(o.land.yd),'13 yesterday\'s results while today is empty');ok(/No victor yet today/.test(o.land.empty),'13 the empty state');
 ok(/Hostus/.test(o.land.mock)&&/44 CF/.test(o.land.mock),'13 the mock day reaches the Acta '+o.land.mock.slice(0,120));await shot('landing');
 /* 3 · the market without the board art */
 o.mk=await P.evaluate(async()=>{ONL.tab='armory';onlRedraw();await new Promise(r=>setTimeout(r,500));const m=document.querySelector('#onl .mb83');return m?getComputedStyle(m).backgroundImage:'none'});

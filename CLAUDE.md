@@ -1057,7 +1057,7 @@ One global script; files are concatenated in order. Later "version modules" patc
 - **v1.0 FREE AGENTS HEAL (17-manager endWeek, his pick a 2026-10-11):** a free agent's surgeon wound never festers — the city physician closes it on its due week (history line); contracted fighters unchanged. Test tv100f.
 - **v1.0 CITY SQUARE WARM-UP (279-v100city):** the square opens under a black cover (`#cityFade.hold100`): paint → bake89 → one cityDraw (figure images requested) → wait for decodes (≤ `WARM100.cap` 1.8 s) → priming draw → reveal; walkers get random start phases (Math.random), animals/chatter/beast timers fresh starts; Reduce motion = cover cuts (`cut100`). Root cause: the 600 ms bake ran in the first loop frame and no walker had t0, so all stepped together. Kill switch flavius_city100off=1. Test tv100c.
 - **v1.0 FIXES FROM HIS v0.99 TEST NOTES (284-v100fix + small edits; header lists F1-F4, C1-C3; test `tv100x`, shots tools/plans/fix100/):** F1 196 srv91Chip needs #onl on screen and
-  the main menu NOT on top. F2 `trainAP100` (05-flow) replaces distributeAP for the Manager start bonus `s.boost.ap` (armored locations only, lowest AP first, bare = nothing).
+  the main menu NOT on top. F2 `trainAP100` (05-flow) replaces distributeAP for the Manager start bonus `s.boost.ap` (armored locations only, bare = nothing; a HUMAN places it in the distribute dialog — `DIST100.only` (284) = the armored locations, 199's distModal disables the rest with "No armor here" (212's body-pick follows); CPUs/sims/headless auto-place lowest AP first; test tv100x F2e).
   F3 bed patients (`inBed76`) never train: `yard92Lock` → "🛏 In bed", thResolve drops their plan/y92/spar pairs, ord87Apply skips, old yard buttons refuse (capture guard),
   17-manager regime lists them "sat out — in bed". F4 the Focus! card already picks the location in a popup without a roll (chooseLocation 'card'); doAttack now spends no
   movement for a Focus act while `player.focusNext` is declared. C1 League standings Points column + ⓘ (`LP100_TIP` in 231). C2 Trials card compact (CSS in 284). C3 Acta
@@ -1067,13 +1067,22 @@ One global script; files are concatenated in order. Later "version modules" patc
   1c 2b 3a, no protocol bump):** route `here.list {status?,region?,sort?,cursor?}` → `{rows,n,next,at}` (≤ `WHO100.MAX` 200 rows / ≤ 60 KB a page; 200 rows ≈ 29 KB) from
   ONE presence query (`here()`, GSI1 'ON') + the rooms list — rows `{id,ln,g,rk,dn,dom,dr,rg,st idle|room|fight|watch,rm,m,ni,fo,me,hid}` (`whoRow100`); the house tier rides
   on the account (`ACCT dr100`, set on hello / domus.get), watching = `ACCT w100 {id,at}` (match.watch / unwatch wrappers). Hidden lanistas (priv89.hide), guests and bots
-  never listed; guests may read it (no Invite/Follow); my row first ("you", "you · hidden"). Page: `#who100p` = its OWN grid column between the stage (the Orbis) and
-  This week/Acta on desktop (absolute inside → adds no height, landing still fits at ≥1300×900), a row on tablets, under the stage on phones; Lobby Browser strip
+  never listed; guests may read it (no Invite/Follow); my row first ("you", "you · hidden"). Page: the landing has NO panel any more (his 2026-10-11 answers) — the list lives only in the Lobby Browser strip
   ⚔ Rooms | 👥 Online now (`WHO100.lb`) → `#who100t` with Status / Region / Sort filters + Show more (cursor); localStorage flavius_onlwho100. Row: Domus-rank banner
   (dr98URI), status dot, lanista name (→ house card), "you", region flag (rg98Flag), gladiator + rank chip; ✉ Invite (only while I host a waiting room; disabled with the
   reason for fighting / in a room / no invitations), 👁 Watch (onlWatch), 🏛 house card (hc98Open), ★/☆ Follow (ONL83.follow). Poll: a REAL 5 s timer that asks only when
-  a panel shows, the tab is visible, not idle92, and 30 s passed (`ONLC.WHO100.POLL_MS`); lists patched in place. Mock `MOCK_ROUTES['here.list']`. Kill switch localStorage
+  a panel shows, the tab is visible, not idle92, and 30 s passed (`ONLC.WHO100.POLL_MS`); lists patched in place. Mock `MOCK_ROUTES['here.list']`.  Kill switch localStorage
   flavius_who100off=1. Tests tonl100w (mock, 3 windows), server/test/v100w.test.js.
+  FOLLOW-UP (his answers 2026-10-11): PER-GLADIATOR status — `st` = the lanista's CURRENT activity; a gladiator of his still fighting in a Custom match he abandoned
+  (a CPU holds the seat) rides as `ab {m,g}` (row chip `.w100ab` "⚔ <gladiator> still fighting" + 👁 Watch on that match). Server: `match.abandon` wrapper marks
+  `ACCT.ab100 {m,at}` (abandon clears the live flag `A.match`); `here.list` reads `MATCH#<m>/META` ONLY for rows whose ab100 match is still live (cached `AB_TTL` 10 s per
+  match, ≤ `AB_READS` 20 reads a request; a reclaim clears `M.abandoned[acct]` → mark gone; Ranked abandons are a recorded Fate → never marked); shared `whoMaps100`
+  (`fightAll`, `gname`) / `whoStatus100(A,maps,ab)` / `whoAb100` / `whoRow100(…,{ab})`. LANDING (a100, final onlPlayHTML + v85ShowHTML wrappers in 287): ★ Followed houses
+  card, its Find box and the 📜 Acta box are GONE from the landing; grid = stage + playlists | ONE right column `.a100-right` (This week + 🏆/🪦 boxes, acta lines merged:
+  winner box = the day's results, loser box = bouts where someone fell, each line opens the day's list) at ≥1100 px, tablets stack, phones one column; fits ≥1300×900.
+  Profile & Settings → Find (name OR FID: `l89FindHTML` wrapper + a capture click → `onl89Visit({name})`) already lists the followed houses (252 `pr98Follows`). Also 146's
+  tall-showcase media block is scoped to `:not(.l100)`. A lanista with no house/gladiator yet shows only in the tab. Tests tonl100w (+ landing fit, merged boxes,
+  Profile find/follow, abandoned-but-fighting row), server v100w.
 - **Guide data:** `SIM50` in 53-guide50 is regenerated by `node tools/simguide.js flavius-arena.html 600` (SIMVER env);
   it includes `perk` (wins by rating perk), charted by 69-v56.
 - **Music:** procedural Web Audio (21-audio, 45-music, 16 themes; unlocked by winning in cities). Play Now plays a

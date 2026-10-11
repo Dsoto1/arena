@@ -2074,19 +2074,30 @@ async function simToEnd(skipAsk) {
   await endTurn();
 }
 
-/* trainAP100 (v1.00) — the Manager start bonus (+AP from training, temple, walk the sand, gear, armory...) only goes onto locations that already have armor; bare locations never get it. Lowest AP first, HEAL_ORDER breaks ties; no armor at all = nothing is placed. */
+/* trainAP100 (v1.00) — the Manager start bonus (+AP from training, temple, walk the sand, gear, armory...) only goes onto locations that already have armor; bare locations never get it. A human places it in the distribute dialog with the bare locations disabled (DIST100.only, 199); CPUs, sims and hidden-controlled fighters auto-place (lowest AP first, HEAL_ORDER breaks ties); no armor at all = nothing is placed. */
 async function trainAP100(p, n, why) {
   const locs = LOCS.filter(l => p.hp[l] > 0 && p.ap[l] > 0 && p.ap[l] < 7);
   if (!locs.length) return;
-  const plan = {};
-  LOCS.forEach(l => plan[l] = 0);
-  for (let i = 0; i < n; i++) {
-    const c = locs.filter(l => p.ap[l] + plan[l] < 7).sort((a, b) => p.ap[a] + plan[a] - (p.ap[b] + plan[b]) || HEAL_ORDER.indexOf(a) - HEAL_ORDER.indexOf(b));
-    if (!c.length) break;
-    plan[c[0]]++;
+  let plan;
+  if (!p.cpu && !HEADLESS && !(S && S.sim)) {
+    DIST100.only = locs;
+    try {
+      plan = await distModal(p, n, why, 'ap');
+    } finally {
+      DIST100.only = null;
+    }
+  } else {
+    plan = {};
+    LOCS.forEach(l => plan[l] = 0);
+    for (let i = 0; i < n; i++) {
+      const c = locs.filter(l => p.ap[l] + plan[l] < 7).sort((a, b) => p.ap[a] + plan[a] - (p.ap[b] + plan[b]) || HEAL_ORDER.indexOf(a) - HEAL_ORDER.indexOf(b));
+      if (!c.length) break;
+      plan[c[0]]++;
+    }
   }
   const parts = [];
   for (const l of LOCS) if (plan[l]) {
+    if (!locs.includes(l)) continue;
     p.ap[l] = Math.min(7, p.ap[l] + plan[l]);
     parts.push(_T`${LOCN[l]} +${plan[l]} AP`);
   }

@@ -6,11 +6,11 @@
    • AP Upgrade window: each location button shows the armor piece being upgraded (its card art) and its AP before → after; ✖ Cancel kept. */
 const DIST91={cancel:false};
 distModal=function(player,n,why,kind){const plan={};LOCS.forEach(l=>plan[l]=0);
-  const cap=l=>kind==='hp'?7-player.hp[l]:7-player.ap[l];const okLoc=l=>player.hp[l]>0&&cap(l)>0;
+  const cap=l=>kind==='hp'?7-player.hp[l]:7-player.ap[l];const bare=l=>!!(typeof DIST100!=='undefined'&&DIST100.only&&!DIST100.only.includes(l));const okLoc=l=>player.hp[l]>0&&cap(l)>0&&!bare(l);
   const left=()=>n-LOCS.reduce((s,l)=>s+plan[l],0);const room=()=>LOCS.some(l=>okLoc(l)&&plan[l]<cap(l));
   const canCancel=DIST91.cancel;
-  const body=()=>`<p>${_T`Distribute <b>${n} ${kind==='hp'?'HP':'AP'}</b> from ${why}. Put it all in one location or spread it. Nothing can exceed 7.`}</p>
-   <div class="dist">${LOCS.map(l=>`<span>${sideBadge(l)} ${LOCN[l]} <span style="color:var(--dim);font:12px var(--mono)">${kind==='hp'?player.hp[l]:player.ap[l]} → ${(kind==='hp'?player.hp[l]:player.ap[l])+plan[l]}</span></span><button class="btn" type="button" data-d="-" data-l="${l}" ${plan[l]?'':'disabled'} aria-label="${_T`Remove from ${LOCN[l]}`}">−</button><span class="v">${plan[l]}</span><button class="btn" type="button" data-d="+" data-l="${l}" ${okLoc(l)&&plan[l]<cap(l)&&left()>0?'':'disabled'} aria-label="${_T`Add to ${LOCN[l]}`}">+</button>`).join('')}</div>
+  const body=()=>`<p>${_T`Distribute <b>${n} ${kind==='hp'?'HP':'AP'}</b> from ${why}. Put it all in one location or spread it. Nothing can exceed 7.`}</p>${typeof DIST100!=='undefined'&&DIST100.only?`<p class="rc-sub">${_T`Only a location that wears armor can take it.`}</p>`:''}
+   <div class="dist">${LOCS.map(l=>`<span>${sideBadge(l)} ${LOCN[l]} <span style="color:var(--dim);font:12px var(--mono)">${kind==='hp'?player.hp[l]:player.ap[l]} → ${(kind==='hp'?player.hp[l]:player.ap[l])+plan[l]}</span></span><button class="btn" type="button" data-d="-" data-l="${l}" ${plan[l]?'':'disabled'} aria-label="${_T`Remove from ${LOCN[l]}`}">−</button><span class="v">${plan[l]}</span><button class="btn" type="button" data-d="+" data-l="${l}" ${okLoc(l)&&plan[l]<cap(l)&&left()>0?'':'disabled'} ${bare(l)?`title="${_T`No armor here`}"`:''} aria-label="${_T`Add to ${LOCN[l]}`}">+</button>`).join('')}</div>
    <p style="margin-top:10px">${_T`Left to assign: <b id="distLeft">${left()}</b>`}</p>`;
   const sync=()=>{const ok=document.querySelector('#mBtns [data-mi="1"]');if(ok)ok.disabled=left()>0&&room()};
   const btns=[{label:_T('Auto: head, chest, arms, legs'),value:'auto'},{label:_T('Confirm'),value:'ok',primary:1}];if(canCancel)btns.push({label:_T('Cancel'),value:'cancel'});

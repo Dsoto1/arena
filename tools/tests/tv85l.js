@@ -22,10 +22,10 @@ await setup(A,'Vettii','hero');await W8(A,600);
 o.grid=await A.evaluate(()=>{const g=document.querySelector('#onl .onl-play81.v85');const box=document.querySelector('#onl .a85-bot .onl-pls81');const cards=box?[...box.children].filter(c=>c.offsetParent!==null&&!c.classList.contains('pl85div')):[];
   const tops=[...new Set(cards.map(c=>Math.round(c.getBoundingClientRect().top)))];
   return {v85:!!g,cols:box?getComputedStyle(box).gridTemplateColumns.split(' ').length:0,n:cards.length,rows:tops.length,order:cards.map(c=>c.classList.contains('pl84')?'week':c.classList.contains('pl85cl')?'classic':c.classList.contains('inf83')?'inf':c.classList.contains('rot88')?'familia' /* v0.98: Golden Eagle approved, so Familia sits in the cycling box */:c.dataset.pl81||'?'),
-    week:cards[0]?getComputedStyle(cards[0]).borderTopStyle:'',ribbon:!!document.querySelector('#onl #onlToday80'),more:!!document.querySelector('#onl .td81-more'),show:!!document.querySelector('#onl .a85-bot #v85show')}});
+    week:cards[0]?getComputedStyle(cards[0]).borderTopStyle:'',ribbon:!!document.querySelector('#onl #onlToday80'),more:!!document.querySelector('#onl .td81-more'),show:!!document.querySelector('#onl .a100-right #v85show')}});
 ok(o.grid.v85&&o.grid.cols===2&&o.grid.n===4&&o.grid.rows===2,'playlists in a 2×2 grid '+JSON.stringify(o.grid));
 ok(o.grid.order.join()==='week,classic,familia,inf','This week · Classic · Familia · Ludi Infames '+o.grid.order.join());
-ok(o.grid.week==='double','This week keeps its double border');ok(!o.grid.ribbon&&!o.grid.more,'no Today ribbon / + more');ok(o.grid.show,'the showcases sit in the bottom block');
+ok(o.grid.week==='double','This week keeps its double border');ok(!o.grid.ribbon&&!o.grid.more,'no Today ribbon / + more');ok(o.grid.show,'the showcases sit in the right column (v1.0: beside the playlists)');
 await A.click('#onl [data-pl85="egidious"]');await W8(A,200);
 o.tab=await A.evaluate(()=>{const on=[...document.querySelectorAll('#onl .pl85c')].filter(c=>!c.classList.contains('pl85off')).map(c=>c.dataset.pl85k);return {on,vis:on.length===1&&document.querySelector('#onl .pl85c:not(.pl85off)').offsetParent!==null,saved:localStorage.getItem('flavius_pl85')}});
 ok(o.tab.on.join()==='egidious'&&o.tab.vis&&o.tab.saved==='egidious','the Classic tabs switch '+JSON.stringify(o.tab));
