@@ -361,8 +361,7 @@ function cityDrawBldg(c2,[k,r0,r1,c0,c1,h,label,icon],dress){const TWc=CITY.TW;
 function cityAt(ev){const rect=CITY.cv.getBoundingClientRect();const x=ev.clientX-rect.left,y=ev.clientY-rect.top;const TWc=CITY.TW;
   // sponsor balcony?
   if(CITY.spBox&&x>=CITY.spBox[0]&&x<=CITY.spBox[0]+CITY.spBox[2]&&y>=CITY.spBox[1]&&y<=CITY.spBox[1]+CITY.spBox[3])return {sponsor:true};
-  let best=null,bd=1e9;for(const n of CITY.npcs){if(n._x==null)continue;const d=Math.hypot(x-n._x,y-(n._y-TWc*0.45));if(d<TWc*0.5&&d<bd){bd=d;best=n}}
-  if(best)return {npc:best};
+  /* v1.0 (280): the crowd is ambient life only — no figure hit-test; their actions live in the right sidebar (People / Arena tabs) */
   const cB=Math.round(((x-CITY.OX)/(TWc/2)+(y-CITY.OY)/(TWc/4))/2),rB=Math.round(((y-CITY.OY)/(TWc/4)-(x-CITY.OX)/(TWc/2))/2);
   return {r:rB,c:cB}}
 /* cityMove — pointer move over the square: hover and cursor. */
